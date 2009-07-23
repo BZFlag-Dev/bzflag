@@ -10,10 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "TimeKeeper.h"
 
-/* system implementation headers */
+// system implementation headers
 #include <time.h>
 #include <string>
 #include <string.h>
@@ -26,57 +26,64 @@
 #if !defined(_WIN32)
 #  include <sys/time.h>
 #  include <sys/types.h>
-static struct timeval	lastTime = { 0, 0 };
+static int64_t lastTime = 0;
 #  ifdef HAVE_SCHED_H
 #    include <sched.h>
 #  endif
-#else /* !defined(_WIN32) */
+#else // !defined(_WIN32)
 #  include <mmsystem.h>
-static unsigned long int	lastTime = 0;
-static LARGE_INTEGER	qpcLastTime;
-static LONGLONG		qpcFrequency = 0;
-static LONGLONG	 qpcLastCalibration;
-static DWORD	    timeLastCalibration;
-#endif /* !defined(_WIN32) */
+static unsigned long int lastTime = 0;
+static LARGE_INTEGER     qpcLastTime;
+static LONGLONG          qpcFrequency = 0;
+static LONGLONG          qpcLastCalibration;
+static DWORD             timeLastCalibration;
+#endif // !defined(_WIN32)
 
-/* common implementation headers */
+// common implementation headers
 #include "TextUtils.h"
 #include "bzfio.h"
 
 
-static TimeKeeper	currentTime;
-static TimeKeeper	tickTime;
-static TimeKeeper	sunExplodeTime;
-static TimeKeeper	sunGenesisTime;
-static TimeKeeper	nullTime;
-static TimeKeeper	startTime = TimeKeeper::getCurrent();
+static TimeKeeper currentTime;
+static TimeKeeper tickTime;
+static TimeKeeper sunExplodeTime;
+static TimeKeeper sunGenesisTime;
+static TimeKeeper nullTime;
+static TimeKeeper startTime = TimeKeeper::getCurrent();
 
-const TimeKeeper&	TimeKeeper::getCurrent(void)
+
+#if !defined(_WIN32)
+static inline int64_t getEpochMicroseconds()
+{
+  struct timeval nowTime;
+  gettimeofday(&nowTime, NULL);
+  return (int64_t(nowTime.tv_sec) * int64_t(1000000))
+        + int64_t(nowTime.tv_usec);
+}
+#endif
+
+
+const TimeKeeper& TimeKeeper::getCurrent(void)
 {
   // if not first call then update current time, else use default initial time
 #if !defined(_WIN32)
-  if (lastTime.tv_sec != 0) {
-    double curr;
-    double last;
-    double diff;
-    struct timeval now;
+  if (lastTime == 0) {
+    // time starts at 0 seconds from the first call to getCurrent()
+    lastTime = getEpochMicroseconds();
+  }
+  else {
+    const int64_t nowTime = getEpochMicroseconds();
 
-    gettimeofday(&now, NULL);
-
-    curr = double(now.tv_sec) + (1.0e-6 * double(now.tv_usec));
-    last = double(lastTime.tv_sec) + (1.0e-6 * double(lastTime.tv_usec));
-
-    if (curr <= last) {
-      // eh, how'd we go back in time?
-      diff = 0.0;
-    } else {
-      diff = curr - last;
+    int64_t diff = (nowTime - lastTime);
+    if (diff < 0) {
+      logDebugMessage(1, "WARNING: went back in time %li microseconds\n",
+                      (long int)diff);
+      diff = 0; // eh, how'd we go back in time?
     }
 
-    currentTime += diff;
-    lastTime = now;
-  } else {
-    gettimeofday(&lastTime, NULL);
+    currentTime += double(diff) * 1.0e-6;;
+
+    lastTime = nowTime;
   }
 #else /* !defined(_WIN32) */
   if (qpcFrequency != 0) {
@@ -145,20 +152,24 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
   return currentTime;
 }
 
-const TimeKeeper&	TimeKeeper::getStartTime(void) // const
+
+const TimeKeeper& TimeKeeper::getStartTime(void) // const
 {
   return startTime;
 }
 
-const TimeKeeper&	TimeKeeper::getTick(void) // const
+
+const TimeKeeper& TimeKeeper::getTick(void) // const
 {
   return tickTime;
 }
 
-void			TimeKeeper::setTick(void)
+
+void TimeKeeper::setTick(void)
 {
   tickTime = getCurrent();
 }
+
 
 const TimeKeeper& TimeKeeper::getSunExplodeTime(void)
 {
@@ -166,17 +177,20 @@ const TimeKeeper& TimeKeeper::getSunExplodeTime(void)
   return sunExplodeTime;
 }
 
+
 const TimeKeeper& TimeKeeper::getSunGenesisTime(void)
 {
   sunGenesisTime.seconds = -10000.0 * 365 * 24 * 60 * 60;
   return sunGenesisTime;
 }
 
+
 const TimeKeeper& TimeKeeper::getNullTime(void)
 {
   nullTime.seconds = 0;
   return nullTime;
 }
+
 
 const char *TimeKeeper::timestamp(void) // const
 {
@@ -194,10 +208,10 @@ const char *TimeKeeper::timestamp(void) // const
   return buffer;
 }
 
+
 /** returns a short string of the local time */
 //static
-std::string
-TimeKeeper::shortTimeStamp(void) {
+std::string TimeKeeper::shortTimeStamp(void) {
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
 
@@ -205,79 +219,62 @@ TimeKeeper::shortTimeStamp(void) {
   return result;
 }
 
-void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst) // const
+
+void TimeKeeper::localTime(int *year, int *month, int* day,
+                           int* hour, int* min, int* sec, bool* dst) // const
 {
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
-  if ( year )
-    *year = now->tm_year;
-  if ( month )
-    *month = now->tm_mon;
-  if ( day )
-    *day = now->tm_mday;
-  if ( hour )
-    *hour = now->tm_hour;
-  if ( min )
-    *min = now->tm_min;
-  if ( sec )
-    *sec = now->tm_sec;
-  if ( dst )
-    *dst = now->tm_isdst != 0;
+  if (year)  { *year  = now->tm_year; }
+  if (month) { *month = now->tm_mon;  }
+  if (day)   { *day   = now->tm_mday; }
+  if (hour)  { *hour  = now->tm_hour; }
+  if (min)   { *min   = now->tm_min;  }
+  if (sec)   { *sec   = now->tm_sec;  }
+  if (dst)   { *dst   = (now->tm_isdst != 0); }
 }
 
 
-void TimeKeeper::localTimeDOW(int *year, int *month, int* day, int* dayOfWeek, int* hour, int* min, int* sec, bool* dst) // const
+void TimeKeeper::localTimeDOW(int *year, int *month, int* day, int* wday,
+                              int* hour, int* min, int* sec, bool* dst) // const
 {
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
-  if ( year )
-    *year = now->tm_year;
-  if ( month )
-    *month = now->tm_mon;
-  if ( day )
-    *day = now->tm_mday;
-  if ( hour )
-    *hour = now->tm_hour;
-  if ( min )
-    *min = now->tm_min;
-  if ( sec )
-    *sec = now->tm_sec;
-  if ( dst )
-    *dst = now->tm_isdst != 0;
-  if(dayOfWeek)
-    *dayOfWeek = now->tm_wday;
+  if (year)  { *year  = now->tm_year; }
+  if (month) { *month = now->tm_mon;  }
+  if (day)   { *day   = now->tm_mday; }
+  if (wday)  { *wday  = now->tm_wday; }
+  if (hour)  { *hour  = now->tm_hour; }
+  if (min)   { *min   = now->tm_min;  }
+  if (sec)   { *sec   = now->tm_sec;  }
+  if (dst)   { *dst   = (now->tm_isdst != 0); }
 }
 
-void TimeKeeper::UTCTime(int *year, int *month, int* day, int* dayOfWeek, int* hour, int* min, int* sec, bool* dst) // const
+
+void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
+                         int* hour, int* min, int* sec, bool* dst) // const
 {
   time_t tnow = time(0);
   struct tm *now = gmtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
-  if ( year )
-    *year = now->tm_year;
-  if ( month )
-    *month = now->tm_mon;
-  if ( day )
-    *day = now->tm_mday;
-  if ( hour )
-    *hour = now->tm_hour;
-  if ( min )
-    *min = now->tm_min;
-  if ( sec )
-    *sec = now->tm_sec;
-  if ( dst )
-    *dst = now->tm_isdst != 0;
-  if(dayOfWeek)
-    *dayOfWeek = now->tm_wday;
+  if (year)  { *year  = now->tm_year; }
+  if (month) { *month = now->tm_mon;  }
+  if (day)   { *day   = now->tm_mday; }
+  if (wday)  { *wday  = now->tm_wday; }
+  if (hour)  { *hour  = now->tm_hour; }
+  if (min)   { *min   = now->tm_min;  }
+  if (sec)   { *sec   = now->tm_sec;  }
+  if (dst)   { *dst   = (now->tm_isdst != 0); }
 }
+
 
 // function for converting a float time (e.g. difference of two TimeKeepers)
 // into an array of ints
@@ -302,6 +299,7 @@ void TimeKeeper::convertTime(double raw, long int convertedTimes[]) // const
 
   return;
 }
+
 
 // function for printing an array of ints representing a time
 // as a human-readable string
@@ -338,6 +336,7 @@ const std::string TimeKeeper::printTime(long int timeValue[])
 
   return valueNames;
 }
+
 
 // function for printing a float time difference as a human-readable string
 const std::string TimeKeeper::printTime(double diff)

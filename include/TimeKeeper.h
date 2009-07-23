@@ -36,29 +36,29 @@
  * elapsed float time value.
  */
 class TimeKeeper {
-public:
-  explicit TimeKeeper(double secs=0.0);
 
-  double		operator-(const TimeKeeper&) const;
-  bool			operator<=(const TimeKeeper&) const;
-  TimeKeeper&		operator+=(double);
-  TimeKeeper&		operator+=(const TimeKeeper&);
+private: // member data
+
+  double seconds;
+
+public: // member functions
+
+  explicit TimeKeeper(double secs = 0.0);
+
+  double	operator-(const TimeKeeper&) const;
+  bool		operator<=(const TimeKeeper&) const;
+  TimeKeeper&	operator+=(double);
+  TimeKeeper&	operator+=(const TimeKeeper&);
 
   // make a TimeKeeper with seconds = NULL act like unset
   // FIXME: must this be defined here? didn't work for me outside the class
-  inline operator void*()
-  {
-    if (seconds > 0.0)
-      return this;
-    else
-      return NULL;
-   }
+  inline operator void*() { return (seconds > 0.0) ? this : NULL; }
 
-  /** Returns how many seconds have elapsed since epoch, Jan 1, 1970.
-    * On windows this will actually be how many seconds have elapsed
-    * since bootup, so don't rely on the value for anything but
-    * deltas.  If real times are needed use TimeKeeper::localTime */
-  double       getSeconds(void) const;
+  /** Returns how many seconds have elapsed the first call to getCurrent().
+    * If real times are needed, use TimeKeeper::localTime */
+  inline double getSeconds(void) const { return seconds; }
+
+public: // static functions
 
   /** returns a timekeeper representing the current time */
   static const TimeKeeper&	getCurrent(void);
@@ -108,13 +108,11 @@ public:
   /** try to lock the process to a given CPU to avoid timekeeper from
       going back in time */
   static void setProcessorAffinity(int processor = 0);
-
-private:
-  double		seconds;
 };
 
+
 //
-// TimeKeeper
+// TimeKeeper (more inlined functions)
 //
 
 inline TimeKeeper::TimeKeeper(double secs) : seconds(secs)
@@ -144,10 +142,6 @@ inline bool		TimeKeeper::operator<=(const TimeKeeper& t) const
   return seconds <= t.seconds;
 }
 
-inline double		TimeKeeper::getSeconds(void) const
-{
-  return seconds;
-}
 
 #endif // BZF_TIME_KEEPER_H
 

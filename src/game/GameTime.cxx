@@ -58,7 +58,7 @@ static BZDB_int debugGameTime("debugGameTime");
 
 //============================================================================//
 
-static double getRawTime()
+static inline double getRawTime()
 {
   return TimeKeeper::getCurrent().getSeconds();
 }
@@ -224,11 +224,11 @@ void GameTime::pack(BufferedNetworkMessage *msg, float lag)
 
 void* GameTime::unpack(void *buf)
 {
-  double netTime;
+  double msgTime;
   float halfLag;
-  buf = nboUnpackDouble(buf, netTime);
+  buf = nboUnpackDouble(buf, msgTime);
   buf = nboUnpackFloat(buf, halfLag);
-  netTime += halfLag;
+  const double netTime = msgTime + halfLag;
 
   // store the value
   const double localTime = getRawTime();
