@@ -229,10 +229,6 @@ DefaultDBItem	defaultDBItems[] = {
   // seconds between pulses to textOutput (0 is disabled)
   { "statsOutputFrequency",		"0",		true,  DefPerm, NULL },
   { "statsOutputFilename",		"",		true,  DefPerm, NULL },
-
-  // debugging (none should be persistent)
-  { "debugNewAngVel",			"0",		false, DefPerm, NULL }
-
 };
 
 
