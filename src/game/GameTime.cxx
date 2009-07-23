@@ -263,7 +263,7 @@ void* GameTime::unpack(void *buf)
   }
   if (debugGameTime >= 1) {
     logDebugMessage(0,
-      "GameTime:unpack()"
+      "GameTime::unpack()"
       " net:%.3f local:%.3f diff:%.3f step:%.3f halfLag:%.3f rate:%.6f\n",
       netTime, localTime, netTime - localTime, stepTime, halfLag, avgRate);
   }
