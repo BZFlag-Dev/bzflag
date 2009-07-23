@@ -76,7 +76,7 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
 
     int64_t diff = (nowTime - lastTime);
     if (diff < 0) {
-      logDebugMessage(1, "WARNING: went back in time %li microseconds\n",
+      logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
                       (long int)diff);
       diff = 0; // eh, how'd we go back in time?
     }
