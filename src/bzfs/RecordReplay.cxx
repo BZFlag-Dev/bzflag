@@ -167,10 +167,8 @@ static RRtime ReplayOffset = 0;
 static long ReplayFileStart = 0;
 static RRpacket *ReplayPos = NULL;
 
-static TimeKeeper StartTime;
-
 static RRbuffer ReplayBuf = {0, 0, NULL, NULL}; // for replaying
-static RRbuffer RecordBuf = {0, 0, NULL, NULL};  // for recording
+static RRbuffer RecordBuf = {0, 0, NULL, NULL}; // for recording
 
 static FILE *ReplayFile = NULL;
 static std::string ReplayFilename = "";
