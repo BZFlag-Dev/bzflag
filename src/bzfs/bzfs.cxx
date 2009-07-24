@@ -339,35 +339,18 @@ NetHandler* getPlayerNetHandler( int playerIndex )
 
 static void bzdbGlobalCallback(const std::string& name, void* /*data*/)
 {
-  // this global callback is always called for all variables
-
   const std::string value = BZDB.get(name);
   bz_BZDBChangeData_V1 eventData(name, value);
   worldEventManager.callEvents(eventData);
-}
 
-static void onGlobalChanged(const std::string& name, void*)
-{
-  // This Callback is removed in replay mode. As
-  // well, the /set and /reset commands are blocked.
-
-  const std::string value = BZDB.get(name);
-
-  NetMsg msg = MSGMGR.newMessage();
-
-  msg->packUInt16(1);
-  msg->packStdString(name);
-  msg->packStdString(value);
-  msg->broadcast(MsgSetVar);
-}
-
-//
-// provides external access to onGlobalChanged
-//
-void addBzfsCallback(const std::string& name, void* data)
-{
-  BZDB.addCallback(name, onGlobalChanged, data);
-  return;
+  // only send the network update if not replaying
+  if (!Replay::enabled()) {
+    NetMsg msg = MSGMGR.newMessage();
+    msg->packUInt16(1);
+    msg->packStdString(name);
+    msg->packStdString(value);
+    msg->broadcast(MsgSetVar);
+  }
 }
 
 
@@ -3683,7 +3666,6 @@ static void initStartupParameters(int argc, char **argv)
 
     BZDB.setPersistent(globalDBItems[gi].name, globalDBItems[gi].persistent);
     BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
-    BZDB.addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
 
   // add the global callback for worldEventManager
@@ -3771,13 +3753,6 @@ static void enableReplayServer(void)
     // we don't send flags to a client that isn't expecting them
     numFlags = 0;
     clOptions->numExtraFlags = 0;
-
-    // disable the BZDB callbacks
-    for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
-      assert(globalDBItems[gi].name != NULL);
-      BZDB.removeCallback(std::string(globalDBItems[gi].name),
-			  onGlobalChanged, (void*) NULL);
-    }
 
     // maxPlayers is sent in the world data to the client.
     // the client then uses this to setup it's players

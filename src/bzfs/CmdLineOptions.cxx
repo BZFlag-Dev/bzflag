@@ -1093,7 +1093,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 	exit(1);
       }
       BZDB.set(name, value);
-      logDebugMessage(1, "set variable: %s = %s\n",
+      logDebugMessage(1, "set variable: '%s' = '%s'\n",
                       name.c_str(), BZDB.get(name).c_str());
     }
     else if (token == "-setforced") {
@@ -1102,11 +1102,9 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       const bool exists = BZDB.isSet(name);
       if (exists) {
 	std::cerr << "-setforced: " << name << " already exists" << std::endl;
-      } else {
-	addBzfsCallback(name, NULL);
       }
       BZDB.set(name, value);
-      logDebugMessage(1, "set variable: %s = %s\n",
+      logDebugMessage(1, "set variable: '%s' = '%s'\n",
                       name.c_str(), BZDB.get(name).c_str());
     }
     else if (token == "-sl") {
