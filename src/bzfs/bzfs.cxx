@@ -334,14 +334,24 @@ NetHandler* getPlayerNetHandler( int playerIndex )
 }
 
 //
-// global variable callback
+// global variable callbacks
 //
+
+static void bzdbGlobalCallback(const std::string& name, void* /*data*/)
+{
+  // this global callback is always called for all variables
+
+  const std::string value = BZDB.get(name);
+  bz_BZDBChangeData_V1 eventData(name, value);
+  worldEventManager.callEvents(eventData);
+}
+
 static void onGlobalChanged(const std::string& name, void*)
 {
   // This Callback is removed in replay mode. As
   // well, the /set and /reset commands are blocked.
 
-  std::string value = BZDB.get(name);
+  const std::string value = BZDB.get(name);
 
   NetMsg msg = MSGMGR.newMessage();
 
@@ -349,9 +359,6 @@ static void onGlobalChanged(const std::string& name, void*)
   msg->packStdString(name);
   msg->packStdString(value);
   msg->broadcast(MsgSetVar);
-
-  bz_BZDBChangeData_V1 eventData(name, value);
-  worldEventManager.callEvents(eventData);
 }
 
 //
@@ -362,6 +369,7 @@ void addBzfsCallback(const std::string& name, void* data)
   BZDB.addCallback(name, onGlobalChanged, data);
   return;
 }
+
 
 static void sendUDPupdate(NetHandler *handler)
 {
@@ -3677,6 +3685,10 @@ static void initStartupParameters(int argc, char **argv)
     BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
     BZDB.addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
+
+  // add the global callback for worldEventManager
+  BZDB.addGlobalCallback(bzdbGlobalCallback, NULL);
+
   CMDMGR.add("set", cmdSet, "set <name> [<value>]");
   CMDMGR.add("reset", cmdReset, "reset <name>");
 
