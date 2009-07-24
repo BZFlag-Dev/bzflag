@@ -1,7 +1,7 @@
 to do list for BZFlag
 ---------------------
 
-These are the tasks that are generaly agreed upon by the core developers.
+These are the tasks that are generally agreed upon by the core developers.
 If a task has a name next to it, then that person has agreed to work on it.
 If you wish to do that task, or help on it, please contact the developer
 so that no work is duplicated.
@@ -36,7 +36,7 @@ so that no work is duplicated.
    When a match is over, make everyone non shoot and non move
    then start an internal clock for _matchResetTime (5min default)
    then respawn everyone and reset scores. If a new match is started,
-   then reset imideately. Add a /match report that dumps the results
+   then reset immediately. Add a /match report that dumps the results
    out to the report file, as well as calling an API event for further
    processing.
 
@@ -75,10 +75,10 @@ so that no work is duplicated.
   a new "I got hit" message asking the server what to do. Then have the 
   server send out the death, flag transfer, or flag drop for shield message.
   This will fix a number of cheats, and allow the API to modify the game play
-  in a number of intersting ways (real freeze tag, etc ).
+  in a number of interesting ways (real freeze tag, etc ).
   
 * Move all the flag effects ( wings, OO, and other non shot effects ) into
-  an enumeration that is sent with the flag, to allow for truely custom flags.
+  an enumeration that is sent with the flag, to allow for truly custom flags.
 
 * local register and identify have been removed. we need to implement
   a new way that uses the internal password, somehow encyrpted.
@@ -89,12 +89,12 @@ so that no work is duplicated.
   with global auth
 
 * take out the flag type out of the flag messages, as they are all PZ.
-  Change the team flags to be a difrent message and take the real team
+  Change the team flags to be a different message and take the real team
   enumeration. The flag type is told on pickup.
 
 * Implement Server side shot tracking (JeffM2501)
 
-* Implement server side shot ID and path enhacements (JeffM2501)
+* Implement server side shot ID and path enhancements (JeffM2501)
   Design Doc at http://my.bzflag.org/w/Server_Updated_Shots
 
 * Apply Simple Gravity to all DR (JeffM2501)
@@ -124,7 +124,7 @@ so that no work is duplicated.
 * Finish Server listener class and hooks to the API (JeffM2501)
 
 * Create a user modifiable group management system that is based on 
-  the concepts of registered orginisations. 
+  the concepts of registered organisations.
   Design Doc at http://my.bzflag.org/w/Group_Management_System
 
 * add a command line option to let random worlds do an oncap weapon
@@ -230,7 +230,7 @@ so that no work is duplicated.
   blocked forever by one player just sitting there.
 
 * make tank scene node not use a list per size mode, just use the scale matrix.
-  (the disadvange is the speed hits from GL_NORMALIZE or GL_RESCALE)
+  (the disadvantage is the speed hits from GL_NORMALIZE or GL_RESCALE)
 
 * server should track last reported player and shot positions (done?)
 
@@ -285,7 +285,7 @@ so that no work is duplicated.
 
   - some bzdb values are stored elsewhere and written to bzdb only on exit.
     these should be stored in bzdb for the entire time; also why are some
-    variabels startign with _, while others are not? The distinction between
+    variables starting with _, while others are not? The distinction between
     the different types of variables stored in BZDB is not quite clear
 
 * make the vertical rico solution more elegant - get rid of
@@ -398,10 +398,10 @@ so that no work is duplicated.
    figure out how to do team colors if a team skin is not provided.
 
 * supply tank/map meshes and textures from the server if client does not have.
-   implement resouce cache on client and have server offer
-   new resources as needed. (md5 resouces to ensure they are the same??)
+   implement resource cache on client and have server offer
+   new resources as needed. (md5 resources to ensure they are the same??)
 
-* allow client to only choose meshs from the server list
+* allow client to only choose meshes from the server list
 
 * find some way to limit tank skins to team colors.
 
@@ -419,7 +419,7 @@ so that no work is duplicated.
 
 * look into burning global lighting into world, perhaps with lightmaps. Allow map lights.
 
-* look into useing projected textures or some other shadow method that allows for better shadows.
+* look into using projected textures or some other shadow method that allows for better shadows.
 
 * see if 3dfx/other old hardware limits are still practical.
 
@@ -436,15 +436,15 @@ so that no work is duplicated.
 
 * Bot should share the TCP connection with the normal tank player, and should be allowed to increase / decrease number of it run-time
 
-THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE WANT TO DO
+THESE ARE NOT REALLY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE WANT TO DO
 
-* Make a simple non froum registration page that is linked from the main web page
+* Make a simple non forum registration page that is linked from the main web page
 
 * Have the installer ask if the user wants to register on install, and take them to the reg page.
 
-* Have the game know what servers are reg only, and help the user get reged, if they arn't.
+* Have the game know what servers are reg only, and help the user get reged, if they aren't.
 
-* Make the server list page have multiple tabs to seperate games out by , game type, bandwith, players, shots, quality,
+* Make the server list page have multiple tabs to separate games out by , game type, bandwith, players, shots, quality,
   and other factors.
 
 * Create a system where server operators can apply to be come "prefered" servers if they meet a set of requirements.
@@ -455,7 +455,7 @@ THESE ARE NOT REALY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE W
 
 * Create a tab for local servers ( lan games )
 
-* Create a tab for user defined "favorate" servers ( bookmarks ).
+* Create a tab for user defined "favorite" servers ( bookmarks ).
 
 * Create some sort of server "rating" system like the movies use, to let players know what to expect.
   Provide some way to override and control it at a list server level, as well as make it so the client
