@@ -61,11 +61,6 @@
 //   for name matching (so that messages aren't sent to ghosts)
 // - improve skipping
 
-// OOPS, get rid of these during the next protocol change
-static const int PACKET_SIZE_STUFFING = 8;
-static const int HEADER_SIZE_STUFFING = 0;
-
-
 // Type Definitions
 // ----------------
 
@@ -92,7 +87,6 @@ struct RRpacket {
 //static const unsigned int RRpacketHdrSize =
 //  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
 static const unsigned int RRpacketHdrSize =
-  PACKET_SIZE_STUFFING +
   (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
 
 struct RRbuffer {
@@ -122,7 +116,6 @@ struct ReplayHeader {
 //static const unsigned int ReplayHeaderSize =
 //  sizeof(ReplayHeader) - (2 * sizeof(char*));
 static const unsigned int ReplayHeaderSize =
-  HEADER_SIZE_STUFFING +
   (sizeof(u32) * 6) + sizeof(RRtime) +
   CallSignLen + 8 + MessageLen + 64 + WorldSettingsSize;
 
