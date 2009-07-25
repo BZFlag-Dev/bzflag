@@ -65,8 +65,6 @@ static string directory = "./";
 
 static bool SetupLuaDirectory(const string& fileName);
 
-extern const string& GetLuaDir() { return directory; } // extern
-
 
 //============================================================================//
 //============================================================================//
@@ -79,6 +77,15 @@ static bool fileExists(const string& file)
   }
   fclose(f);
   return true;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+const std::string& LuaServer::getLuaDir()
+{
+  return directory;
 }
 
 

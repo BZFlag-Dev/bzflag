@@ -48,9 +48,8 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
+#include "LuaServer.h"
 
-
-extern const string& GetLuaDir(); // from lua.cpp
 
 // FIXME: TODO
 // - plugin management  (not part of the plan...)
@@ -521,7 +520,7 @@ bool CallOuts::PushEntries(lua_State* L)
 
 static int GetLuaDirectory(lua_State* L)
 {
-  lua_pushstdstring(L, GetLuaDir());
+  lua_pushstdstring(L, LuaServer::getLuaDir());
   return 1;
 }
 

@@ -28,6 +28,8 @@ class LuaServer {
 
     static void recvCommand(const std::string& command, int player);
 
+    static const std::string& getLuaDir();
+
     static lua_State* GetL(); // for local lua libraries
 };
 

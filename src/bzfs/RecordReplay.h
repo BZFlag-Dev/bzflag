@@ -56,7 +56,6 @@ namespace Replay {
 
   extern bool sendFileList(int playerIndex, const char* options);
   extern bool loadFile    (int playerIndex, const char* filename);
-  extern bool unloadFile  (int playerIndex);
   extern bool play        (int playerIndex);
   extern bool loop        (int playerIndex);
   extern bool sendStats   (int playerIndex);
