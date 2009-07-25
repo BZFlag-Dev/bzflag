@@ -861,7 +861,7 @@ bool defineWorld ( void )
 
   // make world and add buildings
   if (worldData.worldBlob != NULL) {
-    logDebugMessage(1,"reading worldfile from memory\n");
+    logDebugMessage(1, "reading worldfile from memory\n");
     std::istringstream in(worldData.worldBlob);
     BZWReader* reader = new BZWReader(in);
     world = reader->defineWorldFromFile();
@@ -901,10 +901,11 @@ bool defineWorld ( void )
       else
 	pluginWorldHeight = wallHeight;
 
-      world->addWall(0.0f, 0.5f * worldSize, 0.0f, (float)(1.5 * M_PI), 0.5f * worldSize, wallHeight);
-      world->addWall(0.5f * worldSize, 0.0f, 0.0f, (float)M_PI, 0.5f * worldSize, wallHeight);
-      world->addWall(0.0f, -0.5f * worldSize, 0.0f, (float)(0.5 * M_PI), 0.5f * worldSize, wallHeight);
-      world->addWall(-0.5f * worldSize, 0.0f, 0.0f, 0.0f, 0.5f * worldSize, wallHeight);
+      const float hws = 0.5f * worldSize;
+      world->addWall(0.0f, +hws, 0.0f, (float)(1.5 * M_PI), hws, wallHeight);
+      world->addWall(+hws, 0.0f, 0.0f, (float)(1.0 * M_PI), hws, wallHeight);
+      world->addWall(0.0f, -hws, 0.0f, (float)(0.5 * M_PI), hws, wallHeight);
+      world->addWall(-hws, 0.0f, 0.0f, (float)(0.0 * M_PI), hws, wallHeight);
 
       OBSTACLEMGR.makeWorld();
       world->finishWorld();
