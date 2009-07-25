@@ -277,12 +277,6 @@ so that no work is duplicated.
   with "relay:" in this case. -solo <n> should enable this behavior.
 
 * BZDB:
-  - rework the BZDB->eval() caching to support expression dependencies - if
-    a variable changes, all the expressions that use that variable should be
-    updated as well, or at the least, flush the entire cache when a callback
-    happens; maybe collapse GlobalDBItem and the extra caching into the same
-    class, so all would be auto-cached
-
   - some bzdb values are stored elsewhere and written to bzdb only on exit.
     these should be stored in bzdb for the entire time; also why are some
     variables starting with _, while others are not? The distinction between
