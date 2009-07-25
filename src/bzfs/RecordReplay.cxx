@@ -134,7 +134,7 @@ struct FileEntry {
 #define REPLAY_LABEL "[REPLAY] "
 
 static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
-static const u32 ReplayVersion     = 0x0001;
+static const u32 ReplayVersion     = 0x0002;
 static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
 static const u32 DefaultUpdateRate = 10; // seconds
 static const int MaxListOutput     = 100;
