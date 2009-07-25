@@ -2171,15 +2171,32 @@ static bool saveFileTime(RRtime filetime, FILE *f)
 
 static bool loadFileTime(RRtime *filetime, FILE *f)
 {
+  // check the version
+  rewind(f);
+  if (fseek(f, sizeof(u32) * 1, SEEK_SET) < 0) {
+    return false;
+  }
+  char verBuf[sizeof(u32)];
+  if (fread(verBuf, sizeof(u32), 1, f) != 1) {
+    return false;
+  }
+  u32 version;
+  nboUnpackUInt32(verBuf, version);
+  if (version != ReplayVersion) {
+    return false;
+  }
+
+  // get the filetime  
   rewind(f);
   if (fseek(f, sizeof(u32) * 3, SEEK_SET) < 0) {
     return false;
   }
-  char buffer[sizeof(RRtime)];
-  if (fread(buffer, sizeof(RRtime), 1, f) != 1) {
+  char timeBuf[sizeof(RRtime)];
+  if (fread(timeBuf, sizeof(RRtime), 1, f) != 1) {
     return false;
   }
-  nboUnpackRRtime(buffer, *filetime);
+  nboUnpackRRtime(timeBuf, *filetime);
+
   return true;
 }
 
