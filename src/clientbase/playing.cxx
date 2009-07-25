@@ -137,7 +137,7 @@ const char *blowedUpMessage[] = {
 
 static AccessList serverAccessList("ServerAccess.txt", NULL);
 
-static const char AutoJoinContent[] = // FIXME
+static const char AutoJoinContent[] =
   "#\n"
   "# This file controls the auto-join confirmation requirements.\n"
   "# Patterns are attempted in order against both the hostname\n"

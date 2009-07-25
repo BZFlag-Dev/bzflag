@@ -70,7 +70,8 @@ void CommandCompleter::reset()
   registerWord("kick");
   registerWord("kill");
   registerWord("/quit");
-  registerWord("/record");
+  registerWord("/record ");
+  registerWord("/replay ");
   registerWord("reload");
   registerWord("start");
   registerWord("stop");
@@ -84,7 +85,6 @@ void CommandCompleter::reset()
   registerWord("reload");
   registerWord("flush");
   registerWord("/removegroup ");
-  registerWord("/replay ");
   registerWord("list");
   registerWord("load");
   registerWord("play");
