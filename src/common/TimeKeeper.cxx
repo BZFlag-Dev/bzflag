@@ -13,7 +13,7 @@
 // interface header
 #include "TimeKeeper.h"
 
-// system implementation headers
+// system headers
 #include <time.h>
 #include <string>
 #include <string.h>
@@ -39,10 +39,37 @@ static LONGLONG          qpcLastCalibration;
 static DWORD             timeLastCalibration;
 #endif // !defined(_WIN32)
 
-// common implementation headers
+// system threading headers
+#ifndef _WIN32   
+#  include <sys/types.h>
+#  include <dirent.h>
+#endif
+#ifdef HAVE_PTHREADS
+#  include <pthread.h>  
+#endif
+
+// common headers
 #include "TextUtils.h"
 #include "bzfio.h"
 
+
+//============================================================================//
+
+#if defined(HAVE_PTHREADS)
+  static pthread_mutex_t    timer_mutex;
+# define LOCK_TIMER_MUTEX   pthread_mutex_lock(&timer_mutex);
+# define UNLOCK_TIMER_MUTEX pthread_mutex_unlock(&timer_mutex);
+#elif defined(_WIN32) 
+  static CRITICAL_SECTION   timer_critical;
+# define LOCK_TIMER_MUTEX   EnterCriticalSection(&timer_critical);
+# define UNLOCK_TIMER_MUTEX LeaveCriticalSection(&timer_critical);
+#else
+# define LOCK_TIMER_MUTEX
+# define UNLOCK_TIMER_MUTEX
+#endif
+
+
+//============================================================================//
 
 static TimeKeeper currentTime;
 static TimeKeeper tickTime;
@@ -50,6 +77,9 @@ static TimeKeeper sunExplodeTime;
 static TimeKeeper sunGenesisTime;
 static TimeKeeper nullTime;
 static TimeKeeper startTime = TimeKeeper::getCurrent();
+
+
+//============================================================================//
 
 
 #if !defined(_WIN32)
@@ -65,6 +95,8 @@ static inline int64_t getEpochMicroseconds()
 
 const TimeKeeper& TimeKeeper::getCurrent(void)
 {
+  LOCK_TIMER_MUTEX
+
   // if not first call then update current time, else use default initial time
 #if !defined(_WIN32)
   if (lastTime == 0) {
@@ -149,6 +181,9 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
     }
   }
 #endif /* !defined(_WIN32) */
+
+  UNLOCK_TIMER_MUTEX
+
   return currentTime;
 }
 
