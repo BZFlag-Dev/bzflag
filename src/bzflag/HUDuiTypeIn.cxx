@@ -80,93 +80,107 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   static unsigned int backspace = '\b';	// ^H
   static unsigned int whitespace = ' ';
 
-  if (HUDuiControl::doKeyPress(key))
+  if (HUDuiControl::doKeyPress(key)) {
     return true;
-
-  if (!allowEdit) return false; //or return true ??
-  unsigned int c = key.chr;
-  if (c == 0) switch (key.button) {
-    case BzfKeyEvent::Left: {
-      size_t pos = cursorPos.getCount();
-      // uhh...there's not really any way to reverse over a multibyte string
-      // do this the hard way: reset to the beginning and advance to the current
-      // position, minus a character.
-      if (pos > 0) {
-	--pos;
-	cursorPos = data.c_str();
-	while (cursorPos.getCount() < pos && (*cursorPos))
-	  ++cursorPos;
-      }
-      return true;
-    }
-
-    case BzfKeyEvent::Right:
-      if (*cursorPos)
-	++cursorPos;
-      return true;
-
-    case BzfKeyEvent::Home:
-      cursorPos = data.c_str();
-      return true;
-
-    case BzfKeyEvent::End:
-      while (*cursorPos)
-        ++cursorPos;
-      return true;
-
-    case BzfKeyEvent::Backspace:
-      c = backspace;
-      break;
-
-    case BzfKeyEvent::Delete:
-      if (*cursorPos) {
-	++cursorPos;
-	c = backspace;
-      } else {
-	return true;
-      }
-      break;
-
-    default:
-      return false;
   }
 
-  if (!iswprint(c) && c != backspace)
+  if (!allowEdit) {
+    return false; //or return true ??
+  }
+
+  unsigned int c = key.chr;
+
+  if (c == 0) {
+    switch (key.button) {
+      case BzfKeyEvent::Left: {
+        size_t pos = cursorPos.getCount();
+        // uhh...there's not really any way to reverse over a multibyte string
+        // do this the hard way: reset to the beginning and advance to the current
+        // position, minus a character.
+        if (pos > 0) {
+          --pos;
+          cursorPos = data.c_str();
+          while (cursorPos.getCount() < pos && (*cursorPos)) {
+            ++cursorPos;
+          }
+        }
+        return true;
+      }
+      case BzfKeyEvent::Right: {
+        if (*cursorPos) {
+          ++cursorPos;
+        }
+        return true;
+      }
+      case BzfKeyEvent::Home: {
+        cursorPos = data.c_str();
+        return true;
+      }
+      case BzfKeyEvent::End: {
+        while (*cursorPos) {
+          ++cursorPos;
+        }
+        return true;
+      }
+      case BzfKeyEvent::Backspace: {
+        c = backspace;
+        break;
+      }
+      case BzfKeyEvent::Delete: {
+        if (*cursorPos) {
+          ++cursorPos;
+          c = backspace;
+        } else {
+          return true;
+        }
+        break;
+      }
+      default:
+        return false;
+    }
+  }
+
+  if (!iswprint(c) && (c != backspace)) {
     return false;
+  }
 
   if (c == backspace) {
     size_t pos = cursorPos.getCount();
     if (pos == 1) {
       goto noRoom;
-    } else {
-      // copy up to cursor position - 1
-      cursorPos = data.c_str();
-      --pos;
-      while (cursorPos.getCount() < pos)
-        ++cursorPos;
-      std::string temp = data.substr(0, cursorPos.getBufferFromHere() - data.c_str());
-      // skip the deleted character
-      ++cursorPos;
-      // copy the remainder
-      pos = (cursorPos.getBufferFromHere() - data.c_str());
-      data += data.substr(pos, data.length() - pos);
-      data = temp;
-      // new buffer, restart cursor
-      pos = cursorPos.getCount();
-      cursorPos = data.c_str();
-      while (cursorPos.getCount() < (pos - 1))
-	++cursorPos;
     }
+    else {
+      // copy up to cursor position - 1
+      --pos;
+      cursorPos = data.c_str();
+      while (cursorPos.getCount() < pos) {
+        ++cursorPos;
+      }
+      const char* s = data.c_str();
+      const char* a = cursorPos.getBufferFromHere();
+      ++cursorPos;
+      const char* b = cursorPos.getBufferFromHere();
 
-    onSetFont();
-  } else {
-    if (iswspace(c))
+      // remove the character from the data
+      const std::string tmpData = data.substr(0, (a - s)) + data.substr(b - s);
+      data = tmpData;
+
+      // new buffer, restart cursor
+      cursorPos = data.c_str();
+      while (cursorPos.getCount() < pos) {
+	++cursorPos;
+      }
+    }
+  }
+  else {
+    if (iswspace(c)) {
       c = whitespace;
-
+    }
     CountUTF8StringItr cusi(data.c_str());
     while (*cusi) ++cusi;
-    if (cusi.getCount() >= maxLength) goto noRoom;
-
+    if (cusi.getCount() >= maxLength) {
+      goto noRoom;
+    }
     bzUTF8Char ch(c);
     size_t pos = (cursorPos.getBufferFromHere() - data.c_str());
     // copy to the current cursor location
@@ -179,13 +193,15 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     // new buffer, restart cursor
     pos = cursorPos.getCount();
     cursorPos = data.c_str();
-    while (cursorPos.getCount() < pos)
+    while (cursorPos.getCount() < pos) {
       ++cursorPos;
-
+    }
     // bump the cursor
     ++cursorPos;
-    onSetFont();
   }
+
+  onSetFont();
+
   return true;
 
 noRoom:
