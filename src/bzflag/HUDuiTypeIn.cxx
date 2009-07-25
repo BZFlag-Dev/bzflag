@@ -21,6 +21,7 @@
 #include "bzUnicode.h"
 #include "LocalFontFace.h"
 
+
 //
 // HUDuiTypeIn
 //
@@ -34,33 +35,39 @@ HUDuiTypeIn::HUDuiTypeIn()
   obfuscate = false;
 }
 
+
 HUDuiTypeIn::~HUDuiTypeIn()
 {
 }
 
-void		HUDuiTypeIn::setObfuscation(bool on)
+
+void HUDuiTypeIn::setObfuscation(bool on)
 {
   obfuscate = on;
 }
 
-size_t			HUDuiTypeIn::getMaxLength() const
+
+size_t HUDuiTypeIn::getMaxLength() const
 {
   return maxLength;
 }
 
-std::string		HUDuiTypeIn::getString() const
+
+std::string HUDuiTypeIn::getString() const
 {
   return data;
 }
 
-void			HUDuiTypeIn::setMaxLength(size_t _maxLength)
+
+void HUDuiTypeIn::setMaxLength(size_t _maxLength)
 {
   maxLength = _maxLength;
   setString(data.substr(0, maxLength));
   onSetFont();
 }
 
-void			HUDuiTypeIn::setString(const std::string& _string)
+
+void HUDuiTypeIn::setString(const std::string& _string)
 {
   data = _string;
   cursorPos = data.c_str();
@@ -69,13 +76,30 @@ void			HUDuiTypeIn::setString(const std::string& _string)
   onSetFont();
 }
 
+
 // allows composing, otherwise not
-void			HUDuiTypeIn::setEditing(bool _allowEdit)
+void HUDuiTypeIn::setEditing(bool _allowEdit)
 {
   allowEdit = _allowEdit;
 }
 
-bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
+
+bool HUDuiTypeIn::decrementCursor()
+{
+  size_t pos = cursorPos.getCount();
+  if (pos <= 1) {
+    return false;
+  }
+  --pos;
+  cursorPos = data.c_str(); // reset the cursor
+  while ((cursorPos.getCount() < pos) && (*cursorPos)) {
+    ++cursorPos;
+  }
+  return true;
+}
+
+
+bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
   static unsigned int backspace = '\b';	// ^H
   static unsigned int whitespace = ' ';
@@ -93,22 +117,31 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   if (c == 0) {
     switch (key.button) {
       case BzfKeyEvent::Left: {
-        size_t pos = cursorPos.getCount();
-        // uhh...there's not really any way to reverse over a multibyte string
-        // do this the hard way: reset to the beginning and advance to the current
-        // position, minus a character.
-        if (pos > 0) {
-          --pos;
-          cursorPos = data.c_str();
-          while (cursorPos.getCount() < pos && (*cursorPos)) {
-            ++cursorPos;
+        if ((key.shift & BzfKeyEvent::ControlKey) == 0) {
+          // skip a character
+          decrementCursor();
+        }
+        else {
+          // skip a word
+          while (decrementCursor() &&  iswspace(*cursorPos)) {}
+          while (decrementCursor() && !iswspace(*cursorPos)) {}
+          if (iswspace(*cursorPos)) {
+            ++cursorPos; // move into the first character of the word
           }
         }
         return true;
       }
       case BzfKeyEvent::Right: {
-        if (*cursorPos) {
-          ++cursorPos;
+        if ((key.shift & BzfKeyEvent::ControlKey) == 0) {
+          // skip a character
+          if (*cursorPos) {
+            ++cursorPos;
+          }
+        }
+        else {
+          // skip a word
+          while (*cursorPos &&  iswspace(*cursorPos)) { ++cursorPos; }
+          while (*cursorPos && !iswspace(*cursorPos)) { ++cursorPos; }
         }
         return true;
       }
@@ -209,7 +242,8 @@ noRoom:
   return true;
 }
 
-bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
+
+bool HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
   if (key.chr == '\t' || !iswprint(key.chr))	// ignore non-printing and tab
     return false;
@@ -218,7 +252,8 @@ bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
   return true;
 }
 
-void			HUDuiTypeIn::doRender()
+
+void HUDuiTypeIn::doRender()
 {
   if (getFontFace() < 0) return;
 

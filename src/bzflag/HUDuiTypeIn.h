@@ -72,6 +72,7 @@ class HUDuiTypeIn : public HUDuiControl {
     bool		doKeyPress(const BzfKeyEvent&);
     bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
+    bool		decrementCursor();
 
   private:
     size_t		maxLength;
