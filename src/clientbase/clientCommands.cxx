@@ -67,6 +67,7 @@ static std::string cmdRoam          (const std::string&, const CmdArgList& args,
 static std::string cmdScreenshot    (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdScrollPanel   (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdSend          (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdSendMsg       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdServerCommand (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdSilence       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdTime          (const std::string&, const CmdArgList& args, bool*);
@@ -95,6 +96,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("destruct",      &cmdDestruct,      "destruct:  self destruct");
   PUSHCMD("pause",         &cmdPause,         "pause:  pause/resume");
   PUSHCMD("send",          &cmdSend,          "send {all|team|nemesis|recipient|admin}:  start composing a message");
+  PUSHCMD("sendmsg",       &cmdSendMsg,       "send {all|team|nemesis|recipient|admin} <message>:  send a message");
   PUSHCMD("screenshot",    &cmdScreenshot,    "screenshot:  take a screenshot");
   PUSHCMD("time",          &cmdTime,          "time {forward|backward|<seconds>}:  adjust the current time");
   PUSHCMD("roam",          &cmdRoam,          "roam {zoom|cycle} <args>:  roam around");
@@ -547,6 +549,85 @@ static std::string cmdSend(const std::string&, const CmdArgList& args, bool*)
   messageHistoryIndex = 0;
   hud->setComposing(composePrompt);
   HUDui::setDefaultKey(&composeKeyHandler);
+
+  return std::string();
+}
+
+
+static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: sendmsg {all|team|nemesis|recipient|admin} <message>";
+  }
+
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    return "sendmsg: you do not exist";
+  }
+
+  if (!serverLink) {
+    return "sendmsg: not connected";
+  }
+
+  PlayerId msgDest = NoPlayer;
+
+  // parse the destination
+  if (args[0] == "all") {
+    msgDest = AllPlayers;
+  }
+  else if (args[0] == "team") {
+    if (World::getWorld() && World::getWorld()->allowTeams()) {
+      msgDest = TeamToPlayerId(myTank->getTeam());
+    } else {
+      msgDest = AllPlayers;
+    }
+  }
+  else if (args[0] == "nemesis") {
+    const Player* nemesis = myTank->getNemesis();
+    if (!nemesis) {
+      return "";
+    }
+    msgDest = nemesis->getId();
+  }
+  else if (args[0] == "recipient") {
+    const Player* recipient = myTank->getRecipient();
+    if (!recipient) {
+      for (int i = 0; i < curMaxPlayers; i++) {
+        if (remotePlayers[i]) {
+          myTank->setRecipient(remotePlayers[i]);
+          break;
+        }
+      }
+    }
+    recipient = myTank->getRecipient();
+    if (recipient) {
+      msgDest = recipient->getId();
+    }
+  }
+  else if (args[0] == "admin") {
+    msgDest = AdminPlayers;
+  }
+  else {
+    return "usage: sendmsg {all|team|nemesis|recipient|admin} <message>";
+  }
+
+  if (msgDest == NoPlayer) {
+    return "sendmsg: something is amiss";
+  }
+
+  // concatenate the args  
+  std::string msg = "";
+  for (size_t i = 1; i < args.size(); i++) {
+    if (i != 1) {
+      msg += " ";
+    }
+    msg += args[i];
+  }
+
+  char msgBuf[MessageLen];
+  memset(msgBuf, 0, MessageLen);
+  strncpy(msgBuf, msg.c_str(), MessageLen);
+  serverLink->sendMessage(msgDest, msgBuf);
 
   return std::string();
 }
