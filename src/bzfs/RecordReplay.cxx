@@ -48,6 +48,7 @@
 #include "Score.h"
 #include "version.h"
 #include "TextUtils.h"
+#include "TimeKeeper.h"
 #include "MsgStrings.h"
 
 // bzfs specific headers
@@ -64,9 +65,10 @@
 // Type Definitions
 // ----------------
 
+typedef double RRtime;
+
 typedef uint16_t u16;
 typedef uint32_t u32;
-typedef int64_t  RRtime; // should last a while
 
 enum RecordType {
   StraightToFile  = 0,
@@ -134,7 +136,7 @@ struct FileEntry {
 static const u32 ReplayMagic       = 0x7272425A; // "rrBZ"
 static const u32 ReplayVersion     = 0x0001;
 static const u32 DefaultMaxBytes   = (16 * 1024 * 1024); // 16 Mbytes
-static const u32 DefaultUpdateRate = (10 * 1000000); // seconds
+static const u32 DefaultUpdateRate = 10; // seconds
 static const int MaxListOutput     = 100;
 
 static std::string RecordDir = getRecordDirName();
@@ -358,7 +360,7 @@ bool Record::setRate(int playerIndex, int seconds)
   } else if (seconds > 30) {
     seconds = 30;
   }
-  RecordUpdateRate = seconds * 1000000;
+  RecordUpdateRate = (RRtime)seconds;
   snprintf(buffer, MessageLen, "Record rate set to %i", seconds);
   sendMessage(ServerPlayer, playerIndex, buffer);
   return true;
@@ -378,7 +380,7 @@ bool Record::sendStats(int playerIndex)
   if (RecordMode == BufferedRecord) {
     if ((RecordBuf.tail != NULL) && (RecordBuf.head != NULL)) {
       RRtime diff = RecordBuf.head->timestamp - RecordBuf.tail->timestamp;
-      saveTime = (float)diff / 1000000.0f;
+      saveTime = (float)diff;
     }
     snprintf(buffer, MessageLen,
 	      "Buffered:  %i bytes / %i packets / %.1f seconds",
@@ -386,7 +388,7 @@ bool Record::sendStats(int playerIndex)
     sendMessage(ServerPlayer, playerIndex, buffer);
   } else {
     RRtime diff = getRRtime() - RecordStartTime;
-    saveTime = (float)diff / 1000000.0f;
+    saveTime = (float)diff;
     snprintf(buffer, MessageLen,
 	      "Filename:  %s", RecordFilename.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
@@ -488,11 +490,11 @@ bool Record::saveBuffer(int playerIndex, const char *filename, int seconds)
     logDebugMessage(3,"Record: saving %i seconds to %s\n", seconds, name.c_str());
     // start the first update that happened at least 'seconds' ago
     p = RecordBuf.head;
-    RRtime usecs = (RRtime)seconds * (RRtime)1000000;
+    RRtime saveSecs = (RRtime)seconds;
     while (p != NULL) {
       if (p->mode == UpdatePacket) {
 	RRtime diff = RecordBuf.head->timestamp - p->timestamp;
-	if (diff >= usecs) {
+	if (diff >= saveSecs) {
 	  break;
 	}
       }
@@ -830,16 +832,15 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   sendMessage(ServerPlayer, playerIndex, buffer);
   snprintf(buffer, MessageLen, "  server:     %s", header.appVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  seconds:    %.1f",
-	    (float)header.filetime/1000000.0f);
+  snprintf(buffer, MessageLen, "  seconds:    %.1f", header.filetime);
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  time_t startTime = (time_t)(ReplayPos->timestamp / 1000000);
+  time_t startTime = (time_t)(ReplayPos->timestamp);
   std::string startTimeString = TextUtils::trim(ctime(&startTime));
   snprintf(buffer, MessageLen, "  start:      %s", startTimeString.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  time_t endTime = (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
+  time_t endTime = (time_t)((header.filetime + ReplayPos->timestamp));
   std::string endTimeString = TextUtils::trim(ctime(&endTime));
   snprintf(buffer, MessageLen, "  end:        %s", endTimeString.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
@@ -901,7 +902,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
       if (loadFileTime(&filetime, file)) {
 	FileEntry entry;
 	entry.file = de->d_name;
-	entry.time = (float)filetime / 1000000.0f;
+	entry.time = (float)filetime;
 	entry.entryNum = entNum++;
 	entries.push_back(entry);
       }
@@ -931,7 +932,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
 	if (loadFileTime(&filetime, file)) {
 	  FileEntry entry;
 	  entry.file = findData.cFileName;
-	  entry.time = (float)filetime / 1000000.0f;
+	  entry.time = (float)filetime;
 	  entry.entryNum = entNum++;
 		entries.push_back(entry);
 	}
@@ -1129,10 +1130,10 @@ bool Replay::sendStats(int playerIndex)
 	   "Replay File:  %s", ReplayFilename.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
 
-  time_t replayTime = (time_t)(ReplayPos->timestamp / 1000000);
-  float fullTime = (float)ReplayFileTime / 1000000.0f;
-  float usedTime =(float)(ReplayPos->timestamp - ReplayStartTime) / 1000000.0f;
-  float percent = 100.0f * (usedTime / fullTime);
+  const time_t replayTime = (time_t)(ReplayPos->timestamp);
+  const float fullTime = (float)ReplayFileTime;
+  const float usedTime =(float)(ReplayPos->timestamp - ReplayStartTime);
+  const float percent = 100.0f * (usedTime / fullTime);
   snprintf(buffer, MessageLen,
 	   "Replay Date:  %s [%.2f %%]  (%.1f secs / %.1f secs)",
 	   ctime(&replayTime), percent, usedTime, fullTime);
@@ -1162,7 +1163,7 @@ bool Replay::skip(int playerIndex, int seconds)
 
   if (seconds != 0) {
     RRpacket *p = ReplayPos;
-    RRtime target = nowtime + ((RRtime)seconds * (RRtime)1000000);
+    const RRtime target = nowtime + (RRtime)seconds;
 
     if (seconds > 0) {
       do {
@@ -1191,7 +1192,7 @@ bool Replay::skip(int playerIndex, int seconds)
   RRtime diff = ReplayPos->timestamp - nowtime;
   char buffer[MessageLen];
   snprintf(buffer, MessageLen, REPLAY_LABEL "skipped %.1f seconds (asked %i)",
-	   (float)diff/1000000.0f, seconds);
+	   diff, seconds);
   sendMessage(playerIndex, AllPlayers, buffer);
 
   return true;
@@ -1304,10 +1305,10 @@ bool Replay::sendPackets()
 
   if (sent && (ReplayPos->prev != NULL)) {
     RRtime diff = (ReplayPos->timestamp - ReplayPos->prev->timestamp);
-    if (diff > (10 * 1000000)) {
+    if (diff > 10.0) {
       char buffer[MessageLen];
       sprintf(buffer, "No activity for the next %.1f seconds",
-	       (float)diff / 1000000.0f);
+	      diff);
       sendMessage(ServerPlayer, AllPlayers, buffer);
     }
   }
@@ -1322,7 +1323,7 @@ float Replay::nextTime()
     return 1000.0f;
   } else {
     RRtime diff = (ReplayPos->timestamp + ReplayOffset) - getRRtime();
-    return (float)diff / 1000000.0f;
+    return (float)diff;
   }
 }
 
@@ -2451,55 +2452,29 @@ static void freeBuffer(RRbuffer *b)
 
 
 //============================================================================//
-
+//
 // Timing Functions
+//
+
+
+static const RRtime startTimeOffset = (RRtime)time(NULL);
+
 
 static RRtime getRRtime()
 {
-#ifndef _WIN32
-
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  return ((RRtime)tv.tv_sec * (RRtime)1000000) + (RRtime)tv.tv_usec;
-
-#else //_WIN32
-
-  // FIXME - use QPC if available? (10ms[pat] good enough?)
-  //       - during rollovers, check time() against the
-  //	 current value to see if a rollover was missed?
-
-  static RRtime offset = ((RRtime)time(NULL) * (RRtime)1000000) -
-			 ((RRtime)timeGetTime() * (RRtime)1000);
-  static u32 lasttime = (u32)timeGetTime();
-  u32 nowtime = (u32)timeGetTime();
-
-  // we've got 49.71 days to catch the rollovers
-  if (nowtime < lasttime) {
-    // add the rollover value
-    offset += ((RRtime)1 << 32);
-  }
-  lasttime = nowtime;
-  return offset + ((RRtime)nowtime * (RRtime)1000);
-
-#endif //_WIN32
+  return TimeKeeper::getCurrent().getSeconds() + startTimeOffset;
 }
 
 
 static void *nboPackRRtime(void *buf, RRtime value)
 {
-  buf = nboPackUInt32(buf, (u32) (value >> 32));       // msb's
-  buf = nboPackUInt32(buf, (u32) (value & 0xFFFFFFFF)); // lsb's
-  return buf;
+  return nboPackDouble(buf, value);
 }
 
 
 static void *nboUnpackRRtime(void *buf, RRtime& value)
 {
-  u32 msb, lsb;
-  buf = nboUnpackUInt32(buf, msb);
-  buf = nboUnpackUInt32(buf, lsb);
-  value = ((RRtime)msb << 32) + (RRtime)lsb;
-  return buf;
+  return nboUnpackDouble(buf, value);
 }
 
 
