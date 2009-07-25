@@ -2055,6 +2055,10 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));
   buf = nboUnpackString(buf, h->worldSettings, sizeof(h->worldSettings));
 
+  if (h->version != ReplayVersion) {
+    return false;
+  }
+
   // load the flags, if there are any
   if (h->flagsSize > 0) {
     h->flags = new char [h->flagsSize];
