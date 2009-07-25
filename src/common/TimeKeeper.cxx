@@ -95,6 +95,8 @@ static inline int64_t getEpochMicroseconds()
 
 const TimeKeeper& TimeKeeper::getCurrent(void)
 {
+  // a mutex lock is used because this routine
+  // is called from the client's sound thread
   LOCK_TIMER_MUTEX
 
   // if not first call then update current time, else use default initial time
