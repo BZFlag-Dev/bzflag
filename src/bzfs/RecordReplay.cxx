@@ -297,6 +297,7 @@ bool Record::start(int playerIndex)
     return false;
   }
   Recording = true;
+  RecordStartTime = getRRtime();
   saveStates();
   sendMessage(ServerPlayer, playerIndex, "Recording started");
 
@@ -455,7 +456,6 @@ bool Record::saveFile(int playerIndex, const char *filename)
     return false;
   }
 
-  RecordStartTime = getRRtime();
 
   snprintf(buffer, MessageLen, "Recording to file: %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
