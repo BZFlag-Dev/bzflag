@@ -18,6 +18,7 @@
 
 // system headers
 #include <vector>
+#include <set>
 #include <map>
 #include <iostream>
 #include <string>
@@ -56,6 +57,7 @@ class StateDatabase : public Singleton<StateDatabase>
 public:
 
   typedef void (*Callback)(const std::string& name, void* userData);
+  typedef std::set<std::string> StringSet;
 
   enum Permission {
     // permission levels
@@ -72,32 +74,26 @@ public:
   /** set a name/value pair.  if access is less than the permission
    *level of the name then this has no effect.
    */
-  void				set(const std::string& name,
-				    const std::string& value,
-				    Permission access = Client);
+  void set(const std::string& name, const std::string& value,
+           Permission access = Client);
 
-  void			     setInt(const std::string& name,
-				    const int& value,
-				    Permission access = Client);
+  void setInt(const std::string& name, const int& value,
+              Permission access = Client);
 
-  void			    setBool(const std::string& name,
-				    const bool& value,
-				    Permission access = Client);
+  void setBool(const std::string& name, const bool& value,
+               Permission access = Client);
 
-  void			   setFloat(const std::string& name,
-				    const float& value,
-				    Permission access = Client);
+  void setFloat(const std::string& name, const float& value,
+                Permission access = Client);
 
   /** unset a name if access is not less than the permission level
    * of the name.
    */
-  void				unset(const std::string& name,
-				      Permission access = Client);
+  void unset(const std::string& name, Permission access = Client);
 
   /** simulate a change to a value (i.e. invoke the callbacks on it)
    */
-  void				touch(const std::string& name,
-				      Permission access = Client);
+  void touch(const std::string& name, Permission access = Client);
 
   /** mark a value as persistent (i.e. to be saved) or volatile.
    * this state is stored independently of the existance of a value
@@ -105,22 +101,19 @@ public:
    * will not affect persistence of the name.  the default is
    * volatile.
    */
-  void				setPersistent(const std::string& name,
-					      bool = true);
+  void setPersistent(const std::string& name, bool = true);
 
   /** set the default value for a name.  if the default value is set
    * then the value will not be written by write() if the current
    * value is equal to the default value.
    */
-  void				setDefault(const std::string& name,
-					   const std::string& value);
+  void setDefault(const std::string& name, const std::string& value);
 
   /** set the permission level of a name.  like persistence, this is
    * stored independently of a value with the name.  the default
    * permission is ReadWrite (i.e. full access).
    */
-  void				setPermission(const std::string& name,
-					      Permission);
+  void setPermission(const std::string& name, Permission);
 
   /** add/remove a callback to/from a name.  all callbacks on a name are
    * invoked when the value changes (either by being set or unset).
@@ -128,82 +121,80 @@ public:
    * function/userData pair on a name can only be registered once (i.e.
    * multiple adds have the same effect as a single add).
    */
-  void				addCallback(const std::string& name,
-					    Callback, void* userData);
-  void				removeCallback(const std::string& name,
-					       Callback, void* userData);
+  void addCallback(const std::string& name, Callback, void* userData);
+  void removeCallback(const std::string& name, Callback, void* userData);
 
   /** add/remove a global callback for all values. invoked when any value
    * changes (either by being set or unset). each function/userData pair can
    * only be registered once (i.e. multiple adds have the same effect as a
    * single add).
    */
-  void				addGlobalCallback(Callback, void* userData);
-  void				removeGlobalCallback(Callback, void* userData);
+  void addGlobalCallback(Callback, void* userData);
+  void removeGlobalCallback(Callback, void* userData);
 
   /** test if a name is set or not
    */
-  bool				isSet(const std::string& name) const;
+  bool isSet(const std::string& name) const;
 
   /** get the value associated with a name.  returns the empty string
    * if the name isn't set.
    */
-  std::string			get(const std::string& name) const;
+  std::string get(const std::string& name) const;
 
   /** get the INT value associated with a name. Clamp value within range.
    *  Returns 0 (or min) if value is not set.
    */
-  int	getIntClamped(const std::string& name, const int min, const int max) const;
+  int getIntClamped(const std::string& name, const int min, const int max) const;
 
   /** get the value as a floating point number. this will evaluate
    * the string as an expression
    */
-  float				eval(const std::string& name);
-  int				evalInt(const std::string& name);
-  bool				evalPair(const std::string& name, float data[2]);
-  bool				evalTriplet(const std::string& name, float data[3]);
-  fvec2				evalFVec2(const std::string& name);
-  fvec3				evalFVec3(const std::string& name);
-  fvec4				evalFVec4(const std::string& name);
+  float eval(const std::string& name);
+  int   evalInt(const std::string& name);
+  bool  evalPair(const std::string& name, float data[2]);
+  bool  evalTriplet(const std::string& name, float data[3]);
+  fvec2 evalFVec2(const std::string& name);
+  fvec3 evalFVec3(const std::string& name);
+  fvec4 evalFVec4(const std::string& name);
 
   /** return true if the value associated with a name indicates
    * logical true, which is when the value is not empty and not
    * "0" and not "false" and not "no".
    */
-  bool				isTrue(const std::string& name) const;
+  bool isTrue(const std::string& name) const;
 
   /** test if a name is empty or not.  a name is empty if it's
    * not set or it's set to the empty string.
    */
-  bool				isEmpty(const std::string& name) const;
+  bool isEmpty(const std::string& name) const;
 
   /** get the persistence, permission, and default for an entry
    */
-  bool				isPersistent(const std::string& name) const;
-  std::string			getDefault(const std::string& name) const;
-  Permission			getPermission(const std::string& name) const;
+  bool        isPersistent(const std::string& name) const;
+  std::string getDefault(const std::string& name) const;
+  Permission  getPermission(const std::string& name) const;
 
   /** invoke the callback for each entry
    */
-  void				iterate(Callback, void* userData) const;
+  void iterate(Callback, void* userData) const;
 
   /** invoke the callback for each entry that should be written (i.e.
    * is set, persistent, and not the default).
    */
-  void				write(Callback, void* userData) const;
+  void write(Callback, void* userData) const;
 
   /** tell the state database whether it should print debug info to stdout
    * now and then.
    */
-  void			  setDebug(bool print);
+  void setDebug(bool print);
 
   /** do we want debug output?
    */
-  bool			  getDebug() const;
+  inline bool getDebug() const { return debug; }
 
  // true if we are in a mode where we are seting values that are to be defaults ( config and world time )
-  void			  setSaveDefault(bool save);
-  bool			  getSaveDefault() const;
+  void        setSaveDefault(bool save);
+  inline bool getSaveDefault() const { return saveDefault; }
 
 protected:
   friend class Singleton<StateDatabase>;
@@ -213,9 +204,9 @@ private:
   StateDatabase();
   ~StateDatabase();
 
-  static bool			onCallback(Callback, void* userData,
-					   void* iterateData);
-
+  static bool onCallback(Callback, void* userData, void* iterateData);
+  
+private:
   struct Item {
   public:
     Item();
@@ -228,14 +219,18 @@ private:
     bool			save;
     Permission			permission;
     CallbackList<Callback>	callbacks;
+    StringSet			dependents;
+    StringSet			dependencies;
   };
-  typedef std::map<std::string, Item> Map;
+  typedef std::map<std::string, Item> ItemMap;
 
-  Map::iterator			lookup(const std::string&);
-  void				notify(Map::iterator);
+  ItemMap::iterator		lookup(const std::string&);
+  void				notify(ItemMap::iterator);
 
 private:
-  Map				items;
+  ItemMap			items;
+
+  void addDependents(ItemMap::iterator& it, const StringSet& dependents);
 
 public:
   class ExpressionToken {
@@ -276,30 +271,23 @@ private:
 
 private:
   static Expression		infixToPrefix(const Expression &infix);
-  float				evaluate(Expression e) const;
-  typedef std::map<std::string,float> EvalMap;
-  EvalMap			evalCache;
+  float				evaluate(Expression e);
   bool				debug;
   bool				saveDefault;
   CallbackList<Callback>	globalCallbacks;
+
+  typedef std::map<std::string, float> EvalMap;
+  EvalMap evalCache; // cached evaluation results
 };
-
-inline bool StateDatabase::getDebug() const
-{
-  return debug;
-}
-
-inline bool StateDatabase::getSaveDefault() const
-{
-  return saveDefault;
-}
 
 
 std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
-std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
+std::string&  operator >> (std::string&  src, StateDatabase::Expression& dst);
 std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src);
 
+
 #endif // BZF_STATE_DATABASE_H
+
 
 // Local Variables: ***
 // mode: C++ ***
