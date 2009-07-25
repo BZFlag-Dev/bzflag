@@ -403,11 +403,11 @@ if test $ac_cv_type_socklen_t != yes; then
 fi
 if test $ac_cv_type_socklen_t != yes; then
     AC_MSG_CHECKING([for socklen_t equivalent])
-    AC_CACHE_VAL([cv_socklen_t_equiv],
+    AC_CACHE_VAL([ac_cv_socklen_t_equiv],
     [
 	# Systems have either "struct sockaddr *" or
 	# "void *" as the second argument to getpeername
-	cv_socklen_t_equiv=
+	ac_cv_socklen_t_equiv=
 	for arg2 in "struct sockaddr" void; do
 	  for t in int size_t unsigned long "unsigned long"; do
 	    AC_TRY_COMPILE([
@@ -417,17 +417,17 @@ if test $ac_cv_type_socklen_t != yes; then
 	    ],[
 		$t len;	getpeername(0,0,&len);
 	    ],[
-		cv_socklen_t_equiv="$t"
+		ac_cv_socklen_t_equiv="$t"
 		break
 	    ])
 	  done
 	done
-	if test "x$cv_socklen_t_equiv" = x; then
+	if test "x$ac_cv_socklen_t_equiv" = x; then
 	  AC_MSG_ERROR([Cannot find a type to use in place of socklen_t])
 	fi
     ])
-    AC_MSG_RESULT($cv_socklen_t_equiv)
-    AC_DEFINE_UNQUOTED(socklen_t, $cv_socklen_t_equiv,
+    AC_MSG_RESULT($ac_cv_socklen_t_equiv)
+    AC_DEFINE_UNQUOTED(socklen_t, $ac_cv_socklen_t_equiv,
 		       [type to use in place of socklen_t if not defined])
 else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
