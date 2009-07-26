@@ -380,7 +380,7 @@ void HUDuiServerList::doRender()
 
 
   for (int i=Modes; i != NoSort; i++) {
-    std::string columnTitle = " " + columns[i].first;
+    const std::string columnTitle = " " + columns[i].first;
 
     if (sortMode == i) {
       TextureManager& tm = TextureManager::instance();

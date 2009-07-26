@@ -798,7 +798,7 @@ void SceneRenderer::renderScene()
   glScissor(window->getOriginX(), window->getOriginY() + windowYOffset,
             window->getWidth(), window->getViewHeight());
 
-  const bool origShadowMode = BZDBCache::shadowMode;
+  const int origShadowMode = BZDBCache::shadowMode;
   switch (specialMode) {
     case DepthComplexity: {
       if (BZDBCache::shadowMode == StencilShadows) {
