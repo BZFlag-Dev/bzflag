@@ -275,6 +275,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzauthd\HttpHandler.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzauthd\NetHandler.cxx"
 				>
 				<FileConfiguration
@@ -382,6 +386,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\EventHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzauthd\HttpHandler.h"
 				>
 			</File>
 			<File

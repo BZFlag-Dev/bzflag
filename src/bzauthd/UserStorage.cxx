@@ -83,11 +83,6 @@ void UserStore::hash(uint8_t *message, size_t message_len, uint8_t *digest)
   delete[] tmpbuf;
 }
 
-const char *UserStore::dummyPassword()
-{
-  return "{md5}X";
-}
-
 struct LDAPMod1
 {
   LDAPMod1(int op, const char *type, const char *value)
@@ -428,14 +423,13 @@ BzRegErrors UserStore::registerUser(UserInfo &info)
   LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
   LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", info.name.c_str());
   LDAPMod1 attr_sn    (LDAP_MOD_ADD, "sn", info.name.c_str());
-  LDAPMod1 attr_pwd   (LDAP_MOD_ADD, "userPassword", dummyPassword());
   char nextuid_str[20]; sprintf(nextuid_str, "%d", nextuid + 1);
   LDAPMod1 attr_uid   (LDAP_MOD_ADD, "uid", nextuid_str);
   LDAPMod1 attr_mail  (LDAP_MOD_ADD, "mail", info.email.c_str());
   // use a negative value as a flag for unfinished registration
   char time_str[30]; sprintf(time_str, "-%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
   LDAPMod1 attr_time  (LDAP_MOD_ADD, "shadowLastChange", time_str);
-  LDAPMod *user_mods[8] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_pwd.mod, &attr_uid.mod, &attr_mail.mod, &attr_time.mod, NULL };
+  LDAPMod *user_mods[7] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod, &attr_uid.mod, &attr_mail.mod, &attr_time.mod, NULL };
 
   while(1) {
     int user_add_ret = ldap_add_ext_s(rootld, user_dn.c_str(), user_mods, NULL, NULL);
@@ -573,12 +567,11 @@ BzRegErrors UserStore::userExists(std::string const &user_dn, std::string const 
 BzRegErrors UserStore::updatePassword(UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
   sLog.outLog("finishing registration for %s", info.name.c_str());
-  // atomically replace the invalidated password
-  LDAPMod1 attr_pwd1 (LDAP_MOD_DELETE, "userPassword", dummyPassword());
-  LDAPMod1 attr_pwd2 (LDAP_MOD_ADD, "userPassword", info.password.c_str());
+  // add the password and change the sign of the timestamp
+  LDAPMod1 attr_pwd (LDAP_MOD_ADD, "userPassword", info.password.c_str());
   char time_str[30]; sprintf(time_str, "%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
   LDAPMod1 attr_time  (LDAP_MOD_REPLACE, "shadowLastChange", time_str);
-  LDAPMod *pwd_mods[4] = { &attr_pwd1.mod, &attr_pwd2.mod, &attr_time.mod, NULL };
+  LDAPMod *pwd_mods[3] = { &attr_pwd.mod, &attr_time.mod, NULL };
 
   if(!ldap_check(ldap_modify_ext_s(rootld, user_dn.c_str(), pwd_mods, NULL, NULL))) {
     // undo in reverse order, both should succeed under normal circumstances
@@ -674,9 +667,11 @@ bool UserStore::isRegistered(std::string callsign)
 {
   std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
+  // filter out users without a userPassword
+
   char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
   LDAPMessage *res = NULL, *msg;
-  if(!ldap_check( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(objectClass=*)", attrs, 0, &res) )) {
+  if(!ldap_check( ldap_search_s(rootld, dn.c_str(), LDAP_SCOPE_BASE, "(userPassword=*)", attrs, 0, &res) )) {
     if(res) ldap_msgfree(ldap_first_message(rootld, res));
     return false;
   }

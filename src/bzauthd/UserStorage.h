@@ -51,7 +51,6 @@ public:
 
   size_t hashLen();
   void hash(uint8_t *message, size_t message_len, uint8_t *digest);
-  const char *dummyPassword();
 private:
   bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
   void unbind(LDAP *&ld);

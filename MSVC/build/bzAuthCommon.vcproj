@@ -577,6 +577,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzAuthCommon\mongoose.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzAuthCommon\net.cpp"
 				>
 			</File>
@@ -603,6 +607,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzAuthCommon\Log.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzAuthCommon\mongoose.h"
 				>
 			</File>
 			<File
