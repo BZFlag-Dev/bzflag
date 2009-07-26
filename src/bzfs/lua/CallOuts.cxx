@@ -45,6 +45,7 @@ using std::map;
 #include "../CmdLineOptions.h"
 #include "../bzfsMessages.h"
 #include "../commands.h"
+#include "../RecordReplay.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -241,9 +242,9 @@ static int SetTeamLosses(lua_State* L);
 static int FireWeapon(lua_State* L);
 static int FireMissile(lua_State* L);
 
-static int SaveRecBuf(lua_State* L);
-static int StartRecBuf(lua_State* L);
-static int StopRecBuf(lua_State* L);
+static int SaveRecording(lua_State* L);
+static int StartRecording(lua_State* L);
+static int StopRecording(lua_State* L);
 
 static int GetCountdownActive(lua_State* L);
 static int GetCountdownInProgress(lua_State* L);
@@ -447,9 +448,9 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, FireWeapon);
   PUSH_LUA_CFUNC(L, FireMissile);
 
-  PUSH_LUA_CFUNC(L, SaveRecBuf);
-  PUSH_LUA_CFUNC(L, StartRecBuf);
-  PUSH_LUA_CFUNC(L, StopRecBuf);
+  PUSH_LUA_CFUNC(L, SaveRecording);
+  PUSH_LUA_CFUNC(L, StartRecording);
+  PUSH_LUA_CFUNC(L, StopRecording);
 
   PUSH_LUA_CFUNC(L, GetCountdownActive);
   PUSH_LUA_CFUNC(L, GetCountdownInProgress);
@@ -674,7 +675,7 @@ static int GetWorldCache(lua_State* L)
 
 static int GetWorldURL(lua_State* L)
 {
-  const bz_ApiString url =  bz_getClientWorldDownloadURL();
+  const bz_ApiString url = bz_getClientWorldDownloadURL();
   lua_pushstring(L, url.c_str());
   return 1;
 }
@@ -1894,25 +1895,40 @@ static int FireMissile(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int SaveRecBuf(lua_State* L)
+static int SaveRecording(lua_State* L)
 {
+  if (!Record::enabled()) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
   const char* fileName = luaL_checkstring(L, 1);
   const int   seconds  = luaL_checkint(L, 2);
-  lua_pushboolean(L, bz_saveRecBuf(fileName, seconds));
+  Record::saveBuffer(ServerPlayer, fileName, seconds);
+  lua_pushboolean(L, true);
   return 1;
 }
 
 
-static int StartRecBuf(lua_State* L)
+static int StartRecording(lua_State* L)
 {
-  lua_pushboolean(L, bz_startRecBuf());
+  if (!Record::enabled()) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+  Record::start(ServerPlayer);
+  lua_pushboolean(L, true);
   return 1;
 }
 
 
-static int StopRecBuf(lua_State* L)
+static int StopRecording(lua_State* L)
 {
-  lua_pushboolean(L, bz_stopRecBuf());
+  if (!Record::enabled()) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+  Record::stop(ServerPlayer);
+  lua_pushboolean(L, true);
   return 1;
 }
 
