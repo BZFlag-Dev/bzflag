@@ -3700,7 +3700,7 @@ static void initStartupParameters(int argc, char **argv)
       "WARNING:\n"
       "  Publicly listed bzfs servers must register using the '-publickey <key>'\n"
       "  option. A web page describing list-server policies and procedures can\n"
-      "  be found here:\n"
+      "  be found at the following location:\n"
       "\n"
       "    http://my.bzflag.org/w/ServerAuthentication\n"
       "\n");
@@ -5188,6 +5188,8 @@ void saveStartupInfo ( void )
  */
 int main(int argc, char **argv)
 {
+  TimeKeeper::init();
+
   // setup all the data for the server
   if (!initServer(argc,argv))
     return 1;

@@ -81,7 +81,6 @@ static TimeKeeper startTime = TimeKeeper::getCurrent();
 
 //============================================================================//
 
-
 #if !defined(_WIN32)
 static inline int64_t getEpochMicroseconds()
 {
@@ -93,33 +92,40 @@ static inline int64_t getEpochMicroseconds()
 #endif
 
 
+void TimeKeeper::init()
+{
+#if defined(HAVE_PTHREADS)
+  pthread_mutex_init(&timer_mutex, NULL);
+  lastTime = getEpochMicroseconds();
+#elif defined(_WIN32) 
+  InitializeCriticalSection(&timer_critical);
+#endif
+}
+
+
 const TimeKeeper& TimeKeeper::getCurrent(void)
 {
   // a mutex lock is used because this routine
   // is called from the client's sound thread
   LOCK_TIMER_MUTEX
 
-  // if not first call then update current time, else use default initial time
 #if !defined(_WIN32)
-  if (lastTime == 0) {
-    // time starts at 0 seconds from the first call to getCurrent()
-    lastTime = getEpochMicroseconds();
+
+  const int64_t nowTime = getEpochMicroseconds();
+
+  int64_t diff = (nowTime - lastTime);
+  if (diff < 0) {
+    logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
+                    (long int)diff);
+    diff = 0; // eh, how'd we go back in time?
   }
-  else {
-    const int64_t nowTime = getEpochMicroseconds();
 
-    int64_t diff = (nowTime - lastTime);
-    if (diff < 0) {
-      logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
-                      (long int)diff);
-      diff = 0; // eh, how'd we go back in time?
-    }
+  currentTime += double(diff) * 1.0e-6;;
 
-    currentTime += double(diff) * 1.0e-6;;
+  lastTime = nowTime;
 
-    lastTime = nowTime;
-  }
 #else /* !defined(_WIN32) */
+
   if (qpcFrequency != 0) {
 
     // main timer is qpc
@@ -182,6 +188,7 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
       lastTime = (unsigned long int)timeGetTime();
     }
   }
+
 #endif /* !defined(_WIN32) */
 
   UNLOCK_TIMER_MUTEX

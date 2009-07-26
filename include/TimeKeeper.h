@@ -43,6 +43,8 @@ private: // member data
 
 public: // member functions
 
+  static void init();
+
   explicit TimeKeeper(double secs = 0.0);
 
   double	operator-(const TimeKeeper&) const;

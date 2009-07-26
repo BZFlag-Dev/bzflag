@@ -1456,6 +1456,8 @@ int myMain(int argc, char **argv)
 {
   argv0 = argv[0];
 
+  TimeKeeper::init();
+
   saveStartupInfo();
 
   if (initClient(argc,argv)!= 0)
