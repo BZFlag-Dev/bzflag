@@ -112,8 +112,8 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   }
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
-  if (!useStencilOn) {
-    BZDB.setBool("stencilShadows", false);
+  if (!useStencilOn && (BZDBCache::shadowMode == StencilShadows)) {
+    BZDB.setInt("shadowMode", StippleShadows);
   }
 
   // can only do hidden line if polygon offset is available
@@ -798,11 +798,11 @@ void SceneRenderer::renderScene()
   glScissor(window->getOriginX(), window->getOriginY() + windowYOffset,
             window->getWidth(), window->getViewHeight());
 
-  const bool origStencilShadows = BZDBCache::stencilShadows;
+  const bool origShadowMode = BZDBCache::shadowMode;
   switch (specialMode) {
     case DepthComplexity: {
-      if (BZDBCache::stencilShadows) {
-        BZDB.setBool("stencilShadows", false);
+      if (BZDBCache::shadowMode == StencilShadows) {
+        BZDB.setInt("shadowMode", NoShadows);
       }
       glEnable(GL_STENCIL_TEST);
       if (!mirror || (clearZbuffer)) {
@@ -948,7 +948,7 @@ void SceneRenderer::renderScene()
   // do depth complexity
   if (specialMode == DepthComplexity) {
     renderDepthComplexity();
-    BZDB.setBool("stencilShadows", origStencilShadows);
+    BZDB.setInt("shadowMode", origShadowMode);
   }
 
   return;
@@ -1198,7 +1198,7 @@ void SceneRenderer::getRenderNodes()
   }
 
   // add the shadow rendering nodes
-  if (scene && BZDBCache::shadows && (getSunDirection() != NULL) &&
+  if (scene && BZDBCache::shadowMode && (getSunDirection() != NULL) &&
       (!mirror || !clearZbuffer) && !BZDB.isTrue(BZDBNAMES.NOSHADOWS)) {
     setupShadowPlanes();
     scene->addShadowNodes(*this, true, true);

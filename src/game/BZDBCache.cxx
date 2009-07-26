@@ -25,8 +25,6 @@
 BZDBCache::Bool  BZDBCache::displayMainFlags;
 BZDBCache::Bool  BZDBCache::blend;
 BZDBCache::Bool  BZDBCache::texture;
-BZDBCache::Bool  BZDBCache::shadows;
-BZDBCache::Bool  BZDBCache::stencilShadows;
 BZDBCache::Bool  BZDBCache::zbuffer;
 BZDBCache::Bool  BZDBCache::tesselation;
 BZDBCache::Bool  BZDBCache::lighting;
@@ -35,8 +33,9 @@ BZDBCache::Bool  BZDBCache::colorful;
 BZDBCache::Bool  BZDBCache::animatedTreads;
 BZDBCache::Bool  BZDBCache::leadingShotLine;
 BZDBCache::Bool  BZDBCache::showShotGuide;
-BZDBCache::Int   BZDBCache::radarStyle;
+BZDBCache::Int   BZDBCache::shadowMode;
 BZDBCache::Float BZDBCache::shadowAlpha;
+BZDBCache::Int   BZDBCache::radarStyle;
 BZDBCache::Float BZDBCache::radarTankPixels;
 BZDBCache::Int   BZDBCache::linedRadarShots;
 BZDBCache::Int   BZDBCache::sizedRadarShots;
@@ -106,11 +105,10 @@ void BZDBCache::init()
   BZDB.addCallback("displayMainFlags",          clientCallback, NULL);
   BZDB.addCallback("radarStyle",                clientCallback, NULL);
   BZDB.addCallback("radarTankPixels",           clientCallback, NULL);
+  BZDB.addCallback("shadowMode",                clientCallback, NULL);
   BZDB.addCallback("shadowAlpha",               clientCallback, NULL);
   BZDB.addCallback("blend",                     clientCallback, NULL);
   BZDB.addCallback("texture",                   clientCallback, NULL);
-  BZDB.addCallback("shadows",                   clientCallback, NULL);
-  BZDB.addCallback("stencilShadows",            clientCallback, NULL);
   BZDB.addCallback("zbuffer",                   clientCallback, NULL);
   BZDB.addCallback("tesselation",               clientCallback, NULL);
   BZDB.addCallback("lighting",                  clientCallback, NULL);
@@ -185,10 +183,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     displayMainFlags = BZDB.isTrue("displayMainFlags");
   else if (name == "texture")
     texture = BZDB.isTrue("texture");
-  else if (name == "shadows")
-    shadows = BZDB.isTrue("shadows");
-  else if (name == "stencilShadows")
-    stencilShadows = BZDB.isTrue("stencilShadows");
   else if (name == "zbuffer")
     zbuffer = BZDB.isTrue("zbuffer");
   else if (name == "tesselation")
@@ -203,6 +197,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     radarStyle = BZDB.evalInt("radarStyle");
   else if (name == "radarTankPixels")
     radarTankPixels = BZDB.eval("radarTankPixels");
+  else if (name == "shadowMode")
+    shadowMode = BZDB.evalInt("shadowMode");
   else if (name == "shadowAlpha")
     shadowAlpha = BZDB.eval("shadowAlpha");
   else if (name == "animatedTreads")

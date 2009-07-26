@@ -72,6 +72,13 @@ public:
     SpecialModeCount
   };
 
+  enum ShadowMode {
+    NoShadows      = 0,
+    StippleShadows = 1,
+    StencilShadows = 2,
+    MappedShadows  = 3
+  };
+
   void		setWindow(MainWindow* _window);
   MainWindow&	getWindow() const;
 

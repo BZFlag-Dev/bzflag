@@ -4137,8 +4137,8 @@ static void drawInterlaced()
   if (BZDB.isSet("focal"))
     FocalPlane = BZDB.eval("focal");
 
-  if (BZDBCache::stencilShadows) {
-    BZDB.set("stencilShadows", "0");
+  if (BZDBCache::shadowMode == SceneRenderer::StencilShadows) {
+    BZDB.setInt("shadowMode", SceneRenderer::StippleShadows);
     addMessage(NULL, "Disabled stencilShadows for interlaced mode");
   }
 

@@ -369,7 +369,7 @@ void BackgroundRenderer::notifyStyleChange()
   // some stuff is drawn only for certain states
   cloudsVisible = (styleIndex >= 2 && cloudsAvailable && BZDBCache::blend);
   mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
-  shadowsVisible = BZDB.isTrue("shadows");
+  shadowsVisible = (BZDBCache::shadowMode != SceneRenderer::NoShadows);
   starGStateIndex = BZDB.isTrue("smooth");
 
   // fixup gstates
@@ -1319,8 +1319,8 @@ void BackgroundRenderer::multShadowMatrix() const
 
 void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 {
-  // draw sun shadows -- always stippled so overlapping shadows don't
-  // accumulate darkness.  make and multiply by shadow projection matrix.
+  // draw sun shadows -- stippled or stencilled so that overlapping shadows
+  // don't accumulate darkness. make and multiply by shadow projection matrix.
   multShadowMatrix();
 
   // disable color updates
@@ -1330,7 +1330,9 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  if (!BZDBCache::stencilShadows) {
+  const bool stencil = (BZDBCache::shadowMode == SceneRenderer::StencilShadows);
+
+  if (!stencil) {
     // use stippling to avoid overlapping shadows
     sunShadowsGState.setState();
     glColor3f(0.0f, 0.0f, 0.0f);
@@ -1361,7 +1363,7 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
   renderer.getShadowList().render();
 
   // revert to OpenGLGState defaults
-  if (BZDBCache::stencilShadows) {
+  if (stencil) {
     glBlendFunc(GL_ONE, GL_ZERO);
     glDisable(GL_BLEND);
     glDisable(GL_STENCIL_TEST);

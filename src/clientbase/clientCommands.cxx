@@ -635,7 +635,7 @@ static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
 
 // yeah, we reuse the mutex for different crit sections.  so shoot me.
 #if defined(HAVE_PTHREADS)
-  static pthread_mutex_t screenshot_mutex;
+  static pthread_mutex_t screenshot_mutex = PTHREAD_MUTEX_INITIALIZER;
 # define LOCK_SCREENSHOT_MUTEX pthread_mutex_lock(&screenshot_mutex);
 # define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
 #elif defined(_WIN32)

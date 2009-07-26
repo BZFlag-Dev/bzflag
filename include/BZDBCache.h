@@ -70,8 +70,6 @@ class BZDBCache
     static Bool  displayMainFlags;
     static Bool  blend;
     static Bool  texture;
-    static Bool  shadows;
-    static Bool  stencilShadows;
     static Bool  zbuffer;
     static Bool  tesselation;
     static Bool  lighting;
@@ -81,6 +79,7 @@ class BZDBCache
     static Bool  animatedTreads;
     static Int   radarStyle;
     static Float radarTankPixels;
+    static Int   shadowMode;
     static Float shadowAlpha;
     static Bool  leadingShotLine;
     static Bool  showShotGuide;

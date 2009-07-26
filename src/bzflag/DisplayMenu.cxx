@@ -352,14 +352,7 @@ void DisplayMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(lighting);
 
   // Shadows
-  int shadowVal = 0;
-  if (BZDBCache::shadows) {
-    shadowVal = 1;
-    if (RENDERER.useStencil() && BZDBCache::stencilShadows) {
-      shadowVal = 2;
-    }
-  }
-  ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::shadowMode);
 
   // Blending
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
@@ -508,8 +501,7 @@ void DisplayMenu::callback(HUDuiControl* w, void* data)
     }
     case 'S': {
       const int shadowVal = list->getIndex();
-      BZDB.set("shadows", shadowVal > 0 ? "1" : "0");
-      BZDB.set("stencilShadows", shadowVal > 1 ? "1" : "0");
+      BZDB.setInt("shadowMode", shadowVal);
       RENDERER.notifyStyleChange();
       break;
     }

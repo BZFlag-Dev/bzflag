@@ -722,7 +722,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
 
   linesPtr = &stripped;
 
-  if (!BZDBCache::stencilShadows) {
+  if (BZDBCache::shadowMode == SceneRenderer::StippleShadows) {
     shadowColor.a = 1.0f;
     render();
   }

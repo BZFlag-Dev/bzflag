@@ -221,10 +221,15 @@ int ServerItem::getPlayerCount() const
   int curPlayer = 0;
   if (&ping != 0) {
     int maxPlayer = ping.maxPlayers;
-    curPlayer = ping.rogueCount + ping.redCount + ping.greenCount +
-      ping.blueCount + ping.purpleCount + ping.observerCount;
-    if (curPlayer > maxPlayer)
+    curPlayer = ping.rogueCount
+              + ping.redCount
+              + ping.greenCount
+              + ping.blueCount
+              + ping.purpleCount
+              + ping.observerCount;
+    if (curPlayer > maxPlayer) {
       curPlayer = maxPlayer;
+    }
   }
   return curPlayer;
 }
@@ -243,8 +248,11 @@ unsigned int ServerItem::getSortFactor() const
   unsigned int value = 0;
   if (&ping != 0) {
     // real players are worth a 1000
-    value = ping.rogueCount + ping.redCount + ping.greenCount +
-	    ping.blueCount + ping.purpleCount;
+    value = ping.rogueCount
+          + ping.redCount
+          + ping.greenCount
+          + ping.blueCount
+          + ping.purpleCount;
     value *= 10000;
     // include the lowly observers, 1 point each
     value += ping.observerCount;
