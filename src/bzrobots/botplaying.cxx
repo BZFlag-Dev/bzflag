@@ -66,7 +66,7 @@
 #include "RobotPlayer.h"
 #include "Roster.h"
 #include "ShotStats.h"
-#include "SyncClock.h"
+#include "GameTime.h"
 #include "WorldBuilder.h"
 #include "WorldPlayer.h"
 #include "World.h"
@@ -429,7 +429,7 @@ void handleAliveMessage(void *msg)
   tank->move(pos, forward);
   tank->setVelocity(zero);
   tank->setAngularVelocity(0.0f);
-  tank->setDeadReckoning(syncedClock.GetServerSeconds());
+  tank->setDeadReckoning(GameTime::getDRTime());
   tank->spawnEffect();
   if (tank == myTank) {
     myTank->setSpawning(false);
@@ -1765,9 +1765,6 @@ static void playingLoop()
     const float dt = float(TimeKeeper::getTick() - prevTime);
 
     doMessages();    // handle incoming packets
-
-    // have the synced clock do anything it has to do
-    syncedClock.update(serverLink);
 
     if (world)
       world->checkCollisionManager(); // see if the world collision grid needs to be updated
