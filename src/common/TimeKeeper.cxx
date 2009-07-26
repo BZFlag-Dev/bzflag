@@ -109,10 +109,12 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
     const int64_t nowTime = getEpochMicroseconds();
 
     const int64_t diff = (nowTime - lastTime);
+
     if (diff > 0) {
+      // add to currentTime
       currentTime += double(diff) * 1.0e-6;;
     }
-    else {
+    else if (diff < 0) {
       // eh, how'd we go back in time?
       logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
                       (long int)diff);
