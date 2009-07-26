@@ -5188,8 +5188,6 @@ void saveStartupInfo ( void )
  */
 int main(int argc, char **argv)
 {
-  TimeKeeper::init();
-
   // setup all the data for the server
   if (!initServer(argc,argv))
     return 1;

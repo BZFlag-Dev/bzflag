@@ -63,8 +63,6 @@ int main(int argc, char** argv) {
   }
 #endif
 
-  TimeKeeper::init();
-
   // command line options
   std::string uiName("curses");
   std::vector<std::string> visibleMsgs;

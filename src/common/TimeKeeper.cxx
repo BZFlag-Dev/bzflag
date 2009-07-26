@@ -56,7 +56,7 @@ static DWORD             timeLastCalibration;
 //============================================================================//
 
 #if defined(HAVE_PTHREADS)
-  static pthread_mutex_t    timer_mutex;
+  static pthread_mutex_t    timer_mutex = PTHREAD_MUTEX_INITIALIZER;
 # define LOCK_TIMER_MUTEX   pthread_mutex_lock(&timer_mutex);
 # define UNLOCK_TIMER_MUTEX pthread_mutex_unlock(&timer_mutex);
 #elif defined(_WIN32) 
@@ -92,39 +92,46 @@ static inline int64_t getEpochMicroseconds()
 #endif
 
 
-void TimeKeeper::init()
-{
-#if defined(HAVE_PTHREADS)
-  pthread_mutex_init(&timer_mutex, NULL);
-  lastTime = getEpochMicroseconds();
-#elif defined(_WIN32) 
-  InitializeCriticalSection(&timer_critical);
-#endif
-}
-
-
 const TimeKeeper& TimeKeeper::getCurrent(void)
 {
   // a mutex lock is used because this routine
   // is called from the client's sound thread
-  LOCK_TIMER_MUTEX
 
 #if !defined(_WIN32)
 
-  const int64_t nowTime = getEpochMicroseconds();
+  LOCK_TIMER_MUTEX
 
-  int64_t diff = (nowTime - lastTime);
-  if (diff < 0) {
-    logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
-                    (long int)diff);
-    diff = 0; // eh, how'd we go back in time?
+  if (lastTime == 0) {
+    lastTime = getEpochMicroseconds();
+  }
+  else {
+
+    const int64_t nowTime = getEpochMicroseconds();
+
+    int64_t diff = (nowTime - lastTime);
+    if (diff < 0) {
+      logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
+                      (long int)diff);
+      diff = 0; // eh, how'd we go back in time?
+    }
+
+    currentTime += double(diff) * 1.0e-6;;
+
+    lastTime = nowTime;
+
   }
 
-  currentTime += double(diff) * 1.0e-6;;
-
-  lastTime = nowTime;
+  UNLOCK_TIMER_MUTEX
 
 #else /* !defined(_WIN32) */
+
+  static bool inited = false;
+  if (!inited) {
+    inited = true;
+    InitializeCriticalSection(&timer_critical);
+  }    
+
+  LOCK_TIMER_MUTEX
 
   if (qpcFrequency != 0) {
 
@@ -189,9 +196,9 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
     }
   }
 
-#endif /* !defined(_WIN32) */
-
   UNLOCK_TIMER_MUTEX
+
+#endif /* !defined(_WIN32) */
 
   return currentTime;
 }
