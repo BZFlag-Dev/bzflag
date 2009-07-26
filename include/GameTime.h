@@ -31,6 +31,9 @@ namespace GameTime {
   void   setStepTime();
   double getStepTime();
 
+  double getDRTime(); // for dead-reckoning calculations,
+                      // doesn't really belong here
+
   int   packSize();
   void* pack(void *, float lag);
   void  pack(BufferedNetworkMessage *msg, float lag);
@@ -38,15 +41,6 @@ namespace GameTime {
 
   const float startRate = 1.0f;
   const float finalRate = 10.0f;
-
-  inline double getDRTime()
-  {
-    static BZDB_bool useServerDRClock("_userServerDRClock");
-
-    if (useServerDRClock)
-      return getStepTime();
-    return TimeKeeper::getCurrent().getSeconds();
-  }
 }
 
 

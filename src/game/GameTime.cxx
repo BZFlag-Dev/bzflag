@@ -274,6 +274,19 @@ void* GameTime::unpack(void *buf)
 
 //============================================================================//
 
+double GameTime::getDRTime()
+{
+  static BZDB_bool useServerDRClock("_userServerDRClock");
+
+  if (useServerDRClock) {
+    return getStepTime();
+  }
+  
+  return TimeKeeper::getCurrent().getSeconds();
+}
+
+
+//============================================================================//
 
 // Local Variables: ***
 // mode: C++ ***
