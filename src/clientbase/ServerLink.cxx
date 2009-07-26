@@ -42,7 +42,7 @@
 #endif
 #include "TimeKeeper.h"
 
-#include "SyncClock.h"
+#include "GameTime.h"
 #include "bzUnicode.h"
 
 #ifndef BUILDING_BZADMIN
@@ -479,8 +479,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
       case MsgPlayerUpdateSmall:
       case MsgGMUpdate:
       case MsgUDPLinkRequest:
-      case MsgUDPLinkEstablished:
-      case MsgWhatTimeIsIt: {
+      case MsgUDPLinkEstablished:{
         needForSpeed = true;
         break;
       }
@@ -983,7 +982,7 @@ void ServerLink::sendPlayerUpdate(Player* player )
   void* buf = msg;
   uint16_t code;
   buf = nboPackUInt8(buf, player->getId());
-  buf = nboPackDouble(buf, syncedClock.GetServerSeconds());
+  buf = nboPackDouble(buf, GameTime::getDRTime());
 
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
   buf = player->pack(buf, code);
@@ -996,11 +995,14 @@ void ServerLink::sendPlayerUpdate(Player* player )
 
 void ServerLink::sendBeginShot(const FiringInfo& info)
 {
-  char msg[3];
+  char msg[35];
   void* buf = msg;
 
   buf = nboPackUInt8(buf, info.shot.player);
   buf = nboPackUInt16(buf, info.shot.id);
+  buf = nboPackDouble(buf, GameTime::getDRTime()); 
+  buf = nboPackFVec3(buf, info.shot.pos);
+  buf = nboPackFVec3(buf, info.shot.vel);
 
   send(MsgShotBegin, sizeof(msg), msg);
 }
@@ -1121,14 +1123,6 @@ void ServerLink::sendPaused(bool paused)
   buf = nboPackUInt8(buf, uint8_t(getId()));
   buf = nboPackUInt8(buf, paused ? 1 : 0);
   send(MsgPause, sizeof(msg), msg);
-}
-
-void ServerLink::sendWhatTimeIsIt ( unsigned char tag )
-{
-  char msg[2];
-  void* buf = msg;
-  buf = nboPackUInt8(buf, tag);
-  send(MsgWhatTimeIsIt, 1, msg);
 }
 
 void ServerLink::sendNewPlayer( int botID )

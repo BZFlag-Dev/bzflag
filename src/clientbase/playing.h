@@ -133,7 +133,6 @@ extern void joinGame();
 void leaveGame();
 
 void handleSetShotType(BufferedNetworkMessage *msg);
-void handleWhatTimeIsIt(void *msg);
 void handleNearFlag(void *msg);
 void handleSetTeam(void *msg, uint16_t len);
 void handleResourceFetch(void *msg);

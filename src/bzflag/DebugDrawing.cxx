@@ -55,7 +55,7 @@ static void drawTankHitZone(const Player* tank)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glColor4f(color.r, color.g, color.b, 0.8f);
     glPushMatrix();
-    glTranslatef(pos.x, pos.y, pos.z + (dims.z * 0.5));
+    glTranslatef(pos.x, pos.y, pos.z + (dims.z * 0.5f));
     glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
     glScalef(sp.x, sp.y, sp.z);
     gluSphere(quad, 1.0f, 16, 8);

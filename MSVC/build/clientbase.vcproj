@@ -259,10 +259,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\SyncClock.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\clientbase\TargetingUtils.cxx"
 				>
 			</File>
@@ -394,10 +390,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\clientbase\ShotStrategy.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\clientbase\SyncClock.h"
 				>
 			</File>
 			<File

@@ -21,6 +21,8 @@
 
 #include "common.h"
 #include "BufferedNetworkMessage.h"
+#include "BZDBCache.h"
+#include "TimeKeeper.h"
 
 namespace GameTime {
   void reset();
@@ -36,7 +38,17 @@ namespace GameTime {
 
   const float startRate = 1.0f;
   const float finalRate = 10.0f;
+
+  inline double getDRTime()
+  {
+    static BZDB_bool useServerDRClock("_userServerDRClock");
+
+    if (useServerDRClock)
+      return getStepTime();
+    return TimeKeeper::getCurrent().getSeconds();
+  }
 }
+
 
 
 #endif // BZF_GAME_TIME_H

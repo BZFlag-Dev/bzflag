@@ -107,8 +107,6 @@ public:
   void		sendLagPing(char pingRequest[]);
   void		sendUDPlinkRequest();
 
-  void		sendWhatTimeIsIt ( unsigned char tag );
-
   void		sendCustomData ( const std::string &key, const std::string &value );
   void		sendCustomData ( const char* key, const std::string &value ){if (key) sendCustomData(std::string(key),value);}
 

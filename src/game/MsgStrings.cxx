@@ -137,7 +137,6 @@ PACKET_LIST_ENTRY(MsgRemovePlayer)
 PACKET_LIST_ENTRY(MsgReplayReset)
 PACKET_LIST_ENTRY(MsgShotBegin)
 PACKET_LIST_ENTRY(MsgWShotBegin)
-PACKET_LIST_ENTRY(MsgWhatTimeIsIt)
 PACKET_LIST_ENTRY(MsgScore)
 PACKET_LIST_ENTRY(MsgScoreOver)
 PACKET_LIST_ENTRY(MsgShotEnd)
@@ -1047,14 +1046,6 @@ static MsgStringList handleMsgShotBegin(const PacketInfo& pi)
 
 
 static MsgStringList handleMsgWShotBegin(const PacketInfo& pi)
-{
-  // not recorded
-  MsgStringList list = listMsgBasics(pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgWhatTimeIsIt(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);

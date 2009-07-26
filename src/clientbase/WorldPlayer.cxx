@@ -12,7 +12,7 @@
 
 // interface header
 #include "WorldPlayer.h"
-#include "SyncClock.h"
+#include "GameTime.h"
 
 
 WorldPlayer::WorldPlayer() :
@@ -28,7 +28,7 @@ WorldPlayer::~WorldPlayer()
 
 void			WorldPlayer::addShot(const FiringInfo& info)
 {
-  Player::addShot(new RemoteShotPath(info,syncedClock.GetServerSeconds()), info);
+  Player::addShot(new RemoteShotPath(info,GameTime::getDRTime()), info);
 }
 
 

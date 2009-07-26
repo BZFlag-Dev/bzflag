@@ -12,7 +12,7 @@
 
 // interface header
 #include "ShotList.h"
-#include "SyncClock.h"
+#include "GameTime.h"
 
 //
 // ShotList
@@ -86,7 +86,7 @@ std::vector<int> ShotList::getExpiredShotList ( void )
 int ShotList::addLocalShot ( FiringInfo * info )
 {
   lastLocalShot--;
-  ShotPath *shot = new ShotPath(*info,syncedClock.GetServerSeconds());
+  ShotPath *shot = new ShotPath(*info,GameTime::getDRTime());
   shot->setLocal(true);
   shots[lastLocalShot] = shot;
   return lastLocalShot;
@@ -94,7 +94,7 @@ int ShotList::addLocalShot ( FiringInfo * info )
 
 int ShotList::addShot ( int GUID, FiringInfo * info )
 {
-  shots[GUID] = new ShotPath(*info,syncedClock.GetServerSeconds());
+  shots[GUID] = new ShotPath(*info,GameTime::getDRTime());
   return GUID;
 }
 

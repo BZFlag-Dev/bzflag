@@ -56,8 +56,6 @@ libClientBase_la_SOURCES =		\
 	ShotStatistics.h		\
 	ShotStrategy.cxx		\
 	ShotStrategy.h			\
-	SyncClock.cxx			\
-	SyncClock.h			\
 	TargetingUtils.cxx		\
 	TargetingUtils.h		\
 	Weapon.cxx			\

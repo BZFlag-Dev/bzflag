@@ -49,7 +49,7 @@
 #include "FlashClock.h"
 #include "Region.h"
 #include "Roster.h"
-#include "SyncClock.h"
+#include "GameTime.h"
 #include "World.h"
 #include "WorldPlayer.h"
 
@@ -289,8 +289,6 @@ void joinInternetGame(const struct in_addr *inAddress)
     addMessage(NULL, msg);
     return;
   }
-
-  syncedClock.update(NULL);
   // open server
   ServerLink *_serverLink = new ServerLink(serverAddress,
     startupInfo.serverPort);
@@ -369,7 +367,6 @@ void joinInternetGame(const struct in_addr *inAddress)
   sendFlagNegotiation();
   joiningGame = true;
   GameTime::reset();
-  syncedClock.update(serverLink);
 }
 
 
@@ -1024,18 +1021,6 @@ void handleSetShotType(BufferedNetworkMessage *msg)
     return;
   p->setShotType((ShotType)shotType);
 }
-
-
-void handleWhatTimeIsIt(void *msg)
-{
-  double time = -1;
-  unsigned char tag = 0;
-
-  msg = nboUnpackUInt8(msg, tag);
-  msg = nboUnpackDouble(msg, time);
-  syncedClock.timeMessage(tag, time);
-}
-
 
 void handleSetTeam(void *msg, uint16_t len)
 {
@@ -1818,10 +1803,6 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
   }
 
   switch (code) {
-    case MsgWhatTimeIsIt: {
-      handleWhatTimeIsIt(msg);
-      break;
-    }
     case MsgNearFlag: {
       handleNearFlag(msg);
       break;

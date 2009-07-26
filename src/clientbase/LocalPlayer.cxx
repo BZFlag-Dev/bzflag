@@ -32,7 +32,7 @@
 #include "sound.h"
 #include "ForceFeedback.h"
 #include "EffectsRenderer.h"
-#include "SyncClock.h"
+#include "GameTime.h"
 #include "ClientIntangibilityManager.h"
 #include "MotionUtils.h"
 #include "playing.h"
@@ -1396,16 +1396,16 @@ bool LocalPlayer::fireShot()
 
   // prepare shot
   FiringInfo firingInfo;
-  firingInfo.timeSent = syncedClock.GetServerSeconds();
+  firingInfo.timeSent = GameTime::getDRTime();
   firingInfo.shotType = getShotType();
   firingInfo.shot.player = getId();
   firingInfo.shot.id     = uint16_t(i + getSalt());
-  prepareShotInfo(firingInfo);
+  prepareShotInfo(firingInfo,true);
   // make shot and put it in the table
-  addShot(new LocalShotPath(firingInfo,syncedClock.GetServerSeconds()), firingInfo);
+  addShot(new LocalShotPath(firingInfo,GameTime::getDRTime()), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
-  firingInfo.timeSent = syncedClock.GetServerSeconds();
+  firingInfo.timeSent = GameTime::getDRTime();
 
   // always send a player-update message. To synchronize movement and
   // shot start. They should generally travel on the same frame, when

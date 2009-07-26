@@ -997,17 +997,6 @@ void sendMsgGMUpdate ( int /*player*/, ShotUpdate *shot, int target )
   msg->broadcast(MsgGMUpdate);
 }
 
-
-void sendMsgWhatTimeIsIt ( NetHandler *handler, unsigned char tag, double time )
-{
-  /* Pack a message with the given time */
-  NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt8(tag);
-  msg->packDouble(time);
-  msg->send(handler,MsgWhatTimeIsIt);
-}
-
-
 void sendMsgTimeUpdate( int32_t timeLimit )
 {
   // start client's clock
@@ -1187,8 +1176,7 @@ bool isUDPAttackMessage ( uint16_t &code )
     case MsgGMUpdate:
     case MsgUDPLinkRequest:
     case MsgUDPLinkEstablished:
-    case MsgHit:
-    case MsgWhatTimeIsIt: {
+    case MsgHit:{
       return false;
     }
   }

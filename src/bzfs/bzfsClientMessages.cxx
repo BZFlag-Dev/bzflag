@@ -38,33 +38,6 @@ void packWorldSettings ( void )
   buffer = nboPackUInt16 (buffer, clOptions->shakeWins);
 }
 
-
-// messages that don't have players
-class WhatTimeIsItHandler : public ClientNetworkMessageHandler
-{
-public:
-  virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * buf, int len )
-  {
-    // the client wants to know what time we think it is.
-    // he may have sent us a tag to ID the ping with ( for packet loss )
-    // so we send that back to them with the time.
-    // this is so the client can try and get a decent guess
-    // at what our time is, and timestamp stuff with a real server
-    // time, so everyone can go and compensate for some lag.
-    unsigned char tag = 0;
-    if (len >= 1)
-      buf = nboUnpackUInt8(buf,tag);
-
-    double time = TimeKeeper::getCurrent().getSeconds();
-
-    logDebugMessage(4,"what time is it message from %s with tag %d\n",handler->getHostname(),tag);
-
-    sendMsgWhatTimeIsIt(handler,tag,time);
-    return true;
-  }
-};
-
-
 class SetVarHandler : public ClientNetworkMessageHandler
 {
 public:
@@ -519,7 +492,7 @@ class ShotBeginHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 3)
+    if (!player || len < 35)
       return false;
 
     FiringInfo firingInfo;
@@ -532,6 +505,11 @@ public:
     // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
     firingInfo.shot.id     = id;
+
+    bufTmp = nboUnpackDouble(buf, firingInfo.timeSent);
+
+    bufTmp = nboUnpackFVec3(buf, firingInfo.shot.pos);
+    bufTmp = nboUnpackFVec3(buf, firingInfo.shot.vel);
 
     firingInfo.shotType = player->effectiveShotType;
 
@@ -1109,7 +1087,6 @@ public:
 
 void registerDefaultHandlers ( void )
 {
-  clientNetworkHandlers[MsgWhatTimeIsIt]       = new WhatTimeIsItHandler;
   clientNetworkHandlers[MsgSetVar]             = new SetVarHandler;
   clientNetworkHandlers[MsgNegotiateFlags]     = new NegotiateFlagHandler;
   clientNetworkHandlers[MsgGetWorld]           = new GetWorldHandler;

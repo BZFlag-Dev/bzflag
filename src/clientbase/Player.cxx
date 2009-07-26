@@ -31,7 +31,7 @@
 #include "sound.h"
 #include "EffectsRenderer.h"
 #include "Roaming.h"
-#include "SyncClock.h"
+#include "GameTime.h"
 
 #include "playing.h"
 // FIXME: Shouldn't need to depend on GUI elements
@@ -88,7 +88,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setVelocity(zero);
   setAngularVelocity(0.0f);
   setPhysicsDriver(-1);
-  setDeadReckoning(syncedClock.GetServerSeconds());
+  setDeadReckoning(GameTime::getDRTime());
   setRelativeMotion();
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
@@ -1294,6 +1294,11 @@ void* Player::unpack(void* buf, uint16_t code)
 
   buf = nboUnpackUInt8(buf, ident);
   buf = nboUnpackDouble(buf, timestamp);
+
+  static BZDB_bool useServerDRClock("_userServerDRClock");
+  if (!useServerDRClock)
+    timestamp = GameTime::getDRTime();
+
   buf = state.unpack(buf, code);
 
   setDeadReckoning(timestamp);
@@ -1440,7 +1445,7 @@ bool Player::isDeadReckoningWrong() const
   }
 
   // time since setdeadreckoning
-  const double dt = syncedClock.GetServerSeconds() - updateTimeStamp;
+  const double dt = GameTime::getDRTime() - updateTimeStamp;
 
   // otherwise always send at least one packet per second
   if (dt >= MaxUpdateTime) {
@@ -1513,7 +1518,7 @@ void Player::doDeadReckoning()
   fvec3 predictedVel;
   float predictedAzimuth;
 
-  double dt = syncedClock.GetServerSeconds() - updateTimeStamp;
+  double dt = GameTime::getDRTime() - updateTimeStamp;
   getDeadReckoning(predictedPos, predictedAzimuth, predictedVel, (float)dt);
 
   // setup notResponding
@@ -1627,7 +1632,7 @@ void Player::doDeadReckoning()
   setRelativeMotion();
 
   if (hitWorld) { // if we hit something, then we want to DR from here now, instead of from the starting point
-    setDeadReckoning(syncedClock.GetServerSeconds());
+    setDeadReckoning(GameTime::getDRTime());
   }
 
   return;
@@ -1644,7 +1649,7 @@ void Player::setDeadReckoning(double timestamp)
   inputTime = TimeKeeper::getTick();
 
 #ifdef DEBUG
-  double currentServerTime = syncedClock.GetServerSeconds();
+  double currentServerTime = GameTime::getDRTime();
   if (currentServerTime <= timestamp)
     printf("Player::setDeadReckoning(): currentServerTime %11.4f ought to be greater than timestamp %11.4f (diff = %g)\n",
            currentServerTime, timestamp, currentServerTime - timestamp);
@@ -1716,9 +1721,17 @@ ShotPath* Player::getShot(int index) const
   return shots[index];
 }
 
-void Player::prepareShotInfo(FiringInfo &firingInfo)
+void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
 {
-  firingInfo.shot.dt = 0.0f;
+  static BZDB_bool useServerDRClock("_userServerDRClock");
+
+  if (useServerDRClock)
+    firingInfo.shot.dt = (float)(GameTime::getDRTime() - firingInfo.timeSent);
+  else
+  {
+    firingInfo.timeSent = GameTime::getDRTime();
+    firingInfo.shot.dt = 0.0f;
+  }
   firingInfo.lifetime = BZDB.eval(BZDBNAMES.RELOADTIME);
 
   firingInfo.flagType = getFlag();
@@ -1730,31 +1743,34 @@ void Player::prepareShotInfo(FiringInfo &firingInfo)
 
   firingInfo.shot.team = getTeam();
 
-  if (firingInfo.shotType == ShockWaveShot) {
-    // move shot origin under tank and make it stationary
-    const fvec3& pos = getPosition();
-    firingInfo.shot.pos = pos;
-    firingInfo.shot.vel = fvec3(0.0f, 0.0f, 0.0f);
-  } else {
-    getMuzzle(firingInfo.shot.pos);
+  if (local)
+  {
+    if (firingInfo.shotType != ShockWaveShot)
+    { 
+      getMuzzle(firingInfo.shot.pos);
 
-    const fvec3& dir     = getForward();
-    const fvec3& tankVel = getVelocity();
-    float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
+      const fvec3& dir     = getForward();
+      const fvec3& tankVel = getVelocity();
+      float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
 
-    if (handicap > 0.0f) {
-      // apply any handicap advantage to shot speed
-      const float speedAd = 1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPSHOTAD) - 1.0f));
-      shotSpeed *= speedAd;
+      if (handicap > 0.0f) {
+	// apply any handicap advantage to shot speed
+	const float speedAd = 1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPSHOTAD) - 1.0f));
+	shotSpeed *= speedAd;
+      }
+
+      firingInfo.shot.vel = tankVel + (shotSpeed * dir);
+
+      // Set _shotsKeepVerticalVelocity on the server if you want shots
+      // to have the same vertical velocity as the tank when fired.
+      // keeping shots moving horizontally makes the game more playable.
+      if (!BZDB.isTrue(BZDBNAMES.SHOTSKEEPVERTICALV))
+	firingInfo.shot.vel.z = 0.0f;
     }
-
-    firingInfo.shot.vel = tankVel + (shotSpeed * dir);
-
-    // Set _shotsKeepVerticalVelocity on the server if you want shots
-    // to have the same vertical velocity as the tank when fired.
-    // keeping shots moving horizontally makes the game more playable.
-    if (!BZDB.isTrue(BZDBNAMES.SHOTSKEEPVERTICALV))
-      firingInfo.shot.vel.z = 0.0f;
+    else
+    {
+      firingInfo.shot.pos = getPosition();
+    }
   }
 }
 
