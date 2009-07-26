@@ -102,23 +102,23 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
   LOCK_TIMER_MUTEX
 
   if (lastTime == 0) {
+    // time starts at 0 seconds from the first call to getCurrent()
     lastTime = getEpochMicroseconds();
   }
   else {
-
     const int64_t nowTime = getEpochMicroseconds();
 
-    int64_t diff = (nowTime - lastTime);
-    if (diff < 0) {
+    const int64_t diff = (nowTime - lastTime);
+    if (diff > 0) {
+      currentTime += double(diff) * 1.0e-6;;
+    }
+    else {
+      // eh, how'd we go back in time?
       logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
                       (long int)diff);
-      diff = 0; // eh, how'd we go back in time?
     }
 
-    currentTime += double(diff) * 1.0e-6;;
-
     lastTime = nowTime;
-
   }
 
   UNLOCK_TIMER_MUTEX
