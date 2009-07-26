@@ -15,26 +15,25 @@
 #include "HUDuiServerList.h"
 
 // common implementation headers
-#include "TextUtils.h"
+#include "bzfgl.h"
 #include "bzglob.h"
 #include "ErrorHandler.h"
-
 #include "FontManager.h"
 #include "LocalFontFace.h"
-
 #include "OpenGLGState.h"
 #include "OpenGLUtils.h"
-#include "bzfgl.h"
+#include "TextureManager.h"
+#include "TextUtils.h"
 
 //
 // HUDuiServerList
 //
 
-float HUDuiServerList::MODES_PERCENTAGE = 0.125f;
-float HUDuiServerList::DOMAIN_PERCENTAGE = 0.375f;
-float HUDuiServerList::SERVER_PERCENTAGE = 0.375f;
-float HUDuiServerList::PLAYER_PERCENTAGE = 0.0625f;
-float HUDuiServerList::PING_PERCENTAGE = 0.0625f;
+float HUDuiServerList::MODES_PERCENTAGE  = 0.10f;
+float HUDuiServerList::DOMAIN_PERCENTAGE = 0.35f;
+float HUDuiServerList::SERVER_PERCENTAGE = 0.38f;
+float HUDuiServerList::PLAYER_PERCENTAGE = 0.10f;
+float HUDuiServerList::PING_PERCENTAGE   = 0.07f;
 
 HUDuiServerList::HUDuiServerList()
   : HUDuiScrollList()
@@ -97,7 +96,7 @@ public:
       break;
 
     case PlayerCount:
-      return (_first->getServer()->getPlayerCount() < _second->getServer()->getPlayerCount());
+      return (_first->getServer()->getSortFactor() < _second->getServer()->getSortFactor());
       break;
 
     case Ping:
@@ -379,21 +378,43 @@ void HUDuiServerList::doRender()
   float y = getY() + getHeight() - columnsHeight;
   float x = getX();
 
-  std::string columnTitle = "";
 
   for (int i=Modes; i != NoSort; i++) {
-    if (sortMode == i)
-      if (reverseSort)
-	columnTitle = columns[i].first + " \xE2\x96\xBC";
-      else
-	columnTitle = columns[i].first + " \xE2\x96\xB2";
-    else
-      columnTitle = columns[i].first;
+    std::string columnTitle = " " + columns[i].first;
 
-    if ((activeColumn == i)&&(hasFocus()))
+    if (sortMode == i) {
+      TextureManager& tm = TextureManager::instance();
+      const int texID = tm.getTextureID(reverseSort ? "arrow_up.png"
+                                                    : "arrow_down.png");
+      if (texID) {
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        if (tm.bind(texID)) {
+          glEnable(GL_TEXTURE_2D);
+          glEnable(GL_BLEND);
+          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+          glBegin(GL_QUADS);
+          const float h = columnsHeight * 1.5f;
+          const float w = fm.getStringWidth(getFontFace()->getFMFace(),
+                                            getFontSize(), columnTitle, true);
+          const float x0 = x + w;
+          const float y0 = getY() + getHeight() - h + 1;
+          const float x1 = x0 + h;
+          const float y1 = y0 + h;
+          glTexCoord2f(0.0f, 0.0f); glVertex2f(x0, y0);
+          glTexCoord2f(1.0f, 0.0f); glVertex2f(x1, y0);
+          glTexCoord2f(1.0f, 1.0f); glVertex2f(x1, y1);
+          glTexCoord2f(0.0f, 1.0f); glVertex2f(x0, y1);
+          glEnd();
+        }
+        glPopAttrib();
+      }
+    }
+
+    if ((activeColumn == i)&&(hasFocus())) {
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &activeColor);
-    else
+    } else {
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &color);
+    }
 
     x = x + ((*columns[i].second) * (getWidth()));
     glOutlineBoxHV(1.0f, getX(), getY(), x, getY() + getHeight() + 1, -0.5f);
@@ -472,24 +493,13 @@ void HUDuiServerList::sortBy(SortConstants sortType)
   sortMode = sortType;
 
   switch (sortType) {
-  case DomainName:
-    items.sort(compare<DomainName>());
-    break;
-
-  case ServerName:
-    items.sort(compare<ServerName>());
-    break;
-
-  case PlayerCount:
-    items.sort(compare<PlayerCount>());
-    break;
-
-  case Ping:
-    items.sort(compare<Ping>());
-    break;
-
-  default:
-    break;
+    case DomainName:  { items.sort(compare<DomainName>());  break; }
+    case ServerName:  { items.sort(compare<ServerName>());  break; }
+    case PlayerCount: { items.sort(compare<PlayerCount>()); break; }
+    case Ping:        { items.sort(compare<Ping>());        break; }
+    default: {
+      break;
+    }
   }
 
   if (reverseSort)
@@ -570,113 +580,108 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 {
   if (key.chr == 0) {
     switch (key.button) {
-
-    case BzfKeyEvent::Down:
-      if (hasFocus())
-	getNav().next();
-      break;
-
-    case BzfKeyEvent::Up:
-      if (hasFocus())
-	getNavList()->prev();
-      break;
-
-    case BzfKeyEvent::Left:
-      if (hasFocus())
-	setActiveColumn(getActiveColumn() - 1);
-      break;
-
-    case BzfKeyEvent::Right:
-      if (hasFocus())
-	setActiveColumn(getActiveColumn() + 1);
-      break;
-
-    default:
-      return false;
+      case BzfKeyEvent::Down: {
+        if (hasFocus())
+          getNav().next();
+        break;
+      }
+      case BzfKeyEvent::Up: {
+        if (hasFocus())
+          getNavList()->prev();
+        break;
+      }
+      case BzfKeyEvent::Left: {
+        if (hasFocus())
+          setActiveColumn(getActiveColumn() - 1);
+        break;
+      }
+      case BzfKeyEvent::Right: {
+        if (hasFocus())
+          setActiveColumn(getActiveColumn() + 1);
+        break;
+      }
+      default: {
+        return false;
+      }
     }
-  } else if (key.chr == 's') {
+  }
+  else if ((key.chr == 's') || (key.chr == ' ')) {
     if (hasFocus()) {
       if (getActiveColumn() == sortMode) {
 	reverseSort = !reverseSort;
       }
       switch (getActiveColumn()) {
-      case DomainName:
-	sortBy(DomainName);
-	break;
-
-      case ServerName:
-	sortBy(ServerName);
-	break;
-
-      case PlayerCount:
-	sortBy(PlayerCount);
-	break;
-
-      case Ping:
-	sortBy(Ping);
-	break;
-
-      default:
-	break;
+        case DomainName:  { sortBy(DomainName);  break; }
+        case ServerName:  { sortBy(ServerName);  break; }
+        case PlayerCount: { sortBy(PlayerCount); break; }
+        case Ping:        { sortBy(Ping);        break; }
+        default: {
+          break;
+        }
       }
     }
-  } else if (key.chr == '+') {
+  }
+  else if (key.chr == '+') {
     if (hasFocus()) {
       switch (getActiveColumn()) {
-      case DomainName:
-	HUDuiServerList::DOMAIN_PERCENTAGE += 0.005f;
-	HUDuiServerList::SERVER_PERCENTAGE -= 0.005f;
-	break;
-
-      case ServerName:
-	HUDuiServerList::SERVER_PERCENTAGE += 0.005f;
-	HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
-	break;
-
-      case PlayerCount:
-	HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
-	HUDuiServerList::PING_PERCENTAGE -= 0.005f;
-	break;
-
-      case Ping:
-	HUDuiServerList::PING_PERCENTAGE += 0.005f;
-	HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
-	break;
-
-      default:
-	break;
-      }
-      update();
-    }
-  } else if (key.chr == '-') {
-    if (hasFocus()) {
-      switch (getActiveColumn()) {
-      case DomainName:
-	HUDuiServerList::DOMAIN_PERCENTAGE -= 0.005f;
-	HUDuiServerList::SERVER_PERCENTAGE += 0.005f;
-	break;
-
-      case ServerName:
-	HUDuiServerList::SERVER_PERCENTAGE -= 0.005f;
-	HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
-	break;
-
-      case PlayerCount:
-	HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
-	HUDuiServerList::PING_PERCENTAGE += 0.005f;
-	break;
-
-      case Ping:
-	HUDuiServerList::PING_PERCENTAGE -= 0.005f;
-	HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
-	break;
-
-      default:
-	break;
+        case DomainName: {
+          HUDuiServerList::DOMAIN_PERCENTAGE += 0.005f;
+          HUDuiServerList::SERVER_PERCENTAGE -= 0.005f;
+          break;
+        }
+        case ServerName: {
+          HUDuiServerList::SERVER_PERCENTAGE += 0.005f;
+          HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
+          break;
+        }
+        case PlayerCount: {
+          HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
+          HUDuiServerList::PING_PERCENTAGE   -= 0.005f;
+          break;
+        }
+        case Ping: {
+          HUDuiServerList::PING_PERCENTAGE   += 0.005f;
+          HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
+          break;
+        }
+        default: {
+          break;
+        }
       }
       update();
     }
   }
+  else if (key.chr == '-') {
+    if (hasFocus()) {
+      switch (getActiveColumn()) {
+        case DomainName: {
+          HUDuiServerList::DOMAIN_PERCENTAGE -= 0.005f;
+          HUDuiServerList::SERVER_PERCENTAGE += 0.005f;
+          break;
+        }
+        case ServerName: {
+          HUDuiServerList::SERVER_PERCENTAGE -= 0.005f;
+          HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
+          break;
+        }
+        case PlayerCount: {
+          HUDuiServerList::PLAYER_PERCENTAGE -= 0.005f;
+          HUDuiServerList::PING_PERCENTAGE   += 0.005f;
+          break;
+        }
+        case Ping: {
+          HUDuiServerList::PING_PERCENTAGE   -= 0.005f;
+          HUDuiServerList::PLAYER_PERCENTAGE += 0.005f;
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+      update();
+    }
+  }
+
   if (key.chr == 'd') {
     if (hasFocus()) {
       devInfo = !devInfo;
@@ -685,9 +690,10 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 
   // This doesn't appear to do anything?
   switch (key.chr) {
-  case 13: // Return
-  case 27:
-    return false;
+    case 13: // Return
+    case 27: {
+      return false;
+    }
   }
 
   return false;

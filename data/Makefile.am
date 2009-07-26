@@ -8,6 +8,8 @@ bzflagdir = $(BZFLAG_DATA)
 bzflag_DATA = \
 	automatic_icon.png	\
 	alpha_gradient.png	\
+	arrow_up.png		\
+	arrow_down.png		\
 	blend_flash.png		\
 	boxwall.png		\
 	bubble.png		\
