@@ -276,7 +276,7 @@ void* GameTime::unpack(void *buf)
 
 double GameTime::getDRTime()
 {
-  static BZDB_bool useServerDRClock("_userServerDRClock");
+  static BZDB_bool useServerDRClock("_useServerDRClock");
 
   if (useServerDRClock) {
     return getStepTime();

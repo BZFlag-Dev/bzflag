@@ -1295,7 +1295,7 @@ void* Player::unpack(void* buf, uint16_t code)
   buf = nboUnpackUInt8(buf, ident);
   buf = nboUnpackDouble(buf, timestamp);
 
-  static BZDB_bool useServerDRClock("_userServerDRClock");
+  static BZDB_bool useServerDRClock("_useServerDRClock");
   if (!useServerDRClock)
     timestamp = GameTime::getDRTime();
 
@@ -1723,7 +1723,7 @@ ShotPath* Player::getShot(int index) const
 
 void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
 {
-  static BZDB_bool useServerDRClock("_userServerDRClock");
+  static BZDB_bool useServerDRClock("_useServerDRClock");
 
   if (useServerDRClock)
     firingInfo.shot.dt = (float)(GameTime::getDRTime() - firingInfo.timeSent);
