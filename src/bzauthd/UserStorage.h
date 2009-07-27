@@ -33,6 +33,9 @@ struct UserInfo
   std::string name;
   std::string password;
   std::string email;
+  UserInfo(std::string n, std::string p, std::string e) :
+    name(n), password(p), email(e) {}
+  UserInfo() {}
 };
 
 /** The UserStore abstracts the method used for storing users */
@@ -43,7 +46,7 @@ public:
   ~UserStore();
   bool initialize();
   
-  BzRegErrors registerUser(UserInfo &info);
+  BzRegErrors registerUser(const UserInfo &info);
   uint32_t authUser(UserInfo &info);
   bool isRegistered(std::string callsign);
   void update();
@@ -56,8 +59,8 @@ private:
   void unbind(LDAP *&ld);
 
   uint32_t getuid(LDAP *ld, const char *dn);
-  BzRegErrors registerMail(UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
-  BzRegErrors updatePassword(UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
+  BzRegErrors registerMail(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
+  BzRegErrors updatePassword(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors userExists(std::string const &user_dn, std::string const &callsign);
 
   LDAP *rootld;

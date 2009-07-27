@@ -12,6 +12,10 @@
 
 #include <common.h>
 #include "HttpHandler.h"
+#include "ConfigMgr.h"
+#include "Log.h"
+#include <TextUtils.h>
+#include "UserStorage.h"
 
 INSTANTIATE_SINGLETON(HttpHandler)
 
@@ -28,9 +32,56 @@ HttpHandler::~HttpHandler()
 bool HttpHandler::initialize()
 {
   if(!(ctx = mg_start())) return false;
-  if(1 != mg_set_option(ctx, "ports", "88")) return false;
+  if(1 != mg_set_option(ctx, "ports", (const char*)sConfig.getStringValue(CONFIG_HTTP_PORT))) return false;
+
+  mg_set_uri_callback(ctx, "/", &request_callback, (void *)NULL);
+  sLog.outLog("HttpHandler: initialized");
   return true;
 }
+
+std::vector<std::string> split_request(const std::string &request)
+{
+  std::vector<std::string> ret;
+  std::string::size_type off = 0, poz, del;
+  while(1) {
+    del = request.find('&', off);
+    std::string elem = del == request.npos ? request.substr(off) : request.substr(off, del - off);
+
+    poz = elem.find("*2"); if(poz != elem.npos) elem.replace(poz, 2, "&");
+    poz = elem.find("*1"); if(poz != elem.npos) elem.replace(poz, 2, "*");
+
+    ret.push_back(elem);
+    if(del == request.npos) break;
+    off = del + 1;
+  };
+  return ret;
+}
+
+void HttpHandler::request_callback(
+  struct mg_connection *conn, const struct mg_request_info *request_info, void *user_data)
+{
+  // only from localhost (127.0.0.1)
+  if(request_info->remote_ip != 0x7F000001) {
+    sLog.outError("request dropped from ip %d", request_info->remote_ip);
+    return;
+  }
+
+  char *req = request_info->query_string;
+  if(!req) return;
+  sLog.outDebug("got request %s", req);
+
+  std::vector<std::string> tokens = split_request(req);
+  if(tokens.empty())
+    return;
+
+  if(tokens[0] == "register") {
+    if(tokens.size() < 4) return;
+    BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]));
+    mg_printf(conn, "%d message", (int)err);
+  }
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***

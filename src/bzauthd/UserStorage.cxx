@@ -313,7 +313,7 @@ private:
   LDAPAttr attr_res[3];
 };
 
-BzRegErrors UserStore::registerUser(UserInfo &info)
+BzRegErrors UserStore::registerUser(const UserInfo &info)
 {
   sLog.outLog("registering %s(%s)", info.name.c_str(), info.email.c_str());
   /* If multiple sources are allowed to register users,
@@ -564,7 +564,7 @@ BzRegErrors UserStore::userExists(std::string const &user_dn, std::string const 
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::updatePassword(UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
+BzRegErrors UserStore::updatePassword(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
   sLog.outLog("finishing registration for %s", info.name.c_str());
   // add the password and change the sign of the timestamp
@@ -584,7 +584,7 @@ BzRegErrors UserStore::updatePassword(UserInfo &info, std::string const &user_dn
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::registerMail(UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
+BzRegErrors UserStore::registerMail(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
   sLog.outLog("registering mail %s for %s", info.email.c_str(), info.name.c_str());
   const char *oc_vals[3] = {"applicationProcess", "extensibleObject", NULL};
