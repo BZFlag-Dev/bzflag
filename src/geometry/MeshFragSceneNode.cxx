@@ -253,7 +253,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
   // disable radar and shadows if required
   noRadar = bzmat->getNoRadar();
-  noShadow = bzmat->getNoShadow();
+  noShadow = bzmat->getNoShadowCast(); // FIXME
 
   // set lod info
   setNumLODs(0, NULL /* unused because LOD = 0 */);

@@ -34,7 +34,8 @@ SilenceDefaultKey::SilenceDefaultKey()
 {
 }
 
-bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
+
+bool SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -47,9 +48,9 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down) ||
 	(key.button == BzfKeyEvent::Left) ||
-	(key.button == BzfKeyEvent::Right))
-
+	(key.button == BzfKeyEvent::Right)) {
       return true;
+    }
   }
 
   switch (key.chr) {
@@ -151,11 +152,18 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
+
+bool SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (!myTank)
+  if (!myTank) {
     return false;
+  }
+  if (KEYMGR.get(key, true) == "jump") {
+    // jump while typing
+    myTank->setJump();
+  }
+
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
     if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
@@ -185,6 +193,7 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
   }
   return keyPress(key);
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

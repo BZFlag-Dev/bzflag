@@ -1573,7 +1573,7 @@ bool CI_ShotFired::execute(bz_EventData* eventData)
 {
   bz_ShotFiredEventData_V1* ed = (bz_ShotFiredEventData_V1*)eventData;
 
-  if (!PushCallIn(6)) {
+  if (!PushCallIn(9)) {
     return false;
   }
 
@@ -1583,10 +1583,13 @@ bool CI_ShotFired::execute(bz_EventData* eventData)
   lua_pushfloat(L,  ed->pos[0]);
   lua_pushfloat(L,  ed->pos[1]);
   lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,  ed->vel[0]);
+  lua_pushfloat(L,  ed->vel[1]);
+  lua_pushfloat(L,  ed->vel[2]);
 
   //lua_pushboolean(L, ed->changed); // FIXME - output? used?
 
-  return RunCallIn(6, 0);
+  return RunCallIn(9, 0);
 }
 
 

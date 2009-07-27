@@ -174,6 +174,7 @@ class OpenGLGStateBuilder {
     void resetBlending();
     void resetSmoothing();
     void resetAlphaFunc();
+    void resetPolygonOffset();
     void setTexture(const int texture);
     void setTextureMatrix(const float* matrix);
     void setTextureEnvMode(unsigned int mode = BZ_GL_MODULATE);
@@ -185,6 +186,7 @@ class OpenGLGStateBuilder {
     void setCulling(unsigned int culling);
     void setShading(unsigned int shading = BZ_GL_SMOOTH);
     void setAlphaFunc(unsigned int func = BZ_GL_GEQUAL, float ref = 0.1f);
+    void setPolygonOffset(float factor, float units);
     void setNeedsSorting(bool);
 
     OpenGLGState getState() const;

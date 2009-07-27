@@ -157,6 +157,8 @@ bzflag_SOURCES =			\
 	ServerCommandKey.h		\
 	ServerMenu.cxx			\
 	ServerMenu.h			\
+	ShadowMap.cxx			\
+	ShadowMap.h			\
 	ShotList.cxx			\
 	ShotList.h			\
 	ShotStats.cxx			\

@@ -60,6 +60,8 @@ WallSceneNode::WallSceneNode()
   wantBlending = false;
   wantSphereMap = false;
   alphaThreshold = 0.0f;
+  poFactor = 0.0f;
+  poUnits  = 0.0f;
 
   return;
 }
@@ -283,6 +285,13 @@ void WallSceneNode::setAlphaThreshold(float thresh)
 }
 
 
+void WallSceneNode::setPolygonOffset(float factor, float units)
+{
+  poFactor = factor;
+  poUnits  = units;
+}
+
+
 void WallSceneNode::setNoCulling(bool value)
 {
   noCulling = value;
@@ -368,6 +377,7 @@ void WallSceneNode::notifyStyleChange()
   if (alphaThreshold != 0.0f) {
     builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
   }
+  builder.setPolygonOffset(poFactor, poUnits);
   if (noCulling) {
     builder.setCulling(GL_NONE);
   }

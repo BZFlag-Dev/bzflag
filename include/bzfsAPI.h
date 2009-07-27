@@ -868,11 +868,13 @@ public:
     , playerID(-1)
     , shotID(-1)
   {
-    pos[0] = pos[1] = pos[2] = 0;
+    pos[0] = pos[1] = pos[2] = 0.0f;
+    vel[0] = vel[1] = vel[2] = 0.0f;
   }
 
   bool changed;
   float pos[3];
+  float vel[3];
   bz_ApiString type;
   int playerID;
   int shotID;

@@ -71,11 +71,14 @@ class BzMaterial {
     void setGroupAlpha(bool);
     void setNoLighting(bool);
     void setNoRadar(bool);
-    void setNoShadow(bool);
+    void setNoShadowCast(bool);
+    void setNoShadowRecv(bool);
+    void setTextureShadow(bool);
     void setNoCulling(bool);
     void setNoSorting(bool);
     void setNoBlending(bool);
-    void setAlphaThreshold(const float);
+    void setAlphaThreshold(float);
+    void setPolygonOffset(float factor, float units);
 
     // the following set()'s operate on the last added texture
     void addTexture(const std::string&);
@@ -108,15 +111,18 @@ class BzMaterial {
     const fvec4& getEmission() const;
     float getShininess() const;
 
-    bool getOccluder() const;
-    bool getGroupAlpha() const;
-    bool getNoRadar() const;
-    bool getNoShadow() const;
-    bool getNoCulling() const;
-    bool getNoSorting() const;
-    bool getNoBlending() const;
-    bool getNoLighting() const;
+    bool  getOccluder() const;
+    bool  getGroupAlpha() const;
+    bool  getNoRadar() const;
+    bool  getNoShadowCast() const;
+    bool  getNoShadowRecv() const;
+    bool  getTextureShadow() const;
+    bool  getNoCulling() const;
+    bool  getNoSorting() const;
+    bool  getNoBlending() const;
+    bool  getNoLighting() const;
     float getAlphaThreshold() const;
+    bool  getPolygonOffset(float& factor, float& units) const;
 
     int getTextureCount() const;
     const std::string& getTexture(int) const;
@@ -168,12 +174,16 @@ class BzMaterial {
     bool occluder;
     bool groupAlpha;
     bool noRadar;
-    bool noShadow;
+    bool noShadowCast;
+    bool noShadowRecv;
+    bool texShadow;
     bool noCulling;
     bool noSorting;
     bool noBlending;
     bool noLighting;
     float alphaThreshold;
+    float poFactor;
+    float poUnits;
 
     enum CombineModes {
       replace = 0,

@@ -64,6 +64,7 @@ class OpenGLGStateState {
     void setCulling(GLenum culling);
     void setShading(GLenum);
     void setAlphaFunc(GLenum func, GLclampf ref);
+    void setPolygonOffset(float factor, float units);
     void setNeedsSorting(bool value);
     void setOrder(int order);
 
@@ -115,12 +116,15 @@ class OpenGLGStateState {
 	bool		hasCulling;
 	bool		hasShading;
 	bool		hasAlphaFunc;
+	bool		hasPolyOffset;
 	GLenum		blendSFactor;
 	GLenum		blendDFactor;
 	int		stippleIndex;
 	GLenum		culling;
 	GLenum		alphaFunc;
 	GLclampf	alphaRef;
+	float		poFactor;
+	float		poUnits;
     };
 
   public:
@@ -293,12 +297,15 @@ OpenGLGStateState::Unsorted::Unsorted()
 , hasCulling(true)
 , hasShading(false)
 , hasAlphaFunc(false)
+, hasPolyOffset(false)
 , blendSFactor(GL_ONE)
 , blendDFactor(GL_ZERO)
 , stippleIndex(0)
 , culling(GL_BACK)
 , alphaFunc(GL_ALWAYS)
 , alphaRef(0.0f)
+, poFactor(0.0f)
+, poUnits(0.0f)
 {
   // do nothing
 }
@@ -310,14 +317,15 @@ OpenGLGStateState::Unsorted::~Unsorted()
 
 void OpenGLGStateState::Unsorted::reset()
 {
-  needsSorting = false;
-  hasBlending  = false;
-  hasStipple   = false;
-  hasSmoothing = false;
-  hasShading   = false;
-  hasAlphaFunc = false;
-  hasCulling   = true;
-  culling      = GL_BACK;
+  needsSorting  = false;
+  hasBlending   = false;
+  hasStipple    = false;
+  hasSmoothing  = false;
+  hasShading    = false;
+  hasAlphaFunc  = false;
+  hasPolyOffset = false;
+  hasCulling    = true;
+  culling       = GL_BACK;
 }
 
 OpenGLGStateState::OpenGLGStateState()
@@ -428,12 +436,18 @@ void OpenGLGStateState::setShading(GLenum shading)
   unsorted.hasShading = (shading != GL_FLAT);
 }
 
-void OpenGLGStateState::setAlphaFunc(
-				GLenum func, GLclampf ref)
+void OpenGLGStateState::setAlphaFunc(GLenum func, GLclampf ref)
 {
   unsorted.hasAlphaFunc = (func != GL_ALWAYS);
   unsorted.alphaFunc = func;
   unsorted.alphaRef = ref;
+}
+
+void OpenGLGStateState::setPolygonOffset(float factor, float units)
+{
+  unsorted.hasPolyOffset = (factor != 0.0f) || (units != 0.0f);
+  unsorted.poFactor = factor;
+  unsorted.poUnits  = units;
 }
 
 void OpenGLGStateState::setNeedsSorting(bool value)
@@ -483,6 +497,11 @@ void OpenGLGStateState::resetOpenGLState() const
   }
   if (unsorted.hasAlphaFunc) {
     glDisable(GL_ALPHA_TEST);
+  }
+  if (unsorted.hasPolyOffset) {
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glDisable(GL_POLYGON_OFFSET_LINE);
+    glDisable(GL_POLYGON_OFFSET_POINT);
   }
 }
 
@@ -649,9 +668,10 @@ void OpenGLGStateState::setOpenGLState(
     // alpha func
     if (unsorted.hasAlphaFunc) {
       if (oldState->unsorted.hasAlphaFunc) {
-	if (unsorted.alphaFunc != oldState->unsorted.alphaFunc ||
-	    unsorted.alphaRef != oldState->unsorted.alphaRef)
+	if ((unsorted.alphaFunc != oldState->unsorted.alphaFunc) ||
+	    (unsorted.alphaRef != oldState->unsorted.alphaRef)) {
 	  glAlphaFunc(unsorted.alphaFunc, unsorted.alphaRef);
+        }
       }
       else {
 	glAlphaFunc(unsorted.alphaFunc, unsorted.alphaRef);
@@ -659,8 +679,32 @@ void OpenGLGStateState::setOpenGLState(
       }
     }
     else {
-      if (oldState->unsorted.hasAlphaFunc)
+      if (oldState->unsorted.hasAlphaFunc) {
 	glDisable(GL_ALPHA_TEST);
+      }
+    }
+
+    // polygon offset
+    if (unsorted.hasPolyOffset) {
+      if (oldState->unsorted.hasPolyOffset) {
+	if ((unsorted.poFactor != oldState->unsorted.poFactor) ||
+	    (unsorted.poUnits  != oldState->unsorted.poUnits)) {
+          glPolygonOffset(unsorted.poFactor, unsorted.poUnits);
+        }
+      }
+      else {
+        glPolygonOffset(unsorted.poFactor, unsorted.poUnits);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glEnable(GL_POLYGON_OFFSET_LINE);
+        glEnable(GL_POLYGON_OFFSET_POINT);
+      }
+    }
+    else {
+      if (oldState->unsorted.hasPolyOffset) {
+        glDisable(GL_POLYGON_OFFSET_FILL);
+        glDisable(GL_POLYGON_OFFSET_LINE);
+        glDisable(GL_POLYGON_OFFSET_POINT);
+      }
     }
   }
   else {
@@ -764,6 +808,19 @@ void OpenGLGStateState::setOpenGLState(
     }
     else {
       glDisable(GL_ALPHA_TEST);
+    }
+
+    // polygon offset
+    if (unsorted.hasPolyOffset) {
+        glPolygonOffset(unsorted.poFactor, unsorted.poUnits);
+        glEnable(GL_POLYGON_OFFSET_FILL);
+        glEnable(GL_POLYGON_OFFSET_LINE);
+        glEnable(GL_POLYGON_OFFSET_POINT);
+    }
+    else {
+      glDisable(GL_POLYGON_OFFSET_FILL);
+      glDisable(GL_POLYGON_OFFSET_LINE);
+      glDisable(GL_POLYGON_OFFSET_POINT);
     }
   }
 }
@@ -1452,6 +1509,11 @@ void OpenGLGStateBuilder::resetAlphaFunc()
   state->setAlphaFunc(GL_ALWAYS, 0.0f);
 }
 
+void OpenGLGStateBuilder::resetPolygonOffset()
+{
+  state->setPolygonOffset(0.0f, 0.0f);
+}
+
 void OpenGLGStateBuilder::setTexture(
 					const int texture)
 {
@@ -1505,6 +1567,11 @@ void OpenGLGStateBuilder::setShading(unsigned int shading)
 void OpenGLGStateBuilder::setAlphaFunc(unsigned int func, float ref)
 {
   state->setAlphaFunc(func, ref);
+}
+
+void OpenGLGStateBuilder::setPolygonOffset(float factor, float units)
+{
+  state->setPolygonOffset(factor, units);
 }
 
 void OpenGLGStateBuilder::setNeedsSorting(bool value)

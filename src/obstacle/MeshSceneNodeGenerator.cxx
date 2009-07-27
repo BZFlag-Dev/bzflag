@@ -370,7 +370,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   const BzMaterial* bzmat = face->getMaterial();
   if (bzmat != NULL) {
     noRadar  = bzmat->getNoRadar();
-    noShadow = bzmat->getNoShadow();
+    noShadow = bzmat->getNoShadowCast(); // FIXME
   }
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), noRadar, noShadow,
@@ -465,6 +465,10 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     }
   }
 
+  float poFactor, poUnits;
+  if (mat->getPolygonOffset(poFactor, poUnits)) {
+    node->setPolygonOffset(poFactor, poUnits);
+  }
   node->setAlphaThreshold(mat->getAlphaThreshold());
   node->setNoCulling(mat->getNoCulling());
   node->setNoSorting(mat->getNoSorting());

@@ -180,6 +180,13 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
+
+  if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
+    // jump while typing
+    myTank->setJump();
+    return false;
+  }
+
   if (!myTank ||
       (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
       (myTank->getTeam() == ObserverTeam)) {

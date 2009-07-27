@@ -53,6 +53,7 @@ class WallSceneNode : public SceneNode {
     void		setLightedModulateColor(float r, float g,
 				float b, float a = 1.0f);
     void		setLightedModulateColor(const fvec4& rgba);
+
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
     void		setTextureMatrix(const float* texmat);
@@ -64,7 +65,7 @@ class WallSceneNode : public SceneNode {
     void		setNoSorting(bool);
     void		setNoBlending(bool);
     void		setAlphaThreshold(float);
-    void		setRadarColor(const float color[4]);
+    void		setPolygonOffset(float factor, float units);
 
     void		setColor();
 
@@ -105,6 +106,8 @@ class WallSceneNode : public SceneNode {
     fvec4		lightedColor;
     fvec4		lightedModulateColor;
     float		alphaThreshold;
+    float		poFactor;
+    float		poUnits;
     int			style;
     bool		noCulling;
     bool		noSorting;

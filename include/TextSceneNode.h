@@ -109,7 +109,6 @@ class TextSceneNode : public SceneNode {
         bool noRadar;
         bool noShadow;
 
-        bool usePolygonOffset;
         bool useLengthPerPixel;
 
         int triangles;

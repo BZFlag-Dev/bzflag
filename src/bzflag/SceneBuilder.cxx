@@ -299,7 +299,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
   // get the material
   const BzMaterial* mat = world->getWaterMaterial();
   const bool noRadar = mat->getNoRadar();
-  const bool noShadow = mat->getNoShadow();
+  const bool noShadow = mat->getNoShadowCast(); // FIXME
 
   MeshPolySceneNode* node =
     new MeshPolySceneNode(plane, noRadar, noShadow, v, n, t);

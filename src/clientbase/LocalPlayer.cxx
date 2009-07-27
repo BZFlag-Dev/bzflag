@@ -1496,21 +1496,17 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, fvec3& pos)
 void LocalPlayer::setJump()
 {
   wantJump = jumpPressed;
-  jumpPressed = false;
 }
 
 
 void LocalPlayer::setJumpPressed(bool value)
 {
-  if (onSolidSurface() || hasWings())
-    jumpPressed = value;
+  jumpPressed = value;
 }
 
 
 void LocalPlayer::doJump()
 {
-  wantJump = false;
-
   FlagType* flag = getFlag();
   World *world = World::getWorld();
   if (!world) {
@@ -1574,6 +1570,8 @@ void LocalPlayer::doJump()
       addRemoteSound(PlayerState::JumpSound);
     }
   }
+
+  wantJump = false;
 }
 
 

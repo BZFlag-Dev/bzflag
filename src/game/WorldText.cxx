@@ -46,8 +46,6 @@ WorldText::WorldText()
 , useBZDB(false)
 , billboard(false)
 , bzMaterial(NULL)
-, poFactor(0.0f)
-, poUnits(0.0f)
 , fromGroup(false)
 {
 }
@@ -65,8 +63,6 @@ WorldText::WorldText(const WorldText& wt)
 , useBZDB(wt.useBZDB)
 , billboard(wt.billboard)
 , bzMaterial(wt.bzMaterial)
-, poFactor(wt.poFactor)
-, poUnits(wt.poUnits)
 , fromGroup(wt.fromGroup)
 {
   xform = wt.xform;
@@ -107,8 +103,6 @@ int WorldText::packSize() const
   fullSize += sizeof(float); // lineSpace
   fullSize += sizeof(float); // fixedWidth
   fullSize += sizeof(float); // lengthPerPixel
-  fullSize += sizeof(float); // poFactor
-  fullSize += sizeof(float); // poUnits
 
   fullSize += xform.packSize();
 
@@ -130,8 +124,6 @@ void* WorldText::pack(void* buf) const
   buf = nboPackFloat(buf, lineSpace);
   buf = nboPackFloat(buf, fixedWidth);
   buf = nboPackFloat(buf, lengthPerPixel);
-  buf = nboPackFloat(buf, poFactor);
-  buf = nboPackFloat(buf, poUnits);
 
   buf = xform.pack(buf);
 
@@ -158,8 +150,6 @@ void* WorldText::unpack(void* buf)
   buf = nboUnpackFloat(buf, lineSpace);
   buf = nboUnpackFloat(buf, fixedWidth);
   buf = nboUnpackFloat(buf, lengthPerPixel);
-  buf = nboUnpackFloat(buf, poFactor);
-  buf = nboUnpackFloat(buf, poUnits);
 
   buf = xform.unpack(buf);
 
@@ -222,10 +212,6 @@ void WorldText::print(std::ostream& out, const std::string& indent) const
   out << indent << "  matref ";
   MATERIALMGR.printReference(out, bzMaterial);
   out << std::endl;
-
-  if ((poFactor != 0.0f) || (poUnits != 0.0f)) {
-    out << indent << "  polyoffset " << poFactor << " " << poUnits << std::endl;
-  }
 
   out << indent << "end" << std::endl << std::endl;
 }

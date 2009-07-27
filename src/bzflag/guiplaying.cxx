@@ -968,6 +968,11 @@ static void doEvent(BzfDisplay *disply)
         mainWindow->grabMouse();
       }
 
+      if (myTank) {
+        // clear the jump polarity
+        myTank->setJumpPressed(false);
+      }
+
       break;
     }
     case BzfEvent::Unmap: {

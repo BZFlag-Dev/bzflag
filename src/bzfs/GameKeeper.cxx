@@ -546,6 +546,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 	player.getCallSign(), playerIndex, id);
       return false;
   }
+
   // verify shot number
   if (id > maxShots - 1) {
     logDebugMessage(2,"Player %s [%d] shot id %d out of range %d\n",

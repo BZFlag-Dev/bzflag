@@ -148,6 +148,16 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setAlphaThreshold(alphaThresh);
     }
   }
+  else if (strcasecmp(cmd, "depthoffset") == 0) {
+    float factor, units;
+    if (!(input >> factor >> units)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
+      error = true;
+    }
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setPolygonOffset(factor, units);
+    }
+  }
   else if (strcasecmp(cmd, "noculling") == 0) {
     for (i = 0; i < materialCount; i++) {
       materials[i].setNoCulling(true);
@@ -170,7 +180,18 @@ bool parseMaterials(const char* cmd, std::istream& input,
   }
   else if (strcasecmp(cmd, "noshadow") == 0) {
     for (i = 0; i < materialCount; i++) {
-      materials[i].setNoShadow(true);
+      materials[i].setNoShadowCast(true);
+      materials[i].setNoShadowRecv(true);
+    }
+  }
+  else if (strcasecmp(cmd, "noshadowcast") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoShadowCast(true);
+    }
+  }
+  else if (strcasecmp(cmd, "noshadowrecv") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoShadowRecv(true);
     }
   }
   else if (strcasecmp(cmd, "nolighting") == 0) {

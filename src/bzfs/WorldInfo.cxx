@@ -207,7 +207,7 @@ void WorldInfo::makeWaterMaterial()
   material.setUseColorOnTexture(false); // only use the color as a backup
   material.setUseSphereMap(false);
   material.setNoRadar(true);
-  material.setNoShadow(true);
+  material.setNoShadowCast(true);
   waterMatRef = MATERIALMGR.addMaterial(&material);
 
   return;

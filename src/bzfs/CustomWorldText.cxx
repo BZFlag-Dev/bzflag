@@ -117,11 +117,6 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
   else if (strcasecmp ("upright", cmd) == 0) {
     upright = true;
   }
-  else if (strcasecmp ("polyoffset", cmd) == 0) {
-    if (!(input >> text->poFactor >> text->poUnits)) {
-      return false;
-    }
-  }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;

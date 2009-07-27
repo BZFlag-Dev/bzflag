@@ -430,6 +430,8 @@ properties:
 .br
 \fB  alphathresh 0.0\fR      # alpha thresholding value
 .br
+\fB  depthoffset 0.0 0.0\fR  # <factor, units> for depth offset (aka: polygonOffset)
+.br
 \fB  groupalpha\fR           # sort translucent faces as a group
 .br
 \fB  occluder\fR             # faces with this material will occlude
@@ -1199,8 +1201,6 @@ BZDB variable), can use the following escape characters:
 .br
 \fB  billboard\fR             # orients the text towards the screen
 .br
-\fB  polyoffset\fR 0.0 0.0    # polygon offset factor and units
-.br
 \fB  lengthPerPixel\fR 0.0    # draw distance cutoff length
 .br
 \fBend\fR
@@ -1429,7 +1429,9 @@ material :=
 .br
 	| "nolighting"
 .br
-	| "alphathresh" <value>
+	| "alphathresh" <float>
+.br
+	| "depthoffset" <float> <float>
 .br
 	| "groupalpha"
 .br
@@ -2156,8 +2158,6 @@ text :=
 	| "linespace" <float>
 .br
 	| "fixedwidth" <float>
-.br
-	| "polyoffset" <float> <float>
 .br
 	| "billboard"
 .br

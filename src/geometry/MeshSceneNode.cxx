@@ -545,9 +545,15 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
   }
 
+  // polygon offset
+  float poFactor, poUnits;
+  if (bzmat->getPolygonOffset(poFactor, poUnits)) {
+    builder.setPolygonOffset(poFactor, poUnits);
+  }
+
   // radar and shadows
   mat->drawRadar = !bzmat->getNoRadar();
-  mat->drawShadow = !bzmat->getNoShadow();
+  mat->drawShadow = !bzmat->getNoShadowCast(); // FIXME
 
   // culling
   if (bzmat->getNoCulling()) {

@@ -33,6 +33,7 @@
 #include "Roaming.h"
 #include "playing.h"
 #include "guiplaying.h"
+#include "ShadowMap.h"
 
 
 DisplayMenu::DisplayMenu()
@@ -141,6 +142,9 @@ DisplayMenu::DisplayMenu()
   options->push_back(std::string("Stipple"));
   if (RENDERER.useStencil()) {
     options->push_back(std::string("Stencil"));
+    if (ShadowMap::available()) {
+      options->push_back(std::string("Mapped"));
+    }
   }
   option->update();
   addControl(option);

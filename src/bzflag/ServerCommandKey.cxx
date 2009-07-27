@@ -67,6 +67,7 @@ namespace {
   const int numNonAdminModes( sizeof(nonAdminModes)/sizeof(nonAdminModes[0]) );
 }
 
+
 /* FIXME - note the important numModes value inited here when new
  * commands are added, the indices need to be adjusted here.
  */
@@ -76,7 +77,8 @@ ServerCommandKey::ServerCommandKey()
 {
 }
 
-void			ServerCommandKey::nonAdminInit()
+
+void ServerCommandKey::nonAdminInit()
 {
   // if we are in a non admin mode stay there
   bool inNonAdminCommand = false;
@@ -91,17 +93,21 @@ void			ServerCommandKey::nonAdminInit()
 
   updatePrompt();
 }
-void			ServerCommandKey::adminInit()
+
+
+void ServerCommandKey::adminInit()
 {
   updatePrompt();
 }
 
-void			ServerCommandKey::init()
+
+void ServerCommandKey::init()
 {
   updatePrompt();
 }
 
-void			ServerCommandKey::updatePrompt()
+
+void ServerCommandKey::updatePrompt()
 {
   std::string composePrompt, banPattern;
   // decide what should be on the composing prompt
@@ -275,9 +281,10 @@ void			ServerCommandKey::updatePrompt()
   hud->setComposing(composePrompt, allowEdit);
 }
 
+
 // return the right ban pattern 123.32.12.* for example depending on
 // the mode of the class. Returns an empty string on errors.
-std::string		ServerCommandKey::makePattern(const InAddr& address)
+std::string ServerCommandKey::makePattern(const InAddr& address)
 {
   const char * c = inet_ntoa(address);
   if (c == NULL) return "";
@@ -301,7 +308,8 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
   return "";
 }
 
-bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
+
+bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -446,9 +454,15 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
+
+bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  if (KEYMGR.get(key, true) == "jump") {
+    // jump while typing
+    myTank->setJump();
+  }
 
   // Check to see if we got disconnected while waiting for input
   if (myTank == 0) return false;
@@ -518,6 +532,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
   }
   return keyPress(key);
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -251,7 +251,7 @@ void SceneNode::getRenderNodes(std::vector<RenderSet>&)
 
 void SceneNode::renderRadar()
 {
-  printf ("SceneNode::renderRadar() called, implement in subclass\n");
+  printf("SceneNode::renderRadar() called, implement in subclass\n");
   return;
 }
 

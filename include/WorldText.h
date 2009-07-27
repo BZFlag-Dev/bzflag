@@ -71,10 +71,6 @@ class WorldText {
 
     MeshTransform xform;
 
-    // polygon offset
-    float poFactor;
-    float poUnits;
-
     bool fromGroup;
 };
 

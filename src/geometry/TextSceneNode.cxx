@@ -244,6 +244,12 @@ void TextSceneNode::notifyStyleChange()
     builder.setAlphaFunc(GL_GEQUAL, bzmat->getAlphaThreshold());
   }
 
+  // polygon offset
+  float poFactor, poUnits;
+  if (bzmat->getPolygonOffset(poFactor, poUnits)) {
+    builder.setPolygonOffset(poFactor, poUnits);
+  }
+
   // culling
   if (bzmat->getNoCulling()) {
     builder.setCulling(GL_NONE);
@@ -366,7 +372,7 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 , fontSize(text.fontSize)
 , fixedWidth(0.0f)
 , noRadar(text.bzMaterial->getNoRadar())
-, noShadow(text.bzMaterial->getNoShadow())
+, noShadow(text.bzMaterial->getNoShadowCast()) // FIXME
 , triangles(0)
 {
   FontManager &fm = FontManager::instance();
@@ -389,8 +395,6 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
   fontID = getFontID();
 
   lineStep = -text.lineSpace * fm.getStringHeight(fontID, fontSize);
-
-  usePolygonOffset  = (text.poFactor != 0.0f) || (text.poUnits != 0.0f);
 
   useLengthPerPixel = (text.lengthPerPixel > 0.0f);
 
@@ -630,11 +634,6 @@ void TextSceneNode::TextRenderNode::render()
     RENDERER.getViewFrustum().executeBillboard();
   }
 
-  if (usePolygonOffset) {
-    glEnable(GL_POLYGON_OFFSET_FILL);
-    glPolygonOffset(text.poFactor, text.poUnits);
-  }
-
   const std::vector<std::string>& currLines = *linesPtr;
 
   if (currLines.size() == 1) {
@@ -672,10 +671,6 @@ void TextSceneNode::TextRenderNode::render()
       }
       glTranslatef(0.0f, lineStep, 0.0f);
     }
-  }
-
-  if (usePolygonOffset) {
-    glDisable(GL_POLYGON_OFFSET_FILL);
   }
 
   fm.setOpacity(oldOpacity);
@@ -722,17 +717,19 @@ void TextSceneNode::TextRenderNode::renderShadow()
 
   linesPtr = &stripped;
 
+  glAlphaFunc(GL_GEQUAL, 0.1f);
+  glEnable(GL_ALPHA_TEST);
+
   if (BZDBCache::shadowMode == SceneRenderer::StippleShadows) {
     shadowColor.a = 1.0f;
     render();
   }
   else {
     shadowColor.a = BZDBCache::shadowAlpha;
-    glAlphaFunc(GL_GEQUAL, 0.1f);
-    glEnable(GL_ALPHA_TEST);
     render();
-    glDisable(GL_ALPHA_TEST);
   }
+
+  glDisable(GL_ALPHA_TEST);
 
   linesPtr = &lines;
 
