@@ -70,18 +70,30 @@ void HttpHandler::request_callback(
   if(!req) return;
   sLog.outDebug("got request %s", req);
 
+  // apparently it isn't received at all if it's too short so
+  mg_printf(conn, "message:");
+
   std::vector<std::string> tokens = split_request(req);
   if(tokens.empty())
     return;
 
   if(tokens[0] == "register") {
     if(tokens.size() < 4) return;
+    // TODO: not thread safe
     BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]));
-    mg_printf(conn, "%d message", (int)err);
+
+    mg_printf(conn, "%d", (int)err);
+  } else if(tokens[0] == "intersectGroups") {
+    if(tokens.size() < 3) return;
+    std::list<std::string> list;
+    for(int i = 2; i < tokens.size(); i++)
+      list.push_back(tokens[i]);
+    
+    list = sUserStore.intersectGroupList(tokens[1], list);
+    for(std::list<std::string>::iterator itr = list.begin(); itr != list.end(); ++itr)
+      mg_printf(conn, ":%s", itr->c_str());
   }
 }
-
-
 
 // Local Variables: ***
 // mode: C++ ***
