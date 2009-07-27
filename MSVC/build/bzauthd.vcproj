@@ -401,6 +401,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzauthd\Thread.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzauthd\TimeKeeper.h"
 				>
 			</File>

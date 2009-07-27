@@ -20,7 +20,7 @@
 #include "base64.h"
 #include <assert.h>
 
-INSTANTIATE_SINGLETON(UserStore)
+INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
 UserStore::UserStore() : rootld(NULL), nextuid(0)
 {

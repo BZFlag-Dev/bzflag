@@ -79,14 +79,14 @@ void HttpHandler::request_callback(
 
   if(tokens[0] == "register") {
     if(tokens.size() < 4) return;
-    // TODO: not thread safe
-    BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]));
 
+    BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]));
     mg_printf(conn, "%d", (int)err);
+
   } else if(tokens[0] == "intersectGroups") {
     if(tokens.size() < 3) return;
     std::list<std::string> list;
-    for(int i = 2; i < tokens.size(); i++)
+    for(int i = 2; i < (int)tokens.size(); i++)
       list.push_back(tokens[i]);
     
     list = sUserStore.intersectGroupList(tokens[1], list);

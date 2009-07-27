@@ -13,10 +13,10 @@
 #ifndef __BZAUTHD_USERSTORAGE_H__
 #define __BZAUTHD_USERSTORAGE_H__
 
-#include <Singleton.h>
 #include <string>
 #include <list>
 #include <AuthProtocol.h>
+#include "Thread.h"
 
 typedef struct ldap LDAP;
 
@@ -39,7 +39,7 @@ struct UserInfo
 };
 
 /** The UserStore abstracts the method used for storing users */
-class UserStore : public Singleton<UserStore>
+class UserStore : public GuardedSingleton<UserStore>
 {
 public:
   UserStore();
@@ -67,7 +67,7 @@ private:
   uint32_t nextuid;
 };
 
-#define sUserStore UserStore::instance()
+#define sUserStore UserStore::guard().instance()
 
 #endif // __BZAUTHD_USERSTORAGE_H__
 
