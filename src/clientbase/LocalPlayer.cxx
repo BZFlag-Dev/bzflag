@@ -1397,12 +1397,12 @@ bool LocalPlayer::fireShot()
   // prepare shot
   FiringInfo firingInfo;
   firingInfo.timeSent = GameTime::getDRTime();
-  firingInfo.shotType = getShotType();
+  firingInfo.shotType    = getShotType();
   firingInfo.shot.player = getId();
   firingInfo.shot.id     = uint16_t(i + getSalt());
-  prepareShotInfo(firingInfo,true);
+  prepareShotInfo(firingInfo, true);
   // make shot and put it in the table
-  addShot(new LocalShotPath(firingInfo,GameTime::getDRTime()), firingInfo);
+  addShot(new LocalShotPath(firingInfo, GameTime::getDRTime()), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
   firingInfo.timeSent = GameTime::getDRTime();

@@ -496,20 +496,18 @@ public:
       return false;
 
     FiringInfo firingInfo;
-
-    uint16_t		id;
-    void		*bufTmp;
-
-    bufTmp = nboUnpackUInt16(buf, id);
-
-    // TODO, this should be made into a generic function that updates the state, so that others can add a firing info to the state
     firingInfo.shot.player = player->getIndex();
-    firingInfo.shot.id     = id;
 
-    bufTmp = nboUnpackDouble(buf, firingInfo.timeSent);
+    // TODO, this should be made into a generic function that updates
+    // the state, so that others can add a firing info to the state
 
-    bufTmp = nboUnpackFVec3(buf, firingInfo.shot.pos);
-    bufTmp = nboUnpackFVec3(buf, firingInfo.shot.vel);
+    uint16_t id;
+    buf = nboUnpackUInt16(buf, id);
+    firingInfo.shot.id = id;
+
+    buf = nboUnpackDouble(buf, firingInfo.timeSent);
+    buf = nboUnpackFVec3(buf, firingInfo.shot.pos);
+    buf = nboUnpackFVec3(buf, firingInfo.shot.vel);
 
     firingInfo.shotType = player->effectiveShotType;
 
