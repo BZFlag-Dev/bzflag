@@ -269,6 +269,12 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 
   mesh->finalize();
 
+  if (!mesh->isValid()) {
+    delete mesh;
+    delete drawInfo;
+    return;
+  }
+
   if (drawInfo) {
     ((MeshDrawInfo*)drawInfo)->serverSetup(mesh);
     if (drawInfo->isValid()) {

@@ -442,6 +442,8 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
 		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
 		false, NULL);
 
+  mesh->finalize();
+
   // to be or not to be...
   if (mesh->isValid()) {
     groupdef->addObstacle(mesh);

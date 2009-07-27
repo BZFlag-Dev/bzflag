@@ -202,6 +202,8 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
                   driveThrough, shootThrough, ricochet, false, NULL);
   }
 
+  mesh->finalize();
+
   // to be or not to be...
   if (mesh->isValid()) {
     groupdef->addObstacle(mesh);

@@ -455,6 +455,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
   mesh->setName(name.c_str());
 
+  mesh->finalize();
+
   // to be or not to be...
   if (mesh->isValid()) {
     groupdef->addObstacle(mesh);
