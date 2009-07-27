@@ -88,6 +88,9 @@ bool LuaObstacle::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetPhyDrvID);
   PUSH_LUA_CFUNC(L, GetPhyDrvName);
 
+  PUSH_LUA_CFUNC(L, ObstacleRayTime);
+  PUSH_LUA_CFUNC(L, ObstacleBoxTest);
+
   return true;
 }
 
@@ -147,7 +150,7 @@ static bool PushObstacleList(lua_State* L, int type, int& index)
   const size_t count = obsList.size();
   for (size_t i = 0; i < count; i++) {
     index++;
-    lua_pushdouble(L, obsList[i]->getGUID());
+    lua_pushdouble(L, (double)obsList[i]->getGUID());
     lua_rawseti(L, -2, index);
   }
 
@@ -210,7 +213,7 @@ int LuaObstacle::GetObstaclesInBox(lua_State* L)
   const ObsList* obsList = COLLISIONMGR.axisBoxTest(exts);
   lua_createtable(L, obsList->count, 0);
   for (int i = 0; i < obsList->count; i++) {
-    lua_pushdouble(L, obsList->list[i]->getGUID());
+    lua_pushdouble(L, (double)obsList->list[i]->getGUID());
     lua_rawseti(L, -2, i + 1);
   }
   return 1;
@@ -407,7 +410,7 @@ int LuaObstacle::GetMeshFace(lua_State* L)
   }
   const MeshFace* face = mesh->getFace(faceID);
 
-  lua_pushdouble(L, face->getGUID());
+  lua_pushdouble(L, (double)face->getGUID());
 
   return 1;
 }
@@ -424,7 +427,7 @@ int LuaObstacle::GetFaceMesh(lua_State* L)
     lua_pushboolean(L, false);
     return 1;
   }
-  lua_pushdouble(L, mesh->getGUID());
+  lua_pushdouble(L, (double)mesh->getGUID());
   return 1;
 }
 
@@ -656,7 +659,7 @@ int LuaObstacle::GetLinkSrcFace(lua_State* L)
   if (face == NULL) {
     return 0;
   }
-  lua_pushdouble(L, face->getGUID());
+  lua_pushdouble(L, (double)face->getGUID());
   return 1;
 }
 
@@ -668,7 +671,7 @@ int LuaObstacle::GetLinkDstFace(lua_State* L)
   if (face == NULL) {
     return 0;
   }
-  lua_pushdouble(L, face->getGUID());
+  lua_pushdouble(L, (double)face->getGUID());
   return 1;
 }
 
@@ -722,6 +725,41 @@ int LuaObstacle::GetPhyDrvName(lua_State* L)
     return 0;
   }
   lua_pushstdstring(L, phydrv->getName());
+  return 1;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+int LuaObstacle::ObstacleRayTime(lua_State* L)
+{
+  const Obstacle* obs = ParseObstacle(L, 1);
+  fvec3 pos, vel;
+  pos.x = luaL_checkfloat(L, 2);
+  pos.y = luaL_checkfloat(L, 3);
+  pos.z = luaL_checkfloat(L, 4);
+  vel.x = luaL_checkfloat(L, 5);
+  vel.y = luaL_checkfloat(L, 6);
+  vel.z = luaL_checkfloat(L, 7);
+  lua_pushfloat(L, obs->intersect(Ray(pos, vel)));
+  return 1;
+}
+
+
+int LuaObstacle::ObstacleBoxTest(lua_State* L)
+{
+  const Obstacle* obs = ParseObstacle(L, 1);
+  fvec3 pos, size;
+  float radians;
+  pos.x   = luaL_checkfloat(L, 2);
+  pos.y   = luaL_checkfloat(L, 3);
+  pos.z   = luaL_checkfloat(L, 4);
+  size.x  = luaL_checkfloat(L, 5);
+  size.y  = luaL_checkfloat(L, 6);
+  size.z  = luaL_checkfloat(L, 7);
+  radians = luaL_optfloat(L, 8, 0.0f);
+  lua_pushboolean(L, obs->inBox(pos, radians, size.x, size.y, size.z));
   return 1;
 }
 

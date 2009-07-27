@@ -62,6 +62,9 @@ class LuaObstacle {
 
     static int GetPhyDrvID(lua_State* L);
     static int GetPhyDrvName(lua_State* L);
+
+    static int ObstacleRayTime(lua_State* L);
+    static int ObstacleBoxTest(lua_State* L);
 };
 
 
