@@ -128,6 +128,11 @@ typedef HANDLE pthread_cond_t;
 typedef DWORD pthread_t;
 typedef HANDLE pid_t;
 
+struct timespec {
+	long tv_nsec;
+	long tv_sec;
+};
+
 static int pthread_mutex_lock(pthread_mutex_t *);
 static int pthread_mutex_unlock(pthread_mutex_t *);
 
@@ -188,11 +193,6 @@ typedef struct DIR {
 typedef int SOCKET;
 
 #endif /* End of Windows and UNIX specific includes */
-
-struct timespec {
-	long tv_nsec;
-	long tv_sec;
-};
 
 #include "mongoose.h"
 
