@@ -717,7 +717,17 @@ bool CI_FilteredChatMessage::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->to);
   lua_pushinteger(L, ed->team);
 
-  return RunCallIn(4, 0);
+  if (!RunCallIn(4, 1)) {
+    return false;
+  }
+
+  if (lua_israwstring(L, -1)) {
+    ed->message = lua_tostring(L, -1);
+  }
+
+  lua_pop(L, 1);
+
+  return true;
 }
 
 

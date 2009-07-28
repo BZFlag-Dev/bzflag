@@ -188,7 +188,8 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "drawInfo") == 0) {
     if (drawInfo != NULL) {
       std::cout << "WARNING: multiple drawInfo, using first" << std::endl;
-    } else {
+    }
+    else {
       drawInfo = new MeshDrawInfo();
       if (!drawInfo->parse(input)) {
 	std::cout << "WARNING: invalid drawInfo" << std::endl;
@@ -280,7 +281,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     if (drawInfo->isValid()) {
       mesh->setDrawInfo(drawInfo);
     } else {
-      delete ((MeshDrawInfo*)drawInfo);
+      delete drawInfo;
     }
   }
 
