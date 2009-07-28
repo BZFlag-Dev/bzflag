@@ -139,10 +139,19 @@ public:
   char * getNext() {
     while(values && values[cur_val] != NULL) {
       
-      if((int)strnlen(values[cur_val], val_max_len) < val_max_len)
-        return values[cur_val++];
-      sLog.outError("invalid value for %s, potential buffer overflow", attr);
-      cur_val++;
+      if(val_max_len != -1) {
+        int i;
+        for(i = 0; i < val_max_len+1; i++)
+          if(values[cur_val][i] == '\0')
+            break;
+        if(i == val_max_len+1) {
+          sLog.outError("invalid value for %s, potential buffer overflow", attr);
+          cur_val++;
+          continue;
+        }
+      }
+
+      return values[cur_val++];
     }
     return NULL;
   }

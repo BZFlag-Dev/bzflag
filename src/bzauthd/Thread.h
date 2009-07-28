@@ -31,8 +31,7 @@ protected:
   ~GuardedSingleton() { Guard::_instance = 0; } // do not delete
 
 public:
-  template<typename U>
-  friend class GuardedSingleton<U>::Guard;
+  friend class Guard;
 
   class Guard
   {
