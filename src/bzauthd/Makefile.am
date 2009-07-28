@@ -23,6 +23,8 @@ bzauthd_SOURCES = \
 	ConfigMgr.h \
 	EventHandler.cxx \
 	EventHandler.h \
+	HttpHandler.cxx \
+	HttpHandler.h \
 	NetHandler.cxx \
 	NetHandler.h \
 	Serverhandler.cxx \

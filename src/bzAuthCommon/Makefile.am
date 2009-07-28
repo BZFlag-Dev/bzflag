@@ -23,6 +23,8 @@ libbzAuthCommon_la_SOURCES  = \
 	Common.cxx \
 	Log.cxx \
 	Log.h \
+	mongoose.c \
+	mongoose.h \
 	net.cpp \
 	net.h \
 	RSA.cxx \

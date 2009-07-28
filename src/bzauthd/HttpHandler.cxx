@@ -58,7 +58,7 @@ std::vector<std::string> split_request(const std::string &request)
 }
 
 void HttpHandler::request_callback(
-  struct mg_connection *conn, const struct mg_request_info *request_info, void *user_data)
+  struct mg_connection *conn, const struct mg_request_info *request_info, void */*user_data*/)
 {
   // only from localhost (127.0.0.1)
   if(request_info->remote_ip != 0x7F000001) {

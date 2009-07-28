@@ -31,8 +31,8 @@ protected:
   ~GuardedSingleton() { Guard::_instance = 0; } // do not delete
 
 public:
-  template<class T>
-  friend class GuardedSingleton<T>::Guard;
+  template<typename U>
+  friend class GuardedSingleton<U>::Guard;
 
   class Guard
   {
@@ -45,7 +45,7 @@ public:
 
 #if defined(HAVE_PTHREADS)
     pthread_mutex_t mutex;
-    void init() { pthread_mutex_init(&mutex); }
+    void init() { pthread_mutex_init(&mutex, NULL); }
     void acquire() { pthread_mutex_lock(&mutex); }
     void release() { pthread_mutex_unlock(&mutex); }
 #elif defined(_WIN32)
@@ -69,7 +69,6 @@ public:
       }
     }
 
-    template<class T>
     friend class GuardedSingleton;
 
      /** returns a singleton
