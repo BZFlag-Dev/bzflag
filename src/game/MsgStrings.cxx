@@ -110,6 +110,7 @@ PACKET_LIST_ENTRY(MsgFlagUpdate)
 PACKET_LIST_ENTRY(MsgFetchResources)
 PACKET_LIST_ENTRY(MsgForceState)
 PACKET_LIST_ENTRY(MsgGrabFlag)
+PACKET_LIST_ENTRY(MsgQueryGL)
 PACKET_LIST_ENTRY(MsgGMUpdate)
 PACKET_LIST_ENTRY(MsgGetWorld)
 PACKET_LIST_ENTRY(MsgGameSettings)
@@ -672,6 +673,14 @@ static MsgStringList handleMsgGrabFlag(const PacketInfo& pi)
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
   listPush(list, 1, "flag: %s", strFlag(flagid).c_str());
 
+  return list;
+}
+
+
+static MsgStringList handleMsgQueryGL(const PacketInfo& pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics(pi);
   return list;
 }
 

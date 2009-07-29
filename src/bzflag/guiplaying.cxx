@@ -2397,7 +2397,86 @@ void handleMessage(void *msg)
 }
 
 
+static std::string getQueryGLResult(const std::string& query)
+{
+  GLenum queryID = 0;
 
+#define GL_QUERY_COMPARE(x) if (query == #x) { queryID = GL_ ## x; }
+
+  // string queries
+  GL_QUERY_COMPARE(VENDOR);
+  GL_QUERY_COMPARE(VERSION);
+  GL_QUERY_COMPARE(RENDERER);
+  GL_QUERY_COMPARE(EXTENSIONS);
+  if (queryID != 0) {
+    const char* resultPtr = (const char*)glGetString(queryID);
+    if (resultPtr == NULL) {
+      return "";
+    }
+    return resultPtr;
+  }
+
+  // integer queries
+  GL_QUERY_COMPARE(MAX_LIGHTS);
+  GL_QUERY_COMPARE(MAX_ATTRIB_STACK_DEPTH);
+  GL_QUERY_COMPARE(MAX_CLIENT_ATTRIB_STACK_DEPTH);
+  GL_QUERY_COMPARE(MAX_MODELVIEW_STACK_DEPTH);
+  GL_QUERY_COMPARE(MAX_PROJECTION_STACK_DEPTH);
+  GL_QUERY_COMPARE(MAX_TEXTURE_STACK_DEPTH);
+  GL_QUERY_COMPARE(MAX_TEXTURE_SIZE);
+  GL_QUERY_COMPARE(MAX_TEXTURE_UNITS);
+  GL_QUERY_COMPARE(MAX_TEXTURE_COORDS);
+  GL_QUERY_COMPARE(MAX_TEXTURE_IMAGE_UNITS);
+  GL_QUERY_COMPARE(MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+  GL_QUERY_COMPARE(MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+  GL_QUERY_COMPARE(MAX_ELEMENTS_VERTICES);
+  GL_QUERY_COMPARE(MAX_ELEMENTS_INDICES);
+  GL_QUERY_COMPARE(MAX_DRAW_BUFFERS);
+  GL_QUERY_COMPARE(MAX_SAMPLES);
+  GL_QUERY_COMPARE(RED_BITS);
+  GL_QUERY_COMPARE(BLUE_BITS);
+  GL_QUERY_COMPARE(GREEN_BITS);
+  GL_QUERY_COMPARE(ALPHA_BITS);
+  GL_QUERY_COMPARE(DEPTH_BITS);
+  GL_QUERY_COMPARE(STENCIL_BITS);
+  if (queryID != 0) {
+    GLint value;
+    glGetIntegerv(queryID, &value);
+    return TextUtils::itoa(value);
+  }
+
+#undef GL_QUERY_COMPARE
+
+  return "";  
+}
+
+
+void handleQueryGL(void *msg)
+{
+  std::string queryStr;
+  msg = nboUnpackStdString(msg, queryStr);
+
+  std::string result = getQueryGLResult(queryStr);
+
+  std::vector<std::string> results;
+  const std::string prefix = "QueryGL/" + queryStr + ": ";
+  const size_t maxLen = MessageLen - prefix.size() - 15;
+  while (!result.empty()) {
+    if (result.size() > maxLen) {
+      results.push_back(prefix + result.substr(0, maxLen));
+      result = result.substr(maxLen);
+    } else {
+      results.push_back(prefix + result);
+      result.clear();
+    }
+  }
+
+  for (size_t r = 0; r < results.size(); r++) {
+    char buf[MessageLen];
+    strncpy(buf, results[r].c_str(), MessageLen);
+    serverLink->sendMessage(ServerPlayer, buf);
+  }
+}
 
 
 void handleGMUpdate(void *msg)

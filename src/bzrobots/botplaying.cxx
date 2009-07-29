@@ -815,6 +815,9 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
 }
 
 
+void handleQueryGL(void*)
+{
+}
 
 
 void handleGMUpdate(void *msg)

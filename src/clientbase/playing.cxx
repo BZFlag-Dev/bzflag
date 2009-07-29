@@ -1988,6 +1988,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
       handleMovementUpdate(code, msg);
       break;
     }
+    case MsgQueryGL: {
+      handleQueryGL(msg);
+      break;
+    }
     case MsgGMUpdate: {
       handleGMUpdate(msg);
       break;
