@@ -2129,44 +2129,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
-
-  // FIXME -- MsgQueryGL test
-  std::vector<std::string> queries;
-  queries.push_back("");
-
-  queries.push_back("VENDOR");    
-  queries.push_back("VERSION");   
-  queries.push_back("RENDERER");  
-  queries.push_back("EXTENSIONS");
-  queries.push_back("MAX_LIGHTS");
-  queries.push_back("MAX_ATTRIB_STACK_DEPTH");
-  queries.push_back("MAX_CLIENT_ATTRIB_STACK_DEPTH");
-  queries.push_back("MAX_MODELVIEW_STACK_DEPTH");    
-  queries.push_back("MAX_PROJECTION_STACK_DEPTH");
-  queries.push_back("MAX_TEXTURE_STACK_DEPTH");   
-  queries.push_back("MAX_TEXTURE_SIZE");       
-  queries.push_back("MAX_TEXTURE_UNITS"); 
-  queries.push_back("MAX_TEXTURE_COORDS");
-  queries.push_back("MAX_TEXTURE_IMAGE_UNITS");
-  queries.push_back("MAX_VERTEX_TEXTURE_IMAGE_UNITS");  
-  queries.push_back("MAX_COMBINED_TEXTURE_IMAGE_UNITS");
-  queries.push_back("MAX_ELEMENTS_VERTICES");           
-  queries.push_back("MAX_ELEMENTS_INDICES"); 
-  queries.push_back("MAX_DRAW_BUFFERS");    
-  queries.push_back("MAX_SAMPLES");     
-  queries.push_back("RED_BITS");    
-  queries.push_back("BLUE_BITS");   
-  queries.push_back("GREEN_BITS");  
-  queries.push_back("ALPHA_BITS");  
-  queries.push_back("DEPTH_BITS");  
-  queries.push_back("STENCIL_BITS");
-  
-  NetMsg msg;
-  for (size_t q = 0; q < queries.size(); q++) {
-    msg = MSGMGR.newMessage();
-    msg->packStdString(queries[q]);
-    msg->send(playerData->netHandler, MsgQueryGL);
-  }
 }
 
 
