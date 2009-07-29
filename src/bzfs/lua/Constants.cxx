@@ -160,7 +160,7 @@ static bool PushObstacles(lua_State* L)
 
 static bool PushFlagQualities(lua_State* L)
 {
-  lua_pushliteral(L, "QUALITY");
+  lua_pushliteral(L, "FLAGQUAL");
   lua_newtable(L);
 
   PushDualPair(L, "GOOD", eGoodFlag);
@@ -243,6 +243,7 @@ static bool PushPermissions(lua_State* L)
   ADD_PERM(lagwarn);
   ADD_PERM(listPlugins);
   ADD_PERM(listPerms);
+  ADD_PERM(luaServer);
   ADD_PERM(masterBan);
   ADD_PERM(mute);
   ADD_PERM(playerList);

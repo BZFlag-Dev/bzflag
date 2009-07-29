@@ -797,8 +797,12 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 	      TeamColor destTeam = TeamColor(250 - destPlayer);	// FIXME this teamcolor <-> player id conversion is in several files now
 	      for (int i = 0; i < curMaxPlayers; i++) {
 		GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-		if (otherData && otherData->player.isPlaying() && otherData->player.isHuman() && otherData->player.isTeam(destTeam))
+		if (otherData &&
+		    otherData->player.isPlaying() &&
+		    otherData->player.isHuman() &&
+		    otherData->player.isTeam(destTeam)) {
 		  MSGMGR.newMessage(msg)->send(otherData->netHandler,MsgMessage);
+                }
 	      }
 	    }
 	  }

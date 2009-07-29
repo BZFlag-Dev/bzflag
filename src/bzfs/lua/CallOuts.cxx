@@ -297,6 +297,8 @@ static int GetMaxWaitTime(lua_State* L);
 static int SetMaxWaitTime(lua_State* L);
 static int ClearMaxWaitTime(lua_State* L);
 
+static int PlayerQueryGL(lua_State* L);
+
 static int GetTime(lua_State* L);
 
 static int DirList(lua_State* L);
@@ -502,6 +504,8 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetMaxWaitTime);
   PUSH_LUA_CFUNC(L, SetMaxWaitTime);
   PUSH_LUA_CFUNC(L, ClearMaxWaitTime);
+
+  PUSH_LUA_CFUNC(L, PlayerQueryGL);
 
   PUSH_LUA_CFUNC(L, GetTime);
 
@@ -2322,6 +2326,28 @@ static int ClearMaxWaitTime(lua_State* L)
   const char* name = luaL_checkstring(L, 1);
   bz_clearMaxWaitTime(name);
   return 0;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+static int PlayerQueryGL(lua_State* L)
+{
+  const int playerID      = luaL_checkint(L, 1);
+  const std::string query = luaL_checkstring(L, 2);
+
+  GameKeeper::Player* player = getPlayerByIndex(playerID);
+  if ((player == NULL) || (player->netHandler == NULL)) {
+    return 0;
+  }
+
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packStdString(query);
+  msg->send(player->netHandler, MsgQueryGL);
+
+  lua_pushboolean(L, true);
+  return 1;
 }
 
 
