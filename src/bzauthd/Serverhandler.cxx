@@ -10,7 +10,6 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <common.h>
 #include "ServerHandler.h"
 #include "TokenMgr.h"
 #include "UserStorage.h"

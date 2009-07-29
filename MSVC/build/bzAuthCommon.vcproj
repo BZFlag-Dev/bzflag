@@ -577,11 +577,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzAuthCommon\mongoose.c"
+				RelativePath="..\..\src\bzAuthCommon\mongoose.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzAuthCommon\net.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\plugin_utils\plugin_config.cpp"
 				>
 			</File>
 			<File
@@ -615,6 +619,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzAuthCommon\net.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\plugins\plugin_utils\plugin_config.h"
 				>
 			</File>
 			<File

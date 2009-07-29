@@ -10,7 +10,6 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <common.h>
 #include "EventHandler.h"
 #include "TimeKeeper.h"
 

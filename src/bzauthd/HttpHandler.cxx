@@ -10,12 +10,12 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <common.h>
 #include "HttpHandler.h"
 #include "ConfigMgr.h"
 #include "Log.h"
 #include <TextUtils.h>
 #include "UserStorage.h"
+#include <mongoose.h>
 
 INSTANTIATE_SINGLETON(HttpHandler)
 

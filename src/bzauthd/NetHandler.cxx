@@ -10,7 +10,6 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <common.h>
 #include "NetHandler.h"
 #include "ClientHandler.h"
 #include "ServerHandler.h"

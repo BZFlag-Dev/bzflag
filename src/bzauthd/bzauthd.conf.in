@@ -1,0 +1,8 @@
+localport = 1234
+ldap_master_addr = ldap://127.0.0.1
+ldap_suffix = dc=my-domain,dc=com
+ldap_rootdn = cn=Manager,dc=my-domain,dc=com
+ldap_password = secret
+token_expire_delay = 300000
+reg_period = 300
+http_port = 88

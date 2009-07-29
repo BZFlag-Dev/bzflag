@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/"
+				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/;../../plugins/plugin_utils"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -51,6 +51,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
+				ForcedIncludeFiles="common.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -121,7 +122,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/"
+				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/;../../plugins/plugin_utils"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -129,6 +130,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
+				ForcedIncludeFiles="common.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

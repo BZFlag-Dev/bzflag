@@ -10,7 +10,6 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <common.h>
 #include "ClientHandler.h"
 #include "Log.h"
 #include "RSA.h"

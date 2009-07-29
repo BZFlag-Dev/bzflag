@@ -13,8 +13,9 @@
 #ifndef __BZAUTHD_HTTPHANDLER_H__
 #define __BZAUTHD_HTTPHANDLER_H__
 
-#include <mongoose.h>
 #include <Singleton.h>
+
+struct mg_context;
 
 class HttpHandler : public Singleton<HttpHandler>
 {

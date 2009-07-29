@@ -60,6 +60,8 @@ public:
   uint16_t lookupKey(std::string stringKey);
   uint8_t lookupType(uint16_t key);
 protected:
+  void parse();
+
   typedef UNORDERED_MAP<std::string, uint16_t /*key*/> KeyRegisterType;
   typedef std::vector<uint8_t /*type*/> TypeRegisterType;
   typedef std::vector<void *> ValuesType;

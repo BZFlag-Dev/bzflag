@@ -10,10 +10,10 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
-#include <common.h>
 #include <assert.h>
 #include <string.h>
 #include "ConfigMgr.h"
+#include <plugin_config.h>
 
 INSTANTIATE_SINGLETON(Config)
 
@@ -27,6 +27,18 @@ void Config::initialize()
   registerKey("token_expire_delay", CONFIG_TOKEN_EXPIRE_DELAY, 5 * 60 * 1000);
   registerKey("reg_period", CONFIG_REG_PERIOD, 5 * 60);
   registerKey("http_port", CONFIG_HTTP_PORT, "88");
+
+  parse();
+}
+
+void Config::parse()
+{
+  PluginConfig config("bzauthd.conf");
+  for(KeyRegisterType::iterator itr = keyRegister.begin(); itr != keyRegister.end(); ++itr) {
+    std::string value = config.item("global", itr->first);
+    if(value != "")
+      setStringValue(itr->second, (const uint8_t*)value.c_str());
+  }
 }
 
 Config::Config()
@@ -43,9 +55,14 @@ Config::~Config()
 
 void Config::setStringValue(uint16_t key, const uint8_t *value)
 {
-  assert(lookupType(key) == CONFIG_TYPE_STRING);
-
-  values[key] = (void*)strdup((const char*)value);
+  if(lookupType(key) == CONFIG_TYPE_STRING) {
+    values[key] = (void*)strdup((const char*)value);
+  } else if(lookupType(key) == CONFIG_TYPE_INTEGER) {
+    uint32_t intValue;
+    sscanf((const char*)value, "%d", &intValue);
+    setIntValue(key, intValue); 
+  } else
+    assert(false);
 }
 
 const uint8_t * Config::getStringValue(uint16_t key)
@@ -100,6 +117,28 @@ uint8_t Config::lookupType(uint16_t key)
   else
     return CONFIG_TYPE_MAX;
 }
+
+// hack to be able to reuse plugin_config
+// normally these are defined in bzfsAPI.cxx and plugin_utils.cxx
+
+#ifdef _WIN32
+#  define BZF_API __declspec(dllexport)
+#else
+#  define BZF_API
+#endif
+
+BZF_API void bz_debugMessagef(int _level, const char *fmt, ...)
+{
+}
+
+const std::string& makelower(std::string& s)
+{
+  for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
+    *i = ::tolower(*i);
+
+  return s;
+}
+
 
 // Local Variables: ***
 // mode: C++ ***
