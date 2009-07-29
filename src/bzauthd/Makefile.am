@@ -7,6 +7,7 @@ bin_PROGRAMS = bzauthd
 AM_CPPFLAGS = \
 	-DBUILDING_BZAUTHD \
 	-I$(top_srcdir)/src/bzAuthCommon \
+	-I$(top_srcdir)/plugins/plugin_utils \
 	-include common.h \
 	$(LIBGCRYPT_CFLAGS) \
 	$(GPG_ERROR_CFLAGS) \
@@ -17,8 +18,6 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 bzauthd_DFLAGS = -static
 bzauthd_SOURCES = \
-	../../plugins/plugin_utils/plugin_config.cpp \
-	../../plugins/plugin_utils/plugin_config.h \
 	bzauthd.cxx \
 	ClientHandler.cxx \
 	Common.cxx \

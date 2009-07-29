@@ -16,6 +16,8 @@ libbzAuthCommon_la_LIBADD = \
 	$(LIBGCRYPT_LIBS)
 
 libbzAuthCommon_la_SOURCES  = \
+	../../plugins/plugin_utils/plugin_config.cpp \
+	../../plugins/plugin_utils/plugin_config.h \
 	AuthProtocol.cxx \
 	AuthProtocol.h \
 	base64.cpp \

@@ -59,7 +59,7 @@ void Config::setStringValue(uint16_t key, const uint8_t *value)
     values[key] = (void*)strdup((const char*)value);
   } else if(lookupType(key) == CONFIG_TYPE_INTEGER) {
     uint32_t intValue;
-    sscanf((const char*)value, "%d", &intValue);
+    sscanf((const char*)value, "%d", (int*)&intValue);
     setIntValue(key, intValue); 
   } else
     assert(false);
@@ -127,7 +127,7 @@ uint8_t Config::lookupType(uint16_t key)
 #  define BZF_API
 #endif
 
-BZF_API void bz_debugMessagef(int _level, const char *fmt, ...)
+BZF_API void bz_debugMessagef(int /*_level*/, const char */*fmt*/, ...)
 {
 }
 
