@@ -331,7 +331,7 @@ bool Record::setDirectory(const char *dirname)
 
   if (!makeDirExist(RecordDir.c_str())) {
     // they've been warned, leave it at that
-    logDebugMessage(1,"Could not open or create -recdir directory: %s\n",
+    logDebugMessage(1, "Could not open or create -recdir directory: %s\n",
 	    RecordDir.c_str());
     return false;
   }
@@ -487,7 +487,7 @@ bool Record::saveBuffer(int playerIndex, const char *filename, int seconds)
 
   // setup the beginning position for the recording
   if (seconds != 0) {
-    logDebugMessage(3,"Record: saving %i seconds to %s\n", seconds, name.c_str());
+    logDebugMessage(3, "Record: saving %i seconds to %s\n", seconds, name.c_str());
     // start the first update that happened at least 'seconds' ago
     p = RecordBuf.head;
     RRtime saveSecs = (RRtime)seconds;
@@ -591,11 +591,11 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
     RRpacket *p = newPacket(mode, code, len, data);
     p->timestamp = getRRtime();
     addHeadPacket(&RecordBuf, p);
-    logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+    logDebugMessage(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
-      logDebugMessage(4,"routePacket: deleting until State Update\n");
+      logDebugMessage(4, "routePacket: deleting until State Update\n");
       while (((p = delTailPacket(&RecordBuf)) != NULL) &&
 	     (p->mode != UpdatePacket)) {
 	delete[] p->data;
@@ -607,7 +607,7 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
     p.timestamp = getRRtime();
     initPacket(mode, code, len, data, &p);
     savePacket(&p, RecordFile);
-    logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+    logDebugMessage(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p.mode, p.len, MsgStrings::strMsgCode(p.code), p.data);
   }
 
@@ -1233,7 +1233,7 @@ bool Replay::sendPackets()
       return false;
     }
 
-    logDebugMessage(4,"sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
+    logDebugMessage(4, "sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
     if (p->mode != HiddenPacket) {
@@ -1280,7 +1280,7 @@ bool Replay::sendPackets()
 
       } // for loop
     } else {
-      logDebugMessage(4,"  skipping hidden packet\n");
+      logDebugMessage(4, "  skipping hidden packet\n");
     }
 
     p = nextPacket();
@@ -1861,7 +1861,7 @@ static RRpacket *loadPacket(FILE *f)
     }
   }
 
-  logDebugMessage(4,"loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
+  logDebugMessage(4, "loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
 	  (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
   return p;
@@ -2081,15 +2081,15 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   // do the worldDatabase or flagTypes need to be replaced?
   bool replaced = false;
   if (replaceFlagTypes(h)) {
-    logDebugMessage(1,"Replay: replaced flags\n");
+    logDebugMessage(1, "Replay: replaced flags\n");
     replaced = true;
   }
   if (replaceSettings(h)) {
-    logDebugMessage(1,"Replay: replaced settings\n");
+    logDebugMessage(1, "Replay: replaced settings\n");
     replaced = true;
   }
   if (replaceWorldDatabase(h)) {
-    logDebugMessage(1,"Replay: replaced world database\n");
+    logDebugMessage(1, "Replay: replaced world database\n");
     replaced = true;
   }
 
@@ -2233,7 +2233,7 @@ static bool replaceFlagTypes(ReplayHeader *h)
 
   if (replace) {
     // replace the flags
-    logDebugMessage(3,"Replay: replacing Flag Types\n");
+    logDebugMessage(3, "Replay: replacing Flag Types\n");
     clOptions->numExtraFlags = 0;
     for (it = FlagType::getFlagMap().begin();
 	 it != FlagType::getFlagMap().end(); ++it) {
@@ -2258,7 +2258,8 @@ static bool replaceSettings(ReplayHeader *h)
   // change the settings maxPlayer size to the current value
   const int maxPlayersOffset =
     sizeof(float)    + // world size
-    sizeof(uint16_t);  // gamestyle
+    sizeof(uint16_t) + // gameType
+    sizeof(uint16_t);  // gameOptions
   char *hdrMaxPlayersPtr = h->worldSettings + maxPlayersOffset;
   nboPackUInt16(hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
 
@@ -2280,7 +2281,7 @@ static bool replaceWorldDatabase(ReplayHeader *h)
       (memcmp(h->world, worldDatabase, h->worldSize) != 0)) {
     // they don't match, replace the world
 
-    logDebugMessage(3,"Replay: replacing World Database\n");
+    logDebugMessage(3, "Replay: replacing World Database\n");
 
     char *oldWorld = worldDatabase;
     worldDatabase = h->world;
