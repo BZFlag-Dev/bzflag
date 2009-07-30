@@ -3768,6 +3768,11 @@ static void enableReplayServer(void)
       std::cerr << "observer count limited to " << ReplayObservers << " for replay" << std::endl;
       clOptions->maxTeam[ObserverTeam] = ReplayObservers;
     }
+
+    if (clOptions->botsPerIP != 0) {
+      std::cerr << "bots are not allowed in replay mode" << std::endl;
+      clOptions->botsPerIP = 0;
+    }
   }
 }
 
