@@ -26,6 +26,9 @@ void packWorldSettings ( void )
   void* buffer = worldSettings;
 
   // the settings
+
+  // When changing the next three lines, be sure to update
+  // maxPlayersOffset in replaceSettings (RecordReplay.cxx)
   buffer = nboPackFloat  (buffer, BZDBCache::worldSize);
   buffer = nboPackUInt16 (buffer, clOptions->gameType);
   buffer = nboPackUInt16 (buffer, clOptions->gameOptions);
