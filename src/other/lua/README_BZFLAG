@@ -1,8 +1,9 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-The following is a list of the major customizations
-made to the lua-5.1.4 sources for BZFlag.
+The following is a list of the major customizations made to the lua-5.1.4
+sources for BZFlag. Many of the source code changes can be found by searching
+for the 'BZ' tag, ex:  'cd src/; grep BZ *.cxx *.h'
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -20,9 +21,9 @@ made to the lua-5.1.4 sources for BZFlag.
 
 6. Added the __rawset metamethod and luaL_checkrawset() funciton  (svn r19402)
 
-7. Added the luaL_testudata() function
+7. Added the luaL_testudata() function  (rumoured to be in lua 5.2)
 
-8. Changed HUGE_VAL to std::numeric_limits<lua_Number>::infinity() in lmathlib.cxx
+8. Fixed a g++ HUGE_VAL issue at the top of lmathlib.cxx
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
