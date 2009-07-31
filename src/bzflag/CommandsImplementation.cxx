@@ -145,6 +145,14 @@ class DebugLevelCommand : LocalCommand {
 };
 
 
+#if defined(DEBUG_RENDERING)
+class ReContextCommand : LocalCommand {
+  public:
+    ReContextCommand();
+    bool operator() (const char *commandLine);
+};
+#endif
+
 // class instantiations
 static BindCommand        bindCommand;
 static CommandList        commandList;
@@ -163,6 +171,9 @@ static SetCommand         setCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
 static WorldInfoCommand   worldInfoCommand;
+#if defined(DEBUG_RENDERING)
+static ReContextCommand   reContextCommand;
+#endif
 
 
 // class constructors
@@ -183,6 +194,9 @@ SetCommand::SetCommand()               : LocalCommand("/set")       {}
 SilenceCommand::SilenceCommand()       : LocalCommand("/silence")   {}
 UnsilenceCommand::UnsilenceCommand()   : LocalCommand("/unsilence") {}
 WorldInfoCommand::WorldInfoCommand()   : LocalCommand("/worldinfo") {}
+#if defined(DEBUG_RENDERING)
+ReContextCommand::ReContextCommand()   : LocalCommand("/recontext") {}
+#endif
 
 
 // the meat of the matter
@@ -686,6 +700,28 @@ bool RoamPosCommand::operator() (const char *commandLine)
 
   return true;
 }
+
+
+#if defined(DEBUG_RENDERING)
+bool ReContextCommand::operator() (const char *)
+{
+  // destroy OpenGL context
+  getMainWindow()->getWindow()->freeContext();
+
+  // recreate OpenGL context
+  getMainWindow()->getWindow()->makeContext();
+
+  // force a redraw (mainly for control panel)
+  getMainWindow()->getWindow()->callExposeCallbacks();
+
+  // cause sun/moon to be repositioned immediately
+  lastEpochOffset = epochOffset - 5.0;
+
+  // reload display lists and textures and initialize other state
+  OpenGLGState::initContext();
+  return true;
+}
+#endif
 
 
 bool ReTextureCommand::operator() (const char *)

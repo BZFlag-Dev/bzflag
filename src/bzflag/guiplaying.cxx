@@ -583,33 +583,6 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
     return false;
   }
 
-  // built-in unchangeable keys.  only perform if not masked.
-  // TODO: not localizable
-  switch (key.chr) {
-#if defined(DEBUG_RENDERING)
-    // for testing forced recreation of OpenGL context
-    case 'X': {
-      if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
-        // destroy OpenGL context
-        getMainWindow()->getWindow()->freeContext();
-
-        // recreate OpenGL context
-        getMainWindow()->getWindow()->makeContext();
-
-        // force a redraw (mainly for control panel)
-        getMainWindow()->getWindow()->callExposeCallbacks();
-
-        // cause sun/moon to be repositioned immediately
-        lastEpochOffset = epochOffset - 5.0;
-
-        // reload display lists and textures and initialize other state
-        OpenGLGState::initContext();
-      }
-      return true;
-    }
-#endif // DEBUG_RENDERING
-  } // end switch on key
-
   // Shot/Accuracy Statistics display
   if (key.button == BzfKeyEvent::Home && pressed) {
     HUDDialogStack::get()->push(new ShotStats);
