@@ -1133,10 +1133,6 @@ void ServerLink::sendNewPlayer( int botID, TeamColor team )
   buf = nboPackUInt8(buf, uint8_t(botID));
   buf = nboPackInt16(buf, int16_t(team));
 
-  printf("clientbase sending new player...\n");
-  printf("  bid: %d\n",botID);
-  printf("  team: %d\n",int16_t(team));
-  
   send(MsgNewPlayer, sizeof(msg), msg);
 }
 

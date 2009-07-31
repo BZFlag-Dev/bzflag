@@ -56,8 +56,8 @@ public:
 
   double          lastTickAt;
   double          tickDuration;
-  double           speed, nextSpeed;
-  double           turnRate, nextTurnRate;
+  double          speed, nextSpeed;
+  double          turnRate, nextTurnRate;
   bool            shoot;
 
   double          distanceRemaining, nextDistance;

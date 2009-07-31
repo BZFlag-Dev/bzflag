@@ -39,6 +39,8 @@ RCRobotPlayer::RCRobotPlayer(const PlayerId& _id,
   nextTurn(0.0),
   hasStopped(false)
 {
+  for (int i = 0; i < RCRobotPlayer::updateCount; ++i)
+    pendingUpdates[i] = false;
 }
 
 

@@ -35,12 +35,13 @@
 
 
 RCLink::RCLink(std::ostream *logger) :
+  isFrontEnd(false),
   status(Disconnected),
   listenfd(-1),
   connfd(-1),
+  output_overflow(false),
   specificLogger(logger)
 {
-  isFrontEnd = false;
 }
 
 RCLink::~RCLink()

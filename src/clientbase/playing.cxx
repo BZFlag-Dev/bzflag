@@ -1577,39 +1577,6 @@ void handlePlayerInfo(void *msg)
 }
 
 
-void handleNewPlayer(void *msg)
-{
-  uint8_t id;
-  uint8_t botID;
-  int16_t team;
-  msg = nboUnpackUInt8(msg, id);
-  msg = nboUnpackUInt8(msg, botID);
-  msg = nboUnpackInt16(msg, team);
-  
-#ifdef ROBOT
-  int i;
-  for (i = 0; i < MAX_ROBOTS; i++)
-    if (!robots[i])
-      break;
-  if (i >= MAX_ROBOTS) {
-    logDebugMessage(1, "Too many bots requested\n");
-    return;
-  }
-  robots[i] = new RobotPlayer(id,
-    TextUtils::format("%s%2.2d", myTank->getCallSign(),i).c_str(),
-    serverLink);
-  robots[i]->setTeam((TeamColor)team);
-  serverLink->sendEnter(id, ComputerPlayer, NoUpdates, robots[i]->getTeam(),
-    robots[i]->getCallSign(), "", "");
-  if (!numRobots) {
-    makeObstacleList();
-    RobotPlayer::setObstacleList(&obstacleList);
-  }
-  numRobots++;
-#endif
-}
-
-
 void handleForceState(void *msg)
 {
   PlayerId pid;
