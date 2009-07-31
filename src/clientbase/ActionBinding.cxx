@@ -124,6 +124,10 @@ ActionBinding::ActionBinding() {
 
   defaultBinding.insert(BindingTable::value_type("-", "time backward"));
   defaultBinding.insert(BindingTable::value_type("=", "time forward"));
+  defaultBinding.insert(BindingTable::value_type("]", "time +30"));
+  defaultBinding.insert(BindingTable::value_type("[", "time -30"));
+  defaultBinding.insert(BindingTable::value_type("}", "time +30"));
+  defaultBinding.insert(BindingTable::value_type("{", "time -30"));
 
   					       /* A - unused */
   defaultBinding.insert(BindingTable::value_type("B", "viewZoom toggle"));
@@ -144,12 +148,12 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
   					       /* R - unused */
   defaultBinding.insert(BindingTable::value_type("S", "toggle displayScore"));
-  					       /* T - framerate */
+  defaultBinding.insert(BindingTable::value_type("T", "toggle showDrawFPS"));
   defaultBinding.insert(BindingTable::value_type("U", "hunt"));
   defaultBinding.insert(BindingTable::value_type("V", "toggle slowMotion"));
   defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
   					       /* X - debug rendering */
-  					       /* Y - milliseconds drawing */
+  defaultBinding.insert(BindingTable::value_type("Y", "toggle showDrawTime"));
   					       /* Z - send admin (above) */
   defaultBinding.insert(BindingTable::value_type("Delete", "destruct"));
 

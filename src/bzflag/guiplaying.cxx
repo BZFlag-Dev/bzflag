@@ -118,8 +118,8 @@ static RadarRenderer *radar = NULL;
 static ScoreboardRenderer *scoreboard = NULL;
 static SceneDatabaseBuilder *sceneBuilder = NULL;
 static bool firstLife = false;
-static bool showFPS = false;
-static bool showDrawTime = false;
+static BZDB_bool showDrawFPS("showDrawFPS");
+static BZDB_bool showDrawTime("showDrawTime");
 static bool unmapped = false;
 static int preUnmapFormat = -1;
 static float testVideoFormatTimer = 0.0f;
@@ -184,6 +184,7 @@ std::vector<std::string> &getSilenceList()
 {
   return silencePlayers;
 }
+
 
 // try to select the next recipient in the specified direction
 // eventually avoiding robots
@@ -585,70 +586,36 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
   // built-in unchangeable keys.  only perform if not masked.
   // TODO: not localizable
   switch (key.chr) {
-  case 'T':
-  case 't':
-    // toggle frames-per-second display
-    if (pressed) {
-      showFPS = !showFPS;
-      if (!showFPS) {
-	hud->setFPS(-1.0);
-      }
-    }
-    return true;
-
-  case 'Y':
-  case 'y':
-    // toggle milliseconds for drawing
-    if (pressed) {
-      showDrawTime = !showDrawTime;
-      if (!showDrawTime) {
-	hud->setDrawTime(-1.0);
-      }
-    }
-    return true;
-
-    // for testing forced recreation of OpenGL context
 #if defined(DEBUG_RENDERING)
-  case 'X':
-    if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
-      // destroy OpenGL context
-      getMainWindow()->getWindow()->freeContext();
+    // for testing forced recreation of OpenGL context
+    case 'X': {
+      if (pressed && ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0)) {
+        // destroy OpenGL context
+        getMainWindow()->getWindow()->freeContext();
 
-      // recreate OpenGL context
-      getMainWindow()->getWindow()->makeContext();
+        // recreate OpenGL context
+        getMainWindow()->getWindow()->makeContext();
 
-      // force a redraw (mainly for control panel)
-      getMainWindow()->getWindow()->callExposeCallbacks();
+        // force a redraw (mainly for control panel)
+        getMainWindow()->getWindow()->callExposeCallbacks();
 
-      // cause sun/moon to be repositioned immediately
-      lastEpochOffset = epochOffset - 5.0;
+        // cause sun/moon to be repositioned immediately
+        lastEpochOffset = epochOffset - 5.0;
 
-      // reload display lists and textures and initialize other state
-      OpenGLGState::initContext();
+        // reload display lists and textures and initialize other state
+        OpenGLGState::initContext();
+      }
+      return true;
     }
-    return true;
 #endif // DEBUG_RENDERING
-
-  case ']':
-  case '}':
-    // plus 30 seconds
-    if (pressed) clockAdjust += 30.0f;
-    return true;
-
-  case '[':
-  case '{':
-    // minus 30 seconds
-    if (pressed) clockAdjust -= 30.0f;
-    return true;
-
-  default:
-    break;
   } // end switch on key
+
   // Shot/Accuracy Statistics display
   if (key.button == BzfKeyEvent::Home && pressed) {
     HUDDialogStack::get()->push(new ShotStats);
     return true;
   }
+
   return false;
 }
 
@@ -3866,7 +3833,7 @@ static void checkDirtyControlPanel(ControlPanel *cp)
 static void drawUI()
 {
   // setup the triangle counts  (FIXME: hackish)
-  if (showFPS && showDrawTime) {
+  if (showDrawFPS && showDrawTime) {
     hud->setFrameTriangleCount(RENDERER.getFrameTriangleCount());
     // NOTE:  the radar triangle count is actually from the previous frame
     if (radar)
@@ -4606,8 +4573,10 @@ void drawFrame(const float dt)
   frameCount++;
   cumTime += float(dt);
   if (cumTime >= 2.0) {
-    if (showFPS) {
+    if (showDrawFPS) {
       hud->setFPS(float(frameCount) / cumTime);
+    } else {
+      hud->setFPS(-1.0f);
     }
     cumTime = 0.00000001f;
     frameCount = 0;
@@ -4768,6 +4737,8 @@ void drawFrame(const float dt)
     }
 #endif
     hud->setDrawTime((float)media->stopwatch(false));
+  } else {
+    hud->setDrawTime(-1.0f);
   }
 
   handleMouseDrawing();
