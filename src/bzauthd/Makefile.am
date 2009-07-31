@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 	$(LIBGCRYPT_CFLAGS) \
 	$(GPG_ERROR_CFLAGS) \
 	$(OPENLDAP_CFLAGS) \
+	$(LIBCURL_CPPFLAGS) \
 	-I$(top_srcdir)/include \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
@@ -39,7 +40,9 @@ bzauthd_SOURCES = \
 
 LDADD = \
 	../bzAuthCommon/libbzAuthCommon.la 	\
-	../common/libCommon.la 			\
+	../common/libCommon.la 				\
+	$(LIBCURL)							\
+	$(LIBREGEX)							\
 	$(OPENLDAP_LIBS)
 
 MAINTAINERCLEANFILES = \

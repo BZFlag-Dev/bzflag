@@ -29,6 +29,9 @@ void Config::initialize()
   registerKey("web_server_name", CONFIG_WEB_SERVER_NAME, "my.bzflag.org");
   registerKey("web_script_name", CONFIG_WEB_SCRIPT_NAME, "/bb/profile.php");
   registerKey("http_port", CONFIG_HTTP_PORT, "88");
+  registerKey("callsign_regex", CONFIG_CALLSIGN_REGEX, "^[][[:alnum:] +_-]{2,20}$");
+  registerKey("password_regex", CONFIG_PASSWORD_REGEX, "^[[:print:]]{3,255}$");
+  registerKey("email_regex", CONFIG_EMAIL_REGEX, "^[[:alnum:]._%+-]+@[[:alnum:].-]+\\.[[:alpha:]]{2,4}$");
 
   parse();
 }
@@ -129,7 +132,7 @@ uint8_t Config::lookupType(uint16_t key)
 #  define BZF_API
 #endif
 
-BZF_API void bz_debugMessagef(int /*_level*/, const char */*fmt*/, ...)
+BZF_API void bz_debugMessagef(int /*_level*/, const char * /*fmt*/, ...)
 {
 }
 

@@ -18,6 +18,7 @@
 #include <gcrypt.h>
 #include "base64.h"
 #include <assert.h>
+#include <bzregex.h>
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
@@ -27,6 +28,9 @@ UserStore::UserStore() : rootld(NULL), nextuid(0)
 
 UserStore::~UserStore()
 {
+  regfree(&re_callsign);
+  regfree(&re_password);
+  regfree(&re_email);
   unbind(rootld);
 }
 
@@ -62,8 +66,25 @@ bool UserStore::bind(LDAP *& ld, const uint8_t *addr, const uint8_t *dn, const u
   return true;
 }
 
+bool UserStore::compile_reg(regex_t &reg, uint16_t config_key)
+{
+  const char *regex = (const char*)sConfig.getStringValue(config_key);
+  int ret = regcomp(&reg, regex, REG_EXTENDED | REG_NOSUB);
+  if(ret != 0) {
+    char err[1024];
+    size_t size = regerror (ret, &reg, err, 1024);
+    sLog.outError("UserStore: failed to compile '%s': %s", regex, err);
+    return false;
+  }
+  return true;
+}
+
 bool UserStore::initialize()
 {
+  if(!compile_reg(re_callsign, CONFIG_CALLSIGN_REGEX)) return false;
+  if(!compile_reg(re_password, CONFIG_PASSWORD_REGEX)) return false;
+  if(!compile_reg(re_email, CONFIG_EMAIL_REGEX)) return false;
+
   return bind(rootld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
 
@@ -321,9 +342,29 @@ private:
   LDAPAttr attr_res[3];
 };
 
+bool UserStore::execute_reg(regex_t &reg, const char *str)
+{
+  int ret = regexec(&reg, str, 0, NULL, 0);
+  if(ret != 0) {
+    char err[1024];
+    size_t size = regerror (ret, &reg, err, 1024);
+    sLog.outDebug("UserStore: %s did not match", str);
+    return false;
+  }
+  return true;
+}
+
 BzRegErrors UserStore::registerUser(const UserInfo &info)
 {
-  sLog.outLog("registering %s(%s)", info.name.c_str(), info.email.c_str());
+  // first check if info is valid
+  if(!execute_reg(re_callsign, info.name.c_str()))
+    return REG_USER_INVALID;
+  if(!execute_reg(re_password, info.password.c_str()))
+    return REG_PASS_INVALID;
+  if(!execute_reg(re_email, info.email.c_str()))
+    return REG_MAIL_INVALID;
+
+  sLog.outLog("UserStore: registering %s(%s)", info.name.c_str(), info.email.c_str());
   /* If multiple sources are allowed to register users,
      the highest uid must be atomically fetch/incremented.
      First the value stored in cn=NextUID's uid is retrieved then
@@ -354,20 +395,20 @@ BzRegErrors UserStore::registerUser(const UserInfo &info)
         LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
         LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
         if(!ldap_check( ldap_modify_s(rootld, nextuid_dn.c_str(), mod_attrs) )) {
-          sLog.outDebug("nextuid modify failed");
+          sLog.outDebug("UserStore: nextuid modify failed");
           nextuid = 0;
         } else
           break;
       }
 
-      sLog.outDebug("cannot fetch-increment NextUID, retry number %d", i + 1);
+      sLog.outDebug("UserStore: cannot fetch-increment NextUID, retry number %d", i + 1);
     }
 
     if(nextuid < 1) {
       nextuid = 0;
       return REG_FAIL_GENERIC;
     }
-    sLog.outDebug("fetch nextuid %d", nextuid);
+    sLog.outDebug("UserStore: fetch nextuid %d", nextuid);
   }
 
   /* NOTE: the "active state" of the account is determined by whether the password is
@@ -597,14 +638,22 @@ BzRegErrors UserStore::userExists(std::string const &user_dn, std::string const 
 
 BzRegErrors UserStore::updatePassword(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
+  // hash the password
+  size_t digest_len = hashLen();
+  uint8_t *digest = new uint8_t[digest_len];
+  hash((uint8_t*)info.password.c_str(), info.password.length(), digest);
+
   sLog.outLog("finishing registration for %s", info.name.c_str());
   // add the password and change the sign of the timestamp
-  LDAPMod1 attr_pwd (LDAP_MOD_ADD, "userPassword", info.password.c_str());
+  LDAPMod1 attr_pwd (LDAP_MOD_ADD, "userPassword", (const char*)digest);
   char time_str[30]; sprintf(time_str, "%d", (int)time(NULL)); // TODO: TimeKeeper + 64bit
   LDAPMod1 attr_time  (LDAP_MOD_REPLACE, "shadowLastChange", time_str);
   LDAPMod *pwd_mods[3] = { &attr_pwd.mod, &attr_time.mod, NULL };
 
-  if(!ldap_check(ldap_modify_ext_s(rootld, user_dn.c_str(), pwd_mods, NULL, NULL))) {
+  bool success = ldap_check(ldap_modify_ext_s(rootld, user_dn.c_str(), pwd_mods, NULL, NULL));
+  delete[] digest;
+
+  if(!success) {
     // undo in reverse order, both should succeed under normal circumstances
     if(ldap_check(ldap_delete_ext_s(rootld, mail_dn.c_str(), NULL, NULL)))
       ldap_check(ldap_delete_ext_s(rootld, user_dn.c_str(), NULL, NULL));

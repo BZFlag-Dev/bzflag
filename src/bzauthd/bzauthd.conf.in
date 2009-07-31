@@ -8,3 +8,6 @@ reg_period = 300
 http_port = 88
 web_server_name = my.bzflag.org
 web_script_name = /bb/profile.php
+callsign_regex = ^[][[:alnum:] +_-]{2,20}$
+password_regex = ^[[:print:]]{3,255}$
+email_regex = ^[[:alnum:]._%+-]+@[[:alnum:].-]+\.[[:alpha:]]{2,4}$

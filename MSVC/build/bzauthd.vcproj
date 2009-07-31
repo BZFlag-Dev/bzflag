@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/;../../plugins/plugin_utils"
+				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/;../../plugins/plugin_utils;../../src/other/curl/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -95,6 +95,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy .\bzauthd_debug\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
@@ -122,7 +123,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/;../../plugins/plugin_utils"
+				AdditionalIncludeDirectories="./;../../include;../../src/other/gcrypt/src;&quot;../../src/other/gpg-error/src&quot;;../../src/other/openldap/include;../../src/bzAuthCommon/;../../plugins/plugin_utils;../../src/other/curl/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -174,6 +175,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="copy .\bzauthd_release\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 	</Configurations>

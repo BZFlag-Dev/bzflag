@@ -17,6 +17,7 @@
 #include <list>
 #include <AuthProtocol.h>
 #include "Thread.h"
+#include <bzregex.h>
 
 typedef struct ldap LDAP;
 
@@ -62,9 +63,14 @@ private:
   BzRegErrors registerMail(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors updatePassword(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors userExists(std::string const &user_dn, std::string const &callsign);
+  bool compile_reg(regex_t &reg, uint16_t config_key);
+  bool execute_reg(regex_t &reg, const char *str);
 
   LDAP *rootld;
   uint32_t nextuid;
+  regex_t re_callsign;
+  regex_t re_password;
+  regex_t re_email;
 };
 
 #define sUserStore UserStore::guard().instance()

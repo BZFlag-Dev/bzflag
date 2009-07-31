@@ -114,8 +114,6 @@ bool ClientHandler::handleAuthResponse(Packet &packet)
     }
   }
 
-  // TODO: make sure all characters are in range etc .. more thorough checking needed
-
   if(valid)
   {
     // the password doesn't need hashing for auth
@@ -224,7 +222,6 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
       if(!isprint(message[i])) break;
       if(message[i] == ' ')
       {
-        // TODO: "Username must be between 2 and 20 chars long and use letter, number, space or -+_[] characters"
         if(callsign_len != -1) {
           if(password_len != -1) break;
           password_len = (int32_t)i - callsign_len - 1;
@@ -246,15 +243,10 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
   // TODO: check for proper email address
 
   if(valid)
-  {
-    // hash the password
-    size_t digest_len = sUserStore.hashLen();
-    uint8_t *digest = new uint8_t[digest_len];
-    sUserStore.hash(message + callsign_len + 1, password_len, digest);
-    
+  { 
     UserInfo info;
     info.name = std::string ((const char*)message, callsign_len);
-    info.password = std::string((const char*)digest, digest_len);
+    info.password = std::string((const char*)message + callsign_len + 1, password_len);
     info.email = std::string((const char*)message + callsign_len + password_len + 2, email_len);
 
     BzRegErrors error = sUserStore.registerUser(info);
@@ -266,8 +258,7 @@ bool ClientHandler::handleRegisterResponse(Packet &packet)
       Packet success(DMSG_REGISTER_SUCCESS, 0);
       m_socket->sendData(success);
     }
-    
-    delete[] digest;
+
   } else {
     Packet fail(DMSG_REGISTER_FAIL, 4);
     fail << (uint32_t)REG_INVALID_MESSAGE;

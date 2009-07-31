@@ -13,9 +13,10 @@
 #include "HttpHandler.h"
 #include "ConfigMgr.h"
 #include "Log.h"
-#include <TextUtils.h>
 #include "UserStorage.h"
 #include <mongoose.h>
+#include <network.h>
+#include <curl/curl.h>
 
 INSTANTIATE_SINGLETON(HttpHandler)
 
@@ -42,15 +43,15 @@ bool HttpHandler::initialize()
 std::vector<std::string> split_request(const std::string &request)
 {
   std::vector<std::string> ret;
-  std::string::size_type off = 0, poz, del;
+  std::string::size_type off = 0, del;
   while(1) {
     del = request.find('&', off);
     std::string elem = del == request.npos ? request.substr(off) : request.substr(off, del - off);
 
-    poz = elem.find("*2"); if(poz != elem.npos) elem.replace(poz, 2, "&");
-    poz = elem.find("*1"); if(poz != elem.npos) elem.replace(poz, 2, "*");
+    char *unescaped = curl_easy_unescape(NULL, elem.c_str(), (int)elem.length(), NULL);
+    ret.push_back(unescaped);
+    curl_free(unescaped);
 
-    ret.push_back(elem);
     if(del == request.npos) break;
     off = del + 1;
   };
