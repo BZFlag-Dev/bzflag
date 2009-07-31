@@ -77,6 +77,11 @@
 #
 ######################################################################
 
+# hack to avoid having dynamic files in SVN
+# (libtool.m4.old is libtool 1.5 compatible?)
+cp src/other/curl/m4/libtool.m4.old src/other/curl/m4/libtool.m4
+
+
 # set to minimum acceptible version of autoconf
 if [ "x$AUTOCONF_VERSION" = "x" ] ; then
     AUTOCONF_VERSION=2.58
