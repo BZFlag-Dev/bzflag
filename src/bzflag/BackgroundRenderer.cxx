@@ -1499,11 +1499,40 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 }
 
 
+static float getFogFactor(const fvec3& pos, const std::string& fogMode)
+{
+  const fvec3& eye = RENDERER.getViewFrustum().getEye();
+  const float dist = (pos - eye).length();
+
+  if (fogMode == "linear") {
+    static BZDB_float fogStart("_fogStart");
+    static BZDB_float fogEnd("_fogEnd");
+    if (dist <= fogStart) { return 1.0f; }
+    if (dist >= fogEnd)   { return 0.0f; }
+    return (fogEnd - dist) /
+           (fogEnd - fogStart);;
+  }
+
+  static BZDB_float fogDensity("_fogDensity");
+
+  if (fogMode == "exp") {
+    return exp(-dist * fogDensity);
+  }
+
+  if (fogMode == "exp2") {
+    const float factor = (dist * fogDensity);
+    return exp(-(factor * factor));
+  }
+
+  return 1.0f;
+}
+
+
 void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 {
-  const float minLuminance = 0.02f;
-  static const int receiverSlices = 32;
-  static const float receiverRingSize = 0.5f;	// meters
+  static const float minLuminance = 0.01f;
+  static const int   receiverSlices = 32;
+  static const float receiverRingSize = 0.5f; // meters
   static fvec2 angle[receiverSlices + 1];
 
   static bool init = false;
@@ -1519,6 +1548,19 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   const int count = renderer.getNumAllLights();
   if (count == 0) {
     return;
+  }
+
+  // special handling for fog  (because of the blend mode)
+  static BZDB_string fogModeStr("_fogMode");
+  const std::string& fogMode = fogModeStr;
+  const bool foggy = !fogMode.empty() &&
+                     (fogMode != "none") &&
+                     ((fogMode == "exp")  ||
+                      (fogMode == "exp2") ||
+                      (fogMode == "linear"));
+  if (foggy) {
+    glPushAttrib(GL_FOG_BIT);
+    glDisable(GL_FOG);
   }
 
   // setup the ground tint
@@ -1568,13 +1610,16 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     const fvec3& atten = light.getAttenuation();
 
     if (isnan(pos.x) || isnan(pos.y) || isnan(pos.z)) {
-      printf("FIXME: NaN light pos: %s:%i\n", __FILE__, __LINE__);
+      logDebugMessage(0, "FIXME: NaN light pos: %s:%i\n", __FILE__, __LINE__);
       continue;
     }
 
     // point under light
-    float d = pos[2];
+    float d = pos.z;
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
+    if (foggy) {
+      I *= getFogFactor(pos.xyz(), fogMode);
+    }
 
     // set the main lighting color
     fvec3 baseColor = gndColor->rgb() * lightColor.rgb();
@@ -1596,10 +1641,8 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     // move to the light's position
     glTranslatef(pos[0], pos[1], 0.0f);
 
-    float innerSize;
-    fvec3 innerColor;
-    float outerSize;
-    fvec3 outerColor;
+    float innerSize,  outerSize;
+    fvec3 innerColor, outerColor;
 
     // draw ground receiver, computing lighting at each vertex ourselves
     glBegin(GL_TRIANGLE_FAN); {
@@ -1657,6 +1700,10 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   if (useTexture) {
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
+  }
+
+  if (foggy) {
+    glPopAttrib();
   }
 }
 
