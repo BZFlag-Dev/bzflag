@@ -40,6 +40,8 @@ namespace MessageUtilities
   template<>
   bool parse(const char *message, uint32_t &dest);
   template<>
+  bool parse(const char *message, uint16_t &dest);
+  template<>
   bool parse(const char *message, std::string &dest);
 
   template<typename T>

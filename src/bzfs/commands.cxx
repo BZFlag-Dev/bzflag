@@ -1139,7 +1139,7 @@ bool GameOverCommand::operator() (const char *,
 
   NetMsg  msg = MSGMGR.newMessage();
   msg->packUInt8(t);
-  msg->packUInt16(uint16_t(NoTeam));
+  msg->packInt16(int16_t(NoTeam));
   msg->broadcast(MsgScoreOver);
 
   gameOver = true;

@@ -880,11 +880,11 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, NetworkUpdates updates
   if (state != Okay) return;
   char msg[MaxPacketLen] = {0};
   void* buf = msg;
-
+  
   buf = nboPackUInt8(buf, uint8_t(_id));
   buf = nboPackUInt16(buf, uint16_t(type));
   buf = nboPackUInt16(buf, uint16_t(updates));
-  buf = nboPackUInt16(buf, uint16_t(team));
+  buf = nboPackInt16(buf, int16_t(team));
 
   ::strncpy((char*)buf, name, CallSignLen - 1);
   buf = (void*)((char*)buf + CallSignLen);
@@ -939,7 +939,7 @@ void ServerLink::sendCaptureFlag(TeamColor team)
   char msg[3];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
-  nboPackUInt16(buf, uint16_t(team));
+  nboPackInt16(buf, int16_t(team));
   send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
@@ -1125,13 +1125,18 @@ void ServerLink::sendPaused(bool paused)
   send(MsgPause, sizeof(msg), msg);
 }
 
-void ServerLink::sendNewPlayer( int botID )
+void ServerLink::sendNewPlayer( int botID, TeamColor team )
 {
-  char msg[2];
+  char msg[4];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
   buf = nboPackUInt8(buf, uint8_t(botID));
+  buf = nboPackInt16(buf, int16_t(team));
 
+  printf("clientbase sending new player...\n");
+  printf("  bid: %d\n",botID);
+  printf("  team: %d\n",int16_t(team));
+  
   send(MsgNewPlayer, sizeof(msg), msg);
 }
 

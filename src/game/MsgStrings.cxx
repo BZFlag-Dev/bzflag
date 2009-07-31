@@ -473,12 +473,13 @@ static MsgStringList handleMsgAddPlayer(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t index;
-  uint16_t type, team, wins, losses, tks;
+  int16_t team;
+  uint16_t type, wins, losses, tks;
   char callsign[CallSignLen];
 
   d = nboUnpackUInt8(d, index);
   d = nboUnpackUInt16(d, type);
-  d = nboUnpackUInt16(d, team);
+  d = nboUnpackInt16(d, team);
   d = nboUnpackUInt16(d, wins);
   d = nboUnpackUInt16(d, losses);
   d = nboUnpackUInt16(d, tks);
@@ -527,8 +528,8 @@ static MsgStringList handleMsgCaptureFlag(const PacketInfo& pi)
   MsgStringList list = listMsgBasics(pi);
 
   void *d = (void*)pi.data;
-  uint16_t team;
-  d = nboUnpackUInt16(d, team);
+  int16_t team;
+  d = nboUnpackInt16(d, team);
   listPush(list, 1, "team: %s", strTeam(team).c_str());
 
   return list;
@@ -796,13 +797,13 @@ static MsgStringList handleMsgJoinServer(const PacketInfo& pi)
 
   std::string addr;
   int32_t port;
-  int32_t team;
+  int16_t team;
   std::string referrer;
   std::string message;
 
   d = nboUnpackStdString(d, addr);
   d = nboUnpackInt32(d, port);
-  d = nboUnpackInt32(d, team);
+  d = nboUnpackInt16(d, team);
   d = nboUnpackStdString(d, referrer);
   d = nboUnpackStdString(d, message);
 
@@ -1090,9 +1091,9 @@ static MsgStringList handleMsgScoreOver(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t player;
-  uint16_t team;
+  int16_t team;
   d = nboUnpackUInt8(d, player);
-  d = nboUnpackUInt16(d, team);
+  d = nboUnpackInt16(d, team);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
   listPush(list, 1, "team:   %i", strTeam(team).c_str());
 
@@ -1241,11 +1242,12 @@ static MsgStringList handleMsgTeamUpdate(const PacketInfo& pi)
 
   void *d = (void*)pi.data;
   uint8_t count;
-  uint16_t i, team, size, won, lost;
+  int16_t team;
+  uint16_t i, size, won, lost;
   d = nboUnpackUInt8(d, count);
   listPush(list, 1, "count: %i", count);
   for (i = 0; i < count; i++) {
-    d = nboUnpackUInt16(d, team);
+    d = nboUnpackInt16(d, team);
     d = nboUnpackUInt16(d, size);
     d = nboUnpackUInt16(d, won);
     d = nboUnpackUInt16(d, lost);

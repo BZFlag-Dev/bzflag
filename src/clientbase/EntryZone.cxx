@@ -43,13 +43,13 @@ void* EntryZone::unpack(void* buf)
     flags.push_back(type);
   }
   for (i = 0; i < teamCount; i++) {
-    uint16_t team;
-    buf = nboUnpackUInt16(buf, team);
+    int16_t team;
+    buf = nboUnpackInt16(buf, team);
     teams.push_back((TeamColor)team);
   }
   for (i = 0; i < safetyCount; i++) {
-    uint16_t safetyTeam;
-    buf = nboUnpackUInt16(buf, safetyTeam);
+    int16_t safetyTeam;
+    buf = nboUnpackInt16(buf, safetyTeam);
     safety.push_back((TeamColor)safetyTeam);
   }
 

@@ -758,11 +758,12 @@ void doNetworkStuff(void)
 //
 static Player* addPlayer(PlayerId id, void* msg, int showMessage)
 {
-  uint16_t team, type, wins, losses, tks;
+  int16_t team;
+  uint16_t type, wins, losses, tks;
   float rank;
   char callsign[CallSignLen];
   msg = nboUnpackUInt16 (msg, type);
-  msg = nboUnpackUInt16 (msg, team);
+  msg = nboUnpackInt16 (msg, team);
   msg = nboUnpackFloat (msg, rank);
   msg = nboUnpackUInt16 (msg, wins);
   msg = nboUnpackUInt16 (msg, losses);
@@ -951,10 +952,11 @@ static void saveRobotInfo(Playerid id, void *msg)
   for (int i = 0; i < numRobots; i++)
     if (robots[i]) {
       void *tmpbuf = msg;
-      uint16_t team, type, wins, losses, tks;
+      int16_t team;
+      uint16_t type, wins, losses, tks;
       char callsign[CallSignLen];
       tmpbuf = nboUnpackUInt16(tmpbuf, type);
-      tmpbuf = nboUnpackUInt16(tmpbuf, team);
+      tmpbuf = nboUnpackInt16(tmpbuf, team);
       tmpbuf = nboUnpackUInt16(tmpbuf, wins);
       tmpbuf = nboUnpackUInt16(tmpbuf, losses);
       tmpbuf = nboUnpackUInt16(tmpbuf, tks);
@@ -1031,8 +1033,8 @@ void handleSetTeam(void *msg, uint16_t len)
   PlayerId id;
   msg = nboUnpackUInt8(msg, id);
 
-  uint8_t team;
-  msg = nboUnpackUInt8(msg, team);
+  int16_t team;
+  msg = nboUnpackInt16(msg, team);
 
   Player *p = lookupPlayer(id);
   if (p == NULL) {
@@ -1063,13 +1065,13 @@ void handleJoinServer(void *msg)
 
   std::string addr;
   int32_t port;
-  int32_t team;
+  int16_t team;
   std::string referrer;
   std::string message;
 
   msg = nboUnpackStdString(msg, addr);
   msg = nboUnpackInt32(msg, port);
-  msg = nboUnpackInt32(msg, team);
+  msg = nboUnpackInt16(msg, team);
   msg = nboUnpackStdString(msg, referrer);
   msg = nboUnpackStdString(msg, message);
 
@@ -1291,11 +1293,11 @@ void handleFlagUpdate(void *msg, size_t len)
 void handleTeamUpdate(void *msg, bool &checkScores)
 {
   uint8_t  numTeams;
-  uint16_t team;
+  int16_t team;
 
   msg = nboUnpackUInt8(msg, numTeams);
   for (int i = 0; i < numTeams; i++) {
-    msg = nboUnpackUInt16(msg, team);
+    msg = nboUnpackInt16(msg, team);
     msg = teams[int(team)].unpack(msg);
   }
   updateNumPlayers();
@@ -1578,7 +1580,12 @@ void handlePlayerInfo(void *msg)
 void handleNewPlayer(void *msg)
 {
   uint8_t id;
+  uint8_t botID;
+  int16_t team;
   msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt8(msg, botID);
+  msg = nboUnpackInt16(msg, team);
+  
 #ifdef ROBOT
   int i;
   for (i = 0; i < MAX_ROBOTS; i++)
@@ -1589,10 +1596,9 @@ void handleNewPlayer(void *msg)
     return;
   }
   robots[i] = new RobotPlayer(id,
-    TextUtils::format("%s%2.2d", myTank->getCallSign(),
-    i).c_str(),
+    TextUtils::format("%s%2.2d", myTank->getCallSign(),i).c_str(),
     serverLink);
-  robots[i]->setTeam(AutomaticTeam);
+  robots[i]->setTeam((TeamColor)team);
   serverLink->sendEnter(id, ComputerPlayer, NoUpdates, robots[i]->getTeam(),
     robots[i]->getCallSign(), "", "");
   if (!numRobots) {

@@ -98,7 +98,7 @@ public:
   void		sendTransferFlag(const PlayerId&, const PlayerId&);
   void		sendNewRabbit();
   void		sendPaused(bool paused);
-  void		sendNewPlayer( int botID);
+  void		sendNewPlayer(int botID, TeamColor team);
 
   void		sendExit();
   void		sendAutoPilot(bool autopilot);

@@ -1935,7 +1935,7 @@ BZF_API bool bz_sendJoinServer(int playerID,
 
   netMsg->packStdString(addr);
   netMsg->packInt32(port);
-  netMsg->packInt32(teamID);
+  netMsg->packInt16(int16_t(teamID));
   netMsg->packStdString(refr);
   netMsg->packStdString(mesg);
 

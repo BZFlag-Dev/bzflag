@@ -934,7 +934,7 @@ void sendScoreOverMessage(int playerID, TeamColor _team)
 {
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt8(playerID);
-  msg->packUInt16(uint16_t(_team));
+  msg->packInt16(int16_t(_team));
   msg->broadcast(MsgScoreOver);
 
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -970,7 +970,7 @@ void sendFlagCaptureMessage ( int playerIndex, int flagIndex, int teamCaptured )
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt8(playerIndex);
   msg->packUInt16(uint16_t(flagIndex));
-  msg->packUInt16(uint16_t(teamCaptured));
+  msg->packInt16(int16_t(teamCaptured));
   msg->broadcast(MsgCaptureFlag,false);
 
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -1070,7 +1070,7 @@ void sendSetTeam ( int playerIndex, int _team )
   NetMsg msg = MSGMGR.newMessage();
 
   msg->packUInt8(playerIndex);
-  msg->packUInt8(_team);
+  msg->packInt16(_team);
   msg->broadcast(MsgSetTeam);
 }
 

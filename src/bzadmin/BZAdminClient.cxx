@@ -215,12 +215,13 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       }
 
       case MsgAddPlayer:
-	uint16_t team, type, wins, losses, tks;
+	int16_t team;
+	uint16_t type, wins, losses, tks;
 	float rank;
 	char callsign[CallSignLen];
 	vbuf = nboUnpackUInt8(vbuf, p);
 	vbuf = nboUnpackUInt16(vbuf, type);
-	vbuf = nboUnpackUInt16(vbuf, team);
+	vbuf = nboUnpackInt16(vbuf, team);
 	vbuf = nboUnpackFloat(vbuf, rank);
 	vbuf = nboUnpackUInt16(vbuf, wins);
 	vbuf = nboUnpackUInt16(vbuf, losses);
@@ -303,12 +304,12 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
       case MsgScoreOver:
 	PlayerId id;
-	uint16_t _team;
+	int16_t _team;
 	vbuf = nboUnpackUInt8(vbuf, id);
-	vbuf = nboUnpackUInt16(vbuf, _team);
+	vbuf = nboUnpackInt16(vbuf, _team);
 	it = players.find(id);
 	victimName = (it != players.end() ? it->second.name : "<unknown>");
-	if (_team != (uint16_t)NoTeam) {
+	if (_team != (int16_t)NoTeam) {
 	  Team temp;
 	  victimName = temp.getName((TeamColor)_team);
 	}

@@ -100,14 +100,14 @@ void PlayerInfo::setDead()
 void *PlayerInfo::packUpdate(void *buf)
 {
   buf = nboPackUInt16(buf, uint16_t(type));
-  buf = nboPackUInt16(buf, uint16_t(team));
+  buf = nboPackInt16(buf, int16_t(team));
   return buf;
 }
 
 void PlayerInfo::packUpdate(BufferedNetworkMessage *msg)
 {
   msg->packUInt16(uint16_t(type));
-  msg->packUInt16(uint16_t(team));
+  msg->packInt16(int16_t(team));
 }
 
 void *PlayerInfo::packId(void *buf)
@@ -225,7 +225,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
   buf = nboUnpackString(buf, referrer, ReferrerLen);
-
+  
   return processEnter(rejectCode, rejectMsg);
 }
 
@@ -318,8 +318,8 @@ void PlayerInfo::clearReferrer()
 
 void *PlayerInfo::packVirtualFlagCapture(void *buf)
 {
-  buf = nboPackUInt16(buf, uint16_t(int(team) - 1));
-  buf = nboPackUInt16(buf, uint16_t(1 + (int(team) % 4)));
+  buf = nboPackInt16(buf, int16_t(int(team) - 1));
+  buf = nboPackInt16(buf, int16_t(1 + (int(team) % 4)));
   return buf;
 }
 

@@ -37,12 +37,13 @@ PlayerAddMessage::PlayerAddMessage()
 bool PlayerAddMessage::unpack ( void* buf )
 {
   unsigned char id;
-  uint16_t _team, _type, _wins, _losses, _tks;
+  int16_t _team;
+  uint16_t _type, _wins, _losses, _tks;
   char _callsign[_CallSignLen] = {0};
 
   buf = nboUnpackUInt8(buf, id);
   buf = nboUnpackUInt16(buf, _type);
-  buf = nboUnpackUInt16(buf, _team);
+  buf = nboUnpackInt16(buf, _team);
   buf = nboUnpackUInt16(buf, _wins);
   buf = nboUnpackUInt16(buf, _losses);
   buf = nboUnpackUInt16(buf, _tks);
@@ -62,7 +63,8 @@ bool PlayerAddMessage::unpack ( void* buf )
 
 void*  PlayerAddMessage::pack ( void* buf )
 {
-  uint16_t _team, _type, _wins, _losses, _tks;
+  int16_t _team;
+  uint16_t _type, _wins, _losses, _tks;
   char _callsign[_CallSignLen] = {0};
 
   unsigned char id;
@@ -79,7 +81,7 @@ void*  PlayerAddMessage::pack ( void* buf )
   buf = nboPackUInt8(buf, id);
   buf = nboPackUInt16(buf, _type);
   buf = nboPackUInt16(buf, _type);
-  buf = nboPackUInt16(buf, _team);
+  buf = nboPackInt16(buf, _team);
   buf = nboPackUInt16(buf, _wins);
   buf = nboPackUInt16(buf, _losses);
   buf = nboPackUInt16(buf, _tks);

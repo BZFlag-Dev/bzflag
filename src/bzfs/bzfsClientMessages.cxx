@@ -250,8 +250,9 @@ public:
 
     // byte * 3
     if ( len >= 1 ) {
-      unsigned char temp = 0;
+      uint8_t temp = 0;
       buf  = nboUnpackUInt8(buf, temp);
+
       player = GameKeeper::Player::getPlayerByIndex(temp);
 
       return buf;
@@ -266,12 +267,14 @@ class NewPlayerHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    unsigned char botID;
+    uint8_t botID;
+    int16_t team;
 
     if ( len < 1)
       return false;
 
     buf = nboUnpackUInt8(buf, botID);
+    buf = nboUnpackInt16(buf, team);
 
     PlayerId id = getNewBot(player->getIndex(),botID);
     if (id == 0xff)
@@ -280,6 +283,9 @@ public:
     NetMsg   msg = MSGMGR.newMessage();
 
     msg->packUInt8(id);
+    msg->packUInt8(botID);
+    msg->packInt16(team);
+
     msg->send(player->netHandler, MsgNewPlayer);
 
     return true;
@@ -481,8 +487,8 @@ public:
       return false;
 
     // data: team whose territory flag was brought to
-    uint16_t _team;
-    buf = nboUnpackUInt16(buf, _team);
+    int16_t _team;
+    buf = nboUnpackInt16(buf, _team);
 
     captureFlag(player->getIndex(), TeamColor(_team));
     return true;

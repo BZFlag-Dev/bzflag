@@ -254,7 +254,7 @@ bool BaseBuilding::isFlatTop() const
 
 void* BaseBuilding::pack(void* buf) const
 {
-  buf = nboPackUInt16(buf, (uint16_t) team);
+  buf = nboPackInt16(buf, (int16_t) team);
 
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
@@ -272,8 +272,8 @@ void* BaseBuilding::pack(void* buf) const
 
 void* BaseBuilding::unpack(void* buf)
 {
-  uint16_t shortTeam;
-  buf = nboUnpackUInt16(buf, shortTeam);
+  int16_t shortTeam;
+  buf = nboUnpackInt16(buf, shortTeam);
   team = (int)shortTeam;
 
   buf = nboUnpackFVec3(buf, pos);
@@ -295,7 +295,7 @@ void* BaseBuilding::unpack(void* buf)
 int BaseBuilding::packSize() const
 {
   int fullSize = 0;
-  fullSize += sizeof(uint16_t); // team
+  fullSize += sizeof(int16_t);  // team
   fullSize += sizeof(fvec3);    // pos
   fullSize += sizeof(float);    // rotation
   fullSize += sizeof(fvec3);    // size

@@ -298,7 +298,7 @@ void* GroupInstance::pack(void* buf) const
   buf = nboPackUInt8(buf, bits);
 
   if (modifyTeam) {
-    buf = nboPackUInt16(buf, team);
+    buf = nboPackInt16(buf, team);
   }
   if (modifyColor) {
     buf = nboPackFVec4(buf, tint);
@@ -375,8 +375,8 @@ void* GroupInstance::unpack(void* buf)
   ricochet            = ((bits & (1 << 6)) == 0) ? false : true;
 
   if (modifyTeam) {
-    uint16_t tmpTeam;
-    buf = nboUnpackUInt16(buf, tmpTeam);
+    int16_t tmpTeam;
+    buf = nboUnpackInt16(buf, tmpTeam);
     team = (int)tmpTeam;
   }
   if (modifyColor) {

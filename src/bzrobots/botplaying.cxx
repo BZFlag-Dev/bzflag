@@ -348,14 +348,14 @@ void handleScoreOver(void *msg)
 {
   // unpack packet
   PlayerId id;
-  uint16_t team;
+  int16_t team;
   msg = nboUnpackUInt8(msg, id);
-  msg = nboUnpackUInt16(msg, team);
+  msg = nboUnpackInt16(msg, team);
   Player *player = lookupPlayer(id);
 
   // make a message
   std::string msg2;
-  if (team == (uint16_t)NoTeam) {
+  if (team == (int16_t)NoTeam) {
     // a player won
     if (player) {
       msg2 = TextUtils::format("%s (%s) won the game",
@@ -556,13 +556,14 @@ void handleGrabFlag(void *msg)
 void handleCaptureFlag(void *msg, bool &checkScores)
 {
   PlayerId id;
-  uint16_t flagIndex, team;
+  uint16_t flagIndex;
+  int16_t team;
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt16(msg, flagIndex);
   if (flagIndex >= world->getMaxFlags()) {
     return;
   }
-  msg = nboUnpackUInt16(msg, team);
+  msg = nboUnpackInt16(msg, team);
   Player *capturer = lookupPlayer(id);
 
   Flag& capturedFlag = world->getFlag(int(flagIndex));
@@ -1424,15 +1425,16 @@ void enteringServer(void* buf)
   }
   int i;
   for (i = 0; i < numRobotTanks; i++)
-    serverLink->sendNewPlayer(i);
+    serverLink->sendNewPlayer(i,AutomaticTeam);
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
-  uint16_t team, type, wins, losses, tks;
+  int16_t team;
+  uint16_t type, wins, losses, tks;
   float rank;
   tmpbuf = nboUnpackUInt16(tmpbuf, type);
-  tmpbuf = nboUnpackUInt16(tmpbuf, team);
+  tmpbuf = nboUnpackInt16(tmpbuf, team);
   tmpbuf = nboUnpackFloat(tmpbuf, rank);
   tmpbuf = nboUnpackUInt16(tmpbuf, wins);
   tmpbuf = nboUnpackUInt16(tmpbuf, losses);

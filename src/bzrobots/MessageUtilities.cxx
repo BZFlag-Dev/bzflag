@@ -80,6 +80,19 @@ bool MessageUtilities::parse(const char *str, uint32_t &dest)
   return true;
 }
 
+template<>
+bool MessageUtilities::parse(const char *str, uint16_t &dest)
+{
+  uint64_t tmp;
+
+  if (!MessageUtilities::parse(str, tmp))
+    return false;
+
+  dest = (uint16_t) tmp;
+
+  return true;
+}
+
 template <>
 bool MessageUtilities::parse(const char *str, std::string &dest)
 {
