@@ -16,7 +16,7 @@ AM_CPPFLAGS = \
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
-bzauthd_DFLAGS = -static
+bzauthd_LDFLAGS = -static -pthread
 bzauthd_SOURCES = \
 	bzauthd.cxx \
 	ClientHandler.cxx \

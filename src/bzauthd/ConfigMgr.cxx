@@ -26,6 +26,8 @@ void Config::initialize()
   registerKey("ldap_password", CONFIG_LDAP_ROOTPW, "secret");
   registerKey("token_expire_delay", CONFIG_TOKEN_EXPIRE_DELAY, 5 * 60 * 1000);
   registerKey("reg_period", CONFIG_REG_PERIOD, 5 * 60);
+  registerKey("web_server_name", CONFIG_WEB_SERVER_NAME, "my.bzflag.org");
+  registerKey("web_script_name", CONFIG_WEB_SCRIPT_NAME, "/bb/profile.php");
   registerKey("http_port", CONFIG_HTTP_PORT, "88");
 
   parse();

@@ -6,3 +6,5 @@ ldap_password = secret
 token_expire_delay = 300000
 reg_period = 300
 http_port = 88
+web_server_name = my.bzflag.org
+web_script_name = /bb/profile.php

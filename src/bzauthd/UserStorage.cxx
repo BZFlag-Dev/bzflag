@@ -466,6 +466,29 @@ BzRegErrors UserStore::registerUser(const UserInfo &info)
   if(err != REG_SUCCESS)
     return err;
 
+  // it's better to send the confirmation mail multiple times
+  // than not send it at all, so do it before registration is finalized
+
+  FILE *cmd_pipe;
+  std::string cmd = "mail -s \"BZFlag player registration\" " + 
+info.email;
+  if( (cmd_pipe = popen( cmd.c_str(), "w" )) != NULL ) {
+    char alphanum[] = "abcdefghijklmnopqrstuvwxyz0123456789";
+    std::string randtext(8, ' ');
+    for(int i = 0; i < 8; i++)
+      randtext[i] = alphanum[rand() % 35];
+
+    std::string msg = "You have just registered a BZFlag player account with\n"
+      "    callsign: " + info.name + "\n"
+      "To activate this account, please go to the following URL:\n\n" 
+      "http://" +(std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
+      (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
+      "?action=CONFIRM&email=" + info.email + "&password=" + 
+      (std::string)randtext + "\n";
+    pclose(cmd_pipe);
+  } else
+    sLog.outError("UserStore: could not send mail, failed to open pipe");  
+
   err = updatePassword(info, user_dn, mail_dn);
   if(err == REG_SUCCESS)
     nextuid = 0;
@@ -592,13 +615,16 @@ BzRegErrors UserStore::updatePassword(const UserInfo &info, std::string const &u
   return REG_SUCCESS;
 }
 
-BzRegErrors UserStore::registerMail(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
+BzRegErrors UserStore::registerMail(const UserInfo &info, std::string 
+const &user_dn, std::string const &mail_dn)
 {
   sLog.outLog("registering mail %s for %s", info.email.c_str(), info.name.c_str());
   const char *oc_vals[3] = {"applicationProcess", "extensibleObject", NULL};
-  LDAPModN attr_oc (LDAP_MOD_ADD, "objectClass", oc_vals);
-  LDAPMod1 attr_cn (LDAP_MOD_ADD, "cn", info.name.c_str());
-  LDAPMod *mail_mods[3] = { &attr_oc.mod, &attr_cn.mod, NULL };
+  LDAPModN attr_oc   (LDAP_MOD_ADD, "objectClass", oc_vals);
+  LDAPMod1 attr_cn   (LDAP_MOD_ADD, "cn", info.name.c_str());
+  LDAPMod1 attr_mail (LDAP_MOD_ADD, "mail", info.email.c_str());
+  LDAPMod *mail_mods[4] = { &attr_oc.mod, &attr_cn.mod, 
+&attr_mail.mod, NULL };
 
   while(1) {
     int mail_ret = ldap_add_ext_s(rootld, mail_dn.c_str(), mail_mods, NULL, NULL);
