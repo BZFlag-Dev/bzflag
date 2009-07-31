@@ -1515,16 +1515,13 @@ static float getFogFactor(const fvec3& pos, const std::string& fogMode)
 
   static BZDB_float fogDensity("_fogDensity");
 
-  if (fogMode == "exp") {
-    return exp(-dist * fogDensity);
-  }
-
   if (fogMode == "exp2") {
     const float factor = (dist * fogDensity);
     return exp(-(factor * factor));
   }
 
-  return 1.0f;
+  // default to GL_EXP fog mode
+  return exp(-dist * fogDensity);
 }
 
 
@@ -1553,11 +1550,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   // special handling for fog  (because of the blend mode)
   static BZDB_string fogModeStr("_fogMode");
   const std::string& fogMode = fogModeStr;
-  const bool foggy = !fogMode.empty() &&
-                     (fogMode != "none") &&
-                     ((fogMode == "exp")  ||
-                      (fogMode == "exp2") ||
-                      (fogMode == "linear"));
+  const bool foggy = !fogMode.empty() && (fogMode != "none");
   if (foggy) {
     glPushAttrib(GL_FOG_BIT);
     glDisable(GL_FOG);
