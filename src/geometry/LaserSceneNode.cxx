@@ -141,10 +141,20 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
 
 void LaserSceneNode::LaserRenderNode::render()
 {
-  if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)
+  const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
+
+  if (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY) {
     renderGeoLaser();
-  else
+  } else {
     renderFlatLaser();
+  }
+
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+  }
 }
 
 

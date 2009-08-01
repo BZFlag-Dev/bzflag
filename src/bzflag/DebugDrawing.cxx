@@ -19,6 +19,7 @@
 // common headers
 #include "bzfgl.h"
 #include "OpenGLGState.h"
+#include "SceneRenderer.h"
 #include "BZDBCache.h"
 #include "LocalPlayer.h"
 #include "LinkManager.h"
@@ -218,6 +219,12 @@ void DebugDrawing::drawLinks()
 
   OpenGLGState::resetState();
 
+  /// it's debugging junk, let it shine through
+  const bool blackFog = false && RENDERER.isFogActive();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
+
   glShadeModel(GL_SMOOTH);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE);
   glEnable(GL_BLEND);
@@ -338,6 +345,10 @@ void DebugDrawing::drawLinks()
   glDisable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glShadeModel(GL_FLAT);
+
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+  }
 }
 
 

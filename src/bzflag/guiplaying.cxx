@@ -3962,11 +3962,9 @@ static void setupFarPlane()
 
   float farDist = FarPlane;
 
-  const std::string fogMode = BZDB.get("_fogMode");
-  const bool mapFog = !fogMode.empty() && (fogMode != "none");
-
   if (BZDB.get("_cullDist") == "fog") {
-    if (mapFog && !BZDB.isTrue("_fogNoSky")) {
+    if (RENDERER.isFogActive() && !BZDB.isTrue("_fogNoSky")) {
+      const std::string fogMode = BZDB.get("_fogMode");
       const float fogMargin = 1.01f;
       if (fogMode == "linear") {
 	farDist = fogMargin * BZDB.eval("_fogEnd");
@@ -4587,6 +4585,9 @@ void drawFrame(const float dt)
     cumTime = 0.00000001f;
     frameCount = 0;
   }
+
+  // setup fog controls
+  RENDERER.setupFog();
 
   // drift clouds
   RENDERER.getBackground()->addCloudDrift(1.0f * dt, 0.731f * dt);

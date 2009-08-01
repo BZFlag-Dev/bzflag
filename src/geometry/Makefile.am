@@ -33,7 +33,6 @@ libGeometry_la_SOURCES  =		\
 	TankGeometryMgr.cxx		\
 	TankSceneNode.cxx		\
 	TextSceneNode.cxx		\
-	TracerSceneNode.cxx		\
 	TriWallSceneNode.cxx		\
 	ViewFrustum.cxx			\
 	WallSceneNode.cxx

@@ -309,8 +309,7 @@ void BillboardSceneNode::addLight(SceneRenderer& renderer)
 
 void BillboardSceneNode::notifyStyleChange()
 {
-  show = hasTexture && BZDBCache::texture &&
-	(!hasAlpha || BZDBCache::blend);
+  show = hasTexture && BZDBCache::texture && (!hasAlpha || BZDBCache::blend);
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {
@@ -386,6 +385,13 @@ void BillboardSceneNode::BillboardRenderNode::render()
   const float dist = sceneNode->width / dir.length();
   const fvec3 trans = sphere.xyz() + (dist * dir);
 
+  const bool blackFog = sceneNode->hasAlpha &&
+                        RENDERER.isFogActive() &&
+                        (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY);
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
+
   glPushMatrix();
   {
     glTranslatef(trans.x, trans.y, trans.z);
@@ -402,6 +408,10 @@ void BillboardSceneNode::BillboardRenderNode::render()
     glEnd();
   }
   glPopMatrix();
+
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+  }
 
   addTriangleCount(2);
 

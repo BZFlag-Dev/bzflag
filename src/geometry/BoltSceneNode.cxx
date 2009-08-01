@@ -491,6 +491,11 @@ void BoltSceneNode::BoltRenderNode::render()
     }
   }
   else {
+    const bool blackFog = RENDERER.isFogActive();
+    if (blackFog) {
+      glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+    }
+
     RENDERER.getViewFrustum().executeBillboard();
     glScalef(sceneNode->size, sceneNode->size, sceneNode->size);
     // draw some flares
@@ -690,6 +695,10 @@ void BoltSceneNode::BoltRenderNode::render()
       myStipple(0.5f);
 
       addTriangleCount(24);
+    }
+
+    if (blackFog) {
+      glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
     }
   }
 

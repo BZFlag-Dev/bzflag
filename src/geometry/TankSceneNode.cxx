@@ -199,20 +199,20 @@ void TankSceneNode::notifyStyleChange()
   builder.setTexture(TextureManager::instance().getTextureID("treads"));
   treadState = builder.getState();
 
-  OpenGLGStateBuilder builder2(lightsGState);
+  OpenGLGStateBuilder lightBuilder(lightsGState);
   if (BZDBCache::smooth) {
-    builder2.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    builder2.setSmoothing();
+    lightBuilder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    lightBuilder.setSmoothing();
   } else {
-    builder2.resetBlending();
-    builder2.setSmoothing(false);
+    lightBuilder.resetBlending();
+    lightBuilder.setSmoothing(false);
   }
-  lightsGState = builder2.getState();
+  lightsGState = lightBuilder.getState();
 
-  OpenGLGStateBuilder builder3(jumpJetsGState);
-  builder3.setCulling(GL_NONE);
-  builder3.setBlending(GL_SRC_ALPHA, GL_ONE);
-  jumpJetsGState = builder3.getState();
+  OpenGLGStateBuilder jumpJetBuilder(jumpJetsGState);
+  jumpJetBuilder.setCulling(GL_NONE);
+  jumpJetBuilder.setBlending(GL_SRC_ALPHA, GL_ONE);
+  jumpJetsGState = jumpJetBuilder.getState();
 }
 
 
@@ -1403,6 +1403,11 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
   myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
+  const bool blackFog = RENDERER.isFogActive();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
+
   // use a clip plane, because the ground has no depth
   const GLdouble clipPlane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
   glClipPlane(GL_CLIP_PLANE1, clipPlane);
@@ -1434,6 +1439,10 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   sceneNode->gstate.setState();
 
   glDisable(GL_CLIP_PLANE1);
+
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+  }
 
   addTriangleCount(4);
 

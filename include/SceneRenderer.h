@@ -105,6 +105,7 @@ public:
   void		setViewType(ViewType);
   void		setRebuildTanks();
 
+
   void		setExposed();
 
   void		clearRadar(float opacity);
@@ -157,7 +158,9 @@ public:
 
   const RenderNodeList& getShadowList() const;
 
-  bool		setupMapFog();
+  void			setupFog();
+  inline bool		isFogActive() const { return fogActive; }
+  inline const fvec4&	getFogColor() const { return fogColor; }
 
   void		render(bool lastFrame = true,
 		       bool sameFrame = false,
@@ -245,6 +248,9 @@ private:
   bool		fullWindow;
   bool		needStyleUpdate;
   bool		rebuildTanks;
+
+  bool		fogActive;
+  fvec4		fogColor;
 
   fvec4		shadowPlanes[4];
   int		shadowPlaneCount;

@@ -638,7 +638,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   }
 
   // fog setup
-  mapFog = setupMapFog();
+  if (fogActive) {
+    glEnable(GL_FOG);
+  }
 
   mirror = (BZDB.get(BZDBNAMES.MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
@@ -655,7 +657,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   renderScene();
 
   // finalize
-  if (mapFog) {
+  if (fogActive) {
     glDisable(GL_FOG);
   }
   renderPostDimming();
@@ -706,7 +708,7 @@ void SceneRenderer::drawMirror()
   }
 
   // darken the reflection
-  if (!mapFog) {
+  if (!fogActive) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glMatrixMode(GL_MODELVIEW);
@@ -845,7 +847,7 @@ void SceneRenderer::renderScene()
     background->setBlank(blank);
     background->setInvert(invert);
 
-    const bool avoidSkyFog = (mapFog && BZDB.isTrue("_fogNoSky"));
+    const bool avoidSkyFog = (fogActive && BZDB.isTrue("_fogNoSky"));
     if (avoidSkyFog) {
       glDisable(GL_FOG);
       background->renderSky(*this, fullWindow, mirror);
@@ -1057,44 +1059,47 @@ void SceneRenderer::doRender()
 }
 
 
-bool SceneRenderer::setupMapFog()
+void SceneRenderer::setupFog()
 {
+  fogActive = false;
   const std::string modeStr = BZDB.get("_fogMode");
   if (modeStr.empty() || (modeStr == "none")) {
     glDisable(GL_FOG);
     glHint(GL_FOG_HINT, GL_FASTEST);
-    return false;
+    return;
+  }
+  fogActive = true;
+
+  if (BZDB.evalInt("fogEffect") >= 1) {
+    glHint(GL_FOG_HINT, GL_NICEST);
+  } else {
+    glHint(GL_FOG_HINT, GL_FASTEST);
   }
 
-  GLenum  fogMode    = GL_EXP;
-  float   fogDensity = 0.001f;
-  float   fogStart   = BZDBCache::worldSize * 0.5f;
-  float   fogEnd     = BZDBCache::worldSize;
-  fvec4   fogColor(0.25f, 0.25f, 0.25f, 0.25f);
+  // parse the color setting
+  fogColor = fvec4(0.25f, 0.25f, 0.25f, 0.25f);
+  if (!parseColorString(BZDB.get(BZDBNAMES.FOGCOLOR), fogColor)) {
+    fogColor.r = fogColor.g = fogColor.b = 0.1f;
+    fogColor.a = 0.0f; // has no effect
+  }
 
-  // parse the values;
+  // parse the mode setting
+  GLenum fogMode    = GL_EXP; // default mode
   if (modeStr == "linear") {
     fogMode = GL_LINEAR;
   } else if (modeStr == "exp") {
     fogMode = GL_EXP;
   } else if (modeStr == "exp2") {
     fogMode = GL_EXP2;
-  } else {
-    fogMode = GL_EXP;
   }
 
+  // parse the range settings
+  float  fogDensity = 0.001f;
+  float  fogStart   = BZDBCache::worldSize * 0.5f;
+  float  fogEnd     = BZDBCache::worldSize;
   fogDensity = BZDB.eval(BZDBNAMES.FOGDENSITY);
   fogStart   = BZDB.eval(BZDBNAMES.FOGSTART);
   fogEnd     = BZDB.eval(BZDBNAMES.FOGEND);
-  if (!parseColorString(BZDB.get(BZDBNAMES.FOGCOLOR), fogColor)) {
-    fogColor.r = fogColor.g = fogColor.b = 0.1f;
-    fogColor.a = 0.0f; // has no effect
-  }
-  if (BZDB.evalInt("fogEffect") >= 1) {
-    glHint(GL_FOG_HINT, GL_NICEST);
-  } else {
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
 
   // setup GL fog
   glFogi(GL_FOG_MODE,    fogMode);
@@ -1102,9 +1107,8 @@ bool SceneRenderer::setupMapFog()
   glFogf(GL_FOG_START,   fogStart);
   glFogf(GL_FOG_END,     fogEnd);
   glFogfv(GL_FOG_COLOR,  fogColor);
-  glEnable(GL_FOG);
 
-  return true;
+  return;
 }
 
 

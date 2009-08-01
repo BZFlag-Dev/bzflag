@@ -119,13 +119,13 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
   // make receiver stuff
   gstate.reset();
   gstate.setShading();
-  gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE);
+  gstate.setBlending(GL_SRC_ALPHA, GL_ONE);
   receiverGState = gstate.getState();
 
   // sun shadow stuff
   gstate.reset();
   gstate.setStipple(0.5f);
-  gstate.setCulling((GLenum)GL_NONE);
+  gstate.setCulling(GL_NONE);
   sunShadowsGState = gstate.getState();
 
   // sky stuff
@@ -135,7 +135,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
   gstate.reset();
   sunGState = gstate.getState();
   gstate.reset();
-  gstate.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
+  gstate.setBlending(GL_ONE, GL_ONE);
 
   gstate.reset();
   starGState[0] = gstate.getState();
@@ -151,7 +151,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
     cloudsAvailable = true;
     gstate.reset();
     gstate.setShading();
-    gstate.setBlending((GLenum)GL_SRC_ALPHA, (GLenum)GL_ONE_MINUS_SRC_ALPHA);
+    gstate.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gstate.setMaterial(defaultMaterial, RENDERER.useQuality() > _LOW_QUALITY);
     gstate.setTexture(cloudsTexture);
     gstate.setAlphaFunc();
@@ -1406,6 +1406,12 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     return;
   }
 
+  // special handling for fog  (because of the blend mode)
+  const bool blackFog = renderer.isFogActive();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
+
   // bright sun dims intensity of ground receivers
   const float B = 1.0f - (0.6f * renderer.getSunBrightness());
 
@@ -1496,32 +1502,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();
-}
 
-
-static float getFogFactor(const fvec3& pos, const std::string& fogMode)
-{
-  const fvec3& eye = RENDERER.getViewFrustum().getEye();
-  const float dist = (pos - eye).length();
-
-  if (fogMode == "linear") {
-    static BZDB_float fogStart("_fogStart");
-    static BZDB_float fogEnd("_fogEnd");
-    if (dist <= fogStart) { return 1.0f; }
-    if (dist >= fogEnd)   { return 0.0f; }
-    return (fogEnd - dist) /
-           (fogEnd - fogStart);;
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, renderer.getFogColor());
   }
-
-  static BZDB_float fogDensity("_fogDensity");
-
-  if (fogMode == "exp2") {
-    const float factor = (dist * fogDensity);
-    return exp(-(factor * factor));
-  }
-
-  // default to GL_EXP fog mode
-  return exp(-dist * fogDensity);
 }
 
 
@@ -1548,12 +1532,9 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   }
 
   // special handling for fog  (because of the blend mode)
-  static BZDB_string fogModeStr("_fogMode");
-  const std::string& fogMode = fogModeStr;
-  const bool foggy = !fogMode.empty() && (fogMode != "none");
-  if (foggy) {
-    glPushAttrib(GL_FOG_BIT);
-    glDisable(GL_FOG);
+  const bool blackFog = renderer.isFogActive();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
   }
 
   // setup the ground tint
@@ -1568,7 +1549,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   OpenGLGState advGState;
   OpenGLGStateBuilder builder;
   builder.setShading(GL_SMOOTH);
-  builder.setBlending((GLenum)GL_ONE, (GLenum)GL_ONE);
+  builder.setBlending(GL_ONE, GL_ONE);
   if (useTexture) {
     builder.setTexture(groundTextureID);
     builder.setTextureMatrix(groundTextureMatrix);
@@ -1610,9 +1591,6 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     // point under light
     float d = pos.z;
     float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
-    if (foggy) {
-      I *= getFogFactor(pos.xyz(), fogMode);
-    }
 
     // set the main lighting color
     fvec3 baseColor = gndColor->rgb() * lightColor.rgb();
@@ -1695,8 +1673,8 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     glDisable(GL_TEXTURE_GEN_T);
   }
 
-  if (foggy) {
-    glPopAttrib();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, renderer.getFogColor());
   }
 }
 

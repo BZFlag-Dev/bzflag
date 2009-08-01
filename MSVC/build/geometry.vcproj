@@ -273,10 +273,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\TracerSceneNode.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\geometry\TriWallSceneNode.cxx"
 				>
 			</File>
