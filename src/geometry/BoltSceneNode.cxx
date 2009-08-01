@@ -175,8 +175,7 @@ void BoltSceneNode::notifyStyleChange()
     }
     builder.setStipple(1.0f);
     builder.setAlphaFunc();
-    if (!texturing) builder.setShading(GL_SMOOTH);
-    else builder.setShading(GL_FLAT);
+    builder.setShading(texturing ? GL_FLAT : GL_SMOOTH);
   }
   else {
     builder.resetBlending();
@@ -204,14 +203,10 @@ const float BoltSceneNode::BoltRenderNode::FlareSpread  = 0.08f;
 float       BoltSceneNode::BoltRenderNode::core[9][2];
 float       BoltSceneNode::BoltRenderNode::corona[8][2];
 const float BoltSceneNode::BoltRenderNode::ring[8][2] = {
-  { 1.0f, 0.0f },
-  { (float)M_SQRT1_2, (float)M_SQRT1_2 },
-  { 0.0f, 1.0f },
-  { (float)-M_SQRT1_2, (float)M_SQRT1_2 },
-  { -1.0f, 0.0f },
-  { (float)-M_SQRT1_2, (float)-M_SQRT1_2 },
-  { 0.0f, -1.0f },
-  { (float)M_SQRT1_2, (float)-M_SQRT1_2 }
+  {  1.0f,  0.0f }, { (float)+M_SQRT1_2, (float)+M_SQRT1_2 },
+  {  0.0f,  1.0f }, { (float)-M_SQRT1_2, (float)+M_SQRT1_2 },
+  { -1.0f,  0.0f }, { (float)-M_SQRT1_2, (float)-M_SQRT1_2 },
+  {  0.0f, -1.0f }, { (float)+M_SQRT1_2, (float)-M_SQRT1_2 }
 };
 
 
@@ -473,17 +468,20 @@ void BoltSceneNode::BoltRenderNode::render()
   if (sceneNode->invisible) {
     return;
   }
-  const float u0 = (float)u * du;
-  const float v0 = (float)v * dv;
-  const float u1 = u0 + du;
-  const float v1 = v0 + dv;
+  const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
+  const bool experimental = (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY);
+
+  const bool blackFog = RENDERER.isFogActive() && BZDBCache::blend &&
+                        ((shotLength > 0) || experimental);
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
 
   const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
   glTranslatef(sphere.x, sphere.y, sphere.z);
-  const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
-  if ((shotLength <= 0) &&
-      (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)) {
+
+  if ((shotLength <= 0) && experimental) {
     if (!sceneNode->drawFlares) {
       renderGeoBolt();
     } else {
@@ -491,11 +489,6 @@ void BoltSceneNode::BoltRenderNode::render()
     }
   }
   else {
-    const bool blackFog = RENDERER.isFogActive();
-    if (blackFog) {
-      glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
-    }
-
     RENDERER.getViewFrustum().executeBillboard();
     glScalef(sceneNode->size, sceneNode->size, sceneNode->size);
     // draw some flares
@@ -535,6 +528,10 @@ void BoltSceneNode::BoltRenderNode::render()
 
     if (sceneNode->texturing) {
       // draw billboard square
+      const float u0 = (float)u * du;
+      const float v0 = (float)v * dv;
+      const float u1 = u0 + du;
+      const float v1 = v0 + dv;
       myColor4fv(textureColor); // 1.0f all
       glBegin(GL_QUADS);
       glTexCoord2f(u0, v0); glVertex2f(-1.0f, -1.0f);
@@ -697,12 +694,13 @@ void BoltSceneNode::BoltRenderNode::render()
       addTriangleCount(24);
     }
 
-    if (blackFog) {
-      glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
-    }
   }
 
   glPopMatrix();
+
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+  }
 
   if (RENDERER.isLastFrame()) {
     if (++u == cu) {
