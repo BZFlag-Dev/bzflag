@@ -25,5 +25,8 @@ for the 'BZ' tag, ex:  'cd src/; grep BZ *.cxx *.h'
 
 8. Fixed a g++ HUGE_VAL issue at the top of lmathlib.cxx
 
+9. Appended '(BZFlag)' to the LUA_VERSION and LUA_RELEASE strings in lua.h
+   (svn r20367)
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
