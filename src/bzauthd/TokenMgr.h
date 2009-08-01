@@ -19,9 +19,9 @@
 #define __BZAUTHD_TOKENMGR_H__
 
 #include <string>
-#include <Singleton.h>
+#include "Thread.h"
 
-class TokenMgr : public Singleton<TokenMgr>
+class TokenMgr : public GuardedSingleton<TokenMgr>
 {
 public:
   TokenMgr();
@@ -39,7 +39,7 @@ private:
   void removeToken(TokenMapType::iterator &itr);
 };
 
-#define sTokenMgr TokenMgr::instance()
+#define sTokenMgr TokenMgr::guard().instance()
 
 #endif // __BZAUTHD_TOKENMGR_H__
 

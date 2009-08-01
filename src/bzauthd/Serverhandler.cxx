@@ -43,7 +43,7 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
     if(bzid) {
       response << (uint32_t)2;                          // registered, verified
       // send list of groups
-      std::list<std::string> groups = sUserStore.intersectGroupList((char*)callsign, m_groups);
+      std::list<std::string> groups = sUserStore.intersectGroupList((char*)callsign, m_groups, false, false);
       response << (uint32_t)groups.size();
       for(std::list<std::string>::iterator itr = groups.begin(); itr != groups.end(); ++itr)
         response << itr->c_str();

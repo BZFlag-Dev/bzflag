@@ -15,7 +15,7 @@
 #include "Log.h"
 #include "ConfigMgr.h"
 
-INSTANTIATE_SINGLETON(TokenMgr)
+INSTANTIATE_GUARDED_SINGLETON(TokenMgr)
 
 TokenMgr::TokenMgr()
 {

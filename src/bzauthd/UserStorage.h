@@ -46,12 +46,12 @@ public:
   UserStore();
   ~UserStore();
   bool initialize();
+  void update();
   
-  BzRegErrors registerUser(const UserInfo &info);
+  BzRegErrors registerUser(const UserInfo &info, std::string *rand_text = NULL);
   uint32_t authUser(UserInfo &info);
   bool isRegistered(std::string callsign);
-  void update();
-  std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups);
+  std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool all_groups, bool ids);
 
   size_t hashLen();
   void hash(uint8_t *message, size_t message_len, uint8_t *digest);

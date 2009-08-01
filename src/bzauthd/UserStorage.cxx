@@ -176,7 +176,6 @@ public:
     return NULL;
   }
 
-private:
   void setValues(char **vals) {
     values = vals;
     if(val_req_cnt != -1) {
@@ -190,6 +189,7 @@ private:
 
   }
 
+private:
   char *attr;
   char **values;
   int cur_val;
@@ -354,7 +354,7 @@ bool UserStore::execute_reg(regex_t &reg, const char *str)
   return true;
 }
 
-BzRegErrors UserStore::registerUser(const UserInfo &info)
+BzRegErrors UserStore::registerUser(const UserInfo &info, std::string *rand_text)
 {
   // first check if info is valid
   if(!execute_reg(re_callsign, info.name.c_str()))
@@ -511,8 +511,7 @@ BzRegErrors UserStore::registerUser(const UserInfo &info)
   // than not send it at all, so do it before registration is finalized
 
   FILE *cmd_pipe;
-  std::string cmd = "mail -s \"BZFlag player registration\" " + 
-info.email;
+  std::string cmd = "mail -s \"BZFlag player registration\" " + info.email;
   if( (cmd_pipe = popen( cmd.c_str(), "w" )) != NULL ) {
     char alphanum[] = "abcdefghijklmnopqrstuvwxyz0123456789";
     std::string randtext(8, ' ');
@@ -527,6 +526,8 @@ info.email;
       "?action=CONFIRM&email=" + info.email + "&password=" + 
       (std::string)randtext + "\n";
     pclose(cmd_pipe);
+
+    if(rand_text) *rand_text = randtext;
   } else
     sLog.outError("UserStore: could not send mail, failed to open pipe");  
 
@@ -779,12 +780,12 @@ bool UserStore::isRegistered(std::string callsign)
   return found;
 }
 
-std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups)
+std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool all_groups, bool ids)
 {
   sLog.outLog("getting group list for %s", callsign.c_str());
 
   std::list<std::string> ret;
-  if(groups.empty()) return ret;
+  if(groups.empty() && !all_groups) return ret;
 
   /* It seems here is no memberOf attribute for users in OpenLdap, but the groupOfUniqueNames
      objectClass has a member attribute. So getting the groups is still possible but slower. */
@@ -794,16 +795,29 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
      it only needs to check a subset for membership (there are likely many more groups than
      what a particular server is interested in) */
 
-  std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
-  std::string filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|";
-  for(std::list<std::string>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
-    filter += "(cn=" + *itr + ")";
-  filter += "))";
+  std::string filter;
+  if(callsign != "") {
+    std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+    if(!all_groups)
+      filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|";
+    else
+      filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + "))";
+  } else if(!all_groups)
+    filter = "(&(objectClass=groupOfUniqueNames)(|";
+  else
+    filter = "(objectClass=groupOfUniqueNames)";
+
+  if(!all_groups) {
+    for(std::list<std::string>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
+      filter += "(cn=" + *itr + ")";
+    filter += "))";
+  }
   
   char *attrs[2] = { (char*)LDAP_NO_ATTRS, NULL };
+  char *attrs_ids[2] = { "uid", NULL };
   LDAPMessage *res, *msg;
 
-  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_ONELEVEL, filter.c_str(), attrs, 0, &res) )) {
+  if(!ldap_check( ldap_search_s(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), LDAP_SCOPE_ONELEVEL, filter.c_str(), ids ? attrs_ids : attrs, 0, &res) )) {
     if(res) ldap_msgfree(ldap_first_message(rootld, res));
     return ret;
   }
@@ -811,21 +825,29 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
   for (msg = ldap_first_message(rootld, res); msg; msg = ldap_next_message(rootld, msg)) {
     switch(ldap_msgtype(msg)) {
       case LDAP_RES_SEARCH_ENTRY: {
-	// found the dn of a group, extract its cn
-        char *dn_str = ldap_get_dn(rootld, msg);
-        if(!dn_str) 
-          sLog.outError("null dn in search result");
-        else {
-          // TODO: maybe use ldap_str2dn
-          char *cn = strstr(dn_str, "cn=");
-          if(cn != NULL) {
-            char *comma = strchr(cn, ',');
-            if(comma) *comma = NULL;
-            ret.push_back(cn+3);
-          } else
-            sLog.outError("found group with no cn, dn=%s", dn_str);
-          
-          ldap_memfree(dn_str);
+        if(ids == false) {
+	  // found the dn of a group, extract its cn
+          char *dn_str = ldap_get_dn(rootld, msg);
+          if(!dn_str) 
+            sLog.outError("null dn in search result");
+          else {
+            // TODO: maybe use ldap_str2dn
+            char *cn = strstr(dn_str, "cn=");
+            if(cn != NULL) {
+              char *comma = strchr(cn, ',');
+              if(comma) *comma = NULL;
+              ret.push_back(cn+3);
+            } else
+              sLog.outError("found group with no cn, dn=%s", dn_str);
+            
+            ldap_memfree(dn_str);
+          }
+        } else {
+          LDAPAttr attr(1, 20, "uid");
+          attr.setValues(ldap_get_values(rootld, msg, "uid"));
+          char *uid = attr.getNext();
+          if(uid && !strcmp(uid, ""))
+            ret.push_back(uid);
         }
       } break;
       case LDAP_RES_SEARCH_RESULT: {

@@ -17,6 +17,7 @@
 #include <mongoose.h>
 #include <network.h>
 #include <curl/curl.h>
+#include "TokenMgr.h"
 
 INSTANTIATE_SINGLETON(HttpHandler)
 
@@ -59,7 +60,7 @@ std::vector<std::string> split_request(const std::string &request)
 }
 
 void HttpHandler::request_callback(
-  struct mg_connection *conn, const struct mg_request_info *request_info, void */*user_data*/)
+  struct mg_connection *conn, const struct mg_request_info *request_info, void * /*user_data*/)
 {
   // only from localhost (127.0.0.1)
   if(request_info->remote_ip != 0x7F000001) {
@@ -81,18 +82,48 @@ void HttpHandler::request_callback(
   if(tokens[0] == "register") {
     if(tokens.size() < 4) return;
 
-    BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]));
-    mg_printf(conn, "%d", (int)err);
+    std::string randtext;
+    BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]), &randtext);
+    mg_printf(conn, "%d:%s", (int)err, randtext.c_str());
 
   } else if(tokens[0] == "intersectGroups") {
     if(tokens.size() < 3) return;
+    if(tokens[2].size() != 2) return;
     std::list<std::string> list;
-    for(int i = 2; i < (int)tokens.size(); i++)
-      list.push_back(tokens[i]);
+    bool all = false;
+    if(tokens[2][0] == '0') {
+      if(tokens.size() < 4) return;
+      for(int i = 3; i < (int)tokens.size(); i++)
+        list.push_back(tokens[i]);
+    } else
+      all = true;
     
-    list = sUserStore.intersectGroupList(tokens[1], list);
+    list = sUserStore.intersectGroupList(tokens[1], list, all, tokens[2][1] == '1');
     for(std::list<std::string>::iterator itr = list.begin(); itr != list.end(); ++itr)
       mg_printf(conn, ":%s", itr->c_str());
+
+  } else if(tokens[0] == "gettoken") {
+    if(tokens.size() < 4) return;
+    // TODO: token[3] = ip
+    uint32_t uid = sUserStore.authUser(UserInfo(tokens[1], tokens[2], ""));
+    if(uid) {
+      uint32_t token = sTokenMgr.newToken(tokens[1], uid);
+      mg_printf(conn, "%d", (int)token);
+    }
+
+  } else if(tokens[0] == "checktoken") {
+    if(tokens.size() < 4) return;
+    // TODO: tokens[2] = ip
+    if(sUserStore.isRegistered(tokens[1])) {    
+      uint32_t token;
+      sscanf(tokens[3].c_str(), "%d", (int*)&token);
+      if(sTokenMgr.checkToken(tokens[1], token))
+        mg_printf(conn, "3");
+      else
+        mg_printf(conn, "2");
+    } else
+      mg_printf(conn, "1");
+
   }
 }
 
