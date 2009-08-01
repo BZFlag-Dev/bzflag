@@ -219,8 +219,7 @@ void DebugDrawing::drawLinks()
 
   OpenGLGState::resetState();
 
-  /// it's debugging junk, let it shine through
-  const bool blackFog = false && RENDERER.isFogActive();
+  const bool blackFog = RENDERER.isFogActive();
   if (blackFog) {
     glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
   }
