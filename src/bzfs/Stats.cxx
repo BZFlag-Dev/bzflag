@@ -133,6 +133,9 @@ void StatsLink::buildHTMLPlayer ( std::string &params, int playerID, int index )
       Token = "none";
     params += TextUtils::format("&token%d=%s",index,TextUtils::url_encode(Token).c_str());
 
+    if (player->player.OSVersion.size())
+     params += TextUtils::format("&osvers%d=%s",index,TextUtils::url_encode(player->player.OSVersion).c_str());
+
     if (player->player.getTeam() != ObserverTeam) 
     {
       params += TextUtils::format("&wins%d=%d",index,player->score.getWins());

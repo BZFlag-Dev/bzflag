@@ -239,7 +239,6 @@ public:
   }
 };
 
-
 // messages that have players
 class PlayerFirstHandler : public PlayerNetworkMessageHandler
 {
@@ -1038,6 +1037,24 @@ public:
   }
 };
 
+class QueryOSHandler : public PlayerFirstHandler
+{
+public:
+  virtual bool execute ( uint16_t & /*code*/, void * buf, int /*len*/ )
+  {
+    if (!player)
+      return false;
+
+    std::string vers;
+    buf = nboUnpackStdString(buf, vers);
+
+    player->player.OSVersion = vers;
+
+    return true;
+  }
+};
+
+
 
 class PlayerFirstNoBumpHandler : public PlayerFirstHandler
 {
@@ -1118,6 +1135,7 @@ void registerDefaultHandlers ( void )
   playerNetworkHandlers[MsgPlayerUpdateSmall] = new PlayerUpdateHandler;
   playerNetworkHandlers[MsgGMUpdate]          = new GMUpdateHandler;
   playerNetworkHandlers[MsgPlayerData]        = new PlayerDataHandler;
+  playerNetworkHandlers[MsgQueryOS]	      = new QueryOSHandler;
 }
 
 

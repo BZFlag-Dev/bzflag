@@ -1965,6 +1965,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
       handleQueryGL(msg);
       break;
     }
+    case MsgQueryOS: {
+      handleQueryOS(msg);
+      break;
+    }   
     case MsgGMUpdate: {
       handleGMUpdate(msg);
       break;

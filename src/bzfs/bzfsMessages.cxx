@@ -1033,6 +1033,19 @@ void sendMsgTangibilityReset ( void )
   msg->broadcast(MsgTangibilityReset,false);
 }
 
+void sendOSRequest( int player )
+{
+  GameKeeper::Player* playeData = GameKeeper::Player::getPlayerByIndex(player);
+  if (playeData && playeData->netHandler)
+  {
+    NetMsg msg = MSGMGR.newMessage();
+    msg->packUInt8(player);
+    msg->send(playeData->netHandler,MsgQueryOS);
+  }
+  else
+    playeData->player.OSVersion = "Server Side Player"; // ssp's don't have an os to query
+}
+
 
 void sendMsgCanSpawn ( int player, bool canSpawn )
 {

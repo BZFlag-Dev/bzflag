@@ -107,6 +107,8 @@ public:
   void		sendLagPing(char pingRequest[]);
   void		sendUDPlinkRequest();
 
+  void		sendOSVersion ( const PlayerId player, const std::string &vers );
+
   void		sendCustomData ( const std::string &key, const std::string &value );
   void		sendCustomData ( const char* key, const std::string &value ){if (key) sendCustomData(std::string(key),value);}
 

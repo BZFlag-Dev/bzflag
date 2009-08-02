@@ -2452,6 +2452,12 @@ void handleQueryGL(void *msg)
   }
 }
 
+void handleQueryOS(void *msg)
+{
+  uint8_t id;
+  msg = nboUnpackUInt8(msg, id);
+  serverLink->sendOSVersion(id,display->getOSString());
+}
 
 void handleGMUpdate(void *msg)
 {

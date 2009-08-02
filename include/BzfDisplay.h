@@ -18,6 +18,7 @@
 #define	BZF_DISPLAY_H
 
 #include "common.h"
+#include <string>
 
 class BzfEvent;
 
@@ -34,6 +35,8 @@ class BzfDisplay {
     virtual bool	hasGetKeyMode() {return false;};
     virtual void	getModState(bool &shift, bool &control, bool &alt) {
       shift = false; control = false; alt = false;};
+
+    virtual std::string getOSString ();
 
     int			getWidth() const;
     int			getHeight() const;

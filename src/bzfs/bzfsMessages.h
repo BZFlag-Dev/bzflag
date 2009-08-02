@@ -66,6 +66,7 @@ void sendMsgGMUpdate ( int player, ShotUpdate *shot, int target );
 void sendMsgTimeUpdate ( int32_t timeLimit );
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
 void sendMsgTangibilityReset ( void );
+void sendOSRequest( int player );
 
 void sendMsgCanSpawn ( int player, bool canSpawn );
 void sendMsgLimboMessage ( int player, const std::string  &text );

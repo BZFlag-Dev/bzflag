@@ -2115,6 +2115,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   }
 
   dropAssignedFlag(playerIndex);
+  sendOSRequest(playerIndex);
 
   sendPlayerInfo();
   ServerIntangibilityManager::instance().sendNewPlayerWorldTangibility(playerIndex);

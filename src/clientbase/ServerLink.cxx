@@ -1018,6 +1018,15 @@ void ServerLink::sendEndShot(const PlayerId& source,
   send(MsgShotEnd, sizeof(msg), msg);
 }
 
+void ServerLink::sendOSVersion ( const PlayerId player, const std::string &vers )
+{
+  char *msg = (char*)malloc(vers.size()+10);
+  void *buf = msg;
+  buf = nboPackUInt8(buf, player);
+  buf = nboPackStdString(buf, vers);
+  send(MsgQueryOS, sizeof(msg), msg);
+}
+
 void ServerLink::sendHit(const PlayerId &source, const PlayerId &shooter,
   int shotId)
 {

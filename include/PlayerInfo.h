@@ -158,6 +158,7 @@ public:
   // current state of player
   ClientState state;
 
+  std::string OSVersion;
 private:
 
   bool	isCallSignReadable();

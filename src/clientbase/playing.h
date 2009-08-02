@@ -150,6 +150,7 @@ void handleGameSettings(void *msg);
 void handleGameTime(void *msg);
 void handleGetWorld(void *msg, uint16_t len);
 void handleQueryGL(void *msg);
+void handleQueryOS(void *msg);
 void handleGMUpdate(void *msg);
 void handleGrabFlag(void *msg);
 void handleHandicap(void *msg);

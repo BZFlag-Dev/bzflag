@@ -163,6 +163,11 @@ void BzfDisplay::setFullScreenFormat(int index) {
   modeIndex = index;
 }
 
+std::string BzfDisplay::getOSString ()
+{
+  return std::string("BASE_PLATFORM");
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
