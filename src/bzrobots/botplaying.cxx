@@ -310,7 +310,12 @@ int curlProgressFunc(void * /*clientp*/,
 
 
 
-void handleResourceFetch (void *)
+void handleResourceFetch(void*)
+{
+}
+
+
+void handleQueryOS(void*)
 {
 }
 
@@ -318,9 +323,6 @@ void handleResourceFetch (void *)
 void handleCustomSound(void *)
 {
 }
-
-
-
 
 
 void handleTimeUpdate(void *msg)
