@@ -525,6 +525,7 @@ BzRegErrors UserStore::registerUser(const UserInfo &info, std::string *rand_text
       (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
       "?action=CONFIRM&email=" + info.email + "&password=" + 
       (std::string)randtext + "\n";
+    fprintf(cmd_pipe, "%s", msg.c_str());
     pclose(cmd_pipe);
 
     if(rand_text) *rand_text = randtext;
@@ -732,7 +733,7 @@ uint32_t UserStore::getuid(LDAP *ld, const char *dn)
   return uid;
 }
 
-uint32_t UserStore::authUser(UserInfo &info)
+uint32_t UserStore::authUser(const UserInfo &info)
 {
   // bind to the user's dn
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));

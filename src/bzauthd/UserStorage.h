@@ -49,7 +49,7 @@ public:
   void update();
   
   BzRegErrors registerUser(const UserInfo &info, std::string *rand_text = NULL);
-  uint32_t authUser(UserInfo &info);
+  uint32_t authUser(const UserInfo &info);
   bool isRegistered(std::string callsign);
   std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool all_groups, bool ids);
 
