@@ -30,6 +30,8 @@ bzauthd_SOURCES = \
 	HttpHandler.h \
 	NetHandler.cxx \
 	NetHandler.h \
+	Random.cxx \
+	Random.h \
 	Serverhandler.cxx \
 	TimeKeeper.cxx \
 	TimeKeeper.h \

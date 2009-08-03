@@ -29,7 +29,7 @@ TokenMgr::~TokenMgr()
 
 uint32_t TokenMgr::newToken(std::string name, uint32_t bzid, uint32_t ip)
 {
-  TokenMapType::_Pairib p;
+  std::pair<TokenMapType::iterator, bool> p;
   uint32_t token;
   do {
     token = 1 + sRandom.getU32() % ((uint32_t)(1 << 31) - 1);
