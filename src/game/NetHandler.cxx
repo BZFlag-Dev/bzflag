@@ -751,6 +751,11 @@ const char* NetHandler::getTargetIP()
   return dotNotation.c_str();
 }
 
+const Address& NetHandler::getTargetAddr()
+{
+  return peer;
+}
+
 int NetHandler::sizeOfIP()
 {
   // IPv4 is 1 byte for type and 4 bytes for IP = 5

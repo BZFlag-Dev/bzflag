@@ -116,7 +116,6 @@ bool ClientHandler::handleAuthResponse(Packet &packet)
 
   if(valid)
   {
-    // the password doesn't need hashing for auth
     UserInfo info;
     info.name = std::string ((const char*)message, callsign_len);
     info.password = std::string((const char*)message + callsign_len + 1, password_len);
@@ -124,7 +123,7 @@ bool ClientHandler::handleAuthResponse(Packet &packet)
     uint32_t uid = sUserStore.authUser(info);
     if(uid)
     {
-      uint32_t token = sTokenMgr.newToken(info.name, uid);
+      uint32_t token = sTokenMgr.newToken(info.name, uid, 0);
       Packet success(DMSG_AUTH_SUCCESS, 4);
       success << token;
       m_socket->sendData(success);

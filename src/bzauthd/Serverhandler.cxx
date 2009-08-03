@@ -13,6 +13,7 @@
 #include "ServerHandler.h"
 #include "TokenMgr.h"
 #include "UserStorage.h"
+#include "Log.h"
 
 INSTANTIATE_PACKETHANDLER(ServerHandler)
 
@@ -33,13 +34,25 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
   Packet response(DMSG_TOKEN_VALIDATE, n*4);
   response << n;
   for(int i = 0; i < n; i++) {
-    uint8_t callsign[MAX_CALLSIGN_LEN+1];
-    uint32_t token = 0;
+    uint8_t callsign[MAX_CALLSIGN_LEN+1], ipVersion = 0;
+    uint32_t token = 0, ip = 0;
     if(!(packet >> token)) return false;
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
+    packet >> ipVersion;
+    switch((int)ipVersion) {
+      case 0:
+        break;
+      case 4: {
+        packet >> ip;
+      } break;
+      default:
+        sLog.outError("got unknown ip version %d", (int)ipVersion);
+        return false;
+    }
+
     response << callsign;
-    uint32_t bzid = sTokenMgr.checkToken((char *)callsign, token);
+    uint32_t bzid = sTokenMgr.checkToken(token, (char *)callsign, ip);
     if(bzid) {
       response << (uint32_t)2;                          // registered, verified
       // send list of groups

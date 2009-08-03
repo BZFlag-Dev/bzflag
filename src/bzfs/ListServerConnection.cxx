@@ -610,15 +610,24 @@ void ListServerLink::checkTokens(std::string *pMsg)
     GameKeeper::Player *playerData = itr->second;
     playerData->_LSAState = GameKeeper::Player::checking;
     NetHandler *handler = playerData->netHandler;
+    Address source_addr = handler->getIPAddress();
+    Address target_addr = handler->getTargetAddr();
+
     tokenMsg << (uint32_t)atoi(playerData->player.getToken());
     tokenMsg << itr->first.c_str();
-    tokenMsg << '\0';
+    if(!source_addr.isPrivate()) {
+      uint8_t ipVersion = target_addr.getIPVersion();
+      assert(ipVersion == 4);
+      tokenMsg << (uint8_t)ipVersion;
+      tokenMsg << (uint32_t)InAddr(target_addr).s_addr;
+    } else {
+      tokenMsg << (uint8_t)'\0';
+    }
 
     if(pMsg) {
       std::string &msg = *pMsg;
       msg += TextUtils::url_encode(playerData->player.getCallSign());
-      Address addr = handler->getIPAddress();
-      if (!addr.isPrivate()) {
+      if (!source_addr.isPrivate()) {
 	  msg += "@";
 	  msg += handler->getTargetIP();
       }

@@ -134,6 +134,7 @@ public:
   std::string	reasonToKick();
   void		getPlayerList(char* list, size_t listSize);
   const char*	getTargetIP();
+  const Address&  getTargetAddr();
   int		sizeOfIP();
   void*		packAdminInfo(void *buf);
   static NetHandler *whoIsAtIP(const std::string& IP);

@@ -107,7 +107,7 @@ void HttpHandler::request_callback(
     // TODO: token[3] = ip
     uint32_t uid = sUserStore.authUser(UserInfo(tokens[1], tokens[2], ""));
     if(uid) {
-      uint32_t token = sTokenMgr.newToken(tokens[1], uid);
+      uint32_t token = sTokenMgr.newToken(tokens[1], uid, 0);
       mg_printf(conn, "%d", (int)token);
     }
 
@@ -117,7 +117,7 @@ void HttpHandler::request_callback(
     if(sUserStore.isRegistered(tokens[1])) {    
       uint32_t token;
       sscanf(tokens[3].c_str(), "%d", (int*)&token);
-      if(sTokenMgr.checkToken(tokens[1], token))
+      if(sTokenMgr.checkToken(token, tokens[1], 0))
         mg_printf(conn, "3");
       else
         mg_printf(conn, "2");

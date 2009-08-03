@@ -26,15 +26,21 @@ class TokenMgr : public GuardedSingleton<TokenMgr>
 public:
   TokenMgr();
   ~TokenMgr();
-  uint32_t newToken(std::string name, uint32_t bzid);
-  void addToken(std::string name, uint32_t bzid, uint32_t token);
-  uint32_t checkToken(std::string name, uint32_t token);
+  uint32_t newToken(std::string name, uint32_t bzid, uint32_t ip);
+  uint32_t checkToken(uint32_t token, std::string name, uint32_t ip);
   void removeToken(uint32_t token);
   static void expireCallback(void *data);
 private:
-  uint32_t nextToken;
-  typedef std::pair<std::string, uint32_t> TokenType;
-  typedef UNORDERED_MAP<uint32_t, TokenType> TokenMapType;
+  struct TokenInfo
+  {
+    std::string name;
+    uint32_t bzid;
+    uint32_t ip;
+    TokenInfo(std::string name, uint32_t bzid, uint32_t ip)
+      : name(name), bzid(bzid), ip(ip) {}
+  };
+
+  typedef UNORDERED_MAP<uint32_t /*token*/, TokenInfo> TokenMapType;
   TokenMapType tokenMap;
   void removeToken(TokenMapType::iterator &itr);
 };

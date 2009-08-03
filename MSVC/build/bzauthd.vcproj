@@ -305,6 +305,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzauthd\Random.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzauthd\Serverhandler.cxx"
 				>
 				<FileConfiguration
@@ -398,6 +402,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\NetHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzauthd\Random.h"
 				>
 			</File>
 			<File

@@ -19,6 +19,7 @@
 #include "base64.h"
 #include <assert.h>
 #include <bzregex.h>
+#include "Random.h"
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
@@ -100,6 +101,7 @@ void UserStore::hash(uint8_t *message, size_t message_len, uint8_t *digest)
   gcry_md_hash_buffer(GCRY_MD_MD5, tmpbuf, message, message_len);
   strcpy((char*)digest, "{md5}");
   base64::encode(tmpbuf, tmpbuf + md5len, digest+5);
+  digest[md5len / 2 * 3 + 5] = '\0';
   delete[] tmpbuf;
 }
 
@@ -513,10 +515,10 @@ BzRegErrors UserStore::registerUser(const UserInfo &info, std::string *rand_text
   FILE *cmd_pipe;
   std::string cmd = "mail -s \"BZFlag player registration\" " + info.email;
   if( (cmd_pipe = popen( cmd.c_str(), "w" )) != NULL ) {
-    char alphanum[] = "abcdefghijklmnopqrstuvwxyz0123456789";
-    std::string randtext(8, ' ');
+    char alphanum[] = "abcdefghijklmnopqrstuvwxyz0123456789", randtext[8];
+    sRandom.get(randtext, 8);
     for(int i = 0; i < 8; i++)
-      randtext[i] = alphanum[rand() % 35];
+      randtext[i] = alphanum[randtext[i] % 35];
 
     std::string msg = "You have just registered a BZFlag player account with\n"
       "    callsign: " + info.name + "\n"
@@ -642,7 +644,7 @@ BzRegErrors UserStore::updatePassword(const UserInfo &info, std::string const &u
 {
   // hash the password
   size_t digest_len = hashLen();
-  uint8_t *digest = new uint8_t[digest_len];
+  uint8_t *digest = new uint8_t[digest_len+1];
   hash((uint8_t*)info.password.c_str(), info.password.length(), digest);
 
   sLog.outLog("finishing registration for %s", info.name.c_str());

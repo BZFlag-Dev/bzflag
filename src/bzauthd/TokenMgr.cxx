@@ -14,13 +14,12 @@
 #include "EventHandler.h"
 #include "Log.h"
 #include "ConfigMgr.h"
+#include "Random.h"
 
 INSTANTIATE_GUARDED_SINGLETON(TokenMgr)
 
 TokenMgr::TokenMgr()
 {
-  // reserve token 0 for unregistered users
-  nextToken = 1;
 }
 
 TokenMgr::~TokenMgr()
@@ -28,25 +27,27 @@ TokenMgr::~TokenMgr()
 
 }
 
-void TokenMgr::addToken(std::string name, uint32_t bzid, uint32_t token)
+uint32_t TokenMgr::newToken(std::string name, uint32_t bzid, uint32_t ip)
 {
-  sLog.outLog("TokenMgr: adding token %d (%s)", token, name.c_str());
-  tokenMap[nextToken] = TokenType(name, bzid);
+  TokenMapType::_Pairib p;
+  uint32_t token;
+  do {
+    token = 1 + sRandom.getU32() % ((uint32_t)(1 << 31) - 1);
+    
+    p = tokenMap.insert(TokenMapType::value_type(token, TokenInfo(name, bzid, ip)));
+  } while(p.second == false); // try inserting a different number if failed
+
   sEventHandler.addDelta(&TokenMgr::expireCallback, (void *)new uint32_t(token), sConfig.getIntValue(CONFIG_TOKEN_EXPIRE_DELAY) / 1000.0);
-}
-
-uint32_t TokenMgr::newToken(std::string name, uint32_t bzid)
-{
+  sLog.outLog("TokenMgr: adding token %d (%s)", token, name.c_str());
   // TODO: share tokens between daemons
-  addToken(name, bzid, nextToken);
-  return nextToken++;
+  return token;
 }
 
-uint32_t TokenMgr::checkToken(std::string name, uint32_t token)
+uint32_t TokenMgr::checkToken(uint32_t token, std::string name, uint32_t ip)
 {
   TokenMapType::iterator itr = tokenMap.find(token);
-  if(itr != tokenMap.end() && itr->second.first == name)
-    return itr->second.second;
+  if(itr != tokenMap.end() && itr->second.name == name)
+    return itr->second.bzid;
   else
     return 0;
 }
