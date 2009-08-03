@@ -47,13 +47,7 @@ Regressions
   Sounds cause an observable reduction in frame rate.
 
 * GM does not seem to lock on reliably (try against a remote client, bots work
-  fine) (may be fixed as of 2.99.21)
-
-* bullets no longer bounce off the walls in replays even when ricochets have
-  been enabled
-
-* The entire replay system needs to be tested for functionalities, some report
-  that tanks can't spawn or shoot.
+  fine)
 
 * server communication error when someone logs off and people are still playing
   (may be fixed as of 2.99.21)
@@ -127,6 +121,11 @@ Rendering
   down arrow repeatedly (for the All tab).  The highlighted server list item
   jumps around instead of going sequentially through the servers.  Hitting
   return to select a server doesn't load the highlighted server.
+
+Replay
+------
+
+* Recorded bots seem to be 'stucked' in replay.
 
 Platform (multiple)
 -------------------
@@ -207,12 +206,8 @@ Gameplay
 Solo Bots
 --------------
 
-* the team which solo bots join should be predictable, probably the same team
-  as the player when playing on a team, and have some way of choosing when the
-  player is an observer
-  
-* bots shots are currently exploding as soon as they are fired. this is a
-  pretty recent development, probably some time July '09
+* Under Windows, bots shots are currently exploding as soon as they are fired.
+  this is a pretty recent development, probably some time July '09
 
 3rd party libs
 --------------
