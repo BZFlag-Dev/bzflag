@@ -77,6 +77,7 @@ class Teleporter : public Obstacle {
     void finalize();
     const BzMaterial* getTeleMaterial();
     const BzMaterial* getLinkMaterial();
+    const BzMaterial* getVoidMaterial();
 
   private:
     static const char* typeName;

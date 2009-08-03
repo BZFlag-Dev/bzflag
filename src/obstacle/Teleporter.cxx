@@ -214,6 +214,13 @@ MeshObstacle* Teleporter::makeMesh()
     vertices.push_back(fvec3(+xb, +yo,   zt)); // v22
     vertices.push_back(fvec3(+xb, -yo,   zt)); // v23
 
+    // flag blocker vertices
+    const float zOffset = 0.1f;
+    vertices.push_back(fvec3(-xl, -yi, zOffset)); // v24
+    vertices.push_back(fvec3(+xl, -yi, zOffset)); // v25
+    vertices.push_back(fvec3(+xl, +yi, zOffset)); // v26
+    vertices.push_back(fvec3(-xl, +yi, zOffset)); // v27
+
     // t4 - t11
     const fvec2 xTexOffset(+yo, -zt);
     for (size_t i = 16; i < 24; i++) {
@@ -237,7 +244,7 @@ MeshObstacle* Teleporter::makeMesh()
     texcoords.push_back(texScale * fvec2(+b2yi, -xb2)); // t23
   }
 
-  const int faceCount = 2 + (wantBorder ? 14 : 0);
+  const int faceCount = 2 + (wantBorder ? 14 : 0) + 1;
 
   mesh = new MeshObstacle(tmpXform, checkTypes, checkPoints,
                           vertices, normals, texcoords, faceCount,
@@ -251,6 +258,7 @@ MeshObstacle* Teleporter::makeMesh()
 
   const BzMaterial* linkMat = getLinkMaterial();
   const BzMaterial* teleMat = getTeleMaterial();
+  const BzMaterial* voidMat = getVoidMaterial();
 
   MeshFace::SpecialData sd;
 
@@ -326,6 +334,13 @@ MeshObstacle* Teleporter::makeMesh()
   push4Ints(tlist,  0, 18, 21, 20); // texcoords
   addFace(mesh, vlist, nlist, tlist, teleMat, -1);
 
+  // flag blocker
+  push4Ints(vlist, 24, 25, 26, 27); // vertices
+  mesh->addFace(vlist, nlist, tlist,
+                voidMat, -1, false, false,
+                0xFF, 0x00, false, false, NULL);
+  vlist.clear();
+
   // wrap it up
   mesh->finalize();
 
@@ -395,6 +410,20 @@ const BzMaterial* Teleporter::getTeleMaterial()
   mat.setTexture("caution");
   mat.setName(matName);
 
+  return MATERIALMGR.addMaterial(&mat);
+}
+
+
+const BzMaterial* Teleporter::getVoidMaterial()
+{
+  BzMaterial mat;
+  mat.setDiffuse(fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  mat.setNoRadar(true);
+  mat.setNoShadowCast(true);
+  mat.setNoShadowRecv(true);
+  mat.setNoSorting(true);
+  mat.setNoBlending(true);
+  mat.setNoLighting(true);
   return MATERIALMGR.addMaterial(&mat);
 }
 
