@@ -737,6 +737,9 @@ uint32_t UserStore::getuid(LDAP *ld, const char *dn)
 
 uint32_t UserStore::authUser(const UserInfo &info)
 {
+  if(!execute_reg(re_callsign, info.name.c_str()))
+    return 0;
+
   // bind to the user's dn
   std::string dn = "cn=" + info.name + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 
@@ -800,6 +803,9 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
 
   std::string filter;
   if(callsign != "") {
+    if(!execute_reg(re_callsign, callsign.c_str()))
+      return ret;
+
     std::string dn = "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
     if(!all_groups)
       filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|";

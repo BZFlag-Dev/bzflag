@@ -728,10 +728,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\gcrypt\src\dumpsexp.c"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\other\gcrypt\src\g10lib.h"
 				>
 			</File>
