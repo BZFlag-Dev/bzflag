@@ -121,23 +121,8 @@ bzrobot_pyext_la_LDFLAGS = -module -avoid-version -export-dynamic
 bzrobot_pyext_la_SOURCES = \
 	BZAdvancedRobot.cxx \
 	BZAdvancedRobot.h \
-	RCRequests.cxx \
-	RCRequests_ProcessSWIG.cxx \
-	RCRequests.h \
-	RCLink.cxx \
-	RCLink.h \
-	RCLinkFrontend.cxx \
-	RCLinkFrontend.h \
-	RCEvent.h \
-	MessageUtilities.cxx \
-	MessageUtilities.h \
 	Tank.cxx \
 	Tank.h
-
-# FIXME -- these files seem to be missing,
-#       -- commented to make the 'make dist' top level target work
-#	bzrobot_python_wrap.cxx \
-#	bzrobot_python_wrap.h
 
 bzrobot_pyext_la_LIBADD = ../date/libDate.la
 
@@ -167,7 +152,6 @@ EXTRA_DIST = \
 	OpenGLUtils.cxx	\
 	PrintError.cxx \
 	PrintError.h \
-	RCRequests_ProcessSWIG.cxx \
 	bzrobot.i
 
 MAINTAINERCLEANFILES = \
