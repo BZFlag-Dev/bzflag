@@ -13,19 +13,6 @@
 /* interface header */
 #include "Tank.h"
 
-/* local implementation headers */
-#include "MessageUtilities.h"
-
-std::ostream& operator<<(std::ostream& os, const Tank& tank)
-{
-  return os << tank.callsign << " " << tank.team << " "
-    << tank.paused << " " << tank.alive << " " << tank.frozen << " " << tank.super << " "
-    << tank.team << " " << tank.position[0] << " " << tank.position[1] << " " << tank.position[2] << " "
-    << tank.angle << " " << tank.velocity[0] << " " << tank.velocity[1] << " " << tank.velocity[2] << " "
-    << tank.angularVelocity;
-}
-
-
 Tank::Tank() {}
 
 Tank::Tank(
@@ -58,46 +45,6 @@ Tank::Tank(
   velocity[0] = nvelocity.x;
   velocity[1] = nvelocity.y;
   velocity[2] = nvelocity.z;
-}
-
-
-messageParseStatus Tank::parse(char **arguments, int count)
-{
-  if (count != 15)
-    return InvalidArgumentCount;
-
-  if (!MessageUtilities::parse(arguments[0], callsign))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[1], team))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[2], paused))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[3], alive))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[4], frozen))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[5], super))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[6], flag))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[7], position[0]))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[8], position[1]))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[9], position[2]))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[10], angle))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[11], velocity[0]))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[12], velocity[1]))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[13], velocity[2]))
-      return InvalidArguments;
-  if (!MessageUtilities::parse(arguments[14], angularVelocity))
-      return InvalidArguments;
-
-  return ParseOk;
 }
 
 // Local Variables: ***

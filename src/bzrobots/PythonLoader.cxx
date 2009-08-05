@@ -30,7 +30,7 @@ PythonLoader::~PythonLoader()
   /* Is this neccessary when we're calling Py_Finalize()? Can't hurt. :-) */
   Py_XDECREF(module);
   Py_XDECREF(ctor);
-  Py_XDECREF(robot);
+  Py_XDECREF(pyrobot);
 
   Py_Finalize();
 }
@@ -138,27 +138,31 @@ bool PythonLoader::load(std::string filepath)
   }
 
   Py_XDECREF(file);
+  
+  _loaded = true;
+  error = "";
+
   return true;
 }
 
-BZAdvancedRobot *PythonLoader::create(void)
+BZRobot *PythonLoader::create(void)
 {
-  Py_XDECREF(robot);
+  Py_XDECREF(pyrobot);
 
-  robot = PyObject_CallObject(ctor, NULL);
-  if (!robot) {
+  pyrobot = PyObject_CallObject(ctor, NULL);
+  if (!pyrobot) {
     error = "Could not call constructor.";
     return NULL;
   }
 
-  PySwigObject *holder = SWIG_Python_GetSwigThis(robot);
+  PySwigObject *holder = SWIG_Python_GetSwigThis(pyrobot);
   return static_cast<BZAdvancedRobot *>(holder ? holder->ptr : 0);
 }
 
-void PythonLoader::destroy(BZAdvancedRobot * /*instance*/)
+void PythonLoader::destroy(BZRobot * /*instance*/)
 {
-  Py_XDECREF(robot);
-  robot = NULL;
+  Py_XDECREF(pyrobot);
+  pyrobot = NULL;
 }
 
 // Local Variables: ***

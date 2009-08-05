@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __SCRIPTLOADERFACTORY_H__
-#define __SCRIPTLOADERFACTORY_H__
+#ifndef __SCRIPTTOOLFACTORY_H__
+#define __SCRIPTTOOLFACTORY_H__
 
 #include "common.h"
 
@@ -24,18 +24,18 @@
 #include "TextUtils.h"
 
 /* local interface headers */
-#include "ScriptLoader.h"
+#include "BZRobotScript.h"
 
 
 /** convenience handle on the singleton instance */
-#define SCRIPTLOADER (ScriptLoaderFactory::instance())
+#define SCRIPTTOOLFACTORY (ScriptLoaderFactory::instance())
 
 class ScriptLoaderFactory : public Singleton<ScriptLoaderFactory>,
-			    public Factory<ScriptLoader, std::string>
+			    public Factory<BZRobotScript, std::string>
 {
 
 public:
-  ScriptLoader *scriptLoader(std::string extension);
+  BZRobotScript *scriptTool(std::string extension);
   static void initialize();
 
 
@@ -48,7 +48,7 @@ private:
 };
 
 
-#endif /* __SCRIPTLOADERFACTORY_H__ */
+#endif /* __SCRIPTTOOLFACTORY_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

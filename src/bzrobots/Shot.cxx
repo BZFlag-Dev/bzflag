@@ -13,11 +13,6 @@
 /* interface header */
 #include "Shot.h"
 
-/* local implementation headers */
-#include "MessageUtilities.h"
-#include "RCRequest.h"
-#include "RCRequests.h"
-
 Shot::Shot() {}
 
 Shot::Shot(uint64_t _id) : id(_id)
@@ -49,22 +44,6 @@ uint64_t Shot::getId(void) const
 void Shot::setId(uint64_t _id)
 {
   id = _id;
-}
-
-std::ostream& operator<<(std::ostream& os, const Shot& shot)
-{
-  return os << shot.getId();
-}
-
-messageParseStatus Shot::parse(char **arguments, int count)
-{
-  if (count != 1)
-    return InvalidArgumentCount;
-
-  if (!MessageUtilities::parse(arguments[0], id))
-    return InvalidArguments;
-
-  return ParseOk;
 }
 
 

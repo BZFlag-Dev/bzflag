@@ -14,13 +14,7 @@
 #define __SHOT_H__
 
 #include "common.h"
-
-/* system interface headers */
-#include <ostream>
-
-/* local interface headers */
-#include "BZAdvancedRobot.h"
-
+#include "Address.h"
 
 class Shot {
 public:
@@ -35,10 +29,8 @@ public:
   uint64_t getId(void) const;
   void setId(uint64_t id);
 
-  messageParseStatus parse(char **arguments, int count);
-
-	mutable double x, y, z;
-	mutable double vx, vy, vz;
+  mutable double x, y, z;
+  mutable double vx, vy, vz;
 
 protected:
   uint64_t id;

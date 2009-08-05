@@ -20,12 +20,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifdef _WIN32
+#  include <io.h>
 #  include <shlobj.h>
 #  include <direct.h>
 #else
 #  include <pwd.h>
 #  include <dirent.h>
 #  include <utime.h>
+#  include <unistd.h>
 #endif
 
 // common headers
@@ -60,6 +62,7 @@
 
 // common client headers
 #include "ClientIntangibilityManager.h"
+#include "Downloads.h"
 #include "FlashClock.h"
 #include "LocalPlayer.h"
 #include "Roaming.h"
@@ -72,13 +75,8 @@
 #include "World.h"
 
 // local implementation headers
-#include "Downloads.h"
-#include "Frontend.h"
-#include "Logger.h"
-#include "RCLinkBackend.h"
-#include "RCMessageFactory.h"
-#include "RCRobotPlayer.h"
-#include "ScriptLoaderFactory.h"
+#include "BZRobotPlayer.h"
+#include "BZRobotScript.h"
 
 #include "bzflag.h"
 #include "commands.h"
@@ -90,9 +88,6 @@
 // FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
 // it's operating in a context where graphics and sound are available.
 bool headless = true;
-
-RCLinkBackend *rcLink = NULL;
-
 
 // to simplify code shared between bzrobots and bzflag
 // - in bzrobots, this just goes to the error console
@@ -108,13 +103,15 @@ void showError(const char *msg, bool flush)
 // - in bzrobots, this shows the error on the console
 void showMessage(const std::string& line)
 {
-  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
+  printf("%s\n",stripAnsiCodes(line.c_str()));
+  //BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
 }
 
 
 void showMessage(const std::string& line, ControlPanel::MessageModes)
 {
-  BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
+  printf("%s\n",stripAnsiCodes(line.c_str()));
+  //BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
 }
 // access silencePlayers from bzflag.cxx
 std::vector<std::string> &getSilenceList()
@@ -494,7 +491,8 @@ void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
     // uh oh, local player is dead
     if (victimLocal->isAlive()) {
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
-      rcLink->pushEvent(new DeathEvent());
+      // FIXME: send event using callbacks
+      //rcLink->pushEvent(new DeathEvent());
     }
   }
   else if (victimPlayer) {
@@ -819,7 +817,7 @@ void handleNewPlayer(void *msg)
     logDebugMessage(1, "Too many bots requested\n");
     return;
   }
-  robots[i] = new RCRobotPlayer(id,
+  robots[i] = new BZRobotPlayer(id,
     TextUtils::format("%s%2.2d", myTank->getCallSign(),i).c_str(),
     serverLink);
   robots[i]->setTeam((TeamColor)team);
@@ -1433,18 +1431,21 @@ static void		sendConstList()
 
 static void doBotRequests()
 {
+  // FIXME: do requests
+  /*
   RCRequest* req;
 
   if (numRobots < 1)
     return;
 
   while ((req = rcLink->peekRequest()) != NULL) {
-    if (!req->process((RCRobotPlayer*)robots[0]))
+    if (!req->process((BZRobotPlayer*)robots[0]))
       return;
 
     rcLink->popRequest(); // Discard it, we're done with this one.
     rcLink->sendAck(req);
   }
+  */
 }
 
 void enteringServer(void* buf)
@@ -1816,12 +1817,15 @@ static void playingLoop()
       joinInternetGame(&inAddress);
 
     // Communicate with remote agent if necessary
+    // FIXME:
+    /*
     if (rcLink) {
       if (numRobots >= numRobotTanks)
-				rcLink->tryAccept();
+	rcLink->tryAccept();
       rcLink->update();
       doBotRequests();
     }
+    */
 
     callPlayingCallbacks();    // invoke callbacks
 
@@ -1857,7 +1861,7 @@ static void defaultErrorCallback(const char *msg)
 }
 
 
-void			botStartPlaying()
+void botStartPlaying()
 {
   // register some commands
   const std::vector<CommandListItem>& commandList = getCommandList();
@@ -1933,32 +1937,20 @@ void			botStartPlaying()
     printError(aString);
   }
 
-  int port;
-  if (!BZDB.isSet("rcPort")) // Generate a random port between 1024 & 65536.
-    port = (int)(bzfrand() * (65536 - 1024)) + 1024;
-  else
-    port = atoi(BZDB.get("rcPort").c_str());
-
-  // here we register the various RCRequest-handlers for commands
-  // that RCLinkBackend receives. :-)
-  RCMessageFactory<RCRequest>::initialize();
-
-  rcLink = new RCLinkBackend();
-  rcLink->startListening(port);
-  RCREQUEST.setLink(rcLink);
-
-  if (!BZDB.isSet("robotScript")) {
-    BACKENDLOGGER << "Missing script on commandline!\n" << std::endl;
-    exit(EXIT_FAILURE);
+  BZRobotScript *robotScript = BZRobotScript::loadFile(BZDB.get("robotScript"));
+  
+  if(!robotScript->loaded()) {
+    showMessage("Unable to load script: " + robotScript->getError());
+    return;
   }
 
-  ScriptLoaderFactory::initialize();
-
-  if (!Frontend::run(BZDB.get("robotScript"), "localhost", port))
+  if(!robotScript->start()) {
+    showMessage("Unable to start robot: " + robotScript->getError());
     return;
+  }
 
   // enter game if we have all the info we need, otherwise
-  joinRequested    = true;
+  joinRequested = true;
   showMessage("Trying...");
 
   // start game loop

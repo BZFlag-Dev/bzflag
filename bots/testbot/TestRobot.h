@@ -15,8 +15,6 @@
 
 /* local interface headers */
 #include "BZAdvancedRobot.h"
-#include "RCLinkFrontend.h"
-#include "RCEvents.h"
 
 
 /**
@@ -26,10 +24,8 @@ class TestRobot : public BZAdvancedRobot
 {
 public:
   TestRobot() {}
-  TestRobot(RCLinkFrontend *_link) { setLink(_link); }
 
-  void initialize();
-  void update();
+  void run();
   void onHitWall(const HitWallEvent &hwe);
 };
 

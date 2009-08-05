@@ -79,6 +79,9 @@
 // client prefrences
 #include "clientConfig.h"
 
+#include "ScriptLoaderFactory.h"
+
+
 int beginendCount = 0;
 
 const char*		argv0;
@@ -141,7 +144,6 @@ static void		usage()
 		  " [-h | -help | --help]"
 		  " [-locale <locale>]"
 		  " [-m | -mute]"
-		  " [-p | -rcport <remote-control-port>]"
 		  " [-motd <motd-url>] [-nomotd]"
 		  " [-team {red|green|blue|purple|rogue|observer}]"
 		  " [-v | -version | --version]"
@@ -215,10 +217,6 @@ static void		parse(int argc, char** argv)
     } else if (strcmp(argv[i], "-m") == 0 ||
 	       strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
-    } else if (strcmp(argv[i], "-p") == 0 ||
-	       strcmp(argv[i], "-rcport") == 0) {
-      checkArgc(i, argc, argv[i]);
-      BZDB.set("rcPort", argv[i]);
     } else if (strcmp(argv[i], "-posnoise") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("bzrcPosNoise", argv[i]);
@@ -517,6 +515,8 @@ int main(int argc, char **argv)
   // initialize global objects and classes
   bzfsrand((unsigned int)time(0));
 
+  ScriptLoaderFactory::initialize();
+  
   /* try to set the processor affinity to prevent TimeKeeper from
    * reporting negative times
    */

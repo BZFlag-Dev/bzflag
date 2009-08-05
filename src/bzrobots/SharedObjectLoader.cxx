@@ -23,23 +23,22 @@
 
 bool SharedObjectLoader::load(std::string filename)
 {
-
 #ifdef _WIN32
 
-	soHandle = LoadLibrary(filename.c_str());
-	if(soHandle == NULL) {
-		return false;
-	}
+  soHandle = LoadLibrary(filename.c_str());
+  if(soHandle == NULL) {
+    return false;
+  }
 
-	createFunction = (createHandle) ( GetProcAddress( soHandle, "create" ) );
-	if(createFunction == NULL) {
-		return false;
-	}
+  createFunction = (createHandle) ( GetProcAddress( soHandle, "create" ) );
+  if(createFunction == NULL) {
+    return false;
+  }
 
-	destroyFunction = (destroyHandle) ( GetProcAddress( soHandle, "destroy" ) );
-	if(destroyFunction == NULL) {
-		return false;
-	}
+  destroyFunction = (destroyHandle) ( GetProcAddress( soHandle, "destroy" ) );
+  if(destroyFunction == NULL) {
+    return false;
+  }
 
 #else
 
@@ -103,8 +102,12 @@ bool SharedObjectLoader::load(std::string filename)
       error = "Unknown pointer address size!\n";
       return false;
   }
-
+  
 #endif /* _WIN32 */
+
+  _loaded = true;
+  error = "";
+
   return true;
 }
 
@@ -119,13 +122,13 @@ SharedObjectLoader::~SharedObjectLoader()
 }
 
 
-BZAdvancedRobot *SharedObjectLoader::create(void)
+BZRobot *SharedObjectLoader::create(void)
 {
   return (*createFunction)();
 }
 
 
-void SharedObjectLoader::destroy(BZAdvancedRobot *instance)
+void SharedObjectLoader::destroy(BZRobot *instance)
 {
   (*destroyFunction)(instance);
 }

@@ -20,11 +20,11 @@
 #include <Python.h>
 
 /* local interface headers */
-#include "ScriptLoader.h"
+#include "BZRobotScript.h"
 #include "BZAdvancedRobot.h"
 
 
-class PythonLoader : public ScriptLoader {
+class PythonLoader : public BZRobotScript {
   PyObject *module, *ctor;
   PyObject *robot;
 
@@ -36,8 +36,8 @@ class PythonLoader : public ScriptLoader {
     PythonLoader();
     ~PythonLoader();
     bool load(std::string filename);
-    BZAdvancedRobot *create(void);
-    void destroy(BZAdvancedRobot *instance);
+    BZRobot *create(void);
+    void destroy(BZRobot *instance);
 };
 
 #endif /* __PYTHONLOADER_H__ */

@@ -14,33 +14,27 @@
 #define __TANK_H__
 
 #include "common.h"
+#include "vectors.h"
 
 /* system interface headers */
-#include <ostream>
 #include <string>
-
-/* local interface headers */
-#include "RCMessage.h"
-
 
 class Tank {
 public:
   Tank();
   Tank(
-		std::string ncallsign,
-		std::string nteam,
-		std::string nflag,
+    std::string ncallsign,
+    std::string nteam,
+    std::string nflag,
     bool npaused,
-	  bool nalive,
-		bool nfrozen,
-		bool nsuper,
-		fvec3 nposition,
-		double nangle,
-		fvec3 nvelocity,
-		double nangularVelocity
-	);
-
-  messageParseStatus parse(char **arguments, int count);
+    bool nalive,
+    bool nfrozen,
+    bool nsuper,
+    fvec3 nposition,
+    double nangle,
+    fvec3 nvelocity,
+    double nangularVelocity
+  );
 
   std::string callsign, team, flag;
   bool paused, alive, frozen, super;
@@ -48,8 +42,6 @@ public:
   double position[3], angle;
   double velocity[3], angularVelocity;
 };
-
-std::ostream& operator<<(std::ostream& os, const Tank& tank);
 
 #endif /* __TANK_H__ */
 

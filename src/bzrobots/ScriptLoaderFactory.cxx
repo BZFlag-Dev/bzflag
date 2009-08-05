@@ -27,22 +27,22 @@ ScriptLoaderFactory* Singleton<ScriptLoaderFactory>::_instance = NULL;
 
 /* public */
 
-ScriptLoader *
-ScriptLoaderFactory::scriptLoader(std::string extension)
+BZRobotScript *
+ScriptLoaderFactory::scriptTool(std::string extension)
 {
   std::string lcExtension = TextUtils::tolower(extension);
-  return SCRIPTLOADER.Create(lcExtension.c_str());
+  return SCRIPTTOOLFACTORY.Create(lcExtension.c_str());
 }
 
 void ScriptLoaderFactory::initialize()
 {
 #if defined(_WIN32)
-  SCRIPTLOADER.Register<SharedObjectLoader>("dll");
+  SCRIPTTOOLFACTORY.Register<SharedObjectLoader>("dll");
 #else
-  SCRIPTLOADER.Register<SharedObjectLoader>("so");
+  SCRIPTTOOLFACTORY.Register<SharedObjectLoader>("so");
 #endif /* defined(_WIN32) */
 #ifdef WITH_PYTHONLOADER
-  SCRIPTLOADER.Register<PythonLoader>("py");
+  SCRIPTTOOLFACTORY.Register<PythonLoader>("py");
 #endif
 }
 

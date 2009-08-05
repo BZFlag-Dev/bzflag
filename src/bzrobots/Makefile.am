@@ -36,56 +36,32 @@ endif
 
 genericfiles =				\
 	bzrobots.cxx			\
-	botplaying.h			\
 	botplaying.cxx			\
-	RCLink.cxx			\
-	RCLink.h			\
-	RCMessage.h			\
-	RCRequest.h			\
-	RCRequests.cxx			\
-	BackendShot.h			\
-	BackendShot.cxx			\
-	FrontendShot.h			\
-	FrontendShot.cxx		\
-	RCRequests_Process.cxx		\
-	RCRequests.h			\
-	RCReply.h			\
-	RCReplies.cxx			\
-	RCReplies.h			\
-	RCEvent.h			\
-	RCEvents.h			\
-	RCEvents.cxx			\
-	MessageUtilities.cxx		\
-	MessageUtilities.h		\
-	RCMessageFactory.h		\
-	RCMessageFactory.cxx		\
-	RCLinkBackend.cxx		\
-	RCLinkBackend.h			\
-	RCLinkFrontend.cxx		\
-	RCLinkFrontend.h		\
-	RCRobotPlayer.cxx		\
-	RCRobotPlayer.h			\
-	Tank.h				\
-	Tank.cxx			\
-	Shot.h				\
-	Shot.cxx			\
-	Frontend.cxx			\
-	Frontend.h			\
-	Logger.h			\
-	Logger.cxx			\
-	ScriptLoader.h			\
+	botplaying.h			\
+	AdvancedRobot.cxx		\
+	AdvancedRobot.h			\
+	BZAdvancedRobot.cxx		\
+	BZAdvancedRobot.h		\
+	BZRobot.cxx			\
+	BZRobot.h			\
+	BZRobotCallbacks.h		\
+	BZRobotControl.cxx		\
+	BZRobotControl.h		\
+	BZRobotPlayer.cxx		\
+	BZRobotPlayer.h			\
+	BZRobotScript.cxx		\
+	BZRobotScript.h			\
+	Robot.cxx			\
+	Robot.h				\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\
 	SharedObjectLoader.h		\
-	BZAdvancedRobot.cxx		\
-	BZAdvancedRobot.h		\
-	AdvancedRobot.cxx		\
-	AdvancedRobot.h			\
-	BZRobot.cxx			\
-	BZRobot.h			\
-	Robot.cxx			\
-	Robot.h				
+	Shot.h				\
+	Shot.cxx			\
+	../obstacle/ObstacleMgr.cxx	\
+	Tank.h				\
+	Tank.cxx			
 
 
 if CLIENT_INCLUDED

@@ -14,80 +14,67 @@
 #include "BZAdvancedRobot.h"
 
 /* implementation headers */
-#include "MessageUtilities.h"
-#include "RCRequests.h"
 
-
-BZAdvancedRobot::BZAdvancedRobot() : link(NULL), compatability(true)
+BZAdvancedRobot::BZAdvancedRobot()
 {
+  robotType = "BZAdvancedRobot";
 }
 
 BZAdvancedRobot::~BZAdvancedRobot()
 {
-  for (std::vector<Obstacle *>::iterator i = obstacles.begin(); i != obstacles.end(); i++) {
-    delete (*i);
-  }
-}
 
-bool BZAdvancedRobot::getCompatability() const { return compatability; }
-void BZAdvancedRobot::setCompatability(bool newState) { compatability = newState; }
-void BZAdvancedRobot::setLink(RCLinkFrontend *_link)
-{
-  link = _link;
-}
-RCLinkFrontend *BZAdvancedRobot::getLink(void) const
-{
-  return link;
-}
-
-void BZAdvancedRobot::run()
-{
-  initialize();
-  while (true) {
-    update();
-  }
 }
 
 void BZAdvancedRobot::execute()
 {
-  link->sendAndProcess(ExecuteReq(), this);
+  if(bzrobotcb.Execute != NULL)
+    bzrobotcb.Execute(bzrobotcb.data);
 }
 
 double BZAdvancedRobot::getDistanceRemaining() const
 {
-  link->sendAndProcess(GetDistanceRemainingReq(), this);
-  return distanceRemaining;
+  if(bzrobotcb.GetDistanceRemaining != NULL)
+    return bzrobotcb.GetDistanceRemaining(bzrobotcb.data);
+  else
+    return 0.0;
 }
 
 double BZAdvancedRobot::getTurnRemaining() const
 {
-  link->sendAndProcess(GetTurnRemainingReq(), this);
-  return turnRemaining;
+  if(bzrobotcb.GetTurnRemaining != NULL)
+    return bzrobotcb.GetTurnRemaining(bzrobotcb.data);
+  else
+    return 0.0;
 }
 
 void BZAdvancedRobot::setAhead(double distance)
 {
-  link->sendAndProcess(SetAheadReq(distance), this);
+  if(bzrobotcb.SetAhead != NULL)
+    bzrobotcb.SetAhead(bzrobotcb.data,distance);
 }
 
 void BZAdvancedRobot::setFire()
 {
-  link->sendAndProcess(SetFireReq(), this);
+  if(bzrobotcb.SetFire != NULL)
+    bzrobotcb.SetFire(bzrobotcb.data);
 }
 
 void BZAdvancedRobot::setTurnRate(double turnRate)
 {
-  link->sendAndProcess(SetTurnRateReq(turnRate), this);
+  if(bzrobotcb.SetTurnRate != NULL)
+    bzrobotcb.SetTurnRate(bzrobotcb.data,turnRate);
 }
 
-void BZAdvancedRobot::setSpeed(double speed)
+void BZAdvancedRobot::setMaxVelocity(double maxVelocity)
 {
-  link->sendAndProcess(SetSpeedReq(speed), this);
+  if(bzrobotcb.SetMaxVelocity != NULL)
+    bzrobotcb.SetMaxVelocity(bzrobotcb.data,maxVelocity);
 }
 
 void BZAdvancedRobot::setResume()
 {
-  link->sendAndProcess(SetResumeReq(), this);
+  if(bzrobotcb.SetResume != NULL)
+    bzrobotcb.SetResume(bzrobotcb.data);
 }
 
 void BZAdvancedRobot::setStop()
@@ -97,100 +84,20 @@ void BZAdvancedRobot::setStop()
 
 void BZAdvancedRobot::setStop(bool overwrite)
 {
-  link->sendAndProcess(SetStopReq(overwrite), this);
+  if(bzrobotcb.SetStop != NULL)
+    bzrobotcb.SetStop(bzrobotcb.data,overwrite);
 }
 
 void BZAdvancedRobot::setTurnLeft(double degrees)
 {
-  link->sendAndProcess(SetTurnLeftReq(degrees), this);
+  if(bzrobotcb.SetTurnLeft != NULL)
+    bzrobotcb.SetTurnLeft(bzrobotcb.data,degrees);
 }
 
 void BZAdvancedRobot::setTickDuration(double duration)
 {
-  link->sendAndProcess(SetTickDurationReq(duration), this);
-}
-
-double BZAdvancedRobot::getBattleFieldSize() const
-{
-  link->sendAndProcess(GetBattleFieldSizeReq(), this);
-  return battleFieldSize;
-}
-
-// These are normally in Robot and not AdvancedRobot, but due to
-// the upside-down hierarchy we have - they're here instead ;-)
-double BZAdvancedRobot::getGunHeat() const
-{
-  link->sendAndProcess(GetGunHeatReq(), this);
-  return gunHeat;
-}
-
-double BZAdvancedRobot::getHeading() const
-{
-  link->sendAndProcess(GetHeadingReq(), this);
-  return heading;
-}
-
-double BZAdvancedRobot::getHeight() const
-{
-  link->sendAndProcess(GetHeightReq(), this);
-  return tankHeight;
-}
-
-double BZAdvancedRobot::getWidth() const
-{
-  link->sendAndProcess(GetWidthReq(), this);
-  return tankWidth;
-}
-
-double BZAdvancedRobot::getLength() const
-{
-  link->sendAndProcess(GetLengthReq(), this);
-  return tankLength;
-}
-
-void BZAdvancedRobot::getPlayers() const
-{
-  link->sendAndProcess(GetPlayersReq(), this);
-}
-
-void BZAdvancedRobot::getObstacles() const
-{
-  link->sendAndProcess(GetObstaclesReq(), this);
-}
-
-void BZAdvancedRobot::getShots() const
-{
-  link->sendAndProcess(GetShotsReq(), this);
-}
-
-long BZAdvancedRobot::getTime() const
-{
-  /* TODO: Implement this. */
-  return 0;
-}
-
-double BZAdvancedRobot::getVelocity() const
-{
-  /* TODO: Implement this. */
-  return 0.0;
-}
-
-double BZAdvancedRobot::getX() const
-{
-  link->sendAndProcess(GetXReq(), this);
-  return xPosition;
-}
-
-double BZAdvancedRobot::getY() const
-{
-  link->sendAndProcess(GetYReq(), this);
-  return yPosition;
-}
-
-double BZAdvancedRobot::getZ() const
-{
-  link->sendAndProcess(GetZReq(), this);
-  return zPosition;
+  if(bzrobotcb.SetTickDuration != NULL)
+    bzrobotcb.SetTickDuration(bzrobotcb.data,duration);
 }
 
 double BZAdvancedRobot::getBearing(const Tank &tank) const
@@ -201,6 +108,7 @@ double BZAdvancedRobot::getBearing(const Tank &tank) const
 double BZAdvancedRobot::getBearing(double x, double y) const
 {
   double vec[2] = {x - getX(), y - getY()};
+  double bearing = 0.0;
 
   if (vec[0] == 0 && vec[1] == 0)
     return 0.0;
@@ -209,8 +117,14 @@ double BZAdvancedRobot::getBearing(double x, double y) const
   double len = 1.0 / sqrt(vec[0]*vec[0] + vec[1]*vec[1]);
   vec[0] *= len;
   vec[1] *= len;
+  
+  bearing = atan2(vec[1], vec[0])*180.0/M_PI - getHeading();
 
-  return MessageUtilities::overflow(atan2(vec[1], vec[0])*180.0/M_PI - getHeading(), -180.0, 180.0);
+  while(bearing > 180.0)
+    bearing -= 360.0;
+  while(bearing < -180)
+    bearing += 360.0;
+  return bearing;
 }
 
 double BZAdvancedRobot::getDistance(const Tank &tank) const
@@ -224,16 +138,6 @@ double BZAdvancedRobot::getDistance(double x, double y) const
   x0 = getX() - x;
   y0 = getY() - y;
   return sqrt(x0*x0 + y0*y0);
-}
-
-const Shot *BZAdvancedRobot::getShot(uint64_t id) const
-{
-  for (unsigned int i = 0; i < shots.size(); i++) {
-    if (shots[i].getId() == id)
-      return &shots[i];
-  }
-
-  return NULL;
 }
 
 // Local Variables: ***
