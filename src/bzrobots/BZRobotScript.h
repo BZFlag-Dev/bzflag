@@ -41,7 +41,7 @@ public:
   std::string getError() const { return error; }
   
 private:
-  BZRobot *robot;
+  BZRobot *pyrobot;
   
 protected:
   bool _loaded;

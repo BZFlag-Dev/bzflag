@@ -26,7 +26,7 @@
 
 class PythonLoader : public BZRobotScript {
   PyObject *module, *ctor;
-  PyObject *robot;
+  PyObject *pyrobot;
 
   bool initialized;
   bool initialize();

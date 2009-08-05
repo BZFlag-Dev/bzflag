@@ -15,7 +15,7 @@
 #include "bzrobot_python_runtime.h"
 
 
-PythonLoader::PythonLoader() :module(NULL), ctor(NULL), robot(NULL), initialized(false)
+PythonLoader::PythonLoader() :module(NULL), ctor(NULL), pyrobot(NULL), initialized(false)
 {
   // Py_SetProgramName() takes a non-const argument in Python 2.5, so
   // suppress a warning about conversion from string constant to char*

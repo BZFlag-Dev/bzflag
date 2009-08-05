@@ -53,8 +53,8 @@ BZRobotScript *BZRobotScript::loadFile(std::string filename)
 
 bool BZRobotScript::start()
 {
-  if(!robot)
-    robot = create();
+  if(!pyrobot)
+    pyrobot = create();
 
 #ifndef _WIN32
   pid_t pid = fork();
@@ -66,10 +66,10 @@ bool BZRobotScript::start()
   bzSignal(SIGINT, SIG_DFL);
 #endif
 #ifndef _WIN32
-  robot->run();
+  pyrobot->run();
   return false;
 #else
-  CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, robot, 0, 0);
+  CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, pyrobot, 0, 0);
   return true;
 #endif // _WIN32
 
