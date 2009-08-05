@@ -124,62 +124,42 @@ void			HUDuiControl::renderFocus()
   const float x = getX();
   const float y = getY();
 
-  if (gstate->isTextured()) {
-    /* draw a fancy textured/image cursor */
+  /* draw a fancy textured/image cursor */
 
-    float imageSize = (float)info.y;
-    // assumes there are w/h frames of animation h x h in each image
-    int uFrames = 1;
-    if (imageSize != 0)
-      uFrames = int(info.x/imageSize); // 4;
-    int vFrames = 1; // 4;
-    float du = 1.0f / (float)uFrames;
-    float dv = 1.0f / (float)vFrames;
+  float imageSize = (float)info.y;
+  // assumes there are w/h frames of animation h x h in each image
+  int uFrames = 1;
+  if (imageSize != 0)
+    uFrames = int(info.x/imageSize); // 4;
+  int vFrames = 1; // 4;
+  float du = 1.0f / (float)uFrames;
+  float dv = 1.0f / (float)vFrames;
 
-    float u = (float)(arrowFrame % uFrames) / (float)uFrames;
-    float v = (float)(arrowFrame / uFrames) / (float)vFrames;
-    fh2 = floorf(1.5f * fontHeight) - 1.0f; // this really should not scale the image based on the font,
-    gstate->setState();			    // best would be to load an image for each size
-    glColor3f(1.0f, 1.0f, 1.0f);
-    float imageXShift = 0.55f;
-    float imageYShift = -fh2 * 0.29f;
-    float outputSize = fh2;
+  float u = (float)(arrowFrame % uFrames) / (float)uFrames;
+  float v = (float)(arrowFrame / uFrames) / (float)vFrames;
+  fh2 = floorf(1.5f * fontHeight) - 1.0f; // this really should not scale the image based on the font,
+  gstate->setState();			    // best would be to load an image for each size
+  glColor3f(1.0f, 1.0f, 1.0f);
+  float imageXShift = 0.55f;
+  float imageYShift = -fh2 * 0.29f;
+  float outputSize = fh2;
 
-    glEnable(GL_TEXTURE_2D);
-    glBegin(GL_QUADS); {
-      glTexCoord2f(u, v);
-      glVertex2f(x + imageXShift - outputSize, y + imageYShift);
-      glTexCoord2f(u + du, v);
-      glVertex2f(x + imageXShift , y + imageYShift);
-      glTexCoord2f(u + du, v + dv);
-      glVertex2f(x + imageXShift , y + outputSize + imageYShift);
-      glTexCoord2f(u, v + dv);
-      glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
-    } glEnd();
+  glEnable(GL_TEXTURE_2D);
+  glBegin(GL_QUADS); {
+    glTexCoord2f(u, v);
+    glVertex2f(x + imageXShift - outputSize, y + imageYShift);
+    glTexCoord2f(u + du, v);
+    glVertex2f(x + imageXShift , y + imageYShift);
+    glTexCoord2f(u + du, v + dv);
+    glVertex2f(x + imageXShift , y + outputSize + imageYShift);
+    glTexCoord2f(u, v + dv);
+    glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
+  } glEnd();
 
-    TimeKeeper nowTime = TimeKeeper::getCurrent();
-    if (nowTime - lastTime > 0.07f) {
-      lastTime = nowTime;
-      if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
-    }
-  } else {
-    /* draw a generic triangle cursor */
-
-    fh2 = floorf(0.5f * fontHeight);
-    gstate->setState();
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_TRIANGLES);
-      glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
-      glVertex2f(x - fh2 - fontHeight, y);
-      glVertex2f(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f));
-    glEnd();
-
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glBegin(GL_LINE_LOOP);
-      glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
-      glVertex2f(x - fh2 - fontHeight, y);
-      glVertex2f(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f));
-    glEnd();
+  TimeKeeper nowTime = TimeKeeper::getCurrent();
+  if (nowTime - lastTime > 0.07f) {
+    lastTime = nowTime;
+    if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
   }
 }
 
