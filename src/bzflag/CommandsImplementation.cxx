@@ -857,18 +857,6 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
     for (unsigned int i = 0; i < infoVec.size(); i++) {
       addMessage(NULL, indent + TextUtils::replace_all(infoVec[i], "\t", "  "));
     }
-    if (false) { // FIXME - test code
-      addMessage(NULL, "and now ... by map<>");
-      const MapInfo::InfoMap& infoMap = world->getMapInfo().getMap();
-      MapInfo::InfoMap::const_iterator it;
-      for (it = infoMap.begin(); it != infoMap.end(); ++it) {
-        addMessage(NULL, indent + it->first);
-        const std::vector<std::string>& values = it->second;
-        for (unsigned int i = 0; i < values.size(); i++) {
-          addMessage(NULL, indent + "  " + values[i]);
-        }
-      }
-    }
   }
 
   return true;
