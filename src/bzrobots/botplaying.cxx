@@ -1429,8 +1429,8 @@ static void		sendConstList()
 }
 */
 
-static void doBotRequests()
-{
+//static void doBotRequests()
+//{
   // FIXME: do requests
   /*
   RCRequest* req;
@@ -1446,7 +1446,7 @@ static void doBotRequests()
     rcLink->sendAck(req);
   }
   */
-}
+//}
 
 void enteringServer(void* buf)
 {
