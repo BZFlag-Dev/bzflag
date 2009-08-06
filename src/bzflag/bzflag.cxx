@@ -1334,7 +1334,7 @@ int postWindowInit ( void )
 
     SOUNDSYSTEM.startup();
     if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
-      SOUNDSYSTEM.setVolume(static_cast<int>(BZDB.eval("volume"))*0.1f);
+      SOUNDSYSTEM.setVolume(BZDB.eval("volume") * 0.1f);
 
     BZDB.set("soundsystem",SOUNDSYSTEM.name()); // save the sound system they get
   }

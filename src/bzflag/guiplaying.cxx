@@ -4546,9 +4546,7 @@ void handleMouseDrawing()
       cursorIsHidden = true;
       mainWindow->getWindow()->hideMouse();
     }
-    if (fakeCursor) {
-      drawFakeCursor(fakeCursor);
-    }
+    drawFakeCursor(fakeCursor);
   }
   else {
     if (cursorIsHidden) {

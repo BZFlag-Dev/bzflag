@@ -297,8 +297,8 @@ void BZDBCache::serverCallback(const std::string& name, void *)
 
 void BZDBCache::update() {
   tankRadius = BZDB.eval(BZDBNAMES.TANKRADIUS);
-  linedRadarShots = static_cast<int>(BZDB.eval("linedradarshots"));
-  sizedRadarShots = static_cast<int>(BZDB.eval("sizedradarshots"));
+  linedRadarShots = BZDB.evalInt("linedradarshots");
+  sizedRadarShots = BZDB.evalInt("sizedradarshots");
 }
 
 
