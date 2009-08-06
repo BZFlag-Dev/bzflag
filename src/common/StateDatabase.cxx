@@ -362,10 +362,7 @@ float StateDatabase::eval(const std::string& name)
 int StateDatabase::evalInt(const std::string& name)
 {
   const float value = eval(name);
-  if (isnan(value)) {
-    return 0;
-  }
-  return value;
+  return isnan(value) ? 0 : (int)value;
 }
 
 
