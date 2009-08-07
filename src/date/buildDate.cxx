@@ -12,16 +12,22 @@
 
 #include "common.h"
 
+#include "TextUtils.h"
+
 /* system headers */
 #include <sstream>
 #include <string>
 #include <stdio.h>
 #include <string.h>
 
-#if defined (__APPLE__)
+#ifdef __APPLE__
 #include <sstream>
 #include <CoreServices/CoreServices.h>
 #include <sys/sysctl.h>
+#endif
+
+#ifdef _WIN32
+#include <windows.h>
 #endif
 
 
@@ -160,7 +166,7 @@ const char*		getAppVersion()
 
 std::string getOSString()
 {
-#if defined (__APPLE__)
+#ifdef __APPLE__
   OSErr err = noErr;
   
   long systemMajor, systemMinor, systemBugFix = 0;
@@ -207,26 +213,29 @@ std::string getOSString()
   }
   
   return std::string(reply.str());
-#elif defined (_WIN32)
-  // build up version string
-  OSVERSIONINFOEX versionInfo;
-  SYSTEM_INFO systemInfo;
-  
-  versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-  GetVersionEx((LPOSVERSIONINFOW)&versionInfo);
-  GetNativeSystemInfo(&systemInfo);
-  
-  std::string versionString
-  std::string platform = "Win32";
-  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-    platform = "Win64";
-  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-    platform = "WinIA64";
-  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
-  
-  return versionString;
 #else
-  return std::string("BASE_PLATFORM");
+	#ifdef _WIN32
+	  // build up version string
+	  OSVERSIONINFOEX versionInfo;
+	  SYSTEM_INFO systemInfo;
+	  
+	  versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+	  GetVersionEx((LPOSVERSIONINFO)&versionInfo);
+	  GetNativeSystemInfo(&systemInfo);
+	  
+	  std::string versionString;
+	  std::string platform = "Win32";
+	  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+		platform = "Win64";
+	  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+		platform = "WinIA64";
+	  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
+	  
+	  return versionString;
+	#else
+		// linux
+	  return std::string("BASE_PLATFORM");
+	#endif
 #endif
 }
 
