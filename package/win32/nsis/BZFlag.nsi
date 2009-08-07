@@ -173,7 +173,7 @@ Section "!BZFlag (Required)" BZFlag
 
   ; This requires the Visual C++ 2008 SP1 runtime file to be located in
   ; the same directory as the NSIS script
-  ; http://www.microsoft.com/downloads/details.aspx?FamilyID=a5c84275-3b97-4ab7-a40d-3802b2af5fc2
+  ; http://www.microsoft.com/downloads/details.aspx?familyid=2051A0C1-C9B5-4B0A-A8F5-770A549FD78C
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ 2008 SP1 runtime"         
   File vcredist_x86.exe  
