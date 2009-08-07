@@ -124,20 +124,14 @@ void HttpHandler::request_callback(
     } else
       mg_printf(conn, "1");
 
-  } else if(tokens[0] == "updatename") {
-    if(tokens.size() < 3) return;
-    if(sUserStore.updateName(tokens[1], tokens[2]))
-      mg_printf(conn, "1");
-    else
-      mg_printf(conn, "0");
+  } else if(tokens[0] == "chinf") {
+    if(tokens.size() < 5) return;
+    mg_printf(conn, "%d", (int)sUserStore.changeUserInfo(tokens[1], UserInfo(tokens[2], tokens[3], tokens[4])) );
 
   } else if(tokens[0] == "addtogroup") {
     if(tokens.size() < 3) return;
-    if(sUserStore.addToGroup(tokens[1], tokens[2], 
-      sUserStore.getUserDN(tokens[1]), sUserStore.getGroupDN(tokens[2])))
-      mg_printf(conn, "1");
-    else
-      mg_printf(conn, "0");
+    mg_printf(conn, "%d", sUserStore.addToGroup(tokens[1], tokens[2], 
+      sUserStore.getUserDN(tokens[1]), sUserStore.getGroupDN(tokens[2]) ) );
 
   }
 }

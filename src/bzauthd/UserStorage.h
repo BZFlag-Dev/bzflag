@@ -42,7 +42,18 @@ struct UserInfo
 enum UserLockReason
 {
   USER_LOCK_REGISTER,
-  USER_LOCK_NAMECHANGE
+  USER_LOCK_CHINF,
+};
+
+enum ChInfError
+{
+  CHINF_SUCCESS = 0x0,
+  CHINF_INVALID_CALLSIGN = 0x1,
+  CHINF_INVALID_EMAIL = 0x2,
+  CHINF_INVALID_PASSWORD = 0x4,
+  CHINF_TAKEN_CALLSIGN = 0x8,
+  CHINF_TAKEN_EMAIL = 0x10,
+  CHINF_OTHER_ERROR = 0x1000
 };
 
 /** The UserStore abstracts the method used for storing users */
@@ -58,12 +69,13 @@ public:
   uint32_t authUser(const UserInfo &info);
   bool isRegistered(std::string callsign);
   std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool all_groups, bool ids);
-  bool updateName(const std::string &old_name, const std::string &new_name);
   bool addToGroup(const std::string &callsign, const std::string &group, const std::string &user_dn, const std::string &group_dn);
   std::list<std::string> getUsers(const char *uid);
+  ChInfError changeUserInfo(std::string for_name, const UserInfo &to_info);
 
   int acquireUserLock(std::string const &user_dn, std::string const &callsign, int diff, UserLockReason reason, const char *lock_value = NULL, const char *user_filter = NULL);
-  void releaseUserLock(std::string const &user_dn);
+  template<class T>
+    T releaseUserLock(std::string const &user_dn, T ret_error, T ret_success);
 
   std::string getUserDN(std::string const &callsign);
   std::string getMailDN(std::string const &email);
@@ -78,19 +90,21 @@ private:
 
   uint32_t getuid(LDAP *ld, const char *dn);
   BzRegErrors registerMail(const UserInfo &info, uint32_t uid, std::string const &user_dn, std::string const &mail_dn);
+  BzRegErrors registerMail(const UserInfo &info, char * uid, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors updatePassword(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors userExists(std::string const &user_dn, std::string const &callsign, uint32_t uid);
   BzRegErrors userExists(std::string const &user_dn, std::string const &callsign, const char *uid_str);
   bool compile_reg(regex_t &reg, uint16_t config_key);
   bool execute_reg(regex_t &reg, const char *str);
-  BzRegErrors addUser(const std::string &user_dn, const char *name, const char *pass, const char *email, uint32_t uid, int lock_time);
-  BzRegErrors addUser(const std::string &user_dn, const char *name, const char *pass, const char *email, const char * uid_str, int lock_time);
+  BzRegErrors addUser(const std::string &user_dn, const char *name, const char *digest, const char *email, uint32_t uid, int lock_time);
+  BzRegErrors addUser(const std::string &user_dn, const char *name, const char *digest, const char *email, const char * uid_str, int lock_time);
 
   LDAP *rootld;
   uint32_t nextuid;
   regex_t re_callsign;
   regex_t re_password;
   regex_t re_email;
+  regex_t re_group;
   std::string nextuid_dn;
 };
 

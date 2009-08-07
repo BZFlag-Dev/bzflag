@@ -26,13 +26,16 @@ void Config::initialize()
   registerKey("ldap_password", CONFIG_LDAP_ROOTPW, "secret");
   registerKey("token_expire_delay", CONFIG_TOKEN_EXPIRE_DELAY, 5 * 60 * 1000);
   registerKey("register_lock_time", CONFIG_REGISTER_LOCK_TIME, 5 * 60);
-  registerKey("updatename_lock_time", CONFIG_UPDATENAME_LOCK_TIME, 5 * 60);
+  registerKey("chinf_pass_lock_time", CONFIG_CHINF_PASS_LOCK_TIME, 5 * 60);
+  registerKey("chinf_mail_lock_time", CONFIG_CHINF_MAIL_LOCK_TIME, 5 * 60);
+  registerKey("chinf_name_lock_time", CONFIG_CHINF_NAME_LOCK_TIME, 10 * 60);
   registerKey("web_server_name", CONFIG_WEB_SERVER_NAME, "my.bzflag.org");
   registerKey("web_script_name", CONFIG_WEB_SCRIPT_NAME, "/bb/profile.php");
   registerKey("http_port", CONFIG_HTTP_PORT, "88");
   registerKey("callsign_regex", CONFIG_CALLSIGN_REGEX, "^[][[:alnum:] +_-]{2,20}$");
   registerKey("password_regex", CONFIG_PASSWORD_REGEX, "^[[:print:]]{3,255}$");
   registerKey("email_regex", CONFIG_EMAIL_REGEX, "^[[:alnum:]._%+-]+@[[:alnum:].-]+\\.[[:alpha:]]{2,4}$");
+  registerKey("group_regex", CONFIG_GROUP_REGEX, "^[[:print:]]{3,40}$");
 
   parse();
 }

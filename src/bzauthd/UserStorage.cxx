@@ -12,7 +12,6 @@
 
 #include "UserStorage.h"
 #define LDAP_DEPRECATED 1
-#include <ldap.h>
 #include "ConfigMgr.h"
 #include <Log.h>
 #include <gcrypt.h>
@@ -20,8 +19,45 @@
 #include <assert.h>
 #include <bzregex.h>
 #include "Random.h"
+#include "LDAPUtils.h"
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
+
+struct LDAPMod_UserLockSetReason : public LDAPMod1
+{
+  LDAPMod_UserLockSetReason(UserLockReason flag) : LDAPMod1(LDAP_MOD_REPLACE, "shadowFlag", getFlagStr(flag)) {}
+
+  const char *getFlagStr(UserLockReason flag) {
+    sprintf(flag_str, "%d", (int)flag);
+    return flag_str;
+  }
+
+  char flag_str[30];
+};
+
+struct LDAPMod_UserUnlock : public LDAPMod1
+{
+  LDAPMod_UserUnlock() : LDAPMod1(LDAP_MOD_REPLACE, "shadowExpire", "0") {}
+};
+
+struct LDAPMod_UserLockDel : public LDAPMod1
+{
+  LDAPMod_UserLockDel(const char *lock_val) : LDAPMod1(LDAP_MOD_DELETE, "shadowExpire", lock_val) {}
+};
+
+struct LDAPMod_UserLockAdd : public LDAPMod1
+{
+  LDAPMod_UserLockAdd(int diff) : LDAPMod1(LDAP_MOD_ADD, "shadowExpire", getTimeStr(diff)) {}
+
+  const char *getTimeStr(int diff) {
+    // if diff = 0, just add the attribute but don't set a lock
+    // TODO: TimeKeeper + 64bit
+    sprintf(time_str, "%d", diff > 0 ? (int)time(NULL) + diff : 0);
+    return time_str;
+  }
+
+  char time_str[30];
+};
 
 UserStore::UserStore() : rootld(NULL), nextuid(0)
 {
@@ -34,18 +70,6 @@ UserStore::~UserStore()
   regfree(&re_email);
   unbind(rootld);
 }
-
-bool ldap_check(int ret)
-{
-  if(ret != LDAP_SUCCESS) {
-    sLog.outError("LDAP %d: %s", ret, ldap_err2string(ret));
-    return false;
-  }
-  else return true;
-}
-
-#define LDAP_FCHECK(x) if(!ldap_check(x)) return false
-#define LDAP_VCHECK(x) if(!ldap_check(x)) return
 
 void UserStore::unbind(LDAP *& ld)
 {
@@ -87,6 +111,7 @@ bool UserStore::initialize()
   if(!compile_reg(re_callsign, CONFIG_CALLSIGN_REGEX)) return false;
   if(!compile_reg(re_password, CONFIG_PASSWORD_REGEX)) return false;
   if(!compile_reg(re_email, CONFIG_EMAIL_REGEX)) return false;
+  if(!compile_reg(re_group, CONFIG_GROUP_REGEX)) return false;
 
   return bind(rootld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
@@ -107,245 +132,6 @@ void UserStore::hash(uint8_t *message, size_t message_len, uint8_t *digest)
   delete[] tmpbuf;
 }
 
-struct LDAPMod1
-{
-  LDAPMod1(int op, const char *type, const char *value)
-  {
-    mod.mod_op = op;
-    mod.mod_type = (char*)type;
-    mod.mod_values = values;
-    values[0] = (char*)value;
-    values[1] = NULL;
-  }
-
-  LDAPMod mod;
-  char *values[2];
-};
-
-struct LDAPModN
-{
-  LDAPModN(int op, const char *type, const char **values)
-  {
-    mod.mod_op = op;
-    mod.mod_type = (char*)type;
-    mod.mod_values = (char**)values;
-  }
-
-  LDAPMod mod;
-};
-
-class LDAPAttr
-{
-public:
-  friend class LDAPBaseSearch;
-  LDAPAttr() {}
-  
-  LDAPAttr(int req_value_cnt, int max_value_len, const char *attr_name) {
-    init(req_value_cnt, max_value_len, attr_name);
-  }
-
-  void init(int req_value_cnt, int max_value_len, const char *attr_name) {
-    val_req_cnt = req_value_cnt;
-    val_max_len = max_value_len;
-    cur_val = 0;
-    values = NULL;
-    attr = (char*)attr_name;
-  }
-
-  ~LDAPAttr() {
-    ldap_value_free(values);
-  }
-
-  int count() {
-    return ldap_count_values(values); 
-  }
-
-  char * getNext() {
-    while(values && values[cur_val] != NULL) {
-      
-      if(val_max_len != -1) {
-        int i;
-        for(i = 0; i < val_max_len+1; i++)
-          if(values[cur_val][i] == '\0')
-            break;
-        if(i == val_max_len+1) {
-          sLog.outError("invalid value for %s, potential buffer overflow", attr);
-          cur_val++;
-          continue;
-        }
-      }
-
-      return values[cur_val++];
-    }
-    return NULL;
-  }
-
-  void setValues(char **vals) {
-    values = vals;
-    if(val_req_cnt != -1) {
-      int cnt = count();
-      if(cnt != val_req_cnt) {
-        sLog.outError("value count for %s is %d != %d", attr, cnt, val_req_cnt);
-        ldap_value_free(values);
-        values = NULL;
-      }
-    }
-
-  }
-
-private:
-  char *attr;
-  char **values;
-  int cur_val;
-  int val_max_len;
-  int val_req_cnt;
-};
-
-class LDAPBaseSearch
-{
-public:
-  LDAPBaseSearch(LDAP *ldap, const char *dn, const char *filter, int attr_count, const char **attrs, LDAPAttr *ldap_attrs)
-  {
-    ld = ldap;
-    result = NULL;
-    attr_cnt = attr_count;
-    attr_results = ldap_attrs;
-
-    err = ldap_search_s(ld, dn, LDAP_SCOPE_BASE, filter, (char**)attrs, 0, &result);
-    
-    if(err != LDAP_SUCCESS) {
-      sLog.outError("LDAP %d: %s (at search)", err, ldap_err2string(err));
-    } else {
-      for (LDAPMessage *msg = ldap_first_message(ld, result); msg; msg = ldap_next_message(ld, msg)) {
-        if(ldap_msgtype(msg) == LDAP_RES_SEARCH_ENTRY) {
-          for(int i = 0; i < attr_cnt; i++)
-            attr_results[i].setValues(ldap_get_values(ld, msg, attrs[i]));
-
-          break; // don't care about other messages
-        }
-      }
-    }
-  }
-
-  int getError() {
-    return err;
-  }
-
-  LDAPAttr& getResult(int i) {
-    assert(i < attr_cnt);
-    return attr_results[i];
-  }
-
-  int getResultCount() {
-    return err == LDAP_SUCCESS;
-  }
-
-  ~LDAPBaseSearch()
-  {
-    ldap_msgfree(ldap_first_message(ld, result));
-  }
-
-private:
-  LDAP *ld;
-  LDAPMessage *result;
-  LDAPAttr *attr_results;
-  int attr_cnt;
-  int err;
-};
-
-template< int N >
-class LDAPBaseSearchN {
-};
-
-template<>
-class LDAPBaseSearchN<1> : public LDAPAttr, public LDAPBaseSearch {
-public:
-  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter,
-    const char *attr_name, int req_value_cnt, int max_value_len) :
-    LDAPAttr(req_value_cnt, max_value_len, attr_name),
-    LDAPBaseSearch(ldap, dn, filter, 1, init_attrs(attr_name), (LDAPAttr*)this)
-  {
-  }
-    
-private:
-  const char **init_attrs(const char *attr_name)
-  {
-    attrs[0] = (char*)attr_name;
-    attrs[1] = NULL;
-    return (const char**)attrs;
-  }
-
-  char* attrs[2];
-};
-
-template<>
-class LDAPBaseSearchN<2> : public LDAPBaseSearch {
-public:
-  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter, 
-    const char *attr1, int req_value_cnt1, int max_value_len1,
-    const char *attr2, int req_value_cnt2, int max_value_len2) :
-    LDAPBaseSearch(ldap, dn, filter, 2, init_attrs(attr1, attr2), init_result(
-      req_value_cnt1, max_value_len1, attr1,
-      req_value_cnt2, max_value_len2, attr2))
-  {
-  }
-    
-private:
-  const char **init_attrs(const char *attr1, const char *attr2)
-  {
-    attrs[0] = (char*)attr1;
-    attrs[1] = (char*)attr2;
-    attrs[2] = NULL;
-    return (const char**)attrs;
-  }
-
-  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, const char *attr1, int req_value_cnt2, int max_value_len2, const char *attr2)
-  {
-    attr_res[0].init(req_value_cnt1, max_value_len1, attr1);
-    attr_res[1].init(req_value_cnt2, max_value_len2, attr2);
-    return attr_res;
-  }
-
-  char* attrs[3];
-  LDAPAttr attr_res[2];
-};
-
-template<>
-class LDAPBaseSearchN<3> : public LDAPBaseSearch {
-public:
-  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter, 
-    const char *attr1, int req_value_cnt1, int max_value_len1,
-    const char *attr2, int req_value_cnt2, int max_value_len2,
-    const char *attr3, int req_value_cnt3, int max_value_len3) :
-    LDAPBaseSearch(ldap, dn, filter, 3, init_attrs(attr1, attr2, attr3), init_result(
-      req_value_cnt1, max_value_len1, attr1,
-      req_value_cnt2, max_value_len2, attr2,
-      req_value_cnt3, max_value_len3, attr3))
-  {
-  }
-    
-private:
-  const char **init_attrs(const char *attr1, const char *attr2, const char *attr3)
-  {
-    attrs[0] = (char*)attr1;
-    attrs[1] = (char*)attr2;
-    attrs[2] = (char*)attr3;
-    attrs[3] = NULL;
-    return (const char**)attrs;
-  }
-
-  LDAPAttr *init_result(int req_value_cnt1, int max_value_len1, const char *attr1, int req_value_cnt2, int max_value_len2, const char *attr2, int req_value_cnt3, int max_value_len3, const char *attr3)
-  {
-    attr_res[0].init(req_value_cnt1, max_value_len1, attr1);
-    attr_res[1].init(req_value_cnt2, max_value_len2, attr2);
-    attr_res[2].init(req_value_cnt3, max_value_len3, attr3);
-    return attr_res;
-  }
-
-  char* attrs[4];
-  LDAPAttr attr_res[3];
-};
-
 bool UserStore::execute_reg(regex_t &reg, const char *str)
 {
   int ret = regexec(&reg, str, 0, NULL, 0);
@@ -358,49 +144,15 @@ bool UserStore::execute_reg(regex_t &reg, const char *str)
   return true;
 }
 
-struct LDAPMod_UserLockDel : public LDAPMod1
-{
-  LDAPMod_UserLockDel(const char *lock_val) : LDAPMod1(LDAP_MOD_DELETE, "shadowExpire", lock_val) {}
-};
-
-struct LDAPMod_UserLockAdd : public LDAPMod1
-{
-  LDAPMod_UserLockAdd(int diff) : LDAPMod1(LDAP_MOD_ADD, "shadowExpire", getTimeStr(diff)) {}
-
-  const char *getTimeStr(int diff) {
-    // TODO: TimeKeeper + 64bit
-    sprintf(time_str, "%d", (int)time(NULL) + diff);
-    return time_str;
-  }
-
-  char time_str[30];
-};
-
-struct LDAPMod_UserLockSetReason : public LDAPMod1
-{
-  LDAPMod_UserLockSetReason(UserLockReason flag) : LDAPMod1(LDAP_MOD_REPLACE, "shadowFlag", getFlagStr(flag)) {}
-
-  const char *getFlagStr(UserLockReason flag) {
-    sprintf(flag_str, "%d", (int)flag);
-    return flag_str;
-  }
-
-  char flag_str[30];
-};
-
-struct LDAPMod_UserUnlock : public LDAPMod1
-{
-  LDAPMod_UserUnlock() : LDAPMod1(LDAP_MOD_REPLACE, "shadowExpire", "0") {}
-};
-
-BzRegErrors UserStore::addUser(const std::string &user_dn, const char *name, const char *pass, const char *email, uint32_t uid, int lock_time)
+BzRegErrors UserStore::addUser(const std::string &user_dn, const char *name, const char *pass_digest, const char *email, uint32_t uid, int lock_time)
 {
   char uid_str[20]; sprintf(uid_str, "%d", uid);
-  return addUser(user_dn, name, pass, email, uid_str, lock_time);
+  return addUser(user_dn, name, pass_digest, email, uid_str, lock_time);
 }
 
-BzRegErrors UserStore::addUser(const std::string &user_dn, const char *name, const char *pass, const char *email, const char * uid_str, int lock_time)
+BzRegErrors UserStore::addUser(const std::string &user_dn, const char *name, const char *pass_digest, const char *email, const char * uid_str, int lock_time)
 {
+
   const char *oc_vals[3] = {"person", "extensibleObject", NULL};
   LDAPModN attr_oc    (LDAP_MOD_ADD, "objectClass", oc_vals);
   LDAPMod1 attr_cn    (LDAP_MOD_ADD, "cn", name);
@@ -409,36 +161,34 @@ BzRegErrors UserStore::addUser(const std::string &user_dn, const char *name, con
   LDAPMod1 attr_mail  (LDAP_MOD_ADD, "mail", email);
   LDAPMod_UserLockAdd attr_lock(lock_time);
   LDAPMod_UserLockSetReason attr_lockr(USER_LOCK_REGISTER);
-  LDAPMod1 attr_pass  (LDAP_MOD_ADD, "userPassword", pass);
+  LDAPMod1 attr_pass  (LDAP_MOD_ADD, "userPassword", pass_digest);
 
+  // do not lock the user if the password was also given
   LDAPMod *user_mods[9] = { &attr_oc.mod, &attr_cn.mod, &attr_sn.mod,
     &attr_uid.mod, &attr_mail.mod, &attr_lock.mod, &attr_lockr.mod,
-    pass ? &attr_pass.mod : NULL, NULL };
+    pass_digest ? &attr_pass.mod : NULL, NULL };
 
   while(1) {
     BzRegErrors err;
     int ret = ldap_add_ext_s(rootld, user_dn.c_str(), user_mods, NULL, NULL);
-    if(ret != LDAP_SUCCESS) {
-      switch(ret) {
-      case LDAP_SUCCESS:
-        return REG_SUCCESS;
-      case LDAP_ALREADY_EXISTS:
-        err = userExists(user_dn, name, nextuid + 1);
-        // if the function succeeded in deleting the existing user and its email
-        // try inserting again
-        if(err == REG_SUCCESS)
-          continue;
-        if(err == REG_USER_EXISTS) {
-          sLog.outDebug("User %s already exists", name);
-          return REG_USER_EXISTS;
-        }
-        return err;
-      default:
-        ldap_check(ret);
-        return REG_FAIL_GENERIC;
-      }
-    } else
+    switch(ret) {
+    case LDAP_SUCCESS:
       return REG_SUCCESS;
+    case LDAP_ALREADY_EXISTS:
+      err = userExists(user_dn, name, nextuid + 1);
+      // if the function succeeded in deleting the existing user and its email
+      // try inserting again
+      if(err == REG_SUCCESS)
+        continue;
+      if(err == REG_USER_EXISTS) {
+        sLog.outDebug("User %s already exists", name);
+        return REG_USER_EXISTS;
+      }
+      return err;
+    default:
+      ldap_check(ret);
+      return REG_FAIL_GENERIC;
+    }
   }
 }
 
@@ -665,9 +415,15 @@ int UserStore::acquireUserLock(std::string const &user_dn, std::string const &ca
   return 1; // this should only occur on extreme load
 }
 
-void UserStore::releaseUserLock(std::string const &user_dn)
+template<class T>
+T UserStore::releaseUserLock(std::string const &user_dn, T ret_error, T ret_success)
 {
-  // TODO
+  LDAPMod_UserUnlock attr_unlock;
+  LDAPMod *attrs[3] = { &attr_unlock.mod, NULL };
+  if(!ldap_check( ldap_modify_s(rootld, user_dn.c_str(), attrs) ))
+    return ret_error;
+  else
+    return ret_success;
 }
 
 BzRegErrors UserStore::userExists(std::string const &user_dn, std::string const &callsign, uint32_t uid)
@@ -729,11 +485,11 @@ BzRegErrors UserStore::userExists(std::string const &user_dn, std::string const 
   if(mail_search.getResultCount() != 0) {
     char *mail_uid = mail_search.getResult(0).getNext();
     if(!mail_uid)
-      return REG_FAIL_GENERIC;
+      return releaseUserLock(user_dn, REG_FAIL_GENERIC, REG_FAIL_GENERIC);
     if(strcmp(uid_str, mail_uid) == 0) {
       sLog.outLog("found mail from unfinished registration %s(%s), removing", callsign.c_str(), mail);
       if(!ldap_check(ldap_delete_ext_s(rootld, mail_dn.c_str(), NULL, NULL)))
-        return REG_FAIL_GENERIC;
+        return releaseUserLock(user_dn, REG_FAIL_GENERIC, REG_FAIL_GENERIC);;
     }
   }
 
@@ -772,10 +528,15 @@ BzRegErrors UserStore::updatePassword(const UserInfo &info, std::string const &u
 
 BzRegErrors UserStore::registerMail(const UserInfo &info, uint32_t uid, std::string const &user_dn, std::string const &mail_dn)
 {
+  char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
+  return registerMail(info, uid_str, user_dn, mail_dn);
+}
+
+BzRegErrors UserStore::registerMail(const UserInfo &info, char * uid_str, std::string const &user_dn, std::string const &mail_dn)
+{
   sLog.outLog("UserStore: registering mail %s for %s", info.email.c_str(), info.name.c_str());
   const char *oc_vals[3] = {"LDAPsubEntry", "extensibleObject", NULL};
   LDAPModN attr_oc   (LDAP_MOD_ADD, "objectClass", oc_vals);
-  char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
   LDAPMod1 attr_uid  (LDAP_MOD_ADD, "uid", uid_str);
   LDAPMod1 attr_mail (LDAP_MOD_ADD, "mail", info.email.c_str());
   LDAPMod *mail_mods[4] = { &attr_oc.mod, &attr_uid.mod, &attr_mail.mod, NULL };
@@ -989,57 +750,6 @@ std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::
   return ret;
 }
 
-bool UserStore::updateName(const std::string &old_name, const std::string &new_name)
-{
-  sLog.outLog("UserStore: changing the callsign %s to %s", old_name.c_str(), new_name.c_str());
-
-  std::string old_user_dn = getUserDN(old_name);
-  std::string new_user_dn = getUserDN(new_name);
-
-  // lock the old user
-  if(0 != acquireUserLock(old_user_dn, old_name, 
-    (int)sConfig.getIntValue(CONFIG_UPDATENAME_LOCK_TIME), USER_LOCK_NAMECHANGE))
-    return false;
-
-  // search for the old user's uid,mail,pass
-  LDAPBaseSearchN<3> user_search(rootld, old_user_dn.c_str(), "(objectClass=*)",
-    "uid", 1, 20,
-    "mail", 1, MAX_EMAIL_LEN,
-    "userPassword", 1, (int)hashLen());
-
-  char *uid = user_search.getResult(0).getNext();
-  char *mail = user_search.getResult(1).getNext();
-  char *pass = user_search.getResult(2).getNext();
-  if(!uid || !mail || !pass) {
-    sLog.outError("UserStore: cannot find uid,mail,pass for %s", old_name.c_str());
-    return false;
-  }
-
-  // add a new user with the same values
-  if(REG_SUCCESS != addUser(new_user_dn, new_name.c_str(), pass, mail, uid, 
-    (int)sConfig.getIntValue(CONFIG_REGISTER_LOCK_TIME)))
-    return false;
-
-  // add the new user to the same groups as the old
-  /* FIXME: - this is not interrupt safe
-     - this would not be necessary if the groups were linked to the user by uid,
-     but that would break existing group management functions in ldap
-  */
-  std::list<std::string> list;
-  list = intersectGroupList(old_name, list, true, false);
-  for(std::list<std::string>::iterator itr = list.begin(); itr != list.end(); ++itr)
-    addToGroup(new_name, *itr, new_user_dn, getGroupDN(*itr));
-
-  // deactivate and unlock the old user
-  LDAPMod1 attr_pass (LDAP_MOD_DELETE, "userPassword", pass);
-  LDAPMod_UserUnlock attr_lock;
-  LDAPMod *attrs[3] = { &attr_pass.mod, &attr_lock.mod, NULL };
-  if(!ldap_check( ldap_modify_s(rootld, old_user_dn.c_str(), attrs) ))
-    return false;
-
-  return true;
-}
-
 bool UserStore::addToGroup(const std::string &callsign, const std::string &group, const std::string &user_dn, const std::string &group_dn)
 {
   sLog.outLog("UserStore: adding %s to group %s", callsign.c_str(), group.c_str());
@@ -1090,6 +800,166 @@ std::list<std::string> UserStore::getUsers(const char *uid)
 
   ldap_msgfree(ldap_first_message(rootld, res));
   return ret;
+}
+
+ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_info)
+{
+  /* FIXME: - this is not interrupt safe */
+
+  std::string &name = for_name;
+  const UserInfo& info = to_info;
+
+  bool got_name = info.name != "";
+  bool got_mail = info.email != "";
+  bool got_pass = info.password != "";
+
+  if(!got_name && !got_mail && !got_pass)
+    return CHINF_SUCCESS;
+
+  int err = CHINF_SUCCESS;
+
+  if( !execute_reg(re_callsign, name.c_str()) ||
+    ( got_name && !execute_reg(re_callsign, info.name.c_str())) )
+    err += CHINF_INVALID_CALLSIGN;
+  if( got_mail && !execute_reg(re_email, info.email.c_str()) )
+    err += CHINF_INVALID_EMAIL;
+  if(got_pass && !execute_reg(re_password, info.password.c_str()))
+    err += CHINF_INVALID_PASSWORD;
+
+  if(err != CHINF_SUCCESS)
+    return (ChInfError)err;
+
+  if(got_name) sLog.outLog("UserStore: changing the callsign %s to %s", name.c_str(), info.name.c_str());
+  if(got_mail) sLog.outLog("UserStore: changing email for %s to %s", name.c_str(), info.email.c_str());
+  if(got_pass) sLog.outLog("UserStore: changing password for %s", name.c_str());
+
+  std::string old_user_dn = getUserDN(name);
+  std::string new_user_dn = getUserDN(info.name);
+
+  int lock_time = 0;
+  if(got_pass) lock_time += (int)sConfig.getIntValue(CONFIG_CHINF_PASS_LOCK_TIME);
+  if(got_mail) lock_time += (int)sConfig.getIntValue(CONFIG_CHINF_MAIL_LOCK_TIME);
+  if(got_name) lock_time += (int)sConfig.getIntValue(CONFIG_CHINF_NAME_LOCK_TIME);
+
+  // for now use the same lock type for all operations
+  UserLockReason lock_type = USER_LOCK_CHINF;
+
+  if(0 != acquireUserLock(old_user_dn, name, lock_time, lock_type))
+    return CHINF_OTHER_ERROR;
+
+  char old_digest[4000]; // fixme: should not need to copy here
+  char *new_digest = NULL;
+
+  if(got_name || got_mail) 
+  {
+    // search for the old user's uid,mail,pass
+    LDAPBaseSearchN<3> user_search(rootld, old_user_dn.c_str(), "(objectClass=*)",
+      "uid", 1, 20,
+      "mail", 1, MAX_EMAIL_LEN,
+      "userPassword", 1, (int)hashLen());
+
+    char *uid = user_search.getResult(0).getNext();
+    char *mail = user_search.getResult(1).getNext();
+    char *digest = user_search.getResult(2).getNext();
+    if(!uid || !mail || !digest) {
+      sLog.outError("UserStore: cannot find uid,mail,pass for %s", name.c_str());
+      return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_OTHER_ERROR);
+    }
+
+    strcpy(old_digest, digest);
+
+    if(mail == info.email)
+      got_mail = false;
+
+    if(got_name) {
+      // add a new user with either the same values as the old or
+      // if the email or password is being changed as well
+      // insert directly with the new value
+      const char *new_mail = got_mail ? info.email.c_str() : mail;
+
+      new_digest = old_digest;
+      if(got_pass) {
+        // hash the password
+        size_t digest_len = hashLen();
+        new_digest = new char[digest_len+1];
+        hash((uint8_t*)info.password.c_str(), info.password.length(), (uint8_t*)new_digest);
+      }
+
+      BzRegErrors err = addUser(new_user_dn, info.name.c_str(), new_digest, new_mail, uid, 0);
+
+      if(got_pass) delete[] new_digest;
+
+      if(err != REG_SUCCESS) {
+        if(err == REG_USER_EXISTS)
+          return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_TAKEN_CALLSIGN);
+        else
+          return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_OTHER_ERROR);
+      }
+    }
+
+    if(got_mail) {
+      BzRegErrors err = registerMail(UserInfo(name, "", info.email), uid, old_user_dn, getMailDN(info.email));
+      if(err != REG_SUCCESS) {
+        if(got_name) {
+          if(ldap_check( ldap_delete_s(rootld, new_user_dn.c_str()) ))
+            // cannot release lock until finished or undone
+            return CHINF_OTHER_ERROR; 
+        }
+
+        if(err == REG_MAIL_EXISTS)
+          return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_TAKEN_EMAIL);
+        else
+          return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_OTHER_ERROR);
+      }
+
+      if(!ldap_check( ldap_delete_s( rootld, getMailDN(mail).c_str() ) )) {
+        sLog.outError("UserStore: failed to delete mail %s", mail);
+        // user remains locked, should try to finish this when next acquired
+        return CHINF_OTHER_ERROR;
+      }
+    }
+
+    if(got_name) {
+      // add the new user to the same groups as the old
+      /* - this would not be necessary if the groups were linked to the user by uid,
+         but that might break existing group management functions in ldap
+      */
+      std::list<std::string> list;
+      list = intersectGroupList(name, list, true, false);
+      for(std::list<std::string>::iterator itr = list.begin(); itr != list.end(); ++itr)
+        addToGroup(info.name, *itr, new_user_dn, getGroupDN(*itr));
+    }
+  }
+
+  if(got_pass && !got_name) {
+    // hash the password
+    size_t digest_len = hashLen();
+    new_digest = new char[digest_len+1];
+    hash((uint8_t*)info.password.c_str(), info.password.length(), (uint8_t*)new_digest);
+  }
+  
+  LDAPMod1 attr_del_pass (LDAP_MOD_DELETE, "userPassword", old_digest);
+  LDAPMod1 attr_set_pass (LDAP_MOD_REPLACE, "userPassword", new_digest);
+  LDAPMod1 attr_set_mail (LDAP_MOD_REPLACE, "mail", info.email.c_str());
+  LDAPMod_UserUnlock attr_lock;
+
+  LDAPMod *attrs[5] = { NULL, NULL, NULL, NULL, NULL };
+  int poz = 0;
+  // deactivate the old user if a new one was created
+  if(got_name) attrs[poz++] = &attr_del_pass.mod;
+  // the password should be changed if it was not already added to a new user
+  if(got_pass && !got_name) attrs[poz++] = &attr_set_pass.mod;
+  // should the mail be modified for the old user if a new one was created ?
+  if(got_mail) attrs[poz++] = &attr_set_mail.mod;
+  attrs[poz++] = &attr_lock.mod;
+  
+  bool ret = ldap_check( ldap_modify_s(rootld, old_user_dn.c_str(), attrs) );
+  if(got_pass && !got_name) delete[] new_digest;
+
+  if(!ret)
+    return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_OTHER_ERROR);
+
+  return CHINF_SUCCESS;
 }
 
 // Local Variables: ***

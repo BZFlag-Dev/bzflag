@@ -401,6 +401,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzauthd\LDAPUtils.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzauthd\NetHandler.h"
 				>
 			</File>
