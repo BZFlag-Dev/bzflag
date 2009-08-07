@@ -18,6 +18,12 @@
 #include <stdio.h>
 #include <string.h>
 
+#if defined (__APPLE__)
+#include <sstream>
+#include <CoreServices/CoreServices.h>
+#include <sys/sysctl.h>
+#endif
+
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
@@ -151,6 +157,79 @@ const char*		getAppVersion()
   }
   return appVersion.c_str();
 }
+
+std::string getOSString()
+{
+#if defined (__APPLE__)
+  OSErr err = noErr;
+  
+  long systemMajor, systemMinor, systemBugFix = 0;
+  err = Gestalt(gestaltSystemVersionMajor, &systemMajor);
+  if (err == noErr){
+    err = Gestalt(gestaltSystemVersionMinor, &systemMinor);
+    if (err == noErr){
+      err = Gestalt(gestaltSystemVersionBugFix, &systemBugFix);
+    }
+  }
+  
+  std::stringstream reply;
+  if (err == noErr) {
+    reply << "Mac OS X Version ";
+    reply << systemMajor;
+    reply << ".";
+    reply << systemMinor;
+    reply << ".";
+    reply << systemBugFix;
+  } else {
+    reply << "unknown system version (Gestalt error)";
+  }
+  
+  long systemArchitecture = 0;
+  err = Gestalt(gestaltSysArchitecture, &systemArchitecture);
+  if (err == noErr) {
+    switch (systemArchitecture) {
+      case gestalt68k: {reply << " 68k"; break;}
+      case gestaltPowerPC: {reply << " PPC"; break;}
+      case gestaltIntel: {reply << " x86"; break;}
+      default: {reply << " unknown CPU architecture (Gestalt reply is ";
+      reply << systemArchitecture; reply << ")";}
+    }
+  } else {
+    reply << " unknown CPU architecture (Gestalt error)";
+  }
+  
+  int value = 0;
+  size_t length = sizeof(value);
+  if (sysctlbyname("hw.cpu64bit_capable", &value, &length, NULL, 0) == 0) {
+    if (value) {
+      reply << "; CPU 64 bit cabable";
+    }
+  }
+  
+  return std::string(reply.str());
+#elif defined (_WIN32)
+  // build up version string
+  OSVERSIONINFOEX versionInfo;
+  SYSTEM_INFO systemInfo;
+  
+  versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+  GetVersionEx((LPOSVERSIONINFOW)&versionInfo);
+  GetNativeSystemInfo(&systemInfo);
+  
+  std::string versionString
+  std::string platform = "Win32";
+  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+    platform = "Win64";
+  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+    platform = "WinIA64";
+  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
+  
+  return versionString;
+#else
+  return std::string("BASE_PLATFORM");
+#endif
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

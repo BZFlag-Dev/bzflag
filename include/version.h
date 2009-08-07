@@ -43,6 +43,7 @@ extern const char* getServerVersion();
 extern const char* getMajorMinorVersion();
 extern const char* getMajorMinorRevVersion();
 extern const char* getAppVersion();
+extern std::string getOSString();
 
 #endif //__VERSION_H__
 

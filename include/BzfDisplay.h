@@ -36,8 +36,6 @@ class BzfDisplay {
     virtual void	getModState(bool &shift, bool &control, bool &alt) {
       shift = false; control = false; alt = false;};
 
-    virtual std::string getOSString ();
-
     int			getWidth() const;
     int			getHeight() const;
     void		setFullScreenFormat(int);

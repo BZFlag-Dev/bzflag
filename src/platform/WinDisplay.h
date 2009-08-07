@@ -44,8 +44,6 @@ public:
 
   bool		peekEvent(BzfEvent& event) const;
 
-  virtual std::string getOSString ();
-
 
   // for other Windows stuff
   class Rep {
@@ -79,8 +77,6 @@ private:
   static bool	canChangeDepth();
 
   bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
-
-  std::string versionString;
 private:
   Rep*		rep;
 

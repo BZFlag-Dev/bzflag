@@ -12,12 +12,6 @@
 
 #include "BzfDisplay.h"
 #include <string.h>
-#include <sstream>
-
-#if defined (__APPLE__)
-#include <CoreServices/CoreServices.h>
-#include <sys/sysctl.h>
-#endif
 
 //
 // BzfDisplay::ResInfo
@@ -167,60 +161,6 @@ void			BzfDisplay::initResolutions(ResInfo** _resolutions,
 
 void BzfDisplay::setFullScreenFormat(int index) {
   modeIndex = index;
-}
-
-std::string BzfDisplay::getOSString ()
-{
-#if defined (__APPLE__)
-  OSErr err = noErr;
-  
-  long systemMajor, systemMinor, systemBugFix = 0;
-  err = Gestalt(gestaltSystemVersionMajor, &systemMajor);
-  if (err == noErr){
-    err = Gestalt(gestaltSystemVersionMinor, &systemMinor);
-    if (err == noErr){
-      err = Gestalt(gestaltSystemVersionBugFix, &systemBugFix);
-    }
-  }
-  
-  std::stringstream reply;
-  if (err == noErr) {
-    reply << "Mac OS X Version ";
-    reply << systemMajor;
-    reply << ".";
-    reply << systemMinor;
-    reply << ".";
-    reply << systemBugFix;
-  } else {
-    reply << "unknown system version (Gestalt error)";
-  }
-  
-  long systemArchitecture = 0;
-  err = Gestalt(gestaltSysArchitecture, &systemArchitecture);
-  if (err == noErr) {
-    switch (systemArchitecture) {
-      case gestalt68k: {reply << " 68k"; break;}
-      case gestaltPowerPC: {reply << " PPC"; break;}
-      case gestaltIntel: {reply << " x86"; break;}
-      default: {reply << " unknown CPU architecture (Gestalt reply is ";
-		  reply << systemArchitecture; reply << ")";}
-    }
-  } else {
-    reply << " unknown CPU architecture (Gestalt error)";
-  }
-  
-  int value = 0;
-  size_t length = sizeof(value);
-  if (sysctlbyname("hw.cpu64bit_capable", &value, &length, NULL, 0) == 0) {
-    if (value) {
-      reply << "; CPU 64 bit cabable";
-    }
-  }
-  
-  return std::string(reply.str());
-#else
-  return std::string("BASE_PLATFORM");
-#endif
 }
 
 // Local Variables: ***

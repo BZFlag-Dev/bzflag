@@ -179,21 +179,6 @@ WinDisplay::WinDisplay(const char* displayName, const char*) :
 {
   rep = new Rep(displayName);
 
-  // build up version string
-  OSVERSIONINFOEX versionInfo;
-  SYSTEM_INFO systemInfo;
-
-  versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-  GetVersionEx((LPOSVERSIONINFOW)&versionInfo);
-  GetNativeSystemInfo(&systemInfo);
-
-  std::string platform = "Win32";
-  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-    platform = "Win64";
-  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-    platform = "WinIA64";
-  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
-
   // get resolutions
   if (isValid()) {
     int numModes, currentMode;
@@ -221,11 +206,6 @@ WinDisplay::~WinDisplay()
   setDefaultResolution();
   delete[] resolutions;
   rep->unref();
-}
-
-std::string WinDisplay::getOSString ()
-{
-  return versionString;
 }
 
 int			WinDisplay::getFullWidth() const
