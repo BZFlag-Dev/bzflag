@@ -116,11 +116,8 @@ void QuickKeysMenu::resize(int _width, int _height)
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
-  fs.setMin(0, 20);
-  const float bigFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
-
   fs.setMin(0, 40);
-  const float fontSize = fs.getFontSize(fontFace->getFMFace(), "infoFontSize");
+  const float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
@@ -134,21 +131,21 @@ void QuickKeysMenu::resize(int _width, int _height)
 
   // reposition help
   HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
-  help->setFontSize(bigFontSize);
-  const float helpWidth = fm.getStringWidth(fontFace->getFMFace(), bigFontSize, help->getString());
-  const float bigHeight = fm.getStringHeight(fontFace->getFMFace(), bigFontSize);
+  help->setFontSize(fontSize);
+  const float helpWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, help->getString());
+  const float bigHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
   x = 0.5f * ((float)_width - helpWidth);
   y -= 1.1f * bigHeight;
   help->setPosition(x, y);
 
   // reposition column titles
   HUDuiLabel *all = (HUDuiLabel*)listHUD[2];
-  all->setFontSize(bigFontSize);
+  all->setFontSize(fontSize);
   x = 0.1f * _width;
   y -= 1.5f * bigHeight;
   all->setPosition(x, y);
   HUDuiLabel *team = (HUDuiLabel*)listHUD[3];
-  team->setFontSize(bigFontSize);
+  team->setFontSize(fontSize);
   x = 0.6f * _width;
   team->setPosition(x, y);
 
