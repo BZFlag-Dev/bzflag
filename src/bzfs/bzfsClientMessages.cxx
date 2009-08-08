@@ -1049,6 +1049,8 @@ public:
     buf = nboUnpackStdString(buf, vers);
 
     player->player.OSVersion = vers;
+    logDebugMessage(2,"Player %s [%d] OS version \"%s\"\n",
+		    player->player.getCallSign(), player->getIndex(), player->player.OSVersion.c_str());
 
     return true;
   }
