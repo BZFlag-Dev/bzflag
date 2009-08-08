@@ -1787,7 +1787,7 @@ void Player::addShot(ShotPath *shot, const FiringInfo &info)
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
 }
 
-void Player::updateShot ( FiringInfo &info, int shotID, double time )
+void Player::updateShot(FiringInfo &info, int shotID, double time )
 {
   // kill the old shot
   if (shotID < (int)shots.size()) {

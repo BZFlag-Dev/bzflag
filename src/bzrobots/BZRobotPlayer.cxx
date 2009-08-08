@@ -26,7 +26,6 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 			     const char* _name,
 			     ServerLink* _server) :
   RobotPlayer(_id, _name, _server),
-  lastTickAt(0.0),
   tickDuration(2.0),
   speed(1.0),
   nextSpeed(1.0),
@@ -39,8 +38,35 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
   nextTurn(0.0),
   hasStopped(false)
 {
+#if defined(HAVE_PTHREADS)
+  pthread_mutex_init(&player_lock, NULL);
+#endif
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     pendingUpdates[i] = false;
+}
+
+
+float BZRobotPlayer::getReloadTime()
+{
+  LOCK_PLAYER
+  float reloadTime = RobotPlayer::getReloadTime();
+  UNLOCK_PLAYER
+  return reloadTime;
+}
+
+
+void BZRobotPlayer::addShot(ShotPath *shot, const FiringInfo &info)
+{
+  LOCK_PLAYER
+  RobotPlayer::addShot(shot, info);
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::updateShot (FiringInfo &info, int shotID, double time )
+{
+  LOCK_PLAYER
+  RobotPlayer::updateShot(info, shotID, time );
+  UNLOCK_PLAYER
 }
 
 
@@ -53,47 +79,39 @@ void BZRobotPlayer::doUpdate(float dt)
 void BZRobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
-    double timeNow = TimeKeeper::getCurrent().getSeconds();
-    /* Is the tick still running? */
-    if (lastTickAt + tickDuration >= timeNow) {
-      const float *vel = getVelocity();
-      distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
-      if (distanceRemaining > 0.0) {
-        if (distanceForward)
-          setDesiredSpeed((float)speed);
-        else
-          setDesiredSpeed((float)-speed);
-      } else {
-        setDesiredSpeed(0);
-      }
-
-      if (turnRemaining > 0.0) {
-        if (turnLeft) {
-          turnRemaining -= getAngularVelocity() * dt;
-
-          if (turnRemaining <= 0.0)
-            setDesiredAngVel(0);
-          else if (turnRate * dt > turnRemaining)
-            setDesiredAngVel((float)turnRemaining/dt);
-          else
-            setDesiredAngVel((float)turnRate);
-        } else {
-          turnRemaining += getAngularVelocity() * dt;
-          if (turnRemaining <= 0.0)
-            setDesiredAngVel(0);
-          else if (turnRate * dt > turnRemaining)
-            setDesiredAngVel((float)-turnRemaining/dt);
-          else
-            setDesiredAngVel((float)-turnRate);
-        }
-      } else {
-        setDesiredAngVel(0);
-      }
+    const float *vel = getVelocity();
+    distanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
+    if (distanceRemaining > 0.0) {
+      if (distanceForward)
+        setDesiredSpeed((float)speed);
+      else
+        setDesiredSpeed((float)-speed);
     } else {
-      /*setDesiredAngVel(0);
-      setDesiredSpeed(0);*/
+      setDesiredSpeed(0);
     }
 
+    if (turnRemaining > 0.0) {
+      if (turnLeft) {
+        turnRemaining -= getAngularVelocity() * dt;
+
+        if (turnRemaining <= 0.0)
+        setDesiredAngVel(0);
+        else if (turnRate * dt > turnRemaining)
+        setDesiredAngVel((float)turnRemaining/dt);
+        else
+        setDesiredAngVel((float)turnRate);
+      } else {
+        turnRemaining += getAngularVelocity() * dt;
+        if (turnRemaining <= 0.0)
+        setDesiredAngVel(0);
+        else if (turnRate * dt > turnRemaining)
+        setDesiredAngVel((float)-turnRemaining/dt);
+        else
+        setDesiredAngVel((float)-turnRate);
+      }
+    } else {
+      setDesiredAngVel(0);
+    }
   }
   LocalPlayer::doUpdateMotion(dt);
 }
@@ -111,15 +129,6 @@ void BZRobotPlayer::restart(const double* _pos, double _azimuth)
   LocalPlayer::restart(pos, (float)_azimuth);
 }
 
-
-bool BZRobotPlayer::isSteadyState()
-{
-  double timeNow = TimeKeeper::getCurrent().getSeconds();
-  /* last tick done? */
-  if (lastTickAt + tickDuration <= timeNow)
-    return true;
-  return false;
-}
 
 // Local Variables: ***
 // mode: C++ ***

@@ -49,11 +49,6 @@ void BZRobotControl::Execute(void *_rrp)
 
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   
-  if (!rrp->isSteadyState())
-    return;
-
-  rrp->lastTickAt = TimeKeeper::getCurrent().getSeconds();
-
   if (rrp->pendingUpdates[BZRobotPlayer::speedUpdate])
     rrp->speed = rrp->nextSpeed;
   if (rrp->pendingUpdates[BZRobotPlayer::turnRateUpdate])
@@ -132,8 +127,6 @@ void BZRobotControl::SetResume(void *_rrp)
 {
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  if (!rrp->isSteadyState())
-    return;
 
   if (rrp->hasStopped) {
     rrp->hasStopped = false;
@@ -148,8 +141,6 @@ void BZRobotControl::SetStop(void *_rrp,bool overwrite)
 {
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  if (!rrp->isSteadyState())
-    return;
 
   if (!rrp->hasStopped || overwrite) {
     rrp->hasStopped = true;
