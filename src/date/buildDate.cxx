@@ -28,6 +28,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <sys/utsname.h>
 #endif
 
 
@@ -233,8 +235,26 @@ std::string getOSString()
 	  
 	  return versionString;
 	#else
-		// linux
-	  return std::string("BASE_PLATFORM");
+  std::string versionString;
+  struct utsname buf;
+  if (uname(&buf) == 0) {
+    std::vector<std::string> rtok = TextUtils::tokenize(buf.release, ".", 4);
+    std::string rel;
+    unsigned int i;
+    // use up to three period separated elements of the release string
+    for (i = 0; i < 3 && i < rtok.size(); i++) {
+      if (rel.size() > 0)
+	rel += ".";
+      rel += rtok[i];
+    }
+    // "Linux 2.6.27 x86_64" for example
+    versionString = TextUtils::format("%s %s %s", buf.sysname, rel.c_str(), buf.machine);
+  }
+  else {
+    perror("uname");
+    versionString = "unix unknown";
+  }
+  return versionString;
 	#endif
 #endif
 }
