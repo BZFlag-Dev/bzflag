@@ -27,6 +27,7 @@ BZRobot::~BZRobot()
 
 void BZRobot::setCallbacks(BZRobotCallbacks *_bzrobotcb)
 {
+  printf("setting callbacks!\n");
   bzrobotcb = _bzrobotcb;
 }
 

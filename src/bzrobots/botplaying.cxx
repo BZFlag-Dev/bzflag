@@ -1442,24 +1442,6 @@ static void		sendConstList()
 }
 */
 
-//static void doBotRequests()
-//{
-  // FIXME: do requests
-  /*
-  RCRequest* req;
-
-  if (numRobots < 1)
-    return;
-
-  while ((req = rcLink->peekRequest()) != NULL) {
-    if (!req->process((BZRobotPlayer*)robots[0]))
-      return;
-
-    rcLink->popRequest(); // Discard it, we're done with this one.
-    rcLink->sendAck(req);
-  }
-  */
-//}
 
 void enteringServer(void* buf)
 {
@@ -1829,17 +1811,6 @@ static void playingLoop()
     if (dnsLookupDone(inAddress))
       joinInternetGame(&inAddress);
 
-    // Communicate with remote agent if necessary
-    // FIXME:
-    /*
-    if (rcLink) {
-      if (numRobots >= numRobotTanks)
-	rcLink->tryAccept();
-      rcLink->update();
-      doBotRequests();
-    }
-    */
-
     callPlayingCallbacks();    // invoke callbacks
 
     if (CommandsStandard::isQuit())     // quick out
@@ -1961,13 +1932,13 @@ void botStartPlaying()
     return;
   }
   
-  robotScript->setCallbacks(robotCallbacks);
-
   if(!robotScript->start()) {
     showMessage("Unable to start robot: " + robotScript->getError());
     return;
   }
   
+  robotScript->setCallbacks(robotCallbacks);
+
   // enter game if we have all the info we need, otherwise
   joinRequested = true;
   showMessage("Trying...");
