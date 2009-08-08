@@ -19,24 +19,16 @@
 #include "BZRobotCallbacks.h"
 #include "BZRobotEvents.h"
 
-class _BZRobot
+class BZRobot
 {
 protected:
+  mutable BZRobotCallbacks *bzrobotcb;
   std::string robotType;
-public:
-  std::string getRobotType() { return robotType; }
-  _BZRobot() { robotType = "Unknown"; }
-  virtual ~_BZRobot() {}
-};
-
-class BZRobot : public _BZRobot
-{
-protected:
-  mutable BZRobotCallbacks bzrobotcb;
 public:
   BZRobot();
   virtual ~BZRobot();
-  void setCallbacks(BZRobotCallbacks _bzrobotcb);
+  void setCallbacks(BZRobotCallbacks *_bzrobotcb);
+  std::string getRobotType() { return robotType; }
 
   void ahead(double distance);
   void doNothing();

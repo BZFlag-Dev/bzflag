@@ -19,7 +19,8 @@
 #include "BZRobotPlayer.h"
 
 class BZRobotControl {
-  static BZRobotCallbacks CallbackSet(BZRobotPlayer *rrp);
+public:
+  static BZRobotCallbacks *CallbackSet(BZRobotPlayer *rrp);
   static void Execute(void *_rrp);
   static double GetDistanceRemaining(void *_rrp);
   static double GetTurnRemaining(void *_rrp);

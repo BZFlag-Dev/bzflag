@@ -31,18 +31,27 @@ public:
 
   static BZRobotScript *loadFile(std::string filename);
   
-  virtual bool load(std::string /*filename*/) { return false; }
-  virtual BZRobot *create(void) { return NULL; }
-  virtual void destroy(BZRobot */*instance*/) { }
-
+  void setCallbacks(BZRobotCallbacks *_bzrobotcb);
+  
   bool start();
+  bool stop();
   
   bool loaded() const { return _loaded; }
   std::string getError() const { return error; }
   
-private:
-  BZRobot *pyrobot;
+  virtual bool load(std::string /*filename*/) { return false; }
+  virtual BZRobot *create(void) { return NULL; }
+  virtual void destroy(BZRobot */*instance*/) { }
   
+private:
+  BZRobot *robot;
+  
+#ifndef _WIN32
+  pthread_t rthread;
+#else
+  HANDLE rthread;
+#endif // _WIN32
+
 protected:
   bool _loaded;
   std::string error;

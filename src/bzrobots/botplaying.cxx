@@ -77,6 +77,7 @@
 // local implementation headers
 #include "BZRobotPlayer.h"
 #include "BZRobotScript.h"
+#include "BZRobotControl.h"
 
 #include "bzflag.h"
 #include "commands.h"
@@ -88,6 +89,10 @@
 // FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
 // it's operating in a context where graphics and sound are available.
 bool headless = true;
+
+
+std::list<BZRobotScript *> robotScripts;
+std::list<BZRobotCallbacks *> robotCalls;
 
 // to simplify code shared between bzrobots and bzflag
 // - in bzrobots, this just goes to the error console
@@ -823,6 +828,14 @@ void handleNewPlayer(void *msg)
   robots[i]->setTeam((TeamColor)team);
   serverLink->sendEnter(id, ComputerPlayer, NoUpdates, robots[i]->getTeam(),
     robots[i]->getCallSign(), "", "");
+  std::list<BZRobotCallbacks *>::iterator cbitr = robotCalls.begin();
+  while(cbitr != robotCalls.end()) {
+    if((*cbitr)->data == NULL) {
+      (*cbitr)->data = robots[i];
+      break;
+    }
+    cbitr++;
+  }
   if (!numRobots) {
     makeObstacleList();
     RobotPlayer::setObstacleList(&obstacleList);
@@ -1461,7 +1474,7 @@ void enteringServer(void* buf)
   }
   int i;
   for (i = 0; i < numRobotTanks; i++)
-    serverLink->sendNewPlayer(i,AutomaticTeam);
+    serverLink->sendNewPlayer(i,startupInfo.team);
   numRobots = 0;
 #endif
   // the server sends back the team the player was joined to
@@ -1938,17 +1951,23 @@ void botStartPlaying()
   }
 
   BZRobotScript *robotScript = BZRobotScript::loadFile(BZDB.get("robotScript"));
+  BZRobotCallbacks *robotCallbacks = BZRobotControl::CallbackSet(NULL);
   
+  robotScripts.push_back(robotScript);
+  robotCalls.push_back(robotCallbacks);
+
   if(!robotScript->loaded()) {
     showMessage("Unable to load script: " + robotScript->getError());
     return;
   }
+  
+  robotScript->setCallbacks(robotCallbacks);
 
   if(!robotScript->start()) {
     showMessage("Unable to start robot: " + robotScript->getError());
     return;
   }
-
+  
   // enter game if we have all the info we need, otherwise
   joinRequested = true;
   showMessage("Trying...");

@@ -27,54 +27,52 @@ BZAdvancedRobot::~BZAdvancedRobot()
 
 void BZAdvancedRobot::execute()
 {
-  if(bzrobotcb.Execute != NULL)
-    bzrobotcb.Execute(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->Execute)
+    bzrobotcb->Execute(bzrobotcb->data);
 }
 
 double BZAdvancedRobot::getDistanceRemaining() const
 {
-  if(bzrobotcb.GetDistanceRemaining != NULL)
-    return bzrobotcb.GetDistanceRemaining(bzrobotcb.data);
-  else
-    return 0.0;
+  if(bzrobotcb && bzrobotcb->GetDistanceRemaining)
+    return bzrobotcb->GetDistanceRemaining(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZAdvancedRobot::getTurnRemaining() const
 {
-  if(bzrobotcb.GetTurnRemaining != NULL)
-    return bzrobotcb.GetTurnRemaining(bzrobotcb.data);
-  else
-    return 0.0;
+  if(bzrobotcb && bzrobotcb->GetTurnRemaining)
+    return bzrobotcb->GetTurnRemaining(bzrobotcb->data);
+  return 0.0;
 }
 
 void BZAdvancedRobot::setAhead(double distance)
 {
-  if(bzrobotcb.SetAhead != NULL)
-    bzrobotcb.SetAhead(bzrobotcb.data,distance);
+  if(bzrobotcb && bzrobotcb->SetAhead)
+    bzrobotcb->SetAhead(bzrobotcb->data,distance);
 }
 
 void BZAdvancedRobot::setFire()
 {
-  if(bzrobotcb.SetFire != NULL)
-    bzrobotcb.SetFire(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->SetFire)
+    bzrobotcb->SetFire(bzrobotcb->data);
 }
 
 void BZAdvancedRobot::setTurnRate(double turnRate)
 {
-  if(bzrobotcb.SetTurnRate != NULL)
-    bzrobotcb.SetTurnRate(bzrobotcb.data,turnRate);
+  if(bzrobotcb && bzrobotcb->SetTurnRate)
+    bzrobotcb->SetTurnRate(bzrobotcb->data,turnRate);
 }
 
 void BZAdvancedRobot::setMaxVelocity(double maxVelocity)
 {
-  if(bzrobotcb.SetMaxVelocity != NULL)
-    bzrobotcb.SetMaxVelocity(bzrobotcb.data,maxVelocity);
+  if(bzrobotcb && bzrobotcb->SetMaxVelocity)
+    bzrobotcb->SetMaxVelocity(bzrobotcb->data,maxVelocity);
 }
 
 void BZAdvancedRobot::setResume()
 {
-  if(bzrobotcb.SetResume != NULL)
-    bzrobotcb.SetResume(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->SetResume)
+    bzrobotcb->SetResume(bzrobotcb->data);
 }
 
 void BZAdvancedRobot::setStop()
@@ -84,20 +82,20 @@ void BZAdvancedRobot::setStop()
 
 void BZAdvancedRobot::setStop(bool overwrite)
 {
-  if(bzrobotcb.SetStop != NULL)
-    bzrobotcb.SetStop(bzrobotcb.data,overwrite);
+  if(bzrobotcb && bzrobotcb->SetStop)
+    bzrobotcb->SetStop(bzrobotcb->data,overwrite);
 }
 
 void BZAdvancedRobot::setTurnLeft(double degrees)
 {
-  if(bzrobotcb.SetTurnLeft != NULL)
-    bzrobotcb.SetTurnLeft(bzrobotcb.data,degrees);
+  if(bzrobotcb && bzrobotcb->SetTurnLeft)
+    bzrobotcb->SetTurnLeft(bzrobotcb->data,degrees);
 }
 
 void BZAdvancedRobot::setTickDuration(double duration)
 {
-  if(bzrobotcb.SetTickDuration != NULL)
-    bzrobotcb.SetTickDuration(bzrobotcb.data,duration);
+  if(bzrobotcb && bzrobotcb->SetTickDuration)
+    bzrobotcb->SetTickDuration(bzrobotcb->data,duration);
 }
 
 double BZAdvancedRobot::getBearing(const Tank &tank) const

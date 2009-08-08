@@ -21,11 +21,10 @@
 #include "ScriptLoaderFactory.h"
 
 /* static entry point for threading */
-#ifdef _WIN32
-static void startBot(void *bot) {
+static void *startBot(void *bot) {
   ((BZRobot *)(bot))->run();
+  return NULL;
 }
-#endif // _WIN32
 
 BZRobotScript::BZRobotScript()
 {
@@ -51,28 +50,42 @@ BZRobotScript *BZRobotScript::loadFile(std::string filename)
   return scriptTool;
 }
 
+void BZRobotScript::setCallbacks(BZRobotCallbacks *_bzrobotcb)
+{
+  if(robot)
+    robot->setCallbacks(_bzrobotcb);
+}
+
 bool BZRobotScript::start()
 {
-  if(!pyrobot)
-    pyrobot = create();
+  if(!robot)
+    robot = create();
 
 #ifndef _WIN32
-  pid_t pid = fork();
-  if (pid < 0)
-    return false;
-  else if (pid > 0)
-    return true;
-  fclose(stdin);
-  bzSignal(SIGINT, SIG_DFL);
-#endif
-#ifndef _WIN32
-  pyrobot->run();
-  return false;
+  pthread_create( &rthread, NULL, startBot, robot);
 #else
-  CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, pyrobot, 0, 0);
-  return true;
+  rthread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, robot, 0, 0);
 #endif // _WIN32
 
+  return true;
+}
+
+bool BZRobotScript::stop()
+{
+  if(!robot)
+    robot = create();
+
+#ifndef _WIN32
+  pthread_join(rthread, NULL);
+  pthread_detach(rthread);
+#else
+  WaitForSingleObject(rthread, INFINITE);
+  CloseHandle(rthread);
+#endif // _WIN32
+
+  destroy(robot);
+
+  return true;
 }
 
 // Local Variables: ***

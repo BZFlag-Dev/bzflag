@@ -16,73 +16,95 @@
 
 BZRobot::BZRobot()
 {
-  memset(&bzrobotcb,0,sizeof(BZRobotCallbacks));
+  bzrobotcb = NULL;
   robotType = "BZRobot";
 }
 
 BZRobot::~BZRobot()
 {
-
+  delete bzrobotcb;
 }
 
-void BZRobot::setCallbacks(BZRobotCallbacks _bzrobotcb)
+void BZRobot::setCallbacks(BZRobotCallbacks *_bzrobotcb)
 {
   bzrobotcb = _bzrobotcb;
 }
 
 double BZRobot::getBattleFieldSize() const
 {
-  return bzrobotcb.GetBattleFieldSize(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetBattleFieldSize)
+    return bzrobotcb->GetBattleFieldSize(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getGunHeat() const
 {
-  return bzrobotcb.GetGunHeat(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetGunHeat)
+    return bzrobotcb->GetGunHeat(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getVelocity() const
 {
-  return bzrobotcb.GetVelocity(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetVelocity)
+    return bzrobotcb->GetVelocity(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getHeading() const
 {
-  return bzrobotcb.GetHeading(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetHeading)
+    return bzrobotcb->GetHeading(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getHeight() const
 {
-  return bzrobotcb.GetHeight(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetHeight)
+    return bzrobotcb->GetHeight(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getWidth() const
 {
-  return bzrobotcb.GetWidth(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetWidth)
+    return bzrobotcb->GetWidth(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getLength() const
 {
-  return bzrobotcb.GetLength(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetLength)
+    return bzrobotcb->GetLength(bzrobotcb->data);
+  return 0.0;
 }
 
 long BZRobot::getTime() const
 {
-  return bzrobotcb.GetTime(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetTime)
+    return bzrobotcb->GetTime(bzrobotcb->data);
+  return 0;
 }
 
 double BZRobot::getX() const
 {
-  return bzrobotcb.GetX(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetX)
+    return bzrobotcb->GetX(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getY() const
 {
-  return bzrobotcb.GetY(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetY)
+    return bzrobotcb->GetY(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getZ() const
 {
-  return bzrobotcb.GetZ(bzrobotcb.data);
+  if(bzrobotcb && bzrobotcb->GetZ)
+    return bzrobotcb->GetZ(bzrobotcb->data);
+  return 0.0;
 }
 
 
