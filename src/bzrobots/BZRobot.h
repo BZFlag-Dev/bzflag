@@ -52,31 +52,23 @@ public:
   virtual void run() { printf("BZRobot: run\n"); }
 
   /* Event Handlers. */
-  virtual void onHitWall(const HitWallEvent &/*event*/) {}
+  
+  virtual void onBattleEnded(const BattleEndedEvent &/*event*/) {} // End of league match or server shutting down...
+  virtual void onBulletHit(const BulletHitEvent &/*event*/) {}
+  virtual void onBulletMissed(const BulletMissedEvent &/*event*/) {}
   virtual void onDeath(const DeathEvent &/*event*/) {}
-
-  //virtual void onSkippedTurn(const SkippedTurnEvent &/*event*/) {}
-  //virtual void onBulletHit(const BulletHitEvent &/*event*/) {}
-  //This method is called when one of your bullets hits another robot.
-  //virtual void onBulletHitBullet(const BulletHitBulletEvent &/*event*/) {}
-  //This method is called when one of your bullets hits another bullet.
-  //virtual void onBulletMissed(const BulletMissedEvent &/*event*/) {}
-  //This method is called when one of your bullets misses, i.e. hits a wall.
-  //This method is called if your robot dies.
-  //virtual void onHitByBullet(const HitByBulletEvent &/*event*/) {}
-  //This method is called when your robot is hit by a bullet.
-  //virtual void onHitRobot(const HitRobotEvent &/*event*/) {}
-  //This method is called when your robot collides with another robot.
-  //virtual void onRobotDeath(const RobotDeathEvent &/*event*/) {}
-  //This method is called when another robot dies.
-  //virtual void onScannedRobot(const ScannedRobotEvent &/*event*/) {}
-  //This method is called when your robot sees another robot, i.e. when the robot's radar scan "hits" another robot.
-  //virtual void onWin(const WinEvent &/*event*/) {}
-  //This method is called if your robot wins a battle.
+  virtual void onHitByBullet(const HitByBulletEvent &/*event*/) {}
+  virtual void onHitWall(const HitWallEvent &/*event*/) {}
+  virtual void onRobotDeath(const RobotDeathEvent &/*event*/) {}
+  virtual void onScannedRobot(const ScannedRobotEvent &/*event*/) {}
+  virtual void onStatus(const StatusEvent &/*event*/) {}
+  virtual void onWin(const WinEvent &/*event*/) {} // Only in league matches...
 };
 
 #else
+
 class BZRobot;
+
 #endif /* __BZROBOT_H__ */
 
 // Local Variables: ***

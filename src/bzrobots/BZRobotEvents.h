@@ -21,27 +21,99 @@
 /* local interface headers */
 #include "BZRobotEvent.h"
 
-class HitWallEvent : public BZRobotEvent
+typedef enum EventID {
+  UnknownEventID = -1,
+  BattleEndedEventID = 0,
+  BulletHitEventID,
+  BulletMissedEventID,
+  DeathEventID,
+  HitByBulletEventID,
+  HitWallEventID,
+  RobotDeathEventID,
+  ScannedRobotEventID,
+  StatusEventID,
+  WinEventID
+} EventID;
+
+class BattleEndedEvent : public BZRobotEvent
 {
 public:
-  HitWallEvent() {}
-  HitWallEvent(double _bearing) : bearing(_bearing) {}
-  std::string getType() const { return "HitWall"; }
+  BattleEndedEvent() { eventName = "BattleEnded"; eventID = BattleEndedEventID; }
+};
 
-private:
-  double bearing;
+class BulletHitEvent : public BZRobotEvent
+{
+public:
+  BulletHitEvent() { eventName = "BulletHit"; eventID = BulletHitEventID; }
+};
+
+class BulletMissedEvent : public BZRobotEvent
+{
+public:
+  BulletMissedEvent() { eventName = "BulletMissed"; eventID = BulletMissedEventID; }
 };
 
 class DeathEvent : public BZRobotEvent
 {
 public:
-  DeathEvent() {}
-  std::string getType() const { return "Death"; }
+  DeathEvent() { eventName = "Death"; eventID = BulletMissedEventID; }
+};
+
+class HitByBulletEvent : public BZRobotEvent
+{
+public:
+  HitByBulletEvent() { eventName = "HitByBullet"; eventID = HitByBulletEventID; }
+  HitByBulletEvent(double _bearing) : bearing(_bearing) { eventName = "HitByBullet"; eventID = HitByBulletEventID; }
+
+private:
+  double bearing;
+};
+
+class HitWallEvent : public BZRobotEvent
+{
+public:
+  HitWallEvent() { eventName = "HitWall"; eventID = HitWallEventID; }
+  HitWallEvent(double _bearing) : bearing(_bearing) { eventName = "HitWall"; eventID = HitWallEventID; }
+
+private:
+  double bearing;
+};
+
+class RobotDeathEvent : public BZRobotEvent
+{
+public:
+  RobotDeathEvent() { eventName = "RobotDeath"; eventID = RobotDeathEventID; }
+};
+
+class ScannedRobotEvent : public BZRobotEvent
+{
+public:
+  ScannedRobotEvent() { eventName = "ScannedRobot"; eventID = ScannedRobotEventID; }
+};
+
+class StatusEvent : public BZRobotEvent
+{
+public:
+  StatusEvent() { eventName = "Status"; eventID = StatusEventID; }
+};
+
+class WinEvent : public BZRobotEvent
+{
+public:
+  WinEvent() { eventName = "Win"; eventID = WinEventID; }
 };
 
 #else
-class HitWallEvent;
+class BattleEndedEvent;
+class BulletHitEvent;
+class BulletMissedEvent;
 class DeathEvent;
+class HitByBulletEvent;
+class HitWallEvent;
+class RobotDeathEvent;
+class ScannedRobotEvent;
+class StatusEvent;
+class WinEvent;
 #endif /* __BZROBOTEVENTS_H__ */
 
 // Local Variables: ***
