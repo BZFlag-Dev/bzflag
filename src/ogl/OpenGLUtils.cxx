@@ -20,7 +20,7 @@
 #include "bzfgl.h"
 
 
-#define GL_INVALID_ID 0xffffffff
+#define INVALID_GL_ID 0xffffffff
 
 float getFloatColor(int val)
 {
@@ -272,10 +272,10 @@ void DisplayListSystem::flushLists ( void )
 
   while (itr != lists.end())
     {
-      if (itr->second.list != GL_INVALID_ID)
+      if (itr->second.list != INVALID_GL_ID)
 	glDeleteLists(itr->second.list, 1);
 
-      itr->second.list = GL_INVALID_ID;
+      itr->second.list = INVALID_GL_ID;
       itr++;
     }
 }
@@ -287,7 +287,7 @@ GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *creator)
 
   DisplayList displayList;
   displayList.creator = creator;
-  displayList.list = GL_INVALID_ID;
+  displayList.list = INVALID_GL_ID;
 
   lastList++;
   lists[lastList] = displayList;
@@ -300,7 +300,7 @@ void DisplayListSystem::freeList (GLDisplayList displayList)
   if (itr == lists.end())
     return;
 
-  if (itr->second.list != GL_INVALID_ID)
+  if (itr->second.list != INVALID_GL_ID)
     glDeleteLists(itr->second.list, 1);
 
   lists.erase(itr);
@@ -312,7 +312,7 @@ void DisplayListSystem::callList (GLDisplayList displayList)
   if (itr == lists.end())
     return;
 
-  if (itr->second.list == GL_INVALID_ID)
+  if (itr->second.list == INVALID_GL_ID)
     {
       itr->second.list = glGenLists(1);
       glNewList(itr->second.list,GL_COMPILE);

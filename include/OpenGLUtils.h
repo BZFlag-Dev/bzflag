@@ -19,7 +19,7 @@
 #include <map>
 #include <vector>
 
-#define GL_INVALID_ID 0xffffffff
+#define INVALID_GL_ID 0xffffffff
 
 
 float getFloatColor(int val);
@@ -64,7 +64,7 @@ void glOutlineTabbedBox(float thickness, float minX, float minY,
 // display list system
 typedef unsigned int GLDisplayList;
 
-#define _INVALID_LIST GL_INVALID_ID
+#define _INVALID_LIST INVALID_GL_ID
 
 
 class GLDisplayListCreator
