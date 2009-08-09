@@ -751,7 +751,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     }
   }
 
-  //draw world weapon shots
+  // draw world weapon shots
   WorldPlayer *worldWeapons = world->getWorldWeapons();
   maxShots = worldWeapons->getMaxShots();
   for (i = 0; i < maxShots; i++) {

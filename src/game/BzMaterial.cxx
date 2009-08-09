@@ -330,7 +330,7 @@ void BzMaterial::reset()
   noSorting    = false;
   noBlending   = false;
   noLighting   = false;
-
+  radarSpecial = false;
   delete[] textures;
   textures = NULL;
   textureCount = 0;
@@ -400,6 +400,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   noSorting = m.noSorting;
   noBlending = m.noBlending;
   noLighting = m.noLighting;
+  radarSpecial = m.radarSpecial;
 
   delete[] textures;
   textureCount = m.textureCount;
@@ -441,7 +442,8 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (noRadar != m.noRadar) || (noShadowCast != m.noShadowCast) ||
       (noShadowRecv != m.noShadowRecv) || (texShadow != m.texShadow) ||
       (noCulling != m.noCulling) || (noSorting != m.noSorting) ||
-      (noBlending != m.noBlending) || (noLighting != m.noLighting)) {
+      (noBlending != m.noBlending) || (noLighting != m.noLighting) ||
+      (radarSpecial != m.radarSpecial)) {
     return false;
   }
 
@@ -494,6 +496,7 @@ void* BzMaterial::pack(void* buf) const
   if (groupAlpha)   { modeBytes |= (1 << 7); }
   if (noLighting)   { modeBytes |= (1 << 8); }
   if (noBlending)   { modeBytes |= (1 << 9); }
+  if (radarSpecial) { modeBytes |= (1 << 10); }
   buf = nboPackUInt16(buf, modeBytes);
 
   buf = nboPackInt32(buf, order);
@@ -556,6 +559,7 @@ void* BzMaterial::unpack(void* buf)
   groupAlpha   = (modeBytes & (1 << 7)) != 0;
   noLighting   = (modeBytes & (1 << 8)) != 0;
   noBlending   = (modeBytes & (1 << 9)) != 0;
+  radarSpecial = (modeBytes & (1 << 10)) != 0;
 
   buf = nboUnpackInt32(buf, order);
   buf = nboUnpackInt32(buf, inTmp); dynamicColor = int(inTmp);
@@ -727,6 +731,9 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
   }
   if (noLighting) {
     out << indent << "  nolighting" << std::endl;
+  }
+  if (radarSpecial) {
+    out << indent << "  radarSpecial" << std::endl;
   }
 
   for (i = 0; i < textureCount; i++) {
@@ -904,6 +911,12 @@ void BzMaterial::setPolygonOffset(float factor, float units)
 {
   poFactor = factor;
   poUnits  = units;
+  return;
+}
+
+void BzMaterial::setRadarSpecial(bool value)
+{
+  radarSpecial = value;
   return;
 }
 
@@ -1163,6 +1176,11 @@ bool BzMaterial::getPolygonOffset(float& factor, float& units) const
   factor = poFactor;
   units  = poUnits;
   return (poFactor != 0.0f) || (poUnits != 0.0f);
+}
+
+bool BzMaterial::getRadarSpecial() const
+{
+  return radarSpecial;
 }
 
 bool BzMaterial::getOccluder() const

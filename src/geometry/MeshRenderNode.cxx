@@ -95,7 +95,9 @@ void MeshRenderNode::renderRadar()
     glPushMatrix();
     glCallList(*xformList);
   }
+
   drawMgr->executeSetGeometry(lod, set);
+
   if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }
@@ -112,7 +114,9 @@ void MeshRenderNode::renderShadow()
     glPushMatrix();
     glCallList(*xformList);
   }
+
   drawMgr->executeSetGeometry(lod, set);
+
   if (*xformList != INVALID_GL_LIST_ID) {
     glPopMatrix();
   }

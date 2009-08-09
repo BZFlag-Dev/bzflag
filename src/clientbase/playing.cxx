@@ -1714,21 +1714,34 @@ void handlePause(void *msg)
   PlayerId id, state;
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt8(msg, state);
-  const bool paused = (state != 0);
-
-  printf("handlePause: %i - paused=%s\n", id, paused ? "true" : "false");//FIXME
 
   Player *player = lookupPlayer(id);
-  if (player) {
-    if (paused != player->isPaused()) {
-      addMessage(player, state ? "Paused" : "Resumed");
+  if (player == NULL) {
+    return;
+  }
+
+  switch (state) {
+    case PauseCodeEnable:
+    case PauseCodeDisable: {
+      const bool paused = (state == PauseCodeEnable);
+      if (paused != player->isPaused()) {
+        addMessage(player, state ? "Paused" : "Resumed");
+      }
+      player->setPause(paused);
+      if (player == LocalPlayer::getMyTank()) {
+        pauseCountdown = 0.0f;
+        pausedByUnmap = false;
+      }
+      break;
     }
-
-    player->setPause(paused);
-
-    if (player == LocalPlayer::getMyTank()) {
-      pauseCountdown = 0.0f;
-      pausedByUnmap = false;
+    case PauseCodeAcknowledge: {
+      if (player == myTank) {
+        msg = nboUnpackFloat(msg, pauseCountdown);
+      }
+      break;
+    }
+    default: {
+      break;
     }
   }
 }

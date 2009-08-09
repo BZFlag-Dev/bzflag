@@ -79,6 +79,7 @@ class BzMaterial {
     void setNoBlending(bool);
     void setAlphaThreshold(float);
     void setPolygonOffset(float factor, float units);
+    void setRadarSpecial(bool);
 
     // the following set()'s operate on the last added texture
     void addTexture(const std::string&);
@@ -123,6 +124,7 @@ class BzMaterial {
     bool  getNoLighting() const;
     float getAlphaThreshold() const;
     bool  getPolygonOffset(float& factor, float& units) const;
+    bool  getRadarSpecial() const;
 
     int getTextureCount() const;
     const std::string& getTexture(int) const;
@@ -184,6 +186,7 @@ class BzMaterial {
     float alphaThreshold;
     float poFactor;
     float poUnits;
+    bool radarSpecial;
 
     enum CombineModes {
       replace = 0,

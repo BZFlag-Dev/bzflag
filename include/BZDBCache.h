@@ -95,7 +95,6 @@ class BZDBCache
     static Float hudGUIBorderOpacityFactor;
 
     // server-side
-    static Bool  forbidDebug;
     static Bool  drawCelestial;
     static Bool  drawClouds;
     static Bool  drawGround;
@@ -103,13 +102,15 @@ class BZDBCache
     static Bool  drawMountains;
     static Bool  drawSky;
 
+    static Bool  forbidDebug;
+
     static Float flagPoleSize;
     static Float flagPoleWidth;
     static Float flagRadius;
     static Float gravity;
     static Float maxLOD;
-    static Float radarLimit;
     static Float muzzleHeight;
+    static Float radarLimit;
     static Float tankHeight;
     static Float tankLength;
     static Float tankRadius;

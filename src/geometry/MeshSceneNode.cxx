@@ -344,7 +344,21 @@ void MeshSceneNode::renderRadar()
   for (int i = 0; i < lod.count; i++) {
     SetNode& set = lod.sets[i];
     if (set.meshMat.drawRadar) {
-      set.radarNode->renderRadar();
+      const bool special = set.meshMat.bzmat->getRadarSpecial();
+      if (!special) {
+        set.radarNode->renderRadar();
+      }
+      else if (set.meshMat.colorPtr->a > 0.0f) {
+        glPushAttrib(GL_ALL_ATTRIB_BITS);
+        glDisable(GL_TEXTURE_GEN_S);
+        set.meshMat.gstate.setState();
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        set.radarNode->render();
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glPopAttrib();
+      }
     }
   }
   return;

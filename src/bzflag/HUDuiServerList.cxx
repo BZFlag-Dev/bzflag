@@ -378,7 +378,6 @@ void HUDuiServerList::doRender()
   float y = getY() + getHeight() - columnsHeight;
   float x = getX();
 
-
   for (int i=Modes; i != NoSort; i++) {
     const std::string columnTitle = " " + columns[i].first;
 
@@ -410,7 +409,7 @@ void HUDuiServerList::doRender()
       }
     }
 
-    if ((activeColumn == i)&&(hasFocus())) {
+    if ((activeColumn == i) && hasFocus()) {
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &activeColor);
     } else {
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &color);

@@ -16,6 +16,7 @@
 #include "bzfsMessages.h"
 #include "bzfsPlayerStateVerify.h"
 #include "bzfsChatVerify.h"
+#include "Protocol.h"
 
 std::map<uint16_t, ClientNetworkMessageHandler*> clientNetworkHandlers;
 std::map<uint16_t, PlayerNetworkMessageHandler*> playerNetworkHandlers;
@@ -904,11 +905,21 @@ public:
     }
     else {
       if (!player->pauseRequested) {
+        const float pauseDelay = 12.3f;
         // delayed pausing
         TimeKeeper activeTime = TimeKeeper::getCurrent();
-        activeTime += 5.0f;
+        activeTime += pauseDelay;
         player->pauseActiveTime = activeTime;
         player->pauseRequested  = true;
+
+        // send the PauseCodeAcknowledge message
+        if (player->netHandler) {
+          NetMsg msg = MSGMGR.newMessage();
+          msg->packUInt8(player->getIndex());
+          msg->packUInt8(PauseCodeAcknowledge);
+          msg->packFloat(pauseDelay);
+          msg->send(player->netHandler, MsgPause);
+        }
       }
     }
     
