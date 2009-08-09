@@ -200,7 +200,7 @@ std::string		getOSString()
   
   std::stringstream reply;
   if (err == noErr) {
-    reply << "Mac OS X Version ";
+    reply << "MacOS ";
     reply << systemMajor;
     reply << ".";
     reply << systemMinor;
@@ -216,7 +216,7 @@ std::string		getOSString()
     switch (systemArchitecture) {
       case gestalt68k: {reply << " 68k"; break;}
       case gestaltPowerPC: {reply << " PPC"; break;}
-      case gestaltIntel: {reply << " x86"; break;}
+      case gestaltIntel: {reply << " i386"; break;}
       default: {reply << " unknown CPU architecture (Gestalt reply is ";
 	reply << systemArchitecture; reply << ")";}
     }
@@ -232,6 +232,7 @@ std::string		getOSString()
     }
   }
   
+  // "MacOS 10.4.11 i386" for example
   versionString = reply.str();
 #else
   struct utsname buf;
