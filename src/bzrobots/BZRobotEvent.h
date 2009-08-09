@@ -18,12 +18,15 @@ class BZRobotEvent
 public:
   BZRobotEvent() { eventName = "Unknown"; eventID = -1; }
   virtual ~BZRobotEvent() {}
-  int getPriority() { return priority; }
-  long getTime() { return time; }
-  void setPriority(int _priority) { priority = _priority; }
+
   void setTime(long _time) { time = _time; }
-  std::string const getEventName() { return eventName; }
-  int const getEventID() { return eventID; }
+  void setPriority(int _priority) { priority = _priority; }
+
+  inline long getTime()     const { return time;     }
+  inline int  getEventID()  const { return eventID;  }
+  inline int  getPriority() const { return priority; }
+  inline const std::string& getEventName() const { return eventName; }
+
 protected:
   std::string eventName;
   int eventID;

@@ -2382,6 +2382,7 @@ static std::string getQueryGLResult(const std::string& query)
   GL_QUERY_COMPARE(VERSION);
   GL_QUERY_COMPARE(RENDERER);
   GL_QUERY_COMPARE(EXTENSIONS);
+  GL_QUERY_COMPARE(SHADING_LANGUAGE_VERSION);
   if (queryID != 0) {
     const char* resultPtr = (const char*)glGetString(queryID);
     if (resultPtr == NULL) {
