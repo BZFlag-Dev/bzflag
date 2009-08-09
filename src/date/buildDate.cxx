@@ -191,9 +191,9 @@ std::string		getOSString()
   
   long systemMajor, systemMinor, systemBugFix = 0;
   err = Gestalt(gestaltSystemVersionMajor, &systemMajor);
-  if (err == noErr){
+  if (err == noErr) {
     err = Gestalt(gestaltSystemVersionMinor, &systemMinor);
-    if (err == noErr){
+    if (err == noErr) {
       err = Gestalt(gestaltSystemVersionBugFix, &systemBugFix);
     }
   }
@@ -228,7 +228,7 @@ std::string		getOSString()
   size_t length = sizeof(value);
   if (sysctlbyname("hw.cpu64bit_capable", &value, &length, NULL, 0) == 0) {
     if (value) {
-      reply << "; CPU 64 bit cabable";
+      reply << "; CPU 64 bit capable";
     }
   }
   
