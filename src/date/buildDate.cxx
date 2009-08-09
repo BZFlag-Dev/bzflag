@@ -12,25 +12,26 @@
 
 #include "common.h"
 
-#include "TextUtils.h"
-
 /* system headers */
 #include <sstream>
 #include <string>
 #include <stdio.h>
 #include <string.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#else
 #ifdef __APPLE__
 #include <sstream>
 #include <CoreServices/CoreServices.h>
 #include <sys/sysctl.h>
-#endif
-
-#ifdef _WIN32
-#include <windows.h>
 #else
 #include <sys/utsname.h>
-#endif
+#endif // __APPLE__
+#endif // _WIN32
+
+// common headers
+#include "TextUtils.h"
 
 
 // opaque version number increments on protocol incompatibility
@@ -166,8 +167,25 @@ const char*		getAppVersion()
   return appVersion.c_str();
 }
 
-std::string getOSString()
+std::string		getOSString()
 {
+  std::string versionString = "unknown";
+#ifdef _WIN32
+  // build up version string
+  OSVERSIONINFOEX versionInfo;
+  SYSTEM_INFO systemInfo;
+
+  versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+  GetVersionEx((LPOSVERSIONINFO)&versionInfo);
+  GetNativeSystemInfo(&systemInfo);
+
+  std::string platform = "Win32";
+  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+    platform = "Win64";
+  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+    platform = "WinIA64";
+  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
+#else
 #ifdef __APPLE__
   OSErr err = noErr;
   
@@ -200,7 +218,7 @@ std::string getOSString()
       case gestaltPowerPC: {reply << " PPC"; break;}
       case gestaltIntel: {reply << " x86"; break;}
       default: {reply << " unknown CPU architecture (Gestalt reply is ";
-      reply << systemArchitecture; reply << ")";}
+	reply << systemArchitecture; reply << ")";}
     }
   } else {
     reply << " unknown CPU architecture (Gestalt error)";
@@ -214,28 +232,8 @@ std::string getOSString()
     }
   }
   
-  return std::string(reply.str());
+  versionString = reply.str();
 #else
-	#ifdef _WIN32
-	  // build up version string
-	  OSVERSIONINFOEX versionInfo;
-	  SYSTEM_INFO systemInfo;
-	  
-	  versionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	  GetVersionEx((LPOSVERSIONINFO)&versionInfo);
-	  GetNativeSystemInfo(&systemInfo);
-	  
-	  std::string versionString;
-	  std::string platform = "Win32";
-	  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
-		platform = "Win64";
-	  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
-		platform = "WinIA64";
-	  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
-	  
-	  return versionString;
-	#else
-  std::string versionString;
   struct utsname buf;
   if (uname(&buf) == 0) {
     std::vector<std::string> rtok = TextUtils::tokenize(buf.release, ".", 4);
@@ -254,9 +252,9 @@ std::string getOSString()
     perror("uname");
     versionString = "unix unknown";
   }
+#endif // __APPLE__
+#endif // _WIN32
   return versionString;
-	#endif
-#endif
 }
 
 
