@@ -41,7 +41,7 @@ public:
   
   virtual bool load(std::string /*filename*/) { return false; }
   virtual BZRobot *create(void) { return NULL; }
-  virtual void destroy(BZRobot */*instance*/) { }
+  virtual void destroy(BZRobot * /*instance*/) { }
   
 private:
   BZRobot *robot;

@@ -125,7 +125,7 @@ void BZRobotPlayer::explodeTank()
 
 void BZRobotPlayer::restart(const double* _pos, double _azimuth)
 {
-  fvec3 pos(_pos[0], _pos[1], _pos[2]);;
+  fvec3 pos((float)_pos[0], (float)_pos[1], (float)_pos[2]);;
   LocalPlayer::restart(pos, (float)_azimuth);
 }
 

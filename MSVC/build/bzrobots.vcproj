@@ -220,63 +220,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Frontend.h"
+				RelativePath="..\..\src\bzrobots\BZRobotCallbacks.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Logger.h"
+				RelativePath="..\..\src\bzrobots\BZRobotControl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\MessageUtilities.h"
+				RelativePath="..\..\src\bzrobots\BZRobotEvent.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\RCEvent.h"
+				RelativePath="..\..\src\bzrobots\BZRobotEvents.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\RCEvents.h"
+				RelativePath="..\..\src\bzrobots\BZRobotPlayer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\RCLink.h"
+				RelativePath="..\..\src\bzrobots\BZRobotScript.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\RCLinkBackend.h"
+				RelativePath="..\..\src\bzrobots\PrintError.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\RCLinkFrontend.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCMessage.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCMessageFactory.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCReplies.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCReply.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCRequest.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCRequests.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCRobotPlayer.h"
+				RelativePath="..\..\src\bzrobots\PythonLoader.h"
 				>
 			</File>
 			<File
@@ -305,55 +277,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzrobots\BZRobotControl.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZRobotPlayer.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzrobots\bzrobots.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Frontend.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Logger.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\MessageUtilities.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCEvents.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCLink.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCLinkBackend.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCLinkFrontend.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCMessageFactory.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCReplies.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCRequests.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCRequests_Process.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\RCRobotPlayer.cxx"
+				RelativePath="..\..\src\bzrobots\BZRobotScript.cxx"
 				>
 			</File>
 			<File
@@ -905,6 +841,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\SaveMenu.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\SaveMenu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\SaveWorldMenu.cxx"
 				>
 			</File>
@@ -1065,14 +1009,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\FrontendShot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\FrontendShot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\Robot.cxx"
 				>
 			</File>
@@ -1103,6 +1039,10 @@
 		</File>
 		<File
 			RelativePath="..\..\src\bzflag\Makefile.am"
+			>
+		</File>
+		<File
+			RelativePath="..\..\src\bzrobots\Makefile.am"
 			>
 		</File>
 	</Files>

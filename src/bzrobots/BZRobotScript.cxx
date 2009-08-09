@@ -28,6 +28,7 @@ static void *startBot(void *bot) {
 
 BZRobotScript::BZRobotScript()
 {
+  robot = NULL;
   _loaded = false;
   error = "Invalid script filename.";
 }
