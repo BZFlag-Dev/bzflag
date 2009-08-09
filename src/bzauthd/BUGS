@@ -1,0 +1,1 @@
+The bzauthd protocol does not work in big-endian systems.

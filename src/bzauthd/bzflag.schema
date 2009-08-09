@@ -1,0 +1,7 @@
+attributetype ( 1.3.6.1.4.9191.1 NAME 'inactivePassword'
+	EQUALITY octetStringMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.40{128} )
+
+attributetype ( 1.3.6.1.4.9191.2 NAME 'activationKey'
+	EQUALITY octetStringMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.40{128} )

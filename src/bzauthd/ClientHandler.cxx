@@ -120,7 +120,7 @@ bool ClientHandler::handleAuthResponse(Packet &packet)
     info.name = std::string ((const char*)message, callsign_len);
     info.password = std::string((const char*)message + callsign_len + 1, password_len);
 
-    uint32_t uid = sUserStore.authUser(info);
+    uint32_t uid = sUserStore.authUserInGame(info);
     if(uid)
     {
       uint32_t token = sTokenMgr.newToken(info.name, uid, 0);

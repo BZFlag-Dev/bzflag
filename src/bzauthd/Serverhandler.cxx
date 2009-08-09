@@ -39,7 +39,7 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
     if(!(packet >> token)) return false;
     if(!packet.read_string(callsign, MAX_CALLSIGN_LEN+1)) return false;
 
-    packet >> ipVersion;
+    if(!(packet >> ipVersion)) return false;
     switch((int)ipVersion) {
       case 0:
         break;

@@ -81,10 +81,7 @@ void HttpHandler::request_callback(
 
   if(tokens[0] == "register") {
     if(tokens.size() < 4) return;
-
-    std::string randtext;
-    BzRegErrors err = sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3]), &randtext);
-    mg_printf(conn, "%d:%s", (int)err, randtext.c_str());
+    mg_printf(conn, "%d", (int)sUserStore.registerUser(UserInfo(tokens[1], tokens[2], tokens[3])));
 
   } else if(tokens[0] == "intersectGroups") {
     if(tokens.size() < 3) return;
@@ -132,6 +129,18 @@ void HttpHandler::request_callback(
     if(tokens.size() < 3) return;
     mg_printf(conn, "%d", sUserStore.addToGroup(tokens[1], tokens[2], 
       sUserStore.getUserDN(tokens[1]), sUserStore.getGroupDN(tokens[2]) ) );
+
+  } else if(tokens[0] == "activate") {
+    if(tokens.size() < 4) return;
+    mg_printf(conn, "%d", sUserStore.activateUser(UserInfo(tokens[1], "", tokens[2]), tokens[3]));
+
+  } else if(tokens[0] == "resetpass") {
+    if(tokens.size() < 3) return;
+    mg_printf(conn, "%d", sUserStore.resetPassword(UserInfo(tokens[1], "", tokens[2])));
+
+  } else if(tokens[0] == "resendactmail") {
+    if(tokens.size() < 3) return;
+    mg_printf(conn, "%d", sUserStore.resendActivation(UserInfo(tokens[1], "", tokens[2])));
 
   }
 }
