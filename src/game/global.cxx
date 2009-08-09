@@ -111,6 +111,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_noSmallPackets",		"0",				false, StateDatabase::Locked },
   { "_notRespondingTime",	"5.0",				false, StateDatabase::Locked },
   { "_obeseFactor",		"2.5",				false, StateDatabase::Locked },
+  { "_pauseDelay",		"5.0",				false, StateDatabase::Locked },
   { "_pauseDropTime",		"15.0",				false, StateDatabase::Locked },
   { "_positionTolerance",	"0.09",				false, StateDatabase::Locked },
   { "_pyrBase",			"4.0*_tankHeight",		false, StateDatabase::Locked },

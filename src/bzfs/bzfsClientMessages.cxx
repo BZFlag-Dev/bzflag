@@ -905,7 +905,7 @@ public:
     }
     else {
       if (!player->pauseRequested) {
-        const float pauseDelay = 12.3f;
+        static BZDB_float pauseDelay("_pauseDelay");
         // delayed pausing
         TimeKeeper activeTime = TimeKeeper::getCurrent();
         activeTime += pauseDelay;
