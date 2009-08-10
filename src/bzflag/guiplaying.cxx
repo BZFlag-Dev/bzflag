@@ -6001,7 +6001,8 @@ void startPlaying()
   tmpString += getAppVersion();
   tmpString += " (";
   tmpString += getProtocolVersion();
-  tmpString += ")";
+  tmpString += ") running on ";
+  tmpString += getOSString();
   showMessage(tmpString);
   // print copyright
   tmpString = ColorStrings[YellowColor];
