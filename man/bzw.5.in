@@ -430,11 +430,15 @@ properties:
 .br
 \fB  alphathresh 0.0\fR      # alpha thresholding value
 .br
-\fB  depthoffset 0.0 0.0\fR  # <factor, units> for depth offset (aka: polygonOffset)
+\fB  depthoffset 0.0 0.0\fR  # <factor, units> for depth offset
+.br
+                       # (see 'glPolygonOffset' for details)
 .br
 \fB  groupalpha\fR           # sort translucent faces as a group
 .br
 \fB  occluder\fR             # faces with this material will occlude
+.br
+\fB  radarSpecial\fR         # radar rendered with full properties
 .br
 \fBend\fR
 .br
@@ -1434,6 +1438,8 @@ material :=
 	| "depthoffset" <float> <float>
 .br
 	| "groupalpha"
+.br
+	| "radarSpecial"
 .br
 	| "occluder"
 .br

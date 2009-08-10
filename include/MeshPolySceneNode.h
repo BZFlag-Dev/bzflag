@@ -44,6 +44,7 @@ class MeshPolySceneNode : public WallSceneNode {
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
 
+    void setRadarSpecial(bool value) { radarSpecial = value; }
 
   protected:
     class Geometry : public RenderNode {
@@ -107,6 +108,7 @@ class MeshPolySceneNode : public WallSceneNode {
     Geometry node;
     bool noRadar;
     bool noShadow;
+    bool radarSpecial;
 };
 
 inline int MeshPolySceneNode::Geometry::getVertexCount() const

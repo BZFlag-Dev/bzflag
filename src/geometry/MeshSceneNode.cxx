@@ -350,11 +350,16 @@ void MeshSceneNode::renderRadar()
       }
       else if (set.meshMat.colorPtr->a > 0.0f) {
         glPushAttrib(GL_ALL_ATTRIB_BITS);
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
         glDisable(GL_TEXTURE_GEN_S);
-        set.meshMat.gstate.setState();
         glEnableClientState(GL_NORMAL_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        TextureManager::instance().clearLastBoundID();
+        set.meshMat.gstate.setState();
         set.radarNode->render();
+        OpenGLGState::resetState();
+        TextureManager::instance().clearLastBoundID();
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         glDisableClientState(GL_NORMAL_ARRAY);
         glPopAttrib();

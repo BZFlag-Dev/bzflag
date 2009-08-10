@@ -30,11 +30,13 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "SceneRenderer.h"
+#include "TextureManager.h"
 
 
 // FIXME - no tesselation is done on for shot lighting
 
 
+//============================================================================//
 //
 // MeshFragSceneNode::Geometry
 //
@@ -178,15 +180,15 @@ void MeshFragSceneNode::Geometry::render()
   else {
     if (BZDBCache::lighting) {
       if (BZDBCache::texture) {
-	drawVTN();
+        drawVTN();
       } else {
-	drawVN();
+        drawVN();
       }
     } else {
       if (BZDBCache::texture) {
-	drawVT();
+        drawVT();
       } else {
-	drawV();
+        drawV();
       }
     }
   }
@@ -229,12 +231,14 @@ void MeshFragSceneNode::Geometry::renderShadow()
 }
 
 
+//============================================================================//
 //
 // MeshFragSceneNode
 //
 
 MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
-				    : renderNode(this)
+: renderNode(this)
+, radarSpecial(false)
 {
   int i, j, k;
 
@@ -417,8 +421,31 @@ void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 
 void MeshFragSceneNode::renderRadar()
 {
-  if (!noRadar) {
+  if (noRadar) {
+    return;
+  }
+
+  if (!radarSpecial) {
     renderNode.renderRadar();
+  }
+  else {
+    const fvec4* dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+      glPushAttrib(GL_ALL_ATTRIB_BITS);
+      glDisable(GL_BLEND);
+      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_TEXTURE_GEN_S);
+      glEnableClientState(GL_NORMAL_ARRAY);
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+      TextureManager::instance().clearLastBoundID();
+      getWallGState()->setState();
+      renderNode.render();
+      OpenGLGState::resetState();
+      TextureManager::instance().clearLastBoundID();
+      glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+      glDisableClientState(GL_NORMAL_ARRAY);
+      glPopAttrib();
+    }
   }
   return;
 }

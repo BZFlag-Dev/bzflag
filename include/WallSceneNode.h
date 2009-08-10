@@ -39,7 +39,7 @@ class WallSceneNode : public SceneNode {
     const fvec4&	getLightedColor() const;
     const fvec4&	getLightedModulateColor() const;
     float		getDistanceSq(const fvec3& eye) const;
-    virtual bool	inAxisBox (const Extents& exts) const;
+    virtual bool	inAxisBox(const Extents& exts) const;
 
     void		setColor(float r, float g,
 				float b, float a = 1.0f);
@@ -75,6 +75,9 @@ class WallSceneNode : public SceneNode {
     void		copyStyle(WallSceneNode*);
 
     void		setUseColorTexture(bool use){useColorTexture=use;}
+
+    virtual void	setRadarSpecial(bool) { return; }
+
   protected:
     int			getNumLODs() const;
     void		setNumLODs(int, float* elementAreas);

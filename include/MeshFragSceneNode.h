@@ -51,6 +51,8 @@ class MeshFragSceneNode : public WallSceneNode {
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
 
+    void setRadarSpecial(bool value) { radarSpecial = value; }
+
   protected:
     class Geometry : public RenderNode {
       public:
@@ -89,6 +91,7 @@ class MeshFragSceneNode : public WallSceneNode {
 
     bool noRadar;
     bool noShadow;
+    bool radarSpecial;
     int arrayCount;
     float* vertices;
     float* normals;

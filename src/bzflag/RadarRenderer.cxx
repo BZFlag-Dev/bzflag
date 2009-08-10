@@ -1080,13 +1080,11 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   }
 
   // GL state
-  OpenGLGStateBuilder gb;
-  gb.setTexture(gradientTexId);
-  gb.setShading(GL_FLAT);
-  gb.setCulling(GL_BACK);
-  gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  OpenGLGState gs = gb.getState();
-  gs.setState();
+  OpenGLGState::resetState();
+  tm.bind(gradientTexId);
+  glEnable(GL_TEXTURE_2D);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
 
   // disable the unused arrays
   glDisableClientState(GL_NORMAL_ARRAY);
@@ -1113,16 +1111,16 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   // set the color
   glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-  //  if (!BZDB.isTrue("visualRadar")) {
+  // draw the nodes
   ViewFrustum radarClipper;
   radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), _range, _range);
   RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
-  //  } else {
-  //    RENDERER.getSceneDatabase()->renderRadarNodes(RENDERER.getViewFrustum());
-  //  }
 
   // restore texture generation
   glDisable(GL_TEXTURE_GEN_S);
+
+  glDisable(GL_TEXTURE_2D);
+  glDisable(GL_BLEND);
 
   OpenGLGState::resetState();
 

@@ -24,11 +24,13 @@
 #include "bzfgl.h"
 #include "Intersect.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
+#include "TextureManager.h"
 
 
 // FIXME - no tesselation is done on for shot lighting
 
 
+//============================================================================//
 //
 // MeshPolySceneNode::Geometry
 //
@@ -147,6 +149,7 @@ void MeshPolySceneNode::Geometry::renderShadow()
 }
 
 
+//============================================================================//
 //
 // MeshPolySceneNode
 //
@@ -157,6 +160,7 @@ MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
 				     const fvec3Array& normals,
 				     const fvec2Array& texcoords)
 : node(this, vertices, normals, texcoords, plane.xyz())
+, radarSpecial(false)
 {
   int i, j;
   const int count = vertices.getSize();
@@ -323,8 +327,31 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 
 void MeshPolySceneNode::renderRadar()
 {
-  if (!noRadar) {
+  if (noRadar) {
+    return;
+  }
+
+  if (!radarSpecial) {
     node.renderRadar();
+  }
+  else {
+    const fvec4* dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+      glPushAttrib(GL_ALL_ATTRIB_BITS);
+      glDisable(GL_BLEND);
+      glDisable(GL_TEXTURE_2D);
+      glDisable(GL_TEXTURE_GEN_S);
+      glEnableClientState(GL_NORMAL_ARRAY);
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+      TextureManager::instance().clearLastBoundID();
+      getWallGState()->setState();
+      node.render();
+      OpenGLGState::resetState();
+      TextureManager::instance().clearLastBoundID();
+      glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+      glDisableClientState(GL_NORMAL_ARRAY);
+      glPopAttrib();
+    }
   }
   return;
 }

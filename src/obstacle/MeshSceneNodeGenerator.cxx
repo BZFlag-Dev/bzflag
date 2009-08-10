@@ -316,7 +316,8 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   WallSceneNode* node;
   if (mn->isFace) {
     node = getMeshPolySceneNode(face);
-  } else {
+  }
+  else {
     const MeshFace** faces = new const MeshFace*[mn->faces.size()];
     for (int i = 0; i < (int)mn->faces.size(); i++) {
       faces[i] = mn->faces[i];
@@ -473,6 +474,8 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   node->setNoCulling(mat->getNoCulling());
   node->setNoSorting(mat->getNoSorting());
   node->setNoBlending(mat->getNoBlending());
+
+  node->setRadarSpecial(mat->getRadarSpecial());
 }
 
 

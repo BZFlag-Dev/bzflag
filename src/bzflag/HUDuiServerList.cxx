@@ -387,6 +387,7 @@ void HUDuiServerList::doRender()
                                                     : "arrow_down.png");
       if (texID) {
         glPushAttrib(GL_ALL_ATTRIB_BITS);
+        tm.clearLastBoundID();
         if (tm.bind(texID)) {
           glEnable(GL_TEXTURE_2D);
           glEnable(GL_BLEND);
@@ -405,6 +406,7 @@ void HUDuiServerList::doRender()
           glTexCoord2f(0.0f, 1.0f); glVertex2f(x0, y1);
           glEnd();
         }
+        tm.clearLastBoundID();
         glPopAttrib();
       }
     }
