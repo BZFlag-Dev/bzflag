@@ -1220,7 +1220,7 @@ int initDisplay ( void )
   // run-time GL version check
   if (!GLEW_VERSION_1_2) {
     // DIE
-    printFatalError("ERROR: OpenGL version 1.1 or later is required");
+    printFatalError("ERROR: OpenGL version 1.2 or later is required");
     if (display != NULL) {
       delete display;
       display = NULL;
