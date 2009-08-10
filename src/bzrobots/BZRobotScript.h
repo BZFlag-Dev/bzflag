@@ -28,7 +28,7 @@ class BZRobotScript
 public:
   BZRobotScript();
   virtual ~BZRobotScript() {}
-
+  
   static BZRobotScript *loadFile(std::string filename);
   
   void setCallbacks(BZRobotCallbacks *_bzrobotcb);

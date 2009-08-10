@@ -55,39 +55,65 @@ public:
     updateCount
   } variableUpdates;
   
-  float           getReloadTime();
-  void            addShot(ShotPath *shot, const FiringInfo &info);
-  void            updateShot(FiringInfo &info, int shotID, double time );
-
   void            restart(const double* pos, double azimuth);
   void            explodeTank();
-  
-private:
+
+  void            botExecute();
+  double          botGetDistanceRemaining();
+  double          botGetTurnRemaining();
+  void            botSetAhead(double distance);
+  void            botSetFire();
+  void            botSetTurnRate(double rate);
+  void            botSetMaxVelocity(double speed);
+  void            botSetResume();
+  void            botSetStop(bool overwrite);
+  void            botSetTurnLeft(double turn);
+  double          botGetBattleFieldSize();
+  double          botGetGunHeat();
+  double          botGetVelocity();
+  double          botGetHeading();
+  double          botGetWidth();
+  double          botGetLength();
+  double          botGetHeight();
+  long            botGetTime();
+  double          botGetX();
+  double          botGetY();
+  double          botGetZ();
+
   void            doUpdate(float dt);
   void            doUpdateMotion(float dt);
-public:
-  bool            pendingUpdates[updateCount];
-  
-  double          lastTickAt;
-  double          tickDuration;
-  double          speed, nextSpeed;
-  double          turnRate, nextTurnRate;
-  bool            shoot;
-  
-  double          distanceRemaining, nextDistance;
-  bool            distanceForward, turnLeft;
-  double          turnRemaining, nextTurn;
-  
-  bool            hasStopped;
-  double          stoppedDistance, stoppedTurn;
-  bool            stoppedForward, stoppedLeft;
-  
+
 private:
+
+// Begin thread-safe variables
+  double          tsBattleFieldSize;
+
+  fvec3           tsTankSize;
+
+  bool            tsPendingUpdates[updateCount];
+
+  double          tsGunHeat;
+  bool            tsShoot;
+
+  fvec3           tsPosition;
+  double          tsCurrentHeading;
+  double          tsCurrentSpeed, tsSpeed, tsNextSpeed;
+  double          tsCurrentTurnRate, tsTurnRate, tsNextTurnRate;
+  
+  double          tsDistanceRemaining, tsNextDistance;
+  bool            tsDistanceForward, tsTurnLeft;
+  double          tsTurnRemaining, tsNextTurn;
+  
+  bool            tsHasStopped;
+  double          tsStoppedDistance, tsStoppedTurn;
+  bool            tsStoppedForward, tsStoppedLeft;
+
 #if defined(HAVE_PTHREADS)
   pthread_mutex_t player_lock;
 #elif defined(_WIN32) 
   CRITICAL_SECTION player_lock;
 #endif
+// End thread-safe variables
 };
 
 #else

@@ -175,31 +175,31 @@ void			RobotPlayer::doUpdate(float dt)
       float maxdistance = targetdistance;
       if (!ShotStrategy::getFirstBuilding(tankRay, -0.5f, maxdistance))
       {
-	shoot=true;
-	// try to not aim at teammates
-	for (int i=0; i <= world->getCurMaxPlayers(); i++)
-	{
-	  Player *p = 0;
-	  if (i < world->getCurMaxPlayers())
-	    p = world->getPlayer(i);
-	  else
-	    p = LocalPlayer::getMyTank();
-	  if (!p || p->getId() == getId() || validTeamTarget(p) ||
-	     !p->isAlive()) continue;
-	  const fvec3 relpos = getPosition() - p->getPosition();
-	  Ray ray(relpos, dir);
-	  float impact = Intersect::rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);
-	  if (impact > 0 && impact < shotRange)
-	  {
-	    shoot=false;
-	    timerForShot = 0.1f;
-	    break;
-	  }
-	}
-	if (shoot && fireShot()) {
-	  // separate shot by 0.2 - 0.8 sec (experimental value)
-	  timerForShot = float(bzfrand()) * 0.6f + 0.2f;
-	}
+	    shoot=true;
+	    // try to not aim at teammates
+	    for (int i=0; i <= world->getCurMaxPlayers(); i++)
+	    {
+	      Player *p = 0;
+	      if (i < world->getCurMaxPlayers())
+	        p = world->getPlayer(i);
+	      else
+	        p = LocalPlayer::getMyTank();
+	      if (!p || p->getId() == getId() || validTeamTarget(p) ||
+	         !p->isAlive()) continue;
+	      const fvec3 relpos = getPosition() - p->getPosition();
+	      Ray ray(relpos, dir);
+	      float impact = Intersect::rayAtDistanceFromOrigin(ray, 5 * BZDBCache::tankRadius);
+	      if (impact > 0 && impact < shotRange)
+	      {
+	        shoot=false;
+	        timerForShot = 0.1f;
+	        break;
+	      }
+	    }
+	    if (shoot && fireShot()) {
+	      // separate shot by 0.2 - 0.8 sec (experimental value)
+	      timerForShot = float(bzfrand()) * 0.6f + 0.2f;
+	    }
       }
     }
   }

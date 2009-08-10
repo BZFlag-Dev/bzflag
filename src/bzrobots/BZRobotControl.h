@@ -31,7 +31,6 @@ public:
   static void SetResume(void *_rrp);
   static void SetStop(void *_rrp, bool);
   static void SetTurnLeft(void *_rrp, double);
-  static void SetTickDuration(void *_rrp, double);
   static double GetBattleFieldSize(void *_rrp);
   static double GetGunHeat(void *_rrp);
   static double GetVelocity(void *_rrp);
