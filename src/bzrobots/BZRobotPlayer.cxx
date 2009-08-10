@@ -26,11 +26,11 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 			     const char* _name,
 			     ServerLink* _server) :
   RobotPlayer(_id, _name, _server),
+  tsShoot(false),
   tsSpeed(1.0),
   tsNextSpeed(1.0),
   tsTurnRate(1.0),
   tsNextTurnRate(1.0),
-  tsShoot(false),
   tsDistanceRemaining(0.0),
   tsNextDistance(0.0),
   tsTurnRemaining(0.0),
@@ -198,10 +198,10 @@ void BZRobotPlayer::botSetTurnRate(double rate)
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::botSetMaxVelocity(double tsSpeed)
+void BZRobotPlayer::botSetMaxVelocity(double speed)
 {
   LOCK_PLAYER
-  tsNextSpeed = tsSpeed;
+  tsNextSpeed = speed;
   tsPendingUpdates[BZRobotPlayer::speedUpdate] = true;
   UNLOCK_PLAYER
 }
