@@ -20,6 +20,7 @@
 #include <bzregex.h>
 #include "Random.h"
 #include "LDAPUtils.h"
+#include "MailMan.h"
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
@@ -586,30 +587,19 @@ void UserStore::getActivationKey(uint8_t *key, int len)
 
 bool UserStore::sendActivationMail(const UserInfo &info, const char *key)
 {
+  if(!execute_reg(re_callsign, info.name.c_str())) return false;
+  if(!execute_reg(re_email, info.email.c_str())) return false;
+
   // it's better to send the confirmation mail multiple times
   // than not send it at all, so do it before registration is finalized
-
-  FILE *cmd_pipe;
-  std::string cmd = "mail -s \"BZFlag player registration\" " + info.email;
-  if( (cmd_pipe = popen( cmd.c_str(), "w" )) != NULL ) {
-    std::string msg = "You have just registered a BZFlag player account with\n"
-      "    callsign: " + info.name + "\n"
-      "To activate this account, please go to the following URL:\n\n" 
-      "http://" +(std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
-      (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
-      "?action=CONFIRM&email=" + info.email + "&password=" + 
-      (std::string)key + "\n";
-    int ret = fprintf(cmd_pipe, "%s", msg.c_str());
-    pclose(cmd_pipe);
-    if(ret != msg.size()) {
-      sLog.outError("UserStore: could not write body of activation mail sent to %s(%s)", info.name.c_str(), info.email.c_str());
-      return false;
-    } else
-      return true;
-  } else {
-    sLog.outError("UserStore: could not send mail, failed to open pipe");  
-    return false;
-  }
+  Mail mail = sMailMan.newMail("user_welcome_inactive");
+  mail.replace("{USERNAME}", info.name);
+  mail.replace("{U_ACTIVATE}", 
+    "http://" +(std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
+    (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
+    "?action=CONFIRM&email=" + info.email + "&password=" + 
+    (std::string)key);
+  return mail.send(info.email);
 }
 
 bool UserStore::activateUser(const UserInfo &info, const std::string &key)

@@ -283,6 +283,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzauthd\MailMan.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzauthd\NetHandler.cxx"
 				>
 				<FileConfiguration
@@ -329,6 +333,10 @@
 						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\common\TextUtils.cxx"
+				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\TimeKeeper.cxx"
@@ -402,6 +410,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzauthd\LDAPUtils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzauthd\MailMan.h"
 				>
 			</File>
 			<File

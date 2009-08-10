@@ -18,6 +18,7 @@
 #include "TimeKeeper.h"
 #include "EventHandler.h"
 #include "HttpHandler.h"
+#include "MailMan.h"
 //#include <conio.h>
 
 int main()
@@ -39,6 +40,9 @@ int main()
     return 1;
 
   if(!sHttpHandler.initialize())
+    return 1;
+
+  if(!sMailMan.initialize())
     return 1;
 
   /* main loop */
