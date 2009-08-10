@@ -46,6 +46,7 @@ class BZRobotPlayer : public RobotPlayer
 {
 public:
   BZRobotPlayer(const PlayerId&, const char* name, ServerLink*);
+  ~BZRobotPlayer();
 
   typedef enum {
     speedUpdate,
