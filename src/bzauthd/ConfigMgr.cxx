@@ -15,7 +15,7 @@
 #include "ConfigMgr.h"
 #include <plugin_config.h>
 
-INSTANTIATE_SINGLETON(Config)
+INSTANTIATE_GUARDED_SINGLETON(Config)
 
 void Config::initialize()
 {

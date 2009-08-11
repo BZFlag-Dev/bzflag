@@ -20,7 +20,7 @@
 
 #include <vector>
 #include <string>
-#include <Singleton.h>
+#include "Thread.h"
 
 enum ConfTypes
 {
@@ -51,7 +51,7 @@ enum ConfValueTypes
   CONFIG_TYPE_MAX
 };
 
-class Config : public Singleton<Config>
+class Config : public GuardedSingleton<Config>
 {
 public:
   /** Config manager functions */
@@ -80,7 +80,7 @@ protected:
   ValuesType values;
 };
 
-#define sConfig Config::instance()
+#define sConfig Config::guard().instance()
 
 #endif // __BZAUTHD_CONFIG_H__
 

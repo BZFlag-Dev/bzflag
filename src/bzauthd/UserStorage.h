@@ -57,6 +57,14 @@ enum ChInfError
   CHINF_OTHER_ERROR = 0x1000
 };
 
+enum UserInfoValidity
+{
+  INFO_VALID,
+  INFO_INVALID_NAME,
+  INFO_INVALID_MAIL,
+  INFO_INVALID_PASS
+};
+
 enum AcquireError
 {
   AQ_SUCCESS            = 0x1,    // the user was locked with the given time / reason
@@ -83,9 +91,10 @@ public:
   bool isRegistered(std::string callsign);
   bool addToGroup(const std::string &callsign, const std::string &group, const std::string &user_dn, const std::string &group_dn);
   ChInfError changeUserInfo(std::string for_name, const UserInfo &to_info);
-  bool activateUser(const UserInfo &info, const std::string &key);
-  bool resetPassword(const UserInfo &info);
-  bool resendActivation(const UserInfo &info);
+  int activateUser(const UserInfo &info, const std::string &key);
+  int resetPassword(const UserInfo &info);
+  int resendActivation(const UserInfo &info);
+  std::string getActivationURL(const UserInfo &info, const std::string &key);
 
   uint64_t acquireUserLock(std::string const &user_dn, std::string const &callsign, int diff, UserLockReason reason);
   template<class T>
@@ -105,7 +114,12 @@ public:
   void hash(uint8_t *message, size_t message_len, uint8_t *digest);
   std::string hash(const std::string &message);
 
+  void getRandomKey(uint8_t *key, int len);
+  int getActivationKeyLen() const;
+  int getNewPasswordLen() const;
 
+  UserInfoValidity validateUserInfo(const UserInfo &info, bool *got_name = NULL, bool *got_mail = NULL, bool *got_pass = NULL);
+  UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool got_name, bool got_mail, bool got_pass);
 
 private:
   bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
@@ -119,9 +133,7 @@ private:
   bool execute_reg(regex_t &reg, const char *str);
   BzRegErrors addUser(const std::string &user_dn, const char *name, const char *pass_digest, bool active, const char *email, uint32_t uid, int lock_time);
   BzRegErrors addUser(const std::string &user_dn, const char *name, const char *pass_digest, bool active, const char *email, const char * uid_str, int lock_time);
-  void getActivationKey(uint8_t *key, int len);
-  int getActivationKeyLen() const;
-  bool sendActivationMail(const UserInfo &info, const char *key);
+  bool sendActivationMail(const UserInfo &info, const char *key, const char *tmpl = NULL);
   uint64_t acquireOrCheckLock(std::string const &user_dn, std::string const &callsign, int new_diff, UserLockReason new_reason, const char *lock_value, const char *lock_reason);
 
   uint64_t resume_register(const std::string &callsign, const std::string &user_dn);

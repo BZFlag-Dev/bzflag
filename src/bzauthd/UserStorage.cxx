@@ -255,7 +255,7 @@ BzRegErrors UserStore::registerUser(const UserInfo &info)
         LDAPMod1 attr_old(LDAP_MOD_DELETE, "uid", curvalue);
         LDAPMod1 attr_new(LDAP_MOD_ADD, "uid", newvalue);
         LDAPMod *mod_attrs[3] = { &attr_old.mod, &attr_new.mod, NULL };
-        if(!ldap_check( ldap_modify_s(rootld, nextuid_dn.c_str(), mod_attrs) )) {
+        if(!ldap_check( ldap_modify_ext_s(rootld, nextuid_dn.c_str(), mod_attrs, NULL, NULL) )) {
           sLog.outDebug("UserStore: nextuid modify failed");
           nextuid = 0;
         } else
@@ -329,7 +329,7 @@ BzRegErrors UserStore::registerUser(const UserInfo &info)
   std::string mail_dn = getMailDN(info.email);
   BzRegErrors err;
 
-  err = addUser(user_dn, info.name.c_str(), hash(info.password).c_str(), false, info.email.c_str(), nextuid + 1, 
+  err = addUser(user_dn, info.name.c_str(), NULL, false, info.email.c_str(), nextuid + 1, 
     (int)sConfig.getIntValue(CONFIG_REGISTER_LOCK_TIME));
   if(err != REG_SUCCESS)
     return err;
@@ -548,9 +548,11 @@ uint64_t UserStore::resume_register(const std::string &callsign, const std::stri
 BzRegErrors UserStore::finishReg(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn)
 {
   sLog.outLog("finishing registration for %s", info.name.c_str());
-  // unlock the player
+  // unlock the player and update the password
+  std::string digest = hash(info.password);
   LDAPMod_UserUnlock attr_unlock;
-  LDAPMod *reg_mods[2] = { &attr_unlock.mod, NULL };
+  LDAPMod1 attr_ipass (LDAP_MOD_ADD, "inactivePassword", digest.c_str());
+  LDAPMod *reg_mods[3] = { &attr_unlock.mod, &attr_ipass.mod, NULL };
 
   if(!ldap_check(ldap_modify_ext_s(rootld, user_dn.c_str(), reg_mods, NULL, NULL))) {
     // undo in reverse order, both should succeed under normal circumstances
@@ -574,7 +576,7 @@ int UserStore::getActivationKeyLen() const
   return 10;
 }
 
-void UserStore::getActivationKey(uint8_t *key, int len)
+void UserStore::getRandomKey(uint8_t *key, int len)
 {
   static char alphanum[] = "abcdefghijklmnopqrstuvwxyz0123456789";
   static int alpha_len = (int)strlen(alphanum);
@@ -585,48 +587,59 @@ void UserStore::getActivationKey(uint8_t *key, int len)
   key[len] = '\0';
 }
 
-bool UserStore::sendActivationMail(const UserInfo &info, const char *key)
+int UserStore::getNewPasswordLen() const
+{
+  return 15;
+}
+
+bool UserStore::sendActivationMail(const UserInfo &info, const char *key, const char *tmpl)
 {
   if(!execute_reg(re_callsign, info.name.c_str())) return false;
   if(!execute_reg(re_email, info.email.c_str())) return false;
 
   // it's better to send the confirmation mail multiple times
   // than not send it at all, so do it before registration is finalized
-  Mail mail = sMailMan.newMail("user_welcome_inactive");
+  Mail mail = sMailMan.newMail(tmpl ? tmpl : "user_welcome_inactive");
   mail.replace("{USERNAME}", info.name);
-  mail.replace("{U_ACTIVATE}", 
-    "http://" +(std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
-    (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
-    "?action=CONFIRM&email=" + info.email + "&password=" + 
-    (std::string)key);
+  mail.replace("{U_ACTIVATE}", getActivationURL(info, key));
   return mail.send(info.email);
 }
 
-bool UserStore::activateUser(const UserInfo &info, const std::string &key)
+int UserStore::activateUser(const UserInfo &info, const std::string &key)
 {
+  /* returns: 0 - succes
+              1 - already confirmed
+              2 - bad key
+              3 - other error
+   */
+
   LDAPBaseSearchN<1> mail_search(rootld, getMailDN(info.email).c_str(), "(objectClass=*)",
     "activationKey", 1, getActivationKeyLen());
 
   char *act_key = mail_search.getResult(0).getNextVal();
   if(!act_key) {
-    sLog.outError("UserStore: mail %s has no activation key", info.email.c_str());
-    return false;
+    sLog.outDebug("UserStore: mail %s has no activation key", info.email.c_str());
+    return 3;
   }
 
-  if(key != act_key) return false;
+  if(key != act_key) return 2;
 
   std::string user_dn = getUserDN(info.name);
   LDAPBaseSearchN<1> pass_search(rootld, user_dn.c_str(), "(inactivePassword=*)",
     "inactivePassword", 1, (int)hashLen());
 
   char *digest = pass_search.getResult(0).getNextVal();
-  if(!digest) return false;
+  if(!digest) // could be some other error but usually it's because the user's active
+    return 1;
 
   LDAPMod1 attr_del_inactive (LDAP_MOD_DELETE, "inactivePassword", digest);
   LDAPMod1 attr_add_active   (LDAP_MOD_ADD,    "userPassword",     digest);
-  LDAPMod *attrs[] = { &attr_del_inactive.mod, &attr_add_active.mod, NULL };
+  LDAPMod *attrs[3] = { &attr_del_inactive.mod, &attr_add_active.mod, NULL };
 
-  return ldap_check( ldap_modify_ext_s(rootld, user_dn.c_str(), attrs, NULL, NULL) );
+  if( ldap_check( ldap_modify_ext_s(rootld, user_dn.c_str(), attrs, NULL, NULL) ))
+    return 0;
+  else
+    return 3;
 }
 
 std::string UserStore::getNamefromUID(uint32_t uid)
@@ -667,7 +680,7 @@ BzRegErrors UserStore::registerMail(const UserInfo &info, char * uid_str, const 
 {
   uint8_t buf[100];
   if(!act_key) {
-    getActivationKey(buf, getActivationKeyLen());
+    getRandomKey(buf, getActivationKeyLen());
     act_key = (const char*)buf;
   }
 
@@ -853,7 +866,7 @@ bool UserStore::addToGroup(const std::string &callsign, const std::string &group
   sLog.outLog("UserStore: adding %s to group %s", callsign.c_str(), group.c_str());
   LDAPMod1 attr_cn (LDAP_MOD_ADD, "uniqueMember", callsign.c_str());
   LDAPMod *attrs[2] = { &attr_cn.mod, NULL };
-  return ldap_check( ldap_modify_s(rootld, group_dn.c_str(), attrs) );
+  return ldap_check( ldap_modify_ext_s(rootld, group_dn.c_str(), attrs, NULL, NULL) );
 }
 
 std::string UserStore::getUserDN(std::string const &callsign)
@@ -896,25 +909,15 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
   std::string &name = for_name;
   const UserInfo& info = to_info;
 
-  bool got_name = info.name != "";
-  bool got_mail = info.email != "";
-  bool got_pass = info.password != "";
+  bool got_name = true, got_mail = true, got_pass = true; 
+  switch(validateUserInfo(info, &got_name, &got_mail, &got_pass)) {
+    case INFO_INVALID_NAME: return CHINF_INVALID_CALLSIGN;
+    case INFO_INVALID_MAIL: return CHINF_INVALID_EMAIL;
+    case INFO_INVALID_PASS: return CHINF_INVALID_PASSWORD;
+  }
 
   if(!got_name && !got_mail && !got_pass)
     return CHINF_SUCCESS;
-
-  int err = CHINF_SUCCESS;
-
-  if( !execute_reg(re_callsign, name.c_str()) ||
-    ( got_name && !execute_reg(re_callsign, info.name.c_str())) )
-    err += CHINF_INVALID_CALLSIGN;
-  if( got_mail && !execute_reg(re_email, info.email.c_str()) )
-    err += CHINF_INVALID_EMAIL;
-  if(got_pass && !execute_reg(re_password, info.password.c_str()))
-    err += CHINF_INVALID_PASSWORD;
-
-  if(err != CHINF_SUCCESS)
-    return (ChInfError)err;
 
   if(got_name) sLog.outLog("UserStore: changing the callsign %s to %s", name.c_str(), info.name.c_str());
   if(got_mail) sLog.outLog("UserStore: changing email for %s to %s", name.c_str(), info.email.c_str());
@@ -978,7 +981,7 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
       BzRegErrors err = registerMail(UserInfo(name, "", info.email), old_uid, "", false, old_user_dn, getMailDN(info.email));
       if(err != REG_SUCCESS) {
         if(got_name) {
-          if(ldap_check( ldap_delete_s(rootld, new_user_dn.c_str()) ))
+          if(ldap_check( ldap_delete_ext_s(rootld, new_user_dn.c_str(), NULL, NULL) ))
             // cannot release lock until finished or undone
             return CHINF_OTHER_ERROR; 
         }
@@ -989,7 +992,7 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
           return releaseUserLock(old_user_dn, CHINF_OTHER_ERROR, CHINF_OTHER_ERROR);
       }
 
-      if(!ldap_check( ldap_delete_s( rootld, getMailDN(old_mail).c_str() ) )) {
+      if(!ldap_check( ldap_delete_ext_s( rootld, getMailDN(old_mail).c_str(), NULL, NULL) )) {
         sLog.outError("UserStore: failed to delete mail %s", old_mail);
         // user remains locked, should try to finish this when next acquired
         return CHINF_OTHER_ERROR;
@@ -1030,7 +1033,7 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
   if(got_mail) attrs[poz++] = &attr_set_mail.mod;
   attrs[poz++] = &attr_lock.mod;
   
-  bool ret = ldap_check( ldap_modify_s(rootld, old_user_dn.c_str(), attrs) );
+  bool ret = ldap_check( ldap_modify_ext_s(rootld, old_user_dn.c_str(), attrs, NULL, NULL) );
   if(got_pass && !got_name) delete[] new_digest;
 
   if(!ret)
@@ -1039,16 +1042,117 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
   return CHINF_SUCCESS;
 }
 
-bool UserStore::resetPassword(const UserInfo &info)
+std::string UserStore::getActivationURL(const UserInfo &info, const std::string &key)
 {
-  //LDAPBaseSearchN<3> user_search(rootld, 
-  return true;
+  return "http://" +(std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
+    (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
+    "?action=CONFIRM&email=" + info.email + "&password=" + key;
 }
 
-bool UserStore::resendActivation(const UserInfo &info)
+UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool *got_name, bool *got_mail, bool *got_pass)
 {
+  bool name = true, mail = true, pass = true;
+  if(got_name == NULL) got_name = &name;
+  if(got_mail == NULL) got_mail = &name;
+  if(got_pass == NULL) got_pass = &name;
 
-  return true;
+  if(*got_name == true)
+    *got_name = info.name != "";
+  if(*got_mail == true)
+    *got_mail = info.email != "";
+  if(*got_pass == true)
+    *got_pass = info.password != "";
+
+  if(*got_name && !execute_reg(re_callsign, info.name.c_str()))
+    return INFO_INVALID_NAME;
+  if(*got_mail && !execute_reg(re_email, info.email.c_str()))
+    return INFO_INVALID_MAIL;
+  if(*got_pass && !execute_reg(re_password, info.password.c_str()))
+    return INFO_INVALID_PASS;
+  return INFO_VALID;
+}
+
+UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool got_name, bool got_mail, bool got_pass)
+{
+  return validateUserInfo(info, &got_name, &got_mail, &got_pass);
+}
+
+int UserStore::resetPassword(const UserInfo &info)
+{
+  /* returns: 0 - success
+              1 - no such user
+              2 - no such email
+              3 - ther user has not been activated
+              4 - other error
+  */
+
+  if(INFO_VALID != validateUserInfo(info, true, false, true))
+    return 4;
+
+  sLog.outLog("UserStore: resetting password for %s", info.name.c_str());
+
+  uint8_t pass[1000], key[1000];
+  getRandomKey(pass, getNewPasswordLen());
+  getRandomKey(key, getActivationKeyLen());
+
+  // check if the mail is correct
+  LDAPBaseSearchN<0> mail_search(rootld, getMailDN(info.email).c_str(), "(objectClass=*)");
+  if(LDAP_SUCCESS != mail_search.getError())
+    return 2;
+
+  // send the reminder email
+  Mail mail = sMailMan.newMail("user_remind_inactive");
+  mail.replace("{USERNAME}", info.name);
+  mail.replace("{PASSWORD}", (char*)pass);
+  mail.replace("{U_ACTIVATE}", getActivationURL(info, (char*)key));
+  mail.send(info.email);
+
+  std::string digest = hash((char*)pass);
+
+  // NOTE: this will only succeed if the user is active
+  // is there any reason to allow inactive users to reset their passwords ?
+  LDAPMod1 attr_del (LDAP_MOD_DELETE, "userPassword", NULL);
+  LDAPMod1 attr_add (LDAP_MOD_ADD, "userPassword", digest.c_str());
+  LDAPMod *attrs[3] = { &attr_del.mod, &attr_add.mod, NULL };
+
+  int ret = ldap_modify_ext_s(rootld, getUserDN(info.name).c_str(), attrs, NULL, NULL);
+  if(ret != LDAP_SUCCESS) {
+    switch(ret) {
+      case LDAP_NO_SUCH_OBJECT: return 1;
+      case LDAP_NO_SUCH_ATTRIBUTE: return 3;
+      default:
+        ldap_check(ret);
+        return 4;
+    }
+  } else
+    return 0;
+}
+
+int UserStore::resendActivation(const UserInfo &info)
+{
+  /* returns: 0 - success
+              1 - no such user
+              2 - no such email
+              3 - has already been activated
+              4 - other error
+  */
+
+  if(INFO_VALID != validateUserInfo(info, true, false, true))
+    return 4;
+
+  LDAPBaseSearchN<1> key_search(rootld, getMailDN(info.email).c_str(), "(objectClass=*)",
+    "activationKey", 1, getActivationKeyLen());
+
+  char *key = key_search.getResult(0).getNextVal();
+  if(!key) {
+    if(key_search.getError() != LDAP_NO_SUCH_OBJECT) {
+      sLog.outDebug("UserStore: cannot find activation key for email %s", info.email.c_str());
+      return 4;
+    }
+    return 2;
+  }
+
+  return sendActivationMail(info, key, "user_resend_inactive") ? 0 : 4;
 }
 
 // Local Variables: ***

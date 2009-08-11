@@ -36,9 +36,12 @@ struct LDAPMod1
   {
     mod.mod_op = op;
     mod.mod_type = (char*)type;
-    mod.mod_values = values;
-    values[0] = (char*)value;
-    values[1] = NULL;
+    if(value) {
+      mod.mod_values = values;
+      values[0] = (char*)value;
+      values[1] = NULL;
+    } else
+      mod.mod_values = NULL;
   }
 
   LDAPMod mod;
@@ -284,7 +287,7 @@ public:
   int run(LDAP *ldap, const char *dn, const char *filter)
   {
     init_attrs();
-    return LDAPBaseSearch::run(ldap, dn, filter, 1, (const char**)attrs, (LDAPAttr*)this);
+    return LDAPBaseSearch::run(ldap, dn, filter, 0, (const char**)attrs, (LDAPAttr*)this);
   }
 };
 
@@ -301,7 +304,7 @@ public:
   int run(LDAP *ldap, const char *dn, int scope, const char *filter)
   {
     init_attrs();
-    return LDAPSearch::run(ldap, dn, scope, filter, 1, (const char**)attrs, (LDAPAttr*)this);
+    return LDAPSearch::run(ldap, dn, scope, filter, 0, (const char**)attrs, (LDAPAttr*)this);
   }
 };
 
