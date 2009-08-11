@@ -28,6 +28,9 @@ bzauthd_SOURCES = \
 	EventHandler.h \
 	HttpHandler.cxx \
 	HttpHandler.h \
+	LDAPUtils.h \
+	MailMan.cxx \
+	MailMan.h \
 	NetHandler.cxx \
 	NetHandler.h \
 	Random.cxx \

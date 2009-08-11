@@ -68,7 +68,7 @@ Mail::Mail(const Mail &mail)
   body = mail.body;
 }
 
-bool Mail::load(std::string &path)
+bool Mail::load(const std::string &path)
 {
   FILE *fin = fopen(path.c_str(), "r");
   if(!fin) {

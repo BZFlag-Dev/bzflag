@@ -23,7 +23,7 @@ public:
   Mail();
   Mail(const Mail &mail);
 
-  bool load(std::string &path);
+  bool load(const std::string &path);
 
   bool send(const std::string &dest);
   void replace(const std::string &keyword, const std::string &subst);
