@@ -39,6 +39,12 @@
 # define UNLOCK_PLAYER
 #endif
 
+#ifdef _WIN32
+# define SLEEP_PLAYER(ms) Sleep(ms)
+#else
+# define SLEEP_PLAYER(ms) (ms > 1000 ? sleep(ms/1000) : usleep(ms*1000))
+#endif
+
 /**
  * BZFlag Robot Player
  */

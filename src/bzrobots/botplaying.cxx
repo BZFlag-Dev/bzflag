@@ -1790,7 +1790,7 @@ static void playingLoop()
   while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
     
-    usleep(5000);
+	TimeKeeper::sleep(0.005);
 
     canSpawn = true;
 

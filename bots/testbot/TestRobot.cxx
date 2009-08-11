@@ -32,7 +32,6 @@ void TestRobot::run()
     do {
       double lastDistance = getDistanceRemaining();
       execute();
-      sleep(1);
       if(lastDistance == getDistanceRemaining())
         break;
     } while (getDistanceRemaining() > 0);
@@ -41,7 +40,6 @@ void TestRobot::run()
     do {
       double lastDistance = getDistanceRemaining();
       execute();
-      sleep(1);
       if(lastDistance == getDistanceRemaining())
         break;
     } while (getDistanceRemaining() > 0);
@@ -50,7 +48,6 @@ void TestRobot::run()
     do {
       double lastTurn = getTurnRemaining();
       execute();
-      sleep(1);
       if(lastTurn == getTurnRemaining())
         break;
     } while (getTurnRemaining() > 0);

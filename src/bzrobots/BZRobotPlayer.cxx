@@ -161,6 +161,7 @@ void BZRobotPlayer::botExecute()
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     tsPendingUpdates[i] = false;
   UNLOCK_PLAYER
+  TimeKeeper::sleep(1);
 }
 
 double BZRobotPlayer::botGetDistanceRemaining()
