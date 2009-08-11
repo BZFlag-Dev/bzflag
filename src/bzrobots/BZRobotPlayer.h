@@ -62,58 +62,73 @@ public:
     updateCount
   } variableUpdates;
   
-  void            restart(const double* pos, double azimuth);
-  void            explodeTank();
+  void explodeTank();
+  void restart(const double* _pos, double _azimuth);
+  void update(float inputDT);
+  void doUpdate(float dt);
+  void doUpdateMotion(float dt);
 
-  void            update(float inputDT = -1.0f);
-  void            doUpdate(float dt);
-  void            doUpdateMotion(float dt);
-
-  void            botExecute();
-  double          botGetDistanceRemaining();
-  double          botGetTurnRemaining();
-  void            botSetAhead(double distance);
-  void            botSetFire();
-  void            botSetTurnRate(double rate);
-  void            botSetMaxVelocity(double speed);
-  void            botSetResume();
-  void            botSetStop(bool overwrite);
-  void            botSetTurnLeft(double turn);
-  double          botGetBattleFieldSize();
-  double          botGetGunHeat();
-  double          botGetVelocity();
-  double          botGetHeading();
-  double          botGetWidth();
-  double          botGetLength();
-  double          botGetHeight();
-  long            botGetTime();
-  double          botGetX();
-  double          botGetY();
-  double          botGetZ();
+  void botAhead(double distance);
+  void botBack(double distance);
+  void botExecute();
+  void botFire();
+  double botGetDistanceRemaining();
+  const char * botGetName();
+  double botGetGunCoolingRate();
+  double botGetBattleFieldSize();
+  double botGetGunHeat();
+  double botGetVelocity();
+  double botGetHeading();
+  double botGetWidth();
+  double botGetLength();
+  double botGetHeight();
+  double botGetTime();
+  double botGetX();
+  double botGetY();
+  double botGetZ();
+  double botGetTurnRemaining();
+  void botResume();
+  void botScan();
+  void botSetAhead(double distance);
+  void botSetFire();
+  void botSetTurnRate(double rate);
+  void botSetMaxVelocity(double speed);
+  void botSetResume();
+  void botStop(bool overwrite);
+  void botSetStop(bool overwrite);
+  void botSetTurnLeft(double turn);
+  void botTurnLeft(double turn);
+  void botTurnRight(double turn);
+  
+  double lastExec;
 
   private:
 // Begin thread-safe variables
-  double          tsBattleFieldSize;
+  double tsBattleFieldSize;
 
-  fvec3           tsTankSize;
+  const std::string tsName;
 
-  bool            tsPendingUpdates[updateCount];
+  fvec3 tsTankSize;
 
-  double          tsGunHeat;
-  bool            tsShoot;
+  bool tsPendingUpdates[updateCount];
 
-  fvec3           tsPosition;
-  double          tsCurrentHeading;
-  double          tsCurrentSpeed, tsSpeed, tsNextSpeed;
-  double          tsCurrentTurnRate, tsTurnRate, tsNextTurnRate;
-  
-  double          tsDistanceRemaining, tsNextDistance;
-  bool            tsDistanceForward, tsTurnLeft;
-  double          tsTurnRemaining, tsNextTurn;
-  
-  bool            tsHasStopped;
-  double          tsStoppedDistance, tsStoppedTurn;
-  bool            tsStoppedForward, tsStoppedLeft;
+  double tsGunHeat;
+  bool tsShoot;
+
+  fvec3 tsPosition;
+  double tsCurrentHeading;
+  double tsCurrentSpeed, tsSpeed, tsNextSpeed;
+  double tsCurrentTurnRate, tsTurnRate, tsNextTurnRate;
+ 
+  double tsDistanceRemaining, tsNextDistance;
+  bool tsDistanceForward, tsTurnLeft;
+  double tsTurnRemaining, tsNextTurn;
+ 
+  bool tsHasStopped;
+  double tsStoppedDistance, tsStoppedTurn;
+  bool tsStoppedForward, tsStoppedLeft;
+
+  double tsShotReloadTime;
 
 #if defined(HAVE_PTHREADS)
   pthread_mutex_t player_lock;

@@ -30,6 +30,25 @@ void BZRobot::setCallbacks(BZRobotCallbacks *_bzrobotcb)
   bzrobotcb = _bzrobotcb;
 }
 
+
+void BZRobot::ahead(double distance)
+{
+  if(bzrobotcb && bzrobotcb->Ahead)
+    bzrobotcb->Ahead(bzrobotcb->data,distance);
+}
+
+void BZRobot::back(double distance)
+{
+  if(bzrobotcb && bzrobotcb->Back)
+    bzrobotcb->Back(bzrobotcb->data,distance);
+}
+
+void BZRobot::fire()
+{
+  if(bzrobotcb && bzrobotcb->Fire)
+    bzrobotcb->Fire(bzrobotcb->data);
+}
+
 double BZRobot::getBattleFieldSize() const
 {
   if(bzrobotcb && bzrobotcb->GetBattleFieldSize)
@@ -37,17 +56,17 @@ double BZRobot::getBattleFieldSize() const
   return 0.0;
 }
 
+double BZRobot::getGunCoolingRate() const
+{
+  if(bzrobotcb && bzrobotcb->GetGunCoolingRate)
+    return bzrobotcb->GetGunCoolingRate(bzrobotcb->data);
+  return 0.0;
+}
+
 double BZRobot::getGunHeat() const
 {
   if(bzrobotcb && bzrobotcb->GetGunHeat)
     return bzrobotcb->GetGunHeat(bzrobotcb->data);
-  return 0.0;
-}
-
-double BZRobot::getVelocity() const
-{
-  if(bzrobotcb && bzrobotcb->GetVelocity)
-    return bzrobotcb->GetVelocity(bzrobotcb->data);
   return 0.0;
 }
 
@@ -65,13 +84,6 @@ double BZRobot::getHeight() const
   return 0.0;
 }
 
-double BZRobot::getWidth() const
-{
-  if(bzrobotcb && bzrobotcb->GetWidth)
-    return bzrobotcb->GetWidth(bzrobotcb->data);
-  return 0.0;
-}
-
 double BZRobot::getLength() const
 {
   if(bzrobotcb && bzrobotcb->GetLength)
@@ -79,11 +91,32 @@ double BZRobot::getLength() const
   return 0.0;
 }
 
-long BZRobot::getTime() const
+const char * BZRobot::getName() const
+{
+  if(bzrobotcb && bzrobotcb->GetName)
+    return bzrobotcb->GetName(bzrobotcb->data);
+  return "";
+}
+
+double BZRobot::getTime() const
 {
   if(bzrobotcb && bzrobotcb->GetTime)
     return bzrobotcb->GetTime(bzrobotcb->data);
   return 0;
+}
+
+double BZRobot::getWidth() const
+{
+  if(bzrobotcb && bzrobotcb->GetWidth)
+    return bzrobotcb->GetWidth(bzrobotcb->data);
+  return 0.0;
+}
+
+double BZRobot::getVelocity() const
+{
+  if(bzrobotcb && bzrobotcb->GetVelocity)
+    return bzrobotcb->GetVelocity(bzrobotcb->data);
+  return 0.0;
 }
 
 double BZRobot::getX() const
@@ -107,6 +140,35 @@ double BZRobot::getZ() const
   return 0.0;
 }
 
+void BZRobot::resume()
+{
+  if(bzrobotcb && bzrobotcb->Resume)
+    bzrobotcb->Resume(bzrobotcb->data);
+}
+
+void BZRobot::scan()
+{
+  if(bzrobotcb && bzrobotcb->Scan)
+    bzrobotcb->Scan(bzrobotcb->data);
+}
+
+void BZRobot::stop(bool overwrite)
+{
+  if(bzrobotcb && bzrobotcb->Stop)
+    bzrobotcb->Stop(bzrobotcb->data,overwrite);
+}
+
+void BZRobot::turnLeft(double degrees)
+{
+  if(bzrobotcb && bzrobotcb->TurnLeft)
+    bzrobotcb->TurnLeft(bzrobotcb->data,degrees);
+}
+
+void BZRobot::turnRight(double degrees)
+{
+  if(bzrobotcb && bzrobotcb->TurnRight)
+    bzrobotcb->TurnRight(bzrobotcb->data,degrees);
+}
 
 // Local Variables: ***
 // mode: C++ ***

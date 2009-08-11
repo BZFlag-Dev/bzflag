@@ -21,27 +21,37 @@
 class BZRobotControl {
 public:
   static BZRobotCallbacks *CallbackSet(BZRobotPlayer *rrp);
+  static void Ahead(void *_rrp, double);
+  static void Back(void *_rrp, double);
   static void Execute(void *_rrp);
+  static void Fire(void *_rrp);
+  static double GetBattleFieldSize(void *_rrp);
   static double GetDistanceRemaining(void *_rrp);
+  static double GetGunCoolingRate(void *_rrp);
+  static double GetGunHeat(void *_rrp);
+  static double GetHeading(void *_rrp);
+  static double GetHeight(void *_rrp);
+  static const char * GetName(void *_rrp);
+  static double GetLength(void *_rrp);
+  static double GetTime(void *_rrp);
   static double GetTurnRemaining(void *_rrp);
+  static double GetVelocity(void *_rrp);
+  static double GetWidth(void *_rrp);
+  static double GetX(void *_rrp);
+  static double GetY(void *_rrp);
+  static double GetZ(void *_rrp);
+  static void Resume(void *_rrp);
+  static void Scan(void *_rrp);
   static void SetAhead(void *_rrp, double);
   static void SetFire(void *_rrp);
-  static void SetTurnRate(void *_rrp, double);
   static void SetMaxVelocity(void *_rrp, double);
   static void SetResume(void *_rrp);
   static void SetStop(void *_rrp, bool);
   static void SetTurnLeft(void *_rrp, double);
-  static double GetBattleFieldSize(void *_rrp);
-  static double GetGunHeat(void *_rrp);
-  static double GetVelocity(void *_rrp);
-  static double GetHeading(void *_rrp);
-  static double GetHeight(void *_rrp);
-  static double GetWidth(void *_rrp);
-  static double GetLength(void *_rrp);
-  static long GetTime(void *_rrp);
-  static double GetX(void *_rrp);
-  static double GetY(void *_rrp);
-  static double GetZ(void *_rrp);
+  static void SetTurnRate(void *_rrp, double);
+  static void Stop(void *_rrp, bool);
+  static void TurnLeft(void *_rrp, double);
+  static void TurnRight(void *_rrp, double);
 };
 
 #else

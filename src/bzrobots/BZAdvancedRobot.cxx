@@ -92,12 +92,6 @@ void BZAdvancedRobot::setTurnLeft(double degrees)
     bzrobotcb->SetTurnLeft(bzrobotcb->data,degrees);
 }
 
-void BZAdvancedRobot::setTickDuration(double duration)
-{
-  if(bzrobotcb && bzrobotcb->SetTickDuration)
-    bzrobotcb->SetTickDuration(bzrobotcb->data,duration);
-}
-
 double BZAdvancedRobot::getBearing(const Tank &tank) const
 {
   return getBearing(tank.position[0], tank.position[1]);

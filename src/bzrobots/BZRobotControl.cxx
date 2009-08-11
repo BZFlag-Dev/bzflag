@@ -18,28 +18,52 @@ BZRobotCallbacks *BZRobotControl::CallbackSet(BZRobotPlayer *rrp)
 {
   BZRobotCallbacks *cbset = new BZRobotCallbacks;
   cbset->data = rrp;
+  cbset->Ahead = &BZRobotControl::Ahead;
+  cbset->Back = &BZRobotControl::Back;
   cbset->Execute = &BZRobotControl::Execute;
+  cbset->Fire = &BZRobotControl::Fire;
+  cbset->GetBattleFieldSize = &BZRobotControl::GetBattleFieldSize;
   cbset->GetDistanceRemaining = &BZRobotControl::GetDistanceRemaining;
+  cbset->GetGunCoolingRate = &BZRobotControl::GetGunCoolingRate;
+  cbset->GetGunHeat = &BZRobotControl::GetGunHeat;
+  cbset->GetHeading = &BZRobotControl::GetHeading;
+  cbset->GetHeight = &BZRobotControl::GetHeight;
+  cbset->GetName = &BZRobotControl::GetName;
+  cbset->GetLength = &BZRobotControl::GetLength;
+  cbset->GetTime = &BZRobotControl::GetTime;
   cbset->GetTurnRemaining = &BZRobotControl::GetTurnRemaining;
+  cbset->GetVelocity = &BZRobotControl::GetVelocity;
+  cbset->GetWidth = &BZRobotControl::GetWidth;
+  cbset->GetX = &BZRobotControl::GetX;
+  cbset->GetY = &BZRobotControl::GetY;
+  cbset->GetZ = &BZRobotControl::GetZ;
+  cbset->Resume = &BZRobotControl::Resume;
+  cbset->Scan = &BZRobotControl::Scan;
   cbset->SetAhead = &BZRobotControl::SetAhead;
   cbset->SetFire = &BZRobotControl::SetFire;
-  cbset->SetTurnRate = &BZRobotControl::SetTurnRate;
   cbset->SetMaxVelocity = &BZRobotControl::SetMaxVelocity;
   cbset->SetResume = &BZRobotControl::SetResume;
   cbset->SetStop = &BZRobotControl::SetStop;
   cbset->SetTurnLeft = &BZRobotControl::SetTurnLeft;
-  cbset->GetBattleFieldSize = &BZRobotControl::GetBattleFieldSize;
-  cbset->GetGunHeat = &BZRobotControl::GetGunHeat;
-  cbset->GetVelocity = &BZRobotControl::GetVelocity;
-  cbset->GetHeading = &BZRobotControl::GetHeading;
-  cbset->GetHeight = &BZRobotControl::GetHeight;
-  cbset->GetWidth = &BZRobotControl::GetWidth;
-  cbset->GetLength = &BZRobotControl::GetLength;
-  cbset->GetTime = &BZRobotControl::GetTime;
-  cbset->GetX = &BZRobotControl::GetX;
-  cbset->GetY = &BZRobotControl::GetY;
-  cbset->GetZ = &BZRobotControl::GetZ;
+  cbset->SetTurnRate = &BZRobotControl::SetTurnRate;
+  cbset->Stop = &BZRobotControl::Stop;
+  cbset->TurnLeft = &BZRobotControl::TurnLeft;
+  cbset->TurnRight = &BZRobotControl::TurnRight;
   return cbset;
+}
+
+void BZRobotControl::Ahead(void *_rrp,double distance)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botAhead(distance);
+}
+
+void BZRobotControl::Back(void *_rrp,double distance)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botBack(distance);
 }
 
 void BZRobotControl::Execute(void *_rrp)
@@ -49,6 +73,20 @@ void BZRobotControl::Execute(void *_rrp)
   rrp->botExecute();
 }
 
+void BZRobotControl::Fire(void *_rrp)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botFire();
+}
+
+double BZRobotControl::GetBattleFieldSize(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetBattleFieldSize();
+}
+
 double BZRobotControl::GetDistanceRemaining(void *_rrp)
 {
   if(!_rrp) return 0.0;
@@ -56,11 +94,109 @@ double BZRobotControl::GetDistanceRemaining(void *_rrp)
   return rrp->botGetDistanceRemaining();
 }
 
+double BZRobotControl::GetGunCoolingRate(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetGunCoolingRate();
+}
+
+double BZRobotControl::GetGunHeat(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetGunHeat();
+}
+
+double BZRobotControl::GetHeading(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetHeading();
+}
+
+double BZRobotControl::GetHeight(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetHeight();
+}
+
+const char * BZRobotControl::GetName(void *_rrp)
+{
+  if(!_rrp) return "";
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetName();
+}
+
+double BZRobotControl::GetLength(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetLength();
+}
+
+double BZRobotControl::GetTime(void *_rrp)
+{
+  if(!_rrp) return 0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetTime();
+}
+
 double BZRobotControl::GetTurnRemaining(void *_rrp)
 {
   if(!_rrp) return 0.0;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   return rrp->botGetTurnRemaining();
+}
+
+double BZRobotControl::GetVelocity(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetVelocity();
+}
+
+double BZRobotControl::GetWidth(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetWidth();
+}
+
+double BZRobotControl::GetX(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetX();
+}
+
+double BZRobotControl::GetY(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetY();
+}
+
+double BZRobotControl::GetZ(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetZ();
+}
+
+void BZRobotControl::Resume(void *_rrp)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botResume();
+}
+
+void BZRobotControl::Scan(void *_rrp)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botScan();
 }
 
 void BZRobotControl::SetAhead(void *_rrp,double distance)
@@ -75,13 +211,6 @@ void BZRobotControl::SetFire(void *_rrp)
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   rrp->botSetFire();
-}
-
-void BZRobotControl::SetTurnRate(void *_rrp,double rate)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  rrp->botSetTurnRate(rate);
 }
 
 void BZRobotControl::SetMaxVelocity(void *_rrp,double speed)
@@ -112,83 +241,33 @@ void BZRobotControl::SetTurnLeft(void *_rrp,double turn)
   rrp->botSetTurnLeft(turn);
 }
 
-double BZRobotControl::GetBattleFieldSize(void *_rrp)
+void BZRobotControl::SetTurnRate(void *_rrp,double rate)
 {
-  if(!_rrp) return 0.0;
+  if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetBattleFieldSize();
+  rrp->botSetTurnRate(rate);
 }
 
-double BZRobotControl::GetGunHeat(void *_rrp)
+void BZRobotControl::Stop(void *_rrp,bool overwrite)
 {
-  if(!_rrp) return 0.0;
+  if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetGunHeat();
+  rrp->botStop(overwrite);
 }
 
-double BZRobotControl::GetVelocity(void *_rrp)
+void BZRobotControl::TurnLeft(void *_rrp,double turn)
 {
-  if(!_rrp) return 0.0;
+  if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetVelocity();
+  rrp->botTurnLeft(turn);
 }
 
-double BZRobotControl::GetHeading(void *_rrp)
+void BZRobotControl::TurnRight(void *_rrp,double turn)
 {
-  if(!_rrp) return 0.0;
+  if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetHeading();
+  rrp->botTurnRight(turn);
 }
-
-double BZRobotControl::GetHeight(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetHeight();
-}
-
-double BZRobotControl::GetWidth(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetWidth();
-}
-
-double BZRobotControl::GetLength(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetLength();
-}
-
-long BZRobotControl::GetTime(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetTime();
-}
-
-double BZRobotControl::GetX(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetX();
-}
-
-double BZRobotControl::GetY(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetY();
-}
-
-double BZRobotControl::GetZ(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  return rrp->botGetZ();
-}
-
 
 /*
 

@@ -16,29 +16,38 @@
 #include "common.h"
 
 typedef struct BZRobotCallbacks {
-  void *data;
+  void *data; // Data to be sent back to callbacks
+  void (*Ahead)(void *data, double);
+  void (*Back)(void *data, double);
   void (*Execute)(void *data);
+  void (*Fire)(void *data);
+  double (*GetBattleFieldSize)(void *data);
   double (*GetDistanceRemaining)(void *data);
+  double (*GetGunCoolingRate)(void *data);
+  double (*GetGunHeat)(void *data);
+  double (*GetHeading)(void *data);
+  double (*GetHeight)(void *data);
+  const char * (*GetName)(void *data);
+  double (*GetLength)(void *data);
+  double (*GetTime)(void *data);
   double (*GetTurnRemaining)(void *data);
+  double (*GetVelocity)(void *data);
+  double (*GetWidth)(void *data);
+  double (*GetX)(void *data);
+  double (*GetY)(void *data);
+  double (*GetZ)(void *data);
   void (*SetAhead)(void *data, double);
   void (*SetFire)(void *data);
-  void (*SetTurnRate)(void *data, double);
   void (*SetMaxVelocity)(void *data, double);
   void (*SetResume)(void *data);
   void (*SetStop)(void *data, bool);
   void (*SetTurnLeft)(void *data, double);
-  void (*SetTickDuration)(void *data, double);
-  double (*GetBattleFieldSize)(void *data);
-  double (*GetGunHeat)(void *data);
-  double (*GetVelocity)(void *data);
-  double (*GetHeading)(void *data);
-  double (*GetHeight)(void *data);
-  double (*GetWidth)(void *data);
-  double (*GetLength)(void *data);
-  long (*GetTime)(void *data);
-  double (*GetX)(void *data);
-  double (*GetY)(void *data);
-  double (*GetZ)(void *data);
+  void (*SetTurnRate)(void *data, double);
+  void (*Resume)(void *data);
+  void (*Scan)(void *data);
+  void (*Stop)(void *data, bool);
+  void (*TurnLeft)(void *data, double);
+  void (*TurnRight)(void *data, double);
 } BZRobotCallbacks;
 
 #else

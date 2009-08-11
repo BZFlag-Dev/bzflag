@@ -26,6 +26,9 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 			     const char* _name,
 			     ServerLink* _server) :
   RobotPlayer(_id, _name, _server),
+  lastExec(0.0),
+  tsName(_name),
+  tsGunHeat(0.0),
   tsShoot(false),
   tsSpeed(BZDBCache::tankSpeed),
   tsNextSpeed(BZDBCache::tankSpeed),
@@ -35,12 +38,17 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
   tsNextDistance(0.0f),
   tsTurnRemaining(0.0f),
   tsNextTurn(0.0f),
-  tsHasStopped(false)
+  tsHasStopped(false),
+  tsStoppedDistance(0.0f),
+  tsStoppedTurn(0.0f),
+  tsStoppedForward(false),
+  tsStoppedLeft(false),
+  tsShotReloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
 {
 #if defined(HAVE_PTHREADS)
   pthread_mutex_init(&player_lock, NULL);
 #elif defined(_WIN32) 
-  InitializeCriticalSection (&player_lock);
+  InitializeCriticalSection(&player_lock);
 #endif
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     tsPendingUpdates[i] = false;
@@ -134,6 +142,18 @@ void BZRobotPlayer::doUpdateMotion(float dt)
   LocalPlayer::doUpdateMotion(dt);
 }
 
+void BZRobotPlayer::botAhead(double distance)
+{
+  botSetAhead(distance);
+  botExecute();
+  while(botGetDistanceRemaining() > 0.0f)
+	  TimeKeeper::sleep(0.01);
+}
+
+void BZRobotPlayer::botBack(double distance)
+{
+	botAhead(-distance);
+}
 
 void BZRobotPlayer::botExecute()
 {
@@ -161,7 +181,20 @@ void BZRobotPlayer::botExecute()
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     tsPendingUpdates[i] = false;
   UNLOCK_PLAYER
-  TimeKeeper::sleep(1);
+  double thisExec = TimeKeeper::getCurrent().getSeconds();
+  double diffExec = (thisExec - lastExec);
+  if(diffExec < 0.02) {
+    TimeKeeper::sleep(0.02 - diffExec);
+    lastExec = TimeKeeper::getCurrent().getSeconds();
+  } else {
+    lastExec = thisExec;
+  }
+}
+
+void BZRobotPlayer::botFire()
+{
+  botSetFire();
+  botExecute();
 }
 
 double BZRobotPlayer::botGetDistanceRemaining()
@@ -172,78 +205,16 @@ double BZRobotPlayer::botGetDistanceRemaining()
   return distanceRemaining;
 }
 
-double BZRobotPlayer::botGetTurnRemaining()
+const char * BZRobotPlayer::botGetName()
 {
-  LOCK_PLAYER
-  double turnRemaining = tsTurnRemaining * 180.0f/M_PI;
-  UNLOCK_PLAYER
-  return turnRemaining;
+  return tsName.c_str();
 }
 
-void BZRobotPlayer::botSetAhead(double distance)
+double BZRobotPlayer::botGetGunCoolingRate()
 {
-  LOCK_PLAYER
-  tsNextDistance = distance;
-  tsPendingUpdates[BZRobotPlayer::distanceUpdate] = true;
-  UNLOCK_PLAYER
+  return tsShotReloadTime;
 }
 
-void BZRobotPlayer::botSetFire()
-{
-  LOCK_PLAYER
-  tsShoot = true;
-  UNLOCK_PLAYER
-}
-
-void BZRobotPlayer::botSetTurnRate(double rate)
-{
-  LOCK_PLAYER
-  tsNextTurnRate = rate * M_PI/180.0f;
-  tsPendingUpdates[BZRobotPlayer::turnRateUpdate] = true;
-  UNLOCK_PLAYER
-}
-
-void BZRobotPlayer::botSetMaxVelocity(double speed)
-{
-  LOCK_PLAYER
-  tsNextSpeed = speed;
-  tsPendingUpdates[BZRobotPlayer::speedUpdate] = true;
-  UNLOCK_PLAYER
-}
-
-void BZRobotPlayer::botSetResume()
-{
-  LOCK_PLAYER
-  if (tsHasStopped) {
-    tsHasStopped = false;
-    tsDistanceRemaining = tsStoppedDistance;
-    tsTurnRemaining = tsStoppedTurn;
-    tsDistanceForward = tsStoppedForward;
-    tsTurnLeft = tsStoppedLeft;
-  }
-  UNLOCK_PLAYER
-}
-
-void BZRobotPlayer::botSetStop(bool overwrite)
-{
-  LOCK_PLAYER
-  if (!tsHasStopped || overwrite) {
-    tsHasStopped = true;
-    tsStoppedDistance = tsDistanceRemaining;
-    tsStoppedTurn = tsTurnRemaining;
-    tsStoppedForward = tsDistanceForward;
-    tsStoppedLeft = tsTurnLeft;
-  }
-  UNLOCK_PLAYER
-}
-
-void BZRobotPlayer::botSetTurnLeft(double turn)
-{
-  LOCK_PLAYER
-  tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
-  tsNextTurn = turn * M_PI/180.0f;
-  UNLOCK_PLAYER
-}
 
 double BZRobotPlayer::botGetBattleFieldSize()
 {
@@ -301,7 +272,7 @@ double BZRobotPlayer::botGetHeight()
   return height;
 }
 
-long BZRobotPlayer::botGetTime()
+double BZRobotPlayer::botGetTime()
 {
   return TimeKeeper::getCurrent().getSeconds();
 }
@@ -329,6 +300,113 @@ double BZRobotPlayer::botGetZ()
   UNLOCK_PLAYER
   return zPos;
 }
+
+double BZRobotPlayer::botGetTurnRemaining()
+{
+  LOCK_PLAYER
+  double turnRemaining = tsTurnRemaining * 180.0f/M_PI;
+  UNLOCK_PLAYER
+  return turnRemaining;
+}
+
+void BZRobotPlayer::botResume()
+{
+  botSetResume();
+  botExecute();
+}
+
+void BZRobotPlayer::botScan()
+{
+}
+
+void BZRobotPlayer::botSetAhead(double distance)
+{
+  LOCK_PLAYER
+  tsNextDistance = distance;
+  tsPendingUpdates[BZRobotPlayer::distanceUpdate] = true;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetFire()
+{
+  LOCK_PLAYER
+  tsShoot = true;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetTurnRate(double rate)
+{
+  LOCK_PLAYER
+  tsNextTurnRate = rate * M_PI/180.0f;
+  tsPendingUpdates[BZRobotPlayer::turnRateUpdate] = true;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetMaxVelocity(double speed)
+{
+  LOCK_PLAYER
+  tsNextSpeed = speed;
+  tsPendingUpdates[BZRobotPlayer::speedUpdate] = true;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetResume()
+{
+  LOCK_PLAYER
+  if (tsHasStopped) {
+    tsHasStopped = false;
+    tsDistanceRemaining = tsStoppedDistance;
+    tsTurnRemaining = tsStoppedTurn;
+    tsDistanceForward = tsStoppedForward;
+    tsTurnLeft = tsStoppedLeft;
+  }
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botStop(bool overwrite)
+{
+  botSetStop(overwrite);
+  botExecute();
+}
+
+void BZRobotPlayer::botSetStop(bool overwrite)
+{
+  LOCK_PLAYER
+  if (!tsHasStopped || overwrite) {
+    tsHasStopped = true;
+    tsStoppedDistance = tsDistanceRemaining;
+    tsStoppedTurn = tsTurnRemaining;
+    tsStoppedForward = tsDistanceForward;
+    tsStoppedLeft = tsTurnLeft;
+  }
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetTurnLeft(double turn)
+{
+  LOCK_PLAYER
+  tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
+  tsNextTurn = turn * M_PI/180.0f;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botTurnLeft(double turn)
+{
+  botSetTurnLeft(turn);
+  botExecute();
+  while(botGetTurnRemaining() > 0.0f)
+	  TimeKeeper::sleep(0.01);
+}
+
+void BZRobotPlayer::botTurnRight(double turn)
+{
+  botSetTurnLeft(-turn);
+  botExecute();
+  while(botGetTurnRemaining() < 0.0f)
+	  TimeKeeper::sleep(0.01);
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***

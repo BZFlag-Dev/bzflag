@@ -31,25 +31,28 @@ public:
   std::string getRobotType() { return robotType; }
 
   void ahead(double distance);
-  void doNothing();
+  void back(double distance);
   void fire();
   double getBattleFieldSize() const;
+  double getGunCoolingRate() const;
   double getGunHeat() const;
   double getHeading() const;
   double getHeight() const;
-  double getWidth() const;
   double getLength() const;
-  long getTime() const;
+  const char * getName() const;
+  double getTime() const;
+  double getWidth() const;
   double getVelocity() const;
   double getX() const;
   double getY() const;
   double getZ() const;
   void resume();
-  void stop();
-  void stop(bool overwrite);
+  void scan();
+  void stop(bool overwrite = false);
   void turnLeft(double degrees);
+  void turnRight(double degrees);
   
-  virtual void run() { printf("BZRobot: run\n"); }
+  virtual void run() {}
 
   /* Event Handlers. */
   

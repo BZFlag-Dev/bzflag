@@ -36,7 +36,6 @@ public:
   void setStop();
   void setStop(bool overwrite);
   void setTurnLeft(double degrees);
-  void setTickDuration(double duration);
   
   /* These are helper functions. */
   /* This returns the bearing between our current angle and the location of the tank. */
