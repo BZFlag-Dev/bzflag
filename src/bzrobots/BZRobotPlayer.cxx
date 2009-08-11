@@ -79,7 +79,7 @@ void BZRobotPlayer::setRobot(BZRobot * /*_robot*/)
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::pushEvent(BZRobotEvent *e)
+void BZRobotPlayer::pushEvent(BZRobotEvent * /* e */)
 {
   LOCK_PLAYER
 
