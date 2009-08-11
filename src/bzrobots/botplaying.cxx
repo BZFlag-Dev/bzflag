@@ -92,7 +92,6 @@ bool headless = true;
 
 
 std::list<BZRobotScript *> robotScripts;
-std::list<BZRobotCallbacks *> robotCalls;
 
 // to simplify code shared between bzrobots and bzflag
 // - in bzrobots, this just goes to the error console
@@ -828,13 +827,12 @@ void handleNewPlayer(void *msg)
   robots[i]->setTeam((TeamColor)team);
   serverLink->sendEnter(id, ComputerPlayer, NoUpdates, robots[i]->getTeam(),
     robots[i]->getCallSign(), "", "");
-  std::list<BZRobotCallbacks *>::iterator cbitr = robotCalls.begin();
-  while(cbitr != robotCalls.end()) {
-    if((*cbitr)->data == NULL) {
-      (*cbitr)->data = robots[i];
+  std::list<BZRobotScript *>::iterator scriptItr;
+  for(scriptItr = robotScripts.begin(); scriptItr != robotScripts.end(); scriptItr++) {
+    if(!(*scriptItr)->hasPlayer()) {
+	  (*scriptItr)->setPlayer((BZRobotPlayer *)robots[i]);
       break;
     }
-    cbitr++;
   }
   if (!numRobots) {
     makeObstacleList();
@@ -1924,22 +1922,15 @@ void botStartPlaying()
   }
 
   BZRobotScript *robotScript = BZRobotScript::loadFile(BZDB.get("robotScript"));
-  BZRobotCallbacks *robotCallbacks = BZRobotControl::CallbackSet(NULL);
   
   robotScripts.push_back(robotScript);
-  robotCalls.push_back(robotCallbacks);
 
-  if(!robotScript->loaded()) {
-    showMessage("Unable to load script: " + robotScript->getError());
+  if(robotScript->loaded()) {
+    robotScript->start();
+  } else {
+	showMessage("Unable to load script: " + robotScript->getError());
     return;
   }
-  
-  if(!robotScript->start()) {
-    showMessage("Unable to start robot: " + robotScript->getError());
-    return;
-  }
-  
-  robotScript->setCallbacks(robotCallbacks);
 
   // enter game if we have all the info we need, otherwise
   joinRequested = true;

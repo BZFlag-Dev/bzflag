@@ -19,14 +19,16 @@
 #include <vector>
 
 /* interface header */
-#include "RobotPlayer.h"
+#include "BZRobotPlayer.h"
 
 /* common interface headers */
 #include "ServerLink.h"
 
 /* local interface headers */
+#include "BZRobot.h"
 #include "Region.h"
 #include "RegionPriorityQueue.h"
+#include "RobotPlayer.h"
 
 #if defined(HAVE_PTHREADS)
 # define LOCK_PLAYER   pthread_mutex_lock(&player_lock);
@@ -62,6 +64,9 @@ public:
     updateCount
   } variableUpdates;
   
+  void setRobot(BZRobot *_robot);
+  void pushEvent(BZRobotEvent *e);
+  void execEvents();
   void explodeTank();
   void restart(const double* _pos, double _azimuth);
   void update(float inputDT);
@@ -100,10 +105,12 @@ public:
   void botTurnLeft(double turn);
   void botTurnRight(double turn);
   
+private:
   double lastExec;
 
-  private:
-// Begin thread-safe variables
+// Begin shared thread-safe variables
+  BZRobot *robot;
+
   double tsBattleFieldSize;
 
   const std::string tsName;
@@ -135,7 +142,7 @@ public:
 #elif defined(_WIN32) 
   CRITICAL_SECTION player_lock;
 #endif
-// End thread-safe variables
+// End shared thread-safe variables
 };
 
 #else

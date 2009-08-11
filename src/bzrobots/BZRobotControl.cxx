@@ -269,50 +269,6 @@ void BZRobotControl::TurnRight(void *_rrp,double turn)
   rrp->botTurnRight(turn);
 }
 
-/*
-
-
-double BZRobotControl::FlushEvents()
-{
-
-  switch(event->getEventID())
-  {
-    case BattleEndedEventID:
-	  robot->onBattleEnded((BattleEndedEvent *)event);
-	  break;
-    case BulletHitEventID:
-	  robot->onBulletHit((BulletHitEvent *)event);
-	  break;
-    case BulletMissedEventID:
-	  robot->onBulletMissed((BulletMissedEvent *)event);
-	  break;
-    case DeathEventID:
-	  robot->onDeath((DeathEvent *)event);
-	  break;
-    case HitByBulletEventID:
-	  robot->onHitByBullet((HitByBulletEvent *)event);
-	  break;
-    case HitWallEventID:
-	  robot->onHitWall((HitWallEvent *)event);
-	  break;
-    case RobotDeathEventID:
-	  robot->onRobotDeath((RobotDeathEvent *)event);
-	  break;
-    case ScannedRobotEventID:
-	  robot->onScannedRobot((ScannedRobotEvent *)event);
-	  break;
-    case StatusEventID:
-	  robot->onStatus((StatusEvent *)event);
-	  break;
-    case WinEventID:
-	  robot->onWin((WinEvent *)event);
-	  break;
-  }
-
-}
-
-*/
-
 
 // Local Variables: ***
 // mode: C++ ***

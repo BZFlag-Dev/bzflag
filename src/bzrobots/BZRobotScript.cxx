@@ -18,6 +18,7 @@
 #include "TimeKeeper.h"
 
 /* local implementation headers */
+#include "BZRobotControl.h"
 #include "ScriptLoaderFactory.h"
 
 /* static entry point for threading */
@@ -29,7 +30,10 @@ static void *startBot(void *bot) {
 BZRobotScript::BZRobotScript()
 {
   robot = NULL;
+  botplayer = NULL;
+  bzrobotcb = NULL;
   _loaded = false;
+  _running = false;
   error = "Invalid script filename.";
 }
 
@@ -51,16 +55,27 @@ BZRobotScript *BZRobotScript::loadFile(std::string filename)
   return scriptTool;
 }
 
-void BZRobotScript::setCallbacks(BZRobotCallbacks *_bzrobotcb)
+void BZRobotScript::setPlayer(BZRobotPlayer *_botplayer)
 {
-  if(robot)
-    robot->setCallbacks(_bzrobotcb);
+  botplayer = _botplayer;
+  bzrobotcb = BZRobotControl::CallbackSet(_botplayer);
 }
 
-bool BZRobotScript::start()
+bool BZRobotScript::hasPlayer()
+{
+  if(botplayer == NULL)
+    return false;
+  return true;
+}
+
+void BZRobotScript::start()
 {
   if(!robot)
     robot = create();
+  if(robot)
+	robot->setCallbacks(bzrobotcb);
+  if(botplayer)
+    botplayer->setRobot(robot);
 
 #ifndef _WIN32
   pthread_create( &rthread, NULL, startBot, robot);
@@ -68,14 +83,11 @@ bool BZRobotScript::start()
   rthread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, robot, 0, 0);
 #endif // _WIN32
 
-  return true;
+  _running = true;
 }
 
-bool BZRobotScript::stop()
+void BZRobotScript::stop()
 {
-  if(!robot)
-    robot = create();
-
 #ifndef _WIN32
   pthread_join(rthread, NULL);
   pthread_detach(rthread);
@@ -84,9 +96,15 @@ bool BZRobotScript::stop()
   CloseHandle(rthread);
 #endif // _WIN32
 
-  destroy(robot);
+  _running = false;
 
-  return true;
+  if(robot)
+	robot->setCallbacks(NULL);
+  if(botplayer)
+    botplayer->setRobot(NULL);
+  if(robot)
+    destroy(robot);
+  robot = NULL;
 }
 
 // Local Variables: ***

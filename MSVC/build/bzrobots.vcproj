@@ -212,10 +212,6 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\BackendShot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\botplaying.h"
 				>
 			</File>
@@ -228,10 +224,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\BZRobotEvent.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\BZRobotEvents.h"
 				>
 			</File>
@@ -241,14 +233,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\BZRobotScript.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\PrintError.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\PythonLoader.h"
 				>
 			</File>
 			<File
@@ -269,15 +253,15 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\BackendShot.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\botplaying.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\BZRobotControl.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\BZRobotEvents.cxx"
 				>
 			</File>
 			<File
@@ -1038,11 +1022,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzflag\Makefile.am"
+			RelativePath="..\..\src\bzrobots\Makefile.am"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzrobots\Makefile.am"
+			RelativePath="..\..\src\bzflag\Makefile.am"
 			>
 		</File>
 	</Files>

@@ -20,8 +20,8 @@
 #include <map>
 
 /* local interface headers */
-#include "BZAdvancedRobot.h"
-
+#include "BZRobot.h"
+#include "BZRobotPlayer.h"
 
 class BZRobotScript
 {
@@ -31,20 +31,25 @@ public:
   
   static BZRobotScript *loadFile(std::string filename);
   
-  void setCallbacks(BZRobotCallbacks *_bzrobotcb);
+  void setPlayer(BZRobotPlayer *_botplayer);
+  bool hasPlayer();
   
-  bool start();
-  bool stop();
+  void start();
+  void stop();
   
   bool loaded() const { return _loaded; }
+  bool running() const { return _running; }
   std::string getError() const { return error; }
   
+protected:
   virtual bool load(std::string /*filename*/) { return false; }
   virtual BZRobot *create(void) { return NULL; }
   virtual void destroy(BZRobot * /*instance*/) { }
   
 private:
   BZRobot *robot;
+  BZRobotPlayer *botplayer;
+  BZRobotCallbacks *bzrobotcb;
   
 #ifndef _WIN32
   pthread_t rthread;
@@ -54,6 +59,7 @@ private:
 
 protected:
   bool _loaded;
+  bool _running;
   std::string error;
 };
 

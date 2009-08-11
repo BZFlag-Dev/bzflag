@@ -22,11 +22,21 @@
 #include "TargetingUtils.h"
 
 
+// event priority sorting
+bool compareEventPriority(BZRobotEvent a, BZRobotEvent b)
+{
+  if(a.getPriority() < b.getPriority())
+    return true;
+  return false;
+}
+
+
 BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 			     const char* _name,
 			     ServerLink* _server) :
   RobotPlayer(_id, _name, _server),
-  lastExec(0.0),
+  lastExec(0.0f),
+  robot(NULL),
   tsName(_name),
   tsGunHeat(0.0),
   tsShoot(false),
@@ -62,11 +72,32 @@ BZRobotPlayer::~BZRobotPlayer()
 #endif
 }
 
+void BZRobotPlayer::setRobot(BZRobot * /*_robot*/)
+{
+  LOCK_PLAYER
+
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::pushEvent(BZRobotEvent *e)
+{
+  LOCK_PLAYER
+
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::execEvents()
+{
+  LOCK_PLAYER
+
+  UNLOCK_PLAYER
+
+}
+
 void BZRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
 }
-
 
 void BZRobotPlayer::restart(const double* _pos, double _azimuth)
 {

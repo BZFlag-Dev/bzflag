@@ -19,7 +19,7 @@
 #include <string>
 
 /* local interface headers */
-#include "BZRobotEvent.h"
+#include "BZRobot.h"
 
 typedef enum EventID {
   UnknownEventID = -1,
@@ -34,6 +34,30 @@ typedef enum EventID {
   StatusEventID,
   WinEventID
 } EventID;
+
+class BZRobotEvent
+{
+public:
+  BZRobotEvent() { eventName = "Unknown"; eventID = -1; }
+  virtual ~BZRobotEvent() {}
+
+  void setTime(double _time) { time = _time; }
+  void setPriority(int _priority) { priority = _priority; }
+
+  inline double getTime()     const { return time;     }
+  inline int  getEventID()  const { return eventID;  }
+  inline int  getPriority() const { return priority; }
+  inline const std::string& getEventName() const { return eventName; }
+
+  void Execute(BZRobot *);
+
+protected:
+  std::string eventName;
+  int eventID;
+private:
+  int priority;
+  double time;
+};
 
 class BattleEndedEvent : public BZRobotEvent
 {
