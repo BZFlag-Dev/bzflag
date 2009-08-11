@@ -1,5 +1,6 @@
 %module(directors="1") bzrobot
 %{
+#include "BZRobot.h"
 #include "BZAdvancedRobot.h"
 #include "Tank.h"
 %}
@@ -28,5 +29,6 @@ namespace std {
     }
 }
 
+%include "BZRobot.h"
 %include "BZAdvancedRobot.h"
 %include "Tank.h"
