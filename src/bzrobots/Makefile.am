@@ -47,8 +47,8 @@ genericfiles =				\
 	BZRobotCallbacks.h		\
 	BZRobotControl.cxx		\
 	BZRobotControl.h		\
-	BZRobotEvent.h			\
 	BZRobotEvents.h			\
+	BZRobotEvents.cxx		\
 	BZRobotPlayer.cxx		\
 	BZRobotPlayer.h			\
 	BZRobotScript.cxx		\
