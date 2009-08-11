@@ -114,12 +114,13 @@ void HttpHandler::request_callback(
     if(sUserStore.isRegistered(tokens[1])) {    
       uint32_t token;
       sscanf(tokens[3].c_str(), "%d", (int*)&token);
-      if(sTokenMgr.checkToken(token, tokens[1], 0))
-        mg_printf(conn, "3");
+      uint32_t bzid = sTokenMgr.checkToken(token, tokens[1], 0);
+      if(bzid)
+        mg_printf(conn, "3,%d", bzid);
       else
-        mg_printf(conn, "2");
+        mg_printf(conn, "2,0");
     } else
-      mg_printf(conn, "1");
+      mg_printf(conn, "1,0");
 
   } else if(tokens[0] == "chinf") {
     if(tokens.size() < 5) return;
