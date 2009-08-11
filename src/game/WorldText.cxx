@@ -178,12 +178,17 @@ void WorldText::print(std::ostream& out, const std::string& indent) const
   if (name.size() > 0) {
     out << indent << "  name " << name << std::endl;
   }
-  if (data.size() > 0) {
-    out << indent << "  data " << data << std::endl;
+
+  if (!useBZDB) {
+    if (data.size() > 0) {
+      out << indent << "  string " << data << std::endl;
+    }
+  } else {
+    if (data.size() > 0) {
+      out << indent << "  varName " << data << std::endl;
+    }
   }
-  if (useBZDB) {
-    out << indent << "  variable" << std::endl;
-  }
+
   if (font.size() > 0) {
     out << indent << "  font " << font << std::endl;
   }

@@ -313,7 +313,7 @@ Instantiates a group, and possibly modifies subobjects
 .br
   # BZDB variable control  (overrides states control)
 .br
-\fB  varName\fR _varname  # the BZDB variable name
+\fB  varName\fR $varname  # the BZDB variable name
 .br
 \fB  varTime\fR 1.0       # the transition time (in seconds)
 .br
@@ -1177,13 +1177,14 @@ BZDB variable), can use the following escape characters:
 .br
 \fB  name\fR example_text
 .br
-\fB  data\fR my text string   # the text, or the bzdb variable name
+\fB  string\fR my text string   # the text
 .br
-\fB  variable\fR              # use 'data' as a BZDB variable name
+\fB  varName\fR $varname        # the name of the variable
+                          #to use as the text source
 .br
-\fB  font\fR myFontName       # the font name, can use URLs
+\fB  font\fR myFontName         # the font name, can use URLs
 .br
-\fB  justify\fR 0.0           # horizontal justification
+\fB  justify\fR 0.0             # horizontal justification
 .br
   # 0.0 -> left   justify
 .br
@@ -2151,9 +2152,9 @@ world :=
 .TP
 text :=
 .br
-	  "data" <string>
+	  "string" <string>
 .br
-	| "bzdb"
+	| "varName" <string>
 .br
 	| "font" <string>
 .br

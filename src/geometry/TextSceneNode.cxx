@@ -389,11 +389,7 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 
   const BzMaterial* bzmat = text.bzMaterial;
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
-  if (dyncol != NULL) {
-    colorPtr = &dyncol->getColor();
-  } else {
-    colorPtr = &bzmat->getDiffuse();
-  }
+  colorPtr = (dyncol != NULL) ? &dyncol->getColor() : &bzmat->getDiffuse();
 
   fontID = getFontID();
 
@@ -685,18 +681,18 @@ void TextSceneNode::TextRenderNode::render()
 
 void TextSceneNode::TextRenderNode::renderRadar()
 {
-  return; // FIXME -- text does not render to radar, FIXME?  ;-)
-          //       -- fast mode requires 2 textures?
-          //       -- non-textured radar modes would need new code
-  if (noRadar) {
+  if (noRadar || !text.bzMaterial->getRadarSpecial()) {
     return;
   }
-  glPushAttrib(GL_ENABLE_BIT);
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glDisable(GL_BLEND);
+  glDisable(GL_TEXTURE_2D);
   glDisable(GL_TEXTURE_GEN_S);
-  glPushMatrix();
-  glScalef(1.0f, 1.0f, 0.0f);
+  TextureManager::instance().clearLastBoundID();
+  sceneNode->gstate.setState();
   render();
-  glPopMatrix();
+  OpenGLGState::resetState();
+  TextureManager::instance().clearLastBoundID();
   glPopAttrib();
 }
 

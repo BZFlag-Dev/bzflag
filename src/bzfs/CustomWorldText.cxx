@@ -49,16 +49,30 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
 {
   bool materror;
 
-  if (strcasecmp ("data", cmd) == 0) {
+  if (strcasecmp ("string", cmd) == 0) {
     std::string line;
     std::getline(input, line);
     if (line[0] == ' ') {
       line = line.substr(1);
     }
     text->data = line;
+    text->useBZDB = false;
     input.putback('\n');
     if (text->data.empty()) {
       std::cout << "World Text: missing data" << std::endl;
+    }
+  }
+  else if (strcasecmp ("varName", cmd) == 0) {
+    std::string line;
+    std::getline(input, line);
+    if (line[0] == ' ') {
+      line = line.substr(1);
+    }
+    text->data = line;
+    text->useBZDB = true;
+    input.putback('\n');
+    if (text->data.empty()) {
+      std::cout << "World Text: missing varName" << std::endl;
     }
   }
   else if (strcasecmp ("font", cmd) == 0) {
@@ -107,9 +121,6 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
 
     text->lengthPerPixel =
       minDist * tan(fov * 0.5f * ((float)M_PI / 180.0f)) / (pixels * 0.5f);
-  }
-  else if (strcasecmp ("variable", cmd) == 0) {
-    text->useBZDB = true;
   }
   else if (strcasecmp ("billboard", cmd) == 0) {
     text->billboard = true;
