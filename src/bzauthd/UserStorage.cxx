@@ -21,6 +21,7 @@
 #include "Random.h"
 #include "LDAPUtils.h"
 #include "MailMan.h"
+#include <curl/curl.h>
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
@@ -1044,9 +1045,20 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
 
 std::string UserStore::getActivationURL(const UserInfo &info, const std::string &key)
 {
-  return "http://" +(std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
+  char *escaped_name = curl_easy_escape(NULL, info.name.c_str(), (int)info.name.size());
+  char *escaped_mail = curl_easy_escape(NULL, info.email.c_str(), (int)info.email.size());
+
+  std::string ret = "http://" +
+    (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SERVER_NAME) +
     (std::string)(char*)sConfig.getStringValue(CONFIG_WEB_SCRIPT_NAME) + 
-    "?action=CONFIRM&email=" + info.email + "&password=" + key;
+    "?action=CONFIRM" 
+    "&callsign=" + (std::string)escaped_name +
+    "&email=" + (std::string)escaped_mail + 
+    "&password=" + key;
+
+  curl_free(escaped_name);
+  curl_free(escaped_mail);
+  return ret;
 }
 
 UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool *got_name, bool *got_mail, bool *got_pass)
@@ -1086,7 +1098,7 @@ int UserStore::resetPassword(const UserInfo &info)
               4 - other error
   */
 
-  if(INFO_VALID != validateUserInfo(info, true, false, true))
+  if(INFO_VALID != validateUserInfo(info, true, true, false))
     return 4;
 
   sLog.outLog("UserStore: resetting password for %s", info.name.c_str());

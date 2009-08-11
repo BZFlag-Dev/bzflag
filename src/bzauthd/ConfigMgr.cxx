@@ -30,7 +30,7 @@ void Config::initialize()
   registerKey("chinf_mail_lock_time", CONFIG_CHINF_MAIL_LOCK_TIME, 5 * 60);
   registerKey("chinf_name_lock_time", CONFIG_CHINF_NAME_LOCK_TIME, 10 * 60);
   registerKey("web_server_name", CONFIG_WEB_SERVER_NAME, "my.bzflag.org");
-  registerKey("web_script_name", CONFIG_WEB_SCRIPT_NAME, "/bb/profile.php");
+  registerKey("web_script_name", CONFIG_WEB_SCRIPT_NAME, "/db");
   registerKey("http_port", CONFIG_HTTP_PORT, "88");
   registerKey("callsign_regex", CONFIG_CALLSIGN_REGEX, "^[][[:alnum:] +_-]{2,20}$");
   registerKey("password_regex", CONFIG_PASSWORD_REGEX, "^[[:print:]]{3,255}$");
