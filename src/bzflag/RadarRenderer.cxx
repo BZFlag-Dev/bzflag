@@ -35,6 +35,7 @@
 #include "World.h"
 #include "ShotPath.h"
 #include "AutoHunt.h"
+#include "DynamicWorldText.h"
 #include "DebugDrawing.h"
 
 
@@ -1012,6 +1013,8 @@ void RadarRenderer::renderObstacles(bool fastRadar, float _range)
   } else {
     renderBoxPyrMeshFast(_range);
   }
+
+  DYNAMICWORLDTEXT.renderRadar();
 
   lastFast = fastRadar;
 

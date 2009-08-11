@@ -684,6 +684,7 @@ void TextSceneNode::TextRenderNode::renderRadar()
   if (noRadar || !text.bzMaterial->getRadarSpecial()) {
     return;
   }
+  wantCheckDist = false;
   glPushAttrib(GL_ALL_ATTRIB_BITS);
   glDisable(GL_BLEND);
   glDisable(GL_TEXTURE_2D);
@@ -694,6 +695,7 @@ void TextSceneNode::TextRenderNode::renderRadar()
   OpenGLGState::resetState();
   TextureManager::instance().clearLastBoundID();
   glPopAttrib();
+  wantCheckDist = true;
 }
 
 
