@@ -5515,7 +5515,7 @@ static void timeConfigurations()
   RENDERER.setQuality(0);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "0");
-  BZDB.set("radarStyle", "0");
+  BZDB.setInt("radarStyle", SceneRenderer::NormalRadar);
   tm.setMaxFilter(OpenGLTexture::Off);
   timeConfiguration(true);
 
@@ -5587,7 +5587,7 @@ static void timeConfigurations()
   RENDERER.setQuality(2);
   BZDB.set("dither", "1");
   BZDB.set("shadows", "1");
-  BZDB.set("radarStyle", "3");
+  BZDB.setInt("radarStyle", SceneRenderer::FastSortedRadar);
   if (timeConfiguration(true)  < MaxFrameTime) { return; }
   if (timeConfiguration(false) < MaxFrameTime) { return; }
 
@@ -5784,7 +5784,7 @@ void startPlaying()
     RENDERER.setQuality(0);
     BZDB.set("dither", "0");
     BZDB.set("shadows", "0");
-    BZDB.set("radarStyle", "0");
+    BZDB.setInt("radarStyle", SceneRenderer::NormalRadar);
     TextureManager::instance().setMaxFilter(OpenGLTexture::Off);
   }
 

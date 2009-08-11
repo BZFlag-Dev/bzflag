@@ -38,6 +38,7 @@
 #include "StateDatabase.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
+#include "TimeKeeper.h"
 #include "WorldText.h"
 #include "bzfio.h" // for debugLevel
 
@@ -46,6 +47,8 @@
 
 
 static const GLbitfield FTGL_MISSING_ATTRIBS = GL_TEXTURE_BIT;
+
+static BZDB_bool debugTextDraw("debugTextDraw");
 
 
 //============================================================================//
@@ -609,11 +612,9 @@ void TextSceneNode::TextRenderNode::render()
     return;
   }
 
-#ifdef DEBUG_RENDERING
-  if (debugLevel > 0) {
+  if (debugTextDraw) {
     drawDebug();
   }
-#endif
 
   FontManager& fm = FontManager::instance();
 
@@ -715,19 +716,16 @@ void TextSceneNode::TextRenderNode::renderShadow()
   const fvec4* oldColor = colorPtr;
   colorPtr = &shadowColor;
 
+  // setup the alpha component based on the shadow technique
+  const bool stencil = (BZDBCache::shadowMode == SceneRenderer::StencilShadows);
+  shadowColor.a = stencil ? BZDBCache::shadowAlpha : 1.0f;
+
   linesPtr = &stripped;
 
   glAlphaFunc(GL_GEQUAL, 0.1f);
   glEnable(GL_ALPHA_TEST);
 
-  if (BZDBCache::shadowMode == SceneRenderer::StippleShadows) {
-    shadowColor.a = 1.0f;
-    render();
-  }
-  else {
-    shadowColor.a = BZDBCache::shadowAlpha;
-    render();
-  }
+  render();
 
   glDisable(GL_ALPHA_TEST);
 
@@ -757,6 +755,14 @@ void TextSceneNode::TextRenderNode::drawDebug()
   }
   glEnd();
 
+
+  const double period = 0.5;
+  const double now = TimeKeeper::getCurrent().getSeconds();
+  const float phase = (float)(fmod(now, period) / period);
+  const float alpha = 2.0f * fabsf(0.5f - phase);
+  fvec4 color = 1.0f - *colorPtr;
+  color.a = alpha;
+  glColor4fv(color);
   glBegin(GL_POINTS);
     glVertex3fv(points[4]);
   glEnd();

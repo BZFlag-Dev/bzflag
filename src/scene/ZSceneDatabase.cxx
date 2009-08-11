@@ -306,7 +306,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
     culledCount = octree->getRadarList (culledList, staticCount, f);
 
     // sort based on heights
-    if (BZDBCache::radarStyle == 2) {
+    if (BZDBCache::radarStyle == SceneRenderer::FastSortedRadar) {
       qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
     }
   }

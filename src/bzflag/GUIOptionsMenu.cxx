@@ -49,10 +49,10 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Radar Style:");
   option->setCallback(callback, (void*)"e");
   std::vector<std::string>* options = &option->getList();
-  options->push_back(std::string("Normal"));
-  options->push_back(std::string("Fast"));
-  options->push_back(std::string("Fast Sorted"));
-  options->push_back(std::string("Enhanced"));
+  options->push_back(std::string("Normal"));      // NormalRadar
+  options->push_back(std::string("Enhanced"));    // EnhancedRadar
+  options->push_back(std::string("Fast"));        // FastRadar
+  options->push_back(std::string("Fast Sorted")); // FastSortedRadar
   option->update();
   addControl(option);
 

@@ -79,6 +79,13 @@ public:
     MappedShadows  = 3
   };
 
+  enum RadarStyle {
+    NormalRadar     = 0,
+    EnhancedRadar   = 1,
+    FastRadar       = 2,
+    FastSortedRadar = 3
+  };
+
   void		setWindow(MainWindow* _window);
   MainWindow&	getWindow() const;
 

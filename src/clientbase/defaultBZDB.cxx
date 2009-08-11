@@ -19,10 +19,17 @@
 #include "defaultBZDB.h"
 #include "Protocol.h"
 #include "callbacks.h"
+#include "SceneRenderer.h"
+#include "TextUtils.h"
 
 
 // default client permission level
 const StateDatabase::Permission DefPerm = StateDatabase::ReadWrite;
+
+static const std::string getDefRadar()
+{
+  return TextUtils::itoa(SceneRenderer::FastSortedRadar);
+}
 
 
 DefaultDBItem	defaultDBItems[] = {
@@ -75,7 +82,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "pyrWallTexRepeat",		"3.0",			true,  DefPerm, NULL },
   { "radarLodScale",		"1.0",			true,  DefPerm, NULL },
   { "radarsize",		"4",			true,  DefPerm, NULL },
-  { "radarStyle",		"3",			true,  DefPerm, NULL },
+  { "radarStyle",		getDefRadar().c_str(),	true,  DefPerm, NULL },
   { "radarTankPixels",		"2.0",			true,  DefPerm, NULL },
   { "remoteSounds",		"1",			true,  DefPerm, NULL },
   { "roamSmoothTime",		"0.5",			true,  DefPerm, NULL },

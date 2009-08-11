@@ -49,13 +49,11 @@ RadarRenderer::~RadarRenderer()
 
 void RadarRenderer::clearRadarObjects()
 {
-  RadarObjectMap::iterator itr = radarObjectLists.begin();
-
   DisplayListSystem &ds = DisplayListSystem::Instance();
 
-  while (itr != radarObjectLists.end()) {
+  RadarObjectMap::iterator itr;
+  for (itr = radarObjectLists.begin(); itr != radarObjectLists.end(); ++itr) {
     ds.freeList(itr->first);
-    itr++;
   }
 
   radarObjectLists.clear();
@@ -604,8 +602,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   smooth = !multiSampled && BZDBCache::smooth;
-  const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
-			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
+  const bool fastRadar = BZDBCache::zbuffer &&
+    ((BZDBCache::radarStyle == SceneRenderer::FastRadar) ||
+     (BZDBCache::radarStyle == SceneRenderer::FastSortedRadar));
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
   // setup the desired range
@@ -948,7 +947,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 float RadarRenderer::colorScale(const float z, const float h)
 {
   float scaleColor;
-  if (BZDBCache::radarStyle > 0) {
+  if (BZDBCache::radarStyle > SceneRenderer::NormalRadar) {
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
     // Scale color so that objects that are close to tank's level are opaque
@@ -1257,7 +1256,7 @@ void RadarRenderer::buildOutline(const Obstacle* object)
 
 void RadarRenderer::renderBoxPyrMesh()
 {
-  const bool enhanced = (BZDBCache::radarStyle > 0);
+  const bool enhanced = (BZDBCache::radarStyle > SceneRenderer::NormalRadar);
 
   DisplayListSystem &ds = DisplayListSystem::Instance();
 
