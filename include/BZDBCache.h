@@ -115,6 +115,7 @@ class BZDBCache
     static Float tankLength;
     static Float tankRadius;
     static Float tankSpeed;
+    static Float tankAngVel;
     static Float tankWidth;
     static Float worldSize;
 

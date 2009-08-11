@@ -1789,6 +1789,8 @@ static void playingLoop()
   // main loop
   while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
+    
+    usleep(5000);
 
     canSpawn = true;
 

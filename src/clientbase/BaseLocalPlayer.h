@@ -32,7 +32,7 @@ class BaseLocalPlayer : public Player {
 		  const PlayerType type);
   ~BaseLocalPlayer();
 
-  void update( float inputDT = -1.0f);
+  virtual void update(float inputDT = -1.0f);
   Ray getLastMotion() const;
   const Extents& getLastMotionBBox() const;
 

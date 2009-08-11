@@ -64,6 +64,7 @@ BZDBCache::Float BZDBCache::tankWidth;
 BZDBCache::Float BZDBCache::tankLength;
 BZDBCache::Float BZDBCache::tankHeight;
 BZDBCache::Float BZDBCache::tankSpeed;
+BZDBCache::Float BZDBCache::tankAngVel;
 BZDBCache::Float BZDBCache::tankRadius;
 BZDBCache::Float BZDBCache::flagRadius;
 BZDBCache::Float BZDBCache::flagPoleSize;
@@ -146,6 +147,7 @@ void BZDBCache::init()
   BZDB.addCallback(BZDBNAMES.TANKLENGTH,       serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKHEIGHT,       serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKSPEED,        serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKANGVEL,       serverCallback, NULL);
 
   forbidDebug      = BZDB.isTrue(BZDBNAMES.FORBIDDEBUG);
   drawCelestial    = BZDB.isTrue(BZDBNAMES.DRAWCELESTIAL);
@@ -166,6 +168,7 @@ void BZDBCache::init()
   tankLength       = getGoodPosValue(tankLength,      BZDBNAMES.TANKLENGTH);
   tankRadius       = getGoodPosValue(tankRadius,      BZDBNAMES.TANKRADIUS);
   tankSpeed        = getGoodPosValue(tankSpeed,       BZDBNAMES.TANKSPEED);
+  tankAngVel       = getGoodPosValue(tankAngVel,      BZDBNAMES.TANKANGVEL);
   tankWidth        = getGoodPosValue(tankWidth,       BZDBNAMES.TANKWIDTH);
   worldSize        = getGoodPosValue(worldSize,       BZDBNAMES.WORLDSIZE);
 

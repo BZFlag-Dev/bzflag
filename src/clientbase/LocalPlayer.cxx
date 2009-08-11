@@ -1261,7 +1261,7 @@ void LocalPlayer::changeTeam(TeamColor newTeam)
 void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
-
+  
   // If we aren't allowed to move, then the desired speed is 0.
   if (
 	  (!canMoveForward() && fracOfMaxSpeed > 0) ||

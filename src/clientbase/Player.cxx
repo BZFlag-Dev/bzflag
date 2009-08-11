@@ -1682,7 +1682,7 @@ void Player::setDeadReckoning(double timestamp)
     inputTurnCenter.y = inputPos.y - inputTurnVector.y;
   }
 
-  setRelativeMotion ();
+  setRelativeMotion();
 }
 
 

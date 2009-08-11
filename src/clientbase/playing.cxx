@@ -714,9 +714,11 @@ void updateRobots(float dt)
   }
 
   // do updates
-  for (i = 0; i < numRobots; i++)
-    if (robots[i])
+  for (i = 0; i < numRobots; i++) {
+    if (robots[i]) {
       robots[i]->update();
+    }
+  }
 }
 
 void sendRobotUpdates()

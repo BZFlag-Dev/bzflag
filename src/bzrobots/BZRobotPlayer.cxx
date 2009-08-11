@@ -27,14 +27,14 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 			     ServerLink* _server) :
   RobotPlayer(_id, _name, _server),
   tsShoot(false),
-  tsSpeed(1.0),
-  tsNextSpeed(1.0),
-  tsTurnRate(1.0),
-  tsNextTurnRate(1.0),
-  tsDistanceRemaining(0.0),
-  tsNextDistance(0.0),
-  tsTurnRemaining(0.0),
-  tsNextTurn(0.0),
+  tsSpeed(BZDBCache::tankSpeed),
+  tsNextSpeed(BZDBCache::tankSpeed),
+  tsTurnRate(BZDBCache::tankAngVel),
+  tsNextTurnRate(BZDBCache::tankAngVel),
+  tsDistanceRemaining(0.0f),
+  tsNextDistance(0.0f),
+  tsTurnRemaining(0.0f),
+  tsNextTurn(0.0f),
   tsHasStopped(false)
 {
 #if defined(HAVE_PTHREADS)
@@ -44,6 +44,7 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 #endif
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     tsPendingUpdates[i] = false;
+  tsBattleFieldSize = BZDBCache::worldSize;
 }
 
 BZRobotPlayer::~BZRobotPlayer()
@@ -61,72 +62,75 @@ void BZRobotPlayer::explodeTank()
 
 void BZRobotPlayer::restart(const double* _pos, double _azimuth)
 {
-  fvec3 pos((float)_pos[0], (float)_pos[1], (float)_pos[2]);;
+  fvec3 pos((float)_pos[0], (float)_pos[1], (float)_pos[2]);
   LocalPlayer::restart(pos, (float)_azimuth);
 }
 
 // Called by bzrobots client thread
-void BZRobotPlayer::doUpdate(float dt)
+void BZRobotPlayer::update(float inputDT)
 {
-  LocalPlayer::doUpdate(dt);
   LOCK_PLAYER
-  // Copy data accessed by both threads
-  //tsBattleFieldSize;
-  const float *vel = getVelocity();
-  tsTankSize = getDimensions();
-  tsGunHeat = getReloadTime();
-  tsPosition = getPosition();
-  tsCurrentHeading = getAngle()*180.0f/M_PI;
-  tsCurrentSpeed = sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]);
-  tsCurrentTurnRate = getAngularVelocity();
-
-  if (tsShoot) {
-    tsShoot = false;
-    fireShot();
-  }
+  BaseLocalPlayer::update(inputDT); // There is no LocalPlayer::update
   UNLOCK_PLAYER
 }
 
 // Called by bzrobots client thread
+// Note that LOCK_PLAYER is already set by BZRobotPlayer::update
+void BZRobotPlayer::doUpdate(float dt)
+{
+  LocalPlayer::doUpdate(dt);
+  // Copy data accessed by both threads
+  const fvec3& vvec = getVelocity();
+  tsTankSize = getDimensions();
+  tsGunHeat = getReloadTime();
+  tsPosition = getPosition();
+  tsCurrentHeading = getAngle();
+  tsCurrentSpeed = sqrt(vvec.x*vvec.x + vvec.y*vvec.y);
+  tsCurrentTurnRate = getAngularVelocity();
+  
+  if (tsShoot) {
+    tsShoot = false;
+    fireShot();
+  }
+}
+
+// Called by bzrobots client thread
+// Note that LOCK_PLAYER is already set by BZRobotPlayer::update
 void BZRobotPlayer::doUpdateMotion(float dt)
 {
-  LOCK_PLAYER
-  if (isAlive()) {
-    const float *vel = getVelocity();
-    tsDistanceRemaining -= sqrt(vel[0]*vel[0] + vel[1]*vel[1] + vel[2]*vel[2]) * dt;
-    if (tsDistanceRemaining > 0.0) {
-      if (tsDistanceForward)
-        setDesiredSpeed((float)tsSpeed);
-      else
-        setDesiredSpeed((float)-tsSpeed);
-    } else {
-      setDesiredSpeed(0);
-    }
-
-    if (tsTurnRemaining > 0.0) {
-      if (tsTurnLeft) {
-        tsTurnRemaining -= getAngularVelocity() * dt;
-
-        if (tsTurnRemaining <= 0.0)
+  const fvec3& vvec = getVelocity();
+  float dist = dt *sqrt(vvec.x*vvec.x + vvec.y*vvec.y); // no z vector
+  tsDistanceRemaining -= dist;
+  if (tsDistanceRemaining > 0.0001) {
+    setDesiredSpeed((float)(tsDistanceForward ? tsSpeed : -tsSpeed));
+  } else {
+    setDesiredSpeed(0);
+    tsDistanceRemaining = 0.0f;
+  }
+  if (tsTurnRemaining > 0.0001) {
+    double turnAdjust = getAngularVelocity() * dt;
+    if (tsTurnLeft) {
+      tsTurnRemaining -= turnAdjust;
+      if (tsTurnRemaining <= 0.0001)
         setDesiredAngVel(0);
-        else if (tsTurnRate * dt > tsTurnRemaining)
+      else if (tsTurnRate * dt > tsTurnRemaining)
         setDesiredAngVel((float)tsTurnRemaining/dt);
-        else
+      else
         setDesiredAngVel((float)tsTurnRate);
-      } else {
-        tsTurnRemaining += getAngularVelocity() * dt;
-        if (tsTurnRemaining <= 0.0)
-        setDesiredAngVel(0);
-        else if (tsTurnRate * dt > tsTurnRemaining)
-        setDesiredAngVel((float)-tsTurnRemaining/dt);
-        else
-        setDesiredAngVel((float)-tsTurnRate);
-      }
     } else {
-      setDesiredAngVel(0);
+      tsTurnRemaining += turnAdjust;
+      if (tsTurnRemaining <= 0.0001)
+        setDesiredAngVel(0);
+      else if (tsTurnRate * dt > tsTurnRemaining)
+        setDesiredAngVel((float)-tsTurnRemaining/dt);
+      else
+        setDesiredAngVel((float)-tsTurnRate);
     }
   }
-  UNLOCK_PLAYER
+  if (tsTurnRemaining <= 0.0001) {
+    setDesiredAngVel(0);
+    tsTurnRemaining = 0.0f;
+  }
   LocalPlayer::doUpdateMotion(dt);
 }
 
@@ -151,7 +155,7 @@ void BZRobotPlayer::botExecute()
       tsTurnLeft = false;
     else
       tsTurnLeft = true;
-    tsTurnRemaining = (tsTurnLeft ? 1 : -1) * tsNextTurn * M_PI/180.0f; /* We have to convert to radians! */
+    tsTurnRemaining = (tsTurnLeft ? 1 : -1) * tsNextTurn;
   }
 
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
@@ -178,8 +182,8 @@ double BZRobotPlayer::botGetTurnRemaining()
 void BZRobotPlayer::botSetAhead(double distance)
 {
   LOCK_PLAYER
-  tsPendingUpdates[BZRobotPlayer::distanceUpdate] = true;
   tsNextDistance = distance;
+  tsPendingUpdates[BZRobotPlayer::distanceUpdate] = true;
   UNLOCK_PLAYER
 }
 
@@ -193,7 +197,7 @@ void BZRobotPlayer::botSetFire()
 void BZRobotPlayer::botSetTurnRate(double rate)
 {
   LOCK_PLAYER
-  tsNextTurnRate = rate;
+  tsNextTurnRate = rate * M_PI/180.0f;
   tsPendingUpdates[BZRobotPlayer::turnRateUpdate] = true;
   UNLOCK_PLAYER
 }
@@ -236,15 +240,16 @@ void BZRobotPlayer::botSetTurnLeft(double turn)
 {
   LOCK_PLAYER
   tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
-  tsNextTurn = turn;
+  tsNextTurn = turn * M_PI/180.0f;
   UNLOCK_PLAYER
 }
 
 double BZRobotPlayer::botGetBattleFieldSize()
 {
-  //
-  // FIXME: Return proper value
-  return 0.0;
+  LOCK_PLAYER
+  double battleFieldSize = tsBattleFieldSize;
+  UNLOCK_PLAYER
+  return battleFieldSize;
 }
 
 double BZRobotPlayer::botGetGunHeat()
@@ -266,7 +271,7 @@ double BZRobotPlayer::botGetVelocity()
 double BZRobotPlayer::botGetHeading()
 {
   LOCK_PLAYER
-  double heading = tsCurrentHeading;
+  double heading = tsCurrentHeading * 180.0f/M_PI;
   UNLOCK_PLAYER
   return heading;
 }

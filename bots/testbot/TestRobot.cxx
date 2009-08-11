@@ -26,19 +26,33 @@ extern "C" {
 
 void TestRobot::run()
 {
-  printf("TestRobot: run\n");
   while(true) {
     setFire();
-    setAhead(20);
+    setAhead(200);
     do {
-      if (getGunHeat() <= 0)
-        setFire();
+      double lastDistance = getDistanceRemaining();
       execute();
+      sleep(1);
+      if(lastDistance == getDistanceRemaining())
+        break;
     } while (getDistanceRemaining() > 0);
   
+    setAhead(-20);
+    do {
+      double lastDistance = getDistanceRemaining();
+      execute();
+      sleep(1);
+      if(lastDistance == getDistanceRemaining())
+        break;
+    } while (getDistanceRemaining() > 0);
+    
     setTurnLeft(90);
     do {
+      double lastTurn = getTurnRemaining();
       execute();
+      sleep(1);
+      if(lastTurn == getTurnRemaining())
+        break;
     } while (getTurnRemaining() > 0);
   }
 }

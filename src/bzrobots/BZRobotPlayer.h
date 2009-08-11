@@ -59,6 +59,10 @@ public:
   void            restart(const double* pos, double azimuth);
   void            explodeTank();
 
+  void            update(float inputDT = -1.0f);
+  void            doUpdate(float dt);
+  void            doUpdateMotion(float dt);
+
   void            botExecute();
   double          botGetDistanceRemaining();
   double          botGetTurnRemaining();
@@ -81,11 +85,7 @@ public:
   double          botGetY();
   double          botGetZ();
 
-  void            doUpdate(float dt);
-  void            doUpdateMotion(float dt);
-
-private:
-
+  private:
 // Begin thread-safe variables
   double          tsBattleFieldSize;
 
