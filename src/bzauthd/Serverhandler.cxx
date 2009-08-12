@@ -56,10 +56,10 @@ bool ServerHandler::handleTokenValidate(Packet &packet)
     if(bzid) {
       response << (uint32_t)2;                          // registered, verified
       // send list of groups
-      std::list<std::string> groups = sUserStore.intersectGroupList((char*)callsign, m_groups, false, false);
+      std::list<GroupId> groups = sUserStore.intersectGroupList((char*)callsign, m_groups, false);
       response << (uint32_t)groups.size();
-      for(std::list<std::string>::iterator itr = groups.begin(); itr != groups.end(); ++itr)
-        response << itr->c_str();
+      for(std::list<GroupId>::iterator itr = groups.begin(); itr != groups.end(); ++itr)
+        response << itr->getDotNotation().c_str();
       // send bzid as string for future flexibility
       char bzid_str[32];
       sprintf(bzid_str, "%d", bzid);
@@ -82,10 +82,9 @@ bool ServerHandler::handleGroupList(Packet &packet)
     m_groups.clear();
     for(int i = 0; i < nr; i++)
     {
-        uint8_t group[MAX_GROUPNAME_LEN+1];
-        if(!packet.read_string(group, MAX_GROUPNAME_LEN+1)) return false;
-        /* TODO: validate group name */
-        m_groups.push_back((char*)group);
+        uint8_t group[MAX_GROUPNAME_LEN+MAX_ORGNAME_LEN+1];
+        if(!packet.read_string(group, MAX_GROUPNAME_LEN+MAX_ORGNAME_LEN+1)) return false;
+        m_groups.push_back(GroupId((const char*)group));
     }
 
     return true;

@@ -27,7 +27,8 @@ typedef struct ldap LDAP;
 #define MIN_CALLSIGN_LEN 2
 #define MIN_EMAIL_LEN 3
 #define MAX_EMAIL_LEN 254 // RFC
-#define MAX_GROUPNAME_LEN 20 /* TODO */
+#define MAX_GROUPNAME_LEN 30
+#define MAX_ORGNAME_LEN 30
 
 struct UserInfo
 {
@@ -76,6 +77,24 @@ enum AcquireError
   AQ_USER_DELETED       = 0x40    // the user entry was deleted
 };
 
+enum GroupIdValidity
+{
+  GROUPID_VALID = 0x0,
+  GROUPID_INVALID_OU = 0x1,
+  GROUPID_INVALID_GN = 0x2
+};
+
+struct GroupId
+{
+  std::string ou;
+  std::string gn;
+  GroupId(const std::string &organization, const std::string &group_name) : ou(organization), gn(group_name) {}
+  GroupId(const std::string &org_dot_group);
+  std::string getDotNotation() {
+    return ou + "." + gn;
+  }
+};
+
 /** The UserStore abstracts the method used for storing users */
 class UserStore : public GuardedSingleton<UserStore>
 { 
@@ -89,12 +108,15 @@ public:
   uint32_t authUser(const UserInfo &info);
   uint32_t authUserInGame(const UserInfo &info);
   bool isRegistered(std::string callsign);
-  bool addToGroup(const std::string &callsign, const std::string &group, const std::string &user_dn, const std::string &group_dn);
+  bool addToGroup(const char *uid_str, const GroupId & gid, bool groupAdmin, bool orgAdmin);
+  bool addToGroup(uint32_t uid, const GroupId & gid, bool groupAdmin, bool orgAdmin);
   ChInfError changeUserInfo(std::string for_name, const UserInfo &to_info);
   int activateUser(const UserInfo &info, const std::string &key);
   int resetPassword(const UserInfo &info);
   int resendActivation(const UserInfo &info);
   std::string getActivationURL(const UserInfo &info, const std::string &key);
+  bool createGroup(const GroupId &gid);
+  bool createOrganization(const std::string &org);
 
   uint64_t acquireUserLock(std::string const &user_dn, std::string const &callsign, int diff, UserLockReason reason);
   template<class T>
@@ -102,13 +124,19 @@ public:
 
   std::string getUserDN(std::string const &callsign);
   std::string getMailDN(std::string const &email);
-  std::string getGroupDN(std::string const &group);
+  std::string getGroupDN(const GroupId &gid);
+  std::string getOrgDN(std::string const &org);
+  std::string getMemberDN(const char *uid_str, const GroupId &gid);
+  std::string getMemberDN(uint32_t uid, const GroupId &gid);
 
-  std::list<std::string> intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool all_groups, bool ids);
+  std::list<GroupId> intersectGroupList(std::string callsign, std::list<GroupId> const &groups, bool all_groups);
   std::list<std::string> getUsers(const char *uid);
   std::string getNamefromUID(uint32_t uid);
   std::string getNamefromUID(const char * uid_str);
   std::string getNameFromMail(const std::string &mail, const std::string &mail_dn);
+  std::list<GroupId> getGroupsAdministratedBy(const char * uid);
+  std::list<GroupId> getGroupsAdministratedBy(uint32_t uid);
+  uint32_t getUIDfromName(const char *name);
 
   size_t hashLen();
   void hash(uint8_t *message, size_t message_len, uint8_t *digest);
@@ -120,6 +148,7 @@ public:
 
   UserInfoValidity validateUserInfo(const UserInfo &info, bool *got_name = NULL, bool *got_mail = NULL, bool *got_pass = NULL);
   UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool got_name, bool got_mail, bool got_pass);
+  GroupIdValidity validateGroupId(const GroupId &gid);
 
 private:
   bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
@@ -135,6 +164,7 @@ private:
   BzRegErrors addUser(const std::string &user_dn, const char *name, const char *pass_digest, bool active, const char *email, const char * uid_str, int lock_time);
   bool sendActivationMail(const UserInfo &info, const char *key, const char *tmpl = NULL);
   uint64_t acquireOrCheckLock(std::string const &user_dn, std::string const &callsign, int new_diff, UserLockReason new_reason, const char *lock_value, const char *lock_reason);
+  std::list<GroupId> &getGroups(const std::string &filter, std::list<GroupId> &ret);
 
   uint64_t resume_register(const std::string &callsign, const std::string &user_dn);
 
@@ -144,6 +174,7 @@ private:
   regex_t re_password;
   regex_t re_email;
   regex_t re_group;
+  regex_t re_organization;
   std::string nextuid_dn;
 };
 

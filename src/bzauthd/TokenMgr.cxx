@@ -33,7 +33,6 @@ uint32_t TokenMgr::newToken(std::string name, uint32_t bzid, uint32_t ip)
   uint32_t token;
   do {
     token = 1 + sRandom.getU32() % ((uint32_t)(1 << 31) - 1);
-    
     p = tokenMap.insert(TokenMapType::value_type(token, TokenInfo(name, bzid, ip)));
   } while(p.second == false); // try inserting a different number if failed
 
@@ -46,7 +45,8 @@ uint32_t TokenMgr::newToken(std::string name, uint32_t bzid, uint32_t ip)
 uint32_t TokenMgr::checkToken(uint32_t token, std::string name, uint32_t ip)
 {
   TokenMapType::iterator itr = tokenMap.find(token);
-  if(itr != tokenMap.end() && itr->second.name == name)
+  // callsigns should be case insesitive so use such a comparison
+  if(itr != tokenMap.end() && (strcasecmp(itr->second.name.c_str(), name.c_str()) == 0))
     return itr->second.bzid;
   else
     return 0;

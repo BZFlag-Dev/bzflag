@@ -35,7 +35,8 @@ void Config::initialize()
   registerKey("callsign_regex", CONFIG_CALLSIGN_REGEX, "^[][[:alnum:] +_-]{2,20}$");
   registerKey("password_regex", CONFIG_PASSWORD_REGEX, "^[[:print:]]{3,255}$");
   registerKey("email_regex", CONFIG_EMAIL_REGEX, "^[[:alnum:]._%+-]+@[[:alnum:].-]+\\.[[:alpha:]]{2,4}$");
-  registerKey("group_regex", CONFIG_GROUP_REGEX, "^[[:print:]]{3,40}$");
+  registerKey("group_regex", CONFIG_GROUP_REGEX, "^[[:alnum:]]{3,40}$");
+  registerKey("organization_regex", CONFIG_ORGANIZATION_REGEX, "^[[:alnum:]]{3,40}$");
 
   parse();
 }

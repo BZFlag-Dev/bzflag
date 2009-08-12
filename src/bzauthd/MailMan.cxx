@@ -31,12 +31,13 @@ bool MailMan::initialize()
 { 
   if(!addTemplate("user_welcome_inactive")) return false;
   if(!addTemplate("user_resend_inactive")) return false;
-  if(!addTemplate("user_remind_inactive")) return false;
+  if(!addTemplate("user_activate_passwd")) return false;
 
   for(TemplateMapType::iterator itr = templates.begin(); itr != templates.end(); ++itr) {
     itr->second.replace("{SITENAME}", "Official forums for BZFlag.org");
     itr->second.replace("{WELCOME_MSG}", "Welcome to Official forums for BZFlag.org");
     itr->second.replace("{U_BOARD}", "http://my.bzflag.org/bb");
+    itr->second.replace("{EMAIL_SIG}", "--\nThank you.\n\n-The BZFlag Team");
   }
 
   sLog.outLog("MailMan: initialized");;

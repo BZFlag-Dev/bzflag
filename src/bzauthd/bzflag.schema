@@ -1,7 +1,43 @@
-attributetype ( 1.3.6.1.4.9191.1 NAME 'inactivePassword'
-	EQUALITY octetStringMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.40{128} )
+objectIdentifier bzOID 1.3.6.1.4.9191
+objectIdentifier bzAttribute bzOID:1
+objectIdentifier bzObjectClass bzOID:2
 
-attributetype ( 1.3.6.1.4.9191.2 NAME 'activationKey'
+objectIdentifier bzBoolean 1.3.6.1.4.1.1466.115.121.1.7
+objectIdentifier bzOctetString 1.3.6.1.4.1.1466.115.121.1.40
+objectIdentifier bzInteger 1.3.6.1.4.1.1466.115.121.1.27
+
+attributetype ( bzAttribute:1 NAME 'inactivePassword'
 	EQUALITY octetStringMatch
-	SYNTAX 1.3.6.1.4.1.1466.115.121.1.40{128} )
+	SYNTAX bzOctetString{128} )
+
+attributetype ( bzAttribute:2 NAME 'activationKey'
+	EQUALITY octetStringMatch
+	SYNTAX bzOctetString{32} )
+
+attributetype ( bzAttribute:4 NAME 'state'
+	SYNTAX bzInteger )
+	
+attributetype ( bzAttribute:5 NAME 'freeleave'
+	SYNTAX bzBoolean )
+
+attributetype ( bzAttribute:6 NAME 'isGroupAdmin'
+	SYNTAX bzBoolean )
+	
+attributetype ( bzAttribute:7 NAME 'isOrgAdmin'
+	SYNTAX bzBoolean )
+
+objectclass ( bzObjectClass:1 NAME 'email'
+	DESC 'information about an email address'
+	SUP top STRUCTURAL
+	MUST ( mail $ uid )
+	MAY activationKey )
+
+objectclass ( bzObjectClass:2 NAME 'groupMembership'
+	DESC 'information about the group membership of a particular user'
+	SUP top STRUCTURAL
+	MUST ( ou $ gn $ uid $ isOrgAdmin $ isGroupAdmin ) )
+
+objectclass ( bzObjectClass:3 NAME 'group'
+	DESC 'information about a group of users'
+	SUP top STRUCTURAL
+	MUST ( ou $ gn $ state $ freeleave ) )

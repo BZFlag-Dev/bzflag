@@ -16,6 +16,7 @@
 #include "NetHandler.h"
 #include <list>
 #include <string>
+#include "UserStorage.h"
 
 /* Server specific packet handler */
 class ServerHandler : public PacketHandlerTemplate<ServerHandler>
@@ -29,7 +30,7 @@ public:
   bool handleTokenValidate(Packet &packet);
   bool handleGroupList(Packet &packet);
 private:
-  std::list<std::string> m_groups;
+  std::list<GroupId> m_groups;
 };
 
 #endif // __BZAUTHD_SERVERHANDLER_H__

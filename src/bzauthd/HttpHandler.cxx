@@ -85,19 +85,19 @@ void HttpHandler::request_callback(
 
   } else if(tokens[0] == "intersectGroups") {
     if(tokens.size() < 3) return;
-    if(tokens[2].size() != 2) return;
-    std::list<std::string> list;
+    if(tokens[2].size() != 1) return;
+    std::list<GroupId> list;
     bool all = false;
     if(tokens[2][0] == '0') {
       if(tokens.size() < 4) return;
       for(int i = 3; i < (int)tokens.size(); i++)
-        list.push_back(tokens[i]);
+        list.push_back(GroupId(tokens[i]));
     } else
       all = true;
     
-    list = sUserStore.intersectGroupList(tokens[1], list, all, tokens[2][1] == '1');
-    for(std::list<std::string>::iterator itr = list.begin(); itr != list.end(); ++itr)
-      mg_printf(conn, ":%s", itr->c_str());
+    list = sUserStore.intersectGroupList(tokens[1], list, all);
+    for(std::list<GroupId>::iterator itr = list.begin(); itr != list.end(); ++itr)
+      mg_printf(conn, ":%s.%s", itr->ou.c_str(), itr->gn.c_str());
 
   } else if(tokens[0] == "gettoken") {
     if(tokens.size() < 4) return;
@@ -128,8 +128,7 @@ void HttpHandler::request_callback(
 
   } else if(tokens[0] == "addtogroup") {
     if(tokens.size() < 3) return;
-    mg_printf(conn, "%d", sUserStore.addToGroup(tokens[1], tokens[2], 
-      sUserStore.getUserDN(tokens[1]), sUserStore.getGroupDN(tokens[2]) ) );
+    mg_printf(conn, "%d", sUserStore.addToGroup(tokens[1].c_str(), GroupId(tokens[2]), false, false));
 
   } else if(tokens[0] == "activate") {
     if(tokens.size() < 4) return;
@@ -142,6 +141,21 @@ void HttpHandler::request_callback(
   } else if(tokens[0] == "resendactmail") {
     if(tokens.size() < 3) return;
     mg_printf(conn, "%d", sUserStore.resendActivation(UserInfo(tokens[1], "", tokens[2])));
+
+  } else if(tokens[0] == "groupsadministratedby") {
+    if(tokens.size() < 2) return;
+
+    std::list<GroupId> list = sUserStore.getGroupsAdministratedBy(tokens[1].c_str());
+    for(std::list<GroupId>::iterator itr = list.begin(); itr != list.end(); ++itr)
+      mg_printf(conn, "%s%s.%s", (itr == list.begin() ? "" : ","), itr->ou.c_str(), itr->gn.c_str());
+
+  } else if(tokens[0] == "createorg") {
+    if(tokens.size() < 2) return;
+
+    mg_printf(conn, "%d", sUserStore.createOrganization(tokens[1]));
+
+  } else if(tokens[0] == "creategroup") {
+    if(tokens.size() < 2) return;
 
   }
 }

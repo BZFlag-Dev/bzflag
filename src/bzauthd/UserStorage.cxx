@@ -122,6 +122,7 @@ bool UserStore::initialize()
   if(!compile_reg(re_password, CONFIG_PASSWORD_REGEX)) return false;
   if(!compile_reg(re_email, CONFIG_EMAIL_REGEX)) return false;
   if(!compile_reg(re_group, CONFIG_GROUP_REGEX)) return false;
+  if(!compile_reg(re_organization, CONFIG_ORGANIZATION_REGEX)) return false;
 
   return bind(rootld, sConfig.getStringValue(CONFIG_LDAP_MASTER_ADDR), sConfig.getStringValue(CONFIG_LDAP_ROOTDN), sConfig.getStringValue(CONFIG_LDAP_ROOTPW));
 }
@@ -812,62 +813,65 @@ bool UserStore::isRegistered(std::string callsign)
   return LDAP_SUCCESS == user_search.getError();
 }
 
-std::list<std::string> UserStore::intersectGroupList(std::string callsign, std::list<std::string> const &groups, bool all_groups, bool ids)
+uint32_t UserStore::getUIDfromName(const char *name)
+{
+  return getuid(rootld, getUserDN(name).c_str());
+}
+
+std::list<GroupId> UserStore::intersectGroupList(std::string callsign, std::list<GroupId> const &groups, bool all_groups)
 {
   sLog.outLog("getting group list for %s", callsign.c_str());
 
-  std::list<std::string> ret;
+  std::list<GroupId> ret;
   if(groups.empty() && !all_groups) return ret;
-
-  /* It seems here is no memberOf attribute for users in OpenLdap, but the groupOfUniqueNames
-     objectClass has a member attribute. So getting the groups is still possible but slower. */
-  /* It is also possible to retrieve all of the user's groups from the directory
-     and intersect it with the interest list on the daemon, but (unless the overhead
-     of sending more data is too much) LDAP should be able to find the groups faster if
-     it only needs to check a subset for membership (there are likely many more groups than
-     what a particular server is interested in) */
 
   std::string filter;
   if(callsign != "") {
     if(!execute_reg(re_callsign, callsign.c_str()))
       return ret;
 
-    std::string dn = getUserDN(callsign);
+    uint32_t uid = getUIDfromName(callsign.c_str());
+    if(!uid) return ret;
+    char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
+
     if(!all_groups)
-      filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + ")(|";
+      filter = "(&(objectClass=groupMembership)(uid=" + std::string(uid_str) + ")(|";
     else
-      filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + dn + "))";
+      filter = "(&(objectClass=groupMembership)(uid=" + std::string(uid_str) + "))";
   } else if(!all_groups)
-    filter = "(&(objectClass=groupOfUniqueNames)(|";
+    filter = "(&(objectClass=groupMembership)(|";
   else
-    filter = "(objectClass=groupOfUniqueNames)";
+    filter = "(objectClass=group)";
 
   if(!all_groups) {
-    for(std::list<std::string>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
-      filter += "(cn=" + *itr + ")";
+    for(std::list<GroupId>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
+      if(GROUPID_VALID == validateGroupId(*itr))
+        filter += "(ou=" + itr->ou + ")(gn=" + itr->gn + ")";
     filter += "))";
   }
 
-  LDAPSearchN<1> search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
-    LDAP_SCOPE_ONELEVEL, filter.c_str(),
-    ids ? "uid" : "cn", 1, ids ? 30 : MAX_CALLSIGN_LEN);
-
-  LDAPEntry *entry;
-  while(entry = search.getNextEntry()) {
-    char *val = entry->getResult(0).getNextVal();
-    if(val && strcmp(val, "") != 0)
-      ret.push_back(val);
-  }
-
-  return ret;
+  return getGroups(filter, ret);
 }
 
-bool UserStore::addToGroup(const std::string &callsign, const std::string &group, const std::string &user_dn, const std::string &group_dn)
+bool UserStore::addToGroup(uint32_t uid, const GroupId & gid, bool groupAdmin, bool orgAdmin)
 {
-  sLog.outLog("UserStore: adding %s to group %s", callsign.c_str(), group.c_str());
-  LDAPMod1 attr_cn (LDAP_MOD_ADD, "uniqueMember", callsign.c_str());
-  LDAPMod *attrs[2] = { &attr_cn.mod, NULL };
-  return ldap_check( ldap_modify_ext_s(rootld, group_dn.c_str(), attrs, NULL, NULL) );
+  if(!uid) return false;
+  char uid_str[32]; sprintf(uid_str, "%d", (int)uid);
+  return addToGroup(uid_str, gid, groupAdmin, orgAdmin);
+}
+
+bool UserStore::addToGroup(const char *uid_str, const GroupId & gid, bool groupAdmin, bool orgAdmin)
+{
+  if(!uid_str || !*uid_str) return false;
+  LDAPMod1 attr_oc   (LDAP_MOD_ADD, "objectClass", "groupMembership");
+  LDAPMod1 attr_uid  (LDAP_MOD_ADD, "uid", uid_str);
+  LDAPMod1 attr_gn   (LDAP_MOD_ADD, "gn", gid.gn.c_str());
+  LDAPMod1 attr_ou   (LDAP_MOD_ADD, "ou", gid.ou.c_str());
+  LDAPMod1 attr_iga  (LDAP_MOD_ADD, "isGroupAdmin", groupAdmin ? "TRUE" : "FALSE");
+  LDAPMod1 attr_ioa  (LDAP_MOD_ADD, "isOrgAdmin", orgAdmin ? "TRUE" : "FALSE");
+  LDAPMod *attrs[] = { &attr_oc.mod, &attr_uid.mod, &attr_gn.mod, &attr_ou.mod, &attr_iga.mod, &attr_ioa.mod, NULL };
+
+  return ldap_check( ldap_modify_ext_s(rootld, getMemberDN(uid_str, gid).c_str(), attrs, NULL, NULL) );
 }
 
 std::string UserStore::getUserDN(std::string const &callsign)
@@ -880,9 +884,25 @@ std::string UserStore::getMailDN(std::string const &email)
   return "mail=" + email + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 }
 
-std::string UserStore::getGroupDN(std::string const &group)
+std::string UserStore::getOrgDN(std::string const &org)
 {
-  return "cn=" + group + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+  return "ou=" + org + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
+}
+
+std::string UserStore::getGroupDN(const GroupId &gid)
+{
+  return "gn=" + gid.gn + "," + getOrgDN(gid.ou);
+}
+
+std::string UserStore::getMemberDN(const char *uid_str, const GroupId &gid)
+{
+  return "uid=" + std::string(uid_str) + "," + getGroupDN(gid);
+}
+
+std::string UserStore::getMemberDN(uint32_t uid, const GroupId &gid)
+{
+  char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
+  return getMemberDN(uid_str, gid);
 }
 
 std::list<std::string> UserStore::getUsers(const char *uid)
@@ -999,17 +1019,8 @@ ChInfError UserStore::changeUserInfo(std::string for_name, const UserInfo &to_in
         return CHINF_OTHER_ERROR;
       }
     }
-
-    if(got_name) {
-      // add the new user to the same groups as the old
-      /* - this would not be necessary if the groups were linked to the user by uid,
-         but that might break existing group management functions in ldap
-      */
-      std::list<std::string> list;
-      list = intersectGroupList(name, list, true, false);
-      for(std::list<std::string>::iterator itr = list.begin(); itr != list.end(); ++itr)
-        addToGroup(info.name, *itr, new_user_dn, getGroupDN(*itr));
-    }
+  
+    // both groups and emails are liked to the user by uid so no need to move them
   }
 
   if(got_pass && !got_name) {
@@ -1069,11 +1080,11 @@ UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool *got_nam
   if(got_pass == NULL) got_pass = &name;
 
   if(*got_name == true)
-    *got_name = info.name != "";
+    *got_name = !info.name.empty();
   if(*got_mail == true)
-    *got_mail = info.email != "";
+    *got_mail = !info.email.empty();
   if(*got_pass == true)
-    *got_pass = info.password != "";
+    *got_pass = !info.password.empty();
 
   if(*got_name && !execute_reg(re_callsign, info.name.c_str()))
     return INFO_INVALID_NAME;
@@ -1113,7 +1124,7 @@ int UserStore::resetPassword(const UserInfo &info)
     return 2;
 
   // send the reminder email
-  Mail mail = sMailMan.newMail("user_remind_inactive");
+  Mail mail = sMailMan.newMail("user_activate_passwd");
   mail.replace("{USERNAME}", info.name);
   mail.replace("{PASSWORD}", (char*)pass);
   mail.replace("{U_ACTIVATE}", getActivationURL(info, (char*)key));
@@ -1165,6 +1176,89 @@ int UserStore::resendActivation(const UserInfo &info)
   }
 
   return sendActivationMail(info, key, "user_resend_inactive") ? 0 : 4;
+}
+
+bool UserStore::createOrganization(const std::string &org)
+{
+  sLog.outLog("UserStore: creating the organization %s", org.c_str());
+
+  std::string org_dn = getOrgDN(org);
+
+  const char *oc_vals[3] = { "organizationalUnit", "extensibleObject", NULL };
+  LDAPModN attr_oc      (LDAP_MOD_ADD, "objectClass", oc_vals);
+  LDAPMod1 attr_ou      (LDAP_MOD_ADD, "ou", org.c_str());
+  LDAPMod *org_mods[3] = { &attr_oc.mod, &attr_ou.mod, NULL };
+
+  return ldap_check( ldap_add_ext_s(rootld, org_dn.c_str(), org_mods, NULL, NULL) );
+}
+
+bool UserStore::createGroup(const GroupId &gid)
+{
+  sLog.outLog("UserStore: creating the group %s.%s", gid.ou.c_str(), gid.gn.c_str());
+
+  std::string group_dn = getGroupDN(gid);
+
+  LDAPMod1 attr_oc     (LDAP_MOD_ADD, "objectClass", "group");
+  LDAPMod1 attr_gn     (LDAP_MOD_ADD, "gn", gid.gn.c_str());
+  LDAPMod1 attr_ou     (LDAP_MOD_ADD, "ou", gid.ou.c_str());
+  LDAPMod *group_mods[] = { &attr_oc.mod, &attr_gn.mod, &attr_ou.mod, NULL };
+
+  return ldap_check( ldap_add_ext_s(rootld, group_dn.c_str(), group_mods, NULL, NULL) );
+}
+
+std::list<GroupId> &UserStore::getGroups(const std::string &filter, std::list<GroupId> &ret)
+{
+  LDAPSearchN<2> group_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
+    LDAP_SCOPE_SUBTREE, filter.c_str(),
+    "ou", 1, MAX_ORGNAME_LEN,
+    "gn", 1, MAX_GROUPNAME_LEN);
+
+  LDAPEntry *entry;
+  while(entry = group_search.getNextEntry()) {
+    char *ou = entry->getResult(0).getNextVal();
+    char *gn = entry->getResult(1).getNextVal();
+    if(ou && gn && strcmp(ou, "") != 0 && strcmp(gn, "") != 0)
+      ret.push_back(GroupId(ou, gn));
+  }
+  return ret;
+}
+
+std::list<GroupId> UserStore::getGroupsAdministratedBy(uint32_t uid)
+{
+  char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
+  return getGroupsAdministratedBy(uid_str);
+}
+
+std::list<GroupId> UserStore::getGroupsAdministratedBy(const char * uid_str)
+{  
+  std::list<GroupId> ret;
+  if(!uid_str || !*uid_str || *uid_str == '0')
+    return ret;
+
+  std::string filter = "(&(objectClass=groupMembership)(uid=" + std::string(uid_str) + "))";
+  return getGroups(filter, ret);
+}
+
+GroupId::GroupId(const std::string &org_dot_group)
+{
+  std::string::size_type pos = org_dot_group.find('.');
+  if(pos == org_dot_group.npos || pos == org_dot_group.size() - 1) {
+    sLog.outError("GroupId: invalid group %s", org_dot_group.c_str());
+  } else {
+    ou = org_dot_group.substr(0, pos);
+    gn = org_dot_group.substr(pos + 1);
+  }
+}
+
+GroupIdValidity UserStore::validateGroupId(const GroupId &gid)
+{
+  int ret = 0;
+  if(gid.ou.empty() || !execute_reg(re_organization, gid.ou.c_str()))
+    ret += GROUPID_INVALID_OU;
+  if(gid.gn.empty() || !execute_reg(re_group, gid.gn.c_str()))
+    ret += GROUPID_INVALID_GN;
+
+  return (GroupIdValidity)ret;
 }
 
 // Local Variables: ***
