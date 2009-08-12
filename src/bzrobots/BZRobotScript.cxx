@@ -59,6 +59,8 @@ void BZRobotScript::setPlayer(BZRobotPlayer *_botplayer)
 {
   botplayer = _botplayer;
   bzrobotcb = BZRobotControl::CallbackSet(_botplayer);
+  if(robot)
+	robot->setCallbacks(bzrobotcb);
 }
 
 bool BZRobotScript::hasPlayer()
