@@ -63,7 +63,7 @@ void CustomMaterial::writeToManager() const
   if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
     std::cout << "WARNING: duplicate material name"
 	      << " (" << name << ")" << std::endl;
-    std::cout << "	 the first material will be used" << std::endl;
+    std::cout << "  the first material will be used" << std::endl;
   }
 
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);

@@ -299,7 +299,7 @@ bool KickCommand::operator() (const char	 *message,
 		"Syntax: /kick <#slot | PlayerName | \"Player Name\"> "
 		"<reason>");
     sendMessage(ServerPlayer, t,
-		"	Please keep in mind that reason is displayed to the "
+		"  Please keep in mind that reason is displayed to the "
 		"user.");
     return true;
   }
@@ -385,7 +385,7 @@ bool KillCommand::operator() (const char	 *message,
 		"Syntax: /kill <#slot | PlayerName | \"Player Name\">  "
 		"[reason]");
     sendMessage(ServerPlayer, t,
-		"	Please keep in mind that reason is displayed to the "
+		"  Please keep in mind that reason is displayed to the "
 		"user.");
     return true;
   }
@@ -600,17 +600,17 @@ bool BanCommand::operator() (const char	 *message,
 		"Syntax: /ban <#slot | PlayerName | \"Player Name\" | ip> "
 		"<duration> <reason>");
     sendMessage(ServerPlayer, t,
-		"	<duration> can be 'short' or 'default' for the default"
+		"  <duration> can be 'short' or 'default' for the default"
 		" ban time ");
     sendMessage(ServerPlayer, t,
-		"	or 'forever' or 'max' for infinite bans ");
+		"  or 'forever' or 'max' for infinite bans ");
     sendMessage(ServerPlayer, t,
-		"	or a time in the format <weeks>W<days>D<hours>"
+		"  or a time in the format <weeks>W<days>D<hours>"
 		"H<minutes>M ");
     sendMessage(ServerPlayer, t,
-		"	or just a number of minutes ");
+		"  or just a number of minutes ");
     sendMessage(ServerPlayer, t,
-		"	Please keep in mind that reason is displayed to the "
+		"  Please keep in mind that reason is displayed to the "
 		"user.");
     return true;
   }
@@ -749,7 +749,7 @@ bool HostbanCommand::operator() (const char* message,
     sendMessage(ServerPlayer, t,
 		"Syntax: /hostban <host pattern> [duration] [reason]");
     sendMessage(ServerPlayer, t,
-		"	Please keep in mind that reason is displayed to the "
+		"  Please keep in mind that reason is displayed to the "
 		"user.");
     return true;
   }
