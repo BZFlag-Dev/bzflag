@@ -144,9 +144,9 @@ inline bool isVisible(const char c)
 inline bool isPrintable(const char c)
 {
   if (isVisible(c) || isWhitespace(c)) {
-    return false;
+    return true;
   }
-  return true;
+  return false;
 }
 
 const std::vector<std::string> bzu_standardPerms (void);

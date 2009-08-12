@@ -227,9 +227,9 @@ namespace TextUtils {
   inline bool isPrintable(const char c)
   {
     if (isVisible(c) || isWhitespace(c)) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 
 
