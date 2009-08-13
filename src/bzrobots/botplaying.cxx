@@ -829,6 +829,7 @@ void handleNewPlayer(void *msg)
   for(scriptItr = robotScripts.begin(); scriptItr != robotScripts.end(); scriptItr++) {
     if(!(*scriptItr)->hasPlayer()) {
 	  (*scriptItr)->setPlayer((BZRobotPlayer *)robots[i]);
+	  (*scriptItr)->start();
       break;
     }
   }
@@ -1923,9 +1924,7 @@ void botStartPlaying()
   
   robotScripts.push_back(robotScript);
 
-  if(robotScript->loaded()) {
-    robotScript->start();
-  } else {
+  if(!robotScript->loaded()) {
 	showMessage("Unable to load script: " + robotScript->getError());
     return;
   }
