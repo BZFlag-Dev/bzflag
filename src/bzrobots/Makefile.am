@@ -103,7 +103,7 @@ LDADD =	\
 	$(GLEW_LIBS)			\
 	../date/libDate.la
 
-TestRobot_la_LDFLAGS = -module -avoid-version
+TestRobot_la_LDFLAGS = -fPIC -module -avoid-version
 TestRobot_la_SOURCES = \
 	BZAdvancedRobot.h \
 	../../bots/testbot/TestRobot.cxx \
