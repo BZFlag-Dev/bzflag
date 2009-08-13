@@ -969,14 +969,6 @@
 			Name="API"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\Bullet.h"
 				>
 			</File>
@@ -996,25 +988,17 @@
 				RelativePath="..\..\src\bzrobots\BZRobot.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Robot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Robot.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\..\src\bzrobots\bzrobot.i"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzflag\Makefile.am"
+			RelativePath="..\..\src\bzrobots\Makefile.am"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzrobots\Makefile.am"
+			RelativePath="..\..\src\bzflag\Makefile.am"
 			>
 		</File>
 	</Files>

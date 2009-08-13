@@ -212,14 +212,6 @@
 			Name="API"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\Bullet.h"
 				>
 			</File>
@@ -237,14 +229,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\BZRobot.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Robot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\Robot.h"
 				>
 			</File>
 		</Filter>
