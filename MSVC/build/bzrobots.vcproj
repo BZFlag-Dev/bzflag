@@ -236,10 +236,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\ScriptLoader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\ScriptLoaderFactory.h"
 				>
 			</File>
@@ -994,11 +990,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzrobots\Makefile.am"
+			RelativePath="..\..\src\bzflag\Makefile.am"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzflag\Makefile.am"
+			RelativePath="..\..\src\bzrobots\Makefile.am"
 			>
 		</File>
 	</Files>
