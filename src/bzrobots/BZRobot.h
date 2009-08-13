@@ -13,6 +13,11 @@
 #ifndef __BZROBOT_H__
 #define __BZROBOT_H__
 
+/* ugly hack for pyconfig.h */
+#ifdef HAVE_NCURSES_H
+#  undef HAVE_NCURSES_H
+#endif
+
 #include "common.h"
 
 /* local interface headers */

@@ -17,6 +17,12 @@
 
 /* system interface headers */
 #include <string>
+
+/* ugly hack for pyconfig.h */
+#ifdef HAVE_NCURSES_H
+#  undef HAVE_NCURSES_H
+#endif
+
 #include <Python.h>
 
 /* local interface headers */
