@@ -65,16 +65,16 @@ public:
   } variableUpdates;
   
   void setRobot(BZRobot *_robot);
-  void pushEvent(BZRobotEvent *e);
-  void execEvents();
+  void pushEvent(BZRobotEvent e);
   void explodeTank();
-  void restart(const double* _pos, double _azimuth);
+  void restart(const fvec3& pos, float azimuth);
   void update(float inputDT);
   void doUpdate(float dt);
   void doUpdateMotion(float dt);
 
   void botAhead(double distance);
   void botBack(double distance);
+  void botDoNothing();
   void botExecute();
   void botFire();
   double botGetDistanceRemaining();
@@ -118,6 +118,7 @@ private:
   fvec3 tsTankSize;
 
   bool tsPendingUpdates[updateCount];
+  std::list<BZRobotEvent> tsEventQueue; // non-prioritized
 
   double tsGunHeat;
   bool tsShoot;

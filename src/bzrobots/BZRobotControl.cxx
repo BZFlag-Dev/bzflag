@@ -66,6 +66,13 @@ void BZRobotControl::Back(void *_rrp,double distance)
   rrp->botBack(distance);
 }
 
+void BZRobotControl::DoNothing(void *_rrp)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botDoNothing();
+}
+
 void BZRobotControl::Execute(void *_rrp)
 {
   if(!_rrp) return;

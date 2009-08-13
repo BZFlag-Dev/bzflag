@@ -26,7 +26,18 @@ public:
   TestRobot() {}
 
   void run();
-  void onHitWall(const HitWallEvent &hwe);
+
+  void onBattleEnded(const BattleEndedEvent &e);
+  void onBulletHit(const BulletHitEvent &e);
+  void onBulletMissed(const BulletMissedEvent &e);
+  void onDeath(const DeathEvent &e);
+  void onHitByBullet(const HitByBulletEvent &e);
+  void onHitWall(const HitWallEvent &e);
+  void onRobotDeath(const RobotDeathEvent &e);
+  void onScannedRobot(const ScannedRobotEvent &e);
+  void onSpawn(const SpawnEvent &e);
+  void onStatus(const StatusEvent &e);
+  void onWin(const WinEvent &e);
 };
 
 #endif /* __TESTROBOT_H__ */

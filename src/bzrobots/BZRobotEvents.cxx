@@ -15,6 +15,8 @@
 
 void BZRobotEvent::Execute(BZRobot *robot)
 {
+  if(!robot)
+	  return;
   switch(eventID)
   {
     case BattleEndedEventID:
@@ -40,6 +42,9 @@ void BZRobotEvent::Execute(BZRobot *robot)
       break;
     case ScannedRobotEventID:
       robot->onScannedRobot(*((ScannedRobotEvent *)this));
+      break;
+    case SpawnEventID:
+      robot->onSpawn(*((SpawnEvent *)this));
       break;
     case StatusEventID:
       robot->onStatus(*((StatusEvent *)this));

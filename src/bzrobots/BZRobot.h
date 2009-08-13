@@ -16,22 +16,24 @@
 #include "common.h"
 
 /* local interface headers */
-#include "BZRobotCallbacks.h"
 #include "BZRobotEvents.h"
 
 class BZRobot
 {
 protected:
-  mutable BZRobotCallbacks *bzrobotcb;
+  // bzrobotcb is of type BZRobotCallbacks, but void*
+  // is used here to keep the API headers clean
+  mutable void *bzrobotcb;
   std::string robotType;
 public:
   BZRobot();
   virtual ~BZRobot();
-  void setCallbacks(BZRobotCallbacks *_bzrobotcb);
+  void setCallbacks(void *_bzrobotcb);
   std::string getRobotType() { return robotType; }
 
   void ahead(double distance);
   void back(double distance);
+  void doNothing();
   void fire();
   double getBattleFieldSize() const;
   double getGunCoolingRate() const;
@@ -64,6 +66,7 @@ public:
   virtual void onHitWall(const HitWallEvent &/*event*/) {}
   virtual void onRobotDeath(const RobotDeathEvent &/*event*/) {}
   virtual void onScannedRobot(const ScannedRobotEvent &/*event*/) {}
+  virtual void onSpawn(const SpawnEvent &/*event*/) {}
   virtual void onStatus(const StatusEvent &/*event*/) {}
   virtual void onWin(const WinEvent &/*event*/) {} // Only in league matches...
 };

@@ -10,9 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <string.h>
-
+/* interface header */
 #include "BZRobot.h"
+
+/* implementation headers */
+#include "BZRobotCallbacks.h"
+
+#define BOT_CALLBACKS ((BZRobotCallbacks *)bzrobotcb)
+#define BOT_CLIENT_PLAYER ((BZRobotCallbacks *)bzrobotcb)->data
+
 
 BZRobot::BZRobot()
 {
@@ -25,7 +31,7 @@ BZRobot::~BZRobot()
   delete bzrobotcb;
 }
 
-void BZRobot::setCallbacks(BZRobotCallbacks *_bzrobotcb)
+void BZRobot::setCallbacks(void *_bzrobotcb)
 {
   bzrobotcb = _bzrobotcb;
 }
@@ -33,141 +39,147 @@ void BZRobot::setCallbacks(BZRobotCallbacks *_bzrobotcb)
 
 void BZRobot::ahead(double distance)
 {
-  if(bzrobotcb && bzrobotcb->Ahead)
-    bzrobotcb->Ahead(bzrobotcb->data,distance);
+  if(bzrobotcb && BOT_CALLBACKS->Ahead)
+    BOT_CALLBACKS->Ahead(BOT_CLIENT_PLAYER,distance);
 }
 
 void BZRobot::back(double distance)
 {
-  if(bzrobotcb && bzrobotcb->Back)
-    bzrobotcb->Back(bzrobotcb->data,distance);
+  if(bzrobotcb && BOT_CALLBACKS->Back)
+    BOT_CALLBACKS->Back(BOT_CLIENT_PLAYER,distance);
+}
+
+void BZRobot::doNothing()
+{
+  if(bzrobotcb && BOT_CALLBACKS->DoNothing)
+    BOT_CALLBACKS->DoNothing(BOT_CLIENT_PLAYER);
 }
 
 void BZRobot::fire()
 {
-  if(bzrobotcb && bzrobotcb->Fire)
-    bzrobotcb->Fire(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->Fire)
+    BOT_CALLBACKS->Fire(BOT_CLIENT_PLAYER);
 }
 
 double BZRobot::getBattleFieldSize() const
 {
-  if(bzrobotcb && bzrobotcb->GetBattleFieldSize)
-    return bzrobotcb->GetBattleFieldSize(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetBattleFieldSize)
+    return BOT_CALLBACKS->GetBattleFieldSize(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getGunCoolingRate() const
 {
-  if(bzrobotcb && bzrobotcb->GetGunCoolingRate)
-    return bzrobotcb->GetGunCoolingRate(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetGunCoolingRate)
+    return BOT_CALLBACKS->GetGunCoolingRate(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getGunHeat() const
 {
-  if(bzrobotcb && bzrobotcb->GetGunHeat)
-    return bzrobotcb->GetGunHeat(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetGunHeat)
+    return BOT_CALLBACKS->GetGunHeat(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getHeading() const
 {
-  if(bzrobotcb && bzrobotcb->GetHeading)
-    return bzrobotcb->GetHeading(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetHeading)
+    return BOT_CALLBACKS->GetHeading(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getHeight() const
 {
-  if(bzrobotcb && bzrobotcb->GetHeight)
-    return bzrobotcb->GetHeight(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetHeight)
+    return BOT_CALLBACKS->GetHeight(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getLength() const
 {
-  if(bzrobotcb && bzrobotcb->GetLength)
-    return bzrobotcb->GetLength(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetLength)
+    return BOT_CALLBACKS->GetLength(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 const char * BZRobot::getName() const
 {
-  if(bzrobotcb && bzrobotcb->GetName)
-    return bzrobotcb->GetName(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetName)
+    return BOT_CALLBACKS->GetName(BOT_CLIENT_PLAYER);
   return "";
 }
 
 double BZRobot::getTime() const
 {
-  if(bzrobotcb && bzrobotcb->GetTime)
-    return bzrobotcb->GetTime(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetTime)
+    return BOT_CALLBACKS->GetTime(BOT_CLIENT_PLAYER);
   return 0;
 }
 
 double BZRobot::getWidth() const
 {
-  if(bzrobotcb && bzrobotcb->GetWidth)
-    return bzrobotcb->GetWidth(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetWidth)
+    return BOT_CALLBACKS->GetWidth(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getVelocity() const
 {
-  if(bzrobotcb && bzrobotcb->GetVelocity)
-    return bzrobotcb->GetVelocity(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetVelocity)
+    return BOT_CALLBACKS->GetVelocity(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getX() const
 {
-  if(bzrobotcb && bzrobotcb->GetX)
-    return bzrobotcb->GetX(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetX)
+    return BOT_CALLBACKS->GetX(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getY() const
 {
-  if(bzrobotcb && bzrobotcb->GetY)
-    return bzrobotcb->GetY(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetY)
+    return BOT_CALLBACKS->GetY(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZRobot::getZ() const
 {
-  if(bzrobotcb && bzrobotcb->GetZ)
-    return bzrobotcb->GetZ(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetZ)
+    return BOT_CALLBACKS->GetZ(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 void BZRobot::resume()
 {
-  if(bzrobotcb && bzrobotcb->Resume)
-    bzrobotcb->Resume(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->Resume)
+    BOT_CALLBACKS->Resume(BOT_CLIENT_PLAYER);
 }
 
 void BZRobot::scan()
 {
-  if(bzrobotcb && bzrobotcb->Scan)
-    bzrobotcb->Scan(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->Scan)
+    BOT_CALLBACKS->Scan(BOT_CLIENT_PLAYER);
 }
 
 void BZRobot::stop(bool overwrite)
 {
-  if(bzrobotcb && bzrobotcb->Stop)
-    bzrobotcb->Stop(bzrobotcb->data,overwrite);
+  if(bzrobotcb && BOT_CALLBACKS->Stop)
+    BOT_CALLBACKS->Stop(BOT_CLIENT_PLAYER,overwrite);
 }
 
 void BZRobot::turnLeft(double degrees)
 {
-  if(bzrobotcb && bzrobotcb->TurnLeft)
-    bzrobotcb->TurnLeft(bzrobotcb->data,degrees);
+  if(bzrobotcb && BOT_CALLBACKS->TurnLeft)
+    BOT_CALLBACKS->TurnLeft(BOT_CLIENT_PLAYER,degrees);
 }
 
 void BZRobot::turnRight(double degrees)
 {
-  if(bzrobotcb && bzrobotcb->TurnRight)
-    bzrobotcb->TurnRight(bzrobotcb->data,degrees);
+  if(bzrobotcb && BOT_CALLBACKS->TurnRight)
+    BOT_CALLBACKS->TurnRight(BOT_CLIENT_PLAYER,degrees);
 }
 
 // Local Variables: ***

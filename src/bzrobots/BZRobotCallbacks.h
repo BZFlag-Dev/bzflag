@@ -19,6 +19,7 @@ typedef struct BZRobotCallbacks {
   void *data; // Data to be sent back to callbacks
   void (*Ahead)(void *data, double);
   void (*Back)(void *data, double);
+  void (*DoNothing)(void *data);
   void (*Execute)(void *data);
   void (*Fire)(void *data);
   double (*GetBattleFieldSize)(void *data);

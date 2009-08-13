@@ -22,6 +22,11 @@
 #include "TargetingUtils.h"
 
 
+#define MIN_EXEC_TIME 0.05f // 1000ms * 0.05 = 50ms
+#define DIST_THRESHOLD 0.001f
+#define TURN_THRESHOLD 0.001f
+
+
 // event priority sorting
 bool compareEventPriority(BZRobotEvent a, BZRobotEvent b)
 {
@@ -72,37 +77,48 @@ BZRobotPlayer::~BZRobotPlayer()
 #endif
 }
 
-void BZRobotPlayer::setRobot(BZRobot * /*_robot*/)
+// Called by bzrobots client thread
+void BZRobotPlayer::setRobot(BZRobot *_robot)
+{
+  printf("Setting robot...\n");
+  robot = _robot;
+}
+
+// Called by bzrobots client thread
+void BZRobotPlayer::pushEvent(BZRobotEvent e)
 {
   LOCK_PLAYER
-
+  tsEventQueue.push_back(e);
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::pushEvent(BZRobotEvent * /* e */)
-{
-  LOCK_PLAYER
-
-  UNLOCK_PLAYER
-}
-
-void BZRobotPlayer::execEvents()
-{
-  LOCK_PLAYER
-
-  UNLOCK_PLAYER
-
-}
-
+// Called by bzrobots client thread
 void BZRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
+  DeathEvent e;
+  e.setTime(TimeKeeper::getCurrent().getSeconds());
+  LOCK_PLAYER
+  tsEventQueue.clear();
+  tsEventQueue.push_back(e);
+  UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::restart(const double* _pos, double _azimuth)
+// Called by bzrobots client thread
+void BZRobotPlayer::restart(const fvec3& pos, float azimuth)
 {
-  fvec3 pos((float)_pos[0], (float)_pos[1], (float)_pos[2]);
-  LocalPlayer::restart(pos, (float)_azimuth);
+  SpawnEvent e;
+  e.setTime(TimeKeeper::getCurrent().getSeconds());
+  LOCK_PLAYER
+  tsEventQueue.push_back(e);
+  tsTankSize = getDimensions();
+  tsGunHeat = 0.0;
+  tsPosition = pos;
+  tsCurrentHeading = azimuth;
+  tsCurrentSpeed = 0.0;
+  tsCurrentTurnRate = 0.0;
+  UNLOCK_PLAYER
+  LocalPlayer::restart(pos, azimuth);
 }
 
 // Called by bzrobots client thread
@@ -140,17 +156,17 @@ void BZRobotPlayer::doUpdateMotion(float dt)
   const fvec3& vvec = getVelocity();
   float dist = dt *sqrt(vvec.x*vvec.x + vvec.y*vvec.y); // no z vector
   tsDistanceRemaining -= dist;
-  if (tsDistanceRemaining > 0.0001) {
+  if (tsDistanceRemaining > DIST_THRESHOLD) {
     setDesiredSpeed((float)(tsDistanceForward ? tsSpeed : -tsSpeed));
   } else {
     setDesiredSpeed(0);
     tsDistanceRemaining = 0.0f;
   }
-  if (tsTurnRemaining > 0.0001) {
+  if (tsTurnRemaining > TURN_THRESHOLD) {
     double turnAdjust = getAngularVelocity() * dt;
     if (tsTurnLeft) {
       tsTurnRemaining -= turnAdjust;
-      if (tsTurnRemaining <= 0.0001)
+      if (tsTurnRemaining <= TURN_THRESHOLD)
         setDesiredAngVel(0);
       else if (tsTurnRate * dt > tsTurnRemaining)
         setDesiredAngVel((float)tsTurnRemaining/dt);
@@ -158,7 +174,7 @@ void BZRobotPlayer::doUpdateMotion(float dt)
         setDesiredAngVel((float)tsTurnRate);
     } else {
       tsTurnRemaining += turnAdjust;
-      if (tsTurnRemaining <= 0.0001)
+      if (tsTurnRemaining <= TURN_THRESHOLD)
         setDesiredAngVel(0);
       else if (tsTurnRate * dt > tsTurnRemaining)
         setDesiredAngVel((float)-tsTurnRemaining/dt);
@@ -166,7 +182,7 @@ void BZRobotPlayer::doUpdateMotion(float dt)
         setDesiredAngVel((float)-tsTurnRate);
     }
   }
-  if (tsTurnRemaining <= 0.0001) {
+  if (tsTurnRemaining <= TURN_THRESHOLD) {
     setDesiredAngVel(0);
     tsTurnRemaining = 0.0f;
   }
@@ -186,8 +202,20 @@ void BZRobotPlayer::botBack(double distance)
 	botAhead(-distance);
 }
 
+void BZRobotPlayer::botDoNothing()
+{
+	botExecute();
+}
+
+// This does three things:
+// 1) makes the setXXX calls "live"
+// 2) runs any pending events ("end of turn")
+// 3) may sleep for a time
+// 4) send status event ("start of next turn")
 void BZRobotPlayer::botExecute()
 {
+  std::list<BZRobotEvent> eventQueue;
+  
   LOCK_PLAYER
   if (tsPendingUpdates[BZRobotPlayer::speedUpdate])
     tsSpeed = tsNextSpeed;
@@ -211,15 +239,33 @@ void BZRobotPlayer::botExecute()
 
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     tsPendingUpdates[i] = false;
+
+  // Copy the event queue, since LOCK_PLAYER must not
+  // be locked while executing the various events
+  eventQueue.splice(eventQueue.begin(),tsEventQueue);
+
   UNLOCK_PLAYER
+
+  BZRobotEvent e;
+  eventQueue.sort(compareEventPriority);
+  while(!eventQueue.empty()) {
+    e = eventQueue.front();
+	e.Execute(robot);
+	eventQueue.pop_front();
+  }
+
   double thisExec = TimeKeeper::getCurrent().getSeconds();
   double diffExec = (thisExec - lastExec);
-  if(diffExec < 0.02) {
-    TimeKeeper::sleep(0.02 - diffExec);
+  if(diffExec < MIN_EXEC_TIME) {
+    TimeKeeper::sleep(MIN_EXEC_TIME - diffExec);
     lastExec = TimeKeeper::getCurrent().getSeconds();
   } else {
     lastExec = thisExec;
   }
+
+  StatusEvent statusEvent;
+  statusEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+  statusEvent.Execute(robot);
 }
 
 void BZRobotPlayer::botFire()

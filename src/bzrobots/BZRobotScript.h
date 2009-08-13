@@ -20,8 +20,10 @@
 #include <map>
 
 /* local interface headers */
-#include "BZRobot.h"
 #include "BZRobotPlayer.h"
+
+#include "BZRobot.h"
+#include "BZRobotCallbacks.h"
 
 class BZRobotScript
 {

@@ -58,6 +58,7 @@ BZRobotScript *BZRobotScript::loadFile(std::string filename)
 void BZRobotScript::setPlayer(BZRobotPlayer *_botplayer)
 {
   botplayer = _botplayer;
+  botplayer->setRobot(robot);
   bzrobotcb = BZRobotControl::CallbackSet(_botplayer);
   if(robot)
 	robot->setCallbacks(bzrobotcb);

@@ -23,6 +23,7 @@ public:
   static BZRobotCallbacks *CallbackSet(BZRobotPlayer *rrp);
   static void Ahead(void *_rrp, double);
   static void Back(void *_rrp, double);
+  static void DoNothing(void *_rrp);
   static void Execute(void *_rrp);
   static void Fire(void *_rrp);
   static double GetBattleFieldSize(void *_rrp);

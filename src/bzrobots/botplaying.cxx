@@ -495,8 +495,6 @@ void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
     // uh oh, local player is dead
     if (victimLocal->isAlive()) {
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
-      // FIXME: send event using callbacks
-      //rcLink->pushEvent(new DeathEvent());
     }
   }
   else if (victimPlayer) {

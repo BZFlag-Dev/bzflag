@@ -99,7 +99,7 @@ public:
   void		setRecipient(const Player*);
   const Player*	getRecipient() const;
 
-  void restart(const fvec3& pos, float azimuth);
+  virtual void restart(const fvec3& pos, float azimuth);
   bool checkHit(const Player* source, const ShotPath*& hit, float& minTime) const;
   void setFlag(FlagType*);
   void changeScore(float newRank, short newWins, short newLosses, short newTeamKills);

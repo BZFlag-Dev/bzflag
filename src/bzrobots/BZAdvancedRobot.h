@@ -17,7 +17,6 @@
 
 /* local interface headers */
 #include "BZRobot.h"
-#include "Tank.h"
 
 class BZAdvancedRobot :public BZRobot
 {
@@ -38,12 +37,7 @@ public:
   void setTurnLeft(double degrees);
   
   /* These are helper functions. */
-  /* This returns the bearing between our current angle and the location of the tank. */
-  double getBearing(const Tank &tank) const;
   double getBearing(double x, double y) const;
-
-  /* This returns the distance between us and the location of the tank. */
-  double getDistance(const Tank &tank) const;
   double getDistance(double x, double y) const;
 };
 

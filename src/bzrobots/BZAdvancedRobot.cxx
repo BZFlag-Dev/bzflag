@@ -14,6 +14,10 @@
 #include "BZAdvancedRobot.h"
 
 /* implementation headers */
+#include "BZRobotCallbacks.h"
+
+#define BOT_CALLBACKS ((BZRobotCallbacks *)bzrobotcb)
+#define BOT_CLIENT_PLAYER ((BZRobotCallbacks *)bzrobotcb)->data
 
 BZAdvancedRobot::BZAdvancedRobot()
 {
@@ -27,52 +31,52 @@ BZAdvancedRobot::~BZAdvancedRobot()
 
 void BZAdvancedRobot::execute()
 {
-  if(bzrobotcb && bzrobotcb->Execute)
-    bzrobotcb->Execute(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->Execute)
+    BOT_CALLBACKS->Execute(BOT_CLIENT_PLAYER);
 }
 
 double BZAdvancedRobot::getDistanceRemaining() const
 {
-  if(bzrobotcb && bzrobotcb->GetDistanceRemaining)
-    return bzrobotcb->GetDistanceRemaining(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetDistanceRemaining)
+    return BOT_CALLBACKS->GetDistanceRemaining(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 double BZAdvancedRobot::getTurnRemaining() const
 {
-  if(bzrobotcb && bzrobotcb->GetTurnRemaining)
-    return bzrobotcb->GetTurnRemaining(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->GetTurnRemaining)
+    return BOT_CALLBACKS->GetTurnRemaining(BOT_CLIENT_PLAYER);
   return 0.0;
 }
 
 void BZAdvancedRobot::setAhead(double distance)
 {
-  if(bzrobotcb && bzrobotcb->SetAhead)
-    bzrobotcb->SetAhead(bzrobotcb->data,distance);
+  if(bzrobotcb && BOT_CALLBACKS->SetAhead)
+    BOT_CALLBACKS->SetAhead(BOT_CLIENT_PLAYER,distance);
 }
 
 void BZAdvancedRobot::setFire()
 {
-  if(bzrobotcb && bzrobotcb->SetFire)
-    bzrobotcb->SetFire(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->SetFire)
+    BOT_CALLBACKS->SetFire(BOT_CLIENT_PLAYER);
 }
 
 void BZAdvancedRobot::setTurnRate(double turnRate)
 {
-  if(bzrobotcb && bzrobotcb->SetTurnRate)
-    bzrobotcb->SetTurnRate(bzrobotcb->data,turnRate);
+  if(bzrobotcb && BOT_CALLBACKS->SetTurnRate)
+    BOT_CALLBACKS->SetTurnRate(BOT_CLIENT_PLAYER,turnRate);
 }
 
 void BZAdvancedRobot::setMaxVelocity(double maxVelocity)
 {
-  if(bzrobotcb && bzrobotcb->SetMaxVelocity)
-    bzrobotcb->SetMaxVelocity(bzrobotcb->data,maxVelocity);
+  if(bzrobotcb && BOT_CALLBACKS->SetMaxVelocity)
+    BOT_CALLBACKS->SetMaxVelocity(BOT_CLIENT_PLAYER,maxVelocity);
 }
 
 void BZAdvancedRobot::setResume()
 {
-  if(bzrobotcb && bzrobotcb->SetResume)
-    bzrobotcb->SetResume(bzrobotcb->data);
+  if(bzrobotcb && BOT_CALLBACKS->SetResume)
+    BOT_CALLBACKS->SetResume(BOT_CLIENT_PLAYER);
 }
 
 void BZAdvancedRobot::setStop()
@@ -82,19 +86,14 @@ void BZAdvancedRobot::setStop()
 
 void BZAdvancedRobot::setStop(bool overwrite)
 {
-  if(bzrobotcb && bzrobotcb->SetStop)
-    bzrobotcb->SetStop(bzrobotcb->data,overwrite);
+  if(bzrobotcb && BOT_CALLBACKS->SetStop)
+    BOT_CALLBACKS->SetStop(BOT_CLIENT_PLAYER,overwrite);
 }
 
 void BZAdvancedRobot::setTurnLeft(double degrees)
 {
-  if(bzrobotcb && bzrobotcb->SetTurnLeft)
-    bzrobotcb->SetTurnLeft(bzrobotcb->data,degrees);
-}
-
-double BZAdvancedRobot::getBearing(const Tank &tank) const
-{
-  return getBearing(tank.position[0], tank.position[1]);
+  if(bzrobotcb && BOT_CALLBACKS->SetTurnLeft)
+    BOT_CALLBACKS->SetTurnLeft(BOT_CLIENT_PLAYER,degrees);
 }
 
 double BZAdvancedRobot::getBearing(double x, double y) const
@@ -117,11 +116,6 @@ double BZAdvancedRobot::getBearing(double x, double y) const
   while(bearing < -180)
     bearing += 360.0;
   return bearing;
-}
-
-double BZAdvancedRobot::getDistance(const Tank &tank) const
-{
-  return getDistance(tank.position[0], tank.position[1]);
 }
 
 double BZAdvancedRobot::getDistance(double x, double y) const
