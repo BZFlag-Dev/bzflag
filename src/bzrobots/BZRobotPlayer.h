@@ -107,6 +107,7 @@ public:
   
 private:
   double lastExec;
+  bool inEvents;
 
 // Begin shared thread-safe variables
   BZRobot *robot;

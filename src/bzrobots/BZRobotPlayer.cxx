@@ -41,6 +41,7 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 			     ServerLink* _server) :
   RobotPlayer(_id, _name, _server),
   lastExec(0.0f),
+  inEvents(false),
   robot(NULL),
   tsName(_name),
   tsGunHeat(0.0),
@@ -215,7 +216,7 @@ void BZRobotPlayer::botDoNothing()
 void BZRobotPlayer::botExecute()
 {
   std::list<BZRobotEvent> eventQueue;
-  
+
   LOCK_PLAYER
   if (tsPendingUpdates[BZRobotPlayer::speedUpdate])
     tsSpeed = tsNextSpeed;
@@ -242,9 +243,19 @@ void BZRobotPlayer::botExecute()
 
   // Copy the event queue, since LOCK_PLAYER must not
   // be locked while executing the various events
-  eventQueue.splice(eventQueue.begin(),tsEventQueue);
+  if(!inEvents)
+    eventQueue.splice(eventQueue.begin(),tsEventQueue);
 
   UNLOCK_PLAYER
+
+  // It's possible we might call execute
+  // from within an event handler, so return
+  // here if we're flushing an event queue
+  // (to prevent infinite recursion)
+  if(inEvents)
+    return;
+
+  inEvents = true;
 
   BZRobotEvent e;
   eventQueue.sort(compareEventPriority);
@@ -266,6 +277,8 @@ void BZRobotPlayer::botExecute()
   StatusEvent statusEvent;
   statusEvent.setTime(TimeKeeper::getCurrent().getSeconds());
   statusEvent.Execute(robot);
+
+  inEvents = false;
 }
 
 void BZRobotPlayer::botFire()
