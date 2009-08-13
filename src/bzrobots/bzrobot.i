@@ -2,16 +2,13 @@
 %{
 #include "BZRobot.h"
 #include "BZAdvancedRobot.h"
-#include "Tank.h"
+#include "Bullet.h"
 %}
 
 %feature("director");
 
 %include "std_vector.i"
 %include "std_string.i"
-namespace std {
-       %template (VecTank) vector< Tank >;
-}
 
 %typemap(out) float [ANY] {
     int i;
@@ -31,4 +28,4 @@ namespace std {
 
 %include "BZRobot.h"
 %include "BZAdvancedRobot.h"
-%include "Tank.h"
+%include "Bullet.h"

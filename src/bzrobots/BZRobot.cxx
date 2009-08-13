@@ -28,7 +28,6 @@ BZRobot::BZRobot()
 
 BZRobot::~BZRobot()
 {
-  delete bzrobotcb;
 }
 
 void BZRobot::setCallbacks(void *_bzrobotcb)

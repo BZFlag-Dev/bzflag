@@ -30,15 +30,15 @@ public:
 
   virtual ~Bullet();
 
-  inline double const getHeading() { return heading; }
-  inline double const getHeadingRadians() { return headingRadians; }
-  inline std::string const getName() { return ownerName; }
-  inline double const getVelocity() { return velocity; }
-  inline std::string const getVictim() { return victimName; }
-  inline double const getX() { return x; }
-  inline double const getY() { return y; }
-  inline double const getZ() { return z; }
-  inline bool const isActive() { return active; }
+  inline double getHeading() const { return heading; }
+  inline double getHeadingRadians() const { return headingRadians; }
+  inline std::string getName() const { return ownerName; }
+  inline double getVelocity() const { return velocity; }
+  inline std::string getVictim() const { return victimName; }
+  inline double getX() const { return x; }
+  inline double getY() const { return y; }
+  inline double getZ() const { return z; }
+  inline bool isActive() const { return active; }
 
 protected:
   double heading;

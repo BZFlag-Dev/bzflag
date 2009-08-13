@@ -66,7 +66,7 @@ class BattleEndedEvent : public BZRobotEvent
 public:
   BattleEndedEvent(bool _aborted) :
     aborted(_aborted) { eventID = BattleEndedEventID; }
-  inline boolean isAborted() const { return aborted; }
+  inline bool isAborted() const { return aborted; }
 
 private:
   bool aborted;
@@ -111,8 +111,8 @@ public:
   inline double getBearing() const { return bearing; }
 
 private:
-  Bullet *bullet;
   double bearing;
+  Bullet *bullet;
 };
 
 class HitWallEvent : public BZRobotEvent
@@ -155,9 +155,9 @@ public:
   inline std::string getName() const { return name; }
   inline double getBearing() const { return bearing; }
   inline double getDistance() const { return distance; }
-  inline double const getX() { return x; }
-  inline double const getY() { return y; }
-  inline double const getZ() { return z; }
+  inline double getX() const { return x; }
+  inline double getY() const { return y; }
+  inline double getZ() const { return z; }
   inline double getHeading() const { return heading; }
   inline double getVelocity() const { return velocity; }
 

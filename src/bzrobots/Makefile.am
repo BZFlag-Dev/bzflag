@@ -40,6 +40,7 @@ genericfiles =				\
 	botplaying.h			\
 	AdvancedRobot.cxx		\
 	AdvancedRobot.h			\
+	Bullet.h			\
 	BZAdvancedRobot.cxx		\
 	BZAdvancedRobot.h		\
 	BZRobot.cxx			\
@@ -59,11 +60,7 @@ genericfiles =				\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\
 	SharedObjectLoader.h		\
-	Shot.h				\
-	Shot.cxx			\
-	../obstacle/ObstacleMgr.cxx	\
-	Tank.h				\
-	Tank.cxx			
+	../obstacle/ObstacleMgr.cxx	
 
 
 if CLIENT_INCLUDED
@@ -121,10 +118,11 @@ libbzrobot = bzrobot_pyext.la
 bzrobot_pyext_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
 bzrobot_pyext_la_LDFLAGS = -module -avoid-version -export-dynamic
 bzrobot_pyext_la_SOURCES = \
+	Bullet.h \
+	BZRobot.cxx \
+	BZRobot.h \
 	BZAdvancedRobot.cxx \
-	BZAdvancedRobot.h \
-	Tank.cxx \
-	Tank.h
+	BZAdvancedRobot.h
 
 bzrobot_pyext_la_LIBADD = ../date/libDate.la
 
