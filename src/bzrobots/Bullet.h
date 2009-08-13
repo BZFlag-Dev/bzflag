@@ -17,17 +17,7 @@
 
 class Bullet {
 public:
-  Bullet() :
-      heading(0.0f),
-      headingRadians(0.0f),
-	  ownerName(""),
-      velocity(0.0f),
-      victimName(""),
-      x(0.0f),
-      y(0.0f),
-	  z(0.0f),
-	  active(false) {}
-
+  Bullet();
   virtual ~Bullet();
 
   inline double getHeading() const { return heading; }

@@ -115,14 +115,6 @@ TestRobot_la_SOURCES = \
 
 if BZROBOTS_PYTHON_ENABLED
 libbzrobot = bzrobot_pyext.la
-bzrobot_pyext_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
-bzrobot_pyext_la_LDFLAGS = -module -avoid-version -export-dynamic
-bzrobot_pyext_la_SOURCES = \
-	Bullet.h \
-	BZRobot.cxx \
-	BZRobot.h \
-	BZAdvancedRobot.cxx \
-	BZAdvancedRobot.h
 
 bzrobot_pyext_la_LIBADD = ../date/libDate.la
 
@@ -133,11 +125,25 @@ BUILT_SOURCES = \
 
 bzrobot_python_wrap.h: bzrobot_python_wrap.cxx
 
-bzrobot_python_wrap.cxx: bzrobot.i BZAdvancedRobot.h
+bzrobot_python_wrap.cxx: bzrobot.i Bullet.h BZRobot.h BZAdvancedRobot.h
 	$(SWIG) -Wall -c++ -python -o $@ -interface bzrobot_pyext $< # Consider using -O for 'optimized mode'
 
 bzrobot_python_runtime.h:
 	$(SWIG) -python -external-runtime $@
+
+bzrobot_pyext_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
+bzrobot_pyext_la_LDFLAGS = -module -avoid-version -export-dynamic
+bzrobot_pyext_la_SOURCES = \
+	Bullet.h \
+	Bullet.cxx \
+	BZRobot.cxx \
+	BZRobot.h \
+	BZAdvancedRobot.cxx \
+	BZAdvancedRobot.h \
+	bzrobot_python_wrap.cxx \
+	bzrobot_python_wrap.h \
+	bzrobot_python_runtime.h
+
 else
 libbzrobot =
 endif
