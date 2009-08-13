@@ -13,14 +13,11 @@
 #ifndef __BZROBOTEVENTS_H__
 #define __BZROBOTEVENTS_H__
 
-#include "common.h"
-
 /* system interface headers */
 #include <string>
 
 /* local interface headers */
 #include "BZRobot.h"
-
 #include "Bullet.h"
 
 #define DEFAULT_EVENT_PRIORITY 80

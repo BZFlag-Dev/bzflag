@@ -38,8 +38,6 @@ genericfiles =				\
 	bzrobots.cxx			\
 	botplaying.cxx			\
 	botplaying.h			\
-	AdvancedRobot.cxx		\
-	AdvancedRobot.h			\
 	Bullet.h			\
 	BZAdvancedRobot.cxx		\
 	BZAdvancedRobot.h		\
@@ -54,8 +52,6 @@ genericfiles =				\
 	BZRobotPlayer.h			\
 	BZRobotScript.cxx		\
 	BZRobotScript.h			\
-	Robot.cxx			\
-	Robot.h				\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\

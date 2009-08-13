@@ -13,8 +13,6 @@
 #ifndef __BZADVANCEDROBOT_H__
 #define __BZADVANCEDROBOT_H__
 
-#include "common.h"
-
 /* local interface headers */
 #include "BZRobot.h"
 
