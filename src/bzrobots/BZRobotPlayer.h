@@ -108,6 +108,8 @@ public:
 private:
   double lastExec;
   bool inEvents;
+  bool purgeQueue;
+  bool didHitWall;
 
 // Begin shared thread-safe variables
   BZRobot *robot;
@@ -119,6 +121,7 @@ private:
   fvec3 tsTankSize;
 
   bool tsPendingUpdates[updateCount];
+  std::list<BZRobotEvent> tsScanQueue; // non-prioritized
   std::list<BZRobotEvent> tsEventQueue; // non-prioritized
 
   double tsGunHeat;

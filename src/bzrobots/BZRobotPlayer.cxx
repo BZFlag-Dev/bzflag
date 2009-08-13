@@ -17,6 +17,7 @@
 #include "BZDBCache.h"
 
 // local implementation headers
+#include "Roster.h"
 #include "World.h"
 #include "Intersect.h"
 #include "TargetingUtils.h"
@@ -42,6 +43,8 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
   RobotPlayer(_id, _name, _server),
   lastExec(0.0f),
   inEvents(false),
+  purgeQueue(false),
+  didHitWall(false),
   robot(NULL),
   tsName(_name),
   tsGunHeat(0.0),
@@ -81,7 +84,6 @@ BZRobotPlayer::~BZRobotPlayer()
 // Called by bzrobots client thread
 void BZRobotPlayer::setRobot(BZRobot *_robot)
 {
-  printf("Setting robot...\n");
   robot = _robot;
 }
 
@@ -102,6 +104,7 @@ void BZRobotPlayer::explodeTank()
   LOCK_PLAYER
   tsEventQueue.clear();
   tsEventQueue.push_back(e);
+  purgeQueue = true;
   UNLOCK_PLAYER
 }
 
@@ -126,19 +129,46 @@ void BZRobotPlayer::restart(const fvec3& pos, float azimuth)
 void BZRobotPlayer::update(float inputDT)
 {
   LOCK_PLAYER
-  /*
-  // Get Players
+  // Check for wall hit
+  if(hasHitWall()) {
+	  if(!didHitWall) {
+	    HitWallEvent hitWallEvent(0.0f); // Get real angle to wall?
+        hitWallEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+	    tsEventQueue.push_back(hitWallEvent);
+        didHitWall = true;
+	  }
+  } else {
+    didHitWall = false;
+  }
+  // Update scanned player queue
+  double cpa = getAngle();
+  fvec3 cpp = getPosition();
+  tsScanQueue.clear();
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!remotePlayers[i])
+    if (remotePlayers[i] == NULL)
       continue;
-    if (getId() == remotePlayers[i]->getId())
+    if (remotePlayers[i]->getId() == getId())
       continue;
-    TeamColor team = remotePlayers[i]->getTeam();
-    if (team == ObserverTeam)
+    if (remotePlayers[i]->getTeam() == ObserverTeam)
       continue;
 
-    // Make event with remotePlayers[i]
+	fvec3 rpp = remotePlayers[i]->getPosition();
+	fvec3 rpv = remotePlayers[i]->getVelocity();
+	double remotePlayerVelocity = sqrt(rpv.x*rpv.x + rpv.y*rpv.y); // exclude z vector
+	fvec3 rpdv(rpp.x-cpp.x,rpp.y-cpp.y,rpp.z-cpp.z);
+	double remotePlayerDistance = sqrt(rpdv.x*rpdv.x + rpdv.y*rpdv.y); // exclude z vector
+	double remotePlayerBearing = atan2(rpdv.x,rpdv.y);
+	ScannedRobotEvent scannedRobotEvent(
+      remotePlayers[i]->getCallSign(),
+      remotePlayerBearing,
+	  remotePlayerDistance,
+	  rpp.x, rpp.y, rpp.z,
+	  remotePlayers[i]->getAngle(),
+	  remotePlayerVelocity);
+    scannedRobotEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+	tsScanQueue.push_back(scannedRobotEvent);
   }
+  /*
   // Get Shots
   link->send(ShotsBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -309,10 +339,12 @@ void BZRobotPlayer::botExecute()
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
     tsPendingUpdates[i] = false;
 
-  // Copy the event queue, since LOCK_PLAYER must not
+  // Copy the event queues, since LOCK_PLAYER must not
   // be locked while executing the various events
-  if(!inEvents)
+  if(!inEvents) {
+    eventQueue.splice(eventQueue.begin(),tsScanQueue);
     eventQueue.splice(eventQueue.begin(),tsEventQueue);
+  }
 
   UNLOCK_PLAYER
 
@@ -325,12 +357,16 @@ void BZRobotPlayer::botExecute()
 
   inEvents = true;
 
-  BZRobotEvent e;
   eventQueue.sort(compareEventPriority);
-  while(!eventQueue.empty()) {
-    e = eventQueue.front();
+  purgeQueue = false;
+  while(!purgeQueue && !eventQueue.empty()) {
+    BZRobotEvent e = eventQueue.front();
 	e.Execute(robot);
 	eventQueue.pop_front();
+  }
+  if(purgeQueue) {
+	purgeQueue = false;
+    eventQueue.clear();
   }
 
   double thisExec = TimeKeeper::getCurrent().getSeconds();

@@ -1755,19 +1755,19 @@ bool checkForCompleteDownloads(void)
 
 void doEnergySaver(void )
 {
+  // always cap out at 200 fps unless a limit is set.
   static TimeKeeper lastTime = TimeKeeper::getCurrent();
-  const float fpsLimit = 10000;
+  float fpsLimit = 200;
 
-  if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) {
-    const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
-    if (elapsed > 0.0f) {
-      const float period = (1.0f / fpsLimit);
-      const float remaining = (period - elapsed);
-
-      if (remaining > 0.0f)
-	TimeKeeper::sleep(remaining);
+  const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+  if (elapsed > 0.0f) {
+    const float period = (1.0f / fpsLimit);
+    const float remaining = (period - elapsed);
+    if (remaining > 0.0f) {
+      TimeKeeper::sleep(remaining);
     }
   }
+
   lastTime = TimeKeeper::getCurrent();
 }
 
@@ -1787,8 +1787,6 @@ static void playingLoop()
   while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
     
-	TimeKeeper::sleep(0.005);
-
     canSpawn = true;
 
     // set this step game time

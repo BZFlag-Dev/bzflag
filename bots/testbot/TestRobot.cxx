@@ -27,6 +27,10 @@ extern "C" {
 void TestRobot::run()
 {
   while(true) {
+	printf("TestRobot: run\n");
+	ahead(10);
+    fire();
+	/*
     setFire();
     setAhead(200);
     do {
@@ -51,22 +55,23 @@ void TestRobot::run()
       if(lastTurn == getTurnRemaining())
         break;
     } while (getTurnRemaining() > 0);
+	*/
   }
 }
 
 void TestRobot::onBattleEnded(const BattleEndedEvent &/*e*/)
 {
-  printf("TestRobot: BattleEndedEvent\n");
+  //printf("TestRobot: BattleEndedEvent\n");
 }
 
 void TestRobot::onBulletHit(const BulletHitEvent &/*e*/)
 {
-  printf("TestRobot: BulletHitEvent\n");
+  //printf("TestRobot: BulletHitEvent\n");
 }
 
 void TestRobot::onBulletMissed(const BulletMissedEvent &/*e*/)
 {
-  printf("TestRobot: BulletMissedEvent\n");
+  //printf("TestRobot: BulletMissedEvent\n");
 }
 
 void TestRobot::onDeath(const DeathEvent &/*e*/)
@@ -76,17 +81,19 @@ void TestRobot::onDeath(const DeathEvent &/*e*/)
 
 void TestRobot::onHitByBullet(const HitByBulletEvent &/*e*/)
 {
-  printf("TestRobot: HitByBulletEvent\n");
+  //printf("TestRobot: HitByBulletEvent\n");
 }
 
 void TestRobot::onHitWall(const HitWallEvent &/*e*/)
 {
   printf("TestRobot: HitWallEvent\n");
+  back(100);
+  turnLeft(90);
 }
 
 void TestRobot::onRobotDeath(const RobotDeathEvent &/*e*/)
 {
-  printf("TestRobot: RobotDeathEvent\n");
+  //printf("TestRobot: RobotDeathEvent\n");
 }
 
 void TestRobot::onScannedRobot(const ScannedRobotEvent &/*e*/)
@@ -101,12 +108,12 @@ void TestRobot::onSpawn(const SpawnEvent &/*e*/)
 
 void TestRobot::onStatus(const StatusEvent &/*e*/)
 {
-  printf("TestRobot: StatusEvent\n");
+  //printf("TestRobot: StatusEvent\n");
 }
 
 void TestRobot::onWin(const WinEvent &/*e*/)
 {
-  printf("TestRobot: WinEvent\n");
+  //printf("TestRobot: WinEvent\n");
 }
 
 // Local Variables: ***
