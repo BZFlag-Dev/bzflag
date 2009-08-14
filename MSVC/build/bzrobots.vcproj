@@ -236,6 +236,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzrobots\LuaHeader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\LuaLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzrobots\ScriptLoaderFactory.h"
 				>
 			</File>
@@ -270,6 +278,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzrobots\BZRobotScript.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\LuaLoader.cxx"
 				>
 			</File>
 			<File
@@ -1006,11 +1018,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzrobots\Makefile.am"
+			RelativePath="..\..\src\bzflag\Makefile.am"
 			>
 		</File>
 		<File
-			RelativePath="..\..\src\bzflag\Makefile.am"
+			RelativePath="..\..\src\bzrobots\Makefile.am"
 			>
 		</File>
 	</Files>

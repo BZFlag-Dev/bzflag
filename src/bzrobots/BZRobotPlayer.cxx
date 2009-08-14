@@ -260,9 +260,16 @@ void BZRobotPlayer::doUpdateMotion(float dt)
   LocalPlayer::doUpdateMotion(dt);
 }
 
-void BZRobotPlayer::shotFired(ShotPath * /*shot*/, Player * /*shooter*/)
+void BZRobotPlayer::shotFired(const ShotPath * /*shot*/, const Player * /*shooter*/)
 {
+  printf("BZRobotPlayer: shotFired\n");
   // TODO: Create a BulletFiredEvent
+}
+
+void BZRobotPlayer::shotKilled(const ShotPath * /*shot*/, const Player * /*killer*/, const Player * /*victim*/)
+{
+  printf("BZRobotPlayer: shotKilled\n");
+  // TODO: Create a BulletHitEvent (if this bot is the killer)
 }
 
 void BZRobotPlayer::botAhead(double distance)

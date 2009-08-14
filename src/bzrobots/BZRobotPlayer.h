@@ -72,7 +72,8 @@ public:
   void doUpdate(float dt);
   void doUpdateMotion(float dt);
 
-  void shotFired(ShotPath *shot, Player *shooter);
+  void shotFired(const ShotPath *shot, const Player *shooter);
+  void shotKilled(const ShotPath *shot, const Player *killer, const Player *victim);
 
   // Call-ins for BZRobot/BZAdvancedRobot
   void botAhead(double distance);
