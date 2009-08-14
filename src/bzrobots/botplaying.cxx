@@ -1665,28 +1665,6 @@ void doTankMotions(const float /*dt*/)
   
   // do motion
   if (myTank) {
-    if (myTank->isAlive() && !myTank->isPaused()) {
-      /*doMotion();
-      if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED)
-	setHuntTarget(); //spot hunt target
-
-      if (myTank->getTeam() != ObserverTeam &&
-	((fireButton && myTank->getFlag() == Flags::MachineGun) ||
-	(myTank->getFlag() == Flags::TriggerHappy)))
-	myTank->fireShot();
-
-      setLookAtMarker();
-
-      // see if we have a target, if so lock on to the bastage
-      if (myTank->getTarget())
-	hud->AddLockOnMarker(myTank->getTarget()->getPosition(),
-	myTank->getTarget()->getCallSign(),
-	!isKillable(myTank->getTarget()));
-	
-    } else {
-      int mx, my;
-      mainWindow->getMousePosition(mx, my);*/
-    }
     myTank->update();
   }
 }
