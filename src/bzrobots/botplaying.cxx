@@ -510,13 +510,13 @@ void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
 #ifdef ROBOT
   if (killerPlayer && victimPlayer && shotId >= 0) {
     const ShotPath *shot = killerPlayer->getShot(int(shotId));
-    if (shot && shot->getFlag() == Flags::Genocide) {
+    if (shot) {
       for (int i = 0; i < numRobots; i++) {
 		if(robots[i] != NULL) {
 		  // notify the robot that a tank was blown up
 		  ((BZRobotPlayer *)(robots[i]))->shotKilled(shot,killerPlayer,victimPlayer);
 		  // blow up robots on victim's team if shot was genocide
-	      if ((victimPlayer != robots[i]) && (victimPlayer->getTeam() == robots[i]->getTeam()) && (robots[i]->getTeam() != RogueTeam)) {
+	      if ((shot->getFlag() == Flags::Genocide) && (victimPlayer != robots[i]) && (victimPlayer->getTeam() == robots[i]->getTeam()) && (robots[i]->getTeam() != RogueTeam)) {
 	        gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
 		  }
 		}
