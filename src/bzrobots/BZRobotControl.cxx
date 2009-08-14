@@ -20,6 +20,7 @@ BZRobotCallbacks *BZRobotControl::CallbackSet(BZRobotPlayer *rrp)
   cbset->data = rrp;
   cbset->Ahead = &BZRobotControl::Ahead;
   cbset->Back = &BZRobotControl::Back;
+  cbset->DoNothing = &BZRobotControl::DoNothing;
   cbset->Execute = &BZRobotControl::Execute;
   cbset->Fire = &BZRobotControl::Fire;
   cbset->GetBattleFieldSize = &BZRobotControl::GetBattleFieldSize;
