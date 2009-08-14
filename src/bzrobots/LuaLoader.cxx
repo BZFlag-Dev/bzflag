@@ -19,6 +19,9 @@
 #include <string>
 #include <stdlib.h>
 
+// common headers
+#include "TimeKeeper.h"
+
 // local headers
 #include "LuaHeader.h"
 
@@ -68,6 +71,8 @@ static int GetTurnRemaining(lua_State* L);
 static int GetEventID(lua_State* L);
 static int GetEventTime(lua_State* L);
 static int GetEventPriority(lua_State* L);
+
+static int Sleep(lua_State* L);
 
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
 static int ReadStdin(lua_State* L);
@@ -442,6 +447,7 @@ static bool PushCallOuts(lua_State* L)
   PUSH_LUA_CFUNC(L, GetEventTime);
   PUSH_LUA_CFUNC(L, GetEventPriority);
 
+  PUSH_LUA_CFUNC(L, Sleep);
 
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
   PUSH_LUA_CFUNC(L, ReadStdin);
@@ -651,6 +657,13 @@ static int GetEventPriority(lua_State* L) {
 }
 
 //============================================================================//
+
+static int Sleep(lua_State* L)
+{
+  TimeKeeper::sleep(luaL_checkdouble(L, 1));
+  return 0;
+}
+
 
 // whacky bit of dev'ing fun
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
