@@ -6,8 +6,6 @@
 # ahead for this to happen.  In the meantime, this seems to be the least
 # ugly of all of the solutions.
 
-LIBS = # bzrobots doesn't need default linkage libraries
-
 bin_PROGRAMS = bzrobots
 lib_LTLIBRARIES = TestRobot.la $(libbzrobot)
 
