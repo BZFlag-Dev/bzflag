@@ -64,6 +64,9 @@ bzrobots_SOURCES =			\
 	BZRobotPlayer.h			\
 	BZRobotScript.cxx		\
 	BZRobotScript.h			\
+	LuaHeadr.h			\
+	LuaLoader.h			\
+	LuaLoader.cxx			\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\
@@ -93,6 +96,7 @@ bzrobots_LDADD =	\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
+	$(LIBLUA)			\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\

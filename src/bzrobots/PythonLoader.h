@@ -19,11 +19,16 @@
 #include <string>
 
 /* ugly hack for pyconfig.h */
-#ifdef HAVE_NCURSES_H
-#  undef HAVE_NCURSES_H
+#ifndef HAVE_NCURSES_H
+  #include <Python.h>
+#else
+  #undef HAVE_NCURSES_H
+  #include <Python.h>
+  #ifndef HAVE_NCURSES_H
+    #define HAVE_NCURSES_H
+  #endif
 #endif
 
-#include <Python.h>
 
 /* local interface headers */
 #include "BZRobotScript.h"

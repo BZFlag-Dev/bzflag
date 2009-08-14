@@ -16,6 +16,8 @@
 /* local implementation headers */
 #include "SharedObjectLoader.h"
 
+#include "LuaLoader.h"
+
 #ifdef WITH_PYTHONLOADER
 #   include "PythonLoader.h"
 #endif
@@ -41,19 +43,25 @@ void ScriptLoaderFactory::initialize()
 #else
   SCRIPTTOOLFACTORY.Register<SharedObjectLoader>("so");
 #endif /* defined(_WIN32) */
+
+  SCRIPTTOOLFACTORY.Register<LuaLoader>("lua");
+
 #ifdef WITH_PYTHONLOADER
   SCRIPTTOOLFACTORY.Register<PythonLoader>("py");
 #endif
 }
+
 
 /* private */
 ScriptLoaderFactory::ScriptLoaderFactory()
 {
 }
 
+
 ScriptLoaderFactory::~ScriptLoaderFactory()
 {
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

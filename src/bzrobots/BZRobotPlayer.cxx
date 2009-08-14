@@ -122,13 +122,13 @@ void BZRobotPlayer::update(float inputDT)
 {
   LOCK_PLAYER
   // Check for wall hit
-  if(hasHitWall()) {
-	  if(!didHitWall) {
-	    HitWallEvent hitWallEvent(0.0f); // Get real angle to wall?
-        hitWallEvent.setTime(TimeKeeper::getCurrent().getSeconds());
-	    tsEventQueue.push_back(hitWallEvent);
-        didHitWall = true;
-	  }
+  if (hasHitWall()) {
+    if (!didHitWall) {
+      HitWallEvent hitWallEvent(0.0f); // Get real angle to wall?
+      hitWallEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+      tsEventQueue.push_back(hitWallEvent);
+      didHitWall = true;
+    }
   } else {
     didHitWall = false;
   }

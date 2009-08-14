@@ -23,7 +23,7 @@
 
 /* static entry point for threading */
 static void *startBot(void *bot) {
-  ((BZRobot *)(bot))->run();
+  ((BZRobot *)bot)->run();
   return NULL;
 }
 
@@ -66,19 +66,20 @@ void BZRobotScript::setPlayer(BZRobotPlayer *_botplayer)
 
 bool BZRobotScript::hasPlayer()
 {
-  if(botplayer == NULL)
-    return false;
-  return true;
+  return (botplayer != NULL);
 }
 
 void BZRobotScript::start()
 {
-  if(!robot)
+  if (!robot) {
     robot = create();
-  if(robot)
-	robot->setCallbacks(bzrobotcb);
-  if(botplayer)
+  }
+  if (robot) {
+    robot->setCallbacks(bzrobotcb);
+  }
+  if (botplayer) {
     botplayer->setRobot(robot);
+  }
 
 #ifndef _WIN32
   pthread_create( &rthread, NULL, startBot, robot);
@@ -101,12 +102,16 @@ void BZRobotScript::stop()
 
   _running = false;
 
-  if(robot)
-	robot->setCallbacks(NULL);
-  if(botplayer)
+  if (robot) {
+    robot->setCallbacks(NULL);
+  }
+  if (botplayer) {
     botplayer->setRobot(NULL);
-  if(robot)
+  }
+  if (robot) {
     destroy(robot);
+  }
+
   robot = NULL;
 }
 
