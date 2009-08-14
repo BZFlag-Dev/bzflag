@@ -24,8 +24,7 @@ PYTHON_LOADER = \
 
 if BZROBOTS_PYTHON_ENABLED
 AM_CXXFLAGS = @CONF_CXXFLAGS@ \
-	$(PYTHON_CPPFLAGS) \
-	-DWITH_PYTHONLOADER=1
+	$(PYTHON_CPPFLAGS) -DWITH_PYTHONLOADER=1
 bzrobots_LDFLAGS = -export-dynamic -static $(PYTHON_LDFLAGS)
 pythonloaderfiles = $(PYTHON_LOADER)
 else
@@ -34,7 +33,18 @@ bzrobots_LDFLAGS = -export-dynamic -static
 pythonloaderfiles =
 endif
 
-genericfiles =				\
+if CLIENT_INCLUDED
+clientfiles = \
+	../obstacle/ObstacleMgr.cxx	
+else
+clientfiles = \
+	OpenGLUtils.cxx	\
+	../obstacle/ObstacleMgr.cxx	
+endif
+
+bzrobots_SOURCES =			\
+	$(pythonloaderfiles)		\
+	$(clientfiles)			\
 	bzrobots.cxx			\
 	botplaying.cxx			\
 	botplaying.h			\
@@ -55,18 +65,8 @@ genericfiles =				\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\
 	SharedObjectLoader.cxx		\
-	SharedObjectLoader.h		\
-	../obstacle/ObstacleMgr.cxx	
+	SharedObjectLoader.h		
 
-
-if CLIENT_INCLUDED
-bzrobots_SOURCES = $(genericfiles)		\
-	$(pythonloaderfiles)
-else
-bzrobots_SOURCES = $(genericfiles)		\
-	$(pythonloaderfiles)			\
-	OpenGLUtils.cxx	
-endif
 
 if WIN32
 RESOURCE = bzflag.res
@@ -78,7 +78,7 @@ if MACOS
 NACLIB = ../platform/MacOSX/libMac.la
 endif
 
-LDADD =	\
+bzrobots_LDADD =	\
 	../obstacle/libObstacle.la	\
 	../clientbase/libClientBase.la	\
 	../game/libGame.la		\
@@ -109,15 +109,16 @@ TestRobot_la_SOURCES = \
 	../../bots/testbot/TestRobot.cxx \
 	../../bots/testbot/TestRobot.h
 
-if BZROBOTS_PYTHON_ENABLED
-libbzrobot = bzrobot_pyext.la
-
-bzrobot_pyext_la_LIBADD = ../date/libDate.la
+TestRobot.la: $(TestRobot_la_OBJECTS) $(TestRobot_la_DEPENDENCIES)
+	$(TestRobot_la_LINK) -rpath $(libdir) $(TestRobot_la_OBJECTS) $(TestRobot_la_LIBADD)
 
 BUILT_SOURCES = \
 	bzrobot_python_wrap.cxx \
 	bzrobot_python_wrap.h \
 	bzrobot_python_runtime.h
+
+if BZROBOTS_PYTHON_ENABLED
+libbzrobot = bzrobot_pyext.la
 
 bzrobot_python_wrap.h: bzrobot_python_wrap.cxx
 
@@ -160,8 +161,6 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 CLEANFILES = \
-	bzrobot.py \
-	bzrobot_python_wrap.cxx \
-	bzrobot_python_wrap.h \
-	bzrobot_python_runtime.h
+	$(BUILT_SOURCES) \
+	bzrobot.py
 

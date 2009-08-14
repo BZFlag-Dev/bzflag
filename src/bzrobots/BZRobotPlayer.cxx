@@ -141,7 +141,7 @@ void BZRobotPlayer::update(float inputDT)
     didHitWall = false;
   }
   // Update scanned player queue
-  double cpa = getAngle();
+  //double cpa = getAngle();
   fvec3 cpp = getPosition();
   tsScanQueue.clear();
   for (int i = 0; i < curMaxPlayers; i++) {
