@@ -79,11 +79,6 @@ void BZAdvancedRobot::setResume()
     BOT_CALLBACKS->SetResume(BOT_CLIENT_PLAYER);
 }
 
-void BZAdvancedRobot::setStop()
-{
-  setStop(false);
-}
-
 void BZAdvancedRobot::setStop(bool overwrite)
 {
   if(bzrobotcb && BOT_CALLBACKS->SetStop)

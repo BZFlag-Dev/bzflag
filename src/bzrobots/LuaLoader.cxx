@@ -93,8 +93,8 @@ class LuaRobot : public BZAdvancedRobot {
     void onWin(const WinEvent&);
 
   private:
-    bool PushFunction(const char* funcName, int inArgs);
-    bool ExecFunction(int inArgs, int outArgs);
+    bool PushCallIn(const char* funcName, int inArgs);
+    bool RunCallIn(int inArgs, int outArgs);
 
   private:
     lua_State* L;
@@ -193,7 +193,7 @@ LuaRobot::~LuaRobot()
 //  Call-ins
 //
 
-bool LuaRobot::PushFunction(const char* funcName, int inArgs)
+bool LuaRobot::PushCallIn(const char* funcName, int inArgs)
 {
   if (L == NULL) {
     return false;
@@ -210,7 +210,7 @@ bool LuaRobot::PushFunction(const char* funcName, int inArgs)
 }
 
 
-bool LuaRobot::ExecFunction(int inArgs, int outArgs)
+bool LuaRobot::RunCallIn(int inArgs, int outArgs)
 {
   if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
     printf("LuaRobot: error, %s\n", lua_tostring(L, -1));
@@ -242,101 +242,101 @@ static void PushBullet(lua_State* L, const Bullet* bullet)
 
 void LuaRobot::run()
 {
-  if (!PushFunction("Run", 0)) {
+  if (!PushCallIn("Run", 0)) {
     printf("LuaRobot: missing Run() function\n");
     return;
   }
-  ExecFunction(0, 0);
+  RunCallIn(0, 0);
 }
 
 
 void LuaRobot::onBattleEnded(const BattleEndedEvent& event)
 {
-  if (!PushFunction("BattleEnded", 3)) {
+  if (!PushCallIn("BattleEnded", 3)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
   lua_pushboolean(L, event.isAborted());
-  ExecFunction(3, 0);
+  RunCallIn(3, 0);
 }
 
 
 void LuaRobot::onBulletHit(const BulletHitEvent& event)
 {
-  if (!PushFunction("BulletHit", 4)) {
+  if (!PushCallIn("BulletHit", 4)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
   lua_pushstdstring(L, event.getName());
   PushBullet(L, event.getBullet());
-  ExecFunction(4, 0);
+  RunCallIn(4, 0);
 }
 
 
 void LuaRobot::onBulletMissed(const BulletMissedEvent& event)
 {
-  if (!PushFunction("BulletMissed", 3)) {
+  if (!PushCallIn("BulletMissed", 3)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
   PushBullet(L, event.getBullet());
-  ExecFunction(3, 0);
+  RunCallIn(3, 0);
 }
 
 
 void LuaRobot::onDeath(const DeathEvent& event)
 {
-  if (!PushFunction("Death", 2)) {
+  if (!PushCallIn("Death", 2)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
-  ExecFunction(2, 0);
+  RunCallIn(2, 0);
 }
 
 
 void LuaRobot::onHitByBullet(const HitByBulletEvent& event)
 {
-  if (!PushFunction("HitByBullet", 4)) {
+  if (!PushCallIn("HitByBullet", 4)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
   lua_pushdouble(L, event.getBearing());
   PushBullet(L, event.getBullet());
-  ExecFunction(4, 0);
+  RunCallIn(4, 0);
 }
 
 
 void LuaRobot::onHitWall(const HitWallEvent& event)
 {
-  if (!PushFunction("HitWall", 3)) {
+  if (!PushCallIn("HitWall", 3)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
   lua_pushdouble(L, event.getBearing());
-  ExecFunction(3, 0);
+  RunCallIn(3, 0);
 }
 
 
 void LuaRobot::onRobotDeath(const RobotDeathEvent& event)
 {
-  if (!PushFunction("RobotDeath", 2)) {
+  if (!PushCallIn("RobotDeath", 2)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
-  ExecFunction(2, 0);
+  RunCallIn(2, 0);
 }
 
 
 void LuaRobot::onScannedRobot(const ScannedRobotEvent& event)
 {
-  if (!PushFunction("ScannedRobot", 3)) {
+  if (!PushCallIn("ScannedRobot", 3)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
@@ -352,40 +352,40 @@ void LuaRobot::onScannedRobot(const ScannedRobotEvent& event)
   lua_pushdouble(L, event.getHeading());  lua_setfield(L, -2, "heading");
   lua_pushdouble(L, event.getVelocity()); lua_setfield(L, -2, "velocity");
 
-  ExecFunction(3, 0);
+  RunCallIn(3, 0);
 }
 
 
 void LuaRobot::onSpawn(const SpawnEvent& event)
 {
-  if (!PushFunction("Spawn", 2)) {
+  if (!PushCallIn("Spawn", 2)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
-  ExecFunction(2, 0);
+  RunCallIn(2, 0);
 }
 
 
 void LuaRobot::onStatus(const StatusEvent& event)
 {
-  if (!PushFunction("Status", 2)) {
+  if (!PushCallIn("Status", 2)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
-  ExecFunction(2, 0);
+  RunCallIn(2, 0);
 }
 
 
 void LuaRobot::onWin(const WinEvent& event)
 {
-  if (!PushFunction("Win", 2)) {
+  if (!PushCallIn("Win", 2)) {
     return;
   }
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
-  ExecFunction(2, 0);
+  RunCallIn(2, 0);
 }
 
 
@@ -461,71 +461,52 @@ static inline LuaRobot* GetRobot(lua_State* L)
 
 //============================================================================//
 
-static int Execute(lua_State* L)
-{
+static int Execute(lua_State* L) {
   GetRobot(L)->execute();
   return 0;
 }
 
-
-static int DoNothing(lua_State* L)
-{
+static int DoNothing(lua_State* L) {
   GetRobot(L)->doNothing();
   return 0;
 }
 
-
-static int Fire(lua_State* L)
-{
+static int Fire(lua_State* L) {
   GetRobot(L)->fire();
   return 0;
 }
 
-
-static int Resume(lua_State* L)
-{
+static int Resume(lua_State* L) {
   GetRobot(L)->resume();
   return 0;
 }
 
-
-static int Scan(lua_State* L)
-{
+static int Scan(lua_State* L) {
   GetRobot(L)->scan();
   return 0;
 }
 
-
-static int Stop(lua_State* L)
-{
+static int Stop(lua_State* L) {
   GetRobot(L)->stop();
   return 0;
 }
 
-
-static int Ahead(lua_State* L)
-{
+static int Ahead(lua_State* L) {
   GetRobot(L)->ahead(luaL_checkdouble(L, 1));
   return 0;
 }
 
-
-static int Back(lua_State* L)
-{
+static int Back(lua_State* L) {
   GetRobot(L)->back(luaL_checkdouble(L, 1));
   return 0;
 }
 
-
-static int TurnLeft(lua_State* L)
-{
+static int TurnLeft(lua_State* L) {
   GetRobot(L)->turnLeft(luaL_checkdouble(L, 1));
   return 0;
 }
 
-
-static int TurnRight(lua_State* L)
-{
+static int TurnRight(lua_State* L) {
   GetRobot(L)->turnRight(luaL_checkdouble(L, 1));
   return 0;
 }
@@ -533,54 +514,37 @@ static int TurnRight(lua_State* L)
 
 //============================================================================//
 
-static int SetAhead(lua_State* L)
-{
+static int SetAhead(lua_State* L) {
   GetRobot(L)->setAhead(luaL_checkdouble(L, 1));
   return 0;
 }
 
-
-static int SetFire(lua_State* L)
-{
+static int SetFire(lua_State* L) {
   GetRobot(L)->setFire();
   return 0;
 }
 
-
-static int SetTurnRate(lua_State* L)
-{
+static int SetTurnRate(lua_State* L) {
   GetRobot(L)->setTurnRate(luaL_checkdouble(L, 1));
   return 0;
 }
 
-
-static int SetMaxVelocity(lua_State* L)
-{
+static int SetMaxVelocity(lua_State* L) {
   GetRobot(L)->setMaxVelocity(luaL_checkdouble(L, 1));
   return 0;
 }
 
-
-static int SetResume(lua_State* L)
-{
+static int SetResume(lua_State* L) {
   GetRobot(L)->setResume();
   return 0;
 }
 
-
-static int SetStop(lua_State* L)
-{
-  if (lua_type(L, 1) != LUA_TBOOLEAN) {
-    GetRobot(L)->setStop();
-  } else {
-    GetRobot(L)->setStop(lua_toboolean(L, 1));
-  }
+static int SetStop(lua_State* L) {
+  GetRobot(L)->setStop(lua_isboolean(L, 1) && lua_toboolean(L, 1));
   return 0;
 }
 
-
-static int SetTurnLeft(lua_State* L)
-{
+static int SetTurnLeft(lua_State* L) {
   GetRobot(L)->setTurnLeft(luaL_checkdouble(L, 1));
   return 0;
 }
@@ -588,106 +552,77 @@ static int SetTurnLeft(lua_State* L)
 
 //============================================================================//
 
-static int GetTime(lua_State* L)
-{
+static int GetTime(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getTime());
   return 1;
 }
 
-
-static int GetBattleFieldSize(lua_State* L)
-{
+static int GetBattleFieldSize(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getBattleFieldSize());
   return 1;
 }
 
-
-static int GetGunCoolingRate(lua_State* L)
-{
+static int GetGunCoolingRate(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getGunCoolingRate());
   return 1;
 }
 
-
-static int GetGunHeat(lua_State* L)
-{
+static int GetGunHeat(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getGunHeat());
   return 1;
 }
 
-
-static int GetHeading(lua_State* L)
-{
+static int GetHeading(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getHeading());
   return 1;
 }
 
-
-static int GetHeight(lua_State* L)
-{
+static int GetHeight(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getHeight());
   return 1;
 }
 
-
-static int GetLength(lua_State* L)
-{
+static int GetLength(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getLength());
   return 1;
 }
 
-
-static int GetName(lua_State* L)
-{
+static int GetName(lua_State* L) {
   lua_pushstring(L, GetRobot(L)->getName());
   return 1;
 }
 
-
-static int GetWidth(lua_State* L)
-{
+static int GetWidth(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getWidth());
   return 1;
 }
 
-
-static int GetVelocity(lua_State* L)
-{
+static int GetVelocity(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getVelocity());
   return 1;
 }
 
-
-static int GetX(lua_State* L)
-{
+static int GetX(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getX());
   return 1;
 }
 
-
-static int GetY(lua_State* L)
-{
+static int GetY(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getY());
   return 1;
 }
 
-
-static int GetZ(lua_State* L)
-{
+static int GetZ(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getZ());
   return 1;
 }
 
-
-static int GetDistanceRemaining(lua_State* L)
-{
+static int GetDistanceRemaining(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getDistanceRemaining());
   return 1;
 }
 
-
-static int GetTurnRemaining(lua_State* L)
-{
+static int GetTurnRemaining(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getTurnRemaining());
   return 1;
 }

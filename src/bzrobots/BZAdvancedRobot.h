@@ -30,8 +30,7 @@ public:
   void setTurnRate(double turnRate);
   void setMaxVelocity(double maxVelocity);
   void setResume();
-  void setStop();
-  void setStop(bool overwrite);
+  void setStop(bool overwrite = false);
   void setTurnLeft(double degrees);
   
   /* These are helper functions. */
