@@ -139,9 +139,8 @@ void LocalPlayer::doUpdate(float dt)
   for (i = 0; i < numShots; i++) {
     if (shots[i] && shots[i]->isReloaded()) {
       if (!shots[i]->isExpired())
-	shots[i]->setExpired();
-      delete shots[i];
-      shots[i] = NULL;
+        shots[i]->setExpired();
+	    deleteShot(i);
     }
   }
 
@@ -1208,8 +1207,7 @@ void LocalPlayer::restart(const fvec3& pos, float _azimuth)
   // get rid of existing shots
   for (int i = 0; i < numShots; i++)
     if (shots[i]) {
-      delete shots[i];
-      shots[i] = NULL;
+	  deleteShot(i);
     }
   anyShotActive = false;
 
@@ -1372,13 +1370,15 @@ void LocalPlayer::requestAutoPilot(bool autopilot)
 }
 
 
-bool LocalPlayer::fireShot()
+ShotPath *LocalPlayer::fireShot()
 {
+  ShotPath *shot = NULL;
+
   if (! (firingStatus == Ready || firingStatus == Zoned))
-    return false;
+    return shot;
 
   if (!canShoot())
-    return false;
+    return shot;
 
   // find an empty slot
   const int numShots = getMaxShots();
@@ -1386,12 +1386,13 @@ bool LocalPlayer::fireShot()
   for (i = 0; i < numShots; i++)
     if (!shots[i])
       break;
-  if (i == numShots) return false;
+  if (i == numShots)
+	  return shot;
 
   // make sure we're allowed to shoot
   if (!isAlive() || isPaused() ||
       ((location == InBuilding) && !isPhantomZoned())) {
-    return false;
+    return shot;
   }
 
   // prepare shot
@@ -1402,7 +1403,7 @@ bool LocalPlayer::fireShot()
   firingInfo.shot.id     = uint16_t(i + getSalt());
   prepareShotInfo(firingInfo, true);
   // make shot and put it in the table
-  addShot(new LocalShotPath(firingInfo, GameTime::getDRTime()), firingInfo);
+  shot = addShot(new LocalShotPath(firingInfo, GameTime::getDRTime()), firingInfo);
 
   // Insert timestamp, useful for dead reckoning jitter fixing
   firingInfo.timeSent = GameTime::getDRTime();
@@ -1450,7 +1451,7 @@ bool LocalPlayer::fireShot()
     // make sure all the shots don't go off at once
     forceReload(BZDB.eval(BZDBNAMES.RELOADTIME) / numShots);
   }
-  return true;
+  return shot;
 }
 
 

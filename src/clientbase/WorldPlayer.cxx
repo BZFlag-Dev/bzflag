@@ -26,9 +26,9 @@ WorldPlayer::~WorldPlayer()
 }
 
 
-void			WorldPlayer::addShot(const FiringInfo& info)
+ShotPath *WorldPlayer::addShot(const FiringInfo& info)
 {
-  Player::addShot(new RemoteShotPath(info,GameTime::getDRTime()), info);
+  return Player::addShot(new RemoteShotPath(info,GameTime::getDRTime()), info);
 }
 
 

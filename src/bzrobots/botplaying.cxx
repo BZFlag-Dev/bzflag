@@ -707,13 +707,22 @@ void handleShotBegin(bool /*human*/, void *msg)
     // the shot is ours, find the shot we made, and kill it
     // then rebuild the shot with the info from the server
     myTank->updateShot(firingInfo, id, firingInfo.timeSent);
-  }
-  else {
+	/*
+    for (int r = 0; r < numRobots; r++) {
+      if (robots[r])
+	    ((BZRobotPlayer *)(robots[r]))->shotFired(shot,myTank);
+    }
+	*/
+  } else {
     RemotePlayer *shooter = remotePlayers[shooterid];
 
     if (shooterid != ServerPlayer) {
       if (shooter && remotePlayers[shooterid]->getId() == shooterid) {
-	shooter->addShot(firingInfo);
+	    ShotPath *shot = shooter->addShot(firingInfo);
+		for (int r = 0; r < numRobots; r++) {
+          if (robots[r])
+	        ((BZRobotPlayer *)(robots[r]))->shotFired(shot,shooter);
+        }
       }
     }
   }
@@ -726,9 +735,12 @@ void handleWShotBegin (void *msg)
   msg = firingInfo.unpack(msg);
 
   WorldPlayer *worldWeapons = world->getWorldWeapons();
+  ShotPath *shot = worldWeapons->addShot(firingInfo);
 
-  worldWeapons->addShot(firingInfo);
-  //playShotSound(firingInfo, false);
+  for (int r = 0; r < numRobots; r++) {
+    if (robots[r])
+	  ((BZRobotPlayer *)(robots[r]))->shotFired(shot,worldWeapons);
+  }
 }
 
 

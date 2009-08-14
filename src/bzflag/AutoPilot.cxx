@@ -699,9 +699,9 @@ static bool fireAtTank()
       }
 
       if (hasSWTarget) {
-	myTank->fireShot();
-	lastShot = TimeKeeper::getTick();
-	return true;
+        myTank->fireShot();
+        lastShot = TimeKeeper::getTick();
+        return true;
       }
     }
 

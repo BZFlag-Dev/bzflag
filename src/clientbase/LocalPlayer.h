@@ -83,7 +83,7 @@ public:
   void setDesiredAngVel(float fracOfMaxAngVel);
   void setPause(bool = true); // virtual
   void requestAutoPilot(bool = true);
-  bool fireShot();
+  ShotPath *fireShot();
   void explodeTank();
   bool canJump() const;
   void doJump();

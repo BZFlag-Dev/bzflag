@@ -88,14 +88,6 @@ void BZRobotPlayer::setRobot(BZRobot *_robot)
 }
 
 // Called by bzrobots client thread
-void BZRobotPlayer::pushEvent(BZRobotEvent e)
-{
-  LOCK_PLAYER
-  tsEventQueue.push_back(e);
-  UNLOCK_PLAYER
-}
-
-// Called by bzrobots client thread
 void BZRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
@@ -169,28 +161,6 @@ void BZRobotPlayer::update(float inputDT)
 	tsScanQueue.push_back(scannedRobotEvent);
   }
   /*
-  // Get Shots
-  link->send(ShotsBeginReply());
-  for (int i = 0; i < curMaxPlayers; i++) {
-    if (!remotePlayers[i])
-      continue;
-
-    TeamColor team = remotePlayers[i]->getTeam();
-    if (team == ObserverTeam)
-      continue;
-    if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
-      continue;
-
-    for (int j = 0; j < remotePlayers[i]->getMaxShots(); j++) {
-      ShotPath *path = remotePlayers[i]->getShot(j);
-      if (!path || path->isExpired())
-        continue;
-
-      const FiringInfo &info = path->getFiringInfo();
-
-      link->send(ShotReply(Shot(info.shot.player, info.shot.id)));
-    }
-  }
   // Get Obstacles
     unsigned int i;
   link->send(ObstaclesBeginReply());
@@ -245,6 +215,8 @@ void BZRobotPlayer::doUpdate(float dt)
   if (tsShoot) {
     tsShoot = false;
     fireShot();
+	// TODO: Use ShotPath *shot = fireShot();
+	// Then track the shot live
   }
 }
 
@@ -286,6 +258,11 @@ void BZRobotPlayer::doUpdateMotion(float dt)
     tsTurnRemaining = 0.0f;
   }
   LocalPlayer::doUpdateMotion(dt);
+}
+
+void BZRobotPlayer::shotFired(ShotPath * /*shot*/, Player * /*shooter*/)
+{
+  // TODO: Create a BulletFiredEvent
 }
 
 void BZRobotPlayer::botAhead(double distance)

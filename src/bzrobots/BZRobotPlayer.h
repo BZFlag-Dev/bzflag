@@ -65,13 +65,16 @@ public:
   } variableUpdates;
   
   void setRobot(BZRobot *_robot);
-  void pushEvent(BZRobotEvent e);
+
   void explodeTank();
   void restart(const fvec3& pos, float azimuth);
   void update(float inputDT);
   void doUpdate(float dt);
   void doUpdateMotion(float dt);
 
+  void shotFired(ShotPath *shot, Player *shooter);
+
+  // Call-ins for BZRobot/BZAdvancedRobot
   void botAhead(double distance);
   void botBack(double distance);
   void botDoNothing();

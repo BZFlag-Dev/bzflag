@@ -33,7 +33,7 @@ public:
 	       const PlayerType);
   ~RemotePlayer();
 
-  void addShot(FiringInfo&);
+  ShotPath *addShot(FiringInfo&);
   void updateShots(float dt);
 
 private:

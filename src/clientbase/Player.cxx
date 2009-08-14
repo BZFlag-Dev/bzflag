@@ -139,7 +139,7 @@ Player::~Player()
   const int numShots = getMaxShots();
   for (int i = 0; i < numShots; i++) {
     if (shots[i])
-      delete shots[i];
+      deleteShot(i);
   }
   freePlayerAvatar (avatar);
 }
@@ -1774,17 +1774,27 @@ void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
   }
 }
 
-void Player::addShot(ShotPath *shot, const FiringInfo &info)
+ShotPath *Player::addShot(ShotPath *shot, const FiringInfo &info)
 {
   int shotNum = int(shot->getShotId() & 255);
 
   if (shotNum >= (int)shots.size())
     shots.resize(shotNum+1);
   else if (shots[shotNum] != NULL)
-    delete shots[shotNum];
+    deleteShot(shotNum);
 
   shots[shotNum] = shot;
   shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
+
+  return shot;
+}
+
+void Player::deleteShot(int index)
+{
+  if(shots[index] != NULL) {
+    delete shots[index];
+	shots[index] = NULL;
+  }
 }
 
 void Player::updateShot(FiringInfo &info, int shotID, double time )
@@ -1792,8 +1802,7 @@ void Player::updateShot(FiringInfo &info, int shotID, double time )
   // kill the old shot
   if (shotID < (int)shots.size()) {
     if ( shots[shotID] != NULL ) {
-      delete shots[shotID];
-      shots[shotID] = NULL;
+	  deleteShot(shotID);
     }
   }
   else

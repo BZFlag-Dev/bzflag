@@ -88,8 +88,8 @@ void Plan::execute(float &, float &)
 	}
       }
       if (hasSWTarget) {
-	myTank->fireShot();
-	lastShot = TimeKeeper::getTick();
+        myTank->fireShot();
+        lastShot = TimeKeeper::getTick();
       }
     }
   } else {

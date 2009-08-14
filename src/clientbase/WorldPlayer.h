@@ -23,7 +23,7 @@ class WorldPlayer : public Player {
 			WorldPlayer();
 			~WorldPlayer();
 
-    void		addShot(const FiringInfo&);
+    ShotPath	*addShot(const FiringInfo&);
     void		updateShots(float dt);
     void		addShots(SceneDatabase* scene, bool colorblind) const;
 

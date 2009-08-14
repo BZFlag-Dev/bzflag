@@ -215,7 +215,9 @@ protected:
   void	  clearRemoteSounds();
   void	  addRemoteSound(int sound);
   void    prepareShotInfo(FiringInfo &info, bool local = false);
-  void    addShot(ShotPath *shot, const FiringInfo &info);
+
+  ShotPath *addShot(ShotPath *shot, const FiringInfo &info);
+  void deleteShot(int index);
 
 protected:
   // shot statistics
