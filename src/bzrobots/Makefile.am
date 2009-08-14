@@ -6,6 +6,8 @@
 # ahead for this to happen.  In the meantime, this seems to be the least
 # ugly of all of the solutions.
 
+LIBS = # bzrobots doesn't need default linkage libraries
+
 bin_PROGRAMS = bzrobots
 lib_LTLIBRARIES = TestRobot.la $(libbzrobot)
 
@@ -103,14 +105,11 @@ bzrobots_LDADD =	\
 	$(GLEW_LIBS)			\
 	../date/libDate.la
 
-TestRobot_la_LDFLAGS = -fPIC -module -avoid-version
+TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
 	BZAdvancedRobot.h \
 	../../bots/testbot/TestRobot.cxx \
 	../../bots/testbot/TestRobot.h
-
-TestRobot.la: $(TestRobot_la_OBJECTS) $(TestRobot_la_DEPENDENCIES)
-	$(TestRobot_la_LINK) -rpath $(libdir) $(TestRobot_la_OBJECTS) $(TestRobot_la_LIBADD)
 
 BUILT_SOURCES = \
 	bzrobot_python_wrap.cxx \
