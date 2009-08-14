@@ -115,7 +115,7 @@ TestRobot_la_SOURCES = \
 	../../bots/testbot/TestRobot.cxx \
 	../../bots/testbot/TestRobot.h
 
-BUILT_SOURCES = \
+python_wrap_files = \
 	bzrobot_python_wrap.cxx \
 	bzrobot_python_wrap.h \
 	bzrobot_python_runtime.h
@@ -131,18 +131,18 @@ bzrobot_python_wrap.cxx: bzrobot.i Bullet.h BZRobot.h BZAdvancedRobot.h
 bzrobot_python_runtime.h:
 	$(SWIG) -python -external-runtime $@
 
+BUILT_SOURCES = $(python_wrap_files)
+
 bzrobot_pyext_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
 bzrobot_pyext_la_LDFLAGS = -module -avoid-version -export-dynamic
 bzrobot_pyext_la_SOURCES = \
+	$(BUILT_SOURCES) \
 	Bullet.h \
 	Bullet.cxx \
 	BZRobot.cxx \
 	BZRobot.h \
 	BZAdvancedRobot.cxx \
-	BZAdvancedRobot.h \
-	bzrobot_python_wrap.cxx \
-	bzrobot_python_wrap.h \
-	bzrobot_python_runtime.h
+	BZAdvancedRobot.h
 
 else
 libbzrobot =
@@ -153,7 +153,7 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	-O coff
 
 EXTRA_DIST = \
-	$(BUILT_SOURCES) \
+	$(python_wrap_files) \
 	$(PYTHON_LOADER) \
 	OpenGLUtils.cxx	\
 	PrintError.cxx \
@@ -164,6 +164,6 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 CLEANFILES = \
-	$(BUILT_SOURCES) \
+	$(python_wrap_files) \
 	bzrobot.py
 
