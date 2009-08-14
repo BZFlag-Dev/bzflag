@@ -155,7 +155,7 @@ BZRobot *PythonLoader::create(void)
     return NULL;
   }
 
-  PySwigObject *holder = SWIG_Python_GetSwigThis(pyrobot);
+  SwigPyObject *holder = SWIG_Python_GetSwigThis(pyrobot);
   return static_cast<BZAdvancedRobot *>(holder ? holder->ptr : 0);
 }
 

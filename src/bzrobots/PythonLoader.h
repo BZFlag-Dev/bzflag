@@ -29,6 +29,11 @@
 #include "BZRobotScript.h"
 #include "BZAdvancedRobot.h"
 
+#ifdef SWIG_VERSION_BCD
+# if SWIG_VERSION_BCD < 0x010337
+#  define SwigPyObject PySwigObject
+# endif
+#endif
 
 class PythonLoader : public BZRobotScript {
   PyObject *module, *ctor;
