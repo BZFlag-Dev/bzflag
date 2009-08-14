@@ -976,6 +976,13 @@ else
                 AC_MSG_WARN([No SWIG found, so cannot build Python support])
                 AM_CONDITIONAL(BZROBOTS_PYTHON_ENABLED, false)
                 enable_bzrobots_python=no
+            else
+                AC_MSG_CHECKING(SWIG version)
+                SWIG_VERSION_STR=`$SWIG -version 2>&1 |sed -ne 's/^SWIG Version //p'`
+                SWIG_VERSION_BCD=`echo $SWIG_VERSION_STR | $AWK -F. '{printf("0x%06d\n", 10000*$1 + 100*$2 + $3)};'`
+                AC_DEFINE_UNQUOTED(SWIG_VERSION_STR, "$SWIG_VERSION_STR", [SWIG version string])
+                AC_DEFINE_UNQUOTED(SWIG_VERSION_BCD, $SWIG_VERSION_BCD, [SWIG version in BCD form])
+                AC_MSG_RESULT($SWIG_VERSION - OK)
             fi
         fi
     fi
