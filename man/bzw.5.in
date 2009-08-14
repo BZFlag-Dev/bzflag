@@ -1162,9 +1162,11 @@ BZDB variable), can use the following escape characters:
    \\+      bright
    \\-      dim
    \\*      blink
-   \\/      noblink
-   \\_      under
-   \\~      nounder
+   \\/      blinkOff
+   \\_      underline
+   \\~      underlineOff
+   \\[      reverse
+   \\]      reverseOff
    \\!      reset
    \\#      fullreset
 .br

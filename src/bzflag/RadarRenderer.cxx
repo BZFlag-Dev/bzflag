@@ -394,9 +394,9 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   const float bottom = float(oy + y + h) + 1;
 
   float outlineOpacity = RENDERER.getPanelOpacity();
-  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
+  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;
   if (outlineOpacity < 1.0f ) {
-    outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+    outlineOpacity = (outlineOpacity * fudgeFactor) + (1.0f - fudgeFactor);
   }
 
   if (BZDBCache::blend) {

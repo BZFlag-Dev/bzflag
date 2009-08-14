@@ -26,19 +26,22 @@
 #include "Intersect.h"
 #include "TargetingUtils.h"
 
+
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 
-RobotPlayer::RobotPlayer(const PlayerId& _id, const char* _name,
-				ServerLink* _server) :
-				LocalPlayer(_id, _name, ComputerPlayer),
-				target(NULL),
-				pathIndex(0),
-				timerForShot(0.0f),
-				drivingForward(true)
+
+RobotPlayer::RobotPlayer(const PlayerId& _id,
+                         const char* _name, ServerLink* _server)
+: LocalPlayer(_id, _name, ComputerPlayer)
+, target(NULL)
+, pathIndex(0)
+, timerForShot(0.0f)
+, drivingForward(true)
 {
   gettingSound = false;
   server       = _server;
 }
+
 
 // estimate a player's position at now+t, similar to dead reckoning
 void RobotPlayer::projectPosition(const Player *targ, const float t, fvec3& pos) const
@@ -122,7 +125,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, fvec3& projpos) const
 }
 
 
-void			RobotPlayer::doUpdate(float dt)
+void RobotPlayer::doUpdate(float dt)
 {
   LocalPlayer::doUpdate(dt);
 
@@ -205,7 +208,7 @@ void			RobotPlayer::doUpdate(float dt)
   }
 }
 
-void			RobotPlayer::doUpdateMotion(float dt)
+void RobotPlayer::doUpdateMotion(float dt)
 {
   if (isAlive()) {
     bool evading = false;
@@ -323,17 +326,20 @@ void			RobotPlayer::doUpdateMotion(float dt)
       }
     }
   }
+
   LocalPlayer::doUpdateMotion(dt);
 }
 
-void			RobotPlayer::explodeTank()
+
+void RobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
   target = NULL;
   path.clear();
 }
 
-void			RobotPlayer::restart(const fvec3& pos, float _azimuth)
+
+void RobotPlayer::restart(const fvec3& pos, float _azimuth)
 {
   LocalPlayer::restart(pos, _azimuth);
   // no target
@@ -343,8 +349,8 @@ void			RobotPlayer::restart(const fvec3& pos, float _azimuth)
 
 }
 
-float			RobotPlayer::getTargetPriority(const
-							Player* _target) const
+
+float RobotPlayer::getTargetPriority(const Player* _target) const
 {
   // don't target teammates or myself
   if (!this->validTeamTarget(_target))
@@ -371,18 +377,20 @@ float			RobotPlayer::getTargetPriority(const
     - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / worldSize;
 }
 
-void		    RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
-						     _obstacleList)
+
+void RobotPlayer::setObstacleList(std::vector<BzfRegion*>* _obstacleList)
 {
   obstacleList = _obstacleList;
 }
 
-const Player*		RobotPlayer::getTarget() const
+
+const Player* RobotPlayer::getTarget() const
 {
   return target;
 }
 
-void			RobotPlayer::setTarget(const Player* _target)
+
+void RobotPlayer::setTarget(const Player* _target)
 {
   static int mailbox = 0;
 
@@ -424,8 +432,8 @@ void			RobotPlayer::setTarget(const Player* _target)
   pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const fvec2& p,
-						fvec2& nearest) const
+
+BzfRegion* RobotPlayer::findRegion(const fvec2& p, fvec2& nearest) const
 {
   nearest[0] = p[0];
   nearest[1] = p[1];
@@ -450,10 +458,10 @@ BzfRegion*		RobotPlayer::findRegion(const fvec2& p,
   return nearestRegion;
 }
 
-float			RobotPlayer::getRegionExitPoint(
-				const fvec2& p1, const fvec2& p2,
-				const fvec2& a, const fvec2& targetPoint,
-				fvec2& mid, float& priority)
+
+float RobotPlayer::getRegionExitPoint(const fvec2& p1, const fvec2& p2,
+                                      const fvec2& a, const fvec2& targetPoint,
+                                      fvec2& mid, float& priority)
 {
   fvec2 b;
   b[0] = targetPoint[0] - a[0];
@@ -483,11 +491,10 @@ float			RobotPlayer::getRegionExitPoint(
   return distance;
 }
 
-void			RobotPlayer::findPath(RegionPriorityQueue& queue,
-					BzfRegion* region,
-					BzfRegion* targetRegion,
-					const fvec2& targetPoint,
-					int mailbox)
+
+void RobotPlayer::findPath(RegionPriorityQueue& queue, BzfRegion* region,
+                           BzfRegion* targetRegion, const fvec2& targetPoint,
+                           int mailbox)
 {
   const int numEdges = region->getNumSides();
   for (int i = 0; i < numEdges; i++) {

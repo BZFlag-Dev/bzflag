@@ -364,7 +364,7 @@ namespace TextUtils
     return position;
   }
 
-  static int expandEscName(const char* source, std::string& outLine)
+  static int expandEscName(const char* source, std::string& out)
   {
     const char* c = source;
     while ((*c != 0) && (*c != ')')) { c++; }
@@ -373,31 +373,31 @@ namespace TextUtils
     }
     const std::string key(source, c - source);
     const int len = key.size() + 2; // 2 for the () chars
-    if (key == "backslash")   { outLine.push_back('\\');   return len; }
-    if (key == "newline")     { outLine.push_back('\n');   return len; }
-    if (key == "escape")      { outLine.push_back('\033'); return len; }
-    if (key == "space")       { outLine.push_back(' ');    return len; }
-    if (key == "red")         { outLine += ANSI_STR_FG_RED;       return len; }
-    if (key == "green")       { outLine += ANSI_STR_FG_GREEN;     return len; }
-    if (key == "blue")        { outLine += ANSI_STR_FG_BLUE;      return len; }
-    if (key == "yellow")      { outLine += ANSI_STR_FG_YELLOW;    return len; }
-    if (key == "purple")      { outLine += ANSI_STR_FG_MAGENTA;   return len; }
-    if (key == "cyan")        { outLine += ANSI_STR_FG_CYAN;      return len; }
-    if (key == "orange")      { outLine += ANSI_STR_FG_ORANGE;    return len; }
-    if (key == "white")       { outLine += ANSI_STR_FG_WHITE;     return len; }
-    if (key == "black")       { outLine += ANSI_STR_FG_BLACK;     return len; }
-    if (key == "bright")      { outLine += ANSI_STR_BRIGHT;       return len; }
-    if (key == "dim")         { outLine += ANSI_STR_DIM;          return len; }
-    if (key == "blink")       { outLine += ANSI_STR_PULSATING;    return len; }
-    if (key == "blinkOff")    { outLine += ANSI_STR_NO_PULSATE;   return len; }
-    if (key == "under")       { outLine += ANSI_STR_UNDERLINE;    return len; }
-    if (key == "underOff")    { outLine += ANSI_STR_NO_UNDERLINE; return len; }
-    if (key == "reverse")     { outLine += ANSI_STR_REVERSE;      return len; }
-    if (key == "reverseOff")  { outLine += ANSI_STR_NO_REVERSE;   return len; }
-    if (key == "reset")       { outLine += ANSI_STR_RESET_FINAL;  return len; }
-    if (key == "resetBright") { outLine += ANSI_STR_RESET;        return len; }
+    if (key == "backslash")    { out.push_back('\\');   return len; }
+    if (key == "newline")      { out.push_back('\n');   return len; }
+    if (key == "escape")       { out.push_back('\033'); return len; }
+    if (key == "space")        { out.push_back(' ');    return len; }
+    if (key == "red")          { out += ANSI_STR_FG_RED;       return len; }
+    if (key == "green")        { out += ANSI_STR_FG_GREEN;     return len; }
+    if (key == "blue")         { out += ANSI_STR_FG_BLUE;      return len; }
+    if (key == "yellow")       { out += ANSI_STR_FG_YELLOW;    return len; }
+    if (key == "purple")       { out += ANSI_STR_FG_MAGENTA;   return len; }
+    if (key == "cyan")         { out += ANSI_STR_FG_CYAN;      return len; }
+    if (key == "orange")       { out += ANSI_STR_FG_ORANGE;    return len; }
+    if (key == "white")        { out += ANSI_STR_FG_WHITE;     return len; }
+    if (key == "black")        { out += ANSI_STR_FG_BLACK;     return len; }
+    if (key == "bright")       { out += ANSI_STR_BRIGHT;       return len; }
+    if (key == "dim")          { out += ANSI_STR_DIM;          return len; }
+    if (key == "blink")        { out += ANSI_STR_PULSATING;    return len; }
+    if (key == "blinkOff")     { out += ANSI_STR_NO_PULSATE;   return len; }
+    if (key == "underline")    { out += ANSI_STR_UNDERLINE;    return len; }
+    if (key == "underlineOff") { out += ANSI_STR_NO_UNDERLINE; return len; }
+    if (key == "reverse")      { out += ANSI_STR_REVERSE;      return len; }
+    if (key == "reverseOff")   { out += ANSI_STR_NO_REVERSE;   return len; }
+    if (key == "reset")        { out += ANSI_STR_RESET_FINAL;  return len; }
+    if (key == "resetBright")  { out += ANSI_STR_RESET;        return len; }
 
-    outLine.push_back('\\');
+    out.push_back('\\');
 
     return 0;
   }
