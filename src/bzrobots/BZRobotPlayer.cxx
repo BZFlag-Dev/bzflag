@@ -224,38 +224,43 @@ void BZRobotPlayer::doUpdate(float dt)
 // Note that LOCK_PLAYER is already set by BZRobotPlayer::update
 void BZRobotPlayer::doUpdateMotion(float dt)
 {
-  const fvec3& vvec = getVelocity();
-  float dist = dt *sqrt(vvec.x*vvec.x + vvec.y*vvec.y); // no z vector
-  tsDistanceRemaining -= dist;
-  if (tsDistanceRemaining > DIST_THRESHOLD) {
-    setDesiredSpeed((float)(tsDistanceForward ? tsSpeed : -tsSpeed));
+  if(!tsHasStopped) {
+    const fvec3& vvec = getVelocity();
+    float dist = dt *sqrt(vvec.x*vvec.x + vvec.y*vvec.y); // no z vector
+    tsDistanceRemaining -= dist;
+    if (tsDistanceRemaining > DIST_THRESHOLD) {
+      setDesiredSpeed((float)(tsDistanceForward ? tsSpeed : -tsSpeed));
+    } else {
+      setDesiredSpeed(0);
+      tsDistanceRemaining = 0.0f;
+    }
+    if (tsTurnRemaining > TURN_THRESHOLD) {
+      double turnAdjust = getAngularVelocity() * dt;
+      if (tsTurnLeft) {
+	tsTurnRemaining -= turnAdjust;
+	if (tsTurnRemaining <= TURN_THRESHOLD)
+	  setDesiredAngVel(0);
+	else if (tsTurnRate * dt > tsTurnRemaining)
+	  setDesiredAngVel((float)tsTurnRemaining/dt);
+	else
+	  setDesiredAngVel((float)tsTurnRate);
+      } else {
+	tsTurnRemaining += turnAdjust;
+	if (tsTurnRemaining <= TURN_THRESHOLD)
+	  setDesiredAngVel(0);
+	else if (tsTurnRate * dt > tsTurnRemaining)
+	  setDesiredAngVel((float)-tsTurnRemaining/dt);
+	else
+	  setDesiredAngVel((float)-tsTurnRate);
+      }
+    }
+    if (tsTurnRemaining <= TURN_THRESHOLD) {
+      setDesiredAngVel(0);
+      tsTurnRemaining = 0.0f;
+    }
   } else {
     setDesiredSpeed(0);
-    tsDistanceRemaining = 0.0f;
-  }
-  if (tsTurnRemaining > TURN_THRESHOLD) {
-    double turnAdjust = getAngularVelocity() * dt;
-    if (tsTurnLeft) {
-      tsTurnRemaining -= turnAdjust;
-      if (tsTurnRemaining <= TURN_THRESHOLD)
-        setDesiredAngVel(0);
-      else if (tsTurnRate * dt > tsTurnRemaining)
-        setDesiredAngVel((float)tsTurnRemaining/dt);
-      else
-        setDesiredAngVel((float)tsTurnRate);
-    } else {
-      tsTurnRemaining += turnAdjust;
-      if (tsTurnRemaining <= TURN_THRESHOLD)
-        setDesiredAngVel(0);
-      else if (tsTurnRate * dt > tsTurnRemaining)
-        setDesiredAngVel((float)-tsTurnRemaining/dt);
-      else
-        setDesiredAngVel((float)-tsTurnRate);
-    }
-  }
-  if (tsTurnRemaining <= TURN_THRESHOLD) {
     setDesiredAngVel(0);
-    tsTurnRemaining = 0.0f;
   }
   LocalPlayer::doUpdateMotion(dt);
 }
@@ -336,21 +341,20 @@ void BZRobotPlayer::botExecute()
   // from within an event handler, so return
   // here if we're flushing an event queue
   // (to prevent infinite recursion)
-  if(inEvents)
-    return;
-
-  inEvents = true;
-
-  eventQueue.sort(compareEventPriority);
-  purgeQueue = false;
-  while(!purgeQueue && !eventQueue.empty()) {
-    BZRobotEvent e = eventQueue.front();
-	e.Execute(robot);
-	eventQueue.pop_front();
-  }
-  if(purgeQueue) {
-	purgeQueue = false;
-    eventQueue.clear();
+  if(!inEvents) {
+    inEvents = true;
+    eventQueue.sort(compareEventPriority);
+    purgeQueue = false;
+    while(!purgeQueue && !eventQueue.empty()) {
+      BZRobotEvent e = eventQueue.front();
+	  e.Execute(robot);
+	  eventQueue.pop_front();
+    }
+    if(purgeQueue) {
+	  purgeQueue = false;
+      eventQueue.clear();
+    }
+    inEvents = false;
   }
 
   double thisExec = TimeKeeper::getCurrent().getSeconds();
@@ -362,13 +366,14 @@ void BZRobotPlayer::botExecute()
     lastExec = thisExec;
   }
 
-  StatusEvent statusEvent;
-  statusEvent.setTime(TimeKeeper::getCurrent().getSeconds());
-  statusEvent.Execute(robot);
-
-  inEvents = false;
+  if(!inEvents) {
+    inEvents = true;
+    StatusEvent statusEvent;
+    statusEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+    statusEvent.Execute(robot);
+    inEvents = false;
+  }
 }
-
 void BZRobotPlayer::botFire()
 {
   botSetFire();
@@ -377,8 +382,12 @@ void BZRobotPlayer::botFire()
 
 double BZRobotPlayer::botGetDistanceRemaining()
 {
+  double distanceRemaining = 0.0f;
   LOCK_PLAYER
-  double distanceRemaining = tsDistanceRemaining;
+  if (tsPendingUpdates[BZRobotPlayer::distanceUpdate])
+    distanceRemaining = tsNextDistance;
+  else
+    distanceRemaining = tsDistanceRemaining;
   UNLOCK_PLAYER
   return distanceRemaining;
 }
@@ -481,8 +490,12 @@ double BZRobotPlayer::botGetZ()
 
 double BZRobotPlayer::botGetTurnRemaining()
 {
+  double turnRemaining = 0.0f;
   LOCK_PLAYER
-  double turnRemaining = tsTurnRemaining * 180.0f/M_PI;
+  if (tsPendingUpdates[BZRobotPlayer::turnUpdate])
+    turnRemaining = tsNextTurn * 180.0f/M_PI;
+  else
+    turnRemaining = tsTurnRemaining * 180.0f/M_PI;
   UNLOCK_PLAYER
   return turnRemaining;
 }
