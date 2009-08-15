@@ -118,7 +118,7 @@ class BulletHitBulletEvent : public Event
 {
 public:
   BulletHitBulletEvent(Bullet *_bullet, Bullet *_hitBullet) :
-    bullet(_bullet), hitBullet(_hitBullet) { eventID = BulletHitEventID; priority = 50; }
+    bullet(_bullet), hitBullet(_hitBullet) { eventID = BulletHitBulletEventID; priority = 50; }
   inline Bullet * getBullet() const { return bullet; }
   inline Bullet * getHitBullet() const { return hitBullet; }
 

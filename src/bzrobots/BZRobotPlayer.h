@@ -145,8 +145,8 @@ private:
   fvec3 tsTankSize;
 
   bool tsPendingUpdates[updateCount];
-  std::list<BZRobots::Event> tsScanQueue; // non-prioritized
-  std::list<BZRobots::Event> tsEventQueue; // non-prioritized
+  std::list<BZRobots::Event *> tsScanQueue; // non-prioritized
+  std::list<BZRobots::Event *> tsEventQueue; // non-prioritized
 
   double tsGunHeat;
   bool tsShoot;

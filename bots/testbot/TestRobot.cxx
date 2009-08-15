@@ -89,9 +89,9 @@ void TestRobot::onBattleEnded(const BattleEndedEvent &/*e*/)
   //printf("TestRobot: BattleEndedEvent\n");
 }
 
-void TestRobot::onBulletHit(const BulletHitEvent &/*e*/)
+void TestRobot::onBulletHit(const BulletHitEvent &e)
 {
-  //printf("TestRobot: BulletHitEvent\n");
+  printf("TestRobot: BulletHitEvent (%s)\n",e.getName().c_str());
 }
 
 void TestRobot::onBulletMissed(const BulletMissedEvent &/*e*/)

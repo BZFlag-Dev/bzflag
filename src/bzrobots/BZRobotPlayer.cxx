@@ -29,52 +29,60 @@
 
 
 // event priority sorting
-static bool compareEventPriority(BZRobots::Event a, BZRobots::Event b)
+static bool compareEventPriority(BZRobots::Event *a, BZRobots::Event *b)
 {
-  if(a.getPriority() < b.getPriority())
+  if(a->getPriority() < b->getPriority())
     return true;
   return false;
 }
 
+static void clearEventQueue(std::list<BZRobots::Event *> &eventQueue)
+{
+  while(!eventQueue.empty()) {
+    BZRobots::Event *e = eventQueue.front();
+    eventQueue.pop_front();
+	delete e;
+  }
+}
 
-static void runEventHandler(BZRobots::Robot *robot,BZRobots::Event e)
+static void runEventHandler(BZRobots::Robot *robot,BZRobots::Event *e)
 {
   if(!robot)
 	  return;
-  switch(e.getEventID())
+  switch(e->getEventID())
   {
     case BZRobots::BattleEndedEventID:
-      robot->onBattleEnded(*((BZRobots::BattleEndedEvent *)&e));
+      robot->onBattleEnded(*((BZRobots::BattleEndedEvent *)e));
       break;
     case BZRobots::BulletHitEventID:
-      robot->onBulletHit(*((BZRobots::BulletHitEvent *)&e));
+      robot->onBulletHit(*((BZRobots::BulletHitEvent *)e));
       break;
     case BZRobots::BulletMissedEventID:
-      robot->onBulletMissed(*((BZRobots::BulletMissedEvent *)&e));
+      robot->onBulletMissed(*((BZRobots::BulletMissedEvent *)e));
       break;
     case BZRobots::DeathEventID:
-      robot->onDeath(*((BZRobots::DeathEvent *)&e));
+      robot->onDeath(*((BZRobots::DeathEvent *)e));
       break;
     case BZRobots::HitByBulletEventID:
-      robot->onHitByBullet(*((BZRobots::HitByBulletEvent *)&e));
+      robot->onHitByBullet(*((BZRobots::HitByBulletEvent *)e));
       break;
     case BZRobots::HitWallEventID:
-      robot->onHitWall(*((BZRobots::HitWallEvent *)&e));
+      robot->onHitWall(*((BZRobots::HitWallEvent *)e));
       break;
     case BZRobots::RobotDeathEventID:
-      robot->onRobotDeath(*((BZRobots::RobotDeathEvent *)&e));
+      robot->onRobotDeath(*((BZRobots::RobotDeathEvent *)e));
       break;
     case BZRobots::ScannedRobotEventID:
-      robot->onScannedRobot(*((BZRobots::ScannedRobotEvent *)&e));
+      robot->onScannedRobot(*((BZRobots::ScannedRobotEvent *)e));
       break;
     case BZRobots::SpawnEventID:
-      robot->onSpawn(*((BZRobots::SpawnEvent *)&e));
+      robot->onSpawn(*((BZRobots::SpawnEvent *)e));
       break;
     case BZRobots::StatusEventID:
-      robot->onStatus(*((BZRobots::StatusEvent *)&e));
+      robot->onStatus(*((BZRobots::StatusEvent *)e));
       break;
     case BZRobots::WinEventID:
-      robot->onWin(*((BZRobots::WinEvent *)&e));
+      robot->onWin(*((BZRobots::WinEvent *)e));
       break;
     default:
       break;
@@ -121,6 +129,10 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 
 BZRobotPlayer::~BZRobotPlayer()
 {
+LOCK_PLAYER
+  clearEventQueue(tsScanQueue);
+  clearEventQueue(tsEventQueue);
+UNLOCK_PLAYER
 #if defined(_WIN32) 
   DeleteCriticalSection (&player_lock);
 #endif
@@ -136,10 +148,11 @@ void BZRobotPlayer::setRobot(BZRobots::Robot *_robot)
 void BZRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
-  BZRobots::DeathEvent e;
-  e.setTime(TimeKeeper::getCurrent().getSeconds());
+  BZRobots::DeathEvent *e = new BZRobots::DeathEvent();
+  e->setTime(TimeKeeper::getCurrent().getSeconds());
   LOCK_PLAYER
-  tsEventQueue.clear();
+  clearEventQueue(tsScanQueue);
+  clearEventQueue(tsEventQueue);
   tsEventQueue.push_back(e);
   purgeQueue = true;
   UNLOCK_PLAYER
@@ -148,8 +161,8 @@ void BZRobotPlayer::explodeTank()
 // Called by bzrobots client thread
 void BZRobotPlayer::restart(const fvec3& pos, float azimuth)
 {
-  BZRobots::SpawnEvent e;
-  e.setTime(TimeKeeper::getCurrent().getSeconds());
+  BZRobots::SpawnEvent *e = new BZRobots::SpawnEvent();
+  e->setTime(TimeKeeper::getCurrent().getSeconds());
   LOCK_PLAYER
   tsEventQueue.push_back(e);
   tsTankSize = getDimensions();
@@ -169,8 +182,8 @@ void BZRobotPlayer::update(float inputDT)
   // Check for wall hit
   if (hasHitWall()) {
     if (!didHitWall) {
-      BZRobots::HitWallEvent hitWallEvent(0.0f); // Get real angle to wall?
-      hitWallEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+      BZRobots::HitWallEvent *hitWallEvent = new BZRobots::HitWallEvent(0.0f); // Get real angle to wall?
+      hitWallEvent->setTime(TimeKeeper::getCurrent().getSeconds());
       tsEventQueue.push_back(hitWallEvent);
       didHitWall = true;
     }
@@ -180,7 +193,7 @@ void BZRobotPlayer::update(float inputDT)
   // Update scanned player queue
   //double cpa = getAngle();
   fvec3 cpp = getPosition();
-  tsScanQueue.clear();
+  clearEventQueue(tsScanQueue);
   for (int i = 0; i < curMaxPlayers; i++) {
     if (remotePlayers[i] == NULL)
       continue;
@@ -197,15 +210,15 @@ void BZRobotPlayer::update(float inputDT)
 	fvec3 rpdv(rpp.x-cpp.x,rpp.y-cpp.y,rpp.z-cpp.z);
 	double remotePlayerDistance = sqrt(rpdv.x*rpdv.x + rpdv.y*rpdv.y); // exclude z vector
 	double remotePlayerBearing = atan2(rpdv.x,rpdv.y);
-	BZRobots::ScannedRobotEvent scannedRobotEvent(
+	BZRobots::ScannedRobotEvent *sre = new BZRobots::ScannedRobotEvent(
           remotePlayers[i]->getCallSign(),
           remotePlayerBearing,
 	  remotePlayerDistance,
 	  rpp.x, rpp.y, rpp.z,
 	  remotePlayers[i]->getAngle(),
 	  remotePlayerVelocity);
-        scannedRobotEvent.setTime(TimeKeeper::getCurrent().getSeconds());
-	tsScanQueue.push_back(scannedRobotEvent);
+    sre->setTime(TimeKeeper::getCurrent().getSeconds());
+	tsScanQueue.push_back(sre);
   }
   /*
   // Get Obstacles
@@ -321,8 +334,8 @@ void BZRobotPlayer::shotFired(const ShotPath *shot, const Player *shooter)
   LOCK_PLAYER
   if(robotName != shooterName) {
     // TODO: Create a Bullet based on the shot and place it in the event
-    BZRobots::BulletFiredEvent bfe(NULL);
-	bfe.setTime(TimeKeeper::getCurrent().getSeconds());
+    BZRobots::BulletFiredEvent *bfe = new BZRobots::BulletFiredEvent(NULL);
+	bfe->setTime(TimeKeeper::getCurrent().getSeconds());
 	tsEventQueue.push_back(bfe);
   }
   UNLOCK_PLAYER
@@ -335,19 +348,18 @@ void BZRobotPlayer::shotKilled(const ShotPath *shot, const Player *killer, const
   std::string robotName = this->getCallSign();
   std::string killerName = killer->getCallSign();
   std::string victimName = victim->getCallSign();
-  printf("BZRobotPlayer: bullet killed event (%s) (%s)\n",killerName.c_str(),victimName.c_str());
   LOCK_PLAYER
   // FIXME: Why are these blowing up?
   if(robotName == killerName) {
     // TODO: Create a Bullet based on the shot and place it in the event
-	//BZRobots::BulletHitEvent bhe(victimName,NULL);
-	//bhe.setTime(TimeKeeper::getCurrent().getSeconds());
-	//tsEventQueue.push_back(bhe);
+	BZRobots::BulletHitEvent *bhe = new BZRobots::BulletHitEvent(victimName,NULL);
+	bhe->setTime(TimeKeeper::getCurrent().getSeconds());
+	tsEventQueue.push_back(bhe);
   }
   if(robotName != victimName) {
-    //BZRobots::RobotDeathEvent rde(victimName);
-    //rde.setTime(TimeKeeper::getCurrent().getSeconds());
-    //tsEventQueue.push_back(rde);
+    BZRobots::RobotDeathEvent *rde = new BZRobots::RobotDeathEvent(victimName);
+    rde->setTime(TimeKeeper::getCurrent().getSeconds());
+    tsEventQueue.push_back(rde);
   }
   UNLOCK_PLAYER
 }
@@ -368,8 +380,8 @@ void BZRobotPlayer::botBack(double distance)
 void BZRobotPlayer::botClearAllEvents()
 {
   LOCK_PLAYER
-  tsScanQueue.clear();
-  tsEventQueue.clear();
+  clearEventQueue(tsScanQueue);
+  clearEventQueue(tsEventQueue);
   purgeQueue = true;
   UNLOCK_PLAYER
 }
@@ -386,7 +398,7 @@ void BZRobotPlayer::botDoNothing()
 // 4) send status event ("start of next turn")
 void BZRobotPlayer::botExecute()
 {
-  std::list<BZRobots::Event> eventQueue;
+  std::list<BZRobots::Event *> eventQueue;
 
   LOCK_PLAYER
   if (tsPendingUpdates[BZRobotPlayer::speedUpdate])
@@ -430,13 +442,14 @@ void BZRobotPlayer::botExecute()
     eventQueue.sort(compareEventPriority);
     purgeQueue = false;
     while(!purgeQueue && !eventQueue.empty()) {
-      BZRobots::Event e = eventQueue.front();
-	  runEventHandler(robot,e);
+      BZRobots::Event *e = eventQueue.front();
 	  eventQueue.pop_front();
+	  runEventHandler(robot,e);
+	  delete e;
     }
     if(purgeQueue) {
 	  purgeQueue = false;
-      eventQueue.clear();
+	  clearEventQueue(eventQueue);
     }
     inEvents = false;
   }
@@ -452,9 +465,10 @@ void BZRobotPlayer::botExecute()
 
   if(!inEvents) {
     inEvents = true;
-    BZRobots::StatusEvent statusEvent;
-    statusEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+    BZRobots::StatusEvent *statusEvent = new BZRobots::StatusEvent();
+    statusEvent->setTime(TimeKeeper::getCurrent().getSeconds());
     runEventHandler(robot,statusEvent);
+	delete statusEvent;
     inEvents = false;
   }
 }
