@@ -396,12 +396,14 @@ void LuaRobot::onHitWall(const HitWallEvent& event)
 
 void LuaRobot::onRobotDeath(const RobotDeathEvent& event)
 {
-  if (!PushCallIn("RobotDeath", 0)) {
+  if (!PushCallIn("RobotDeath", 1)) {
     return;
   }
   setLastEvent(event);
 
-  RunCallIn(0, 0);
+  lua_pushstdstring(L, event.getName());
+
+  RunCallIn(1, 0);
 }
 
 
