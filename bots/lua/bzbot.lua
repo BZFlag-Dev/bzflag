@@ -17,10 +17,13 @@ print('Hello from bzbot.lua')
 
 local callIns = {
   'BattleEnded',
+  'BulletFired',
   'BulletHit',
+  'BulletHitBullet',
   'BulletMissed',
   'Death',
   'HitByBullet',
+  'HitRobot',
   'HitWall',
   'RobotDeath',
   'ScannedRobot',
@@ -32,7 +35,7 @@ local callIns = {
 -- assign the callins to a print function
 for _,name in ipairs(callIns) do
   _G[name] = function(...)
-    print('LUAROBOT', name, ...)
+    print('LUAROBOT', name, bz.GetEventID(), bz.GetEventTime(), bz.GetEventPriority(), ...)
   end
 end
 

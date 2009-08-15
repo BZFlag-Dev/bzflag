@@ -36,6 +36,7 @@ static const char* ThisLabel = "this";
 static bool PushCallOuts(lua_State* L);
 
 static int Execute(lua_State* L);
+static int ClearEvents(lua_State* L);
 
 static int DoNothing(lua_State* L);
 static int Fire(lua_State* L);
@@ -56,6 +57,7 @@ static int SetStop(lua_State* L);
 static int SetTurnLeft(lua_State* L);
 
 static int GetTime(lua_State* L);
+static int GetOthers(lua_State* L);
 static int GetBattleFieldLength(lua_State* L);
 static int GetBattleFieldWidth(lua_State* L);
 static int GetGunCoolingRate(lua_State* L);
@@ -64,7 +66,6 @@ static int GetHeading(lua_State* L);
 static int GetHeight(lua_State* L);
 static int GetLength(lua_State* L);
 static int GetName(lua_State* L);
-static int GetTime(lua_State* L);
 static int GetWidth(lua_State* L);
 static int GetVelocity(lua_State* L);
 static int GetX(lua_State* L);
@@ -95,10 +96,13 @@ class LuaRobot : public AdvancedRobot {
     void run();
 
     void onBattleEnded(const BattleEndedEvent&);
+    void onBulletFired(const BulletFiredEvent&);
     void onBulletHit(const BulletHitEvent&);
+    void onBulletHitBullet(const BulletHitBulletEvent&);
     void onBulletMissed(const BulletMissedEvent&);
     void onDeath(const DeathEvent&);
     void onHitByBullet(const HitByBulletEvent&);
+    void onHitRobot(const HitRobotEvent&);
     void onHitWall(const HitWallEvent&);
     void onRobotDeath(const RobotDeathEvent&);
     void onScannedRobot(const ScannedRobotEvent&);
@@ -275,7 +279,22 @@ void LuaRobot::onBattleEnded(const BattleEndedEvent& event)
     return;
   }
   setLastEvent(event);
+
   lua_pushboolean(L, event.isAborted());
+
+  RunCallIn(1, 0);
+}
+
+
+void LuaRobot::onBulletFired(const BulletFiredEvent& event)
+{
+  if (!PushCallIn("BulletFired", 1)) {
+    return;
+  }
+  setLastEvent(event);
+
+  PushBullet(L, event.getBullet());
+
   RunCallIn(1, 0);
 }
 
@@ -286,8 +305,24 @@ void LuaRobot::onBulletHit(const BulletHitEvent& event)
     return;
   }
   setLastEvent(event);
+
   lua_pushstdstring(L, event.getName());
   PushBullet(L, event.getBullet());
+
+  RunCallIn(2, 0);
+}
+
+
+void LuaRobot::onBulletHitBullet(const BulletHitBulletEvent& event)
+{
+  if (!PushCallIn("BulletHitBullet", 2)) {
+    return;
+  }
+  setLastEvent(event);
+
+  PushBullet(L, event.getBullet());
+  PushBullet(L, event.getHitBullet());
+
   RunCallIn(2, 0);
 }
 
@@ -298,7 +333,9 @@ void LuaRobot::onBulletMissed(const BulletMissedEvent& event)
     return;
   }
   setLastEvent(event);
+
   PushBullet(L, event.getBullet());
+
   RunCallIn(1, 0);
 }
 
@@ -309,8 +346,7 @@ void LuaRobot::onDeath(const DeathEvent& event)
     return;
   }
   setLastEvent(event);
-  lua_pushdouble(L, event.getTime());
-  lua_pushinteger(L, event.getPriority());
+
   RunCallIn(0, 0);
 }
 
@@ -321,9 +357,27 @@ void LuaRobot::onHitByBullet(const HitByBulletEvent& event)
     return;
   }
   setLastEvent(event);
+
   lua_pushdouble(L, event.getBearing());
   PushBullet(L, event.getBullet());
+
   RunCallIn(2, 0);
+}
+
+
+void LuaRobot::onHitRobot(const HitRobotEvent& event)
+{
+  if (!PushCallIn("HitRobot", 4)) {
+    return;
+  }
+  setLastEvent(event);
+
+  lua_pushstdstring(L, event.getName());
+  lua_pushdouble(L, event.getEnergy());
+  lua_pushdouble(L, event.getBearing());
+  lua_pushboolean(L, event.isMyFault());
+
+  RunCallIn(4, 0);
 }
 
 
@@ -333,7 +387,9 @@ void LuaRobot::onHitWall(const HitWallEvent& event)
     return;
   }
   setLastEvent(event);
+
   lua_pushdouble(L, event.getBearing());
+
   RunCallIn(1, 0);
 }
 
@@ -344,8 +400,7 @@ void LuaRobot::onRobotDeath(const RobotDeathEvent& event)
     return;
   }
   setLastEvent(event);
-  lua_pushdouble(L, event.getTime());
-  lua_pushinteger(L, event.getPriority());
+
   RunCallIn(0, 0);
 }
 
@@ -377,6 +432,7 @@ void LuaRobot::onSpawn(const SpawnEvent& event)
     return;
   }
   setLastEvent(event);
+
   RunCallIn(0, 0);
 }
 
@@ -386,8 +442,11 @@ void LuaRobot::onStatus(const StatusEvent& event)
   if (!PushCallIn("Status", 2)) {
     return;
   }
+  setLastEvent(event);
+
   lua_pushdouble(L, event.getTime());
   lua_pushinteger(L, event.getPriority());
+
   RunCallIn(2, 0);
 }
 
@@ -398,6 +457,7 @@ void LuaRobot::onWin(const WinEvent& event)
     return;
   }
   setLastEvent(event);
+
   RunCallIn(0, 0);
 }
 
@@ -413,6 +473,7 @@ static bool PushCallOuts(lua_State* L)
   lua_newtable(L);
 
   PUSH_LUA_CFUNC(L, Execute);
+  PUSH_LUA_CFUNC(L, ClearEvents);
 
   PUSH_LUA_CFUNC(L, DoNothing);
   PUSH_LUA_CFUNC(L, Fire);
@@ -433,6 +494,7 @@ static bool PushCallOuts(lua_State* L)
   PUSH_LUA_CFUNC(L, SetTurnLeft);
 
   PUSH_LUA_CFUNC(L, GetTime);
+  PUSH_LUA_CFUNC(L, GetOthers);
   PUSH_LUA_CFUNC(L, GetBattleFieldLength);
   PUSH_LUA_CFUNC(L, GetBattleFieldWidth);
   PUSH_LUA_CFUNC(L, GetGunCoolingRate);
@@ -483,6 +545,11 @@ static inline LuaRobot* GetRobot(lua_State* L)
 
 static int Execute(lua_State* L) {
   GetRobot(L)->execute();
+  return 0;
+}
+
+static int ClearEvents(lua_State* L) {
+  GetRobot(L)->clearAllEvents();
   return 0;
 }
 
@@ -574,6 +641,11 @@ static int SetTurnLeft(lua_State* L) {
 
 static int GetTime(lua_State* L) {
   lua_pushdouble(L, GetRobot(L)->getTime());
+  return 1;
+}
+
+static int GetOthers(lua_State* L) {
+  lua_pushinteger(L, GetRobot(L)->getOthers());
   return 1;
 }
 

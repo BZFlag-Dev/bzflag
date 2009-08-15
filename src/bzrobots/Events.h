@@ -54,7 +54,7 @@ typedef enum EventID {
    BulletHitEvent:        50
    HitByBulletEvent:      40
    HitWallEvent:          30
-   HitEvent:         20
+   HitEvent:              20
    ScannedRobotEvent:     10
    PaintEvent:             5
    DeathEvent:            -1 (reserved)
