@@ -109,8 +109,16 @@ public:
     return NULL;
   }
 
+  void reset_itr()
+  {
+    cur_val = 0;
+  }
+
   void setValues(char **vals) {
-    if(values) ldap_value_free(values);
+    if(values) { 
+      ldap_value_free(values);
+      reset_itr();
+    }
     values = vals;
     if(val_req_cnt != -1) {
       int cnt = count();
@@ -186,7 +194,20 @@ public:
     for(int i = 0; i < attr_cnt; i++)
       attr_results[i].setValues(ldap_get_values(ld, msg, attr_names[i]));
 
+    msg = ldap_next_message(ld, msg);
+
     return &entry;
+  }
+
+  int getEntriesCount()
+  {
+    int count = 0;
+    LDAPMessage *tmp_msg = ldap_first_message(ld, result);
+    while(tmp_msg != NULL) {
+      if(ldap_msgtype(tmp_msg) == LDAP_RES_SEARCH_ENTRY) count++;
+      tmp_msg = ldap_next_message(ld, tmp_msg);
+    }
+    return count;
   }
 
   int getError() {
@@ -505,6 +526,95 @@ public:
       attr2, req_value_cnt2, max_value_len2,
       attr3, req_value_cnt3, max_value_len3);
     return LDAPSearch::run(ldap, dn, scope, filter, 3, (const char**)attrs, attr_res);
+  }
+};
+
+// --- N = 4 ---
+
+template<>
+class LDAPSearchNCommon<4> {
+protected:
+  void init_attrs(const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2,
+    const char *attr3, int req_value_cnt3, int max_value_len3,
+    const char *attr4, int req_value_cnt4, int max_value_len4)
+  {
+    attrs[0] = (char*)attr1;
+    attrs[1] = (char*)attr2;
+    attrs[2] = (char*)attr3;
+    attrs[3] = (char*)attr4;
+    attrs[4] = NULL;
+    attr_res[0].init_attr(req_value_cnt1, max_value_len1, attr1);
+    attr_res[1].init_attr(req_value_cnt2, max_value_len2, attr2);
+    attr_res[2].init_attr(req_value_cnt3, max_value_len3, attr3);
+    attr_res[3].init_attr(req_value_cnt4, max_value_len4, attr4);
+  }
+
+  char* attrs[5];
+  LDAPAttr attr_res[4];
+};
+
+template<>
+class LDAPBaseSearchN<4> : public LDAPBaseSearch, public LDAPSearchNCommon<4> {
+public:
+  LDAPBaseSearchN() {}
+
+  LDAPBaseSearchN(LDAP *ldap, const char *dn, const char *filter, 
+    const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2,
+    const char *attr3, int req_value_cnt3, int max_value_len3,
+    const char *attr4, int req_value_cnt4, int max_value_len4)
+  {
+    run(ldap, dn, filter, 
+      attr1, req_value_cnt1, max_value_len1,
+      attr2, req_value_cnt2, max_value_len2,
+      attr3, req_value_cnt3, max_value_len3,
+      attr4, req_value_cnt4, max_value_len4);
+  }
+
+  int run(LDAP *ldap, const char *dn, const char *filter, 
+    const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2,
+    const char *attr3, int req_value_cnt3, int max_value_len3,
+    const char *attr4, int req_value_cnt4, int max_value_len4)
+  {
+    init_attrs(attr1, req_value_cnt1, max_value_len1,
+      attr2, req_value_cnt2, max_value_len2,
+      attr3, req_value_cnt3, max_value_len3,
+      attr4, req_value_cnt4, max_value_len4);
+    return LDAPBaseSearch::run(ldap, dn, filter, 4, (const char**)attrs, attr_res);
+  }
+};
+
+template<>
+class LDAPSearchN<4> : public LDAPSearch, public LDAPSearchNCommon<4> {
+public:
+  LDAPSearchN() {}
+
+  LDAPSearchN(LDAP *ldap, const char *dn, int scope, const char *filter, 
+    const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2,
+    const char *attr3, int req_value_cnt3, int max_value_len3,
+    const char *attr4, int req_value_cnt4, int max_value_len4)
+  {
+    run(ldap, dn, scope, filter, 
+      attr1, req_value_cnt1, max_value_len1,
+      attr2, req_value_cnt2, max_value_len2,
+      attr3, req_value_cnt3, max_value_len3,
+      attr4, req_value_cnt4, max_value_len4);
+  }
+
+  int run(LDAP *ldap, const char *dn, int scope, const char *filter, 
+    const char *attr1, int req_value_cnt1, int max_value_len1,
+    const char *attr2, int req_value_cnt2, int max_value_len2,
+    const char *attr3, int req_value_cnt3, int max_value_len3,
+    const char *attr4, int req_value_cnt4, int max_value_len4)
+  {
+    init_attrs(attr1, req_value_cnt1, max_value_len1,
+      attr2, req_value_cnt2, max_value_len2,
+      attr3, req_value_cnt3, max_value_len3,
+      attr4, req_value_cnt4, max_value_len4);
+    return LDAPSearch::run(ldap, dn, scope, filter, 4, (const char**)attrs, attr_res);
   }
 };
 

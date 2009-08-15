@@ -18,6 +18,7 @@
 #include <AuthProtocol.h>
 #include "Thread.h"
 #include <bzregex.h>
+#include <sstream>
 
 typedef struct ldap LDAP;
 
@@ -29,6 +30,7 @@ typedef struct ldap LDAP;
 #define MAX_EMAIL_LEN 254 // RFC
 #define MAX_GROUPNAME_LEN 30
 #define MAX_ORGNAME_LEN 30
+#define MAX_PERMISSION_LEN 255
 
 struct UserInfo
 {
@@ -87,17 +89,72 @@ enum GroupIdValidity
 struct GroupId
 {
   std::string ou;
-  std::string gn;
-  GroupId(const std::string &organization, const std::string &group_name) : ou(organization), gn(group_name) {}
+  std::string grp;
+  GroupId(const std::string &organization, const std::string &group_name) : ou(organization), grp(group_name) {}
   GroupId(const std::string &org_dot_group);
   std::string getDotNotation() {
-    return ou + "." + gn;
+    return ou + "." + grp;
   }
 };
 
+struct GroupMemberCallback
+{
+  virtual void got_group(char* ou, char* grp) = 0;
+  virtual void got_perm(uint32_t perm_val, char* val, char* arg) = 0;
+};
+
+struct GroupInfoCallback
+{
+  virtual void got_group(char* ou, char* grp, uint32_t state) = 0;
+  virtual void got_perm(char* val, char* arg) = 0;
+};
+
+struct FindGroupsCallback
+{
+  virtual void got_group(char *ou, char *grp) = 0;
+};
+
+struct OrgCallback
+{
+  virtual void got_org(const char *ou) = 0;
+};
+
+struct FilterStream
+{
+  std::ostringstream stream;
+  bool changed;
+};
+
+struct OrgFilter : public FilterStream
+{
+  OrgFilter();
+  void add_org(const char *org);
+  void add_owner(const char *uid_str);
+  bool finish();
+};
+
+struct GroupFilter : public FilterStream
+{
+  GroupFilter();
+  void add_org(const char *org);
+  void add_org_group(const char *org, const char *grp);
+  bool finish();
+};
+
+enum PermissionTypes
+{
+  PERM_ADMIN_OF     = 1,
+  PERM_ADMIN        = 2,
+  PERM_ORG_ADMIN    = 3,
+  PERM_GLOBAL_ADMIN = 4
+};
+
+#define MAX_ORGS_PER_USER 255
+
 /** The UserStore abstracts the method used for storing users */
 class UserStore : public GuardedSingleton<UserStore>
-{ 
+{
+
 public:
   UserStore();
   ~UserStore();
@@ -108,8 +165,7 @@ public:
   uint32_t authUser(const UserInfo &info);
   uint32_t authUserInGame(const UserInfo &info);
   bool isRegistered(std::string callsign);
-  bool addToGroup(const char *uid_str, const GroupId & gid, bool groupAdmin, bool orgAdmin);
-  bool addToGroup(uint32_t uid, const GroupId & gid, bool groupAdmin, bool orgAdmin);
+  bool addToGroup(const std::string &uid_str, const GroupId & gid);
   ChInfError changeUserInfo(std::string for_name, const UserInfo &to_info);
   int activateUser(const UserInfo &info, const std::string &key);
   int resetPassword(const UserInfo &info);
@@ -122,39 +178,46 @@ public:
   template<class T>
     T releaseUserLock(std::string const &user_dn, T ret_error, T ret_success);
 
-  std::string getUserDN(std::string const &callsign);
-  std::string getMailDN(std::string const &email);
-  std::string getGroupDN(const GroupId &gid);
-  std::string getOrgDN(std::string const &org);
-  std::string getMemberDN(const char *uid_str, const GroupId &gid);
-  std::string getMemberDN(uint32_t uid, const GroupId &gid);
+  std::string getUserDN(std::string const &callsign) const;
+  std::string getMailDN(std::string const &email) const;
+  std::string getGroupDN(const GroupId &gid) const;
+  std::string getOrgDN(std::string const &org) const;
+  std::string getMemberDN(const char *uid_str, const GroupId &gid) const;
+  std::string getMemberDN(uint32_t uid, const GroupId &gid) const;
 
+  std::list<GroupId> intersectGroupListUID(const std::string & uid_str, std::list<GroupId> const &groups, bool all_groups);
   std::list<GroupId> intersectGroupList(std::string callsign, std::list<GroupId> const &groups, bool all_groups);
   std::list<std::string> getUsers(const char *uid);
+  uint32_t getTotalGroups();
+  uint32_t getTotalOrgs();
+  bool getGroups(GroupFilter &filter, FindGroupsCallback &callback);
+  bool getOrgs(OrgFilter &filter, OrgCallback &callback);
+  bool getMembershipInfo(const std::string &uid_str, GroupMemberCallback &callback);
+  bool getGroupInfo(GroupFilter &filter, GroupInfoCallback &callback);
+
   std::string getNamefromUID(uint32_t uid);
   std::string getNamefromUID(const char * uid_str);
   std::string getNameFromMail(const std::string &mail, const std::string &mail_dn);
-  std::list<GroupId> getGroupsAdministratedBy(const char * uid);
-  std::list<GroupId> getGroupsAdministratedBy(uint32_t uid);
-  uint32_t getUIDfromName(const char *name);
+  const std::string getUIDfromName(const char *name) const;
 
   size_t hashLen();
   void hash(uint8_t *message, size_t message_len, uint8_t *digest);
   std::string hash(const std::string &message);
 
   void getRandomKey(uint8_t *key, int len);
-  int getActivationKeyLen() const;
-  int getNewPasswordLen() const;
+  int getActivationKeyLen();
+  int getNewPasswordLen();
+  const std::string uid2str(uint32_t uid) const;
 
   UserInfoValidity validateUserInfo(const UserInfo &info, bool *got_name = NULL, bool *got_mail = NULL, bool *got_pass = NULL);
-  UserInfoValidity UserStore::validateUserInfo(const UserInfo &info, bool got_name, bool got_mail, bool got_pass);
+  UserInfoValidity validateUserInfo(const UserInfo &info, bool got_name, bool got_mail, bool got_pass);
   GroupIdValidity validateGroupId(const GroupId &gid);
 
 private:
   bool bind(LDAP *&ld, const uint8_t *addr, const uint8_t *dn, const uint8_t *pw);
   void unbind(LDAP *&ld);
 
-  uint32_t getuid(LDAP *ld, const char *dn);
+  uint32_t getuid(LDAP *ld, const char *dn) const;
   BzRegErrors registerMail(const UserInfo &info, uint32_t uid, const char *act_key, bool send_mail, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors registerMail(const UserInfo &info, char * uid, const char *act_key, bool send_mail, std::string const &user_dn, std::string const &mail_dn);
   BzRegErrors finishReg(const UserInfo &info, std::string const &user_dn, std::string const &mail_dn);
@@ -165,8 +228,15 @@ private:
   bool sendActivationMail(const UserInfo &info, const char *key, const char *tmpl = NULL);
   uint64_t acquireOrCheckLock(std::string const &user_dn, std::string const &callsign, int new_diff, UserLockReason new_reason, const char *lock_value, const char *lock_reason);
   std::list<GroupId> &getGroups(const std::string &filter, std::list<GroupId> &ret);
+  uint32_t checkPerm(char *perm, char * &arg, const char *type, const char *what);
+  void getAllOrgGroups(const std::string &org, FindGroupsCallback &callback);
 
   uint64_t resume_register(const std::string &callsign, const std::string &user_dn);
+
+  const std::string &getEmptyString() const {
+    static std::string str;
+    return str;
+  }
 
   LDAP *rootld;
   uint32_t nextuid;

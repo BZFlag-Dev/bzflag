@@ -1,3 +1,6 @@
+#
+# macros
+#
 objectIdentifier bzOID 1.3.6.1.4.9191
 objectIdentifier bzAttribute bzOID:1
 objectIdentifier bzObjectClass bzOID:2
@@ -5,27 +8,36 @@ objectIdentifier bzObjectClass bzOID:2
 objectIdentifier bzBoolean 1.3.6.1.4.1.1466.115.121.1.7
 objectIdentifier bzOctetString 1.3.6.1.4.1.1466.115.121.1.40
 objectIdentifier bzInteger 1.3.6.1.4.1.1466.115.121.1.27
+objectIdentifier bzString 1.3.6.1.4.1.1466.115.121.1.15
 
+#
+# attribute types
+#
 attributetype ( bzAttribute:1 NAME 'inactivePassword'
 	EQUALITY octetStringMatch
-	SYNTAX bzOctetString{128} )
+	SYNTAX bzOctetString{128}
+	SINGLE-VALUE )
 
 attributetype ( bzAttribute:2 NAME 'activationKey'
 	EQUALITY octetStringMatch
-	SYNTAX bzOctetString{32} )
+	SYNTAX bzOctetString{32}
+	SINGLE-VALUE )
 
-attributetype ( bzAttribute:4 NAME 'state'
+attributetype ( bzAttribute:3 NAME 'state'
 	SYNTAX bzInteger )
-	
-attributetype ( bzAttribute:5 NAME 'freeleave'
-	SYNTAX bzBoolean )
 
-attributetype ( bzAttribute:6 NAME 'isGroupAdmin'
-	SYNTAX bzBoolean )
+attributetype ( bzAttribute:5 NAME 'permission'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX bzString )
 	
-attributetype ( bzAttribute:7 NAME 'isOrgAdmin'
-	SYNTAX bzBoolean )
+attributetype ( bzAttribute:6 NAME 'uidOwner' SUP uid )
 
+attributetype ( bzAttribute:7 NAME 'grp' SUP name )
+
+#
+# object classes
+#
 objectclass ( bzObjectClass:1 NAME 'email'
 	DESC 'information about an email address'
 	SUP top STRUCTURAL
@@ -35,9 +47,11 @@ objectclass ( bzObjectClass:1 NAME 'email'
 objectclass ( bzObjectClass:2 NAME 'groupMembership'
 	DESC 'information about the group membership of a particular user'
 	SUP top STRUCTURAL
-	MUST ( ou $ gn $ uid $ isOrgAdmin $ isGroupAdmin ) )
+	MUST ( ou $ grp $ uid )
+	MAY permission )
 
 objectclass ( bzObjectClass:3 NAME 'group'
 	DESC 'information about a group of users'
 	SUP top STRUCTURAL
-	MUST ( ou $ gn $ state $ freeleave ) )
+	MUST ( ou $ grp $ state )
+	MAY ( permission $ uidOwner ) )

@@ -75,14 +75,14 @@ void Config::setStringValue(uint16_t key, const uint8_t *value)
     assert(false);
 }
 
-const uint8_t * Config::getStringValue(uint16_t key)
+const uint8_t * Config::getStringValue(uint16_t key) const
 {
   assert(lookupType(key) == CONFIG_TYPE_STRING);
 
   return (const uint8_t*) values[key];
 }
 
-uint32_t Config::getIntValue(uint16_t key)
+uint32_t Config::getIntValue(uint16_t key) const
 {
   assert(lookupType(key) == CONFIG_TYPE_INTEGER);
 
@@ -120,7 +120,7 @@ uint16_t Config::lookupKey(std::string stringKey)
     return CONFIG_MAX;
 }
 
-uint8_t Config::lookupType(uint16_t key)
+uint8_t Config::lookupType(uint16_t key) const
 {
   if(key < typeRegister.size())
     return typeRegister[key];

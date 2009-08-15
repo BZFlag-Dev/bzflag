@@ -22,6 +22,7 @@
 #include "LDAPUtils.h"
 #include "MailMan.h"
 #include <curl/curl.h>
+#include <sstream>
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
@@ -573,7 +574,7 @@ BzRegErrors UserStore::registerMail(const UserInfo &info, uint32_t uid, const ch
   return registerMail(info, uid_str, act_key, send_mail, user_dn, mail_dn);
 }
 
-int UserStore::getActivationKeyLen() const
+int UserStore::getActivationKeyLen()
 {
   return 10;
 }
@@ -589,7 +590,7 @@ void UserStore::getRandomKey(uint8_t *key, int len)
   key[len] = '\0';
 }
 
-int UserStore::getNewPasswordLen() const
+int UserStore::getNewPasswordLen()
 {
   return 15;
 }
@@ -739,7 +740,7 @@ BzRegErrors UserStore::registerMail(const UserInfo &info, char * uid_str, const 
 }
 
 // find the uid for a given ldap connection and dn
-uint32_t UserStore::getuid(LDAP *ld, const char *dn)
+uint32_t UserStore::getuid(LDAP *ld, const char *dn) const
 {
   LDAPBaseSearchN<1> uid_search(ld, dn, "(objectClass=*)",
     "uid", 1, 20);
@@ -813,31 +814,39 @@ bool UserStore::isRegistered(std::string callsign)
   return LDAP_SUCCESS == user_search.getError();
 }
 
-uint32_t UserStore::getUIDfromName(const char *name)
+const std::string UserStore::getUIDfromName(const char *name) const
 {
-  return getuid(rootld, getUserDN(name).c_str());
+  LDAPBaseSearchN<1> uid_search(rootld, getUserDN(name).c_str(), "(objectClass=*)",
+    "uid", 1, 30);
+
+  char *uid_str = uid_search.getResult(0).getNextVal();
+  return uid_str ? uid_str : getEmptyString();
 }
 
 std::list<GroupId> UserStore::intersectGroupList(std::string callsign, std::list<GroupId> const &groups, bool all_groups)
 {
-  sLog.outLog("getting group list for %s", callsign.c_str());
+  if(!callsign.empty()) {
+    if( !execute_reg(re_callsign, callsign.c_str()) )
+      return std::list<GroupId>();
+
+    return intersectGroupList(getUIDfromName(callsign.c_str()), groups, all_groups);
+  } else
+    return intersectGroupList(getEmptyString(), groups, all_groups);
+}
+
+std::list<GroupId> UserStore::intersectGroupListUID(const std::string & uid_str, std::list<GroupId> const &groups, bool all_groups)
+{
+  sLog.outLog("UserStore: getting group list for user %s", uid_str.c_str());
 
   std::list<GroupId> ret;
   if(groups.empty() && !all_groups) return ret;
 
   std::string filter;
-  if(callsign != "") {
-    if(!execute_reg(re_callsign, callsign.c_str()))
-      return ret;
-
-    uint32_t uid = getUIDfromName(callsign.c_str());
-    if(!uid) return ret;
-    char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
-
+  if(!uid_str.empty()) {
     if(!all_groups)
-      filter = "(&(objectClass=groupMembership)(uid=" + std::string(uid_str) + ")(|";
+      filter = "(&(objectClass=groupMembership)(uid=" + uid_str + ")(|";
     else
-      filter = "(&(objectClass=groupMembership)(uid=" + std::string(uid_str) + "))";
+      filter = "(&(objectClass=groupMembership)(uid=" + uid_str + "))";
   } else if(!all_groups)
     filter = "(&(objectClass=groupMembership)(|";
   else
@@ -846,60 +855,51 @@ std::list<GroupId> UserStore::intersectGroupList(std::string callsign, std::list
   if(!all_groups) {
     for(std::list<GroupId>::const_iterator itr = groups.begin(); itr != groups.end(); ++itr)
       if(GROUPID_VALID == validateGroupId(*itr))
-        filter += "(ou=" + itr->ou + ")(gn=" + itr->gn + ")";
+        filter += "(&(ou=" + itr->ou + ")(grp=" + itr->grp + "))";
     filter += "))";
   }
 
   return getGroups(filter, ret);
 }
 
-bool UserStore::addToGroup(uint32_t uid, const GroupId & gid, bool groupAdmin, bool orgAdmin)
+bool UserStore::addToGroup(const std::string &uid_str, const GroupId & gid)
 {
-  if(!uid) return false;
-  char uid_str[32]; sprintf(uid_str, "%d", (int)uid);
-  return addToGroup(uid_str, gid, groupAdmin, orgAdmin);
-}
-
-bool UserStore::addToGroup(const char *uid_str, const GroupId & gid, bool groupAdmin, bool orgAdmin)
-{
-  if(!uid_str || !*uid_str) return false;
   LDAPMod1 attr_oc   (LDAP_MOD_ADD, "objectClass", "groupMembership");
-  LDAPMod1 attr_uid  (LDAP_MOD_ADD, "uid", uid_str);
-  LDAPMod1 attr_gn   (LDAP_MOD_ADD, "gn", gid.gn.c_str());
+  LDAPMod1 attr_uid  (LDAP_MOD_ADD, "uid", uid_str.c_str());
+  LDAPMod1 attr_gn   (LDAP_MOD_ADD, "grp", gid.grp.c_str());
   LDAPMod1 attr_ou   (LDAP_MOD_ADD, "ou", gid.ou.c_str());
-  LDAPMod1 attr_iga  (LDAP_MOD_ADD, "isGroupAdmin", groupAdmin ? "TRUE" : "FALSE");
-  LDAPMod1 attr_ioa  (LDAP_MOD_ADD, "isOrgAdmin", orgAdmin ? "TRUE" : "FALSE");
-  LDAPMod *attrs[] = { &attr_oc.mod, &attr_uid.mod, &attr_gn.mod, &attr_ou.mod, &attr_iga.mod, &attr_ioa.mod, NULL };
 
-  return ldap_check( ldap_modify_ext_s(rootld, getMemberDN(uid_str, gid).c_str(), attrs, NULL, NULL) );
+  LDAPMod *member_attrs[] = { &attr_oc.mod, &attr_uid.mod, &attr_gn.mod, &attr_ou.mod, NULL };
+
+  return ldap_check( ldap_modify_ext_s(rootld, getMemberDN(uid_str.c_str(), gid).c_str(), member_attrs, NULL, NULL) );
 }
 
-std::string UserStore::getUserDN(std::string const &callsign)
+std::string UserStore::getUserDN(std::string const &callsign) const
 {
   return "cn=" + callsign + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 }
 
-std::string UserStore::getMailDN(std::string const &email)
+std::string UserStore::getMailDN(std::string const &email) const
 {
   return "mail=" + email + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 }
 
-std::string UserStore::getOrgDN(std::string const &org)
+std::string UserStore::getOrgDN(std::string const &org) const
 {
   return "ou=" + org + "," + std::string((const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX));
 }
 
-std::string UserStore::getGroupDN(const GroupId &gid)
+std::string UserStore::getGroupDN(const GroupId &gid) const
 {
-  return "gn=" + gid.gn + "," + getOrgDN(gid.ou);
+  return "grp=" + gid.grp + "," + getOrgDN(gid.ou);
 }
 
-std::string UserStore::getMemberDN(const char *uid_str, const GroupId &gid)
+std::string UserStore::getMemberDN(const char *uid_str, const GroupId &gid) const
 {
   return "uid=" + std::string(uid_str) + "," + getGroupDN(gid);
 }
 
-std::string UserStore::getMemberDN(uint32_t uid, const GroupId &gid)
+std::string UserStore::getMemberDN(uint32_t uid, const GroupId &gid) const
 {
   char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
   return getMemberDN(uid_str, gid);
@@ -1194,12 +1194,12 @@ bool UserStore::createOrganization(const std::string &org)
 
 bool UserStore::createGroup(const GroupId &gid)
 {
-  sLog.outLog("UserStore: creating the group %s.%s", gid.ou.c_str(), gid.gn.c_str());
+  sLog.outLog("UserStore: creating the group %s.%s", gid.ou.c_str(), gid.grp.c_str());
 
   std::string group_dn = getGroupDN(gid);
 
   LDAPMod1 attr_oc     (LDAP_MOD_ADD, "objectClass", "group");
-  LDAPMod1 attr_gn     (LDAP_MOD_ADD, "gn", gid.gn.c_str());
+  LDAPMod1 attr_gn     (LDAP_MOD_ADD, "grp", gid.grp.c_str());
   LDAPMod1 attr_ou     (LDAP_MOD_ADD, "ou", gid.ou.c_str());
   LDAPMod *group_mods[] = { &attr_oc.mod, &attr_gn.mod, &attr_ou.mod, NULL };
 
@@ -1211,32 +1211,190 @@ std::list<GroupId> &UserStore::getGroups(const std::string &filter, std::list<Gr
   LDAPSearchN<2> group_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
     LDAP_SCOPE_SUBTREE, filter.c_str(),
     "ou", 1, MAX_ORGNAME_LEN,
-    "gn", 1, MAX_GROUPNAME_LEN);
+    "grp", 1, MAX_GROUPNAME_LEN);
 
   LDAPEntry *entry;
   while(entry = group_search.getNextEntry()) {
     char *ou = entry->getResult(0).getNextVal();
-    char *gn = entry->getResult(1).getNextVal();
-    if(ou && gn && strcmp(ou, "") != 0 && strcmp(gn, "") != 0)
-      ret.push_back(GroupId(ou, gn));
+    char *grp = entry->getResult(1).getNextVal();
+    if(ou && grp && strcmp(ou, "") != 0 && strcmp(grp, "") != 0)
+      ret.push_back(GroupId(ou, grp));
   }
   return ret;
 }
 
-std::list<GroupId> UserStore::getGroupsAdministratedBy(uint32_t uid)
-{
-  char uid_str[30]; sprintf(uid_str, "%d", (int)uid);
-  return getGroupsAdministratedBy(uid_str);
+OrgFilter::OrgFilter() {
+  stream << "(&(objectClass=organizationalUnit)(|";
+  changed = false;
 }
 
-std::list<GroupId> UserStore::getGroupsAdministratedBy(const char * uid_str)
-{  
-  std::list<GroupId> ret;
-  if(!uid_str || !*uid_str || *uid_str == '0')
-    return ret;
+void OrgFilter::add_org(const char *org)
+{
+  stream << "(ou=" << org << ")";
+  changed = true;
+}
 
-  std::string filter = "(&(objectClass=groupMembership)(uid=" + std::string(uid_str) + "))";
-  return getGroups(filter, ret);
+bool OrgFilter::finish()
+{
+  if(!changed) return false;
+  stream << "))";
+  return true;
+}
+
+void OrgFilter::add_owner(const char *uid_str)
+{
+  stream << "(uidOwner=" << uid_str << ")";
+  changed = true;
+}
+
+GroupFilter::GroupFilter()
+{
+  stream << "(&(objectClass=group)(|";
+  changed = false;
+}
+
+void GroupFilter::add_org(const char *org)
+{
+  stream << "(ou=" << org << ")";
+  changed = true;
+}
+
+void GroupFilter::add_org_group(const char *org, const char *grp)
+{
+  stream << "(&(ou=" << org << ")(grp=" << grp << "))";
+  changed = true;
+}
+
+bool GroupFilter::finish()
+{
+  if(!changed) return false;
+  stream << "))";
+  return true;
+}
+
+bool UserStore::getOrgs(OrgFilter &filter, OrgCallback &callback)
+{
+  if(!filter.finish()) return true;
+
+  LDAPSearchN<1> org_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
+    LDAP_SCOPE_ONELEVEL, filter.stream.str().c_str(),
+    "ou", 1, MAX_GROUPNAME_LEN);
+
+  LDAPEntry *orgEntry;
+  while(orgEntry = org_search.getNextEntry()) {
+    char *ou = orgEntry->getResult(0).getNextVal();
+    if(ou && *ou)
+      callback.got_org(ou);
+  }
+  return true;
+}
+
+const std::string UserStore::uid2str(uint32_t uid) const
+{
+  char buf[30]; sprintf(buf, "%d", (int)uid);
+  return buf;
+}
+
+uint32_t UserStore::checkPerm(char *perm, char * &arg, const char *type, const char *what)
+{
+  arg = strchr(perm, ' ');
+  if(arg) { *arg = '\0'; arg++; }
+  uint32_t perm_val; sscanf(perm, "%d", (int*)&perm_val);
+  if(!arg) {
+    switch(perm_val) {
+      case PERM_ADMIN_OF:
+        sLog.outError("UserStore: %s %s has perm %s but no arg", type, what, perm);
+        return 0;
+    }
+  }
+  return perm_val;
+}
+
+bool UserStore::getGroups(GroupFilter &filter, FindGroupsCallback &callback)
+{
+  if(!filter.finish()) return true;
+
+  // get all groups of the org
+  LDAPSearchN<2> org_group_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
+    LDAP_SCOPE_SUBTREE, filter.stream.str().c_str(),
+    "ou", 1, MAX_ORGNAME_LEN,
+    "grp", 1, MAX_GROUPNAME_LEN);
+
+  LDAPEntry *orgGroupEntry;
+  while(orgGroupEntry = org_group_search.getNextEntry()) {
+    char *ou = orgGroupEntry->getResult(0).getNextVal();
+    char *grp = orgGroupEntry->getResult(1).getNextVal();
+    if(ou && grp && *ou && *grp)
+      callback.got_group(ou, grp);
+  }
+  return true;
+}
+
+bool UserStore::getMembershipInfo(const std::string &uid_str, GroupMemberCallback &callback)
+{
+  if(uid_str.empty()) return false;
+
+  std::string member_filter = "(&(objectClass=groupMembership)(uid=" + uid_str + "))";
+  LDAPSearchN<3> member_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
+    LDAP_SCOPE_SUBTREE, member_filter.c_str(),
+    "ou", 1, MAX_ORGNAME_LEN,
+    "grp", 1, MAX_GROUPNAME_LEN,
+    "permission", -1, MAX_PERMISSION_LEN);
+
+  LDAPEntry *memberEntry;
+  while(memberEntry = member_search.getNextEntry()) {
+    char *ou = memberEntry->getResult(0).getNextVal();
+    char *grp = memberEntry->getResult(1).getNextVal();
+    if(!ou || !grp) {
+      sLog.outError("UserStore: no ou/grp for a membership of user %s", uid_str.c_str());
+      continue;
+    }
+
+    callback.got_group(ou, grp);
+  
+    LDAPAttr &attr = memberEntry->getResult(2);
+    uint32_t perm_val;
+    char *perm, *arg;
+    while(perm = attr.getNextVal()) {
+      if(!(perm_val = checkPerm(perm, arg, "user", uid_str.c_str())))
+        continue;
+
+      callback.got_perm(perm_val, perm, arg);
+    }
+  }
+  return true;
+}
+
+bool UserStore::getGroupInfo(GroupFilter &filter, GroupInfoCallback &callback)
+{
+  if(!filter.finish()) return true;
+
+  LDAPSearchN<4> group_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
+    LDAP_SCOPE_SUBTREE, filter.stream.str().c_str(),
+    "ou", 1, MAX_ORGNAME_LEN,
+    "grp", 1, MAX_GROUPNAME_LEN,
+    "permission", -1, MAX_PERMISSION_LEN,
+    "state", 1, 30);
+
+  LDAPEntry *groupEntry;
+  while(groupEntry = group_search.getNextEntry()) {
+    char *ou = groupEntry->getResult(0).getNextVal();
+    char *grp = groupEntry->getResult(1).getNextVal();
+    char *state = groupEntry->getResult(3).getNextVal();
+    if(!ou || !grp || !state || !*ou || !*grp || !*state)
+      continue;
+
+    uint32_t state_val; sscanf(state, "%d", (int*)&state_val);
+    callback.got_group(ou, grp, state_val);
+
+    uint32_t perm_val;
+    char *perm, *arg;
+    while(perm = groupEntry->getResult(2).getNextVal()) {
+      if(perm_val = checkPerm(perm, arg, "group", grp))
+        callback.got_perm(perm, arg);
+    }
+  }
+  return true;
 }
 
 GroupId::GroupId(const std::string &org_dot_group)
@@ -1246,7 +1404,7 @@ GroupId::GroupId(const std::string &org_dot_group)
     sLog.outError("GroupId: invalid group %s", org_dot_group.c_str());
   } else {
     ou = org_dot_group.substr(0, pos);
-    gn = org_dot_group.substr(pos + 1);
+    grp = org_dot_group.substr(pos + 1);
   }
 }
 
@@ -1255,10 +1413,24 @@ GroupIdValidity UserStore::validateGroupId(const GroupId &gid)
   int ret = 0;
   if(gid.ou.empty() || !execute_reg(re_organization, gid.ou.c_str()))
     ret += GROUPID_INVALID_OU;
-  if(gid.gn.empty() || !execute_reg(re_group, gid.gn.c_str()))
+  if(gid.grp.empty() || !execute_reg(re_group, gid.grp.c_str()))
     ret += GROUPID_INVALID_GN;
 
   return (GroupIdValidity)ret;
+}
+
+uint32_t UserStore::getTotalOrgs()
+{
+  LDAPSearchN<0> org_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
+    LDAP_SCOPE_ONELEVEL, "(objectClass=organizationalUnit)");
+  return (uint32_t)org_search.getEntriesCount();
+}
+
+uint32_t UserStore::getTotalGroups()
+{
+  LDAPSearchN<0> group_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
+    LDAP_SCOPE_SUBTREE, "(objectClass=group)");
+  return (uint32_t)group_search.getEntriesCount();
 }
 
 // Local Variables: ***

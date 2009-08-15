@@ -61,14 +61,14 @@ public:
   void initialize();
   /** Functions for setting and retrieving config values */
   void setStringValue(uint16_t key, const uint8_t *value);
-  const uint8_t * getStringValue(uint16_t key);
-  uint32_t getIntValue(uint16_t key);
+  const uint8_t * getStringValue(uint16_t key) const;
+  uint32_t getIntValue(uint16_t key) const;
   void setIntValue(uint16_t key, uint32_t value);
   /** Mapping functions for string keys and key types */
   void registerKey(std::string stringKey, uint16_t intKey, uint32_t defaultValue);
   void registerKey(std::string stringKey, uint16_t intKey, const char * defaultValue);
   uint16_t lookupKey(std::string stringKey);
-  uint8_t lookupType(uint16_t key);
+  uint8_t lookupType(uint16_t key) const;
 protected:
   void parse();
 

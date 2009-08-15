@@ -25,6 +25,7 @@ public:
   bool initialize();
 private:
   static void request_callback(struct mg_connection *conn, const struct mg_request_info *request_info, void *user_data);
+  static void handle_getAllGroupInfo(struct mg_connection *conn, const std::string &str);
 
   struct mg_context *ctx;
 };

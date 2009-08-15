@@ -59,6 +59,88 @@ std::vector<std::string> split_request(const std::string &request)
   return ret;
 }
 
+struct HttpMemberInfoCallback : public GroupMemberCallback
+{
+  bool first_group;
+  mg_connection *conn;
+  HttpMemberInfoCallback(mg_connection *_conn, const std::string &uid_str)
+  {
+    conn = _conn;
+    first_group = true;
+    sUserStore.getMembershipInfo(uid_str, *this);
+  }
+
+  void got_group(char* ou, char* grp)
+  {
+    mg_printf(conn, "%s%s %s", (first_group ? "" : ":"), ou, grp);
+    first_group = false;
+  }
+
+  void got_perm(uint32_t perm_val, char* val, char* arg)
+  {
+    mg_printf(conn, ",%s%s%s", val, (arg ? " " : ""), (arg ? arg : ""));
+  }
+};
+
+struct HttpGroupInfoCallback : public GroupInfoCallback
+{
+  mg_connection *conn;
+  bool first_group;
+  HttpGroupInfoCallback(mg_connection *_conn, GroupFilter &filter)
+  {
+    conn = _conn;
+    first_group = true;
+    sUserStore.getGroupInfo(filter, *this);
+  }
+
+  void got_group(char* ou, char* grp, uint32_t state)
+  {
+    mg_printf(conn, "%s%s %s %d", (first_group ? "" : ":"), ou, grp, (int)state);
+    first_group = false;
+  }
+
+  void got_perm(char* val, char* arg)
+  {
+    mg_printf(conn, ",%s%s%s", val, (arg ? " " : ""), (arg ? arg : ""));
+  }
+};
+
+struct HttpOrgGroupsCallback : public FindGroupsCallback
+{
+  mg_connection *conn;
+  bool first_group;
+  HttpOrgGroupsCallback(mg_connection *_conn, GroupFilter &filter)
+  {
+    conn = _conn;
+    first_group = true;
+    sUserStore.getGroups(filter, *this);
+  }
+
+  void got_group(char* ou, char* grp)
+  {
+    mg_printf(conn, "%s%s %s", (first_group ? "" : ","), ou, grp);
+    first_group = false;
+  }
+};
+
+struct HttpOrgsOwnedByCallback : public OrgCallback
+{
+  mg_connection *conn;
+  bool first_org;
+  HttpOrgsOwnedByCallback(mg_connection *_conn, OrgFilter &filter) 
+  {
+    conn = _conn;
+    first_org = true;
+    sUserStore.getOrgs(filter, *this);
+  }
+
+  void got_org(const char *ou)
+  {
+    mg_printf(conn, "%s%s", (first_org ? "" : ","), ou);
+    first_org = false;
+  }
+};
+
 void HttpHandler::request_callback(
   struct mg_connection *conn, const struct mg_request_info *request_info, void * /*user_data*/)
 {
@@ -97,7 +179,7 @@ void HttpHandler::request_callback(
     
     list = sUserStore.intersectGroupList(tokens[1], list, all);
     for(std::list<GroupId>::iterator itr = list.begin(); itr != list.end(); ++itr)
-      mg_printf(conn, ":%s.%s", itr->ou.c_str(), itr->gn.c_str());
+      mg_printf(conn, ":%s.%s", itr->ou.c_str(), itr->grp.c_str());
 
   } else if(tokens[0] == "gettoken") {
     if(tokens.size() < 4) return;
@@ -128,7 +210,7 @@ void HttpHandler::request_callback(
 
   } else if(tokens[0] == "addtogroup") {
     if(tokens.size() < 3) return;
-    mg_printf(conn, "%d", sUserStore.addToGroup(tokens[1].c_str(), GroupId(tokens[2]), false, false));
+    mg_printf(conn, "%d", sUserStore.addToGroup(tokens[1], GroupId(tokens[2])));
 
   } else if(tokens[0] == "activate") {
     if(tokens.size() < 4) return;
@@ -142,13 +224,6 @@ void HttpHandler::request_callback(
     if(tokens.size() < 3) return;
     mg_printf(conn, "%d", sUserStore.resendActivation(UserInfo(tokens[1], "", tokens[2])));
 
-  } else if(tokens[0] == "groupsadministratedby") {
-    if(tokens.size() < 2) return;
-
-    std::list<GroupId> list = sUserStore.getGroupsAdministratedBy(tokens[1].c_str());
-    for(std::list<GroupId>::iterator itr = list.begin(); itr != list.end(); ++itr)
-      mg_printf(conn, "%s%s.%s", (itr == list.begin() ? "" : ","), itr->ou.c_str(), itr->gn.c_str());
-
   } else if(tokens[0] == "createorg") {
     if(tokens.size() < 2) return;
 
@@ -156,6 +231,38 @@ void HttpHandler::request_callback(
 
   } else if(tokens[0] == "creategroup") {
     if(tokens.size() < 2) return;
+
+  } else if(tokens[0] == "getmemberinfo") {
+    if(tokens.size() < 2) return;
+
+    HttpMemberInfoCallback cb(conn, tokens[1]);
+
+  } else if(tokens[0] == "getgroupinfo") {
+    if(tokens.size() < 3 || tokens.size() % 2 != 1) return;
+    GroupFilter filter;
+    for(int i = 1; i < (int)tokens.size(); i+=2)
+      filter.add_org_group(tokens[i].c_str(), tokens[i+1].c_str());
+
+    HttpGroupInfoCallback cb(conn, filter);
+
+  } else if(tokens[0] == "getorggroups") {
+    if(tokens.size() < 2) return;
+    GroupFilter filter;
+    for(int i = 1; i < (int)tokens.size(); i++)
+      filter.add_org(tokens[i].c_str());
+
+    HttpOrgGroupsCallback cb(conn, filter);
+  } else if(tokens[0] == "getorgsownedby") {
+    if(tokens.size() < 2) return;
+    OrgFilter filter; filter.add_owner(tokens[1].c_str());
+
+    HttpOrgsOwnedByCallback cb(conn, filter); 
+    
+  } else if(tokens[0] == "totalgroups") {
+    mg_printf(conn, "%d", sUserStore.getTotalGroups());
+
+  } else if(tokens[0] == "totalorgs") {
+    mg_printf(conn, "%d", sUserStore.getTotalOrgs());
 
   }
 }

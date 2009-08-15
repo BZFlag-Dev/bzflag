@@ -109,8 +109,11 @@ bool Mail::send(const std::string &dest)
 {
   FILE *cmd_pipe;
   // escape this to prevent executing other commands
+  subject = TextUtils::replace_all(subject, "\\", "\\\\");
   subject = TextUtils::replace_all(subject, "\"", "\\\"");
   std::string escaped_dest = TextUtils::replace_all(dest, "\"", "\\\"");
+  escaped_dest = TextUtils::replace_all(escaped_dest, "\\", "\\\\");
+
   std::string cmd = "mail -s \"" + subject + "\" \"" + escaped_dest + "\"";
   if( (cmd_pipe = popen( cmd.c_str(), "w" )) != NULL ) {
     int ret = fprintf(cmd_pipe, "%s", body.c_str());
