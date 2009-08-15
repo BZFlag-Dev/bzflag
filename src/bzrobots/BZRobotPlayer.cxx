@@ -349,12 +349,17 @@ void BZRobotPlayer::shotKilled(const ShotPath *shot, const Player *killer, const
   std::string killerName = killer->getCallSign();
   std::string victimName = victim->getCallSign();
   LOCK_PLAYER
-  // FIXME: Why are these blowing up?
   if(robotName == killerName) {
     // TODO: Create a Bullet based on the shot and place it in the event
 	BZRobots::BulletHitEvent *bhe = new BZRobots::BulletHitEvent(victimName,NULL);
 	bhe->setTime(TimeKeeper::getCurrent().getSeconds());
 	tsEventQueue.push_back(bhe);
+  }
+  if(robotName == victimName) {
+    // TODO: Create a Bullet based on the shot and place it in the event
+    BZRobots::HitByBulletEvent *hbbe = new BZRobots::HitByBulletEvent(0.0f,NULL);
+    hbbe->setTime(TimeKeeper::getCurrent().getSeconds());
+    tsEventQueue.push_back(hbbe);
   }
   if(robotName != victimName) {
     BZRobots::RobotDeathEvent *rde = new BZRobots::RobotDeathEvent(victimName);
