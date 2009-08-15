@@ -1495,6 +1495,7 @@ static int SetPlayerCapabilities(lua_State* L)
   }
 
   unsigned char caps = luaL_checkint(L, 2);
+
   if (lua_israwstring(L, 3)) {
     const string type = lua_tostring(L, 3);
     if (type == "add") {
@@ -1509,6 +1510,7 @@ static int SetPlayerCapabilities(lua_State* L)
     }
   }
 
+  player->player.setAllow(caps);
   sendMessageAllow(pid, caps);
 
   lua_pushboolean(L, true);
