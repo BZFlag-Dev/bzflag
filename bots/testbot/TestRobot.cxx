@@ -116,9 +116,9 @@ void TestRobot::onHitWall(const HitWallEvent &/*e*/)
   turnLeft(90);
 }
 
-void TestRobot::onRobotDeath(const RobotDeathEvent &/*e*/)
+void TestRobot::onRobotDeath(const RobotDeathEvent &e)
 {
-  //printf("TestRobot: RobotDeathEvent\n");
+  printf("TestRobot: RobotDeathEvent (%s)\n",e.getName().c_str());
 }
 
 void TestRobot::onScannedRobot(const ScannedRobotEvent &/*e*/)

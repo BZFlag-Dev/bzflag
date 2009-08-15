@@ -184,6 +184,8 @@ void BZRobotPlayer::update(float inputDT)
   for (int i = 0; i < curMaxPlayers; i++) {
     if (remotePlayers[i] == NULL)
       continue;
+    if (remotePlayers[i]->isAlive() == false)
+      continue;
     if (remotePlayers[i]->getId() == getId())
       continue;
     if (remotePlayers[i]->getTeam() == ObserverTeam)
@@ -310,16 +312,44 @@ void BZRobotPlayer::doUpdateMotion(float dt)
   LocalPlayer::doUpdateMotion(dt);
 }
 
-void BZRobotPlayer::shotFired(const ShotPath * /*shot*/, const Player * /*shooter*/)
+void BZRobotPlayer::shotFired(const ShotPath *shot, const Player *shooter)
 {
-  printf("BZRobotPlayer: shotFired\n");
-  // TODO: Create a BulletFiredEvent
+  if(shot == NULL || shooter == NULL)
+    return;
+  std::string robotName = this->getCallSign();
+  std::string shooterName = shooter->getCallSign();
+  LOCK_PLAYER
+  if(robotName != shooterName) {
+    // TODO: Create a Bullet based on the shot and place it in the event
+    BZRobots::BulletFiredEvent bfe(NULL);
+	bfe.setTime(TimeKeeper::getCurrent().getSeconds());
+	tsEventQueue.push_back(bfe);
+  }
+  UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::shotKilled(const ShotPath * /*shot*/, const Player * /*killer*/, const Player * /*victim*/)
+void BZRobotPlayer::shotKilled(const ShotPath *shot, const Player *killer, const Player *victim)
 {
-  printf("BZRobotPlayer: shotKilled\n");
-  // TODO: Create a BulletHitEvent (if this bot is the killer)
+  if(shot == NULL || killer == NULL || victim == NULL)
+    return;
+  std::string robotName = this->getCallSign();
+  std::string killerName = killer->getCallSign();
+  std::string victimName = victim->getCallSign();
+  printf("BZRobotPlayer: bullet killed event (%s) (%s)\n",killerName.c_str(),victimName.c_str());
+  LOCK_PLAYER
+  // FIXME: Why are these blowing up?
+  if(robotName == killerName) {
+    // TODO: Create a Bullet based on the shot and place it in the event
+	//BZRobots::BulletHitEvent bhe(victimName,NULL);
+	//bhe.setTime(TimeKeeper::getCurrent().getSeconds());
+	//tsEventQueue.push_back(bhe);
+  }
+  if(robotName != victimName) {
+    //BZRobots::RobotDeathEvent rde(victimName);
+    //rde.setTime(TimeKeeper::getCurrent().getSeconds());
+    //tsEventQueue.push_back(rde);
+  }
+  UNLOCK_PLAYER
 }
 
 void BZRobotPlayer::botAhead(double distance)
@@ -337,7 +367,7 @@ void BZRobotPlayer::botBack(double distance)
 
 void BZRobotPlayer::botClearAllEvents()
 {
-  UNLOCK_PLAYER
+  LOCK_PLAYER
   tsScanQueue.clear();
   tsEventQueue.clear();
   purgeQueue = true;

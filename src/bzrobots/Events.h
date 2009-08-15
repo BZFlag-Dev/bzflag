@@ -191,7 +191,13 @@ private:
 class RobotDeathEvent : public Event
 {
 public:
-  RobotDeathEvent() { eventID = RobotDeathEventID; priority = 70; }
+  RobotDeathEvent(std::string _name) :
+    name(_name) { eventID = RobotDeathEventID; priority = 70; }
+
+  inline std::string getName() const { return name; }
+
+private:
+  std::string name;
 };
 
 class ScannedRobotEvent : public Event
