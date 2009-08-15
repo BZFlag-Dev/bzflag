@@ -44,7 +44,7 @@ void ScriptLoaderFactory::initialize()
   SCRIPTTOOLFACTORY.Register<SharedObjectLoader>("so");
 #endif /* defined(_WIN32) */
 
-  SCRIPTTOOLFACTORY.Register<LuaLoader>("lua");
+  SCRIPTTOOLFACTORY.Register<LuaScript>("lua");
 
 #ifdef WITH_PYTHONLOADER
   SCRIPTTOOLFACTORY.Register<PythonLoader>("py");

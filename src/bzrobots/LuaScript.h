@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __LUA_ROBOT_H__
-#define __LUA_ROBOT_H__
+#ifndef __LUA_SCRIPT_H__
+#define __LUA_SCRIPT_H__
 
 // system headers
 #include <string>
@@ -21,10 +21,10 @@
 #include "Robot.h"
 
 
-class LuaLoader : public RobotScript {
+class LuaScript : public RobotScript {
   public:
-    LuaLoader();
-    ~LuaLoader();
+    LuaScript();
+    ~LuaScript();
 
     bool load(std::string filename);
     BZRobots::Robot* create();
@@ -38,7 +38,7 @@ class LuaLoader : public RobotScript {
 };
 
 
-#endif /* __LUA_ROBOT_H__ */
+#endif /* __LUA_SCRIPT_H__ */
 
 
 // Local Variables: ***

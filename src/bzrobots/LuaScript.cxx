@@ -123,22 +123,22 @@ class LuaRobot : public AdvancedRobot {
 //============================================================================//
 //============================================================================//
 //
-//  LuaLoader
+//  LuaScript
 //
 
-LuaLoader::LuaLoader()
+LuaScript::LuaScript()
 {
   _running = true;
   error = "";
 }
 
 
-LuaLoader::~LuaLoader()
+LuaScript::~LuaScript()
 {
 }
 
 
-bool LuaLoader::load(std::string filename)
+bool LuaScript::load(std::string filename)
 {
   scriptFile = filename;
   _loaded = true;
@@ -146,13 +146,13 @@ bool LuaLoader::load(std::string filename)
 }
 
 
-Robot* LuaLoader::create()
+Robot* LuaScript::create()
 {
   return new LuaRobot(scriptFile);
 }
 
 
-void LuaLoader::destroy(Robot* instance)
+void LuaScript::destroy(Robot* instance)
 {
   delete instance;
 }

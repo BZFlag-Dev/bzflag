@@ -10,15 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_BOTPLAYING_H
-#define	BZF_BOTPLAYING_H
+#ifndef __BZF_BOTPLAYING_H__
+#define __BZF_BOTPLAYING_H__
 
 #include "common.h"
 
 
-
-
-#endif // BZF_BOTPLAYING_H
+#endif // __BZF_BOTPLAYING_H__
 
 // Local Variables: ***
 // mode: C++ ***

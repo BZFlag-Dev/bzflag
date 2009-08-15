@@ -14,8 +14,8 @@
  * dummy error handling function for bot dll
  */
 
-#ifndef BZF_PRINT_ERROR_H
-#define	BZF_PRINT_ERROR_H
+#ifndef __BZF_PRINT_ERROR_H__
+#define __BZF_PRINT_ERROR_H__
 
 // common header first
 #include "common.h"
@@ -27,9 +27,9 @@
 // local implementation headers
 #include "common.h"
 
-void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
+void printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
 
-#endif // BZF_PRINT_ERROR_H
+#endif // __BZF_PRINT_ERROR_H__
 
 // Local Variables: ***
 // mode: C++ ***

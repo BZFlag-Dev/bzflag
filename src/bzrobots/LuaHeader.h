@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef LUA_HEADER_H
-#define LUA_HEADER_H
+#ifndef __LUA_HEADER_H__
+#define __LUA_HEADER_H__
 
 
 #include <string>
@@ -107,7 +107,7 @@ inline void lua_pushstdstring(lua_State* L, const std::string& value)
 //============================================================================//
 
 
-#endif // LUA_HEADER_H
+#endif // __LUA_HEADER_H__
 
 // Local Variables: ***
 // mode: C++ ***
