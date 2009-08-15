@@ -216,23 +216,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\BZRobotCallbacks.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobotControl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobotEvents.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\BZRobotPlayer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobotScript.h"
 				>
 			</File>
 			<File
@@ -240,7 +224,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\LuaLoader.h"
+				RelativePath="..\..\src\bzrobots\LuaScript.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RobotCallbacks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RobotControl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RobotScript.h"
 				>
 			</File>
 			<File
@@ -248,7 +244,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\SharedObjectLoader.h"
+				RelativePath="..\..\src\bzrobots\SharedObjectScript.h"
 				>
 			</File>
 		</Filter>
@@ -261,14 +257,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\BZRobotControl.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobotEvents.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\BZRobotPlayer.cxx"
 				>
 			</File>
@@ -277,11 +265,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\BZRobotScript.cxx"
+				RelativePath="..\..\src\bzrobots\LuaScript.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\LuaLoader.cxx"
+				RelativePath="..\..\src\bzrobots\RobotControl.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RobotScript.cxx"
 				>
 			</File>
 			<File
@@ -289,7 +281,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\SharedObjectLoader.cxx"
+				RelativePath="..\..\src\bzrobots\SharedObjectScript.cxx"
 				>
 			</File>
 		</Filter>
@@ -985,23 +977,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzrobots\Bullet.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzrobots\Bullet.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.cxx"
+				RelativePath="..\..\src\bzrobots\Events.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\BZAdvancedRobot.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobot.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzrobots\BZRobot.h"
+				RelativePath="..\..\src\bzrobots\Events.h"
 				>
 			</File>
 			<File
@@ -1015,14 +1003,6 @@
 		</Filter>
 		<File
 			RelativePath="..\..\src\bzrobots\bzrobot.i"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\bzflag\Makefile.am"
-			>
-		</File>
-		<File
-			RelativePath="..\..\src\bzrobots\Makefile.am"
 			>
 		</File>
 	</Files>
