@@ -1343,15 +1343,23 @@ void handleAllow(void *msg)
     }
   }
 
-  // FIXME - this is currently too noisy
   tank->setAllow(allow);
-  addMessage(tank, allow & AllowShoot ? "Shooting allowed" : "Shooting forbidden");
-  addMessage(tank, allow & (AllowMoveForward  |
-                            AllowMoveBackward |
-                            AllowTurnLeft     |
-                            AllowTurnRight) ? "Movement allowed"
-                                            : "Movement restricted");
-  addMessage(tank, allow & AllowJump ? "Jumping allowed" : "Jumping forbidden");
+
+  if (!BZDB.isTrue("_forbidDebug")) {
+    const unsigned char moveBits = AllowMoveForward  |
+                                   AllowMoveBackward |
+                                   AllowTurnLeft     |
+                                   AllowTurnRight;
+    logDebugMessage(3, "%s: %s", tank->getCallSign(),
+                    ((allow & moveBits) == moveBits) ? "Movement allowed"
+                                                    : "Movement restricted");
+    logDebugMessage(3, "%s: %s", tank->getCallSign(),
+                    (allow & AllowShoot) ? "Shooting allowed"
+                                         : "Shooting forbidden");
+    logDebugMessage(3, "%s: %s", tank->getCallSign(),
+                    (allow & AllowJump) ? "Jumping allowed"
+                                        : "Jumping forbidden");
+  }
 }
 
 

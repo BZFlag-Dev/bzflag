@@ -69,6 +69,66 @@ static bool SetupLuaDirectory(const string& fileName);
 //============================================================================//
 //============================================================================//
 
+class UpdateTick : public bz_EventHandler {
+  private:
+    enum QueuedCommand { NoCmd, ReloadCmd, DisableCmd };
+
+  public:
+    UpdateTick() : command(NoCmd) {}
+    ~UpdateTick() {}
+
+    void queueReload() {
+      if (command != DisableCmd) {
+        command = ReloadCmd;
+      }
+    }
+
+    void queueDisable() {
+      command = DisableCmd;
+    }
+
+    void activate() {
+      if (!active) {
+        bz_registerEvent(bz_eTickEvent, this);
+        active = true;
+      }
+    }
+
+    void deactivate() {
+      bz_removeEvent(bz_eTickEvent, this);
+      active = false;
+    }
+
+  private:
+    void process(bz_EventData*) {
+      switch (command) {
+        case NoCmd: {
+          break; // do nothing
+        }
+        case DisableCmd: {
+          LuaServer::kill();
+          break;
+        }
+        case ReloadCmd: {
+          LuaServer::kill();
+          LuaServer::init(clOptions->luaServer);
+          break;
+        }
+      }
+      command = NoCmd;
+    }
+
+  private:
+    bool active;
+    QueuedCommand command;
+};
+
+static UpdateTick updateTick;
+
+
+//============================================================================//
+//============================================================================//
+
 static bool fileExists(const string& file)
 {
   FILE* f = fopen(file.c_str(), "r");
@@ -144,6 +204,10 @@ bool LuaServer::init(const string& cmdLine)
     return false;
   }
 
+  updateTick.activate();
+
+  bz_registerEvent(bz_eTickEvent, &updateTick);
+
   return true;
 }
 
@@ -153,6 +217,8 @@ bool LuaServer::init(const string& cmdLine)
 
 bool LuaServer::kill()
 {
+  updateTick.deactivate();
+
   if (L == NULL) {
     return false;
   }
@@ -186,6 +252,21 @@ bool LuaServer::isActive()
 lua_State* LuaServer::GetL()
 {
   return L;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+void LuaServer::queueReload()
+{
+  updateTick.queueReload();
+}
+
+
+void LuaServer::queueDisable()
+{
+  updateTick.queueDisable();
 }
 
 

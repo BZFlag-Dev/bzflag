@@ -20,6 +20,7 @@
 #include <string>
 
 // common headers
+#include "global.h"
 #include "bzfsAPI.h"
 #include "Obstacle.h"
 
@@ -34,6 +35,7 @@ static bool PushFlagQualities(lua_State* L);
 static bool PushPlayers(lua_State* L);
 static bool PushPlayerStates(lua_State* L);
 static bool PushObstacles(lua_State* L);
+static bool PushCapabilities(lua_State* L);
 static bool PushPermissions(lua_State* L);
 
 
@@ -49,6 +51,7 @@ bool Constants::PushEntries(lua_State* L)
   PushPlayers(L);
   PushPlayerStates(L);
   PushObstacles(L);
+  PushCapabilities(L);
   PushPermissions(L);
 
   return true;
@@ -207,6 +210,28 @@ static bool PushPlayerStates(lua_State* L)
 
 //============================================================================//
 
+static bool PushCapabilities(lua_State* L)
+{
+  lua_pushliteral(L, "CAPABILITY");
+  lua_newtable(L);
+
+  PushDualPair(L, "JUMP",          AllowJump);
+  PushDualPair(L, "FIRE",          AllowShoot);
+  PushDualPair(L, "TURN",          AllowTurnLeft | AllowTurnRight);
+  PushDualPair(L, "TURN_LEFT",     AllowTurnLeft);
+  PushDualPair(L, "TURN_RIGHT",    AllowTurnRight);
+  PushDualPair(L, "MOVE",          AllowMoveForward | AllowMoveBackward);
+  PushDualPair(L, "MOVE_FORWARD",  AllowMoveForward);
+  PushDualPair(L, "MOVE_BACKWARD", AllowMoveBackward);
+  PushDualPair(L, "ALL",   0xFF);
+
+  lua_rawset(L, -3);
+
+  return true;
+}
+
+
+//============================================================================//
 static bool PushPermissions(lua_State* L)
 {
   lua_pushliteral(L, "PERM");

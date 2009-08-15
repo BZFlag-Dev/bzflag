@@ -34,6 +34,7 @@ using std::map;
 
 // local headers
 #include "LuaHeader.h"
+#include "LuaServer.h"
 
 
 //============================================================================//
@@ -203,16 +204,16 @@ static int GetName(lua_State* L)
 }
 
 
-static int Disable(lua_State* L) // FIXME
+static int Disable(lua_State* /*L*/)
 {
-  L = L;
+  LuaServer::queueDisable();
   return 0;
 }
 
 
-static int Reload(lua_State* L) // FIXME
+static int Reload(lua_State* /*L*/)
 {
-  L = L;
+  LuaServer::queueReload();
   return 0;
 }
 

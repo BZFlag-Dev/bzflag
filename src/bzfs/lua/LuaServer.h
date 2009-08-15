@@ -31,6 +31,9 @@ class LuaServer {
     static const std::string& getLuaDir();
 
     static lua_State* GetL(); // for local lua libraries
+
+    static void queueReload();
+    static void queueDisable();
 };
 
 

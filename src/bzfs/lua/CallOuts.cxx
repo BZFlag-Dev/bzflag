@@ -200,6 +200,9 @@ static int SetPlayerCustomData(lua_State* L);
 static int GetPlayerAutoPilot(lua_State* L);
 static int SetPlayerAutoPilot(lua_State* L);
 
+static int GetPlayerCapabilities(lua_State* L);
+static int SetPlayerCapabilities(lua_State* L);
+
 static int SetPlayerState(lua_State* L);
 static int SetPlayerPosition(lua_State* L);
 static int SetPlayerVelocity(lua_State* L);
@@ -404,6 +407,9 @@ bool CallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, GetPlayerAutoPilot);
   PUSH_LUA_CFUNC(L, SetPlayerAutoPilot);
+
+  PUSH_LUA_CFUNC(L, GetPlayerCapabilities);
+  PUSH_LUA_CFUNC(L, SetPlayerCapabilities);
 
   PUSH_LUA_CFUNC(L, SetPlayerState);
   PUSH_LUA_CFUNC(L, SetPlayerPosition);
@@ -1462,6 +1468,51 @@ static fvec3 checkFVec3Table(lua_State* L, int index)
     lua_rawgeti(L, index, 3); v.z = luaL_checkfloat(L, -1); lua_pop(L, 1);
   }
   return v;
+}
+
+
+static int GetPlayerCapabilities(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    return 0;
+  }
+
+  lua_pushinteger(L, player->player.getAllow());
+
+  return 1;
+}
+
+
+static int SetPlayerCapabilities(lua_State* L)
+{
+  const int pid = luaL_checkint(L, 1);
+  GameKeeper::Player* player = getPlayerByIndex(pid);
+  if (player == NULL) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  unsigned char caps = luaL_checkint(L, 2);
+  if (lua_israwstring(L, 3)) {
+    const string type = lua_tostring(L, 3);
+    if (type == "add") {
+      caps = (player->player.getAllow() | caps);
+    }
+    else if (type == "remove") {
+      caps = (player->player.getAllow() & ~caps);
+    }
+    else {
+      lua_pushboolean(L, false);
+      return 1;
+    }
+  }
+
+  sendMessageAllow(pid, caps);
+
+  lua_pushboolean(L, true);
+  return 1;
 }
 
 
