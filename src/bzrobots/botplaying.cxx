@@ -76,8 +76,8 @@
 
 // local implementation headers
 #include "BZRobotPlayer.h"
-#include "BZRobotScript.h"
-#include "BZRobotControl.h"
+#include "RobotScript.h"
+#include "RobotControl.h"
 
 #include "bzflag.h"
 #include "commands.h"
@@ -91,7 +91,7 @@
 bool headless = true;
 
 
-std::list<BZRobotScript *> robotScripts;
+std::list<RobotScript *> robotScripts;
 
 // to simplify code shared between bzrobots and bzflag
 // - in bzrobots, this just goes to the error console
@@ -842,7 +842,7 @@ void handleNewPlayer(void *msg)
   robots[i]->setTeam((TeamColor)team);
   serverLink->sendEnter(id, ComputerPlayer, NoUpdates, robots[i]->getTeam(),
     robots[i]->getCallSign(), "", "");
-  std::list<BZRobotScript *>::iterator scriptItr;
+  std::list<RobotScript *>::iterator scriptItr;
   for(scriptItr = robotScripts.begin(); scriptItr != robotScripts.end(); scriptItr++) {
     if(!(*scriptItr)->hasPlayer()) {
 	  (*scriptItr)->setPlayer((BZRobotPlayer *)robots[i]);
@@ -1913,7 +1913,7 @@ void botStartPlaying()
     printError(aString);
   }
 
-  BZRobotScript *robotScript = BZRobotScript::loadFile(BZDB.get("robotScript"));
+  RobotScript *robotScript = RobotScript::loadFile(BZDB.get("robotScript"));
   
   robotScripts.push_back(robotScript);
 

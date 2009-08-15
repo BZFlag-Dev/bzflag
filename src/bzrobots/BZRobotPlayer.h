@@ -25,7 +25,7 @@
 #include "ServerLink.h"
 
 /* local interface headers */
-#include "BZRobot.h"
+#include "Robot.h"
 #include "Region.h"
 #include "RegionPriorityQueue.h"
 #include "RobotPlayer.h"
@@ -64,7 +64,7 @@ public:
     updateCount
   } variableUpdates;
   
-  void setRobot(BZRobot *_robot);
+  void setRobot(BZRobots::Robot *_robot);
 
   void explodeTank();
   void restart(const fvec3& pos, float azimuth);
@@ -78,35 +78,55 @@ public:
   // Call-ins for BZRobot/BZAdvancedRobot
   void botAhead(double distance);
   void botBack(double distance);
+  void botClearAllEvents();
   void botDoNothing();
   void botExecute();
-  void botFire();
+  void botFire(double power);
+  BZRobots::Bullet* botFireBullet(double power);
+  double botGetBattleFieldLength();
+  double botGetBattleFieldWidth();
   double botGetDistanceRemaining();
-  const char * botGetName();
+  double botGetEnergy();
   double botGetGunCoolingRate();
-  double botGetBattleFieldSize();
+  double botGetGunHeading();
   double botGetGunHeat();
-  double botGetVelocity();
   double botGetHeading();
-  double botGetWidth();
-  double botGetLength();
   double botGetHeight();
+  double botGetLength();
+  std::string botGetName();
+  int botGetNumRounds();
+  int botGetOthers();
+  double botGetRadarHeading();
+  int botGetRoundNum();
   double botGetTime();
+  double botGetTurnRemaining();
+  double botGetVelocity();
+  double botGetWidth();
   double botGetX();
   double botGetY();
   double botGetZ();
-  double botGetTurnRemaining();
+  void botSetAdjustGunForRobotTurn(bool independent);
+  void botSetAdjustRadarForGunTurn(bool independent);
+  void botSetAdjustRadarForRobotTurn(bool independent);
   void botResume();
   void botScan();
   void botSetAhead(double distance);
-  void botSetFire();
-  void botSetTurnRate(double rate);
+  void botSetBack(double distance);
+  void botSetFire(double power);
+  BZRobots::Bullet* botSetFireBullet(double power);
+  void botSetMaxTurnRate(double turnRate);
   void botSetMaxVelocity(double speed);
   void botSetResume();
-  void botStop(bool overwrite);
   void botSetStop(bool overwrite);
   void botSetTurnLeft(double turn);
+  void botSetTurnRate(double rate);
+  void botSetTurnRight(double turn);
+  void botStop(bool overwrite);
+  void botTurnGunLeft(double turn);
+  void botTurnGunRight(double turn);
   void botTurnLeft(double turn);
+  void botTurnRadarLeft(double turn);
+  void botTurnRadarRight(double turn);
   void botTurnRight(double turn);
   
 private:
@@ -116,7 +136,7 @@ private:
   bool didHitWall;
 
 // Begin shared thread-safe variables
-  BZRobot *robot;
+  BZRobots::Robot *robot;
 
   double tsBattleFieldSize;
 
@@ -125,8 +145,8 @@ private:
   fvec3 tsTankSize;
 
   bool tsPendingUpdates[updateCount];
-  std::list<BZRobotEvent> tsScanQueue; // non-prioritized
-  std::list<BZRobotEvent> tsEventQueue; // non-prioritized
+  std::list<BZRobots::Event> tsScanQueue; // non-prioritized
+  std::list<BZRobots::Event> tsEventQueue; // non-prioritized
 
   double tsGunHeat;
   bool tsShoot;

@@ -13,7 +13,7 @@
 #include "common.h"
 
 // interface header
-#include "LuaLoader.h"
+#include "LuaScript.h"
 
 // system headers
 #include <string>
@@ -24,6 +24,10 @@
 
 // local headers
 #include "LuaHeader.h"
+#include "AdvancedRobot.h"
+
+
+using namespace BZRobots;
 
 
 static const char* ThisLabel = "this";
@@ -52,7 +56,8 @@ static int SetStop(lua_State* L);
 static int SetTurnLeft(lua_State* L);
 
 static int GetTime(lua_State* L);
-static int GetBattleFieldSize(lua_State* L);
+static int GetBattleFieldLength(lua_State* L);
+static int GetBattleFieldWidth(lua_State* L);
 static int GetGunCoolingRate(lua_State* L);
 static int GetGunHeat(lua_State* L);
 static int GetHeading(lua_State* L);
@@ -82,7 +87,7 @@ static int ReadStdin(lua_State* L);
 //============================================================================//
 //============================================================================//
 
-class LuaRobot : public BZAdvancedRobot {
+class LuaRobot : public AdvancedRobot {
   public:
     LuaRobot(const std::string& filename);
     ~LuaRobot();
@@ -102,16 +107,16 @@ class LuaRobot : public BZAdvancedRobot {
     void onWin(const WinEvent&);
 
   public:
-    const BZRobotEvent& getLastEvent() const { return lastEvent; }
+    const Event& getLastEvent() const { return lastEvent; }
 
   private:
-    void setLastEvent(const BZRobotEvent& e) { lastEvent = e; }
+    void setLastEvent(const Event& e) { lastEvent = e; }
     bool PushCallIn(const char* funcName, int inArgs);
     bool RunCallIn(int inArgs, int outArgs);
 
   private:
     lua_State* L;
-    BZRobotEvent lastEvent;
+    Event lastEvent;
 };
 
 
@@ -141,13 +146,13 @@ bool LuaLoader::load(std::string filename)
 }
 
 
-BZRobot* LuaLoader::create()
+Robot* LuaLoader::create()
 {
   return new LuaRobot(scriptFile);
 }
 
 
-void LuaLoader::destroy(BZRobot* instance)
+void LuaLoader::destroy(Robot* instance)
 {
   delete instance;
 }
@@ -428,7 +433,8 @@ static bool PushCallOuts(lua_State* L)
   PUSH_LUA_CFUNC(L, SetTurnLeft);
 
   PUSH_LUA_CFUNC(L, GetTime);
-  PUSH_LUA_CFUNC(L, GetBattleFieldSize);
+  PUSH_LUA_CFUNC(L, GetBattleFieldLength);
+  PUSH_LUA_CFUNC(L, GetBattleFieldWidth);
   PUSH_LUA_CFUNC(L, GetGunCoolingRate);
   PUSH_LUA_CFUNC(L, GetGunHeat);
   PUSH_LUA_CFUNC(L, GetHeading);
@@ -571,8 +577,13 @@ static int GetTime(lua_State* L) {
   return 1;
 }
 
-static int GetBattleFieldSize(lua_State* L) {
-  lua_pushdouble(L, GetRobot(L)->getBattleFieldSize());
+static int GetBattleFieldLength(lua_State* L) {
+  lua_pushdouble(L, GetRobot(L)->getBattleFieldLength());
+  return 1;
+}
+
+static int GetBattleFieldWidth(lua_State* L) {
+  lua_pushdouble(L, GetRobot(L)->getBattleFieldWidth());
   return 1;
 }
 
@@ -602,7 +613,7 @@ static int GetLength(lua_State* L) {
 }
 
 static int GetName(lua_State* L) {
-  lua_pushstring(L, GetRobot(L)->getName());
+  lua_pushstring(L, GetRobot(L)->getName().c_str());
   return 1;
 }
 

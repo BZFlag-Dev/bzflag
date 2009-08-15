@@ -19,8 +19,8 @@ AM_CPPFLAGS = \
 	@CONF_CPPFLAGS@
 
 PYTHON_LOADER = \
-	PythonLoader.cxx	\
-	PythonLoader.h
+	PythonScript.cxx	\
+	PythonScript.h
 
 if BZROBOTS_PYTHON_ENABLED
 AM_CXXFLAGS = @CONF_CXXFLAGS@ \
@@ -42,33 +42,41 @@ clientfiles = \
 	../obstacle/ObstacleMgr.cxx	
 endif
 
+apisources = \
+	AdvancedRobot.cxx		\
+	Bullet.cxx			\
+	Events.cxx			\
+	Robot.cxx			
+
+apiheaders = \
+	AdvancedRobot.h			\
+	Bullet.h			\
+	Events.h			\
+	Robot.h
+	
+
 bzrobots_SOURCES =			\
 	$(pythonloaderfiles)		\
 	$(clientfiles)			\
+	$(apisources)			\
+	$(apiheaders)			\
 	bzrobots.cxx			\
 	botplaying.cxx			\
 	botplaying.h			\
-	Bullet.h			\
-	BZAdvancedRobot.cxx		\
-	BZAdvancedRobot.h		\
-	BZRobot.cxx			\
-	BZRobot.h			\
-	BZRobotCallbacks.h		\
-	BZRobotControl.cxx		\
-	BZRobotControl.h		\
-	BZRobotEvents.h			\
-	BZRobotEvents.cxx		\
+	RobotCallbacks.h		\
+	RobotControl.cxx		\
+	RobotControl.h			\
 	BZRobotPlayer.cxx		\
 	BZRobotPlayer.h			\
-	BZRobotScript.cxx		\
-	BZRobotScript.h			\
+	RobotScript.cxx			\
+	RobotScript.h			\
 	LuaHeader.h			\
-	LuaLoader.h			\
-	LuaLoader.cxx			\
+	LuaScript.cxx			\
+	LuaScript.h			\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\
-	SharedObjectLoader.cxx		\
-	SharedObjectLoader.h		
+	SharedObjectScript.cxx		\
+	SharedObjectScript.h		
 
 
 if WIN32
@@ -123,7 +131,7 @@ libbzrobot = bzrobot_pyext.la
 
 bzrobot_python_wrap.h: bzrobot_python_wrap.cxx
 
-bzrobot_python_wrap.cxx: bzrobot.i Bullet.h BZRobot.h BZAdvancedRobot.h
+bzrobot_python_wrap.cxx: bzrobot.i $(apiheaders)
 	$(SWIG) -Wall -c++ -python -o $@ -interface bzrobot_pyext $< # Consider using -O for 'optimized mode'
 
 bzrobot_python_runtime.h:
@@ -135,12 +143,8 @@ bzrobot_pyext_la_CXXFLAGS = -fexceptions $(SWIG_PYTHON_CPPFLAGS)
 bzrobot_pyext_la_LDFLAGS = -module -avoid-version -export-dynamic
 bzrobot_pyext_la_SOURCES = \
 	$(BUILT_SOURCES) \
-	Bullet.h \
-	Bullet.cxx \
-	BZRobot.cxx \
-	BZRobot.h \
-	BZAdvancedRobot.cxx \
-	BZAdvancedRobot.h
+	$(apisources) \
+	$(apiheaders)
 
 else
 libbzrobot =

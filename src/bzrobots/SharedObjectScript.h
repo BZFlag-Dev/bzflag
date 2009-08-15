@@ -19,14 +19,14 @@
 #include <string>
 
 /* local interface headers */
-#include "BZRobotScript.h"
-#include "BZAdvancedRobot.h"
+#include "RobotScript.h"
+#include "Robot.h"
 
 
-class SharedObjectLoader : public BZRobotScript
+class SharedObjectLoader : public RobotScript
 {
-  typedef BZRobot *(*createHandle)(void);
-  typedef void (*destroyHandle)(BZRobot *);
+  typedef BZRobots::Robot *(*createHandle)(void);
+  typedef void (*destroyHandle)(BZRobots::Robot *);
 
   createHandle createFunction;
   destroyHandle destroyFunction;
@@ -40,8 +40,8 @@ class SharedObjectLoader : public BZRobotScript
   public:
     ~SharedObjectLoader();
     bool load(std::string filename);
-    BZRobot *create(void);
-    void destroy(BZRobot *instance);
+    BZRobots::Robot *create(void);
+    void destroy(BZRobots::Robot *instance);
 };
 
 #endif /* __SHAREDOBJECTLOADER_H__ */

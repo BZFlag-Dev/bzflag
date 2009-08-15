@@ -15,6 +15,8 @@
 
 #include <string>
 
+namespace BZRobots {
+
 class Bullet {
 public:
   Bullet();
@@ -40,10 +42,12 @@ protected:
   bool active;
 };
 
+} // namespace BZRobots
+
 #else
-
+namespace BZRobots {
 class Bullet;
-
+}
 #endif /* __BULLET_H__ */
 
 // Local Variables: ***

@@ -22,16 +22,16 @@
 /* local interface headers */
 #include "BZRobotPlayer.h"
 
-#include "BZRobot.h"
-#include "BZRobotCallbacks.h"
+#include "Robot.h"
+#include "RobotCallbacks.h"
 
-class BZRobotScript
+class RobotScript
 {
 public:
-  BZRobotScript();
-  virtual ~BZRobotScript() {}
+  RobotScript();
+  virtual ~RobotScript() {}
   
-  static BZRobotScript *loadFile(std::string filename);
+  static RobotScript *loadFile(std::string filename);
   
   void setPlayer(BZRobotPlayer *_botplayer);
   bool hasPlayer();
@@ -45,13 +45,13 @@ public:
   
 protected:
   virtual bool load(std::string /*filename*/) { return false; }
-  virtual BZRobot *create(void) { return NULL; }
-  virtual void destroy(BZRobot * /*instance*/) { }
+  virtual BZRobots::Robot *create(void) { return NULL; }
+  virtual void destroy(BZRobots::Robot * /*instance*/) { }
   
 private:
-  BZRobot *robot;
+  BZRobots::Robot *robot;
   BZRobotPlayer *botplayer;
-  BZRobotCallbacks *bzrobotcb;
+  RobotCallbacks *bzrobotcb;
   
 #ifndef _WIN32
   pthread_t rthread;

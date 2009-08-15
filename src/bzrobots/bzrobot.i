@@ -1,14 +1,16 @@
 %module(directors="1") bzrobot
 %{
-#include "BZRobot.h"
-#include "BZAdvancedRobot.h"
 #include "Bullet.h"
+#include "Events.h"
+#include "Robot.h"
+#include "AdvancedRobot.h"
 %}
 
 %feature("director");
 
-%include "std_vector.i"
+%include "std_list.i"
 %include "std_string.i"
+%include "std_vector.i"
 
 %typemap(out) float [ANY] {
     int i;
@@ -26,6 +28,7 @@
     }
 }
 
-%include "BZRobot.h"
-%include "BZAdvancedRobot.h"
 %include "Bullet.h"
+%include "Events.h"
+%include "Robot.h"
+%include "AdvancedRobot.h"

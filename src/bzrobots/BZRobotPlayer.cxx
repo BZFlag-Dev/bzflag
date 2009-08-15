@@ -29,11 +29,56 @@
 
 
 // event priority sorting
-bool compareEventPriority(BZRobotEvent a, BZRobotEvent b)
+static bool compareEventPriority(BZRobots::Event a, BZRobots::Event b)
 {
   if(a.getPriority() < b.getPriority())
     return true;
   return false;
+}
+
+
+static void runEventHandler(BZRobots::Robot *robot,BZRobots::Event e)
+{
+  if(!robot)
+	  return;
+  switch(e.getEventID())
+  {
+    case BZRobots::BattleEndedEventID:
+      robot->onBattleEnded(*((BZRobots::BattleEndedEvent *)&e));
+      break;
+    case BZRobots::BulletHitEventID:
+      robot->onBulletHit(*((BZRobots::BulletHitEvent *)&e));
+      break;
+    case BZRobots::BulletMissedEventID:
+      robot->onBulletMissed(*((BZRobots::BulletMissedEvent *)&e));
+      break;
+    case BZRobots::DeathEventID:
+      robot->onDeath(*((BZRobots::DeathEvent *)&e));
+      break;
+    case BZRobots::HitByBulletEventID:
+      robot->onHitByBullet(*((BZRobots::HitByBulletEvent *)&e));
+      break;
+    case BZRobots::HitWallEventID:
+      robot->onHitWall(*((BZRobots::HitWallEvent *)&e));
+      break;
+    case BZRobots::RobotDeathEventID:
+      robot->onRobotDeath(*((BZRobots::RobotDeathEvent *)&e));
+      break;
+    case BZRobots::ScannedRobotEventID:
+      robot->onScannedRobot(*((BZRobots::ScannedRobotEvent *)&e));
+      break;
+    case BZRobots::SpawnEventID:
+      robot->onSpawn(*((BZRobots::SpawnEvent *)&e));
+      break;
+    case BZRobots::StatusEventID:
+      robot->onStatus(*((BZRobots::StatusEvent *)&e));
+      break;
+    case BZRobots::WinEventID:
+      robot->onWin(*((BZRobots::WinEvent *)&e));
+      break;
+    default:
+      break;
+  }
 }
 
 
@@ -82,7 +127,7 @@ BZRobotPlayer::~BZRobotPlayer()
 }
 
 // Called by bzrobots client thread
-void BZRobotPlayer::setRobot(BZRobot *_robot)
+void BZRobotPlayer::setRobot(BZRobots::Robot *_robot)
 {
   robot = _robot;
 }
@@ -91,7 +136,7 @@ void BZRobotPlayer::setRobot(BZRobot *_robot)
 void BZRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
-  DeathEvent e;
+  BZRobots::DeathEvent e;
   e.setTime(TimeKeeper::getCurrent().getSeconds());
   LOCK_PLAYER
   tsEventQueue.clear();
@@ -103,7 +148,7 @@ void BZRobotPlayer::explodeTank()
 // Called by bzrobots client thread
 void BZRobotPlayer::restart(const fvec3& pos, float azimuth)
 {
-  SpawnEvent e;
+  BZRobots::SpawnEvent e;
   e.setTime(TimeKeeper::getCurrent().getSeconds());
   LOCK_PLAYER
   tsEventQueue.push_back(e);
@@ -124,7 +169,7 @@ void BZRobotPlayer::update(float inputDT)
   // Check for wall hit
   if (hasHitWall()) {
     if (!didHitWall) {
-      HitWallEvent hitWallEvent(0.0f); // Get real angle to wall?
+      BZRobots::HitWallEvent hitWallEvent(0.0f); // Get real angle to wall?
       hitWallEvent.setTime(TimeKeeper::getCurrent().getSeconds());
       tsEventQueue.push_back(hitWallEvent);
       didHitWall = true;
@@ -150,14 +195,14 @@ void BZRobotPlayer::update(float inputDT)
 	fvec3 rpdv(rpp.x-cpp.x,rpp.y-cpp.y,rpp.z-cpp.z);
 	double remotePlayerDistance = sqrt(rpdv.x*rpdv.x + rpdv.y*rpdv.y); // exclude z vector
 	double remotePlayerBearing = atan2(rpdv.x,rpdv.y);
-	ScannedRobotEvent scannedRobotEvent(
-      remotePlayers[i]->getCallSign(),
-      remotePlayerBearing,
+	BZRobots::ScannedRobotEvent scannedRobotEvent(
+          remotePlayers[i]->getCallSign(),
+          remotePlayerBearing,
 	  remotePlayerDistance,
 	  rpp.x, rpp.y, rpp.z,
 	  remotePlayers[i]->getAngle(),
 	  remotePlayerVelocity);
-    scannedRobotEvent.setTime(TimeKeeper::getCurrent().getSeconds());
+        scannedRobotEvent.setTime(TimeKeeper::getCurrent().getSeconds());
 	tsScanQueue.push_back(scannedRobotEvent);
   }
   /*
@@ -287,12 +332,21 @@ void BZRobotPlayer::botAhead(double distance)
 
 void BZRobotPlayer::botBack(double distance)
 {
-	botAhead(-distance);
+  botAhead(-distance);
+}
+
+void BZRobotPlayer::botClearAllEvents()
+{
+  UNLOCK_PLAYER
+  tsScanQueue.clear();
+  tsEventQueue.clear();
+  purgeQueue = true;
+  UNLOCK_PLAYER
 }
 
 void BZRobotPlayer::botDoNothing()
 {
-	botExecute();
+  botExecute();
 }
 
 // This does three things:
@@ -302,7 +356,7 @@ void BZRobotPlayer::botDoNothing()
 // 4) send status event ("start of next turn")
 void BZRobotPlayer::botExecute()
 {
-  std::list<BZRobotEvent> eventQueue;
+  std::list<BZRobots::Event> eventQueue;
 
   LOCK_PLAYER
   if (tsPendingUpdates[BZRobotPlayer::speedUpdate])
@@ -346,8 +400,8 @@ void BZRobotPlayer::botExecute()
     eventQueue.sort(compareEventPriority);
     purgeQueue = false;
     while(!purgeQueue && !eventQueue.empty()) {
-      BZRobotEvent e = eventQueue.front();
-	  e.Execute(robot);
+      BZRobots::Event e = eventQueue.front();
+	  runEventHandler(robot,e);
 	  eventQueue.pop_front();
     }
     if(purgeQueue) {
@@ -368,16 +422,40 @@ void BZRobotPlayer::botExecute()
 
   if(!inEvents) {
     inEvents = true;
-    StatusEvent statusEvent;
+    BZRobots::StatusEvent statusEvent;
     statusEvent.setTime(TimeKeeper::getCurrent().getSeconds());
-    statusEvent.Execute(robot);
+    runEventHandler(robot,statusEvent);
     inEvents = false;
   }
 }
-void BZRobotPlayer::botFire()
+void BZRobotPlayer::botFire(double power)
 {
-  botSetFire();
+  botSetFire(power);
   botExecute();
+}
+
+BZRobots::Bullet* BZRobotPlayer::botFireBullet(double power)
+{
+  BZRobots::Bullet *bullet;
+  bullet = botSetFireBullet(power);
+  botExecute();
+  return bullet;
+}
+
+double BZRobotPlayer::botGetBattleFieldLength()
+{
+  LOCK_PLAYER
+  double battleFieldSize = tsBattleFieldSize;
+  UNLOCK_PLAYER
+  return battleFieldSize;
+}
+
+double BZRobotPlayer::botGetBattleFieldWidth()
+{
+  LOCK_PLAYER
+  double battleFieldSize = tsBattleFieldSize;
+  UNLOCK_PLAYER
+  return battleFieldSize;
 }
 
 double BZRobotPlayer::botGetDistanceRemaining()
@@ -392,9 +470,9 @@ double BZRobotPlayer::botGetDistanceRemaining()
   return distanceRemaining;
 }
 
-const char * BZRobotPlayer::botGetName()
+double BZRobotPlayer::botGetEnergy()
 {
-  return tsName.c_str();
+  return 100.0f;
 }
 
 double BZRobotPlayer::botGetGunCoolingRate()
@@ -402,13 +480,9 @@ double BZRobotPlayer::botGetGunCoolingRate()
   return tsShotReloadTime;
 }
 
-
-double BZRobotPlayer::botGetBattleFieldSize()
+double BZRobotPlayer::botGetGunHeading()
 {
-  LOCK_PLAYER
-  double battleFieldSize = tsBattleFieldSize;
-  UNLOCK_PLAYER
-  return battleFieldSize;
+  return botGetHeading();
 }
 
 double BZRobotPlayer::botGetGunHeat()
@@ -419,36 +493,12 @@ double BZRobotPlayer::botGetGunHeat()
   return gunHeat;
 }
 
-double BZRobotPlayer::botGetVelocity()
-{
-  LOCK_PLAYER
-  double velocity = tsCurrentSpeed;
-  UNLOCK_PLAYER
-  return velocity;
-}
-
 double BZRobotPlayer::botGetHeading()
 {
   LOCK_PLAYER
   double heading = tsCurrentHeading * 180.0f/M_PI;
   UNLOCK_PLAYER
   return heading;
-}
-
-double BZRobotPlayer::botGetWidth()
-{
-  LOCK_PLAYER
-  double width = tsTankSize.x;
-  UNLOCK_PLAYER
-  return width;
-}
-
-double BZRobotPlayer::botGetLength()
-{
-  LOCK_PLAYER
-  double length = tsTankSize.y;
-  UNLOCK_PLAYER
-  return length;
 }
 
 double BZRobotPlayer::botGetHeight()
@@ -459,9 +509,71 @@ double BZRobotPlayer::botGetHeight()
   return height;
 }
 
+double BZRobotPlayer::botGetLength()
+{
+  LOCK_PLAYER
+  double length = tsTankSize.y;
+  UNLOCK_PLAYER
+  return length;
+}
+
+std::string BZRobotPlayer::botGetName()
+{
+  return tsName;
+}
+
+int BZRobotPlayer::botGetNumRounds()
+{
+  return 1;
+}
+
+int BZRobotPlayer::botGetOthers()
+{
+  // TODO: Make this return the number of other tanks
+  return 1;
+}
+
+double BZRobotPlayer::botGetRadarHeading()
+{
+  return botGetHeading();
+}
+
+int BZRobotPlayer::botGetRoundNum()
+{
+  return 1;
+}
+
 double BZRobotPlayer::botGetTime()
 {
   return TimeKeeper::getCurrent().getSeconds();
+}
+
+double BZRobotPlayer::botGetTurnRemaining()
+{
+  double turnRemaining = 0.0f;
+  LOCK_PLAYER
+  if (tsPendingUpdates[BZRobotPlayer::turnUpdate])
+    turnRemaining = tsNextTurn * 180.0f/M_PI;
+  else
+    turnRemaining = tsTurnRemaining * 180.0f/M_PI;
+  UNLOCK_PLAYER
+  return turnRemaining;
+}
+
+double BZRobotPlayer::botGetVelocity()
+{
+  LOCK_PLAYER
+  double velocity = tsCurrentSpeed;
+  UNLOCK_PLAYER
+  return velocity;
+}
+
+double BZRobotPlayer::botGetWidth()
+{
+  LOCK_PLAYER
+  double width = tsTankSize.x;
+  UNLOCK_PLAYER
+  return width;
 }
 
 double BZRobotPlayer::botGetX()
@@ -488,18 +600,6 @@ double BZRobotPlayer::botGetZ()
   return zPos;
 }
 
-double BZRobotPlayer::botGetTurnRemaining()
-{
-  double turnRemaining = 0.0f;
-  LOCK_PLAYER
-  if (tsPendingUpdates[BZRobotPlayer::turnUpdate])
-    turnRemaining = tsNextTurn * 180.0f/M_PI;
-  else
-    turnRemaining = tsTurnRemaining * 180.0f/M_PI;
-  UNLOCK_PLAYER
-  return turnRemaining;
-}
-
 void BZRobotPlayer::botResume()
 {
   botSetResume();
@@ -507,6 +607,19 @@ void BZRobotPlayer::botResume()
 }
 
 void BZRobotPlayer::botScan()
+{
+  botExecute();
+}
+
+void BZRobotPlayer::botSetAdjustGunForRobotTurn(bool /*independent*/)
+{
+}
+
+void BZRobotPlayer::botSetAdjustRadarForGunTurn(bool /*independent*/)
+{
+}
+
+void BZRobotPlayer::botSetAdjustRadarForRobotTurn(bool /*independent*/)
 {
 }
 
@@ -518,17 +631,34 @@ void BZRobotPlayer::botSetAhead(double distance)
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::botSetFire()
+void BZRobotPlayer::botSetBack(double distance)
+{
+  LOCK_PLAYER
+  tsNextDistance = -distance;
+  tsPendingUpdates[BZRobotPlayer::distanceUpdate] = true;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetFire(double /*power*/)
 {
   LOCK_PLAYER
   tsShoot = true;
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::botSetTurnRate(double rate)
+BZRobots::Bullet* BZRobotPlayer::botSetFireBullet(double /*power*/)
 {
   LOCK_PLAYER
-  tsNextTurnRate = rate * M_PI/180.0f;
+  tsShoot = true;
+  UNLOCK_PLAYER
+  // TODO: Make a bullet and return it
+  return NULL;
+}
+
+void BZRobotPlayer::botSetMaxTurnRate(double turnRate)
+{
+  LOCK_PLAYER
+  tsNextTurnRate = turnRate * M_PI/180.0f;
   tsPendingUpdates[BZRobotPlayer::turnRateUpdate] = true;
   UNLOCK_PLAYER
 }
@@ -554,12 +684,6 @@ void BZRobotPlayer::botSetResume()
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::botStop(bool overwrite)
-{
-  botSetStop(overwrite);
-  botExecute();
-}
-
 void BZRobotPlayer::botSetStop(bool overwrite)
 {
   LOCK_PLAYER
@@ -581,12 +705,50 @@ void BZRobotPlayer::botSetTurnLeft(double turn)
   UNLOCK_PLAYER
 }
 
+void BZRobotPlayer::botSetTurnRate(double rate)
+{
+  LOCK_PLAYER
+  tsNextTurnRate = rate * M_PI/180.0f;
+  tsPendingUpdates[BZRobotPlayer::turnRateUpdate] = true;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetTurnRight(double turn)
+{
+  LOCK_PLAYER
+  tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
+  tsNextTurn = -turn * M_PI/180.0f;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botStop(bool overwrite)
+{
+  botSetStop(overwrite);
+  botExecute();
+}
+
+void BZRobotPlayer::botTurnGunLeft(double /*turn*/)
+{
+}
+
+void BZRobotPlayer::botTurnGunRight(double /*turn*/)
+{
+}
+
 void BZRobotPlayer::botTurnLeft(double turn)
 {
   botSetTurnLeft(turn);
   botExecute();
   while(botGetTurnRemaining() > 0.0f)
 	  TimeKeeper::sleep(0.01);
+}
+
+void BZRobotPlayer::botTurnRadarLeft(double /*turn*/)
+{
+}
+
+void BZRobotPlayer::botTurnRadarRight(double /*turn*/)
+{
 }
 
 void BZRobotPlayer::botTurnRight(double turn)

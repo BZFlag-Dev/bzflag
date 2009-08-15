@@ -14,12 +14,12 @@
 #include "ScriptLoaderFactory.h"
 
 /* local implementation headers */
-#include "SharedObjectLoader.h"
+#include "SharedObjectScript.h"
 
-#include "LuaLoader.h"
+#include "LuaScript.h"
 
 #ifdef WITH_PYTHONLOADER
-#   include "PythonLoader.h"
+#   include "PythonScript.h"
 #endif
 
 
@@ -29,7 +29,7 @@ ScriptLoaderFactory* Singleton<ScriptLoaderFactory>::_instance = NULL;
 
 /* public */
 
-BZRobotScript *
+RobotScript *
 ScriptLoaderFactory::scriptTool(std::string extension)
 {
   std::string lcExtension = TextUtils::tolower(extension);

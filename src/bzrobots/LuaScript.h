@@ -10,27 +10,36 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
-#include "Bullet.h"
+#ifndef __LUA_ROBOT_H__
+#define __LUA_ROBOT_H__
 
-BZRobots::Bullet::Bullet() :
-      heading(0.0f),
-      headingRadians(0.0f),
-          ownerName(""),
-      velocity(0.0f),
-      victimName(""),
-      x(0.0f),
-      y(0.0f),
-          z(0.0f),
-          active(false)
-{
+// system headers
+#include <string>
 
-}
+// local headers
+#include "RobotScript.h"
+#include "Robot.h"
 
-BZRobots::Bullet::~Bullet()
-{
 
-}
+class LuaLoader : public RobotScript {
+  public:
+    LuaLoader();
+    ~LuaLoader();
+
+    bool load(std::string filename);
+    BZRobots::Robot* create();
+    void destroy(BZRobots::Robot* instance);
+
+  private:
+    std::string scriptFile;
+    bool initialized;
+    bool initialize();
+    bool addSysPath(std::string path);
+};
+
+
+#endif /* __LUA_ROBOT_H__ */
+
 
 // Local Variables: ***
 // mode: C++ ***

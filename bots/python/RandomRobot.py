@@ -5,7 +5,7 @@ import random
 def create():
     return RandomRobot()
 
-class RandomRobot(bzrobot.BZAdvancedRobot):
+class RandomRobot(bzrobot.AdvancedRobot):
 
     def run(self):
 	while True:

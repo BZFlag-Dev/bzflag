@@ -13,7 +13,7 @@
 #include "common.h"
 
 /* interface header */
-#include "SharedObjectLoader.h"
+#include "SharedObjectScript.h"
 
 /* system headers */
 #ifdef HAVE_DLFCN_H
@@ -122,13 +122,13 @@ SharedObjectLoader::~SharedObjectLoader()
 }
 
 
-BZRobot *SharedObjectLoader::create(void)
+BZRobots::Robot *SharedObjectLoader::create(void)
 {
   return (*createFunction)();
 }
 
 
-void SharedObjectLoader::destroy(BZRobot *instance)
+void SharedObjectLoader::destroy(BZRobots::Robot *instance)
 {
   (*destroyFunction)(instance);
 }

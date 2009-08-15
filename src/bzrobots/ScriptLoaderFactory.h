@@ -24,18 +24,18 @@
 #include "TextUtils.h"
 
 /* local interface headers */
-#include "BZRobotScript.h"
+#include "RobotScript.h"
 
 
 /** convenience handle on the singleton instance */
 #define SCRIPTTOOLFACTORY (ScriptLoaderFactory::instance())
 
 class ScriptLoaderFactory : public Singleton<ScriptLoaderFactory>,
-			    public Factory<BZRobotScript, std::string>
+			    public Factory<RobotScript, std::string>
 {
 
 public:
-  BZRobotScript *scriptTool(std::string extension);
+  RobotScript *scriptTool(std::string extension);
   static void initialize();
 
 

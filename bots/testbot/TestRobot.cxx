@@ -10,15 +10,40 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
-#include "TestRobot.h"
+/* BZRobots API Header */
+#include "AdvancedRobot.h"
+
+using namespace BZRobots;
+
+/**
+ * TestRobot: Testing basic stuff.
+ */
+class TestRobot : public AdvancedRobot
+{
+public:
+  TestRobot() {}
+
+  void run();
+
+  void onBattleEnded(const BattleEndedEvent &e);
+  void onBulletHit(const BulletHitEvent &e);
+  void onBulletMissed(const BulletMissedEvent &e);
+  void onDeath(const DeathEvent &e);
+  void onHitByBullet(const HitByBulletEvent &e);
+  void onHitWall(const HitWallEvent &e);
+  void onRobotDeath(const RobotDeathEvent &e);
+  void onScannedRobot(const ScannedRobotEvent &e);
+  void onSpawn(const SpawnEvent &e);
+  void onStatus(const StatusEvent &e);
+  void onWin(const WinEvent &e);
+};
 
 extern "C" {
-  BZAdvancedRobot *create()
+  AdvancedRobot *create()
   {
     return new TestRobot();
   }
-  void destroy(BZAdvancedRobot *robot)
+  void destroy(AdvancedRobot *robot)
   {
     delete robot;
   }

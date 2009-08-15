@@ -10,23 +10,28 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __BZROBOTEVENTS_H__
-#define __BZROBOTEVENTS_H__
+#ifndef __BZROBOTS_EVENTS_H__
+#define __BZROBOTS_EVENTS_H__
 
 /* system interface headers */
 #include <string>
 
 /* local interface headers */
-#include "BZRobot.h"
+#include "Robot.h"
 #include "Bullet.h"
+
+namespace BZRobots {
 
 typedef enum EventID {
   UnknownEventID = -1,
   BattleEndedEventID = 0,
+  BulletFiredEventID,
   BulletHitEventID,
+  BulletHitBulletEventID,
   BulletMissedEventID,
   DeathEventID,
   HitByBulletEventID,
+  HitRobotEventID,
   HitWallEventID,
   RobotDeathEventID,
   ScannedRobotEventID,
@@ -35,11 +40,31 @@ typedef enum EventID {
   WinEventID
 } EventID;
 
-class BZRobotEvent
+/*
+   BattleEndedEvent:     100 (reserved)
+   WinEvent:             100 (reserved)
+   SkippedTurnEvent:     100 (reserved)
+   StatusEvent:           99
+   Key and mouse events:  98
+   CustomEvent:           80 (default value)
+   MessageEvent:          75
+   RobotDeathEvent:       70
+   BulletMissedEvent:     60
+   BulletHitBulletEvent:  55
+   BulletHitEvent:        50
+   HitByBulletEvent:      40
+   HitWallEvent:          30
+   HitEvent:         20
+   ScannedRobotEvent:     10
+   PaintEvent:             5
+   DeathEvent:            -1 (reserved)
+*/
+
+class Event
 {
 public:
-  BZRobotEvent() { eventID = UnknownEventID; priority = 80; time = 0.0; }
-  virtual ~BZRobotEvent() {}
+  Event() { eventID = UnknownEventID; priority = 80; time = 0.0; }
+  virtual ~Event() {}
 
   void setTime(double _time) { time = _time; }
   void setPriority(int _priority) { priority = _priority; }
@@ -48,15 +73,13 @@ public:
   inline int getEventID() const { return eventID; }
   inline int getPriority() const { return priority; }
 
-  void Execute(BZRobot *);
-
 protected:
   int eventID;
   int priority;
   double time;
 };
 
-class BattleEndedEvent : public BZRobotEvent
+class BattleEndedEvent : public Event
 {
 public:
   BattleEndedEvent(bool _aborted) :
@@ -67,7 +90,18 @@ private:
   bool aborted;
 };
 
-class BulletHitEvent : public BZRobotEvent
+class BulletFiredEvent : public Event
+{
+public:
+  BulletFiredEvent(Bullet *_bullet) :
+    bullet(_bullet) { eventID = BulletFiredEventID; priority = 50; }
+  inline Bullet * getBullet() const { return bullet; }
+
+private:
+  Bullet *bullet;
+};
+
+class BulletHitEvent : public Event
 {
 public:
   BulletHitEvent(std::string _victimName, Bullet *_bullet) :
@@ -80,7 +114,20 @@ private:
   Bullet *bullet;
 };
 
-class BulletMissedEvent : public BZRobotEvent
+class BulletHitBulletEvent : public Event
+{
+public:
+  BulletHitBulletEvent(Bullet *_bullet, Bullet *_hitBullet) :
+    bullet(_bullet), hitBullet(_hitBullet) { eventID = BulletHitEventID; priority = 50; }
+  inline Bullet * getBullet() const { return bullet; }
+  inline Bullet * getHitBullet() const { return hitBullet; }
+
+private:
+  Bullet *bullet;
+  Bullet *hitBullet;
+};
+
+class BulletMissedEvent : public Event
 {
 public:
   BulletMissedEvent(Bullet *_bullet) :
@@ -91,13 +138,13 @@ private:
   Bullet *bullet;
 };
 
-class DeathEvent : public BZRobotEvent
+class DeathEvent : public Event
 {
 public:
   DeathEvent() { eventID = DeathEventID; priority = 0; }
 };
 
-class HitByBulletEvent : public BZRobotEvent
+class HitByBulletEvent : public Event
 {
 public:
   HitByBulletEvent(double _bearing, Bullet *_bullet) :
@@ -110,7 +157,26 @@ private:
   Bullet *bullet;
 };
 
-class HitWallEvent : public BZRobotEvent
+class HitRobotEvent : public Event
+{
+public:
+  HitRobotEvent(std::string _name, double _bearing, double _energy, bool _atFault) :
+	name(_name), bearing(_bearing), energy(_energy), atFault(_atFault)
+        { eventID = HitWallEventID; priority = 30; }
+
+  inline std::string getName() const { return name; }
+  inline double getEnergy() const { return energy; }
+  inline double getBearing() const { return bearing; }
+  inline bool isMyFault() const { return atFault; }
+
+private:
+  std::string name;
+  double bearing;
+  double energy;
+  bool atFault;
+};
+
+class HitWallEvent : public Event
 {
 public:
   HitWallEvent(double _bearing) :
@@ -122,13 +188,13 @@ private:
   double bearing;
 };
 
-class RobotDeathEvent : public BZRobotEvent
+class RobotDeathEvent : public Event
 {
 public:
   RobotDeathEvent() { eventID = RobotDeathEventID; priority = 70; }
 };
 
-class ScannedRobotEvent : public BZRobotEvent
+class ScannedRobotEvent : public Event
 {
 public:
   ScannedRobotEvent(std::string _name,
@@ -167,37 +233,45 @@ private:
   double velocity;
 };
 
-class SpawnEvent : public BZRobotEvent
+class SpawnEvent : public Event
 {
 public:
   SpawnEvent() { eventID = SpawnEventID; priority = 0; }
 };
 
-class StatusEvent : public BZRobotEvent
+class StatusEvent : public Event
 {
 public:
   StatusEvent() { eventID = StatusEventID; priority = 99; }
 };
 
-class WinEvent : public BZRobotEvent
+class WinEvent : public Event
 {
 public:
   WinEvent() { eventID = WinEventID; priority = 100; }
 };
 
+
+} // namespace BZRobots
+
 #else
+namespace BZRobots {
 class BattleEndedEvent;
+class BulletFiredEvent;
 class BulletHitEvent;
+class BulletHitBulletEvent;
 class BulletMissedEvent;
 class DeathEvent;
 class HitByBulletEvent;
+class HitRobotEvent;
 class HitWallEvent;
 class RobotDeathEvent;
 class ScannedRobotEvent;
 class SpawnEvent;
 class StatusEvent;
 class WinEvent;
-#endif /* __BZROBOTEVENTS_H__ */
+}
+#endif /* __BZROBOTS_EVENTS_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

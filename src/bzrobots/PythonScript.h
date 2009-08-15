@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __PYTHONLOADER_H__
-#define __PYTHONLOADER_H__
+#ifndef __PYTHONSCRIPT_H__
+#define __PYTHONSCRIPT_H__
 
 #include "common.h"
 
@@ -31,8 +31,8 @@
 
 
 /* local interface headers */
-#include "BZRobotScript.h"
-#include "BZAdvancedRobot.h"
+#include "RobotScript.h"
+#include "Robot.h"
 
 #ifdef SWIG_VERSION_BCD
 # if SWIG_VERSION_BCD < 0x010337
@@ -40,7 +40,7 @@
 # endif
 #endif
 
-class PythonLoader : public BZRobotScript {
+class PythonLoader : public RobotScript {
   PyObject *module, *ctor;
   PyObject *pyrobot;
 
@@ -52,11 +52,11 @@ class PythonLoader : public BZRobotScript {
     PythonLoader();
     ~PythonLoader();
     bool load(std::string filename);
-    BZRobot *create(void);
-    void destroy(BZRobot *instance);
+    BZRobots::Robot *create(void);
+    void destroy(BZRobots::Robot *instance);
 };
 
-#endif /* __PYTHONLOADER_H__ */
+#endif /* __PYTHONSCRIPT_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -4,7 +4,7 @@ import bzrobot
 def create():
     return TestRobot()
 
-class TestRobot(bzrobot.BZAdvancedRobot):
+class TestRobot(bzrobot.AdvancedRobot):
 
     def run(self):
         while True:

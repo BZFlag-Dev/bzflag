@@ -10,26 +10,37 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __BZROBOTCALLBACKS_H__
-#define __BZROBOTCALLBACKS_H__
+#ifndef __ROBOTCALLBACKS_H__
+#define __ROBOTCALLBACKS_H__
 
-#include "common.h"
+#include <string>
 
-typedef struct BZRobotCallbacks {
+#include "Bullet.h"
+
+typedef struct RobotCallbacks {
   void *data; // Data to be sent back to callbacks
   void (*Ahead)(void *data, double);
   void (*Back)(void *data, double);
+  void (*ClearAllEvents)(void *data);
   void (*DoNothing)(void *data);
   void (*Execute)(void *data);
-  void (*Fire)(void *data);
-  double (*GetBattleFieldSize)(void *data);
+  void (*Fire)(void *data, double);
+  BZRobots::Bullet* (*FireBullet)(void *data, double);
+  double (*GetBattleFieldLength)(void *data);
+  double (*GetBattleFieldWidth)(void *data);
   double (*GetDistanceRemaining)(void *data);
+  double (*GetEnergy)(void *data);
   double (*GetGunCoolingRate)(void *data);
+  double (*GetGunHeading)(void *data);
   double (*GetGunHeat)(void *data);
   double (*GetHeading)(void *data);
   double (*GetHeight)(void *data);
-  const char * (*GetName)(void *data);
   double (*GetLength)(void *data);
+  std::string (*GetName)(void *data);
+  int (*GetNumRounds)(void *data);
+  int (*GetOthers)(void *data);
+  double (*GetRadarHeading)(void *data);
+  int (*GetRoundNum)(void *data);
   double (*GetTime)(void *data);
   double (*GetTurnRemaining)(void *data);
   double (*GetVelocity)(void *data);
@@ -37,25 +48,36 @@ typedef struct BZRobotCallbacks {
   double (*GetX)(void *data);
   double (*GetY)(void *data);
   double (*GetZ)(void *data);
+  void (*Resume)(void *data);
+  void (*Scan)(void *data);
+  void (*SetAdjustGunForRobotTurn)(void *data, bool);
+  void (*SetAdjustRadarForGunTurn)(void *data, bool);
+  void (*SetAdjustRadarForRobotTurn)(void *data, bool);
   void (*SetAhead)(void *data, double);
-  void (*SetFire)(void *data);
+  void (*SetBack)(void *data, double);
+  void (*SetFire)(void *data, double);
+  BZRobots::Bullet* (*SetFireBullet)(void *data, double);
+  void (*SetMaxTurnRate)(void *data, double);
   void (*SetMaxVelocity)(void *data, double);
   void (*SetResume)(void *data);
   void (*SetStop)(void *data, bool);
   void (*SetTurnLeft)(void *data, double);
   void (*SetTurnRate)(void *data, double);
-  void (*Resume)(void *data);
-  void (*Scan)(void *data);
+  void (*SetTurnRight)(void *data, double);
   void (*Stop)(void *data, bool);
+  void (*TurnGunLeft)(void *data, double);
+  void (*TurnGunRight)(void *data, double);
   void (*TurnLeft)(void *data, double);
+  void (*TurnRadarLeft)(void *data, double);
+  void (*TurnRadarRight)(void *data, double);
   void (*TurnRight)(void *data, double);
-} BZRobotCallbacks;
+} RobotCallbacks;
 
 #else
 
-struct BZRobotCallbacks;
+struct RobotCallbacks;
 
-#endif /* __BZROBOTCALLBACKS_H__ */
+#endif /* __ROBOTCALLBACKS_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

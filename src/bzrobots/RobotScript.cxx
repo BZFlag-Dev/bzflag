@@ -11,23 +11,23 @@
  */
 
 /* interface header */
-#include "BZRobotScript.h"
+#include "RobotScript.h"
 
 /* common implementation headers */
 #include "bzsignal.h"
 #include "TimeKeeper.h"
 
 /* local implementation headers */
-#include "BZRobotControl.h"
+#include "RobotControl.h"
 #include "ScriptLoaderFactory.h"
 
 /* static entry point for threading */
 static void *startBot(void *bot) {
-  ((BZRobot *)bot)->run();
+  ((BZRobots::Robot *)bot)->run();
   return NULL;
 }
 
-BZRobotScript::BZRobotScript()
+RobotScript::RobotScript()
 {
   robot = NULL;
   botplayer = NULL;
@@ -37,39 +37,39 @@ BZRobotScript::BZRobotScript()
   error = "Invalid script filename.";
 }
 
-BZRobotScript *BZRobotScript::loadFile(std::string filename)
+RobotScript *RobotScript::loadFile(std::string filename)
 {
   std::string::size_type extension_pos = filename.find_last_of(".");
   if (extension_pos == std::string::npos || extension_pos >= filename.length()) {
-    return new BZRobotScript();
+    return new RobotScript();
   }
   std::string extension = filename.substr(extension_pos + 1);
   
   if (!SCRIPTTOOLFACTORY.IsRegistered(extension)) {
-    return new BZRobotScript();
+    return new RobotScript();
   }
 
-  BZRobotScript *scriptTool = SCRIPTTOOLFACTORY.scriptTool(extension);
+  RobotScript *scriptTool = SCRIPTTOOLFACTORY.scriptTool(extension);
   scriptTool->load(filename);
 
   return scriptTool;
 }
 
-void BZRobotScript::setPlayer(BZRobotPlayer *_botplayer)
+void RobotScript::setPlayer(BZRobotPlayer *_botplayer)
 {
   botplayer = _botplayer;
   botplayer->setRobot(robot);
-  bzrobotcb = BZRobotControl::CallbackSet(_botplayer);
+  bzrobotcb = RobotControl::CallbackSet(_botplayer);
   if(robot)
 	robot->setCallbacks(bzrobotcb);
 }
 
-bool BZRobotScript::hasPlayer()
+bool RobotScript::hasPlayer()
 {
   return (botplayer != NULL);
 }
 
-void BZRobotScript::start()
+void RobotScript::start()
 {
   if (!robot) {
     robot = create();
@@ -90,7 +90,7 @@ void BZRobotScript::start()
   _running = true;
 }
 
-void BZRobotScript::stop()
+void RobotScript::stop()
 {
 #ifndef _WIN32
   pthread_join(rthread, NULL);

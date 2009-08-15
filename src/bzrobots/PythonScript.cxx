@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "PythonLoader.h"
+#include "PythonScript.h"
 
 #include "bzrobot_python_runtime.h"
 
@@ -145,7 +145,7 @@ bool PythonLoader::load(std::string filepath)
   return true;
 }
 
-BZRobot *PythonLoader::create(void)
+BZRobots::Robot *PythonLoader::create(void)
 {
   Py_XDECREF(pyrobot);
 
@@ -156,10 +156,10 @@ BZRobot *PythonLoader::create(void)
   }
 
   SwigPyObject *holder = SWIG_Python_GetSwigThis(pyrobot);
-  return static_cast<BZAdvancedRobot *>(holder ? holder->ptr : 0);
+  return static_cast<BZRobots::Robot *>(holder ? holder->ptr : 0);
 }
 
-void PythonLoader::destroy(BZRobot * /*instance*/)
+void PythonLoader::destroy(BZRobots::Robot * /*instance*/)
 {
   Py_XDECREF(pyrobot);
   pyrobot = NULL;
