@@ -17,6 +17,7 @@
 
 #include "bzfsAPI.h"
 #include <map>
+#include <stdio.h>
 #include <stdarg.h>
 
 BZ_GET_PLUGIN_VERSION
