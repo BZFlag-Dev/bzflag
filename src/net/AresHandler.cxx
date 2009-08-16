@@ -62,7 +62,7 @@ void AresHandler::queryHostname(struct sockaddr *clientAddr)
 		     sizeof(in_addr), AF_INET, staticCallback, (void *)this);
 }
 
-void AresHandler::queryHost(char *hostName)
+void AresHandler::queryHost(const char *hostName)
 {
   if (aresFailed)
     return;
@@ -73,7 +73,7 @@ void AresHandler::queryHost(char *hostName)
     return;
   }
 
-  char *queryHostName = hostName;
+  const char *queryHostName = hostName;
 
   char myHost[MAXHOSTNAMELEN+1];
   if (hostName == NULL || *hostName == '\0') {
