@@ -1,6 +1,7 @@
 %module(directors="1") bzrobot
 %{
 #include "Bullet.h"
+#include "RobotStatus.h"
 #include "Events.h"
 #include "Robot.h"
 #include "AdvancedRobot.h"
@@ -29,6 +30,7 @@
 }
 
 %include "Bullet.h"
+%include "RobotStatus.h"
 %include "Events.h"
 %include "Robot.h"
 %include "AdvancedRobot.h"
