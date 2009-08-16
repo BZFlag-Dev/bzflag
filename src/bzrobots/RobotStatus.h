@@ -18,7 +18,7 @@ namespace BZRobots {
 class RobotStatus {
 public:
   RobotStatus();
-  RobotStatus::RobotStatus(
+  RobotStatus(
     double _botDistanceRemaining,
     double _botEnergy,
     double _botGunHeading,
