@@ -19,6 +19,7 @@
 /* local interface headers */
 #include "Robot.h"
 #include "Bullet.h"
+#include "RobotStatus.h"
 
 namespace BZRobots {
 
@@ -248,7 +249,12 @@ public:
 class StatusEvent : public Event
 {
 public:
-  StatusEvent() { eventID = StatusEventID; priority = 99; }
+  StatusEvent(RobotStatus _status) : status(_status) { eventID = StatusEventID; priority = 99; }
+
+  inline RobotStatus getStatus() const { return status; }
+
+private:
+  RobotStatus status;
 };
 
 class WinEvent : public Event

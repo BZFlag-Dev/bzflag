@@ -470,8 +470,33 @@ void BZRobotPlayer::botExecute()
 
   if(!inEvents) {
     inEvents = true;
-    BZRobots::StatusEvent *statusEvent = new BZRobots::StatusEvent();
-    statusEvent->setTime(TimeKeeper::getCurrent().getSeconds());
+	BZRobots::RobotStatus robotStatus(
+		tsDistanceRemaining,
+		100,
+		tsCurrentHeading * 180.0f/M_PI,
+		tsCurrentHeading,
+		tsGunHeat,
+		0.0f,
+		0.0f,
+		tsCurrentHeading * 180.0f/M_PI,
+		tsCurrentHeading,
+		1,
+		0, // TODO: count other robots
+		tsCurrentHeading * 180.0f/M_PI,
+		tsCurrentHeading,
+		0.0f,
+		0.0f,
+		1,
+		TimeKeeper::getCurrent().getSeconds(),
+		tsTurnRemaining * 180.0f/M_PI,
+		tsTurnRemaining,
+		tsCurrentSpeed,
+		tsPosition.x,
+		tsPosition.y,
+		tsPosition.z
+	);
+    BZRobots::StatusEvent *statusEvent = new BZRobots::StatusEvent(robotStatus);
+    statusEvent->setTime(robotStatus.getTime());
     runEventHandler(robot,statusEvent);
 	delete statusEvent;
     inEvents = false;

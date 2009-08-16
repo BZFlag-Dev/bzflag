@@ -46,13 +46,15 @@ apisources = \
 	AdvancedRobot.cxx		\
 	Bullet.cxx			\
 	Events.cxx			\
-	Robot.cxx			
+	Robot.cxx			\
+	RobotStatus.cxx
 
 apiheaders = \
 	AdvancedRobot.h			\
 	Bullet.h			\
 	Events.h			\
-	Robot.h
+	Robot.h				\
+	RobotStatus.h
 	
 
 bzrobots_SOURCES =			\

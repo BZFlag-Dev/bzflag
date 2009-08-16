@@ -243,6 +243,14 @@
 				RelativePath="..\..\src\bzrobots\Robot.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RobotStatus.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzrobots\RobotStatus.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
