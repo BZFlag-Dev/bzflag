@@ -35,11 +35,11 @@ endif
 
 if CLIENT_INCLUDED
 clientfiles = \
-	../obstacle/ObstacleMgr.cxx	
+	../obstacle/ObstacleMgr.cxx
 else
 clientfiles = \
 	OpenGLUtils.cxx	\
-	../obstacle/ObstacleMgr.cxx	
+	../obstacle/ObstacleMgr.cxx
 endif
 
 apisources = \
@@ -55,7 +55,6 @@ apiheaders = \
 	Events.h			\
 	Robot.h				\
 	RobotStatus.h
-	
 
 bzrobots_SOURCES =			\
 	$(pythonloaderfiles)		\
@@ -78,8 +77,7 @@ bzrobots_SOURCES =			\
 	ScriptLoaderFactory.cxx		\
 	ScriptLoaderFactory.h		\
 	SharedObjectScript.cxx		\
-	SharedObjectScript.h		
-
+	SharedObjectScript.h
 
 if WIN32
 RESOURCE = bzflag.res
@@ -119,9 +117,7 @@ bzrobots_LDADD =	\
 
 TestRobot_la_LDFLAGS = -module -avoid-version
 TestRobot_la_SOURCES = \
-	BZAdvancedRobot.h \
-	../../bots/testbot/TestRobot.cxx \
-	../../bots/testbot/TestRobot.h
+	../../bots/testbot/TestRobot.cxx
 
 python_wrap_files = \
 	bzrobot_python_wrap.cxx \
@@ -170,4 +166,3 @@ MAINTAINERCLEANFILES = \
 CLEANFILES = \
 	$(python_wrap_files) \
 	bzrobot.py
-
