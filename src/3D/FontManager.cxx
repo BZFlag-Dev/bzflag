@@ -211,13 +211,14 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   const bool doDisplayLists = !BZDB.isTrue("noDisplayListsForFonts");
   font->UseDisplayList(doDisplayLists);
 
-  // preload the font
-  font->Advance("abcdefghijklmnopqrstuvwxyz"
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"1234567890"
-		"`;'/.,[]\\\""
-		"<>?:{}+_)(*&^%$#@!)"
-		" \t");
+  if (BZDB.isTrue("fontPreload")) {
+    font->Advance("abcdefghijklmnopqrstuvwxyz"
+                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                  "1234567890"
+                  "`;'/.,[]\\\""
+                  "<>?:{}+_)(*&^%$#@!)"
+                  " \t");
+  }
 
   return font;
 }
