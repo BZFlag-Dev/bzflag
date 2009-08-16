@@ -25,6 +25,7 @@ public:
   inline double getHeading() const { return heading; }
   inline double getHeadingRadians() const { return headingRadians; }
   inline std::string getName() const { return ownerName; }
+  inline double getPower() const { return 17.0f; }
   inline double getVelocity() const { return velocity; }
   inline std::string getVictim() const { return victimName; }
   inline double getX() const { return x; }
