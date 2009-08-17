@@ -207,7 +207,7 @@ void BZRobotPlayer::update(float inputDT)
   //double cpa = getAngle();
   fvec3 cpp = getPosition();
   clearEventQueue(tsScanQueue);
-  for (int i = 0; i < curMaxPlayers; i++) {
+  for (i = 0; i < curMaxPlayers; i++) {
     if (remotePlayers[i] == NULL)
       continue;
     if (remotePlayers[i]->isAlive() == false)
