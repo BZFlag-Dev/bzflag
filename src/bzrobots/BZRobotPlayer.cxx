@@ -485,7 +485,7 @@ void BZRobotPlayer::botExecute()
     inEvents = true;
 	BZRobots::RobotStatus robotStatus(
 		tsDistanceRemaining,
-		100,
+		16,
 		tsCurrentHeading * 180.0f/M_PI,
 		tsCurrentHeading,
 		tsGunHeat,
@@ -583,7 +583,7 @@ double BZRobotPlayer::botGetDistanceRemaining()
 
 double BZRobotPlayer::botGetEnergy()
 {
-  return 100.0f;
+  return 16.0f;
 }
 
 double BZRobotPlayer::botGetGunCoolingRate()
