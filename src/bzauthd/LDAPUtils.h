@@ -269,6 +269,8 @@ public:
   }
 };
 
+// TODO: rewite this stuff using variadic templates in C++0x
+
 template< int N >
 class LDAPSearchN {
 };

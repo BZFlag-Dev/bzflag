@@ -63,16 +63,16 @@ struct HttpMemberInfoCallback : public GroupMemberCallback
 {
   bool first_group;
   mg_connection *conn;
-  HttpMemberInfoCallback(mg_connection *_conn, const std::string &uid_str)
+  HttpMemberInfoCallback(mg_connection *_conn, MemberFilter &filter)
   {
     conn = _conn;
     first_group = true;
-    sUserStore.getMembershipInfo(uid_str, *this);
+    sUserStore.getMembershipInfo(filter, *this);
   }
 
-  void got_group(char* ou, char* grp)
+  void got_group(char *uid, char* ou, char* grp)
   {
-    mg_printf(conn, "%s%s %s", (first_group ? "" : ":"), ou, grp);
+    mg_printf(conn, "%s%s %s %s", (first_group ? "" : ":"), uid, ou, grp);
     first_group = false;
   }
 
@@ -134,12 +134,49 @@ struct HttpOrgsOwnedByCallback : public OrgCallback
     sUserStore.getOrgs(filter, *this);
   }
 
-  void got_org(const char *ou)
+  void got_org(char *ou)
   {
     mg_printf(conn, "%s%s", (first_org ? "" : ","), ou);
     first_org = false;
   }
 };
+
+struct HttpMemberCountCallback : public MemberCountCallback
+{
+  mg_connection *conn;
+  bool first_group;
+  HttpMemberCountCallback(mg_connection *_conn, MemberFilter &filter)
+  {
+    conn = _conn;
+    first_group = true;
+    sUserStore.getMemberCount(filter, *this);
+  }
+
+  void got_count(const char *ou, const char *grp, uint32_t count)
+  {
+    mg_printf(conn, "%s%s %s %d", (first_group ? "" : ","), ou, grp, (int)count);
+    first_group = false;
+  }
+};
+
+struct HttpUserNameCallback : public UserNameCallback
+{
+  mg_connection *conn;
+  bool first_name;
+  HttpUserNameCallback(mg_connection *_conn, UserNameFilter &filter)
+  {
+    conn = _conn;
+    first_name = true;
+    sUserStore.getUserNames(filter, *this);
+  }
+
+  void got_userName(const char *uid, const char *name)
+  {
+    mg_printf(conn, "%s%s %s", (first_name ? "" : ","), uid, name);
+    first_name = false;
+  }
+};
+
 
 void HttpHandler::request_callback(
   struct mg_connection *conn, const struct mg_request_info *request_info, void * /*user_data*/)
@@ -235,7 +272,8 @@ void HttpHandler::request_callback(
   } else if(tokens[0] == "getmemberinfo") {
     if(tokens.size() < 2) return;
 
-    HttpMemberInfoCallback cb(conn, tokens[1]);
+    MemberFilter filter; filter.add_uid(tokens[1].c_str());
+    HttpMemberInfoCallback cb(conn, filter);
 
   } else if(tokens[0] == "getgroupinfo") {
     if(tokens.size() < 3 || tokens.size() % 2 != 1) return;
@@ -252,6 +290,7 @@ void HttpHandler::request_callback(
       filter.add_org(tokens[i].c_str());
 
     HttpOrgGroupsCallback cb(conn, filter);
+
   } else if(tokens[0] == "getorgsownedby") {
     if(tokens.size() < 2) return;
     OrgFilter filter; filter.add_owner(tokens[1].c_str());
@@ -263,6 +302,30 @@ void HttpHandler::request_callback(
 
   } else if(tokens[0] == "totalorgs") {
     mg_printf(conn, "%d", sUserStore.getTotalOrgs());
+
+  } else if(tokens[0] == "getmembercount") {
+    if(tokens.size() < 3 || tokens.size() % 2 != 1) return;
+    MemberFilter filter;
+    for(int i = 1; i < (int)tokens.size(); i+=2)
+      filter.add_org_group(tokens[i].c_str(), tokens[i+1].c_str());
+
+    HttpMemberCountCallback cb(conn, filter);
+
+  } else if(tokens[0] == "getgroupmembers") {
+    if(tokens.size() < 3) return;
+    MemberFilter filter;
+    for(int i = 1; i < (int)tokens.size(); i+=2)
+      filter.add_org_group(tokens[i].c_str(), tokens[i+1].c_str());
+
+    HttpMemberInfoCallback cb(conn, filter);
+
+  } else if(tokens[0] == "getusernames") {
+    if(tokens.size() < 2) return;
+    UserNameFilter filter;
+    for(int i = 1; i < (int)tokens.size(); i+=2)
+      filter.add_uid(tokens[i].c_str());
+
+    HttpUserNameCallback cb(conn, filter);
 
   }
 }

@@ -99,7 +99,7 @@ struct GroupId
 
 struct GroupMemberCallback
 {
-  virtual void got_group(char* ou, char* grp) = 0;
+  virtual void got_group(char *uid, char* ou, char* grp) = 0;
   virtual void got_perm(uint32_t perm_val, char* val, char* arg) = 0;
 };
 
@@ -116,7 +116,17 @@ struct FindGroupsCallback
 
 struct OrgCallback
 {
-  virtual void got_org(const char *ou) = 0;
+  virtual void got_org(char *ou) = 0;
+};
+
+struct MemberCountCallback
+{
+  virtual void got_count(const char *ou, const char *grp, uint32_t count) = 0;
+};
+
+struct UserNameCallback
+{
+  virtual void got_userName(const char *uid, const char *name) = 0;
 };
 
 struct FilterStream
@@ -138,6 +148,22 @@ struct GroupFilter : public FilterStream
   GroupFilter();
   void add_org(const char *org);
   void add_org_group(const char *org, const char *grp);
+  bool finish();
+};
+
+struct MemberFilter : public FilterStream
+{
+  MemberFilter();
+  void add_uid(const char *uid);
+  void add_org(const char *org);
+  void add_org_group(const char *org, const char *grp);
+  bool finish();
+};
+
+struct UserNameFilter : public FilterStream
+{
+  UserNameFilter();
+  void add_uid(const char *uid);
   bool finish();
 };
 
@@ -192,8 +218,10 @@ public:
   uint32_t getTotalOrgs();
   bool getGroups(GroupFilter &filter, FindGroupsCallback &callback);
   bool getOrgs(OrgFilter &filter, OrgCallback &callback);
-  bool getMembershipInfo(const std::string &uid_str, GroupMemberCallback &callback);
+  bool getMembershipInfo(MemberFilter &filter, GroupMemberCallback &callback);
   bool getGroupInfo(GroupFilter &filter, GroupInfoCallback &callback);
+  bool getMemberCount(MemberFilter &filter, MemberCountCallback &callback);
+  bool getUserNames(UserNameFilter &filter, UserNameCallback &callback);
 
   std::string getNamefromUID(uint32_t uid);
   std::string getNamefromUID(const char * uid_str);

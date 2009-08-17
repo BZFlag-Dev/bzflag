@@ -22,7 +22,7 @@
 #include "LDAPUtils.h"
 #include "MailMan.h"
 #include <curl/curl.h>
-#include <sstream>
+#include <set>
 
 INSTANTIATE_GUARDED_SINGLETON(UserStore)
 
@@ -275,49 +275,17 @@ BzRegErrors UserStore::registerUser(const UserInfo &info)
     sLog.outDebug("UserStore: fetch nextuid %d", nextuid);
   }
 
-  /* NOTE: the "active state" of the account is determined by whether the password is
-     given a valid hash. This means that no additional attributes and no additional checks
-     are needed during authentication. */
+  /* NOTE: The user has an active and inactive password. The inactive one is used
+    until the user activates his registration then it is deleted and replaced by the
+    active one (userPassword instead of inactivePassword). This ensures that
+    external auths will not pass the user before it activated. The inactive 
+    password is used when authenticating from the game, which is allowed even before
+    activation. It is added as the last step in the registration so that the user cannot
+    login if it was not finished. */
 
-  /* Because mails need to be unique the following algorithms is used:
-     - insert the user with an invalidated password (append something to the end)
-       (since we need multiple modifications this makes sure that the account cannot
-       be used until everything is finishes) and also a timestamp set to NOW() which
-       is used as a soft timed lock to avoid concurrency problems
-     loop1:
-     if (succeeded) {
-       loop2:
-       - insert the entry having mail=email and cn=user's callsign
-       if(failed) {
-         - run userExists with the mail's cn to delete the mail if it belongs to
-           an unfinished registration
-         if(userExists succeeded)
-           - goto loop2
-         else if(it failed with user exists)
-           - fail with mail exists
-         else 
-           - fail with given error
-
-         - delete the user
-         if(with already exists)
-           - fail with email exits
-         else
-           - fail
-       }
-       - change the user's password and shadowExpire to the real value
-     } else if(failed because it already exists) {
-        - run userExists to check for an unfinished registration
-        if(userExists succeeded)
-          - goto loop1
-        else
-          - fail with the given error
-     } else if(failed for some other reason) {
-        - fail;
-     } 
-
-     NOTE: As long as all the changes succeed or only fail when expected to (user/mail
+  /* NOTE: As long as all the changes succeed or only fail when expected to (user/mail
      already exits), this should run without concurrency problems and will clean itself up.
-     The userExists procedure also ensures that if after an interrupted registration,
+     The acquireUserLock procedure also ensures that if after an interrupted registration,
      the same callsign or email is registered again, it will be superceded. This means
      that the corruption in the database does not affect the behavior of the registration,
      apart from the time delay in the soft lock. If however nobody registers the same
@@ -1223,6 +1191,8 @@ std::list<GroupId> &UserStore::getGroups(const std::string &filter, std::list<Gr
   return ret;
 }
 
+// TODO: reuse some code in the filters
+
 OrgFilter::OrgFilter() {
   stream << "(&(objectClass=organizationalUnit)(|";
   changed = false;
@@ -1266,6 +1236,54 @@ void GroupFilter::add_org_group(const char *org, const char *grp)
 }
 
 bool GroupFilter::finish()
+{
+  if(!changed) return false;
+  stream << "))";
+  return true;
+}
+
+MemberFilter::MemberFilter()
+{
+  stream << "(&(objectClass=groupMembership)(|";
+  changed = false;
+}
+
+void MemberFilter::add_uid(const char *uid)
+{
+  stream << "(uid=" << uid << ")";
+}
+
+void MemberFilter::add_org(const char *org)
+{
+  stream << "(ou=" << org << ")";
+  changed = true; 
+}
+
+void MemberFilter::add_org_group(const char *org, const char *grp)
+{
+  stream << "(&(ou=" << org << ")(grp=" << grp << "))";
+  changed = true;
+}
+
+bool MemberFilter::finish()
+{
+  if(!changed) return false;
+  stream << "))";
+  return true;
+}
+
+UserNameFilter::UserNameFilter()
+{
+  stream << "(&(objectClass=person)(userPassword=*)(|";
+  changed = false;
+}
+
+void UserNameFilter::add_uid(const char *uid)
+{
+  stream << "(uid=" << uid << ")";
+}
+
+bool UserNameFilter::finish()
 {
   if(!changed) return false;
   stream << "))";
@@ -1330,33 +1348,35 @@ bool UserStore::getGroups(GroupFilter &filter, FindGroupsCallback &callback)
   return true;
 }
 
-bool UserStore::getMembershipInfo(const std::string &uid_str, GroupMemberCallback &callback)
+bool UserStore::getMembershipInfo(MemberFilter &filter, GroupMemberCallback &callback)
 {
-  if(uid_str.empty()) return false;
+  if(!filter.finish())
+    return true;
 
-  std::string member_filter = "(&(objectClass=groupMembership)(uid=" + uid_str + "))";
-  LDAPSearchN<3> member_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
-    LDAP_SCOPE_SUBTREE, member_filter.c_str(),
+  LDAPSearchN<4> member_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX), 
+    LDAP_SCOPE_SUBTREE, filter.stream.str().c_str(),
+    "uid", 1, 30,
     "ou", 1, MAX_ORGNAME_LEN,
     "grp", 1, MAX_GROUPNAME_LEN,
     "permission", -1, MAX_PERMISSION_LEN);
 
   LDAPEntry *memberEntry;
   while(memberEntry = member_search.getNextEntry()) {
-    char *ou = memberEntry->getResult(0).getNextVal();
-    char *grp = memberEntry->getResult(1).getNextVal();
-    if(!ou || !grp) {
-      sLog.outError("UserStore: no ou/grp for a membership of user %s", uid_str.c_str());
+    char *uid = memberEntry->getResult(0).getNextVal();
+    char *ou = memberEntry->getResult(1).getNextVal();
+    char *grp = memberEntry->getResult(2).getNextVal();
+    if(!ou || !grp || !uid) {
+      sLog.outError("UserStore: incomplete membership info (%s,%s,%s)", (uid ? uid : ""), (ou ? ou : ""), (grp ? grp : ""));
       continue;
     }
 
-    callback.got_group(ou, grp);
+    callback.got_group(uid, ou, grp);
   
     LDAPAttr &attr = memberEntry->getResult(2);
     uint32_t perm_val;
     char *perm, *arg;
     while(perm = attr.getNextVal()) {
-      if(!(perm_val = checkPerm(perm, arg, "user", uid_str.c_str())))
+      if(!(perm_val = checkPerm(perm, arg, "user", uid)))
         continue;
 
       callback.got_perm(perm_val, perm, arg);
@@ -1431,6 +1451,56 @@ uint32_t UserStore::getTotalGroups()
   LDAPSearchN<0> group_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
     LDAP_SCOPE_SUBTREE, "(objectClass=group)");
   return (uint32_t)group_search.getEntriesCount();
+}
+
+bool UserStore::getMemberCount(MemberFilter &filter, MemberCountCallback &callback)
+{
+  if(!filter.finish())
+    return true;
+
+  LDAPSearchN<2> member_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
+    LDAP_SCOPE_SUBTREE, filter.stream.str().c_str(),
+    "ou", 1, MAX_ORGNAME_LEN,
+    "grp", 1, MAX_GROUPNAME_LEN);
+
+  // TODO: this can be made faster with ldap_create_sort_keylist
+  typedef std::pair<std::string, std::string> GroupPair;
+  typedef std::map<GroupPair, uint32_t> GroupMap;
+  GroupMap groups;
+
+  LDAPEntry *entry;
+  while(entry = member_search.getNextEntry()) {
+    char *ou = entry->getResult(0).getNextVal();
+    char *grp = entry->getResult(1).getNextVal();
+    if(ou && grp && *ou && *grp)
+      groups[GroupPair(ou, grp)]++;
+  }
+
+  for(GroupMap::iterator itr = groups.begin(); itr != groups.end(); ++itr)
+    callback.got_count(itr->first.first.c_str(), itr->first.second.c_str(), itr->second);
+
+  return true;
+}
+
+bool UserStore::getUserNames(UserNameFilter &filter, UserNameCallback &callback)
+{
+  if(!filter.finish())
+    return true;
+
+  // return the primary callsign of the given users
+  LDAPSearchN<2> user_search(rootld, (const char*)sConfig.getStringValue(CONFIG_LDAP_SUFFIX),
+    LDAP_SCOPE_SUBTREE, filter.stream.str().c_str(),
+    "uid", 1, 30,
+    "cn", 1, MAX_CALLSIGN_LEN);
+  
+  LDAPEntry *entry;
+  while(entry = user_search.getNextEntry()) {
+    char *uid = entry->getResult(0).getNextVal();
+    char *cn = entry->getResult(1).getNextVal();
+    if(!uid || !cn || !*uid || !*cn) continue;
+    callback.got_userName(uid, cn);
+  }
+  return true;
 }
 
 // Local Variables: ***
