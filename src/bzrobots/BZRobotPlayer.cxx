@@ -516,6 +516,12 @@ BZRobots::Bullet* BZRobotPlayer::botFireBullet(double power)
   return bullet;
 }
 
+std::list<BZRobots::Event> BZRobotPlayer::botGetAllEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
 double BZRobotPlayer::botGetBattleFieldLength()
 {
   LOCK_PLAYER
@@ -530,6 +536,24 @@ double BZRobotPlayer::botGetBattleFieldWidth()
   double battleFieldSize = tsBattleFieldSize;
   UNLOCK_PLAYER
   return battleFieldSize;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetBulletHitBulletEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetBulletHitEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetBulletMissedEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
 }
 
 double BZRobotPlayer::botGetDistanceRemaining()
@@ -559,6 +583,21 @@ double BZRobotPlayer::botGetGunHeading()
   return botGetHeading();
 }
 
+double BZRobotPlayer::botGetGunHeadingRadians()
+{
+  return botGetHeadingRadians();
+}
+
+double BZRobotPlayer::botGetGunTurnRemaining()
+{
+  return 0.0f;
+}
+
+double BZRobotPlayer::botGetGunTurnRemainingRadians()
+{
+  return 0.0f;
+}
+
 double BZRobotPlayer::botGetGunHeat()
 {
   LOCK_PLAYER
@@ -575,12 +614,38 @@ double BZRobotPlayer::botGetHeading()
   return heading;
 }
 
+double BZRobotPlayer::botGetHeadingRadians()
+{
+  LOCK_PLAYER
+  double heading = tsCurrentHeading;
+  UNLOCK_PLAYER
+  return heading;
+}
+
 double BZRobotPlayer::botGetHeight()
 {
   LOCK_PLAYER
   double height = tsTankSize.z;
   UNLOCK_PLAYER
   return height;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetHitByBulletEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetHitRobotEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetHitWallEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
 }
 
 double BZRobotPlayer::botGetLength()
@@ -612,9 +677,42 @@ double BZRobotPlayer::botGetRadarHeading()
   return botGetHeading();
 }
 
+double BZRobotPlayer::botGetRadarHeadingRadians()
+{
+  return botGetHeadingRadians();
+}
+
+double BZRobotPlayer::botGetRadarTurnRemaining()
+{
+  return 0.0f;
+}
+
+double BZRobotPlayer::botGetRadarTurnRemainingRadians()
+{
+  return 0.0f;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetRobotDeathEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
 int BZRobotPlayer::botGetRoundNum()
 {
   return 1;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetScannedRobotEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
+}
+
+std::list<BZRobots::Event> BZRobotPlayer::botGetStatusEvents()
+{
+  std::list<BZRobots::Event> queue;
+  return queue;
 }
 
 double BZRobotPlayer::botGetTime()
@@ -630,6 +728,18 @@ double BZRobotPlayer::botGetTurnRemaining()
     turnRemaining = tsNextTurn * 180.0f/M_PI;
   else
     turnRemaining = tsTurnRemaining * 180.0f/M_PI;
+  UNLOCK_PLAYER
+  return turnRemaining;
+}
+
+double BZRobotPlayer::botGetTurnRemainingRadians()
+{
+  double turnRemaining = 0.0f;
+  LOCK_PLAYER
+  if (tsPendingUpdates[BZRobotPlayer::turnUpdate])
+    turnRemaining = tsNextTurn;
+  else
+    turnRemaining = tsTurnRemaining;
   UNLOCK_PLAYER
   return turnRemaining;
 }
@@ -672,6 +782,21 @@ double BZRobotPlayer::botGetZ()
   double zPos = tsPosition.z;
   UNLOCK_PLAYER
   return zPos;
+}
+
+bool BZRobotPlayer::botIsAdjustGunForRobotTurn()
+{
+  return true;
+}
+
+bool BZRobotPlayer::botIsAdjustRadarForGunTurn()
+{
+  return true;
+}
+
+bool BZRobotPlayer::botIsAdjustRadarForRobotTurn()
+{
+  return true;
 }
 
 void BZRobotPlayer::botResume()
@@ -779,11 +904,11 @@ void BZRobotPlayer::botSetTurnLeft(double turn)
   UNLOCK_PLAYER
 }
 
-void BZRobotPlayer::botSetTurnRate(double rate)
+void BZRobotPlayer::botSetTurnLeftRadians(double turn)
 {
   LOCK_PLAYER
-  tsNextTurnRate = rate * M_PI/180.0f;
-  tsPendingUpdates[BZRobotPlayer::turnRateUpdate] = true;
+  tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
+  tsNextTurn = turn;
   UNLOCK_PLAYER
 }
 
@@ -792,6 +917,14 @@ void BZRobotPlayer::botSetTurnRight(double turn)
   LOCK_PLAYER
   tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
   tsNextTurn = -turn * M_PI/180.0f;
+  UNLOCK_PLAYER
+}
+
+void BZRobotPlayer::botSetTurnRightRadians(double turn)
+{
+  LOCK_PLAYER
+  tsPendingUpdates[BZRobotPlayer::turnUpdate] = true;
+  tsNextTurn = -turn;
   UNLOCK_PLAYER
 }
 
@@ -805,7 +938,15 @@ void BZRobotPlayer::botTurnGunLeft(double /*turn*/)
 {
 }
 
+void BZRobotPlayer::botTurnGunLeftRadians(double /*turn*/)
+{
+}
+
 void BZRobotPlayer::botTurnGunRight(double /*turn*/)
+{
+}
+
+void BZRobotPlayer::botTurnGunRightRadians(double /*turn*/)
 {
 }
 
@@ -817,7 +958,19 @@ void BZRobotPlayer::botTurnLeft(double turn)
 	  TimeKeeper::sleep(0.01);
 }
 
+void BZRobotPlayer::botTurnLeftRadians(double turn)
+{
+  botSetTurnLeftRadians(turn);
+  botExecute();
+  while(botGetTurnRemaining() > 0.0f)
+	  TimeKeeper::sleep(0.01);
+}
+
 void BZRobotPlayer::botTurnRadarLeft(double /*turn*/)
+{
+}
+
+void BZRobotPlayer::botTurnRadarLeftRadians(double /*turn*/)
 {
 }
 
@@ -825,9 +978,21 @@ void BZRobotPlayer::botTurnRadarRight(double /*turn*/)
 {
 }
 
+void BZRobotPlayer::botTurnRadarRightRadians(double /*turn*/)
+{
+}
+
 void BZRobotPlayer::botTurnRight(double turn)
 {
-  botSetTurnLeft(-turn);
+  botSetTurnRight(turn);
+  botExecute();
+  while(botGetTurnRemaining() < 0.0f)
+	  TimeKeeper::sleep(0.01);
+}
+
+void BZRobotPlayer::botTurnRightRadians(double turn)
+{
+  botSetTurnRightRadians(turn);
   botExecute();
   while(botGetTurnRemaining() < 0.0f)
 	  TimeKeeper::sleep(0.01);

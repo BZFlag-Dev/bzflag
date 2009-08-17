@@ -50,7 +50,7 @@ static int TurnRight(lua_State* L);
 
 static int SetAhead(lua_State* L);
 static int SetFire(lua_State* L);
-static int SetTurnRate(lua_State* L);
+static int SetMaxTurnRate(lua_State* L);
 static int SetMaxVelocity(lua_State* L);
 static int SetResume(lua_State* L);
 static int SetStop(lua_State* L);
@@ -489,7 +489,7 @@ static bool PushCallOuts(lua_State* L)
 
   PUSH_LUA_CFUNC(L, SetAhead);
   PUSH_LUA_CFUNC(L, SetFire);
-  PUSH_LUA_CFUNC(L, SetTurnRate);
+  PUSH_LUA_CFUNC(L, SetMaxTurnRate);
   PUSH_LUA_CFUNC(L, SetMaxVelocity);
   PUSH_LUA_CFUNC(L, SetResume);
   PUSH_LUA_CFUNC(L, SetStop);
@@ -613,8 +613,8 @@ static int SetFire(lua_State* L) {
   return 0;
 }
 
-static int SetTurnRate(lua_State* L) {
-  GetRobot(L)->setTurnRate(luaL_checkdouble(L, 1));
+static int SetMaxTurnRate(lua_State* L) {
+  GetRobot(L)->setMaxTurnRate(luaL_checkdouble(L, 1));
   return 0;
 }
 

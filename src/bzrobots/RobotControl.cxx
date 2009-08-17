@@ -25,22 +25,40 @@ RobotCallbacks *RobotControl::CallbackSet(BZRobotPlayer *rrp)
   cbset->Execute = &RobotControl::Execute;
   cbset->Fire = &RobotControl::Fire;
   cbset->FireBullet = &RobotControl::FireBullet;
+  cbset->GetAllEvents = &RobotControl::GetAllEvents;
   cbset->GetBattleFieldLength = &RobotControl::GetBattleFieldLength;
   cbset->GetBattleFieldWidth = &RobotControl::GetBattleFieldWidth;
+  cbset->GetBulletHitBulletEvents = &RobotControl::GetBulletHitBulletEvents;
+  cbset->GetBulletHitEvents = &RobotControl::GetBulletHitEvents;
+  cbset->GetBulletMissedEvents = &RobotControl::GetBulletMissedEvents;
   cbset->GetDistanceRemaining = &RobotControl::GetDistanceRemaining;
   cbset->GetEnergy = &RobotControl::GetEnergy;
   cbset->GetGunCoolingRate = &RobotControl::GetGunCoolingRate;
+  cbset->GetGunHeading = &RobotControl::GetGunHeading;
+  cbset->GetGunHeadingRadians = &RobotControl::GetGunHeadingRadians;
   cbset->GetGunHeat = &RobotControl::GetGunHeat;
   cbset->GetHeading = &RobotControl::GetHeading;
+  cbset->GetGunTurnRemaining = &RobotControl::GetGunTurnRemaining;
+  cbset->GetGunTurnRemainingRadians = &RobotControl::GetGunTurnRemainingRadians;
   cbset->GetHeight = &RobotControl::GetHeight;
+  cbset->GetHitByBulletEvents = &RobotControl::GetHitByBulletEvents;
+  cbset->GetHitRobotEvents = &RobotControl::GetHitRobotEvents;
+  cbset->GetHitWallEvents = &RobotControl::GetHitWallEvents;
   cbset->GetLength = &RobotControl::GetLength;
   cbset->GetName = &RobotControl::GetName;
   cbset->GetNumRounds = &RobotControl::GetNumRounds;
   cbset->GetOthers = &RobotControl::GetOthers;
   cbset->GetRadarHeading = &RobotControl::GetRadarHeading;
+  cbset->GetRadarHeadingRadians = &RobotControl::GetRadarHeadingRadians;
+  cbset->GetRadarTurnRemaining = &RobotControl::GetRadarTurnRemaining;
+  cbset->GetRadarTurnRemainingRadians = &RobotControl::GetRadarTurnRemainingRadians;
+  cbset->GetRobotDeathEvents = &RobotControl::GetRobotDeathEvents;
   cbset->GetRoundNum = &RobotControl::GetRoundNum;
+  cbset->GetScannedRobotEvents = &RobotControl::GetScannedRobotEvents;
+  cbset->GetStatusEvents = &RobotControl::GetStatusEvents;
   cbset->GetTime = &RobotControl::GetTime;
   cbset->GetTurnRemaining = &RobotControl::GetTurnRemaining;
+  cbset->GetTurnRemainingRadians = &RobotControl::GetTurnRemainingRadians;
   cbset->GetVelocity = &RobotControl::GetVelocity;
   cbset->GetWidth = &RobotControl::GetWidth;
   cbset->GetX = &RobotControl::GetX;
@@ -48,23 +66,37 @@ RobotCallbacks *RobotControl::CallbackSet(BZRobotPlayer *rrp)
   cbset->GetZ = &RobotControl::GetZ;
   cbset->Resume = &RobotControl::Resume;
   cbset->Scan = &RobotControl::Scan;
+  cbset->IsAdjustGunForRobotTurn = &RobotControl::IsAdjustGunForRobotTurn;
+  cbset->IsAdjustRadarForGunTurn = &RobotControl::IsAdjustRadarForGunTurn;
+  cbset->IsAdjustRadarForRobotTurn = &RobotControl::IsAdjustRadarForRobotTurn;
   cbset->SetAdjustGunForRobotTurn = &RobotControl::SetAdjustGunForRobotTurn;
   cbset->SetAdjustRadarForGunTurn = &RobotControl::SetAdjustRadarForGunTurn;
   cbset->SetAdjustRadarForRobotTurn = &RobotControl::SetAdjustRadarForRobotTurn;
+  cbset->SetBack = &RobotControl::SetBack;
   cbset->SetAhead = &RobotControl::SetAhead;
   cbset->SetFire = &RobotControl::SetFire;
+  cbset->SetFireBullet = &RobotControl::SetFireBullet;
+  cbset->SetMaxTurnRate = &RobotControl::SetMaxTurnRate;
   cbset->SetMaxVelocity = &RobotControl::SetMaxVelocity;
   cbset->SetResume = &RobotControl::SetResume;
   cbset->SetStop = &RobotControl::SetStop;
   cbset->SetTurnLeft = &RobotControl::SetTurnLeft;
-  cbset->SetTurnRate = &RobotControl::SetTurnRate;
+  cbset->SetTurnLeftRadians = &RobotControl::SetTurnLeftRadians;
+  cbset->SetTurnRight = &RobotControl::SetTurnRight;
+  cbset->SetTurnRightRadians = &RobotControl::SetTurnRightRadians;
   cbset->Stop = &RobotControl::Stop;
   cbset->TurnGunLeft = &RobotControl::TurnGunLeft;
+  cbset->TurnGunLeftRadians = &RobotControl::TurnGunLeftRadians;
   cbset->TurnGunRight = &RobotControl::TurnGunRight;
+  cbset->TurnGunRightRadians = &RobotControl::TurnGunRightRadians;
   cbset->TurnLeft = &RobotControl::TurnLeft;
+  cbset->TurnLeftRadians = &RobotControl::TurnLeftRadians;
   cbset->TurnRadarLeft = &RobotControl::TurnRadarLeft;
+  cbset->TurnRadarLeftRadians = &RobotControl::TurnRadarLeftRadians;
   cbset->TurnRadarRight = &RobotControl::TurnRadarRight;
+  cbset->TurnRadarRightRadians = &RobotControl::TurnRadarRightRadians;
   cbset->TurnRight = &RobotControl::TurnRight;
+  cbset->TurnRightRadians = &RobotControl::TurnRightRadians;
   return cbset;
 }
 
@@ -117,6 +149,13 @@ BZRobots::Bullet* RobotControl::FireBullet(void *_rrp, double power)
   return rrp->botFireBullet(power);
 }
 
+std::list<BZRobots::Event> RobotControl::GetAllEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetAllEvents();
+}
+
 double RobotControl::GetBattleFieldLength(void *_rrp)
 {
   if(!_rrp) return 0.0;
@@ -129,6 +168,27 @@ double RobotControl::GetBattleFieldWidth(void *_rrp)
   if(!_rrp) return 0.0;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   return rrp->botGetBattleFieldWidth();
+}
+
+std::list<BZRobots::Event> RobotControl::GetBulletHitBulletEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetBulletHitBulletEvents();
+}
+
+std::list<BZRobots::Event> RobotControl::GetBulletHitEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetBulletHitEvents();
+}
+
+std::list<BZRobots::Event> RobotControl::GetBulletMissedEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetBulletMissedEvents();
 }
 
 double RobotControl::GetDistanceRemaining(void *_rrp)
@@ -159,11 +219,32 @@ double RobotControl::GetGunHeading(void *_rrp)
   return rrp->botGetGunHeading();
 }
 
+double RobotControl::GetGunHeadingRadians(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetGunHeadingRadians();
+}
+
 double RobotControl::GetGunHeat(void *_rrp)
 {
   if(!_rrp) return 0.0;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   return rrp->botGetGunHeat();
+}
+
+double RobotControl::GetGunTurnRemaining(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetGunTurnRemaining();
+}
+
+double RobotControl::GetGunTurnRemainingRadians(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetGunTurnRemainingRadians();
 }
 
 double RobotControl::GetHeading(void *_rrp)
@@ -173,11 +254,39 @@ double RobotControl::GetHeading(void *_rrp)
   return rrp->botGetHeading();
 }
 
+double RobotControl::GetHeadingRadians(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetHeadingRadians();
+}
+
 double RobotControl::GetHeight(void *_rrp)
 {
   if(!_rrp) return 0.0;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   return rrp->botGetHeight();
+}
+
+std::list<BZRobots::Event> RobotControl::GetHitByBulletEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetHitByBulletEvents();
+}
+
+std::list<BZRobots::Event> RobotControl::GetHitRobotEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetHitRobotEvents();
+}
+
+std::list<BZRobots::Event> RobotControl::GetHitWallEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetHitWallEvents();
 }
 
 double RobotControl::GetLength(void *_rrp)
@@ -215,11 +324,53 @@ double RobotControl::GetRadarHeading(void *_rrp)
   return rrp->botGetRadarHeading();
 }
 
+double RobotControl::GetRadarHeadingRadians(void *_rrp)
+{
+  if(!_rrp) return 0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetRadarHeadingRadians();
+}
+
+double RobotControl::GetRadarTurnRemaining(void *_rrp)
+{
+  if(!_rrp) return 0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetRadarTurnRemaining();
+}
+
+double RobotControl::GetRadarTurnRemainingRadians(void *_rrp)
+{
+  if(!_rrp) return 0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetRadarTurnRemainingRadians();
+}
+
+std::list<BZRobots::Event> RobotControl::GetRobotDeathEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetRobotDeathEvents();
+}
+
 int RobotControl::GetRoundNum(void *_rrp)
 {
   if(!_rrp) return 0;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   return rrp->botGetRoundNum();
+}
+
+std::list<BZRobots::Event> RobotControl::GetScannedRobotEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetScannedRobotEvents();
+}
+
+std::list<BZRobots::Event> RobotControl::GetStatusEvents(void *_rrp)
+{
+  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetStatusEvents();
 }
 
 double RobotControl::GetTime(void *_rrp)
@@ -234,6 +385,13 @@ double RobotControl::GetTurnRemaining(void *_rrp)
   if(!_rrp) return 0.0;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   return rrp->botGetTurnRemaining();
+}
+
+double RobotControl::GetTurnRemainingRadians(void *_rrp)
+{
+  if(!_rrp) return 0.0;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botGetTurnRemainingRadians();
 }
 
 double RobotControl::GetVelocity(void *_rrp)
@@ -271,6 +429,41 @@ double RobotControl::GetZ(void *_rrp)
   return rrp->botGetZ();
 }
 
+bool RobotControl::IsAdjustGunForRobotTurn(void *_rrp)
+{
+  if(!_rrp) return true;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botIsAdjustGunForRobotTurn();
+}
+
+bool RobotControl::IsAdjustRadarForGunTurn(void *_rrp)
+{
+  if(!_rrp) return true;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botIsAdjustRadarForGunTurn();
+}
+
+bool RobotControl::IsAdjustRadarForRobotTurn(void *_rrp)
+{
+  if(!_rrp) return true;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  return rrp->botIsAdjustRadarForRobotTurn();
+}
+
+void RobotControl::Resume(void *_rrp)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botResume();
+}
+
+void RobotControl::Scan(void *_rrp)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botScan();
+}
+
 void RobotControl::SetAdjustGunForRobotTurn(void *_rrp, bool independent)
 {
   if(!_rrp) return;
@@ -290,20 +483,6 @@ void RobotControl::SetAdjustRadarForRobotTurn(void *_rrp, bool independent)
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   rrp->botSetAdjustRadarForRobotTurn(independent);
-}
-
-void RobotControl::Resume(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  rrp->botResume();
-}
-
-void RobotControl::Scan(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  rrp->botScan();
 }
 
 void RobotControl::SetAhead(void *_rrp,double distance)
@@ -369,11 +548,11 @@ void RobotControl::SetTurnLeft(void *_rrp,double turn)
   rrp->botSetTurnLeft(turn);
 }
 
-void RobotControl::SetTurnRate(void *_rrp,double rate)
+void RobotControl::SetTurnLeftRadians(void *_rrp,double turn)
 {
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
-  rrp->botSetTurnRate(rate);
+  rrp->botSetTurnLeftRadians(turn);
 }
 
 void RobotControl::SetTurnRight(void *_rrp,double turn)
@@ -381,6 +560,13 @@ void RobotControl::SetTurnRight(void *_rrp,double turn)
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   rrp->botSetTurnRight(turn);
+}
+
+void RobotControl::SetTurnRightRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botSetTurnRightRadians(turn);
 }
 
 void RobotControl::Stop(void *_rrp,bool overwrite)
@@ -397,11 +583,25 @@ void RobotControl::TurnGunLeft(void *_rrp,double turn)
   rrp->botTurnGunLeft(turn);
 }
 
+void RobotControl::TurnGunLeftRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botTurnGunLeftRadians(turn);
+}
+
 void RobotControl::TurnGunRight(void *_rrp,double turn)
 {
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   rrp->botTurnGunRight(turn);
+}
+
+void RobotControl::TurnGunRightRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botTurnGunRightRadians(turn);
 }
 
 void RobotControl::TurnLeft(void *_rrp,double turn)
@@ -411,11 +611,25 @@ void RobotControl::TurnLeft(void *_rrp,double turn)
   rrp->botTurnLeft(turn);
 }
 
+void RobotControl::TurnLeftRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botTurnLeftRadians(turn);
+}
+
 void RobotControl::TurnRadarLeft(void *_rrp,double turn)
 {
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   rrp->botTurnRadarLeft(turn);
+}
+
+void RobotControl::TurnRadarLeftRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botTurnRadarLeftRadians(turn);
 }
 
 void RobotControl::TurnRadarRight(void *_rrp,double turn)
@@ -425,11 +639,25 @@ void RobotControl::TurnRadarRight(void *_rrp,double turn)
   rrp->botTurnRadarRight(turn);
 }
 
+void RobotControl::TurnRadarRightRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botTurnRadarRightRadians(turn);
+}
+
 void RobotControl::TurnRight(void *_rrp,double turn)
 {
   if(!_rrp) return;
   BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
   rrp->botTurnRight(turn);
+}
+
+void RobotControl::TurnRightRadians(void *_rrp,double turn)
+{
+  if(!_rrp) return;
+  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+  rrp->botTurnRightRadians(turn);
 }
 
 
