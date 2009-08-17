@@ -132,6 +132,7 @@ PACKET_LIST_ENTRY(MsgPlayerInfo)
 PACKET_LIST_ENTRY(MsgPlayerUpdate)
 PACKET_LIST_ENTRY(MsgPlayerUpdateSmall)
 PACKET_LIST_ENTRY(MsgQueryGame)
+PACKET_LIST_ENTRY(MsgQueryOS)
 PACKET_LIST_ENTRY(MsgQueryPlayers)
 PACKET_LIST_ENTRY(MsgReject)
 PACKET_LIST_ENTRY(MsgRemovePlayer)
@@ -141,6 +142,7 @@ PACKET_LIST_ENTRY(MsgWShotBegin)
 PACKET_LIST_ENTRY(MsgScore)
 PACKET_LIST_ENTRY(MsgScoreOver)
 PACKET_LIST_ENTRY(MsgShotEnd)
+PACKET_LIST_ENTRY(MsgShotInfo)
 PACKET_LIST_ENTRY(MsgSuperKill)
 PACKET_LIST_ENTRY(MsgSetShot)
 PACKET_LIST_ENTRY(MsgSetTeam)
@@ -153,6 +155,7 @@ PACKET_LIST_ENTRY(MsgTransferFlag)
 PACKET_LIST_ENTRY(MsgTeamUpdate)
 PACKET_LIST_ENTRY(MsgWantWHash)
 PACKET_LIST_ENTRY(MsgWantSettings)
+PACKET_LIST_ENTRY(MsgWhatTimeIsIt)
 PACKET_LIST_ENTRY(MsgUDPLinkRequest)
 PACKET_LIST_ENTRY(MsgUDPLinkEstablished)
 PACKET_LIST_ENTRY(MsgServerControl)
@@ -992,6 +995,14 @@ static MsgStringList handleMsgQueryGame(const PacketInfo& pi)
 }
 
 
+static MsgStringList handleMsgQueryOS(const PacketInfo& pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics(pi);
+  return list;
+}
+
+
 static MsgStringList handleMsgQueryPlayers(const PacketInfo& pi)
 {
   // not recorded
@@ -1116,6 +1127,14 @@ static MsgStringList handleMsgShotEnd(const PacketInfo& pi)
   listPush(list, 1, "shotid: %i", shotid);
   listPush(list, 1, "reason: %i", reason); // FIXME
 
+  return list;
+}
+
+
+static MsgStringList handleMsgShotInfo(const PacketInfo& pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics(pi);
   return list;
 }
 
@@ -1268,6 +1287,14 @@ static MsgStringList handleMsgWantWHash(const PacketInfo& pi)
 
 
 static MsgStringList handleMsgWantSettings(const PacketInfo& pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics(pi);
+  return list;
+}
+
+
+static MsgStringList handleMsgWhatTimeIsIt(const PacketInfo& pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics(pi);
