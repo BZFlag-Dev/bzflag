@@ -168,6 +168,8 @@ private:
 
   double tsBattleFieldSize;
 
+  int tsPlayerCount;
+
   const std::string tsName;
 
   fvec3 tsTankSize;

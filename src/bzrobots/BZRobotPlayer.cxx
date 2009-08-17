@@ -99,6 +99,7 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
   purgeQueue(false),
   didHitWall(false),
   robot(NULL),
+  tsPlayerCount(0),
   tsName(_name),
   tsGunHeat(0.0),
   tsShoot(false),
@@ -178,7 +179,19 @@ void BZRobotPlayer::restart(const fvec3& pos, float azimuth)
 // Called by bzrobots client thread
 void BZRobotPlayer::update(float inputDT)
 {
+  std::string robotName = this->getCallSign();
   LOCK_PLAYER
+  // Update player count (better way to do this?)
+  int i;
+  tsPlayerCount = 0;
+  for (i = 0; i < curMaxPlayers; i++)
+    if (remotePlayers[i])
+	  if(remotePlayers[i]->getTeam() >= 0 && remotePlayers[i]->getTeam() != ObserverTeam)
+		if(robotName != std::string(remotePlayers[i]->getCallSign()))
+	      tsPlayerCount++;
+  for (i = 0; i < numRobots; i++)
+    if (robots[i] && robots[i] != this)
+	  tsPlayerCount++;
   // Check for wall hit
   if (hasHitWall()) {
     if (!didHitWall) {
@@ -658,7 +671,11 @@ double BZRobotPlayer::botGetLength()
 
 std::string BZRobotPlayer::botGetName()
 {
-  return tsName;
+  std::string playerName;
+  LOCK_PLAYER
+  playerName = tsName;
+  UNLOCK_PLAYER
+  return playerName;
 }
 
 int BZRobotPlayer::botGetNumRounds()
@@ -668,8 +685,11 @@ int BZRobotPlayer::botGetNumRounds()
 
 int BZRobotPlayer::botGetOthers()
 {
-  // TODO: Make this return the number of other tanks
-  return 1;
+  int othersCount = 0;
+  LOCK_PLAYER
+  othersCount = tsPlayerCount;
+  UNLOCK_PLAYER
+  return othersCount;
 }
 
 double BZRobotPlayer::botGetRadarHeading()

@@ -52,6 +52,7 @@ extern "C" {
 void TestRobot::run()
 {
   while(true) {
+	printf("TestRobot: others: %d\n",getOthers());
 	printf("TestRobot: run\n");
 	ahead(10);
     fire();
