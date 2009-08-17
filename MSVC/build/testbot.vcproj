@@ -71,8 +71,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib Advapi32.lib"
-				OutputFile="./testbot_debug/$(ProjectName).dll"
-				ModuleDefinitionFile="..\..\bots\testbot\TestRobot.def"
+				OutputFile="./testbot_debug/TestRobot.dll"
+				ModuleDefinitionFile="..\..\bots\cplusplus\TestRobot.def"
 				GenerateDebugInformation="true"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -97,7 +97,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy .\testbot_debug\testbot.dll ..\..\"
+				CommandLine="copy .\testbot_debug\TestRobot.dll ..\..\"
 			/>
 		</Configuration>
 		<Configuration
@@ -154,7 +154,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib Advapi32.lib"
-				OutputFile="./testbot_release/$(ProjectName).dll"
+				OutputFile="./testbot_release/TestRobot.dll"
 				ModuleDefinitionFile=""
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -179,7 +179,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy .\testbot_release\testbot.dll ..\..\"
+				CommandLine="copy .\testbot_release\TestRobot.dll ..\..\"
 			/>
 		</Configuration>
 	</Configurations>
@@ -191,7 +191,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\bots\testbot\TestRobot.cxx"
+				RelativePath="..\..\bots\cplusplus\TestRobot.cxx"
 				>
 			</File>
 		</Filter>
@@ -199,14 +199,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath=".\config.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\bots\testbot\TestRobot.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="API"

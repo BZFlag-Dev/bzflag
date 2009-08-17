@@ -1,4 +1,4 @@
-LIBRARY testbot
+LIBRARY TestRobot
 EXPORTS
  create
  destroy

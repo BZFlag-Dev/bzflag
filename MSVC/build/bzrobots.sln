@@ -97,6 +97,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testbot", "testbot.vcproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua.vcproj", "{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfs", "bzfs.vcproj", "{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rclinkbot", "rclinkbot.vcproj", "{64EE3569-6234-4FB3-ABD8-C04334C79601}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -199,6 +203,14 @@ Global
 		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}.Debug|Win32.Build.0 = Debug|Win32
 		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}.Release|Win32.ActiveCfg = Release|Win32
 		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}.Release|Win32.Build.0 = Release|Win32
+		{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}.Debug|Win32.Build.0 = Debug|Win32
+		{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}.Release|Win32.ActiveCfg = Release|Win32
+		{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}.Release|Win32.Build.0 = Release|Win32
+		{64EE3569-6234-4FB3-ABD8-C04334C79601}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64EE3569-6234-4FB3-ABD8-C04334C79601}.Debug|Win32.Build.0 = Debug|Win32
+		{64EE3569-6234-4FB3-ABD8-C04334C79601}.Release|Win32.ActiveCfg = Release|Win32
+		{64EE3569-6234-4FB3-ABD8-C04334C79601}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

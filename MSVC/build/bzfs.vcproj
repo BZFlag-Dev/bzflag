@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="bzfs"
-	ProjectGUID="{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}"
+	ProjectGUID="{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}"
 	RootNamespace="bzfs"
 	TargetFrameworkVersion="131072"
 	>
@@ -853,14 +853,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\LuaURL.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\lua\LuaURL.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\lua\LuaFloat.cxx"
 				>
 			</File>
@@ -878,6 +870,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\lua\LuaServer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\LuaURL.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\lua\LuaURL.h"
 				>
 			</File>
 			<File

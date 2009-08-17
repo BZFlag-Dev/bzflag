@@ -1,0 +1,4 @@
+LIBRARY RCLinkBot
+EXPORTS
+ create
+ destroy
