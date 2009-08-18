@@ -116,8 +116,7 @@ bzrobots_LDADD =	\
 	../date/libDate.la
 
 TestRobot_la_LDFLAGS = -module -avoid-version
-TestRobot_la_SOURCES = \
-	../../bots/cplusplus/TestRobot.cxx
+TestRobot_la_SOURCES = ../../bots/cplusplus/TestRobot.cxx
 
 python_wrap_files = \
 	bzrobot_python_wrap.cxx \

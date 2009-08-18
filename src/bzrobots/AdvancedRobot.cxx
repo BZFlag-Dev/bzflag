@@ -116,6 +116,57 @@ double BZRobots::AdvancedRobot::getHeadingRadians() const
   return 0.0;
 }
 
+std::list<BZRobots::Event> BZRobots::AdvancedRobot::getHitByBulletEvents()
+{
+  if(robotcb && BOT_CALLBACKS->GetHitByBulletEvents) {
+    return BOT_CALLBACKS->GetHitByBulletEvents(BOT_CLIENT_PLAYER);
+  } else {
+    std::list<BZRobots::Event> events;
+	return events; 
+  }
+}
+
+std::list<BZRobots::Event> BZRobots::AdvancedRobot::getHitRobotEvents()
+{
+  if(robotcb && BOT_CALLBACKS->GetHitRobotEvents) {
+    return BOT_CALLBACKS->GetHitRobotEvents(BOT_CLIENT_PLAYER);
+  } else {
+    std::list<BZRobots::Event> events;
+	return events; 
+  }
+}
+
+std::list<BZRobots::Event> BZRobots::AdvancedRobot::getHitWallEvents()
+{
+  if(robotcb && BOT_CALLBACKS->GetHitWallEvents) {
+    return BOT_CALLBACKS->GetHitWallEvents(BOT_CLIENT_PLAYER);
+  } else {
+    std::list<BZRobots::Event> events;
+	return events; 
+  }
+}
+
+double BZRobots::AdvancedRobot::getRadarHeadingRadians() const
+{
+  if(robotcb && BOT_CALLBACKS->GetRadarHeadingRadians)
+    return BOT_CALLBACKS->GetRadarHeadingRadians(BOT_CLIENT_PLAYER);
+  return 0.0;
+}
+
+double BZRobots::AdvancedRobot::getRadarTurnRemaining() const
+{
+  if(robotcb && BOT_CALLBACKS->GetRadarTurnRemaining)
+    return BOT_CALLBACKS->GetRadarTurnRemaining(BOT_CLIENT_PLAYER);
+  return 0.0;
+}
+
+double BZRobots::AdvancedRobot::getRadarTurnRemainingRadians() const
+{
+  if(robotcb && BOT_CALLBACKS->GetRadarTurnRemainingRadians)
+    return BOT_CALLBACKS->GetRadarTurnRemainingRadians(BOT_CLIENT_PLAYER);
+  return 0.0;
+}
+
 std::list<BZRobots::Event> BZRobots::AdvancedRobot::getRobotDeathEvents()
 {
   if(robotcb && BOT_CALLBACKS->GetRobotDeathEvents) {
@@ -228,6 +279,30 @@ void BZRobots::AdvancedRobot::setStop(bool overwrite)
 {
   if(robotcb && BOT_CALLBACKS->SetStop)
     BOT_CALLBACKS->SetStop(BOT_CLIENT_PLAYER,overwrite);
+}
+
+void BZRobots::AdvancedRobot::setTurnGunLeft(double degrees)
+{
+  if(robotcb && BOT_CALLBACKS->SetTurnGunLeft)
+    BOT_CALLBACKS->SetTurnGunLeft(BOT_CLIENT_PLAYER,degrees);
+}
+
+void BZRobots::AdvancedRobot::setTurnGunLeftRadians(double radians)
+{
+  if(robotcb && BOT_CALLBACKS->SetTurnGunLeftRadians)
+    BOT_CALLBACKS->SetTurnGunLeftRadians(BOT_CLIENT_PLAYER,radians);
+}
+
+void BZRobots::AdvancedRobot::setTurnGunRight(double degrees)
+{
+  if(robotcb && BOT_CALLBACKS->SetTurnGunRight)
+    BOT_CALLBACKS->SetTurnGunRight(BOT_CLIENT_PLAYER,degrees);
+}
+
+void BZRobots::AdvancedRobot::setTurnGunRightRadians(double radians)
+{
+  if(robotcb && BOT_CALLBACKS->SetTurnGunRightRadians)
+    BOT_CALLBACKS->SetTurnGunRightRadians(BOT_CLIENT_PLAYER,radians);
 }
 
 void BZRobots::AdvancedRobot::setTurnLeft(double degrees)
