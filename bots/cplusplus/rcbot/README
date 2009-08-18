@@ -5,3 +5,7 @@ Young University
 In it's current state it is incomplete, however, the
 files necessary to finish it up can be found in this
 directory.
+
+The general idea is to recreate the only the backend
+portion of BZRC on top of an AdvancedRobot, then run
+standalone server to which a single agent can connect.
