@@ -181,6 +181,13 @@ void BZRobotPlayer::update(float inputDT)
 {
   std::string robotName = this->getCallSign();
   LOCK_PLAYER
+  // Fire a shot if requested
+  if (tsShoot) {
+    tsShoot = false;
+    fireShot();
+	// TODO: Use ShotPath *shot = fireShot();
+	// Then track the shot live
+  }
   // Update player count (better way to do this?)
   int i;
   tsPlayerCount = 0;
@@ -220,17 +227,20 @@ void BZRobotPlayer::update(float inputDT)
 	fvec3 rpp = remotePlayers[i]->getPosition();
 	fvec3 rpv = remotePlayers[i]->getVelocity();
 	double remotePlayerVelocity = sqrt(rpv.x*rpv.x + rpv.y*rpv.y); // exclude z vector
-	fvec3 rpdv(rpp.x-cpp.x,rpp.y-cpp.y,rpp.z-cpp.z);
-	double remotePlayerDistance = sqrt(rpdv.x*rpdv.x + rpdv.y*rpdv.y); // exclude z vector
-	double remotePlayerBearing = atan2(rpdv.x,rpdv.y);
+	fvec3 rpd(rpp.x-cpp.x,rpp.y-cpp.y,rpp.z-cpp.z);
+	double remotePlayerDistance = sqrt(rpd.x*rpd.x + rpd.y*rpd.y); // exclude z vector
+	double headingToPlayer = -atan2(rpd.x,rpd.y) + (M_PI/2.0f);
+        if(headingToPlayer < 0.0f) headingToPlayer += (M_PI + M_PI);
+        double bearingToPlayer = headingToPlayer - getAngle();
+        if(bearingToPlayer < -M_PI) bearingToPlayer += (M_PI + M_PI);
 	BZRobots::ScannedRobotEvent *sre = new BZRobots::ScannedRobotEvent(
           remotePlayers[i]->getCallSign(),
-          remotePlayerBearing,
+          bearingToPlayer * 180.0f/M_PI,
 	  remotePlayerDistance,
 	  rpp.x, rpp.y, rpp.z,
 	  remotePlayers[i]->getAngle(),
 	  remotePlayerVelocity);
-    sre->setTime(TimeKeeper::getCurrent().getSeconds());
+        sre->setTime(TimeKeeper::getCurrent().getSeconds());
 	tsScanQueue.push_back(sre);
   }
   /*
@@ -284,13 +294,6 @@ void BZRobotPlayer::doUpdate(float dt)
   tsCurrentHeading = getAngle();
   tsCurrentSpeed = sqrt(vvec.x*vvec.x + vvec.y*vvec.y);
   tsCurrentTurnRate = getAngularVelocity();
-  
-  if (tsShoot) {
-    tsShoot = false;
-    fireShot();
-	// TODO: Use ShotPath *shot = fireShot();
-	// Then track the shot live
-  }
 }
 
 // Called by bzrobots client thread
@@ -387,12 +390,15 @@ void BZRobotPlayer::botAhead(double distance)
   botSetAhead(distance);
   botExecute();
   while(botGetDistanceRemaining() > 0.0f)
-	  TimeKeeper::sleep(0.01);
+    botDoNothing();
 }
 
 void BZRobotPlayer::botBack(double distance)
 {
-  botAhead(-distance);
+  botSetBack(distance);
+  botExecute();
+  while(botGetDistanceRemaining() > 0.0f)
+    botDoNothing();
 }
 
 void BZRobotPlayer::botClearAllEvents()
@@ -975,7 +981,7 @@ void BZRobotPlayer::botTurnLeft(double turn)
   botSetTurnLeft(turn);
   botExecute();
   while(botGetTurnRemaining() > 0.0f)
-	  TimeKeeper::sleep(0.01);
+    botDoNothing();
 }
 
 void BZRobotPlayer::botTurnLeftRadians(double turn)
@@ -983,7 +989,7 @@ void BZRobotPlayer::botTurnLeftRadians(double turn)
   botSetTurnLeftRadians(turn);
   botExecute();
   while(botGetTurnRemaining() > 0.0f)
-	  TimeKeeper::sleep(0.01);
+    botDoNothing();
 }
 
 void BZRobotPlayer::botTurnRadarLeft(double /*turn*/)
@@ -1007,7 +1013,7 @@ void BZRobotPlayer::botTurnRight(double turn)
   botSetTurnRight(turn);
   botExecute();
   while(botGetTurnRemaining() < 0.0f)
-	  TimeKeeper::sleep(0.01);
+    botDoNothing();
 }
 
 void BZRobotPlayer::botTurnRightRadians(double turn)
@@ -1015,7 +1021,7 @@ void BZRobotPlayer::botTurnRightRadians(double turn)
   botSetTurnRightRadians(turn);
   botExecute();
   while(botGetTurnRemaining() < 0.0f)
-	  TimeKeeper::sleep(0.01);
+    botDoNothing();
 }
 
 
