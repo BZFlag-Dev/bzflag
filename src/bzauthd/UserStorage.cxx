@@ -1251,6 +1251,7 @@ MemberFilter::MemberFilter()
 void MemberFilter::add_uid(const char *uid)
 {
   stream << "(uid=" << uid << ")";
+  changed = true;
 }
 
 void MemberFilter::add_org(const char *org)
@@ -1281,6 +1282,7 @@ UserNameFilter::UserNameFilter()
 void UserNameFilter::add_uid(const char *uid)
 {
   stream << "(uid=" << uid << ")";
+  changed = true;
 }
 
 bool UserNameFilter::finish()
