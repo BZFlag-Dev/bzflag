@@ -231,8 +231,9 @@ void BZRobotPlayer::update(float inputDT)
 	double remotePlayerDistance = sqrt(rpd.x*rpd.x + rpd.y*rpd.y); // exclude z vector
 	double headingToPlayer = -atan2(rpd.x,rpd.y) + (M_PI/2.0f);
         if(headingToPlayer < 0.0f) headingToPlayer += (M_PI + M_PI);
-        double bearingToPlayer = headingToPlayer - getAngle();
+        double bearingToPlayer = -(headingToPlayer - getAngle());
         if(bearingToPlayer < -M_PI) bearingToPlayer += (M_PI + M_PI);
+        if(bearingToPlayer > M_PI) bearingToPlayer -= (M_PI + M_PI);
 	BZRobots::ScannedRobotEvent *sre = new BZRobots::ScannedRobotEvent(
           remotePlayers[i]->getCallSign(),
           bearingToPlayer * 180.0f/M_PI,
