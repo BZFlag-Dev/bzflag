@@ -124,6 +124,7 @@ bzflag_SOURCES =			\
 	LocalCommand.h			\
 	LocalFontFace.cxx		\
 	LocalFontFace.h			\
+	LuaHeader.h			\
 	MainMenu.cxx			\
 	MainMenu.h			\
 	MainWindow.cxx			\
