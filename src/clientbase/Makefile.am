@@ -131,6 +131,8 @@ libClientBase_la_SOURCES =		\
 	$(top_srcdir)/src/bzflag/HUDuiList.h		\
 	$(top_srcdir)/src/bzflag/HUDuiTypeIn.cxx	\
 	$(top_srcdir)/src/bzflag/HUDuiTypeIn.h		\
+	$(top_srcdir)/src/bzflag/HubComposeKey.h	\
+	$(top_srcdir)/src/bzflag/HubComposeKey.cxx	\
 	$(top_srcdir)/src/bzflag/LocalCommand.cxx	\
 	$(top_srcdir)/src/bzflag/LocalCommand.h		\
 	$(top_srcdir)/src/bzflag/LocalFontFace.cxx	\

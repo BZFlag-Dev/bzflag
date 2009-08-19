@@ -528,7 +528,7 @@ void TextSceneNode::TextRenderNode::setRawText(const std::string& rawText)
 
   stripped.clear();
   for (size_t i = 0; i < lines.size(); i++) {
-    stripped.push_back(stripAnsiCodes(lines[i].c_str()));
+    stripped.push_back(stripAnsiCodes(lines[i]));
   }
 
   widths.clear();

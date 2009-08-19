@@ -41,7 +41,10 @@ void HubComposeKey::init()
 {
   messageHistoryIndex = 0;
   hud->setComposing("HUB:");
-  HUDui::setDefaultKey(NULL);
+  HUDui::setDefaultKey(this);
+  if (hubLink) {
+    hubLink->startComposing();
+  }
 }
 
 

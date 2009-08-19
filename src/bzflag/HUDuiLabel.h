@@ -29,8 +29,8 @@
 
 class HUDuiLabel : public HUDuiControl {
   public:
-			HUDuiLabel();
-			~HUDuiLabel();
+    HUDuiLabel();
+    ~HUDuiLabel();
 
     std::string		getString() const;
     void		setString(const std::string&, const std::vector<std::string> *_params = NULL);

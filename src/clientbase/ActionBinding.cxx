@@ -54,6 +54,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("silence"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle displayLabels"), press));
   wayToBindActions.insert(std::make_pair(std::string("destruct"), press));
+  wayToBindActions.insert(std::make_pair(std::string("hubcompose"), press));
 
   // Movement keys
   wayToBindActions.insert(std::make_pair(std::string("turn left"), both));
@@ -86,10 +87,14 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("restart"), release));
   wayToBindActions.insert(std::make_pair(std::string("autopilot"), press));
 
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel all"), press));
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel chat"), press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel all"),    press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel chat"),   press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel server"), press));
-  wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"), press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel misc"),   press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel hub"),    press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel debug"),  press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel prev"),   press));
+  wayToBindActions.insert(std::make_pair(std::string("messagepanel next"),   press));
 
   /*
    * NOTE: the following keys are 'hard coded' in the playing loop and shouldn't
@@ -136,7 +141,7 @@ ActionBinding::ActionBinding() {
   					       /* E - unused */
   defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
   					       /* G - unused */
-  defaultBinding.insert(BindingTable::value_type("H", "toggleFlags radar"));
+  defaultBinding.insert(BindingTable::value_type("H", "hubcompose"));
   					       /* I - identify/restart (above) */
   defaultBinding.insert(BindingTable::value_type("J", "toggleFlags main"));
   defaultBinding.insert(BindingTable::value_type("K", "silence"));
@@ -146,7 +151,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
   defaultBinding.insert(BindingTable::value_type("P", "pause"));
   defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
-  					       /* R - unused */
+  defaultBinding.insert(BindingTable::value_type("R", "toggleFlags radar"));
   defaultBinding.insert(BindingTable::value_type("S", "toggle displayScore"));
   defaultBinding.insert(BindingTable::value_type("T", "toggle showDrawFPS"));
   defaultBinding.insert(BindingTable::value_type("U", "hunt"));
@@ -158,28 +163,28 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Delete", "destruct"));
 
   // Default movement keys
-  defaultBinding.insert(BindingTable::value_type("Left Arrow", "turn left"));
+  defaultBinding.insert(BindingTable::value_type("Left Arrow",  "turn left"));
   defaultBinding.insert(BindingTable::value_type("Right Arrow", "turn right"));
-  defaultBinding.insert(BindingTable::value_type("Up Arrow", "drive forward"));
+  defaultBinding.insert(BindingTable::value_type("Up Arrow",   "drive forward"));
   defaultBinding.insert(BindingTable::value_type("Down Arrow", "drive reverse"));
   // End default movement keys
 
-  defaultBinding.insert(BindingTable::value_type("Shift+Wheel Up", "radarZoom in"));
+  defaultBinding.insert(BindingTable::value_type("Shift+Wheel Up",   "radarZoom in"));
   defaultBinding.insert(BindingTable::value_type("Shift+Wheel Down", "radarZoom out"));
 
   defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
   defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
   defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));
-  defaultBinding.insert(BindingTable::value_type("F6", "roam cycle subject backward"));
-  defaultBinding.insert(BindingTable::value_type("F7", "roam cycle subject forward"));
-  defaultBinding.insert(BindingTable::value_type("F8", "roam cycle type forward"));
-  defaultBinding.insert(BindingTable::value_type("F9", "roam zoom in"));
+  defaultBinding.insert(BindingTable::value_type("F6",  "roam cycle subject backward"));
+  defaultBinding.insert(BindingTable::value_type("F7",  "roam cycle subject forward"));
+  defaultBinding.insert(BindingTable::value_type("F8",  "roam cycle type forward"));
+  defaultBinding.insert(BindingTable::value_type("F9",  "roam zoom in"));
   defaultBinding.insert(BindingTable::value_type("F10", "roam zoom out"));
   defaultBinding.insert(BindingTable::value_type("F11", "roam zoom normal"));
   defaultBinding.insert(BindingTable::value_type("F12", "quit"));
-  defaultBinding.insert(BindingTable::value_type("Page Up", "scrollpanel up_page"));
-  defaultBinding.insert(BindingTable::value_type("Wheel Up", "scrollpanel up 3"));
-  defaultBinding.insert(BindingTable::value_type("Page Down", "scrollpanel down_page"));
+  defaultBinding.insert(BindingTable::value_type("Page Up",    "scrollpanel up_page"));
+  defaultBinding.insert(BindingTable::value_type("Wheel Up",   "scrollpanel up 3"));
+  defaultBinding.insert(BindingTable::value_type("Page Down",  "scrollpanel down_page"));
   defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down 3"));
   defaultBinding.insert(BindingTable::value_type("End", "scrollpanel bottom"));
   defaultBinding.insert(BindingTable::value_type("1", "set displayRadarRange 0.25"));
@@ -195,6 +200,8 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+F3", "messagepanel server"));
   defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
   defaultBinding.insert(BindingTable::value_type("Shift+F5", "messagepanel debug"));
+  defaultBinding.insert(BindingTable::value_type("Alt+Left Arrow",  "messagepanel prev"));
+  defaultBinding.insert(BindingTable::value_type("Alt+Right Arrow", "messagepanel next"));
 }
 
 void ActionBinding::resetBindings() {
@@ -224,7 +231,7 @@ void ActionBinding::onScanCB(const std::string& name, bool,
 
 void ActionBinding::associate(std::string key,
 			      std::string action,
-			      bool	keyBind) {
+			      bool keyBind) {
   BindingTable::iterator index, next;
   if (!wayToBindActions.count(action))
     return;

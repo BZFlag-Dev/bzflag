@@ -59,6 +59,8 @@ DefaultDBItem	defaultDBItems[] = {
   { "groundHighResTexRepeat",	"0.05",			true,  DefPerm, NULL },
   { "groundTexRepeat",		"0.1",			true,  DefPerm, NULL },
   { "highlightPattern",		"",			true,  DefPerm, NULL },
+  { "hubServer",		DefaultHubServer,	true,  DefPerm, NULL },
+  { "hubAutoJoin",		"1",			true,  DefPerm, NULL },
   { "killerhighlight",		"1",			true,  DefPerm, NULL },
   { "latitude",			"37.5",			true,  DefPerm, NULL },
   { "leadingShotLine",		"0",			true,  DefPerm, NULL },

@@ -27,12 +27,12 @@
 typedef std::deque<std::string> MessageQueue;
 
 extern MessageQueue messageHistory;
-extern unsigned int	messageHistoryIndex;
+extern unsigned int messageHistoryIndex;
 
 class ComposeDefaultKey : public HUDuiDefaultKey {
-public:
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
+  public:
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 };
 
 

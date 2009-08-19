@@ -22,11 +22,13 @@
 class ServerCommandKey : public HUDuiDefaultKey {
 public:
   ServerCommandKey();
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
-  void		init();
-  void		adminInit();
-  void		nonAdminInit();
+
+  bool keyPress(const BzfKeyEvent&);
+  bool keyRelease(const BzfKeyEvent&);
+
+  void init();
+  void adminInit();
+  void nonAdminInit();
 
   enum Mode {
     Kick,
@@ -65,8 +67,8 @@ public:
   };
 
 private:
-  std::string		makePattern(const InAddr& address);
-  void		updatePrompt();
+  std::string makePattern(const InAddr& address);
+  void updatePrompt();
 
 private:
   Mode mode;

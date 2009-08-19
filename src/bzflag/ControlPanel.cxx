@@ -10,18 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* BZFlag common header */
+// BZFlag common header
 #include "common.h"
 
-/* interface header */
+// interface header
 #include "ControlPanel.h"
 
-/* system headers */
+// system headers
 #include <iostream>
 #include <assert.h>
 #include <time.h>
 
-/* common implementation headers */
+// common headers
 #include "bzregex.h"
 #include "BZDBCache.h"
 #include "FontManager.h"
@@ -29,8 +29,9 @@
 #include "ErrorHandler.h"
 #include "global.h"
 
-/* local implementation headers */
+// local headers
 #include "FontSizer.h"
+#include "HubLink.h"
 #include "SceneRenderer.h"
 #include "RadarRenderer.h"
 #include "bzflag.h"
@@ -56,7 +57,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
   // get message and its length
   const char* msg = string.c_str();
-  int lineLen     = (int)string.length();
+  int lineLen = (int)string.length();
 
   // if there are tabs in the message, find the last one
   int lastTab = (int)string.rfind('\t');
@@ -78,7 +79,8 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     // the unprinted ANSI codes don't count
     if ((fm.getStringWidth(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0)) {
       n = lineLen;
-    } else {
+    }
+    else {
       n = 0;
       while ((n < lineLen) &&
 	     (fm.getStringWidth(fontFace, fontSize,
@@ -121,40 +123,40 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
       }
     }
 
-    if (lastWhitespace > 0)
+    if (lastWhitespace > 0) {
       n = lastWhitespace;
+    }
 
     // message
     lines.push_back(cumulativeANSICodes + std::string(msg,n));
 
-    if (msg[n] != '\t')
+    if (msg[n] != '\t') {
       numlines++;
+    }
 
     // account for portion broken
     msg += n;
     lineLen -= n;
     lastTab -= n;
-
   }
 }
 
 
-const std::deque<ControlPanelMessage>*
-  ControlPanel::getModeMessages(MessageModes mode)
+const ControlPanel::MessageQueue* ControlPanel::getTabMessages(int tabID)
 {
-  if ((mode < 0) || (mode >= MessageModeCount)) {
+  if (!validTab(tabID)) {
     return NULL;
   }
-  return &(messages[mode]);
+  return &(tabs[tabID]->messages);
 }
 
 
-int ControlPanel::getModeMessageCount(MessageModes mode)
+int ControlPanel::getTabMessageCount(int tabID)
 {
-  if ((mode < 0) || (mode >= MessageModeCount)) {
+  if (!validTab(tabID)) {
     return -1;
   }
-  return messageCounts[mode];
+  return tabs[tabID]->msgCount;
 }
 
 
@@ -162,11 +164,13 @@ int ControlPanel::getModeMessageCount(MessageModes mode)
 //
 // ControlPanel
 //
+
 int ControlPanel::messagesOffset = 0;
 
+
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
-: tabsOnRight(true)
-, tabs(NULL)
+: activeTab(MessageAll)
+, tabsOnRight(true)
 , totalTabWidth(0)
 , window(_mainWindow)
 , resized(false)
@@ -178,7 +182,6 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
 , dimming(1.0f)
 , du(0)
 , dv(0)
-, messageMode(MessageAll)
 , teamColor(0.0f, 0.0f, 0.0f, 1.0f)
 {
   setControlColor();
@@ -199,26 +202,18 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
   messageAreaPixels[1] = 0;
   messageAreaPixels[2] = 0;
   messageAreaPixels[3] = 0;
-  for (int i = 0; i < MessageModeCount; i++) {
-    messages[i].clear();
-    messageCounts[i] = 0;
-    unRead[i] = false;
-  }
   teamColor[0] = teamColor[1] = teamColor[2] = (float)0.0f;
 
   maxLines = 30;
 
-  /* use pointer initialization to perform precomputation and
-   * prestorage. eventually should move this data into constructor.
-   */
-  if (tabs == NULL) {
-    tabs = new std::vector<const char *>;
-    tabs->push_back("All");
-    tabs->push_back("Chat");
-    tabs->push_back("Server");
-    tabs->push_back("Misc");
-    tabs->push_back("Debug");
-  }
+  // - - - - - - - - -   label     locked  allSrc  allDst
+  tabs.push_back(new Tab("All",    true,   true,   true));
+  tabs.push_back(new Tab("Chat",   true,   true,   true));
+  tabs.push_back(new Tab("Server", true,   true,   true));
+  tabs.push_back(new Tab("Misc",   true,   true,   true));
+  tabs.push_back(new Tab("Debug",  true,   false,  true));
+
+  setupTabMap();
 
   resize(); // need resize to set up font and window dimensions
 
@@ -228,6 +223,11 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
 
 ControlPanel::~ControlPanel()
 {
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    delete tabs[t];
+  }
+  tabs.clear();
+
   // don't notify me anymore (cos you can't wake the dead!)
   unregisterLoggingProc(loggingCallback, this);
   window.getWindow()->removeResizeCallback(resizeCallback, this);
@@ -237,17 +237,12 @@ ControlPanel::~ControlPanel()
   BZDB.removeCallback(BZDBNAMES.RADARLIMIT, bzdbCallback, this);
 
   // release font face
-  if (fontFace)
+  if (fontFace) {
     LocalFontFace::release(fontFace);
+  }
 
   if (echoToConsole && echoAnsi) {
     std::cout << ColorStrings[FinalResetColor] << std::flush;
-  }
-  if (tabs != NULL) {
-    tabs->clear();
-    delete tabs;
-    tabTextWidth.clear();
-    totalTabWidth = 0;
   }
 }
 
@@ -285,7 +280,21 @@ void ControlPanel::loggingCallback(int level,
 void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
 {
   ((ControlPanel*)data)->resize();
-  return;
+}
+
+
+void ControlPanel::setupTabMap()
+{
+  tabMap.clear();
+
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    const std::string& label = tabs[t]->label;
+    tabMap[label] = t;
+    tabMap[stripAnsiCodes(label)] = t;
+    if (tabs[t]->locked) {
+      tabMap[TextUtils::tolower(label)] = t;
+    }
+  }
 }
 
 
@@ -299,15 +308,6 @@ void ControlPanel::setControlColor(const fvec4* color)
 }
 
 
-bool ControlPanel::isTabVisible(MessageModes mode) const
-{
-  if (debugLevel > 0) {
-    return true;
-  }
-  return (mode != MessageDebug);
-}
-
-
 void ControlPanel::render(SceneRenderer& _renderer)
 {
   if (!BZDB.isTrue("displayConsole")) {
@@ -318,12 +318,16 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  if (!resized) resize();
+  if (!resized) {
+    resize();
+  }
 
   // optimization for software rendering folks
   if (!changedMessage && _renderer.getPanelOpacity() == 1.0f) {
     return;
   }
+
+  const fvec2 halfPixel(0.5f, 0.5f);
 
   int i, j;
   const int x = window.getOriginX();
@@ -360,8 +364,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
   if (_renderer.getPanelOpacity() > 0.0f) {
     // nice blended messages background
-    if (BZDBCache::blend && _renderer.getPanelOpacity() < 1.0f)
+    const bool blended = BZDBCache::blend && (_renderer.getPanelOpacity() < 1.0f);
+    if (blended) {
       glEnable(GL_BLEND);
+    }
 
     // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
@@ -373,13 +379,14 @@ void ControlPanel::render(SceneRenderer& _renderer)
     // display tabs for chat sections
     if (showTabs) {
       long int drawnTabWidth = 0;
-      for (size_t tab = 0; tab < tabs->size(); tab++) {
-        if (!isTabVisible((MessageModes)tab)) {
+      for (int t = 0; t < (int)tabs.size(); t++) {
+        const Tab* tab = tabs[t];
+        if (!tab->visible) {
           continue;
         }
 
 	// current mode is given a dark background to match the control panel
-	if (messageMode == MessageModes(tab)) {
+	if (activeTab == t) {
 	  glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
 	} else {
 	  glColor4f(0.10f, 0.10f, 0.10f, _renderer.getPanelOpacity());
@@ -389,26 +396,28 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	  // draw the tabs on the right side
 	  glRecti(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth,
 		  messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-		  messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(tabTextWidth[tab]), //+ drawnTabWidth + int(tabTextWidth[tab]),
+		  messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(tab->width),
 		  messageAreaPixels[1] + messageAreaPixels[3] + ay);
 	} else {
 	  // draw the tabs on the left side
 	  glRecti(messageAreaPixels[0] + drawnTabWidth,
 		  messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-		  messageAreaPixels[0] + drawnTabWidth + int(tabTextWidth[tab]),
+		  messageAreaPixels[0] + drawnTabWidth + int(tab->width),
 		  messageAreaPixels[1] + messageAreaPixels[3] + ay);
 	}
-	drawnTabWidth += long(tabTextWidth[tab]);
+
+	drawnTabWidth += long(tab->width);
       } // end iteration over tabs
     }
 
-    if (BZDBCache::blend && _renderer.getPanelOpacity() < 1.0f)
+    if (blended) {
       glDisable(GL_BLEND);
+    }
   }
 
   // show scroll indicator if not at end
-  if (messagesOffset > 0 && messageMode >= 0) {
-    int lines = int(messages[messageMode].size());
+  if ((messagesOffset > 0) && (activeTab >= 0)) {
+    int lines = int(tabs[activeTab]->messages.size());
     if (lines > 0) {
 
       const float size = std::max(float(maxLines) / lines, 0.02f);
@@ -422,22 +431,22 @@ void ControlPanel::render(SceneRenderer& _renderer)
       glRecti(messageAreaPixels[0],
 	      messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
 	      messageAreaPixels[0] + 2, top);
-
     }
   }
 
   // Draw tab labels
   if (showTabs) {
     long int drawnTabWidth = 0;
-    for (size_t tab = 0; tab < tabs->size(); tab++) {
-      if (!isTabVisible((MessageModes)tab)) {
+    for (int t = 0; t < (int)tabs.size(); t++) {
+      const Tab* tab = tabs[t];
+      if (!tab->visible) {
         continue;
       }
 
       // current mode is bright, others are not so bright
-      if (messageMode == MessageModes(tab)) {
+      if (activeTab == t) {
 	glColor4f(1.0f, 1.0f, 1.0f, dimming);
-      } else if (unRead[MessageModes(tab)]) {
+      } else if (tab->unread) {
 	glColor4f(0.5f, 0.0f, 0.0f, dimming);
       } else {
 	glColor4f(0.5f, 0.5f, 0.5f, dimming);
@@ -447,14 +456,14 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	// draw the tabs on the right side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
-		      0.0f, fontFace->getFMFace(), (float)fontSize, (*tabs)[tab]);
+		      0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
       } else {
 	// draw the tabs on the left side (with one letter padding)
 	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
 		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
-		      0.0f, fontFace->getFMFace(), (float)fontSize, (*tabs)[tab]);
+		      0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
       }
-      drawnTabWidth += long(tabTextWidth[tab]);
+      drawnTabWidth += long(tab->width);
     }
   }
 
@@ -481,15 +490,16 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	    messageAreaPixels[2],
 	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
-  if (messageMode >= 0) {
-    i = (int)messages[messageMode].size() - 1;
+  if (activeTab >= 0) {
+    i = (int)tabs[activeTab]->messages.size() - 1;
   } else {
     i = -1;
   }
-  if (i >= 0 && messagesOffset > 0) {
+  if ((i >= 0) && (messagesOffset > 0)) {
     i -= messagesOffset;
-    if (i < 0)
+    if (i < 0) {
       i = 0;
+    }
   }
 
   const std::string highlightPattern = BZDB.get("highlightPattern");
@@ -501,10 +511,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  for (j = 0; i >= 0 && j < maxLines; i--) {
+  for (j = 0; (i >= 0) && (j < maxLines); i--) {
     // draw each line of text
-    int numLines = messages[messageMode][i].numlines;
-    int numStrings = (int)messages[messageMode][i].lines.size();
+    int numLines = tabs[activeTab]->messages[i].numlines;
+    int numStrings = (int)tabs[activeTab]->messages[i].lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
 
@@ -512,8 +522,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
     bool highlight = false;
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
-	const std::string &msg = messages[messageMode][i].lines[l];
-	std::string raw = stripAnsiCodes(msg.c_str());
+	const std::string &msg = tabs[activeTab]->messages[i].lines[l];
+	std::string raw = stripAnsiCodes(msg);
 	if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
 	  highlight = true;
 	}
@@ -527,7 +537,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     bool isTab = false;
 
     for (int l = 0; l < numStrings; l++)  {
-      const std::string &msg = messages[messageMode][i].lines[l];
+      const std::string &msg = tabs[activeTab]->messages[i].lines[l];
 
       // Tab chars move horizontally instead of vertically
       // It doesn't matter where in the string the tab char is
@@ -544,16 +554,19 @@ void ControlPanel::render(SceneRenderer& _renderer)
       assert(msgy >= 0);
 
       // only draw message if inside message area
-      if (j + msgy < maxLines) {
+      if ((j + msgy) < maxLines) {
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, msg);
-	} else {
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0,
+	                fontFace->getFMFace(), fontSize, msg);
+	}
+	else {
 	  // highlight this line
 	  std::string newMsg = ANSI_STR_PULSATING;
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
-	  newMsg += stripAnsiCodes(msg.c_str());
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace->getFMFace(), fontSize, newMsg);
+	  newMsg += stripAnsiCodes(msg);
+	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0,
+	                fontFace->getFMFace(), fontSize, newMsg);
 	}
       }
 
@@ -581,98 +594,69 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
   float outlineOpacity = RENDERER.getPanelOpacity();
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor; // bzdb cache this maybe?
-  if (outlineOpacity < 1.0f)
+  if (outlineOpacity < 1.0f) {
     outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+  }
 
-  if (BZDBCache::blend)
+  if (BZDBCache::blend) {
     glEnable(GL_BLEND);
+  }
 
   // nice border
-  glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity);
+  glColor4f(teamColor[0], teamColor[1], teamColor[2], outlineOpacity);
   glBegin(GL_LINE_LOOP); {
     // bottom left
     xpos = x + messageAreaPixels[0] - 1;
     ypos = y + messageAreaPixels[1] - 1;
-    glVertex2f((float) xpos, (float) ypos);
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // bottom right
     xpos += messageAreaPixels[2] + 1;
-    glVertex2f((float) xpos, (float) ypos);
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // top right
     ypos += messageAreaPixels[3] + 1;
-    glVertex2f((float) xpos, (float) ypos);
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // over to panel on left
     if (!tabsOnRight) {
       xpos = x + messageAreaPixels[0] + totalTabWidth;
-      glVertex2f((float) xpos, (float) ypos);
+      glVertex2fv(fvec2(xpos, ypos) + halfPixel);
     }
 
     // across the top from right to left
     long int drawnTabWidth = 0;
-    for (int tab = (int)tabs->size() - 1; tab >= 0; tab--) {
-      if (!isTabVisible((MessageModes)tab)) {
+    for (int t = (int)tabs.size() - 1; t >= 0; t--) {
+      const Tab* tab = tabs[t];
+      if (!tab->visible) {
         continue;
       }
-      if (messageMode == MessageModes(tab)) {
+      if (activeTab == t) {
 	ypos += ay;
-	glVertex2f((float) xpos, (float) ypos);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
-	xpos -= long(tabTextWidth[tab]) + 1;
-	glVertex2f((float) xpos, (float) ypos);
+	xpos -= long(tab->width) + 1;
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
 	ypos -= ay;
-	glVertex2f((float) xpos, (float) ypos);
-      } else {
-	xpos -= long(tabTextWidth[tab]);
-	glVertex2f((float) xpos, (float) ypos);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
       }
-      drawnTabWidth += long(tabTextWidth[tab]);
+      else {
+	xpos -= long(tab->width);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+      }
+      drawnTabWidth += long(tab->width);
     }
 
     // over from panel on right
-    //    if (tabsOnRight) {
     xpos = x + messageAreaPixels[0] - 1;
-    glVertex2f((float) xpos, (float) ypos);
-    //    }
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
   } glEnd();
 
-  // some engines miss the corners
-  glBegin(GL_POINTS); {
-    glVertex2f((float) (x + messageAreaPixels[0] - 1),
-	       (float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2]),
-	       (float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2]),
-	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1),
-	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
-    long int tabPosition = 0;
-    for (size_t tab = 0; tab < tabs->size(); tab++) {
-      if (!isTabVisible((MessageModes)tab)) {
-        continue;
-      }
-      if (messageMode == MessageModes(tab)) {
-	if (tabsOnRight) {
-	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + long(tabTextWidth[tab])),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	} else {
-	  glVertex2f((float) (x + messageAreaPixels[0] + tabPosition),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	  glVertex2f((float) (x + messageAreaPixels[0] + tabPosition + long(tabTextWidth[tab])),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	}
-      }
-      tabPosition += long(tabTextWidth[tab]);
-    }
-  } glEnd();
-
-  if (BZDBCache::blend)
+  if (BZDBCache::blend) {
     glDisable(GL_BLEND);
+  }
 
   glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f);
 
@@ -684,6 +668,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
 void ControlPanel::resize()
 {
+  tabs[MessageDebug]->visible = (debugLevel > 0);
+
   float radarSpace, radarSize;
   // get important metrics
   const float w = (float)window.getWidth();
@@ -713,30 +699,35 @@ void ControlPanel::resize()
   }
 
   // if radar connected then resize it
-  if (radarRenderer)
+  if (radarRenderer) {
     radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
 			    radarAreaPixels[2], radarAreaPixels[3]);
+  }
 
   FontManager &fm = FontManager::instance();
-  if (!fontFace)
+  if (!fontFace) {
     fontFace = LocalFontFace::create("consoleFont");
+  }
 
   FontSizer fs = FontSizer(w, h);
   fontSize = fs.getFontSize(fontFace, "consoleFontSize");
 
   // tab widths may have changed
-  if (tabs) {
-    tabTextWidth.clear();
-    totalTabWidth = 0;
-    const float charWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, "-");
-    for (size_t tab = 0; tab < tabs->size(); tab++) {
-      if (!isTabVisible((MessageModes)tab)) {
-        continue;
-      }
-      // add space for about 2-chars on each side for padding
-      tabTextWidth.push_back(fm.getStringWidth(fontFace->getFMFace(), fontSize, (*tabs)[tab]) + (4.0f * charWidth));
-      totalTabWidth += long(tabTextWidth[tab]);
+  totalTabWidth = 0;
+  const float charWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, "-");
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    Tab* tab = tabs[t];
+    if (!tab->visible) {
+      tab->width = 0.0f;
+      continue;
     }
+
+    // add space for about 2-chars on each side for padding
+    tab->width = 
+      fm.getStringWidth(fontFace->getFMFace(), fontSize, tab->label)
+      + (4.0f * charWidth);
+
+    totalTabWidth += long(tab->width);
   }
 
   lineHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
@@ -746,15 +737,16 @@ void ControlPanel::resize()
   margin = lineHeight / 4.0f;
 
   // rewrap all the lines
-  for (int i = 0; i < MessageModeCount; i++) {
-    for (int j = 0; j < (int)messages[i].size(); j++) {
-      messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin,
+  for (int i = 0; i < (int)tabs.size(); i++) {
+    for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
+      tabs[i]->messages[j].breakLines(messageAreaPixels[2] - 2 * margin,
                                 fontFace->getFMFace(), fontSize);
     }
   }
 
   // note that we've been resized at least once
   resized = true;
+
   invalidate();
 }
 
@@ -801,58 +793,98 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
   // whence = 0, 1, or 2 (akin to SEEK_SET, SEEK_CUR, SEEK_END)
 
   switch (whence) {
-  case 0:
-    if (offset < (int)messages[messageMode].size())
-      messagesOffset = offset;
-    else
-      messagesOffset = (int)messages[messageMode].size() - 1;
-    break;
-  case 1:
-    if (offset > 0) {
-      if (messagesOffset + offset < (int)messages[messageMode].size())
-	messagesOffset += offset;
-      else
-	messagesOffset = (int)messages[messageMode].size() - 1;
-    } else if (offset < 0) {
-      if (messagesOffset + offset >= 0)
-	messagesOffset += offset;
-      else
-	messagesOffset = 0;
+    case 0: {
+      if (offset < (int)tabs[activeTab]->messages.size()) {
+        messagesOffset = offset;
+      } else {
+        messagesOffset = (int)tabs[activeTab]->messages.size() - 1;
+      }
+      break;
     }
-    break;
-  case 2:
-    if (offset < 0) {
-      if ((int)messages[messageMode].size() >= offset)
-	messagesOffset += offset;
-      else
-	messagesOffset = 0;
+    case 1: {
+      if (offset > 0) {
+        if (messagesOffset + offset < (int)tabs[activeTab]->messages.size()) {
+          messagesOffset += offset;
+        } else {
+          messagesOffset = (int)tabs[activeTab]->messages.size() - 1;
+        }
+      } else if (offset < 0) {
+        if (messagesOffset + offset >= 0) {
+          messagesOffset += offset;
+        } else {
+          messagesOffset = 0;
+        }
+      }
+      break;
     }
-    break;
+    case 2: {
+      if (offset < 0) {
+        if ((int)tabs[activeTab]->messages.size() >= offset) {
+          messagesOffset += offset;
+        } else {
+          messagesOffset = 0;
+        }
+      }
+      break;
+    }
   }
+
   invalidate();
 }
 
 
-void ControlPanel::setMessagesMode(MessageModes mode)
+bool ControlPanel::setActiveTab(int tabID)
 {
-  if ((mode == MessageDebug) && (debugLevel <= 0)) {
-    return;
+  if (!validTab(tabID)) {
+    return false;
   }
-  messageMode = mode;
-  if (messageMode == MessageAll) {
-    for (int i = 0; i < MessageModeCount; i++) {
-      unRead[i] = false;
+
+  if (!tabs[tabID]->visible) {
+    return false;
+  }
+
+  activeTab = tabID;
+
+  if (hubLink) {
+    hubLink->activeTabChanged();
+  }
+
+  if (activeTab == MessageAll) {
+    for (int i = 0; i < (int)tabs.size(); i++) {
+      if (tabs[i]->allSrc) {
+        tabs[i]->unread = false;
+      }
     }
   }
-  else if (messageMode >= MessageChat) {
-    unRead[messageMode] = false;
+  else if (activeTab >= MessageChat) {
+    tabs[activeTab]->unread = false;
   }
+
   invalidate();
+
+  return true;
 }
 
 
-void ControlPanel::addMessage(const std::string& line,
-			      MessageModes realmode)
+bool ControlPanel::isTabLocked(int tabID) const
+{
+  if (!validTab(tabID)) {
+    return false;
+  }
+  return tabs[tabID]->locked;
+}
+
+
+bool ControlPanel::isTabVisible(int tabID) const
+{
+  if (!validTab(tabID)) {
+    return false;
+  }
+  return tabs[tabID]->visible;
+}
+
+
+void ControlPanel::addMessage(const std::string& line, int realmode)
 {
   ControlPanelMessage item(line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
@@ -864,81 +896,231 @@ void ControlPanel::addMessage(const std::string& line,
   }
 
   // the effective tab
-  const int tabmode = (realmode == MessageCurrent) ? messageMode : realmode;
+  const int tabmode = (realmode == MessageCurrent) ? activeTab : realmode;
+
+  const bool allSrc = !validTab(tabmode) || tabs[tabmode]->allSrc;
 
   // add to the appropriate tabs
-  for (int tab = MessageAll; tab < MessageModeCount; tab++) {
-
-    if ((tab == tabmode) // add to its own mode
-	// add to the All tab, unless using Debug or Current mode
-	|| ((tab == MessageAll) && (realmode != MessageDebug)
-	                        && (realmode != MessageCurrent))
+  for (int t = MessageAll; t < (int)tabs.size(); t++) {
+    Tab* tab = tabs[t];
+    if ((t == tabmode) // add to its own mode
+	// add to the All tab, unless not a source for All, or Current mode
+	|| ((t == MessageAll) && allSrc && (realmode != MessageCurrent))
 	// always add to all tabs
-	|| (realmode == MessageAllTabs)) {
+	|| ((realmode == MessageAllTabs) && tab->allDst)) {
 
       // insert the message into the tab
-      if ((int)messages[tab].size() < maxLines * _maxScrollPages) {
+      if ((int)tab->messages.size() < (maxLines * _maxScrollPages)) {
 	// not full yet so just append it
-	messages[tab].push_back(item);
+	tab->messages.push_back(item);
       } else {
 	// rotate list and replace oldest (in newest position after rotate)
-	messages[tab].pop_front();
-	messages[tab].push_back(item);
+	tab->messages.pop_front();
+	tab->messages.push_back(item);
       }
-      messageCounts[tab]++;
+      tab->msgCount++;
 
       // visible changes, force a console refresh
-      if (messageMode == tab) {
+      if (activeTab == t) {
 	invalidate();
       }
 
       // mark the tab as unread (if viewing tabs)
       const bool showTabs = (BZDB.evalInt("showtabs") > 0);
-      if (showTabs && (messageMode != tab) && (messageMode != MessageAll)) {
-	unRead[tab] = true;
+      if (showTabs && (activeTab != t) && (activeTab != MessageAll)) {
+	tab->unread = true;
       }
     }
   }
 
-  if (echoToConsole){
-#ifdef _WIN32
+  if (echoToConsole) {
+    std::string echoOut = line;
+    if (echoAnsi) {
+      echoOut += ColorStrings[ResetColor];
+    } else {
+      echoOut = stripAnsiCodes(line);
+    }
+#ifndef _WIN32
+    std::cout << echoOut << std::endl;
+    fflush(stdout);
+#else
     // this is cheap but it will work on windows
-    FILE *fp = fopen ("stdout.txt","a+");
-    if (fp){
-      fprintf(fp,"%s\n", stripAnsiCodes(line.c_str()));
+    FILE *fp = fopen("stdout.txt", "a+");
+    if (fp) {
+      fprintf(fp,"%s\n", echoOut.c_str());
       fclose(fp);
     }
-#else
-    if (echoAnsi) {
-      std::cout << line.c_str() << ColorStrings[ResetColor] << std::endl;
-    } else {
-      std::cout << stripAnsiCodes(line.c_str()) << std::endl;
-    }
-    fflush(stdout);
 #endif
   }
 }
 
 
-void ControlPanel::saveMessages(const std::string& filename,
-				bool stripAnsi) const
+void ControlPanel::addMessage(const std::string& line,
+                              const std::string& tabLabel)
 {
-  FILE* file = fopen(filename.c_str(), "a+");
-  if (!file) {
+  const int tabID = getTabID(tabLabel);
+  if (tabID < 0) {
     return;
   }
+  addMessage(line, tabID);
+}
 
-  const time_t nowTime = time (NULL);
+
+bool ControlPanel::addTab(const std::string& label, bool allSrc, bool allDst)
+{
+  if (label.empty()) {
+    return false;
+  }
+  if (getTabID(label) >= 0) {
+    return false;
+  }
+
+  tabs.push_back(new Tab(label, false, allSrc, allDst));
+  setupTabMap();
+  resize();
+  
+  return true;
+}
+
+
+bool ControlPanel::removeTab(const std::string& label)
+{
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    if (tabs[t]->label == label) { // an exact test, not using getTabID()
+      if (tabs[t]->locked) {
+        return false;
+      }
+      delete tabs[t];
+      tabs.erase(tabs.begin() + t);
+      setupTabMap();
+      if (activeTab >= (int)tabs.size()) {
+        activeTab = -1;
+        if (hubLink) {
+          hubLink->activeTabChanged();
+        }
+      }
+      resize();
+      return true;
+    }
+  }
+  return false;
+}
+
+
+bool ControlPanel::renameTab(const std::string& oldLabel,
+                             const std::string& newLabel)
+{
+  if (newLabel.empty()) {
+    return false;
+  }
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    if (tabs[t]->label == oldLabel) {
+      if (tabs[t]->locked) {
+        return false;
+      }
+      const int newTab = getTabID(newLabel);
+      if (validTab(newTab) && (newTab != t)) {
+        return false;
+      }
+      tabs[t]->label = newLabel;
+      setupTabMap();
+      resize();
+      return true;
+    }
+  }
+  return false;
+}
+
+
+int ControlPanel::getTabID(const std::string& label) const
+{
+  TabMap::const_iterator it = tabMap.find(label);
+  if (it == tabMap.end()) {
+    return -1;
+  }
+  return it->second;
+}
+
+
+bool ControlPanel::shiftTab(int tabID, int distance)
+{
+  if (!validTab(tabID) || tabs[tabID]->locked || (distance == 0)) {
+    return false;
+  }
+
+  const int swapID = (distance > 0) ? (tabID + 1) : (tabID - 1);
+  if (!validTab(swapID) ||tabs[swapID]->locked) {
+    return false;
+  }
+
+  // swap the tabs
+  Tab* swapTab = tabs[swapID];
+  tabs[swapID] = tabs[tabID];
+  tabs[tabID]  = swapTab;
+
+  if (activeTab == tabID) {
+    activeTab = swapID;
+    if (hubLink) {
+      hubLink->activeTabChanged();
+    }
+  }
+
+  setupTabMap();
+  resize();
+
+
+  return true;
+}
+
+
+bool ControlPanel::clearTab(int tabID)
+{
+  if (!validTab(tabID) || tabs[tabID]->locked) {
+    return false;
+  }
+  tabs[tabID]->messages.clear();
+  return true;
+}
+
+
+const std::string& ControlPanel::getTabLabel(int tabID) const
+{
+  static const std::string empty = "";
+  if (!validTab(tabID)) {
+    return empty;
+  }
+  return tabs[tabID]->label;
+}
+
+
+bool ControlPanel::saveMessages(const std::string& filename, bool stripAnsi,
+                                const std::string& tabLabel) const
+{
+  // pick the tab to save
+  const MessageQueue* msgs = &(tabs[MessageAll]->messages);
+  if (!tabLabel.empty()) {
+    const int tabID = getTabID(tabLabel);
+    if (tabID < 0) {
+      return false;
+    }
+    msgs = &(tabs[tabID]->messages);
+  }
+
+  FILE* file = fopen(filename.c_str(), "a+");
+  if (!file) {
+    return false;
+  }
+
+  const time_t nowTime = time(NULL);
   fprintf(file, "\n----------------------------------------\n");
   fprintf(file, "Messages saved: %s", ctime(&nowTime));
   fprintf(file, "----------------------------------------\n\n");
 
-  // add to the appropriate tabs
-  std::deque<ControlPanelMessage>::const_iterator msg = messages[MessageAll].begin()++;
-  for (; msg != messages[MessageAll].end(); ++msg) {
+  MessageQueue::const_iterator msg;
+  for (msg = msgs->begin(); msg != msgs->end(); ++msg) {
     const std::string& line = msg->string;
     if (stripAnsi) {
-      fprintf(file, "%s\n", stripAnsiCodes(line.c_str()));
+      fprintf(file, "%s\n", stripAnsiCodes(line));
     } else {
       fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
     }
@@ -946,7 +1128,7 @@ void ControlPanel::saveMessages(const std::string& filename,
 
   fclose(file);
 
-  return;
+  return true;
 }
 
 

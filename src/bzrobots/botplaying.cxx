@@ -82,8 +82,19 @@
 #include "bzflag.h"
 #include "commands.h"
 #include "motd.h"
+#include "HubLink.h"
 
 #include "clientvars.h"
+
+
+// HubLink stubs
+class HubLink* hubLink = NULL;
+HubLink::HubLink(const std::string&, const std::string&) {}
+HubLink::~HubLink() {}
+void HubLink::activeTabChanged() {}
+void HubLink::startComposing() {}
+void HubLink::recvCommand(const std::string&) {}
+void HubLink::wordComplete(const std::string&, std::set<std::string>&) {}
 
 
 // FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
@@ -107,15 +118,15 @@ void showError(const char *msg, bool flush)
 // - in bzrobots, this shows the error on the console
 void showMessage(const std::string& line)
 {
-  printf("%s\n",stripAnsiCodes(line.c_str()));
-  //BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
+  printf("%s\n",stripAnsiCodes(line));
+  //BACKENDLOGGER << stripAnsiCodes(line) << std::endl;
 }
 
 
 void showMessage(const std::string& line, ControlPanel::MessageModes)
 {
-  printf("%s\n",stripAnsiCodes(line.c_str()));
-  //BACKENDLOGGER << stripAnsiCodes(line.c_str()) << std::endl;
+  printf("%s\n",stripAnsiCodes(line));
+  //BACKENDLOGGER << stripAnsiCodes(line) << std::endl;
 }
 // access silencePlayers from bzflag.cxx
 std::vector<std::string> &getSilenceList()

@@ -29,8 +29,13 @@
 #include "LocalFontFace.h"
 
 
+JoinMenu* JoinMenu::instance = NULL;
+
+
 JoinMenu::JoinMenu() : serverMenu(NULL)
 {
+  instance = this;
+
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -63,7 +68,7 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   password->setObfuscation(true);
   password->setFontFace(fontFace);
   password->setLabel("Password:");
-  password->setMaxLength(CallSignLen - 1);
+  password->setMaxLength(PasswordLen - 1);
   password->setString(info->password);
   addControl(password);
 
@@ -126,6 +131,7 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
 
 JoinMenu::~JoinMenu()
 {
+  instance = NULL;
   delete serverMenu;
 }
 

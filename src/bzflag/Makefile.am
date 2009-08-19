@@ -4,12 +4,12 @@
 
 bin_PROGRAMS = bzflag
 
-AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
-	-I$(top_srcdir)/src/clientbase \
-	$(SDL_CFLAGS) \
-	$(LIBCURL_CPPFLAGS) \
-	@X_CFLAGS@ \
+AM_CPPFLAGS =				\
+	-I$(top_srcdir)/include		\
+	-I$(top_srcdir)/src/clientbase	\
+	$(SDL_CFLAGS)			\
+	$(LIBCURL_CPPFLAGS)		\
+	@X_CFLAGS@			\
 	@CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
@@ -93,9 +93,9 @@ bzflag_SOURCES =			\
 	HUDuiServerListItem.cxx		\
 	HUDuiServerListItem.h		\
 	HUDuiServerListCustomTab.cxx	\
-	HUDuiServerListCustomTab.h		\
-	HUDuiTabbedControl.cxx	\
-	HUDuiTabbedControl.h	\
+	HUDuiServerListCustomTab.h	\
+	HUDuiTabbedControl.cxx		\
+	HUDuiTabbedControl.h		\
 	HUDuiTypeIn.cxx			\
 	HUDuiTypeIn.h			\
 	HelpCreditsMenu.cxx		\
@@ -108,6 +108,12 @@ bzflag_SOURCES =			\
 	HelpKeymapMenu.h		\
 	HelpMenu.cxx			\
 	HelpMenu.h			\
+	HubComposeKey.h			\
+	HubComposeKey.cxx		\
+	HubLink.h			\
+	HubLink.cxx			\
+	HubMenu.h			\
+	HubMenu.cxx			\
 	InputMenu.cxx			\
 	InputMenu.h			\
 	JoinMenu.cxx			\
@@ -210,6 +216,7 @@ LDADD =	\
 	../scene/libSceneDB.la		\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
+	$(LIBLUA)			\
 	$(LIBFTGL)			\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\

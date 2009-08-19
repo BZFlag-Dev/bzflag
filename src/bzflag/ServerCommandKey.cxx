@@ -122,7 +122,7 @@ void ServerCommandKey::updatePrompt()
   const Player *recipient = myTank->getRecipient();
 
   switch (mode) {
-    case Kick:
+    case Kick: {
       if (recipient) {
 	composePrompt = "Kick -> ";
 	composePrompt += recipient->getCallSign();
@@ -131,7 +131,8 @@ void ServerCommandKey::updatePrompt()
 	composePrompt = "Kick :";
       }
       break;
-    case Kill:
+    }
+    case Kill: {
       if (recipient) {
 	composePrompt = "Kill -> ";
 	composePrompt += recipient->getCallSign();
@@ -140,10 +141,11 @@ void ServerCommandKey::updatePrompt()
 	composePrompt = "Kill :";
       }
       break;
+    }
     case BanIp:
     case Ban1:
     case Ban2:
-    case Ban3:
+    case Ban3: {
       if (recipient) {
 	// Set the prompt and enable editing/composing --> allows to enter ban time
 	/* FIXME: temporarily breaking bans for playerid->ubyte
@@ -155,7 +157,8 @@ void ServerCommandKey::updatePrompt()
 	composePrompt = "Ban :";
       }
       break;
-    case Showgroup:
+    }
+    case Showgroup: {
       if (recipient) {
 	composePrompt = "Show player's groups -> ";
 	composePrompt += recipient->getCallSign();
@@ -164,7 +167,8 @@ void ServerCommandKey::updatePrompt()
 	composePrompt = "Show player's group :";
       }
       break;
-    case Setgroup:
+    }
+    case Setgroup: {
       if (recipient) {
 	composePrompt = "Set player's group -> ";
 	composePrompt += recipient->getCallSign();
@@ -173,7 +177,8 @@ void ServerCommandKey::updatePrompt()
 	composePrompt = "Set player's group :";
       }
       break;
-    case Removegroup:
+    }
+    case Removegroup: {
       if (recipient) {
 	composePrompt = "Remove player from group -> ";
 	composePrompt += recipient->getCallSign();
@@ -182,100 +187,126 @@ void ServerCommandKey::updatePrompt()
 	composePrompt = "Remove player from group :";
       }
       break;
-    case Unban:
+    }
+    case Unban: {
       composePrompt = "Unban :";
       break;
-    case Banlist:
+    }
+    case Banlist: {
       composePrompt = "Show ban list";
       allowEdit = false;
       break;
-    case Playerlist:
+    }
+    case Playerlist: {
       composePrompt = "Show player list";
       allowEdit = false;
       break;
-    case FlagReset:
+    }
+    case FlagReset: {
       composePrompt = "Reset Flags";
       allowEdit = false;
       break;
-    case FlagUnusedReset:
+    }
+    case FlagUnusedReset: {
       composePrompt = "Reset Unused Flags";
       allowEdit = false;
       break;
-    case FlagUp:
+    }
+    case FlagUp: {
       composePrompt = "Remove Flags";
       allowEdit = false;
       break;
-    case FlagShow:
+    }
+    case FlagShow: {
       composePrompt = "Show Flag Info";
       allowEdit = false;
       break;
-    case FlagHistory:
+    }
+    case FlagHistory: {
       composePrompt = "Flag History";
       allowEdit = false;
       break;
-    case IdleStats:
+    }
+    case IdleStats: {
       composePrompt = "Idle Stats";
       allowEdit = false;
       break;
-    case ClientQuery:
+    }
+    case ClientQuery: {
       composePrompt = "Client Version Query";
       allowEdit = false;
       break;
-    case LagStats:
+    }
+    case LagStats: {
       composePrompt = "Lag / Ping Stats";
       allowEdit = false;
       break;
-    case Report:
+    }
+    case Report: {
       composePrompt = "Send Report to Server:";
       break;
-    case LagWarn:
+    }
+    case LagWarn: {
       composePrompt = "Lag Warning threshold:";
       break;
-    case LagDrop:
+    }
+    case LagDrop: {
       composePrompt = "Maximum lag warnings:";
       break;
-    case GameOver:
+    }
+    case GameOver: {
       composePrompt = "End Game";
       allowEdit = false;
       break;
-    case CountDown:
+    }
+    case CountDown: {
       composePrompt = "Restart Countdown:";
       break;
-    case SuperKill:
+    }
+    case SuperKill: {
       composePrompt = "Disconnect all Players";
       allowEdit = false;
       break;
-    case Shutdown:
+    }
+    case Shutdown: {
       composePrompt = "Shut Down Server";
       allowEdit = false;
       break;
-    case Grouplist:
+    }
+    case Grouplist: {
       composePrompt = "List Groups";
       allowEdit = false;
       break;
-    case Groupperms:
+    }
+    case Groupperms: {
       composePrompt = "List Permissions";
       allowEdit = false;
       break;
-    case Vote:
+    }
+    case Vote: {
       composePrompt = "Vote:";
       break;
-    case Poll:
+    }
+    case Poll: {
       composePrompt = "Call a Poll:";
       break;
-    case Veto:
+    }
+    case Veto: {
       composePrompt = "Cancel a Poll";
       allowEdit = false;
       break;
-    case Password:
+    }
+    case Password: {
       composePrompt = "Admin Password:";
       break;
-    default:
+    }
+    default: {
       // Because of the type-safety of the enum, this should never
       // happen (unless someone adds a new mode without updating this
       // case statement)
       composePrompt = TextUtils::format("ERROR: Someone forgot to update a ServerCommandKey switch [mode == %d]:", mode);
       break;
+    }
   }
 
   hud->setComposing(composePrompt, allowEdit);
@@ -293,16 +324,21 @@ std::string ServerCommandKey::makePattern(const InAddr& address)
   if (dotChunks.size() != 4) return "";
 
   switch (mode) {
-    case BanIp:
+    case BanIp: {
       return dots;
-    case Ban1:
+    }
+    case Ban1: {
       return dotChunks[0] + "." + dotChunks[1] + "." + dotChunks[2] + ".*";
-    case Ban2:
+    }
+    case Ban2: {
       return dotChunks[0] + "." + dotChunks[1] + ".*.*";
-    case Ban3:
+    }
+    case Ban3: {
       return dotChunks[0] + ".*.*.*";
-    default:
+    }
+    default: {
       break;
+    }
   }
 
   return "";
@@ -312,38 +348,43 @@ std::string ServerCommandKey::makePattern(const InAddr& address)
 bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   // Check to see if we got disconnected while waiting for input
-  if (myTank == 0) return false;
+  if (myTank == NULL) {
+    return false;
+  }
 
-  if (KEYMGR.get(key, true) == "jump") {
-    // jump while typing
-    myTank->setJump();
+  if (KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
+    myTank->setJump(); // jump while typing
   }
 
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down) ||
-	(key.button == BzfKeyEvent::Left) ||
-	(key.button == BzfKeyEvent::Right))
+	(key.button == BzfKeyEvent::Down)) {
       return true;
+    }
+    if ((key.button == BzfKeyEvent::Left) ||
+	(key.button == BzfKeyEvent::Right)) {
+      return ((key.shift & BzfKeyEvent::AltKey) == 0);
+    }
   }
 
   switch (key.chr) {
     case 3:	// ^C
-    case 27:	// escape
+    case 27: {	// escape
       // case 127:   // delete
       sendIt = false;			// finished composing -- don't send
       break;
-
+    }
     case 4:	// ^D
-    case 13:	// return
+    case 13: {	// return
       sendIt = true;
       break;
-
-    default:
+    }
+    default: {
       return false;
+    }
   }
 
   if (sendIt) {
@@ -354,86 +395,91 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
     if (troll) name = troll->getCallSign();
 
     switch (mode) {
-    case Kick:
-      sendMsg = "/kick ";
-      if (troll) {
-	// escape the name
-	sendMsg += quote( escape(name) );
-	append_if(sendMsg, message);
+      case Kick: {
+        sendMsg = "/kick ";
+        if (troll) {
+          // escape the name
+          sendMsg += quote( escape(name) );
+          append_if(sendMsg, message);
+        }
+        break;
       }
-      break;
-
-    case Kill:
-      sendMsg = "/kill ";
-      if (troll) {
-	// escape the name
-	sendMsg += quote( escape(name) );
-	append_if(sendMsg, message);
+      case Kill: {
+        sendMsg = "/kill ";
+        if (troll) {
+          // escape the name
+          sendMsg += quote( escape(name) );
+          append_if(sendMsg, message);
+        }
+        break;
       }
-      break;
-
-    // The previous version did not define actions for Ban1-Ban3 when
-    // in editing mode, but this seems reasonable.  why this is
-    // (intentionally) broken is warranted
-   case BanIp: case Ban1: case Ban2: case Ban3:
-      sendMsg = "/ban ";
-      if (troll) {
-	/* FIXME: temporarily break ban-by-name for playerid->ubyte
-	std::string banPattern = makePattern(troll->id.serverHost);
-	sendMsg.append(" ").append(banPattern);
-	 */
-	sendMsg=""; break; // hack to keep this broken (why?)
+      // The previous version did not define actions for Ban1-Ban3 when
+      // in editing mode, but this seems reasonable.  why this is
+      // (intentionally) broken is warranted
+      case BanIp:
+      case Ban1:
+      case Ban2:
+      case Ban3: {
+        sendMsg = "/ban ";
+        if (troll) {
+          /* FIXME: temporarily break ban-by-name for playerid->ubyte
+          std::string banPattern = makePattern(troll->id.serverHost);
+          sendMsg.append(" ").append(banPattern);
+           */
+          sendMsg=""; break; // hack to keep this broken (why?)
+        }
+        // Note that this seems broken, if a recipient was specified (?!)
+        append_if(sendMsg, message);
+        break;
       }
-      // Note that this seems broken, if a recipient was specified (?!)
-      append_if(sendMsg, message);
-      break;
-
-    case Showgroup:
-      sendMsg = "/showgroup ";
-      if (troll) {
-	sendMsg += quote(name);
-      } else {
-	append_if(sendMsg, message);
+      case Showgroup: {
+        sendMsg = "/showgroup ";
+        if (troll) {
+          sendMsg += quote(name);
+        } else {
+          append_if(sendMsg, message);
+        }
+        break;
       }
-      break;
-
-    case Setgroup:
-      sendMsg = "/setgroup ";
-      if (troll) sendMsg += quote(name);
-      append_if(sendMsg, message);
-      break;
-
-    case Removegroup:
-      sendMsg = "/removegroup ";
-      if (troll) sendMsg += quote(name);
-      append_if(sendMsg, message);
-      break;
-
-    case Unban: sendMsg = "/unban " + message; break;
-    case Banlist: sendMsg = "/banlist";  break;
-    case Playerlist: sendMsg = "/playerlist";  break;
-    case FlagReset: sendMsg = "/flag reset"; break;
-    case FlagUnusedReset: sendMsg = "/flag reset unused"; break;
-    case FlagUp: sendMsg = "/flag up"; break;
-    case FlagShow: sendMsg = "/flag show"; break;
-    case FlagHistory: sendMsg = "/flaghistory"; break;
-    case IdleStats: sendMsg = "/idlestats"; break;
-    case ClientQuery: sendMsg = "/clientquery"; break;
-    case LagStats: sendMsg = "/lagstats"; break;
-    case Report: sendMsg = "/report " + message; break;
-    case LagWarn: sendMsg = "/lagwarn " + message; break;
-    case LagDrop: sendMsg = "/lagdrop " + message; break;
-    case GameOver: sendMsg = "/gameover"; break;
-    case CountDown: sendMsg = "/countdown " + message; break;
-    case SuperKill: sendMsg = "/superkill"; break;
-    case Shutdown: sendMsg = "/shutdownserver"; break;
-    case Grouplist: sendMsg = "/grouplist"; break;
-    case Groupperms: sendMsg = "/groupperms"; break;
-    case Vote: sendMsg = "/vote " + message; break;
-    case Poll: sendMsg = "/poll " + message; break;
-    case Veto: sendMsg = "/veto " + message; break;
-    case Password: sendMsg = "/password " + message; break;
-    default: /* shouldn't happen */ break;
+      case Setgroup: {
+        sendMsg = "/setgroup ";
+        if (troll) sendMsg += quote(name);
+        append_if(sendMsg, message);
+        break;
+      }
+      case Removegroup: {
+        sendMsg = "/removegroup ";
+        if (troll) sendMsg += quote(name);
+        append_if(sendMsg, message);
+        break;
+      }
+      case Unban:           { sendMsg = "/unban " + message;     break; }
+      case Banlist:         { sendMsg = "/banlist";              break; }
+      case Playerlist:      { sendMsg = "/playerlist";           break; }
+      case FlagReset:       { sendMsg = "/flag reset";           break; }
+      case FlagUnusedReset: { sendMsg = "/flag reset unused";    break; }
+      case FlagUp:          { sendMsg = "/flag up";              break; }
+      case FlagShow:        { sendMsg = "/flag show";            break; }
+      case FlagHistory:     { sendMsg = "/flaghistory";          break; }
+      case IdleStats:       { sendMsg = "/idlestats";            break; }
+      case ClientQuery:     { sendMsg = "/clientquery";          break; }
+      case LagStats:        { sendMsg = "/lagstats";             break; }
+      case Report:          { sendMsg = "/report "  + message;   break; }
+      case LagWarn:         { sendMsg = "/lagwarn " + message;   break; }
+      case LagDrop:         { sendMsg = "/lagdrop " + message;   break; }
+      case GameOver:        { sendMsg = "/gameover";             break; }
+      case CountDown:       { sendMsg = "/countdown " + message; break; }
+      case SuperKill:       { sendMsg = "/superkill";            break; }
+      case Shutdown:        { sendMsg = "/shutdownserver";       break; }
+      case Grouplist:       { sendMsg = "/grouplist";            break; }
+      case Groupperms:      { sendMsg = "/groupperms";           break; }
+      case Vote:            { sendMsg = "/vote " + message;      break; }
+      case Poll:            { sendMsg = "/poll " + message;      break; }
+      case Veto:            { sendMsg = "/veto " + message;      break; }
+      case Password:        { sendMsg = "/password " + message;  break; }
+      default: {
+        break; // shouldn't happen
+      }
     }
 
     // send the message on its way if it isn't empty
@@ -450,31 +496,35 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
   }
 
   hud->setComposing(std::string());
+
   HUDui::setDefaultKey(NULL);
+
   return true;
 }
 
 
 bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
 
-  if (KEYMGR.get(key, true) == "jump") {
-    // jump while typing
-    myTank->setJump();
+  if (KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
+    myTank->setJump(); // jump while typing
   }
 
   // Check to see if we got disconnected while waiting for input
-  if (myTank == 0) return false;
+  if (myTank == NULL) {
+    return false;
+  }
 
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
-    if (key.button == BzfKeyEvent::Up || key.button == BzfKeyEvent::Down
-	|| key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right) {
-      if (key.button == BzfKeyEvent::Left || key.button == BzfKeyEvent::Right)
+    if ((key.button == BzfKeyEvent::Up)   || (key.button == BzfKeyEvent::Down) ||
+	(key.button == BzfKeyEvent::Left) || (key.button == BzfKeyEvent::Right)) {
+      if ((key.button == BzfKeyEvent::Left) || (key.button == BzfKeyEvent::Right)) {
 	// robot stay on the recipient list - to ban eventually ??
 	selectNextRecipient(key.button == BzfKeyEvent::Right, true);
-      const Player *recipient = myTank->getRecipient();
+      }
+      const Player* recipient = myTank->getRecipient();
 
       // choose which mode we are in
       int maxModes;
@@ -530,6 +580,7 @@ bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
       return false;
     }
   }
+
   return keyPress(key);
 }
 

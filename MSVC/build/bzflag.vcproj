@@ -654,6 +654,34 @@
 				</File>
 			</Filter>
 			<Filter
+				Name="Hub"
+				>
+				<File
+					RelativePath="..\..\src\bzflag\HubComposeKey.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HubComposeKey.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HubLink.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HubLink.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HubMenu.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HubMenu.h"
+					>
+				</File>
+			</Filter>
+			<Filter
 				Name="clientbase"
 				>
 			</Filter>

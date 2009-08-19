@@ -18,6 +18,7 @@
 // system headers
 #include <assert.h>
 #include <string.h>
+#include <string>
 
 // common headers
 #include "vectors.h"
@@ -156,6 +157,12 @@ inline const char* stripAnsiCodes(const char* text)
   str[j] = '\0';
 
   return str;
+}
+
+
+inline const char* stripAnsiCodes(const std::string& text)
+{
+  return stripAnsiCodes(text.c_str());
 }
 
 

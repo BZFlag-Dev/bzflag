@@ -401,6 +401,18 @@ bool HUDRenderer::getComposing() const
 }
 
 
+std::string HUDRenderer::getComposePrompt() const
+{
+  return composeTypeIn->getLabel();
+}
+
+
+void HUDRenderer::setComposePrompt(const std::string& prompt) const
+{
+  return composeTypeIn->setLabel(prompt);
+}
+
+
 std::string HUDRenderer::getComposeString() const
 {
   return composeTypeIn->getString();

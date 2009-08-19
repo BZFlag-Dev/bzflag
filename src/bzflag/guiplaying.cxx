@@ -84,6 +84,7 @@
 // local implementation headers
 #include "AutoPilot.h"
 #include "AnsiCodes.h"
+#include "HubLink.h"
 #include "Daylight.h"
 #include "Downloads.h"
 #include "EffectsRenderer.h"
@@ -3574,7 +3575,6 @@ static void resetServerVar(const std::string &name, void*)
 
 void leaveGame()
 {
-
   entered = false;
   joiningGame = false;
 
@@ -3694,6 +3694,10 @@ void leaveGame()
   // purge any custom flags we may have accumulated
   Flags::clearCustomFlags();
 
+  if (hubLink) {
+    hubLink->serverParted();
+  }
+
   return;
 }
 
@@ -3807,6 +3811,13 @@ void joinInternetGame2()
   HUDDialogStack *stack = HUDDialogStack::get();
   while (stack->isActive())
     stack->pop();
+
+  if (hubLink) {
+    hubLink->serverJoined(startupInfo.serverName,
+                          startupInfo.serverPort,
+                          startupInfo.callsign);
+  }
+
   joiningGame = false;
 }
 
@@ -5366,6 +5377,35 @@ void doFPSLimit(void)
 }
 
 
+static void updateHubLink()
+{
+  if (hubLink == NULL) {
+    return;
+  }
+
+  if (hubLink->getWantDisable()) {
+    delete hubLink;
+    hubLink = NULL;
+    return;
+  }
+
+  const std::string& reload = hubLink->getReloadHostPort();
+  if (!reload.empty()) {
+    // copy the strings
+    const std::string hostPort = hubLink->getReloadHostPort();
+    const std::string luaCode  = hubLink->getReloadLuaCode();
+    delete hubLink;
+    hubLink = new HubLink(hostPort, luaCode);
+    return;
+  }
+
+  if (!hubLink->update()) {
+    delete hubLink;
+    hubLink = NULL;
+  }
+}
+ 
+
 //
 // main playing loop
 //
@@ -5381,7 +5421,6 @@ static void playingLoop()
   // main loop
   while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
-
     canSpawn = true;
 
     // set this step game time
@@ -5394,7 +5433,9 @@ static void playingLoop()
 
     mainWindow->getWindow()->yieldCurrent();
 
-    doMessages();    // handle incoming packets
+    doMessages(); // handle incoming packets
+
+    updateHubLink();
 
     if (world) { // udpate the world collision grid if required
       world->checkCollisionManager();
@@ -5714,6 +5755,14 @@ static void startupErrorCallback(const char *msg)
   glClear(GL_COLOR_BUFFER_BIT);
   controlPanel->render(RENDERER);
   mainWindow->getWindow()->swapBuffers();
+}
+
+
+static void globalBZDBCallback(const std::string& varName, void*)
+{
+  if (hubLink != NULL) {
+    hubLink->bzdbChange(varName);
+  }
 }
 
 
@@ -6053,6 +6102,15 @@ void startPlaying()
     showMessage(aString);
   }
 
+  BZDB.addGlobalCallback(globalBZDBCallback, NULL);
+
+  if (BZDB.isTrue("hubAutoJoin")) {
+    const std::string hubServer = BZDB.get("hubServer");
+    if (!hubServer.empty()) {
+      hubLink = new HubLink(BZDB.get("hubServer"));
+    }
+  }
+
   // enter game if we have all the info we need, otherwise
   // pop up main menu
   if (startupInfo.autoConnect &&
@@ -6078,6 +6136,7 @@ void startPlaying()
     //////////
 
   // clean up
+  BZDB.removeGlobalCallback(globalBZDBCallback, NULL);
   TankGeometryMgr::kill();
   SphereLodSceneNode::kill();
   if (resourceDownloader) {
@@ -6095,6 +6154,7 @@ void startPlaying()
   }
   delete mainMenu;
   delete sceneBuilder;
+  delete hubLink; hubLink = NULL;
   RENDERER.setBackground(NULL);
   RENDERER.setSceneDatabase(NULL);
   World::done();

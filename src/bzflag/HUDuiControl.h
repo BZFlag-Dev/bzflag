@@ -80,8 +80,10 @@ class HUDuiControl : public HUDuiElement {
   private:
     bool		showingFocus;
     HUDNavigationQueue*	navList;
+  protected:
     HUDuiCallback	cb;
     void*		userData;
+  private:
     static OpenGLGState* gstate;
     static int	  arrow;
     static int		arrowFrame;

@@ -680,8 +680,7 @@ float FontManager::getStringWidth(int faceID, float size, const std::string& tex
   }
 
   // don't include ansi codes in the length, but allow outside funcs to skip
-  const char* stripped = alreadyStripped ? text.c_str()
-                                         : stripAnsiCodes(text.c_str());
+  const char* stripped = alreadyStripped ? text.c_str() : stripAnsiCodes(text);
   if (!stripped) {
     return 0.0f;
   }

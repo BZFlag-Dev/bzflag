@@ -34,6 +34,7 @@
 #include "bzglob.h"
 #include "guiplaying.h"
 #include "playing.h"
+#include "HubLink.h"
 #include "LocalCommand.h"
 #include "LocalPlayer.h"
 #include "Roaming.h"
@@ -144,6 +145,12 @@ class DebugLevelCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class HubCommand : LocalCommand {
+  public:
+    HubCommand();
+    bool operator() (const char *commandLine);
+};
+
 
 #if defined(DEBUG_RENDERING)
 class ReContextCommand : LocalCommand {
@@ -160,6 +167,7 @@ static DebugLevelCommand  debugLevelCommand;
 static DiffCommand        diffCommand;
 static DumpCommand        dumpCommand;
 static HighlightCommand   highlightCommand;
+static HubCommand         hubCommand;
 static LocalSetCommand    localSetCommand;
 static QuitCommand        quitCommand;
 static ReTextureCommand   reTextureCommand;
@@ -183,6 +191,7 @@ DebugLevelCommand::DebugLevelCommand() : LocalCommand("/debug")     {}
 DiffCommand::DiffCommand()             : LocalCommand("/diff")      {}
 DumpCommand::DumpCommand()             : LocalCommand("/dumpvars")  {}
 HighlightCommand::HighlightCommand()   : LocalCommand("/highlight") {}
+HubCommand::HubCommand()               : LocalCommand("/hub") {}
 LocalSetCommand::LocalSetCommand()     : LocalCommand("/localset")  {}
 QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}
@@ -395,6 +404,31 @@ bool HighlightCommand::operator() (const char *commandLine)
   const char* c = commandLine + 10;
   c = TextUtils::skipWhitespace(c);
   BZDB.set("highlightPattern", std::string(c));
+  return true;
+}
+
+
+bool HubCommand::operator() (const char *commandLine)
+{
+  const std::string params = commandLine + 4;
+  const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 3, true);
+  if (tokens.empty()) {
+    return true;
+  }
+  if (tokens[0] == "/connect") {
+    delete hubLink;
+    hubLink = new HubLink(BZDB.get("hubServer"));
+  }
+  else if (tokens[0] == "/disconnect") {
+    delete hubLink;
+    hubLink = NULL;
+  }
+  else if (tokens[0] == "/status") {
+    addMessage(NULL, hubLink ? "hublink active" : "hublink inactive");
+  }
+  else if (hubLink) {
+    hubLink->recvCommand(commandLine);
+  }
   return true;
 }
 
@@ -741,17 +775,33 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
   const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
+  // process the arguments
+  int tabIndex = 1;
+  std::string tabLabel = "";
   bool stripAnsi = false;
   if ((argCount > 1) && (args[1] == "-s")) {
     stripAnsi = true;
+    tabIndex++;
+  }
+  if (argCount > tabIndex) {
+    tabLabel = args[tabIndex];
   }
 
-  const std::string filename = getConfigDirName() + "msglog.txt";
+  std::string filename = "msglog.txt";
+  if (!tabLabel.empty()) {
+    filename = "msglog-";
+    filename += tabLabel;
+    filename += ".txt";
+  }
+  filename = getConfigDirName() + filename;
 
-  controlPanel->saveMessages(filename, stripAnsi);
-
-  const std::string msg = "Saved messages to: " + filename;
-  addMessage(NULL, msg);
+  if (controlPanel->saveMessages(filename, stripAnsi, tabLabel)) {
+    const std::string msg = "Saved messages to: " + filename;
+    addMessage(NULL, msg);
+  } else {
+    const std::string msg = "Error saving: " + filename;
+    addMessage(NULL, msg);
+  }
 
   return true;
 }

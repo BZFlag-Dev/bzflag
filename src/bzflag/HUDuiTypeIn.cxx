@@ -117,6 +117,9 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
   if (c == 0) {
     switch (key.button) {
       case BzfKeyEvent::Left: {
+        if ((key.shift & BzfKeyEvent::AltKey) != 0) {
+          return false;
+        }
         if ((key.shift & BzfKeyEvent::ControlKey) == 0) {
           // skip a character
           decrementCursor();
@@ -132,6 +135,9 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
         return true;
       }
       case BzfKeyEvent::Right: {
+        if ((key.shift & BzfKeyEvent::AltKey) != 0) {
+          return false;
+        }
         if ((key.shift & BzfKeyEvent::ControlKey) == 0) {
           // skip a character
           if (*cursorPos) {
@@ -168,8 +174,9 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
         }
         break;
       }
-      default:
+      default: {
         return false;
+      }
     }
   }
 
@@ -203,6 +210,10 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
       while (cursorPos.getCount() < pos) {
 	++cursorPos;
       }
+
+      if (cb != NULL) {
+        cb(this, userData);
+      }
     }
   }
   else {
@@ -231,6 +242,10 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     }
     // bump the cursor
     ++cursorPos;
+
+    if (cb != NULL) {
+      cb(this, userData);
+    }
   }
 
   onSetFont();

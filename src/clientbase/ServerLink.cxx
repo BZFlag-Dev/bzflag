@@ -92,14 +92,19 @@ TimeKeeper packetStartTime;
 static const unsigned long serverPacket = 1;
 static const unsigned long endPacket = 0;
 
-ServerLink*		ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port) :
-  state(SocketError),	// assume failure
-  fd(-1), // assume failure
-  udpLength(0),
-  oldNeedForSpeed(false),
-  previousFill(0)
+ServerLink* ServerLink::server = NULL;
+
+
+ServerLink::ServerLink(const std::string& serverName,
+                       const Address& serverAddress, int port)
+: state(SocketError) // assume failure
+, fd(-1)             // assume failure
+, udpLength(0)
+, oldNeedForSpeed(false)
+, previousFill(0)
+, joinServer(serverName)
+, joinPort(port)
 {
   int i;
 
@@ -877,6 +882,8 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, NetworkUpdates updates
                            const char* token,
                            const char* referrer)
 {
+  joinCallsign = name;
+
   if (state != Okay) return;
   char msg[MaxPacketLen] = {0};
   void* buf = msg;

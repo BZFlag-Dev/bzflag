@@ -28,9 +28,11 @@ void CommandCompleter::reset()
   registerWord("/checkip ");
   registerWord("/countdown");
   registerWord("/clientquery");
+  registerWord("/connect"); // /hub sub-command
   registerWord("/date");
   registerWord("/debug ");
   registerWord("disable");
+  registerWord("/disconnect"); // /hub sub-command
   registerWord("/dumpvars");
   registerWord("/flag ");
   registerWord("reset");
@@ -45,6 +47,7 @@ void CommandCompleter::reset()
   registerWord("/hostban ");
   registerWord("/hostunban ");
   registerWord("/hostbanlist");
+  registerWord("/hub ");
   registerWord("/idban ");
   registerWord("/idunban ");
   registerWord("/idbanlist");
@@ -102,6 +105,7 @@ void CommandCompleter::reset()
   registerWord("/shutdownserver");
   registerWord("/silence ");
   registerWord("/unsilence ");
+  registerWord("/status"); // /hub sub-command
   registerWord("/superkill");
   registerWord("/time");
   registerWord("/unban ");

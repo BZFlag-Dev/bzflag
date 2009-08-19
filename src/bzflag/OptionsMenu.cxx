@@ -26,10 +26,16 @@
 #include "bzflag.h"
 #include "LocalFontFace.h"
 
-OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
-			     cacheMenu(NULL), saveWorldMenu(NULL),
-			     inputMenu(NULL), audioMenu(NULL),
-			     displayMenu(NULL) , saveMenu(NULL)
+OptionsMenu::OptionsMenu()
+: guiOptionsMenu(NULL)
+, effectsMenu(NULL)
+, cacheMenu(NULL)
+, hubMenu(NULL)
+, saveWorldMenu(NULL)
+, inputMenu(NULL)
+, audioMenu(NULL)
+, displayMenu(NULL)
+, saveMenu(NULL)
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -73,6 +79,11 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   label->setLabel("Cache Settings");
   addControl(label);
 
+  hubOptions = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("HUB Settings");
+  addControl(label);
+
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Auto Save Settings:");
@@ -112,6 +123,7 @@ OptionsMenu::~OptionsMenu()
   delete guiOptionsMenu;
   delete effectsMenu;
   delete cacheMenu;
+  delete hubMenu;
   delete saveWorldMenu;
   delete inputMenu;
   delete audioMenu;
@@ -125,16 +137,24 @@ void OptionsMenu::execute()
   if (_focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
-  } else if (_focus == effectsOptions) {
+  }
+  else if (_focus == effectsOptions) {
     if (!effectsMenu) effectsMenu = new EffectsMenu;
     HUDDialogStack::get()->push(effectsMenu);
-  } else if (_focus == cacheOptions) {
+  }
+  else if (_focus == cacheOptions) {
     if (!cacheMenu) cacheMenu = new CacheMenu;
     HUDDialogStack::get()->push(cacheMenu);
-  } else if (_focus == saveWorld) {
+  }
+  else if (_focus == hubOptions) {
+    if (!hubMenu) hubMenu = new HubMenu;
+    HUDDialogStack::get()->push(hubMenu);
+  }
+  else if (_focus == saveWorld) {
     if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
     HUDDialogStack::get()->push(saveWorldMenu);
-  } else if (_focus == saveSettings) {
+  }
+  else if (_focus == saveSettings) {
     // save resources
     dumpResources();
     if (!saveMenu) saveMenu = new SaveMenu;
@@ -147,13 +167,16 @@ void OptionsMenu::execute()
       saveMenu->setFileName(alternateConfig);
     }
     HUDDialogStack::get()->push(saveMenu);
-  } else if (_focus == inputSetting) {
+  }
+  else if (_focus == inputSetting) {
     if (!inputMenu) inputMenu = new InputMenu;
     HUDDialogStack::get()->push(inputMenu);
-  } else if (_focus == audioSetting) {
+  }
+  else if (_focus == audioSetting) {
     if (!audioMenu) audioMenu = new AudioMenu;
     HUDDialogStack::get()->push(audioMenu);
-  } else if (_focus == displaySetting) {
+  }
+  else if (_focus == displaySetting) {
     if (!displayMenu) displayMenu = new DisplayMenu;
     HUDDialogStack::get()->push(displayMenu);
   }
@@ -193,7 +216,7 @@ void OptionsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 6) || (i == 8)) {
+    if ((i == 7) || (i == 9)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -201,7 +224,7 @@ void OptionsMenu::resize(int _width, int _height)
   }
 
   // load current settings
-  i = 7;
+  i = 8;
 
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveSettings"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveIdentity"));

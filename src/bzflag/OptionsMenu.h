@@ -23,6 +23,7 @@
 #include "GUIOptionsMenu.h"
 #include "EffectsMenu.h"
 #include "CacheMenu.h"
+#include "HubMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
 #include "AudioMenu.h"
@@ -47,19 +48,22 @@ private:
   HUDuiControl*	guiOptions;
   HUDuiControl*	effectsOptions;
   HUDuiControl*	cacheOptions;
+  HUDuiControl*	hubOptions;
   HUDuiControl*	saveWorld;
   HUDuiControl* saveSettings;
   HUDuiControl*	inputSetting;
   HUDuiControl*	audioSetting;
   HUDuiControl*	displaySetting;
-  GUIOptionsMenu*	guiOptionsMenu;
-  EffectsMenu*		effectsMenu;
-  CacheMenu*		cacheMenu;
-  SaveWorldMenu*	saveWorldMenu;
-  InputMenu*		inputMenu;
-  AudioMenu*		audioMenu;
-  DisplayMenu*		displayMenu;
-  SaveMenu*		saveMenu;
+
+  GUIOptionsMenu* guiOptionsMenu;
+  EffectsMenu*    effectsMenu;
+  CacheMenu*      cacheMenu;
+  HubMenu*        hubMenu;
+  SaveWorldMenu*  saveWorldMenu;
+  InputMenu*      inputMenu;
+  AudioMenu*      audioMenu;
+  DisplayMenu*    displayMenu;
+  SaveMenu*       saveMenu;
 };
 
 

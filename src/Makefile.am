@@ -59,8 +59,8 @@ SUBDIRS = \
 	$(CLIENT_DIRS) \
 	${BZFS_DIR} \
 	${BZFLAG_DIR} \
-	${BZROBOTS_DIR} \
-	${BZADMIN_DIR}
+	${BZADMIN_DIR} \
+	${BZROBOTS_DIR}
 
 EXTRA_DIST = \
 	world

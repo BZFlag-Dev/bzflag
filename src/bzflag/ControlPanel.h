@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 #include <deque>
+#include <map>
 
 //common headers
 #include "bzfgl.h"
@@ -60,6 +61,9 @@ class ControlPanel {
       MessageModeCount
     };
 
+    typedef std::deque<ControlPanelMessage> MessageQueue;
+    typedef std::map<std::string, int>      TabMap;
+
   public:
     ControlPanel(MainWindow&, SceneRenderer&);
     ~ControlPanel();
@@ -71,20 +75,42 @@ class ControlPanel {
 
     void setNumberOfFrameBuffers(int);
 
-    void addMessage(const std::string&, MessageModes mode = MessageMisc);
+    bool addTab(const std::string& label, bool allSrc, bool allDst);
+    bool removeTab(const std::string& label);
+    bool renameTab(const std::string& oldLabel,
+                   const std::string& newLabel);
+
+    void addMessage(const std::string&, int tabMode = MessageMisc);
+    void addMessage(const std::string&, const std::string& tabLabel);
+
     void setMessagesOffset(int offset, int whence, bool paged);
-    void setMessagesMode(MessageModes messageMode);
-    void setStatus(const char*);
+
+    bool setActiveTab(int tabID);
+    int  getActiveTab() const { return activeTab; }
+
+    bool clearTab(int tabID);
+    bool shiftTab(int tabID, int distance);
+
+    bool isTabLocked(int tabID) const;
+    bool isTabVisible(int tabID) const;
+
+    int                getTabCount() const { return (int)tabs.size(); }
+    int                getTabID(const std::string& label) const;
+    const std::string& getTabLabel(int tabID) const;
+
+    int                getCurrentTabID()    const;
+    const std::string& getCurrentTabLabel() const;
+
     void setRadarRenderer(RadarRenderer*);
-    MessageModes getMessagesMode() const { return messageMode; }
 
     void setDimming(float dimming);
 
-    void saveMessages(const std::string& filename,
-				     bool stripAnsi) const;
+    bool saveMessages(const std::string& filename, bool stripAnsi,
+                      const std::string& tabLabel = "All") const;
 
-    int getModeMessageCount(MessageModes mode);
-    const std::deque<ControlPanelMessage>* getModeMessages(MessageModes mode);
+    int getTabMessageCount(int tabID);
+    const MessageQueue* getTabMessages(int tabID);
+    const MessageQueue* getTabMessages(const std::string& tabLabel);
 
   private:
     // no copying!
@@ -96,12 +122,42 @@ class ControlPanel {
     static void bzdbCallback(const std::string& name, void* data);
     static void loggingCallback(int level, const std::string& msg, void* data);
 
-    bool isTabVisible(MessageModes mode) const;
+    inline bool validTab(int tab) const {
+      return (tab >= 0) && (tab < (int)tabs.size());
+    }
 
   private:
+    void setupTabMap();
+
+  private:
+    struct Tab {
+      Tab(const std::string& l, bool lk, bool _allSrc, bool _allDst)
+      : label(l)
+      , locked(lk)
+      , visible(true)
+      , width(0.0f)
+      , allSrc(_allSrc)
+      , allDst(_allDst)
+      , unread(false)
+      , msgCount(0)
+      {}
+      std::string label;
+      bool  locked;   // can not be removed
+      bool  visible;
+      float width;
+      bool  allSrc;   // feeds into the 'All' tab
+      bool  allDst;   // receives MessageAllTabs messages
+      bool  unread;   // has unread messages
+      int   msgCount; // tally of all messages
+      MessageQueue messages;
+    };
+    std::vector<Tab*> tabs;
+
+    TabMap tabMap;
+
+    int	activeTab;
+
     bool tabsOnRight;
-    std::vector<const char *> *tabs;
-    std::vector<float> tabTextWidth;
     long totalTabWidth;
 
     MainWindow&		window;
@@ -119,14 +175,10 @@ class ControlPanel {
     float		du, dv;
     int			radarAreaPixels[4];
     int			messageAreaPixels[4];
-    std::deque<ControlPanelMessage>	messages[MessageModeCount];
-    MessageModes	messageMode;
     fvec4		teamColor;
     int			maxLines;
     float		margin;
     float		lineHeight;
-    bool		unRead[MessageModeCount];
-    int			messageCounts[MessageModeCount];
 
     static int		messagesOffset;
     static const int	maxScrollPages;

@@ -126,7 +126,7 @@ std::string HUDuiServerListItem::calculateDomainName()
   if (server == NULL)
     return "";
 
-  std::string addr = stripAnsiCodes(server->description.c_str());
+  std::string addr = stripAnsiCodes(server->description);
   std::string desc;
   std::string::size_type pos = addr.find_first_of(';');
   if (pos != std::string::npos) {
@@ -143,7 +143,7 @@ std::string HUDuiServerListItem::calculateServerName()
   if (server == NULL)
     return "";
 
-  std::string addr = stripAnsiCodes(server->description.c_str());
+  std::string addr = stripAnsiCodes(server->description);
   std::string desc;
   std::string::size_type pos = addr.find_first_of(';');
   if (pos != std::string::npos) {

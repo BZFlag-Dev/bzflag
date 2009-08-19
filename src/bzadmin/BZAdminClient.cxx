@@ -35,7 +35,10 @@
 StartupInfo startupInfo;
 
 BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
-  : myTeam(ObserverTeam), sLink(Address(startupInfo.serverName), startupInfo.serverPort), valid(false), ui(bzInterface)
+: myTeam(ObserverTeam)
+, sLink(startupInfo.serverName, Address(startupInfo.serverName), startupInfo.serverPort)
+, valid(false)
+, ui(bzInterface)
 {
   if (sLink.getState() != ServerLink::Okay) {
     switch (sLink.getState()) {

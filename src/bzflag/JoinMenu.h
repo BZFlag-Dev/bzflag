@@ -36,8 +36,14 @@ class ServerMenu;
 
 class JoinMenu : public HUDDialog {
   public:
-			JoinMenu();
-			~JoinMenu();
+    friend class HubMenu;
+    static JoinMenu* getInstance() { return instance; }
+  private:
+    static JoinMenu* instance;
+
+  public:
+    JoinMenu();
+    ~JoinMenu();
 
     HUDuiDefaultKey*	getDefaultKey();
 

@@ -17,6 +17,7 @@
 #ifndef	BZF_SERVER_LINK_H
 #define	BZF_SERVER_LINK_H
 
+
 #include "common.h"
 
 #include <string>
@@ -51,66 +52,71 @@ public:
     HasMessageLink = 8
   };
 
-  ServerLink(const Address& serverAddress,
+  ServerLink(const std::string& serverName,
+             const Address& serverAddress,
 	     int port = ServerPort);
   ~ServerLink();
 
-  State		getState() const;
-  const std::string&	getRejectionMessage() { return rejectionMessage; }
-  int			getSocket() const;	// file descriptor actually
-  const PlayerId&	getId() const;
-  const char*		getVersion() const;
+  inline State           getState()   const { return state; }
+  inline int             getSocket()  const { return fd; } // file descriptor actually
+  inline const PlayerId& getId()      const { return id; }
+  inline const char*     getVersion() const { return version; }
 
-  void		send(uint16_t code, uint16_t len, const void* msg);
+  inline const std::string& getJoinServer()   const { return joinServer;   }
+  inline int                getJoinPort()     const { return joinPort;     }
+  inline const std::string& getJoinCallsign() const { return joinCallsign; }
+
+  inline const std::string& getRejectionMessage() { return rejectionMessage; }
+
+  void send(uint16_t code, uint16_t len, const void* msg);
+
   // if millisecondsToBlock < 0 then block forever
-  int		read(uint16_t& code, uint16_t& len, void* msg, int millisecondsToBlock = 0);
-  int		read(BufferedNetworkMessage *msg, int millisecondsToBlock = 0);
+  int read(uint16_t& code, uint16_t& len, void* msg, int millisecondsToBlock = 0);
+  int read(BufferedNetworkMessage *msg, int millisecondsToBlock = 0);
 
-  void		sendCaps(PlayerId id, bool downloads, bool sounds );
-  void		sendEnter(PlayerId, PlayerType, NetworkUpdates, TeamColor,
-                          const char* name, const char* token, const char* referrer);
-  bool		readEnter(std::string& reason,
-			  uint16_t& code, uint16_t& rejcode);
+  bool readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
 
-  void		sendCaptureFlag(TeamColor);
-  void		sendDropFlag(const fvec3& position);
-  void		sendKilled(const PlayerId victim,
-			   const PlayerId shooter,
-			   int reason, int shotId,
-			   const FlagType* flag, int phydrv);
+  void sendCaps(PlayerId id, bool downloads, bool sounds );
+  void sendEnter(PlayerId, PlayerType, NetworkUpdates, TeamColor,
+                 const char* name, const char* token, const char* referrer);
+
+  void sendCaptureFlag(TeamColor);
+  void sendDropFlag(const fvec3& position);
+  void sendKilled(const PlayerId victim, const PlayerId shooter,
+                  int reason, int shotId, const FlagType* flag, int phydrv);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
   //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN
-  void		sendPlayerUpdate(Player*);
-  void		sendBeginShot(const FiringInfo&);
+  void sendPlayerUpdate(Player*);
+  void sendBeginShot(const FiringInfo&);
 #endif
-  void		sendEndShot(const PlayerId&, int shotId, int reason);
+  void sendEndShot(const PlayerId&, int shotId, int reason);
 
   void sendHit(const PlayerId &source, const PlayerId &shooter, int shotId);
   void sendVarRequest();
 
-  void		sendAlive(const PlayerId playerId);
-  void		sendTeleport(int from, int to);
-  void		sendShotInfo(const ShotPath& shotPath,
-                             char infoType, const fvec3& pos,
-                             uint32_t obstacleGUID = (uint32_t)-1,
-                             int linkSrcID = -1, int linkDstID = -1);
-  void		sendTransferFlag(const PlayerId&, const PlayerId&);
-  void		sendNewRabbit();
-  void		sendPaused(bool paused);
-  void		sendNewPlayer(int botID, TeamColor team);
+  void sendAlive(const PlayerId playerId);
+  void sendTeleport(int from, int to);
+  void sendShotInfo(const ShotPath& shotPath, char infoType, const fvec3& pos,
+                    uint32_t obstacleGUID = (uint32_t)-1,
+                    int linkSrcID = -1, int linkDstID = -1);
+  void sendTransferFlag(const PlayerId&, const PlayerId&);
+  void sendNewRabbit();
+  void sendPaused(bool paused);
+  void sendNewPlayer(int botID, TeamColor team);
 
-  void		sendExit();
-  void		sendAutoPilot(bool autopilot);
-  void		sendMessage(const PlayerId& to,
-			    const char message[MessageLen]);
-  void		sendLagPing(char pingRequest[]);
-  void		sendUDPlinkRequest();
+  void sendExit();
+  void sendAutoPilot(bool autopilot);
+  void sendMessage(const PlayerId& to, const char message[MessageLen]);
+  void sendLagPing(char pingRequest[]);
+  void sendUDPlinkRequest();
 
-  void		sendOSVersion ( const PlayerId player, const std::string &vers );
+  void sendOSVersion(const PlayerId player, const std::string &vers);
 
-  void		sendCustomData ( const std::string &key, const std::string &value );
-  void		sendCustomData ( const char* key, const std::string &value ){if (key) sendCustomData(std::string(key),value);}
+  void sendCustomData(const std::string &key, const std::string &value);
+  void sendCustomData(const char* key, const std::string &value ) {
+    if (key != NULL) { sendCustomData(std::string(key), value); }
+  }
 
   static ServerLink*	getServer(); // const
   static void		setServer(ServerLink*);
@@ -144,33 +150,14 @@ private:
   unsigned int previousFill;
   char txbuf[MaxPacketLen];
 
+  std::string joinServer;
+  int         joinPort;
+  std::string joinCallsign;
 };
 
-//
-// ServerLink
-//
-
-inline ServerLink::State ServerLink::getState() const
-{
-  return state;
-}
-
-inline int		ServerLink::getSocket() const
-{
-  return fd;
-}
-
-inline const PlayerId&	ServerLink::getId() const
-{
-  return id;
-}
-
-inline const char*	ServerLink::getVersion() const
-{
-  return version;
-}
 
 #endif // BZF_SERVER_LINK_H
+
 
 // Local Variables: ***
 // mode: C++ ***

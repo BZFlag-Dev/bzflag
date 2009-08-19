@@ -37,6 +37,7 @@
 #include "ComposeDefaultKey.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
+#include "HubComposeKey.h"
 #include "LocalPlayer.h"
 #include "Roaming.h"
 #include "ServerCommandKey.h"
@@ -54,6 +55,7 @@ static std::string cmdAutoPilot     (const std::string&, const CmdArgList& args,
 static std::string cmdDestruct      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdDrop          (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdFire          (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdHubCompose    (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdHunt          (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdIconify       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdIdentify      (const std::string&, const CmdArgList& args, bool*);
@@ -91,6 +93,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("fire",          &cmdFire,          "fire:  fire a shot");
   PUSHCMD("jump",          &cmdJump,          "jump:  make player jump");
   PUSHCMD("drop",          &cmdDrop,          "drop:  drop the current flag");
+  PUSHCMD("hubcompose",    &cmdHubCompose,    "hubcompose:  quick hub access");
   PUSHCMD("identify",      &cmdIdentify,      "identify:  identify/lock-on-to player in view");
   PUSHCMD("restart",       &cmdRestart,       "restart:  restart playing");
   PUSHCMD("destruct",      &cmdDestruct,      "destruct:  self destruct");
@@ -459,21 +462,39 @@ static std::string cmdViewZoom(const std::string&, const CmdArgList& args, bool*
 
 static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, bool*)
 {
+  if (controlPanel == NULL) {
+    return "";
+  }
+
   if (args.size() != 1) {
     return "usage: messagepanel {all|chat|server|misc|debug}";
   }
+  const std::string& tabName = args[0];
 
-  ControlPanel::MessageModes mode = ControlPanel::MessageAll;
-       if (args[0] == "all")    { mode = ControlPanel::MessageAll;    }
-  else if (args[0] == "chat")   { mode = ControlPanel::MessageChat;   }
-  else if (args[0] == "server") { mode = ControlPanel::MessageServer; }
-  else if (args[0] == "misc")   { mode = ControlPanel::MessageMisc;   }
-  else if (args[0] == "debug")  { mode = ControlPanel::MessageDebug;  }
-  else {
-    return "usage: messagepanel {all|chat|server|misc|debug}";
+  int tab = controlPanel->getTabID(tabName);
+
+  if (tab < 0) {
+    const int tabCount = controlPanel->getTabCount();
+    if (tabName == "prev") {
+      tab = controlPanel->getActiveTab();
+      tab = (tab - 1 + tabCount) % tabCount;
+      while (!controlPanel->isTabVisible(tab)) {
+        tab = (tab - 1 + tabCount) % tabCount;
+      }
+    }
+    else if (tabName == "next") {
+      tab = controlPanel->getActiveTab();
+      tab = (tab + 1) % tabCount;
+      while (!controlPanel->isTabVisible(tab)) {
+        tab = (tab + 1) % tabCount;
+      }
+    }
+    else {
+      return "bad tab: '" + tabName + "'";
+    }
   }
 
-  controlPanel->setMessagesMode(mode);
+  controlPanel->setActiveTab(tab);
 
   if (!BZDB.isTrue("displayConsole")) {
     BZDB.setBool("displayConsole", true);
@@ -995,11 +1016,13 @@ static std::string cmdSilence(const std::string&, const CmdArgList& args, bool*)
 static std::string cmdServerCommand(const std::string&, const CmdArgList& args, bool*)
 {
   static ServerCommandKey serverCommandKeyHandler;
-  if (args.size() != 0)
+  if (args.size() != 0) {
     return "usage: servercommand";
+  }
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (!myTank)
+  if (!myTank) {
     return "use only when connected";
+  }
   static bool prevAdmin = myTank->isAdmin();
   if (!prevAdmin && myTank->isAdmin()) serverCommandKeyHandler.adminInit();
   if (prevAdmin && !myTank->isAdmin()) serverCommandKeyHandler.nonAdminInit();
@@ -1008,6 +1031,21 @@ static std::string cmdServerCommand(const std::string&, const CmdArgList& args, 
   messageHistoryIndex = 0;
   serverCommandKeyHandler.init();
   HUDui::setDefaultKey(&serverCommandKeyHandler);
+  return std::string();
+}
+
+
+static std::string cmdHubCompose(const std::string&, const CmdArgList& args, bool*)
+{
+  static HubComposeKey hubComposeKey;
+
+  if (args.size() != 0) {
+    return "usage: hubcompose";
+  }
+
+  messageHistoryIndex = 0;
+  hubComposeKey.init();
+
   return std::string();
 }
 

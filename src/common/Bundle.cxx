@@ -130,7 +130,7 @@ std::string Bundle::getLocalString(const std::string &key) const
     if (BZDB.getDebug()) {
       if (unmapped.find(key) == unmapped.end()) {
 	unmapped.insert(key);
-	logDebugMessage(1, "Unmapped Locale String: %s\n", stripAnsiCodes(key.c_str()));
+	logDebugMessage(1, "Unmapped Locale String: %s\n", stripAnsiCodes(key));
       }
     }
     return key;

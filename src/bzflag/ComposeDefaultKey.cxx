@@ -24,6 +24,7 @@
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
+#include "HubLink.h"
 #include "LocalCommand.h"
 #include "guiplaying.h"
 #include "playing.h"
@@ -37,7 +38,7 @@ unsigned int messageHistoryIndex = 0;
 static bool isWordCompletion(const BzfKeyEvent& key)
 {
   if ((key.chr == 6) || // ^F
-      (key.chr== 9) || // <TAB>
+      (key.chr == 9) || // <TAB>
       ((key.shift == 0) && (key.button == BzfKeyEvent::F2))) {
     return true;
   } else {
@@ -82,7 +83,11 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     const std::string tag = "/localset";
     if ((line.size() < tag.size()) || (line.substr(0, tag.size()) != tag)) {
       completer.complete(line, partials);
-    } else {
+      if (hubLink) {
+        hubLink->wordComplete(line, partials);
+      }
+    }
+    else {
       AutoCompleter ac;
       BZDB.iterate(localVarIterator, &ac);
       ac.complete(line, partials);
@@ -207,10 +212,10 @@ bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       return true;
     }
-    else if (myTank && ((key.shift == BzfKeyEvent::ShiftKey
-			 || (hud->getComposeString().length() == 0)) &&
-			(key.button == BzfKeyEvent::Left
-			 || key.button == BzfKeyEvent::Right))) {
+    else if (myTank && (((key.shift == BzfKeyEvent::ShiftKey) ||
+			 (hud->getComposeString().length() == 0)) &&
+			((key.button == BzfKeyEvent::Left) ||
+			 (key.button == BzfKeyEvent::Right)))) {
       // exclude robot from private message recipient.
       // No point sending messages to robot (now)
       selectNextRecipient(key.button != BzfKeyEvent::Left, false);

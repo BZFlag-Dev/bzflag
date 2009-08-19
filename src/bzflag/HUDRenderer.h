@@ -117,6 +117,9 @@ public:
   std::string getComposeString() const;
   void setComposeString(const std::string& message) const;
   void setComposeString(const std::string& message, bool allowEdit) const;
+  // these two functions just affect the prompt string
+  std::string getComposePrompt() const;
+  void setComposePrompt(const std::string& prompt) const;
 
   void setComposing(const std::string& prompt);
   void setComposing(const std::string& prompt, bool allowEdit);

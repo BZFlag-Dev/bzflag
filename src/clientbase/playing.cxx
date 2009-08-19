@@ -290,8 +290,10 @@ void joinInternetGame(const struct in_addr *inAddress)
     return;
   }
   // open server
-  ServerLink *_serverLink = new ServerLink(serverAddress,
-    startupInfo.serverPort);
+  ServerLink *_serverLink =
+    new ServerLink(startupInfo.serverName,
+                   serverAddress,
+                   startupInfo.serverPort);
 
   serverLink = _serverLink;
 
@@ -2139,7 +2141,7 @@ void addMessage(const Player *player, const std::string &msg,
 #endif
       prefix += ": ";
     }
-    message = stripAnsiCodes(msg.c_str());
+    message = stripAnsiCodes(msg);
   }
   const std::string msgf = TextUtils::format("%s%s", prefix.c_str(), message);
   showMessage(msgf, mode);
