@@ -556,6 +556,21 @@ static void PushNamedString(lua_State* L, const char* key,
 }
 
 
+static void limitMembers(lua_State* L, const char* table,
+                           const std::vector<std::string>& functions)
+{
+  lua_newtable(L);
+  const int nt = lua_gettop(L); // new table
+  lua_getglobal(L, table);
+  for (size_t i = 0; i < functions.size(); i++) {
+    lua_getfield(L, -1, functions[i].c_str());
+    lua_setfield(L, nt, functions[i].c_str());
+  }
+  lua_pop(L, 1);
+  lua_setglobal(L, table);
+}
+
+
 bool HubLink::createLua(const std::string& code)
 {
   L = luaL_newstate();
@@ -564,7 +579,34 @@ bool HubLink::createLua(const std::string& code)
     return false;
   }
 
-  luaL_openlibs(L);
+  lua_pushlightuserdata(L, this);
+  lua_setfield(L, LUA_REGISTRYINDEX, ThisLabel);
+
+  luaopen_base(L);
+  luaopen_table(L);
+//  luaopen_io(L);
+  luaopen_os(L);      
+  luaopen_string(L);
+  luaopen_math(L);
+  luaopen_debug(L);
+//  luaopen_package(L);
+
+  // limit { os } table members
+  std::vector<std::string> osFuncs;
+  osFuncs.push_back("clock");
+  osFuncs.push_back("date");
+  osFuncs.push_back("time");
+  osFuncs.push_back("difftime");
+  limitMembers(L, "os", osFuncs);
+
+  // limit { debug } table members
+  std::vector<std::string> debugFuncs;
+  debugFuncs.push_back("traceback");
+  limitMembers(L, "debug", debugFuncs);
+
+  // remove dofile() and loadfile()
+  lua_pushnil(L); lua_setglobal(L, "dofile");
+  lua_pushnil(L); lua_setglobal(L, "loadfile");
 
   if (!pushAnsiCodes()) {
     fail("pushAnsiCodes() error");
@@ -578,9 +620,6 @@ bool HubLink::createLua(const std::string& code)
     fail("pushConstants() error");
     return false;
   }
-
-  lua_pushlightuserdata(L, this);
-  lua_setfield(L, LUA_REGISTRYINDEX, ThisLabel);
 
   if (luaL_loadstring(L, code.c_str()) != 0) {
     std::string msg= "luaL_loadstring() error: ";
@@ -596,6 +635,9 @@ bool HubLink::createLua(const std::string& code)
     return false;
   }
 
+  lua_gc(L, LUA_GCCOLLECT, 0);
+
+  // create ServerJoined call-in
   const ServerLink* srvLink = ServerLink::getServer();
   if ((srvLink != NULL) &&
       (srvLink->getState() == ServerLink::Okay)) {
