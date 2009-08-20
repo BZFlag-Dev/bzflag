@@ -376,12 +376,12 @@ void HubLink::stateConnect()
 
 void HubLink::stateGetCode()
 {
-  if (!updateRecv() || !updateSend()) {
+  if (!updateSend() || !updateRecv()) {
     return;
   }
 
   std::string code;
-  if (!recvChunk(code)) {
+  if (!readChunk(code)) {
     return;
   }
 
@@ -413,18 +413,21 @@ void HubLink::stateGetCode()
 
 void HubLink::stateReady()
 {
-  if (!updateRecv() || !updateSend()) {
+  if (!updateSend() || !updateRecv()) {
     return;
   }
 
   updateLua();
 
-  std::string data;
-  while (!recvQueue.empty()) {
-    data = recvQueue.front(); recvQueue.pop_front();
-    recvData(data);
+  while (recvTotal > 0) {
+    const std::string& data = recvQueue.front();
+    if (recvData(data)) {
+      recvTotal -= data.size();
+      recvQueue.pop_front();
+    } else {
+      break;
+    }
   }
-  recvTotal = 0;
 }
 
 
@@ -432,36 +435,6 @@ void HubLink::stateReady()
 //
 //  network queue routines
 //
-
-bool HubLink::updateRecv()
-{
-  char buf[4096];
-  while (true) {
-    const int bytes = read(sock, buf, sizeof(buf));
-    if (bytes > 0) {
-      debugf(4, "received %i bytes\n", bytes);
-      recvTotal += bytes;
-      recvQueue.push_back(std::string(buf, bytes));
-    }
-    else if (bytes == 0) {
-      fail("disconnected");
-      return false;
-    }
-    else if (bytes == -1) {
-      if (errno != EAGAIN) {
-        fail("recv error: ", errno);
-        return false;
-      }
-      return true; // waiting for data
-    }
-    else {
-      debugf(1, "unknown recv state\n");
-      return false;
-    }
-  }
-  return false;
-}
-
 
 bool HubLink::updateSend()
 {
@@ -498,6 +471,44 @@ bool HubLink::updateSend()
 }
 
 
+bool HubLink::updateRecv()
+{
+  char buf[4096];
+  while (true) {
+    const int bytes = read(sock, buf, sizeof(buf));
+    if (bytes > 0) {
+      debugf(4, "received %i bytes\n", bytes);
+      recvTotal += bytes;
+      recvQueue.push_back(std::string(buf, bytes));
+    }
+    else if (bytes == 0) {
+      fail("disconnected");
+      return false;
+    }
+    else if (bytes == -1) {
+      if (errno != EAGAIN) {
+        fail("recv error: ", errno);
+        return false;
+      }
+      return true; // waiting for data
+    }
+    else {
+      debugf(1, "unknown recv state\n");
+      return false;
+    }
+  }
+  return false;
+}
+
+
+bool HubLink::sendData(const std::string& data)
+{
+  sendQueue.push_back(data);
+  sendTotal += data.size();
+  return updateSend();
+}
+
+
 bool HubLink::combineRecv(size_t minSize)
 {
   if (recvTotal < minSize) {
@@ -512,7 +523,63 @@ bool HubLink::combineRecv(size_t minSize)
 }
 
 
-bool HubLink::recvChunk(std::string& chunk)
+bool HubLink::readData(int bytes, std::string& data)
+{
+  data.clear();
+
+  if (bytes <= 0) {
+    return true;
+  }
+
+  if (!combineRecv(bytes)) {
+    return false;
+  }
+
+  data = recvQueue.front().substr(0, bytes);
+
+  if (bytes == (int)data.size()) {
+    recvQueue.pop_front();
+  }
+  else {
+    const std::string s = recvQueue.front();
+    recvQueue.pop_front();
+    recvQueue.push_front(s.substr(bytes));
+  }
+  
+  recvTotal -= data.size();
+
+  return true;
+}
+
+
+bool HubLink::peekData(int bytes, std::string& data)
+{
+  data.clear();
+
+  if (bytes <= 0) {
+    return true;
+  }
+
+  if (!combineRecv(bytes)) {
+    return false;
+  }
+
+  data = recvQueue.front().substr(0, bytes);
+
+  return true;
+}
+
+
+bool HubLink::sendChunk(const std::string& chunk)
+{
+  char lenBuf[sizeof(uint32_t)];
+  nboPackUInt32(lenBuf, (uint32_t)chunk.size());
+  const std::string lenStr = std::string(lenBuf, sizeof(uint32_t));
+  return sendData(lenStr + chunk);
+}
+
+
+bool HubLink::readChunk(std::string& chunk)
  {
   chunk = "";
 
@@ -543,23 +610,6 @@ bool HubLink::recvChunk(std::string& chunk)
   recvTotal -= totalLen;
 
   return true;    
-}
-
-
-bool HubLink::sendData(const std::string& data)
-{
-  sendQueue.push_back(data);
-  sendTotal += data.size();
-  return updateSend();
-}
-
-
-bool HubLink::sendChunk(const std::string& chunk)
-{
-  char lenBuf[sizeof(uint32_t)];
-  nboPackUInt32(lenBuf, (uint32_t)chunk.size());
-  const std::string lenStr = std::string(lenBuf, sizeof(uint32_t));
-  return sendData(lenStr + chunk);
 }
 
 
@@ -772,16 +822,26 @@ void HubLink::recvCommand(const std::string& cmd)
 }
 
 
-void HubLink::recvData(const std::string& data)
+bool HubLink::recvData(const std::string& data)
 {
-  debugf(2, "recvData(%i) = '%s'\n", (int)data.size(),  data.c_str());
   if (!pushCallIn("RecvData", 1)) {
-    return;
+    return false;
   }
 
   lua_pushstdstring(L, data);
 
-  runCallIn(1, 0);
+  if (!runCallIn(1, 1)) {
+    return false;
+  }
+
+  bool eatData = true;
+  if (lua_isboolean(L, -1) && !lua_toboolean(L, -1)) {
+    eatData = false;
+  }
+
+  lua_pop(L, 1);
+
+  return eatData;
 }
 
 
@@ -915,6 +975,9 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, Disable);
 
   PUSH_LUA_CFUNC(L, SendData);
+  PUSH_LUA_CFUNC(L, ReadDataSize);
+  PUSH_LUA_CFUNC(L, ReadData);
+  PUSH_LUA_CFUNC(L, PeekData);
 
   PUSH_LUA_CFUNC(L, Print);
   PUSH_LUA_CFUNC(L, SetAlert);
@@ -1238,6 +1301,49 @@ int HubLink::SendData(lua_State* L)
   const std::string data = luaL_checkstdstring(L, 1);
   link->sendData(data);
   return 0;
+}
+
+
+int HubLink::ReadDataSize(lua_State* L)
+{
+  HubLink* link = GetLink(L);
+  if (link == NULL) {
+    return 0;
+  }
+  lua_pushinteger(L, link->recvTotal);
+  return 1;
+}
+
+
+int HubLink::ReadData(lua_State* L)
+{
+  HubLink* link = GetLink(L);
+  if (link == NULL) {
+    return 0;
+  }
+  const int bytes = luaL_optint(L, 1, link->recvTotal);
+  std::string data; 
+  if (!link->readData(bytes, data)) {
+    return 0;
+  }
+  lua_pushstdstring(L, data);
+  return 1;
+}
+
+
+int HubLink::PeekData(lua_State* L)
+{
+  HubLink* link = GetLink(L);
+  if (link == NULL) {
+    return 0;
+  }
+  const int bytes = luaL_optint(L, 1, link->recvTotal);
+  std::string data;
+  if (!link->peekData(bytes, data)) {
+    return 0;
+  }
+  lua_pushstdstring(L, data);
+  return 1;
 }
 
 

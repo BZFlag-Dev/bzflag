@@ -129,7 +129,17 @@ class ControlPanel {
   private:
     void setupTabMap();
 
+    void drawTabBoxes(int yOffset);
+    void drawTabLabels(int yOffset);
+    void drawOutline(int yOffset);
+    void drawScrollBar();
+
   private:
+    struct IntRect {
+      int xpos,  ypos;
+      int xsize, ysize;
+    };
+
     struct Tab {
       Tab(const std::string& l, bool lk, bool _allSrc, bool _allDst)
       : label(l)
@@ -139,6 +149,7 @@ class ControlPanel {
       , allSrc(_allSrc)
       , allDst(_allDst)
       , unread(false)
+      , offset(0)
       , msgCount(0)
       {}
       std::string label;
@@ -148,6 +159,7 @@ class ControlPanel {
       bool  allSrc;   // feeds into the 'All' tab
       bool  allDst;   // receives MessageAllTabs messages
       bool  unread;   // has unread messages
+      int   offset;   // for scrolling
       int   msgCount; // tally of all messages
       MessageQueue messages;
     };
@@ -173,14 +185,13 @@ class ControlPanel {
 
     float		dimming;
     float		du, dv;
-    int			radarAreaPixels[4];
-    int			messageAreaPixels[4];
+    IntRect		radarRect;
+    IntRect		messageRect;
     fvec4		teamColor;
     int			maxLines;
     float		margin;
     float		lineHeight;
 
-    static int		messagesOffset;
     static const int	maxScrollPages;
 };
 

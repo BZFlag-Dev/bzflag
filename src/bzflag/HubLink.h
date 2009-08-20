@@ -71,15 +71,13 @@ class HubLink {
 
     void startComposing();
 
-  protected: // internal call-ins
+  protected:
+    // internal call-ins
     void shutdown();
     void updateLua();
-    void recvData(const std::string& msg);
+    bool recvData(const std::string& data);
 
   protected:
-    bool sendData(const std::string& msg);
-
-  private:
     void clear();
 
     void fail(const std::string& failMsg);
@@ -97,11 +95,14 @@ class HubLink {
     void stateGetCode();
     void stateReady();
 
-    bool updateRecv();
     bool updateSend();
+    bool updateRecv();
+    bool sendData(const std::string& data);
     bool combineRecv(size_t minSize);
-    bool recvChunk(std::string& chunk); 
+    bool readData(int bytes, std::string& data);
+    bool peekData(int bytes, std::string& data);
     bool sendChunk(const std::string& chunk); 
+    bool readChunk(std::string& chunk); 
 
     bool createLua(const std::string& code);
     bool pushAnsiCodes();
@@ -116,6 +117,9 @@ class HubLink {
     static int Disable(lua_State* L);
 
     static int SendData(lua_State* L);
+    static int ReadDataSize(lua_State* L);
+    static int ReadData(lua_State* L);
+    static int PeekData(lua_State* L);
 
     static int Print(lua_State* L);
     static int SetAlert(lua_State* L);

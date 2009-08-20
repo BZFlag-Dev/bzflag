@@ -40,6 +40,16 @@
 
 
 //============================================================================//
+
+struct AreaInts {
+  int xpos;
+  int ypos;
+  int xsize;
+  int ysize;
+};
+
+
+//============================================================================//
 //
 // ControlPanelMessage
 //
@@ -165,9 +175,6 @@ int ControlPanel::getTabMessageCount(int tabID)
 // ControlPanel
 //
 
-int ControlPanel::messagesOffset = 0;
-
-
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
 : activeTab(MessageAll)
 , tabsOnRight(true)
@@ -194,14 +201,14 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
   BZDB.addCallback(BZDBNAMES.RADARLIMIT, bzdbCallback, this);
 
   // other initialization
-  radarAreaPixels[0] = 0;
-  radarAreaPixels[1] = 0;
-  radarAreaPixels[2] = 0;
-  radarAreaPixels[3] = 0;
-  messageAreaPixels[0] = 0;
-  messageAreaPixels[1] = 0;
-  messageAreaPixels[2] = 0;
-  messageAreaPixels[3] = 0;
+  radarRect.xpos  = 0;
+  radarRect.ypos  = 0;
+  radarRect.xsize = 0;
+  radarRect.ysize = 0;
+  messageRect.xpos  = 0;
+  messageRect.ypos  = 0;
+  messageRect.xsize = 0;
+  messageRect.ysize = 0;
   teamColor[0] = teamColor[1] = teamColor[2] = (float)0.0f;
 
   maxLines = 30;
@@ -327,8 +334,6 @@ void ControlPanel::render(SceneRenderer& _renderer)
     return;
   }
 
-  const fvec2 halfPixel(0.5f, 0.5f);
-
   int i, j;
   const int x = window.getOriginX();
   const int y = window.getOriginY();
@@ -351,15 +356,15 @@ void ControlPanel::render(SceneRenderer& _renderer)
   if (changedMessage > 0) {
     changedMessage--;
   }
-  float fx = messageAreaPixels[0] + margin;
-  float fy = messageAreaPixels[1] + margin + 1.0f;
+  float fx = messageRect.xpos + margin;
+  float fy = messageRect.ypos + margin + 1.0f;
   int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
     : int(lineHeight + 4);
 
-  glScissor(messageAreaPixels[0] + x - 1,
-	    messageAreaPixels[1] + y,
-	    messageAreaPixels[2] + 1,
-	    messageAreaPixels[3] + ay);
+  glScissor(messageRect.xpos + x - 1,
+	    messageRect.ypos + y,
+	    messageRect.xsize + 1,
+	    messageRect.ysize + ay);
   OpenGLGState::resetState();
 
   if (_renderer.getPanelOpacity() > 0.0f) {
@@ -371,43 +376,14 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
     // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
-    glRecti(messageAreaPixels[0] - 1, // clear an extra pixel column to simplify fuzzy float stuff later
-	    messageAreaPixels[1],
-	    messageAreaPixels[0] + messageAreaPixels[2],
-	    messageAreaPixels[1] + messageAreaPixels[3]);
+    glRecti(messageRect.xpos - 1, // clear an extra pixel column to simplify fuzzy float stuff later
+	    messageRect.ypos,
+	    messageRect.xpos + messageRect.xsize,
+	    messageRect.ypos + messageRect.ysize);
 
     // display tabs for chat sections
     if (showTabs) {
-      long int drawnTabWidth = 0;
-      for (int t = 0; t < (int)tabs.size(); t++) {
-        const Tab* tab = tabs[t];
-        if (!tab->visible) {
-          continue;
-        }
-
-	// current mode is given a dark background to match the control panel
-	if (activeTab == t) {
-	  glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
-	} else {
-	  glColor4f(0.10f, 0.10f, 0.10f, _renderer.getPanelOpacity());
-	}
-
-	if (tabsOnRight) {
-	  // draw the tabs on the right side
-	  glRecti(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth,
-		  messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-		  messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(tab->width),
-		  messageAreaPixels[1] + messageAreaPixels[3] + ay);
-	} else {
-	  // draw the tabs on the left side
-	  glRecti(messageAreaPixels[0] + drawnTabWidth,
-		  messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-		  messageAreaPixels[0] + drawnTabWidth + int(tab->width),
-		  messageAreaPixels[1] + messageAreaPixels[3] + ay);
-	}
-
-	drawnTabWidth += long(tab->width);
-      } // end iteration over tabs
+      drawTabBoxes(ay);
     }
 
     if (blended) {
@@ -415,56 +391,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  // show scroll indicator if not at end
-  if ((messagesOffset > 0) && (activeTab >= 0)) {
-    int lines = int(tabs[activeTab]->messages.size());
-    if (lines > 0) {
+  drawScrollBar();
 
-      const float size = std::max(float(maxLines) / lines, 0.02f);
-      const float offset = float(messagesOffset) / lines;
-      const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
-      int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
-      if (top > maxTop) {
-	top = maxTop;
-      }
-      glColor3f(0.7f, 0.7f, 0.7f);
-      glRecti(messageAreaPixels[0],
-	      messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
-	      messageAreaPixels[0] + 2, top);
-    }
-  }
-
-  // Draw tab labels
   if (showTabs) {
-    long int drawnTabWidth = 0;
-    for (int t = 0; t < (int)tabs.size(); t++) {
-      const Tab* tab = tabs[t];
-      if (!tab->visible) {
-        continue;
-      }
-
-      // current mode is bright, others are not so bright
-      if (activeTab == t) {
-	glColor4f(1.0f, 1.0f, 1.0f, dimming);
-      } else if (tab->unread) {
-	glColor4f(0.5f, 0.0f, 0.0f, dimming);
-      } else {
-	glColor4f(0.5f, 0.5f, 0.5f, dimming);
-      }
-
-      if (tabsOnRight) {
-	// draw the tabs on the right side (with one letter padding)
-	fm.drawString(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
-		      0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
-      } else {
-	// draw the tabs on the left side (with one letter padding)
-	fm.drawString(messageAreaPixels[0] + drawnTabWidth + floorf(fontSize),
-		      messageAreaPixels[1] + messageAreaPixels[3] - floorf(lineHeight * 0.9f) + ay,
-		      0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
-      }
-      drawnTabWidth += long(tab->width);
-    }
+    drawTabLabels(ay);
   }
 
   /* draw messages
@@ -475,7 +405,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
    * lines and displaying downward -- that is, it kinda backtracks for
    * each line that will wrap.
    *
-   * messageAreaPixels[2] = Width of Message Window in Pixels.
+   * messageRect.xsize = Width of Message Window in Pixels.
    *
    * maxLines = Max messages lines that can be displayed at once per
    * page.  This COULD be a BZDB parameter (but isn't).
@@ -485,18 +415,18 @@ void ControlPanel::render(SceneRenderer& _renderer)
    * parameter.
    */
 
-  glScissor(messageAreaPixels[0] + x,
-	    messageAreaPixels[1] + y,
-	    messageAreaPixels[2],
-	    messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
+  glScissor(messageRect.xpos + x,
+	    messageRect.ypos + y,
+	    messageRect.xsize,
+	    messageRect.ysize - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
   if (activeTab >= 0) {
     i = (int)tabs[activeTab]->messages.size() - 1;
   } else {
     i = -1;
   }
-  if ((i >= 0) && (messagesOffset > 0)) {
-    i -= messagesOffset;
+  if ((i >= 0) && (tabs[activeTab]->offset > 0)) {
+    i -= tabs[activeTab]->offset;
     if (i < 0) {
       i = 0;
     }
@@ -545,7 +475,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
       // We use 1 tabstop spaced 1/3 of the way across the controlpanel
       isTab = (msg.find('\t') != std::string::npos);
       if (isTab) {
-	msgx += messageAreaPixels[2] / 3;
+	msgx += messageRect.xsize / 3;
 	msgy++;
       } else {
 	msgx = 0;
@@ -582,45 +512,164 @@ void ControlPanel::render(SceneRenderer& _renderer)
     regfree(&re);
   }
 
-  glScissor(messageAreaPixels[0] + x - 2,
-	    messageAreaPixels[1] + y - 2,
-	    messageAreaPixels[2] + 3,
-	    messageAreaPixels[3] + 33);
+  glScissor(messageRect.xpos + x - 2,
+	    messageRect.ypos + y - 2,
+	    messageRect.xsize + 3,
+	    messageRect.ysize + 33);
   OpenGLGState::resetState();
 
-  // draw the lines around the console panel
-  long xpos;
-  long ypos;
+  drawOutline(ay);
 
-  float outlineOpacity = RENDERER.getPanelOpacity();
-  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor; // bzdb cache this maybe?
-  if (outlineOpacity < 1.0f) {
-    outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
+  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f);
+
+  glPopMatrix();
+
+  fm.setOpacity(1.0f);
+}
+
+
+void ControlPanel::drawScrollBar()
+{
+  if (activeTab < 0) {
+    return;
   }
+  const Tab* tab = tabs[activeTab];
+  if (tab->offset == 0) {
+    return; // only show the scroll indicator if not at the end
+  }
+  const int lines = int(tab->messages.size());
+  if (lines > 0) {
+    const float size = std::max(float(maxLines) / lines, 0.02f);
+    const float offset = float(tab->offset) / lines;
+    const int maxTop = messageRect.ypos + messageRect.ysize;
+    int top = messageRect.ypos + int((offset + size) * (float)messageRect.ysize);
+    if (top > maxTop) {
+      top = maxTop;
+    }
+    glColor3f(0.7f, 0.7f, 0.7f);
+    glRecti(messageRect.xpos,
+            messageRect.ypos + int(offset * (float)messageRect.ysize),
+            messageRect.xpos + 2,
+            top);
+  }
+}
+
+
+void ControlPanel::drawTabBoxes(int yOffset)
+{
+  const IntRect& rect = messageRect;
+
+  const int tabHeight = (int)lineHeight + 4;
+
+  long int drawnTabWidth = 0;
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    const Tab* tab = tabs[t];
+    if (!tab->visible) {
+      continue;
+    }
+    const int tabWidth = (int)tab->width;
+
+    // current mode is given a dark background to match the control panel
+    if (activeTab == t) {
+      glColor4f(0.0f, 0.0f, 0.0f, RENDERER.getPanelOpacity());
+    } else {
+      glColor4f(0.10f, 0.10f, 0.10f, RENDERER.getPanelOpacity());
+    }
+
+    if (tabsOnRight) {
+      // draw the tabs on the right side
+      glRecti(rect.xpos + rect.xsize - totalTabWidth + drawnTabWidth,
+              rect.ypos + rect.ysize + yOffset - tabHeight,
+              rect.xpos + rect.xsize - totalTabWidth + drawnTabWidth + tabWidth,
+              rect.ypos + rect.ysize + yOffset);
+    } else {
+      // draw the tabs on the left side
+      glRecti(rect.xpos + drawnTabWidth,
+              rect.ypos + rect.ysize + yOffset - tabHeight,
+              rect.xpos + drawnTabWidth + tabWidth,
+              rect.ypos + rect.ysize + yOffset);
+    }
+
+    drawnTabWidth += long(tab->width);
+  }
+}
+
+
+void ControlPanel::drawTabLabels(int yOffset)
+{
+  FontManager &fm = FontManager::instance();
+  const IntRect& rect = messageRect;
+
+  long int drawnTabWidth = 0;
+  for (int t = 0; t < (int)tabs.size(); t++) {
+    const Tab* tab = tabs[t];
+    if (!tab->visible) {
+      continue;
+    }
+
+    // current mode is bright, others are not so bright
+    if (activeTab == t) {
+      glColor4f(1.0f, 1.0f, 1.0f, dimming);
+    } else if (tab->unread) {
+      glColor4f(0.5f, 0.0f, 0.0f, dimming);
+    } else {
+      glColor4f(0.5f, 0.5f, 0.5f, dimming);
+    }
+
+    if (tabsOnRight) {
+      // draw the tabs on the right side (with one letter padding)
+      fm.drawString(rect.xpos + rect.xsize - totalTabWidth + drawnTabWidth + floorf(fontSize),
+                    rect.ypos + rect.ysize - floorf(lineHeight * 0.9f) + yOffset,
+                    0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
+    } else {
+      // draw the tabs on the left side (with one letter padding)
+      fm.drawString(rect.xpos + drawnTabWidth + floorf(fontSize),
+                    rect.ypos + rect.ysize - floorf(lineHeight * 0.9f) + yOffset,
+                    0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
+    }
+    drawnTabWidth += long(tab->width);
+  }
+}
+
+
+void ControlPanel::drawOutline(int yOffset)
+{
+  const fvec2 halfPixel(0.5f, 0.5f);
 
   if (BZDBCache::blend) {
     glEnable(GL_BLEND);
   }
 
-  // nice border
-  glColor4f(teamColor[0], teamColor[1], teamColor[2], outlineOpacity);
+  float opacity = RENDERER.getPanelOpacity();
+  const float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;
+  if (opacity < 1.0f) {
+    opacity = (opacity * fudgeFactor) + (1.0f - fudgeFactor);
+  }
+
+  glColor4f(teamColor[0], teamColor[1], teamColor[2], opacity);
+
+  const int x = window.getOriginX();
+  const int y = window.getOriginY();
+
   glBegin(GL_LINE_LOOP); {
+    long xpos, ypos;
+
     // bottom left
-    xpos = x + messageAreaPixels[0] - 1;
-    ypos = y + messageAreaPixels[1] - 1;
+     xpos = x + messageRect.xpos - 1;
+     ypos = y + messageRect.ypos - 1;
     glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // bottom right
-    xpos += messageAreaPixels[2] + 1;
+    xpos += messageRect.xsize + 1;
     glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // top right
-    ypos += messageAreaPixels[3] + 1;
+    ypos += messageRect.ysize + 1;
     glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // over to panel on left
     if (!tabsOnRight) {
-      xpos = x + messageAreaPixels[0] + totalTabWidth;
+      xpos = x + messageRect.xpos + totalTabWidth;
       glVertex2fv(fvec2(xpos, ypos) + halfPixel);
     }
 
@@ -632,13 +681,13 @@ void ControlPanel::render(SceneRenderer& _renderer)
         continue;
       }
       if (activeTab == t) {
-	ypos += ay;
+	ypos += yOffset;
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
 	xpos -= long(tab->width) + 1;
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
-	ypos -= ay;
+	ypos -= yOffset;
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
       }
       else {
@@ -649,7 +698,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
 
     // over from panel on right
-    xpos = x + messageAreaPixels[0] - 1;
+    xpos = x + messageRect.xpos - 1;
     glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
   } glEnd();
@@ -657,12 +706,6 @@ void ControlPanel::render(SceneRenderer& _renderer)
   if (BZDBCache::blend) {
     glDisable(GL_BLEND);
   }
-
-  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f);
-
-  glPopMatrix();
-
-  fm.setOpacity(1.0f);
 }
 
 
@@ -686,22 +729,22 @@ void ControlPanel::resize()
 
   // compute areas in pixels x,y,w,h
   // leave off 1 pixel for the border
-  radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
-  radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
+  radarRect.xpos = radarRect.ypos = (int)radarSpace + 1;
+  radarRect.xsize = radarRect.ysize = (int)(radarSize - (radarSpace * 2.0f)) - 2;
 
-  messageAreaPixels[0] = (int)radarSize + 1; // X coord
-  messageAreaPixels[1] = radarAreaPixels[1]; // Y coord
-  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
-  messageAreaPixels[3] = radarAreaPixels[3]; // Height
+  messageRect.xpos  = (int)radarSize + 1; // X coord
+  messageRect.ypos  = radarRect.ypos; // Y coord
+  messageRect.xsize = (int)(w - radarSize - radarSpace) - 2; // Width
+  messageRect.ysize = radarRect.ysize; // Height
   if (!BZDB.isTrue("displayRadar") || (BZDBCache::radarLimit <= 0.0f)) {
-    messageAreaPixels[0] = (int)radarSpace + 1;
-    messageAreaPixels[2] = (int)(w - (radarSpace * 2.0f)) - 2;
+    messageRect.xpos  = (int)radarSpace + 1;
+    messageRect.xsize = (int)(w - (radarSpace * 2.0f)) - 2;
   }
 
   // if radar connected then resize it
   if (radarRenderer) {
-    radarRenderer->setShape(radarAreaPixels[0], radarAreaPixels[1],
-			    radarAreaPixels[2], radarAreaPixels[3]);
+    radarRenderer->setShape(radarRect.xpos, radarRect.ypos,
+                            radarRect.xsize, radarRect.ysize);
   }
 
   FontManager &fm = FontManager::instance();
@@ -732,15 +775,15 @@ void ControlPanel::resize()
 
   lineHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
 
-  maxLines = int(messageAreaPixels[3] / lineHeight);
+  maxLines = int(messageRect.ysize / lineHeight);
 
   margin = lineHeight / 4.0f;
 
   // rewrap all the lines
   for (int i = 0; i < (int)tabs.size(); i++) {
     for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
-      tabs[i]->messages[j].breakLines(messageAreaPixels[2] - 2 * margin,
-                                fontFace->getFMFace(), fontSize);
+      tabs[i]->messages[j].breakLines(messageRect.xsize - 2 * margin,
+                                      fontFace->getFMFace(), fontSize);
     }
   }
 
@@ -781,6 +824,10 @@ void ControlPanel::exposeCallback(void* self)
 
 void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
 {
+  if (activeTab < 0) {
+    return;
+  }
+
   if (paged) {
     if (abs(offset) <= 1) {
       offset = offset * (maxLines - 1);
@@ -795,24 +842,24 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
   switch (whence) {
     case 0: {
       if (offset < (int)tabs[activeTab]->messages.size()) {
-        messagesOffset = offset;
+        tabs[activeTab]->offset = offset;
       } else {
-        messagesOffset = (int)tabs[activeTab]->messages.size() - 1;
+        tabs[activeTab]->offset = (int)tabs[activeTab]->messages.size() - 1;
       }
       break;
     }
     case 1: {
       if (offset > 0) {
-        if (messagesOffset + offset < (int)tabs[activeTab]->messages.size()) {
-          messagesOffset += offset;
+        if (tabs[activeTab]->offset + offset < (int)tabs[activeTab]->messages.size()) {
+          tabs[activeTab]->offset += offset;
         } else {
-          messagesOffset = (int)tabs[activeTab]->messages.size() - 1;
+          tabs[activeTab]->offset = (int)tabs[activeTab]->messages.size() - 1;
         }
       } else if (offset < 0) {
-        if (messagesOffset + offset >= 0) {
-          messagesOffset += offset;
+        if (tabs[activeTab]->offset + offset >= 0) {
+          tabs[activeTab]->offset += offset;
         } else {
-          messagesOffset = 0;
+          tabs[activeTab]->offset = 0;
         }
       }
       break;
@@ -820,9 +867,9 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
     case 2: {
       if (offset < 0) {
         if ((int)tabs[activeTab]->messages.size() >= offset) {
-          messagesOffset += offset;
+          tabs[activeTab]->offset += offset;
         } else {
-          messagesOffset = 0;
+          tabs[activeTab]->offset = 0;
         }
       }
       break;
@@ -887,7 +934,7 @@ bool ControlPanel::isTabVisible(int tabID) const
 void ControlPanel::addMessage(const std::string& line, int realmode)
 {
   ControlPanelMessage item(line);
-  item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace->getFMFace(), fontSize);
+  item.breakLines(messageRect.xsize - 2 * margin, fontFace->getFMFace(), fontSize);
 
   int _maxScrollPages = BZDB.evalInt("scrollPages");
   if (_maxScrollPages <= 0) {
@@ -927,7 +974,8 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
 
       // mark the tab as unread (if viewing tabs)
       const bool showTabs = (BZDB.evalInt("showtabs") > 0);
-      if (showTabs && (activeTab != t) && (activeTab != MessageAll)) {
+      if (showTabs && (activeTab != t) && (activeTab >= 0) &&
+          ((activeTab != MessageAll) || !tab->allSrc)) {
 	tab->unread = true;
       }
     }
@@ -986,18 +1034,16 @@ bool ControlPanel::addTab(const std::string& label, bool allSrc, bool allDst)
 bool ControlPanel::removeTab(const std::string& label)
 {
   for (int t = 0; t < (int)tabs.size(); t++) {
-    if (tabs[t]->label == label) { // an exact test, not using getTabID()
-      if (tabs[t]->locked) {
+    Tab* tab = tabs[t];
+    if (tab->label == label) { // an exact test, not using getTabID()
+      if (tab->locked) {
         return false;
       }
-      delete tabs[t];
+      delete tab;
       tabs.erase(tabs.begin() + t);
       setupTabMap();
       if (activeTab >= (int)tabs.size()) {
-        activeTab = -1;
-        if (hubLink) {
-          hubLink->activeTabChanged();
-        }
+        setActiveTab(MessageAll);
       }
       resize();
       return true;
@@ -1014,15 +1060,16 @@ bool ControlPanel::renameTab(const std::string& oldLabel,
     return false;
   }
   for (int t = 0; t < (int)tabs.size(); t++) {
-    if (tabs[t]->label == oldLabel) {
-      if (tabs[t]->locked) {
+    Tab* tab = tabs[t];
+    if (tab->label == oldLabel) {
+      if (tab->locked) {
         return false;
       }
       const int newTab = getTabID(newLabel);
       if (validTab(newTab) && (newTab != t)) {
         return false;
       }
-      tabs[t]->label = newLabel;
+      tab->label = newLabel;
       setupTabMap();
       resize();
       return true;
