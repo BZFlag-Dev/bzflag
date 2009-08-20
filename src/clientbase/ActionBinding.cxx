@@ -45,6 +45,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("mousegrab"), press));
   wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
   wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
+  wayToBindActions.insert(std::make_pair(std::string("shotstats"), press));
   wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleRadar"), press));
@@ -187,6 +188,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Page Down",  "scrollpanel down_page"));
   defaultBinding.insert(BindingTable::value_type("Wheel Down", "scrollpanel down 3"));
   defaultBinding.insert(BindingTable::value_type("End", "scrollpanel bottom"));
+  defaultBinding.insert(BindingTable::value_type("Home", "shotstats"));
   defaultBinding.insert(BindingTable::value_type("1", "set displayRadarRange 0.25"));
   defaultBinding.insert(BindingTable::value_type("2", "set displayRadarRange 0.5"));
   defaultBinding.insert(BindingTable::value_type("3", "set displayRadarRange 1.0"));

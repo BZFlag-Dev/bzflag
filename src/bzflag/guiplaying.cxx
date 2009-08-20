@@ -65,7 +65,6 @@
 #include "Roaming.h"
 #include "RobotPlayer.h"
 #include "Roster.h"
-#include "ShotStats.h"
 #include "GameTime.h"
 #include "WorldBuilder.h"
 #include "WorldPlayer.h"
@@ -582,12 +581,6 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
   // if we don't have a tank, the following key commands don't apply
   if (!myTank) {
     return false;
-  }
-
-  // Shot/Accuracy Statistics display
-  if (key.button == BzfKeyEvent::Home && pressed) {
-    HUDDialogStack::get()->push(new ShotStats);
-    return true;
   }
 
   return false;

@@ -36,12 +36,14 @@
 /* local implementation headers */
 #include "ComposeDefaultKey.h"
 #include "HUDRenderer.h"
+#include "HUDDialogStack.h"
 #include "HUDui.h"
 #include "HubComposeKey.h"
 #include "LocalPlayer.h"
 #include "Roaming.h"
 #include "ServerCommandKey.h"
 #include "SilenceDefaultKey.h"
+#include "ShotStats.h"
 #include "sound.h"
 #include "playing.h"
 // FIXME: Shouldn't need to depend on GUI elements
@@ -72,6 +74,7 @@ static std::string cmdSend          (const std::string&, const CmdArgList& args,
 static std::string cmdSendMsg       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdServerCommand (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdSilence       (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdShotStats     (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdTime          (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdToggleConsole (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdToggleFlags   (const std::string&, const CmdArgList& args, bool*);
@@ -101,6 +104,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("send",          &cmdSend,          "send {all|team|nemesis|recipient|admin}:  start composing a message");
   PUSHCMD("sendmsg",       &cmdSendMsg,       "send {all|team|nemesis|recipient|admin} <message>:  send a message");
   PUSHCMD("screenshot",    &cmdScreenshot,    "screenshot:  take a screenshot");
+  PUSHCMD("shotstats",     &cmdShotStats,     "shotstats:  shot statistics");
   PUSHCMD("time",          &cmdTime,          "time {forward|backward|<seconds>}:  adjust the current time");
   PUSHCMD("roam",          &cmdRoam,          "roam {zoom|cycle} <args>:  roam around");
   PUSHCMD("silence",       &cmdSilence,       "silence:  silence/unsilence a player");
@@ -926,6 +930,19 @@ static std::string cmdScreenshot(const std::string&, const CmdArgList& args, boo
   return std::string();
 }
 
+
+static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool*)
+{
+  if (args.size() != 0) {
+    return "usage: screenshot";
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank != NULL) {
+    HUDDialogStack::get()->push(new ShotStats);
+  }
+  return std::string();
+}
+  
 
 static std::string cmdTime(const std::string&, const CmdArgList& args, bool*)
 {
