@@ -43,6 +43,7 @@ class HubMenu : public HUDDialog {
 
   protected:
     HUDuiList*   autoJoinList;
+    HUDuiList*   updateCode;
     HUDuiTypeIn* usernameText;
     HUDuiTypeIn* passwordText;
     HUDuiLabel*  copyLoginLabel;

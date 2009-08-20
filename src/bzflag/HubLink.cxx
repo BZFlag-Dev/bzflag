@@ -341,13 +341,25 @@ void HubLink::stateConnect()
   //
   if (!luaCode.empty()) {
     if (!createLua(luaCode)) {
-      return;
+      return; // createLua() has its own fail() calls
     }
     state = StateReady;
     return;
   }
 
-  luaCode.clear();
+  // for the paranoid,
+  if (!BZDB.isTrue("hubUpdateCode")) {
+    if (!loadLuaCode(luaCode)) {
+      fail("UpdateCode is Off, and hub.lua is not available");
+      return;
+    }
+    if (!createLua(luaCode)) {
+      return; // createLua() has its own fail() calls
+    }
+    state = StateReady;
+    return;
+  }
+
   std::string msg;
   msg += "getcode " VERSION;
   if (loadLuaCode(luaCode)) {

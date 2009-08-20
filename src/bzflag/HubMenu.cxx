@@ -64,6 +64,16 @@ HubMenu::HubMenu()
   options->push_back("On");
   addControl(autoJoinList);
 
+  // UpdateCode -- Yes / NO
+  updateCode = new HUDuiList;
+  updateCode->setFontFace(fontFace);
+  updateCode->setLabel("UpdateCode:");
+  updateCode->setCallback(callback, (void*)"c");
+  options = &updateCode->getList();
+  options->push_back("Off");
+  options->push_back("On");
+  addControl(updateCode);
+
   // Username -- text input
   usernameText = new HUDuiTypeIn;
   usernameText->setFontFace(fontFace);
@@ -155,7 +165,7 @@ void HubMenu::resize(int _width, int _height)
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if ((listHUD[i] == autoJoinList) ||
+    if ((listHUD[i] == updateCode) ||
         (listHUD[i] == copyLoginLabel)) {
       y -= 0.5f * h;
     }
@@ -163,6 +173,7 @@ void HubMenu::resize(int _width, int _height)
 
   // load current settings
   autoJoinList->setIndex(BZDB.isTrue("hubAutoJoin") ? 1 : 0);
+  updateCode->setIndex(BZDB.isTrue("hubUpdateCode") ? 1 : 0);
   usernameText->setString(BZDB.get("hubUsername"));
   passwordText->setString(BZDB.get("hubPassword"));
 }
@@ -212,6 +223,11 @@ void HubMenu::callback(HUDuiControl* w, void* data)
     case 'a': {
       HUDuiList* list = (HUDuiList*)w;
       BZDB.setBool("hubAutoJoin", (list->getIndex() == 0) ? false : true);
+      break;
+    }
+    case 'c': {
+      HUDuiList* list = (HUDuiList*)w;
+      BZDB.setBool("hubUpdateCode", (list->getIndex() == 0) ? false : true);
       break;
     }
     case 'u': {

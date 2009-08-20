@@ -119,7 +119,8 @@ bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
   return true;
 }
 
-bool        ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
+
+bool ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
 {
   const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
   const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
