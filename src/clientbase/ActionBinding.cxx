@@ -200,8 +200,6 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+F3", "messagepanel server"));
   defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
   defaultBinding.insert(BindingTable::value_type("Shift+F5", "messagepanel debug"));
-  defaultBinding.insert(BindingTable::value_type("Alt+Left Arrow",  "messagepanel prev"));
-  defaultBinding.insert(BindingTable::value_type("Alt+Right Arrow", "messagepanel next"));
 }
 
 void ActionBinding::resetBindings() {
