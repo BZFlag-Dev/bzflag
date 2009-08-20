@@ -30,6 +30,7 @@
 #include "HubComposeKey.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
+#include "Pack.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "bzfio.h"
@@ -210,12 +211,12 @@ bool HubLink::saveLuaCode(const std::string& code) const
 bool HubLink::update()
 {
   switch (state) {
-    case StateInit:      { stateInit();      break; }
-    case StateDNS:       { stateDNS();       break; }
-    case StateConnect:   { stateConnect();   break; }
-    case StateGetScript: { stateGetScript(); break; }
-    case StateReady:     { stateReady();     break; }
-    case StateFailed:    { return false; }
+    case StateInit:    { stateInit();    break; }
+    case StateDNS:     { stateDNS();     break; }
+    case StateConnect: { stateConnect(); break; }
+    case StateGetCode: { stateGetCode(); break; }
+    case StateReady:   { stateReady();   break; }
+    case StateFailed:  { return false; }
   }
 
   if (state == StateFailed) {
@@ -331,7 +332,7 @@ void HubLink::stateConnect()
   }
 
   // NOTE:
-  //   we skip StateGetScript if initialized with lua code.
+  //   we skip StateGetCode if initialized with lua code.
   //   this also avoids sending the VERSION hello message
   //   (could be used to redirect to servers with any protocol)
   //
@@ -366,21 +367,21 @@ void HubLink::stateConnect()
     msg += " " + TextUtils::itoa(luaCode.size());
     msg += " " + MD5(luaCode).hexdigest();
   }
-  sendMessage(msg);
+  sendChunk(msg);
   debugf(1, "initial message = '%s'\n", msg.c_str());
 
-  state = StateGetScript;
+  state = StateGetCode;
 }
 
 
-void HubLink::stateGetScript()
+void HubLink::stateGetCode()
 {
   if (!updateRecv() || !updateSend()) {
     return;
   }
 
   std::string code;
-  if (!nextMessage(code)) {
+  if (!recvChunk(code)) {
     return;
   }
 
@@ -412,16 +413,18 @@ void HubLink::stateGetScript()
 
 void HubLink::stateReady()
 {
-  updateLua();
-
   if (!updateRecv() || !updateSend()) {
     return;
   }
 
-  std::string msg;
-  while (nextMessage(msg)) {
-    recvMessage(msg);
+  updateLua();
+
+  std::string data;
+  while (!recvQueue.empty()) {
+    data = recvQueue.front(); recvQueue.pop_front();
+    recvData(data);
   }
+  recvTotal = 0;
 }
 
 
@@ -433,27 +436,30 @@ void HubLink::stateReady()
 bool HubLink::updateRecv()
 {
   char buf[4096];
-  const int bytes = read(sock, buf, sizeof(buf));
-  if (bytes > 0) {
-    debugf(4, "received %i bytes\n", bytes);
-    recvTotal += bytes;
-    recvQueue.push_back(std::string(buf, bytes));
-  }
-  else if (bytes == 0) {
-    fail("disconnected");
-    return false;
-  }
-  else if (bytes == -1) {
-    if (errno != EAGAIN) {
-      fail("recv error: ", errno);
+  while (true) {
+    const int bytes = read(sock, buf, sizeof(buf));
+    if (bytes > 0) {
+      debugf(4, "received %i bytes\n", bytes);
+      recvTotal += bytes;
+      recvQueue.push_back(std::string(buf, bytes));
+    }
+    else if (bytes == 0) {
+      fail("disconnected");
+      return false;
+    }
+    else if (bytes == -1) {
+      if (errno != EAGAIN) {
+        fail("recv error: ", errno);
+        return false;
+      }
+      return true; // waiting for data
+    }
+    else {
+      debugf(1, "unknown recv state\n");
       return false;
     }
   }
-  else {
-    debugf(1, "unknown recv state\n");
-    return false;
-  }
-  return true;
+  return false;
 }
 
 
@@ -481,6 +487,7 @@ bool HubLink::updateSend()
         fail("send error: ", errno);
         return false;
       }
+      return true;
     }
     else {
       debugf(1, "unknown send state\n");
@@ -505,24 +512,24 @@ bool HubLink::combineRecv(size_t minSize)
 }
 
 
-bool HubLink::nextMessage(std::string& msg)
-{
-  msg = "";
+bool HubLink::recvChunk(std::string& chunk)
+ {
+  chunk = "";
 
   const size_t lenSize = sizeof(uint32_t);
   if (!combineRecv(lenSize)) {
     return false;
   }
-
-  uint32_t msgLen;
-  nboUnpackUInt32((void*)recvQueue.front().c_str(), msgLen);
-  const uint32_t totalLen = lenSize + msgLen;
+  
+  uint32_t chunkLen;
+  nboUnpackUInt32((void*)recvQueue.front().c_str(), chunkLen);
+  const uint32_t totalLen = lenSize + chunkLen;
 
   if (!combineRecv(totalLen)) {
     return false;
   }
-
-  msg = recvQueue.front().substr(lenSize, msgLen);
+   
+  chunk = recvQueue.front().substr(lenSize, chunkLen);
 
   if (recvQueue.front().size() == totalLen) {
     recvQueue.pop_front();
@@ -532,24 +539,27 @@ bool HubLink::nextMessage(std::string& msg)
     recvQueue.pop_front();
     recvQueue.push_front(s.substr(totalLen));
   }
-
+   
   recvTotal -= totalLen;
 
   return true;    
 }
 
 
-bool HubLink::sendMessage(const std::string& msg)
+bool HubLink::sendData(const std::string& data)
 {
-  const size_t lenSize = sizeof(uint32_t);
-  char buf[lenSize];
-  nboPackUInt32(buf, (uint32_t)msg.size());
-
-  sendQueue.push_back(std::string(buf, lenSize) + msg);
-
-  sendTotal += lenSize + msg.size();
-
+  sendQueue.push_back(data);
+  sendTotal += data.size();
   return updateSend();
+}
+
+
+bool HubLink::sendChunk(const std::string& chunk)
+{
+  char lenBuf[sizeof(uint32_t)];
+  nboPackUInt32(lenBuf, (uint32_t)chunk.size());
+  const std::string lenStr = std::string(lenBuf, sizeof(uint32_t));
+  return sendData(lenStr + chunk);
 }
 
 
@@ -762,14 +772,14 @@ void HubLink::recvCommand(const std::string& cmd)
 }
 
 
-void HubLink::recvMessage(const std::string& msg)
+void HubLink::recvData(const std::string& data)
 {
-  debugf(2, "recvMessage(%i) = '%s'\n", (int)msg.size(),  msg.c_str());
-  if (!pushCallIn("RecvMessage", 1)) {
+  debugf(2, "recvData(%i) = '%s'\n", (int)data.size(),  data.c_str());
+  if (!pushCallIn("RecvData", 1)) {
     return;
   }
 
-  lua_pushstdstring(L, msg);
+  lua_pushstdstring(L, data);
 
   runCallIn(1, 0);
 }
@@ -900,11 +910,15 @@ static int ReadStdin(lua_State* L);
 bool HubLink::pushCallOuts()
 {
   lua_newtable(L);
+
   PUSH_LUA_CFUNC(L, Reload);
   PUSH_LUA_CFUNC(L, Disable);
-  PUSH_LUA_CFUNC(L, SendMessage);
+
+  PUSH_LUA_CFUNC(L, SendData);
+
   PUSH_LUA_CFUNC(L, Print);
   PUSH_LUA_CFUNC(L, SetAlert);
+
   PUSH_LUA_CFUNC(L, AddTab);
   PUSH_LUA_CFUNC(L, RemoveTab);
   PUSH_LUA_CFUNC(L, ShiftTab);
@@ -914,10 +928,12 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, GetTabLabel);
   PUSH_LUA_CFUNC(L, GetActiveTab);
   PUSH_LUA_CFUNC(L, SetActiveTab);
+
   PUSH_LUA_CFUNC(L, GetComposePrompt);
   PUSH_LUA_CFUNC(L, SetComposePrompt);
   PUSH_LUA_CFUNC(L, GetComposeString);
   PUSH_LUA_CFUNC(L, SetComposeString);
+
   PUSH_LUA_CFUNC(L, CalcMD5);
   PUSH_LUA_CFUNC(L, StripAnsiCodes);
   PUSH_LUA_CFUNC(L, SetBZDB);
@@ -927,10 +943,34 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, GetVersion);
   PUSH_LUA_CFUNC(L, GetHubServer);
   PUSH_LUA_CFUNC(L, GetServerInfo);
+
+  PUSH_LUA_CFUNC(L, PackInt8);
+  PUSH_LUA_CFUNC(L, PackInt16);
+  PUSH_LUA_CFUNC(L, PackInt32);
+  PUSH_LUA_CFUNC(L, PackInt64);
+  PUSH_LUA_CFUNC(L, PackUInt8);
+  PUSH_LUA_CFUNC(L, PackUInt16);
+  PUSH_LUA_CFUNC(L, PackUInt32);
+  PUSH_LUA_CFUNC(L, PackUInt64);
+  PUSH_LUA_CFUNC(L, PackFloat);
+  PUSH_LUA_CFUNC(L, PackDouble);
+  PUSH_LUA_CFUNC(L, UnpackInt8);
+  PUSH_LUA_CFUNC(L, UnpackInt16);
+  PUSH_LUA_CFUNC(L, UnpackInt32);
+  PUSH_LUA_CFUNC(L, UnpackInt64);
+  PUSH_LUA_CFUNC(L, UnpackUInt8);
+  PUSH_LUA_CFUNC(L, UnpackUInt16);
+  PUSH_LUA_CFUNC(L, UnpackUInt32);
+  PUSH_LUA_CFUNC(L, UnpackUInt64);
+  PUSH_LUA_CFUNC(L, UnpackFloat);
+  PUSH_LUA_CFUNC(L, UnpackDouble);
+
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
   PUSH_LUA_CFUNC(L, ReadStdin);
 #endif
+
   lua_setglobal(L, "bz");
+
   return true;
 }
 
@@ -1189,14 +1229,14 @@ int HubLink::SetActiveTab(lua_State* L)
 }
 
 
-int HubLink::SendMessage(lua_State* L)
+int HubLink::SendData(lua_State* L)
 {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
   }
-  const std::string msg = luaL_checkstring(L, 1);
-  link->sendMessage(msg);
+  const std::string data = luaL_checkstdstring(L, 1);
+  link->sendData(data);
   return 0;
 }
 
@@ -1238,7 +1278,7 @@ int HubLink::SetAlert(lua_State* L)
 
 int HubLink::CalcMD5(lua_State* L)
 {
-  const std::string text = luaL_checkstring(L, 1);
+  const std::string text = luaL_checkstdstring(L, 1);
   lua_pushstdstring(L, MD5(text).hexdigest());
   return 1;
 }
@@ -1339,6 +1379,53 @@ int HubLink::GetServerInfo(lua_State* L)
   return 3;
 }
 
+//============================================================================//
+
+#undef PACK_TYPE
+#undef UNPACK_TYPE
+
+#define PACK_TYPE(label, type) \
+  const type value = luaL_checkint(L, 1); \
+  char buf[sizeof(type)]; \
+  nboPack ## label(buf, value); \
+  lua_pushlstring(L, buf, sizeof(type)); \
+  return 1;
+
+int HubLink::PackInt8(lua_State* L)   { PACK_TYPE(Int8,   int8_t)   }
+int HubLink::PackInt16(lua_State* L)  { PACK_TYPE(Int16,  int16_t)  }
+int HubLink::PackInt32(lua_State* L)  { PACK_TYPE(Int32,  int32_t)  }
+int HubLink::PackInt64(lua_State* L)  { PACK_TYPE(Int64,  int64_t)  }
+int HubLink::PackUInt8(lua_State* L)  { PACK_TYPE(UInt8,  uint8_t)  }
+int HubLink::PackUInt16(lua_State* L) { PACK_TYPE(UInt16, uint16_t) }
+int HubLink::PackUInt32(lua_State* L) { PACK_TYPE(UInt32, uint32_t) }
+int HubLink::PackUInt64(lua_State* L) { PACK_TYPE(UInt64, uint64_t) }
+int HubLink::PackFloat(lua_State* L)  { PACK_TYPE(Float,  float)    }
+int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
+
+#define UNPACK_TYPE(label, type) \
+  size_t len; \
+  const char* s = luaL_checklstring(L, 1, &len); \
+  if (len < sizeof(type)) { \
+    return 0; \
+  } \
+  type value; \
+  nboUnpack ## label((void*)s, value); \
+  lua_pushnumber(L, (lua_Number)value); \
+  return 1;
+
+int HubLink::UnpackInt8(lua_State* L)   { UNPACK_TYPE(Int8,   int8_t)   }
+int HubLink::UnpackInt16(lua_State* L)  { UNPACK_TYPE(Int16,  int16_t)  } 
+int HubLink::UnpackInt32(lua_State* L)  { UNPACK_TYPE(Int32,  int32_t)  }
+int HubLink::UnpackInt64(lua_State* L)  { UNPACK_TYPE(Int64,  int64_t)  }
+int HubLink::UnpackUInt8(lua_State* L)  { UNPACK_TYPE(UInt8,  uint8_t)  }
+int HubLink::UnpackUInt16(lua_State* L) { UNPACK_TYPE(UInt16, uint16_t) } 
+int HubLink::UnpackUInt32(lua_State* L) { UNPACK_TYPE(UInt32, uint32_t) }
+int HubLink::UnpackUInt64(lua_State* L) { UNPACK_TYPE(UInt64, uint64_t) }
+int HubLink::UnpackFloat(lua_State* L)  { UNPACK_TYPE(Float,  float)    }
+int HubLink::UnpackDouble(lua_State* L) { UNPACK_TYPE(Double, double)   }
+
+#undef PACK_TYPE
+#undef UNPACK_TYPE
 
 //============================================================================//
 //============================================================================//

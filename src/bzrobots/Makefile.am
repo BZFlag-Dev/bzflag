@@ -71,7 +71,6 @@ bzrobots_SOURCES =			\
 	BZRobotPlayer.h			\
 	RobotScript.cxx			\
 	RobotScript.h			\
-	LuaHeader.h			\
 	LuaScript.cxx			\
 	LuaScript.h			\
 	ScriptLoaderFactory.cxx		\

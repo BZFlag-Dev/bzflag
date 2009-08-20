@@ -861,10 +861,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\LuaHeader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\lua\LuaServer.cxx"
 				>
 			</File>

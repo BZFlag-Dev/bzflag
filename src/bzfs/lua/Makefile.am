@@ -17,7 +17,6 @@ noinst_HEADERS =      \
 	CallOuts.h    \
 	Constants.h   \
 	LuaFloat.h    \
-	LuaHeader.h   \
 	LuaServer.h   \
 	LuaURL.h      \
 	MapObject.h   \

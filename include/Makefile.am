@@ -64,6 +64,7 @@ noinst_HEADERS =			\
 	LinkManager.h			\
 	LinkPhysics.h			\
 	ListServer.h			\
+	LuaHeader.h			\
 	MapInfo.h			\
 	MathUtils.h			\
 	MediaFile.h			\

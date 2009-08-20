@@ -10,15 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef LUA_INCLUDE_H
-#define LUA_INCLUDE_H
+#ifndef __LUA_HEADER_H__
+#define __LUA_HEADER_H__
 
 
 #include <string>
 
-#include "../../other/lua/src/lua.h"
-#include "../../other/lua/src/lualib.h"
-#include "../../other/lua/src/lauxlib.h"
+#include "../src/other/lua/src/lua.h"
+#include "../src/other/lua/src/lualib.h"
+#include "../src/other/lua/src/lauxlib.h"
 
 
 //============================================================================//
@@ -88,6 +88,12 @@ inline double luaL_checkdouble(lua_State* L, int idx) {
   return (double)luaL_checknumber(L, idx);
 }
 
+inline std::string luaL_checkstdstring(lua_State* L, int idx) {
+  size_t len;
+  const char* s = luaL_checklstring(L, idx, &len);
+  return std::string(s, len);
+}
+
 
 inline float luaL_optfloat(lua_State* L, int idx, float def) {
   return (float)luaL_optnumber(L, idx, def);
@@ -107,7 +113,7 @@ inline void lua_pushstdstring(lua_State* L, const std::string& value)
 //============================================================================//
 
 
-#endif // LUA_INCLUDE_H
+#endif // __LUA_HEADER_H__
 
 // Local Variables: ***
 // mode: C++ ***

@@ -33,7 +33,7 @@ class HubLink {
       StateInit,
       StateDNS,
       StateConnect,
-      StateGetScript,
+      StateGetCode,
       StateReady,
       StateFailed
     };
@@ -71,11 +71,13 @@ class HubLink {
 
     void startComposing();
 
-  protected:
-    // internal call-ins
+  protected: // internal call-ins
     void shutdown();
     void updateLua();
-    bool sendMessage(const std::string& msg);
+    void recvData(const std::string& msg);
+
+  protected:
+    bool sendData(const std::string& msg);
 
   private:
     void clear();
@@ -92,15 +94,14 @@ class HubLink {
     void stateInit();
     void stateDNS();
     void stateConnect();
-    void stateGetScript();
+    void stateGetCode();
     void stateReady();
-
-    void recvMessage(const std::string& msg);
 
     bool updateRecv();
     bool updateSend();
     bool combineRecv(size_t minSize);
-    bool nextMessage(std::string& msg);
+    bool recvChunk(std::string& chunk); 
+    bool sendChunk(const std::string& chunk); 
 
     bool createLua(const std::string& code);
     bool pushAnsiCodes();
@@ -114,7 +115,7 @@ class HubLink {
     static int Reload(lua_State* L);
     static int Disable(lua_State* L);
 
-    static int SendMessage(lua_State* L);
+    static int SendData(lua_State* L);
 
     static int Print(lua_State* L);
     static int SetAlert(lua_State* L);
@@ -145,6 +146,27 @@ class HubLink {
     static int GetVersion(lua_State* L);
     static int GetHubServer(lua_State* L);
     static int GetServerInfo(lua_State* L);
+
+    static int PackInt8(lua_State* L);
+    static int PackInt16(lua_State* L);
+    static int PackInt32(lua_State* L);
+    static int PackInt64(lua_State* L);
+    static int PackUInt8(lua_State* L);
+    static int PackUInt16(lua_State* L);
+    static int PackUInt32(lua_State* L);
+    static int PackUInt64(lua_State* L);
+    static int PackFloat(lua_State* L);
+    static int PackDouble(lua_State* L);
+    static int UnpackInt8(lua_State* L);
+    static int UnpackInt16(lua_State* L);
+    static int UnpackInt32(lua_State* L);
+    static int UnpackInt64(lua_State* L);
+    static int UnpackUInt8(lua_State* L);
+    static int UnpackUInt16(lua_State* L);
+    static int UnpackUInt32(lua_State* L);
+    static int UnpackUInt64(lua_State* L);
+    static int UnpackFloat(lua_State* L);
+    static int UnpackDouble(lua_State* L);
 
   protected:
     const std::string hostPort; // host[:port] address format

@@ -220,10 +220,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\LuaHeader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzrobots\LuaScript.h"
 				>
 			</File>
