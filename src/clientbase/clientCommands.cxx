@@ -114,7 +114,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("autopilot",     &cmdAutoPilot,     "autopilot:  set/unset autopilot bot code");
   PUSHCMD("radarZoom",     &cmdRadarZoom,     "radarZoom {in/out}: change maxRadar range");
   PUSHCMD("viewZoom",      &cmdViewZoom,      "viewZoom {in/out/toggle}: change view angle");
-  PUSHCMD("messagepanel",  &cmdMessagePanel,  "messagepanel {all|chat|server|misc|debug}:  set message tab");
+  PUSHCMD("messagepanel",  &cmdMessagePanel,  "messagepanel {all|chat|server|misc|debug|prev|next}:  set message tab");
   PUSHCMD("toggleRadar",   &cmdToggleRadar,   "toggleRadar:  toggle radar visibility");
   PUSHCMD("toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility");
   PUSHCMD("toggleFlags",   &cmdToggleFlags,   "toggleFlags {main|radar}:  turn off/on field radar flags");
@@ -467,7 +467,7 @@ static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, b
   }
 
   if (args.size() != 1) {
-    return "usage: messagepanel {all|chat|server|misc|debug}";
+    return "usage: messagepanel {all|chat|server|misc|debug|prev|next}";
   }
   const std::string& tabName = args[0];
 
