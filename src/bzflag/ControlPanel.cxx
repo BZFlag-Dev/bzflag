@@ -953,7 +953,7 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
     if ((t == tabmode) // add to its own mode
 	// add to the All tab, unless not a source for All, or Current mode
 	|| ((t == MessageAll) && allSrc && (realmode != MessageCurrent))
-	// always add to all tabs
+	// add to all tabs unless the tab is not a destination for MessageAllTabs
 	|| ((realmode == MessageAllTabs) && tab->allDst)) {
 
       // insert the message into the tab

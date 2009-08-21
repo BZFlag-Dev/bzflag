@@ -86,8 +86,8 @@ class HubLink {
     bool parseHostPort(std::string& host, int& port);
 
     std::string getLuaCodeFilename() const;
-    bool loadLuaCode(std::string& code) const;
-    bool saveLuaCode(const std::string& code) const;
+    bool loadFile(const std::string& path, std::string& data) const;
+    bool saveFile(const std::string& path, const std::string& data) const;
         
     void stateInit();
     void stateDNS();

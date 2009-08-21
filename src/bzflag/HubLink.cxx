@@ -37,6 +37,7 @@
 #include "bz_md5.h"
 #include "network.h"
 #include "version.h"
+#include "zlib.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -122,6 +123,7 @@ void HubLink::clear()
 void HubLink::fail(const std::string& msg)
 {
   state = StateFailed;
+  debugf(1, "entered StateFailed\n");
   error = msg;
   clear();
 }
@@ -168,44 +170,46 @@ std::string HubLink::getLuaCodeFilename() const
 }
 
 
-bool HubLink::loadLuaCode(std::string& code) const
+bool HubLink::loadFile(const std::string& path, std::string& data) const
 {
-  code = "";
+  data = "";
 
-  FILE* file = fopen(getLuaCodeFilename().c_str(), "rb");
+  gzFile file = gzopen(path.c_str(), "rb");
   if (file == NULL) {
     return false;
   }
 
   char buf[4096];
   while (true) {
-    const int bytes = fread(buf, 1, sizeof(buf), file);
+    const int bytes = gzread(file, buf, sizeof(buf));
     if (bytes > 0) {
-      code.append(buf, bytes);
+      data.append(buf, bytes);
     } else {
       break;
     }
   }
-  fclose(file);
+  gzclose(file);
 
   return true;
 }
 
 
-bool HubLink::saveLuaCode(const std::string& code) const
+bool HubLink::saveFile(const std::string& path, const std::string& data) const
 {
   // open with binary mode and truncation enabled
-  const std::string fileName = getLuaCodeFilename();
-  std::ostream* out = FILEMGR.createDataOutStream(fileName, true, true);
+  const std::string gzName = path;
+  std::ostream* out = FILEMGR.createDataOutStream(path, true, true);
   if (out == NULL) {
     return false;
   }
-  *out << code;
+  *out << data;
+  out->flush();
   delete out;
   return true;
 }
 
 
+//============================================================================//
 //============================================================================//
 
 bool HubLink::update()
@@ -231,6 +235,8 @@ bool HubLink::update()
 }
 
 
+//============================================================================//
+
 void HubLink::stateInit()
 {
   std::string host;
@@ -243,8 +249,11 @@ void HubLink::stateInit()
   ares = new AresHandler();
   ares->queryHost(host.c_str());
   state = StateDNS;
+  debugf(1, "entered StateDNS\n");
 }
 
+
+//============================================================================//
 
 void HubLink::stateDNS()
 {
@@ -301,8 +310,11 @@ void HubLink::stateDNS()
   }
 
   state = StateConnect;
+  debugf(1, "entered StateConnect\n");
 }
 
+
+//============================================================================//
 
 void HubLink::stateConnect()
 {
@@ -345,12 +357,13 @@ void HubLink::stateConnect()
       return; // createLua() has its own fail() calls
     }
     state = StateReady;
+    debugf(1, "entered StateReady\n");
     return;
   }
 
   // for the paranoid,
   if (!BZDB.isTrue("hubUpdateCode")) {
-    if (!loadLuaCode(luaCode)) {
+    if (!loadFile(getLuaCodeFilename(), luaCode)) {
       fail("UpdateCode is Off, and hub.lua is not available");
       return;
     }
@@ -358,12 +371,13 @@ void HubLink::stateConnect()
       return; // createLua() has its own fail() calls
     }
     state = StateReady;
+    debugf(1, "entered StateReady\n");
     return;
   }
 
   std::string msg;
   msg += "getcode " VERSION;
-  if (loadLuaCode(luaCode)) {
+  if (loadFile(getLuaCodeFilename(), luaCode)) {
     msg += " " + TextUtils::itoa(luaCode.size());
     msg += " " + MD5(luaCode).hexdigest();
   }
@@ -371,8 +385,11 @@ void HubLink::stateConnect()
   debugf(1, "initial message = '%s'\n", msg.c_str());
 
   state = StateGetCode;
+  debugf(1, "entered StateGetCode\n");
 }
 
+
+//============================================================================//
 
 void HubLink::stateGetCode()
 {
@@ -380,20 +397,31 @@ void HubLink::stateGetCode()
     return;
   }
 
-  std::string code;
-  if (!readChunk(code)) {
+  std::string gzCode;
+  if (!readChunk(gzCode)) {
     return;
   }
 
-  if (code.empty()) {
-    debugf(1, "received empty lua code\n");
-  } else {
-    debugf(1, "received %i bytes of lua code\n", (int)code.size());
-    luaCode = code;
+  if (gzCode.empty()) {
+    debugf(1, "received empty lua code, no update required\n");
+  }
+  else {
+    const std::string gzFilename = getLuaCodeFilename() + ".gz";
+    if (!saveFile(gzFilename, gzCode)) {
+      fail("could not save the lua gzipped code");
+      return;
+    }
+    debugf(1, "received %i bytes of compressed lua code\n", (int)gzCode.size());
+    std::string rawCode;
+    if (!loadFile(gzFilename, rawCode)) {
+      fail("could not load the lua gzipped code");
+      return;
+    }
+    debugf(1, "uncompressed code size is %i bytes\n", (int)rawCode.size());
+    luaCode = rawCode;
   }
 
   if (luaCode.empty()) {
-    debugf(1, "empty luaCode\n");
     fail("empty luaCode");
     return;
   }
@@ -402,14 +430,19 @@ void HubLink::stateGetCode()
     return;
   }
 
-  if (!code.empty()) {
+  if (!gzCode.empty()) {
     // save the new code (after it has been successfully used)
-    saveLuaCode(code);
+    if (!saveFile(getLuaCodeFilename(), luaCode)) {
+      debugf(1, "warning, could not save uncompressed lua code\n");
+    }
   }
 
   state = StateReady;
+  debugf(1, "entered StateReady\n");
 }
 
+
+//============================================================================//
 
 void HubLink::stateReady()
 {
@@ -431,6 +464,7 @@ void HubLink::stateReady()
 }
 
 
+//============================================================================//
 //============================================================================//
 //
 //  network queue routines
@@ -654,14 +688,11 @@ bool HubLink::createLua(const std::string& code)
   lua_pushlightuserdata(L, this);
   lua_setfield(L, LUA_REGISTRYINDEX, ThisLabel);
 
-  luaopen_base(L);
-  luaopen_table(L);
-//  luaopen_io(L);
-  luaopen_os(L);      
-  luaopen_string(L);
-  luaopen_math(L);
-  luaopen_debug(L);
-//  luaopen_package(L);
+  luaL_openlibs(L);
+
+  // remove the "io" and "package" libraries
+  lua_pushnil(L); lua_setfield(L, LUA_GLOBALSINDEX, "io");
+  lua_pushnil(L); lua_setfield(L, LUA_GLOBALSINDEX, "package");
 
   // limit { os } table members
   std::vector<std::string> osFuncs;
