@@ -298,6 +298,7 @@ void HubLink::stateDNS()
     fail("setNonBlocking() error");
     return;
   }
+  setNoDelay(sock);
 
   // add the rest of the address information
   addr.sin_family = AF_INET;
@@ -403,7 +404,7 @@ void HubLink::stateGetCode()
   }
 
   if (gzCode.empty()) {
-    debugf(1, "received empty lua code, no update required\n");
+    debugf(1, "lua code update is not required\n");
   }
   else {
     const std::string gzFilename = getLuaCodeFilename() + ".gz";
@@ -422,7 +423,7 @@ void HubLink::stateGetCode()
   }
 
   if (luaCode.empty()) {
-    fail("empty luaCode");
+    fail("missing lua code to execute");
     return;
   }
 
@@ -433,7 +434,7 @@ void HubLink::stateGetCode()
   if (!gzCode.empty()) {
     // save the new code (after it has been successfully used)
     if (!saveFile(getLuaCodeFilename(), luaCode)) {
-      debugf(1, "warning, could not save uncompressed lua code\n");
+      debugf(1, "warning, could not save the uncompressed lua code\n");
     }
   }
 
