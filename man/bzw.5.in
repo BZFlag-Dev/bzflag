@@ -1182,7 +1182,8 @@ BZDB variable), can use the following escape characters:
 \fB  string\fR my text string   # the text
 .br
 \fB  varName\fR $varname        # the name of the variable
-                          #to use as the text source
+                          # to use as the text source
+                          # (instead of the 'string' value)
 .br
 \fB  font\fR myFontName         # the font name, can use URLs
 .br
