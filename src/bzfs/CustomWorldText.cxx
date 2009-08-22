@@ -63,17 +63,13 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
     }
   }
   else if (strcasecmp ("varName", cmd) == 0) {
-    std::string line;
-    std::getline(input, line);
-    if (line[0] == ' ') {
-      line = line.substr(1);
+    std::string varName;
+    if (!(input >> varName)) {
+      std::cout << "missing variable name" << std::endl;
+      return false;
     }
-    text->data = line;
+    text->data = varName;
     text->useBZDB = true;
-    input.putback('\n');
-    if (text->data.empty()) {
-      std::cout << "World Text: missing varName" << std::endl;
-    }
   }
   else if (strcasecmp ("font", cmd) == 0) {
     std::string font;
