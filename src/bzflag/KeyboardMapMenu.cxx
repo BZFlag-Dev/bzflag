@@ -107,6 +107,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   addControl(createLabel(NULL, "Chat Message Tab: "));
   addControl(createLabel(NULL, "Server Message Tab: "));
   addControl(createLabel(NULL, "Misc Message Tab: "));
+  addControl(createLabel(NULL, "Prev Tab: "));
+  addControl(createLabel(NULL, "Next Tab: "));
   addControl(createLabel(NULL, "Forward Key: "));
   addControl(createLabel(NULL, "Reverse Key: "));
   addControl(createLabel(NULL, "Left Key: "));
@@ -157,6 +159,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("messagepanel chat", ++i);
   initkeymap("messagepanel server", ++i);
   initkeymap("messagepanel misc", ++i);
+  initkeymap("messagepanel prev", ++i);
+  initkeymap("messagepanel next", ++i);
   initkeymap("drive forward", ++i);
   initkeymap("drive reverse", ++i);
   initkeymap("turn left", ++i);

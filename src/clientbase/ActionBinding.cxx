@@ -202,6 +202,9 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Shift+F3", "messagepanel server"));
   defaultBinding.insert(BindingTable::value_type("Shift+F4", "messagepanel misc"));
   defaultBinding.insert(BindingTable::value_type("Shift+F5", "messagepanel debug"));
+  // these do not work when a HUDDialog is active
+  defaultBinding.insert(BindingTable::value_type("Alt+,",    "messagepanel prev"));
+  defaultBinding.insert(BindingTable::value_type("Alt+.",    "messagepanel next"));
 }
 
 void ActionBinding::resetBindings() {

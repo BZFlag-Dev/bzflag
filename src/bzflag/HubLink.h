@@ -188,7 +188,7 @@ class HubLink {
     size_t recvTotal;
     size_t sendTotal;
 
-    std::string error;
+    std::string failMsg;
 
     std::string luaCode;
 

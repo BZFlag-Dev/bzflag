@@ -59,6 +59,8 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
   addControl(createLabel(NULL, "Chat Message Tab:"), false);
   addControl(createLabel(NULL, "Server Message Tab:"), false);
   addControl(createLabel(NULL, "Misc Message Tab:"), false);
+  addControl(createLabel(NULL, "Prev Tab:"), false);
+  addControl(createLabel(NULL, "Next Tab:"), false);
   addControl(createLabel("Esc", "Show/Dismiss menu:"), false);
 
   initKeymap("fire", 3);
@@ -94,6 +96,8 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
   initKeymap("messagepanel chat", 33);
   initKeymap("messagepanel server", 34);
   initKeymap("messagepanel misc", 35);
+  initKeymap("messagepanel prev", 36);
+  initKeymap("messagepanel next", 37);
 }
 
 void HelpKeymapMenu::onScan(const std::string& name, bool press,

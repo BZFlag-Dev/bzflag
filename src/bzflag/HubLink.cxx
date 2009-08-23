@@ -124,7 +124,7 @@ void HubLink::fail(const std::string& msg)
 {
   state = StateFailed;
   debugf(1, "entered StateFailed\n");
-  error = msg;
+  failMsg = msg;
   clear();
 }
 
@@ -225,9 +225,9 @@ bool HubLink::update()
 
   if (state == StateFailed) {
     if (controlPanel) {
-      controlPanel->addMessage("HubLink: " + error);
+      controlPanel->addMessage("HubLink: " + failMsg);
     }
-    logDebugMessage(0, "HubLink: %s\n", error.c_str());
+    logDebugMessage(0, "HubLink: %s\n", failMsg.c_str());
     return false;
   }
 
@@ -403,11 +403,12 @@ void HubLink::stateGetCode()
     return;
   }
 
+  const std::string gzFilename = getLuaCodeFilename() + ".gz";
+
   if (gzCode.empty()) {
     debugf(1, "lua code update is not required\n");
   }
   else {
-    const std::string gzFilename = getLuaCodeFilename() + ".gz";
     if (!saveFile(gzFilename, gzCode)) {
       fail("could not save the lua gzipped code");
       return;
@@ -428,13 +429,16 @@ void HubLink::stateGetCode()
   }
 
   if (!createLua(luaCode)) {
-    return;
+    return; // createLua() has its own fail() calls
   }
 
   if (!gzCode.empty()) {
     // save the new code (after it has been successfully used)
     if (!saveFile(getLuaCodeFilename(), luaCode)) {
       debugf(1, "warning, could not save the uncompressed lua code\n");
+    } else {
+      // remove the gzip file
+      remove(gzFilename.c_str());
     }
   }
 
