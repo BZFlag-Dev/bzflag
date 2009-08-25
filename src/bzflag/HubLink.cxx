@@ -377,7 +377,8 @@ void HubLink::stateConnect()
   }
 
   std::string msg;
-  msg += "getcode " VERSION;
+  msg += "getcode ";
+  msg += getMajorMinorRevVersion();
   if (loadFile(getLuaCodeFilename(), luaCode)) {
     msg += " " + TextUtils::itoa(luaCode.size());
     msg += " " + MD5(luaCode).hexdigest();
@@ -1524,15 +1525,12 @@ int HubLink::GetServerInfo(lua_State* L)
 //============================================================================//
 
 #undef PACK_TYPE
-#undef UNPACK_TYPE
-
 #define PACK_TYPE(label, type) \
   const type value = luaL_checkint(L, 1); \
   char buf[sizeof(type)]; \
   nboPack ## label(buf, value); \
   lua_pushlstring(L, buf, sizeof(type)); \
   return 1;
-
 int HubLink::PackInt8(lua_State* L)   { PACK_TYPE(Int8,   int8_t)   }
 int HubLink::PackInt16(lua_State* L)  { PACK_TYPE(Int16,  int16_t)  }
 int HubLink::PackInt32(lua_State* L)  { PACK_TYPE(Int32,  int32_t)  }
@@ -1543,7 +1541,9 @@ int HubLink::PackUInt32(lua_State* L) { PACK_TYPE(UInt32, uint32_t) }
 int HubLink::PackUInt64(lua_State* L) { PACK_TYPE(UInt64, uint64_t) }
 int HubLink::PackFloat(lua_State* L)  { PACK_TYPE(Float,  float)    }
 int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
+#undef PACK_TYPE
 
+#undef UNPACK_TYPE
 #define UNPACK_TYPE(label, type) \
   size_t len; \
   const char* s = luaL_checklstring(L, 1, &len); \
@@ -1554,7 +1554,6 @@ int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
   nboUnpack ## label((void*)s, value); \
   lua_pushnumber(L, (lua_Number)value); \
   return 1;
-
 int HubLink::UnpackInt8(lua_State* L)   { UNPACK_TYPE(Int8,   int8_t)   }
 int HubLink::UnpackInt16(lua_State* L)  { UNPACK_TYPE(Int16,  int16_t)  } 
 int HubLink::UnpackInt32(lua_State* L)  { UNPACK_TYPE(Int32,  int32_t)  }
@@ -1565,9 +1564,8 @@ int HubLink::UnpackUInt32(lua_State* L) { UNPACK_TYPE(UInt32, uint32_t) }
 int HubLink::UnpackUInt64(lua_State* L) { UNPACK_TYPE(UInt64, uint64_t) }
 int HubLink::UnpackFloat(lua_State* L)  { UNPACK_TYPE(Float,  float)    }
 int HubLink::UnpackDouble(lua_State* L) { UNPACK_TYPE(Double, double)   }
-
-#undef PACK_TYPE
 #undef UNPACK_TYPE
+
 
 //============================================================================//
 //============================================================================//
