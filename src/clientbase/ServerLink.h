@@ -22,6 +22,7 @@
 
 #include <string>
 #include "global.h"
+#include "network.h"
 #include "Address.h"
 #include "Protocol.h"
 #include "Flag.h"

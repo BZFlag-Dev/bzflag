@@ -37,122 +37,143 @@
 #  include <unistd.h>
 #endif
 
+
 #if !defined(_WIN32)
 
-#include <sys/time.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
+  #include <sys/time.h>
+  #include <sys/ioctl.h>
+  #include <sys/socket.h>
 
-#ifndef GUSI_20
-#  include <sys/param.h>
-#endif
+  #ifndef GUSI_20
+  #  include <sys/param.h>
+  #endif
 
-#include <net/if.h>
-#include <netinet/in.h>
+  #include <net/if.h>
+  #include <netinet/in.h>
 
-#if defined(__linux__)
-/* these are defined in both socket.h and tcp.h without ifdef guards. */
-#  undef TCP_NODELAY
-#  undef TCP_MAXSEG
-#endif
+  #if defined(__linux__)
+  /* these are defined in both socket.h and tcp.h without ifdef guards. */
+  #  undef TCP_NODELAY
+  #  undef TCP_MAXSEG
+  #endif
 
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#ifdef HAVE_BSTRING_H
-#  include <bstring.h>
-#endif
+  #include <netinet/tcp.h>
+  #include <arpa/inet.h>
+  #include <netdb.h>
+  #ifdef HAVE_BSTRING_H
+  #  include <bstring.h>
+  #endif
 
-#if defined(__linux__) && !defined(_old_linux_)
-#  define AddrLen		unsigned int
-/* setsockopt incorrectly prototypes the 4th arg without const. */
-#  define SSOType		void*
-#elif defined(BSD) || defined(sun) || defined(__GLIBC__)
-#  define AddrLen		socklen_t
-#elif defined (__APPLE__)
-#  include <AvailabilityMacros.h>
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-#    define AddrLen		socklen_t
-#  endif
-#endif
+  #if defined(__linux__) && !defined(_old_linux_)
+  #  define AddrLen		unsigned int
+  /* setsockopt incorrectly prototypes the 4th arg without const. */
+  #  define SSOType		void*
+  #elif defined(BSD) || defined(sun) || defined(__GLIBC__)
+  #  define AddrLen		socklen_t
+  #elif defined (__APPLE__)
+  #  include <AvailabilityMacros.h>
+  #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+  #    define AddrLen		socklen_t
+  #  endif
+  #endif
 
-#if defined(sun)
-/* setsockopt prototypes the 4th arg as const char*. */
-#  define SSOType		const char*
-/* connect prototypes the 2nd arg without const */
-#  define CNCTType	struct sockaddr
-#endif
+  #if defined(sun)
+  /* setsockopt prototypes the 4th arg as const char*. */
+  #  define SSOType   const char*
+  /* connect prototypes the 2nd arg without const */
+  #  define CNCTType  struct sockaddr
+  #endif
 
-extern "C" {
+  /* BeOS net_server has closesocket(), which _must_ be used in place of close() */
+  #if defined(__BEOS__) && (IPPROTO_TCP != 6)
+  #  define close(__x) closesocket(__x)
+  #endif
 
-#define herror(_x)	bzfherror(_x)
-
-  void nerror(const char* msg);
-  void bzfherror(const char* msg);
-  int getErrno();
-	void setNoDelay(int fd);
-}
-
-/* BeOS net_server has closesocket(), which _must_ be used in place of close() */
-#if defined(__BEOS__) && (IPPROTO_TCP != 6)
-#  define close(__x) closesocket(__x)
-#endif
+  #define herror(msg) bzfherror(msg)
 
 #else /* !defined(_WIN32) */
 
-#define	MAXHOSTNAMELEN	64
+  #define MAXHOSTNAMELEN  64
 
-#define EINPROGRESS	WSAEWOULDBLOCK
-#define	EWOULDBLOCK	WSAEWOULDBLOCK
-#define	ECONNRESET	WSAECONNRESET
-#define	EBADMSG		WSAECONNRESET	/* not defined by windows */
+  #define EINPROGRESS  WSAEWOULDBLOCK  /* FIXME -- WSAEINPROGRESS ? */
+  #define EWOULDBLOCK  WSAEWOULDBLOCK
+  #define ECONNRESET   WSAECONNRESET
+  #define EBADMSG      WSAECONNRESET   /* not defined by windows */
 
-/* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType		const char*
+  /* setsockopt prototypes the 4th arg as const char*. */
+  #define SSOType		const char*
 
-inline int close(SOCKET s) { return closesocket(s); }
-#define	ioctl(__fd, __req, __arg) \
-			ioctlsocket(__fd, __req, (u_long*)__arg)
-#define	gethostbyaddr(__addr, __len, __type) \
-			gethostbyaddr((const char*)__addr, __len, __type)
+  inline int close(SOCKET s) { return closesocket(s); }
+  #define ioctl(__fd, __req, __arg) ioctlsocket(__fd, __req, (u_long*)__arg)
+  #define gethostbyaddr(__addr, __len, __type) \
+            gethostbyaddr((const char*)__addr, __len, __type)
 
-extern "C" {
-
-  int inet_aton(const char* cp, struct in_addr* pin);
-  void nerror(const char* msg);
-  void herror(const char* msg);
-  int getErrno();
-	void setNoDelay(int fd);
-
-}
+  extern "C" {
+    int  inet_aton(const char* cp, struct in_addr* pin);
+    void herror(const char* msg);
+  }
 
 #endif /* !defined(_WIN32) */
 
+
 #if !defined(AddrLen)
-#  define AddrLen		int
+#  define AddrLen  int
 #endif
 
 #if !defined(SSOType)
-#  define SSOType		const void*
+#  define SSOType  const void*
 #endif
 #if !defined(CNCTType)
-#  define CNCTType	const struct sockaddr
+#  define CNCTType  const struct sockaddr
 #endif
 
 #if !defined(INADDR_NONE)
-#  define INADDR_NONE	((in_addr_t)0xffffffff)
+#  define INADDR_NONE  ((in_addr_t)0xffffffff)
 #endif
 
+
+extern "C" {
+  const char* socket_strerror(int err);
+  void nerror(const char* msg);
+  void bzfherror(const char* msg);
+  int getErrno();
+  void setNoDelay(int fd);
+  /*
+   * getConnectionState()
+   *
+   *   used to check if a non-blocking socket's connect() has been successful
+   *
+   *   returns 0 if successful,
+   *     *state will be either 0 (not connected) or 1 (connected)
+   * 
+   *   returns -1 on error,
+   *     use getError() to determine the error code
+   */
+  int getConnectionState(int fd, int* state);
+}
+
+
 class BzfNetwork {
-public:
-  static int		setNonBlocking(int fd);
-  static int		setBlocking(int fd);
-  static bool	parseURL(const std::string& url,
-			 std::string& protocol,
-			 std::string& hostname,
-			 int& port,
-			 std::string& pathname);
+  public:
+    static int	setNonBlocking(int fd);
+    static int	setBlocking(int fd);
+    static bool	parseURL(const std::string& url,
+                         std::string& protocol, std::string& hostname,
+                         int& port, std::string& pathname);
+
+    // getConnectionState()
+    //
+    //   used to check if a non-blocking socket's connect() has been successful
+    //
+    //   returns 0 if successful,
+    //    state will be either 0 (not connected) or 1 (connected)
+    // 
+    //   returns -1 on error,
+    //     use getError() to determine the error code
+    //
+    static int getConnectionState(int fd, int* state);
 };
+
 
 #endif // BZF_NETWORK_H
 

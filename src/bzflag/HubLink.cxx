@@ -131,7 +131,7 @@ void HubLink::fail(const std::string& msg)
 
 void HubLink::fail(const std::string& msg, int errnum)
 {
-  fail(msg + std::string(strerror(errnum)));
+  fail(msg + std::string(socket_strerror(errnum)));
 }
 
 
@@ -264,6 +264,7 @@ void HubLink::stateDNS()
     return;
   }
 
+  // update the async DNS query
   struct timeval timeout = { 0, 0 };
   int nfds = -1;
   fd_set rfds, wfds;
@@ -290,7 +291,7 @@ void HubLink::stateDNS()
 
   sock = (int)socket(AF_INET, SOCK_STREAM, 0);
   if (sock == -1) {
-    fail("socket() error: ", errno);
+    fail("socket() error: ", getErrno());
     return;
   }
 
@@ -305,8 +306,8 @@ void HubLink::stateDNS()
   addr.sin_port = htons(port); // set the port
         
   const int connCode = connect(sock, (const sockaddr*)&addr, sizeof(addr));
-  if ((connCode != 0) && (errno != EINPROGRESS)) {
-    fail("connect() error: ", errno);
+  if ((connCode != 0) && (getErrno() != EINPROGRESS)) {
+    fail("connect() error: ", getErrno());
     return;
   }
 
@@ -319,29 +320,13 @@ void HubLink::stateDNS()
 
 void HubLink::stateConnect()
 {
-  struct timeval timeout = { 0, 0 };
-  fd_set wfds;
-  FD_ZERO(&wfds);
-  FD_SET(sock, &wfds);
-  const int selCode = select(sock + 1, NULL, &wfds, NULL, &timeout);
-  if (selCode == -1) {
-    fail("connect/select error: ", errno);
+  int connState = 0;
+  if (BzfNetwork::getConnectionState(sock, &connState) == -1) {
+    fail("connection error: ", getErrno());
     return;
   }
-  if (selCode == 0) {
-    return; // still cookin'
-  }
-
-  int optVal;
-  socklen_t optLen = (socklen_t)sizeof(optVal);
-  const int optCode = getsockopt(sock, SOL_SOCKET, SO_ERROR, &optVal, &optLen);
-  if (optCode == -1) {
-    fail("connect/getsockopt error: ", errno);
-    return;
-  }
-  if (optVal != 0) {
-    fail("connect/getsockopt value error: ", optVal);
-    return;
+  if (connState == 0) {
+    return; // still connecting
   }
 
   // NOTE:
@@ -496,11 +481,12 @@ bool HubLink::updateSend()
       return false;
     }
     else if (bytes == -1) {
-      if (errno != EAGAIN) {
-        fail("send error: ", errno);
-        return false;
+      const int err = getErrno();
+      if ((err == EAGAIN) || (err == EWOULDBLOCK) || (err == EINTR)) {
+        return true; // waiting for data
       }
-      return true;
+      fail("send error: ", getErrno());
+      return false;
     }
     else {
       debugf(1, "unknown send state\n");
@@ -515,7 +501,7 @@ bool HubLink::updateRecv()
 {
   char buf[4096];
   while (true) {
-    const int bytes = read(sock, buf, sizeof(buf));
+    const int bytes = recv(sock, buf, sizeof(buf), 0);
     if (bytes > 0) {
       debugf(4, "received %i bytes\n", bytes);
       recvTotal += bytes;
@@ -526,11 +512,12 @@ bool HubLink::updateRecv()
       return false;
     }
     else if (bytes == -1) {
-      if (errno != EAGAIN) {
-        fail("recv error: ", errno);
-        return false;
+      const int err = getErrno();
+      if ((err == EAGAIN) || (err == EWOULDBLOCK) || (err == EINTR)) {
+        return true; // waiting for data
       }
-      return true; // waiting for data
+      fail("recv error: ", getErrno());
+      return false;
     }
     else {
       debugf(1, "unknown recv state\n");

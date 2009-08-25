@@ -20,7 +20,10 @@
 #include <vector>
 #include <string>
 
+
+//============================================================================//
 #if !defined(WIN32)
+//============================================================================//
 
 #include <fcntl.h>
 #include <ctype.h>
@@ -36,9 +39,16 @@
 #define O_NDELAY O_NONBLOCK
 #endif
 
+
 extern "C" {
 
-void			nerror(const char* msg)
+const char* socket_strerror(int err)
+{
+  return strerror(err);
+}
+
+
+void nerror(const char* msg)
 {
   std::vector<std::string> args;
   if (msg) {
@@ -51,7 +61,8 @@ void			nerror(const char* msg)
   }
 }
 
-void			bzfherror(const char* msg)
+
+void bzfherror(const char* msg)
 {
   std::vector<std::string> args;
   if (msg) {
@@ -64,14 +75,16 @@ void			bzfherror(const char* msg)
   }
 }
 
-int			getErrno()
+
+int getErrno()
 {
   return errno;
 }
 
-}
+} /* end 'extern "C"' */
 
-int			BzfNetwork::setNonBlocking(int fd)
+
+int BzfNetwork::setNonBlocking(int fd)
 {
   int mode = fcntl(fd, F_GETFL, 0);
   if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NDELAY) < 0)
@@ -79,7 +92,8 @@ int			BzfNetwork::setNonBlocking(int fd)
   return 0;
 }
 
-int			BzfNetwork::setBlocking(int fd)
+
+int BzfNetwork::setBlocking(int fd)
 {
   int mode = fcntl(fd, F_GETFL, 0);
   if (mode == -1 || fcntl(fd, F_SETFL, mode & ~O_NDELAY) < 0)
@@ -87,11 +101,42 @@ int			BzfNetwork::setBlocking(int fd)
   return 0;
 }
 
+
+int BzfNetwork::getConnectionState(int fd, int* state)
+{
+  *state = 0;
+
+  struct timeval timeout = { 0, 0 };
+  fd_set wrfds;
+  FD_ZERO(&wrfds);
+  FD_SET(fd, &wrfds);
+  if (select(fd + 1, NULL, &wrfds, NULL, &timeout) == -1) {
+    return -1;
+  }
+  if (!FD_ISSET(fd, &wrfds)) {
+    *state = 0;
+    return 0;
+  }
+
+  int optVal;
+  socklen_t optLen;
+  if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
+    return -1;
+  }
+  if (optVal == 0) { // no error
+    *state = 1;
+  }
+  return 0;
+}
+
+
+//============================================================================//
 #else /* defined(_WIN32) */
+//============================================================================//
 
 extern "C" {
 
-int			inet_aton(const char* cp, struct in_addr* pin)
+int inet_aton(const char* cp, struct in_addr* pin)
 {
   unsigned long a = inet_addr(cp);
   if (a == (unsigned long)-1) {
@@ -103,6 +148,7 @@ int			inet_aton(const char* cp, struct in_addr* pin)
   pin->s_addr = a;
   return 1;
 }
+
 
 // win32 apparently cannot lookup error messages for us
 static const struct { int code; const char* msg; } netErrorCodes[] = {
@@ -160,15 +206,23 @@ static const struct { int code; const char* msg; } netErrorCodes[] = {
 	/* end   */{0,			NULL}
 };
 
-void			nerror(const char* msg)
+
+const char* socket_strerror(int err)
+{
+  const char* errmsg = "<unknown winsock error>";
+  for (int i = 0; netErrorCodes[i].code != 0; ++i) {
+    if (netErrorCodes[i].code == err) {
+      return netErrorCodes[i].msg;
+    }
+  }
+  return errmsg;
+}
+
+
+void nerror(const char* msg)
 {
   const int err = getErrno();
-  const char* errmsg = "<unknown error>";
-  for (int i = 0; netErrorCodes[i].code != 0; ++i)
-    if (netErrorCodes[i].code == err) {
-      errmsg = netErrorCodes[i].msg;
-      break;
-    }
+  const char* errmsg = socket_strerror(err);
   if (msg) {
     char buf[50];
     std::vector<std::string> args;
@@ -187,38 +241,61 @@ void			nerror(const char* msg)
   }
 }
 
-void			herror(const char* msg)
+
+void herror(const char* msg)
 {
   nerror(msg);
 }
 
-int			getErrno()
+
+int getErrno()
 {
   return WSAGetLastError();
 }
 
-}
+} /* end 'extern "C"' */
 
-int			BzfNetwork::setNonBlocking(int fd)
+
+int BzfNetwork::setNonBlocking(int fd)
 {
   int on = 1;
   return ioctl(fd, FIONBIO, &on);
 }
 
-int			BzfNetwork::setBlocking(int fd)
+
+int BzfNetwork::setBlocking(int fd)
 {
   int off = 0;
   return ioctl(fd, FIONBIO, &off);
 }
 
+
+int BzfNetwork::getConnectionState(int fd, int* state)
+{
+  *state = 0;
+  struct timeval timeout = { 0, 0 };
+  fd_set wrfds;
+  FD_ZERO(&wrfds);
+  FD_SET(fd, &wrfds);
+  if (select(fd + 1, NULL, &wrfds, NULL, &timeout) == -1) {
+    return -1;
+  }
+  if (FD_ISSET(fd, &wrfds)) {
+    *state = 1;
+  }
+  return 0;  
+}
+
+
+//============================================================================//
 #endif /* defined(_WIN32) */
+//============================================================================//
+
 
 // parse a url into its parts
-bool			BzfNetwork::parseURL(const std::string& url,
-				std::string& protocol,
-				std::string& hostname,
-				int& port,
-				std::string& pathname)
+bool BzfNetwork::parseURL(const std::string& url, std::string& protocol,
+                          std::string& hostname, int& port,
+                          std::string& pathname)
 {
   static const char* defaultHostname = "localhost";
 
@@ -279,6 +356,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
   return true;
 }
 
+
 void setNoDelay(int fd)
 {
   // turn off TCP delay (collection).  we want packets sent immediately.
@@ -292,6 +370,7 @@ void setNoDelay(int fd)
     nerror("enabling TCP_NODELAY");
   }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***
