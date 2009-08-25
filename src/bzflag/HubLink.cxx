@@ -107,6 +107,7 @@ void HubLink::clear()
     ares = NULL;
   }
   if (sock >= 0) {
+    ::shutdown(sock, SHUT_RDWR);
     BzfNetwork::closeSocket(sock);
     sock = -1;
   }

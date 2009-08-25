@@ -770,7 +770,7 @@ static void serverStop()
   bzSignal(SIGTERM, SIG_IGN);
 
   // reject attempts to talk to server
-  shutdown(wksSocket, 2);
+  shutdown(wksSocket, SHUT_RDWR);
   BzfNetwork::closeSocket(wksSocket);
 
   // tell all clients to quit

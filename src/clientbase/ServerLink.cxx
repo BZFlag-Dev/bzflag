@@ -393,7 +393,7 @@ ServerLink::ServerLink(const std::string& serverName,
 ServerLink::~ServerLink()
 {
   if (state != Okay) return;
-  shutdown(fd, 2);
+  shutdown(fd, SHUT_RDWR);
   close(fd);
 
   if (urecvfd >= 0)

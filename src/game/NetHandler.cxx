@@ -283,7 +283,7 @@ NetHandler::~NetHandler()
   dumpMessageStats();
 #endif
   // shutdown TCP socket
-  shutdown(fd, 2);
+  shutdown(fd, SHUT_RDWR);
   close(fd);
 
   delete[] outmsg;
