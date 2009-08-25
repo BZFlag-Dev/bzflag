@@ -155,8 +155,8 @@ extern "C" {
 
 class BzfNetwork {
   public:
-    static int	setNonBlocking(int fd);
-    static int	setBlocking(int fd);
+    static int  setNonBlocking(int fd);
+    static int  setBlocking(int fd);
     static bool	parseURL(const std::string& url,
                          std::string& protocol, std::string& hostname,
                          int& port, std::string& pathname);
@@ -172,6 +172,7 @@ class BzfNetwork {
     //     use getError() to determine the error code
     //
     static int getConnectionState(int fd, int* state);
+    static int closeSocket(int fd);
 };
 
 

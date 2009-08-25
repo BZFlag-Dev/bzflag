@@ -130,6 +130,12 @@ int BzfNetwork::getConnectionState(int fd, int* state)
 }
 
 
+int BzfNetwork::closeSocket(int fd)
+{
+  return close(fd);
+}
+
+
 //============================================================================//
 #else /* defined(_WIN32) */
 //============================================================================//
@@ -284,6 +290,12 @@ int BzfNetwork::getConnectionState(int fd, int* state)
     *state = 1;
   }
   return 0;  
+}
+
+
+int BzfNetwork::closeSocket(int fd)
+{
+  return closesocket(fd);
 }
 
 

@@ -716,22 +716,14 @@ static bool serverStart()
   opt = optOn;
   if (setsockopt(wksSocket, SOL_SOCKET, SO_REUSEADDR, (SSOType)&opt, sizeof(opt)) < 0) {
     nerror("serverStart: setsockopt SO_REUSEADDR");
-#ifdef _WIN32
-    closesocket(wksSocket);
-#else
-    close(wksSocket);
-#endif
+    BzfNetwork::closeSocket(wksSocket);
     return false;
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
     if (!clOptions->useFallbackPort) {
       nerror("couldn't bind connect socket");
-#ifdef _WIN32
-      closesocket(wksSocket);
-#else
-      close(wksSocket);
-#endif
+      BzfNetwork::closeSocket(wksSocket);
       return false;
     }
 
@@ -739,11 +731,7 @@ static bool serverStart()
     addr.sin_port = htons(0);
     if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
       nerror("couldn't bind connect socket");
-#ifdef _WIN32
-      closesocket(wksSocket);
-#else
-      close(wksSocket);
-#endif
+      BzfNetwork::closeSocket(wksSocket);
       return false;
     }
 
@@ -758,21 +746,13 @@ static bool serverStart()
 
   if (listen(wksSocket, 5) == -1) {
     nerror("couldn't make connect socket queue");
-#ifdef _WIN32
-    closesocket(wksSocket);
-#else
-    close(wksSocket);
-#endif
+    BzfNetwork::closeSocket(wksSocket);
     return false;
   }
 
   addr.sin_port = htons(clOptions->wksPort);
   if (!NetHandler::initHandlers(addr)) {
-#ifdef _WIN32
-    closesocket(wksSocket);
-#else
-    close(wksSocket);
-#endif
+    BzfNetwork::closeSocket(wksSocket);
     return false;
   }
 
@@ -791,11 +771,7 @@ static void serverStop()
 
   // reject attempts to talk to server
   shutdown(wksSocket, 2);
-#ifdef _WIN32
-  closesocket(wksSocket);
-#else
-  close(wksSocket);
-#endif
+  BzfNetwork::closeSocket(wksSocket);
 
   // tell all clients to quit
   NetMsg msg = MSGMGR.newMessage();
