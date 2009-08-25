@@ -105,28 +105,23 @@ int BzfNetwork::setBlocking(int fd)
 int BzfNetwork::getConnectionState(int fd, int* state)
 {
   *state = 0;
-
-  struct timeval timeout = { 0, 0 };
-  fd_set wrfds;
-  FD_ZERO(&wrfds);
-  FD_SET(fd, &wrfds);
-  if (select(fd + 1, NULL, &wrfds, NULL, &timeout) == -1) {
-    return -1;
-  }
-  if (!FD_ISSET(fd, &wrfds)) {
-    *state = 0;
-    return 0;
-  }
-
   int optVal;
   socklen_t optLen;
   if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
     return -1;
   }
-  if (optVal == 0) { // no error
-    *state = 1;
+  switch (optVal) {
+    case 0: {
+      *state = 1; // successful connection
+      return 0;
+    }
+    case EINPROGRESS:
+    case EINTR: {
+      return 0; // still connecting
+    }
   }
-  return 0;
+  errno = optVal;
+  return -1; // connection error
 }
 
 
