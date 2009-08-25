@@ -1490,7 +1490,7 @@ int HubLink::GetTime(lua_State* L)
 
 int HubLink::GetVersion(lua_State* L)
 {
-  lua_pushstring(L, VERSION);
+  lua_pushstring(L, getMajorMinorRevVersion());
   lua_pushstring(L, getAppVersion());
   return 2;
 }
