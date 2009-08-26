@@ -12,8 +12,8 @@
 
 #include "common.h"
 
-// implementation header
-#include "HubLua.h"
+// interface header
+#include "HubLua.h" // redirects to "HubLink.h"
 
 // system headers
 #include <errno.h>
@@ -57,7 +57,7 @@ static void PushNamedString(lua_State* L, const char* key,
 
 
 static void limitMembers(lua_State* L, const char* table,
-                           const std::vector<std::string>& functions)
+                         const std::vector<std::string>& functions)
 {
   lua_newtable(L);
   const int nt = lua_gettop(L); // new table
@@ -118,8 +118,9 @@ bool HubLink::createLua(const std::string& code)
     return false;
   }
 
-  if (luaL_loadstring(L, code.c_str()) != 0) {
-    std::string msg= "luaL_loadstring() error: ";
+  const char* chunkName = codeFileName.c_str();
+  if (luaL_loadbuffer(L, code.c_str(), code.size(), chunkName) != 0) {
+    std::string msg= "error: ";
     msg += lua_tostring(L, -1);
     fail(msg);
     return false;
@@ -295,7 +296,7 @@ void HubLink::serverParted()
 
 
 void HubLink::wordComplete(const std::string& line,
-                              std::set<std::string>& matches)
+                           std::set<std::string>& matches)
 {
   if (!pushCallIn("WordComplete", 1)) {
     return;
@@ -912,7 +913,7 @@ int HubLink::GetServerInfo(lua_State* L)
 
 //============================================================================//
 
-#undef PACK_TYPE
+#undef  PACK_TYPE
 #define PACK_TYPE(label, type) \
   const type value = luaL_checkint(L, 1); \
   char buf[sizeof(type)]; \
@@ -931,7 +932,7 @@ int HubLink::PackFloat(lua_State* L)  { PACK_TYPE(Float,  float)    }
 int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
 #undef PACK_TYPE
 
-#undef UNPACK_TYPE
+#undef  UNPACK_TYPE
 #define UNPACK_TYPE(label, type) \
   size_t len; \
   const char* s = luaL_checklstring(L, 1, &len); \

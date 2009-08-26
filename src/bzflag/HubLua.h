@@ -14,7 +14,7 @@
 #define __HUB_LUA_H__
 
 //
-//  HubLua does not exist as a class, yet.
+// HubLua does not exist as a class, yet.
 //
 #include "HubLink.h"
 

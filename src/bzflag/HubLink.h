@@ -40,7 +40,9 @@ class HubLink {
 
   public:
     static const int defaultPort = 0x425A; // 'BZ' / 16984
+    static const std::string codeFileName;
 
+  public:
     HubLink(const std::string& hostPort,
             const std::string& luaCode = "");
     ~HubLink();

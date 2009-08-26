@@ -12,7 +12,7 @@
 
 #include "common.h"
 
-// implementation header
+// interface header
 #include "HubLink.h"
 
 // system headers
@@ -41,7 +41,7 @@
 
 HubLink* hubLink = NULL;
 
-static const std::string codeFileName = "hub.lua";
+const std::string HubLink::codeFileName = "hub.lua";
 
 
 //============================================================================//
