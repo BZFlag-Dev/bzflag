@@ -673,6 +673,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\HubLua.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\HubLua.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HubMenu.cxx"
 					>
 				</File>

@@ -112,6 +112,8 @@ bzflag_SOURCES =			\
 	HubComposeKey.cxx		\
 	HubLink.h			\
 	HubLink.cxx			\
+	HubLua.h			\
+	HubLua.cxx			\
 	HubMenu.h			\
 	HubMenu.cxx			\
 	InputMenu.cxx			\
