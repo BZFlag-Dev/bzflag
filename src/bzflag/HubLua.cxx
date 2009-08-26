@@ -43,23 +43,6 @@ static int thisIndex = -123456; // LUA_REGISTRYINDEX for the HuaLink pointer
 
 //============================================================================//
 //============================================================================//
-                    
-static void debugf(int level, const char* fmt, ...)
-{
-  static BZDB_int debugHub("debugHub");
-  if (level > debugHub) {
-    return;
-  }
-  const std::string fmt2 = std::string("HubLink: ") + fmt;
-  va_list ap;
-  va_start(ap, fmt);
-  logDebugMessageArgs(0, fmt2.c_str(), ap);
-  va_end(ap);
-}
-
-
-//============================================================================//
-//============================================================================//
 //
 //  Lua routines
 //

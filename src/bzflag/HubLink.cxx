@@ -47,7 +47,7 @@ static const std::string codeFileName = "hub.lua";
 //============================================================================//
 //============================================================================//
                     
-static void debugf(int level, const char* fmt, ...)
+void HubLink::debugf(int level, const char* fmt, ...)
 {
   static BZDB_int debugHub("debugHub");
   if (level > debugHub) {
