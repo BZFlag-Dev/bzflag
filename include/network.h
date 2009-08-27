@@ -68,13 +68,13 @@
   #  define AddrLen		unsigned int
   /* setsockopt incorrectly prototypes the 4th arg without const. */
   #  define SSOType		void*
-  #elif defined(BSD) || defined(sun) || defined(__GLIBC__)
-  #  define AddrLen		socklen_t
   #elif defined (__APPLE__)
   #  include <AvailabilityMacros.h>
   #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
   #    define AddrLen		socklen_t
   #  endif
+  #else	/* POSIX.1-2001 compliant */
+  #  define AddrLen		socklen_t
   #endif
 
   #if defined(sun)
