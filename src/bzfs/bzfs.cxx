@@ -736,7 +736,7 @@ static bool serverStart()
     }
 
     // fixup ping reply
-    AddrLen addrLen = sizeof(addr);
+    size_t addrLen = sizeof(addr);
     if (getsockname(wksSocket, (struct sockaddr*)&addr, &addrLen) >= 0)
       pingReply.serverId.port = addr.sin_port;
 
@@ -1219,7 +1219,7 @@ static void acceptClient()
   // client (not a player yet) is requesting service.
   // accept incoming connection on our well known port
   struct sockaddr_in clientAddr;
-  AddrLen addr_len = sizeof(clientAddr);
+  size_t addr_len = sizeof(clientAddr);
   int fd = accept(wksSocket, (struct sockaddr*)&clientAddr, &addr_len);
   if (fd == -1) {
     nerror("accepting on wks");

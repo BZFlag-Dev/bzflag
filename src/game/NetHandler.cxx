@@ -137,7 +137,7 @@ struct sockaddr_in NetHandler::lastUDPRxaddr;
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 			   NetHandler **netHandler)
 {
-  AddrLen recvlen = sizeof(*uaddr);
+  size_t recvlen = sizeof(*uaddr);
   uint16_t len;
   uint16_t code;
 
@@ -246,7 +246,7 @@ NetHandler::NetHandler(const struct sockaddr_in &clientAddr, int _fd)
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false)
 {
   // store address information for player
-  AddrLen addr_len = sizeof(clientAddr);
+  size_t addr_len = sizeof(clientAddr);
   memcpy(&uaddr, &clientAddr, addr_len);
   peer = Address(uaddr);
 
@@ -895,7 +895,7 @@ void NetListener::processConnections (void)
 void NetListener::accept (void)
 {
   struct sockaddr_in clientAddr;
-  AddrLen addr_len = sizeof(clientAddr);
+  size_t addr_len = sizeof(clientAddr);
   int fd = (int)::accept(listenSocket, (struct sockaddr*)&clientAddr, &addr_len);
   if (fd == -1)
     {

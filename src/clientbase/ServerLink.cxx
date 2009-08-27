@@ -534,7 +534,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
     int n;
 
     if (!udpLength) {
-      AddrLen recvlen = sizeof(urecvaddr);
+      size_t recvlen = sizeof(urecvaddr);
       n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr,
 		   (socklen_t*) &recvlen);
       if (n > 0) {
@@ -688,7 +688,7 @@ int ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
     int n;
 
     if (!udpLength) {
-      AddrLen recvlen = sizeof(urecvaddr);
+      size_t recvlen = sizeof(urecvaddr);
       n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr, (socklen_t*) &recvlen);
       if (n > 0) {
 	udpLength    = n;
@@ -1217,7 +1217,7 @@ void ServerLink::sendUDPlinkRequest()
     return; // we cannot comply
   }
 #if 1
-  AddrLen addr_len = sizeof(serv_addr);
+  size_t addr_len = sizeof(serv_addr);
   if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0) {
     printError("Error: getsockname() failed, cannot get TCP port?");
     return;
