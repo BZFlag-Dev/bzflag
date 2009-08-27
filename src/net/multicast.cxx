@@ -196,9 +196,6 @@ int			sendBroadcast(int fd, const void* buffer,
 				(const struct sockaddr*)addr, sizeof(*addr));
 }
 
-#if !defined(AddrLen)
-#define AddrLen		int
-#endif
 
 #if defined(WIN32) && !defined(HAVE_SOCKLEN_T)
 /* This is a really really fugly hack to get around winsock sillyness
@@ -217,7 +214,7 @@ int			recvBroadcast(int fd, void* buffer, int bufferLength,
 					 struct sockaddr_in* addr)
 {
   struct sockaddr_in from;
-  AddrLen fromLength = sizeof(from);
+  size_t fromLength = sizeof(from);
 
   int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,
 				(struct sockaddr*)&from, (socklen_t*) &fromLength);
