@@ -367,6 +367,7 @@ AC_CHECK_HEADERS( \
 	stdint.h \
 	sys/param.h \
 	sys/socket.h \
+	netdb.h \
 	unistd.h \
 	values.h \
 )

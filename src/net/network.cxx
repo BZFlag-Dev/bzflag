@@ -29,14 +29,16 @@
 #include <ctype.h>
 #include <errno.h>
 
-#if defined(_old_linux_)
-#define hstrerror(x) sys_errlist[x]
-#elif defined(sun)
-#define hstrerror(x) "<network error>"
+/* for hstrerror() */
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#else
+#  define hstrerror(x) sys_errlist[x]
 #endif
 
+
 #ifndef O_NDELAY
-#define O_NDELAY O_NONBLOCK
+#  define O_NDELAY O_NONBLOCK
 #endif
 
 
