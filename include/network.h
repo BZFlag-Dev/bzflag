@@ -64,19 +64,6 @@
   #  include <bstring.h>
   #endif
 
-  #if defined(__linux__) && !defined(_old_linux_)
-  #  define AddrLen		unsigned int
-  /* setsockopt incorrectly prototypes the 4th arg without const. */
-  #  define SSOType		void*
-  #elif defined (__APPLE__)
-  #  include <AvailabilityMacros.h>
-  #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-  #    define AddrLen		socklen_t
-  #  endif
-  #else	/* POSIX.1-2001 compliant */
-  #  define AddrLen		socklen_t
-  #endif
-
   #if defined(sun)
   /* setsockopt prototypes the 4th arg as const char*. */
   #  define SSOType   const char*
@@ -126,10 +113,6 @@
 
 #endif /* !defined(_WIN32) */
 
-
-#if !defined(AddrLen)
-#  define AddrLen  int
-#endif
 
 #if !defined(SSOType)
 #  define SSOType  const void*
