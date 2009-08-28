@@ -102,6 +102,9 @@
 #ifndef HAVE_COSF
 #  define	cosf		(float)cos
 #endif
+#ifndef HAVE_CEILF
+#  define	ceilf		(float)ceil
+#endif
 #ifndef HAVE_EXPF
 #  define	expf		(float)exp
 #endif
