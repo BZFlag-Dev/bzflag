@@ -137,7 +137,7 @@ struct sockaddr_in NetHandler::lastUDPRxaddr;
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 			   NetHandler **netHandler)
 {
-  size_t recvlen = sizeof(*uaddr);
+  socklen_t recvlen = sizeof(*uaddr);
   uint16_t len;
   uint16_t code;
 
@@ -895,7 +895,7 @@ void NetListener::processConnections (void)
 void NetListener::accept (void)
 {
   struct sockaddr_in clientAddr;
-  size_t addr_len = sizeof(clientAddr);
+  socklen_t addr_len = sizeof(clientAddr);
   int fd = (int)::accept(listenSocket, (struct sockaddr*)&clientAddr, &addr_len);
   if (fd == -1)
     {
