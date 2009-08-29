@@ -292,7 +292,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 {
   Uint16 unicode = sdlEvent.key.keysym.unicode;
   SDLKey sym     = sdlEvent.key.keysym.sym;
-  SDLMod mod     = sdlEvent.key.keysym.mod;
+  SDLMod mod     = (SDLMod) sdlEvent.key.keysym.mod;
 
   key.chr = 0;
   switch (sym) {

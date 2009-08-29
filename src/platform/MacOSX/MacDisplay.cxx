@@ -14,6 +14,7 @@
 #include "BzfEvent.h"
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <ApplicationServices/ApplicationServices.h>
 
 bool     MacDisplay::pending;
 CGrafPtr    MacDisplay::window;
@@ -31,7 +32,7 @@ MacDisplay::MacDisplay(const char *, const char *) {
   is_valid      = true;
   pending       = false;
 
-  cursor_region = NewRgn();
+  cursor_region = CGPathCreateMutable();
   ResInfo** resInfo = NULL;
   resInfo = new ResInfo*[1];
   resInfo[0] = new ResInfo("default",
@@ -287,7 +288,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     case kF3KeyCode:	bzf_key.button = BzfKeyEvent::F3;	break;
     case kF2KeyCode:	bzf_key.button = BzfKeyEvent::F2;	break;
     case kF1KeyCode:	bzf_key.button = BzfKeyEvent::F1;	break;
-    default:	fprintf(stderr, "Uknown function key code: 0x%lX\n", keycode);	break;
+    default:	fprintf(stderr, "Uknown function key code: 0x%lX\n", (long unsigned int) keycode);	break;
     }
     break;
     // standard key; a-z, 0-9 etc

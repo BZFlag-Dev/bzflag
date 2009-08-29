@@ -189,7 +189,7 @@ std::string		getOSString()
 #ifdef __APPLE__
   OSErr err = noErr;
   
-  long systemMajor, systemMinor, systemBugFix = 0;
+  SInt32 systemMajor, systemMinor, systemBugFix = 0;
   err = Gestalt(gestaltSystemVersionMajor, &systemMajor);
   if (err == noErr) {
     err = Gestalt(gestaltSystemVersionMinor, &systemMinor);
@@ -210,7 +210,7 @@ std::string		getOSString()
     reply << "unknown system version (Gestalt error)";
   }
   
-  long systemArchitecture = 0;
+  SInt32 systemArchitecture = 0;
   err = Gestalt(gestaltSysArchitecture, &systemArchitecture);
   if (err == noErr) {
     switch (systemArchitecture) {

@@ -67,7 +67,7 @@ class MacDisplay : public BzfDisplay {
     static CGLContextObj  context;
     static CGrafPtr    window;
 
-    RgnHandle   cursor_region;
+    CGMutablePathRef   cursor_region;
 
     //GDHandle    screen_device;
 };
