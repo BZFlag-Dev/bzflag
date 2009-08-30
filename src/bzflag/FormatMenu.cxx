@@ -46,10 +46,6 @@ bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
       }
       return true;
 
-  // TODO: not localizable
-  } else if (key.chr == 'T' || key.chr == 't') {
-    menu->setFormat(true);
-    return true;
   }
   return MenuDefaultKey::keyPress(key);
 }
@@ -64,8 +60,6 @@ bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   switch (key.chr) {
     case 27:	// escape
     case 13:	// return
-    case 'T':
-    case 't':
       return true;
   }
   return MenuDefaultKey::keyRelease(key);
