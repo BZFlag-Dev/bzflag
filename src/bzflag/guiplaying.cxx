@@ -5956,10 +5956,10 @@ void startPlaying()
   TextureManager &tm = TextureManager::instance();
 
   bool done = false;
-  int explostion = 1;
+  int explosionNum = 1;
   while (!done) {
     char text[256];
-    sprintf(text, "explode%d", explostion);
+    sprintf(text, "explode%d", explosionNum);
 
     int tex = tm.getTextureID(text, false);
 
@@ -5973,7 +5973,7 @@ void startPlaying()
 
       // add it to list of prototype explosions
       prototypeExplosions.push_back(explosion);
-      explostion++;
+      explosionNum++;
     }
   }
 
