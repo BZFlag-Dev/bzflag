@@ -170,8 +170,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
     int width = 0;
     int height = 0;
     numMountainTextures = 0;
-    bool done = false;
-    while (!done) {
+    do {
       char text[256];
       sprintf (text, "mountain%d", numMountainTextures + 1);
       mountainTexture = tm.getTextureID (text, false);
@@ -180,10 +179,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
 	height = info.y;
 	width += info.x;
 	numMountainTextures++;
-      } else {
-	done = true;
       }
-    }
+    } while (mountainTexture >= 0);
 
     if (numMountainTextures > 0) {
       mountainsAvailable = true;
