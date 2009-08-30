@@ -56,6 +56,8 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("toggle displayLabels"), press));
   wayToBindActions.insert(std::make_pair(std::string("destruct"), press));
   wayToBindActions.insert(std::make_pair(std::string("hubcompose"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle showDrawFPS"), press));
+  wayToBindActions.insert(std::make_pair(std::string("toggle showDrawTime"), press));
 
   // Movement keys
   wayToBindActions.insert(std::make_pair(std::string("turn left"), both));
@@ -97,17 +99,6 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("messagepanel prev"),   press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel next"),   press));
 
-  /*
-   * NOTE: the following keys are 'hard coded' in the playing loop and shouldn't
-   * be used as part of default bindings:
-   *
-   * T - framerate
-   * X - debug rendering
-   * Y - milliseconds drawing
-   * ] and } - adjust clock +30sec
-   * [ and { - adjust clock -30sec
-   */
-
   defaultBinding.insert(BindingTable::value_type("Left Mouse", "fire"));
   defaultBinding.insert(BindingTable::value_type("Enter", "fire"));
   defaultBinding.insert(BindingTable::value_type("Middle Mouse", "drop"));
@@ -135,20 +126,20 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("}", "time +30"));
   defaultBinding.insert(BindingTable::value_type("{", "time -30"));
 
-  					       /* A - unused */
+					       /* A - unused */
   defaultBinding.insert(BindingTable::value_type("B", "viewZoom toggle"));
-  					       /* C - unused */
-  					       /* D - unused */
-  					       /* E - unused */
+					       /* C - unused */
+					       /* D - unused */
+					       /* E - unused */
   defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
-  					       /* G - unused */
+					       /* G - unused */
   defaultBinding.insert(BindingTable::value_type("H", "hubcompose"));
-  					       /* I - identify/restart (above) */
+					       /* I - identify/restart (above) */
   defaultBinding.insert(BindingTable::value_type("J", "toggleFlags main"));
   defaultBinding.insert(BindingTable::value_type("K", "silence"));
   defaultBinding.insert(BindingTable::value_type("L", "toggle displayLabels"));
-  					       /* M - send team (above) */
-  					       /* N - send all (above) */
+					       /* M - send team (above) */
+					       /* N - send all (above) */
   defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
   defaultBinding.insert(BindingTable::value_type("P", "pause"));
   defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
@@ -158,9 +149,9 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("U", "hunt"));
   defaultBinding.insert(BindingTable::value_type("V", "toggle slowMotion"));
   defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
-  					       /* X - debug rendering */
+					       /* X - unused */
   defaultBinding.insert(BindingTable::value_type("Y", "toggle showDrawTime"));
-  					       /* Z - send admin (above) */
+					       /* Z - send admin (above) */
   defaultBinding.insert(BindingTable::value_type("Delete", "destruct"));
 
   // Default movement keys

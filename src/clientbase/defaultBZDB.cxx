@@ -101,6 +101,8 @@ DefaultDBItem	defaultDBItems[] = {
   { "showCollisionGrid",	"0",			true,  DefPerm, NULL },
   { "showCoordinates",		"0",			true,  DefPerm, NULL },
   { "showCullingGrid",		"0",			true,  DefPerm, NULL },
+  { "showDrawFPS",		"0",			false, DefPerm, NULL },
+  { "showDrawTime",		"0",			false, DefPerm, NULL },
   { "showShotGuide",		"0",			true,  DefPerm, NULL },
   { "showtabs",			"2",			true,  DefPerm, NULL },
   { "showTreads",		"0",			true,  DefPerm, NULL },

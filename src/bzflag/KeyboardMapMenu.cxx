@@ -102,17 +102,19 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   addControl(createLabel(NULL, "Server Command Key:"));
   addControl(createLabel(NULL, "Hunt Key:"));
   addControl(createLabel(NULL, "Add/Modify Hunt Key:"));
-  addControl(createLabel(NULL, "AutoPilot Key: "));
-  addControl(createLabel(NULL, "Main Message Tab: "));
-  addControl(createLabel(NULL, "Chat Message Tab: "));
-  addControl(createLabel(NULL, "Server Message Tab: "));
-  addControl(createLabel(NULL, "Misc Message Tab: "));
-  addControl(createLabel(NULL, "Prev Tab: "));
-  addControl(createLabel(NULL, "Next Tab: "));
-  addControl(createLabel(NULL, "Forward Key: "));
-  addControl(createLabel(NULL, "Reverse Key: "));
-  addControl(createLabel(NULL, "Left Key: "));
-  addControl(createLabel(NULL, "Right Key: "));
+  addControl(createLabel(NULL, "AutoPilot Key:"));
+  addControl(createLabel(NULL, "Main Message Tab:"));
+  addControl(createLabel(NULL, "Chat Message Tab:"));
+  addControl(createLabel(NULL, "Server Message Tab:"));
+  addControl(createLabel(NULL, "Misc Message Tab:"));
+  addControl(createLabel(NULL, "Prev Tab:"));
+  addControl(createLabel(NULL, "Next Tab:"));
+  addControl(createLabel(NULL, "Toggle FPS:"));
+  addControl(createLabel(NULL, "Toggle Frame Time:"));
+  addControl(createLabel(NULL, "Forward Key:"));
+  addControl(createLabel(NULL, "Reverse Key:"));
+  addControl(createLabel(NULL, "Left Key:"));
+  addControl(createLabel(NULL, "Right Key:"));
   addControl(createLabel(NULL, "Restart:"));
   addControl(createLabel(NULL, "Iconify:"));
   addControl(createLabel(NULL, "Fullscreen:"));
@@ -121,6 +123,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initNavigation();
 
   int i = 3;
+  // the order of these initkeymap calls must match the order of the
+  // addControl calls above
   initkeymap("fire", i);
   initkeymap("drop", ++i);
   initkeymap("identify", ++i);
@@ -161,6 +165,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("messagepanel misc", ++i);
   initkeymap("messagepanel prev", ++i);
   initkeymap("messagepanel next", ++i);
+  initkeymap("toggle showDrawFPS", ++i);
+  initkeymap("toggle showDrawTime", ++i);
   initkeymap("drive forward", ++i);
   initkeymap("drive reverse", ++i);
   initkeymap("turn left", ++i);

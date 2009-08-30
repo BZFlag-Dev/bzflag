@@ -61,6 +61,8 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
   addControl(createLabel(NULL, "Misc Message Tab:"), false);
   addControl(createLabel(NULL, "Prev Tab:"), false);
   addControl(createLabel(NULL, "Next Tab:"), false);
+  addControl(createLabel(NULL, "Toggle FPS:"), false);
+  addControl(createLabel(NULL, "Toggle Frame Time:"), false);
   addControl(createLabel("Esc", "Show/Dismiss menu:"), false);
 
   initKeymap("fire", 3);
@@ -98,6 +100,8 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
   initKeymap("messagepanel misc", 35);
   initKeymap("messagepanel prev", 36);
   initKeymap("messagepanel next", 37);
+  initKeymap("toggle showDrawFPS", 38);
+  initKeymap("toggle showDrawTime", 39);
 }
 
 void HelpKeymapMenu::onScan(const std::string& name, bool press,
