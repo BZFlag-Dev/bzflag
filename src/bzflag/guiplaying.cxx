@@ -5961,7 +5961,7 @@ void startPlaying()
     char text[256];
     sprintf(text, "explode%d", explosionNum);
 
-    int tex = tm.getTextureID(text, false);
+    int tex = tm.getTextureID(text, (explosionNum == 1));
 
     if (tex < 0) {
       done = true;

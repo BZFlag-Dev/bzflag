@@ -173,7 +173,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
     do {
       char text[256];
       sprintf (text, "mountain%d", numMountainTextures + 1);
-      mountainTexture = tm.getTextureID (text, false);
+      mountainTexture = tm.getTextureID (text, (numMountainTextures == 0));
       if (mountainTexture >= 0) {
 	const ImageInfo & info = tm.getInfo (mountainTexture);
 	height = info.y;
