@@ -199,6 +199,7 @@ bool TeamsBalanced()
   float RatioBP = 0;
   float RatioGP = 0;
   float RS = (float) bz_getTeamCount(eRedTeam);
+#undef GS	// defined in /usr/include/sys/regset.h on Solaris x86
   float GS = (float) bz_getTeamCount(eGreenTeam);
   float BS = (float) bz_getTeamCount(eBlueTeam);
   float PS = (float) bz_getTeamCount(ePurpleTeam);
