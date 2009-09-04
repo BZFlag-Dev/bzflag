@@ -29,11 +29,26 @@
 #include <ctype.h>
 #include <errno.h>
 
-/* for hstrerror() */
-#ifdef HAVE_NETDB_H
-#  include <netdb.h>
-#else
-#  define hstrerror(x) sys_errlist[x]
+#ifndef HAVE_HSTRERROR
+// POSIX.1-2001 marks this "obsolete" but we need it to interpret
+// errors from gethostbyname(), which is likewise obsolete
+char* hstrerror(int err)
+{
+  switch (err) {
+  case 0:
+    return "Resolver Error 0 (no error)";
+  case HOST_NOT_FOUND:
+    return "Unknown host";
+  case TRY_AGAIN:
+    return "Host name lookup failure";
+  case NO_RECOVERY:
+    return "Unknown server error";
+  case NO_DATA:
+    return "No address associated with name";
+  default:
+    return "Unknown resolver error";
+    }
+}
 #endif
 
 

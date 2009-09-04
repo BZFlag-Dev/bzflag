@@ -59,7 +59,9 @@
 
   #include <netinet/tcp.h>
   #include <arpa/inet.h>
-  #include <netdb.h>
+  #ifdef HAVE_NETDB_H
+  #  include <netdb.h>
+  #endif
   #ifdef HAVE_BSTRING_H
   #  include <bstring.h>
   #endif

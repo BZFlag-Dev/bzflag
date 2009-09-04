@@ -469,9 +469,13 @@ fi
 
 case $host_os in
     solaris*)
-	GLIBS="-lresolv -laudio $GLIBS"
+	if [ -d /usr/demo/SOUND/lib ] ; then
+		GLIBS="-laudio $GLIBS"
+		LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
+	fi
+	GLIBS="-lresolv $GLIBS"
 	LIBS="$LIBS -lsocket -lnsl -lresolv"
-	LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
+	LDFLAGS="$LDFLAGS -lresolv"	# for hstrerror()
 	;;
     irix*)
 	GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
@@ -831,6 +835,7 @@ AC_CHECK_FUNCS(\
 	_strnicmp \
 	_vsnprintf \
 	atexit \
+	hstrerror \
 	sched_setaffinity \
 	select \
 	snooze \
