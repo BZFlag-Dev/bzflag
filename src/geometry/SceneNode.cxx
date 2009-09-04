@@ -25,26 +25,11 @@
 #include "Extents.h"
 #include "RenderNode.h"
 #include "StateDatabase.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
-
-
-#ifndef __MINGW32__
-void (__stdcall *SceneNode::color3f)(float, float, float);
-void (__stdcall *SceneNode::color4f)(float, float, float, float);
-void (__stdcall *SceneNode::color3fv)(const float*);
-void (__stdcall *SceneNode::color4fv)(const float*);
-#endif
-void (*SceneNode::stipple)(float);
+#include "SceneRenderer.h"
 
 
 SceneNode::SceneNode()
 {
-  static bool init = false;
-
-  if (!init) {
-    init = true;
-    setColorOverride(false);
-  }
   memset(sphere, 0, sizeof(float) & 4);
 
   setCenter(0.0f, 0.0f, 0.0f);
@@ -64,74 +49,39 @@ SceneNode::~SceneNode()
 }
 
 
-#if defined(sun)
-static void __stdcall	oglColor3f(float r, float g, float b)
-				{ glColor3f(r, g, b); }
-static void __stdcall	oglColor4f(float r, float g, float b, float a)
-				{ glColor4f(r, g, b, a); }
-static void __stdcall	oglColor3fv(const float* v)
-				{ glColor3fv(v); }
-static void __stdcall	oglColor4fv(const float* v)
-				{ glColor4fv(v); }
-#endif
+bool SceneNode::showColor = true;
 
-#ifdef __MINGW32__
-bool SceneNode::colorOverride = true;
+void SceneNode::setStipple(float alpha)
+{
+  if (showColor)
+    OpenGLGState::setStipple(alpha);
+}
+
 void SceneNode::glColor3f(float r, float g, float b)
 {
-  if (!colorOverride) { ::glColor3f(r, g, b); }
+  if (showColor)
+    ::glColor3f(r, g, b);
 }
 void SceneNode::glColor4f(float r, float g, float b, float a)
 {
-  if (!colorOverride) { ::glColor4f(r, g, b, a); }
+  if (showColor)
+    ::glColor4f(r, g, b, a);
 }
 void SceneNode::glColor3fv(const float* rgb)
 {
-  if (!colorOverride) { ::glColor3fv(rgb); }
+  if (showColor)
+    ::glColor3fv(rgb);
 }
 void SceneNode::glColor4fv(const float* rgba)
 {
-  if (!colorOverride) { ::glColor4fv(rgba); }
+  if (showColor)
+    ::glColor4fv(rgba);
 }
-#else
-void __stdcall SceneNode::noColor3f(float, float, float) {}
-void __stdcall SceneNode::noColor4f(float, float, float, float) {}
-void __stdcall SceneNode::noColor3fv(const float*) {}
-void __stdcall SceneNode::noColor4fv(const float*) {}
-#endif
-void			SceneNode::noStipple(float) { }
 
 
-void			SceneNode::setColorOverride(bool on)
+void SceneNode::setColorOverride(bool on)
 {
-#ifdef __MINGW32__
-  colorOverride = on;
-#endif
-  if (on) {
-#ifndef __MINGW32__
-    color3f  = &noColor3f;
-    color4f  = &noColor4f;
-    color3fv = &noColor3fv;
-    color4fv = &noColor4fv;
-#endif
-    stipple  = &noStipple;
-  }
-  else {
-#if defined(sun)
-    color3f  = &oglColor3f;
-    color4f  = &oglColor4f;
-    color3fv = &oglColor3fv;
-    color4fv = &oglColor4fv;
-#else
-#ifndef __MINGW32__
-    color3f  = &::glColor3f;
-    color4f  = &::glColor4f;
-    color3fv = &::glColor3fv;
-    color4fv = &::glColor4fv;
-#endif
-#endif
-    stipple  = &OpenGLGState::setStipple;
-  }
+  showColor = !on;
 }
 
 

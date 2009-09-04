@@ -83,23 +83,14 @@ class SceneNode {
     };
     virtual void getRenderNodes(std::vector<RenderSet>& rnodes);
 
-    static void setStipple(float alpha) { (*stipple)(alpha); }
+    static void setStipple(float alpha);
 
     static void setColorOverride(bool = true);
 
-#ifdef __MINGW32__
     static void glColor3fv(const float* rgb);
     static void glColor4fv(const float* rgba);
     static void glColor3f(float r, float g, float b);
     static void glColor4f(float r, float g, float b, float a);
-#else
-    static void glColor3fv(const float* rgb)         { (*color3fv)(rgb);    }
-    static void glColor4fv(const float* rgba)        { (*color4fv)(rgba);   }
-    static void glColor3f(float r, float g, float b) { (*color3f)(r, g, b); }
-    static void glColor4f(float r, float g, float b, float a) {
-      (*color4f)(r, g, b, a);
-    }
-#endif // __MINGW32__
 
     enum CullState {
       OctreeCulled,
@@ -122,15 +113,6 @@ class SceneNode {
     SceneNode(const SceneNode&);
     SceneNode& operator=(const SceneNode&);
 
-    static void noStipple(float);
-
-#ifndef __MINGW32__
-    static void __stdcall noColor3f(float, float, float);
-    static void __stdcall noColor4f(float, float, float, float);
-    static void __stdcall noColor3fv(const float*);
-    static void __stdcall noColor4fv(const float*);
-#endif
-
   protected:
     fvec4   plane;  // unit normal, distance to origin
     bool    noPlane;
@@ -142,15 +124,7 @@ class SceneNode {
     fvec4 sphere;
 
   private:
-    static void (*stipple)(float);
-#ifdef __MINGW32__
-    static bool colorOverride;
-#else
-    static void (__stdcall *color3f)(float, float, float);
-    static void (__stdcall *color4f)(float, float, float, float);
-    static void (__stdcall *color3fv)(const float*);
-    static void (__stdcall *color4fv)(const float*);
-#endif
+    static bool showColor;
 };
 
 
