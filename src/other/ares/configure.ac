@@ -251,6 +251,9 @@ if test "$ac_cv_lib_resolve_strcasecmp" = "$ac_cv_func_strcasecmp"; then
 fi
 
 dnl socket lib?
+# Ignore any cached detection of connect() from the BZFlag top-level
+# configure to allow Solaris to discover it in libsocket in this test.
+unset ac_cv_func_connect
 AC_CHECK_FUNC(connect, , [ AC_CHECK_LIB(socket, connect) ])
 
 dnl dl lib?
