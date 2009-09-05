@@ -200,7 +200,7 @@ std::string		getOSString()
   
   std::stringstream reply;
   if (err == noErr) {
-    reply << "MacOS ";
+    reply << "Mac OS X ";
     reply << systemMajor;
     reply << ".";
     reply << systemMinor;
@@ -209,30 +209,44 @@ std::string		getOSString()
   } else {
     reply << "unknown system version (Gestalt error)";
   }
-  
-  SInt32 systemArchitecture = 0;
-  err = Gestalt(gestaltSysArchitecture, &systemArchitecture);
-  if (err == noErr) {
-    switch (systemArchitecture) {
-      case gestalt68k: {reply << " 68k"; break;}
-      case gestaltPowerPC: {reply << " PPC"; break;}
-      case gestaltIntel: {reply << " i386"; break;}
-      default: {reply << " unknown CPU architecture (Gestalt reply is ";
-	reply << systemArchitecture; reply << ")";}
-    }
+
+  // determine hardware platform at runtime because
+  // application may run using binary for different platform
+  size_t length;
+  sysctlbyname("hw.machine", NULL, &length, NULL, 0);
+
+  char* architecture = (char*) malloc(length);
+  if (sysctlbyname("hw.machine", architecture, &length, NULL, 0) == 0) {
+    reply << " " << architecture;
   } else {
-    reply << " unknown CPU architecture (Gestalt error)";
+    reply << " unknown architecture";
   }
+  free(architecture);
   
+#if __LP64__
+  // applications can also be running in 64 bit mode
+  // despite kernel is running in 32 bit mode
+  reply << "; LP64 BZFlag";
+#else
+#if __ppc__ || __POWERPC__ || _M_PPC
+  reply << "; PPC BZFlag";
+#else
+#if __i386__
+  reply << "; i386 BZFlag";
+#endif
+#endif
+#endif
   int value = 0;
-  size_t length = sizeof(value);
+  length = sizeof(value);
   if (sysctlbyname("hw.cpu64bit_capable", &value, &length, NULL, 0) == 0) {
     if (value) {
       reply << "; CPU 64 bit capable";
     }
   }
   
-  // "MacOS 10.4.11 i386" for example
+  // examples
+  // Mac OS X 10.4.11 Power Macintosh; PPC BZFlag
+  // Mac OS X 10.4.11 i386; i386 BZFlag
   versionString = reply.str();
 #else
   struct utsname buf;
