@@ -109,6 +109,7 @@ class HubLink {
     bool sendChunk(const std::string& chunk); 
     bool readChunk(std::string& chunk); 
 
+  protected: // lua routines
     bool createLua(const std::string& code);
     bool pushAnsiCodes();
     bool pushCallOuts();

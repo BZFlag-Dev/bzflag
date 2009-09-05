@@ -59,8 +59,8 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
   addControl(createLabel(NULL, "Chat Message Tab:"), false);
   addControl(createLabel(NULL, "Server Message Tab:"), false);
   addControl(createLabel(NULL, "Misc Message Tab:"), false);
-  addControl(createLabel(NULL, "Prev Tab:"), false);
-  addControl(createLabel(NULL, "Next Tab:"), false);
+  addControl(createLabel(NULL, "Prev Message Tab:"), false);
+  addControl(createLabel(NULL, "Next Message Tab:"), false);
   addControl(createLabel(NULL, "Toggle FPS:"), false);
   addControl(createLabel(NULL, "Toggle Frame Time:"), false);
   addControl(createLabel("Esc", "Show/Dismiss menu:"), false);

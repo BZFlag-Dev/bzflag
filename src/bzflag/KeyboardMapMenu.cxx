@@ -107,8 +107,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   addControl(createLabel(NULL, "Chat Message Tab:"));
   addControl(createLabel(NULL, "Server Message Tab:"));
   addControl(createLabel(NULL, "Misc Message Tab:"));
-  addControl(createLabel(NULL, "Prev Tab:"));
-  addControl(createLabel(NULL, "Next Tab:"));
+  addControl(createLabel(NULL, "Prev Message Tab:"));
+  addControl(createLabel(NULL, "Next Message Tab:"));
   addControl(createLabel(NULL, "Toggle FPS:"));
   addControl(createLabel(NULL, "Toggle Frame Time:"));
   addControl(createLabel(NULL, "Forward Key:"));
