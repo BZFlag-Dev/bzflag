@@ -184,7 +184,7 @@ std::string		getOSString()
     platform = "Win64";
   if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
     platform = "WinIA64";
-  versionString = TextUtils::format("%s%d.%d.%d sp%d.$d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
+  versionString = TextUtils::format("%s%d.%d.%d sp%d.%d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
 #else
 #ifdef __APPLE__
   OSErr err = noErr;
