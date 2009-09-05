@@ -25,10 +25,12 @@
 #include "AnsiCodes.h"
 #include "BZDBCache.h"
 #include "HubComposeKey.h"
+#include "HubLink.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
 #include "Pack.h"
 #include "TimeKeeper.h"
+#include "bzfgl.h"
 #include "bzfio.h"
 #include "bz_md5.h"
 #include "version.h"
@@ -432,6 +434,8 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, GetVersion);
   PUSH_LUA_CFUNC(L, GetHubServer);
   PUSH_LUA_CFUNC(L, GetServerInfo);
+  PUSH_LUA_CFUNC(L, GetOpenGLString);
+  PUSH_LUA_CFUNC(L, GetOpenGLNumbers);
 
   PUSH_LUA_CFUNC(L, PackInt8);
   PUSH_LUA_CFUNC(L, PackInt16);
@@ -881,7 +885,8 @@ int HubLink::GetVersion(lua_State* L)
 {
   lua_pushstring(L, getMajorMinorRevVersion());
   lua_pushstring(L, getAppVersion());
-  return 2;
+  lua_pushstdstring(L, getOSString());
+  return 3;
 }
 
 
@@ -910,6 +915,32 @@ int HubLink::GetServerInfo(lua_State* L)
 
   return 3;
 }
+
+
+int HubLink::GetOpenGLString(lua_State* L)
+{
+  const int pname = (GLenum) luaL_checkint(L, 1);
+  lua_pushstring(L, (const char*)glGetString((GLenum)pname));
+  return 1;
+}
+
+
+int HubLink::GetOpenGLNumbers(lua_State* L)
+{
+  const int pname = luaL_checkint(L, 1);
+  const int count = luaL_optint(L, 2, 1);
+  GLdouble buf[256];
+  if ((count < 0) || (count > 256)) {
+    return 0;
+  }
+  glGetDoublev(pname, buf);
+  lua_checkstack(L, count);
+  for (int i = 0; i < count; i++) {
+    lua_pushdouble(L, buf[i]);
+  }
+  return count;
+}
+
 
 //============================================================================//
 

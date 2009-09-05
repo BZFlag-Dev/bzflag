@@ -53,7 +53,7 @@ void HubLink::debugf(int level, const char* fmt, ...)
   if (level > debugHub) {
     return;
   }
-  const std::string fmt2 = std::string("HubLink: ") + fmt;
+  const std::string fmt2 = std::string("Hub: ") + fmt;
   va_list ap;
   va_start(ap, fmt);
   logDebugMessageArgs(0, fmt2.c_str(), ap);

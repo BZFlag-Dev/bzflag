@@ -155,6 +155,8 @@ class HubLink {
     static int GetVersion(lua_State* L);
     static int GetHubServer(lua_State* L);
     static int GetServerInfo(lua_State* L);
+    static int GetOpenGLString(lua_State* L);
+    static int GetOpenGLNumbers(lua_State* L);
 
     static int PackInt8(lua_State* L);
     static int PackInt16(lua_State* L);
