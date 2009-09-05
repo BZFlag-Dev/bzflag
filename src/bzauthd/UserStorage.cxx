@@ -656,8 +656,7 @@ BzRegErrors UserStore::registerMail(const UserInfo &info, char * uid_str, const 
   }
 
   sLog.outLog("UserStore: registering mail %s for %s", info.email.c_str(), info.name.c_str());
-  const char *oc_vals[3] = {"LDAPsubEntry", "extensibleObject", NULL};
-  LDAPModN attr_oc   (LDAP_MOD_ADD, "objectClass", oc_vals);
+  LDAPMod1 attr_oc   (LDAP_MOD_ADD, "objectClass", "email");
   LDAPMod1 attr_uid  (LDAP_MOD_ADD, "uid", uid_str);
   LDAPMod1 attr_mail (LDAP_MOD_ADD, "mail", info.email.c_str());
   LDAPMod1 attr_akey (LDAP_MOD_ADD, "activationKey", act_key);
