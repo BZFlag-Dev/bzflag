@@ -156,7 +156,6 @@ const char*		getAppVersion()
   static std::string	appVersion = "";
   if (!appVersion.size()){
     std::ostringstream	appVersionStream;
-    // TODO add current platform, release, cpu, etc
     appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
 #ifdef HAVE_SDL
@@ -223,15 +222,15 @@ std::string		getOSString()
   }
   free(architecture);
   
-#if __LP64__
+#ifdef __LP64__
   // applications can also be running in 64 bit mode
   // despite kernel is running in 32 bit mode
   reply << "; LP64 BZFlag";
 #else
-#if __ppc__ || __POWERPC__ || _M_PPC
+#if defined(__ppc__) || defined(__POWERPC__) || defined(_M_PPC)
   reply << "; PPC BZFlag";
 #else
-#if __i386__
+#ifdef __i386__
   reply << "; i386 BZFlag";
 #endif
 #endif
