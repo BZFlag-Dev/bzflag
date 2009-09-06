@@ -249,7 +249,10 @@ std::string		getOSString()
   versionString = reply.str();
 #else
   struct utsname buf;
-  if (uname(&buf) == 0) {
+  if (uname(&buf) == -1) {
+    perror("uname");
+    versionString = "unix unknown";
+  } else {
     std::vector<std::string> rtok = TextUtils::tokenize(buf.release, ".", 4);
     std::string rel;
     unsigned int i;
@@ -261,10 +264,6 @@ std::string		getOSString()
     }
     // "Linux 2.6.27 x86_64" for example
     versionString = TextUtils::format("%s %s %s", buf.sysname, rel.c_str(), buf.machine);
-  }
-  else {
-    perror("uname");
-    versionString = "unix unknown";
   }
 #endif // __APPLE__
 #endif // _WIN32
