@@ -2,7 +2,7 @@
  * FTGLDemo - simple demo for FTGL, the OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- *               2008 Sam Hocevar <sam@zoy.org>
+ *               2008 Sam Hocevar <sam@hocevar.net>
  *               2008 Éric Beets <ericbeets@free.fr>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
