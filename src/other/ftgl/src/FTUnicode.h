@@ -148,7 +148,7 @@ private:
     const T* nextPos;
 
     // unicode magic numbers
-    static const char utf8bytes[256];
+    static const unsigned char utf8bytes[256];
     static const unsigned long offsetsFromUTF8[6];
     static const unsigned long highSurrogateStart;
     static const unsigned long highSurrogateEnd;
@@ -161,7 +161,7 @@ private:
 /* The first character in a UTF8 sequence indicates how many bytes
  * to read (among other things) */
 template <typename T>
-const char FTUnicodeStringItr<T>::utf8bytes[256] = {
+const unsigned char FTUnicodeStringItr<T>::utf8bytes[256] = {
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
   1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
