@@ -445,8 +445,8 @@ inline float FTFontImpl::AdvanceI(const T* string, const int len,
 
     for(int i = 0; (len < 0 && *ustr) || (len >= 0 && i < len); i++)
     {
-        unsigned int thisChar = (unsigned T)*ustr++;
-        unsigned int nextChar = (unsigned T)*ustr;
+        unsigned int thisChar = *ustr++;
+        unsigned int nextChar = *ustr;
 
         if(CheckGlyph(thisChar))
         {
