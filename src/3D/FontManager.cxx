@@ -427,7 +427,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (buffer[i] == '\t')
       buffer[i] = ' ';
 
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
   glEnable(GL_TEXTURE_2D);
 
   // Colorize text based on ANSI codes embedded in it.
@@ -531,6 +530,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  glEnable(GL_BLEND);
 	  if (reverse) {
 	    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+	  } else {
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	  }
 	}
 	theFont->Render(rendertext, -1, FTPoint(), FTPoint(), FTGL::RENDER_ALL);
@@ -657,7 +658,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     }
   }
 
-  glPopAttrib();
+  glDisable(GL_TEXTURE_2D);
 
   return;
 }
