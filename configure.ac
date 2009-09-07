@@ -624,9 +624,16 @@ if test x$with_SDL = xyes; then
 	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
 	else
 	    AC_MSG_CHECKING([for SDL 1.3])
+
+	    savedSDL_CFLAGS="$SDL_CFLAGS"
+	    savedSDL_LIBS="$SDL_LIBS"
 	    AM_PATH_SDL(1.3.0, with_SDL_1_3=yes, with_SDL_1_3=no)
+
 	    if test x$with_SDL_1_3 = xyes; then
 	        AC_DEFINE(HAVE_SDL_1_3, 1, [Using SDL 1.3 API])
+	    else
+		SDL_CFLAGS="$savedSDL_CFLAGS"
+		SDL_LIBS="$savedSDL_LIBS"
 	    fi
 	fi
     else
