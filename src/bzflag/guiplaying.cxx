@@ -3687,7 +3687,7 @@ void leaveGame()
   // purge any custom flags we may have accumulated
   Flags::clearCustomFlags();
 
-  if (hubLink) {
+  if (hubLink && sayGoodbye) {
     hubLink->serverParted();
   }
 

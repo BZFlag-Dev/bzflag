@@ -424,7 +424,12 @@ bool HubCommand::operator() (const char *commandLine)
     hubLink = NULL;
   }
   else if (tokens[0] == "/status") {
-    addMessage(NULL, hubLink ? "hublink active" : "hublink inactive");
+    const char* status = "inactive";
+    if (hubLink != NULL) {
+      status = hubLink->getStateString();
+    }
+    const std::string statusStr = "hublink " + std::string(status);
+    addMessage(NULL, statusStr.c_str());
   }
   else if (hubLink) {
     hubLink->recvCommand(commandLine);

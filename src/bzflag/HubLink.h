@@ -50,6 +50,7 @@ class HubLink {
     bool update();
 
     LinkState getState() const { return state; }
+    const char* getStateString() const;
 
     const std::string& getHostPort() const { return hostPort; }
     const std::string& getLuaCode()  const { return luaCode;  }

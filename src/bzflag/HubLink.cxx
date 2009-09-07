@@ -153,6 +153,20 @@ bool HubLink::parseHostPort(std::string& host, int& port)
 }
 
 
+const char* HubLink::getStateString() const
+{
+  switch (state) {
+    case StateInit:    { return "initializing";  }
+    case StateDNS:     { return "dns lookup";    }
+    case StateConnect: { return "connecting";    }
+    case StateGetCode: { return "fetching code"; }
+    case StateReady:   { return "active";        }
+    case StateFailed:  { return "failed";        }
+  }
+  return "unknown state";
+}
+
+
 //============================================================================//
 //============================================================================//
 

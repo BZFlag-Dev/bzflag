@@ -475,27 +475,30 @@ static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, b
   }
   const std::string& tabName = args[0];
 
-  int tab = controlPanel->getTabID(tabName);
+  int tab = -1;
+
+  if (tabName == "prev") {
+    const int tabCount = controlPanel->getTabCount();
+    tab = controlPanel->getActiveTab();
+    tab = (tab - 1 + tabCount) % tabCount;
+    while (!controlPanel->isTabVisible(tab)) {
+      tab = (tab - 1 + tabCount) % tabCount;
+    }
+  }
+  else if (tabName == "next") {
+    const int tabCount = controlPanel->getTabCount();
+    tab = controlPanel->getActiveTab();
+    tab = (tab + 1) % tabCount;
+    while (!controlPanel->isTabVisible(tab)) {
+      tab = (tab + 1) % tabCount;
+    }
+  }
+  else {
+    tab = controlPanel->getTabID(tabName);
+  }
 
   if (tab < 0) {
-    const int tabCount = controlPanel->getTabCount();
-    if (tabName == "prev") {
-      tab = controlPanel->getActiveTab();
-      tab = (tab - 1 + tabCount) % tabCount;
-      while (!controlPanel->isTabVisible(tab)) {
-        tab = (tab - 1 + tabCount) % tabCount;
-      }
-    }
-    else if (tabName == "next") {
-      tab = controlPanel->getActiveTab();
-      tab = (tab + 1) % tabCount;
-      while (!controlPanel->isTabVisible(tab)) {
-        tab = (tab + 1) % tabCount;
-      }
-    }
-    else {
-      return "bad tab: '" + tabName + "'";
-    }
+    return "messagepanel, bad tab: '" + tabName + "'";
   }
 
   controlPanel->setActiveTab(tab);
