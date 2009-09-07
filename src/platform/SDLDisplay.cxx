@@ -360,9 +360,18 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
       key.chr = unicode;
     }
     else {
+#ifdef HAVE_SDL_1_3
+      // FIXME: Not a proper solution and probably reason 
+      // of buggy BZFlag on Mac OS X 10.6 using __LP64__
+      // but SDLK_FIRST is gone in SDL 1.3.0
+      if ((sym >= (SDLKey) 0) && (sym <= SDLK_DELETE)) {
+	key.chr = sym;
+      }
+#else
       if ((sym >= SDLK_FIRST) && (sym <= SDLK_DELETE)) {
 	key.chr = sym;
       }
+#endif
       else if ((sym >= SDLK_KP0) && (sym <= SDLK_KP9)) {
 	key.chr = (sym - SDLK_KP0) + SDLK_0; // translate to normal number
       }
