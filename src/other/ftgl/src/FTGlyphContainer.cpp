@@ -80,7 +80,7 @@ const FTGlyph* const FTGlyphContainer::Glyph(const unsigned int charCode) const
 {
     unsigned int index = charMap->GlyphListIndex(charCode);
     if (index > glyphs.size()) {
-	return NULL:
+      return NULL;
     }
     return glyphs[index];
 }
@@ -97,7 +97,7 @@ float FTGlyphContainer::Advance(const unsigned int charCode,
 {
     unsigned int left = charMap->FontIndex(charCode);
     unsigned int right = charMap->FontIndex(nextCharCode);
-    FTGlyph *glyph = Glyph(charCode);
+    const FTGlyph *glyph = Glyph(charCode);
     if (!glyph)
 	return 0.0;
 
