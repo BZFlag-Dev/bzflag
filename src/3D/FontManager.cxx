@@ -427,6 +427,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (buffer[i] == '\t')
       buffer[i] = ' ';
 
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
   glEnable(GL_TEXTURE_2D);
 
   // Colorize text based on ANSI codes embedded in it.
@@ -472,9 +473,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   }
 
   float height = getStringHeight(faceID, size);
-
-  const int renderBits = rawBlending ? (FTGL::RENDER_ALL | FTGL::RENDER_NOBLEND)
-                                     :  FTGL::RENDER_ALL;
 
   // split string into parts based on the embedded ANSI codes, render each separately
   // there has got to be a faster way to do this
@@ -527,16 +525,15 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  myColor4fv(color);
 	}
 
-        if (!reverse) {
-          theFont->Render(rendertext, -1, FTPoint(), FTPoint(), renderBits);
-        }
-        else {
-          glEnable(GL_BLEND);
-          glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-          theFont->Render(rendertext, -1, FTPoint(), FTPoint(),
-                          renderBits | FTGL::RENDER_NOBLEND);
-          glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
+	if (rawBlending) {
+	  glDisable(GL_BLEND);
+	} else {
+	  glEnable(GL_BLEND);
+	  if (reverse) {
+	    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+	  }
+	}
+	theFont->Render(rendertext, -1, FTPoint(), FTPoint(), FTGL::RENDER_ALL);
 
 	// restore
 	buffer[endSend] = savechar;
@@ -660,7 +657,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     }
   }
 
-  glDisable(GL_TEXTURE_2D);
+  glPopAttrib();
 
   return;
 }
