@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2009 Sam Hocevar <sam@hocevar.net>
+ *               2009 Mathew Eis (kingrobot)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -40,10 +41,10 @@ FTCleanup::~FTCleanup()
     std::set<FT_Face **>::iterator cleanupItr = cleanupFT_FaceItems.begin();
     FT_Face **cleanupFace = 0;
 
-    while(cleanupItr != cleanupFT_FaceItems.end())
+    while (cleanupItr != cleanupFT_FaceItems.end())
     {
         cleanupFace = *cleanupItr;
-        if(*cleanupFace)
+        if (*cleanupFace)
         {
             FT_Done_Face(**cleanupFace);
             delete *cleanupFace;
@@ -65,3 +66,4 @@ void FTCleanup::UnregisterObject(FT_Face **obj)
 {
     cleanupFT_FaceItems.erase(obj);
 }
+

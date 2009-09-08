@@ -2,6 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2009 Sam Hocevar <sam@hocevar.net>
+ *               2009 Mathew Eis (kingrobot)
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -41,7 +42,6 @@ typedef void* FTCleanupObject;
  */
 class FTCleanup
 {
-
     protected:
 
         /**
@@ -62,36 +62,36 @@ class FTCleanup
     public:
 
         /**
-         * Generates the instance if necessary and returns it
+         * Generate the instance if necessary and return it
          *
-         * @return     The FTCleanup instance
+         * @return The FTCleanup instance
          */
         static FTCleanup* Instance()
         {
-                if (FTCleanup::_instance == 0)
-                        FTCleanup::_instance = new FTCleanup;
-                return FTCleanup::_instance;
+            if (FTCleanup::_instance == 0)
+                FTCleanup::_instance = new FTCleanup;
+            return FTCleanup::_instance;
         }
 
         /**
-        * Destroys the FTCleanup instance
+        * Destroy the FTCleanup instance
         */
         static void DestroyAll()
         {
-                delete FTCleanup::_instance;
+            delete FTCleanup::_instance;
         }
 
         /**
-         * Adds a FT_Face to the cleanup list
+         * Add an FT_Face to the cleanup list
          *
-         * @param obj    The reference to the FT_Face to be deleted on cleanup
+         * @param obj The reference to the FT_Face to be deleted on cleanup
          */
         void RegisterObject(FT_Face **obj);
 
         /**
-         * Removes a FT_Face from the cleanup list
+         * Remove an FT_Face from the cleanup list
          *
-         * @param obj    The reference to the FT_Face to be removed from the list
+         * @param obj The reference to the FT_Face to be removed from the list
          */
         void UnregisterObject(FT_Face **obj);
 
@@ -100,5 +100,5 @@ class FTCleanup
         std::set<FT_Face **> cleanupFT_FaceItems;
 };
 
-
 #endif  //  __FTCleanup__
+

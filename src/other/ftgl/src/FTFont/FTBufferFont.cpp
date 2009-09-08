@@ -230,17 +230,13 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
     int cacheIndex = -1;
     bool inCache = false;
 
-    // Protect blending functions, GL_BLEND and GL_TEXTURE_2D
+    // Protect blending functions and GL_TEXTURE_2D
     glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
 
     // Protect glPixelStorei() calls
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
     glEnable(GL_TEXTURE_2D);
-    if ((renderMode & FTGL::RENDER_NOBLEND) == 0) {
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // GL_ONE
-    }
 
     // Search whether the string is already in a texture we uploaded
     for(int n = 0; n < BUFFER_CACHE_SIZE; n++)

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="ftgl_static"
 	ProjectGUID="{1D758EEA-59C3-46E4-BEF5-16DCCA8C0B21}"
 	RootNamespace="ftgl_static"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../;../../src/;&quot;../../../freetype/include&quot;"
+				AdditionalIncludeDirectories="$(FREETYPE)/include;../../src/;../"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;FTGL_LIBRARY_STATIC"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -104,7 +105,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../;../../src/;&quot;../../../freetype/include&quot;"
+				AdditionalIncludeDirectories="$(FREETYPE)/include;../../src/;../"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;FTGL_LIBRARY_STATIC"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -522,7 +523,7 @@
 			</Filter>
 		</Filter>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath="..\README.txt"
 			>
 		</File>
 	</Files>

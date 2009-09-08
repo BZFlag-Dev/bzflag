@@ -224,6 +224,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\FTCleanup.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\FTContour.cpp"
 				>
 			</File>
@@ -354,6 +358,10 @@
 			>
 			<File
 				RelativePath="..\..\src\FTCharmap.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\FTCleanup.h"
 				>
 			</File>
 			<File

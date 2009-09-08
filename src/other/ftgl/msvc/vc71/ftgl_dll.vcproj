@@ -142,6 +142,9 @@
 				RelativePath="..\..\src\FTCharmap.cpp">
 			</File>
 			<File
+				RelativePath="..\..\src\FTCleanup.cpp">
+			</File>
+			<File
 				RelativePath="..\..\src\FTContour.cpp">
 			</File>
 			<File
@@ -250,6 +253,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\FTCharToGlyphIndexMap.h">
+			</File>
+			<File
+				RelativePath="..\..\src\FTCleanup.h">
 			</File>
 			<File
 				RelativePath="..\..\src\FTContour.h">

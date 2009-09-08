@@ -103,7 +103,6 @@ FTFace::~FTFace()
         FTCleanup::Instance()->UnregisterObject(&ftFace);
 
         FT_Done_Face(*ftFace);
-
         delete ftFace;
         ftFace = 0;
     }
@@ -213,7 +212,7 @@ void FTFace::BuildKerningCache()
     kernAdvance.x = 0;
     kernAdvance.y = 0;
     kerningCache = new FTGL_DOUBLE[FTFace::MAX_PRECOMPUTED
-				   * FTFace::MAX_PRECOMPUTED * 2];
+                                    * FTFace::MAX_PRECOMPUTED * 2];
     for(unsigned int j = 0; j < FTFace::MAX_PRECOMPUTED; j++)
     {
         for(unsigned int i = 0; i < FTFace::MAX_PRECOMPUTED; i++)

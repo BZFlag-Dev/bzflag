@@ -81,7 +81,7 @@ const float OY = 170;
 //wchar_t myString[16] = { 0x6FB3, 0x9580};
 char myString[4096];
 
-static const int FTGL_NUM_FONTS = 7;
+static int const FTGL_NUM_FONTS = 7;
 static FTFont* fonts[FTGL_NUM_FONTS];
 static FTPixmapFont* infoFont;
 
@@ -703,22 +703,22 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    std::cout << "The following interactive commands are available:\n"
-	      << "\tTAB:         change the alignment of the text\n"
-	      << "\tENTER:       toggle interactive mode\n"
-	      << "\n"
-	      << "\tARROW-UP:    cycle the font type up\n"
-	      << "\tARROW-DOWN:  cycle the font type down\n"
-	      << "\tARROW-LEFT:  decrease the font size\n"
-	      << "\tARROW-RIGHT: increase the font size\n"
-	      << "\n"
-	      << "\tPAGE-UP:     cycle the layout up\n"
-	      << "\tPAGE-DOWN:   cycle the layout down\n"
-	      << "\tHOME:        decrease line length\n"
-	      << "\tEND:         increase line length\n"
-	      << "\n"
-	      << "\tESC:         quit\n"
-      ;
+    std::cout
+        << "The following interactive commands are available:" << std::endl
+        << "\tTAB:         change the alignment of the text" << std::endl
+        << "\tENTER:       toggle interactive mode" << std::endl
+        << std::endl
+        << "\tARROW-UP:    cycle the font type up" << std::endl
+        << "\tARROW-DOWN:  cycle the font type down" << std::endl
+        << "\tARROW-LEFT:  decrease the font size" << std::endl
+        << "\tARROW-RIGHT: increase the font size" << std::endl
+        << std::endl
+        << "\tPAGE-UP:     cycle the layout up" << std::endl
+        << "\tPAGE-DOWN:   cycle the layout down" << std::endl
+        << "\tHOME:        decrease line length" << std::endl
+        << "\tEND:         increase line length" << std::endl
+        << std::endl
+        << "\tESC:         quit" << std::endl;
 
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DEPTH | GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE);

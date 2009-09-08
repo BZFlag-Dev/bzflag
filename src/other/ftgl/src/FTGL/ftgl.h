@@ -52,11 +52,10 @@ namespace FTGL
 {
     typedef enum
     {
-        RENDER_FRONT   = 0x00001,
-        RENDER_BACK    = 0x00002,
-        RENDER_SIDE    = 0x00004,
-        RENDER_ALL     = 0x0ffff,
-	RENDER_NOBLEND = 0x10000
+        RENDER_FRONT = 0x0001,
+        RENDER_BACK  = 0x0002,
+        RENDER_SIDE  = 0x0004,
+        RENDER_ALL   = 0xffff
     } RenderMode;
 
     typedef enum
@@ -68,11 +67,10 @@ namespace FTGL
     } TextAlignment;
 }
 #else
-#   define FTGL_RENDER_FRONT   0x00001
-#   define FTGL_RENDER_BACK    0x00002
-#   define FTGL_RENDER_SIDE    0x00004
-#   define FTGL_RENDER_ALL     0x0ffff
-#   define FTGL_RENDER_NOBLEND 0x10000
+#   define FTGL_RENDER_FRONT 0x0001
+#   define FTGL_RENDER_BACK  0x0002
+#   define FTGL_RENDER_SIDE  0x0004
+#   define FTGL_RENDER_ALL   0xffff
 
 #   define FTGL_ALIGN_LEFT    0
 #   define FTGL_ALIGN_CENTER  1

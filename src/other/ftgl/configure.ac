@@ -113,6 +113,15 @@ if test "x${LATEX}" != "xno"; then
 fi
 AM_CONDITIONAL(HAVE_LATEX, test "x${LATEX}" != "xno")
 
+# make sure ECHO and ECHO_N got defined and substituted
+if test "x$ECHO" = "x" ; then
+    ECHO=echo
+    AC_MSG_NOTICE([ECHO was not defined by configure so defining manually])
+fi
+AC_SUBST(ECHO)
+AC_SUBST(ECHO_N)
+
+
 AC_CONFIG_FILES([
   ftgl.pc
 ])
