@@ -1124,8 +1124,8 @@ void handleJoinServer(void *msg)
     info.team = (TeamColor)team;
   }
 
-  printf("AutoJoin: %s %u %i \"%s\" \"%s\"\n", // FIXME
-         addr.c_str(), port, team, referrer.c_str(), message.c_str());
+  logDebugMessage(1, "AutoJoin: %s %u %i \"%s\" \"%s\"\n",
+                  addr.c_str(), port, team, referrer.c_str(), message.c_str());
 
   joinGame();
 }

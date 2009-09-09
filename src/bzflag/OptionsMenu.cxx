@@ -81,7 +81,7 @@ OptionsMenu::OptionsMenu()
 
   hubOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
-  label->setLabel("HUB Settings");
+  label->setLabel("Hub Settings");
   addControl(label);
 
   option = new HUDuiList;

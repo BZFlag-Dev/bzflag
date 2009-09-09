@@ -231,9 +231,9 @@ bool HubLink::update()
 
   if (state == StateFailed) {
     if (controlPanel) {
-      controlPanel->addMessage("HubLink: " + failMsg);
+      controlPanel->addMessage("Hub: " + failMsg);
     }
-    logDebugMessage(0, "HubLink: %s\n", failMsg.c_str());
+    logDebugMessage(0, "Hub: %s\n", failMsg.c_str());
     return false;
   }
 
@@ -374,8 +374,9 @@ void HubLink::stateConnect()
     msg += " " + TextUtils::itoa(luaCode.size());
     msg += " " + MD5(luaCode).hexdigest();
   }
-  sendChunk(msg);
   debugf(1, "initial message = '%s'\n", msg.c_str());
+
+  sendData(msg + "\r\n");
 
   state = StateGetCode;
   debugf(1, "entered StateGetCode\n");

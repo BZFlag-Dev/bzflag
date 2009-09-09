@@ -409,7 +409,24 @@ std::string HUDRenderer::getComposePrompt() const
 
 void HUDRenderer::setComposePrompt(const std::string& prompt) const
 {
-  return composeTypeIn->setLabel(prompt);
+  composeTypeIn->setLabel(prompt);
+
+  // setup the geometry
+  const LocalFontFace* cFontFace = composeTypeIn->getFontFace();
+  if (cFontFace) {
+    FontManager &fm = FontManager::instance();
+    const int   faceID = cFontFace->getFMFace();
+    const float cFontSize = composeTypeIn->getFontSize();
+    const float fontHeight = fm.getStringHeight(faceID, cFontSize);
+    const float x =
+      fm.getStringWidth(faceID, cFontSize, composeTypeIn->getLabel()) +
+      fm.getStringWidth(faceID, cFontSize, "__");
+    const float y = fontHeight * 0.5f;
+    composeTypeIn->setLabelWidth(x);
+    composeTypeIn->setPosition(x + 8, y); // pad prompt on the left just a smidgen
+    // FIXME what is this supposed to do?
+    composeTypeIn->setSize(window.getWidth() - x, 0);
+  }
 }
 
 
@@ -443,32 +460,17 @@ void HUDRenderer::setComposing(const std::string &prompt) {
 
 
 // Set the prompt and allow editing or not depending on _allowEdit
-void HUDRenderer::setComposing(const std::string &prompt,
-						  bool _allowEdit)
+void HUDRenderer::setComposing(const std::string &prompt, bool _allowEdit)
 {
-  showCompose = (prompt.length() != 0);
-  if (showCompose) {
-    composeTypeIn->setEditing(_allowEdit);
-    composeTypeIn->setLabel(prompt);
-    composeTypeIn->setString("");
-    HUDui::setFocus(composeTypeIn);
-
-    const LocalFontFace* cFontFace = composeTypeIn->getFontFace();
-    float cFontSize = composeTypeIn->getFontSize();
-    if (cFontFace >= 0) {
-      FontManager &fm = FontManager::instance();
-      float fontHeight = fm.getStringHeight(cFontFace->getFMFace(), cFontSize);
-      const float x =
-	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, composeTypeIn->getLabel()) +
-	fm.getStringWidth(cFontFace->getFMFace(), cFontSize, "__");
-      const float y = fontHeight * 0.5f;
-      composeTypeIn->setLabelWidth(x);
-      composeTypeIn->setPosition(x + 8, y); // pad prompt on the left just a smidgen
-      // FIXME what is this supposed to do?
-      composeTypeIn->setSize(window.getWidth() - x, 0);
-    }
-  } else {
+  showCompose = !prompt.empty();
+  if (!showCompose) {
     HUDui::setFocus(NULL);
+  }
+  else {
+    composeTypeIn->setEditing(_allowEdit);
+    composeTypeIn->setString("");
+    setComposePrompt(prompt);
+    HUDui::setFocus(composeTypeIn);
   }
 }
 

@@ -58,6 +58,14 @@ static void PushNamedString(lua_State* L, const char* key,
 }
 
 
+static void PushNamedInt(lua_State* L, const char* key, int value)
+{
+  lua_pushstring(L, key);
+  lua_pushinteger(L, value);
+  lua_rawset(L, -3);
+}
+
+
 static void limitMembers(lua_State* L, const char* table,
                          const std::vector<std::string>& functions)
 {
@@ -72,6 +80,8 @@ static void limitMembers(lua_State* L, const char* table,
   lua_setglobal(L, table);
 }
 
+
+//============================================================================//
 
 bool HubLink::createLua(const std::string& code)
 {
@@ -111,12 +121,12 @@ bool HubLink::createLua(const std::string& code)
     fail("pushAnsiCodes() error");
     return false;
   }
-  if (!pushCallOuts()) {
-    fail("pushCallOuts() error");
-    return false;
-  }
   if (!pushConstants()) {
     fail("pushConstants() error");
+    return false;
+  }
+  if (!pushCallOuts()) {
+    fail("pushCallOuts() error");
     return false;
   }
 
@@ -152,9 +162,6 @@ bool HubLink::createLua(const std::string& code)
 
 bool HubLink::pushAnsiCodes()
 {
-  lua_pushvalue(L, LUA_GLOBALSINDEX);
-
-  lua_pushliteral(L, "ANSI");
   lua_newtable(L);
 
   PushNamedString(L, "RESET",        ANSI_STR_RESET_FINAL);
@@ -176,9 +183,26 @@ bool HubLink::pushAnsiCodes()
   PushNamedString(L, "CYAN",    ANSI_STR_FG_CYAN);
   PushNamedString(L, "WHITE",   ANSI_STR_FG_WHITE);
   PushNamedString(L, "ORANGE",  ANSI_STR_FG_ORANGE);
-  lua_rawset(L, -3);
 
-  lua_pop(L, 1); // pop _G
+  lua_setglobal(L, "ANSI");
+
+  return true;
+}
+
+
+bool HubLink::pushConstants()
+{
+  lua_newtable(L);
+
+  PushNamedInt(L, "ALLTABS", ControlPanel::MessageAllTabs);
+  PushNamedInt(L, "CURRENT", ControlPanel::MessageCurrent);
+  PushNamedInt(L, "ALL",     ControlPanel::MessageAll);
+  PushNamedInt(L, "CHAT",    ControlPanel::MessageChat);
+  PushNamedInt(L, "SERVER",  ControlPanel::MessageServer);
+  PushNamedInt(L, "MISC",    ControlPanel::MessageMisc);
+  PushNamedInt(L, "DEBUG",   ControlPanel::MessageDebug);
+
+  lua_setglobal(L, "TABS");
 
   return true;
 }
@@ -373,20 +397,19 @@ static inline HubLink* GetLink(lua_State* L)
 }
 
 
-static int ParseTab(lua_State* L, int index)
+static int CheckTab(lua_State* L, int index)
 {
+  const int type = lua_type(L, index);
+  if ((type != LUA_TNUMBER) && (type != LUA_TSTRING)) {
+    luaL_error(L, "expected number or string");
+  }
   if (controlPanel == NULL) {
     return -1;
   }
-  switch (lua_type(L, index)) {
-    case LUA_TNUMBER: {
-      return lua_tonumber(L, index);
-    }
-    case LUA_TSTRING: {
-      return controlPanel->getTabID(lua_tostring(L, index));
-    }
+  if (type == LUA_TNUMBER) {
+    return lua_tonumber(L, index);
   }
-  return -1;
+  return controlPanel->getTabID(lua_tostring(L, index));
 }
 
 
@@ -408,7 +431,7 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, PeekData);
 
   PUSH_LUA_CFUNC(L, Print);
-  PUSH_LUA_CFUNC(L, SetAlert);
+  PUSH_LUA_CFUNC(L, Alert);
 
   PUSH_LUA_CFUNC(L, AddTab);
   PUSH_LUA_CFUNC(L, RemoveTab);
@@ -468,28 +491,7 @@ bool HubLink::pushCallOuts()
 }
 
 
-bool HubLink::pushConstants()
-{
-#define PUSH_LUA_STRING_NUMBER(s, n) \
-  lua_pushstring(L, s); \
-  lua_pushnumber(L, n); \
-  lua_rawset(L, -3);
-
-  lua_newtable(L);
-  PUSH_LUA_STRING_NUMBER("ALLTABS", ControlPanel::MessageAllTabs);
-  PUSH_LUA_STRING_NUMBER("CURRENT", ControlPanel::MessageCurrent);
-  PUSH_LUA_STRING_NUMBER("ALL",     ControlPanel::MessageAll);
-  PUSH_LUA_STRING_NUMBER("CHAT",    ControlPanel::MessageChat);
-  PUSH_LUA_STRING_NUMBER("SERVER",  ControlPanel::MessageServer);
-  PUSH_LUA_STRING_NUMBER("MISC",    ControlPanel::MessageMisc);
-  PUSH_LUA_STRING_NUMBER("DEBUG",   ControlPanel::MessageDebug);
-  lua_setglobal(L, "TABS");
-
-#undef PUSH_LUA_STRING_NUMBER
-
-  return true;
-}
-
+//============================================================================//
 
 int HubLink::Reload(lua_State* L)
 {
@@ -514,6 +516,8 @@ int HubLink::Disable(lua_State* L)
   return 0;
 }
 
+
+//============================================================================//
 
 int HubLink::AddTab(lua_State* L)
 {
@@ -557,7 +561,7 @@ int HubLink::ShiftTab(lua_State* L)
   if (!controlPanel) {
     return 0;
   }
-  const int tabID = ParseTab(L, 1);
+  const int tabID = CheckTab(L, 1);
   const int distance  = luaL_checkint(L, 2);
   lua_pushboolean(L, controlPanel->shiftTab(tabID, distance));
   return 1;
@@ -569,7 +573,7 @@ int HubLink::ClearTab(lua_State* L)
   if (!controlPanel) {
     return 0;
   }
-  const int tabID = ParseTab(L, 1);
+  const int tabID = CheckTab(L, 1);
   lua_pushboolean(L, controlPanel->clearTab(tabID));
   return 1;
 }
@@ -611,7 +615,7 @@ int HubLink::GetTabLabel(lua_State* L)
   if (!controlPanel) {
     return 0;
   }
-  const int tabID = luaL_checkint(L, 1);
+  const int tabID = CheckTab(L, 1);
   const std::string& label = controlPanel->getTabLabel(tabID);
   if (label.empty()) {
     return 0;
@@ -638,6 +642,19 @@ int HubLink::GetActiveTab(lua_State* L)
   return 1;
 }
 
+
+int HubLink::SetActiveTab(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const int tabID = CheckTab(L, 1);
+  lua_pushboolean(L, controlPanel->setActiveTab(tabID));
+  return 1;
+}
+
+
+//============================================================================//
 
 int HubLink::GetComposePrompt(lua_State* L)
 {
@@ -669,7 +686,7 @@ int HubLink::SetComposePrompt(lua_State* L)
     return 0;
   }
   const std::string prompt = luaL_checkstring(L, 1);
-  hud->setComposing(prompt);
+  hud->setComposePrompt(prompt);
   lua_pushboolean(L, true);
   return 1;
 }
@@ -711,16 +728,7 @@ int HubLink::SetComposeString(lua_State* L)
 }
 
 
-int HubLink::SetActiveTab(lua_State* L)
-{
-  if (!controlPanel) {
-    return 0;
-  }
-  const int tabID = ParseTab(L, 1);
-  lua_pushboolean(L, controlPanel->setActiveTab(tabID));
-  return 1;
-}
-
+//============================================================================//
 
 int HubLink::SendData(lua_State* L)
 {
@@ -777,6 +785,8 @@ int HubLink::PeekData(lua_State* L)
 }
 
 
+//============================================================================//
+
 int HubLink::Print(lua_State* L)
 {
   const std::string msg = luaL_checkstring(L, 1);
@@ -800,7 +810,7 @@ int HubLink::Print(lua_State* L)
 }
 
 
-int HubLink::SetAlert(lua_State* L)
+int HubLink::Alert(lua_State* L)
 {
   const std::string msg = luaL_checkstring(L, 1);
   const int   priority  = luaL_optint(L, 2, 0);
@@ -812,6 +822,8 @@ int HubLink::SetAlert(lua_State* L)
 }
 
 
+//============================================================================//
+
 int HubLink::CalcMD5(lua_State* L)
 {
   const std::string text = luaL_checkstdstring(L, 1);
@@ -822,11 +834,13 @@ int HubLink::CalcMD5(lua_State* L)
 
 int HubLink::StripAnsiCodes(lua_State* L)
 {
-  const std::string text = luaL_checkstring(L, 1);
+  const char* text = luaL_checkstring(L, 1);
   lua_pushstdstring(L, stripAnsiCodes(text));
   return 1;
 }
 
+
+//============================================================================//
 
 int HubLink::SetBZDB(lua_State* L)
 {
@@ -873,6 +887,8 @@ int HubLink::GetCode(lua_State* L)
   return 1;
 }
 
+
+//============================================================================//
 
 int HubLink::GetTime(lua_State* L)
 {
@@ -996,14 +1012,18 @@ int HubLink::UnpackDouble(lua_State* L) { UNPACK_TYPE(Double, double)   }
   #include <fcntl.h>
   static int ReadStdin(lua_State* L)
   {
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+    if (bits == -1) {
+      return 0;
+    }
+    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
     char buf[4096];
     const int r = read(STDIN_FILENO, buf, sizeof(buf));
+    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
     if (r <= 0) {
       return 0;
     }
     lua_pushlstring(L, buf, r);
-    fcntl(STDIN_FILENO, F_SETFL, 0);
     return 1;
   }
 #endif

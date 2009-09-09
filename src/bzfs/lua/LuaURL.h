@@ -38,7 +38,6 @@ class LuaURL : private cURLManager {
 
     bool GetActive()  const { return active; }
     bool GetSuccess() const { return success; }
-    bool WantCache()  const { return wantCache; }
 
     unsigned int  GetLength() const { return theLen; }
 
@@ -58,7 +57,6 @@ class LuaURL : private cURLManager {
     lua_State* L;
     bool active;
     bool success;
-    bool wantCache;
     bool headOnly; // do not fetch the data
 
     double fileSize;

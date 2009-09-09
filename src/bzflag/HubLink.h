@@ -129,7 +129,7 @@ class HubLink {
     static int PeekData(lua_State* L);
 
     static int Print(lua_State* L);
-    static int SetAlert(lua_State* L);
+    static int Alert(lua_State* L);
 
     static int AddTab(lua_State* L);
     static int RemoveTab(lua_State* L);

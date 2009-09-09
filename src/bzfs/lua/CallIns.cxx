@@ -463,10 +463,10 @@ bool CI_AllowCTFCapture::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->teamCapped);
   lua_pushinteger(L, ed->teamCapping);
   lua_pushinteger(L, ed->playerCapping);
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
-  lua_pushfloat(L,  ed->rot);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
+  lua_pushfloat(L,   ed->rot);
 
   if (!RunCallIn(7, 2)) {
     return false;
@@ -502,9 +502,9 @@ bool CI_AllowFlagGrab::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
   lua_pushinteger(L, ed->shotType);
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   if (!RunCallIn(7, 1)) {
     return false;
@@ -697,10 +697,10 @@ bool CI_Capture::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->teamCapped);
   lua_pushinteger(L, ed->teamCapping);
   lua_pushinteger(L, ed->playerCapping);
-  lua_pushfloat(L, ed->pos[0]);
-  lua_pushfloat(L, ed->pos[1]);
-  lua_pushfloat(L, ed->pos[2]);
-  lua_pushfloat(L, ed->rot);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
+  lua_pushfloat(L,   ed->rot);
 
   return RunCallIn(7, 0);
 }
@@ -713,7 +713,7 @@ bool CI_FilteredChatMessage::execute(bz_EventData* eventData)
   if (!PushCallIn(4)) {
     return false;
   }
-  lua_pushstring(L, ed->message.c_str());
+  lua_pushstring(L,  ed->message.c_str());
   lua_pushinteger(L, ed->from);
   lua_pushinteger(L, ed->to);
   lua_pushinteger(L, ed->team);
@@ -743,9 +743,9 @@ bool CI_FlagDropped::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   return RunCallIn(6, 0);
 }
@@ -763,9 +763,9 @@ bool CI_FlagGrabbed::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
   lua_pushinteger(L, ed->shotType);
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   return RunCallIn(7, 0);
 }
@@ -781,9 +781,9 @@ bool CI_FlagReset::execute(bz_EventData* eventData)
 
   lua_pushinteger(L, ed->flagID);
   lua_pushstring(L,  ed->flagType);
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
   lua_pushboolean(L, ed->teamIsEmpty);
 //  lua_pushboolean(L, ed->changed); // FIXME - output, unused ?
 
@@ -869,7 +869,7 @@ bool CI_GetAutoTeam::execute(bz_EventData* eventData)
   }
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->team);
-  lua_pushstring(L, ed->callsign.c_str());
+  lua_pushstring(L,  ed->callsign.c_str());
 
   if (!RunCallIn(3, 1)) {
     return false;
@@ -1153,7 +1153,7 @@ bool CI_Logging::execute(bz_EventData* eventData)
     return false;
   }
 
-  lua_pushstring(L, ed->message.c_str());
+  lua_pushstring(L,  ed->message.c_str());
   lua_pushinteger(L, ed->level);
 
   return RunCallIn(2, 0);
@@ -1270,9 +1270,9 @@ bool CI_PlayerCollision::execute(bz_EventData* eventData)
 
   lua_pushinteger(L, ed->players[0]);
   lua_pushinteger(L, ed->players[1]);
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   if (!RunCallIn(5, 1)) {
     return false;
@@ -1297,8 +1297,8 @@ bool CI_PlayerCustomDataChanged::execute(bz_EventData* eventData)
   }
 
   lua_pushinteger(L, ed->playerID);
-  lua_pushstring(L, ed->key.c_str());
-  lua_pushstring(L, ed->data.c_str());
+  lua_pushstring(L,  ed->key.c_str());
+  lua_pushstring(L,  ed->data.c_str());
 
   return RunCallIn(3, 0);
 }
@@ -1318,10 +1318,10 @@ bool CI_PlayerDied::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->killerTeam);
   lua_pushstring(L,  ed->flagKilledWith.c_str());
   lua_pushinteger(L, ed->shotID);
-  lua_pushfloat(L,  ed->state.pos[0]);
-  lua_pushfloat(L,  ed->state.pos[1]);
-  lua_pushfloat(L,  ed->state.pos[2]);
-  lua_pushfloat(L,  ed->state.rotation);
+  lua_pushfloat(L,   ed->state.pos[0]);
+  lua_pushfloat(L,   ed->state.pos[1]);
+  lua_pushfloat(L,   ed->state.pos[2]);
+  lua_pushfloat(L,   ed->state.rotation);
   // bz_PlayerUpdateState state; -- FIXME?
 
   return RunCallIn(10, 0);
@@ -1414,8 +1414,8 @@ bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
   }
 
   lua_pushinteger(L, ed->playerID);
-  lua_pushstring(L, ed->key.c_str());
-  lua_pushstring(L, ed->data.c_str());
+  lua_pushstring(L,  ed->key.c_str());
+  lua_pushstring(L,  ed->data.c_str());
 
   return RunCallIn(3, 0);
 }
@@ -1485,7 +1485,7 @@ bool CI_RawChatMessage::execute(bz_EventData* eventData)
   if (!PushCallIn(4)) {
     return false;
   }
-  lua_pushstring(L, ed->message.c_str());
+  lua_pushstring(L,  ed->message.c_str());
   lua_pushinteger(L, ed->from);
   lua_pushinteger(L, ed->to);
   lua_pushinteger(L, ed->team);
@@ -1591,12 +1591,12 @@ bool CI_ShotFired::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
   lua_pushstring(L,  ed->type.c_str());
-  lua_pushfloat(L,  ed->pos[0]);
-  lua_pushfloat(L,  ed->pos[1]);
-  lua_pushfloat(L,  ed->pos[2]);
-  lua_pushfloat(L,  ed->vel[0]);
-  lua_pushfloat(L,  ed->vel[1]);
-  lua_pushfloat(L,  ed->vel[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
+  lua_pushfloat(L,   ed->vel[0]);
+  lua_pushfloat(L,   ed->vel[1]);
+  lua_pushfloat(L,   ed->vel[2]);
 
   //lua_pushboolean(L, ed->changed); // FIXME - output? used?
 
@@ -1615,9 +1615,9 @@ bool CI_ShotExpired::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
   lua_pushstring(L,  ed->type.c_str());
-  lua_pushfloat(L, ed->pos[0]);
-  lua_pushfloat(L, ed->pos[1]);
-  lua_pushfloat(L, ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   return RunCallIn(6, 0);
 }
@@ -1634,9 +1634,9 @@ bool CI_ShotStopped::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
   lua_pushstring(L,  ed->type.c_str());
-  lua_pushfloat(L, ed->pos[0]);
-  lua_pushfloat(L, ed->pos[1]);
-  lua_pushfloat(L, ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   if (ed->obstacleGUID == (uint32_t)-1) {
     lua_pushnil(L);
@@ -1659,9 +1659,9 @@ bool CI_ShotRicochet::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
   lua_pushstring(L,  ed->type.c_str());
-  lua_pushfloat(L, ed->pos[0]);
-  lua_pushfloat(L, ed->pos[1]);
-  lua_pushfloat(L, ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
 
   if (ed->obstacleGUID == (uint32_t)-1) {
     lua_pushnil(L);
@@ -1684,9 +1684,9 @@ bool CI_ShotTeleport::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->shotID);
   lua_pushstring(L,  ed->type.c_str());
-  lua_pushfloat(L, ed->pos[0]);
-  lua_pushfloat(L, ed->pos[1]);
-  lua_pushfloat(L, ed->pos[2]);
+  lua_pushfloat(L,   ed->pos[0]);
+  lua_pushfloat(L,   ed->pos[1]);
+  lua_pushfloat(L,   ed->pos[2]);
   lua_pushinteger(L, ed->linkSrcID);
   lua_pushinteger(L, ed->linkDstID);
 

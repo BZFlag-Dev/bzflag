@@ -75,28 +75,29 @@ static inline GameKeeper::Player* getPlayerByIndex(int playerID)
 // FIXME -- move into "utils.cpp"
 static bz_eTeamType ParseTeam(lua_State* L, int index)
 {
+  static map<string, bz_eTeamType> nameMap;
+  if (nameMap.empty()) {
+    nameMap["auto"]     = eAutomaticTeam;
+    nameMap["none"]     = eNoTeam;
+    nameMap["rogue"]    = eRogueTeam;
+    nameMap["red"]      = eRedTeam;
+    nameMap["green"]    = eGreenTeam;
+    nameMap["blue"]     = eBlueTeam;
+    nameMap["purple"]   = ePurpleTeam;
+    nameMap["rabbit"]   = eRabbitTeam;
+    nameMap["hunter"]   = eHunterTeam;
+    nameMap["observer"] = eObservers;
+    nameMap["admin"]    = eAdministrators;
+  }
+
   if (lua_israwstring(L, index)) {
-    static map<string, bz_eTeamType> nameMap;
-    if (nameMap.empty()) {
-      nameMap["auto"]     = eAutomaticTeam;
-      nameMap["none"]     = eNoTeam;
-      nameMap["rogue"]    = eRogueTeam;
-      nameMap["red"]      = eRedTeam;
-      nameMap["green"]    = eGreenTeam;
-      nameMap["blue"]     = eBlueTeam;
-      nameMap["purple"]   = ePurpleTeam;
-      nameMap["rabbit"]   = eRabbitTeam;
-      nameMap["hunter"]   = eHunterTeam;
-      nameMap["observer"] = eObservers;
-      nameMap["admin"]    = eAdministrators;
-    }
     string s = lua_tostring(L, index);
     s = TextUtils::tolower(s);
     map<string, bz_eTeamType>::const_iterator it = nameMap.find(s);
     if (it != nameMap.end()) {
       return it->second;
     }
-    luaL_error(L, "invalid team: %s", s.c_str());
+    luaL_error(L, "invalid team: '%s'", s.c_str());
   }
   else if (lua_israwnumber(L, index)) {
     return (bz_eTeamType)lua_toint(L, index);
@@ -104,6 +105,7 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
   else {
     luaL_error(L, "invalid team argument");
   }
+
   return eRogueTeam;
 }
 
@@ -233,7 +235,6 @@ static int MoveFlag(lua_State* L);
 static int ResetFlag(lua_State* L);
 static int ResetFlags(lua_State* L);
 
-static int GetTeamName(lua_State* L);
 static int GetTeamLimit(lua_State* L);
 static int GetTeamCount(lua_State* L);
 static int GetTeamScore(lua_State* L);
@@ -443,7 +444,6 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, ResetFlags);
 
   // Team
-  PUSH_LUA_CFUNC(L, GetTeamName);
   PUSH_LUA_CFUNC(L, GetTeamLimit);
   PUSH_LUA_CFUNC(L, GetTeamCount);
   PUSH_LUA_CFUNC(L, GetTeamScore);
@@ -1735,16 +1735,12 @@ static int GivePlayerFlag(lua_State* L)
 {
   const int playerID = luaL_checkint(L, 1);
 
-  const char* flagType = NULL;
-  if (!lua_isnil(L, 2)) {
-    flagType = luaL_checkstring(L, 2);
-  }
-
-  if (flagType == NULL) {
+  if (lua_isnil(L, 2)) {
     lua_pushboolean(L, bz_removePlayerFlag(playerID));
     return 1;
   }
 
+  const char* flagType = luaL_checkstring(L, 2);
   const bool force = lua_isboolean(L, 3) && lua_tobool(L, 3);
   lua_pushboolean(L, bz_givePlayerFlag(playerID, flagType, force));
 
@@ -1836,14 +1832,6 @@ static int ResetFlags(lua_State* L)
 
 //============================================================================//
 //============================================================================//
-
-static int GetTeamName(lua_State* L)
-{
-  bz_eTeamType teamID = ParseTeam(L, 1);
-  lua_pushliteral(L, "FIXME"); teamID = teamID; // FIXME bzu_GetTeamName(teamID));
-  return 1;
-}
-
 
 static int GetTeamLimit(lua_State* L)
 {
@@ -2590,14 +2578,18 @@ static int CalcMD5(lua_State* L)
   #include <fcntl.h>
   static int ReadStdin(lua_State* L)
   {
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+    if (bits == -1) {
+      return 0;
+    }
+    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
     char buf[4096];
     const int r = read(STDIN_FILENO, buf, sizeof(buf));
+    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
     if (r <= 0) {
       return 0;
     }
     lua_pushlstring(L, buf, r);
-    fcntl(STDIN_FILENO, F_SETFL, 0);
     return 1;
   }
 #endif
