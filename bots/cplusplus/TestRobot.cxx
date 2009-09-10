@@ -13,6 +13,9 @@
 /* BZRobots API Header */
 #include "AdvancedRobot.h"
 
+/* system headers */
+#include <stdio.h>
+
 using namespace BZRobots;
 
 /**
