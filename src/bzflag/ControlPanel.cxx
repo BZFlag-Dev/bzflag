@@ -1096,7 +1096,7 @@ bool ControlPanel::shiftTab(int tabID, int distance)
   }
 
   const int swapID = (distance > 0) ? (tabID + 1) : (tabID - 1);
-  if (!validTab(swapID) ||tabs[swapID]->locked) {
+  if (!validTab(swapID) || tabs[swapID]->locked) {
     return false;
   }
 

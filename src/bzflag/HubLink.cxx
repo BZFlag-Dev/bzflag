@@ -376,7 +376,7 @@ void HubLink::stateConnect()
   }
   debugf(1, "initial message = '%s'\n", msg.c_str());
 
-  sendData(msg + "\r\n");
+  sendData(msg + "\n");
 
   state = StateGetCode;
   debugf(1, "entered StateGetCode\n");

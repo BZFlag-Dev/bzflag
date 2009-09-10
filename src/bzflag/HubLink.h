@@ -116,10 +116,13 @@ class HubLink {
     bool pushCallOuts();
     bool pushConstants();
 
-    bool pushCallIn(const char* funcName, int inArgs);
+    bool pushCallIn(int ciCode, int inArgs);
     bool runCallIn(int inArgs, int outArgs);
 
   private: // lua call-outs
+    static int GetCallIn(lua_State* L);
+    static int SetCallIn(lua_State* L);
+
     static int Reload(lua_State* L);
     static int Disable(lua_State* L);
 

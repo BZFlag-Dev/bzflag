@@ -60,15 +60,6 @@ static bool isWordCompletion(const BzfKeyEvent& key)
 }
 
 
-static void localVarIterator(const std::string& name, void* data)
-{
-  if (BZDB.getPermission(name) != StateDatabase::Server) {
-    AutoCompleter* ac = (AutoCompleter*) data;
-    ac->registerWord(name);
-  }
-}
-
-
 bool HubComposeKey::keyPress(const BzfKeyEvent& key)
 {
   bool sendIt;
@@ -92,19 +83,16 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
     const std::string line = hud->getComposeString();
     std::set<std::string> partials;
 
+    AutoCompleter ac;
+    ac.registerWord("/status");
+    ac.registerWord("/connect");
+    ac.registerWord("/disconnect");
+
     // use a custom AutoCompleter for local variables
-    const std::string tag = "/localset";
-    if ((line.size() < tag.size()) || (line.substr(0, tag.size()) != tag)) {
-      completer.complete(line, partials);
-      if (hubLink) {
-        const std::string prefixLine = hubPrefix + line;
-        hubLink->wordComplete(prefixLine, partials);
-      }
-    }
-    else {
-      AutoCompleter ac;
-      BZDB.iterate(localVarIterator, &ac);
-      ac.complete(line, partials);
+    ac.complete(line, partials);
+    if (hubLink) {
+      const std::string prefixLine = hubPrefix + line;
+      hubLink->wordComplete(prefixLine, partials);
     }
 
     if (!partials.empty()) {
