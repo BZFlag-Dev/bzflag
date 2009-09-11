@@ -127,12 +127,10 @@ class HubLink {
     static int Disable(lua_State* L);
 
     static int SendData(lua_State* L);
-    static int ReadDataSize(lua_State* L);
-    static int ReadData(lua_State* L);
-    static int PeekData(lua_State* L);
 
     static int Print(lua_State* L);
     static int Alert(lua_State* L);
+    static int PlaySound(lua_State* L);
 
     static int AddTab(lua_State* L);
     static int RemoveTab(lua_State* L);
@@ -140,6 +138,7 @@ class HubLink {
     static int ClearTab(lua_State* L);
     static int RenameTab(lua_State* L);
     static int GetTabCount(lua_State* L);
+    static int GetTabIndex(lua_State* L);
     static int GetTabLabel(lua_State* L);
     static int GetActiveTab(lua_State* L);
     static int SetActiveTab(lua_State* L);

@@ -29,6 +29,7 @@
 #include "HubLink.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
+#include "LuaHeader.h"
 #include "Pack.h"
 #include "TimeKeeper.h"
 #include "bzfgl.h"
@@ -37,7 +38,7 @@
 #include "version.h"
 
 // local headers
-#include "LuaHeader.h"
+#include "sound.h"
 #include "guiplaying.h"
 
 
@@ -474,12 +475,10 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, Disable);
 
   PUSH_LUA_CFUNC(L, SendData);
-  PUSH_LUA_CFUNC(L, ReadDataSize);
-  PUSH_LUA_CFUNC(L, ReadData);
-  PUSH_LUA_CFUNC(L, PeekData);
 
   PUSH_LUA_CFUNC(L, Print);
   PUSH_LUA_CFUNC(L, Alert);
+  PUSH_LUA_CFUNC(L, PlaySound);
 
   PUSH_LUA_CFUNC(L, AddTab);
   PUSH_LUA_CFUNC(L, RemoveTab);
@@ -487,6 +486,7 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, ClearTab);
   PUSH_LUA_CFUNC(L, RenameTab);
   PUSH_LUA_CFUNC(L, GetTabCount);
+  PUSH_LUA_CFUNC(L, GetTabIndex);
   PUSH_LUA_CFUNC(L, GetTabLabel);
   PUSH_LUA_CFUNC(L, GetActiveTab);
   PUSH_LUA_CFUNC(L, SetActiveTab);
@@ -700,12 +700,29 @@ int HubLink::GetTabCount(lua_State* L)
 }
 
 
+int HubLink::GetTabIndex(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const int tabID = CheckTab(L, 1);
+  if (!controlPanel->validTab(tabID)) {
+    return 0;
+  }
+  lua_pushinteger(L, tabID);
+  return 1;
+}
+
+
 int HubLink::GetTabLabel(lua_State* L)
 {
   if (!controlPanel) {
     return 0;
   }
   const int tabID = CheckTab(L, 1);
+  if (!controlPanel->validTab(tabID)) {
+    return 0;
+  }
   const std::string& label = controlPanel->getTabLabel(tabID);
   if (label.empty()) {
     return 0;
@@ -832,49 +849,6 @@ int HubLink::SendData(lua_State* L)
 }
 
 
-int HubLink::ReadDataSize(lua_State* L)
-{
-  HubLink* link = GetLink(L);
-  if (link == NULL) {
-    return 0;
-  }
-  lua_pushinteger(L, link->recvTotal);
-  return 1;
-}
-
-
-int HubLink::ReadData(lua_State* L)
-{
-  HubLink* link = GetLink(L);
-  if (link == NULL) {
-    return 0;
-  }
-  const int bytes = luaL_optint(L, 1, link->recvTotal);
-  std::string data; 
-  if (!link->readData(bytes, data)) {
-    return 0;
-  }
-  lua_pushstdstring(L, data);
-  return 1;
-}
-
-
-int HubLink::PeekData(lua_State* L)
-{
-  HubLink* link = GetLink(L);
-  if (link == NULL) {
-    return 0;
-  }
-  const int bytes = luaL_optint(L, 1, link->recvTotal);
-  std::string data;
-  if (!link->peekData(bytes, data)) {
-    return 0;
-  }
-  lua_pushstdstring(L, data);
-  return 1;
-}
-
-
 //============================================================================//
 
 int HubLink::Print(lua_State* L)
@@ -909,6 +883,21 @@ int HubLink::Alert(lua_State* L)
 
   hud->setAlert(priority, msg.c_str(), duration, warning);
   return 0;
+}
+
+
+int HubLink::PlaySound(lua_State* L)
+{
+  const char* soundName = luaL_checkstring(L, 1);
+  const int   soundCode = SOUNDSYSTEM.getID(soundName);
+  const bool  important = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+  if (soundCode >= 0) {
+    SOUNDSYSTEM.play(soundCode, NULL, important);
+    lua_pushboolean(L, true);
+  } else {
+    lua_pushboolean(L, false);
+  }
+  return 1;
 }
 
 

@@ -85,6 +85,10 @@ class ControlPanel {
 
     void setMessagesOffset(int offset, int whence, bool paged);
 
+    inline bool validTab(int tabID) const {
+      return (tabID >= 0) && (tabID < (int)tabs.size());
+    }
+
     bool setActiveTab(int tabID);
     int  getActiveTab() const { return activeTab; }
 
@@ -121,10 +125,6 @@ class ControlPanel {
     static void exposeCallback(void*);
     static void bzdbCallback(const std::string& name, void* data);
     static void loggingCallback(int level, const std::string& msg, void* data);
-
-    inline bool validTab(int tab) const {
-      return (tab >= 0) && (tab < (int)tabs.size());
-    }
 
   private:
     void setupTabMap();
