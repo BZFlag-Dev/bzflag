@@ -94,8 +94,9 @@ class CallIn : public bz_EventHandler {
     virtual bool execute(bz_EventData* eventData) = 0;
     void process(bz_EventData* eventData) { execute(eventData); }
 
-    inline int           GetBZCode()   const { return bzCode; }
-    inline int           GetCICode()   const { return ciCode; }
+    inline int GetBZCode() const { return bzCode; }
+    inline int GetCICode() const { return ciCode; }
+
     inline const std::string& GetName()     const { return name; }
     inline const std::string& GetLoopType() const { return loopType; }
 
@@ -156,9 +157,9 @@ class CallIn : public bz_EventHandler {
 
   protected:
     const std::string name;
-    const int    bzCode; // bzfsAPI event code
-    const int    ciCode; // lua call-in registry index
-    const bool   customEvent;
+    const int         bzCode; // bzfsAPI event code
+    const int         ciCode; // lua call-in registry index
+    const bool        customEvent;
     const std::string loopType;
 
     bool bzRegistered;
