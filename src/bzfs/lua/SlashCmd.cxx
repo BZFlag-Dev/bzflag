@@ -19,7 +19,6 @@
 // system headers
 #include <string>
 #include <map>
-using std::string;
 
 // common headers
 #include "bzfsAPI.h"
@@ -30,7 +29,7 @@ using std::string;
 #include "LuaServer.h"
 
 
-static std::map<string, class SlashCmdHandler*> slashHandlers;
+static std::map<std::string, class SlashCmdHandler*> slashHandlers;
 
 static int AttachSlashCommand(lua_State* L);
 static int DetachSlashCommand(lua_State* L);
@@ -41,7 +40,7 @@ static int DetachSlashCommand(lua_State* L);
 
 class SlashCmdHandler : public bz_CustomSlashCommandHandler {
   public:
-    SlashCmdHandler(const string& c, const string& h);
+    SlashCmdHandler(const std::string& c, const std::string& h);
     ~SlashCmdHandler();
 
     bool handle(int playerID, bz_ApiString command,
@@ -50,13 +49,13 @@ class SlashCmdHandler : public bz_CustomSlashCommandHandler {
     const char* help(bz_ApiString /* command */) { return helpTxt.c_str(); }
 
   private:
-    string cmd;
-    string helpTxt;
+    std::string cmd;
+    std::string helpTxt;
     int luaRef;
 };
 
 
-SlashCmdHandler::SlashCmdHandler(const string& c, const string& h)
+SlashCmdHandler::SlashCmdHandler(const std::string& c, const std::string& h)
 : cmd(c)
 , helpTxt(h)
 , luaRef(LUA_NOREF)
@@ -142,7 +141,7 @@ bool SlashCmd::PushEntries(lua_State* L)
 
 bool SlashCmd::CleanUp(lua_State* /*_L*/)
 {
-  std::map<string, SlashCmdHandler*>::const_iterator it, nextIT;
+  std::map<std::string, SlashCmdHandler*>::const_iterator it, nextIT;
 
   for (it = slashHandlers.begin(); it != slashHandlers.end(); /* noop */) {
     nextIT = it;
@@ -162,7 +161,7 @@ bool SlashCmd::CleanUp(lua_State* /*_L*/)
 
 static int AttachSlashCommand(lua_State* L)
 {
-  const string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
+  const std::string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
   const char* help = luaL_checkstring(L, 2);
   if (!lua_isfunction(L, 3)) {
     luaL_error(L, "expected a function");
@@ -192,9 +191,9 @@ static int AttachSlashCommand(lua_State* L)
 
 static int DetachSlashCommand(lua_State* L)
 {
-  const string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
+  const std::string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
 
-  std::map<string, SlashCmdHandler*>::iterator it = slashHandlers.find(cmd);
+  std::map<std::string, SlashCmdHandler*>::iterator it = slashHandlers.find(cmd);
   if (it == slashHandlers.end()) {
     lua_pushboolean(L, false);
     return 1;

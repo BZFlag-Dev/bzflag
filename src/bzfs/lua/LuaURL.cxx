@@ -20,8 +20,6 @@
 #include <time.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "bzfio.h"
@@ -64,7 +62,7 @@ LuaURL::LuaURL(lua_State* _L, const std::string& _url)
     funcArg++;
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-        const string key = lua_tostring(L, -2);
+        const std::string key = lua_tostring(L, -2);
         if (key == "post") {
           postData = luaL_checkstring(L, -1);
         }
@@ -324,9 +322,9 @@ int LuaURLMgr::MetaToString(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int ParseURL(lua_State* L, const string& url, string& hostname)
+static int ParseURL(lua_State* L, const std::string& url, std::string& hostname)
 {
-  string protocol, path;
+  std::string protocol, path;
   int port;
   if (!BzfNetwork::parseURL(url, protocol, hostname, port, path)) {
     lua_pushnil(L);
@@ -347,14 +345,14 @@ static int ParseURL(lua_State* L, const string& url, string& hostname)
 
 int LuaURLMgr::Fetch(lua_State* L)
 {
-  string url = luaL_checkstring(L, 1);
+  std::string url = luaL_checkstring(L, 1);
 
   // default to http
-  if (url.find("://") == string::npos) {
+  if (url.find("://") == std::string::npos) {
     url = "http://" + url;
   }
 
-  string hostname;
+  std::string hostname;
   const int parseArgs = ParseURL(L, url, hostname);
   if (parseArgs) {
     return parseArgs;
@@ -424,7 +422,7 @@ int LuaURLMgr::GetURL(lua_State* L)
 int LuaURLMgr::GetPostData(lua_State* L)
 {
   const LuaURL* fetch = CheckURL(L, 1);
-  const string& postData = fetch->GetPostData();
+  const std::string& postData = fetch->GetPostData();
   if (postData.empty()) {
     return 0;
   }

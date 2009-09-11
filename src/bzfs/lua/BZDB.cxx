@@ -21,8 +21,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using std::string;
-using std::vector;
 
 // common headers
 #include "StateDatabase.h"
@@ -116,9 +114,9 @@ bool LuaBZDB::PushEntries(lua_State* L)
 
 //============================================================================//
 
-static void VarCallback(const string& key, void* userData)
+static void VarCallback(const std::string& key, void* userData)
 {
-  vector<string>* names = (vector<string>*) userData;
+  std::vector<std::string>* names = (std::vector<std::string>*) userData;
   names->push_back(key);
 }
 
@@ -127,7 +125,7 @@ static void VarCallback(const string& key, void* userData)
 
 static int GetMap(lua_State* L)
 {
-  vector<string> names;
+  std::vector<std::string> names;
   BZDB.iterate(VarCallback, &names);
 
   lua_createtable(L, 0, (int)names.size());
@@ -143,7 +141,7 @@ static int GetMap(lua_State* L)
 
 static int GetList(lua_State* L)
 {
-  vector<string> names;
+  std::vector<std::string> names;
   BZDB.iterate(VarCallback, &names);
 
   std::sort(names.begin(), names.end());
@@ -340,10 +338,10 @@ static int SendPlayerVariables(lua_State* L)
   const int tableIndex = 2;
   luaL_checktype(L, tableIndex, LUA_TTABLE);
 
-  std::map<string, string> varMap;
+  std::map<std::string, std::string> varMap;
   for (lua_pushnil(L); lua_next(L, tableIndex) != 0; lua_pop(L, 1)) {
     if (lua_israwstring(L, -2) && lua_isstring(L, -1)) {
-      const string key = lua_tostring(L, -2);
+      const std::string key = lua_tostring(L, -2);
       if (!key.empty()) {
         varMap[key] = lua_tostring(L, -1);
       }
@@ -357,7 +355,7 @@ static int SendPlayerVariables(lua_State* L)
 
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt16(varMap.size());
-  std::map<string, string>::const_iterator it;
+  std::map<std::string, std::string>::const_iterator it;
   for (it = varMap.begin(); it != varMap.end(); ++it) {
     msg->packStdString(it->first);
     msg->packStdString(it->second);

@@ -20,8 +20,6 @@
 #include <string>
 #include <set>
 #include <map>
-using std::string;
-using std::set;
 
 // common headers
 #include "bzfsAPI.h"

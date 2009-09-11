@@ -21,8 +21,6 @@
 #include <ctype.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "bzfsAPI.h"
@@ -54,16 +52,16 @@ using std::vector;
 
 static lua_State* L = NULL;
 
-static bool CreateLuaState(const string& script);
-static string EnvExpand(const string& path);
+static bool CreateLuaState(const std::string& script);
+static std::string EnvExpand(const std::string& path);
 
 
 //============================================================================//
 //============================================================================//
 
-static string directory = "./";
+static std::string directory = "./";
 
-static bool SetupLuaDirectory(const string& fileName);
+static bool SetupLuaDirectory(const std::string& fileName);
 
 
 //============================================================================//
@@ -129,7 +127,7 @@ static UpdateTick updateTick;
 //============================================================================//
 //============================================================================//
 
-static bool fileExists(const string& file)
+static bool fileExists(const std::string& file)
 {
   FILE* f = fopen(file.c_str(), "r");
   if (f == NULL) {
@@ -152,7 +150,7 @@ const std::string& LuaServer::getLuaDir()
 //============================================================================//
 //============================================================================//
 
-bool LuaServer::init(const string& cmdLine)
+bool LuaServer::init(const std::string& cmdLine)
 {
   if (cmdLine.empty()) {
     return false;
@@ -168,7 +166,7 @@ bool LuaServer::init(const string& cmdLine)
   }
 
   // dieHard check
-  string scriptFile = cmdLine.c_str();
+  std::string scriptFile = cmdLine.c_str();
   if (scriptFile.size() > 8) {
     if (scriptFile.substr(0, 8) == "dieHard,") {
       dieHard = true;
@@ -273,9 +271,9 @@ void LuaServer::queueDisable()
 //============================================================================//
 //============================================================================//
 
-void LuaServer::recvCommand(const string& cmdLine, int playerIndex)
+void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
 {
-  vector<string> args = TextUtils::tokenize(cmdLine, " \t", 3);
+  std::vector<std::string> args = TextUtils::tokenize(cmdLine, " \t", 3);
 
   GameKeeper::Player* p = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (p == NULL) {
@@ -348,10 +346,10 @@ void LuaServer::recvCommand(const string& cmdLine, int playerIndex)
 //============================================================================//
 //============================================================================//
 
-static bool SetupLuaDirectory(const string& fileName)
+static bool SetupLuaDirectory(const std::string& fileName)
 {
-  const string::size_type pos = fileName.find_last_of("/\\");
-  if (pos == string::npos) {
+  const std::string::size_type pos = fileName.find_last_of("/\\");
+  if (pos == std::string::npos) {
     directory = "./";
   } else {
     directory = fileName.substr(0, pos + 1);
@@ -363,7 +361,7 @@ static bool SetupLuaDirectory(const string& fileName)
 //============================================================================//
 //============================================================================//
 
-static bool CreateLuaState(const string& script)
+static bool CreateLuaState(const std::string& script)
 {
   if (L != NULL) {
     return false;
@@ -372,9 +370,9 @@ static bool CreateLuaState(const string& script)
   L = luaL_newstate();
   luaL_openlibs(L);
 
-  const string lualib = directory + "lualib/";
-  const string path   = lualib + "?.lua";
-  const string cpath  = lualib + "?.so;" + lualib + "?.dll";
+  const std::string lualib = directory + "lualib/";
+  const std::string path   = lualib + "?.lua";
+  const std::string cpath  = lualib + "?.so;" + lualib + "?.dll";
   lua_getglobal(L, "package");
   lua_pushstdstring(L, path);  lua_setfield(L, -2, "path");
   lua_pushstdstring(L, cpath); lua_setfield(L, -2, "cpath");
@@ -427,10 +425,10 @@ static bool CreateLuaState(const string& script)
 //============================================================================//
 //============================================================================//
 
-static string EnvExpand(const string& path)
+static std::string EnvExpand(const std::string& path)
 {
-  string::size_type pos = path.find('$');
-  if (pos == string::npos) {
+  std::string::size_type pos = path.find('$');
+  if (pos == std::string::npos) {
     return path;
   }
 
@@ -445,12 +443,12 @@ static string EnvExpand(const string& path)
     e++;
   }
 
-  const string head = path.substr(0, pos);
-  const string key  = path.substr(pos + 1, e - s);
-  const string tail = path.substr(e - b);
+  const std::string head = path.substr(0, pos);
+  const std::string key  = path.substr(pos + 1, e - s);
+  const std::string tail = path.substr(e - b);
 
   const char* env = getenv(key.c_str());
-  const string value = (env == NULL) ? "" : env;
+  const std::string value = (env == NULL) ? "" : env;
 
   return head + value + EnvExpand(tail);
 }

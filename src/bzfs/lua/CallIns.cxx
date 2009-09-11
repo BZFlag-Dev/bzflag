@@ -24,9 +24,6 @@
 #include <vector>
 #include <set>
 #include <map>
-using std::string;
-using std::vector;
-using std::set;
 
 // common headers
 #include "bzfsAPI.h"
@@ -45,11 +42,11 @@ static const bz_eEventType bz_eRecvCommand = (bz_eEventType)(bz_eLastEvent + 2);
 
 class RecvCommandData : public bz_EventData {
   public:
-    RecvCommandData(const string& _cmdLine, int player)
+    RecvCommandData(const std::string& _cmdLine, int player)
     : cmdLine(_cmdLine)
     , playerID(player)
     {}
-    string cmdLine;
+    std::string cmdLine;
     int playerID;
 };
 
@@ -77,7 +74,7 @@ class CallIn : public bz_EventHandler {
     static void SetL(lua_State* _L) { L = _L; }
 
   public:
-    CallIn(int _bzCode, const string& _name, const string& _loopType)
+    CallIn(int _bzCode, const std::string& _name, const std::string& _loopType)
     : name(_name)
     , bzCode(_bzCode)
     , ciCode(MapEventToCallIn(bzCode))
@@ -99,8 +96,8 @@ class CallIn : public bz_EventHandler {
 
     inline int           GetBZCode()   const { return bzCode; }
     inline int           GetCICode()   const { return ciCode; }
-    inline const string& GetName()     const { return name; }
-    inline const string& GetLoopType() const { return loopType; }
+    inline const std::string& GetName()     const { return name; }
+    inline const std::string& GetLoopType() const { return loopType; }
 
     bool PushCallIn(int argCount)
     {
@@ -158,11 +155,11 @@ class CallIn : public bz_EventHandler {
     bool IsActive() const { return bzRegistered; }
 
   protected:
-    const string name;
+    const std::string name;
     const int    bzCode; // bzfsAPI event code
     const int    ciCode; // lua call-in registry index
     const bool   customEvent;
-    const string loopType;
+    const std::string loopType;
 
     bool bzRegistered;
 
@@ -170,23 +167,23 @@ class CallIn : public bz_EventHandler {
     static lua_State* L;
 
   public:
-    static CallIn* Find(const string& name)
+    static CallIn* Find(const std::string& name)
     {
-      std::map<string, CallIn*>::iterator it = nameMap.find(name);
+      std::map<std::string, CallIn*>::iterator it = nameMap.find(name);
       return (it == nameMap.end()) ? NULL : it->second;
     }
-    static const std::map<string, CallIn*>& GetNameMap()   { return nameMap; }
+    static const std::map<std::string, CallIn*>& GetNameMap()   { return nameMap; }
     static const std::map<int,    CallIn*>& GetBzCodeMap() { return bzCodeMap; }
 
   private:
     static std::map<int,    CallIn*> bzCodeMap;
-    static std::map<string, CallIn*> nameMap;
+    static std::map<std::string, CallIn*> nameMap;
 };
 
 
 lua_State* CallIn::L = NULL;
 
-std::map<string, CallIn*> CallIn::nameMap;
+std::map<std::string, CallIn*> CallIn::nameMap;
 std::map<int,    CallIn*> CallIn::bzCodeMap;
 
 
@@ -219,7 +216,7 @@ static int Reload(lua_State* /*L*/)
 
 static int SetCallIn(lua_State* L)
 {
-  const string name = luaL_checkstring(L, 1);
+  const std::string name = luaL_checkstring(L, 1);
 
   CallIn* ci = CallIn::Find(name);
   if (ci == NULL) {
@@ -258,10 +255,10 @@ static int SetCallIn(lua_State* L)
 
 static int GetCallInInfo(lua_State* L)
 {
-  const std::map<string, CallIn*>& nameMap = CallIn::GetNameMap();
+  const std::map<std::string, CallIn*>& nameMap = CallIn::GetNameMap();
 
   lua_newtable(L);
-  std::map<string, CallIn*>::const_iterator it;
+  std::map<std::string, CallIn*>::const_iterator it;
   for (it = nameMap.begin(); it != nameMap.end(); ++it) {
     const CallIn* ci = it->second;
     lua_pushstring(L, ci->GetName().c_str());
@@ -569,7 +566,7 @@ bool CI_AllowPlayer::execute(bz_EventData* eventData)
   }
 
   if (lua_israwstring(L, -1)) {
-    const string reason = lua_tostring(L, -1);
+    const std::string reason = lua_tostring(L, -1);
     if (!reason.empty()) {
       ed->allow = false;
       ed->reason = reason;
@@ -982,7 +979,7 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
       if (!lua_israwstring(L, -2)) {
         continue;
       }
-      const string key = lua_tostring(L, -2);
+      const std::string key = lua_tostring(L, -2);
       if (key == "file") {
         if (lua_israwstring(L, -1)) {
           ed->worldFile = lua_tostring(L, -1);
@@ -1817,14 +1814,14 @@ bool CallIns::Shutdown()
 }
 
 
-bool CallIns::RecvCommand(const string& cmdLine, int playerIndex)
+bool CallIns::RecvCommand(const std::string& cmdLine, int playerIndex)
 {
-  const string prefix = "/luaserver ";
+  const std::string prefix = "/luaserver ";
   if ((cmdLine.size() < prefix.size()) ||
       (cmdLine.substr(0, prefix.size()) != prefix)) {
     return false;
   }
-  const string cmd = cmdLine.substr(prefix.size());
+  const std::string cmd = cmdLine.substr(prefix.size());
   RecvCommandData recvCmdData(cmd, playerIndex);
   return ciRecvCommand.execute((bz_EventData*)&recvCmdData);
 }

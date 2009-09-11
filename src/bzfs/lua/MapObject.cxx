@@ -19,7 +19,6 @@
 // system headers
 #include <string>
 #include <map>
-using std::string;
 
 // common headers
 #include "bzfsAPI.h"
@@ -30,7 +29,7 @@ using std::string;
 #include "LuaServer.h"
 
 
-static std::map<string, class MapHandler*> mapHandlers;
+static std::map<std::string, class MapHandler*> mapHandlers;
 
 static int AttachMapObject(lua_State* L);
 static int DetachMapObject(lua_State* L);
@@ -41,18 +40,18 @@ static int DetachMapObject(lua_State* L);
 
 class MapHandler : public bz_CustomMapObjectHandler {
   public:
-    MapHandler(const string& objName);
+    MapHandler(const std::string& objName);
     ~MapHandler();
 
     bool handle(bz_ApiString object, bz_CustomMapObjectInfo *data);
 
   private:
-    string objName;
+    std::string objName;
     int luaRef;
 };
 
 
-MapHandler::MapHandler(const string& name)
+MapHandler::MapHandler(const std::string& name)
 : objName(name)
 , luaRef(LUA_NOREF)
 {
@@ -119,7 +118,7 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
     return false;
   }
 
-  string newData = info->newData.c_str();
+  std::string newData = info->newData.c_str();
 
   if (lua_israwstring(L, -1)) {
     newData += lua_tostring(L, -1);
@@ -161,7 +160,7 @@ bool MapObject::PushEntries(lua_State* L)
 
 bool MapObject::CleanUp(lua_State* /*L*/)
 {
-  std::map<string, MapHandler*>::const_iterator it, nextIT;
+  std::map<std::string, MapHandler*>::const_iterator it, nextIT;
 
   for (it = mapHandlers.begin(); it != mapHandlers.end(); /* noop */) {
     nextIT = it;
@@ -182,7 +181,7 @@ bool MapObject::CleanUp(lua_State* /*L*/)
 static int AttachMapObject(lua_State* L)
 {
   int funcIndex = 2;
-  const string objName  = TextUtils::tolower(luaL_checkstring(L, 1));
+  const std::string objName  = TextUtils::tolower(luaL_checkstring(L, 1));
   const char* endToken = NULL;
   if (lua_israwstring(L, 2)) {
     funcIndex++;
@@ -212,9 +211,9 @@ static int AttachMapObject(lua_State* L)
 
 static int DetachMapObject(lua_State* L)
 {
-  const string objName = TextUtils::tolower(luaL_checkstring(L, 1));
+  const std::string objName = TextUtils::tolower(luaL_checkstring(L, 1));
 
-  std::map<string, MapHandler*>::iterator it = mapHandlers.find(objName);
+  std::map<std::string, MapHandler*>::iterator it = mapHandlers.find(objName);
   if (it == mapHandlers.end()) {
     lua_pushboolean(L, false);
     return 1;

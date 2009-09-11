@@ -24,9 +24,6 @@
 #include <vector>
 #include <set>
 #include <map>
-using std::string;
-using std::vector;
-using std::set;
 
 // common headers
 #include "bzfio.h"
@@ -74,7 +71,7 @@ static inline GameKeeper::Player* getPlayerByIndex(int playerID)
 // FIXME -- move into "utils.cpp"
 static bz_eTeamType ParseTeam(lua_State* L, int index)
 {
-  static std::map<string, bz_eTeamType> nameMap;
+  static std::map<std::string, bz_eTeamType> nameMap;
   if (nameMap.empty()) {
     nameMap["auto"]     = eAutomaticTeam;
     nameMap["none"]     = eNoTeam;
@@ -90,9 +87,9 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
   }
 
   if (lua_israwstring(L, index)) {
-    string s = lua_tostring(L, index);
+    std::string s = lua_tostring(L, index);
     s = TextUtils::tolower(s);
-    std::map<string, bz_eTeamType>::const_iterator it = nameMap.find(s);
+    std::map<std::string, bz_eTeamType>::const_iterator it = nameMap.find(s);
     if (it != nameMap.end()) {
       return it->second;
     }
@@ -1220,7 +1217,7 @@ static int GetPlayerGroups(lua_State* L)
     return 0;
   }
   lua_newtable(L);
-  const vector<string>& groups = player->accessInfo.groups;
+  const std::vector<std::string>& groups = player->accessInfo.groups;
   for (unsigned int i = 0; i < groups.size(); i++) {
     lua_pushstdstring(L, groups[i]);
     lua_rawseti(L, -2, i + 1);
@@ -1272,7 +1269,7 @@ static int GetPlayerFlagHistory(lua_State* L)
   if (player == NULL) {
     return 0;
   }
-  const vector<FlagType*>& flagHistory = player->flagHistory.get();
+  const std::vector<FlagType*>& flagHistory = player->flagHistory.get();
   lua_newtable(L);
   for (size_t i = 0; i < flagHistory.size(); i++) {
     lua_pushstdstring(L, flagHistory[i]->flagAbbv);
@@ -1496,7 +1493,7 @@ static int SetPlayerCapabilities(lua_State* L)
   unsigned char caps = luaL_checkint(L, 2);
 
   if (lua_israwstring(L, 3)) {
-    const string type = lua_tostring(L, 3);
+    const std::string type = lua_tostring(L, 3);
     if (type == "add") {
       caps = (player->player.getAllow() | caps);
     }
@@ -2512,25 +2509,25 @@ static int DirList(lua_State* L)
   const char* path = luaL_checkstring(L, 1);
   const bool recursize = lua_tobool(L, 2);
 
-  vector<string> dirs;
-  vector<string> files;
+  std::vector<std::string> dirs;
+  std::vector<std::string> files;
 
   if (path[0] == 0) {
     path = "./";
   }
 
-  const string cleanPath = cleanDirPath(path);
+  const std::string cleanPath = cleanDirPath(path);
   if (!rawDirList("", cleanPath, recursize, dirs, files)) {
     return 0;
   }
 
 
-  set<string> dirSet;
+  std::set<std::string> dirSet;
   for (unsigned int i = 0; i < dirs.size(); i++) {
     dirSet.insert(dirs[i]);
   }
 
-  set<string> fileSet;
+  std::set<std::string> fileSet;
   for (unsigned int i = 0; i < files.size(); i++) {
     // do not include directories
     if (dirSet.find(files[i]) == dirSet.end()) {
@@ -2540,7 +2537,7 @@ static int DirList(lua_State* L)
 
   // files table
   lua_createtable(L, (int)fileSet.size(), 0);
-  set<string>::const_iterator fit;
+  std::set<std::string>::const_iterator fit;
   int fileCount = 0;
   for (fit = fileSet.begin(); fit != fileSet.end(); ++fit) {
     fileCount++;
@@ -2550,7 +2547,7 @@ static int DirList(lua_State* L)
 
   // dirs table
   lua_createtable(L, (int)dirSet.size(), 0);
-  set<string>::const_iterator dit;
+  std::set<std::string>::const_iterator dit;
   int dirCount = 0;
   for (dit = dirSet.begin(); dit != dirSet.end(); ++dit) {
     dirCount++;

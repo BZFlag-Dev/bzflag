@@ -18,8 +18,6 @@
 // system headers
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "ArcObstacle.h"
@@ -98,7 +96,7 @@ bool LuaObstacle::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetTypeFromName(const string& name)
+static int GetTypeFromName(const std::string& name)
 {
        if (name == "wall")   { return wallType;   }
   else if (name == "box")    { return boxType;    }
@@ -511,11 +509,11 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
   // generated texcoords
   if (!lua_isboolean(L, 3) || lua_tobool(L, 3)) {
     const int elements = face->getVertexCount();
-    vector<fvec3> vertArray;
+    std::vector<fvec3> vertArray;
     for (int i = 0; i < elements; i++) {
       vertArray.push_back(face->getVertex(i));
     }
-    vector<fvec2> txcdArray;
+    std::vector<fvec2> txcdArray;
     const fvec2& autoScale = face->getMaterial()->getTextureAutoScale(0);
     if (!MeshObstacle::makeTexcoords(autoScale,
                                      face->getPlane(), vertArray, txcdArray)) {
@@ -596,7 +594,7 @@ int LuaObstacle::GetFaceLinkName(lua_State* L)
 
 int LuaObstacle::GetLinkSrcIDs(lua_State* L)
 {
-  const string srcName = luaL_checkstring(L, 1);
+  const std::string srcName = luaL_checkstring(L, 1);
 
   lua_newtable(L);
   const LinkManager::FaceVec& linkSrcs = linkManager.getLinkSrcs();
@@ -613,7 +611,7 @@ int LuaObstacle::GetLinkSrcIDs(lua_State* L)
 
 int LuaObstacle::GetLinkDstIDs(lua_State* L)
 {
-  const string dstName = luaL_checkstring(L, 1);
+  const std::string dstName = luaL_checkstring(L, 1);
 
   lua_newtable(L);
   const LinkManager::DstDataVec& linkDsts = linkManager.getLinkDsts();

@@ -18,7 +18,6 @@
 // system headers
 #include <math.h>
 #include <string>
-using std::string;
 
 // local headers
 #include "LuaHeader.h"
@@ -74,7 +73,7 @@ float LuaFloat::CheckNumber(lua_State* L, int index)
 int LuaFloat::MetaIndex(lua_State* L)
 {
   const float f1 = CheckFloat(L, 1);
-  const string key = luaL_checkstring(L, 2);
+  const std::string key = luaL_checkstring(L, 2);
 
   if (key == "number") {
     lua_pushfloat(L, f1);
