@@ -20,7 +20,6 @@
 #include <string>
 #include <map>
 using std::string;
-using std::map;
 
 // common headers
 #include "bzfsAPI.h"
@@ -31,7 +30,7 @@ using std::map;
 #include "LuaServer.h"
 
 
-static map<string, class MapHandler*> mapHandlers;
+static std::map<string, class MapHandler*> mapHandlers;
 
 static int AttachMapObject(lua_State* L);
 static int DetachMapObject(lua_State* L);
@@ -162,7 +161,7 @@ bool MapObject::PushEntries(lua_State* L)
 
 bool MapObject::CleanUp(lua_State* /*L*/)
 {
-  map<string, MapHandler*>::const_iterator it, nextIT;
+  std::map<string, MapHandler*>::const_iterator it, nextIT;
 
   for (it = mapHandlers.begin(); it != mapHandlers.end(); /* noop */) {
     nextIT = it;
@@ -215,7 +214,7 @@ static int DetachMapObject(lua_State* L)
 {
   const string objName = TextUtils::tolower(luaL_checkstring(L, 1));
 
-  map<string, MapHandler*>::iterator it = mapHandlers.find(objName);
+  std::map<string, MapHandler*>::iterator it = mapHandlers.find(objName);
   if (it == mapHandlers.end()) {
     lua_pushboolean(L, false);
     return 1;

@@ -20,7 +20,6 @@
 #include <string>
 #include <map>
 using std::string;
-using std::map;
 
 // common headers
 #include "bzfsAPI.h"
@@ -31,7 +30,7 @@ using std::map;
 #include "LuaServer.h"
 
 
-static map<string, class SlashCmdHandler*> slashHandlers;
+static std::map<string, class SlashCmdHandler*> slashHandlers;
 
 static int AttachSlashCommand(lua_State* L);
 static int DetachSlashCommand(lua_State* L);
@@ -143,7 +142,7 @@ bool SlashCmd::PushEntries(lua_State* L)
 
 bool SlashCmd::CleanUp(lua_State* /*_L*/)
 {
-  map<string, SlashCmdHandler*>::const_iterator it, nextIT;
+  std::map<string, SlashCmdHandler*>::const_iterator it, nextIT;
 
   for (it = slashHandlers.begin(); it != slashHandlers.end(); /* noop */) {
     nextIT = it;
@@ -195,7 +194,7 @@ static int DetachSlashCommand(lua_State* L)
 {
   const string cmd = TextUtils::tolower(luaL_checkstring(L, 1));
 
-  map<string, SlashCmdHandler*>::iterator it = slashHandlers.find(cmd);
+  std::map<string, SlashCmdHandler*>::iterator it = slashHandlers.find(cmd);
   if (it == slashHandlers.end()) {
     lua_pushboolean(L, false);
     return 1;

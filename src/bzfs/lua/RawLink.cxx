@@ -22,7 +22,6 @@
 #include <map>
 using std::string;
 using std::set;
-using std::map;
 
 // common headers
 #include "bzfsAPI.h"
@@ -41,7 +40,7 @@ static int GetRawLinkHost(lua_State* L);
 static int GetRawLinkQueued(lua_State* L);
 
 
-typedef map<int, class Link*> LinkMap;
+typedef std::map<int, class Link*> LinkMap;
 static LinkMap linkMap;
 
 
