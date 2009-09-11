@@ -23,7 +23,6 @@
 #include <map>
 using std::string;
 using std::vector;
-using std::map;
 
 // common headers
 #include "StateDatabase.h"
@@ -341,7 +340,7 @@ static int SendPlayerVariables(lua_State* L)
   const int tableIndex = 2;
   luaL_checktype(L, tableIndex, LUA_TTABLE);
 
-  map<string, string> varMap;
+  std::map<string, string> varMap;
   for (lua_pushnil(L); lua_next(L, tableIndex) != 0; lua_pop(L, 1)) {
     if (lua_israwstring(L, -2) && lua_isstring(L, -1)) {
       const string key = lua_tostring(L, -2);
@@ -358,7 +357,7 @@ static int SendPlayerVariables(lua_State* L)
 
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt16(varMap.size());
-  map<string, string>::const_iterator it;
+  std::map<string, string>::const_iterator it;
   for (it = varMap.begin(); it != varMap.end(); ++it) {
     msg->packStdString(it->first);
     msg->packStdString(it->second);

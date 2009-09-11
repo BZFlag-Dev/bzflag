@@ -27,7 +27,6 @@
 using std::string;
 using std::vector;
 using std::set;
-using std::map;
 
 // common headers
 #include "bzfsAPI.h"
@@ -173,22 +172,22 @@ class CallIn : public bz_EventHandler {
   public:
     static CallIn* Find(const string& name)
     {
-      map<string, CallIn*>::iterator it = nameMap.find(name);
+      std::map<string, CallIn*>::iterator it = nameMap.find(name);
       return (it == nameMap.end()) ? NULL : it->second;
     }
-    static const map<string, CallIn*>& GetNameMap()   { return nameMap; }
-    static const map<int,    CallIn*>& GetBzCodeMap() { return bzCodeMap; }
+    static const std::map<string, CallIn*>& GetNameMap()   { return nameMap; }
+    static const std::map<int,    CallIn*>& GetBzCodeMap() { return bzCodeMap; }
 
   private:
-    static map<int,    CallIn*> bzCodeMap;
-    static map<string, CallIn*> nameMap;
+    static std::map<int,    CallIn*> bzCodeMap;
+    static std::map<string, CallIn*> nameMap;
 };
 
 
 lua_State* CallIn::L = NULL;
 
-map<string, CallIn*> CallIn::nameMap;
-map<int,    CallIn*> CallIn::bzCodeMap;
+std::map<string, CallIn*> CallIn::nameMap;
+std::map<int,    CallIn*> CallIn::bzCodeMap;
 
 
 //============================================================================//
@@ -259,10 +258,10 @@ static int SetCallIn(lua_State* L)
 
 static int GetCallInInfo(lua_State* L)
 {
-  const map<string, CallIn*>& nameMap = CallIn::GetNameMap();
+  const std::map<string, CallIn*>& nameMap = CallIn::GetNameMap();
 
   lua_newtable(L);
-  map<string, CallIn*>::const_iterator it;
+  std::map<string, CallIn*>::const_iterator it;
   for (it = nameMap.begin(); it != nameMap.end(); ++it) {
     const CallIn* ci = it->second;
     lua_pushstring(L, ci->GetName().c_str());
@@ -307,8 +306,8 @@ bool CallIns::PushEntries(lua_State* L)
 
 bool CallIns::CleanUp(lua_State* /*L*/)
 {
-  const map<int, CallIn*>& bzCodeMap = CallIn::GetBzCodeMap();
-  map<int, CallIn*>::const_iterator it;
+  const std::map<int, CallIn*>& bzCodeMap = CallIn::GetBzCodeMap();
+  std::map<int, CallIn*>::const_iterator it;
   for (it = bzCodeMap.begin(); it != bzCodeMap.end(); ++it) {
     CallIn* ci = it->second;
     ci->Unregister();

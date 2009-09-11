@@ -27,7 +27,6 @@
 using std::string;
 using std::vector;
 using std::set;
-using std::map;
 
 // common headers
 #include "bzfio.h"
@@ -75,7 +74,7 @@ static inline GameKeeper::Player* getPlayerByIndex(int playerID)
 // FIXME -- move into "utils.cpp"
 static bz_eTeamType ParseTeam(lua_State* L, int index)
 {
-  static map<string, bz_eTeamType> nameMap;
+  static std::map<string, bz_eTeamType> nameMap;
   if (nameMap.empty()) {
     nameMap["auto"]     = eAutomaticTeam;
     nameMap["none"]     = eNoTeam;
@@ -93,7 +92,7 @@ static bz_eTeamType ParseTeam(lua_State* L, int index)
   if (lua_israwstring(L, index)) {
     string s = lua_tostring(L, index);
     s = TextUtils::tolower(s);
-    map<string, bz_eTeamType>::const_iterator it = nameMap.find(s);
+    std::map<string, bz_eTeamType>::const_iterator it = nameMap.find(s);
     if (it != nameMap.end()) {
       return it->second;
     }
