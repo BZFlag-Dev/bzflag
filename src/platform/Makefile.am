@@ -15,6 +15,7 @@ libPlatform_la_SOURCES = \
 	BzfMedia.cxx				\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
+	Clipboard.cxx				\
 	PlatformFactory.cxx			\
 	VerticalSync.cxx			\
 	wave.cxx

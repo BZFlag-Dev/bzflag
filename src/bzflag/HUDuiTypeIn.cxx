@@ -13,14 +13,18 @@
 // interface headers
 #include "HUDuiTypeIn.h"
 
-// system implementation headers
+// system headers
 #include <ctype.h>
 
-// common implementation headers
+// common headers
+#include "Clipboard.h"
 #include "FontManager.h"
+#include "KeyManager.h"
 #include "bzUnicode.h"
-#include "LocalFontFace.h"
 
+// local headers
+#include "LocalFontFace.h"
+#include "guiplaying.h"
 
 //
 // HUDuiTypeIn
@@ -102,14 +106,34 @@ bool HUDuiTypeIn::decrementCursor()
 bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
   static unsigned int backspace = '\b';	// ^H
-  static unsigned int whitespace = ' ';
 
   if (HUDuiControl::doKeyPress(key)) {
     return true;
   }
 
   if (!allowEdit) {
-    return false; //or return true ??
+    return false; // or return true ??
+  }
+
+  if (KEYMGR.get(key, true) == "paste") {
+    const std::string pasteData = getClipboard();
+    if (pasteData.empty()) {
+      return true;
+    }
+    
+    bool changed = false;
+    for (size_t i = 0; i < pasteData.size(); i++) {
+      changed = doInsert(pasteData[i]) || changed;
+    }
+
+    if (changed) {
+      onSetFont();
+      if (cb != NULL) {
+        cb(this, userData);
+      }
+    }
+
+    return true;
   }
 
   unsigned int c = key.chr;
@@ -184,93 +208,110 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return false;
   }
 
+  bool changed = false;
   if (c == backspace) {
-    size_t pos = cursorPos.getCount();
-    if (pos == 1) {
-      goto noRoom;
-    }
-    else {
-      // copy up to cursor position - 1
-      --pos;
-      cursorPos = data.c_str();
-      while (cursorPos.getCount() < pos) {
-        ++cursorPos;
-      }
-      const char* s = data.c_str();
-      const char* a = cursorPos.getBufferFromHere();
-      ++cursorPos;
-      const char* b = cursorPos.getBufferFromHere();
-
-      // remove the character from the data
-      const std::string tmpData = data.substr(0, (a - s)) + data.substr(b - s);
-      data = tmpData;
-
-      // new buffer, restart cursor
-      cursorPos = data.c_str();
-      while (cursorPos.getCount() < pos) {
-	++cursorPos;
-      }
-
-      if (cb != NULL) {
-        cb(this, userData);
-      }
-    }
+    changed = doBackspace();
+  } else {
+    changed = doInsert(c);
   }
-  else {
-    if (iswspace(c)) {
-      c = whitespace;
-    }
-    CountUTF8StringItr cusi(data.c_str());
-    while (*cusi) ++cusi;
-    if (cusi.getCount() >= maxLength) {
-      goto noRoom;
-    }
-    bzUTF8Char ch(c);
-    size_t pos = (cursorPos.getBufferFromHere() - data.c_str());
-    // copy to the current cursor location
-    std::string temp = data.substr(0, pos);
-    // insert the new character
-    temp += ch.str();
-    // copy the rest of the string
-    temp += data.substr(pos, data.length());
-    data = temp;
-    // new buffer, restart cursor
-    pos = cursorPos.getCount();
-    cursorPos = data.c_str();
-    while (cursorPos.getCount() < pos) {
-      ++cursorPos;
-    }
-    // bump the cursor
-    ++cursorPos;
 
+  if (changed) {
+    onSetFont();
     if (cb != NULL) {
       cb(this, userData);
     }
   }
 
-  onSetFont();
+  return true;
+}
+
+
+bool HUDuiTypeIn::doInsert(unsigned int c)
+{
+  if (iswspace(c)) {
+    c = ' ';
+  }
+  CountUTF8StringItr cusi(data.c_str());
+  while (*cusi) ++cusi;
+  if (cusi.getCount() >= maxLength) {
+    return false;
+  }
+  bzUTF8Char ch(c);
+  size_t pos = (cursorPos.getBufferFromHere() - data.c_str());
+  // copy to the current cursor location
+  std::string temp = data.substr(0, pos);
+  // insert the new character
+  temp += ch.str();
+  // copy the rest of the string
+  temp += data.substr(pos, data.length());
+  data = temp;
+  // new buffer, restart cursor
+  pos = cursorPos.getCount();
+  cursorPos = data.c_str();
+  while (cursorPos.getCount() < pos) {
+    ++cursorPos;
+  }
+  // bump the cursor
+  ++cursorPos;
+
+  if (cb != NULL) {
+    cb(this, userData);
+  }
 
   return true;
+}
 
-noRoom:
-  // ring bell?
+bool HUDuiTypeIn::doBackspace()
+{
+  size_t pos = cursorPos.getCount();
+  if (pos == 1) {
+    return false;
+  }
+
+  // copy up to cursor position - 1
+  --pos;
+  cursorPos = data.c_str();
+  while (cursorPos.getCount() < pos) {
+    ++cursorPos;
+  }
+  const char* s = data.c_str();
+  const char* a = cursorPos.getBufferFromHere();
+  ++cursorPos;
+  const char* b = cursorPos.getBufferFromHere();
+
+  // remove the character from the data
+  const std::string tmpData = data.substr(0, (a - s)) + data.substr(b - s);
+  data = tmpData;
+
+  // new buffer, restart cursor
+  cursorPos = data.c_str();
+  while (cursorPos.getCount() < pos) {
+    ++cursorPos;
+  }
+
+  if (cb != NULL) {
+    cb(this, userData);
+  }
+
   return true;
 }
 
 
 bool HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
-  if (key.chr == '\t' || !iswprint(key.chr))	// ignore non-printing and tab
-    return false;
-
-  // slurp up releases
-  return true;
+  if (key.chr == '\t' || !iswprint(key.chr)) {
+    return false; // ignore non-printing and tab
+  }
+  return true; // slurp up releases
 }
 
 
 void HUDuiTypeIn::doRender()
 {
-  if (getFontFace() < 0) return;
+  if (getFontFace() == NULL) {
+    return;
+  }
+  const int faceID = getFontFace()->getFMFace();
 
   // render string
   glColor3fv(hasFocus() ? textColor : dimTextColor);
@@ -279,19 +320,20 @@ void HUDuiTypeIn::doRender()
   std::string renderStr;
   if (obfuscate) {
     CountUTF8StringItr cusi(data.c_str());
-    while (*cusi) ++cusi;
+    while (*cusi) { ++cusi; }
     renderStr.append(cusi.getCount(), '*');
   } else {
     renderStr = data;
   }
-  fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(), getFontSize(), renderStr);
+
+  fm.drawString(getX(), getY(), 0, faceID, getFontSize(), renderStr);
 
   // find the position of where to draw the input cursor
-  float start = fm.getStringWidth(getFontFace()->getFMFace(), getFontSize(),
+  float start = fm.getStringWidth(faceID, getFontSize(),
     renderStr.substr(0, cursorPos.getBufferFromHere() - data.c_str()));
 
   if (hasFocus() && allowEdit) {
-    fm.drawString(getX() + start, getY(), 0, getFontFace()->getFMFace(), getFontSize(), "_");
+    fm.drawString(getX() + start, getY(), 0, faceID, getFontSize(), "_");
   }
 }
 

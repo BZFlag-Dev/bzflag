@@ -30,6 +30,7 @@ noinst_HEADERS =			\
 	BzMaterial.h			\
 	CacheManager.h			\
 	CallbackList.h			\
+	Clipboard.h			\
 	CollisionManager.h		\
 	CommandCompleter.h		\
 	CommandManager.h		\

@@ -29,36 +29,36 @@
 #include "HUDuiControl.h"
 #include "bzUnicode.h"
 
+
 // wrapper just for HUDuiTypeIn
-class CountUTF8StringItr : public UTF8StringItr
-{
-public:
-  CountUTF8StringItr(const char* data) :
-    UTF8StringItr(data), counter(0) {}
+class CountUTF8StringItr : public UTF8StringItr {
+  public:
+    CountUTF8StringItr(const char* data) : UTF8StringItr(data), counter(0) {}
 
-  inline CountUTF8StringItr& operator++()
-  {
-    counter++;
-    UTF8StringItr::operator++();
-    return (*this);
-  }
+    inline CountUTF8StringItr& operator++()
+    {
+      counter++;
+      UTF8StringItr::operator++();
+      return (*this);
+    }
 
-  inline void operator=(const char* value)
-  {
-    counter = 0;
-    UTF8StringItr::operator=(value);
-  }
+    inline void operator=(const char* value)
+    {
+      counter = 0;
+      UTF8StringItr::operator=(value);
+    }
 
-  inline size_t getCount() const { return counter; }
+    inline size_t getCount() const { return counter; }
 
-private:
-  size_t counter;
+  private:
+    size_t counter;
 };
+
 
 class HUDuiTypeIn : public HUDuiControl {
   public:
-			HUDuiTypeIn();
-			~HUDuiTypeIn();
+    HUDuiTypeIn();
+    ~HUDuiTypeIn();
 
     void		setObfuscation(bool on);
     size_t		getMaxLength() const;
@@ -73,6 +73,8 @@ class HUDuiTypeIn : public HUDuiControl {
     bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
     bool		decrementCursor();
+    bool		doInsert(unsigned int c);	
+    bool		doBackspace();
 
   private:
     size_t		maxLength;
@@ -82,7 +84,9 @@ class HUDuiTypeIn : public HUDuiControl {
     bool		obfuscate;
 };
 
+
 #endif // __HUDUITYPEIN_H__
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -56,6 +56,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("toggle displayLabels"), press));
   wayToBindActions.insert(std::make_pair(std::string("destruct"), press));
   wayToBindActions.insert(std::make_pair(std::string("hubcompose"), press));
+  wayToBindActions.insert(std::make_pair(std::string("paste"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle showDrawFPS"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggle showDrawTime"), press));
 
@@ -163,6 +164,8 @@ ActionBinding::ActionBinding() {
 
   defaultBinding.insert(BindingTable::value_type("Shift+Wheel Up",   "radarZoom in"));
   defaultBinding.insert(BindingTable::value_type("Shift+Wheel Down", "radarZoom out"));
+
+  defaultBinding.insert(BindingTable::value_type("Shift+Insert", "paste"));
 
   defaultBinding.insert(BindingTable::value_type("F1", "fullscreen"));
   defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
