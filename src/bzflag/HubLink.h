@@ -102,7 +102,7 @@ class HubLink {
     void stateReady();
 
     bool updateSend();
-    bool updateRecv();
+    bool updateRecv(bool useBuffer);
     bool sendData(const std::string& data);
     bool combineRecv(size_t minSize);
     bool readData(int bytes, std::string& data);
@@ -161,6 +161,8 @@ class HubLink {
     static int GetServerInfo(lua_State* L);
     static int GetOpenGLString(lua_State* L);
     static int GetOpenGLNumbers(lua_State* L);
+
+    static int GetKeyBindings(lua_State* L);
 
     static int PackInt8(lua_State* L);
     static int PackInt16(lua_State* L);

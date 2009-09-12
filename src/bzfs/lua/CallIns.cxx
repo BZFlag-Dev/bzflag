@@ -168,16 +168,19 @@ class CallIn : public bz_EventHandler {
     static lua_State* L;
 
   public:
-    static CallIn* Find(const std::string& name)
-    {
+    static CallIn* Find(const std::string& name) {
       std::map<std::string, CallIn*>::iterator it = nameMap.find(name);
       return (it == nameMap.end()) ? NULL : it->second;
     }
-    static const std::map<std::string, CallIn*>& GetNameMap()   { return nameMap; }
-    static const std::map<int,    CallIn*>& GetBzCodeMap() { return bzCodeMap; }
+    static const std::map<std::string, CallIn*>& GetNameMap() {
+      return nameMap;
+    }
+    static const std::map<int, CallIn*>& GetBzCodeMap() {
+      return bzCodeMap;
+    }
 
   private:
-    static std::map<int,    CallIn*> bzCodeMap;
+    static std::map<int, CallIn*> bzCodeMap;
     static std::map<std::string, CallIn*> nameMap;
 };
 
@@ -185,7 +188,7 @@ class CallIn : public bz_EventHandler {
 lua_State* CallIn::L = NULL;
 
 std::map<std::string, CallIn*> CallIn::nameMap;
-std::map<int,    CallIn*> CallIn::bzCodeMap;
+std::map<int, CallIn*>         CallIn::bzCodeMap;
 
 
 //============================================================================//

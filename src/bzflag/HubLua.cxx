@@ -29,6 +29,7 @@
 #include "HubLink.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
+#include "KeyManager.h"
 #include "LuaHeader.h"
 #include "Pack.h"
 #include "TimeKeeper.h"
@@ -507,6 +508,8 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, GetServerInfo);
   PUSH_LUA_CFUNC(L, GetOpenGLString);
   PUSH_LUA_CFUNC(L, GetOpenGLNumbers);
+
+  PUSH_LUA_CFUNC(L, GetKeyBindings);
 
   PUSH_LUA_CFUNC(L, PackInt8);
   PUSH_LUA_CFUNC(L, PackInt16);
@@ -1034,6 +1037,22 @@ int HubLink::GetOpenGLNumbers(lua_State* L)
     lua_pushdouble(L, buf[i]);
   }
   return count;
+}
+
+
+//============================================================================//
+
+int HubLink::GetKeyBindings(lua_State* L)
+{
+  const std::string command = luaL_checkstring(L, 1);
+  const bool press = !lua_isboolean(L, 2) || lua_toboolean(L, 2);
+  std::vector<std::string> keys = KEYMGR.getKeysFromCommand(command, press);
+  lua_newtable(L);
+  for (size_t i = 0; i < keys.size(); i++) {
+    lua_pushstdstring(L, keys[i]);
+    lua_rawseti(L, -2, i + 1);
+  }
+  return 1;
 }
 
 

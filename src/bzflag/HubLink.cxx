@@ -387,7 +387,7 @@ void HubLink::stateConnect()
 
 void HubLink::stateGetCode()
 {
-  if (!updateSend() || !updateRecv()) {
+  if (!updateRecv(true) || !updateSend()) {
     return;
   }
 
@@ -437,19 +437,8 @@ void HubLink::stateGetCode()
 
   state = StateReady;
   debugf(1, "entered StateReady\n");
-}
 
-
-//============================================================================//
-
-void HubLink::stateReady()
-{
-  if (!updateSend() || !updateRecv()) {
-    return;
-  }
-
-  updateLua();
-
+  // send remaining received data to the script
   while (recvTotal > 0) {
     const std::string& data = recvQueue.front();
     if (recvData(data)) {
@@ -459,6 +448,17 @@ void HubLink::stateReady()
       break;
     }
   }
+}
+
+
+//============================================================================//
+
+void HubLink::stateReady()
+{
+  if (!updateRecv(false) || !updateSend()) {
+    return;
+  }
+  updateLua();
 }
 
 
@@ -504,15 +504,19 @@ bool HubLink::updateSend()
 }
 
 
-bool HubLink::updateRecv()
+bool HubLink::updateRecv(bool useBuffer)
 {
   char buf[4096];
   while (true) {
     const int bytes = (int) recv(sock, buf, sizeof(buf), 0);
     if (bytes > 0) {
       debugf(4, "received %i bytes\n", bytes);
-      recvTotal += bytes;
-      recvQueue.push_back(std::string(buf, bytes));
+      if (!useBuffer) {
+        recvData(std::string(buf, bytes));
+      } else {
+        recvTotal += bytes;
+        recvQueue.push_back(std::string(buf, bytes));
+      }
     }
     else if (bytes == 0) {
       fail("disconnected");
