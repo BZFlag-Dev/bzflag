@@ -42,9 +42,13 @@ struct ControlPanelMessage {
   ControlPanelMessage(const std::string&);
   void breakLines(float maxLength, int fontFace, float fontSize);
 
-  std::string string;
+  std::string data;
   std::vector<std::string> lines;
+  float xoffset;      // for vertical tabs
+  float xoffsetFirst; // for vertical tabs
   int numlines;
+
+  static float prevXoffset;
 };
 
 

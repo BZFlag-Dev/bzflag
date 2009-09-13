@@ -54,8 +54,13 @@ struct AreaInts {
 // ControlPanelMessage
 //
 
-ControlPanelMessage::ControlPanelMessage(const std::string& _string)
-: string(_string)
+float ControlPanelMessage::prevXoffset = 0.0f;
+
+
+ControlPanelMessage::ControlPanelMessage(const std::string& _data)
+: data(_data)
+, xoffset(0.0f)
+, xoffsetFirst(0.0f)
 , numlines(0)
 {
 }
@@ -65,15 +70,40 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 {
   FontManager &fm = FontManager::instance();
 
+  std::string s = data;
+
+  bool needXoffsetAdj = false;
+
+  // handle the vertical tabs
+  std::string::size_type vPos = s.find('\v');
+  if (vPos == 0) {
+    maxLength   -= prevXoffset;
+    xoffset      = prevXoffset;
+    xoffsetFirst = prevXoffset;
+  }
+  else if (vPos != std::string::npos) {
+    const std::string prefix = stripAnsiCodes(s.substr(0, vPos));
+    xoffset = fm.getStringWidth(fontFace, fontSize, prefix);
+    prevXoffset = xoffset;
+    needXoffsetAdj = true;
+  }
+
+  // strip remaining '\v'
+  if (vPos != std::string::npos) {
+    do {
+      s.replace(vPos, 1, "");
+    } while ((vPos = s.find('\v')) != std::string::npos);
+  }
+
   // get message and its length
-  const char* msg = string.c_str();
-  int lineLen = (int)string.length();
+  const char* msg = s.c_str();
+  int lineLen = (int)s.length();
 
   // if there are tabs in the message, find the last one
-  int lastTab = (int)string.rfind('\t');
+  int lastTab = (int)s.rfind('\t');
 
   lines.clear();
-  numlines=0;
+  numlines = 0;
 
   // in order for the new font engine to draw successive lines in the right
   // color, it needs to be fed the right ansi codes at the beginning of each
@@ -91,12 +121,17 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
       n = lineLen;
     }
     else {
+
       n = 0;
+
       while ((n < lineLen) &&
 	     (fm.getStringWidth(fontFace, fontSize,
-				std::string(msg, ((++UTF8StringItr(msg+n)).getBufferFromHere()-msg)))
+				std::string(msg, ((++UTF8StringItr(msg + n)).getBufferFromHere() - msg)))
 	      < maxLength)) {
-	if (msg[n] == ESC_CHAR) {
+	if (msg[n] != ESC_CHAR) {
+	  n = static_cast<int>((++UTF8StringItr(msg+n)).getBufferFromHere() - msg);
+        }
+        else {
 	  // clear the cumulative codes when we hit a reset
 	  // the reset itself will start the new cumulative string.
 	  if ((strncmp(msg + n, ANSI_STR_RESET, strlen(ANSI_STR_RESET)) == 0)
@@ -120,15 +155,15 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 	      n++;
 	    }
 	  }
-	} else {
-	  n = static_cast<int>((++UTF8StringItr(msg+n)).getBufferFromHere()-msg);
 	}
+
 	if (TextUtils::isWhitespace(msg[n])) {
 	  lastWhitespace = n;
 	  // Tabs break out into their own message.  These get dealt with
 	  // in ControlPanel::render, which will increment x instead of y.
-	  if (msg[n] == '\t')
+	  if (msg[n] == '\t') {
 	    break;
+          }
 	}
       }
     }
@@ -138,16 +173,31 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
     }
 
     // message
-    lines.push_back(cumulativeANSICodes + std::string(msg,n));
+    lines.push_back(cumulativeANSICodes + std::string(msg, n));
 
     if (msg[n] != '\t') {
       numlines++;
+    }
+
+    // adjust the maxLength for non-first lines
+    if (needXoffsetAdj) {
+      maxLength -= xoffset;
+      needXoffsetAdj = false;
     }
 
     // account for portion broken
     msg += n;
     lineLen -= n;
     lastTab -= n;
+
+    // eat leading whitespace after breaks
+    if (xoffset != 0.0f) {
+      while (TextUtils::isWhitespace(msg[0]) and (msg[0] != '\t')) {
+        msg++;
+        lineLen--;
+        lastTab--;
+      }
+    }
   }
 }
 
@@ -466,8 +516,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
     bool isTab = false;
 
+    bool first = true;
     for (int l = 0; l < numStrings; l++)  {
-      const std::string &msg = tabs[activeTab]->messages[i].lines[l];
+      const ControlPanelMessage& cpMsg = tabs[activeTab]->messages[i];
+      const std::string &msg = cpMsg.lines[l];
 
       // Tab chars move horizontally instead of vertically
       // It doesn't matter where in the string the tab char is
@@ -485,8 +537,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
       // only draw message if inside message area
       if ((j + msgy) < maxLines) {
+        float xoff = first ? cpMsg.xoffsetFirst : cpMsg.xoffset;
 	if (!highlight) {
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0,
+	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
 	                fontFace->getFMFace(), fontSize, msg);
 	}
 	else {
@@ -495,9 +548,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	  newMsg += ANSI_STR_UNDERLINE;
 	  newMsg += ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg);
-	  fm.drawString(fx + msgx, fy + msgy * lineHeight, 0,
+	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
 	                fontFace->getFMFace(), fontSize, newMsg);
 	}
+	first = false;
       }
 
       // next line
@@ -780,6 +834,7 @@ void ControlPanel::resize()
   margin = lineHeight / 4.0f;
 
   // rewrap all the lines
+  ControlPanelMessage::prevXoffset = 0.0f;
   for (int i = 0; i < (int)tabs.size(); i++) {
     for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
       tabs[i]->messages[j].breakLines(messageRect.xsize - 2 * margin,
@@ -1165,7 +1220,7 @@ bool ControlPanel::saveMessages(const std::string& filename, bool stripAnsi,
 
   MessageQueue::const_iterator msg;
   for (msg = msgs->begin(); msg != msgs->end(); ++msg) {
-    const std::string& line = msg->string;
+    const std::string& line = msg->data;
     if (stripAnsi) {
       fprintf(file, "%s\n", stripAnsiCodes(line));
     } else {

@@ -80,7 +80,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   addControl(createLabel(NULL, "Send to Nemesis:"));
   addControl(createLabel(NULL, "Send to Recipient:"));
   addControl(createLabel(NULL, "Send to Admin:"));
-  addControl(createLabel(NULL, "Send Hub message:"));
+  addControl(createLabel(NULL, "Send Hub Message:"));
+  addControl(createLabel(NULL, "Paste:"));
   addControl(createLabel(NULL, "Jump:"));
   addControl(createLabel(NULL, "Binoculars:"));
   addControl(createLabel(NULL, "Toggle Score:"));
@@ -136,8 +137,9 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("send team", ++i);
   initkeymap("send nemesis", ++i);
   initkeymap("send recipient", ++i);
-  initkeymap("send admin",++i);
-  initkeymap("hubcompose",++i);
+  initkeymap("send admin", ++i);
+  initkeymap("hubcompose", ++i);
+  initkeymap("paste", ++i);
   initkeymap("jump", ++i);
   initkeymap("viewZoom toggle", ++i);
   initkeymap("toggle displayScore", ++i);

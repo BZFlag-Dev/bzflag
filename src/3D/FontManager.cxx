@@ -423,9 +423,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   }
 
   // FTGL tries to render tab characters, which we don't want.  Replace them with spaces.
-  for (int i = 0; i < textlen; ++i)
-    if (buffer[i] == '\t')
+  for (int i = 0; i < textlen; ++i) {
+    if (buffer[i] == '\t') {
       buffer[i] = ' ';
+    }
+  }
 
   glEnable(GL_TEXTURE_2D);
 
