@@ -2242,7 +2242,7 @@ void handleMessage(void *msg)
             fullMsg += "[->" + dstName + " " + text + "]";
           } else {
             fullMsg += "[->" + dstName + "]";
-            fullMsg += std::string(ColorStrings[ResetColor]) + " ";
+            fullMsg += std::string(ColorStrings[ResetColor]) + " \v";
             fullMsg += std::string(ColorStrings[CyanColor]) + text;
           }
         } else {
@@ -2250,7 +2250,7 @@ void handleMessage(void *msg)
             fullMsg += "[" + srcName + " " + text + "->]";
           } else {
             fullMsg += "[" + srcName + "->]";
-            fullMsg += std::string(ColorStrings[ResetColor]) + " ";
+            fullMsg += std::string(ColorStrings[ResetColor]) + " \v";
             fullMsg += std::string(ColorStrings[CyanColor]) + text;
           }
 
@@ -2300,9 +2300,9 @@ void handleMessage(void *msg)
 
       // display action messages differently
       if (type == ActionMessage) {
-        fullMsg += srcName + " " + text;
+        fullMsg += srcName + " \v" + text;
       } else {
-        fullMsg += srcName + colorStr + ": " +
+        fullMsg += srcName + colorStr + ": \v" +
                    std::string(ColorStrings[CyanColor]) + text;
       }
     }
