@@ -20,22 +20,25 @@
 #include "common.h"
 
 // well known service port number for bzflag server
-const unsigned int	ServerPort = 5154;
+const unsigned int  ServerPort = 5154;
 
 // port for udp broadcasts used to find servers on local lan
-const unsigned int	BroadcastPort = 5154;
+const unsigned int  BroadcastPort = 5154;
+
+// well known service port number for bzflag hub server
+const unsigned int  HubServerPort = 16986; // 0x425A / 'BZ'
 
 // URL for default list server
-const char* const DefaultListServerURL = "http://my.BZFlag.org/db/";
-const char* const DefaultMasterBanURL  = "http://bzflag.org/master-bans.txt";
-const char* const DefaultMOTDServer    = "http://bzflag.org/motd.php";
-const char* const DefaultHubServer     = "hub.bzflag.bz";
+const char* const  DefaultListServerURL = "http://my.BZFlag.org/db/";
+const char* const  DefaultMasterBanURL  = "http://bzflag.org/master-bans.txt";
+const char* const  DefaultMOTDServer    = "http://bzflag.org/motd.php";
+const char* const  DefaultHubServer     = "hub.bzflag.bz";
 
 // maximum size of any message (including header and length fields)
-const unsigned int	MaxPacketLen = 1024;
+const unsigned int  MaxPacketLen = 1024;
 
 // the banned tag
-const char* const	BanRefusalString = "REFUSED:";
+const char* const  BanRefusalString = "REFUSED:";
 
 // player attributes for the MsgPlayerInfo message
 enum PlayerAttribute {

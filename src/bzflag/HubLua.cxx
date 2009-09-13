@@ -32,6 +32,7 @@
 #include "KeyManager.h"
 #include "LuaHeader.h"
 #include "Pack.h"
+#include "ServerLink.h"
 #include "TimeKeeper.h"
 #include "bzfgl.h"
 #include "bzfio.h"

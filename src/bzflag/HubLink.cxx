@@ -27,6 +27,7 @@
 #include "DirectoryNames.h"
 #include "FileManager.h"
 #include "Pack.h"
+#include "Protocol.h"
 #include "TextUtils.h"
 #include "bzfio.h"
 #include "bz_md5.h"
@@ -136,7 +137,7 @@ bool HubLink::parseHostPort(std::string& host, int& port)
   const std::string::size_type colon = hostPort.find(':');
   if (colon == std::string::npos) {
     host = hostPort;
-    port = defaultPort;
+    port = HubServerPort;
     return true;
   }
 

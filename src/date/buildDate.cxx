@@ -57,7 +57,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		50
+#  define BZ_REV		51
 #endif
 
 // DEVEL | STABLE | MAINT

@@ -500,8 +500,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
   for (j = 0; (i >= 0) && (j < maxLines); i--) {
     // draw each line of text
-    int numLines = tabs[activeTab]->messages[i].numlines;
-    int numStrings = (int)tabs[activeTab]->messages[i].lines.size();
+    const ControlPanelMessage& cpMsg = tabs[activeTab]->messages[i];
+    int numLines = cpMsg.numlines;
+    int numStrings = (int)cpMsg.lines.size();
     int msgy = numLines - 1;
     int msgx = 0;
 
@@ -509,7 +510,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     bool highlight = false;
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
-	const std::string &msg = tabs[activeTab]->messages[i].lines[l];
+	const std::string &msg = cpMsg.lines[l];
 	std::string raw = stripAnsiCodes(msg);
 	if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
 	  highlight = true;
@@ -523,9 +524,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
     bool isTab = false;
 
-    bool first = true;
     for (int l = 0; l < numStrings; l++)  {
-      const ControlPanelMessage& cpMsg = tabs[activeTab]->messages[i];
       const std::string &msg = cpMsg.lines[l];
 
       // Tab chars move horizontally instead of vertically
@@ -544,7 +543,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
       // only draw message if inside message area
       if ((j + msgy) < maxLines) {
-        float xoff = first ? cpMsg.xoffsetFirst : cpMsg.xoffset;
+        const float xoff = (l == 0) ? cpMsg.xoffsetFirst : cpMsg.xoffset;
 	if (!highlight) {
 	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
 	                fontFace->getFMFace(), fontSize, msg);
@@ -558,7 +557,6 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
 	                fontFace->getFMFace(), fontSize, newMsg);
 	}
-	first = false;
       }
 
       // next line
