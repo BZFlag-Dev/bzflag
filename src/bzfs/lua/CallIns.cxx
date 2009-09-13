@@ -71,7 +71,7 @@ static int MapEventToCallIn(int eventCode)
 
 class CallIn : public bz_EventHandler {
   public:
-    static void SetL(lua_State* _L) { L = _L; }
+    static void SetL(lua_State* LS) { L = LS; }
 
   public:
     CallIn(int _bzCode, const std::string& _name, const std::string& _loopType)

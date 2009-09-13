@@ -37,8 +37,8 @@ const char* LuaURLMgr::metaName = "FetchURL";
 //============================================================================//
 //============================================================================//
 
-LuaURL::LuaURL(lua_State* _L, const std::string& _url)
-: L(_L)
+LuaURL::LuaURL(lua_State* LS, const std::string& _url)
+: L(LS)
 , active(false)
 , success(false)
 , headOnly(false)
@@ -203,9 +203,9 @@ bool LuaURL::Cancel()
 }
 
 
-bool LuaURL::PushFunc(lua_State* _L) const
+bool LuaURL::PushFunc(lua_State* LS) const
 {
-  if (L != _L) {
+  if (L != LS) {
     return false;
   }
   lua_rawgeti(L, LUA_REGISTRYINDEX, funcRef);
