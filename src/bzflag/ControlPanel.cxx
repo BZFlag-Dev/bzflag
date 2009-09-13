@@ -74,18 +74,25 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
   bool needXoffsetAdj = false;
 
+  const float charWidth = fm.getStringWidth(fontFace, fontSize, "-");
+
   // handle the vertical tabs
   std::string::size_type vPos = s.find('\v');
   if (vPos == 0) {
-    maxLength   -= prevXoffset;
-    xoffset      = prevXoffset;
-    xoffsetFirst = prevXoffset;
+    if (prevXoffset < (maxLength - (2.0f * charWidth))) {
+      maxLength   -= prevXoffset;
+      xoffset      = prevXoffset;
+      xoffsetFirst = prevXoffset;
+    }
   }
   else if (vPos != std::string::npos) {
     const std::string prefix = stripAnsiCodes(s.substr(0, vPos));
-    xoffset = fm.getStringWidth(fontFace, fontSize, prefix);
-    prevXoffset = xoffset;
-    needXoffsetAdj = true;
+    const float prefixWidth = fm.getStringWidth(fontFace, fontSize, prefix);
+    if (prefixWidth < (maxLength - (2.0f * charWidth))) {
+      xoffset = prefixWidth;
+      prevXoffset = xoffset;
+      needXoffsetAdj = true;
+    }
   }
 
   // strip remaining '\v'
