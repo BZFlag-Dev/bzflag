@@ -68,7 +68,14 @@ ControlPanelMessage::ControlPanelMessage(const std::string& _data)
 
 void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
 {
+  lines.clear();
+  numlines = 0;
+
   FontManager &fm = FontManager::instance();
+
+  if (maxLength <= 0.0f) {
+    return;
+  }
 
   std::string s = data;
 
@@ -108,9 +115,6 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
   // if there are tabs in the message, find the last one
   int lastTab = (int)s.rfind('\t');
-
-  lines.clear();
-  numlines = 0;
 
   // in order for the new font engine to draw successive lines in the right
   // color, it needs to be fed the right ansi codes at the beginning of each

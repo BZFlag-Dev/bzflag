@@ -12,12 +12,6 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* Fix stencil shadows (broken during the FTGL NO_BLEND removal)
-
-* Fix the spin-loop that occurs in ControlPanelMessage::breakLines()
-  when the window width is shrunk to the point where the lines can
-  never be broken
-
 * Canceling a pause command before the 5 second countdown completes
   causes the client to drop any good flag without notifying the
   server, so other players will still see a flag on the tank even

@@ -153,6 +153,9 @@ class HubLink {
     static int SetBZDB(lua_State* L);
     static int GetBZDB(lua_State* L);
 
+    static int LoadFile(lua_State* L);
+    static int SaveFile(lua_State* L);
+
     static int GetCode(lua_State* L);
     static int GetTime(lua_State* L);
     static int GetVersion(lua_State* L);

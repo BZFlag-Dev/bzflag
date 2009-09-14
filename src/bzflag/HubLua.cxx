@@ -25,6 +25,7 @@
 // common headers
 #include "AnsiCodes.h"
 #include "BZDBCache.h"
+#include "DirectoryNames.h"
 #include "HubComposeKey.h"
 #include "HubLink.h"
 #include "HUDRenderer.h"
@@ -72,7 +73,7 @@ static std::map<int, std::string> code2name;
 //  Lua routines
 //
 
-static void PushNamedString(lua_State* L, const char* key,
+static void pushNamedString(lua_State* L, const char* key,
                                           const char* value)
 {
   lua_pushstring(L, key);
@@ -81,7 +82,7 @@ static void PushNamedString(lua_State* L, const char* key,
 }
 
 
-static void PushNamedInt(lua_State* L, const char* key, int value)
+static void pushNamedInt(lua_State* L, const char* key, int value)
 {
   lua_pushstring(L, key);
   lua_pushinteger(L, value);
@@ -213,25 +214,25 @@ bool HubLink::pushAnsiCodes()
 {
   lua_newtable(L);
 
-  PushNamedString(L, "RESET",        ANSI_STR_RESET_FINAL);
-  PushNamedString(L, "RESET_BRIGHT", ANSI_STR_RESET);
-  PushNamedString(L, "BRIGHT",       ANSI_STR_BRIGHT);
-  PushNamedString(L, "DIM",          ANSI_STR_DIM);
-  PushNamedString(L, "UNDERLINE",    ANSI_STR_UNDERLINE);
-  PushNamedString(L, "NO_UNDERLINE", ANSI_STR_NO_UNDERLINE);
-  PushNamedString(L, "BLINK",        ANSI_STR_PULSATING);
-  PushNamedString(L, "NO_BLINK",     ANSI_STR_NO_PULSATE);
-  PushNamedString(L, "REVERSE",      ANSI_STR_REVERSE);
-  PushNamedString(L, "NO_REVERSE",   ANSI_STR_NO_REVERSE);
-  PushNamedString(L, "BLACK",   ANSI_STR_FG_BLACK);
-  PushNamedString(L, "RED",     ANSI_STR_FG_RED);
-  PushNamedString(L, "GREEN",   ANSI_STR_FG_GREEN);
-  PushNamedString(L, "YELLOW",  ANSI_STR_FG_YELLOW);
-  PushNamedString(L, "BLUE",    ANSI_STR_FG_BLUE);
-  PushNamedString(L, "MAGENTA", ANSI_STR_FG_MAGENTA);
-  PushNamedString(L, "CYAN",    ANSI_STR_FG_CYAN);
-  PushNamedString(L, "WHITE",   ANSI_STR_FG_WHITE);
-  PushNamedString(L, "ORANGE",  ANSI_STR_FG_ORANGE);
+  pushNamedString(L, "RESET",        ANSI_STR_RESET_FINAL);
+  pushNamedString(L, "RESET_BRIGHT", ANSI_STR_RESET);
+  pushNamedString(L, "BRIGHT",       ANSI_STR_BRIGHT);
+  pushNamedString(L, "DIM",          ANSI_STR_DIM);
+  pushNamedString(L, "UNDERLINE",    ANSI_STR_UNDERLINE);
+  pushNamedString(L, "NO_UNDERLINE", ANSI_STR_NO_UNDERLINE);
+  pushNamedString(L, "BLINK",        ANSI_STR_PULSATING);
+  pushNamedString(L, "NO_BLINK",     ANSI_STR_NO_PULSATE);
+  pushNamedString(L, "REVERSE",      ANSI_STR_REVERSE);
+  pushNamedString(L, "NO_REVERSE",   ANSI_STR_NO_REVERSE);
+  pushNamedString(L, "BLACK",   ANSI_STR_FG_BLACK);
+  pushNamedString(L, "RED",     ANSI_STR_FG_RED);
+  pushNamedString(L, "GREEN",   ANSI_STR_FG_GREEN);
+  pushNamedString(L, "YELLOW",  ANSI_STR_FG_YELLOW);
+  pushNamedString(L, "BLUE",    ANSI_STR_FG_BLUE);
+  pushNamedString(L, "MAGENTA", ANSI_STR_FG_MAGENTA);
+  pushNamedString(L, "CYAN",    ANSI_STR_FG_CYAN);
+  pushNamedString(L, "WHITE",   ANSI_STR_FG_WHITE);
+  pushNamedString(L, "ORANGE",  ANSI_STR_FG_ORANGE);
 
   lua_setglobal(L, "ANSI");
 
@@ -243,13 +244,13 @@ bool HubLink::pushConstants()
 {
   lua_newtable(L);
 
-  PushNamedInt(L, "ALLTABS", ControlPanel::MessageAllTabs);
-  PushNamedInt(L, "CURRENT", ControlPanel::MessageCurrent);
-  PushNamedInt(L, "ALL",     ControlPanel::MessageAll);
-  PushNamedInt(L, "CHAT",    ControlPanel::MessageChat);
-  PushNamedInt(L, "SERVER",  ControlPanel::MessageServer);
-  PushNamedInt(L, "MISC",    ControlPanel::MessageMisc);
-  PushNamedInt(L, "DEBUG",   ControlPanel::MessageDebug);
+  pushNamedInt(L, "ALLTABS", ControlPanel::MessageAllTabs);
+  pushNamedInt(L, "CURRENT", ControlPanel::MessageCurrent);
+  pushNamedInt(L, "ALL",     ControlPanel::MessageAll);
+  pushNamedInt(L, "CHAT",    ControlPanel::MessageChat);
+  pushNamedInt(L, "SERVER",  ControlPanel::MessageServer);
+  pushNamedInt(L, "MISC",    ControlPanel::MessageMisc);
+  pushNamedInt(L, "DEBUG",   ControlPanel::MessageDebug);
 
   lua_setglobal(L, "TABS");
 
@@ -500,8 +501,13 @@ bool HubLink::pushCallOuts()
 
   PUSH_LUA_CFUNC(L, CalcMD5);
   PUSH_LUA_CFUNC(L, StripAnsiCodes);
+
   PUSH_LUA_CFUNC(L, SetBZDB);
   PUSH_LUA_CFUNC(L, GetBZDB);
+
+  PUSH_LUA_CFUNC(L, LoadFile);
+  PUSH_LUA_CFUNC(L, SaveFile);
+
   PUSH_LUA_CFUNC(L, GetCode);
   PUSH_LUA_CFUNC(L, GetTime);
   PUSH_LUA_CFUNC(L, GetVersion);
@@ -959,6 +965,60 @@ int HubLink::GetBZDB(lua_State* L)
   return 1;
 }
 
+//============================================================================//
+
+static std::string checkFilename(const char* filename)
+{
+  if ((strlen(filename) <= 4)
+   || (strncmp(filename, "hub_", 4) != 0)
+   || (strstr(filename,  "..")   != NULL)
+   || (strpbrk(filename, "/:\\") != NULL)) {
+    return "";
+  }
+  return getConfigDirName(BZ_CONFIG_DIR_VERSION) + filename;
+}
+
+int HubLink::LoadFile(lua_State* L)
+{
+  const std::string filename = checkFilename(luaL_checkstring(L, 1));
+  if (filename.empty()) {
+    return 0;
+  }
+  FILE* file = fopen(filename.c_str(), "rb");
+  if (file == NULL) {
+    return 0;
+  }
+  std::string data;
+  while (!feof(file) && !ferror(file)) {
+    char buf[4096];
+    const size_t bytes = fread(buf, 1, sizeof(buf), file);
+    data.append(buf, bytes);
+  }
+  fclose(file);
+  lua_pushstdstring(L, data);
+  return 1;
+}
+
+
+int HubLink::SaveFile(lua_State* L)
+{
+  const std::string filename = checkFilename(luaL_checkstring(L, 1));
+  const std::string data = luaL_checkstdstring(L, 2);
+  if (filename.empty()) {
+    return 0;
+  }
+  FILE* file = fopen(filename.c_str(), "wb");
+  if (file == NULL) {
+    return 0;
+  }
+  const size_t bytes = fwrite(data.c_str(), 1, data.size(), file);
+  fclose(file);
+  lua_pushboolean(L, bytes == data.size());
+  return 1;
+}
+
+
+//============================================================================//
 
 int HubLink::GetCode(lua_State* L)
 {
@@ -970,8 +1030,6 @@ int HubLink::GetCode(lua_State* L)
   return 1;
 }
 
-
-//============================================================================//
 
 int HubLink::GetTime(lua_State* L)
 {

@@ -25,6 +25,9 @@
 #include "KeyManager.h"
 #include "TextUtils.h"
 
+// FIXME: Shouldn't need to depend on GUI elements
+#include "guiplaying.h"
+
 typedef CommandManager::ArgList CmdArgList;
 
 
@@ -136,6 +139,9 @@ static std::string cmdPrint(const std::string&, const CmdArgList& args, bool*)
   }
 
   std::cout << "printing \"" << result << "\"" << std::endl;
+  if (controlPanel) {
+    controlPanel->addMessage(result);
+  }
   return result;
 }
 
