@@ -203,7 +203,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
     // eat leading whitespace after breaks
     if (xoffset != 0.0f) {
-      while (TextUtils::isWhitespace(msg[0]) and (msg[0] != '\t')) {
+      while (TextUtils::isWhitespace(msg[0]) && (msg[0] != '\t')) {
         msg++;
         lineLen--;
         lastTab--;
