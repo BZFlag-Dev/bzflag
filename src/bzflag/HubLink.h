@@ -155,6 +155,8 @@ class HubLink {
 
     static int LoadFile(lua_State* L);
     static int SaveFile(lua_State* L);
+    static int AppendFile(lua_State* L);
+    static int RemoveFile(lua_State* L);
 
     static int GetCode(lua_State* L);
     static int GetTime(lua_State* L);

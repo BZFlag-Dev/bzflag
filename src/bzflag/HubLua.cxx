@@ -507,6 +507,8 @@ bool HubLink::pushCallOuts()
 
   PUSH_LUA_CFUNC(L, LoadFile);
   PUSH_LUA_CFUNC(L, SaveFile);
+  PUSH_LUA_CFUNC(L, AppendFile);
+  PUSH_LUA_CFUNC(L, RemoveFile);
 
   PUSH_LUA_CFUNC(L, GetCode);
   PUSH_LUA_CFUNC(L, GetTime);
@@ -967,7 +969,7 @@ int HubLink::GetBZDB(lua_State* L)
 
 //============================================================================//
 
-static std::string checkFilename(const char* filename)
+static std::string setupFilename(const char* filename)
 {
   if ((strlen(filename) <= 4)
    || (strncmp(filename, "hub_", 4) != 0)
@@ -978,42 +980,101 @@ static std::string checkFilename(const char* filename)
   return getConfigDirName(BZ_CONFIG_DIR_VERSION) + filename;
 }
 
+
 int HubLink::LoadFile(lua_State* L)
 {
-  const std::string filename = checkFilename(luaL_checkstring(L, 1));
+  const std::string filename = setupFilename(luaL_checkstring(L, 1));
   if (filename.empty()) {
     return 0;
   }
+
   FILE* file = fopen(filename.c_str(), "rb");
   if (file == NULL) {
-    return 0;
+    const int errNo = errno;
+    lua_pushnil(L);
+    lua_pushstring(L, strerror(errNo));
+    return 2;
   }
+
   std::string data;
+  char buf[4096];
   while (!feof(file) && !ferror(file)) {
-    char buf[4096];
     const size_t bytes = fread(buf, 1, sizeof(buf), file);
     data.append(buf, bytes);
+    if (ferror(file)) {
+      const int errNo = errno;
+      lua_pushnil(L);
+      lua_pushstring(L, strerror(errNo));
+      lua_pushstdstring(L, data); // partial data
+      fclose(file);
+      return 3;
+    }
   }
+
   fclose(file);
   lua_pushstdstring(L, data);
   return 1;
 }
 
 
-int HubLink::SaveFile(lua_State* L)
+static int luaSaveFile(lua_State* L, const char* mode)
 {
-  const std::string filename = checkFilename(luaL_checkstring(L, 1));
+  const std::string filename = setupFilename(luaL_checkstring(L, 1));
   const std::string data = luaL_checkstdstring(L, 2);
   if (filename.empty()) {
     return 0;
   }
-  FILE* file = fopen(filename.c_str(), "wb");
+
+  FILE* file = fopen(filename.c_str(), mode);
   if (file == NULL) {
+    const int errNo = errno;
+    lua_pushnil(L);
+    lua_pushstring(L, strerror(errNo));
+    return 2;
+  }
+
+  fwrite(data.c_str(), 1, data.size(), file);
+  if (ferror(file)) {
+    const int errNo = errno;
+    lua_pushnil(L);
+    lua_pushstring(L, strerror(errNo));
+    fclose(file);
+    return 2;
+  }
+
+  fclose(file);
+  lua_pushboolean(L, true);
+  return 1;
+}
+
+
+int HubLink::SaveFile(lua_State* L)
+{
+  return luaSaveFile(L, "wb");
+}
+
+
+int HubLink::AppendFile(lua_State* L)
+{
+  return luaSaveFile(L, "ab");
+}
+
+
+int HubLink::RemoveFile(lua_State* L)
+{
+  const std::string filename = setupFilename(luaL_checkstring(L, 1));
+  if (filename.empty()) {
     return 0;
   }
-  const size_t bytes = fwrite(data.c_str(), 1, data.size(), file);
-  fclose(file);
-  lua_pushboolean(L, bytes == data.size());
+
+  if (remove(filename.c_str()) != 0) {
+    const int errNo = errno;
+    lua_pushnil(L);
+    lua_pushstring(L, strerror(errNo));
+    return 2;
+  }
+
+  lua_pushboolean(L, true); 
   return 1;
 }
 
