@@ -729,15 +729,18 @@ int HubLink::GetTabIndex(lua_State* L)
 int HubLink::GetTabLabel(lua_State* L)
 {
   if (!controlPanel) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   const int tabID = CheckTab(L, 1);
   if (!controlPanel->validTab(tabID)) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   const std::string& label = controlPanel->getTabLabel(tabID);
   if (label.empty()) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, label);
   return 1;
@@ -747,15 +750,18 @@ int HubLink::GetTabLabel(lua_State* L)
 int HubLink::GetActiveTab(lua_State* L)
 {
   if (!controlPanel) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   const int tabID = controlPanel->getActiveTab();
   if (tabID < 0) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   const std::string& label = controlPanel->getTabLabel(tabID);
   if (label.empty()) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, label);
   return 1;
@@ -778,14 +784,17 @@ int HubLink::SetActiveTab(lua_State* L)
 int HubLink::GetComposePrompt(lua_State* L)
 {
   if (hud == NULL) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   HUDuiDefaultKey* defKey = HUDui::getDefaultKey();
   if (!defKey || !dynamic_cast<HubComposeKey*>(defKey)) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   if (!hud->getComposing()) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, hud->getComposePrompt());
   return 1;
@@ -814,14 +823,17 @@ int HubLink::SetComposePrompt(lua_State* L)
 int HubLink::GetComposeString(lua_State* L)
 {
   if (hud == NULL) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   HUDuiDefaultKey* defKey = HUDui::getDefaultKey();
   if (!defKey || !dynamic_cast<HubComposeKey*>(defKey)) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   if (!hud->getComposing()) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, hud->getComposeString());
   return 1;
@@ -961,7 +973,8 @@ int HubLink::GetBZDB(lua_State* L)
 {
   const std::string key = luaL_checkstring(L, 1);
   if (!BZDB.isSet(key)) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, BZDB.get(key));
   return 1;
@@ -1022,7 +1035,9 @@ static int luaSaveFile(lua_State* L, const char* mode)
   const std::string filename = setupFilename(luaL_checkstring(L, 1));
   const std::string data = luaL_checkstdstring(L, 2);
   if (filename.empty()) {
-    return 0;
+    lua_pushnil(L);
+    lua_pushstring(L, "invalid filename");
+    return 2;
   }
 
   FILE* file = fopen(filename.c_str(), mode);
@@ -1064,7 +1079,9 @@ int HubLink::RemoveFile(lua_State* L)
 {
   const std::string filename = setupFilename(luaL_checkstring(L, 1));
   if (filename.empty()) {
-    return 0;
+    lua_pushnil(L);
+    lua_pushstring(L, "invalid filename");
+    return 2;
   }
 
   if (remove(filename.c_str()) != 0) {
@@ -1085,7 +1102,8 @@ int HubLink::GetCode(lua_State* L)
 {
   HubLink* link = GetLink(L);
   if (link == NULL) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, link->getLuaCode());
   return 1;
@@ -1112,7 +1130,8 @@ int HubLink::GetHubServer(lua_State* L)
 {
   HubLink* link = GetLink(L);
   if (link == NULL) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   lua_pushstdstring(L, link->getHostPort());
   return 1;
@@ -1124,7 +1143,8 @@ int HubLink::GetServerInfo(lua_State* L)
   const ServerLink* srvLink = ServerLink::getServer();
   if ((srvLink == NULL) ||
       (srvLink->getState() != ServerLink::Okay)) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
 
   lua_pushstdstring(L, srvLink->getJoinServer());
@@ -1149,7 +1169,8 @@ int HubLink::GetOpenGLNumbers(lua_State* L)
   const int count = luaL_optint(L, 2, 1);
   GLdouble buf[256];
   if ((count < 0) || (count > 256)) {
-    return 0;
+    lua_pushnil(L);
+    return 1;
   }
   glGetDoublev(pname, buf);
   lua_checkstack(L, count);
