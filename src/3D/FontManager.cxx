@@ -505,9 +505,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	// draw the underline before the text
 	if (underline) {
 	  if (!rawBlending) {
-            glDisable(GL_TEXTURE_2D);
             glEnable(GL_BLEND);
           }
+          glDisable(GL_TEXTURE_2D);
 	  if (bright && underlineColor[0] >= 0) {
 	    myColor4fv(underlineColor);
 	  } else if (underlineColor[0] >= 0) {
