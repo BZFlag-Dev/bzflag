@@ -195,6 +195,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\platform\Clipboard.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\platform\DXJoystick.cxx"
 				>
 			</File>
@@ -309,6 +313,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\BzfWindow.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\Clipboard.h"
 				>
 			</File>
 			<File
