@@ -396,6 +396,14 @@ const char* FontManager::getFaceName(int faceID)
 }
 
 
+static float italicMatrix[16] = {
+  1.0f, 0.0f, 0.0f, 0.0f,
+  0.4f, 1.0f, 0.0f, 0.0f, // note the 0.4f (for the y -> x skew)
+  0.0f, 0.0f, 1.0f, 0.0f,
+  1.0f, 1.0f, 1.0f, 1.0f
+};
+
+
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string& text,
 			     const fvec4* resetColor,
@@ -436,6 +444,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   // sane defaults
   bool bright    = true;
+  bool italic    = false;
   bool pulsating = false;
   bool underline = false;
   bool reverse   = false;
@@ -495,12 +504,17 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
       glPushMatrix(); {
 	if (align == AlignCenter) {
-	  glTranslatef(x - (width*0.5f), y, z);
+	  glTranslatef(x - (width * 0.5f), y, z);
 	} else if (align == AlignRight) {
 	  glTranslatef(x - width, y, z);
 	} else {
 	  glTranslatef(x, y, z);
 	}
+
+        if (italic) {
+          glTranslatef(-0.25f * (height * italicMatrix[4]), 0.0f, 0.0f);
+          glMultMatrixf(italicMatrix);
+        }
 
 	// draw the underline before the text
 	if (underline) {
@@ -602,12 +616,14 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	// settings other than color
 	if (strcasecmp(tmpText, ANSI_STR_RESET) == 0) {
 	  bright = true;
+	  italic = false;
 	  pulsating = false;
 	  underline = false;
 	  reverse = false;
 	  color.rgb() = resetColor->rgb() * darkness;
 	} else if (strcasecmp(tmpText, ANSI_STR_RESET_FINAL) == 0) {
 	  bright = false;
+	  italic = false;
 	  pulsating = false;
 	  underline = false;
 	  reverse = false;
@@ -616,6 +632,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  bright = true;
 	} else if (strcasecmp(tmpText, ANSI_STR_DIM) == 0) {
 	  bright = false;
+	} else if (strcasecmp(tmpText, ANSI_STR_NORMAL) == 0) {
+	  bright = false; // bzflag only has 2 levels, not 3
+	} else if (strcasecmp(tmpText, ANSI_STR_ITALIC) == 0) {
+	  italic = true;
+	} else if (strcasecmp(tmpText, ANSI_STR_NO_ITALIC) == 0) {
+	  italic = false;
 	} else if (strcasecmp(tmpText, ANSI_STR_UNDERLINE) == 0) {
 	  underline = true;
 	} else if (strcasecmp(tmpText, ANSI_STR_NO_UNDERLINE) == 0) {

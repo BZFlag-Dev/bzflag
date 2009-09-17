@@ -17,11 +17,14 @@
 #include "StateDatabase.h"
 #include "KeyManager.h"
 
-static const int	MaximumLineLength = 1024;
+
+static const int  MaximumLineLength = 1024;
+
 
 // initialize the singleton
 template <>
 ConfigFileManager* Singleton<ConfigFileManager>::_instance = (ConfigFileManager*)0;
+
 
 void writeBZDB(const std::string& name, void *stream)
 {
@@ -37,38 +40,45 @@ void writeBZDB(const std::string& name, void *stream)
   }
 
   // quotify the key if there's a space
-  if (name.find(' ') != name.npos)
+  if (name.find(' ') != name.npos) {
     newkey = std::string("\"") + name + "\"";
-  else
+  } else {
     newkey = name;
+  }
 
   s << (commentOut ? "#set " : "set ") << newkey << ' ' << value << std::endl;
 }
 
-void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream)
+
+void writeKEYMGR(const std::string& name, bool press,
+                 const std::string& command, void* stream)
 {
   std::ostream& s = *static_cast<std::ostream*>(stream);
   // quotify anything with a space
   std::string value = name;
-  if (value.find(' ') != value.npos)
+  if (value.find(' ') != value.npos) {
     value = std::string("\"") + value + "\"";
+  }
   s << "bind " << value << ' ' << (press ? "down " : "up ");
   value = command;
-  if (value.find(' ') != value.npos)
+  if (value.find(' ') != value.npos) {
     value = std::string("\"") + value + "\"";
+  }
   s << value << std::endl;
 }
 
+
 ConfigFileManager::ConfigFileManager()
 {
-  // do nothing
 }
+
 
 ConfigFileManager::~ConfigFileManager()
 {
 }
 
-bool				ConfigFileManager::parse(std::istream& stream)
+
+bool ConfigFileManager::parse(std::istream& stream)
 {
   char buffer[MaximumLineLength];
   while (!stream.eof()) {
@@ -78,7 +88,8 @@ bool				ConfigFileManager::parse(std::istream& stream)
   return true;
 }
 
-bool				ConfigFileManager::read(const std::string& filename)
+
+bool ConfigFileManager::read(const std::string& filename)
 {
   std::istream* stream = FILEMGR.createDataInStream(filename);
   if (stream == NULL) {
@@ -89,12 +100,14 @@ bool				ConfigFileManager::read(const std::string& filename)
   return ret;
 }
 
-void				ConfigFileManager::read(std::istream& stream)
+
+void ConfigFileManager::read(std::istream& stream)
 {
   parse(stream);
 }
 
-bool				ConfigFileManager::write(const std::string& filename)
+
+bool ConfigFileManager::write(const std::string& filename)
 {
   std::ostream* stream = FILEMGR.createDataOutStream(filename);
   if (stream == NULL) {

@@ -45,10 +45,14 @@ public:
   virtual int play(int soundID, const float *pos = NULL,
                    bool important = false,
                    bool localSound = true,
-                   bool repeat = false);
+                   bool repeat = false,
+                   bool ignoreMute = false);
 
   virtual void setVolume(float volume);
   virtual float getVolume();
+
+  virtual void setMute(bool value);
+  virtual bool getMute() const { return muting; }
 
   virtual bool update(double time);
 
@@ -105,7 +109,8 @@ protected:
 
   typedef struct {
     AudioSamples* samples; /* event sound effect */
-    bool    busy;           /* true iff in use */
+    bool    busy;           /* true if in use */
+    bool    muted;          /* true if muted */
     long    ptr;            /* current sample */
     double  ptrFracLeft;    /* fractional step ptr */
     double  ptrFracRight;   /* fractional step ptr */
@@ -183,7 +188,7 @@ protected:
   /* volume */
   float volumeAtten;
   int   mutingOn;
-
+  bool  muting;
 };
 
 #endif // PLATFORM_SOUND_H

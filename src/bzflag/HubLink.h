@@ -67,6 +67,8 @@ class HubLink {
 
     void wordComplete(const std::string& line, std::set<std::string>& matches);
 
+    void tabAdded(const std::string& name);
+    void tabRemoved(const std::string& name);
     void activeTabChanged();
 
     void bzdbChange(const std::string& varName);
@@ -167,6 +169,8 @@ class HubLink {
     static int GetOpenGLNumbers(lua_State* L);
 
     static int GetKeyBindings(lua_State* L);
+
+    static int IsVisible(lua_State* L);
 
     static int PackInt8(lua_State* L);
     static int PackInt16(lua_State* L);

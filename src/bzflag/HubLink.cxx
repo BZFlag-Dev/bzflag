@@ -22,6 +22,7 @@
 #include <set>
 
 // common headers
+#include "AnsiCodes.h"
 #include "AresHandler.h"
 #include "BZDBCache.h"
 #include "DirectoryNames.h"
@@ -94,19 +95,36 @@ void HubLink::clear()
     lua_close(L);
     L = NULL;
   }
+
   if (ares != NULL) {
     delete ares;
     ares = NULL;
   }
+
   if (sock >= 0) {
     ::shutdown(sock, SHUT_RDWR);
     BzfNetwork::closeSocket(sock);
     sock = -1;
   }
+
+  static BZDB_bool hubCloseTabs("hubCloseTabs");
   if (controlPanel != NULL) {
     std::set<std::string>::const_iterator it;
     for (it = tabs.begin(); it != tabs.end(); ++it) {
-      controlPanel->removeTab(*it);
+      const std::string& label = *it;
+      if (hubCloseTabs) {
+        controlPanel->removeTab(label);
+      }
+      else {
+        // add a DISCONNECTED message
+        controlPanel->addMessage(" ", label); // a blank line
+        controlPanel->addMessage(ANSI_STR_FG_RED ">>> DISCONNECTED <<<", label);
+        controlPanel->addMessage(" ", label); // a blank line
+
+        // change the tabel label to dark yellow
+        const std::string dimYellow = ANSI_STR_DIM ANSI_STR_FG_YELLOW;
+        controlPanel->renameTab(label, dimYellow + stripAnsiCodes(label));
+      }
     }
   }
   tabs.clear();
@@ -354,8 +372,9 @@ void HubLink::stateConnect()
     return;
   }
 
-  // for the paranoid,
-  if (!BZDB.isTrue("hubUpdateCode")) {
+  // for the paranoid, do not update the code
+  static BZDB_bool hubUpdateCode("hubUpdateCode");
+  if (!hubUpdateCode) {
     if (!loadFile(getLuaCodeFilename(), luaCode)) {
       fail("UpdateCode is Off, and hub.lua is not available");
       return;

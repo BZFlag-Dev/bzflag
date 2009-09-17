@@ -396,6 +396,12 @@ void forceControls(bool enabled, float speed, float angVel)
 }
 
 
+bool isUnmapped()
+{
+  return unmapped;
+}
+
+
 void setSceneDatabase()
 {
   // FIXME - test the zbuffer here
@@ -805,7 +811,7 @@ static void mouseClamp(const BzfMotionEvent& event)
 {
   // only clamp when it might be useful
   if ((myTank == NULL) || !myTank->isAlive() ||
-      myTank->isPaused() || (myTank->getTeam() == ObserverTeam)) {
+      myTank->isPaused() || myTank->isObserver()) {
     return;
   }
 
@@ -892,10 +898,7 @@ static void doEvent(BzfDisplay *disply)
       }
 
       // restore the sound
-      if (savedVolume != -1) {
-        SOUNDSYSTEM.setVolume(savedVolume * 0.1f);
-        savedVolume = -1;
-      }
+      SOUNDSYSTEM.setMute(false);
 
       unmapped = false;
       if (shouldGrabMouse()) {
@@ -932,10 +935,7 @@ static void doEvent(BzfDisplay *disply)
       }
 
       // turn off the sound
-      if (savedVolume == -1) {
-        savedVolume = (int)(SOUNDSYSTEM.getVolume() * 10);
-        SOUNDSYSTEM.setVolume(0);
-      }
+      SOUNDSYSTEM.setMute(true);
 
       unmapped = true;
       mainWindow->ungrabMouse();
@@ -1838,7 +1838,7 @@ void handleNewRabbit(void *msg)
 	}
 	scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
       }
-      else if (myTank->getTeam() != ObserverTeam) {
+      else if (!myTank->isObserver()) {
 	myTank->changeTeam(HunterTeam);
 
 	if (myTank->isPaused() || myTank->isAlive()) {
@@ -2312,7 +2312,7 @@ void handleMessage(void *msg)
     if (!srcPlayer || (srcPlayer->getTeam() == NoTeam)) {
       oldcolor = ColorStrings[RogueTeam];
     }
-    else if (srcPlayer->getTeam() == ObserverTeam) {
+    else if (srcPlayer->isObserver()) {
       oldcolor = ColorStrings[CyanColor];
     }
     else {
@@ -2712,7 +2712,7 @@ void handleFlagDropped(Player *tank)
 bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
 			const ShotPath *hit, int phydrv)
 {
-  if (!tank || (tank->getTeam() == ObserverTeam || !tank->isAlive()))
+  if (!tank || tank->isObserver() || !tank->isAlive())
     return false;
 
   int shotId = -1;
@@ -2738,10 +2738,7 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
 
   // restore the sound, this happens when paused tank dies
   // (genocide or team flag captured)
-  if (savedVolume != -1) {
-    SOUNDSYSTEM.setVolume(savedVolume*0.1f);
-    savedVolume = -1;
-  }
+  SOUNDSYSTEM.setMute(false);
 
   // take care of explosion business -- don't want to wait for
   // round trip of killed message.  waiting would simplify things,
@@ -2853,7 +2850,7 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
 
 static void checkEnvironment()
 {
-  if (!myTank || (myTank->getTeam() == ObserverTeam)) {
+  if (!myTank || myTank->isObserver()) {
     return;
   }
 
@@ -3481,7 +3478,7 @@ void enteringServer(void* buf)
   }
 
   // observer colors are actually cyan, make them black
-  const bool observer = (myTank->getTeam() == ObserverTeam);
+  const bool observer = myTank->isObserver();
   const fvec4* borderColor;
   if (observer) {
     static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
@@ -3492,7 +3489,7 @@ void enteringServer(void* buf)
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
 
-  if (myTank->getTeam() != ObserverTeam) {
+  if (!myTank->isObserver()) {
     ROAM.setMode(Roaming::roamViewDisabled);
   }
   else {
@@ -3529,10 +3526,7 @@ void enteringServer(void* buf)
   lastEpochOffset = epochOffset;
 
   // restore the sound
-  if (savedVolume != -1) {
-    SOUNDSYSTEM.setVolume(savedVolume*0.1f);
-    savedVolume = -1;
-  }
+  SOUNDSYSTEM.setMute(false);
 
   // initialize some other stuff
   updateNumPlayers();
@@ -3548,7 +3542,7 @@ void enteringServer(void* buf)
   BZDB.setBool("displayRadarFlags", true);
   BZDB.setBool("displayRadar",      true);
   BZDB.setBool("displayConsole",    true);
-  if (myTank->getTeam() != ObserverTeam) {
+  if (!myTank->isObserver()) {
     BZDB.setBool("slowMotion", false);
   }
 
@@ -3751,8 +3745,9 @@ void joinInternetGame2()
   myTank->setTeam(startupInfo.team);
   LocalPlayer::setMyTank(myTank);
 
-  if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
+  if (world->allowRabbit() && !myTank->isObserver()) {
     myTank->setTeam(HunterTeam);
+  }
 
   // tell server we want to join
   bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
@@ -3875,7 +3870,7 @@ static void drawUI()
   // draw the radar
   if (radar) {
     const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
-    const bool observer = myTank && (myTank->getTeam() == ObserverTeam);
+    const bool observer = myTank && myTank->isObserver();
     radar->render(RENDERER, showBlankRadar, observer);
   }
 
@@ -4938,10 +4933,7 @@ static void updatePauseCountdown(float dt)
 //FIXME	showMessage("Paused");
 
 	// turn off the sound
-	if (savedVolume == -1) {
-	  savedVolume = (int)(SOUNDSYSTEM.getVolume() * 10);
-	  SOUNDSYSTEM.setVolume(0);
-	}
+	SOUNDSYSTEM.setMute(true);
 
 	// ungrab mouse
 	mainWindow->ungrabMouse();
@@ -5167,10 +5159,11 @@ void doTankMotions(const float /*dt*/)
       if (scoreboard->getHuntState()==ScoreboardRenderer::HUNT_ENABLED)
 	setHuntTarget(); //spot hunt target
 
-      if (myTank->getTeam() != ObserverTeam &&
-	((fireButton && myTank->getFlag() == Flags::MachineGun) ||
-	(myTank->getFlag() == Flags::TriggerHappy)))
+      if (!myTank->isObserver() &&
+	  ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
+	   (myTank->getFlag() == Flags::TriggerHappy))) {
 	myTank->fireShot();
+      }
 
       setLookAtMarker();
 
@@ -5495,13 +5488,11 @@ static void playingLoop()
 
 
   delete worldDownLoader;
+
   // restore the sound.  if we don't do this then we'll save the
   // wrong volume when we dump out the configuration file if the
   // app exits when the game is paused.
-  if (savedVolume != -1) {
-    SOUNDSYSTEM.setVolume(savedVolume*0.1f);
-    savedVolume = -1;
-  }
+  SOUNDSYSTEM.setMute(false);
 
   // hide window
   mainWindow->showWindow(false);
@@ -6039,19 +6030,23 @@ void startPlaying()
   showMessage("");
   // print app version
   tmpString = ColorStrings[RedColor];
-  tmpString += "BZFlag version: ";
+  tmpString += "BZFlag version: \v";
   tmpString += getAppVersion();
   tmpString += " (";
   tmpString += getProtocolVersion();
-  tmpString += ") running on ";
+  tmpString += ")";
+  showMessage(tmpString);
+  tmpString = "\v";
+  tmpString += ColorStrings[RedColor];
+  tmpString += "running on ";
   tmpString += getOSString();
   showMessage(tmpString);
   // print copyright
-  tmpString = ColorStrings[YellowColor];
+  tmpString = ColorStrings[OrangeColor];
   tmpString += bzfcopyright;
   showMessage(tmpString);
   // print license
-  tmpString = ColorStrings[CyanColor];
+  tmpString = ColorStrings[YellowColor];
   tmpString += "Distributed under the terms of the LGPL";
   showMessage(tmpString);
   // print author

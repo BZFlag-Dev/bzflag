@@ -75,26 +75,32 @@ public:
                    const float *pos = NULL,
                    bool important = false,
                    bool localSound = true,
-                   bool repeat = false) = 0;
+                   bool repeat = false,
+                   bool ignoreMute = false) = 0;
 
   virtual int play(const char* _name,
                    const float *pos = NULL,
                    bool important = false,
                    bool localSound = true,
-                   bool repeat = false) {
-    return play(getID(_name), pos, important, localSound, repeat);
+                   bool repeat = false,
+                   bool ignoreMute = false) {
+    return play(getID(_name), pos, important, localSound, repeat, ignoreMute);
   }
 
   virtual int play(const std::string &_name,
                    const float *pos = NULL,
                    bool important = false,
                    bool localSound = true,
-                   bool repeat = false) {
-    return play(getID(_name), pos, important, localSound, repeat);
+                   bool repeat = false,
+                   bool ignoreMute = false) {
+    return play(getID(_name), pos, important, localSound, repeat, ignoreMute);
   }
 
   virtual void setVolume(float volume) = 0;
   virtual float getVolume(void) = 0;
+
+  virtual void setMute(bool value) = 0;
+  virtual bool getMute(void) const = 0;
 
   virtual bool update(double time) = 0;
 

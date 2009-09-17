@@ -71,13 +71,13 @@ ShotStats::ShotStats() : HUDDialog()
 
   // my statistics first
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (myTank->getTeam() != ObserverTeam) {
+  if (!myTank->isObserver()) {
     addStats((Player*)myTank);
   }
 
   // add statistics for each player
   for (int i = 0; i < curMaxPlayers; ++i) {
-    if (remotePlayers[i] && (remotePlayers[i]->getTeam() != ObserverTeam)) {
+    if (remotePlayers[i] && !remotePlayers[i]->isObserver()) {
       addStats((Player*)remotePlayers[i]);
     }
   }

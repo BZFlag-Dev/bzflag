@@ -68,7 +68,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 
   if (myTank &&
       ((myTank->getInputMethod() != LocalPlayer::Keyboard) ||
-       (myTank->getTeam() == ObserverTeam))) {
+       myTank->isObserver())) {
     if ((key.button == BzfKeyEvent::Up) ||
 	(key.button == BzfKeyEvent::Down)) {
       return true;
@@ -194,7 +194,7 @@ bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 
   if (!myTank ||
       (myTank->getInputMethod() != LocalPlayer::Keyboard) ||
-      (myTank->getTeam() == ObserverTeam)) {
+      myTank->isObserver()) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.size()) {
 	hud->setComposeString(messageHistory[messageHistoryIndex]);

@@ -55,7 +55,7 @@ void Roaming::setMode(RoamingView newView) {
   if (!LocalPlayer::getMyTank()) {
     view = newView;
   }
-  else if (LocalPlayer::getMyTank()->getTeam() == ObserverTeam) {
+  else if (LocalPlayer::getMyTank()->isObserver()) {
     // force roaming for observers
     if ((newView <= roamViewDisabled) || (newView >= roamViewCount)) {
       view = (RoamingView)(roamViewDisabled + 1);

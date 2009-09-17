@@ -170,7 +170,7 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
   switch (((const char*)data)[0]) {
     case 's':
       BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
-      SOUNDSYSTEM.setVolume(list->getIndex() *0.1f);
+      SOUNDSYSTEM.setVolume(list->getIndex() * 0.1f);
       break;
     case 'r':
       BZDB.setBool("remoteSounds", (list->getIndex() == 0) ? false : true);

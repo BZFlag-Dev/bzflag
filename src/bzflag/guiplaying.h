@@ -43,6 +43,7 @@ RadarRenderer* getRadarRenderer();
 void notifyBzfKeyMapChanged();
 bool setVideoFormat(int, bool test = false);
 void forceControls(bool enabled, float speed, float angVel);
+bool isUnmapped();
 
 bool addExplosion(const fvec3& pos, float size, float duration);
 void addTankExplosion(const fvec3& pos);
@@ -60,7 +61,6 @@ extern ControlPanel* controlPanel;
 extern HUDRenderer* hud;
 extern MainWindow* mainWindow;
 extern float roamDZoom;
-extern int savedVolume;
 extern bool fireButton;
 extern bool roamButton;
 

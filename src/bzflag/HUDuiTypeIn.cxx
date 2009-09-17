@@ -26,6 +26,7 @@
 #include "LocalFontFace.h"
 #include "guiplaying.h"
 
+
 //
 // HUDuiTypeIn
 //
@@ -103,6 +104,26 @@ bool HUDuiTypeIn::decrementCursor()
 }
 
 
+void HUDuiTypeIn::pasteText(const std::string& text)
+{
+  if (text.empty()) {
+    return;
+  }
+
+  bool changed = false;
+  for (size_t i = 0; i < text.size(); i++) {
+    changed = doInsert(text[i]) || changed;
+  }
+
+  if (changed) {
+    onSetFont();
+    if (cb != NULL) {
+      cb(this, userData);
+    }
+  }
+}
+
+
 bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
   static unsigned int backspace = '\b';	// ^H
@@ -115,24 +136,13 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return false; // or return true ??
   }
 
-  if (KEYMGR.get(key, true) == "paste") {
-    const std::string pasteData = getClipboard();
-    if (pasteData.empty()) {
-      return true;
-    }
-    
-    bool changed = false;
-    for (size_t i = 0; i < pasteData.size(); i++) {
-      changed = doInsert(pasteData[i]) || changed;
-    }
-
-    if (changed) {
-      onSetFont();
-      if (cb != NULL) {
-        cb(this, userData);
-      }
-    }
-
+  const std::string& cmd = KEYMGR.get(key, true);
+  if (cmd == "paste") {
+    pasteText(getClipboard());
+    return true;
+  }
+  else if ((cmd.size() > 6) && (cmd.substr(0, 6) == "paste ")) {
+    pasteText(cmd.substr(6));
     return true;
   }
 
@@ -299,9 +309,20 @@ bool HUDuiTypeIn::doBackspace()
 
 bool HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
+  const std::string& cmd = KEYMGR.get(key, false);
+  if (cmd == "paste") {
+    pasteText(getClipboard());
+    return true;
+  }
+  else if ((cmd.size() > 6) && (cmd.substr(0, 6) == "paste ")) {
+    pasteText(cmd.substr(6));
+    return true;
+  }
+
   if (key.chr == '\t' || !iswprint(key.chr)) {
     return false; // ignore non-printing and tab
   }
+
   return true; // slurp up releases
 }
 

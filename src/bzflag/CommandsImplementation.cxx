@@ -191,7 +191,7 @@ DebugLevelCommand::DebugLevelCommand() : LocalCommand("/debug")     {}
 DiffCommand::DiffCommand()             : LocalCommand("/diff")      {}
 DumpCommand::DumpCommand()             : LocalCommand("/dumpvars")  {}
 HighlightCommand::HighlightCommand()   : LocalCommand("/highlight") {}
-HubCommand::HubCommand()               : LocalCommand("/hub") {}
+HubCommand::HubCommand()               : LocalCommand("/hub")       {}
 LocalSetCommand::LocalSetCommand()     : LocalCommand("/localset")  {}
 QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}

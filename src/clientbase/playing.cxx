@@ -69,7 +69,6 @@ HUDRenderer *hud = NULL;
 MainWindow *mainWindow = NULL;
 CommandCompleter completer;
 float roamDZoom = 0.0f;
-int savedVolume = -1;
 bool fireButton = false;
 bool roamButton = false;
 const float FlagHelpDuration = 60.0f;
@@ -442,8 +441,8 @@ bool checkSquishKill(const Player* victim, const Player* killer, bool localKille
     }
   }
 
-  if (victim->isPhantomZoned() || (victim->getTeam() == ObserverTeam) ||
-      killer->isPhantomZoned() || (killer->getTeam() == ObserverTeam)) {
+  if (victim->isPhantomZoned() || victim->isObserver() ||
+      killer->isPhantomZoned() || killer->isObserver()) {
     return false;
   }
   if (!localKiller && killer->isNotResponding()) {
@@ -744,9 +743,9 @@ void addRobots()
 void doNetworkStuff(void)
 {
   // send my data
-  if (myTank && myTank->isDeadReckoningWrong() &&
-    (myTank->getTeam() != ObserverTeam))
+  if (myTank && myTank->isDeadReckoningWrong() && !myTank->isObserver()) {
     serverLink->sendPlayerUpdate(myTank); // also calls setDeadReckoning()
+  }
 
 #ifdef ROBOT
   if (entered)
@@ -1527,7 +1526,7 @@ void handleAdminInfo(void *msg)
 
     std::string name(tank->getCallSign());
     std::string message("joining as ");
-    if (tank->getTeam() == ObserverTeam) {
+    if (tank->isObserver()) {
       message += "an observer";
     } else {
       switch (tank->getPlayerType()) {

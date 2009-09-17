@@ -91,6 +91,8 @@
 class HubLink* hubLink = NULL;
 HubLink::HubLink(const std::string&, const std::string&) {}
 HubLink::~HubLink() {}
+void HubLink::tabAdded(const std::string&) {}
+void HubLink::tabRemoved(const std::string&) {}
 void HubLink::activeTabChanged() {}
 void HubLink::startComposing() {}
 void HubLink::recvCommand(const std::string&) {}
@@ -971,7 +973,7 @@ void handleFlagDropped(Player *tank)
 bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
 			const ShotPath *hit, int phydrv)
 {
-  if (!tank || (tank->getTeam() == ObserverTeam || !tank->isAlive()))
+  if (!tank || tank->isObserver() || !tank->isAlive())
     return false;
 
   int shotId = -1;

@@ -1727,8 +1727,8 @@ bool CI_Teleport::execute(bz_EventData* eventData)
   }
 
   lua_pushinteger(L, ed->playerID);
-  lua_pushinteger(L, ed->from);
-  lua_pushinteger(L, ed->to);
+  lua_pushinteger(L, ed->from); // src
+  lua_pushinteger(L, ed->to);   // dst
 
   return RunCallIn(3, 0);
 }

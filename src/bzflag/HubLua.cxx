@@ -58,9 +58,11 @@ enum CallInCode {
   CI_ServerJoined     = CallInBase - 4,
   CI_ServerParted     = CallInBase - 5,
   CI_WordComplete     = CallInBase - 6,
-  CI_ActiveTabChanged = CallInBase - 7,
-  CI_BZDBChange       = CallInBase - 8,
-  CI_StartComposing   = CallInBase - 9
+  CI_TabAdded         = CallInBase - 7,
+  CI_TabRemoved       = CallInBase - 8,
+  CI_ActiveTabChanged = CallInBase - 9,
+  CI_BZDBChange       = CallInBase - 10,
+  CI_StartComposing   = CallInBase - 11
 };
 
 static std::map<std::string, int> name2code;
@@ -121,6 +123,8 @@ static void setupCallInMaps()
   CALLIN_PAIR(ServerJoined);
   CALLIN_PAIR(ServerParted);
   CALLIN_PAIR(WordComplete);
+  CALLIN_PAIR(TabAdded);
+  CALLIN_PAIR(TabRemoved);
   CALLIN_PAIR(ActiveTabChanged);
   CALLIN_PAIR(BZDBChange);
   CALLIN_PAIR(StartComposing);
@@ -206,6 +210,8 @@ bool HubLink::createLua(const std::string& code)
                  srvLink->getJoinCallsign());
   }
 
+  debugf(1, "createLua succeeded\n");  
+
   return true;
 }
 
@@ -218,21 +224,24 @@ bool HubLink::pushAnsiCodes()
   pushNamedString(L, "RESET_BRIGHT", ANSI_STR_RESET);
   pushNamedString(L, "BRIGHT",       ANSI_STR_BRIGHT);
   pushNamedString(L, "DIM",          ANSI_STR_DIM);
+  pushNamedString(L, "NORMAL",       ANSI_STR_NORMAL);
+  pushNamedString(L, "ITALIC",       ANSI_STR_ITALIC);
+  pushNamedString(L, "NO_ITALIC",    ANSI_STR_NO_ITALIC);
   pushNamedString(L, "UNDERLINE",    ANSI_STR_UNDERLINE);
   pushNamedString(L, "NO_UNDERLINE", ANSI_STR_NO_UNDERLINE);
   pushNamedString(L, "BLINK",        ANSI_STR_PULSATING);
   pushNamedString(L, "NO_BLINK",     ANSI_STR_NO_PULSATE);
   pushNamedString(L, "REVERSE",      ANSI_STR_REVERSE);
   pushNamedString(L, "NO_REVERSE",   ANSI_STR_NO_REVERSE);
-  pushNamedString(L, "BLACK",   ANSI_STR_FG_BLACK);
-  pushNamedString(L, "RED",     ANSI_STR_FG_RED);
-  pushNamedString(L, "GREEN",   ANSI_STR_FG_GREEN);
-  pushNamedString(L, "YELLOW",  ANSI_STR_FG_YELLOW);
-  pushNamedString(L, "BLUE",    ANSI_STR_FG_BLUE);
-  pushNamedString(L, "MAGENTA", ANSI_STR_FG_MAGENTA);
-  pushNamedString(L, "CYAN",    ANSI_STR_FG_CYAN);
-  pushNamedString(L, "WHITE",   ANSI_STR_FG_WHITE);
-  pushNamedString(L, "ORANGE",  ANSI_STR_FG_ORANGE);
+  pushNamedString(L, "BLACK",  ANSI_STR_FG_BLACK);
+  pushNamedString(L, "RED",    ANSI_STR_FG_RED);
+  pushNamedString(L, "GREEN",  ANSI_STR_FG_GREEN);
+  pushNamedString(L, "YELLOW", ANSI_STR_FG_YELLOW);
+  pushNamedString(L, "BLUE",   ANSI_STR_FG_BLUE);
+  pushNamedString(L, "PURPLE", ANSI_STR_FG_MAGENTA);
+  pushNamedString(L, "CYAN",   ANSI_STR_FG_CYAN);
+  pushNamedString(L, "WHITE",  ANSI_STR_FG_WHITE);
+  pushNamedString(L, "ORANGE", ANSI_STR_FG_ORANGE);
 
   lua_setglobal(L, "ANSI");
 
@@ -280,7 +289,7 @@ bool HubLink::pushCallIn(int ciCode, int inArgs)
 bool HubLink::runCallIn(int inArgs, int outArgs)
 {
   if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
-    debugf(2, "error, %s\n", lua_tostring(L, -1));
+    debugf(1, "error, %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
@@ -394,6 +403,30 @@ void HubLink::wordComplete(const std::string& line,
       matches.insert(lua_tostring(L, -1));
     }
   }
+}
+
+
+void HubLink::tabAdded(const std::string& name)
+{
+  if (!pushCallIn(CI_TabAdded, 1)) {
+    return;
+  }
+
+  lua_pushstdstring(L, name);
+
+  runCallIn(1, 0);
+}
+
+
+void HubLink::tabRemoved(const std::string& name)
+{
+  if (!pushCallIn(CI_TabRemoved, 1)) {
+    return;
+  }
+
+  lua_pushstdstring(L, name);
+
+  runCallIn(1, 0);
 }
 
 
@@ -519,6 +552,8 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, GetOpenGLNumbers);
 
   PUSH_LUA_CFUNC(L, GetKeyBindings);
+
+  PUSH_LUA_CFUNC(L, IsVisible);
 
   PUSH_LUA_CFUNC(L, PackInt8);
   PUSH_LUA_CFUNC(L, PackInt16);
@@ -912,15 +947,17 @@ int HubLink::Alert(lua_State* L)
 
 int HubLink::PlaySound(lua_State* L)
 {
-  const char* soundName = luaL_checkstring(L, 1);
-  const int   soundCode = SOUNDSYSTEM.getID(soundName);
-  const bool  important = lua_isboolean(L, 2) && lua_toboolean(L, 2);
-  if (soundCode >= 0) {
-    SOUNDSYSTEM.play(soundCode, NULL, important);
-    lua_pushboolean(L, true);
-  } else {
+  const char* soundName  = luaL_checkstring(L, 1);
+  const int   soundCode  = SOUNDSYSTEM.getID(soundName);
+  const bool  ignoreMute = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+  if (soundCode < 0) {
     lua_pushboolean(L, false);
+    return 1;
   }
+
+  SOUNDSYSTEM.play(soundCode, NULL, true, true, false, ignoreMute);
+
+  lua_pushboolean(L, true);
   return 1;
 }
 
@@ -953,7 +990,7 @@ int HubLink::SetBZDB(lua_State* L)
   const bool isPersistent  = usePersistent && lua_toboolean(L, 3);
 
   if (BZDB.isSet(key) &&
-      (BZDB.getPermission(key) != StateDatabase::Client)) {
+      (BZDB.getPermission(key) == StateDatabase::Server)) {
     lua_pushboolean(L, false);
     return 1;
   }
@@ -1196,6 +1233,12 @@ int HubLink::GetKeyBindings(lua_State* L)
   return 1;
 }
 
+
+int HubLink::IsVisible(lua_State* L)
+{
+  lua_pushboolean(L, !isUnmapped());
+  return 1;
+}
 
 //============================================================================//
 

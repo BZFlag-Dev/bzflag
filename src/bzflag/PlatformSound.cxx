@@ -22,17 +22,22 @@
 static const float SpeedOfSound = 343.0f;		// meters/sec
 static const float InterAuralDistance = 0.1f;		// meters
 
-/* sound queue commands */
-#define	SQC_CLEAR	0		/* no code; no data */
-#define	SQC_SET_POS	1		/* no code; x,y,z,t */
-#define	SQC_SET_VEL	2		/* no code; x,y,z */
-#define	SQC_SET_VOLUME	3		/* code = new volume; no data */
-#define	SQC_LOCAL_SFX	4		/* code=sfx; no data */
-#define	SQC_WORLD_SFX	5		/* code=sfx; x,y,z of sfx source */
-#define	SQC_FIXED_SFX	6		/* code=sfx; x,y,z of sfx source */
-#define	SQC_JUMP_POS	7		/* no code; x,y,z,t */
-#define	SQC_QUIT	8		/* no code; no data */
-#define	SQC_IWORLD_SFX	9		/* code=sfx; x,y,z of sfx source */
+
+// sound queue commands
+enum SoundQueueCode {
+  SQC_QUIT = 0,    // no code; no data
+  SQC_CLEAR,       // no code; no data
+  SQC_MUTE,        // no code; no data
+  SQC_LOCAL_SFX,   // code=sfx; no data
+  SQC_FIXED_SFX,   // code=sfx; x,y,z of sfx source
+  SQC_WORLD_SFX,   // code=sfx; x,y,z of sfx source
+  SQC_IWORLD_SFX,  // code=sfx; x,y,z of sfx source
+  SQC_SET_VEL,     // no code; x,y,z
+  SQC_SET_VOLUME,  // code = new volume; no data
+  SQC_SET_POS,     // no code; x,y,z,t
+  SQC_JUMP_POS     // no code; x,y,z,t
+};
+
 
 PlatformSound::AudioSamples::AudioSamples()
 {
@@ -46,6 +51,7 @@ PlatformSound::AudioSamples::AudioSamples()
   duration = 0;
 }
 
+
 PlatformSound::AudioSamples::~AudioSamples()
 {
   if (data)
@@ -54,6 +60,7 @@ PlatformSound::AudioSamples::~AudioSamples()
   if (monoRaw)
     delete[] monoRaw;
 }
+
 
 PlatformSound::AudioSamples& PlatformSound::AudioSamples::operator = ( const AudioSamples& r)
 {
@@ -77,6 +84,7 @@ PlatformSound::AudioSamples& PlatformSound::AudioSamples::operator = ( const Aud
   return *this;
 }
 
+
 PlatformSound::AudioSamples::AudioSamples ( const AudioSamples& r)
 {
   length = r.length;
@@ -92,13 +100,14 @@ PlatformSound::AudioSamples::AudioSamples ( const AudioSamples& r)
   duration = r.duration;
 }
 
-/*
- * local functions
- */
 
-static void		audioLoop(void*);
+// local functions
 
-PlatformSound		*platformSound = NULL;
+static void audioLoop(void*);
+
+
+PlatformSound* platformSound = NULL;
+
 
 static bool audioClassInnerLoop()
 {
@@ -107,6 +116,7 @@ static bool audioClassInnerLoop()
   return false;
 }
 
+
 PlatformSound::PlatformSound()
 {
   soundStarted = false;
@@ -114,13 +124,16 @@ PlatformSound::PlatformSound()
 
   volumeAtten = 1.0f;
   mutingOn = 0;
+  muting = false;
   media = NULL;
 }
+
 
 PlatformSound::~PlatformSound()
 {
   shutdown();
 }
+
 
 bool PlatformSound::startup ( void )
 {
@@ -129,7 +142,7 @@ bool PlatformSound::startup ( void )
   unsigned int i;
 
   if (active())
-    return true;			// already opened
+    return true; // already opened
 
   media = PlatformFactory::getMedia();
   if (!media->openAudio())
@@ -144,12 +157,12 @@ bool PlatformSound::startup ( void )
 #ifndef DEBUG
     std::cout << "WARNING: Unable to open audio data files" << std::endl;
 #endif
-    return false;					// couldn't get samples
+    return false; // couldn't get samples
   }
 
   audioBufferSize = media->getAudioBufferChunkSize() << 1;
 
-  /* initialize */
+  // initialize
   float worldSize = BZDBCache::worldSize;
   timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
   for (i = 0; i < (int)MaxEvents; i++)
@@ -192,6 +205,7 @@ bool PlatformSound::startup ( void )
   return active();
 }
 
+
 void PlatformSound::shutdown ( void )
 {
   platformSound = NULL;
@@ -221,6 +235,7 @@ void PlatformSound::shutdown ( void )
     soundStarted = false;
   }
 }
+
 
 bool PlatformSound::active ( void )
 {
@@ -260,12 +275,14 @@ void PlatformSound::freeAudioSamples( void )
   soundSamples.clear();
 }
 
+
 void PlatformSound::sendSound(SoundCommand* s)
 {
   if (!active())
     return;
   PlatformFactory::getMedia()->writeSoundCommand(s, sizeof(SoundCommand));
 }
+
 
 void PlatformSound::setReceiver(float x, float y, float z, float t, int discontinuity)
 {
@@ -282,6 +299,7 @@ void PlatformSound::setReceiver(float x, float y, float z, float t, int disconti
   sendSound(&s);
 }
 
+
 void PlatformSound::setReceiverVec(float vx, float vy, float vz)
 {
   SoundCommand s;
@@ -294,11 +312,14 @@ void PlatformSound::setReceiverVec(float vx, float vy, float vz)
   sendSound(&s);
 }
 
+
 int PlatformSound::play(int soundID, const float *pos,
-                        bool important, bool localSound, bool repeat)
+                        bool important, bool localSound,
+                        bool repeat, bool ignoreMute)
 {
-  if (soundLevel <= 0)
+  if (soundLevel <= 0) {
     return 0;
+  }
 
   SoundCommand s;
   if (soundID < 0 ||( int)soundSamples.size() <= soundID)
@@ -314,19 +335,34 @@ int PlatformSound::play(int soundID, const float *pos,
     s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
 
   s.code = soundID;
-  if(pos)
-  {
+  if (pos) {
     s.data[0] = pos[0];
     s.data[1] = pos[1];
     s.data[2] = pos[2];
   }
-  s.data[3] = 0.0f;
+  s.data[3] = (muting && !ignoreMute) ? 1.0f : 0.0f;
   sendSound(&s);
 
   return 0;
 }
 
-void PlatformSound::setVolume ( float volume )
+
+void PlatformSound::setMute(bool value)
+{
+  muting = value;
+
+  SoundCommand s;
+  s.cmd = SQC_MUTE;
+  s.code = muting ? 1 : 0;
+  s.data[0] = 0.0f;
+  s.data[1] = 0.0f;
+  s.data[2] = 0.0f;
+  s.data[3] = 0.0f;
+  sendSound(&s);
+}
+
+
+void PlatformSound::setVolume(float volume)
 {
   soundLevel = (int)(volume*10.0f);
   if (soundLevel < 0) soundLevel = 0;
@@ -342,12 +378,14 @@ void PlatformSound::setVolume ( float volume )
   sendSound(&s);
 }
 
-float PlatformSound::getVolume ( void )
+
+float PlatformSound::getVolume()
 {
   return soundLevel / 10.0f;
 }
 
-bool PlatformSound::update ( double /*time*/ )
+
+bool PlatformSound::update(double /*time*/)
 {
   if (!active() || !usingSameThread)
     return false;
@@ -359,7 +397,7 @@ bool PlatformSound::update ( double /*time*/ )
 }
 
 
-int PlatformSound::getID ( const char* _name )
+int PlatformSound::getID(const char* _name)
 {
   if (_name == NULL) {
     return -1;
@@ -376,7 +414,8 @@ int PlatformSound::getID ( const char* _name )
 }
 
 
-int PlatformSound::resampleAudio(const float* in, int frames, int rate, PlatformSound::AudioSamples* out)
+int PlatformSound::resampleAudio(const float* in, int frames, int rate,
+                                 PlatformSound::AudioSamples* out)
 {
   // attenuation on all sounds
   static const float GlobalAtten = 0.5f;
@@ -427,14 +466,18 @@ int PlatformSound::resampleAudio(const float* in, int frames, int rate, Platform
   return 1;
 }
 
-/*
- * Below this point is stuff for real-time audio thread
- */
 
-#define	SEF_WORLD	1
-#define	SEF_FIXED	2
-#define	SEF_IGNORING	4
-#define	SEF_IMPORTANT	8
+//============================================================================//
+//
+// Below this point is stuff for real-time audio thread
+//
+//============================================================================//
+
+#define	SEF_WORLD	(1 << 0)
+#define	SEF_FIXED	(1 << 1)
+#define	SEF_IGNORING	(1 << 2)
+#define	SEF_IMPORTANT	(1 << 3)
+
 
 void PlatformSound::recalcEventDistance(SoundEvent* e)
 {
@@ -469,6 +512,7 @@ void PlatformSound::recalcEventDistance(SoundEvent* e)
   }
 }
 
+
 int PlatformSound::recalcEventIgnoring(SoundEvent* e)
 {
   if ((e->flags & SEF_FIXED) || !(e->flags & SEF_WORLD)) return 0;
@@ -484,33 +528,33 @@ int PlatformSound::recalcEventIgnoring(SoundEvent* e)
   float eventDistance = e->d / SpeedOfSound;
   if (travelTime < eventDistance) {
     if (e->flags & SEF_IGNORING) {
-      /* do nothing -- still ignoring */
+      // do nothing -- still ignoring
     }
     else {
-      /* ignoring again */
+      // ignoring again
       e->flags |= SEF_IGNORING;
       useChange = -1;
     }
-    /* don't sleep past the time the sound front will pass by */
+    // don't sleep past the time the sound front will pass by
     endTime = eventDistance;
   }
   else {
     float timeFromFront;
     if (e->flags & SEF_IGNORING) {
-      /* compute time from sound front */
+      // compute time from sound front
       timeFromFront = travelTime - e->dLeft / SpeedOfSound;
       if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
 
-      /* recompute sample pointers */
+      // recompute sample pointers
       e->ptrFracLeft = timeFromFront *
 	(float)PlatformFactory::getMedia()->getAudioOutputRate();
       if (e->ptrFracLeft >= 0.0 && e->ptrFracLeft < e->samples->dmlength) {
-	/* not ignoring anymore */
+	// not ignoring anymore
 	e->flags &= ~SEF_IGNORING;
 	useChange = 1;
       }
 
-      /* now do it again for right ear */
+      // now do it again for right ear
       timeFromFront = travelTime - e->dRight / SpeedOfSound;
       if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
       e->ptrFracRight = timeFromFront *
@@ -521,11 +565,12 @@ int PlatformSound::recalcEventIgnoring(SoundEvent* e)
       }
     }
     else {
-      /* do nothing -- still not ignoring */
+      // do nothing -- still not ignoring
     }
   }
   return useChange;
 }
+
 
 void PlatformSound::receiverMoved(float* data)
 {
@@ -547,10 +592,13 @@ void PlatformSound::receiverMoved(float* data)
   lastXRight = lastX - 0.5f * InterAuralDistance * leftX;
   lastYRight = lastY - 0.5f * InterAuralDistance * leftY;
 
-  for (int i = 0; i < MaxEvents; i++)
-    if (events[i].busy && (events[i].flags & SEF_WORLD))
+  for (int i = 0; i < MaxEvents; i++) {
+    if (events[i].busy && (events[i].flags & SEF_WORLD)) {
       recalcEventDistance(events + i);
+    }
+  }
 }
+
 
 void PlatformSound::receiverVelocity(float* data)
 {
@@ -561,58 +609,64 @@ void PlatformSound::receiverVelocity(float* data)
   //  velZ = s * data[2];
 }
 
+
 int PlatformSound::addLocalContribution(SoundEvent* e, long* len)
 {
-  long		n, numSamples;
-  float*	src;
+  long   n, numSamples;
+  float* src;
 
   numSamples = e->samples->length - e->ptr;
-  if (numSamples > audioBufferSize) numSamples = audioBufferSize;
+  if (numSamples > audioBufferSize) {
+    numSamples = audioBufferSize;
+  }
 
-  if (!mutingOn && numSamples != 0) {
-    /* initialize new areas of scratch space and adjust output sample count */
+  if (!mutingOn && (numSamples != 0)) {
+    // initialize new areas of scratch space and adjust output sample count
     if (numSamples > *len) {
-      for (n = *len; n < numSamples; n += 2)
+      for (n = *len; n < numSamples; n += 2) {
 	scratch[n] = scratch[n+1] = 0.0f;
+      }
       *len = numSamples;
     }
 
     // add contribution -- conditionals outside loop for run-time efficiency
     src = e->samples->data + e->ptr;
-    if (numSamples <= FadeDuration) {
-      for (n = 0; n < numSamples; n += 2) {
-	int fs = int(FadeDuration * float(n) / float(numSamples)) & ~1;
-	scratch[n] += src[n] * (fadeIn[fs] * volumeAtten +
-	  fadeOut[fs] * e->lastLeftAtten);
-	scratch[n+1] += src[n+1] * (fadeIn[fs] * volumeAtten +
-	  fadeOut[fs] * e->lastRightAtten);
-      }
-    }
-    else {
-      for (n = 0; n < FadeDuration; n += 2) {
-	scratch[n] += src[n] * (fadeIn[n] * volumeAtten +
-	  fadeOut[n] * e->lastLeftAtten);
-	scratch[n+1] += src[n+1] * (fadeIn[n] * volumeAtten +
-	  fadeOut[n] * e->lastRightAtten);
-      }
-      if (volumeAtten == 1.0f) {
-	for (; n < numSamples; n += 2) {
-	  scratch[n] += src[n];
-	  scratch[n+1] += src[n+1];
-	}
+    if (!e->muted) {
+      if (numSamples <= FadeDuration) {
+        for (n = 0; n < numSamples; n += 2) {
+          int fs = int(FadeDuration * float(n) / float(numSamples)) & ~1;
+          scratch[n] += src[n] * (fadeIn[fs] * volumeAtten +
+                                  fadeOut[fs] * e->lastLeftAtten);
+          scratch[n+1] += src[n+1] * (fadeIn[fs] * volumeAtten +
+                                      fadeOut[fs] * e->lastRightAtten);
+        }
       }
       else {
-	for (; n < numSamples; n += 2) {
-	  scratch[n] += src[n] * volumeAtten;
-	  scratch[n+1] += src[n+1] * volumeAtten;
-	}
+        for (n = 0; n < FadeDuration; n += 2) {
+          scratch[n] += src[n] * (fadeIn[n] * volumeAtten +
+                                  fadeOut[n] * e->lastLeftAtten);
+          scratch[n+1] += src[n+1] * (fadeIn[n] * volumeAtten +
+                                      fadeOut[n] * e->lastRightAtten);
+        }
+        if (volumeAtten == 1.0f) {
+          for (; n < numSamples; n += 2) {
+            scratch[n]   += src[n];
+            scratch[n+1] += src[n+1];
+          }
+        }
+        else {
+          for (; n < numSamples; n += 2) {
+            scratch[n]   += src[n]   * volumeAtten;
+            scratch[n+1] += src[n+1] * volumeAtten;
+          }
+        }
       }
     }
 
     e->lastLeftAtten = e->lastRightAtten = volumeAtten;
   }
 
-  /* free event if ran out of samples */
+  // free event if ran out of samples
   if ((e->ptr += numSamples) == e->samples->length) {
     e->busy = false;
     return -1;
@@ -621,8 +675,9 @@ int PlatformSound::addLocalContribution(SoundEvent* e, long* len)
   return 0;
 }
 
+
 void PlatformSound::getWorldStuff(SoundEvent *e, float* la, float* ra,
-				      double* sampleStep)
+                                  double* sampleStep)
 {
   float leftAtten, rightAtten;
 
@@ -638,35 +693,43 @@ void PlatformSound::getWorldStuff(SoundEvent *e, float* la, float* ra,
     leftAtten = ff * fl * e->amplitude;
     rightAtten = ff * (4.0f/3.0f - fl) * e->amplitude;
   }
+
   if (e->ptrFracLeft == 0.0f || e->ptrFracRight == 0.0f) {
     e->lastLeftAtten = leftAtten;
     e->lastRightAtten = rightAtten;
   }
-  *la = mutingOn ? 0.0f : leftAtten * volumeAtten;
-  *ra = mutingOn ? 0.0f : rightAtten * volumeAtten;
 
-  /* compute doppler effect */
+  *la = mutingOn ? 0.0f : (leftAtten * volumeAtten);
+  *ra = mutingOn ? 0.0f : (rightAtten * volumeAtten);
+
+  // compute doppler effect
   // FIXME -- should be per ear
   *sampleStep = double(1.0 + velX * e->dx + velY * e->dy);
 }
 
+
 int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
 {
-  int		fini = 0;
-  long		n, nmL, nmR;
-  float*	src = e->samples->mono;
-  float		leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
-  double	sampleStep;
+  int    fini = 0;
+  long   n, nmL, nmR;
+  float* src = e->samples->mono;
+  float  leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
+  double sampleStep;
 
-  if (e->flags & SEF_IGNORING) return 0;
+  if (e->flags & SEF_IGNORING) {
+    return 0;
+  }
 
   getWorldStuff(e, &leftAtten, &rightAtten, &sampleStep);
-  if (sampleStep <= 0.0) fini = 1;
+  if (sampleStep <= 0.0) {
+    fini = 1;
+  }
 
-  /* initialize new areas of scratch space and adjust output sample count */
+  // initialize new areas of scratch space and adjust output sample count
   if (audioBufferSize > *len) {
-    for (n = *len; n < audioBufferSize; n += 2)
+    for (n = *len; n < audioBufferSize; n += 2) {
       scratch[n] = scratch[n+1] = 0.0f;
+    }
     *len = audioBufferSize;
   }
 
@@ -683,16 +746,20 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
     fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
-      fadeOut[n] * e->lastLeftAtten);
-    scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
-      fadeOut[n] * e->lastRightAtten);
+    if (!e->muted) {
+      scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
+                                fadeOut[n] * e->lastLeftAtten);
+      scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
+                                  fadeOut[n] * e->lastRightAtten);
+    }
 
     // next sample
-    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength) {
       fini = true;
-    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+    }
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength) {
       fini = true;
+    }
   }
 
   // add contribution
@@ -708,23 +775,28 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
     fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsampleL * leftAtten;
-    scratch[n+1] += fsampleR * rightAtten;
+    if (!e->muted) {
+      scratch[n]   += fsampleL * leftAtten;
+      scratch[n+1] += fsampleR * rightAtten;
+    }
 
     // next sample
-    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength) {
       fini = true;
-    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+    }
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength) {
       fini = true;
+    }
   }
+
   e->lastLeftAtten = leftAtten;
   e->lastRightAtten = rightAtten;
 
-  /* NOTE: running out of samples just means the world sound front
-  *	has passed our location.  if we teleport it may pass us again.
-  *	so we can't free the event until the front passes out of the
-  *	world.  compute time remaining until that happens and set
-  *	endTime if smaller than current endTime. */
+  // NOTE: running out of samples just means the world sound front
+  //	has passed our location.  if we teleport it may pass us again.
+  //	so we can't free the event until the front passes out of the
+  //	world.  compute time remaining until that happens and set
+  //	endTime if smaller than current endTime.
   if (fini) {
     double et = e->samples->duration + timeSizeOfWorld - (prevTime - e->time);
     if (endTime == -1.0 || et < endTime) endTime = et;
@@ -735,19 +807,21 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
   return 0;
 }
 
+
 int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
 {
-  long		n, nmL, nmR;
-  float*	src = e->samples->mono;
-  float		leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
-  double	sampleStep;
+  long   n, nmL, nmR;
+  float* src = e->samples->mono;
+  float  leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
+  double sampleStep;
 
   getWorldStuff(e, &leftAtten, &rightAtten, &sampleStep);
 
-  /* initialize new areas of scratch space and adjust output sample count */
+  // initialize new areas of scratch space and adjust output sample count
   if (audioBufferSize > *len) {
-    for (n = *len; n < audioBufferSize; n += 2)
+    for (n = *len; n < audioBufferSize; n += 2) {
       scratch[n] = scratch[n+1] = 0.0f;
+    }
     *len = audioBufferSize;
   }
 
@@ -764,16 +838,20 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
     fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
-      fadeOut[n] * e->lastLeftAtten);
-    scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
-      fadeOut[n] * e->lastRightAtten);
+    if (!e->muted) {
+      scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
+                                fadeOut[n] * e->lastLeftAtten);
+      scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
+                                  fadeOut[n] * e->lastRightAtten);
+    }
 
     // next sample
-    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength) {
       e->ptrFracLeft -= e->samples->dmlength;
-    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+    }
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength) {
       e->ptrFracRight -= e->samples->dmlength;
+    }
   }
 
   // add contribution
@@ -789,14 +867,18 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
     fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
     // filter and accumulate
-    scratch[n] += fsampleL * leftAtten;
-    scratch[n+1] += fsampleR * rightAtten;
+    if (!e->muted) {
+      scratch[n]   += fsampleL * leftAtten;
+      scratch[n+1] += fsampleR * rightAtten;
+    }
 
     // next sample
-    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
+    if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength) {
       e->ptrFracLeft -= e->samples->dmlength;
-    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
+    }
+    if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength) {
       e->ptrFracRight -= e->samples->dmlength;
+    }
   }
   e->lastLeftAtten = leftAtten;
   e->lastRightAtten = rightAtten;
@@ -804,24 +886,31 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
   return 0;
 }
 
+
 int PlatformSound::findBestWorldSlot()
 {
   int i;
 
   // the best slot is an empty one
-  for (i = 0; i < MaxEvents; i++)
-    if (!events[i].busy)
+  for (i = 0; i < MaxEvents; i++) {
+    if (!events[i].busy) {
       return i;
+    }
+  }
 
   // no available slots.  find an existing sound that won't be missed
   // (much).  this will cause a pop or crackle if the replaced sound is
   // currently playing.  first see if there are any world events.
-  for (i = 0; i < MaxEvents; i++)
-    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) == SEF_WORLD)
+  for (i = 0; i < MaxEvents; i++) {
+    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) == SEF_WORLD) {
       break;
+    }
+  }
 
   // give up if no (non-fixed) world events
-  if (i == MaxEvents) return MaxEvents;
+  if (i == MaxEvents) {
+    return MaxEvents;
+  }
 
   // found a world event.  see if there's an event that's
   // completely passed us.
@@ -831,7 +920,9 @@ int PlatformSound::findBestWorldSlot()
     if (!(events[i].flags & SEF_IGNORING)) continue;
     const float travelTime = (float)(curTime - events[i].time);
     const float eventDistance = events[i].d / SpeedOfSound;
-    if (travelTime > eventDistance) return i;
+    if (travelTime > eventDistance) {
+      return i;
+    }
   }
 
   // if no sound front has completely passed our position
@@ -849,7 +940,10 @@ int PlatformSound::findBestWorldSlot()
       farthestDistance = eventDistance;
     }
   }
-  if (farthestEvent != -1) return farthestEvent;
+
+  if (farthestEvent != -1) {
+    return farthestEvent;
+  }
 
   // same thing but look at important sounds
   for (i = first; i < MaxEvents; i++) {
@@ -862,7 +956,10 @@ int PlatformSound::findBestWorldSlot()
       farthestDistance = eventDistance;
     }
   }
-  if (farthestEvent != -1) return farthestEvent;
+
+  if (farthestEvent != -1) {
+    return farthestEvent;
+  }
 
   // we've only got playing world sounds to choose from.  pick the
   // most distant one since it's probably the quietest.
@@ -882,6 +979,7 @@ int PlatformSound::findBestWorldSlot()
   return farthestEvent;
 }
 
+
 int PlatformSound::findBestLocalSlot()
 {
   // better to lose a world sound
@@ -890,9 +988,11 @@ int PlatformSound::findBestLocalSlot()
 
   // find the first local event
   int i;
-  for (i = 0; i < MaxEvents; i++)
-    if (!(events[i].flags & SEF_FIXED))
+  for (i = 0; i < MaxEvents; i++) {
+    if (!(events[i].flags & SEF_FIXED)) {
       break;
+    }
+  }
 
   // no available slot if only fixed sounds are playing (highly unlikely)
   if (i == MaxEvents) return MaxEvents;
@@ -901,7 +1001,9 @@ int PlatformSound::findBestLocalSlot()
   int minEvent = i;
   int minSamplesLeft = events[i].samples->length - events[i].ptr;
   for (i++; i < MaxEvents; i++) {
-    if (events[i].flags & SEF_FIXED) continue;
+    if (events[i].flags & SEF_FIXED) {
+      continue;
+    }
     if (events[i].samples->length - events[i].ptr < minSamplesLeft) {
       minEvent = i;
       minSamplesLeft = events[i].samples->length - events[i].ptr;
@@ -913,174 +1015,199 @@ int PlatformSound::findBestLocalSlot()
   return minEvent;
 }
 
+
 //
 // audioLoop() simply generates samples and keeps the audio hw fed
 //
 bool PlatformSound::audioInnerLoop()
 {
-  if (!active())
+  if (!active()) {
     return false;
+  }
 
   int i, j;
 
-  /* get time step */
+  // get time step
   prevTime = curTime;
   curTime = TimeKeeper::getCurrent() - startTime;
   endTime = -1.0;
   positionDiscontinuity = 0;
 
-  /* get new commands from queue */
+  // get new commands from queue
   SoundCommand cmd;
   SoundEvent* event;
   while (media->readSoundCommand(&cmd, sizeof(SoundCommand))) {
     switch (cmd.cmd) {
-	case SQC_QUIT:
-	  return true;
+      case SQC_QUIT: {
+        return true;
+      }
+      case SQC_CLEAR: {
+        break;
+      }
+      case SQC_MUTE: {
+        const bool mute = cmd.data;
+        for (i = 0; i < MaxEvents; i++) {
+          events[i].muted = mute;
+        }
+        break;
+      }
+      case SQC_SET_POS:
+      case SQC_JUMP_POS: {
+        positionDiscontinuity = (cmd.cmd == SQC_JUMP_POS);
+        receiverMoved(cmd.data);
+        break;
+      }
+      case SQC_SET_VEL: {
+        receiverVelocity(cmd.data);
+        break;
+      }
+      case SQC_SET_VOLUME: {
+        volumeAtten = 0.2f * (float)cmd.code;
+        if (volumeAtten <= 0.0f) {
+          mutingOn = true;
+          volumeAtten = 0.0f;
+        }
+        else if (volumeAtten >= 2.0f) {
+          mutingOn = false;
+          volumeAtten = 2.0f;
+        }
+        else {
+          mutingOn = false;
+        }
+        break;
+      }
+      case SQC_LOCAL_SFX: {
+        i = findBestLocalSlot();
+        if (i == MaxEvents) break;
+        event = events + i;
 
-	case SQC_CLEAR:
-	  /* FIXME */
-	  break;
+        event->samples = soundSamples[cmd.code];
+        event->ptr = 0;
+        event->flags = 0;
+        event->time = curTime;
+        event->busy = true;
+        event->muted = (cmd.data[3] != 0.0f);
+        event->lastLeftAtten = event->lastRightAtten = volumeAtten;
+        portUseCount++;
+        break;
+      }
+      case SQC_IWORLD_SFX:
+      case SQC_WORLD_SFX: {
+        if (cmd.cmd == SQC_IWORLD_SFX) {
+          i = findBestWorldSlot();
+        }
+        else {
+          for (i = 0; i < MaxEvents; i++) {
+            if (!events[i].busy) {
+              break;
+            }
+          }
+        }
+        if (i == MaxEvents) break;
+        event = events + i;
 
-	case SQC_SET_POS:
-	case SQC_JUMP_POS: {
-	  positionDiscontinuity = (cmd.cmd == SQC_JUMP_POS);
-	  receiverMoved(cmd.data);
-	  break;
-			   }
+        event->samples = soundSamples[cmd.code];
+        event->ptrFracLeft = 0.0;
+        event->ptrFracRight = 0.0;
+        event->flags = SEF_WORLD | SEF_IGNORING |
+                       ((cmd.cmd == SQC_IWORLD_SFX) ? SEF_IMPORTANT : 0);
+        event->x = cmd.data[0];
+        event->y = cmd.data[1];
+        event->z = cmd.data[2];
+        event->time = curTime;
+        event->busy = true;
+        event->muted = (cmd.data[3] != 0.0f);
+        // don't increment use count because we're ignoring the sound
+        recalcEventDistance(event);
+        break;
+      }
+      case SQC_FIXED_SFX: {
+        for (i = 0; i < MaxEvents; i++)
+          if (!events[i].busy)
+            break;
+        if (i == MaxEvents) break;
+        event = events + i;
 
-	case SQC_SET_VEL:
-	  receiverVelocity(cmd.data);
-	  break;
-
-	case SQC_SET_VOLUME:
-	  volumeAtten = 0.2f * (float)cmd.code;
-	  if (volumeAtten <= 0.0f) {
-	    mutingOn = true;
-	    volumeAtten = 0.0f;
-	  }
-	  else if (volumeAtten >= 2.0f) {
-	    mutingOn = false;
-	    volumeAtten = 2.0f;
-	  }
-	  else {
-	    mutingOn = false;
-	  }
-	  break;
-
-	case SQC_LOCAL_SFX:
-	  i = findBestLocalSlot();
-	  if (i == MaxEvents) break;
-	  event = events + i;
-
-	  event->samples = soundSamples[cmd.code];
-	  event->ptr = 0;
-	  event->flags = 0;
-	  event->time = curTime;
-	  event->busy = true;
-	  event->lastLeftAtten = event->lastRightAtten = volumeAtten;
-	  portUseCount++;
-	  break;
-
-	case SQC_IWORLD_SFX:
-	case SQC_WORLD_SFX:
-	  if (cmd.cmd == SQC_IWORLD_SFX) {
-	    i = findBestWorldSlot();
-	  }
-	  else {
-	    for (i = 0; i < MaxEvents; i++)
-	      if (!events[i].busy)
-		break;
-	  }
-	  if (i == MaxEvents) break;
-	  event = events + i;
-
-	  event->samples = soundSamples[cmd.code];
-	  event->ptrFracLeft = 0.0;
-	  event->ptrFracRight = 0.0;
-	  event->flags = SEF_WORLD | SEF_IGNORING;
-	  if (cmd.cmd == SQC_IWORLD_SFX) event->flags |= SEF_IMPORTANT;
-	  event->x = cmd.data[0];
-	  event->y = cmd.data[1];
-	  event->z = cmd.data[2];
-	  event->time = curTime;
-	  event->busy = true;
-	  /* don't increment use count because we're ignoring the sound */
-	  recalcEventDistance(event);
-	  break;
-
-	case SQC_FIXED_SFX:
-	  for (i = 0; i < MaxEvents; i++)
-	    if (!events[i].busy)
-	      break;
-	  if (i == MaxEvents) break;
-	  event = events + i;
-
-	  event->samples = soundSamples[cmd.code];
-	  event->ptrFracLeft = 0.0;
-	  event->ptrFracRight = 0.0;
-	  event->flags = SEF_FIXED | SEF_WORLD;
-	  event->x = cmd.data[0];
-	  event->y = cmd.data[1];
-	  event->z = cmd.data[2];
-	  event->time = curTime;
-	  event->busy = true;
-	  portUseCount++;
-	  recalcEventDistance(event);
-	  break;
+        event->samples = soundSamples[cmd.code];
+        event->ptrFracLeft = 0.0;
+        event->ptrFracRight = 0.0;
+        event->flags = SEF_FIXED | SEF_WORLD;
+        event->x = cmd.data[0];
+        event->y = cmd.data[1];
+        event->z = cmd.data[2];
+        event->time = curTime;
+        event->busy = true;
+        event->muted = (cmd.data[3] != 0.0f);
+        portUseCount++;
+        recalcEventDistance(event);
+        break;
+      }
     }
   }
-  for (i = 0; i < MaxEvents; i++)
+
+  for (i = 0; i < MaxEvents; i++) {
     if (events[i].busy) {
       int deltaCount = recalcEventIgnoring(events + i);
       portUseCount += deltaCount;
     }
+  }
 
-    /* sum contributions to the port and output samples */
-    if (media->isAudioTooEmpty()) {
-      long numSamples = 0;
-      if (portUseCount != 0) {
-	for (j = 0; j < MaxEvents; j++) {
-	  if (!events[j].busy) continue;
-
-	  int deltaCount;
-	  if (events[j].flags & SEF_WORLD)
-	    if (events[j].flags & SEF_FIXED)
-	      deltaCount = addFixedContribution(events + j, &numSamples);
-	    else
-	      deltaCount = addWorldContribution(events + j, &numSamples);
-	  else
-	    deltaCount = addLocalContribution(events + j, &numSamples);
-	  portUseCount += deltaCount;
-	}
+  // sum contributions to the port and output samples
+  if (media->isAudioTooEmpty()) {
+    long numSamples = 0;
+    if (portUseCount != 0) {
+      for (j = 0; j < MaxEvents; j++) {
+        SoundEvent* sndEvent = &events[j];
+        if (!sndEvent->busy) {
+          continue;
+        }
+        int deltaCount;
+        if (sndEvent->flags & SEF_WORLD) {
+          if (sndEvent->flags & SEF_FIXED) {
+            deltaCount = addFixedContribution(sndEvent, &numSamples);
+          } else {
+            deltaCount = addWorldContribution(sndEvent, &numSamples);
+          }
+        }
+        else {
+          deltaCount = addLocalContribution(sndEvent, &numSamples);
+        }
+        portUseCount += deltaCount;
       }
-
-      // replace all samples with silence if muting is on
-      if (mutingOn)
-	numSamples = 0;
-
-      // fill out partial buffers with silence
-      for (j = numSamples; j < audioBufferSize; j++)
-	scratch[j] = 0.0f;
-
-      // write samples
-      media->writeAudioFrames(scratch, audioBufferSize >> 1);
     }
 
-    return false;
+    // replace all samples with silence if muting is on
+    if (mutingOn) {
+      numSamples = 0;
+    }
+
+    // fill out partial buffers with silence
+    for (j = numSamples; j < audioBufferSize; j++) {
+      scratch[j] = 0.0f;
+    }
+
+    // write samples
+    media->writeAudioFrames(scratch, audioBufferSize >> 1);
+  }
+
+  return false;
 }
 
-static void		audioLoop(void*)
+
+static void audioLoop(void*)
 {
   // loop until requested to stop
   while (true) {
     // sleep until audio buffers hit low water mark or new command available
-    if(platformSound)
+    if (platformSound) {
       platformSound->sleep();
-
-    if (platformSound && platformSound->audioInnerLoop())
-      break;
+      if (platformSound->audioInnerLoop()) {
+        break;
+      }
+    }
   }
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

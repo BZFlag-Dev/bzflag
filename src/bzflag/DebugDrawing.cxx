@@ -36,7 +36,7 @@
 
 static void drawTankHitZone(const Player* tank)
 {
-  if ((tank == NULL) || (tank->getTeam() == ObserverTeam)) {
+  if ((tank == NULL) || tank->isObserver()) {
     return;
   }
 
@@ -125,7 +125,7 @@ void DebugDrawing::drawTanks()
   }
   if (BZDB.isTrue("_forbidDebug")) {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
-    if (!myTank || (myTank->getTeam() != ObserverTeam)) {
+    if (!myTank || !myTank->isObserver()) {
       return; // debug forbidden, not an observer, no boxes for you!
     }
   }

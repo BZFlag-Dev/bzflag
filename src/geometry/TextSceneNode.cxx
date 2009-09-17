@@ -718,7 +718,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
   const bool stencil = (BZDBCache::shadowMode == SceneRenderer::StencilShadows);
   shadowColor.a = stencil ? BZDBCache::shadowAlpha : 1.0f;
 
-  linesPtr = &stripped;
+//FIXME  linesPtr = &stripped;
 
   glAlphaFunc(GL_GEQUAL, 0.1f);
   glEnable(GL_ALPHA_TEST);

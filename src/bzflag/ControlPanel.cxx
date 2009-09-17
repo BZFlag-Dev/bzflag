@@ -378,9 +378,10 @@ void ControlPanel::setControlColor(const fvec4* color)
 
 void ControlPanel::render(SceneRenderer& _renderer)
 {
+  const float opacity = _renderer.getPanelOpacity();
+
   if (!BZDB.isTrue("displayConsole")) {
     // always draw the console if its fully opaque
-    const float opacity = RENDERER.getPanelOpacity();
     if (opacity != 1.0f) {
       return;
     }
@@ -391,7 +392,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   }
 
   // optimization for software rendering folks
-  if (!changedMessage && _renderer.getPanelOpacity() == 1.0f) {
+  if (!changedMessage && (opacity == 1.0f)) {
     return;
   }
 
@@ -417,10 +418,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
   if (changedMessage > 0) {
     changedMessage--;
   }
-  float fx = messageRect.xpos + margin;
-  float fy = messageRect.ypos + margin + 1.0f;
-  int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
-    : int(lineHeight + 4);
+  const float fx = messageRect.xpos + margin;
+  float       fy = messageRect.ypos + margin + 1.0f;
+  const int   ay = ((opacity == 1.0f) || !showTabs) ? 0 : int(lineHeight + 4);
 
   glScissor(messageRect.xpos + x - 1,
 	    messageRect.ypos + y,
@@ -428,17 +428,17 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	    messageRect.ysize + ay);
   OpenGLGState::resetState();
 
-  if (_renderer.getPanelOpacity() > 0.0f) {
+  if (opacity > 0.0f) {
     // nice blended messages background
-    const bool blended = BZDBCache::blend && (_renderer.getPanelOpacity() < 1.0f);
+    const bool blended = BZDBCache::blend && (opacity < 1.0f);
     if (blended) {
       glEnable(GL_BLEND);
     }
 
     // clear the background
-    glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
-    glRecti(messageRect.xpos - 1, // clear an extra pixel column to simplify fuzzy float stuff later
-	    messageRect.ypos,
+    glColor4f(0.0f, 0.0f, 0.0f, opacity);
+    glRecti(messageRect.xpos - 1, // clear an extra pixel column to
+	    messageRect.ypos,     //   simplify fuzzy float stuff later 
 	    messageRect.xpos + messageRect.xsize,
 	    messageRect.ypos + messageRect.ysize);
 
@@ -566,7 +566,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
       // next line
       msgy--;
     }
+
     j += numLines;
+
     fy += int(lineHeight * numLines);
   }
 
@@ -1084,13 +1086,17 @@ bool ControlPanel::addTab(const std::string& label, bool allSrc, bool allDst)
     return false;
   }
   if (getTabID(label) >= 0) {
-    return false;
+    return false; // already exists
   }
 
   tabs.push_back(new Tab(label, false, allSrc, allDst));
   setupTabMap();
   resize();
-  
+
+  if (hubLink) {
+    hubLink->tabAdded(label);
+  }
+
   return true;
 }
 
@@ -1110,6 +1116,9 @@ bool ControlPanel::removeTab(const std::string& label)
         setActiveTab(MessageAll);
       }
       resize();
+      if (hubLink) {
+        hubLink->tabRemoved(label);
+      }
       return true;
     }
   }

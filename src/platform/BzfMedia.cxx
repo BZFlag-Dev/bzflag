@@ -27,6 +27,7 @@
 #include "MediaFile.h"
 
 #include "DirectoryNames.h"
+#include "version.h"
 
 
 BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) {
@@ -190,31 +191,42 @@ float*			BzfMedia::readSound(const std::string& filename,
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
-  // try mediaDir/filename
+  // try ../mediaDir/filename
   name = "../";
   name += DEFAULT_MEDIA_DIR;
   name = makePath(name, soundFileName);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
-  // try mediaDir/filename with replaced extension
+  // try ../mediaDir/filename with replaced extension
   name = "../";
   name += DEFAULT_MEDIA_DIR;
   name = replaceExtension(makePath(name, soundFileName), getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
-  // try mediaDir/filename
+  // try ../../mediaDir/filename
   name = "../../";
   name += DEFAULT_MEDIA_DIR;
   name = makePath(name, soundFileName);
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 
-  // try mediaDir/filename with replaced extension
+  // try ../../mediaDir/filename with replaced extension
   name = "../../";
   name += DEFAULT_MEDIA_DIR;
   name = replaceExtension(makePath(name, soundFileName), getSoundExtension());
+  sound = doReadSound(name, numFrames, rate);
+  if (sound) return sound;
+
+  // try configDir/version/filename
+  name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + filename;
+  sound = doReadSound(name, numFrames, rate);
+  if (sound) return sound;
+
+  // try configDir/version/filename with replaced extension
+  name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + filename;
+  name = replaceExtension(name, getSoundExtension());
   sound = doReadSound(name, numFrames, rate);
   if (sound) return sound;
 

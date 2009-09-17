@@ -68,6 +68,8 @@ class HUDuiTypeIn : public HUDuiControl {
     void		setString(const std::string&);
     void		setEditing(bool _allowEdit);
 
+    void		pasteText(const std::string& text);
+
   protected:
     bool		doKeyPress(const BzfKeyEvent&);
     bool		doKeyRelease(const BzfKeyEvent&);

@@ -221,9 +221,10 @@ static std::string cmdFire(const std::string&, const CmdArgList& args, bool*)
   if (args.size() != 0)
     return "usage: fire";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (fireButton && myTank != NULL && myTank->isAlive()
-      && myTank->getTeam() != ObserverTeam)
+  if (fireButton &&
+      (myTank != NULL) && myTank->isAlive() && !myTank->isObserver()) {
     myTank->fireShot();
+  }
   return std::string();
 }
 
@@ -267,9 +268,11 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
     return "usage: restart";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if ((myTank != NULL) && canSpawn) {
-    if (!gameOver && !myTank->isSpawning() &&
-        (myTank->getTeam() != ObserverTeam) &&
-        !myTank->isAlive() && !myTank->isExploding()) {
+    if (!gameOver
+        && !myTank->isSpawning()
+        && !myTank->isObserver()
+        && !myTank->isAlive()
+        && !myTank->isExploding()) {
       serverLink->sendAlive(myTank->getId());
       myTank->setSpawning(true);
       CmdArgList zoomArgs;
@@ -312,10 +315,7 @@ static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
       server->sendPaused(false);
 
       // restore the sound
-//FIXME      if (savedVolume != -1) {
-//FIXME        SOUNDSYSTEM.setVolume(savedVolume*0.1f);
-//FIXME        savedVolume = -1;
-//FIXME      }
+//FIXME        SOUNDSYSTEM.setMute(false);
 
       // grab mouse
 //FIXME      if (shouldGrabMouse()) {
@@ -368,7 +368,7 @@ static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool
     return std::string();
   }
 
-  if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
+  if ((myTank != NULL) && !myTank->isObserver()) {
     // if I am an auto pilot and I requested it to be turned on
     // in the first place, send the request to disable it.
     if (myTank->isAutoPilot() && myTank->requestedAutopilot) {

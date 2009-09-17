@@ -706,7 +706,7 @@ static void huntPlayers()
   if (!myTank) {
     return;
   }
-  const bool observer = (myTank->getTeam() == ObserverTeam);
+  const bool observer = myTank->isObserver();
 
   // for detecting team killers
   const float tkWarnRatio = BZDB.eval("tkwarnratio");

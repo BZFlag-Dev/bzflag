@@ -193,7 +193,7 @@ void BZRobotPlayer::update(float inputDT)
   tsPlayerCount = 0;
   for (i = 0; i < curMaxPlayers; i++)
     if (remotePlayers[i])
-	  if(remotePlayers[i]->getTeam() >= 0 && remotePlayers[i]->getTeam() != ObserverTeam)
+	  if(remotePlayers[i]->getTeam() >= 0 && !remotePlayers[i]->isObserver())
 		if(robotName != std::string(remotePlayers[i]->getCallSign()))
 	      tsPlayerCount++;
   for (i = 0; i < numRobots; i++)
@@ -221,7 +221,7 @@ void BZRobotPlayer::update(float inputDT)
       continue;
     if (remotePlayers[i]->getId() == getId())
       continue;
-    if (remotePlayers[i]->getTeam() == ObserverTeam)
+    if (remotePlayers[i]->isObserver())
       continue;
 
 	fvec3 rpp = remotePlayers[i]->getPosition();

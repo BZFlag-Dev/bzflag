@@ -124,6 +124,7 @@ public:
   bool		isExploding() const;
   bool		isPhantomZoned() const;
   bool		isCrossingWall() const;
+  bool		isObserver() const;
   bool		canMove() const;
   bool		canJump() const;
   bool		canTurnLeft() const;
@@ -578,6 +579,11 @@ inline bool		Player::isPhantomZoned() const
 inline bool		Player::isCrossingWall() const
 {
   return (state.status & short(PlayerState::CrossingWall)) != 0;
+}
+
+inline bool		Player::isObserver() const
+{
+  return (team == ObserverTeam);
 }
 
 inline bool		Player::canMove() const

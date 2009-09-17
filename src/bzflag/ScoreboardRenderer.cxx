@@ -519,7 +519,7 @@ void ScoreboardRenderer::renderScoreboard(void)
     if (player->isHunted()) {
       ++numHunted;
     }
-    if (player->getTeam()==ObserverTeam && !haveObs) {
+    if (player->isObserver() && !haveObs) {
       y -= dy;
       haveObs = true;
     }
@@ -705,7 +705,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   }
 
 #if DEBUG_SHOWRATIOS
-  if (player->getTeam() != ObserverTeam) {
+  if (!player->isObserver()) {
     if (sortMode == SortNormalized) {
       stringAppendNormalized(playerInfo, player->getNormalizedScore());
     } else if (sortMode == SortMyRatio) {
@@ -720,7 +720,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   fm.setDimFactor(dimFactor);
 
   // draw
-  if (player->getTeam() != ObserverTeam) {
+  if (!player->isObserver()) {
     hudColor3fv(Team::getRadarColor(teamIndex));
     fm.drawString(x1, y, 0, minorFontFace->getFMFace(), minorFontSize, score);
     hudColor3fv(Team::getRadarColor(teamIndex));
@@ -788,7 +788,7 @@ Player* ScoreboardRenderer::getLeader(std::string *label)
 
   delete[] list;
 
-  if (top==NULL || top->getTeam()==ObserverTeam)
+  if (top==NULL || top->isObserver())
     return NULL;
   return top;
 }
@@ -848,14 +848,14 @@ Player** ScoreboardRenderer::newSortedList(int sortType,
   // fill the array with remote players
   for (i=0; i<curMaxPlayers-1; i++) {
     if ((p = world->getPlayer(i))) {
-      if (obsLast && p->getTeam()==ObserverTeam)
+      if (obsLast && p->isObserver())
 	sorter[curMaxPlayers - (++numObs)].player = p;
       else
 	sorter[numPlayers++].player = p;
     }
   }
   // add my tank
-  if (obsLast && myTank->getTeam()==ObserverTeam)
+  if (obsLast && myTank->isObserver())
     sorter[curMaxPlayers - (++numObs)].player = myTank;
   else
     sorter[numPlayers++].player = myTank;

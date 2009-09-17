@@ -388,6 +388,8 @@ namespace TextUtils
     if (key == "black")        { out += ANSI_STR_FG_BLACK;     return len; }
     if (key == "bright")       { out += ANSI_STR_BRIGHT;       return len; }
     if (key == "dim")          { out += ANSI_STR_DIM;          return len; }
+    if (key == "italic")       { out += ANSI_STR_ITALIC;       return len; }
+    if (key == "italicOff")    { out += ANSI_STR_NO_ITALIC;    return len; }
     if (key == "blink")        { out += ANSI_STR_PULSATING;    return len; }
     if (key == "blinkOff")     { out += ANSI_STR_NO_PULSATE;   return len; }
     if (key == "underline")    { out += ANSI_STR_UNDERLINE;    return len; }
@@ -430,14 +432,16 @@ namespace TextUtils
           case 'd':  { out += ANSI_STR_FG_BLACK;     c++; break; }
           case '+':  { out += ANSI_STR_BRIGHT;       c++; break; }
           case '-':  { out += ANSI_STR_DIM;          c++; break; }
+          case '/':  { out += ANSI_STR_ITALIC;       c++; break; }
+          case '|':  { out += ANSI_STR_NO_ITALIC;    c++; break; }
           case '*':  { out += ANSI_STR_PULSATING;    c++; break; }
-          case '/':  { out += ANSI_STR_NO_PULSATE;   c++; break; }
+          case '.':  { out += ANSI_STR_NO_PULSATE;   c++; break; }
           case '_':  { out += ANSI_STR_UNDERLINE;    c++; break; }
           case '~':  { out += ANSI_STR_NO_UNDERLINE; c++; break; }
           case '[':  { out += ANSI_STR_REVERSE;      c++; break; }
           case ']':  { out += ANSI_STR_NO_REVERSE;   c++; break; }
-          case '!':  { out += ANSI_STR_RESET_FINAL;  c++; break; }
-          case '#':  { out += ANSI_STR_RESET;        c++; break; }
+          case ':':  { out += ANSI_STR_RESET_FINAL;  c++; break; }
+          case ';':  { out += ANSI_STR_RESET;        c++; break; }
           case '(':  {
             c += expandEscName(c + 2, out);
             break;

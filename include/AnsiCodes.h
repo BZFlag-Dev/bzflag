@@ -32,6 +32,9 @@
 #define ANSI_STR_RESET_FINAL	"\033[0m"	// only reset
 #define ANSI_STR_BRIGHT		"\033[1m"
 #define ANSI_STR_DIM		"\033[2m"
+#define ANSI_STR_NORMAL		"\033[22m"	// not bright or dim
+#define ANSI_STR_ITALIC		"\033[3m"
+#define ANSI_STR_NO_ITALIC	"\033[23m"
 #define ANSI_STR_UNDERLINE	"\033[4m"
 #define ANSI_STR_NO_UNDERLINE	"\033[24m"
 #define ANSI_STR_PULSATING	"\033[5m"
