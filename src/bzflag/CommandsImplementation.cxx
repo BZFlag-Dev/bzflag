@@ -431,6 +431,16 @@ bool HubCommand::operator() (const char *commandLine)
     const std::string statusStr = "hublink " + std::string(status);
     addMessage(NULL, statusStr.c_str());
   }
+  else if (tokens[0] == "/closetabs") {
+    if (hubLink != NULL) {
+      addMessage(NULL, "hublink is active, can not close its tabs");
+    }
+    else if (controlPanel) {
+      for (int i = controlPanel->getTabCount() - 1; i >= 0; i--) {
+        controlPanel->removeTab(controlPanel->getTabLabel(i));
+      }
+    }
+  }
   else if (hubLink) {
     hubLink->recvCommand(commandLine);
   }

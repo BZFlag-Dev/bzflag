@@ -27,9 +27,13 @@ extern unsigned int messageHistoryIndex;
 
 class HubComposeKey : public HUDuiDefaultKey {
   public:
-    void init();
+    HubComposeKey() : keepAlive(false) {}
+  public:
+    void init(bool keepAlive);
     bool keyPress(const BzfKeyEvent&);
     bool keyRelease(const BzfKeyEvent&);
+  private:
+    bool keepAlive;
 };
 
 

@@ -25,6 +25,7 @@
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "HubLink.h"
+#include "ControlPanel.h"
 #include "LocalCommand.h"
 #include "guiplaying.h"
 #include "playing.h"
@@ -37,8 +38,9 @@
 static const std::string hubPrefix = "/hub ";
 
 
-void HubComposeKey::init()
+void HubComposeKey::init(bool keep)
 {
+  keepAlive = keep;
   messageHistoryIndex = 0;
   hud->setComposing("HUB:");
   HUDui::setDefaultKey(this);
@@ -155,6 +157,16 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
       else if (message == "/status") {
         addMessage(NULL, hubLink ? "hublink active" : "hublink inactive");
       }
+      else if (message == "/closetabs") {
+        if (hubLink) {
+          addMessage(NULL, "hublink is active, can not close its tabs");
+        }
+        else if (controlPanel) {
+          for (int i = controlPanel->getTabCount() - 1; i >= 0; i--) {
+            controlPanel->removeTab(controlPanel->getTabLabel(i));
+          }
+        }
+      }
       else if (hubLink == NULL) {
         controlPanel->addMessage("not connected to the HUB", ControlPanel::MessageCurrent);
       }
@@ -181,9 +193,16 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
     }
   }
 
-  messageHistoryIndex = 0;
-  hud->setComposing("");
-  HUDui::setDefaultKey(NULL);
+
+  if (keepAlive && sendIt) {
+    init(true);
+  }
+  else {
+    messageHistoryIndex = 0;
+    hud->setComposing("");
+    HUDui::setDefaultKey(NULL);
+  }
+
   return true;
 }
 

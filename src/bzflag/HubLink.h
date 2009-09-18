@@ -143,6 +143,8 @@ class HubLink {
     static int GetTabLabel(lua_State* L);
     static int GetActiveTab(lua_State* L);
     static int SetActiveTab(lua_State* L);
+    static int GetTabTopic(lua_State* L);
+    static int SetTabTopic(lua_State* L);
 
     static int GetComposePrompt(lua_State* L);
     static int SetComposePrompt(lua_State* L);

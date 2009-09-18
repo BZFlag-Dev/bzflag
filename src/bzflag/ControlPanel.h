@@ -106,6 +106,9 @@ class ControlPanel {
     int                getTabID(const std::string& label) const;
     const std::string& getTabLabel(int tabID) const;
 
+    const std::string& getTabTopic(int tabID) const;
+    bool               setTabTopic(int tabID, const std::string&);
+
     int                getCurrentTabID()    const;
     const std::string& getCurrentTabLabel() const;
 
@@ -155,6 +158,7 @@ class ControlPanel {
       , unread(false)
       , offset(0)
       , msgCount(0)
+      , topic("")
       {}
       std::string label;
       bool  locked;   // can not be removed
@@ -166,6 +170,7 @@ class ControlPanel {
       int   offset;   // for scrolling
       int   msgCount; // tally of all messages
       MessageQueue messages;
+      ControlPanelMessage topic;
     };
     std::vector<Tab*> tabs;
 

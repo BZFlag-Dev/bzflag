@@ -229,6 +229,7 @@ FontManager::FontManager()
 , dimFactor(0.2f)
 , darkness(1.0f)
 , rawBlending(false)
+, flooring(true)
 {
 #if debugging
   std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
@@ -435,6 +436,12 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (buffer[i] == '\t') {
       buffer[i] = ' ';
     }
+  }
+
+  // clamp to integers  (unless working in world space)
+  if (flooring) {
+    x = floorf(x);
+    y = floorf(y);
   }
 
   glEnable(GL_TEXTURE_2D);

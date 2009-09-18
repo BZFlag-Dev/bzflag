@@ -310,7 +310,7 @@ void ScoreboardRenderer::renderTeamScores()
   FontManager &fm = FontManager::instance();
   float x = winWidth;
   float y = winY;
-  float dy =  fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
+  float dy = ceilf(fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize));
 
   World* world = World::getWorld();
   if ((world == NULL) || !world->allowTeams()) {
@@ -370,9 +370,9 @@ void ScoreboardRenderer::renderCtfFlags() {
 
   const int curMaxPlayers = world->getCurMaxPlayers();
   FontManager &fm = FontManager::instance();
-  const float x = winX;
-  const float y = winY;
-  const float dy = fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
+  const float x = floorf(winX);
+  const float y = floorf(winY);
+  const float dy = ceilf(fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize));
   float y0 = y - dy;
 
   hudColor3fv(messageColor);
@@ -433,10 +433,12 @@ void ScoreboardRenderer::renderScoreboard(void)
   Bundle *bdl = BundleMgr::getCurrentBundle();
   FontManager &fm = FontManager::instance();
 
-  const float x1 = winX;
-  const float x2 = x1 + scoreLabelWidth;
-  const float x3 = x2 + killsLabelWidth;
-  const float y0 = winY;
+  const int minorFaceID = minorFontFace->getFMFace();
+
+  const float x1 = floorf(winX);
+  const float x2 = x1 + ceilf(scoreLabelWidth);
+  const float x3 = x2 + ceilf(killsLabelWidth);
+  const float y0 = floorf(winY);
   hudColor3fv(messageColor);
 
   std::string psLabel = bdl->getLocalString(playerLabel);
@@ -451,20 +453,20 @@ void ScoreboardRenderer::renderScoreboard(void)
     psLabel += "  ";
     psLabel += sortLabels[sortMode];
   }
-  fm.drawString(x1, y0, 0, minorFontFace->getFMFace(), minorFontSize, bdl->getLocalString(scoreLabel));
-  fm.drawString(x2, y0, 0, minorFontFace->getFMFace(), minorFontSize, bdl->getLocalString(killLabel));
-  fm.drawString(x3, y0, 0, minorFontFace->getFMFace(), minorFontSize, psLabel);
-  const float dy = fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
+  fm.drawString(x1, y0, 0, minorFaceID, minorFontSize, bdl->getLocalString(scoreLabel));
+  fm.drawString(x2, y0, 0, minorFaceID, minorFontSize, bdl->getLocalString(killLabel));
+  fm.drawString(x3, y0, 0, minorFaceID, minorFontSize, psLabel);
+  const float dy = ceilf(fm.getStringHeight(minorFaceID, minorFontSize));
   float y = y0 - dy;
 
   // make room for the status marker
-  const float xs = x3 - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "+|");
+  const float xs = ceilf(x3 - fm.getStringWidth(minorFaceID, minorFontSize, "+|"));
 
   if (huntState == HUNT_SELECTING) {
     std::string huntStr = ColorStrings[YellowColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += " *SEL*";
-    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFontFace->getFMFace(), minorFontSize, huntStr);
+    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFaceID, minorFontSize, huntStr);
   }
 
   // grab the tk warning ratio

@@ -380,11 +380,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
 {
   const float opacity = _renderer.getPanelOpacity();
 
-  if (!BZDB.isTrue("displayConsole")) {
-    // always draw the console if its fully opaque
-    if (opacity != 1.0f) {
-      return;
-    }
+  if (!BZDB.isTrue("displayConsole") && (opacity != 1.0f)) {
+    return; // NOTE: always draw the console if it's fully opaque
   }
 
   if (!resized) {
@@ -502,7 +499,10 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  for (j = 0; (i >= 0) && (j < maxLines); i--) {
+  const int topicLines = tabs[activeTab]->topic.numlines;
+  const int maxNormLines = (maxLines - ((topicLines > 0) ? (topicLines + 1) : 0));
+
+  for (j = 0; (i >= 0) && (j < maxNormLines); i--) {
     // draw each line of text
     const ControlPanelMessage& cpMsg = tabs[activeTab]->messages[i];
     int numLines = cpMsg.numlines;
@@ -546,7 +546,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
       assert(msgy >= 0);
 
       // only draw message if inside message area
-      if ((j + msgy) < maxLines) {
+      if ((j + msgy) < maxNormLines) {
         const float xoff = (l == 0) ? cpMsg.xoffsetFirst : cpMsg.xoffset;
 	if (!highlight) {
 	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
@@ -569,7 +569,16 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
     j += numLines;
 
-    fy += int(lineHeight * numLines);
+    fy += lineHeight * numLines;
+  }
+
+  // draw the topic lines
+  fy = messageRect.ypos + messageRect.ysize - margin;
+  for (i = 0; i < topicLines; i++) {
+    j = (topicLines - (i + 1));
+    const std::string& line = tabs[activeTab]->topic.lines[j];
+    fm.drawString(fx, fy - ((i + 1) * lineHeight), 0,
+                  fontFace->getFMFace(), fontSize, line);
   }
 
   // free the regex memory
@@ -839,6 +848,7 @@ void ControlPanel::resize()
   }
 
   lineHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
+  lineHeight = ceilf(lineHeight);
 
   maxLines = int(messageRect.ysize / lineHeight);
 
@@ -851,6 +861,8 @@ void ControlPanel::resize()
       tabs[i]->messages[j].breakLines(messageRect.xsize - 2 * margin,
                                       fontFace->getFMFace(), fontSize);
     }
+    tabs[i]->topic.breakLines(messageRect.xsize - 2 * margin,
+                              fontFace->getFMFace(), fontSize);
   }
 
   // note that we've been resized at least once
@@ -1210,6 +1222,28 @@ const std::string& ControlPanel::getTabLabel(int tabID) const
     return empty;
   }
   return tabs[tabID]->label;
+}
+
+
+const std::string& ControlPanel::getTabTopic(int tabID) const
+{
+  static const std::string empty = "";
+  if (!validTab(tabID)) {
+    return empty;
+  }
+  return tabs[tabID]->topic.data;
+}
+
+
+bool ControlPanel::setTabTopic(int tabID, const std::string& topic)
+{
+  if (!validTab(tabID)) {
+    return false;
+  }
+  tabs[tabID]->topic.data = topic;
+  tabs[tabID]->topic.breakLines(messageRect.xsize - 2 * margin,
+                                fontFace->getFMFace(), fontSize);
+  return true;
 }
 
 

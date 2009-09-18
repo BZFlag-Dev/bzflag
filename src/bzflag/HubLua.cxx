@@ -526,6 +526,8 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, GetTabLabel);
   PUSH_LUA_CFUNC(L, GetActiveTab);
   PUSH_LUA_CFUNC(L, SetActiveTab);
+  PUSH_LUA_CFUNC(L, GetTabTopic);
+  PUSH_LUA_CFUNC(L, SetTabTopic);
 
   PUSH_LUA_CFUNC(L, GetComposePrompt);
   PUSH_LUA_CFUNC(L, SetComposePrompt);
@@ -810,6 +812,29 @@ int HubLink::SetActiveTab(lua_State* L)
   }
   const int tabID = CheckTab(L, 1);
   lua_pushboolean(L, controlPanel->setActiveTab(tabID));
+  return 1;
+}
+
+
+int HubLink::GetTabTopic(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const int tabID = CheckTab(L, 1);
+  lua_pushstdstring(L, controlPanel->getTabTopic(tabID));
+  return 1;
+}
+
+
+int HubLink::SetTabTopic(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const int tabID = CheckTab(L, 1);
+  const std::string topic = luaL_checkstring(L, 2);
+  lua_pushboolean(L, controlPanel->setTabTopic(tabID, topic));
   return 1;
 }
 

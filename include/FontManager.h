@@ -143,6 +143,7 @@ public:
   void  setDarkness(float newDarkFactor);
   void  setDimFactor(float newDimFactor);
   void  setRawBlending(bool value) { rawBlending = value; }
+  void  setFlooring(bool value) { flooring = value; }
 
   bool freeFontFile(const std::string& fileName);
 
@@ -191,6 +192,8 @@ private:
   float darkness;
   /** do not mess with GL blending */
   bool rawBlending;
+  /** use the floorf() */
+  bool flooring;
   /** precompute colors on dim/darkness changes */
   fvec4 dimUnderlineColor;
 

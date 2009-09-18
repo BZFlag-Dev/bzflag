@@ -613,6 +613,7 @@ void TextSceneNode::TextRenderNode::render()
   }
 
   FontManager& fm = FontManager::instance();
+  fm.setFlooring(false);
 
   glPushAttrib(FTGL_MISSING_ATTRIBS);
   glPushMatrix();
@@ -671,6 +672,7 @@ void TextSceneNode::TextRenderNode::render()
   }
 
   fm.setOpacity(oldOpacity);
+  fm.setFlooring(true);
 
   glPopMatrix();
   glPopAttrib();

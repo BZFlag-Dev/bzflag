@@ -1059,12 +1059,13 @@ static std::string cmdHubCompose(const std::string&, const CmdArgList& args, boo
 {
   static HubComposeKey hubComposeKey;
 
-  if (args.size() != 0) {
-    return "usage: hubcompose";
+  const bool keepAlive = (args.size() == 1) && (args[0] == "keepalive");
+
+  if ((args.size() != 0) && !keepAlive) {
+    return "usage: hubcompose [keepalive]";
   }
 
-  messageHistoryIndex = 0;
-  hubComposeKey.init();
+  hubComposeKey.init(keepAlive);
 
   return std::string();
 }
