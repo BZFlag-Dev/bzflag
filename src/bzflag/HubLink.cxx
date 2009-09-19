@@ -547,13 +547,8 @@ bool HubLink::updateRecv(bool useBuffer)
       if ((err == EAGAIN) || (err == EWOULDBLOCK) || (err == EINTR)) {
         return true; // waiting for data
       }
-      else if (err == EBADF) {
-	return false;		// no need to report if the socket isn't even connected
-      }
-      else {
-	fail("recv error: ", getErrno());
-	return false;
-      }
+      fail("recv error: ", getErrno());
+      return false;
     }
     else {
       debugf(1, "unknown recv state\n");
