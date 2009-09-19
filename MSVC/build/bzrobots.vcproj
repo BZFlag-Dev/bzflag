@@ -457,6 +457,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TextOptionsMenu.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\guiplaying.h"
 				>
 			</File>

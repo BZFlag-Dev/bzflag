@@ -175,6 +175,8 @@ bzflag_SOURCES =			\
 	SilenceDefaultKey.h		\
 	StandardTankAvatar.cxx		\
 	StandardTankAvatar.h		\
+	TextOptionsMenu.cxx		\
+	TextOptionsMenu.h		\
 	ThirdPersonVars.cxx		\
 	ThirdPersonVars.h		\
 	TrackMarks.cxx			\

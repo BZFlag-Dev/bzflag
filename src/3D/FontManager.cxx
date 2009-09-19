@@ -39,6 +39,7 @@
 typedef FTTextureFont FONT;
 typedef FTBitmapFont CRAP_FONT;
 
+
 /* FIXME: this debugging crap and all associated printfs disappear
  * when fontmanager is verified to be working.  there is still a
  * problem in the destructor that needs to be further investigated and
@@ -414,6 +415,44 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     return;
   }
 
+  // clamp to integers  (unless working in world space)
+  if (flooring) {
+    x = floorf(x);
+    y = floorf(y);
+  }
+
+  // cheesy drop shadows for lack of accessible font textures
+  static BZDB_int fontOutlines("fontOutlines");
+  if (flooring && fontOutlines) {
+    flooring = false;
+    const float oldOpacity = opacity;
+    const std::string stripped = stripAnsiCodes(text);
+    glPushAttrib(GL_CURRENT_BIT);
+    fvec4 color(0.0f, 0.0f, 0.0f, opacity);
+    myColor4fv(color);
+    if (fontOutlines > 1) { // dropShadow
+      opacity *= 0.6f;
+      glPushMatrix();
+      drawString(x + 1.0f, y - 1.0f, z, faceID, size, stripped, &color, align);
+      glPopMatrix();
+    }
+    else { // outline
+      opacity *= 0.25f;
+      glPushMatrix();
+      drawString(x + 1.0f, y, z, faceID, size, stripped, &color, align);
+      glPopMatrix(); glPushMatrix();
+      drawString(x - 1.0f, y, z, faceID, size, stripped, &color, align);
+      glPopMatrix(); glPushMatrix();
+      drawString(x, y + 1.0f, z, faceID, size, stripped, &color, align);
+      glPopMatrix(); glPushMatrix();
+      drawString(x, y - 1.0f, z, faceID, size, stripped, &color, align);
+      glPopMatrix();
+    }
+    glPopAttrib();
+    opacity = oldOpacity;
+    flooring = true;
+  }
+
   const int bufSize = 1024;
   char buffer[bufSize];
 
@@ -436,12 +475,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
     if (buffer[i] == '\t') {
       buffer[i] = ' ';
     }
-  }
-
-  // clamp to integers  (unless working in world space)
-  if (flooring) {
-    x = floorf(x);
-    y = floorf(y);
   }
 
   glEnable(GL_TEXTURE_2D);

@@ -28,6 +28,7 @@
 
 OptionsMenu::OptionsMenu()
 : guiOptionsMenu(NULL)
+, textOptionsMenu(NULL)
 , effectsMenu(NULL)
 , cacheMenu(NULL)
 , hubMenu(NULL)
@@ -67,6 +68,11 @@ OptionsMenu::OptionsMenu()
   guiOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("GUI Settings");
+  addControl(label);
+
+  textOptions = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("Text Settings");
   addControl(label);
 
   effectsOptions = label = new HUDuiLabel;
@@ -121,6 +127,7 @@ OptionsMenu::OptionsMenu()
 OptionsMenu::~OptionsMenu()
 {
   delete guiOptionsMenu;
+  delete textOptionsMenu;
   delete effectsMenu;
   delete cacheMenu;
   delete hubMenu;
@@ -137,6 +144,10 @@ void OptionsMenu::execute()
   if (_focus == guiOptions) {
     if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
     HUDDialogStack::get()->push(guiOptionsMenu);
+  }
+  else if (_focus == textOptions) {
+    if (!textOptionsMenu) textOptionsMenu = new TextOptionsMenu;
+    HUDDialogStack::get()->push(textOptionsMenu);
   }
   else if (_focus == effectsOptions) {
     if (!effectsMenu) effectsMenu = new EffectsMenu;
@@ -216,7 +227,7 @@ void OptionsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 7) || (i == 9)) {
+    if ((i == 8) || (i == 10)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -224,7 +235,7 @@ void OptionsMenu::resize(int _width, int _height)
   }
 
   // load current settings
-  i = 8;
+  i = 9;
 
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveSettings"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveIdentity"));

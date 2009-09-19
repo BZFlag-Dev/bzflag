@@ -537,6 +537,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\HelpCreditsMenu.cxx"
 					>
 				</File>
@@ -816,6 +820,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\GUIOptionsMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TextOptionsMenu.h"
 				>
 			</File>
 			<File
