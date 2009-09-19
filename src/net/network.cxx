@@ -122,7 +122,7 @@ int BzfNetwork::setBlocking(int fd)
 BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
 {
   int optVal;
-  socklen_t optLen;
+  socklen_t optLen = sizeof(optVal);
   if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
     return CONNSTATE_QUERY_FAILURE;
   }
@@ -288,17 +288,28 @@ int BzfNetwork::setBlocking(int fd)
 
 BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
 {
+  // reference:  http://msdn.microsoft.com/en-us/library/ms740141(VS.85).aspx
   struct timeval timeout = { 0, 0 };
-  fd_set wrfds;
-  fd_set exfds;
+  fd_set wrfds, exfds;
   FD_ZERO(&wrfds);
+  FD_ZERO(&exfds);
   FD_SET(fd, &wrfds);
-  if (select(fd + 1, NULL, &wrfds, NULL, &timeout) == -1) {
+  FD_SET(fd, &exfds);
+  if (select(fd + 1, NULL, &wrfds, &exfds, &timeout) == -1) {
     return CONNSTATE_QUERY_FAILURE;
   }
   if (FD_ISSET(fd, &wrfds)) {
-    return CONNSTATE_CONN_SUCCESS; // FIXME -- need to detect connection errors,
-                                   //          and WSASetLastError() accordingly
+    return CONNSTATE_CONN_SUCCESS;
+  }
+  else if (FD_ISSET(fd, &exfds)) {
+    int optVal;
+    int optLen = sizeof(optVal);
+    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
+      // do nothing, return this call's error as getErrno()
+    } else {
+      WSASetLastError(optVal);
+    }
+    return CONNSTATE_CONN_FAILURE;
   }
   return CONNSTATE_INPROGRESS; // still connecting
 }
