@@ -104,9 +104,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   }
 
   // strip remaining '\v'
-  if (vPos != std::string::npos) {
-    std::remove(s.begin(), s.end(), '\v');
-  }
+  s.erase(std::remove(s.begin(), s.end(), '\v'), s.end());
 
   // get message and its length
   const char* msg = s.c_str();

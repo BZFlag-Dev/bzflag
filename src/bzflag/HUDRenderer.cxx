@@ -386,7 +386,7 @@ void HUDRenderer::setAlert(int index, const char* msg,
   }
   else {
     std::string text = msg;
-    std::remove(text.begin(), text.end(), '\v');
+    text.erase(std::remove(text.begin(), text.end(), '\v'), text.end());
     FontManager &fm = FontManager::instance();
     alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(text.c_str());
     alertLabelWidth[index] = fm.getStringWidth(alertFontFace->getFMFace(),
