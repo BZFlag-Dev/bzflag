@@ -15,6 +15,7 @@
 
 // system headers
 #include <time.h>
+#include <algorithm>
 
 /* common implementation headers */
 #include "BundleMgr.h"
@@ -384,8 +385,10 @@ void HUDRenderer::setAlert(int index, const char* msg,
     alertClock[index].setClock(0.0f);
   }
   else {
+    std::string text = msg;
+    std::remove(text.begin(), text.end(), '\v');
     FontManager &fm = FontManager::instance();
-    alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(msg);
+    alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(text.c_str());
     alertLabelWidth[index] = fm.getStringWidth(alertFontFace->getFMFace(),
                                                alertFontSize,
                                                alertLabel[index]);

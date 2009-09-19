@@ -18,6 +18,7 @@
 
 // system headers
 #include <iostream>
+#include <algorithm>
 #include <assert.h>
 #include <time.h>
 
@@ -104,9 +105,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 
   // strip remaining '\v'
   if (vPos != std::string::npos) {
-    do {
-      s.replace(vPos, 1, "");
-    } while ((vPos = s.find('\v')) != std::string::npos);
+    std::remove(s.begin(), s.end(), '\v');
   }
 
   // get message and its length
