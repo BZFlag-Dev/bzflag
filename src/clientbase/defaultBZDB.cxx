@@ -78,6 +78,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "mouseboxsize",		"5",			true,  DefPerm, NULL },
   { "panelopacity",		"0.3",			true,  DefPerm, NULL },
   { "pauseOnMinimize",		"1",			true,  DefPerm, NULL },
+  { "fontOutlines",		"0",			true,  DefPerm, NULL },
   { "fontPreload",		"1",			true,  DefPerm, NULL },
   { "processorAffinity",	"0",			true,  DefPerm, Callbacks::setProcessorAffinity },
   { "pulseDepth",		"0.4",			true,  DefPerm, NULL },

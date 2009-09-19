@@ -231,8 +231,8 @@ void TextOptionsMenu::resize(int _width, int _height)
 					 opts.begin()));
 
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("killerhighlight"));
-  ((HUDuiList*)listHUD[i++])->setIndex((BZDB.evalInt("pulseRate") * 5) - 1);
-  ((HUDuiList*)listHUD[i++])->setIndex((BZDB.evalInt("pulseDepth") * 10) - 1);
+  ((HUDuiList*)listHUD[i++])->setIndex(int(BZDB.eval("pulseRate") * 5.0f) - 1);
+  ((HUDuiList*)listHUD[i++])->setIndex(int(BZDB.eval("pulseDepth") * 10.0f) - 1);
 }
 
 
