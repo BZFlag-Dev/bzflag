@@ -134,41 +134,24 @@ extern "C" {
   void bzfherror(const char* msg);
   int getErrno();
   void setNoDelay(int fd);
-  /*
-   * getConnectionState()
-   *
-   *   used to check if a non-blocking socket's connect() has been successful
-   *
-   *   returns 0 if successful,
-   *     *state will be either 0 (not connected) or 1 (connected)
-   * 
-   *   returns -1 on error,
-   *     use getError() to determine the error code
-   */
-  int getConnectionState(int fd, int* state);
 }
 
 
 class BzfNetwork {
   public:
+    static int  closeSocket(int fd);
     static int  setNonBlocking(int fd);
     static int  setBlocking(int fd);
     static bool	parseURL(const std::string& url,
                          std::string& protocol, std::string& hostname,
                          int& port, std::string& pathname);
-
-    // getConnectionState()
-    //
-    //   used to check if a non-blocking socket's connect() has been successful
-    //
-    //   returns 0 if successful,
-    //    state will be either 0 (not connected) or 1 (connected)
-    // 
-    //   returns -1 on error,
-    //     use getError() to determine the error code
-    //
-    static int getConnectionState(int fd, int* state);
-    static int closeSocket(int fd);
+    enum ConnState {
+      CONNSTATE_QUERY_FAILURE,
+      CONNSTATE_INPROGRESS,
+      CONNSTATE_CONN_SUCCESS,
+      CONNSTATE_CONN_FAILURE  // getErrno() should be used
+    };
+    static ConnState getConnectionState(int fd);
 };
 
 

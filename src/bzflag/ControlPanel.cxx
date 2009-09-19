@@ -85,26 +85,27 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   const float charWidth = fm.getStringWidth(fontFace, fontSize, "-");
 
   // handle the vertical tabs
-  std::string::size_type vPos = s.find('\v');
-  if (vPos == 0) {
-    if (prevXoffset < (maxLength - (2.0f * charWidth))) {
-      maxLength   -= prevXoffset;
-      xoffset      = prevXoffset;
-      xoffsetFirst = prevXoffset;
+  const std::string::size_type vPos = s.find('\v');
+  if (vPos != std::string::npos) {
+    if (vPos == 0) {
+      if (prevXoffset < (maxLength - (2.0f * charWidth))) {
+        maxLength   -= prevXoffset;
+        xoffset      = prevXoffset;
+        xoffsetFirst = prevXoffset;
+      }
     }
-  }
-  else if (vPos != std::string::npos) {
-    const std::string prefix = stripAnsiCodes(s.substr(0, vPos));
-    const float prefixWidth = fm.getStringWidth(fontFace, fontSize, prefix);
-    if (prefixWidth < (maxLength - (2.0f * charWidth))) {
-      xoffset = prefixWidth;
-      prevXoffset = xoffset;
-      needXoffsetAdj = true;
+    else if (vPos != std::string::npos) {
+      const std::string prefix = stripAnsiCodes(s.substr(0, vPos));
+      const float prefixWidth = fm.getStringWidth(fontFace, fontSize, prefix);
+      if (prefixWidth < (maxLength - (2.0f * charWidth))) {
+        xoffset = prefixWidth;
+        prevXoffset = xoffset;
+        needXoffsetAdj = true;
+      }
     }
+    // strip all '\v' characters
+    s = TextUtils::remove_char(s, '\v');
   }
-
-  // strip remaining '\v'
-  s.erase(std::remove(s.begin(), s.end(), '\v'), s.end());
 
   // get message and its length
   const char* msg = s.c_str();
@@ -1057,8 +1058,7 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
   }
 
   if (echoToConsole) {
-    std::string echoOut = line;
-    echoOut.erase(std::remove(echoOut.begin(), echoOut.end(), '\v'), echoOut.end());
+    std::string echoOut = TextUtils::remove_char(line, '\v');
     if (echoAnsi) {
       echoOut += ColorStrings[ResetColor];
     } else {

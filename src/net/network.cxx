@@ -119,26 +119,24 @@ int BzfNetwork::setBlocking(int fd)
 }
 
 
-int BzfNetwork::getConnectionState(int fd, int* state)
+BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
 {
-  *state = 0;
   int optVal;
   socklen_t optLen;
   if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
-    return -1;
+    return CONNSTATE_QUERY_FAILURE;
   }
   switch (optVal) {
     case 0: {
-      *state = 1; // successful connection
-      return 0;
+      return CONNSTATE_CONN_SUCCESS;
     }
     case EINPROGRESS:
     case EINTR: {
-      return 0; // still connecting
+      return CONNSTATE_INPROGRESS;
     }
   }
   errno = optVal;
-  return -1; // connection error
+  return CONNSTATE_CONN_FAILURE;
 }
 
 
@@ -288,20 +286,21 @@ int BzfNetwork::setBlocking(int fd)
 }
 
 
-int BzfNetwork::getConnectionState(int fd, int* state)
+BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
 {
-  *state = 0;
   struct timeval timeout = { 0, 0 };
   fd_set wrfds;
+  fd_set exfds;
   FD_ZERO(&wrfds);
   FD_SET(fd, &wrfds);
   if (select(fd + 1, NULL, &wrfds, NULL, &timeout) == -1) {
-    return -1;
+    return CONNSTATE_QUERY_FAILURE;
   }
   if (FD_ISSET(fd, &wrfds)) {
-    *state = 1;
+    return CONNSTATE_CONN_SUCCESS; // FIXME -- need to detect connection errors,
+                                   //          and WSASetLastError() accordingly
   }
-  return 0;  
+  return CONNSTATE_INPROGRESS; // still connecting
 }
 
 

@@ -345,13 +345,18 @@ void HubLink::stateDNS()
 
 void HubLink::stateConnect()
 {
-  int connState = 0;
-  if (BzfNetwork::getConnectionState(sock, &connState) == -1) {
-    fail("connection error: ", getErrno());
-    return;
-  }
-  if (connState == 0) {
-    return; // still connecting
+  switch (BzfNetwork::getConnectionState(sock)) {
+    case BzfNetwork::CONNSTATE_CONN_FAILURE:
+    case BzfNetwork::CONNSTATE_QUERY_FAILURE: {
+      fail("connection error: ", getErrno());
+      return;
+    }
+    case BzfNetwork::CONNSTATE_INPROGRESS: {
+      return; // still connecting
+    }
+    case BzfNetwork::CONNSTATE_CONN_SUCCESS: {
+      break; // success, continue on
+    }
   }
 
   // NOTE:

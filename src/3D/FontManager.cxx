@@ -437,7 +437,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glPopMatrix();
     }
     else { // outline
-      opacity *= 0.25f;
+      opacity *= 0.4f;
       glPushMatrix();
       drawString(x + 1.0f, y, z, faceID, size, stripped, &color, align);
       glPopMatrix(); glPushMatrix();

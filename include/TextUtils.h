@@ -70,6 +70,15 @@ namespace TextUtils {
                           const std::string& replaceMe,
                           const std::string& withMe);
 
+  /** remove all instances of 'c'
+   */
+  inline std::string remove_char(const std::string& s, char c)
+  {
+    std::string t = s;
+    t.erase(std::remove(t.begin(), t.end(), c), t.end());
+    return t;
+  }
+
   /** remove leading whitespace */
   std::string ltrim(const std::string& s);
 
