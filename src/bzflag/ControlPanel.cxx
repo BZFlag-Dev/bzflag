@@ -1058,7 +1058,7 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
 
   if (echoToConsole) {
     std::string echoOut = line;
-    std::remove(echoOut.begin(), echoOut.end(), '\v');
+    echoOut.erase(std::remove(echoOut.begin(), echoOut.end(), '\v'), echoOut.end());
     if (echoAnsi) {
       echoOut += ColorStrings[ResetColor];
     } else {
