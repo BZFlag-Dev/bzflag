@@ -180,7 +180,7 @@ public:
 			{
 				bz_PlayerRecord	*player = bz_getPlayerByIndex(players->get(p));
 
-				int playerID = players->get(p);
+				//int playerID = players->get(p);
 				if (player)
 				{
 					std::string BZID = player->bzID.c_str();
