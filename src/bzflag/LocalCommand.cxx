@@ -26,17 +26,6 @@ LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;
 
 //============================================================================//
 
-static bool fallbackCommand(const char*)
-{
-  return false; // do nothing
-}
-
-
-bool (*LocalCommand::fallback)(const char*) = fallbackCommand;
-
-
-//============================================================================//
-
 LocalCommand::LocalCommand(std::string _commandName)
   : commandName(_commandName)
 {
@@ -67,9 +56,6 @@ bool LocalCommand::execute(const char *commandLine)
   std::map<std::string, LocalCommand *>::iterator it;
   it = (*mapOfCommands).find(commandToken);
   if (it == (*mapOfCommands).end()) {
-    if (fallback && fallback(commandLine)) {
-      return true;
-    }
     return false;
   }
   return (*(it->second))(commandLine);

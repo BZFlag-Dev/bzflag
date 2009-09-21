@@ -22,13 +22,9 @@
 
 class LocalCommand {
   public:
-
     static bool execute(const char *commandToken);
 
-    static void setFallback(bool (*func)(const char*)) { fallback = func; }
-
   protected:
-
     LocalCommand(std::string _commandName);
     virtual ~LocalCommand();
 
@@ -37,9 +33,6 @@ class LocalCommand {
     std::string commandName;
 
   protected:
-
-    static bool (*fallback)(const char* command);
-
     typedef std::map<std::string, LocalCommand *> MapOfCommands;
 
     static MapOfCommands* mapOfCommands;
