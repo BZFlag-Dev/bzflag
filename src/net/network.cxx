@@ -121,19 +121,21 @@ int BzfNetwork::setBlocking(int fd)
 
 BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
 {
+  struct timeval timeout = { 0, 0 };
+  fd_set wrfds;
+  FD_ZERO(&wrfds);
+  FD_SET(fd, &wrfds);
+  const int selVal = select(fd + 1, NULL, &wrfds, NULL, &timeout);
+  if (selVal == -1) { return CONNSTATE_QUERY_FAILURE; }
+  if (selVal ==  0) { return CONNSTATE_INPROGRESS;    }
+
   int optVal;
   socklen_t optLen = sizeof(optVal);
   if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
     return CONNSTATE_QUERY_FAILURE;
   }
-  switch (optVal) {
-    case 0: {
-      return CONNSTATE_CONN_SUCCESS;
-    }
-    case EINPROGRESS:
-    case EINTR: {
-      return CONNSTATE_INPROGRESS;
-    }
+  if (optVal == 0) {
+    return CONNSTATE_CONN_SUCCESS;
   }
   errno = optVal;
   return CONNSTATE_CONN_FAILURE;
