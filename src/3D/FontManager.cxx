@@ -406,6 +406,16 @@ static float italicMatrix[16] = {
 };
 
 
+static float calcOutlineOpacity(float bias, float strength)
+{
+  // bias is the output value when (strength == 0.5)
+  const float k2 = (2.0f - (4.0f * bias));
+  const float k1 = (1.0f - k2);
+  const float s = strength;
+  return (k2 * (s * s)) + (k1 * s);
+}
+
+
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const std::string& text,
 			     const fvec4* resetColor,
@@ -422,22 +432,27 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   }
 
   // cheesy drop shadows for lack of accessible font textures
-  static BZDB_int fontOutlines("fontOutlines");
-  if (flooring && fontOutlines) {
+  static BZDB_int   fontOutline("fontOutline");
+  static BZDB_float fontOutlineStrength("fontOutlineStrength");
+  if (flooring && fontOutline) {
     flooring = false;
     const float oldOpacity = opacity;
+    opacity = fontOutlineStrength;
     const std::string stripped = stripAnsiCodes(text);
     glPushAttrib(GL_CURRENT_BIT);
+
+    const float bias = (fontOutline > 1) ? 0.6f : 0.4f;
+    opacity *= calcOutlineOpacity(bias, fontOutlineStrength);
+
     fvec4 color(0.0f, 0.0f, 0.0f, opacity);
     myColor4fv(color);
-    if (fontOutlines > 1) { // dropShadow
-      opacity *= 0.6f;
+
+    if (fontOutline > 1) { // dropShadow
       glPushMatrix();
       drawString(x + 1.0f, y - 1.0f, z, faceID, size, stripped, &color, align);
       glPopMatrix();
     }
     else { // outline
-      opacity *= 0.4f;
       glPushMatrix();
       drawString(x + 1.0f, y, z, faceID, size, stripped, &color, align);
       glPopMatrix(); glPushMatrix();

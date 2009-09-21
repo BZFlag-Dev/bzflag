@@ -219,7 +219,7 @@ void TextOptionsMenu::resize(int _width, int _height)
 
   int i = 1;
   i++; // locale
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fontOutlines"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fontOutline"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("scoreFontSize") / fontStep);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("consoleFontSize") / fontStep);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
@@ -256,7 +256,7 @@ void TextOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 'o': {
-      BZDB.setInt("fontOutlines", list->getIndex());
+      BZDB.setInt("fontOutline", list->getIndex());
       break;
     }
     case 'S': {

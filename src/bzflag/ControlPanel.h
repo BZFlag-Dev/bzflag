@@ -68,6 +68,11 @@ class ControlPanel {
     typedef std::deque<ControlPanelMessage> MessageQueue;
     typedef std::map<std::string, int>      TabMap;
 
+    struct IntRect {
+      int xpos,  ypos;
+      int xsize, ysize;
+    };
+
   public:
     ControlPanel(MainWindow&, SceneRenderer&);
     ~ControlPanel();
@@ -97,7 +102,7 @@ class ControlPanel {
     int  getActiveTab() const { return activeTab; }
 
     bool clearTab(int tabID);
-    bool shiftTab(int tabID, int distance);
+    bool swapTabs(int tabID1, int tabID2);
 
     bool isTabLocked(int tabID) const;
     bool isTabVisible(int tabID) const;
@@ -112,6 +117,10 @@ class ControlPanel {
     int                getCurrentTabID()    const;
     const std::string& getCurrentTabLabel() const;
 
+    inline bool tabUnread(int tabID) const {
+      return validTab(tabID) && tabs[tabID]->unread;
+    }
+
     void setRadarRenderer(RadarRenderer*);
 
     void setDimming(float dimming);
@@ -122,6 +131,11 @@ class ControlPanel {
     int getTabMessageCount(int tabID);
     const MessageQueue* getTabMessages(int tabID);
     const MessageQueue* getTabMessages(const std::string& tabLabel);
+
+    LocalFontFace*	getFontFace() const { return fontFace; }
+    float		getFontSize() const { return fontSize; }
+
+    const IntRect&	getMessageRect() const { return messageRect; }
 
   private:
     // no copying!
@@ -142,11 +156,6 @@ class ControlPanel {
     void drawScrollBar();
 
   private:
-    struct IntRect {
-      int xpos,  ypos;
-      int xsize, ysize;
-    };
-
     struct Tab {
       Tab(const std::string& l, bool lk, bool _allSrc, bool _allDst)
       : label(l)
@@ -172,6 +181,7 @@ class ControlPanel {
       MessageQueue messages;
       ControlPanelMessage topic;
     };
+
     std::vector<Tab*> tabs;
 
     TabMap tabMap;

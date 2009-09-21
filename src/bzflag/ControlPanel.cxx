@@ -40,14 +40,7 @@
 #include "bzUnicode.h"
 
 
-//============================================================================//
-
-struct AreaInts {
-  int xpos;
-  int ypos;
-  int xsize;
-  int ysize;
-};
+const float tabMargin = 2.5f; // 1.25 characters on each side
 
 
 //============================================================================//
@@ -630,10 +623,21 @@ void ControlPanel::drawScrollBar()
 void ControlPanel::drawTabBoxes(int yOffset)
 {
   const IntRect& rect = messageRect;
-
+  const float opacity = RENDERER.getPanelOpacity();
   const int tabHeight = (int)lineHeight + 4;
 
-  long int drawnTabWidth = 0;
+  const int xOffset = !tabsOnRight ? 0
+                      : (rect.xsize < totalTabWidth) ? 0
+                      : (rect.xsize - totalTabWidth);
+
+  yOffset -= tabHeight;
+
+  const int xMax = rect.xpos + rect.xsize;
+
+  bool needTriangle = false;
+  bool redTriangle = false;
+
+  int drawnTabWidth = 0;
   for (int t = 0; t < (int)tabs.size(); t++) {
     const Tab* tab = tabs[t];
     if (!tab->visible) {
@@ -643,26 +647,45 @@ void ControlPanel::drawTabBoxes(int yOffset)
 
     // current mode is given a dark background to match the control panel
     if (activeTab == t) {
-      glColor4f(0.0f, 0.0f, 0.0f, RENDERER.getPanelOpacity());
+      glColor4f(0.0f, 0.0f, 0.0f, opacity);
     } else {
-      glColor4f(0.10f, 0.10f, 0.10f, RENDERER.getPanelOpacity());
+      glColor4f(0.10f, 0.10f, 0.10f, opacity);
     }
+    const int x1 = rect.xpos + drawnTabWidth + xOffset;
+    const int y1 = rect.ypos + rect.ysize + yOffset;
+    const int x2 = x1 + tabWidth;
+    const int y2 = y1 + tabHeight;
+    if (x1 < xMax) {
+      glRecti(x1, y1, x2, y2);
+    }
+    if (x2 > xMax) {
+      needTriangle = true;
+      if (tab->unread) {
+        redTriangle = true;
+      }
+    }
+    drawnTabWidth += int(tab->width);
+  }
 
-    if (tabsOnRight) {
-      // draw the tabs on the right side
-      glRecti(rect.xpos + rect.xsize - totalTabWidth + drawnTabWidth,
-              rect.ypos + rect.ysize + yOffset - tabHeight,
-              rect.xpos + rect.xsize - totalTabWidth + drawnTabWidth + tabWidth,
-              rect.ypos + rect.ysize + yOffset);
+  // FIXME -- drawing triangles for fully opaque control panels
+  if (needTriangle) {
+    if (redTriangle) {
+      glColor4f(1.0f, 0.0f, 0.0f, opacity);
     } else {
-      // draw the tabs on the left side
-      glRecti(rect.xpos + drawnTabWidth,
-              rect.ypos + rect.ysize + yOffset - tabHeight,
-              rect.xpos + drawnTabWidth + tabWidth,
-              rect.ypos + rect.ysize + yOffset);
+      glColor4f(0.8f, 0.8f, 0.8f, opacity);
     }
-
-    drawnTabWidth += long(tab->width);
+    const float x0 = xMax + 1;
+    const float x1 = x0 + (tabHeight * 0.5f);
+    const float y0 = rect.ypos + rect.ysize + yOffset + 1;
+    const float y1 = y0 + (tabHeight * 0.5f);
+    const float y2 = y0 + tabHeight;
+    glDisable(GL_SCISSOR_TEST);
+    glBegin(GL_TRIANGLES);
+    glVertex2f(x0, y0);
+    glVertex2f(x1, y1);
+    glVertex2f(x0, y2);
+    glEnd();
+    glEnable(GL_SCISSOR_TEST);
   }
 }
 
@@ -671,6 +694,11 @@ void ControlPanel::drawTabLabels(int yOffset)
 {
   FontManager &fm = FontManager::instance();
   const IntRect& rect = messageRect;
+  const int faceID = fontFace->getFMFace();
+
+  const int xOffset = !tabsOnRight ? 0
+                      : (rect.xsize < totalTabWidth) ? 0
+                      : (rect.xsize - totalTabWidth);
 
   long int drawnTabWidth = 0;
   for (int t = 0; t < (int)tabs.size(); t++) {
@@ -688,17 +716,13 @@ void ControlPanel::drawTabLabels(int yOffset)
       glColor4f(0.5f, 0.5f, 0.5f, dimming);
     }
 
-    if (tabsOnRight) {
+    const float halfWidth = (tab->width * 0.5f);
+
       // draw the tabs on the right side (with one letter padding)
-      fm.drawString(rect.xpos + rect.xsize - totalTabWidth + drawnTabWidth + floorf(fontSize),
-                    rect.ypos + rect.ysize - floorf(lineHeight * 0.9f) + yOffset,
-                    0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
-    } else {
-      // draw the tabs on the left side (with one letter padding)
-      fm.drawString(rect.xpos + drawnTabWidth + floorf(fontSize),
-                    rect.ypos + rect.ysize - floorf(lineHeight * 0.9f) + yOffset,
-                    0.0f, fontFace->getFMFace(), (float)fontSize, tab->label);
-    }
+    fm.drawString(rect.xpos + xOffset + drawnTabWidth + halfWidth,
+                  rect.ypos + rect.ysize - floorf(lineHeight * 0.9f) + yOffset,
+                  0.0f, faceID, (float)fontSize, tab->label, NULL, AlignCenter);
+
     drawnTabWidth += long(tab->width);
   }
 }
@@ -823,13 +847,14 @@ void ControlPanel::resize()
   if (!fontFace) {
     fontFace = LocalFontFace::create("consoleFont");
   }
+  const int faceID = fontFace->getFMFace();
 
   FontSizer fs = FontSizer(w, h);
   fontSize = fs.getFontSize(fontFace, "consoleFontSize");
 
   // tab widths may have changed
   totalTabWidth = 0;
-  const float charWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, "-");
+  const float charWidth = fm.getStringWidth(faceID, fontSize, "-");
   for (int t = 0; t < (int)tabs.size(); t++) {
     Tab* tab = tabs[t];
     if (!tab->visible) {
@@ -837,15 +862,14 @@ void ControlPanel::resize()
       continue;
     }
 
-    // add space for about 2-chars on each side for padding
-    tab->width = 
-      fm.getStringWidth(fontFace->getFMFace(), fontSize, tab->label)
-      + (4.0f * charWidth);
+    // add space for about 1 character on each side for padding
+    tab->width = fm.getStringWidth(faceID, fontSize, tab->label)
+               + (tabMargin * charWidth);
 
     totalTabWidth += long(tab->width);
   }
 
-  lineHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
+  lineHeight = fm.getStringHeight(faceID, fontSize);
   lineHeight = ceilf(lineHeight);
 
   maxLines = int(messageRect.ysize / lineHeight);
@@ -857,10 +881,10 @@ void ControlPanel::resize()
   for (int i = 0; i < (int)tabs.size(); i++) {
     for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
       tabs[i]->messages[j].breakLines(messageRect.xsize - 2 * margin,
-                                      fontFace->getFMFace(), fontSize);
+                                      faceID, fontSize);
     }
     tabs[i]->topic.breakLines(messageRect.xsize - 2 * margin,
-                              fontFace->getFMFace(), fontSize);
+                              faceID, fontSize);
   }
 
   // note that we've been resized at least once
@@ -1172,24 +1196,19 @@ int ControlPanel::getTabID(const std::string& label) const
 }
 
 
-bool ControlPanel::shiftTab(int tabID, int distance)
+bool ControlPanel::swapTabs(int tabID1, int tabID2)
 {
-  if (!validTab(tabID) || tabs[tabID]->locked || (distance == 0)) {
-    return false;
-  }
-
-  const int swapID = (distance > 0) ? (tabID + 1) : (tabID - 1);
-  if (!validTab(swapID) || tabs[swapID]->locked) {
+  if (!validTab(tabID1) || tabs[tabID1]->locked ||
+      !validTab(tabID2) || tabs[tabID2]->locked) {
     return false;
   }
 
   // swap the tabs
-  Tab* swapTab = tabs[swapID];
-  tabs[swapID] = tabs[tabID];
-  tabs[tabID]  = swapTab;
+  Tab* tab1 = tabs[tabID1];
+  tabs[tabID1] = tabs[tabID2];
+  tabs[tabID2] = tab1;
 
-  if (activeTab == tabID) {
-    activeTab = swapID;
+  if ((activeTab == tabID1) || (activeTab == tabID2)) {
     if (hubLink) {
       hubLink->activeTabChanged();
     }
@@ -1197,7 +1216,6 @@ bool ControlPanel::shiftTab(int tabID, int distance)
 
   setupTabMap();
   resize();
-
 
   return true;
 }

@@ -48,6 +48,7 @@
 #include "playing.h"
 // FIXME: Shouldn't need to depend on GUI elements
 #include "guiplaying.h"
+#include "LocalCommand.h"
 
 typedef CommandManager::ArgList CmdArgList;
 
@@ -62,6 +63,7 @@ static std::string cmdHunt          (const std::string&, const CmdArgList& args,
 static std::string cmdIconify       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdIdentify      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdJump          (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLocalCmd      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMessagePanel  (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMouseGrab     (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdPause         (const std::string&, const CmdArgList& args, bool*);
@@ -113,6 +115,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("hunt",          &cmdHunt,          "hunt:  hunt a specific player");
   PUSHCMD("addhunt",       &cmdAddHunt,       "addhunt:  add/modify hunted player(s)");
   PUSHCMD("iconify",       &cmdIconify,       "iconify: iconify & pause bzflag");
+  PUSHCMD("localcmd",      &cmdLocalCmd,      "localcmd: process a local command");
   PUSHCMD("mousegrab",     &cmdMouseGrab,     "mousegrab: toggle exclusive mouse mode");
   PUSHCMD("fullscreen",    &cmdToggleFS,      "fullscreen: toggle fullscreen mode");
   PUSHCMD("autopilot",     &cmdAutoPilot,     "autopilot:  set/unset autopilot bot code");
@@ -154,6 +157,21 @@ static std::string cmdIconify(const std::string&, const CmdArgList& args, bool*)
     return "usage: iconify";
   if (!BZDB.isTrue("Win32NoMin"))
     mainWindow->iconify();
+  return std::string();
+}
+
+
+static std::string cmdLocalCmd(const std::string&, const CmdArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: localcmd command args";
+  }
+
+  std::string cmd = args[0];
+  for (size_t i = 1; i < args.size(); i++) {
+    cmd += " " + args[i];
+  }
+  LocalCommand::execute(cmd.c_str());
   return std::string();
 }
 

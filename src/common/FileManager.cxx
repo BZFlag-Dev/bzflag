@@ -33,7 +33,8 @@
 
 // initialize the singleton
 template <>
-FileManager* Singleton<FileManager>::_instance = (FileManager*)0;
+FileManager* Singleton<FileManager>::_instance = (FileManager*)NULL;
+
 
 FileManager::FileManager()
 {
@@ -44,119 +45,145 @@ FileManager::~FileManager()
 {
 }
 
-std::istream*			FileManager::createDataInStream(
-						const std::string& filename,
-						bool binary) const
+
+static bool isDirectory(const std::string& path)
+{
+  struct stat statbuf;
+#ifndef WIN32
+  if (stat(path.c_str(), &statbuf) == -1) {
+    return false;
+  }
+  return S_ISDIR(statbuf.st_mode);
+#else
+  std::string dir = path;
+  while (dir.find_last_of('\\') == (dir.size() - 1)) {
+    dir.resize(dir.size() - 1); // strip trailing '\'s
+  }
+  if (_stat(dir.c_str(), &statbuf) == -1) {
+    return false;
+  }
+  return ((statbuf.st_mode & _S_IFDIR) != 0);
+#endif
+}
+
+
+static std::ifstream* getInStream(const std::string& path,
+                                 std::ios::openmode mode)
+{
+  if (isDirectory(path)) {
+    return NULL;
+  }  
+  std::ifstream* stream = new std::ifstream(path.c_str(), mode);
+  if (stream && *stream) {
+    return stream; // ready for reading
+  }
+  delete stream;
+  return NULL;
+}
+
+
+std::istream* FileManager::createDataInStream(const std::string& filename,
+                                              bool binary) const
 {
   // choose open mode
   std::ios::openmode mode = std::ios::in;
-  if (binary)
+  if (binary) {
     mode |= std::ios::binary;
+  }
+
+  std::ifstream* stream = NULL;
 
   const bool relative = !isAbsolute(filename);
+
   if (relative) {
     // try directory stored in DB
     if (BZDB.isSet("directory")) {
-      std::ifstream* stream = new std::ifstream(catPath(BZDB.get("directory"),
-						filename).c_str(), mode);
-      if (stream && *stream)
-	return stream;
-      delete stream;
+      stream = getInStream(catPath(BZDB.get("directory"), filename), mode);
+      if (stream) {
+        return stream;
+      }
     }
 
     // try data directory
-    {
-      std::ifstream* stream = new std::ifstream(catPath("data", filename).c_str(), mode);
-      if (stream && *stream)
-	return stream;
-      delete stream;
+    stream = getInStream(catPath("data", filename), mode);
+    if (stream) {
+      return stream;
     }
   }
 
   // try current directory (or absolute path)
-  {
-    std::ifstream* stream = new std::ifstream(filename.c_str(), mode);
-    if (stream && *stream)
-      return stream;
-    delete stream;
+  stream = getInStream(filename, mode);
+  if (stream) {
+    return stream;
   }
 
   // try install directory
 #if defined(BZFLAG_DATA)
   if (relative) {
-    std::ifstream* stream = new std::ifstream(catPath(BZFLAG_DATA,
-					      filename).c_str(), mode);
-    if (stream && *stream)
+    stream = getInStream(catPath(BZFLAG_DATA, filename), mode);
+    if (stream) {
       return stream;
-    delete stream;
+    }
   }
 #endif
 
   return NULL;
 }
 
-std::ostream*			FileManager::createDataOutStream(
-						const std::string& filename,
-						bool binary,
-						bool truncate) const
+
+std::ostream* FileManager::createDataOutStream(const std::string& filename,
+					       bool binary, bool truncate) const
 {
   // choose open mode
   std::ios::openmode mode = std::ios::out;
-  if (binary)
-    mode |= std::ios::binary;
-  if (truncate)
-    mode |= std::ios::trunc;
+  if (binary)   { mode |= std::ios::binary; }
+  if (truncate) { mode |= std::ios::trunc;  }
 
   const bool relative = !isAbsolute(filename);
   if (relative) {
     // try directory stored in DB
     if (BZDB.isSet("directory")) {
-      std::ofstream* stream = new std::ofstream(catPath(BZDB.get("directory"),
-						filename).c_str(), mode);
-      if (stream && *stream)
+      const std::string path = catPath(BZDB.get("directory"), filename);
+      std::ofstream* stream = new std::ofstream(path.c_str(), mode);
+      if (stream && *stream) {
 	return stream;
+      }
       delete stream;
     }
 
     // try data directory
     {
-      std::ofstream* stream = new std::ofstream(catPath("data", filename).c_str(), mode);
-      if (stream && *stream)
+      const std::string path = catPath("data", filename);
+      std::ofstream* stream = new std::ofstream(path.c_str(), mode);
+      if (stream && *stream) {
 	return stream;
+      }
       delete stream;
     }
-  } else {
+  }
+  else {
     // try absolute path
     int successMkdir = 0;
     int i = 0;
 #ifndef _WIN32
     // create all directories above the file
     while ((i = filename.find('/', i+1)) != -1) {
-      struct stat statbuf;
-      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
-	    (S_ISDIR(statbuf.st_mode)))) {
-	successMkdir = mkdir(filename.substr(0, i).c_str(), 0755);
+      const std::string subDir = filename.substr(0, i);
+      if (!isDirectory(subDir)) {
+	successMkdir = mkdir(subDir.c_str(), 0755);
 	if (successMkdir != 0) {
 	  perror("Unable to make directory");
 	  return NULL;
 	}
       }
     }
-    std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
-    if (stream && *stream)
-      return stream;
 #else
     // create all directories above the file
     i = 2; // don't stat on a drive, it will fail
-    while ((i = filename.find('\\', i+1)) != -1)
-    {
-      struct stat statbuf;
-      std::string subDir = filename.substr(0, i);
-
-      if (!(stat(subDir.c_str(), &statbuf) == 0 && (_S_IFDIR & statbuf.st_mode)))
-      {
+    while ((i = filename.find('\\', i + 1)) != -1) {
+      const std::string subDir = filename.substr(0, i);
+      if (!isDirectory(subDir)) {
 	successMkdir = _mkdir(subDir.c_str());
-
 	/*if (successMkdir != 0)
 	{
 	  perror("Unable to make directory");
@@ -164,17 +191,21 @@ std::ostream*			FileManager::createDataOutStream(
 	} */
       }
     }
-    std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
-    if (stream)
-      return stream;
 #endif
+
+    std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
+    if (stream) {
+      return stream;
+    }
+
     delete stream;
   }
 
   return NULL;
 }
 
-bool				FileManager::isAbsolute(const std::string& path) const
+
+bool FileManager::isAbsolute(const std::string& path) const
 {
   if (path.empty())
     return false;
@@ -194,9 +225,9 @@ bool				FileManager::isAbsolute(const std::string& path) const
   return false;
 }
 
-std::string			FileManager::catPath(
-						const std::string& a,
-						const std::string& b) const
+
+std::string FileManager::catPath(const std::string& a,
+                                 const std::string& b) const
 {
   // handle trivial cases
   if (a.empty())

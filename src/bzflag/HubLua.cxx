@@ -26,6 +26,7 @@
 #include "AnsiCodes.h"
 #include "BZDBCache.h"
 #include "DirectoryNames.h"
+#include "FontManager.h"
 #include "HubComposeKey.h"
 #include "HubLink.h"
 #include "HUDRenderer.h"
@@ -43,6 +44,7 @@
 // local headers
 #include "sound.h"
 #include "guiplaying.h"
+#include "LocalFontFace.h"
 
 
 static int thisIndex = -12345; // LUA_REGISTRYINDEX for the HubLink pointer
@@ -489,7 +491,7 @@ static int CheckTab(lua_State* L, int index)
     return -1;
   }
   if (type == LUA_TNUMBER) {
-    return lua_tonumber(L, index);
+    return lua_tonumber(L, index) - 1;
   }
   return controlPanel->getTabID(lua_tostring(L, index));
 }
@@ -518,8 +520,8 @@ bool HubLink::pushCallOuts()
 
   PUSH_LUA_CFUNC(L, AddTab);
   PUSH_LUA_CFUNC(L, RemoveTab);
-  PUSH_LUA_CFUNC(L, ShiftTab);
   PUSH_LUA_CFUNC(L, ClearTab);
+  PUSH_LUA_CFUNC(L, SwapTabs);
   PUSH_LUA_CFUNC(L, RenameTab);
   PUSH_LUA_CFUNC(L, GetTabCount);
   PUSH_LUA_CFUNC(L, GetTabIndex);
@@ -528,6 +530,10 @@ bool HubLink::pushCallOuts()
   PUSH_LUA_CFUNC(L, SetActiveTab);
   PUSH_LUA_CFUNC(L, GetTabTopic);
   PUSH_LUA_CFUNC(L, SetTabTopic);
+  PUSH_LUA_CFUNC(L, IsTabDirty);
+
+  PUSH_LUA_CFUNC(L, GetStringWidth);
+  PUSH_LUA_CFUNC(L, GetConsoleWidth);
 
   PUSH_LUA_CFUNC(L, GetComposePrompt);
   PUSH_LUA_CFUNC(L, SetComposePrompt);
@@ -695,18 +701,6 @@ int HubLink::RemoveTab(lua_State* L)
 }
 
 
-int HubLink::ShiftTab(lua_State* L)
-{
-  if (!controlPanel) {
-    return 0;
-  }
-  const int tabID = CheckTab(L, 1);
-  const int distance  = luaL_checkint(L, 2);
-  lua_pushboolean(L, controlPanel->shiftTab(tabID, distance));
-  return 1;
-}
-
-
 int HubLink::ClearTab(lua_State* L)
 {
   if (!controlPanel) {
@@ -714,6 +708,18 @@ int HubLink::ClearTab(lua_State* L)
   }
   const int tabID = CheckTab(L, 1);
   lua_pushboolean(L, controlPanel->clearTab(tabID));
+  return 1;
+}
+
+
+int HubLink::SwapTabs(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const int tabID1 = CheckTab(L, 1);
+  const int tabID2 = CheckTab(L, 2);
+  lua_pushboolean(L, controlPanel->swapTabs(tabID1, tabID2));
   return 1;
 }
 
@@ -758,7 +764,7 @@ int HubLink::GetTabIndex(lua_State* L)
   if (!controlPanel->validTab(tabID)) {
     return 0;
   }
-  lua_pushinteger(L, tabID);
+  lua_pushinteger(L, tabID + 1);
   return 1;
 }
 
@@ -835,6 +841,43 @@ int HubLink::SetTabTopic(lua_State* L)
   const int tabID = CheckTab(L, 1);
   const std::string topic = luaL_checkstring(L, 2);
   lua_pushboolean(L, controlPanel->setTabTopic(tabID, topic));
+  return 1;
+}
+
+
+int HubLink::IsTabDirty(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const int tabID = CheckTab(L, 1);
+  lua_pushboolean(L, controlPanel->tabUnread(tabID));
+  return 1;
+}
+
+
+//============================================================================//
+
+int HubLink::GetStringWidth(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  const char* text = luaL_checkstring(L, 1);
+  FontManager& fm = FontManager::instance();
+  const int   faceID   = controlPanel->getFontFace()->getFMFace();
+  const float fontSize = controlPanel->getFontSize();
+  lua_pushfloat(L, fm.getStringWidth(faceID, fontSize, text));
+  return 1;
+}
+
+
+int HubLink::GetConsoleWidth(lua_State* L)
+{
+  if (!controlPanel) {
+    return 0;
+  }
+  lua_pushinteger(L, controlPanel->getMessageRect().xsize);
   return 1;
 }
 
