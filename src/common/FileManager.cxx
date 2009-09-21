@@ -48,13 +48,14 @@ FileManager::~FileManager()
 
 static bool isDirectory(const std::string& path)
 {
-  struct stat statbuf;
 #ifndef WIN32
+  struct stat statbuf;
   if (stat(path.c_str(), &statbuf) == -1) {
     return false;
   }
   return S_ISDIR(statbuf.st_mode);
 #else
+  struct _stat statbuf; // from Windows stat.h
   std::string dir = path;
   while (dir.find_last_of('\\') == (dir.size() - 1)) {
     dir.resize(dir.size() - 1); // strip trailing '\'s

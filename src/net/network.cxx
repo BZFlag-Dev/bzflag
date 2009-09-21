@@ -302,9 +302,9 @@ BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
     return CONNSTATE_CONN_SUCCESS;
   }
   else if (FD_ISSET(fd, &exfds)) {
-    int optVal;
+    int optVal; // cast to char* per http://msdn.microsoft.com/en-us/library/aa916172.aspx
     int optLen = sizeof(optVal);
-    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
+    if (getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&optVal, &optLen) == -1) {
       // do nothing, return this call's error as getErrno()
     } else {
       WSASetLastError(optVal);

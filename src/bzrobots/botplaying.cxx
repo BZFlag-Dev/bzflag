@@ -97,7 +97,7 @@ void HubLink::activeTabChanged() {}
 void HubLink::startComposing() {}
 void HubLink::recvCommand(const std::string&) {}
 void HubLink::wordComplete(const std::string&, std::set<std::string>&) {}
-
+const char* HubLink::getStateString() const { return ""; }
 
 // FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
 // it's operating in a context where graphics and sound are available.

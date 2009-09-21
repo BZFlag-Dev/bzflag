@@ -154,10 +154,10 @@ void CacheMenu::execute()
     CACHEMGR.limitCacheSize();
     CACHEMGR.saveIndex();
     BZDB.set("maxCacheMB", oldSize);
-    controlPanel->addMessage("Download Cache Cleared");
+	controlPanel->addMessage("Download Cache Cleared",ControlPanel::MessageMisc);
   } else if (_focus == clearServerListCache) {
     if ((ServerListCache::get())->clearCache()) {
-      controlPanel->addMessage("Server List Cache Cleared");
+      controlPanel->addMessage("Server List Cache Cleared",ControlPanel::MessageMisc);
     } else {
       // already cleared -- do nothing
     }

@@ -457,14 +457,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzflag\TextOptionsMenu.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\guiplaying.h"
 				>
 			</File>
@@ -506,6 +498,22 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\HelpMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HubComposeKey.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HubComposeKey.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HubMenu.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\HubMenu.h"
 				>
 			</File>
 			<File
@@ -934,6 +942,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\stars.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TextOptionsMenu.h"
 				>
 			</File>
 			<File

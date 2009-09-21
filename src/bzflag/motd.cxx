@@ -103,9 +103,10 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 
   controlPanel->addMessage(ColorStrings[UnderlineColor]
 			   + std::string(ColorStrings[WhiteColor])
-			   + "Message of the day: ");
+			   + "Message of the day: ",ControlPanel::MessageMisc);
   for (j = 0; j < msgs.size(); ++j)
-    controlPanel->addMessage(std::string(ColorStrings[WhiteColor]) + "* " + msgs[j]);
+    controlPanel->addMessage(std::string(ColorStrings[WhiteColor]) + "* " + msgs[j],
+		ControlPanel::MessageMisc);
 }
 
 void MessageOfTheDay::getURL(const std::string URL)
