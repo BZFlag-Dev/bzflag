@@ -1021,6 +1021,11 @@ int PlatformSound::findBestLocalSlot()
 //
 bool PlatformSound::audioInnerLoop()
 {
+  // if our object is already being deleted, act like we were told to quit (even if we weren't yet)
+  if (!this) {
+    return true;
+  }
+
   if (!active()) {
     return false;
   }
@@ -1045,7 +1050,7 @@ bool PlatformSound::audioInnerLoop()
         break;
       }
       case SQC_MUTE: {
-        const bool mute = cmd.data;
+        const bool mute = (cmd.data != NULL);
         for (i = 0; i < MaxEvents; i++) {
           events[i].muted = mute;
         }
