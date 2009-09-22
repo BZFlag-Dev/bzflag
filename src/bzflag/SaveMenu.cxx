@@ -127,14 +127,14 @@ void SaveMenu::resize(int _width, int _height)
   label->setFontSize(midFontSize);
   x = (float)_width / 4.0f;
   label->setString(getFileName());
-  label->setPosition(1.5*x, y);
+  label->setPosition(1.5f * x, y);
 
   // OK
   label = (HUDuiLabel*)listHUD[2];
   label->setFontSize(fontSize);
   x = (float)_width / 4.0f;
   y = (float)_height - 5.5f * fontHeight;
-  label->setPosition(2*x, y);
+  label->setPosition(2.0f * x, y);
 
   // frame
   HUDuiFrame* frame = (HUDuiFrame*)listHUD[3];

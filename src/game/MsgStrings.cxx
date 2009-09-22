@@ -232,7 +232,7 @@ void MsgStrings::trackState(bool value)
 
 int MsgStrings::knownPacketTypes()
 {
-  return packetCodeMap.size() - 1; // MsgNull doesn't count
+  return (int)(packetCodeMap.size() - 1); // MsgNull doesn't count
 }
 
 

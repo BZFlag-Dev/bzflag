@@ -674,9 +674,9 @@ void ControlPanel::drawTabBoxes(int yOffset)
     } else {
       glColor4f(0.8f, 0.8f, 0.8f, opacity);
     }
-    const float x0 = xMax + 1;
+    const float x0 = xMax + 1.0f;
     const float x1 = x0 + (tabHeight * 0.5f);
-    const float y0 = rect.ypos + rect.ysize + yOffset + 1;
+    const float y0 = rect.ypos + rect.ysize + yOffset + 1.0f;
     const float y1 = y0 + (tabHeight * 0.5f);
     const float y2 = y0 + tabHeight;
     glDisable(GL_SCISSOR_TEST);
@@ -753,20 +753,20 @@ void ControlPanel::drawOutline(int yOffset)
     // bottom left
      xpos = x + messageRect.xpos - 1;
      ypos = y + messageRect.ypos - 1;
-    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
     // bottom right
     xpos += messageRect.xsize + 1;
-    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
     // top right
     ypos += messageRect.ysize + 1;
-    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
     // over to panel on left
     if (!tabsOnRight) {
       xpos = x + messageRect.xpos + totalTabWidth;
-      glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+      glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
     }
 
     // across the top from right to left
@@ -778,24 +778,24 @@ void ControlPanel::drawOutline(int yOffset)
       }
       if (activeTab == t) {
 	ypos += yOffset;
-        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
 	xpos -= long(tab->width) + 1;
-        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
 	ypos -= yOffset;
-        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
       }
       else {
 	xpos -= long(tab->width);
-        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
       }
       drawnTabWidth += long(tab->width);
     }
 
     // over from panel on right
     xpos = x + messageRect.xpos - 1;
-    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
+    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
   } glEnd();
 
