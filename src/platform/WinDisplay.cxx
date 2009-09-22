@@ -21,7 +21,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "StateDatabase.h"
-#include "TextUtils.h"
 
 class Resolution {
   public:
