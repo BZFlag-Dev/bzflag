@@ -962,7 +962,7 @@ void BackgroundRenderer::setupSkybox()
   }
 
   // setup the wrap mode
-  skyboxWrapMode = GL_CLAMP_TO_EDGE;
+  skyboxWrapMode = GLEW_VERSION_1_2 ? GL_CLAMP_TO_EDGE : GL_CLAMP;
 
   // setup the corner colors
   const int cornerFaces[8][3] = {

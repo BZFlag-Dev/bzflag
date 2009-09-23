@@ -365,8 +365,9 @@ void ControlPanel::setControlColor(const fvec4* color)
 void ControlPanel::render(SceneRenderer& _renderer)
 {
   const float opacity = _renderer.getPanelOpacity();
+  const bool  opaque  = (opacity >= 1.0f);
 
-  if (!BZDB.isTrue("displayConsole") && (opacity != 1.0f)) {
+  if (!BZDB.isTrue("displayConsole") && !opaque) {
     return; // NOTE: always draw the console if it's fully opaque
   }
 
@@ -375,7 +376,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   }
 
   // optimization for software rendering folks
-  if (!changedMessage && (opacity == 1.0f)) {
+  if (!changedMessage && opaque) {
     return;
   }
 
@@ -395,11 +396,6 @@ void ControlPanel::render(SceneRenderer& _renderer)
   FontManager &fm = FontManager::instance();
   fm.setOpacity(dimming);
 
-  static BZDB_bool useOutline("fontOutlineConsole");
-  if (!useOutline) {
-    fm.setUseOutline(false);
-  }
-
   if (changedMessage > 0) {
     changedMessage--;
   }
@@ -413,7 +409,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
                   0 : ((tab->topic.numlines * lineHeight) + (2 * margin));
     textHeight  = messageRect.ysize - topicHeight;
 
-    if (opacity != 1.0f) {
+    if (!opaque) {
       tabYOffset = messageRect.ysize;
     }
     else {
@@ -483,6 +479,11 @@ void ControlPanel::render(SceneRenderer& _renderer)
    *                  of messages (and scrollback). It is stored as a
    *                  BZDB parameter.
    */
+
+  static BZDB_bool useOutline("fontOutlineConsole");
+  if (!useOutline || opaque) {
+    fm.setUseOutline(false);
+  }
 
   glScissor(winX + messageRect.xpos,
 	    winY + messageRect.ypos,
@@ -840,7 +841,7 @@ void ControlPanel::resize()
   const float h = (float)window.getHeight();
   const float opacity = RENDERER.getPanelOpacity();
   radarSize = float(window.getHeight() - window.getViewHeight());
-  if (opacity == 1.0f) {
+  if (opacity >= 1.0f) {
     radarSize = float(window.getHeight() - window.getViewHeight());
     radarSpace = 0.0f;
   } else {

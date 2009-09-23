@@ -348,7 +348,9 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
   glClipPlane(GL_CLIP_PLANE0, groundPlane);
   glEnable(GL_CLIP_PLANE0);
 
-  glEnable(GL_RESCALE_NORMAL);
+  const GLenum normalizing = GLEW_VERSION_1_2 ? GL_RESCALE_NORMAL
+                                              : GL_NORMALIZE;
+  glEnable(normalizing);
 
   const bool transparent = sceneNode->transparent;
   const bool stippled = transparent && !BZDBCache::blend;
@@ -424,7 +426,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
   }
   glPopMatrix();
 
-  glDisable(GL_RESCALE_NORMAL);
+  glDisable(normalizing);
 
   glDisable(GL_CLIP_PLANE0);
 

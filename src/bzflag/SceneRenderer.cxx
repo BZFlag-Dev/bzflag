@@ -221,7 +221,7 @@ void SceneRenderer::setQuality(int value)
 
   // this setting helps keep those specular highlights
   // highlighting when applied to a dark textured surface.
-  if (useQualityValue >= _MEDIUM_QUALITY) {
+  if ((useQualityValue >= _MEDIUM_QUALITY) && GLEW_VERSION_1_2) {
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
   } else {
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);

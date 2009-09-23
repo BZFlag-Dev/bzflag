@@ -258,10 +258,12 @@ inline int FlagPhase::render(int lod) const
   glNormalPointer(GL_FLOAT, 0, norms);
   glTexCoordPointer(2, GL_FLOAT, 0, txcds);
 
-  if (GLEW_EXT_draw_range_elements)
-    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-  else
+  if (GLEW_VERSION_1_2) {
+    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1,
+                        count, GL_UNSIGNED_SHORT, indices[lod]);
+  } else {
     glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+  }
 
   return count;
 }
@@ -276,10 +278,12 @@ inline int FlagPhase::renderShadow(int lod) const
   const int count = elementCounts[lod];
   glVertexPointer(3, GL_FLOAT, 0, verts);
 
-  if (GLEW_EXT_draw_range_elements)
-    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1, count, GL_UNSIGNED_SHORT, indices[lod]);
-  else
+  if (GLEW_VERSION_1_2) {
+    glDrawRangeElements(GL_QUAD_STRIP, 0, count - 1,
+                        count, GL_UNSIGNED_SHORT, indices[lod]);
+  } else {
     glDrawElements(GL_QUAD_STRIP, count, GL_UNSIGNED_SHORT, indices[lod]);
+  }
 
   return count;
 }
