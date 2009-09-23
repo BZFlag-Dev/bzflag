@@ -62,32 +62,33 @@ class PlayerState
       BounceSound	= (1 << 2)
     };
 
-
+  public:
     PlayerState();
-    void*	pack(void*, uint16_t& code, bool increment = true);
-    void	pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment = true);
-    void*	unpack(void*, uint16_t code);
+    void* pack(void*, uint16_t& code, bool increment = true);
+    void  pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment = true);
+    void* unpack(void*, uint16_t code);
 
-    long	order;		// packet ordering
-    short	status;		// see PStatus enum
-    fvec3	pos;		// position of tank
-    fvec3	velocity;	// velocity of tank
-    float	azimuth;	// orientation of tank
-    float	angVel;		// angular velocity of tank
-    int		phydrv;		// physics driver
+  public:
+    long  order;	// packet ordering
+    short status;	// see PStatus enum
+    fvec3 pos;		// position of tank
+    fvec3 velocity;	// velocity of tank
+    float azimuth;	// orientation of tank
+    float angVel;	// angular velocity of tank
+    int   phydrv;	// physics driver
 
-    fvec3	apparentVelocity;	// velocity of tank as derived from
-                                        // its last positional update
+    fvec3 apparentVelocity;	// velocity of tank as derived from
+                                // its last positional update
 
-    float	lastUpdateTime;		// the time of the last update
+    float lastUpdateTime;	// the time of the last update
 
     // the following are to be used only for drawing
-    float	userSpeed;	// user's desired angular velocity
-    float	userAngVel;	// angular velocity of tank
-    float	jumpJetsScale;	// angular velocity of tank
+    float userSpeed;		// user's desired angular velocity
+    float userAngVel;		// angular velocity of tank
+    float jumpJetsScale;	// angular velocity of tank
 
     // used to avoid awkward remote bouncy sounds
-    uint8_t	sounds;		// for playing sounds
+    uint8_t sounds;		// for playing sounds
 };
 
 

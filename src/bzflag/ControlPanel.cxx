@@ -229,8 +229,6 @@ int ControlPanel::getTabMessageCount(int tabID)
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
 : activeTab(MessageAll)
-, tabsOnRight(true)
-, totalTabWidth(0)
 , window(_mainWindow)
 , resized(false)
 , numBuffers(2)
@@ -242,28 +240,23 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
 , du(0)
 , dv(0)
 , teamColor(0.0f, 0.0f, 0.0f, 1.0f)
+, showTabs(true)
+, tabsOnRight(true)
+, totalTabWidth(0)
+, tabHeight(0)
+, tabYOffset(0)
+, textHeight(0)
+, topicHeight(0)
 {
   setControlColor();
 
   // make sure we're notified when MainWindow resizes or is exposed
   window.getWindow()->addResizeCallback(resizeCallback, this);
   window.getWindow()->addExposeCallback(exposeCallback, this);
+  BZDB.addCallback("showtabs",     bzdbCallback, this);
   BZDB.addCallback("debugLevel",   bzdbCallback, this);
   BZDB.addCallback("displayRadar", bzdbCallback, this);
   BZDB.addCallback(BZDBNAMES.RADARLIMIT, bzdbCallback, this);
-
-  // other initialization
-  radarRect.xpos  = 0;
-  radarRect.ypos  = 0;
-  radarRect.xsize = 0;
-  radarRect.ysize = 0;
-  messageRect.xpos  = 0;
-  messageRect.ypos  = 0;
-  messageRect.xsize = 0;
-  messageRect.ysize = 0;
-  teamColor[0] = teamColor[1] = teamColor[2] = (float)0.0f;
-
-  maxLines = 30;
 
   // - - - - - - - - -   label     locked  allSrc  allDst
   tabs.push_back(new Tab("All",    true,   true,   true));
@@ -280,6 +273,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
   registerLoggingProc(loggingCallback, this);
 }
 
+
 ControlPanel::~ControlPanel()
 {
   for (int t = 0; t < (int)tabs.size(); t++) {
@@ -291,6 +285,7 @@ ControlPanel::~ControlPanel()
   unregisterLoggingProc(loggingCallback, this);
   window.getWindow()->removeResizeCallback(resizeCallback, this);
   window.getWindow()->removeExposeCallback(exposeCallback, this);
+  BZDB.removeCallback("showtabs",     bzdbCallback, this);
   BZDB.removeCallback("debugLevel",   bzdbCallback, this);
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
   BZDB.removeCallback(BZDBNAMES.RADARLIMIT, bzdbCallback, this);
@@ -384,36 +379,64 @@ void ControlPanel::render(SceneRenderer& _renderer)
     return;
   }
 
-  int i, j;
-  const int x = window.getOriginX();
-  const int y = window.getOriginY();
-  const int w = window.getWidth();
-  const int tabStyle = BZDB.evalInt("showtabs");
-  const bool showTabs = (tabStyle > 0);
-  tabsOnRight = (tabStyle == 2);
+  const int winX = window.getOriginX();
+  const int winY = window.getOriginY();
+  const int winWidth = window.getWidth();
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0.0, (double)w, 0.0, window.getHeight(), -1.0, 1.0);
+  glOrtho(0.0, (double)winWidth, 0.0, window.getHeight(), -1.0, 1.0);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
+  glTranslatef(messageRect.xpos, messageRect.ypos, 0);
   OpenGLGState::resetState();
 
   FontManager &fm = FontManager::instance();
   fm.setOpacity(dimming);
 
+  static BZDB_bool useOutline("fontOutlineConsole");
+  if (!useOutline) {
+    fm.setUseOutline(false);
+  }
+
   if (changedMessage > 0) {
     changedMessage--;
   }
-  const float fx = messageRect.xpos + margin;
-  float       fy = messageRect.ypos + margin + 1.0f;
-  const int   ay = ((opacity == 1.0f) || !showTabs) ? 0 : int(lineHeight + 4);
 
-  glScissor(messageRect.xpos + x - 1,
-	    messageRect.ypos + y,
+  const Tab* tab = tabs[activeTab];
+
+  // setup some geometry
+  {
+    tabHeight   = !showTabs ? 0 : (lineHeight + (2 * margin));
+    topicHeight = (tab->topic.numlines <= 0) ?
+                  0 : ((tab->topic.numlines * lineHeight) + (2 * margin));
+    textHeight  = messageRect.ysize - topicHeight;
+
+    if (opacity != 1.0f) {
+      tabYOffset = messageRect.ysize;
+    }
+    else {
+      if (!showTabs) {
+        tabYOffset = messageRect.ysize;
+      } else {
+        tabYOffset = messageRect.ysize - tabHeight;
+        textHeight -= tabHeight;
+      }
+    }
+    textHeight = std::max(0, textHeight);
+
+    maxLines = ((textHeight - (2 * margin)) / lineHeight);
+
+    tabXOffset = !tabsOnRight ? 0 : (messageRect.xsize - totalTabWidth);
+    tabXOffset = std::max(0, tabXOffset);
+  }
+
+  glScissor(winX + messageRect.xpos - 1,
+	    winY + messageRect.ypos,
 	    messageRect.xsize + 1,
-	    messageRect.ysize + ay);
+	    messageRect.ysize + tabHeight);
+
   OpenGLGState::resetState();
 
   if (opacity > 0.0f) {
@@ -425,14 +448,12 @@ void ControlPanel::render(SceneRenderer& _renderer)
 
     // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, opacity);
-    glRecti(messageRect.xpos - 1, // clear an extra pixel column to
-	    messageRect.ypos,     //   simplify fuzzy float stuff later 
-	    messageRect.xpos + messageRect.xsize,
-	    messageRect.ypos + messageRect.ysize);
+    glRecti(-1, -1, // clear an extra pixel column
+	    messageRect.xsize + 2, messageRect.ysize + 2);
 
     // display tabs for chat sections
     if (showTabs) {
-      drawTabBoxes(ay);
+      drawTabBoxes();
     }
 
     if (blended) {
@@ -443,7 +464,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   drawScrollBar();
 
   if (showTabs) {
-    drawTabLabels(ay);
+    drawTabLabels();
   }
 
   /* draw messages
@@ -456,32 +477,31 @@ void ControlPanel::render(SceneRenderer& _renderer)
    *
    * messageRect.xsize = Width of Message Window in Pixels.
    *
-   * maxLines = Max messages lines that can be displayed at once per
-   * page.  This COULD be a BZDB parameter (but isn't).
+   * maxLines = Max messages lines that can be displayed at once per page
    *
-   * maxScrollPages = This number * maxLines is the total maximum
-   * lines of messages (and scrollback). It is stored as a BZDB
-   * parameter.
+   * maxScrollPages = This number * maxLines is the total maximum lines
+   *                  of messages (and scrollback). It is stored as a
+   *                  BZDB parameter.
    */
 
-  glScissor(messageRect.xpos + x,
-	    messageRect.ypos + y,
-	    messageRect.xsize,
-	    messageRect.ysize - (showTabs ? int(lineHeight + 4) : 0) + ay);
+  glScissor(winX + messageRect.xpos,
+	    winY + messageRect.ypos,
+	    messageRect.xsize, textHeight);
 
-  if (activeTab >= 0) {
-    i = (int)tabs[activeTab]->messages.size() - 1;
-  } else {
-    i = -1;
-  }
-  if ((i >= 0) && (tabs[activeTab]->offset > 0)) {
-    i -= tabs[activeTab]->offset;
+  int i, j;
+
+  i = (int)tab->messages.size() - 1;
+  if ((i >= 0) && (tab->offset > 0)) {
+    i -= tab->offset;
     if (i < 0) {
       i = 0;
     }
   }
 
-  const std::string highlightPattern = BZDB.get("highlightPattern");
+  float whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
+
+  static BZDB_string highlightBZDB("highlightPattern");
+  const std::string& highlightPattern = highlightBZDB;
   bool useHighlight = (highlightPattern.size() > 0);
   regex_t re;
   if (useHighlight) {
@@ -490,12 +510,12 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
   }
 
-  const int topicLines = tabs[activeTab]->topic.numlines;
-  const int maxNormLines = (maxLines - ((topicLines > 0) ? (topicLines + 1) : 0));
+  const int fx = margin;
+  int       fy = margin + (lineHeight / 5);
 
-  for (j = 0; (i >= 0) && (j < maxNormLines); i--) {
+  for (j = 0; (i >= 0) && (j < maxLines); i--) {
     // draw each line of text
-    const ControlPanelMessage& cpMsg = tabs[activeTab]->messages[i];
+    const ControlPanelMessage& cpMsg = tab->messages[i];
     int numLines = cpMsg.numlines;
     int numStrings = (int)cpMsg.lines.size();
     int msgy = numLines - 1;
@@ -514,7 +534,6 @@ void ControlPanel::render(SceneRenderer& _renderer)
     }
 
     // default to drawing text in white
-    float whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
     glColor4fv(whiteColor);
 
     bool isTab = false;
@@ -537,7 +556,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
       assert(msgy >= 0);
 
       // only draw message if inside message area
-      if ((j + msgy) < maxNormLines) {
+      if ((j + msgy) < maxLines) {
         const float xoff = (l == 0) ? cpMsg.xoffsetFirst : cpMsg.xoffset;
 	if (!highlight) {
 	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
@@ -545,9 +564,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	}
 	else {
 	  // highlight this line
-	  std::string newMsg = ANSI_STR_PULSATING;
-	  newMsg += ANSI_STR_UNDERLINE;
-	  newMsg += ANSI_STR_FG_CYAN;
+	  std::string newMsg;
+	  newMsg += ANSI_STR_PULSATING ANSI_STR_UNDERLINE ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg);
 	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
 	                fontFace->getFMFace(), fontSize, newMsg);
@@ -563,32 +581,52 @@ void ControlPanel::render(SceneRenderer& _renderer)
     fy += lineHeight * numLines;
   }
 
-  // draw the topic lines
-  fy = messageRect.ypos + messageRect.ysize - margin;
-  for (i = 0; i < topicLines; i++) {
-    j = (topicLines - (i + 1));
-    const std::string& line = tabs[activeTab]->topic.lines[j];
-    fm.drawString(fx, fy - ((i + 1) * lineHeight), 0,
-                  fontFace->getFMFace(), fontSize, line);
-  }
-
   // free the regex memory
   if (useHighlight) {
     regfree(&re);
   }
 
-  glScissor(messageRect.xpos + x - 2,
-	    messageRect.ypos + y - 2,
-	    messageRect.xsize + 3,
-	    messageRect.ysize + 33);
+  // draw the topic
+  if (topicHeight > 0) {
+    glScissor(winX + messageRect.xpos,
+              winY + messageRect.ypos + textHeight,
+              messageRect.xsize, topicHeight);
+
+    glColor4f(1.0f, 1.0f, 1.0f, opacity);
+    const float x0 = +0.5f;
+    const float y0 = textHeight + 0.5f;
+    const float x1 = messageRect.xsize - 0.5f;
+    const float y1 = tabYOffset - 0.5f;
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(x0, y0);
+    glVertex2f(x1, y0);
+    glVertex2f(x1, y1);
+    glVertex2f(x0, y1);
+    glEnd();
+    const int topicLines = (int)tab->topic.numlines;
+    fy = tabYOffset - margin + (lineHeight / 5);
+    for (i = 0; i < topicLines; i++) {
+      glColor4fv(whiteColor);
+      const std::string& line = tab->topic.lines[i];
+      fm.drawString(fx, fy - ((i + 1) * lineHeight), 0,
+                    fontFace->getFMFace(), fontSize, line);
+    }
+  }
+
+  glScissor(winX + messageRect.xpos - 2,
+	    winY + messageRect.ypos - 2,
+	    messageRect.xsize + 4,
+	    tabYOffset + tabHeight + 4);
+
   OpenGLGState::resetState();
 
-  drawOutline(ay);
+  drawOutline();
 
-  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f);
+  glColor4f(teamColor[0], teamColor[1], teamColor[2], 1.0f);
 
   glPopMatrix();
 
+  fm.setUseOutline(true);
   fm.setOpacity(1.0f);
 }
 
@@ -606,33 +644,21 @@ void ControlPanel::drawScrollBar()
   if (lines > 0) {
     const float size = std::max(float(maxLines) / lines, 0.02f);
     const float offset = float(tab->offset) / lines;
-    const int maxTop = messageRect.ypos + messageRect.ysize;
-    int top = messageRect.ypos + int((offset + size) * (float)messageRect.ysize);
+    const int maxTop = messageRect.ysize;
+    int top = int((offset + size) * (float)messageRect.ysize);
     if (top > maxTop) {
       top = maxTop;
     }
     glColor3f(0.7f, 0.7f, 0.7f);
-    glRecti(messageRect.xpos,
-            messageRect.ypos + int(offset * (float)messageRect.ysize),
-            messageRect.xpos + 2,
-            top);
+    glRecti(0, int(offset * (float)messageRect.ysize), 2, top);
   }
 }
 
 
-void ControlPanel::drawTabBoxes(int yOffset)
+void ControlPanel::drawTabBoxes()
 {
   const IntRect& rect = messageRect;
   const float opacity = RENDERER.getPanelOpacity();
-  const int tabHeight = (int)lineHeight + 4;
-
-  const int xOffset = !tabsOnRight ? 0
-                      : (rect.xsize < totalTabWidth) ? 0
-                      : (rect.xsize - totalTabWidth);
-
-  yOffset -= tabHeight;
-
-  const int xMax = rect.xpos + rect.xsize;
 
   bool needTriangle = false;
   bool redTriangle = false;
@@ -643,7 +669,6 @@ void ControlPanel::drawTabBoxes(int yOffset)
     if (!tab->visible) {
       continue;
     }
-    const int tabWidth = (int)tab->width;
 
     // current mode is given a dark background to match the control panel
     if (activeTab == t) {
@@ -651,20 +676,20 @@ void ControlPanel::drawTabBoxes(int yOffset)
     } else {
       glColor4f(0.10f, 0.10f, 0.10f, opacity);
     }
-    const int x1 = rect.xpos + drawnTabWidth + xOffset;
-    const int y1 = rect.ypos + rect.ysize + yOffset;
-    const int x2 = x1 + tabWidth;
+    const int x1 = tabXOffset + drawnTabWidth;
+    const int y1 = tabYOffset;
+    const int x2 = x1 + tab->width;
     const int y2 = y1 + tabHeight;
-    if (x1 < xMax) {
+    if (x1 < rect.xsize) {
       glRecti(x1, y1, x2, y2);
     }
-    if (x2 > xMax) {
+    if (x2 > rect.xsize) {
       needTriangle = true;
       if (tab->unread) {
         redTriangle = true;
       }
     }
-    drawnTabWidth += int(tab->width);
+    drawnTabWidth += tab->width;
   }
 
   // FIXME -- drawing triangles for fully opaque control panels
@@ -674,10 +699,10 @@ void ControlPanel::drawTabBoxes(int yOffset)
     } else {
       glColor4f(0.8f, 0.8f, 0.8f, opacity);
     }
-    const float x0 = xMax + 1.0f;
+    const float x0 = rect.xsize + 1;
     const float x1 = x0 + (tabHeight * 0.5f);
-    const float y0 = rect.ypos + rect.ysize + yOffset + 1.0f;
-    const float y1 = y0 + (tabHeight * 0.5f);
+    const float y0 = tabYOffset + 1;
+    const float y1 = y0 + (tabHeight / 2);
     const float y2 = y0 + tabHeight;
     glDisable(GL_SCISSOR_TEST);
     glBegin(GL_TRIANGLES);
@@ -690,17 +715,12 @@ void ControlPanel::drawTabBoxes(int yOffset)
 }
 
 
-void ControlPanel::drawTabLabels(int yOffset)
+void ControlPanel::drawTabLabels()
 {
   FontManager &fm = FontManager::instance();
-  const IntRect& rect = messageRect;
   const int faceID = fontFace->getFMFace();
 
-  const int xOffset = !tabsOnRight ? 0
-                      : (rect.xsize < totalTabWidth) ? 0
-                      : (rect.xsize - totalTabWidth);
-
-  long int drawnTabWidth = 0;
+  int drawnTabWidth = 0;
   for (int t = 0; t < (int)tabs.size(); t++) {
     const Tab* tab = tabs[t];
     if (!tab->visible) {
@@ -716,19 +736,19 @@ void ControlPanel::drawTabLabels(int yOffset)
       glColor4f(0.5f, 0.5f, 0.5f, dimming);
     }
 
-    const float halfWidth = (tab->width * 0.5f);
+    const float halfWidth = ((float)tab->width * 0.5f);
 
       // draw the tabs on the right side (with one letter padding)
-    fm.drawString(rect.xpos + xOffset + drawnTabWidth + halfWidth,
-                  rect.ypos + rect.ysize - floorf(lineHeight * 0.9f) + yOffset,
+    fm.drawString(tabXOffset + drawnTabWidth + halfWidth,
+                  tabYOffset + margin + (lineHeight / 5),
                   0.0f, faceID, (float)fontSize, tab->label, NULL, AlignCenter);
 
-    drawnTabWidth += long(tab->width);
+    drawnTabWidth += tab->width;
   }
 }
 
 
-void ControlPanel::drawOutline(int yOffset)
+void ControlPanel::drawOutline()
 {
   const fvec2 halfPixel(0.5f, 0.5f);
 
@@ -744,57 +764,57 @@ void ControlPanel::drawOutline(int yOffset)
 
   glColor4f(teamColor[0], teamColor[1], teamColor[2], opacity);
 
-  const int x = window.getOriginX();
-  const int y = window.getOriginY();
+  const int winX = window.getOriginX();
+  const int winY = window.getOriginY();
 
   glBegin(GL_LINE_LOOP); {
-    long xpos, ypos;
+    float xpos, ypos;
 
     // bottom left
-     xpos = x + messageRect.xpos - 1;
-     ypos = y + messageRect.ypos - 1;
-    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+    xpos = float(winX - 1);
+    ypos = float(winY - 1);
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // bottom right
-    xpos += messageRect.xsize + 1;
-    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+    xpos += float(messageRect.xsize + 1);
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // top right
-    ypos += messageRect.ysize + 1;
-    glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+    ypos += float(tabYOffset + 1);
+    glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
     // over to panel on left
     if (!tabsOnRight) {
-      xpos = x + messageRect.xpos + totalTabWidth;
-      glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+      xpos = float(winX + totalTabWidth);
+      glVertex2fv(fvec2(xpos, ypos) + halfPixel);
     }
 
     // across the top from right to left
-    long int drawnTabWidth = 0;
+    int drawnTabWidth = 0;
     for (int t = (int)tabs.size() - 1; t >= 0; t--) {
       const Tab* tab = tabs[t];
       if (!tab->visible) {
         continue;
       }
       if (activeTab == t) {
-	ypos += yOffset;
-        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+	ypos += float(tabHeight);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
-	xpos -= long(tab->width) + 1;
-        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+	xpos -= float(tab->width + 1);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
-	ypos -= yOffset;
-        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+	ypos -= float(tabHeight);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
       }
       else {
-	xpos -= long(tab->width);
-        glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
+	xpos -= float(tab->width);
+        glVertex2fv(fvec2(xpos, ypos) + halfPixel);
       }
-      drawnTabWidth += long(tab->width);
+      drawnTabWidth += tab->width;
     }
 
     // over from panel on right
-    xpos = x + messageRect.xpos - 1;
+    xpos = float(winX - 1);
     glVertex2fv(fvec2((float)xpos, (float)ypos) + halfPixel);
 
   } glEnd();
@@ -809,7 +829,12 @@ void ControlPanel::resize()
 {
   tabs[MessageDebug]->visible = (debugLevel > 0);
 
+  const int tabStyle = BZDB.evalInt("showtabs");
+  showTabs = (tabStyle != 0);
+  tabsOnRight = (tabStyle == 2);
+
   float radarSpace, radarSize;
+
   // get important metrics
   const float w = (float)window.getWidth();
   const float h = (float)window.getHeight();
@@ -858,32 +883,31 @@ void ControlPanel::resize()
   for (int t = 0; t < (int)tabs.size(); t++) {
     Tab* tab = tabs[t];
     if (!tab->visible) {
-      tab->width = 0.0f;
+      tab->width = 0;
       continue;
     }
 
-    // add space for about 1 character on each side for padding
-    tab->width = fm.getStringWidth(faceID, fontSize, tab->label)
-               + (tabMargin * charWidth);
+    tab->width = (int)ceilf(fm.getStringWidth(faceID, fontSize, tab->label)
+                            + (tabMargin * charWidth));
 
-    totalTabWidth += long(tab->width);
+    totalTabWidth += tab->width;
   }
 
-  lineHeight = fm.getStringHeight(faceID, fontSize);
-  lineHeight = ceilf(lineHeight);
+  lineHeight = (int)ceilf(fm.getStringHeight(faceID, fontSize));
 
-  maxLines = int(messageRect.ysize / lineHeight);
+  maxLines = int((float)messageRect.ysize / (float)lineHeight);
 
-  margin = lineHeight / 4.0f;
+  margin = int(float(lineHeight) / 4.0f);
+  margin = std::max(2, std::min(6, margin));
 
   // rewrap all the lines
   ControlPanelMessage::prevXoffset = 0.0f;
   for (int i = 0; i < (int)tabs.size(); i++) {
     for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
-      tabs[i]->messages[j].breakLines(messageRect.xsize - 2 * margin,
+      tabs[i]->messages[j].breakLines(messageRect.xsize - (2 * margin),
                                       faceID, fontSize);
     }
-    tabs[i]->topic.breakLines(messageRect.xsize - 2 * margin,
+    tabs[i]->topic.breakLines(messageRect.xsize - (2 * margin),
                               faceID, fontSize);
   }
 
@@ -1072,9 +1096,8 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
 	invalidate();
       }
 
-      // mark the tab as unread (if viewing tabs)
-      const bool showTabs = (BZDB.evalInt("showtabs") > 0);
-      if (showTabs && (activeTab != t) && (activeTab >= 0) &&
+      // mark the tab as unread
+      if ((activeTab != t) && (activeTab >= 0) &&
           ((activeTab != MessageAll) || !tab->allSrc)) {
 	tab->unread = true;
       }
@@ -1256,7 +1279,10 @@ bool ControlPanel::setTabTopic(int tabID, const std::string& topic)
   if (!validTab(tabID)) {
     return false;
   }
-  tabs[tabID]->topic.data = topic;
+  std::string clean = topic;
+  clean = TextUtils::remove_char(clean, '\t');
+  clean = TextUtils::remove_char(clean, '\v');
+  tabs[tabID]->topic.data = clean;
   tabs[tabID]->topic.breakLines(messageRect.xsize - 2 * margin,
                                 fontFace->getFMFace(), fontSize);
   return true;

@@ -148,6 +148,8 @@ bzflag_SOURCES =			\
 	SaveMenu.h			\
 	QuitMenu.cxx			\
 	QuitMenu.h			\
+	RadarOptionsMenu.cxx		\
+	RadarOptionsMenu.h		\
 	RadarRenderer.cxx		\
 	RadarRenderer.h			\
 	Roaming.cxx			\

@@ -231,6 +231,7 @@ FontManager::FontManager()
 , darkness(1.0f)
 , rawBlending(false)
 , flooring(true)
+, useOutline(true)
 {
 #if debugging
   std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
@@ -434,20 +435,21 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   // cheesy drop shadows for lack of accessible font textures
   static BZDB_int   fontOutline("fontOutline");
   static BZDB_float fontOutlineStrength("fontOutlineStrength");
-  if (flooring && fontOutline) {
+  if (flooring && useOutline && fontOutline) {
     flooring = false;
     const float oldOpacity = opacity;
     opacity = fontOutlineStrength;
     const std::string stripped = stripAnsiCodes(text);
     glPushAttrib(GL_CURRENT_BIT);
 
-    const float bias = (fontOutline > 1) ? 0.6f : 0.4f;
+    const bool dropShadow = (fontOutline > 1);
+    const float bias = dropShadow ? 0.6f : 0.4f;
     opacity *= calcOutlineOpacity(bias, fontOutlineStrength);
 
     fvec4 color(0.0f, 0.0f, 0.0f, opacity);
     myColor4fv(color);
 
-    if (fontOutline > 1) { // dropShadow
+    if (dropShadow) { // dropShadow
       glPushMatrix();
       drawString(x + 1.0f, y - 1.0f, z, faceID, size, stripped, &color, align);
       glPopMatrix();
@@ -619,6 +621,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	myColor4f(1, 1, 1, 1);
       }
     }
+
     if (!doneLastSection) {
       // startSend = (int)text.find('m', endSend) + 1;
       startSend = -1;
@@ -629,7 +632,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	}
       }
       startSend++;
-      assert(startSend > 0 && "drawString found an ansi sequence that didn't terminate?"); // FIXME
+      if (startSend == 0) {
+        logDebugMessage(1,
+          "drawString found an ansi sequence that didn't terminate");
+        break; // break out of the while loop
+      }
     }
 
     // we stopped sending text at an ANSI code,

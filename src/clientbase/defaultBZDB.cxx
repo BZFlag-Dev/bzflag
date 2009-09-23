@@ -79,6 +79,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "panelopacity",		"0.3",			true,  DefPerm, NULL },
   { "pauseOnMinimize",		"1",			true,  DefPerm, NULL },
   { "fontOutline",		"0",			true,  DefPerm, NULL },
+  { "fontOutlineConsole",	"1",			true,  DefPerm, NULL },
   { "fontOutlineStrength",	"0.5",			true,  DefPerm, NULL },
   { "fontPreload",		"1",			true,  DefPerm, NULL },
   { "processorAffinity",	"0",			true,  DefPerm, Callbacks::setProcessorAffinity },

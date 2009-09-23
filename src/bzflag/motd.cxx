@@ -101,12 +101,14 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
     regfree(&re);
   }
 
-  controlPanel->addMessage(ColorStrings[UnderlineColor]
-			   + std::string(ColorStrings[WhiteColor])
-			   + "Message of the day: ",ControlPanel::MessageMisc);
-  for (j = 0; j < msgs.size(); ++j)
-    controlPanel->addMessage(std::string(ColorStrings[WhiteColor]) + "* " + msgs[j],
-		ControlPanel::MessageMisc);
+  const std::string white     = ColorStrings[WhiteColor];
+  const std::string underline = ColorStrings[UnderlineColor];
+  controlPanel->addMessage(underline + white + "Message of the day: ",
+                           ControlPanel::MessageMisc);
+  for (j = 0; j < msgs.size(); ++j) {
+    controlPanel->addMessage(white + "* \v" + msgs[j],
+                             ControlPanel::MessageMisc);
+  }
 }
 
 void MessageOfTheDay::getURL(const std::string URL)

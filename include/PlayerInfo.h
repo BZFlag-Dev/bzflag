@@ -198,7 +198,7 @@ private:
   int spamWarns;
   TimeKeeper lastMsgTime;
 
-  bool paused;
+  bool       paused;
   TimeKeeper pausedSince;
 
   bool autopilot;

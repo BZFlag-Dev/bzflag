@@ -44,18 +44,10 @@ GUIOptionsMenu::GUIOptionsMenu()
   label->setString("GUI Settings");
   addControl(label, false);
 
-  HUDuiList* option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Style:");
-  option->setCallback(callback, (void*)"e");
-  std::vector<std::string>* options = &option->getList();
-  options->push_back(std::string("Normal"));      // NormalRadar
-  options->push_back(std::string("Enhanced"));    // EnhancedRadar
-  options->push_back(std::string("Fast"));        // FastRadar
-  options->push_back(std::string("Fast Sorted")); // FastSortedRadar
-  option->update();
-  addControl(option);
+  HUDuiList* option;
+  std::vector<std::string>* options;
 
+  // scoreboard sorting
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Scoreboard Sort:");
@@ -67,6 +59,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   addControl(option);
 
+  // always show team scores
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Always Show Team Scores:");
@@ -97,57 +90,6 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(10);
   options = &option->getList();
   options->push_back(std::string("Opaque"));
-  option->update();
-  addControl(option);
-
-  // toggle coloring of shots on radar
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Colored shots on radar:");
-  option->setCallback(callback, (void*)"z");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  addControl(option);
-
-  // set radar shot length
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Length:");
-  option->setCallback(callback, (void*)"l");
-  option->createSlider(11);
-  option->update();
-  addControl(option);
-
-  // set radar shot size
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Size:");
-  option->setCallback(callback, (void*)"s");
-  option->createSlider(11);
-  option->update();
-  addControl(option);
-
-  // radar shot leading line
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Line:");
-  option->setCallback(callback, (void*)"F");
-  options = &option->getList();
-  options->push_back(std::string("Lagging"));
-  options->push_back(std::string("Leading"));
-  option->update();
-  addControl(option);
-
-  // radar shot guide on/off
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Guide:");
-  option->setCallback(callback, (void*)"G");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
   option->update();
   addControl(option);
 
@@ -257,16 +199,10 @@ void GUIOptionsMenu::resize(int _width, int _height)
   // load current settings
 
   int i = 1;
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
   ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
   ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("showVelocities"));
   ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * RENDERER.getPanelOpacity() + 0.5));
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("linedradarshots"));
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("sizedradarshots"));
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showShotGuide ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.getRadarSize());
   ((HUDuiList*)listHUD[i++])->setIndex(RENDERER.getMaxMotionFactor() + 11);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("showtabs"));
@@ -280,10 +216,6 @@ void GUIOptionsMenu::callback(HUDuiControl* w, void* data)
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
-    case 'e': {
-      BZDB.setInt("radarStyle", list->getIndex());
-      break;
-    }
     case 'h': {
       BZDB.setInt("timedate", list->getIndex());
       break;
@@ -295,26 +227,6 @@ void GUIOptionsMenu::callback(HUDuiControl* w, void* data)
     }
     case 'y': {
       RENDERER.setPanelOpacity(((float)list->getIndex()) / 10.0f);
-      break;
-    }
-    case 'z': {
-      BZDB.set("coloredradarshots", list->getIndex() ? "1" : "0");
-      break;
-    }
-    case 'l': {
-      BZDB.set("linedradarshots", TextUtils::format("%d", list->getIndex()));
-      break;
-    }
-    case 's': {
-      BZDB.set("sizedradarshots", TextUtils::format("%d", list->getIndex()));
-      break;
-    }
-    case 'F': {
-      BZDB.set("leadingShotLine", list->getIndex() ? "1" : "0");
-      break;
-    }
-    case 'G': {
-      BZDB.set("showShotGuide", list->getIndex() ? "1" : "0");
       break;
     }
     case 'R': {

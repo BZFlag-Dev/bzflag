@@ -331,43 +331,31 @@ static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
     if (myTank->isPaused()) {
       // already paused, so unpause
       server->sendPaused(false);
-
-      // restore the sound
-//FIXME        SOUNDSYSTEM.setMute(false);
-
-      // grab mouse
-//FIXME      if (shouldGrabMouse()) {
-//FIXME        mainWindow->grabMouse();
-//FIXME      }
-
-    } else if (pauseCountdown > 0.0f) {
+    }
+    else if (pauseCountdown > 0.0f) {
       // player aborted pause
       pauseCountdown = 0.0f;
       hud->setAlert(1, "Pause cancelled", 1.5f, true);
       server->sendPaused(false);
-
-    } else if (myTank->getLocation() == LocalPlayer::InBuilding) {
+    }
+    else if (myTank->getLocation() == LocalPlayer::InBuilding) {
       // custom message when trying to pause while in a building
       // (could get stuck on un-pause if flag is taken)
       hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
-
-    } else if (myTank->getLocation() == LocalPlayer::InAir || myTank->isFalling()) {
+    }
+    else if (myTank->getLocation() == LocalPlayer::InAir || myTank->isFalling()) {
       // custom message when trying to pause when jumping/falling
       hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
-
-    } else if (myTank->getLocation() != LocalPlayer::OnGround &&
-               myTank->getLocation() != LocalPlayer::OnBuilding) {
+    }
+    else if (myTank->getLocation() != LocalPlayer::OnGround &&
+             myTank->getLocation() != LocalPlayer::OnBuilding) {
       // catch-all message when trying to pause when you should not
       hud->setAlert(1, "Unable to pause right now", 1.0f, false);
-
-    } else {
+    }
+    else {
       // update the pause alert message
       pauseCountdown = 5.0f;
       server->sendPaused(true);
-
-//FIXME      char msgBuf[40];
-//FIXME      sprintf(msgBuf, "Pausing in %d", (int) (pauseCountdown + 0.99f));
-//FIXME      hud->setAlert(1, msgBuf, 1.0f, false);
     }
   }
   return std::string();

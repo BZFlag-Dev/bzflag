@@ -69,6 +69,7 @@ class ControlPanel {
     typedef std::map<std::string, int>      TabMap;
 
     struct IntRect {
+      IntRect() : xpos(0), ypos(0), xsize(0), ysize(0) {}
       int xpos,  ypos;
       int xsize, ysize;
     };
@@ -150,9 +151,9 @@ class ControlPanel {
   private:
     void setupTabMap();
 
-    void drawTabBoxes(int yOffset);
-    void drawTabLabels(int yOffset);
-    void drawOutline(int yOffset);
+    void drawTabBoxes();
+    void drawTabLabels();
+    void drawOutline();
     void drawScrollBar();
 
   private:
@@ -172,7 +173,7 @@ class ControlPanel {
       std::string label;
       bool  locked;   // can not be removed
       bool  visible;
-      float width;
+      int   width;
       bool  allSrc;   // feeds into the 'All' tab
       bool  allDst;   // receives MessageAllTabs messages
       bool  unread;   // has unread messages
@@ -187,9 +188,6 @@ class ControlPanel {
     TabMap tabMap;
 
     int	activeTab;
-
-    bool tabsOnRight;
-    long totalTabWidth;
 
     MainWindow&		window;
     bool		resized;
@@ -207,9 +205,20 @@ class ControlPanel {
     IntRect		radarRect;
     IntRect		messageRect;
     fvec4		teamColor;
+
     int			maxLines;
-    float		margin;
-    float		lineHeight;
+    int			margin;
+    int			lineHeight;
+
+    bool		showTabs;
+    bool		tabsOnRight;
+    int			totalTabWidth;
+
+    int			tabHeight;
+    int			tabXOffset;
+    int			tabYOffset;
+    int			textHeight;
+    int			topicHeight;
 
     static const int	maxScrollPages;
 };

@@ -143,7 +143,8 @@ public:
   void  setDarkness(float newDarkFactor);
   void  setDimFactor(float newDimFactor);
   void  setRawBlending(bool value) { rawBlending = value; }
-  void  setFlooring(bool value) { flooring = value; }
+  void  setFlooring(bool value)    { flooring    = value; }
+  void	setUseOutline(bool value)  { useOutline  = value; }
 
   bool freeFontFile(const std::string& fileName);
 
@@ -194,6 +195,8 @@ private:
   bool rawBlending;
   /** use the floorf() */
   bool flooring;
+  /** allows outlining */
+  bool useOutline;
   /** precompute colors on dim/darkness changes */
   fvec4 dimUnderlineColor;
 

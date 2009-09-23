@@ -23,7 +23,7 @@
 #include "HUDuiDefaultKey.h"
 
 
-/** this class provides options for setting the gui
+/** this class provides text related options
  */
 class TextOptionsMenu : public HUDDialog {
 public:

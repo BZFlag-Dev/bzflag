@@ -421,15 +421,15 @@ namespace TextUtils
           case 'n':  { out.push_back('\n');   c++; break; }
           case 'e':  { out.push_back('\033'); c++; break; }
           case 's':  { out.push_back(' ');    c++; break; }
-          case 'r':  { out += ANSI_STR_FG_RED;       c++; break; } // not carriage return
-          case 'g':  { out += ANSI_STR_FG_GREEN;     c++; break; }
-          case 'b':  { out += ANSI_STR_FG_BLUE;      c++; break; } // not backspace
-          case 'y':  { out += ANSI_STR_FG_YELLOW;    c++; break; }
-          case 'p':  { out += ANSI_STR_FG_MAGENTA;   c++; break; }
-          case 'c':  { out += ANSI_STR_FG_CYAN;      c++; break; }
-          case 'o':  { out += ANSI_STR_FG_ORANGE;    c++; break; }
-          case 'w':  { out += ANSI_STR_FG_WHITE;     c++; break; }
-          case 'd':  { out += ANSI_STR_FG_BLACK;     c++; break; }
+          case 'R':  { out += ANSI_STR_FG_RED;       c++; break; } // not carriage return
+          case 'G':  { out += ANSI_STR_FG_GREEN;     c++; break; }
+          case 'B':  { out += ANSI_STR_FG_BLUE;      c++; break; } // not backspace
+          case 'Y':  { out += ANSI_STR_FG_YELLOW;    c++; break; }
+          case 'P':  { out += ANSI_STR_FG_MAGENTA;   c++; break; }
+          case 'C':  { out += ANSI_STR_FG_CYAN;      c++; break; }
+          case 'O':  { out += ANSI_STR_FG_ORANGE;    c++; break; }
+          case 'W':  { out += ANSI_STR_FG_WHITE;     c++; break; }
+          case 'D':  { out += ANSI_STR_FG_BLACK;     c++; break; }
           case '+':  { out += ANSI_STR_BRIGHT;       c++; break; }
           case '-':  { out += ANSI_STR_DIM;          c++; break; }
           case '/':  { out += ANSI_STR_ITALIC;       c++; break; }

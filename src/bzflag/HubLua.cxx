@@ -35,6 +35,7 @@
 #include "LuaHeader.h"
 #include "Pack.h"
 #include "ServerLink.h"
+#include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "bzfgl.h"
 #include "bzfio.h"
@@ -542,6 +543,7 @@ bool HubLink::pushCallOuts()
 
   PUSH_LUA_CFUNC(L, CalcMD5);
   PUSH_LUA_CFUNC(L, StripAnsiCodes);
+  PUSH_LUA_CFUNC(L, UnescapeAnsiCodes);
 
   PUSH_LUA_CFUNC(L, SetBZDB);
   PUSH_LUA_CFUNC(L, GetBZDB);
@@ -1044,6 +1046,14 @@ int HubLink::StripAnsiCodes(lua_State* L)
 {
   const char* text = luaL_checkstring(L, 1);
   lua_pushstdstring(L, stripAnsiCodes(text));
+  return 1;
+}
+
+
+int HubLink::UnescapeAnsiCodes(lua_State* L)
+{
+  const char* text = luaL_checkstring(L, 1);
+  lua_pushstdstring(L, TextUtils::unescape_colors(text));
   return 1;
 }
 

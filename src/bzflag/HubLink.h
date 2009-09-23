@@ -157,6 +157,7 @@ class HubLink {
 
     static int CalcMD5(lua_State* L);
     static int StripAnsiCodes(lua_State* L);
+    static int UnescapeAnsiCodes(lua_State* L);
 
     static int SetBZDB(lua_State* L);
     static int GetBZDB(lua_State* L);

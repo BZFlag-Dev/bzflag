@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __GUIOPTIONSMENU_H__
-#define __GUIOPTIONSMENU_H__
+#ifndef __RADAROPTIONSMENU_H__
+#define __RADAROPTIONSMENU_H__
 
 #include "common.h"
 
@@ -23,12 +23,12 @@
 #include "HUDuiDefaultKey.h"
 
 
-/** this class provides options for setting the gui
+/** this class provides radar related options
  */
-class GUIOptionsMenu : public HUDDialog {
+class RadarOptionsMenu : public HUDDialog {
 public:
-  GUIOptionsMenu();
-  ~GUIOptionsMenu();
+  RadarOptionsMenu();
+  ~RadarOptionsMenu();
 
   HUDuiDefaultKey* getDefaultKey()
   {
@@ -37,12 +37,10 @@ public:
   void execute();
   void resize(int width, int height);
   static void callback(HUDuiControl* w, void* data);
-
-  static const int maxRadarSize = 30;
 };
 
 
-#endif /* __GUIOPTIONSMENU_H__ */
+#endif /* __RADAROPTIONSMENU_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -134,11 +134,12 @@ BzfNetwork::ConnState BzfNetwork::getConnectionState(int fd)
   if (getsockopt(fd, SOL_SOCKET, SO_ERROR, &optVal, &optLen) == -1) {
     return CONNSTATE_QUERY_FAILURE;
   }
-  if (optVal == 0) {
-    return CONNSTATE_CONN_SUCCESS;
+  if (optVal != 0) {
+    errno = optVal;
+    return CONNSTATE_CONN_FAILURE;
   }
-  errno = optVal;
-  return CONNSTATE_CONN_FAILURE;
+
+  return CONNSTATE_CONN_SUCCESS;
 }
 
 

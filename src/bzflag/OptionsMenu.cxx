@@ -26,9 +26,11 @@
 #include "bzflag.h"
 #include "LocalFontFace.h"
 
+
 OptionsMenu::OptionsMenu()
 : guiOptionsMenu(NULL)
 , textOptionsMenu(NULL)
+, radarOptionsMenu(NULL)
 , effectsMenu(NULL)
 , cacheMenu(NULL)
 , hubMenu(NULL)
@@ -73,6 +75,11 @@ OptionsMenu::OptionsMenu()
   textOptions = label = new HUDuiLabel;
   label->setFontFace(fontFace);
   label->setLabel("Text Settings");
+  addControl(label);
+
+  radarOptions = label = new HUDuiLabel;
+  label->setFontFace(fontFace);
+  label->setLabel("Radar Settings");
   addControl(label);
 
   effectsOptions = label = new HUDuiLabel;
@@ -124,10 +131,12 @@ OptionsMenu::OptionsMenu()
   initNavigation();
 }
 
+
 OptionsMenu::~OptionsMenu()
 {
   delete guiOptionsMenu;
   delete textOptionsMenu;
+  delete radarOptionsMenu;
   delete effectsMenu;
   delete cacheMenu;
   delete hubMenu;
@@ -137,6 +146,7 @@ OptionsMenu::~OptionsMenu()
   delete displayMenu;
   delete saveMenu;
 }
+
 
 void OptionsMenu::execute()
 {
@@ -148,6 +158,10 @@ void OptionsMenu::execute()
   else if (_focus == textOptions) {
     if (!textOptionsMenu) textOptionsMenu = new TextOptionsMenu;
     HUDDialogStack::get()->push(textOptionsMenu);
+  }
+  else if (_focus == radarOptions) {
+    if (!radarOptionsMenu) radarOptionsMenu = new RadarOptionsMenu;
+    HUDDialogStack::get()->push(radarOptionsMenu);
   }
   else if (_focus == effectsOptions) {
     if (!effectsMenu) effectsMenu = new EffectsMenu;
@@ -193,6 +207,7 @@ void OptionsMenu::execute()
   }
 }
 
+
 void OptionsMenu::resize(int _width, int _height)
 {
   int i;
@@ -227,7 +242,7 @@ void OptionsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 8) || (i == 10)) {
+    if ((i == 9) || (i == 11)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -235,11 +250,11 @@ void OptionsMenu::resize(int _width, int _height)
   }
 
   // load current settings
-  i = 9;
-
+  i = 10;
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveSettings"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveIdentity"));
 }
+
 
 void OptionsMenu::callback(HUDuiControl* w, void* data)
 {

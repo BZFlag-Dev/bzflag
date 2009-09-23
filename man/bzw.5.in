@@ -1150,29 +1150,31 @@ BZDB variable), can use the following escape characters:
    \\n      newline
    \\e      escape
    \\s      space
-   \\r      red
-   \\g      green
-   \\b      blue
-   \\y      yellow
-   \\p      purple
-   \\c      cyan
-   \\o      orange
-   \\w      white
-   \\d      black
+   \\R      red
+   \\G      green
+   \\B      blue
+   \\Y      yellow
+   \\P      purple
+   \\C      cyan
+   \\O      orange
+   \\W      white
+   \\D      black
    \\+      bright
    \\-      dim
+   \\/      italic
+   \\|      italicOff
    \\*      blink
-   \\/      blinkOff
+   \\.      blinkOff
    \\_      underline
    \\~      underlineOff
    \\[      reverse
    \\]      reverseOff
-   \\!      reset
-   \\#      fullreset
+   \\:      resetBright
+   \\;      reset
 .br
-  The 'short' escapes style: '\\rred \\!then \\bblue'
+  The 'short' escapes style: '\\Rred \\Ggreen \\Bblue'
 .br
-  The 'named' escapes style: '\\(red)red \\(reset)then \\(blue)blue'
+  The 'named' escapes style: '\\(red)red \\(green)green \\(blue)blue'
 
 .br
 \fBtext\fR
