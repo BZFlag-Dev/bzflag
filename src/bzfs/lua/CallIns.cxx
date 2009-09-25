@@ -292,14 +292,11 @@ bool CallIns::PushEntries(lua_State* L)
 {
   CallIn::SetL(L);
 
-  lua_newtable(L); {
-    PUSH_LUA_CFUNC(L, GetName);
-    PUSH_LUA_CFUNC(L, Disable);
-    PUSH_LUA_CFUNC(L, Reload);
-    PUSH_LUA_CFUNC(L, SetCallIn);
-    PUSH_LUA_CFUNC(L, GetCallInInfo);
-  }
-  lua_setglobal(L, "script");
+  PUSH_LUA_CFUNC(L, GetName);
+  PUSH_LUA_CFUNC(L, Disable);
+  PUSH_LUA_CFUNC(L, Reload);
+  PUSH_LUA_CFUNC(L, SetCallIn);
+  PUSH_LUA_CFUNC(L, GetCallInInfo);
 
   return true;
 }
@@ -1384,6 +1381,10 @@ bool CI_PlayerPauseRequest::execute(bz_EventData* eventData)
   bz_PlayerPauseRequestData_V1* ed =
     (bz_PlayerPauseRequestData_V1*)eventData;
 
+  if (!ed->allow) {
+    return true; // someone else handled it
+  }
+
   if (!PushCallIn(2)) {
     return false;
   }
@@ -1395,8 +1396,12 @@ bool CI_PlayerPauseRequest::execute(bz_EventData* eventData)
     return false;
   }
 
-  if (lua_isboolean(L, -1)) {
-    ed->allow = lua_tobool(L, -1);
+  if (lua_israwstring(L, -1)) {
+    const std::string reason = lua_tostring(L, -1);
+    if (!reason.empty()) {
+      ed->allow  = false;
+      ed->reason = reason;
+    }
   }
 
   lua_pop(L, 1);

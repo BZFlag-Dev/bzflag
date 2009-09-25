@@ -542,7 +542,9 @@ static void listSetVars(const std::string& name, void* varDispPtr)
 	       BZDB.get(name).c_str(),
 	       BZDB.getDefault(name).c_str());
     }
-    addMessage(LocalPlayer::getMyTank(), message, ControlPanel::MessageServer);
+    addMessage(LocalPlayer::getMyTank(), message,
+               varDisp->client ? ControlPanel::MessageMisc
+                               : ControlPanel::MessageServer);
   }
 }
 
@@ -612,21 +614,16 @@ bool LocalSetCommand::operator() (const char *commandLine)
 {
   const std::string params = commandLine + 9;
   const std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 0, true);
-#ifdef DEBUG
-  const bool debug = true;
-#else
-  const bool debug = false;
-#endif
+
+  const bool debug = (debugLevel > 0);
 
   if (tokens.size() == 1) {
     const std::string header = "/localset " + tokens[0];
-    addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageServer);
+    addMessage(LocalPlayer::getMyTank(), header, ControlPanel::MessageMisc);
 
-    if (!debug &&
-	((strstr(tokens[0].c_str(), "*") != NULL) ||
-	 (strstr(tokens[0].c_str(), "?") != NULL))) {
+    if (!debug && (tokens[0].find_first_of("*?") != std::string::npos)) {
       addMessage(LocalPlayer::getMyTank(), "undefined client variable",
-                 ControlPanel::MessageServer);
+                 ControlPanel::MessageMisc);
       return true;
     }
 
@@ -639,10 +636,10 @@ bool LocalSetCommand::operator() (const char *commandLine)
     if (!foundVar) {
       if (debug) {
 	addMessage(LocalPlayer::getMyTank(),
-	  "no matching client variables", ControlPanel::MessageServer);
+	  "no matching client variables", ControlPanel::MessageMisc);
       } else {
 	addMessage(LocalPlayer::getMyTank(),
-	  "undefined client variable", ControlPanel::MessageServer);
+	  "undefined client variable", ControlPanel::MessageMisc);
       }
     }
   }

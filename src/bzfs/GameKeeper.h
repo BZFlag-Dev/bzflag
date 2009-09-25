@@ -40,7 +40,6 @@
 #include "RecordReplay.h"
 #include "NetHandler.h"
 #include "Authentication.h"
-#include "messages.h"
 #include "ShotUpdate.h"
 #include "BufferedNetworkMessage.h"
 
@@ -109,8 +108,6 @@ public:
     void	  *packPlayerInfo(void *buf);
     void	  packPlayerInfo(BufferedNetworkMessage *msg);
     void	  packPlayerUpdate(BufferedNetworkMessage *msg);
-
-    void	  setPlayerAddMessage ( PlayerAddMessage &msg );
 
     void	  setAutoPilot(bool autopilot);
 

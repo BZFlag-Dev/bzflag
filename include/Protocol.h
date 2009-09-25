@@ -186,7 +186,8 @@ enum ForceStateBits {
 enum PauseCodes {
   PauseCodeDisable     = 0,
   PauseCodeEnable      = 1,
-  PauseCodeAcknowledge = 2
+  PauseCodeAcknowledge = 2,
+  PauseCodeCancel      = 3
 };
 
 // sound type codes

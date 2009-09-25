@@ -896,6 +896,15 @@ public:
     bz_PlayerPauseRequestData_V1 eventData(playerIndex, wantPause);
     worldEventManager.callEvents(bz_ePlayerPauseRequestEvent, &eventData);
     if (eventData.allow == false) {
+      std::string reason = eventData.reason.c_str();
+      if (reason.empty()) {
+        reason = "pause request denied";
+      }
+      NetMsg msg = MSGMGR.newMessage();
+      msg->packUInt8(player->getIndex());
+      msg->packUInt8(PauseCodeCancel);
+      msg->packStdString(reason);
+      msg->send(player->netHandler, MsgPause);
       return true;
     }
 

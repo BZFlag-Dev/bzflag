@@ -378,7 +378,12 @@ static bool CreateLuaState(const std::string& script)
   lua_pushstdstring(L, cpath); lua_setfield(L, -2, "cpath");
   lua_pop(L, 1);
 
-  CallIns::PushEntries(L);
+
+  lua_pushliteral(L, "script");
+  lua_newtable(L); {
+    CallIns::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
 
   lua_pushvalue(L, LUA_GLOBALSINDEX);
   LuaFloat::PushEntries(L);         

@@ -596,7 +596,6 @@ class BZF_API bz_AllowPlayerEventData_V1 : public bz_EventData
   bz_ApiString ipAddress;
 
   bz_ApiString reason;
-
   bool allow;
 };
 
@@ -789,11 +788,13 @@ class BZF_API bz_PlayerPauseRequestData_V1 : public bz_EventData
   , playerID(id)
   , pause(p)
   , allow(true)
+  , reason("")
   {
   }
   int playerID;
   bool pause;
   bool allow;
+  bz_ApiString reason;
 };
 
 class BZF_API bz_MessageFilteredEventData_V1 : public bz_EventData

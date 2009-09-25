@@ -99,12 +99,12 @@ static AresHandler ares;
 
 std::vector<PlayingCallbackItem> playingCallbacks;
 
-bool serverDied = false;
+bool serverDied    = false;
 bool joinRequested = false;
-bool waitingDNS = false;
-bool serverError = false;
-bool entered = false;
-bool joiningGame = false;
+bool waitingDNS    = false;
+bool serverError   = false;
+bool entered       = false;
+bool joiningGame   = false;
 
 double epochOffset;
 double lastEpochOffset;
@@ -119,6 +119,7 @@ int numFlags = 0;
 float clockAdjust = 0.0f;
 
 bool  pausedByUnmap = false;
+bool  pauseWaiting  = false;
 float pauseCountdown = 0.0f;
 
 float destructCountdown = 0.0f;
@@ -1739,15 +1740,28 @@ void handlePause(void *msg)
         addMessage(player, state ? "Paused" : "Resumed");
       }
       player->setPause(paused);
-      if (player == LocalPlayer::getMyTank()) {
+      if (player == myTank) {
         pauseCountdown = 0.0f;
         pausedByUnmap = false;
+        pauseWaiting = false;
       }
       break;
     }
     case PauseCodeAcknowledge: {
       if (player == myTank) {
         msg = nboUnpackFloat(msg, pauseCountdown);
+        pauseWaiting = true;
+      }
+      break;
+    }
+    case PauseCodeCancel: {
+      if (player == myTank) {
+        std::string reason;
+        msg = nboUnpackStdString(msg, reason);
+        addMessage(player, "Pause cancelled: " + reason);
+        pauseCountdown = 0.0f;
+        pausedByUnmap = false;
+        pauseWaiting = false;
       }
       break;
     }

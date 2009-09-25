@@ -39,8 +39,7 @@ libCommon_la_SOURCES  =			\
 	bzsignal.cxx			\
 	bzUnicode.cxx			\
 	cURLManager.cxx			\
-	bz_md5.cxx			\
-	messages.cxx
+	bz_md5.cxx
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

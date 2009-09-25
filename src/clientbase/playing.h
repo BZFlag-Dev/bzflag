@@ -228,8 +228,11 @@ extern bool gameOver;
 extern int numFlags;
 
 extern float clockAdjust;
-extern bool pausedByUnmap;
+
+extern bool  pausedByUnmap;
+extern bool  pauseWaiting;
 extern float pauseCountdown;
+
 extern float destructCountdown;
 
 extern const char *blowedUpMessage[];

@@ -882,7 +882,6 @@ static void doEvent(BzfDisplay *disply)
         // FIXME -- send a MsgPause to cancel pauseOnMinimize initiated pauses
         //          if not paused, and the counter is running
         pausedByUnmap = false;
-        pauseCountdown = 5.0f;
         if (myTank && myTank->isAlive() && myTank->isPaused()) {
           serverLink->sendPaused(false);
         }
@@ -920,7 +919,6 @@ static void doEvent(BzfDisplay *disply)
       if (!pausedByUnmap && (pauseCountdown == 0.0f) &&
           myTank && myTank->isAlive() && !myTank->isPaused() &&
           !myTank->isAutoPilot() && BZDB.isTrue("pauseOnMinimize")) {
-        pauseCountdown = 5.0f;
         pausedByUnmap = true;
         serverLink->sendPaused(true);
       }
@@ -4879,7 +4877,7 @@ static void updatePauseCountdown(float dt)
     pauseCountdown = 0.0f;
   }
 
-  if (pauseCountdown > 0.0f && !myTank->isAlive()) {
+  if (pauseWaiting && pauseCountdown > 0.0f && !myTank->isAlive()) {
     pauseCountdown = 0.0f;
     hud->setAlert(1, NULL, 0.0f, true);
   }
@@ -4898,24 +4896,24 @@ static void updatePauseCountdown(float dt)
 	// (could get stuck on un-pause if flag is taken/lost)
 	server->sendPaused(false);
 	hud->setAlert(1, "Can't pause while inside a building", 1.0f, false);
-
-      } else if (myTank->getLocation() == LocalPlayer::InAir || myTank->isFalling()) {
+      }
+      else if (myTank->getLocation() == LocalPlayer::InAir || myTank->isFalling()) {
 	// custom message when trying to pause when jumping/falling
 	server->sendPaused(false);
 	hud->setAlert(1, "Can't pause when you are in the air", 1.0f, false);
-
-      } else if (myTank->getLocation() != LocalPlayer::OnGround &&
+      }
+      else if (myTank->getLocation() != LocalPlayer::OnGround &&
 	myTank->getLocation() != LocalPlayer::OnBuilding) {
 	  // catch-all message when trying to pause when you should not
 	  server->sendPaused(false);
 	  hud->setAlert(1, "Unable to pause right now", 1.0f, false);
-
-      } else if (myTank->isPhantomZoned()) {
+      }
+      else if (myTank->isPhantomZoned()) {
 	// custom message when trying to pause while zoned
 	server->sendPaused(false);
 	hud->setAlert(1, "Can't pause when you are in the phantom zone", 1.0f, false);
-
-      } else {
+      }
+      else {
 	// okay, now we pause.  first drop any team flag we may have.
 	const FlagType *flagd = myTank->getFlag();
 	if (flagd->flagTeam != NoTeam) {
@@ -4938,7 +4936,8 @@ static void updatePauseCountdown(float dt)
 	// ungrab mouse
 	mainWindow->ungrabMouse();
       }
-    } else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
+    }
+    else if ((int)(pauseCountdown + 0.99f) != oldPauseCountdown &&
       !pausedByUnmap) {
 	// update countdown alert
 	char msgBuf[40];

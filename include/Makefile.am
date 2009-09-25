@@ -162,7 +162,6 @@ noinst_HEADERS =			\
 	cURLManager.h			\
 	global.h			\
 	bz_md5.h			\
-	messages.h			\
 	multicast.h			\
 	network.h			\
 	bzregex.h			\
