@@ -139,6 +139,8 @@ libClientBase_la_SOURCES =		\
 	$(top_srcdir)/src/bzflag/LocalFontFace.h	\
 	$(top_srcdir)/src/bzflag/MainWindow.cxx		\
 	$(top_srcdir)/src/bzflag/MainWindow.h		\
+	$(top_srcdir)/src/bzflag/Mumble.cxx		\
+	$(top_srcdir)/src/bzflag/Mumble.h		\
 	$(top_srcdir)/src/bzflag/Plan.cxx		\
 	$(top_srcdir)/src/bzflag/Plan.h			\
 	$(top_srcdir)/src/bzflag/PlatformSound.cxx	\
