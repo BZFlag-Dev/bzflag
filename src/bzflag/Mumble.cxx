@@ -18,6 +18,7 @@
 // system headers
 #ifdef WIN32
 #  include <windows.h>
+#  include <process.h>
 #else
 #  include <unistd.h>
 #  include <fcntl.h>
@@ -43,25 +44,22 @@
 //  the shared memory data structure
 //
 
-#ifndef WIN32
+static const int linkNameLen = 256;
+
+
 struct LinkedMem {
+#ifndef WIN32
   uint32_t uiVersion;
   uint32_t uiTick;
-  float    fPosition[3];
-  float    fFront[3];
-  float    fTop[3];
-  wchar_t  name[256];
-};
 #else
-struct LinkedMem {
-  UINT32  uiVersion;
-  DWORD   uiTick;
-  float   fPosition[3];
-  float   fFront[3];
-  float   fTop[3];
-  wchar_t name[256];
-};
+  UINT32 uiVersion;
+  DWORD  uiTick;
 #endif
+  float fPosition[3];
+  float fFront[3];
+  float fTop[3];
+  wchar_t name[linkNameLen];
+};
 
 
 static LinkedMem* linkedMem = NULL;
@@ -85,10 +83,9 @@ bool Mumble::init()
     return false;
   }
 
-  char memname[256];
-  snprintf(memname, 256, "/MumbleLink.%d", getuid());
+  char memname[64];
+  snprintf(memname, sizeof(memname), "/MumbleLink.%d", getuid());
 
-  // note the lack of O_CREAT
   shmfd = shm_open(memname, O_RDWR, S_IRUSR | S_IWUSR);
   if (shmfd < 0) {
     logDebugMessage(0, "MUMBLE: failed to open %s\n", memname);
@@ -97,13 +94,15 @@ bool Mumble::init()
 
   linkedMem = (LinkedMem*) mmap(NULL, sizeof(struct LinkedMem),
                                 PROT_READ | PROT_WRITE, MAP_SHARED, shmfd, 0);
-  if (linkedMem == MAP_FAILED) { // (void*)-1
+  if (linkedMem == MAP_FAILED) { // AKA: (void*)-1
     linkedMem = NULL;
     close(shmfd);
     shmfd = -1;
     logDebugMessage(0, "MUMBLE: failed to map %s\n", memname);
     return false;
   }
+
+  swprintf(linkedMem->name, linkNameLen, L"BZFlag(%d)", (int)getpid());
 
   logDebugMessage(0, "MUMBLE: linked using %s\n", memname);
 
@@ -124,10 +123,10 @@ void Mumble::kill()
   munmap(linkedMem, sizeof(struct LinkedMem));
   linkedMem = NULL;
 
-  // NOTE: shm_unlink() is not used
-
   close(shmfd);
   shmfd = -1;
+
+  // NOTE: shm_unlink() is not used
 }
 
 
@@ -159,7 +158,7 @@ bool Mumble::init()
     return false;
   }
 
-  wcscpy_s(linkedMem->name, 256, L"BZFlag");
+  swprintf(linkedMem->name, linkNameLen, L"BZFlag(%d)", _getpid());
 
   logDebugMessage(0, "MUMBLE: linked using MumbleLink\n");
 
