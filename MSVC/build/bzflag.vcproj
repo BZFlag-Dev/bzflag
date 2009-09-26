@@ -278,6 +278,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\Mumble.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\Plan.cxx"
 				>
 			</File>
@@ -537,10 +541,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\bzflag\HelpCreditsMenu.cxx"
 					>
 				</File>
@@ -609,6 +609,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\RadarOptionsMenu.cxx"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\SaveMenu.cxx"
 					>
 				</File>
@@ -622,6 +626,10 @@
 				</File>
 				<File
 					RelativePath="..\..\src\bzflag\ServerMenu.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
 					>
 				</File>
 			</Filter>
@@ -823,10 +831,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\TextOptionsMenu.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzflag\guiplaying.h"
 				>
 			</File>
@@ -979,6 +983,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\Mumble.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\NewVersionMenu.h"
 				>
 			</File>
@@ -1016,6 +1024,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\QuitMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\RadarOptionsMenu.h"
 				>
 			</File>
 			<File
@@ -1136,6 +1148,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\clientbase\TargetingUtils.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\TextOptionsMenu.h"
 				>
 			</File>
 			<File
