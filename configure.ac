@@ -291,6 +291,10 @@ if test "x$enable_regex_build" != "xyes" ; then
     )
 fi
 
+dnl detect a usable system -lrt library for shm_open()
+AC_CHECK_LIB(rt, shm_open, LIBRT="-lrt", LIBRT="")
+AC_SUBST(LIBRT)
+
 # Check for the math lib
 AC_CHECK_LIB(m, sqrtf)
 

@@ -235,7 +235,7 @@ LDADD =	\
 	$(SDL_LIBS)			\
 	$(GLIBS)			\
 	$(GLEW_LIBS)			\
-	-lrt				\
+	$(LIBRT)			\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)

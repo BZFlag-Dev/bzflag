@@ -112,7 +112,7 @@ bzrobots_LDADD =	\
 	$(SDL_LIBS)			\
 	$(GLIBS)			\
 	$(GLEW_LIBS)			\
-	-lrt				\
+	$(LIBRT)			\
 	../date/libDate.la
 
 TestRobot_la_LDFLAGS = -module -avoid-version
