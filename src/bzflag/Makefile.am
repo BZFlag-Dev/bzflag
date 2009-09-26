@@ -132,6 +132,8 @@ bzflag_SOURCES =			\
 	MainWindow.h			\
 	MenuDefaultKey.cxx		\
 	MenuDefaultKey.h		\
+	Mumble.cxx			\
+	Mumble.h			\
 	NewVersionMenu.cxx		\
 	NewVersionMenu.h		\
 	OptionsMenu.cxx			\

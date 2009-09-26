@@ -13,11 +13,18 @@
 // interface header
 #include "PlatformSound.h"
 
+// system headers
+#include <cstring>
+
 // common headers
 #include "PlatformFactory.h"
 #include "BZDBCache.h"
 #include "TextUtils.h"
-#include <cstring>
+#include "vectors.h"
+
+// local headers
+#include "Mumble.h"
+
 
 static const float SpeedOfSound = 343.0f;		// meters/sec
 static const float InterAuralDistance = 0.1f;		// meters
@@ -34,8 +41,8 @@ enum SoundQueueCode {
   SQC_IWORLD_SFX,  // code=sfx; x,y,z of sfx source
   SQC_SET_VEL,     // no code; x,y,z
   SQC_SET_VOLUME,  // code = new volume; no data
-  SQC_SET_POS,     // no code; x,y,z,t
-  SQC_JUMP_POS     // no code; x,y,z,t
+  SQC_SET_POS,     // no code; x,y,z,theta (in radians)
+  SQC_JUMP_POS     // no code; x,y,z,theta (in radians)
 };
 
 
@@ -126,11 +133,15 @@ PlatformSound::PlatformSound()
   mutingOn = 0;
   muting = false;
   media = NULL;
+
+  Mumble::init();
 }
 
 
 PlatformSound::~PlatformSound()
 {
+  Mumble::kill();
+
   shutdown();
 }
 
@@ -297,6 +308,15 @@ void PlatformSound::setReceiver(float x, float y, float z, float t, int disconti
   s.data[2] = z;
   s.data[3] = t;
   sendSound(&s);
+
+  if (Mumble::active()) {
+    static const fvec3 xAxis(1.0f, 0.0f, 0.0f);
+    static const fvec3 zAxis(0.0f, 0.0f, 1.0f);
+    const fvec3 pos(x, y, z);
+    const fvec3 front = xAxis.rotateZ(t);
+    const fvec3 top = zAxis;
+    Mumble::update(pos, front, top);
+  }
 }
 
 

@@ -30,6 +30,7 @@
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "LocalFontFace.h"
+#include "Mumble.h"
 
 AudioMenu::AudioMenu()
 {
@@ -99,6 +100,17 @@ AudioMenu::AudioMenu()
   option->update();
   addControl(option);
 
+  // Mumble Position
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Mumble Position:");
+  option->setCallback(callback, (void*)"m");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  addControl(option);
+
   initNavigation();
 }
 
@@ -161,6 +173,7 @@ void			AudioMenu::resize(int _width, int _height)
   i++; // device
 #endif // HAVE_SDL
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("mumblePosition") ? 1 : 0);
 }
 
 void			AudioMenu::callback(HUDuiControl* w, void* data) {
@@ -174,6 +187,18 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
       break;
     case 'r':
       BZDB.setBool("remoteSounds", (list->getIndex() == 0) ? false : true);
+      break;
+    case 'm':
+      const bool oldState = BZDB.isTrue("mumblePosition");
+      BZDB.setBool("mumblePosition", (list->getIndex() == 0) ? false : true);
+      const bool newState = BZDB.isTrue("mumblePosition");
+      if (oldState != newState) {
+        if (newState) {
+          Mumble::init();
+        } else {
+          Mumble::kill();
+        }
+      }
       break;
   }
 }
