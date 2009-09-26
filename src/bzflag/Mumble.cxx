@@ -117,6 +117,10 @@ void Mumble::kill()
     return;
   }
 
+  update(fvec3(0.0f, 0.0f, 0.0f),
+         fvec3(1.0f, 0.0f, 0.0f),
+         fvec3(0.0f, 0.0f, 1.0f));
+
   munmap(linkedMem, sizeof(struct LinkedMem));
   linkedMem = NULL;
 
@@ -168,6 +172,10 @@ void Mumble::kill()
   if (linkedMem == NULL) {
     return;
   }
+
+  update(fvec3(0.0f, 0.0f, 0.0f),
+         fvec3(1.0f, 0.0f, 0.0f),
+         fvec3(0.0f, 0.0f, 1.0f));
 
   UnmapViewOfFile(linkedMem);
   linkedMem = NULL;
