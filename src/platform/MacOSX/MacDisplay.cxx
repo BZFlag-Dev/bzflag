@@ -288,7 +288,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     case kF3KeyCode:	bzf_key.button = BzfKeyEvent::F3;	break;
     case kF2KeyCode:	bzf_key.button = BzfKeyEvent::F2;	break;
     case kF1KeyCode:	bzf_key.button = BzfKeyEvent::F1;	break;
-    default:	fprintf(stderr, "Uknown function key code: 0x%lX\n", (long unsigned int) keycode);	break;
+    default:	fprintf(stderr, "Unknown function key code: 0x%lX\n", (long unsigned int) keycode);	break;
     }
     break;
     // standard key; a-z, 0-9 etc
