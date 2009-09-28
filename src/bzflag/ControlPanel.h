@@ -162,7 +162,7 @@ class ControlPanel {
       : label(l)
       , locked(lk)
       , visible(true)
-      , width(0.0f)
+      , width(0)
       , allSrc(_allSrc)
       , allDst(_allDst)
       , unread(false)
