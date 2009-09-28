@@ -23,6 +23,7 @@
 #include "FlagInfo.h"
 #include "StateDatabase.h"
 #include "bzfsMessages.h"
+#include "bzfsAPI.h"
 
 GameKeeper::Player *GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -530,6 +531,19 @@ void GameKeeper::Player::setAutoPilot( bool autopilot )
   bz_AutoPilotChangeData_V1 evnt(autopilot, true,getIndex());
   worldEventManager.callEvents(bz_eAutoPilotChangeEvent,&evnt);
 }
+
+void GameKeeper::Player::setTeam(TeamColor newTeam, bool event)
+{
+  if (event) {
+    const TeamColor oldTeam = player.getTeam();
+    const bz_eTeamType apiOldTeam = convertTeam(oldTeam);
+    const bz_eTeamType apiNewTeam = convertTeam(newTeam);
+    bz_PlayerTeamChangeData_V1 eventData(playerIndex, apiNewTeam, apiOldTeam);
+    worldEventManager.callEvents(eventData);
+  }
+  player.setTeam(newTeam);
+}
+
 
 int GameKeeper::Player::maxShots = 0;
 void GameKeeper::Player::setMaxShots(int _maxShots)

@@ -111,6 +111,8 @@ public:
 
     void	  setAutoPilot(bool autopilot);
 
+    void	  setTeam(TeamColor team, bool event = true);
+
     void	   signingOn(bool ctf);
     void	   close();
     static bool    clean();
@@ -254,6 +256,7 @@ public:
   class Flag {
   };
 };
+
 
 inline int GameKeeper::Player::getIndex()
 {

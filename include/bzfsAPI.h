@@ -161,6 +161,7 @@ typedef enum {
   bz_eBZDBChange,
   bz_eAutoPilotChangeEvent,
   bz_eAllowAutoPilotChangeEvent,
+  bz_ePlayerTeamChangeEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1258,6 +1259,21 @@ public:
 	bool allow;
 	bool autopilot;
 	int playerID;
+};
+
+class BZF_API bz_PlayerTeamChangeData_V1 : public bz_EventData
+{
+public:
+	bz_PlayerTeamChangeData_V1(int _playerID, 
+	                           bz_eTeamType _newTeam, bz_eTeamType _oldTeam)
+		: bz_EventData(bz_ePlayerTeamChangeEvent)
+		, playerID(_playerID)
+		, newTeam(_newTeam)
+		, oldTeam(_oldTeam)
+		{}
+	int playerID;
+	bz_eTeamType newTeam;
+	bz_eTeamType oldTeam;
 };
 
 class bz_EventHandler;

@@ -1879,7 +1879,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
-  playerData->player.setTeam(convertTeam(autoTeamData.team));
+  playerData->setTeam(convertTeam(autoTeamData.team), false);
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
 
   // count current number of players and players+observers
@@ -2245,7 +2245,7 @@ void anointNewRabbit( int killerId )
 
     if (anoitData.newRabbit != -1) {
       GameKeeper::Player *rabbitData = GameKeeper::Player::getPlayerByIndex(anoitData.newRabbit);
-      rabbitData->player.setTeam(RabbitTeam);
+      rabbitData->setTeam(RabbitTeam);
 
       sendRabbitUpdate(rabbitIndex,anoitData.swap ? 0 : 1);
     }

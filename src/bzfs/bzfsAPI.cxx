@@ -4830,7 +4830,7 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char 
     return ;
 
   player->player.setType(TankPlayer); // because we like to lie :)
-  player->player.setTeam(convertTeam(_team));
+  player->setTeam(convertTeam(_team));
   player->player.setCallsign(callsign);
   player->player.setToken(token);
   player->player.setClientVersion(clientVersion);
@@ -5524,7 +5524,7 @@ BZF_API void bz_newRabbit(int player, bool swap)
       rabbit->player.wasARabbit();
   }
 
-  playerRec->player.setTeam(RabbitTeam);
+  playerRec->setTeam(RabbitTeam);
   rabbitIndex=playerIndex;
 
   sendRabbitUpdate(playerIndex, swap ? 0 : 1);
@@ -5545,7 +5545,7 @@ BZF_API void bz_removeRabbit(int player)
 
   playerRec->player.wasARabbit();
 
-  playerRec->player.setTeam(HunterTeam);
+  playerRec->setTeam(HunterTeam);
 
   if(playerIndex==rabbitIndex)
     rabbitIndex=NoPlayer;
@@ -5567,7 +5567,7 @@ BZF_API void bz_changeTeam(int player, bz_eTeamType _team)
     return ;
 
   TeamColor realTeam = convertTeam(_team);
-  playerRec->player.setTeam(realTeam);
+  playerRec->setTeam(realTeam);
   if (realTeam == ObserverTeam) {
     playerRec->player.setDead();
     playerRec->lastState.status = PlayerState::DeadStatus;

@@ -391,6 +391,7 @@ CALLIN(PlayerPausedEvent,          PlayerPaused,            BASIC);        // -E
 CALLIN(PlayerPauseRequestEvent,    PlayerPauseRequest,      FIRST_FALSE);  // -Event
 CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    BASIC);
 CALLIN(PlayerSpawnEvent,           PlayerSpawned,           BASIC);        // -Event+ed
+CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,        BASIC);        // -Event
 CALLIN(PlayerUpdateEvent,          PlayerUpdate,            BASIC);        // -Event
 CALLIN(RawChatMessageEvent,        RawChatMessage,          SPECIAL);      // -Event
 CALLIN(RecvCommand,                RecvCommand,             FIRST_TRUE);   //  custom
@@ -1446,6 +1447,22 @@ bool CI_PlayerSpawned::execute(bz_EventData* eventData)
   // bz_PlayerUpdateState state; -- FIXME?
 
   return RunCallIn(6, 0);
+}
+
+
+bool CI_PlayerTeamChange::execute(bz_EventData* eventData)
+{
+  bz_PlayerTeamChangeData_V1* ed = (bz_PlayerTeamChangeData_V1*)eventData;
+
+  if (!PushCallIn(3)) {
+    return false;
+  }
+
+  lua_pushinteger(L, ed->playerID);
+  lua_pushinteger(L, ed->newTeam);
+  lua_pushinteger(L, ed->oldTeam);
+
+  return RunCallIn(3, 0);
 }
 
 
