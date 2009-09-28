@@ -515,7 +515,7 @@ bool ChatLoop::loopCallback (const std::string &key)
 void ChatLoop::keyCallback (std::string &data, const std::string &key)
 {
   if (key=="chattotal")
-    data += format("%d",messages.size());
+    data += format("%d",(int) messages.size());
   else
     LoopHandler::keyCallback(data,key);
 }
@@ -543,7 +543,7 @@ void ChatLoop::getKey (size_t item, std::string &data, const std::string &key)
   else if (key == "chatlinetext")
     data += message.message;
   else if (key == "chatlinetext")
-    data += format("%d",pos);
+    data += format("%d",(int) pos);
 }
 
 bool ChatLoop::getIF  (size_t item, const std::string &key)
@@ -676,7 +676,7 @@ void IPBanLoop::getKey (size_t item, std::string &data, const std::string &key)
   else if (key == "ipbanduration")
       temp = format("%f",bz_getBanItemDuration(eIPList,i));
   else if (key == "ipbanid")
-    temp = format("%d",item);
+    temp = format("%d",(int) item);
 
   if (temp.size())
     data += temp;
@@ -731,7 +731,7 @@ void HostBanLoop::getKey (size_t item, std::string &data, const std::string &key
   else if (key == "hostbanduration")
     temp = format("%f",bz_getBanItemDuration(eHostList,i));
   else if (key == "hostbanid")
-    temp = format("%d",item);
+    temp = format("%d",(int) item);
 
   if (temp.size())
     data += temp;
@@ -789,7 +789,7 @@ void IDBanLoop::getKey (size_t item, std::string &data, const std::string &key)
   else if (key == "idbanduration")
     temp = format("%f",bz_getBanItemDuration(eIDList,i));
   else if (key == "idbanid")
-    temp = format("%d",item);
+    temp = format("%d",(int) item);
 
   if (temp.size())
     data += temp;
