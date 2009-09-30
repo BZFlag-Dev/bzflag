@@ -363,10 +363,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\messages.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\MotionUtils.h"
 				>
 			</File>
