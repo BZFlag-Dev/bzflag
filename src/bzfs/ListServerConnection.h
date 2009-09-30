@@ -31,7 +31,8 @@ public:
   // c'tor will fill list and local server information variables and
   // do an initial ADD
   ListServerLink(std::string listServerURL, std::string publicizedAddress,
-		 std::string publicizedTitle, std::string advertiseGroups);
+		 std::string publicizedTitle, std::string advertiseGroups,
+		 float dnsCache = 0);
   // c'tor with no arguments called when we don't want to use a list server.
   ListServerLink();
   // d'tor will REMOVE server and close connection

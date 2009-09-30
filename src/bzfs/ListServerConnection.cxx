@@ -42,7 +42,8 @@ extern TeamColor convertTeam( bz_eTeamType team );
 ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
 			       std::string publicizedTitle,
-			       std::string _advertiseGroups)
+			       std::string _advertiseGroups,
+			       float dnsCache)
 {
 
   std::string bzfsUserAgent = "bzfs ";
@@ -50,7 +51,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   setURL(listServerURL);
   setUserAgent(bzfsUserAgent);
-  setDNSCachingTime(-1);
+  setDNSCachingTime((long)ceilf(dnsCache));
   setTimeout(10);
 
   publiclyDisconnected = false;
