@@ -117,11 +117,6 @@ Rendering
   resolutions overlaps one another. @ r18096 -spldart-
   -confirmed- @ r19553
 
-* Navigating the server list jumps around.  Join->Find Server then press the
-  down arrow repeatedly (for the All tab).  The highlighted server list item
-  jumps around instead of going sequentially through the servers.  Hitting
-  return to select a server doesn't load the highlighted server.
-
 Replay
 ------
 
