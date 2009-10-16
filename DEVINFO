@@ -14,6 +14,7 @@ tools/		- various helper tools
 game dependent libraries
 ------------------------
 src/game	- core game logic
+plugins/	- bzfs plugins
 
 game independent, platform independent libraries
 ------------------------------------------------
@@ -41,13 +42,13 @@ misc/		- kitchen sink of anything
 web/		- website stuff
 
 Note that only a few directories contain code directly related to the
-game BZFlag.  In particular: bzflag, bzadmin, bzfs, and game.  (And
-obstacle, but that will hopefully be made more general some day.)  The
-rest of the code could potentially be used in a different game.  If
-your code is BZFlag specific then it should go into one of the above
-directories (game if it can potentially be used by more than one app,
-otherwise into the appropriate app directory).  If not then put it in
-one of the other directories or add a new directory.
+game BZFlag.  In particular: bzflag, bzadmin, bzfs, plugins, and game.
+(And obstacle, but that will hopefully be made more general some day.)
+The rest of the code could potentially be used in a different game.
+If your code is BZFlag specific then it should go into one of the
+above directories (game if it can potentially be used by more than one
+app, otherwise into the appropriate app directory).  If not then put
+it in one of the other directories or add a new directory.
 
 
 Coding conventions
@@ -73,8 +74,9 @@ directory off the top-level.  Header files for classes introduced in
 an application directory should never go into a #include outside of
 that application directory.
 
-C files use the .c extension.  C++ files use the .cxx extension.
-Header files for both C and C++ use the .h extension.
+C files use the .c extension.  C++ files use the .cxx extension for
+everything except plugins which use the .cpp extension.  Header files
+for both C and C++ use the .h extension.
 
 Headers
 -------
