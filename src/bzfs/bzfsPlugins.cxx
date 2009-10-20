@@ -303,7 +303,9 @@ PluginLoadReturn load1Plugin ( std::string plugin, std::string config ) {
     }
   }
 
-  void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+  void *hLib = NULL;
+  if (realPluginName != "")
+    hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
   if (hLib) {
     if (dlsym(hLib, "bz_Load") == NULL) {
       logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
