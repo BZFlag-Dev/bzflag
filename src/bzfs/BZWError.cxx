@@ -46,11 +46,11 @@ bool BZWError::fatalError(const std::string& msg, int line)
   }
 
   // report error
-  std::cout << location << ": error";
+  std::cerr << location << ": error";
   if (line != 0) {
-    std::cout << " (line " << line << ")";
+    std::cerr << " (line " << line << ")";
   }
-  std::cout << ": " << errorMsg << std::endl << std::flush;
+  std::cerr << ": " << errorMsg << std::endl << std::flush;
   return true;
 }
 
@@ -70,11 +70,11 @@ bool BZWError::warning(const std::string& msg, int line)
   }
 
   // report warning
-  std::cout << location << ": warning";
+  std::cerr << location << ": warning";
   if (line != 0) {
-    std::cout << " (line " << line << ")";
+    std::cerr << " (line " << line << ")";
   }
-  std::cout << ": " << warningMsg << std::endl << std::flush;
+  std::cerr << ": " << warningMsg << std::endl << std::flush;
 
   return true;
 }
