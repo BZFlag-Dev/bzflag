@@ -173,7 +173,6 @@ bool worldWasSentToAPlayer   = false;
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
-// FIXME forward declarations probably unnecessary
 int bz_pwrite(NetHandler *handler, const void *b, int l);
 void pwriteBroadcast(const void *b, int l, int mask);
 
