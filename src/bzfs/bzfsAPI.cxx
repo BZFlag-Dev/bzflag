@@ -1767,7 +1767,12 @@ BZF_API bool bz_moveFlag ( int flag, float pos[3] )
   if (pFlag->player != -1)
     sendDrop(*pFlag);
 
-  pFlag->resetFlag(pos, true);
+  int teamIndex = pFlag->teamIndex();
+  bool teamIsEmpty = true;
+  if (teamIndex != ::NoTeam)
+    teamIsEmpty = (team[teamIndex].team.size == 0);
+
+  pFlag->resetFlag(pos, teamIsEmpty);
   sendFlagUpdate(*pFlag);
 
   return true;
