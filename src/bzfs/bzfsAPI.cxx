@@ -4399,12 +4399,11 @@ BZF_API bz_ApiString bz_filterPath(const char *path)
     return bz_ApiString("");
 
   char *temp;
-  temp=(char*)malloc(strlen(path)+1);
-  if (temp) {
-    strncpy(temp, path, strlen(path)+1);
-  }
+  temp=strdup(path);
+  if (!temp)
+    return bz_ApiString(""); // bad news
 
-  // replace anything but alphanumeric charcters or dots in filename by '_'
+  // replace anything but alphanumeric characters or dots in filename by '_'
   // should be safe on every supported platform
 
   char *buf=temp;
@@ -4416,7 +4415,7 @@ BZF_API bz_ApiString bz_filterPath(const char *path)
     buf++;
   }
   bz_ApiString ret(temp);
-  if (temp) free(temp);
+  free(temp);
   return ret;
 }
 
