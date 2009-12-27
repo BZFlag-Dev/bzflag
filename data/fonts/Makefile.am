@@ -5,7 +5,9 @@ fonts_DATA = \
 	DejaVuSerifBold.ttf \
 	TogaSansBold.ttf \
 	TogaSerifBold.ttf \
-	VeraMonoBold.ttf
+	VeraMonoBold.ttf \
+	ume-pgc5.ttf \
+	ume-tgo5.ttf
 
 EXTRA_DIST = \
 	$(fonts_DATA) \

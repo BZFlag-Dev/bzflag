@@ -1,0 +1,2392 @@
+# This is a generic Japanese
+# Author: Makoto Hara <haramako@jop.org>
+
+msgid "ja"
+msgstr "日本語"
+
+msgid "translator"
+msgstr "Makoto Hara"
+
+###########
+## FONTS ##
+###########
+
+msgid "_consoleFont"
+msgstr "ume-tgo5"
+
+msgid "_serifFont"
+msgstr "ume-pgc5"
+
+msgid "_sansSerifFont"
+msgstr "ume-pgc5"
+
+#############
+## GENERAL ##
+#############
+
+msgid "Unavailable"
+msgstr "利用不可"
+
+msgid "None"
+msgstr "なし"
+
+msgid "Fast"
+msgstr "速度優先"
+
+msgid "Best"
+msgstr "最高品質"
+
+msgid "N/A"
+msgstr "利用不可"
+
+msgid "NOTE: "
+msgstr "注意: "
+
+msgid "Page {1} of {2}"
+msgstr "{2}ページ中{1}ページ"
+
+msgid "Auto"
+msgstr "自動"
+
+msgid "Pause/Resume:"
+msgstr "一時停止・復帰:"
+
+msgid "Slow Keyboard Motion:"
+msgstr "スローキーモーション:"
+
+msgid "<not mapped>"
+msgstr "<未割り当て>"
+
+msgid "No"
+msgstr "いいえ"
+
+msgid "Yes"
+msgstr "はい"
+
+msgid "no"
+msgstr "いいえ"
+
+msgid "yes"
+msgstr "はい"
+
+msgid "no limit"
+msgstr "無制限"
+
+msgid "Failed... unknown error (%d)."
+msgstr "失敗…。未知のエラー（%d）"
+
+msgid "Silenced All Msgs"
+msgstr "無視状態の全メッセージ"
+
+msgid " or "
+msgstr "または"
+
+# MainMenu
+
+msgid "Join Game"
+msgstr "ゲームに参戦する"
+
+msgid "Find Server"
+msgstr "サーバを検索する"
+
+msgid "Connect"
+msgstr "接続する"
+
+msgid "Callsign:"
+msgstr "コールサイン:"
+
+msgid "Password:"
+msgstr "パスワード:"
+
+msgid "Motto:"
+msgstr "座右の銘:"
+
+msgid "Team:"
+msgstr "チーム:"
+
+msgid "Server:"
+msgstr "サーバ:"
+
+msgid "Port:"
+msgstr "ポート:"
+
+msgid "Start Server"
+msgstr "サーバを開始する"
+
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
+msgstr "カーソル上下で移動、Enterで選択、Escで非表示"
+
+msgid "Options"
+msgstr "オプション"
+
+msgid "Help"
+msgstr "ヘルプ"
+
+msgid "Quit"
+msgstr "終了する"
+
+msgid "Leave Game"
+msgstr "ゲームから退却する"
+
+msgid "Yes, quit"
+msgstr "はい、終了します"
+
+msgid "No, return to game"
+msgstr "いいえ、ゲームに戻ります"
+
+msgid "Save Settings?"
+msgstr "設定を保存しますか？"
+
+# OptionsMenu
+
+msgid "Input Settings"
+msgstr "入力設定"
+
+msgid "Audio Settings"
+msgstr "音声設定"
+
+msgid "Display Settings"
+msgstr "ディスプレイ設定"
+
+msgid "GUI Settings"
+msgstr "GUI設定"
+
+msgid "Text Settings"
+msgstr "文字設定"
+
+msgid "Radar Settings"
+msgstr "レーダー設定"
+
+msgid "Effects Settings"
+msgstr "各種効果設定"
+
+msgid "Cache Settings"
+msgstr "キャッシュ設定"
+
+msgid "Hub Settings"
+msgstr "ハブ設定"
+
+msgid "Auto Save Settings:"
+msgstr "自動保存設定:"
+
+msgid "On Exit"
+msgstr "終了時"
+
+msgid "Save Identity:"
+msgstr "個人情報の保存:"
+
+msgid "Username only"
+msgstr "コールサインのみ"
+
+msgid "Username and password"
+msgstr "コールサインとパスワード"
+
+msgid "Save World"
+msgstr "マップを保存する"
+
+msgid "Save Settings Now"
+msgstr "今すぐ設定を保存する"
+
+# SaveWorldMenu
+
+msgid "File Name:"
+msgstr "ファイル名:"
+
+msgid "No world loaded to save"
+msgstr "保存するマップが読み込まれていません。"
+
+msgid "World Saved: "
+msgstr "マップが保存されました: "
+
+msgid "Error Saving: "
+msgstr "保存する際にエラーが起こりました: "
+
+# DisplayMenu
+
+msgid "Dithering:"
+msgstr "ディザリング:"
+
+msgid "Off"
+msgstr "オフ"
+
+msgid "On"
+msgstr "オン"
+
+msgid "Either"
+msgstr "両方"
+
+msgid "Blending:"
+msgstr "α合成:"
+
+msgid "Smoothing:"
+msgstr "平滑化:"
+
+msgid "Lighting:"
+msgstr "入射光:"
+
+msgid "Texturing:"
+msgstr "テクスチャ補間:"
+
+msgid "Nearest"
+msgstr "Nearest"
+
+msgid "Linear"
+msgstr "Linear"
+
+msgid "Nearest Mipmap Nearest"
+msgstr "Nearest Mipmap Nearest"
+
+msgid "Linear Mipmap Nearest"
+msgstr "Linear Mipmap Nearest"
+
+msgid "Nearest Mipmap Linear"
+msgstr "Nearest Mipmap Linear"
+
+msgid "Linear Mipmap Linear"
+msgstr "Linear Mipmap Linear"
+
+msgid "AntiFlicker:"
+msgstr "ちらつき防止:"
+
+msgid "Anisotropic:"
+msgstr "異方性フィルタリング:"
+
+msgid "Unavailable"
+msgstr "利用不可"
+
+msgid "Quality:"
+msgstr "品質:"
+
+msgid "Low"
+msgstr "低"
+
+msgid "Medium"
+msgstr "中"
+
+msgid "High"
+msgstr "高"
+
+msgid "Experimental"
+msgstr "実験的"
+
+msgid "Shadows:"
+msgstr "陰影描画:"
+
+msgid "Stipple"
+msgstr "点描"
+
+msgid "Stencil"
+msgstr "型抜き"
+
+msgid "Hidden Line:"
+msgstr "陰線処理:"
+
+msgid "Wireframe:"
+msgstr "輪郭線:"
+
+msgid "Depth Complexity:"
+msgstr "深度の複雑さ:"
+
+msgid "Culling Tree:"
+msgstr "木の選抜除去:"
+
+msgid "Collision Tree:"
+msgstr "木の衝突:"
+
+msgid "Brightness:"
+msgstr "明るさ:"
+
+msgid "Vertical Sync:"
+msgstr "垂直同期:"
+
+msgid "Energy Saver:"
+msgstr "省電力機能:"
+
+msgid "Special Mode:"
+msgstr "スペシャルモード:"
+
+msgid "Only for Observers"
+msgstr "観戦者のみ利用可能"
+
+msgid "Depth Buffer:"
+msgstr "深度バッファ:"
+
+msgid "Not available"
+msgstr "利用不可"
+
+msgid "Change Video Format"
+msgstr "解像度を変更する"
+
+msgid "Sound Volume:"
+msgstr "音量:"
+
+# CacheMenu
+
+msgid "Server List Cache:"
+msgstr "サーバ一覧キャッシュ:"
+
+msgid "Off / Backup Mode"
+msgstr "オフ／バックアップモード"
+
+msgid "5 Minutes"
+msgstr "5分間"
+
+msgid "15 Minutes"
+msgstr "15分間"
+
+msgid "30 Minutes"
+msgstr "30分間"
+
+msgid "1 Hour"
+msgstr "1時間"
+
+msgid "5 Hours"
+msgstr "5時間"
+
+msgid "15 Hours"
+msgstr "15時間"
+
+msgid "1 day"
+msgstr "1日間"
+
+msgid "15 days"
+msgstr "15日間"
+
+msgid "30 days"
+msgstr "30日間"
+
+msgid "Clear Server List Cache"
+msgstr "サーバ一覧キャッシュを消去する"
+
+msgid "Cache Size (MB):"
+msgstr "キャッシュサイズ（メガバイト）:"
+
+msgid "Clear Download Cache"
+msgstr "ダウンロードキャッシュを消去する"
+
+msgid "Automatic Downloads:"
+msgstr "自動ダウンロード:"
+
+msgid "Connection Updates:"
+msgstr "接続の更新:"
+
+msgid "Update Downloads"
+msgstr "ダウンロードを更新する"
+
+# HubMenu
+
+msgid "(global chat)"
+msgstr "（全体チャット）"
+
+msgid "AutoJoin:"
+msgstr "自動参加:"
+
+msgid "UpdateCode:"
+msgstr "コード更新"
+
+msgid "Username:"
+msgstr "ユーザー名:"
+
+msgid "Copy Login"
+msgstr "ログイン情報をコピーする"
+
+msgid "Disconnect"
+msgstr "切断する"
+
+# Unknown
+
+msgid "UDP network connection:"
+msgstr "UDPネットワーク接続:"
+
+# ServerStartMenu
+
+msgid "Style:"
+msgstr "ルール:"
+
+msgid "Capture the Flag"
+msgstr "旗取り戦"
+
+msgid "Free for All"
+msgstr "乱闘戦"
+
+msgid "Rabbit Hunt (Random Selection)"
+msgstr "ウサギ狩り（ランダム選出）"
+
+msgid "Rabbit Hunt (Score-based Selection)"
+msgstr "ウサギ狩り（スコア基準選出）"
+
+msgid "Rabbit Hunt (Killer Selection)"
+msgstr "ウサギ狩り（キラー選出）"
+
+msgid "Max Players:"
+msgstr "最大接続人数:"
+
+msgid "Max Shots:"
+msgstr "最大砲弾数:"
+
+msgid "Teleporters:"
+msgstr "テレポーター:"
+
+msgid "Ricochet:"
+msgstr "反射:"
+
+msgid "Jumping:"
+msgstr "ジャンプ:"
+
+msgid "Handicap:"
+msgstr "ハンディキャップ:"
+
+msgid "Superflags:"
+msgstr "スーパーフラッグの種類:"
+
+msgid "good flags only"
+msgstr "グッドフラッグのみ"
+
+msgid "all flags"
+msgstr "全てのフラッグ"
+
+msgid "Max Superflags:"
+msgstr "スーパーフラッグの最大数:"
+
+msgid "Bad Flag Antidote:"
+msgstr "バッドフラッグの解毒剤:"
+
+msgid "Bad Flag Time Limit:"
+msgstr "バッドフラッグの時間制限:"
+
+msgid "15 seconds"
+msgstr "15秒間"
+
+msgid "30 seconds"
+msgstr "30秒間"
+
+msgid "60 seconds"
+msgstr "60秒間"
+
+msgid "180 seconds"
+msgstr "180秒間"
+
+msgid "Bad Flag Win Limit:"
+msgstr "バッドフラッグの勝数制限:"
+
+msgid "drop after 1 win"
+msgstr "1勝したら投下"
+
+msgid "drop after 2 wins"
+msgstr "2勝したら投下"
+
+msgid "drop after 3 wins"
+msgstr "3勝したら投下"
+
+msgid "Game Over:"
+msgstr "ゲーム終了条件:"
+
+msgid "never"
+msgstr "しない"
+
+msgid "after 5 minutes"
+msgstr "5分後"
+
+msgid "after 15 minutes"
+msgstr "15分後"
+
+msgid "after 60 minutes"
+msgstr "60分後"
+
+msgid "after 3 hours"
+msgstr "3時間後"
+
+msgid "when a player gets +3"
+msgstr "プレイヤーが3点取った時"
+
+msgid "when a player gets +10"
+msgstr "プレイヤーが10点取った時"
+
+msgid "when a player gets +25"
+msgstr "プレイヤーが25点取った時"
+
+msgid "when a team gets +3"
+msgstr "チームが3点取った時"
+
+msgid "when a team gets +10"
+msgstr "チームが10点取った時"
+
+msgid "when a team gets +25"
+msgstr "チームが25点取った時"
+
+msgid "when a team gets +100"
+msgstr "チームが100点取った時"
+
+msgid "Server Reset:"
+msgstr "サーバ再起動:"
+
+msgid "no, quit after game"
+msgstr "いいえ、ゲームの後に終了します"
+
+msgid "yes, reset for more games"
+msgstr "はい、次のゲームのため再起動します"
+
+msgid "World Map:"
+msgstr "マップ:"
+
+msgid "random map"
+msgstr "ランダムマップ"
+
+msgid "Start"
+msgstr "開始する"
+
+# GUIOptionsMenu
+
+msgid "GUI Options"
+msgstr "GUIオプション"
+
+msgid "Enhanced radar:"
+msgstr "強化レーダー:"
+
+msgid "Radar Style:"
+msgstr "レーダー型式:"
+
+msgid "Normal"
+msgstr "標準型"
+
+msgid "Fast"
+msgstr "高速型"
+
+msgid "Fast Sorted"
+msgstr "ソート済み高速型"
+
+msgid "Enhanced"
+msgstr "強化型"
+
+msgid "Scoreboard Sort:"
+msgstr "スコアボードの並び:"
+
+msgid "[Score]"
+msgstr "[スコア]"
+
+msgid "[Normalized Score]"
+msgstr "[正規化スコア]"
+
+msgid "[Callsign]"
+msgstr "[コールサイン]"
+
+msgid "[Team]"
+msgstr "[チーム]"
+
+msgid "[Team Kills]"
+msgstr "[TK数]"
+
+msgid "[TK ratio]"
+msgstr "[TK率]"
+
+msgid "[1on1]"
+msgstr "[1対1]"
+
+msgid "[HuntLevel]"
+msgstr "[被追跡レベル]"
+
+msgid "Always Show Team Scores:"
+msgstr "チームスコアを常に表示:"
+
+msgid "Scoreboard Font Size:"
+msgstr "スコアボードのフォントサイズ:"
+
+msgid "ControlPanel Font Size:"
+msgstr "コントロールパネルのフォントサイズ:"
+
+msgid "Extended Observer Info:"
+msgstr "観戦者用の拡張情報:"
+
+msgid "On With Apparent Speeds"
+msgstr "オン（相対速度を併せて表示）"
+
+msgid "Radar & Panel Opacity:"
+msgstr "レーダーとコントロールパネルの不透過度:"
+
+msgid "Opaque:"
+msgstr "不透明体:"
+
+msgid "Controlpanel & Score FontSize:"
+msgstr "コントロールパネルとスコアボードのフォントサイズ:"
+
+msgid "normal"
+msgstr "標準"
+
+msgid "bigger"
+msgstr "大"
+
+msgid "Colored shots on radar:"
+msgstr "レーダーの砲弾色分け:"
+
+msgid "Radar Shot Length:"
+msgstr "レーダーでの弾道の長さ:"
+
+msgid "Radar Shot Line:"
+msgstr "レーダーでの弾道の向き:"
+
+msgid "Lagging"
+msgstr "砲弾より後"
+
+msgid "Leading"
+msgstr "砲弾より先"
+
+msgid "Radar Shot Size:"
+msgstr "レーダーの砲弾サイズ:"
+
+msgid "Radar Shot Guide:"
+msgstr "レーダーの砲弾ガイド:"
+
+msgid "Radar & Panel Size:"
+msgstr "レーダーとコントロールパネルのサイズ:"
+
+msgid "Mouse Box Size:"
+msgstr "マウスボックスのサイズ:"
+
+msgid "Locale:"
+msgstr "ロケール:"
+
+msgid "Default"
+msgstr "既定値"
+
+msgid "Font Outlines:"
+msgstr "フォントの輪郭:"
+
+msgid "Outlines"
+msgstr "輪郭線"
+
+msgid "Drop Shadows"
+msgstr "影付き"
+
+msgid "Control panel tabs:"
+msgstr "コントロールパネルのタブ配置:"
+
+msgid "Left"
+msgstr "左側"
+
+msgid "Right"
+msgstr "右側"
+
+msgid "Control panel coloring:"
+msgstr "コントロールパネルの色分け:"
+
+msgid "Underline color:"
+msgstr "下線の色:"
+
+msgid "Cyan"
+msgstr "シアン"
+
+msgid "Grey"
+msgstr "グレー"
+
+msgid "Text"
+msgstr "文字色"
+
+msgid "Killer Highlight:"
+msgstr "キラー強調表示:"
+
+msgid "Pulsating"
+msgstr "脈動"
+
+msgid "Underline"
+msgstr "下線"
+
+msgid "Pulsation Rate:"
+msgstr "脈動の速さ:"
+
+msgid "Pulsation Depth:"
+msgstr "脈動の深さ:"
+
+msgid "Time / Date Display:"
+msgstr "時刻・日付の表示:"
+
+msgid "time"
+msgstr "時刻"
+
+msgid "date"
+msgstr "日付"
+
+msgid "both"
+msgstr "両方"
+
+msgid "Reload timer on HUD:"
+msgstr "計器上の再装弾タイマー:"
+
+# EffectsMenu
+
+msgid "Rain:"
+msgstr "雨:"
+
+msgid "Mirror:"
+msgstr "鏡:"
+
+msgid "Fog:"
+msgstr "霧:"
+
+msgid "Nice"
+msgstr "精細"
+
+msgid "Shot Length:"
+msgstr "弾道の長さ:"
+
+msgid "Display Treads:"
+msgstr "キャタピラーの表示:"
+
+msgid "Animated Treads:"
+msgstr "キャタピラーの動き:"
+
+msgid "Covered"
+msgstr "被覆"
+
+msgid "Exposed"
+msgstr "曝露"
+
+msgid "Track Marks:"
+msgstr "轍痕:"
+
+msgid "Track Mark Culling:"
+msgstr "轍痕の除去:"
+
+msgid "Fancy Effects:"
+msgstr "装飾的効果:"
+
+msgid "Spawn Effect:"
+msgstr "出現時効果:"
+
+msgid "Cone"
+msgstr "円錐"
+
+msgid "Blossom"
+msgstr "花"
+
+msgid "Rings"
+msgstr "輪"
+
+msgid "Local Spawn Effect:"
+msgstr "ローカルの出現時効果:"
+
+msgid "Same as spawns"
+msgstr "出現時効果と同じ"
+
+msgid "Death Effect:"
+msgstr "死亡時効果:"
+
+msgid "We Got Death Star"
+msgstr "ウィ・ガット・デス・スター"
+
+msgid "Shot Fired Effect:"
+msgstr "発砲時効果:"
+
+msgid "Smoke Rings"
+msgstr "煙の輪"
+
+msgid "Muzzle Flash"
+msgstr "銃口の火花"
+
+msgid "Smoke and Flash"
+msgstr "煙と火花"
+
+msgid "Local Shot Effect:"
+msgstr "ローカルの発砲時効果:"
+
+msgid "Same as shots"
+msgstr "発砲時効果と同じ"
+
+msgid "Use Velocity on Shot Effects:"
+msgstr "発砲時効果への移動速度の適用:"
+
+msgid "Landing Effect:"
+msgstr "着地時効果:"
+
+msgid "Dirt Flash"
+msgstr "泥撥ね"
+
+msgid "GM Smoke Effect:"
+msgstr "GMの発煙効果:"
+
+msgid "Classic Puff"
+msgstr "古典的な噴煙"
+
+msgid "Shock Cone"
+msgstr "円錐状の衝撃波"
+
+msgid "GM Effect Timing:"
+msgstr "GM効果のタイミング:"
+
+msgid "  Ricochet Effect:"
+msgstr "跳ね返り時効果:"
+
+msgid "Ring"
+msgstr "輪"
+
+msgid "  Teleport Shot Effect:"
+msgstr "テレポーターでの発砲時効果:"
+
+msgid "Page Down for next page"
+msgstr "Page Downで次のページ"
+
+msgid "Page Up for previous page"
+msgstr "Page Upで前のページ"
+
+msgid "Automatic"
+msgstr "自動"
+
+msgid "Rogue"
+msgstr "放浪者"
+
+msgid "Red Team"
+msgstr "赤チーム"
+
+msgid "Green Team"
+msgstr "緑チーム"
+
+msgid "Blue Team"
+msgstr "青チーム"
+
+msgid "Purple Team"
+msgstr "紫チーム"
+
+msgid "Observer"
+msgstr "観戦者"
+
+msgid "Enter to quit, Esc to resume"
+msgstr "Enterで終了、Escで復帰"
+
+msgid "Really Quit?"
+msgstr "本当に終了しますか？"
+
+msgid "Video Format"
+msgstr "画面解像度"
+
+msgid "Current Format:"
+msgstr "現在の解像度:"
+
+msgid "Key Mapping"
+msgstr "キー割り当て"
+
+msgid "Use up/down arrows to navigate, enter key to enter edit mode"
+msgstr "カーソル上下で操作、Enterで編集モードへ移動"
+
+msgid "Reset Defaults"
+msgstr "既定値に戻す"
+
+msgid "Fire shot:"
+msgstr "発砲:"
+
+msgid "Drop flag:"
+msgstr "フラッグの投下:"
+
+msgid "Identify/Lock On:"
+msgstr "識別・ロックオン:"
+
+msgid "Radar Short:"
+msgstr "近距離レーダー:"
+
+msgid "Radar Medium:"
+msgstr "中距離レーダー:"
+
+msgid "Radar Long:"
+msgstr "遠距離レーダー:"
+
+msgid "Send to All:"
+msgstr "全員へ送信:"
+
+msgid "Send to Teammates:"
+msgstr "チームへ送信:"
+
+msgid "Send to Nemesis:"
+msgstr "宿敵へ送信:"
+
+msgid "Send to Recipient:"
+msgstr "相手へ送信:"
+
+msgid "Send to Admin:"
+msgstr "管理者へ送信:"
+
+msgid "Send Hub Message:"
+msgstr "ハブメッセージを送信:"
+
+msgid "Paste:"
+msgstr "貼り付け:"
+
+msgid "Jump:"
+msgstr "ジャンプ:"
+
+msgid "Binoculars:"
+msgstr "双眼鏡:"
+
+msgid "Toggle Score:"
+msgstr "スコアボードの表示・非表示:"
+
+msgid "Tank Labels:"
+msgstr "戦車の標識:"
+
+msgid "Flag Help:"
+msgstr "フラッグのヘルプ:"
+
+msgid "Time Forward:"
+msgstr "時刻の先送り:"
+
+msgid "Time Backward:"
+msgstr "時刻の後戻し:"
+
+msgid "Pause/Resume:"
+msgstr "一時停止・復帰:"
+
+msgid "SelfDestruct/Cancel:"
+msgstr "自爆・自爆の中止:"
+
+msgid "Fast Quit:"
+msgstr "ゲームの即時終了:"
+
+msgid "Scroll Backward:"
+msgstr "前へスクロール:"
+
+msgid "Scroll Forward:"
+msgstr "次へスクロール:"
+
+msgid "Scroll Bottom:"
+msgstr "最後へスクロール:"
+
+msgid "Toggle Flags On Radar:"
+msgstr "レーダー上のフラッグ表示・非表示:"
+
+msgid "Toggle Flags On Field:"
+msgstr "視野のフラッグ表示・非表示:"
+
+msgid "Silence/UnSilence Key:"
+msgstr "無視・無視の解除:"
+
+msgid "Server Command Key:"
+msgstr "サーバコマンド:"
+
+msgid "Hunt Key:"
+msgstr "追跡:"
+
+msgid "Add/Modify Hunt Key:"
+msgstr "追跡の追加・変更:"
+
+msgid "AutoPilot Key:"
+msgstr "自動操縦:"
+
+msgid "Main Message Tab:"
+msgstr "主メッセージタブ:"
+
+msgid "Chat Message Tab:"
+msgstr "チャットメッセージタブ:"
+
+msgid "Server Message Tab:"
+msgstr "サーバメッセージタブ:"
+
+msgid "Misc Message Tab:"
+msgstr "その他メッセージタブ:"
+
+msgid "Prev Message Tab:"
+msgstr "前のメッセージタブ:"
+
+msgid "Next Message Tab:"
+msgstr "次のメッセージタブ:"
+
+msgid "Toggle FPS:"
+msgstr "FPSの表示・非表示:"
+
+msgid "Toggle Frame Time:"
+msgstr "フレーム時間の表示・非表示:"
+
+msgid "Forward Key:"
+msgstr "前進:"
+
+msgid "Reverse Key:"
+msgstr "後退:"
+
+msgid "Left Key:"
+msgstr "左旋回:"
+
+msgid "Right Key:"
+msgstr "右旋回:"
+
+msgid "Restart:"
+msgstr "再始動:"
+
+msgid "Self Destruct/Cancel:"
+msgstr "自爆・自爆の中止:"
+
+msgid "Iconify:"
+msgstr "アイコン化:"
+
+msgid "Fullscreen:"
+msgstr "全画面表示:"
+
+msgid "Define Quick Keys"
+msgstr "クイックキーを定義する"
+
+msgid "Notice: depending on platform not all keys might work"
+msgstr "注意: システムによりますが全てのキーが動作するとは限りません。"
+
+msgid "Send to All"
+msgstr "全員へ送信する"
+
+msgid "Send to Team"
+msgstr "チームへ送信する"
+
+msgid "Notice: depending on platform not all keys work"
+msgstr "注意: システムによりますが全てのキーが動作するとは限りません。"
+
+msgid "Slow Keyboard Motion:"
+msgstr "スローキーボードモーション:"
+
+msgid "loading {1}"
+msgstr "{1}をロードしています。"
+
+# ActionBinding
+
+msgid "Left Mouse"
+msgstr "マウス左ボタン"
+
+msgid "Middle Mouse"
+msgstr "マウス中ボタン"
+
+msgid "Space"
+msgstr "Space"
+
+msgid "Right Mouse"
+msgstr "マウス右ボタン"
+
+msgid "Ctrl+Wheel Up"
+msgstr "Ctrl+上ホイール"
+
+msgid "Ctrl+Wheel Down"
+msgstr "Ctrl+下ホイール"
+
+msgid "Shift+Wheel Up"
+msgstr "Shift+上ホイール"
+
+msgid "Shift+Wheel Down"
+msgstr "Shift+下ホイール"
+
+msgid "Wheel Up"
+msgstr "上ホイール"
+
+msgid "Wheel Down"
+msgstr "下ホイール"
+
+msgid "Left Arrow"
+msgstr "左カーソル"
+
+msgid "Right Arrow"
+msgstr "右カーソル"
+
+msgid "Up Arrow"
+msgstr "上カーソル"
+
+msgid "Down Arrow"
+msgstr "下カーソル"
+
+# HelpKeyMapMenu
+
+msgid "Mouse Position"
+msgstr "マウス位置"
+
+msgid "Controls Tank Position:"
+msgstr "戦車位置の制御:"
+
+msgid "Fires Shot:"
+msgstr "発砲:"
+
+msgid "Drops Flag (if not bad):"
+msgstr "フラッグの投下（バッドフラッグでない場合）:"
+
+msgid "Identifies Player (locks on GM):"
+msgstr "プレーヤーの識別（およびGMのロックオン）:"
+
+msgid "Short Radar Range:"
+msgstr "近距離レーダー:"
+
+msgid "Medium Radar Range:"
+msgstr "中距離レーダー:"
+
+msgid "Long Radar Range:"
+msgstr "遠距離レーダー:"
+
+msgid "Send Message to Everybody:"
+msgstr "メッセージを全員へ送信:"
+
+msgid "Send Message to Teammates:"
+msgstr "メッセージをチームへ送信:"
+
+msgid "Send Message to Nemesis:"
+msgstr "メッセージを宿敵へ送信:"
+
+msgid "Send Message to Recipient:"
+msgstr "メッセージを相手へ送信:"
+
+msgid "Send Hub message:"
+msgstr "ハブメッセージを送信:"
+
+msgid "Jump (if allowed):"
+msgstr "ジャンプ（できる場合）:"
+
+msgid "Toggle Binoculars:"
+msgstr "双眼鏡切り替え:"
+
+msgid "Toggle Score Sheet:"
+msgstr "スコアボードの表示・非表示:"
+
+msgid "Toggle Radar:"
+msgstr "レーダーの表示・非表示:"
+
+msgid "Toggle Console:"
+msgstr "コンソールの表示・非表示:"
+
+msgid "Toggle Tank Labels:"
+msgstr "戦車識別情報の表示・非表示:"
+
+msgid "Toggle Heads-up Flag Help:"
+msgstr "フラッグヘルプの表示・非表示:"
+
+msgid "Set Time of Day Backward:"
+msgstr "時刻の後戻し:"
+
+msgid "Set Time of Day Forward:"
+msgstr "時刻の先送り:"
+
+msgid "Pause/Resume:"
+msgstr "一時停止・復帰:"
+
+msgid "Self destruct/Cancel:"
+msgstr "自爆・自爆の中止:"
+
+msgid "Quit:"
+msgstr "終了:"
+
+msgid "Scroll Message Log Backward:"
+msgstr "メッセージログの前へスクロール:"
+
+msgid "Scroll Message Log Forward:"
+msgstr "メッセージログの次へスクロール:"
+
+msgid "Slow Motion:"
+msgstr "スローモーション:"
+
+msgid "Toggle Radar Flags:"
+msgstr "レーダー上のフラッグ表示・非表示:"
+
+msgid "Toggle Main Flags:"
+msgstr "視野のフラッグ表示・非表示:"
+
+msgid "Silence/UnSilence:"
+msgstr "無視・無視の解除:"
+
+msgid "Server Admin:"
+msgstr "サーバ管理:"
+
+msgid "Hunt:"
+msgstr "追跡:"
+
+msgid "Auto Pilot:"
+msgstr "自動操縦:"
+
+msgid "Show/Dismiss menu:"
+msgstr "メニューの表示・非表示:"
+
+msgid "Maintainer:"
+msgstr "保守管理者:"
+
+msgid "Original Author:"
+msgstr "原作者:"
+
+msgid "Code Contributors:"
+msgstr "コード提供者:"
+
+msgid "Tank Models:"
+msgstr "戦車モデリング:"
+
+msgid "Special Thanks:"
+msgstr "次の方々へ特に感謝します:"
+
+msgid "Send:"
+msgstr "送信:"
+
+# FormatMenu
+msgid "Press Enter to select and T to test a format. Esc to exit."
+msgstr "Enterで選択し、Tでフォーマット検査。Escで終了。"
+
+# ???
+msgid "Free-style"
+msgstr "乱闘"
+
+msgid "Capture-the-Flag"
+msgstr "旗取り戦"
+
+msgid "Rabbit Chase"
+msgstr "ウサギ狩り"
+
+msgid "Super Flags"
+msgstr "スーパーフラッグ"
+
+msgid "Antidote Flags"
+msgstr "解毒フラッグ"
+
+msgid "Trying..."
+msgstr "接続を要求しています…"
+
+msgid "Searching..."
+msgstr "検索しています…"
+
+# HUDRenderer
+
+msgid "Press %s to start"
+msgstr "%s押下で開始"
+
+msgid "Press Pause to resume"
+msgstr "Pause押下で復帰"
+
+msgid "AutoPilot on"
+msgstr "自動操縦"
+
+msgid "GAME OVER"
+msgstr "ゲームオーバー"
+
+msgid "Dead"
+msgstr "死亡"
+
+#msgid "%.1f"
+#msgstr ""
+
+msgid "Ready"
+msgstr "準備完了"
+
+msgid "Reloaded in %.1f"
+msgstr "再装弾まで%.1f秒"
+
+msgid "Sealed"
+msgstr "被覆"
+
+msgid "Zoned"
+msgstr "虚像"
+
+# ???
+
+#msgid "You are now the rabbit."
+#msgstr ""
+
+# ServerMenu
+
+msgid "Servers"
+msgstr "サーバ一覧"
+
+msgid "Players"
+msgstr "接続者数"
+
+msgid "Red"
+msgstr "赤チーム"
+
+msgid "Green"
+msgstr "緑チーム"
+
+msgid "Blue"
+msgstr "青チーム"
+
+msgid "Purple"
+msgstr "紫チーム"
+
+msgid "Observers"
+msgstr "観戦者"
+
+msgid "Enter Tab Name:"
+msgstr "新規タブ名:"
+
+msgid "Domain Name Filter:"
+msgstr "ドメイン名フィルタ:"
+
+msgid "Server Name Filter:"
+msgstr "サーバ名フィルタ:"
+
+msgid "Show Empty Servers:"
+msgstr "無人のサーバを表示:"
+
+msgid "Show Full Servers:"
+msgstr "満員のサーバを表示:"
+
+msgid "Show Team Free-For-All Servers:"
+msgstr "チーム乱闘戦のサーバを表示:"
+
+msgid "Show Open Free-For-All Servers:"
+msgstr "オープン乱闘戦のサーバを表示:"
+
+msgid "Show Capture The Flag Servers:"
+msgstr "旗取り戦のサーバを表示:"
+
+msgid "Show Rabbit Chase Servers:"
+msgstr "ウサギ狩りのサーバを表示:"
+
+msgid "Super Flags:"
+msgstr "スーパーフラッグ:"
+
+msgid "Antidote Flags:"
+msgstr "解毒フラッグ:"
+
+msgid "-> Create Tab"
+msgstr "-> タブを作成する"
+
+msgid "Servers found: {1}"
+msgstr "サーバが見つかりました: {1}"
+
+msgid "{1} Shot"
+msgstr "{1}発"
+
+msgid "{1} Shots"
+msgstr "{1}発"
+
+msgid "{1} sec To Drop Bad Flag"
+msgstr "{1}秒でバッドフラッグを投下"
+
+msgid "{1} secs To Drop Bad Flag"
+msgstr "{1}秒でバッドフラッグを投下"
+
+msgid "{1} Win Drops Bad Flag"
+msgstr "{1}勝でバッドフラッグを投下"
+
+msgid "{1} Wins Drops Bad Flag"
+msgstr "{1}勝でバッドフラッグを投下"
+
+msgid "Time limit: {1}"
+msgstr "制限時間: {1}"
+
+msgid "Max team score: {1}"
+msgstr "最大チームスコア: {1}"
+
+msgid "Max player score: {1}"
+msgstr "最大チームスコア: {1}"
+
+msgid "Page {1} of {2}"
+msgstr "{2}ページ中の{1}ページ"
+
+msgid "openBroadcast: No udp service {1}"
+msgstr "openBroadcast: UDPサービス「{1}」がありません"
+
+msgid "Joystick '{1}' not supported..."
+msgstr "ジョイスティック「{1}」は非対応です…"
+
+#msgid "Server did send endpoint information, UDP connection up"
+#msgstr ""
+
+msgid "Ignoring Finder argument '{1}'"
+msgstr "Finder引数「{1}」を無視します"
+
+#msgid "Can't open list server: {1}"
+#msgstr ""
+
+#msgid "Server sent downlink endpoint information, port {1}"
+#msgstr ""
+
+#msgid "Communication error joining game [Wrong Code {1}]."
+#msgstr ""
+
+#msgid "Server sent UDP request, UDP up. Info: [{1}:{2}:{3}]"
+#msgstr ""
+
+# ServerLink - there are more strings
+
+msgid "Network: Created local UDP downlink port {1}"
+msgstr "ネットワーク: ローカルのUDPダウンリンクポート{1}が作成されました"
+
+#msgid "More Info: [{1}:{2}:{3}]"
+#msgstr ""
+
+msgid "cannot load texture: {1}"
+msgstr "テクスチャをロードできません: {1}"
+
+msgid "Connection failed."
+msgstr "接続失敗。"
+
+msgid "Server forced a disconnect"
+msgstr "サーバから強制切断されました。"
+
+msgid "Rogues not allowed.  Try another team."
+msgstr "放浪者は許可されません。他のチームを試して下さい。"
+
+msgid "This team is full.  Try another team."
+msgstr "チームが満員です。他のチームを試して下さい。"
+
+msgid "This game is full.  Try again later."
+msgstr "ゲームが満員です。後ほど試して下さい。"
+
+msgid "Game is full or over.  Try again later."
+msgstr "ゲームが満員か終了しています。後ほど試して下さい。"
+
+msgid "Error connecting to server."
+msgstr "サーバ接続エラー。"
+
+msgid "Error downloading world database"
+msgstr "マップデータのダウンロードエラー"
+
+msgid "Score"
+msgstr "スコア"
+
+msgid "888~888 Hunt->"
+msgstr "888~888 追跡->"
+
+#msgid "Kills"
+#msgstr "勝敗"
+
+msgid " Kills"
+msgstr "勝敗"
+
+msgid "Team Score"
+msgstr "チームスコア"
+
+msgid "Player"
+msgstr "プレイヤー"
+
+msgid "Motto"
+msgstr "座右の銘"
+
+#################
+## SUPER FLAGS ##
+#################
+
+msgid "Good Flags:"
+msgstr "グッドフラッグ:"
+
+msgid "Bad Flags:"
+msgstr "バッドフラッグ:"
+
+msgid "High Speed"
+msgstr "High Speed"
+
+msgid "high speed (+V)"
+msgstr "high speed (+V)"
+
+msgid "Tank moves faster.  Outrun bad guys."
+msgstr "高速移動：より速く動く。悪党を振り切れ。"
+
+msgid "Quick Turn"
+msgstr "Quick Turn"
+
+msgid "Quick Turn (+QT)"
+msgstr "Quick Turn (+QT)"
+
+msgid "Tank turns faster.  Good for dodging."
+msgstr "高速旋回：より速く旋回する。弾をかわすのによい。"
+
+msgid "Oscillation Overthruster"
+msgstr "Oscillation Overthruster"
+
+msgid "Oscillation Overthruster (+OO)"
+msgstr "Oscillation Overthruster (+OO)"
+
+msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgstr "振動推進：構造物を素通りできる。内部にいる間は後退や発砲ができない。"
+
+msgid "Rapid Fire"
+msgstr "Rapid Fire"
+
+msgid "rapid Fire (+F)"
+msgstr "rapid Fire (+F)"
+
+msgid "Shoots more often.  Shells go faster but not as far."
+msgstr "迅速発砲：頻繁に発砲できる。砲弾は速く飛ぶものの、遠くには届かない。"
+
+msgid "Machine Gun"
+msgstr "Machine Gun"
+
+msgid "Machine Gun (+MG)"
+msgstr "Machine Gun (+MG)"
+
+msgid "Very fast reload and very short range."
+msgstr "機関銃：再装弾がとても早いが、飛距離はとても短い。"
+
+msgid "Guided Missile"
+msgstr "Guided Missile"
+
+msgid "Guided Missile (+GM)"
+msgstr "Guided Missile (+GM)"
+
+msgid "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+msgstr "誘導弾：砲弾が標的を捕捉する。右ボタンでロックオン。発砲の後、再度ロックオンできる。"
+
+msgid "Laser"
+msgstr "Laser"
+
+msgid "Laser (+L)"
+msgstr "Laser (+L)"
+
+msgid "Shoots a laser.  Infinite speed, long range, but long reload time."
+msgstr "レーザー：レーザー光線を照射する。無限の速度と長い飛距離をもつが、再装弾時間が長い。"
+
+msgid "Ricochet"
+msgstr "Ricochet"
+
+msgid "Ricochet (+R)"
+msgstr "Ricochet (+R)"
+
+msgid "Shots bounce off walls.  Don't shoot yourself!"
+msgstr "反射弾：砲弾が壁で跳ね返る。自分を撃たないように！"
+
+msgid "Super Bullet"
+msgstr "Super Bullet"
+
+msgid "Super Bullet (+SB)"
+msgstr "Super Bullet (+SB)"
+
+msgid "Shoots through buildings.  Can kill Phantom Zone."
+msgstr "貫通弾：砲弾が構造物を貫通する。虚像域内の戦車も破壊できる。"
+
+msgid "Invisible Bullet"
+msgstr "Invisible Bullet"
+
+msgid "Invisible Bullet (+IB)"
+msgstr "Invisible Bullet (+IB)"
+
+msgid "Your shots don't appear on other radars.  Can still see them out window."
+msgstr "不可視弾：砲弾がレーダーに映らない。視認することはできる。"
+
+msgid "Cloaked Shot"
+msgstr "Cloaked Shot"
+
+msgid "Cloaked Shot (+CS)"
+msgstr "Cloaked Shot (+CS)"
+
+msgid "Shots are invisible out-the-window. Still visible on radar. Glow is still visible out-the-window. Watch out for ricochet!"
+msgstr "擬態弾：視認できない砲弾を撃つ。レーダーには映る。砲弾の放射光は視認できる。跳ね返りを警戒せよ！"
+
+msgid "Stealth"
+msgstr "Stealth"
+
+msgid "STealth (+ST)"
+msgstr "STealth (+ST)"
+
+msgid "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+msgstr "ステルス：戦車がレーダーに映らなくなる。砲弾は映る。敵の背後から忍び寄れ！"
+
+msgid "Tiny"
+msgstr "Tiny"
+
+msgid "Tiny (+T)"
+msgstr "Tiny (+T)"
+
+msgid "Tank is small and can get through small openings.  Very hard to hit."
+msgstr "小型化：戦車が小さくなり、小さい隙間を通り抜けられる。砲撃がとても困難。"
+
+msgid "Narrow"
+msgstr "Narrow"
+
+msgid "Narrow (+N)"
+msgstr "Narrow (+N)"
+
+msgid "Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+msgstr "極細化：戦車が極細くなり、小さい隙間を通り抜けられる。正面からの砲撃はとても困難だが、側面は通常と変わらない。"
+
+msgid "Shield"
+msgstr "Shield"
+
+msgid "SHield (+SH)"
+msgstr "SHield (+SH)"
+
+msgid "Getting hit only drops flag.  Flag flies an extra-long time."
+msgstr "シールド：撃たれてもシールドを落とすだけで済む。フラッグは余分に長い時間をかけて舞い戻る。"
+
+msgid "Steamroller"
+msgstr "Steamroller"
+
+msgid "SteamRoller (+SR)"
+msgstr "SteamRoller (+SR)"
+
+msgid "Destroys tanks you touch but you have to get really close."
+msgstr "蒸気ローラー：触れた戦車を破壊できるが、至近距離に寄る必要がある。"
+
+msgid "Shock Wave"
+msgstr "Shock Wave"
+
+msgid "Shock Wave (+SW)"
+msgstr "Shock Wave (SW)"
+
+msgid "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+msgstr "衝撃波：近くの戦車を全滅させる衝撃波を出す。チームを殺すな！構造物内の戦車も破壊できる。"
+
+msgid "Phantom Zone"
+msgstr "Phantom Zone"
+
+msgid "Phantom Zone (+PZ)"
+msgstr "Phantom Zone (+PZ)"
+
+msgid "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."
+msgstr "虚像域：テレポートにより虚像域を出入りする。虚像は、貫通弾、衝撃波、虚像弾を除き、衝突しない。"
+
+msgid "Genocide"
+msgstr "Genocide"
+
+msgid "Genocide (+G)"
+msgstr "Genocide (+G)"
+
+msgid "Killing one tank kills that tank's whole team."
+msgstr "集団虐殺：戦車を1台殺せば、そのチーム全体が死ぬ。"
+
+msgid "Jumping"
+msgstr "Jumping"
+
+msgid "JumPing (+JP)"
+msgstr "JumPing (+JP)"
+
+msgid "Tank can jump.  Use Tab key.  Can't steer in the air."
+msgstr "跳躍：ジャンプできる。Tabキーを使え。空中では操縦できない。"
+
+msgid "Identify"
+msgstr "Identify"
+
+msgid "IDentify (+ID)"
+msgstr "IDentify (+ID)"
+
+msgid "Identifies type of nearest flag."
+msgstr "鑑定：最も近くにあるフラッグを鑑定する。"
+
+msgid "Cloaking"
+msgstr "Cloaking"
+
+msgid "CLoaking (+CL)"
+msgstr "CLoaking (+CL)"
+
+msgid "Makes your tank invisible out-the-window.  Still visible on radar."
+msgstr "擬態化：戦車が視認されなくなる。レーダーには映る。"
+
+msgid "Useless"
+msgstr "Useless"
+
+msgid "USeless (+US)"
+msgstr "USeless (+US)"
+
+msgid "You have found the useless flag. Use it wisely."
+msgstr "無益：無益のフラッグを見つけましたね。賢く利用しよう。"
+
+msgid "Masquerade"
+msgstr "Masquerade"
+
+msgid "MasQuerade (+MQ)"
+msgstr "MasQuerade (+MQ)"
+
+msgid "In opponent's hud, you appear as a teammate."
+msgstr "なりすまし：敵の視野で、仲間のように映る。"
+
+msgid "Seer"
+msgstr "Seer"
+
+msgid "SEer (+SE)"
+msgstr "SEer (+SE)"
+
+msgid "See stealthed, cloaked and masquerading tanks as normal.  See invisible bullets and cloaked shots."
+msgstr "看破：ステルス、擬態化、なりすましを普通に視認できる。また、不可視弾と擬態弾を視認できる。"
+
+msgid "Thief"
+msgstr "Thief"
+
+msgid "THief (+TH)"
+msgstr "THief (+TH)"
+
+msgid "Steal flags.  Small and fast but can't kill."
+msgstr "盗賊：人の持っているフラッグを盗む。小型で速く移動できるが、相手を殺すことができない。"
+
+msgid "Burrow"
+msgstr "Burrow"
+
+msgid "BUrrow (+BU)"
+msgstr "BUrrow (+BU)"
+
+msgid "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"
+msgstr "潜伏：地面に潜り込み通常の砲弾には撃たれなくなるが、他者が押しつぶすことはできる。"
+
+msgid "Wings"
+msgstr "Wings"
+
+msgid "WinGs (+WG)"
+msgstr "WinGs (+WG)"
+
+msgid "Tank can drive in air."
+msgstr "ウィング：空を飛べる。"
+
+msgid "Agility"
+msgstr "Agility"
+
+msgid "Agility (+A)"
+msgstr "Agility (+A)"
+
+msgid "Tank is quick and nimble making it easier to dodge."
+msgstr "俊敏：戦車が速く、そして素早くなり、砲弾からの退避が容易である。"
+
+msgid "Low Gravity"
+msgstr "Low Gravity"
+
+msgid "Low Gravity (+LG)"
+msgstr "Low Gravity (+LG)"
+
+msgid "The gravity is reduced. Tank jumps higher, falls slower."
+msgstr "低重力：重力が小さくなる。より高くジャンプして落下が遅くなる。"
+
+msgid "ReverseControls"
+msgstr "ReverseControls"
+
+msgid "ReverseControls (-RC)"
+msgstr "ReverseControls (-RC)"
+
+msgid "Tank driving controls are reversed."
+msgstr "逆転操縦：戦車の操縦が通常と逆転する。"
+
+msgid "Colorblindness"
+msgstr "Colorblindness"
+
+msgid "ColorBlindness (-CB)"
+msgstr "ColorBlindness (-CB)"
+
+msgid "Can't tell team colors.  Don't shoot teammates!"
+msgstr "色覚異常：チームの色を見分けられない。仲間を撃つな！"
+
+msgid "Obesity"
+msgstr "Obesity"
+
+msgid "Obesity (-O)"
+msgstr "Obesity (-O)"
+
+msgid "Tank becomes very large.  Can't fit through teleporters."
+msgstr "肥満：戦車がとても大きくなる。テレポーターを通り抜けられない。"
+
+msgid "Left Turn Only"
+msgstr "Left Turn Only"
+
+msgid "Left Turn only (-LT)"
+msgstr "Left Turn only (-LT)"
+
+msgid "Can't turn right."
+msgstr "左旋回のみ：右に曲がれない。"
+
+msgid "Right Turn Only"
+msgstr "Right Turn Only"
+
+msgid "Right Turn only (-RT)"
+msgstr "Right Turn only (-RT)"
+
+msgid "Can't turn left."
+msgstr "右旋回のみ：左に曲がれない。"
+
+msgid "Forward Only"
+msgstr "Forward Only"
+
+msgid "Forward Only (-FO)"
+msgstr "Forward Only (-FO)"
+
+msgid "Can't drive in reverse."
+msgstr "前進のみ：後退できない。"
+
+msgid "ReverseOnly"
+msgstr "ReverseOnly"
+
+msgid "ReverseOnly (-RO)"
+msgstr "ReverseOnly (-RO)"
+
+msgid "Can't drive forward."
+msgstr "後退のみ：前進できない。"
+
+msgid "Momentum"
+msgstr "Momentum"
+
+msgid "Momentum (-M)"
+msgstr "Momentum (-M)"
+
+msgid "Tank has inertia.  Acceleration is limited."
+msgstr "慣性運動：戦車が慣性をもち、加速が制限される。"
+
+msgid "Blindness"
+msgstr "Blindness"
+
+msgid "Blindness (-B)"
+msgstr "Blindness (-B)"
+
+msgid "Can't see out window.  Radar still works."
+msgstr "視覚異常：視野を見られなくなる。レーダーは作動する。"
+
+msgid "Jamming"
+msgstr "Jamming"
+
+msgid "JaMming (-JM)"
+msgstr "JaMming (-JM)"
+
+msgid "Radar doesn't work.  Can still see."
+msgstr "妨害電波：レーダーが作動しない。視野は見られる。"
+
+msgid "Wide Angle"
+msgstr "Wide Angle"
+
+msgid "Wide Angle (-WA)"
+msgstr "Wide Angle (-WA)"
+
+msgid "Fish-eye lens distorts view."
+msgstr "広視野角：魚眼レンズにより視野が歪む。"
+
+msgid "No Jumping"
+msgstr "No Jumping"
+
+msgid "No Jumping (-NJ)"
+msgstr "No Jumping (-NJ)"
+
+msgid "Tank can't jump."
+msgstr "跳躍不能：ジャンプできない。"
+
+msgid "Trigger Happy"
+msgstr "Trigger Happy"
+
+msgid "TRigger happy (-TR)"
+msgstr "TRigger happy (-TR)"
+
+msgid "Tank can't stop firing."
+msgstr "発砲狂：発砲を止められない。"
+
+msgid "Bouncy"
+msgstr "Bouncy"
+
+msgid "BouncY (-BY)"
+msgstr "BouncY (-BY)"
+
+msgid "Tank can't stop bouncing."
+msgstr "弾力化：戦車がバウンドする。"
+
+####################
+## AUDIO SETTINGS ##
+####################
+
+msgid "Sound Volume:"
+msgstr "音量:"
+
+msgid "Driver:"
+msgstr "ドライバ:"
+
+msgid "Device:"
+msgstr "デバイス:"
+
+msgid "Remote Sounds:"
+msgstr "リモートサウンド:"
+
+msgid "Mumble Position:"
+msgstr "位置つぶやき:"
+
+# Flags identification
+
+msgid "Closest Flag: High Speed"
+msgstr "最接近フラッグ: High Speed"
+
+msgid "Closest Flag: Quick Turn"
+msgstr "最接近フラッグ: Quick Turn"
+
+msgid "Closest Flag: Oscillation Overthurster"
+msgstr "最接近フラッグ: Oscillation Overthurster"
+
+msgid "Closest Flag: Rapid Fire"
+msgstr "最接近フラッグ: Rapid Fire"
+
+msgid "Closest Flag: Machine Gun"
+msgstr "最接近フラッグ: Machine Gun"
+
+msgid "Closest Flag: Guided Missile"
+msgstr "最接近フラッグ: Guided Missile"
+
+msgid "Closest Flag: Laser"
+msgstr "最接近フラッグ: Laser"
+
+msgid "Closest Flag: Ricochet"
+msgstr "最接近フラッグ: Ricochet"
+
+msgid "Closest Flag: Super Bullet"
+msgstr "最接近フラッグ: Super Bullet"
+
+msgid "Closest Flag: Stealth"
+msgstr "最接近フラッグ: Stealth"
+
+msgid "Closest Flag: Cloaking"
+msgstr "最接近フラッグ: Cloaking"
+
+msgid "Closest Flag: Invisible Bullet"
+msgstr "最接近フラッグ: Invisible Bullet"
+
+msgid "Closest Flag: Tiny"
+msgstr "最接近フラッグ: Tiny"
+
+msgid "Closest Flag: Narrow"
+msgstr "最接近フラッグ: Narrow"
+
+msgid "Closest Flag: Shield"
+msgstr "最接近フラッグ: Shield"
+
+msgid "Closest Flag: Steamroller"
+msgstr "最接近フラッグ: Steamroller"
+
+msgid "Closest Flag: Shock Wave"
+msgstr "最接近フラッグ: Shock Wave"
+
+msgid "Closest Flag: Phantom Zone"
+msgstr "最接近フラッグ: Phantom Zone"
+
+msgid "Closest Flag: Genocide"
+msgstr "最接近フラッグ: Genocide"
+
+msgid "Closest Flag: Jumping"
+msgstr "最接近フラッグ: Jumping"
+
+msgid "Closest Flag: Identify"
+msgstr "最接近フラッグ: Identify"
+
+msgid "Closest Flag: Colorblindness"
+msgstr "最接近フラッグ: Colorblindness"
+
+msgid "Closest Flag: Obesity"
+msgstr "最接近フラッグ: Obesity"
+
+msgid "Closest Flag: Left Turn Only"
+msgstr "最接近フラッグ: Left Turn Only"
+
+msgid "Closest Flag: Right Turn Only"
+msgstr "最接近フラッグ: Right Turn Only"
+
+msgid "Closest Flag: Momentum"
+msgstr "最接近フラッグ: Momentum"
+
+msgid "Closest Flag: Blindness"
+msgstr "最接近フラッグ: Blindness"
+
+msgid "Closest Flag: Jamming"
+msgstr "最接近フラッグ: Jamming"
+
+msgid "Closest Flag: Wide Angle"
+msgstr "最接近フラッグ: Wide Angle"
+
+msgid "Closest Flag: Useless"
+msgstr "最接近フラッグ: Useless"
+
+msgid "Closest Flag: Thief"
+msgstr "最接近フラッグ: Thief"
+
+msgid "Closest Flag: Masquerade"
+msgstr "最接近フラッグ: Masquerade"
+
+msgid "Closest Flag: Seer"
+msgstr "最接近フラッグ: Seer"
+
+msgid "Closest Flag: Burrow"
+msgstr "最接近フラッグ: Burrow"
+
+msgid "Closest Flag: Cloaked shot"
+msgstr "最接近フラッグ: Cloaked shot"
+
+# Other
+
+msgid "Server started."
+msgstr "サーバが開始しました。"
+
+msgid "Shot myself"
+msgstr "自己砲撃"
+
+# HelpMenu
+
+msgid "Controls"
+msgstr "操作方法"
+
+msgid "General"
+msgstr "ゲーム概要"
+
+msgid "Environment"
+msgstr "マップ環境"
+
+msgid "Flags"
+msgstr "フラッグ"
+
+msgid "Readouts I"
+msgstr "説明１"
+
+msgid "Readouts II"
+msgstr "説明２"
+
+msgid "Credits"
+msgstr "著作権表示"
+
+# HelpMenu:General
+
+msgid "BZFlag is a multi-player networked tank battle game.  There are five teams:"
+msgstr "BZFlagはマルチプレーヤーのオンライン戦車対戦ゲームです。"
+
+msgid "red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"
+msgstr "赤チーム・緑チーム・青チーム・紫チーム、そして黒い色をした放浪者の、5チームがあります。"
+
+msgid "player on another team scores a win, while being destroyed or destroying a"
+msgstr "他チームのプレーヤーを破壊すればスコアが加点されますが、逆に破壊されるか味方を破壊してしまうと減点となります。"
+
+msgid "teammate scores a loss.  Individual and aggregate team scores are tallied."
+msgstr "プレーヤー個人のスコアと、それをチームごとに合算したスコアが集計されます。"
+
+msgid "Rogues have no teammates (not even other rogues), so they cannot shoot"
+msgstr "放浪者にはそもそもチームというものがありませんので、"
+
+msgid "teammates and they don't have a team score."
+msgstr "味方を撃つことはありえませんし、チームスコアもありません。"
+
+msgid "There are four styles of play, determined by the server configuration:  capture-"
+msgstr "サーバの設定により、旗取り戦・ウサギ狩り・乱闘戦・オープン乱闘戦の、"
+
+msgid "the-flag, rabbit-chase, free-for-all and open-free-for-all.  In free-for-all the"
+msgstr "4形式の遊び方があります。"
+
+msgid "object is simply to get the highest score by shooting opponents.  In open-free-"
+msgstr "乱闘戦の目的は単純に、敵を撃破することで最高スコアを取ることです。"
+
+msgid "for-all highest score is still the goal but there are no teams.  In rabbit chase,"
+msgstr "オープン乱闘戦でも最高スコアを目指しますが、チームという枠組みがありません。"
+
+msgid "the white tank tries to stay alive while all other tanks try to hunt and kill it."
+msgstr "ウサギ狩りは、白色の戦車が生き延びようとするなか、残り全ての戦車で追跡して仕留めようとするものです。"
+
+msgid "The object in capture-the-flag is to capture enemy flags while preventing opponents"
+msgstr "旗取り戦の目的は、自軍のフラッグを敵軍から守りつつ、敵軍のフラッグを獲得することです。"
+
+msgid " from capturing yours.  In this style, each team (but not rogues) has a team base"
+msgstr "この形式では、放浪者を除く各チームが陣地をもち、"
+
+msgid "and each team with at least one player has a team flag which has the color of the team."
+msgstr "ひとりでもプレーヤーのいるチームは、各色のチームフラッグを持ちます。"
+
+msgid "To capture a flag, you must grab it and bring it back to your team base (you must be"
+msgstr "チームフラッグを獲得するには、敵軍から強奪して自陣へ持ち帰り、陣地に接地して下さい。"
+
+msgid "on the ground in your base to register the capture).  Capturing a flag destroys"
+msgstr "チームフラッグの獲得によりチームスコアが加点され、"
+
+msgid "all the players on that team and gives your team score a bonus;  the players will"
+msgstr "そして獲得されてしまったチームは全員破壊されて、陣地から再出動することになります。"
+
+msgid "restart on their team base.  Taking your flag onto an enemy base counts as a capture"
+msgstr "自軍のフラッグを敵陣に持って行く行為は、敵軍のフラッグを獲得したことにはならず、"
+
+msgid "against your team but not for the enemy team."
+msgstr "自軍のフラッグが獲得されたものとして扱われます。"
+
+# HelpMenu:Environment
+
+msgid "The world environment contains an outer wall and several buildings."
+msgstr "マップには外壁やさまざまな構造物が含まれます。"
+
+msgid "You cannot go outside the outer wall (you can't even jump over it)."
+msgstr "外壁から外に出たり、外壁を飛び越えたりすることはできません。"
+
+msgid "You cannot normally drive or shoot through buildings."
+msgstr "普通の状態では構造物を通り抜けたり撃ち抜いたりすることはできません。"
+
+msgid "The server may be configured to include teleporters:  large transparent"
+msgstr "テレポーターという、黒色透明の大きな平板が含まれることもあります。"
+
+msgid "black slabs.  Objects entering one side of a teleporter are instantly"
+msgstr "テレポーターの面に入った物体はすぐに、"
+
+msgid "moved to one side of another (or possibly the same) teleporter.  The"
+msgstr "他のテレポーターの面へと転送されます（同じテレポーターの場合もありえます）。"
+
+msgid "teleport is reversible;  reentering the same side of the destination"
+msgstr "転送は逆向きについても同じで、再度出口に入ると"
+
+msgid "teleporter brings you back to where you started.  Teleport connections"
+msgstr "入口へと戻ります。テレポーターの接続は"
+
+msgid "are fixed at the start of the game and don't change during the game."
+msgstr "ゲーム開始時に固定され、ゲーム中には変化しません。"
+
+msgid "The connections are always the same in the capture-the-flag style."
+msgstr "旗取り戦におけるテレポーターの接続はいつも同じです。"
+
+msgid "Each side of a teleporter teleports independently of the other side."
+msgstr "テレポーターの表面と裏面は、それぞれが独立して転送します。"
+
+msgid "It's possible for a teleporter to teleport to the opposite side of"
+msgstr "同じテレポーターの裏側へ転送されることがありえます。"
+
+msgid "itself.  Such a thru-teleporter acts almost as if it wasn't there."
+msgstr "これは言わば透過テレポーターですが、そこに存在しないのとほとんど同じといえます。"
+
+msgid "A teleporter can also teleport to the same side of itself.  This is a"
+msgstr "同じテレポーターの同じ面へ転送されることもありえます。"
+
+msgid "reverse teleporter.  Shooting at a reverse teleporter is likely to be"
+msgstr "これは逆転テレポーターです。逆転テレポーターを撃てば自爆することになるかも知れません。"
+
+msgid "self destructive;  shooting a laser at one is invariably fatal."
+msgstr "レーザーを打ち込もうものなら、まず目も当てられない結果になるでしょう。"
+
+# HelpMenu:Flags
+
+msgid "Flags come in two varieties:  team flags and super flags.  Team flags"
+msgstr "フラッグにはチームフラッグとスーパーフラッグの2種類があります。"
+
+msgid "are used only in the capture-the-flag style.  The server may also be"
+msgstr "チームフラッグは旗取り戦においてのみ使われます。"
+
+msgid "configured to supply super flags, which give your tank some advantage"
+msgstr "マップには、戦車に利益や不利益をもたらす、スーパーフラッグも設置されているかも知れません。"
+
+msgid "or disadvantage.  You normally can't tell which until you pick one up,"
+msgstr "通常、フラッグを拾うまではそれが何かを見分けることができませんが、"
+
+msgid "but good flags generally outnumber bad flags two to one."
+msgstr "大抵グッドフラッグは数が多く、バッドフラッグは1つか2つしかありません。"
+
+msgid "Team flags are not allowed to be in Bad Places.  Bad Places are:  on"
+msgstr "チームフラッグは不適切な場所には置くことができません。"
+
+msgid "a building or on an enemy base.  Team flags dropped in a Bad Place are"
+msgstr "不適切な場所とは、構造物や敵陣の上です。不適切な場所に落とされたチームフラッグは、"
+
+msgid "moved to a safety position.  Captured flags are placed back on their"
+msgstr "安全地帯へと移動されます。獲得されたフラッグは元の陣地に置かれます。"
+
+msgid "team base.  Super flags dropped above a building always disappear."
+msgstr "構造物の上に落とされたスーパーフラッグは必ず消滅します。"
+
+msgid "A random good super flag will remain for up to 4 possessions.  After"
+msgstr "ランダムのグッドフラッグは、最大で4回まで留まります。"
+
+msgid "that it'll disappear and will eventually be replaced by a new random"
+msgstr "その後、消滅して最終的に新たなランダムのフラッグに置き換わります。"
+
+msgid "flag.  Bad random super flags disappear after the first possession."
+msgstr "ランダムのバッドフラッグは、最初の1回で消滅します。"
+
+msgid "Bad super flags can't normally be dropped.  The server can be set to"
+msgstr "バッドフラッグは自分で落とすことができません。"
+
+msgid "automatically drop the flag for you after some time, after you destroy"
+msgstr "ある時間の経過後か、ある数の敵の撃破後か、"
+
+msgid "a certain number of enemies, and/or when you grab an antidote flag."
+msgstr "あるいは解毒フラッグを取ったときに、自動的に落とされます。"
+
+msgid "Antidote flags are yellow and only appear when you have a bad flag."
+msgstr "解毒フラッグは黄色で、バッドフラッグを持っているときのみ出現します。"
+
+# HelpMenu:Readouts I
+
+msgid "The radar is on the left side of the control panel.  It shows an overhead"
+msgstr "レーダーはコントロールパネルの左側にあります。"
+
+msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
+msgstr "レーダーはゲームの空撮X線映像を示します。構造物や外壁は明るい青色で示されます。"
+
+msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
+msgstr "チームの陣地はチームの色で縁取り表示されます。テレポーターは短い黄色の線です。"
+
+msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
+msgstr "戦車はチームの色をした点で、放浪者は黄色です。"
+
+msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
+msgstr "点のサイズで戦車のおおまかな高度が示され、"
+
+msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
+msgstr "高い位置の戦車ほど大きな点になります。フラッグは小さな十字です。"
+
+msgid "flags are in the team color, superflags are white, and the antidote flag"
+msgstr "チームフラッグはチームの色、スーパーフラッグは白色、解毒フラッグは黄色です。"
+
+msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
+msgstr "砲弾は小さい点、レーザーは線、衝撃波は円で示されます。"
+
+msgid "shock waves, respectively).  Your tank is always dead center and forward"
+msgstr "自分の戦車はレーダー上で、常にど真ん中で、進行方向が上になります。"
+
+msgid "is always up on the radar.  The yellow V is your field of view.  North"
+msgstr "黄色のV字は、視野を表します。"
+
+msgid "is indicated by the letter N."
+msgstr "北はNの文字で表示されます。"
+
+msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
+msgstr "計器にはいくつかの表示があります。"
+
+msgid "center of the view are the motion control boxes;  within the small box"
+msgstr "計器中央の2つの箱は動作制御の箱で、"
+
+msgid "your tank won't move, outside the large box you don't move any faster than"
+msgstr "小さい箱の中なら戦車が動かず、大きい箱の外なら大きい箱の縁よりも速く動くことはありません。"
+
+msgid "at the edge of the large box.  Moving the mouse above or below the small"
+msgstr "マウスを小さい箱の上や下へ動かすと、前や後ろに動きます。"
+
+msgid "box moves forward or backward, respectively.  Similarly for left and right."
+msgstr "前や後ろに動きます。左や右も同様です。"
+
+msgid "The distance away from the small box determines the speed."
+msgstr "小さい箱からの距離で速度を決めます。"
+
+# HelpMenu:Readouts II
+
+msgid "Above the larger box is a tape showing your current heading.  North is"
+msgstr "大きい箱の上に現在の向きを示す帯があります。北が0、東が90などです。"
+
+msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
+msgstr "ジャンプが可能か、ジャンプフラッグを持っていれば、"
+
+msgid "an altitude tape appears to the right of the larger box."
+msgstr "大きい箱の右側に高度を示す帯が現れます。"
+
+msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
+msgstr "色のついた小さい菱形あるいは矢印が方位の帯上に現れます。"
+
+msgid "arrow pointing left means that a particular flag is to your left, an"
+msgstr "左矢印は件のフラッグが左にあることを示し、"
+
+msgid "arrow pointing right means that the flag is to your right, and a diamond"
+msgstr "右矢印はそのフラッグが右にあることを示し、"
+
+msgid "indicates the heading to the flag by its position on the heading tape."
+msgstr "菱形は向きを示す帯上の位置でそのフラッグの方向を示します。"
+
+msgid "In capture-the-flag mode a marker always shows where your team flag is."
+msgstr "旗取り戦においては、目印はいつも、自分のチームフラッグがどこにあるかを示します。"
+
+msgid "A yellow marker shows the way to the antidote flag."
+msgstr "黄色の目印は、解毒フラッグへの道筋を示します。"
+
+msgid "At the top of the display are, from left to right, your callsign and"
+msgstr "ディスプレイの上部には、左から右に向かって、"
+
+msgid "score, your status, and the flag you have.  Your callsign is in the"
+msgstr "あなたのコールサインとスコア、状態、持っているフラッグ名があります。"
+
+msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
+msgstr "あなたのコールサインはあなたのチームの色になっています。"
+
+msgid "or reloading (showing the time until reloaded).  It can also show the"
+msgstr "状態は、準備完了、死亡、被覆、虚像、装弾中（装弾完了までの時間を示します）の何れか1つです。"
+
+msgid "time until a bad flag is dropped (if there's a time limit)."
+msgstr "また、バッドフラッグが落とされるまでの時間も示されます（時間制限のある場合）。"
+
+msgid "Other informational messages may occasionally flash on the HUD."
+msgstr "その他の情報が時々、計器上に点滅表示します。"
+
+# InputMenu
+
+msgid "Change Key Mapping"
+msgstr "キー割り当てを変更する"
+
+msgid "Joystick device:"
+msgstr "ジョイスティック装置:"
+
+msgid "Active input device:"
+msgstr "有効な入力装置:"
+
+msgid "Keyboard"
+msgstr "キーボード"
+
+msgid "Mouse"
+msgstr "マウス"
+
+msgid "Joystick"
+msgstr "ジョイスティック"
+
+msgid "Auto"
+msgstr "自動"
+
+msgid "Force feedback:"
+msgstr "フォースフィードバック:"
+
+msgid "Rumble"
+msgstr "轟音"
+
+msgid "Directional"
+msgstr "指向性"
+
+msgid "Joystick Turn Axis (X):"
+msgstr "ジョイスティック旋回軸 (X):"
+
+msgid "Joystick Speed Axis (Y):"
+msgstr "ジョイスティック速度軸 (Y):"
+
+msgid "Confine mouse:"
+msgstr "マウスの範囲制限:"
+
+msgid "Jump while typing:"
+msgstr "タイピング中のジャンプ:"
+
+msgid "Slow turning with binoculars:"
+msgstr "双眼鏡使用時の減速旋回:"
+
+# Playing
+
+msgid "Download stopped by user action"
+msgstr "ユーザによりダウンロードが中断されました"
+
+msgid "World cache files disappeared.  Join canceled"
+msgstr "マップのキャッシュファイルがなくなりました。参戦がキャンセルされました"
+
+msgid "Loading world into memory..."
+msgstr "マップをメモリに読み込んでいます…"
+
+msgid "Error loading cached world.  Join canceled"
+msgstr "キャッシュされたマップの読み込みエラーです。参戦がキャンセルされました"
+
+msgid "Verifying world integrity..."
+msgstr "マップの整合性を検査しています…"
+
+msgid "Error on md5. Removing offending file."
+msgstr "MD5のエラーです。原因のファイルを取り除きます。"
+
+msgid "Preparing world..."
+msgstr "マップを準備しています…"
+
+msgid "Error unpacking world database. Join canceled."
+msgstr "マップデータベースの展開エラーです。参戦がキャンセルされました。"
+
+msgid "Downloading files..."
+msgstr "ファイルをダウンロードしています…"
+
+msgid "Download from URL failed"
+msgstr "URLからのダウンロードが失敗しました"
+
+msgid "Problem writing cache"
+msgstr "キャッシュの書き込みに問題があります"
+
+msgid "Downloading World..."
+msgstr "マップをダウンロードしています…"
+
+msgid "Requesting World Hash..."
+msgstr "マップのハッシュを要求しています…"
+
+msgid "Server not found"
+msgstr "サーバが見つかりません"
+
+msgid "Server Access Denied Locally"
+msgstr "サーバへのアクセスが局所的に拒否されました"
+
+msgid "Memory error"
+msgstr "メモリエラー"
+
+msgid "Game is full or over.  Try again later."
+msgstr "ゲームが満員または終了しています。後で再度試して下さい。"
+
+msgid "Error connecting to server."
+msgstr "サーバへの接続エラーです。"
+
+msgid "Cannot connect to full version server."
+msgstr "完全版のサーバに接続できません。"
+
+msgid "Connection Established..."
+msgstr "接続が確立されました…"
+
+msgid "Entering game..."
+msgstr "ゲームに入ります…"
+
+msgid "Server not found"
+msgstr "サーバが見つかりません"
+
+####################
+####################
+####################
+
+msgid "Self Destructing in"
+msgstr "自爆まであと"
+
+msgid "Self Destruct cancelled"
+msgstr "自爆がキャンセルされました"
+
+msgid "Tank Self Destructed"
+msgstr "戦車が自爆しました"

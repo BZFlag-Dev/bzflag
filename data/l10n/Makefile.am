@@ -8,6 +8,7 @@ l10n_DATA = \
 	bzflag_es.po	\
 	bzflag_fr.po	\
 	bzflag_it.po	\
+	bzflag_ja.po	\
 	bzflag_kg.po	\
 	bzflag_lt.po	\
 	bzflag_nl.po	\

@@ -11,6 +11,7 @@ BZFlag 2.99.x (development for 3.0 http://my.bzflag.org/w/BZFlag_3.0 )
 * Handle Unicode input and keybindings - Daniel Remenak
 * Correctly render Unicode (UTF8) localizations - Daniel Remenak, Alexander Law
 * Russian translation - Alexander Law
+* Japanese translation - Makoto Hara
 * Added new BZFS API event bz_eIdBanEvent - Steven Mertens
 * Fix -configdir on client - Scott Wichser, Steven Mertens
 * Server operators no longer automatically override antiban - Daniel Remenak
