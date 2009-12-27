@@ -58,9 +58,7 @@ inline int wresize(WINDOW*, int, int) {
 }
 
 inline int cr_waddstr(WINDOW* w, const char* str) {
-  char* newStr = new char[strlen(str) + 1];
-  strncpy(newStr, str, strlen(str));
-  return waddstr(w, newStr);
+  return waddstr(w, const_cast<char *>(str));
 }
 #undef waddstr
 #define waddstr(W, C) cr_waddstr(W, C)
@@ -139,9 +137,7 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 
   // wrap some functions to make it compatible with ncurses
   inline int pd_waddstr(WINDOW* w, const char* str) {
-    char* newStr = new char[strlen(str) + 1];
-    strncpy(newStr, str, strlen(str));
-    return waddstr(w, newStr);
+    return waddstr(w, const_cast<char *>(str));
   }
   #define waddstr(W, C) pd_waddstr(W, C)
 
