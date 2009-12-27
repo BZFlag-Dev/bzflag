@@ -4409,7 +4409,7 @@ BZF_API bz_ApiString bz_filterPath(const char *path)
   char *buf=temp;
   while(buf && *buf!='\0')
   {
-    if(!isalnum(*buf) ||  *buf!='.')
+    if(!isalnum(*buf) && ((*buf)!='.'))
       *buf='_';
 
     buf++;
