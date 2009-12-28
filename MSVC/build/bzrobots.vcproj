@@ -199,8 +199,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Copying BZFS to root..."
-				CommandLine="copy .\bzrobots_debug\*.exe ..\..\*.exe&#x0D;&#x0A;copy .\bzrobots_debug\*.lib ..\..\*.lib&#x0D;&#x0A;"
+				Description="Copying BZRobots to root..."
+				CommandLine="copy .\bzrobots_debug\*.exe ..\..\*.exe&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -757,6 +757,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\Mumble.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\Mumble.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\NewVersionMenu.cxx"
 				>
 			</File>
@@ -810,6 +818,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\QuitMenu.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\RadarOptionsMenu.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\RadarOptionsMenu.h"
 				>
 			</File>
 			<File
