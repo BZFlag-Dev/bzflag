@@ -464,11 +464,11 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 
 bool AccessControlList::load() {
 
-  // clear all local bans
-  purgeLocals();
-
   if (banFile.size() == 0)
     return true;
+
+  // clear all local bans
+  purgeLocals();
 
   // try to open the ban file
   std::ifstream is(banFile.c_str());

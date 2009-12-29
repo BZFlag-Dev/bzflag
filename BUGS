@@ -53,6 +53,12 @@ Regressions
 * server communication error when someone logs off and people are still playing
   (may be fixed as of 2.99.21)
 
+* Authentication status (-, +, @) and motto for other players does not show up
+  when you join a public server. When last checked, data was being processed
+  by bzfs in the incorrect order (example: motto was being processed before
+  the player was added, thus setting the motto failed because it didn't have a
+  player to assign it to) @ r20696 (blast)
+
 Documentation
 -------------
 
@@ -61,12 +67,11 @@ Documentation
 Bans
 ----
 
-* a banned registered player that gets added to both the banList and idBanList
-  is not listed in the latter on a idbanlist yet prevented from joining even
-  after the ban is removed from the banList.
-    - This only occurs when no -banfile is used, as issueing a ban reloads the
-      (non-existant) ban file. So it goes: reload (which empties bans), BZID
-      ban, reload, IP ban. @ r20695 (blast)
+- Ban notifications do not show up when joining, at least to a public server.
+  It just disconnects the user after "Global login approved". May be related
+  to the regression above dealing with authentication status and motto. (may
+  be data getting sent/received/processed out of order) @ r20696 (blast)
+  
 
 Controls
 --------
