@@ -26,6 +26,11 @@ so that no work is duplicated.
   player's point of view.  The tank blows up normally the next time it
   is shot.
 
+* Network code issues:
+  - Data is sometimes sent/received/processed? out of order. For example,
+    on a public server, the motto (via MsgPlayerData) is procesed in bzfs
+    before the player join message, so it gets ignored.
+
 * fix the MsgPause messages
 
 * fix the Z dead-reckoning issue  (ask JeffM about it)
