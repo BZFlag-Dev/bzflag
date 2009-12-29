@@ -35,6 +35,7 @@ Crashes
   exception on line 181
 
 * The WebAdmin plugin segfaults the server on shutdown.
+    - Cannot duplicate on either linux or Windows @ r20695 (blast)
 
 * After joining then leaving a server with at least one solo bot, the bzfs
   will crash reasonably predictably at NetHandler:578 (toBeKickedReason is a
@@ -63,6 +64,9 @@ Bans
 * a banned registered player that gets added to both the banList and idBanList
   is not listed in the latter on a idbanlist yet prevented from joining even
   after the ban is removed from the banList.
+    - This only occurs when no -banfile is used, as issueing a ban reloads the
+      (non-existant) ban file. So it goes: reload (which empties bans), BZID
+      ban, reload, IP ban. @ r20695 (blast)
 
 Controls
 --------
