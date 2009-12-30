@@ -172,10 +172,6 @@ bzfs
   queued and delivered to the server after things returned to normal.  Lag
   numbers were very high (up to 1.3 seconds) right after this.
 
-* After nearly an hour of playing bzfs provided a new random map to rejoiners,
-  while the player who stayed was on the original random map.  Each player was
-  seen interacting with their own map.  Very confusing.
-
 * bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
