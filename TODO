@@ -90,9 +90,6 @@ so that no work is duplicated.
   or just say it's global or nothing
   Design Doc at http://my.bzflag.org/w/LocalAuthentication
 
-* /ghost should be removed, we should auto ghost people when the login
-  with global auth
-
 * take out the flag type out of the flag messages, as they are all PZ.
   Change the team flags to be a different message and take the real team
   enumeration. The flag type is told on pickup.
@@ -163,6 +160,9 @@ so that no work is duplicated.
   are unique, though, maybe somehow move to those. This would fix some issues
   and create others. All the implications are not quite clear yet. Best
   practice at the moment: Don't change your bzbb login name.
+  - This is only a problem when using a userdb to assign people to groups.
+    Global groups already use the BZID, so changing a name will not cause
+    issues. (blast)
 
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
