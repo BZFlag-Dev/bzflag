@@ -306,6 +306,15 @@ void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
   scene->addDynamicNode(boltSceneNode);
 }
 
+void DrawShotTip ( float size, const fvec3& orig )
+{
+	glBegin(GL_QUADS);
+	glVertex2f(orig.x-size,orig.y-size);
+	glVertex2f(orig.x+size,orig.y-size);
+	glVertex2f(orig.x+size,orig.y+size);
+	glVertex2f(orig.x-size,orig.y+size);
+	glEnd();
+}
 
 void SegmentedShotStrategy::radarRender() const
 {
@@ -331,21 +340,12 @@ void SegmentedShotStrategy::radarRender() const
     // draw a "bright" bullet tip
     if (size > 0) {
       glColor3f(0.75, 0.75, 0.75);
-      glPointSize((float)size);
-      glBegin(GL_POINTS);
-      glVertex2fv(orig);
-      glEnd();
-      glPointSize(1.0f);
+	  DrawShotTip((float)size,orig);
     }
   } else {
     if (size > 0) {
       // draw a sized bullet
-      glPointSize((float)size);
-      glBegin(GL_POINTS);
-      glVertex2fv(orig);
-      glEnd();
-      glPointSize(1.0f);
-
+	  DrawShotTip((float)size,orig);
     } else {
       // draw the tiny little bullet
       glBegin(GL_POINTS);
