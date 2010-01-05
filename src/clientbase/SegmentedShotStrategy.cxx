@@ -308,12 +308,26 @@ void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
 
 void DrawShotTip ( float size, const fvec3& orig )
 {
-	glBegin(GL_QUADS);
-	glVertex2f(orig.x-size,orig.y-size);
-	glVertex2f(orig.x+size,orig.y-size);
-	glVertex2f(orig.x+size,orig.y+size);
-	glVertex2f(orig.x-size,orig.y+size);
+	if (size == 1.0f)
+	{
+		glBegin(GL_POINTS);
+			glVertex2f(orig.x,orig.y);
+		glEnd();
+		return;
+	}
+	glPushMatrix();
+	glTranslatef(orig.x,orig.y,0);
+	glBegin(GL_POLYGON);
+		glVertex2f(size*-0.46194f,size*0.19134f);
+		glVertex2f(size*-0.46194f,size*-0.19134f);
+		glVertex2f(size*-0.19134f,size*-0.46194f);
+		glVertex2f(size*0.19134f,size*-0.46194f);
+		glVertex2f(size*0.46194f,size*-0.19134f);
+		glVertex2f(size*0.46194f,size*0.19134f);
+		glVertex2f(size*0.46194f,size*0.46194f);
+		glVertex2f(size*-0.19134f,size*0.46194f);
 	glEnd();
+	glPopMatrix();
 }
 
 void SegmentedShotStrategy::radarRender() const
