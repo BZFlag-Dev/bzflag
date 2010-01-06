@@ -310,30 +310,6 @@ void			SegmentedShotStrategy::addShot(
   scene->addDynamicNode(boltSceneNode);
 }
 
-void DrawShotTip ( float size, const float* orig )
-{
-	if (size == 1.0f)
-	{
-		glBegin(GL_POINTS);
-			glVertex2f(orig[0],orig[1]);
-		glEnd();
-		return;
-	}
-	glPushMatrix();
-	glTranslatef(orig[0],orig[1],0);
-	glBegin(GL_POLYGON);
-		glVertex2f(size*-0.46194f,size*0.19134f);
-		glVertex2f(size*-0.46194f,size*-0.19134f);
-		glVertex2f(size*-0.19134f,size*-0.46194f);
-		glVertex2f(size*0.19134f,size*-0.46194f);
-		glVertex2f(size*0.46194f,size*-0.19134f);
-		glVertex2f(size*0.46194f,size*0.19134f);
-		glVertex2f(size*0.46194f,size*0.46194f);
-		glVertex2f(size*-0.19134f,size*0.46194f);
-	glEnd();
-	glPopMatrix();
-}
-
 void			SegmentedShotStrategy::radarRender() const
 {
   const float *orig = getPath().getPosition();
@@ -362,12 +338,21 @@ void			SegmentedShotStrategy::radarRender() const
     // draw a "bright" bullet tip
     if (size > 0) {
       glColor3f(0.75, 0.75, 0.75);
-	  DrawShotTip((float)size,orig);
+      glPointSize((float)size);
+      glBegin(GL_POINTS);
+      glVertex2f(orig[0], orig[1]);
+      glEnd();
+      glPointSize(1.0f);
     }
   } else {
     if (size > 0) {
       // draw a sized bullet
-	DrawShotTip((float)size,orig);
+      glPointSize((float)size);
+      glBegin(GL_POINTS);
+      glVertex2fv(orig);
+      glEnd();
+      glPointSize(1.0f);
+
     } else {
       // draw the tiny little bullet
       glBegin(GL_POINTS);
