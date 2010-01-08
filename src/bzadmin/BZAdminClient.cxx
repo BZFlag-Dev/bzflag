@@ -176,11 +176,23 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	break;
 
       case MsgPause:
-	uint8_t paused;
+	uint8_t pauseCode;
 	vbuf = nboUnpackUInt8(vbuf, p);
-	vbuf = nboUnpackUInt8(vbuf, paused);
-	lastMessage.first = std::string("*** '") + players[p].name + "': " +
-	  (paused ? "paused" : "resumed") + ".";
+	vbuf = nboUnpackUInt8(vbuf, pauseCode);
+        switch (pauseCode) {
+          case PauseCodeEnable: {
+            lastMessage.first = "*** '" + players[p].name + "': paused";
+            break;
+          }
+          case PauseCodeDisable: {
+            lastMessage.first = "*** '" + players[p].name + "': resumed";
+            break;
+          }
+          default: {
+            break; // bzadmin clients should not receive
+                   // PauseCodeAcknowlege or PauseCodeCancel
+          }
+        }
 	break;
 
       case MsgAlive:

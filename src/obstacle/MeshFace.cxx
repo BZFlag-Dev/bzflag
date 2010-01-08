@@ -1609,10 +1609,6 @@ void MeshFace::SpecialData::print(std::ostream& out,
     out << prefix << "linkSrcNoGlow" << std::endl;
   }
 
-  if ((stateBits & LinkSrcNoRadar) != 0) {
-    out << prefix << "linkSrcNoRadar" << std::endl;
-  }
-
   if ((stateBits & LinkSrcNoSound) != 0) {
     out << prefix << "linkSrcNoSound" << std::endl;
   }

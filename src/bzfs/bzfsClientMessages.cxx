@@ -887,9 +887,20 @@ public:
       return false;
     }
 
-    uint8_t pauseFlag;
-    nboUnpackUInt8(buf, pauseFlag);
-    const bool wantPause = (pauseFlag != 0);
+    uint8_t pauseCode;
+    nboUnpackUInt8(buf, pauseCode);
+    switch (pauseCode) {
+      case PauseCodeEnable:
+      case PauseCodeDisable: {
+        break;
+      }
+      default: { // ignore unexpected pause codes
+        logDebugMessage(1, "unexpected pause code: %s sent %d\n",
+                        player->player.getCallSign(), (int)pauseCode);
+        return true;
+      }
+    }
+    const bool wantPause = (pauseCode == PauseCodeEnable);
 
     // notify plugins, and let them block the request
     const int playerIndex = player->player.getPlayerIndex();
@@ -908,28 +919,29 @@ public:
       return true;
     }
 
-    if (!wantPause) {
-      // unpause immediately
+    if (!wantPause) { // unpause immediately
       pausePlayer(playerIndex, false);
+      return true;
     }
-    else {
-      if (!player->pauseRequested) {
-        static BZDB_float pauseDelay("_pauseDelay");
-        // delayed pausing
-        TimeKeeper activeTime = TimeKeeper::getCurrent();
-        activeTime += pauseDelay;
-        player->pauseActiveTime = activeTime;
-        player->pauseRequested  = true;
 
-        // send the PauseCodeAcknowledge message
-        if (player->netHandler) {
-          NetMsg msg = MSGMGR.newMessage();
-          msg->packUInt8(player->getIndex());
-          msg->packUInt8(PauseCodeAcknowledge);
-          msg->packFloat(pauseDelay);
-          msg->send(player->netHandler, MsgPause);
-        }
-      }
+    if (player->pauseRequested) {
+      return true; // ignore repeat requests
+    }
+
+    static BZDB_float pauseDelay("_pauseDelay");
+    // delayed pausing
+    TimeKeeper activeTime = TimeKeeper::getCurrent();
+    activeTime += pauseDelay;
+    player->pauseActiveTime = activeTime;
+    player->pauseRequested  = true;
+
+    // send the PauseCodeAcknowledge message
+    if (player->netHandler) {
+      NetMsg msg = MSGMGR.newMessage();
+      msg->packUInt8(player->getIndex());
+      msg->packUInt8(PauseCodeAcknowledge);
+      msg->packFloat(pauseDelay);
+      msg->send(player->netHandler, MsgPause);
     }
     
     return true;
@@ -948,14 +960,14 @@ public:
     uint8_t autopilot;
     nboUnpackUInt8(buf, autopilot);
 
-	bool allow = !BZDB.isTrue(BZDBNAMES.DISABLEBOTS);
+    bool allow = !BZDB.isTrue(BZDBNAMES.DISABLEBOTS);
 
-	bz_AutoPilotChangeData_V1 evnt(autopilot != 0, allow,player->getIndex());
+    bz_AutoPilotChangeData_V1 evnt(autopilot != 0, allow,player->getIndex());
 
-	worldEventManager.callEvents(bz_eAllowAutoPilotChangeEvent,&evnt);
+    worldEventManager.callEvents(bz_eAllowAutoPilotChangeEvent,&evnt);
 
-	if (evnt.allow)
-		player->setAutoPilot(autopilot != 0);
+    if (evnt.allow)
+      player->setAutoPilot(autopilot != 0);
 
     return true;
   }

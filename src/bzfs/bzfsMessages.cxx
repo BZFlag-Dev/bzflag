@@ -169,7 +169,7 @@ void sendExistingPlayerUpdates ( int newPlayer )
       if (otherData->player.isPaused()) {
         NetMsg pauseMsg = MSGMGR.newMessage();
         pauseMsg->packUInt8(otherData->getIndex());
-        pauseMsg->packUInt8(1);
+        pauseMsg->packUInt8(PauseCodeEnable);
         pauseMsg->send(playerData->netHandler, MsgPause);
       }
     }

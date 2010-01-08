@@ -1646,7 +1646,8 @@ static bool savePlayersState()
 
     // complete MsgPause
     buf = nboPackUInt8(bufStart, i);
-    buf = nboPackUInt8(buf, pi->isPaused() ? 1 : 0);
+    buf = nboPackUInt8(buf, pi->isPaused() ? PauseCodeEnable
+                                           : PauseCodeDisable);
     routePacket(MsgPause,
                 (char*)buf - (char*)bufStart, bufStart, StatePacket);
 

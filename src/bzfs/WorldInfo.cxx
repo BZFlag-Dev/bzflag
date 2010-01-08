@@ -74,7 +74,15 @@ WorldInfo::WorldInfo() :
   waterLevel = -1.0f;
   waterMatRef = NULL;
   finished = false;
+
+  if (!clOptions->gndTexture.empty()) {
+    BzMaterial material;
+    material.setName("GroundMaterial");
+    material.setTexture(clOptions->gndTexture);
+    MATERIALMGR.addMaterial(&material);
+  }
 }
+
 
 WorldInfo::~WorldInfo()
 {
@@ -92,7 +100,7 @@ WorldInfo::~WorldInfo()
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
   linkManager.clear();  
-                  
+
   finished = false;
 }
 

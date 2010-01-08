@@ -162,9 +162,6 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "linkSrcNoGlow") == 0) {
     specialData.stateBits |=  MeshFace::LinkSrcNoGlow;
   }
-  else if (strcasecmp(cmd, "linkSrcNoRadar") == 0) {
-    specialData.stateBits |=  MeshFace::LinkSrcNoRadar;
-  }
   else if (strcasecmp(cmd, "linkSrcNoSound") == 0) {
     specialData.stateBits |=  MeshFace::LinkSrcNoSound;
   }

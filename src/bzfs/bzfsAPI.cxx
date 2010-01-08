@@ -1952,7 +1952,7 @@ BZF_API bool bz_sendJoinServer(int playerID,
 
 BZF_API bool bz_fireWorldWep(const char *flagType, float lifetime, float *pos, float tilt, float direction, int shotID, float dt)
 {
-  if(!pos || !flagType)
+  if(!pos || !flagType || !world)
     return false;
 
   FlagTypeMap &flagMap=FlagType::getFlagMap();
@@ -1985,7 +1985,7 @@ BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float
 {
   const char *flagType="GM";
 
-  if(!pos || !flagType)
+  if(!pos || !flagType || !world)
     return false;
 
   FlagTypeMap &flagMap=FlagType::getFlagMap();
@@ -4977,7 +4977,6 @@ bool bz_ServerSidePlayerHandler::jump(void)
 const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldPos, bz_ServerSidePlayerHandler::UpdateInfo &newPos, float width, float breadth, float height, bool directional, bool checkWalls = true )
 {
   return NULL;
-
   // check and see if this path goes thru a building.
   const fvec3 oldP(oldPos.pos[0], oldPos.pos[1], oldPos.pos[2]);
   const fvec3 newP(newPos.pos[0], newPos.pos[1], newPos.pos[2]);
@@ -5043,6 +5042,7 @@ const Obstacle* hitBuilding ( const bz_ServerSidePlayerHandler::UpdateInfo &oldP
 bool checkBounds ( float pos[3], float rad )
 {
   float x,y;
+
   world->getSize(x,y);
 
   if ( pos[0] + rad > x)

@@ -70,7 +70,7 @@ void CustomMaterial::writeToManager() const
 
   int index = MATERIALMGR.getIndex(matref);
   if (index < 0) {
-    std::cout << "CustomMaterial::write: material didn't register" << std::endl;
+    std::cout << "CustomMaterial::write: material did not register" << std::endl;
   }
   return;
 }

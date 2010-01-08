@@ -804,12 +804,16 @@ static bool allBasesDefined(void)
 bool defineWorld ( void )
 {
   logDebugMessage(1,"defining world\n");
-  // clean up old database
-  if (world)
-    delete world;
 
-  if (worldDatabase)
+  // clean up old data
+  if (world) {
+    delete world;
+    world = NULL;
+  }
+  if (worldDatabase) {
     delete[] worldDatabase;
+    worldDatabase = NULL;
+  }
 
   bz_GetWorldEventData_V1 worldData;
   worldData.ctf     = (clOptions->gameType == ClassicCTF);
@@ -817,7 +821,6 @@ bool defineWorld ( void )
   worldData.openFFA = (clOptions->gameType == OpenFFA);
   worldData.worldFile = clOptions->worldFile;
 
-  world = new WorldInfo;
   worldEventManager.callEvents(bz_eGetWorldEvent, &worldData);
 
   if (!worldData.generated && worldData.worldFile.size()) {
@@ -831,50 +834,56 @@ bool defineWorld ( void )
     else
       clOptions->gameType = TeamFFA;
 
-    // todo.. load this maps options and vars and stuff.
+    // todo.. load this map's options and vars and stuff.
   }
 
   // make world and add buildings
   if (worldData.worldBlob != NULL) {
     logDebugMessage(1, "reading worldfile from memory\n");
     std::istringstream in(worldData.worldBlob);
-    BZWReader* reader = new BZWReader(in);
-    world = reader->defineWorldFromFile();
-    delete reader;
+    BZWReader reader(in);
+    world = reader.defineWorldFromFile();
 
-    if (!allBasesDefined()) { return false; }
+    if (!allBasesDefined()) {
+      delete world;
+      world = NULL;
+      return false;
+    }
   }
   else if (clOptions->worldFile.size()) {
     logDebugMessage(1, "reading worldfile %s\n", clOptions->worldFile.c_str());
-    BZWReader* reader = new BZWReader(clOptions->worldFile);
-    world = reader->defineWorldFromFile();
-    delete reader;
+    BZWReader reader(clOptions->worldFile);
+    world = reader.defineWorldFromFile();
 
-    if (!allBasesDefined()) { return false; }
+    if (!allBasesDefined()) {
+      delete world;
+      world = NULL;
+      return false;
+    }
   }
   else {
     // check and see if anyone wants to define the world from an event
     if (!worldData.generated) {
-      logDebugMessage(1,"building random map\n");
+      logDebugMessage(1, "building random map\n");
       delete world;
-      if (clOptions->gameType == ClassicCTF)
-	world = defineTeamWorld();
-      else
-	world = defineRandomWorld();
+      world = (clOptions->gameType == ClassicCTF) ? defineTeamWorld()
+                                                  : defineRandomWorld();
     }
     else {
-      logDebugMessage(1,"loading plug-in map\n");
+      logDebugMessage(1, "loading plug-in map\n");
       float worldSize = BZDBCache::worldSize;
-      if (pluginWorldSize > 0)
+      if (pluginWorldSize > 0) {
 	worldSize = pluginWorldSize;
-      else
+      } else {
 	pluginWorldSize = worldSize;
+      }
 
       float wallHeight = BZDB.eval(BZDBNAMES.WALLHEIGHT);
-      if (pluginWorldHeight > 0)
+      if (pluginWorldHeight > 0) {
 	wallHeight = pluginWorldHeight;
-      else
+      } else {
 	pluginWorldHeight = wallHeight;
+      }
 
       const float hws = 0.5f * worldSize;
       world->addWall(0.0f, +hws, 0.0f, (float)(1.5 * M_PI), hws, wallHeight);
@@ -898,8 +907,14 @@ bool defineWorld ( void )
   world->packDatabase();
 
   // now get world packaged for network transmission
-  worldDatabaseSize = 4 + WorldCodeHeaderSize +
-    world->getDatabaseSize() + 4 + WorldCodeEndSize;
+  worldDatabaseSize =
+    sizeof(uint16_t) + // WorldCodeHeaderSize
+    sizeof(uint16_t) + // WorldCodeHeader
+    WorldCodeHeaderSize +
+    world->getDatabaseSize() +
+    sizeof(uint16_t) + // WorldCodeEndSize
+    WorldCodeEndSize + 
+    sizeof(uint16_t);  // WorldCodeEnd
 
   worldDatabase = new char[worldDatabaseSize];
   // this should NOT happen but it does sometimes
@@ -2261,13 +2276,14 @@ void anointNewRabbit( int killerId )
 
 void pausePlayer(int playerIndex, bool paused)
 {
-  printf("pausePlayer %i %s\n", playerIndex, paused ? "true" : "false");//FIXME
-
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData) {
     return;
   }
+
+  logDebugMessage(2, "pausePlayer %s %s\n", playerData->player.getCallSign(),
+                  paused ? "true" : "false");
 
   // always reset these parameters
   playerData->pauseRequested = false;
@@ -2297,7 +2313,7 @@ void pausePlayer(int playerIndex, bool paused)
 
   NetMsg msg = MSGMGR.newMessage();
   msg->packUInt8(playerIndex);
-  msg->packUInt8(paused ? 1 : 0);
+  msg->packUInt8(paused ? PauseCodeEnable : PauseCodeDisable);
   msg->broadcast(MsgPause);
 
   bz_PlayerPausedEventData_V1 pauseEventData;

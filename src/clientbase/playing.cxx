@@ -1529,17 +1529,21 @@ void handleAdminInfo(void *msg)
     std::string message("joining as ");
     if (tank->isObserver()) {
       message += "an observer";
-    } else {
+    }
+    else {
       switch (tank->getPlayerType()) {
-case TankPlayer:
-  message += "a tank";
-  break;
-case ComputerPlayer:
-  message += "a robot tank";
-  break;
-default:
-  message += "an unknown type";
-  break;
+        case TankPlayer: {
+          message += "a tank";
+          break;
+        }
+        case ComputerPlayer: {
+          message += "a robot tank";
+          break;
+        }
+        default: {
+          message += "an unknown type";
+          break;
+        }
       }
     }
     message += " from " + ip.getDotNotation();
@@ -1749,7 +1753,9 @@ void handlePause(void *msg)
     }
     case PauseCodeAcknowledge: {
       if (player == myTank) {
-        msg = nboUnpackFloat(msg, pauseCountdown);
+        float waitTime;
+        msg = nboUnpackFloat(msg, waitTime);
+        pauseCountdown = waitTime;
         pauseWaiting = true;
       }
       break;
@@ -1758,7 +1764,7 @@ void handlePause(void *msg)
       if (player == myTank) {
         std::string reason;
         msg = nboUnpackStdString(msg, reason);
-        addMessage(player, "Pause cancelled: " + reason);
+        addMessage(player, "Pause cancelled: " + reason); // FIXME -- use an alert
         pauseCountdown = 0.0f;
         pausedByUnmap = false;
         pauseWaiting = false;

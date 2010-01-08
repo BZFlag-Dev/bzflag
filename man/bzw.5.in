@@ -563,8 +563,6 @@ properties:
 .br
 \fB    linkSrcNoGlow\fR    # do not render the foggy 'glow'
 .br
-\fB    linkSrcNoRadar\fR   # do not render as a teleporter in the radar
-.br
 \fB    linkSrcNoSound\fR   # do not play the teleport sound
 .br
 \fB    linkSrcNoEffect\fR  # do not render shot or tank teleported effects
@@ -1917,8 +1915,6 @@ face :=
 	| "linkName" <link_name>
 .br
 	| "linkSrcNoGlow"
-.br
-	| "linkSrcNoRadar"
 .br
 	| "linkSrcNoSound"
 .br

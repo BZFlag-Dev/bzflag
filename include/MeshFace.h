@@ -71,9 +71,8 @@ class MeshFace : public Obstacle {
       LinkSrcTouch      = (1 << 2),
       LinkSrcRebound    = (1 << 3),
       LinkSrcNoGlow     = (1 << 4),
-      LinkSrcNoRadar    = (1 << 5),
-      LinkSrcNoSound    = (1 << 6),
-      LinkSrcNoEffect   = (1 << 7)
+      LinkSrcNoSound    = (1 << 5),
+      LinkSrcNoEffect   = (1 << 6)
     };
 
     enum LinkGeoBits {
@@ -273,9 +272,6 @@ class MeshFace : public Obstacle {
     }
     inline bool linkSrcNoGlow() const {
       return isSpecial() && ((specialData->stateBits & LinkSrcNoGlow) != 0);
-    }
-    inline bool linkSrcNoRadar() const {
-      return isSpecial() && ((specialData->stateBits & LinkSrcNoRadar) != 0);
     }
     inline bool linkSrcNoSound() const {
       return isSpecial() && ((specialData->stateBits & LinkSrcNoSound) != 0);

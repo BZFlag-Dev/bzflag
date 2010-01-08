@@ -1394,7 +1394,7 @@ void RadarRenderer::renderBasesAndTeles()
     glColor3f(1.0f, 1.0f, 0.25f); // yellow
     for (size_t i = 0; i < linkSrcs.size(); i++) {
       const MeshFace* face = linkSrcs[i];
-      if (!face->linkSrcNoRadar()) {
+      if (!face->getMaterial()->getNoRadar()) {
         glBegin(GL_LINE_LOOP);
         const int vertCount = face->getVertexCount();
         for (int v = 0; v < vertCount; v++) {
@@ -1417,9 +1417,11 @@ void RadarRenderer::renderBasesAndTeles()
 	glBegin(GL_LINE_LOOP);
         if (bp->getTypeID() == faceType) {
           const MeshFace* face = (const MeshFace*)bp;
-          const int vertCount = face->getVertexCount();
-          for (int v = 0; v < vertCount; v++) {
-            glVertex2fv(face->getVertex(v).xy());
+          if (!face->getMaterial()->getNoRadar()) {
+            const int vertCount = face->getVertexCount();
+            for (int v = 0; v < vertCount; v++) {
+              glVertex2fv(face->getVertex(v).xy());
+            }
           }
         }
         else if (bp->getTypeID() == baseType) {

@@ -81,7 +81,7 @@ struct CmdLineOptions
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
     autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(1),
-    luaServer("")
+    luaServer(""), gndTexture("")
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -229,6 +229,8 @@ struct CmdLineOptions
   int			botsPerIP;
 
   std::string		luaServer;
+
+  std::string		gndTexture;
 
   // plugins
   typedef struct

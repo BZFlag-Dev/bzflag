@@ -737,11 +737,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       oneGameOnly = true;
     }
     else if (token == "-gndtex") {
-      const std::string texName = parseStringArg(i, tokens);
-      BzMaterial material;
-      material.setName("GroundMaterial");
-      material.setTexture(texName);
-      MATERIALMGR.addMaterial(&material);
+      gndTexture = parseStringArg(i, tokens);
     }
     else if (token == "-groupdb") {
       groupsFile = parseStringArg(i, tokens);

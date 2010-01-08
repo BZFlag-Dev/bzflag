@@ -1137,7 +1137,7 @@ void ServerLink::sendPaused(bool paused)
   char msg[2];
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
-  buf = nboPackUInt8(buf, paused ? 1 : 0);
+  buf = nboPackUInt8(buf, paused ? PauseCodeEnable : PauseCodeDisable);
   send(MsgPause, sizeof(msg), msg);
 }
 
