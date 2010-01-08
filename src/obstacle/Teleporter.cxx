@@ -419,6 +419,7 @@ const BzMaterial* Teleporter::getVoidMaterial()
   BzMaterial mat;
   mat.setDiffuse(fvec4(0.0f, 0.0f, 0.0f, 0.0f));
   mat.setNoRadar(true);
+  mat.setNoRadarOutline(true);
   mat.setNoShadowCast(true);
   mat.setNoShadowRecv(true);
   mat.setNoSorting(true);

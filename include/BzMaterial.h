@@ -71,6 +71,7 @@ class BzMaterial {
     void setGroupAlpha(bool);
     void setNoLighting(bool);
     void setNoRadar(bool);
+    void setNoRadarOutline(bool);
     void setNoShadowCast(bool);
     void setNoShadowRecv(bool);
     void setTextureShadow(bool);
@@ -115,6 +116,7 @@ class BzMaterial {
     bool  getOccluder() const;
     bool  getGroupAlpha() const;
     bool  getNoRadar() const;
+    bool  getNoRadarOutline() const;
     bool  getNoShadowCast() const;
     bool  getNoShadowRecv() const;
     bool  getTextureShadow() const;
@@ -176,6 +178,7 @@ class BzMaterial {
     bool occluder;
     bool groupAlpha;
     bool noRadar;
+    bool noRadarOutline;
     bool noShadowCast;
     bool noShadowRecv;
     bool texShadow;

@@ -320,17 +320,18 @@ void BzMaterial::reset()
   poFactor = 0.0f;
   poUnits  = 0.0f;
 
-  occluder     = false;
-  groupAlpha   = false;
-  noRadar      = false;
-  noShadowCast = false;
-  noShadowRecv = false;
-  texShadow    = false;
-  noCulling    = false;
-  noSorting    = false;
-  noBlending   = false;
-  noLighting   = false;
-  radarSpecial = false;
+  occluder       = false;
+  groupAlpha     = false;
+  noRadar        = false;
+  noRadarOutline = false;
+  noShadowCast   = false;
+  noShadowRecv   = false;
+  texShadow      = false;
+  noCulling      = false;
+  noSorting      = false;
+  noBlending     = false;
+  noLighting     = false;
+  radarSpecial   = false;
   delete[] textures;
   textures = NULL;
   textureCount = 0;
@@ -393,6 +394,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   occluder = m.occluder;
   groupAlpha = m.groupAlpha;
   noRadar = m.noRadar;
+  noRadarOutline = m.noRadarOutline;
   noShadowCast = m.noShadowCast;
   noShadowRecv = m.noShadowRecv;
   texShadow = m.texShadow;
@@ -439,8 +441,9 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (shininess != m.shininess) || (alphaThreshold != m.alphaThreshold) ||
       (poFactor != m.poFactor) || (poUnits != m.poUnits) ||
       (occluder != m.occluder) || (groupAlpha != m.groupAlpha) ||
-      (noRadar != m.noRadar) || (noShadowCast != m.noShadowCast) ||
-      (noShadowRecv != m.noShadowRecv) || (texShadow != m.texShadow) ||
+      (noRadar != m.noRadar) || (noRadarOutline != m.noRadarOutline) ||
+      (noShadowCast != m.noShadowCast) || (noShadowRecv != m.noShadowRecv) ||
+      (texShadow != m.texShadow) ||
       (noCulling != m.noCulling) || (noSorting != m.noSorting) ||
       (noBlending != m.noBlending) || (noLighting != m.noLighting) ||
       (radarSpecial != m.radarSpecial)) {
@@ -486,17 +489,18 @@ void* BzMaterial::pack(void* buf) const
   }
 
   uint16_t modeBytes = 0;
-  if (noCulling)    { modeBytes |= (1 << 0); }
-  if (noSorting)    { modeBytes |= (1 << 1); }
-  if (noRadar)      { modeBytes |= (1 << 2); }
-  if (noShadowCast) { modeBytes |= (1 << 3); }
-  if (noShadowRecv) { modeBytes |= (1 << 4); }
-  if (texShadow)    { modeBytes |= (1 << 5); }
-  if (occluder)     { modeBytes |= (1 << 6); }
-  if (groupAlpha)   { modeBytes |= (1 << 7); }
-  if (noLighting)   { modeBytes |= (1 << 8); }
-  if (noBlending)   { modeBytes |= (1 << 9); }
-  if (radarSpecial) { modeBytes |= (1 << 10); }
+  if (noCulling)      { modeBytes |= (1 << 0); }
+  if (noSorting)      { modeBytes |= (1 << 1); }
+  if (noRadar)        { modeBytes |= (1 << 2); }
+  if (noRadarOutline) { modeBytes |= (1 << 3); }
+  if (noShadowCast)   { modeBytes |= (1 << 4); }
+  if (noShadowRecv)   { modeBytes |= (1 << 5); }
+  if (texShadow)      { modeBytes |= (1 << 6); }
+  if (occluder)       { modeBytes |= (1 << 7); }
+  if (groupAlpha)     { modeBytes |= (1 << 8); }
+  if (noLighting)     { modeBytes |= (1 << 9); }
+  if (noBlending)     { modeBytes |= (1 << 10); }
+  if (radarSpecial)   { modeBytes |= (1 << 11); }
   buf = nboPackUInt16(buf, modeBytes);
 
   buf = nboPackInt32(buf, order);
@@ -549,17 +553,18 @@ void* BzMaterial::unpack(void* buf)
 
   uint16_t modeBytes;
   buf = nboUnpackUInt16(buf, modeBytes);
-  noCulling    = (modeBytes & (1 << 0)) != 0;
-  noSorting    = (modeBytes & (1 << 1)) != 0;
-  noRadar      = (modeBytes & (1 << 2)) != 0;
-  noShadowCast = (modeBytes & (1 << 3)) != 0;
-  noShadowRecv = (modeBytes & (1 << 4)) != 0;
-  texShadow    = (modeBytes & (1 << 5)) != 0;
-  occluder     = (modeBytes & (1 << 6)) != 0;
-  groupAlpha   = (modeBytes & (1 << 7)) != 0;
-  noLighting   = (modeBytes & (1 << 8)) != 0;
-  noBlending   = (modeBytes & (1 << 9)) != 0;
-  radarSpecial = (modeBytes & (1 << 10)) != 0;
+  noCulling      = (modeBytes & (1 << 0)) != 0;
+  noSorting      = (modeBytes & (1 << 1)) != 0;
+  noRadar        = (modeBytes & (1 << 2)) != 0;
+  noRadarOutline = (modeBytes & (1 << 3)) != 0;
+  noShadowCast   = (modeBytes & (1 << 4)) != 0;
+  noShadowRecv   = (modeBytes & (1 << 5)) != 0;
+  texShadow      = (modeBytes & (1 << 6)) != 0;
+  occluder       = (modeBytes & (1 << 7)) != 0;
+  groupAlpha     = (modeBytes & (1 << 8)) != 0;
+  noLighting     = (modeBytes & (1 << 9)) != 0;
+  noBlending     = (modeBytes & (1 << 10)) != 0;
+  radarSpecial   = (modeBytes & (1 << 11)) != 0;
 
   buf = nboUnpackInt32(buf, order);
   buf = nboUnpackInt32(buf, inTmp); dynamicColor = int(inTmp);
@@ -710,6 +715,9 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
   }
   if (noRadar) {
     out << indent << "  noradar" << std::endl;
+  }
+  if (noRadarOutline) {
+    out << indent << "  noRadarOutline" << std::endl;
   }
   if (noShadowCast) {
     out << indent << "  noshadowcast" << std::endl;
@@ -923,6 +931,12 @@ void BzMaterial::setRadarSpecial(bool value)
 void BzMaterial::setOccluder(bool value)
 {
   occluder = value;
+  return;
+}
+
+void BzMaterial::setNoRadarOutline(bool value)
+{
+  noRadarOutline = value;
   return;
 }
 
@@ -1186,6 +1200,11 @@ bool BzMaterial::getRadarSpecial() const
 bool BzMaterial::getOccluder() const
 {
   return occluder;
+}
+
+bool BzMaterial::getNoRadarOutline() const
+{
+  return noRadarOutline;
 }
 
 bool BzMaterial::getGroupAlpha() const

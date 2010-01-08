@@ -418,6 +418,8 @@ properties:
 .br
 \fB  noradar\fR              # do not display on radar  (except normal mode)
 .br
+\fB  noradaroutline\fR       # do not display on radar outlines  (for links and bases)
+.br
 \fB  noshadow\fR             # do not render shadows
 .br
 \fB  noculling\fR            # do not cull by face winding  (double-sided)
@@ -1428,6 +1430,8 @@ material :=
 	| "spheremap"
 .br
 	| "noradar"
+.br
+	| "noradaroutline"
 .br
 	| "noshadow"
 .br

@@ -178,6 +178,11 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setNoRadar(true);
     }
   }
+  else if (strcasecmp(cmd, "noradaroutline") == 0) {
+    for (i = 0; i < materialCount; i++) {
+      materials[i].setNoRadarOutline(true);
+    }
+  }
   else if (strcasecmp(cmd, "noshadow") == 0) {
     for (i = 0; i < materialCount; i++) {
       materials[i].setNoShadowCast(true);
