@@ -22,6 +22,13 @@
 // to verify that it is a valid token, and to test which groups the user is a
 // member of.
 //
+// Sites MUST redirect the user to the login form. Sites that send the login
+// info from any other form will automaticly be rejected. The aim of this
+// service to to show the user that login info is being sent to bzflag.org.
+//
+// Sites can send a CSS file to us, using the 'css' paramater to tweak the 
+// look of the login page to better match the site that is calling it.
+//
 // TODO: Add some error handling/reporting
 
 function validate_token($token, $username, $groups = array(), $checkIP = true)
