@@ -29,6 +29,7 @@
 #include "MeshDrawInfo.h"
 #include "MeshTransform.h"
 #include "StateDatabase.h"
+#include "TextUtils.h"
 
 // local headers
 #include "Triangulate.h"
@@ -991,6 +992,15 @@ void *MeshObstacle::unpack(void *buf)
 }
 
 
+static std::string debugIndex(int index)
+{
+  if (debugLevel >= 1) {
+    return " # " + TextUtils::itoa(index);
+  }
+  return "";
+}
+
+
 void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "mesh" << std::endl;
@@ -1045,13 +1055,13 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     }
   }
   for (i = 0; i < vertexCount; i++) {
-    out << indent << "  vertex"   << vertices[i]  << std::endl;
+    out << indent << "  vertex"   << vertices[i]  << debugIndex(i) << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << indent << "  normal"   << normals[i]   << std::endl;
+    out << indent << "  normal"   << normals[i]   << debugIndex(i) << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
-    out << indent << "  texcoord" << texcoords[i] << std::endl;
+    out << indent << "  texcoord" << texcoords[i] << debugIndex(i) << std::endl;
   }
 
   // weapons
@@ -1197,19 +1207,21 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
 
 
   for (i = 0; i < vertexCount; i++) {
-    out << "v" << vertices[i] << std::endl;
+    out << "v" << vertices[i] << debugIndex(i) << std::endl;
   }
   for (i = 0; i < normalCount; i++) {
-    out << "vn" << normals[i] << std::endl;
+    out << "vn" << normals[i] << debugIndex(i) << std::endl;
   }
+  const int nc = normalCount;
   for (size_t j = 0; j < extraNormals.size(); j++) {
-    out << "vn" << extraNormals[j] << std::endl;
+    out << "vn" << extraNormals[j] << debugIndex(nc + j) << std::endl;
   }
   for (i = 0; i < texcoordCount; i++) {
-    out << "vt" << texcoords[i] << std::endl;
+    out << "vt" << texcoords[i] << debugIndex(i) << std::endl;
   }
+  const int tc = texcoordCount;
   for (size_t j = 0; j < extraTexcoords.size(); j++) {
-    out << "vt" << extraTexcoords[j] << std::endl;
+    out << "vt" << extraTexcoords[j] << debugIndex(tc + j) << std::endl;
   }
 
   int usedExtraNorms = 0;

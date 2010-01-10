@@ -999,6 +999,15 @@ bool MeshDrawInfo::parse(std::istream& input)
 
 //============================================================================//
 
+static std::string debugIndex(int index)
+{
+  if (debugLevel >= 1) {
+    return " # " + TextUtils::itoa(index);
+  }
+  return "";
+}
+
+
 void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
 {
   int i;
@@ -1031,19 +1040,17 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
   // raw vertices
   for (i = 0; i < rawVertCount; i++) {
     const fvec3& v = rawVerts[i];
-    out << indent << "  vertex " << v.x << " " << v.y << " "
-				 << v.z << std::endl;
+    out << indent << "  vertex " << v << debugIndex(i) << std::endl;
   }
   // raw normals
   for (i = 0; i < rawNormCount; i++) {
     const fvec3& n = rawNorms[i];
-    out << indent << "  normal " << n.x << " " << n.y << " "
-				 << n.z << std::endl;
+    out << indent << "  normal " << n << debugIndex(i) << std::endl;
   }
   // raw texcoords
   for (i = 0; i < rawTxcdCount; i++) {
     const fvec2& t = rawTxcds[i];
-    out << indent << "  texcoord " << t.x << " " << t.y << std::endl;
+    out << indent << "  texcoord " << t << debugIndex(i) << std::endl;
   }
 
   // corners
@@ -1051,7 +1058,8 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
     const Corner& corner = corners[i];
     out << indent << "  corner " << corner.vertex << " "
 				 << corner.normal << " "
-				 << corner.texcoord << std::endl;
+				 << corner.texcoord 
+				 << debugIndex(i) << std::endl;
   }
 
   // normal draw sets
