@@ -252,7 +252,7 @@ void BzMaterialManager::setTextureLocal(const std::string& url,
 //
 
 BzMaterial BzMaterial::defaultMaterial;
-std::string BzMaterial::nullString = "";
+const std::string BzMaterial::nullString = "";
 
 
 std::string BzMaterial::convertTexture(const std::string& oldTex)

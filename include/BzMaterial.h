@@ -219,7 +219,7 @@ class BzMaterial {
     ShaderInfo* shaders;
 
   private:
-    static std::string nullString;
+    static const std::string nullString;
     static BzMaterial defaultMaterial;
 };
 
