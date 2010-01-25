@@ -17,9 +17,6 @@
 #include "vectors.h"
 
 
-class WorldInfo;
-
-
 namespace DropGeometry
 {
   bool dropFlag     (fvec3& pos, float minZ, float maxZ);
