@@ -135,8 +135,6 @@ static const char *usageString =
   "[-srvmsg <text>] "
   "[-st <time>] "
   "[-sw <num>] "
-  "[-synctime] "
-  "[-synclocation] "
   "[-t] "
   "[-tftimeout <seconds>] "
   "[-time {<seconds>|endTime}] "
@@ -243,8 +241,6 @@ static const char *extraUsageString =
   "\t-srvmsg: specify a <msg> to print upon client login\n"
   "\t-st: shake bad flags in <time> seconds\n"
   "\t-sw: shake bad flags after <num> wins\n"
-  "\t-synctime: synchronize time of day on all clients\n"
-  "\t-synclocation: synchronize latitude and longitude on all clients\n"
   "\t-t: allow teleporters\n"
   "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
   "\t-time: set time limit on each game in format of either seconds or ending time in x[x]:[xx:[xx]] format\n"
@@ -1180,14 +1176,6 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 	shakeWins = uint16_t(count);
       }
       gameOptions |= int(ShakableGameStyle);
-    }
-    else if (token == "-synctime") {
-      // client clocks should be synchronized to server clock
-      BZDB.set(BZDBNAMES.SYNCTIME, "1.0"); // any positive number
-    }
-    else if (token == "-synclocation") {
-      // client coordinates should be set to server coordinates
-      BZDB.set(BZDBNAMES.SYNCLOCATION, "true");
     }
     else if (token == "-t") {
       // allow teleporters
