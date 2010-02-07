@@ -609,7 +609,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     for (i = 0; i < topicLines; i++) {
       glColor4fv(whiteColor);
       const std::string& line = tab->topic.lines[i];
-      fm.drawString((float)fx, fy - (i + 1.0f) * lineHeight, 0,
+      fm.drawString((float)fx, (float)(fy - (i + 1)) * lineHeight, 0,
                     fontFace->getFMFace(), fontSize, line);
     }
   }
@@ -905,10 +905,10 @@ void ControlPanel::resize()
   ControlPanelMessage::prevXoffset = 0.0f;
   for (int i = 0; i < (int)tabs.size(); i++) {
     for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
-      tabs[i]->messages[j].breakLines(messageRect.xsize - (2.0f * margin),
+      tabs[i]->messages[j].breakLines((float)(messageRect.xsize - (2 * margin)),
                                       faceID, fontSize);
     }
-    tabs[i]->topic.breakLines(messageRect.xsize - (2.0f * margin),
+    tabs[i]->topic.breakLines((float)(messageRect.xsize - (2 * margin)),
                               faceID, fontSize);
   }
 
@@ -1059,7 +1059,7 @@ bool ControlPanel::isTabVisible(int tabID) const
 void ControlPanel::addMessage(const std::string& line, int realmode)
 {
   ControlPanelMessage item(line);
-  item.breakLines(messageRect.xsize - 2.0f * margin, fontFace->getFMFace(), fontSize);
+  item.breakLines((float)(messageRect.xsize - 2 * margin), fontFace->getFMFace(), fontSize);
 
   int _maxScrollPages = BZDB.evalInt("scrollPages");
   if (_maxScrollPages <= 0) {
@@ -1284,7 +1284,7 @@ bool ControlPanel::setTabTopic(int tabID, const std::string& topic)
   clean = TextUtils::remove_char(clean, '\t');
   clean = TextUtils::remove_char(clean, '\v');
   tabs[tabID]->topic.data = clean;
-  tabs[tabID]->topic.breakLines(messageRect.xsize - 2.0f * margin,
+  tabs[tabID]->topic.breakLines((float)(messageRect.xsize - 2* margin),
                                 fontFace->getFMFace(), fontSize);
   return true;
 }
