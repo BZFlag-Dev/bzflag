@@ -390,7 +390,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
-  glTranslatef(messageRect.xpos, messageRect.ypos, 0);
+  glTranslatef((float)messageRect.xpos, (float)messageRect.ypos, 0);
   OpenGLGState::resetState();
 
   FontManager &fm = FontManager::instance();
@@ -560,7 +560,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
       if ((j + msgy) < maxLines) {
         const float xoff = (l == 0) ? cpMsg.xoffsetFirst : cpMsg.xoffset;
 	if (!highlight) {
-	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
+	  fm.drawString((float)(fx + msgx + xoff), (float)(fy + msgy * lineHeight), 0,
 	                fontFace->getFMFace(), fontSize, msg);
 	}
 	else {
@@ -568,7 +568,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
 	  std::string newMsg;
 	  newMsg += ANSI_STR_PULSATING ANSI_STR_UNDERLINE ANSI_STR_FG_CYAN;
 	  newMsg += stripAnsiCodes(msg);
-	  fm.drawString(fx + msgx + xoff, fy + msgy * lineHeight, 0,
+	  fm.drawString((float)(fx + msgx + xoff), (float)(fy + msgy * lineHeight), 0,
 	                fontFace->getFMFace(), fontSize, newMsg);
 	}
       }
@@ -609,7 +609,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     for (i = 0; i < topicLines; i++) {
       glColor4fv(whiteColor);
       const std::string& line = tab->topic.lines[i];
-      fm.drawString(fx, fy - ((i + 1) * lineHeight), 0,
+      fm.drawString((float)fx, fy - (i + 1.0f) * lineHeight, 0,
                     fontFace->getFMFace(), fontSize, line);
     }
   }
@@ -700,11 +700,11 @@ void ControlPanel::drawTabBoxes()
     } else {
       glColor4f(0.8f, 0.8f, 0.8f, opacity);
     }
-    const float x0 = rect.xsize + 1;
+    const float x0 = rect.xsize + 1.0f;
     const float x1 = x0 + (tabHeight * 0.5f);
-    const float y0 = tabYOffset + 1;
-    const float y1 = y0 + (tabHeight / 2);
-    const float y2 = y0 + tabHeight;
+    const float y0 = tabYOffset + 1.0f;
+    const float y1 = (float)(y0 + (tabHeight / 2));
+    const float y2 = (float)(y0 + tabHeight);
     glDisable(GL_SCISSOR_TEST);
     glBegin(GL_TRIANGLES);
     glVertex2f(x0, y0);
@@ -741,7 +741,7 @@ void ControlPanel::drawTabLabels()
 
       // draw the tabs on the right side (with one letter padding)
     fm.drawString(tabXOffset + drawnTabWidth + halfWidth,
-                  tabYOffset + margin + (lineHeight / 5),
+                  (float)(tabYOffset + margin + (lineHeight / 5)),
                   0.0f, faceID, (float)fontSize, tab->label, NULL, AlignCenter);
 
     drawnTabWidth += tab->width;
@@ -905,10 +905,10 @@ void ControlPanel::resize()
   ControlPanelMessage::prevXoffset = 0.0f;
   for (int i = 0; i < (int)tabs.size(); i++) {
     for (int j = 0; j < (int)tabs[i]->messages.size(); j++) {
-      tabs[i]->messages[j].breakLines(messageRect.xsize - (2 * margin),
+      tabs[i]->messages[j].breakLines(messageRect.xsize - (2.0f * margin),
                                       faceID, fontSize);
     }
-    tabs[i]->topic.breakLines(messageRect.xsize - (2 * margin),
+    tabs[i]->topic.breakLines(messageRect.xsize - (2.0f * margin),
                               faceID, fontSize);
   }
 
@@ -1059,7 +1059,7 @@ bool ControlPanel::isTabVisible(int tabID) const
 void ControlPanel::addMessage(const std::string& line, int realmode)
 {
   ControlPanelMessage item(line);
-  item.breakLines(messageRect.xsize - 2 * margin, fontFace->getFMFace(), fontSize);
+  item.breakLines(messageRect.xsize - 2.0f * margin, fontFace->getFMFace(), fontSize);
 
   int _maxScrollPages = BZDB.evalInt("scrollPages");
   if (_maxScrollPages <= 0) {
@@ -1284,7 +1284,7 @@ bool ControlPanel::setTabTopic(int tabID, const std::string& topic)
   clean = TextUtils::remove_char(clean, '\t');
   clean = TextUtils::remove_char(clean, '\v');
   tabs[tabID]->topic.data = clean;
-  tabs[tabID]->topic.breakLines(messageRect.xsize - 2 * margin,
+  tabs[tabID]->topic.breakLines(messageRect.xsize - 2.0f * margin,
                                 fontFace->getFMFace(), fontSize);
   return true;
 }

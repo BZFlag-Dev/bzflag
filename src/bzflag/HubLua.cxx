@@ -492,7 +492,7 @@ static int CheckTab(lua_State* L, int index)
     return -1;
   }
   if (type == LUA_TNUMBER) {
-    return lua_tonumber(L, index) - 1;
+    return (int)lua_tonumber(L, index) - 1;
   }
   return controlPanel->getTabID(lua_tostring(L, index));
 }
