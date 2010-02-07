@@ -64,7 +64,7 @@
 				WarningLevel="3"
 				WarnAsError="false"
 				SuppressStartupBanner="true"
-				Detect64BitPortabilityProblems="true"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="4"
 				CompileAs="0"
 			/>
