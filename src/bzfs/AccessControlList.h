@@ -214,10 +214,6 @@ public:
       @returns @c true if the address is valid, @c false if not. */
   bool validate(const in_addr &ipAddr, BanInfo *info = NULL);
 
-  /** This function checks if a host matches a given host pattern.
-      @returns @c true if a match is found, @c false otherwise. */
-  static bool does_match(const char *targ, int targlen, const char *pat, int patlen);
-
   /** This function checks that a hostname is "valid". In this case valid means
       "not banned".
       @returns @c true if the hostname is valid, @c false if it isn't. */
