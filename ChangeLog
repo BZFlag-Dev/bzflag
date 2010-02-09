@@ -6,8 +6,17 @@ No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
+BZFlag 2.0.14
+-------------
+* added Options -> Display -> AntiFlicker option - trepan
+* added Options -> Input -> Confine Mouse (MotionBox) - trepan
+* adjusted advanced ground rendering for texture flicker - trepan
+* changed the default stencil bitplanes to 1 - trepan
+  (fixes stencil shadows and various other stencil features)
+* fixed the /idbanlist and /hostbanlist crashes - trepan, backported
+
 BZFlag 2.0.13
-------------
+-------------
 * change fonts to DejaVu - Jeff Myers, Tim Riker
 * source cleanup - Tim Riker
 
