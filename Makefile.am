@@ -22,7 +22,6 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(traversal_dirs) \
-	Dev-C++ \
 	debian \
 	m4 \
 	misc \
@@ -41,7 +40,6 @@ EXTRA_DIST = \
 	DEVINFO \
 	PORTING \
 	README.BeOS \
-	README.DEVC++ \
 	README.IRIX \
 	README.Linux \
 	README.MINGW32 \
