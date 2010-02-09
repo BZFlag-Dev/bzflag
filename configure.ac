@@ -886,7 +886,7 @@ AC_CONFIG_FILES(bzflag.info
 	tools/modeltool/vc71/Makefile
 	win32/Makefile
 	win32/VC71/Makefile
-	win32/VC8/Makefile)
+	win32/VC9/Makefile)
 AC_OUTPUT
 
 
