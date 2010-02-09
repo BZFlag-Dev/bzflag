@@ -30,7 +30,7 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(SUBDIRS)	\
-	vc71
+	vc9
 
 EXTRA_DIST = \
 	api_notes \

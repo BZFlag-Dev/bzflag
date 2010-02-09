@@ -807,7 +807,6 @@ AC_SUBST(LIBDIR)
 
 AC_CONFIG_FILES(bzflag.info
 	BZFlag.xcodeproj/Makefile
-	Dev-C++/Makefile
 	Makefile
 	bzflag.lsm
 	bzflag.spec
@@ -827,7 +826,7 @@ AC_CONFIG_FILES(bzflag.info
 	package/win32/nsis/Makefile
 	plugins/Makefile
 	plugins/plugin_utils/Makefile
-	plugins/plugin_utils/VC71/Makefile
+	plugins/plugin_utils/VC9/Makefile
 	plugins/HoldTheFlag/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
@@ -855,7 +854,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/vocaliser/Makefile
 	plugins/Phoenix/Makefile
 	plugins/wwzones/Makefile
-	plugins/vc71/Makefile
+	plugins/vc9/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
@@ -883,7 +882,7 @@ AC_CONFIG_FILES(bzflag.info
 	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
-	tools/modeltool/vc71/Makefile
+	tools/modeltool/vc9/Makefile
 	win32/Makefile
 	win32/VC71/Makefile
 	win32/VC9/Makefile)
