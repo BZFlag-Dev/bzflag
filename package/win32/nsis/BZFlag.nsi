@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.0
-  !define VER_MINOR .12
+  !define VER_MINOR .14.20100209
 
 ;--------------------------------
 ;Compression options
@@ -47,7 +47,7 @@
 ;Interface Settings
 
   ;Icons
-  !define MUI_ICON ..\..\..\win32\bzflag.ico
+  !define MUI_ICON ..\..\..\MSVC\bzflag.ico
   !define MUI_UNICON uninstall.ico
 
   ;Bitmaps
@@ -117,20 +117,24 @@ Section "!BZFlag (Required)" BZFlag
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\src\bzflag\bzflag.exe
-  File bzflag.exe.manifest
+  File ..\..\..\bzflag.exe
   
   ; make the data dir
   SetOutPath $INSTDIR\data
-  File ..\..\..\data\*.*
+  File ..\..\..\data\*.png
+   File ..\..\..\data\*.wav
 
   ; make the fonts dir
   SetOutPath $INSTDIR\data\fonts
-  File ..\..\..\data\fonts\*.*
-
+  File ..\..\..\data\fonts\*.fmt
+  File ..\..\..\data\fonts\*.png
+  File ..\..\..\data\fonts\README
+  File ..\..\..\data\fonts\DejaVu.License
+  
   ; make the l10n dir
   SetOutPath $INSTDIR\data\l10n
-  File ..\..\..\data\l10n\*.*
+  File ..\..\..\data\l10n\*.po
+  File ..\..\..\data\l10n\*.txt
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
@@ -141,12 +145,16 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
-  File ..\..\..\glew32.dll
 
-  ; See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_c_run.2d.time_libraries.asp
-  ; "An application should use and redistribute msvcr71.dll [and msvcp71.dll], and it should avoid placing a copy or using an existing copy of msvcr71.dll in the system directory. Instead, the application should keep a copy of msvcr71.dll [and msvcp71.dll] in its application directory with the program executable."
-  File ..\..\..\msvcr71.dll
-  File ..\..\..\msvcp71.dll
+  ; This requires the Visual C++ 2008 SP1 runtime file to be located in
+  ; the same directory as the NSIS script
+  ; http://www.microsoft.com/downloads/details.aspx?familyid=2051A0C1-C9B5-4B0A-A8F5-770A549FD78C
+  SetOutPath $TEMP
+  DetailPrint "Installing Visual C++ 2008 SP1 runtime"         
+  File vcredist_x86.exe  
+  ExecWait "$TEMP\vcredist_x86.exe /q"         
+  DetailPrint "Cleaning up"         
+  Delete $TEMP\vcredist_x86.exe
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
@@ -165,7 +173,7 @@ Section "!BZFlag (Required)" BZFlag
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR} (Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window -geometry 800x600" "$INSTDIR\bzflag.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR} (Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
 
     SetOutPath $INSTDIR\doc
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -179,7 +187,7 @@ Section "BZAdmin" BZAdmin
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\src\bzadmin\bzadmin.exe
+  File ..\..\..\bzadmin.exe
 
   ; Add some DLL files
   ;SetOutPath $INSTDIR\
@@ -208,15 +216,15 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Set output path to the installation directory.
     SetOutPath $INSTDIR
     ; Put file there
-    File ..\..\..\src\bzfs\bzfs.exe
+    File ..\..\..\bzfs.exe
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
-    File ..\..\..\misc\hix.bzw
-    File ..\..\..\misc\bzfs.conf
-    File ..\..\..\misc\bzfs_conf.html
-    File ..\..\..\misc\groups.conf
-    File ..\..\..\misc\vars.txt
+    File ..\..\..\misc\maps\hix.bzw
+    File ..\..\..\misc\samples\bzfs.conf
+    File ..\..\..\misc\samples\bzfs_conf.html
+    File ..\..\..\misc\samples\groups.conf
+    File ..\..\..\misc\samples\vars.txt
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
@@ -251,8 +259,10 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\src\bzfs\bzfs.lib
+    File ..\..\..\bzfs.lib
+    File ..\..\..\plugins\plugin_utils\Release\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
+    File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
 SectionGroupEnd
 
@@ -300,6 +310,7 @@ Section "Uninstall"
   ;remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}"
   DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}"
+  DeleteRegKey HKCU "Software\BZFlag"
 
   ; remove files
   Delete $INSTDIR\*.*
@@ -308,6 +319,15 @@ Section "Uninstall"
   Delete $INSTDIR\data\*.*
   Delete $INSTDIR\data\fonts\*.*
   Delete $INSTDIR\data\l10n\*.*
+  Delete $INSTDIR\data\skins\blue\*.*
+  Delete $INSTDIR\data\skins\red\*.*
+  Delete $INSTDIR\data\skins\green\*.*
+  Delete $INSTDIR\data\skins\purple\*.*
+  Delete $INSTDIR\data\skins\rabbit\*.*
+  Delete $INSTDIR\data\skins\observer\*.*
+  Delete $INSTDIR\data\skins\hunter\*.*
+  Delete $INSTDIR\data\skins\rogue\*.*
+
   Delete $INSTDIR\API\*.*
 
   ; MUST REMOVE UNINSTALLER, too
@@ -318,6 +338,15 @@ Section "Uninstall"
   RMDir "$INSTDIR\API"
   RMDir "$INSTDIR\data\l10n"
   RMDir "$INSTDIR\data\fonts"
+  RMDir "$INSTDIR\data\skins\blue"
+  RMDir "$INSTDIR\data\skins\green"
+  RMDir "$INSTDIR\data\skins\hunter"
+  RMDir "$INSTDIR\data\skins\red"
+  RMDir "$INSTDIR\data\skins\purple"
+  RMDir "$INSTDIR\data\skins\rabbit"
+  RMDir "$INSTDIR\data\skins\observer"
+  RMDir "$INSTDIR\data\skins\rogue"
+  RMDir "$INSTDIR\data\skins\"
   RMDir "$INSTDIR\data"
   RMDir "$INSTDIR\misc"
   RMDir "$INSTDIR\doc"

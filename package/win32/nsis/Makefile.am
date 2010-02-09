@@ -1,11 +1,10 @@
 EXTRA_DIST =	\
-	BZFlag.nsi	\
-	bzflag.exe.manifest	\
+	BZFlag.nsi		\
 	DisableCheck.bmp	\
 	EnableCheck.bmp		\
-	side.bmp		\
 	copying.rtf		\
 	header.bmp		\
+	side.bmp		\
 	uninstall.ico
 
 MAINTAINERCLEANFILES = \
