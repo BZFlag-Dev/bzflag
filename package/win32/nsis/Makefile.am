@@ -5,6 +5,7 @@ EXTRA_DIST =	\
 	copying.rtf		\
 	header.bmp		\
 	side.bmp		\
+	notes.txt		\
 	uninstall.ico
 
 MAINTAINERCLEANFILES = \
