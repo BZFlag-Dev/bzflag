@@ -41,19 +41,18 @@ The installer is the bzflag executable in the dist folder.
 
 The instructions for building with Dev-C++ are enclosed in README.DEVC++
 
-If you are using Visual C++ 2005 EXPRESS edition, you will need to install
+If you are using Visual C++ 2008 EXPRESS edition, you will need to install
 a number of extra things before you can build. BZFlag will not build with 
 VC express editions "out of the box".
-Also note that the VC8 project does not have the same setup as the VC7.1 does
-since it is not used for binaries. It will not convert the man pages
-into HTML automatically, nor does it build a binary with the GLEW library.
+Also note that the VC9 project will not convert the man pages
+into HTML automatically.
 
 You will need the windows platform SDK
   (instructions http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/default.aspx)
 You will need the windows DirectX SDK
   (instructions at http://msdn.microsoft.com/directx/sdk/readmepage/default.aspx)
 You will need to also install libCURL and curses (see above).
-Use the VC8 projects in the win32 directory.
+Use the VC9 projects in the win32 directory.
 
 If you want to build with SDL (not recommended):
 Choose the Lib tab, and add SDLMain.lib and SDL.lib. These can be
