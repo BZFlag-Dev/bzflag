@@ -178,7 +178,7 @@ void readOBJ ( CModel &model, std::string file )
 	// figure out the base path
 	std::string baseFilePath;
 
-	char *p = strrchr (file.c_str(),'\\');
+	const char *p = strrchr (file.c_str(),'\\');
 	if ( !p )
 		p = strrchr (file.c_str(),'/');
 

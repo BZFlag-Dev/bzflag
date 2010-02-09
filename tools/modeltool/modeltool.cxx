@@ -66,7 +66,7 @@ static void writeBZW  ( CModel &model, std::string file )
 			if ( material.texture.size()) {
 			  std::string texName = texdir + material.texture;
 				// change the extension to png
-				char *p = strrchr(texName.c_str(), '.');
+				const char *p = strrchr(texName.c_str(), '.');
 				if (p) {
 					texName.resize(p - texName.c_str());
 					texName += ".png";
