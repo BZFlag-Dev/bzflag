@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9.00"
 	Name="bzflag"
 	ProjectGUID="{5000550B-DA03-4872-9975-1AA7EE3A40AF}"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -80,7 +81,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
-				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="dinput8.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib"
 				OutputFile="..\..\src\bzflag\debug\bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -89,6 +90,8 @@
 				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
 				SubSystem="2"
 				LinkTimeCodeGeneration="0"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -108,9 +111,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -186,6 +186,8 @@
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -205,9 +207,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -283,6 +282,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\src\bzflag\debug/bzflag.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -302,9 +303,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -348,6 +346,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="dinput.lib dxguid.lib ws2_32.lib dsound.lib winmm.lib libcurl.lib glu32.lib opengl32.lib odbc32.lib odbccp32.lib krb5_32.lib comerr32.lib"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -366,9 +366,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -443,6 +440,8 @@
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -462,9 +461,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -540,6 +536,8 @@
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -559,9 +557,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -636,6 +631,8 @@
 				SuppressStartupBanner="true"
 				ProgramDatabaseFile="../src/bzflag/bzflag.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -655,9 +652,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
