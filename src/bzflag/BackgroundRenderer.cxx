@@ -1062,45 +1062,49 @@ void BackgroundRenderer::drawGround()
 
 void BackgroundRenderer::drawGroundCentered()
 {
-  const ViewFrustum& frustum = RENDERER.getViewFrustum();
-  const float* center = frustum.getEye();
-
   const float groundSize = 10.0f * BZDBCache::worldSize;
+  const float centerSize = 128.0f;
+
+  const ViewFrustum& frustum = RENDERER.getViewFrustum();
+  float center[2] = { frustum.getEye()[0], frustum.getEye()[1] };
+  const float minDist = -groundSize + centerSize;
+  const float maxDist = +groundSize - centerSize;
+  if (center[0] < minDist) { center[0] = minDist; }
+  if (center[0] > maxDist) { center[0] = maxDist; }
+  if (center[1] < minDist) { center[1] = minDist; }
+  if (center[1] > maxDist) { center[1] = maxDist; }
+
+  const float vertices[8][2] = {
+    { -groundSize, -groundSize },
+    { +groundSize, -groundSize },
+    { +groundSize, +groundSize },
+    { -groundSize, +groundSize },
+    { center[0] - centerSize, center[1] - centerSize },
+    { center[0] + centerSize, center[1] - centerSize },
+    { center[0] + centerSize, center[1] + centerSize },
+    { center[0] - centerSize, center[1] + centerSize }
+  };
+
   const float repeat = BZDB.eval("groundHighResTexRepeat");
-
-  // vertices
-  const float vXmin = -groundSize;
-  const float vXmax = +groundSize;
-  const float vYmin = -groundSize;
-  const float vYmax = +groundSize;
-  const GLfloat vertices[5][2] = {
-    {center[0], center[1]},
-    {vXmin, vYmin}, {vXmax, vYmin}, {vXmax, vYmax}, {vXmin, vYmax}
+  const int indices[5][4] = {
+    { 4, 5, 6, 7 },
+    { 0, 1, 5, 4 },
+    { 1, 2, 6, 5 },
+    { 2, 3, 7, 6 },
+    { 3, 0, 4, 7 },
   };
-
-  // texcoords
-  const float tcenterX = center[0] * repeat;
-  const float tcenterY = center[1] * repeat;
-  const float tXmin = -groundSize * repeat;
-  const float tXmax = +groundSize * repeat;
-  const float tYmin = -groundSize * repeat;
-  const float tYmax = +groundSize * repeat;
-  const GLfloat texcoords[5][2] = {
-    {tcenterX, tcenterY},
-    {tXmin, tYmin}, {tXmax, tYmin}, {tXmax, tYmax}, {tXmin, tYmax}
-  };
-
-//  const GLubyte fan[6] = { 0, 1, 2, 3, 4, 1};
 
   glNormal3f(0.0f, 0.0f, 1.0f);
-  glBegin(GL_TRIANGLE_FAN);
+  glBegin(GL_QUADS);
   {
-    for (int i = 0; i < 5; i++) {
-      glTexCoord2fv(texcoords[i]);
-      glVertex2fv(vertices[i]);
+    for (int q = 0; q < 5; q++) {
+      for (int c = 0; c < 4; c++) {
+        const int index = indices[q][c];
+        glTexCoord2f(vertices[index][0] * repeat,
+                     vertices[index][1] * repeat);
+        glVertex2fv(vertices[index]);
+      }
     }
-    glTexCoord2fv(texcoords[1]);
-    glVertex2fv(vertices[1]);
   }
   glEnd();
 

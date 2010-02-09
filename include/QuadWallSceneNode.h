@@ -27,7 +27,8 @@ class QuadWallSceneNode : public WallSceneNode {
 				const GLfloat tEdge[3],
 				float uRepeats = 1.0,
 				float vRepeats = 1.0,
-				bool makeLODs = true);
+				bool makeLODs = true,
+				bool fixedUVs = false);
 			QuadWallSceneNode(const GLfloat base[3],
 				const GLfloat sEdge[3],
 				const GLfloat tEdge[3],
@@ -60,7 +61,7 @@ class QuadWallSceneNode : public WallSceneNode {
 				float vOffset,
 				float uRepeats,
 				float vRepeats,
-				bool makeLODs);
+				bool makeLODs, bool fixedUVs);
 
   protected:
     class Geometry : public RenderNode {
@@ -72,7 +73,8 @@ class QuadWallSceneNode : public WallSceneNode {
 				const GLfloat vEdge[3],
 				const GLfloat* normal,
 				float uOffset, float vOffset,
-				float uRepeats, float vRepeats);
+				float uRepeats, float vRepeats,
+				bool fixedUVs);
 			~Geometry();
 	void		setStyle(int _style) { style = _style; }
 	void		render();

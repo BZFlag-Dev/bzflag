@@ -21,6 +21,7 @@
 
 // common implementation headers
 #include "Intersect.h"
+#include "StateDatabase.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -39,7 +40,7 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
 				const GLfloat vEdge[3],
 				const GLfloat* _normal,
 				float uOffset, float vOffset,
-				float uRepeats, float vRepeats) :
+				float uRepeats, float vRepeats, bool fixedUVs) :
 				wall(_wall),
 				style(0),
 				ds(uCount),
@@ -61,6 +62,39 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
       uv[n][1] = vOffset + t * vRepeats;
     }
   }
+
+  if (!fixedUVs && BZDB.isTrue("remapTexCoords")) {
+    const float uLen = sqrtf((uEdge[0] * uEdge[0]) +
+                             (uEdge[1] * uEdge[1]) +
+                             (uEdge[2] * uEdge[2]));
+    const float vLen = sqrtf((vEdge[0] * vEdge[0]) +
+                             (vEdge[1] * vEdge[1]) +
+                             (vEdge[2] * vEdge[2]));
+    const float uScale = 10.0f / floorf(10.0f * uLen / uRepeats);
+    const float vScale = 10.0f / floorf(10.0f * vLen / vRepeats);
+    if (fabsf(normal[2]) > 0.999f) {
+      // horizontal surface
+      for (int i = 0; i < vertex.getSize(); i++) {
+        uv[i][0] = uScale * vertex[i][0];
+        uv[i][1] = vScale * vertex[i][1];
+      }
+    }
+    else {
+      // vertical surface
+      const float nh = sqrtf((normal[0] * normal[0]) + (normal[1] * normal[1]));
+      const float nx = normal[0] / nh;
+      const float ny = normal[1] / nh;
+      const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
+      for (int i = 0; i < vertex.getSize(); i++) {
+        const float* v = vertex[i];
+        const float uGeoScale = (nx * v[1]) - (ny * v[0]);
+        const float vGeoScale = v[2] * vs;
+        uv[i][0] = uScale * uGeoScale;
+        uv[i][1] = vScale * vGeoScale;
+      }
+    }
+  }
+
   triangles = 2 * (uCount * vCount);
 }
 
@@ -162,7 +196,7 @@ QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
 				float vRepeats,
 				bool makeLODs)
 {
-  init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs);
+  init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs, false);
 }
 
 QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
@@ -170,9 +204,9 @@ QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
 				const GLfloat vEdge[3],
 				float uRepeats,
 				float vRepeats,
-				bool makeLODs)
+				bool makeLODs, bool fixedUVs)
 {
-  init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs);
+  init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs, fixedUVs);
 }
 
 void			QuadWallSceneNode::init(const GLfloat base[3],
@@ -182,7 +216,8 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 				float vOffset,
 				float uRepeats,
 				float vRepeats,
-				bool makeLODs)
+				bool makeLODs,
+				bool fixedUVs)
 {
   // record plane and bounding sphere info
   GLfloat myPlane[4], mySphere[4];
@@ -261,11 +296,11 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
   nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
   shadowNode = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
   shadowNode->setStyle(0);
 
   // make squaring levels if necessary
@@ -280,7 +315,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 	nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
 
       }
       area /= (float)uElements;
@@ -293,7 +328,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
 	nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
 
       }
       area /= (float)vElements;
@@ -309,7 +344,7 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
     nodes[level++] = new Geometry(this, uElements, vElements,
 				base, uEdge, vEdge,
 				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats);
+				uRepeats, vRepeats, fixedUVs);
   }
 
   // record extents info

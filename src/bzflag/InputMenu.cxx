@@ -113,14 +113,21 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   fillJSOptions();
 
   option = new HUDuiList;
-  // confine mouse on/off
+  // confine mouse
   option->setFontFace(fontFace);
   option->setLabel("Confine mouse:");
   option->setCallback(callback, (void*)"G");
   options = &option->getList();
   options->push_back(std::string("No"));
-  options->push_back(std::string("Yes"));
-  option->setIndex(getMainWindow()->isGrabEnabled() ? 1 : 0);
+  options->push_back(std::string("Window"));
+  options->push_back(std::string("MotionBox"));
+  if (getMainWindow()->isGrabEnabled()) {
+    option->setIndex(1);
+  } else if (BZDB.isTrue("mouseClamp")) {
+    option->setIndex(2);
+  } else {
+    option->setIndex(0);
+  }
   option->update();
   listHUD.push_back(option);
 
@@ -241,9 +248,12 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     /* Grab mouse */
     case 'G':
       {
-	bool grabbing = (selectedOption == "Yes");
-	BZDB.set("mousegrab", grabbing ? "true" : "false");
+	const bool grabbing = (selectedOption == "Window");
+	BZDB.set("mousegrab", grabbing ? "1" : "0");
 	getMainWindow()->enableGrabMouse(grabbing);
+
+	const bool clamped = (selectedOption == "MotionBox");
+        BZDB.set("mouseClamp", clamped ? "1" : "0");
       }
       break;
 

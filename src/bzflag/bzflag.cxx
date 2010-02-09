@@ -155,8 +155,11 @@ static void		setVisual(BzfVisual* visual)
   }
 
   // optional
+  visual->setStencil(4);
 #if defined(DEBUG_RENDERING)
   visual->setStencil(4);
+#else
+  visual->setStencil(1);
 #endif
   if (BZDB.isTrue("multisample"))
     visual->setMultisample(4);
