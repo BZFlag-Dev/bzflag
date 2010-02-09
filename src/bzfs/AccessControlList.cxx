@@ -198,39 +198,15 @@ bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
 }
 
 
-bool AccessControlList::does_match(const char *targ, int targlen, const char *pat, int patlen)
-{
-  if (!targlen)
-    return patlen == 0;
-  if (!patlen)
-    return targlen == 0;
-
-  while (*pat != '*') {
-    if (*pat != *targ)
-      return false;
-
-    pat++; patlen--;
-    targ++; targlen--;
-    if (!targlen)
-      return patlen == 0;
-    if (!patlen)
-      return targlen == 0;
-  }
-
-  // found a *, search for matches in the rest of the string
-  for (int pos = 0; pos <= targlen; pos++)
-    if (does_match(targ+pos, targlen-pos, pat+1, patlen-1))
-      return true;
-  return false;
-}
-
-
 bool AccessControlList::hostValidate(const char *hostname, HostBanInfo *info)
 {
   expire();
 
+  const std::string upperHost = TextUtils::toupper(hostname);
+
   for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
-    if (does_match(hostname, strlen(hostname), it->hostpat.c_str(), it->hostpat.length())) {
+    const std::string upperPattern = TextUtils::toupper(it->hostpat);
+    if (glob_match(upperPattern, upperHost)) {
       if (info)
 	*info = *it;
       return false;
