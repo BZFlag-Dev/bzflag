@@ -63,17 +63,8 @@ AC_SUBST(MINOR_VERSION)
 AC_SUBST(BZFLAG_VERSION)
 AC_SUBST(BZFLAG_DATE)
 
-# Let the C++ code know about OS and user
+# Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
-AC_CHECK_PROG(HASWHOAMI, whoami, yes, no)
-if test x$HASWHOAMI = xyes ; then
-  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "`whoami`", [User who compiled BZFlag])
-else
-  AC_DEFINE_UNQUOTED(BZ_BUILD_USER, "anonymous", [User who compiled BZFlag])
-fi
-
-# check for kerberos option
-AC_ARG_WITH(kerberos, [  --with-kerberos	  with Kerberos support])
 
 # check for regex option (on means build our own)
 AC_ARG_WITH(regex, [  --with-regex		  Use bzflag regex lib])
