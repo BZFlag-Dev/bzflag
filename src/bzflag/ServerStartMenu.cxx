@@ -319,14 +319,6 @@ HUDuiDefaultKey* ServerStartMenu::getDefaultKey()
 
 void ServerStartMenu::setSettings(const char* _settings)
 {
-  // FIXME -- temporary to automatically upgrade old configurations
-  if (strlen(_settings) == 14) {
-    strcpy(settings, _settings);
-    settings[12] = settings[13];
-    settings[13] = settings[14];
-    return;
-  }
-
   if (strlen(_settings) != strlen(settings)) return;
   strcpy(settings, _settings);
 }
