@@ -80,14 +80,12 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    */
   GUID thisDevice;
   for (unsigned int i = 0; i < devices.size(); i++) {
-    if (strcmp(joystickName, devices[i].tszProductName) == 0) {
-      thisDevice = devices[i].guidInstance;
-      break;
-    }
+	  if (strcmp(joystickName, devices[i].tszProductName) == 0) {
+		  thisDevice = devices[i].guidInstance;
+		  break;
+	  }
   }
-  HRESULT success = directInput->CreateDeviceEx(thisDevice,
-						IID_IDirectInputDevice7,
-						(void**)&device, NULL);
+  HRESULT success = directInput->CreateDevice(thisDevice,&device, NULL);
 
   if (success != DI_OK) {
     DXError("Could not initialize device", success);

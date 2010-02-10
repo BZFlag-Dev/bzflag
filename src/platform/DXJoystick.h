@@ -99,8 +99,8 @@ class DXJoystick : public BzfJoystick {
     static std::vector<DIDEVICEINSTANCE> devices;
     static EffectMap effectDatabase;
 
-    IDirectInput7* directInput;
-    IDirectInputDevice7* device;
+    IDirectInput8* directInput;
+    IDirectInputDevice8* device;
 
     /* Nasty callbacks 'cause DirectX sucks */
 
