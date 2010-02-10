@@ -1351,8 +1351,10 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
 
-  if (message[0] == '/' && message[1] == '/')
-    msg = &message[1];
+  if (message[0] == '/' && message[1] == '/') {
+    ++msg;
+    --msglen;
+  }
 
   // Should cut the message
   if (msglen > MessageLen) {
