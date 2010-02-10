@@ -377,6 +377,8 @@ public:
   {
     if (!player)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     // player is on the waiting list
     char buffer[MessageLen];
@@ -408,6 +410,8 @@ public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 7)
+      return false;
+    if (!player->player.isCompletelyAdded())
       return false;
 
     if (player->player.isObserver())
@@ -456,6 +460,8 @@ public:
   {
     if (!player || len < 13)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     // data: position of drop
     fvec3 pos;
@@ -485,6 +491,8 @@ public:
   {
     if (!player || len < 3)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     // data: team whose territory flag was brought to
     int16_t _team;
@@ -502,6 +510,8 @@ public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 35)
+      return false;
+    if (!player->player.isCompletelyAdded())
       return false;
 
     FiringInfo firingInfo;
@@ -592,6 +602,8 @@ public:
   {
     if (!player || len < 3)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     if (player->player.isObserver())
       return true;
@@ -623,9 +635,10 @@ class ShotInfoHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 16) {
+    if (!player || len < 16)
       return false;
-    }
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     if (player->player.isObserver()) {
       return true;
@@ -703,6 +716,8 @@ public:
   {
     if (!player || len < 3)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     if (player->player.isObserver() || !player->player.isAlive())
       return true;
@@ -746,6 +761,8 @@ public:
   {
     if (!player || len < 4)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     uint16_t from, to;
 
@@ -774,6 +791,8 @@ public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < MessageLen+1)
+      return false;
+    if (!player->player.isCompletelyAdded())
       return false;
 
     // data: target player/team, message string
@@ -817,6 +836,8 @@ public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 2)
+      return false;
+    if (!player->player.isCompletelyAdded())
       return false;
 
     PlayerId from, to;
@@ -869,6 +890,8 @@ public:
   {
     if (!player)
       return false;
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     if (player->getIndex() == rabbitIndex)
       anointNewRabbit();
@@ -883,9 +906,10 @@ class PauseHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || (len < 2)) {
+    if (!player || (len < 2))
       return false;
-    }
+    if (!player->player.isCompletelyAdded())
+      return false;
 
     uint8_t pauseCode;
     nboUnpackUInt8(buf, pauseCode);
@@ -955,6 +979,8 @@ public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 2)
+      return false;
+    if (!player->player.isCompletelyAdded())
       return false;
 
     uint8_t autopilot;
@@ -1116,6 +1142,8 @@ public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
     if (!player || len < 33)
+      return false;
+    if (!player->player.isCompletelyAdded())
       return false;
 
     ShotUpdate shot;

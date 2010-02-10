@@ -2120,6 +2120,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
   if (spawnSoon)
     playerAlive(playerIndex);
+
+  playerData->player.setCompletelyAdded();
 }
 
 
