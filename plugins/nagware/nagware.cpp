@@ -490,7 +490,7 @@ MsgEnt * parseCfgMessage(const char *m){
   char *p;
   int time, repeat=0;
 
-  if ((p = strchr (m, ' ')) == NULL)
+  if ((p = (char *)strchr (m, ' ')) == NULL)
     return NULL;
   *p = '\0';
   if (strchr (m, ',') != NULL){
