@@ -5308,6 +5308,9 @@ int main(int argc, char **argv)
 	    zapFlag(*FlagInfo::get(j));
 	  }
 
+	  // quietly reset team scores in case of a capture during the countdown
+	  resetTeamScores();
+
 	  // fire off a game start event
 	  bz_GameStartEndEventData	gameData;
 	  gameData.eventType = bz_eGameStartEvent;
