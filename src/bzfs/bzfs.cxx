@@ -4172,6 +4172,8 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 	for (int j = 0; j < numFlags; j++)
 	  zapFlag(*FlagInfo::get(j));
 
+	resetTeamScores();
+
 	// fire off a game start event
 	bz_GameStartEndEventData_V1 gameData;
 	gameData.eventType = bz_eGameStartEvent;
