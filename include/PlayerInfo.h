@@ -108,8 +108,8 @@ public:
   bool	hasStartedToNotRespond();
   void	hasSent();
   bool	hasPlayedEarly();
-  void  setEnter() {validEnter = true;}
-  bool	hasSentEnter() {return validEnter;}
+  void  setCompletelyAdded() {completelyAdded = true;}
+  bool	isCompletelyAdded() {return completelyAdded;}
   TimeKeeper  getNextSpawnTime() const;
   void	setSpawnDelay(double delay);
   bool	waitingToSpawn() const;
@@ -163,8 +163,8 @@ private:
   // flag index player has
   int flag;
 
-  // has the player sent an enter
-  bool validEnter;
+  // addPlayer has completed for this player 
+  bool completelyAdded;
 
   TimeKeeper lastFlagDropTime;
 

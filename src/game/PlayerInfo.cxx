@@ -42,7 +42,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   clientVersionMajor = -1;
   clientVersionMinor = -1;
   clientVersionRevision = -1;
-  validEnter = false;
+  completelyAdded = false;
   nextSpawnTime = TimeKeeper::getSunGenesisTime();
   wantsToSpawn = false;
 }

@@ -2010,7 +2010,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (spawnSoon)
     playerAlive(playerIndex);
 
-  playerData->player.setEnter();
+  playerData->player.setCompletelyAdded();
 }
 
 
@@ -3631,7 +3631,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     }
   }
 
-  if(!playerData->player.hasSentEnter())
+  if(!playerData->player.isCompletelyAdded())
   {
 	  switch (code)
 	  {
