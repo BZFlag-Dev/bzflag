@@ -47,7 +47,7 @@
 ;Interface Settings
 
   ;Icons
-  !define MUI_ICON ..\..\..\MSVC\bzflag.ico
+  !define MUI_ICON ..\..\..\Win32\bzflag.ico
   !define MUI_UNICON uninstall.ico
 
   ;Bitmaps
@@ -220,11 +220,11 @@ SectionGroup "BZFlag Server" BZFlagServer
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
-    File ..\..\..\misc\maps\hix.bzw
-    File ..\..\..\misc\samples\bzfs.conf
-    File ..\..\..\misc\samples\bzfs_conf.html
-    File ..\..\..\misc\samples\groups.conf
-    File ..\..\..\misc\samples\vars.txt
+    File ..\..\..\misc\hix.bzw
+    File ..\..\..\misc\bzfs.conf
+    File ..\..\..\misc\bzfs_conf.html
+    File ..\..\..\misc\groups.conf
+    File ..\..\..\misc\vars.txt
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
@@ -259,8 +259,8 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\bzfs.lib
-    File ..\..\..\plugins\plugin_utils\Release\plugin_utils.lib
+    File ..\..\..\src\bzfs\bzfs.lib
+    File ..\..\..\plugins\plugin_utils\VC9\Release\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
     File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
