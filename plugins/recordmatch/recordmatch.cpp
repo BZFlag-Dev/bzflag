@@ -67,6 +67,8 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 			bz_stopRecBuf();
 
 			started = false;
+			bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS,
+				"Match saved in file %s", filename.c_str());
 		}
 		break;
 	default:
@@ -83,4 +85,3 @@ void GameStartEndHandler::process( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
