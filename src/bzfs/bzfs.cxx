@@ -180,7 +180,11 @@ APILogingCallback apiLogingCallback;
 class BZFSNetLogCB : NetworkDataLogCallback
 {
 public:
-  BZFSNetLogCB(){addNetworkLogCallback(this);}
+  void Init()
+  {
+	  addNetworkLogCallback(this);
+  }
+
   virtual ~BZFSNetLogCB(){removeNetworkLogCallback(this);}
 
   virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param )
@@ -4766,6 +4770,7 @@ int main(int argc, char **argv)
 
   logingCallback = &apiLogingCallback;
 
+  netLogCB.Init();
 #ifndef _WIN32
   setvbuf(stdout, (char *)NULL, _IOLBF, 0);
   setvbuf(stderr, (char *)NULL, _IOLBF, 0);
