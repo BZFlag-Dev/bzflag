@@ -190,7 +190,6 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     strcpy(token, "NONE");
   }
 
-  validEnter = true;
   return true;
 }
 

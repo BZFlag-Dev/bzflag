@@ -108,6 +108,7 @@ public:
   bool	hasStartedToNotRespond();
   void	hasSent();
   bool	hasPlayedEarly();
+  void  setEnter() {validEnter = true;}
   bool	hasSentEnter() {return validEnter;}
   TimeKeeper  getNextSpawnTime() const;
   void	setSpawnDelay(double delay);
