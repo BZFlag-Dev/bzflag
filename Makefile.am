@@ -57,7 +57,13 @@ MAINTAINERCLEANFILES = \
 	bzflag.info \
 	bzflag.spec \
 	INSTALL \
-	Makefile.in
+	Makefile.in \
+	m4/libtool.m4 \
+	m4/ltoptions.m4 \
+	m4/ltsugar.m4 \
+	m4/ltversion.m4 \
+	m4/lt~obsolete.m4
+# delete files from m4 subdirectory here to prevent dependency problems
 
 .PHONY: package debian-svn debian-release
 
