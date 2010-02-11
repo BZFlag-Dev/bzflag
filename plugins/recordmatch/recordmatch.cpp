@@ -2,6 +2,7 @@
 //
 
 #include "bzfsAPI.h"
+#include <stdio.h>
 
 class GameStartEndHandler : public bz_EventHandler
 {

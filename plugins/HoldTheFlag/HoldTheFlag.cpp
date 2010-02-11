@@ -5,8 +5,8 @@
 
 #include "bzfsAPI.h"
 #include <map>
-#include <cstring>
-#include <cstdlib>
+#include <stdio.h>
+#include <stdarg.h>
 
 BZ_GET_PLUGIN_VERSION
 

@@ -4,8 +4,7 @@
 
 #include "bzfsAPI.h"
 #include <vector>
-#include <cstring>
-#include <cstdlib>
+#include <stdio.h>
 
 BZ_GET_PLUGIN_VERSION
 
