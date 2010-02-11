@@ -1510,10 +1510,13 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, uint8
 
 void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
+  char message[MessageLen];
+
   // tell them they were rejected
   sendRejectPlayerMessage(playerIndex,code,reason);
-  // remove player so he can not ignore the reject messaeg and, then can avoid a ban, hostban...
-  removePlayer(playerIndex, "/rejected", true);
+  // remove player so he can not ignore the reject message and, then can avoid a ban, hostban...
+  snprintf(message, MessageLen, "rejected: %s", reason); 
+  removePlayer(playerIndex, message, true);
   return;
 }
 
