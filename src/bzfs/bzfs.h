@@ -117,7 +117,7 @@ extern TeamColor  whoseBase(float x, float y, float z);
 bool defineWorld ( void );
 bool saveWorldCache( const char* file = NULL );
 
-void rescanForBans ( bool isOperator = true, const char* callsign = NULL, int playerID = -1 );
+void rescanForBans ( bool isOperator = false, const char* callsign = NULL, int playerID = -1 );
 
 // initialize permission groups
 extern void initGroups();
