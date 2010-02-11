@@ -2201,6 +2201,12 @@ static void autopilotPlayer(int playerIndex, bool autopilot)
   if (!playerData)
     return;
 
+  if (autopilot && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+    sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow autopilot on this server.");
+    removePlayer(playerIndex, "AutopilotPlayer");
+    return;
+  }
+
   playerData->player.setAutoPilot(autopilot);
 
   void *buf, *bufStart = getDirectMessageBuffer();
