@@ -32,7 +32,7 @@ bool PlayerInfo::simpleFiltering = true;
 
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
-  state(PlayerInLimbo), playerIndex(_playerIndex), completelyAdded(false),
+  state(PlayerInLimbo), playerIndex(_playerIndex), enterProcessed(false), completelyAdded(false),
   type(TankPlayer), updates(AllUpdates), team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now),
   paused(false), pausedSince(TimeKeeper::getNullTime()), autopilot(false),
   tracker(0)
@@ -204,6 +204,8 @@ bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
   if (token[0] == 0) {
     strcpy(token, "NONE");
   }
+
+  enterProcessed = true;
 
   return true;
 }

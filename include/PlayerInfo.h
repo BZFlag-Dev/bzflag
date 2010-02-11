@@ -128,7 +128,7 @@ public:
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
-  void  setCompletelyAdded() {completelyAdded = true;}                                                                                                                             
+  void  setCompletelyAdded() {completelyAdded = true;}
   bool  isCompletelyAdded() {return completelyAdded;}
 
   float	jumpStartPos;
@@ -169,7 +169,9 @@ private:
 
   bool restartOnBase;
 
-  // addPlayer has completed for this player
+  // processEnter has completed
+  bool enterProcessed;
+  // addPlayer has completed
   bool completelyAdded;
   // type of player
   PlayerType type;
@@ -237,7 +239,7 @@ inline bool PlayerInfo::isPlaying() const {
 }
 
 inline bool PlayerInfo::isHuman() const {
-  return (type == TankPlayer) && completelyAdded; 
+  return (type == TankPlayer) && enterProcessed;
 }
 
 inline bool PlayerInfo::haveFlag() const {
