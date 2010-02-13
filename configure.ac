@@ -1209,7 +1209,7 @@ if test "x$BUILD_FTGL" = "xyes" ; then
     CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
 fi
 
-LIBLUA="\$(top_srcdir)/src/other/lua/liblua.la"
+LIBLUA='${top_builddir}/src/other/lua/liblua.la'
 AC_SUBST(LIBLUA)
 
 # GLEW
