@@ -6,22 +6,22 @@ No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
-BZFlag 2.0.14
--------------
-* added Options -> Display -> AntiFlicker option - trepan
-* added Options -> Input -> Confine Mouse (MotionBox) - trepan
-* adjusted advanced ground rendering for texture flicker - trepan
-* changed the default stencil bitplanes to 1 - trepan
-  (fixes stencil shadows and various other stencil features)
-* fixed the /idbanlist and /hostbanlist crashes - trepan, backported
+BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-??)
+-------------------------------------------------------------------------
 
-BZFlag 2.0.13
--------------
-* change fonts to DejaVu - Jeff Myers, Tim Riker
-* source cleanup - Tim Riker
+* Add Options -> Display -> AntiFlicker option - trepan
+* Add Options -> Input -> Confine Mouse (MotionBox) - trepan
+* Adjust advanced ground rendering for texture flicker - trepan
+* Change the default stencil bitplanes to 1 to fix stencil shadows and various
+  other stencil features - trepan
+* Backport fix for /idbanlist and /hostbanlist crashes - trepan
+* Change fonts to DejaVu - Jeff Myers, Tim Riker
+* Source cleanup - Tim Riker
 
-BZFlag 2.0.12
-----------------------------------------------------
+
+BZFlag 2.0.12  "The release without a name." (2008-06-25)
+---------------------------------------------------------
+
 * Fix build with -ffast-math avoiding use of isnan for fog - Alfredo Tupone
 * Fix for memory leaks -
 * libGLEW requirement controlled by --with-glew - Alfredo Tupone
@@ -47,6 +47,7 @@ BZFlag 2.0.12
 * Added _countdownResumeDelay to control resume delay. - Thomas Stauer
 * Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 
+
 BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 ---------------------------------------------
 
@@ -57,7 +58,7 @@ BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 * Fix bug where poll results would not be announced - Joshua Bodine
 * Fix antikill notice bug - Joshua Bodine
 * Add -adminlagannounce and -lagannounce - Thomas Stauer
-* Check for talk permission for part/quit messages  - uso
+* Check for talk permission for part/quit messages - uso
 * First map no longer ignored in Start Server menu - Ravu al Hemio
 * Implemented Confine Mouse for Windows platforms - Daniel Remenak
 * Implemented fullscreen->windowed mode toggle on Windows - Daniel Remenak
@@ -113,8 +114,9 @@ BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 * Allows leading face specification (x+,x-,y+,y-,z+,z-) - Anonymous
 * Authorization is invariant to case - Anonymous
 
-BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
-----------------------------------------------------
+
+BZFlag 2.0.8  "Oops, Happy Mother's Day" (2006-05-13)
+-----------------------------------------------------
 
 * Add a plugin to record matches - Jeff Myers.
 * Add an option to send out a UDP heartbeat message for observers behind flakey
@@ -123,6 +125,7 @@ BZFlag 2.0.8 "Oops, Happy Mother's Day" (2006-05-13)
 * Client and server now close http connections correctly - Daniel Remenak
 * Fixed crash when rogue autopilot picks up a team flag - Daniel Remenak
 * Fixed spawnpoint selection regression - Sean Morrison
+
 
 BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 ------------------------------------------------
@@ -156,6 +159,7 @@ BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 * Fix misc/bzfquery.pl to handle MsgGameTime - Tegan, Mark Thomas
 * Simple server list searching - Daniel Remenak
 * Added GUI option for email display length - Mark Thomas
+
 
 BZFlag 2.0.4  "Shiny" (2005-09-30)
 ----------------------------------
@@ -230,6 +234,7 @@ BZFlag 2.0.4  "Shiny" (2005-09-30)
 * +ALL and -ALL adds/removes all perms from a group in groupdb - Frank Evers
 * Support for +,- and ! operators in bzfs' groupdb file - Frank Evers
 
+
 BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 -------------------------------------------
 
@@ -248,7 +253,7 @@ BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 * Fixed force feedback on Windows - Scott Wichser
 * New Kick/Ban options using slot numbers (rendered in client) - Julio Jimenez
 * Added EndShot cheat detection - Julio Jimenez
-* Avoid spawning on top of tanks with SR or BU -  Daniel Remenak
+* Avoid spawning on top of tanks with SR or BU - Daniel Remenak
 * Add fine-grained permissions control of polling - Daniel Remenak
 * Fixed loading of colormapped PNGs - Daniel Remenak
 * Add SPAWN permission, remove -requireidentify - Steve Krenzel, Tim Riker
@@ -275,6 +280,7 @@ BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 * print errors in red - Frank Thilo
 * simple scroll indicator for control panel - Frank Thilo
 * antiban perm actually counters a server ban now - Steve Krenzel
+
 
 BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
 ---------------------------------------------
@@ -409,12 +415,14 @@ BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
 * Rip out ref counted texture system, TM controls this now - Dave Brosius
 * Added Admin Message Queue - Michael Hoffman
 
+
 BZFlag 1.10.8  "lightning strikes back - list server returns" (2004-10-05)
 --------------------------------------------------------------------------
 
 * New list server URL
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
 * Throw away bad or early links in world files - Tim Riker
+
 
 BZFlag 1.10.6  "the little hop" (2004-05-14)
 --------------------------------------------
@@ -425,7 +433,7 @@ BZFlag 1.10.6  "the little hop" (2004-05-14)
 * Curing ghost/duplicated/ungetable flag - Alfredo Tupone
 * Fixed 0 height flag, no more flags inside buildings - Alfredo Tupone
 * Observers see Masquerade tank with their true color - Alfredo Tupone
-* Password file now supports callsigns with non alphanumerics  - Alfredo Tupone
+* Password file now supports callsigns with non alphanumerics - Alfredo Tupone
 * Support for building BZAdmin with PDCurses on Windows - Daniel Remenak
 * Correctly read PNG textures with multiple IDAT chunks - Daniel Remenak
 * Add aggressive filtering support for all platforms - Sean Morrison
@@ -464,7 +472,7 @@ BZFlag 1.10.4  "not a smurf" (2004-01-24)
 * Alt-Tab & resolution changes does not mess up the screen - Tupone Alfredo
 * No shooting allowed if OO flag is lost in a building - Tupone Alfredo
 * Killed player stop drifting & clean dirty tank pieces - Tupone Alfredo
-* Rabbit score changed and values displayed on HUD  - Tupone Alfredo
+* Rabbit score changed and values displayed on HUD - Tupone Alfredo
 * Sound samples are resampled since bzflag doesn't - Tupone Alfredo
 * Unclean client disconnects are recognized earlier - Tupone Alfredo
 * Async communication between bzfs and list server - Tupone Alfredo
@@ -478,7 +486,7 @@ BZFlag 1.10.4  "not a smurf" (2004-01-24)
 * Renamed and reorganized texture resources - Jeff Myers
 * BZDB alternate image dir added - Jeff Myers
 * Improved transparent proxy support - Alfredo Tupone, Sean Morrison
-* Ground Texture Repeat added to BZDB, default increased to 0.1  - Jeff Myers
+* Ground Texture Repeat added to BZDB, default increased to 0.1 - Jeff Myers
 * Added ability to have and use per-team colored textures - Jeff Myers
 * Added support for colored and zoned ground textures - Jeff Myers
 * Hunter tanks try to use "hunter" texture if found - Jeff Myers
