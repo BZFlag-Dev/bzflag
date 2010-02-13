@@ -190,8 +190,8 @@ Section "BZAdmin" BZAdmin
   File ..\..\..\bzadmin.exe
 
   ; Add some DLL files
-  ;SetOutPath $INSTDIR\
-  ;File ..\..\..\pdcurses.dll
+  SetOutPath $INSTDIR\
+  File ..\..\..\pdcurses.dll
 
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
