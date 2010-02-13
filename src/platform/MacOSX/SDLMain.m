@@ -10,6 +10,13 @@
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
 
+/* For some reaon, Apple removed setAppleMenu from the headers in 10.4,
+   but the method still is there and works. To avoid warnings, we declare
+   it ourselves here. */
+@interface NSApplication(SDL_Missing_Methods)
+- (void)setAppleMenu:(NSMenu *)menu;
+@end
+
 /* Use this flag to determine whether we use SDLMain.nib or not */
 #define		SDL_USE_NIB_FILE	0
 
@@ -190,7 +197,7 @@ static void setupWindowMenu(void)
 }
 
 /* Replacement for NSApplicationMain */
-static void CustomApplicationMain (argc, argv)
+static void CustomApplicationMain (int argc, char **argv)
 {
     NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
     SDLMain				*sdlMain;
