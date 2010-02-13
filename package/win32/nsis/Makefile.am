@@ -4,6 +4,7 @@ EXTRA_DIST =	\
 	EnableCheck.bmp		\
 	copying.rtf		\
 	header.bmp		\
+	notes.txt		\
 	side.bmp		\
 	uninstall.ico
 

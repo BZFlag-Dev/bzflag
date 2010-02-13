@@ -18,6 +18,7 @@ webadmin_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
 webadmin_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
 
 EXTRA_DIST = \
+	BUGS \
 	README.txt \
 	templates \
 	webadmin.def \
