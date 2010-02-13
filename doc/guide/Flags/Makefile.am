@@ -43,7 +43,8 @@ EXTRA_DIST = \
 	TriggerHappy.xml \
 	Useless.xml \
 	Velocity.xml \
-	WideAngle.xml
+	WideAngle.xml \
+	Wings.xml
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
