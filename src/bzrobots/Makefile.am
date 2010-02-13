@@ -145,6 +145,7 @@ bzrobot_pyext_la_SOURCES = \
 
 else
 libbzrobot =
+BUILT_SOURCES =
 endif
 
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
@@ -152,7 +153,7 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	-O coff
 
 EXTRA_DIST = \
-	$(python_wrap_files) \
+	$(BUILT_SOURCES) \
 	$(PYTHON_LOADER) \
 	OpenGLUtils.cxx	\
 	PrintError.cxx \
