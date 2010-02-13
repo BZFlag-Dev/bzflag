@@ -234,7 +234,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
       ;Main start menu shortcuts
-      SetOutPath $INSTDIR\data
+      SetOutPath $INSTDIR
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
