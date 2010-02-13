@@ -329,10 +329,10 @@ EndY: 200
 
 Char: "D"
 InitialDist: 3
-Width: 28
-Whitespace: 1
+Width: 27
+Whitespace: 2
 StartX: 300
-EndX: 328
+EndX: 327
 StartY: 150
 EndY: 200
 
@@ -562,11 +562,11 @@ StartY: 300
 EndY: 350
 
 Char: "^"
-InitialDist: 3
-Width: 26
+InitialDist: 4
+Width: 25
 Whitespace: 3
 StartX: 100
-EndX: 126
+EndX: 125
 StartY: 300
 EndY: 350
 
@@ -832,11 +832,11 @@ StartY: 450
 EndY: 500
 
 Char: "|"
-InitialDist: 4
-Width: 6
+InitialDist: 5
+Width: 5
 Whitespace: 4
 StartX: 100
-EndX: 106
+EndX: 105
 StartY: 450
 EndY: 500
 

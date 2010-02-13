@@ -32,10 +32,10 @@ EndY: 19
 
 Char: "#"
 InitialDist: 1
-Width: 11
-Whitespace: 0
+Width: 10
+Whitespace: 1
 StartX: 57
-EndX: 68
+EndX: 67
 StartY: 0
 EndY: 19
 
@@ -202,11 +202,11 @@ StartY: 0
 EndY: 19
 
 Char: "6"
-InitialDist: 0
-Width: 10
+InitialDist: 1
+Width: 9
 Whitespace: 0
 StartX: 418
-EndX: 428
+EndX: 427
 StartY: 0
 EndY: 19
 
@@ -230,10 +230,10 @@ EndY: 19
 
 Char: "9"
 InitialDist: 0
-Width: 10
-Whitespace: 0
+Width: 9
+Whitespace: 1
 StartX: 475
-EndX: 485
+EndX: 484
 StartY: 0
 EndY: 19
 
@@ -247,11 +247,11 @@ StartY: 19
 EndY: 38
 
 Char: ";"
-InitialDist: 0
-Width: 5
+InitialDist: 1
+Width: 4
 Whitespace: 1
 StartX: 19
-EndX: 24
+EndX: 23
 StartY: 19
 EndY: 38
 
@@ -617,10 +617,10 @@ EndY: 57
 
 Char: "d"
 InitialDist: 0
-Width: 10
-Whitespace: 0
+Width: 9
+Whitespace: 1
 StartX: 304
-EndX: 314
+EndX: 313
 StartY: 38
 EndY: 57
 
@@ -644,10 +644,10 @@ EndY: 57
 
 Char: "g"
 InitialDist: 0
-Width: 10
-Whitespace: 0
+Width: 9
+Whitespace: 1
 StartX: 361
-EndX: 371
+EndX: 370
 StartY: 38
 EndY: 57
 
@@ -734,10 +734,10 @@ EndY: 76
 
 Char: "q"
 InitialDist: 0
-Width: 10
-Whitespace: 0
+Width: 9
+Whitespace: 1
 StartX: 57
-EndX: 67
+EndX: 66
 StartY: 57
 EndY: 76
 

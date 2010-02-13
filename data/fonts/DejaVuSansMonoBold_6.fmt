@@ -392,10 +392,10 @@ EndY: 9
 
 Char: "K"
 InitialDist: 1
-Width: 4
-Whitespace: 0
+Width: 5
+Whitespace: -1
 StartX: 387
-EndX: 391
+EndX: 392
 StartY: 0
 EndY: 9
 
