@@ -15,6 +15,7 @@ BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-??)
 * Change the default stencil bitplanes to 1 to fix stencil shadows and various
   other stencil features - trepan
 * Backport fix for /idbanlist and /hostbanlist crashes - trepan
+* Add the "roamView" BZDB variable - trepan
 * Change fonts to DejaVu - Jeff Myers, Tim Riker
 * Source cleanup - Tim Riker
 
