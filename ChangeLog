@@ -16,14 +16,16 @@ BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-??)
   other stencil features - trepan
 * Backport fix for /idbanlist and /hostbanlist crashes - trepan
 * Add support for gcc-4.4 and libtool-2.2 - Jeff Makey
-* Update to Microsoft Visual C 9 from 7.1 - Jeff Myers
+* Update to Microsoft Visual C++ 9 from 7.1 - Jeff Myers
 * Update to directX 8 from 7 - Jeff Myers
+* Fix player ghosting failure - Steven Mertens
 * Provide API support for using bz_moveFlag on team flags - Scott Wichser
 * Add pushstats plugin for future statistics gathering system - Jeff Myers
-* Increase restrictions on incompletely joined players - Jeff Myers
+* Increase restrictions on incompletely joined players - Jeff Myers, Scott W.
 * Announce saved file name in recordmatch plugin - Jeff Makey
 * Fix buffer overflow in menu subsystem - Jeff Myers
-* Fully support glob-style wildcards in hostbans - Bryan Jennings
+* Fully support glob-style wildcards in hostbans and make name comparisons
+  case insensitive - Bryan Jennings
 * Properly limit maximum message size in /showgroup command - Jeff Makey
 * Reset team scores in case of a capture during a countdown - Jeff Makey
 * Block spoofed /me messages - Scott Wichser
