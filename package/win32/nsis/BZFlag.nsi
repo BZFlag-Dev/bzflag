@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.0
-  !define VER_MINOR .14.20100209
+  !define VER_MINOR .14.20100214A
 
 ;--------------------------------
 ;Compression options
@@ -145,6 +145,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\libcurl.dll
+  File ..\..\..\glew32.dll
 
   ; This requires the Visual C++ 2008 SP1 runtime file to be located in
   ; the same directory as the NSIS script
@@ -190,7 +191,7 @@ Section "BZAdmin" BZAdmin
   File ..\..\..\bzadmin.exe
 
   ; Add some DLL files
-  SetOutPath $INSTDIR\
+  SetOutPath $INSTDIR
   File ..\..\..\pdcurses.dll
 
   ; Add to the doc dir
