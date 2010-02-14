@@ -2,16 +2,13 @@ README for Win32 platforms
 --------------------------
 
 BZFlag uses Microsoft Visual C++ for its prebuilt binary 
-releases (version 7.1 aka ".NET 2003"). Project files 
-are also provided for Visual C++ 8.0 which are also 
-useable by the free "visual C++ .net 2005 express edition".
-Visual Studio 6.0 support has been discontinued.
+releases (version 9 aka ".NET 2008"). Both the full and
+"express" editions are supported.
+
 It is also possible to build on Win32 using MinGW/MSYS or
 Cygwin, both of which use a unix-like make file system; 
 for details, see README.MINGW32 (for MinGW)or the main 
 README (for Cygwin).
-There is a Dev-C++ project available as well. Please see
-the README.DEVC++ for more info.
 
 So, to build bzflag on Win32, get Visual C++ or something
 that can read Visual C++ projects and workspaces.  Then:
