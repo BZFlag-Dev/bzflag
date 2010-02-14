@@ -31,6 +31,20 @@ made for "MSVC". You should note that the binary versions
 of libCurl may link to a zlib dll that you will have to aquire
 as well.
 
+The simplest way to get libCurl and glew are to get the source
+tree for the trunk version of BZFlag and build it. This will
+produce the libcurl.lib and dll files in
+bzflag\MSVC\build\libcurl_release(or libcurl_debug). Take the
+lib file and place it in the VC9 folder for 2.0.x, and the dll.
+into the root level of the 2.0.x source code folder.
+Also place the curl folder from /src/other/curl/include into
+the VC9. Finaly if you wish to build with glew, open
+/src/other/glew/build/vc6/glew.sln file and build. This will
+produce a glew32.lib file in /src/other/glew/build/lib. Copy
+this file to the VC9 folder, as well as the GL folder from 
+glew's include folder. Finaly place the glew32.dll from the bin
+folder into the root level of the 2.0.x source tree.
+
 Add the include directory and the lib to your visual c++
 configuration.  See the SDL section at the end of the file for
 details.
@@ -38,8 +52,6 @@ details.
 If you wish to build bzAdmin you may also want to get PDCurses.
 
 The installer is the bzflag executable in the dist folder.
-
-The instructions for building with Dev-C++ are enclosed in README.DEVC++
 
 If you are using Visual C++ 2008 EXPRESS edition, you will need to install
 a number of extra things before you can build. BZFlag will not build with 
