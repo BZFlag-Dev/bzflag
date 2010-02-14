@@ -6,7 +6,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.0
-  !define VER_MINOR .14.20100214A
+  !define VER_MINOR .14
 
 ;--------------------------------
 ;Compression options
