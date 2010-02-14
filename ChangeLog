@@ -15,6 +15,19 @@ BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-??)
 * Change the default stencil bitplanes to 1 to fix stencil shadows and various
   other stencil features - trepan
 * Backport fix for /idbanlist and /hostbanlist crashes - trepan
+* Add support for gcc-4.4 and libtool-2.2 - Jeff Makey
+* Update to Microsoft Visual C 9 from 7.1 - Jeff Myers
+* Update to directX 8 from 7 - Jeff Myers
+* Provide API support for using bz_moveFlag on team flags - Scott Wichser
+* Add pushstats plugin for future statistics gathering system - Jeff Myers
+* Increase restrictions on incompletely joined players - Jeff Myers
+* Announce saved file name in recordmatch plugin - Jeff Makey
+* Fix buffer overflow in menu subsystem - Jeff Myers
+* Fully support glob-style wildcards in hostbans - Bryan Jennings
+* Properly limit maximum message size in /showgroup command - Jeff Makey
+* Reset team scores in case of a capture during a countdown - Jeff Makey
+* Block spoofed /me messages - Scott Wichser
+* Keep flags within the world boundary - Jeff Makey
 * Add the "roamView" BZDB variable - trepan
 * Change fonts to DejaVu - Jeff Myers, Tim Riker
 * Source cleanup - Tim Riker
@@ -31,11 +44,11 @@ BZFlag 2.0.12  "The release without a name." (2008-06-25)
 * Configurable "defaultFOV" (60 deg) for widescreen users - Jeff Myers
 * Adjust shown coordinate for observers - Jeff Myers
 * Use the foghack only if the config says - Jeff Myers
-* Queue spawns after flag captures -
+* Queue spawns after flag captures - l4m3rthanyou, pacman97
 * Fix kill callback when is coming from server - Jeff Myers
 * Fix intermix of chat messages and api callback - Jeff Myers
 * Various permission fixes - Jeff Myers
-* Plugins path fixed -
+* Plugins path fixed - Jeff Makey
 * Kerberos and thread removed (never used) - Alfredo Tupone
 * Event log fixed - Jeff Myers
 * Workaroung to a driver bug - Jeff Myers
