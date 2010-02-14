@@ -97,6 +97,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "doDownloads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "updateDownloads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "roamView",			"fps",			true,	StateDatabase::ReadWrite,	NULL },
   { "listIcons",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxTextureSize",		"512",			true,	StateDatabase::ReadWrite,	NULL },
   { "lodScale",			"1.0",			true,	StateDatabase::ReadWrite,	NULL },

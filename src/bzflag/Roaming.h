@@ -44,6 +44,9 @@ public:
   RoamingView getMode(void) const;
   void setMode(RoamingView newView);
 
+  RoamingView parseView(const std::string& view) const;
+  const char* getViewName(RoamingView) const;
+
   enum RoamingTarget {
     next = 0,
     previous,

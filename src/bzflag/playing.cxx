@@ -4283,7 +4283,12 @@ static void enteringServer(void *buf)
   radar->setControlColor(borderColor);
 
   if ((myTank->getTeam() == ObserverTeam) || devDriving) {
-    ROAM.setMode(Roaming::roamViewFree);
+    const std::string roamStr = BZDB.get("roamView");
+    Roaming::RoamingView roamView = ROAM.parseView(roamStr);
+    if (roamView <= Roaming::roamViewDisabled) {
+      roamView = Roaming::roamViewFP;
+    }
+    ROAM.setMode(roamView);
     //    ROAM.resetCamera();
   } else {
     ROAM.setMode(Roaming::roamViewDisabled);
