@@ -16,8 +16,8 @@ BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-??)
   other stencil features - trepan
 * Backport fix for /idbanlist and /hostbanlist crashes - trepan
 * Add support for gcc-4.4 and libtool-2.2 - Jeff Makey
-* Update to Microsoft Visual C++ 9 from 7.1 - Jeff Myers
-* Update to directX 8 from 7 - Jeff Myers
+* Update to Microsoft Visual C++ 9 from 8.0 - Jeff Myers
+* Update to directInput 8 from 7 - Jeff Myers
 * Fix player ghosting failure - Steven Mertens
 * Provide API support for using bz_moveFlag on team flags - Scott Wichser
 * Add pushstats plugin for future statistics gathering system - Jeff Myers
