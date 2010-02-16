@@ -533,6 +533,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\src\bzflag\FontOptionsMenu.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\bzflag\FontOptionsMenu.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\src\bzflag\FormatMenu.cxx"
 					>
 				</File>
