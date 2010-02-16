@@ -3382,7 +3382,7 @@ static void changePlayerTeam(Player* player, TeamColor oldTeam,
   }
   else if (!ROAM.isRoaming()) {
     const std::string roamStr = BZDB.get("roamView");
-    Roaming::RoamingView roamView = ROAM.parseView(BZDB.get("roamView"));
+    Roaming::RoamingView roamView = ROAM.parseView(roamStr);
     if (roamView <= Roaming::roamViewDisabled) {
       roamView = Roaming::roamViewFP;
     }
@@ -3493,8 +3493,7 @@ void enteringServer(void* buf)
   else {
     if (!ROAM.isRoaming()) {
       const std::string roamStr = BZDB.get("roamView");
-
-      Roaming::RoamingView roamView = ROAM.parseView(BZDB.get("roamView"));
+      Roaming::RoamingView roamView = ROAM.parseView(roamStr);
       if (roamView <= Roaming::roamViewDisabled) {
         roamView = Roaming::roamViewFP;
       }

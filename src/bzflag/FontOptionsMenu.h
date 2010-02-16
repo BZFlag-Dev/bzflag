@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __TEXTOPTIONSMENU_H__
-#define __TEXTOPTIONSMENU_H__
+#ifndef __FONTOPTIONSMENU_H__
+#define __FONTOPTIONSMENU_H__
 
 #include "common.h"
 
@@ -23,15 +23,15 @@
 #include "HUDuiDefaultKey.h"
 
 
-class FontOptionsMenu;
+class LocalFontFace;
 
 
-/** this class provides text related options
+/** this class provides font options
  */
-class TextOptionsMenu : public HUDDialog {
+class FontOptionsMenu : public HUDDialog {
   public:
-    TextOptionsMenu();
-    ~TextOptionsMenu();
+    FontOptionsMenu();
+    ~FontOptionsMenu();
 
     HUDuiDefaultKey* getDefaultKey()
     {
@@ -41,13 +41,16 @@ class TextOptionsMenu : public HUDDialog {
     void resize(int width, int height);
     static void callback(HUDuiControl* w, void* data);
 
+    LocalFontFace* consoleFont;
+    LocalFontFace* serifFont;
+    LocalFontFace* sansSerifFont;
+
   private:
-    HUDuiControl* fontOptions;
-    FontOptionsMenu* fontMenu;
+    static FontOptionsMenu* fontOptionsMenu;
 };
 
 
-#endif /* __TEXTOPTIONSMENU_H__ */
+#endif /* __FONTOPTIONSMENU_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

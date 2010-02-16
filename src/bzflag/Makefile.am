@@ -48,6 +48,8 @@ bzflag_SOURCES =			\
 	EffectsRenderer.h		\
 	ExportInformation.cxx		\
 	ExportInformation.h		\
+	FontOptionsMenu.cxx		\
+	FontOptionsMenu.h		\
 	FontSizer.cxx			\
 	FontSizer.h			\
 	ForceFeedback.cxx		\

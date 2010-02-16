@@ -20,6 +20,7 @@
 #include "FontManager.h"
 
 /* local implementation headers */
+#include "FontOptionsMenu.h"
 #include "FontSizer.h"
 #include "MainMenu.h"
 #include "World.h"
@@ -37,6 +38,7 @@ static const int fontStep = 6;
 
 
 TextOptionsMenu::TextOptionsMenu()
+: fontMenu(NULL)
 {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -77,6 +79,12 @@ TextOptionsMenu::TextOptionsMenu()
   }
   option->update();
   addControl(option);
+
+  // Font Options
+  fontOptions = new HUDuiLabel;
+  fontOptions->setFontFace(fontFace);
+  fontOptions->setLabel("Font Options");
+  addControl(fontOptions);
 
   // Font Outlines
   option = new HUDuiList;
@@ -171,11 +179,19 @@ TextOptionsMenu::TextOptionsMenu()
 
 TextOptionsMenu::~TextOptionsMenu()
 {
+  delete fontMenu;
 }
 
 
 void TextOptionsMenu::execute()
 {
+  HUDuiControl* _focus = getNav().get();
+  if (_focus == fontOptions) {
+    if (fontMenu == NULL) {
+      fontMenu = new FontOptionsMenu;
+    }
+    HUDDialogStack::get()->push(fontMenu);
+  }
 }
 
 
@@ -219,6 +235,7 @@ void TextOptionsMenu::resize(int _width, int _height)
 
   int i = 1;
   i++; // locale
+  i++; // font options
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fontOutline"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("scoreFontSize") / fontStep);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("consoleFontSize") / fontStep);

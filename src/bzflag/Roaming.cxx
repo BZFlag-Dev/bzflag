@@ -349,7 +349,6 @@ Roaming::RoamingView Roaming::parseView(const std::string& str) const
   else if (strcasecmp(s, "follow")   == 0) { return roamViewFollow;   }
   else if (strcasecmp(s, "fps")      == 0) { return roamViewFP;       }
   else if (strcasecmp(s, "flag")     == 0) { return roamViewFlag;     }
-  else if (strcasecmp(s, "count")    == 0) { return roamViewCount;    }
   else                                     { return roamViewDisabled; }
 }
 
@@ -363,7 +362,6 @@ const char* Roaming::getViewName(RoamingView roamView) const
     case roamViewFollow:   { return "follow";   }
     case roamViewFP:       { return "fps";      }
     case roamViewFlag:     { return "flag";     }
-    case roamViewCount:    { return "count";    }
     default:               { return "unknown";  }
   }
 }
