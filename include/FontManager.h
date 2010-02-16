@@ -153,15 +153,7 @@ public:
    */
   void clear();
 
-protected:
-  friend class Singleton<FontManager>;
-
-  /**
-   * return the pulse color
-   */
-  void getPulseColor(const fvec4& color, fvec4& pulseColor) const;
-
-  /**
+   /**
    * returns the number of fonts loaded
    */
   int getNumFaces(void);
@@ -170,6 +162,14 @@ protected:
    * given a font ID, return that font's name
    */
   const char* getFaceName(int faceID);
+
+protected:
+  friend class Singleton<FontManager>;
+
+  /**
+   * return the pulse color
+   */
+  void getPulseColor(const fvec4& color, fvec4& pulseColor) const;
 
 private:
   /**
