@@ -11,7 +11,7 @@
  */
 
 /* DXJoystick:
- *	Encapsulates a Windows DirectInput 7+ joystick with
+ *	Encapsulates a Windows DirectInput 8+ joystick with
  *	force feedback support
  */
 
