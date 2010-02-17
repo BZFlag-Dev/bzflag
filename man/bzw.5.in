@@ -349,11 +349,11 @@ Instantiates a group, and possibly modifies subobjects
 .br
 \fB  fixedshift\fR 0.0 0.0     # time invariant u/v shift
 .br
-\fB  spinVar\fR  varName  # BZDB variable, "freq"
+\fB  spinVar\fR  $varname  # BZDB variable, "freq"
 .br
-\fB  scaleVar\fR varName  # BZDB variable, "scaleU scaleV freqU freqV"
+\fB  scaleVar\fR $varname  # BZDB variable, "scaleU scaleV freqU freqV"
 .br
-\fB  shiftVar\fR varName  # BZDB variable, "freqU freqV"
+\fB  shiftVar\fR $varname  # BZDB variable, "freqU freqV"
 .br
 \fBend\fR
 .br
@@ -408,7 +408,13 @@ properties:
 .br
   # the color will be used (untextured)
 .br
-\fB  texautoscale\fR 8 8     # world view generated texcoord scales
+\fB  texautoscale\fR 8 8     # unassigned texcoord generation scaling
+.br
+                       # use positive numbers to generate world space
+.br
+                       # texcoords. use negative numbers to generate
+.br
+                       # object space based texcoords.
 .br
 \fB  spheremap\fR            # use spherical texture coordinate mapping
 .br
@@ -418,7 +424,9 @@ properties:
 .br
 \fB  noradar\fR              # do not display on radar  (except normal mode)
 .br
-\fB  noradaroutline\fR       # do not display on radar outlines  (for links and bases)
+\fB  noradaroutline\fR       # do not display radar outlines
+.br
+                       # (for links and bases)                          
 .br
 \fB  noshadow\fR             # do not render shadows
 .br
@@ -466,15 +474,15 @@ properties:
 .br
   # the 'death' property requires a non\-blank message
 .br
-\fB  linearVar\fR  varName   # BZDB variable, "vx vy vz"
+\fB  linearVar\fR  $varname  # BZDB variable, "vx vy vz"
 .br
-\fB  angularVar\fR varName   # BZDB variable, "av [px py]"
+\fB  angularVar\fR $varname  # BZDB variable, "av [px py]"
 .br
-\fB  radialVar\fR  varName   # BZDB variable, "rv [px py]"
+\fB  radialVar\fR  $varname  # BZDB variable, "rv [px py]"
 .br
-\fB  slideVar\fR   varName   # BZDB variable, "slideTime"
+\fB  slideVar\fR   $varname  # BZDB variable, "slideTime"
 .br
-\fB  deathVar\fR   varName   # BZDB variable, "[deathMsg]"
+\fB  deathVar\fR   $varname  # BZDB variable, "[deathMsg]"
 .br
 \fBend\fR
 .br
@@ -988,13 +996,13 @@ Adds a route to teleport between a linkSrc and a linkDst.
 .br
   # speed blocks
 .br
-\fB  shotMinSpeed\fR speed
+\fB  shotMinSpeed\fR speed  # negative value for normal component
 .br
-\fB  shotMaxSpeed\fR speed
+\fB  shotMaxSpeed\fR speed  # negative value for normal component
 .br
-\fB  tankMinSpeed\fR speed
+\fB  tankMinSpeed\fR speed  # negative value for normal component
 .br
-\fB  tankMaxSpeed\fR speed
+\fB  tankMaxSpeed\fR speed  # negative value for normal component
 .br
   # angle blocks
 .br
@@ -1031,11 +1039,11 @@ Adds a route to teleport between a linkSrc and a linkDst.
 \fB  tankAllowFlags\fR GM ST OO
 .br
   # BZDB variable blocks
-\fB  blockVar\fR varName
+\fB  blockVar\fR $varname
 .br
-\fB  shotBlockVar\fR varName
+\fB  shotBlockVar\fR $varname
 .br
-\fB  tankBlockVar\fR varName
+\fB  tankBlockVar\fR $varname
 .br
   # Pass messages
 \fB  passText\fR pass message for shots and tanks
