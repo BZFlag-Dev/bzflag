@@ -153,7 +153,7 @@ public:
    */
   void clear();
 
-   /**
+  /**
    * returns the number of fonts loaded
    */
   int getNumFaces(void);

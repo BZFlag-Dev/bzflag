@@ -2935,9 +2935,9 @@ void searchFlag(GameKeeper::Player &playerData)
       int o;
       for (o = 0; o < count; o++) {
         const Obstacle* obs = oList->list[o];
+        // FIXME -- check for passthru and link characteristics ?
         const float t = obs->intersect(ray);
         if ((t >= 0.0f) && (t < 1.0f)) {
-          // FIXME -- check for passthru and link characteristics ?
           break;
         }
       }

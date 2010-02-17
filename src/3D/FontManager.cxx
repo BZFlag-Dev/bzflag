@@ -234,7 +234,7 @@ FontManager::FontManager()
 , useOutline(true)
 {
 #if debugging
-  std::cout <<"CONSTRUCTING FONT MANAGER" << std::endl;
+  std::cout << "CONSTRUCTING FONT MANAGER" << std::endl;
 #endif
 
   BZDB.addCallback(std::string("underlineColor"), underlineCallback, NULL);
