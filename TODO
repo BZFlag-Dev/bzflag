@@ -12,6 +12,30 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
+* Create a defined method to allow for a "passing" feature on flag
+  drop. Old game behavor users the fact that flags respawn to 0,0
+  or safezone if dropped over a pyramid or other "undropable" area.
+  This is not fully defined behavor and has and will be broken as
+  BZFlag is impoved. To allow this gameplay we need a real feature
+  in the map that fully defines some kind of zone (or face property)
+  that can detect a flag drop and then define a target zone (or area)
+  to send the flag to. This should be defineable per flag type and 
+  be totaly arbitray around the map. This way there will be a clearly
+  defined system for pass zones. The API should also be expaned to be
+  able to fully overide the entire flag grap/cap/respawn system.
+  
+* Update the flag grab code to use a more cylindrical volume for grabs
+  using tank and pole heights. This should let tanks get near flags
+  in Z and grab them.
+  
+* When flags are droped in undropable areas they need to go to the
+  closest "open" area, not be resent to the origin or safe zone.
+  The postion of things like the team flags mean something, so moving
+  it all over the place does affect gameplay.
+  
+* Add option to let flags rest on pyramids and sloped surfaces so they
+  can be picked up by jumpers using the new Z grab features.
+
 * Canceling a pause command before the 5 second countdown completes
   causes the client to drop any good flag without notifying the
   server, so other players will still see a flag on the tank even
