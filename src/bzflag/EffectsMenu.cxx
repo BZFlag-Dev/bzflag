@@ -78,6 +78,17 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // Shot Length (Viewport)
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("Shot Length:");
+  option->setCallback(callback, (void*)"x");
+  options = &option->getList(); 
+  options->push_back(std::string("Off"));
+  option->createSlider(10);
+  option->update();
+  listHUD.push_back(option);
+
   // Display Treads
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -300,7 +311,7 @@ void EffectsMenu::resize(int _width, int _height)
   for (i = 1; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
-    if ((i == 3) || (i == 5) || (i == 7)) {
+    if ((i == 3) || (i == 4) || (i == 6) || (i == 8)) {
       y -= 1.75f * h;
     } else {
       y -= 1.0f * h;
@@ -313,6 +324,7 @@ void EffectsMenu::resize(int _width, int _height)
 					    * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fogEffect"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("shotLength"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
   int treadIndex = 0;
   if (BZDB.isTrue("animatedTreads")) {
@@ -402,6 +414,11 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
 	TrackMarks::setAirCulling(TrackMarks::FullAirCull);
       }
       break;
+    }
+    case 'x': {
+      BZDB.setInt("shotLength", list->getIndex());
+      RENDERER.notifyStyleChange(); // bolt glBlendFunc() may change
+     break;
     }
     case 'f': {
       BZDB.set("useFancyEffects", list->getIndex() ? "1" : "0");

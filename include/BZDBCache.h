@@ -59,6 +59,7 @@ class BZDBCache
     static Bool  leadingShotLine;
     static Float linedRadarShots;
     static Float sizedRadarShots;
+    static Float shotLength;
     static Float pulseRate;
     static Float pulseDepth;
     static Bool  showCollisionGrid;

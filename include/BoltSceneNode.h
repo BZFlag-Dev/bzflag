@@ -81,6 +81,8 @@ class BoltSceneNode : public ShotSceneNode {
     bool		texturing;
     bool		colorblind;
     float		size;
+    float		length;
+    float		velocity[3];
     GLfloat		color[4];
     OpenGLLight		light;
     OpenGLGState	gstate;
