@@ -564,9 +564,10 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
     for (i = 0; i < numResolutions; i++) {
       const Resolution* r = resolutions + i;
       if (r->refresh == 0)
-	sprintf(name, "%dx%d %d bits", r->width, r->height, r->depth);
+	snprintf(name, sizeof name, "%dx%d %d bits", r->width, r->height,
+					r->depth);
       else
-	sprintf(name, "%dx%d @%dHz %d bits", r->width, r->height,
+	snprintf(name, sizeof name, "%dx%d @%dHz %d bits", r->width, r->height,
 					r->refresh, r->depth);
       resInfo[i] = new ResInfo(name, r->width, r->height, r->refresh);
     }

@@ -144,7 +144,8 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
   ResInfo** resInfo = new ResInfo*[numResolutions];
   for (i = 0; i < numResolutions; i++) {
     const XF86VidModeModeInfo* r = resolutions[i];
-    sprintf(name, "%dx%d @%d", r->hdisplay, r->vdisplay, getRetrace(r));
+    snprintf(name, sizeof name, "%dx%d @%d", r->hdisplay, r->vdisplay,
+					getRetrace(r));
     resInfo[i] = new ResInfo(name, r->hdisplay, r->vdisplay, getRetrace(r));
   }
 
