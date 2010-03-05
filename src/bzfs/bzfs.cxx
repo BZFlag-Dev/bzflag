@@ -3651,9 +3651,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgUDPLinkEstablished:
 	  case MsgWantSettings:
 	  case MsgExit:
+	  case MsgAlive:
 		  break;
 
-	  case MsgAlive:
 	  case MsgMessage:
 	  case MsgPlayerUpdateSmall:
 		  // FIXME: this is a workaround for a protocol problem
