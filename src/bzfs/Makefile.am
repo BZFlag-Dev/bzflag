@@ -150,5 +150,6 @@ LDADD = \
 	$(LIBCURL)			\
 	$(CARESLIB)			\
 	$(REGEX)			\
-	$(ZLIB)			\
+	$(ZLIB)				\
+	$(LIBDL)			\
 	../date/libDate.la

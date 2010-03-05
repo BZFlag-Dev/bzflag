@@ -131,6 +131,9 @@ AC_DISABLE_SHARED
 
 if test x$enable_shared != xno ; then
    AC_DEFINE(_USE_BZ_API, 1, [Enable plugins])
+   # dnl explicitly link with the dl library when available
+   AC_CHECK_LIB(dl, dlopen, [LIBDL=-ldl], [])
+   AC_SUBST(LIBDL)
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_shared" != "xno")
 
