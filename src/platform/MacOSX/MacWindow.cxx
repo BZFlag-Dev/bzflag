@@ -134,6 +134,7 @@ class GLContext
       if (settings.VBL_Synch)
 	SetVBLSynch(true);
 
+#ifdef DEBUG
       // spit out OpenGL capabilities
       fprintf(stderr, "----------------------------------------------------------------\n");
       fprintf(stderr, "Vendor:     \"%s\"\n", glGetString(GL_VENDOR));
@@ -151,6 +152,7 @@ class GLContext
       delete [] tmp;
       tmp = NULL;
       fprintf(stderr, "----------------------------------------------------------------\n");
+#endif
       return true;
     }
 
@@ -456,7 +458,9 @@ void MacWindow::setSize(int width, int height)
   settings.Window_Size.width = width;
   settings.Window_Size.height = height;
 
+#ifdef DEBUG
   std::cout << "setSize was called with " << width << " x " << height << std::endl;
+#endif
 
   int num_displays = displays.Init();
   if (num_displays == 0) {
