@@ -281,7 +281,7 @@ class DirectDisplay
   CGDisplayCount num_displays;
   CGDirectDisplayID* display_ids;
 
-  void DumpDisplayModeValues(CFDictionaryRef values) {
+  void DumpDisplayModeValues(CFDictionaryRef /* values */) {
   /*
     dprintf("   ----- Display Mode Info for %d -----\n", get_value(values, kCGDisplayMode));
     dprintf("   Bounds = %d x %d\n", get_value(values, kCGDisplayWidth), get_value(values, kCGDisplayHeight));
@@ -495,7 +495,10 @@ void MacWindow::setMinSize(int, int) {
 #endif
 }
 
-void MacWindow::setFullscreen() {} // do nothing for now
+void MacWindow::setFullscreen(bool) {
+  // do nothing for now
+}
+
 void MacWindow::warpMouse(int x, int y) {
   CGDisplayErr cgErr;
   CGPoint  mp;
