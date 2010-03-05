@@ -3650,10 +3650,18 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgUDPLinkRequest:
 	  case MsgUDPLinkEstablished:
 	  case MsgWantSettings:
+	  case MsgExit:
 		  break;
 
+	  case MsgAlive:
+	  case MsgMessage:
+	  case MsgPlayerUpdateSmall:
+		  // FIXME: this is a workaround for a protocol problem
+		  logDebugMessage(2,"Ignoring premature message 0x%4hx from host %s\n",code,handler->getTargetIP());
+		  return;
+
 	  default:
-		  logDebugMessage(1,"Host %s tried to send invalid message before Enter; %d\n",handler->getHostname(),code);
+		  logDebugMessage(1,"Host %s tried to send invalid message before Enter; 0x%4hx\n",handler->getTargetIP(),code);
 		  rejectPlayer(t, RejectBadRequest, "invalid request");
 		  return;
 	  }
