@@ -67,7 +67,7 @@ and running quickly if everything external to BZFlag is properly
 installed:
 
     ./autogen.sh
-    ./configure --enable-optimized
+    ./configure
     make
     ./src/bzflag/bzflag
 
@@ -107,11 +107,10 @@ was successful, you can configure BZFlag:
   % ./configure --help
 
 There are a variety of options possible when configuring BZFlag.  Most
-notably, you'll probably want to use the --enable-optimized option for
-performance and the --enable-shared option if you are building server
-plugins.
+notably, you'll want to use the --disable-static and --enable-shared
+options if you are building server plugins.
 
-  % ./configure --enable-optimized --enable-shared
+  % ./configure --disable-static --enable-shared
 
 You may want to create a 'work' directory and configure from there to
 have all the build products and binary executables get placed in a
@@ -419,4 +418,3 @@ moded games be played, and prevent moded clients from being used on public un-mo
 games. The bzflag project administrators reserve the right to remove public listing
 of any game servers that do not follow this rule. We also reserve the right to
 remove any global accounts or access to public services at any time.
-
