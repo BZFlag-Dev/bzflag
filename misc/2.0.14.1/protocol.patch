@@ -1,0 +1,22 @@
+--- bzflag-2.0.14/src/bzfs/bzfs.cxx.old	2010-02-13 01:09:52 +0000
++++ bzflag-2.0.14/src/bzfs/bzfs.cxx	2010-03-05 21:09:29 +0000
+@@ -3650,10 +3650,18 @@
+ 	  case MsgUDPLinkRequest:
+ 	  case MsgUDPLinkEstablished:
+ 	  case MsgWantSettings:
++	  case MsgExit:
++	  case MsgAlive:
+ 		  break;
+ 
++	  case MsgMessage:
++	  case MsgPlayerUpdateSmall:
++		  // FIXME: this is a workaround for a protocol problem
++		  logDebugMessage(2,"Ignoring premature message 0x%4hx from host %s\n",code,handler->getTargetIP());
++		  return;
++
+ 	  default:
+-		  logDebugMessage(1,"Host %s tried to send invalid message before Enter; %d\n",handler->getHostname(),code);
++		  logDebugMessage(1,"Host %s tried to send invalid message before Enter; 0x%4hx\n",handler->getTargetIP(),code);
+ 		  rejectPlayer(t, RejectBadRequest, "invalid request");
+ 		  return;
+ 	  }
