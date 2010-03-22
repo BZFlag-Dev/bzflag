@@ -27,7 +27,6 @@ bzflag_DATA = \
 	menu_arrow.png		\
 	mesh.png		\
 	missile.png		\
-	moon.png		\
 	mountain1.png		\
 	mountain2.png		\
 	mountain3.png		\
