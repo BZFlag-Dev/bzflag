@@ -266,18 +266,47 @@ Licensing
 --------------
 
 By committing to a source code repository or submitting a patch, you the
-developer are giving the project maintainer (Tim Riker) a non-exclusive
-unrestricted, irrevocable, license to your works. This includes rights to 
-modify, distribute, relicense, transfer, and claim copyright on the specific 
-works that you submit. As the original author you may distribute, modify, 
-transfer, and relicense your copy of a submitted works as you see fit, provided 
-they do not have additional licensing restrictions from being a derived work. 
-You may not place any restrictions on how the project maintainer (Tim Riker) 
-maintains or handles your submitted works. Works that are derivations of 
-existing works in the project are subject to the current project license(LGPL).
-Authors that submit works must have the legal right to agree to these terms, 
-either has original author or authorised licensee of derived works.
+developer are giving the project maintainer(Tim Riker),and his successors
+various rights to the work submitted, as defined below;
 
+Grant of Copyright License.
+Each Contributor hereby grants to The Project Maintainer a perpetual, 
+worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright 
+license to reproduce, prepare Derivative Works of, publicly display, publicly 
+perform, sublicense, and distribute the Work and such Derivative Works in 
+Source or Object form. 
+
+Grant of Patent License.
+Each Contributor hereby grants to The Project Maintainer a perpetual,
+worldwide, non-exclusive, no-charge, royalty-free, irrevocable 
+(except as stated in this section) patent license to make, have made, use,
+offer to sell, sell, import, and otherwise transfer the Work, where such 
+license applies only to those patent claims licensable by such Contributor 
+that are necessarily infringed by their Contribution(s) alone or by combination
+of their Contribution(s) with the Work to which such Contribution(s) was 
+submitted. If the Contributor institutes patent litigation against any entity
+(including a cross-claim or counterclaim in a lawsuit) alleging that the
+Work or a Contribution incorporated within the Work constitutes direct or
+contributory patent infringement, then any patent licenses granted to the 
+Contributor under this License for that Work shall terminate as of the date 
+such litigation is filed. 
+
+Submission of Contributions.
+Any Contribution intentionally submitted for inclusion in the Work by 
+Contributors to the Project shall be under the terms and conditions of this 
+License, without any additional terms or conditions. Notwithstanding the above,
+nothing herein shall supersede or modify the terms of any separate license
+agreement you may have executed with Licensor regarding such Contributions. 
+
+Notes.
+As the original author you may distribute, modify, transfer, and relicense your
+copy of a submitted works as you see fit, provided  they do not have additional
+licensing restrictions from being a derived work. You may not place any 
+restrictions on how the project maintainer (Tim Riker) maintains or handles your
+submitted works. Works that are derivations of existing works in the project 
+are subject to the current project license(LGPL).Authors that submit works must
+have the legal right to agree to these terms, either has original author or
+authorized licensee of derived works.
 
 Testing
 =======
