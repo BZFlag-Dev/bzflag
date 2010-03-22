@@ -272,6 +272,10 @@ BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 
 # FIXME: move other library checks here
 
+dnl explicitly link with the dl library when available
+AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl", LIBDL="")
+AC_SUBST(LIBDL)
+
 dnl detect a usable system zlib compression library
 if test "x$enable_zlib_build" != "xyes" ; then
     AC_CHECK_LIB(z, compressBound, LIBZ="-lz", LIBZ="")

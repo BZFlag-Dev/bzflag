@@ -14,6 +14,7 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if BUILD_PLUGINS
 plugin_files = bzfsPlugins.h bzfsPlugins.cxx
+bzfs_LDADD = $(LDADD) $(LIBDL)
 else
 plugin_files =
 endif

@@ -231,6 +231,7 @@ LDADD =	\
 	$(LIBFREETYPE)			\
 	$(LIBCURL)			\
 	$(LIBCARES)			\
+	$(LIBDL)			\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
 	$(RESOURCE)			\
