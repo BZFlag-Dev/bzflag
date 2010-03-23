@@ -67,6 +67,9 @@ class MainWindow {
 
     void		showWindow(bool = true);
     void		warpMouse();
+    void		warpMouse(int mx, int my);
+    void		warpMouseCenterX();
+    void		warpMouseCenterY();
     void		grabMouse();
     void		enableGrabMouse(bool on);
     bool		isGrabEnabled(void);
@@ -100,6 +103,8 @@ class MainWindow {
 
     static void		resizeCB(void*);
     static void		exposeCB(void*);
+
+    inline int		getYOffset() const;
 
   private:
     BzfWindow*		window;
