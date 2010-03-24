@@ -322,6 +322,14 @@ public:
     if (!player || len < 119)
       return false;
 
+    // a previous MsgEnter will have set the name a few lines down from here
+    if (!player->accessInfo.getName().empty()) {
+      logDebugMessage(1,"Player %s [%d] sent another MsgEnter\n",
+		      player->player.getCallSign(), player->getIndex());
+      rejectPlayer(player->getIndex(), RejectBadRequest, "invalid request");
+      return true;
+    }
+
     uint16_t rejectCode;
     char     rejectMsg[MessageLen];
 
