@@ -3680,6 +3680,13 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
   switch (code) {
     // player joining
     case MsgEnter: {
+      // a previous MsgEnter will have set the name a few lines down from here
+      if (!playerData->accessInfo.getName().empty()) {
+	logDebugMessage(1,"Player %s [%d] sent another MsgEnter\n",
+	       playerData->player.getCallSign(), t);
+	rejectPlayer(t, RejectBadRequest, "invalid request");
+	break;
+      }
       uint16_t rejectCode;
       char     rejectMsg[MessageLen];
       if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg)) {
