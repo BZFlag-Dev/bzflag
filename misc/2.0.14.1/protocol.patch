@@ -1,5 +1,6 @@
---- bzflag-2.0.14/src/bzfs/bzfs.cxx.old	2010-02-13 01:09:52 +0000
-+++ bzflag-2.0.14/src/bzfs/bzfs.cxx	2010-03-05 21:09:29 +0000
+http://bzflag.svn.sourceforge.net/viewvc/bzflag/branches/v2_0branch/bzflag/src/bzfs/bzfs.cxx?view=patch&r1=20950&r2=20844
+--- branches/v2_0branch/bzflag/src/bzfs/bzfs.cxx	2010/02/14 19:49:16	20844
++++ branches/v2_0branch/bzflag/src/bzfs/bzfs.cxx	2010/03/24 14:35:00	20950
 @@ -3650,10 +3650,18 @@
  	  case MsgUDPLinkRequest:
  	  case MsgUDPLinkEstablished:
@@ -20,3 +21,17 @@
  		  rejectPlayer(t, RejectBadRequest, "invalid request");
  		  return;
  	  }
+@@ -3672,6 +3680,13 @@
+   switch (code) {
+     // player joining
+     case MsgEnter: {
++      // a previous MsgEnter will have set the name a few lines down from here
++      if (!playerData->accessInfo.getName().empty()) {
++	logDebugMessage(1,"Player %s [%d] sent another MsgEnter\n",
++	       playerData->player.getCallSign(), t);
++	rejectPlayer(t, RejectBadRequest, "invalid request");
++	break;
++      }
+       uint16_t rejectCode;
+       char     rejectMsg[MessageLen];
+       if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg)) {
