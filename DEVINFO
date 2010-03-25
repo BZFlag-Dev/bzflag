@@ -263,11 +263,11 @@ existing developers is one of the more immediate means to become a
 developer for BZFlag yourself.
 
 Licensing
---------------
+---------
 
 By committing to a source code repository or submitting a patch, you the
 developer are giving the project maintainer(Tim Riker),and his successors
-various rights to the work submitted, as defined below;
+various rights to the work submitted, as defined below.
 
 Grant of Copyright License.
 Each Contributor hereby grants to The Project Maintainer a perpetual, 
@@ -300,12 +300,12 @@ agreement you may have executed with Licensor regarding such Contributions.
 
 Notes.
 As the original author you may distribute, modify, transfer, and relicense your
-copy of a submitted works as you see fit, provided  they do not have additional
+copy of a submitted work as you see fit, provided it does not have additional
 licensing restrictions from being a derived work. You may not place any 
 restrictions on how the project maintainer (Tim Riker) maintains or handles your
 submitted works. Works that are derivations of existing works in the project 
 are subject to the current project license(LGPL).Authors that submit works must
-have the legal right to agree to these terms, either has original author or
+have the legal right to agree to these terms, either as original author or
 authorized licensee of derived works.
 
 Testing
