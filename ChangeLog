@@ -6,6 +6,19 @@ No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
+BZFlag 2.0.15  "Insert Clever Name Here" (2010-04-01)
+-----------------------------------------------------
+
+* Fix command line options in Windows launcher - Scott Wichser
+* Backport bullet tails as seen out the viewport - trepan
+* Fix regression in protocol handling by server - Jeff Makey, Scott Wichser
+* Minor cleanup of source and build system - Jeff Makey
+* Explicitly link to the dl library when needed - Jeff Makey
+* Remove unused dependency on Xi library - Jeff Makey
+* Clarify copyright assignment terms for developers - Jeff Myers
+* Allow only one Enter message per player instance - Jeff Makey
+
+
 BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-15)
 -------------------------------------------------------------------------
 
