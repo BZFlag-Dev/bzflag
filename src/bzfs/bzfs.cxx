@@ -3657,7 +3657,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgMessage:
 	  case MsgPlayerUpdateSmall:
 		  // FIXME: this is a workaround for a protocol problem
-		  logDebugMessage(2,"Ignoring premature message 0x%4hx from host %s\n",code,handler->getTargetIP());
+		  logDebugMessage(4,"Ignoring premature message 0x%4hx from host %s\n",code,handler->getTargetIP());
 		  return;
 
 	  default:
