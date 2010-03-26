@@ -634,7 +634,8 @@ void			HUDRenderer::render(SceneRenderer& renderer)
   else {
     const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
 			   (triangleCount > 0) || (radarTriangleCount > 0);
-    const bool showTankLabels = BZDB.isTrue("displayLabels");
+    const bool showTankLabels = roaming &&
+                                BZDB.isTrue("displayLabels");
 
     if (showCompose || showTimes || showTankLabels) {
       // get view metrics
