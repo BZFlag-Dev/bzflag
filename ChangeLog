@@ -17,6 +17,7 @@ BZFlag 2.0.15  "Insert Clever Name Here" (2010-04-01)
 * Remove unused dependency on Xi library - Jeff Makey
 * Clarify copyright assignment terms for developers - Jeff Myers
 * Allow only one Enter message per player instance - Jeff Makey
+* Show tank labels only in observer mode - Scott Wichser
 
 
 BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-15)
@@ -67,7 +68,7 @@ BZFlag 2.0.12  "The release without a name." (2008-06-25)
 * Kerberos and thread removed (never used) - Alfredo Tupone
 * Event log fixed - Jeff Myers
 * Workaroung to a driver bug - Jeff Myers
-* Word filtering is case unsensitive -
+* Word filtering is case insensitive -
 * Correctly interface with c-ares 1.5.1 and lower - Alfredo Tupone
 * Not showing a "new rabbit" message when player ID == NoPlayer - blast007
 * gcc-4.3 fixes - Tim Riker, Alfredo Tupone
@@ -164,7 +165,7 @@ BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 * /reset uses the values from the config and the map as default - Jeff Myers
 * Sreenshots now remember where they left off - Jeff Myers, Thomas Sowell
 * Have windows dump std::error out to a file - Jeff Myers
-* Various API enhancmentes - Jeff Myers and others ( from patches )
+* Various API enhancements - Jeff Myers and others ( from patches )
 * Not applauding when capturing his own flag - Alfredo Tupone
 * Fixing crash on invalid captured flag - Alfredo Tupone
 * Fixed bots on a public server - Alfredo Tupone
@@ -611,7 +612,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Added voting sytem with /poll, /vote, and /veto commands - Sean Morrison
 * Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
-* World object and -worldsize paramaters - Jeff Myers
+* World object and -worldsize parameters - Jeff Myers
 * Server side world parm (bzdb) file [clo] - Dave Brosius
 * MsgTeamUpdate, MsgFlagUpdate coalesced - Dave Brosius
 * Burrow Flag - Dave Brosius
@@ -631,7 +632,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Show Team kill score in Scoreboard - Dave Brosius
 * Beginnings of flag 'negotiation' - Dave Brosius
 * Pass reason in MsgKilled, add support for SR noise - Dave Brosius
-* Remove unnessary MsgScore from player to server - Dave Brosius
+* Remove unnecessary MsgScore from player to server - Dave Brosius
 * Remove old lag pings - Dave Brosius
 * BeOS port - François Revol
 * Collision detection fixes - David Trowbridge, Jeff Myers
@@ -887,7 +888,7 @@ BZFlag 1.7d release 8
 * added uptime to bzfls statistics
 * changed bzfls protocol and bzfs to match
     deliberately not backwards compatible to force upgrades
-* gave flag help messsages more space to avoid overlapping target box
+* gave flag help messages more space to avoid overlapping target box
 
 
 BZFlag 1.7d release 7
@@ -952,7 +953,7 @@ BZFlag 1.7d release 5
 * added custom visual choosing algorithm on X (to prefer DirectColor over True)
     making it more likely to get a gamma correctable visual
 * added support for destroying/recreating OpenGL context on-the-fly
-    required to support dynamic video format chaning on win32
+    required to support dynamic video format changing on win32
 * support for dynamic changing of video format on xfree86 and win32
     removed startup format picker on win32 -- change format through options
 * improved integration with win32 desktop (alt-tab, screen saver, etc.)
