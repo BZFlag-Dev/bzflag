@@ -777,7 +777,8 @@ bool ForceRadarCommand::operator() (const char*)
     return true;
   }
   if (myTank->getTeam() != ObserverTeam) {
-    return true; // FIXME -- add a message
+    addMessage(NULL, "the /forceradar command only works for observers");
+    return true;
   }
   float value;
   if (BZDBCache::radarLimit == 0.0f) {
