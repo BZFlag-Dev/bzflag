@@ -4,6 +4,7 @@ SUBDIRS = \
 	Phoenix \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
+	TimeLimit \
 	airspawn \
 	chathistory \
 	flagStay \

@@ -823,8 +823,10 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/plugin_utils/Makefile
 	plugins/plugin_utils/VC9/Makefile
 	plugins/HoldTheFlag/Makefile
+	plugins/Phoenix/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
+	plugins/TimeLimit/Makefile
 	plugins/airspawn/Makefile
 	plugins/chathistory/Makefile
 	plugins/flagStay/Makefile
@@ -847,7 +849,6 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/timedctf/Makefile
 	plugins/torBlock/Makefile
 	plugins/vocaliser/Makefile
-	plugins/Phoenix/Makefile
 	plugins/wwzones/Makefile
 	plugins/vc9/Makefile
 	src/3D/Makefile
