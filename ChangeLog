@@ -10,8 +10,10 @@ BZFlag 2.0.15  "Insert Clever Name Here" (2010-04-01)
 -----------------------------------------------------
 
 * Fix command line options in Windows launcher - Scott Wichser
-* Backport bullet tails as seen out the viewport - trepan
 * Fix regression in protocol handling by server - Jeff Makey, Scott Wichser
+* Add bullet tails as seen out the viewport - trepan
+* Add observer mouse controls for roaming and tracking modes - trepan
+* Add the /forceradar client-side command for observers - trepan
 * Minor cleanup of source and build system - Jeff Makey
 * Explicitly link to the dl library when needed - Jeff Makey
 * Remove unused dependency on Xi library - Jeff Makey
