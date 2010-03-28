@@ -3652,6 +3652,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  case MsgWantSettings:
 	  case MsgExit:
 	  case MsgAlive:
+	  case MsgAutoPilot:
 		  break;
 
 	  case MsgMessage:
