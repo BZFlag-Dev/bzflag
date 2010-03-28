@@ -76,20 +76,46 @@ void			MainWindow::showWindow(bool on)
   if (on) resize();
 }
 
+
+inline int MainWindow::getYOffset() const
+{
+  if (quadrant == FullWindow) {
+    return 0;
+  }
+  return ((trueHeight + 1) >> 1) - yOrigin;
+}
+
 void			MainWindow::warpMouse()
 {
   // move mouse to center of view window (zero motion box)
-  int y = viewHeight >> 1;
-  if (quadrant != FullWindow) y += ((trueHeight+1) >> 1) - yOrigin;
-  window->warpMouse((width >> 1) + xOrigin, y);
+  window->warpMouse((width >> 1) + xOrigin, (viewHeight >> 1) + getYOffset());
+}
+
+void			MainWindow::warpMouse(int mx, int my)
+{
+  window->warpMouse(mx, my);
+}
+
+void			MainWindow::warpMouseCenterX()
+{
+  int mx, my;
+  getMousePosition(mx, my);
+  window->warpMouse((width >> 1) + xOrigin, my + (viewHeight >> 1) + getYOffset());
+}
+
+void			MainWindow::warpMouseCenterY()
+{
+  int mx, my;
+  getMousePosition(mx, my);
+  const int y = (viewHeight >> 1) + getYOffset();
+  window->warpMouse(mx + (width >> 1) + xOrigin, y);
 }
 
 void			MainWindow::getMousePosition(int& mx, int& my) const
 {
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
-  my -= (viewHeight >> 1);
-  if (quadrant != FullWindow) my -= ((trueHeight+1) >> 1) - yOrigin;
+  my -= (viewHeight >> 1) + getYOffset();
 }
 
 void			MainWindow::grabMouse()

@@ -171,6 +171,11 @@ static float FarPlane = FarPlaneDefault;
 static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
+static bool leftButton   = false;
+static bool rightButton  = false;
+static bool middleButton = false;
+
+
 enum BlowedUpReason {
   GotKilledMsg,
   GotShot,
@@ -547,10 +552,11 @@ static ServerLink*	lookupServer(const Player *_player)
 static bool		motionFreeze = false;
 #endif
 
-static enum {None, Left, Right, Up, Down} keyboardMovement;
+static enum { None, Left, Right, Up, Down } keyboardMovement;
 static int shiftKeyStatus;
 
-static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
+
+static bool doKeyCommon(const BzfKeyEvent& key, bool pressed)
 {
   keyboardMovement = None;
   shiftKeyStatus   = key.shift;
@@ -577,6 +583,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       return true;
     }
   }
+
   std::string cmdDrive = cmd;
   if (cmdDrive.empty()) {
     // Check for driving keys
@@ -594,7 +601,7 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
     keyboardMovement = Down;
   }
 
-  if (myTank)
+  if (myTank) {
     switch (keyboardMovement) {
       case Left:
 	myTank->setKey(BzfKeyEvent::Left, pressed);
@@ -611,9 +618,12 @@ static bool		doKeyCommon(const BzfKeyEvent& key, bool pressed)
       case None:
 	break;
     }
+  }
+
   if (!cmd.empty()) {
-    if (cmd=="fire")
+    if (cmd == "fire") {
       fireButton = pressed;
+    }
     roamButton = pressed;
     if (keyboardMovement == None) {
       std::string result = CMDMGR.run(cmd);
@@ -753,7 +763,14 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
   }
 }
 
+
 static void doKey(const BzfKeyEvent& key, bool pressed) {
+  switch (key.button) {
+    case BzfKeyEvent::LeftMouse:   { leftButton   = pressed; break; }
+    case BzfKeyEvent::RightMouse:  { rightButton  = pressed; break; }
+    case BzfKeyEvent::MiddleMouse: { middleButton = pressed; break; }
+  }
+    
   if (myTank) {
     const std::string cmd = KEYMGR.get(key, pressed);
     if (cmd == "jump") {
@@ -3253,10 +3270,6 @@ static void *handleMsgSetVars(void *msg)
     msg = nboUnpackUByte(msg, valueLen);
     msg = nboUnpackString(msg, value, valueLen);
     value[valueLen] = '\0';
-
-    BZDB.set(name, value);
-    BZDB.setPersistent(name, false);
-    BZDB.setPermission(name, StateDatabase::Locked);
   }
   return msg;
 }
@@ -4862,6 +4875,7 @@ static void		renderDialog()
   }
 }
 
+
 static void checkDirtyControlPanel(ControlPanel *cp)
 {
   if (cp) {
@@ -4872,13 +4886,61 @@ static void checkDirtyControlPanel(ControlPanel *cp)
   return;
 }
 
-static int		getZoomFactor()
+
+static int getZoomFactor()
 {
   if (!BZDB.isSet("displayZoom")) return 1;
   const int zoom = atoi(BZDB.get("displayZoom").c_str());
   if (zoom < 1) return 1;
   if (zoom > 8) return 8;
   return zoom;
+}
+
+
+static void renderRoamMouse()
+{
+  if (!ROAM.isRoaming() ||
+      !myTank || (myTank->getTeam() != ObserverTeam) ||
+      !(leftButton || rightButton || middleButton)) {
+    return;
+  }
+
+  const int sx = mainWindow->getWidth();
+  const int sy = mainWindow->getHeight();
+  const int ox = mainWindow->getOriginX();
+  const int oy = mainWindow->getOriginY();
+  int mx, my;
+  mainWindow->getWindow()->getMouse(mx, my);
+  my = sy - my - 1; // flip the y axis
+  const int xc = ox + (sx / 2);
+  const int y2 = oy + (mainWindow->getViewHeight() / 2);
+  const int yc = (sy - y2 - 1); // flip the y axis
+
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+
+  glScissor(ox, oy, sx, sy);
+  glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
+  glOrtho(0.0, sx, 0.0, sy, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);  glPushMatrix(); glLoadIdentity();
+
+  glShadeModel(GL_SMOOTH);
+  glEnable(GL_BLEND);
+  glEnable(GL_LINE_SMOOTH);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+  static const float color0[4] = { 0.0f, 0.0f, 0.0f, 0.1f };
+  static const float color1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+  glLineWidth(1.49f);
+  glBegin(GL_LINES);  
+  glColor4fv(color0); glVertex2i(xc, yc);
+  glColor4fv(color1); glVertex2i(mx, my);
+  glEnd();
+
+  glMatrixMode(GL_PROJECTION); glPopMatrix();
+  glMatrixMode(GL_MODELVIEW);  glPopMatrix();
+
+  glPopAttrib();
 }
 
 
@@ -4917,6 +4979,9 @@ static void drawUI()
 
   // update the HUD (menus)
   renderDialog();
+
+  // render the drag-line
+  renderRoamMouse();
 
   return;
 }
@@ -5675,10 +5740,53 @@ void drawFrame(const float dt)
 }
 
 
-static void		setupRoamingCamera(float dt)
+//============================================================================//
+
+enum MouseButtonBits {
+  leftMouseBit   = (1 << 0),
+  rightMouseBit  = (1 << 1),
+  middleMouseBit = (1 << 2)
+};
+
+enum MouseCtrlType {
+  NoCtrl,
+  ShiftX, // left/right
+  ShiftY, // backwards/forewards
+  ShiftZ, // up/down
+  SpinX,  // tilt (phi)
+  SpinY,  // -- not used --
+  SpinZ   // heading (theta)
+};
+
+struct MouseCtrlPair {
+  MouseCtrlType x;
+  MouseCtrlType y;
+};
+
+static const bool mouseCtrlMask = 0x7;
+
+static const MouseCtrlPair mouseCtrlMap[8] = {
+//  X       Y
+  { NoCtrl, NoCtrl }, // . . .
+  { SpinZ,  ShiftY }, // L . .
+  { SpinZ,  SpinX  }, // . R .
+  { ShiftX, ShiftY }, // L R .
+  { ShiftX, ShiftZ }, // . . M
+  { SpinZ,  ShiftZ }, // L . M
+  { SpinZ,  ShiftZ }, // . R M
+  { ShiftX, ShiftY }  // L R M
+};
+
+
+static void setupRoamingCamera(float dt)
 {
+
   static Roaming::RoamingCamera prevDeltaCamera;
   static bool inited = false;
+  static int prevMouseBits = 0;
+  int currMouseBits = (leftButton   ? leftMouseBit   : 0) |
+                      (rightButton  ? rightMouseBit  : 0) |
+                      (middleButton ? middleMouseBit : 0);
 
   if (!inited) {
     memset(&prevDeltaCamera, 0, sizeof(Roaming::RoamingCamera));
@@ -5690,25 +5798,71 @@ static void		setupRoamingCamera(float dt)
 
   // move roaming camera
   if (myTank) {
-    bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
-    bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
-    bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
-    if (display->hasGetKeyMode()) {
-      display->getModState (shift, control, alt);
+    int mx, my;
+    mainWindow->getMousePosition(mx, my);
+
+    const MouseCtrlPair currCtrl = mouseCtrlMap[currMouseBits];
+    const MouseCtrlPair prevCtrl = mouseCtrlMap[prevMouseBits];
+
+    if (currCtrl.x == prevCtrl.x) {
+      if (currCtrl.y != prevCtrl.y) {
+        mainWindow->warpMouseCenterY();
+        my = 0;
+      }
     }
-    if (!control && !shift) {
-      deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+    else if (currCtrl.y == prevCtrl.y) {
+      mainWindow->warpMouseCenterX();
+      mx = 0;
     }
-    if (alt) {
-      deltaCamera.pos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
-    } else {
-      deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
+    else {
+      mainWindow->warpMouse();
+      mx = my = 0;
     }
-    if (control) {
-      deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
+
+    if (currMouseBits != 0) {
+      // mouse control
+      const float spinMult  =  -100.0f;
+      const float shiftMult = -1000.0f;
+      const int wx = mainWindow->getWidth();
+      const int wy = mainWindow->getViewHeight();
+      const int ws = (wx < wy) ? wx : wy;
+      const float wf = 1.0f / (float(ws * ws) * 0.25f);
+      const float sx = float(mx * abs(mx)) * wf;
+      const float sy = float(my * abs(my)) * wf;
+      switch (currCtrl.x) {
+        case SpinZ:  { deltaCamera.theta  = spinMult  * sx; break; }
+        case ShiftX: { deltaCamera.pos[1] = shiftMult * sx; break; }
+        default: { break; }
+      }
+      switch (currCtrl.y) {
+        case SpinX:  { deltaCamera.phi    =  spinMult * sy; break; }
+        case ShiftY: { deltaCamera.pos[0] = shiftMult * sy; break; }
+        case ShiftZ: { deltaCamera.pos[2] = shiftMult * sy; break; }
+        default: { break; }
+      }
     }
-    if (shift) {
-      deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+    else {
+      // keyboard control
+      bool control = ((shiftKeyStatus & BzfKeyEvent::ControlKey) != 0);
+      bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
+      bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
+      if (display->hasGetKeyMode()) {
+        display->getModState (shift, control, alt);
+      }
+      if (!control && !shift) {
+        deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+      }
+      if (alt) {
+        deltaCamera.pos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
+      } else {
+        deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
+      }
+      if (control) {
+        deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
+      }
+      if (shift) {
+        deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+      }
     }
   }
 
@@ -5723,8 +5877,8 @@ static void		setupRoamingCamera(float dt)
     deltaCamera.pos[0] = (at * deltaCamera.pos[0]) + (bt * prevDeltaCamera.pos[0]);
     deltaCamera.pos[1] = (at * deltaCamera.pos[1]) + (bt * prevDeltaCamera.pos[1]);
     deltaCamera.pos[2] = (at * deltaCamera.pos[2]) + (bt * prevDeltaCamera.pos[2]);
-    deltaCamera.theta  = (at * deltaCamera.theta) + (bt * prevDeltaCamera.theta);
-    deltaCamera.phi    = (at * deltaCamera.phi) + (bt * prevDeltaCamera.phi);
+    deltaCamera.theta  = (at * deltaCamera.theta)  + (bt * prevDeltaCamera.theta);
+    deltaCamera.phi    = (at * deltaCamera.phi)    + (bt * prevDeltaCamera.phi);
   }
 
   deltaCamera.zoom = roamDZoom;
@@ -5734,9 +5888,13 @@ static void		setupRoamingCamera(float dt)
   // copy the old delta values
   memcpy(&prevDeltaCamera, &deltaCamera, sizeof(Roaming::RoamingCamera));
 
+  prevMouseBits = currMouseBits;
+
   return;
 }
 
+
+//============================================================================//
 
 static void		prepareTheHUD()
 {
