@@ -3270,6 +3270,10 @@ static void *handleMsgSetVars(void *msg)
     msg = nboUnpackUByte(msg, valueLen);
     msg = nboUnpackString(msg, value, valueLen);
     value[valueLen] = '\0';
+
+    BZDB.set(name, value); 
+    BZDB.setPersistent(name, false);
+    BZDB.setPermission(name, StateDatabase::Locked);
   }
   return msg;
 }
