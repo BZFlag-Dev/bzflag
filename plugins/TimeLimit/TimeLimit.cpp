@@ -15,7 +15,7 @@
 
 #include "bzfsAPI.h"
 #include <sstream>
-#include <regex.h>
+#include "bzregex.h"
 
 BZ_GET_PLUGIN_VERSION
 
