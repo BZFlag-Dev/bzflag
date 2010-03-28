@@ -127,6 +127,12 @@ class SaveWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class ForceRadarCommand : LocalCommand {
+  public:
+    ForceRadarCommand();
+    bool operator() (const char *commandLine);
+};
+
 
 // class instantiations
 static CommandList	  commandList;
@@ -144,24 +150,26 @@ static RoamPosCommand     RoamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
+static ForceRadarCommand  forceRadarCommand;
 
 
 // class constructors
-BindCommand::BindCommand() :		LocalCommand("/bind") {}
-CommandList::CommandList() :		LocalCommand("/cmds") {}
-DiffCommand::DiffCommand() :		LocalCommand("/diff") {}
-DumpCommand::DumpCommand() :		LocalCommand("/dumpvars") {}
-HighlightCommand::HighlightCommand() :	LocalCommand("/highlight") {}
-LocalSetCommand::LocalSetCommand() :	LocalCommand("/localset") {}
-QuitCommand::QuitCommand() :		LocalCommand("/quit") {}
-ReTextureCommand::ReTextureCommand() :	LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand() :	LocalCommand("/roampos") {}
-SaveMsgsCommand::SaveMsgsCommand() :	LocalCommand("/savemsgs") {}
-SaveWorldCommand::SaveWorldCommand() :	LocalCommand("/saveworld") {}
-SetCommand::SetCommand() :		LocalCommand("/set") {}
-SilenceCommand::SilenceCommand() :	LocalCommand("/silence") {}
-UnsilenceCommand::UnsilenceCommand() :	LocalCommand("/unsilence") {}
-ClientQueryCommand::ClientQueryCommand() : LocalCommand("CLIENTQUERY") {}
+BindCommand::BindCommand()			: LocalCommand("/bind") {}
+CommandList::CommandList()			: LocalCommand("/cmds") {}
+DiffCommand::DiffCommand()			: LocalCommand("/diff") {}
+DumpCommand::DumpCommand()			: LocalCommand("/dumpvars") {}
+HighlightCommand::HighlightCommand()		: LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand()		: LocalCommand("/localset") {}
+QuitCommand::QuitCommand()			: LocalCommand("/quit") {}
+ReTextureCommand::ReTextureCommand()		: LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand()		: LocalCommand("/roampos") {}
+SaveMsgsCommand::SaveMsgsCommand()		: LocalCommand("/savemsgs") {}
+SaveWorldCommand::SaveWorldCommand()		: LocalCommand("/saveworld") {}
+ForceRadarCommand::ForceRadarCommand()		: LocalCommand("/forceradar") {}
+SetCommand::SetCommand()			: LocalCommand("/set") {}
+SilenceCommand::SilenceCommand()		: LocalCommand("/silence") {}
+UnsilenceCommand::UnsilenceCommand()		: LocalCommand("/unsilence") {}
+ClientQueryCommand::ClientQueryCommand()	: LocalCommand("CLIENTQUERY") {}
 
 
 // the meat of the matter
@@ -761,6 +769,28 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   return true;
 }
 
+
+bool ForceRadarCommand::operator() (const char*)
+{
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank == NULL) {
+    return true;
+  }
+  if (myTank->getTeam() != ObserverTeam) {
+    return true; // FIXME -- add a message
+  }
+  float value;
+  if (BZDBCache::radarLimit == 0.0f) {
+    value = +BZDBCache::worldSize;
+  } else {
+    value = -BZDBCache::radarLimit;
+  }
+  BZDB.setPermission(StateDatabase::BZDB_RADARLIMIT, StateDatabase::User);
+  BZDB.setFloat(StateDatabase::BZDB_RADARLIMIT, value);
+  BZDB.setPermission(StateDatabase::BZDB_RADARLIMIT, StateDatabase::Server);
+  return true;
+}
+    
 
 // Local Variables: ***
 // mode:C++ ***
