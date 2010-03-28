@@ -1217,6 +1217,14 @@ void			BackgroundRenderer::drawGroundShadows(
 }
 
 
+static void setupBlackFog(float fogColor[4])
+{
+  static const float black[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+  glGetFloatv(GL_FOG_COLOR, fogColor);
+  glFogfv(GL_FOG_COLOR, black);
+}
+
+
 void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 {
   static const int receiverRings = 4;
@@ -1243,6 +1251,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
   const float B = 1.0f - (0.6f * renderer.getSunBrightness());
 
   receiverGState.setState();
+
+  // setup black fog
+  float fogColor[4];
+  setupBlackFog(fogColor);
 
   glPushMatrix();
   int i, j;
@@ -1339,6 +1351,8 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     glTranslatef(-pos[0], -pos[1], 0.0f);
   }
   glPopMatrix();
+
+  glFogfv(GL_FOG_COLOR, fogColor);
 }
 
 
@@ -1383,6 +1397,10 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
   }
   advGState = builder.getState();
   advGState.setState();
+
+  // setup black fog
+  float fogColor[4];
+  setupBlackFog(fogColor);
 
   // lazy way to get texcoords
   if (useTexture) {
@@ -1512,6 +1530,8 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     glDisable(GL_TEXTURE_GEN_S);
     glDisable(GL_TEXTURE_GEN_T);
   }
+
+  glFogfv(GL_FOG_COLOR, fogColor);
 }
 
 
