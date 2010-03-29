@@ -34,7 +34,6 @@ SUBDIRS = \
 	teamflagreset \
 	thiefControl \
 	timedctf \
-	torBlock \
 	unrealCTF \
 	weaponArena \
 	webstats \

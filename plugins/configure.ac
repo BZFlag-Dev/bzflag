@@ -370,7 +370,6 @@ AC_CONFIG_FILES([
 	teamflagreset/Makefile
 	thiefControl/Makefile
 	timedctf/Makefile
-	torBlock/Makefile
 	unrealCTF/Makefile
 	weaponArena/Makefile
 	webstats/Makefile
