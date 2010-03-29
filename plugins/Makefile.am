@@ -26,7 +26,6 @@ SUBDIRS = \
 	teamflagreset \
 	timedctf \
 	torBlock \
-	vocaliser \
 	wwzones
 
 DIST_SUBDIRS = \
