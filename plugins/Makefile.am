@@ -25,7 +25,6 @@ SUBDIRS = \
 	shockwaveDeath \
 	teamflagreset \
 	timedctf \
-	torBlock \
 	wwzones
 
 DIST_SUBDIRS = \

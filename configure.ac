@@ -847,7 +847,6 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/shockwaveDeath/Makefile
 	plugins/teamflagreset/Makefile
 	plugins/timedctf/Makefile
-	plugins/torBlock/Makefile
 	plugins/wwzones/Makefile
 	plugins/vc9/Makefile
 	src/3D/Makefile
