@@ -20,6 +20,7 @@ BZFlag 2.0.15  "Insert Clever Name Here" (2010-04-01)
 * Clarify copyright assignment terms for developers - Jeff Myers
 * Allow only one Enter message per player instance - Jeff Makey
 * Add TimeLimit plugin - Steven Mertens
+* Remove broken vocaliser and obsolete torBlock plugins - Jeff Myers
 
 
 BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-15)
