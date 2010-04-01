@@ -10,15 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playHistoryTracker", "..\pl
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shockwaveDeath", "..\shockwaveDeath\shockwaveDeath.vcproj", "{71A8E9FF-58CE-459C-9BD7-9C5706DB6491}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vocaliser", "..\vocaliser\vocaliser.vcproj", "{1AED4F07-D864-4638-B3E9-74E4737D3DD0}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueGenocide", "..\RogueGenocide\RogueGenocide.vcproj", "{AD6040FD-F813-4DA7-8058-32022A58F79E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "killall", "..\killall\killall.vcproj", "{A9898AEC-086B-4B9E-8978-C1BFE3EA56A6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nagware", "..\nagware\nagware.vcproj", "{2A9BC706-C839-4091-B3CE-36E6E324565F}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "torBlock", "..\torBlock\torBlock.vcproj", "{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Phoenix", "..\Phoenix\Phoenix.vcproj", "{16D3208C-0A75-4CC3-A7C2-6A266127BB90}"
 EndProject
@@ -81,12 +77,6 @@ Global
 		{71A8E9FF-58CE-459C-9BD7-9C5706DB6491}.release_modern|Win32.ActiveCfg = release_modern|Win32
 		{71A8E9FF-58CE-459C-9BD7-9C5706DB6491}.Release|Win32.ActiveCfg = Release|Win32
 		{71A8E9FF-58CE-459C-9BD7-9C5706DB6491}.Release|Win32.Build.0 = Release|Win32
-		{1AED4F07-D864-4638-B3E9-74E4737D3DD0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1AED4F07-D864-4638-B3E9-74E4737D3DD0}.Debug|Win32.Build.0 = Debug|Win32
-		{1AED4F07-D864-4638-B3E9-74E4737D3DD0}.release_modern_p3|Win32.ActiveCfg = release_modern_p3|Win32
-		{1AED4F07-D864-4638-B3E9-74E4737D3DD0}.release_modern|Win32.ActiveCfg = release_modern|Win32
-		{1AED4F07-D864-4638-B3E9-74E4737D3DD0}.Release|Win32.ActiveCfg = Release|Win32
-		{1AED4F07-D864-4638-B3E9-74E4737D3DD0}.Release|Win32.Build.0 = Release|Win32
 		{AD6040FD-F813-4DA7-8058-32022A58F79E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AD6040FD-F813-4DA7-8058-32022A58F79E}.Debug|Win32.Build.0 = Debug|Win32
 		{AD6040FD-F813-4DA7-8058-32022A58F79E}.release_modern_p3|Win32.ActiveCfg = release_modern_p3|Win32
@@ -105,12 +95,6 @@ Global
 		{2A9BC706-C839-4091-B3CE-36E6E324565F}.release_modern|Win32.ActiveCfg = Release|Win32
 		{2A9BC706-C839-4091-B3CE-36E6E324565F}.Release|Win32.ActiveCfg = Release|Win32
 		{2A9BC706-C839-4091-B3CE-36E6E324565F}.Release|Win32.Build.0 = Release|Win32
-		{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}.Debug|Win32.Build.0 = Debug|Win32
-		{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}.release_modern_p3|Win32.ActiveCfg = Release|Win32
-		{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}.release_modern|Win32.ActiveCfg = Release|Win32
-		{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}.Release|Win32.ActiveCfg = Release|Win32
-		{E38AB038-9BE2-4FAC-B32F-25FFB7351BC5}.Release|Win32.Build.0 = Release|Win32
 		{16D3208C-0A75-4CC3-A7C2-6A266127BB90}.Debug|Win32.ActiveCfg = Debug|Win32
 		{16D3208C-0A75-4CC3-A7C2-6A266127BB90}.Debug|Win32.Build.0 = Debug|Win32
 		{16D3208C-0A75-4CC3-A7C2-6A266127BB90}.release_modern_p3|Win32.ActiveCfg = Release|Win32

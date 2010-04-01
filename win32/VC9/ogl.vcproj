@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="ogl"
 	ProjectGUID="{E5030DD4-164D-4DB0-A593-FA1C76F1F2D7}"
+	RootNamespace="ogl"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -476,7 +477,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;HAVE_GLEW"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
