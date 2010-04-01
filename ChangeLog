@@ -6,8 +6,8 @@ No development is scheduled to continue on this branch.  Only
 critical bug fixes should be applied.
 *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***
 
-BZFlag 2.0.15  "No Foolin" (2010-04-01)
------------------------------------------------------
+BZFlag 2.0.16  "No Foolin'" (2010-04-01)
+----------------------------------------
 
 * Fix command line options in Windows launcher - Scott Wichser
 * Fix regression in protocol handling by server - Jeff Makey, Scott Wichser
