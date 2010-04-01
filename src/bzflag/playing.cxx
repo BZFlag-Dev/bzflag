@@ -1025,6 +1025,9 @@ static void		doEvent(BzfDisplay *disply)
 	}
       }
 
+      // clear the mouse button states
+      leftButton = rightButton = middleButton = false;
+
       // turn off the sound
       if (savedVolume == -1) {
 	savedVolume = getSoundVolume();
@@ -5826,7 +5829,7 @@ static void setupRoamingCamera(float dt)
     if (currMouseBits != 0) {
       // mouse control
       const float spinMult  =  -100.0f;
-      const float shiftMult = -1000.0f;
+      const float shiftMult = -1.25f * BZDBCache::worldSize;
       const int wx = mainWindow->getWidth();
       const int wy = mainWindow->getViewHeight();
       const int ws = (wx < wy) ? wx : wy;
