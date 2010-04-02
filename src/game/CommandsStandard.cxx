@@ -299,6 +299,32 @@ static std::string cmdAdd(const std::string&, const CommandManager::ArgList& arg
   return std::string();
 }
 
+static std::string cmdCycle(const std::string&, const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() < 2) {
+    return "usage: cycle <name> <value> [value2] [value3] ...";
+  }
+
+  const std::string& key = args[0];
+  const std::string& val = BZDB.get(key);
+
+  size_t index;
+  for (index = 1; index < args.size(); index++) {
+    if (val == args[index]) {
+      break;
+    }
+  }
+  if (index == args.size()) {
+    index = 0; // start at the first value when there are no matches
+  }
+  index = (index % (args.size() - 1)) + 1;
+
+  BZDB.set(key, args[index]);
+
+  return std::string();
+}
+
+
 //
 // command name to function mapping
 //
@@ -311,6 +337,7 @@ const struct CommandsItem commands[] = {
   { "unset",	&cmdUnset,	"unset <name>:  unset a variable" },
   { "bind",	&cmdBind,	"bind <button-name> {up|down} <command> <args>...: bind a key" },
   { "unbind",	&cmdUnbind,	"unbind <button-name> {up|down}:  unbind a key" },
+  { "cycle",	&cmdCycle,	"cycle name value1 value2 value3 etc...: cycle through a set of values" },
   { "toggle",	&cmdToggle,	"toggle <name> [first [second]]:  toggle value of a variable" },
   { "mult",	&cmdMult,	"mult <name> <value>:  multiply a variable by an amount" },
   { "add",	&cmdAdd,	"add <name> <value>:  add an amount to a variable" }
