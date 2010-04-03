@@ -28,6 +28,9 @@
 #include "HUDuiControl.h"
 
 
+typedef std::string (*TypeInColorFunc)(const std::string&);
+
+
 class HUDuiTypeIn : public HUDuiControl {
   public:
 			HUDuiTypeIn();
@@ -40,6 +43,7 @@ class HUDuiTypeIn : public HUDuiControl {
     void		setMaxLength(int);
     void		setString(const std::string&);
     void		setEditing(bool _allowEdit);
+    void		setColorFunc(TypeInColorFunc func) { colorFunc = func; }
 
   protected:
     bool		doKeyPress(const BzfKeyEvent&);
@@ -52,6 +56,7 @@ class HUDuiTypeIn : public HUDuiControl {
     int			cursorPos;
     bool		allowEdit;
     bool		obfuscate;
+    TypeInColorFunc	colorFunc;
 };
 
 #endif // __HUDUITYPEIN_H__

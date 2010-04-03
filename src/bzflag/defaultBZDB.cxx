@@ -175,17 +175,17 @@ DefaultDBItem	defaultDBItems[] = {
   { "lastScreenshot",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // listFilters
-  { "listFilter",  "",                                   true, StateDatabase::ReadWrite, NULL },
-  { "listFilter0", "",                                   true, StateDatabase::ReadWrite, NULL },
-  { "listFilter1", "/p>1, (busy)",                       true, StateDatabase::ReadWrite, NULL },
-  { "listFilter2", "/p>1,s>1,s<4, (busy, 2 or 3 shots)", true, StateDatabase::ReadWrite, NULL },
-  { "listFilter3", "/-j,+r,-f,s=2,+t,vt=2, (ducati)",    true, StateDatabase::ReadWrite, NULL },
-  { "listFilter4", "/p>1,+rabbit, (busy rabbit)",        true, StateDatabase::ReadWrite, NULL },
-  { "listFilter5", "/vt=3,+t,Rm<1, (three-way)",         true, StateDatabase::ReadWrite, NULL },
-  { "listFilter6", "/+replay, (replay)",                 true, StateDatabase::ReadWrite, NULL },
-  { "listFilter7", "/d=louman, (LouMan maps)",           true, StateDatabase::ReadWrite, NULL },
-  { "listFilter8", "/D=HiX, (HiX maps)",                 true, StateDatabase::ReadWrite, NULL },
-  { "listFilter9", "/a~\\.bz(:[0-9]+)?$, (.bz servers)", true, StateDatabase::ReadWrite, NULL }
+  { "listFilter",  "",                                        true, StateDatabase::ReadWrite, NULL },
+  { "listFilter0", "",                                        true, StateDatabase::ReadWrite, NULL },
+  { "listFilter1", "/p>1, # busy",                            true, StateDatabase::ReadWrite, NULL },
+  { "listFilter2", "/p>1,s>1,s<4, # busy - 2 or 3 shots",     true, StateDatabase::ReadWrite, NULL },
+  { "listFilter3", "/p>1,+rabbit, # busy rabbit",             true, StateDatabase::ReadWrite, NULL },
+  { "listFilter4", "/-j,+r,-f,s=2,+t,vt=2, # ducati",         true, StateDatabase::ReadWrite, NULL },
+  { "listFilter5", "/vt=3,+t,Rm<1, # three-way",              true, StateDatabase::ReadWrite, NULL },
+  { "listFilter6", "/+replay, # replay",                      true, StateDatabase::ReadWrite, NULL },
+  { "listFilter7", "/a]\\.bz(:[0-9]+)?$, # .bz servers",      true, StateDatabase::ReadWrite, NULL },
+  { "listFilter8", "/d)louman/d)ahs3/d)spazzy, # fancy maps", true, StateDatabase::ReadWrite, NULL },
+  { "listFilter9", "/d]louman|ahs3|spazzy, # fancy maps2",    true, StateDatabase::ReadWrite, NULL }
 };
 
 

@@ -20,6 +20,7 @@
 /* system interface headers */
 #include <string>
 #include <vector>
+#include <deque>
 
 /* common interface headers */
 #include "BzfEvent.h"

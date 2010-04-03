@@ -27,10 +27,13 @@
 //
 
 HUDuiTypeIn::HUDuiTypeIn()
-: HUDuiControl(), maxLength(0), cursorPos(0)
+: HUDuiControl()
+, maxLength(0)
+, cursorPos(0)
+, allowEdit(true)
+, obfuscate(false)
+, colorFunc(NULL)
 {
-  allowEdit = true; // allow editing by default
-  obfuscate = false;
 }
 
 HUDuiTypeIn::~HUDuiTypeIn()
@@ -176,10 +179,14 @@ void			HUDuiTypeIn::doRender()
   } else {
     renderStr = string;
   }
+  if (colorFunc) {
+    renderStr = colorFunc(renderStr);
+  }
   fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr);
 
   // find the position of where to draw the input cursor
-  float start = fm.getStrLength(getFontFace(), getFontSize(), renderStr.substr(0, cursorPos));
+  const std::string noAnsi = stripAnsiCodes(renderStr);
+  float start = fm.getStrLength(getFontFace(), getFontSize(), noAnsi.substr(0, cursorPos));
 
   if (HUDui::getFocus() == this && allowEdit) {
     fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");

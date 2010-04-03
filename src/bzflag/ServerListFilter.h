@@ -23,9 +23,9 @@ class ServerItem;
 
 class ServerListFilter {
   private:
-    struct BoolOpt {
+    struct BoolFilter {
       static bool parse(const std::string& s);
-      BoolOpt() {
+      BoolFilter() {
         reset();
       }
       void reset() {
@@ -39,9 +39,9 @@ class ServerListFilter {
       bool value;
     };
 
-    struct RangeOpt {
+    struct RangeFilter {
       static bool parse(const std::string& s);
-      RangeOpt() {
+      RangeFilter() {
         reset();
       }
       void reset() {
@@ -57,17 +57,17 @@ class ServerListFilter {
       bool  minActive, maxActive;
     };
 
-    struct PatternOpt {
+    struct PatternFilter {
       enum PatternType {
         NoPattern    = 0,
         GlobPattern  = 1,
         RegexPattern = 2
       };
       static bool parse(const std::string& s);
-      PatternOpt() : re(NULL) {
+      PatternFilter() : re(NULL) {
         reset();
       }
-      ~PatternOpt() {
+      ~PatternFilter() {
         reset();
       }
       bool setupGlob(const std::string& pattern, bool noCase);
@@ -80,9 +80,11 @@ class ServerListFilter {
       std::string pattern;
       struct regex_t* re;
       private: // no copying
-        PatternOpt(const PatternOpt&);
-        PatternOpt& operator=(const PatternOpt&);
+        PatternFilter(const PatternFilter&);
+        PatternFilter& operator=(const PatternFilter&);
     };
+
+  //==========================================================================//
 
   public:
     ServerListFilter();
@@ -107,70 +109,78 @@ class ServerListFilter {
     ServerListFilter(const ServerListFilter&);
     ServerListFilter& operator=(const ServerListFilter&);
 
+  public:
+    static bool isBoolLabel(const std::string& label);
+    static bool isRangeLabel(const std::string& label);
+    static bool isPatternLabel(const std::string& label);
+    static char parseFilterType(const std::string& f, char& op,
+                                std::string& label, std::string& param);
   private:
     void reset();
-    bool parseOption(const std::string& opt);
-    bool parseBoolOpt(const std::string& opt);
-    bool parseRangeOpt(const std::string& opt);
-    bool parsePatternOpt(const std::string& opt);
+    bool parseFilter(const std::string& f);
+    bool parseBoolFilter(const std::string& label, char op);
+    bool parseRangeFilter(const std::string& label, char op,
+                          const std::string& param);
+    bool parsePatternFilter(const std::string& label, char op,
+                            const std::string& param);
 
   private:
     std::string source;
 
-    // sub-filter
-    ServerListFilter* subFilter;
+    // 'OR' clause chaining
+    ServerListFilter* orFilter;
 
     // pattern filters
-    PatternOpt addrPat;
-    PatternOpt descPat;
-    PatternOpt addrDescPat;
+    PatternFilter addrPat;
+    PatternFilter descPat;
+    PatternFilter addrDescPat;
     
     // boolean filters
-    BoolOpt jump;
-    BoolOpt rico;
-    BoolOpt flags;
-    BoolOpt teams;
-    BoolOpt handi;
-    BoolOpt rabbit;
-    BoolOpt replay;
-    BoolOpt inertia;
-    BoolOpt antidote;
-    BoolOpt favorite;
-    BoolOpt cached;
+    BoolFilter jump;
+    BoolFilter rico;
+    BoolFilter flags;
+    BoolFilter teams;
+    BoolFilter handi;
+    BoolFilter rabbit;
+    BoolFilter replay;
+    BoolFilter inertia;
+    BoolFilter antidote;
+    BoolFilter favorite;
+    BoolFilter cached;
 
     // range filters
-    RangeOpt shots;
-    RangeOpt players;
-    RangeOpt freeSlots;
-    RangeOpt validTeams;
+    RangeFilter shots;
+    RangeFilter players;
+    RangeFilter freeSlots;
+    RangeFilter validTeams;
 
-    RangeOpt maxTime;
-    RangeOpt maxPlayers;
-    RangeOpt maxTeamScore;
-    RangeOpt maxPlayerScore;
-    RangeOpt shakeWins;
-    RangeOpt shakeTime;
+    RangeFilter maxTime;
+    RangeFilter maxPlayers;
+    RangeFilter maxTeamScore;
+    RangeFilter maxPlayerScore;
+    RangeFilter shakeWins;
+    RangeFilter shakeTime;
 
-    RangeOpt rogueCount;
-    RangeOpt redCount;
-    RangeOpt greenCount;
-    RangeOpt blueCount;
-    RangeOpt purpleCount;
-    RangeOpt observerCount;
+    RangeFilter rogueCount;
+    RangeFilter redCount;
+    RangeFilter greenCount;
+    RangeFilter blueCount;
+    RangeFilter purpleCount;
+    RangeFilter observerCount;
 
-    RangeOpt rogueMax;
-    RangeOpt redMax;
-    RangeOpt greenMax;
-    RangeOpt blueMax;
-    RangeOpt purpleMax;
-    RangeOpt observerMax;
+    RangeFilter rogueMax;
+    RangeFilter redMax;
+    RangeFilter greenMax;
+    RangeFilter blueMax;
+    RangeFilter purpleMax;
+    RangeFilter observerMax;
 
-    RangeOpt rogueFree;
-    RangeOpt redFree;
-    RangeOpt greenFree;
-    RangeOpt blueFree;
-    RangeOpt purpleFree;
-    RangeOpt observerFree;
+    RangeFilter rogueFree;
+    RangeFilter redFree;
+    RangeFilter greenFree;
+    RangeFilter blueFree;
+    RangeFilter purpleFree;
+    RangeFilter observerFree;
 
   private:
     void setupBoolMap();

@@ -1,0 +1,99 @@
+
+Format:
+  (addr_desc_glob_filter)?(/(filter)([,/]filter)*)?
+
+Notes:
+  1. ',' acts as an AND operator
+  2. '/' acts as an OR  operator (after the first one)
+
+Examples:
+  basic      -- globbing case-insensitive match to addresses or descriptions
+                including "basic"
+  basic/s=2  -- globbing case-insensitive match to addresses or descriptions
+                including "basic", that have 2 shots
+  /d)test    -- globbing case-insensitive match to descriptions including "test"
+  /D)LouMan  -- globbing case-sensitive match to descriptions including "LouMan"
+  /p>1,+f    -- 2 or more players, must have superflags
+  /d]^$|s=8  -- empty description, or shots is 8
+
+
+--------------------------------------------------------------------------------
+
+BOOLEAN FILTERS
+---------------
+
+  filter := < '+' | '-' > <label>
+
+  labels:
+    j, jump
+    r, rico
+    f, flags
+    t, teams
+    h, handicap
+    R, rabbit
+    P, replay
+    i, inertia
+    a, antidote
+    F, favorite
+    C, cached
+
+
+RANGE FILTERS
+-------------
+
+  filter := <label> < '=' | '>' | '<' | '>=' | '<=' > <number>
+
+  labels:
+    s,  shots
+    p,  players     -- does not include observers
+    f,  freeSlots   -- does not include observers
+    vt, validTeams  -- does not include observers
+
+    mt,  maxTime
+    mp,  maxPlayers
+    mts, maxTeamScore
+    mps, maxPlayerScore
+
+    sw, shakeWins
+    st, shakeTime
+
+    Rm, rogueMax
+    rm, redMax
+    gm, greenMax
+    bm, blueMax
+    pm, purpleMax
+    om, observerMax
+
+    Rp, roguePlayers
+    rp, redPlayers
+    gp, greenPlayers
+    bp, bluePlayers
+    pp, purplePlayers
+    op, observerPlayers
+
+    Rf, rogueFree
+    rf, redFree
+    gf, greenFree
+    bf, blueFree
+    pf, purpleFree
+    of, observerFree
+}
+
+
+PATTERN FILTERS
+---------------
+
+  filter := <label | Label> < ')' | ']' > <string>
+
+  notes:
+  1.  ')' for glob patterns
+      ']' for regex patterns
+  2.  capitalize the label for case-sensitive matching  
+
+  labels:
+    a, addr, address      -- server address
+    d, desc, description  -- server description
+    ad, addrdesc          -- server address or description matches
+
+
+--------------------------------------------------------------------------------
