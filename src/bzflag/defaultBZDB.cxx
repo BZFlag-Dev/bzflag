@@ -182,7 +182,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "listFilter3", "/p>1,+rabbit, # busy rabbit",             true, StateDatabase::ReadWrite, NULL },
   { "listFilter4", "/-j,+r,-f,s=2,+t,vt=2, # ducati",         true, StateDatabase::ReadWrite, NULL },
   { "listFilter5", "/vt=3,+t,Rm<1, # three-way",              true, StateDatabase::ReadWrite, NULL },
-  { "listFilter6", "/+replay, # replay",                      true, StateDatabase::ReadWrite, NULL },
+  { "listFilter6", "/d)replay, # replay servers",             true, StateDatabase::ReadWrite, NULL },
   { "listFilter7", "/a]\\.bz(:[0-9]+)?$, # .bz servers",      true, StateDatabase::ReadWrite, NULL },
   { "listFilter8", "/d)louman/d)ahs3/d)spazzy, # fancy maps", true, StateDatabase::ReadWrite, NULL },
   { "listFilter9", "/d]louman|ahs3|spazzy, # fancy maps2",    true, StateDatabase::ReadWrite, NULL }

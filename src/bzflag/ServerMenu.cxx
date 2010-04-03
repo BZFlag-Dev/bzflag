@@ -784,7 +784,7 @@ void ServerMenu::resize(int _width, int _height)
     status->setFontSize(fontSize);
     const float statusWidth = fm.getStrLength(status->getFontFace(), fontSize, status->getString());
     x = 0.5f * ((float)_width - statusWidth);
-    y -= 0.8f * fontHt;
+    y -= 1.5f * fontHt;
     status->setPosition(x, y);
   }
 
@@ -848,10 +848,17 @@ void ServerMenu::updateStatus() {
     return;
   }
 
-  // do filtering
+  // do filtering and counting
+  int playerCount = 0;
   serverList.clear();
   for (unsigned int i = 0; i < realServerList.size(); ++i) {
     const ServerItem &item = realServerList.getServers()[i];
+    const PingPacket& ping = item.ping;
+    playerCount += ping.rogueCount;
+    playerCount += ping.redCount;
+    playerCount += ping.greenCount;
+    playerCount += ping.blueCount;
+    playerCount += ping.purpleCount;
     // filter is already lower case.  do case insensitive matching.
     if (listFilter.check(item) && (!favView || item.favorite)) {
       serverList.addToList(item);
@@ -866,10 +873,12 @@ void ServerMenu::updateStatus() {
   args.push_back(buffer);
   sprintf(buffer, "%d", (unsigned int)realServerList.size());
   args.push_back(buffer);
+  sprintf(buffer, "%d", playerCount);
+  args.push_back(buffer);
   if (favView) {
-    setStatus("Favorite servers: {1}/{2}", &args);
+    setStatus("Favorite servers: {1}/{2}  ({3} players)", &args);
   } else {
-    setStatus("Servers found: {1}/{2}", &args);
+    setStatus("Servers found: {1}/{2}  ({3} players)", &args);
   }
   pageLabel->setString("");
   selectedIndex = -1;
