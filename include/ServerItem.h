@@ -32,6 +32,7 @@ public:
   bool		readFromFile(std::istream& in, int subrevision); // serialize in
   void		setUpdateTime(); // set last updated to now
   int		getPlayerCount() const;
+  void		splitAddrTitle(std::string& addr, std::string& title) const;
   std::string	getAddrName() const;
   time_t	getAgeMinutes() const;
   time_t	getAgeSeconds() const;

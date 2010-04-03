@@ -786,9 +786,7 @@ bool ForceRadarCommand::operator() (const char*)
   } else {
     value = -BZDBCache::radarLimit;
   }
-  BZDB.setPermission(StateDatabase::BZDB_RADARLIMIT, StateDatabase::User);
-  BZDB.setFloat(StateDatabase::BZDB_RADARLIMIT, value);
-  BZDB.setPermission(StateDatabase::BZDB_RADARLIMIT, StateDatabase::Server);
+  BZDB.setFloat(StateDatabase::BZDB_RADARLIMIT, value, StateDatabase::Server);
   return true;
 }
     

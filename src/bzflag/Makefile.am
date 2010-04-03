@@ -128,6 +128,8 @@ bzflag_SOURCES =			\
 	ServerCommandKey.h		\
 	ServerLink.cxx			\
 	ServerLink.h			\
+	ServerListFilter.cxx		\
+	ServerListFilter.h		\
 	ServerMenu.cxx			\
 	ServerMenu.h			\
 	ServerStartMenu.cxx		\

@@ -30,8 +30,11 @@
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
+#include "ServerListFilter.h"
+
 
 class ServerMenu;
+
 
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
@@ -58,14 +61,17 @@ public:
   void execute();
   void dismiss();
   void resize(int width, int height);
-  static void playingCB(void*);
   void updateStatus();
+  void setFindLabel(const std::string& label);
 
   bool getFind() const;
-  void setFind(bool mode);
+  void setFind(bool mode, bool clear = false);
+  void setFindIndex(int index);
 
   void toggleFavView();
   void setFav(bool);
+
+  static void playingCB(void*);
 
   static const int NumItems;
 
@@ -90,9 +96,12 @@ private:
 
   HUDuiTypeIn* search;
   bool findMode;
-  std::string filter;
   bool favView;
   bool newfilter;
+
+  ServerListFilter listFilter;
+
+  int lastWidth, lastHeight;
 
   static const int NumReadouts;
 };

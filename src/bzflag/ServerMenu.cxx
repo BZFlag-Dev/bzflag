@@ -19,7 +19,6 @@
 /* common implementation headers */
 #include "FontManager.h"
 #include "TextUtils.h"
-#include "bzglob.h"
 #include "AnsiCodes.h"
 
 /* local implementation headers */
@@ -27,9 +26,11 @@
 #include "HUDDialogStack.h"
 #include "playing.h"
 #include "HUDui.h"
+#include "ServerListFilter.h"
 
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
+
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -81,7 +82,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   else if (key.ascii == '/') {
     if (HUDui::getFocus() && !menu->getFind()) {
-      menu->setFind(true);
+      menu->setFind(true, key.shift & BzfKeyEvent::AltKey);
       return true;
     }
   }
@@ -107,6 +108,13 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     }
   }
 
+  else if ((key.ascii >= '0') && (key.ascii <= '9')) {
+    if (HUDui::getFocus() && !menu->getFind()) {
+      menu->setFindIndex(key.ascii - '0');
+      return true;
+    }
+  }
+
   else if (key.ascii == 27) {
     if (HUDui::getFocus()) {
       // escape drops out of find mode
@@ -120,6 +128,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   return MenuDefaultKey::keyPress(key);
 }
+
 
 bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
@@ -138,15 +147,23 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
-ServerMenu::ServerMenu() : defaultKey(this),
-			   selectedIndex(0),
-			   serversFound(0),
-			   realServersFound(0),
-			   findMode(false),
-			   filter("*"),
-			   favView(false),
-			   newfilter(false)
+
+ServerMenu::ServerMenu()
+: defaultKey(this)
+, selectedIndex(0)
+, serversFound(0)
+, realServersFound(0)
+, findMode(false)
+, favView(false)
+, newfilter(true)
+, listFilter(BZDB.get("listFilter"))
+, lastWidth(0)
+, lastHeight(0)
 {
+  if (debugLevel > 0) {
+    listFilter.print();
+  }
+
   // add controls
   addLabel("Servers", "");
   addLabel("Players", "");
@@ -182,7 +199,8 @@ ServerMenu::ServerMenu() : defaultKey(this),
   // find server
   search = new HUDuiTypeIn;
   search->setFontFace(MainMenu::getFontFace());
-  search->setMaxLength(30);
+  search->setMaxLength(42);
+  search->setString(listFilter.getSource());
   getControls().push_back(search);
   setFind(false);
 
@@ -197,7 +215,6 @@ ServerMenu::ServerMenu() : defaultKey(this),
 }
 
 
-
 void ServerMenu::addLabel(const char* msg, const char* _label)
 {
   HUDuiLabel* label = new HUDuiLabel;
@@ -207,37 +224,66 @@ void ServerMenu::addLabel(const char* msg, const char* _label)
   getControls().push_back(label);
 }
 
-void ServerMenu::setFind(bool mode)
+
+void ServerMenu::setFindLabel(const std::string& label)
 {
-  std::string oldfilter = filter;
-  if (mode) {
-    search->setLabel("Find Servers:");
+  search->setLabel(label);
+  if (lastWidth && lastHeight) {
+    resize(lastWidth, lastHeight); // overkill...
+  }
+}
+
+
+void ServerMenu::setFind(bool mode, bool clear)
+{
+  const std::string oldFilterSource = listFilter.getSource();;
+
+  if (clear) {
+    search->setString("");
+  }
+
+  if (mode) { // filter is being typed in
+    setFindLabel(ANSI_STR_FG_GREEN "Edit Filter:");
     search->setFocus();
-  } else {
-    if (search->getString() == "" || search->getString() == "*") {
-      search->setLabel("Press '/' to search");
-      search->setString("");
-      filter = "*";
+  }
+  else {
+    listFilter.parse(search->getString());
+    BZDB.set("listFilter", search->getString());
+    if (listFilter.getSource().empty()) {
+      setFindLabel("Press '/' to search");
     } else {
-      if (search->getString().find("*") == std::string::npos
-	&& search->getString().find("?") == std::string::npos)
-	search->setString("*" + search->getString() + "*");
-      search->setLabel("Using filter:");
-      // filter is set in lower case
-      filter = TextUtils::tolower(search->getString());
+      setFindLabel(ANSI_STR_FG_RED "Using filter:");
     }
     // select the first item in the list
     setSelected(0);
   }
+
+  if (debugLevel > 0) {
+    listFilter.print();
+  }
+
   findMode = mode;
 
-  newfilter = (filter != oldfilter);
+  newfilter = (listFilter.getSource() != oldFilterSource);
 }
+
+
+void ServerMenu::setFindIndex(int index)
+{
+  if ((index >= 0) && (index <= 9)) {
+    std::string name = "listFilter";
+    name += (index + '0');
+    search->setString(BZDB.get(name));
+    setFind(false);
+  }
+}
+
 
 bool ServerMenu::getFind() const
 {
   return findMode;
 }
+
 
 void ServerMenu::toggleFavView()
 {
@@ -246,13 +292,14 @@ void ServerMenu::toggleFavView()
   updateStatus();
 }
 
+
 void ServerMenu::setFav(bool fav)
 {
   const ServerItem& item = serverList.getServers()[selectedIndex];
   std::string addrname = item.getAddrName();
   ServerListCache *cache = ServerListCache::get();
   ServerListCache::SRV_STR_MAP::iterator i = cache->find(addrname);
-  if (i!= cache->end()) {
+  if (i != cache->end()) {
     i->second.favorite = fav;
   } else {
     // FIXME  should not ever come here, but what to do?
@@ -263,10 +310,12 @@ void ServerMenu::setFav(bool fav)
   setSelected(getSelected()+1, true);
 }
 
+
 int ServerMenu::getSelected() const
 {
   return selectedIndex;
 }
+
 
 void ServerMenu::setSelected(int index, bool forcerefresh)
 {
@@ -360,20 +409,17 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
 	}
 
-	std::string addr = stripAnsiCodes(server.description);
-	std::string desc;
-	std::string::size_type pos = addr.find_first_of(';');
-	if (pos != std::string::npos) {
-	  desc = addr.substr(pos > 0 ? pos+1 : pos);
-	  addr.resize(pos);
-	}
+	std::string addr, desc;
+	server.splitAddrTitle(addr, desc);
 	if (server.favorite)
 	  fullLabel += ANSI_STR_FG_ORANGE;
 	else
 	  fullLabel += ANSI_STR_FG_WHITE;
 	fullLabel += addr;
-	fullLabel += ANSI_STR_RESET " ";
-	fullLabel += desc;
+	if (!desc.empty()) {
+          fullLabel += ANSI_STR_RESET "  ";
+          fullLabel += desc;
+        }
 	label->setString(fullLabel);
 	label->setDarker(server.cached);
       }
@@ -403,6 +449,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
   // update readouts
   pick();
 }
+
 
 void ServerMenu::pick()
 {
@@ -593,7 +640,8 @@ void ServerMenu::pick()
   }
 }
 
-void			ServerMenu::show()
+
+void ServerMenu::show()
 {
   // clear server readouts
   std::vector<HUDuiControl*>& listHUD = getControls();
@@ -637,11 +685,13 @@ void			ServerMenu::show()
 
 }
 
-void			ServerMenu::execute()
+
+void ServerMenu::execute()
 {
-  HUDuiControl* _focus = HUDui::getFocus();
-  if (_focus == search) {
+  const bool endFind = (HUDui::getFocus() == search);
+  if (endFind) {
     setFind(false);
+    status->setFocus();
     return;
   }
 
@@ -652,13 +702,14 @@ void			ServerMenu::execute()
   StartupInfo* info = getStartupInfo();
   strcpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str());
   info->serverPort = ntohs((unsigned short)
-				serverList.getServers()[selectedIndex].ping.serverId.port);
+			   serverList.getServers()[selectedIndex].ping.serverId.port);
 
   // all done
   HUDDialogStack::get()->pop();
 }
 
-void			ServerMenu::dismiss()
+
+void ServerMenu::dismiss()
 {
   // no more callbacks
   removePlayingCallback(&playingCB, this);
@@ -666,8 +717,12 @@ void			ServerMenu::dismiss()
   // FIXME myTank.token = serverList.token;
 }
 
-void			ServerMenu::resize(int _width, int _height)
+
+void ServerMenu::resize(int _width, int _height)
 {
+  lastWidth = _width;
+  lastHeight = _height;
+  
   // remember size
   HUDDialog::resize(_width, _height);
 
@@ -724,8 +779,8 @@ void			ServerMenu::resize(int _width, int _height)
     fontSize = (float)_height / 36.0f;
     float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
     search->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(search->getFontFace(), fontSize, search->getString());
-    x = 0.5f * ((float)_width - searchWidth);
+    const float searchWidth = fm.getStrLength(search->getFontFace(), fontSize, search->getLabel());
+    x = (0.1f * (float)_width) + searchWidth;
     search->setPosition(x, fontHt * 2 /* near bottom of screen */);
   }
 
@@ -757,7 +812,8 @@ void			ServerMenu::resize(int _width, int _height)
   }
 }
 
-void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
+
+void ServerMenu::setStatus(const char* msg, const std::vector<std::string> *parms)
 {
   status->setString(msg, parms);
   FontManager &fm = FontManager::instance();
@@ -765,7 +821,8 @@ void			ServerMenu::setStatus(const char* msg, const std::vector<std::string> *pa
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
-void			ServerMenu::updateStatus() {
+
+void ServerMenu::updateStatus() {
   // nothing here to see
   if (!realServerList.serverFound()) {
     setStatus("Searching");
@@ -781,10 +838,7 @@ void			ServerMenu::updateStatus() {
   for (unsigned int i = 0; i < realServerList.size(); ++i) {
     const ServerItem &item = realServerList.getServers()[i];
     // filter is already lower case.  do case insensitive matching.
-    if ((glob_match(filter, TextUtils::tolower(item.description)) ||
-	 glob_match(filter, TextUtils::tolower(item.name))) &&
-	(!favView || item.favorite)
-       ) {
+    if (listFilter.check(item) && (!favView || item.favorite)) {
       serverList.addToList(item);
     }
   }
@@ -810,12 +864,13 @@ void			ServerMenu::updateStatus() {
 }
 
 
-void			ServerMenu::playingCB(void* _self)
+void ServerMenu::playingCB(void* _self)
 {
   ((ServerMenu*)_self)->realServerList.checkEchos(getStartupInfo());
 
   ((ServerMenu*)_self)->updateStatus();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***
