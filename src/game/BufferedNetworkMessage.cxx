@@ -443,7 +443,6 @@ void BufferedNetworkMessageManager::queueMessage (BufferedNetworkMessage *msg)
 {
   MessageList::iterator itr = std::find(pendingOutgoingMessages.begin(), pendingOutgoingMessages.end(), msg);
   if (itr != pendingOutgoingMessages.end()) {
-    logDebugMessage(0, " BufferedNetworkMessageManager::queueMessage() collision\n");
     pendingOutgoingMessages.erase(itr);
   }
 
