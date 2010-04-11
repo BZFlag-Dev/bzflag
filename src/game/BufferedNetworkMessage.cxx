@@ -20,6 +20,9 @@
 // Common headers
 #include "Pack.h"
 #include "NetHandler.h"
+#ifdef DEBUG
+#include "MsgStrings.h"
+#endif
 
 
 // initialize the singleton
@@ -446,8 +449,17 @@ void BufferedNetworkMessageManager::queueMessage (BufferedNetworkMessage *msg)
     pendingOutgoingMessages.erase(itr);
   }
 
+#ifdef DEBUG
+  if (msg->code != MsgPlayerUpdateSmall) {
+    const MsgStringList msgList = MsgStrings::msgFromClient(msg->packedSize,
+      msg->code, msg->data);
+    logDebugMessage(5, "%s to %s at %f\n", msgList[0].text.c_str(),
+      msg->recipient ? msg->recipient->getTargetIP() : "all",
+      TimeKeeper::getCurrent().getSeconds());
+  }
+#endif
   outgoingQueue.push_back(msg);
-  update();
+  update();	// FIXME: this prevents all buffering
 }
 
 void BufferedNetworkMessageManager::purgeMessages (NetHandler *handler)

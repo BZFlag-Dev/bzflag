@@ -36,6 +36,9 @@
 #include "TimeBomb.h"
 #include "ConfigFileManager.h"
 #include "bzsignal.h"
+#ifdef DEBUG
+#include "MsgStrings.h"
+#endif
 
 // implementation-specific bzfs-specific headers
 #include "RejoinList.h"
@@ -1053,6 +1056,14 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
       "Received packet type (%x) via udp, possible attack from %s\n",
       code, handler->getTargetIP());
   }
+#ifdef DEBUG
+  else if (code != MsgPlayerUpdateSmall) {
+    const MsgStringList msgList = MsgStrings::msgFromClient(len, code, buf);
+    logDebugMessage(5, "%s from %s:%s at %f\n", msgList[0].text.c_str(),
+      handler->getTargetIP(), (udp ? "udp" : "tcp"),
+      TimeKeeper::getCurrent().getSeconds());
+  }
+#endif
 
   // see if we have any registered handlers for this message type
   bool handled = false;
@@ -3185,9 +3196,13 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, Tim
   eventData.playerID = playerData->getIndex();
   worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
 
-  // silently drop old packet
-  if (state.order <= playerData->lastState.order)
+  // ignore out of order packet
+  if (state.order <= playerData->lastState.order) {
+    logDebugMessage(5, "[%d] ignoring out of order update (%ld <= %ld)\n",
+      playerData->player.getPlayerIndex(),
+      state.order, playerData->lastState.order);
     return true;
+  }
 
   if (!validatePlayerState(playerData,state))
     return false;
