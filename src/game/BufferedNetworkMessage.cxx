@@ -446,6 +446,7 @@ void BufferedNetworkMessageManager::queueMessage (BufferedNetworkMessage *msg)
     pendingOutgoingMessages.erase(itr);
 
   outgoingQueue.push_back(msg);
+  update();
 }
 
 void BufferedNetworkMessageManager::purgeMessages (NetHandler *handler)
