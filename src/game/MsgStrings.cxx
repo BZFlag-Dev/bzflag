@@ -276,12 +276,10 @@ MsgStringList MsgStrings::msgFromClient(uint16_t len,
     const char* c = (const char*) &code;
     listPush(badcode, 0, "Unknown message code: 0x%04X <%c%c>\n",
                          code, c[1], c[0]);
-    badcode[0].text += "  << client to server messages unimplemented >>";
     return badcode;
   }
-  //const PacketListEntry* entry = it->second;
   MsgStringList list = listMsgBasics(PacketInfo(len, code, data));
-  list[0].text += "  << client to server messages unimplemented >>";
+  listPush(list, 1, "(details unimplemented)");
   return list;
 }
 
