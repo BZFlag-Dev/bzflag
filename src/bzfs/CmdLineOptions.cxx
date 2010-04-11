@@ -388,7 +388,7 @@ bool CmdLineOptions::parsePlayerCount(const std::string& arg)
 	commaCount++;
     }
     if (commaCount != 5) {
-      std::cout << "improper player count list" << std::endl;
+      std::cerr << "improper player count list" << std::endl;
       return false;
     }
 
@@ -454,7 +454,7 @@ bool CmdLineOptions::parsePlayerCount(const std::string& arg)
     char *tail;
     long count = strtol(argv, &tail, 10);
     if (argv == tail) {
-      std::cout << "improper player count" << std::endl;
+      std::cerr << "improper player count" << std::endl;
       return false;
     }
     if (count < 1) {
