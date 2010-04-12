@@ -57,10 +57,10 @@ protected:
   fvec3 velocity;
   fvec4 color;
   double startTime;
-  double lifetime;
   double lastTime;
-  double deltaTime;
-  double age;
+  float  lifeTime;
+  float  deltaTime;
+  float  age;
 };
 
 typedef std::vector<BasicEffect*> tvEffectsList;

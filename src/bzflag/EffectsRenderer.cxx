@@ -397,7 +397,7 @@ BasicEffect::BasicEffect()
 {
   startTime = TimeKeeper::getCurrent().getSeconds();
 
-  lifetime = 0;
+  lifeTime = 0;
   lastTime = startTime;
   deltaTime = 0;
 }
@@ -433,7 +433,7 @@ bool BasicEffect::update(double time)
 {
   age = time - startTime;
 
-  if (age >= lifetime)
+  if (age >= lifeTime)
     return true;
 
   deltaTime = time - lastTime;
@@ -445,7 +445,7 @@ bool BasicEffect::update(double time)
 StdSpawnEffect::StdSpawnEffect() : BasicEffect()
 {
   texture = TextureManager::instance().getTextureID("wavy_flare",false);
-  lifetime = 1.5f;
+  lifeTime = 1.5f;
   radius = 1.75f;
 
   OpenGLGStateBuilder gstate;
@@ -483,7 +483,7 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 
   ringState.setState();
 
-  float ageParam = age / lifetime;
+  float ageParam = age / lifeTime;
 
   glColor4f(color.r, color.g, color.b, 1.0f - ageParam);
   glDepthMask(0);
@@ -517,7 +517,7 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 
   ringState.setState();
 
-  glColor4f(color.r, color.g, color.b, 1.0f - (age / lifetime));
+  glColor4f(color.r, color.g, color.b, 1.0f - (age / lifeTime));
   glDepthMask(0);
 
   drawRingXY(radius * 0.5f, 1.25f);
@@ -567,14 +567,14 @@ void RingSpawnEffect::draw(const SceneRenderer &)
 
   glDepthMask(0);
 
-  ringRange = lifetime / 4.0f;  // first 3/4ths of the life are rings, last is fade
+  ringRange = lifeTime / 4.0f;  // first 3/4ths of the life are rings, last is fade
   ringRange = (ringRange * 3) / 4.0f; // of the ring section there are 4 ring segments
 
   const float bigRange = ringRange * 3;
 
   float coreAlpha = 1;
   if (age >= bigRange)
-    coreAlpha = 1.0f - ((age - bigRange) / (lifetime - bigRange));
+    coreAlpha = 1.0f - ((age - bigRange) / (lifeTime - bigRange));
 
   for (int n = 0; n < 4; ++n)
     drawRing(n, coreAlpha);
@@ -610,7 +610,7 @@ void RingSpawnEffect::drawRing(int n, float coreAlpha)
 StdShotEffect::StdShotEffect() : BasicEffect()
 {
   texture = TextureManager::instance().getTextureID("wavy_flare",false);
-  lifetime = 1.5f;
+  lifeTime = 1.5f;
   radius = 0.125f;
 
 
@@ -645,7 +645,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 {
   glPushMatrix();
 
-  fvec3 pos = position + ((float)age * velocity);
+  fvec3 pos = position + (age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(180.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
@@ -654,7 +654,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 
   color.r = color.g = color.b = 1;
 
-  float alpha = 0.5f - (age / lifetime);
+  float alpha = 0.5f - (age / lifeTime);
   if (alpha < 0.001f)
     alpha = 0.001f;
 
@@ -673,7 +673,7 @@ FlashShotEffect::FlashShotEffect() : StdShotEffect()
 {
   // we use the jump jet texture upside-down to get a decent muzzle flare effect
   texture = TextureManager::instance().getTextureID("jumpjets",false);
-  lifetime = 0.75f;
+  lifeTime = 0.75f;
   radius = 0.5f;
 
   OpenGLGStateBuilder gstate;
@@ -696,10 +696,10 @@ bool FlashShotEffect::update(double time)
     return true;
 
   // do stuff that may be need to be done every time to an image
-  if (age < lifetime / 2)
-    length = 6 * (age / lifetime);
+  if (age < lifeTime / 2)
+    length = 6 * (age / lifeTime);
   else
-    length = 6 * (1 - (age / lifetime));
+    length = 6 * (1 - (age / lifeTime));
 
   return false;
 }
@@ -708,7 +708,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 {
   glPushMatrix();
 
-  fvec3 pos = position +((float)age * velocity);
+  fvec3 pos = position +(age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(270.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
@@ -717,7 +717,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 
   color.r = color.g = color.b = 1;
 
-  float alpha = 0.8f - (age / lifetime);
+  float alpha = 0.8f - (age / lifeTime);
   if (alpha < 0.001f)
     alpha = 0.001f;
 
@@ -764,7 +764,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 StdDeathEffect::StdDeathEffect() : BasicEffect()
 {
   texture = TextureManager::instance().getTextureID("blend_flash",false);
-  lifetime = 1.25f;
+  lifeTime = 1.25f;
   radius = 2.0f;
 
 
@@ -810,7 +810,7 @@ void StdDeathEffect::draw(const SceneRenderer &)
 
   fvec3 deltas = 1.0f - color.rgb();
 
-  float ageParam = age / lifetime;
+  float ageParam = age / lifeTime;
 
   float alpha = 1.0f - ageParam;
   if (alpha < 0.0f) {
@@ -845,7 +845,7 @@ void StdDeathEffect::draw(const SceneRenderer &)
 StdLandEffect::StdLandEffect() : BasicEffect()
 {
   texture = TextureManager::instance().getTextureID("dusty_flare",false);
-  lifetime = 1.0f;
+  lifeTime = 1.0f;
   radius = 2.5f;
 
   OpenGLGStateBuilder gstate;
@@ -887,7 +887,7 @@ void StdLandEffect::draw(const SceneRenderer &)
   color.g = 1;
   color.b = 1;
 
-  glColor4f(color.r, color.g, color.b, 1.0f - (age / lifetime));
+  glColor4f(color.r, color.g, color.b, 1.0f - (age / lifeTime));
   glDepthMask(0);
 
   drawRingXY(radius, 0.5f + age, 0.05f * radius, 0.0f, 0.9f);
@@ -901,7 +901,7 @@ void StdLandEffect::draw(const SceneRenderer &)
 StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
 {
   texture = TextureManager::instance().getTextureID("blend_flash",false);
-  lifetime = 6.5f;
+  lifeTime = 6.5f;
   radius = 0.125f;
 
 
@@ -936,7 +936,7 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 {
   glPushMatrix();
 
-  fvec3 pos = position + ((float)age * velocity);
+  fvec3 pos = position + (age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(180.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
@@ -946,7 +946,7 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 
   color.r = color.g = color.b = 1;
 
-  float alpha = 0.5f - (age / lifetime);
+  float alpha = 0.5f - (age / lifeTime);
   if (alpha < 0.000001f)
     alpha = 0.000001f;
 
@@ -964,7 +964,7 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 StdRicoEffect::StdRicoEffect() : BasicEffect()
 {
   texture = TextureManager::instance().getTextureID("blend_flash",false);
-  lifetime = 0.5f;
+  lifeTime = 0.5f;
   radius = 0.25f;
 
   OpenGLGStateBuilder gstate;
@@ -998,7 +998,7 @@ void StdRicoEffect::draw(const SceneRenderer &)
 {
   glPushMatrix();
 
-  fvec3 pos = position + ((float)age * velocity);
+  fvec3 pos = position + (age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef((rotation.z * RAD2DEGf) + 180.0f, 0.0f, 0.0f, 1.0f);
@@ -1008,7 +1008,7 @@ void StdRicoEffect::draw(const SceneRenderer &)
 
   color.r = color.g = color.b = 1;
 
-  float alpha = 0.5f - (age / lifetime);
+  float alpha = 0.5f - (age / lifeTime);
   if (alpha < 0.000001f)
     alpha = 0.000001f;
 
@@ -1029,7 +1029,7 @@ StdShotTeleportEffect::StdShotTeleportEffect(float len, const fvec4* cp)
 , clipPlane(cp)
 {
   texture = TextureManager::instance().getTextureID("dusty_flare",false);
-  lifetime = 4.0f;
+  lifeTime = 4.0f;
   radius = 0.25f;
 
   OpenGLGStateBuilder gstate;
@@ -1075,7 +1075,7 @@ void StdShotTeleportEffect::draw(const SceneRenderer&)
 
   glPushMatrix();
 
-  fvec3 pos = position + ((float)age * velocity);
+  fvec3 pos = position + (age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(rotation.z * RAD2DEGf, 0.0f, 0.0f, 1.0f);
@@ -1086,7 +1086,7 @@ void StdShotTeleportEffect::draw(const SceneRenderer&)
 
   color.r = color.g = color.b = 1;
 
-  const float fraction = 1.0f - (age / lifetime);
+  const float fraction = 1.0f - (age / lifeTime);
 
   const float alpha = 0.25f + (0.75f * fraction);
 
