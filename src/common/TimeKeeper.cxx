@@ -102,9 +102,8 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
   LOCK_TIMER_MUTEX
 
   if (lastTime == 0) {
-    // time starts at 0 seconds from the first call to getCurrent()
     lastTime = getEpochMicroseconds();
-    currentTime += double(lastTime) * 1.0e-6;
+    currentTime += double(lastTime) * 1.0e-6; // sync with system clock
   }
   else {
     const int64_t nowTime = getEpochMicroseconds();
@@ -192,10 +191,12 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
       logDebugMessage(4,"Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
+      currentTime += 1.0e-3 * (double)timeLastCalibration; // sync with system clock
     } else {
       logDebugMessage(1,"QueryPerformanceFrequency failed with error %d\n", GetLastError());
 
       lastTime = (unsigned long int)timeGetTime();
+      currentTime += 1.0e-3 * (double)lastTime; // sync with system clock
     }
   }
 
