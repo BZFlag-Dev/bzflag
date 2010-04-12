@@ -48,6 +48,7 @@
 #ifndef BUILDING_BZADMIN
 // bzflag local implementation headers
 #include "playing.h"
+#include "MsgStrings.h"
 #endif
 
 #define UDEBUG if (UDEBUGMSG) printf
@@ -508,6 +509,30 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
     buf = nboPackString(buf, msg, len);
   }
   previousFill += len + 4;
+
+#ifndef BUILDING_BZADMIN
+  static BZDB_int  debugMessages("debugNetMesg");
+  static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
+  if ((debugMessages >= 1) && !BZDB.isTrue("_forbidDebug")) {
+    if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
+      // use the fancier MsgStrings setup
+      const int msgLevel = (debugMessages - 1);
+      MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
+      for (size_t i = 0; i < msgList.size(); i++) {
+	if (msgList[i].level <= msgLevel) {
+	  std::string prefix = "send: ";
+	  if (i == 0)
+	    prefix += TextUtils::format("%f ",
+	      TimeKeeper::getCurrent().getSeconds());
+	  for (int lvl = 0; lvl < msgList[i].level; lvl++) {
+	    prefix += "  ";
+	  }
+	  showMessage(prefix + msgList[i].color + msgList[i].text);
+	}
+      }
+    }
+  }
+#endif
 }
 
 #if defined(WIN32) && !defined(HAVE_SOCKLEN_T)

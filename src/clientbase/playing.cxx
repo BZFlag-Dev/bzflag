@@ -1807,9 +1807,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
       MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
       for (size_t i = 0; i < msgList.size(); i++) {
         if (msgList[i].level <= msgLevel) {
-          std::string prefix = "netdbg: ";
-          prefix += TimeKeeper::getCurrent().timestamp();
-          prefix += " ";
+          std::string prefix = "recv: ";
+	  if (i == 0)
+	    prefix += TextUtils::format("%f ",
+	      TimeKeeper::getCurrent().getSeconds());
           for (int lvl = 0; lvl < msgList[i].level; lvl++) {
             prefix += "  ";
           }
