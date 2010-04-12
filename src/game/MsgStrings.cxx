@@ -475,12 +475,14 @@ static MsgStringList handleMsgAddPlayer(const PacketInfo& pi)
   void *d = (void*)pi.data;
   uint8_t index;
   int16_t team;
+  float rank;
   uint16_t type, wins, losses, tks;
   char callsign[CallSignLen];
 
   d = nboUnpackUInt8(d, index);
   d = nboUnpackUInt16(d, type);
   d = nboUnpackInt16(d, team);
+  d = nboUnpackFloat(d, rank);
   d = nboUnpackUInt16(d, wins);
   d = nboUnpackUInt16(d, losses);
   d = nboUnpackUInt16(d, tks);
@@ -492,6 +494,7 @@ static MsgStringList handleMsgAddPlayer(const PacketInfo& pi)
   listPush(list, 1, "player: %s", strPlayer(index).c_str());
   listPush(list, 1, "team:   %s", strTeam(team).c_str());
   listPush(list, 1, "type:   %i", type);
+  listPush(list, 2, "rank:   %f", rank);
   listPush(list, 2, "wins:   %i", wins);
   listPush(list, 2, "losses: %i", losses);
   listPush(list, 2, "tks:    %i", tks);
