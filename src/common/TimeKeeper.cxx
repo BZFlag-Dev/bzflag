@@ -104,6 +104,7 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
   if (lastTime == 0) {
     // time starts at 0 seconds from the first call to getCurrent()
     lastTime = getEpochMicroseconds();
+    currentTime += double(lastTime) * 1.0e-6;
   }
   else {
     const int64_t nowTime = getEpochMicroseconds();
@@ -112,7 +113,7 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
 
     if (diff > 0) {
       // add to currentTime
-      currentTime += double(diff) * 1.0e-6;;
+      currentTime += double(diff) * 1.0e-6;
     }
     else if (diff < 0) {
       // eh, how'd we go back in time?
