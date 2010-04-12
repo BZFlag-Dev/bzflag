@@ -5608,6 +5608,10 @@ static void playingLoop()
 
     doUpdates(dt);
 
+    if (serverLink) {
+      serverLink->flush();
+    }
+
     // prep the HUD
     prepareTheHUD();
 
@@ -5629,10 +5633,6 @@ static void playingLoop()
     }
 
     doFPSLimit();
-
-    if (serverLink) {
-      serverLink->flush();
-    }
   } // end main client loop
 
 
