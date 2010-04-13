@@ -459,7 +459,6 @@ void BufferedNetworkMessageManager::queueMessage (BufferedNetworkMessage *msg)
   }
 #endif
   outgoingQueue.push_back(msg);
-  update();	// FIXME: this prevents all buffering
 }
 
 void BufferedNetworkMessageManager::purgeMessages (NetHandler *handler)
