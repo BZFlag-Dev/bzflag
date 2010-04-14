@@ -115,9 +115,6 @@ class ControlPanel {
     const std::string& getTabTopic(int tabID) const;
     bool               setTabTopic(int tabID, const std::string&);
 
-    int                getCurrentTabID()    const;
-    const std::string& getCurrentTabLabel() const;
-
     inline bool tabUnread(int tabID) const {
       return validTab(tabID) && tabs[tabID]->unread;
     }
