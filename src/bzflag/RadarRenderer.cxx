@@ -603,7 +603,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   smooth = !multiSampled && BZDBCache::smooth;
-  const bool fastRadar = BZDBCache::zbuffer &&
+  const bool fastRadar = BZDBCache::zbuffer && BZDBCache::texture &&
     ((BZDBCache::radarStyle == SceneRenderer::FastRadar) ||
      (BZDBCache::radarStyle == SceneRenderer::FastSortedRadar));
   const LocalPlayer *myTank = LocalPlayer::getMyTank();

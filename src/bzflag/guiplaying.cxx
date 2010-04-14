@@ -154,8 +154,10 @@ static bool leftButton   = false;
 static bool rightButton  = false;
 static bool middleButton = false;
 
-// cache _syncTime BZDB value
+// cached BZDB values
 static BZDB_float bzdbSyncTime("_syncTime"); // AKA BZDBNAMES.SYNCTIME
+static BZDB_bool  bzdbShowTreads("showTreads");
+
 
 #ifdef ROBOT
 void handleMyTankKilled(int reason);
@@ -942,6 +944,9 @@ static void doEvent(BzfDisplay *disply)
           disply->setDefaultResolution();
         }
       }
+
+      // clear the mouse button states
+      leftButton = rightButton = middleButton = false;
 
       // turn off the sound
       SOUNDSYSTEM.setMute(true);
@@ -3994,7 +3999,7 @@ static void setupNearPlane()
 {
   NearPlane = NearPlaneNormal;
 
-  const bool showTreads = BZDB.isTrue("showTreads") ||
+  const bool showTreads = bzdbShowTreads ||
                           thirdPersonVars.b3rdPerson;
   if (!showTreads || !myTank)
     return;
@@ -4424,7 +4429,7 @@ static void addDynamicSceneNodes()
   }
 
   const bool seerView = (myTank->getFlag() == Flags::Seer);
-  const bool showTreads = BZDB.isTrue("showTreads") ||
+  const bool showTreads = bzdbShowTreads ||
                           thirdPersonVars.b3rdPerson;
 
   // add my tank if required
@@ -4955,8 +4960,9 @@ static void updateRoamingCamera(float dt)
   }
 
   // adjust for slow keyboard
-  if (BZDB.isTrue("slowMotion")) {
-    float st = BZDB.eval("roamSmoothTime");
+  float st = BZDB.eval("roamSmoothTime");
+  if (BZDB.isTrue("slowMotion") != (st < 0.0f)) {
+    st = fabsf(st);
     if (st < 0.1f) {
       st = 0.1f;
     }
@@ -5229,9 +5235,9 @@ void updateTimeOfDay(const float dt)
 {
   // update time of day -- update sun and sky every few seconds
   if (bzdbSyncTime < 0.0f) {
-    if (!BZDB.isSet("fixedTime"))
+    if (!BZDB.isSet("fixedTime")) {
       epochOffset += (double)dt;
-
+    }
     epochOffset += (double)(50.0f * dt * clockAdjust);
   } else {
     epochOffset = (double)bzdbSyncTime;
@@ -5572,7 +5578,7 @@ static void playingLoop()
 
     updateHubLink();
 
-    if (world) { // udpate the world collision grid if required
+    if (world) { // update the world collision grid if required
       world->checkCollisionManager();
     }
 
@@ -5854,16 +5860,19 @@ static void findFastConfiguration()
   static const fvec3 tEdge(  0.0f,  0.0f, 10.0f);
   static const fvec4 color(1.0f, 1.0f, 1.0f, 0.5f);
   SceneDatabase *timingScene = new ZSceneDatabase;
-  WallSceneNode *node = new QuadWallSceneNode(base,
-    sEdge, tEdge, 1.0f, 1.0f, true);
-  node->setColor(color);
-  node->setModulateColor(color);
-  node->setLightedColor(color);
-  node->setLightedModulateColor(color);
-  node->setTexture(HUDuiControl::getArrow());
-  node->setMaterial(OpenGLMaterial(color, color));
+  WallSceneNode *node = new QuadWallSceneNode(base, sEdge, tEdge,
+                                              1.0f, 1.0f, true);
+
+  BzMaterial bzMat;
+  bzMat.setDiffuse(color);
+  bzMat.setEmission(color);
+  bzMat.setSpecular(color);
+  bzMat.setTexture("menu_arrow");
+  node->setBzMaterial(&bzMat);
+
   timingScene->addStaticNode(node, false);
   timingScene->finalizeStatics();
+
   RENDERER.setSceneDatabase(timingScene);
   RENDERER.setDim(false);
 

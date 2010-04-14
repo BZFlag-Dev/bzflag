@@ -34,6 +34,7 @@
 #include "Intersect.h"
 #include "MeshTransform.h"
 #include "OpenGLMaterial.h"
+#include "OpenGLUtils.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "StateDatabase.h"
 #include "TextureManager.h"
@@ -238,8 +239,12 @@ void TextSceneNode::notifyStyleChange()
 
   // blending
   builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  if (bzmat->getNoBlending()) {
-    builder.resetBlending();
+  const std::string& blendFactors = bzmat->getBlendFactors();
+  if (!blendFactors.empty()) {
+    GLenum src, dst;
+    if (parseBlendFactors(blendFactors, src, dst)) {
+      builder.setBlending(src, dst);
+    }
   }
 
   // alpha thresholding
@@ -318,13 +323,17 @@ bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 
 void TextSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
-  renderer.addRenderNode(&renderNode, &gstate);
+  if (renderNode.getColorPtr()->a > 0.0f) {
+    renderer.addRenderNode(&renderNode, &gstate);
+  }
 }
 
 
 void TextSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  renderer.addShadowNode(&renderNode);
+  if (renderNode.getColorPtr()->a > 0.0f) {
+    renderer.addShadowNode(&renderNode);
+  }
 }
 
 
@@ -614,6 +623,7 @@ void TextSceneNode::TextRenderNode::render()
 
   FontManager& fm = FontManager::instance();
   fm.setFlooring(false);
+  fm.setRawBlending(true);
 
   glPushAttrib(FTGL_MISSING_ATTRIBS);
   glPushMatrix();
@@ -625,6 +635,7 @@ void TextSceneNode::TextRenderNode::render()
   if (colorPtr->a != oldOpacity) {
     fm.setOpacity(colorPtr->a);
   }
+
 
   glCallList(xformList);
 
@@ -673,9 +684,11 @@ void TextSceneNode::TextRenderNode::render()
 
   fm.setOpacity(oldOpacity);
   fm.setFlooring(true);
+  fm.setRawBlending(false);
 
   glPopMatrix();
   glPopAttrib();
+
 
   addTriangleCount(triangles);
 }
@@ -706,11 +719,8 @@ void TextSceneNode::TextRenderNode::renderShadow()
   if (noShadow) {
     return;
   }
-  FontManager &fm = FontManager::instance();
 
   wantCheckDist = false;
-
-  fm.setRawBlending(true);
 
   static fvec4 shadowColor(0.0f, 0.0f, 0.0f, 1.0f);
   const fvec4* oldColor = colorPtr;
@@ -732,8 +742,6 @@ void TextSceneNode::TextRenderNode::renderShadow()
   linesPtr = &lines;
 
   colorPtr = oldColor;
-
-  fm.setRawBlending(false);
 
   wantCheckDist = true;
 }

@@ -323,6 +323,9 @@ PhysicsDriver::~PhysicsDriver()
 
 bool PhysicsDriver::operator<(const PhysicsDriver& pd) const
 {
+  if (name < pd.name) { return true;  }
+  if (pd.name < name) { return false; }
+
   if ((xformTool == NULL) && (pd.xformTool != NULL)) { return true;  }
   if ((xformTool != NULL) && (pd.xformTool == NULL)) { return false; }
 

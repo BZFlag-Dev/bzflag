@@ -66,6 +66,8 @@ class TextSceneNode : public SceneNode {
 
 	const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
+	const fvec4* getColorPtr() const { return colorPtr; }
+
       private:
         int  getFontID() const;
 

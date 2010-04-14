@@ -104,7 +104,7 @@ TriWallSceneNode::Geometry::~Geometry()
 
 void TriWallSceneNode::Geometry::render()
 {
-  wall->setColor();
+  wall->applyColor();
   glNormal3fv(normal);
   if (style >= 2) {
     drawVT();

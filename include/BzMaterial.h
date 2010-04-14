@@ -59,13 +59,17 @@ class BzMaterial {
     bool setName(const std::string&);
     bool addAlias(const std::string&);
 
+
     void setOrder(int);
+
     void setDynamicColor(int);
     void setAmbient(const fvec4&);
     void setDiffuse(const fvec4&);
     void setSpecular(const fvec4&);
     void setEmission(const fvec4&);
     void setShininess(const float);
+
+    void setBlendFactors(const std::string& s) { blendFactors = s; }
 
     void setOccluder(bool);
     void setGroupAlpha(bool);
@@ -77,7 +81,7 @@ class BzMaterial {
     void setTextureShadow(bool);
     void setNoCulling(bool);
     void setNoSorting(bool);
-    void setNoBlending(bool);
+    void setFlatShade(bool);
     void setAlphaThreshold(float);
     void setPolygonOffset(float factor, float units);
     void setRadarSpecial(bool);
@@ -113,6 +117,8 @@ class BzMaterial {
     const fvec4& getEmission() const;
     float getShininess() const;
 
+    const std::string& getBlendFactors() const { return blendFactors; }
+
     bool  getOccluder() const;
     bool  getGroupAlpha() const;
     bool  getNoRadar() const;
@@ -122,7 +128,7 @@ class BzMaterial {
     bool  getTextureShadow() const;
     bool  getNoCulling() const;
     bool  getNoSorting() const;
-    bool  getNoBlending() const;
+    bool  getFlatShade() const;
     bool  getNoLighting() const;
     float getAlphaThreshold() const;
     bool  getPolygonOffset(float& factor, float& units) const;
@@ -158,6 +164,8 @@ class BzMaterial {
 
     static std::string convertTexture(const std::string& oldTex);
 
+    static bool testBlendFactors(const std::string& s);
+
     // data
   private:
     std::string name;
@@ -175,6 +183,8 @@ class BzMaterial {
     fvec4 emission;
     float shininess;
 
+    std::string blendFactors;
+
     bool occluder;
     bool groupAlpha;
     bool noRadar;
@@ -184,8 +194,8 @@ class BzMaterial {
     bool texShadow;
     bool noCulling;
     bool noSorting;
-    bool noBlending;
     bool noLighting;
+    bool flatShade;
     float alphaThreshold;
     float poFactor;
     float poUnits;

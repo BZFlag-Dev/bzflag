@@ -43,131 +43,95 @@
 #include "WorldText.h"
 
 // local implementation headers
+#include "LocalPlayer.h"
 #include "DynamicWorldText.h"
 
 // uncomment for cheaper eighth dimension scene nodes
 //#define SHELL_INSIDE_NODES
 
 
+//============================================================================//
+//
+//  Primitive materials
+//
+
+struct MatInfo {
+  public:
+    // normal materials
+    MatInfo(const std::string& _name, const std::string _texVar,
+            float r, float g, float b)
+            : name(_name), texVar(_texVar), color(r, g, b, 1.0f)
+            , teamColor((TeamColor)-1)
+    {
+    }
+    // base materials
+    MatInfo(const std::string& _name, TeamColor _teamColor,
+            const std::string _texVar, float r, float g, float b)
+            : name(_name), texVar(_texVar), color(r, g, b, 1.0f)
+            , teamColor(_teamColor)
+    {
+    }
+  public:
+    std::string name;
+    std::string texVar;
+    fvec4	color;
+    TeamColor	teamColor;
+};
+
+
+static const MatInfo wallMat   ("WallMaterial",    "wallTexture",    0.4f, 0.2f, 0.2f);
+static const MatInfo pyrMat    ("PyramidMaterial", "pyrWallTexture", 0.2f, 0.6f, 0.8f);
+static const MatInfo boxTopMat ("BoxTopMaterial",  "boxTopTexture",  0.4f, 0.3f, 0.2f);
+static const MatInfo boxWallMat("BoxWallMaterial", "boxWallTexture", 0.4f, 0.2f, 0.1f);
+
+static const MatInfo baseTopMats[5] = {
+  MatInfo("RogueBaseTopMaterial",  RogueTeam,  "baseTopTexture", 0.5f, 0.5f, 0.5f),
+  MatInfo("RedBaseTopMaterial",    RedTeam,    "baseTopTexture", 1.0f, 0.0f, 0.0f),
+  MatInfo("GreenBaseTopMaterial",  GreenTeam,  "baseTopTexture", 0.0f, 1.0f, 0.0f),
+  MatInfo("BlueBaseTopMaterial",   BlueTeam,   "baseTopTexture", 0.0f, 0.0f, 1.0f),
+  MatInfo("PurpleBaseTopMaterial", PurpleTeam, "baseTopTexture", 1.0f, 0.0f, 1.0f)
+};
+static const MatInfo baseWallMats[5] = {
+  MatInfo("RogueBaseWallMaterial",  RogueTeam,  "baseWallTexture", 0.5f, 0.5f, 0.5f),
+  MatInfo("RedBaseWallMaterial",    RedTeam,    "baseWallTexture", 1.0f, 0.0f, 0.0f),
+  MatInfo("GreenBaseWallMaterial",  GreenTeam,  "baseWallTexture", 0.0f, 1.0f, 0.0f),
+  MatInfo("BlueBaseWallMaterial",   BlueTeam,   "baseWallTexture", 0.0f, 0.0f, 1.0f),
+  MatInfo("PurpleBaseWallMaterial", PurpleTeam, "baseWallTexture", 1.0f, 0.0f, 1.0f)
+};
+
+
+static const BzMaterial* getBzMat(const MatInfo& mi)
+{
+  const BzMaterial* ptr = MATERIALMGR.findMaterial(mi.name);
+  if (ptr) {
+    return ptr;
+  }
+
+  std::string texture;
+  if (mi.teamColor >= 0) {
+    texture = Team::getImagePrefix(mi.teamColor);
+  }
+  texture += BZDB.get(mi.texVar);
+
+  BzMaterial mat;
+  mat.setName(mi.name);
+  mat.addTexture(texture);
+  mat.setUseTextureAlpha(false);
+  mat.setUseColorOnTexture(false);
+  mat.setDiffuse(mi.color);
+  mat.setNoLighting(mi.teamColor >= 0);
+  return MATERIALMGR.addMaterial(&mat);
+}
+
+
+//============================================================================//
 //
 // SceneDatabaseBuilder
 //
 
-const fvec4 SceneDatabaseBuilder::wallColors[4] = {
-  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
-  fvec4(0.4f, 0.4f, 0.4f, 1.0f),
-  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
-  fvec4(0.6f, 0.6f, 0.6f, 1.0f)
-};
-const fvec4 SceneDatabaseBuilder::wallModulateColors[4] = {
-  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
-  fvec4(0.4f, 0.4f, 0.4f, 1.0f),
-  fvec4(0.5f, 0.5f, 0.5f, 1.0f),
-  fvec4(0.6f, 0.6f, 0.6f, 1.0f)
-};
-const fvec4 SceneDatabaseBuilder::wallLightedColors[1] = {
-  fvec4(0.5f, 0.5f, 0.5f, 1.0f)
-};
-const fvec4 SceneDatabaseBuilder::wallLightedModulateColors[1] = {
-  fvec4(0.5f, 0.5f, 0.5f, 1.0f)
-};
-
-const fvec4 SceneDatabaseBuilder::boxColors[6] = {
-  fvec4(0.75f,  0.25f,  0.25f,  1.0f),
-  fvec4(0.63f,  0.25f,  0.25f,  1.0f),
-  fvec4(0.75f,  0.25f,  0.25f,  1.0f),
-  fvec4(0.75f,  0.375f, 0.375f, 1.0f),
-  fvec4(0.875f, 0.5f,   0.5f,   1.0f),
-  fvec4(0.275f, 0.2f,   0.2f,   1.0f)
-};
-const fvec4 SceneDatabaseBuilder::boxModulateColors[6] = {
-  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
-  fvec4(0.63f,  0.63f,  0.63f,  1.0f),
-  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
-  fvec4(0.69f,  0.69f,  0.69f,  1.0f),
-  fvec4(0.875f, 0.875f, 0.875f, 1.0f),
-  fvec4(0.375f, 0.375f, 0.375f, 1.0f)
-};
-const fvec4 SceneDatabaseBuilder::boxLightedColors[6] = {
-  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
-  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
-  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
-  fvec4(0.75f,  0.25f, 0.25f, 1.0f),
-  fvec4(0.875f, 0.5f,  0.5f,  1.0f),
-  fvec4(0.875f, 0.5f,  0.5f,  1.0f)
-};
-const fvec4 SceneDatabaseBuilder::boxLightedModulateColors[6] = {
-  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
-  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
-  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
-  fvec4(0.75f,  0.75f,  0.75f,  1.0f),
-  fvec4(0.875f, 0.875f, 0.875f, 1.0f),
-  fvec4(0.875f, 0.875f, 0.875f, 1.0f)
-};
-
-const fvec4 SceneDatabaseBuilder::pyramidColors[5] = {
-  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
-  fvec4(0.13f,  0.13f,  0.51f, 1.0f),
-  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
-  fvec4(0.375f, 0.375f, 0.75f, 1.0f),
-  fvec4(0.175f, 0.175f, 0.35f, 1.0f)
-};
-
-const fvec4 SceneDatabaseBuilder::pyramidModulateColors[5] = {
-  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
-  fvec4(0.13f,  0.13f,  0.51f, 1.0f),
-  fvec4(0.25f,  0.25f,  0.63f, 1.0f),
-  fvec4(0.375f, 0.375f, 0.75f, 1.0f),
-  fvec4(0.175f, 0.175f, 0.35f, 1.0f)
-};
-const fvec4 SceneDatabaseBuilder::pyramidLightedColors[5] = {
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f)
-};
-const fvec4 SceneDatabaseBuilder::pyramidLightedModulateColors[5] = {
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f),
-  fvec4(0.25f, 0.25f, 0.63f, 1.0f)
-};
-
-const fvec4 SceneDatabaseBuilder::teleporterColors[3] = {
-  fvec4(1.0f, 0.875f, 0.0f, 1.0f),
-  fvec4(0.9f, 0.8f,   0.0f, 1.0f),
-  fvec4(0.0f, 0.0f,   0.0f, 0.5f)
-};
-const fvec4 SceneDatabaseBuilder::teleporterModulateColors[3] = {
-  fvec4(1.0f, 1.0f, 1.0f, 1.0f),
-  fvec4(0.9f, 0.9f, 0.9f, 1.0f),
-  fvec4(0.0f, 0.0f, 0.0f, 0.5f)
-};
-const fvec4 SceneDatabaseBuilder::teleporterLightedColors[3] = {
-  fvec4(1.0f, 0.875f, 0.0f, 1.0f),
-  fvec4(1.0f, 0.875f, 0.0f, 1.0f),
-  fvec4(0.0f, 0.0f,   0.0f, 0.5f)
-};
-const fvec4 SceneDatabaseBuilder::teleporterLightedModulateColors[3] = {
-  fvec4(1.0f, 1.0f, 1.0f, 1.0f),
-  fvec4(1.0f, 1.0f, 1.0f, 1.0f),
-  fvec4(0.0f, 0.0f, 0.0f, 0.5f)
-};
-
-
-static const fvec4 black(0.0f, 0.0f, 0.0f, 0.0f);
-
-
 SceneDatabaseBuilder::SceneDatabaseBuilder()
-: wallMaterial(black, black, 0.0f)
-, boxMaterial(black, black, 0.0f)
-, pyramidMaterial(black, black, 0.0f)
-, teleporterMaterial(black, black, 0.0f)
 {
   // FIXME -- should get texture heights from resources
-
   TextureManager &tm = TextureManager::instance();
 
 
@@ -323,29 +287,11 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);
 
-  TextureManager &tm = TextureManager::instance();
-  int wallTexture = -1;
-
-  bool useColorTexture = false;
-
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    wallTexture = tm.getTextureID(o.userTextures[0],false);
-  if (wallTexture < 0)
-    wallTexture = tm.getTextureID( "wall" );
-  else
-    useColorTexture = wallTexture >= 0;
+  const BzMaterial* wallBzMat = getBzMat(wallMat);
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
 				      o.getHeight() / wallTexHeight, wallLOD))) {
-    node->setColor(wallColors[part]);
-    node->setModulateColor(wallModulateColors[part]);
-    node->setLightedColor(wallLightedColors[0]);
-    node->setLightedModulateColor(wallLightedModulateColors[0]);
-    node->setMaterial(wallMaterial);
-    node->setTexture(wallTexture);
-    node->setUseColorTexture(useColorTexture);
-
+    node->setBzMaterial(wallBzMat);
     db->addStaticNode(node, false);
     part = (part + 1) % 5;
   }
@@ -356,7 +302,7 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 {
   WallSceneNode* node;
-  MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator (mesh);
+  MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator(mesh);
 
   while ((node = nodeGen->getNextNode(wallLOD))) {
     // make the inside node
@@ -378,30 +324,14 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   int part = 0;
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new BoxSceneNodeGenerator(&o);
-  TextureManager &tm = TextureManager::instance();
-  int boxTexture = -1;
-  bool useColorTexture[2] = { false, false };
-
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0],false);
-  if (boxTexture < 0)
-    boxTexture = tm.getTextureID(BZDB.get("boxWallTexture"),true);
-
-  useColorTexture[0] = boxTexture >= 0;
-
-  int boxTopTexture = -1;
-
-  if (o.userTextures[1].size())
-    boxTopTexture = tm.getTextureID(o.userTextures[1],false);
-  if (boxTopTexture < 0)
-    boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture"),true);
-
-  useColorTexture[1] = boxTopTexture >= 0;
 
   float textureFactor = BZDB.eval("boxWallTexRepeat");
-  if (RENDERER.useQuality() >= _HIGH_QUALITY)
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     textureFactor = BZDB.eval("boxWallHighResTexRepeat");
+  }
+
+  const BzMaterial* topBzMat  = getBzMat(boxTopMat);
+  const BzMaterial* wallBzMat = getBzMat(boxWallMat);
 
   while ((node = ((part < 4) ?
 		  nodeGen->getNextNode(-textureFactor*boxTexWidth,
@@ -410,17 +340,10 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 		  // size and this number is available
 		  nodeGen->getNextNode(-boxTexHeight,
 				       -boxTexHeight, boxLOD)))) {
-    node->setColor(boxColors[part]);
-    node->setModulateColor(boxModulateColors[part]);
-    node->setLightedColor(boxLightedColors[part]);
-    node->setLightedModulateColor(boxLightedModulateColors[part]);
-    node->setMaterial(boxMaterial);
-    if (part < 4) {
-      node->setTexture(boxTexture);
-      node->setUseColorTexture(useColorTexture[0]);
-    } else {
-      node->setTexture(boxTopTexture);
-      node->setUseColorTexture(useColorTexture[1]);
+    if (part < 4){
+      node->setBzMaterial(wallBzMat);
+    } else{
+      node->setBzMaterial(topBzMat);
     }
 
 #ifdef SHELL_INSIDE_NODES
@@ -452,33 +375,18 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new PyramidSceneNodeGenerator(&o);
 
-  TextureManager &tm = TextureManager::instance();
-  int pyramidTexture = -1;
-
-  bool useColorTexture = false;
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    pyramidTexture = tm.getTextureID(o.userTextures[0],false);
-  if (pyramidTexture < 0)
-    pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture"),false);
-
-  useColorTexture = pyramidTexture >= 0;
-
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (RENDERER.useQuality() >= _HIGH_QUALITY)
+  if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
+  }
+
+  const BzMaterial* pyrBzMat  = getBzMat(pyrMat);
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
 				      -textureFactor * boxTexHeight,
 				      pyramidLOD))) {
-    node->setColor(pyramidColors[part]);
-    node->setModulateColor(pyramidModulateColors[part]);
-    node->setLightedColor(pyramidLightedColors[part]);
-    node->setLightedModulateColor(pyramidLightedModulateColors[part]);
-    node->setMaterial(pyramidMaterial);
-    node->setTexture(pyramidTexture);
-    node->setUseColorTexture(useColorTexture);
+    node->setBzMaterial(pyrBzMat);
 
 #ifdef SHELL_INSIDE_NODES
     const bool ownTheNode = db->addStaticNode(node, true);
@@ -507,37 +415,15 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
 
-  TextureManager &tm = TextureManager::instance();
-  int boxTexture = -1;
-
-  bool  useColorTexture[2] = {false,false};
-
-  // try object, standard, then default
-  if (o.userTextures[0].size())
-    boxTexture = tm.getTextureID(o.userTextures[0],false);
-  if (boxTexture < 0) {
-    std::string teamBase = Team::getImagePrefix((TeamColor)o.getBaseTeam());
-    teamBase += BZDB.get("baseWallTexture");
-    boxTexture = tm.getTextureID(teamBase,false);
+  const BzMaterial* topBzMat;
+  const BzMaterial* wallBzMat;
+  if ((o.getBaseTeam() >= 0) && (o.getBaseTeam() <= 5)) {
+    topBzMat  = getBzMat(baseTopMats[o.getBaseTeam()]);
+    wallBzMat = getBzMat(baseWallMats[o.getBaseTeam()]);
+  } else {
+    topBzMat  = getBzMat(boxTopMat);
+    wallBzMat = getBzMat(boxWallMat);
   }
-  if (boxTexture < 0)
-    boxTexture = tm.getTextureID( BZDB.get("boxWallTexture") );
-
-  useColorTexture[0] = boxTexture >= 0;
-
-  int baseTopTexture = -1;
-
-  if (o.userTextures[1].size())
-    baseTopTexture = tm.getTextureID(o.userTextures[1],false);
-  if (baseTopTexture < 0) {
-    std::string teamBase = Team::getImagePrefix((TeamColor)o.getBaseTeam());
-    teamBase += BZDB.get("baseTopTexture");
-    baseTopTexture = tm.getTextureID(teamBase,false);
-  }
-  if (baseTopTexture < 0)
-    baseTopTexture = -1;
-  else
-    useColorTexture[1] = baseTopTexture >= 0;
 
   // this assumes bases have 6 parts - if they don't, it still works
   int part = 0;
@@ -551,18 +437,9 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 					o.getHeight(),
 					boxLOD)))) {
     if ((part % 5) != 0) {
-      node->setColor(boxColors[part - 2]);
-      node->setModulateColor(boxModulateColors[part - 2]);
-      node->setLightedColor(boxLightedColors[part - 2]);
-      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
-      node->setMaterial(boxMaterial);
-      node->setTexture(boxTexture);
-      node->setUseColorTexture(useColorTexture[0]);
+      node->setBzMaterial(wallBzMat);
     } else {
-      if (useColorTexture[1]) {  // only set the texture if we have one and are using it
-	node->setTexture(baseTopTexture);
-	node->setUseColorTexture(useColorTexture[1]);
-      }
+      node->setBzMaterial(topBzMat);
     }
     part++;
 

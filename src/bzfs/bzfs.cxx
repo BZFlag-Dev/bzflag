@@ -2992,7 +2992,7 @@ void searchFlag(GameKeeper::Player &playerData)
 }
 
 
-void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
+void dropFlag(FlagInfo& flagInfo, const fvec3& dropPos)
 {
   assert(world != NULL);
 
@@ -3006,22 +3006,23 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
 
   // player wants to drop flag.  we trust that the client won't tell
   // us to drop a sticky flag until the requirements are satisfied.
-  const int flagIndex = drpFlag.getIndex();
-  if (drpFlag.flag.status != FlagOnTank)
+  const int flagIndex = flagInfo.getIndex();
+  if (flagInfo.flag.status != FlagOnTank)
     return;
 
-  int flagTeam = drpFlag.flag.type->flagTeam;
+  int flagTeam = flagInfo.flag.type->flagTeam;
   bool isTeamFlag = (flagTeam != ::NoTeam);
 
   // limited flags that have been fired should be disposed of
-  bool limited = clOptions->flagLimit[drpFlag.flag.type] != -1;
-  if (limited && drpFlag.numShots > 0) drpFlag.grabs = 0;
+  bool limited = clOptions->flagLimit[flagInfo.flag.type] != -1;
+  if (limited && flagInfo.numShots > 0) flagInfo.grabs = 0;
 
 
   const float waterLevel = world->getWaterLevel();
   float minZ = 0.0f;
-  if (waterLevel > minZ)
+  if (waterLevel > minZ) {
     minZ = waterLevel;
+  }
 
   const float maxZ = MAXFLOAT;
 
@@ -3032,9 +3033,9 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
 
   if (isTeamFlag) {
     vanish = false;
-  } else if (--drpFlag.grabs <= 0) {
+  } else if (--flagInfo.grabs <= 0) {
     vanish = true;
-    drpFlag.grabs = 0;
+    flagInfo.grabs = 0;
   } else if (!clOptions->flagsOnBuildings && (landing.z > 0.0f)) {
     vanish = true;
   } else {
@@ -3048,7 +3049,7 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
     // figure out landing spot -- if flag in a Bad Place
     // when dropped, move to safety position or make it going
     std::string teamName = Team::getName((TeamColor) flagTeam);
-    if (!world->getFlagDropPoint(&drpFlag, pos, landing)) {
+    if (!world->getFlagDropPoint(&flagInfo, pos, landing)) {
       // try the center
       landing = fvec3(0.0f, 0.0f, 0.0f);
       safelyDropped = DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
@@ -3064,19 +3065,19 @@ void dropFlag(FlagInfo& drpFlag, const fvec3& dropPos)
   if (isTeamFlag) {
     // if it is a team flag, check if there are any players left in
     // that team - if not, start the flag timeout
-    if (teamInfos[drpFlag.flag.type->flagTeam].team.size == 0) {
+    if (teamInfos[flagInfo.flag.type->flagTeam].team.size == 0) {
       teamInfos[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
       teamInfos[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
     }
   }
 
-  drpFlag.dropFlag(pos, landing, vanish);
+  flagInfo.dropFlag(pos, landing, vanish);
 
   // player no longer has flag -- send MsgDropFlag
-  dropFlag(drpFlag);
+  dropFlag(flagInfo);
 
   // notify of new flag state
-  sendFlagUpdateMessage(drpFlag);
+  sendFlagUpdateMessage(flagInfo);
 }
 
 
@@ -3194,7 +3195,7 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, Tim
   playerStateToAPIState(eventData.state,state);
   eventData.stateTime = timeStamp.getSeconds();
   eventData.playerID = playerData->getIndex();
-  worldEventManager.callEvents(bz_ePlayerUpdateEvent,&eventData);
+  worldEventManager.callEvents(bz_ePlayerUpdateEvent, &eventData);
 
   // ignore out of order packet
   if (state.order <= playerData->lastState.order) {
@@ -3208,6 +3209,11 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, Tim
     return false;
 
   playerData->setPlayerState(state, timeStamp);
+
+  bz_PlayerUpdateDoneEventData_V1 doneEventData;
+  doneEventData.stateTime = timeStamp.getSeconds();
+  doneEventData.playerID = playerData->getIndex();
+  worldEventManager.callEvents(bz_ePlayerUpdateDoneEvent, &doneEventData);
 
   // Player might already be dead and did not know it yet (e.g. teamkill)
   // do not propogate

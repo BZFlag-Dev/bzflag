@@ -16,16 +16,31 @@
 #include "common.h"
 
 // system headers
+#include <string>
 #include <map>
 #include <vector>
+
+// common headers
+#include "bzfgl.h"
+#include "vectors.h"
+
+
+class BzMaterial;
+class OpenGLGState;
+
 
 #define INVALID_GL_ID 0xffffffff
 
 
-float getFloatColor(int val);
-void setColor(float dstColor[3], int r, int g, int b);
-void glSetColor(const float c[3], float alpha = 1.0f);
-void glTranslatefv(const float v[3]);
+extern void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
+                         fvec4& color, const fvec4*& colorPtr);
+
+extern bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst);
+
+extern float getFloatColor(int val);
+extern void setColor(float dstColor[3], int r, int g, int b);
+extern void glSetColor(const float c[3], float alpha = 1.0f);
+extern void glTranslatefv(const float v[3]);
 
 typedef enum {
   eCenter,
@@ -39,27 +54,27 @@ typedef enum {
   eCenterBottom
 } eAlignment;
 
-void glQuad(float x, float y, eAlignment align, float scale = 1.0f);
-void glLineRing(float radius, float width = 1.0f);
+extern void glQuad(float x, float y, eAlignment align, float scale = 1.0f);
+extern void glLineRing(float radius, float width = 1.0f);
 
 // draw an outline box with the outside at the bounds, and inset by the thickness
-void glOutlineBoxCP(float thickness, float centerX, float centerY,
+extern void glOutlineBoxCP(float thickness, float centerX, float centerY,
                     float width, float height, float depth = 0.0f);
 inline void glOutlineBoxCP(float t, int x, int y, int w, int h, int d = 0) {
   glOutlineBoxCP(t, (float)x, (float)y, (float)w, (float)h, (float)d);
 }
 
-void glOutlineBoxHV(float thickness, float minX, float minY,
-                    float maxX, float maxY, float depth = 0.0f);
+extern void glOutlineBoxHV(float thickness, float minX, float minY,
+                           float maxX, float maxY, float depth = 0.0f);
 inline void glOutlineBoxHV(float t, int minX, int minY, int maxX, int maxY, int d = 0) {
   glOutlineBoxHV(t, (float)minX, (float)minY, (float)maxX, (float)maxY, (float)d);
 }
 
 // draw an outline tabbed box
-void glOutlineTabbedBox(float thickness, float minX, float minY,
-                        float maxX, float maxY,
-                        float tabInset, float tabWidth, float tabHeight,
-                        float depth = 0);
+extern void glOutlineTabbedBox(float thickness, float minX, float minY,
+                               float maxX, float maxY,
+                               float tabInset, float tabWidth, float tabHeight,
+                               float depth = 0);
 
 // display list system
 typedef unsigned int GLDisplayList;
@@ -106,7 +121,9 @@ class DisplayListSystem
   GLDisplayList				lastList;
 };
 
+
 #endif // __OPENGLUTILS_H__
+
 
 // Local Variables: ***
 // mode: C++ ***

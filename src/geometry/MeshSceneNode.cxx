@@ -36,6 +36,7 @@
 #include "BzMaterial.h"
 #include "OpenGLGState.h"
 #include "OpenGLMaterial.h"
+#include "OpenGLUtils.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
 #include "ViewFrustum.h"
@@ -440,149 +441,11 @@ const BzMaterial* MeshSceneNode::convertMaterial(const BzMaterial* bzmat)
 
 void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 {
-// FIXME - deal with invisibility
+  bzMat2gstate(mat->bzmat, mat->gstate, mat->color, mat->colorPtr);
 
-  // get the references
-  const BzMaterial* bzmat  = mat->bzmat;
-  OpenGLGState&     gstate = mat->gstate;
-  fvec4&            color  = mat->color;
-
-  OpenGLGStateBuilder builder;
-  TextureManager &tm = TextureManager::instance();
-
-  // cheat a little
-  ((BzMaterial*)bzmat)->setReference();
-
-  builder.setOrder(bzmat->getOrder());
-
-  // ways of requiring blending
-  bool colorAlpha = false;
-  bool textureAlpha = false;
-
-  bool useDiffuseColor = true;
-
-  // texturing
-  if (BZDBCache::texture) {
-    int faceTexture = -1;
-    bool userTexture = (bzmat->getTextureCount() > 0);
-    if (userTexture) {
-      const std::string& texname = bzmat->getTextureLocal(0);
-      if (texname.size() > 0) {
-	faceTexture = tm.getTextureID(texname);
-      }
-      if (faceTexture >= 0) {
-	useDiffuseColor = bzmat->getUseColorOnTexture(0);
-	if (bzmat->getUseTextureAlpha(0)) {
-	  const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-	  textureAlpha = imageInfo.alpha;
-	}
-      } else {
-	faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
-      }
-      if (faceTexture >= 0) {
-	// texture matrix
-	const int texMatId = bzmat->getTextureMatrix(0);
-	const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
-	if (texmat != NULL) {
-	  const float* matrix = texmat->getMatrix();
-	  if (matrix != NULL) {
-	    builder.setTextureMatrix(matrix);
-	    builder.enableTextureMatrix(true);
-	  }
-	}
-	// sphere mapping
-	if (bzmat->getUseSphereMap(0)) {
-	  builder.enableSphereMap(true);
-	}
-      }
-      builder.setTexture(faceTexture);
-      builder.enableTexture(true);
-    }
-  }
-
-  // lighting
-  if (BZDBCache::lighting && !bzmat->getNoLighting()) {
-    OpenGLMaterial oglMaterial(bzmat->getSpecular(),
-			       bzmat->getEmission(),
-			       bzmat->getShininess());
-    builder.setMaterial(oglMaterial, RENDERER.useQuality() > _LOW_QUALITY);
-    builder.setShading(GL_SMOOTH);
-  } else {
-    builder.setShading(GL_FLAT);
-  }
-
-  // color
-  if (useDiffuseColor) {
-    color = bzmat->getDiffuse();
-    colorAlpha = (color.a != 1.0f);
-  } else {
-    // set it to white, this should only happen when
-    // we've gotten a user texture, and there's a
-    // request to not use the material's diffuse color.
-    color.r = color.g = color.b = color.a = 1.0f;
-  }
-
-  // dynamic color
-  const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
-  if (dyncol != NULL) {
-    mat->colorPtr = &dyncol->getColor();
-    colorAlpha = dyncol->canHaveAlpha(); // override
-  } else {
-    mat->colorPtr = &color;
-  }
-
-  // blending
-  const bool isAlpha = (colorAlpha || textureAlpha);
-  if (isAlpha) {
-    if (BZDBCache::blend) {
-      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      builder.setStipple(1.0f);
-    } else {
-      builder.resetBlending();
-      if (dyncol != NULL) {
-	builder.setStipple(0.5f);
-      } else {
-	builder.setStipple(color.a);
-      }
-    }
-  }
-  if (bzmat->getNoBlending()) {
-    builder.resetBlending();
-  }
-
-  // sorting  (do this after using setBlending())
-  //
-  // NOTE:  getGroupAlpha() isn't used because all MeshSceneNode
-  //	elements are sorted as groups rather then individually
-  //
-  mat->needsSorting = (isAlpha && !bzmat->getNoSorting());
-  builder.setNeedsSorting(mat->needsSorting);
-
-  // alpha thresholding
-  float alphaThreshold = bzmat->getAlphaThreshold();
-  if (alphaThreshold != 0.0f) {
-    builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
-  }
-
-  // polygon offset
-  float poFactor, poUnits;
-  if (bzmat->getPolygonOffset(poFactor, poUnits)) {
-    builder.setPolygonOffset(poFactor, poUnits);
-  }
-
-  // radar and shadows
-  mat->drawRadar = !bzmat->getNoRadar();
-  mat->drawShadow = !bzmat->getNoShadowCast(); // FIXME
-
-  // culling
-  if (bzmat->getNoCulling()) {
-    builder.setCulling(GL_NONE);
-  }
-
-  // generate the gstate
-  gstate = builder.getState();
-
-  return;
+  mat->drawRadar    = !mat->bzmat->getNoRadar();
+  mat->drawShadow   = !mat->bzmat->getNoShadowCast();
+  mat->needsSorting =  mat->gstate.getNeedsSorting();
 }
 
 

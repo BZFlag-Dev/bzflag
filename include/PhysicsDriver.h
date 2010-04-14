@@ -169,11 +169,7 @@ class PhysicsDriverManager {
 
 inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
 {
-  if ((id >= 0) && (id < (int)drivers.size())) {
-    return drivers[id];
-  } else {
-    return NULL;
-  }
+  return ((id >= 0) && (id < (int)drivers.size())) ? drivers[id] : NULL;
 }
 
 

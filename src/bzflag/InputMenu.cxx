@@ -260,11 +260,11 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
     case 'G':
       {
 	const bool grabbing = (selectedOption == "Window");
-	BZDB.set("mousegrab", grabbing ? "true" : "false");
+	BZDB.setBool("mousegrab", grabbing);
 	getMainWindow()->enableGrabMouse(grabbing);
 
 	const bool clamped = (selectedOption == "MotionBox");
-        BZDB.set("mouseClamp", clamped ? "true" : "false");
+        BZDB.setBool("mouseClamp", clamped);
       }
       break;
 

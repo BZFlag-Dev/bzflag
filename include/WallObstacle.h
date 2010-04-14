@@ -53,8 +53,6 @@ class WallObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-    std::string		userTextures[1];
-
   private:
     void finalize();
 

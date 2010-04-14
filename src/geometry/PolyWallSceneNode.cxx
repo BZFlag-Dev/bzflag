@@ -47,7 +47,7 @@ PolyWallSceneNode::Geometry::~Geometry()
 
 void			PolyWallSceneNode::Geometry::render()
 {
-  wall->setColor();
+  wall->applyColor();
   glNormal3fv(normal);
   if (style >= 2) {
     drawVT();

@@ -82,8 +82,7 @@ bool DropGeometry::dropFlag(fvec3& pos, float minZ, float maxZ)
 }
 
 
-bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ,
-				int team)
+bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ, int team)
 {
   // team flags do not get real clearance checks (radius = 0)
   // if you want to put some smarts in to check for wedging

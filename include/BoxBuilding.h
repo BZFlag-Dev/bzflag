@@ -70,8 +70,6 @@ class BoxBuilding : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
 
-    std::string	userTextures[2];
-
   private:
     void finalize();
 

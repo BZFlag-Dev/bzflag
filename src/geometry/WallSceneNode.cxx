@@ -27,43 +27,25 @@
 #include "bzfgl.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "BzMaterial.h"
+#include "OpenGLUtils.h"
 #include "SceneRenderer.h" // FIXME (SceneRenderer.cxx is in src/bzflag)
 
 // local headers
 #include "ViewFrustum.h"
 
 
+//============================================================================//
+
 WallSceneNode::WallSceneNode()
-: numLODs(0)
+: style(0)
+, numLODs(0)
 , elementAreas(NULL)
-, style(0)
+, bzMaterial(NULL)
+, color(fvec4(1.0f, 1.0f, 1.0f, 1.0f))
+, colorPtr(&color)
 {
   noPlane = false;
-  order = 0;
-  dynamicColor = NULL;
-
-  color.a = 1.0f;
-  modulateColor.a = 1.0f;
-  lightedColor.a = 1.0f;
-  lightedModulateColor.a = 1.0f;
-
-  setColor(1.0f, 1.0f, 1.0f);
-  setModulateColor(1.0f, 1.0f, 1.0f);
-  setLightedColor(1.0f, 1.0f, 1.0f);
-  setLightedModulateColor(1.0f, 1.0f, 1.0f);
-
-  useColorTexture = false;
-  noCulling = false;
-  noSorting = false;
-  noBlending = false;
-  isBlended = false;
-  wantBlending = false;
-  wantSphereMap = false;
-  alphaThreshold = 0.0f;
-  poFactor = 0.0f;
-  poUnits  = 0.0f;
-
-  return;
 }
 
 
@@ -206,226 +188,84 @@ float WallSceneNode::getDistanceSq(const fvec3& eye) const
 }
 
 
-void WallSceneNode::setColor(float r, float g, float b, float a)
+void WallSceneNode::setBzMaterial(const BzMaterial* bzmat)
 {
-  color = fvec4(r, g, b, a);
+  assert(bzmat != NULL);
+  bzMaterial = bzmat;
 }
 
 
-void WallSceneNode::setOrder(int value)
+void WallSceneNode::burnLighting()
 {
-  order = value;
-}
+  if (BZDBCache::lighting ||
+      bzMaterial->getNoLighting() ||
+      (colorPtr != &color)) { // dynamic color
+    return;
+  }
 
+  const fvec4* p = getPlane();
+  if (!p) {
+    return;
+  }
 
-void WallSceneNode::setDynamicColor(const fvec4* rgba)
-{
-  dynamicColor = rgba;
-}
+  const fvec3* sd = RENDERER.getSunDirection();
+  const fvec3* d = sd;
+  if (!sd) {
+    static const fvec3 fakeSunDir = fvec3(3.0f, 4.0f, 12.0f) / 13.0f;
+    d = &fakeSunDir;
+  }
 
+  float dot = p->xyz().dot(*d);
+  if (dot < 0.0f) {
+    dot = 0.0f;
+  }
 
-void WallSceneNode::setBlending(bool blend)
-{
-  wantBlending = blend;
-}
+  const fvec4& dc = RENDERER.getSunColor();
+  const fvec4& ac = RENDERER.getAmbientColor();
+  color.rgb() *= (dot * dc.rgb()) + ac.rgb();
 
-
-void WallSceneNode::setSphereMap(bool sphereMapping)
-{
-  wantSphereMap = sphereMapping;
-}
-
-
-void WallSceneNode::setColor(const fvec4& rgba)
-{
-  color = rgba;
-}
-
-
-void WallSceneNode::setModulateColor(
-				float r, float g, float b, float a)
-{
-  modulateColor = fvec4(r, g, b, a);
-}
-
-
-void WallSceneNode::setModulateColor(const fvec4& rgba)
-{
-  modulateColor = rgba;
-}
-
-
-void WallSceneNode::setLightedColor(float r, float g, float b, float a)
-{
-  lightedColor = fvec4(r, g, b, a);
-}
-
-
-void WallSceneNode::setLightedColor(const fvec4& rgba)
-{
-  lightedColor = rgba;
-}
-
-
-void WallSceneNode::setLightedModulateColor(float r, float g, float b, float a)
-{
-  lightedModulateColor = fvec4(r, g, b, a);
-}
-
-
-void WallSceneNode::setLightedModulateColor(const fvec4& rgba)
-{
-  lightedModulateColor = rgba;
-}
-
-
-void WallSceneNode::setAlphaThreshold(float thresh)
-{
-  alphaThreshold = thresh;
-}
-
-
-void WallSceneNode::setPolygonOffset(float factor, float units)
-{
-  poFactor = factor;
-  poUnits  = units;
-}
-
-
-void WallSceneNode::setNoCulling(bool value)
-{
-  noCulling = value;
-}
-
-
-void WallSceneNode::setNoSorting(bool value)
-{
-  noSorting = value;
-}
-
-
-void WallSceneNode::setNoBlending(bool value)
-{
-  noBlending = value;
-}
-
-
-void WallSceneNode::setMaterial(const OpenGLMaterial& mat)
-{
-  OpenGLGStateBuilder builder(gstate);
-  builder.setMaterial(mat, RENDERER.useQuality() > _LOW_QUALITY);
-  gstate = builder.getState();
-}
-
-
-void WallSceneNode::setTexture(const int tex)
-{
-  OpenGLGStateBuilder builder(gstate);
-  builder.setTexture(tex);
-  gstate = builder.getState();
-}
-
-
-void WallSceneNode::setTextureMatrix(const float* texmat)
-{
-  OpenGLGStateBuilder builder(gstate);
-  builder.setTextureMatrix(texmat);
-  gstate = builder.getState();
+  const fvec4& ec = bzMaterial->getEmission();
+  color.rgb() += ec.rgb();
 }
 
 
 void WallSceneNode::notifyStyleChange()
 {
-  float alpha;
-  bool lighted = (BZDBCache::lighting && gstate.isLighted());
-  OpenGLGStateBuilder builder(gstate);
-  builder.setOrder(order);
+  if (bzMaterial == NULL) {
+    OpenGLGStateBuilder builder;
+    gstate = builder.getState();
+    style = 0;
+    color = fvec4(1.0f, 1.0f, 1.0f, 1.0f);
+    colorPtr = &color;
+    return;
+  }
+
+  bzMat2gstate(bzMaterial, gstate, color, colorPtr);
+
+  burnLighting();
+
   style = 0;
-  if (lighted) {
-    style += 1;
-    builder.setShading();
-  }
-  else {
-    builder.setShading(GL_FLAT);
-  }
-  if (BZDBCache::texture && gstate.isTextured()) {
-    style += 2;
-    builder.enableTexture(true);
-    builder.enableTextureMatrix(true);
-    alpha = lighted ? lightedModulateColor.a : modulateColor.a;
-  }
-  else {
-    builder.enableTexture(false);
-    builder.enableTextureMatrix(false);
-    alpha = lighted ? lightedColor.a : color.a;
-  }
-  if (BZDB.isTrue("texturereplace")) {
-    builder.setTextureEnvMode(GL_REPLACE);
-  } else {
-    builder.setTextureEnvMode(GL_MODULATE);
-  }
-  builder.enableMaterial(lighted);
-  if (BZDBCache::blend && (wantBlending || (alpha != 1.0f))) {
-    builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    builder.setStipple(1.0f);
-  }
-  else {
-    builder.resetBlending();
-    builder.setStipple(alpha);
-  }
-  isBlended = wantBlending || (alpha != 1.0f);
-  if (alphaThreshold != 0.0f) {
-    builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
-  }
-  builder.setPolygonOffset(poFactor, poUnits);
-  if (noCulling) {
-    builder.setCulling(GL_NONE);
-  }
-  if (noSorting) {
-    builder.setNeedsSorting(false);
-  }
-  if (noBlending) {
-    builder.resetBlending();
-  }
-  if (wantSphereMap) {
-    builder.enableSphereMap(true);
-  }
-  gstate = builder.getState();
+  if (gstate.isLighted())  { style += 1; }
+  if (gstate.isTextured()) { style += 2; }
 }
 
 
 void WallSceneNode::copyStyle(WallSceneNode* node)
 {
   gstate = node->gstate;
-  useColorTexture = node->useColorTexture;
-  order = node->order;
-  dynamicColor = node->dynamicColor;
-  setColor(node->color);
-  setModulateColor(node->modulateColor);
-  setLightedColor(node->lightedColor);
-  setLightedModulateColor(node->lightedModulateColor);
-  isBlended = node->isBlended;
-  wantBlending = node->wantBlending;
-  wantSphereMap = node->wantSphereMap;
+  bzMaterial = node->bzMaterial;
+  color = node->color;
+  if (node->colorPtr == &node->color) {
+    colorPtr = &color;
+  } else {
+    colorPtr = node->colorPtr; // dynamic color
+  }
 }
 
 
-void WallSceneNode::setColor()
+void WallSceneNode::applyColor() const
 {
-  if (BZDBCache::texture && useColorTexture) {
-    myColor4f(1,1,1,1);
-  }
-  else if (dynamicColor != NULL) {
-    myColor4fv(*dynamicColor);
-  }
-  else {
-    switch (style) {
-      case 0: { myColor4fv(color);                break; }
-      case 1: { myColor4fv(lightedColor);         break; }
-      case 2: { myColor4fv(modulateColor);        break; }
-      case 3: { myColor4fv(lightedModulateColor); break; }
-    }
-  }
+  myColor4fv(*colorPtr);
 }
 
 int WallSceneNode::splitWall(const fvec4& splitPlane,

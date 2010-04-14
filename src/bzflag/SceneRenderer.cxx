@@ -571,6 +571,23 @@ static int sortLights (const void* a, const void* b)
 }
 
 
+static TeamColor getVisualTeam()
+{
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!myTank) {
+    return ObserverTeam;
+  }
+  if (!myTank->isObserver()) {
+    return myTank->getTeam();
+  }
+  Player* p = ROAM.getTargetTank();
+  if (p) {
+    return p->getTeam();
+  }
+  return ObserverTeam;
+}
+
+
 void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
 {
   lastFrame  = _lastFrame;
@@ -600,6 +617,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   }
 
   // update the dynamic colors
+  DYNCOLORMGR.setVisualTeam(getVisualTeam());
   DYNCOLORMGR.update();
 
   // update the texture matrices
@@ -1202,8 +1220,9 @@ void SceneRenderer::getRenderNodes()
   }
 
   // add the shadow rendering nodes
+  static BZDB_bool noShadows(BZDBNAMES.NOSHADOWS);
   if (scene && BZDBCache::shadowMode && (getSunDirection() != NULL) &&
-      (!mirror || !clearZbuffer) && !BZDB.isTrue(BZDBNAMES.NOSHADOWS)) {
+      (!mirror || !clearZbuffer) && !noShadows) {
     setupShadowPlanes();
     scene->addShadowNodes(*this, true, true);
     DYNAMICWORLDTEXT.addShadowNodes(*this);

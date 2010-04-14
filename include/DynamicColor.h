@@ -37,14 +37,16 @@ class DynamicColor {
 
     bool setName(const std::string& name);
 
+    bool setTeamMask(const std::string& maskStr);
+
     void setVariableName(const std::string& name);
     void setVariableTiming(float seconds);
     void setVariableNoAlpha(bool);
 
     void setDelay(float delay);
+
     void addState(float duration, const fvec4& color);
-    void addState(float duration,
-                  float r, float g, float b, float a);
+    void clearStates();
 
     void finalize();
 
@@ -68,22 +70,29 @@ class DynamicColor {
     void updateVariable();
     static void bzdbCallback(const std::string& varName, void* data);
 
+    std::string teamMaskString() const;
+
   private:
     static const float minPeriod;
 
     std::string name;
+
     fvec4 color;
+    bool possibleAlpha;
+
+    int teamMask;
 
     std::string varName;
-
-    bool varNoAlpha;
-    float varTime;
-    bool varInit;
-    bool varTransition;
-    float varTimeTmp;
-    fvec4 varOldColor;
-    fvec4 varNewColor;
-    TimeKeeper varLastChange;
+    bool        varNoAlpha;
+    float       varTime;
+    bool        varInit;
+    bool        varTransition;
+    float       varTimeTmp;
+    fvec4       varOldColor;
+    fvec4       varNewColor;
+    bool        varOldStates;
+    bool        varNewStates;
+    TimeKeeper  varLastChange;
 
     struct ColorState {
       ColorState() {
@@ -101,8 +110,6 @@ class DynamicColor {
     std::map<float, int> colorEnds;
     float statesDelay;
     float statesLength;
-
-    bool possibleAlpha;
 };
 
 inline bool DynamicColor::canHaveAlpha() const
@@ -129,6 +136,12 @@ class DynamicColorManager {
 
     void getVariables(std::set<std::string>& vars) const;
 
+    void setVisualTeam(int team);
+    inline int getTeamMask() const { return teamMask; }
+
+    void setActive(DynamicColor* dyncol);
+    void setInactive(DynamicColor* dyncol);
+
     int packSize() const;
     void* pack(void*) const;
     void* unpack(void*);
@@ -137,6 +150,11 @@ class DynamicColorManager {
 
   private:
     std::vector<DynamicColor*> colors;
+    std::set<DynamicColor*> active;
+    std::set<DynamicColor*> inactive;
+
+    int teamMask;
+    int oldTeamMask;
 };
 
 extern DynamicColorManager DYNCOLORMGR;

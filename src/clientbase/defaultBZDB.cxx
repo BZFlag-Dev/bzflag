@@ -154,6 +154,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "pyrWallTexture",		"pyrwall",		true,  DefPerm, NULL },
   { "cautionTexture",		"caution",		true,  DefPerm, NULL },
   { "waterTexture",		"water",		true,  DefPerm, NULL },
+  { "wallTexture",		"wall",			true,  DefPerm, NULL },
 
   // default fonts
   { "consoleFont",		"VeraMonoBold",		true,  DefPerm, NULL },
@@ -217,8 +218,8 @@ DefaultDBItem	defaultDBItems[] = {
   { "httpTimeout",		"15",			true,  DefPerm, NULL },
 
   // hud drawing
-  { "hudGUIBorderOpacityFactor","0.75",			true,  DefPerm, NULL },
-  { "hudWayPMarkerSize",	"15",			true,  DefPerm, NULL },
+  { "hudGUIBorderOpacityFactor",	"0.75",		true,  DefPerm, NULL },
+  { "hudWayPMarkerSize",		"15",		true,  DefPerm, NULL },
 
   // 3rdPerson Camera
   { "3rdPersonCam",			"0",		true,  DefPerm, NULL },

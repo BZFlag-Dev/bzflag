@@ -111,7 +111,7 @@ inline void MeshPolySceneNode::Geometry::drawVTN() const
 
 void MeshPolySceneNode::Geometry::render()
 {
-  sceneNode->setColor();
+  sceneNode->applyColor();
 
   if (normals.getSize() != 0) {
     if (style >= 2) {
@@ -305,8 +305,7 @@ int MeshPolySceneNode::split(const fvec4& splitPlane,
 void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   node.setStyle(getStyle());
-  const fvec4* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+  if (getColorPtr()->a > 0.0f) {
     renderer.addRenderNode(&node, getWallGState());
   }
   return;
@@ -316,8 +315,7 @@ void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   if (!noShadow) {
-    const fvec4* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+    if (getColorPtr()->a > 0.0f) {
       renderer.addShadowNode(&node);
     }
   }
@@ -335,8 +333,7 @@ void MeshPolySceneNode::renderRadar()
     node.renderRadar();
   }
   else {
-    const fvec4* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+    if (getColorPtr()->a > 0.0f) {
       glPushAttrib(GL_ALL_ATTRIB_BITS);
       glDisable(GL_BLEND);
       glDisable(GL_TEXTURE_2D);

@@ -45,10 +45,10 @@
 static void CreateMapInfo(const std::string& type,
                           std::vector<std::string>& mapInfo)
 {
-  mapInfo.push_back(std::string("author:  ") + "bzfs <random>");
-  mapInfo.push_back(std::string("version: ") + getAppVersion());
-  mapInfo.push_back(std::string("maptype: ") + type);
-  mapInfo.push_back(std::string("date:    ") + TimeKeeper::timestamp());
+  mapInfo.push_back(std::string("  author:  ") + "bzfs <random>");
+  mapInfo.push_back(std::string("  version: ") + getAppVersion());
+  mapInfo.push_back(std::string("  maptype: ") + type);
+  mapInfo.push_back(std::string("  date:    ") + TimeKeeper::timestamp());
 
 // NOTE: add the relevant BZDB and clOptions values?
 }
@@ -182,10 +182,12 @@ WorldInfo* defineTeamWorld()
   // mapinfo
   std::vector<std::string> mapInfo;
   CreateMapInfo("team", mapInfo);
-  if (haveRed)    { mapInfo.push_back("team:    red"); }
-  if (haveBlue)   { mapInfo.push_back("team:    blue"); }
-  if (haveGreen)  { mapInfo.push_back("team:    green"); }
-  if (havePurple) { mapInfo.push_back("team:    purple"); }
+  std::string teamsStr = "  teams:  ";
+  if (haveRed)    { teamsStr += " red"; }
+  if (haveBlue)   { teamsStr += " blue"; }
+  if (haveGreen)  { teamsStr += " green"; }
+  if (havePurple) { teamsStr += " purple"; }
+  mapInfo.push_back(teamsStr);
   myWorld->setMapInfo(mapInfo);
 
   const float worldSize = BZDBCache::worldSize;

@@ -315,6 +315,8 @@ void BzMaterial::reset()
   emission = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
   shininess = 0.0f;
 
+  blendFactors = "";
+
   alphaThreshold = 0.0f;
 
   poFactor = 0.0f;
@@ -329,9 +331,10 @@ void BzMaterial::reset()
   texShadow      = false;
   noCulling      = false;
   noSorting      = false;
-  noBlending     = false;
   noLighting     = false;
   radarSpecial   = false;
+  flatShade      = false;
+
   delete[] textures;
   textures = NULL;
   textureCount = 0;
@@ -383,12 +386,13 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
 
   order = m.order;
   dynamicColor = m.dynamicColor;
-  memcpy (ambient, m.ambient, sizeof(ambient));
-  memcpy (diffuse, m.diffuse, sizeof(diffuse));
-  memcpy (specular, m.specular, sizeof(specular));
-  memcpy (emission, m.emission, sizeof(emission));
+  ambient = m.ambient;
+  diffuse = m.diffuse;
+  specular = m.specular;
+  emission = m.emission;
   shininess = m.shininess;
   alphaThreshold = m.alphaThreshold;
+  blendFactors = m.blendFactors;
   poFactor = m.poFactor;
   poUnits  = m.poUnits;
   occluder = m.occluder;
@@ -400,8 +404,8 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   texShadow = m.texShadow;
   noCulling = m.noCulling;
   noSorting = m.noSorting;
-  noBlending = m.noBlending;
   noLighting = m.noLighting;
+  flatShade = m.flatShade;
   radarSpecial = m.radarSpecial;
 
   delete[] textures;
@@ -439,13 +443,14 @@ bool BzMaterial::operator==(const BzMaterial& m) const
       (ambient  != m.ambient)  || (diffuse  != m.diffuse)  ||
       (specular != m.specular) || (emission != m.emission) ||
       (shininess != m.shininess) || (alphaThreshold != m.alphaThreshold) ||
+      (blendFactors != m.blendFactors) ||
       (poFactor != m.poFactor) || (poUnits != m.poUnits) ||
       (occluder != m.occluder) || (groupAlpha != m.groupAlpha) ||
       (noRadar != m.noRadar) || (noRadarOutline != m.noRadarOutline) ||
       (noShadowCast != m.noShadowCast) || (noShadowRecv != m.noShadowRecv) ||
       (texShadow != m.texShadow) ||
       (noCulling != m.noCulling) || (noSorting != m.noSorting) ||
-      (noBlending != m.noBlending) || (noLighting != m.noLighting) ||
+      (flatShade != m.flatShade) || (noLighting != m.noLighting) ||
       (radarSpecial != m.radarSpecial)) {
     return false;
   }
@@ -499,7 +504,7 @@ void* BzMaterial::pack(void* buf) const
   if (occluder)       { modeBytes |= (1 << 7); }
   if (groupAlpha)     { modeBytes |= (1 << 8); }
   if (noLighting)     { modeBytes |= (1 << 9); }
-  if (noBlending)     { modeBytes |= (1 << 10); }
+  if (flatShade)      { modeBytes |= (1 << 10); }
   if (radarSpecial)   { modeBytes |= (1 << 11); }
   buf = nboPackUInt16(buf, modeBytes);
 
@@ -513,6 +518,8 @@ void* BzMaterial::pack(void* buf) const
   buf = nboPackFloat(buf, alphaThreshold);
   buf = nboPackFloat(buf, poFactor);
   buf = nboPackFloat(buf, poUnits);
+
+  buf = nboPackStdString(buf, blendFactors);
 
   buf = nboPackUInt8(buf, textureCount);
   for (i = 0; i < textureCount; i++) {
@@ -563,7 +570,7 @@ void* BzMaterial::unpack(void* buf)
   occluder       = (modeBytes & (1 << 7)) != 0;
   groupAlpha     = (modeBytes & (1 << 8)) != 0;
   noLighting     = (modeBytes & (1 << 9)) != 0;
-  noBlending     = (modeBytes & (1 << 10)) != 0;
+  flatShade      = (modeBytes & (1 << 10)) != 0;
   radarSpecial   = (modeBytes & (1 << 11)) != 0;
 
   buf = nboUnpackInt32(buf, order);
@@ -576,6 +583,8 @@ void* BzMaterial::unpack(void* buf)
   buf = nboUnpackFloat(buf, alphaThreshold);
   buf = nboUnpackFloat(buf, poFactor);
   buf = nboUnpackFloat(buf, poUnits);
+
+  buf = nboUnpackStdString(buf, blendFactors);
 
   unsigned char tCount;
   buf = nboUnpackUInt8(buf, tCount);
@@ -634,6 +643,8 @@ int BzMaterial::packSize() const
   fullSize += sizeof(float);   // alphaThreshold
   fullSize += sizeof(float);   // poFactor
   fullSize += sizeof(float);   // poUnits
+
+  fullSize += nboStdStringPackSize(blendFactors);
   
   fullSize += sizeof(uint8_t); // texture count
   for (int i = 0; i < textureCount; i++) {
@@ -707,6 +718,9 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
     out << indent << "  depthoffset " << poFactor << " "
                                       << poUnits << std::endl;
   }
+  if (!blendFactors.empty()) {
+    out << indent << "  blending " << blendFactors << std::endl;
+  }
   if (occluder) {
     out << indent << "  occluder" << std::endl;
   }
@@ -734,8 +748,8 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
   if (noSorting) {
     out << indent << "  nosorting" << std::endl;
   }
-  if (noBlending) {
-    out << indent << "  noblending" << std::endl;
+  if (flatShade) {
+    out << indent << "  flatShade" << std::endl;
   }
   if (noLighting) {
     out << indent << "  nolighting" << std::endl;
@@ -982,9 +996,9 @@ void BzMaterial::setNoSorting(bool value)
   return;
 }
 
-void BzMaterial::setNoBlending(bool value)
+void BzMaterial::setFlatShade(bool value)
 {
-  noBlending = value;
+  flatShade = value;
   return;
 }
 
@@ -1242,9 +1256,9 @@ bool BzMaterial::getNoSorting() const
   return noSorting;
 }
 
-bool BzMaterial::getNoBlending() const
+bool BzMaterial::getFlatShade() const
 {
-  return noBlending;
+  return flatShade;
 }
 
 bool BzMaterial::getNoLighting() const
@@ -1356,6 +1370,60 @@ bool BzMaterial::isInvisible() const
   }
   return false;
 }
+
+
+//============================================================================//
+
+static bool testBlendFactor(const std::string& s)
+{
+  static std::set<std::string> factors;
+  if (factors.empty()) {
+    factors.insert("one");
+    factors.insert("zero");
+    factors.insert("src_alpha");
+    factors.insert("src_color");
+    factors.insert("dst_alpha");
+    factors.insert("dst_color");
+    factors.insert("one_minus_src_alpha");
+    factors.insert("one_minus_src_color");
+    factors.insert("one_minus_dst_alpha");
+    factors.insert("one_minus_dst_color");
+    factors.insert("src_alpha_saturate");
+  }
+  const std::set<std::string>::const_iterator it = factors.find(s);
+  if (it == factors.end()) {
+    return false;
+  }
+  return true;
+}
+
+
+bool BzMaterial::testBlendFactors(const std::string& s)
+{
+  if (s == "disable")          { return true; }
+  else if (s == "add")         { return true; }
+  else if (s == "addalpha")    { return true; }
+  else if (s == "modulate")    { return true; }
+  else if (s == "alpha") { return true; }
+  else if (s == "color") { return true; }
+
+  const std::string::size_type pos = s.find('/');
+  if (pos == std::string::npos) {
+    return false;
+  }
+  const std::string srcStr = s.substr(0, pos);
+  const std::string dstStr = s.substr(pos + 1);
+  if (!testBlendFactor(srcStr) ||
+      !testBlendFactor(dstStr)) {
+    return false;
+  }
+
+  return true;
+}
+
+
+//============================================================================//
+
 
 
 // Local Variables: ***

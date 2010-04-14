@@ -59,38 +59,17 @@ class SceneDatabaseBuilder {
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
   private:
-    OpenGLMaterial	wallMaterial;
     float		wallTexWidth, wallTexHeight;
     bool		wallLOD;
 
-    OpenGLMaterial	boxMaterial;
     float		boxTexWidth, boxTexHeight;
     bool		boxLOD;
 
-    OpenGLMaterial	pyramidMaterial;
     bool		pyramidLOD;
 
     bool		baseLOD;
 
-    OpenGLMaterial	teleporterMaterial;
     bool		teleporterLOD;
-
-    static const fvec4 wallColors[4];
-    static const fvec4 wallModulateColors[4];
-    static const fvec4 wallLightedColors[1];
-    static const fvec4 wallLightedModulateColors[1];
-    static const fvec4 boxColors[6];
-    static const fvec4 boxModulateColors[6];
-    static const fvec4 boxLightedColors[6];
-    static const fvec4 boxLightedModulateColors[6];
-    static const fvec4 pyramidColors[5];
-    static const fvec4 pyramidModulateColors[5];
-    static const fvec4 pyramidLightedColors[5];
-    static const fvec4 pyramidLightedModulateColors[5];
-    static const fvec4 teleporterColors[3];
-    static const fvec4 teleporterModulateColors[3];
-    static const fvec4 teleporterLightedColors[3];
-    static const fvec4 teleporterLightedModulateColors[3];
 };
 
 #endif // BZF_SCENE_BUILDER_H

@@ -172,7 +172,7 @@ void MeshFragSceneNode::Geometry::render()
   }
 
   // set the color
-  sceneNode->setColor();
+  sceneNode->applyColor();
 
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
@@ -399,8 +399,7 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
   renderNode.setStyle(getStyle());
-  const fvec4* dyncol = getDynamicColor();
-  if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+  if (getColorPtr()->a > 0.0f) {
     renderer.addRenderNode(&renderNode, getWallGState());
   }
   return;
@@ -410,8 +409,7 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
   if (!noShadow) {
-    const fvec4* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+    if (getColorPtr()->a > 0.0f) {
       renderer.addShadowNode(&renderNode);
     }
   }
@@ -429,8 +427,7 @@ void MeshFragSceneNode::renderRadar()
     renderNode.renderRadar();
   }
   else {
-    const fvec4* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol->a != 0.0f)) {
+    if (getColorPtr()->a > 0.0f) {
       glPushAttrib(GL_ALL_ATTRIB_BITS);
       glDisable(GL_BLEND);
       glDisable(GL_TEXTURE_2D);

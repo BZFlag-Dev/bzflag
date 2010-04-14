@@ -181,6 +181,7 @@ void BZFontFace_impl::clear()
 }
 
 
+
 FTFont* BZFontFace_impl::loadSize(size_t size)
 {
   FTFont* font(0);
@@ -212,6 +213,10 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   const bool doDisplayLists = !BZDB.isTrue("noDisplayListsForFonts");
   font->UseDisplayList(doDisplayLists);
 
+#if debugging
+  const TimeKeeper t0 = TimeKeeper::getCurrent();
+#endif
+
   if (BZDB.isTrue("fontPreload")) {
     font->Advance("abcdefghijklmnopqrstuvwxyz"
                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -220,6 +225,14 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
                   "<>?:{}+_)(*&^%$#@!)"
                   " \t");
   }
+
+#if debugging
+  const TimeKeeper t1 = TimeKeeper::getCurrent();
+  static float advanceTime = 0.0f;
+  advanceTime += (t1 - t0);
+  printf("FontTime: %.3f  %.3f  <%s @ %i>\n",
+         (t1 - t0), advanceTime, privateName.c_str(), (int)size);
+#endif
 
   return font;
 }

@@ -167,9 +167,10 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
   const bool noMeshClusters = BZDB.isTrue("noMeshClusters");
   if (mesh->noClusters() || noMeshClusters || !BZDBCache::zbuffer) {
     for (int i = 0; i < faceCount; i++) {
+      const MeshFace* face = mesh->getFace(i);
       MeshNode mn;
       mn.isFace = true;
-      mn.faces.push_back(mesh->getFace(i));
+      mn.faces.push_back(face);
       nodes.push_back(mn);
     }
     return; // bail out
@@ -387,93 +388,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
   // cheat a little
   ((BzMaterial*)mat)->setReference();
 
-  TextureManager &tm = TextureManager::instance();
-  OpenGLMaterial oglMaterial(mat->getSpecular(),
-			     mat->getEmission(),
-			     mat->getShininess());
-
-  int userTexture = (mat->getTextureCount() > 0);
-  int faceTexture = -1;
-  bool gotSpecifiedTexture = false;
-  if (userTexture) {
-    const std::string& texname = mat->getTextureLocal(0);
-    if (texname.size() > 0) {
-      faceTexture = tm.getTextureID(texname);
-    }
-    if (faceTexture >= 0) {
-      gotSpecifiedTexture = true;
-    } else {
-      faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
-    }
-  }
-
-  if (!mat->getNoLighting()) {
-    node->setMaterial(oglMaterial);
-  }
-
-  // NOTE: the diffuse color is used, and not the ambient color
-  //       could use the ambient color for non-lighted,and diffuse
-  //       for lighted
-  const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
-  const fvec4* dc = NULL;
-  if (dyncol != NULL) {
-    dc = &dyncol->getColor();
-  }
-  node->setOrder(mat->getOrder());
-  node->setDynamicColor(dc);
-  node->setColor(mat->getDiffuse()); // redundant, see below
-  node->setModulateColor(mat->getDiffuse());
-  node->setLightedColor(mat->getDiffuse());
-  node->setLightedModulateColor(mat->getDiffuse());
-  node->setTexture(faceTexture);
-  if ((userTexture && mat->getUseColorOnTexture(0)) ||
-      !gotSpecifiedTexture) {
-    // modulate with the color if asked to, or
-    // if the specified texture was not available
-    node->setUseColorTexture(false);
-  } else {
-    node->setUseColorTexture(true);
-  }
-  const int texMatId = mat->getTextureMatrix(0);
-  const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
-  if (texmat != NULL) {
-    const float* matrix = texmat->getMatrix();
-    if (matrix != NULL) {
-      node->setTextureMatrix(matrix);
-    }
-  }
-
-  // deal with the blending setting for textures
-  bool alpha = false;
-  if ((faceTexture >= 0) && (userTexture && mat->getUseTextureAlpha(0))) {
-    const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-    alpha = imageInfo.alpha;
-  }
-  node->setBlending(alpha);
-  node->setSphereMap(mat->getUseSphereMap(0));
-
-  // the current color can also affect the blending.
-  // if blending is disabled then the alpha value from
-  // one of these colors is used to set the stipple value.
-  // we'll just set it to the middle value.
-  if (dyncol) {
-    const fvec4 color(1.0f, 1.0f, 1.0f, 0.5f); // alpha value != 1.0f
-    if (dyncol->canHaveAlpha()) {
-      node->setColor(color); // trigger transparency check
-      node->setModulateColor(color);
-      node->setLightedColor(color);
-      node->setLightedModulateColor(color);
-    }
-  }
-
-  float poFactor, poUnits;
-  if (mat->getPolygonOffset(poFactor, poUnits)) {
-    node->setPolygonOffset(poFactor, poUnits);
-  }
-  node->setAlphaThreshold(mat->getAlphaThreshold());
-  node->setNoCulling(mat->getNoCulling());
-  node->setNoSorting(mat->getNoSorting());
-  node->setNoBlending(mat->getNoBlending());
+  node->setBzMaterial(mat);
 
   node->setRadarSpecial(mat->getRadarSpecial());
 }

@@ -12,18 +12,20 @@
 
 #include "common.h"
 
-/* interface header */
+// interface header
 #include "CustomDynamicColor.h"
 
-/* system implementation headers */
+// system headers
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <string.h>
 
-/* common implementation headers */
+// common headers
+#include "global.h"
 #include "DynamicColor.h"
 #include "ParseColor.h"
+#include "TextUtils.h"
 
 
 //============================================================================//
@@ -99,6 +101,24 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     }
     dyncol->addState(duration, color);
     dyncol->addState(0.0f,     color);
+  }
+  else if (strcasecmp("color", cmd) == 0) {
+    fvec4 color;
+    if (!parseColorStream(input, color)) {
+      std::cout << "bad dyncol color" << std::endl;
+      return false;
+    }
+    dyncol->clearStates();
+    dyncol->addState(0.0f, color);
+  }
+  else if (strcasecmp("teamMask", cmd) == 0) {
+    std::string maskStr;
+    std::getline(input, maskStr);
+    input.putback('\n');
+    if (!dyncol->setTeamMask(maskStr)) {
+      std::cout << "bad dyncol teamMask" << std::endl;
+      return false;
+    }
   }
   else {
     // NOTE: we don't use a WorldFileObstacle

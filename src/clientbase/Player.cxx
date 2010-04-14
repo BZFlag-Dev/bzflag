@@ -1426,6 +1426,7 @@ bool Player::isDeadReckoningWrong() const
   // always send a new packet when some kinds of status change
   const uint16_t checkStates = (PlayerState::Alive | PlayerState::Falling);
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
+    logDebugMessage(4, "isDeadReckoningWrong() - status mismatch\n");
     return true;
   }
 
@@ -1436,11 +1437,13 @@ bool Player::isDeadReckoningWrong() const
 
   //  send a packet if we've made some noise
   if (state.sounds != PlayerState::NoSounds) {
+    logDebugMessage(4, "isDeadReckoningWrong() - sounds\n");
     return true;
   }
 
   //  send a packet if we've crossed a physics driver boundary
   if (state.phydrv != inputPhyDrv) {
+    logDebugMessage(4, "isDeadReckoningWrong() - phydrv\n");
     return true;
   }
 
@@ -1449,6 +1452,8 @@ bool Player::isDeadReckoningWrong() const
 
   // otherwise always send at least one packet per second
   if (dt >= MaxUpdateTime) {
+    logDebugMessage(4, "isDeadReckoningWrong() - MaxUpdateTime %f vs %f\n",
+                    dt, MaxUpdateTime);
     return true;
   }
 
@@ -1464,6 +1469,7 @@ bool Player::isDeadReckoningWrong() const
     groundLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
   if (predictedPos.z < groundLimit) {
+    logDebugMessage(4, "isDeadReckoningWrong() - predictPos.z < groundLimit\n");
     return true;
   }
 
@@ -1481,18 +1487,19 @@ bool Player::isDeadReckoningWrong() const
       (fabsf(state.pos.z - predictedPos.z) > positionTolerance)) {
     if ((debugLevel >= 4) && !BZDBCache::forbidDebug) {
       if (fabsf(state.pos.x - predictedPos.x) > positionTolerance) {
-	printf ("state.pos.x = %f, predictedPos.x = %f\n",
-		state.pos.x, predictedPos.x);
+	logDebugMessage(4, "state.pos.x = %f, predictedPos.x = %f\n",
+		        state.pos.x, predictedPos.x);
       }
       if (fabsf(state.pos.y - predictedPos.y) > positionTolerance) {
-	printf ("state.pos.y = %f, predictedPos.y = %f\n",
-		state.pos.y, predictedPos.y);
+	logDebugMessage(4, "state.pos.y = %f, predictedPos.y = %f\n",
+		        state.pos.y, predictedPos.y);
       }
       if (fabsf(state.pos.z - predictedPos.z) > positionTolerance) {
-	printf ("state.pos.z = %f, predictedPos.z = %f\n",
-		state.pos.z, predictedPos.z);
+	logDebugMessage(4, "state.pos.z = %f, predictedPos.z = %f\n",
+		        state.pos.z, predictedPos.z);
       }
     }
+    logDebugMessage(9, "isDeadReckoningWrong() - predictPos.z < groundLimit\n"); //FIXME
     return true;
   }
 

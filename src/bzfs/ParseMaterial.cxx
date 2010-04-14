@@ -37,14 +37,16 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    const BzMaterial* matref = MATERIALMGR.findMaterial(name);
-    if (matref == NULL) {
-      std::cout << "couldn't find reference material: " << name << std::endl;
-      error = true;
-    }
     else {
-      for (i = 0; i < materialCount; i++) {
-	materials[i] = *matref;
+      const BzMaterial* matref = MATERIALMGR.findMaterial(name);
+      if (matref == NULL) {
+        std::cout << "couldn't find reference material: " << name << std::endl;
+        error = true;
+      }
+      else {
+        for (i = 0; i < materialCount; i++) {
+          materials[i] = *matref;
+        }
       }
     }
   }
@@ -59,8 +61,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameter" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setOrder(order);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setOrder(order);
+      }
     }
   }
   else if (strcasecmp(cmd, "dyncol") == 0) {
@@ -69,63 +73,66 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameter" << std::endl;
       error = true;
     }
-    int dynamicColor = DYNCOLORMGR.findColor(dyncol);
-    if ((dynamicColor == -1) && (dyncol != "-1")) {
-      std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
-      error = true;
-    }
     else {
-      for (i = 0; i < materialCount; i++) {
-	materials[i].setDynamicColor(dynamicColor);
+      int dynamicColor = DYNCOLORMGR.findColor(dyncol);
+      if ((dynamicColor == -1) && (dyncol != "-1")) {
+        std::cout << "couldn't find dynamicColor: " << dyncol << std::endl;
+        error = true;
+      }
+      else {
+        for (i = 0; i < materialCount; i++) {
+          materials[i].setDynamicColor(dynamicColor);
+        }
       }
     }
   }
   else if (strcasecmp(cmd, "ambient") == 0) {
     fvec4 ambient;
     error = !parseColorStream(input, ambient);
-    if (!error) {
+    if (error) {
+      std::cout << "bad " << cmd << " specification" << std::endl;
+    }
+    else {
       for (i = 0; i < materialCount; i++) {
 	materials[i].setAmbient(ambient);
       }
-    }
-    else {
-      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
 	     (strcasecmp(cmd, "color") == 0)) {
     fvec4 diffuse;
     error = !parseColorStream(input, diffuse);
-    if (!error) {
+    if (error) {
+      std::cout << "bad " << cmd << " specification" << std::endl;
+    }
+    else {
       for (i = 0; i < materialCount; i++) {
 	materials[i].setDiffuse(diffuse);
       }
-    } else {
-      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if (strcasecmp(cmd, "specular") == 0) {
     fvec4 specular;
     error = !parseColorStream(input, specular);
-    if (!error) {
+    if (error) {
+      std::cout << "bad " << cmd << " specification" << std::endl;
+    }
+    else {
       for (i = 0; i < materialCount; i++) {
 	materials[i].setSpecular(specular);
       }
-    }
-    else {
-      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if (strcasecmp(cmd, "emission") == 0) {
     fvec4 emission;
     error = !parseColorStream(input, emission);
-    if (!error) {
+    if (error) {
+      std::cout << "bad " << cmd << " specification" << std::endl;
+    }
+    else {
       for (i = 0; i < materialCount; i++) {
 	materials[i].setEmission(emission);
       }
-    }
-    else {
-      std::cout << "bad " << cmd << " specification" << std::endl;
     }
   }
   else if (strcasecmp(cmd, "shininess") == 0) {
@@ -134,8 +141,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setShininess(shininess);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setShininess(shininess);
+      }
     }
   }
   else if (strcasecmp(cmd, "alphathresh") == 0) {
@@ -144,8 +153,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setAlphaThreshold(alphaThresh);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setAlphaThreshold(alphaThresh);
+      }
     }
   }
   else if (strcasecmp(cmd, "depthoffset") == 0) {
@@ -154,8 +165,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setPolygonOffset(factor, units);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setPolygonOffset(factor, units);
+      }
     }
   }
   else if (strcasecmp(cmd, "noculling") == 0) {
@@ -168,9 +181,21 @@ bool parseMaterials(const char* cmd, std::istream& input,
       materials[i].setNoSorting(true);
     }
   }
-  else if (strcasecmp(cmd, "noblending") == 0) {
+  else if (strcasecmp(cmd, "blending") == 0) {
+    std::string blendFactors;
+    if (!(input >> blendFactors)) {
+      std::cout << "missing " << cmd << " parameters" << std::endl;
+      error = true;
+    }
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setBlendFactors(blendFactors);
+      }
+    }
+  }
+  else if (strcasecmp(cmd, "flatShade") == 0) {
     for (i = 0; i < materialCount; i++) {
-      materials[i].setNoBlending(true);
+      materials[i].setFlatShade(true);
     }
   }
   else if (strcasecmp(cmd, "noradar") == 0) {
@@ -242,8 +267,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].addTexture(name);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].addTexture(name);
+      }
     }
   }
   else if (strcasecmp(cmd, "texmat") == 0) {
@@ -252,12 +279,14 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    int textureMatrix = TEXMATRIXMGR.findMatrix(texmat);
-    if ((textureMatrix == -1) && (texmat != "-1")) {
-      std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
-    }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setTextureMatrix(textureMatrix);
+    else {
+      int textureMatrix = TEXMATRIXMGR.findMatrix(texmat);
+      if ((textureMatrix == -1) && (texmat != "-1")) {
+        std::cout << "couldn't find textureMatrix: " << texmat << std::endl;
+      }
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setTextureMatrix(textureMatrix);
+      }
     }
   }
   else if (strcasecmp(cmd, "notexalpha") == 0) {
@@ -291,8 +320,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].setShader(name);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].setShader(name);
+      }
     }
   }
   else if (strcasecmp(cmd, "addshader") == 0) {
@@ -301,8 +332,10 @@ bool parseMaterials(const char* cmd, std::istream& input,
       std::cout << "missing " << cmd << " parameters" << std::endl;
       error = true;
     }
-    for (i = 0; i < materialCount; i++) {
-      materials[i].addShader(name);
+    else {
+      for (i = 0; i < materialCount; i++) {
+        materials[i].addShader(name);
+      }
     }
   }
   else if (strcasecmp(cmd, "noshaders") == 0) {

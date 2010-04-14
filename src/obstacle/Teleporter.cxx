@@ -365,9 +365,9 @@ const BzMaterial* Teleporter::getLinkMaterial()
   int dyncolID = DYNCOLORMGR.findColor(matName);
   if (dyncolID < 0) {
     DynamicColor* dyncol = new DynamicColor;
-    dyncol->addState(0.6f, 0.5f, 0.0f, 0.0f, 0.75f);
-    dyncol->addState(0.6f, 0.0f, 0.3f, 0.0f, 0.75f);
-    dyncol->addState(0.6f, 0.0f, 0.0f, 0.7f, 0.75f);
+    dyncol->addState(0.6f, fvec4(0.5f, 0.0f, 0.0f, 0.75f));
+    dyncol->addState(0.6f, fvec4(0.0f, 0.3f, 0.0f, 0.75f));
+    dyncol->addState(0.6f, fvec4(0.0f, 0.0f, 0.7f, 0.75f));
     dyncol->setName(matName);
     dyncol->finalize();
     dyncolID = DYNCOLORMGR.addColor(dyncol);
@@ -383,8 +383,7 @@ const BzMaterial* Teleporter::getLinkMaterial()
   }
 
   BzMaterial mat;
-  const fvec4 color(0.0f, 0.0f, 0.0f, 0.5f);
-  mat.setDiffuse(color);
+  mat.setDiffuse(fvec4(0.0f, 0.0f, 0.0f, 0.5f));
   mat.setDynamicColor(dyncolID);
   mat.setTexture("telelink");
   mat.setTextureMatrix(texmatID);
@@ -405,9 +404,10 @@ const BzMaterial* Teleporter::getTeleMaterial()
   }
 
   BzMaterial mat;
-  const fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
-  mat.setDiffuse(color);
   mat.setTexture("caution");
+  mat.setUseTextureAlpha(false);
+  mat.setDiffuse(fvec4(0.7f, 0.7, 0.1f, 1.0f));
+  mat.setUseColorOnTexture(false);
   mat.setName(matName);
 
   return MATERIALMGR.addMaterial(&mat);
@@ -423,7 +423,7 @@ const BzMaterial* Teleporter::getVoidMaterial()
   mat.setNoShadowCast(true);
   mat.setNoShadowRecv(true);
   mat.setNoSorting(true);
-  mat.setNoBlending(true);
+  mat.setBlendFactors("disable");
   mat.setNoLighting(true);
   return MATERIALMGR.addMaterial(&mat);
 }

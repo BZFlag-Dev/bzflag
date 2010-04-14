@@ -135,6 +135,7 @@ typedef enum {
   bz_eNewRabbitEvent,
   bz_eReloadEvent,
   bz_ePlayerUpdateEvent,
+  bz_ePlayerUpdateDoneEvent,
   bz_eNetDataSendEvent,
   bz_eNetDataReceiveEvent,
   bz_eLoggingEvent,
@@ -1018,6 +1019,18 @@ public:
 
   int playerID;
   bz_PlayerUpdateState state;
+  double stateTime;
+};
+
+class BZF_API bz_PlayerUpdateDoneEventData_V1 : public bz_EventData
+{
+public:
+  bz_PlayerUpdateDoneEventData_V1() : bz_EventData(bz_ePlayerUpdateDoneEvent)
+    , playerID(-1), stateTime(0.0)
+  {
+  }
+
+  int playerID;
   double stateTime;
 };
 

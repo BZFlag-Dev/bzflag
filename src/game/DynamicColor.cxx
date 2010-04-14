@@ -22,8 +22,10 @@
 #include <map>
 
 /* common implementation headers */
+#include "global.h"
 #include "GameTime.h"
 #include "Pack.h"
+#include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "ParseColor.h"
 #include "StateDatabase.h"
@@ -42,15 +44,15 @@ DynamicColorManager DYNCOLORMGR;
 
 
 DynamicColorManager::DynamicColorManager()
+: teamMask(0)
+, oldTeamMask(0)
 {
-  return;
 }
 
 
 DynamicColorManager::~DynamicColorManager()
 {
   clear();
-  return;
 }
 
 
@@ -61,36 +63,68 @@ void DynamicColorManager::clear()
     delete *it;
   }
   colors.clear();
-  return;
+  active.clear();
+  inactive.clear();
+  teamMask = 0;
+  oldTeamMask = 0;
 }
 
 
 void DynamicColorManager::update()
 {
   const double gameTime = GameTime::getStepTime();
-  std::vector<DynamicColor*>::iterator it;
-  for (it = colors.begin(); it != colors.end(); it++) {
-    DynamicColor* color = *it;
-    color->update(gameTime);
+  if (teamMask != oldTeamMask) { // update them all
+    for (size_t i = 0; i < colors.size(); i++) {
+      colors[i]->update(gameTime);
+    }
   }
-  return;
+  else { // update the ones that need it
+    std::set<DynamicColor*>::iterator it, nextIt;
+    for (it = active.begin(); it != active.end(); it = nextIt) {
+      nextIt = it;
+      nextIt++; // be wary of setInactive()
+      (*it)->update(gameTime);
+    }
+  }
+  oldTeamMask = teamMask;
+}
+
+
+void DynamicColorManager::setActive(DynamicColor* color)
+{
+  std::set<DynamicColor*>::iterator it = inactive.find(color);
+  if (it != inactive.end()) {
+    inactive.erase(it);
+    active.insert(color);
+  }
+}
+
+
+void DynamicColorManager::setInactive(DynamicColor* color)
+{
+  std::set<DynamicColor*>::iterator it = active.find(color);
+  if (it != active.end()) {
+    active.erase(it);
+    inactive.insert(color);
+  }
 }
 
 
 int DynamicColorManager::addColor(DynamicColor* color)
 {
+  active.insert(color);
   colors.push_back(color);
   return ((int)colors.size() - 1);
 }
 
 
-int DynamicColorManager::findColor(const std::string& dyncol) const
+int DynamicColorManager::findColor(const std::string& name) const
 {
-  if (dyncol.empty()) {
+  if (name.empty()) {
     return -1;
   }
-  else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
-    int index = atoi (dyncol.c_str());
+  else if ((name[0] >= '0') && (name[0] <= '9')) {
+    int index = atoi(name.c_str());
     if ((index < 0) || (index >= (int)colors.size())) {
       return -1;
     } else {
@@ -98,7 +132,7 @@ int DynamicColorManager::findColor(const std::string& dyncol) const
     }
   } else {
     for (int i = 0; i < (int)colors.size(); i++) {
-      if (colors[i]->getName() == dyncol) {
+      if (colors[i]->getName() == name) {
 	return i;
       }
     }
@@ -141,7 +175,7 @@ int DynamicColorManager::packSize() const
 }
 
 
-void * DynamicColorManager::pack(void *buf) const
+void* DynamicColorManager::pack(void *buf) const
 {
   std::vector<DynamicColor*>::const_iterator it;
   buf = nboPackUInt32(buf, (int)colors.size());
@@ -153,7 +187,7 @@ void * DynamicColorManager::pack(void *buf) const
 }
 
 
-void * DynamicColorManager::unpack(void *buf)
+void* DynamicColorManager::unpack(void *buf)
 {
   unsigned int i;
   uint32_t count;
@@ -174,7 +208,13 @@ void DynamicColorManager::print(std::ostream& out, const std::string& indent) co
     DynamicColor* color = *it;
     color->print(out, indent);
   }
-  return;
+}
+
+
+void DynamicColorManager::setVisualTeam(int team)
+{
+  oldTeamMask = teamMask;
+  teamMask = (1 << team);
 }
 
 
@@ -188,9 +228,12 @@ DynamicColor::DynamicColor()
   const fvec4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
   name = "";
+
   possibleAlpha = false;
 
   color = white;
+
+  teamMask = 0;
 
   varName = "";
   varTime = 1.0f;
@@ -201,21 +244,19 @@ DynamicColor::DynamicColor()
   varTransition = false;
   varOldColor = white;
   varNewColor = white;
+  varOldStates = false;
+  varNewStates = false;
   varLastChange = TimeKeeper::getSunGenesisTime();
 
   statesDelay = 0.0f;
-
-  return;
 }
 
 
 DynamicColor::~DynamicColor()
 {
-  // free the sequence values
   if (varInit) {
     BZDB.removeCallback(varName, bzdbCallback, this);
   }
-  return;
 }
 
 
@@ -226,7 +267,6 @@ void DynamicColor::finalize()
   // variables take priority
   if (!varName.empty()) {
     possibleAlpha = !varNoAlpha;
-    return;
   }
 
   // followed by color states
@@ -251,16 +291,16 @@ void DynamicColor::finalize()
 }
 
 
-bool DynamicColor::setName(const std::string& dyncol)
+bool DynamicColor::setName(const std::string& newName)
 {
-  if (dyncol.empty()) {
+  if (newName.empty()) {
     name = "";
     return false;
-  } else if ((dyncol[0] >= '0') && (dyncol[0] <= '9')) {
+  } else if ((newName[0] >= '0') && (newName[0] <= '9')) {
     name = "";
     return false;
   } else {
-    name = dyncol;
+    name = newName;
   }
   return true;
 }
@@ -275,28 +315,24 @@ const std::string& DynamicColor::getName() const
 void DynamicColor::setVariableName(const std::string& vName)
 {
   varName = vName;
-  return;
 }
 
 
 void DynamicColor::setVariableTiming(float seconds)
 {
   varTime = seconds;
-  return;
 }
 
 
 void DynamicColor::setVariableNoAlpha(bool value)
 {
   varNoAlpha = value;
-  return;
 }
 
 
 void DynamicColor::setDelay(float delay)
 {
   statesDelay = delay;
-  return;
 }
 
 
@@ -306,25 +342,18 @@ void DynamicColor::addState(float duration, const fvec4& _color)
     duration = 0.0f;
   }
   colorStates.push_back(ColorState(_color, duration));
-  return;
 }
 
 
-void DynamicColor::addState(float duration,
-                            float r, float g, float b, float a)
+void DynamicColor::clearStates()
 {
-  if (duration < 0.0f) {
-    duration = 0.0f;
-  }
-  colorStates.push_back(ColorState(fvec4(r, g, b, a), duration));
-  return;
+  colorStates.clear();
 }
 
 
 void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data)
 {
   ((DynamicColor*)data)->updateVariable();
-  return;
 }
 
 
@@ -334,6 +363,8 @@ void DynamicColor::updateVariable()
   varTransition = true;
   varLastChange = TimeKeeper::getTick();
   varOldColor = color;
+  varOldStates = varNewStates;
+
   std::string expr = BZDB.get(varName);
 
   // parse the optional delay timing
@@ -345,19 +376,32 @@ void DynamicColor::updateVariable()
     char* end;
     const char* start = expr.c_str() + atpos + 1;
     varTimeTmp = (float)strtod(start, &end);
-    if (end == start) {
-      varTimeTmp = varTime; // conversion failed
+    if ((end == start) || isnan(varTimeTmp)) {
+      varTimeTmp = varTime; // conversion failed or invalid number
     }
     expr.resize(atpos); // strip everything after '@'
   }
 
-  parseColorString(expr, varNewColor);
-  return;
+  // parse the new color
+  if (expr != "*") {
+    parseColorString(expr, varNewColor);
+    varNewStates = false;
+  } else {
+    varNewStates = true;
+  }
+
+  DYNCOLORMGR.setActive(this);
 }
 
 
 void DynamicColor::update(double t)
 {
+  // teamMask
+  if ((DYNCOLORMGR.getTeamMask() & teamMask) != 0) {
+    color.a = 0.0f;
+    return;
+  }
+
   // variables take priority
   if (!varName.empty()) {
     colorByVariable(t);
@@ -378,38 +422,67 @@ void DynamicColor::setColor(const fvec4& value)
 }
 
 
-void DynamicColor::colorByVariable(double /* t */)
+void DynamicColor::colorByVariable(double t)
 {
   // process the variable value
   if (!varInit) {
     varInit = true;
     varTransition = false;
+    BZDB.addCallback(varName, bzdbCallback, this);
+
     std::string expr = BZDB.get(varName);
     std::string::size_type atpos = expr.find_first_of('@');
     if (atpos != std::string::npos) {
-      expr.resize(atpos);
+      expr.resize(atpos); // strip the delay specification
     }
-    parseColorString(expr, color);
-    varOldColor = color;
-    varNewColor = color;
-    BZDB.addCallback(varName, bzdbCallback, this);
+
+    if (expr != "*") {
+      DYNCOLORMGR.setInactive(this);
+      parseColorString(expr, color);
+      varOldColor = color;
+      varNewColor = color;
+      varOldStates = varNewStates = false;
+    } else {
+      varOldStates = varNewStates = true;
+    }
   }
 
   // setup the color value
-  if (varTransition) {
-    const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
-    if (diffTime < varTimeTmp) {
-      const float newScale = (varTimeTmp > 0.0f) ? (diffTime / varTimeTmp) : 1.0f;
-      const float oldScale = 1.0f - newScale;
-      color = (oldScale * varOldColor) + (newScale * varNewColor);
-    } else {
+  if (!varTransition) {
+    if (varNewStates) {
+      colorByStates(t);
+    }
+    return;
+  }
+
+  // transitioning
+  const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
+  if (diffTime < varTimeTmp) {
+    const float newScale = (varTimeTmp > 0.0f) ?
+                           (diffTime / varTimeTmp) : 1.0f;
+    const float oldScale = 1.0f - newScale;
+    if (varOldStates) { colorByStates(t); varOldColor = color; }
+    if (varNewStates) { colorByStates(t); varNewColor = color; }
+    color = (oldScale * varOldColor) + (newScale * varNewColor);
+  }
+  else { // complete the transition
+    varTransition = false;
+    if (!varNewStates) {
+      DYNCOLORMGR.setInactive(this);
       // make sure the final color is set exactly
-      varTransition = false;
       color = varNewColor;
     }
-    if (varNoAlpha) {
-      color.a = (color.a >= 0.5f) ? 1.0f : 0.0f;
+    else {
+      colorByStates(t);
+      if (colorStates.size() <= 1) {
+        DYNCOLORMGR.setInactive(this);
+      }
     }
+  }
+
+  // clamp alpha
+  if (varNoAlpha) {
+    color.a = (color.a >= 0.5f) ? 1.0f : 0.0f;
   }
 }
 
@@ -419,6 +492,9 @@ void DynamicColor::colorByStates(double t)
   if ((colorStates.size() <= 1) ||
       (statesLength <= 0.0f)) {
     color = colorStates[0].color;
+    if (varName.empty()) {
+      DYNCOLORMGR.setInactive(this);
+    }
     return;
   }
 
@@ -456,6 +532,8 @@ void* DynamicColor::pack(void *buf) const
 {
   buf = nboPackStdString(buf, name);
 
+  buf = nboPackInt32(buf, teamMask);
+
   buf = nboPackStdString(buf, varName);
   buf = nboPackFloat(buf, varTime);
   buf = nboPackUInt8(buf, varNoAlpha ? 1 : 0);
@@ -475,6 +553,10 @@ void* DynamicColor::pack(void *buf) const
 void* DynamicColor::unpack(void *buf)
 {
   buf = nboUnpackStdString(buf, name);
+
+  int32_t mask;
+  buf = nboUnpackInt32(buf, mask);
+  teamMask = mask;
 
   uint8_t u8;
   buf = nboUnpackStdString(buf, varName);
@@ -504,6 +586,8 @@ int DynamicColor::packSize() const
 
   fullSize += nboStdStringPackSize(name);
 
+  fullSize += sizeof(int32_t); // teamMask
+
   fullSize += nboStdStringPackSize(varName);
   fullSize += sizeof(float);   // varTime
   fullSize += sizeof(uint8_t); // varNoAlpha
@@ -519,12 +603,77 @@ int DynamicColor::packSize() const
 }
 
 
+bool DynamicColor::setTeamMask(const std::string& maskStr)
+{
+  if (maskStr.empty()) {
+    return false;
+  }
+
+  const std::string lower = TextUtils::tolower(maskStr);
+  const std::vector<std::string> args = TextUtils::tokenize(lower, " \t");
+
+  int mask = 0;
+
+  for (size_t i = 0; i < args.size(); i++) {
+    std::string arg = args[i];
+    bool invert = false;
+    if (!arg.empty() && (arg[0] == '-')) {
+      invert = true;
+      arg = arg.substr(1);
+    }
+
+    int bits = 0;
+         if (arg == "all")      { bits = ~0; } // all bits
+    else if (arg == "rogue")    { bits = (1 << RogueTeam);    } // 1
+    else if (arg == "red")      { bits = (1 << RedTeam);      } // 2
+    else if (arg == "green")    { bits = (1 << GreenTeam);    } // 4
+    else if (arg == "blue")     { bits = (1 << BlueTeam);     } // 8
+    else if (arg == "purple")   { bits = (1 << PurpleTeam);   } // 16
+    else if (arg == "observer") { bits = (1 << ObserverTeam); } // 32
+    else if (arg == "rabbit")   { bits = (1 << RabbitTeam);   } // 64
+    else if (arg == "hunter")   { bits = (1 << HunterTeam);   } // 128
+    else {
+      return false;
+    }
+
+    if (!invert) {
+      mask |= bits;
+    } else {
+      mask &= ~bits;
+    }
+  }
+
+  teamMask = mask;
+
+  return true;
+}
+
+
+std::string DynamicColor::teamMaskString() const
+{
+  std::string s;
+  if (teamMask & (1 << RogueTeam))    { s += " rogue";    }
+  if (teamMask & (1 << RedTeam))      { s += " red";      }
+  if (teamMask & (1 << GreenTeam))    { s += " green";    }
+  if (teamMask & (1 << BlueTeam))     { s += " blue";     }
+  if (teamMask & (1 << PurpleTeam))   { s += " purple";   }
+  if (teamMask & (1 << ObserverTeam)) { s += " observer"; }
+  if (teamMask & (1 << RabbitTeam))   { s += " rabbit";   }
+  if (teamMask & (1 << HunterTeam))   { s += " hunter";   }
+  return s;
+}
+
+
 void DynamicColor::print(std::ostream& out, const std::string& indent) const
 {
   out << indent << "dynamicColor" << std::endl;
 
   if (!name.empty()) {
     out << indent << "  name " << name << std::endl;
+  }
+
+  if (teamMask != 0) {
+    out << indent << "  teamMask" << teamMaskString() << std::endl;
   }
 
   if (!varName.empty()) {
@@ -540,28 +689,29 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
   if (statesDelay != 0.0f) {
     out << indent << "  delay " << statesDelay << std::endl;
   }
-  for (size_t i = 0; i < colorStates.size(); i++) {
-    const char* keyword = "  ramp ";
-    const ColorState& state = colorStates[i];
-    if ((i + 1) < colorStates.size()) {
-      const ColorState& nextState = colorStates[i + 1];
-      if ((nextState.duration <= 0.0f) &&
-          (memcmp(state.color, nextState.color, sizeof(float[4])) == 0)) {
-        keyword = "  level ";
-        i++;
+
+  if ((colorStates.size() == 1) && (colorStates[0].duration == 0.0f)) {
+    out << indent << "  color " << colorStates[0].color << std::endl;
+  }
+  else {
+    for (size_t i = 0; i < colorStates.size(); i++) {
+      const char* keyword = "  ramp ";
+      const ColorState& state = colorStates[i];
+      if ((i + 1) < colorStates.size()) {
+        const ColorState& nextState = colorStates[i + 1];
+        if ((nextState.duration <= 0.0f) &&
+            (memcmp(state.color, nextState.color, sizeof(float[4])) == 0)) {
+          keyword = "  level ";
+          i++;
+        }
       }
+      out << indent << keyword
+                    << state.duration << " "
+                    << state.color<< std::endl;
     }
-    out << indent << keyword
-                  << state.duration << " "
-                  << state.color.r  << " "
-                  << state.color.g  << " "
-                  << state.color.b  << " "
-                  << state.color.a  << std::endl;
   }
 
   out << indent << "end" << std::endl << std::endl;
-
-  return;
 }
 
 

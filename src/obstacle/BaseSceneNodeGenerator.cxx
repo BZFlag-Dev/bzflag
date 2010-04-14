@@ -84,20 +84,12 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 
     }
   }
-  fvec4 color;
-  switch(base->getBaseTeam()) {
-    case 1: { color.rgb() = fvec3(0.7f, 0.0f, 0.0f); break; }
-    case 2: { color.rgb() = fvec3(0.0f, 0.7f, 0.0f); break; }
-    case 3: { color.rgb() = fvec3(0.0f, 0.0f, 0.7f); break; }
-    case 4: { color.rgb() = fvec3(0.7f, 0.0f, 0.7f); break; }
-  }
-  color.a = 1.0;
 
   const fvec3 sEdge = sCorner - bPoint;
   const fvec3 tEdge = tCorner - bPoint;
 
-  WallSceneNode *retval = new QuadWallSceneNode(bPoint, sEdge, tEdge, uRepeats, vRepeats, lod, fixedUVs);
-  retval->setColor(color);
+  WallSceneNode* retval = new QuadWallSceneNode(bPoint, sEdge, tEdge, uRepeats, vRepeats, lod, fixedUVs);
+
   return retval;
 }
 
