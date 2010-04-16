@@ -437,8 +437,10 @@ cannot proceed.  A checklist of items to be completed follows:
   buildDate.cxx, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
+- BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
+
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
-  version numbers
+  version numbers.
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.
@@ -464,9 +466,10 @@ cannot proceed.  A checklist of items to be completed follows:
 - Post the source tarball, zip and platform-specific binaries to
   SourceForge.
 
-- Increment and commit the version number in configure.ac to the
-  source repository so that later builds are immediately
-  distinguished.
+- Increment and commit the version number in configure.ac and other
+  files (see above) to the source repository so that later builds are
+  immediately distinguished.  Also, change BZ_BUILD_TYPE back to DEVEL
+  in buildDate.cxx.
 
 - Notify the following (at least):
 
