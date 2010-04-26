@@ -1056,7 +1056,7 @@ initialize ( ) {
     for dir in m4 ; do
 	if [ -d $dir ] ; then
 	    $VERBOSE_ECHO "Found extra aclocal search directory: $dir"
-	    SEARCH_DIRS="$SEARCH_DIRS -I `pwd`$dir"
+	    SEARCH_DIRS="$SEARCH_DIRS -I `pwd`/$dir"
 	fi
     done
 
