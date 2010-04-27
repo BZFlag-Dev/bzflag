@@ -39,6 +39,7 @@ libLuaGame_la_SOURCES =                           \
 	LuaVFS.cxx            LuaVFS.h            \
 	LuaZip.cxx            LuaZip.h
 
+
 if CLIENT_INCLUDED
 
 libLuaClient_la_LDFLAGS = -static

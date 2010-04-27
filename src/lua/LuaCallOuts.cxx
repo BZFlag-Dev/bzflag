@@ -529,19 +529,48 @@ int LuaCallOuts::LeaveGame(lua_State* L)
 //  Printing
 //
 
+static std::string ArgsToString(lua_State* L, int start, int end)
+{
+  std::string msg;
+
+  // copied from lua/src/lib/lbaselib.c
+  lua_getglobal(L, "tostring");
+
+  for (int i = start; i <= end; i++) {
+    const char *s;
+    lua_pushvalue(L, -1); // copy the tostring() function
+    lua_pushvalue(L, i);  // copy the value
+    lua_call(L, 1, 1);
+    s = lua_tostring(L, -1); // get the result
+    if (s == NULL) {
+      luaL_error(L, "`tostring' must return a string to `print'");
+    }
+    if (i > start) {
+      msg += ", ";
+    }
+    msg += s;
+    lua_pop(L, 1); // pop the result
+  }
+
+  lua_pop(L, 1); // pop the tostring() function
+
+  return msg;
+}
+
+
 int LuaCallOuts::Print(lua_State* L)
 {
   if (controlPanel == NULL) {
     return 0;
   }
   ControlPanel::MessageModes mode = ControlPanel::MessageMisc;
-  int msgArg = 1;
-  if (lua_israwnumber(L, msgArg)) {
-    mode = (ControlPanel::MessageModes)lua_toint(L, msgArg);
-    msgArg++;
+  int end = lua_gettop(L);
+  int start = 1;
+  if (lua_israwnumber(L, start)) {
+    mode = (ControlPanel::MessageModes) lua_toint(L, start);
+    start++;
   }
-  const char* msg = luaL_checkstring(L, msgArg);
-  controlPanel->addMessage(msg, mode);
+  controlPanel->addMessage(ArgsToString(L, start, end), mode);
   return 0;
 }
 
@@ -549,13 +578,13 @@ int LuaCallOuts::Print(lua_State* L)
 int LuaCallOuts::Debug(lua_State* L)
 {
   int level = 0;
-  int msgArg = 1;
-  if (lua_israwnumber(L, msgArg)) {
-    level = lua_toint(L, msgArg);
-    msgArg++;
+  int end = lua_gettop(L);
+  int start = 1;
+  if (lua_israwnumber(L, start)) {
+    level = lua_toint(L, start);
+    start++;
   }
-  const char* msg = luaL_checkstring(L, msgArg);
-  logDebugMessage(level, msg);
+  logDebugMessage(level, ArgsToString(L, start, end));
   return 0;
 }
 
