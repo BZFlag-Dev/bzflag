@@ -247,11 +247,7 @@ DefaultDBItem	defaultDBItems[] = {
 #endif
   // seconds between pulses to textOutput (0 is disabled)
   { "statsOutputFrequency",		"0",		true,  DefPerm, NULL },
-  { "statsOutputFilename",		"",		true,  DefPerm, NULL },
-
-  // name,                      value,              persist, permission, callback
-  { "callsign",                 "",                     true, StateDatabase::ReadOnly, NULL },
-  { "password",                 "",                     true, StateDatabase::ReadOnly, NULL }
+  { "statsOutputFilename",		"",		true,  DefPerm, NULL }
 };
 
 
