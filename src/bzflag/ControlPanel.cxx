@@ -681,7 +681,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     for (i = 0; i < topicLines; i++) {
       glColor4fv(whiteColor);
       const std::string& line = tab->topic.lines[i];
-      fm.drawString((float)fx, (float)(fy - (i + 1)) * lineHeight, 0,
+      fm.drawString(float(fx), float(fy - ((i + 1) * lineHeight)), 0,
                     fontFace->getFMFace(), fontSize, line);
     }
   }
