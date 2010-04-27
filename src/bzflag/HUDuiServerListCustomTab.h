@@ -66,6 +66,7 @@ class HUDuiServerListCustomTab : public HUDuiNestedContainer {
     HUDuiList* antidoteFlag;
     HUDuiList* jumping;
     HUDuiList* handicap;
+    HUDuiList* luaWorld;
 
     std::list<HUDuiControl*> controls;
 };

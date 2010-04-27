@@ -203,6 +203,9 @@ bzflag_SOURCES =			\
 	stars.cxx			\
 	stars.h
 
+#	ServerListFilter.cxx		\
+#	ServerListFilter.h		
+
 if WIN32
 RESOURCE = bzflag.res
 else

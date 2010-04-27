@@ -598,6 +598,7 @@ int WorldInfo::packDatabase()
     clOptions->gameOptions |= LuaWorldAvailable;
   } else {
     clOptions->gameOptions &= ~LuaWorldAvailable;
+    clOptions->gameOptions &= ~LuaWorldRequired;
   }
 
   // make default water material. we wait to make the default material

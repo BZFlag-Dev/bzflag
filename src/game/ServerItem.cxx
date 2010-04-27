@@ -20,9 +20,10 @@
 #include "ServerItem.h"
 
 /* common implementation headers */
-#include "TextUtils.h"
-#include "Protocol.h"
 #include "bzfio.h"
+#include "AnsiCodes.h"
+#include "Protocol.h"
+#include "TextUtils.h"
 
 /* local implementation headers */
 #include "ServerListCache.h"
@@ -310,6 +311,22 @@ bool operator<(const ServerItem &left, const ServerItem &right)
 
   logDebugMessage(0, "Error: operator<: equality detected.\n");
   return false; // arbitrary
+}
+
+
+void ServerItem::splitAddrTitle(std::string& addr, std::string& title) const
+{
+  addr = stripAnsiCodes(description);
+  title = "";
+  const std::string::size_type pos = addr.find_first_of(';');
+  if (pos == std::string::npos) {
+    return;
+  }
+  const std::string::size_type tpos = pos + 2; // skip the ';' and ' '
+  if (addr.size() > tpos) {
+    title = addr.substr(tpos);
+  }
+  addr.resize(pos);
 }
 
 

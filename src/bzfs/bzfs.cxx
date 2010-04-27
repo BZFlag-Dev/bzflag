@@ -2559,9 +2559,9 @@ void spawnPlayer ( int playerIndex )
   spawnEvent.playerID = playerIndex;
   spawnEvent.team = convertTeam(playerData->player.getTeam());
 
-  playerStateToAPIState(spawnEvent.state,playerData->lastState);
+  playerStateToAPIState(spawnEvent.state, playerData->lastState);
 
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent, &spawnEvent);
 
   if (clOptions->gameType == RabbitChase) {
     playerData->player.wasNotARabbit();

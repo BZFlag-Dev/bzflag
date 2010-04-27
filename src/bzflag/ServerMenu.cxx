@@ -27,6 +27,7 @@
 #include "LocalFontFace.h"
 #include "playing.h"
 
+
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
   ServerList &serverList = ServerList::instance();
@@ -149,6 +150,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   return MenuDefaultKey::keyPress(key);
 }
 
+
 bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   switch (key.unicode) {
@@ -160,7 +162,9 @@ bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
   return false;
 }
 
+
 ServerMenu::PingsMap ServerMenu::activePings;
+
 
 ServerMenu::ServerMenu()
   : normalList(0)
@@ -239,12 +243,14 @@ ServerMenu::ServerMenu()
   initNavigation();
 }
 
+
 ServerMenu::~ServerMenu()
 {
   serverList.removeServerCallback(newServer, normalList);
   serverList.removeFavoriteServerCallback(newServer, favoritesList);
   serverList.removeRecentServerCallback(newServer, recentList);
 }
+
 
 void ServerMenu::newServer(ServerItem* addedServer, void* data)
 {
@@ -269,6 +275,7 @@ void ServerMenu::newServer(ServerItem* addedServer, void* data)
   ServerMenu::activePings.insert(PingsMap::value_type(addedServer->getServerKey(), std::pair<ServerPing*, std::vector<HUDuiServerList*> >(newping, serverListsVector)));
   addedServer->ping.pinging = true;
 }
+
 
 void ServerMenu::execute()
 {
@@ -300,6 +307,7 @@ void ServerMenu::execute()
   // all done
   HUDDialogStack::get()->pop();
 }
+
 
 void ServerMenu::resize(int _width, int _height)
 {
@@ -347,15 +355,18 @@ void ServerMenu::resize(int _width, int _height)
   help->setFontSize(fontSize);
 }
 
+
 void ServerMenu::updateStatus()
 {
   if (tabbedControl->hasFocus() ||
       tabbedControl->getActiveTab()->hasFocus() ||
-      tabbedControl->getActiveTabName() == "Create New Tab")
+      tabbedControl->getActiveTabName() == "Create New Tab") {
     serverInfo->setServerItem(NULL);
-  else
+  } else {
     serverInfo->setServerItem(dynamic_cast<HUDuiServerList*>(tabbedControl->getActiveTab())->getSelectedServer());
+  }
 }
+
 
 void ServerMenu::playingCB(void* _self)
 {
@@ -364,38 +375,35 @@ void ServerMenu::playingCB(void* _self)
 
   std::vector<std::string> itemsToBoot;
 
-  while (itr != ServerMenu::activePings.end())
-  {
-	  itr->second.first->doPings();
-	  if (itr->second.first->done())
-	  {
-		  ServerItem* server = list.lookupServer(itr->first);
-		  if (server != NULL)
-		  {
-			  server->ping.pingTime = itr->second.first->calcLag();
-			  server->ping.pinging = false;
-			  for (size_t j=0; j<(itr->second.second.size()); j++) 
-				  itr->second.second[j]->addItem(server);
-			  itemsToBoot.push_back(itr->first);
-		  }
-	  }
-	  itr++;
+  while (itr != ServerMenu::activePings.end()) {
+    itr->second.first->doPings();
+    if (itr->second.first->done()) {
+      ServerItem* server = list.lookupServer(itr->first);
+      if (server != NULL) {
+        server->ping.pingTime = itr->second.first->calcLag();
+        server->ping.pinging = false;
+        for (size_t j=0; j<(itr->second.second.size()); j++) 
+          itr->second.second[j]->addItem(server);
+        itemsToBoot.push_back(itr->first);
+      }
+    }
+    itr++;
   }
   
   std::vector<std::string>::iterator delItr = itemsToBoot.begin();
-  while (delItr != itemsToBoot.end())
-  {
-	  PingsMap::iterator i = ServerMenu::activePings.find(*delItr);
+  while (delItr != itemsToBoot.end()) {
+    PingsMap::iterator i = ServerMenu::activePings.find(*delItr);
 
-	  delete i->second.first;
-	  ServerMenu::activePings.erase(i);
+    delete i->second.first;
+    ServerMenu::activePings.erase(i);
 
-	  delItr++;
+    delItr++;
   }
    
   static_cast<ServerMenu*>(_self)->serverList.checkEchos(getStartupInfo());
   static_cast<ServerMenu*>(_self)->updateStatus();
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -116,6 +116,15 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   handicap->getList().push_back("Off");
   handicap->update();
 
+  luaWorld = new HUDuiList();
+  luaWorld->setLabel("LuaWorld:");
+  luaWorld->getList().push_back("Do Not Care");
+  luaWorld->getList().push_back("Available");
+  luaWorld->getList().push_back("Not Available");
+  luaWorld->getList().push_back("Required");
+  luaWorld->getList().push_back("Not Required");
+  luaWorld->update();
+
   createNew = new HUDuiLabel();
   createNew->setString("-> Create Tab");
 
@@ -133,6 +142,7 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   addControl(antidoteFlag);
   addControl(jumping);
   addControl(handicap);
+  addControl(luaWorld);
   addControl(createNew);
 
   getNav().addCallback(callback, this);
@@ -318,6 +328,14 @@ void HUDuiServerListCustomTab::resize()
 
   y = y - _fontheight;
 
+  width = fm.getStringWidth(faceID, fontSize, luaWorld->getLabel());
+
+  luaWorld->setFontFace(getFontFace());
+  luaWorld->setFontSize(fontSize);
+  luaWorld->setPosition(getX() + width + spacer, y);
+
+  y = y - _fontheight;
+
   createNew->setFontFace(getFontFace());
   createNew->setFontSize(fontSize);
   createNew->setPosition(getX() + spacer, y);
@@ -360,8 +378,27 @@ HUDuiServerList* HUDuiServerListCustomTab::createServerList()
     newServerList->toggleFilter(HUDuiServerList::SuperFlagsOn);
   if (superFlags->getList().at(superFlags->getIndex()) == "Off")
     newServerList->toggleFilter(HUDuiServerList::SuperFlagsOff);
+
+  const std::string lw = luaWorld->getList().at(luaWorld->getIndex());
+  if (lw == "Do Not Care") {
+    // do nothing
+  }
+  else if (lw == "Available") {
+    newServerList->toggleFilter(HUDuiServerList::LuaWorldOn);
+  }
+  else if (lw == "Not Available") {
+    newServerList->toggleFilter(HUDuiServerList::LuaWorldOff);
+  }
+  else if (lw == "Required") {
+    newServerList->toggleFilter(HUDuiServerList::LuaWorldReqOn);
+  }
+  else if (lw == "Not Required") {
+    newServerList->toggleFilter(HUDuiServerList::LuaWorldReqOff);
+  }
+    
   newServerList->domainNameFilter(domainName->getString());
   newServerList->serverNameFilter(serverName->getString());
+
   return newServerList;
 }
 
@@ -393,6 +430,7 @@ void HUDuiServerListCustomTab::doRender()
   antidoteFlag->render();
   jumping->render();
   handicap->render();
+  luaWorld->render();
   createNew->render();
 }
 

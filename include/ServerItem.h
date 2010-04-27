@@ -41,6 +41,7 @@ public:
   std::string	getAgeString() const; // nifty formated age string
   time_t	getNow() const; // current time
   unsigned int	getSortFactor() const;
+  void splitAddrTitle(std::string& addr, std::string& title) const;
 
 public:
   std::string	name;

@@ -351,73 +351,73 @@ static const char* FIRST_STRING = "FIRST_STRING";
 //     bz_e <C++ enum name>	lua call-in name	 loop type      difference
 //     --------------------	----------------	 ---------      ----------
 CALLIN(AllowAutoPilotChangeEvent,  AllowAutoPilotChange,    FIRST_FALSE);  // -Event
-CALLIN(AllowCTFCaptureEvent,       AllowCTFCapture,	 SPECIAL);      // -Event
-CALLIN(AllowFlagGrabEvent,	 AllowFlagGrab,	   FIRST_FALSE);  // -Event
-CALLIN(AllowKillCommandEvent,      AllowKillCommand,	FIRST_FALSE);  // -Event
-CALLIN(AllowPlayer,		AllowPlayer,	     FIRST_STRING);
-CALLIN(AllowSpawn,		 AllowSpawn,	      FIRST_FALSE);
-CALLIN(AnointRabbitEvent,	  AnointRabbit,	    BASIC);	// -Event
-CALLIN(AutoPilotChangeEvent,       AutoPilotChange,	 BASIC)  ;      // -Event
-CALLIN(BanEvent,		   Ban,		     BASIC);	// -Event
-CALLIN(BZDBChange,		 BZDBChange,	      BASIC);
-CALLIN(CaptureEvent,	       Capture,		 BASIC);	// -Event
-CALLIN(FilteredChatMessageEvent,   FilteredChatMessage,     BASIC);	// -Event
-CALLIN(FlagDroppedEvent,	   FlagDropped,	     BASIC);	// -Event
-CALLIN(FlagGrabbedEvent,	   FlagGrabbed,	     BASIC);	// -Event
-CALLIN(FlagResetEvent,	     FlagReset,	       BASIC);	// -Event
-CALLIN(FlagTransferredEvent,       FlagTransfer,	    SPECIAL);      // -Event
-CALLIN(GameEndEvent,	       GameEnd,		 BASIC);	// -Event
-CALLIN(GameStartEvent,	     GameStart,	       BASIC);	// -Event
-CALLIN(GetAutoTeamEvent,	   GetAutoTeam,	     FIRST_NUMBER); // -Event
-CALLIN(GetPlayerInfoEvent,	 GetPlayerInfo,	   SPECIAL);      // -Event
+CALLIN(AllowCTFCaptureEvent,       AllowCTFCapture,         SPECIAL);      // -Event
+CALLIN(AllowFlagGrabEvent,         AllowFlagGrab,           FIRST_FALSE);  // -Event
+CALLIN(AllowKillCommandEvent,      AllowKillCommand,        FIRST_FALSE);  // -Event
+CALLIN(AllowPlayer,                AllowPlayer,             FIRST_STRING);
+CALLIN(AllowSpawn,                 AllowSpawn,              FIRST_FALSE);
+CALLIN(AnointRabbitEvent,          AnointRabbit,            BASIC);        // -Event
+CALLIN(AutoPilotChangeEvent,       AutoPilotChange,         BASIC)  ;      // -Event
+CALLIN(BanEvent,                   Ban,                     BASIC);        // -Event
+CALLIN(BZDBChange,                 BZDBChange,              BASIC);
+CALLIN(CaptureEvent,               Capture,                 BASIC);        // -Event
+CALLIN(FilteredChatMessageEvent,   FilteredChatMessage,     BASIC);        // -Event
+CALLIN(FlagDroppedEvent,           FlagDropped,             BASIC);        // -Event
+CALLIN(FlagGrabbedEvent,           FlagGrabbed,             BASIC);        // -Event
+CALLIN(FlagResetEvent,             FlagReset,               BASIC);        // -Event
+CALLIN(FlagTransferredEvent,       FlagTransfer,            SPECIAL);      // -Event
+CALLIN(GameEndEvent,               GameEnd,                 BASIC);        // -Event
+CALLIN(GameStartEvent,             GameStart,               BASIC);        // -Event
+CALLIN(GetAutoTeamEvent,           GetAutoTeam,             FIRST_NUMBER); // -Event
+CALLIN(GetPlayerInfoEvent,         GetPlayerInfo,           SPECIAL);      // -Event
 CALLIN(GetPlayerSpawnPosEvent,     GetPlayerSpawnPos,       SPECIAL);      // -Event
-CALLIN(GetWorldEvent,	      GetWorld,		SPECIAL);      // -Event
-//CALLIN(HostBanModifyEvent,       HostBanModify,	   BASIC);	//  unused
-CALLIN(HostBanNotifyEvent,	 HostBan,		 BASIC);	// -Event-
-CALLIN(IdBanEvent,		 IdBan,		   BASIC);	// -Event
-CALLIN(IdleNewNonPlayerConnection, IdleNonPlayerConnection, BASIC);	// -New
-CALLIN(KickEvent,		  Kick,		    BASIC);	// -Event
-CALLIN(KillEvent,		  Kill,		    BASIC);	// -Event
-CALLIN(ListServerUpdateEvent,      ListServerUpdate,	BASIC);	// -Event
-CALLIN(LoggingEvent,	       Logging,		 BASIC);	// -Event
-CALLIN(LuaDataEvent,	       RecvLuaData,	     SPECIAL);      // -Event+Recv
-CALLIN(MessageFilteredEvent,       MessageFiltered,	 BASIC);	// -Event
-CALLIN(NetDataReceiveEvent,	NetDataReceive,	  BASIC);	// -Event
-CALLIN(NetDataSendEvent,	   NetDataSend,	     BASIC);	// -Event
-CALLIN(NewNonPlayerConnection,     RawLink,		 BASIC);	//  renamed
-CALLIN(NewRabbitEvent,	     NewRabbit,	       BASIC);	// -Event
-CALLIN(PlayerAuthEvent,	    PlayerAuth,	      BASIC);	// -Event
-CALLIN(PlayerCollision,	    PlayerCollision,	 SPECIAL);
+CALLIN(GetWorldEvent,              GetWorld,                SPECIAL);      // -Event
+//CALLIN(HostBanModifyEvent,       HostBanModify,           BASIC);        //  unused
+CALLIN(HostBanNotifyEvent,         HostBan,                 BASIC);        // -Event-
+CALLIN(IdBanEvent,                 IdBan,                   BASIC);        // -Event
+CALLIN(IdleNewNonPlayerConnection, IdleNonPlayerConnection, BASIC);        // -New
+CALLIN(KickEvent,                  Kick,                    BASIC);        // -Event
+CALLIN(KillEvent,                  Kill,                    BASIC);        // -Event
+CALLIN(ListServerUpdateEvent,      ListServerUpdate,        BASIC);        // -Event
+CALLIN(LoggingEvent,               Logging,                 BASIC);        // -Event
+CALLIN(LuaDataEvent,               RecvLuaData,             SPECIAL);      // -Event+Recv
+CALLIN(MessageFilteredEvent,       MessageFiltered,         BASIC);        // -Event
+CALLIN(NetDataReceiveEvent,        NetDataReceive,          BASIC);        // -Event
+CALLIN(NetDataSendEvent,           NetDataSend,             BASIC);        // -Event
+CALLIN(NewNonPlayerConnection,     RawLink,                 BASIC);        //  renamed
+CALLIN(NewRabbitEvent,             NewRabbit,               BASIC);        // -Event
+CALLIN(PlayerAuthEvent,            PlayerAuth,              BASIC);        // -Event
+CALLIN(PlayerCollision,            PlayerCollision,         SPECIAL);
 CALLIN(PlayerCustomDataChanged,    PlayerCustomDataChanged, BASIC);
-CALLIN(PlayerDieEvent,	     PlayerDied,	      BASIC);	// -Event+d
-CALLIN(PlayerJoinEvent,	    PlayerJoined,	    BASIC);	// -Event+ed
-CALLIN(PlayerPartEvent,	    PlayerParted,	    BASIC);	// -Event+ed
-CALLIN(PlayerPausedEvent,	  PlayerPaused,	    BASIC);	// -Event
+CALLIN(PlayerDieEvent,             PlayerDied,              BASIC);        // -Event+d
+CALLIN(PlayerJoinEvent,            PlayerJoined,            BASIC);        // -Event+ed
+CALLIN(PlayerPartEvent,            PlayerParted,            BASIC);        // -Event+ed
+CALLIN(PlayerPausedEvent,          PlayerPaused,            BASIC);        // -Event
 CALLIN(PlayerPauseRequestEvent,    PlayerPauseRequest,      FIRST_FALSE);  // -Event
 CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    BASIC);
-CALLIN(PlayerSpawnEvent,	   PlayerSpawned,	   BASIC);	// -Event+ed
-CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,	BASIC);	// -Event
-CALLIN(PlayerUpdateEvent,	  PlayerUpdate,	    BASIC);	// -Event
-CALLIN(PlayerUpdateDoneEvent,      PlayerUpdateDone,	BASIC);	// -Event
-CALLIN(RawChatMessageEvent,	RawChatMessage,	  SPECIAL);      // -Event
-CALLIN(RecvCommand,		RecvCommand,	     FIRST_TRUE);   //  custom
-CALLIN(ReloadEvent,		Reload,		  BASIC);	// -Event
-CALLIN(ReportFiledEvent,	   ReportFiled,	     BASIC);	// -Event
-CALLIN(ServerMsgEvent,	     ServerMsg,	       BASIC);	// -Event
-CALLIN(ShotEndedEvent,	     ShotEnded,	       BASIC);	// -Event
-CALLIN(ShotFiredEvent,	     ShotFired,	       BASIC);	// -Event
-CALLIN(ShotExpiredEvent,	   ShotExpired,	     BASIC);	// -Event
-CALLIN(ShotStoppedEvent,	   ShotStopped,	     BASIC);	// -Event
-CALLIN(ShotRicochetEvent,	  ShotRicochet,	    BASIC);	// -Event
-CALLIN(ShotTeleportEvent,	  ShotTeleport,	    BASIC);	// -Event
-CALLIN(Shutdown,		   Shutdown,		BASIC);	//  custom
-CALLIN(SlashCommandEvent,	  SlashCommand,	    BASIC);	// -Event
-CALLIN(TeleportEvent,	      Teleport,		BASIC);	// -Event
-CALLIN(TickEvent,		  Update,		  BASIC);	//  renamed
-CALLIN(UnknownSlashCommand,	UnknownSlashCommand,     SPECIAL);
-CALLIN(WorldFinalized,	     WorldFinalized,	  BASIC);
-CALLIN(ZoneEntryEvent,	     ZoneEntry,	       BASIC);	// -Event
-CALLIN(ZoneExitEvent,	      ZoneExit,		BASIC);	// -Event
+CALLIN(PlayerSpawnEvent,           PlayerSpawned,           BASIC);        // -Event+ed
+CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,        BASIC);        // -Event
+CALLIN(PlayerUpdateEvent,          PlayerUpdate,            BASIC);        // -Event
+CALLIN(PlayerUpdateDoneEvent,      PlayerUpdateDone,        BASIC);        // -Event
+CALLIN(RawChatMessageEvent,        RawChatMessage,          SPECIAL);      // -Event
+CALLIN(RecvCommand,                RecvCommand,             FIRST_TRUE);   //  custom
+CALLIN(ReloadEvent,                Reload,                  BASIC);        // -Event
+CALLIN(ReportFiledEvent,           ReportFiled,             BASIC);        // -Event
+CALLIN(ServerMsgEvent,             ServerMsg,               BASIC);        // -Event
+CALLIN(ShotEndedEvent,             ShotEnded,               BASIC);        // -Event
+CALLIN(ShotFiredEvent,             ShotFired,               BASIC);        // -Event
+CALLIN(ShotExpiredEvent,           ShotExpired,             BASIC);        // -Event
+CALLIN(ShotStoppedEvent,           ShotStopped,             BASIC);        // -Event
+CALLIN(ShotRicochetEvent,          ShotRicochet,            BASIC);        // -Event
+CALLIN(ShotTeleportEvent,          ShotTeleport,            BASIC);        // -Event
+CALLIN(Shutdown,                   Shutdown,                BASIC);        //  custom
+CALLIN(SlashCommandEvent,          SlashCommand,            BASIC);        // -Event
+CALLIN(TeleportEvent,              Teleport,                BASIC);        // -Event
+CALLIN(TickEvent,                  Update,                  BASIC);        //  renamed
+CALLIN(UnknownSlashCommand,        UnknownSlashCommand,     SPECIAL);
+CALLIN(WorldFinalized,             WorldFinalized,          BASIC);
+CALLIN(ZoneEntryEvent,             ZoneEntry,               BASIC);        // -Event
+CALLIN(ZoneExitEvent,              ZoneExit,                BASIC);        // -Event
 
 
 //============================================================================//

@@ -262,12 +262,12 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
 
   switch (((const char*)data)[0]) {
     case 's': { // save settings
-	BZDB.setInt("saveSettings", listHUD->getIndex());
-	break;
+      BZDB.setInt("saveSettings", listHUD->getIndex());
+      break;
     }
     case 'i': { // save identity
-	BZDB.setInt("saveIdentity", listHUD->getIndex());
-	break;
+      BZDB.setInt("saveIdentity", listHUD->getIndex());
+      break;
     }
   }
 }

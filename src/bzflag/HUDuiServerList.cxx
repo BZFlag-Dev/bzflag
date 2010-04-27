@@ -120,88 +120,57 @@ public:
     HUDuiServerListItem* item = (HUDuiServerListItem*) control;
     ServerItem* server = serverList.lookupServer(item->getServerKey());
 
-    if (server == NULL)
+    if (server == NULL) {
       return true;
+    }
 
-    bool returnValue = false;
+    bool retVal = false;
+
+    const uint16_t gameOpts = server->ping.gameOptions;
+    const uint16_t gameType = server->ping.gameType;
 
     for (uint32_t i = 1; i < EndOfFilterConstants; i <<= 1) {
       if ((_filter & i) == i) {
 	switch (i) {
-	case EmptyServer:
-	  returnValue = (server->getPlayerCount() == 0);
-	  break;
-
-	case FullServer:
-	  returnValue = (server->getPlayerCount() == server->ping.maxPlayers);
-	  break;
-
-	case JumpingOn:
-	  returnValue = ((server->ping.gameOptions & JumpingGameStyle) != JumpingGameStyle);
-	  break;
-
-	case JumpingOff:
-	  returnValue = ((server->ping.gameOptions & JumpingGameStyle) == JumpingGameStyle);
-	  break;
-
-	case RicochetOn:
-	  returnValue = ((server->ping.gameOptions & RicochetGameStyle) != RicochetGameStyle);
-	  break;
-
-	case RicochetOff:
-	  returnValue = ((server->ping.gameOptions & RicochetGameStyle) == RicochetGameStyle);
-	  break;
-
-	case AntidoteFlagOn:
-	  returnValue = ((server->ping.gameOptions & AntidoteGameStyle) != AntidoteGameStyle);
-	  break;
-
-	case AntidoteFlagOff:
-	  returnValue = ((server->ping.gameOptions & AntidoteGameStyle) == AntidoteGameStyle);
-	  break;
-
-	case SuperFlagsOn:
-	  returnValue = ((server->ping.gameOptions & SuperFlagGameStyle) != SuperFlagGameStyle);
-	  break;
-
-	case SuperFlagsOff:
-	  returnValue = ((server->ping.gameOptions & SuperFlagGameStyle) == SuperFlagGameStyle);
-	  break;
-
-	case HandicapOn:
-	  returnValue = ((server->ping.gameOptions & HandicapGameStyle) != HandicapGameStyle);
-	  break;
-
-	case HandicapOff:
-	  returnValue = ((server->ping.gameOptions & HandicapGameStyle) == HandicapGameStyle);
-	  break;
-
-	case ClassicCTFGameMode:
-	  returnValue = (server->ping.gameType == ClassicCTF);
-	  break;
-
-	case RabbitChaseGameMode:
-	  returnValue = (server->ping.gameType == RabbitChase);
-	  break;
-
-	case OpenFFAGameMode:
-	  returnValue = (server->ping.gameType == OpenFFA);
-	  break;
-
-	case TeamFFAGameMode:
-	  returnValue = (server->ping.gameType == TeamFFA);
-	  break;
-
-	default:
-	  break;
+          case EmptyServer: {
+            retVal = (server->getPlayerCount() == 0);
+            break;
+          }
+          case FullServer: {
+            retVal = (server->getPlayerCount() == server->ping.maxPlayers);
+            break;
+          }
+          case JumpingOn:       { retVal = ((gameOpts & JumpingGameStyle)   != 0); break; }
+          case JumpingOff:      { retVal = ((gameOpts & JumpingGameStyle)   == 0); break; }
+          case RicochetOn:      { retVal = ((gameOpts & RicochetGameStyle)  != 0); break; }
+          case RicochetOff:     { retVal = ((gameOpts & RicochetGameStyle)  == 0); break; }
+          case AntidoteFlagOn:  { retVal = ((gameOpts & AntidoteGameStyle)  != 0); break; }
+          case AntidoteFlagOff: { retVal = ((gameOpts & AntidoteGameStyle)  == 0); break; }
+          case SuperFlagsOn:    { retVal = ((gameOpts & SuperFlagGameStyle) != 0); break; }
+          case SuperFlagsOff:   { retVal = ((gameOpts & SuperFlagGameStyle) == 0); break; }
+          case HandicapOn:      { retVal = ((gameOpts & HandicapGameStyle)  != 0); break; }
+          case HandicapOff:     { retVal = ((gameOpts & HandicapGameStyle)  == 0); break; }
+          case LuaWorldOn:      { retVal = ((gameOpts & LuaWorldAvailable)  != 0); break; }
+          case LuaWorldOff:     { retVal = ((gameOpts & LuaWorldAvailable)  == 0); break; }
+          case LuaWorldReqOn:   { retVal = ((gameOpts & LuaWorldRequired)   != 0); break; }
+          case LuaWorldReqOff:  { retVal = ((gameOpts & LuaWorldRequired)   == 0); break; }
+          case ClassicCTFGameMode:  { retVal = (gameType == ClassicCTF);  break; }
+          case RabbitChaseGameMode: { retVal = (gameType == RabbitChase); break; }
+          case OpenFFAGameMode:     { retVal = (gameType == OpenFFA);     break; }
+          case TeamFFAGameMode:     { retVal = (gameType == TeamFFA);     break; }
+          default: {
+            break;
+          }
 	}
       }
-      if (returnValue == true)
+      if (retVal == true) {
 	return true;
+      }
     }
     return false;
   }
 };
+
 
 // Add a new item to our scrollable list
 void HUDuiServerList::addItem(ServerItem* item)
