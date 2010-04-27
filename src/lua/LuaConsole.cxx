@@ -68,7 +68,7 @@ static inline int ParseTab(lua_State* L, int index)
     return -1;
   }
 
-  int tabID;
+  int tabID = -1;
 
   if (lua_israwnumber(L, index)) {
     tabID = lua_toint(L, index);
