@@ -105,9 +105,9 @@ void MyGLView::MouseDown(BPoint where)
   msg->FindInt32("buttons", &buttons);
   msg->FindInt32("modifiers", &modifiers);
   win->bzfEvent.type = BzfEvent::KeyDown;
-  win->bzfEvent.keyDown.chr = 0;
+  win->bzfEvent.keyDown.unicode = 0;
   win->bzfEvent.keyDown.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
-  win->bzfEvent.keyDown.shift = 0;
+  win->bzfEvent.keyDown.modifiers = 0;
   win->PostBzfEvent();
 }
 
@@ -121,9 +121,9 @@ void MyGLView::MouseUp(BPoint where)
   msg->FindInt32("buttons", &buttons);
   msg->FindInt32("modifiers", &modifiers);
   win->bzfEvent.type = BzfEvent::KeyUp;
-  win->bzfEvent.keyUp.chr = 0;
+  win->bzfEvent.keyUp.unicode = 0;
   win->bzfEvent.keyUp.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
-  win->bzfEvent.keyUp.shift = 0;
+  win->bzfEvent.keyUp.modifiers = 0;
   win->PostBzfEvent();
 }
 
@@ -180,17 +180,17 @@ void MyGLWindow::MessageReceived(BMessage *msg)
     msg->FindInt32("buttons", &buttons);
     msg->FindInt32("modifiers", &modifiers);
     bzfEvent.type = BzfEvent::KeyDown;
-    bzfEvent.keyDown.chr = 0;
+    bzfEvent.keyDown.unicode = 0;
     bzfEvent.keyDown.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
-    bzfEvent.keyDown.shift = 0;
+    bzfEvent.keyDown.modifiers = 0;
     break;
   case B_MOUSE_UP:
     msg->FindInt32("buttons", &buttons);
     msg->FindInt32("modifiers", &modifiers);
     bzfEvent.type = BzfEvent::KeyUp;
-    bzfEvent.keyUp.chr = 0;
+    bzfEvent.keyUp.unicode = 0;
     bzfEvent.keyUp.button = (buttons == B_PRIMARY_MOUSE_BUTTON)?(BzfKeyEvent::LeftMouse):(BzfKeyEvent::RightMouse);
-    bzfEvent.keyUp.shift = 0;
+    bzfEvent.keyUp.modifiers = 0;
     break;
   case B_KEY_DOWN:
   case B_KEY_UP:
@@ -205,13 +205,13 @@ void MyGLWindow::MessageReceived(BMessage *msg)
       else
 	bzfEvent.type = BzfEvent::KeyUp;
       bzfEvent.keyDown.button = BzfKeyEvent::NoButton;
-      bzfEvent.keyDown.chr = 0;
-      bzfEvent.keyDown.shift = 0;
+      bzfEvent.keyDown.unicode = 0;
+      bzfEvent.keyDown.modifiers = 0;
       MSGDBG(("### raw_char = 0x%08lx\n", raw_char));
       switch (raw_char) {
-      case B_ESCAPE: bzfEvent.keyDown.chr = '\033'; break;
-      case B_RETURN: bzfEvent.keyDown.chr = '\r'; break; // CR sux, LF rulz
-      case B_SPACE: bzfEvent.keyDown.chr = ' '; break;
+      case B_ESCAPE: bzfEvent.keyDown.unicode = '\033'; break;
+      case B_RETURN: bzfEvent.keyDown.unicode = '\r'; break; // CR sux, LF rulz
+      case B_SPACE: bzfEvent.keyDown.unicode = ' '; break;
       case B_HOME: bzfEvent.keyDown.button = BzfKeyEvent::Home; break;
       case B_END: bzfEvent.keyDown.button = BzfKeyEvent::End; break;
       case B_LEFT_ARROW: bzfEvent.keyDown.button = BzfKeyEvent::Left; break;
@@ -233,7 +233,7 @@ void MyGLWindow::MessageReceived(BMessage *msg)
 	    bzfEvent.keyDown.button = BzfKeyEvent::Pause;
 	  }
 	} else {
-	  bzfEvent.keyDown.chr = raw_char;
+	  bzfEvent.keyDown.unicode = raw_char;
 	}
 	break;
       }

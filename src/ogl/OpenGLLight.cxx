@@ -219,11 +219,15 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 
 void OpenGLLight::enableLight(int index, bool on) // const
 {
+  static const fvec4 onAmbient (0.0f, 0.0f, 0.0f, 1.0f);
+  static const fvec4 offAmbient(0.0f, 0.0f, 0.0f, 0.0f);
   const GLenum light = (GL_LIGHT0 + index);
   if (on) {
     glEnable(light);
+    glLightfv(light, GL_AMBIENT, onAmbient); // for shaders
   } else {
     glDisable(light);
+    glLightfv(light, GL_AMBIENT, offAmbient); // for shaders
   }
   return;
 }

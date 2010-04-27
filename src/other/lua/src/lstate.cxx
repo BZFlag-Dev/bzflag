@@ -6,6 +6,7 @@
 
 
 #include <stddef.h>
+#include <string.h>
 
 #define lstate_c
 #define LUA_CORE
@@ -36,7 +37,7 @@ typedef struct LG {
   lua_State l;
   global_State g;
 } LG;
-  
+
 
 
 static void stack_init (lua_State *L1, lua_State *L) {
@@ -73,6 +74,7 @@ static void f_luaopen (lua_State *L, void *ud) {
   stack_init(L, L);  /* init stack */
   sethvalue(L, gt(L), luaH_new(L, 0, 2));  /* table of globals */
   sethvalue(L, registry(L), luaH_new(L, 0, 2));  /* registry */
+  sethvalue(L, callins(L),  luaH_new(L, 0, 2));  /* callins  */
   luaS_resize(L, MINSTRTABSIZE);  /* initial size of string table */
   luaT_init(L);
   luaX_init(L);
@@ -98,6 +100,7 @@ static void preinit_state (lua_State *L, global_State *g) {
   L->base_ci = L->ci = NULL;
   L->savedpc = NULL;
   L->errfunc = 0;
+  L->errfuncref = 0;
   setnilvalue(gt(L));
 }
 
@@ -118,6 +121,7 @@ static void close_state (lua_State *L) {
 
 lua_State *luaE_newthread (lua_State *L) {
   lua_State *L1 = tostate(luaM_malloc(L, state_size(lua_State)));
+  memcpy(fromstate(L1), fromstate(L), LUAI_EXTRASPACE);
   luaC_link(L, obj2gco(L1), LUA_TTHREAD);
   preinit_state(L1, G(L));
   stack_init(L1, L);  /* init stack */
@@ -146,6 +150,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   global_State *g;
   void *l = (*f)(ud, NULL, 0, state_size(LG));
   if (l == NULL) return NULL;
+  memset(l, 0, LUAI_EXTRASPACE);
   L = tostate(l);
   g = &((LG *)L)->g;
   L->next = NULL;
@@ -164,6 +169,7 @@ LUA_API lua_State *lua_newstate (lua_Alloc f, void *ud) {
   g->strt.nuse = 0;
   g->strt.hash = NULL;
   setnilvalue(registry(L));
+  setnilvalue(callins(L));
   luaZ_initbuffer(L, &g->buff);
   g->panic = NULL;
   g->gcstate = GCSpause;

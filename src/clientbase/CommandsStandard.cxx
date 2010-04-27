@@ -254,7 +254,7 @@ static std::string cmdBind(const std::string&, const CmdArgList& args, bool*)
   }
 
   // ignore attempts to modify Esc.  we reserve that for the menu
-  if (key.chr != 27) {
+  if (key.unicode != 27) {
     KEYMGR.bind(key, down, cmd);
   }
 

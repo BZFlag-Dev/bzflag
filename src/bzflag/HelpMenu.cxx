@@ -47,7 +47,7 @@ bool HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, false));
     return true;
   }
-  if (key.button == BzfKeyEvent::PageDown || key.chr == 13) {
+  if (key.button == BzfKeyEvent::PageDown || key.unicode == 13) {
     HUDDialog* oldMenu = HUDDialogStack::get()->top();
     HUDDialogStack::get()->pop();
     HUDDialogStack::get()->push(HelpMenu::getHelpMenu(oldMenu, true));
@@ -59,7 +59,7 @@ bool HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 bool HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (key.button == BzfKeyEvent::PageUp ||
-      key.button == BzfKeyEvent::PageDown || key.chr == 13)
+      key.button == BzfKeyEvent::PageDown || key.unicode == 13)
     return true;
   return MenuDefaultKey::keyRelease(key);
 }

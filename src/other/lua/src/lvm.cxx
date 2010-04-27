@@ -125,7 +125,7 @@ void luaV_gettable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       callTMres(L, val, tm, t, key);
       return;
     }
-    t = tm;  /* else repeat with `tm' */ 
+    t = tm;  /* else repeat with `tm' */
   }
   luaG_runerror(L, "loop in gettable");
 }
@@ -155,7 +155,7 @@ void luaV_settable (lua_State *L, const TValue *t, TValue *key, StkId val) {
       callTM(L, tm, t, key, val);
       return;
     }
-    t = tm;  /* else repeat with `tm' */ 
+    t = tm;  /* else repeat with `tm' */
   }
   luaG_runerror(L, "loop in settable");
 }
@@ -678,10 +678,62 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         continue;
       }
       case OP_TFORLOOP: {
+#ifndef LUA_EZFOR_LOOP /*BZ*/
         StkId cb = ra + 3;  /* call base */
         setobjs2s(L, cb+2, ra+2);
         setobjs2s(L, cb+1, ra+1);
         setobjs2s(L, cb, ra);
+#else
+        StkId cb;
+        if (ttistable(ra)) {
+          Table *h = hvalue(ra);
+          if (!ttisnumber(ra+1)) { /* for k,v in t do ... end */
+            if (!ttisnil(ra+1)) {
+              setobjs2s(L, ra+2, ra+1);  /* value */
+              setnilvalue(ra+1);
+            }
+            if (luaH_next(L, h, ra+2)) {
+              setobjs2s(L, ra+4, ra+3);  /* value */
+              setobjs2s(L, ra+3, ra+2);  /* key */  
+              dojump(L, pc, GETARG_sBx(*pc));  /* jump back */
+            }
+          }  
+          else {  /* for i,v in t,start,stride do ... end */
+            /* NOTE -- does not use __index, who cares? */ 
+            const TValue* nv;
+            const lua_Number nk = nvalue(ra+1);
+            int ni;
+            lua_number2int(ni, nk);
+            lua_assert(luai_numeq(cast_num(ni), nk));
+            nv = luaH_getnum(h, ni);
+            if (!ttisnil(nv)) {
+              int newi;
+              if (!ttisnumber(ra+2)) {
+                newi = ni + 1;
+              } else {
+                const lua_Number s = nvalue(ra+2);
+                int stride;
+                lua_number2int(stride, s);
+                lua_assert(luai_numeq(cast_num(stride), s));
+                if (stride == 0) {
+                  luaG_runerror(L, "for loop stride is 0");
+                }
+                newi = ni + stride;
+              }
+              setnvalue(ra+1, newi); /* key update*/
+              setnvalue(ra+3, nk);     /* key */
+              setobj2s(L, ra+4, nv);   /* value */
+              dojump(L, pc, GETARG_sBx(*pc));  /* jump back */
+            }
+          }  
+          pc++;
+          continue;
+        }  
+        cb = ra + 3;  /* call base */
+        setobjs2s(L, cb+2, ra+2);  /* key */
+        setobjs2s(L, cb+1, ra+1);  /* state */
+        setobjs2s(L, cb, ra);      /* function */
+#endif
         L->top = cb+3;  /* func. + 2 args (state and index) */
         Protect(luaD_call(L, cb, GETARG_C(i)));
         L->top = L->ci->top;

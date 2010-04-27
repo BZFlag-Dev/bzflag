@@ -181,12 +181,12 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
     }
     case SDL_MOUSEBUTTONDOWN: {
       bzEvent.type = BzfEvent::KeyDown;
-      bzEvent.keyDown.chr = 0;
-      bzEvent.keyDown.shift = 0;
+      bzEvent.keyDown.unicode = 0;
+      bzEvent.keyDown.modifiers = 0;
 
-      if (alt)   { bzEvent.keyDown.shift |= BzfKeyEvent::AltKey;     }
-      if (ctrl)  { bzEvent.keyDown.shift |= BzfKeyEvent::ControlKey; }
-      if (shift) { bzEvent.keyDown.shift |= BzfKeyEvent::ShiftKey;   }
+      if (alt)   { bzEvent.keyDown.modifiers |= BzfKeyEvent::AltKey;     }
+      if (ctrl)  { bzEvent.keyDown.modifiers |= BzfKeyEvent::ControlKey; }
+      if (shift) { bzEvent.keyDown.modifiers |= BzfKeyEvent::ShiftKey;   }
 
       int& button = bzEvent.keyDown.button;
       switch (sdlEvent.button.button) {
@@ -208,12 +208,12 @@ bool SDLDisplay::setupEvent(BzfEvent& bzEvent, const SDL_Event& sdlEvent) const
     }
     case SDL_MOUSEBUTTONUP: {
       bzEvent.type = BzfEvent::KeyUp;
-      bzEvent.keyUp.chr = 0;
-      bzEvent.keyUp.shift = 0;
+      bzEvent.keyUp.unicode = 0;
+      bzEvent.keyUp.modifiers = 0;
 
-      if (alt)   { bzEvent.keyUp.shift |= BzfKeyEvent::AltKey;     }
-      if (ctrl)  { bzEvent.keyUp.shift |= BzfKeyEvent::ControlKey; }
-      if (shift) { bzEvent.keyUp.shift |= BzfKeyEvent::ShiftKey;   }
+      if (alt)   { bzEvent.keyUp.modifiers |= BzfKeyEvent::AltKey;     }
+      if (ctrl)  { bzEvent.keyUp.modifiers |= BzfKeyEvent::ControlKey; }
+      if (shift) { bzEvent.keyUp.modifiers |= BzfKeyEvent::ShiftKey;   }
 
       int& button = bzEvent.keyUp.button;
       switch (sdlEvent.button.button) {
@@ -294,7 +294,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   SDLKey sym     = sdlEvent.key.keysym.sym;
   SDLMod mod     = (SDLMod) sdlEvent.key.keysym.mod;
 
-  key.chr = 0;
+  key.unicode = 0;
   switch (sym) {
     case SDLK_PAUSE:       { key.button = BzfKeyEvent::Pause;       break; }
     case SDLK_HOME:        { key.button = BzfKeyEvent::Home;        break; }
@@ -357,7 +357,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
 
   if (key.button == BzfKeyEvent::NoButton) {
     if (unicode) {
-      key.chr = unicode;
+      key.unicode = unicode;
     }
     else {
 #ifdef HAVE_SDL_1_3
@@ -365,18 +365,18 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
       // of buggy BZFlag on Mac OS X 10.6 using __LP64__
       // but SDLK_FIRST is gone in SDL 1.3.0
       if ((sym >= (SDLKey) 0) && (sym <= SDLK_DELETE)) {
-	key.chr = sym;
+	key.unicode = sym;
       }
 #else
       if ((sym >= SDLK_FIRST) && (sym <= SDLK_DELETE)) {
-	key.chr = sym;
+	key.unicode = sym;
       }
 #endif
       else if ((sym >= SDLK_KP0) && (sym <= SDLK_KP9)) {
-	key.chr = (sym - SDLK_KP0) + SDLK_0; // translate to normal number
+	key.unicode = (sym - SDLK_KP0) + SDLK_0; // translate to normal number
       }
       else if (sym == SDLK_KP_ENTER) {
-	key.chr = SDLK_RETURN; // enter
+	key.unicode = SDLK_RETURN; // enter
       }
       else {
 	return false;
@@ -384,10 +384,10 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
     }
   }
 
-  key.shift = 0;
-  if (mod & KMOD_ALT)   { key.shift |= BzfKeyEvent::AltKey;     }
-  if (mod & KMOD_CTRL)  { key.shift |= BzfKeyEvent::ControlKey; }
-  if (mod & KMOD_SHIFT) { key.shift |= BzfKeyEvent::ShiftKey;   }
+  key.modifiers = 0;
+  if (mod & KMOD_ALT)   { key.modifiers |= BzfKeyEvent::AltKey;     }
+  if (mod & KMOD_CTRL)  { key.modifiers |= BzfKeyEvent::ControlKey; }
+  if (mod & KMOD_SHIFT) { key.modifiers |= BzfKeyEvent::ShiftKey;   }
 
   return true;
 }

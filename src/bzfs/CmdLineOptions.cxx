@@ -40,6 +40,7 @@
 #include "TextUtils.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
+#include "BzVFS.h"
 
 /* local implementation headers */
 #include "bzfs.h"
@@ -90,7 +91,9 @@ static const char *usageString =
   "[-lagdrop <num>] "
   "[-lagwarn <time/ms>] "
   "[-loadplugin <pluginname,commandline>] "
-  "[-luaserver <filepath>] "
+  "[-luaserver <dirpath>] "
+  "[-luaworld <dirpath>] "
+  "[-luaworldReq] "
   "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
   "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
@@ -191,7 +194,9 @@ static const char *extraUsageString =
   "\t-jitterdrop: drop player after this many jitter warnings\n"
   "\t-jitterwarn: jitter warning threshhold time [ms]\n"
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
-  "\t-luaserver: path to the LuaServer entry source file\n"
+  "\t-luaserver: path to the LuaServer sources directory\n"
+  "\t-luaworld: path to the LuaWorld sources directory\n"
+  "\t-luaworldReq: LuaWorld script execution is required\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
   "\t-mp: maximum players total or per team\n"
@@ -821,14 +826,20 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       }
     }
     else if (token == "-luaserver") {
-      const std::string filePath = parseStringArg(i, tokens);
+      const std::string dirPath = parseStringArg(i, tokens);
       if (LuaServer::isActive()) {   
         std::cerr << "WARNING: ignoring extra '-luaserver "
-                  << filePath << "' argument" << std::endl; 
+                  << dirPath << "' argument" << std::endl; 
       } else {
-        luaServer = filePath;
-        LuaServer::init(luaServer);
+        luaServerDir = dirPath;
+        LuaServer::init(luaServerDir);
       }
+    }
+    else if (token == "-luaworld") {
+      luaWorldDir = parseStringArg(i, tokens);
+    }
+    else if (token == "-luaworldReq") {
+      gameOptions |= int(LuaWorldRequired);   
     }
     else if (token == "-maxidle") {
       idlekickthresh = (float)parseIntArg(i, tokens);
@@ -1046,6 +1057,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     }
     else if (token == "-replay") {
       replayServer = true;
+      gameOptions |= int(ReplayServer);
     }
     else if (token == "-reportfile") {
       reportFile = parseStringArg(i, tokens);

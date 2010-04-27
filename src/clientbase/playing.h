@@ -158,7 +158,7 @@ void handleJoinServer(void *msg);
 void handleKilledMessage(void *msg, bool human, bool &checkScores);
 void handleLimboMessage(void *msg);
 void handleMessage(void *msg);
-void handleMovementUpdate(uint16_t code, void *msg);
+void handlePlayerUpdate(uint16_t code, void *msg);
 void handleMsgSetVars(void *msg);
 void handleNearFlag(void *msg);
 void handleNewPlayer(void *msg);

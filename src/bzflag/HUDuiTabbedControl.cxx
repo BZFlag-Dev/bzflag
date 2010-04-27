@@ -207,30 +207,31 @@ void HUDuiTabbedControl::doRender()
 
 bool HUDuiTabbedControl::doKeyPress(const BzfKeyEvent& key)
 {
-  if (key.chr == 0) {
+  if (key.unicode == 0) {
     switch (key.button) {
-    case BzfKeyEvent::Left:
-      if (hasFocus())
-	setActiveTab(activeTab - 1);
-      break;
-
-    case BzfKeyEvent::Right:
-      if (hasFocus())
-	setActiveTab(activeTab + 1);
-      break;
-
-    case BzfKeyEvent::Down:
-      if (hasFocus())
-	getNav().next();
-      break;
-
-    default:
-      return false;
+      case BzfKeyEvent::Left: {
+        if (hasFocus())
+          setActiveTab(activeTab - 1);
+        break;
+      }
+      case BzfKeyEvent::Right: {
+        if (hasFocus())
+          setActiveTab(activeTab + 1);
+        break;
+      }
+      case BzfKeyEvent::Down: {
+        if (hasFocus())
+          getNav().next();
+        break;
+      }
+      default: {
+        return false;
+      }
     }
   }
 
   // Does this do anything?
-  switch (key.chr) {
+  switch (key.unicode) {
   case 27:
     return false;
   }

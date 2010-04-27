@@ -34,6 +34,8 @@
 #include "FlagSceneNode.h"
 #include "LinkManager.h"
 #include "MeshFace.h"
+#include "EventHandler.h"
+#include "GfxBlock.h"
 
 // local headers -- FIXME, local dependencies for a global interface
 #include "BackgroundRenderer.h"
@@ -87,6 +89,7 @@ SceneRenderer::SceneRenderer()
 , sameFrame(false)
 , needStyleUpdate(true)
 , rebuildTanks(true)
+, fogActive(false)
 {
   lightsSize = 4;
   lights = new OpenGLLight*[lightsSize];
@@ -644,7 +647,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   }
 
   // get the track mark sceneNodes (only for BSP)
-  if (scene) {
+  if (scene && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::addSceneNodes(scene);
   }
 
@@ -661,7 +664,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame, bool _fullWindow)
   }
 
   mirror = (BZDB.get(BZDBNAMES.MIRROR) != "none")
-	   && BZDB.isTrue("userMirror");
+	   && BZDB.isTrue("userMirror") && GfxBlockMgr::mirror.notBlocked();
 
   clearZbuffer = true;
   drawGround = true;
@@ -1043,14 +1046,18 @@ void SceneRenderer::doRender()
 {
   const bool mirrorPass = (mirror && clearZbuffer);
 
+  eventHandler.DrawWorldStart();
+
   // render the ground tank tracks
-  if (!mirrorPass) {
+  if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::renderGroundTracks();
   }
 
   // NOTE -- this should go into a separate thread
   // now draw each render node list
   OpenGLGState::renderLists();
+
+  eventHandler.DrawWorld();
 
   draw3rdPersonTarget(this);
 
@@ -1069,9 +1076,11 @@ void SceneRenderer::doRender()
   glDepthMask(GL_TRUE);
 
   // render the obstacle tank tracks
-  if (!mirrorPass) {
+  if (!mirrorPass && GfxBlockMgr::trackMarks.notBlocked()) {
     TrackMarks::renderObstacleTracks();
   }
+
+  eventHandler.DrawWorldAlpha();
 
   return;
 }
@@ -1202,6 +1211,8 @@ void SceneRenderer::getRenderNodes()
     return;
   }
 
+  const bool drawObstacles = GfxBlockMgr::obstacles.notBlocked();
+
   // empty the render node lists in preparation for the next frame
   OpenGLGState::clearLists();
   orderedList.clear();
@@ -1209,10 +1220,12 @@ void SceneRenderer::getRenderNodes()
 
   // make the lists of render nodes sorted in optimal rendering order
   if (scene) {
-    scene->addRenderNodes(*this, true, true);
+    scene->addRenderNodes(*this, drawObstacles, true);
   }
 
-  DYNAMICWORLDTEXT.addRenderNodes(*this);
+  if (drawObstacles) {
+    DYNAMICWORLDTEXT.addRenderNodes(*this);
+  }
 
   // sort ordered list in reverse depth order
   if (!inOrder) {
@@ -1221,11 +1234,16 @@ void SceneRenderer::getRenderNodes()
 
   // add the shadow rendering nodes
   static BZDB_bool noShadows(BZDBNAMES.NOSHADOWS);
-  if (scene && BZDBCache::shadowMode && (getSunDirection() != NULL) &&
-      (!mirror || !clearZbuffer) && !noShadows) {
+  if (scene && !noShadows &&
+      BZDBCache::shadowMode &&
+      (getSunDirection() != NULL) &&
+      GfxBlockMgr::shadows.notBlocked() &&
+      (!mirror || !clearZbuffer)) {
     setupShadowPlanes();
-    scene->addShadowNodes(*this, true, true);
-    DYNAMICWORLDTEXT.addShadowNodes(*this);
+    scene->addShadowNodes(*this, drawObstacles, true);
+    if (drawObstacles) {
+      DYNAMICWORLDTEXT.addShadowNodes(*this);
+    }
   }
 
   return;

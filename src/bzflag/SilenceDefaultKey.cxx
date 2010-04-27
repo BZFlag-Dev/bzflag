@@ -53,7 +53,7 @@ bool SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
     }
   }
 
-  switch (key.chr) {
+  switch (key.unicode) {
   case 3:	// ^C
   case 27:	// escape
     //    case 127:	// delete
@@ -166,8 +166,10 @@ bool SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
-    if (key.button == BzfKeyEvent::Up || key.button==BzfKeyEvent::Down
-	||key.button==BzfKeyEvent::Left||key.button==BzfKeyEvent::Right) {
+    if (key.button == BzfKeyEvent::Up   ||
+        key.button == BzfKeyEvent::Down ||
+        key.button == BzfKeyEvent::Left ||
+        key.button == BzfKeyEvent::Right) {
       // exclude robots from silence recipient list they don't talk
       selectNextRecipient(key.button == BzfKeyEvent::Up ||
 			  key.button == BzfKeyEvent::Right, false);

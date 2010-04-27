@@ -67,6 +67,9 @@ void sendMsgTimeUpdate ( int32_t timeLimit );
 void sendMsgTangibilityUpdate ( unsigned int object, unsigned char tang, int player = AllPlayers );
 void sendMsgTangibilityReset ( void );
 void sendOSRequest( int player );
+bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+                    PlayerId dstPlayerID, int16_t dstScriptID,
+                    uint8_t status, const std::string& data); 
 
 void sendMsgCanSpawn ( int player, bool canSpawn );
 void sendMsgLimboMessage ( int player, const std::string  &text );

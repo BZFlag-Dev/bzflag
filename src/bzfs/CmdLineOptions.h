@@ -81,7 +81,7 @@ struct CmdLineOptions
     banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
     votePercentage(50.1f), voteRepeatTime(300),
     autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(1),
-    luaServer(""), gndTexture("")
+    luaWorldDir(""), luaServerDir(""), gndTexture("")
   {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -228,7 +228,8 @@ struct CmdLineOptions
   /** how many client-side bots are allowed per IP address */
   int			botsPerIP;
 
-  std::string		luaServer;
+  std::string		luaWorldDir;
+  std::string		luaServerDir;
 
   std::string		gndTexture;
 

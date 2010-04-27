@@ -44,7 +44,7 @@ class SlashCmdHandler : public bz_CustomSlashCommandHandler {
     ~SlashCmdHandler();
 
     bool handle(int playerID, bz_ApiString command,
-                bz_ApiString message, bz_APIStringList* params);
+		bz_ApiString message, bz_APIStringList* params);
 
     const char* help(bz_ApiString /* command */) { return helpTxt.c_str(); }
 
@@ -86,7 +86,7 @@ SlashCmdHandler::~SlashCmdHandler()
 
 
 bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
-                             bz_ApiString message, bz_APIStringList* /*params*/)
+			     bz_ApiString message, bz_APIStringList* /*params*/)
 {
   lua_State* L = LuaServer::GetL();
   if (L == NULL) {
@@ -108,7 +108,7 @@ bool SlashCmdHandler::handle(int playerID, bz_ApiString /*command*/,
 
   if (lua_pcall(L, 3, 1, 0) != 0) {
     bz_debugMessagef(0, "LuaSlashCmd callback error (%s): %s\n",
-                     cmd.c_str(), lua_tostring(L, -1));
+		     cmd.c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }

@@ -208,19 +208,19 @@ private:
   
 private:
   struct Item {
-  public:
-    Item();
+    public:
+      Item();
 
-  public:
-    std::string			value;
-    std::string			defValue;
-    bool			isSet;
-    bool			isTrue;
-    bool			save;
-    Permission			permission;
-    CallbackList<Callback>	callbacks;
-    StringSet			dependents;
-    StringSet			dependencies;
+    public:
+      std::string		value;
+      std::string		defValue;
+      bool			isSet;
+      bool			isTrue;
+      bool			save;
+      Permission		permission;
+      CallbackList<Callback>	callbacks;
+      StringSet			dependents;
+      StringSet			dependencies;
   };
   typedef std::map<std::string, Item> ItemMap;
 

@@ -30,6 +30,7 @@
 // local headers
 #include "Weapon.h"
 #include "EntryZone.h"
+#include "ClientFlag.h"
 
 
 class WorldPlayer;
@@ -54,6 +55,7 @@ class World {
     World();
     ~World();
 
+    short		getGameOptions() const { return gameOptions; }
     GameType		getGameType() const;
     bool		allowTeamFlags() const;
     bool		allowTeamKills() const;
@@ -66,6 +68,8 @@ class World {
     bool		allowRabbit() const;
     bool		allowHandicap() const;
     bool		allowTeams() const;
+    bool		luaWorldAvailable() const;
+    bool		luaWorldRequired() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
     float		getFlagShakeTimeout() const;
@@ -89,6 +93,7 @@ class World {
     RemotePlayer*	getCurrentRabbit() const;
     WorldPlayer*	getWorldWeapons() const;
     Flag&		getFlag(int index) const;
+    ClientFlag&		getClientFlag(int index) const;
     const Obstacle*	getBase(int team, int base = 0) const;
 
     TeamColor		whoseBase(const fvec3& pos) const;
@@ -179,7 +184,7 @@ class World {
     RemotePlayer**	players;
     int			playersSize;
     WorldPlayer*	worldWeapons;
-    Flag*		flags;
+    ClientFlag*		flags;
     FlagSceneNode**	flagNodes;
     FlagWarpSceneNode**	flagWarpNodes;
 
@@ -260,6 +265,17 @@ inline bool		World::allowRabbit() const
 inline bool		World::allowHandicap() const
 {
   return (gameOptions & short(HandicapGameStyle)) != 0;
+}
+
+inline bool		World::luaWorldAvailable() const
+{
+  return (gameOptions & short(LuaWorldAvailable)) != 0;
+}
+
+inline bool		World::luaWorldRequired() const
+{
+  return ((gameOptions & short(LuaWorldAvailable)) != 0) &&
+         ((gameOptions & short(LuaWorldRequired)) != 0);
 }
 
 inline float		World::getWaterLevel() const
@@ -372,6 +388,11 @@ inline Flag&		World::getFlag(int index) const
   return flags[index];
 }
 
+inline ClientFlag&	World::getClientFlag(int index) const
+{
+  return flags[index];
+}
+ 
 inline const Obstacle* World::getBase(int _team, int base) const
 {
   const TeamBases &b = bases[_team];

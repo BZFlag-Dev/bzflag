@@ -56,9 +56,10 @@ class BzfKeyEvent {
   public:
     enum Button {
       NoButton = 0,
+
       Pause,
 
-      /* Arrows + Home/End pad */
+      // Arrows + Home/End pad
       Home,
       End,
       Left,
@@ -69,11 +70,11 @@ class BzfKeyEvent {
       PageDown,
       Insert,
 
-      /* Ascii character */
+      // Ascii character
       Backspace,
       Delete,
 
-      /* Numeric keypad */
+      // Numeric keypad
       Kp0,
       Kp1,
       Kp2,
@@ -92,7 +93,7 @@ class BzfKeyEvent {
       Kp_Enter,
       Kp_Equals,
 
-      /* Function keys */
+      // Function keys
       F1,
       F2,
       F3,
@@ -106,7 +107,7 @@ class BzfKeyEvent {
       F11,
       F12,
 
-      /* Miscellaneous function keys */
+      // Miscellaneous function keys
       Help,
       Print,
       Sysreq,
@@ -116,7 +117,7 @@ class BzfKeyEvent {
       Euro,
       Undo,
 
-      /* Mouse buttons */
+      // Mouse buttons
       LeftMouse,
       MiddleMouse,
       RightMouse,
@@ -128,7 +129,7 @@ class BzfKeyEvent {
       MouseButton9,
       MouseButton10,
 
-      /* Joystick buttons */
+      // Joystick buttons
       BZ_Button_1,
       BZ_Button_2,
       BZ_Button_3,
@@ -179,9 +180,9 @@ class BzfKeyEvent {
       AltKey     = (1 << 2)  // 4
     };
 
-    int chr;
-    int button;
-    int shift;
+    int button; // FIXME - replace with a real keysym
+    int modifiers;
+    int unicode;
 };
 
 
@@ -217,14 +218,18 @@ class BzfEvent {
     : type(Unset)
     , window((BzfWindow*)NULL)
     {
-      mouseMove.x = mouseMove.y = 0;
-      resize.width = resize.height = 0;
-      keyUp.chr = keyUp.button = keyUp.shift = 0;
+      mouseMove.x = 0;
+      mouseMove.y = 0;
+      resize.width = 0;
+      resize.height = 0;
+      keyUp.button = 0;
+      keyUp.modifiers = 0;
+      keyUp.unicode = 0;
     }
 };
 
 
-#endif /* BZF_EVENT_H */
+#endif // BZF_EVENT_H
 
 
 // Local Variables: ***

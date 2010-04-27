@@ -215,6 +215,9 @@ endif
 
 LDADD =	\
 	../obstacle/libObstacle.la	\
+	../lua/libLuaClient.la		\
+	../lua/libLuaClientGL.la	\
+	../lua/libLuaGame.la		\
 	../clientbase/libClientBase.la	\
 	../game/libGame.la		\
 	../geometry/libGeometry.la	\

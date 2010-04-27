@@ -130,7 +130,7 @@ void Link::pending(int /*id*/, void* data, unsigned int size)
 
   if (lua_pcall(L, 2, 0, 0) != 0) {
     bz_debugMessagef(0, "LuaRawLink callback error (%i): %s\n",
-                     id, lua_tostring(L, -1));
+		     id, lua_tostring(L, -1));
     lua_pop(L, 1);
     return;
   }

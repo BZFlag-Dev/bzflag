@@ -19,6 +19,7 @@
 #include "BzfEvent.h"
 #include "CollisionManager.h"
 #include "CommandManager.h"
+#include "EventHandler.h"
 #include "FlagSceneNode.h"
 #include "MeshObstacle.h"
 #include "PhysicsDriver.h"
@@ -1003,6 +1004,9 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
   // send teleport info
   server->sendTeleport(linkSrcID, linkDstID);
 
+  // send the event
+  eventHandler.PlayerTeleported(*this, linkSrcID, linkDstID);
+
   // print the pass message
   if (!linkPhysics->tankPassText.empty()) {
     addMessage(NULL, TextUtils::unescape_colors(linkPhysics->tankPassText));
@@ -1372,28 +1376,37 @@ void LocalPlayer::requestAutoPilot(bool autopilot)
 
 ShotPath *LocalPlayer::fireShot()
 {
-  ShotPath *shot = NULL;
+  if (!(firingStatus == Ready || firingStatus == Zoned)) {
+    return NULL;
+  }
 
-  if (! (firingStatus == Ready || firingStatus == Zoned))
-    return shot;
+  if (!canShoot()) {
+    return NULL;
+  }
 
-  if (!canShoot())
-    return shot;
+  if (eventHandler.ForbidShot()) {
+    return NULL;
+  }
 
   // find an empty slot
   const int numShots = getMaxShots();
   int i;
-  for (i = 0; i < numShots; i++)
-    if (!shots[i])
+  for (i = 0; i < numShots; i++) {
+    if (!shots[i]) {
       break;
-  if (i == numShots)
-	  return shot;
+    }
+  }
+  if (i == numShots) {
+    return NULL;
+  }
 
   // make sure we're allowed to shoot
   if (!isAlive() || isPaused() ||
       ((location == InBuilding) && !isPhantomZoned())) {
-    return shot;
+    return NULL;
   }
+
+  ShotPath* shot = NULL;
 
   // prepare shot
   FiringInfo firingInfo;
@@ -1414,8 +1427,12 @@ ShotPath *LocalPlayer::fireShot()
   server->sendPlayerUpdate(this);
   server->sendBeginShot(firingInfo);
 
-  if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY)
+  eventHandler.ShotAdded(firingInfo);
+
+  if (BZDB.isTrue("enableLocalShotEffect") &&
+      SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
     EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
+  }
 
   if (gettingSound) {
     switch (firingInfo.shotType) {
@@ -1520,6 +1537,10 @@ void LocalPlayer::doJump()
     return;
   }
 
+  if (eventHandler.ForbidJump()) {
+    return;
+  }
+
   if (hasWings()) {
     if (wingsFlapCount <= 0) {
       return;
@@ -1572,12 +1593,17 @@ void LocalPlayer::doJump()
     }
   }
 
+  eventHandler.PlayerJumped(*this);
+
   wantJump = false;
 }
 
 
 void LocalPlayer::setTarget(const Player* _target)
 {
+  if (_target && eventHandler.ForbidShotLock(*_target)) {
+    return;
+  }
   target = _target;
 }
 

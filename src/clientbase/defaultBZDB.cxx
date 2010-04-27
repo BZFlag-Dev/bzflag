@@ -33,7 +33,6 @@ static const std::string getDefRadar()
 
 
 DefaultDBItem	defaultDBItems[] = {
-//  name,                       value,              persist, permission, callback
   { "animatedTreads",		"1",			true,  DefPerm, NULL },
   { "aniso",			"1",			true,  DefPerm, NULL },
   { "autoFlagDisplay",		"0",			true,  DefPerm, NULL },
@@ -70,6 +69,9 @@ DefaultDBItem	defaultDBItems[] = {
   { "listIcons",		"1",			true,  DefPerm, NULL },
   { "lodScale",			"1.0",			true,  DefPerm, NULL },
   { "longitude",		"122",			true,  DefPerm, NULL },
+  { "luaBzOrg",			"1",			true,  DefPerm, NULL },
+  { "luaUser",			"1",			true,  DefPerm, NULL },
+  { "luaWorld",			"1",			true,  DefPerm, NULL },
   { "maxCacheMB",		"96",			true,  DefPerm, NULL },
   { "maxFlagLOD",		"8",			true,  DefPerm, NULL },
   { "maxFontSize",		"128",			true,  DefPerm, NULL },
@@ -127,7 +129,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "vsync",			"-1",			true,  DefPerm, NULL },
   { "zbuffer",			"1",			true,  DefPerm, NULL },
 
-  //ping
+  // ping
   { "pingLow",		        "100",			true,  DefPerm, NULL },
   { "pingMed",		        "200",			true,  DefPerm, NULL },
   { "pingHigh",                 "400",			true,  DefPerm, NULL },
@@ -246,6 +248,10 @@ DefaultDBItem	defaultDBItems[] = {
   // seconds between pulses to textOutput (0 is disabled)
   { "statsOutputFrequency",		"0",		true,  DefPerm, NULL },
   { "statsOutputFilename",		"",		true,  DefPerm, NULL },
+
+  // name,                      value,              persist, permission, callback
+  { "callsign",                 "",                     true, StateDatabase::ReadOnly, NULL },
+  { "password",                 "",                     true, StateDatabase::ReadOnly, NULL }
 };
 
 

@@ -29,24 +29,32 @@
 #endif
 
 // common headers
+#include "bz_md5.h"
+#include "bzsignal.h"
+#include "vectors.h"
+#include "version.h"
 #include "AccessList.h"
 #include "AutoHunt.h"
 #include "BaseBuilding.h"
 #include "BZDBCache.h"
 #include "BzfMedia.h"
-#include "bzsignal.h"
+#include "BzVFS.h"
 #include "CacheManager.h"
 #include "CollisionManager.h"
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
+#include "EventHandler.h"
 #include "FileManager.h"
 #include "GameTime.h"
 #include "KeyManager.h"
 #include "LinkManager.h"
+#include "LuaClientScripts.h"
 #include "MsgStrings.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
+#include "OpenGLGState.h"
+#include "OpenGLPassState.h"
 #include "PhysicsDriver.h"
 #include "PlatformFactory.h"
 #include "ServerList.h"
@@ -54,9 +62,6 @@
 #include "TimeBomb.h"
 #include "TimeKeeper.h"
 #include "WordFilter.h"
-#include "bz_md5.h"
-#include "vectors.h"
-#include "version.h"
 
 // common client headers
 #include "ClientIntangibilityManager.h"
@@ -150,9 +155,9 @@ static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
 // mouse button states
-static bool leftButton   = false;
-static bool rightButton  = false;
-static bool middleButton = false;
+bool leftMouseButton   = false;
+bool rightMouseButton  = false;
+bool middleMouseButton = false;
 
 // cached BZDB values
 static BZDB_float bzdbSyncTime("_syncTime"); // AKA BZDBNAMES.SYNCTIME
@@ -409,6 +414,13 @@ bool isUnmapped()
 }
 
 
+void openMainMenu()
+{
+  mainMenu->createControls();
+  HUDDialogStack::get()->push(mainMenu);
+}
+
+
 void setSceneDatabase()
 {
   // FIXME - test the zbuffer here
@@ -518,10 +530,10 @@ static int shiftKeyStatus;
 static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
 {
   keyboardMovement = None;
-  shiftKeyStatus   = key.shift;
+  shiftKeyStatus   = key.modifiers;
 
   const std::string cmd = KEYMGR.get(key, pressed);
-  if (key.chr == 27) {
+  if (key.unicode == 27) {
     if (pressed) {
       mainMenu->createControls();
       HUDDialogStack::get()->push(mainMenu);
@@ -548,7 +560,7 @@ static bool doKeyCommon(const BzfKeyEvent &key, bool pressed)
   std::string cmdDrive = cmd;
   if (cmdDrive.empty()) {
     BzfKeyEvent cleanKey = key;
-    cleanKey.shift = 0;
+    cleanKey.modifiers = 0;
     cmdDrive = KEYMGR.get(cleanKey, pressed);
   }
   if (cmdDrive == "turn left") {
@@ -608,7 +620,7 @@ static void doKeyNotPlaying(const BzfKeyEvent&, bool, bool)
 static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
 {
 #if defined(FREEZING)
-  if ((key.chr == '`' && pressed) && (!haveBinding && key.shift)) {
+  if ((key.unicode == '`' && pressed) && (!haveBinding && key.modifiers)) {
     // toggle motion freeze
     motionFreeze = !motionFreeze;
     if (motionFreeze) {
@@ -620,17 +632,17 @@ static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
 
   const int altORctrl = (BzfKeyEvent::ControlKey | BzfKeyEvent::AltKey);
   if (!haveBinding &&
-      (key.chr == 0) &&
+      (key.unicode == 0) &&
       (key.button >= BzfKeyEvent::F1) &&
       (key.button <= BzfKeyEvent::F10) &&
-      ((key.shift & altORctrl) != 0)) {
+      ((key.modifiers & altORctrl) != 0)) {
       // [Ctrl]-[Fx] is message to team
       // [Alt]-[Fx] is message to all
       if (pressed) {
 	char name[32];
 	int msgno = (key.button - BzfKeyEvent::F1) + 1;
 	PlayerId  to;
-	if ((key.shift == BzfKeyEvent::ControlKey) && world->allowTeams()) {
+	if ((key.modifiers == BzfKeyEvent::ControlKey) && world->allowTeams()) {
 	  sprintf(name, "quickTeamMessage%d", msgno);
 	  to = myTank->getTeam();
 	} else {
@@ -651,9 +663,9 @@ static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
 static void doKey(const BzfKeyEvent &key, bool pressed)
 {
   switch (key.button) {
-    case BzfKeyEvent::LeftMouse:   { leftButton   = pressed; break; }
-    case BzfKeyEvent::RightMouse:  { rightButton  = pressed; break; }
-    case BzfKeyEvent::MiddleMouse: { middleButton = pressed; break; }
+    case BzfKeyEvent::LeftMouse:   { leftMouseButton   = pressed; break; }
+    case BzfKeyEvent::RightMouse:  { rightMouseButton  = pressed; break; }
+    case BzfKeyEvent::MiddleMouse: { middleMouseButton = pressed; break; }
   }
 
   if (myTank) {
@@ -862,10 +874,136 @@ static void mouseClamp(const BzfMotionEvent& event)
 }
 
 
+static int bzModsToEventMods(int mods)
+{
+  int eMods = 0;
+  if (mods & BzfKeyEvent::AltKey)     { eMods |= EventHandler::AltKeyModBit;   }
+  if (mods & BzfKeyEvent::ControlKey) { eMods |= EventHandler::CtrlKeyModBit;  }
+  if (mods & BzfKeyEvent::ShiftKey)   { eMods |= EventHandler::ShiftKeyModBit; }
+  // NOTE - EventHandler::RepeatKeyModBit is never being set
+  return eMods;
+}
+
+
+static bool handleEvent(const BzfEvent& event)
+{
+  // return 'true' to consume the event
+  // would be better to have raw keysyms (SDL?) as well as unicode values
+  switch (event.type) {
+    case BzfEvent::KeyUp: {
+      const BzfKeyEvent& kEv = event.keyUp;
+      switch (kEv.button) {
+        case BzfKeyEvent::F12: {
+          return false;
+        }
+        case BzfKeyEvent::WheelUp:
+        case BzfKeyEvent::WheelDown: {
+          return false; // only send the KeyDown version
+        }
+        case BzfKeyEvent::LeftMouse:
+        case BzfKeyEvent::MiddleMouse:
+        case BzfKeyEvent::RightMouse: 
+        case BzfKeyEvent::MouseButton6:
+        case BzfKeyEvent::MouseButton7:
+        case BzfKeyEvent::MouseButton8:
+        case BzfKeyEvent::MouseButton9:
+        case BzfKeyEvent::MouseButton10: {
+          int mx, my;
+          mainWindow->getWindow()->getMouse(mx, my);
+          my = mainWindow->getHeight() - my - 1;
+          const int button = kEv.button - BzfKeyEvent::LeftMouse;
+          return eventHandler.MouseRelease(false, mx, my, button);
+        }
+        default: {
+          const int mods = bzModsToEventMods(kEv.modifiers);
+          const int keysym = kEv.button ? -kEv.button : kEv.unicode;
+          if (!HUDui::getFocus() && (kEv.button != 27)) {
+            return eventHandler.KeyRelease(false, keysym, mods);
+          }
+          else {
+            // the HUDui already owns the event, so taken = true
+            eventHandler.KeyRelease(true, keysym, mods); // ignored return value
+            return false;
+          }
+        }  
+      }    
+      break;
+    }
+    case BzfEvent::KeyDown: {
+      const BzfKeyEvent& kEv = event.keyDown;
+      switch (kEv.button) {
+        case BzfKeyEvent::F12: {
+          return false;
+        }
+        case BzfKeyEvent::WheelUp: {
+          return eventHandler.MouseWheel(false, +1.0f);
+        }
+        case BzfKeyEvent::WheelDown: {
+          return eventHandler.MouseWheel(false, -1.0f);
+        }
+        case BzfKeyEvent::LeftMouse:
+        case BzfKeyEvent::MiddleMouse:
+        case BzfKeyEvent::RightMouse: 
+        case BzfKeyEvent::MouseButton6:
+        case BzfKeyEvent::MouseButton7:
+        case BzfKeyEvent::MouseButton8:
+        case BzfKeyEvent::MouseButton9:
+        case BzfKeyEvent::MouseButton10: {
+          int mx, my;
+          mainWindow->getWindow()->getMouse(mx, my);
+          my = mainWindow->getHeight() - my - 1;
+          const int button = kEv.button - BzfKeyEvent::LeftMouse;
+          return eventHandler.MousePress(false, mx, my, button);
+        }
+        default: {
+          const int mods = bzModsToEventMods(kEv.modifiers);
+          const int keysym = kEv.button ? -kEv.button : kEv.unicode;
+          if (!HUDui::getFocus() && (kEv.button != 27)) { 
+            bool taken = eventHandler.KeyPress(false, keysym, mods);
+            if (kEv.unicode) {
+              taken = eventHandler.UnicodeText(false, kEv.unicode) || taken;
+            }
+            return taken;
+          }
+          else {
+            // the HUDui already owns the event, so taken = true
+            eventHandler.KeyPress(true, keysym, mods); // ignored return value
+            if (kEv.unicode) {
+              eventHandler.UnicodeText(true, kEv.unicode); // ignored return value
+            }
+            return false;
+          }
+        }  
+      }    
+      break;
+    }
+    case BzfEvent::MouseMove: {
+      const BzfMotionEvent& mmEv = event.mouseMove;
+      const int yCoord = mainWindow->getHeight() - mmEv.y - 1;
+      return eventHandler.MouseMove(false, mmEv.x, yCoord);   
+      break;
+    }
+    case BzfEvent::Unset:
+    case BzfEvent::Quit: 
+    case BzfEvent::Redraw:
+    case BzfEvent::Resize:
+    case BzfEvent::Map:   
+    case BzfEvent::Unmap: {
+      break;
+    }
+  }  
+  return false;
+}
+ 
+ 
 static void doEvent(BzfDisplay *disply)
 {
   BzfEvent event;
   if (!disply->getEvent(event)) {
+    return;
+  }
+
+  if (handleEvent(event)) {
     return;
   }
 
@@ -884,6 +1022,7 @@ static void doEvent(BzfDisplay *disply)
           (mainWindow->getHeight() != event.resize.height)) {
         mainWindow->getWindow()->setSize(event.resize.width, event.resize.height);
         mainWindow->getWindow()->callResizeCallbacks();
+        eventHandler.GLResize();
       }
       break;
     }
@@ -946,13 +1085,14 @@ static void doEvent(BzfDisplay *disply)
       }
 
       // clear the mouse button states
-      leftButton = rightButton = middleButton = false;
+      leftMouseButton = rightMouseButton = middleMouseButton = false;
 
       // turn off the sound
       SOUNDSYSTEM.setMute(true);
 
       unmapped = true;
       mainWindow->ungrabMouse();
+      eventHandler.GLUnmapped();
       break;
     }
     case BzfEvent::KeyUp: {
@@ -1133,7 +1273,7 @@ int curlProgressFunc(void * /*clientp*/,
       return 1; // terminate the curl call
     case BzfEvent::KeyDown:
       display->getEvent(event); // flush the event
-      if (event.keyDown.chr == 27)
+      if (event.keyDown.unicode == 27)
 	return 1; // terminate the curl call
 
       break;
@@ -1423,6 +1563,8 @@ void handleAliveMessage(void *msg)
     myTank->setSpawning(false);
   }
 
+  eventHandler.PlayerSpawned(*tank);
+
   SOUNDSYSTEM.play(SFX_POP, pos, true, isViewTank(tank));
 }
 
@@ -1495,6 +1637,11 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
   BaseLocalPlayer *killerLocal = getLocalPlayer(killer);
   Player *victimPlayer = lookupPlayer(victim);
   Player *killerPlayer = lookupPlayer(killer);
+
+  if (victimPlayer != NULL) {
+    eventHandler.PlayerKilled(*victimPlayer, killerPlayer,
+                              reason, flagType, phydrv);  
+  }
 
   if (victimPlayer == myTank) {
     // uh oh, i'm dead
@@ -1740,6 +1887,8 @@ void handleGrabFlag(void *msg)
   message += tank->getFlag()->flagName;
   message += " flag";
 
+  eventHandler.FlagGrabbed(flag, *tank);
+
   addMessage(tank, message);
 }
 
@@ -1761,6 +1910,8 @@ void handleCaptureFlag(void *msg, bool &checkScores)
 
   if (capturedFlag.type == Flags::Null)
     return;
+
+  eventHandler.FlagCaptured(capturedFlag, capturer);
 
   int capturedTeam = capturedFlag.type->flagTeam;
 
@@ -1984,6 +2135,8 @@ void handleShotBegin(bool human, void *msg)
     myTank->updateShot(firingInfo, id, firingInfo.timeSent);
   }
   else {
+    eventHandler.ShotAdded(firingInfo);
+
     RemotePlayer *shooter = remotePlayers[shooterid];
 
     if (shooterid != ServerPlayer) {
@@ -2074,6 +2227,7 @@ void handleTeleport(void *msg)
   Player *tank = lookupPlayer(id);
   if (tank) {
     if (tank != myTank) {
+      eventHandler.PlayerTeleported(*tank, srcID, dstID);
       tank->setTeleport(TimeKeeper::getTick(), short(srcID), short(dstID));
       const MeshFace* linkDst = linkManager.getLinkDstFace(dstID);
       const MeshFace* linkSrc = linkManager.getLinkSrcFace(srcID);
@@ -2118,13 +2272,17 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
 
   const fvec3& pos = toTank->getPosition();
   if (f.type->flagTeam != ::NoTeam) {
-    if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam())) {
+    if ((toTank->getTeam() == myTank->getTeam()) &&
+        (f.type->flagTeam != myTank->getTeam())) {
       SOUNDSYSTEM.play(SFX_TEAMGRAB, pos, false, false);
-    } else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam())) {
+    } else if ((fromTank->getTeam() == myTank->getTeam()) &&
+               (f.type->flagTeam == myTank->getTeam())) {
       hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
       SOUNDSYSTEM.play(SFX_ALERT);
     }
   }
+
+  eventHandler.FlagTransferred(f, *fromTank, *toTank);
 
   std::string message(toTank->getCallSign());
   message += " stole ";
@@ -2132,8 +2290,6 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
   message += "'s flag";
   addMessage(toTank, message);
 }
-
-
 
 
 void handleMessage(void *msg)
@@ -2199,6 +2355,10 @@ void handleMessage(void *msg)
     wordFilter->filter((char *)msg);
   }
 
+  // the text is good to go, trigger the event
+  eventHandler.RecvChatMsg((char*)msg, src, dst, type == ActionMessage);
+
+  // do a little more filtering
   const char *origText = stripAnsiCodes((char*)msg);
   std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
@@ -2655,6 +2815,9 @@ static void updateExplosions(float dt)
 
 static void addExplosions(SceneDatabase *scene)
 {
+  if (GfxBlockMgr::explosions.blocked()) {
+    return;
+  }
   const size_t count = explosions.size();
   for (size_t i = 0; i < count; i++) {
     scene->addDynamicNode(explosions[i]);
@@ -3575,6 +3738,9 @@ static void resetServerVar(const std::string &name, void*)
 
 void leaveGame()
 {
+  eventHandler.ServerParted();
+  LuaClientScripts::LuaWorldFreeHandler();
+
   entered = false;
   joiningGame = false;
 
@@ -3694,6 +3860,16 @@ void leaveGame()
   // purge any custom flags we may have accumulated
   Flags::clearCustomFlags();
 
+  // reload LuaUser and LuaBzOrg in case they were forbidden
+  if (!CommandsStandard::isQuit()) {
+    if (!LuaClientScripts::LuaUserIsActive()) {
+      LuaClientScripts::LuaUserLoadHandler();  
+    }
+    if (!LuaClientScripts::LuaBzOrgIsActive()) {
+      LuaClientScripts::LuaBzOrgLoadHandler();  
+    }
+  }  
+     
   if (hubLink && sayGoodbye) {
     hubLink->serverParted();
   }
@@ -3813,6 +3989,11 @@ void joinInternetGame2()
   while (stack->isActive())
     stack->pop();
 
+  LuaClientScripts::LuaBzOrgUpdateForbidden();
+  LuaClientScripts::LuaUserUpdateForbidden(); 
+  LuaClientScripts::LuaWorldLoadHandler();    
+  eventHandler.ServerJoined();
+
   if (hubLink) {
     hubLink->serverJoined(startupInfo.serverName,
                           startupInfo.serverPort,
@@ -3825,6 +4006,9 @@ void joinInternetGame2()
 
 static void renderDialog()
 {
+  if (GfxBlockMgr::menu.blocked()) {
+    return;
+  }
   if (HUDDialogStack::get()->isActive()) {
     const int width = mainWindow->getWidth();
     const int height = mainWindow->getHeight();
@@ -3855,11 +4039,133 @@ static void checkDirtyControlPanel(ControlPanel *cp)
 }
 
 
+//============================================================================//
+
+static void drawFakeCursor(int type)
+{
+  int mx, my;
+  const int width = mainWindow->getWidth();
+  const int height = mainWindow->getHeight();
+  const int ox = mainWindow->getOriginX();
+  const int oy = mainWindow->getOriginY();
+  mainWindow->getWindow()->getMouse(mx, my);
+  my = height - my - 1; // flip the y axis
+
+  glScissor(ox, oy, width, height);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glLoadIdentity();
+
+  if (type <= 1) {
+    // old style
+    glColor3f(0.0f, 0.0f, 0.0f);
+    glRecti(mx - 8, my - 2, mx - 2, my + 2);
+    glRecti(mx + 2, my - 2, mx + 8, my + 2);
+    glRecti(mx - 2, my - 8, mx + 2, my - 2);
+    glRecti(mx - 2, my + 2, mx + 2, my + 8);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glRecti(mx - 7, my - 1, mx - 3, my + 1);
+    glRecti(mx + 3, my - 1, mx + 7, my + 1);
+    glRecti(mx - 1, my - 7, mx + 1, my - 3);
+    glRecti(mx - 1, my + 3, mx + 1, my + 7);
+  }
+  else {
+    // new style
+    const int xc = ox + (width / 2);
+    const int y2 = oy + (mainWindow->getViewHeight() / 2);
+    const int yc = (height - y2 - 1); // flip the y axis
+
+    glEnable(GL_BLEND);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_POINT_SMOOTH);
+    glShadeModel(GL_SMOOTH);
+
+    const TeamColor myTeam = (myTank != NULL) ? myTank->getTeam()
+                                              : ObserverTeam;
+    if (myTeam != ObserverTeam) {
+      // draw a drag bar
+      const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.2f);
+      const fvec4& teamColor = Team::getRadarColor(myTeam);
+      glLineWidth(1.49f);
+      glBegin(GL_LINES);
+      glColor4fv(fadeWhite); glVertex2i(xc, yc);
+      glColor4fv(teamColor); glVertex2i(mx, my);
+      glEnd();
+      glLineWidth(1.0f);
+    }
+    else {
+      // draw a cross
+      const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.0f);
+      const fvec4 fullWhite(1.0f, 1.0f, 1.0f, 1.0f);
+      const float dist = 16.0f;
+      glLineWidth(1.49f);
+      glBegin(GL_LINES);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i((int)(mx - dist), my);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i((int)(mx + dist), my);
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i(mx, (int)(my - dist));
+      glColor4fv(fullWhite); glVertex2i(mx, my);
+      glColor4fv(fadeWhite); glVertex2i(mx, (int)(my + dist));
+      glEnd();
+      glLineWidth(1.0f);
+    }
+ 
+    glPointSize(6.0f);
+    glBegin(GL_POINTS);
+    glColor3f(1.0f, 1.0f, 1.0f); glVertex2i(mx, my);
+    glEnd();
+
+    glPointSize(3.0f);
+    glBegin(GL_POINTS);
+    glColor3f(0.0f, 0.0f, 0.0f); glVertex2i(mx, my);
+    glEnd();
+    glPointSize(1.0f);
+
+    glShadeModel(GL_FLAT);
+    glDisable(GL_POINT_SMOOTH);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_BLEND);
+  }
+
+  glPopMatrix();
+}
+
+
+void handleMouseDrawing()
+{
+  static bool cursorIsHidden = false;
+  static BZDB_int fakeCursor("fakecursor");
+  const bool gfxBlocked = GfxBlockMgr::cursor.blocked();
+
+  if (fakeCursor || gfxBlocked) {
+    if (!cursorIsHidden) {
+      cursorIsHidden = true;
+      mainWindow->getWindow()->hideMouse();
+    }
+    if (fakeCursor && !gfxBlocked) {
+      drawFakeCursor(fakeCursor);
+    }
+  }
+  else {
+    if (cursorIsHidden) {
+      cursorIsHidden = false;
+      mainWindow->getWindow()->showMouse();
+    }
+  }
+}
+
+
 static void renderRoamMouse()
 {
   if (!ROAM.isRoaming() ||
       !myTank || !myTank->isObserver() ||
-      !(leftButton || rightButton || middleButton)) {
+      !(leftMouseButton || rightMouseButton || middleMouseButton)) {
     return;
   }
 
@@ -3904,6 +4210,8 @@ static void renderRoamMouse()
 
 static void drawUI()
 {
+  eventHandler.DrawScreenStart();
+
   // setup the triangle counts  (FIXME: hackish)
   if (showDrawFPS && showDrawTime) {
     hud->setFrameTriangleCount(RENDERER.getFrameTriangleCount());
@@ -3923,27 +4231,40 @@ static void drawUI()
   }
 
   // draw the control panel
-  if (controlPanel) {
-    controlPanel->render(RENDERER);
+  if (GfxBlockMgr::console.notBlocked()) {
+    if (controlPanel) {
+      controlPanel->render(RENDERER);
+    }
   }
 
   // draw the radar
-  if (radar) {
-    const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
-    const bool observer = myTank && myTank->isObserver();
-    radar->render(RENDERER, showBlankRadar, observer);
+  if (GfxBlockMgr::radar.notBlocked()) {
+    if (radar) {
+      const bool showBlankRadar = !myTank || (myTank && myTank->isPaused());
+      const bool observer = myTank && myTank->isObserver();
+      radar->render(RENDERER, showBlankRadar, observer);
+    }
   }
+
+  // before the dialogs
+  eventHandler.DrawScreen();
 
   // update the HUD (menus)
   renderDialog();
 
   // render the drag-line
-  renderRoamMouse();
+  if (GfxBlockMgr::cursor.notBlocked()) {
+    renderRoamMouse();
+  }
+
+  // render the cursor
+  handleMouseDrawing();
 
   return;
 }
 
 
+//============================================================================//
 //
 // stuff to draw a frame
 //
@@ -4221,16 +4542,16 @@ static void drawAnaglyph()
 {
   ViewFrustum& viewFrustum = RENDERER.getViewFrustum();
 
-  float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
-  float FocalPlane = BZDB.eval(BZDBNAMES.BOXBASE);
+  float eyeDisplacement = 0.25f * BZDBCache::tankWidth;
+  float focalPlane = BZDB.eval(BZDBNAMES.BOXBASE);
   if (BZDB.isSet("eyesep"))
-    EyeDisplacement = BZDB.eval("eyesep");
+    eyeDisplacement = BZDB.eval("eyesep");
   if (BZDB.isSet("focal"))
-    FocalPlane = BZDB.eval("focal");
+    focalPlane = BZDB.eval("focal");
 
   // setup view for left eye
   glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
-  viewFrustum.setOffset(EyeDisplacement, FocalPlane);
+  viewFrustum.setOffset(eyeDisplacement, focalPlane);
 
   // draw left eye's view
   RENDERER.render(false);
@@ -4240,7 +4561,7 @@ static void drawAnaglyph()
   glColorMask(GL_FALSE, GL_TRUE, GL_TRUE, GL_FALSE);
   // for red/blue to somewhat work ...
   //glColorMask(GL_FALSE, GL_FALSE, GL_TRUE, GL_FALSE);
-  viewFrustum.setOffset(-EyeDisplacement, FocalPlane);
+  viewFrustum.setOffset(-eyeDisplacement, focalPlane);
 
   // draw right eye's view
   RENDERER.render(true, true);
@@ -4489,132 +4810,15 @@ static void addDynamicSceneNodes()
   addExplosions(scene);
 
   // if inside a building, add some eighth dimension scene nodes.
-  const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
-  for (unsigned int n = 0; n < list.size(); n++) {
-    const Obstacle *obs = list[n];
-    const int nodeCount = obs->getInsideSceneNodeCount();
-    SceneNode **nodeList = obs->getInsideSceneNodeList();
-    for (int o = 0; o < nodeCount; o++) {
-      scene->addDynamicNode(nodeList[o]);
-    }
-  }
-}
-
-
-//============================================================================//
-
-static void drawFakeCursor(int type)
-{
-  int mx, my;
-  const int width = mainWindow->getWidth();
-  const int height = mainWindow->getHeight();
-  const int ox = mainWindow->getOriginX();
-  const int oy = mainWindow->getOriginY();
-  mainWindow->getWindow()->getMouse(mx, my);
-  my = height - my - 1; // flip the y axis
-
-  glScissor(ox, oy, width, height);
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
-  if (type <= 1) {
-    // old style
-    glColor3f(0.0f, 0.0f, 0.0f);
-    glRecti(mx - 8, my - 2, mx - 2, my + 2);
-    glRecti(mx + 2, my - 2, mx + 8, my + 2);
-    glRecti(mx - 2, my - 8, mx + 2, my - 2);
-    glRecti(mx - 2, my + 2, mx + 2, my + 8);
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-    glRecti(mx - 7, my - 1, mx - 3, my + 1);
-    glRecti(mx + 3, my - 1, mx + 7, my + 1);
-    glRecti(mx - 1, my - 7, mx + 1, my - 3);
-    glRecti(mx - 1, my + 3, mx + 1, my + 7);
-  }
-  else {
-    // new style
-    const int xc = ox + (width / 2);
-    const int y2 = oy + (mainWindow->getViewHeight() / 2);
-    const int yc = (height - y2 - 1); // flip the y axis
-
-    glEnable(GL_BLEND);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
-    glShadeModel(GL_SMOOTH);
-
-    const TeamColor myTeam = (myTank != NULL) ? myTank->getTeam()
-                                              : ObserverTeam;
-    if (myTeam != ObserverTeam) {
-      // draw a drag bar
-      const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.2f);
-      const fvec4& teamColor = Team::getRadarColor(myTeam);
-      glLineWidth(1.49f);
-      glBegin(GL_LINES);
-      glColor4fv(fadeWhite); glVertex2i(xc, yc);
-      glColor4fv(teamColor); glVertex2i(mx, my);
-      glEnd();
-      glLineWidth(1.0f);
-    }
-    else {
-      // draw a cross
-      const fvec4 fadeWhite(1.0f, 1.0f, 1.0f, 0.0f);
-      const fvec4 fullWhite(1.0f, 1.0f, 1.0f, 1.0f);
-      const float dist = 16.0f;
-      glLineWidth(1.49f);
-      glBegin(GL_LINES);
-      glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i((int)(mx - dist), my);
-      glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i((int)(mx + dist), my);
-      glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i(mx, (int)(my - dist));
-      glColor4fv(fullWhite); glVertex2i(mx, my);
-      glColor4fv(fadeWhite); glVertex2i(mx, (int)(my + dist));
-      glEnd();
-      glLineWidth(1.0f);
-    }
- 
-    glPointSize(6.0f);
-    glBegin(GL_POINTS);
-    glColor3f(1.0f, 1.0f, 1.0f); glVertex2i(mx, my);
-    glEnd();
-
-    glPointSize(3.0f);
-    glBegin(GL_POINTS);
-    glColor3f(0.0f, 0.0f, 0.0f); glVertex2i(mx, my);
-    glEnd();
-    glPointSize(1.0f);
-
-    glShadeModel(GL_FLAT);
-    glDisable(GL_POINT_SMOOTH);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_BLEND);
-  }
-
-  glPopMatrix();
-}
-
-
-void handleMouseDrawing()
-{
-  static bool cursorIsHidden = false;
-  static BZDB_int fakeCursor("fakecursor");
-
-  if (fakeCursor) {
-    if (!cursorIsHidden) {
-      cursorIsHidden = true;
-      mainWindow->getWindow()->hideMouse();
-    }
-    drawFakeCursor(fakeCursor);
-  }
-  else {
-    if (cursorIsHidden) {
-      cursorIsHidden = false;
-      mainWindow->getWindow()->showMouse();
+  if (GfxBlockMgr::insides.notBlocked()) {
+    const std::vector<const Obstacle*> &list = myTank->getInsideBuildings();
+    for (unsigned int n = 0; n < list.size(); n++) {
+      const Obstacle *obs = list[n];
+      const int nodeCount = obs->getInsideSceneNodeCount();
+      SceneNode **nodeList = obs->getInsideSceneNodeList();
+      for (int o = 0; o < nodeCount; o++) {
+        scene->addDynamicNode(nodeList[o]);
+      }
     }
   }
 }
@@ -4779,6 +4983,8 @@ void drawFrame(const float dt)
     }
   }
 
+  eventHandler.DrawGenesis();
+
   // let the hud save off the view matrix so it can do view projections
   if (hud) {
     hud->saveMatrixes(viewFrustum.getViewMatrix(),
@@ -4815,7 +5021,6 @@ void drawFrame(const float dt)
     hud->setDrawTime(-1.0f);
   }
 
-  handleMouseDrawing();
 
   verticalSync();
 
@@ -4872,9 +5077,9 @@ static void updateRoamingCamera(float dt)
   static Roaming::RoamingCamera prevDeltaCamera;
   static bool inited = false;
   static int prevMouseBits = 0;
-  int currMouseBits = (leftButton   ? leftMouseBit   : 0) |
-                      (rightButton  ? rightMouseBit  : 0) |
-                      (middleButton ? middleMouseBit : 0);
+  int currMouseBits = (leftMouseButton   ? leftMouseBit   : 0) |
+                      (rightMouseButton  ? rightMouseBit  : 0) |
+                      (middleMouseButton ? middleMouseBit : 0);
 
   if (!inited) {
     memset(&prevDeltaCamera, 0, sizeof(Roaming::RoamingCamera));
@@ -5187,8 +5392,8 @@ void handleJoyStick(void)
       if ((old_buttons & (1<<j)) != (new_buttons & (1<<j))) {
 	BzfKeyEvent ev;
 	ev.button = button_map[j];
-	ev.chr = 0;
-	ev.shift = 0;
+	ev.unicode = 0;
+	ev.modifiers = 0;
 	doKey(ev, (new_buttons & (1<<j)) != 0);
       }
     }
@@ -5220,8 +5425,8 @@ void handleJoyStick(void)
 	  if (((old_direction[j] ^ hat_direction) & mask) != 0) {
 	    BzfKeyEvent ev;
 	    ev.button = hatswitch_map[j * 4 + k];
-	    ev.chr = 0;
-	    ev.shift = 0;
+	    ev.unicode = 0;
+	    ev.modifiers = 0;
 	    doKey(ev, (hat_direction & mask) != 0);
 	  }
 	}
@@ -5618,14 +5823,24 @@ static void playingLoop()
       serverLink->flush();
     }
 
+    LuaClientScripts::LuaUserUpdate();
+    LuaClientScripts::LuaBzOrgUpdate();
+    LuaClientScripts::LuaWorldUpdate();
+
+    eventHandler.Update();
+    eventHandler.Purify();
+
     // prep the HUD
     prepareTheHUD();
 
     // draw the frame
     if (!unmapped) {
       drawFrame(dt);
+      // NOTE: eventHandler.DrawGenesis() is called in drawFrame(),
+      //       after it has setup a number of parameters
     }
     else { // wait around a little to avoid spinning the CPU when iconified
+      eventHandler.DrawGenesis(); // called every frame
       TimeKeeper::sleep(0.05f);
     }
 
@@ -5907,6 +6122,12 @@ static void globalBZDBCallback(const std::string& varName, void*)
   }
 }
 
+
+static void BZDBGlobalCallback(const std::string& name, void* /*userData*/)
+{
+  eventHandler.BZDBChange(name);
+}
+ 
 
 void startPlaying()
 {
@@ -6265,13 +6486,22 @@ void startPlaying()
     joinRequested = true;
     showMessage("Trying...");
   } else {
-    mainMenu->createControls();
-    HUDDialogStack::get()->push(mainMenu);
+    if (!BZDB.isTrue("noStartupMenu")) {
+      mainMenu->createControls();
+      HUDDialogStack::get()->push(mainMenu);
+    }
   }
 
   // set up the cache singleton to work in the data dir
   std::string cacheDir = getCacheDirName();
   CACHEMGR.setCacheDirectory(cacheDir);
+
+  setupVFS();
+  BZDB.addGlobalCallback(BZDBGlobalCallback, NULL);
+  OpenGLPassState::Init();
+  LuaClientScripts::Init();
+  LuaClientScripts::LuaUserLoadHandler();
+  LuaClientScripts::LuaBzOrgLoadHandler();
 
     //////////
    ////////////
@@ -6281,6 +6511,12 @@ void startPlaying()
    ////////////
     //////////
 
+  LuaClientScripts::LuaBzOrgFreeHandler();
+  LuaClientScripts::LuaUserFreeHandler(); 
+  LuaClientScripts::Free();
+  OpenGLPassState::Free(); 
+  BZDB.removeGlobalCallback(BZDBGlobalCallback, NULL);
+
   // clean up
   BZDB.removeGlobalCallback(globalBZDBCallback, NULL);
   TankGeometryMgr::kill();
@@ -6289,8 +6525,12 @@ void startPlaying()
     delete resourceDownloader;
   }
   delete motd;
-  for (unsigned int ext = 0; ext < prototypeExplosions.size(); ext++) {
-    delete prototypeExplosions[ext];
+  for (size_t e = 0; e < explosions.size(); e++) {
+    delete explosions[e];
+  }
+  explosions.clear();
+  for (size_t e = 0; e < prototypeExplosions.size(); e++) {
+    delete prototypeExplosions[e];
   }
   prototypeExplosions.clear();
   leaveGame();

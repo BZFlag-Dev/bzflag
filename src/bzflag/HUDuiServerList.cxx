@@ -579,7 +579,7 @@ void HUDuiServerList::refreshNavQueue()
 
 bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 {
-  if (key.chr == 0) {
+  if (key.unicode == 0) {
     switch (key.button) {
       case BzfKeyEvent::Down: {
         if (hasFocus())
@@ -606,7 +606,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
       }
     }
   }
-  else if ((key.chr == 's') || (key.chr == ' ')) {
+  else if ((key.unicode == 's') || (key.unicode == ' ')) {
     if (hasFocus()) {
       if (getActiveColumn() == sortMode) {
 	reverseSort = !reverseSort;
@@ -622,7 +622,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
       }
     }
   }
-  else if (key.chr == '+') {
+  else if (key.unicode == '+') {
     if (hasFocus()) {
       switch (getActiveColumn()) {
         case DomainName: {
@@ -652,7 +652,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
       update();
     }
   }
-  else if (key.chr == '-') {
+  else if (key.unicode == '-') {
     if (hasFocus()) {
       switch (getActiveColumn()) {
         case DomainName: {
@@ -683,14 +683,14 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
     }
   }
 
-  if (key.chr == 'd') {
+  if (key.unicode == 'd') {
     if (hasFocus()) {
       devInfo = !devInfo;
     }
   }
 
   // This doesn't appear to do anything?
-  switch (key.chr) {
+  switch (key.unicode) {
     case 13: // Return
     case 27: {
       return false;

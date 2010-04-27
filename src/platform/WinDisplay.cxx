@@ -269,8 +269,8 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_MBUTTONDOWN:
 	case WM_RBUTTONDOWN:
 		event.type = BzfEvent::KeyDown;
-		event.keyDown.chr = 0;
-		event.keyDown.shift = 0;
+		event.keyDown.unicode = 0;
+		event.keyDown.modifiers = 0;
 		switch (msg.message) {
 	case WM_LBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::LeftMouse; break;
 	case WM_MBUTTONDOWN:	event.keyDown.button = BzfKeyEvent::MiddleMouse; break;
@@ -283,8 +283,8 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_MBUTTONUP:
 	case WM_RBUTTONUP:
 		event.type = BzfEvent::KeyUp;
-		event.keyUp.chr = 0;
-		event.keyUp.shift = 0;
+		event.keyUp.unicode = 0;
+		event.keyUp.modifiers = 0;
 		switch (msg.message) {
 	case WM_LBUTTONUP:	event.keyUp.button = BzfKeyEvent::LeftMouse; break;
 	case WM_MBUTTONUP:	event.keyUp.button = BzfKeyEvent::MiddleMouse; break;
@@ -296,15 +296,15 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 	case WM_MOUSEWHEEL:{
 
 		event.type = BzfEvent::KeyDown;
-		event.keyDown.chr = 0;
-		event.keyDown.shift = 0;
+		event.keyDown.unicode = 0;
+		event.keyDown.modifiers = 0;
 
 		if (LOWORD(msg.wParam) == MK_SHIFT)
-			event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+			event.keyDown.modifiers |= BzfKeyEvent::ShiftKey;
 		if (LOWORD(msg.wParam) == MK_CONTROL)
-			event.keyDown.shift |= BzfKeyEvent::ControlKey;
+			event.keyDown.modifiers |= BzfKeyEvent::ControlKey;
 		if (LOWORD(msg.wParam) == MK_ALT)
-			event.keyDown.shift |= BzfKeyEvent::AltKey;
+			event.keyDown.modifiers |= BzfKeyEvent::AltKey;
 
 		short field = HIWORD(msg.wParam);
 		if (field > 0)
@@ -368,10 +368,10 @@ void			WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt) {
 bool			WinDisplay::getKey(const MSG& msg,
 					BzfKeyEvent& key) const
 {
-  key.shift = key.chr = key.button = 0;
-  if (GetKeyState(VK_SHIFT) < 0)	key.shift |= BzfKeyEvent::ShiftKey;
-  if (GetKeyState(VK_CONTROL) < 0)	key.shift |= BzfKeyEvent::ControlKey;
-  if (GetKeyState(VK_MENU) < 0)		key.shift |= BzfKeyEvent::AltKey;
+  key.modifiers = key.unicode = key.button = 0;
+  if (GetKeyState(VK_SHIFT) < 0)	key.modifiers |= BzfKeyEvent::ShiftKey;
+  if (GetKeyState(VK_CONTROL) < 0)	key.modifiers |= BzfKeyEvent::ControlKey;
+  if (GetKeyState(VK_MENU) < 0)		key.modifiers |= BzfKeyEvent::AltKey;
 
   // We recieve key messages as follows: WM_KEYDOWN, (translated) WM_CHAR, WM_KEYUP
   // This means that in order to get a char for WM_KEYUP we must save the CHAR that follows
@@ -389,7 +389,7 @@ bool			WinDisplay::getKey(const MSG& msg,
   //	 a key is held down.
   // So, with this in mind, we must store either the WM_CHAR, or the lack of one, during
   // each WM_KEYDOWN, and read it during WM_KEYUP, such that the KeyUp event gets the
-  // same .chr member as the immediately preceding KeyDown event on the same key.
+  // same .unicode member as the immediately preceding KeyDown event on the same key.
 
   key.button = buttonMap[(int)msg.wParam];
 
@@ -399,23 +399,23 @@ bool			WinDisplay::getKey(const MSG& msg,
 	(cmsg.message == WM_CHAR || cmsg.message == WM_SYSCHAR)) {
       GetMessage(&cmsg, NULL, 0, 0);
       // chr is in UTF-16, so convert it to a codepoint
-      key.chr = cmsg.wParam;
-      if (UNICODE_IS_HIGH_SURROGATE(key.chr >> 16) &&
-          UNICODE_IS_LOW_SURROGATE(key.chr & 0xFFFF)) {
-	key.chr = UNICODE_SURROGATE_TO_UTF32(key.chr >> 16, key.chr & 0xFFFF);
+      key.unicode = cmsg.wParam;
+      if (UNICODE_IS_HIGH_SURROGATE(key.unicode >> 16) &&
+          UNICODE_IS_LOW_SURROGATE(key.unicode & 0xFFFF)) {
+	key.unicode = UNICODE_SURROGATE_TO_UTF32(key.unicode >> 16, key.unicode & 0xFFFF);
       }
-      keyUpDownMap[key.button] = key.chr;
+      keyUpDownMap[key.button] = key.unicode;
     } else if (keyUpDownMap.find(key.button) != keyUpDownMap.end()) {
       // perhaps we already know this character from WM_KEYDOWN?
-      key.chr = keyUpDownMap[key.button];
+      key.unicode = keyUpDownMap[key.button];
       // each WM_KEYDOWN is only good for one WM_KEYUP (necessary for deadkeys)
       keyUpDownMap[key.button] = 0;
     }
   }
 
-  if (key.button == BzfKeyEvent::Delete) key.chr = 0;
+  if (key.button == BzfKeyEvent::Delete) key.unicode = 0;
 
-  return (key.chr != 0 || key.button != 0);
+  return (key.unicode != 0 || key.button != 0);
 }
 
 bool			WinDisplay::isNastyKey(const MSG& msg) const

@@ -25,6 +25,12 @@ static int db_getregistry (lua_State *L) {
 }
 
 
+static int db_getcallins (lua_State *L) {
+  lua_pushvalue(L, LUA_CALLINSINDEX);
+  return 1;
+}
+
+
 static int db_getmetatable (lua_State *L) {
   luaL_checkany(L, 1);
   if (!lua_getmetatable(L, 1)) {
@@ -138,7 +144,7 @@ static int db_getinfo (lua_State *L) {
     treatstackoption(L, L1, "func");
   return 1;  /* return table */
 }
-    
+
 
 static int db_getlocal (lua_State *L) {
   int arg;
@@ -378,6 +384,7 @@ static const luaL_Reg dblib[] = {
   {"getinfo", db_getinfo},
   {"getlocal", db_getlocal},
   {"getregistry", db_getregistry},
+  {"getcallins", db_getcallins},
   {"getmetatable", db_getmetatable},
   {"getupvalue", db_getupvalue},
   {"setfenv", db_setfenv},

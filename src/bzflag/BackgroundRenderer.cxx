@@ -24,6 +24,8 @@
 #include "TextureMatrix.h"
 #include "ParseColor.h"
 #include "BZDBCache.h"
+#include "EventHandler.h"
+#include "GfxBlock.h"
 
 // local headers
 #include "Daylight.h"
@@ -720,7 +722,7 @@ void BackgroundRenderer::addCloudDrift(float uDrift, float vDrift)
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 				   bool mirror)
 {
-  if (!BZDBCache::drawSky) {
+  if (!BZDBCache::drawSky || GfxBlockMgr::sky.blocked()) {
     return;
   }
   if (renderer.useQuality() > _LOW_QUALITY) {
@@ -840,7 +842,8 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
   }
 
   if (!blank) {
-    if (doShadows && shadowsVisible && !drawingMirror) {
+    if (doShadows && shadowsVisible && !drawingMirror &&
+        GfxBlockMgr::shadows.notBlocked()) {
       drawGroundShadows(renderer);
     }
 
@@ -849,7 +852,8 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
-	!drawingMirror && BZDBCache::drawGroundLights) {
+	!drawingMirror && BZDBCache::drawGroundLights &&
+	GfxBlockMgr::lights.notBlocked()) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= _HIGH_QUALITY)) {
 	//	  (BZDB.get(BZDBNAMES.FOGMODE) == "none")) {
 	// not really tesselation, but it is tied to the "Best" lighting,
@@ -866,12 +870,16 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // light the mountains (so that they get dark when the sun goes down).
     // don't do zbuffer test since they occlude all drawn before them and
     // are occluded by all drawn after.
-    if (mountainsVisible && BZDBCache::drawMountains) {
+    if (mountainsVisible &&
+        BZDBCache::drawMountains &&
+        GfxBlockMgr::mountains.notBlocked()) {
       drawMountains();
     }
 
     // draw clouds
-    if (cloudsVisible && BZDBCache::drawClouds) {
+    if (cloudsVisible &&
+        BZDBCache::drawClouds &&
+        GfxBlockMgr::clouds.notBlocked()) {
       cloudsGState.setState();
       glMatrixMode(GL_TEXTURE);
       glPushMatrix();
@@ -891,15 +899,19 @@ void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
     return;
   }
 
-  if (update) {
-    weather.update();
+  if (GfxBlockMgr::weather.notBlocked()) {
+    if (update) {
+      weather.update();
+    }
+    weather.draw(renderer);
   }
-  weather.draw(renderer);
 
-  if (update) {
-    EFFECTS.update();
+  if (GfxBlockMgr::effects.notBlocked()) {
+    if (update) {
+      EFFECTS.update();
+    }
+    EFFECTS.draw(renderer);
   }
-  EFFECTS.draw(renderer);
 }
 
 
@@ -1009,7 +1021,7 @@ void BackgroundRenderer::drawSkybox()
   glDisable(GL_CULL_FACE);
   glShadeModel(GL_SMOOTH);
 
-  if (!BZDBCache::drawGround) {
+  if (!BZDBCache::drawGround || GfxBlockMgr::ground.blocked()) {
     tm.bind(skyboxTexID[5]); // bottom
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
@@ -1137,7 +1149,8 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
   glLoadIdentity();
   renderer.getViewFrustum().executeOrientation();
 
-  const bool drawCelestial = BZDBCache::drawCelestial;
+  const bool drawCelestial = BZDBCache::drawCelestial &&
+                             GfxBlockMgr::stars.notBlocked();
   const bool useClipPlane = (mirror && (doSkybox || drawCelestial));
 
   if (useClipPlane) {
@@ -1183,7 +1196,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
 void BackgroundRenderer::drawGround()
 {
-  if (!BZDBCache::drawGround) {
+  if (!BZDBCache::drawGround || GfxBlockMgr::ground.blocked()) {
     return;
   }
   // draw ground
@@ -1358,6 +1371,7 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 
   // render those nodes
   renderer.getShadowList().render();
+  eventHandler.DrawWorldShadow();
 
   // revert to OpenGLGState defaults
   if (stencil) {

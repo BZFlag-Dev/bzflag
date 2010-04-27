@@ -15,6 +15,7 @@
 
 // common headers
 #include "BZDBCache.h"
+#include "EventHandler.h"
 #include "Intersect.h"
 #include "LinkManager.h"
 #include "MeshFace.h"
@@ -392,6 +393,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     if (!physics->shotPassText.empty()) {
       addMessage(NULL, TextUtils::unescape_colors(physics->shotPassText));
     }
+    eventHandler.ShotTeleported(getPath(), linkSrcID, linkDstID);
     return t;
   }
   else if (building) {

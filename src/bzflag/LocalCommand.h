@@ -36,6 +36,8 @@ class LocalCommand {
     typedef std::map<std::string, LocalCommand *> MapOfCommands;
 
     static MapOfCommands* mapOfCommands;
+
+    static bool (*fallback)(const char* command);
 };
 
 #endif

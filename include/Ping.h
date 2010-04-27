@@ -56,8 +56,8 @@ class PingPacket {
 
   public:
     ServerId		serverId;
-    Address			sourceAddr;
-	uint16_t		gameType;
+    Address		sourceAddr;
+    uint16_t		gameType;
     uint16_t		gameOptions;
     uint16_t		maxShots;
     uint16_t		shakeWins;

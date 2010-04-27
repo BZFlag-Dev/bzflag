@@ -20,6 +20,7 @@
 /* common implementation headers */
 #include "BzfEvent.h"
 #include "KeyManager.h"
+#include "EventHandler.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -37,9 +38,9 @@ unsigned int messageHistoryIndex = 0;
 
 static bool isWordCompletion(const BzfKeyEvent& key)
 {
-  if ((key.chr == 6) || // ^F
-      (key.chr == 9) || // <TAB>
-      ((key.shift == 0) && (key.button == BzfKeyEvent::F2))) {
+  if ((key.unicode == 6) || // ^F
+      (key.unicode == 9) || // <TAB>
+      ((key.modifiers == 0) && (key.button == BzfKeyEvent::F2))) {
     return true;
   } else {
     return false;
@@ -82,7 +83,10 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     // use a custom AutoCompleter for local variables
     const std::string tag = "/localset";
     if ((line.size() < tag.size()) || (line.substr(0, tag.size()) != tag)) {
-      completer.complete(line, partials);
+      if (!BZDB.isTrue("noDefaultWordComplete")) {
+        completer.complete(line, partials);
+      }
+      eventHandler.WordComplete(line, partials);
       if (hubLink) {
         hubLink->wordComplete(line, partials);
       }
@@ -123,7 +127,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
-  switch (key.chr) {
+  switch (key.unicode) {
     case 3: // ^C
     case 27: { // escape
       sendIt = false; // finished composing -- don't send
@@ -212,7 +216,7 @@ bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       }
       return true;
     }
-    else if (myTank && (((key.shift == BzfKeyEvent::ShiftKey) ||
+    else if (myTank && (((key.modifiers == BzfKeyEvent::ShiftKey) ||
 			 (hud->getComposeString().length() == 0)) &&
 			((key.button == BzfKeyEvent::Left) ||
 			 (key.button == BzfKeyEvent::Right)))) {
@@ -231,9 +235,9 @@ bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
     }
   }
 
-  if ((key.chr == 4) || // ^D
-      (key.chr == 6) || // ^F
-      (key.chr == 13) || // return
+  if ((key.unicode == 4) || // ^D
+      (key.unicode == 6) || // ^F
+      (key.unicode == 13) || // return
       isWordCompletion(key)) {
     return true;
   }

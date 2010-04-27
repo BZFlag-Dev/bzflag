@@ -28,6 +28,7 @@
 #endif
 
 // common headers
+#include "bzsignal.h"
 #include "AccessList.h"
 #include "AnsiCodes.h"
 #include "AresHandler.h"
@@ -36,12 +37,13 @@
 #include "CacheManager.h"
 #include "CommandsStandard.h"
 #include "Downloads.h"
+#include "EventHandler.h"
 #include "FileManager.h"
 #include "GameTime.h"
+#include "LuaClientScripts.h"
+#include "MsgStrings.h"
 #include "ServerList.h"
 #include "TextUtils.h"
-#include "bzsignal.h"
-#include "MsgStrings.h"
 
 
 // common client headers
@@ -405,6 +407,16 @@ void handlePendingJoins(void)
   if (!joinRequested) {
     return;
   }
+
+  if (LuaClientScripts::GetDevMode()) {
+    strcpy(startupInfo.callsign, "devmode");
+    if (strcmp(startupInfo.serverName, "127.0.0.1") != 0) {
+      addMessage(NULL,
+        "ABORTING!!!  -- you can only join '127.0.0.1' when using '-devmode'");
+      joinRequested = false;
+      return;
+    }
+  }  
 
   // if already connected to a game then first sign off
   if (myTank)
@@ -906,6 +918,8 @@ static bool removePlayer (PlayerId id)
 
   Player *p = getPlayerByIndex(playerIndex);
 
+  eventHandler.PlayerRemoved(*p);
+
   Address addr;
   std::string msg = "signing off";
   if (!p->getIpAddress(addr)) {
@@ -1262,6 +1276,14 @@ void handleAddPlayer(void* msg, bool& checkScores)
       setTankFlags(); // update the tank flags when in replay mode.
     }
   }
+
+  const int index = lookupPlayerIndex(id);
+  if ((index >= 0) || (index == -2)) {
+    const Player* player = getPlayerByIndex(index);
+    if (player) {
+      eventHandler.PlayerAdded(*player);
+    }
+  }  
 }
 
 
@@ -1383,6 +1405,8 @@ void handleDropFlag(void *msg)
     return;
 
   handleFlagDropped(tank);
+
+  eventHandler.FlagDropped(flag, *tank);
 }
 
 
@@ -1646,7 +1670,29 @@ void handleForceState(void *msg)
 }
 
 
-void handleMovementUpdate(uint16_t code, void *msg)
+static void handleLuaData(void *msg)
+{
+  PlayerId srcPlayerID;
+  int16_t  srcScriptID;
+  PlayerId dstPlayerID;
+  int16_t  dstScriptID;
+  uint8_t  statusBits; 
+  std::string data;    
+
+  msg = nboUnpackUInt8(msg, srcPlayerID);
+  msg = nboUnpackInt16(msg, srcScriptID);
+  msg = nboUnpackUInt8(msg, dstPlayerID);
+  msg = nboUnpackInt16(msg, dstScriptID);
+  msg = nboUnpackUInt8(msg, statusBits); 
+  msg = nboUnpackStdStringRaw(msg, data);
+
+  eventHandler.RecvLuaData(srcPlayerID, srcScriptID,
+                           dstPlayerID, dstScriptID,
+                           statusBits,  data);
+}
+
+
+void handlePlayerUpdate(uint16_t code, void *msg)
 {
   double timestamp;
   PlayerId id;
@@ -1663,10 +1709,12 @@ void handleMovementUpdate(uint16_t code, void *msg)
   nboUnpackInt32(buf, order); // peek
   if (order <= tank->getOrder())
     return;
-  short oldStatus = tank->getStatus();
+  const short oldStatus = tank->getStatus();
+  const float oldJumpJets = tank->getState().jumpJetsScale;
 
   tank->unpack(msg, code); // now read
-  short newStatus = tank->getStatus();
+  const short newStatus = tank->getStatus();
+  const float newJumpJets = tank->getState().jumpJetsScale;
 
   if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
     // player has started exploding and we haven't gotten killed
@@ -1676,6 +1724,12 @@ void handleMovementUpdate(uint16_t code, void *msg)
     tank->setStatus(newStatus | short(PlayerState::Alive));
     tank->setExplode(TimeKeeper::getTick());
     // ROBOT -- play explosion now
+  }
+
+  const bool oldJump = oldStatus & short(PlayerState::JumpJets);
+  const bool newJump = newStatus & short(PlayerState::JumpJets);
+  if (newJump && (!oldJump || (oldJumpJets < newJumpJets))) {
+    eventHandler.PlayerJumped(*tank);
   }
 }
 
@@ -2003,7 +2057,7 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
     // inter-player relayed message
     case MsgPlayerUpdate:
     case MsgPlayerUpdateSmall: {
-      handleMovementUpdate(code, msg);
+      handlePlayerUpdate(code, msg);
       break;
     }
     case MsgQueryGL: {
@@ -2037,6 +2091,11 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
     case MsgLimboMessage: {
       handleLimboMessage(msg);
       break;
+    }
+    case MsgLuaData:   
+    case MsgLuaDataFast: {
+      handleLuaData(msg);
+      break;             
     }
     case MsgPlayerData: {
       handlePlayerData(msg);

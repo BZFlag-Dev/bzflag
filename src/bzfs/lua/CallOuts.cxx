@@ -27,25 +27,27 @@
 
 // common headers
 #include "bzfio.h"
-#include "TextUtils.h"
-#include "PlayerState.h"
-#include "LinkManager.h"
-#include "MeshFace.h"
 #include "bzfsAPI.h"
 #include "vectors.h"
 #include "version.h"
+#include "GameTime.h"
+#include "LinkManager.h"
+#include "MeshFace.h"
+#include "PlayerState.h"
+#include "TextUtils.h"
 
 // bzfs headers
-#include "../bzfs.h"
-#include "../GameKeeper.h"
-#include "../CmdLineOptions.h"
-#include "../bzfsMessages.h"
-#include "../commands.h"
-#include "../RecordReplay.h"
+#include "bzfs/bzfs.h"
+#include "bzfs/GameKeeper.h"
+#include "bzfs/CmdLineOptions.h"
+#include "bzfs/bzfsMessages.h"
+#include "bzfs/commands.h"
+#include "bzfs/RecordReplay.h"
 
 // local headers
 #include "LuaHeader.h"
 #include "LuaServer.h"
+#include "LuaDouble.h"
 
 
 // FIXME: TODO
@@ -127,6 +129,7 @@ static int AdminSuperKill(lua_State* L);
 static int AdminGameOver(lua_State* L);
 
 static int GetGameType(lua_State* L);
+static int GetGameOptions(lua_State* L);
 static int GetJumpingAllowed(lua_State* L);
 
 static int GetWallHeight(lua_State* L);
@@ -143,9 +146,11 @@ static int SetDebugLevel(lua_State* L);
 
 static int SendMessage(lua_State* L);
 static int SendTeamMessage(lua_State* L);
+static int SendLuaData(lua_State* L);
 static int SendFetchResource(lua_State* L);
 static int SendJoinServer(lua_State* L);
 static int PlaySound(lua_State* L);
+static int SendPlayerVariables(lua_State* L);
 
 static int GetStandardSpawn(lua_State* L);
 static int GetBaseAtPosition(lua_State* L);
@@ -300,6 +305,9 @@ static int ClearMaxWaitTime(lua_State* L);
 static int PlayerQueryGL(lua_State* L);
 
 static int GetTime(lua_State* L);
+static int GetGameTime(lua_State* L);
+static int GetTimer(lua_State* L);
+static int DiffTimers(lua_State* L);
 
 static int DirList(lua_State* L);
 static int CalcMD5(lua_State* L);
@@ -333,6 +341,7 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, AdminGameOver);
 
   PUSH_LUA_CFUNC(L, GetGameType);
+  PUSH_LUA_CFUNC(L, GetGameOptions);
   PUSH_LUA_CFUNC(L, GetJumpingAllowed);
 
   PUSH_LUA_CFUNC(L, GetWallHeight);
@@ -349,9 +358,11 @@ bool CallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, SendMessage);
   PUSH_LUA_CFUNC(L, SendTeamMessage);
+  PUSH_LUA_CFUNC(L, SendLuaData);
   PUSH_LUA_CFUNC(L, SendFetchResource);
   PUSH_LUA_CFUNC(L, SendJoinServer);
   PUSH_LUA_CFUNC(L, PlaySound);
+  PUSH_LUA_CFUNC(L, SendPlayerVariables);
 
   PUSH_LUA_CFUNC(L, GetStandardSpawn);
   PUSH_LUA_CFUNC(L, GetBaseAtPosition);
@@ -510,6 +521,9 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, PlayerQueryGL);
 
   PUSH_LUA_CFUNC(L, GetTime);
+  PUSH_LUA_CFUNC(L, GetGameTime);
+  PUSH_LUA_CFUNC(L, GetTimer);
+  PUSH_LUA_CFUNC(L, DiffTimers);
 
   PUSH_LUA_CFUNC(L, DirList);
   PUSH_LUA_CFUNC(L, CalcMD5);
@@ -640,6 +654,13 @@ static int GetGameType(lua_State* L)
 }
 
 
+static int GetGameOptions(lua_State* L)
+{
+  lua_pushinteger(L, clOptions->gameOptions);
+  return 1;
+}
+
+
 static int GetJumpingAllowed(lua_State* L)
 {
   lua_pushboolean(L, bz_allowJumping());
@@ -757,10 +778,29 @@ static int SendMessage(lua_State* L)
 
 static int SendTeamMessage(lua_State* L)
 {
-  const int          src = luaL_checkint(L, 1);
+  const int	  src = luaL_checkint(L, 1);
   const bz_eTeamType dst = ParseTeam(L, 2);
-  const char*        msg = luaL_checkstring(L, 3);
+  const char*	msg = luaL_checkstring(L, 3);
   lua_pushboolean(L, bz_sendTextMessage(src, dst, msg));
+  return 1;
+}
+
+
+static int SendLuaData(lua_State* L)
+{
+  const int myOrder = 0; // the server
+
+  size_t len;
+  const char* ptr = luaL_checklstring(L, 1, &len);
+  const std::string data(ptr, len);
+
+  const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
+  const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
+  const uint8_t  statusBits  =  (uint8_t)luaL_optint(L, 4, 0);
+
+  lua_pushboolean(L, sendMsgLuaData(ServerPlayer, myOrder,
+				    dstPlayerID, dstScriptID,
+				    statusBits, data));
   return 1;
 }
 
@@ -783,7 +823,7 @@ static int SendJoinServer(lua_State* L)
   const char* referrer = luaL_optstring(L, 5, bz_getPublicAddr().c_str());
   const char* message  = luaL_optstring(L, 6, NULL);
   lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port,
-                                       teamID, referrer, message));
+				       teamID, referrer, message));
   return 1;
 }
 
@@ -801,6 +841,47 @@ static int PlaySound(lua_State* L)
     pos.z = luaL_checkfloat(L, 5);
   }
   lua_pushboolean(L, bz_sendPlayCustomLocalSound(playerID, sound, posPtr));
+  return 1;
+}
+
+
+static int SendPlayerVariables(lua_State* L)
+{
+  const int playerID = luaL_checkint(L, 1);
+  GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playerID);
+  if ((gkPlayer == NULL) || (gkPlayer->netHandler == NULL)) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  const int tableIndex = 2;
+  luaL_checktype(L, tableIndex, LUA_TTABLE);
+
+  std::map<std::string, std::string> varMap;
+  for (lua_pushnil(L); lua_next(L, tableIndex) != 0; lua_pop(L, 1)) {
+    if (lua_israwstring(L, -2) && lua_isstring(L, -1)) {
+      const std::string key = lua_tostring(L, -2);
+      if (!key.empty()) {
+	varMap[key] = lua_tostring(L, -1);
+      }
+    }
+  }
+
+  if (varMap.empty()) {
+    lua_pushboolean(L, false);
+    return 1;
+  }
+
+  NetMsg msg = MSGMGR.newMessage();
+  msg->packUInt16(varMap.size());
+  std::map<std::string, std::string>::const_iterator it;
+  for (it = varMap.begin(); it != varMap.end(); ++it) {
+    msg->packStdString(it->first);
+    msg->packStdString(it->second);
+  }
+  msg->send(gkPlayer->netHandler, MsgSetVar);
+
+  lua_pushinteger(L, (int)varMap.size());
   return 1;
 }
 
@@ -1163,7 +1244,7 @@ static int GetPlayerPhysicsDriver(lua_State* L)
   if (statePtr->phydrv < 0) {
     lua_pushboolean(L, false);
   } else {
-    lua_pushinteger(L, statePtr->phydrv);
+    lua_pushinteger(L, statePtr->phydrv + 1);
   }
   return 1;
 }
@@ -1415,8 +1496,8 @@ static int SetPlayerAutoPilot(lua_State* L)
 //============================================================================//
 
 static bool sendForceState(GameKeeper::Player* gkPlayer,
-                           const fvec3* pos,   const fvec3* vel,
-                           const float* angle, const float* angvel)
+			   const fvec3* pos,   const fvec3* vel,
+			   const float* angle, const float* angvel)
 {
   if (!gkPlayer->netHandler) {
     return false;
@@ -1452,10 +1533,10 @@ static fvec3 checkFVec3Table(lua_State* L, int index)
 
   lua_getfield(L, index, "x");
   if (lua_israwnumber(L, -1)) {
-                                 v.x = luaL_checkfloat(L, -1); lua_pop(L, 1);
+				 v.x = luaL_checkfloat(L, -1); lua_pop(L, 1);
     lua_getfield(L, index, "y"); v.y = luaL_checkfloat(L, -1); lua_pop(L, 1);
     lua_getfield(L, index, "z"); v.z = luaL_checkfloat(L, -1); lua_pop(L, 1);
-    
+
   }
   else {
     lua_pop(L, 1);
@@ -1565,10 +1646,10 @@ static int SetPlayerState(lua_State* L)
   lua_pop(L, 1);
 
   lua_pushboolean(L, sendForceState(player, havePos    ? &pos    : NULL,
-                                            haveVel    ? &vel    : NULL,
-                                            haveAngle  ? &angle  : NULL,
-                                            haveAngVel ? &angvel : NULL));
-    
+					    haveVel    ? &vel    : NULL,
+					    haveAngle  ? &angle  : NULL,
+					    haveAngVel ? &angvel : NULL));
+
   return 1;
 }
 
@@ -1894,9 +1975,9 @@ static int FireWeapon(lua_State* L)
 {
   fvec3 pos;
   const char* flagType = luaL_checkstring(L, 1);
-  pos.x                = luaL_checkfloat(L, 2);
-  pos.y                = luaL_checkfloat(L, 3);
-  pos.z                = luaL_checkfloat(L, 4);
+  pos.x		       = luaL_checkfloat(L, 2);
+  pos.y		       = luaL_checkfloat(L, 3);
+  pos.z		       = luaL_checkfloat(L, 4);
   const float rot      = luaL_optfloat(L, 5,  0.0f);
   const float tilt     = luaL_optfloat(L, 6,  0.0f);
   const float lifeTime = luaL_optfloat(L, 7, -1.0f);
@@ -1904,7 +1985,7 @@ static int FireWeapon(lua_State* L)
   const int   shotID   = luaL_optint(L, 9, -1);
 
   lua_pushboolean(L, bz_fireWorldWep(flagType, lifeTime,
-                                     pos, tilt, rot, shotID , dt));
+				     pos, tilt, rot, shotID , dt));
   return 1;
 }
 
@@ -1913,14 +1994,14 @@ static int FireMissile(lua_State* L)
 {
   fvec3 pos;
   int targetID   = luaL_checkint(L, 1);
-  pos.x          = luaL_checkfloat(L, 2);
-  pos.y          = luaL_checkfloat(L, 3);
-  pos.z          = luaL_checkfloat(L, 4);
+  pos.x		 = luaL_checkfloat(L, 2);
+  pos.y		 = luaL_checkfloat(L, 3);
+  pos.z		 = luaL_checkfloat(L, 4);
   float rot      = luaL_checkfloat(L, 5);
   float tilt     = luaL_optfloat(L, 6,  0.0f);
   float lifeTime = luaL_optfloat(L, 7, -1.0f);
   float dt       = luaL_optfloat(L, 8, -1.0f);
-  
+
   if (lifeTime <= 0.0f) {
     lifeTime = BZDB.eval(BZDBNAMES.RELOADTIME);
   }
@@ -2321,7 +2402,7 @@ static int GetBanEntry(lua_State* L, bz_eBanListType listType)
   lua_pushstring(L, bz_getBanItemSource(listType, entry));
   lua_rawset(L, -3);
   lua_pushliteral(L, "duration");
-  lua_pushdouble(L, bz_getBanItemDuration(listType, entry));
+  LuaDouble::PushDouble(L, bz_getBanItemDuration(listType, entry));
   lua_rawset(L, -3);
   lua_pushliteral(L, "fromMaster");
   lua_pushboolean(L, bz_getBanItemIsFromMaster(listType, entry));
@@ -2393,7 +2474,40 @@ static int PlayerQueryGL(lua_State* L)
 
 static int GetTime(lua_State* L)
 {
-  lua_pushdouble(L, bz_getCurrentTime());
+  LuaDouble::PushDouble(L, bz_getCurrentTime());
+  return 1;
+}
+
+
+static int GetGameTime(lua_State* L)
+{
+  const double gameTime = GameTime::getStepTime();
+  LuaDouble::PushDouble(L, gameTime);
+  return 1;
+}
+
+
+static int GetTimer(lua_State* L)
+{
+  const double nowTime = TimeKeeper::getCurrent().getSeconds();
+  const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
+  lua_pushlightuserdata(L, (void*)millisecs);
+  return 1;
+}
+
+
+static int DiffTimers(lua_State* L)
+{
+  const int args = lua_gettop(L); // number of arguments
+  if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
+    luaL_error(L, "Incorrect arguments to DiffTimers()");
+  }
+  const void* p1 = lua_touserdata(L, 1);
+  const void* p2 = lua_touserdata(L, 2);
+  const uint32_t t1 = *((const uint32_t*)(const void*)&p1);
+  const uint32_t t2 = *((const uint32_t*)(const void*)&p2);
+  const uint32_t diffTime = (t1 - t2);
+  lua_pushfloat(L, float(diffTime) * 0.001f); // return seconds
   return 1;
 }
 
@@ -2425,9 +2539,9 @@ static std::string cleanDirPath(const std::string& path)
 
 
 static bool rawDirList(const std::string& root, const std::string& path,
-                       bool recursive,
-                       std::vector<std::string>& dirs,
-                       std::vector<std::string>& files)
+		       bool recursive,
+		       std::vector<std::string>& dirs,
+		       std::vector<std::string>& files)
 {
 #ifndef WIN32
 
@@ -2445,14 +2559,14 @@ static bool rawDirList(const std::string& root, const std::string& path,
     if (stat((fullPath + name).c_str(), &stbuf) == 0) {
       const std::string filePath = path + name;
       if (!S_ISDIR(stbuf.st_mode)) {
-        files.push_back(filePath);
+	files.push_back(filePath);
       }
       else {
-        const std::string dirPath = filePath + "/";
-        dirs.push_back(dirPath);
-        if (recursive) {
-          rawDirList(root, dirPath, recursive, dirs, files);
-        }
+	const std::string dirPath = filePath + "/";
+	dirs.push_back(dirPath);
+	if (recursive) {
+	  rawDirList(root, dirPath, recursive, dirs, files);
+	}
       }
     }
   }
@@ -2485,7 +2599,7 @@ static bool rawDirList(const std::string& root, const std::string& path,
       const std::string dirPath = filePath + "/";
       dirs.push_back(dirPath);
       if (recursive) {
-        rawDirList(root, dirPath, recursive, dirs, files);
+	rawDirList(root, dirPath, recursive, dirs, files);
       }
     }
   }
@@ -2507,7 +2621,7 @@ static bool rawDirList(const std::string& root, const std::string& path,
 static int DirList(lua_State* L)
 {
   const char* path = luaL_checkstring(L, 1);
-  const bool recursize = lua_tobool(L, 2);
+  const bool recursive = lua_tobool(L, 2);
 
   std::vector<std::string> dirs;
   std::vector<std::string> files;
@@ -2517,7 +2631,7 @@ static int DirList(lua_State* L)
   }
 
   const std::string cleanPath = cleanDirPath(path);
-  if (!rawDirList("", cleanPath, recursize, dirs, files)) {
+  if (!rawDirList("", cleanPath, recursive, dirs, files)) {
     return 0;
   }
 

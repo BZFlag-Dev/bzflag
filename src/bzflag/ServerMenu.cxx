@@ -60,7 +60,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if ((!activeServerList->hasFocus())&&(!menu->tabbedControl->hasFocus())&&
      (activeServerList->getSelectedServer() != NULL)){
     // The favorite key was pressed
-    if (key.chr == 'f') {
+    if (key.unicode == 'f') {
       // Check to see if we're on the favorites list, if we are, ignore keypress
       if (activeServerList == menu->favoritesList) {
 	return false;
@@ -72,7 +72,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     }
 
     // The remove server key was pressed
-    if (key.chr == 'h') {
+    if (key.unicode == 'h') {
       // Design decision: Don't let users remove any servers from the normal server
       // list. Let's keep this as a pure representation of all the available servers
       if (activeServerList == menu->normalList)
@@ -95,7 +95,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   // The clear server list key was pressed
-  if (key.chr == 'c') {
+  if (key.unicode == 'c') {
     // Design decision: Don't let users remove any servers from the normal server
     // list. Let's keep this as a pure representation of all the available servers
     if (activeServerList == menu->normalList)
@@ -125,7 +125,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
   // Remove the current tab. This can be pressed at any
   // time, but only works if the user is on a custom tab.
-  if (key.chr == 'v') {
+  if (key.unicode == 'v') {
     // Do nothing if the user is on any of the standard tabs
     if ((activeServerList == menu->favoritesList) ||
 	(activeServerList == menu->normalList) ||
@@ -140,7 +140,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
 
   // Refresh the server list. This can be done at any time.
-  if (key.chr == 'r') {
+  if (key.unicode == 'r') {
     ServerList::instance().clear();
     ServerList::instance().startServerPings(getStartupInfo());
     return true;
@@ -151,7 +151,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 
 bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
-  switch (key.chr) {
+  switch (key.unicode) {
   case 27: // escape
   case 13: // return
     return true;

@@ -80,6 +80,8 @@ const uint16_t MsgJoinServer        = 0x6a73; // 'js'
 const uint16_t MsgKilled            = 0x6b6c; // 'kl'
 const uint16_t MsgLagState          = 0x6c73; // 'ls'
 const uint16_t MsgLimboMessage      = 0x6c6d; // 'lm'
+const uint16_t MsgLuaData           = 0x6c64; // 'ld'
+const uint16_t MsgLuaDataFast       = 0x6c44; // 'lD'
 const uint16_t MsgMessage           = 0x6d67; // 'mg'
 const uint16_t MsgNewPlayer         = 0x6e70; // 'np'
 const uint16_t MsgNearFlag          = 0x4e66; // 'Nf'
@@ -159,6 +161,8 @@ const uint16_t MsgPingCodeRequest = 0x0404;
 
 const uint16_t MsgEchoRequest  = 0x6572; // 'er'
 const uint16_t MsgEchoResponse = 0x6570; // 'ep'
+
+const uint8_t  MsgLuaDataUdpBit = 0x80;
 
 // rejection codes
 const uint16_t RejectBadRequest     = 0x0000;

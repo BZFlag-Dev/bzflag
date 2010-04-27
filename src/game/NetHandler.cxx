@@ -432,6 +432,7 @@ int NetHandler::pwrite(const void *b, int l)
       case MsgPlayerUpdate:
       case MsgPlayerUpdateSmall:
       case MsgGMUpdate:
+      case MsgLuaDataFast:
       case MsgLagPing:
       case MsgGameTime:
 	useUDP = true;

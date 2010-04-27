@@ -33,19 +33,21 @@ const int FormatMenu::NumColumns = 3;
 
 bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  if (key.chr == 0) switch (key.button) {
-    case BzfKeyEvent::PageUp:
-      if (HUDui::getFocus()) {
-	menu->setPage(menu->page - 1);
+  if (key.unicode == 0) {
+    switch (key.button) {
+      case BzfKeyEvent::PageUp: {
+        if (HUDui::getFocus()) {
+          menu->setPage(menu->page - 1);
+        }
+        return true;
       }
-      return true;
-
-    case BzfKeyEvent::PageDown:
-      if (HUDui::getFocus()) {
-	menu->setPage(menu->page + 1);
+      case BzfKeyEvent::PageDown: {
+        if (HUDui::getFocus()) {
+          menu->setPage(menu->page + 1);
+        }
+        return true;
       }
-      return true;
-
+    }
   }
   return MenuDefaultKey::keyPress(key);
 }
@@ -57,7 +59,7 @@ bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
     case BzfKeyEvent::PageDown:
       return true;
   }
-  switch (key.chr) {
+  switch (key.unicode) {
     case 27:	// escape
     case 13:	// return
       return true;

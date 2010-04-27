@@ -180,8 +180,8 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
 
     case ButtonPress:
       event.type = BzfEvent::KeyDown;
-      event.keyDown.chr = 0;
-      event.keyDown.shift = 0;
+      event.keyDown.unicode = 0;
+      event.keyDown.modifiers = 0;
       switch (xevent.xbutton.button) {
 	case Button1: event.keyDown.button = BzfKeyEvent::LeftMouse; break;
 	case Button2: event.keyDown.button = BzfKeyEvent::MiddleMouse; break;
@@ -192,8 +192,8 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
 
     case ButtonRelease:
       event.type = BzfEvent::KeyUp;
-      event.keyUp.chr = 0;
-      event.keyUp.shift = 0;
+      event.keyUp.unicode = 0;
+      event.keyUp.modifiers = 0;
       switch (xevent.xbutton.button) {
 	case Button1: event.keyUp.button = BzfKeyEvent::LeftMouse; break;
 	case Button2: event.keyUp.button = BzfKeyEvent::MiddleMouse; break;
@@ -236,16 +236,16 @@ bool			XDisplay::getKey(const XEvent& xevent,
   KeySym keysym;
   /* TODO: allow wide character input */
   if (XLookupString((XKeyEvent*)&xevent.xkey, buf, 1, &keysym, NULL) == 1) {
-    key.chr = buf[0];
+    key.unicode = buf[0];
     key.button = BzfKeyEvent::NoButton;
 
     if (keysym == XK_Delete) {
-      key.chr = 0;
+      key.unicode = 0;
       key.button = BzfKeyEvent::Delete;
     }
   }
   else {
-    key.chr = 0;
+    key.unicode = 0;
     switch (keysym) {
       case XK_Pause:	key.button = BzfKeyEvent::Pause; break;
       case XK_Home:	key.button = BzfKeyEvent::Home; break;
@@ -274,10 +274,10 @@ bool			XDisplay::getKey(const XEvent& xevent,
     }
   }
 
-  key.shift = 0;
-  if (xevent.xkey.state & ShiftMask) key.shift |= BzfKeyEvent::ShiftKey;
-  if (xevent.xkey.state & ControlMask) key.shift |= BzfKeyEvent::ControlKey;
-  if (xevent.xkey.state & Mod1Mask) key.shift |= BzfKeyEvent::AltKey;
+  key.modifiers = 0;
+  if (xevent.xkey.state & ShiftMask) key.modifiers |= BzfKeyEvent::ShiftKey;
+  if (xevent.xkey.state & ControlMask) key.modifiers |= BzfKeyEvent::ControlKey;
+  if (xevent.xkey.state & Mod1Mask) key.modifiers |= BzfKeyEvent::AltKey;
   return true;
 }
 

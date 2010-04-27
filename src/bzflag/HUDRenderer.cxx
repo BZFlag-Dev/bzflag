@@ -22,6 +22,7 @@
 #include "Bundle.h"
 #include "FontManager.h"
 #include "BZDBCache.h"
+#include "GfxBlock.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
@@ -680,6 +681,10 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
                                      const float* viewPos, std::string name,
                                      bool friendly)
 {
+  if (GfxBlockMgr::markers.blocked()) {
+    return;
+  }
+ 
   double map[3] = {0,0,0};
   double o[3];
   o[0] = object[0];
@@ -959,13 +964,16 @@ void HUDRenderer::render(void)
       renderNotPlaying(RENDERER);
     }
   } else {
-    const bool showTimes = ((fps > 0.0f)        ||
+    const bool showTimes = GfxBlockMgr::times.notBlocked() &&
+                           ((fps > 0.0f)        ||
                             (drawTime > 0.0f)   ||
                             (triangleCount > 0) ||
                             (radarTriangleCount > 0));
-    const bool showTankLabels = roaming && BZDB.isTrue("displayLabels");
+    const bool showTankLabels = roaming &&
+                                BZDB.isTrue("displayLabels") &&
+                                GfxBlockMgr::labels.notBlocked();
 
-    const bool showCompose2 = showCompose;
+    const bool showCompose2 = showCompose && GfxBlockMgr::compose.notBlocked();
 
     if (showCompose2 || showTimes || showTankLabels) {
       // get view metrics
@@ -1000,6 +1008,10 @@ void HUDRenderer::render(void)
 
 void HUDRenderer::renderAlerts(void)
 {
+  if (GfxBlockMgr::alerts.blocked()) {
+    return;
+  }
+
   const float centerx = 0.5f * (float)window.getWidth();
 
   FontManager &fm = FontManager::instance();
@@ -1027,6 +1039,10 @@ void HUDRenderer::renderAlerts(void)
 
 void HUDRenderer::renderStatus(void)
 {
+  if (GfxBlockMgr::status.blocked()) {
+    return;
+  }
+
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   World *world = World::getWorld();
   if (!myTank || !world) return;
@@ -1243,6 +1259,10 @@ int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
 
 void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
+  if (GfxBlockMgr::labels.blocked()) {
+    return;
+  }
+
   World *world = World::getWorld();
   if (!world) {
     return;
@@ -1302,6 +1322,9 @@ void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
 void HUDRenderer::renderCompose(SceneRenderer&)
 {
+  if (GfxBlockMgr::compose.blocked()) {
+    return;
+  }
   composeTypeIn->render();
   OpenGLGState::resetState();
 }
@@ -1309,6 +1332,10 @@ void HUDRenderer::renderCompose(SceneRenderer&)
 
 void HUDRenderer::renderTimes(void)
 {
+  if (GfxBlockMgr::times.blocked()) {
+    return;
+  }
+
   const int centerx = window.getWidth() >> 1;
   const int centery = window.getViewHeight() >> 1;
   FontManager &fm = FontManager::instance();
@@ -1375,6 +1402,10 @@ void HUDRenderer::renderTimes(void)
 
 void HUDRenderer::renderBox(SceneRenderer&)
 {
+  if (GfxBlockMgr::targetBox.blocked()) {
+    return;
+  }
+
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();
@@ -1600,7 +1631,7 @@ void HUDRenderer::setCracks(bool _showCracks)
 void HUDRenderer::renderUpdate(SceneRenderer& renderer)
 {
   // draw cracks
-  if (showCracks) {
+  if (showCracks && GfxBlockMgr::cracks.notBlocked()) {
     CrackedGlass::Render(renderer);
   }
 
@@ -1696,7 +1727,8 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   }
 
   // draw shot reload status
-  if (BZDB.isTrue("displayReloadTimer")) {
+  if (BZDB.isTrue("displayReloadTimer") &&
+      GfxBlockMgr::shotStatus.notBlocked()) {
     renderShots(myTank);
   }
 
@@ -1704,7 +1736,8 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   renderUpdate(renderer);
 
   // draw the markers, if we should
-  if (!BZDB.isTrue("_forbidMarkers")) {
+  if (!BZDB.isTrue("_forbidMarkers") &&
+      GfxBlockMgr::markers.notBlocked()) {
     bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
     glDisable(GL_TEXTURE_2D);
 
@@ -1716,7 +1749,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   }
 
   // draw flag help
-  if (flagHelpClock.isOn()) {
+  if (flagHelpClock.isOn() && GfxBlockMgr::flagHelp.notBlocked()) {
     hudColor3fv(messageColor);
     flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY;
@@ -1840,7 +1873,8 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
   // draw shot reload status
   if ((ROAM.getMode() == Roaming::roamViewFP) &&
-       BZDB.isTrue("displayReloadTimer")) {
+       BZDB.isTrue("displayReloadTimer") &&
+       GfxBlockMgr::shotStatus.notBlocked()) {
     renderShots(ROAM.getTargetTank());
   }
 
@@ -1848,7 +1882,8 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
   renderUpdate(renderer);
 
   // show tank labels
-  if (BZDB.isTrue("displayLabels")) {
+  if (BZDB.isTrue("displayLabels") &&
+      GfxBlockMgr::labels.notBlocked()) {
     renderTankLabels(renderer);
   }
 

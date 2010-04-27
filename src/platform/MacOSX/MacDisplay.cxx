@@ -75,7 +75,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
   const ::Boolean	removeEventFromQueue = true;
 
   /* initialize the event for safety */
-  bzf_event.keyDown.chr = 0;
+  bzf_event.keyDown.unicode = 0;
 
   bzf_event.type = (BzfEvent::Type)-1;
 
@@ -89,7 +89,7 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
   eventKind = ::GetEventKind(eventRef);
 
   // make note of any modifiers being pressed
-  bzf_event.keyDown.shift = 0;
+  bzf_event.keyDown.modifiers = 0;
   status = GetEventParameter(eventRef,
 			     ::kEventParamKeyModifiers,
 			     ::typeUInt32,
@@ -99,11 +99,11 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 			     &eventModifiers);
   if (eventModifiers & cmdKey) {
     // command and option both serve as bzflag alt even
-    bzf_event.keyDown.shift = BzfKeyEvent::AltKey;
+    bzf_event.keyDown.modifiers = BzfKeyEvent::AltKey;
   }
-  if (eventModifiers & shiftKey) bzf_event.keyDown.shift = BzfKeyEvent::ShiftKey;
-  if (eventModifiers & optionKey) bzf_event.keyDown.shift = BzfKeyEvent::AltKey;
-  if (eventModifiers & controlKey) bzf_event.keyDown.shift = BzfKeyEvent::ControlKey;
+  if (eventModifiers & shiftKey) bzf_event.keyDown.modifiers = BzfKeyEvent::ShiftKey;
+  if (eventModifiers & optionKey) bzf_event.keyDown.modifiers = BzfKeyEvent::AltKey;
+  if (eventModifiers & controlKey) bzf_event.keyDown.modifiers = BzfKeyEvent::ControlKey;
 
   switch(eventClass) {
   case ::kEventClassMouse:
@@ -156,8 +156,8 @@ bool MacDisplay::getEvent (BzfEvent &bzf_event) const {
 	/* consistent wth the rest of the mac experience, a command click is
 	 * the same as a right click.
 	 */
-	if (bzf_event.keyDown.shift == BzfKeyEvent::AltKey) {
-	  bzf_event.keyDown.shift = 0;
+	if (bzf_event.keyDown.modifiers == BzfKeyEvent::AltKey) {
+	  bzf_event.keyDown.modifiers = 0;
 	  bzf_event.keyDown.button = BzfKeyEvent::RightMouse;
 	} else {
 	  bzf_event.keyDown.button = BzfKeyEvent::LeftMouse + eventButtons - 1;
@@ -259,7 +259,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     kF14KeyCode	 = 0x6B,	// Scroll Lock
     kF15KeyCode	 = 0x71	// Pause
   };
-  bzf_key.chr = 0;
+  bzf_key.unicode = 0;
   bzf_key.button = BzfKeyEvent::NoButton;
   switch (char_code) {
   case kUpArrowCharCode   : bzf_key.button = BzfKeyEvent::Up;       break;
@@ -292,7 +292,7 @@ void MacDisplay::getKey (BzfKeyEvent &bzf_key, char char_code, ::UInt32 keycode)
     }
     break;
     // standard key; a-z, 0-9 etc
-  default:	bzf_key.chr  = char_code;		break;
+  default:	bzf_key.unicode  = char_code;		break;
   }
 }
 

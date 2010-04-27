@@ -99,24 +99,24 @@ MeshDrawInfo::MeshDrawInfo(const MeshDrawInfo* di,
 
   // copy extents and sphere  (xform applied later)
   extents = di->extents;
-  sphere = di->sphere;
+  sphere  = di->sphere;
 
   // counts
   cornerCount = di->cornerCount;
-  lodCount = di->lodCount;
-  radarCount = di->radarCount;
+  lodCount    = di->lodCount;
+  radarCount  = di->radarCount;
 
   // referenced data
-  corners = di->corners;
-  vertices = di->vertices;
-  normals = di->normals;
+  corners   = di->corners;
+  vertices  = di->vertices;
+  normals   = di->normals;
   texcoords = di->texcoords;
-  lods = di->lods;
+  lods      = di->lods;
   radarLods = di->radarLods;
-  animInfo = di->animInfo;
+  animInfo  = di->animInfo;
 
   // new data
-  matMap = new MaterialMap(_matMap);
+  matMap    = new MaterialMap(_matMap);
   xformTool = new MeshTransform::Tool(xform);
 
   return;

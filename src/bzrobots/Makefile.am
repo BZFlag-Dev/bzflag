@@ -91,6 +91,9 @@ endif
 bzrobots_LDADD =	\
 	../obstacle/libObstacle.la	\
 	../clientbase/libClientBase.la	\
+	../lua/libLuaClient.la		\
+	../lua/libLuaClientGL.la	\
+	../lua/libLuaGame.la		\
 	../game/libGame.la		\
 	../geometry/libGeometry.la	\
 	../3D/lib3D.la			\

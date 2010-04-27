@@ -19,32 +19,48 @@
 // system headers
 #include <stdio.h>
 #include <ctype.h>
+#include <assert.h>
 #include <string>
 #include <vector>
 
 // common headers
 #include "bzfsAPI.h"
 #include "bzfio.h"
+#include "version.h"
+#include "BzVFS.h"
 #include "DirectoryNames.h"
 #include "TextUtils.h"
-#include "version.h"
+#include "LuaHeader.h"
 
 // bzfs headers
-#include "../bzfs.h"
-#include "../CmdLineOptions.h"
+#include "bzfs/bzfs.h"
+#include "bzfs/CmdLineOptions.h"
 
 //local headers
-#include "LuaHeader.h"
-#include "BZDB.h"
 #include "CallIns.h"
 #include "CallOuts.h"
 #include "Constants.h"
-#include "LuaFloat.h"
-#include "LuaURL.h"
 #include "MapObject.h"
-#include "Obstacles.h"
 #include "RawLink.h"
 #include "SlashCmd.h"
+// from libLuaGame
+#include "LuaDouble.h"
+#include "LuaExtras.h"
+#include "LuaBitOps.h"
+#include "LuaBZDB.h"
+#include "LuaBzMaterial.h"
+#include "LuaDynCol.h"
+#include "LuaHTTP.h"
+#include "LuaObstacle.h"
+#include "LuaPack.h"
+#include "LuaPhyDrv.h"
+#include "LuaTexMat.h"
+#include "LuaVector.h"
+#include "LuaVFS.h"
+#include "LuaZip.h"
+
+
+static const char* sourceFile = "bzServer.lua";
 
 
 //============================================================================//
@@ -61,8 +77,6 @@ static std::string EnvExpand(const std::string& path);
 
 static std::string directory = "./";
 
-static bool SetupLuaDirectory(const std::string& fileName);
-
 
 //============================================================================//
 //============================================================================//
@@ -77,7 +91,7 @@ class UpdateTick : public bz_EventHandler {
 
     void queueReload() {
       if (command != DisableCmd) {
-        command = ReloadCmd;
+	command = ReloadCmd;
       }
     }
 
@@ -87,8 +101,8 @@ class UpdateTick : public bz_EventHandler {
 
     void activate() {
       if (!active) {
-        bz_registerEvent(bz_eTickEvent, this);
-        active = true;
+	bz_registerEvent(bz_eTickEvent, this);
+	active = true;
       }
     }
 
@@ -100,18 +114,18 @@ class UpdateTick : public bz_EventHandler {
   private:
     void process(bz_EventData*) {
       switch (command) {
-        case NoCmd: {
-          break; // do nothing
-        }
-        case DisableCmd: {
-          LuaServer::kill();
-          break;
-        }
-        case ReloadCmd: {
-          LuaServer::kill();
-          LuaServer::init(clOptions->luaServer);
-          break;
-        }
+	case NoCmd: {
+	  break; // do nothing
+	}
+	case DisableCmd: {
+	  LuaServer::kill();
+	  break;
+	}
+	case ReloadCmd: {
+	  LuaServer::kill();
+	  LuaServer::init(clOptions->luaServerDir);
+	  break;
+	}
       }
       command = NoCmd;
     }
@@ -166,34 +180,56 @@ bool LuaServer::init(const std::string& cmdLine)
   }
 
   // dieHard check
-  std::string scriptFile = cmdLine.c_str();
-  if (scriptFile.size() > 8) {
-    if (scriptFile.substr(0, 8) == "dieHard,") {
+  std::string scriptDir = cmdLine.c_str();
+  if (scriptDir.size() > 8) {
+    if (scriptDir.substr(0, 8) == "dieHard,") {
       dieHard = true;
-      scriptFile = scriptFile.substr(8);
+      scriptDir = scriptDir.substr(8);
     }
   }
 
   // leading tilde => $HOME substitution
-  if (!scriptFile.empty() && (scriptFile[0] == '~')) {
-    scriptFile = "$HOME" + scriptFile.substr(1);
+  if (!scriptDir.empty() && (scriptDir[0] == '~')) {
+    scriptDir = "$HOME" + scriptDir.substr(1);
   }
 
-  scriptFile = EnvExpand(scriptFile);
-
-  if (!fileExists(scriptFile)) {
-    scriptFile = getConfigDirName(BZ_CONFIG_DIR_VERSION) + scriptFile;
+  scriptDir = EnvExpand(scriptDir);
+  if (!scriptDir.empty() && (scriptDir[scriptDir.size() - 1] != '/')) {
+    scriptDir += '/';
   }
 
+  const std::string scriptFile = scriptDir + sourceFile;
   if (!fileExists(scriptFile)) {
-    logDebugMessage(1, "LuaServer: could not find the script file\n");
+    logDebugMessage(1, "LuaServer: could not find %s in %s\n",
+		       sourceFile, scriptDir.c_str());
     if (dieHard) {
       exit(2);
     }
     return false;
   }
 
-  SetupLuaDirectory(scriptFile);
+  directory = scriptDir;
+
+  // add the -luaserver directory as readable
+  bzVFS.removeFS(BZVFS_LUA_SERVER);
+  bzVFS.addFS(BZVFS_LUA_SERVER, directory);
+
+  // add a writable cache dir
+  const std::string writeDir = getCacheDirName() + "LuaServer";
+  bzVFS.removeFS(BZVFS_LUA_SERVER_WRITE);
+  bzVFS.addFS(BZVFS_LUA_SERVER_WRITE, writeDir);
+  bzVFS.setFSWritable(BZVFS_LUA_SERVER_WRITE, true);
+  BzVFS::createPathDirs("", BzVFS::cleanDirPath(writeDir));
+
+  // add the -luaworld directory as read/write
+  const std::string luaWorldDir = clOptions->luaWorldDir;
+  if (!luaWorldDir.empty()) {
+    // add the raw filesystem, not the docket
+    bzVFS.removeFS(BZVFS_LUA_WORLD);
+    if (bzVFS.addFS(BZVFS_LUA_WORLD, luaWorldDir)) {
+      bzVFS.setFSWritable(BZVFS_LUA_WORLD, true);
+    }
+  }
 
   if (!CreateLuaState(scriptFile)) {
     if (dieHard) {
@@ -286,7 +322,7 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
 
   if (args.size() < 2) {
     sendMessage(ServerPlayer, playerIndex,
-                "/luaserver < status | disable | reload >");
+		"/luaserver < status | disable | reload >");
     return;
   }
 
@@ -302,7 +338,7 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
   if (args[1] == "disable") {
     if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaServer)) {
       sendMessage(ServerPlayer, playerIndex,
-                  "You do not have permission to control LuaServer");
+		  "You do not have permission to control LuaServer");
       return;
     }
     if (isActive()) {
@@ -317,17 +353,13 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
   if (args[1] == "reload") {
     if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaServer)) {
       sendMessage(ServerPlayer, playerIndex,
-                  "You do not have permission to control LuaServer");
+		  "You do not have permission to control LuaServer");
       return;
     }
+    const std::string srcDir =
+      (args.size() > 2) ? args[2] : clOptions->luaServerDir;
     kill();
-    bool success = false;
-    if (args.size() > 2) {
-      success = init(args[2]);
-    } else {
-      success = init(clOptions->luaServer);
-    }
-    if (success) {
+    if (init(srcDir)) {
       sendMessage(ServerPlayer, playerIndex, "LuaServer reload succeeded");
     } else {
       sendMessage(ServerPlayer, playerIndex, "LuaServer reload failed");
@@ -346,30 +378,32 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
 //============================================================================//
 //============================================================================//
 
-static bool SetupLuaDirectory(const std::string& fileName)
-{
-  const std::string::size_type pos = fileName.find_last_of("/\\");
-  if (pos == std::string::npos) {
-    directory = "./";
-  } else {
-    directory = fileName.substr(0, pos + 1);
-  }
-  return true;
-}
-
-
-//============================================================================//
-//============================================================================//
-
 static bool CreateLuaState(const std::string& script)
 {
+  static LuaVfsModes vfsModes;
+  vfsModes.readDefault  = BZVFS_LUA_SERVER;
+  vfsModes.readAllowed  = BZVFS_ALL;
+  vfsModes.writeDefault = BZVFS_LUA_SERVER_WRITE;
+  vfsModes.writeAllowed = BZVFS_ALL;
+
+  assert(BZ_LUA_EXTRASPACE >= sizeof(LuaExtraSpace));
+
   if (L != NULL) {
     return false;
   }
 
   L = luaL_newstate();
+
+  LuaExtraSpace* LHH = L2ES(L);
+  LHH->handle    = NULL;
+  LHH->handlePtr = NULL;
+  LHH->vfsModes  = &vfsModes;
+  LHH->bzdbReadCheck  = NULL;
+  LHH->bzdbWriteCheck = NULL;
+
   luaL_openlibs(L);
 
+  // adjust package.path and package.cpath
   const std::string lualib = directory + "lualib/";
   const std::string path   = lualib + "?.lua";
   const std::string cpath  = lualib + "?.so;" + lualib + "?.dll";
@@ -378,6 +412,10 @@ static bool CreateLuaState(const std::string& script)
   lua_pushstdstring(L, cpath); lua_setfield(L, -2, "cpath");
   lua_pop(L, 1);
 
+  // add the global error function (traceback)
+  lua_getglobal(L, "debug");
+  lua_getfield(L, -1, "traceback");
+  lua_seterrorfunc(L, luaL_ref(L, LUA_REGISTRYINDEX));
 
   lua_pushliteral(L, "script");
   lua_newtable(L); {
@@ -386,9 +424,15 @@ static bool CreateLuaState(const std::string& script)
   lua_rawset(L, LUA_GLOBALSINDEX);
 
   lua_pushvalue(L, LUA_GLOBALSINDEX);
-  LuaFloat::PushEntries(L);         
-  lua_pop(L, 1); 
-      
+  LuaDouble::PushEntries(L);
+  LuaExtras::PushEntries(L);
+  lua_pop(L, 1);
+
+  lua_getglobal(L, "math");
+  LuaVector::PushEntries(L);
+  LuaBitOps::PushEntries(L);
+  lua_pop(L, 1);
+
   lua_pushliteral(L, "bz");
   lua_newtable(L); {
     CallOuts::PushEntries(L);
@@ -396,24 +440,36 @@ static bool CreateLuaState(const std::string& script)
     SlashCmd::PushEntries(L);
     RawLink::PushEntries(L);
     LuaObstacle::PushEntries(L);
-  }
-  lua_rawset(L, LUA_GLOBALSINDEX);
-
-  lua_pushliteral(L, "url");
-  lua_newtable(L); {
-    LuaURLMgr::PushEntries(L);
-  }
-  lua_rawset(L, LUA_GLOBALSINDEX);
-
-  lua_pushliteral(L, "BZ");
-  lua_newtable(L); {
-    Constants::PushEntries(L);
+    LuaPack::PushEntries(L);
+    LuaBzMaterial::PushEntries(L);
+    LuaDynCol::PushEntries(L);
+    LuaTexMat::PushEntries(L);
+    LuaPhyDrv::PushEntries(L);
+    LuaZip::PushEntries(L);
   }
   lua_rawset(L, LUA_GLOBALSINDEX);
 
   lua_pushliteral(L, "bzdb");
   lua_newtable(L); {
     LuaBZDB::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
+
+  lua_pushliteral(L, "url");
+  lua_newtable(L); {
+    LuaHTTPMgr::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
+
+  lua_pushliteral(L, "vfs");
+  lua_newtable(L); {
+    LuaVFS::PushEntries(L);
+  }
+  lua_rawset(L, LUA_GLOBALSINDEX);
+
+  lua_pushliteral(L, "BZ");
+  lua_newtable(L); {
+    Constants::PushEntries(L);
   }
   lua_rawset(L, LUA_GLOBALSINDEX);
 
@@ -443,7 +499,7 @@ static std::string EnvExpand(const std::string& path)
 
   const char* b = path.c_str(); // beginning of string
   const char* s = b + pos + 1;  // start of the key name
-  const char* e = s;            // end   of the key Name
+  const char* e = s;	    // end   of the key Name
   while ((*e != 0) && (isalnum(*e) || (*e == '_'))) {
     e++;
   }

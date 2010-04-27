@@ -10,16 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef LUA_BZDB_H
-#define LUA_BZDB_H
+#ifndef LUA_CONST_GL_H
+#define LUA_CONST_GL_H
+
 
 struct lua_State;
 
-namespace LuaBZDB {
-  bool PushEntries(lua_State* L);
-}
 
-#endif // LUA_BZDB_H
+class LuaGLConst {
+  public:
+    static bool PushEntries(lua_State* L);
+};
+
+
+#endif // LUA_CONST_GL_H
+
 
 // Local Variables: ***
 // mode: C++ ***

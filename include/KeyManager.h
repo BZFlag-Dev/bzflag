@@ -39,15 +39,14 @@ public:
   typedef IterateCallback ChangeCallback;
 
   // bind/unbind a command to/from a key event press or release
-  void			bind(const BzfKeyEvent&,
-			     bool press, const std::string& cmd);
-  void			unbind(const BzfKeyEvent&, bool press);
+  void bind(const BzfKeyEvent&, bool press, const std::string& cmd);
+  void unbind(const BzfKeyEvent&, bool press);
 
   // unbind all keys bound to a specific command
-  void			unbindCommand(const char* command);
+  void unbindCommand(const char* command);
 
   // get the command for a key event press or release
-  std::string		get(const BzfKeyEvent&, bool press) const;
+  std::string get(const BzfKeyEvent&, bool press) const;
 
   /** returns a set of keypress strings that correspond to keys bound
    * to a particular command
@@ -55,16 +54,16 @@ public:
   std::vector<std::string> getKeysFromCommand(std::string command, bool press) const;
 
   // convert a key event to/from a string
-  std::string		keyEventToString(const BzfKeyEvent&) const;
-  bool			stringToKeyEvent(const std::string&, BzfKeyEvent&) const;
+  std::string keyEventToString(const BzfKeyEvent&) const;
+  bool        stringToKeyEvent(const std::string&, BzfKeyEvent&) const;
 
   // invoke callback for each bound key
-  void			iterate(IterateCallback callback, void* userData);
+  void iterate(IterateCallback callback, void* userData);
 
   // add/remove a callback to invoke when a key binding is added,
   // removed, or changed.
-  void			addCallback(ChangeCallback, void* userData);
-  void			removeCallback(ChangeCallback, void* userData);
+  void addCallback(ChangeCallback, void* userData);
+  void removeCallback(ChangeCallback, void* userData);
 
 protected:
   friend class Singleton<KeyManager>;
@@ -84,13 +83,13 @@ private:
   static bool		onCallback(ChangeCallback, void*, void*);
 
 private:
-	class KeyEventLess {
-	public:
-		bool		operator()(const BzfKeyEvent&,
-			const BzfKeyEvent&) const;
-	};
+  class KeyEventLessThan {
+    public:
+      bool operator()(const BzfKeyEvent&,
+      const BzfKeyEvent&) const;
+  };
 
-  typedef std::map<BzfKeyEvent, std::string, KeyEventLess> EventToCommandMap;
+  typedef std::map<BzfKeyEvent, std::string, KeyEventLessThan> EventToCommandMap;
   typedef std::map<std::string, BzfKeyEvent> StringToEventMap;
 
   EventToCommandMap	pressEventToCommand;

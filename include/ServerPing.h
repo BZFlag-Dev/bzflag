@@ -42,6 +42,7 @@ public:
   void setTimeout(double tms);
   void setInterval(double _interval);
   void doPings();
+
 private:
   void openSocket(); //Dirty low-level stuff
   void closeSocket();

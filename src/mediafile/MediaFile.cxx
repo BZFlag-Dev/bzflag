@@ -16,10 +16,15 @@
 /* system implementation headers */
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <algorithm>
+#include <errno.h>
+#include <string.h>
 
-/* common implementation headers */
+// common headers
 #include "CacheManager.h"
+#include "Pack.h"
+#include "zlib.h"
 
 
 #ifdef WIN32
@@ -30,6 +35,8 @@ static void ConvertPath(std::string &path)
 #endif
 
 
+//============================================================================//
+//============================================================================//
 //
 // MediaFile
 //
@@ -143,6 +150,9 @@ uint32_t MediaFile::swap32BE(uint32_t* d)
 #include "WaveAudioFile.h"
 
 
+//============================================================================//
+//============================================================================//
+
 #define OPENMEDIA(_T)					\
 do {							\
   stream = FILEMGR.createDataInStream(filename, true);	\
@@ -254,6 +264,7 @@ unsigned char* MediaFile::readImage(std::string filename,
 
 
 //============================================================================//
+//============================================================================//
 
 /*
 float* MediaFile::readSound(const std::string& filename,
@@ -337,6 +348,10 @@ float* MediaFile::readSound(const std::string& filename,
   return audio;
 }
 */
+
+
+//============================================================================//
+//============================================================================//
 
 
 // Local Variables: ***

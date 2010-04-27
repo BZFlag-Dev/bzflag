@@ -14,10 +14,11 @@
 #include "JoinMenu.h"
 
 /* common implementation headers */
+#include "AnsiCodes.h"
+#include "Bundle.h"
+#include "BundleMgr.h"
 #include "FontManager.h"
 #include "Protocol.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
@@ -61,7 +62,12 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   callsign->setFontFace(fontFace);
   callsign->setLabel("Callsign:");
   callsign->setMaxLength(CallSignLen - 1);
-  callsign->setString(info->callsign);
+  if (!LuaClientScripts::GetDevMode()) {
+    callsign->setString(info->callsign);
+  } else {
+    callsign->setString(ANSI_STR_FG_BLACK "devmode");
+    callsign->setEditing(false);
+  }
   addControl(callsign);
 
   password = new HUDuiTypeIn;
@@ -100,7 +106,12 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   server->setFontFace(fontFace);
   server->setLabel("Server:");
   server->setMaxLength(64);
-  server->setString(info->serverName);
+  if (!LuaClientScripts::GetDevMode()) {
+    server->setString(info->serverName);
+  } else {
+    server->setString(ANSI_STR_FG_BLACK "127.0.0.1 (devmode)");
+    server->setEditing(false);
+  }
   addControl(server);
 
   char buffer[10];
@@ -145,11 +156,20 @@ void JoinMenu::show()
   StartupInfo* info = getStartupInfo();
 
   // set fields
-  callsign->setString(info->callsign);
+  if (!LuaClientScripts::GetDevMode()) {
+    callsign->setString(info->callsign);
+  } else {
+    callsign->setString(ANSI_STR_FG_BLACK "devmode");
+  }
+
   password->setString(info->password);
   setTeam(info->team);
 
-  server->setString(info->serverName);
+  if (!LuaClientScripts::GetDevMode()) {
+    server->setString(info->serverName);
+  } else {
+    server->setString(ANSI_STR_FG_BLACK "127.0.0.1 (devmode)");
+  }
   char buffer[10];
   sprintf(buffer, "%d", info->serverPort);
   port->setString(buffer);
@@ -168,9 +188,11 @@ void JoinMenu::loadInfo()
 {
   // load startup info with current settings
   StartupInfo* info = getStartupInfo();
-  if (strcmp(info->callsign, callsign->getString().c_str())) {
-    strncpy(info->callsign, callsign->getString().c_str(), CallSignLen-1);
-    info->token[0] = '\0';
+  if (!LuaClientScripts::GetDevMode()) {
+    if (strcmp(info->callsign, callsign->getString().c_str())) {
+      strncpy(info->callsign, callsign->getString().c_str(), CallSignLen-1);
+      info->token[0] = '\0';
+    }
   }
   if (strcmp(info->password, password->getString().c_str())) {
     strncpy(info->password, password->getString().c_str(), PasswordLen-1);
@@ -181,7 +203,11 @@ void JoinMenu::loadInfo()
     info->motto = motto->getString();
 
   info->team = getTeam();
-  strncpy(info->serverName, server->getString().c_str(), ServerNameLen-1);
+  if (!LuaClientScripts::GetDevMode()) {
+    strncpy(info->serverName, server->getString().c_str(), ServerNameLen-1);
+  } else {
+    strcpy(info->serverName, "127.0.0.1");
+  }
   info->serverPort = atoi(port->getString().c_str());
 }
 

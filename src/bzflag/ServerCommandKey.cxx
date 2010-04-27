@@ -366,11 +366,11 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
     }
     if ((key.button == BzfKeyEvent::Left) ||
 	(key.button == BzfKeyEvent::Right)) {
-      return ((key.shift & BzfKeyEvent::AltKey) == 0);
+      return ((key.modifiers & BzfKeyEvent::AltKey) == 0);
     }
   }
 
-  switch (key.chr) {
+  switch (key.unicode) {
     case 3:	// ^C
     case 27: {	// escape
       // case 127:   // delete
@@ -518,9 +518,12 @@ bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
 
-    if ((key.button == BzfKeyEvent::Up)   || (key.button == BzfKeyEvent::Down) ||
-	(key.button == BzfKeyEvent::Left) || (key.button == BzfKeyEvent::Right)) {
-      if ((key.button == BzfKeyEvent::Left) || (key.button == BzfKeyEvent::Right)) {
+    if ((key.button == BzfKeyEvent::Up)   ||
+        (key.button == BzfKeyEvent::Down) ||
+	(key.button == BzfKeyEvent::Left) ||
+	(key.button == BzfKeyEvent::Right)) {
+      if ((key.button == BzfKeyEvent::Left) ||
+          (key.button == BzfKeyEvent::Right)) {
 	// robot stay on the recipient list - to ban eventually ??
 	selectNextRecipient(key.button == BzfKeyEvent::Right, true);
       }

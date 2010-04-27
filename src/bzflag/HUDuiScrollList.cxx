@@ -165,28 +165,29 @@ bool HUDuiScrollList::doKeyPress(const BzfKeyEvent& key)
   // Figure out what page the user is on
   size_t currentPage = (index/numVisibleItems) + 1;
 
-  if (key.chr == 0)
+  if (key.unicode == 0) {
     switch (key.button) {
-
-      case BzfKeyEvent::PageUp:
+      case BzfKeyEvent::PageUp: {
         if (pagedList) {
           // Jump back to the previous page
           getNav().set((currentPage - 2)*numVisibleItems);
         }
         break;
-
-      case BzfKeyEvent::PageDown:
+      }
+      case BzfKeyEvent::PageDown: {
         if (pagedList) {
           // Skip to the next page
           getNav().set((currentPage)*numVisibleItems);
         }
         break;
-
-      default:
+      }
+      default: {
         return false;
+      }
+    }
   }
 
-  switch (key.chr) {
+  switch (key.unicode) {
     case 13:
     case 27:
       return false;

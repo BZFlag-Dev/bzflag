@@ -18,6 +18,9 @@
 #include "GuidedMissleStrategy.h"
 #include "ShockWaveStrategy.h"
 
+// common headers
+#include "EventHandler.h"
+
 
 //============================================================================//
 //
@@ -29,6 +32,7 @@ ShotPath::ShotPath(const FiringInfo& info, double now)
 , reloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
 , expiring(false)
 , expired(false)
+, gfxBlock(GfxBlock::Shot, (info.shot.player << 16) | info.shot.id, true)
 {
   startTime = info.timeSent;
   currentTime = now;
@@ -155,6 +159,7 @@ void ShotPath::setExpired()
   expiring = true;
   expired = true;
   getStrategy()->expire();
+  eventHandler.ShotRemoved(firingInfo);
 }
 
 

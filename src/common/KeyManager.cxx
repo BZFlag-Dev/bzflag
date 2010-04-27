@@ -25,13 +25,19 @@
 #include <string>   // std::string
 #include <vector>
 
-// local implementation headers
-#include "BzfEvent.h"
+
+// common headers
 #include "bzUnicode.h"
+#include "TextUtils.h"
+
+// local headers
+#include "BzfEvent.h"
+
 
 // initialize the singleton
 template <>
 KeyManager* Singleton<KeyManager>::_instance = (KeyManager*)0;
+
 
 const char*		KeyManager::buttonNames[] = {
   "???",
@@ -149,15 +155,15 @@ KeyManager::KeyManager()
 
   // prep string to key map
   BzfKeyEvent key;
-  key.chr  = 0;
-  key.shift  = 0;
+  key.unicode  = 0;
+  key.modifiers  = 0;
   for (i = BzfKeyEvent::Pause; i < BzfKeyEvent::LastButton; ++i) {
     key.button = static_cast<BzfKeyEvent::Button>(i);
     stringToEvent.insert(std::make_pair(std::string(buttonNames[i]), key));
   }
   key.button = BzfKeyEvent::NoButton;
   for (i = 0; i < countof(asciiNames); ++i) {
-    key.chr = asciiNames[i][1][0];
+    key.unicode = asciiNames[i][1][0];
     stringToEvent.insert(std::make_pair(std::string(asciiNames[i][0]), key));
   }
 }
@@ -255,13 +261,13 @@ std::string		KeyManager::keyEventToString(
 					const BzfKeyEvent& key) const
 {
   std::string name;
-  if (key.shift & BzfKeyEvent::ShiftKey)
+  if (key.modifiers & BzfKeyEvent::ShiftKey)
     name += "Shift+";
-  if (key.shift & BzfKeyEvent::ControlKey)
+  if (key.modifiers & BzfKeyEvent::ControlKey)
     name += "Ctrl+";
-  if (key.shift & BzfKeyEvent::AltKey)
+  if (key.modifiers & BzfKeyEvent::AltKey)
     name += "Alt+";
-  switch (key.chr) {
+  switch (key.unicode) {
     case 0:
       return name + buttonNames[key.button];
     case '\b':
@@ -273,9 +279,9 @@ std::string		KeyManager::keyEventToString(
     case ' ':
       return name + "Space";
     default:
-      if (!iswspace(key.chr))
+      if (!iswspace(key.unicode))
       {
-        bzUTF8Char chr(key.chr);
+        bzUTF8Char chr(key.unicode);
 	return name + chr.str();
       }
       return name + "???";
@@ -310,8 +316,8 @@ bool			KeyManager::stringToKeyEvent(
     if (chr > 0x21 && iswprint(chr)) {
       if (*(++itr)) // more than one unicode code point...no can do
 	return false;
-      key.chr = chr;
-      key.shift = 0;
+      key.unicode = chr;
+      key.modifiers = 0;
       stringToEvent.insert(std::make_pair(keyPart, key));
     }
     // try finding it again
@@ -326,13 +332,13 @@ bool			KeyManager::stringToKeyEvent(
   // apply shift state
   if (strstr(shiftPart.c_str(), "+Shift+") != NULL ||
       strstr(shiftPart.c_str(), "+shift+") != NULL)
-    key.shift |= BzfKeyEvent::ShiftKey;
+    key.modifiers |= BzfKeyEvent::ShiftKey;
   if (strstr(shiftPart.c_str(), "+Ctrl+") != NULL ||
       strstr(shiftPart.c_str(), "+ctrl+") != NULL)
-    key.shift |= BzfKeyEvent::ControlKey;
+    key.modifiers |= BzfKeyEvent::ControlKey;
   if (strstr(shiftPart.c_str(), "+Alt+") != NULL ||
       strstr(shiftPart.c_str(), "+alt+") != NULL)
-    key.shift |= BzfKeyEvent::AltKey;
+    key.modifiers |= BzfKeyEvent::AltKey;
 
   // success
   return true;
@@ -383,31 +389,31 @@ bool			KeyManager::onCallback(
   return true;
 }
 
-bool			KeyManager::KeyEventLess::operator()(
+bool			KeyManager::KeyEventLessThan::operator()(
 				const BzfKeyEvent& a,
 				const BzfKeyEvent& b) const
 {
-  if (a.chr == 0 && b.chr == 0) {
+  if (a.unicode == 0 && b.unicode == 0) {
     if (a.button < b.button)
       return true;
     if (a.button > b.button)
       return false;
 
     // check shift
-    if (a.shift < b.shift)
+    if (a.modifiers < b.modifiers)
       return true;
-  } else if (a.chr == 0 && b.chr != 0) {
+  } else if (a.unicode == 0 && b.unicode != 0) {
     return true;
-  } else if (a.chr != 0 && b.chr == 0) {
+  } else if (a.unicode != 0 && b.unicode == 0) {
     return false;
   } else {
-    if (towupper(a.chr) < towupper(b.chr))
+    if (towupper(a.unicode) < towupper(b.unicode))
       return true;
-    if (towupper(a.chr) > towupper(b.chr))
+    if (towupper(a.unicode) > towupper(b.unicode))
       return false;
 
     // check shift state without shift key
-    if ((a.shift & ~BzfKeyEvent::ShiftKey) < (b.shift & ~BzfKeyEvent::ShiftKey))
+    if ((a.modifiers & ~BzfKeyEvent::ShiftKey) < (b.modifiers & ~BzfKeyEvent::ShiftKey))
       return true;
   }
 

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef LUA_URL_H
-#define LUA_URL_H
+#ifndef LUA_HTTP_H
+#define LUA_HTTP_H
 
 #include "common.h"
 
@@ -26,10 +26,10 @@ struct lua_State;
 class AccessList;
 
 
-class LuaURL : private cURLManager {
+class LuaHTTP : private cURLManager {
   public:
-    LuaURL(lua_State* L, const std::string& url);
-    ~LuaURL();
+    LuaHTTP(lua_State* L, const std::string& url);
+    ~LuaHTTP();
 
     // virtuals from cURLManager
     void finalization(char* data, unsigned int length, bool good);
@@ -39,14 +39,15 @@ class LuaURL : private cURLManager {
     bool GetActive()  const { return active; }
     bool GetSuccess() const { return success; }
 
-    unsigned int  GetLength() const { return theLen; }
+    unsigned int GetLength() const { return theLen; }
 
-    const std::string& GetURL()      const { return url; }
+    const std::string& GetURL()      const { return url;      }
     const std::string& GetPostData() const { return postData; }
+    long	       GetHttpCode() const { return httpCode; }
 
-    double GetFileSize() const { return fileSize; }
-    time_t GetFileTime() const { return fileTime; }
-    long   GetHttpCode() const { return httpCode; }
+    time_t GetFileTime();
+    double GetFileSize();
+    double GetFileRemoteSize();
 
     bool PushFunc(lua_State* L) const;
 
@@ -54,12 +55,12 @@ class LuaURL : private cURLManager {
     void ClearRefs();
 
   private:
-    lua_State* L;
+    lua_State* httpL;
     bool active;
     bool success;
-    bool headOnly; // do not fetch the data
 
     double fileSize;
+    double fileRemoteSize;
     time_t fileTime;
     long   httpCode;
 
@@ -70,9 +71,11 @@ class LuaURL : private cURLManager {
 };
 
 
-class LuaURLMgr {
+class LuaHTTPMgr {
   public:
     static bool PushEntries(lua_State* L);
+
+    static void SetAccessList(AccessList*);
 
   public:
     static const char* metaName;
@@ -83,11 +86,11 @@ class LuaURLMgr {
     static int MetaToString(lua_State* L);
 
   public:
-    static const LuaURL* TestURL(lua_State* L, int index);
-    static const LuaURL* CheckURL(lua_State* L, int index);
+    static const LuaHTTP* TestHTTP(lua_State* L, int index);
+    static const LuaHTTP* CheckHTTP(lua_State* L, int index);
 
   private:
-    static LuaURL* GetURL(lua_State* L, int index);
+    static LuaHTTP* GetURL(lua_State* L, int index);
 
   private: // call-outs
 
@@ -101,12 +104,17 @@ class LuaURLMgr {
     static int GetPostData(lua_State* L);
     static int GetCallback(lua_State* L);
     static int GetFileSize(lua_State* L);
+    static int GetFileRemoteSize(lua_State* L);
     static int GetFileTime(lua_State* L);
     static int GetHttpCode(lua_State* L);
+    static int TestAccess(lua_State* L);
+
+  private:
+    static AccessList* accessList;
 };
 
 
-#endif // LUA_URL_H
+#endif // LUA_HTTP_H
 
 
 // Local Variables: ***

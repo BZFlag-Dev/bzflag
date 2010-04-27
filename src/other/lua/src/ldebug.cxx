@@ -184,7 +184,7 @@ static void collectvalidlines (lua_State *L, Closure *f) {
     int i;
     for (i=0; i<f->l.p->sizelineinfo; i++)
       setbvalue(luaH_setnum(L, t, lineinfo[i]), 1);
-    sethvalue(L, L->top, t); 
+    sethvalue(L, L->top, t);
   }
   incr_top(L);
 }
@@ -550,8 +550,7 @@ static const char *getfuncname (lua_State *L, CallInfo *ci, const char **name) {
   if (GET_OPCODE(i) == OP_CALL || GET_OPCODE(i) == OP_TAILCALL ||
       GET_OPCODE(i) == OP_TFORLOOP)
     return getobjname(L, ci, GETARG_A(i), name);
-  else
-    return NULL;  /* no useful name can be found */
+  return NULL;  /* no useful name can be found */
 }
 
 
@@ -616,9 +615,22 @@ static void addinfo (lua_State *L, const char *msg) {
 
 
 void luaG_errormsg (lua_State *L) {
-  if (L->errfunc != 0) {  /* is there an error handling function? */
-    StkId errfunc = restorestack(L, L->errfunc);
-    if (!ttisfunction(errfunc)) luaD_throw(L, LUA_ERRERR);
+  StkId errfunc = NULL;
+  if (L->errfunc != 0) {
+    errfunc = restorestack(L, L->errfunc);
+  } else if (L->errfuncref) { /*BZ*/
+    TValue* rv = registry(L);
+    if (ttistable(rv)) {
+      Table* rt = hvalue(rv);
+      TValue regIndex;
+      setnvalue(&regIndex, L->errfuncref);
+      errfunc = (StkId) luaH_get(rt, &regIndex);
+    }
+  }
+  if (errfunc != NULL) {
+    if (!ttisfunction(errfunc)) {
+      luaD_throw(L, LUA_ERRERR);
+    }
     setobjs2s(L, L->top, L->top - 1);  /* move argument */
     setobjs2s(L, L->top - 1, errfunc);  /* push function */
     incr_top(L);

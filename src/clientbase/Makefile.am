@@ -22,8 +22,12 @@ libClientBase_la_SOURCES =		\
 	CommandsStandard.h		\
 	EntryZone.cxx			\
 	EntryZone.h			\
+	EventClient.cxx			\
+	EventClientList.cxx		\
+	EventHandler.cxx		\
 	FlashClock.cxx			\
 	FlashClock.h			\
+	GfxBlock.cxx			\
 	GuidedMissleStrategy.cxx	\
 	GuidedMissleStrategy.h		\
 	LocalPlayer.cxx			\

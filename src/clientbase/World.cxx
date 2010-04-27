@@ -758,6 +758,9 @@ void World::addFlags(SceneDatabase* scene, bool seerView)
     if ((flags[i].status != FlagOnTank) && !BZDBCache::displayMainFlags) {
       continue;
     }
+    if (flags[i].gfxBlock.blocked()) {
+      continue;
+    }
 
     if (flags[i].status == FlagNoExist) continue;
     // skip flag on a tank that isn't alive. also skip

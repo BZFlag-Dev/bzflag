@@ -32,6 +32,7 @@ liblua_la_SOURCES =      \
 	src/linit.cxx    \
 	src/liolib.cxx   \
 	src/llex.cxx     \
+	src/lpeg.cxx     \
 	src/lmathlib.cxx \
 	src/lmem.cxx     \
 	src/loadlib.cxx  \
@@ -70,6 +71,7 @@ noinst_HEADERS =       \
 	src/ltm.h      \
 	src/luaconf.h  \
 	src/lua.h      \
+	src/lua_extra.h \
 	src/lualib.h   \
 	src/lundump.h  \
 	src/lvm.h      \

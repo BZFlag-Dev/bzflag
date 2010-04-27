@@ -355,6 +355,7 @@ MeshObstacle::~MeshObstacle()
     delete faces[i];
   }
   delete[] faces;
+  delete[] edges;
   delete drawInfo;
   return;
 }

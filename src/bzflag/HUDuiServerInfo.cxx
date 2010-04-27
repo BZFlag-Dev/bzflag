@@ -49,8 +49,9 @@ HUDuiServerInfo::HUDuiServerInfo() : HUDuiControl()
   readouts.push_back(new HUDuiLabel);	// 17 max team score
   readouts.push_back(new HUDuiLabel);	// 18 max player score
   readouts.push_back(new HUDuiLabel);	// 19 ping time
-  readouts.push_back(new HUDuiLabel);	// 20 cached status
-  readouts.push_back(new HUDuiLabel);	// 21 cached age
+  readouts.push_back(new HUDuiLabel);	// 20 server script
+  readouts.push_back(new HUDuiLabel);	// 21 cached status
+  readouts.push_back(new HUDuiLabel);	// 22 cached age
 
   HUDuiLabel* allPlayers = new HUDuiLabel;
   allPlayers->setString("Players");
@@ -356,12 +357,22 @@ void HUDuiServerInfo::fillReadouts()
     ((HUDuiLabel*)listHUD[19])->setString(disabledColor + "Ping");
   }
 
-  if (item.cached) {
-    (listHUD[20])->setString("Cached");
-    (listHUD[21])->setString(item.getAgeString());
+  if (ping.gameOptions & LuaWorldAvailable) {  
+    if (ping.gameOptions & LuaWorldRequired) {
+      (listHUD[20])->setString("Script: required");
+    } else {
+      (listHUD[20])->setString("Script: optional");
+    }
   } else {
-    (listHUD[20])->setString(disabledColor + "Cached");
-    (listHUD[21])->setString("");
+    (listHUD[20])->setString("Script: none");
+  }
+
+  if (item.cached) {
+    (listHUD[21])->setString("Cached");
+    (listHUD[22])->setString(item.getAgeString());
+  } else {
+    (listHUD[21])->setString(disabledColor + "Cached");
+    (listHUD[22])->setString("");
   }
 }
 

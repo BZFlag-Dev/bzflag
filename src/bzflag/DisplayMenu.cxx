@@ -523,7 +523,9 @@ void DisplayMenu::callback(HUDuiControl* w, void* data)
     case 'b': {
       BzfWindow* window = getMainWindow()->getWindow();
       if (window->hasGammaControl()) {
-        window->setGamma(indexToGamma(list->getIndex()));
+        const float gamma = indexToGamma(list->getIndex());
+        window->setGamma(gamma);
+        BZDB.setFloat("gamma", gamma);
       }
       break;
     }

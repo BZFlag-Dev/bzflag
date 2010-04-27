@@ -35,8 +35,9 @@
 ** pseudo-indices
 */
 #define LUA_REGISTRYINDEX	(-10000)
-#define LUA_ENVIRONINDEX	(-10001)
-#define LUA_GLOBALSINDEX	(-10002)
+#define LUA_CALLINSINDEX	(-10001) /*BZ*/
+#define LUA_ENVIRONINDEX	(-10002)
+#define LUA_GLOBALSINDEX	(-10003)
 #define lua_upvalueindex(i)	(LUA_GLOBALSINDEX-(i))
 
 
@@ -104,6 +105,10 @@ typedef LUA_NUMBER lua_Number;
 typedef LUA_INTEGER lua_Integer;
 
 
+/* type for string hashes */
+typedef unsigned int lua_Hash;
+
+
 
 /*
 ** state manipulation
@@ -148,6 +153,8 @@ LUA_API lua_Number      (lua_tonumber) (lua_State *L, int idx);
 LUA_API lua_Integer     (lua_tointeger) (lua_State *L, int idx);
 LUA_API int             (lua_toboolean) (lua_State *L, int idx);
 LUA_API const char     *(lua_tolstring) (lua_State *L, int idx, size_t *len);
+LUA_API const char     *(lua_tohstring) (lua_State *L,
+                                         int idx, size_t *len, lua_Hash *hash);
 LUA_API size_t          (lua_objlen) (lua_State *L, int idx);
 LUA_API lua_CFunction   (lua_tocfunction) (lua_State *L, int idx);
 LUA_API void	       *(lua_touserdata) (lua_State *L, int idx);
@@ -166,6 +173,8 @@ LUA_API void  (lua_pushstring) (lua_State *L, const char *s);
 LUA_API const char *(lua_pushvfstring) (lua_State *L, const char *fmt,
                                                       va_list argp);
 LUA_API const char *(lua_pushfstring) (lua_State *L, const char *fmt, ...);
+LUA_API void  (lua_pushhstring) (lua_State *L, /*BZ*/
+                                 lua_Hash h, const char *s, size_t l);
 LUA_API void  (lua_pushcclosure) (lua_State *L, lua_CFunction fn, int n);
 LUA_API void  (lua_pushboolean) (lua_State *L, int b);
 LUA_API void  (lua_pushlightuserdata) (lua_State *L, void *p);
@@ -244,9 +253,34 @@ LUA_API void  (lua_concat) (lua_State *L, int n);
 LUA_API lua_Alloc (lua_getallocf) (lua_State *L, void **ud);
 LUA_API void lua_setallocf (lua_State *L, lua_Alloc f, void *ud);
 
+/* for lua_pushhstring() */
+LUA_API lua_Hash (lua_calchash) (const char *s, size_t l); /*BZ*/
 
+LUA_API int   (lua_setuserdataextra) (lua_State* L, int idx, void* extra); /*BZ*/
+LUA_API void* (lua_getuserdataextra) (lua_State* L, int idx);              /*BZ*/
 
-/* 
+#ifdef LUA_READONLY_TABLES /*BZ*/
+#  define LUA_READONLY_OLD_LUA_BIT       (1 << 0)
+#  define LUA_READONLY_OLD_CAPI_BIT      (1 << 1)
+#  define LUA_READONLY_OLD_INTERNAL_BIT  (1 << 2)
+#  define LUA_READONLY_OLD_BITS  (LUA_READONLY_OLD_LUA_BIT  | \
+                                  LUA_READONLY_OLD_CAPI_BIT | \
+                                  LUA_READONLY_OLD_INTERNAL_BIT)
+#  define LUA_READONLY_NEW_LUA_BIT       (1 << 3)
+#  define LUA_READONLY_NEW_CAPI_BIT      (1 << 4)
+#  define LUA_READONLY_NEW_INTERNAL_BIT  (1 << 5)
+#  define LUA_READONLY_NEW_BITS  (LUA_READONLY_NEW_LUA_BIT  | \
+                                  LUA_READONLY_NEW_CAPI_BIT | \
+                                  LUA_READONLY_NEW_INTERNAL_BIT)
+#  define LUA_READONLY_BITS  (LUA_READONLY_OLD_BITS | LUA_READONLY_NEW_BITS)
+LUA_API int   (lua_getreadonly) (lua_State *L, int idx); /*BZ*/
+LUA_API void  (lua_setreadonly) (lua_State *L, int idx, int bits); /*BZ*/
+#endif
+
+LUA_API int   (lua_geterrorfunc) (lua_State* L); /*BZ*/
+LUA_API void  (lua_seterrorfunc) (lua_State* L, int ref); /*BZ*/
+
+/*
 ** ===============================================================
 ** some useful macros
 ** ===============================================================

@@ -21,6 +21,9 @@
 #include <algorithm>
 #include <assert.h>
 #include <time.h>
+#ifdef HAVE_PTHREADS
+#  include <pthread.h>
+#endif
 
 // common headers
 #include "bzregex.h"
@@ -40,7 +43,60 @@
 #include "bzUnicode.h"
 
 
+#if defined(HAVE_PTHREADS)
+# define LOCK_SCREENSHOT_MUTEX   pthread_mutex_lock(&screenshot_mutex);
+# define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
+#elif defined(_WIN32)
+# define LOCK_SCREENSHOT_MUTEX   EnterCriticalSection(&screenshot_critical);
+# define UNLOCK_SCREENSHOT_MUTEX LeaveCriticalSection(&screenshot_critical);
+#else
+# define LOCK_SCREENSHOT_MUTEX
+# define UNLOCK_SCREENSHOT_MUTEX
+#endif
+
+
 const float tabMargin = 2.5f; // 1.25 characters on each side
+
+
+//============================================================================//
+
+static std::deque<std::string> mutexMsgs;
+
+#if defined(HAVE_PTHREADS)
+static pthread_mutex_t screenshot_mutex = PTHREAD_MUTEX_INITIALIZER;
+#elif defined(_WIN32)
+static CRITICAL_SECTION screenshot_critical;
+#endif
+
+
+#if defined(HAVE_PTHREADS)
+# define LOCK_SCREENSHOT_MUTEX   pthread_mutex_lock(&screenshot_mutex);
+# define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
+#elif defined(_WIN32)
+# define LOCK_SCREENSHOT_MUTEX   EnterCriticalSection(&screenshot_critical);
+# define UNLOCK_SCREENSHOT_MUTEX LeaveCriticalSection(&screenshot_critical);
+#else
+# define LOCK_SCREENSHOT_MUTEX
+# define UNLOCK_SCREENSHOT_MUTEX
+#endif
+
+
+void ControlPanel::addMutexMessage(const char* msg)
+{
+  static bool inited = false;
+  if (!inited) {
+#if defined(HAVE_PTHREADS)
+    pthread_mutex_init(&screenshot_mutex, NULL);
+#elif defined(_WIN32)
+    InitializeCriticalSection(&screenshot_critical);
+#endif
+    inited = true;
+  }
+
+  LOCK_SCREENSHOT_MUTEX
+  mutexMsgs.push_back(msg);  
+  UNLOCK_SCREENSHOT_MUTEX
+}
 
 
 //============================================================================//
@@ -213,6 +269,17 @@ const ControlPanel::MessageQueue* ControlPanel::getTabMessages(int tabID)
 }
 
 
+const ControlPanel::MessageQueue*
+  ControlPanel::getTabMessages(const std::string& tabLabel)
+{
+  const int tabID = getTabID(tabLabel);
+  if (!validTab(tabID)) {
+    return NULL;
+  }
+  return &(tabs[tabID]->messages);
+}
+
+
 int ControlPanel::getTabMessageCount(int tabID)
 {
   if (!validTab(tabID)) {
@@ -364,6 +431,11 @@ void ControlPanel::setControlColor(const fvec4* color)
 
 void ControlPanel::render(SceneRenderer& _renderer)
 {
+  while (!mutexMsgs.empty()) {
+    addMessage(mutexMsgs.front());
+    mutexMsgs.pop_front();
+  }
+
   const float opacity = _renderer.getPanelOpacity();
   const bool  opaque  = (opacity >= 1.0f);
 

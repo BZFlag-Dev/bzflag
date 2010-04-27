@@ -4938,6 +4938,21 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 //-------------------------------------------------------------------------
 
+
+BZF_API bool bz_sendLuaData(int srcPlayerID, int srcScriptID,
+                            int dstPlayerID, int dstScriptID,
+                            int statusBits, const char* data, int len)
+{
+  const std::string dataStr(data, len);
+  sendMsgLuaData(srcPlayerID, srcScriptID,
+                 dstPlayerID, dstScriptID,
+                 statusBits, dataStr);
+  return true;
+}
+
+
+//-------------------------------------------------------------------------
+
 void bz_ServerSidePlayerHandler::setMovement(float forward, float turn)
 {
   if(input[0]==turn && input[1]==forward)

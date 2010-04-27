@@ -113,7 +113,7 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 
   if (lua_pcall(L, 5, 1, 0) != 0) {
     bz_debugMessagef(0, "LuaMapObject callback error (%s): %s\n",
-                     objToken.c_str(), lua_tostring(L, -1));
+		     objToken.c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
@@ -127,8 +127,8 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
     const int table = lua_gettop(L);
     for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
       if (lua_israwstring(L, -1)) {
-        newData += lua_tostring(L, -1);
-        newData += "\n";
+	newData += lua_tostring(L, -1);
+	newData += "\n";
       }
     }
   }

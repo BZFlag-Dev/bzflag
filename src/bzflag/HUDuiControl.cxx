@@ -198,7 +198,7 @@ bool HUDuiControl::doKeyPress(const BzfKeyEvent& key)
 {
   if (!navList) { return false; }
 
-  if (key.chr == 0) {
+  if (key.unicode == 0) {
     switch (key.button) {
       case BzfKeyEvent::Up: {
 	navList->prev();
@@ -211,7 +211,7 @@ bool HUDuiControl::doKeyPress(const BzfKeyEvent& key)
     }
   }
 
-  if (key.chr == '\t') {
+  if (key.unicode == '\t') {
     navList->next();
     return true;
   }

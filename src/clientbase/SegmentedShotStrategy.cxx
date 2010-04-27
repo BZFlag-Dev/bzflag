@@ -22,6 +22,7 @@
 #include "TextureManager.h"
 #include "Intersect.h"
 #include "LinkManager.h"
+#include "EventHandler.h"
 #include "MeshFace.h"
 #include "Roster.h"
 #include "WallObstacle.h"
@@ -160,6 +161,7 @@ void SegmentedShotStrategy::update(float dt)
             const fvec3& newDir = segm.ray.getDirection();
             const fvec3& oldDir = segments[segment - 1].ray.getDirection();
             const fvec3 normal = (newDir - oldDir).normalize();
+            eventHandler.ShotRicochet(getPath(), pos, normal);
 
             const MeshFace* srcFace = linkManager.getLinkSrcFace(segm.linkSrcID);
             if ((srcFace == NULL) || !srcFace->linkSrcNoEffect()) {
@@ -181,6 +183,8 @@ void SegmentedShotStrategy::update(float dt)
               EFFECTS.addShotTeleportEffect(segm.ray.getOrigin(),
                                             segm.ray.getDirection(),
                                             clipPlane);
+              eventHandler.ShotTeleported(getPath(), segm.linkSrcID,
+                                                     segm.linkDstID);
             }
             if (wantShotInfo(ShotInfoTeleport) &&
                 (getPath().getPlayer() == myTankId)) {

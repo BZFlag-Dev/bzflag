@@ -21,6 +21,7 @@
 #include "common.h"
 
 // common headers
+#include "global.h"
 #include "vectors.h"
 #include "OpenGLMaterial.h"
 
@@ -34,24 +35,25 @@ class PyramidBuilding;
 class BaseBuilding;
 class Teleporter;
 class World;
+class BzMaterial;
 
 
 class SceneDatabaseBuilder {
   public:
-			SceneDatabaseBuilder();
-			~SceneDatabaseBuilder();
+    SceneDatabaseBuilder();
+    ~SceneDatabaseBuilder();
 
-    SceneDatabase*	make(const World*);
+    SceneDatabase* make(const World*);
 
   protected:
-    void		addWall(SceneDatabase*, const WallObstacle&);
-    void		addMesh(SceneDatabase*, MeshObstacle*);
-    void		addBox(SceneDatabase*, BoxBuilding&);
-    void		addPyramid(SceneDatabase*, PyramidBuilding&);
-    void		addBase(SceneDatabase*, BaseBuilding&);
-    void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
-    void		addWaterLevel(SceneDatabase*, const World*);
-    void		addWorldTexts(SceneDatabase*);
+    void addWall(SceneDatabase*, const WallObstacle&);
+    void addMesh(SceneDatabase*, MeshObstacle*);
+    void addBox(SceneDatabase*, BoxBuilding&);
+    void addPyramid(SceneDatabase*, PyramidBuilding&);
+    void addBase(SceneDatabase*, BaseBuilding&);
+    void addTeleporter(SceneDatabase*, const Teleporter&, const World*);
+    void addWaterLevel(SceneDatabase*, const World*);
+    void addWorldTexts(SceneDatabase*);
 
   private:
     // disallow duplication
@@ -59,17 +61,26 @@ class SceneDatabaseBuilder {
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
   private:
-    float		wallTexWidth, wallTexHeight;
-    bool		wallLOD;
+    float wallTexWidth, wallTexHeight;
+    bool  wallLOD;
 
-    float		boxTexWidth, boxTexHeight;
-    bool		boxLOD;
+    float boxTexWidth, boxTexHeight;
+    bool  boxLOD;
 
-    bool		pyramidLOD;
+    bool  pyramidLOD;
 
-    bool		baseLOD;
+    bool  baseLOD;
 
-    bool		teleporterLOD;
+    bool  teleporterLOD;
+
+/* FIXME - find the default materials before generating?
+    const BzMaterial* wallMaterial;
+    const BzMaterial* pyramidMaterial;
+    const BzMaterial* boxTopMaterial;
+    const BzMaterial* boxWallMaterial;
+    const BzMaterial* baseTopMaterials[5];
+    const BzMaterial* baseWallMaterials[5];
+*/
 };
 
 #endif // BZF_SCENE_BUILDER_H

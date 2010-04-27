@@ -46,7 +46,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.99.53, [http://BZFlag.org], bzflag)
+AC_INIT(BZFlag, 2.99.54, [http://BZFlag.org], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
@@ -1352,6 +1352,7 @@ AC_CONFIG_FILES([
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/tank/Makefile
+	src/lua/Makefile
 	src/mediafile/Makefile
 	src/net/Makefile
 	src/obstacle/Makefile

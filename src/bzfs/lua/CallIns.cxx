@@ -31,10 +31,14 @@
 // local headers
 #include "LuaHeader.h"
 #include "LuaServer.h"
+#include "LuaDouble.h"
 
 
 //============================================================================//
 //============================================================================//
+//
+//  Custom call-ins
+//
 
 static const bz_eEventType bz_eShutdown    = (bz_eEventType)(bz_eLastEvent + 1);
 static const bz_eEventType bz_eRecvCommand = (bz_eEventType)(bz_eLastEvent + 2);
@@ -52,7 +56,7 @@ class RecvCommandData : public bz_EventData {
 
 
 static char* worldBlob = NULL; // FIXME -- free() in WorldFinalize? ...
-                               // (would require that it always be registered)
+			       // (would require that it always be registered)
 
 
 //============================================================================//
@@ -103,15 +107,15 @@ class CallIn : public bz_EventHandler {
     bool PushCallIn(int argCount)
     {
       if (L == NULL) {
-        return false;
+	return false;
       }
       if (!lua_checkstack(L, argCount + 2)) {
-        return false; // FIXME -- add a message for lua_checkstack()?
+	return false; // FIXME -- add a message for lua_checkstack()?
       }
       lua_rawgeti(L, LUA_REGISTRYINDEX, ciCode);
       if (!lua_isfunction(L, -1)) {
-        lua_pop(L, 1);
-        return false;
+	lua_pop(L, 1);
+	return false;
       }
       return true;
     }
@@ -119,10 +123,10 @@ class CallIn : public bz_EventHandler {
     bool RunCallIn(int inArgs, int outArgs)
     {
       if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
-        bz_debugMessagef(0, "lua call-in error (%s): %s\n",
-                         name.c_str(), lua_tostring(L, -1));
-        lua_pop(L, 1);
-        return false;
+	bz_debugMessagef(0, "lua call-in error (%s): %s\n",
+			 name.c_str(), lua_tostring(L, -1));
+	lua_pop(L, 1);
+	return false;
       }
       return true;
     }
@@ -130,12 +134,12 @@ class CallIn : public bz_EventHandler {
     bool Register()
     {
       if (customEvent) {
-        return true; // no need to register
+	return true; // no need to register
       }
       if (!bzRegistered) {
-        bz_registerEvent((bz_eEventType)bzCode, this);
-        bzRegistered = true;
-        return true;
+	bz_registerEvent((bz_eEventType)bzCode, this);
+	bzRegistered = true;
+	return true;
       }
       return false;
     }
@@ -143,12 +147,12 @@ class CallIn : public bz_EventHandler {
     bool Unregister()
     {
       if (customEvent) {
-        return true; // no need to remove
+	return true; // no need to remove
       }
       if (bzRegistered) {
-        bz_removeEvent((bz_eEventType)bzCode, this);
-        bzRegistered = false;
-        return true;
+	bz_removeEvent((bz_eEventType)bzCode, this);
+	bzRegistered = false;
+	return true;
       }
       return false;
     }
@@ -157,9 +161,9 @@ class CallIn : public bz_EventHandler {
 
   protected:
     const std::string name;
-    const int         bzCode; // bzfsAPI event code
-    const int         ciCode; // lua call-in registry index
-    const bool        customEvent;
+    const int	 bzCode; // bzfsAPI event code
+    const int	 ciCode; // lua call-in registry index
+    const bool	customEvent;
     const std::string loopType;
 
     bool bzRegistered;
@@ -188,7 +192,7 @@ class CallIn : public bz_EventHandler {
 lua_State* CallIn::L = NULL;
 
 std::map<std::string, CallIn*> CallIn::nameMap;
-std::map<int, CallIn*>         CallIn::bzCodeMap;
+std::map<int, CallIn*>	 CallIn::bzCodeMap;
 
 
 //============================================================================//
@@ -270,8 +274,8 @@ static int GetCallInInfo(lua_State* L)
       lua_pushliteral(L, "func");
       lua_rawgeti(L, LUA_REGISTRYINDEX, ci->GetCICode());
       if (!lua_isfunction(L, -1)) {
-        lua_pop(L, 1);
-        lua_pushboolean(L, false);
+	lua_pop(L, 1);
+	lua_pushboolean(L, false);
       }
       lua_rawset(L, -3);
 
@@ -324,7 +328,7 @@ bool CallIns::CleanUp(lua_State* /*L*/)
 //============================================================================//
 
 // typo avoidance  (loop types)
-static const char* BASIC        = "BASIC";
+static const char* BASIC	= "BASIC";
 static const char* SPECIAL      = "SPECIAL";
 static const char* FIRST_TRUE   = "FIRST_TRUE";
 static const char* FIRST_FALSE  = "FIRST_FALSE";
@@ -332,87 +336,88 @@ static const char* FIRST_NUMBER = "FIRST_NUMBER";
 static const char* FIRST_STRING = "FIRST_STRING";
 
 
-#define CALLIN(cpp, lua, loopType)           \
-  class CI_ ## lua : public CallIn {         \
-    public:                                  \
-      CI_ ## lua()                           \
+#define CALLIN(cpp, lua, loopType)	   \
+  class CI_ ## lua : public CallIn {	 \
+    public:				  \
+      CI_ ## lua()			   \
       : CallIn(bz_e ## cpp, #lua, loopType)  \
-      {}                                     \
-      ~CI_ ## lua() {}                       \
+      {}				     \
+      ~CI_ ## lua() {}		       \
       bool execute(bz_EventData* eventData); \
-  };                                         \
+  };					 \
   static CI_ ## lua  ci ## lua
 
 
-//     bz_e <C++ enum name>        lua call-in name         loop type      difference
-//     --------------------        ----------------         ---------      ----------
+//     bz_e <C++ enum name>	lua call-in name	 loop type      difference
+//     --------------------	----------------	 ---------      ----------
 CALLIN(AllowAutoPilotChangeEvent,  AllowAutoPilotChange,    FIRST_FALSE);  // -Event
-CALLIN(AllowCTFCaptureEvent,       AllowCTFCapture,         SPECIAL);      // -Event
-CALLIN(AllowFlagGrabEvent,         AllowFlagGrab,           FIRST_FALSE);  // -Event
-CALLIN(AllowKillCommandEvent,      AllowKillCommand,        FIRST_FALSE);  // -Event
-CALLIN(AllowPlayer,                AllowPlayer,             FIRST_STRING);
-CALLIN(AllowSpawn,                 AllowSpawn,              FIRST_FALSE);
-CALLIN(AnointRabbitEvent,          AnointRabbit,            BASIC);        // -Event
-CALLIN(AutoPilotChangeEvent,       AutoPilotChange,         BASIC)  ;      // -Event
-CALLIN(BanEvent,                   Ban,                     BASIC);        // -Event
-CALLIN(BZDBChange,                 BZDBChange,              BASIC);
-CALLIN(CaptureEvent,               Capture,                 BASIC);        // -Event
-CALLIN(FilteredChatMessageEvent,   FilteredChatMessage,     BASIC);        // -Event
-CALLIN(FlagDroppedEvent,           FlagDropped,             BASIC);        // -Event
-CALLIN(FlagGrabbedEvent,           FlagGrabbed,             BASIC);        // -Event
-CALLIN(FlagResetEvent,             FlagReset,               BASIC);        // -Event
-CALLIN(FlagTransferredEvent,       FlagTransfer,            SPECIAL);      // -Event
-CALLIN(GameEndEvent,               GameEnd,                 BASIC);        // -Event
-CALLIN(GameStartEvent,             GameStart,               BASIC);        // -Event
-CALLIN(GetAutoTeamEvent,           GetAutoTeam,             FIRST_NUMBER); // -Event
-CALLIN(GetPlayerInfoEvent,         GetPlayerInfo,           SPECIAL);      // -Event
+CALLIN(AllowCTFCaptureEvent,       AllowCTFCapture,	 SPECIAL);      // -Event
+CALLIN(AllowFlagGrabEvent,	 AllowFlagGrab,	   FIRST_FALSE);  // -Event
+CALLIN(AllowKillCommandEvent,      AllowKillCommand,	FIRST_FALSE);  // -Event
+CALLIN(AllowPlayer,		AllowPlayer,	     FIRST_STRING);
+CALLIN(AllowSpawn,		 AllowSpawn,	      FIRST_FALSE);
+CALLIN(AnointRabbitEvent,	  AnointRabbit,	    BASIC);	// -Event
+CALLIN(AutoPilotChangeEvent,       AutoPilotChange,	 BASIC)  ;      // -Event
+CALLIN(BanEvent,		   Ban,		     BASIC);	// -Event
+CALLIN(BZDBChange,		 BZDBChange,	      BASIC);
+CALLIN(CaptureEvent,	       Capture,		 BASIC);	// -Event
+CALLIN(FilteredChatMessageEvent,   FilteredChatMessage,     BASIC);	// -Event
+CALLIN(FlagDroppedEvent,	   FlagDropped,	     BASIC);	// -Event
+CALLIN(FlagGrabbedEvent,	   FlagGrabbed,	     BASIC);	// -Event
+CALLIN(FlagResetEvent,	     FlagReset,	       BASIC);	// -Event
+CALLIN(FlagTransferredEvent,       FlagTransfer,	    SPECIAL);      // -Event
+CALLIN(GameEndEvent,	       GameEnd,		 BASIC);	// -Event
+CALLIN(GameStartEvent,	     GameStart,	       BASIC);	// -Event
+CALLIN(GetAutoTeamEvent,	   GetAutoTeam,	     FIRST_NUMBER); // -Event
+CALLIN(GetPlayerInfoEvent,	 GetPlayerInfo,	   SPECIAL);      // -Event
 CALLIN(GetPlayerSpawnPosEvent,     GetPlayerSpawnPos,       SPECIAL);      // -Event
-CALLIN(GetWorldEvent,              GetWorld,                SPECIAL);      // -Event
-//CALLIN(HostBanModifyEvent,       HostBanModify,           BASIC);        //  unused
-CALLIN(HostBanNotifyEvent,         HostBan,                 BASIC);        // -Event-
-CALLIN(IdBanEvent,                 IdBan,                   BASIC);        // -Event
-CALLIN(IdleNewNonPlayerConnection, IdleNonPlayerConnection, BASIC);        // -New
-CALLIN(KickEvent,                  Kick,                    BASIC);        // -Event
-CALLIN(KillEvent,                  Kill,                    BASIC);        // -Event
-CALLIN(ListServerUpdateEvent,      ListServerUpdate,        BASIC);        // -Event
-CALLIN(LoggingEvent,               Logging,                 BASIC);        // -Event
-CALLIN(MessageFilteredEvent,       MessageFiltered,         BASIC);        // -Event
-CALLIN(NetDataReceiveEvent,        NetDataReceive,          BASIC);        // -Event
-CALLIN(NetDataSendEvent,           NetDataSend,             BASIC);        // -Event
-CALLIN(NewNonPlayerConnection,     RawLink,                 BASIC);        //  renamed
-CALLIN(NewRabbitEvent,             NewRabbit,               BASIC);        // -Event
-CALLIN(PlayerAuthEvent,            PlayerAuth,              BASIC);        // -Event
-CALLIN(PlayerCollision,            PlayerCollision,         SPECIAL);
+CALLIN(GetWorldEvent,	      GetWorld,		SPECIAL);      // -Event
+//CALLIN(HostBanModifyEvent,       HostBanModify,	   BASIC);	//  unused
+CALLIN(HostBanNotifyEvent,	 HostBan,		 BASIC);	// -Event-
+CALLIN(IdBanEvent,		 IdBan,		   BASIC);	// -Event
+CALLIN(IdleNewNonPlayerConnection, IdleNonPlayerConnection, BASIC);	// -New
+CALLIN(KickEvent,		  Kick,		    BASIC);	// -Event
+CALLIN(KillEvent,		  Kill,		    BASIC);	// -Event
+CALLIN(ListServerUpdateEvent,      ListServerUpdate,	BASIC);	// -Event
+CALLIN(LoggingEvent,	       Logging,		 BASIC);	// -Event
+CALLIN(LuaDataEvent,	       RecvLuaData,	     SPECIAL);      // -Event+Recv
+CALLIN(MessageFilteredEvent,       MessageFiltered,	 BASIC);	// -Event
+CALLIN(NetDataReceiveEvent,	NetDataReceive,	  BASIC);	// -Event
+CALLIN(NetDataSendEvent,	   NetDataSend,	     BASIC);	// -Event
+CALLIN(NewNonPlayerConnection,     RawLink,		 BASIC);	//  renamed
+CALLIN(NewRabbitEvent,	     NewRabbit,	       BASIC);	// -Event
+CALLIN(PlayerAuthEvent,	    PlayerAuth,	      BASIC);	// -Event
+CALLIN(PlayerCollision,	    PlayerCollision,	 SPECIAL);
 CALLIN(PlayerCustomDataChanged,    PlayerCustomDataChanged, BASIC);
-CALLIN(PlayerDieEvent,             PlayerDied,              BASIC);        // -Event+d
-CALLIN(PlayerJoinEvent,            PlayerJoined,            BASIC);        // -Event+ed
-CALLIN(PlayerPartEvent,            PlayerParted,            BASIC);        // -Event+ed
-CALLIN(PlayerPausedEvent,          PlayerPaused,            BASIC);        // -Event
+CALLIN(PlayerDieEvent,	     PlayerDied,	      BASIC);	// -Event+d
+CALLIN(PlayerJoinEvent,	    PlayerJoined,	    BASIC);	// -Event+ed
+CALLIN(PlayerPartEvent,	    PlayerParted,	    BASIC);	// -Event+ed
+CALLIN(PlayerPausedEvent,	  PlayerPaused,	    BASIC);	// -Event
 CALLIN(PlayerPauseRequestEvent,    PlayerPauseRequest,      FIRST_FALSE);  // -Event
 CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    BASIC);
-CALLIN(PlayerSpawnEvent,           PlayerSpawned,           BASIC);        // -Event+ed
-CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,        BASIC);        // -Event
-CALLIN(PlayerUpdateEvent,          PlayerUpdate,            BASIC);        // -Event
-CALLIN(PlayerUpdateDoneEvent,      PlayerUpdateDone,        BASIC);        // -Event
-CALLIN(RawChatMessageEvent,        RawChatMessage,          SPECIAL);      // -Event
-CALLIN(RecvCommand,                RecvCommand,             FIRST_TRUE);   //  custom
-CALLIN(ReloadEvent,                Reload,                  BASIC);        // -Event
-CALLIN(ReportFiledEvent,           ReportFiled,             BASIC);        // -Event
-CALLIN(ServerMsgEvent,             ServerMsg,               BASIC);        // -Event
-CALLIN(ShotEndedEvent,             ShotEnded,               BASIC);        // -Event
-CALLIN(ShotFiredEvent,             ShotFired,               BASIC);        // -Event
-CALLIN(ShotExpiredEvent,           ShotExpired,             BASIC);        // -Event
-CALLIN(ShotStoppedEvent,           ShotStopped,             BASIC);        // -Event
-CALLIN(ShotRicochetEvent,          ShotRicochet,            BASIC);        // -Event
-CALLIN(ShotTeleportEvent,          ShotTeleport,            BASIC);        // -Event
-CALLIN(Shutdown,                   Shutdown,                BASIC);        //  custom
-CALLIN(SlashCommandEvent,          SlashCommand,            BASIC);        // -Event
-CALLIN(TeleportEvent,              Teleport,                BASIC);        // -Event
-CALLIN(TickEvent,                  Tick,                    BASIC);        // -Event
-CALLIN(UnknownSlashCommand,        UnknownSlashCommand,     SPECIAL);
-CALLIN(WorldFinalized,             WorldFinalized,          BASIC);
-CALLIN(ZoneEntryEvent,             ZoneEntry,               BASIC);        // -Event
-CALLIN(ZoneExitEvent,              ZoneExit,                BASIC);        // -Event
+CALLIN(PlayerSpawnEvent,	   PlayerSpawned,	   BASIC);	// -Event+ed
+CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,	BASIC);	// -Event
+CALLIN(PlayerUpdateEvent,	  PlayerUpdate,	    BASIC);	// -Event
+CALLIN(PlayerUpdateDoneEvent,      PlayerUpdateDone,	BASIC);	// -Event
+CALLIN(RawChatMessageEvent,	RawChatMessage,	  SPECIAL);      // -Event
+CALLIN(RecvCommand,		RecvCommand,	     FIRST_TRUE);   //  custom
+CALLIN(ReloadEvent,		Reload,		  BASIC);	// -Event
+CALLIN(ReportFiledEvent,	   ReportFiled,	     BASIC);	// -Event
+CALLIN(ServerMsgEvent,	     ServerMsg,	       BASIC);	// -Event
+CALLIN(ShotEndedEvent,	     ShotEnded,	       BASIC);	// -Event
+CALLIN(ShotFiredEvent,	     ShotFired,	       BASIC);	// -Event
+CALLIN(ShotExpiredEvent,	   ShotExpired,	     BASIC);	// -Event
+CALLIN(ShotStoppedEvent,	   ShotStopped,	     BASIC);	// -Event
+CALLIN(ShotRicochetEvent,	  ShotRicochet,	    BASIC);	// -Event
+CALLIN(ShotTeleportEvent,	  ShotTeleport,	    BASIC);	// -Event
+CALLIN(Shutdown,		   Shutdown,		BASIC);	//  custom
+CALLIN(SlashCommandEvent,	  SlashCommand,	    BASIC);	// -Event
+CALLIN(TeleportEvent,	      Teleport,		BASIC);	// -Event
+CALLIN(TickEvent,		  Update,		  BASIC);	//  renamed
+CALLIN(UnknownSlashCommand,	UnknownSlashCommand,     SPECIAL);
+CALLIN(WorldFinalized,	     WorldFinalized,	  BASIC);
+CALLIN(ZoneEntryEvent,	     ZoneEntry,	       BASIC);	// -Event
+CALLIN(ZoneExitEvent,	      ZoneExit,		BASIC);	// -Event
 
 
 //============================================================================//
@@ -590,20 +595,21 @@ bool CI_AllowSpawn::execute(bz_EventData* eventData)
     return false; // already disallowed
   }
 
-  if (!PushCallIn(2)) {
+  if (!PushCallIn(3)) {
     return false;
   }
 
   lua_pushinteger(L, ed->playerID);
   lua_pushinteger(L, ed->team);
+  lua_pushboolean(L, ed->allow);
 
-  if (!RunCallIn(2, 1)) {
+  if (!RunCallIn(3, 1)) {
     return false;
   }
 
-  if (lua_isboolean(L, -1)) {
-    ed->allow = lua_tobool(L, -1);
-    // ed->handled = true; FIXME?
+  if (ed->allow && lua_isboolean(L, -1) && !lua_toboolean(L, -1)) {
+    ed->allow = false;
+    ed->handled = true;
   }
 
   lua_pop(L, 1);
@@ -674,14 +680,13 @@ bool CI_BZDBChange::execute(bz_EventData* eventData)
 {
   bz_BZDBChangeData_V1* ed = (bz_BZDBChangeData_V1*)eventData;
 
-  if (!PushCallIn(2)) {
+  if (!PushCallIn(1)) {
     return false;
   }
 
   lua_pushstring(L, ed->key.c_str());
-  lua_pushstring(L, ed->value.c_str());
 
-  return RunCallIn(2, 0);
+  return RunCallIn(1, 0);
 }
 
 
@@ -812,7 +817,7 @@ bool CI_FlagTransfer::execute(bz_EventData* eventData)
   else if (lua_isboolean(L, -1)) {
     const bool value = lua_tobool(L, -1);
     ed->action = value ? bz_FlagTransferredEventData_V1::ContinueSteal
-                       : bz_FlagTransferredEventData_V1::CancelSteal;
+		       : bz_FlagTransferredEventData_V1::CancelSteal;
   }
   else if (lua_israwstring(L, -1)) {
     const std::string cmd = lua_tostring(L, -1);
@@ -839,7 +844,7 @@ bool CI_GameEnd::execute(bz_EventData* eventData)
     return false;
   }
 
-  lua_pushdouble(L, ed->duration);
+  LuaDouble::PushDouble(L, ed->duration);
 
   return RunCallIn(1, 0);
 }
@@ -853,7 +858,7 @@ bool CI_GameStart::execute(bz_EventData* eventData)
     return false;
   }
 
-  lua_pushdouble(L, ed->duration);
+  LuaDouble::PushDouble(L, ed->duration);
 
   return RunCallIn(1, 0);
 }
@@ -875,7 +880,10 @@ bool CI_GetAutoTeam::execute(bz_EventData* eventData)
   }
 
   if (lua_israwnumber(L, -1)) {
-    ed->team = (bz_eTeamType)lua_toint(L, -1); // FIXME -- use ParseTeam()
+    bz_eTeamType team = (bz_eTeamType)lua_toint(L, -1); // FIXME -- use ParseTeam()
+    if ((team >= eRogueTeam) && (team <= eHunterTeam)) {
+      ed->team = team;
+    }
   }
 
   lua_pop(L, 1);
@@ -980,40 +988,40 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
     const int table = lua_gettop(L);
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (!lua_israwstring(L, -2)) {
-        continue;
+	continue;
       }
       const std::string key = lua_tostring(L, -2);
       if (key == "file") {
-        if (lua_israwstring(L, -1)) {
-          ed->worldFile = lua_tostring(L, -1);
-        }
+	if (lua_israwstring(L, -1)) {
+	  ed->worldFile = lua_tostring(L, -1);
+	}
       }
       else if (key == "data") {
-        if (lua_israwstring(L, -1)) {
-          free(worldBlob);
-          worldBlob = strdup(lua_tostring(L, -1));
-          ed->worldBlob = worldBlob;
-        }
+	if (lua_israwstring(L, -1)) {
+	  free(worldBlob);
+	  worldBlob = strdup(lua_tostring(L, -1));
+	  ed->worldBlob = worldBlob;
+	}
       }
       else if (key == "mode") {
-        if (lua_israwnumber(L, -1)) {
-          ed->openFFA = false;
-          ed->rabbit  = false;
-          ed->ctf     = false;
-          switch ((bz_eGameType)lua_toint(L, -1)) {
-            case eOpenFFAGame:    { ed->openFFA = true; break; }
-            case eRabbitGame:     { ed->rabbit  = true; break; }
-            case eClassicCTFGame: { ed->ctf     = true; break; }
-            default: {
-              break;
-            }
-          }
-        }
+	if (lua_israwnumber(L, -1)) {
+	  ed->openFFA = false;
+	  ed->rabbit  = false;
+	  ed->ctf     = false;
+	  switch ((bz_eGameType)lua_toint(L, -1)) {
+	    case eOpenFFAGame:    { ed->openFFA = true; break; }
+	    case eRabbitGame:     { ed->rabbit  = true; break; }
+	    case eClassicCTFGame: { ed->ctf     = true; break; }
+	    default: {
+	      break;
+	    }
+	  }
+	}
       }
       else if (key == "generated") {
-        if (lua_isboolean(L, -1)) {
-          ed->generated = ed->generated || lua_tobool(L, -1);
-        }
+	if (lua_isboolean(L, -1)) {
+	  ed->generated = ed->generated || lua_tobool(L, -1);
+	}
       }
     } // end for
   } // end if lua_istable()
@@ -1159,6 +1167,35 @@ bool CI_Logging::execute(bz_EventData* eventData)
 }
 
 
+bool CI_RecvLuaData::execute(bz_EventData* eventData)
+{
+  bz_LuaDataEventData_V1* ed = (bz_LuaDataEventData_V1*)eventData;
+
+  if (!PushCallIn(6)) {
+    return false;
+  }
+
+  lua_pushinteger(L, ed->srcPlayerID);
+  lua_pushinteger(L, ed->srcScriptID);
+  lua_pushinteger(L, ed->dstPlayerID);
+  lua_pushinteger(L, ed->dstScriptID);
+  lua_pushinteger(L, ed->status);
+  lua_pushlstring(L, ed->data, ed->dataLen);
+
+  if (!RunCallIn(6, 1)) {
+    return false;
+  }
+
+  if (lua_isboolean(L, -1)) {
+    ed->doNotSend = ed->doNotSend || lua_tobool(L, -1);
+  }
+
+  lua_pop(L, 1);
+
+  return true;
+}
+
+
 bool CI_MessageFiltered::execute(bz_EventData* eventData)
 {
   bz_MessageFilteredEventData_V1* ed = (bz_MessageFilteredEventData_V1*)eventData;
@@ -1183,7 +1220,7 @@ bool CI_NetDataReceive::execute(bz_EventData* eventData)
     return false;
   }
 
-  //lua_pushboolean(L, ed->send); // FIXME?
+  //lua_pushboolean(L, ed->send);
   lua_pushinteger(L, ed->playerID);
   lua_pushboolean(L, ed->udp);
   lua_pushlstring(L, (char*)ed->data, ed->iSize);
@@ -1200,7 +1237,7 @@ bool CI_NetDataSend::execute(bz_EventData* eventData)
     return false;
   }
 
-  //lua_pushboolean(L, ed->send); // FIXME?
+  //lua_pushboolean(L, ed->send);
   lua_pushinteger(L, ed->playerID);
   lua_pushboolean(L, ed->udp);
   lua_pushlstring(L, (char*)ed->data, ed->iSize);
@@ -1471,7 +1508,7 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
 {
   bz_PlayerUpdateEventData_V1* ed = (bz_PlayerUpdateEventData_V1*)eventData;
 
-  if (!PushCallIn(14)) {
+  if (!PushCallIn(15)) {
     return false;
   }
 
@@ -1480,7 +1517,7 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
 
   lua_pushinteger(L, state.status);
-  lua_pushinteger(L, state.phydrv);
+  lua_pushinteger(L, state.phydrv + 1);
   lua_pushboolean(L, state.falling);
   lua_pushboolean(L, state.crossingWall);
   lua_pushboolean(L, state.inPhantomZone);
@@ -1495,9 +1532,9 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
   lua_pushfloat(L, state.velocity[2]);
   lua_pushfloat(L, state.angVel);
 
-  // FIXME double stateTime;
+  LuaDouble::PushDouble(L, ed->stateTime);
 
-  return RunCallIn(14, 0);
+  return RunCallIn(15, 0);
 }
 
 
@@ -1506,13 +1543,14 @@ bool CI_PlayerUpdateDone::execute(bz_EventData* eventData)
   bz_PlayerUpdateDoneEventData_V1* ed =
     (bz_PlayerUpdateDoneEventData_V1*)eventData;
 
-  if (!PushCallIn(1)) {
+  if (!PushCallIn(2)) {
     return false;
   }
 
   lua_pushinteger(L, ed->playerID);
+  LuaDouble::PushDouble(L, ed->stateTime);
 
-  return RunCallIn(1, 0);
+  return RunCallIn(2, 0);
 }
 
 
@@ -1551,7 +1589,7 @@ bool CI_RecvCommand::execute(bz_EventData* eventData)
   }
 
   lua_pushstdstring(L, recvCmdData->cmdLine);
-  lua_pushinteger(L,   recvCmdData->playerID); 
+  lua_pushinteger(L,   recvCmdData->playerID);
 
   return RunCallIn(2, 0);
 }
@@ -1772,11 +1810,8 @@ bool CI_Teleport::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Tick::execute(bz_EventData* eventData)
+bool CI_Update::execute(bz_EventData* /*eventData*/)
 {
-  bz_TickEventData_V1* ed = (bz_TickEventData_V1*)eventData;
-  ed = ed; // FIXME?
-
   if (!PushCallIn(0)) {
     return false;
   }

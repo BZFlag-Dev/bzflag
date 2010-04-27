@@ -96,10 +96,8 @@ void HubLink::clear()
     L = NULL;
   }
 
-  if (ares != NULL) {
-    delete ares;
-    ares = NULL;
-  }
+  delete ares;
+  ares = NULL;
 
   if (sock >= 0) {
     ::shutdown(sock, SHUT_RDWR);
@@ -310,10 +308,11 @@ void HubLink::stateDNS()
     return; // not done yet
   }
 
-  // connect the socket
+  // get rid of the AresHandler
   delete ares;
   ares = NULL;
 
+  // connect the socket
   sock = (int)socket(AF_INET, SOCK_STREAM, 0);
   if (sock == -1) {
     fail("socket() error: ", getErrno());

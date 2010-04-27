@@ -17,11 +17,25 @@
 #include <ctype.h>
 #include <wctype.h>
 
+// common headers
+#include "EventHandler.h"
+
 // local implementation headers
 #include "bzUnicode.h"
 
 
 LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;
+
+
+//============================================================================//
+
+static bool fallbackCommand(const char* cmd)
+{
+  return eventHandler.CommandFallback(cmd);
+}
+
+
+bool (*LocalCommand::fallback)(const char*) = fallbackCommand;
 
 
 //============================================================================//
@@ -56,6 +70,9 @@ bool LocalCommand::execute(const char *commandLine)
   std::map<std::string, LocalCommand *>::iterator it;
   it = (*mapOfCommands).find(commandToken);
   if (it == (*mapOfCommands).end()) {
+    if (fallback && fallback(commandLine)) {
+      return true;
+    }
     return false;
   }
   return (*(it->second))(commandLine);

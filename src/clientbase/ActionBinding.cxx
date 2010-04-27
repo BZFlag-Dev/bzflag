@@ -100,6 +100,11 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("messagepanel prev"),   press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel next"),   press));
 
+  wayToBindActions.insert(std::make_pair(std::string("luauser reload"), press));
+  wayToBindActions.insert(std::make_pair(std::string("luauser disable"), press));
+  wayToBindActions.insert(std::make_pair(std::string("luaworld reload"), press));
+  wayToBindActions.insert(std::make_pair(std::string("luaworld disable"), press));
+
   defaultBinding.insert(BindingTable::value_type("Left Mouse", "fire"));
   defaultBinding.insert(BindingTable::value_type("Enter", "fire"));
   defaultBinding.insert(BindingTable::value_type("Middle Mouse", "drop"));
@@ -199,6 +204,15 @@ ActionBinding::ActionBinding() {
   // these do not work when a HUDDialog is active
   defaultBinding.insert(BindingTable::value_type("Alt+,",    "messagepanel prev"));
   defaultBinding.insert(BindingTable::value_type("Alt+.",    "messagepanel next"));
+
+  defaultBinding.insert(BindingTable::value_type("Alt+U",  "luauser reload"));
+  defaultBinding.insert(BindingTable::value_type("Alt+W",  "luaworld reload"));
+  defaultBinding.insert(BindingTable::value_type("Alt+B",  "luabzorg reload"));
+/* FIXME -- bindings to disable client lua scripts
+  defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
+  defaultBinding.insert(BindingTable::value_type("Ctrl+B", "luabzorg disable"));
+*/
 }
 
 void ActionBinding::resetBindings() {

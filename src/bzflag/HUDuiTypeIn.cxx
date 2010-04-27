@@ -146,15 +146,15 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return true;
   }
 
-  unsigned int c = key.chr;
+  unsigned int c = key.unicode;
 
   if (c == 0) {
     switch (key.button) {
       case BzfKeyEvent::Left: {
-        if ((key.shift & BzfKeyEvent::AltKey) != 0) {
+        if ((key.modifiers & BzfKeyEvent::AltKey) != 0) {
           return false;
         }
-        if ((key.shift & BzfKeyEvent::ControlKey) == 0) {
+        if ((key.modifiers & BzfKeyEvent::ControlKey) == 0) {
           // skip a character
           decrementCursor();
         }
@@ -169,10 +169,10 @@ bool HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
         return true;
       }
       case BzfKeyEvent::Right: {
-        if ((key.shift & BzfKeyEvent::AltKey) != 0) {
+        if ((key.modifiers & BzfKeyEvent::AltKey) != 0) {
           return false;
         }
-        if ((key.shift & BzfKeyEvent::ControlKey) == 0) {
+        if ((key.modifiers & BzfKeyEvent::ControlKey) == 0) {
           // skip a character
           if (*cursorPos) {
             ++cursorPos;
@@ -319,7 +319,7 @@ bool HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
     return true;
   }
 
-  if (key.chr == '\t' || !iswprint(key.chr)) {
+  if (key.unicode == '\t' || !iswprint(key.unicode)) {
     return false; // ignore non-printing and tab
   }
 

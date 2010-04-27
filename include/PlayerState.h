@@ -85,7 +85,7 @@ class PlayerState
     // the following are to be used only for drawing
     float userSpeed;		// user's desired angular velocity
     float userAngVel;		// angular velocity of tank
-    float jumpJetsScale;	// angular velocity of tank
+    float jumpJetsScale;	// size of the jump jets
 
     // used to avoid awkward remote bouncy sounds
     uint8_t sounds;		// for playing sounds

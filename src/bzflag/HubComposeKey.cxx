@@ -52,9 +52,9 @@ void HubComposeKey::init(bool keep)
 
 static bool isWordCompletion(const BzfKeyEvent& key)
 {
-  if ((key.chr == 6) || // ^F
-      (key.chr == 9) || // <TAB>
-      ((key.shift == 0) && (key.button == BzfKeyEvent::F2))) {
+  if ((key.unicode == 6) || // ^F
+      (key.unicode == 9) || // <TAB>
+      ((key.modifiers == 0) && (key.button == BzfKeyEvent::F2))) {
     return true;
   } else {
     return false;
@@ -127,7 +127,7 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
     return true;
   }
 
-  switch (key.chr) {
+  switch (key.unicode) {
     case 3: // ^C
     case 27: { // escape
       sendIt = false; // finished composing -- don't send
@@ -238,9 +238,9 @@ bool HubComposeKey::keyRelease(const BzfKeyEvent& key)
     }
   }
 
-  if ((key.chr == 4) || // ^D
-      (key.chr == 6) || // ^F
-      (key.chr == 13) || // return
+  if ((key.unicode == 4) || // ^D
+      (key.unicode == 6) || // ^F
+      (key.unicode == 13) || // return
       isWordCompletion(key)) {
     return true;
   }

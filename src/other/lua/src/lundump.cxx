@@ -194,6 +194,10 @@ static void LoadHeader(LoadState* S)
 */
 Proto* luaU_undump (lua_State* L, ZIO* Z, Mbuffer* buff, const char* name)
 {
+  /* BZ -- disable precompiled chunks */
+ luaO_pushfstring(L, "precompiled chunks are disabled");
+ luaD_throw(L, LUA_ERRSYNTAX);
+
  LoadState S;
  if (*name=='@' || *name=='=')
   S.name=name+1;

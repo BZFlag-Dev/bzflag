@@ -201,7 +201,7 @@ typedef union TString {
   struct {
     CommonHeader;
     lu_byte reserved;
-    unsigned int hash;
+    lua_Hash hash;
     size_t len;
   } tsv;
 } TString;
@@ -219,6 +219,7 @@ typedef union Udata {
     struct Table *metatable;
     struct Table *env;
     size_t len;
+    void* extra;
   } uv;
 } Udata;
 
@@ -337,7 +338,7 @@ typedef struct Node {
 
 typedef struct Table {
   CommonHeader;
-  lu_byte flags;  /* 1<<p means tagmethod(p) is not present */ 
+  lu_byte flags;  /* 1<<p means tagmethod(p) is not present */
   lu_byte lsizenode;  /* log2 of size of `node' array */
   struct Table *metatable;
   TValue *array;  /* array part */
@@ -345,6 +346,7 @@ typedef struct Table {
   Node *lastfree;  /* any free position is before this position */
   GCObject *gclist;
   int sizearray;  /* size of `array' array */
+  char readonly; /*BZ*/
 } Table;
 
 

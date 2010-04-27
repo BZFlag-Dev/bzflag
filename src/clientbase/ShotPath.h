@@ -31,6 +31,7 @@
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "ShotUpdate.h"
+#include "GfxBlock.h"
 #include "vectors.h"
 
 /* local interface headers */
@@ -80,6 +81,9 @@ public:
   bool predictPosition(float dt, fvec3& p) const;
   bool predictVelocity(float dt, fvec3& p) const;
 
+  GfxBlock&       getGfxBlock()       { return gfxBlock; }
+  const GfxBlock& getGfxBlock() const { return gfxBlock; }
+
 protected:
   void updateShot(float dt);
   const ShotStrategy *getStrategy() const;
@@ -99,6 +103,7 @@ private:
   bool expiring; // shot has almost terminated
   bool expired; // shot has terminated
   bool local; // shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
+  GfxBlock gfxBlock;
 };
 
 class LocalShotPath : public ShotPath {

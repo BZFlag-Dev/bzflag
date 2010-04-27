@@ -87,41 +87,42 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
   if (HUDuiControl::doKeyPress(key))
     return true;
 
-  if (key.chr == 0)
+  if (key.unicode == 0)
     switch (key.button) {
-      case BzfKeyEvent::Left:
+      case BzfKeyEvent::Left: {
 	if (index != -1) {
 	  if (--index < 0) index = (int)list.size() - 1;
 	  doCallback();
 	}
 	break;
-
-      case BzfKeyEvent::Right:
+      }
+      case BzfKeyEvent::Right: {
 	if (index != -1) {
 	  if (++index >= (int)list.size()) index = 0;
 	  doCallback();
 	}
 	break;
-
-      case BzfKeyEvent::Home:
+      }
+      case BzfKeyEvent::Home: {
 	if (index != -1) {
 	  index = 0;
 	  doCallback();
 	}
 	break;
-
-      case BzfKeyEvent::End:
+      }
+      case BzfKeyEvent::End: {
 	if (index != -1) {
 	  index = (int)list.size() - 1;
 	  doCallback();
 	}
 	break;
-
-      default:
+      }
+      default: {
 	return false;
+      }
     }
 
-  switch (key.chr) {
+  switch (key.unicode) {
     case 13:
     case 27:
       return false;

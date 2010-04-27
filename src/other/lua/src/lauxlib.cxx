@@ -142,12 +142,12 @@ LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) { /*BZ
   if (p == NULL) {  /* value is a userdata? */
     return NULL;
   }
-  
+   
   if (!lua_getmetatable(L, ud)) {  /* does it have a metatable? */
     lua_pop(L, 1);
     return NULL;
   }
-
+   
   /* get type metatable */
   lua_getfield(L, LUA_REGISTRYINDEX, tname);
 
@@ -156,29 +156,9 @@ LUALIB_API void *luaL_testudata (lua_State *L, int ud, const char *tname) { /*BZ
     lua_pop(L, 2);  /* remove both metatables */
     return p;
   }
-
+   
   lua_pop(L, 2);  /* remove both metatables */
   return NULL;
-}
-
-
-LUALIB_API void luaL_checkrawset (lua_State *L, int tbl) { /*BZ*/
-  if (luaL_getmetafield(L, tbl, "__rawset")) {
-    const int type = lua_type(L, -1);
-    switch (type) {
-      case LUA_TSTRING: {
-        luaL_error(L, "__rawset: %s", lua_tostring(L, -1));
-        break;
-      }
-      case LUA_TBOOLEAN: {
-        if (!lua_toboolean(L, -1)) {
-          luaL_error(L, "blocked by (__rawset == false)");
-        }
-        break;
-      }
-    }
-    lua_pop(L, 1);
-  }
 }
 
 

@@ -107,6 +107,11 @@ static const BzMaterial* getBzMat(const MatInfo& mi)
     return ptr;
   }
 
+  ptr = MATERIALMGR.findMaterial("__" + mi.name);
+  if (ptr) {
+    return ptr;
+  }
+
   std::string texture;
   if (mi.teamColor >= 0) {
     texture = Team::getImagePrefix(mi.teamColor);
@@ -114,7 +119,7 @@ static const BzMaterial* getBzMat(const MatInfo& mi)
   texture += BZDB.get(mi.texVar);
 
   BzMaterial mat;
-  mat.setName(mi.name);
+  mat.setName("__" + mi.name);
   mat.addTexture(texture);
   mat.setUseTextureAlpha(false);
   mat.setUseColorOnTexture(false);

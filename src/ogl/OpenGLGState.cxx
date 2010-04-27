@@ -28,6 +28,7 @@
 #include "TextureMatrix.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
+#include "EventHandler.h"
 
 #include "OpenGLUtils.h"
 
@@ -1374,6 +1375,7 @@ void OpenGLGState::initContext()
     logDebugMessage(0,"GLEW initialization failed");
 
   // call all of the freeing functions first
+  eventHandler.GLContextFree(); // before default resources
   logDebugMessage(3,"ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
   logDebugMessage(3,"ContextInitializer::executeFreeFuncs() end\n");
@@ -1388,6 +1390,7 @@ void OpenGLGState::initContext()
   logDebugMessage(3,"ContextInitializer::executeInitFuncs() start\n");
   ContextInitializer::executeInitFuncs();
   logDebugMessage(3,"ContextInitializer::executeInitFuncs() end\n");
+  eventHandler.GLContextInit(); // after default resources
 
   // initialize the GL state again in case one of the initializers messed it up
   initGLState();

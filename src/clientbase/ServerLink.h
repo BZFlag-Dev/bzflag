@@ -119,6 +119,10 @@ public:
     if (key != NULL) { sendCustomData(std::string(key), value); }
   }
 
+  bool sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
+                   PlayerId dstPlayerID, int16_t dstScriptID,
+                   uint8_t status, const std::string& data);
+
   static ServerLink*	getServer(); // const
   static void		setServer(ServerLink*);
 

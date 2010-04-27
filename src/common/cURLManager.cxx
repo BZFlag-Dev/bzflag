@@ -34,11 +34,12 @@ cURLManager::cURLManager()
 {
   CURLcode result;
 
-  theData   = NULL;
-  theLen    = 0;
-  added     = false;
-  formPost  = NULL;
-  formLast  = NULL;
+  theData    = NULL;
+  theLen     = 0;
+  added      = false;
+  formPost   = NULL;
+  formLast   = NULL;
+  httpHeader = NULL;
 
   deleteOnDone = false;
 
@@ -112,6 +113,10 @@ cURLManager::~cURLManager()
   if (refs == 0)
     delete pcURLMap;
   free(theData);
+  if (httpHeader) {
+    curl_slist_free_all(httpHeader);
+    httpHeader = NULL;
+  }
 }
 
 
@@ -165,10 +170,20 @@ void cURLManager::setNoBody()
 {
   CURLcode result;
   long     nobody = 1;
-
   result = curl_easy_setopt(easyHandle, CURLOPT_NOBODY, nobody);
   if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_NOBODY error %d : %s\n", result, errorBuffer);
+  }
+}
+
+
+void cURLManager::setIncludeHeader()
+{
+  CURLcode result;
+  long     includeHeader = 1;
+  result = curl_easy_setopt(easyHandle, CURLOPT_HEADER, includeHeader);
+  if (result != CURLE_OK) {
+    logDebugMessage(1, "CURLOPT_HEADER error %d : %s\n", result, errorBuffer);
   }
 }
 
@@ -196,7 +211,28 @@ void cURLManager::setGetMode()
 }
 
 
-void cURLManager::setPostMode(std::string _postData)
+void cURLManager::setHttpHeader(const std::vector<std::string>& lines)
+{
+  if (httpHeader) {
+    curl_slist_free_all(httpHeader);
+    httpHeader = NULL;
+  }
+
+  for (size_t i = 0; i < lines.size(); ++i) {
+    logDebugMessage(3, "adding header line: '%s'\n", lines[i].c_str());
+    httpHeader = curl_slist_append(httpHeader, lines[i].c_str());
+  }
+  
+  CURLcode result;
+  result = curl_easy_setopt(easyHandle, CURLOPT_HTTPHEADER, httpHeader);
+  if (result != CURLE_OK) {
+    logDebugMessage(1, "CURLOPT_HTTPHEADER error %d : %s\n", result, errorBuffer);
+  }
+
+}
+
+
+void cURLManager::setPostMode(const std::string& _postData)
 {
   CURLcode result;
 
@@ -224,7 +260,7 @@ void cURLManager::setHTTPPostMode()
 }
 
 
-void cURLManager::setURL(const std::string url)
+void cURLManager::setURL(const std::string& url)
 {
   CURLcode result;
 
@@ -397,6 +433,10 @@ void cURLManager::infoComplete(CURLcode result)
   if (result != CURLE_OK)
     logDebugMessage(1, "File transfer terminated with error from libcurl %d : %s\n",
 		    result, errorBuffer);
+  if (httpHeader) {
+    curl_slist_free_all(httpHeader);
+    httpHeader = NULL;
+  }
   if (formPost) {
     curl_formfree(formPost);
     formPost = NULL;
@@ -431,6 +471,18 @@ bool cURLManager::getFileSize(double &size)
   result = curl_easy_getinfo(easyHandle, CURLINFO_SIZE_DOWNLOAD, &size);
   if (result) {
     logDebugMessage(1, "CURLINFO_SIZE_DOWNLOAD error %d : %s\n", result, errorBuffer);
+    return false;
+  }
+  return true;
+}
+
+
+bool cURLManager::getFileRemoteSize(double &size)
+{
+  CURLcode result;
+  result = curl_easy_getinfo(easyHandle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &size);
+  if (result) {
+    logDebugMessage(1, "CURLINFO_CONTENT_LENGTH_DOWNLOAD error %d : %s\n", result, errorBuffer);
     return false;
   }
   return true;
@@ -482,7 +534,7 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 }
 
 
-void cURLManager::setInterface(const std::string _interfaceIP)
+void cURLManager::setInterface(const std::string& _interfaceIP)
 {
   interfaceIP = _interfaceIP;
 
@@ -496,7 +548,7 @@ void cURLManager::setInterface(const std::string _interfaceIP)
 }
 
 
-void cURLManager::setUserAgent(const std::string _userAgent)
+void cURLManager::setUserAgent(const std::string& _userAgent)
 {
   userAgent = _userAgent;
 

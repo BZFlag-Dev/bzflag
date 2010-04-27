@@ -435,6 +435,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 			     const fvec4* resetColor,
 			     fontJustification align)
 {
+  static BZDB_float maxFontSize("maxFontSize"); // FIXME?
+  if (size > maxFontSize) {
+    size = maxFontSize;
+  }
+
   if (text.empty()) {
     return;
   }
@@ -798,14 +803,14 @@ float FontManager::getStringHeight(int font, float size)
 
 void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
 {
-  float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
+  const double pulseTime = TimeKeeper::getCurrent().getSeconds();
 
   // depth is how dark it should get (1.0 is to black)
   float pulseDepth = BZDBCache::pulseDepth;
   // rate is how fast it should pulsate (smaller is faster)
   float pulseRate = BZDBCache::pulseRate;
 
-  float pulseFactor = fmodf(pulseTime, pulseRate) - pulseRate /2.0f;
+  float pulseFactor = float(fmod(pulseTime, pulseRate)) - (pulseRate * 0.5f);
   pulseFactor = fabsf(pulseFactor) / (pulseRate/2.0f);
   pulseFactor = pulseDepth * pulseFactor + (1.0f - pulseDepth);
 

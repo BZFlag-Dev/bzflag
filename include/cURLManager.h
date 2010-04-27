@@ -43,13 +43,15 @@ public:
   void setFailOnError();
   void setGetMode();
   void setHTTPPostMode();
-  void setPostMode(std::string postData);
+  void setHttpHeader(const std::vector<std::string>& lines);
+  void setPostMode(const std::string& postData);
+  void setIncludeHeader();
   void setRequestFileTime(bool request);
-  void setURL(const std::string url);
+  void setURL(const std::string& url);
   void setProgressFunction(curl_progress_callback func, void* data);
   void setTimeCondition(timeCondition condition, time_t &t);
-  void setInterface(const std::string interfaceIP);
-  void setUserAgent(const std::string userAgent);
+  void setInterface(const std::string& interfaceIP);
+  void setUserAgent(const std::string& userAgent);
   void setDNSCachingTime(long time);
   void setDeleteOnDone();
 
@@ -57,6 +59,7 @@ public:
 
   bool getFileTime(time_t &t);
   bool getFileSize(double &size);
+  bool getFileRemoteSize(double &size);
   bool getHttpCode(long   &code);
 
   virtual void collectData(char *ptr, int len);
@@ -82,6 +85,8 @@ private:
   std::string   interfaceIP;
   std::string   userAgent;
   std::string   postData;
+
+  struct curl_slist* httpHeader;
 
   struct curl_httppost* formPost;
   struct curl_httppost* formLast;

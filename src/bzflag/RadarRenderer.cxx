@@ -20,6 +20,7 @@
 #include "BZDBCache.h"
 #include "TextureManager.h"
 #include "PhysicsDriver.h"
+#include "EventHandler.h"
 #include "TimeKeeper.h"
 #include "LinkManager.h"
 
@@ -922,6 +923,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   glPopMatrix(); // depth = 0
+
+  eventHandler.DrawRadar();
 
   if (dimming > 0.0f) {
     glPushMatrix(); // depth = 1

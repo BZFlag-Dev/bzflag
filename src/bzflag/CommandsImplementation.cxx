@@ -23,9 +23,12 @@
 // common implementation headers
 #include "AnsiCodes.h"
 #include "BZDBCache.h"
+#include "BzDocket.h"
+#include "BzVFS.h"
 #include "CommandsStandard.h"
 #include "DirectoryNames.h"
 #include "KeyManager.h"
+#include "LuaClientScripts.h"
 #include "MapInfo.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
@@ -139,6 +142,24 @@ class WorldInfoCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class LuaUserCommand : LocalCommand {
+  public:
+    LuaUserCommand();
+    bool operator() (const char *commandLine);
+};
+
+class LuaBzOrgCommand : LocalCommand {
+  public:
+    LuaBzOrgCommand();
+    bool operator() (const char *commandLine);
+};
+
+class LuaWorldCommand : LocalCommand {
+  public:
+    LuaWorldCommand();
+    bool operator() (const char *commandLine);
+};
+
 class DebugLevelCommand : LocalCommand {
   public:
     DebugLevelCommand();
@@ -169,6 +190,9 @@ static DumpCommand        dumpCommand;
 static HighlightCommand   highlightCommand;
 static HubCommand         hubCommand;
 static LocalSetCommand    localSetCommand;
+static LuaBzOrgCommand    luaBzOrgCommand;
+static LuaUserCommand     luaUserCommand;
+static LuaWorldCommand    luaWorldCommand;
 static QuitCommand        quitCommand;
 static ReTextureCommand   reTextureCommand;
 static RoamPosCommand     RoamPosCommand;
@@ -193,6 +217,9 @@ DumpCommand::DumpCommand()             : LocalCommand("/dumpvars")  {}
 HighlightCommand::HighlightCommand()   : LocalCommand("/highlight") {}
 HubCommand::HubCommand()               : LocalCommand("/hub")       {}
 LocalSetCommand::LocalSetCommand()     : LocalCommand("/localset")  {}
+LuaBzOrgCommand::LuaBzOrgCommand()     : LocalCommand("/luabzorg")  {}
+LuaUserCommand::LuaUserCommand()       : LocalCommand("/luauser")   {}
+LuaWorldCommand::LuaWorldCommand()     : LocalCommand("/luaworld")  {}
 QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand()       : LocalCommand("/roampos")   {}
@@ -825,14 +852,16 @@ static void sendSaveWorldHelp()
   addMessage(NULL, "  -g : save ungrouped");
   addMessage(NULL, "  -m : save some primitives as meshes");
   addMessage(NULL, "  -o : save meshes into WaveFront OBJ files");
-  return;
+  addMessage(NULL, "  -d : do not try to save the LuaWorld docket");
 }
+
 
 bool SaveWorldCommand::operator() (const char *commandLine)
 {
   bool meshprims  = false;
   bool ungrouped  = false;
   bool wavefront  = false;
+  bool skipDocket = false;
 
   const std::string cmdLine = commandLine;
   const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
@@ -854,6 +883,8 @@ bool SaveWorldCommand::operator() (const char *commandLine)
       wavefront = true;
       meshprims = true;
       ungrouped = true;
+    } else if (arg == "-d") {
+      skipDocket = true;
     } else {
       break;
     }
@@ -886,6 +917,23 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   }
   addMessage(NULL, buffer);
 
+  if (!skipDocket) {
+    const BzDocket* docket = bzVFS.getDocket(BZVFS_LUA_WORLD);
+    if (docket != NULL) {
+      std::vector<std::string> dirs, files;
+      docket->dirList("", false, dirs, files);
+      if (!dirs.empty() || !files.empty()) {
+        const std::string docketDir = fullname + ".docket";
+        // FIXME - should move directory if already exists 
+        if (docket->save(docketDir)) {
+          addMessage(NULL, std::string("Docket saved: ") + docketDir);
+        } else {
+          addMessage(NULL, std::string("Docket failed: ") + docketDir);
+        }
+      }
+    }  
+  }    
+       
   return true;
 }
 
@@ -925,6 +973,36 @@ bool WorldInfoCommand::operator() (const char* /*commandLine*/)
 }
 
 
+bool LuaUserCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaUserCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+ 
+ 
+bool LuaBzOrgCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaBzOrgCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+ 
+ 
+bool LuaWorldCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaWorldCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+ 
+ 
 bool DebugLevelCommand::operator() (const char* cmdLine)
 {
   const std::vector<std::string> args = TextUtils::tokenize(cmdLine, " ");

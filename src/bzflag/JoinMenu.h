@@ -21,6 +21,7 @@
 
 /* common interface headers */
 #include "global.h"
+#include "LuaClientScripts.h"
 
 /* local interface headers */
 #include "HUDDialog.h"

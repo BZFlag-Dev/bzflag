@@ -10,31 +10,31 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef LUA_FLOAT_H
-#define LUA_FLOAT_H
+#ifndef LUA_DOUBLE_H
+#define LUA_DOUBLE_H
 
 struct lua_State;
 
 
-class LuaFloat {
+class LuaDouble {
   public:
     static bool PushEntries(lua_State* L);
 
-    static bool      IsFloat(lua_State* L, int index);
-    static float*  TestFloat(lua_State* L, int index);
-    static float* TestNumber(lua_State* L, int index);
-    static float  CheckFloat(lua_State* L, int index);
-    static float CheckNumber(lua_State* L, int index);
+    static bool      IsDouble(lua_State* L, int index);
+    static double* TestDouble(lua_State* L, int index);
+    static double* TestNumber(lua_State* L, int index);
+    static double CheckDouble(lua_State* L, int index);
+    static double CheckNumber(lua_State* L, int index);
 
-    static void PushFloat(lua_State* L, float value);
+    static void PushDouble(lua_State* L, double value);
 
   public:
     static const char* metaName;
 
   private:
     static bool CreateMetatable(lua_State* L);
-    static int CreateFloat(lua_State* L);
-    static int IsFloat(lua_State* L);
+    static int CreateDouble(lua_State* L);
+    static int IsDouble(lua_State* L);
     static int MetaIndex(lua_State* L);
     static int MetaToString(lua_State* L);
     static int MetaADD(lua_State* L);
@@ -50,7 +50,7 @@ class LuaFloat {
 };
 
 
-#endif // LUA_FLOAT_H
+#endif // LUA_DOUBLE_H
 
 
 // Local Variables: ***

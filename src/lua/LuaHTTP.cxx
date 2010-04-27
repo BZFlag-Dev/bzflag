@@ -13,13 +13,15 @@
 #include "common.h"
 
 // interface header
-#include "LuaURL.h"
+#include "LuaHTTP.h"
 
 // system headers
 #include <new>
 #include <time.h>
 #include <string>
 #include <vector>
+using std::string;
+using std::vector;
 
 // common headers
 #include "bzfio.h"
@@ -29,20 +31,23 @@
 
 // local headers
 #include "LuaHeader.h"
+#include "LuaDouble.h"
 
 
-const char* LuaURLMgr::metaName = "FetchURL";
+const char* LuaHTTPMgr::metaName = "HTTP";
+
+AccessList* LuaHTTPMgr::accessList = NULL;
 
 
 //============================================================================//
 //============================================================================//
 
-LuaURL::LuaURL(lua_State* LS, const std::string& _url)
-: L(LS)
+LuaHTTP::LuaHTTP(lua_State* LS, const std::string& _url)
+: httpL(LS)
 , active(false)
 , success(false)
-, headOnly(false)
 , fileSize(-1.0)
+, fileRemoteSize(-1.0)
 , fileTime(0)
 , httpCode(0)
 , url(_url)
@@ -50,52 +55,72 @@ LuaURL::LuaURL(lua_State* LS, const std::string& _url)
 , funcRef(LUA_NOREF)
 , selfRef(LUA_NOREF)
 {
-  selfRef = luaL_ref(L, LUA_REGISTRYINDEX);
+  selfRef = luaL_ref(httpL, LUA_REGISTRYINDEX);
+
+  long timeout = 0;
+  bool noBody = false;
+  bool header = false;
+  std::vector<std::string> httpHeaders;
 
   int funcArg = 2;
-  if (lua_israwstring(L, 2)) {
-    postData = lua_tostring(L, 2);
+  if (lua_israwstring(httpL, 2)) {
+    postData = lua_tostring(httpL, 2);
     funcArg++;
   }
-  else if (lua_istable(L, 2)) {
+  else if (lua_istable(httpL, 2)) {
     const int table = funcArg;
     funcArg++;
-    for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
-      if (lua_israwstring(L, -2)) {
-        const std::string key = lua_tostring(L, -2);
-        if (key == "post") {
-          postData = luaL_checkstring(L, -1);
-        }
-        else if (key == "timeout") {
-          const long timeout = (long)luaL_checkint(L, -1);
-          setTimeout(timeout);
-        }
-        else if (key == "head") {
-          luaL_checktype(L, -1, LUA_TBOOLEAN);
-          if (lua_tobool(L, -1)) {
-            setNoBody();
-          }
-        }
-        else if (key == "failOnError") {
-          luaL_checktype(L, -1, LUA_TBOOLEAN);
-          if (lua_tobool(L, -1)) {
-            setFailOnError();
-          }
-        }
+    for (lua_pushnil(httpL); lua_next(httpL, table) != 0; lua_pop(httpL, 1)) {
+      if (lua_israwstring(httpL, -2)) {
+	const std::string key = lua_tostring(httpL, -2);
+	if (key == "post") {
+	  postData = luaL_checkstring(httpL, -1);
+	}
+	else if (key == "timeout") {
+	  timeout = (long)luaL_checkint(httpL, -1);
+	}
+	else if (key == "noBody") {
+	  luaL_checktype(httpL, -1, LUA_TBOOLEAN);
+	  if (lua_tobool(httpL, -1)) {
+	    noBody = true;
+	  }
+	}
+	else if (key == "header") {
+	  luaL_checktype(httpL, -1, LUA_TBOOLEAN);
+	  if (lua_tobool(httpL, -1)) {
+	    header = true;
+	  }
+	}
+	else if (key == "failOnError") {
+	  luaL_checktype(httpL, -1, LUA_TBOOLEAN);
+	  if (lua_tobool(httpL, -1)) {
+	    setFailOnError();
+	  }
+	}
+	else if (key == "httpHeader") {
+	  if (lua_israwstring(httpL, -1)) {
+	    httpHeaders.push_back(lua_tostring(httpL, -1));
+	  }
+	  else if (lua_type(httpL, -1) == LUA_TTABLE) {
+	    const int t = lua_gettop(httpL);
+	    for (int i = 1; lua_checkgeti(httpL, t, i) != 0; lua_pop(httpL, 1), i++) {
+	      httpHeaders.push_back(luaL_checkstring(httpL, -1));
+	    }
+	  }
+	  else {
+	    luaL_error(httpL, "'httpHeaders' expects a string or table");
+	  }
+	}
       }
     }
   }
 
-  if (lua_isfunction(L, funcArg)) {
-    lua_pushvalue(L, funcArg);
-    funcRef = luaL_ref(L, LUA_REGISTRYINDEX);
+  if (lua_isfunction(httpL, funcArg)) {
+    lua_pushvalue(httpL, funcArg);
+    funcRef = luaL_ref(httpL, LUA_REGISTRYINDEX);
   }
 
   setURL(url);
-
-  if (headOnly) {
-    setNoBody();
-  }
 
   if (postData.empty()) {
     setGetMode();
@@ -107,14 +132,31 @@ LuaURL::LuaURL(lua_State* LS, const std::string& _url)
 
   setRequestFileTime(true);
 
+  if (timeout != 0) {
+    setTimeout(timeout);
+  }
+
+  if (noBody) {
+    setNoBody();
+  }
+
+  if (header) {
+    setIncludeHeader();
+  }
+
+  if (!httpHeaders.empty()) {
+    setHttpHeader(httpHeaders);
+  }
+
   addHandle();
+
   active = true;
 }
 
 
-LuaURL::~LuaURL()
+LuaHTTP::~LuaHTTP()
 {
-  logDebugMessage(6, "LuaURL: deleting %s userdata\n", url.c_str());
+  logDebugMessage(6, "LuaHTTP: deleting %s userdata\n", url.c_str());
   if (active) {
     removeHandle();
   }
@@ -122,27 +164,29 @@ LuaURL::~LuaURL()
 }
 
 
-void LuaURL::ClearRefs()
+void LuaHTTP::ClearRefs()
 {
   if (funcRef != LUA_NOREF) {
-    luaL_unref(L, LUA_REGISTRYINDEX, funcRef);
+    luaL_unref(httpL, LUA_REGISTRYINDEX, funcRef);
     funcRef = LUA_NOREF;
   }
   if (selfRef != LUA_NOREF) {
-    luaL_unref(L, LUA_REGISTRYINDEX, selfRef);
+    luaL_unref(httpL, LUA_REGISTRYINDEX, selfRef);
     selfRef = LUA_NOREF;
   }
 }
 
 
-void LuaURL::finalization(char* data, unsigned int length, bool good)
+void LuaHTTP::finalization(char* data, unsigned int length, bool good)
 {
   active = false;
 
   good = good && (data != NULL);
 
+  // note the lower-case get()'s
   getFileTime(fileTime);
   getFileSize(fileSize);
+  getFileRemoteSize(fileRemoteSize);
   getHttpCode(httpCode);
 
   if ((funcRef == LUA_NOREF) || (selfRef == LUA_NOREF)) {
@@ -150,10 +194,10 @@ void LuaURL::finalization(char* data, unsigned int length, bool good)
     return;
   }
 
-  lua_checkstack(L, 4);
-  lua_rawgeti(L, LUA_REGISTRYINDEX, funcRef);
-  if (!lua_isfunction(L, -1)) {
-    lua_pop(L, 1);
+  lua_checkstack(httpL, 4);
+  lua_rawgeti(httpL, LUA_REGISTRYINDEX, funcRef);
+  if (!lua_isfunction(httpL, -1)) {
+    lua_pop(httpL, 1);
     ClearRefs();
     return;
   }
@@ -161,9 +205,9 @@ void LuaURL::finalization(char* data, unsigned int length, bool good)
   // callback(thisFetch, <data | nil> [, errMsg, errCode ])
 
   int args = 1;
-  lua_rawgeti(L, LUA_REGISTRYINDEX, selfRef);
-  if (!LuaURLMgr::TestURL(L, -1)) {
-    lua_pop(L, 2);
+  lua_rawgeti(httpL, LUA_REGISTRYINDEX, selfRef);
+  if (!LuaHTTPMgr::TestHTTP(httpL, -1)) {
+    lua_pop(httpL, 2);
     ClearRefs();
     return;
   }
@@ -173,25 +217,25 @@ void LuaURL::finalization(char* data, unsigned int length, bool good)
   if (good) {
     success = true;
     args += 1;
-    lua_pushlstring(L, data, length);
+    lua_pushlstring(httpL, data, length);
   }
   else {
     args += 3;
-    lua_pushnil(L);
-    lua_pushliteral(L, "failed");
-    lua_pushdouble(L, (double)httpCode);
+    lua_pushnil(httpL);
+    lua_pushliteral(httpL, "failed");
+    lua_pushinteger(httpL, httpCode);
   }
 
   // call the function
-  if (lua_pcall(L, args, 0, 0) != 0) {
-    logDebugMessage(0, "LuaURL callback error (%s): %s\n",
-                    url.c_str(), lua_tostring(L, -1));
-    lua_pop(L, 1);
+  if (lua_pcall(httpL, args, 0, 0) != 0) {
+    logDebugMessage(0, "LuaHTTP callback error (%s): %s\n",
+		    url.c_str(), lua_tostring(httpL, -1));
+    lua_pop(httpL, 1);
   }
 }
 
 
-bool LuaURL::Cancel()
+bool LuaHTTP::Cancel()
 {
   if (!active) {
     return false;
@@ -203,9 +247,9 @@ bool LuaURL::Cancel()
 }
 
 
-bool LuaURL::PushFunc(lua_State* LS) const
+bool LuaHTTP::PushFunc(lua_State* L) const
 {
-  if (L != LS) {
+  if (httpL != L) {
     return false;
   }
   lua_rawgeti(L, LUA_REGISTRYINDEX, funcRef);
@@ -217,13 +261,43 @@ bool LuaURL::PushFunc(lua_State* LS) const
 }
 
 
+time_t LuaHTTP::GetFileTime()
+{
+  if (!active) {
+    return fileTime;
+  }
+  time_t tmp;
+  return getFileTime(tmp) ? tmp : 0;
+}
+
+double LuaHTTP::GetFileSize()
+{
+  if (!active) {
+    return fileSize;
+  }
+  double tmp;
+  return getFileSize(tmp) ? tmp : -1.0;
+}
+
+
+double LuaHTTP::GetFileRemoteSize()
+{
+  if (!active) {
+    return fileRemoteSize;
+  }
+  double tmp;
+  return getFileRemoteSize(tmp) ? tmp : -1.0;
+}
+
+
+
 //============================================================================//
 //============================================================================//
 //
-//  LuaURLMgr
+//  LuaHTTPMgr
 //
 
-bool LuaURLMgr::PushEntries(lua_State* L)
+bool LuaHTTPMgr::PushEntries(lua_State* L)
 {
   CreateMetatable(L);
 
@@ -236,38 +310,46 @@ bool LuaURLMgr::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetPostData);
   PUSH_LUA_CFUNC(L, GetCallback);
   PUSH_LUA_CFUNC(L, GetFileSize);
+  PUSH_LUA_CFUNC(L, GetFileRemoteSize);
   PUSH_LUA_CFUNC(L, GetFileTime);
   PUSH_LUA_CFUNC(L, GetHttpCode);
+  PUSH_LUA_CFUNC(L, TestAccess);
 
   return true;
 }
 
 
-//============================================================================//
-//============================================================================//
-
-const LuaURL* LuaURLMgr::TestURL(lua_State* L, int index)
+void LuaHTTPMgr::SetAccessList(AccessList* list)
 {
-  return (LuaURL*)luaL_testudata(L, index, metaName);
-}
-
-
-const LuaURL* LuaURLMgr::CheckURL(lua_State* L, int index)
-{
-  return (LuaURL*)luaL_checkudata(L, index, metaName);
-}
-
-
-LuaURL* LuaURLMgr::GetURL(lua_State* L, int index)
-{
-  return (LuaURL*)luaL_testudata(L, index, metaName);
+  accessList = list;
 }
 
 
 //============================================================================//
 //============================================================================//
 
-bool LuaURLMgr::CreateMetatable(lua_State* L)
+const LuaHTTP* LuaHTTPMgr::TestHTTP(lua_State* L, int index)
+{
+  return (LuaHTTP*)luaL_testudata(L, index, metaName);
+}
+
+
+const LuaHTTP* LuaHTTPMgr::CheckHTTP(lua_State* L, int index)
+{
+  return (LuaHTTP*)luaL_checkudata(L, index, metaName);
+}
+
+
+LuaHTTP* LuaHTTPMgr::GetURL(lua_State* L, int index)
+{
+  return (LuaHTTP*)luaL_testudata(L, index, metaName);
+}
+
+
+//============================================================================//
+//============================================================================//
+
+bool LuaHTTPMgr::CreateMetatable(lua_State* L)
 {
   luaL_newmetatable(L, metaName);
 
@@ -289,6 +371,7 @@ bool LuaURLMgr::CreateMetatable(lua_State* L)
     PUSH_LUA_CFUNC(L, GetPostData);
     PUSH_LUA_CFUNC(L, GetCallback);
     PUSH_LUA_CFUNC(L, GetFileSize);
+    PUSH_LUA_CFUNC(L, GetFileRemoteSize);
     PUSH_LUA_CFUNC(L, GetFileTime);
     PUSH_LUA_CFUNC(L, GetHttpCode);
   }
@@ -303,17 +386,17 @@ bool LuaURLMgr::CreateMetatable(lua_State* L)
 }
 
 
-int LuaURLMgr::MetaGC(lua_State* L)
+int LuaHTTPMgr::MetaGC(lua_State* L)
 {
-  LuaURL* fetch = GetURL(L, 1);
-  fetch->~LuaURL();
+  LuaHTTP* fetch = GetURL(L, 1);
+  fetch->~LuaHTTP();
   return 0;
 }
 
 
-int LuaURLMgr::MetaToString(lua_State* L)
+int LuaHTTPMgr::MetaToString(lua_State* L)
 {
-  LuaURL* fetch = GetURL(L, 1);
+  LuaHTTP* fetch = GetURL(L, 1);
   lua_pushfstring(L, "url(%p,%s)", (void*)fetch, fetch->GetURL().c_str());
   return 1;
 }
@@ -343,7 +426,7 @@ static int ParseURL(lua_State* L, const std::string& url, std::string& hostname)
 //============================================================================//
 //============================================================================//
 
-int LuaURLMgr::Fetch(lua_State* L)
+int LuaHTTPMgr::Fetch(lua_State* L)
 {
   std::string url = luaL_checkstring(L, 1);
 
@@ -358,18 +441,28 @@ int LuaURLMgr::Fetch(lua_State* L)
     return parseArgs;
   }
 
+  if (accessList && !accessList->alwaysAuthorized()) {
+    std::vector<std::string> hostnames;
+    hostnames.push_back(hostname);
+    if (!accessList->authorized(hostnames)) {
+      lua_pushnil(L);
+      lua_pushliteral(L, "site blocked by DownloadAccess.txt");
+      return 2;
+    }
+  }
+
   // create the userdata
-  void* data = lua_newuserdata(L, sizeof(LuaURL));
+  void* data = lua_newuserdata(L, sizeof(LuaHTTP));
   luaL_getmetatable(L, metaName);
   lua_setmetatable(L, -2);
 
   lua_pushvalue(L, -1); // push a copy of the userdata for
-                        // the LuaURL constructor to reference
+			// the LuaHTTP constructor to reference
 
-  LuaURL* fetch = new(data) LuaURL(L, url);
+  LuaHTTP* fetch = new(data) LuaHTTP(L, url);
   if (!fetch->GetActive()) {
-    fetch->~LuaURL();
-    return 0;
+    fetch->~LuaHTTP();
+    return luaL_pushnil(L);
   }
 
   return 1;
@@ -379,84 +472,92 @@ int LuaURLMgr::Fetch(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaURLMgr::Cancel(lua_State* L)
+int LuaHTTPMgr::Cancel(lua_State* L)
 {
-  LuaURL* fetch = GetURL(L, 1);
+  LuaHTTP* fetch = GetURL(L, 1);
   lua_pushboolean(L, fetch->Cancel());
   return 1;
 }
 
 
-int LuaURLMgr::Length(lua_State* L)
+int LuaHTTPMgr::Length(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushinteger(L, fetch->GetLength());
   return 1;
 }
 
 
-int LuaURLMgr::Success(lua_State* L)
+int LuaHTTPMgr::Success(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushboolean(L, fetch->GetSuccess());
   return 1;
 }
 
 
-int LuaURLMgr::IsActive(lua_State* L)
+int LuaHTTPMgr::IsActive(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushboolean(L, fetch->GetActive());
   return 1;
 }
 
 
-int LuaURLMgr::GetURL(lua_State* L)
+int LuaHTTPMgr::GetURL(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushstdstring(L, fetch->GetURL());
   return 1;
 }
 
 
-int LuaURLMgr::GetPostData(lua_State* L)
+int LuaHTTPMgr::GetPostData(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
   const std::string& postData = fetch->GetPostData();
   if (postData.empty()) {
-    return 0;
+    return luaL_pushnil(L);
   }
   lua_pushstdstring(L, postData);
   return 1;
 }
 
 
-int LuaURLMgr::GetCallback(lua_State* L)
+int LuaHTTPMgr::GetCallback(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
   if (!fetch->PushFunc(L)) {
-    return 0;
+    return luaL_pushnil(L);
   }
   return 1;
 }
 
 
-int LuaURLMgr::GetFileSize(lua_State* L)
+int LuaHTTPMgr::GetFileSize(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
-  lua_pushnumber(L, (float)fetch->GetFileSize());
+  LuaHTTP* fetch = const_cast<LuaHTTP*>(CheckHTTP(L, 1));
+  LuaDouble::PushDouble(L, fetch->GetFileSize());
   return 1;
 }
 
 
-int LuaURLMgr::GetFileTime(lua_State* L)
+int LuaHTTPMgr::GetFileRemoteSize(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  LuaHTTP* fetch = const_cast<LuaHTTP*>(CheckHTTP(L, 1));
+  LuaDouble::PushDouble(L, fetch->GetFileRemoteSize());
+  return 1;
+}
+
+
+int LuaHTTPMgr::GetFileTime(lua_State* L)
+{
+  LuaHTTP* fetch = const_cast<LuaHTTP*>(CheckHTTP(L, 1));
 
   const time_t t = fetch->GetFileTime();
   struct tm* tmPtr = gmtime(&t);
   if (tmPtr == NULL) {
-    return 0;
+    return luaL_pushnil(L);
   }
 
   char buf[256];
@@ -472,13 +573,28 @@ int LuaURLMgr::GetFileTime(lua_State* L)
 }
 
 
-int LuaURLMgr::GetHttpCode(lua_State* L)
+int LuaHTTPMgr::GetHttpCode(lua_State* L)
 {
-  const LuaURL* fetch = CheckURL(L, 1);
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
 
   const long code = fetch->GetHttpCode();
   lua_pushinteger(L, (int)code);
 
+  return 1;
+}
+
+
+int LuaHTTPMgr::TestAccess(lua_State* L)
+{
+  const std::string hostname = luaL_checkstring(L, 1);
+  if ((accessList == NULL) || accessList->alwaysAuthorized()) {
+    lua_pushboolean(L, 1);
+  }
+  else {
+    std::vector<std::string> hostnames;
+    hostnames.push_back(hostname);
+    lua_pushboolean(L, accessList->authorized(hostnames));
+  }
   return 1;
 }
 
@@ -494,3 +610,4 @@ int LuaURLMgr::GetHttpCode(lua_State* L)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
+

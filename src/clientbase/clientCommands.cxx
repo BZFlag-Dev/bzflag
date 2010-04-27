@@ -14,26 +14,25 @@
 #include "commands.h"
 
 /* system implementation headers */
-#include "zlib.h"
 #ifndef _WIN32
 #  include <sys/types.h>
 #  include <dirent.h>
-#endif
-#ifdef HAVE_PTHREADS
-#  include <pthread.h>
 #endif
 #include <string>
 
 /* common implementation headers */
 #include "BZDBCache.h"
 #include "DirectoryNames.h"
+#include "EventHandler.h"
 #include "FileManager.h"
+#include "LuaClientScripts.h"
 #include "MotionUtils.h"
 #include "TextUtils.h"
 #include "bzglob.h"
 #include "version.h"
 
 /* local implementation headers */
+#include "BzPNG.h"
 #include "ComposeDefaultKey.h"
 #include "HUDRenderer.h"
 #include "HUDDialogStack.h"
@@ -63,6 +62,9 @@ static std::string cmdHunt          (const std::string&, const CmdArgList& args,
 static std::string cmdIconify       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdIdentify      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdJump          (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaBzOrg      (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaUser       (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaWorld      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdLocalCmd      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMessagePanel  (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMouseGrab     (const std::string&, const CmdArgList& args, bool*);
@@ -125,6 +127,9 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("toggleRadar",   &cmdToggleRadar,   "toggleRadar:  toggle radar visibility");
   PUSHCMD("toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility");
   PUSHCMD("toggleFlags",   &cmdToggleFlags,   "toggleFlags {main|radar}:  turn off/on field radar flags");
+  PUSHCMD("luauser",       &cmdLuaUser,       "luauser {'reload | disable | status }: control luauser");
+  PUSHCMD("luabzorg",      &cmdLuaBzOrg,      "luabzorg {'reload | disable | status }: control luabzorg");
+  PUSHCMD("luaworld",      &cmdLuaWorld,      "luaworld {'reload | disable | status }: control luaworld");
 #undef  PUSHCMD
   return commandVector;
 }
@@ -258,10 +263,12 @@ static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*)
         (flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
         !(flag == Flags::OscillationOverthruster &&
           myTank->getLocation() == LocalPlayer::InBuilding)) {
-      serverLink->sendDropFlag(myTank->getPosition());
-      // changed: on windows it may happen the MsgDropFlag
-      // never comes back to us, so we drop it right away
-      handleFlagDropped(myTank);
+      if (!eventHandler.ForbidFlagDrop()) {
+        serverLink->sendDropFlag(myTank->getPosition());
+        // changed: on windows it may happen the MsgDropFlag
+        // never comes back to us, so we drop it right away
+        handleFlagDropped(myTank);
+      }
     }
   }
   return std::string();
@@ -291,12 +298,14 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
         && !myTank->isObserver()
         && !myTank->isAlive()
         && !myTank->isExploding()) {
-      serverLink->sendAlive(myTank->getId());
-      myTank->setSpawning(true);
-      CmdArgList zoomArgs;
-      std::string resetArg = "reset";
-      zoomArgs.push_back(resetArg);
-      cmdViewZoom("", zoomArgs,NULL);
+      if (!eventHandler.ForbidSpawn()) {
+        serverLink->sendAlive(myTank->getId());
+        myTank->setSpawning(true);
+        CmdArgList zoomArgs;
+        std::string resetArg = "reset";
+        zoomArgs.push_back(resetArg);
+        cmdViewZoom("", zoomArgs,NULL);
+      }
     }
   }
   return std::string();
@@ -667,24 +676,13 @@ static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-// yeah, we reuse the mutex for different crit sections.  so shoot me.
-#if defined(HAVE_PTHREADS)
-  static pthread_mutex_t screenshot_mutex = PTHREAD_MUTEX_INITIALIZER;
-# define LOCK_SCREENSHOT_MUTEX pthread_mutex_lock(&screenshot_mutex);
-# define UNLOCK_SCREENSHOT_MUTEX pthread_mutex_unlock(&screenshot_mutex);
-#elif defined(_WIN32)
-  static CRITICAL_SECTION screenshot_critical;
-# define LOCK_SCREENSHOT_MUTEX EnterCriticalSection(&screenshot_critical);
-# define UNLOCK_SCREENSHOT_MUTEX LeaveCriticalSection(&screenshot_critical);
-#else
-# define LOCK_SCREENSHOT_MUTEX
-# define UNLOCK_SCREENSHOT_MUTEX
-#endif
-
 struct ScreenshotData
 {
-  unsigned char* rawPixels;
   std::string renderer;
+  unsigned char* pixels;
+  int xsize;
+  int ysize;
+  int channels;
 };
 
 #ifdef _WIN32
@@ -742,150 +740,46 @@ static void* writeScreenshot(void* data)
   std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
   if (f != NULL) {
-    int w = mainWindow->getWidth(), h = mainWindow->getHeight();
-    const unsigned long blength = h * w * 3 + h;    //size of b[] and br[]
-    unsigned char* b = new unsigned char[blength];  //screen of pixels + column for filter type required by PNG - filtered data
 
-    // Prepare gamma table
-    const bool gammaAdjust = BZDB.isSet("gamma");
-    unsigned char gammaTable[256];
-    if (gammaAdjust) {
-      float gamma = (float) atof(BZDB.get("gamma").c_str());
-      for (int i = 0; i < 256; i++) {
-        float lum = ((float) i) / 256.0f;
-        float lumadj = pow(lum, 1.0f / gamma);
-        gammaTable[i] = (unsigned char) (lumadj * 256);
-      }
-    }
+    const std::string& renderer = ssdata->renderer;
+    unsigned char* pixels       = ssdata->pixels;
+    const int xsize             = ssdata->xsize;
+    const int ysize             = ssdata->ysize;
+    const int channels          = ssdata->channels;
 
-    /* Write a PNG stream.
-       FIXME: Note that there are several issues with this code, altho it produces perfectly fine PNGs.
-       1. We do no filtering.  Sub filters increase screenshot size, other filters would require a lot of effort to implement.
-       2. Gamma-correction is preapplied by BZFlag's gamma table.  This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
-       3. Timestamp (tIME) chunk is not added to the file, but would be a good idea.
-    */
-    int temp = 0; //temporary values for binary file writing
-    char tempByte = 0;
-    int crc = 0;  //used for running CRC values
-
-    // Write PNG headers
-    (*f) << "\211PNG\r\n\032\n";
-#define PNGTAG(t_) ((((int)t_[0]) << 24) | \
-                   (((int)t_[1]) << 16) | \
-                   (((int)t_[2]) <<  8) | \
-                   (int)t_[3])
-
-    // IHDR chunk
-    temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
-    f->write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(w);              //(data) Image width
-    f->write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(h);              //(data) Image height
-    f->write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    tempByte = 8;                 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 2;                 //(data) Color type: RGB = 2
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 0;
-    int i;
-    for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
-      f->write(&tempByte, 1);
-      crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    }
-    crc = htonl(crc);
-    f->write((char*) &crc, 4);    //(crc) write crc
-
-    // IDAT chunk
-    for (i = h - 1; i >= 0; i--) {
-      const unsigned long line = (h - (i + 1)) * (w * 3 + 1); //beginning of this line
-      b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
-      memcpy(b + line + 1, ssdata->rawPixels + i * w * 3, w * 3); //copy captured line
-      // apply gamma correction if necessary
-      if (gammaAdjust) {
-        unsigned char *ptr = b + line + 1;
-        for (int j = 1; j < w * 3 + 1; j++) {
-          *ptr = gammaTable[*ptr];
-          ptr++;
+    // Gamma-correction is preapplied by BZFlag's gamma table
+    // This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
+    if (BZDB.isSet("gamma")) {
+      const float gamma = BZDB.eval("gamma");
+      if (gamma != 1.0f) {
+        unsigned char gammaTable[256];
+        for (int i = 0; i < 256; i++) {
+          const float lum    = float(i) / 256.0f;
+          const float lumadj = pow(lum, 1.0f / gamma);
+          gammaTable[i] = (unsigned char) (lumadj * 256);
+        }
+        const int pixelCount = (xsize * ysize * channels);
+        for (int i = 0; i < pixelCount; i++) {
+          pixels[i] = gammaTable[pixels[i]];
         }
       }
     }
 
-    unsigned long zlength = blength + 15;            //length of bz[], will be changed by zlib to the length of the compressed string contained therein
-    unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
-    // compress b into bz
-    compress2(bz, &zlength, b, blength, 5);
+    const std::string versionStr = std::string("BZFlag") + getAppVersion();
+    std::vector<BzPNG::Chunk> chunks;
+    chunks.push_back(BzPNG::Chunk("tEXt", "Software", versionStr));
+    chunks.push_back(BzPNG::Chunk("tEXt", "GL Renderer", renderer));
 
-    temp = htonl(zlength);                          //(length) IDAT length after compression
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IDAT"));                   //(tag) IDAT
-    f->write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
-    crc = htonl(crc32(crc, bz, zlength));
-    f->write((char*) &crc, 4);                       //(crc) write crc
-
-    // tEXt chunk containing bzflag build/version
-    std::string version = "BZFlag "; version += getAppVersion();
-    temp = htonl(9 + (int)version.size()); //(length) tEXt is strlen("Software") + 1 + version.size()
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
-    f->write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
-    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
-    crc = crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b)));
-    tempByte = 0;                                    //(data) Null character separator
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strncpy((char*) b, version.c_str(), blength-1);               //(data) Text contents (build/version)
-    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
-    crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
-    f->write((char*) &crc, 4);                       //(crc) write crc
-
-    // tEXt chunk containing gl renderer information
-    temp = htonl(12 + (int)ssdata->renderer.size()); //(length) tEXt is len("GL Renderer") + 1 + renderer.size()
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("tEXt"));                   //(tag) tEXt
-    f->write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    strcpy(reinterpret_cast<char*>(b), "GL Renderer"); //(data) Keyword
-    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
-    crc = crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b)));
-    tempByte = 0;                                    //(data) Null character separator
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strncpy((char*) b, ssdata->renderer.c_str(), blength-1);  //(data) Text contents (GL information)
-    f->write(reinterpret_cast<char*>(b), (unsigned)strlen(reinterpret_cast<const char*>(b)));
-    crc = htonl(crc32(crc, b, (unsigned)strlen(reinterpret_cast<const char*>(b))));
-    f->write((char*) &crc, 4);                       //(crc) write crc
-
-    // IEND chunk
-    temp = htonl((int) 0);        //(length) IEND is always 0 bytes long
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IEND")); //(tag) IEND
-    f->write((char*) &temp, 4);
-    crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
-    //(data) IEND has no data field
-    f->write((char*) &crc, 4);     //(crc) write crc
-    delete [] bz;
-    delete [] b;
-    delete f;
-
-    char notify[128];
-    snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
-    LOCK_SCREENSHOT_MUTEX // prevent simultaneous access to the control panel messages array
-    controlPanel->addMessage(notify);
-    UNLOCK_SCREENSHOT_MUTEX
+    char buf[128];
+    if (BzPNG::save(filename, chunks, xsize, ysize, channels, pixels)) {
+      snprintf(buf, sizeof(buf), "%s: %dx%d", filename.c_str(), xsize, ysize);
+    } else {
+      snprintf(buf, sizeof(buf), "%s: failed to save", filename.c_str());
+    }
+    ControlPanel::addMutexMessage(buf);
   }
 
-  delete ssdata->rawPixels;
+  delete ssdata->pixels;
   delete ssdata;
 
   return NULL;
@@ -899,31 +793,24 @@ static std::string cmdScreenshot(const std::string&, const CmdArgList& args, boo
   }
 
   ScreenshotData* ssdata = new ScreenshotData;
-  int w = mainWindow->getWidth(), h = mainWindow->getHeight();
-  ssdata->rawPixels = new unsigned char[h * w * 3];
-  glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->rawPixels);
-  ssdata->renderer = reinterpret_cast<const char*>(glGetString(GL_VENDOR)); ssdata->renderer += ": ";
-  ssdata->renderer += reinterpret_cast<const char*>(glGetString(GL_RENDERER)); ssdata->renderer += " (OpenGL ";
-  ssdata->renderer += reinterpret_cast<const char*>(glGetString(GL_VERSION)); ssdata->renderer += ")";
+  ssdata->renderer += (const char*)(glGetString(GL_VENDOR));
+  ssdata->renderer += ": ";
+  ssdata->renderer += (const char*)(glGetString(GL_RENDERER));
+  ssdata->renderer += " (OpenGL ";
+  ssdata->renderer += (const char*)(glGetString(GL_VERSION));
+  ssdata->renderer += ")";
+  int w = mainWindow->getWidth();
+  int h = mainWindow->getHeight();
+  ssdata->xsize = w;
+  ssdata->ysize = h;
+  ssdata->channels = 3; // GL_RGB
+  ssdata->pixels = new unsigned char[h * w * 3];
+  glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->pixels);
 
 #if defined(HAVE_PTHREADS)
   pthread_t thread;
-  static bool inited = false;
-
-  if (!inited) {
-    pthread_mutex_init(&screenshot_mutex, NULL);
-    inited = true;
-  }
-
   pthread_create(&thread, NULL, writeScreenshot, (void *) ssdata);
 #elif defined(_WIN32)
-  static bool inited = false;
-
-  if (!inited) {
-    InitializeCriticalSection(&screenshot_critical);
-    inited = true;
-  }
-
   CreateThread(
             NULL, // Security attributes
             0, // Stack size (0 -> default)
@@ -956,13 +843,17 @@ static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool
 static std::string cmdTime(const std::string&, const CmdArgList& args, bool*)
 {
   // FIXME - time should be moved into BZDB
-  if (args.size() != 1)
+  if (args.size() != 1) {
     return "usage: time {forward|backward|<seconds>}";
+  }
+
   if (args[0] == "forward") {
     clockAdjust += 5.0f * 60.0f;
-  } else if (args[0] == "backward") {
+  }
+  else if (args[0] == "backward") {
     clockAdjust -= 5.0f * 60.0f;
-  } else {
+  }
+  else {
     float seconds;
     char* end;
     seconds = (float)strtod(args[0].c_str(), &end);
@@ -1114,11 +1005,56 @@ static std::string cmdHunt(const std::string&, const CmdArgList& args, bool*)
   return std::string();
 }
 
+
 static std::string cmdAddHunt(const std::string&, const CmdArgList& args, bool*)
 {
   if (args.size() != 0)
     return "usage: addhunt";
   hud->getScoreboard()->huntKeyEvent (true);
+  return std::string();
+}
+
+
+static std::string concatArgs(const CmdArgList& args)
+{
+  std::string line;
+  for (size_t i = 0; i < args.size(); i++) {
+    if (i == 0) {
+      line = args[i];
+    } else {
+      line += " " + args[i];
+    }
+  }
+  return line;
+}
+
+
+static std::string cmdLuaUser(const std::string& cmd, const CmdArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: luauser { reload | disable | status }";
+  }  
+  LuaClientScripts::LuaUserCommand(cmd + " " + concatArgs(args));
+  return std::string();
+}
+ 
+ 
+static std::string cmdLuaBzOrg(const std::string& cmd, const CmdArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: luabzorg { reload | disable | status }";
+  }
+  LuaClientScripts::LuaBzOrgCommand(cmd + " " + concatArgs(args));
+  return std::string();
+}
+
+
+static std::string cmdLuaWorld(const std::string& cmd, const CmdArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: luaworld { reload | disable | status }";
+  }
+  LuaClientScripts::LuaWorldCommand(cmd + " " + concatArgs(args));
   return std::string();
 }
 

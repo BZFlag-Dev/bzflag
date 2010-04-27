@@ -63,12 +63,14 @@
 #include "DirectoryNames.h"
 
 // common implementation headers
+#include "bzfsAPI.h"
+#include "BzDocket.h"
+#include "BzVFS.h"
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
 #include "BaseBuilding.h"
 #include "AnsiCodes.h"
 #include "GameTime.h"
-#include "bzfsAPI.h"
 #include "BufferedNetworkMessage.h"
 
 #include "CollisionManager.h"
@@ -5196,17 +5198,17 @@ static void cleanupServer ( void )
 
 void saveStartupInfo ( void )
 {
-	std::string conf = getConfigDirName();
-	conf += "bzfs.dir";
-	FILE *fp = fopen(conf.c_str(),"wt");
-	if (fp)
-	{
-		std::string exepath = getModuleName();
-		exepath += "\n";
-		fwrite(exepath.c_str(),exepath.size(),1,fp);
-		fclose(fp);
-	}
+  std::string conf = getConfigDirName();
+  conf += "bzfs.dir";
+  FILE *fp = fopen(conf.c_str(),"wt");
+  if (fp) {
+    std::string exepath = getModuleName();
+    exepath += "\n";
+    fwrite(exepath.c_str(),exepath.size(),1,fp);
+    fclose(fp);
+  }
 }
+
 
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and

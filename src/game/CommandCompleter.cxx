@@ -64,6 +64,10 @@ void CommandCompleter::reset()
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");
+  registerWord("/luabzorg ");
+  registerWord("/luaserver ");
+  registerWord("/luauser ");
+  registerWord("/luaworld ");
   registerWord("/mute ");
   registerWord("/owner");
   registerWord("/password ");

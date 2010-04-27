@@ -33,6 +33,7 @@
 #include "MeshDrawInfo.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
+#include "BzDocket.h"
 #include "BZDBCache.h"
 #include "FileManager.h"
 #include "DirectoryNames.h"
@@ -591,6 +592,14 @@ int WorldInfo::packDatabase()
     uncompressedSize = 0;
   }
 
+  BzDocket luaWorld("LuaWorld");
+  luaWorld.addDir(clOptions->luaWorldDir, "");
+  if (luaWorld.hasData("bzWorld.lua")) {
+    clOptions->gameOptions |= LuaWorldAvailable;
+  } else {
+    clOptions->gameOptions &= ~LuaWorldAvailable;
+  }
+
   // make default water material. we wait to make the default material
   // to avoid messing up any user indexing. this has to be done before
   // the texture matrices and materials are packed.
@@ -608,7 +617,8 @@ int WorldInfo::packDatabase()
     + TRANSFORMMGR.packSize()
     + OBSTACLEMGR.packSize()
     + worldWeapons.packSize()
-    + entryZones.packSize();
+    + entryZones.packSize()
+    + luaWorld.packSize();
 
   // add water level size
   databaseSize += sizeof(float);
@@ -653,6 +663,9 @@ int WorldInfo::packDatabase()
 
   // pack entry zones
   databasePtr = entryZones.pack(databasePtr);
+
+  // pack the LuaWorld docket
+  databasePtr = luaWorld.pack(databasePtr);
 
   // compress the map database
   TimeKeeper startTime = TimeKeeper::getCurrent();

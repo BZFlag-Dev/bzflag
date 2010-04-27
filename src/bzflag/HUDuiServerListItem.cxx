@@ -61,6 +61,7 @@ HUDuiServerListItem::~HUDuiServerListItem()
   // do nothing
 }
 
+
 std::string HUDuiServerListItem::calculateModes()
 {
   ServerItem* server = serverList.lookupServer(serverKey);
@@ -71,7 +72,7 @@ std::string HUDuiServerListItem::calculateModes()
   std::string modesText;
   if (BZDB.isTrue("listIcons")) {
     // game mode
-    if ((server->ping.observerMax == 16) && (server->ping.maxPlayers == 200))
+    if (server->ping.gameOptions & ReplayServer)
       modesText += ANSI_STR_FG_CYAN "*  "; // replay
     else if (server->ping.gameType == ClassicCTF)
       modesText += ANSI_STR_FG_RED "*  "; // ctf
@@ -97,6 +98,17 @@ std::string HUDuiServerListItem::calculateModes()
       modesText += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R ";
     else
       modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "R ";
+
+    // LuaWorld -- S = scripted
+    if (server->ping.gameOptions & LuaWorldAvailable) {
+      if (server->ping.gameOptions & LuaWorldRequired) {
+        modesText += ANSI_STR_BRIGHT ANSI_STR_FG_RED "S ";
+      } else {
+        modesText += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "S ";
+      }
+    } else {
+      modesText += ANSI_STR_DIM ANSI_STR_FG_WHITE "S ";
+    }
 
     // lag?
     if (server->ping.pingTime <= 0)

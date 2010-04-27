@@ -99,6 +99,11 @@ void HubLink::recvCommand(const std::string&) {}
 void HubLink::wordComplete(const std::string&, std::set<std::string>&) {}
 const char* HubLink::getStateString() const { return ""; }
 
+// guiplaying.cxx variables
+bool leftMouseButton = false;
+bool rightMouseButton = false;
+bool middleMouseButton = false;
+
 // FIXME: Any code surrounded by "if (!headless)" is unsafely assuming that
 // it's operating in a context where graphics and sound are available.
 bool headless = true;

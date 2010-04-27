@@ -17,6 +17,7 @@
 
 /* system interface headers */
 #include <string>
+#include <vector>
 
 /* common interface headers */
 #include "bzfio.h"

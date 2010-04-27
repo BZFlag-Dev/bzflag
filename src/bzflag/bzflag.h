@@ -26,6 +26,8 @@ extern std::string alternateConfig;
 extern const char *argv0;
 extern struct tm   userTime;
 
+extern void setupVFS();
+
 #ifdef ROBOT
 extern int numRobotTanks;
 #endif

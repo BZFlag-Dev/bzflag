@@ -48,7 +48,7 @@
 
 
 #define hashpow2(t,n)      (gnode(t, lmod((n), sizenode(t))))
-  
+
 #define hashstr(t,str)  hashpow2(t, (str)->tsv.hash)
 #define hashboolean(t,p)        hashpow2(t, p)
 
@@ -302,7 +302,7 @@ static void resize (lua_State *L, Table *t, int nasize, int nhsize) {
   if (nasize > oldasize)  /* array part must grow? */
     setarrayvector(L, t, nasize);
   /* create new hash part with appropriate size */
-  setnodevector(L, t, nhsize);  
+  setnodevector(L, t, nhsize);
   if (nasize < oldasize) {  /* array part must shrink? */
     t->sizearray = nasize;
     /* re-insert elements from vanishing slice */
@@ -365,6 +365,9 @@ Table *luaH_new (lua_State *L, int narray, int nhash) {
   t->sizearray = 0;
   t->lsizenode = 0;
   t->node = cast(Node *, dummynode);
+#ifdef LUA_READONLY_TABLES /*BZ*/
+  t->readonly = 0;
+#endif
   setarrayvector(L, t, narray);
   setnodevector(L, t, nhash);
   return t;
@@ -390,11 +393,11 @@ static Node *getfreepos (Table *t) {
 
 
 /*
-** inserts a new key into a hash table; first, check whether key's main 
-** position is free. If not, check whether colliding node is in its main 
-** position or not: if it is not, move colliding node to an empty place and 
-** put new key in its main position; otherwise (colliding node is in its main 
-** position), new key goes to an empty position. 
+** inserts a new key into a hash table; first, check whether key's main
+** position is free. If not, check whether colliding node is in its main
+** position or not: if it is not, move colliding node to an empty place and
+** put new key in its main position; otherwise (colliding node is in its main
+** position), new key goes to an empty position.
 */
 static TValue *newkey (lua_State *L, Table *t, const TValue *key) {
   Node *mp = mainposition(t, key);
@@ -491,12 +494,40 @@ const TValue *luaH_get (Table *t, const TValue *key) {
 }
 
 
+#ifdef LUA_READONLY_TABLES /*BZ*/
+  #define check_readonlynew(L, t) \
+    if ((t)->readonly) { \
+      if ((t)->readonly & LUA_READONLY_NEW_BITS) { \
+        luaG_runerror((L), "read-only table, no new entries"); \
+      } \
+    }
+  #define check_readonlyold(L, t, v) \
+    if ((t)->readonly) { \
+      if (ttisnil(v)) { \
+        if ((t)->readonly & LUA_READONLY_NEW_BITS) { \
+          luaG_runerror((L), "read-only table, no new entries"); \
+        } \
+      } else { \
+        if ((t)->readonly & LUA_READONLY_OLD_BITS) { \
+          luaG_runerror((L), "read-only table, immutable entries"); \
+        } \
+      } \
+    }
+#else
+  #define check_readonlynew(L, t)     ((void) 0)
+  #define check_readonlyold(L, t, v)  ((void) 0)
+#endif
+
+
 TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
   const TValue *p = luaH_get(t, key);
   t->flags = 0;
-  if (p != luaO_nilobject)
+  if (p != luaO_nilobject) {
+    check_readonlyold(L, t, cast(TValue *, p)); /*BZ*/
     return cast(TValue *, p);
+  }
   else {
+    check_readonlynew(L, t); /*BZ*/
     if (ttisnil(key)) luaG_runerror(L, "table index is nil");
     else if (ttisnumber(key) && luai_numisnan(nvalue(key)))
       luaG_runerror(L, "table index is NaN");
@@ -507,10 +538,13 @@ TValue *luaH_set (lua_State *L, Table *t, const TValue *key) {
 
 TValue *luaH_setnum (lua_State *L, Table *t, int key) {
   const TValue *p = luaH_getnum(t, key);
-  if (p != luaO_nilobject)
+  if (p != luaO_nilobject) {
+    check_readonlyold(L, t, cast(TValue *, p)); /*BZ*/
     return cast(TValue *, p);
+  }
   else {
     TValue k;
+    check_readonlynew(L, t); /*BZ*/
     setnvalue(&k, cast_num(key));
     return newkey(L, t, &k);
   }
@@ -519,10 +553,13 @@ TValue *luaH_setnum (lua_State *L, Table *t, int key) {
 
 TValue *luaH_setstr (lua_State *L, Table *t, TString *key) {
   const TValue *p = luaH_getstr(t, key);
-  if (p != luaO_nilobject)
+  if (p != luaO_nilobject) {
+    check_readonlyold(L, t, cast(TValue *, p)); /*BZ*/
     return cast(TValue *, p);
+  }
   else {
     TValue k;
+    check_readonlynew(L, t); /*BZ*/
     setsvalue(L, &k, key);
     return newkey(L, t, &k);
   }

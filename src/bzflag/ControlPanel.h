@@ -25,6 +25,9 @@
 #include <vector>
 #include <deque>
 #include <map>
+#ifdef HAVE_PTHREADS
+#  include <pthread.h>
+#endif
 
 //common headers
 #include "bzfgl.h"
@@ -53,6 +56,9 @@ struct ControlPanelMessage {
 
 
 class ControlPanel {
+  public:
+    static void addMutexMessage(const char* msg);
+    
   public:
     enum MessageModes {
       MessageAllTabs = -2,

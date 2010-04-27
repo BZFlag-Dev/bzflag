@@ -59,7 +59,6 @@ class BzMaterial {
     bool setName(const std::string&);
     bool addAlias(const std::string&);
 
-
     void setOrder(int);
 
     void setDynamicColor(int);

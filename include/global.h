@@ -113,15 +113,17 @@ enum GameType
 };
 // game styles
 enum GameOptions {
-  Unused             = 0x0001, // -- this space available for rent --
-  SuperFlagGameStyle = 0x0002, // superflags allowed
-  NoTeamKills        = 0x0004, // teams can't kill each other
-  JumpingGameStyle   = 0x0008, // jumping allowed
-  InertiaGameStyle   = 0x0010, // momentum for all
-  RicochetGameStyle  = 0x0020, // all shots ricochet
-  ShakableGameStyle  = 0x0040, // can drop bad flags
-  AntidoteGameStyle  = 0x0080, // anti-bad flags
-  HandicapGameStyle  = 0x0100  // handicap players based on score (eek! was TimeSyncGameStyle)
+  ReplayServer       = (1 << 0),  // replay server
+  SuperFlagGameStyle = (1 << 1),  // superflags allowed
+  NoTeamKills        = (1 << 2),  // teams can't kill each other
+  JumpingGameStyle   = (1 << 3),  // jumping allowed
+  InertiaGameStyle   = (1 << 4),  // momentum for all
+  RicochetGameStyle  = (1 << 5),  // all shots ricochet
+  ShakableGameStyle  = (1 << 6),  // can drop bad flags
+  AntidoteGameStyle  = (1 << 7),  // anti-bad flags
+  HandicapGameStyle  = (1 << 8),  // handicap players based on score (eek! was TimeSyncGameStyle)
+  LuaWorldAvailable  = (1 << 9),  // the server offers a LuaWorld script
+  LuaWorldRequired   = (1 << 10)  // the server requires that LuaWorld be executed
   // add here before reusing old ones above
 };
 

@@ -44,6 +44,7 @@ void notifyBzfKeyMapChanged();
 bool setVideoFormat(int, bool test = false);
 void forceControls(bool enabled, float speed, float angVel);
 bool isUnmapped();
+void openMainMenu();
 
 bool addExplosion(const fvec3& pos, float size, float duration);
 void addTankExplosion(const fvec3& pos);
@@ -63,6 +64,10 @@ extern MainWindow* mainWindow;
 extern float roamDZoom;
 extern bool fireButton;
 extern bool roamButton;
+
+extern bool leftMouseButton;
+extern bool rightMouseButton;
+extern bool middleMouseButton;
 
 #endif // BZF_GUIPLAYING_H
 

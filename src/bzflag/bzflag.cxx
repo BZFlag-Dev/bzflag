@@ -42,6 +42,8 @@
 #include "BZDBCache.h"
 #include "BundleMgr.h"
 #include "BzfMedia.h"
+#include "BzDocket.h"
+#include "BzVFS.h"
 #include "BzfVisual.h"
 #include "BzfWindow.h"
 #include "BzfDisplay.h"
@@ -50,12 +52,16 @@
 #include "ConfigFileManager.h"
 #include "DirectoryNames.h"
 #include "ErrorHandler.h"
+#include "EventHandler.h"
 #include "FileManager.h"
 #include "FontManager.h"
 #include "GUIOptionsMenu.h"
+#include "GfxBlock.h"
 #include "KeyManager.h"
+#include "LuaClientScripts.h"
 #include "OSFile.h"
 #include "OpenGLGState.h"
+#include "OpenGLPassState.h"
 #include "ParseColor.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
@@ -231,6 +237,9 @@ static void parse(int argc, char **argv)
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
     }
+    else if (strcmp(argv[i], "-devmode") == 0) {
+      LuaClientScripts::SetDevMode(true);
+    }
     else if ((strcmp(argv[i], "-dir") == 0) ||
 	       (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
@@ -304,6 +313,11 @@ static void parse(int argc, char **argv)
     }
     else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB.set("_multisample", "1");
+    }
+    else if (strcmp(argv[i], "-set") == 0) {
+      checkArgc(i, argc, argv[i]);
+      checkArgc(i, argc, argv[i]);
+      BZDB.set(argv[i - 1], argv[i]);
     }
 #ifdef ROBOT
     else if (strcmp(argv[i], "-solo") == 0) {
@@ -432,49 +446,52 @@ static void parse(int argc, char **argv)
     }
     else if (argv[i][0] != '-') {
       if (i == argc-1) {
-		// find the beginning of the server name, parse the callsign
-		char *serverName;
-		if ((serverName = strchr(argv[i], '@')) != NULL) {
-		  char *password;
-		  *serverName = '\0';
-		  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
-			printFatalError("Callsign truncated.");
-		  strncpy(startupInfo.callsign, argv[i],
-			  sizeof(startupInfo.callsign) - 1);
-		  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-		  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
-			*(strchr(startupInfo.callsign, ':')) = '\0';
-			*password = '\0', ++password;
-			if (strlen(argv[i]) >= sizeof(startupInfo.password))
-			  printFatalError("Password truncated.");
-			strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
-			startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-		  }
-		  ++serverName;
-		} else {
-		  serverName = argv[i];
-		}
+        // find the beginning of the server name, parse the callsign
+        char *serverName;
+        if ((serverName = strchr(argv[i], '@')) != NULL) {
+          char *password;
+          *serverName = '\0';
+          if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
+            printFatalError("Callsign truncated.");
+          }
+          strncpy(startupInfo.callsign, argv[i],
+                  sizeof(startupInfo.callsign) - 1);
+          startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+          if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
+            *(strchr(startupInfo.callsign, ':')) = '\0';
+            *password = '\0', ++password;
+            if (strlen(argv[i]) >= sizeof(startupInfo.password)) {
+              printFatalError("Password truncated.");
+            }
+            strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
+            startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+          }
+          ++serverName;
+        } else {
+          serverName = argv[i];
+        }
 
-		// find the beginning of the port number, parse it
-		char *portNumber;
-		if ((portNumber = strchr(serverName, ':')) != NULL) {
-		  *portNumber = '\0';
-		  ++portNumber;
-		  startupInfo.serverPort = atoi(portNumber);
-		  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-			startupInfo.serverPort = ServerPort;
-			printFatalError("Bad port, using default %d.",
-					startupInfo.serverPort);
-		  }
-		}
-		if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
-		  printFatalError("Server name too long.  Ignoring.");
-		} else {
-		  strncpy(startupInfo.serverName, serverName, ServerNameLen-1);
-		  startupInfo.autoConnect = true;
-		}
-      } else {
-		printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
+        // find the beginning of the port number, parse it
+        char *portNumber;
+        if ((portNumber = strchr(serverName, ':')) != NULL) {
+          *portNumber = '\0';
+          ++portNumber;
+          startupInfo.serverPort = atoi(portNumber);
+          if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
+                startupInfo.serverPort = ServerPort;
+                printFatalError("Bad port, using default %d.",
+                                startupInfo.serverPort);
+          }
+        }
+        if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
+          printFatalError("Server name too long.  Ignoring.");
+        } else {
+          strncpy(startupInfo.serverName, serverName, ServerNameLen-1);
+          startupInfo.autoConnect = true;
+        }
+      }
+      else {
+        printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
       }
     }
     else if (strcmp(argv[i], "-debug") == 0) {
@@ -502,6 +519,10 @@ static void parse(int argc, char **argv)
       printFatalError("Unknown option %s.", argv[i]);
       usage();
     }
+  }
+
+  if (LuaClientScripts::GetDevMode()) {
+    strcpy(startupInfo.serverName, "127.0.0.1");
   }
 }
 
@@ -615,6 +636,56 @@ static bool needsFullscreen()
 
   // bogus view, default to normal so no fullscreen
   return false;
+}
+
+
+static void bzdbLuaUserDir(const std::string& name, void* /*data*/)
+{
+  if (name == "luaUserDir") {
+    bzVFS.removeFS(BZVFS_LUA_USER);
+    bzVFS.addFS(BZVFS_LUA_USER, BZDB.get("luaUserDir"));
+  }
+}
+
+
+void setupVFS()
+{
+  static bool callbackAdded = false;
+  if (!callbackAdded) {
+    callbackAdded = true;
+    BZDB.addCallback("luaUserDir", bzdbLuaUserDir, NULL);
+  }
+
+  bzVFS.clear();
+
+  const std::string configDir = getConfigDirName();
+  const std::string cacheDir  = getCacheDirName();
+
+  // add the filesystems
+  bzVFS.addFS(BZVFS_CONFIG,          configDir);
+  bzVFS.addFS(BZVFS_FTP,             cacheDir + "ftp"); 
+  bzVFS.addFS(BZVFS_HTTP,            cacheDir + "http");
+  bzVFS.addFS(BZVFS_DATA,            BZDB.get("directory"));
+#if defined(BZFLAG_DATA)
+  bzVFS.addFS(BZVFS_DATA_DEFAULT,    BZFLAG_DATA);
+#endif
+  bzVFS.addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));  
+  bzVFS.addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
+//bzVFS.addFS(BZVFS_LUA_BZORG,       ""); // NOTE: <--
+  bzVFS.addFS(BZVFS_LUA_USER_WRITE,  cacheDir + "LuaUser"); 
+  bzVFS.addFS(BZVFS_LUA_WORLD_WRITE, cacheDir + "LuaWorld");
+  bzVFS.addFS(BZVFS_LUA_BZORG_WRITE, cacheDir + "LuaBzOrg");
+
+  // setup the writable directories
+  bzVFS.setFSWritable(BZVFS_CONFIG,          true);
+  bzVFS.setFSWritable(BZVFS_LUA_USER_WRITE,  true);
+  bzVFS.setFSWritable(BZVFS_LUA_WORLD_WRITE, true);
+  bzVFS.setFSWritable(BZVFS_LUA_BZORG_WRITE, true);
+
+  // create the writable lua directories
+  BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaUser")); 
+  BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaWorld"));
+  BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaBzOrg"));
 }
 
 
@@ -1007,6 +1078,13 @@ void initAudio ( void )
       closedir(localedir);
 #endif
   }
+      
+  // setup the default LuaUser/ directory
+  if (!BZDB.isSet("luaUserDir")) {
+    if (BZDB.isSet("directory")) {
+      BZDB.set("luaUserDir", BZDB.get("directory") + "/LuaUser");
+    }
+  }  
 }
 
 
@@ -1409,6 +1487,7 @@ void cleanupClient ( void )
   // clean up
   WSACleanup();
   stripAnsiCodes(NULL); // free the stripping buffer
+  BZDB.removeCallback("luaUserDir", bzdbLuaUserDir, NULL);
 #endif
 
 }
