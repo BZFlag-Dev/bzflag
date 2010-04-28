@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/bzflag \
 	-I$(top_srcdir)/src/clientbase \
+	$(LIBCURL_CPPFLAGS) \
 	@CONF_CPPFLAGS@
 
 AM_CXXFLAGS = @CONF_CXXFLAGS@
