@@ -24,7 +24,6 @@ using std::string;
 #include "BzMaterial.h"
 #include "DynamicColor.h"
 #include "TextureMatrix.h"
-#include "OpenGLUtils.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -203,7 +202,7 @@ int LuaBzMaterial::GetMaterialBlending(lua_State* L)
     lua_pushstring(L, "");
     return 2;
   }
-  GLenum src, dst;
+  unsigned int src, dst;
   if (blendParser == NULL) {
     lua_pushstdstring(L, blending);
     return 1;
@@ -400,7 +399,7 @@ int LuaBzMaterial::GetMaterialTable(lua_State* L)
     // blending
     lua_pushliteral(L, "blending");
     const std::string& blendFactors = mat->getBlendFactors();
-    GLenum blendSrc, blendDst;
+    unsigned int blendSrc, blendDst;
     if (blendParser == NULL) {
       luaset_strstr(L, "text", blendFactors);
     }
