@@ -28,7 +28,8 @@ core_dirs = \
 	common \
 	net \
 	obstacle \
-	game
+	game \
+	lua
 
 # needed only by clients, generally requires OpenGL
 gui_dirs = \
@@ -38,8 +39,7 @@ gui_dirs = \
 	3D \
 	geometry \
 	scene \
-	platform \
-	lua
+	platform
 
 if CLIENT_INCLUDED
 CLIENT_DIRS = $(gui_dirs)
