@@ -449,6 +449,9 @@ void MeshObstacle::finalize()
   for (int f = 0; f < faceCount; f++) {
     faces[f]->setFaceID(f);
   }
+  
+  //build face neighbors list
+  setupNeighbors();
 
   // setup the face edges
   makeEdges();
@@ -588,6 +591,55 @@ void MeshObstacle::makeEdges() // FIXME -- incomplete
 */
 }
 
+
+//============================================================================//
+
+bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1)
+{
+  for (int v0 = 0; v0 <  face0->getVertexCount(); v0++) {
+    for (int v1 = 0; v1 <  face1->getVertexCount(); v1++) {
+     if ( face0->vertices[v0][0] == face1->vertices[v1][0] && 
+          face0->vertices[v0][1] == face1->vertices[v1][1] &&
+	      face0->vertices[v0][2] == face1->vertices[v1][2] ) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+void MeshObstacle::setupNeighbors()
+{
+  neighbors.resize(faceCount);
+  for (int f = 0; f < faceCount; f++) {
+    for (int nf = 0; nf < faceCount; nf++) {
+      if(nf != f && areNeighbors(getFace(f), getFace(nf)) ){
+        neighbors[f].push_back(nf);
+      }
+    }
+  }
+}
+
+std::vector<MeshFace*> MeshObstacle::getNeighborFaces(MeshFace* f)
+{
+  std::vector<MeshFace*> nlist;
+  std::vector<int> nfaces = neighbors[f->getFaceID()];
+  for (std::vector<int>::iterator i = nfaces.begin(); i != nfaces.end(); i++){
+    nlist.push_back(getFace(*i));
+  }
+  return nlist;
+}
+
+bool MeshObstacle::neighborHasFlatTopAt(MeshFace* aFace, float faceTop)
+{ 
+      std::vector<MeshFace*> nfaces = aFace->getMesh()->getNeighborFaces(aFace);
+      for (std::vector<MeshFace*>::iterator i = nfaces.begin(); i != nfaces.end(); i++){
+        if ( (*i)->isFlatTop() && (*i)->calcCenter().z == faceTop) {
+          return true;
+        }
+      }
+	  return false;
+}
 
 //============================================================================//
 
