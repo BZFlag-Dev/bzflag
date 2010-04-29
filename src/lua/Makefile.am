@@ -1,9 +1,11 @@
 
 if CLIENT_INCLUDED
-noinst_LTLIBRARIES = libLuaGame.la libLuaClient.la libLuaClientGL.la
+LUA_LIBS = libLuaGame.la libLuaClient.la libLuaClientGL.la
 else
-noinst_LTLIBRARIES = libLuaGame.la
+LUA_LIBS = 
 endif
+
+noinst_LTLIBRARIES = $(LUA_LIBS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
