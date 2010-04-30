@@ -178,9 +178,12 @@ static int tcreate(lua_State *L) {
 
 #ifdef LUA_READONLY_TABLES
 static int treadonly (lua_State *L) {
-  const int luabits = (LUA_READONLY_OLD_LUA_BIT | LUA_READONLY_NEW_LUA_BIT);
+  static const int luabits = (LUA_READONLY_OLD_LUA_BIT |
+                              LUA_READONLY_NEW_LUA_BIT);
   int readonly;
+
   luaL_checktype(L, 1, LUA_TTABLE);
+
   readonly = lua_getreadonly(L, 1);
 
   if (lua_isnone(L, 2)) {  /* read the state */

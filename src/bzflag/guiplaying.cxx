@@ -2135,9 +2135,7 @@ void handleShotBegin(bool human, void *msg)
     myTank->updateShot(firingInfo, id, firingInfo.timeSent);
   }
   else {
-    eventHandler.ShotAdded(firingInfo);
-
-    RemotePlayer *shooter = remotePlayers[shooterid];
+    RemotePlayer* shooter = remotePlayers[shooterid];
 
     if (shooterid != ServerPlayer) {
       if (shooter && remotePlayers[shooterid]->getId() == shooterid) {
@@ -2161,6 +2159,8 @@ void handleShotBegin(bool human, void *msg)
     if (human) {
       playShotSound(firingInfo, isViewTank(shooter));
     }
+
+    eventHandler.ShotAdded(firingInfo);
   }
 }
 
@@ -3740,6 +3740,7 @@ void leaveGame()
 {
   eventHandler.ServerParted();
   LuaClientScripts::LuaWorldFreeHandler();
+  LuaClientScripts::LuaRulesFreeHandler();
 
   entered = false;
   joiningGame = false;
@@ -3991,6 +3992,7 @@ void joinInternetGame2()
 
   LuaClientScripts::LuaBzOrgUpdateForbidden();
   LuaClientScripts::LuaUserUpdateForbidden(); 
+  LuaClientScripts::LuaRulesLoadHandler();    
   LuaClientScripts::LuaWorldLoadHandler();    
   eventHandler.ServerJoined();
 
@@ -5823,9 +5825,7 @@ static void playingLoop()
       serverLink->flush();
     }
 
-    LuaClientScripts::LuaUserUpdate();
-    LuaClientScripts::LuaBzOrgUpdate();
-    LuaClientScripts::LuaWorldUpdate();
+    LuaClientScripts::Update();
 
     eventHandler.Update();
     eventHandler.Purify();

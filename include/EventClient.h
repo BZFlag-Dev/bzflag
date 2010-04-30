@@ -15,6 +15,9 @@
 #include <map>
 
 
+#include "vectors.h"
+
+
 class Player;
 class ShotPath;
 class Flag;
@@ -152,9 +155,10 @@ class EventClient
 
     virtual bool ForbidSpawn()                 { return false; }
     virtual bool ForbidJump()                  { return false; }
+    virtual bool ForbidFlagDrop()              { return false; }
     virtual bool ForbidShot()                  { return false; }
     virtual bool ForbidShotLock(const Player&) { return false; }
-    virtual bool ForbidFlagDrop()              { return false; }
+    virtual bool ForbidShotHit(const Player&, const ShotPath&, const fvec3&) { return false; }
 };
 
 

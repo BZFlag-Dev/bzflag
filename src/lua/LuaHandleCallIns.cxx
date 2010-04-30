@@ -908,6 +908,21 @@ bool LuaHandle::ForbidJump()
 }
 
 
+bool LuaHandle::ForbidFlagDrop()
+{
+  LUA_CALL_IN_CHECK(L, 0)
+  if (!PushCallIn(LUA_CI_ForbidFlagDrop)) {
+    return false;
+  }
+
+  if (!RunCallIn(LUA_CI_ForbidFlagDrop, 0, 1)) {
+    return false;
+  }
+
+  return PopBool(L, false);
+}
+
+
 bool LuaHandle::ForbidShot()
 {
   LUA_CALL_IN_CHECK(L, 0)
@@ -940,14 +955,26 @@ bool LuaHandle::ForbidShotLock(const Player& player)
 }
 
 
-bool LuaHandle::ForbidFlagDrop()
+bool LuaHandle::ForbidShotHit(const Player& player,
+                              const ShotPath& shot, const fvec3& pos)
 {
-  LUA_CALL_IN_CHECK(L, 0)
-  if (!PushCallIn(LUA_CI_ForbidFlagDrop)) {
+  LUA_CALL_IN_CHECK(L, 5)
+  if (!PushCallIn(LUA_CI_ForbidShotHit)) {
     return false;
   }
 
-  if (!RunCallIn(LUA_CI_ForbidFlagDrop, 0, 1)) {
+  const FiringInfo& info = shot.getFiringInfo();
+  const uint8_t playerID = (uint8_t)info.shot.player;
+  const uint16_t infoID = info.shot.id;
+  const uint32_t shotID = (playerID << 16) | infoID;
+
+  lua_pushinteger(L, player.getId());
+  lua_pushinteger(L, shotID);
+  lua_pushfloat(L, pos.x);
+  lua_pushfloat(L, pos.y);
+  lua_pushfloat(L, pos.z);
+
+  if (!RunCallIn(LUA_CI_ForbidShotHit, 5, 1)) {
     return false;
   }
 

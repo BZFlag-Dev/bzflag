@@ -805,7 +805,7 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     fvec4 color;
   } MatProps;
   const MatProps defaultMats[] = {
-    {"std_ground",     "std_ground.png",            fvec4(0.5f, 0.5f, 0.5f, 1.0f)},
+    {"ground",         "ground.png",                fvec4(0.5f, 0.5f, 0.5f, 1.0f)},
     {"boxtop",         "roof.png",                  fvec4(1.0f, 1.0f, 0.9f, 1.0f)},
     {"boxwall",        "boxwall.png",               fvec4(1.0f, 0.9f, 0.8f, 1.0f)},
     {"pyrwall",        "pyrwall.png",               fvec4(0.8f, 0.8f, 1.0f, 1.0f)},
@@ -848,7 +848,7 @@ static void writeOBJGround(std::ostream& out)
   out << "vt " << +ts << " " << +ts << std::endl;
   out << "vt " << -ts << " " << +ts << std::endl;
   out << "vn 0 0 1" << std::endl;
-  out << "usemtl std_ground" << std::endl;
+  out << "usemtl ground" << std::endl;
   out << "f -4/-4/-1 -3/-3/-1 -2/-2/-1 -1/-1/-1" << std::endl;
   out << std::endl;
   return;

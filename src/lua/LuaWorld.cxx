@@ -58,7 +58,11 @@ void LuaWorld::LoadHandler()
     return;
   }
 
-  if (!BZDB.isTrue("luaWorld") && !world->luaWorldRequired()) {
+  if (!world->luaWorldScript()) {
+    return;
+  }
+
+  if (!BZDB.isTrue("luaWorld")) {
     return;
   }
 
@@ -103,7 +107,7 @@ LuaWorld::LuaWorld()
 	    LUA_WORLD_GAME_ORDER,
 	    LUA_WORLD_DRAW_WORLD_ORDER,
 	    LUA_WORLD_DRAW_SCREEN_ORDER,
-	    true, World::getWorld()->luaWorldRequired(), true)  // handle perms
+	    true, false, true)  // handle perms
 {
   static LuaVfsModes vfsModes;
   vfsModes.readDefault  = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE BZVFS_BASIC;

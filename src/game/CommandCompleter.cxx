@@ -55,7 +55,6 @@ void CommandCompleter::reset()
   registerWord("/idlestats");
   registerWord("/jitterdrop");
   registerWord("/jitterwarn");
-  registerWord("/luaserver ");
   registerWord("/packetlossdrop");
   registerWord("/packetlosswarn");
   registerWord("/kick ");
@@ -64,10 +63,11 @@ void CommandCompleter::reset()
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");
-  registerWord("/luabzorg ");
-  registerWord("/luaserver ");
   registerWord("/luauser ");
+  registerWord("/luabzorg ");
   registerWord("/luaworld ");
+  registerWord("/luarules ");
+  registerWord("/luaserver ");
   registerWord("/mute ");
   registerWord("/owner");
   registerWord("/password ");
@@ -101,6 +101,7 @@ void CommandCompleter::reset()
   registerWord("/retexture");
   registerWord("/roampos ");
   registerWord("/saveworld ");
+  registerWord("/serverdebug ");
   registerWord("/serverquery");
   registerWord("/set");
   registerWord("/setgroup ");

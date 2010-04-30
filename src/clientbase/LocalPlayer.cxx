@@ -1766,6 +1766,10 @@ bool LocalPlayer::checkHit(const Player* source,
       continue;
     }
 
+    if (eventHandler.ForbidShotHit(*this, *shot, position)) {
+      continue;
+    }
+
     // okay, shot hit
     goodHit = true;
     hit = shot;

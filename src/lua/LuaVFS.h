@@ -36,6 +36,7 @@ class LuaVFS {
     static int Include(lua_State* L);
     static int CreateDir(lua_State* L);
     static int DirList(lua_State* L);
+    static int GetModes(lua_State* L);
 };
 
 

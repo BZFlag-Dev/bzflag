@@ -1497,9 +1497,14 @@ void handleMsgSetVars(void *msg)
     msg = nboUnpackStdString(msg, name);
     msg = nboUnpackStdString(msg, value);
 
-    BZDB.set(name, value);
-    BZDB.setPersistent(name, false);
-    BZDB.setPermission(name, StateDatabase::Locked);
+    if (!name.empty() && ((name[0] == '_') || (name[0] == '$'))) {
+      BZDB.set(name, value);
+      BZDB.setPersistent(name, false);
+      BZDB.setPermission(name, StateDatabase::Locked);
+    } else {
+      logDebugMessage(1, "Server BZDB change blocked: '%s' = '%s'\n",
+                      name.c_str(), value.c_str());
+    }
   }
 }
 

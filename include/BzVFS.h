@@ -16,12 +16,14 @@
 #define BZVFS_FTP               "f"
 #define BZVFS_HTTP              "h"
 #define BZVFS_LUA_USER          "u"
-#define BZVFS_LUA_WORLD         "w"
 #define BZVFS_LUA_BZORG         "b"
+#define BZVFS_LUA_WORLD         "w"
+#define BZVFS_LUA_RULES         "r"
 #define BZVFS_LUA_SERVER        "s"
 #define BZVFS_LUA_USER_WRITE    "U"
-#define BZVFS_LUA_WORLD_WRITE   "W"
 #define BZVFS_LUA_BZORG_WRITE   "B"
+#define BZVFS_LUA_WORLD_WRITE   "W"
+#define BZVFS_LUA_RULES_WRITE   "R"
 #define BZVFS_LUA_SERVER_WRITE  "S"
 
 #define BZVFS_BASIC  \
@@ -33,12 +35,14 @@
 
 #define BZVFS_ALL BZVFS_BASIC \
   BZVFS_LUA_USER   \
-  BZVFS_LUA_WORLD  \
   BZVFS_LUA_BZORG  \
+  BZVFS_LUA_WORLD  \
+  BZVFS_LUA_RULES  \
   BZVFS_LUA_SERVER \
   BZVFS_LUA_USER_WRITE   \
-  BZVFS_LUA_WORLD_WRITE  \
   BZVFS_LUA_BZORG_WRITE  \
+  BZVFS_LUA_WORLD_WRITE  \
+  BZVFS_LUA_RULES_WRITE  \
   BZVFS_LUA_SERVER_WRITE
 
 

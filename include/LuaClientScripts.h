@@ -18,10 +18,17 @@
 #include <string>
 
 
+class SceneDatabase;
+
+
 namespace LuaClientScripts
 {
   void Init();
   void Free();
+
+  void Update();
+
+  void AddSceneNodes(SceneDatabase&);
 
   void LuaUserFreeHandler();
   void LuaUserLoadHandler();
@@ -40,6 +47,12 @@ namespace LuaClientScripts
   void LuaWorldUpdate();
   bool LuaWorldIsActive();
   bool LuaWorldCommand(const std::string& cmd);
+
+  void LuaRulesFreeHandler();
+  void LuaRulesLoadHandler();
+  void LuaRulesUpdate();
+  bool LuaRulesIsActive();
+  bool LuaRulesCommand(const std::string& cmd);
 
   void LuaUserUpdateForbidden();  // special
   void LuaBzOrgUpdateForbidden(); // special

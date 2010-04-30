@@ -128,6 +128,8 @@ static int AdminRestart(lua_State* L);
 static int AdminSuperKill(lua_State* L);
 static int AdminGameOver(lua_State* L);
 
+static int AddCustomFlag(lua_State* L);
+
 static int GetGameType(lua_State* L);
 static int GetGameOptions(lua_State* L);
 static int GetJumpingAllowed(lua_State* L);
@@ -339,6 +341,8 @@ bool CallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, AdminRestart);
   PUSH_LUA_CFUNC(L, AdminSuperKill);
   PUSH_LUA_CFUNC(L, AdminGameOver);
+
+  PUSH_LUA_CFUNC(L, AddCustomFlag);
 
   PUSH_LUA_CFUNC(L, GetGameType);
   PUSH_LUA_CFUNC(L, GetGameOptions);
@@ -641,6 +645,25 @@ static int AdminGameOver(lua_State* L)
   }
   bz_gameOver(playerID, teamID);
   return 0;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+static int AddCustomFlag(lua_State* L)
+{
+  const char* abbr = luaL_checkstring(L, 1);
+  const char* name = luaL_checkstring(L, 2);
+  const char* desc = luaL_checkstring(L, 3);
+  const int   type = luaL_optint(L, 4, eStandardShot);
+  const int   qual = luaL_optint(L, 5, eGoodFlag);
+  lua_pushboolean(L,
+    bz_RegisterCustomFlag(abbr, name, desc,
+                          (bz_eShotType) type,
+                          (bz_eFlagQuality) qual)
+  );
+  return 1;
 }
 
 

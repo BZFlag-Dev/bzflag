@@ -24,6 +24,7 @@ using std::string;
 // common headers
 #include "OpenGLUtils.h"
 #include "TextUtils.h"
+#include "SceneDatabase.h"
 #include "StateDatabase.h"
 
 // bzflag headers
@@ -38,12 +39,14 @@ using std::string;
 #include "LuaBZDB.h"
 #include "LuaBzMaterial.h"
 #include "LuaHTTP.h"
+#include "LuaSceneNode.h"
 #include "LuaServerPing.h"
 
 // LuaHandle headers
 #include "LuaUser.h"
 #include "LuaBzOrg.h"
 #include "LuaWorld.h"
+#include "LuaRules.h"
 
 
 //============================================================================//
@@ -54,14 +57,42 @@ void LuaClientScripts::Init()
   luaCallInDB.Init();
 
   LuaOpenGL::Init();
+
   LuaHTTPMgr::SetAccessList(Downloads::instance().getAccessList());
+
   LuaBzMaterial::SetBlendParser(parseBlendFactors);
 }
 
 
 void LuaClientScripts::Free()
 {
+  LuaUserFreeHandler();
+  LuaBzOrgFreeHandler();
+  LuaWorldFreeHandler();
+  LuaRulesFreeHandler();
+
   LuaOpenGL::Free();
+
+  LuaSceneNodeMgr::ClearSceneNodes();
+}
+
+
+void LuaClientScripts::Update()
+{
+  LuaSceneNodeMgr::ClearSceneNodes();
+  LuaClientScripts::LuaUserUpdate();
+  LuaClientScripts::LuaBzOrgUpdate();
+  LuaClientScripts::LuaWorldUpdate();
+  LuaClientScripts::LuaRulesUpdate();
+}
+
+
+//============================================================================//
+//============================================================================//
+
+void LuaClientScripts::AddSceneNodes(SceneDatabase& scene)
+{
+  LuaSceneNodeMgr::AddSceneNodes(scene);
 }
 
 
@@ -71,14 +102,17 @@ void LuaClientScripts::Free()
 void LuaClientScripts::LuaUserFreeHandler()  { LuaUser::FreeHandler();  }
 void LuaClientScripts::LuaBzOrgFreeHandler() { LuaBzOrg::FreeHandler(); }
 void LuaClientScripts::LuaWorldFreeHandler() { LuaWorld::FreeHandler(); }
+void LuaClientScripts::LuaRulesFreeHandler() { LuaRules::FreeHandler(); }
 
 void LuaClientScripts::LuaUserLoadHandler()  { LuaUser::LoadHandler();  }
 void LuaClientScripts::LuaBzOrgLoadHandler() { LuaBzOrg::LoadHandler(); }
 void LuaClientScripts::LuaWorldLoadHandler() { LuaWorld::LoadHandler(); }
+void LuaClientScripts::LuaRulesLoadHandler() { LuaRules::LoadHandler(); }
 
 bool LuaClientScripts::LuaUserIsActive()  { return (luaUser  != NULL);   }
 bool LuaClientScripts::LuaBzOrgIsActive() { return LuaBzOrg::IsActive(); }
 bool LuaClientScripts::LuaWorldIsActive() { return (luaWorld != NULL);   }
+bool LuaClientScripts::LuaRulesIsActive() { return (luaRules != NULL);   }
 
 bool LuaClientScripts::GetDevMode() { return LuaHandle::GetDevMode(); }
 void LuaClientScripts::SetDevMode(bool value) { LuaHandle::SetDevMode(value); }
@@ -172,6 +206,35 @@ void LuaClientScripts::LuaWorldUpdate()
     LuaWorld::FreeHandler();
 
     showMessage("LuaWorld disabled" + reason);
+  }
+}
+
+
+void LuaClientScripts::LuaRulesUpdate()
+{
+  if (luaRules == NULL) {
+    return;
+  }
+  else if (luaRules->RequestReload()) {
+    string reason = luaRules->RequestMessage();
+    if (!reason.empty()) { reason = ": " + reason; }
+
+    LuaRules::FreeHandler();
+    LuaRules::LoadHandler();
+
+    if (luaRules != NULL) {
+      showMessage("LuaRules reloaded" + reason);
+    } else {
+      showMessage("LuaRules reload failed" + reason);
+    }
+  }
+  else if (luaRules->RequestDisable()) {
+    string reason = luaRules->RequestMessage();
+    if (!reason.empty()) { reason = ": " + reason; }
+
+    LuaRules::FreeHandler();
+
+    showMessage("LuaRules disabled" + reason);
   }
 }
 
@@ -299,10 +362,6 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
     LuaWorld::LoadHandler();
   }
   else if (cmd == "disable") {
-    if (world->luaWorldRequired()) {
-      showMessage("LuaWorld is required on this server");
-      return false;
-    }
     const bool active = (luaWorld != NULL);
     LuaWorld::FreeHandler();
     if (active) {
@@ -322,6 +381,66 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
   }
   else if (luaWorld != NULL) {
     return luaWorld->RecvCommand(c);
+  }
+  else {
+    return false;
+  }
+
+  return true;
+}
+
+
+bool LuaClientScripts::LuaRulesCommand(const std::string& cmdLine)
+{
+  const World* world = World::getWorld();
+  if (world == NULL) {
+    return false;
+  }
+
+  const string prefix = "luarules";
+  const char* c = cmdLine.c_str();
+  if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
+    return false;
+  }
+  c = TextUtils::skipWhitespace(c + prefix.size());
+
+  const string cmd = c;
+  if (cmd == "reload") {
+    if (!GetDevMode()) {
+      showMessage("LuaRules is a required script");
+      return false;
+    }
+    LuaRules::FreeHandler();
+    LuaRules::LoadHandler();
+  }
+  else if (cmd == "disable") {
+    if (!GetDevMode()) {
+      showMessage("LuaRules is a required script");
+      return false;
+    }
+    const bool active = (luaRules != NULL);
+    LuaRules::FreeHandler();
+    if (active) {
+      showMessage("LuaRules disabled");
+    }
+  }
+  else if (cmd == "status") {
+    if (luaRules != NULL) {
+      showMessage("LuaRules is enabled");
+    } else {
+      showMessage("LuaRules is disabled");
+    }
+  }
+  else if (cmd == "") {
+    addMessage(NULL,
+	       "/luarules < status | reload | disable | custom_command ... >");
+  }
+  else if (luaRules != NULL) {
+    if (!GetDevMode()) {
+      showMessage("LuaRules can not receive commands");
+      return false;
+    }
+    return luaRules->RecvCommand(c);
   }
   else {
     return false;

@@ -43,11 +43,12 @@ class LuaHTTP : private cURLManager {
 
     const std::string& GetURL()      const { return url;      }
     const std::string& GetPostData() const { return postData; }
-    long	       GetHttpCode() const { return httpCode; }
+    long               GetHttpCode() const { return httpCode; }
 
     time_t GetFileTime();
     double GetFileSize();
     double GetFileRemoteSize();
+    bool   GetFileData(unsigned int offset, std::string& data) const;
 
     bool PushFunc(lua_State* L) const;
 
@@ -106,6 +107,7 @@ class LuaHTTPMgr {
     static int GetFileSize(lua_State* L);
     static int GetFileRemoteSize(lua_State* L);
     static int GetFileTime(lua_State* L);
+    static int GetFileData(lua_State* L);
     static int GetHttpCode(lua_State* L);
     static int TestAccess(lua_State* L);
 

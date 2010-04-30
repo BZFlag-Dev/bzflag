@@ -160,6 +160,12 @@ class LuaWorldCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class LuaRulesCommand : LocalCommand {
+  public:
+    LuaRulesCommand();
+    bool operator() (const char *commandLine);
+};
+
 class DebugLevelCommand : LocalCommand {
   public:
     DebugLevelCommand();
@@ -193,6 +199,7 @@ static LocalSetCommand    localSetCommand;
 static LuaBzOrgCommand    luaBzOrgCommand;
 static LuaUserCommand     luaUserCommand;
 static LuaWorldCommand    luaWorldCommand;
+static LuaRulesCommand    luaRulesCommand;
 static QuitCommand        quitCommand;
 static ReTextureCommand   reTextureCommand;
 static RoamPosCommand     RoamPosCommand;
@@ -220,6 +227,7 @@ LocalSetCommand::LocalSetCommand()     : LocalCommand("/localset")  {}
 LuaBzOrgCommand::LuaBzOrgCommand()     : LocalCommand("/luabzorg")  {}
 LuaUserCommand::LuaUserCommand()       : LocalCommand("/luauser")   {}
 LuaWorldCommand::LuaWorldCommand()     : LocalCommand("/luaworld")  {}
+LuaRulesCommand::LuaRulesCommand()     : LocalCommand("/luarules")  {}
 QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand()       : LocalCommand("/roampos")   {}
@@ -852,16 +860,36 @@ static void sendSaveWorldHelp()
   addMessage(NULL, "  -g : save ungrouped");
   addMessage(NULL, "  -m : save some primitives as meshes");
   addMessage(NULL, "  -o : save meshes into WaveFront OBJ files");
-  addMessage(NULL, "  -d : do not try to save the LuaWorld docket");
+  addMessage(NULL, "  -d : do not save the LuaWorld or LuaRules dockets");
+}
+
+
+static void saveDocket(const std::string& mapname,
+                       const std::string& name, const std::string& vfsModes)
+{
+  const BzDocket* docket = bzVFS.getDocket(vfsModes);
+  if (docket != NULL) {
+    std::vector<std::string> dirs, files;
+    docket->dirList("", false, dirs, files);
+    if (!dirs.empty() || !files.empty()) {
+      const std::string docketDir = mapname + "." + name;
+      // FIXME - should move directory if already exists 
+      if (docket->save(docketDir)) {
+        addMessage(NULL, name + " saved: " + docketDir);
+      } else {
+        addMessage(NULL, name + " failed: " + docketDir);
+      }
+    }
+  }  
 }
 
 
 bool SaveWorldCommand::operator() (const char *commandLine)
 {
-  bool meshprims  = false;
-  bool ungrouped  = false;
-  bool wavefront  = false;
-  bool skipDocket = false;
+  bool meshprims = false;
+  bool ungrouped = false;
+  bool wavefront = false;
+  bool noDockets = false;
 
   const std::string cmdLine = commandLine;
   const std::vector<std::string> args = TextUtils::tokenize(commandLine, " ");
@@ -884,7 +912,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
       meshprims = true;
       ungrouped = true;
     } else if (arg == "-d") {
-      skipDocket = true;
+      noDockets = true;
     } else {
       break;
     }
@@ -917,23 +945,11 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   }
   addMessage(NULL, buffer);
 
-  if (!skipDocket) {
-    const BzDocket* docket = bzVFS.getDocket(BZVFS_LUA_WORLD);
-    if (docket != NULL) {
-      std::vector<std::string> dirs, files;
-      docket->dirList("", false, dirs, files);
-      if (!dirs.empty() || !files.empty()) {
-        const std::string docketDir = fullname + ".docket";
-        // FIXME - should move directory if already exists 
-        if (docket->save(docketDir)) {
-          addMessage(NULL, std::string("Docket saved: ") + docketDir);
-        } else {
-          addMessage(NULL, std::string("Docket failed: ") + docketDir);
-        }
-      }
-    }  
+  if (!noDockets) {
+    saveDocket(fullname, "LuaWorld", BZVFS_LUA_WORLD);
+    saveDocket(fullname, "LuaRules", BZVFS_LUA_RULES);
   }    
-       
+
   return true;
 }
 
@@ -1001,8 +1017,18 @@ bool LuaWorldCommand::operator() (const char* cmdLine)
   LuaClientScripts::LuaWorldCommand(cmdLine + 1); // skip the '/'
   return true;
 }
- 
- 
+
+
+bool LuaRulesCommand::operator() (const char* cmdLine)
+{
+  if (cmdLine[0] == 0) {
+    return false;
+  }
+  LuaClientScripts::LuaRulesCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+
+
 bool DebugLevelCommand::operator() (const char* cmdLine)
 {
   const std::vector<std::string> args = TextUtils::tokenize(cmdLine, " ");

@@ -171,6 +171,9 @@ bool BZWReader::parseNormalObject(const char* token, WorldFileObject** object)
 
   char name[256];
   readToken(name, sizeof(name));
+  if (name[0] == '#') {
+    name[0] = 0;
+  }
 
        if (lower == "box")           { obj = new CustomBox(false);          }
   else if (lower == "meshbox")       { obj = new CustomBox(true);           }

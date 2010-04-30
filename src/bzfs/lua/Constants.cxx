@@ -94,8 +94,8 @@ static bool PushGameOptionBits(lua_State* L)
   LuaSetDualPair(L, "SHAKABLE",      ShakableGameStyle);
   LuaSetDualPair(L, "ANTIDOTE",      AntidoteGameStyle);
   LuaSetDualPair(L, "HANDICAP",      HandicapGameStyle);
-  LuaSetDualPair(L, "LUA_WORLD",     LuaWorldAvailable);
-  LuaSetDualPair(L, "LUA_WORLD_REQ", LuaWorldRequired);
+  LuaSetDualPair(L, "LUA_WORLD",     LuaWorldScript);
+  LuaSetDualPair(L, "LUA_RULES",     LuaRulesScript);
 
   lua_rawset(L, -3);
 

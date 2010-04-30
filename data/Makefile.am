@@ -23,6 +23,8 @@ bzflag_DATA = \
 	explode2.png		\
 	flag.png		\
 	frog.png		\
+	grass.png		\
+	ground.png		\
 	jumpjets.png		\
 	menu_arrow.png		\
 	mesh.png		\
@@ -38,7 +40,6 @@ bzflag_DATA = \
 	raindrop.png		\
 	roof.png		\
 	snowflake.png		\
-	std_ground.png		\
 	telelink.png		\
 	tetrawall.png		\
 	thief.png		\

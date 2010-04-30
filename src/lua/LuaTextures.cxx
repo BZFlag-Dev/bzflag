@@ -281,7 +281,7 @@ LuaTextureRef::LuaTextureRef(const std::string& _name) : name(_name)
 
 LuaTextureRef::~LuaTextureRef()
 {
-  LuaLog(0, "deleting LuaTextureRef\n");
+  LuaLog(1, "deleting LuaTextureRef\n");
 }
 
 
@@ -676,7 +676,7 @@ LuaTextureObj::~LuaTextureObj()
   FreeContext();
   OpenGLGState::unregisterContextInitializer(StaticFreeContext,
 					     StaticInitContext, this);
-  LuaLog(0, "deleting LuaTextureObj\n");
+  LuaLog(1, "deleting LuaTextureObj\n");
 }
 
 

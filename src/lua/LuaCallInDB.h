@@ -92,9 +92,10 @@ enum LuaCallInCode {
 
   LUA_CI_ForbidSpawn,
   LUA_CI_ForbidJump,
+  LUA_CI_ForbidFlagDrop,
   LUA_CI_ForbidShot,
   LUA_CI_ForbidShotLock,
-  LUA_CI_ForbidFlagDrop
+  LUA_CI_ForbidShotHit
 };
 
 

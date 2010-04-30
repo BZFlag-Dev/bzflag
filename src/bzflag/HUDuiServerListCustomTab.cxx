@@ -118,12 +118,17 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
 
   luaWorld = new HUDuiList();
   luaWorld->setLabel("LuaWorld:");
-  luaWorld->getList().push_back("Do Not Care");
-  luaWorld->getList().push_back("Available");
-  luaWorld->getList().push_back("Not Available");
-  luaWorld->getList().push_back("Required");
-  luaWorld->getList().push_back("Not Required");
+  luaWorld->getList().push_back("Either");
+  luaWorld->getList().push_back("On");
+  luaWorld->getList().push_back("Off");
   luaWorld->update();
+
+  luaRules = new HUDuiList();
+  luaRules->setLabel("LuaRules:");
+  luaRules->getList().push_back("Either");
+  luaRules->getList().push_back("On");
+  luaRules->getList().push_back("Off");
+  luaRules->update();
 
   createNew = new HUDuiLabel();
   createNew->setString("-> Create Tab");
@@ -143,6 +148,7 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
   addControl(jumping);
   addControl(handicap);
   addControl(luaWorld);
+  addControl(luaRules);
   addControl(createNew);
 
   getNav().addCallback(callback, this);
@@ -336,6 +342,14 @@ void HUDuiServerListCustomTab::resize()
 
   y = y - _fontheight;
 
+  width = fm.getStringWidth(faceID, fontSize, luaRules->getLabel());
+
+  luaRules->setFontFace(getFontFace());
+  luaRules->setFontSize(fontSize);
+  luaRules->setPosition(getX() + width + spacer, y);
+
+  y = y - _fontheight;
+
   createNew->setFontFace(getFontFace());
   createNew->setFontSize(fontSize);
   createNew->setPosition(getX() + spacer, y);
@@ -378,24 +392,15 @@ HUDuiServerList* HUDuiServerListCustomTab::createServerList()
     newServerList->toggleFilter(HUDuiServerList::SuperFlagsOn);
   if (superFlags->getList().at(superFlags->getIndex()) == "Off")
     newServerList->toggleFilter(HUDuiServerList::SuperFlagsOff);
-
-  const std::string lw = luaWorld->getList().at(luaWorld->getIndex());
-  if (lw == "Do Not Care") {
-    // do nothing
-  }
-  else if (lw == "Available") {
+  if (luaWorld->getList().at(luaWorld->getIndex()) == "On")
     newServerList->toggleFilter(HUDuiServerList::LuaWorldOn);
-  }
-  else if (lw == "Not Available") {
+  if (luaWorld->getList().at(luaWorld->getIndex()) == "Off")
     newServerList->toggleFilter(HUDuiServerList::LuaWorldOff);
-  }
-  else if (lw == "Required") {
-    newServerList->toggleFilter(HUDuiServerList::LuaWorldReqOn);
-  }
-  else if (lw == "Not Required") {
-    newServerList->toggleFilter(HUDuiServerList::LuaWorldReqOff);
-  }
-    
+  if (luaRules->getList().at(luaRules->getIndex()) == "On")
+    newServerList->toggleFilter(HUDuiServerList::LuaRulesOn);
+  if (luaRules->getList().at(luaRules->getIndex()) == "Off")
+    newServerList->toggleFilter(HUDuiServerList::LuaRulesOff);
+
   newServerList->domainNameFilter(domainName->getString());
   newServerList->serverNameFilter(serverName->getString());
 
@@ -431,6 +436,7 @@ void HUDuiServerListCustomTab::doRender()
   jumping->render();
   handicap->render();
   luaWorld->render();
+  luaRules->render();
   createNew->render();
 }
 

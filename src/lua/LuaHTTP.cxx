@@ -290,6 +290,16 @@ double LuaHTTP::GetFileRemoteSize()
 }
 
 
+bool LuaHTTP::GetFileData(unsigned int offset, std::string& data) const
+{
+  if (!theData || (theLen < offset)) {
+    return false;
+  }
+  data.assign((char*)theData + offset, theLen - offset);
+  return true;
+}
+
+
 
 //============================================================================//
 //============================================================================//
@@ -312,6 +322,7 @@ bool LuaHTTPMgr::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetFileSize);
   PUSH_LUA_CFUNC(L, GetFileRemoteSize);
   PUSH_LUA_CFUNC(L, GetFileTime);
+  PUSH_LUA_CFUNC(L, GetFileData);
   PUSH_LUA_CFUNC(L, GetHttpCode);
   PUSH_LUA_CFUNC(L, TestAccess);
 
@@ -373,6 +384,7 @@ bool LuaHTTPMgr::CreateMetatable(lua_State* L)
     PUSH_LUA_CFUNC(L, GetFileSize);
     PUSH_LUA_CFUNC(L, GetFileRemoteSize);
     PUSH_LUA_CFUNC(L, GetFileTime);
+    PUSH_LUA_CFUNC(L, GetFileData);
     PUSH_LUA_CFUNC(L, GetHttpCode);
   }
   lua_rawset(L, -3);
@@ -570,6 +582,27 @@ int LuaHTTPMgr::GetFileTime(lua_State* L)
   lua_pushstring(L, buf);
 
   return 2;
+}
+
+
+int LuaHTTPMgr::GetFileData(lua_State* L)
+{
+  const LuaHTTP* fetch = CheckHTTP(L, 1);
+
+  double offset = 0.0;
+  double* offPtr = LuaDouble::TestNumber(L, 2);
+  if (offPtr) {
+    offset = *offPtr;
+  }
+
+  std::string data;
+  if (!fetch->GetFileData((unsigned int) offset, data)) {
+    lua_pushnil(L);
+    return 0;
+  }
+
+  lua_pushstdstring(L, data);
+  return 1;
 }
 
 

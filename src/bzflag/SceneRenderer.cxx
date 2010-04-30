@@ -20,22 +20,23 @@
 #include "SceneRenderer.h"
 
 // common headers
-#include "SceneDatabase.h"
-#include "MainWindow.h"
-#include "GameTime.h"
-#include "DynamicColor.h"
-#include "TextureMatrix.h"
-#include "TankSceneNode.h"
-#include "StateDatabase.h"
-#include "TextUtils.h"
-#include "ParseColor.h"
 #include "BZDBCache.h"
-#include "MeshSceneNode.h"
-#include "FlagSceneNode.h"
-#include "LinkManager.h"
-#include "MeshFace.h"
+#include "DynamicColor.h"
 #include "EventHandler.h"
+#include "FlagSceneNode.h"
+#include "GameTime.h"
 #include "GfxBlock.h"
+#include "LinkManager.h"
+#include "LuaClientScripts.h"
+#include "MainWindow.h"
+#include "MeshFace.h"
+#include "MeshSceneNode.h"
+#include "ParseColor.h"
+#include "SceneDatabase.h"
+#include "StateDatabase.h"
+#include "TankSceneNode.h"
+#include "TextureMatrix.h"
+#include "TextUtils.h"
 
 // local headers -- FIXME, local dependencies for a global interface
 #include "BackgroundRenderer.h"
@@ -1220,6 +1221,7 @@ void SceneRenderer::getRenderNodes()
 
   // make the lists of render nodes sorted in optimal rendering order
   if (scene) {
+    LuaClientScripts::AddSceneNodes(*scene);
     scene->addRenderNodes(*this, drawObstacles, true);
   }
 

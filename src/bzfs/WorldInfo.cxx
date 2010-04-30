@@ -595,10 +595,17 @@ int WorldInfo::packDatabase()
   BzDocket luaWorld("LuaWorld");
   luaWorld.addDir(clOptions->luaWorldDir, "");
   if (luaWorld.hasData("bzWorld.lua")) {
-    clOptions->gameOptions |= LuaWorldAvailable;
+    clOptions->gameOptions |= LuaWorldScript;
   } else {
-    clOptions->gameOptions &= ~LuaWorldAvailable;
-    clOptions->gameOptions &= ~LuaWorldRequired;
+    clOptions->gameOptions &= ~LuaWorldScript;
+  }
+
+  BzDocket luaRules("LuaRules");
+  luaRules.addDir(clOptions->luaRulesDir, "");
+  if (luaRules.hasData("bzRules.lua")) {
+    clOptions->gameOptions |= LuaRulesScript;
+  } else {
+    clOptions->gameOptions &= ~LuaRulesScript;
   }
 
   // make default water material. we wait to make the default material
@@ -619,7 +626,8 @@ int WorldInfo::packDatabase()
     + OBSTACLEMGR.packSize()
     + worldWeapons.packSize()
     + entryZones.packSize()
-    + luaWorld.packSize();
+    + luaWorld.packSize()
+    + luaRules.packSize();
 
   // add water level size
   databaseSize += sizeof(float);
@@ -667,6 +675,9 @@ int WorldInfo::packDatabase()
 
   // pack the LuaWorld docket
   databasePtr = luaWorld.pack(databasePtr);
+
+  // pack the LuaRules docket
+  databasePtr = luaRules.pack(databasePtr);
 
   // compress the map database
   TimeKeeper startTime = TimeKeeper::getCurrent();

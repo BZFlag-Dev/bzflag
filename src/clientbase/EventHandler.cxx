@@ -133,9 +133,10 @@ EventHandler::EventHandler()
 
   SETUP_EVENT(ForbidSpawn,       GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
   SETUP_EVENT(ForbidJump,        GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidFlagDrop,    GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
   SETUP_EVENT(ForbidShot,        GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
   SETUP_EVENT(ForbidShotLock,    GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
-  SETUP_EVENT(ForbidFlagDrop,    GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
+  SETUP_EVENT(ForbidShotHit,     GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
 }
 
 
@@ -553,6 +554,19 @@ bool EventHandler::ForbidJump()
 }
 
 
+bool EventHandler::ForbidFlagDrop()
+{
+  EventClientList& ecList = listForbidFlagDrop;
+  EventClientList::const_iterator it;
+  for (it = ecList.begin(); it != ecList.end(); ++it) {
+    if ((*it)->ForbidFlagDrop()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+
 bool EventHandler::ForbidShot()
 {
   EventClientList& ecList = listForbidShot;
@@ -579,12 +593,13 @@ bool EventHandler::ForbidShotLock(const Player& player)
 }
 
 
-bool EventHandler::ForbidFlagDrop()
+bool EventHandler::ForbidShotHit(const Player& player,
+                                  const ShotPath& shot, const fvec3& pos)
 {
-  EventClientList& ecList = listForbidFlagDrop;
+  EventClientList& ecList = listForbidShotHit;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
-    if ((*it)->ForbidFlagDrop()) {
+    if ((*it)->ForbidShotHit(player, shot, pos)) {
       return true;
     }
   }

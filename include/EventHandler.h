@@ -160,9 +160,10 @@ class EventHandler
 
     bool ForbidSpawn();
     bool ForbidJump();
+    bool ForbidFlagDrop();
     bool ForbidShot();
     bool ForbidShotLock(const Player&);
-    bool ForbidFlagDrop();
+    bool ForbidShotHit(const Player&, const ShotPath&, const fvec3& pos);
 
     /**************************************************************************/
 
@@ -248,9 +249,10 @@ class EventHandler
 
     EventClientList listForbidSpawn;
     EventClientList listForbidJump;
+    EventClientList listForbidFlagDrop;
     EventClientList listForbidShot;
     EventClientList listForbidShotLock;
-    EventClientList listForbidFlagDrop;
+    EventClientList listForbidShotHit;
 
     EventClientList listPlayerAdded;
     EventClientList listPlayerRemoved;

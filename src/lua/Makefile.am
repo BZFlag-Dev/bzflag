@@ -61,6 +61,7 @@ libLuaClient_la_SOURCES =                         \
 	LuaKeySyms.cxx        LuaKeySyms.h        \
 	LuaSpatial.cxx        LuaSpatial.h        \
 	LuaUser.cxx           LuaUser.h           \
+	LuaRules.cxx          LuaRules.h          \
 	LuaWorld.cxx          LuaWorld.h
 
 
@@ -74,6 +75,7 @@ libLuaClientGL_la_SOURCES =                       \
 	LuaGLQueries.cxx      LuaGLQueries.h      \
 	LuaOpenGL.cxx         LuaOpenGL.h         \
 	LuaRBOs.cxx           LuaRBOs.h           \
+	LuaSceneNode.cxx      LuaSceneNode.h      \
 	LuaShaders.cxx        LuaShaders.h        \
 	LuaTextures.cxx       LuaTextures.h
 endif

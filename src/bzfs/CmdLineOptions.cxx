@@ -93,7 +93,7 @@ static const char *usageString =
   "[-loadplugin <pluginname,commandline>] "
   "[-luaserver <dirpath>] "
   "[-luaworld <dirpath>] "
-  "[-luaworldReq] "
+  "[-luarules <dirpath>] "
   "[-masterBanURL <URL>] "
   "[-maxidle <time/s>] "
   "[-mp {<count>|[<count>][,<count>][,<count>][,<count>][,<count>][,<count>]}] "
@@ -196,7 +196,7 @@ static const char *extraUsageString =
   "\t-loadplugin: load the specified plugin with the specified commandline\n"
   "\t-luaserver: path to the LuaServer sources directory\n"
   "\t-luaworld: path to the LuaWorld sources directory\n"
-  "\t-luaworldReq: LuaWorld script execution is required\n"
+  "\t-luarules: path to the LuaRules sources directory\n"
   "\t-masterBanURL: URL to atempt to get the master ban list from <URL>\n"
   "\t-maxidle: idle kick threshhold [s]\n"
   "\t-mp: maximum players total or per team\n"
@@ -838,8 +838,8 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     else if (token == "-luaworld") {
       luaWorldDir = parseStringArg(i, tokens);
     }
-    else if (token == "-luaworldReq") {
-      gameOptions |= int(LuaWorldRequired);   
+    else if (token == "-luarules") {
+      luaRulesDir = parseStringArg(i, tokens);
     }
     else if (token == "-maxidle") {
       idlekickthresh = (float)parseIntArg(i, tokens);

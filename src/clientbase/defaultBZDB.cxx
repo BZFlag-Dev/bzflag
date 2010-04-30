@@ -149,7 +149,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "noMeshClusters",		"0",			true,  DefPerm, NULL },
 
   // default texture names
-  { "stdGroundTexture",		"std_ground",		true,  DefPerm, NULL },
+  { "stdGroundTexture",		"ground",		true,  DefPerm, NULL },
   { "zoneGroundTexture",	"zone_ground",		true,  DefPerm, NULL },
   { "boxWallTexture",		"boxwall",		true,  DefPerm, NULL },
   { "boxTopTexture",		"roof",			true,  DefPerm, NULL },

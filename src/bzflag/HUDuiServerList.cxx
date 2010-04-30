@@ -150,10 +150,10 @@ public:
           case SuperFlagsOff:   { retVal = ((gameOpts & SuperFlagGameStyle) == 0); break; }
           case HandicapOn:      { retVal = ((gameOpts & HandicapGameStyle)  != 0); break; }
           case HandicapOff:     { retVal = ((gameOpts & HandicapGameStyle)  == 0); break; }
-          case LuaWorldOn:      { retVal = ((gameOpts & LuaWorldAvailable)  != 0); break; }
-          case LuaWorldOff:     { retVal = ((gameOpts & LuaWorldAvailable)  == 0); break; }
-          case LuaWorldReqOn:   { retVal = ((gameOpts & LuaWorldRequired)   != 0); break; }
-          case LuaWorldReqOff:  { retVal = ((gameOpts & LuaWorldRequired)   == 0); break; }
+          case LuaWorldOn:      { retVal = ((gameOpts & LuaWorldScript)     != 0); break; }
+          case LuaWorldOff:     { retVal = ((gameOpts & LuaWorldScript)     == 0); break; }
+          case LuaRulesOn:      { retVal = ((gameOpts & LuaRulesScript)     != 0); break; }
+          case LuaRulesOff:     { retVal = ((gameOpts & LuaRulesScript)     == 0); break; }
           case ClassicCTFGameMode:  { retVal = (gameType == ClassicCTF);  break; }
           case RabbitChaseGameMode: { retVal = (gameType == RabbitChase); break; }
           case OpenFFAGameMode:     { retVal = (gameType == OpenFFA);     break; }

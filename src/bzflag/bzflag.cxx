@@ -670,8 +670,9 @@ void setupVFS()
   bzVFS.addFS(BZVFS_DATA_DEFAULT,    BZFLAG_DATA);
 #endif
   bzVFS.addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));  
-  bzVFS.addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
 //bzVFS.addFS(BZVFS_LUA_BZORG,       ""); // NOTE: <--
+  bzVFS.addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
+  bzVFS.addFS(BZVFS_LUA_RULES,       new BzDocket("LuaRules"));
   bzVFS.addFS(BZVFS_LUA_USER_WRITE,  cacheDir + "LuaUser"); 
   bzVFS.addFS(BZVFS_LUA_WORLD_WRITE, cacheDir + "LuaWorld");
   bzVFS.addFS(BZVFS_LUA_BZORG_WRITE, cacheDir + "LuaBzOrg");

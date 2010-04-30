@@ -65,6 +65,7 @@ static std::string cmdJump          (const std::string&, const CmdArgList& args,
 static std::string cmdLuaBzOrg      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdLuaUser       (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdLuaWorld      (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaRules      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdLocalCmd      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMessagePanel  (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMouseGrab     (const std::string&, const CmdArgList& args, bool*);
@@ -130,6 +131,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("luauser",       &cmdLuaUser,       "luauser {'reload | disable | status }: control luauser");
   PUSHCMD("luabzorg",      &cmdLuaBzOrg,      "luabzorg {'reload | disable | status }: control luabzorg");
   PUSHCMD("luaworld",      &cmdLuaWorld,      "luaworld {'reload | disable | status }: control luaworld");
+  PUSHCMD("luarules",      &cmdLuaRules,      "luarules {'reload | disable | status }: control luarules");
 #undef  PUSHCMD
   return commandVector;
 }
@@ -1055,6 +1057,16 @@ static std::string cmdLuaWorld(const std::string& cmd, const CmdArgList& args, b
     return "usage: luaworld { reload | disable | status }";
   }
   LuaClientScripts::LuaWorldCommand(cmd + " " + concatArgs(args));
+  return std::string();
+}
+
+
+static std::string cmdLuaRules(const std::string& cmd, const CmdArgList& args, bool*)
+{
+  if (args.size() < 1) {
+    return "usage: luarules { reload | disable | status }";
+  }
+  LuaClientScripts::LuaRulesCommand(cmd + " " + concatArgs(args));
   return std::string();
 }
 

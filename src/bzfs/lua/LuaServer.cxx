@@ -164,6 +164,44 @@ const std::string& LuaServer::getLuaDir()
 //============================================================================//
 //============================================================================//
 
+static void setupVFS()
+{
+  // add the -luaserver directory as readable
+  bzVFS.removeFS(BZVFS_LUA_SERVER);
+  bzVFS.addFS(BZVFS_LUA_SERVER, directory);
+
+  // add a writable cache dir
+  const std::string writeDir = getCacheDirName() + "LuaServer";
+  bzVFS.removeFS(BZVFS_LUA_SERVER_WRITE);
+  bzVFS.addFS(BZVFS_LUA_SERVER_WRITE, writeDir);
+  bzVFS.setFSWritable(BZVFS_LUA_SERVER_WRITE, true);
+  BzVFS::createPathDirs("", BzVFS::cleanDirPath(writeDir));
+
+  // add the -luaworld directory as read/write
+  const std::string luaWorldDir = clOptions->luaWorldDir;
+  if (!luaWorldDir.empty()) {
+    // add the raw filesystem, not the docket
+    bzVFS.removeFS(BZVFS_LUA_WORLD);
+    if (bzVFS.addFS(BZVFS_LUA_WORLD, luaWorldDir)) {
+      bzVFS.setFSWritable(BZVFS_LUA_WORLD, true);
+    }
+  }
+
+  // add the -luarules directory as read/write
+  const std::string luaRulesDir = clOptions->luaRulesDir;
+  if (!luaRulesDir.empty()) {
+    // add the raw filesystem, not the docket
+    bzVFS.removeFS(BZVFS_LUA_RULES);
+    if (bzVFS.addFS(BZVFS_LUA_RULES, luaRulesDir)) {
+      bzVFS.setFSWritable(BZVFS_LUA_RULES, true);
+    }
+  }
+}
+
+
+//============================================================================//
+//============================================================================//
+
 bool LuaServer::init(const std::string& cmdLine)
 {
   if (cmdLine.empty()) {
@@ -210,26 +248,7 @@ bool LuaServer::init(const std::string& cmdLine)
 
   directory = scriptDir;
 
-  // add the -luaserver directory as readable
-  bzVFS.removeFS(BZVFS_LUA_SERVER);
-  bzVFS.addFS(BZVFS_LUA_SERVER, directory);
-
-  // add a writable cache dir
-  const std::string writeDir = getCacheDirName() + "LuaServer";
-  bzVFS.removeFS(BZVFS_LUA_SERVER_WRITE);
-  bzVFS.addFS(BZVFS_LUA_SERVER_WRITE, writeDir);
-  bzVFS.setFSWritable(BZVFS_LUA_SERVER_WRITE, true);
-  BzVFS::createPathDirs("", BzVFS::cleanDirPath(writeDir));
-
-  // add the -luaworld directory as read/write
-  const std::string luaWorldDir = clOptions->luaWorldDir;
-  if (!luaWorldDir.empty()) {
-    // add the raw filesystem, not the docket
-    bzVFS.removeFS(BZVFS_LUA_WORLD);
-    if (bzVFS.addFS(BZVFS_LUA_WORLD, luaWorldDir)) {
-      bzVFS.setFSWritable(BZVFS_LUA_WORLD, true);
-    }
-  }
+  setupVFS();
 
   if (!CreateLuaState(scriptFile)) {
     if (dieHard) {

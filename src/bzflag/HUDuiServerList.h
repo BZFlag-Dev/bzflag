@@ -50,8 +50,8 @@ class HUDuiServerList : public HUDuiScrollList {
       TeamFFAGameMode     = (1 << 15),
       LuaWorldOn          = (1 << 16),
       LuaWorldOff         = (1 << 17),
-      LuaWorldReqOn       = (1 << 18),
-      LuaWorldReqOff      = (1 << 19),
+      LuaRulesOn          = (1 << 18),
+      LuaRulesOff         = (1 << 19),
       EndOfFilterConstants
     } FilterConstants;
 

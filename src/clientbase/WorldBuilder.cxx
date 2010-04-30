@@ -141,10 +141,16 @@ void* WorldBuilder::unpack(void* buf)
   }
 
   // unpack the LuaWorld docket
-  BzDocket* docket = new BzDocket("LuaWorld");
-  buf = docket->unpack(buf);
+  BzDocket* worldDocket = new BzDocket("LuaWorld");
+  buf = worldDocket->unpack(buf);
   bzVFS.removeFS(BZVFS_LUA_WORLD);
-  bzVFS.addFS(BZVFS_LUA_WORLD, docket);
+  bzVFS.addFS(BZVFS_LUA_WORLD, worldDocket);
+
+  // unpack the LuaRules docket
+  BzDocket* rulesDocket = new BzDocket("LuaRules");
+  buf = rulesDocket->unpack(buf);
+  bzVFS.removeFS(BZVFS_LUA_RULES);
+  bzVFS.addFS(BZVFS_LUA_RULES, rulesDocket);
 
   // check if the unpacking was successful
   nboUseErrorChecking(false);

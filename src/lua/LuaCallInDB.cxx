@@ -118,6 +118,7 @@ bool LuaCallInDB::Init()
 //  const char* ONLY_LuaUser    = "LuaUser";
 //  const char* ONLY_LuaBzOrg   = "LuaBzOrg";
 //  const char* ONLY_LuaWorld   = "LuaWorld";
+//  const char* ONLY_LuaRules   = "LuaRules";
 
 #define ADD_CI(n, bits, retType, singleScript) \
   const char* n = #n;	       \
@@ -201,9 +202,10 @@ bool LuaCallInDB::Init()
 
   ADD_CI(ForbidSpawn,    REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
   ADD_CI(ForbidJump,     REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
+  ADD_CI(ForbidFlagDrop, REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
   ADD_CI(ForbidShot,     REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
   ADD_CI(ForbidShotLock, REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
-  ADD_CI(ForbidFlagDrop, REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
+  ADD_CI(ForbidShotHit,  REQ_GAME_CTRL, FIRST_TRUE, ANY_SCRIPT);
 
   return true;
 }

@@ -357,15 +357,17 @@ void HUDuiServerInfo::fillReadouts()
     ((HUDuiLabel*)listHUD[19])->setString(disabledColor + "Ping");
   }
 
-  if (ping.gameOptions & LuaWorldAvailable) {  
-    if (ping.gameOptions & LuaWorldRequired) {
-      (listHUD[20])->setString("Script: required");
-    } else {
-      (listHUD[20])->setString("Script: optional");
-    }
-  } else {
-    (listHUD[20])->setString("Script: none");
+  const int luaCode = ((ping.gameOptions & LuaWorldScript) ? 1 : 0) +
+                      ((ping.gameOptions & LuaRulesScript) ? 2 : 0);
+  std::string scripts;
+  switch (luaCode) {
+    case 0: { scripts = "none";  break; }
+    case 1: { scripts = "world"; break; }
+    case 2: { scripts = "rules"; break; }
+    case 3: { scripts = "rules+world"; break; }
   }
+  scripts = "Script: " + scripts;
+  (listHUD[20])->setString(scripts);
 
   if (item.cached) {
     (listHUD[21])->setString("Cached");

@@ -88,6 +88,7 @@ using std::map;
 bool LuaCallOuts::PushEntries(lua_State* L)
 {
   const bool fullRead = L2H(L)->HasFullRead();
+  const bool gameCtrl = L2H(L)->HasGameCtrl();
 
   PUSH_LUA_CFUNC(L, GetBzLuaVersion);
   PUSH_LUA_CFUNC(L, GetClientVersion);
@@ -208,15 +209,19 @@ bool LuaCallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetShotGfxBlock);
 
   PUSH_LUA_CFUNC(L, GetPlayerList);
-  PUSH_LUA_CFUNC(L, GetPlayerName);
+  if (!gameCtrl) {
+    PUSH_LUA_CFUNC(L, GetPlayerName);
+    PUSH_LUA_CFUNC(L, GetPlayerMotto);
+  }
   PUSH_LUA_CFUNC(L, GetPlayerType);
   PUSH_LUA_CFUNC(L, GetPlayerTeam);
   PUSH_LUA_CFUNC(L, GetPlayerFlagType);
   PUSH_LUA_CFUNC(L, GetPlayerScore);
-  PUSH_LUA_CFUNC(L, GetPlayerMotto);
   PUSH_LUA_CFUNC(L, GetPlayerAutoPilot);
   if (fullRead) {
-    PUSH_LUA_CFUNC(L, GetPlayerCustomData);
+    if (!gameCtrl) {
+      PUSH_LUA_CFUNC(L, GetPlayerCustomData);
+    }
     PUSH_LUA_CFUNC(L, GetPlayerFlag);
     PUSH_LUA_CFUNC(L, GetPlayerShots);
     PUSH_LUA_CFUNC(L, GetPlayerState);
@@ -232,10 +237,12 @@ bool LuaCallOuts::PushEntries(lua_State* L)
     PUSH_LUA_CFUNC(L, GetPlayerDesiredAngVel);
     PUSH_LUA_CFUNC(L, GetPlayerExplodeTime);
   }
-  PUSH_LUA_CFUNC(L, IsPlayerAdmin);
-  PUSH_LUA_CFUNC(L, IsPlayerVerified);
-  PUSH_LUA_CFUNC(L, IsPlayerRegistered);
-  PUSH_LUA_CFUNC(L, IsPlayerHunted);
+  if (!gameCtrl) {
+    PUSH_LUA_CFUNC(L, IsPlayerAdmin);
+    PUSH_LUA_CFUNC(L, IsPlayerVerified);
+    PUSH_LUA_CFUNC(L, IsPlayerRegistered);
+    PUSH_LUA_CFUNC(L, IsPlayerHunted);
+  }
 
   if (fullRead) {
     PUSH_LUA_CFUNC(L, GetFlagList);

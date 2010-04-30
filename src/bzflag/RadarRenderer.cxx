@@ -14,15 +14,15 @@
 #include "RadarRenderer.h"
 
 // common implementation headers
-#include "SceneRenderer.h"
+#include "BZDBCache.h"
+#include "EventHandler.h"
+#include "LinkManager.h"
 #include "MainWindow.h"
 #include "OpenGLGState.h"
-#include "BZDBCache.h"
-#include "TextureManager.h"
 #include "PhysicsDriver.h"
-#include "EventHandler.h"
+#include "SceneRenderer.h"
+#include "TextureManager.h"
 #include "TimeKeeper.h"
-#include "LinkManager.h"
 
 // local implementation headers
 #include "ObstacleMgr.h"

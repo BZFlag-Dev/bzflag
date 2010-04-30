@@ -125,9 +125,10 @@ class LuaHandle : public EventClient
 
     virtual bool ForbidSpawn();
     virtual bool ForbidJump();
+    virtual bool ForbidFlagDrop();
     virtual bool ForbidShot();
     virtual bool ForbidShotLock(const Player&);
-    virtual bool ForbidFlagDrop();
+    virtual bool ForbidShotHit(const Player&, const ShotPath&, const fvec3&);
 
   protected:
     LuaHandle(const std::string& name, int16_t scriptID,

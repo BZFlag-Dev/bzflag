@@ -48,23 +48,26 @@ bool LuaVFS::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, Include);
   PUSH_LUA_CFUNC(L, CreateDir);
   PUSH_LUA_CFUNC(L, DirList);
+  PUSH_LUA_CFUNC(L, GetModes);
 
   lua_pushliteral(L, "MODES");
   lua_newtable(L);
   {
-    luaset_strstr(L, "CONFIG",	  BZVFS_CONFIG);
-    luaset_strstr(L, "DATA",	    BZVFS_DATA);
+    luaset_strstr(L, "CONFIG",          BZVFS_CONFIG);
+    luaset_strstr(L, "DATA",            BZVFS_DATA);
     luaset_strstr(L, "DATA_DEFAULT",    BZVFS_DATA_DEFAULT);
-    luaset_strstr(L, "FTP",	     BZVFS_FTP);
-    luaset_strstr(L, "HTTP",	    BZVFS_HTTP);
-    luaset_strstr(L, "LUA_USER",	BZVFS_LUA_USER);
-    luaset_strstr(L, "LUA_WORLD",       BZVFS_LUA_WORLD);
+    luaset_strstr(L, "FTP",             BZVFS_FTP);
+    luaset_strstr(L, "HTTP",            BZVFS_HTTP);
+    luaset_strstr(L, "LUA_USER",        BZVFS_LUA_USER);
     luaset_strstr(L, "LUA_BZORG",       BZVFS_LUA_BZORG);
+    luaset_strstr(L, "LUA_WORLD",       BZVFS_LUA_WORLD);
+    luaset_strstr(L, "LUA_RULES",       BZVFS_LUA_RULES);
     luaset_strstr(L, "LUA_USER_WRITE",  BZVFS_LUA_USER_WRITE);
-    luaset_strstr(L, "LUA_WORLD_WRITE", BZVFS_LUA_WORLD_WRITE);
     luaset_strstr(L, "LUA_BZORG_WRITE", BZVFS_LUA_BZORG_WRITE);
-    luaset_strstr(L, "BASIC",	   BZVFS_BASIC);
-    luaset_strstr(L, "ALL",	     BZVFS_ALL);
+    luaset_strstr(L, "LUA_WORLD_WRITE", BZVFS_LUA_WORLD_WRITE);
+    luaset_strstr(L, "LUA_RULES_WRITE", BZVFS_LUA_RULES_WRITE);
+    luaset_strstr(L, "BASIC",           BZVFS_BASIC);
+    luaset_strstr(L, "ALL",             BZVFS_ALL);
   }
   lua_rawset(L, -3);
 
@@ -363,6 +366,31 @@ int LuaVFS::DirList(lua_State* L)
   }
 
   return 2;
+}
+
+
+//============================================================================//
+//============================================================================//
+
+int LuaVFS::GetModes(lua_State* L)
+{
+  lua_createtable(L, 0, 2); {
+
+    lua_pushliteral(L, "read");
+    lua_createtable(L, 0, 2); {
+      luaset_strstr(L, "default", L2ES(L)->vfsModes->readDefault);
+      luaset_strstr(L, "allowed", L2ES(L)->vfsModes->readAllowed);
+    }
+    lua_rawset(L, -3);
+
+    lua_pushliteral(L, "write");
+    lua_createtable(L, 0, 2); {
+      luaset_strstr(L, "default", L2ES(L)->vfsModes->writeDefault);
+      luaset_strstr(L, "allowed", L2ES(L)->vfsModes->writeAllowed);
+    }
+    lua_rawset(L, -3);
+  }
+  return 1;
 }
 
 

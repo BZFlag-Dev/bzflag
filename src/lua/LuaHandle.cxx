@@ -54,6 +54,7 @@ using std::vector;
 #include "LuaOpenGL.h"
 #include "LuaPack.h"
 #include "LuaPhyDrv.h"
+#include "LuaSceneNode.h"
 #include "LuaScream.h"
 #include "LuaServerPing.h"
 #include "LuaSpatial.h"
@@ -392,6 +393,7 @@ bool LuaHandle::AddBasicCalls()
       LuaSetDualPair(L, "LuaUser",  LUA_USER_SCRIPT_ID);
       LuaSetDualPair(L, "LuaBzOrg", LUA_BZORG_SCRIPT_ID);
       LuaSetDualPair(L, "LuaWorld", LUA_WORLD_SCRIPT_ID);
+      LuaSetDualPair(L, "LuaRules", LUA_RULES_SCRIPT_ID);
     }
     lua_rawset(L, -3);
   }
@@ -459,6 +461,9 @@ int LuaHandle::ScriptGetID(lua_State* L)
     }
     else if (key == "LuaWorld") {
       lua_pushinteger(L, LUA_WORLD_SCRIPT_ID);
+    }
+    else if (key == "LuaRules") {
+      lua_pushinteger(L, LUA_RULES_SCRIPT_ID);
     }
     else {
       return luaL_pushnil(L);
@@ -704,20 +709,21 @@ bool LuaHandle::SetupEnvironment()
       return false;
     }
     // into sub-tables (using PushLib())
-    if (!PushLib("math",   LuaBitOps::PushEntries)   ||
-	!PushLib("math",   LuaVector::PushEntries)   ||
-	!PushLib("http",   LuaHTTPMgr::PushEntries)  ||
-	!PushLib("vfs",    LuaVFS::PushEntries)      ||
-	!PushLib("bzdb",   LuaBZDB::PushEntries)     ||
-	!PushLib("script", LuaScream::PushEntries)   ||
-	!PushLib("gl",     LuaOpenGL::PushEntries)   ||
-	!PushLib("GL",     LuaGLConst::PushEntries)  ||
-	!PushLib("bz",     LuaZip::PushEntries)      ||
-	!PushLib("bz",     LuaPack::PushEntries)     ||
-	!PushLib("bz",     LuaCallOuts::PushEntries) ||
-	!PushLib("bz",     LuaConsole::PushEntries)  ||
-	!PushLib("BZ",     LuaKeySyms::PushEntries)  ||
-	!PushLib("BZ",     LuaGameConst::PushEntries)) {
+    if (!PushLib("math",   LuaBitOps::PushEntries)       ||
+	!PushLib("math",   LuaVector::PushEntries)       ||
+	!PushLib("http",   LuaHTTPMgr::PushEntries)      ||
+	!PushLib("vfs",    LuaVFS::PushEntries)          ||
+	!PushLib("bzdb",   LuaBZDB::PushEntries)         ||
+	!PushLib("script", LuaScream::PushEntries)       ||
+	!PushLib("gl",     LuaOpenGL::PushEntries)       ||
+	!PushLib("GL",     LuaGLConst::PushEntries)      ||
+	!PushLib("bz",     LuaZip::PushEntries)          ||
+	!PushLib("bz",     LuaPack::PushEntries)         ||
+	!PushLib("bz",     LuaCallOuts::PushEntries)     ||
+	!PushLib("bz",     LuaConsole::PushEntries)      ||
+	!PushLib("bz",     LuaSceneNodeMgr::PushEntries) ||
+	!PushLib("BZ",     LuaKeySyms::PushEntries)      ||
+	!PushLib("BZ",     LuaGameConst::PushEntries))    {
       lua_pop(L, 1);
       return false;
     }

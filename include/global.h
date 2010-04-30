@@ -122,8 +122,8 @@ enum GameOptions {
   ShakableGameStyle  = (1 << 6),  // can drop bad flags
   AntidoteGameStyle  = (1 << 7),  // anti-bad flags
   HandicapGameStyle  = (1 << 8),  // handicap players based on score (eek! was TimeSyncGameStyle)
-  LuaWorldAvailable  = (1 << 9),  // the server offers a LuaWorld script
-  LuaWorldRequired   = (1 << 10)  // the server requires that LuaWorld be executed
+  LuaWorldScript     = (1 << 9),  // the server offers a LuaWorld script
+  LuaRulesScript     = (1 << 10)  // the server requires a LuaRules script
   // add here before reusing old ones above
 };
 
