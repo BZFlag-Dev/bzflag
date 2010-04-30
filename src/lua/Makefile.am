@@ -2,7 +2,7 @@
 if CLIENT_INCLUDED
 LUA_LIBS = libLuaGame.la libLuaClient.la libLuaClientGL.la
 else
-LUA_LIBS = 
+LUA_LIBS = libLuaGame.la
 endif
 
 noinst_LTLIBRARIES = $(LUA_LIBS)
