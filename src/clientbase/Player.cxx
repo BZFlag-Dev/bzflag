@@ -675,12 +675,15 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       break;
 
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
-
+    
     bool hasFlatTop = obstacle->isFlatTop();
-    if( strcmp(obstacle->getType(),"MeshFace") == 0 ){ 
-      hasFlatTop = ((MeshFace*)obstacle)->getMesh()->neighborHasFlatTopAt((MeshFace*)obstacle, obstacleTop);
+    if( obstacle->getTypeID() == faceType ){ 
+      MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
+      if(topFace != NULL){
+        hasFlatTop = true;
+      }
     }
-	  
+    
 	if (((inputStatus & PlayerState::Falling) == 0) && hasFlatTop &&
 	(obstacleTop != tmpPos.z) &&
 	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {

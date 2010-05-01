@@ -450,8 +450,8 @@ void MeshObstacle::finalize()
     faces[f]->setFaceID(f);
   }
   
-  //build face neighbors list
-  setupNeighbors();
+  // calculate topNeighbor for all faces
+  setupTopNeighbors();
 
   // setup the face edges
   makeEdges();
@@ -594,13 +594,12 @@ void MeshObstacle::makeEdges() // FIXME -- incomplete
 
 //============================================================================//
 
+// true if any vertex is shared between the two faces
 bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1)
 {
   for (int v0 = 0; v0 <  face0->getVertexCount(); v0++) {
     for (int v1 = 0; v1 <  face1->getVertexCount(); v1++) {
-     if ( face0->vertices[v0][0] == face1->vertices[v1][0] && 
-          face0->vertices[v0][1] == face1->vertices[v1][1] &&
-	      face0->vertices[v0][2] == face1->vertices[v1][2] ) {
+      if ( face0->vertices[v0] == face1->vertices[v1] ) {
         return true;
       }
     }
@@ -608,37 +607,28 @@ bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1)
   return false;
 }
 
-void MeshObstacle::setupNeighbors()
+/*
+FIXME - sheared box has bad behavior, so it's disable via the 'n[2] == 0'
+FIXME - only works for simple meshes
+*/
+void MeshObstacle::setupTopNeighbors()
 {
-  neighbors.resize(faceCount);
+  fvec3 n;
   for (int f = 0; f < faceCount; f++) {
+    MeshFace* face0 = getFace(f);
+    face0->getNormal(n,n);
     for (int nf = 0; nf < faceCount; nf++) {
-      if(nf != f && areNeighbors(getFace(f), getFace(nf)) ){
-        neighbors[f].push_back(nf);
+      MeshFace* face1 = getFace(nf);
+      if( nf != f && !face0->isFlatTop() && 
+          areNeighbors(face0, face1) ){
+        if( face0->getHeight() == face1->getVertex(0)[2] && 
+            face1->isFlatTop() && 
+            n[2] == 0 ){
+          face0->setTopNeighbor(face1);
+        }
       }
     }
   }
-}
-
-std::vector<MeshFace*> MeshObstacle::getNeighborFaces(MeshFace* f)
-{
-  std::vector<MeshFace*> nlist;
-  std::vector<int> nfaces = neighbors[f->getFaceID()];
-  for (std::vector<int>::iterator i = nfaces.begin(); i != nfaces.end(); i++){
-    nlist.push_back(getFace(*i));
-  }
-  return nlist;
-}
-
-bool MeshObstacle::neighborHasFlatTopAt(MeshFace* aFace, float faceTop)
-{ 
-      std::vector<MeshFace*> nfaces = aFace->getMesh()->getNeighborFaces(aFace);
-      for (std::vector<MeshFace*>::iterator i = nfaces.begin(); i != nfaces.end(); i++){
-        if ( (*i)->isFlatTop() && (*i)->calcCenter().z == faceTop) {
-          return true;
-        }
-      }
-	  return false;
 }
 
 //============================================================================//

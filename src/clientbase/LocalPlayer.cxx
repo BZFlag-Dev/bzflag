@@ -519,12 +519,15 @@ void LocalPlayer::doUpdateMotion(float dt)
 
     static BZDB_float maxBumpHeight(BZDBNAMES.MAXBUMPHEIGHT);
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
-
+    
     bool hasFlatTop = obstacle->isFlatTop();
-    if( strcmp(obstacle->getType(),"MeshFace") == 0 ){ 
-      hasFlatTop = ((MeshFace*)obstacle)->getMesh()->neighborHasFlatTopAt((MeshFace*)obstacle, obstacleTop);
+    if( obstacle->getTypeID() == faceType ){ 
+      MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
+      if(topFace != NULL){
+        hasFlatTop = true;
+      }
     }
-
+    
     if ((oldLocation != InAir) && hasFlatTop &&
 	(obstacleTop != tmpPos.z) &&
 	(obstacleTop < (tmpPos.z + maxBumpHeight))) {

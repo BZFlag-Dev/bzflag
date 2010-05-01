@@ -149,8 +149,6 @@ class MeshObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
-
-    bool neighborHasFlatTopAt(MeshFace* aFace, float faceTop);
 	
   private:
     void makeFacePointers(const std::vector<int>& _vertices,
@@ -164,10 +162,8 @@ class MeshObstacle : public Obstacle {
   private:
     static const char* typeName;
 	
-    std::vector<std::vector<int> > neighbors;
     bool areNeighbors(MeshFace* f0, MeshFace* f1);
-    void setupNeighbors();
-    std::vector<MeshFace*> getNeighborFaces(MeshFace* f);
+    void setupTopNeighbors();
 
     int checkCount;
     char* checkTypes;

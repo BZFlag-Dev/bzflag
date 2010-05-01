@@ -314,6 +314,8 @@ class MeshFace : public Obstacle {
 
   public:
     mutable float scratchPad;
+    MeshFace* getTopNeighbor() { return topNeighbor; }
+    void setTopNeighbor(MeshFace* theFace){ topNeighbor = theFace; }
 
   private:
     void finalize();
@@ -342,6 +344,8 @@ class MeshFace : public Obstacle {
     char planeBits;
 
     SpecialData* specialData;
+	
+    MeshFace* topNeighbor;
 };
 
 
