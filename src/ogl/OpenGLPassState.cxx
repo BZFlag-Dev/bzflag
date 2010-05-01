@@ -187,8 +187,7 @@ void OpenGLPassState::InitContext(void* /*data*/)
 {
   for (int mode = 0; mode < (int)DRAW_MODE_COUNT; mode++) {
     stateLists[mode] = glGenLists(1);
-    glNewList(stateLists[mode], GL_COMPILE);
-    {
+    glNewList(stateLists[mode], GL_COMPILE); {
       ResetModeState((DrawMode)mode);
     }
     glEndList();
@@ -847,7 +846,7 @@ void OpenGLPassState::ResetDrawRadar()
 void OpenGLPassState::DisableDrawRadar()
 {
   resetMatrixFunc = ResetScreenMatrices;
-  ResetScreenMatrices();
+  ResetIdentityMatrices();
   DisableCommon(DRAW_RADAR);
 }
 

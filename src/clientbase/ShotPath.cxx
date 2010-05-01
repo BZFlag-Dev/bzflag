@@ -32,7 +32,8 @@ ShotPath::ShotPath(const FiringInfo& info, double now)
 , reloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
 , expiring(false)
 , expired(false)
-, gfxBlock(GfxBlock::Shot, (info.shot.player << 16) | info.shot.id, true)
+, gfxBlock     (GfxBlock::Shot,      (info.shot.player << 16) | info.shot.id, true)
+, radarGfxBlock(GfxBlock::ShotRadar, (info.shot.player << 16) | info.shot.id, true)
 {
   startTime = info.timeSent;
   currentTime = now;

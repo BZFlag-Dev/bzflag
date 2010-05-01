@@ -166,6 +166,12 @@ class LuaRulesCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class LuaCheckCommand : LocalCommand {
+  public:
+    LuaCheckCommand();
+    bool operator() (const char *commandLine);
+};
+
 class DebugLevelCommand : LocalCommand {
   public:
     DebugLevelCommand();
@@ -200,6 +206,7 @@ static LuaBzOrgCommand    luaBzOrgCommand;
 static LuaUserCommand     luaUserCommand;
 static LuaWorldCommand    luaWorldCommand;
 static LuaRulesCommand    luaRulesCommand;
+static LuaCheckCommand    luaCheckCommand;
 static QuitCommand        quitCommand;
 static ReTextureCommand   reTextureCommand;
 static RoamPosCommand     RoamPosCommand;
@@ -228,6 +235,7 @@ LuaBzOrgCommand::LuaBzOrgCommand()     : LocalCommand("/luabzorg")  {}
 LuaUserCommand::LuaUserCommand()       : LocalCommand("/luauser")   {}
 LuaWorldCommand::LuaWorldCommand()     : LocalCommand("/luaworld")  {}
 LuaRulesCommand::LuaRulesCommand()     : LocalCommand("/luarules")  {}
+LuaCheckCommand::LuaCheckCommand()     : LocalCommand("/luacheck")  {}
 QuitCommand::QuitCommand()             : LocalCommand("/quit")      {}
 ReTextureCommand::ReTextureCommand()   : LocalCommand("/retexture") {}
 RoamPosCommand::RoamPosCommand()       : LocalCommand("/roampos")   {}
@@ -1025,6 +1033,32 @@ bool LuaRulesCommand::operator() (const char* cmdLine)
     return false;
   }
   LuaClientScripts::LuaRulesCommand(cmdLine + 1); // skip the '/'
+  return true;
+}
+
+
+bool LuaCheckCommand::operator() (const char* /*cmdLine*/)
+{
+  if (LuaClientScripts::LuaUserIsActive()) {
+    addMessage(NULL, "LuaUser  is enabled");
+  } else {
+    addMessage(NULL, "LuaUser  is disabled");
+  }
+  if (LuaClientScripts::LuaBzOrgIsActive()) {
+    addMessage(NULL, "LuaBzOrg is enabled");
+  } else {
+    addMessage(NULL, "LuaBzOrg is disabled");
+  }
+  if (LuaClientScripts::LuaWorldIsActive()) {
+    addMessage(NULL, "LuaWorld is enabled");
+  } else {
+    addMessage(NULL, "LuaWorld is disabled");
+  }
+  if (LuaClientScripts::LuaRulesIsActive()) {
+    addMessage(NULL, "LuaRules is enabled");
+  } else {
+    addMessage(NULL, "LuaRules is disabled");
+  }
   return true;
 }
 

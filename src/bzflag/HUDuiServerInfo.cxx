@@ -366,7 +366,7 @@ void HUDuiServerInfo::fillReadouts()
     case 2: { scripts = "rules"; break; }
     case 3: { scripts = "rules+world"; break; }
   }
-  scripts = "Script: " + scripts;
+  scripts = "Scripts: " + scripts;
   (listHUD[20])->setString(scripts);
 
   if (item.cached) {

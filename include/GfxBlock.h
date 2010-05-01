@@ -31,6 +31,9 @@ class GfxBlock {
       Tank,
       Shot,
       Flag,
+      TankRadar,
+      ShotRadar,
+      FlagRadar,
       BlockTypeCount
     };
 
@@ -52,16 +55,16 @@ class GfxBlock {
       return !clients.empty() && (clients[0] == ec);
     }
 
-    inline int  getType()    const { return type; }
-    inline int  getID()      const { return id;   }
+    inline int  getType()    const { return type;  }
+    inline int  getID()      const { return id;    }
     inline bool worldBlock() const { return world; }
 
     static const char* getTypeString(int type);
     static int getStringType(const char* name);
 
   private:
-    int type;
-    int id;
+    int  type;
+    int  id;
     bool world;
     std::vector<EventClient*> clients;
 };

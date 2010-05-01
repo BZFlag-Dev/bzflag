@@ -745,7 +745,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   int i;
   for (i = 0; i < maxShots; i++) {
     const ShotPath* shot = myTank->getShot(i);
-    if (shot) {
+    if (shot && shot->getRadarGfxBlock().notBlocked()) {
       const float cs = colorScale(shot->getPosition().z, muzzleHeight);
       glColor3f(cs, cs, cs);
       shot->radarRender();
@@ -757,7 +757,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   maxShots = worldWeapons->getMaxShots();
   for (i = 0; i < maxShots; i++) {
     const ShotPath* shot = worldWeapons->getShot(i);
-    if (shot) {
+    if (shot && shot->getRadarGfxBlock().notBlocked()) {
       const float cs = colorScale(shot->getPosition().z, muzzleHeight);
       glColor3f(cs, cs, cs);
       shot->radarRender();
@@ -776,6 +776,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   for (i = 0; i < curMaxPlayers; i++) {
     RemotePlayer* player = world->getPlayer(i);
     if (!player) {
+      continue;
+    }
+    if (player->getRadarGfxBlock().blocked()) {
       continue;
     }
     if (!player->isAlive() &&
@@ -837,7 +840,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     if (!player) continue;
     for (int j = 0; j < maxShots; j++) {
       const ShotPath* shot = player->getShot(j);
-      if (shot && (shot->getShotType() != InvisibleShot || iSeeAll)) {
+      if (shot && shot->getRadarGfxBlock().notBlocked() &&
+          (shot->getShotType() != InvisibleShot || iSeeAll)) {
         const float cs = colorScale(shot->getPosition().z, muzzleHeight);
         if (coloredShot) {
           const TeamColor visTeam = colorblind ? RogueTeam : player->getTeam();
@@ -856,13 +860,18 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   const int maxFlags = world->getMaxFlags();
   const bool drawNormalFlags = checkDrawFlags();
   for (i = (maxFlags - 1); i >= 0; i--) {
-    const Flag& flag = world->getFlag(i);
+    const ClientFlag& flag = world->getClientFlag(i);
     // don't draw flags that don't exist or are on a tank
-    if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+    if (flag.status == FlagNoExist || flag.status == FlagOnTank) {
       continue;
+    }
     // don't draw normal flags if we aren't supposed to
-    if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
+    if (flag.type->flagTeam == NoTeam && !drawNormalFlags) {
       continue;
+    }
+    if (flag.radarGfxBlock.blocked()) {
+      continue;
+    }
     // Flags change color by height
     const float cs = colorScale(flag.position.z, muzzleHeight);
     const fvec4& flagColor = flag.type->getColor();
@@ -909,15 +918,17 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     glTranslatef(-myPos.x, -myPos.y, 0.0f);
 
-    // my flag
-    if (myTank->getFlag() != Flags::Null) {
-      glColor3fv(myTank->getFlag()->getColor());
-      drawFlagOnTank(myPos);
-    }
+    if (myTank->getRadarGfxBlock().notBlocked()) {
+      // my flag
+      if (myTank->getFlag() != Flags::Null) {
+        glColor3fv(myTank->getFlag()->getColor());
+        drawFlagOnTank(myPos);
+      }
 
-    // my tank
-    glColor3f(1.0f, 1.0f, 1.0f);
-    drawTank(myTank, true);
+      // my tank
+      glColor3f(1.0f, 1.0f, 1.0f);
+      drawTank(myTank, true);
+    }
 
     glPopMatrix(); // depth = 1
   }

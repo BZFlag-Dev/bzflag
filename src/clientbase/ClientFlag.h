@@ -23,6 +23,7 @@
 class ClientFlag : public Flag {
   public:
     GfxBlock gfxBlock;
+    GfxBlock radarGfxBlock;
 };
 
 

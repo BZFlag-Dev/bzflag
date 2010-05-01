@@ -521,9 +521,9 @@ void LocalPlayer::doUpdateMotion(float dt)
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
     
     bool hasFlatTop = obstacle->isFlatTop();
-    if( obstacle->getTypeID() == faceType ){ 
+    if (obstacle->getTypeID() == faceType) { 
       MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
-      if(topFace != NULL){
+      if (topFace != NULL) {
         hasFlatTop = true;
       }
     }

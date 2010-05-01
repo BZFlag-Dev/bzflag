@@ -63,6 +63,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , verified(false)
 , playerList(false)
 , gfxBlock(GfxBlock::Tank, id, true)
+, radarGfxBlock(GfxBlock::TankRadar, id, true)
 , lastVisualTeam(NoTeam)
 , team(_team)
 , type(_type)
@@ -677,14 +678,14 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
     
     bool hasFlatTop = obstacle->isFlatTop();
-    if( obstacle->getTypeID() == faceType ){ 
+    if (obstacle->getTypeID() == faceType) { 
       MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
-      if(topFace != NULL){
+      if (topFace != NULL) {
         hasFlatTop = true;
       }
     }
     
-	if (((inputStatus & PlayerState::Falling) == 0) && hasFlatTop &&
+    if (((inputStatus & PlayerState::Falling) == 0) && hasFlatTop &&
 	(obstacleTop != tmpPos.z) &&
 	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
       newPos.x = startPos.x;

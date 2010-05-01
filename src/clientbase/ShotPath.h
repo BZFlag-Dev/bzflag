@@ -83,6 +83,8 @@ public:
 
   GfxBlock&       getGfxBlock()       { return gfxBlock; }
   const GfxBlock& getGfxBlock() const { return gfxBlock; }
+  GfxBlock&       getRadarGfxBlock()       { return radarGfxBlock; }
+  const GfxBlock& getRadarGfxBlock() const { return radarGfxBlock; }
 
 protected:
   void updateShot(float dt);
@@ -104,6 +106,7 @@ private:
   bool expired; // shot has terminated
   bool local; // shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
   GfxBlock gfxBlock;
+  GfxBlock radarGfxBlock;
 };
 
 class LocalShotPath : public ShotPath {

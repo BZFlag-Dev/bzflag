@@ -119,6 +119,8 @@ public:
 
   GfxBlock&       getGfxBlock()       { return gfxBlock; }
   const GfxBlock& getGfxBlock() const { return gfxBlock; }
+  GfxBlock&       getRadarGfxBlock()       { return radarGfxBlock; }
+  const GfxBlock& getRadarGfxBlock() const { return radarGfxBlock; }
 
   void		forceReload(float time = 0.0f);
 
@@ -276,6 +278,7 @@ private:
 
   // data use for drawing
   GfxBlock		gfxBlock;
+  GfxBlock		radarGfxBlock;
   PlayerAvatar		*avatar;
 
   fvec4			color;

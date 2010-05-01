@@ -318,6 +318,10 @@ void LuaSceneNodeMgr::ClearSceneNodes()
     nextIt++;
     delete *it;
   }
+  if (!invalidNodes.empty()) {
+    LuaLog(0, "WARNING: LuaSceneNodeMgr::ClearSceneNodes()"
+              " invalidNodes are not empty\n");
+  }
   invalidNodes.clear();
 }
 

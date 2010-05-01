@@ -138,10 +138,16 @@ class LuaCallOuts {
     static int GetGfxBlock(lua_State* L);
     static int SetPlayerGfxBlock(lua_State* L);
     static int GetPlayerGfxBlock(lua_State* L);
+    static int SetPlayerRadarGfxBlock(lua_State* L);
+    static int GetPlayerRadarGfxBlock(lua_State* L);
     static int SetFlagGfxBlock(lua_State* L);
     static int GetFlagGfxBlock(lua_State* L);
+    static int SetFlagRadarGfxBlock(lua_State* L);
+    static int GetFlagRadarGfxBlock(lua_State* L);
     static int SetShotGfxBlock(lua_State* L);
     static int GetShotGfxBlock(lua_State* L);
+    static int SetShotRadarGfxBlock(lua_State* L);
+    static int GetShotRadarGfxBlock(lua_State* L);
 
     // players
     static int GetPlayerList(lua_State* L);

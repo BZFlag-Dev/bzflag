@@ -599,7 +599,7 @@ bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1)
 {
   for (int v0 = 0; v0 <  face0->getVertexCount(); v0++) {
     for (int v1 = 0; v1 <  face1->getVertexCount(); v1++) {
-      if ( face0->vertices[v0] == face1->vertices[v1] ) {
+      if (face0->vertices[v0] == face1->vertices[v1]) {
         return true;
       }
     }
@@ -616,14 +616,12 @@ void MeshObstacle::setupTopNeighbors()
   fvec3 n;
   for (int f = 0; f < faceCount; f++) {
     MeshFace* face0 = getFace(f);
-    face0->getNormal(n,n);
+    face0->getNormal(n, n);
     for (int nf = 0; nf < faceCount; nf++) {
       MeshFace* face1 = getFace(nf);
-      if( nf != f && !face0->isFlatTop() && 
-          areNeighbors(face0, face1) ){
-        if( face0->getHeight() == face1->getVertex(0)[2] && 
-            face1->isFlatTop() && 
-            n[2] == 0 ){
+      if ((nf != f) && !face0->isFlatTop() && areNeighbors(face0, face1)) {
+        if ((face0->getHeight() == face1->getVertex(0)[2]) && 
+            face1->isFlatTop() && (n[2] == 0)) {
           face0->setTopNeighbor(face1);
         }
       }

@@ -52,6 +52,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
   edgePlanes = NULL;
   specialData = NULL;
   phydrv = -1;
+  topNeighbor = NULL;
   return;
 }
 
@@ -85,6 +86,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   }
   edges = NULL;
   edgePlanes = NULL;
+  topNeighbor = NULL;
 
   finalize();
 

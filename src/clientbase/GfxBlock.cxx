@@ -184,10 +184,13 @@ bool GfxBlock::remove(EventClient* ec)
 const char* GfxBlock::getTypeString(int type)
 {
   switch ((BlockType)type) {
-    case Global: { return "global"; }
-    case Tank:   { return "tank";   }
-    case Shot:   { return "shot";   }
-    case Flag:   { return "flag";   }
+    case Global:    { return "global";      }
+    case Tank:      { return "tank";        }
+    case Shot:      { return "shot";        }
+    case Flag:      { return "flag";        }
+    case TankRadar: { return "tankradar";   }
+    case ShotRadar: { return "shotradar";   }
+    case FlagRadar: { return "flagradar";   }
     default: {
       return "unknown";
     }
@@ -198,10 +201,13 @@ const char* GfxBlock::getTypeString(int type)
 int GfxBlock::getStringType(const char* name)
 {
   const std::string key = name;
-       if (key == "global") { return Global; }
-  else if (key == "tank")   { return Tank;   }
-  else if (key == "shot")   { return Shot;   }
-  else if (key == "flag")   { return Flag;   }
+       if (key == "global")    { return Global;    }
+  else if (key == "tank")      { return Tank;      }
+  else if (key == "shot")      { return Shot;      }
+  else if (key == "flag")      { return Flag;      }
+  else if (key == "tankradar") { return TankRadar; }
+  else if (key == "shotradar") { return ShotRadar; }
+  else if (key == "flagradar") { return FlagRadar; }
   return -1;
 }
 
@@ -266,6 +272,7 @@ static bool clearPlayerBlocks(Player* player, void* data)
 
   // clear the player block
   player->getGfxBlock().remove(ec);
+  player->getRadarGfxBlock().remove(ec);
 
   // clear the player shot blocks
   const int maxShots = player->getMaxShots();
@@ -273,6 +280,7 @@ static bool clearPlayerBlocks(Player* player, void* data)
     ShotPath* shot = player->getShot(s);
     if (shot) {
       shot->getGfxBlock().remove(ec);
+      shot->getRadarGfxBlock().remove(ec);
     }
   }
 

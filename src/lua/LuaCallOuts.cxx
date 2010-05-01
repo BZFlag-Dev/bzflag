@@ -203,10 +203,16 @@ bool LuaCallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, SetGfxBlock);
   PUSH_LUA_CFUNC(L, GetPlayerGfxBlock);
   PUSH_LUA_CFUNC(L, SetPlayerGfxBlock);
+  PUSH_LUA_CFUNC(L, GetPlayerRadarGfxBlock);
+  PUSH_LUA_CFUNC(L, SetPlayerRadarGfxBlock);
   PUSH_LUA_CFUNC(L, GetFlagGfxBlock);
   PUSH_LUA_CFUNC(L, SetFlagGfxBlock);
+  PUSH_LUA_CFUNC(L, GetFlagRadarGfxBlock);
+  PUSH_LUA_CFUNC(L, SetFlagRadarGfxBlock);
   PUSH_LUA_CFUNC(L, GetShotGfxBlock);
   PUSH_LUA_CFUNC(L, SetShotGfxBlock);
+  PUSH_LUA_CFUNC(L, GetShotRadarGfxBlock);
+  PUSH_LUA_CFUNC(L, SetShotRadarGfxBlock);
 
   PUSH_LUA_CFUNC(L, GetPlayerList);
   if (!gameCtrl) {
@@ -2072,29 +2078,40 @@ static GfxBlock* ParseGfxBlock(lua_State* L, int index)
 }
 
 
+static int Get_GfxBlock(lua_State* L, const GfxBlock& gfxBlock)
+{
+  EventClient* ec = L2H(L);
+  lua_pushboolean(L, gfxBlock.blocked());
+  lua_pushboolean(L, gfxBlock.test(ec));
+  return 2;
+}
+
+
+static int Set_GfxBlock(lua_State* L, GfxBlock& gfxBlock)
+{
+  EventClient* ec = L2H(L);
+  if ((ec == luaUser) && gfxBlock.worldBlock()) {
+    return luaL_pushnil(L);
+  }
+  luaL_checktype(L, 2, LUA_TBOOLEAN);
+  const bool block = lua_tobool(L, 2);
+  if (!block) {
+    gfxBlock.remove(ec);
+    return luaL_pushnil(L);
+  }
+  const bool queue = lua_isboolean(L, 3) && lua_tobool(L, 3);
+  lua_pushboolean(L, gfxBlock.set(ec, queue));
+  return 1;
+}
+
+
 int LuaCallOuts::SetGfxBlock(lua_State* L)
 {
   GfxBlock* gfxBlock = ParseGfxBlock(L, 1);
   if (gfxBlock == NULL) {
     return luaL_pushnil(L);
   }
-  luaL_checktype(L, 2, LUA_TBOOLEAN);
-  const bool block = lua_tobool(L, 2);
-
-  EventClient* ec = L2H(L);
-  // block LuaUser from setting world graphics blocks
-  if ((ec == luaUser) && gfxBlock->worldBlock()) {
-    return luaL_pushnil(L);
-  }
-
-  if (!block) {
-    gfxBlock->remove(ec);
-    return luaL_pushnil(L);
-  }
-
-  const bool queue = lua_isboolean(L, 2) && lua_tobool(L, 2);
-  lua_pushboolean(L, gfxBlock->set(ec, queue));
-  return 1;
+  return Set_GfxBlock(L, *gfxBlock);;
 }
 
 
@@ -2104,10 +2121,7 @@ int LuaCallOuts::GetGfxBlock(lua_State* L)
   if (gfxBlock == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  lua_pushboolean(L, gfxBlock->blocked());
-  lua_pushboolean(L, gfxBlock->test(ec));
-  return 2;
+  return Get_GfxBlock(L, *gfxBlock);;
 }
 
 
@@ -2118,18 +2132,7 @@ int LuaCallOuts::SetPlayerGfxBlock(lua_State* L)
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  GfxBlock& gfxBlock = player->getGfxBlock();
-
-  luaL_checktype(L, 2, LUA_TBOOLEAN);
-  const bool block = lua_tobool(L, 2);
-  if (!block) {
-    gfxBlock.remove(ec);
-    return luaL_pushnil(L);
-  }
-  const bool queue = lua_isboolean(L, 3) && lua_tobool(L, 3);
-  lua_pushboolean(L, gfxBlock.set(ec, queue));
-  return 1;
+  return Set_GfxBlock(L, player->getGfxBlock());;
 }
 
 
@@ -2139,32 +2142,39 @@ int LuaCallOuts::GetPlayerGfxBlock(lua_State* L)
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  const GfxBlock& gfxBlock = player->getGfxBlock();
-  lua_pushboolean(L, gfxBlock.blocked());
-  lua_pushboolean(L, gfxBlock.test(ec));
-  return 2;
+  return Get_GfxBlock(L, player->getGfxBlock());
+}
+
+
+int LuaCallOuts::SetPlayerRadarGfxBlock(lua_State* L)
+{
+  // FIXME - remove these 3 const_cast<>s for now const Parse routines ?
+  Player* player = const_cast<Player*>(ParsePlayer(L, 1));
+  if (player == NULL) {
+    return luaL_pushnil(L);
+  }
+  return Set_GfxBlock(L, player->getRadarGfxBlock());
+}
+
+
+int LuaCallOuts::GetPlayerRadarGfxBlock(lua_State* L)
+{
+  const Player* player = ParsePlayer(L, 1);
+  if (player == NULL) {
+    return luaL_pushnil(L);
+  }
+  return Get_GfxBlock(L, player->getRadarGfxBlock());
 }
 
 
 int LuaCallOuts::SetFlagGfxBlock(lua_State* L)
 {
+  // FIXME - remove these 3 const_cast<>s for now const Parse routines ?
   ClientFlag* flag = const_cast<ClientFlag*>(ParseFlag(L, 1));
   if (flag == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  GfxBlock& gfxBlock = flag->gfxBlock;
-
-  luaL_checktype(L, 2, LUA_TBOOLEAN);
-  const bool block = lua_tobool(L, 2);
-  if (!block) {
-    gfxBlock.remove(ec);
-    return luaL_pushnil(L);
-  }
-  const bool queue = lua_isboolean(L, 3) && lua_tobool(L, 3);
-  lua_pushboolean(L, gfxBlock.set(ec, queue));
-  return 1;
+  return Set_GfxBlock(L, flag->gfxBlock);
 }
 
 
@@ -2174,11 +2184,27 @@ int LuaCallOuts::GetFlagGfxBlock(lua_State* L)
   if (flag == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  const GfxBlock& gfxBlock = flag->gfxBlock;
-  lua_pushboolean(L, gfxBlock.blocked());
-  lua_pushboolean(L, gfxBlock.test(ec));
-  return 2;
+  return Get_GfxBlock(L, flag->gfxBlock);
+}
+
+
+int LuaCallOuts::SetFlagRadarGfxBlock(lua_State* L)
+{
+  ClientFlag* flag = const_cast<ClientFlag*>(ParseFlag(L, 1));
+  if (flag == NULL) {
+    return luaL_pushnil(L);
+  }
+  return Set_GfxBlock(L, flag->radarGfxBlock);
+}
+
+
+int LuaCallOuts::GetFlagRadarGfxBlock(lua_State* L)
+{
+  const ClientFlag* flag = ParseFlag(L, 1);
+  if (flag == NULL) {
+    return luaL_pushnil(L);
+  }
+  return Get_GfxBlock(L, flag->radarGfxBlock);
 }
 
 
@@ -2188,16 +2214,7 @@ int LuaCallOuts::SetShotGfxBlock(lua_State* L)
   if (shot == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  luaL_checktype(L, 2, LUA_TBOOLEAN);
-  const bool block = lua_tobool(L, 2);
-  if (!block) {
-    shot->getGfxBlock().remove(ec);
-    return luaL_pushnil(L);
-  }
-  const bool queue = lua_isboolean(L, 3) && lua_tobool(L, 3);
-  lua_pushboolean(L, shot->getGfxBlock().set(ec, queue));
-  return 1;
+  return Set_GfxBlock(L, shot->getGfxBlock());
 }
 
 
@@ -2207,11 +2224,27 @@ int LuaCallOuts::GetShotGfxBlock(lua_State* L)
   if (shot == NULL) {
     return luaL_pushnil(L);
   }
-  EventClient* ec = L2H(L);
-  const GfxBlock& gfxBlock = shot->getGfxBlock();
-  lua_pushboolean(L, gfxBlock.blocked());
-  lua_pushboolean(L, gfxBlock.test(ec));
-  return 2;
+  return Get_GfxBlock(L, shot->getGfxBlock());
+}
+
+
+int LuaCallOuts::SetShotRadarGfxBlock(lua_State* L)
+{
+  ShotPath* shot = const_cast<ShotPath*>(ParseShot(L, 1));
+  if (shot == NULL) {
+    return luaL_pushnil(L);
+  }
+  return Set_GfxBlock(L, shot->getRadarGfxBlock());
+}
+
+
+int LuaCallOuts::GetShotRadarGfxBlock(lua_State* L)
+{
+  const ShotPath* shot = ParseShot(L, 1);
+  if (shot == NULL) {
+    return luaL_pushnil(L);
+  }
+  return Get_GfxBlock(L, shot->getRadarGfxBlock());
 }
 
 

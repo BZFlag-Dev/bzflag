@@ -68,6 +68,7 @@ void CommandCompleter::reset()
   registerWord("/luaworld ");
   registerWord("/luarules ");
   registerWord("/luaserver ");
+  registerWord("/luacheck");
   registerWord("/mute ");
   registerWord("/owner");
   registerWord("/password ");

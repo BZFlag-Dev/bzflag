@@ -315,7 +315,7 @@ class MeshFace : public Obstacle {
   public:
     mutable float scratchPad;
     MeshFace* getTopNeighbor() { return topNeighbor; }
-    void setTopNeighbor(MeshFace* theFace){ topNeighbor = theFace; }
+    void setTopNeighbor(MeshFace* theFace) { topNeighbor = theFace; }
 
   private:
     void finalize();
@@ -337,7 +337,6 @@ class MeshFace : public Obstacle {
 
     fvec4  plane;
     fvec4* edgePlanes;
-
     
     EdgeRef* edges;
 

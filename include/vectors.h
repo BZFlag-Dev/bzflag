@@ -427,6 +427,7 @@ typedef vec4<double> dvec4;
 
 #endif // VECTORS_H
 
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***

@@ -275,6 +275,7 @@ void WorldBuilder::preGetWorld()
   for (i = 0; i < world->maxFlags; i++) {
     world->flags[i].id = i;
     world->flags[i].gfxBlock.init(GfxBlock::Flag, i, true);
+    world->flags[i].radarGfxBlock.init(GfxBlock::FlagRadar, i, true);
     world->flags[i].type = Flags::Null;
     world->flags[i].status = FlagNoExist;
     world->flags[i].position.x = 0.0f;
