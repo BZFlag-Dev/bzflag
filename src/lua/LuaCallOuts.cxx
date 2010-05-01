@@ -87,15 +87,21 @@ using std::map;
 
 bool LuaCallOuts::PushEntries(lua_State* L)
 {
-  const bool fullRead = L2H(L)->HasFullRead();
-  const bool gameCtrl = L2H(L)->HasGameCtrl();
+  const bool fullRead  = L2H(L)->HasFullRead();
+  const bool gameCtrl  = L2H(L)->HasGameCtrl();
+  const bool inputCtrl = L2H(L)->HasInputCtrl();
+  const bool isBzOrg   = L2H(L)->GetName() == "LuaBzOrg";
 
   PUSH_LUA_CFUNC(L, GetBzLuaVersion);
   PUSH_LUA_CFUNC(L, GetClientVersion);
   PUSH_LUA_CFUNC(L, GetProtocolVersion);
 
-  PUSH_LUA_CFUNC(L, JoinGame);
-  PUSH_LUA_CFUNC(L, LeaveGame);
+  if (isBzOrg) {
+    PUSH_LUA_CFUNC(L, JoinGame);
+    PUSH_LUA_CFUNC(L, LeaveGame);
+    PUSH_LUA_CFUNC(L, OpenMenu);
+    PUSH_LUA_CFUNC(L, CloseMenu);
+  }
 
   PUSH_LUA_CFUNC(L, Print);
   PUSH_LUA_CFUNC(L, Debug);
@@ -127,10 +133,11 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 
   PUSH_LUA_CFUNC(L, SendCommand);
 
-  PUSH_LUA_CFUNC(L, BlockControls);
-
-  PUSH_LUA_CFUNC(L, OpenMenu);
-  PUSH_LUA_CFUNC(L, CloseMenu);
+  if (inputCtrl) {
+    PUSH_LUA_CFUNC(L, BlockControls);
+    PUSH_LUA_CFUNC(L, WarpMouse);
+    PUSH_LUA_CFUNC(L, SetMouseBox);
+  }
 
   PUSH_LUA_CFUNC(L, PlaySound);
 
@@ -189,9 +196,6 @@ bool LuaCallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetMouseButtons);
   PUSH_LUA_CFUNC(L, GetJoyPosition);
   PUSH_LUA_CFUNC(L, GetKeyModifiers);
-
-  PUSH_LUA_CFUNC(L, WarpMouse);
-  PUSH_LUA_CFUNC(L, SetMouseBox);
 
   PUSH_LUA_CFUNC(L, GetLocalPlayer);
   PUSH_LUA_CFUNC(L, GetLocalPlayerTarget);
@@ -275,6 +279,10 @@ bool LuaCallOuts::PushEntries(lua_State* L)
     PUSH_LUA_CFUNC(L, GetShotLifeTime);
     PUSH_LUA_CFUNC(L, GetShotReloadTime);
   }
+  if (gameCtrl) {
+    PUSH_LUA_CFUNC(L, RemoveShot);
+  }
+    
 
 #ifdef HAVE_UNISTD_H
   PUSH_LUA_CFUNC(L, ReadStdin);
@@ -452,12 +460,6 @@ int LuaCallOuts::GetProtocolVersion(lua_State* L)
 
 int LuaCallOuts::JoinGame(lua_State* L)
 {
-  if (L2H(L)->GetName() != "LuaBzOrg") {
-    lua_pushnil(L);
-    lua_pushliteral(L, "this script can not request joining games");
-    return 2;
-  }
-
   const int table = 1;
   luaL_checktype(L, table, LUA_TTABLE);
 
@@ -523,16 +525,9 @@ int LuaCallOuts::JoinGame(lua_State* L)
 }
 
 
-int LuaCallOuts::LeaveGame(lua_State* L)
+int LuaCallOuts::LeaveGame(lua_State* /*L*/)
 {
-  if (L2H(L)->GetName() != "LuaBzOrg") {
-    lua_pushnil(L);
-    lua_pushliteral(L, "this script can not request leaving games");
-    return 2;
-  }
-
   leaveGame();
-
   return 1;
 }
 
@@ -919,11 +914,8 @@ int LuaCallOuts::SendCommand(lua_State* L) // FIXME -- removed for safety
 
 //============================================================================//
 
-int LuaCallOuts::BlockControls(lua_State* L)
+int LuaCallOuts::BlockControls(lua_State* /*L*/)
 {
-  if (!L2H(L)->HasInputCtrl()) {
-    luaL_error(L, "this script can not block controls");
-  }
   forceControls(true, 0.0f, 0.0f);
   return 0;
 }
@@ -933,9 +925,6 @@ int LuaCallOuts::BlockControls(lua_State* L)
 
 int LuaCallOuts::OpenMenu(lua_State* L)
 {
-  if (L2H(L)->GetName() != "LuaBzOrg") {
-    return luaL_pushnil(L);
-  }
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive()) {
     stack->pop();
@@ -947,9 +936,6 @@ int LuaCallOuts::OpenMenu(lua_State* L)
 
 int LuaCallOuts::CloseMenu(lua_State* L)
 {
-  if (L2H(L)->GetName() != "LuaBzOrg") {
-    return luaL_pushnil(L);
-  }
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive()) {
     stack->pop();
@@ -1738,9 +1724,6 @@ int LuaCallOuts::GetKeyModifiers(lua_State* L)
 
 int LuaCallOuts::WarpMouse(lua_State* L)
 {
-  if (!L2H(L)->HasInputCtrl()) {
-    return 0;
-  }
   const int mx = luaL_checkint(L, 1);
   const int my = luaL_checkint(L, 2);
 
@@ -1758,13 +1741,8 @@ int LuaCallOuts::WarpMouse(lua_State* L)
 
 int LuaCallOuts::SetMouseBox(lua_State* L)
 {
-  if (!L2H(L)->HasInputCtrl()) {
-    return 0;
-  }
-
   const int size = luaL_checkint(L, 1);
   RENDERER.setMaxMotionFactor(size);
-
   return 0;
 }
 
@@ -2947,6 +2925,26 @@ int LuaCallOuts::GetShotReloadTime(lua_State* L)
     return luaL_pushnil(L);
   }
   lua_pushfloat(L, shot->getReloadTime());
+  return 1;
+}
+
+
+int LuaCallOuts::RemoveShot(lua_State* L)
+{
+  const ShotPath* shot = ParseShot(L, 1);
+  if (shot == NULL) {
+    return luaL_pushnil(L);
+  }
+  const bool explode = lua_isboolean(L, 2) && lua_tobool(L, 2);
+
+  Player* player = lookupPlayer(shot->getPlayer());
+  if (!player) {
+    lua_pushboolean(L, false);
+  }
+  else {
+    player->endShot(shot->getShotId(), false, explode);
+    lua_pushboolean(L, true);
+  }
   return 1;
 }
 

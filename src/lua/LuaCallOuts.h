@@ -201,6 +201,7 @@ class LuaCallOuts {
     static int GetShotLifeTime(lua_State* L);
     static int GetShotLeftTime(lua_State* L);
     static int GetShotReloadTime(lua_State* L);
+    static int RemoveShot(lua_State* L);
 
     // unix utility
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
