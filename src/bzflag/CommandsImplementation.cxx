@@ -1039,25 +1039,26 @@ bool LuaRulesCommand::operator() (const char* cmdLine)
 
 bool LuaCheckCommand::operator() (const char* /*cmdLine*/)
 {
+  addMessage(NULL, "LuaScripts:");
   if (LuaClientScripts::LuaUserIsActive()) {
-    addMessage(NULL, "LuaUser  is enabled");
+    addMessage(NULL, ANSI_STR_FG_GREEN "  LuaUser  is enabled");
   } else {
-    addMessage(NULL, "LuaUser  is disabled");
+    addMessage(NULL, ANSI_STR_FG_RED   "  LuaUser  is disabled");
   }
   if (LuaClientScripts::LuaBzOrgIsActive()) {
-    addMessage(NULL, "LuaBzOrg is enabled");
+    addMessage(NULL, ANSI_STR_FG_GREEN "  LuaBzOrg is enabled");
   } else {
-    addMessage(NULL, "LuaBzOrg is disabled");
+    addMessage(NULL, ANSI_STR_FG_RED   "  LuaBzOrg is disabled");
   }
   if (LuaClientScripts::LuaWorldIsActive()) {
-    addMessage(NULL, "LuaWorld is enabled");
+    addMessage(NULL, ANSI_STR_FG_GREEN "  LuaWorld is enabled");
   } else {
-    addMessage(NULL, "LuaWorld is disabled");
+    addMessage(NULL, ANSI_STR_FG_RED   "  LuaWorld is disabled");
   }
   if (LuaClientScripts::LuaRulesIsActive()) {
-    addMessage(NULL, "LuaRules is enabled");
+    addMessage(NULL, ANSI_STR_FG_GREEN "  LuaRules is enabled");
   } else {
-    addMessage(NULL, "LuaRules is disabled");
+    addMessage(NULL, ANSI_STR_FG_RED   "  LuaRules is disabled");
   }
   return true;
 }

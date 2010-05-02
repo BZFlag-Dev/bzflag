@@ -826,6 +826,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       }
     }
     else if (token == "-luaserver") {
+      checkFromWorldFile(token, fromWorldFile);
       const std::string dirPath = parseStringArg(i, tokens);
       if (LuaServer::isActive()) {   
         std::cerr << "WARNING: ignoring extra '-luaserver "
@@ -836,9 +837,11 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       }
     }
     else if (token == "-luaworld") {
+      checkFromWorldFile(token, fromWorldFile);
       luaWorldDir = parseStringArg(i, tokens);
     }
     else if (token == "-luarules") {
+      checkFromWorldFile(token, fromWorldFile);
       luaRulesDir = parseStringArg(i, tokens);
     }
     else if (token == "-maxidle") {
