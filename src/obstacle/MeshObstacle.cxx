@@ -614,17 +614,16 @@ FIXME - only works for simple meshes
 void MeshObstacle::setupTopNeighbors()
 {
   fvec3 n;
+  float h;
   for (int f = 0; f < faceCount; f++) {
     MeshFace* face0 = getFace(f);
     face0->getNormal(n, n);
+    h = face0->getPosition().z + face0->getHeight();
     for (int nf = 0; nf < faceCount; nf++) {
       MeshFace* face1 = getFace(nf);
-      if ((nf != f) && !face0->isFlatTop() && areNeighbors(face0, face1)) {
-        if ((face0->getHeight() == face1->getVertex(0)[2]) && 
-            face1->isFlatTop() && (n[2] == 0)) {
+      if ((nf != f) && !face0->isFlatTop() && areNeighbors(face0, face1))
+        if ((h == face1->getVertex(0)[2]) && face1->isFlatTop() && (n[2] == 0))
           face0->setTopNeighbor(face1);
-        }
-      }
     }
   }
 }
