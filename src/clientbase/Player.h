@@ -78,7 +78,7 @@ public:
   float		getReloadTime() const;
 
   const fvec3&	getApparentVelocity() const;
-  float		getLastUpdateTime() const;
+  TimeKeeper	getLastUpdateTime() const;
 
   inline bool hasWings() const {
     return getFlag() && (getFlag() == Flags::Wings);
@@ -462,7 +462,7 @@ inline float         Player::getUserAngVel() const
   return state.userAngVel;
 }
 
-inline float	Player::getLastUpdateTime() const
+inline TimeKeeper	Player::getLastUpdateTime() const
 {
   return state.lastUpdateTime;
 }

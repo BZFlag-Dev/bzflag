@@ -46,7 +46,7 @@ PlayerState::PlayerState()
   sounds = NoSounds;
 
   apparentVelocity[0] = apparentVelocity[1] = apparentVelocity[2] = 0.0f;
-  lastUpdateTime = -1;
+  lastUpdateTime = TimeKeeper::getSunGenesisTime();
 
   return;
 }

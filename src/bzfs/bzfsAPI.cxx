@@ -1053,7 +1053,7 @@ BZF_API bool bz_updatePlayerData(bz_BasePlayerRecord* playerRecord)
     return false;
 
   playerStateToAPIState(playerRecord->lastKnownState, player->lastState);
-  playerRecord->lastUpdateTime=player->lastState.lastUpdateTime;
+  playerRecord->lastUpdateTime=player->lastState.lastUpdateTime.getSeconds();
 
   playerStateToAPIState(playerRecord->currentState, player->getCurrentStateAsState());
 
@@ -5315,7 +5315,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
 	doUpdate = true;
     }
 
-    if (now - player->lastState.lastUpdateTime > 10.0f)
+    if (now - player->lastState.lastUpdateTime.getSeconds() > 10.0f)
       doUpdate = true;
 
 

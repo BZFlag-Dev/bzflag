@@ -16,6 +16,7 @@
 #include "common.h"
 #include "Address.h"
 #include "BufferedNetworkMessage.h"
+#include "TimeKeeper.h"
 #include "vectors.h"
 
 // 58 bytes
@@ -80,7 +81,7 @@ class PlayerState
     fvec3 apparentVelocity;	// velocity of tank as derived from
                                 // its last positional update
 
-    float lastUpdateTime;	// the time of the last update
+    TimeKeeper lastUpdateTime;	// the time of the last update
 
     // the following are to be used only for drawing
     float userSpeed;		// user's desired angular velocity
