@@ -65,7 +65,7 @@ WeatherRenderer::WeatherRenderer()
   rainStartZ = -1.0f;
   rainEndZ = 0.0f;
 
-  lastRainTime = 0.0f;
+  lastRainTime = TimeKeeper::getCurrent();
 
   maxPuddleTime = 5.0f;
   puddleSpeed = 1.0f;
@@ -396,7 +396,7 @@ void WeatherRenderer::set(void)
 	  raindrops.push_back (drop);
 	}
       }
-      lastRainTime = float(TimeKeeper::getCurrent().getSeconds());
+      lastRainTime = TimeKeeper::getCurrent();
     }
     // recompute the drops based on the posible new size
 
@@ -428,13 +428,15 @@ void WeatherRenderer::set(void)
 void WeatherRenderer::update(void)
 {
   // update the time
-  float frameTime = float(TimeKeeper::getCurrent().getSeconds() - lastRainTime);
-  lastRainTime = float(TimeKeeper::getCurrent().getSeconds());
+  TimeKeeper now = TimeKeeper::getCurrent();
+  float frameTime = now - lastRainTime;
+  lastRainTime = now;
 
   std::vector<rain> dropsToAdd;
 
   // clamp the update time
   // its not an important sim so just keep it smooth
+  // this makes it safe for frameTime to be float rather than double
   if (frameTime > 0.06f)
     frameTime = 0.06f;
 
@@ -786,10 +788,10 @@ void WeatherRenderer::drawDrop(rain& drop, const SceneRenderer& sr)
     if (doBillBoards)
       sr.getViewFrustum().executeBillboard();
     else if (spinRain)
-      glRotatef(lastRainTime * 10.0f * rainSpeed * 0.85f, 0, 1, 0);
+      glRotated(lastRainTime.getSeconds() * 10.0f * rainSpeed * 0.85f, 0, 1, 0);
 
     if (spinRain)
-      glRotatef(lastRainTime * 10.0f * rainSpeed, 0, 0, 1);
+      glRotated(lastRainTime.getSeconds() * 10.0f * rainSpeed, 0, 0, 1);
 
     DisplayListSystem::Instance().callList(dropList);
 
