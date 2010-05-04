@@ -61,31 +61,31 @@ extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
 
-extern void sendChatMessage ( PlayerId srcPlayer, PlayerId dstPlayer, const char *message, uint8_t type = ChatMessage );
-extern void  pausePlayer(int playerIndex, bool paused);
-extern void  sendFlagUpdate(FlagInfo &flag);
-extern void  dropFlag(FlagInfo &flag);
-extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
-extern void  sendPlayerInfo(void);
+extern void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, uint8_t type = ChatMessage);
+extern void pausePlayer(int playerIndex, bool paused);
+extern void sendFlagUpdate(FlagInfo &flag);
+extern void dropFlag(FlagInfo &flag);
+extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
+extern void sendPlayerInfo();
 
-NetHandler *getPlayerNetHandler ( int playerIndex );
+extern NetHandler *getPlayerNetHandler(int playerIndex);
 
-extern int   getCurMaxPlayers();
+extern int  getCurMaxPlayers();
 extern PingPacket getTeamCounts();
-extern void  zapFlagByPlayer(int playerIndex);
-extern void  resetFlag(FlagInfo &flag);
-extern void  dropFlag(FlagInfo& flag, const fvec3& dropPos);
-extern void  publicize();
+extern void zapFlagByPlayer(int playerIndex);
+extern void resetFlag(FlagInfo &flag);
+extern void dropFlag(FlagInfo& flag, const fvec3& dropPos);
+extern void publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
-extern void checkGameOn ( void );
-extern PlayerId getNewPlayerID ( void );
-PlayerId getNewPlayer(NetHandler *netHandler);
-PlayerId getNewBot(PlayerId hostPlayer, int botID);
-extern bool validPlayerCallsign ( int playerIndex );
+extern void checkGameOn();
+extern PlayerId getNewPlayerID();
+extern PlayerId getNewPlayer(NetHandler *netHandler);
+extern PlayerId getNewBot(PlayerId hostPlayer, int botID);
+extern bool validPlayerCallsign(int playerIndex);
 extern void addPlayer(int playerIndex, GameKeeper::Player *playerData);
-bool updatePlayerState ( GameKeeper::Player* playerData, PlayerState& state, TimeKeeper const& timeStamp, bool shortState );
+extern bool updatePlayerState(GameKeeper::Player* playerData, PlayerState& state, TimeKeeper const& timeStamp, bool shortState);
 extern void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
-extern bool worldStateChanging ( void );
+extern bool worldStateChanging();
 extern void searchFlag(GameKeeper::Player &playerData);
 extern void playerAlive(int playerIndex);
 extern int  lookupPlayer(const PlayerId& id);
@@ -93,21 +93,21 @@ extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason
 extern void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos);
 extern void captureFlag(int playerIndex, TeamColor teamCaptured);
 extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
-extern bool allowTeams ( void );
-extern void pauseCountdown ( const char *pausedBy );
-extern void resumeCountdown ( const char *resumedBy );
-extern void resetTeamScores ( void );
-extern void startCountdown ( int delay, float limit, const char *buyWho );
-bool defineWorld ( void );
-bool saveWorldCache ( const char* fileName = NULL );
-void rescanForBans ( const char* callsign = NULL, int playerID = -1 );
-void zapFlag(FlagInfo &flag);
-void anointNewRabbit( int killerId = NoPlayer);
-void spawnPlayer ( int playerIndex );
+extern bool allowTeams();
+extern void pauseCountdown(const char *pausedBy);
+extern void resumeCountdown(const char *resumedBy);
+extern void resetTeamScores();
+extern void startCountdown(int delay, float limit, const char *buyWho);
+extern bool defineWorld();
+extern bool saveWorldCache(const char* fileName = NULL);
+extern void rescanForBans(const char* callsign = NULL, int playerID = -1);
+extern void zapFlag(FlagInfo &flag);
+extern void anointNewRabbit(int killerId = NoPlayer);
+extern void spawnPlayer(int playerIndex);
 
-void lagKick(int playerIndex);
-void jitterKick(int playerIndex);
-void packetLossKick(int playerIndex);
+extern void lagKick(int playerIndex);
+extern void jitterKick(int playerIndex);
+extern void packetLossKick(int playerIndex);
 
 typedef struct _CheatProtectionOptions
 {
@@ -179,7 +179,7 @@ typedef struct {
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;
 
-void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
+extern void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
 
 #endif /* __BZFS_H__ */
 

@@ -537,7 +537,7 @@ void resumeCountdown ( const char *resumedBy )
   }
 }
 
-void resetTeamScores ( void )
+void resetTeamScores()
 {
   // reset team scores
   for (int i = RedTeam; i <= PurpleTeam; i++) {
@@ -788,7 +788,7 @@ static void serverStop()
   Authentication::cleanUp();
 }
 
-static bool allBasesDefined(void)
+static bool allBasesDefined()
 {
   if (clOptions->gameType == ClassicCTF) {
     for (int i = RedTeam; i <= PurpleTeam; i++) {
@@ -806,7 +806,7 @@ static bool allBasesDefined(void)
   return true;
 }
 
-bool defineWorld ( void )
+bool defineWorld()
 {
   logDebugMessage(1,"defining world\n");
 
@@ -1203,7 +1203,7 @@ PlayerId getNewBot(PlayerId hostPlayer, int botID)
   return playerIndex;
 }
 
-PlayerId getNewPlayerID(void)
+PlayerId getNewPlayerID()
 {
   PlayerId playerIndex;
 
@@ -1224,7 +1224,7 @@ PlayerId getNewPlayerID(void)
   return playerIndex;
 }
 
-void checkGameOn ( void )
+void checkGameOn()
 {
   // if game was over and this is the first player then game is on
   if (gameOver) {
@@ -3619,7 +3619,7 @@ void initGroups()
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
 
-static void updatePlayerPositions(void)
+static void updatePlayerPositions()
 {
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
@@ -3628,7 +3628,7 @@ static void updatePlayerPositions(void)
   }
 }
 
-static void checkForWorldDeaths(void)
+static void checkForWorldDeaths()
 {
   float waterLevel = world->getWaterLevel();
 
@@ -3645,7 +3645,7 @@ static void checkForWorldDeaths(void)
   }
 }
 
-static bool initNet(void)
+static bool initNet()
 {
   // initialize
 #if defined(_WIN32)
@@ -3731,7 +3731,7 @@ static void initStartupParameters(int argc, char **argv)
   BZDB.setSaveDefault(false);
 }
 
-static void setupPlugins(void)
+static void setupPlugins()
 {
 #ifdef BZ_PLUGINS
   // see if we are going to load any plugins
@@ -3748,7 +3748,7 @@ static void setupPlugins(void)
 #endif
 }
 
-static bool prepareWorld(void)
+static bool prepareWorld()
 {
   // start listening and prepare world database
   if (!defineWorld()) {
@@ -3765,7 +3765,7 @@ static bool prepareWorld(void)
   return true;
 }
 
-static void enableReplayServer(void)
+static void enableReplayServer()
 {
   // enable replay server mode
   if (clOptions->replayServer) {
@@ -3797,7 +3797,7 @@ static void enableReplayServer(void)
   }
 }
 
-static void setupBadWordFilter(void)
+static void setupBadWordFilter()
 {
   /* load the bad word filter if it was set */
   if (clOptions->filterFilename.length() != 0) {
@@ -3816,7 +3816,7 @@ static void setupBadWordFilter(void)
   }
 }
 
-static void setupVoteArbiter(void)
+static void setupVoteArbiter()
 {
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
@@ -3835,7 +3835,7 @@ static void setupVoteArbiter(void)
   }
 }
 
-static void setupPublicInterfaces(void)
+static void setupPublicInterfaces()
 {
   if (clOptions->pingInterface != "")
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
@@ -3860,7 +3860,7 @@ static void setupPublicInterfaces(void)
   }
 }
 
-static void setupMasterBanList(void)
+static void setupMasterBanList()
 {
   // get the master ban list
   if (clOptions->publicizeServer && !clOptions->suppressMasterBanList) {
@@ -3873,7 +3873,7 @@ static void setupMasterBanList(void)
   }
 }
 
-static void setupScoringOptions(void)
+static void setupScoringOptions()
 {
   Score::setTeamKillRatio(clOptions->teamKillerKickRatio);
   Score::setWinLimit(clOptions->maxPlayerScore);
@@ -3882,7 +3882,7 @@ static void setupScoringOptions(void)
     Score::setRandomRanking();
 }
 
-static void setupPingReply(void)
+static void setupPingReply()
 {
   // prep ping reply
   pingReply.serverId.serverHost = serverAddress;
@@ -3905,7 +3905,7 @@ static void setupPingReply(void)
   pingReply.maxTeamScore        = clOptions->maxTeamScore;
 }
 
-static void setupPermissions(void)
+static void setupPermissions()
 {
   // load up the access permissions & stuff
   initGroups();
@@ -4052,7 +4052,7 @@ static bool initServer(int argc, char **argv)
 }
 
 
-static void doTickEvent(void)
+static void doTickEvent()
 {
   // fire off a tick event
   bz_TickEventData_V1 tickData;
@@ -4060,24 +4060,20 @@ static void doTickEvent(void)
 }
 
 
-float getAPIMaxWaitTime ( void )
+static float getAPIMaxWaitTime()
 {
-  float min = (float)TimeKeeper::getSunExplodeTime().getSeconds();
-  std::map<std::string,float>::iterator itr = APIWaitTimes.begin();
-  while(itr != APIWaitTimes.end()) {
-    if ( itr->second < min )
-      min = itr->second;
-    itr++;
+  float minTime = 100.0f;
+  std::map<std::string, float>::const_iterator it;
+  for (it = APIWaitTimes.begin(); it != APIWaitTimes.end(); ++it) {
+    if (minTime > it->second) {
+      minTime = it->second;
+    }
   }
-
-  if ( min >= 100 )
-    return 100;
-  else
-    return min;
+  return minTime;
 }
 
 
-static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
+static void checkWaitTime(TimeKeeper &tm, float &waitTime)
 {
   if ((countdownDelay >= 0) || (countdownResumeTime >= 0))
     waitTime = 0.5f; // 3 seconds too slow for match countdowns
@@ -4091,15 +4087,17 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.landing(tm)) {
-	if (flag.flag.status == FlagOnGround)
+	if (flag.flag.status == FlagOnGround) {
 	  sendFlagUpdateMessage(flag);
-	else
+	} else {
 	  resetFlag(flag);
+        }
       }
     }
   }
-  if (dropTime < waitTime)
+  if (waitTime > dropTime) {
     waitTime = dropTime;
+  }
 
   // get time for next Player internal action
   GameKeeper::Player::updateLatency(waitTime);
@@ -4107,35 +4105,40 @@ static void checkWaitTime ( TimeKeeper &tm, float &waitTime )
   // get time for the next world weapons shot
   if (world->getWorldWeapons().count() > 0) {
     float nextTime = world->getWorldWeapons().nextTime ();
-    if (nextTime < waitTime)
+    if (waitTime > nextTime) {
       waitTime = nextTime;
+    }
   }
 
   // get time for the next replay packet (if active)
   if (Replay::enabled()) {
     float nextTime = Replay::nextTime ();
-    if (nextTime < waitTime)
+    if (waitTime > nextTime) {
       waitTime = nextTime;
+    }
   } else {
     // game time updates
     const float nextGT = nextGameTime();
-    if (nextGT < waitTime)
+    if (waitTime > nextGT) {
       waitTime = nextGT;
+    }
   }
 
   // see if we are within the plug requested max wait time
-  float plugInWait = getAPIMaxWaitTime();
-  if (waitTime > plugInWait)
+  const float plugInWait = getAPIMaxWaitTime();
+  if (waitTime > plugInWait) {
     waitTime = plugInWait;
+  }
 
   // minmal waitTime
-  if (waitTime < 0.0f)
+  if (waitTime < 0.0f) {
     waitTime = 0.0f;
+  }
 
   // if there are buffered UDP, no wait at all
-  if (NetHandler::anyUDPPending())
+  if (NetHandler::anyUDPPending()) {
     waitTime = 0.0f;
-
+  }
 
   // don't wait (used by CURL and MsgEnter)
   if (dontWait) {
@@ -4302,7 +4305,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 }
 
 
-static void doPlayerStuff(void)
+static void doPlayerStuff()
 {
   requestAuthentication = false;
 
@@ -4661,7 +4664,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 }
 
 
-bool updateCurl ( void )
+bool updateCurl()
 {
   // let curl do it's own select
   fd_set curlReadSet,curlWriteSet;
@@ -4896,7 +4899,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
 }
 
 
-static void runMainLoop ( void )
+static void runMainLoop()
 {
   /* MAIN SERVER RUN LOOP
    *
@@ -5163,7 +5166,7 @@ static void runMainLoop ( void )
 }
 
 
-static void cleanupServer ( void )
+static void cleanupServer()
 {
 #ifdef BZ_PLUGINS
   unloadPlugins();
@@ -5196,7 +5199,7 @@ static void cleanupServer ( void )
 #endif /* defined(_WIN32) */
 }
 
-void saveStartupInfo ( void )
+void saveStartupInfo()
 {
   std::string conf = getConfigDirName();
   conf += "bzfs.dir";
@@ -5244,7 +5247,7 @@ int main(int argc, char **argv)
   return 0;
 }
 
-bool worldStateChanging ( void )
+bool worldStateChanging()
 {
   TimeKeeper now = TimeKeeper::getCurrent();
   return (TimeKeeper::getCurrent() - lastWorldParmChange) <= 10.0f;
