@@ -553,9 +553,9 @@ void GameKeeper::Player::setMaxShots(int _maxShots)
 
 bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
-  float now = (float)TimeKeeper::getCurrent().getSeconds();
+  double now = (double)TimeKeeper::getCurrent().getSeconds();
   if (id < (int)shotsInfo.size() && shotsInfo[id].present
-    && now < shotsInfo[id].expireTime) {
+      && now < shotsInfo[id].expireTime) {
       logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
 	player.getCallSign(), playerIndex, id);
       return false;
@@ -592,12 +592,16 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
   myShot.running     = true;
 
   shotsInfo[id] = myShot;
+
+  logDebugMessage(4, "Added shot for player %s [%d] shot id=%d salt=%d\n",
+                  player.getCallSign(), playerIndex, id, salt);
+
   return true;
 }
 
 bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 {
-  float now = (float)TimeKeeper::getCurrent().getSeconds();
+  double now = (double)TimeKeeper::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
     || now >= shotsInfo[id].expireTime) {
       logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
@@ -618,11 +622,20 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 
 bool GameKeeper::Player::updateShot(int id, int salt)
 {
-  float now = (float)TimeKeeper::getCurrent().getSeconds();
-  if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
-    || now >= shotsInfo[id].expireTime) {
-      logDebugMessage(2,"Player %s [%d] trying to update an unexistent shot id %d\n",
+  double now = (double)TimeKeeper::getCurrent().getSeconds();
+  if (id >= (int)shotsInfo.size()) {
+      logDebugMessage(2,"Player %s [%d] trying to update an invalid shot id %d\n",
 	player.getCallSign(), playerIndex, id);
+      return false;
+  }
+  if (!shotsInfo[id].present) {
+      logDebugMessage(2,"Player %s [%d] trying to update a non-present shot id %d\n",
+	player.getCallSign(), playerIndex, id);
+      return false;
+  }
+  if (now >= shotsInfo[id].expireTime) {
+      logDebugMessage(2,"Player %s [%d] trying to update an expired shot id %d (%f)\n",
+	player.getCallSign(), playerIndex, id, now - shotsInfo[id].expireTime);
       return false;
   }
   if (shotsInfo[id].salt != salt) {
@@ -630,8 +643,11 @@ bool GameKeeper::Player::updateShot(int id, int salt)
       player.getCallSign(), playerIndex, id);
     return false;
   }
-  if (!shotsInfo[id].running)
+  if (!shotsInfo[id].running) {
+    logDebugMessage(2,"Player %s [%d] trying to update a non-running shot id %d\n",
+      player.getCallSign(), playerIndex, id);
     return false;
+  }
   // only GM can be updated
   if (shotsInfo[id].firingInfo.flagType != Flags::GuidedMissile) {
     logDebugMessage(2,"Player %s [%d] trying to update a non GM shot id %d\n",

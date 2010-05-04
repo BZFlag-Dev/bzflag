@@ -50,10 +50,10 @@ public:
   ShotInfo() : present(false) {};
 
   FiringInfo firingInfo;
-  int	salt;
-  float      expireTime;
-  bool       present;
-  bool       running;
+  int    salt;
+  double expireTime;
+  bool   present;
+  bool   running;
 };
 
 class PlayerCaps

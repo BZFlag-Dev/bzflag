@@ -881,7 +881,7 @@ static void saveDocket(const std::string& mapname,
     docket->dirList("", false, dirs, files);
     if (!dirs.empty() || !files.empty()) {
       const std::string docketDir = mapname + "." + name;
-      // FIXME - should move directory if already exists 
+      // FIXME - should move the directory if already exists
       if (docket->save(docketDir)) {
         addMessage(NULL, name + " saved: " + docketDir);
       } else {

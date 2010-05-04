@@ -432,7 +432,8 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   void *buf = (void*)packet;
   buf = firingInfo.shot.pack(buf);
   buf = nboPackUInt8(buf, lastTarget);
-  ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
+  const size_t len = (char*)buf - packet;
+  ServerLink::getServer()->send(MsgGMUpdate, len, packet);
 }
 
 

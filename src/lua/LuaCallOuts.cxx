@@ -246,6 +246,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
     PUSH_LUA_CFUNC(L, GetPlayerDesiredSpeed);
     PUSH_LUA_CFUNC(L, GetPlayerDesiredAngVel);
     PUSH_LUA_CFUNC(L, GetPlayerExplodeTime);
+    PUSH_LUA_CFUNC(L, GetPlayerOpacity);
   }
   if (!gameCtrl) {
     PUSH_LUA_CFUNC(L, IsPlayerAdmin);
@@ -2583,6 +2584,17 @@ int LuaCallOuts::GetPlayerExplodeTime(lua_State* L)
     return luaL_pushnil(L); // should not happen
   }
   lua_pushfloat(L, explodeTime);
+  return 1;
+}
+
+
+int LuaCallOuts::GetPlayerOpacity(lua_State* L)
+{
+  const Player* player = ParsePlayer(L, 1);
+  if (player == NULL) {
+    return luaL_pushnil(L);
+  }
+  lua_pushfloat(L, player->getAlpha());
   return 1;
 }
 

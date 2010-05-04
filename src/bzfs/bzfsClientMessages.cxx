@@ -262,6 +262,26 @@ public:
 };
 
 
+class PlayerFirstNoBumpHandler : public PlayerFirstHandler
+{
+public:
+  virtual void *unpackPlayer ( void * buf, int len )
+  {
+    player = NULL;
+
+    // byte * 3
+    if ( len >= 1 ) {
+      unsigned char temp = 0;
+      nboUnpackUInt8(buf, temp);
+      player = GameKeeper::Player::getPlayerByIndex(temp);
+
+      return buf;
+    }
+    return buf;
+  }
+};
+
+
 class NewPlayerHandler : public PlayerFirstHandler
 {
 public:
@@ -1124,48 +1144,36 @@ public:
 
 
 
-class PlayerFirstNoBumpHandler : public PlayerFirstHandler
-{
-public:
-  virtual void *unpackPlayer ( void * buf, int len )
-  {
-    player = NULL;
-
-    // byte * 3
-    if ( len >= 1 ) {
-      unsigned char temp = 0;
-      nboUnpackUInt8(buf, temp);
-      player = GameKeeper::Player::getPlayerByIndex(temp);
-
-      return buf;
-    }
-    return buf;
-  }
-};
-
-
 class GMUpdateHandler : public PlayerFirstNoBumpHandler
 {
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 33)
+    if (!player || len < 34)
       return false;
+
     if (!player->player.isCompletelyAdded())
       return false;
 
     ShotUpdate shot;
     buf = shot.unpack(buf);
+    const uint8_t shotID   = shot.id & 0xff;
+    const uint8_t shotSalt = shot.id >> 8;
 
     unsigned char temp = 0;
     nboUnpackUInt8(buf, temp);
 
     PlayerId target = temp;
 
-    if (!player->player.isAlive() || player->player.isObserver() || !player->updateShot(shot.id & 0xff, shot.id >> 8))
-      return true ;
+    if (!player->player.isAlive() || player->player.isObserver()) {
+      return true;
+    }
 
-    sendMsgGMUpdate( player->getIndex(), &shot, target );
+    if (!player->updateShot(shotID, shotSalt)) {
+      return true ;
+    }
+
+    sendMsgGMUpdate(player->getIndex(), &shot, target);
     return true;
   }
 };

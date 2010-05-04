@@ -71,6 +71,7 @@ public:
   float		getLocalNormalizedScore() const;
   short		getScore() const;
   const fvec3&	getDimensions() const;
+  float		getAlpha() const { return alpha; }
 
   const PlayerState& getState() const { return state; }
 
