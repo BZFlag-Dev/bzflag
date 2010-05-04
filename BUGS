@@ -16,10 +16,6 @@ bugs formally reported on the bug tracker.
 Crashes
 -------
 
-* MsgGMUpdate isn't processed server-side, because the bzfsClientMessages.cxx
-  code wasn't updated to reflect the changes in the ShotUpdate.cxx packing
-  protocol.
-
 * Tanks only spawn at ground level. Complex maps that have tunnels or platforms
   may not like this (spawn out of bounds happens)
 
