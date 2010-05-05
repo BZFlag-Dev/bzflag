@@ -763,7 +763,6 @@ void TextSceneNode::TextRenderNode::drawDebug()
   }
   glEnd();
 
-
   const double period = 0.5;
   const double now = TimeKeeper::getCurrent().getSeconds();
   const float phase = (float)(fmod(now, period) / period);

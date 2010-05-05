@@ -317,7 +317,7 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   // check for teleportation
   const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
   const MeshFace* linkDst = NULL;
-  const LinkPhysics* physics = NULL;;
+  const LinkPhysics* physics = NULL;
   int linkSrcID, linkDstID;
   if (linkSrc != NULL) {
     const ShotPath& myPath = getPath();
@@ -362,7 +362,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
   // check for teleportation
   const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
   const MeshFace* linkDst = NULL;
-  const LinkPhysics* physics = NULL;;
+  const LinkPhysics* physics = NULL;
   int linkSrcID, linkDstID;
   if (linkSrc != NULL) {
     const ShotPath& myPath = getPath();

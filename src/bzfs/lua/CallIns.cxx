@@ -1517,7 +1517,11 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
   lua_pushinteger(L, ed->playerID);
 
   lua_pushinteger(L, state.status);
-  lua_pushinteger(L, state.phydrv + 1);
+  if (state.phydrv < 0) {
+    lua_pushboolean(L, false);
+  } else {
+    lua_pushinteger(L, state.phydrv);
+  }
   lua_pushboolean(L, state.falling);
   lua_pushboolean(L, state.crossingWall);
   lua_pushboolean(L, state.inPhantomZone);

@@ -2090,7 +2090,7 @@ int LuaCallOuts::SetGfxBlock(lua_State* L)
   if (gfxBlock == NULL) {
     return luaL_pushnil(L);
   }
-  return Set_GfxBlock(L, *gfxBlock);;
+  return Set_GfxBlock(L, *gfxBlock);
 }
 
 
@@ -2100,7 +2100,7 @@ int LuaCallOuts::GetGfxBlock(lua_State* L)
   if (gfxBlock == NULL) {
     return luaL_pushnil(L);
   }
-  return Get_GfxBlock(L, *gfxBlock);;
+  return Get_GfxBlock(L, *gfxBlock);
 }
 
 
@@ -2111,7 +2111,7 @@ int LuaCallOuts::SetPlayerGfxBlock(lua_State* L)
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  return Set_GfxBlock(L, player->getGfxBlock());;
+  return Set_GfxBlock(L, player->getGfxBlock());
 }
 
 
@@ -2538,10 +2538,9 @@ int LuaCallOuts::GetPlayerPhysicsDriver(lua_State* L)
   const int phydrv = player->getPhysicsDriver();
   if (phydrv < 0) {
     lua_pushboolean(L, false);
-    return 1;
+  } else {
+    lua_pushinteger(L, phydrv);
   }
-
-  lua_pushinteger(L, phydrv + 1);
   return 1;
 }
 

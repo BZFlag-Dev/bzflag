@@ -706,10 +706,9 @@ int LuaObstacle::GetFacePhyDrv(lua_State* L)
   const int phydrv = face->getPhysicsDriver();
   if (phydrv < 0) {
     lua_pushboolean(L, false);
-    return 1;
+  } else {
+    lua_pushinteger(L, phydrv);
   }
-
-  lua_pushinteger(L, phydrv);;
   return 1;
 }
 

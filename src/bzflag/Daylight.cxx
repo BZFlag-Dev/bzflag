@@ -233,7 +233,7 @@ void Daylight::getSunColor(const fvec3& sunDir,
 
   // color and brightness
   if (sunDir.z <= -0.009f) {
-    color = moonColor;;
+    color = moonColor;
     brightness = 0.0f;
   }
   else if (sunDir.z < dayElevation) {

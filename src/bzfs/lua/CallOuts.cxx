@@ -1267,7 +1267,7 @@ static int GetPlayerPhysicsDriver(lua_State* L)
   if (statePtr->phydrv < 0) {
     lua_pushboolean(L, false);
   } else {
-    lua_pushinteger(L, statePtr->phydrv + 1);
+    lua_pushinteger(L, statePtr->phydrv);
   }
   return 1;
 }
@@ -1638,7 +1638,7 @@ static int SetPlayerState(lua_State* L)
   fvec3 pos(0.0f, 0.0f, 0.0f);
   fvec3 vel(0.0f, 0.0f, 0.0f);
   float angle = 0.0f;
-  float angvel = 0.0f;;
+  float angvel = 0.0f;
 
   lua_getfield(L, tableIndex, "pos");
   if (!lua_isnil(L, -1)) {

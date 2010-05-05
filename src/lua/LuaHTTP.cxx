@@ -364,12 +364,8 @@ bool LuaHTTPMgr::CreateMetatable(lua_State* L)
 {
   luaL_newmetatable(L, metaName);
 
-  lua_pushliteral(L, "__gc"); // garbage collection
-  lua_pushcfunction(L, MetaGC);
-  lua_rawset(L, -3);
-  lua_pushliteral(L, "__tostring");
-  lua_pushcfunction(L, MetaToString);
-  lua_rawset(L, -3);
+  luaset_strfunc(L, "__gc",       MetaGC);
+  luaset_strfunc(L, "__tostring", MetaToString);
 
   lua_pushliteral(L, "__index");
   lua_newtable(L);
@@ -389,9 +385,7 @@ bool LuaHTTPMgr::CreateMetatable(lua_State* L)
   }
   lua_rawset(L, -3);
 
-  lua_pushliteral(L, "__metatable");
-  lua_pushliteral(L, "no access");
-  lua_rawset(L, -3);
+  luaset_strstr(L, "__metatable", "no access");
 
   lua_pop(L, 1); // pop the metatable
   return true;
@@ -409,7 +403,7 @@ int LuaHTTPMgr::MetaGC(lua_State* L)
 int LuaHTTPMgr::MetaToString(lua_State* L)
 {
   LuaHTTP* fetch = GetURL(L, 1);
-  lua_pushfstring(L, "url(%p,%s)", (void*)fetch, fetch->GetURL().c_str());
+  lua_pushfstring(L, "http(%p,%s)", (void*)fetch, fetch->GetURL().c_str());
   return 1;
 }
 

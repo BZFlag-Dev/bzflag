@@ -35,6 +35,7 @@ class LuaDouble {
     static bool CreateMetatable(lua_State* L);
     static int CreateDouble(lua_State* L);
     static int IsDouble(lua_State* L);
+    static int Date(lua_State* L);
     static int MetaIndex(lua_State* L);
     static int MetaToString(lua_State* L);
     static int MetaADD(lua_State* L);

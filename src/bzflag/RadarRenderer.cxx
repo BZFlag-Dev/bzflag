@@ -256,7 +256,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
   const float thresh = AutoHunt::getOuterBlinkThreshold(huntLevel);
   const bool blink = fmodf((float)diffTime, period) < (period * thresh);
   if (blink) {
-    color.rgb() = fvec3(0.5f, 0.5f, 0.5f);;
+    color.rgb() = fvec3(0.5f, 0.5f, 0.5f);
   }
 
   // translucency range

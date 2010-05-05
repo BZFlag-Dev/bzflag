@@ -449,7 +449,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // check for teleportation
     const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
     const MeshFace* linkDst = NULL;
-    const LinkPhysics* physics = NULL;;
+    const LinkPhysics* physics = NULL;
     if (linkSrc != NULL) {
       const ShotPath& myPath = getPath();
       const FlagType* flagType = myPath.getFlag();

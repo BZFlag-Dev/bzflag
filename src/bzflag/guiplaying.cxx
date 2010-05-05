@@ -2729,7 +2729,7 @@ bool addExplosion(const fvec3& _pos,
 
     // make a copy and initialize it
     BillboardSceneNode *newExpl = prototypeExplosions[idx]->copy();
-    fvec3 explPos = _pos;;
+    fvec3 explPos = _pos;
     explPos.x += (float)(bzfrand() * 12.0 - 6.0);
     explPos.y += (float)(bzfrand() * 12.0 - 6.0);
     explPos.z += (float)(bzfrand() * 10.0);

@@ -390,7 +390,7 @@ int LuaBzMaterial::GetMaterialTable(lua_State* L)
     luaset_strnum(L,  "alphaThresh",    mat->getAlphaThreshold());
     luaset_strbool(L, "groupAlpha",     mat->getGroupAlpha());
     luaset_strbool(L, "radarSpecial",   mat->getRadarSpecial());
-    luaset_strbool(L, "radar",	 !mat->getNoRadar());
+    luaset_strbool(L, "radar",         !mat->getNoRadar());
     luaset_strbool(L, "radarOutline",  !mat->getNoRadarOutline());
     luaset_strbool(L, "shadowCast",    !mat->getNoShadowCast());
     luaset_strbool(L, "shadowRecv",    !mat->getNoShadowRecv());
