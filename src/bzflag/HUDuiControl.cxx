@@ -31,7 +31,7 @@
 OpenGLGState* HUDuiControl::gstate = NULL;
 int           HUDuiControl::arrow = -1;
 int           HUDuiControl::arrowFrame = 0;
-TimeKeeper    HUDuiControl::lastTime;
+BzTime        HUDuiControl::lastTime;
 int           HUDuiControl::totalCount = 0;
 
 
@@ -56,7 +56,7 @@ HUDuiControl::HUDuiControl()
     *gstate = builder.getState();
 
     // get start time for animation
-    lastTime = TimeKeeper::getCurrent();
+    lastTime = BzTime::getCurrent();
   }
 
   totalCount++;
@@ -172,7 +172,7 @@ void HUDuiControl::renderFocus()
     glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
   } glEnd();
 
-  TimeKeeper nowTime = TimeKeeper::getCurrent();
+  BzTime nowTime = BzTime::getCurrent();
   if (nowTime - lastTime > 0.07f) {
     lastTime = nowTime;
     if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;

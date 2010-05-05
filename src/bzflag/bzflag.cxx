@@ -940,10 +940,10 @@ int initClient ( int argc, char **argv )
   // initialize global objects and classes
   bzfsrand((unsigned int)time(0));
 
-  /* try to set the processor affinity to prevent TimeKeeper from
+  /* try to set the processor affinity to prevent BzTime from
    * reporting negative times
    */
-  TimeKeeper::setProcessorAffinity();
+  BzTime::setProcessorAffinity();
 
   setupBZDB();
 

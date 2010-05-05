@@ -27,7 +27,7 @@
 #include <iostream>
 
 /* common headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 #define FP_BITS(fp) (*force_cast<unsigned long *>(&(fp)))
@@ -303,13 +303,13 @@ public:
       }
 
       // test for half a second per function
-      TimeKeeper t = TimeKeeper::getCurrent();
+      BzTime t = BzTime::getCurrent();
       do {
 	for (unsigned int f = 0; f < 0x10000; f++) {
 	  sum += mathTest[i](_random_floats[f]);
 	}
 	iterations++;
-      } while (TimeKeeper::getCurrent() - t < 0.5f);
+      } while (BzTime::getCurrent() - t < 0.5f);
       std::cout << " ... " << iterations;
 
       // should always be false, but compiler shouldn't know that

@@ -17,6 +17,7 @@ libCommon_la_SOURCES  =			\
 	BundleMgr.cxx			\
 	BzDocket.cxx			\
 	BzPNG.cxx			\
+	BzTime.cxx			\
 	BzVFS.cxx			\
 	CacheManager.cxx		\
 	CommandManager.cxx		\
@@ -33,7 +34,6 @@ libCommon_la_SOURCES  =			\
 	TextChunkManager.cxx		\
 	TextUtils.cxx			\
 	TimeBomb.cxx			\
-	TimeKeeper.cxx			\
 	VotingBooth.cxx			\
 	WordFilter.cxx			\
 	bz_Locale.cxx			\

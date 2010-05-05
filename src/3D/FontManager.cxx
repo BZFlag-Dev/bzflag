@@ -29,7 +29,7 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "TextUtils.h"
 #include "OSFile.h"
 #include "SceneNode.h"
@@ -214,7 +214,7 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   font->UseDisplayList(doDisplayLists);
 
 #if debugging
-  const TimeKeeper t0 = TimeKeeper::getCurrent();
+  const BzTime t0 = BzTime::getCurrent();
 #endif
 
   if (BZDB.isTrue("fontPreload")) {
@@ -227,7 +227,7 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
   }
 
 #if debugging
-  const TimeKeeper t1 = TimeKeeper::getCurrent();
+  const BzTime t1 = BzTime::getCurrent();
   static float advanceTime = 0.0f;
   advanceTime += (t1 - t0);
   printf("FontTime: %.3f  %.3f  <%s @ %i>\n",
@@ -803,7 +803,7 @@ float FontManager::getStringHeight(int font, float size)
 
 void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
 {
-  const double pulseTime = TimeKeeper::getCurrent().getSeconds();
+  const double pulseTime = BzTime::getCurrent().getSeconds();
 
   // depth is how dark it should get (1.0 is to black)
   float pulseDepth = BZDBCache::pulseDepth;

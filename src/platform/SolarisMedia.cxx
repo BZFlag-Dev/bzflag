@@ -11,7 +11,7 @@
  */
 
 #include "SolarisMedia.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 #define DEBUG_SOLARIS			0	//(1 = debug, 0 = don't!)
 
@@ -282,7 +282,7 @@ void			SolarisMedia::audioSleep(
   // To do both these operations at once, we need to poll.
   if (checkLowWater) {
     // start looping
-    TimeKeeper start = TimeKeeper::getCurrent();
+    BzTime start = BzTime::getCurrent();
     do {
       // break if buffer has drained enough
       if (isAudioTooEmpty()) break;
@@ -292,7 +292,7 @@ void			SolarisMedia::audioSleep(
       tv.tv_usec=50000;
       if (select(maxFd, &commandSelectSet, 0, 0, &tv)) break;
 
-    } while (endTime<0.0 || (TimeKeeper::getCurrent()-start)<endTime);
+    } while (endTime<0.0 || (BzTime::getCurrent()-start)<endTime);
   } else {
     FD_ZERO(&commandSelectSet);
     FD_SET((unsigned int)queueOut, &commandSelectSet);

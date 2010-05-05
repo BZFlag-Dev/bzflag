@@ -22,7 +22,7 @@ BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
 				 const char* name,
 				 const PlayerType _type)
 : Player(_id, RogueTeam, name, _type)
-, lastTime(TimeKeeper::getTick())
+, lastTime(BzTime::getTick())
 , lastPosition(0.0f, 0.0f, 0.0f)
 , salt(0)
 {
@@ -49,8 +49,8 @@ void BaseLocalPlayer::update( float inputDT )
   lastPosition = oldPosition;
 
   // update by time step
-  float dt = float(TimeKeeper::getTick() - lastTime);
-  lastTime = TimeKeeper::getTick();
+  float dt = float(BzTime::getTick() - lastTime);
+  lastTime = BzTime::getTick();
 
   if (inputDT > 0)
     dt = inputDT;

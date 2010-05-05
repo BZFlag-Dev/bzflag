@@ -17,7 +17,7 @@
 #include "bzfgl.h"
 #include "TextureManager.h"
 #include "StateDatabase.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Flag.h"
 #include "OpenGLUtils.h"
 #include "BZDBCache.h"
@@ -68,7 +68,7 @@ void EffectsRenderer::init(void)
 
 void EffectsRenderer::update(void)
 {
-  const TimeKeeper time = TimeKeeper::getTick();
+  const BzTime time = BzTime::getTick();
 
   tvEffectsList::iterator i = effectsList.begin();
   while (i != effectsList.end()) {
@@ -395,7 +395,7 @@ BasicEffect::BasicEffect()
 , velocity(0.0f, 0.0f, 0.0f)
 , color(0.0f, 0.0f, 0.0f, 1.0f)
 {
-  startTime = TimeKeeper::getCurrent();
+  startTime = BzTime::getCurrent();
 
   lifeTime = 0;
   lastTime = startTime;
@@ -424,12 +424,12 @@ void BasicEffect::setColor(const fvec4& rgba)
 
 void BasicEffect::setStartTime()
 {
-  startTime = TimeKeeper::getTick();
+  startTime = BzTime::getTick();
   lastTime = startTime;
   deltaTime = 0;
 }
 
-bool BasicEffect::update(const TimeKeeper time)
+bool BasicEffect::update(const BzTime time)
 {
   age = time - startTime;
 
@@ -464,7 +464,7 @@ StdSpawnEffect::~StdSpawnEffect()
 {
 }
 
-bool StdSpawnEffect::update(const TimeKeeper time)
+bool StdSpawnEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -498,7 +498,7 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 }
 
 //******************ConeSpawnEffect****************
-bool ConeSpawnEffect::update(const TimeKeeper time)
+bool ConeSpawnEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -547,7 +547,7 @@ RingSpawnEffect::RingSpawnEffect()
   maxZ = 10.0f;
 }
 
-bool RingSpawnEffect::update(const TimeKeeper time)
+bool RingSpawnEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -630,7 +630,7 @@ StdShotEffect::~StdShotEffect()
 {
 }
 
-bool StdShotEffect::update(const TimeKeeper time)
+bool StdShotEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -688,7 +688,7 @@ FlashShotEffect::FlashShotEffect() : StdShotEffect()
   ringState = gstate.getState();
 }
 
-bool FlashShotEffect::update(const TimeKeeper time)
+bool FlashShotEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -784,7 +784,7 @@ StdDeathEffect::~StdDeathEffect()
 {
 }
 
-bool StdDeathEffect::update(const TimeKeeper time)
+bool StdDeathEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -864,7 +864,7 @@ StdLandEffect::~StdLandEffect()
 {
 }
 
-bool StdLandEffect::update(const TimeKeeper time)
+bool StdLandEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -921,7 +921,7 @@ StdGMPuffEffect::~StdGMPuffEffect()
 {
 }
 
-bool StdGMPuffEffect::update(const TimeKeeper time)
+bool StdGMPuffEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -983,7 +983,7 @@ StdRicoEffect::~StdRicoEffect()
 {
 }
 
-bool StdRicoEffect::update(const TimeKeeper time)
+bool StdRicoEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -1048,7 +1048,7 @@ StdShotTeleportEffect::~StdShotTeleportEffect()
 {
 }
 
-bool StdShotTeleportEffect::update(const TimeKeeper time)
+bool StdShotTeleportEffect::update(const BzTime time)
 {
   // see if it's time to die
   // if not update all those fun times

@@ -73,7 +73,7 @@ public:
   void	updatePingLag(void *buf, bool &warn, bool &kick,
 		      bool &jittwarn, bool &jittkick,
 		      bool &plosswarn, bool &plosskick);
-  void	updateLag(TimeKeeper const& timestamp, bool ooo);
+  void	updateLag(BzTime const& timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
   int	getNextPingSeqno(bool &warn, bool &kick);
@@ -104,13 +104,13 @@ private:
   int    losslastwarn;
   int    losswarncount;
   bool	pingpending;
-  TimeKeeper  nextping;
-  TimeKeeper  lastping;
-  TimeKeeper  lastupdate;
+  BzTime  nextping;
+  BzTime  lastping;
+  BzTime  lastupdate;
   int	 pingseqno;
   int	 pingssent;
   // jitter measurement
-  TimeKeeper       lasttimestamp;
+  BzTime       lasttimestamp;
 
   static float threshold;
   static float jitterthreshold;

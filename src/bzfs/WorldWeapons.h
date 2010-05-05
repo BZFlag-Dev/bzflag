@@ -21,7 +21,7 @@
 
 /* common interface headers */
 #include "Flag.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "vectors.h"
 
 #include "WorldEventManager.h"
@@ -40,7 +40,7 @@ public:
   void add(const FlagType *type, const fvec3& origin,
 	   float direction, float tilt, TeamColor teamColor,
 	   float initdelay, const std::vector<float> &delay,
-	   TimeKeeper &sync, bool fromMesh = false);
+	   BzTime &sync, bool fromMesh = false);
   float nextTime();
   void clear();
   unsigned int count(); // returns the number of world weapons
@@ -58,7 +58,7 @@ public:
     float		tilt;
     float		initDelay;
     std::vector<float>  delay;
-    TimeKeeper		nextTime;
+    BzTime		nextTime;
     int			nextDelay;
     bool		fromMesh;
   };

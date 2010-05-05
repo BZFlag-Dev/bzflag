@@ -26,7 +26,7 @@
 #endif
 
 // common interface headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Team.h"
 #include "Protocol.h"
 #include "Flag.h"
@@ -54,7 +54,7 @@ enum PlayerReplayState {
 struct TeamInfo {
 public:
   Team team;
-  TimeKeeper flagTimeout;
+  BzTime flagTimeout;
 };
 
 
@@ -65,7 +65,7 @@ public:
   int   getPlayerIndex( void ) const { return playerIndex; }
   void	setLastMsg(std::string msg);
   const std::string& getLastMsg() const;
-  TimeKeeper  getLastMsgTime() const;
+  BzTime  getLastMsgTime() const;
   void	incSpamWarns();
   int	getSpamWarns() const;
   void	resetPlayer(bool ctf);
@@ -135,16 +135,16 @@ public:
   float	allowedHeightAtJumpStart;
 
   PlayerReplayState getReplayState();
-  static void setCurrentTime(TimeKeeper tm);
+  static void setCurrentTime(BzTime tm);
   static void setFilterParameters(bool	callSignFiltering,
 				  WordFilter &filterData,
 				  bool	simpleFiltering);
 
   void setTrackerID(unsigned short int t);
   unsigned short int trackerID();
-  static TimeKeeper now;
+  static BzTime now;
   int endShotCredit;
-  TimeKeeper allowChangeTime;
+  BzTime allowChangeTime;
 
   PlayerType getType( void ) const {return type;}
 
@@ -193,17 +193,17 @@ private:
   // flag index player has
   int flag;
 
-  TimeKeeper lastFlagDropTime;
+  BzTime lastFlagDropTime;
 
   unsigned char allow;
 
   // spam prevention
   std::string lastMsgSent;
   int spamWarns;
-  TimeKeeper lastMsgTime;
+  BzTime lastMsgTime;
 
   bool       paused;
-  TimeKeeper pausedSince;
+  BzTime pausedSince;
 
   bool autopilot;
 
@@ -213,8 +213,8 @@ private:
   PlayerReplayState replayState;
 
   // idle kick
-  TimeKeeper lastmsg;
-  TimeKeeper lastupdate;
+  BzTime lastmsg;
+  BzTime lastupdate;
 
   // player played before countdown started
   bool playedEarly;
@@ -254,7 +254,7 @@ inline const std::string& PlayerInfo::getLastMsg() const {
   return lastMsgSent;
 }
 
-inline TimeKeeper PlayerInfo::getLastMsgTime() const {
+inline BzTime PlayerInfo::getLastMsgTime() const {
   return lastMsgTime;
 }
 

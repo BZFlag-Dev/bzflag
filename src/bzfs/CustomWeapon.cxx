@@ -28,7 +28,7 @@
 #include "WorldWeapons.h"
 #include "TextUtils.h"
 
-TimeKeeper CustomWeapon::sync = TimeKeeper::getCurrent();
+BzTime CustomWeapon::sync = BzTime::getCurrent();
 
 const float CustomWeapon::minWeaponDelay = 0.1f;
 

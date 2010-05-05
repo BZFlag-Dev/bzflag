@@ -60,7 +60,7 @@
 #include "ServerList.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "WordFilter.h"
 
 // common client headers
@@ -432,9 +432,9 @@ void setSceneDatabase()
   }
 
   // make the scene, and record the processing time
-  TimeKeeper startTime = TimeKeeper::getCurrent();
+  BzTime startTime = BzTime::getCurrent();
   SceneDatabase *scene = sceneBuilder->make(world);
-  float elapsed = float(TimeKeeper::getCurrent() - startTime);
+  float elapsed = float(BzTime::getCurrent() - startTime);
 
   // print debugging info
   if (BZDBCache::zbuffer) {
@@ -1657,7 +1657,7 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
     if (victimLocal->isAlive())
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
   } else if (victimPlayer) {
-    victimPlayer->setExplode(TimeKeeper::getTick());
+    victimPlayer->setExplode(BzTime::getTick());
     const fvec3& pos = victimPlayer->getPosition();
     const bool localView = isViewTank(victimPlayer);
     if (reason == GotRunOver)
@@ -2228,7 +2228,7 @@ void handleTeleport(void *msg)
   if (tank) {
     if (tank != myTank) {
       eventHandler.PlayerTeleported(*tank, srcID, dstID);
-      tank->setTeleport(TimeKeeper::getTick(), short(srcID), short(dstID));
+      tank->setTeleport(BzTime::getTick(), short(srcID), short(dstID));
       const MeshFace* linkDst = linkManager.getLinkDstFace(dstID);
       const MeshFace* linkSrc = linkManager.getLinkSrcFace(srcID);
       if (linkDst && linkSrc) {
@@ -2434,11 +2434,11 @@ void handleMessage(void *msg)
 
           // play a sound on a private message not from self or server
           if (playSound) {
-            static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-            if (TimeKeeper::getTick() - lastMsg > 2.0f) {
+            static BzTime lastMsg = BzTime::getSunGenesisTime();
+            if (BzTime::getTick() - lastMsg > 2.0f) {
               SOUNDSYSTEM.play(SFX_MESSAGE_PRIVATE);
             }
-            lastMsg = TimeKeeper::getTick();
+            lastMsg = BzTime::getTick();
           }
         }
       }
@@ -2447,11 +2447,11 @@ void handleMessage(void *msg)
       if (toAdmin) {
         // play a sound on a private message
         if (playSound) {
-          static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-          if (TimeKeeper::getTick() - lastMsg > 2.0f) {
+          static BzTime lastMsg = BzTime::getSunGenesisTime();
+          if (BzTime::getTick() - lastMsg > 2.0f) {
             SOUNDSYSTEM.play(SFX_MESSAGE_ADMIN);
           }
-          lastMsg = TimeKeeper::getTick();
+          lastMsg = BzTime::getTick();
         }
         fullMsg += "[Admin] ";
       }
@@ -2465,10 +2465,10 @@ void handleMessage(void *msg)
 #endif
         // play a sound on a team message
         if (playSound) {
-          static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
-          if (TimeKeeper::getTick() - lastMsg > 2.0f)
+          static BzTime lastMsg = BzTime::getSunGenesisTime();
+          if (BzTime::getTick() - lastMsg > 2.0f)
             SOUNDSYSTEM.play(SFX_MESSAGE_TEAM);
-          lastMsg = TimeKeeper::getTick();
+          lastMsg = BzTime::getTick();
         }
       }
 
@@ -2646,11 +2646,11 @@ void handleGMUpdate(void *msg)
 
   if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
   {
-    static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75)
+    static BzTime lastLockMsg;
+    if (BzTime::getTick() - lastLockMsg > 0.75)
     {
       SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
-      lastLockMsg = TimeKeeper::getTick();
+      lastLockMsg = BzTime::getTick();
       addMessage(tank, "locked on me");
     }
   }
@@ -2776,10 +2776,10 @@ void addShotPuff(const fvec3& pos, const fvec3& vel)
 void processInputEvents(float maxProcessingTime)
 {
   if (mainWindow && display) {
-    TimeKeeper start = TimeKeeper::getCurrent();
+    BzTime start = BzTime::getCurrent();
     while (display->isEventPending() &&
       !CommandsStandard::isQuit() &&
-      (TimeKeeper::getCurrent() - start < maxProcessingTime)) {
+      (BzTime::getCurrent() - start < maxProcessingTime)) {
 	// process one event
 	doEvent(display);
     }
@@ -3051,8 +3051,8 @@ static void checkEnvironment()
     }
     else if (flagd == Flags::Null) {
       // Don't grab too fast
-      static TimeKeeper lastGrabSent;
-      if (TimeKeeper::getTick()-lastGrabSent > 0.2) {
+      static BzTime lastGrabSent;
+      if (BzTime::getTick()-lastGrabSent > 0.2) {
         // grab any and all flags i'm driving over
         const fvec3& tpos = myTank->getPosition();
         const float radius = myTank->getRadius() + BZDBCache::flagRadius;
@@ -3066,7 +3066,7 @@ static void checkEnvironment()
           if ((fabs(tpos.z - fpos.z) < 0.1f) &&
               ((tpos.xy() - fpos.xy()).lengthSq() < radius2)) {
             serverLink->sendPlayerUpdate(myTank);
-            lastGrabSent = TimeKeeper::getTick();
+            lastGrabSent = BzTime::getTick();
           }
         }
       }
@@ -5678,7 +5678,7 @@ bool checkForCompleteDownloads(void)
 void doFPSLimit(void)
 {
   // always cap out at 200 fps unless a limit is set.
-  static TimeKeeper lastTime = TimeKeeper::getCurrent();
+  static BzTime lastTime = BzTime::getCurrent();
   float fpsLimit = 200;
   if (debugLevel > 0) {
     fpsLimit = BZDB.eval("fpsLimit");
@@ -5712,16 +5712,16 @@ void doFPSLimit(void)
     notify = false;
   }
 
-  const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+  const float elapsed = float(BzTime::getCurrent() - lastTime);
   if (elapsed > 0.0f) {
     const float period = (1.0f / fpsLimit);
     const float remaining = (period - elapsed);
     if (remaining > 0.0f) {
-      TimeKeeper::sleep(remaining);
+      BzTime::sleep(remaining);
     }
   }
 
-  lastTime = TimeKeeper::getCurrent();
+  lastTime = BzTime::getCurrent();
 }
 
 
@@ -5761,7 +5761,7 @@ static void updateHubLink()
 static void playingLoop()
 {
   // start timing
-  TimeKeeper::setTick();
+  BzTime::setTick();
   updateDaylight(epochOffset);
 
   worldDownLoader = new WorldDownLoader;
@@ -5775,9 +5775,9 @@ static void playingLoop()
     GameTime::setStepTime();
 
     // get delta time
-    TimeKeeper prevTime = TimeKeeper::getTick();
-    TimeKeeper::setTick();
-    const float dt = float(TimeKeeper::getTick() - prevTime);
+    BzTime prevTime = BzTime::getTick();
+    BzTime::setTick();
+    const float dt = float(BzTime::getTick() - prevTime);
 
     mainWindow->getWindow()->yieldCurrent();
 
@@ -5841,11 +5841,11 @@ static void playingLoop()
     }
     else { // wait around a little to avoid spinning the CPU when iconified
       eventHandler.DrawGenesis(); // called every frame
-      TimeKeeper::sleep(0.05f);
+      BzTime::sleep(0.05f);
     }
 
     // play the sounds
-    SOUNDSYSTEM.update(TimeKeeper::getCurrent().getSeconds());
+    SOUNDSYSTEM.update(BzTime::getCurrent().getSeconds());
 
     doNetworkStuff();
 
@@ -5884,11 +5884,11 @@ static float timeConfiguration(bool useZBuffer)
 
   // use glFinish() to get accurate timings
   //glFinish();
-  TimeKeeper startTime = TimeKeeper::getCurrent();
+  BzTime startTime = BzTime::getCurrent();
   RENDERER.setExposed();
   RENDERER.render();
   // glFinish();
-  TimeKeeper endTime = TimeKeeper::getCurrent();
+  BzTime endTime = BzTime::getCurrent();
 
   // turn off depth buffer
   if (useZBuffer) glDisable(GL_DEPTH_TEST);

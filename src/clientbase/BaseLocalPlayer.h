@@ -19,7 +19,7 @@
 /* common interface headers */
 #include "Ray.h"
 #include "Extents.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /* local interface headers */
 #include "Player.h"
@@ -46,7 +46,7 @@ class BaseLocalPlayer : public Player {
   virtual void doUpdateMotion(float dt) = 0;
 
  protected:
-  TimeKeeper lastTime;
+  BzTime lastTime;
   fvec3 lastPosition;
   // bbox of last motion
   Extents bbox;

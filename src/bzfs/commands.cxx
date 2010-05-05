@@ -38,7 +38,7 @@
 #include "LagInfo.h"
 #include "NetHandler.h"
 #include "PlayerInfo.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "VotingArbiter.h"
 #include "global.h"
 #include "version.h"
@@ -782,8 +782,8 @@ bool UpTimeCommand::operator() (const char *,
   int t = playerData->getIndex();
   char reply[MessageLen] = {0};
 
-  rawTime = float(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
-  snprintf(reply, MessageLen, "%s.", TimeKeeper::printTime(rawTime).c_str());
+  rawTime = float(BzTime::getCurrent() - BzTime::getStartTime());
+  snprintf(reply, MessageLen, "%s.", BzTime::printTime(rawTime).c_str());
   sendMessage(ServerPlayer, t, reply);
   return true;
 }
@@ -1145,7 +1145,7 @@ bool GameOverCommand::operator() (const char *,
   gameOver = true;
   if (clOptions->timeManualStart) {
     countdownActive = false;
-    countdownPauseStart = TimeKeeper::getNullTime();
+    countdownPauseStart = BzTime::getNullTime();
     clOptions->countdownPaused = false;
   }
 

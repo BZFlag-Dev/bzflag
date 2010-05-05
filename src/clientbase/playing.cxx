@@ -387,7 +387,7 @@ void getAFastToken(void)
       cURLManager::perform();
       if (startupInfo.token[0] != '\0')
 	break;
-      TimeKeeper::sleep(0.25f);
+      BzTime::sleep(0.25f);
     }
     delete serverList;
   }
@@ -1727,7 +1727,7 @@ void handlePlayerUpdate(uint16_t code, void *msg)
     // get killed message).  status is already !Alive so make player
     // alive again, then call setExplode to kill him.
     tank->setStatus(newStatus | short(PlayerState::Alive));
-    tank->setExplode(TimeKeeper::getTick());
+    tank->setExplode(BzTime::getTick());
     // ROBOT -- play explosion now
   }
 
@@ -1869,7 +1869,7 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
           std::string prefix = "recv: ";
 	  if (i == 0)
 	    prefix += TextUtils::format("%f ",
-	      TimeKeeper::getCurrent().getSeconds());
+	      BzTime::getCurrent().getSeconds());
           for (int lvl = 0; lvl < msgList[i].level; lvl++) {
             prefix += "  ";
           }

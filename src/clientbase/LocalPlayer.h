@@ -22,7 +22,7 @@
 
 // common headers
 #include "Obstacle.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "vectors.h"
 
 // local headers
@@ -159,8 +159,8 @@ private:
 private:
   Location	location;
   FiringStatus	firingStatus;
-  TimeKeeper	bounceTime;
-  TimeKeeper	agilityTime;
+  BzTime	bounceTime;
+  BzTime	agilityTime;
   float		flagShakingTime;
   int		flagShakingWins;
   fvec3		flagAntidotePos;
@@ -187,8 +187,8 @@ private:
   bool		jumpPressed;
   int		deathPhyDrv;	// physics driver that caused death
   std::vector<const Obstacle*> insideBuildings;
-  TimeKeeper	stuckStartTime;
-  TimeKeeper	lastCollisionTime;
+  BzTime	stuckStartTime;
+  BzTime	lastCollisionTime;
   bool          hitWall; // If doUpdateMotion hit a wall, this is true.
 };
 

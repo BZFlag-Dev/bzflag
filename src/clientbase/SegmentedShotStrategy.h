@@ -21,7 +21,7 @@
 
 /* common interface headers */
 #include "SceneDatabase.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "LaserSceneNode.h"
 #include "Extents.h"
 

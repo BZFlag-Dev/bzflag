@@ -28,7 +28,7 @@
 /* common interface headers */
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "vectors.h"
 
 #include "Singleton.h"
@@ -49,7 +49,7 @@ public:
   virtual void setColor(const fvec4& rgba);
   virtual void setStartTime();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer &) = 0;
 
 protected:
@@ -57,8 +57,8 @@ protected:
   fvec3 rotation;
   fvec3 velocity;
   fvec4 color;
-  TimeKeeper startTime;
-  TimeKeeper lastTime;
+  BzTime startTime;
+  BzTime lastTime;
   float  lifeTime;
   float  deltaTime;
   float  age;
@@ -72,7 +72,7 @@ public:
   StdSpawnEffect();
   virtual ~StdSpawnEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 protected:
@@ -84,7 +84,7 @@ protected:
 class ConeSpawnEffect : public StdSpawnEffect
 {
 public:
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 };
 
@@ -93,7 +93,7 @@ class RingSpawnEffect : public StdSpawnEffect
 public:
   RingSpawnEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 private:
@@ -110,7 +110,7 @@ public:
   StdShotEffect();
   virtual ~StdShotEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 protected:
@@ -124,7 +124,7 @@ class FlashShotEffect : public StdShotEffect
 public:
   FlashShotEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 private:
@@ -137,7 +137,7 @@ public:
   StdDeathEffect();
   virtual ~StdDeathEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 protected:
@@ -152,7 +152,7 @@ public:
   StdLandEffect();
   virtual ~StdLandEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 protected:
@@ -167,7 +167,7 @@ public:
   StdGMPuffEffect();
   virtual ~StdGMPuffEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 protected:
   int	  texture;
@@ -181,7 +181,7 @@ public:
   StdRicoEffect();
   virtual ~StdRicoEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 protected:
   int	  texture;
@@ -195,7 +195,7 @@ public:
   StdShotTeleportEffect(float length, const fvec4* clipPlane);
   virtual ~StdShotTeleportEffect();
 
-  virtual bool update(const TimeKeeper time);
+  virtual bool update(const BzTime time);
   virtual void draw(const SceneRenderer& sr);
 
 protected:

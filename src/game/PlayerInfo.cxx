@@ -12,7 +12,7 @@
 
 /* interface header */
 #include "PlayerInfo.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /* system implementation headers */
 #include <errno.h>
@@ -24,7 +24,7 @@
 #include "TextUtils.h"
 
 WordFilter PlayerInfo::serverSpoofingFilter;
-TimeKeeper PlayerInfo::now = TimeKeeper::getCurrent();
+BzTime PlayerInfo::now = BzTime::getCurrent();
 
 bool PlayerInfo::callSignFiltering = false;
 WordFilter *PlayerInfo::filterData = NULL;
@@ -34,7 +34,7 @@ bool PlayerInfo::simpleFiltering = true;
 PlayerInfo::PlayerInfo(int _playerIndex) :
   state(PlayerInLimbo), playerIndex(_playerIndex), enterProcessed(false), completelyAdded(false),
   type(TankPlayer), updates(AllUpdates), team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now),
-  paused(false), pausedSince(TimeKeeper::getNullTime()), autopilot(false),
+  paused(false), pausedSince(BzTime::getNullTime()), autopilot(false),
   tracker(0)
 {
   notResponding = false;
@@ -42,7 +42,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
   memset(referrer, 0, ReferrerLen);
-  allowChangeTime = TimeKeeper::getNullTime();
+  allowChangeTime = BzTime::getNullTime();
   jumpStartPos = 0.0f;
   allowedHeightAtJumpStart = -1.0f;
 }
@@ -480,7 +480,7 @@ unsigned short int PlayerInfo::trackerID()
   return tracker;
 }
 
-void PlayerInfo::setCurrentTime(TimeKeeper tm)
+void PlayerInfo::setCurrentTime(BzTime tm)
 {
   now = tm;
 }

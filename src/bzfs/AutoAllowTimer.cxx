@@ -14,7 +14,7 @@
 #include "AutoAllowTimer.h"
 
 // common-interface headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "StateDatabase.h"
 #include "PlayerInfo.h"
 #include "bzfsMessages.h"
@@ -36,7 +36,7 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
     return;
 
   float autoallowtime = BZDB.eval(BZDBNAMES.AUTOALLOWTIME);
-  TimeKeeper now = TimeKeeper::getCurrent();
+  BzTime now = BzTime::getCurrent();
 
   for (int i=0; i < curMaxPlayers; i++) {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
@@ -44,7 +44,7 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
       continue;
     }
 
-    if (player->player.allowChangeTime - TimeKeeper::getNullTime() == 0) {
+    if (player->player.allowChangeTime - BzTime::getNullTime() == 0) {
       continue;
     }
 

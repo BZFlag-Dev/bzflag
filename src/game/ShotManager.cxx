@@ -12,7 +12,7 @@
 
 // interface header
 #include "ShotManager.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 //
 // ShotManager
@@ -64,7 +64,7 @@ ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/)
   if (info) {
     startTime = info->timeSent;
   } else {
-    startTime = TimeKeeper::getCurrent().getSeconds();
+    startTime = BzTime::getCurrent().getSeconds();
   }
 
   // team = LastTeam;

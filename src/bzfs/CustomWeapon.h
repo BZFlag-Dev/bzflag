@@ -22,7 +22,7 @@
 
 /* common interface headers */
 #include "Flag.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /* local interface headers */
 #include "WorldInfo.h"
@@ -57,7 +57,7 @@ protected:
   int eventTeam;
   bz_eEventType triggerType;
 
-  static TimeKeeper sync;
+  static BzTime sync;
 
   const MeshObstacle* mesh;
   int posVertex;

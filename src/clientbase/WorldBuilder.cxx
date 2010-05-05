@@ -46,7 +46,7 @@ WorldBuilder::~WorldBuilder()
 
 void* WorldBuilder::unpack(void* buf)
 {
-  TimeKeeper start = TimeKeeper::getCurrent();
+  BzTime start = BzTime::getCurrent();
 
   // unpack world database from network transfer
   // read style header
@@ -215,7 +215,7 @@ void* WorldBuilder::unpack(void* buf)
   //       and would cause a double loading if we did it now.
 
   if (debugLevel >= 3) {
-    TimeKeeper end = TimeKeeper::getCurrent();
+    BzTime end = BzTime::getCurrent();
     const float elapsed = (float)(end - start);
     logDebugMessage(0,"WorldBuilder::unpack() processed in %f seconds.\n", elapsed);
   }

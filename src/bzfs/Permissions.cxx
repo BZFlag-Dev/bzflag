@@ -43,7 +43,7 @@ uint8_t GetPlayerProperties(bool registered, bool verified, bool admin) {
 }
 
 PlayerAccessInfo::PlayerAccessInfo()
-  : verified(false), loginTime(TimeKeeper::getCurrent()), loginAttempts (0),
+  : verified(false), loginTime(BzTime::getCurrent()), loginAttempts (0),
     serverop(false), passwordAttempts(0)
 {
   groups.push_back("EVERYONE");

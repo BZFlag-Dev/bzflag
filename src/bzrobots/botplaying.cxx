@@ -54,7 +54,7 @@
 #include "ServerList.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "WordFilter.h"
 #include "bz_md5.h"
 #include "vectors.h"
@@ -516,7 +516,7 @@ void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
     }
   }
   else if (victimPlayer) {
-    victimPlayer->setExplode(TimeKeeper::getTick());
+    victimPlayer->setExplode(BzTime::getTick());
   }
 
   if (killerLocal) {
@@ -817,7 +817,7 @@ void handleTeleport(void *msg)
   Player *tank = lookupPlayer(id);
   if (tank) {
     if (tank != myTank) {
-      tank->setTeleport(TimeKeeper::getTick(), short(srcID), short(dstID));
+      tank->setTeleport(BzTime::getTick(), short(srcID), short(dstID));
       /*const MeshFace* linkDst = linkManager.getLinkDstFace(dstID);
       const MeshFace* linkSrc = linkManager.getLinkSrcFace(srcID);
       if (linkDst && linkSrc) {
@@ -917,11 +917,11 @@ void handleGMUpdate(void *msg)
 
   if (targetTank && (targetTank == myTank) && (myTank->isAlive()))
   {
-    static TimeKeeper lastLockMsg;
-    if (TimeKeeper::getTick() - lastLockMsg > 0.75)
+    static BzTime lastLockMsg;
+    if (BzTime::getTick() - lastLockMsg > 0.75)
     {
       //SOUNDSYSTEM.play(SFX_LOCK, shot.pos, false, false);
-      lastLockMsg = TimeKeeper::getTick();
+      lastLockMsg = BzTime::getTick();
       addMessage(tank, "locked on me");
     }
   }
@@ -1769,19 +1769,19 @@ bool checkForCompleteDownloads(void)
 void doEnergySaver(void )
 {
   // always cap out at 200 fps unless a limit is set.
-  static TimeKeeper lastTime = TimeKeeper::getCurrent();
+  static BzTime lastTime = BzTime::getCurrent();
   float fpsLimit = 200;
 
-  const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
+  const float elapsed = float(BzTime::getCurrent() - lastTime);
   if (elapsed > 0.0f) {
     const float period = (1.0f / fpsLimit);
     const float remaining = (period - elapsed);
     if (remaining > 0.0f) {
-      TimeKeeper::sleep(remaining);
+      BzTime::sleep(remaining);
     }
   }
 
-  lastTime = TimeKeeper::getCurrent();
+  lastTime = BzTime::getCurrent();
 }
 
 
@@ -1792,7 +1792,7 @@ void doEnergySaver(void )
 static void playingLoop()
 {
   // start timing
-  TimeKeeper::setTick();
+  BzTime::setTick();
 
   worldDownLoader = new WorldDownLoader;
 
@@ -1806,9 +1806,9 @@ static void playingLoop()
     GameTime::setStepTime();
 
     // get delta time
-    TimeKeeper prevTime = TimeKeeper::getTick();
-    TimeKeeper::setTick();
-    const float dt = float(TimeKeeper::getTick() - prevTime);
+    BzTime prevTime = BzTime::getTick();
+    BzTime::setTick();
+    const float dt = float(BzTime::getTick() - prevTime);
 
     doMessages();    // handle incoming packets
 

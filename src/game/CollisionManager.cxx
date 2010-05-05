@@ -29,7 +29,7 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "BaseBuilding.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 /* static variables */
@@ -296,7 +296,7 @@ void CollisionManager::load()
 {
   int i;
 
-  TimeKeeper startTime = TimeKeeper::getCurrent();
+  BzTime startTime = BzTime::getCurrent();
 
   // get the lists
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
@@ -415,7 +415,7 @@ void CollisionManager::load()
   logDebugMessage(2,"ColDet Octree total elements = %i\n", totalElements);
 
   // print the timing info
-  float elapsed = (float)(TimeKeeper::getCurrent() - startTime);
+  float elapsed = (float)(BzTime::getCurrent() - startTime);
   logDebugMessage(2,"Collision Octree processed in %.3f seconds.\n", elapsed);
 
 

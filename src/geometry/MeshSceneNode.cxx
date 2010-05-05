@@ -25,7 +25,7 @@
 #include "vectors.h"
 #include "Extents.h"
 #include "Intersect.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 #include "MeshFace.h"
 #include "MeshObstacle.h"

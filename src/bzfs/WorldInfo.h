@@ -78,7 +78,7 @@ public:
   void addWeapon(const FlagType *type, const fvec3& origin,
                  float direction, float tilt, TeamColor teamColor,
                  float initdelay, const std::vector<float> &delay,
-                 TimeKeeper &sync, bool fromMesh = false);
+                 BzTime &sync, bool fromMesh = false);
   void addWaterLevel (float level, const BzMaterial* matref);
 
   // for WorldGenerators

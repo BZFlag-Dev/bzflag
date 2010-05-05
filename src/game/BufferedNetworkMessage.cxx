@@ -455,7 +455,7 @@ void BufferedNetworkMessageManager::queueMessage (BufferedNetworkMessage *msg)
       msg->code, msg->data);
     logDebugMessage(5, "%s to %s at %f\n", msgList[0].text.c_str(),
       msg->recipient ? msg->recipient->getTargetIP() : "all",
-      TimeKeeper::getCurrent().getSeconds());
+      BzTime::getCurrent().getSeconds());
   }
 #endif
   outgoingQueue.push_back(msg);

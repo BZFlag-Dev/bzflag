@@ -28,7 +28,7 @@ void VotingArbiter::updatePollers(void)
 {
   while (!_pollers.empty()) {
     poller_t& p = _pollers.front();
-    if ((TimeKeeper::getCurrent() - p.lastRequest) > _voteRepeatTime) {
+    if ((BzTime::getCurrent() - p.lastRequest) > _voteRepeatTime) {
       // remove pollers that expired their repoll timeout
       _pollers.pop_front();
     } else {
@@ -57,7 +57,7 @@ bool VotingArbiter::forgetPoll(void)
     delete _votingBooth;
     _votingBooth = NULL;
   }
-  _startTime = TimeKeeper::getNullTime();
+  _startTime = BzTime::getNullTime();
   _pollee = "nobody";
   _polleeIP = "";
   _action = "";
@@ -91,7 +91,7 @@ bool VotingArbiter::poll(const std::string &player, const std::string &playerReq
 
   // add this poller to the end list
   p.name = playerRequesting;
-  p.lastRequest = TimeKeeper::getCurrent();
+  p.lastRequest = BzTime::getCurrent();
   _pollers.push_back(p);
 
   // create the booth to record votes
@@ -107,7 +107,7 @@ bool VotingArbiter::poll(const std::string &player, const std::string &playerReq
   _pollRequestor = playerRequesting;
 
   // set timers
-  _startTime = TimeKeeper::getCurrent();
+  _startTime = BzTime::getCurrent();
 
   return true;
 }
@@ -144,7 +144,7 @@ bool VotingArbiter::closePoll(void)
     return true;
   }
   // set starting time to exactly current time minus necessary vote time
-  _startTime = TimeKeeper::getCurrent();
+  _startTime = BzTime::getCurrent();
   _startTime += -(float)(_voteTime);
 
   return true;
@@ -320,7 +320,7 @@ unsigned short int VotingArbiter::timeRemaining(void) const
     return 0;
   }
 
-  float remaining = _voteTime - (float)(TimeKeeper::getCurrent() - _startTime);
+  float remaining = _voteTime - (float)(BzTime::getCurrent() - _startTime);
   if (remaining < 0.0f) {
     return 0;
   }

@@ -23,7 +23,7 @@
 #include <iostream>
 
 /* common interface headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "vectors.h"
 
 
@@ -92,7 +92,7 @@ class DynamicColor {
     fvec4       varNewColor;
     bool        varOldStates;
     bool        varNewStates;
-    TimeKeeper  varLastChange;
+    BzTime  varLastChange;
 
     struct ColorState {
       ColorState() {

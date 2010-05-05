@@ -20,7 +20,7 @@
 
 // common headers
 #include "global.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Address.h"
 #include "Flag.h"
 #include "PlayerState.h"
@@ -78,7 +78,7 @@ public:
   float		getReloadTime() const;
 
   const fvec3&	getApparentVelocity() const;
-  TimeKeeper	getLastUpdateTime() const;
+  BzTime	getLastUpdateTime() const;
 
   inline bool hasWings() const {
     return getFlag() && (getFlag() == Flags::Wings);
@@ -95,8 +95,8 @@ public:
   short	getLinkSrcID() const;
   short	getLinkDstID() const;
   float	getTeleporterProximity() const;
-  const TimeKeeper&	getExplodeTime() const;
-  const TimeKeeper&	getTeleportTime() const;
+  const BzTime&	getExplodeTime() const;
+  const BzTime&	getTeleportTime() const;
 
   // shots
   int		getMaxShots() const;
@@ -183,10 +183,10 @@ public:
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void	  setHandicap(float handicap);
   void		setStatus(short);
-  void		setExplode(const TimeKeeper&);
+  void		setExplode(const BzTime&);
   void		setAllow(unsigned char _allow);
   unsigned char		getAllow();
-  void		setTeleport(const TimeKeeper&, short src, short dst);
+  void		setTeleport(const BzTime&, short src, short dst);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
 
@@ -236,8 +236,8 @@ protected:
 
   std::vector<ShotPath*>  shots;
   float			  handicap;
-  TimeKeeper		  jamTime;
-  TimeKeeper		  lastLanding;
+  BzTime		  jamTime;
+  BzTime		  lastLanding;
 
 private:
   // return true if the shot had to be terminated or false if it
@@ -289,7 +289,7 @@ private:
   static int		tankTexture;
   static int		tankOverideTexture;
   TeamColor		lastVisualTeam;
-  TimeKeeper		lastTrackDraw;
+  BzTime		lastTrackDraw;
 
   // permanent data
   TeamColor		team;			// my team
@@ -308,9 +308,9 @@ private:
   float			alpha;			// current tank translucency
   float			alphaRate;		// current tank translucency
   float			alphaTarget;		// current tank translucency
-  TimeKeeper		spawnTime;		// time I started spawning
-  TimeKeeper		explodeTime;		// time I started exploding
-  TimeKeeper		teleportTime;		// time I started teleporting
+  BzTime		spawnTime;		// time I started spawning
+  BzTime		explodeTime;		// time I started exploding
+  BzTime		teleportTime;		// time I started teleporting
   short			teleLinkSrcID;		// teleporter I entered
   short			teleLinkDstID;		// teleporter I exited
   float			teleporterProximity;	// how close to a teleporter
@@ -340,7 +340,7 @@ private:
   float			relativeAngVel;		// relative angular velocity
 
   // dead reckoning stuff
-  TimeKeeper inputTime;		// time of input
+  BzTime inputTime;		// time of input
   double     updateTimeStamp;	// time of  the last update
   int	inputStatus;		// tank status
   fvec3	inputPos;		// tank position
@@ -464,7 +464,7 @@ inline float		Player::getUserAngVel() const
   return state.userAngVel;
 }
 
-inline TimeKeeper	Player::getLastUpdateTime() const
+inline BzTime	Player::getLastUpdateTime() const
 {
   return state.lastUpdateTime;
 }
@@ -514,12 +514,12 @@ inline short		Player::getScore() const
   return wins - losses;
 }
 
-inline const TimeKeeper	&Player::getExplodeTime() const
+inline const BzTime	&Player::getExplodeTime() const
 {
   return explodeTime;
 }
 
-inline const TimeKeeper	&Player::getTeleportTime() const
+inline const BzTime	&Player::getTeleportTime() const
 {
   return teleportTime;
 }
@@ -608,7 +608,7 @@ inline bool		Player::canMove() const
 inline bool		Player::canJump() const
 {
   const float reJumpTime = BZDB.eval(BZDBNAMES.REJUMPTIME);
-  if ((TimeKeeper::getCurrent() - lastLanding) < reJumpTime) {
+  if ((BzTime::getCurrent() - lastLanding) < reJumpTime) {
     return false;
   }
   return (allow & AllowJump) != 0;
@@ -616,7 +616,7 @@ inline bool		Player::canJump() const
 
 inline void		Player::land()
 {
-  lastLanding = TimeKeeper::getCurrent();
+  lastLanding = BzTime::getCurrent();
 }
 
 inline bool		Player::canTurnLeft() const

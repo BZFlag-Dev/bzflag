@@ -119,7 +119,7 @@ void FlagInfo::addFlag()
   flag.flightTime        = 0.0f;
   flag.flightEnd         = flightTime;
   flag.initialVelocity   = -0.5f * gravity * flightTime;
-  dropDone               = TimeKeeper::getCurrent();
+  dropDone               = BzTime::getCurrent();
   dropDone               += flightTime;
 
   if (flag.type == Flags::Null)    // pick a random flag
@@ -190,7 +190,7 @@ void FlagInfo::dropFlag(const fvec3& pos, const fvec3& landingPos, bool vanish)
   const float downTime       = sqrtf(-2.0f * (maxAltitude - pos.z) / gravity);
   const float flightTime     = upTime + downTime;
 
-  dropDone = TimeKeeper::getCurrent();
+  dropDone = BzTime::getCurrent();
   dropDone += flightTime;
   flag.flightTime      = 0.0f;
   flag.flightEnd       = flightTime;
@@ -243,7 +243,7 @@ int FlagInfo::getIndex() const
   return flagIndex;
 }
 
-float FlagInfo::getNextDrop(TimeKeeper &tm)
+float FlagInfo::getNextDrop(BzTime &tm)
 {
   // find timeout when next flag would hit ground
   float waitTime = 3.0f;
@@ -260,7 +260,7 @@ float FlagInfo::getNextDrop(TimeKeeper &tm)
   return waitTime;
 }
 
-bool FlagInfo::landing(const TimeKeeper &tm)
+bool FlagInfo::landing(const BzTime &tm)
 {
   if (numFlagsInAir <= 0)
     return false;

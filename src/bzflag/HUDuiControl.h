@@ -31,7 +31,7 @@
 /* common headers */
 #include "BzfEvent.h"
 #include "OpenGLGState.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 class HUDuiControl;
 class HUDNavigationQueue;
@@ -87,7 +87,7 @@ class HUDuiControl : public HUDuiElement {
     static OpenGLGState* gstate;
     static int	  arrow;
     static int		arrowFrame;
-    static TimeKeeper	lastTime;
+    static BzTime	lastTime;
     static int		totalCount;
 
     bool nested;

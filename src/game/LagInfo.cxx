@@ -173,7 +173,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 }
 
 
-void LagInfo::updateLag(TimeKeeper const& timestamp, bool ooo) {
+void LagInfo::updateLag(BzTime const& timestamp, bool ooo) {
   if (!info->isPlaying())
     return;
   if (ooo) {

@@ -31,7 +31,7 @@
 #include <string>
 
 /* common interface headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 class PlayerAccessInfo
@@ -168,7 +168,7 @@ public:
 
 private:
   bool				verified;
-  TimeKeeper			loginTime;
+  BzTime			loginTime;
   int				loginAttempts;
 
   /** server operator that has provided the server password */

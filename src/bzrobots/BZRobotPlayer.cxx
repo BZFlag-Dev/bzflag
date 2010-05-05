@@ -150,7 +150,7 @@ void BZRobotPlayer::explodeTank()
 {
   LocalPlayer::explodeTank();
   BZRobots::DeathEvent *e = new BZRobots::DeathEvent();
-  e->setTime(TimeKeeper::getCurrent().getSeconds());
+  e->setTime(BzTime::getCurrent().getSeconds());
   LOCK_PLAYER
   clearEventQueue(tsScanQueue);
   clearEventQueue(tsEventQueue);
@@ -163,7 +163,7 @@ void BZRobotPlayer::explodeTank()
 void BZRobotPlayer::restart(const fvec3& pos, float azimuth)
 {
   BZRobots::SpawnEvent *e = new BZRobots::SpawnEvent();
-  e->setTime(TimeKeeper::getCurrent().getSeconds());
+  e->setTime(BzTime::getCurrent().getSeconds());
   LOCK_PLAYER
   tsEventQueue.push_back(e);
   tsTankSize = getDimensions();
@@ -203,7 +203,7 @@ void BZRobotPlayer::update(float inputDT)
   if (hasHitWall()) {
     if (!didHitWall) {
       BZRobots::HitWallEvent *hitWallEvent = new BZRobots::HitWallEvent(0.0f); // Get real angle to wall?
-      hitWallEvent->setTime(TimeKeeper::getCurrent().getSeconds());
+      hitWallEvent->setTime(BzTime::getCurrent().getSeconds());
       tsEventQueue.push_back(hitWallEvent);
       didHitWall = true;
     }
@@ -241,7 +241,7 @@ void BZRobotPlayer::update(float inputDT)
 	  rpp.x, rpp.y, rpp.z,
 	  remotePlayers[i]->getAngle(),
 	  remotePlayerVelocity);
-        sre->setTime(TimeKeeper::getCurrent().getSeconds());
+        sre->setTime(BzTime::getCurrent().getSeconds());
 	tsScanQueue.push_back(sre);
   }
   /*
@@ -352,7 +352,7 @@ void BZRobotPlayer::shotFired(const ShotPath *shot, const Player *shooter)
   if(robotName != shooterName) {
     // TODO: Create a Bullet based on the shot and place it in the event
     BZRobots::BulletFiredEvent *bfe = new BZRobots::BulletFiredEvent(NULL);
-	bfe->setTime(TimeKeeper::getCurrent().getSeconds());
+	bfe->setTime(BzTime::getCurrent().getSeconds());
 	tsEventQueue.push_back(bfe);
   }
   UNLOCK_PLAYER
@@ -369,18 +369,18 @@ void BZRobotPlayer::shotKilled(const ShotPath *shot, const Player *killer, const
   if(robotName == killerName) {
     // TODO: Create a Bullet based on the shot and place it in the event
 	BZRobots::BulletHitEvent *bhe = new BZRobots::BulletHitEvent(victimName,NULL);
-	bhe->setTime(TimeKeeper::getCurrent().getSeconds());
+	bhe->setTime(BzTime::getCurrent().getSeconds());
 	tsEventQueue.push_back(bhe);
   }
   if(robotName == victimName) {
     // TODO: Create a Bullet based on the shot and place it in the event
     BZRobots::HitByBulletEvent *hbbe = new BZRobots::HitByBulletEvent(0.0f,NULL);
-    hbbe->setTime(TimeKeeper::getCurrent().getSeconds());
+    hbbe->setTime(BzTime::getCurrent().getSeconds());
     tsEventQueue.push_back(hbbe);
   }
   if(robotName != victimName) {
     BZRobots::RobotDeathEvent *rde = new BZRobots::RobotDeathEvent(victimName);
-    rde->setTime(TimeKeeper::getCurrent().getSeconds());
+    rde->setTime(BzTime::getCurrent().getSeconds());
     tsEventQueue.push_back(rde);
   }
   UNLOCK_PLAYER
@@ -479,11 +479,11 @@ void BZRobotPlayer::botExecute()
     inEvents = false;
   }
 
-  double thisExec = TimeKeeper::getCurrent().getSeconds();
+  double thisExec = BzTime::getCurrent().getSeconds();
   double diffExec = (thisExec - lastExec);
   if(diffExec < MIN_EXEC_TIME) {
-    TimeKeeper::sleep(MIN_EXEC_TIME - diffExec);
-    lastExec = TimeKeeper::getCurrent().getSeconds();
+    BzTime::sleep(MIN_EXEC_TIME - diffExec);
+    lastExec = BzTime::getCurrent().getSeconds();
   } else {
     lastExec = thisExec;
   }
@@ -507,7 +507,7 @@ void BZRobotPlayer::botExecute()
 		0.0f,
 		0.0f,
 		1,
-		TimeKeeper::getCurrent().getSeconds(),
+		BzTime::getCurrent().getSeconds(),
 		tsTurnRemaining * 180.0f/M_PI,
 		tsTurnRemaining,
 		tsCurrentSpeed,
@@ -744,7 +744,7 @@ std::list<BZRobots::Event> BZRobotPlayer::botGetStatusEvents()
 
 double BZRobotPlayer::botGetTime()
 {
-  return TimeKeeper::getCurrent().getSeconds();
+  return BzTime::getCurrent().getSeconds();
 }
 
 double BZRobotPlayer::botGetTurnRemaining()

@@ -25,7 +25,7 @@
 #endif
 
 // bzflag common headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "StateDatabase.h"
 
 // local headers
@@ -66,7 +66,7 @@ void ExportInformation::setInformation(const std::string key, const std::string 
 
 /* Each program to which we export should have a member function here.
  * The member function will be called every frame.
- * It should keep a static TimeKeeper around and export no more frequently
+ * It should keep a static BzTime around and export no more frequently
  * than is necessary, especially if exporting is expensive.
  * It should serialize and transmit whatever data the author feels is necessary.
  * Please be considerate of the privacy values. */
@@ -86,11 +86,11 @@ void ExportInformation::sendPulse()
 void ExportInformation::sendXfirePulse()
 {
   // maximum of once per minute
-  static TimeKeeper xftk = TimeKeeper::getCurrent();
-  if ((TimeKeeper::getCurrent() - xftk) < 60)
+  static BzTime xftk = BzTime::getCurrent();
+  if ((BzTime::getCurrent() - xftk) < 60)
     return;
   else
-    xftk = TimeKeeper::getCurrent();
+    xftk = BzTime::getCurrent();
 
   // make sure we're enabled
   if ((BZDB.evalInt("xfireCommunicationLevel") <= 0)
@@ -127,11 +127,11 @@ void ExportInformation::sendTextOutputPulse()
   if (pulseTime < 1) return;
 
   // no more frequently than specified
-  static TimeKeeper xftk = TimeKeeper::getCurrent();
-  if ((TimeKeeper::getCurrent() - xftk) < pulseTime)
+  static BzTime xftk = BzTime::getCurrent();
+  if ((BzTime::getCurrent() - xftk) < pulseTime)
     return;
   else
-    xftk = TimeKeeper::getCurrent();
+    xftk = BzTime::getCurrent();
 
   // must be connected
   if (dataMap.find("Server") == dataMap.end())

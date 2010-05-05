@@ -52,7 +52,7 @@
 #include "WorldWeapons.h"
 
 
-TimeKeeper synct=TimeKeeper::getCurrent();
+BzTime synct=BzTime::getCurrent();
 
 std::map<std::string, std::vector<bz_ClipFiledNotifier*> > clipFieldMap;
 
@@ -2010,7 +2010,7 @@ BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float
 // time API
 BZF_API double bz_getCurrentTime(void)
 {
-  return TimeKeeper::getCurrent().getSeconds();
+  return BzTime::getCurrent().getSeconds();
 }
 
 //-------------------------------------------------------------------------
@@ -2057,12 +2057,12 @@ BZF_API void bz_getLocaltime(bz_Time *ts)
   if(!ts)
     return ;
 
-  TimeKeeper::localTimeDOW(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
+  BzTime::localTimeDOW(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
 }
 
 BZF_API void bz_getUTCtime ( bz_Time *ts )
 {
-  TimeKeeper::UTCTime(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
+  BzTime::UTCTime(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
 }
 
 
@@ -2599,7 +2599,7 @@ BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int it
   if (item > bz_getBanListSize(listType))
     return 0.0;
 
-  TimeKeeper end = TimeKeeper::getCurrent();
+  BzTime end = BzTime::getCurrent();
 
   switch(listType)
   {
@@ -2620,7 +2620,7 @@ BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int it
   if (end.getSeconds() > 30000000.0) // it's basicly forever
     return -1.0;
 
-  return end.getSeconds() - TimeKeeper::getCurrent().getSeconds();
+  return end.getSeconds() - BzTime::getCurrent().getSeconds();
 }
 
 
@@ -4626,7 +4626,7 @@ BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
   if(clOptions->timeManualStart)
   {
     countdownActive=false;
-    countdownPauseStart=TimeKeeper::getNullTime();
+    countdownPauseStart=BzTime::getNullTime();
     clOptions->countdownPaused=false;
   }
 }
@@ -5330,7 +5330,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       state.azimuth = currentState.rot;
       memcpy(state.velocity,currentState.vec,sizeof(float)*3);
       memcpy(state.pos,currentState.pos,sizeof(float)*3);
-      updatePlayerState(player, state, TimeKeeper(now), false);
+      updatePlayerState(player, state, BzTime(now), false);
 
       lastUpdate = currentState;
     }

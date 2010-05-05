@@ -21,7 +21,7 @@
 /* common implementation headers */
 #include "global.h"
 #include "Protocol.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "bzfio.h"
 
 // incessint rebuilding for current versioning
@@ -103,8 +103,8 @@ bool			PingPacket::waitForReply(int fd,
   // indicated source then ignore it and go back to waiting.  if the
   // incoming message is not a ping then ignore it and go back to waiting.
   float blockTime = 0.0001f * (float)millisecondsToBlock;
-  TimeKeeper startTime = TimeKeeper::getCurrent();
-  TimeKeeper currentTime = startTime;
+  BzTime startTime = BzTime::getCurrent();
+  BzTime currentTime = startTime;
   do {
     // prepare timeout
     const float timeLeft = float(blockTime - (currentTime - startTime));
@@ -126,7 +126,7 @@ bool			PingPacket::waitForReply(int fd,
       if (sourceAddr == from)
 	return true;
 
-    currentTime = TimeKeeper::getCurrent();
+    currentTime = BzTime::getCurrent();
   } while (currentTime - startTime < blockTime);
   return false;
 }

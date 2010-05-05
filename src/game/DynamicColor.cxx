@@ -26,7 +26,7 @@
 #include "GameTime.h"
 #include "Pack.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "ParseColor.h"
 #include "StateDatabase.h"
 
@@ -246,7 +246,7 @@ DynamicColor::DynamicColor()
   varNewColor = white;
   varOldStates = false;
   varNewStates = false;
-  varLastChange = TimeKeeper::getSunGenesisTime();
+  varLastChange = BzTime::getSunGenesisTime();
 
   statesDelay = 0.0f;
 }
@@ -361,7 +361,7 @@ void DynamicColor::updateVariable()
 {
   // setup the basics
   varTransition = true;
-  varLastChange = TimeKeeper::getTick();
+  varLastChange = BzTime::getTick();
   varOldColor = color;
   varOldStates = varNewStates;
 
@@ -456,7 +456,7 @@ void DynamicColor::colorByVariable(double t)
   }
 
   // transitioning
-  const float diffTime = (float)(TimeKeeper::getTick() - varLastChange);
+  const float diffTime = (float)(BzTime::getTick() - varLastChange);
   if (diffTime < varTimeTmp) {
     const float newScale = (varTimeTmp > 0.0f) ?
                            (diffTime / varTimeTmp) : 1.0f;

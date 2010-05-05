@@ -468,7 +468,7 @@ void BZAdminClient::outputServerList() const {
     }
     serverList.checkEchos(&startupInfo);
     cURLManager::perform();
-    TimeKeeper::sleep(1.0);
+    BzTime::sleep(1.0);
   }
   // what is your final answer?
   serverList.checkEchos(&startupInfo);

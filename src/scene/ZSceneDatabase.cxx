@@ -26,7 +26,7 @@
 #include "SceneRenderer.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Intersect.h"
 #include "Extents.h"
 
@@ -207,7 +207,7 @@ void ZSceneDatabase::makeCuller()
   delete octree;
   octree = new Octree;
 
-  TimeKeeper startTime = TimeKeeper::getCurrent();
+  BzTime startTime = BzTime::getCurrent();
 
   // sorted from lowest to highest
   qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
@@ -215,7 +215,7 @@ void ZSceneDatabase::makeCuller()
   // make the tree
   octree->addNodes (staticList, staticCount, cullDepth, cullElements);
 
-  float elapsed = (float)(TimeKeeper::getCurrent() - startTime);
+  float elapsed = (float)(BzTime::getCurrent() - startTime);
   logDebugMessage(2,"SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
   if (culledList != staticList) {

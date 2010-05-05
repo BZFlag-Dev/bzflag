@@ -97,7 +97,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
 
-  lastLanding = TimeKeeper::getCurrent();
+  lastLanding = BzTime::getCurrent();
 
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
@@ -128,9 +128,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   teleAlpha = 1.0f;
 
   haveIpAddr = false; // no IP address yet
-  lastTrackDraw = TimeKeeper::getCurrent();
+  lastTrackDraw = BzTime::getCurrent();
 
-  spawnTime = TimeKeeper::getCurrent();
+  spawnTime = BzTime::getCurrent();
 
   shotType = StandardShot;
 
@@ -164,7 +164,7 @@ float Player::getNormalizedScore() const
 
 void Player::forceReload(float time)
 {
-  jamTime = TimeKeeper::getCurrent();
+  jamTime = BzTime::getCurrent();
   jamTime+= time;
 }
 
@@ -178,7 +178,7 @@ float Player::getReloadTime() const
   if (numShots <= 0)
     return 0.0f;
 
-  float time = float(jamTime - TimeKeeper::getCurrent());
+  float time = float(jamTime - BzTime::getCurrent());
   if (time > 0.0f)
     return time;
 
@@ -273,7 +273,7 @@ float Player::getMuzzleHeight() const
 void Player::move(const fvec3& _pos, float _azimuth)
 {
   // update the speed of the state
-  TimeKeeper currentTime = TimeKeeper::getCurrent();
+  BzTime currentTime = BzTime::getCurrent();
   if ( state.lastUpdateTime >= 0 ) {
     state.apparentVelocity = (_pos - state.pos) / (currentTime - state.lastUpdateTime);
   }
@@ -424,7 +424,7 @@ void Player::setStatus(short _status)
 }
 
 
-void Player::setExplode(const TimeKeeper& t)
+void Player::setExplode(const BzTime& t)
 {
   if (!isAlive()) {
     return;
@@ -446,7 +446,7 @@ void Player::setExplode(const TimeKeeper& t)
 }
 
 
-void Player::setTeleport(const TimeKeeper& t, short srcID, short dstID)
+void Player::setTeleport(const BzTime& t, short srcID, short dstID)
 {
   if (!isAlive()) {
     return;
@@ -487,7 +487,7 @@ void Player::updateTrackMarks()
   const float minSpeed = 0.1f; // relative speed slop
 
   if (isAlive() && !isFalling() && !isPhantomZoned()) {
-    const float lifeTime = float(TimeKeeper::getCurrent() - lastTrackDraw);
+    const float lifeTime = float(BzTime::getCurrent() - lastTrackDraw);
     if (lifeTime > TrackMarks::updateTime) {
       bool drawMark = true;
       fvec3 markPos;
@@ -513,7 +513,7 @@ void Player::updateTrackMarks()
       if (drawMark) {
 	TrackMarks::addMark(markPos, dimensionsScale.y,
 			    state.azimuth, state.phydrv);
-	lastTrackDraw = TimeKeeper::getCurrent();
+	lastTrackDraw = BzTime::getCurrent();
       }
     }
   }
@@ -1201,7 +1201,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   }
   else if (isExploding() && (state.pos.z > ZERO_TOLERANCE)) {
     // isAlive()
-    float t = float((TimeKeeper::getTick() - explodeTime) /
+    float t = float((BzTime::getTick() - explodeTime) /
 		    BZDB.eval(BZDBNAMES.EXPLODETIME));
     if (t > 1.0f) {
       // FIXME - setStatus(DeadStatus);
@@ -1298,7 +1298,7 @@ void Player::spawnEffect()
     dimensionsRate = fvec3(factor, factor, factor);
     dimensionsScale = fvec3(0.01f, 0.01f, 0.01f);
   }
-  spawnTime = TimeKeeper::getCurrent();
+  spawnTime = BzTime::getCurrent();
   return;
 }
 
@@ -1683,7 +1683,7 @@ const float maxToleratedJitter = 1.0f;
 void Player::setDeadReckoning(double timestamp)
 {
   // set the current state
-  inputTime = TimeKeeper::getTick();
+  inputTime = BzTime::getTick();
 
 #ifdef DEBUG
   double currentServerTime = GameTime::getDRTime();

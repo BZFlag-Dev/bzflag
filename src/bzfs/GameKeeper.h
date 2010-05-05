@@ -27,7 +27,7 @@
 // common headers
 #include "PlayerInfo.h"
 #include "PlayerState.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "bzfsAPI.h"
 #include "vectors.h"
 
@@ -131,7 +131,7 @@ public:
     // To handle player State
     void	   setPlayerState(const fvec3& pos, float azimuth);
     void	   getPlayerState(fvec3& pos, float &azimuth);
-    void	   setPlayerState(PlayerState state, TimeKeeper const& timestamp);
+    void	   setPlayerState(PlayerState state, BzTime const& timestamp);
 
     void	   getPlayerCurrentPosRot(fvec3&, float &rot);
 
@@ -141,7 +141,7 @@ public:
 	// to handle updating current postions;
 
     // When is the player's next GameTime?
-    const TimeKeeper&	getNextGameTime() const;
+    const BzTime&	getNextGameTime() const;
     void		updateNextGameTime();
 
     // To handle shot
@@ -187,7 +187,7 @@ public:
     PlayerAccessInfo  accessInfo;
     // Last known position, vel, etc
     PlayerState       lastState;
-    TimeKeeper	      stateTimeStamp;
+    BzTime	      stateTimeStamp;
 
     ShotType	      effectiveShotType;
 
@@ -196,7 +196,7 @@ public:
     int		      botID;
     std::vector<int>  childBots;
 
-    void doPlayerDR ( TimeKeeper const& time = TimeKeeper::getCurrent() );
+    void doPlayerDR ( BzTime const& time = BzTime::getCurrent() );
     fvec3	      currentPos;
     fvec3	      currentVel;
     float	      currentRot;
@@ -208,11 +208,11 @@ public:
 
     // Pause control
     bool		pauseRequested;
-    TimeKeeper		pauseActiveTime;
+    BzTime		pauseActiveTime;
 
     // GameTime update
     float		gameTimeRate;
-    TimeKeeper		gameTimeNext;
+    BzTime		gameTimeNext;
 
     // FlagHistory
     FlagHistory		flagHistory;
@@ -250,7 +250,7 @@ public:
     std::vector<ShotInfo> shotsInfo;
 
     int			idFlag;
-    TimeKeeper		agilityTime;
+    BzTime		agilityTime;
   };
 
   class Flag {
@@ -331,7 +331,7 @@ inline const std::string& GameKeeper::Player::getBzIdentifier() const
 }
 
 
-inline const TimeKeeper& GameKeeper::Player::getNextGameTime() const
+inline const BzTime& GameKeeper::Player::getNextGameTime() const
 {
   return gameTimeNext;
 }

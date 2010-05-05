@@ -47,7 +47,7 @@ using std::map;
 #include "SceneRenderer.h"
 #include "Team.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "bzfio.h"
 #include "bz_md5.h"
 #include "version.h"
@@ -1618,7 +1618,7 @@ int LuaCallOuts::GetSun(lua_State* L)
 
 int LuaCallOuts::GetTime(lua_State* L)
 {
-  const double nowTime = TimeKeeper::getCurrent().getSeconds();
+  const double nowTime = BzTime::getCurrent().getSeconds();
   LuaDouble::PushDouble(L, nowTime);
   return 1;
 }
@@ -1634,7 +1634,7 @@ int LuaCallOuts::GetGameTime(lua_State* L)
 
 int LuaCallOuts::GetTimer(lua_State* L)
 {
-  const double nowTime = TimeKeeper::getCurrent().getSeconds();
+  const double nowTime = BzTime::getCurrent().getSeconds();
   const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
   lua_pushlightuserdata(L, (void*)millisecs);
   return 1;
@@ -2576,8 +2576,8 @@ int LuaCallOuts::GetPlayerExplodeTime(lua_State* L)
   if (!player->isExploding()) {
     return luaL_pushnil(L);
   }
-  const TimeKeeper current = TimeKeeper::getTick();
-  const TimeKeeper explode = player->getExplodeTime();
+  const BzTime current = BzTime::getTick();
+  const BzTime explode = player->getExplodeTime();
   const float explodeTime = (float)(current - explode);
   if (explodeTime < 0.0f) {
     return luaL_pushnil(L); // should not happen

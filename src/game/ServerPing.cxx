@@ -51,7 +51,7 @@ void ServerPing::start()
 int ServerPing::calcLag()
 {
   if (done()) {
-    TimeKeeper total;
+    BzTime total;
     size_t packetslost = 0;
     for (std::vector<pingdesc>::iterator i = activepings.begin(); i != activepings.end(); ++i) {
       if ((*i).recvtime.getSeconds()) {
@@ -73,7 +73,7 @@ int ServerPing::calcLag()
 
 bool ServerPing::done()
 {
-  return (received == samples || (activepings.size() == samples && (TimeKeeper::getCurrent() - activepings.back().senttime) > timeout));
+  return (received == samples || (activepings.size() == samples && (BzTime::getCurrent() - activepings.back().senttime) > timeout));
 }
 
 void ServerPing::setAddress(const Address& addr, int port)
@@ -95,9 +95,9 @@ void ServerPing::setInterval(double _interval)
 
 void ServerPing::doPings()
 {
-  if (activepings.size() < samples && (activepings.empty() || TimeKeeper::getCurrent() - activepings.back().senttime > interval)) {
+  if (activepings.size() < samples && (activepings.empty() || BzTime::getCurrent() - activepings.back().senttime > interval)) {
     pingdesc pd;
-    pd.senttime = TimeKeeper::getCurrent();
+    pd.senttime = BzTime::getCurrent();
     sendPing((unsigned char)activepings.size());
     activepings.push_back(pd);
   }
@@ -123,7 +123,7 @@ void ServerPing::doPings()
 
       if (code == MsgEchoResponse && len == 1) {
         buf = nboUnpackUInt8(buf, tag);
-        activepings.at(tag).recvtime = TimeKeeper::getCurrent();
+        activepings.at(tag).recvtime = BzTime::getCurrent();
         ++received;
       }
     }

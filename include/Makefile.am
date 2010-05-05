@@ -30,6 +30,7 @@ noinst_HEADERS =			\
 	BzDocket.h			\
 	BzMaterial.h			\
 	BzPNG.h				\
+	BzTime.h			\
 	BzVFS.h				\
 	CacheManager.h			\
 	CallbackList.h			\
@@ -143,7 +144,6 @@ noinst_HEADERS =			\
 	TextureManager.h		\
 	TextureMatrix.h			\
 	TimeBomb.h			\
-	TimeKeeper.h			\
 	TriWallSceneNode.h		\
 	VerticalSync.h			\
 	ViewFrustum.h			\

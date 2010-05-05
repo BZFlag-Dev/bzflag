@@ -15,7 +15,7 @@
 
 /* common implementation headers */
 #include "bzsignal.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /* local implementation headers */
 #include "RobotControl.h"

@@ -22,7 +22,7 @@
 #include "PhysicsDriver.h"
 #include "SceneRenderer.h"
 #include "TextureManager.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 // local implementation headers
 #include "ObstacleMgr.h"
@@ -251,7 +251,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
 
   // setup the color
   fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
-  const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
+  const double diffTime = BzTime::getTick() - BzTime::getStartTime();
   const float period = AutoHunt::getBlinkPeriod(huntLevel);
   const float thresh = AutoHunt::getOuterBlinkThreshold(huntLevel);
   const bool blink = fmodf((float)diffTime, period) < (period * thresh);
@@ -765,7 +765,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   // used for blinking tanks
-  const double diffTime = TimeKeeper::getTick() - TimeKeeper::getStartTime();
+  const double diffTime = BzTime::getTick() - BzTime::getStartTime();
 
   // draw other tanks (and any flags on them)
   // note about flag drawing.  each line segment is drawn twice

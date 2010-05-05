@@ -32,7 +32,7 @@
 #include "BaseBuilding.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "vectors.h"
 #include "version.h"
 
@@ -48,7 +48,7 @@ static void CreateMapInfo(const std::string& type,
   mapInfo.push_back(std::string("  author:  ") + "bzfs <random>");
   mapInfo.push_back(std::string("  version: ") + getAppVersion());
   mapInfo.push_back(std::string("  maptype: ") + type);
-  mapInfo.push_back(std::string("  date:    ") + TimeKeeper::timestamp());
+  mapInfo.push_back(std::string("  date:    ") + BzTime::timestamp());
 
 // NOTE: add the relevant BZDB and clOptions values?
 }

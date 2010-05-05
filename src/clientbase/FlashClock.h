@@ -14,7 +14,7 @@
 #define	__FLASHCLOCK_H__
 
 /* common interface headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 /**
@@ -32,7 +32,7 @@ class FlashClock {
     bool		isOn();
 
   private:
-    TimeKeeper		startTime;
+    BzTime		startTime;
     float		duration;
     float		onDuration;
     float		flashDuration;

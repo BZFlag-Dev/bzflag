@@ -29,24 +29,24 @@
 #include "common.h"
 
 // common interface headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 class BaseTimerStrategy {
 public:
   BaseTimerStrategy (const float duration);
-  BaseTimerStrategy (const TimeKeeper endTime);
+  BaseTimerStrategy (const BzTime endTime);
 
   virtual ~BaseTimerStrategy() {};
 
   virtual bool pause(const float delay = 0.0f);
   virtual bool resume(const float delay = 0.0f);
 
-  virtual BaseTimerStrategy* action(TimeKeeper& tm) = 0;
+  virtual BaseTimerStrategy* action(BzTime& tm) = 0;
 
 private:
   void update();
-  TimeKeeper startTime;
-  TimeKeeper pauseTime;
+  BzTime startTime;
+  BzTime pauseTime;
   float	offset;
   float _duration;
 };
@@ -54,7 +54,7 @@ private:
 class GameTimerStrategy : public BaseTimerStrategy {
 public:
   GameTimerStrategy (const float duration) : BaseTimerStrategy(duration) {};
-  GameTimerStrategy (const TimeKeeper endTime) : BaseTimerStrategy(endTime) {};
+  GameTimerStrategy (const BzTime endTime) : BaseTimerStrategy(endTime) {};
 
   virtual ~BaseTimerStrategy() {};
 
@@ -71,28 +71,28 @@ private:
 class GameCountdownStrategy : public GameTimerStrategy {
 public:
   GameCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
-  GameCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
+  GameCountdownStrategy (const BzTime endTime) : GameTimerStrategy(endTime) {};
   ~GameCountdownStrategy() {};
 
-  BaseTimerStrategy* action(TimeKeeper& tm);
+  BaseTimerStrategy* action(BzTime& tm);
 }
 
 class ManualCountdownStarterStrategy : public GameTimerStrategy {
 public:
   ManualCountdownStarterStrategy (const float duration) : GameTimerStrategy(duration) {};
-  ManualCountdownStarterStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
+  ManualCountdownStarterStrategy (const BzTime endTime) : GameTimerStrategy(endTime) {};
   ~ManualCountdownStarterStrategy() {};
 
-  BaseTimerStrategy* action(TimeKeeper& tm);
+  BaseTimerStrategy* action(BzTime& tm);
 }
 
 class ManualCountdownStrategy : public GameTimerStrategy {
 public:
   ManualCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
-  ManualCountdownStrategy (const TimeKeeper endTime) : GameTimerStrategy(endTime) {};
+  ManualCountdownStrategy (const BzTime endTime) : GameTimerStrategy(endTime) {};
   ~ManualCountdownStrategy() {};
 
-  BaseTimerStrategy* action(TimeKeeper& tm);
+  BaseTimerStrategy* action(BzTime& tm);
 }
 #endif /* _TIMERSTRATEGY_H */
 

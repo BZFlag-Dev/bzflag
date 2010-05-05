@@ -59,7 +59,7 @@ void Callbacks::setDepthBuffer(const std::string& name, void*)
 void Callbacks::setProcessorAffinity(const std::string& name, void*)
 {
   if (BZDB.evalInt(name) >= 0) {
-    TimeKeeper::setProcessorAffinity(BZDB.evalInt(name));
+    BzTime::setProcessorAffinity(BZDB.evalInt(name));
   }
 }
 

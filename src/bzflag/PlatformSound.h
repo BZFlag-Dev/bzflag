@@ -20,7 +20,7 @@
 #include "common.h"
 #include "sound.h"
 #include "BzfMedia.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 #include <string>
 #include <vector>
@@ -104,7 +104,7 @@ protected:
 
   /* speed of sound stuff */
   float      timeSizeOfWorld;		/* in seconds */
-  TimeKeeper startTime;
+  BzTime startTime;
   double     prevTime, curTime;
 
   typedef struct {

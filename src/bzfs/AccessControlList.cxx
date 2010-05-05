@@ -31,7 +31,7 @@
 #include "bzglob.h"
 #include "network.h"
 #include "Address.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "TextUtils.h"
 
 // bzfs specific headers
@@ -283,7 +283,7 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
   os << getBanMaskString(baninfo.addr);
 
   // print duration when < 1 year
-  double duration = baninfo.banEnd - TimeKeeper::getCurrent();
+  double duration = baninfo.banEnd - BzTime::getCurrent();
   if (duration < 365.0f * 24 * 3600)
     os << std::setiosflags(std::ios::fixed) << std::setprecision(1)
        << " (" << duration/60 << " minutes)";
@@ -356,7 +356,7 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
     snprintf(pMsg, MessageLen, "%s", bi.hostpat.c_str());
 
     // print duration when < 1 year
-    double duration = bi.banEnd - TimeKeeper::getCurrent();
+    double duration = bi.banEnd - BzTime::getCurrent();
     int remaining;
     remaining = MessageLen - strlen(pMsg);
     if (duration < 365.0f * 24 * 3600) {
@@ -411,7 +411,7 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
     }
 
     // print duration when < 1 year
-    double duration = bi.banEnd - TimeKeeper::getCurrent();
+    double duration = bi.banEnd - BzTime::getCurrent();
     int remaining;
     remaining = MessageLen - strlen(pMsg);
     if (duration < 365.0f * 24 * 3600) {
@@ -621,10 +621,10 @@ void AccessControlList::save() {
 
       // print ban end, banner, and reason
       if (it->banEnd.getSeconds() ==
-	  TimeKeeper::getSunExplodeTime().getSeconds()) {
+	  BzTime::getSunExplodeTime().getSeconds()) {
 	os << "end: 0" << '\n';
       } else {
-        duration =  it->banEnd.getSeconds() + time(NULL) - TimeKeeper::getCurrent().getSeconds();
+        duration =  it->banEnd.getSeconds() + time(NULL) - BzTime::getCurrent().getSeconds();
         os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration <<'\n';
       }
       os << "banner: " << it->bannedBy << '\n';
@@ -638,10 +638,10 @@ void AccessControlList::save() {
 
     // print ban end, banner, and reason
     if (ith->banEnd.getSeconds() ==
-	TimeKeeper::getSunExplodeTime().getSeconds()) {
+	BzTime::getSunExplodeTime().getSeconds()) {
       os << "end: 0" << '\n';
     } else {
-      duration =  ith->banEnd.getSeconds() + time(NULL) - TimeKeeper::getCurrent().getSeconds();
+      duration =  ith->banEnd.getSeconds() + time(NULL) - BzTime::getCurrent().getSeconds();
       os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration <<'\n';
     }
     os << "banner: " << ith->bannedBy << '\n';
@@ -654,10 +654,10 @@ void AccessControlList::save() {
 
     // print ban end, banner, and reason
     if (iti->banEnd.getSeconds() ==
-	TimeKeeper::getSunExplodeTime().getSeconds()) {
+	BzTime::getSunExplodeTime().getSeconds()) {
       os << "end: 0" << '\n';
     } else {
-      duration =  iti->banEnd.getSeconds() + time(NULL) - TimeKeeper::getCurrent().getSeconds();
+      duration =  iti->banEnd.getSeconds() + time(NULL) - BzTime::getCurrent().getSeconds();
       os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration <<'\n';
     }
     os << "banner: " << iti->bannedBy << '\n';
@@ -780,7 +780,7 @@ bool AccessControlList::convert(char *ip, in_addr &mask) {
 
 void AccessControlList::expire()
 {
-  TimeKeeper now = TimeKeeper::getCurrent();
+  BzTime now = BzTime::getCurrent();
   for (banList_t::iterator it = banList.begin(); it != banList.end();) {
     if (it->banEnd <= now) {
       it = banList.erase(it);

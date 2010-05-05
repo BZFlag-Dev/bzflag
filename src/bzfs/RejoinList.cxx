@@ -14,7 +14,7 @@
 #include "RejoinList.h"
 
 // common headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "PlayerInfo.h"
 #include "StateDatabase.h"  // for BZDBNAMES.REJOINTIME
 
@@ -26,7 +26,7 @@
 // it's loathsome to expose private structure in a header
 struct RejoinNode {
   char callsign[CallSignLen];
-  TimeKeeper joinTime;
+  BzTime joinTime;
 };
 
 
@@ -55,7 +55,7 @@ bool RejoinList::add(int playerIndex)
   }
   RejoinNode* rn = new RejoinNode;
   strncpy (rn->callsign, playerData->player.getCallSign(), CallSignLen-1);
-  rn->joinTime = TimeKeeper::getCurrent();
+  rn->joinTime = BzTime::getCurrent();
   queue.push_back (rn);
   return true;
 }
@@ -93,7 +93,7 @@ float RejoinList::waitTime(int playerIndex)
   }
 
   std::list<struct RejoinNode*>::iterator it;
-  TimeKeeper thenTime = TimeKeeper::getCurrent();
+  BzTime thenTime = BzTime::getCurrent();
   thenTime += -BZDB.eval(BZDBNAMES.REJOINTIME);
 
   // remove old entries

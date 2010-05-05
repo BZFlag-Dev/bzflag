@@ -152,7 +152,7 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &/*state*/)
     return true;
   }
 
-  if ((playerData->pauseActiveTime) - TimeKeeper::getCurrent() < 0.0)
+  if ((playerData->pauseActiveTime) - BzTime::getCurrent() < 0.0)
     pausePlayer(playerData->player.getPlayerIndex(), true);
 
   return true;
@@ -161,11 +161,11 @@ bool doPauseChecks(GameKeeper::Player *playerData, PlayerState &/*state*/)
   // we need some inaccuracy here that is computed using pauseActiveTime and pauseRequestLag
   // lag will cause all players to pause sooner than 5 seconds
   if (state.status & PlayerState::Paused) {
-    TimeKeeper pauseDelay = playerData->player.pauseActiveTime;
+    BzTime pauseDelay = playerData->player.pauseActiveTime;
     pauseDelay += (- playerData->player.pauseRequestLag / 1000.0);
 
-    if ((TimeKeeper::getCurrent() - pauseDelay) < 5.0f
-	&& (playerData->player.pauseActiveTime - TimeKeeper::getNullTime() != 0)) {
+    if ((BzTime::getCurrent() - pauseDelay) < 5.0f
+	&& (playerData->player.pauseActiveTime - BzTime::getNullTime() != 0)) {
       // we have one of those players all love
       logDebugMessage(1,"Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
 		      playerData->getIndex());

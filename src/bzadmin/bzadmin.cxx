@@ -25,7 +25,7 @@
 #include <string>
 
 /* common headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /* local headers */
 #include "BZAdminClient.h"
@@ -170,7 +170,7 @@ int main(int argc, char** argv) {
     // if we have a token wait a bit for global login
     // FIXME: should "know" when we are logged in (or fail) and only wait that long.
     if (startupInfo.token[0] != 0)
-      TimeKeeper::sleep(5.0);
+      BzTime::sleep(5.0);
     for (unsigned int j = 1; j < op.getParameters().size(); ++j) {
       const std::string& cmd = op.getParameters()[j];
       if (cmd == "/quit") {
@@ -182,7 +182,7 @@ int main(int argc, char** argv) {
 	char* endptr;
 	double sleepTime = strtod(start, &endptr);
 	if (endptr != start) {
-	  TimeKeeper::sleep(sleepTime);
+	  BzTime::sleep(sleepTime);
 	}
       }
       else {
@@ -191,10 +191,10 @@ int main(int argc, char** argv) {
     }
   }
 
-  /* try to set the processor affinity to prevent TimeKeeper from
+  /* try to set the processor affinity to prevent BzTime from
    * reporting negative times
    */
-  TimeKeeper::setProcessorAffinity();
+  BzTime::setProcessorAffinity();
 
   // create UI and run the main loop
   BZAdminUI* ui = uiIter->second(client);

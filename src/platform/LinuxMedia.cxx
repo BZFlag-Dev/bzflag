@@ -25,7 +25,7 @@
 #include "bzsignal.h"
 #include <sys/soundcard.h>
 #include <sys/ioctl.h>
-#include <TimeKeeper.h>
+#include <BzTime.h>
 #include <errno.h>
 #include <string.h>
 
@@ -439,7 +439,7 @@ void			LinuxMedia::audioSleep(
   // To do both these operations at once, we need to poll.
   if (checkLowWater) {
     // start looping
-    TimeKeeper start = TimeKeeper::getCurrent();
+    BzTime start = BzTime::getCurrent();
     do {
       // break if buffer has drained enough
       if (isAudioTooEmpty()) break;
@@ -449,7 +449,7 @@ void			LinuxMedia::audioSleep(
       tv.tv_usec=50000;
       if (select(maxFd, &commandSelectSet, 0, 0, &tv)) break;
 
-    } while (endTime<0.0 || (TimeKeeper::getCurrent()-start)<endTime);
+    } while (endTime<0.0 || (BzTime::getCurrent()-start)<endTime);
   } else {
     FD_ZERO(&commandSelectSet);
     FD_SET((unsigned int)queueOut, &commandSelectSet);

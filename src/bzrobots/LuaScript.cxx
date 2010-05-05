@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 // common headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 // local headers
 #include "LuaHeader.h"
@@ -745,7 +745,7 @@ static int GetEventPriority(lua_State* L) {
 
 static int Sleep(lua_State* L)
 {
-  TimeKeeper::sleep(luaL_checkdouble(L, 1));
+  BzTime::sleep(luaL_checkdouble(L, 1));
   return 0;
 }
 

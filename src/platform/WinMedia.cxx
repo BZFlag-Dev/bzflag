@@ -15,7 +15,7 @@
 
 #include "WinMedia.h"
 #include "WinWindow.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Pack.h"
 #include <stdio.h>
 
@@ -420,7 +420,7 @@ void			WinMedia::audioSleep(
 
   if (checkLowWater) {
     // start looping
-    TimeKeeper start = TimeKeeper::getCurrent();
+    BzTime start = BzTime::getCurrent();
     do {
       // break if buffer has drained enough
       if (isAudioTooEmpty())
@@ -430,7 +430,7 @@ void			WinMedia::audioSleep(
       if (WaitForSingleObject(audioCommandEvent, 1) == WAIT_OBJECT_0)
 	break;
 
-    } while (maxTime < 0.0 || (TimeKeeper::getCurrent() - start) < maxTime);
+    } while (maxTime < 0.0 || (BzTime::getCurrent() - start) < maxTime);
   }
 
   else {

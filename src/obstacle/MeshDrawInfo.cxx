@@ -33,7 +33,7 @@
 #include "vectors.h"
 #include "BzMaterial.h"
 #include "MeshObstacle.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "bzfio.h" // for debugging info
 #include "TextUtils.h"
 
@@ -787,7 +787,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod)
 
 bool MeshDrawInfo::parse(std::istream& input)
 {
-  TimeKeeper start = TimeKeeper::getCurrent();
+  BzTime start = BzTime::getCurrent();
 
   bool success = true;
   //  bool allVBO = false;
@@ -988,7 +988,7 @@ bool MeshDrawInfo::parse(std::istream& input)
   }
 
   if (debugLevel >= 4) {
-    TimeKeeper end = TimeKeeper::getCurrent();
+    BzTime end = BzTime::getCurrent();
     const float elapsed = float(end - start);
     logDebugMessage(0,"MeshDrawInfo::parse() processed in %f seconds.\n", elapsed);
   }

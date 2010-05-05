@@ -12,7 +12,7 @@
 
 // Interface header
 #include "ShotStatistics.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 ShotStatistics::ShotStatistics() :
       normalFired(0), normalHit(0),
@@ -53,7 +53,7 @@ void ShotStatistics::recordFire( FlagType* flag, const float *pVec, const float 
   else
     normalFired++;
 
-  double currentTime = TimeKeeper::getCurrent().getSeconds();
+  double currentTime = BzTime::getCurrent().getSeconds();
   if (lastShotTime > 0)
   {
 	  lastShotTimeDelta = currentTime-lastShotTime;

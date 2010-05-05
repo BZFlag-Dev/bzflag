@@ -35,7 +35,7 @@
 #if defined(DEBUG) || defined(_DEBUG)
 // headers needed only for _debugLookups()
 #include <map>
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 void _debugLookups(const std::string &name)
@@ -45,7 +45,7 @@ void _debugLookups(const std::string &name)
 
   /* This bit of nastyness help debug BDZB->eval accesses sorted from worst to best*/
   static EvalCntMap cnts;
-  static TimeKeeper last = TimeKeeper::getCurrent();
+  static BzTime last = BzTime::getCurrent();
 
   EvalCntMap::iterator it = cnts.find(name);
   if (it == cnts.end())
@@ -53,7 +53,7 @@ void _debugLookups(const std::string &name)
   else
     it->second++;
 
-  TimeKeeper now = TimeKeeper::getCurrent();
+  BzTime now = BzTime::getCurrent();
   if ((now - last) <= interval) {
     return;
   }

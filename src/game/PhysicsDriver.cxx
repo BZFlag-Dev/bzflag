@@ -19,7 +19,7 @@
 #include <string.h>
 
 // common headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Pack.h"
 #include "TextUtils.h"
 #include "StateDatabase.h"
@@ -63,7 +63,7 @@ void PhysicsDriverManager::clear()
 
 void PhysicsDriverManager::update()
 {
-  float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
+  float t = (float)(BzTime::getCurrent() - BzTime::getStartTime());
   DriverVec::iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;

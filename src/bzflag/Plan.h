@@ -21,7 +21,7 @@
 
 // common headers
 #include "vectors.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 class ShotPath;
 
@@ -87,8 +87,8 @@ public:
 
 private:
   static ShotPath *findWorstBullet(float &minDistance);
-  TimeKeeper planExpiration;
-  TimeKeeper lastShot;
+  BzTime planExpiration;
+  BzTime lastShot;
 };
 
 class PlanStack

@@ -23,7 +23,7 @@
 /* common interface headers */
 #include "global.h"
 #include "Address.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /* local interface headers */
 #include "RCMessage.h"

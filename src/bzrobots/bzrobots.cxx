@@ -56,7 +56,7 @@
 #include "TextUtils.h"
 #include "TextureManager.h"
 #include "TimeBomb.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "WordFilter.h"
 #include "World.h"
 #include "bzfio.h"
@@ -519,10 +519,10 @@ int main(int argc, char **argv)
 
   ScriptLoaderFactory::initialize();
   
-  /* try to set the processor affinity to prevent TimeKeeper from
+  /* try to set the processor affinity to prevent BzTime from
    * reporting negative times
    */
-  TimeKeeper::setProcessorAffinity();
+  BzTime::setProcessorAffinity();
 
   setupBZDB();
 

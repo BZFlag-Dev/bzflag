@@ -27,7 +27,7 @@
 
 // common headers
 #include "Pack.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "BZDBCache.h"
 #include "bzfio.h"
 
@@ -60,7 +60,7 @@ static BZDB_int debugGameTime("debugGameTime");
 
 static inline double getRawTime()
 {
-  return TimeKeeper::getCurrent().getSeconds();
+  return BzTime::getCurrent().getSeconds();
 }
 
 
@@ -282,7 +282,7 @@ double GameTime::getDRTime()
     return getStepTime();
   }
   
-  return TimeKeeper::getCurrent().getSeconds();
+  return BzTime::getCurrent().getSeconds();
 }
 
 

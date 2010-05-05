@@ -19,7 +19,7 @@
 #include <string>
 
 #include "VotingBooth.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 /** VotingArbiter is a means to manage and enforce a poll.  The poll will
@@ -37,14 +37,14 @@ class VotingArbiter
   // book-keeping to minimize abuse
   typedef struct poller {
     std::string name;
-    TimeKeeper lastRequest;
+    BzTime lastRequest;
   } poller_t;
 
 
 private:
   VotingBooth *_votingBooth;
 
-  TimeKeeper _startTime;
+  BzTime _startTime;
 
   // this is the number of players capable of participating in the poll.
   // it is a dynamic count of how many players are allowed to vote.
@@ -206,7 +206,7 @@ public:
 
   /** returns the time the poll was started
    */
-  TimeKeeper getStartTime(void) const;
+  BzTime getStartTime(void) const;
 
   /** returns truthfully if the poll has reached a passable tally.
    * i.e. enough positive votes have been received that the vote is
@@ -244,7 +244,7 @@ inline VotingArbiter::VotingArbiter(unsigned short int voteTime=60,
     _votePercentage(votePercentage),
     _voteRepeatTime(voteRepeatTime)
 {
-  _startTime = TimeKeeper::getNullTime();
+  _startTime = BzTime::getNullTime();
   _pollee = "nobody";
   _polleeIP = "";
   _action = "";
@@ -292,7 +292,7 @@ inline bool VotingArbiter::isPollClosed(void) const
     return false;
   }
   // check timer
-  if ((TimeKeeper::getCurrent() - _startTime) >= _voteTime) {
+  if ((BzTime::getCurrent() - _startTime) >= _voteTime) {
     return true;
   }
   return false;
@@ -303,7 +303,7 @@ inline bool VotingArbiter::isPollOpen(void) const
   if (!this->knowsPoll()) {
     return false;
   }
-  if ((TimeKeeper::getCurrent() - _startTime) < _voteTime) {
+  if ((BzTime::getCurrent() - _startTime) < _voteTime) {
     return true;
   }
   return false;
@@ -316,7 +316,7 @@ inline bool VotingArbiter::isPollExpired(void) const
     return false;
   }
   // check timer
-  if ((TimeKeeper::getCurrent() - _startTime) > _voteTime + _vetoTime) {
+  if ((BzTime::getCurrent() - _startTime) > _voteTime + _vetoTime) {
     return true;
   }
   return false;
@@ -355,10 +355,10 @@ inline unsigned short int VotingArbiter::getVetoTime(void) const
   return _vetoTime;
 }
 
-inline TimeKeeper VotingArbiter::getStartTime(void) const
+inline BzTime VotingArbiter::getStartTime(void) const
 {
   if (!this->knowsPoll()) {
-    return TimeKeeper::getNullTime();
+    return BzTime::getNullTime();
   }
   return _startTime;
 }

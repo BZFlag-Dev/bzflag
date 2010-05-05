@@ -15,7 +15,7 @@
 
 /* common headers */
 #include "GameKeeper.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "PlayerInfo.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
@@ -84,7 +84,7 @@ void DefaultSpawnPolicy::getPosition(fvec3& pos, int playerId,
     const float maxHeight = world->getMaxWorldHeight();
 
     // keep track of how much time we spend searching for a location
-    TimeKeeper start = TimeKeeper::getCurrent();
+    BzTime start = BzTime::getCurrent();
 
     int tries = 0;
     float minProximity = size / BZDB.eval("_spawnSafeSRMod");
@@ -121,7 +121,7 @@ void DefaultSpawnPolicy::getPosition(fvec3& pos, int playerId,
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
 	tries = 0;
-	if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
+	if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
 	  if (bestDist < 0.0f) { // haven't found a single spot
 	    //Just drop the sucka in, and pray
 	    pos.x = testPos.x;

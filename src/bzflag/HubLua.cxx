@@ -36,7 +36,7 @@
 #include "Pack.h"
 #include "ServerLink.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "bzfgl.h"
 #include "bzfio.h"
 #include "bz_md5.h"
@@ -1235,7 +1235,7 @@ int HubLink::GetCode(lua_State* L)
 
 int HubLink::GetTime(lua_State* L)
 {
-  LuaDouble::PushDouble(L, TimeKeeper::getCurrent().getSeconds());
+  LuaDouble::PushDouble(L, BzTime::getCurrent().getSeconds());
   return 1;
 }
 

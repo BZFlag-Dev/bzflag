@@ -39,7 +39,7 @@
 #include "StateDatabase.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "WorldText.h"
 #include "bzfio.h" // for debugLevel
 
@@ -764,7 +764,7 @@ void TextSceneNode::TextRenderNode::drawDebug()
   glEnd();
 
   const double period = 0.5;
-  const double now = TimeKeeper::getCurrent().getSeconds();
+  const double now = BzTime::getCurrent().getSeconds();
   const float phase = (float)(fmod(now, period) / period);
   const float alpha = 2.0f * fabsf(0.5f - phase);
   fvec4 color = 1.0f - *colorPtr;

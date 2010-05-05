@@ -34,7 +34,7 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   if (!rrp->isSteadyState())
     return false;
 
-  rrp->lastTickAt = TimeKeeper::getCurrent().getSeconds();
+  rrp->lastTickAt = BzTime::getCurrent().getSeconds();
 
   if (rrp->pendingUpdates[RCRobotPlayer::speedUpdate])
     rrp->speed = rrp->nextSpeed;
@@ -158,7 +158,7 @@ bool SetTickDurationReq::process(RCRobotPlayer *rrp)
 bool GetTickRemainingReq::process(RCRobotPlayer *rrp)
 {
   if (rrp->isSteadyState())
-    link->sendf("GetTickRemaining %f\n", (rrp->lastTickAt + rrp->tickDuration) - TimeKeeper::getCurrent().getSeconds());
+    link->sendf("GetTickRemaining %f\n", (rrp->lastTickAt + rrp->tickDuration) - BzTime::getCurrent().getSeconds());
   else
     link->sendf("GetTickRemaining 0.0\n");
 

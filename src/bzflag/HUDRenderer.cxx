@@ -553,7 +553,7 @@ void HUDRenderer::setRestartKeyLabel(const std::string& label)
 void HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 {
   timeLeft = _timeLeft;
-  timeSet = TimeKeeper::getTick();
+  timeSet = BzTime::getTick();
 }
 
 
@@ -1172,7 +1172,7 @@ void HUDRenderer::renderStatus(void)
   if ((timeLeft == 0) || (timeLeft >= (~0u - 3))) {
     strcpy(buffer, "");
   } else {
-    int t = timeLeft - (int)(TimeKeeper::getTick() - timeSet);
+    int t = timeLeft - (int)(BzTime::getTick() - timeSet);
     if (t < 0) t = 0;
     if (t >= 3600)
       sprintf(buffer, "%d:%02d:%02d   ", t / 3600, (t / 60) % 60, t % 60);
@@ -1342,7 +1342,7 @@ void HUDRenderer::renderTimes(void)
 
   // draw frames per second
   if (fps > 0.0f) {
-    static TimeKeeper last = TimeKeeper::getTick();
+    static BzTime last = BzTime::getTick();
     char buf[20];
     snprintf(buf, 20, "FPS: %d", int(fps));
 
@@ -1365,9 +1365,9 @@ void HUDRenderer::renderTimes(void)
 		  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
 		  labelsFontFace->getFMFace(), labelsFontSize, buf);
 
-    if ((int)(TimeKeeper::getTick() - last) > 1) {
+    if ((int)(BzTime::getTick() - last) > 1) {
       logDebugMessage(2, "%s\n", buf);
-      last = TimeKeeper::getTick();
+      last = BzTime::getTick();
     }
   }
   float triCountYOffset = 4.5f;

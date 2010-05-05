@@ -190,7 +190,7 @@ bool PlatformSound::startup ( void )
   }
   scratch = new float[audioBufferSize];
 
-  startTime = TimeKeeper::getCurrent();
+  startTime = BzTime::getCurrent();
   curTime = 0.0;
   endTime = -1.0;
 
@@ -1054,7 +1054,7 @@ bool PlatformSound::audioInnerLoop()
 
   // get time step
   prevTime = curTime;
-  curTime = TimeKeeper::getCurrent() - startTime;
+  curTime = BzTime::getCurrent() - startTime;
   endTime = -1.0;
   positionDiscontinuity = 0;
 

@@ -67,9 +67,9 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
   , currentRot(0)
   , currentAngVel(0)
   , pauseRequested(false)
-  , pauseActiveTime(TimeKeeper::getSunGenesisTime())
+  , pauseActiveTime(BzTime::getSunGenesisTime())
   , gameTimeRate(GameTime::startRate)
-  , gameTimeNext(TimeKeeper::getCurrent())
+  , gameTimeNext(BzTime::getCurrent())
   , flagHistory()
   , score()
   , authentication()
@@ -113,7 +113,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   , currentRot(0)
   , currentAngVel(0)
   , gameTimeRate(GameTime::startRate)
-  , gameTimeNext(TimeKeeper::getCurrent())
+  , gameTimeNext(BzTime::getCurrent())
   , flagHistory()
   , score()
   , authentication()
@@ -253,7 +253,7 @@ void GameKeeper::Player::updateNextGameTime()
   } else {
     gameTimeRate = GameTime::finalRate;
   }
-  gameTimeNext = TimeKeeper::getCurrent();
+  gameTimeNext = BzTime::getCurrent();
   gameTimeNext += gameTimeRate;
   return;
 }
@@ -451,7 +451,7 @@ void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
   // Set Speeds to 0 too
   memset(lastState.velocity, 0, sizeof(float) * 3);
   lastState.angVel = 0.0f;
-  stateTimeStamp   = TimeKeeper::getCurrent();
+  stateTimeStamp   = BzTime::getCurrent();
 
   doPlayerDR(stateTimeStamp);
 
@@ -461,7 +461,7 @@ void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
   lastState.status = eAlive;
 }
 
-void GameKeeper::Player::setPlayerState(PlayerState state, TimeKeeper const& timestamp)
+void GameKeeper::Player::setPlayerState(PlayerState state, BzTime const& timestamp)
 {
   lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
   player.updateIdleTime();
@@ -485,7 +485,7 @@ void GameKeeper::Player::getPlayerCurrentPosRot(fvec3& pos, float &rot)
   rot = currentRot;
 }
 
-void GameKeeper::Player::doPlayerDR ( TimeKeeper const& time )
+void GameKeeper::Player::doPlayerDR ( BzTime const& time )
 {
   float delta = static_cast<float>(time - stateTimeStamp);
 
@@ -553,7 +553,7 @@ void GameKeeper::Player::setMaxShots(int _maxShots)
 
 bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
-  double now = (double)TimeKeeper::getCurrent().getSeconds();
+  double now = (double)BzTime::getCurrent().getSeconds();
   if (id < (int)shotsInfo.size() && shotsInfo[id].present
       && now < shotsInfo[id].expireTime) {
       logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
@@ -601,7 +601,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
 bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 {
-  double now = (double)TimeKeeper::getCurrent().getSeconds();
+  double now = (double)BzTime::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
     || now >= shotsInfo[id].expireTime) {
       logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
@@ -622,7 +622,7 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 
 bool GameKeeper::Player::updateShot(int id, int salt)
 {
-  double now = (double)TimeKeeper::getCurrent().getSeconds();
+  double now = (double)BzTime::getCurrent().getSeconds();
   if (id >= (int)shotsInfo.size()) {
       logDebugMessage(2,"Player %s [%d] trying to update an invalid shot id %d\n",
 	player.getCallSign(), playerIndex, id);
@@ -712,7 +712,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
   else if ((flagType == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
     fracOfMaxSpeed = 0.0f;
   else if (flagType == Flags::Agility) {
-    /*	if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(BZDBNAMES.AGILITYTIMEWINDOW))
+    /*	if ((BzTime::getCurrent() - agilityTime) < BZDB.eval(BZDBNAMES.AGILITYTIMEWINDOW))
     fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
     else {
     float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
@@ -727,7 +727,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
     limit /= 2.0f;
     if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
     fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
-    agilityTime = TimeKeeper::getCurrent();
+    agilityTime = BzTime::getCurrent();
     }
     } */
   }

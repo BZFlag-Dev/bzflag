@@ -20,7 +20,7 @@
 #include <stdio.h>
 
 /* common implementation headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #ifndef HAVE_SDL
 #  include "wave.h"
 #endif
@@ -37,13 +37,13 @@ BzfMedia::~BzfMedia() {
 
 double			BzfMedia::stopwatch(bool start)
 {
-  static TimeKeeper prev;
+  static BzTime prev;
   if (start) {
-    prev = TimeKeeper::getCurrent();
+    prev = BzTime::getCurrent();
     return 0.0;
   }
   else {
-    return (double)(TimeKeeper::getCurrent() - prev);
+    return (double)(BzTime::getCurrent() - prev);
   }
 }
 

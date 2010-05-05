@@ -99,7 +99,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
     gettingSound = false;
   }
 
-  stuckStartTime = TimeKeeper::getNullTime();
+  stuckStartTime = BzTime::getNullTime();
 
   requestedAutopilot = false;
 }
@@ -449,20 +449,20 @@ void LocalPlayer::doUpdateMotion(float dt)
     if (obstacle && expel) {
       // just got stuck?
       if (!stuck) {
-	stuckStartTime = TimeKeeper::getCurrent();
+	stuckStartTime = BzTime::getCurrent();
 	stuck = true;
       }
     } else {
       // weee, we're free
-      stuckStartTime = TimeKeeper::getNullTime();
+      stuckStartTime = BzTime::getNullTime();
       stuck = false;
     }
 
     // unstick if stuck for more than a half a second
-    if (obstacle && stuck && (TimeKeeper::getCurrent() - stuckStartTime > 0.5)) {
+    if (obstacle && stuck && (BzTime::getCurrent() - stuckStartTime > 0.5)) {
       // reset stuckStartTime in order to have this if-construct being executed
       // more than 1 time as often more iterations are needed to get unstuck
-      stuckStartTime = TimeKeeper::getCurrent();
+      stuckStartTime = BzTime::getCurrent();
       // we are using a maximum value on time for frame to avoid lagging problem
       setDesiredSpeed(0.25f);
       float delta = (dt > 0.1f) ? 0.1f : dt;
@@ -851,12 +851,12 @@ void LocalPlayer::doUpdateMotion(float dt)
   if ((getFlag() == Flags::Bouncy) &&
       ((location == OnGround) || (location == OnBuilding))) {
     if (oldLocation != InAir) {
-      if ((TimeKeeper::getCurrent() - bounceTime) > 0) {
+      if ((BzTime::getCurrent() - bounceTime) > 0) {
 	doJump();
       }
     }
     else {
-      bounceTime = TimeKeeper::getCurrent();
+      bounceTime = BzTime::getCurrent();
       bounceTime += 0.2f;
     }
   }
@@ -1302,7 +1302,7 @@ void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
   } else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0)) {
     fracOfMaxSpeed = 0.0f;
   } else if (flag == Flags::Agility) {
-    if ((TimeKeeper::getCurrent() - agilityTime) < BZDB.eval(BZDBNAMES.AGILITYTIMEWINDOW)) {
+    if ((BzTime::getCurrent() - agilityTime) < BZDB.eval(BZDBNAMES.AGILITYTIMEWINDOW)) {
       fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
     } else {
       float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
@@ -1315,7 +1315,7 @@ void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 	limit /= 2.0f;
       if (fabs(fracOfMaxSpeed - oldFrac) > limit) {
 	fracOfMaxSpeed *= BZDB.eval(BZDBNAMES.AGILITYADVEL);
-	agilityTime = TimeKeeper::getCurrent();
+	agilityTime = BzTime::getCurrent();
       }
     }
   }
@@ -1638,7 +1638,7 @@ void LocalPlayer::explodeTank()
   const float explodeTim = BZDB.eval(BZDBNAMES.EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
-  setExplode(TimeKeeper::getTick());
+  setExplode(BzTime::getTick());
   const fvec3& oldVelocity = getVelocity();
   fvec3 newVelocity;
   float maxSpeed;

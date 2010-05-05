@@ -20,7 +20,7 @@
 
 // implementation-specific headers
 #ifdef DEBUG
-#  include "TimeKeeper.h"
+#  include "BzTime.h"
 #endif
 
 // common headers
@@ -798,7 +798,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 bool WordFilter::filter(char *input, bool simple) const
 {
 #ifdef DEBUG
-  TimeKeeper before = TimeKeeper::getCurrent();
+  BzTime before = BzTime::getCurrent();
 #endif
   bool filtered;
   if (simple) {
@@ -807,7 +807,7 @@ bool WordFilter::filter(char *input, bool simple) const
     filtered = aggressiveFilter(input);
   }
 #ifdef DEBUG
-  TimeKeeper after = TimeKeeper::getCurrent();
+  BzTime after = BzTime::getCurrent();
   logDebugMessage(1, "WordFilter: %f seconds\n", after - before);
 #endif
   return filtered;

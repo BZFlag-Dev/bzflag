@@ -393,10 +393,10 @@ static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool
     }
     else if (!myTank->isAutoPilot()) { // can't ask for autopilot if I'm already autopilot
       // don't enable the AutoPilot if you have within the last 5 secs
-      static TimeKeeper LastAutoPilotEnable = TimeKeeper::getSunGenesisTime();
-      if ((TimeKeeper::getCurrent() - LastAutoPilotEnable) > 5) {
+      static BzTime LastAutoPilotEnable = BzTime::getSunGenesisTime();
+      if ((BzTime::getCurrent() - LastAutoPilotEnable) > 5) {
         // reset timer
-        LastAutoPilotEnable = TimeKeeper::getCurrent();
+        LastAutoPilotEnable = BzTime::getCurrent();
 
         // enable autopilot
         myTank->requestAutoPilot();

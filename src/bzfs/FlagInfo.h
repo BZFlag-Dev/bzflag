@@ -21,7 +21,7 @@
 
 /* bzflag common headers */
 #include "Flag.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "BufferedNetworkMessage.h"
 #include "vectors.h"
 
@@ -42,7 +42,7 @@ public:
   void grab(int playerIndex);
   int  teamIndex() const;
   int  getIndex() const;
-  bool landing(const TimeKeeper &tm);
+  bool landing(const BzTime &tm);
   void getTextualInfo(char *message);
   bool exist();
 
@@ -51,7 +51,7 @@ public:
   static void setAllowed(std::vector<FlagType*> allowed);
   static void setExtra(int extra);
   static int  lookupFirstTeamFlag(int teamindex);
-  static float getNextDrop(TimeKeeper &tm);
+  static float getNextDrop(BzTime &tm);
   static void  setNoFlagInAir();
 
   // flag info
@@ -74,7 +74,7 @@ private:
   static FlagInfo	      *flagList;
 
   // time flag will land
-  TimeKeeper		    dropDone;
+  BzTime		    dropDone;
 };
 #else
 class FlagInfo;

@@ -55,7 +55,7 @@ const int udpBufSize = 128*1024;
 const int tcpBufLimit = 64*1024;
 
 bool NetHandler::pendingUDP = false;
-TimeKeeper NetHandler::now = TimeKeeper::getCurrent();
+BzTime NetHandler::now = BzTime::getCurrent();
 std::list<NetHandler*> NetHandler::netConnections;
 
 bool NetHandler::initHandlers(struct sockaddr_in addr)
@@ -794,7 +794,7 @@ int NetHandler::getClientKind()
   return clientType;
 }
 
-void NetHandler::setCurrentTime(TimeKeeper tm)
+void NetHandler::setCurrentTime(BzTime tm)
 {
   now = tm;
 }

@@ -275,10 +275,10 @@ static bool avoidBullet(float &rotation, float &speed)
 
 static bool stuckOnWall(float &rotation, float &speed)
 {
-  static TimeKeeper lastStuckTime;
+  static BzTime lastStuckTime;
   static float stuckRot = 0.0f, stuckSpeed = 0.0f;
 
-  float stuckPeriod = float(TimeKeeper::getTick() - lastStuckTime);
+  float stuckPeriod = float(BzTime::getTick() - lastStuckTime);
   if (stuckPeriod < 0.5f) {
     rotation = stuckRot;
     speed = stuckSpeed;
@@ -297,7 +297,7 @@ static bool stuckOnWall(float &rotation, float &speed)
     || myTank->isPhantomZoned();
 
   if (!phased && (TargetingUtils::getOpenDistance(pos, myAzimuth) < 5.0f)) {
-    lastStuckTime = TimeKeeper::getTick();
+    lastStuckTime = BzTime::getTick();
     if (bzfrand() > 0.8f) {
       // Every once in a while, do something nuts
       speed = (float)(bzfrand() * 1.5f - 0.5f);
@@ -465,7 +465,7 @@ static bool chasePlayer(float &rotation, float &speed)
       rotation *= (float)M_PI / (2.0f * fabs(rotation));
       speed = dotProd; //go forward inverse rel to how much you need to turn
     } else {
-      const int64_t period = TimeKeeper::getTick().getSeconds();
+      const int64_t period = BzTime::getTick().getSeconds();
       float absBias = (float)(M_PI/20.0 * (distance / 100.0));
       float bias = ((period % 4) < 2) ? absBias : -absBias;
       rotation += bias;
@@ -562,11 +562,11 @@ static bool lookForFlag(float &rotation, float &speed)
 
 static bool navigate(float &rotation, float &speed)
 {
-  static TimeKeeper lastNavChange;
+  static BzTime lastNavChange;
   static float navRot = 0.0f, navSpeed = 0.0f;
   static const float baseEpsilon = 1.0f;
 
-  if ((TimeKeeper::getTick() - lastNavChange) < 1.0f) {
+  if ((BzTime::getTick() - lastNavChange) < 1.0f) {
     rotation = navRot;
     speed = navSpeed;
     return true;
@@ -634,14 +634,14 @@ static bool navigate(float &rotation, float &speed)
 
   navRot = rotation;
   navSpeed = speed;
-  lastNavChange = TimeKeeper::getTick();
+  lastNavChange = BzTime::getTick();
   return true;
 }
 
 
 static bool fireAtTank()
 {
-  static TimeKeeper lastShot;
+  static BzTime lastShot;
   fvec3 pos;
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (!myTank) {
@@ -663,7 +663,7 @@ static bool fireAtTank()
   pos[2] -= myTank->getMuzzleHeight();
 
   if (myTank->getFlag() == Flags::ShockWave) {
-    TimeKeeper now = TimeKeeper::getTick();
+    BzTime now = BzTime::getTick();
 
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
@@ -700,7 +700,7 @@ static bool fireAtTank()
 
       if (hasSWTarget) {
         myTank->fireShot();
-        lastShot = TimeKeeper::getTick();
+        lastShot = BzTime::getTick();
         return true;
       }
     }
@@ -708,7 +708,7 @@ static bool fireAtTank()
     return false;
   }
 
-  TimeKeeper now = TimeKeeper::getTick();
+  BzTime now = BzTime::getTick();
   if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
     float errorLimit = world->getMaxShots() * BZDB.eval(BZDBNAMES.LOCKONANGLE) / 8.0f;

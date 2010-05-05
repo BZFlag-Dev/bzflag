@@ -1668,7 +1668,7 @@ void CmdLineOptions::finalizeParsing(EntryZones& entryZones)
   // processor affinity
   if (processorAffinity >= 0) {
     logDebugMessage(2, "Setting process affinity to processor %d\n", processorAffinity);
-    TimeKeeper::setProcessorAffinity(processorAffinity);
+    BzTime::setProcessorAffinity(processorAffinity);
   } else {
     logDebugMessage(2, "Processor affinity is floating (managed by OS)\n");
   }

@@ -24,7 +24,7 @@
  */
 Plan::Plan(float planDuration)
 {
-  planExpiration = TimeKeeper::getCurrent();
+  planExpiration = BzTime::getCurrent();
   planExpiration += planDuration;
 }
 
@@ -36,7 +36,7 @@ Plan::~Plan()
 
 bool Plan::isValid()
 {
-  TimeKeeper now = TimeKeeper();
+  BzTime now = BzTime();
   float delta = float(now - planExpiration);
   return (delta < 0.0f);
 }
@@ -60,7 +60,7 @@ void Plan::execute(float &, float &)
   pos[2] -= myTank->getMuzzleHeight();
 
   if (myTank->getFlag() == Flags::ShockWave) {
-    TimeKeeper now = TimeKeeper::getTick();
+    BzTime now = BzTime::getTick();
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
@@ -89,11 +89,11 @@ void Plan::execute(float &, float &)
       }
       if (hasSWTarget) {
         myTank->fireShot();
-        lastShot = TimeKeeper::getTick();
+        lastShot = BzTime::getTick();
       }
     }
   } else {
-    TimeKeeper now = TimeKeeper::getTick();
+    BzTime now = BzTime::getTick();
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
       float errorLimit = world->getMaxShots() * BZDB.eval(BZDBNAMES.LOCKONANGLE) / 8.0f;

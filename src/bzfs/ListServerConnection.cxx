@@ -95,7 +95,7 @@ ListServerLink::~ListServerLink()
     cURLManager::perform();
     if (!queuedRequest)
       break;
-    TimeKeeper::sleep(0.25f);
+    BzTime::sleep(0.25f);
   }
 }
 
@@ -285,7 +285,7 @@ void ListServerLink::sendQueuedMessages()
           std::string(updateEvent.address.c_str()),
           std::string(updateEvent.description.c_str()),
           std::string(updateEvent.groups.c_str()));
-    lastAddTime = TimeKeeper::getCurrent();
+    lastAddTime = BzTime::getCurrent();
   } else if (nextMessageType == ListServerLink::REMOVE) {
     logDebugMessage(3,"Queuing REMOVE message to list server\n");
     removeMe(publicizeAddress);

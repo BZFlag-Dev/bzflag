@@ -17,7 +17,7 @@ bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t)
 {
   PlayerInfo &player = playerData->player;
   const std::string &oldMsg = player.getLastMsg();
-  float dt = (float)(TimeKeeper::getCurrent() - player.getLastMsgTime());
+  float dt = (float)(BzTime::getCurrent() - player.getLastMsgTime());
 
   // don't consider whitespace
   std::string newMsg = TextUtils::no_whitespace(message);

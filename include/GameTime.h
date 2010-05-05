@@ -22,7 +22,7 @@
 #include "common.h"
 #include "BufferedNetworkMessage.h"
 #include "BZDBCache.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 namespace GameTime {
   void reset();

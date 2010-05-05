@@ -136,9 +136,9 @@ bool publiclyDisconnected = false;
 
 char hexDigest[50] = {0};
 
-TimeKeeper gameStartTime = TimeKeeper::getNullTime();
-TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
-TimeKeeper nextSuperFlagInsertion = TimeKeeper::getNullTime();
+BzTime gameStartTime = BzTime::getNullTime();
+BzTime countdownPauseStart = BzTime::getNullTime();
+BzTime nextSuperFlagInsertion = BzTime::getNullTime();
 bool countdownActive = false;
 int countdownDelay = -1;
 int countdownResumeTime = -1;
@@ -172,7 +172,7 @@ uint8_t rabbitIndex = NoPlayer;
 
 RejoinList rejoinList;
 
-static TimeKeeper lastWorldParmChange = TimeKeeper::getNullTime();
+static BzTime lastWorldParmChange = BzTime::getNullTime();
 bool worldWasSentToAPlayer   = false;
 
 unsigned int maxNonPlayerDataChunk = 2048;
@@ -380,11 +380,11 @@ int lookupPlayer(const PlayerId& id)
 static float nextGameTime()
 {
   float nextTime = +MAXFLOAT;
-  const TimeKeeper nowTime = TimeKeeper::getCurrent();
+  const BzTime nowTime = BzTime::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if ((gkPlayer != NULL) && gkPlayer->player.isHuman() && gkPlayer->netHandler) {
-      const TimeKeeper& pTime = gkPlayer->getNextGameTime();
+      const BzTime& pTime = gkPlayer->getNextGameTime();
       const float pNextTime = (float)(pTime - nowTime);
       if (pNextTime < nextTime) {
 	nextTime = pNextTime;
@@ -412,7 +412,7 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
 
 static void sendPendingGameTime()
 {
-  const TimeKeeper nowTime = TimeKeeper::getCurrent();
+  const BzTime nowTime = BzTime::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
     if ((gkPlayer != NULL) && gkPlayer->player.isHuman() &&
@@ -559,20 +559,20 @@ void startCountdown ( int delay, float limit, const char *byWho )
   if (countdownDelay == 0) {
     matchBegins = "Match begins now!";
   } else {
-    TimeKeeper::convertTime(countdownDelay, timeArray);
-    std::string countdowntime = TimeKeeper::printTime(timeArray);
+    BzTime::convertTime(countdownDelay, timeArray);
+    std::string countdowntime = BzTime::printTime(timeArray);
     matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
   }
   sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
 
-  TimeKeeper::convertTime(clOptions->timeLimit, timeArray);
-  std::string timelimit = TimeKeeper::printTime(timeArray);
+  BzTime::convertTime(clOptions->timeLimit, timeArray);
+  std::string timelimit = BzTime::printTime(timeArray);
   matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
   sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
 
   // make sure the game always start unpaused
   clOptions->countdownPaused = false;
-  countdownPauseStart = TimeKeeper::getNullTime();
+  countdownPauseStart = BzTime::getNullTime();
 }
 
 PingPacket getTeamCounts()
@@ -782,7 +782,7 @@ static void serverStop()
   msg->packUInt8(0xff);
   msg->broadcast(MsgSuperKill);
   MSGMGR.update();
-  TimeKeeper::sleep(0.5);	// provide some time for message delivery
+  BzTime::sleep(0.5);	// provide some time for message delivery
 
   // clean up Kerberos
   Authentication::cleanUp();
@@ -938,7 +938,7 @@ bool defineWorld()
   buf = nboPackUInt16(buf, WorldCodeEndSize);
   buf = nboPackUInt16(buf, WorldCodeEnd);
 
-  TimeKeeper startTime = TimeKeeper::getCurrent();
+  BzTime startTime = BzTime::getCurrent();
   MD5 md5;
   md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
   md5.finalize();
@@ -949,7 +949,7 @@ bool defineWorld()
 
   std::string digest = md5.hexdigest();
   strncat(hexDigest, digest.c_str(), 49);
-  TimeKeeper endTime = TimeKeeper::getCurrent();
+  BzTime endTime = BzTime::getCurrent();
   logDebugMessage(3,"MD5 generation: %.3f seconds\n", endTime - startTime);
 
   // water levels probably require flags on buildings
@@ -1063,7 +1063,7 @@ static void handleCommand(const void *rawbuf, bool udp, NetHandler *handler)
     const MsgStringList msgList = MsgStrings::msgFromClient(len, code, buf);
     logDebugMessage(5, "%s from %s:%s at %f\n", msgList[0].text.c_str(),
       handler->getTargetIP(), (udp ? "udp" : "tcp"),
-      TimeKeeper::getCurrent().getSeconds());
+      BzTime::getCurrent().getSeconds());
   }
 #endif
 
@@ -1231,7 +1231,7 @@ void checkGameOn()
     int count = GameKeeper::Player::count();
     if (count == 0) {
       gameOver = false;
-      gameStartTime = TimeKeeper::getCurrent();
+      gameStartTime = BzTime::getCurrent();
       if (clOptions->timeLimit > 0.0f && !clOptions->timeManualStart) {
 	clOptions->timeElapsed = 0.0f;
 	countdownActive = true;
@@ -1270,7 +1270,7 @@ static void acceptClient()
   peer.socket = fd;
   peer.deleteMe = false;
   peer.sent = false;
-  peer.startTime = TimeKeeper::getCurrent().getSeconds();
+  peer.startTime = BzTime::getCurrent().getSeconds();
 
   netConnectedPeers[fd] = peer;
 }
@@ -1722,7 +1722,7 @@ static std::string evaluateString(const std::string &raw)
 	  i += (end - start) + 2;
 	  if (var == "uptime") {
 	    char buffer[16];
-	    const float uptime = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
+	    const float uptime = (float)(BzTime::getCurrent() - BzTime::getStartTime());
 	    snprintf(buffer, 16, "%i", (int)uptime);
 	    eval += buffer;
 	  }
@@ -2087,10 +2087,10 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (countdownActive && clOptions->timeLimit > 0.0f
       && !playerData->player.isBot()) {
     if (countdownPauseStart) {
-      gameStartTime += (TimeKeeper::getCurrent() - countdownPauseStart);
-      countdownPauseStart = TimeKeeper::getNullTime();
+      gameStartTime += (BzTime::getCurrent() - countdownPauseStart);
+      countdownPauseStart = BzTime::getNullTime();
     }
-    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
+    float timeLeft = clOptions->timeLimit - (float)(BzTime::getCurrent() - gameStartTime);
     if (timeLeft < 0.0f)
       // oops
       timeLeft = 0.0f;
@@ -2101,8 +2101,8 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     // players should know when the countdown is paused
     if (clOptions->countdownPaused) {
       long int timeArray[4];
-      TimeKeeper::convertTime(timeLeft, timeArray);
-      std::string remainingTime = TimeKeeper::printTime(timeArray);
+      BzTime::convertTime(timeLeft, timeArray);
+      std::string remainingTime = BzTime::printTime(timeArray);
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
@@ -2235,7 +2235,7 @@ void zapFlag(FlagInfo &flag)
   dropFlag(flag);
 
   // if flag was flying then it flies no more
-  flag.landing(TimeKeeper::getSunExplodeTime());
+  flag.landing(BzTime::getSunExplodeTime());
 
   flag.flag.status = FlagNoExist;
 
@@ -2305,7 +2305,7 @@ void pausePlayer(int playerIndex, bool paused)
 
   // always reset these parameters
   playerData->pauseRequested = false;
-  playerData->pauseActiveTime = TimeKeeper::getNullTime();
+  playerData->pauseActiveTime = BzTime::getNullTime();
 
   // if the state is not being changed, leave
   if (paused == playerData->player.isPaused()) {
@@ -2429,7 +2429,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     votingArbiter->retractVote(std::string(playerData->player.getCallSign()));
 
   // status message
-  std::string timeStamp = TimeKeeper::timestamp();
+  std::string timeStamp = BzTime::timestamp();
   logDebugMessage(1,"Player %s [%d] removed at %s: %s\n",
 		  playerData->player.getCallSign(),
 		  playerIndex, timeStamp.c_str(), reason);
@@ -2885,7 +2885,7 @@ void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason,
 
     victimData->player.setPaused(false);
     victimData->pauseRequested = false;
-    victimData->pauseActiveTime = TimeKeeper::getNullTime();
+    victimData->pauseActiveTime = BzTime::getNullTime();
   }
 }
 
@@ -3068,7 +3068,7 @@ void dropFlag(FlagInfo& flagInfo, const fvec3& dropPos)
     // if it is a team flag, check if there are any players left in
     // that team - if not, start the flag timeout
     if (teamInfos[flagInfo.flag.type->flagTeam].team.size == 0) {
-      teamInfos[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
+      teamInfos[flagIndex + 1].flagTimeout = BzTime::getCurrent();
       teamInfos[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
     }
   }
@@ -3184,7 +3184,7 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, TimeKeeper const& timeStamp, bool shortState )
+bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, BzTime const& timeStamp, bool shortState )
 {
   // observer updates are not relayed, or checked
   if (playerData->player.isObserver()) {
@@ -3358,7 +3358,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
       StateDatabase::Permission permission = BZDB.getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB.set(args[0], args[1], StateDatabase::Server);
-	lastWorldParmChange = TimeKeeper::getCurrent();
+	lastWorldParmChange = BzTime::getCurrent();
 	return args[0] + " set";
       }
       if (worked)*worked = false;
@@ -3392,13 +3392,13 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
   if (args.size() == 1) {
     if (args[0] == "*") {
       BZDB.iterate(resetAllCallback,NULL);
-      lastWorldParmChange = TimeKeeper::getCurrent();
+      lastWorldParmChange = BzTime::getCurrent();
       return "all variables reset";
     } else if (BZDB.isSet(args[0])) {
       StateDatabase::Permission permission = BZDB.getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB.set(args[0], BZDB.getDefault(args[0]), StateDatabase::Server);
-	lastWorldParmChange = TimeKeeper::getCurrent();
+	lastWorldParmChange = BzTime::getCurrent();
 	return args[0] + " reset";
       }
       return "variable " + args[0] + " is not writeable";
@@ -4036,7 +4036,7 @@ static bool initServer(int argc, char **argv)
   if (Replay::enabled())
     world->getWorldWeapons().clear();
 
-  nextSuperFlagInsertion = TimeKeeper::getCurrent();
+  nextSuperFlagInsertion = BzTime::getCurrent();
   flagExp = -logf(0.5f) / FlagHalfLife;
 
   if (clOptions->startRecording)
@@ -4073,7 +4073,7 @@ static float getAPIMaxWaitTime()
 }
 
 
-static void checkWaitTime(TimeKeeper &tm, float &waitTime)
+static void checkWaitTime(BzTime &tm, float &waitTime)
 {
   if ((countdownDelay >= 0) || (countdownResumeTime >= 0))
     waitTime = 0.5f; // 3 seconds too slow for match countdowns
@@ -4148,11 +4148,11 @@ static void checkWaitTime(TimeKeeper &tm, float &waitTime)
 }
 
 
-static void doCountdown(int &readySetGo, TimeKeeper &tm)
+static void doCountdown(int &readySetGo, BzTime &tm)
 {
   // players see a countdown
   if (countdownDelay >= 0) {
-    static TimeKeeper timePrevious = tm;
+    static BzTime timePrevious = tm;
     if (readySetGo == -1)
       readySetGo = countdownDelay;
 
@@ -4223,7 +4223,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
 
   // players see the announce of resuming the countdown
   if (countdownResumeTime >= 0) {
-    static TimeKeeper timePrevious = tm;
+    static BzTime timePrevious = tm;
     if (tm - timePrevious > 1.0f) {
       timePrevious = tm;
       if (gameOver)
@@ -4247,7 +4247,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
       timeLeft = 0.0f;
       gameOver = true;
       countdownActive = false;
-      countdownPauseStart = TimeKeeper::getNullTime ();
+      countdownPauseStart = BzTime::getNullTime ();
       clOptions->countdownPaused = false;
 
       // fire off a game end event
@@ -4266,7 +4266,7 @@ static void doCountdown(int &readySetGo, TimeKeeper &tm)
     if (countdownActive && !clOptions->countdownPaused && (countdownResumeTime < 0) && countdownPauseStart) {
       // resumed
       gameStartTime += (tm - countdownPauseStart);
-      countdownPauseStart = TimeKeeper::getNullTime ();
+      countdownPauseStart = BzTime::getNullTime ();
       newTimeElapsed = (float)(tm - gameStartTime);
       timeLeft = clOptions->timeLimit - newTimeElapsed;
       sendMsgTimeUpdate((int32_t)timeLeft);
@@ -4322,7 +4322,7 @@ static void doPlayerStuff()
 }
 
 
-static void doVoteArbiter(TimeKeeper &tm)
+static void doVoteArbiter(BzTime &tm)
 {
   // manage voting poll for collective kicks/bans/sets
   if ((clOptions->voteTime > 0) && (votingArbiter != NULL)) {
@@ -4350,7 +4350,7 @@ static void doVoteArbiter(TimeKeeper &tm)
 	announcedOpening = true;
       }
 
-      static TimeKeeper lastAnnounce = TimeKeeper::getNullTime();
+      static BzTime lastAnnounce = BzTime::getNullTime();
 
       /* make a heartbeat announcement every 15 seconds */
       if (((voteTime - (int)(tm - votingArbiter->getStartTime()) - 1) % 15 == 0) &&
@@ -4543,13 +4543,13 @@ static void doVoteArbiter(TimeKeeper &tm)
 }
 
 
-static void doTextBroadcasts ( TimeKeeper &tm )
+static void doTextBroadcasts ( BzTime &tm )
 {
   // periodic advertising broadcast
   static const std::vector<std::string>* adLines = clOptions->textChunker.getTextChunk("admsg");
 
   if ((clOptions->advertisemsg != "") || adLines != NULL) {
-    static TimeKeeper lastbroadcast = tm;
+    static BzTime lastbroadcast = tm;
 
     if (tm - lastbroadcast > 900) {
       // every 15 minutes
@@ -4587,7 +4587,7 @@ static void doTextBroadcasts ( TimeKeeper &tm )
 }
 
 
-static void doTeamFlagTimeouts ( TimeKeeper &tm )
+static void doTeamFlagTimeouts ( BzTime &tm )
 {
   // check team flag timeouts
   if (clOptions->gameType == ClassicCTF) {
@@ -4609,7 +4609,7 @@ static void doTeamFlagTimeouts ( TimeKeeper &tm )
 }
 
 
-static void doSuperFlags ( TimeKeeper &tm )
+static void doSuperFlags ( BzTime &tm )
 {
   // maybe add a super flag (only if game isn't over)
   if (!gameOver && clOptions->numExtraFlags > 0 && nextSuperFlagInsertion <= tm) {
@@ -4632,7 +4632,7 @@ static void doSuperFlags ( TimeKeeper &tm )
 }
 
 
-static void doListServerUpdate ( TimeKeeper &tm )
+static void doListServerUpdate ( BzTime &tm )
 {
   // occasionally add ourselves to the list again (in case we were dropped for some reason).
   if ((clOptions->publicizeServer) && (tm - listServerLink->lastAddTime > ListServerReAddTime)) {
@@ -4936,7 +4936,7 @@ static void runMainLoop()
       maxFileDescriptor = wksSocket;
 
     // find timeout when next flag would hit ground
-    TimeKeeper tm = TimeKeeper::getCurrent();
+    BzTime tm = BzTime::getCurrent();
 
     // lets start by waiting 3 sec
     float waitTime = 3.0f;
@@ -4974,7 +4974,7 @@ static void runMainLoop()
     }
 
     // synchronize PlayerInfo
-    tm = TimeKeeper::getCurrent();
+    tm = BzTime::getCurrent();
     PlayerInfo::setCurrentTime(tm);
     NetHandler::setCurrentTime(tm);
 
@@ -4999,7 +4999,7 @@ static void runMainLoop()
 
       // check if we have any UDP packets pending
       if (NetHandler::isUdpFdSet(&read_set)) {
-	TimeKeeper receiveTime = TimeKeeper::getCurrent();
+	BzTime receiveTime = BzTime::getCurrent();
 	while (true) {
 	  struct sockaddr_in uaddr;
 	  unsigned char ubuf[MaxPacketLen];
@@ -5069,7 +5069,7 @@ static void runMainLoop()
 	  handleCommand(ubuf, true, netHandler);
 
 	  // don't spend more than 250ms receiving udp
-	  if (TimeKeeper::getCurrent() - receiveTime > 0.25f) {
+	  if (BzTime::getCurrent() - receiveTime > 0.25f) {
 	    logDebugMessage(2,
 	      "Too much UDP traffic, will hope to catch up later\n");
 	    break;
@@ -5114,7 +5114,7 @@ static void runMainLoop()
     else if (nfound < 0) {
       if (getErrno() != EINTR) {
 	// test code - do not uncomment, will cause big stuttering
-	// TimeKeeper::sleep(1.0f);
+	// BzTime::sleep(1.0f);
       }
     }
     else {
@@ -5175,7 +5175,7 @@ static void cleanupServer()
   LuaServer::kill();
 
   // print uptime
-  logDebugMessage(1,"Shutting down server: uptime %s\n", TimeKeeper::printTime(TimeKeeper::getCurrent() - TimeKeeper::getStartTime()).c_str());
+  logDebugMessage(1,"Shutting down server: uptime %s\n", BzTime::printTime(BzTime::getCurrent() - BzTime::getStartTime()).c_str());
 
   GameKeeper::Player::freeTCPMutex();
   serverStop();
@@ -5249,8 +5249,8 @@ int main(int argc, char **argv)
 
 bool worldStateChanging()
 {
-  TimeKeeper now = TimeKeeper::getCurrent();
-  return (TimeKeeper::getCurrent() - lastWorldParmChange) <= 10.0f;
+  BzTime now = BzTime::getCurrent();
+  return (BzTime::getCurrent() - lastWorldParmChange) <= 10.0f;
 }
 
 // Local Variables: ***

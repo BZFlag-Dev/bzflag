@@ -28,7 +28,7 @@
 #include "bzsignal.h"
 #include "Ping.h"
 #include "Protocol.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "TextUtils.h"
 #include "ErrorHandler.h"
 

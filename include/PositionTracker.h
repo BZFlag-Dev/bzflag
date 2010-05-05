@@ -23,7 +23,7 @@
 #include <limits.h>
 
 /* common interface headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 
 /** PositionTracker keeps track of where things are in a 3D Cartesian
@@ -46,7 +46,7 @@ private:
     idtype_t id;
     long int intID;
     std::string strID;
-    TimeKeeper lastUpdate;
+    BzTime lastUpdate;
     double position[3]; // position in Cartesian 3-space coodinates
     bool forgotten;
   } item_t;

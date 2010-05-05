@@ -28,7 +28,7 @@
 #include "common.h"
 
 /* common interface headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Flag.h"
 #include "ShotUpdate.h"
 #include "GfxBlock.h"

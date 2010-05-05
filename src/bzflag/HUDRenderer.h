@@ -20,7 +20,7 @@
 #include <string>
 
 // common headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "HUDuiTypeIn.h"
 #include "Flag.h"
 #include "SceneRenderer.h"
@@ -211,7 +211,7 @@ private:
   bool		dim;
   int		numPlayers;
   uint32_t	timeLeft;
-  TimeKeeper	timeSet;
+  BzTime	timeSet;
   bool		playerHasHighScore;
   bool		teamHasHighScore;
   float		heading;

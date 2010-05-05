@@ -48,7 +48,7 @@
 #include "Score.h"
 #include "version.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "MsgStrings.h"
 
 // bzfs specific headers
@@ -2485,7 +2485,7 @@ static const RRtime startTimeOffset = (RRtime)time(NULL);
 
 static RRtime getRRtime()
 {
-  return TimeKeeper::getCurrent().getSeconds() + startTimeOffset;
+  return BzTime::getCurrent().getSeconds() + startTimeOffset;
 }
 
 

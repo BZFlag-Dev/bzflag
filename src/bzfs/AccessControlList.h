@@ -18,7 +18,7 @@
 #include <vector>
 #include <string>
 
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "Address.h"
 
 
@@ -37,9 +37,9 @@ struct BanInfo
     if (_bannedBy)
       bannedBy = _bannedBy;
     if (period == 0) {
-      banEnd = TimeKeeper::getSunExplodeTime();
+      banEnd = BzTime::getSunExplodeTime();
     } else {
-      banEnd = TimeKeeper::getCurrent();
+      banEnd = BzTime::getCurrent();
       banEnd += period * 60.0f;
     }
     fromMaster = isFromMaster;
@@ -54,7 +54,7 @@ struct BanInfo
   }
 
   in_addr	addr;
-  TimeKeeper	banEnd;
+  BzTime	banEnd;
   std::string	bannedBy;	// Who did perform the ban
   std::string	reason;		// reason for banning
   bool fromMaster;		// where the ban came from, local or master list.
@@ -76,9 +76,9 @@ struct HostBanInfo
     if (_bannedBy)
       bannedBy = _bannedBy;
     if (period == 0) {
-      banEnd = TimeKeeper::getSunExplodeTime();
+      banEnd = BzTime::getSunExplodeTime();
     } else {
-      banEnd = TimeKeeper::getCurrent();
+      banEnd = BzTime::getCurrent();
       banEnd += period * 60.0f;
     }
     fromMaster = isFromMaster;
@@ -93,7 +93,7 @@ struct HostBanInfo
   }
 
   std::string hostpat;
-  TimeKeeper banEnd;
+  BzTime banEnd;
   std::string bannedBy;
   std::string reason;
   bool fromMaster;	// where the ban came from, local or master list.
@@ -115,9 +115,9 @@ struct IdBanInfo
     if (_bannedBy)
       bannedBy = _bannedBy;
     if (period == 0) {
-      banEnd = TimeKeeper::getSunExplodeTime();
+      banEnd = BzTime::getSunExplodeTime();
     } else {
-      banEnd = TimeKeeper::getCurrent();
+      banEnd = BzTime::getCurrent();
       banEnd += period * 60.0f;
     }
     fromMaster = isFromMaster;
@@ -132,7 +132,7 @@ struct IdBanInfo
   }
 
   std::string idpat;
-  TimeKeeper banEnd;
+  BzTime banEnd;
   std::string bannedBy;
   std::string reason;
   bool fromMaster;	// where the ban came from, local or master list.

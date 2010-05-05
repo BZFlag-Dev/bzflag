@@ -32,7 +32,7 @@
 #include "vectors.h"
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 #include "OpenGLUtils.h"
 
@@ -101,7 +101,7 @@ protected:
   } puddle;
   std::vector<puddle>	puddles;
 
-  TimeKeeper		lastRainTime;
+  BzTime		lastRainTime;
 
   bool updateDrop(std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd);
   bool updatePuddle(std::vector<puddle>::iterator &splash, float frameTime);

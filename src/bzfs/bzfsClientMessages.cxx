@@ -359,7 +359,7 @@ public:
     }
 
     player->accessInfo.setName(player->player.getCallSign());
-    std::string timeStamp = TimeKeeper::timestamp();
+    std::string timeStamp = BzTime::timestamp();
     std::string playerIP = "local.player";
     if ( player->netHandler )
       playerIP = player->netHandler->getTargetIP();
@@ -474,7 +474,7 @@ public:
 
     // stop pausing attempts as you can not pause when being dead
     player->pauseRequested = false;
-    player->pauseActiveTime = TimeKeeper::getNullTime();
+    player->pauseActiveTime = BzTime::getNullTime();
     player->player.setPaused(false);
     return true;
   }
@@ -982,7 +982,7 @@ public:
 
     static BZDB_float pauseDelay("_pauseDelay");
     // delayed pausing
-    TimeKeeper activeTime = TimeKeeper::getCurrent();
+    BzTime activeTime = BzTime::getCurrent();
     activeTime += pauseDelay;
     player->pauseActiveTime = activeTime;
     player->pauseRequested  = true;
@@ -1088,7 +1088,7 @@ public:
     buf = nboUnpackDouble(buf, timestamp);
     buf = state.unpack(buf, code);
 
-    updatePlayerState(player, state, TimeKeeper(timestamp), code == MsgPlayerUpdateSmall);
+    updatePlayerState(player, state, BzTime(timestamp), code == MsgPlayerUpdateSmall);
 
     return true;
   }

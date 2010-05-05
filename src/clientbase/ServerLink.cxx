@@ -40,7 +40,7 @@
 #if defined(NETWORK_STATS)
 #include "bzfio.h"
 #endif
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 #include "GameTime.h"
 #include "bzUnicode.h"
@@ -55,7 +55,7 @@
 #define UDEBUGMSG false
 
 #if defined(NETWORK_STATS)
-static TimeKeeper	startTime;
+static BzTime	startTime;
 static uint32_t		bytesSent;
 static uint32_t		bytesReceived;
 static uint32_t		packetsSent;
@@ -89,7 +89,7 @@ DWORD WINAPI ThreadConnect(LPVOID params)
 
 // FIXME -- packet recording
 FILE* packetStream = NULL;
-TimeKeeper packetStartTime;
+BzTime packetStartTime;
 static const unsigned long serverPacket = 1;
 static const unsigned long endPacket = 0;
 
@@ -249,7 +249,7 @@ ServerLink::ServerLink(const std::string& serverName,
   timeout.tv_usec = 0;
 
   // pick some limit to time out on ( in seconds )
-  double thisStartTime = TimeKeeper::getCurrent().getSeconds();
+  double thisStartTime = BzTime::getCurrent().getSeconds();
   double connectTimeout = 30.0;
   if (BZDB.isSet("connectionTimeout"))
     connectTimeout = BZDB.eval("connectionTimeout")  ;
@@ -276,18 +276,18 @@ ServerLink::ServerLink(const std::string& serverName,
     // if we got some, then we are done
     if ( i > 0) {
       logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
-      logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
+      logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(BzTime::getCurrent().getSeconds() - thisStartTime));
       gotNetData = true;
     } else {
       // if we have waited too long, then bail
-      if ( (TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
+      if ( (BzTime::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
 	logDebugMessage(1,"CONNECT:connect time out failed\n");
 	logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 	close(query);
 	return;
       }
 
-      TimeKeeper::sleep(0.25f);
+      BzTime::sleep(0.25f);
     }
   }
 
@@ -375,7 +375,7 @@ ServerLink::ServerLink(const std::string& serverName,
 
   state = Okay;
 #if defined(NETWORK_STATS)
-  startTime = TimeKeeper::getCurrent();
+  startTime = BzTime::getCurrent();
   bytesSent = 0;
   bytesReceived = 0;
   packetsSent = 0;
@@ -385,7 +385,7 @@ ServerLink::ServerLink(const std::string& serverName,
   // FIXME -- packet recording
   if (getenv("BZFLAGSAVE")) {
     packetStream = fopen(getenv("BZFLAGSAVE"), "w");
-    packetStartTime = TimeKeeper::getCurrent();
+    packetStartTime = BzTime::getCurrent();
   }
 
   return;
@@ -406,14 +406,14 @@ ServerLink::~ServerLink()
 
   // FIXME -- packet recording
   if (packetStream) {
-    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    long dt = (long)((BzTime::getCurrent() - packetStartTime) * 10000.0f);
     fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
     fwrite(&dt, sizeof(dt), 1, packetStream);
     fclose(packetStream);
   }
 
 #if defined(NETWORK_STATS)
-  const float dt = float(TimeKeeper::getCurrent() - startTime);
+  const float dt = float(BzTime::getCurrent() - startTime);
   logDebugMessage(1,"Server network statistics:\n");
   logDebugMessage(1,"  elapsed time    : %f\n", dt);
   logDebugMessage(1,"  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
@@ -531,7 +531,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 	  std::string prefix = "send: ";
 	  if (i == 0)
 	    prefix += TextUtils::format("%f ",
-	      TimeKeeper::getCurrent().getSeconds());
+	      BzTime::getCurrent().getSeconds());
 	  for (int lvl = 0; lvl < msgList[i].level; lvl++) {
 	    prefix += "  ";
 	  }
@@ -699,7 +699,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
  success:
   // FIXME -- packet recording
   if (packetStream) {
-    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    long dt = (long)((BzTime::getCurrent() - packetStartTime) * 10000.0f);
     fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
     fwrite(&dt, sizeof(dt), 1, packetStream);
     fwrite(headerBuffer, 4, 1, packetStream);
@@ -889,7 +889,7 @@ int ServerLink::read(BufferedNetworkMessage *msg, int blockTime)
  success:
   // FIXME -- packet recording
   if (packetStream) {
-    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    long dt = (long)((BzTime::getCurrent() - packetStartTime) * 10000.0f);
     fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
     fwrite(&dt, sizeof(dt), 1, packetStream);
     fwrite(headerBuffer, 4, 1, packetStream);

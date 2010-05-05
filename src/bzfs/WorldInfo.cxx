@@ -32,7 +32,7 @@
 #include "MeshTransform.h"
 #include "MeshDrawInfo.h"
 #include "TextUtils.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "BzDocket.h"
 #include "BZDBCache.h"
 #include "FileManager.h"
@@ -123,7 +123,7 @@ void WorldInfo::addZone(const CustomZone *zone)
 void WorldInfo::addWeapon(const FlagType *type, const fvec3& origin,
 			  float direction, float tilt, TeamColor teamColor,
 			  float initdelay, const std::vector<float> &delay,
-			  TimeKeeper &sync, bool fromMesh)
+			  BzTime &sync, bool fromMesh)
 {
   worldWeapons.add(type, origin, direction, tilt,
 		   teamColor, initdelay, delay, sync, fromMesh);
@@ -680,7 +680,7 @@ int WorldInfo::packDatabase()
   databasePtr = luaRules.pack(databasePtr);
 
   // compress the map database
-  TimeKeeper startTime = TimeKeeper::getCurrent();
+  BzTime startTime = BzTime::getCurrent();
   uLong gzDBlen = compressBound(databaseSize);
 
   char* gzDB = new char[gzDBlen];
@@ -691,7 +691,7 @@ int WorldInfo::packDatabase()
     delete[] database;
     exit (1);
   }
-  TimeKeeper endTime = TimeKeeper::getCurrent();
+  BzTime endTime = BzTime::getCurrent();
 
   // switch to the compressed map database
   uncompressedSize = databaseSize;

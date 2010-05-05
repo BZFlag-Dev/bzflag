@@ -47,7 +47,7 @@ PositionTracker::~PositionTracker()
       trackSet[i]->id = UNSET_ID;
       trackSet[i]->intID = 0;
       trackSet[i]->strID = "";
-      trackSet[i]->lastUpdate = TimeKeeper::getNullTime();
+      trackSet[i]->lastUpdate = BzTime::getNullTime();
       trackSet[i]->position[0] = trackSet[i]->position[1] = trackSet[i]->position[2] = 0.0;
       trackSet[i]->forgotten = true;
       delete trackSet[i];
@@ -89,7 +89,7 @@ unsigned short PositionTracker::track(const std::string id, std::string group)
   newTracking->id = STR_ID;
   newTracking->intID = 0;
   newTracking->strID = id;
-  newTracking->lastUpdate = TimeKeeper::getNullTime();
+  newTracking->lastUpdate = BzTime::getNullTime();
   newTracking->position[0] = newTracking->position[1] = newTracking->position[2] = 0.0;
   newTracking->forgotten = false;
 
@@ -126,7 +126,7 @@ unsigned short PositionTracker::track(long int id, std::string group)
   newTracking->id = INT_ID;
   newTracking->intID = id;
   newTracking->strID = "";
-  newTracking->lastUpdate = TimeKeeper::getNullTime();
+  newTracking->lastUpdate = BzTime::getNullTime();
   newTracking->position[0] = newTracking->position[1] = newTracking->position[2] = 0.0;
   newTracking->forgotten = false;
 
@@ -151,7 +151,7 @@ bool PositionTracker::update(unsigned short int token, const std::string id, con
   trackSet[token]->position[0] = position[0];
   trackSet[token]->position[1] = position[1];
   trackSet[token]->position[2] = position[2];
-  trackSet[token]->lastUpdate = TimeKeeper::getCurrent();
+  trackSet[token]->lastUpdate = BzTime::getCurrent();
 
   return true;
 }
@@ -176,7 +176,7 @@ bool PositionTracker::update(unsigned short int token, long int id, const double
   trackSet[token]->position[0] = position[0];
   trackSet[token]->position[1] = position[1];
   trackSet[token]->position[2] = position[2];
-  trackSet[token]->lastUpdate = TimeKeeper::getCurrent();
+  trackSet[token]->lastUpdate = BzTime::getCurrent();
 
   return true;
 }

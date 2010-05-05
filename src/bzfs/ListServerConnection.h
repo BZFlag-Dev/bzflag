@@ -24,7 +24,7 @@
 /* common interface headers */
 #include "Address.h"
 #include "Ping.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 class ListServerLink : private cURLManager {
 public:
@@ -39,7 +39,7 @@ public:
   ~ListServerLink();
 
   enum MessageType {NONE, ADD, REMOVE} nextMessageType;
-  TimeKeeper lastAddTime;
+  BzTime lastAddTime;
 
   // connection functions
   void queueMessage(MessageType type);

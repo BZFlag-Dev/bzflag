@@ -22,7 +22,7 @@
 
 /* common interface headers */
 #include "Address.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 /**
  * This class represents the act of pinging a server and calculating
@@ -51,8 +51,8 @@ private:
 
   struct pingdesc
   {
-    TimeKeeper senttime;
-    TimeKeeper recvtime;
+    BzTime senttime;
+    BzTime recvtime;
   };
 
   std::vector<pingdesc> activepings;
@@ -66,7 +66,7 @@ private:
   double timeout;
   double interval;
 
-  TimeKeeper starttime;
+  BzTime starttime;
 };
 
 #endif  /* __SERVERPING_H__ */

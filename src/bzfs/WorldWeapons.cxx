@@ -22,7 +22,7 @@
 #include <vector>
 
 // common-interface headers
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "ShotUpdate.h"
 #include "Protocol.h"
 #include "Address.h"
@@ -43,7 +43,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 			    float dir, int shotID, float dt)
 {
   FiringInfo firingInfo;
-  firingInfo.timeSent = TimeKeeper::getCurrent().getSeconds();
+  firingInfo.timeSent = BzTime::getCurrent().getSeconds();
   firingInfo.flagType = type;
   firingInfo.lifetime = lifetime;
   firingInfo.shotType = type->flagShot;
@@ -73,7 +73,7 @@ static int fireWorldGMReal(FlagType* type, PlayerId targetPlayerID, float
                            float tilt, float dir, int shotID, float dt)
 {
     FiringInfo firingInfo;
-    firingInfo.timeSent = TimeKeeper::getCurrent().getSeconds();
+    firingInfo.timeSent = BzTime::getCurrent().getSeconds();
     firingInfo.flagType = type;
     firingInfo.lifetime = lifetime;
     firingInfo.shot.player = player;
@@ -133,7 +133,7 @@ void WorldWeapons::clear(void)
 
 float WorldWeapons::nextTime ()
 {
-  TimeKeeper nextShot = TimeKeeper::getSunExplodeTime();
+  BzTime nextShot = BzTime::getSunExplodeTime();
   for (std::vector<Weapon*>::iterator it = weapons.begin();
        it != weapons.end(); ++it) {
     Weapon *w = *it;
@@ -141,13 +141,13 @@ float WorldWeapons::nextTime ()
       nextShot = w->nextTime;
     }
   }
-  return (float)(nextShot - TimeKeeper::getCurrent());
+  return (float)(nextShot - BzTime::getCurrent());
 }
 
 
 void WorldWeapons::fire()
 {
-  TimeKeeper nowTime = TimeKeeper::getCurrent();
+  BzTime nowTime = BzTime::getCurrent();
 
   for (std::vector<Weapon*>::iterator it = weapons.begin();
        it != weapons.end(); ++it) {
@@ -175,7 +175,7 @@ void WorldWeapons::fire()
 void WorldWeapons::add(const FlagType *type, const fvec3& origin,
 		       float direction, float tilt, TeamColor teamColor,
 		       float initdelay, const std::vector<float> &delay,
-		       TimeKeeper &sync, bool fromMesh)
+		       BzTime &sync, bool fromMesh)
 {
   Weapon *w = new Weapon();
   w->type = type;

@@ -17,7 +17,7 @@
 #include "TextureManager.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "TextUtils.h"
 #include "ParseColor.h"
 #include "Intersect.h"
@@ -65,7 +65,7 @@ WeatherRenderer::WeatherRenderer()
   rainStartZ = -1.0f;
   rainEndZ = 0.0f;
 
-  lastRainTime = TimeKeeper::getCurrent();
+  lastRainTime = BzTime::getCurrent();
 
   maxPuddleTime = 5.0f;
   puddleSpeed = 1.0f;
@@ -396,7 +396,7 @@ void WeatherRenderer::set(void)
 	  raindrops.push_back (drop);
 	}
       }
-      lastRainTime = TimeKeeper::getCurrent();
+      lastRainTime = BzTime::getCurrent();
     }
     // recompute the drops based on the posible new size
 
@@ -428,7 +428,7 @@ void WeatherRenderer::set(void)
 void WeatherRenderer::update(void)
 {
   // update the time
-  TimeKeeper now = TimeKeeper::getCurrent();
+  BzTime now = BzTime::getCurrent();
   float frameTime = now - lastRainTime;
   lastRainTime = now;
 

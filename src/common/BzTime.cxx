@@ -11,7 +11,7 @@
  */
 
 // interface header
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 // system headers
 #include <time.h>
@@ -71,12 +71,12 @@ static DWORD             timeLastCalibration;
 
 //============================================================================//
 
-static TimeKeeper currentTime;
-static TimeKeeper tickTime;
-static TimeKeeper sunExplodeTime;
-static TimeKeeper sunGenesisTime;
-static TimeKeeper nullTime;
-static TimeKeeper startTime = TimeKeeper::getCurrent();
+static BzTime currentTime;
+static BzTime tickTime;
+static BzTime sunExplodeTime;
+static BzTime sunGenesisTime;
+static BzTime nullTime;
+static BzTime startTime = BzTime::getCurrent();
 
 
 //============================================================================//
@@ -92,7 +92,7 @@ static inline int64_t getEpochMicroseconds()
 #endif
 
 
-const TimeKeeper& TimeKeeper::getCurrent(void)
+const BzTime& BzTime::getCurrent(void)
 {
   // a mutex lock is used because this routine
   // is called from the client's sound thread
@@ -136,7 +136,6 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
   LOCK_TIMER_MUTEX
 
   if (qpcFrequency != 0) {
-
     // main timer is qpc
     LARGE_INTEGER now;
     QueryPerformanceCounter(&now);
@@ -161,7 +160,8 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
     }
 
     currentTime += (double) diff / (double) qpcFrequency;
-  } else if (lastTime != 0) {
+  }
+  else if (lastTime != 0) {
     unsigned long int now = (unsigned long int)timeGetTime();
     unsigned long int diff;
     if (now < lastTime) {
@@ -172,12 +172,13 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
     }
     currentTime += 1.0e-3 * (double)diff;
     lastTime = now;
-  } else {
+  }
+  else {
     static bool sane = true;
 
     // should only get into here once on app start
     if (!sane) {
-      logDebugMessage(1,"Sanity check failure in TimeKeeper::getCurrent()\n");
+      logDebugMessage(1,"Sanity check failure in BzTime::getCurrent()\n");
     }
     sane = false;
 
@@ -192,7 +193,8 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
       currentTime += 1.0e-3 * (double)timeLastCalibration; // sync with system clock
-    } else {
+    }
+    else {
       logDebugMessage(1,"QueryPerformanceFrequency failed with error %d\n", GetLastError());
 
       lastTime = (unsigned long int)timeGetTime();
@@ -208,46 +210,46 @@ const TimeKeeper& TimeKeeper::getCurrent(void)
 }
 
 
-const TimeKeeper& TimeKeeper::getStartTime(void) // const
+const BzTime& BzTime::getStartTime(void) // const
 {
   return startTime;
 }
 
 
-const TimeKeeper& TimeKeeper::getTick(void) // const
+const BzTime& BzTime::getTick(void) // const
 {
   return tickTime;
 }
 
 
-void TimeKeeper::setTick(void)
+void BzTime::setTick(void)
 {
   tickTime = getCurrent();
 }
 
 
-const TimeKeeper& TimeKeeper::getSunExplodeTime(void)
+const BzTime& BzTime::getSunExplodeTime(void)
 {
   sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
   return sunExplodeTime;
 }
 
 
-const TimeKeeper& TimeKeeper::getSunGenesisTime(void)
+const BzTime& BzTime::getSunGenesisTime(void)
 {
   sunGenesisTime.seconds = -10000.0 * 365 * 24 * 60 * 60;
   return sunGenesisTime;
 }
 
 
-const TimeKeeper& TimeKeeper::getNullTime(void)
+const BzTime& BzTime::getNullTime(void)
 {
   nullTime.seconds = 0;
   return nullTime;
 }
 
 
-const char *TimeKeeper::timestamp(void) // const
+const char *BzTime::timestamp(void) // const
 {
   static char buffer[256]; // static, so that it doesn't vanish
   time_t tnow = time(0);
@@ -266,7 +268,7 @@ const char *TimeKeeper::timestamp(void) // const
 
 /** returns a short string of the local time */
 //static
-std::string TimeKeeper::shortTimeStamp(void) {
+std::string BzTime::shortTimeStamp(void) {
   time_t tnow = time(0);
   struct tm *now = localtime(&tnow);
 
@@ -275,7 +277,7 @@ std::string TimeKeeper::shortTimeStamp(void) {
 }
 
 
-void TimeKeeper::localTime(int *year, int *month, int* day,
+void BzTime::localTime(int *year, int *month, int* day,
                            int* hour, int* min, int* sec, bool* dst) // const
 {
   time_t tnow = time(0);
@@ -293,7 +295,7 @@ void TimeKeeper::localTime(int *year, int *month, int* day,
 }
 
 
-void TimeKeeper::localTimeDOW(int *year, int *month, int* day, int* wday,
+void BzTime::localTimeDOW(int *year, int *month, int* day, int* wday,
                               int* hour, int* min, int* sec, bool* dst) // const
 {
   time_t tnow = time(0);
@@ -312,7 +314,7 @@ void TimeKeeper::localTimeDOW(int *year, int *month, int* day, int* wday,
 }
 
 
-void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
+void BzTime::UTCTime(int *year, int *month, int* day, int* wday,
                          int* hour, int* min, int* sec, bool* dst) // const
 {
   time_t tnow = time(0);
@@ -331,9 +333,9 @@ void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
 }
 
 
-// function for converting a float time (e.g. difference of two TimeKeepers)
+// function for converting a float time (e.g. difference of two BzTimes)
 // into an array of ints
-void TimeKeeper::convertTime(double raw, long int convertedTimes[]) // const
+void BzTime::convertTime(double raw, long int convertedTimes[]) // const
 {
   long int day, hour, min, sec, remainder;
   static const int secondsInDay = 86400;
@@ -358,7 +360,7 @@ void TimeKeeper::convertTime(double raw, long int convertedTimes[]) // const
 
 // function for printing an array of ints representing a time
 // as a human-readable string
-const std::string TimeKeeper::printTime(long int timeValue[])
+const std::string BzTime::printTime(long int timeValue[])
 {
   std::string valueNames;
   char temp[20];
@@ -394,7 +396,7 @@ const std::string TimeKeeper::printTime(long int timeValue[])
 
 
 // function for printing a float time difference as a human-readable string
-const std::string TimeKeeper::printTime(double diff)
+const std::string BzTime::printTime(double diff)
 {
   long int temp[4];
   convertTime(diff, temp);
@@ -402,7 +404,7 @@ const std::string TimeKeeper::printTime(double diff)
 }
 
 
-void TimeKeeper::sleep(double seconds)
+void BzTime::sleep(double seconds)
 {
   if (seconds <= 0.0) {
     return;
@@ -436,14 +438,14 @@ void TimeKeeper::sleep(double seconds)
 #endif
 
   // fall-back case is fugly manual timekeeping
-  TimeKeeper now = TimeKeeper::getCurrent();
-  while ((TimeKeeper::getCurrent() - now) < seconds) {
+  BzTime now = BzTime::getCurrent();
+  while ((BzTime::getCurrent() - now) < seconds) {
     continue;
   }
   return;
 }
 
-void TimeKeeper::setProcessorAffinity(int processor)
+void BzTime::setProcessorAffinity(int processor)
 {
 #ifdef HAVE_SCHED_SETAFFINITY
   /* linuxy fix for time travel */

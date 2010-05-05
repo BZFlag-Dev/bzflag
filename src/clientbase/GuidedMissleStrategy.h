@@ -21,7 +21,7 @@
 
 /* common interface headers */
 #include "SceneDatabase.h"
-#include "TimeKeeper.h"
+#include "BzTime.h"
 #include "BoltSceneNode.h"
 
 /* local interface headers */

@@ -2512,7 +2512,7 @@ static int GetGameTime(lua_State* L)
 
 static int GetTimer(lua_State* L)
 {
-  const double nowTime = TimeKeeper::getCurrent().getSeconds();
+  const double nowTime = BzTime::getCurrent().getSeconds();
   const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
   lua_pushlightuserdata(L, (void*)millisecs);
   return 1;

@@ -17,7 +17,7 @@
 #include "common.h"
 
 /* common interface headers */
-#include "TimeKeeper.h"
+#include "BzTime.h"
 
 #include "WorldEventManager.h"
 

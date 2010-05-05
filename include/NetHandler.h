@@ -152,7 +152,7 @@ public:
 
   void	  setUDPin(struct sockaddr_in *uaddr);
 
-  static void setCurrentTime(TimeKeeper tm);
+  static void setCurrentTime(BzTime tm);
 
   bool isMyUdpAddrPort(struct sockaddr_in uaddr, bool checkPort);
 
@@ -230,14 +230,14 @@ private:
   std::string toBeKickedReason;
 
   // time accepted
-  TimeKeeper time;
-  static TimeKeeper now;
+  BzTime time;
+  static BzTime now;
 
 #ifdef NETWORK_STATS
 
   bool     messageExchanged;
   // message stats bloat
-  TimeKeeper perSecondTime[2];
+  BzTime perSecondTime[2];
   uint32_t perSecondCurrentBytes[2];
   uint32_t perSecondMaxBytes[2];
   uint32_t perSecondCurrentMsg[2];
