@@ -37,8 +37,7 @@ class EventHandler
       FirstFalse,
       FirstNumber,
       FirstString,
-      BooleanOR,
-      TakenContinue
+      BooleanOR
     };
 
   public:

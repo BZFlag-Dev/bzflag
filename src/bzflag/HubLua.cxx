@@ -42,6 +42,9 @@
 #include "bz_md5.h"
 #include "version.h"
 
+// lua common headers
+#include "../lua/LuaDouble.h"
+
 // local headers
 #include "sound.h"
 #include "guiplaying.h"
@@ -186,6 +189,11 @@ bool HubLink::createLua(const std::string& code)
     fail("pushCallOuts() error");
     return false;
   }
+
+  // LuaDouble
+  lua_pushvalue(L, LUA_GLOBALSINDEX);
+  LuaDouble::PushEntries(L);
+  lua_pop(L, 1);
 
   const char* chunkName = codeFileName.c_str();
   if (luaL_loadbuffer(L, code.c_str(), code.size(), chunkName) != 0) {
@@ -1227,7 +1235,7 @@ int HubLink::GetCode(lua_State* L)
 
 int HubLink::GetTime(lua_State* L)
 {
-  lua_pushdouble(L, TimeKeeper::getCurrent().getSeconds());
+  LuaDouble::PushDouble(L, TimeKeeper::getCurrent().getSeconds());
   return 1;
 }
 
@@ -1290,7 +1298,7 @@ int HubLink::GetOpenGLNumbers(lua_State* L)
   glGetDoublev(pname, buf);
   lua_checkstack(L, count);
   for (int i = 0; i < count; i++) {
-    lua_pushdouble(L, buf[i]);
+    LuaDouble::PushDouble(L, buf[i]);
   }
   return count;
 }

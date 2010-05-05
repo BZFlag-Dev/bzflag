@@ -120,16 +120,16 @@ EventHandler::EventHandler()
   SETUP_EVENT(DrawScreen,        DrawScreenOrder, Basic, REVERSED);
   SETUP_EVENT(DrawRadar,         DrawScreenOrder, Basic, REVERSED);
 
-  SETUP_EVENT(KeyPress,          ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(KeyRelease,        ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(UnicodeText,       ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(MousePress,        ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseMove,         ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseRelease,      ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(MouseWheel,        ScriptIDOrder,   TakenContinue, REQ_INPUT_CTRL);
-  SETUP_EVENT(IsAbove,           ScriptIDOrder,   FirstTrue,     REQ_INPUT_CTRL);
-  SETUP_EVENT(GetTooltip,        ScriptIDOrder,   FirstString,   REQ_INPUT_CTRL);
-  SETUP_EVENT(WordComplete,      ScriptIDOrder,   Special,       REQ_INPUT_CTRL);
+  SETUP_EVENT(KeyPress,          ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(KeyRelease,        ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(UnicodeText,       ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(MousePress,        ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseMove,         ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseRelease,      ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(MouseWheel,        ScriptIDOrder,   BooleanOR,   REQ_INPUT_CTRL);
+  SETUP_EVENT(IsAbove,           ScriptIDOrder,   FirstTrue,   REQ_INPUT_CTRL);
+  SETUP_EVENT(GetTooltip,        ScriptIDOrder,   FirstString, REQ_INPUT_CTRL);
+  SETUP_EVENT(WordComplete,      ScriptIDOrder,   Special,     REQ_INPUT_CTRL);
 
   SETUP_EVENT(ForbidSpawn,       GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
   SETUP_EVENT(ForbidJump,        GameStateOrder,  FirstTrue, REQ_GAME_CTRL);
@@ -326,14 +326,13 @@ bool EventHandler::RemoveEvent(EventClient* ec, const std::string& ciName)
 const char* EventHandler::GetLoopTypeName(LoopType type) const
 {
   switch (type) {
-    case Basic:         { return "BASIC";          }
-    case Special:       { return "SPECIAL";        }
-    case FirstTrue:     { return "FIRST_TRUE";     }
-    case FirstFalse:    { return "FIRST_FALSE";    }
-    case FirstNumber:   { return "FIRST_NUMBER";   }
-    case FirstString:   { return "FIRST_STRING";   }
-    case BooleanOR:     { return "BOOLEAN_OR";     }
-    case TakenContinue: { return "TAKEN_CONTINUE"; }
+    case Basic:       { return "BASIC";        }
+    case Special:     { return "SPECIAL";      }
+    case FirstTrue:   { return "FIRST_TRUE";   }
+    case FirstFalse:  { return "FIRST_FALSE";  }
+    case FirstNumber: { return "FIRST_NUMBER"; }
+    case FirstString: { return "FIRST_STRING"; }
+    case BooleanOR:   { return "BOOLEAN_OR";   }
   }
   return NULL;
 }
