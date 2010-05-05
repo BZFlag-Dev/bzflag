@@ -237,7 +237,7 @@ protected:
   std::vector<ShotPath*>  shots;
   float			  handicap;
   TimeKeeper		  jamTime;
-  double		  lastLanding;
+  TimeKeeper		  lastLanding;
 
 private:
   // return true if the shot had to be terminated or false if it
@@ -372,7 +372,9 @@ private:
   bool isSolid();
 };
 
+
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.
+
 
 //
 // Player
@@ -457,7 +459,7 @@ inline float		Player::getAngularVelocity() const
   return state.angVel;
 }
 
-inline float         Player::getUserAngVel() const
+inline float		Player::getUserAngVel() const
 {
   return state.userAngVel;
 }
@@ -605,15 +607,16 @@ inline bool		Player::canMove() const
 
 inline bool		Player::canJump() const
 {
-  if (TimeKeeper::getCurrent().getSeconds() - lastLanding < BZDB.eval(BZDBNAMES.REJUMPTIME))
+  const float reJumpTime = BZDB.eval(BZDBNAMES.REJUMPTIME);
+  if ((TimeKeeper::getCurrent() - lastLanding) < reJumpTime) {
     return false;
-
+  }
   return (allow & AllowJump) != 0;
 }
 
 inline void		Player::land()
 {
-  lastLanding = TimeKeeper::getCurrent().getSeconds();
+  lastLanding = TimeKeeper::getCurrent();
 }
 
 inline bool		Player::canTurnLeft() const
