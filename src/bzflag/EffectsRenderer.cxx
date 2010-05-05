@@ -68,7 +68,7 @@ void EffectsRenderer::init(void)
 
 void EffectsRenderer::update(void)
 {
-  double time = TimeKeeper::getCurrent().getSeconds();
+  const TimeKeeper time = TimeKeeper::getTick();
 
   tvEffectsList::iterator i = effectsList.begin();
   while (i != effectsList.end()) {
@@ -114,7 +114,7 @@ void EffectsRenderer::addSpawnEffect(const fvec4& rgba, const fvec3& pos )
 
   if (effect) {
     effect->setPos(pos);
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     effect->setColor(rgba);
     effectsList.push_back(effect);
   }
@@ -157,7 +157,7 @@ void EffectsRenderer::addShotEffect(const fvec4& rgba, const fvec3& pos,
   if (effect) {
     effect->setPos(pos);
     effect->setRot(fvec3(0.0f, 0.0f, rot));
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     if (BZDB.isTrue("useVelOnShotEffects")) {
       effect->setVel(vel);
     }
@@ -203,7 +203,7 @@ void EffectsRenderer::addGMPuffEffect(const fvec3& pos, const fvec2& rot,
   if (effect) {
     effect->setPos(pos);
     effect->setRot(fvec3(0.0f, rot.y, rot.x));
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     if (velPtr && BZDB.isTrue("useVelOnShotEffects")) {
       effect->setVel(*velPtr);
     }
@@ -241,7 +241,7 @@ void EffectsRenderer::addDeathEffect(const fvec4& rgba, const fvec3& pos,
   if (effect) {
     effect->setPos(pos);
     effect->setRot(fvec3(0.0f, 0.0f, rot));
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     effect->setColor(rgba);
     effectsList.push_back(effect);
   }
@@ -272,7 +272,7 @@ void EffectsRenderer::addLandEffect(const fvec4& rgba, const fvec3& pos, float r
   if (effect) {
     effect->setPos(pos);
     effect->setRot(fvec3(0.0f, 0.0f, rot));
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     effect->setColor(rgba);
     effectsList.push_back(effect);
   }
@@ -312,7 +312,7 @@ void EffectsRenderer::addRicoEffect(const fvec3& pos,
 
     effect->setPos(pos);
     effect->setRot(rots);
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     if (velPtr && BZDB.isTrue("useVelOnShotEffects")) {
       effect->setVel(*velPtr);
     }
@@ -368,7 +368,7 @@ void EffectsRenderer::addShotTeleportEffect(const fvec3& pos,
 
     effect->setPos(p);
     effect->setRot(rots);
-    effect->setStartTime(TimeKeeper::getCurrent().getSeconds());
+    effect->setStartTime();
     if (false && BZDB.isTrue("useVelOnShotEffects")) {
       effect->setVel(vel);
     }
@@ -395,7 +395,7 @@ BasicEffect::BasicEffect()
 , velocity(0.0f, 0.0f, 0.0f)
 , color(0.0f, 0.0f, 0.0f, 1.0f)
 {
-  startTime = TimeKeeper::getCurrent().getSeconds();
+  startTime = TimeKeeper::getCurrent();
 
   lifeTime = 0;
   lastTime = startTime;
@@ -422,14 +422,14 @@ void BasicEffect::setColor(const fvec4& rgba)
   color = rgba;
 }
 
-void BasicEffect::setStartTime(double time)
+void BasicEffect::setStartTime()
 {
-  startTime = time;
-  lastTime = time;
+  startTime = TimeKeeper::getTick();
+  lastTime = startTime;
   deltaTime = 0;
 }
 
-bool BasicEffect::update(double time)
+bool BasicEffect::update(const TimeKeeper time)
 {
   age = time - startTime;
 
@@ -464,7 +464,7 @@ StdSpawnEffect::~StdSpawnEffect()
 {
 }
 
-bool StdSpawnEffect::update(double time)
+bool StdSpawnEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -498,7 +498,7 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 }
 
 //******************ConeSpawnEffect****************
-bool ConeSpawnEffect::update(double time)
+bool ConeSpawnEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -547,7 +547,7 @@ RingSpawnEffect::RingSpawnEffect()
   maxZ = 10.0f;
 }
 
-bool RingSpawnEffect::update(double time)
+bool RingSpawnEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -630,7 +630,7 @@ StdShotEffect::~StdShotEffect()
 {
 }
 
-bool StdShotEffect::update(double time)
+bool StdShotEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -688,7 +688,7 @@ FlashShotEffect::FlashShotEffect() : StdShotEffect()
   ringState = gstate.getState();
 }
 
-bool FlashShotEffect::update(double time)
+bool FlashShotEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -784,7 +784,7 @@ StdDeathEffect::~StdDeathEffect()
 {
 }
 
-bool StdDeathEffect::update(double time)
+bool StdDeathEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -864,7 +864,7 @@ StdLandEffect::~StdLandEffect()
 {
 }
 
-bool StdLandEffect::update(double time)
+bool StdLandEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -921,7 +921,7 @@ StdGMPuffEffect::~StdGMPuffEffect()
 {
 }
 
-bool StdGMPuffEffect::update(double time)
+bool StdGMPuffEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -983,7 +983,7 @@ StdRicoEffect::~StdRicoEffect()
 {
 }
 
-bool StdRicoEffect::update(double time)
+bool StdRicoEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
@@ -1048,7 +1048,7 @@ StdShotTeleportEffect::~StdShotTeleportEffect()
 {
 }
 
-bool StdShotTeleportEffect::update(double time)
+bool StdShotTeleportEffect::update(const TimeKeeper time)
 {
   // see if it's time to die
   // if not update all those fun times
