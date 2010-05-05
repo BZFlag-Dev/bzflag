@@ -19,7 +19,7 @@
 
 FlashClock::FlashClock() : duration(0.0f), onDuration(0.0f), flashDuration(0.0f)
 {
-  // do nothing
+  startTime = TimeKeeper::getCurrent();
 }
 
 FlashClock::~FlashClock()
@@ -34,7 +34,8 @@ void FlashClock::setClock(float _duration)
 
 void FlashClock::setClock(float _duration, float onTime, float offTime)
 {
-  startTime = TimeKeeper::getTick();
+  if (TimeKeeper::getTick().getSeconds() > 0.0)
+    startTime = TimeKeeper::getTick();
   duration = _duration;
   if (onTime <= 0.0f || offTime <= 0.0f) {
     onDuration = 0.0f;
@@ -48,13 +49,13 @@ void FlashClock::setClock(float _duration, float onTime, float offTime)
 bool FlashClock::isOn()
 {
   if (duration == 0.0f) return false;
-  const float dt = float(TimeKeeper::getTick() - startTime);
-  if (duration > 0.0f && dt >= duration) {
+  const double dt = TimeKeeper::getTick() - startTime;
+  if (duration > 0.0f && dt >= (double)duration) {
     duration = 0.0f;
     return false;
   }
   if (flashDuration == 0.0f) return true;
-  return (fmodf(dt, flashDuration) < onDuration);
+  return (fmod(dt, (double)flashDuration) < onDuration);
 }
 
 
