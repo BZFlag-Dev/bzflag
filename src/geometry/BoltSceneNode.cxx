@@ -157,7 +157,9 @@ void BoltSceneNode::move(const fvec3& pos, const fvec3& vel)
 
 void BoltSceneNode::addLight(SceneRenderer& renderer)
 {
-  renderer.addLight(light);
+  if (!invisible) {
+    renderer.addLight(light);
+  }
 }
 
 
