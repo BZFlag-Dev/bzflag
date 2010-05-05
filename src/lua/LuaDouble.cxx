@@ -409,6 +409,11 @@ int LuaDouble::ld_isfinite(lua_State* L) {
   return 1;
 }
 
+
+int LuaDouble::ld_abs(lua_State* L) {
+  PushDouble(L, ::fabs(CheckNumber(L, 1))); return 1;
+}
+
 int LuaDouble::ld_floor(lua_State* L) {
   PushDouble(L, ::floor(CheckNumber(L, 1))); return 1;
 }
@@ -440,13 +445,27 @@ int LuaDouble::ld_ldexp(lua_State* L) {
   PushDouble(L, ::ldexp(CheckNumber(L, 1), (int)CheckNumber(L, 2))); return 1;
 }
 
+
 int LuaDouble::ld_sqrt(lua_State* L) {
   PushDouble(L, ::sqrt(CheckNumber(L, 1))); return 1;
 }
 
-int LuaDouble::ld_abs(lua_State* L) {
-  PushDouble(L, ::fabs(CheckNumber(L, 1))); return 1;
+int LuaDouble::ld_pow(lua_State* L) {
+  PushDouble(L, ::pow(CheckNumber(L, 1), CheckNumber(L, 2))); return 1;
 }
+
+int LuaDouble::ld_exp(lua_State* L) {
+  PushDouble(L, ::exp(CheckNumber(L, 1))); return 1;
+}
+
+int LuaDouble::ld_log(lua_State* L) {
+  PushDouble(L, ::log(CheckNumber(L, 1))); return 1;
+}
+
+int LuaDouble::ld_log10(lua_State* L) {
+  PushDouble(L, ::log10(CheckNumber(L, 1))); return 1;
+}
+
 
 int LuaDouble::ld_cos(lua_State* L) {
   PushDouble(L, ::cos(CheckNumber(L, 1))); return 1;
@@ -476,21 +495,6 @@ int LuaDouble::ld_atan2(lua_State* L) {
   PushDouble(L, ::atan2(CheckNumber(L, 1), CheckNumber(L, 2))); return 1;
 }
 
-int LuaDouble::ld_pow(lua_State* L) {
-  PushDouble(L, ::pow(CheckNumber(L, 1), CheckNumber(L, 2))); return 1;
-}
-
-int LuaDouble::ld_exp(lua_State* L) {
-  PushDouble(L, ::exp(CheckNumber(L, 1))); return 1;
-}
-
-int LuaDouble::ld_log(lua_State* L) {
-  PushDouble(L, ::log(CheckNumber(L, 1))); return 1;
-}
-
-int LuaDouble::ld_log10(lua_State* L) {
-  PushDouble(L, ::log10(CheckNumber(L, 1))); return 1;
-}
 
 int LuaDouble::ld_cosh(lua_State* L) {
   PushDouble(L, ::cosh(CheckNumber(L, 1))); return 1;
@@ -525,8 +529,11 @@ bool LuaDouble::PushEntries(lua_State* L)
     luaset_strfunc(L, "pack",   pack);
     luaset_strfunc(L, "unpack", unpack);
 
-    luaset_strfunc(L, "isnan", ld_isnan);
-    luaset_strfunc(L, "isinf", ld_isinf);
+    luaset_strfunc(L, "isnan",    ld_isnan);
+    luaset_strfunc(L, "isinf",    ld_isinf);
+    luaset_strfunc(L, "isfinite", ld_isfinite);
+
+    luaset_strfunc(L, "abs",   ld_abs);
     luaset_strfunc(L, "floor", ld_floor);
     luaset_strfunc(L, "ceil",  ld_ceil);
     luaset_strfunc(L, "fmod",  ld_fmod);
@@ -534,7 +541,10 @@ bool LuaDouble::PushEntries(lua_State* L)
     luaset_strfunc(L, "frexp", ld_frexp);
     luaset_strfunc(L, "ldexp", ld_ldexp);
     luaset_strfunc(L, "sqrt",  ld_sqrt);
-    luaset_strfunc(L, "abs",   ld_abs);
+    luaset_strfunc(L, "pow",   ld_pow);
+    luaset_strfunc(L, "exp",   ld_exp);
+    luaset_strfunc(L, "log",   ld_log);
+    luaset_strfunc(L, "log10", ld_log10);
     luaset_strfunc(L, "cos",   ld_cos);
     luaset_strfunc(L, "sin",   ld_sin);
     luaset_strfunc(L, "tan",   ld_tan);
@@ -542,10 +552,6 @@ bool LuaDouble::PushEntries(lua_State* L)
     luaset_strfunc(L, "asin",  ld_asin);
     luaset_strfunc(L, "atan",  ld_atan);
     luaset_strfunc(L, "atan2", ld_atan2);
-    luaset_strfunc(L, "pow",   ld_pow);
-    luaset_strfunc(L, "exp",   ld_exp);
-    luaset_strfunc(L, "log",   ld_log);
-    luaset_strfunc(L, "log10", ld_log10);
     luaset_strfunc(L, "cosh",  ld_cosh);
     luaset_strfunc(L, "sinh",  ld_sinh);
     luaset_strfunc(L, "tanh",  ld_tanh);
@@ -569,7 +575,7 @@ bool LuaDouble::PushEntries(lua_State* L)
   PushDouble(L, M_PI);
   lua_rawset(L, -3);
 
-  // fixme -- need 'huge'
+  // FIXME -- need 'huge' ?
 
   lua_pop(L, 1); // pop the 'double' table
 

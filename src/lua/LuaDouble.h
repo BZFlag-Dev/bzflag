@@ -71,6 +71,7 @@ class LuaDouble {
     static int ld_isfinite(lua_State* L);
 
   private:
+    static int ld_abs(lua_State* L);
     static int ld_floor(lua_State* L);
     static int ld_ceil(lua_State* L);
     static int ld_fmod(lua_State* L);
@@ -78,7 +79,10 @@ class LuaDouble {
     static int ld_frexp(lua_State* L);
     static int ld_ldexp(lua_State* L);
     static int ld_sqrt(lua_State* L);
-    static int ld_abs(lua_State* L);
+    static int ld_pow(lua_State* L);
+    static int ld_exp(lua_State* L);
+    static int ld_log(lua_State* L);
+    static int ld_log10(lua_State* L);
     static int ld_cos(lua_State* L);
     static int ld_sin(lua_State* L);
     static int ld_tan(lua_State* L);
@@ -86,10 +90,6 @@ class LuaDouble {
     static int ld_asin(lua_State* L);
     static int ld_atan(lua_State* L);
     static int ld_atan2(lua_State* L);
-    static int ld_pow(lua_State* L);
-    static int ld_exp(lua_State* L);
-    static int ld_log(lua_State* L);
-    static int ld_log10(lua_State* L);
     static int ld_cosh(lua_State* L);
     static int ld_sinh(lua_State* L);
     static int ld_tanh(lua_State* L);
