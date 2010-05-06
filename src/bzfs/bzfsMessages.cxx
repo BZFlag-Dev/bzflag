@@ -876,10 +876,10 @@ bool sendPlayerStateMessage( GameKeeper::Player* playerData, bool shortState )
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler && otherData->player.isPlaying())
+    if (otherData && otherData->playerHandler && otherData->player.isPlaying()) {
       otherData->playerHandler->playerStateUpdate(playerData->getIndex(),
-						  &apiState,
-						  playerData->stateTimeStamp.getSeconds());
+						  &apiState, playerData->stateTimeStamp.getSeconds());
+    }
   }
   return true;
 }

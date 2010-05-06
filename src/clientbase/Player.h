@@ -101,8 +101,8 @@ public:
   // shots
   int		getMaxShots() const;
   ShotPath*	getShot(int index) const;
-  ShotType	getShotType ( void ) const {return shotType;}
-  void		setShotType ( ShotType _shotType ) {shotType = _shotType;}
+  ShotType	getShotType() const { return shotType; }
+  void		setShotType(ShotType _shotType) { shotType = _shotType; }
 
   const ShotStatistics*	getShotStatistics() const;
 
@@ -181,11 +181,11 @@ public:
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
-  void	  setHandicap(float handicap);
+  void		setHandicap(float handicap);
   void		setStatus(short);
   void		setExplode(const BzTime&);
   void		setAllow(unsigned char _allow);
-  unsigned char		getAllow();
+  unsigned char	getAllow();
   void		setTeleport(const BzTime&, short src, short dst);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
@@ -196,16 +196,16 @@ public:
   void		setDeadReckoning(); // local version
   void		setDeadReckoning(double timestamp);
 
-  void		setUserTexture(const char *tex) { if(tex) { userTexture = tex; } }
+  void		setUserTexture(const char *tex) { if (tex) { userTexture = tex; } }
 
   void		renderRadar() const;
 
-  void		setZpos (float z);
-  float		getMaxSpeed ( void ) const;
+  void		setZpos(float z);
+  float		getMaxSpeed() const;
 
-  void		updateShot ( FiringInfo &info, int shotID, double time );
+  void		updateShot(FiringInfo &info, int shotID, double time);
 
-  void		land ( void );
+  void		land();
 
   std::map<std::string,std::string> customData;
 

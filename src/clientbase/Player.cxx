@@ -1269,6 +1269,46 @@ void* Player::unpack(void* buf, uint16_t code)
 }
 
 
+void Player::setDeadReckoning()
+{
+  setDeadReckoning(BzTime::getTick());
+}
+
+
+void Player::setDeadReckoning(double timestamp)
+{
+  // set the current state
+  debugDR("setDeadReckoning: playerID = %i, timestamp = %.14g\n",
+          getId(), timestamp);
+
+  // copy stuff for dead reckoning
+  inputTime      = BzTime::getTick();
+  inputTimestamp = timestamp;
+  inputStatus    = state.status;
+  inputPos       = state.pos;
+  inputVel       = state.velocity;
+  inputAzimuth   = state.azimuth;
+  inputAngVel    = state.angVel;
+  inputPhyDrv    = state.phydrv;
+
+  // the relative motion information (with respect to the physics drivers)
+  calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
+
+  // setup the turning parameters
+  inputTurning = false;
+  if (fabsf(inputRelAngVel) > 0.001f) {
+    inputTurning = true;
+    const float radius = (inputRelSpeed / inputRelAngVel);
+    inputTurnVector.x = +sinf(inputAzimuth) * radius;
+    inputTurnVector.y = -cosf(inputAzimuth) * radius;
+    inputTurnCenter.x = inputPos.x - inputTurnVector.x;
+    inputTurnCenter.y = inputPos.y - inputTurnVector.y;
+  }
+
+  setRelativeMotion();
+}
+
+
 void Player::doDeadReckoning()
 {
   if (!isAlive() && !isExploding()) {
@@ -1299,6 +1339,7 @@ void Player::doDeadReckoning()
     zLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
 
+#ifdef DR_USES_HIT_CORRECTION // FIXME - this should probably be moved
   // check for collisions and correct accordingly
   World *world = World::getWorld();
   if (world) {
@@ -1339,6 +1380,7 @@ void Player::doDeadReckoning()
       }
     }
   }
+#endif // DR_USES_HIT_CORRECTION
 
   // the velocity check is for when a Burrow flag is dropped
   if (ZHit || ((predictedPos.z <= zLimit) &&
@@ -1360,7 +1402,7 @@ void Player::doDeadReckoning()
     if (((oldStatus & PlayerState::Falling) != 0) && ((inputStatus & PlayerState::Falling) == 0)) {
       setLandingSpeed(oldZSpeed);    // setup the squish effect
 
-      EFFECTS.addLandEffect(getColor(),predictedPos,state.azimuth);    // make it "land"
+      EFFECTS.addLandEffect(getColor(), predictedPos, state.azimuth); // make it "land"
 
       // setup the sound
       if (BZDB.isTrue("remoteSounds")){
@@ -1396,7 +1438,7 @@ void Player::doDeadReckoning()
   // if we hit something, then we want to DR from
   // here now, instead of from the starting point
   if (hitWorld) {
-    setDeadReckoning(BzTime::getTick()); // FIXME
+    setDeadReckoning(BzTime::getTick()); // FIXME -- wrong timestamp
   }
 }
 
@@ -1500,7 +1542,7 @@ bool Player::isDeadReckoningWrong() const
   // always send a new packet when some kinds of status change
   const uint16_t checkStates = (PlayerState::Alive | PlayerState::Falling);
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
-    debugDR("isDeadReckoningWrong() - status mismatch\n");
+    debugDR("isDRWrong() status mismatch\n");
     return true;
   }
 
@@ -1511,13 +1553,13 @@ bool Player::isDeadReckoningWrong() const
 
   //  send a packet if we've made some noise
   if (state.sounds != PlayerState::NoSounds) {
-    debugDR("isDeadReckoningWrong() - sounds\n");
+    debugDR("isDRWrong() sounds\n");
     return true;
   }
 
   //  send a packet if we've crossed a physics driver boundary
   if (state.phydrv != inputPhyDrv) {
-    debugDR("isDeadReckoningWrong() - phydrv\n");
+    debugDR("isDRWrong() phydrv\n");
     return true;
   }
 
@@ -1526,7 +1568,7 @@ bool Player::isDeadReckoningWrong() const
 
   // otherwise always send at least one packet per second
   if (dt >= MaxUpdateTime) {
-    debugDR("isDeadReckoningWrong() - MaxUpdateTime %f vs %f\n",
+    debugDR("isDRWrong() MaxUpdateTime %.3g vs %.3g\n",
                     dt, MaxUpdateTime);
     return true;
   }
@@ -1543,7 +1585,7 @@ bool Player::isDeadReckoningWrong() const
     groundLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
   if (predictedPos.z < groundLimit) {
-    debugDR("isDeadReckoningWrong() - predictPos.z < groundLimit\n");
+    debugDR("isDRWrong() predictPos.z < groundLimit\n");
     return true;
   }
 
@@ -1561,16 +1603,16 @@ bool Player::isDeadReckoningWrong() const
       (fabsf(state.pos.z - predictedPos.z) > positionTolerance)) {
     if (bzdbDebugDR && !BZDBCache::forbidDebug) {
       if (fabsf(state.pos.x - predictedPos.x) > positionTolerance) {
-	debugDR("state.pos.x = %f, predictedPos.x = %f\n",
-		state.pos.x, predictedPos.x);
+	debugDR("isDRWrong() diff(pos.x) > posTolerance: %.3g vs %.3g\n",
+		fabsf(state.pos.x - predictedPos.x), (float)positionTolerance);
       }
       if (fabsf(state.pos.y - predictedPos.y) > positionTolerance) {
-	debugDR("state.pos.y = %f, predictedPos.y = %f\n",
-		state.pos.y, predictedPos.y);
+	debugDR("isDRWrong() diff(pos.y) > posTolerance: %.3g vs %.3g\n",
+		fabsf(state.pos.y - predictedPos.y), (float)positionTolerance);
       }
       if (fabsf(state.pos.z - predictedPos.z) > positionTolerance) {
-	debugDR("state.pos.z = %f, predictedPos.z = %f\n",
-		state.pos.z, predictedPos.z);
+	debugDR("isDRWrong() diff(pos.z) > posTolerance: %.3g vs %.3g\n",
+		fabsf(state.pos.z - predictedPos.z), (float)positionTolerance);
       }
     }
     return true;
@@ -1578,52 +1620,13 @@ bool Player::isDeadReckoningWrong() const
 
   static BZDB_float angleTolerance(BZDBNAMES.ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
-    debugDR("state.azimuth = %f, predictedAzimuth = %f\n",
-            state.azimuth, predictedAzimuth);
+    debugDR("isDRWrong() diff(azimuth) > angleTolerance: %.3g vs %.3g\n",
+            fabsf(state.azimuth - predictedAzimuth), (float)angleTolerance);
     return true;
   }
 
   // prediction is good enough
   return false;
-}
-
-
-void Player::setDeadReckoning()
-{
-  setDeadReckoning(BzTime::getTick());
-}
-
-
-void Player::setDeadReckoning(double timestamp)
-{
-  // set the current state
-  debugDR("setDeadReckoning: playerID = %i, timestamp = %g\n", getId(), timestamp);
-
-  // copy stuff for dead reckoning
-  inputTime      = BzTime::getTick();
-  inputTimestamp = timestamp;
-  inputStatus    = state.status;
-  inputPos       = state.pos;
-  inputVel       = state.velocity;
-  inputAzimuth   = state.azimuth;
-  inputAngVel    = state.angVel;
-  inputPhyDrv    = state.phydrv;
-
-  // the relative motion information (with respect to the physics drivers)
-  calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
-
-  // setup the turning parameters
-  inputTurning = false;
-  if (fabsf(inputRelAngVel) > 0.001f) {
-    inputTurning = true;
-    const float radius = (inputRelSpeed / inputRelAngVel);
-    inputTurnVector.x = +sinf(inputAzimuth) * radius;
-    inputTurnVector.y = -cosf(inputAzimuth) * radius;
-    inputTurnCenter.x = inputPos.x - inputTurnVector.x;
-    inputTurnCenter.y = inputPos.y - inputTurnVector.y;
-  }
-
-  setRelativeMotion();
 }
 
 
@@ -1712,7 +1715,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
   for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
     // record position at beginning of time step
     fvec3 tmpPos;
-	float tmpAzimuth;
+    float tmpAzimuth;
     tmpAzimuth = newAzimuth;
     tmpPos = newPos;
 
@@ -1771,7 +1774,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
 
     // record position when hitting
     fvec3 hitPos;
-	float hitAzimuth;
+    float hitAzimuth;
     hitAzimuth = newAzimuth;
     hitPos = newPos;
 
@@ -1791,13 +1794,14 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       // see if we hit anything
       bool searchExpel;
       const Obstacle* searchObstacle =
-        getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-                       phased, searchExpel);
+        getHitBuilding(tmpPos, tmpAzimuth,
+                       newPos, newAzimuth, phased, searchExpel);
 
       if (!searchObstacle || !searchExpel) {
         // if no hit then search latter half of time step
         searchTime = t;
-      } else if (searchObstacle) {
+      }
+      else if (searchObstacle) {
         // if we hit a building then record which one and where
         obstacle = searchObstacle;
 
@@ -1832,7 +1836,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
         lastObstacle = obstacle;
       }
       newVelocity.z = 0.0f;
-    } else {
+    }
+    else {
       // get component of velocity in normal direction (in horizontal plane)
       float mag = (normal.x * newVelocity.x) +
 		  (normal.y * newVelocity.y);

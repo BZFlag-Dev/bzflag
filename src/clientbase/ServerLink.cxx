@@ -1023,7 +1023,7 @@ void ServerLink::sendKilled(const PlayerId victim,
 }
 
 
-void ServerLink::sendPlayerUpdate(Player* player )
+void ServerLink::sendPlayerUpdate(Player* player)
 {
   char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all

@@ -3184,7 +3184,8 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
-bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, BzTime const& timeStamp, bool shortState )
+bool updatePlayerState(GameKeeper::Player *playerData,
+                       PlayerState &state, BzTime const& timeStamp, bool shortState)
 {
   // observer updates are not relayed, or checked
   if (playerData->player.isObserver()) {
@@ -3193,6 +3194,7 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, BzT
     return true;
   }
 
+  // bz_ePlayerUpdateEvent
   bz_PlayerUpdateEventData_V1 eventData;
   playerStateToAPIState(eventData.state,state);
   eventData.stateTime = timeStamp.getSeconds();
@@ -3207,11 +3209,13 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, BzT
     return true;
   }
 
-  if (!validatePlayerState(playerData,state))
+  if (!validatePlayerState(playerData, state)) {
     return false;
+  }
 
   playerData->setPlayerState(state, timeStamp);
 
+  // bz_ePlayerUpdateDoneEvent
   bz_PlayerUpdateDoneEventData_V1 doneEventData;
   doneEventData.stateTime = timeStamp.getSeconds();
   doneEventData.playerID = playerData->getIndex();
@@ -3219,12 +3223,15 @@ bool updatePlayerState ( GameKeeper::Player *playerData, PlayerState &state, BzT
 
   // Player might already be dead and did not know it yet (e.g. teamkill)
   // do not propogate
-  if (!playerData->player.isAlive() && (state.status & short(PlayerState::Alive)))
+  if (!playerData->player.isAlive() &&
+      (state.status & short(PlayerState::Alive))) {
     return true;
+  }
 
   searchFlag(*playerData);
 
-  sendPlayerStateMessage(playerData,shortState);
+  sendPlayerStateMessage(playerData, shortState);
+
   return true;
 }
 

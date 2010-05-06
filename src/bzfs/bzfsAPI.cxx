@@ -5330,6 +5330,7 @@ void bz_ServerSidePlayerHandler::updatePhysics(void)
       state.azimuth = currentState.rot;
       memcpy(state.velocity,currentState.vec,sizeof(float)*3);
       memcpy(state.pos,currentState.pos,sizeof(float)*3);
+
       updatePlayerState(player, state, BzTime(now), false);
 
       lastUpdate = currentState;
