@@ -17,9 +17,13 @@
 #include <math.h>
 
 
-FlashClock::FlashClock() : duration(0.0f), onDuration(0.0f), flashDuration(0.0f)
+FlashClock::FlashClock()
+  : startTime(BzTime::getCurrent())
+  , duration(0.0f)
+  , onDuration(0.0f)
+  , flashDuration(0.0f)
 {
-  startTime = BzTime::getCurrent();
+  // do nothing
 }
 
 FlashClock::~FlashClock()
