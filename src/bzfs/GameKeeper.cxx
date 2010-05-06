@@ -553,7 +553,7 @@ void GameKeeper::Player::setMaxShots(int _maxShots)
 
 bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
-  double now = (double)BzTime::getCurrent().getSeconds();
+  BzTime now = BzTime::getCurrent();
   if (id < (int)shotsInfo.size() && shotsInfo[id].present
       && now < shotsInfo[id].expireTime) {
       logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
@@ -587,7 +587,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
   ShotInfo myShot;
   myShot.firingInfo  = firingInfo;
   myShot.salt	= salt;
-  myShot.expireTime  = now + lifeTime;
+  myShot.expireTime += now + lifeTime;
   myShot.present     = true;
   myShot.running     = true;
 
@@ -601,7 +601,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
 bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 {
-  double now = (double)BzTime::getCurrent().getSeconds();
+  BzTime now = BzTime::getCurrent();
   if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
     || now >= shotsInfo[id].expireTime) {
       logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
@@ -622,7 +622,7 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 
 bool GameKeeper::Player::updateShot(int id, int salt)
 {
-  double now = (double)BzTime::getCurrent().getSeconds();
+  BzTime now = BzTime::getCurrent();
   if (id >= (int)shotsInfo.size()) {
       logDebugMessage(2,"Player %s [%d] trying to update an invalid shot id %d\n",
 	player.getCallSign(), playerIndex, id);

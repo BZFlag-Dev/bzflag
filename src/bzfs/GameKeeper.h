@@ -51,7 +51,7 @@ public:
 
   FiringInfo firingInfo;
   int    salt;
-  double expireTime;
+  BzTime expireTime;
   bool   present;
   bool   running;
 };
