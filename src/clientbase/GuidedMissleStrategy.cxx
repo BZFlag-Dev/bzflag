@@ -468,7 +468,7 @@ void GuidedMissileStrategy::expire()
   if (getPath().getPlayer() == LocalPlayer::getMyTank()->getId()) {
     const ShotPath& shot = getPath();
     /* NOTE -- change 0 to 1 to not explode when shot expires (I think) */
-    ServerLink::getServer()->sendEndShot(shot.getPlayer(), shot.getShotId(), 0);
+    ServerLink::getServer()->sendShotEnd(shot.getPlayer(), shot.getShotId(), 0);
   }
 }
 

@@ -193,6 +193,7 @@ public:
   void*		pack(void*, uint16_t& code);
   void*		unpack(void*, uint16_t code);
 
+  void		setDeadReckoning(); // local version
   void		setDeadReckoning(double timestamp);
 
   void		setUserTexture(const char *tex) { if(tex) { userTexture = tex; } }
@@ -245,9 +246,11 @@ private:
   // position if you return true (it's okay to return false if
   // there's no meaningful shot position).
   virtual bool	doEndShot(int index, bool isHit, fvec3& position) = 0;
+
   void getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 			fvec3& predictedVel, float time) const;
   void calcRelativeMotion(fvec2& vel, float& speed, float& angvel);
+
   void setVisualTeam (TeamColor team );
   void updateFlagEffect(FlagType* flag);
   void updateTranslucency(float dt);
@@ -255,7 +258,10 @@ private:
   void updateTreads(float dt);
   void updateJumpJets(float dt);
   void updateTrackMarks();
+
   bool hitObstacleResizing();
+
+  // used by doDeadReckoning()
   bool getHitCorrection(const fvec3& startPos, const float startAzimuth,
                         const fvec3& endPos,   const float endAzimuth,
                         const fvec3& startVelocity, double timeStep,
@@ -340,20 +346,20 @@ private:
   float			relativeAngVel;		// relative angular velocity
 
   // dead reckoning stuff
+  double inputTimestamp;	// input timestamp of the sender
   BzTime inputTime;		// time of input
-  double     updateTimeStamp;	// time of  the last update
-  int	inputStatus;		// tank status
-  fvec3	inputPos;		// tank position
-  fvec3	inputVel;		// tank velocity
-  float	inputAzimuth;		// direction tank is pointing
-  float	inputAngVel;		// tank turn rate
-  bool	inputTurning;		// tank is turning
-  fvec2 inputRelVel;		// relative velocity
-  float	inputRelSpeed;		// relative speed
-  float	inputRelAngVel;		// relative angular velocity
-  fvec2	inputTurnCenter;	// tank turn center
-  fvec2	inputTurnVector;	// tank turn vector
-  int	inputPhyDrv;		// physics driver
+  int    inputStatus;		// tank status
+  fvec3  inputPos;		// tank position
+  fvec3  inputVel;		// tank velocity
+  float  inputAzimuth;		// direction tank is pointing
+  float  inputAngVel;		// tank turn rate
+  bool   inputTurning;		// tank is turning
+  fvec2  inputRelVel;		// relative velocity
+  float  inputRelSpeed;		// relative speed
+  float  inputRelAngVel;	// relative angular velocity
+  fvec2  inputTurnCenter;	// tank turn center
+  fvec2  inputTurnVector;	// tank turn vector
+  int    inputPhyDrv;		// physics driver
 
   // average difference between time source and time destination
   float			deltaTime;
@@ -727,7 +733,7 @@ inline unsigned char	Player::getAllow()
 
 inline void*		Player::pack(void* buf, uint16_t& code)
 {
-  setDeadReckoning(-1);
+  setDeadReckoning();
   return state.pack(buf, code);
 }
 

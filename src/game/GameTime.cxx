@@ -277,12 +277,7 @@ void* GameTime::unpack(void *buf)
 double GameTime::getDRTime()
 {
   static BZDB_bool useServerDRClock("_useServerDRClock"); // FIXME -- for testing
-
-  if (useServerDRClock) {
-    return getStepTime();
-  }
-  
-  return BzTime::getCurrent().getSeconds();
+  return  useServerDRClock ? getStepTime() : BzTime::getCurrent().getSeconds();
 }
 
 

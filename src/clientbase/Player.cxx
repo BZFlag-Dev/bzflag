@@ -42,10 +42,34 @@
 // for dead reckoning
 static const float MaxUpdateTime = 1.0f; // seconds
 
+
+//============================================================================//
+//============================================================================//
+//
+//  Dead-reckoning gets its own debugging routine, woohoo
+//
+
+
+static BZDB_bool bzdbDebugDR("debugDR");
+
+
+static inline void debugDR(const char* fmt, ...)
+{
+  if (!bzdbDebugDR || BZDBCache::forbidDebug) {
+    return;
+  }
+  va_list ap;
+  va_start(ap, fmt);
+  logDebugMessageArgs(0, fmt, ap);
+  va_end(ap);
+}
+
+
+//============================================================================//
+//============================================================================//
 //
 // Player
 //
-
 
 int Player::tankTexture = -1;
 
@@ -92,7 +116,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   setVelocity(zero);
   setAngularVelocity(0.0f);
   setPhysicsDriver(-1);
-  setDeadReckoning(GameTime::getDRTime());
+  setDeadReckoning();
   setRelativeMotion();
   setUserSpeed(0.0f);
   setUserAngVel(0.0f);
@@ -101,13 +125,14 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 
   // set call sign
   ::strncpy(callSign, name, CallSignLen);
-  callSign[CallSignLen-1] = '\0';
+  callSign[CallSignLen - 1] = '\0';
 
   // only get an avtar if it can be drawn
-  if (id != ServerPlayer && !headless)
+  if (id != ServerPlayer && !headless) {
     avatar = getPlayerAvatar(id,state.pos,forward);
-  else
+  } else {
     avatar = NULL;
+  }
 
   // setup the dimension properties
   dimensions.x = 0.5f * BZDBCache::tankLength;
@@ -133,28 +158,31 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   spawnTime = BzTime::getCurrent();
 
   shotType = StandardShot;
-
-  return;
 }
+
 
 Player::~Player()
 {
   // free shots
   const int numShots = getMaxShots();
   for (int i = 0; i < numShots; i++) {
-    if (shots[i])
+    if (shots[i]) {
       deleteShot(i);
+    }
   }
   freePlayerAvatar (avatar);
 }
 
+
 float Player::getTKRatio() const
 {
-  if (wins == 0)
-    return (float)tks/1.0f;    // well, we have to return *something* if they have no wins
-  else
-    return (float)tks/(float)wins;
+  if (wins == 0) {
+    return (float)tks / 1.0f;    // well, we have to return *something* if they have no wins
+  } else {
+    return (float)tks / (float)wins;
+  }
 }
+
 
 // returns a value between 1.0 and -1.0
 float Player::getNormalizedScore() const
@@ -162,52 +190,62 @@ float Player::getNormalizedScore() const
   return ((float)wins - losses) / ((wins+losses>20) ? wins+losses : 20);
 }
 
+
 void Player::forceReload(float time)
 {
   jamTime = BzTime::getCurrent();
   jamTime+= time;
 }
 
+
 float Player::getReloadTime() const
 {
   World *world = World::getWorld();
-  if (!world)
+  if (!world) {
     return 0.0f;
+  }
 
   const int numShots = world->getMaxShots();
-  if (numShots <= 0)
+  if (numShots <= 0) {
     return 0.0f;
+  }
 
   float time = float(jamTime - BzTime::getCurrent());
-  if (time > 0.0f)
+  if (time > 0.0f) {
     return time;
+  }
 
   // look for an empty slot
   int i;
   for (i = 0; i < numShots; i++) {
-    if (!shots[i])
+    if (!shots[i]) {
       return 0.0f;
+    }
   }
 
   // look for the shot fired least recently
   float minTime = float(shots[0]->getReloadTime() - (shots[0]->getCurrentTime() - shots[0]->getStartTime()));
   for (i = 1; i < numShots; i++) {
     const float t = float(shots[i]->getReloadTime() - (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
-    if (t < minTime)
+    if (minTime > t) {
       minTime = t;
+    }
   }
 
-  if (minTime < 0.0f)
+  if (minTime < 0.0f) {
     minTime = 0.0f;
+  }
 
   return minTime;
 }
 
+
 float Player::getLocalNormalizedScore() const
 {
-  return ((float)localWins - localLosses)
-    / ((localWins+localLosses>5) ? localWins+localLosses : 5);
+  return ((float)localWins - localLosses) /
+         ((localWins+localLosses > 5) ? localWins+localLosses : 5);
 }
+
 
 float Player::getRabbitScore() const
 {
@@ -223,15 +261,17 @@ float Player::getRadius() const
   return (dimensionsScale.x * BZDBCache::tankRadius);
 }
 
+
 float Player::getMaxSpeed ( void ) const
 {
   // BURROW and AGILITY will not be taken into account
   const FlagType* flag = getFlag();
   float maxSpeed = BZDBCache::tankSpeed;
-  if (flag == Flags::Velocity)
+  if (flag == Flags::Velocity) {
     maxSpeed *= BZDB.eval(BZDBNAMES.VELOCITYAD);
-  else if (flag == Flags::Thief)
+  } else if (flag == Flags::Thief) {
     maxSpeed *= BZDB.eval(BZDBNAMES.THIEFVELAD);
+  }
   return maxSpeed;
 }
 
@@ -259,8 +299,6 @@ void Player::getMuzzle(fvec3& m) const
   m = state.pos;
   m.xy() += front * forward.xy();
   m.z    += (BZDBCache::muzzleHeight * dimensionsScale.z);
-
-  return;
 }
 
 
@@ -274,9 +312,10 @@ void Player::move(const fvec3& _pos, float _azimuth)
 {
   // update the speed of the state
   BzTime currentTime = BzTime::getCurrent();
-  if ( state.lastUpdateTime >= 0 ) {
+  if (state.lastUpdateTime >= 0) {
     state.apparentVelocity = (_pos - state.pos) / (currentTime - state.lastUpdateTime);
   }
+
   state.lastUpdateTime = currentTime;
 
   // assumes _forward is normalized
@@ -284,10 +323,11 @@ void Player::move(const fvec3& _pos, float _azimuth)
   state.azimuth = _azimuth;
 
   // limit angle
-  if (state.azimuth < 0.0f)
+  if (state.azimuth < 0.0f) {
     state.azimuth = (float)((2.0 * M_PI) - fmodf(-state.azimuth, (float)(2.0 * M_PI)));
-  else if (state.azimuth >= (2.0f * M_PI))
+  } else if (state.azimuth >= (2.0f * M_PI)) {
     state.azimuth = fmodf(state.azimuth, (float)(2.0 * M_PI));
+  }
 
   // update forward vector (always in horizontal plane)
   forward.x = cosf(state.azimuth);
@@ -319,82 +359,25 @@ void Player::setPhysicsDriver(int driver)
   state.phydrv = driver;
 
   const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
-  if (phydrv != NULL)
+  if (phydrv != NULL) {
     state.status |= PlayerState::OnDriver;
-  else
+  } else {
     state.status &= ~PlayerState::OnDriver;
-
-  return;
-}
-
-
-void Player::setRelativeMotion()
-{
-  bool falling = (state.status & short(PlayerState::Falling)) != 0;
-  if (falling && (getFlag() != Flags::Wings))
-    return;    // no adjustments while falling
-
-  // set 'relativeSpeed' and 'relativeAngVel'
-  fvec2 relativeVel;
-  Player::calcRelativeMotion(relativeVel, relativeSpeed, relativeAngVel);
-  return;
+  }
 }
 
 
 void Player::setUserSpeed(float speed)
 {
   state.userSpeed = speed;
-  return;
 }
 
 
 void Player::setUserAngVel(float angVel)
 {
   state.userAngVel = angVel;
-  return;
 }
 
-
-void Player::calcRelativeMotion(fvec2& vel, float& speed, float& angVel)
-{
-  vel.x = state.velocity.x;
-  vel.y = state.velocity.y;
-
-  angVel = state.angVel;
-
-  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
-  if (phydrv != NULL) {
-    // adjust for driver velocity
-    const fvec3& v = phydrv->getLinearVel();
-    vel.x -= v.x;
-    vel.y -= v.y;
-
-    // adjust for driver angular velocity
-    const float av = phydrv->getAngularVel();
-    if (av != 0.0f) {
-      const fvec2& ap = phydrv->getAngularPos();
-      const float dx = state.pos.x - ap.x;
-      const float dy = state.pos.y - ap.y;
-      vel.x += av * dy;
-      vel.y -= av * dx;
-      angVel = state.angVel - av;
-    }
-
-    // adjust for driver radial velocity
-    const float rv = phydrv->getRadialVel();
-    if (rv != 0.0f) {
-      const fvec2& rp = phydrv->getRadialPos();
-      vel += rv * (state.pos.xy() - rp).normalize();
-    }
-  }
-
-  // speed relative to the tank's direction
-  // (could use forward[] instead of re-doing the trig, but this is
-  //  used in the setDeadReckoning(), when forward[] is not yet set)
-  speed = (vel.x * cosf(state.azimuth)) + (vel.y * sinf(state.azimuth));
-
-  return;
-}
 
 void Player::changeTeam(TeamColor _team)
 {
@@ -465,7 +448,6 @@ void Player::updateTank(float dt, bool local)
   updateTreads(dt);
   updateJumpJets(dt);
   updateTrackMarks();
-  return;
 }
 
 
@@ -478,7 +460,6 @@ void Player::updateJumpJets(float dt)
     state.jumpJetsScale = 0.0f;
     state.status &= ~PlayerState::JumpJets;
   }
-  return;
 }
 
 
@@ -517,7 +498,6 @@ void Player::updateTrackMarks()
       }
     }
   }
-  return;
 }
 
 
@@ -574,8 +554,6 @@ void Player::updateDimensions(float dt, bool local)
   } else {
     useDimensions = true;
   }
-
-  return;
 }
 
 
@@ -617,211 +595,12 @@ bool Player::hitObstacleResizing()
   return false;
 }
 
-bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
-                              const fvec3& /*endPos*/, const float /*endAzimuth*/,
-                              const fvec3& startVelocity, double dt,
-                              float groundLimit, fvec3& velocity, fvec3& position,
-                              float* azimuth)
-{
-  // constants
-  static const float MinSearchStep = 0.0001f;
-  static const int MaxSearchSteps = 7;
-  static const int MaxSteps = 4;
-  static const float TinyDistance = 0.0001f;
-
-  fvec3 newPos;
-  fvec3 newVelocity;
-  float newAzimuth;
-  float newAngVel;
-  bool hitWall;
-  const Obstacle* obstacle;
-  bool expel;
-  float timeStep = (float)dt;
-
-  newPos = startPos;
-  newVelocity = startVelocity;
-  newAngVel = state.angVel;
-  newAzimuth = startAzimuth;
-  hitWall = false;
-
-  bool phased = !isSolid();
-
-  for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
-    // record position at beginning of time step
-    fvec3 tmpPos;
-	float tmpAzimuth;
-    tmpAzimuth = newAzimuth;
-    tmpPos = newPos;
-
-    // get position at end of time step
-    newAzimuth = tmpAzimuth + timeStep * newAngVel;
-    newPos = tmpPos + (timeStep * newVelocity);
-    if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
-      // Hit lower limit, stop falling
-      newPos.z = groundLimit;
-	  if ((state.status & PlayerState::Exploding) != 0) {
-	    // tank pieces reach the ground, friction
-	    // stop them, & mainly player view
-	    newPos.x = tmpPos.x;
-	    newPos.y = tmpPos.y;
-      }
-    }
-
-    // see if we hit anything.  if not then we're done.
-    obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-			      phased, expel);
-
-    if (!obstacle || !expel)
-      break;
-
-    float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
-    
-    bool hasFlatTop = obstacle->isFlatTop();
-    if (obstacle->getTypeID() == faceType) { 
-      MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
-      if (topFace != NULL) {
-        hasFlatTop = true;
-      }
-    }
-    
-    if (((inputStatus & PlayerState::Falling) == 0) && hasFlatTop &&
-	(obstacleTop != tmpPos.z) &&
-	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
-      newPos.x = startPos.x;
-      newPos.y = startPos.y;
-      newPos.z = obstacleTop;
-
-      // drive over bumps
-      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
-						    newPos, newAzimuth,
-						    phased, expel);
-      if (!bumpObstacle) {
-	    move(newPos, getAngle());
-	    const float speedFactor = BZDB.eval("_bumpSpeedFactor");
-	    newPos.x += newVelocity.x * ((float)dt * speedFactor);
-	    newPos.y += newVelocity.y * ((float)dt * speedFactor);
-	    break;
-      }
-    }
-
-    hitWall = true;
-
-    // record position when hitting
-    fvec3 hitPos;
-	float hitAzimuth;
-    hitAzimuth = newAzimuth;
-    hitPos = newPos;
-
-    // find the latest time before the collision
-    float searchTime = 0.0f, searchStep = 0.5f * timeStep;
-    for (int i = 0; searchStep > MinSearchStep && i < MaxSearchSteps;
-		searchStep *= 0.5f, i++) {
-      // get intermediate position
-      const float t = searchTime + searchStep;
-      newAzimuth = tmpAzimuth + (t * newAngVel);
-      newPos = tmpPos + (t * newVelocity);
-      if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
-	    newPos.z = groundLimit;
-      }
-
-      // see if we hit anything
-      bool searchExpel;
-      const Obstacle* searchObstacle =
-        getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-                       phased, searchExpel);
-
-      if (!searchObstacle || !searchExpel) {
-        // if no hit then search latter half of time step
-        searchTime = t;
-      } else if (searchObstacle) {
-        // if we hit a building then record which one and where
-        obstacle = searchObstacle;
-
-        expel = searchExpel;
-        hitAzimuth = newAzimuth;
-        hitPos = newPos;
-      }
-    }
-
-    // get position just before impact
-    newAzimuth = tmpAzimuth + (searchTime * newAngVel);
-    newPos = tmpPos + (searchTime * newVelocity);
-    if (startPos.z < groundLimit) {
-      newVelocity.z = std::max(newVelocity.z, -startPos.z / 2.0f + 0.5f);
-    }
-
-
-    // record how much time is left in time step
-    timeStep -= searchTime;
-
-    // get normal at intersection.  sometimes fancy test says there's
-    // no intersection but we're expecting one so, in that case, fall
-    // back to simple normal calculation.
-    fvec3 normal;
-    if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal)) {
-      obstacle->getNormal(newPos, normal);
-    }
-
-    // check for being on a building
-    if ((newPos.z > 0.0f) && (normal.z > 0.001f)) {
-      if (((state.status & PlayerState::DeadStatus) == 0) &&
-          ((state.status & PlayerState::Exploding) == 0) && expel) {
-        lastObstacle = obstacle;
-      }
-      newVelocity.z = 0.0f;
-    } else {
-      // get component of velocity in normal direction (in horizontal plane)
-      float mag = (normal.x * newVelocity.x) +
-		  (normal.y * newVelocity.y);
-
-      // handle upward normal component to prevent an upward force
-      if (!NEAR_ZERO(normal.z, ZERO_TOLERANCE)) {
-        // if going down then stop falling
-        if (newVelocity.z < 0.0f && newVelocity.z -
-            (mag + normal.z * newVelocity.z) * normal.z > 0.0f) {
-          newVelocity.z = 0.0f;
-        }
-
-        // normalize force magnitude in horizontal plane
-        float horNormal = (normal.x * normal.x) + (normal.y * normal.y);
-        if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
-          mag /= horNormal;
-        }
-      }
-
-      // cancel out component in normal direction (if velocity and
-      // normal point in opposite directions).  also back off a tiny
-      // amount to prevent a spurious collision against the same
-      // obstacle.
-      if (mag < 0.0f) {
-        newVelocity.x -= mag * normal.x;
-        newVelocity.y -= mag * normal.y;
-        if (!(getStatus() & PlayerState::BackedOff)) {
-          newPos.x -= TinyDistance * mag * normal.x;
-          newPos.y -= TinyDistance * mag * normal.y;
-          setStatus(getStatus() | PlayerState::BackedOff);
-        }
-      }
-      if (mag > -0.01f) {
-        // assume we're not allowed to turn anymore if there's no
-        // significant velocity component to cancel out.
-        newAngVel = 0.0f;
-      }
-    }
-  }
-
-  velocity = newVelocity;
-  position = newPos;
-  *azimuth = newAzimuth;
-
-  return hitWall;
-}
 
 const Obstacle* Player::getHitBuilding(const fvec3& oldP, float oldA,
-					    const fvec3& p, float a,
-					    bool phased, bool& expel)
+                                       const fvec3& p, float a,
+                                       bool phased, bool& expel)
 {
-  const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
+  const bool hasOOflag = (getFlag() == Flags::OscillationOverthruster);
   const fvec3& dims = getDimensions();
   World *world = World::getWorld();
   if (!world) {
@@ -876,7 +655,8 @@ void Player::updateTranslucency(float dt)
   if (isPhantomZoned()) {
     teleAlpha = 1.0f;
     color.a = 0.25f; // barely visible, regardless of teleporter proximity
-  } else {
+  }
+  else {
     World *world = World::getWorld();
     if (!world) {
       return;
@@ -890,8 +670,6 @@ void Player::updateTranslucency(float dt)
       color.a = teleAlpha * alpha;
     }
   }
-
-  return;
 }
 
 
@@ -922,20 +700,17 @@ void Player::updateTreads(float dt)
   // not using dimensions.y, because it may be set to 0.001 by a Narrow flag
   angularFactor *= dimensionsScale.x * halfWidth;
 
-  const float leftOff = dt * (speedFactor - angularFactor);
+  const float leftOff  = dt * (speedFactor - angularFactor);
   const float rightOff = dt * (speedFactor + angularFactor);
 
-  if (avatar)
-    avatar->setTurnOffsets(leftOff,rightOff);
-
-  return;
+  if (avatar) {
+    avatar->setTurnOffsets(leftOff, rightOff);
+  }
 }
 
 
 void Player::changeScore(float newRank,
-			 short newWins,
-			 short newLosses,
-			 short newTeamKills)
+			 short newWins, short newLosses, short newTeamKills)
 {
   rank   = newRank;
   wins   = newWins;
@@ -960,10 +735,10 @@ void Player::setFlag(FlagType* _flag)
 {
   // set the type
   flagType = _flag;
-  if (_flag == NULL)
+  if (_flag == NULL) {
     setShotType(StandardShot);
+  }
   updateFlagEffect(flagType);
-  return;
 }
 
 
@@ -1014,8 +789,6 @@ void Player::updateFlagEffect(FlagType* effectFlag)
   if (alphaTarget != alpha) {
     alphaRate = (alphaTarget - alpha) / FlagEffectTime;
   }
-
-  return;
 }
 
 
@@ -1025,7 +798,6 @@ void Player::endShot(int index, bool isHit, bool showExplosion)
   if (doEndShot(index, isHit, pos) && showExplosion) {
     addShotExplosion(pos);
   }
-  return;
 }
 
 
@@ -1043,7 +815,6 @@ void Player::fireJumpJets()
 {
   state.jumpJetsScale = 1.0f;
   state.status |= PlayerState::JumpJets;
-  return;
 }
 
 
@@ -1052,8 +823,9 @@ const std::string & Player::getCustomField ( const std::string & key )const
   static std::string emptyField;
 
   std::map<std::string,std::string>::const_iterator itr = customData.find( key);
-  if (itr != customData.end())
-      return itr->second;
+  if (itr != customData.end()) {
+    return itr->second;
+  }
 
   return emptyField;
 }
@@ -1070,9 +842,9 @@ void Player::clearRemoteSounds()
 void Player::addRemoteSound(int sound)
 {
   state.sounds |= sound;
-  if (state.sounds != PlayerState::NoSounds)
+  if (state.sounds != PlayerState::NoSounds) {
     state.status |= PlayerState::PlaySound;
-  return;
+  }
 }
 
 
@@ -1317,26 +1089,6 @@ void Player::addShots(SceneDatabase* scene, bool colorblind ) const
 }
 
 
-void* Player::unpack(void* buf, uint16_t code)
-{
-  double timestamp;
-  PlayerId ident;
-
-  buf = nboUnpackUInt8(buf, ident);
-  buf = nboUnpackDouble(buf, timestamp);
-
-  static BZDB_bool useServerDRClock("_useServerDRClock");
-  if (!useServerDRClock)
-    timestamp = GameTime::getDRTime();
-
-  buf = state.unpack(buf, code);
-
-  setDeadReckoning(timestamp);
-  setRelativeMotion();
-
-  return buf;
-}
-
 
 bool Player::validTeamTarget(const Player *possibleTarget) const
 {
@@ -1352,6 +1104,300 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
 
   World *world = World::getWorld();
   return (world && !world->allowRabbit());
+}
+
+
+void Player::renderRadar() const
+{
+  if (!isAlive()) {
+    return; // don't draw anything
+  }
+  if (avatar) {
+    avatar->renderRadar();
+  }
+}
+
+
+bool Player::getIpAddress(Address& addr)
+{
+  if (!haveIpAddr) {
+    return false;
+  }
+  addr = ipAddr;
+  return true;
+}
+
+
+void Player::setIpAddress(const Address& addr)
+{
+  ipAddr = addr;
+  haveIpAddr = true;
+}
+
+
+ShotPath* Player::getShot(int index) const
+{
+  index &= 0x00FF;
+  if (index >= (int)shots.size()) {
+    return NULL;
+  }
+  return shots[index];
+}
+
+
+void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
+{
+  static BZDB_bool useServerDRClock("_useServerDRClock");
+
+  if (useServerDRClock) {
+    firingInfo.shot.dt = (float)(GameTime::getDRTime() - firingInfo.timeSent);
+  }
+  else {
+    firingInfo.timeSent = GameTime::getDRTime();
+    firingInfo.shot.dt = 0.0f;
+  }
+  firingInfo.lifetime = BZDB.eval(BZDBNAMES.RELOADTIME);
+
+  firingInfo.flagType = getFlag();
+  // wee bit o hack -- if phantom flag but not phantomized
+  // the shot flag is normal -- otherwise FiringInfo will have
+  // to be changed to add a real bitwise status variable
+  if (getFlag() == Flags::PhantomZone && !isFlagActive()) {
+    firingInfo.shotType = StandardShot;
+  }
+
+  firingInfo.shot.team = getTeam();
+
+  if (local) {
+    if (firingInfo.shotType == ShockWaveShot) { 
+      firingInfo.shot.pos = getPosition();
+    }
+    else {
+      getMuzzle(firingInfo.shot.pos);
+
+      const fvec3& dir     = getForward();
+      const fvec3& tankVel = getVelocity();
+      float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
+
+      if (handicap > 0.0f) {
+	// apply any handicap advantage to shot speed
+	const float speedAd = 1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPSHOTAD) - 1.0f));
+	shotSpeed *= speedAd;
+      }
+
+      firingInfo.shot.vel = tankVel + (shotSpeed * dir);
+
+      // Set _shotsKeepVerticalVelocity on the server if you want shots
+      // to have the same vertical velocity as the tank when fired.
+      // keeping shots moving horizontally makes the game more playable.
+      if (!BZDB.isTrue(BZDBNAMES.SHOTSKEEPVERTICALV)) {
+	firingInfo.shot.vel.z = 0.0f;
+      }
+    }
+  }
+}
+
+ShotPath *Player::addShot(ShotPath *shot, const FiringInfo &info)
+{
+  int shotNum = int(shot->getShotId() & 255);
+
+  if (shotNum >= (int)shots.size()) {
+    shots.resize(shotNum+1);
+  } else if (shots[shotNum] != NULL) {
+    deleteShot(shotNum);
+  }
+
+  shots[shotNum] = shot;
+  shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
+
+  return shot;
+}
+
+void Player::deleteShot(int index)
+{
+  if (shots[index] != NULL) {
+    delete shots[index];
+    shots[index] = NULL;
+  }
+}
+
+void Player::updateShot(FiringInfo &info, int shotID, double time )
+{
+  // kill the old shot
+  if ((shotID < 0) || (shotID >= (int)shots.size())) {
+    return;
+  }
+
+  if ( shots[shotID] != NULL ) {
+    deleteShot(shotID);
+  }
+
+  // build a new shot with the new info
+  prepareShotInfo(info);
+  shots[shotID] = new LocalShotPath(info,time);
+}
+
+
+void Player::setHandicap(float _handicap)
+{
+  handicap = _handicap;
+}
+
+
+//============================================================================//
+//============================================================================//
+//
+//  Dead-reckoning related routine
+//
+
+void* Player::unpack(void* buf, uint16_t code)
+{
+  double timestamp;
+  PlayerId ident;
+
+  buf = nboUnpackUInt8(buf, ident);
+  buf = nboUnpackDouble(buf, timestamp);
+
+  debugDR("unpack: playerID = %i, timestamp = %g\n", getId(), timestamp);
+
+  buf = state.unpack(buf, code);
+
+  setDeadReckoning(timestamp);
+//FIXME  setRelativeMotion();
+
+  return buf;
+}
+
+
+void Player::doDeadReckoning()
+{
+  if (!isAlive() && !isExploding()) {
+    return;
+  }
+
+  // get predicted state
+  fvec3 predictedPos;
+  fvec3 predictedVel;
+  float predictedAzimuth;
+
+  const double dt = BzTime::getTick() - inputTime;
+  getDeadReckoning(predictedPos, predictedAzimuth, predictedVel, (float)dt);
+
+  // setup notResponding
+  if (!isAlive()) {
+    notResponding = false;
+  } else {
+    notResponding = (dt > BZDB.eval(BZDBNAMES.NOTRESPONDINGTIME));
+  }
+
+  bool hitWorld = false;
+  bool ZHit = false;
+
+  // if the tanks hits something in Z then update input state (we don't want to fall anymore)
+  float zLimit = 0.0f;
+  if (getFlag() == Flags::Burrow) {
+    zLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
+  }
+
+  // check for collisions and correct accordingly
+  World *world = World::getWorld();
+  if (world) {
+    bool expel;
+    const Obstacle* obstacle = getHitBuilding(inputPos, inputAzimuth,
+		  predictedPos, predictedAzimuth, !isSolid(), expel);
+
+    // did they hit something?
+    if (obstacle && expel) {
+      fvec3 hitPos;
+      fvec3 hitVelocity;
+      fvec3 hitNormal;
+      float hitAzimuth;
+
+      // get the normal for the collision
+      if (!getHitNormal(obstacle, inputPos, inputAzimuth,
+		  predictedPos, predictedAzimuth, hitNormal)) {
+        obstacle->getNormal(inputPos, hitNormal);
+      }
+
+      // get the corrected position
+      // FIXME: Azimuth isn't corrected properly
+      hitWorld = getHitCorrection(inputPos, inputAzimuth, predictedPos,
+		  predictedAzimuth, inputVel, dt, zLimit, hitVelocity, hitPos,
+		  &hitAzimuth);
+
+      if (hitWorld) {
+        // there was a collision, copy corrected position and velocity
+        predictedPos = hitPos;
+        predictedVel = hitVelocity;
+        //predictedAzimuth = hitAzimuth;
+
+        // check if the collision was in the Z direction
+        if (hitNormal.z > 0.001f) {
+          zLimit = hitPos.z;
+          ZHit = true;
+        }
+      }
+    }
+  }
+
+  // the velocity check is for when a Burrow flag is dropped
+  if (ZHit || ((predictedPos.z <= zLimit) &&
+	       (predictedVel.z <= 0.0f))) {
+    predictedPos.z = zLimit;
+    predictedVel.z = 0.0f;
+    inputStatus &= ~PlayerState::Falling;
+    inputVel.z = 0.0f;
+    hitWorld = true;
+  }
+
+  // setup remote players' landing sounds and graphics, and jumping sounds
+  if (isAlive() && !headless) {
+    // the importance level of the remote sounds
+    const bool soundImportance = false;
+    const bool localSound = (ROAM.isRoaming() && (ROAM.getMode() == Roaming::roamViewFP) && (ROAM.getTargetTank() == this));
+
+    // check for a landing
+    if (((oldStatus & PlayerState::Falling) != 0) && ((inputStatus & PlayerState::Falling) == 0)) {
+      setLandingSpeed(oldZSpeed);    // setup the squish effect
+
+      EFFECTS.addLandEffect(getColor(),predictedPos,state.azimuth);    // make it "land"
+
+      // setup the sound
+      if (BZDB.isTrue("remoteSounds")){
+        if ((getFlag() != Flags::Burrow) || (predictedPos.z > 0.0f))
+          SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
+        else    // probably never gets played
+          SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
+      }
+
+      // play jumping type sounds, and then clear them
+      if (state.sounds != PlayerState::NoSounds){
+        if (BZDB.isTrue("remoteSounds")) {
+          if ((state.sounds & PlayerState::JumpSound) != 0)
+            SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
+          if ((state.sounds & PlayerState::WingsSound) != 0)
+            SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
+          if ((state.sounds & PlayerState::BounceSound) != 0)
+            SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
+        }
+        state.sounds = PlayerState::NoSounds;
+      }
+    }
+  }
+
+  // copy some old state
+  oldZSpeed = state.velocity.z;
+  oldStatus = inputStatus;
+
+  move(predictedPos, predictedAzimuth);
+  setVelocity(predictedVel);
+  setRelativeMotion();
+
+  // if we hit something, then we want to DR from
+  // here now, instead of from the starting point
+  if (hitWorld) {
+    setDeadReckoning(BzTime::getTick()); // FIXME
+  }
 }
 
 
@@ -1446,8 +1492,6 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
       }
     }
   }
-
-  return;
 }
 
 
@@ -1456,7 +1500,7 @@ bool Player::isDeadReckoningWrong() const
   // always send a new packet when some kinds of status change
   const uint16_t checkStates = (PlayerState::Alive | PlayerState::Falling);
   if ((state.status & checkStates) != (inputStatus & checkStates)) {
-    logDebugMessage(4, "isDeadReckoningWrong() - status mismatch\n");
+    debugDR("isDeadReckoningWrong() - status mismatch\n");
     return true;
   }
 
@@ -1467,22 +1511,22 @@ bool Player::isDeadReckoningWrong() const
 
   //  send a packet if we've made some noise
   if (state.sounds != PlayerState::NoSounds) {
-    logDebugMessage(4, "isDeadReckoningWrong() - sounds\n");
+    debugDR("isDeadReckoningWrong() - sounds\n");
     return true;
   }
 
   //  send a packet if we've crossed a physics driver boundary
   if (state.phydrv != inputPhyDrv) {
-    logDebugMessage(4, "isDeadReckoningWrong() - phydrv\n");
+    debugDR("isDeadReckoningWrong() - phydrv\n");
     return true;
   }
 
   // time since setdeadreckoning
-  const double dt = GameTime::getDRTime() - updateTimeStamp;
+  const double dt = BzTime::getTick() - inputTime;
 
   // otherwise always send at least one packet per second
   if (dt >= MaxUpdateTime) {
-    logDebugMessage(4, "isDeadReckoningWrong() - MaxUpdateTime %f vs %f\n",
+    debugDR("isDeadReckoningWrong() - MaxUpdateTime %f vs %f\n",
                     dt, MaxUpdateTime);
     return true;
   }
@@ -1499,44 +1543,43 @@ bool Player::isDeadReckoningWrong() const
     groundLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
   if (predictedPos.z < groundLimit) {
-    logDebugMessage(4, "isDeadReckoningWrong() - predictPos.z < groundLimit\n");
+    debugDR("isDeadReckoningWrong() - predictPos.z < groundLimit\n");
     return true;
   }
 
   // client side throttling
-  const int throttleRate = int(BZDB.eval(BZDBNAMES.UPDATETHROTTLERATE));
+  static BZDB_int throttleRate(BZDBNAMES.UPDATETHROTTLERATE);
   const float minUpdateTime = (throttleRate > 0) ? (1.0f / throttleRate) : 0.0f;
   if (dt < minUpdateTime) {
     return false;
   }
 
   // see if position and azimuth are close enough
-  float positionTolerance = BZDB.eval(BZDBNAMES.POSITIONTOLERANCE);
+  static BZDB_float positionTolerance(BZDBNAMES.POSITIONTOLERANCE);
   if ((fabsf(state.pos.x - predictedPos.x) > positionTolerance) ||
       (fabsf(state.pos.y - predictedPos.y) > positionTolerance) ||
       (fabsf(state.pos.z - predictedPos.z) > positionTolerance)) {
-    if ((debugLevel >= 4) && !BZDBCache::forbidDebug) {
+    if (bzdbDebugDR && !BZDBCache::forbidDebug) {
       if (fabsf(state.pos.x - predictedPos.x) > positionTolerance) {
-	logDebugMessage(4, "state.pos.x = %f, predictedPos.x = %f\n",
-		        state.pos.x, predictedPos.x);
+	debugDR("state.pos.x = %f, predictedPos.x = %f\n",
+		state.pos.x, predictedPos.x);
       }
       if (fabsf(state.pos.y - predictedPos.y) > positionTolerance) {
-	logDebugMessage(4, "state.pos.y = %f, predictedPos.y = %f\n",
-		        state.pos.y, predictedPos.y);
+	debugDR("state.pos.y = %f, predictedPos.y = %f\n",
+		state.pos.y, predictedPos.y);
       }
       if (fabsf(state.pos.z - predictedPos.z) > positionTolerance) {
-	logDebugMessage(4, "state.pos.z = %f, predictedPos.z = %f\n",
-		        state.pos.z, predictedPos.z);
+	debugDR("state.pos.z = %f, predictedPos.z = %f\n",
+		state.pos.z, predictedPos.z);
       }
     }
-    logDebugMessage(9, "isDeadReckoningWrong() - predictPos.z < groundLimit\n"); //FIXME
     return true;
   }
 
-  float angleTolerance = BZDB.eval(BZDBNAMES.ANGLETOLERANCE);
+  static BZDB_float angleTolerance(BZDBNAMES.ANGLETOLERANCE);
   if (fabsf(state.azimuth - predictedAzimuth) > angleTolerance) {
-    logDebugMessage(4,"state.azimuth = %f, predictedAzimuth = %f\n",
-		    state.azimuth, predictedAzimuth);
+    debugDR("state.azimuth = %f, predictedAzimuth = %f\n",
+            state.azimuth, predictedAzimuth);
     return true;
   }
 
@@ -1545,165 +1588,26 @@ bool Player::isDeadReckoningWrong() const
 }
 
 
-void Player::doDeadReckoning()
+void Player::setDeadReckoning()
 {
-  if (!isAlive() && !isExploding())
-    return;
-
-  // get predicted state
-  fvec3 predictedPos;
-  fvec3 predictedVel;
-  float predictedAzimuth;
-
-  double dt = GameTime::getDRTime() - updateTimeStamp;
-  getDeadReckoning(predictedPos, predictedAzimuth, predictedVel, (float)dt);
-
-  // setup notResponding
-  if (!isAlive())
-    notResponding = false;
-  else
-    notResponding = (dt > BZDB.eval(BZDBNAMES.NOTRESPONDINGTIME));
-
-  bool hitWorld = false;
-  bool ZHit = false;
-
-  // if the tanks hits something in Z then update input state (we don't want to fall anymore)
-  float zLimit = 0.0f;
-  if (getFlag() == Flags::Burrow )
-    zLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
-
-  // check for collisions and correct accordingly
-  World *world = World::getWorld();
-  if (world) {
-    bool expel;
-    const Obstacle* obstacle = getHitBuilding(inputPos, inputAzimuth,
-		  predictedPos, predictedAzimuth, !isSolid(), expel);
-
-    // did they hit something?
-    if (obstacle && expel) {
-      fvec3 hitPos;
-      fvec3 hitVelocity;
-      fvec3 hitNormal;
-      float hitAzimuth;
-
-	  // get the normal for the collision
-      if (!getHitNormal(obstacle, inputPos, inputAzimuth,
-		  predictedPos, predictedAzimuth, hitNormal)) {
-        obstacle->getNormal(inputPos, hitNormal);
-      }
-
-	  // get the corrected position
-	  // FIXME: Azimuth isn't corrected properly
-      hitWorld = getHitCorrection(inputPos, inputAzimuth, predictedPos,
-		  predictedAzimuth, inputVel, dt, zLimit, hitVelocity, hitPos,
-		  &hitAzimuth);
-
-      if (hitWorld) {
-		// there was a collision, copy corrected position and velocity
-		predictedPos = hitPos;
-		predictedVel = hitVelocity;
-		//predictedAzimuth = hitAzimuth;
-
-		// check if the collision was in the Z direction
-		if (hitNormal.z > 0.001f)
-		{
-		  zLimit = hitPos.z;
-		  ZHit = true;
-		}
-	  }
-    }
-  }
-
-
-  // the velocity check is for when a Burrow flag is dropped
-  if (ZHit || ((predictedPos.z <= zLimit) &&
-	       (predictedVel.z <= 0.0f))) {
-    predictedPos.z = zLimit;
-    predictedVel.z = 0.0f;
-    inputStatus &= ~PlayerState::Falling;
-    inputVel.z = 0.0f;
-    hitWorld = true;
-  }
-
-  // setup remote players' landing sounds and graphics, and jumping sounds
-  if (isAlive() && !headless) {
-    // the importance level of the remote sounds
-    const bool soundImportance = false;
-    const bool localSound = (ROAM.isRoaming() && (ROAM.getMode() == Roaming::roamViewFP) && (ROAM.getTargetTank() == this));
-
-    // check for a landing
-    if (((oldStatus & PlayerState::Falling) != 0) && ((inputStatus & PlayerState::Falling) == 0)) {
-      setLandingSpeed(oldZSpeed);    // setup the squish effect
-
-      EFFECTS.addLandEffect(getColor(),predictedPos,state.azimuth);    // make it "land"
-
-      // setup the sound
-      if (BZDB.isTrue("remoteSounds")){
-        if ((getFlag() != Flags::Burrow) || (predictedPos.z > 0.0f))
-          SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
-        else    // probably never gets played
-          SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
-      }
-
-      // play jumping type sounds, and then clear them
-      if (state.sounds != PlayerState::NoSounds){
-        if (BZDB.isTrue("remoteSounds")) {
-          if ((state.sounds & PlayerState::JumpSound) != 0)
-            SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
-          if ((state.sounds & PlayerState::WingsSound) != 0)
-            SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
-          if ((state.sounds & PlayerState::BounceSound) != 0)
-            SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
-        }
-        state.sounds = PlayerState::NoSounds;
-      }
-    }
-  }
-
-  // copy some old state
-  oldZSpeed = state.velocity.z;
-  oldStatus = inputStatus;
-
-  move(predictedPos, predictedAzimuth);
-  setVelocity(predictedVel);
-  setRelativeMotion();
-
-  if (hitWorld) { // if we hit something, then we want to DR from here now, instead of from the starting point
-    setDeadReckoning(GameTime::getDRTime());
-  }
-
-  return;
+  setDeadReckoning(BzTime::getTick());
 }
 
-
-// How long does the filter takes to be considered "initialized"
-const int   DRStateStable      = 100;
-const float maxToleratedJitter = 1.0f;
 
 void Player::setDeadReckoning(double timestamp)
 {
   // set the current state
-  inputTime = BzTime::getTick();
-
-#ifdef DEBUG
-  double currentServerTime = GameTime::getDRTime();
-  if (currentServerTime <= timestamp)
-    printf("Player::setDeadReckoning(): currentServerTime %11.4f ought to be greater than timestamp %11.4f (diff = %g)\n",
-           currentServerTime, timestamp, currentServerTime - timestamp);
-#endif
-  updateTimeStamp = timestamp;
+  debugDR("setDeadReckoning: playerID = %i, timestamp = %g\n", getId(), timestamp);
 
   // copy stuff for dead reckoning
-  inputStatus = state.status;
-  inputAzimuth = state.azimuth;
-  inputAngVel = state.angVel;
-  inputPos = state.pos;
-  inputVel = state.velocity;
-  inputPhyDrv = state.phydrv;
-
-  //
-  // pre-calculate some stuff for dead reckoning
-  //
+  inputTime      = BzTime::getTick();
+  inputTimestamp = timestamp;
+  inputStatus    = state.status;
+  inputPos       = state.pos;
+  inputVel       = state.velocity;
+  inputAzimuth   = state.azimuth;
+  inputAngVel    = state.angVel;
+  inputPhyDrv    = state.phydrv;
 
   // the relative motion information (with respect to the physics drivers)
   calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
@@ -1723,138 +1627,263 @@ void Player::setDeadReckoning(double timestamp)
 }
 
 
-void Player::renderRadar() const
+void Player::setRelativeMotion()
 {
-  if (!isAlive() && !isExploding()) {
-    return; // don't draw anything
+  bool falling = (state.status & short(PlayerState::Falling)) != 0;
+  if (falling && (getFlag() != Flags::Wings)) {
+    return;    // no adjustments while falling
   }
-  if (avatar) {
-    avatar->renderRadar();
-  }
+
+  // set 'relativeSpeed' and 'relativeAngVel'
+  fvec2 relativeVel;
+  Player::calcRelativeMotion(relativeVel, relativeSpeed, relativeAngVel);
 }
 
 
-bool Player::getIpAddress(Address& addr)
+void Player::calcRelativeMotion(fvec2& vel, float& speed, float& angVel)
 {
-  if (!haveIpAddr) {
-    return false;
+  vel.x = state.velocity.x;
+  vel.y = state.velocity.y;
+
+  angVel = state.angVel;
+
+  const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(state.phydrv);
+  if (phydrv != NULL) {
+    // adjust for driver velocity
+    const fvec3& v = phydrv->getLinearVel();
+    vel.x -= v.x;
+    vel.y -= v.y;
+
+    // adjust for driver angular velocity
+    const float av = phydrv->getAngularVel();
+    if (av != 0.0f) {
+      const fvec2& ap = phydrv->getAngularPos();
+      const float dx = state.pos.x - ap.x;
+      const float dy = state.pos.y - ap.y;
+      vel.x += av * dy;
+      vel.y -= av * dx;
+      angVel = state.angVel - av;
+    }
+
+    // adjust for driver radial velocity
+    const float rv = phydrv->getRadialVel();
+    if (rv != 0.0f) {
+      const fvec2& rp = phydrv->getRadialPos();
+      vel += rv * (state.pos.xy() - rp).normalize();
+    }
   }
-  addr = ipAddr;
-  return true;
+
+  // speed relative to the tank's direction
+  // (could use forward[] instead of re-doing the trig, but this is
+  //  used in the setDeadReckoning(), when forward[] is not yet set)
+  speed = (vel.x * cosf(state.azimuth)) + (vel.y * sinf(state.azimuth));
 }
 
 
-void Player::setIpAddress(const Address& addr)
+bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
+                              const fvec3& /*endPos*/, const float /*endAzimuth*/,
+                              const fvec3& startVelocity, double dt,
+                              float groundLimit, fvec3& velocity, fvec3& position,
+                              float* azimuth)
 {
-  ipAddr = addr;
-  haveIpAddr = true;
-}
+  // constants
+  static const float MinSearchStep = 0.0001f;
+  static const int MaxSearchSteps = 7;
+  static const int MaxSteps = 4;
+  static const float TinyDistance = 0.0001f;
 
-ShotPath* Player::getShot(int index) const
-{
-  index &= 0x00FF;
-  if (index >= (int)shots.size())
-    return NULL;
-  return shots[index];
-}
+  fvec3 newPos;
+  fvec3 newVelocity;
+  float newAzimuth;
+  float newAngVel;
+  bool hitWall;
+  const Obstacle* obstacle;
+  bool expel;
+  float timeStep = (float)dt;
 
-void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
-{
-  static BZDB_bool useServerDRClock("_useServerDRClock");
+  newPos = startPos;
+  newVelocity = startVelocity;
+  newAngVel = state.angVel;
+  newAzimuth = startAzimuth;
+  hitWall = false;
 
-  if (useServerDRClock)
-    firingInfo.shot.dt = (float)(GameTime::getDRTime() - firingInfo.timeSent);
-  else
-  {
-    firingInfo.timeSent = GameTime::getDRTime();
-    firingInfo.shot.dt = 0.0f;
-  }
-  firingInfo.lifetime = BZDB.eval(BZDBNAMES.RELOADTIME);
+  bool phased = !isSolid();
 
-  firingInfo.flagType = getFlag();
-  // wee bit o hack -- if phantom flag but not phantomized
-  // the shot flag is normal -- otherwise FiringInfo will have
-  // to be changed to add a real bitwise status variable
-  if (getFlag() == Flags::PhantomZone && !isFlagActive())
-    firingInfo.shotType = StandardShot;
+  for (int numSteps = 0; numSteps < MaxSteps; numSteps++) {
+    // record position at beginning of time step
+    fvec3 tmpPos;
+	float tmpAzimuth;
+    tmpAzimuth = newAzimuth;
+    tmpPos = newPos;
 
-  firingInfo.shot.team = getTeam();
+    // get position at end of time step
+    newAzimuth = tmpAzimuth + timeStep * newAngVel;
+    newPos = tmpPos + (timeStep * newVelocity);
+    if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
+      // Hit lower limit, stop falling
+      newPos.z = groundLimit;
+	  if ((state.status & PlayerState::Exploding) != 0) {
+	    // tank pieces reach the ground, friction
+	    // stop them, & mainly player view
+	    newPos.x = tmpPos.x;
+	    newPos.y = tmpPos.y;
+      }
+    }
 
-  if (local)
-  {
-    if (firingInfo.shotType != ShockWaveShot)
-    { 
-      getMuzzle(firingInfo.shot.pos);
+    // see if we hit anything.  if not then we're done.
+    obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+			      phased, expel);
 
-      const fvec3& dir     = getForward();
-      const fvec3& tankVel = getVelocity();
-      float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
+    if (!obstacle || !expel)
+      break;
 
-      if (handicap > 0.0f) {
-	// apply any handicap advantage to shot speed
-	const float speedAd = 1.0f + (handicap * (BZDB.eval(BZDBNAMES.HANDICAPSHOTAD) - 1.0f));
-	shotSpeed *= speedAd;
+    float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
+    
+    bool hasFlatTop = obstacle->isFlatTop();
+    if (obstacle->getTypeID() == faceType) { 
+      MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
+      if (topFace != NULL) {
+        hasFlatTop = true;
+      }
+    }
+    
+    if (((inputStatus & PlayerState::Falling) == 0) && hasFlatTop &&
+	(obstacleTop != tmpPos.z) &&
+	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
+      newPos.x = startPos.x;
+      newPos.y = startPos.y;
+      newPos.z = obstacleTop;
+
+      // drive over bumps
+      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
+						    newPos, newAzimuth,
+						    phased, expel);
+      if (!bumpObstacle) {
+        move(newPos, getAngle());
+        const float speedFactor = BZDB.eval("_bumpSpeedFactor");
+        newPos.x += newVelocity.x * ((float)dt * speedFactor);
+        newPos.y += newVelocity.y * ((float)dt * speedFactor);
+        break;
+      }
+    }
+
+    hitWall = true;
+
+    // record position when hitting
+    fvec3 hitPos;
+	float hitAzimuth;
+    hitAzimuth = newAzimuth;
+    hitPos = newPos;
+
+    // find the latest time before the collision
+    float searchTime = 0.0f;
+    float searchStep = 0.5f * timeStep;
+    for (int i = 0; searchStep > MinSearchStep && i < MaxSearchSteps;
+		searchStep *= 0.5f, i++) {
+      // get intermediate position
+      const float t = searchTime + searchStep;
+      newAzimuth = tmpAzimuth + (t * newAngVel);
+      newPos = tmpPos + (t * newVelocity);
+      if ((newPos.z < groundLimit) && (newVelocity.z < 0)) {
+        newPos.z = groundLimit;
       }
 
-      firingInfo.shot.vel = tankVel + (shotSpeed * dir);
+      // see if we hit anything
+      bool searchExpel;
+      const Obstacle* searchObstacle =
+        getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
+                       phased, searchExpel);
 
-      // Set _shotsKeepVerticalVelocity on the server if you want shots
-      // to have the same vertical velocity as the tank when fired.
-      // keeping shots moving horizontally makes the game more playable.
-      if (!BZDB.isTrue(BZDBNAMES.SHOTSKEEPVERTICALV))
-	firingInfo.shot.vel.z = 0.0f;
+      if (!searchObstacle || !searchExpel) {
+        // if no hit then search latter half of time step
+        searchTime = t;
+      } else if (searchObstacle) {
+        // if we hit a building then record which one and where
+        obstacle = searchObstacle;
+
+        expel = searchExpel;
+        hitAzimuth = newAzimuth;
+        hitPos = newPos;
+      }
     }
-    else
-    {
-      firingInfo.shot.pos = getPosition();
+
+    // get position just before impact
+    newAzimuth = tmpAzimuth + (searchTime * newAngVel);
+    newPos = tmpPos + (searchTime * newVelocity);
+    if (startPos.z < groundLimit) {
+      newVelocity.z = std::max(newVelocity.z, -startPos.z / 2.0f + 0.5f);
+    }
+
+    // record how much time is left in time step
+    timeStep -= searchTime;
+
+    // get normal at intersection.  sometimes fancy test says there's
+    // no intersection but we're expecting one so, in that case, fall
+    // back to simple normal calculation.
+    fvec3 normal;
+    if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal)) {
+      obstacle->getNormal(newPos, normal);
+    }
+
+    // check for being on a building
+    if ((newPos.z > 0.0f) && (normal.z > 0.001f)) {
+      if (((state.status & PlayerState::DeadStatus) == 0) &&
+          ((state.status & PlayerState::Exploding) == 0) && expel) {
+        lastObstacle = obstacle;
+      }
+      newVelocity.z = 0.0f;
+    } else {
+      // get component of velocity in normal direction (in horizontal plane)
+      float mag = (normal.x * newVelocity.x) +
+		  (normal.y * newVelocity.y);
+
+      // handle upward normal component to prevent an upward force
+      if (!NEAR_ZERO(normal.z, ZERO_TOLERANCE)) {
+        // if going down then stop falling
+        if (newVelocity.z < 0.0f && newVelocity.z -
+            (mag + normal.z * newVelocity.z) * normal.z > 0.0f) {
+          newVelocity.z = 0.0f;
+        }
+
+        // normalize force magnitude in horizontal plane
+        float horNormal = (normal.x * normal.x) + (normal.y * normal.y);
+        if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE)) {
+          mag /= horNormal;
+        }
+      }
+
+      // cancel out component in normal direction (if velocity and
+      // normal point in opposite directions).  also back off a tiny
+      // amount to prevent a spurious collision against the same
+      // obstacle.
+      if (mag < 0.0f) {
+        newVelocity.x -= mag * normal.x;
+        newVelocity.y -= mag * normal.y;
+        if (!(getStatus() & PlayerState::BackedOff)) {
+          newPos.x -= TinyDistance * mag * normal.x;
+          newPos.y -= TinyDistance * mag * normal.y;
+          setStatus(getStatus() | PlayerState::BackedOff);
+        }
+      }
+      if (mag > -0.01f) {
+        // assume we're not allowed to turn anymore if there's no
+        // significant velocity component to cancel out.
+        newAngVel = 0.0f;
+      }
     }
   }
-}
 
-ShotPath *Player::addShot(ShotPath *shot, const FiringInfo &info)
-{
-  int shotNum = int(shot->getShotId() & 255);
+  velocity = newVelocity;
+  position = newPos;
+  *azimuth = newAzimuth;
 
-  if (shotNum >= (int)shots.size())
-    shots.resize(shotNum+1);
-  else if (shots[shotNum] != NULL)
-    deleteShot(shotNum);
-
-  shots[shotNum] = shot;
-  shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
-
-  return shot;
-}
-
-void Player::deleteShot(int index)
-{
-  if(shots[index] != NULL) {
-    delete shots[index];
-	shots[index] = NULL;
-  }
-}
-
-void Player::updateShot(FiringInfo &info, int shotID, double time )
-{
-  // kill the old shot
-  if (shotID < (int)shots.size()) {
-    if ( shots[shotID] != NULL ) {
-	  deleteShot(shotID);
-    }
-  }
-  else
-    return;
-
-  // build a new shot with the new info
-  prepareShotInfo(info);
-  shots[shotID] = new LocalShotPath(info,time);
+  return hitWall;
 }
 
 
-void Player::setHandicap(float _handicap)
-{
-  handicap = _handicap;
-}
+//============================================================================//
+//============================================================================//
+
 
 // Local Variables: ***
 // mode: C++ ***

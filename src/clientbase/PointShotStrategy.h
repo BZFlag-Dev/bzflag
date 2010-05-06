@@ -27,23 +27,24 @@
 
 class Obstacle;
 
+
 class PointShotStrategy : public ShotStrategy {
   public:
-			PointShotStrategy(ShotPath* _path);
-			~PointShotStrategy();
+    PointShotStrategy(ShotPath* _path);
+    ~PointShotStrategy();
 
   protected:
-	float checkShotHit(const ShotCollider& tank, fvec3& position, float radius) const;
+    float checkShotHit(const ShotCollider& tank, fvec3& position, float radius) const;
 
-	double prevTime;
-	double currentTime;
-	double lastTime;
-	int    segment, lastSegment;
-	std::vector<ShotPathSegment>	segments;
+    double prevTime;
+    double currentTime;
+    double lastTime;
+    int    segment, lastSegment;
+    std::vector<ShotPathSegment> segments;
 
     Extents bbox;
 
-	bool GMTest;
+    bool GMTest;
 };
 
 

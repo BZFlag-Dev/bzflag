@@ -89,9 +89,9 @@ public:
   //	  It should be changed to something cleaner.
 #ifndef BUILDING_BZADMIN
   void sendPlayerUpdate(Player*);
-  void sendBeginShot(const FiringInfo&);
+  void sendShotBegin(const FiringInfo&);
 #endif
-  void sendEndShot(const PlayerId&, int shotId, int reason);
+  void sendShotEnd(const PlayerId&, int shotId, int reason);
 
   void sendHit(const PlayerId &source, const PlayerId &shooter, int shotId);
   void sendVarRequest();

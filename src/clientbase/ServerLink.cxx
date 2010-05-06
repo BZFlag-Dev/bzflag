@@ -1043,7 +1043,7 @@ void ServerLink::sendPlayerUpdate(Player* player )
 }
 
 
-void ServerLink::sendBeginShot(const FiringInfo& info)
+void ServerLink::sendShotBegin(const FiringInfo& info)
 {
   char msg[35];
   void* buf = msg;
@@ -1058,7 +1058,7 @@ void ServerLink::sendBeginShot(const FiringInfo& info)
 }
 
 
-void ServerLink::sendEndShot(const PlayerId& source,
+void ServerLink::sendShotEnd(const PlayerId& source,
   int shotId, int reason)
 {
   char msg[PlayerIdPLen + 4];

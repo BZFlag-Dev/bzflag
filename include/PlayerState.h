@@ -74,8 +74,8 @@ class PlayerState
     short status;	// see PStatus enum
     fvec3 pos;		// position of tank
     fvec3 velocity;	// velocity of tank
-    float azimuth;	// orientation of tank
-    float angVel;	// angular velocity of tank
+    float azimuth;	// orientation of tank      -- radians
+    float angVel;	// angular velocity of tank -- radians per second
     int   phydrv;	// physics driver
 
     fvec3 apparentVelocity;	// velocity of tank as derived from

@@ -1434,7 +1434,7 @@ ShotPath *LocalPlayer::fireShot()
   // shot start. They should generally travel on the same frame, when
   // flushing the output queues.
   server->sendPlayerUpdate(this);
-  server->sendBeginShot(firingInfo);
+  server->sendShotBegin(firingInfo);
 
   eventHandler.ShotAdded(firingInfo);
 
