@@ -11,7 +11,7 @@
  */
 
 // interface header
-#include "GuidedMissleStrategy.h"
+#include "GuidedMissileStrategy.h"
 
 // common headers
 #include "BZDBCache.h"

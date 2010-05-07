@@ -28,8 +28,8 @@ libClientBase_la_SOURCES =		\
 	FlashClock.cxx			\
 	FlashClock.h			\
 	GfxBlock.cxx			\
-	GuidedMissleStrategy.cxx	\
-	GuidedMissleStrategy.h		\
+	GuidedMissileStrategy.cxx	\
+	GuidedMissileStrategy.h		\
 	LocalPlayer.cxx			\
 	LocalPlayer.h			\
 	Player.cxx			\
