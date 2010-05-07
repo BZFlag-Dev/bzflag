@@ -24,28 +24,41 @@
 #include <stdio.h>
 #include <sstream>
 
-// implementation-specific bzflag headers
-#include "NetHandler.h"
-#include "VotingArbiter.h"
-#include "version.h"
+// common headers
+#include "bzfsAPI.h"
 #include "bz_md5.h"
-#include "BZDBCache.h"
-#include "ShotUpdate.h"
-#include "PhysicsDriver.h"
-#include "CommandManager.h"
-#include "TimeBomb.h"
-#include "ConfigFileManager.h"
 #include "bzsignal.h"
+#include "AnsiCodes.h"
+#include "BaseBuilding.h"
+#include "BZDBCache.h"
+#include "BzDocket.h"
+#include "BzVFS.h"
+#include "CommandManager.h"
+#include "ConfigFileManager.h"
+#include "GameTime.h"
+#include "NetHandler.h"
+#include "NetMessage.h"
+#include "Obstacle.h"
+#include "ObstacleMgr.h"
+#include "PhysicsDriver.h"
+#include "ShotUpdate.h"
+#include "TimeBomb.h"
+#include "version.h"
+#include "VotingArbiter.h"
+#include "CollisionManager.h"
+#include "Ray.h"
 #ifdef DEBUG
-#include "MsgStrings.h"
+#  include "MsgStrings.h"
 #endif
 
-// implementation-specific bzfs-specific headers
+
+// bzfs-specific headers
 #include "RejoinList.h"
 #include "ListServerConnection.h"
 #include "WorldInfo.h"
 #include "WorldWeapons.h"
 #include "BZWReader.h"
+#include "SendLagState.h"
 #include "SpawnPosition.h"
 #include "DropGeometry.h"
 #include "commands.h"
@@ -61,20 +74,6 @@
 #include "lua/LuaServer.h"
 
 #include "DirectoryNames.h"
-
-// common implementation headers
-#include "bzfsAPI.h"
-#include "BzDocket.h"
-#include "BzVFS.h"
-#include "Obstacle.h"
-#include "ObstacleMgr.h"
-#include "BaseBuilding.h"
-#include "AnsiCodes.h"
-#include "GameTime.h"
-#include "BufferedNetworkMessage.h"
-
-#include "CollisionManager.h"
-#include "Ray.h"
 
 #include "Stats.h"
 
@@ -173,40 +172,78 @@ uint8_t rabbitIndex = NoPlayer;
 RejoinList rejoinList;
 
 static BzTime lastWorldParmChange = BzTime::getNullTime();
-bool worldWasSentToAPlayer   = false;
+bool worldWasSentToAPlayer = false;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int,NetConnectedPeer> netConnectedPeers;
 
-int bz_pwrite(NetHandler *handler, const void *b, int l);
-void pwriteBroadcast(const void *b, int l, int mask);
 
-class BZFSNetworkMessageTransferCallback : public NetworkMessageTransferCallback
+//============================================================================//
+
+static void dropHandler(NetHandler *handler, const char *reason)
 {
-public:
-  BZFSNetworkMessageTransferCallback() { MSGMGR.setTransferCallback(this); }
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData) {
+      continue;
+    }
+    if (playerData->netHandler != handler) {
+      continue;
+    }
+    removePlayer(i, reason, false);
+  }
+  netConnectedPeers[handler->getFD()].deleteMe = true;
+}
 
-  virtual size_t send(NetHandler *handler, void *data, size_t size)
-  {
-    if (bz_pwrite(handler,data,int(size)) == 0)
-      return size;
-    else
-      return 0;
+
+static void bzfs_send(NetHandler *handler, const void *data, size_t size)
+{
+  int result = handler->pwrite(data, size);
+  if (result == -1) {
+    dropHandler(handler, "ECONNRESET/EPIPE");
+  } else if (result == -2) {
+    dropHandler(handler, "send queue too big");
+  }
+}
+
+
+static void bzfs_broadcast(const void *data, size_t size, bool toTextClients)
+{
+  int result;
+  std::list<NetHandler*>::const_iterator it;
+  // send message to everyone
+  for (it = NetHandler::netConnections.begin();
+       it != NetHandler::netConnections.end();) {
+    NetHandler *handler = *it;
+    it++;
+    if (toTextClients ||
+        (handler->getClientKind() != NetHandler::clientBZAdmin)) {
+      result = handler->pwrite(data, size);
+      if (result == -1) {
+	dropHandler(handler, "ECONNRESET/EPIPE");
+      } else if (result == -2) {
+	dropHandler(handler, "send queue too big");
+      }
+    }
   }
 
-  virtual size_t broadcast(void *data, size_t size, int mask, int code)
-  {
-    pwriteBroadcast(data, int(size), mask);
-
-    //record the packet
-    if (Record::enabled())
-      Record::addPacket(code, size-4, ((char*)data)+4);
-
-    return size;
+  //record the packet
+  if (Record::enabled()) {
+    const uint16_t code = ((uint16_t*)data)[1];
+    const size_t lenCodeOffset = 2 * sizeof(uint16_t);
+    Record::addPacket(code, size - lenCodeOffset, ((char*)data) + lenCodeOffset);
   }
-};
+}
 
-BZFSNetworkMessageTransferCallback bzfsTransferCallback;
+
+static void initNetMessage()
+{
+  NetMessage::setSendFunc(bzfs_send);
+  NetMessage::setBroadcastFunc(bzfs_broadcast);
+}
+
+
+//============================================================================//
 
 class BZFSNetLogCB : NetworkDataLogCallback
 {
@@ -254,6 +291,8 @@ public:
 BZFSNetLogCB netLogCB;
 
 
+//============================================================================//
+
 // Logging to the API
 static void apiLoggingProc(int level, const std::string& msg, void* /*data*/)
 {
@@ -277,54 +316,7 @@ static bool realPlayer(const PlayerId& id)
 }
 
 
-void dropHandler(NetHandler *handler, const char *reason)
-{
-  MSGMGR.purgeMessages(handler);
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
-      continue;
-    if (playerData->netHandler != handler)
-      continue;
-    removePlayer(i, reason, false);
-  }
-  netConnectedPeers[handler->getFD()].deleteMe = true;
-}
-
-int bz_pwrite(NetHandler *handler, const void *b, int l)
-{
-  int result = handler->pwrite(b, l);
-  if (result == -1) {
-    dropHandler(handler, "ECONNRESET/EPIPE");
-  } else if (result == -2) {
-    dropHandler(handler, "send queue too big");
-  }
-  if (result < 0)
-    result = -1;
-  return result;
-}
-
-void pwriteBroadcast(const void *b, int l, int mask)
-{
-  int result;
-  std::list<NetHandler*>::const_iterator it;
-  // send message to everyone
-  for (it = NetHandler::netConnections.begin();
-       it != NetHandler::netConnections.end();) {
-    NetHandler *handler = *it;
-    it++;
-    if (handler->getClientKind() & mask) {
-      result = handler->pwrite(b, l);
-      if (result == -1) {
-	dropHandler(handler, "ECONNRESET/EPIPE");
-      } else if (result == -2) {
-	dropHandler(handler, "send queue too big");
-      }
-    }
-  }
-}
-
-NetHandler* getPlayerNetHandler( int playerIndex )
+NetHandler* getPlayerNetHandler(int playerIndex)
 {
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
@@ -349,21 +341,22 @@ static void bzdbGlobalCallback(const std::string& name, void* /*data*/)
 
   // only send the network update if not replaying
   if (!Replay::enabled()) {
-    NetMsg msg = MSGMGR.newMessage();
-    msg->packUInt16(1);
-    msg->packStdString(name);
-    msg->packStdString(value);
-    msg->broadcast(MsgSetVar);
+    NetMessage netMsg;
+    netMsg.packUInt16(1);
+    netMsg.packStdString(name);
+    netMsg.packStdString(value);
+    netMsg.broadcast(MsgSetVar);
   }
 }
 
 
 static void sendUDPupdate(NetHandler *handler)
 {
-  NetMsg msg = MSGMGR.newMessage();
-  MSGMGR.newMessage(msg)->send(handler, MsgUDPLinkEstablished);
-  msg->send(handler, MsgUDPLinkRequest);
+  NetMessage netMsg;
+  netMsg.send(handler, MsgUDPLinkEstablished);
+  netMsg.send(handler, MsgUDPLinkRequest);
 }
+
 
 int lookupPlayer(const PlayerId& id)
 {
@@ -400,10 +393,9 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
     return;
   }
 
-  NetMsg msg = MSGMGR.newMessage();
-
-  GameTime::pack(msg, gkPlayer->lagInfo.getLagAvg());
-  msg->send(gkPlayer->netHandler, MsgGameTime);
+  NetMessage netMsg;
+  GameTime::pack(netMsg, gkPlayer->lagInfo.getLagAvg());
+  netMsg.send(gkPlayer->netHandler, MsgGameTime);
 
   gkPlayer->updateNextGameTime();
 
@@ -428,21 +420,21 @@ static void sendPlayerUpdateB(GameKeeper::Player *playerData)
   if (!playerData->player.isPlaying())
     return;
 
-  NetMsg msg = MSGMGR.newMessage();
+  NetMessage netMsg;
 
-  playerData->packPlayerUpdate(msg);
-  msg->broadcast(MsgAddPlayer);
+  playerData->packPlayerUpdate(netMsg);
+  netMsg.broadcast(MsgAddPlayer);
 }
 
 void sendPlayerInfo()
 {
-  NetMsg msg = MSGMGR.newMessage();
+  NetMessage netMsg;
 
   int i, numPlayers = 0;
   for (i = 0; i < int(NumTeams); i++)
     numPlayers += teamInfos[i].team.size;
 
-  msg->packUInt8(numPlayers);
+  netMsg.packUInt8(numPlayers);
   for (i = 0; i < curMaxPlayers; ++i) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
@@ -451,19 +443,21 @@ void sendPlayerInfo()
     if (playerData->player.isPlaying()) {
       // see if any events want to update the playerInfo before it is sent out
       bz_GetPlayerInfoEventData_V1 playerInfoData;
-      playerInfoData.playerID = i;
-      playerInfoData.callsign = playerData->player.getCallSign();
-      playerInfoData.team = convertTeam(playerData->player.getTeam());
-      playerInfoData.verified = playerData->accessInfo.isVerified();
+      playerInfoData.playerID   = i;
+      playerInfoData.callsign   = playerData->player.getCallSign();
+      playerInfoData.team       = convertTeam(playerData->player.getTeam());
+      playerInfoData.verified   = playerData->accessInfo.isVerified();
       playerInfoData.registered = playerData->accessInfo.isRegistered();
-      playerInfoData.admin = playerData->accessInfo.showAsAdmin();
+      playerInfoData.admin      = playerData->accessInfo.showAsAdmin();
 
       worldEventManager.callEvents(bz_eGetPlayerInfoEvent,&playerInfoData);
 
-      PackPlayerInfo(msg,i,GetPlayerProperties(playerInfoData.registered,playerInfoData.verified,playerInfoData.admin));
+      PackPlayerInfo(netMsg, i, GetPlayerProperties(playerInfoData.registered,
+                                                    playerInfoData.verified,
+                                                    playerInfoData.admin));
     }
   }
-  msg->broadcast(MsgPlayerInfo);
+  netMsg.broadcast(MsgPlayerInfo);
 }
 
 void sendIPUpdate(int targetPlayer, int playerIndex)
@@ -778,10 +772,9 @@ static void serverStop()
   BzfNetwork::closeSocket(wksSocket);
 
   // tell all clients to quit
-  NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt8(0xff);
-  msg->broadcast(MsgSuperKill);
-  MSGMGR.update();
+  NetMessage netMsg;
+  netMsg.packUInt8(0xff);
+  netMsg.broadcast(MsgSuperKill);
   BzTime::sleep(0.5);	// provide some time for message delivery
 
   // clean up Kerberos
@@ -1416,12 +1409,12 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
   else if ((message[0] == '/') && (isalpha(message[1]) || message[1] == '?')) {
     // record server commands
     if (Record::enabled()) {
-      NetMsg msg = MSGMGR.newMessage();
-      msg->packUInt8(srcPlayer);
-      msg->packUInt8(dstPlayer);
-	  msg->packUInt8(type);
-      msg->packString(message, strlen(message) + 1);
-      Record::addPacket(MsgMessage, msg->size(), msg->buffer(),HiddenPacket);
+      NetMessage netMsg;
+      netMsg.packUInt8(srcPlayer);
+      netMsg.packUInt8(dstPlayer);
+      netMsg.packUInt8(type);
+      netMsg.packString(message, strlen(message) + 1);
+      Record::addPacket(MsgMessage, netMsg, HiddenPacket);
     }
     parseServerCommand(message, srcPlayer);
     return; // bail out
@@ -2013,12 +2006,10 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // send rabbit information
   if (clOptions->gameType == RabbitChase) {
-    NetMsg msg = MSGMGR.newMessage();
-
-    msg->packUInt8(rabbitIndex);
-    // swap mode
-    msg->packUInt8(0);
-    msg->send(playerData->netHandler, MsgNewRabbit);
+    NetMessage netMsg;
+    netMsg.packUInt8(rabbitIndex);
+    netMsg.packUInt8(0); // swap mode
+    netMsg.send(playerData->netHandler, MsgNewRabbit);
   }
 
   // again check if player was disconnected
@@ -2095,9 +2086,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       // oops
       timeLeft = 0.0f;
 
-    NetMsg msg = MSGMGR.newMessage();
-    msg->packInt32((int32_t)timeLeft);
-    msg->send(playerData->netHandler, MsgTimeUpdate);
+    NetMessage netMsg;
+    netMsg.packInt32((int32_t)timeLeft);
+    netMsg.send(playerData->netHandler, MsgTimeUpdate);
     // players should know when the countdown is paused
     if (clOptions->countdownPaused) {
       long int timeArray[4];
@@ -2106,9 +2097,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
       char reply[MessageLen] = {0};
       snprintf(reply, MessageLen, "Countdown is paused. %s remaining.", remainingTime.c_str());
       sendMessage(ServerPlayer, playerData->getIndex(), reply);
-      msg = MSGMGR.newMessage();
-      msg->packInt32(-1);
-      msg->send(playerData->netHandler, MsgTimeUpdate);
+      netMsg.clear();
+      netMsg.packInt32(-1);
+      netMsg.send(playerData->netHandler, MsgTimeUpdate);
     }
   }
 
@@ -2329,10 +2320,10 @@ void pausePlayer(int playerIndex, bool paused)
     zapFlag(*playerFlag);
   }
 
-  NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt8(playerIndex);
-  msg->packUInt8(paused ? PauseCodeEnable : PauseCodeDisable);
-  msg->broadcast(MsgPause);
+  NetMessage netMsg;
+  netMsg.packUInt8(playerIndex);
+  netMsg.packUInt8(paused ? PauseCodeEnable : PauseCodeDisable);
+  netMsg.broadcast(MsgPause);
 
   bz_PlayerPausedEventData_V1 pauseEventData;
   pauseEventData.playerID = playerIndex;
@@ -2360,6 +2351,7 @@ void zapFlagByPlayer(int playerIndex)
     zapFlag(flag);
 }
 
+
 void removePlayer(int playerIndex, const char *reason, bool notify)
 {
   // player is signing off or sent a bad packet.  since the
@@ -2384,8 +2376,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
   // flush all pending messages for the player immediatley
 
-  if (netHandlerIsSafe)
-    MSGMGR.flushMessages(playerData->netHandler);
+  if (netHandlerIsSafe && playerData->netHandler) {
+    playerData->netHandler->flushUDP();            // FIXME ?
+    playerData->netHandler->bufferedSend(NULL, 0); // FIXME ?
+  }
 
   playerData->isParting = true;
 
@@ -3513,9 +3507,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     bool kick;
     int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
     if (nextPingSeqno > 0) {
-      NetMsg msg = MSGMGR.newMessage();
-      msg->packUInt16(nextPingSeqno);
-      msg->send(playerData.netHandler, MsgLagPing);
+      NetMessage netMsg;
+      netMsg.packUInt16(nextPingSeqno);
+      netMsg.send(playerData.netHandler, MsgLagPing);
 
       if (warn) {
 	sendMessage(ServerPlayer, p, "*** Server Warning: your lag is too high (failed to return ping) ***");
@@ -3957,6 +3951,8 @@ static void setupPermissions()
 
 static bool initServer(int argc, char **argv)
 {
+  initNetMessage();
+
   registerLoggingProc(apiLoggingProc, NULL);
 
   /* line buffered output to console */
@@ -4135,6 +4131,11 @@ static void checkWaitTime(BzTime &tm, float &waitTime)
   const float plugInWait = getAPIMaxWaitTime();
   if (waitTime > plugInWait) {
     waitTime = plugInWait;
+  }
+
+  const float sendLagWaitTime = SendLagState::getWaitTime();
+  if (waitTime > sendLagWaitTime) {
+    waitTime = sendLagWaitTime;
   }
 
   // minmal waitTime
@@ -4995,6 +4996,7 @@ static void runMainLoop()
     doTeamFlagTimeouts(tm);
     doSuperFlags(tm);
     doListServerUpdate(tm);
+    SendLagState::update();
 
     // check messages
     if (nfound > 0) {
@@ -5157,8 +5159,6 @@ static void runMainLoop()
 
     // Fire world weapons
     world->getWorldWeapons().fire();
-
-    MSGMGR.update();
 
     // clean any pending players and rebuild the world if necessary
     if (GameKeeper::Player::clean() && worldWasSentToAPlayer) {

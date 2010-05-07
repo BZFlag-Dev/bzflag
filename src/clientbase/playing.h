@@ -44,6 +44,10 @@
 #include "CommandCompleter.h"
 #include "ThirdPersonVars.h"
 
+
+class NetMessage;
+
+
 void warnAboutMainFlags();
 void warnAboutRadarFlags();
 void warnAboutRadar();
@@ -171,7 +175,7 @@ void handleReplayReset(void *msg, bool &checkScores);
 void handleResourceFetch(void *msg);
 void handleScoreOver(void *msg);
 void handleScore(void *msg);
-void handleSetShotType(BufferedNetworkMessage *msg);
+void handleSetShotType(void *msg);
 void handleSetTeam(void *msg, uint16_t len);
 void handleShotBegin(bool human, void *msg);
 void handleShotEnd(void *msg);
@@ -192,9 +196,6 @@ void addMessage(const Player* player,
                 ControlPanel::MessageModes mode = ControlPanel::MessageMisc,
                 bool highlight = false,
                 const char* oldColor = NULL);
-
-bool handleServerMessage(bool human, BufferedNetworkMessage *msg);
-void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg);
 
 void doMessages();
 

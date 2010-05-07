@@ -41,10 +41,10 @@
 #include "FileManager.h"
 #include "GameTime.h"
 #include "LuaClientScripts.h"
+#include "NetMessage.h"
 #include "MsgStrings.h"
 #include "ServerList.h"
 #include "TextUtils.h"
-
 
 // common client headers
 #include "ClientIntangibilityManager.h"
@@ -737,17 +737,19 @@ void updateRobots(float dt)
 
 void sendRobotUpdates()
 {
-  for (int i = 0; i < numRobots; i++)
+  for (int i = 0; i < numRobots; i++) {
     if (robots[i] && robots[i]->isDeadReckoningWrong()) {
       serverLink->sendPlayerUpdate(robots[i]);
     }
+  }
 }
 
 void addRobots()
 {
   int  j;
-  for (j = 0; j < MAX_ROBOTS; j++)
+  for (j = 0; j < MAX_ROBOTS; j++) {
     robots[j] = NULL;
+  }
 }
 
 #endif
@@ -761,8 +763,9 @@ void doNetworkStuff(void)
   }
 
 #ifdef ROBOT
-  if (entered)
+  if (entered) {
     sendRobotUpdates();
+  }
 #endif
 
   cURLManager::perform();
@@ -1031,14 +1034,17 @@ static void dumpMissingFlag(char *buf, uint16_t len)
 // message handlers
 //
 
-void handleSetShotType(BufferedNetworkMessage *msg)
+void handleSetShotType(void* msg)
 {
-  PlayerId id = msg->unpackUInt8();
-  unsigned char shotType = msg->unpackUInt8();
+  PlayerId id;
+  uint8_t shotType;
+  msg = nboUnpackUInt8(msg, id);
+  msg = nboUnpackUInt8(msg, shotType);
 
   Player *p = lookupPlayer(id);
-  if (!p)
+  if (!p) {
     return;
+  }
   p->setShotType((ShotType)shotType);
 }
 
@@ -1697,6 +1703,31 @@ static void handleLuaData(void *msg)
 }
 
 
+static void handleLagState(void *msg)
+{
+  uint8_t  count;
+  uint8_t  playerId;
+  uint16_t lag_ms;
+  uint16_t jitter_ms;
+  uint8_t  pktLoss;
+
+  msg = nboUnpackUInt8(msg, count);
+
+  for (uint16_t i = 0; i < count; i++) {
+    msg = nboUnpackUInt8(msg, playerId);
+    msg = nboUnpackUInt16(msg, lag_ms);
+    msg = nboUnpackUInt16(msg, jitter_ms);
+    msg = nboUnpackUInt8(msg, pktLoss);
+    Player* player = lookupPlayer(playerId);
+    if (player) {
+      player->setLag(float(lag_ms) * 0.001f);
+      player->setJitter(float(jitter_ms) * 0.001f);
+      player->setPacketLoss(float(pktLoss));
+    }
+  }
+}
+
+
 void handlePlayerUpdate(uint16_t code, void *msg)
 {
   double timestamp;
@@ -1784,7 +1815,7 @@ void handlePlayerData(void *msg)
 }
 
 
-void handlePause(void *msg)
+static void handlePause(void *msg)
 {
   PlayerId id, state;
   msg = nboUnpackUInt8(msg, id);
@@ -1837,21 +1868,7 @@ void handlePause(void *msg)
 }
 
 
-bool handleServerMessage(bool /*human*/, BufferedNetworkMessage *msg)
-{
-  switch (msg->getCode()) {
-default:
-  return false;
-
-case MsgSetShot:
-  handleSetShotType(msg);
-  break;
-  }
-  return true;
-}
-
-
-void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
+static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
@@ -2027,6 +2044,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
       handleMsgSetVars(msg);
       break;
     }
+    case MsgSetShot: {
+      handleSetShotType(msg);
+      break;
+    }
     case MsgTeleport: {
       handleTeleport(msg);
       break;
@@ -2110,6 +2131,10 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
       handlePause(msg);
       break;
     }
+    case MsgLagState: {
+      handleLagState(msg);
+      break;
+    }
   }
 
   if (checkScores) {
@@ -2122,51 +2147,27 @@ void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
 // message handling
 //
 
-class ClientReceiveCallback : public NetworkMessageTransferCallback
-{
-  public:
-    virtual size_t receive(BufferedNetworkMessage *message)
-    {
-      if (!serverLink || serverError) {
-        return 0;
-      }
-
-      int e = 0;
-
-      e = serverLink->read(message, 0);
-
-      if (e == -2) {
-        showError("Server communication error");
-        serverError = true;
-        return 0;
-      }
-
-      if (e == 1) {
-        return message->size() + 4;
-      }
-
-      return 0;
-    }
-};
-
-
 void doMessages()
 {
-  static ClientReceiveCallback clientMessageCallback;
-
-  BufferedNetworkMessageManager::MessageList messageList;
-
-  MSGMGR.update();
-  MSGMGR.receiveMessages(&clientMessageCallback, messageList);
-
-  BufferedNetworkMessageManager::MessageList::iterator itr = messageList.begin();
-
-  while (itr != messageList.end()) {
-    if (!handleServerMessage(true, *itr))
-      handleServerMessage(true, (*itr)->getCode(), (uint16_t)(*itr)->size(), (*itr)->buffer());
-
-    delete *itr;
-    itr++;
+  const int millisecToBlock = 0;
+  if (!serverLink || serverError) {
+    return;
+  }
+  char msgBuf[MaxPacketLen];
+  while (true) {
+    uint16_t len, code;
+    const int status = serverLink->read(code, len, msgBuf, millisecToBlock);
+    if (status == -2) {
+      showError("Server communication error");
+      serverError = true;
+      break;
+    }
+    else if (status == 1) {
+      handleServerMessage(true, code, len, msgBuf); // FIMXE: human = true ?
+    }
+    else {
+      break;
+    }
   }
 }
 

@@ -29,7 +29,7 @@
 #include "StateDatabase.h"
 #include "bzfsAPI.h"
 #include "bzfsMessages.h"
-#include "BufferedNetworkMessage.h"
+#include "NetMessage.h"
 
 // bzfs specific headers
 #include "bzfs.h"
@@ -59,11 +59,12 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 
   firingInfo.shot.team = teamColor;
 
-  NetMsg msg = MSGMGR.newMessage();
-  firingInfo.pack(msg);
+  NetMessage netMsg;
+  firingInfo.pack(netMsg);
 
-  if (BZDB.isTrue(BZDBNAMES.WEAPONS))
-    msg->broadcast(MsgWShotBegin);
+  if (BZDB.isTrue(BZDBNAMES.WEAPONS)) {
+    netMsg.broadcast(MsgWShotBegin);
+  }
 
   return shotID;
 }
@@ -88,21 +89,14 @@ static int fireWorldGMReal(FlagType* type, PlayerId targetPlayerID, float
 
     firingInfo.shot.team = RogueTeam;
 
-    NetMsg msg = MSGMGR.newMessage();
-    firingInfo.pack(msg);
-
-    if (BZDB.isTrue(BZDBNAMES.WEAPONS))
-	msg->broadcast(MsgShotBegin);
-
-    // Target the gm.
-    // construct and send packet
-
-    msg = MSGMGR.newMessage();
-
-    firingInfo.shot.pack(msg);
-    msg->packUInt8(targetPlayerID);
-    if (BZDB.isTrue(BZDBNAMES.WEAPONS))
-      msg->broadcast(MsgGMUpdate);
+    // Target the GM, construct and send packet
+    if (BZDB.isTrue(BZDBNAMES.WEAPONS)) {
+      NetMessage netMsg;
+      firingInfo.pack(netMsg);
+      netMsg.broadcast(MsgShotBegin);
+      netMsg.packUInt8(targetPlayerID);
+      netMsg.broadcast(MsgGMUpdate);
+    }
 
     return shotID;
 }

@@ -410,12 +410,12 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
 {
   // GM is not active until activation time passes (for any tank)
   static BZDB_float activationTime(BZDBNAMES.GMACTIVATIONTIME);
-  static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
-
-  if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime)
+  if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime) {
     return Infinity;
+  }
 
-  return checkShotHit(tank,position,shotRadius);
+  static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
+  return checkShotHit(tank, position, shotRadius);
 }
 
 

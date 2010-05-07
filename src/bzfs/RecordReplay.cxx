@@ -44,6 +44,7 @@
 #include "StateDatabase.h"
 #include "DirectoryNames.h"
 #include "NetHandler.h"
+#include "NetMessage.h"
 #include "bz_md5.h"
 #include "Score.h"
 #include "version.h"
@@ -578,6 +579,12 @@ bool Record::addPacket(u16 code, int len, const void * data, u16 mode)
   } else {
     return routePacket(code, len, data, mode);
   }
+}
+
+
+bool Record::addPacket(u16 code, const NetMessage& netMsg, u16 mode)
+{
+  return addPacket(code, netMsg.getSize(), netMsg.getData(), mode);
 }
 
 
@@ -1236,7 +1243,10 @@ bool Replay::sendPackets()
     logDebugMessage(4, "sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
 	    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
-    if (p->mode != HiddenPacket) {
+    if (p->mode == HiddenPacket) {
+      logDebugMessage(4, "  skipping hidden packet\n");
+    }
+    else {
       // set the database variables if this is MsgSetVar
       if (p->code == MsgSetVar) {
 	setVariables(p->data);
@@ -1269,18 +1279,14 @@ bool Replay::sendPackets()
 	  PlayerReplayState state = pi->getReplayState();
 	  // send the packets
 	  if (((p->mode == StatePacket) && (state == ReplayReceiving)) ||
-	      ((p->mode == RealPacket) && (state == ReplayStateful)))
-	  {
+	      ((p->mode == RealPacket)  && (state == ReplayStateful))) {
 	    // the 4 bytes before p->data need to be allocated
-	    NetMsg msg = MSGMGR.newMessage();
-	    msg->addPackedData(p->data, p->len);
-	    msg->send(gkPlayer->netHandler, p->code);
+	    NetMessage netMsg;
+	    netMsg.packString(p->data, p->len);
+	    netMsg.send(gkPlayer->netHandler, p->code);
 	  }
 	}
-
-      } // for loop
-    } else {
-      logDebugMessage(4, "  skipping hidden packet\n");
+      }
     }
 
     p = nextPacket();
@@ -1735,34 +1741,31 @@ static bool resetStates()
 {
   int i;
 
-  NetMsg msg = MSGMGR.newMessage();
+  NetMessage netMsg;
 
   // reset team scores
-  msg->packUInt8(CtfTeams);
+  netMsg.packUInt8(CtfTeams);
   for (i = 0; i < CtfTeams; i++) {
-    msg->packUInt16(i);
-    teamInfos[i].team.pack(msg);
+    netMsg.packUInt16(i);
+    teamInfos[i].team.pack(netMsg);
   }
 
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gkPlayer == NULL)
-      continue;
-
-    if (gkPlayer->player.isPlaying())
-      MSGMGR.newMessage(msg)->send(gkPlayer->netHandler, MsgTeamUpdate);
+    if ((gkPlayer != NULL) && gkPlayer->player.isPlaying()) {
+      netMsg.send(gkPlayer->netHandler, MsgTeamUpdate);
+    }
   }
+
+  netMsg.clear();
 
   // reset players and flags using MsgReplayReset
-  msg = MSGMGR.newMessage();
-  msg->packUInt8(MaxPlayers); // the last player to remove
+  netMsg.packUInt8(MaxPlayers); // the last player to remove
   for (i = MaxPlayers; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-    if (gkPlayer == NULL)
-      continue;
-
-    if (gkPlayer->player.isPlaying())
-      MSGMGR.newMessage(msg)->send(gkPlayer->netHandler, MsgReplayReset);
+    if ((gkPlayer != NULL) && gkPlayer->player.isPlaying()) {
+      netMsg.send(gkPlayer->netHandler, MsgReplayReset);
+    }
   }
 
   // reset the local view of the players' state

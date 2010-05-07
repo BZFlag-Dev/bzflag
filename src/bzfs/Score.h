@@ -13,10 +13,12 @@
 #ifndef __SCORE_H__
 #define __SCORE_H__
 
+
 #include "common.h"
 
-/* common interface headers */
-#include "BufferedNetworkMessage.h"
+
+class NetMessage;
+
 
 class Score {
 public:
@@ -33,7 +35,7 @@ public:
   void  killedBy();
   void  kill();
   void *pack(void *buf) const;
-  void pack(BufferedNetworkMessage *msg) const;
+  void pack(NetMessage& netMsg) const;
 
   bool  reached() const {
     return wins - losses >= score;

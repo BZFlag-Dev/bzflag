@@ -28,7 +28,7 @@
 #include "vectors.h"
 #include "version.h"
 #include "BaseBuilding.h"
-#include "BufferedNetworkMessage.h"
+#include "NetMessage.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
 #include "CommandManager.h"
@@ -1875,28 +1875,27 @@ BZF_API bool bz_sendFetchResMessage(int playerID, const char *URL)
     resType = eImage;
   }
 
-  NetMsg msg = MSGMGR.newMessage();
+  NetMessage netMsg;
 
-  msg->packUInt16(1); // the count
-  msg->packUInt8(1); // overwrite
-  msg->packUInt16((short)resType);
-  msg->packUInt16((unsigned short)strlen(URL));
-  msg->packString(URL, strlen(URL));
+  netMsg.packUInt16(1); // the count
+  netMsg.packUInt8(1); // overwrite
+  netMsg.packUInt16((short)resType);
+  netMsg.packUInt16((unsigned short)strlen(URL));
+  netMsg.packString(URL, strlen(URL));
 
-  if(playerID==BZ_ALLUSERS)
-  {
-    for(int i=0; i < curMaxPlayers; i++)
-    {
+  if (playerID == BZ_ALLUSERS) {
+    for(int i=0; i < curMaxPlayers; i++) {
       GameKeeper::Player *p=GameKeeper::Player::getPlayerByIndex(i);
-      if(p && p->caps.canDownloadResources)
-		MSGMGR.newMessage(msg)->send(p->netHandler, MsgFetchResources);
+      if (p && p->caps.canDownloadResources) {
+        netMsg.send(p->netHandler, MsgFetchResources);
+      }
     }
   }
-  else
-  {
+  else {
     GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-    if(player && player->caps.canDownloadResources)
-      msg->send(player->netHandler, MsgFetchResources);
+    if (player && player->caps.canDownloadResources) {
+      netMsg.send(player->netHandler, MsgFetchResources);
+    }
   }
   return true;
 }
@@ -1931,18 +1930,18 @@ BZF_API bool bz_sendJoinServer(int playerID,
   const std::string refr = referrer;
   const std::string mesg = message;
 
-  NetMsg netMsg = MSGMGR.newMessage();
+  NetMessage netMsg;
 
-  netMsg->packStdString(addr);
-  netMsg->packInt32(port);
-  netMsg->packInt16(int16_t(teamID));
-  netMsg->packStdString(refr);
-  netMsg->packStdString(mesg);
+  netMsg.packStdString(addr);
+  netMsg.packInt32(port);
+  netMsg.packInt16(int16_t(teamID));
+  netMsg.packStdString(refr);
+  netMsg.packStdString(mesg);
 
   if (player != NULL) {
-    netMsg->send(player->netHandler, MsgJoinServer);
+    netMsg.send(player->netHandler, MsgJoinServer);
   } else {
-    netMsg->broadcast(MsgJoinServer);
+    netMsg.broadcast(MsgJoinServer);
   }
 
   return true;
@@ -3688,34 +3687,33 @@ BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char *soundName,
   if(playerID==BZ_SERVER || !soundName)
     return false;
 
-  NetMsg   msg = MSGMGR.newMessage();
+  NetMessage netMsg;
 
   uint8_t bits = 0;
   if (pos != NULL) {
     bits |= SoundPosition;
   }
 
-  msg->packUInt8(LocalCustomSound); // sound type
-  msg->packUInt8(bits);
-  msg->packStdString(std::string(soundName));
+  netMsg.packUInt8(LocalCustomSound); // sound type
+  netMsg.packUInt8(bits);
+  netMsg.packStdString(std::string(soundName));
   if (pos != NULL) {
-    msg->packFVec3(fvec3(pos[0], pos[1], pos[2]));
+    netMsg.packFVec3(fvec3(pos[0], pos[1], pos[2]));
   }
 
-  if(playerID==BZ_ALLUSERS)
-  {
-    for(int i=0; i < curMaxPlayers; i++)
-    {
+  if (playerID == BZ_ALLUSERS) {
+    for (int i = 0; i < curMaxPlayers; i++) {
       GameKeeper::Player *p=GameKeeper::Player::getPlayerByIndex(i);
-      if(p && p->caps.canPlayRemoteSounds)
-	MSGMGR.newMessage(msg)->send(p->netHandler, MsgCustomSound);
+      if (p && p->caps.canPlayRemoteSounds) {
+	netMsg.send(p->netHandler, MsgCustomSound);
+      }
     }
   }
-  else
-  {
-    GameKeeper::Player *player=GameKeeper::Player::getPlayerByIndex(playerID);
-    if(player && player->caps.canPlayRemoteSounds)
-      MSGMGR.newMessage(msg)->send(player->netHandler, MsgCustomSound);
+  else {
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player && player->caps.canPlayRemoteSounds) {
+      netMsg.send(player->netHandler, MsgCustomSound);
+    }
   }
 
   return true;
@@ -5647,9 +5645,9 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
    * Thing(tm) to do.  new clients will get the notification during
    * flag negotiation, which is better.
    */
-  NetMsg msg = MSGMGR.newMessage();
-  tmp->packCustom(msg);
-  msg->broadcast(MsgFlagType);
+  NetMessage netMsg;
+  tmp->packCustom(netMsg);
+  netMsg.broadcast(MsgFlagType);
 
   return true;
 }

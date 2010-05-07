@@ -25,7 +25,8 @@
 #include "global.h"
 #include "vectors.h"
 
-class BufferedNetworkMessage;
+class NetMessage;
+
 
 const int TeamPLen = 10;
 
@@ -35,7 +36,7 @@ struct Team {
     Team();
 
     void* pack(void*) const;
-    void  pack(BufferedNetworkMessage *msg) const;
+    void  pack(NetMessage& netMsg) const;
     void* unpack(void*);
 
     static const std::string getImagePrefix(TeamColor);  // const

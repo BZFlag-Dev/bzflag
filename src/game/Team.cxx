@@ -13,7 +13,7 @@
 #include "common.h"
 #include "Team.h"
 #include "Pack.h"
-#include "BufferedNetworkMessage.h"
+#include "NetMessage.h"
 
 
 fvec4 Team::tankColor[NumTeams] = {
@@ -56,11 +56,11 @@ void* Team::pack(void* buf) const
 }
 
 
-void Team::pack(BufferedNetworkMessage *msg) const
+void Team::pack(NetMessage& netMsg) const
 {
-  msg->packUInt16(uint16_t(size));
-  msg->packUInt16(uint16_t(won));
-  msg->packUInt16(uint16_t(lost));
+  netMsg.packUInt16(uint16_t(size));
+  netMsg.packUInt16(uint16_t(won));
+  netMsg.packUInt16(uint16_t(lost));
 }
 
 

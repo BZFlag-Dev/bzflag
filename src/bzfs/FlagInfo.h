@@ -22,8 +22,10 @@
 /* bzflag common headers */
 #include "Flag.h"
 #include "BzTime.h"
-#include "BufferedNetworkMessage.h"
 #include "vectors.h"
+
+
+class NetMessage;
 
 
 /** FlagInfo describes a flag as it pertains to the world.
@@ -36,7 +38,7 @@ public:
   void setRequiredFlag(FlagType *desc);
   void addFlag();
   void *pack(void *buf, bool hide = false);
-  size_t pack(BufferedNetworkMessage *msg , bool hide = false);
+  size_t pack(NetMessage& netMsg , bool hide = false);
   void dropFlag(const fvec3& pos, const fvec3& landingPos, bool vanish);
   void resetFlag(const fvec3& pos, bool teamIsEmpty);
   void grab(int playerIndex);

@@ -72,13 +72,19 @@ public:
   short		getScore() const;
   const fvec3&	getDimensions() const;
   float		getAlpha() const { return alpha; }
-
-  const PlayerState& getState() const { return state; }
-
   float		getReloadTime() const;
+
+  inline const PlayerState& getState() const { return state; }
 
   const fvec3&	getApparentVelocity() const;
   BzTime	getLastUpdateTime() const;
+
+  inline float	getLag() const { return lag; }
+  inline void	setLag(float lt) { lag = lt; }
+  inline float	getJitter() const { return jitter; }
+  inline void	setJitter(float jt) { jitter = jt; }
+  inline float	getPacketLoss() const { return packetLoss; }
+  inline void	setPacketLoss(float pl) { packetLoss = pl; }
 
   inline bool hasWings() const {
     return getFlag() && (getFlag() == Flags::Wings);
@@ -374,6 +380,8 @@ private:
 
   int			oldStatus;		// old tank status bits
   float			oldZSpeed;		// old tank vertical speed
+
+  float lag, jitter, packetLoss;
 
   bool isSolid();
 };

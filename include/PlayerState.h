@@ -15,9 +15,12 @@
 
 #include "common.h"
 #include "Address.h"
-#include "BufferedNetworkMessage.h"
 #include "BzTime.h"
 #include "vectors.h"
+
+
+class NetMessage;
+
 
 // 58 bytes
 const int PlayerUpdatePLenMax =
@@ -66,7 +69,7 @@ class PlayerState
   public:
     PlayerState();
     void* pack(void*, uint16_t& code, bool increment = true);
-    void  pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment = true);
+    void  pack(NetMessage& netMsg, uint16_t& code, bool increment = true);
     void* unpack(void*, uint16_t code);
 
   public:

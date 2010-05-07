@@ -44,6 +44,8 @@ Crashes
 Regressions
 -----------
 
+* recently removed servers show up as blank rows in the server list
+
 * Some players hear clicks and pops with sound effects, others do not.
   Sounds cause an observable reduction in frame rate.
 

@@ -14,7 +14,6 @@ libGame_la_SOURCES =			\
 	global.cxx			\
 	BZDBCache.cxx			\
 	BZDBNames.cxx			\
-	BufferedNetworkMessage.cxx	\
 	BzMaterial.cxx			\
 	CollisionManager.cxx		\
 	CommandCompleter.cxx		\
@@ -33,6 +32,7 @@ libGame_la_SOURCES =			\
 	MeshTransform.cxx		\
 	MotionUtils.cxx			\
 	NetHandler.cxx			\
+	NetMessage.cxx			\
 	PhysicsDriver.cxx		\
 	PlayerInfo.cxx			\
 	PlayerState.cxx			\

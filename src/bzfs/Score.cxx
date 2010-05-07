@@ -10,13 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "Score.h"
 
-/* system implementation headers */
+// system headers
 #include <iostream>
 
-/* common implementation headers */
+// common headers
+#include "NetMessage.h"
 #include "StateDatabase.h"
 #include "Pack.h"
 
@@ -29,9 +30,11 @@ Score::Score(): wins(0), losses(0), tks(0)
 {
 }
 
+
 void Score::dump() const {
   std::cout << wins << '-' << losses;
 }
+
 
 float Score::ranking() const {
   if (randomRanking)
@@ -47,23 +50,28 @@ float Score::ranking() const {
   return average * penalty;
 }
 
+
 bool Score::isTK() const {
   // arbitrary 3
   return (tks >= 3) && (tkKickRatio > 0)
     && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
 }
 
+
 void Score::tK() {
   tks++;
 }
+
 
 void Score::killedBy() {
   losses++;
 }
 
+
 void Score::kill() {
   wins++;
 }
+
 
 void* Score::pack(void* buf) const {
   buf = nboPackFloat(buf, ranking());
@@ -73,24 +81,29 @@ void* Score::pack(void* buf) const {
   return buf;
 }
 
-void Score::pack(BufferedNetworkMessage* msg) const {
-  msg->packFloat( ranking() );
-  msg->packUInt16(wins);
-  msg->packUInt16(losses);
-  msg->packUInt16(tks);
+
+void Score::pack(NetMessage& netMsg) const {
+  netMsg.packFloat( ranking() );
+  netMsg.packUInt16(wins);
+  netMsg.packUInt16(losses);
+  netMsg.packUInt16(tks);
 }
+
 
 void Score::setTeamKillRatio(int _tkKickRatio) {
   tkKickRatio = (float)_tkKickRatio;
 }
 
+
 void Score::setWinLimit(int _score) {
   score = _score;
 }
 
+
 void Score::setRandomRanking() {
   randomRanking = true;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

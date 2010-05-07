@@ -20,12 +20,15 @@
 
 // common headers
 #include "global.h"
-#include "Address.h"
 #include "vectors.h"
+#include "Address.h"
 
 // local headers
 #include "bzfs.h"
 #include "GameKeeper.h"
+
+
+class NetMessage;
 
 
 // general messages sent to players ( local and remove )
@@ -91,7 +94,7 @@ void APIStateToplayerState ( PlayerState &playerState, const bz_PlayerUpdateStat
 void sendPlayerCustomDataPair ( int playerID, const std::string &key, const std::string &value );
 void sendPlayerCustomDataPair ( int playerID, const char* key, const char* value );
 
-/** class to pack a bunch of variables into one or more BufferedNetworkMessage.
+/** class to pack a bunch of variables into one or more NetMessage.
  *  they are then automatically sent as they complete, or in the destructor.
  */
 class PackVars
@@ -107,7 +110,7 @@ private:
   void startMessage();
   void endMessage();
   NetHandler* handler;
-  NetMsg msg;
+  NetMessage* netMsg;
   unsigned int count;
 };
 

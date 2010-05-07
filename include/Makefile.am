@@ -15,7 +15,6 @@ noinst_HEADERS =			\
 	BoltSceneNode.h			\
 	BoxBuilding.h			\
 	BoxSceneNodeGenerator.h		\
-	BufferedNetworkMessage.h	\
 	Bundle.h			\
 	BundleMgr.h			\
 	BSPSceneDatabase.h		\
@@ -90,6 +89,7 @@ noinst_HEADERS =			\
 	MotionUtils.h			\
 	MsgStrings.h			\
 	NetHandler.h			\
+	NetMessage.h			\
 	Obstacle.h			\
 	ObstacleList.h			\
 	ObstacleMgr.h			\

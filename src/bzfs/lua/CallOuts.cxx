@@ -33,6 +33,7 @@
 #include "GameTime.h"
 #include "LinkManager.h"
 #include "MeshFace.h"
+#include "NetMessage.h"
 #include "PlayerState.h"
 #include "TextUtils.h"
 
@@ -895,14 +896,14 @@ static int SendPlayerVariables(lua_State* L)
     return 1;
   }
 
-  NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt16(varMap.size());
+  NetMessage netMsg;
+  netMsg.packUInt16(varMap.size());
   std::map<std::string, std::string>::const_iterator it;
   for (it = varMap.begin(); it != varMap.end(); ++it) {
-    msg->packStdString(it->first);
-    msg->packStdString(it->second);
+    netMsg.packStdString(it->first);
+    netMsg.packStdString(it->second);
   }
-  msg->send(gkPlayer->netHandler, MsgSetVar);
+  netMsg.send(gkPlayer->netHandler, MsgSetVar);
 
   lua_pushinteger(L, (int)varMap.size());
   return 1;
@@ -1532,15 +1533,15 @@ static bool sendForceState(GameKeeper::Player* gkPlayer,
   if (angle)  { bits |= ForceStateAngleBit;  }
   if (angvel) { bits |= ForceStateAngVelBit; }
 
-  NetMsg msg = MSGMGR.newMessage();
-  msg->packUInt8((uint8_t)gkPlayer->getIndex());
-  msg->packUInt8(bits);
-  if (pos)    { msg->packFVec3(*pos);    }
-  if (vel)    { msg->packFVec3(*vel);    }
-  if (angle)  { msg->packFloat(*angle);  }
-  if (angvel) { msg->packFloat(*angvel); }
+  NetMessage netMsg;
+  netMsg.packUInt8((uint8_t)gkPlayer->getIndex());
+  netMsg.packUInt8(bits);
+  if (pos)    { netMsg.packFVec3(*pos);    }
+  if (vel)    { netMsg.packFVec3(*vel);    }
+  if (angle)  { netMsg.packFloat(*angle);  }
+  if (angvel) { netMsg.packFloat(*angvel); }
 
-  msg->send(gkPlayer->netHandler, MsgForceState);
+  netMsg.send(gkPlayer->netHandler, MsgForceState);
 
   return true;
 }
@@ -2483,9 +2484,9 @@ static int PlayerQueryGL(lua_State* L)
     return 0;
   }
 
-  NetMsg msg = MSGMGR.newMessage();
-  msg->packStdString(query);
-  msg->send(player->netHandler, MsgQueryGL);
+  NetMessage netMsg;
+  netMsg.packStdString(query);
+  netMsg.send(player->netHandler, MsgQueryGL);
 
   lua_pushboolean(L, true);
   return 1;

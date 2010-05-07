@@ -15,6 +15,7 @@
 #include "BZDBCache.h"
 #include "bzfsMessages.h"
 #include "bzfsPlayerStateVerify.h"
+#include "NetMessage.h"
 #include "bzfsChatVerify.h"
 #include "Protocol.h"
 
@@ -70,36 +71,40 @@ public:
     for (int i = 0; i < numClientFlags; i++) {
       FlagType *fDesc;
       buf = FlagType::unpack(buf, fDesc);
-      if (fDesc != Flags::Null)
+      if (fDesc != Flags::Null) {
 	hasFlag[fDesc] = true;
+      }
     }
 
     /* Compare them to the flags this game might need, generating a list of missing flags */
     for (it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
       if (!hasFlag[it->second]) {
-	if (clOptions->flagCount[it->second] > 0)
+	if (clOptions->flagCount[it->second] > 0) {
 	  missingFlags.insert(it->second);
-	if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second])
+        }
+	if ((clOptions->numExtraFlags > 0) && !clOptions->flagDisallowed[it->second]) {
 	  missingFlags.insert(it->second);
+        }
       }
     }
 
     /* Pack a message with the list of missing flags */
-    NetMsg msg = MSGMGR.newMessage();
+    NetMessage netMsg;
     for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
       if ((*m_it) != Flags::Null) {
 	if ((*m_it)->custom) {
 	  // custom flag, tell the client about it
-	  NetMsg flagMsg = MSGMGR.newMessage();
-	  (*m_it)->packCustom(flagMsg);
-	  flagMsg->send(handler, MsgFlagType);
-	} else {
+	  NetMessage customMsg;
+	  (*m_it)->packCustom(customMsg);
+	  customMsg.send(handler, MsgFlagType);
+	}
+	else {
 	  // they should already know about this one, dump it back to them
-	  (*m_it)->pack(msg);
+	  (*m_it)->pack(netMsg);
 	}
       }
     }
-    msg->send(handler, MsgNegotiateFlags);
+    netMsg.send(handler, MsgNegotiateFlags);
     return true;
   }
 };
@@ -128,10 +133,9 @@ class WantSettingsHandler : public ClientNetworkMessageHandler
 public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
-    NetMsg setMsg = MSGMGR.newMessage();
-    setMsg->addPackedData(worldSettings, WorldSettingsSize);
-    setMsg->send(handler, MsgGameSettings);
-
+    NetMessage netMsg;
+    netMsg.packString(worldSettings, WorldSettingsSize);
+    netMsg.send(handler, MsgGameSettings);
     return true;
   }
 };
@@ -143,13 +147,14 @@ public:
   virtual bool execute ( NetHandler *handler, uint16_t &/*code*/, void * /*buf*/, int /*len*/ )
   {
     if (clOptions->cacheURL.size() > 0) {
-      NetMsg   msg = MSGMGR.newMessage();
-      msg->packString(clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
-      msg->send(handler, MsgCacheURL);
+      NetMessage netMsg;
+      netMsg.packString(clOptions->cacheURL.c_str(), clOptions->cacheURL.size() + 1);
+      netMsg.send(handler, MsgCacheURL);
     }
-    NetMsg   msg = MSGMGR.newMessage();
-    msg->packString(hexDigest, strlen(hexDigest)+1);
-    msg->send(handler, MsgWantWHash);
+
+    NetMessage netMsg;
+    netMsg.packString(hexDigest, strlen(hexDigest) + 1);
+    netMsg.send(handler, MsgWantWHash);
     return true;
   }
 };
@@ -163,33 +168,33 @@ public:
     // much like a ping packet but leave out useless stuff (like
     // the server address, which must already be known, and the
     // server version, which was already sent).
-    NetMsg   msg = MSGMGR.newMessage();
-    msg->packUInt16(pingReply.gameType);
-    msg->packUInt16(pingReply.gameOptions);
-    msg->packUInt16(pingReply.maxPlayers);
-    msg->packUInt16(pingReply.maxShots);
-    msg->packUInt16(teamInfos[0].team.size);
-    msg->packUInt16(teamInfos[1].team.size);
-    msg->packUInt16(teamInfos[2].team.size);
-    msg->packUInt16(teamInfos[3].team.size);
-    msg->packUInt16(teamInfos[4].team.size);
-    msg->packUInt16(teamInfos[5].team.size);
-    msg->packUInt16(pingReply.rogueMax);
-    msg->packUInt16(pingReply.redMax);
-    msg->packUInt16(pingReply.greenMax);
-    msg->packUInt16(pingReply.blueMax);
-    msg->packUInt16(pingReply.purpleMax);
-    msg->packUInt16(pingReply.observerMax);
-    msg->packUInt16(pingReply.shakeWins);
+    NetMessage netMsg;
+    netMsg.packUInt16(pingReply.gameType);
+    netMsg.packUInt16(pingReply.gameOptions);
+    netMsg.packUInt16(pingReply.maxPlayers);
+    netMsg.packUInt16(pingReply.maxShots);
+    netMsg.packUInt16(teamInfos[0].team.size);
+    netMsg.packUInt16(teamInfos[1].team.size);
+    netMsg.packUInt16(teamInfos[2].team.size);
+    netMsg.packUInt16(teamInfos[3].team.size);
+    netMsg.packUInt16(teamInfos[4].team.size);
+    netMsg.packUInt16(teamInfos[5].team.size);
+    netMsg.packUInt16(pingReply.rogueMax);
+    netMsg.packUInt16(pingReply.redMax);
+    netMsg.packUInt16(pingReply.greenMax);
+    netMsg.packUInt16(pingReply.blueMax);
+    netMsg.packUInt16(pingReply.purpleMax);
+    netMsg.packUInt16(pingReply.observerMax);
+    netMsg.packUInt16(pingReply.shakeWins);
     // 1/10ths of second
-    msg->packUInt16(pingReply.shakeTimeout);
-    msg->packUInt16(pingReply.maxPlayerScore);
-    msg->packUInt16(pingReply.maxTeamScore);
-    msg->packUInt16(pingReply.maxTime);
-    msg->packUInt16((uint16_t)clOptions->timeElapsed);
+    netMsg.packUInt16(pingReply.shakeTimeout);
+    netMsg.packUInt16(pingReply.maxPlayerScore);
+    netMsg.packUInt16(pingReply.maxTeamScore);
+    netMsg.packUInt16(pingReply.maxTime);
+    netMsg.packUInt16((uint16_t)clOptions->timeElapsed);
 
     // send it
-    msg->send(handler, MsgQueryGame);
+    netMsg.send(handler, MsgQueryGame);
 
     return true;
   }
@@ -205,12 +210,12 @@ public:
     int numPlayers = GameKeeper::Player::count();
 
     // first send number of teams and players being sent
-    NetMsg   msg = MSGMGR.newMessage();
+    NetMessage netMsg;
 
-    msg->packUInt16(NumTeams);
-    msg->packUInt16(numPlayers);
+    netMsg.packUInt16(NumTeams);
+    netMsg.packUInt16(numPlayers);
 
-    msg->send(handler, MsgQueryPlayers);
+    netMsg.send(handler, MsgQueryPlayers);
 
     if (sendTeamUpdateDirect(handler) < 0)
       return true;
@@ -300,13 +305,11 @@ public:
     if (id == 0xff)
       return false;
 
-    NetMsg   msg = MSGMGR.newMessage();
-
-    msg->packUInt8(id);
-    msg->packUInt8(botID);
-    msg->packInt16(team);
-
-    msg->send(player->netHandler, MsgNewPlayer);
+    NetMessage netMsg;
+    netMsg.packUInt8(id);
+    netMsg.packUInt8(botID);
+    netMsg.packInt16(team);
+    netMsg.send(player->netHandler, MsgNewPlayer);
 
     return true;
   }
@@ -963,11 +966,11 @@ public:
       if (reason.empty()) {
         reason = "pause request denied";
       }
-      NetMsg msg = MSGMGR.newMessage();
-      msg->packUInt8(player->getIndex());
-      msg->packUInt8(PauseCodeCancel);
-      msg->packStdString(reason);
-      msg->send(player->netHandler, MsgPause);
+      NetMessage netMsg;
+      netMsg.packUInt8(player->getIndex());
+      netMsg.packUInt8(PauseCodeCancel);
+      netMsg.packStdString(reason);
+      netMsg.send(player->netHandler, MsgPause);
       return true;
     }
 
@@ -989,11 +992,11 @@ public:
 
     // send the PauseCodeAcknowledge message
     if (player->netHandler) {
-      NetMsg msg = MSGMGR.newMessage();
-      msg->packUInt8(player->getIndex());
-      msg->packUInt8(PauseCodeAcknowledge);
-      msg->packFloat(pauseDelay);
-      msg->send(player->netHandler, MsgPause);
+      NetMessage netMsg;
+      netMsg.packUInt8(player->getIndex());
+      netMsg.packUInt8(PauseCodeAcknowledge);
+      netMsg.packFloat(pauseDelay);
+      netMsg.send(player->netHandler, MsgPause);
     }
     
     return true;

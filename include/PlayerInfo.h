@@ -31,7 +31,9 @@
 #include "Protocol.h"
 #include "Flag.h"
 #include "WordFilter.h"
-#include "BufferedNetworkMessage.h"
+
+
+class NetMessage;
 
 
 enum ClientState {
@@ -94,9 +96,9 @@ public:
   bool  getsChatUpdates() const;
   bool  getsAllUpdates() const;
   void  *packUpdate(void *buf);
-  void  packUpdate(BufferedNetworkMessage *msg);
+  void  packUpdate(NetMessage& netMsg);
   void  *packId(void *buf);
-  void  packId(BufferedNetworkMessage *msg);
+  void  packId(NetMessage& netMsg);
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
   const char *getCallSign() const;
   const char *getToken() const;

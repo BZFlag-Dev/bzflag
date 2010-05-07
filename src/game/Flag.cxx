@@ -12,18 +12,19 @@
 
 #include "common.h"
 
-/* interface header */
+// interface header
 #include "Flag.h"
 
-/* system implementation headers */
+// system headers
 #include <math.h>
 #include <string>
 #include <assert.h>
 #include <string.h>
 
-/* common implementation headers */
-#include "Team.h"
+// common headers
+#include "NetMessage.h"
 #include "Pack.h"
+#include "Team.h"
 #include "TextUtils.h"
 
 
@@ -278,6 +279,7 @@ namespace Flags {
   }
 }
 
+
 void* FlagType::pack(void* buf) const
 {
   if (flagAbbv.size() > 0)
@@ -293,6 +295,7 @@ void* FlagType::pack(void* buf) const
   return buf;
 }
 
+
 void* FlagType::fakePack(void* buf) const
 {
   buf = nboPackUInt8(buf, 'P');
@@ -300,35 +303,39 @@ void* FlagType::fakePack(void* buf) const
   return buf;
 }
 
-size_t FlagType::pack(BufferedNetworkMessage *msg) const
+
+size_t FlagType::pack(NetMessage& netMsg) const
 {
   unsigned char buf[2] = {0, 0};
 
   pack((void*)buf);
 
-  msg->packUInt8(buf[0]);
-  msg->packUInt8(buf[1]);
+  netMsg.packUInt8(buf[0]);
+  netMsg.packUInt8(buf[1]);
 
   return 2;
 }
 
-size_t FlagType::fakePack(BufferedNetworkMessage *msg) const
+
+size_t FlagType::fakePack(NetMessage& netMsg) const
 {
-  msg->packUInt8('P');
-  msg->packUInt8('Z');
+  netMsg.packUInt8('P');
+  netMsg.packUInt8('Z');
   return 2;
 }
 
-size_t FlagType::packCustom(BufferedNetworkMessage *msg) const
+
+size_t FlagType::packCustom(NetMessage& netMsg) const
 {
-  size_t  s = msg->size();
-  pack(msg);
-  msg->packUInt8(uint8_t(flagQuality));
-  msg->packUInt8(uint8_t(flagShot));
-  msg->packStdString(flagName);
-  msg->packStdString(flagHelp);
-  return  msg->size()-s;
+  const size_t s = netMsg.getSize();
+  pack(netMsg);
+  netMsg.packUInt8(uint8_t(flagQuality));
+  netMsg.packUInt8(uint8_t(flagShot));
+  netMsg.packStdString(flagName);
+  netMsg.packStdString(flagHelp);
+  return  netMsg.getSize() - s;
 }
+
 
 void* FlagType::unpack(void* buf, FlagType* &type)
 {
@@ -338,6 +345,7 @@ void* FlagType::unpack(void* buf, FlagType* &type)
   type = Flag::getDescFromAbbreviation((const char *)abbv);
   return buf;
 }
+
 
 void* FlagType::unpackCustom(void* buf, FlagType* &type)
 {
@@ -365,10 +373,12 @@ void* FlagType::unpackCustom(void* buf, FlagType* &type)
   return buf;
 }
 
+
 FlagTypeMap& FlagType::getFlagMap() {
   static FlagTypeMap flagMap;
   return flagMap;
 }
+
 
 void* Flag::pack(void* buf) const
 {
@@ -385,37 +395,40 @@ void* Flag::pack(void* buf) const
   return buf;
 }
 
-size_t Flag::pack(BufferedNetworkMessage *msg) const
+
+size_t Flag::pack(NetMessage& netMsg) const
 {
-  size_t s = msg->size();
-  type->pack(msg);
-  msg->packUInt16(uint16_t(status));
-  msg->packUInt16(uint16_t(endurance));
-  msg->packUInt8(owner);
-  msg->packFVec3(position);
-  msg->packFVec3(launchPosition);
-  msg->packFVec3(landingPosition);
-  msg->packFloat(flightTime);
-  msg->packFloat(flightEnd);
-  msg->packFloat(initialVelocity);
-  return msg->size()-s;
+  const size_t s = netMsg.getSize();
+  type->pack(netMsg);
+  netMsg.packUInt16(uint16_t(status));
+  netMsg.packUInt16(uint16_t(endurance));
+  netMsg.packUInt8(owner);
+  netMsg.packFVec3(position);
+  netMsg.packFVec3(launchPosition);
+  netMsg.packFVec3(landingPosition);
+  netMsg.packFloat(flightTime);
+  netMsg.packFloat(flightEnd);
+  netMsg.packFloat(initialVelocity);
+  return netMsg.getSize() - s;
 }
 
-size_t Flag::fakePack(BufferedNetworkMessage *msg) const
+
+size_t Flag::fakePack(NetMessage& netMsg) const
 {
-  size_t s = msg->size();
-  type->fakePack(msg);
-  msg->packUInt16(uint16_t(status));
-  msg->packUInt16(uint16_t(endurance));
-  msg->packUInt8(owner);
-  msg->packFVec3(position);
-  msg->packFVec3(launchPosition);
-  msg->packFVec3(landingPosition);
-  msg->packFloat(flightTime);
-  msg->packFloat(flightEnd);
-  msg->packFloat(initialVelocity);
-  return msg->size()-s;
+  const size_t s = netMsg.getSize();
+  type->fakePack(netMsg);
+  netMsg.packUInt16(uint16_t(status));
+  netMsg.packUInt16(uint16_t(endurance));
+  netMsg.packUInt8(owner);
+  netMsg.packFVec3(position);
+  netMsg.packFVec3(launchPosition);
+  netMsg.packFVec3(landingPosition);
+  netMsg.packFloat(flightTime);
+  netMsg.packFloat(flightEnd);
+  netMsg.packFloat(initialVelocity);
+  return netMsg.getSize() - s;
 }
+
 
 void* Flag::fakePack(void* buf) const
 {
@@ -431,6 +444,7 @@ void* Flag::fakePack(void* buf) const
   buf = nboPackFloat(buf, initialVelocity);
   return buf;
 }
+
 
 void* Flag::unpack(void* buf)
 {
@@ -448,6 +462,7 @@ void* Flag::unpack(void* buf)
   buf = nboUnpackFloat(buf, initialVelocity);			     // 4
   return buf;						// total        55
 }
+
 
 FlagType* Flag::getDescFromAbbreviation(const char* abbreviation)
 {
@@ -468,15 +483,18 @@ FlagType* Flag::getDescFromAbbreviation(const char* abbreviation)
     return i->second;
 }
 
+
 FlagSet& Flag::getGoodFlags()
 {
   return FlagType::flagSets[FlagGood];
 }
 
+
 FlagSet& Flag::getBadFlags()
 {
   return FlagType::flagSets[FlagBad];
 }
+
 
 const fvec4& FlagType::getColor() const
 {
@@ -487,6 +505,7 @@ const fvec4& FlagType::getColor() const
   else
     return Team::getTankColor(flagTeam);
 }
+
 
 
 const std::string FlagType::label() const
@@ -542,6 +561,7 @@ const std::string FlagType::information() const
 			   label().c_str(),
 			   flagHelp.c_str());
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

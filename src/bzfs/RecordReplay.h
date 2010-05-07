@@ -15,7 +15,12 @@
 
 #include "common.h"
 
+
 const int ReplayObservers = 16;
+
+
+class NetMessage;
+
 
 enum ReplayPacketMode {
   RealPacket   = 0, // broadcasted during replay
@@ -23,6 +28,7 @@ enum ReplayPacketMode {
   UpdatePacket = 2, // never broadcasted (only for replay use)
   HiddenPacket = 3  // never broadcasted (stored for admin. purposes)
 };
+
 
 namespace Record {
   extern bool init();
@@ -45,6 +51,9 @@ namespace Record {
   extern void setAllowFileRecs(bool value);
 
   extern bool addPacket(uint16_t code, int len, const void* data,
+			uint16_t mode = RealPacket);
+
+  extern bool addPacket(uint16_t code, const NetMessage& netMsg,
 			uint16_t mode = RealPacket);
 
   extern void sendHelp(int playerIndex);

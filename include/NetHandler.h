@@ -249,59 +249,57 @@ private:
 #endif
 };
 
-class NewNetworkConnectionCallback
-{
-public:
-  virtual ~NewNetworkConnectionCallback(){};
 
-  virtual bool accept ( NetHandler *handler, int connectionID ) = 0;
+class NewNetworkConnectionCallback {
+  public:
+    virtual ~NewNetworkConnectionCallback() {};
+    virtual bool accept(NetHandler *handler, int connectionID) = 0;
 };
 
 
-class NetworkDataPendingCallback
-{
-public:
-    virtual ~NetworkDataPendingCallback(){};
-    virtual bool pending ( NetHandler *handler, int connectionID, bool tcp ) = 0;
-    virtual bool disconnected ( NetHandler *handler, int connectionID ) = 0;
+class NetworkDataPendingCallback {
+  public:
+    virtual ~NetworkDataPendingCallback() {};
+    virtual bool pending(NetHandler *handler, int connectionID, bool tcp) = 0;
+    virtual bool disconnected(NetHandler *handler, int connectionID) = 0;
 };
 
-class NetListener
-{
-public:
-  NetListener();
-  ~NetListener();
 
-  bool listen ( Address serverAddress, unsigned short port );
+class NetListener {
+  public:
+    NetListener();
+    ~NetListener();
 
-  bool close ( NetHandler *handler );
-  bool close ( int connectionID );
+    bool listen(Address serverAddress, unsigned short port);
 
-  int update ( float waitTime );
+    bool close(NetHandler *handler);
+    bool close(int connectionID);
 
-  void processConnections ( void );
+    int update(float waitTime);
 
-  void addNewConnectionCallback ( NewNetworkConnectionCallback *handler );
-  void removeNewConnectionCallback  ( NewNetworkConnectionCallback *handler );
+    void processConnections();
 
-  void addDataPendingCallback( NetworkDataPendingCallback *handler );
-  void removeDataPendingCallback( NetworkDataPendingCallback *handler );
+    void addNewConnectionCallback(NewNetworkConnectionCallback *handler);
+    void removeNewConnectionCallback(NewNetworkConnectionCallback *handler);
 
-protected:
-  int	  listenSocket;
+    void addDataPendingCallback(NetworkDataPendingCallback *handler);
+    void removeDataPendingCallback(NetworkDataPendingCallback *handler);
 
-  int	  toRead;
+  protected:
+    int	  listenSocket;
 
-  int	  maxFileDescriptors;
-  fd_set  read_set;
-  fd_set  write_set;
+    int	  toRead;
 
-  std::map<int,NetHandler*> handlers;
+    int	  maxFileDescriptors;
+    fd_set  read_set;
+    fd_set  write_set;
 
-  std::vector<NewNetworkConnectionCallback*>	newConnectionCallbacks;
-  std::vector<NetworkDataPendingCallback*>	dataPendingCallbacks;
+    std::map<int,NetHandler*> handlers;
 
-  void accept ( void );
+    std::vector<NewNetworkConnectionCallback*>	newConnectionCallbacks;
+    std::vector<NetworkDataPendingCallback*>	dataPendingCallbacks;
+
+    void accept();
 };
 
 #endif

@@ -228,6 +228,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, GetPlayerFlagType);
   PUSH_LUA_CFUNC(L, GetPlayerScore);
   PUSH_LUA_CFUNC(L, GetPlayerAutoPilot);
+  PUSH_LUA_CFUNC(L, GetPlayerLagInfo);
   if (fullRead) {
     if (!gameCtrl) {
       PUSH_LUA_CFUNC(L, GetPlayerCustomData);
@@ -2377,6 +2378,19 @@ int LuaCallOuts::GetPlayerAutoPilot(lua_State* L)
   }
   lua_pushboolean(L, player->isAutoPilot());
   return 1;
+}
+
+
+int LuaCallOuts::GetPlayerLagInfo(lua_State* L)
+{
+  const Player* player = ParsePlayer(L, 1);
+  if (player == NULL) {
+    return luaL_pushnil(L);
+  }
+  lua_pushfloat(L, player->getLag());
+  lua_pushfloat(L, player->getJitter());
+  lua_pushfloat(L, player->getPacketLoss());
+  return 3;
 }
 
 

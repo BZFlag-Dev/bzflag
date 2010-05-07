@@ -29,6 +29,7 @@
 #include "Pack.h"
 #include "BzTime.h"
 #include "BZDBCache.h"
+#include "NetMessage.h"
 #include "bzfio.h"
 
 
@@ -209,7 +210,7 @@ void* GameTime::pack(void *buf, float lag)
 }
 
 
-void GameTime::pack(BufferedNetworkMessage *msg, float lag)
+void GameTime::pack(NetMessage& netMsg, float lag)
 {
   float halfLag;
   if ((lag < 0.0f) || (lag > 10.0f)) {
@@ -217,8 +218,8 @@ void GameTime::pack(BufferedNetworkMessage *msg, float lag)
   } else {
     halfLag = (lag * 0.5f);
   }
-  msg->packDouble(getRawTime());
-  msg->packFloat(halfLag);
+  netMsg.packDouble(getRawTime());
+  netMsg.packFloat(halfLag);
 }
 
 

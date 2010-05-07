@@ -128,6 +128,8 @@ bzfs_SOURCES = \
 	Reports.h \
 	Score.h \
 	Score.cxx \
+	SendLagState.cxx \
+	SendLagState.h \
 	ServerCommand.cxx \
 	ServerCommand.h \
 	ServerIntangibilityManager.h \

@@ -34,21 +34,20 @@
 #include "ShotPath.h"
 
 
-class ShotCollider
-{
-public:
-  fvec3	  position;
-  Ray	  motion;
-  float	  radius;
-  fvec3	  size;
+class ShotCollider {
+  public:
+    fvec3 position;
+    Ray	  motion;
+    float radius;
+    fvec3 size;
 
-  bool	  test2D;
-  float	  angle;
-  float	  length;
+    bool  test2D;
+    float angle;
+    float length;
 
-  Extents bbox;
+    Extents bbox;
 
-  bool	  testLastSegment;
+    bool testLastSegment;
 };
 
 
@@ -57,8 +56,8 @@ class ShotPath;
 
 class ShotStrategy {
   public:
-			ShotStrategy(ShotPath*);
-    virtual		~ShotStrategy();
+    ShotStrategy(ShotPath*);
+    virtual ~ShotStrategy();
 
     virtual void  update(float dt) = 0;
     virtual bool  predictPosition(float dt, fvec3& p) const = 0;

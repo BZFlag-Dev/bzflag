@@ -10,18 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "PlayerInfo.h"
 #include "BzTime.h"
 
-/* system implementation headers */
+// system headers
 #include <errno.h>
 #include <stdio.h>
 #include <string>
 #include <ctype.h>
 
-/* implementation-specific common headers */
+// common headers
+#include "NetMessage.h"
 #include "TextUtils.h"
+
 
 WordFilter PlayerInfo::serverSpoofingFilter;
 BzTime PlayerInfo::now = BzTime::getCurrent();
@@ -47,6 +49,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   allowedHeightAtJumpStart = -1.0f;
 }
 
+
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
 				     WordFilter &_filterData,
 				     bool	_simpleFiltering)
@@ -55,6 +58,7 @@ void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
   filterData	= &_filterData;
   simpleFiltering   = _simpleFiltering;
 }
+
 
 void PlayerInfo::resetPlayer(bool ctf)
 {
@@ -70,20 +74,24 @@ void PlayerInfo::resetPlayer(bool ctf)
   restartOnBase = ctf;
 }
 
+
 void PlayerInfo::setRestartOnBase(bool on)
 {
   restartOnBase = on;
 }
+
 
 bool PlayerInfo::shouldRestartAtBase()
 {
   return restartOnBase;
 }
 
+
 void PlayerInfo::signingOn()
 {
   state = PlayerDead;
 }
+
 
 void PlayerInfo::setAlive()
 {
@@ -92,10 +100,12 @@ void PlayerInfo::setAlive()
   flag = -1;
 }
 
+
 void PlayerInfo::setDead()
 {
   state = PlayerDead;
 }
+
 
 void *PlayerInfo::packUpdate(void *buf)
 {
@@ -104,11 +114,13 @@ void *PlayerInfo::packUpdate(void *buf)
   return buf;
 }
 
-void PlayerInfo::packUpdate(BufferedNetworkMessage *msg)
+
+void PlayerInfo::packUpdate(NetMessage& netMsg)
 {
-  msg->packUInt16(uint16_t(type));
-  msg->packInt16(int16_t(team));
+  netMsg.packUInt16(uint16_t(type));
+  netMsg.packInt16(int16_t(team));
 }
+
 
 void *PlayerInfo::packId(void *buf)
 {
@@ -116,10 +128,12 @@ void *PlayerInfo::packId(void *buf)
   return buf;
 }
 
-void PlayerInfo::packId(BufferedNetworkMessage *msg)
+
+void PlayerInfo::packId(NetMessage& netMsg)
 {
-  msg->packString(callSign, CallSignLen);
+  netMsg.packString(callSign, CallSignLen);
 }
+
 
 void PlayerInfo::setCallsign(const char *text)
 {
@@ -130,6 +144,7 @@ void PlayerInfo::setCallsign(const char *text)
   strncpy(callSign, text, CallSignLen - 1);
 }
 
+
 void PlayerInfo::setToken(const char *text)
 {
   if (!text)
@@ -138,6 +153,7 @@ void PlayerInfo::setToken(const char *text)
   memset(token, 0, TokenLen);
   strncpy(token, text, TokenLen - 1);
 }
+
 
 void PlayerInfo::setClientVersion(const char *text)
 {
@@ -148,15 +164,18 @@ void PlayerInfo::setClientVersion(const char *text)
   strncpy(clientVersion, text, VersionLen - 1);
 }
 
+
 void PlayerInfo::setType (PlayerType playerType)
 {
   type = playerType;
 }
 
+
 void PlayerInfo::setUpdates (NetworkUpdates whichUpdates)
 {
   updates = whichUpdates;
 }
+
 
 bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
 {
@@ -210,6 +229,7 @@ bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
   return true;
 }
 
+
 bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
   // data: type, team, name,
@@ -230,10 +250,12 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   return processEnter(rejectCode, rejectMsg);
 }
 
+
 const char *PlayerInfo::getCallSign() const
 {
   return callSign;
 }
+
 
 bool PlayerInfo::isCallSignReadable()
 {
@@ -297,25 +319,30 @@ bool PlayerInfo::isCallSignReadable()
   return readable;
 }
 
+
 const char *PlayerInfo::getToken() const
 {
   return token;
 }
+
 
 const char *PlayerInfo::getReferrer() const
 {
   return referrer;
 }
 
+
 void PlayerInfo::clearToken()
 {
   token[0] = '\0';
 }
 
+
 void PlayerInfo::clearReferrer()
 {
   referrer[0] = '\0';
 }
+
 
 void *PlayerInfo::packVirtualFlagCapture(void *buf)
 {
@@ -324,25 +351,30 @@ void *PlayerInfo::packVirtualFlagCapture(void *buf)
   return buf;
 }
 
+
 bool PlayerInfo::isTeam(TeamColor _team) const
 {
   return team == _team;
 }
+
 
 bool PlayerInfo::isObserver() const
 {
   return team == ObserverTeam;
 }
 
+
 TeamColor PlayerInfo::getTeam() const
 {
   return team;
 }
 
+
 void PlayerInfo::setTeam(TeamColor _team)
 {
   team = _team;
 }
+
 
 void PlayerInfo::wasARabbit()
 {
@@ -350,10 +382,12 @@ void PlayerInfo::wasARabbit()
   wasRabbit = true;
 }
 
+
 void PlayerInfo::wasNotARabbit()
 {
   wasRabbit = false;
 }
+
 
 void PlayerInfo::resetFlag()
 {
@@ -361,20 +395,24 @@ void PlayerInfo::resetFlag()
   lastFlagDropTime = now;
 }
 
+
 void PlayerInfo::setFlag(int _flag)
 {
   flag = _flag;
 }
+
 
 bool PlayerInfo::isFlagTransitSafe()
 {
   return now - lastFlagDropTime >= 2.0f;
 }
 
+
 const char *PlayerInfo::getClientVersion()
 {
   return clientVersion;
 }
+
 
 std::string PlayerInfo::getIdleStat()
 {
@@ -389,6 +427,7 @@ std::string PlayerInfo::getIdleStat()
   return reply;
 }
 
+
 bool PlayerInfo::canBeRabbit(bool relaxing)
 {
   if (paused || notResponding || (team == ObserverTeam))
@@ -396,16 +435,19 @@ bool PlayerInfo::canBeRabbit(bool relaxing)
   return relaxing ? (state > PlayerInLimbo) : (state == PlayerAlive);
 }
 
+
 void PlayerInfo::setPaused(bool _paused)
 {
   paused = _paused;
   pausedSince = now;
 }
 
+
 void PlayerInfo::setAutoPilot(bool _autopilot)
 {
   autopilot = _autopilot;
 }
+
 
 bool PlayerInfo::isTooMuchIdling(float kickThresh)
 {
@@ -418,6 +460,7 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh)
   }
   return idling;
 }
+
 
 bool PlayerInfo::hasStartedToNotRespond()
 {
@@ -434,10 +477,12 @@ bool PlayerInfo::hasStartedToNotRespond()
   return startingToNotRespond;
 }
 
+
 void PlayerInfo::hasSent()
 {
   lastmsg = now;
 }
+
 
 bool PlayerInfo::hasPlayedEarly()
 {
@@ -446,10 +491,12 @@ bool PlayerInfo::hasPlayedEarly()
   return returnValue;
 }
 
+
 void PlayerInfo::setPlayedEarly(bool early)
 {
   playedEarly = early;
 }
+
 
 void PlayerInfo::updateIdleTime()
 {
@@ -458,15 +505,18 @@ void PlayerInfo::updateIdleTime()
   }
 }
 
+
 void	PlayerInfo::setReplayState(PlayerReplayState _state)
 {
   replayState = _state;
 }
 
+
 PlayerReplayState PlayerInfo::getReplayState()
 {
   return replayState;
 }
+
 
 
 void PlayerInfo::setTrackerID(unsigned short int t)
@@ -475,15 +525,18 @@ void PlayerInfo::setTrackerID(unsigned short int t)
 }
 
 
+
 unsigned short int PlayerInfo::trackerID()
 {
   return tracker;
 }
 
+
 void PlayerInfo::setCurrentTime(BzTime tm)
 {
   now = tm;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

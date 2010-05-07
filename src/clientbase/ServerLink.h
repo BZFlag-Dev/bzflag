@@ -27,10 +27,11 @@
 #include "Protocol.h"
 #include "Flag.h"
 #include "ShotPath.h"
-#include "BufferedNetworkMessage.h"
 #include "vectors.h"
 
+
 class ShotPath;
+class NetMessage;
 
 
 class ServerLink {
@@ -73,7 +74,6 @@ public:
 
   // if millisecondsToBlock < 0 then block forever
   int read(uint16_t& code, uint16_t& len, void* msg, int millisecondsToBlock = 0);
-  int read(BufferedNetworkMessage *msg, int millisecondsToBlock = 0);
 
   bool readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
 

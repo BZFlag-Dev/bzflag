@@ -37,6 +37,7 @@
 #include "CommandManager.h"
 #include "LagInfo.h"
 #include "NetHandler.h"
+#include "NetMessage.h"
 #include "PlayerInfo.h"
 #include "BzTime.h"
 #include "VotingArbiter.h"
@@ -1137,10 +1138,10 @@ bool GameOverCommand::operator() (const char *,
     return true;
   }
 
-  NetMsg  msg = MSGMGR.newMessage();
-  msg->packUInt8(t);
-  msg->packInt16(int16_t(NoTeam));
-  msg->broadcast(MsgScoreOver);
+  NetMessage netMsg;
+  netMsg.packUInt8(t);
+  netMsg.packInt16(int16_t(NoTeam));
+  netMsg.broadcast(MsgScoreOver);
 
   gameOver = true;
   if (clOptions->timeManualStart) {
@@ -1150,10 +1151,10 @@ bool GameOverCommand::operator() (const char *,
   }
 
   // fire off a game end event
-  bz_GameStartEndEventData_V1	gameData;
+  bz_GameStartEndEventData_V1 gameData;
   gameData.eventType = bz_eGameEndEvent;
   gameData.duration = clOptions->timeLimit;
-  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
+  worldEventManager.callEvents(bz_eGameEndEvent, &gameData);
 
   return true;
 }
@@ -1305,8 +1306,7 @@ bool FlagCommand::operator() (const char *message,
       }
     }
   }
-  else if (strncasecmp(msg, "show", 4) == 0)
-  {
+  else if (strncasecmp(msg, "show", 4) == 0) {
     BufferedChatParams *params = new BufferedChatParams(playerData);
     for (int i = 0; i < numFlags; i++)
     {
@@ -1316,8 +1316,7 @@ bool FlagCommand::operator() (const char *message,
     }
     BGTM.addTask(&bufferChat,params);
   }
-  else if (strncasecmp(msg, "reset", 5) == 0)
-  {
+  else if (strncasecmp(msg, "reset", 5) == 0) {
     msg += 5;
     msg = TextUtils::skipWhitespace(msg);
 
@@ -1376,7 +1375,8 @@ bool FlagCommand::operator() (const char *message,
       flagCommandHelp(t);
       return true;
     }
-  } else if (strncasecmp(msg, "take", 4) == 0) {
+  }
+  else if (strncasecmp(msg, "take", 4) == 0) {
     if (!checkFlagMaster(playerData)) {
       return true;
     }
@@ -1419,7 +1419,8 @@ bool FlagCommand::operator() (const char *message,
 	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
     }
-  } else if (strncasecmp(msg, "give", 4) == 0) {
+  }
+  else if (strncasecmp(msg, "give", 4) == 0) {
     if (!checkFlagMaster(playerData)) {
       return true;
     }
@@ -1517,10 +1518,10 @@ bool FlagCommand::operator() (const char *message,
       if (fi->player >= 0) {
 	GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
 	if (fPlayer) {
-	  NetMsg newMsg = MSGMGR.newMessage();
-	  newMsg->packUInt8(fi->player);
-	  fi->pack(newMsg);
-	  newMsg->broadcast(MsgDropFlag);
+	  NetMessage netMsg;
+	  netMsg.packUInt8(fi->player);
+	  fi->pack(netMsg);
+	  netMsg.broadcast(MsgDropFlag);
 	}
 	fPlayer->player.setFlag(-1);
       }

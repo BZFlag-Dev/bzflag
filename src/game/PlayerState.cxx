@@ -16,10 +16,12 @@
 // system headers
 #include <math.h>
 
-// local implementation headers
+// common implementation headers
+#include "NetMessage.h"
 #include "Pack.h"
 #include "Protocol.h"
 #include "StateDatabase.h"
+
 
 // the full scale of a int16_t  (less 1.0 for safety)
 const float smallScale     = 32766.0f;
@@ -35,20 +37,20 @@ const float smallMaxAngVel = 0.001f * smallScale;
 
 
 PlayerState::PlayerState()
-  : order(0), status(DeadStatus), azimuth(0.0f), angVel(0.0f)
+: order(0)
+, status(DeadStatus)
+, pos(0.0f, 0.0f, 0.0f)
+, velocity(0.0f, 0.0f, 0.0f)
+, azimuth(0.0f)
+, angVel(0.0f)
+, phydrv(-1)
+, apparentVelocity(0.0f, 0.0f, 0.0f)
+, lastUpdateTime(BzTime::getSunGenesisTime())
+, userSpeed(0.0f)
+, userAngVel(0.0f)
+, jumpJetsScale(0.0f)
+, sounds(NoSounds)
 {
-  pos[0] = pos[1] = pos[2] = 0.0f;
-  velocity[0] = velocity[1] = velocity[2] = 0.0f;
-  phydrv = -1;
-  userSpeed = 0.0f;
-  userAngVel = 0.0f;
-  jumpJetsScale = 0.0f;
-  sounds = NoSounds;
-
-  apparentVelocity[0] = apparentVelocity[1] = apparentVelocity[2] = 0.0f;
-  lastUpdateTime = BzTime::getSunGenesisTime();
-
-  return;
 }
 
 
@@ -66,8 +68,9 @@ static float clampedValue(float input, float max)
 
 void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 {
-  if (increment)
+  if (increment) {
     order++;
+  }
 
   buf = nboPackInt32(buf, int32_t(order));
   buf = nboPackInt16(buf, int16_t(status));
@@ -148,13 +151,14 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 }
 
 
-void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increment)
+void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
 {
-  if (increment)
+  if (increment) {
     order++;
+  }
 
-  msg->packInt32(int32_t(order));
-  msg->packInt16(int16_t(status));
+  netMsg.packInt32(int32_t(order));
+  netMsg.packInt16(int16_t(status));
 
   if ((BZDB.eval(BZDBNAMES.NOSMALLPACKETS) > 0.0f) ||
       (fabsf(pos.x) >= smallMaxDist)      ||
@@ -167,12 +171,12 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
 
     code = MsgPlayerUpdate;
 
-    msg->packFVec3(pos);
-    msg->packFVec3(velocity);
-    msg->packFloat(azimuth);
-    msg->packFloat(angVel);
-  } else {
-
+    netMsg.packFVec3(pos);
+    netMsg.packFVec3(velocity);
+    netMsg.packFloat(azimuth);
+    netMsg.packFloat(angVel);
+  }
+  else {
     code = MsgPlayerUpdateSmall;
 
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
@@ -192,23 +196,23 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
     aziShort = (int16_t) ((angle * smallScale) / M_PI);
     angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
 
-    msg->packInt16(posShort[0]);
-    msg->packInt16(posShort[1]);
-    msg->packInt16(posShort[2]);
-    msg->packInt16(velShort[0]);
-    msg->packInt16(velShort[1]);
-    msg->packInt16(velShort[2]);
-    msg->packInt16(aziShort);
-    msg->packInt16(angVelShort);
+    netMsg.packInt16(posShort[0]);
+    netMsg.packInt16(posShort[1]);
+    netMsg.packInt16(posShort[2]);
+    netMsg.packInt16(velShort[0]);
+    netMsg.packInt16(velShort[1]);
+    netMsg.packInt16(velShort[2]);
+    netMsg.packInt16(aziShort);
+    netMsg.packInt16(angVelShort);
   }
 
   if ((status & JumpJets) != 0) {
     float tmp = clampedValue(jumpJetsScale, 1.0f);
-    msg->packInt16((int16_t) (tmp * smallScale));
+    netMsg.packInt16((int16_t) (tmp * smallScale));
   }
 
   if ((status & OnDriver) != 0) {
-    msg->packInt32(phydrv);
+    netMsg.packInt32(phydrv);
   }
 
   if ((status & UserInputs) != 0) {
@@ -216,15 +220,15 @@ void PlayerState::pack(BufferedNetworkMessage *msg, uint16_t& code, bool increme
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
     int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
-    msg->packInt16(speed);
+    netMsg.packInt16(speed);
     // pack userAngVel
     tmp = clampedValue(userAngVel, smallMaxAngVel);
     int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
-    msg->packInt16(angvel);
+    netMsg.packInt16(angvel);
   }
 
   if ((status & PlaySound) != 0) {
-    msg->packUInt8(sounds);
+    netMsg.packUInt8(sounds);
   }
 }
 

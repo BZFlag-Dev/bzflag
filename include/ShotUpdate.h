@@ -34,15 +34,15 @@
 #include "vectors.h"
 
 
+class NetMessage;
 class BaseLocalPlayer;
-class BufferedNetworkMessage;
 
 
 struct ShotUpdate {
   public:
     int			packSize() const;
     void*		pack(void*) const;
-    void		pack(BufferedNetworkMessage *msg) const;
+    void		pack(NetMessage& netMsg) const;
     void*		unpack(void*);
 
   public:
@@ -61,7 +61,7 @@ struct FiringInfo {
 
     int			packSize() const;
     void*		pack(void*) const;
-    void		pack(BufferedNetworkMessage *msg) const;
+    void		pack(NetMessage& netMsg) const;
     void*		unpack(void*);
 
   public:

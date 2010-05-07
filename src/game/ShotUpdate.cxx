@@ -16,7 +16,8 @@
 // interface header
 #include "ShotUpdate.h"
 
-// implementation headers
+// common headers
+#include "NetMessage.h"
 #include "Pack.h"
 
 //
@@ -35,14 +36,14 @@ void* ShotUpdate::pack(void* buf) const
 }
 
 
-void ShotUpdate::pack(BufferedNetworkMessage *msg) const
+void ShotUpdate::pack(NetMessage& netMsg) const
 {
-  msg->packUInt8(player);
-  msg->packUInt16(id);
-  msg->packFVec3(pos);
-  msg->packFVec3(vel);
-  msg->packFloat(dt);
-  msg->packInt16(team);
+  netMsg.packUInt8(player);
+  netMsg.packUInt16(id);
+  netMsg.packFVec3(pos);
+  netMsg.packFVec3(vel);
+  netMsg.packFloat(dt);
+  netMsg.packInt16(team);
 }
 
 
@@ -81,13 +82,13 @@ void* FiringInfo::pack(void* buf) const
 }
 
 
-void FiringInfo::pack(BufferedNetworkMessage *msg) const
+void FiringInfo::pack(NetMessage& netMsg) const
 {
-  msg->packDouble(timeSent);
-  shot.pack(msg);
-  flagType->pack(msg);
-  msg->packFloat(lifetime);
-  msg->packUInt8(shotType);
+  netMsg.packDouble(timeSent);
+  shot.pack(netMsg);
+  flagType->pack(netMsg);
+  netMsg.packFloat(lifetime);
+  netMsg.packUInt8(shotType);
 }
 
 

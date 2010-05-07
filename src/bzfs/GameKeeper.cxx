@@ -10,17 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "GameKeeper.h"
 
-/* system headers */
+// system headers
 #include <iostream>
 #include <vector>
 #include <string>
 
-/* common headers */
+// common headers
 #include "GameTime.h"
 #include "FlagInfo.h"
+#include "NetMessage.h"
 #include "StateDatabase.h"
 #include "bzfsMessages.h"
 #include "bzfsAPI.h"
@@ -46,11 +47,13 @@ void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
   return buf;
 }
 
-void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t properties )
+
+void PackPlayerInfo(NetMessage& netMsg, int playerIndex, uint8_t properties )
 {
-  msg->packUInt8(playerIndex);
-  msg->packUInt8(properties);
+  netMsg.packUInt8(playerIndex);
+  netMsg.packUInt8(properties);
 }
+
 
 GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallback _clientCallback)
   : _LSAState(start)
@@ -98,6 +101,7 @@ GameKeeper::Player::Player(int _playerIndex, NetHandler *_netHandler, tcpCallbac
   currentVel = fvec3(0.0f, 0.0f, 0.0f);
 }
 
+
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
   : _LSAState(start)
   , player(_playerIndex)
@@ -143,6 +147,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   currentVel = fvec3(0.0f, 0.0f, 0.0f);
 }
 
+
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();
@@ -155,6 +160,7 @@ GameKeeper::Player::~Player()
   playerList[playerIndex] = NULL;
 }
 
+
 void GameKeeper::Player::setBot ( int id, PlayerId hostID )
 {
   botID = id;
@@ -162,11 +168,13 @@ void GameKeeper::Player::setBot ( int id, PlayerId hostID )
     botHost = hostID;
 }
 
+
 void GameKeeper::Player::addBot ( int id, PlayerId botPlayer )
 {
   if (botHost == -1 && id > 0)
    childBots.push_back(botPlayer);
 }
+
 
 int GameKeeper::Player::count()
 {
@@ -179,6 +187,7 @@ int GameKeeper::Player::count()
       count++;
   return count;
 }
+
 
 void GameKeeper::Player::updateLatency(float &waitTime)
 {
@@ -193,6 +202,7 @@ void GameKeeper::Player::updateLatency(float &waitTime)
   }
 }
 
+
 void GameKeeper::Player::dumpScore()
 {
   Player *playerData;
@@ -206,6 +216,7 @@ void GameKeeper::Player::dumpScore()
 	std::cout << ' ' << playerData->player.getCallSign() << std::endl;
     }
 }
+
 
 int GameKeeper::Player::anointRabbit(int oldRabbit)
 {
@@ -244,6 +255,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
   return newIndex;
 }
 
+
 void GameKeeper::Player::updateNextGameTime()
 {
   if (gameTimeRate < GameTime::startRate) {
@@ -258,6 +270,7 @@ void GameKeeper::Player::updateNextGameTime()
   return;
 }
 
+
 void *GameKeeper::Player::packAdminInfo(void *buf)
 {
   buf = nboPackUInt8(buf, netHandler->sizeOfIP());
@@ -266,14 +279,16 @@ void *GameKeeper::Player::packAdminInfo(void *buf)
   return buf;
 }
 
-void GameKeeper::Player::packAdminInfo(BufferedNetworkMessage *msg)
+
+void GameKeeper::Player::packAdminInfo(NetMessage& netMsg)
 {
-  msg->packUInt8(netHandler->sizeOfIP());
-  msg->packUInt8(playerIndex);
+  netMsg.packUInt8(netHandler->sizeOfIP());
+  netMsg.packUInt8(playerIndex);
   char temp[128];
   char* p = (char*)netHandler->packAdminInfo(temp);
-  msg->addPackedData(temp,p-temp);
+  netMsg.packString(temp, p - temp);
 }
+
 
 void *GameKeeper::Player::packPlayerInfo(void *buf)
 {
@@ -281,18 +296,21 @@ void *GameKeeper::Player::packPlayerInfo(void *buf)
   return buf;
 }
 
-void GameKeeper::Player::packPlayerInfo(BufferedNetworkMessage *msg)
+
+void GameKeeper::Player::packPlayerInfo(NetMessage& netMsg)
 {
-  PackPlayerInfo(msg,playerIndex, accessInfo.getPlayerProperties());
+  PackPlayerInfo(netMsg, playerIndex, accessInfo.getPlayerProperties());
 }
 
-void GameKeeper::Player::packPlayerUpdate(BufferedNetworkMessage *msg)
+
+void GameKeeper::Player::packPlayerUpdate(NetMessage& netMsg)
 {
-  msg->packUInt8(playerIndex);
-  player.packUpdate(msg);
-  score.pack(msg);
-  player.packId(msg);
+  netMsg.packUInt8(playerIndex);
+  player.packUpdate(netMsg);
+  score.pack(netMsg);
+  player.packId(netMsg);
 }
+
 
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 					     int targetPlayer)
@@ -314,6 +332,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
   return receivers;
 }
 
+
 bool GameKeeper::Player::loadEnterData(uint16_t &rejectCode,
 				       char *rejectMsg)
 {
@@ -333,6 +352,7 @@ bool GameKeeper::Player::loadEnterData(uint16_t &rejectCode,
 
   return true;
 }
+
 
 void GameKeeper::Player::signingOn(bool ctf)
 {
@@ -376,12 +396,14 @@ void GameKeeper::Player::reloadAccessDatabase()
       playerData->accessInfo.reloadInfo();
 }
 
+
 void GameKeeper::Player::close()
 {
   closed = true;
   if (playerHandler)		// noone "owns" use anymore
     playerHandler = NULL;
 }
+
 
 bool GameKeeper::Player::clean()
 {
@@ -407,6 +429,7 @@ bool GameKeeper::Player::clean()
   return empty && ICleaned;
 }
 
+
 int GameKeeper::Player::getFreeIndex(int min, int max)
 {
   clean();
@@ -417,6 +440,7 @@ int GameKeeper::Player::getFreeIndex(int min, int max)
   }
   return max;
 }
+
 
 #if defined(USE_THREADS)
 void GameKeeper::Player::handleTcpPacketT()
@@ -441,8 +465,8 @@ void GameKeeper::Player::handleTcpPacket(fd_set *set)
     clientCallback(*netHandler, playerIndex, e);
   }
 }
-
 #endif
+
 
 void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
 {
@@ -461,6 +485,7 @@ void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
   lastState.status = eAlive;
 }
 
+
 void GameKeeper::Player::setPlayerState(PlayerState state, BzTime const& timestamp)
 {
   lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
@@ -471,11 +496,13 @@ void GameKeeper::Player::setPlayerState(PlayerState state, BzTime const& timesta
   doPlayerDR(); // or should it be timestamp?
 }
 
+
 void GameKeeper::Player::getPlayerState(fvec3& pos, float &azimuth)
 {
   memcpy(pos, lastState.pos, sizeof(float) * 3);
   azimuth = lastState.azimuth;
 }
+
 
 void GameKeeper::Player::getPlayerCurrentPosRot(fvec3& pos, float &rot)
 {
@@ -484,6 +511,7 @@ void GameKeeper::Player::getPlayerCurrentPosRot(fvec3& pos, float &rot)
   pos = currentPos;
   rot = currentRot;
 }
+
 
 void GameKeeper::Player::doPlayerDR ( BzTime const& time )
 {
@@ -507,6 +535,7 @@ void GameKeeper::Player::doPlayerDR ( BzTime const& time )
   }
 }
 
+
 PlayerState GameKeeper::Player::getCurrentStateAsState ( void )
 {
   PlayerState	newState = lastState;
@@ -518,10 +547,12 @@ PlayerState GameKeeper::Player::getCurrentStateAsState ( void )
   return newState;
 }
 
+
 void*	GameKeeper::Player::packCurrentState (void* buf, uint16_t& code, bool increment)
 {
   return getCurrentStateAsState().pack(buf,code,increment);
 }
+
 
 void GameKeeper::Player::setAutoPilot( bool autopilot )
 {
@@ -531,6 +562,7 @@ void GameKeeper::Player::setAutoPilot( bool autopilot )
   bz_AutoPilotChangeData_V1 evnt(autopilot, true,getIndex());
   worldEventManager.callEvents(bz_eAutoPilotChangeEvent,&evnt);
 }
+
 
 void GameKeeper::Player::setTeam(TeamColor newTeam, bool event)
 {
@@ -550,6 +582,7 @@ void GameKeeper::Player::setMaxShots(int _maxShots)
 {
   maxShots = _maxShots;
 }
+
 
 bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
@@ -599,6 +632,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
   return true;
 }
 
+
 bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
 {
   BzTime now = BzTime::getCurrent();
@@ -619,6 +653,7 @@ bool GameKeeper::Player::removeShot(int id, int salt, FiringInfo &firingInfo)
   firingInfo = shotsInfo[id].firingInfo;
   return true;
 }
+
 
 bool GameKeeper::Player::updateShot(int id, int salt)
 {
@@ -657,6 +692,7 @@ bool GameKeeper::Player::updateShot(int id, int salt)
   return true;
 }
 
+
 GameKeeper::Player *GameKeeper::Player::getFirstPlayer(NetHandler *_netHandler)
 {
   for (int i = 0; i < PlayerSlot; i++)
@@ -665,13 +701,16 @@ GameKeeper::Player *GameKeeper::Player::getFirstPlayer(NetHandler *_netHandler)
   return NULL;
 }
 
+
 void GameKeeper::Player::setLastIdFlag(int _idFlag) {
   idFlag = _idFlag;
 }
 
+
 int GameKeeper::Player::getLastIdFlag() {
   return idFlag;
 }
+
 
 float GameKeeper::Player::getRealSpeed ( float input )
 {
@@ -739,6 +778,7 @@ float GameKeeper::Player::getRealSpeed ( float input )
   // set desired speed
   return BZDB.eval(BZDBNAMES.TANKSPEED) * fracOfMaxSpeed;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

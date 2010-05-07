@@ -41,7 +41,9 @@
 #include "NetHandler.h"
 #include "Authentication.h"
 #include "ShotUpdate.h"
-#include "BufferedNetworkMessage.h"
+
+
+class NetMessage;
 
 
 struct FiringInfo;
@@ -104,10 +106,10 @@ public:
     bool	   loadEnterData(uint16_t &rejectCode,
 				 char *rejectMsg);
     void	  *packAdminInfo(void *buf);
-    void	  packAdminInfo(BufferedNetworkMessage *msg);
+    void	  packAdminInfo(NetMessage& netMsg);
     void	  *packPlayerInfo(void *buf);
-    void	  packPlayerInfo(BufferedNetworkMessage *msg);
-    void	  packPlayerUpdate(BufferedNetworkMessage *msg);
+    void	  packPlayerInfo(NetMessage& netMsg);
+    void	  packPlayerUpdate(NetMessage& netMsg);
 
     void	  setAutoPilot(bool autopilot);
 
@@ -276,7 +278,7 @@ inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 }
 
 void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
-void PackPlayerInfo(BufferedNetworkMessage *msg, int playerIndex, uint8_t properties );
+void PackPlayerInfo(NetMessage& netMsg, int playerIndex, uint8_t properties );
 
 #if defined(USE_THREADS)
 inline void GameKeeper::Player::handleTcpPacket(fd_set *)

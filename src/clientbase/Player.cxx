@@ -110,6 +110,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , deadReckoningState(0)
 , oldStatus(0)
 , oldZSpeed(0.0f)
+, lag(0.0f)
+, jitter(0.0f)
+, packetLoss(0.0f)
 {
   static const fvec3 zero(0.0f, 0.0f, 0.0f);
   move(zero, 0.0f);
@@ -1175,7 +1178,7 @@ void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
     else {
       getMuzzle(firingInfo.shot.pos);
 
-      const fvec3& dir     = getForward();
+      const fvec3& tankDir     = getForward();
       const fvec3& tankVel = getVelocity();
       float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
 
@@ -1185,7 +1188,7 @@ void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
 	shotSpeed *= speedAd;
       }
 
-      firingInfo.shot.vel = tankVel + (shotSpeed * dir);
+      firingInfo.shot.vel = tankVel + (shotSpeed * tankDir);
 
       // Set _shotsKeepVerticalVelocity on the server if you want shots
       // to have the same vertical velocity as the tank when fired.
@@ -1271,6 +1274,7 @@ void* Player::unpack(void* buf, uint16_t code)
 
 void Player::setDeadReckoning()
 {
+  debugDR("setDeadReckoning: local\n");
   setDeadReckoning(BzTime::getTick());
 }
 
@@ -1435,11 +1439,14 @@ void Player::doDeadReckoning()
   setVelocity(predictedVel);
   setRelativeMotion();
 
+#ifdef DR_USES_HIT_CORRECTION
   // if we hit something, then we want to DR from
   // here now, instead of from the starting point
   if (hitWorld) {
+    debugDR("setDeadReckoning: hitWorld\n");
     setDeadReckoning(BzTime::getTick()); // FIXME -- wrong timestamp
   }
+#endif // DR_USES_HIT_CORRECTION
 }
 
 
@@ -1563,7 +1570,7 @@ bool Player::isDeadReckoningWrong() const
     return true;
   }
 
-  // time since setdeadreckoning
+  // time since setDeadReckoning
   const double dt = BzTime::getTick() - inputTime;
 
   // otherwise always send at least one packet per second

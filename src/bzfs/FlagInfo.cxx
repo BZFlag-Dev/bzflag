@@ -16,13 +16,16 @@
 #pragma warning( 4:4786)
 #endif
 
-/* interface header */
+// interface header
 #include "FlagInfo.h"
 
-/* system headers */
+// system headers
 #include <iostream>
 
-// implementation-specific bzflag headers
+// common headers
+#include "NetMessage.h"
+
+// bzflag headers
 #include "BZDBCache.h"
 
 /* private */
@@ -152,21 +155,27 @@ void *FlagInfo::pack(void *buf, bool hide)
   return buf;
 }
 
-size_t FlagInfo::pack(BufferedNetworkMessage *msg , bool hide )
+
+size_t FlagInfo::pack(NetMessage& netMsg , bool hide )
 {
-  if (FlagInfo::flagList[flagIndex].flag.type->flagTeam != ::NoTeam)
+  if (FlagInfo::flagList[flagIndex].flag.type->flagTeam != ::NoTeam) {
     hide = false;
-  if (FlagInfo::flagList[flagIndex].player != -1)
+  }
+
+  if (FlagInfo::flagList[flagIndex].player != -1) {
     hide = false;
+  }
 
-  size_t s = msg->size();
-  msg->packUInt16(flagIndex);
+  const size_t s = netMsg.getSize();
+  netMsg.packUInt16(flagIndex);
 
-  if (hide)
-    FlagInfo::flagList[flagIndex].flag.fakePack(msg);
-  else
-    FlagInfo::flagList[flagIndex].flag.pack(msg);
-  return msg->size() - s;
+  if (hide) {
+    FlagInfo::flagList[flagIndex].flag.fakePack(netMsg);
+  } else {
+    FlagInfo::flagList[flagIndex].flag.pack(netMsg);
+  }
+
+  return netMsg.getSize() - s;
 }
 
 void FlagInfo::dropFlag(const fvec3& pos, const fvec3& landingPos, bool vanish)
