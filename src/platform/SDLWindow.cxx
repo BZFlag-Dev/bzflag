@@ -88,10 +88,7 @@ void SDLWindow::iconify() {
 void SDLWindow::warpMouse(int x, int y) {
   SDL_WarpMouse(x, y);
   SDL_PumpEvents();
-#ifdef HAVE_SDL_1_3
-  int index = 0;
-  SDL_GetMouseState(index, &mx, &my);
-#else
+  SDL_GetMouseState(&mx, &my);
   SDL_GetMouseState(&mx, &my);
 #endif
 }
