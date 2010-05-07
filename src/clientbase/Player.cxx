@@ -1474,7 +1474,8 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
     predictedVel.z = inputVel.z + (BZDBCache::gravity * dt);
     predictedPos.z = inputPos.z + (inputVel.z * dt) +
       (0.5f * BZDBCache::gravity * dt * dt);
-  } else {
+  }
+  else {
     // velocity.z is zero when not falling, except for Burrow flag
     predictedVel.z = inputVel.z;
     predictedPos.z = inputPos.z + (inputVel.z * dt);
@@ -1487,7 +1488,8 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
       predictedVel.y = inputRelVel.y;
       predictedPos.x = inputPos.x + (dt * inputRelVel.x);
       predictedPos.y = inputPos.y + (dt * inputRelVel.y);
-    } else {
+    }
+    else {
       // make a sweeping arc
       const float angle = (dt * inputRelAngVel);
       predictedAzimuth += angle;
@@ -1510,7 +1512,8 @@ void Player::getDeadReckoning(fvec3& predictedPos, float& predictedAzimuth,
 	predictedVel.y = inputRelVel.y;
 	predictedPos.x = inputPos.x + (dt * inputRelVel.x);
 	predictedPos.y = inputPos.y + (dt * inputRelVel.y);
-      } else {
+      }
+      else {
 	// radial velocity adjustment
 	const float pdRadVel = phydrv->getRadialVel();
 	if (pdRadVel != 0.0f) {

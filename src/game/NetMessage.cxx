@@ -18,8 +18,8 @@
 #include <string.h>
 
 // common headers
+#include "bzfio.h"
 #include "Pack.h"
-#include "NetHandler.h"
 
 
 NetMessage::SendFunc      NetMessage::sendFunc      = NULL;
@@ -505,6 +505,18 @@ std::string NetMessage::unpackStdStringRaw()
     readIndex += strSize;
   }
   return v;
+}
+
+
+void NetMessage::unpackString(char* buf, size_t len)
+{
+  char* p = checkReadBuffer(len);
+  if (p) {
+    memcpy(buf, p, len);
+    readIndex += len;
+  } else {
+    memset(buf, 0, len);
+  }
 }
 
 

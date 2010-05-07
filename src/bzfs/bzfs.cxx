@@ -2105,8 +2105,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   playerData->accessInfo.regAtJoin = playerData->accessInfo.isRegistered();
 
-  if (GameKeeper::Player::getPlayerByIndex(playerIndex) && playerData->accessInfo.isRegistered() && playerData->_LSAState != GameKeeper::Player::verified)
-  {
+  if (GameKeeper::Player::getPlayerByIndex(playerIndex) &&
+      playerData->accessInfo.isRegistered() &&
+      playerData->_LSAState != GameKeeper::Player::verified) {
     // nick is in the DB send him a message to identify.
     sendMessage(ServerPlayer, playerIndex, "This callsign is registered. You must use global registration.");
   }
@@ -2123,8 +2124,11 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   joinEventData.playerID = playerIndex;
   joinEventData.record = bz_getPlayerByIndex(playerIndex);
 
-  if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))	// don't give events if we don't have a real player slot
+  // don't give events if we don't have a real player slot
+  if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign())) {
     worldEventManager.callEvents(bz_ePlayerJoinEvent,&joinEventData);
+  }
+
   if (spawnSoon)
     playerAlive(playerIndex);
 

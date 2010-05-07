@@ -105,6 +105,7 @@ class NetMessage {
     fvec4    unpackFVec4();
     std::string unpackStdString();
     std::string unpackStdStringRaw();
+    void unpackString(char* buf, size_t len);
 
   protected:
     void growCapacity(size_t s);
