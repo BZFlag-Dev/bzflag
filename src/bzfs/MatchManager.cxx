@@ -17,7 +17,6 @@
 #include "MatchManager.h"
 
 #include "StateDatabase.h"
-#include "BzTime.h"
 #include "TextUtils.h"
 
 
@@ -325,7 +324,7 @@ bool MatchManager::handle (int playerID, bz_ApiString command, bz_ApiString /* m
 {
 
   if (command == "match") {
-    double now = BzTime::getCurrent().getSeconds();
+    double now = bz_getCurrentTime();
 
     if (!params->size()) {
       std::string msg;
