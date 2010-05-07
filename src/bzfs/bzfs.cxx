@@ -329,6 +329,7 @@ NetHandler* getPlayerNetHandler(int playerIndex)
   return playerData->netHandler;
 }
 
+
 //
 // global variable callbacks
 //
@@ -387,6 +388,7 @@ static float nextGameTime()
   return nextTime;
 }
 
+
 static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
   if (Replay::enabled() || (gkPlayer == NULL) || gkPlayer->playerHandler) {
@@ -402,6 +404,7 @@ static void sendGameTime(GameKeeper::Player* gkPlayer)
   return;
 }
 
+
 static void sendPendingGameTime()
 {
   const BzTime nowTime = BzTime::getCurrent();
@@ -415,6 +418,7 @@ static void sendPendingGameTime()
   return;
 }
 
+
 static void sendPlayerUpdateB(GameKeeper::Player *playerData)
 {
   if (!playerData->player.isPlaying())
@@ -425,6 +429,7 @@ static void sendPlayerUpdateB(GameKeeper::Player *playerData)
   playerData->packPlayerUpdate(netMsg);
   netMsg.broadcast(MsgAddPlayer);
 }
+
 
 void sendPlayerInfo()
 {
@@ -460,6 +465,7 @@ void sendPlayerInfo()
   netMsg.broadcast(MsgPlayerInfo);
 }
 
+
 void sendIPUpdate(int targetPlayer, int playerIndex)
 {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
@@ -493,6 +499,7 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
   }
 }
 
+
 void pauseCountdown ( const char *pausedBy )
 {
   if (clOptions->countdownPaused)
@@ -505,6 +512,7 @@ void pauseCountdown ( const char *pausedBy )
   else
     sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
 }
+
 
 void resumeCountdown ( const char *resumedBy )
 {
@@ -531,6 +539,7 @@ void resumeCountdown ( const char *resumedBy )
   }
 }
 
+
 void resetTeamScores()
 {
   // reset team scores
@@ -539,6 +548,7 @@ void resetTeamScores()
   }
   sendTeamUpdateMessageBroadcast();
 }
+
 
 void startCountdown ( int delay, float limit, const char *byWho )
 {
@@ -568,6 +578,7 @@ void startCountdown ( int delay, float limit, const char *byWho )
   clOptions->countdownPaused = false;
   countdownPauseStart = BzTime::getNullTime();
 }
+
 
 PingPacket getTeamCounts()
 {
@@ -625,6 +636,7 @@ PingPacket getTeamCounts()
   }
   return pingReply;
 }
+
 
 //============================================================================//
 
@@ -781,6 +793,7 @@ static void serverStop()
   Authentication::cleanUp();
 }
 
+
 static bool allBasesDefined()
 {
   if (clOptions->gameType == ClassicCTF) {
@@ -798,6 +811,7 @@ static bool allBasesDefined()
   }
   return true;
 }
+
 
 bool defineWorld()
 {
@@ -971,6 +985,7 @@ bool defineWorld()
   return true;
 }
 
+
 bool saveWorldCache ( const char* fileName )
 {
   FILE* file;
@@ -989,6 +1004,7 @@ bool saveWorldCache ( const char* fileName )
 
   return true;
 }
+
 
 TeamColor whoseBase(float x, float y, float z)
 {
@@ -1179,6 +1195,7 @@ PlayerId getNewPlayer(NetHandler *netHandler)
   return playerIndex;
 }
 
+
 PlayerId getNewBot(PlayerId hostPlayer, int botID)
 {
   PlayerId playerIndex = getNewPlayerID();
@@ -1197,6 +1214,7 @@ PlayerId getNewBot(PlayerId hostPlayer, int botID)
 
   return playerIndex;
 }
+
 
 PlayerId getNewPlayerID()
 {
@@ -1218,6 +1236,7 @@ PlayerId getNewPlayerID()
 
   return playerIndex;
 }
+
 
 void checkGameOn()
 {
@@ -1269,6 +1288,7 @@ static void acceptClient()
 
   netConnectedPeers[fd] = peer;
 }
+
 
 static void respondToPing(Address addr)
 {
@@ -1516,6 +1536,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, uint8
     sendTextMessage(-1, playerIndex, msg, msglen, type, true);
 }
 
+
 void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
   char message[MessageLen];
@@ -1527,6 +1548,7 @@ void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   removePlayer(playerIndex, message, true);
   return;
 }
+
 
 // FIXME this is a workaround for a bug, still needed?
 // Team Size is wrong at some time
@@ -1585,6 +1607,7 @@ static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
 
   return teams[rand() % teams.size()].color;
 }
+
 
 static TeamColor autoTeamSelect(TeamColor t)
 {
@@ -1670,6 +1693,7 @@ static TeamColor autoTeamSelect(TeamColor t)
   return teamSelect(t, teams);
 }
 
+
 static std::string evaluateString(const std::string &raw)
 {
   std::string eval;
@@ -1734,6 +1758,7 @@ static std::string evaluateString(const std::string &raw)
   }
   return eval;
 }
+
 
 static bool spawnSoon = false;
 
@@ -2224,6 +2249,7 @@ void dropFlag(FlagInfo &flag)
   sendDropFlagMessage(playerIndex,flag);
 }
 
+
 void zapFlag(FlagInfo &flag)
 {
   // called when a flag must just disappear -- doesn't fly
@@ -2337,6 +2363,7 @@ void pausePlayer(int playerIndex, bool paused)
 
   worldEventManager.callEvents(bz_ePlayerPausedEvent, &pauseEventData);
 }
+
 
 void zapFlagByPlayer(int playerIndex)
 {
@@ -2518,6 +2545,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     }
   }
 }
+
 
 void spawnPlayer ( int playerIndex )
 {
@@ -3184,6 +3212,7 @@ void captureFlag(int playerIndex, TeamColor teamCaptured)
     checkTeamScore(playerIndex, winningTeam);
 }
 
+
 bool updatePlayerState(GameKeeper::Player *playerData,
                        PlayerState &state, BzTime const& timeStamp, bool shortState)
 {
@@ -3235,6 +3264,7 @@ bool updatePlayerState(GameKeeper::Player *playerData,
   return true;
 }
 
+
 /** observers and paused players should not be sending updates.. punish the
  * ones that are paused since they are probably cheating.
  */
@@ -3255,6 +3285,7 @@ bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   return false;
 }
 
+
 void lagKick(int playerIndex)
 {
   char message[MessageLen];
@@ -3270,6 +3301,7 @@ void lagKick(int playerIndex)
     removePlayer(playerIndex, "lag", true);
   }
 }
+
 
 void jitterKick(int playerIndex)
 {
@@ -3288,6 +3320,7 @@ void jitterKick(int playerIndex)
   }
 }
 
+
 void packetLossKick(int playerIndex)
 {
   char message[MessageLen];
@@ -3304,6 +3337,7 @@ void packetLossKick(int playerIndex)
     removePlayer(playerIndex, "packetloss", true);
   }
 }
+
 
 static void adjustTolerances()
 {
@@ -3355,6 +3389,7 @@ static void terminateServer(int /*sig*/)
   serverDone = true;
 }
 
+
 static std::string cmdSet(const std::string&, const CommandManager::ArgList& args, bool *worked)
 {
   if (worked)
@@ -3387,12 +3422,14 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
   }
 }
 
+
 static void resetAllCallback(const std::string &name, void*)
 {
   StateDatabase::Permission permission = BZDB.getPermission(name);
   if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked))
     BZDB.set(name, BZDB.getDefault(name), StateDatabase::Server);
 }
+
 
 static std::string cmdReset(const std::string&, const CommandManager::ArgList& args, bool*)
 {
@@ -3416,6 +3453,7 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
     return "usage: reset <name>";
   }
 }
+
 
 static bool requestAuthentication;
 
@@ -3538,6 +3576,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
 }
 
+
 void rescanForBans ( const char* callsign, int playerID )
 {
   // Validate all of the current players
@@ -3576,6 +3615,7 @@ void rescanForBans ( const char* callsign, int playerID )
     }
   }
 }
+
 
 void initGroups()
 {
@@ -3626,6 +3666,7 @@ void initGroups()
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
 
+
 static void updatePlayerPositions()
 {
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3634,6 +3675,7 @@ static void updatePlayerPositions()
       player->doPlayerDR();
   }
 }
+
 
 static void checkForWorldDeaths()
 {
@@ -3651,6 +3693,7 @@ static void checkForWorldDeaths()
     }
   }
 }
+
 
 static bool initNet()
 {
@@ -3678,6 +3721,7 @@ static bool initNet()
   return true;
 #endif /* defined(_WIN32) */
 }
+
 
 static void initStartupParameters(int argc, char **argv)
 {
@@ -3738,6 +3782,7 @@ static void initStartupParameters(int argc, char **argv)
   BZDB.setSaveDefault(false);
 }
 
+
 static void setupPlugins()
 {
 #ifdef BZ_PLUGINS
@@ -3755,6 +3800,7 @@ static void setupPlugins()
 #endif
 }
 
+
 static bool prepareWorld()
 {
   // start listening and prepare world database
@@ -3771,6 +3817,7 @@ static bool prepareWorld()
   }
   return true;
 }
+
 
 static void enableReplayServer()
 {
@@ -3804,6 +3851,7 @@ static void enableReplayServer()
   }
 }
 
+
 static void setupBadWordFilter()
 {
   /* load the bad word filter if it was set */
@@ -3823,6 +3871,7 @@ static void setupBadWordFilter()
   }
 }
 
+
 static void setupVoteArbiter()
 {
   /* initialize the poll arbiter for voting if necessary */
@@ -3841,6 +3890,7 @@ static void setupVoteArbiter()
     votingArbiter->setAvailableVoters(maxPlayers);
   }
 }
+
 
 static void setupPublicInterfaces()
 {
@@ -3867,6 +3917,7 @@ static void setupPublicInterfaces()
   }
 }
 
+
 static void setupMasterBanList()
 {
   // get the master ban list
@@ -3880,6 +3931,7 @@ static void setupMasterBanList()
   }
 }
 
+
 static void setupScoringOptions()
 {
   Score::setTeamKillRatio(clOptions->teamKillerKickRatio);
@@ -3888,6 +3940,7 @@ static void setupScoringOptions()
   if (clOptions->rabbitSelection == RandomRabbitSelection)
     Score::setRandomRanking();
 }
+
 
 static void setupPingReply()
 {
@@ -3911,6 +3964,7 @@ static void setupPingReply()
   pingReply.maxPlayerScore      = clOptions->maxPlayerScore;
   pingReply.maxTeamScore        = clOptions->maxTeamScore;
 }
+
 
 static void setupPermissions()
 {
@@ -5211,6 +5265,7 @@ static void cleanupServer()
   WSACleanup();
 #endif /* defined(_WIN32) */
 }
+
 
 void saveStartupInfo()
 {

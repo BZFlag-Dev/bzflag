@@ -709,7 +709,7 @@ void NetHandler::dumpMessageStats()
 void NetHandler::udpSend(const void *b, size_t l)
 {
 #ifdef TESTLINK
-  if ((random()%LINKQUALITY) == 0) {
+  if ((random() % LINKQUALITY) == 0) {
     logDebugMessage(1, "Drop Packet due to Test\n");
     return;
   }

@@ -1009,7 +1009,8 @@ BZF_API bool bz_setPlayerCustomData(int playerID, const char* key, const char* d
   }
 
   player->customData[k] = v;
-  sendPlayerCustomDataPair(playerID,k,v);
+ 
+  sendPlayerCustomDataPair(playerID, k, v);
 
   // notify on the change
   bz_PlayerSentCustomData_V1 eventData;

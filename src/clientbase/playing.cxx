@@ -1810,8 +1810,9 @@ void handlePlayerData(void *msg)
   msg = nboUnpackStdString(msg, value);
 
   Player *p = lookupPlayer(id);
-  if (p && key.size())
+  if (p && !key.empty()) {
     p->customData[key] = value;
+  }
 }
 
 
