@@ -31,28 +31,26 @@
 
 class GuidedMissileStrategy : public PointShotStrategy {
   public:
-			GuidedMissileStrategy(ShotPath*);
-			~GuidedMissileStrategy();
+    GuidedMissileStrategy(ShotPath*);
+    ~GuidedMissileStrategy();
 
-    void		update(float dt);
-    bool                predictPosition(float dt, fvec3& p) const;
-    bool                predictVelocity(float dt, fvec3& p) const;
+    void update(float dt);
+    bool predictPosition(float dt, fvec3& p) const;
+    bool predictVelocity(float dt, fvec3& v) const;
 
-    float		checkHit(const ShotCollider&, fvec3&) const;
-    void		sendUpdate(const FiringInfo&) const;
-    void		readUpdate(void* buffer);
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		expire();
-    void		radarRender() const;
+    float checkHit(const ShotCollider&, fvec3& hitPos) const;
+    void  sendUpdate(const FiringInfo&) const;
+    void  readUpdate(void* buffer);
+    void  addShot(SceneDatabase*, bool colorblind);
+    void  expire();
+    void  radarRender() const;
 
   private:
-    float		checkBuildings(const Ray& ray);
-    bool                _predict(float dt, fvec3& p, fvec3& v) const;
+    float checkBuildings(const Ray& ray);
+    bool  _predict(float dt, fvec3& p, fvec3& v) const;
 
   private:
     BoltSceneNode* ptSceneNode;
-
-    std::vector<ShotPathSegment> segments;
 
     double lastPuff;
 

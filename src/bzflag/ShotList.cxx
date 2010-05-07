@@ -32,7 +32,7 @@ ShotList::~ShotList()
   clear();
 }
 
-ShotPath* ShotList::getShot ( int GUID )
+ShotPath* ShotList::getShot(int GUID)
 {
   std::map<int,ShotPath*>::iterator itr = shots.find(GUID);
 
@@ -42,7 +42,7 @@ ShotPath* ShotList::getShot ( int GUID )
   return itr->second;
 }
 
-std::vector<ShotPath*> ShotList::getShotList ( void )
+std::vector<ShotPath*> ShotList::getShotList()
 {
   std::vector<ShotPath*> outShots;
   std::map<int,ShotPath*>::iterator itr = shots.begin();
@@ -56,7 +56,7 @@ std::vector<ShotPath*> ShotList::getShotList ( void )
   return outShots;
 }
 
-std::vector<ShotPath*> ShotList::getLocalShotList ( void )
+std::vector<ShotPath*> ShotList::getLocalShotList()
 {
   std::vector<ShotPath*> outShots;
   std::map<int,ShotPath*>::iterator itr = shots.begin();
@@ -70,7 +70,7 @@ std::vector<ShotPath*> ShotList::getLocalShotList ( void )
   return outShots;
 }
 
-std::vector<int> ShotList::getExpiredShotList ( void )
+std::vector<int> ShotList::getExpiredShotList()
 {
   std::vector<int> outShots;
   std::map<int,ShotPath*>::iterator itr = shots.begin();
@@ -83,22 +83,22 @@ std::vector<int> ShotList::getExpiredShotList ( void )
   return outShots;
 }
 
-int ShotList::addLocalShot ( FiringInfo * info )
+int ShotList::addLocalShot(FiringInfo * info)
 {
   lastLocalShot--;
-  ShotPath *shot = new ShotPath(*info,GameTime::getDRTime());
+  ShotPath *shot = new ShotPath(*info);
   shot->setLocal(true);
   shots[lastLocalShot] = shot;
   return lastLocalShot;
 }
 
-int ShotList::addShot ( int GUID, FiringInfo * info )
+int ShotList::addShot(int GUID, FiringInfo * info)
 {
-  shots[GUID] = new ShotPath(*info,GameTime::getDRTime());
+  shots[GUID] = new ShotPath(*info);
   return GUID;
 }
 
-int ShotList::updateShot( int GUID, int param, FiringInfo * info )
+int ShotList::updateShot(int GUID, int param, FiringInfo * info)
 {
   if (!removeShot(GUID))
     removeShot(param);
@@ -108,7 +108,7 @@ int ShotList::updateShot( int GUID, int param, FiringInfo * info )
   return GUID;
 }
 
-bool ShotList::removeShot ( int GUID )
+bool ShotList::removeShot(int GUID)
 {
   std::map<int,ShotPath*>::iterator itr = shots.find(GUID);
 
@@ -120,7 +120,7 @@ bool ShotList::removeShot ( int GUID )
   return true;
 }
 
-void ShotList::updateAllShots ( float dt )
+void ShotList::updateAllShots(float dt)
 {
   std::map<int,ShotPath*>::iterator itr = shots.begin();
   while(itr != shots.end())
@@ -131,14 +131,14 @@ void ShotList::updateAllShots ( float dt )
   }
 }
 
-void ShotList::flushExpiredShots( void )
+void ShotList::flushExpiredShots()
 {
   std::vector<int> expiredList = getExpiredShotList();
   for (size_t i = 0; i < expiredList.size(); i++)
     shots.erase(shots.find(expiredList[i]));
 }
 
-void ShotList::clear ( void )
+void ShotList::clear()
 {
   std::map<int,ShotPath*>::iterator itr = shots.begin();
   while(itr != shots.end())

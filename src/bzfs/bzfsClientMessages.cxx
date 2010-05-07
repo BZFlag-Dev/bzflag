@@ -556,8 +556,8 @@ public:
     firingInfo.shot.id = id;
 
     buf = nboUnpackDouble(buf, firingInfo.timeSent);
-    buf = nboUnpackFVec3(buf, firingInfo.shot.pos);
-    buf = nboUnpackFVec3(buf, firingInfo.shot.vel);
+    buf = nboUnpackFVec3(buf,  firingInfo.shot.pos);
+    buf = nboUnpackFVec3(buf,  firingInfo.shot.vel);
 
     firingInfo.shotType = player->effectiveShotType;
 

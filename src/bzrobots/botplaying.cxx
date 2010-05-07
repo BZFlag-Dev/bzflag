@@ -450,7 +450,7 @@ void handleAliveMessage(void *msg)
   tank->move(pos, forward);
   tank->setVelocity(zero);
   tank->setAngularVelocity(0.0f);
-  tank->setDeadReckoning(GameTime::getDRTime());
+  tank->setDeadReckoning();
   tank->spawnEffect();
   if (tank == myTank) {
     myTank->setSpawning(false);
@@ -729,7 +729,7 @@ void handleShotBegin(bool /*human*/, void *msg)
   if (shooterid == myTank->getId()) {
     // the shot is ours, find the shot we made, and kill it
     // then rebuild the shot with the info from the server
-    myTank->updateShot(firingInfo, id, firingInfo.timeSent);
+    myTank->updateShot(firingInfo, id);
 	/*
     for (int r = 0; r < numRobots; r++) {
       if (robots[r])

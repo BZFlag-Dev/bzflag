@@ -1868,33 +1868,96 @@ static void handlePause(void *msg)
 }
 
 
-static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
+static void parseDebugNetStyle(const std::string& style, int& level,
+                               std::set<uint16_t>& includeTypes,
+                               std::set<uint16_t>& excludeTypes)
 {
-  std::vector<std::string> args;
-  bool checkScores = false;
+  level = 1;
+  includeTypes.clear();
+  excludeTypes.clear();
 
-  // network message debugging
-  static BZDB_int  debugMessages("debugNetMesg");
-  static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
-  if ((debugMessages >= 1) && !BZDB.isTrue("_forbidDebug")) {
-    if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
-      // use the fancier MsgStrings setup
-      const int msgLevel = (debugMessages - 1);
-      MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
-      for (size_t i = 0; i < msgList.size(); i++) {
-        if (msgList[i].level <= msgLevel) {
-          std::string prefix = "recv: ";
-	  if (i == 0)
-	    prefix += TextUtils::format("%f ",
-	      BzTime::getCurrent().getSeconds());
-          for (int lvl = 0; lvl < msgList[i].level; lvl++) {
-            prefix += "  ";
-          }
-          showMessage(prefix + msgList[i].color + msgList[i].text);
-        }
+  std::vector<std::string> args = TextUtils::tokenize(style, ",");
+  for (size_t i = 0; i < args.size(); i++) {
+    const std::string& a = args[i];
+    if (isdigit(a[0])) {
+      level = atoi(a.c_str());
+    }
+    else if (a.size() == 3) {
+      const uint16_t type = (a[1] << 8) | a[2];
+      switch (a[0]) {
+        case '+': { includeTypes.insert(type); break; }
+        case '-': { excludeTypes.insert(type); break; }
       }
     }
   }
+}
+
+
+static void debugNetMessages(uint16_t code, uint16_t len, void *msg)
+{
+  static std::string staticStyle = "";
+  static int msgLevel = 0;
+  static std::set<uint16_t> includeTypes;
+  static std::set<uint16_t> excludeTypes;
+
+  if (BZDBCache::forbidDebug) {
+    return;
+  }
+
+  static BZDB_string bzdbDebugNetMsg("debugNetMsg");
+  const std::string& debugStyle = bzdbDebugNetMsg;
+  if (debugStyle.empty()) {
+    return;
+  }
+
+  // parse the style if the style string has changed
+  if (debugStyle != staticStyle) {
+    staticStyle = debugStyle;
+    parseDebugNetStyle(staticStyle, msgLevel, includeTypes, excludeTypes);
+  }
+
+  if (msgLevel <= 0) {
+    return;
+  }
+
+  if (!includeTypes.empty()) {
+    if (includeTypes.find(code) == includeTypes.end()) {
+      return;
+    }
+  }
+  if (excludeTypes.find(code) != excludeTypes.end()) {
+    return;
+  }
+
+  const MsgStringList msgList = MsgStrings::msgFromServer(len, code, msg);
+
+  for (size_t i = 0; i < msgList.size(); i++) {
+    if (msgList[i].level <= (msgLevel - 1)) {
+      std::string prefix = "recv: ";
+      if (i == 0) {
+        char buf[256];
+        snprintf(buf, sizeof(buf), "%.3f %s<%c%c>%s ",
+                 BzTime::getCurrent().getSeconds(),
+                 ANSI_STR_FG_YELLOW,
+                 code >> 8, code & 0xff,
+                 ANSI_STR_RESET);
+        prefix += buf;
+      }
+      for (int lvl = 0; lvl < msgList[i].level; lvl++) {
+        prefix += "  ";
+      }
+      showMessage(prefix + msgList[i].color + msgList[i].text);
+    }
+  }
+}
+
+
+static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *msg)
+{
+  debugNetMessages(code, len, msg);
+
+  std::vector<std::string> args;
+  bool checkScores = false;
 
   switch (code) {
     case MsgNearFlag: {

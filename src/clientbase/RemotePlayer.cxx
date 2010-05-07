@@ -42,7 +42,7 @@ RemotePlayer::~RemotePlayer()
 ShotPath *RemotePlayer::addShot(FiringInfo& info)
 {
   prepareShotInfo(info);
-  return Player::addShot(new RemoteShotPath(info, GameTime::getDRTime()), info);
+  return Player::addShot(new RemoteShotPath(info), info);
 }
 
 

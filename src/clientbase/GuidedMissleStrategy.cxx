@@ -32,10 +32,10 @@
 #include "guiplaying.h"
 
 
-GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
-  PointShotStrategy(_path),
-  renderTimes(0),
-  needUpdate(true)
+GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path)
+: PointShotStrategy(_path, true)
+, renderTimes(0)
+, needUpdate(true)
 {
   ptSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
   TextureManager &tm = TextureManager::instance();

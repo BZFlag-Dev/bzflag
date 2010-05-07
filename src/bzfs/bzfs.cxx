@@ -931,18 +931,20 @@ bool defineWorld()
   buf = nboPackUInt16(buf, WorldCodeEndSize);
   buf = nboPackUInt16(buf, WorldCodeEnd);
 
-  BzTime startTime = BzTime::getCurrent();
-  MD5 md5;
-  md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
-  md5.finalize();
-  if (clOptions->worldFile == "")
-    strcpy(hexDigest, "t");
-  else
-    strcpy(hexDigest, "p");
+  const BzTime startTime = BzTime::getCurrent();
+  {
+    MD5 md5;
+    md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
+    md5.finalize();
+    if (clOptions->worldFile == "")
+      strcpy(hexDigest, "t");
+    else
+      strcpy(hexDigest, "p");
 
-  std::string digest = md5.hexdigest();
-  strncat(hexDigest, digest.c_str(), 49);
-  BzTime endTime = BzTime::getCurrent();
+    std::string digest = md5.hexdigest();
+    strncat(hexDigest, digest.c_str(), 49);
+  }
+  const BzTime endTime = BzTime::getCurrent();
   logDebugMessage(3,"MD5 generation: %.3f seconds\n", endTime - startTime);
 
   // water levels probably require flags on buildings
@@ -1263,7 +1265,7 @@ static void acceptClient()
   peer.socket = fd;
   peer.deleteMe = false;
   peer.sent = false;
-  peer.startTime = BzTime::getCurrent().getSeconds();
+  peer.startTime = BzTime::getCurrent();
 
   netConnectedPeers[fd] = peer;
 }
@@ -4954,7 +4956,7 @@ static void runMainLoop()
     float waitTime = 3.0f;
     checkWaitTime(tm,waitTime);
 
-    double now = tm.getSeconds();
+    const BzTime nowTime = BzTime::getCurrent();
     double tcpTimeout = BZDB.eval(BZDBNAMES.TCPTIMEOUT);
 
     /**************
@@ -5144,7 +5146,7 @@ static void runMainLoop()
       if (!peer.sent) { // little guy hasn't sent us a thing
 	// check for any waiting conenctions if they are timed,
 	// then see if anyone wants them
-	if ((now - peer.startTime) > tcpTimeout) {
+	if ((nowTime - peer.startTime) > tcpTimeout) {
 	  // see if anyone wants him
 	  bz_NewNonPlayerConnectionEventData_V1 eventData;
 	  eventData.eventType = bz_eIdleNewNonPlayerConnection;
@@ -5258,11 +5260,12 @@ int main(int argc, char **argv)
   return 0;
 }
 
+
 bool worldStateChanging()
 {
-  BzTime now = BzTime::getCurrent();
   return (BzTime::getCurrent() - lastWorldParmChange) <= 10.0f;
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -27,18 +27,17 @@
 // ShotPath
 //
 
-ShotPath::ShotPath(const FiringInfo& info, double now)
+ShotPath::ShotPath(const FiringInfo& info)
 : firingInfo(info)
 , reloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
+, startTime(BzTime::getCurrent())
+, currentTime(BzTime::getCurrent())
 , expiring(false)
 , expired(false)
+, local(false)
 , gfxBlock     (GfxBlock::Shot,      (info.shot.player << 16) | info.shot.id, true)
 , radarGfxBlock(GfxBlock::ShotRadar, (info.shot.player << 16) | info.shot.id, true)
 {
-  startTime = info.timeSent;
-  currentTime = now;
-  local = false;
-
   switch(info.shotType) {
     default:
       strategy = new NormalShotStrategy(this);
@@ -194,8 +193,8 @@ void ShotPath::update(float dt)
 // LocalShotPath
 //
 
-LocalShotPath::LocalShotPath(const FiringInfo& info, double now)
-: ShotPath(info,now)
+LocalShotPath::LocalShotPath(const FiringInfo& info)
+: ShotPath(info)
 {
   // do nothing
   setLocal(true);
@@ -223,8 +222,8 @@ void LocalShotPath::update(float dt)
 // RemoteShotPath
 //
 
-RemoteShotPath::RemoteShotPath(const FiringInfo& info,double now)
-: ShotPath(info,now)
+RemoteShotPath::RemoteShotPath(const FiringInfo& info)
+: ShotPath(info)
 {
   // do nothing
 }

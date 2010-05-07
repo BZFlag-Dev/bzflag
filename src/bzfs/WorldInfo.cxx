@@ -680,18 +680,22 @@ int WorldInfo::packDatabase()
   databasePtr = luaRules.pack(databasePtr);
 
   // compress the map database
-  BzTime startTime = BzTime::getCurrent();
-  uLong gzDBlen = compressBound(databaseSize);
-
-  char* gzDB = new char[gzDBlen];
-  int code = compress2 ((Bytef*)gzDB, &gzDBlen, (Bytef*)database, databaseSize, 9);
-  if (code != Z_OK) {
-    printf ("Could not create compressed world database: %i\n", code);
-    delete[] gzDB;
-    delete[] database;
-    exit (1);
+  uLong gzDBlen;
+  char* gzDB;
+  const BzTime startTime = BzTime::getCurrent();
+  {
+    gzDBlen = compressBound(databaseSize);
+    gzDB    = new char[gzDBlen];
+    const int code = compress2 ((Bytef*)gzDB, &gzDBlen,
+                                (Bytef*)database, databaseSize, 9);
+    if (code != Z_OK) {
+      printf ("Could not create compressed world database: %i\n", code);
+      delete[] gzDB;
+      delete[] database;
+      exit (1);
+    }
   }
-  BzTime endTime = BzTime::getCurrent();
+  const BzTime endTime = BzTime::getCurrent();
 
   // switch to the compressed map database
   uncompressedSize = databaseSize;

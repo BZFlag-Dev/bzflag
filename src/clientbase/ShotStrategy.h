@@ -62,7 +62,7 @@ class ShotStrategy {
     virtual void  update(float dt) = 0;
     virtual bool  predictPosition(float dt, fvec3& p) const = 0;
     virtual bool  predictVelocity(float dt, fvec3& p) const = 0;
-    virtual float checkHit(const ShotCollider&, fvec3&)const = 0;
+    virtual float checkHit(const ShotCollider&, fvec3& hitPos)const = 0;
     virtual bool  isStoppedByHit() const;
     virtual void  addShot(SceneDatabase*, bool colorblind) = 0;
     virtual void  expire();

@@ -209,7 +209,7 @@ public:
   void		setZpos(float z);
   float		getMaxSpeed() const;
 
-  void		updateShot(FiringInfo &info, int shotID, double time);
+  void		updateShot(FiringInfo &info, int shotID);
 
   void		land();
 

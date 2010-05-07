@@ -36,25 +36,26 @@ class Obstacle;
 
 class SegmentedShotStrategy : public PointShotStrategy {
   public:
-			SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
-			~SegmentedShotStrategy();
+    SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
+    ~SegmentedShotStrategy();
 
     void  update(float dt);
     bool  predictPosition(float dt, fvec3& p) const;
-    bool  predictVelocity(float dt, fvec3& p) const;
-    float checkHit(const ShotCollider&, fvec3&) const;
+    bool  predictVelocity(float dt, fvec3& v) const;
+    float checkHit(const ShotCollider&, fvec3& hitPos) const;
     void  addShot(SceneDatabase*, bool colorblind);
     void  radarRender() const;
-    TeamColor	team;
+
+    TeamColor team;
 
   protected:
     enum ObstacleEffect {
-			Stop    = 0,
-			Through = 1,
-			Reflect = 2
+      Stop    = 0,
+      Through = 1,
+      Reflect = 2
     };
     void  makeSegments(ObstacleEffect = Stop);
-    const std::vector<ShotPathSegment>&	getSegments() const;
+    const std::vector<ShotPathSegment>& getSegments() const;
 
     void   setCurrentTime(const double);
     double getLastTime() const;
@@ -62,77 +63,77 @@ class SegmentedShotStrategy : public PointShotStrategy {
     void setCurrentSegment(int segment);
 
   private:
-    BoltSceneNode*	boltSceneNode;
-    int    firstSegment;
+    BoltSceneNode*  boltSceneNode;
+    int             firstSegment;
     const Obstacle* endObstacle;
 };
 
 class NormalShotStrategy : public SegmentedShotStrategy {
   public:
-			NormalShotStrategy(ShotPath*);
-			~NormalShotStrategy();
+    NormalShotStrategy(ShotPath*);
+    ~NormalShotStrategy();
 };
 
 class RapidFireStrategy : public SegmentedShotStrategy {
   public:
-			RapidFireStrategy(ShotPath*);
-			~RapidFireStrategy();
+    RapidFireStrategy(ShotPath*);
+    ~RapidFireStrategy();
 };
 
 class ThiefStrategy : public SegmentedShotStrategy {
   public:
-			ThiefStrategy(ShotPath*);
-			~ThiefStrategy();
-    void		update(float dt);
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    ThiefStrategy(ShotPath*);
+    ~ThiefStrategy();
+    void update(float dt);
+    bool isStoppedByHit() const;
+    void addShot(SceneDatabase*, bool colorblind);
+    void radarRender() const;
 
   private:
-    float		cumTime;
-    float		endTime;
-    LaserSceneNode**	thiefNodes;
+    float cummTime;
+    float endTime;
+    LaserSceneNode** thiefNodes;
 };
 
 class MachineGunStrategy : public SegmentedShotStrategy {
   public:
-			MachineGunStrategy(ShotPath*);
-			~MachineGunStrategy();
+    MachineGunStrategy(ShotPath*);
+    ~MachineGunStrategy();
 };
 
 class LaserStrategy : public SegmentedShotStrategy {
   public:
-			LaserStrategy(ShotPath*);
-			~LaserStrategy();
+    LaserStrategy(ShotPath*);
+    ~LaserStrategy();
 
-    void		update(float dt);
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    void update(float dt);
+    bool isStoppedByHit() const;
+    void addShot(SceneDatabase*, bool colorblind);
+    void radarRender() const;
 
   private:
-    float		cumTime;
-    float		endTime;
-    LaserSceneNode**	laserNodes;
+    float cummTime;
+    float endTime;
+    LaserSceneNode** laserNodes;
 };
 
 class RicochetStrategy : public SegmentedShotStrategy {
   public:
-			RicochetStrategy(ShotPath*);
-			~RicochetStrategy();
+    RicochetStrategy(ShotPath*);
+    ~RicochetStrategy();
 };
 
 class SuperBulletStrategy : public SegmentedShotStrategy {
   public:
-			SuperBulletStrategy(ShotPath*);
-			~SuperBulletStrategy();
+    SuperBulletStrategy(ShotPath*);
+    ~SuperBulletStrategy();
 };
 
 
 class PhantomBulletStrategy : public SegmentedShotStrategy {
   public:
-			PhantomBulletStrategy(ShotPath*);
-			~PhantomBulletStrategy();
+    PhantomBulletStrategy(ShotPath*);
+    ~PhantomBulletStrategy();
 };
 
 

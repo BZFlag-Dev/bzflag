@@ -296,7 +296,7 @@ void CollisionManager::load()
 {
   int i;
 
-  BzTime startTime = BzTime::getCurrent();
+  const BzTime startTime = BzTime::getCurrent();
 
   // get the lists
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();

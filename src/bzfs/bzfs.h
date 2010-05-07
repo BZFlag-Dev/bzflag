@@ -28,6 +28,7 @@
 
 // common interface headers
 #include "Address.h"
+#include "BzTime.h"
 #include "Flag.h"
 #include "Ping.h"
 #include "vectors.h"
@@ -163,7 +164,7 @@ extern float maxWorldHeight;
 extern unsigned int maxNonPlayerDataChunk;
 
 // peer list
-typedef struct {
+struct NetConnectedPeer {
   int socket;
   int player;
 
@@ -172,10 +173,10 @@ typedef struct {
 
   std::list<std::string> sendChunks;
 
-  double    startTime;
-  bool	    sent;
-  bool	    deleteMe;
-} NetConnectedPeer;
+  BzTime startTime;
+  bool   sent;
+  bool   deleteMe;
+};
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;
 

@@ -1419,16 +1419,13 @@ ShotPath *LocalPlayer::fireShot()
 
   // prepare shot
   FiringInfo firingInfo;
-  firingInfo.timeSent = GameTime::getDRTime();
+  firingInfo.timeSent    = GameTime::getStepTime();
   firingInfo.shotType    = getShotType();
   firingInfo.shot.player = getId();
   firingInfo.shot.id     = uint16_t(i + getSalt());
   prepareShotInfo(firingInfo, true);
   // make shot and put it in the table
-  shot = addShot(new LocalShotPath(firingInfo, GameTime::getDRTime()), firingInfo);
-
-  // Insert timestamp, useful for dead reckoning jitter fixing
-  firingInfo.timeSent = GameTime::getDRTime();
+  shot = addShot(new LocalShotPath(firingInfo), firingInfo);
 
   // always send a player-update message. To synchronize movement and
   // shot start. They should generally travel on the same frame, when
@@ -1732,7 +1729,6 @@ bool LocalPlayer::checkHit(const Player* source,
     }
 
     // test myself against shot
-    fvec3 position;
 
     static const fvec3 zeroMargin(0,0,0);
     const fvec3 *proxySize = &zeroMargin;
@@ -1758,18 +1754,19 @@ bool LocalPlayer::checkHit(const Player* source,
     collider.bbox.maxs.z += proxySize->z;
     collider.testLastSegment = (getId() == shot->getPlayer());
 
-    const float t = shot->checkHit(collider, position);
+    fvec3 hitPos;
+    const float t = shot->checkHit(collider, hitPos);
     if (t >= minTime) {
       continue;
     }
 
     // test if shot hit a part of my tank that's through a teleporter.
     // hit is no good if hit point is behind crossing plane.
-    if (isCrossingWall() && (crossingPlane.planeDist(position) < 0.0f)) {
+    if (isCrossingWall() && (crossingPlane.planeDist(hitPos) < 0.0f)) {
       continue;
     }
 
-    if (eventHandler.ForbidShotHit(*this, *shot, position)) {
+    if (eventHandler.ForbidShotHit(*this, *shot, hitPos)) {
       continue;
     }
 

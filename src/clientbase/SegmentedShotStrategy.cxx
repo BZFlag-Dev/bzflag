@@ -45,8 +45,6 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
 : PointShotStrategy(_path)
 , endObstacle(NULL)
 {
-	GMTest = false;
-
   // initialize times
   prevTime = getPath().getStartTime();
   lastTime = currentTime = prevTime;
@@ -597,8 +595,8 @@ const std::vector<ShotPathSegment>& SegmentedShotStrategy::getSegments() const
 // NormalShotStrategy
 //
 
-NormalShotStrategy::NormalShotStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+NormalShotStrategy::NormalShotStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, false)
 {
   // make segments
   makeSegments(Stop);
@@ -615,8 +613,8 @@ NormalShotStrategy::~NormalShotStrategy()
 // RapidFireStrategy
 //
 
-RapidFireStrategy::RapidFireStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+RapidFireStrategy::RapidFireStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, false)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -641,8 +639,9 @@ RapidFireStrategy::~RapidFireStrategy()
 // ThiefStrategy
 //
 
-ThiefStrategy::ThiefStrategy(ShotPath *_path) :
-  SegmentedShotStrategy(_path, false),cumTime(0.0f)
+ThiefStrategy::ThiefStrategy(ShotPath *_path)
+: SegmentedShotStrategy(_path, false)
+, cummTime(0.0f)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -698,8 +697,8 @@ ThiefStrategy::~ThiefStrategy()
 
 void ThiefStrategy::update(float dt)
 {
-  cumTime += dt;
-  if (cumTime >= endTime) {
+  cummTime += dt;
+  if (cummTime >= endTime) {
     setExpired();
   }
 }
@@ -743,8 +742,8 @@ bool ThiefStrategy::isStoppedByHit() const
 // MachineGunStrategy
 //
 
-MachineGunStrategy::MachineGunStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+MachineGunStrategy::MachineGunStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, false)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -769,8 +768,8 @@ MachineGunStrategy::~MachineGunStrategy()
 // RicochetStrategy
 //
 
-RicochetStrategy::RicochetStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false)
+RicochetStrategy::RicochetStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, false)
 {
   // make segments that bounce
   makeSegments(Reflect);
@@ -787,8 +786,8 @@ RicochetStrategy::~RicochetStrategy()
 // SuperBulletStrategy
 //
 
-SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, true)
+SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, true)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -804,8 +803,8 @@ SuperBulletStrategy::~SuperBulletStrategy()
 // PhantomBulletStrategy
 //
 
-PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false,true)
+PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, false,true)
 {
   // make segments that go through buildings
   makeSegments(Through);
@@ -821,8 +820,9 @@ PhantomBulletStrategy::~PhantomBulletStrategy()
 // LaserStrategy
 //
 
-LaserStrategy::LaserStrategy(ShotPath* _path) :
-  SegmentedShotStrategy(_path, false), cumTime(0.0f)
+LaserStrategy::LaserStrategy(ShotPath* _path)
+: SegmentedShotStrategy(_path, false)
+, cummTime(0.0f)
 {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
@@ -881,8 +881,8 @@ LaserStrategy::~LaserStrategy()
 
 void LaserStrategy::update(float dt)
 {
-  cumTime += dt;
-  if (cumTime >= endTime) {
+  cummTime += dt;
+  if (cummTime >= endTime) {
     setExpired();
   }
 }

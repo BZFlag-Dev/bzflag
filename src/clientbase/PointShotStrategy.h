@@ -30,7 +30,7 @@ class Obstacle;
 
 class PointShotStrategy : public ShotStrategy {
   public:
-    PointShotStrategy(ShotPath* _path);
+    PointShotStrategy(ShotPath* _path, bool gmTest = false);
     ~PointShotStrategy();
 
   protected:
@@ -39,12 +39,14 @@ class PointShotStrategy : public ShotStrategy {
     double prevTime;
     double currentTime;
     double lastTime;
-    int    segment, lastSegment;
+    int    segment;
+    int    lastSegment;
+
     std::vector<ShotPathSegment> segments;
 
     Extents bbox;
 
-    bool GMTest;
+    const bool gmTest;
 };
 
 

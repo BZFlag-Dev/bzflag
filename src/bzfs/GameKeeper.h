@@ -44,31 +44,28 @@
 
 
 class NetMessage;
-
-
 struct FiringInfo;
-class ShotInfo {
-public:
-  ShotInfo() : present(false) {};
 
-  FiringInfo firingInfo;
-  int    salt;
-  BzTime expireTime;
-  bool   present;
-  bool   running;
+class ShotInfo {
+  public:
+    ShotInfo() : present(false) {};
+
+    FiringInfo firingInfo;
+    int    salt;
+    BzTime expireTime;
+    bool   present;
+    bool   running;
 };
 
-class PlayerCaps
-{
-public:
-	bool	canDownloadResources;
-	bool	canPlayRemoteSounds;
 
-	PlayerCaps ( void )
-	{
-		canPlayRemoteSounds = false;
-		canDownloadResources = false;
-	}
+class PlayerCaps {
+  public:
+    bool canDownloadResources;
+    bool canPlayRemoteSounds;
+    PlayerCaps()
+    : canDownloadResources(false)
+    , canPlayRemoteSounds(false)
+    {}
 };
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;

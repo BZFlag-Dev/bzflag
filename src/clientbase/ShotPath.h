@@ -43,7 +43,7 @@ class ShotCollider;
 
 class ShotPath {
 public:
-  ShotPath(const FiringInfo &, double);
+  ShotPath(const FiringInfo&);
   virtual ~ShotPath();
 
   bool isExpiring() const;
@@ -55,12 +55,12 @@ public:
   FlagType *getFlag() const;
   float getLifetime() const;
   float getReloadTime() const;
-  double getStartTime() const;
-  double getCurrentTime() const;
+  BzTime getStartTime() const;
+  BzTime getCurrentTime() const;
   const fvec3& getPosition() const;
   const fvec3& getVelocity() const;
 
-  float checkHit(const ShotCollider &, fvec3& p) const;
+  float checkHit(const ShotCollider &, fvec3& hitPos) const;
   void setExpiring();
   void setExpired();
   bool isStoppedByHit() const;
@@ -100,8 +100,8 @@ private:
   ShotStrategy *strategy; // strategy for moving shell
   FiringInfo firingInfo; // shell information
   float reloadTime; // time to reload
-  double startTime; // time of firing
-  double currentTime; // current time
+  BzTime startTime; // time of firing
+  BzTime currentTime; // current time
   bool expiring; // shot has almost terminated
   bool expired; // shot has terminated
   bool local; // shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
@@ -111,7 +111,7 @@ private:
 
 class LocalShotPath : public ShotPath {
 public:
-  LocalShotPath(const FiringInfo &, double);
+  LocalShotPath(const FiringInfo &);
   ~LocalShotPath();
 
   void update(float dt);
@@ -119,7 +119,7 @@ public:
 
 class RemoteShotPath : public ShotPath {
 public:
-  RemoteShotPath(const FiringInfo &, double);
+  RemoteShotPath(const FiringInfo &);
   ~RemoteShotPath();
 
   void update(float dt);
@@ -175,12 +175,12 @@ inline float ShotPath::getReloadTime() const
   return reloadTime;
 }
 
-inline double ShotPath::getStartTime() const
+inline BzTime ShotPath::getStartTime() const
 {
   return startTime;
 }
 
-inline double ShotPath::getCurrentTime() const
+inline BzTime ShotPath::getCurrentTime() const
 {
   return currentTime;
 }

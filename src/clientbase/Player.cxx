@@ -1150,15 +1150,8 @@ ShotPath* Player::getShot(int index) const
 
 void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
 {
-  static BZDB_bool useServerDRClock("_useServerDRClock");
-
-  if (useServerDRClock) {
-    firingInfo.shot.dt = (float)(GameTime::getDRTime() - firingInfo.timeSent);
-  }
-  else {
-    firingInfo.timeSent = GameTime::getDRTime();
-    firingInfo.shot.dt = 0.0f;
-  }
+  firingInfo.timeSent = GameTime::getStepTime();
+  firingInfo.shot.dt = 0.0f;
   firingInfo.lifetime = BZDB.eval(BZDBNAMES.RELOADTIME);
 
   firingInfo.flagType = getFlag();
@@ -1224,20 +1217,20 @@ void Player::deleteShot(int index)
   }
 }
 
-void Player::updateShot(FiringInfo &info, int shotID, double time )
+void Player::updateShot(FiringInfo &info, int shotID)
 {
   // kill the old shot
   if ((shotID < 0) || (shotID >= (int)shots.size())) {
     return;
   }
 
-  if ( shots[shotID] != NULL ) {
+  if (shots[shotID] != NULL) {
     deleteShot(shotID);
   }
 
   // build a new shot with the new info
   prepareShotInfo(info);
-  shots[shotID] = new LocalShotPath(info,time);
+  shots[shotID] = new LocalShotPath(info);
 }
 
 

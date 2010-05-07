@@ -27,22 +27,22 @@
 
 class ShockWaveStrategy : public ShotStrategy {
   public:
-			ShockWaveStrategy(ShotPath*);
-			~ShockWaveStrategy();
+    ShockWaveStrategy(ShotPath*);
+    ~ShockWaveStrategy();
 
-    void		update(float dt);
-    bool        predictPosition(float dt, fvec3& p) const;
-    bool        predictVelocity(float dt, fvec3& p) const;
-    float		checkHit(const ShotCollider&, fvec3&) const;
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    void  update(float dt);
+    bool  predictPosition(float dt, fvec3& p) const;
+    bool  predictVelocity(float dt, fvec3& v) const;
+    float checkHit(const ShotCollider&, fvec3& hitPos) const;
+    bool  isStoppedByHit() const;
+    void  addShot(SceneDatabase*, bool colorblind);
+    void  radarRender() const;
 
   private:
-    SphereSceneNode*	shockNode;
-    float		radius;
-    float		radius2;
-    TeamColor		team;
+    SphereSceneNode* shockNode;
+    float     radius;
+    float     radius2;
+    TeamColor team;
 };
 
 

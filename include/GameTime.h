@@ -34,9 +34,6 @@ namespace GameTime {
   void   setStepTime();
   double getStepTime();
 
-  double getDRTime(); // for dead-reckoning calculations,
-                      // doesn't really belong here
-
   int   packSize();
   void* pack(void *, float lag);
   void  pack(NetMessage& netMsg, float lag);

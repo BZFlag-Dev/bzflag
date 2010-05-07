@@ -841,7 +841,7 @@ void ServerLink::sendPlayerUpdate(Player* player)
   void* buf = msg;
   uint16_t code;
   buf = nboPackUInt8(buf, player->getId());
-  buf = nboPackDouble(buf, GameTime::getDRTime());
+  buf = nboPackDouble(buf, GameTime::getStepTime());
 
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
   buf = player->pack(buf, code);
@@ -860,7 +860,7 @@ void ServerLink::sendShotBegin(const FiringInfo& info)
 
   buf = nboPackUInt8(buf, info.shot.player);
   buf = nboPackUInt16(buf, info.shot.id);
-  buf = nboPackDouble(buf, GameTime::getDRTime()); 
+  buf = nboPackDouble(buf, GameTime::getStepTime()); 
   buf = nboPackFVec3(buf, info.shot.pos);
   buf = nboPackFVec3(buf, info.shot.vel);
 

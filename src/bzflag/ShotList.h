@@ -27,21 +27,21 @@
 class ShotList : public Singleton<ShotList>
 {
 public:
-  ShotPath* getShot ( int GUID );
-  std::vector<ShotPath*> getShotList ( void );
-  std::vector<ShotPath*> getLocalShotList ( void );
-  std::vector<int> getExpiredShotList ( void );
+  ShotPath* getShot(int GUID);
+  std::vector<ShotPath*> getShotList();
+  std::vector<ShotPath*> getLocalShotList();
+  std::vector<int> getExpiredShotList();
 
-  int addLocalShot ( FiringInfo * info );
-  int addShot ( int GUID, FiringInfo * info );
-  int updateShot( int GUID, int param, FiringInfo * info );
+  int addLocalShot(FiringInfo * info);
+  int addShot(int GUID, FiringInfo * info);
+  int updateShot(int GUID, int param, FiringInfo * info);
 
-  bool removeShot ( int GUID );
+  bool removeShot(int GUID);
 
-  void updateAllShots ( float dt );
-  void flushExpiredShots ( void );
+  void updateAllShots(float dt);
+  void flushExpiredShots();
 
-  void clear ( void );
+  void clear();
 
 protected:
   friend class Singleton<ShotList>;
