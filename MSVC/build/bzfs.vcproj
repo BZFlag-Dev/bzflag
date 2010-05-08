@@ -821,14 +821,6 @@
 			Name="lua"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\lua\BZDB.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\lua\BZDB.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\lua\CallIns.cxx"
 				>
 			</File>

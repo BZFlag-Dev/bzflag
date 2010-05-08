@@ -191,7 +191,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\GuidedMissleStrategy.cxx"
+				RelativePath="..\..\src\clientbase\GuidedMissileStrategy.cxx"
 				>
 			</File>
 			<File
@@ -325,7 +325,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\GuidedMissleStrategy.h"
+				RelativePath="..\..\src\clientbase\GuidedMissileStrategy.h"
 				>
 			</File>
 			<File
