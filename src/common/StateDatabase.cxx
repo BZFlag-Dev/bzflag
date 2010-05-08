@@ -49,7 +49,7 @@ void _debugLookups(const std::string &name)
 
   EvalCntMap::iterator it = cnts.find(name);
   if (it == cnts.end())
-    cnts[name] = 1;
+    cnts.insert(std::pair<std::string, int>(name, 1));
   else
     it->second++;
 
