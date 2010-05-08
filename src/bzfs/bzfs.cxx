@@ -1491,14 +1491,14 @@ void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message
 
 void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, uint8_t type)
 {
-  long int msglen = strlen(message) + 1; // include null terminator
-  const char *msg = message;
-
-  if (message[0] == '/' && message[1] == '/')
-    msg = &message[1];
+  size_t msglen = strlen(message) + 1;	// include null terminator
+  if (message[0] == '/' && message[1] == '/') {
+    ++message;
+    --msglen;
+  }
 
   // Should cut the message
-  if (msglen > MessageLen) {
+  if (msglen > (size_t)MessageLen) {
     logDebugMessage(1,"WARNING: Network message being sent is too long! "
 		    "(message is %d, cutoff at %d)\n", msglen, MessageLen);
     msglen = MessageLen;
@@ -1529,10 +1529,10 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, uint8
     worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
   }
 
-  sendTextMessage(dstPlayer, playerIndex, msg, msglen, type);
+  sendTextMessage(dstPlayer, playerIndex, message, msglen, type);
 
   if (Record::enabled() && !(dstPlayer == AllPlayers)) // don't record twice
-    sendTextMessage(-1, playerIndex, msg, msglen, type, true);
+    sendTextMessage(-1, playerIndex, message, msglen, type, true);
 }
 
 
