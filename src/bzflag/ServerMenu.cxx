@@ -382,14 +382,14 @@ void ServerMenu::playingCB(void* _self)
       if (server != NULL) {
         server->ping.pingTime = itr->second.first->calcLag();
         server->ping.pinging = false;
-        for (size_t j=0; j<(itr->second.second.size()); j++) 
+        for (size_t j=0; j<(itr->second.second.size()); j++)
           itr->second.second[j]->addItem(server);
         itemsToBoot.push_back(itr->first);
       }
     }
     itr++;
   }
-  
+
   std::vector<std::string>::iterator delItr = itemsToBoot.begin();
   while (delItr != itemsToBoot.end()) {
     PingsMap::iterator i = ServerMenu::activePings.find(*delItr);
@@ -399,7 +399,7 @@ void ServerMenu::playingCB(void* _self)
 
     delItr++;
   }
-   
+
   static_cast<ServerMenu*>(_self)->serverList.checkEchos(getStartupInfo());
   static_cast<ServerMenu*>(_self)->updateStatus();
 }

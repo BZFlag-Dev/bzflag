@@ -221,7 +221,7 @@ bool HubLink::createLua(const std::string& code)
                  srvLink->getJoinCallsign());
   }
 
-  debugf(1, "createLua succeeded\n");  
+  debugf(1, "createLua succeeded\n");
 
   return true;
 }
@@ -638,7 +638,7 @@ int HubLink::SetCallIn(lua_State* L)
   if ((type != LUA_TFUNCTION) && (type != LUA_TNIL)) {
     luaL_error(L, "expected function or nil");
   }
-    
+
   lua_rawseti(L, LUA_REGISTRYINDEX, ciCode);
 
   lua_pushboolean(L, true);
@@ -1214,7 +1214,7 @@ int HubLink::RemoveFile(lua_State* L)
     return 2;
   }
 
-  lua_pushboolean(L, true); 
+  lua_pushboolean(L, true);
   return 1;
 }
 
@@ -1359,11 +1359,11 @@ int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
   lua_pushnumber(L, (lua_Number)value); \
   return 1;
 int HubLink::UnpackInt8  (lua_State* L) { UNPACK_TYPE(Int8,   int8_t)   }
-int HubLink::UnpackInt16 (lua_State* L) { UNPACK_TYPE(Int16,  int16_t)  } 
+int HubLink::UnpackInt16 (lua_State* L) { UNPACK_TYPE(Int16,  int16_t)  }
 int HubLink::UnpackInt32 (lua_State* L) { UNPACK_TYPE(Int32,  int32_t)  }
 int HubLink::UnpackInt64 (lua_State* L) { UNPACK_TYPE(Int64,  int64_t)  }
 int HubLink::UnpackUInt8 (lua_State* L) { UNPACK_TYPE(UInt8,  uint8_t)  }
-int HubLink::UnpackUInt16(lua_State* L) { UNPACK_TYPE(UInt16, uint16_t) } 
+int HubLink::UnpackUInt16(lua_State* L) { UNPACK_TYPE(UInt16, uint16_t) }
 int HubLink::UnpackUInt32(lua_State* L) { UNPACK_TYPE(UInt32, uint32_t) }
 int HubLink::UnpackUInt64(lua_State* L) { UNPACK_TYPE(UInt64, uint64_t) }
 int HubLink::UnpackFloat (lua_State* L) { UNPACK_TYPE(Float,  float)    }

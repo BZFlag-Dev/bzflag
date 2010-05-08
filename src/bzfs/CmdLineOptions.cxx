@@ -828,9 +828,9 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
     else if (token == "-luaserver") {
       checkFromWorldFile(token, fromWorldFile);
       const std::string dirPath = parseStringArg(i, tokens);
-      if (LuaServer::isActive()) {   
+      if (LuaServer::isActive()) {
         std::cerr << "WARNING: ignoring extra '-luaserver "
-                  << dirPath << "' argument" << std::endl; 
+                  << dirPath << "' argument" << std::endl;
       } else {
         luaServerDir = dirPath;
         LuaServer::init(luaServerDir);

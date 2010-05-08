@@ -143,7 +143,7 @@ const PhysicsDriver* PhysicsDriverManager::relativeDriver(
 
   return copy;
 }
-                                            
+
 
 int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 {
@@ -663,13 +663,13 @@ void PhysicsDriver::transformRadialPos()
   radialPos = pos.xy();
 }
 
-            
+
 //============================================================================//
 
 int PhysicsDriver::packSize() const
 {
   int fullSize = 0;
-  
+
   fullSize += nboStdStringPackSize(name);
 
   fullSize += sizeof(int8_t); // bits
@@ -783,7 +783,7 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
     out << indent << "  angular "
                   << (angularVel / (M_PI * 2.0f)) << " "
                   << angularPos << std::endl;
-  }    
+  }
   if (!angularVar.empty()) {
     out << indent << "  angularVar " << angularVar << std::endl;
   }

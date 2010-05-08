@@ -40,12 +40,12 @@ static DWORD             timeLastCalibration;
 #endif // !defined(_WIN32)
 
 // system threading headers
-#ifndef _WIN32   
+#ifndef _WIN32
 #  include <sys/types.h>
 #  include <dirent.h>
 #endif
 #ifdef HAVE_PTHREADS
-#  include <pthread.h>  
+#  include <pthread.h>
 #endif
 
 // common headers
@@ -59,7 +59,7 @@ static DWORD             timeLastCalibration;
   static pthread_mutex_t    timer_mutex = PTHREAD_MUTEX_INITIALIZER;
 # define LOCK_TIMER_MUTEX   pthread_mutex_lock(&timer_mutex);
 # define UNLOCK_TIMER_MUTEX pthread_mutex_unlock(&timer_mutex);
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
   static CRITICAL_SECTION   timer_critical;
 # define LOCK_TIMER_MUTEX   EnterCriticalSection(&timer_critical);
 # define UNLOCK_TIMER_MUTEX LeaveCriticalSection(&timer_critical);
@@ -131,7 +131,7 @@ const BzTime& BzTime::getCurrent(void)
   if (!inited) {
     inited = true;
     InitializeCriticalSection(&timer_critical);
-  }    
+  }
 
   LOCK_TIMER_MUTEX
 

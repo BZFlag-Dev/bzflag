@@ -335,11 +335,11 @@ int LuaDouble::date(lua_State* L)
     luaset_strint(L,  "sec",   stm->tm_sec);
     luaset_strint(L,  "min",   stm->tm_min);
     luaset_strint(L,  "hour",  stm->tm_hour);
-    luaset_strint(L,  "day",   stm->tm_mday); 
+    luaset_strint(L,  "day",   stm->tm_mday);
     luaset_strint(L,  "month", stm->tm_mon  + 1);
     luaset_strint(L,  "year",  stm->tm_year + 1900);
-    luaset_strint(L,  "wday",  stm->tm_wday + 1);   
-    luaset_strint(L,  "yday",  stm->tm_yday + 1);   
+    luaset_strint(L,  "wday",  stm->tm_wday + 1);
+    luaset_strint(L,  "yday",  stm->tm_yday + 1);
     luaset_strbool(L, "isdst", stm->tm_isdst);
   }
   else {
@@ -357,7 +357,7 @@ int LuaDouble::date(lua_State* L)
         reslen = strftime(buff, sizeof(buff), cc, stm);
         luaL_addlstring(&b, buff, reslen);
       }
-    }  
+    }
     luaL_pushresult(&b);
   }
 

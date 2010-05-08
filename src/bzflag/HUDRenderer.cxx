@@ -684,7 +684,7 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
   if (GfxBlockMgr::markers.blocked()) {
     return;
   }
- 
+
   double map[3] = {0,0,0};
   double o[3];
   o[0] = object[0];

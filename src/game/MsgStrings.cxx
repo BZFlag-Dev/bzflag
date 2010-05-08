@@ -659,7 +659,7 @@ static MsgStringList handleMsgForceState(const PacketInfo& pi)
     d = nboUnpackFloat(d, tmpfloat);
     listPush(list, 1, "angvel: %g", tmpfloat);
   }
-  
+
   return list;
 }
 

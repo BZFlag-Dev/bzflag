@@ -120,7 +120,7 @@ BZRobotPlayer::BZRobotPlayer(const PlayerId& _id,
 {
 #if defined(HAVE_PTHREADS)
   pthread_mutex_init(&player_lock, NULL);
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
   InitializeCriticalSection(&player_lock);
 #endif
   for (int i = 0; i < BZRobotPlayer::updateCount; ++i)
@@ -134,7 +134,7 @@ LOCK_PLAYER
   clearEventQueue(tsScanQueue);
   clearEventQueue(tsEventQueue);
 UNLOCK_PLAYER
-#if defined(_WIN32) 
+#if defined(_WIN32)
   DeleteCriticalSection (&player_lock);
 #endif
 }

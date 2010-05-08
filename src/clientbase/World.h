@@ -391,7 +391,7 @@ inline ClientFlag&	World::getClientFlag(int index) const
 {
   return flags[index];
 }
- 
+
 inline const Obstacle* World::getBase(int _team, int base) const
 {
   const TeamBases &b = bases[_team];

@@ -81,7 +81,7 @@ class MeshObstacle : public Obstacle {
       Convex             = 8,
       ConvexTrace        = 9
     };
-    
+
 
     const char*  getType() const;
     ObstacleType getTypeID() const { return meshType; }
@@ -141,7 +141,7 @@ class MeshObstacle : public Obstacle {
     }
 
     void setDrawInfo(MeshDrawInfo*);
-    
+
 
     int packSize() const;
     void *pack(void*) const;

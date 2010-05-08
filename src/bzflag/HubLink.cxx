@@ -48,7 +48,7 @@ const std::string HubLink::codeFileName = "hub.lua";
 
 //============================================================================//
 //============================================================================//
-                    
+
 void HubLink::debugf(int level, const char* fmt, ...)
 {
   static BZDB_int debugHub("debugHub");
@@ -328,7 +328,7 @@ void HubLink::stateDNS()
   // add the rest of the address information
   addr.sin_family = AF_INET;
   addr.sin_port = htons(port); // set the port
-        
+
   const int connCode = connect(sock, (const sockaddr*)&addr, sizeof(addr));
   if ((connCode != 0) && (getErrno() != EINPROGRESS)) {
     fail("connect() error: ", getErrno());
@@ -607,7 +607,7 @@ bool HubLink::readData(int bytes, std::string& data)
     recvQueue.pop_front();
     recvQueue.push_front(s.substr(bytes));
   }
-  
+
   recvTotal -= data.size();
 
   return true;
@@ -649,7 +649,7 @@ bool HubLink::readChunk(std::string& chunk)
   if (!combineRecv(lenSize)) {
     return false;
   }
-  
+
   uint32_t chunkLen;
   nboUnpackUInt32((void*)recvQueue.front().c_str(), chunkLen);
   const uint32_t totalLen = lenSize + chunkLen;
@@ -657,7 +657,7 @@ bool HubLink::readChunk(std::string& chunk)
   if (!combineRecv(totalLen)) {
     return false;
   }
-   
+
   chunk = recvQueue.front().substr(lenSize, chunkLen);
 
   if (recvQueue.front().size() == totalLen) {
@@ -668,10 +668,10 @@ bool HubLink::readChunk(std::string& chunk)
     recvQueue.pop_front();
     recvQueue.push_front(s.substr(totalLen));
   }
-   
+
   recvTotal -= totalLen;
 
-  return true;    
+  return true;
 }
 
 

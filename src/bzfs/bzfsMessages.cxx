@@ -1410,10 +1410,10 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     netMsg.broadcast(netCode);
     return true;
   }
-   
+
   // specific player
   if (dstPlayerID <= LastRealPlayer) {
-    GameKeeper::Player* dstPlayer =   
+    GameKeeper::Player* dstPlayer =
       GameKeeper::Player::getPlayerByIndex(dstPlayerID);
     if (dstPlayer == NULL) {
       return false;
@@ -1421,7 +1421,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     netMsg.send(dstPlayer->netHandler, netCode);
     return true;
   }
-   
+
   // admin group
   if (dstPlayerID == AdminPlayers) {
     std::vector<int> admins =
@@ -1433,7 +1433,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
     }
     return true;
   }
-   
+
   // send to a team
   TeamColor dstTeam = TeamColor(250 - dstPlayerID);
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -1443,7 +1443,7 @@ bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
         dstPlayer->player.isTeam(dstTeam)) {
       netMsg.send(dstPlayer->netHandler, netCode);
     }
-  }  
+  }
   return true;
 }
 

@@ -30,29 +30,29 @@ class RobotScript
 public:
   RobotScript();
   virtual ~RobotScript() {}
-  
+
   static RobotScript *loadFile(std::string filename);
-  
+
   void setPlayer(BZRobotPlayer *_botplayer);
   bool hasPlayer();
-  
+
   void start();
   void stop();
-  
+
   bool loaded() const { return _loaded; }
   bool running() const { return _running; }
   std::string getError() const { return error; }
-  
+
 protected:
   virtual bool load(std::string /*filename*/) { return false; }
   virtual BZRobots::Robot *create(void) { return NULL; }
   virtual void destroy(BZRobots::Robot * /*instance*/) { }
-  
+
 private:
   BZRobots::Robot *robot;
   BZRobotPlayer *botplayer;
   RobotCallbacks *bzrobotcb;
-  
+
 #ifndef _WIN32
   pthread_t rthread;
 #else

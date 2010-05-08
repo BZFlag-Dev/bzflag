@@ -519,15 +519,15 @@ void LocalPlayer::doUpdateMotion(float dt)
 
     static BZDB_float maxBumpHeight(BZDBNAMES.MAXBUMPHEIGHT);
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
-    
+
     bool hasFlatTop = obstacle->isFlatTop();
-    if (obstacle->getTypeID() == faceType) { 
+    if (obstacle->getTypeID() == faceType) {
       MeshFace* topFace = ((MeshFace*)obstacle)->getTopNeighbor();
       if (topFace != NULL) {
         hasFlatTop = true;
       }
     }
-    
+
     if ((oldLocation != InAir) && hasFlatTop &&
 	(obstacleTop != tmpPos.z) &&
 	(obstacleTop < (tmpPos.z + maxBumpHeight))) {
@@ -1272,7 +1272,7 @@ void LocalPlayer::changeTeam(TeamColor newTeam)
 void LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
   FlagType* flag = getFlag();
-  
+
   // If we aren't allowed to move, then the desired speed is 0.
   if (
 	  (!canMoveForward() && fracOfMaxSpeed > 0) ||

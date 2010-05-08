@@ -94,7 +94,7 @@ void ControlPanel::addMutexMessage(const char* msg)
   }
 
   LOCK_SCREENSHOT_MUTEX
-  mutexMsgs.push_back(msg);  
+  mutexMsgs.push_back(msg);
   UNLOCK_SCREENSHOT_MUTEX
 }
 

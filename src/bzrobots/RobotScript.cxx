@@ -44,7 +44,7 @@ RobotScript *RobotScript::loadFile(std::string filename)
     return new RobotScript();
   }
   std::string extension = filename.substr(extension_pos + 1);
-  
+
   if (!SCRIPTTOOLFACTORY.IsRegistered(extension)) {
     return new RobotScript();
   }

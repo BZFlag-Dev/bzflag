@@ -734,7 +734,7 @@ void ServerLink::sendEnter(PlayerId _id, PlayerType type, NetworkUpdates updates
   if (state != Okay) return;
   char msg[MaxPacketLen] = {0};
   void* buf = msg;
-  
+
   buf = nboPackUInt8(buf, uint8_t(_id));
   buf = nboPackUInt16(buf, uint16_t(type));
   buf = nboPackUInt16(buf, uint16_t(updates));
@@ -860,7 +860,7 @@ void ServerLink::sendShotBegin(const FiringInfo& info)
 
   buf = nboPackUInt8(buf, info.shot.player);
   buf = nboPackUInt16(buf, info.shot.id);
-  buf = nboPackDouble(buf, GameTime::getStepTime()); 
+  buf = nboPackDouble(buf, GameTime::getStepTime());
   buf = nboPackFVec3(buf, info.shot.pos);
   buf = nboPackFVec3(buf, info.shot.vel);
 
@@ -987,8 +987,8 @@ bool ServerLink::sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
 
   const size_t headerSize =
     (sizeof(uint16_t) * 2) + // code and len
-    (sizeof(uint8_t)  * 2) + // player ids  
-    (sizeof(int16_t)  * 2) + // script ids 
+    (sizeof(uint8_t)  * 2) + // player ids
+    (sizeof(int16_t)  * 2) + // script ids
     (sizeof(uint8_t))      + // status bits
     (sizeof(uint32_t));      // data count
 
@@ -1002,7 +1002,7 @@ bool ServerLink::sendLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
   buf = nboPackInt16(buf, srcScriptID);
   buf = nboPackUInt8(buf, dstPlayerID);
   buf = nboPackInt16(buf, dstScriptID);
-  buf = nboPackUInt8(buf, status);  
+  buf = nboPackUInt8(buf, status);
   buf = nboPackStdString(buf, data);
 
   uint16_t code = (status & MsgLuaDataUdpBit) ? MsgLuaDataFast : MsgLuaData;

@@ -342,7 +342,7 @@ void			InputMenu::resize(int _width, int _height)
 
   for (i = 1; i < count; i++) {
     if (listHUD[i]->getLabel() == "Confine mouse:") {
-      HUDuiList* list = reinterpret_cast<HUDuiList*>(listHUD[i]);      
+      HUDuiList* list = reinterpret_cast<HUDuiList*>(listHUD[i]);
       if (BZDB.isTrue("mousegrab")) {
         list->setIndex(1);
       } else if (BZDB.isTrue("mouseClamp")) {

@@ -69,7 +69,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
     std::getline(input, line);
     input.putback('\n');
     return readLine(cmd, line);
-  }  
+  }
   else if (!mesh) {
     return WorldFileLocation::read(cmd, input);
   }

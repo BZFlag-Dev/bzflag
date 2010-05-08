@@ -314,7 +314,7 @@ int curlProgressFunc(void * /*clientp*/,
     }
   }
   */
-  
+
   // update the status
   double percentage = 0.0;
   if ((int)dltotal > 0)
@@ -844,7 +844,7 @@ void handleNewPlayer(void *msg)
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt8(msg, botID);
   msg = nboUnpackInt16(msg, team);
-  
+
 #ifdef ROBOT
   int i;
   for (i = 0; i < MAX_ROBOTS; i++)
@@ -1658,7 +1658,7 @@ void joinInternetGame2()
   LocalPlayer::setMyTank(myTank);
 
   // tell the server that the observer tank wants to join
-  serverLink->sendEnter(myTank->getId(), TankPlayer, AllUpdates, 
+  serverLink->sendEnter(myTank->getId(), TankPlayer, AllUpdates,
 			myTank->getTeam(), myTank->getCallSign(),
 			startupInfo.token, startupInfo.referrer);
   startupInfo.token[0] = '\0';
@@ -1697,7 +1697,7 @@ void doTankMotions(const float /*dt*/)
 	addMessage(remotePlayers[i], "okay");
     }
   }
-  
+
   // do motion
   if (myTank) {
     myTank->update();
@@ -1730,7 +1730,7 @@ void doUpdates ( const float dt )
     realDT = dtLimit;
     doneDT -= dtLimit;
   }
-  
+
   while (doneDT > 0) {
     updatePositions(dt);
     checkEnvironment(dt);
@@ -1740,7 +1740,7 @@ void doUpdates ( const float dt )
     if (doneDT < dtLimit) // if we only have a nubby left, don't do a full dt.
       realDT = doneDT;
   }
-  
+
   // update AutoHunt
   AutoHunt::update();
 }
@@ -1799,7 +1799,7 @@ static void playingLoop()
   // main loop
   while (!CommandsStandard::isQuit()) {
     BZDBCache::update();
-    
+
     canSpawn = true;
 
     // set this step game time
@@ -1932,7 +1932,7 @@ void botStartPlaying()
   }
 
   RobotScript *robotScript = RobotScript::loadFile(BZDB.get("robotScript"));
-  
+
   robotScripts.push_back(robotScript);
 
   if(!robotScript->loaded()) {

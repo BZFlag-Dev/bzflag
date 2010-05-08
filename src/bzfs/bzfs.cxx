@@ -924,7 +924,7 @@ bool defineWorld()
     WorldCodeHeaderSize +
     world->getDatabaseSize() +
     sizeof(uint16_t) + // WorldCodeEndSize
-    WorldCodeEndSize + 
+    WorldCodeEndSize +
     sizeof(uint16_t);  // WorldCodeEnd
 
   worldDatabase = new char[worldDatabaseSize];
@@ -1543,7 +1543,7 @@ void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   // tell them they were rejected
   sendRejectPlayerMessage(playerIndex,code,reason);
   // remove player so he can not ignore the reject message and, then can avoid a ban, hostban...
-  snprintf(message, MessageLen, "rejected: %s", reason); 
+  snprintf(message, MessageLen, "rejected: %s", reason);
   removePlayer(playerIndex, message, true);
   return;
 }

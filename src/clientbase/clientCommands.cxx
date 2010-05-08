@@ -662,7 +662,7 @@ static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
     return "sendmsg: something is amiss";
   }
 
-  // concatenate the args  
+  // concatenate the args
   std::string msg = "";
   for (size_t i = 1; i < args.size(); i++) {
     if (i != 1) {
@@ -842,7 +842,7 @@ static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool
   }
   return std::string();
 }
-  
+
 
 static std::string cmdTime(const std::string&, const CmdArgList& args, bool*)
 {
@@ -1037,12 +1037,12 @@ static std::string cmdLuaUser(const std::string& cmd, const CmdArgList& args, bo
 {
   if (args.size() < 1) {
     return "usage: luauser { reload | disable | status }";
-  }  
+  }
   LuaClientScripts::LuaUserCommand(cmd + " " + concatArgs(args));
   return std::string();
 }
- 
- 
+
+
 static std::string cmdLuaBzOrg(const std::string& cmd, const CmdArgList& args, bool*)
 {
   if (args.size() < 1) {

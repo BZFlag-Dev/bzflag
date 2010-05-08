@@ -47,7 +47,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getAllEvents()
     return BOT_CALLBACKS->GetAllEvents(BOT_CLIENT_PLAYER);
   } else {
      std::list<BZRobots::Event> events;
-	 return events; 
+	 return events;
   }
 }
 
@@ -57,7 +57,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getBulletHitBulletEvents()
     return BOT_CALLBACKS->GetBulletHitBulletEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -67,7 +67,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getBulletHitEvents()
     return BOT_CALLBACKS->GetBulletHitEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -77,7 +77,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getBulletMissedEvents()
     return BOT_CALLBACKS->GetBulletMissedEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -122,7 +122,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getHitByBulletEvents()
     return BOT_CALLBACKS->GetHitByBulletEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -132,7 +132,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getHitRobotEvents()
     return BOT_CALLBACKS->GetHitRobotEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -142,7 +142,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getHitWallEvents()
     return BOT_CALLBACKS->GetHitWallEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -173,7 +173,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getRobotDeathEvents()
     return BOT_CALLBACKS->GetRobotDeathEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -183,7 +183,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getScannedRobotEvents()
     return BOT_CALLBACKS->GetScannedRobotEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 
@@ -193,7 +193,7 @@ std::list<BZRobots::Event> BZRobots::AdvancedRobot::getStatusEvents()
     return BOT_CALLBACKS->GetStatusEvents(BOT_CLIENT_PLAYER);
   } else {
     std::list<BZRobots::Event> events;
-	return events; 
+	return events;
   }
 }
 

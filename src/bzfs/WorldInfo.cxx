@@ -100,7 +100,7 @@ WorldInfo::~WorldInfo()
   TRANSFORMMGR.clear();
   OBSTACLEMGR.clear();
   COLLISIONMGR.clear();
-  linkManager.clear();  
+  linkManager.clear();
 
   finished = false;
 }
@@ -575,7 +575,7 @@ void WorldInfo::finishWorld()
       vars.insert(text->getData());
     }
   }
-  variableWarning("text",  vars);  
+  variableWarning("text",  vars);
 
   finished = true;
 

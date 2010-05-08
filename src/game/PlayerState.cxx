@@ -17,10 +17,10 @@
 #include <math.h>
 
 // common implementation headers
+#include "BZDBCache.h"
 #include "NetMessage.h"
 #include "Pack.h"
 #include "Protocol.h"
-#include "StateDatabase.h"
 
 
 // the full scale of a int16_t  (less 1.0 for safety)
@@ -75,13 +75,14 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
   buf = nboPackInt32(buf, int32_t(order));
   buf = nboPackInt16(buf, int16_t(status));
 
-  if ((BZDB.eval(BZDBNAMES.NOSMALLPACKETS) > 0.0f) ||
-      (fabsf(pos.x) >= smallMaxDist)      ||
-      (fabsf(pos.y) >= smallMaxDist)      ||
-      (fabsf(pos.z) >= smallMaxDist)      ||
-      (fabsf(velocity.x) >= smallMaxVel)  ||
-      (fabsf(velocity.y) >= smallMaxVel)  ||
-      (fabsf(velocity.z) >= smallMaxVel)  ||
+  static BZDB_bool noSmallPackets(BZDBNAMES.NOSMALLPACKETS);
+  if (noSmallPackets                     ||
+      (fabsf(pos.x) >= smallMaxDist)     ||
+      (fabsf(pos.y) >= smallMaxDist)     ||
+      (fabsf(pos.z) >= smallMaxDist)     ||
+      (fabsf(velocity.x) >= smallMaxVel) ||
+      (fabsf(velocity.y) >= smallMaxVel) ||
+      (fabsf(velocity.z) >= smallMaxVel) ||
       (fabsf(angVel) >= smallMaxAngVel)) {
 
     code = MsgPlayerUpdate;
@@ -131,7 +132,8 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     buf = nboPackInt32(buf, phydrv);
   }
 
-  if ((status & UserInputs) != 0) {
+  static BZDB_bool sendUserInputs("_sendUserInputs");
+  if (sendUserInputs || ((status & UserInputs) != 0)) {
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
@@ -160,13 +162,14 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
   netMsg.packInt32(int32_t(order));
   netMsg.packInt16(int16_t(status));
 
-  if ((BZDB.eval(BZDBNAMES.NOSMALLPACKETS) > 0.0f) ||
-      (fabsf(pos.x) >= smallMaxDist)      ||
-      (fabsf(pos.y) >= smallMaxDist)      ||
-      (fabsf(pos.z) >= smallMaxDist)      ||
-      (fabsf(velocity.x) >= smallMaxVel)  ||
-      (fabsf(velocity.y) >= smallMaxVel)  ||
-      (fabsf(velocity.z) >= smallMaxVel)  ||
+  static BZDB_bool noSmallPackets(BZDBNAMES.NOSMALLPACKETS);
+  if (noSmallPackets                     ||
+      (fabsf(pos.x) >= smallMaxDist)     ||
+      (fabsf(pos.y) >= smallMaxDist)     ||
+      (fabsf(pos.z) >= smallMaxDist)     ||
+      (fabsf(velocity.x) >= smallMaxVel) ||
+      (fabsf(velocity.y) >= smallMaxVel) ||
+      (fabsf(velocity.z) >= smallMaxVel) ||
       (fabsf(angVel) >= smallMaxAngVel)) {
 
     code = MsgPlayerUpdate;
@@ -215,7 +218,8 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
     netMsg.packInt32(phydrv);
   }
 
-  if ((status & UserInputs) != 0) {
+  static BZDB_bool sendUserInputs("_sendUserInputs");
+  if (sendUserInputs || ((status & UserInputs) != 0)) {
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);

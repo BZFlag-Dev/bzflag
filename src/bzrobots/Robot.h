@@ -69,11 +69,11 @@ public:
   void turnRadarRight(double degrees);
   void turnRadarLeft(double degrees);
   void turnRight(double degrees);
-  
+
   virtual void run() {}
 
   /* Event Handlers. */
-  
+
   virtual void onBattleEnded(const BattleEndedEvent &/*event*/) {}
   virtual void onBulletFired(const BulletFiredEvent &/*event*/) {}
   virtual void onBulletHit(const BulletHitEvent &/*event*/) {}

@@ -58,12 +58,12 @@ local function DoReadLine()
   if (not bz.ReadStdin) then
     return
   end
-  
+
   local line = bz.ReadStdin()
   if (not line) then
     return
   end
-  
+
   print('ReadStdin(): ' .. line:gsub('\n', ''))
 
   local chunk, err = loadstring(line)
@@ -71,7 +71,7 @@ local function DoReadLine()
     print(err)
     return
   end
-  
+
   local success, err = pcall(chunk)
   if (not success) then
     print(err)

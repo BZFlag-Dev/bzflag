@@ -394,7 +394,7 @@ CALLIN(PlayerJoinEvent,            PlayerJoined,            BASIC);        // -E
 CALLIN(PlayerPartEvent,            PlayerParted,            BASIC);        // -Event+ed
 CALLIN(PlayerPausedEvent,          PlayerPaused,            BASIC);        // -Event
 CALLIN(PlayerPauseRequestEvent,    PlayerPauseRequest,      FIRST_FALSE);  // -Event
-CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    BASIC);
+CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    SPECIAL);
 CALLIN(PlayerSpawnEvent,           PlayerSpawned,           BASIC);        // -Event+ed
 CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,        BASIC);        // -Event
 CALLIN(PlayerUpdateEvent,          PlayerUpdate,            BASIC);        // -Event
@@ -1461,7 +1461,16 @@ bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
   lua_pushstring(L,  ed->key.c_str());
   lua_pushstring(L,  ed->data.c_str());
 
-  return RunCallIn(3, 0);
+  if (!RunCallIn(3, 2)) {
+    return false;
+  }
+
+  if (lua_israwstring(L, -2)) { ed->key  = lua_tostring(L, -2); }
+  if (lua_israwstring(L, -1)) { ed->data = lua_tostring(L, -1); }
+
+  lua_pop(L, 2);
+
+  return true;
 }
 
 

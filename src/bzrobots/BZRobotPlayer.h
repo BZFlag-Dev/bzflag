@@ -33,7 +33,7 @@
 #if defined(HAVE_PTHREADS)
 # define LOCK_PLAYER   pthread_mutex_lock(&player_lock);
 # define UNLOCK_PLAYER pthread_mutex_unlock(&player_lock);
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
 # define LOCK_PLAYER   EnterCriticalSection(&player_lock);
 # define UNLOCK_PLAYER LeaveCriticalSection(&player_lock);
 #else
@@ -63,7 +63,7 @@ public:
     turnUpdate,
     updateCount
   } variableUpdates;
-  
+
   void setRobot(BZRobots::Robot *_robot);
 
   void explodeTank();
@@ -156,7 +156,7 @@ public:
   void botTurnRadarRightRadians(double turn);
   void botTurnRight(double turn);
   void botTurnRightRadians(double turn);
-  
+
 private:
   double lastExec;
   bool inEvents;
@@ -185,11 +185,11 @@ private:
   double tsCurrentHeading;
   double tsCurrentSpeed, tsSpeed, tsNextSpeed;
   double tsCurrentTurnRate, tsTurnRate, tsNextTurnRate;
- 
+
   double tsDistanceRemaining, tsNextDistance;
   bool tsDistanceForward, tsTurnLeft;
   double tsTurnRemaining, tsNextTurn;
- 
+
   bool tsHasStopped;
   double tsStoppedDistance, tsStoppedTurn;
   bool tsStoppedForward, tsStoppedLeft;
@@ -198,7 +198,7 @@ private:
 
 #if defined(HAVE_PTHREADS)
   pthread_mutex_t player_lock;
-#elif defined(_WIN32) 
+#elif defined(_WIN32)
   CRITICAL_SECTION player_lock;
 #endif
 // End shared thread-safe variables

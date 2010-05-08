@@ -1058,7 +1058,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
     const Corner& corner = corners[i];
     out << indent << "  corner " << corner.vertex << " "
 				 << corner.normal << " "
-				 << corner.texcoord 
+				 << corner.texcoord
 				 << debugIndex(i) << std::endl;
   }
 

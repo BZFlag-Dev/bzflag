@@ -121,7 +121,7 @@ void TextureMatrixManager::getVariables(std::set<std::string>& vars) const
     if (!texmat->spinVar.empty())  { vars.insert(texmat->spinVar);  }
     if (!texmat->scaleVar.empty()) { vars.insert(texmat->scaleVar); }
     if (!texmat->shiftVar.empty()) { vars.insert(texmat->shiftVar); }
-  }    
+  }
 }
 
 

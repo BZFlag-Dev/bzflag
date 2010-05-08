@@ -88,7 +88,7 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
   fvec3 lastTankPositionRaw = tank.motion.getOrigin();
   lastTankPositionRaw.z += 0.5f * tank.size.z;
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
-  
+
   const Extents& tankBBox = tank.bbox;
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
@@ -116,7 +116,7 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
       const Ray& ray = segments[i].ray;
 
       Ray relativeRay(Intersect::rayMinusRay(ray, 0.0, tankLastMotion, 0.0));
-    
+
       if (!RayTest(tank, relativeRay, position, minTime,
                    segments[i], dt, prevTime, shotRadius)) {
         continue;
@@ -147,7 +147,7 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
       // construct relative shot ray:  origin and velocity relative to
       // my tank as a function of time (t=0 is start of the interval).
       Ray relativeRay(Intersect::rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
-    
+
       if (!RayTest(tank, relativeRay, position, minTime,
                    s, dt, prevTime, shotRadius )) {
         continue;

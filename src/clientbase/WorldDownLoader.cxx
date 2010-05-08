@@ -113,7 +113,7 @@ uint32_t WorldDownLoader::processChunk(void *buf, uint16_t len, int bytesLeft)
   if (cacheOut) {
     cacheOut->write((char *)buf, len);
   }
-  
+
   worldPtr += len;
 
   const int totalSize = worldPtr + bytesLeft;
@@ -124,7 +124,7 @@ uint32_t WorldDownLoader::processChunk(void *buf, uint16_t len, int bytesLeft)
   showError(
     TextUtils::format("Downloading World (%2d%% complete/%d kb remaining)...",
                       complete, remaining).c_str());
-  
+
   if (bytesLeft == 0) {
     if (cacheOut) {
       delete cacheOut;

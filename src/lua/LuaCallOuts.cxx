@@ -285,7 +285,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
   if (gameCtrl) {
     PUSH_LUA_CFUNC(L, RemoveShot);
   }
-    
+
 
 #ifdef HAVE_UNISTD_H
   PUSH_LUA_CFUNC(L, ReadStdin);

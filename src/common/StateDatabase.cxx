@@ -122,7 +122,7 @@ void StateDatabase::set(const std::string& name,
 			const std::string& value,
 			Permission accessLevel)
 {
-  
+
   ItemMap::iterator it = lookup(name);
   Item& item = it->second;
   if (accessLevel < item.permission) {

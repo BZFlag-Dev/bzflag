@@ -73,7 +73,7 @@ static std::ifstream* getInStream(const std::string& path,
 {
   if (isDirectory(path)) {
     return NULL;
-  }  
+  }
   std::ifstream* stream = new std::ifstream(path.c_str(), mode);
   if (stream && *stream) {
     return stream; // ready for reading

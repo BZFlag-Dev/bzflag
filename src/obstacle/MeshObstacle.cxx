@@ -35,7 +35,7 @@
 #include "Triangulate.h"
 
 
-const char*	MeshObstacle::typeName = "MeshObstacle";
+const char* MeshObstacle::typeName = "MeshObstacle";
 
 
 MeshObstacle::MeshObstacle()
@@ -256,7 +256,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       return false;
     }
     else {
-      // 
+      //
       logDebugMessage(1,
         "WARNING: face triangulated into %u new faces\n", triSize);
       // warn if a zone with fixedFlag was split
@@ -449,7 +449,7 @@ void MeshObstacle::finalize()
   for (int f = 0; f < faceCount; f++) {
     faces[f]->setFaceID(f);
   }
-  
+
   // calculate topNeighbor for all faces
   setupTopNeighbors();
 
@@ -749,7 +749,6 @@ bool MeshObstacle::containsPoint(const fvec3& point) const
 
 bool MeshObstacle::containsPointConvex(const fvec3& point, bool trace) const
 {
-  
   return trace && point.x != 0.0f; // FIXME
 }
 
@@ -757,7 +756,6 @@ bool MeshObstacle::containsPointConvex(const fvec3& point, bool trace) const
 bool MeshObstacle::containsPointParity(const fvec3& point,
                                        bool inside, bool trace) const
 {
-  
   return inside && trace && point.x != 0.0f; // FIXME
 }
 

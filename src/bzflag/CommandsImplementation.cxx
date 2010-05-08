@@ -491,6 +491,8 @@ bool HubCommand::operator() (const char *commandLine)
 }
 
 
+//============================================================================//
+
 static bool foundVar = false;
 
 class VarDispInfo {
@@ -578,7 +580,7 @@ static void listSetVars(const std::string& name, void* varDispPtr)
 	       ColorStrings[BlueColor],   BZDB.get(name).c_str(),
 	       ColorStrings[YellowColor], BZDB.getDefault(name).c_str());
     } else {
-      snprintf(message, MessageLen, "%s %s <%g> %s [%s]", 
+      snprintf(message, MessageLen, "%s %s <%g> %s [%s]",
 	       varDisp->prefix.c_str(),
 	       name.c_str(),
 	       BZDB.eval(name),
@@ -707,6 +709,8 @@ bool LocalSetCommand::operator() (const char *commandLine)
   return true;
 }
 
+
+//============================================================================//
 
 bool QuitCommand::operator() (const char *commandLine)
 {
@@ -888,7 +892,7 @@ static void saveDocket(const std::string& mapname,
         addMessage(NULL, name + " failed: " + docketDir);
       }
     }
-  }  
+  }
 }
 
 
@@ -956,7 +960,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   if (!noDockets) {
     saveDocket(fullname, "LuaWorld", BZVFS_LUA_WORLD);
     saveDocket(fullname, "LuaRules", BZVFS_LUA_RULES);
-  }    
+  }
 
   return true;
 }
@@ -1005,8 +1009,8 @@ bool LuaUserCommand::operator() (const char* cmdLine)
   LuaClientScripts::LuaUserCommand(cmdLine + 1); // skip the '/'
   return true;
 }
- 
- 
+
+
 bool LuaBzOrgCommand::operator() (const char* cmdLine)
 {
   if (cmdLine[0] == 0) {
@@ -1015,8 +1019,8 @@ bool LuaBzOrgCommand::operator() (const char* cmdLine)
   LuaClientScripts::LuaBzOrgCommand(cmdLine + 1); // skip the '/'
   return true;
 }
- 
- 
+
+
 bool LuaWorldCommand::operator() (const char* cmdLine)
 {
   if (cmdLine[0] == 0) {

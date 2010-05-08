@@ -187,7 +187,7 @@ std::string		getOSString()
 #else
 #ifdef __APPLE__
   OSErr err = noErr;
-  
+
   SInt32 systemMajor, systemMinor, systemBugFix = 0;
   err = Gestalt(gestaltSystemVersionMajor, &systemMajor);
   if (err == noErr) {
@@ -196,7 +196,7 @@ std::string		getOSString()
       err = Gestalt(gestaltSystemVersionBugFix, &systemBugFix);
     }
   }
-  
+
   std::stringstream reply;
   if (err == noErr) {
     reply << "Mac OS X ";
@@ -221,7 +221,7 @@ std::string		getOSString()
     reply << " unknown architecture";
   }
   free(architecture);
-  
+
 #ifdef __LP64__
   // applications can also be running in 64 bit mode
   // despite kernel is running in 32 bit mode
@@ -242,7 +242,7 @@ std::string		getOSString()
       reply << "; CPU 64 bit capable";
     }
   }
-  
+
   // examples
   // Mac OS X 10.4.11 Power Macintosh; PPC BZFlag
   // Mac OS X 10.4.11 i386; i386 BZFlag

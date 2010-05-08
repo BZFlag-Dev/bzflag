@@ -92,7 +92,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     std::getline(input, line);
     input.putback('\n');
     return readLine(cmd, line);
-  }  
+  }
   else if (!face) {
     return WorldFileLocation::read(cmd, input);
   }
@@ -101,7 +101,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
   }
 }
 
-  
+
 bool CustomZone::readLine(const std::string& cmd, const std::string& line)
 {
   const std::string lower = TextUtils::tolower(cmd);

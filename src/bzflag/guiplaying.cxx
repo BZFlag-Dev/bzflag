@@ -902,7 +902,7 @@ static bool handleEvent(const BzfEvent& event)
         }
         case BzfKeyEvent::LeftMouse:
         case BzfKeyEvent::MiddleMouse:
-        case BzfKeyEvent::RightMouse: 
+        case BzfKeyEvent::RightMouse:
         case BzfKeyEvent::MouseButton6:
         case BzfKeyEvent::MouseButton7:
         case BzfKeyEvent::MouseButton8:
@@ -925,8 +925,8 @@ static bool handleEvent(const BzfEvent& event)
             eventHandler.KeyRelease(true, keysym, mods); // ignored return value
             return false;
           }
-        }  
-      }    
+        }
+      }
       break;
     }
     case BzfEvent::KeyDown: {
@@ -943,7 +943,7 @@ static bool handleEvent(const BzfEvent& event)
         }
         case BzfKeyEvent::LeftMouse:
         case BzfKeyEvent::MiddleMouse:
-        case BzfKeyEvent::RightMouse: 
+        case BzfKeyEvent::RightMouse:
         case BzfKeyEvent::MouseButton6:
         case BzfKeyEvent::MouseButton7:
         case BzfKeyEvent::MouseButton8:
@@ -958,7 +958,7 @@ static bool handleEvent(const BzfEvent& event)
         default: {
           const int mods = bzModsToEventMods(kEv.modifiers);
           const int keysym = kEv.button ? -kEv.button : kEv.unicode;
-          if (!HUDui::getFocus() && (kEv.button != 27)) { 
+          if (!HUDui::getFocus() && (kEv.button != 27)) {
             bool taken = eventHandler.KeyPress(false, keysym, mods);
             if (kEv.unicode) {
               taken = eventHandler.UnicodeText(false, kEv.unicode) || taken;
@@ -973,29 +973,29 @@ static bool handleEvent(const BzfEvent& event)
             }
             return false;
           }
-        }  
-      }    
+        }
+      }
       break;
     }
     case BzfEvent::MouseMove: {
       const BzfMotionEvent& mmEv = event.mouseMove;
       const int yCoord = mainWindow->getHeight() - mmEv.y - 1;
-      return eventHandler.MouseMove(false, mmEv.x, yCoord);   
+      return eventHandler.MouseMove(false, mmEv.x, yCoord);
       break;
     }
     case BzfEvent::Unset:
-    case BzfEvent::Quit: 
+    case BzfEvent::Quit:
     case BzfEvent::Redraw:
     case BzfEvent::Resize:
-    case BzfEvent::Map:   
+    case BzfEvent::Map:
     case BzfEvent::Unmap: {
       break;
     }
-  }  
+  }
   return false;
 }
- 
- 
+
+
 static void doEvent(BzfDisplay *disply)
 {
   BzfEvent event;
@@ -1369,7 +1369,7 @@ void handleResourceFetch (void *msg)
       resourceDownloader->addResource (item);
       printf("FIXME - fetch started for %s, %s\n", item.URL.c_str(),
              item.doneFunc ? "doneFunc" : "no-doneFunc");
-      
+
     }
   }
 }
@@ -1641,7 +1641,7 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
 
   if (victimPlayer != NULL) {
     eventHandler.PlayerKilled(*victimPlayer, killerPlayer,
-                              reason, flagType, phydrv);  
+                              reason, flagType, phydrv);
   }
 
   if (victimPlayer == myTank) {
@@ -2521,7 +2521,7 @@ void handleNewPlayer(void *msg)
   msg = nboUnpackUInt8(msg, id);
   msg = nboUnpackUInt8(msg, botID);
   msg = nboUnpackInt16(msg, team);
-  
+
 #ifdef ROBOT
   int i;
   for (i = 0; i < MAX_ROBOTS; i++)
@@ -2597,7 +2597,7 @@ static std::string getQueryGLResult(const std::string& query)
 
 #undef QUERY_COMPARE
 
-  return "";  
+  return "";
 }
 
 
@@ -3566,7 +3566,7 @@ static void changePlayerTeam(Player* player, TeamColor oldTeam,
     return;
   }
 
-  // FIXME -- player location 
+  // FIXME -- player location
 
   // change the roaming state
   if (newTeam != ObserverTeam) {
@@ -3894,13 +3894,13 @@ void leaveGame()
   // reload LuaUser and LuaBzOrg in case they were forbidden
   if (!CommandsStandard::isQuit()) {
     if (!LuaClientScripts::LuaUserIsActive()) {
-      LuaClientScripts::LuaUserLoadHandler();  
+      LuaClientScripts::LuaUserLoadHandler();
     }
     if (!LuaClientScripts::LuaBzOrgIsActive()) {
-      LuaClientScripts::LuaBzOrgLoadHandler();  
+      LuaClientScripts::LuaBzOrgLoadHandler();
     }
-  }  
-     
+  }
+
   if (hubLink && sayGoodbye) {
     hubLink->serverParted();
   }
@@ -4028,9 +4028,9 @@ void joinInternetGame2()
   }
 
   LuaClientScripts::LuaBzOrgUpdateForbidden();
-  LuaClientScripts::LuaUserUpdateForbidden(); 
-  LuaClientScripts::LuaRulesLoadHandler();    
-  LuaClientScripts::LuaWorldLoadHandler();    
+  LuaClientScripts::LuaUserUpdateForbidden();
+  LuaClientScripts::LuaRulesLoadHandler();
+  LuaClientScripts::LuaWorldLoadHandler();
 
   joiningGame = false;
 }
@@ -4147,7 +4147,7 @@ static void drawFakeCursor(int type)
       glEnd();
       glLineWidth(1.0f);
     }
- 
+
     glPointSize(6.0f);
     glBegin(GL_POINTS);
     glColor3f(1.0f, 1.0f, 1.0f); glVertex2i(mx, my);
@@ -4228,7 +4228,7 @@ static void renderRoamMouse()
   static const float color1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
   glLineWidth(1.49f);
-  glBegin(GL_LINES);  
+  glBegin(GL_LINES);
   glColor4fv(color0); glVertex2i(xc, yc);
   glColor4fv(color1); glVertex2i(mx, my);
   glEnd();
@@ -5781,7 +5781,7 @@ static void updateHubLink()
     hubLink = NULL;
   }
 }
- 
+
 
 //
 // main playing loop
@@ -6156,7 +6156,7 @@ static void BZDBGlobalCallback(const std::string& name, void* /*userData*/)
 {
   eventHandler.BZDBChange(name);
 }
- 
+
 
 void startPlaying()
 {
@@ -6541,9 +6541,9 @@ void startPlaying()
     //////////
 
   LuaClientScripts::LuaBzOrgFreeHandler();
-  LuaClientScripts::LuaUserFreeHandler(); 
+  LuaClientScripts::LuaUserFreeHandler();
   LuaClientScripts::Free();
-  OpenGLPassState::Free(); 
+  OpenGLPassState::Free();
   BZDB.removeGlobalCallback(BZDBGlobalCallback, NULL);
 
   // clean up

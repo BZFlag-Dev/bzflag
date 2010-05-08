@@ -205,7 +205,7 @@ private:
   ~StateDatabase();
 
   static bool onCallback(Callback, void* userData, void* iterateData);
-  
+
 private:
   struct Item {
     public:

@@ -74,7 +74,7 @@ class PhysicsDriver {
     }
     inline const std::string& getDeathMsg() const { return deathMsg; }
 
-    bool operator<(const PhysicsDriver& pd) const;    
+    bool operator<(const PhysicsDriver& pd) const;
 
     int packSize() const;
     void* pack(void*) const;
@@ -118,7 +118,7 @@ class PhysicsDriver {
     fvec2 radialPos;
 
     float slideTime;
-    
+
     std::string deathMsg;
 
     std::string linearVar;

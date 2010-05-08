@@ -33,7 +33,7 @@ inline bool EventClientList::lessThan(const EventClient* a,
       (b == &DummyEventClient::instance)) {
     return false;
   }
-   
+
   const int aOrder = a->GetOrder(orderType);
   const int bOrder = b->GetOrder(orderType);
   if (aOrder < bOrder) { return !reversed; }

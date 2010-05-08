@@ -518,7 +518,7 @@ int main(int argc, char **argv)
   bzfsrand((unsigned int)time(0));
 
   ScriptLoaderFactory::initialize();
-  
+
   /* try to set the processor affinity to prevent BzTime from
    * reporting negative times
    */

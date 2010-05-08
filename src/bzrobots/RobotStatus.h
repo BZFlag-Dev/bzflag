@@ -68,7 +68,7 @@ public:
   inline double  getX() const { return botX; }
   inline double  getY() const { return botY; }
   inline double  getZ() const { return botZ; }
-  
+
 protected:
   double botDistanceRemaining;
   double botEnergy;

@@ -376,7 +376,7 @@ bool			WinDisplay::getKey(const MSG& msg,
   // We recieve key messages as follows: WM_KEYDOWN, (translated) WM_CHAR, WM_KEYUP
   // This means that in order to get a char for WM_KEYUP we must save the CHAR that follows
   // WM_KEYDOWN.  Things to remember:
-  //  1: not all WM_KEYDOWNs for a particular key will generate the same WM_CHAR (` + a on 
+  //  1: not all WM_KEYDOWNs for a particular key will generate the same WM_CHAR (` + a on
   //	 German keyboard layouts, for instance).  Therefore we cannot remember WM_CHAR
   //	 permanently on a per-key basis.
   //  2: not all WM_KEYDOWNs for a particular key will generate a WM_CHAR AT ALL (` alone

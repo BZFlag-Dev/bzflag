@@ -86,7 +86,7 @@ void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 //  std::string finalName = !telename.empty() ? telename : name;
 
   std::string finalName = cleanName(telename);
-   
+
   if (!finalName.empty()) {
     tele->setName(finalName);
   }

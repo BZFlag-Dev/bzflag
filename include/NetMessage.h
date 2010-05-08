@@ -51,7 +51,7 @@ class NetMessage {
   protected:
     NetMessage(const void* fullData, size_t fullSize);
     NetMessage(uint16_t len, uint16_t code, const void* data);
-  
+
   public:
     void clear();
     void resetRead() { readIndex = 0; }

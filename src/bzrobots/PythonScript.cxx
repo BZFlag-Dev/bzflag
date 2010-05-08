@@ -138,7 +138,7 @@ bool PythonLoader::load(std::string filepath)
   }
 
   Py_XDECREF(file);
-  
+
   _loaded = true;
   error = "";
 

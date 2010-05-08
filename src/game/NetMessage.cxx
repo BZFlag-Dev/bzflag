@@ -39,7 +39,7 @@ uint16_t NetRecvMsg::getCode() const
   nboUnpackUInt16((uint16_t*)data + 1, code);
   return code;
 }
- 
+
 
 //============================================================================//
 
@@ -66,7 +66,7 @@ NetMessage::NetMessage(const void* fullData, size_t fullSize)
 
   const uint16_t msgSize = *((uint16_t*)fullData);
   assert(msgSize == (fullSize - lenCodeOffset));
-  
+
   dataSize = fullSize;
   capacity = fullSize;
   data = (char*) malloc(dataSize);

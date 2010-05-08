@@ -416,7 +416,7 @@ void handlePendingJoins()
       joinRequested = false;
       return;
     }
-  }  
+  }
 
   // if already connected to a game then first sign off
   if (myTank)
@@ -1011,22 +1011,25 @@ static void saveRobotInfo(Playerid id, void *msg)
 static void dumpMissingFlag(char *buf, uint16_t len)
 {
   int i;
-  int nFlags = len/2;
+  int nFlags = (len / 2);
   std::string flags;
 
   for (i = 0; i < nFlags; i++) {
     /* We can't use FlagType::unpack() here, since it counts on the
      * flags existing in our flag database.
      */
-    if (i)
+    if (i) {
       flags += ", ";
+    }
     flags += buf[0];
-    if (buf[1])
+    if (buf[1]) {
       flags += buf[1];
+    }
     buf += 2;
   }
 
-  showError(TextUtils::format("Flags not supported by this client: %s",flags.c_str()).c_str());
+  const std::string msg = "Flags not supported by this client: " + flags;
+  showError(msg.c_str());
 }
 
 
@@ -1296,7 +1299,7 @@ void handleAddPlayer(void* msg, bool& checkScores)
     if (player) {
       eventHandler.PlayerAdded(*player);
     }
-  }  
+  }
 }
 
 
@@ -1694,14 +1697,14 @@ static void handleLuaData(void *msg)
   int16_t  srcScriptID;
   PlayerId dstPlayerID;
   int16_t  dstScriptID;
-  uint8_t  statusBits; 
-  std::string data;    
+  uint8_t  statusBits;
+  std::string data;
 
   msg = nboUnpackUInt8(msg, srcPlayerID);
   msg = nboUnpackInt16(msg, srcScriptID);
   msg = nboUnpackUInt8(msg, dstPlayerID);
   msg = nboUnpackInt16(msg, dstScriptID);
-  msg = nboUnpackUInt8(msg, statusBits); 
+  msg = nboUnpackUInt8(msg, statusBits);
   msg = nboUnpackStdStringRaw(msg, data);
 
   eventHandler.RecvLuaData(srcPlayerID, srcScriptID,
@@ -2165,7 +2168,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
     case MsgQueryOS: {
       handleQueryOS(msg);
       break;
-    }   
+    }
     case MsgGMUpdate: {
       handleGMUpdate(msg);
       break;
@@ -2190,10 +2193,10 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       handleLimboMessage(msg);
       break;
     }
-    case MsgLuaData:   
+    case MsgLuaData:
     case MsgLuaDataFast: {
       handleLuaData(msg);
-      break;             
+      break;
     }
     case MsgPlayerData: {
       handlePlayerData(msg);

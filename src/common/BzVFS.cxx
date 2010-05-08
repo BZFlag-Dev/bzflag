@@ -281,7 +281,7 @@ class UrlFS : public RawFS
         logDebugMessage(0, "invalid UrlFS path: %s\n", path.c_str());
       }
     }
-    
+
     ~UrlFS() {}
 
   private:

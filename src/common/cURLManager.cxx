@@ -222,7 +222,7 @@ void cURLManager::setHttpHeader(const std::vector<std::string>& lines)
     logDebugMessage(3, "adding header line: '%s'\n", lines[i].c_str());
     httpHeader = curl_slist_append(httpHeader, lines[i].c_str());
   }
-  
+
   CURLcode result;
   result = curl_easy_setopt(easyHandle, CURLOPT_HTTPHEADER, httpHeader);
   if (result != CURLE_OK) {

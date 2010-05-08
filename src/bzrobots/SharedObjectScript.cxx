@@ -102,7 +102,7 @@ bool SharedObjectLoader::load(std::string filename)
       error = "Unknown pointer address size!\n";
       return false;
   }
-  
+
 #endif /* _WIN32 */
 
   _loaded = true;

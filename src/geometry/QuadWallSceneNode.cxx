@@ -241,7 +241,7 @@ void QuadWallSceneNode::init(const fvec3& base,
   const float vLength = vEdge.length();
   float area = uLength * vLength;
 
-  
+
   // If negative then these values aren't a number of times to repeat
   // the texture along the surface but the width, or a desired scaled
   // width, of the texture itself. Repeat the texture as many times

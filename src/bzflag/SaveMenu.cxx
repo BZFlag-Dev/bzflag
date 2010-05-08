@@ -74,12 +74,12 @@ SaveMenu::SaveMenu()
   addControl(frame);
 }
 
-void SaveMenu::setFileName(std::string& fname) 
+void SaveMenu::setFileName(std::string& fname)
 {
      filename = fname;
 }
 
-std::string SaveMenu::getFileName() 
+std::string SaveMenu::getFileName()
 {
      return filename;
 }

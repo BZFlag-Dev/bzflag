@@ -76,7 +76,7 @@ void sendMsgTangibilityReset();
 void sendOSRequest(int player);
 bool sendMsgLuaData(PlayerId srcPlayerID, int16_t srcScriptID,
                     PlayerId dstPlayerID, int16_t dstScriptID,
-                    uint8_t status, const std::string& data); 
+                    uint8_t status, const std::string& data);
 
 void sendMsgCanSpawn(int player, bool canSpawn);
 void sendMsgLimboMessage(int player, const std::string  &text);
@@ -102,7 +102,7 @@ void broadcastPlayerCustomDataPair(int playerID,
 void sendPlayerCustomDataMap(NetHandler* netHandler,
                              const GameKeeper::Player* player);
 void broadcastPlayerCustomDataMap(const GameKeeper::Player* player);
-                             
+
 
 /** class to pack a bunch of variables into one or more NetMessage.
  *  they are then automatically sent as they complete, or in the destructor.

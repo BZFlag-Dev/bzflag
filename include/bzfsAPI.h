@@ -1278,7 +1278,7 @@ public:
 class BZF_API bz_PlayerTeamChangeData_V1 : public bz_EventData
 {
 public:
-	bz_PlayerTeamChangeData_V1(int _playerID, 
+	bz_PlayerTeamChangeData_V1(int _playerID,
 	                           bz_eTeamType _newTeam, bz_eTeamType _oldTeam)
 		: bz_EventData(bz_ePlayerTeamChangeEvent)
 		, playerID(_playerID)
@@ -1295,7 +1295,7 @@ class BZF_API bz_LuaDataEventData_V1 : public bz_EventData
 public:
   bz_LuaDataEventData_V1(int _srcPlayerID, int _srcScriptID,
                          int _dstPlayerID, int _dstScriptID,
-                         int _status, const std::string& _data)   
+                         int _status, const std::string& _data)
   : srcPlayerID(_srcPlayerID)
   , srcScriptID(_srcScriptID)
   , dstPlayerID(_dstPlayerID)
@@ -1307,11 +1307,11 @@ public:
   {}
 
   int srcPlayerID;
-  int srcScriptID; 
+  int srcScriptID;
   int dstPlayerID;
   int dstScriptID;
   int status;
-  const char* data;  
+  const char* data;
   int dataLen;
   bool doNotSend;
 };

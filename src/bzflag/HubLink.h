@@ -95,7 +95,7 @@ class HubLink {
     std::string getLuaCodeFilename() const;
     bool loadFile(const std::string& path, std::string& data) const;
     bool saveFile(const std::string& path, const std::string& data) const;
-        
+
     void stateInit();
     void stateDNS();
     void stateConnect();
@@ -108,8 +108,8 @@ class HubLink {
     bool combineRecv(size_t minSize);
     bool readData(int bytes, std::string& data);
     bool peekData(int bytes, std::string& data);
-    bool sendChunk(const std::string& chunk); 
-    bool readChunk(std::string& chunk); 
+    bool sendChunk(const std::string& chunk);
+    bool readChunk(std::string& chunk);
 
   protected: // lua routines
     bool createLua(const std::string& code);

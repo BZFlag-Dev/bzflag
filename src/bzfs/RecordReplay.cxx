@@ -1683,7 +1683,7 @@ static void packVars(const std::string& key, void *data)
 {
   packVarData& pvd = *((packVarData*) data);
   std::string value = BZDB.get(key);
-  const int pairLen = nboStdStringPackSize(key) + nboStdStringPackSize(value); 
+  const int pairLen = nboStdStringPackSize(key) + nboStdStringPackSize(value);
   if ((pairLen + pvd.len) > (int)(MaxPacketLen - 2*sizeof(u16))) {
     nboPackUInt16(pvd.bufStart, pvd.count);
     pvd.count = 0;
@@ -2190,7 +2190,7 @@ static bool loadFileTime(RRtime *filetime, FILE *f)
     return false;
   }
 
-  // get the filetime  
+  // get the filetime
   rewind(f);
   if (fseek(f, sizeof(u32) * 3, SEEK_SET) < 0) {
     return false;

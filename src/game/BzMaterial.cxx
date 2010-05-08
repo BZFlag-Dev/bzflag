@@ -645,7 +645,7 @@ int BzMaterial::packSize() const
   fullSize += sizeof(float);   // poUnits
 
   fullSize += nboStdStringPackSize(blendFactors);
-  
+
   fullSize += sizeof(uint8_t); // texture count
   for (int i = 0; i < textureCount; i++) {
     fullSize += nboStdStringPackSize(textures[i].name);
@@ -1018,7 +1018,7 @@ void BzMaterial::addTexture(const std::string& texname)
   }
   delete[] textures;
   textures = tmpinfo;
-  
+
   TextureInfo* texinfo = &textures[textureCount - 1];
   const std::string newName = convertTexture(texname);
   texinfo->name = newName;

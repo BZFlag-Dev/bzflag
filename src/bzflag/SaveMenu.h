@@ -49,7 +49,7 @@ public:
 
 private:
   SaveMenuDefaultKey defaultKey;
-  std::string          filename; 
+  std::string          filename;
 };
 
 

@@ -28,10 +28,13 @@ void StatsLink::init( void )
   bz_registerEvent(bz_ePlayerPartEvent,this);
   bz_registerEvent(bz_eGetWorldEvent,this);
 
-  if (BZDB.isSet("_statURL"))
+  if (BZDB.isSet("_statURL")) {
     url = BZDB.get("_statURL");
-  if (!url.size())
+  }
+
+  if (!url.size()) {
     url = "http://stattrack.bzflag.org/track/";
+  }
 }
 
 StatsLink::~StatsLink()
@@ -41,24 +44,16 @@ StatsLink::~StatsLink()
 const char* getTeamName ( TeamColor team )
 {
   switch(team) {
-  default:
-    break;
-  case RogueTeam:
-    return "Rogue";
-  case RedTeam:
-    return "Red";
-  case GreenTeam:
-    return "Green";
-  case BlueTeam:
-    return "Blue";
-  case PurpleTeam:
-    return "Purple";
-  case ObserverTeam:
-    return "Observer";
-  case RabbitTeam:
-    return "Rabbit";
-  case HunterTeam:
-    return "Hunter";
+    default:
+      break;
+    case RogueTeam:    return "Rogue";
+    case RedTeam:      return "Red";
+    case GreenTeam:    return "Green";
+    case BlueTeam:     return "Blue";
+    case PurpleTeam:   return "Purple";
+    case ObserverTeam: return "Observer";
+    case RabbitTeam:   return "Rabbit";
+    case HunterTeam:   return "Hunter";
   }
   return "unknown";
 }
@@ -104,8 +99,9 @@ void StatsLink::buildXMLPlayerList ( std::string &params )
     params += "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
     params += "<ArrayOfGamePlayer xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n";
 
-    for( unsigned int i = 0; i < players->size(); i++ )
+    for (unsigned int i = 0; i < players->size(); i++) {
       buildXMLPlayer(params,players->get(i));
+    }
     params += "</ArrayOfGamePlayer>\n";
   }
   bz_deleteIntList(players);
@@ -114,8 +110,7 @@ void StatsLink::buildXMLPlayerList ( std::string &params )
 void StatsLink::buildHTMLPlayer ( std::string &params, int playerID, int index )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-  if (player)
-  {
+  if (player) {
     params += TextUtils::format("&callsign%d=%s",index,TextUtils::url_encode(std::string(player->player.getCallSign())).c_str());
 
     if (player->hasCustomField("motto") && player->customData["motto"].size())
@@ -136,7 +131,7 @@ void StatsLink::buildHTMLPlayer ( std::string &params, int playerID, int index )
     if (player->player.OSVersion.size())
      params += TextUtils::format("&osvers%d=%s",index,TextUtils::url_encode(player->player.OSVersion).c_str());
 
-    if (player->player.getTeam() != ObserverTeam) 
+    if (player->player.getTeam() != ObserverTeam)
     {
       params += TextUtils::format("&wins%d=%d",index,player->score.getWins());
       params += TextUtils::format("&losses%d=%d",index,player->score.getLosses());
@@ -149,19 +144,16 @@ void StatsLink::buildHTMLPlayer ( std::string &params, int playerID, int index )
 void StatsLink::buildHTMLPlayerList ( std::string &params, int skip )
 {
   bz_APIIntList *players = bz_getPlayerIndexList();
-  if (players && players->size())
-  {
+  if (players && players->size()) {
     int count = (int)players->size();
     if (skip > 0)
       count--;
 
     params += TextUtils::format("&playercount=%d", count);
     int index = 0;
-    for( unsigned int i = 0; i < players->size(); i++ )
-    {
+    for( unsigned int i = 0; i < players->size(); i++ ) {
       int playerID = players->get(i);
-      if (playerID != skip)
-      {
+      if (playerID != skip) {
 	buildHTMLPlayer(params,playerID,index);
 	index ++;
       }
@@ -196,8 +188,7 @@ bool StatsLink::getPushHeader(std::string &header)
 
   // game mode
    header += "&game=";
-  switch(bz_getGameType())
-  {
+  switch(bz_getGameType()) {
     default:
       header +="TeamFFA";
       break;
@@ -213,29 +204,32 @@ bool StatsLink::getPushHeader(std::string &header)
   }
 
   // team scores
-  header += TextUtils::format("&redteamscore=%d",bz_getTeamScore(eRedTeam));
-  header += TextUtils::format("&redteamwins=%d",bz_getTeamWins(eRedTeam));
-  header += TextUtils::format("&redteamlosses=%d",bz_getTeamLosses(eRedTeam));
-  header += TextUtils::format("&greenteamscore=%d",bz_getTeamScore(eGreenTeam));
-  header += TextUtils::format("&greenteamwins=%d",bz_getTeamWins(eGreenTeam));
-  header += TextUtils::format("&greenteamlosses=%d",bz_getTeamLosses(eGreenTeam));
-  header += TextUtils::format("&blueteamscore=%d",bz_getTeamScore(eBlueTeam));
-  header += TextUtils::format("&blueteamwins=%d",bz_getTeamWins(eBlueTeam));
-  header += TextUtils::format("&blueteamlosses=%d",bz_getTeamLosses(eBlueTeam));
-  header += TextUtils::format("&purpleteamscore=%d",bz_getTeamScore(ePurpleTeam));
-  header += TextUtils::format("&purpleteamwins=%d",bz_getTeamWins(ePurpleTeam));
-  header += TextUtils::format("&purpleteamlosses=%d",bz_getTeamLosses(ePurpleTeam));
+  header += TextUtils::format("&redteamscore=%d",     bz_getTeamScore(eRedTeam));
+  header += TextUtils::format("&redteamwins=%d",      bz_getTeamWins(eRedTeam));
+  header += TextUtils::format("&redteamlosses=%d",    bz_getTeamLosses(eRedTeam));
+  header += TextUtils::format("&greenteamscore=%d",   bz_getTeamScore(eGreenTeam));
+  header += TextUtils::format("&greenteamwins=%d",    bz_getTeamWins(eGreenTeam));
+  header += TextUtils::format("&greenteamlosses=%d",  bz_getTeamLosses(eGreenTeam));
+  header += TextUtils::format("&blueteamscore=%d",    bz_getTeamScore(eBlueTeam));
+  header += TextUtils::format("&blueteamwins=%d",     bz_getTeamWins(eBlueTeam));
+  header += TextUtils::format("&blueteamlosses=%d",   bz_getTeamLosses(eBlueTeam));
+  header += TextUtils::format("&purpleteamscore=%d",  bz_getTeamScore(ePurpleTeam));
+  header += TextUtils::format("&purpleteamwins=%d",   bz_getTeamWins(ePurpleTeam));
+  header += TextUtils::format("&purpleteamlosses=%d", bz_getTeamLosses(ePurpleTeam));
   return true;
 }
 
-int sumString( const std::string &str )
+
+static int sumString(const std::string &str)
 {
   int i = 0;
-  std::string::const_iterator itr = str.begin();
-  while (itr != str.end())
-    i += *itr++;
+  std::string::const_iterator itr;
+  for (itr = str.begin(); itr != str.end(); ++itr) {
+    i += *itr;
+  }
   return i;
 }
+
 
 void StatsLink::buildStateHash(std::string &params)
 {
@@ -259,19 +253,17 @@ void StatsLink::buildStateHash(std::string &params)
 
   i = 0;
   bz_APIIntList *players = bz_getPlayerIndexList();
-  if (players && players->size())
-  {
-    for (size_t p = 0; p < players->size(); p++ )
-    {
+  if (players && players->size()) {
+    for (size_t p = 0; p < players->size(); p++ ) {
       int playerID = players->get(p);
       GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-      if (player)
-      {
+      if (player) {
 	std::string BZID = player->getBzIdentifier();
-	if (BZID.size())
+	if (BZID.size()) {
 	  i += sumString(BZID);
-	else
+	} else {
 	  i += sumString(std::string(player->player.getCallSign()));
+        }
 
 	i += sumString(player->player.getToken());
 
@@ -291,11 +283,11 @@ void StatsLink::buildStateHash(std::string &params)
 
 void StatsLink::process(bz_EventData *eventData)
 {
-  if (!eventData || !bz_getPublic())
+  if (!eventData || !bz_getPublic()) {
     return;
+  }
 
-  if (eventData->eventType == bz_eGetWorldEvent)
-  {
+  if (eventData->eventType == bz_eGetWorldEvent) {
     bz_GetWorldEventData_V1 *data = (bz_GetWorldEventData_V1*)eventData;
     mapFile = data->worldFile.c_str();
     if (!mapFile.size())
@@ -306,10 +298,9 @@ void StatsLink::process(bz_EventData *eventData)
 	mapFile = "Random";
     }
   }
-  else
-  {
-    if (eventData->eventType == bz_eListServerUpdateEvent || eventData->eventType == bz_eWorldFinalized) 
-    {
+  else {
+    if ((eventData->eventType == bz_eListServerUpdateEvent) ||
+        (eventData->eventType == bz_eWorldFinalized)) {
       std::string params = "action=add&";
       getPushHeader(params);
 
@@ -319,14 +310,16 @@ void StatsLink::process(bz_EventData *eventData)
 
       bz_addURLJob(url.c_str(),NULL,params.c_str());
     }
-    else if (eventData->eventType == bz_ePlayerPartEvent) 
-    {
+    else if (eventData->eventType == bz_ePlayerPartEvent) {
       bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
       std::string params = "action=part";
       getPushHeader(params);
 
-      if (data->playerID) // we use -1 for the parted player, then skip them in the player list. this way we always get all player data on a part
-	  buildHTMLPlayer(params,data->playerID,-1);
+      // we use -1 for the parted player, then skip them in the player list.
+      // this way we always get all player data on a part
+      if (data->playerID) {
+        buildHTMLPlayer(params,data->playerID,-1);
+      }
 
       buildHTMLPlayerList(params, data->playerID);
 

@@ -675,14 +675,14 @@ public:
       return true;
     }
 
-    int16_t shotID;  
+    int16_t shotID;
     uint8_t infoType;
     fvec3 pos;
     uint16_t linkSrcID, linkDstID;
     FlagType* flagType;
     uint32_t obstacleGUID = (uint32_t)-1;
-    
-    buf = nboUnpackInt16(buf, shotID);  
+
+    buf = nboUnpackInt16(buf, shotID);
     buf = FlagType::unpack(buf, flagType);
     buf = nboUnpackUInt8(buf, infoType);
     buf = nboUnpackFVec3(buf, pos);
@@ -737,7 +737,7 @@ public:
     }
 
     return true;
-  } 
+  }
 };
 
 class HitHandler : public PlayerFirstHandler
@@ -998,7 +998,7 @@ public:
       netMsg.packFloat(pauseDelay);
       netMsg.send(player->netHandler, MsgPause);
     }
-    
+
     return true;
   }
 };
@@ -1117,7 +1117,8 @@ public:
     data.data = value;
     worldEventManager.callEvents(data);
 
-    // if the key is still coo, go and set the change, notify all clients, and the API that it changed
+    // if the key is still cool, go and set the change,
+    // and notify all clients and the API that it changed
     if (data.key.size()) {
       bz_setPlayerCustomData(player->getIndex(), data.key.c_str(), data.data.c_str());
     }
@@ -1231,9 +1232,9 @@ public:
 
     return true;
   }
-}; 
-   
-   
+};
+
+
 void registerDefaultHandlers ( void )
 {
   clientNetworkHandlers[MsgSetVar]             = new SetVarHandler;

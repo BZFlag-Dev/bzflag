@@ -485,7 +485,7 @@ static void parse(int argc, char **argv)
             printFatalError("Bad port, using default %d.", ServerPort);
           }
         }
-  
+
         if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
           printFatalError("Server name too long.  Ignoring.");
         } else {
@@ -666,17 +666,17 @@ void setupVFS()
 
   // add the filesystems
   bzVFS.addFS(BZVFS_CONFIG,          configDir);
-  bzVFS.addFS(BZVFS_FTP,             cacheDir + "ftp"); 
+  bzVFS.addFS(BZVFS_FTP,             cacheDir + "ftp");
   bzVFS.addFS(BZVFS_HTTP,            cacheDir + "http");
   bzVFS.addFS(BZVFS_DATA,            BZDB.get("directory"));
 #if defined(BZFLAG_DATA)
   bzVFS.addFS(BZVFS_DATA_DEFAULT,    BZFLAG_DATA);
 #endif
-  bzVFS.addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));  
+  bzVFS.addFS(BZVFS_LUA_USER,        BZDB.get("luaUserDir"));
 //bzVFS.addFS(BZVFS_LUA_BZORG,       ""); // NOTE: <--
   bzVFS.addFS(BZVFS_LUA_WORLD,       new BzDocket("LuaWorld"));
   bzVFS.addFS(BZVFS_LUA_RULES,       new BzDocket("LuaRules"));
-  bzVFS.addFS(BZVFS_LUA_USER_WRITE,  cacheDir + "LuaUser"); 
+  bzVFS.addFS(BZVFS_LUA_USER_WRITE,  cacheDir + "LuaUser");
   bzVFS.addFS(BZVFS_LUA_WORLD_WRITE, cacheDir + "LuaWorld");
   bzVFS.addFS(BZVFS_LUA_BZORG_WRITE, cacheDir + "LuaBzOrg");
 
@@ -687,7 +687,7 @@ void setupVFS()
   bzVFS.setFSWritable(BZVFS_LUA_BZORG_WRITE, true);
 
   // create the writable lua directories
-  BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaUser")); 
+  BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaUser"));
   BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaWorld"));
   BzVFS::createPathDirs("", BzVFS::cleanDirPath(cacheDir + "LuaBzOrg"));
 }
@@ -1082,13 +1082,13 @@ void initAudio ( void )
       closedir(localedir);
 #endif
   }
-      
+
   // setup the default LuaUser/ directory
   if (!BZDB.isSet("luaUserDir")) {
     if (BZDB.isSet("directory")) {
       BZDB.set("luaUserDir", BZDB.get("directory") + "/LuaUser");
     }
-  }  
+  }
 }
 
 

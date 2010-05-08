@@ -67,7 +67,7 @@ class LuaRenderNode : public RenderNode
     ~LuaRenderNode() { Unref(); }
 
     void Unref();
-    
+
     void render();
     void renderRadar() {}
     void renderShadow() {}
@@ -156,7 +156,7 @@ class LuaSceneNode : public SceneNode
 
     void updatePosition();
 
-    void addRenderNodes(SceneRenderer& renderer) { 
+    void addRenderNodes(SceneRenderer& renderer) {
       if (renderNode.funcRef != LUA_NOREF) {
         renderer.addRenderNode(&renderNode, &gstate);
       }
@@ -430,7 +430,7 @@ int LuaSceneNodeMgr::IsValidSceneNode(lua_State* L)
 int LuaSceneNodeMgr::SetSceneNodeFunc(lua_State* L)
 {
   LuaSceneNode* sceneNode = CheckLuaSceneNode(L, 1);
-  
+
   const int type = lua_type(L, 2);
   if ((type != LUA_TNIL) && (type != LUA_TFUNCTION)) {
     luaL_error(L, "bad function type");
@@ -548,7 +548,7 @@ int LuaSceneNodeMgr::SetSceneNodeTracking(lua_State* L)
     lua_settop(L, 1);
     return 1;
   }
-    
+
   if (lua_isnil(L, 2)) {
     sceneNode->trackMode = LuaSceneNode::TrackNone;
     sceneNode->trackTarget = -1;
@@ -576,7 +576,7 @@ int LuaSceneNodeMgr::SetSceneNodeTracking(lua_State* L)
   } else {
     luaL_error(L, "bad tracking type");
   }
-    
+
   lua_settop(L, 1);
   return 1;
 }

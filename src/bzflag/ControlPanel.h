@@ -58,7 +58,7 @@ struct ControlPanelMessage {
 class ControlPanel {
   public:
     static void addMutexMessage(const char* msg);
-    
+
   public:
     enum MessageModes {
       MessageAllTabs = -2,
