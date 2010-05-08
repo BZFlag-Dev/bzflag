@@ -5041,6 +5041,8 @@ static void runMainLoop()
     //if (nfound)
     //	logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
+    GameTime::serverStepTime();
+
     // send replay packets
     // (this check and response should follow immediately after the select() call)
     GameKeeper::Player::passTCPMutex();

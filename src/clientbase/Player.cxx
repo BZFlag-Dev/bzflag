@@ -1269,7 +1269,7 @@ void* Player::unpack(void* buf, uint16_t code)
 void Player::setDeadReckoning()
 {
   debugDR("setDeadReckoning: local\n");
-  setDeadReckoning(BzTime::getCurrent().getSeconds());
+  setDeadReckoning(GameTime::getStepTime());
 }
 
 
@@ -1438,7 +1438,9 @@ void Player::doDeadReckoning()
   // here now, instead of from the starting point
   if (hitWorld) {
     debugDR("setDeadReckoning: hitWorld\n");
-    setDeadReckoning(BzTime::getTick()); // FIXME -- wrong timestamp
+    BzTime newTimestamp = inputTimestamp;
+    newTimestamp += (BzTime::getTick() - inputTime);
+    setDeadReckoning(newTimestamp);
   }
 #endif // DR_USES_HIT_CORRECTION
 }

@@ -31,8 +31,9 @@ namespace GameTime {
   void reset();
   void update();
 
-  void   setStepTime();
   double getStepTime();
+  void   setStepTime();
+  void   serverStepTime();
 
   int   packSize();
   void* pack(void *, float lag);

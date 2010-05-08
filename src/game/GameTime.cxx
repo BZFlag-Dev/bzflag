@@ -156,6 +156,12 @@ void GameTime::update()
 
 //============================================================================//
 
+double GameTime::getStepTime()
+{
+  return stepTime;
+}
+
+
 void GameTime::setStepTime()
 {
   static double lastStep = 0;
@@ -182,9 +188,9 @@ void GameTime::setStepTime()
 }
 
 
-double GameTime::getStepTime()
+void GameTime::serverStepTime()
 {
-  return stepTime;
+  stepTime = getRawTime();
 }
 
 
