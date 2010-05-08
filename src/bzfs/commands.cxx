@@ -2121,9 +2121,9 @@ bool ShowGroupCommand::operator() (const char* msg,
       line += " ";
       itr++;
     }
-    while (line.size() > (unsigned int)MessageLen) {
-      sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-      line.erase(line.begin(), line.begin() + (MessageLen - 1));
+    while (line.size() >= (unsigned int)MessageLen) {
+      sendMessage(ServerPlayer, t, line.substr(0, MessageLen - 1).c_str());
+      line.erase(line.begin(), line.begin() + (MessageLen - 2));
     }
     sendMessage(ServerPlayer, t, line.c_str());
   }
@@ -2141,9 +2141,9 @@ bool ShowGroupCommand::operator() (const char* msg,
       line += " ";
       itr++;
     }
-    while (line.size() > (unsigned int)MessageLen) {
-      sendMessage(ServerPlayer, t, line.substr(0, MessageLen).c_str());
-      line.erase(line.begin(), line.begin() + (MessageLen - 1));
+    while (line.size() >= (unsigned int)MessageLen) {
+      sendMessage(ServerPlayer, t, line.substr(0, MessageLen - 1).c_str());
+      line.erase(line.begin(), line.begin() + (MessageLen - 2));
     }
     sendMessage(ServerPlayer, t, line.c_str());
   } else {
