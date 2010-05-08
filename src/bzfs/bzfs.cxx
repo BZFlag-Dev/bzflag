@@ -2017,9 +2017,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   }
 
   // if new player connection was closed (because of an error) then stop here
-
-  if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
+  if (!GameKeeper::Player::getPlayerByIndex(playerIndex)) {
     return;
+  }
 
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
@@ -2027,6 +2027,11 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // send update of info for team just joined
   sendTeamUpdateMessageBroadcast(teamIndex);
+
+  // again check if player was disconnected
+  if (!GameKeeper::Player::getPlayerByIndex(playerIndex)) {
+    return;
+  }
 
   // send (possibly resend), all of the player's custom data
   broadcastPlayerCustomDataMap(playerData);
