@@ -3768,6 +3768,7 @@ static void resetServerVar(const std::string &name, void*)
 void leaveGame()
 {
   eventHandler.ServerParted();
+
   LuaClientScripts::LuaWorldFreeHandler();
   LuaClientScripts::LuaRulesFreeHandler();
 

@@ -77,10 +77,10 @@ static inline LuaHandle** L2HP(lua_State* L)
 
 
 //============================================================================//
-   
+
 extern void LuaLog(int debugLevel, const std::string& msg);
 extern void LuaLog(int debugLevel, const char* fmt, ...);
-    
+
 
 //============================================================================//
 

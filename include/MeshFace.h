@@ -337,7 +337,7 @@ class MeshFace : public Obstacle {
 
     fvec4  plane;
     fvec4* edgePlanes;
-    
+
     EdgeRef* edges;
 
     char planeBits;

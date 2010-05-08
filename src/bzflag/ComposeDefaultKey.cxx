@@ -10,19 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "ComposeDefaultKey.h"
 
-/* system headers */
+// system headers
 #include <string>
 #include <set>
 
-/* common implementation headers */
+// common headers
 #include "BzfEvent.h"
 #include "KeyManager.h"
 #include "EventHandler.h"
+#include "BZDBCache.h"
 
-/* local implementation headers */
+// local headers
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
 #include "HubLink.h"
@@ -80,21 +81,23 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     const std::string line = hud->getComposeString();
     std::set<std::string> partials;
 
-    // use a custom AutoCompleter for local variables
-    const std::string tag = "/localset";
-    if ((line.size() < tag.size()) || (line.substr(0, tag.size()) != tag)) {
-      if (!BZDB.isTrue("noDefaultWordComplete")) {
+    static BZDB_bool noDefault("noDefaultWordComplete");
+    if (!noDefault) {
+      const std::string tag = "/localset";
+      if ((line.size() < tag.size()) || (line.substr(0, tag.size()) != tag)) {
         completer.complete(line, partials);
       }
-      eventHandler.WordComplete(line, partials);
-      if (hubLink) {
-        hubLink->wordComplete(line, partials);
+      else { // use a custom AutoCompleter for local variables
+        AutoCompleter ac;
+        BZDB.iterate(localVarIterator, &ac);
+        ac.complete(line, partials);
       }
     }
-    else {
-      AutoCompleter ac;
-      BZDB.iterate(localVarIterator, &ac);
-      ac.complete(line, partials);
+
+    eventHandler.WordComplete(line, partials);
+
+    if (hubLink) {
+      hubLink->wordComplete(line, partials);
     }
 
     if (!partials.empty()) {
