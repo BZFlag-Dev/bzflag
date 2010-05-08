@@ -23,7 +23,6 @@
 
 
 NetMessage::SendFunc      NetMessage::sendFunc      = NULL;
-NetMessage::RecvFunc      NetMessage::recvFunc      = NULL;
 NetMessage::BroadcastFunc NetMessage::broadcastFunc = NULL;
 
 
@@ -31,6 +30,16 @@ const size_t NetMessage::lenCodeOffset = 2 * sizeof(uint16_t);
 const size_t NetMessage::capacityStep  = 256;
 const size_t NetMessage::capacityDefault = NetMessage::capacityStep;
 
+
+//============================================================================//
+
+uint16_t NetRecvMsg::getCode() const
+{
+  uint16_t code;
+  nboUnpackUInt16((uint16_t*)data + 1, code);
+  return code;
+}
+ 
 
 //============================================================================//
 
@@ -62,6 +71,21 @@ NetMessage::NetMessage(const void* fullData, size_t fullSize)
   capacity = fullSize;
   data = (char*) malloc(dataSize);
   memcpy(data, fullData, dataSize);
+  readIndex = lenCodeOffset;
+}
+
+
+NetMessage::NetMessage(uint16_t len, uint16_t code, const void* msgData)
+{
+  dataSize = lenCodeOffset + len;
+  capacity = dataSize;
+  data = (char*) malloc(dataSize);
+
+  uint16_t* u16ptr = (uint16_t*) data;
+  nboPackUInt16(u16ptr + 0, len);
+  nboPackUInt16(u16ptr + 1, code);
+  memcpy(data + lenCodeOffset, msgData, len);
+
   readIndex = lenCodeOffset;
 }
 

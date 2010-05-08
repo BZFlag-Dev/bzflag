@@ -16,12 +16,9 @@
 #include "common.h"
 
 // System headers
-#include <list>
-#include <deque>
 #include <string>
 
 // Common headers
-#include "Singleton.h"
 #include "vectors.h"
 
 class NetHandler;
@@ -30,17 +27,14 @@ class NetHandler;
 class NetMessage {
   public:
     typedef void (*SendFunc)      (NetHandler*, const void* data, size_t size);
-    typedef void (*RecvFunc)      (NetMessage* netMsg);
     typedef void (*BroadcastFunc) (const void* data, size_t size, bool textClients);
 
   public:
-    static void setSendFunc(SendFunc func)    { sendFunc = func; }
-    static void setReceiveFunc(RecvFunc func) { recvFunc = func; }
+    static void setSendFunc(SendFunc func)           { sendFunc = func; }
     static void setBroadcastFunc(BroadcastFunc func) { broadcastFunc = func; }
 
   protected:
     static SendFunc sendFunc;
-    static RecvFunc recvFunc;
     static BroadcastFunc broadcastFunc;
 
     static const size_t lenCodeOffset;
@@ -49,12 +43,14 @@ class NetMessage {
 
   public:
     NetMessage();
+    NetMessage(size_t size); // start with capacity = (size + lenCodeOffset)
     NetMessage(const NetMessage& msg);
     NetMessage& operator=(const NetMessage& msg);
     ~NetMessage();
-  private:
-    NetMessage(size_t size); // start with capacity = (size + lenCodeOffset)
-    NetMessage(const void* fullData, size_t fullSize); // FIXME
+
+  protected:
+    NetMessage(const void* fullData, size_t fullSize);
+    NetMessage(uint16_t len, uint16_t code, const void* data);
   
   public:
     void clear();
@@ -119,6 +115,16 @@ class NetMessage {
     size_t dataSize;  // includes the 4 bytes for len+code
     size_t capacity;  // includes the 4 bytes for len+code
     size_t readIndex; // includes the 4 bytes for len+code
+};
+
+
+class NetRecvMsg : public NetMessage {
+  public:
+    NetRecvMsg(uint16_t len, uint16_t code, const void* msgData)
+    : NetMessage(len, code, msgData)
+    {}
+
+    uint16_t getCode() const;
 };
 
 

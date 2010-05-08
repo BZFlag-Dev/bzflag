@@ -78,7 +78,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path)
 
   Ray firstRay = Ray(startPos, vel);
   prevTime = currentTime;
-  prevTime -= (muzzleFront / speed);
+  prevTime += -(muzzleFront / speed);
   checkBuildings(firstRay);
   prevTime = currentTime;
 
@@ -195,7 +195,7 @@ void GuidedMissileStrategy::update(float dt)
   nextPos = ray.getPoint(dt);
 
   // see if we hit something
-  double segmentEndTime = currentTime;
+  BzTime segmentEndTime = currentTime;
 
   if (nextPos.z <= 0.0f) {
     // hit ground -- expire it and shorten life of segment to time of impact
@@ -249,7 +249,8 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   const bool isRemote =
     (getPath().getPlayer() != LocalPlayer::getMyTank()->getId());
 
-  float ctime = (float)currentTime + dt;
+  BzTime ctime = currentTime;
+  ctime += dt;
 
   /*
    * If it expires there we'll return false.

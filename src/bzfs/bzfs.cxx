@@ -2113,7 +2113,7 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   // send time update to new player if we're counting down
   if (countdownActive && clOptions->timeLimit > 0.0f
       && !playerData->player.isBot()) {
-    if (countdownPauseStart) {
+    if (countdownPauseStart.active()) {
       gameStartTime += (BzTime::getCurrent() - countdownPauseStart);
       countdownPauseStart = BzTime::getNullTime();
     }
@@ -4321,7 +4321,7 @@ static void doCountdown(int &readySetGo, BzTime &tm)
   if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
     float newTimeElapsed = (float)(tm - gameStartTime);
     float timeLeft = clOptions->timeLimit - newTimeElapsed;
-    if (timeLeft <= 0.0f && !countdownPauseStart) {
+    if (timeLeft <= 0.0f && !countdownPauseStart.active()) {
       timeLeft = 0.0f;
       gameOver = true;
       countdownActive = false;
@@ -4335,13 +4335,15 @@ static void doCountdown(int &readySetGo, BzTime &tm)
       worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
     }
 
-    if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
+    if (countdownActive && clOptions->countdownPaused &&
+        !countdownPauseStart.active()) {
       // we have a new pause
       countdownPauseStart = tm;
       sendMsgTimeUpdate(-1);
     }
 
-    if (countdownActive && !clOptions->countdownPaused && (countdownResumeTime < 0) && countdownPauseStart) {
+    if (countdownActive && !clOptions->countdownPaused &&
+        (countdownResumeTime < 0) && countdownPauseStart.active()) {
       // resumed
       gameStartTime += (tm - countdownPauseStart);
       countdownPauseStart = BzTime::getNullTime ();

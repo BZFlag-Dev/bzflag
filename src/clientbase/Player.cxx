@@ -315,8 +315,9 @@ void Player::move(const fvec3& _pos, float _azimuth)
 {
   // update the speed of the state
   BzTime currentTime = BzTime::getCurrent();
-  if (state.lastUpdateTime >= 0) {
-    state.apparentVelocity = (_pos - state.pos) / (currentTime - state.lastUpdateTime);
+  const double timeDiff = (currentTime - state.lastUpdateTime);
+  if (timeDiff > 0.0f) {
+    state.apparentVelocity = (_pos - state.pos) / timeDiff;
   }
 
   state.lastUpdateTime = currentTime;
@@ -1268,7 +1269,7 @@ void* Player::unpack(void* buf, uint16_t code)
 void Player::setDeadReckoning()
 {
   debugDR("setDeadReckoning: local\n");
-  setDeadReckoning(BzTime::getTick());
+  setDeadReckoning(BzTime::getCurrent().getSeconds());
 }
 
 

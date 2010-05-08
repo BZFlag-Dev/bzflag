@@ -52,7 +52,7 @@ class GuidedMissileStrategy : public PointShotStrategy {
   private:
     BoltSceneNode* ptSceneNode;
 
-    double lastPuff;
+    BzTime lastPuff;
 
     float speed;
     fvec3 nextPos;

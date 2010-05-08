@@ -57,8 +57,8 @@ class SegmentedShotStrategy : public PointShotStrategy {
     void  makeSegments(ObstacleEffect = Stop);
     const std::vector<ShotPathSegment>& getSegments() const;
 
-    void   setCurrentTime(const double);
-    double getLastTime() const;
+    void   setCurrentTime(const BzTime&);
+    const BzTime& getLastTime() const;
 
     void setCurrentSegment(int segment);
 

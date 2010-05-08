@@ -99,7 +99,7 @@ void suicide(int sig);
 void hangup(int sig);
 
 void joinInternetGame(const struct in_addr *inAddress);
-void handlePendingJoins(void);
+void handlePendingJoins();
 bool checkSquishKill(const Player* victim, const Player* killer, bool localKiller = false);
 bool dnsLookupDone(struct in_addr &inAddress);
 void setTankFlags();
@@ -119,7 +119,7 @@ void sendRobotUpdates();
 void addRobots();
 #endif
 
-void doNetworkStuff(void);
+void doNetworkStuff();
 
 StartupInfo* getStartupInfo();
 
@@ -239,7 +239,9 @@ extern float destructCountdown;
 
 extern const char *blowedUpMessage[];
 
+
 #endif // BZF_PLAYING_H
+
 
 // Local Variables: ***
 // mode: C++ ***

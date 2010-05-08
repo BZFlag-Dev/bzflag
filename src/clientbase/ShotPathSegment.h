@@ -28,7 +28,7 @@ class ShotPathSegment {
     enum Reason { Initial, Through, Ricochet, Teleport, Boundary };
 
     ShotPathSegment();
-    ShotPathSegment(const double start, const double end,
+    ShotPathSegment(const BzTime& start, const BzTime& end,
                                 const Ray& r, Reason = Initial);
     ShotPathSegment(const ShotPathSegment&);
     ShotPathSegment& operator=(const ShotPathSegment&);
@@ -45,8 +45,8 @@ class ShotPathSegment {
     }
 
   public:
-    double start;
-    double end;
+    BzTime start;
+    BzTime end;
     Ray    ray;
     Reason reason;
     Extents bbox;

@@ -26,7 +26,7 @@ LagInfo::LagInfo(PlayerInfo *_info)
     jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
     jittercount(0), jitterlastwarn(0), jitterwarncount(0), losscount(0),
     losslastwarn(0), losswarncount(0), pingpending(false), pingseqno(0),
-    pingssent(0), lasttimestamp(0.0f) {
+    pingssent(0), lasttimestamp(0.0) {
 }
 
 
@@ -78,13 +78,13 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
   }
 
   int numchars;
-  if (isAdmin)
+  if (isAdmin) {
     numchars = sprintf(msg, "[%3d] %-24.24s: %3d", info->getPlayerIndex(),
-
-		       TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
-  else
+                       TextUtils::str_trunc_continued(info->getCallSign(), 22).c_str(), lag);
+  } else {
     numchars = sprintf(msg, "%-24.24s: %3d",
-		       TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
+		       TextUtils::str_trunc_continued(info->getCallSign(), 22).c_str(), lag);
+  }
 
   if (info->isObserver()) {
     sprintf(msg+numchars, "ms");
@@ -103,7 +103,9 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
   nboUnpackUInt16(buf, _pingseqno);
   if (pingseqno == _pingseqno) {
     float timepassed = float(info->now - lastping);
-    logDebugMessage(5, "[%d] lag %.1f ms s=%f (#%u)\n", info->getPlayerIndex(), timepassed * 1000.0f, info->now.getSeconds(), _pingseqno);
+    logDebugMessage(5, "[%d] lag %.1f ms s=%f (#%u)\n",
+                    info->getPlayerIndex(), timepassed * 1000.0f,
+                    info->now.getSeconds(), _pingseqno);
     // time is smoothed exponentially using a dynamic smoothing factor
     lagavg   = lagavg * (1 - lagalpha) + lagalpha * timepassed;
     lagalpha = lagalpha / (0.9f + lagalpha);
@@ -183,14 +185,21 @@ void LagInfo::updateLag(BzTime const& timestamp, bool ooo) {
   // ignore updates when the server timestamp is unchanged
   // FIXME: it would be better to have distinct timestamps
   if (info->now - lastupdate < 0.00001f) {
-    logDebugMessage(5, "[%d] jit ignored s=%f c=%f (s=%f c=%f)%s\n", info->getPlayerIndex(), info->now.getSeconds(), timestamp.getSeconds(), info->now - lastupdate, timestamp - lasttimestamp, ooo ? " ooo" : "");
+    logDebugMessage(5, "[%d] jit ignored s=%f c=%f (s=%f c=%f)%s\n",
+                    info->getPlayerIndex(), info->now.getSeconds(),
+                    timestamp.getSeconds(), info->now - lastupdate,
+                    timestamp - lasttimestamp, ooo ? " ooo" : "");
     return;
   }
   // don't calc jitter if more than 2 seconds between packets
-  if (lasttimestamp && timestamp - lasttimestamp < 2.0f) {
+  if (lasttimestamp.active() && ((timestamp - lasttimestamp) < 2.0f)) {
     const float jitter = fabsf((float)(info->now - lastupdate)
 			       - (float)(timestamp - lasttimestamp));
-    logDebugMessage(5, "[%d] jit %4.1f ms s=%f c=%f (s=%f c=%f)%s\n", info->getPlayerIndex(), jitter * 1000.0f, info->now.getSeconds(), timestamp.getSeconds(), info->now - lastupdate, timestamp - lasttimestamp, ooo ? " ooo" : "");
+    logDebugMessage(5, "[%d] jit %4.1f ms s=%f c=%f (s=%f c=%f)%s\n",
+                    info->getPlayerIndex(), jitter * 1000.0f,
+                    info->now.getSeconds(), timestamp.getSeconds(),
+                    info->now - lastupdate, timestamp - lasttimestamp,
+                    ooo ? " ooo" : "");
     // time is smoothed exponentially using a dynamic smoothing factor
     jitteravg   = jitteravg * (1 - jitteralpha) + jitteralpha * jitter;
     jitteralpha = jitteralpha / (0.99f + jitteralpha);

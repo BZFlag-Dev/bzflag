@@ -20,7 +20,7 @@ ShotPathSegment::ShotPathSegment()
 }
 
 
-ShotPathSegment::ShotPathSegment(const double _start, const double _end,
+ShotPathSegment::ShotPathSegment(const BzTime& _start, const BzTime& _end,
                                  const Ray& _ray, Reason _reason)
 : start(_start)
 , end(_end)

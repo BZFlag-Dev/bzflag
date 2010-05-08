@@ -233,8 +233,9 @@ void SegmentedShotStrategy::update(float dt)
 
 bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const
 {
-  float ctime = (float)currentTime + dt;
-  int cur=0;
+  BzTime ctime = currentTime;
+  ctime += dt;
+  int cur = 0;
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
   while (cur < numSegments && segments[cur].end < ctime) cur++;
@@ -248,7 +249,8 @@ bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const
 
 bool SegmentedShotStrategy::predictVelocity(float dt, fvec3& p) const
 {
-  float ctime = (float)currentTime + dt;
+  BzTime ctime = currentTime;
+  ctime += dt;
   int cur = 0;
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
@@ -261,13 +263,13 @@ bool SegmentedShotStrategy::predictVelocity(float dt, fvec3& p) const
 }
 
 
-void SegmentedShotStrategy::setCurrentTime(const double _currentTime)
+void SegmentedShotStrategy::setCurrentTime(const BzTime& _currentTime)
 {
   currentTime = _currentTime;
 }
 
 
-double	SegmentedShotStrategy::getLastTime() const
+const BzTime& SegmentedShotStrategy::getLastTime() const
 {
   return lastTime;
 }
@@ -375,7 +377,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
   const ShotPath& shotPath = getPath();
 
   fvec3  vel       = shotPath.getVelocity();
-  double startTime = shotPath.getStartTime();
+  BzTime startTime = shotPath.getStartTime();
   float  timeLeft  = shotPath.getLifetime();
 
   // minTime is used to move back to the tank's origin during the first for loop
@@ -422,7 +424,8 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     minTime = 0.0f; // only used the first time around the loop
 
     // construct next shot segment and add it to list
-    const double endTime = startTime + double((t < 0.0f) ? Epsilon : t);
+    BzTime endTime = startTime;
+    endTime += double((t < 0.0f) ? Epsilon : t);
     const Ray startRay(orig, vel);
     ShotPathSegment segm(startTime, endTime, startRay, reason);
     segm.hitObstacle = hitObstacle;
@@ -569,8 +572,8 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       const fvec3 endPos = sps.ray.getPoint((float)(sps.end - sps.start));
       const std::string reasonStr = ShotPathSegment::getReasonString(sps.reason).c_str();
       logDebugMessage(0, "  segment   %i\n", (int)s);
-      logDebugMessage(0, "    start   %f\n", sps.start);
-      logDebugMessage(0, "    end     %f\n", sps.end);
+      logDebugMessage(0, "    start   %f\n", sps.start.getSeconds());
+      logDebugMessage(0, "    end     %f\n", sps.end.getSeconds());
       logDebugMessage(0, "    orig    %s\n", sps.ray.getOrigin().tostring().c_str());
       logDebugMessage(0, "    endPos  %s\n", endPos.tostring().c_str());
       logDebugMessage(0, "    dir     %s\n", sps.ray.getDirection().tostring().c_str());

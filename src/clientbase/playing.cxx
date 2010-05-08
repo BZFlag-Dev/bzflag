@@ -375,7 +375,7 @@ void joinInternetGame(const struct in_addr *inAddress)
 
 
 
-void getAFastToken(void)
+void getAFastToken()
 {
   // get token if we need to (have a password but no token)
   if ((startupInfo.token[0] == '\0') && (startupInfo.password[0] != '\0')) {
@@ -399,7 +399,7 @@ void getAFastToken(void)
 }
 
 
-void handlePendingJoins(void)
+void handlePendingJoins()
 {
   // try to join a game if requested.  do this *before* handling
   // events so we do a redraw after the request is posted and
@@ -755,7 +755,7 @@ void addRobots()
 #endif
 
 
-void doNetworkStuff(void)
+void doNetworkStuff()
 {
   // send my data
   if (myTank && myTank->isDeadReckoningWrong() && !myTank->isObserver()) {
@@ -1790,7 +1790,7 @@ void handleTangUpdate(uint16_t len, void *msg)
 }
 
 
-void handleTangReset(void)
+void handleTangReset()
 {
   ClientIntangibilityManager::instance().resetTangibility();
 }

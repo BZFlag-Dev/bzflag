@@ -55,12 +55,12 @@ public: // member functions
   bool    operator==(const BzTime&) const;
   bool    operator!=(const BzTime&) const;
 
-  /** return true if 'seconds' > 0.0 */
-  inline operator bool() const { return (seconds > 0.0); }
-
-  /** Returns how many seconds have elapsed since the first call to
+  /** returns how many seconds have elapsed since the first call to
     * getCurrent(). If real times are needed, use BzTime::localTime() */
   inline double getSeconds() const { return seconds; }
+
+  /** returns true if seconds != 0.0 */
+  inline bool active() const { return (seconds != 0.0); }
 
 public: // static functions
 

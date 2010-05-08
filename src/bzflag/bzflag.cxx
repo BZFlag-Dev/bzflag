@@ -473,16 +473,19 @@ static void parse(int argc, char **argv)
 
         // find the beginning of the port number, parse it
         char *portNumber;
-        if ((portNumber = strchr(serverName, ':')) != NULL) {
+        if ((portNumber = strchr(serverName, ':')) == NULL) {
+          startupInfo.serverPort = ServerPort; // use the default
+        }
+        else {
           *portNumber = '\0';
           ++portNumber;
           startupInfo.serverPort = atoi(portNumber);
           if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-                startupInfo.serverPort = ServerPort;
-                printFatalError("Bad port, using default %d.",
-                                startupInfo.serverPort);
+            startupInfo.serverPort = ServerPort;
+            printFatalError("Bad port, using default %d.", ServerPort);
           }
         }
+  
         if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
           printFatalError("Server name too long.  Ignoring.");
         } else {

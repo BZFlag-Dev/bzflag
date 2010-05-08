@@ -122,7 +122,6 @@ void sendFlagUpdateMessage(int playerID)
       }
 
       NetMessage netMsg;
-
       netMsg.packUInt16((uint16_t)flagsToDo);
 
       for (size_t i = 0; i < flagsToDo; i++) {
@@ -328,7 +327,6 @@ void sendRejectPlayerMessage(int playerID, uint16_t code , const char* reason)
     playerData->playerHandler->playerRejected((bz_eRejectCodes)code,reason);
   } else {
     NetMessage netMsg;
-
     netMsg.packUInt16(code);
     netMsg.packString(reason, strlen(reason) + 1);
     netMsg.send(playerData->netHandler,MsgReject);
@@ -423,7 +421,6 @@ void sendSingleHandicapInfoUpdate(GameKeeper::Player* playerData)
     return;
 
   NetMessage netMsg;
-
   netMsg.packUInt8(1);
   netMsg.packUInt8(playerData->getIndex());
   netMsg.packInt16(playerData->score.getHandicap());
@@ -489,7 +486,6 @@ void sendAdminInfoMessage(int aboutPlayer, int toPlayer, bool record)
 void sendFlagTransferMessage (int toPlayer, int fromPlayer , FlagInfo &flag)
 {
   NetMessage netMsg;
-
   netMsg.packUInt8(fromPlayer);
   netMsg.packUInt8(toPlayer);
 
@@ -608,10 +604,8 @@ void sendSetShotType(int playerIndex, ShotType type)
   playerData->effectiveShotType = type;
 
   NetMessage netMsg;
-
   netMsg.packUInt8(playerIndex);
   netMsg.packUInt8(type);
-
   netMsg.broadcast(MsgSetShot);
 
   // now do everyone who dosn't have network
@@ -776,7 +770,6 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
   if (recordOnly || broadcast || toGroup ||
       (destPlayerData && !destPlayerData->playerHandler)) {
     NetMessage netMsg;
-
     netMsg.packUInt8(sourcePlayer);
     netMsg.packUInt8(destPlayer);
     netMsg.packUInt8(type);
@@ -842,7 +835,6 @@ void sendTextMessage(int destPlayer, int sourcePlayer, const char *text,
 void sendMessageAlive(int playerID, const fvec3& pos, float rot)
 {
   NetMessage netMsg;
-
   netMsg.packUInt8(playerID);
   netMsg.packFVec3(pos);
   netMsg.packFloat(rot);
@@ -889,7 +881,6 @@ bool sendPlayerStateMessage(GameKeeper::Player* playerData, bool shortState)
   uint16_t code = shortState ? MsgPlayerUpdateSmall : MsgPlayerUpdate;
 
   NetMessage netMsg;
-
   netMsg.packUInt8(playerData->getIndex());
   netMsg.packDouble(playerData->stateTimeStamp.getSeconds());
 
@@ -919,7 +910,6 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex,
 {
   // send MsgKilled
   NetMessage netMsg;
-
   netMsg.packUInt8(victimIndex);
   netMsg.packUInt8(killerIndex);
   netMsg.packInt16(reason);
@@ -948,7 +938,6 @@ void sendPlayerKilledMessage(int victimIndex, int killerIndex,
 void sendPlayerScoreUpdate(GameKeeper::Player *player)
 {
   NetMessage netMsg;
-
   netMsg.packUInt8(1);
   netMsg.packUInt8(player->getIndex());
   player->score.pack(netMsg);
@@ -1020,7 +1009,6 @@ void sendFlagCaptureMessage(int playerIndex, int flagIndex, int teamCaptured)
 void sendRabbitUpdate(int playerIndex, unsigned char mode)
 {
   NetMessage netMsg;
-
   netMsg.packUInt8(playerIndex);
   netMsg.packUInt8(mode);
   netMsg.broadcast(MsgNewRabbit);
@@ -1030,7 +1018,6 @@ void sendRabbitUpdate(int playerIndex, unsigned char mode)
 void sendMsgGMUpdate(int /*player*/, ShotUpdate *shot, int target)
 {
   NetMessage netMsg;
-
   //netMsg.packUInt8(player);
   shot->pack(netMsg);
   netMsg.packUInt8(target);
@@ -1042,7 +1029,6 @@ void sendMsgTimeUpdate(int32_t timeLimit)
 {
   // start client's clock
   NetMessage netMsg;
-
   netMsg.packInt32(timeLimit);
   netMsg.broadcast(MsgTimeUpdate);
 }
@@ -1119,7 +1105,6 @@ void sendMsgLimboMessage(int player, const std::string  &text)
 void sendSetTeam(int playerIndex, int _team)
 {
   NetMessage netMsg;
-
   netMsg.packUInt8(playerIndex);
   netMsg.packInt16(_team);
   netMsg.broadcast(MsgSetTeam);

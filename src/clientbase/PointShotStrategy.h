@@ -36,9 +36,9 @@ class PointShotStrategy : public ShotStrategy {
   protected:
     float checkShotHit(const ShotCollider& tank, fvec3& position, float radius) const;
 
-    double prevTime;
-    double currentTime;
-    double lastTime;
+    BzTime prevTime;
+    BzTime currentTime;
+    BzTime lastTime;
     int    segment;
     int    lastSegment;
 
