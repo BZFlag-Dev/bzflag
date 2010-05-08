@@ -158,12 +158,12 @@ void sendExistingPlayerUpdates(int newPlayer)
     return;
 
   GameKeeper::Player *otherData;
-  for (int i = 0; i < curMaxPlayers; i++) {
-    if (i == newPlayer) {
+  for (int otherIndex = 0; otherIndex < curMaxPlayers; otherIndex++) {
+    if (otherIndex == newPlayer) {
       continue;
     }
 
-    otherData = GameKeeper::Player::getPlayerByIndex(i);
+    otherData = GameKeeper::Player::getPlayerByIndex(otherIndex);
 
     if (!otherData || !otherData->player.isPlaying()) {
       continue;
@@ -183,7 +183,7 @@ void sendExistingPlayerUpdates(int newPlayer)
     else { // a server-side player
       bz_PlayerInfoUpdateRecord	playerRecord;
 
-      playerRecord.index = i;
+      playerRecord.index = otherIndex;
       playerRecord.type = (bz_ePlayerType)otherData->player.getType();
       playerRecord.team = convertTeam(otherData->player.getTeam());
       playerRecord.score.rank   = otherData->score.ranking();
@@ -196,18 +196,10 @@ void sendExistingPlayerUpdates(int newPlayer)
       playerData->playerHandler->playerInfoUpdate(&playerRecord);
     }
 
-    sendMessageAllow(newPlayer, i, otherData->player.getAllow());
+    sendMessageAllow(newPlayer, otherIndex, otherData->player.getAllow());
 
     // custom data
-    std::map<std::string, std::string>& customData = otherData->customData;
-    std::map<std::string, std::string>::const_iterator it;
-    for (it = customData.begin(); it != customData.end(); ++it) {
-      NetMessage netMsg;
-      netMsg.packUInt8(i); // playerID
-      netMsg.packStdString(it->first);  // key
-      netMsg.packStdString(it->second); // value
-      netMsg.send(playerData->netHandler, MsgPlayerData);
-    }
+    sendPlayerCustomDataMap(playerData->netHandler, otherData);
   }
 }
 
@@ -1146,9 +1138,41 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
 }
 
 
-void sendPlayerCustomDataPair(int playerID, const std::string &key, const std::string &value)
+static bool checkPlayerCustomDataSize(const std::string &key,
+                                      const std::string &value)
 {
-  if (key.size()+value.size() >= MaxPacketLen) {
+  const size_t fullSize =
+    sizeof(uint16_t) + // len
+    sizeof(uint16_t) + // code
+    sizeof(uint8_t)  + // playerID
+    sizeof(uint32_t) + // key len
+    sizeof(uint32_t) + // value len
+    key.size()       + // key data
+    value.size();      // value data
+
+  return (fullSize < MaxPacketLen);
+}
+
+
+void sendPlayerCustomDataPair(NetHandler* netHandler, int playerID,
+                              const std::string &key, const std::string &value)
+{
+  if (!checkPlayerCustomDataSize(key, value)) {
+    return;
+  }
+  NetMessage netMsg;
+  netMsg.packUInt8(playerID);
+  netMsg.packStdString(key);
+  netMsg.packStdString(value);
+  netMsg.send(netHandler, MsgPlayerData);
+}
+
+
+void broadcastPlayerCustomDataPair(int playerID,
+                                   const std::string &key,
+                                   const std::string &value)
+{
+  if (!checkPlayerCustomDataSize(key, value)) {
     return;
   }
   NetMessage netMsg;
@@ -1159,14 +1183,41 @@ void sendPlayerCustomDataPair(int playerID, const std::string &key, const std::s
 }
 
 
-void sendPlayerCustomDataPair(int playerID, const char* key, const char* value)
+void sendPlayerCustomDataMap(NetHandler* netHandler,
+                             const GameKeeper::Player* player)
 {
-  if (key && value)
-    sendPlayerCustomDataPair(playerID,std::string(key),std::string(value));
+  if (!player) {
+    return;
+  }
+  const int playerID = player->getIndex();
+  const std::map<std::string, std::string>& customData = player->customData;
+  std::map<std::string, std::string>::const_iterator it;
+  for (it = customData.begin(); it != customData.end(); ++it) {
+    sendPlayerCustomDataPair(netHandler, playerID, it->first, it->second);
+  }
 }
 
 
+void broadcastPlayerCustomDataMap(const GameKeeper::Player* player)
+{
+  if (!player) {
+    return;
+  }
+  const int playerID = player->getIndex();
+  const std::map<std::string, std::string>& customData = player->customData;
+  std::map<std::string, std::string>::const_iterator it;
+  for (it = customData.begin(); it != customData.end(); ++it) {
+    broadcastPlayerCustomDataPair(playerID, it->first, it->second);
+  }
+}
+
+
+//============================================================================//
+//============================================================================//
+//
 //messages sent TO the server
+//
+
 void getGeneralMessageInfo(void **buffer, uint16_t &code, uint16_t &len)
 {
   *buffer = nboUnpackUInt16(*buffer, len);

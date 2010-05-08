@@ -282,9 +282,11 @@ static std::string cmdIdentify(const std::string&, const CmdArgList& args, bool*
   if (args.size() != 0)
     return "usage: identify";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank != NULL)
-    if (myTank->isAlive() && !myTank->isPaused())
+  if (myTank != NULL) {
+    if (myTank->isAlive() && !myTank->isPaused()) {
       setTarget();
+    }
+  }
   return std::string();
 }
 
@@ -294,7 +296,7 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
   if (args.size() != 0)
     return "usage: restart";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if ((myTank != NULL) && canSpawn) {
+  if ((myTank != NULL) && entered && canSpawn) {
     if (!gameOver
         && !myTank->isSpawning()
         && !myTank->isObserver()

@@ -21,7 +21,7 @@
 /* system interface headers */
 #include <string>
 
-class Downloads :   public Singleton<Downloads>
+class Downloads : public Singleton<Downloads>
 {
 public:
   void startDownloads(bool doDownloads, bool updateDownloads, bool referencing);

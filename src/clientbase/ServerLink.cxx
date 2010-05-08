@@ -835,15 +835,15 @@ void ServerLink::sendKilled(const PlayerId victim,
 
 void ServerLink::sendPlayerUpdate(Player* player)
 {
-  char msg[PlayerUpdatePLenMax];
   // Send the time frozen at each start of scene iteration, as all
   // dead reckoning use that
+  char msg[PlayerUpdatePLenMax];
   void* buf = msg;
-  uint16_t code;
   buf = nboPackUInt8(buf, player->getId());
   buf = nboPackDouble(buf, GameTime::getStepTime());
 
   // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
+  uint16_t code;
   buf = player->pack(buf, code);
 
   // variable length

@@ -425,7 +425,6 @@ static void sendPlayerUpdateB(GameKeeper::Player *playerData)
     return;
 
   NetMessage netMsg;
-
   playerData->packPlayerUpdate(netMsg);
   netMsg.broadcast(MsgAddPlayer);
 }
@@ -1926,7 +1925,6 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   autoTeamData.playerID = playerIndex;
   autoTeamData.team = convertTeam(t);
   autoTeamData.callsign = playerData->player.getCallSign();
-
   worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
   playerData->setTeam(convertTeam(autoTeamData.team), false);
@@ -1983,12 +1981,15 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 		 "This team is full.  Try another team.");
     return ;
   }
-  if (!sendAcceptPlayerMessage(playerIndex))
+
+  if (!sendAcceptPlayerMessage(playerIndex)) {
     return;
+  }
 
   // abort if we hung up on the client
-  if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
+  if (!GameKeeper::Player::getPlayerByIndex(playerIndex)) {
     return;
+  }
 
   // player is signing on (has already connected via addClient).
   playerData->signingOn(clOptions->gameType == ClassicCTF);
@@ -2026,6 +2027,9 @@ void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   // send update of info for team just joined
   sendTeamUpdateMessageBroadcast(teamIndex);
+
+  // send (possibly resend), all of the player's custom data
+  broadcastPlayerCustomDataMap(playerData);
 
   // send IP update to everyone with PLAYERLIST permission
   sendIPUpdate(-1, playerIndex);
@@ -3477,19 +3481,20 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   if (playerData._LSAState == GameKeeper::Player::required) {
     requestAuthentication = true;
     playerData._LSAState = GameKeeper::Player::requesting;
-  } else {
-    if (!playerData.netHandler &&  playerData._LSAState != GameKeeper::Player::done) {
-      addPlayer(p, &playerData);
-      playerData._LSAState = GameKeeper::Player::done;
-    } else if (playerData.netHandler) {
-      if (playerData.netHandler->reverseDNSDone()) {
-	if ((playerData._LSAState == GameKeeper::Player::verified)	||
-	    (playerData._LSAState == GameKeeper::Player::timedOut)	||
-	    (playerData._LSAState == GameKeeper::Player::failed)	||
-	    (playerData._LSAState == GameKeeper::Player::notRequired)) {
-	  addPlayer(p, &playerData);
-	  playerData._LSAState = GameKeeper::Player::done;
-	}
+  }
+  else if (!playerData.netHandler &&
+           (playerData._LSAState != GameKeeper::Player::done)) {
+    addPlayer(p, &playerData);
+    playerData._LSAState = GameKeeper::Player::done;
+  }
+  else if (playerData.netHandler) {
+    if (playerData.netHandler->reverseDNSDone()) {
+      if ((playerData._LSAState == GameKeeper::Player::verified) ||
+          (playerData._LSAState == GameKeeper::Player::timedOut) ||
+          (playerData._LSAState == GameKeeper::Player::failed)	 ||
+          (playerData._LSAState == GameKeeper::Player::notRequired)) {
+        addPlayer(p, &playerData);
+        playerData._LSAState = GameKeeper::Player::done;
       }
     }
   }

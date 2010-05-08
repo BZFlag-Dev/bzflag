@@ -12,24 +12,10 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* Canceling a pause command before the 5 second countdown completes
-  causes the client to drop any good flag without notifying the
-  server, so other players will still see a flag on the tank even
-  though it considers itself to have none.  When the flag "dropped"
-  this way is PZ and the player was zoned, other players continue to
-  treat the tank as zoned, and picking up PZ again results in being
-  zoned immediately.  The printing of "MsgPause(FIXME)" in playing.cxx
-  is probably related to this.
-
 * Other players continue to see a white flag on a tank after SH saved
   it from being killed even though the flag has been dropped from that
   player's point of view.  The tank blows up normally the next time it
   is shot.
-
-* Network code issues:
-  - Data is sometimes sent/received/processed? out of order. For example,
-    on a public server, the motto (via MsgPlayerData) is procesed in bzfs
-    before the player join message, so it gets ignored.
 
 * fix the MsgPause messages
 

@@ -37,21 +37,21 @@ class NetMessage;
 class ServerLink {
 public:
   enum State {
-    Okay = 0,
-    SocketError = 1,
-    Rejected = 2,
-    BadVersion = 3,
-    Hungup = 4,		// only used by Winsock
+    Okay            = 0,
+    SocketError     = 1,
+    Rejected        = 2,
+    BadVersion      = 3,
+    Hungup          = 4,		// only used by Winsock
     CrippledVersion = 5,
-    Refused = 6
+    Refused         = 6
   };
 
   enum Abilities {
-    Nothing = 0,
-    CanDoUDP = 1,
-    SendScripts = 2,
-    SendTextures = 4,
-    HasMessageLink = 8
+    Nothing        = 0,
+    CanDoUDP       = (1 << 0),
+    SendScripts    = (1 << 1),
+    SendTextures   = (1 << 2),
+    HasMessageLink = (1 << 3)
   };
 
   ServerLink(const std::string& serverName,
@@ -77,7 +77,7 @@ public:
 
   bool readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
 
-  void sendCaps(PlayerId id, bool downloads, bool sounds );
+  void sendCaps(PlayerId id, bool downloads, bool sounds);
   void sendEnter(PlayerId, PlayerType, NetworkUpdates, TeamColor,
                  const char* name, const char* token, const char* referrer);
 

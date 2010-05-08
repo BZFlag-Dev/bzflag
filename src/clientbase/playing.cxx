@@ -1175,6 +1175,12 @@ void handleSuperKill(void *msg)
 }
 
 
+void handleAccept(void*)
+{
+  // do nothing
+}
+
+
 void handleRejectMessage(void *msg)
 {
   void *buf;
@@ -1273,7 +1279,8 @@ void handleAddPlayer(void* msg, bool& checkScores)
 
   if (id == myTank->getId()) {
     enteringServer(msg); // it's me!  should be the end of updates
-  } else {
+  }
+  else {
     addPlayer(id, msg, entered);
     updateNumPlayers();
     checkScores = true;
@@ -1994,6 +2001,7 @@ static void handleServerMessage(bool human, uint16_t code, uint16_t len, void *m
       break;
     }
     case MsgAccept: {
+      handleAccept(msg);
       break;
     }
     case MsgReject: {

@@ -324,27 +324,27 @@ inline void luaset_numfunc(lua_State* L, lua_Number k, lua_CFunction v)
 
 inline void luaset_intstr(lua_State* L, int k, const std::string& v)
 {
-  lua_pushint(L, k); lua_pushstdstring(L, v); lua_rawset(L, -3);
+  lua_pushstdstring(L, v); lua_rawseti(L, -2, k);
 }
 
 inline void luaset_intnum(lua_State* L, int k, lua_Number v)
 {
-  lua_pushint(L, k); lua_pushnumber(L, v); lua_rawset(L, -3);
+  lua_pushnumber(L, v); lua_rawseti(L, -2, k);
 }
 
 inline void luaset_intint(lua_State* L, int k, int v)
 {
-  lua_pushint(L, k); lua_pushint(L, v); lua_rawset(L, -3);
+  lua_pushint(L, v); lua_rawseti(L, -2, k);
 }
 
 inline void luaset_intbool(lua_State* L, int k, bool v)
 {
-  lua_pushint(L, k); lua_pushboolean(L, v); lua_rawset(L, -3);
+  lua_pushboolean(L, v); lua_rawseti(L, -2, k);
 }
 
 inline void luaset_intfunc(lua_State* L, int k, lua_CFunction v)
 {
-  lua_pushint(L, k); lua_pushcfunction(L, v); lua_rawset(L, -3);
+  lua_pushcfunction(L, v); lua_rawseti(L, -2, k);
 }
 
 

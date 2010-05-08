@@ -485,7 +485,7 @@ bool setVideoFormat(int index, bool test)
 void joinGame()
 {
   if (joiningGame) {
-    if(worldDownLoader) {
+    if (worldDownLoader) {
       worldDownLoader->stop();
       joiningGame = false;
       showError("Download stopped by user action");
@@ -1186,7 +1186,8 @@ void updateHighScores()
 	  }
 	}
 	hud->setTeamHasHighScore(haveBest);
-      } else {
+      }
+      else {
 	hud->setTeamHasHighScore(false);
       }
 }
@@ -1654,9 +1655,11 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
 
   if (victimLocal) {
     // uh oh, local player is dead
-    if (victimLocal->isAlive())
+    if (victimLocal->isAlive()) {
       gotBlowedUp(victimLocal, GotKilledMsg, killer);
-  } else if (victimPlayer) {
+    }
+  }
+  else if (victimPlayer) {
     victimPlayer->setExplode(BzTime::getTick());
     const fvec3& pos = victimPlayer->getPosition();
     const bool localView = isViewTank(victimPlayer);
@@ -1816,8 +1819,12 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
     const ShotPath *shot = killerPlayer->getShot(int(shotId));
     if (shot && shot->getFlag() == Flags::Genocide) {
       for (int i = 0; i < numRobots; i++) {
-	if (robots[i] && victimPlayer != robots[i] && victimPlayer->getTeam() == robots[i]->getTeam() && robots[i]->getTeam() != RogueTeam)
+	if (robots[i] &&
+	    (victimPlayer != robots[i]) &&
+	    (victimPlayer->getTeam() == robots[i]->getTeam()) &&
+	    (robots[i]->getTeam() != RogueTeam)) {
 	  gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+        }
       }
     }
   }
@@ -2924,7 +2931,7 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
   // message when it gets back to us -- do this by ignoring killed
   // message if we're already dead.
   // don't die if we had the shield flag and we've been shot.
-  if (reason != GotShot || flag != Flags::Shield) {
+  if ((reason != GotShot) || (flag != Flags::Shield)) {
     // blow me up
     tank->explodeTank();
     EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle());
@@ -3016,7 +3023,7 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
   // hit me again if I had the shield flag.  this is important for the
   // shots that aren't stopped by a hit and so may stick around to hit
   // me on the next update, making the shield useless.
-  return (reason == GotShot && flag == Flags::Shield && shotId != -1);
+  return ((reason == GotShot) && (flag == Flags::Shield) && (shotId != -1));
 }
 
 
@@ -3103,8 +3110,9 @@ static void checkEnvironment()
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-      if (myTank->getFlag() != Flags::Null)
+      if (myTank->getFlag() != Flags::Null) {
 	serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+      }
       stopShot = true;
     } else {
       stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
@@ -3112,15 +3120,20 @@ static void checkEnvironment()
 
     if (stopShot || hit->isStoppedByHit()) {
       Player *hitter = lookupPlayer(hit->getPlayer());
-      if (hitter)
+      if (hitter) {
 	hitter->endShot(hit->getShotId());
+      }
     }
-  } else if (myTank->getDeathPhysicsDriver() >= 0) { // if not dead yet, see if i'm sitting on death
+  }
+  else if (myTank->getDeathPhysicsDriver() >= 0) {
+    // if not dead yet, see if i'm sitting on death
     gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
     // this is done on the server now, we should remove this when we are sure its ok.
-    /*	else if ((waterLevel > 0.0f) && (myTank->getPosition().z <= waterLevel))  // if not dead yet, see if i've dropped below the death level
-    gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
-  } else {
+    /*	else if ((waterLevel > 0.0f) && (myTank->getPosition().z <= waterLevel))
+          // if not dead yet, see if i've dropped below the death level
+          gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
+  }
+  else {
     // if not dead yet, see if i got squished
     for (i = 0; i < curMaxPlayers; i++) {
       if (checkSquishKill(myTank, remotePlayers[i])) {
@@ -3315,7 +3328,7 @@ void setTarget()
     return;
   }
 
-  const bool forbidIdentify = BZDB.isTrue("_forbidIdentify");
+  static BZDB_bool forbidIdentify("_forbidIdentify");
 
   if (lockedOn) {
     myTank->setTarget(bestTarget);
@@ -3607,6 +3620,7 @@ void enteringServer(void* buf)
     serverLink->sendNewPlayer(i,AutomaticTeam);
   numRobots = 0;
 #endif
+
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
   int16_t team;
@@ -3708,9 +3722,11 @@ void enteringServer(void* buf)
   updateNumPlayers();
   updateFlag(Flags::Null);
   updateHighScores();
+
   hud->setHeading(myTank->getAngle());
   hud->setAltitude(myTank->getPosition().z);
   hud->setTimeLeft((uint32_t)~0);
+
   fireButton = false;
   firstLife = true;
 
@@ -3722,7 +3738,20 @@ void enteringServer(void* buf)
     BZDB.setBool("slowMotion", false);
   }
 
+  // notify HubLink about our success
+  if (hubLink) {
+    hubLink->serverJoined(serverLink->getJoinServer(),
+                          serverLink->getJoinPort(),
+                          serverLink->getJoinCallsign());
+  }
+
+   /////////////
+  ///////////////
   entered = true;
+  ///////////////
+   /////////////
+
+  eventHandler.ServerJoined();
 }
 
 
@@ -3923,9 +3952,7 @@ void joinInternetGame2()
   setSceneDatabase();
   mainWindow->getWindow()->yieldCurrent();
 
-  // make radar
-  //  radar = new RadarRenderer(*sceneRenderer, *world);
-  //  mainWindow->getWindow()->yieldCurrent();
+  // setup the radar and controlPanel
   radar->setWorld(world);
   controlPanel->setRadarRenderer(radar);
   controlPanel->resize();
@@ -3935,12 +3962,13 @@ void joinInternetGame2()
   myTank->setTeam(startupInfo.team);
   LocalPlayer::setMyTank(myTank);
 
+  // default to the Hunter team for rabbit hunt servers
   if (world->allowRabbit() && !myTank->isObserver()) {
     myTank->setTeam(HunterTeam);
   }
 
   // tell server we want to join
-  bool noSounds = BZDB.isSet ("_noRemoteSounds") && BZDB.isTrue ("_noRemoteSounds");
+  const bool noSounds = BZDB.isTrue("_noRemoteSounds");
   serverLink->sendEnter(myTank->getId(), TankPlayer, AllUpdates, myTank->getTeam(),
                         myTank->getCallSign(),
                         startupInfo.token,
@@ -3958,49 +3986,50 @@ void joinInternetGame2()
     serverKey += portBuf;
   }
 
-  //ServerItem server = new ServerItem();
-  //Address::getHostByAddress(info.ping.serverId.serverHost);
-
   ServerList &serverList = ServerList::instance();
-
-  if (!(serverList.lookupServer(serverKey) == NULL))
+  if (!(serverList.lookupServer(serverKey) == NULL)) {
     serverList.markAsRecent(serverList.lookupServer(serverKey));
-
-  serverLink->sendCaps(myTank->getId(), true, !noSounds);
-
-  // give them our motto
-  if (myTank && startupInfo.motto.size())
-    myTank->customData["motto"] = startupInfo.motto;
-
-  // send all our custom data pairs
-  std::map<std::string, std::string>::iterator itr = myTank->customData.begin();
-  while (itr != myTank->customData.end()) {
-    serverLink->sendCustomData(itr->first, itr->second);
-    itr++;
   }
 
+  // give them our motto
+  if (myTank && startupInfo.motto.size()) {
+    myTank->customData["motto"] = startupInfo.motto;
+  }
+
+  // send all our custom data pairs
+  std::map<std::string, std::string>::iterator it;
+  for (it = myTank->customData.begin(); it != myTank->customData.end(); ++it) {
+    serverLink->sendCustomData(it->first, it->second);
+  }
+
+  // send client capabilities
+  const bool canDownload = true;
+  serverLink->sendCaps(myTank->getId(), canDownload, !noSounds);
+
+  // save export information
   ExportInformation &ei = ExportInformation::instance();
-  ei.setInformation("Callsign", myTank->getCallSign(), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
-  ei.setInformation("Team", Team::getName(myTank->getTeam()), ExportInformation::eitPlayerInfo, ExportInformation::eipPrivate);
-  ei.setInformation("Server", TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
-    ExportInformation::eitServerInfo, ExportInformation::eipStandard);
+  const std::string eiServer =
+    TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort);
+  ei.setInformation("Server", eiServer,
+                    ExportInformation::eitServerInfo,
+                    ExportInformation::eipStandard);
+  ei.setInformation("Callsign", myTank->getCallSign(),
+                    ExportInformation::eitPlayerInfo,
+                    ExportInformation::eipPrivate);
+  ei.setInformation("Team", Team::getName(myTank->getTeam()),
+                    ExportInformation::eitPlayerInfo,
+                    ExportInformation::eipPrivate);
 
   // hopefully it worked!  pop all the menus.
   HUDDialogStack *stack = HUDDialogStack::get();
-  while (stack->isActive())
+  while (stack->isActive()) {
     stack->pop();
+  }
 
   LuaClientScripts::LuaBzOrgUpdateForbidden();
   LuaClientScripts::LuaUserUpdateForbidden(); 
   LuaClientScripts::LuaRulesLoadHandler();    
   LuaClientScripts::LuaWorldLoadHandler();    
-  eventHandler.ServerJoined();
-
-  if (hubLink) {
-    hubLink->serverJoined(startupInfo.serverName,
-                          startupInfo.serverPort,
-                          startupInfo.callsign);
-  }
 
   joiningGame = false;
 }
@@ -5654,13 +5683,12 @@ void doUpdates(const float dt)
 }
 
 
-
-
 bool checkForCompleteDownloads(void)
 {
   // check if we are waiting for initial texture downloading
-  if (!Downloads::instance().requestFinalized())
+  if (!Downloads::instance().requestFinalized()) {
     return false;
+  }
 
   // downloading is terminated. go!
   Downloads::instance().finalizeDownloads();
@@ -5668,7 +5696,7 @@ bool checkForCompleteDownloads(void)
     downloadingData = false;
     return true;
   } else {
-    setSceneDatabase();
+    setSceneDatabase(); // FIXME - huh?
   }
 
   return false;

@@ -32,6 +32,7 @@
 #include "playing.h"
 #include "clientvars.h"
 
+
 WorldDownLoader::WorldDownLoader() :
   cURLManager(),
   worldUrl(""),
@@ -44,6 +45,7 @@ WorldDownLoader::WorldDownLoader() :
   cacheOut(NULL)
 {
 }
+
 
 WorldDownLoader::~WorldDownLoader()
 {
@@ -61,6 +63,7 @@ WorldDownLoader::~WorldDownLoader()
   }
 }
 
+
 void WorldDownLoader::start(char *hexDigest)
 {
   md5Digest = &hexDigest[1];
@@ -77,6 +80,7 @@ void WorldDownLoader::start(char *hexDigest)
   }
 }
 
+
 void WorldDownLoader::stop()
 {
   if (joiningGame) {
@@ -90,6 +94,7 @@ void WorldDownLoader::stop()
     }
   }
 }
+
 
 void WorldDownLoader::setCacheURL(char *cacheURL)
 {

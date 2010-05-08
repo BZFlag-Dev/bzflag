@@ -41,6 +41,7 @@ class LuaCallOuts {
     static int LocalizeString(lua_State* L);
     static int GetCacheFilePath(lua_State* L);
 
+    static int InGame(lua_State* L);
     static int GetGameInfo(lua_State* L);
     static int GetWorldInfo(lua_State* L);
 
@@ -181,7 +182,7 @@ class LuaCallOuts {
     static int IsPlayerHunted(lua_State* L);
 
     // flags
-    static int GetFlagList(lua_State* L); // FIXME?
+    static int GetFlagList(lua_State* L);
     static int GetFlagName(lua_State* L);
     static int GetFlagType(lua_State* L);
     static int GetFlagShotType(lua_State* L);

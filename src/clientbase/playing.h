@@ -141,6 +141,7 @@ void handleAdminInfo(void *msg);
 void handleAliveMessage(void *msg);
 void handleAllowSpawn(uint16_t len, void *msg);
 void handleAllow(void *msg);
+void handleAccept(void *msg);
 void handleAutoPilot(void *msg);
 void handleCacheURL(void *msg, uint16_t len);
 void handleCaptureFlag(void *msg, bool &checkScores);

@@ -113,6 +113,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
   PUSH_LUA_CFUNC(L, LocalizeString);
   PUSH_LUA_CFUNC(L, GetCacheFilePath);
 
+  PUSH_LUA_CFUNC(L, InGame);
   PUSH_LUA_CFUNC(L, GetGameInfo);
   PUSH_LUA_CFUNC(L, GetWorldInfo);
 
@@ -670,6 +671,13 @@ int LuaCallOuts::GetCacheFilePath(lua_State* L)
 //
 //  Game / server information
 //
+
+int LuaCallOuts::InGame(lua_State* L)
+{
+  lua_pushboolean(L, entered && serverLink && LocalPlayer::getMyTank());
+  return 1;
+}
+
 
 int LuaCallOuts::GetGameInfo(lua_State* L)
 {
@@ -2664,17 +2672,25 @@ int LuaCallOuts::IsPlayerHunted(lua_State* L)
 
 int LuaCallOuts::GetFlagList(lua_State* L)
 {
-  lua_newtable(L);
-
   World* world = World::getWorld();
   if (world == NULL) {
+    lua_newtable(L);
     return 1;
   }
 
-  for (int i = 0; i < world->getMaxFlags(); i++) {
-    lua_pushinteger(L, i);
-    lua_rawseti(L, -2, i + 1);
+  // arg1 means <show all flags>, defaults to false
+  const bool onlyActive = !lua_isboolean(L, 1) || !lua_tobool(L, 1);
+
+  lua_newtable(L);
+  int index = 0;
+  for (int fi = 0; fi < world->getMaxFlags(); fi++) {
+    const Flag& flag = world->getFlag(fi);
+    if (!onlyActive || (flag.status != FlagNoExist)) {
+      index++;
+      luaset_intint(L, index, fi);
+    }
   }
+
   return 1;
 }
 

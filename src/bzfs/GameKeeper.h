@@ -87,7 +87,8 @@ public:
     void setBot ( int id, PlayerId hostID );
     void addBot ( int id, PlayerId botPlayer );
 
-    int		   getIndex();
+    inline int     getIndex() const { return playerIndex; }
+
     static int     getFreeIndex(int min, int max);
     static Player *getPlayerByIndex(int _playerIndex);
     static Player *getFirstPlayer(NetHandler *_netHandler);
@@ -256,11 +257,6 @@ public:
   };
 };
 
-
-inline int GameKeeper::Player::getIndex()
-{
-  return playerIndex;
-}
 
 inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
 								_playerIndex)

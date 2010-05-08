@@ -16,7 +16,8 @@
 #include "common.h"
 
 // system headers
-#include "bzfs.h"
+#include <string>
+#include <map>
 
 // common headers
 #include "global.h"
@@ -94,8 +95,14 @@ void playerStateToAPIState(bz_PlayerUpdateState &apiState, const PlayerState &pl
 void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState &apiState);
 
 // custom data
-void sendPlayerCustomDataPair(int playerID, const std::string &key, const std::string &value);
-void sendPlayerCustomDataPair(int playerID, const char* key, const char* value);
+void sendPlayerCustomDataPair(NetHandler* netHandler, int playerID,
+                              const std::string& key, const std::string& value);
+void broadcastPlayerCustomDataPair(int playerID,
+                                   const std::string &key, const std::string &value);
+void sendPlayerCustomDataMap(NetHandler* netHandler,
+                             const GameKeeper::Player* player);
+void broadcastPlayerCustomDataMap(const GameKeeper::Player* player);
+                             
 
 /** class to pack a bunch of variables into one or more NetMessage.
  *  they are then automatically sent as they complete, or in the destructor.
