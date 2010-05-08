@@ -4252,8 +4252,6 @@ static void doCountdown(int &readySetGo, BzTime &tm)
 	sendMsgTimeUpdate((int32_t)clOptions->timeLimit);
 
 	// kill any players that are playing already
-	GameKeeper::Player *player;
-
 	if (clOptions->gameType == ClassicCTF) {
 	  // cap all the flags
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(RedTeam),RedTeam);
@@ -4262,7 +4260,7 @@ static void doCountdown(int &readySetGo, BzTime &tm)
 	  sendFlagCaptureMessage((uint8_t)curMaxPlayers,FlagInfo::lookupFirstTeamFlag(PurpleTeam),PurpleTeam);
 
 	  for (int j = 0; j < curMaxPlayers; j++) {
-	    player = GameKeeper::Player::getPlayerByIndex(j);
+	    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(j);
 
 	    if (!player || player->player.isObserver() || !player->player.isPlaying())
 	      continue;
