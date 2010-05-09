@@ -1123,7 +1123,7 @@ void sendEchoResponse (struct sockaddr_in *uaddr, unsigned char tag)
 }
 
 
-static bool checkPlayerCustomDataSize(const std::string &key,
+static bool validPlayerCustomData(const std::string &key,
                                       const std::string &value)
 {
   const size_t fullSize =
@@ -1135,14 +1135,14 @@ static bool checkPlayerCustomDataSize(const std::string &key,
     key.size()       + // key data
     value.size();      // value data
 
-  return (fullSize < MaxPacketLen);
+  return (fullSize <= MaxPacketLen);
 }
 
 
 void sendPlayerCustomDataPair(NetHandler* netHandler, int playerID,
                               const std::string &key, const std::string &value)
 {
-  if (!checkPlayerCustomDataSize(key, value)) {
+  if (!validPlayerCustomData(key, value)) {
     return;
   }
   NetMessage netMsg;
@@ -1157,7 +1157,7 @@ void broadcastPlayerCustomDataPair(int playerID,
                                    const std::string &key,
                                    const std::string &value)
 {
-  if (!checkPlayerCustomDataSize(key, value)) {
+  if (!validPlayerCustomData(key, value)) {
     return;
   }
   NetMessage netMsg;

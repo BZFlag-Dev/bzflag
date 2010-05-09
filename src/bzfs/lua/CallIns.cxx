@@ -394,7 +394,7 @@ CALLIN(PlayerJoinEvent,            PlayerJoined,            BASIC);        // -E
 CALLIN(PlayerPartEvent,            PlayerParted,            BASIC);        // -Event+ed
 CALLIN(PlayerPausedEvent,          PlayerPaused,            BASIC);        // -Event
 CALLIN(PlayerPauseRequestEvent,    PlayerPauseRequest,      FIRST_FALSE);  // -Event
-CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    SPECIAL);
+CALLIN(PlayerSentCustomData,       PlayerSentCustomData,    FIRST_FALSE);
 CALLIN(PlayerSpawnEvent,           PlayerSpawned,           BASIC);        // -Event+ed
 CALLIN(PlayerTeamChangeEvent,      PlayerTeamChange,        BASIC);        // -Event
 CALLIN(PlayerUpdateEvent,          PlayerUpdate,            BASIC);        // -Event
@@ -1326,7 +1326,7 @@ bool CI_PlayerCollision::execute(bz_EventData* eventData)
 
 bool CI_PlayerCustomDataChanged::execute(bz_EventData* eventData)
 {
-  bz_PlayerSentCustomData_V1* ed = (bz_PlayerSentCustomData_V1*)eventData;
+  bz_PlayerCustomData_V1* ed = (bz_PlayerCustomData_V1*)eventData;
 
   if (!PushCallIn(3)) {
     return false;
@@ -1451,7 +1451,7 @@ bool CI_PlayerPauseRequest::execute(bz_EventData* eventData)
 
 bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
 {
-  bz_PlayerSentCustomData_V1* ed = (bz_PlayerSentCustomData_V1*)eventData;
+  bz_PlayerCustomData_V1* ed = (bz_PlayerCustomData_V1*)eventData;
 
   if (!PushCallIn(3)) {
     return false;
@@ -1461,14 +1461,15 @@ bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
   lua_pushstring(L,  ed->key.c_str());
   lua_pushstring(L,  ed->data.c_str());
 
-  if (!RunCallIn(3, 2)) {
+  if (!RunCallIn(3, 1)) {
     return false;
   }
 
-  if (lua_israwstring(L, -2)) { ed->key  = lua_tostring(L, -2); }
-  if (lua_israwstring(L, -1)) { ed->data = lua_tostring(L, -1); }
+  if (lua_isboolean(L, -1) && !lua_tobool(L, -1)) {
+    ed->key = ""; // do not relay this change
+  }
 
-  lua_pop(L, 2);
+  lua_pop(L, 1);
 
   return true;
 }

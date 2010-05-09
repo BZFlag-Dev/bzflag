@@ -663,42 +663,22 @@ bool LuaHandle::SetupEnvironment()
   LUA_OPEN_LIB(L, luaopen_math);
   LUA_OPEN_LIB(L, luaopen_table);
   LUA_OPEN_LIB(L, luaopen_string);
-  LUA_OPEN_LIB(L, luaopen_os);
   LUA_OPEN_LIB(L, luaopen_lpeg);
   if (devMode) {
     LUA_OPEN_LIB(L, luaopen_debug);
   }
   //
-  // disabled libraries  {io} and {package}
+  // disabled libraries  {io}, {os}, and {package}
   // NOTE: if {io} is added, disable io.popen()
   //				 ^^^^^^^^^^
   //LUA_OPEN_LIB(L, luaopen_io);
+  //LUA_OPEN_LIB(L, luaopen_os);
   //LUA_OPEN_LIB(L, luaopen_package);
 
   // disable some global functions
   // (these use stdio calls to access file data)
   lua_pushnil(L); lua_setglobal(L, "dofile");
   lua_pushnil(L); lua_setglobal(L, "loadfile");
-
-  // only allow safe {os} functions  (excluding execute(), exit(), etc ...)
-  const char* osFuncs[] = {
-    "clock",
-    "date",
-    "time",
-    "difftime"
-  };
-  const int osCount = sizeof(osFuncs) / sizeof(osFuncs[0]);
-  lua_newtable(L); // new {os} table
-  const int newOS = lua_gettop(L);
-  // copy the desired entries
-  lua_getglobal(L, "os"); {
-    for (int i = 0; i < osCount; i++) {
-      lua_getfield(L,    -1, osFuncs[i]);
-      lua_setfield(L, newOS, osFuncs[i]);
-    }
-  }
-  lua_pop(L, 1);	  // old {os}
-  lua_setglobal(L, "os"); // new {os}
 
   // push the bzflag additions
   lua_pushvalue(L, LUA_GLOBALSINDEX); {

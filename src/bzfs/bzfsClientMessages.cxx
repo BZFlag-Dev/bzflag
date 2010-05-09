@@ -1106,12 +1106,16 @@ public:
     if (!player)
       return false;
 
-    std::string key,value;
+    std::string key, value;
     buf = nboUnpackStdString(buf, key);
     buf = nboUnpackStdString(buf, value);
 
+    logDebugMessage(4, "Player %s [%d] CustomData < '%s' = '%s' >\n",
+                    player->player.getCallSign(), player->getIndex(),
+                    key.c_str(), value.c_str());
+
     // let the API change the value
-    bz_PlayerSentCustomData_V1 data;
+    bz_PlayerCustomData_V1 data(bz_ePlayerSentCustomData);
     data.playerID = player->getIndex();
     data.key = key;
     data.data = value;
@@ -1119,8 +1123,9 @@ public:
 
     // if the key is still cool, go and set the change,
     // and notify all clients and the API that it changed
-    if (data.key.size()) {
-      bz_setPlayerCustomData(player->getIndex(), data.key.c_str(), data.data.c_str());
+    if (data.key.size() > 0) {
+      bz_setPlayerCustomData(player->getIndex(), data.key.c_str(),
+                                                 data.data.c_str());
     }
 
     return true;
@@ -1139,8 +1144,9 @@ public:
     buf = nboUnpackStdString(buf, vers);
 
     player->player.OSVersion = vers;
-    logDebugMessage(2,"Player %s [%d] OS version \"%s\"\n",
-		    player->player.getCallSign(), player->getIndex(), player->player.OSVersion.c_str());
+    logDebugMessage(2, "Player %s [%d] OS version \"%s\"\n",
+		    player->player.getCallSign(), player->getIndex(),
+		    player->player.OSVersion.c_str());
 
     return true;
   }

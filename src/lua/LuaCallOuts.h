@@ -180,6 +180,7 @@ class LuaCallOuts {
     static int IsPlayerVerified(lua_State* L);
     static int IsPlayerRegistered(lua_State* L);
     static int IsPlayerHunted(lua_State* L);
+    static int SetPlayerCustomData(lua_State* L);
 
     // flags
     static int GetFlagList(lua_State* L);

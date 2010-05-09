@@ -1208,9 +1208,10 @@ public:
 class BZF_API bz_AllowKillCommandEventData_V1 : public bz_EventData
 {
 public:
-  bz_AllowKillCommandEventData_V1() : bz_EventData(bz_eAllowKillCommandEvent)
-    , playerToKill(-1), playerKilling(-1)
-    , allow(false)
+  bz_AllowKillCommandEventData_V1()
+  : bz_EventData(bz_eAllowKillCommandEvent)
+  , playerToKill(-1), playerKilling(-1)
+  , allow(false)
   {
   }
 
@@ -1232,22 +1233,21 @@ class BZF_API bz_TeleportEventData_V1 : public bz_EventData
 {
 public:
   bz_TeleportEventData_V1() : bz_EventData(bz_eTeleportEvent)
-    , playerID(-1)
-  {
-  }
+  , playerID(-1)
+  {}
 
   int playerID;
   int from;
   int to;
 };
 
-class BZF_API bz_PlayerSentCustomData_V1 : public bz_EventData
+class BZF_API bz_PlayerCustomData_V1 : public bz_EventData
 {
 public:
-  bz_PlayerSentCustomData_V1() : bz_EventData(bz_ePlayerSentCustomData)
-    , playerID(-1)
-  {
-  }
+  bz_PlayerCustomData_V1(bz_eEventType type)
+  : bz_EventData(type)
+  , playerID(-1)
+  {}
 
   int playerID;
   bz_ApiString key;

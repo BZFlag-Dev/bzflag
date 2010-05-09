@@ -17,12 +17,7 @@ Crashes
 -------
 
 * Tanks only spawn at ground level. Complex maps that have tunnels or platforms
-  may not like this (spawn out of bounds happens)
-
-* reached assertion on either World::getTeleportTarget() or
-  World::getTeleporter() after getting killed while jumping towards a teleporter
-  (and landing in front of the teleporter, albeit dead).  i didn't respawn,
-  waited a couple sec (was chatting), then the assertion was raised.
+  may not like this (spawn out of bounds happens)  -- huh?
 
 * Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
   client in Rabbit game. The reported message buffer address was bad (ie
@@ -37,10 +32,7 @@ Crashes
 * The WebAdmin plugin segfaults the server on shutdown.
     - Cannot duplicate on either linux or Windows @ r20695 (blast)
 
-* After joining then leaving a server with at least one solo bot, the bzfs
-  will crash reasonably predictably at NetHandler:578 (toBeKickedReason is a
-  bad ptr) This happens at least on Windows
-  
+
 Regressions
 -----------
 
@@ -49,17 +41,31 @@ Regressions
 * Some players hear clicks and pops with sound effects, others do not.
   Sounds cause an observable reduction in frame rate.
 
+* Authentication status (-, +, @) and motto for other players does not show up
+  when you join a public server. When last checked, data was being processed
+  by bzfs in the incorrect order (example: motto was being processed before
+  the player was added, thus setting the motto failed because it didn't have a
+  player to assign it to) @ r20696 (blast)
+
+
+Probably Fixed
+--------------
+
 * GM does not seem to lock on reliably (try against a remote client, bots work
   fine)
 
 * server communication error when someone logs off and people are still playing
   (may be fixed as of 2.99.21)
 
-* Authentication status (-, +, @) and motto for other players does not show up
-  when you join a public server. When last checked, data was being processed
-  by bzfs in the incorrect order (example: motto was being processed before
-  the player was added, thus setting the motto failed because it didn't have a
-  player to assign it to) @ r20696 (blast)
+* reached assertion on either World::getTeleportTarget() or
+  World::getTeleporter() after getting killed while jumping towards a teleporter
+  (and landing in front of the teleporter, albeit dead).  i didn't respawn,
+  waited a couple sec (was chatting), then the assertion was raised.
+
+* After joining then leaving a server with at least one solo bot, the bzfs
+  will crash reasonably predictably at NetHandler:578 (toBeKickedReason is a
+  bad ptr) This happens at least on Windows
+
 
 Documentation
 -------------

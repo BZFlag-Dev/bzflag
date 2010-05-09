@@ -256,6 +256,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
     PUSH_LUA_CFUNC(L, IsPlayerRegistered);
     PUSH_LUA_CFUNC(L, IsPlayerHunted);
   }
+  PUSH_LUA_CFUNC(L, SetPlayerCustomData);
 
   if (fullRead) {
     PUSH_LUA_CFUNC(L, GetFlagList);
@@ -2660,6 +2661,25 @@ int LuaCallOuts::IsPlayerHunted(lua_State* L)
     return luaL_pushnil(L);
   }
   lua_pushboolean(L, player->isHunted());
+  return 1;
+}
+
+
+int LuaCallOuts::SetPlayerCustomData(lua_State* L)
+{
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (!myTank || !serverLink || !entered) {
+    return luaL_pushnil(L);
+  }
+  const std::string key   = luaL_checkstdstring(L, 1);
+  const std::string value = luaL_checkstdstring(L, 2);
+  if (key.empty()) {
+    return luaL_pushnil(L);
+  }
+
+  serverLink->sendCustomData(key, value);
+
+  lua_pushboolean(L, true);
   return 1;
 }
 

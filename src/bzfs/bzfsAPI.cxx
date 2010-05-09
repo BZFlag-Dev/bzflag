@@ -1005,7 +1005,7 @@ BZF_API bool bz_setPlayerCustomData(int playerID, const char* key, const char* d
 
   bool found = false;
   if (player->customData.find(k) != player->customData.end()) {
-    return found = true;
+    found = true;
   }
 
   player->customData[k] = v;
@@ -1013,12 +1013,10 @@ BZF_API bool bz_setPlayerCustomData(int playerID, const char* key, const char* d
   broadcastPlayerCustomDataPair(playerID, k, v);
 
   // notify on the change
-  bz_PlayerSentCustomData_V1 eventData;
+  bz_PlayerCustomData_V1 eventData(bz_ePlayerCustomDataChanged);
   eventData.playerID = playerID;
   eventData.key = k;
   eventData.data = v;
-
-  eventData.eventType = bz_ePlayerCustomDataChanged;
   worldEventManager.callEvents(eventData);
 
   return found;

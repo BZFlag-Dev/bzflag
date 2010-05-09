@@ -1930,11 +1930,11 @@ static void debugNetMessages(uint16_t code, uint16_t len, void *msg)
     return;
   }
 
-  if (!includeTypes.empty()) {
-    if (includeTypes.find(code) == includeTypes.end()) {
-      return;
-    }
+  if (!includeTypes.empty() &&
+      (includeTypes.find(code) == includeTypes.end())) {
+    return;
   }
+
   if (excludeTypes.find(code) != excludeTypes.end()) {
     return;
   }
