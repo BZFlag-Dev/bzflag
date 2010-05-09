@@ -139,9 +139,10 @@ void LocalPlayer::doUpdate(float dt)
   // reap dead (reloaded) shots
   for (i = 0; i < numShots; i++) {
     if (shots[i] && shots[i]->isReloaded()) {
-      if (!shots[i]->isExpired())
+      if (!shots[i]->isExpired()) {
         shots[i]->setExpired();
-	    deleteShot(i);
+      }
+      deleteShot(i);
     }
   }
 
@@ -150,7 +151,9 @@ void LocalPlayer::doUpdate(float dt)
   for (i = 0; i < numShots; i++) {
     if (shots[i]) {
       shots[i]->update(dt);
-      if (!shots[i]->isExpired()) anyShotActive = true;
+      if (!shots[i]->isExpired()) {
+        anyShotActive = true;
+      }
     }
   }
 
@@ -252,9 +255,6 @@ void LocalPlayer::doUpdateMotion(float dt)
   fvec3 newVelocity(oldVelocity);
   float newAngVel = 0.0f;
 
-  if (!headless) {
-    clearRemoteSounds();
-  }
   World* world = World::getWorld();
   if (!world) {
     return; // no world, no motion
@@ -754,15 +754,21 @@ void LocalPlayer::doUpdateMotion(float dt)
     }
   }
 
-  if (gettingSound) {
-    const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());
-    if ((phydriver != NULL) && (phydriver->getLinearVel().z > 0.0f)) {
+  const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());
+  if ((phydriver != NULL) && (phydriver->getLinearVel().z > 0.0f)) {
+    if (gettingSound) {
       SOUNDSYSTEM.play(SFX_BOUNCE);
-      addRemoteSound(PlayerState::BounceSound);
-    } else if (justLanded && !entryDrop) {
+    }
+    addRemoteSound(PlayerState::BounceSound);
+  }
+  else if (justLanded && !entryDrop) {
+    if (gettingSound) {
       SOUNDSYSTEM.play(SFX_LAND);
-    } else if ((location == OnGround) &&
-	       (oldPosition.z == 0.0f) && (newPos.z < 0.f)) {
+    }
+  }
+  else if ((location == OnGround) &&
+           (oldPosition.z == 0.0f) && (newPos.z < 0.f)) {
+    if (gettingSound) {
       SOUNDSYSTEM.play(SFX_BURROW);
     }
   }
@@ -1552,12 +1558,12 @@ void LocalPlayer::doJump()
       return;
     }
     wingsFlapCount--;
-  } else if (!onSolidSurface()) {
+  }
+  else if (!onSolidSurface()) {
     // can't jump without wings unless on the ground or a building
-    if (flag != Flags::Wings)
+    if ((flag != Flags::Wings) || (wingsFlapCount <= 0)) {
       return;
-    if (wingsFlapCount <= 0)
-      return;
+    }
     wingsFlapCount--;
   }
 
@@ -1569,10 +1575,12 @@ void LocalPlayer::doJump()
   newVelocity.y = oldVelocity.y;
   if (flag == Flags::Wings) {
     newVelocity.z = BZDB.eval(BZDBNAMES.WINGSJUMPVELOCITY);
-  } else if (flag == Flags::Bouncy) {
+  }
+  else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
     newVelocity.z = factor * BZDB.eval(BZDBNAMES.JUMPVELOCITY);
-  }  else {
+  }
+  else {
     newVelocity.z = BZDB.eval(BZDBNAMES.JUMPVELOCITY);
   }
 
@@ -1589,14 +1597,17 @@ void LocalPlayer::doJump()
   fireJumpJets();
 
   // setup the sound
-  if (gettingSound) {
-    if (hasWings()) {
+  if (hasWings()) {
+    if (gettingSound) {
       SOUNDSYSTEM.play(SFX_FLAP);
-      addRemoteSound(PlayerState::WingsSound);
-    } else {
-      SOUNDSYSTEM.play(SFX_JUMP);
-      addRemoteSound(PlayerState::JumpSound);
     }
+    addRemoteSound(PlayerState::WingsSound);
+  }
+  else {
+    if (gettingSound) {
+      SOUNDSYSTEM.play(SFX_JUMP);
+    }
+    addRemoteSound(PlayerState::JumpSound);
   }
 
   eventHandler.PlayerJumped(*this);
@@ -1616,21 +1627,25 @@ void LocalPlayer::setTarget(const Player* _target)
 
 void LocalPlayer::setNemesis(const Player* _nemesis)
 {
-  if ((_nemesis == NULL) || _nemesis->getPlayerType() == TankPlayer)
+  if ((_nemesis == NULL) || _nemesis->getPlayerType() == TankPlayer) {
     nemesis = _nemesis;
+  }
 }
 
 
 void LocalPlayer::setRecipient(const Player* _recipient)
 {
-  if ((_recipient == NULL) || (_recipient->getId() <= LastRealPlayer))
+  if ((_recipient == NULL) || (_recipient->getId() <= LastRealPlayer)) {
     recipient = _recipient;
+  }
 }
 
 
 void LocalPlayer::explodeTank()
 {
-  if (location == Dead || location == Exploding) return;
+  if (location == Dead || location == Exploding) {
+    return;
+  }
   const float gravity    = BZDBCache::gravity;
   const float explodeTim = BZDB.eval(BZDBNAMES.EXPLODETIME);
   // Limiting max height increment to this value (the old default value)
@@ -1641,17 +1656,19 @@ void LocalPlayer::explodeTank()
   float maxSpeed;
   newVelocity.x = oldVelocity.x;
   newVelocity.y = oldVelocity.y;
-  if (gravity < 0.0f) {
+  if (gravity >= 0.0f) {
+    newVelocity.z = oldVelocity.z;
+  }
+  else {
     // comparing 2 speed:
-    //   to have a simmetric path (ending at same height as starting)
+    //   to have a symmetric path (ending at same height as starting)
     //   to reach the acme of parabola, under the max height established
     // take the less
     newVelocity.z = - 0.5f * gravity * explodeTim;
-    maxSpeed       = sqrtf(- 2.0f * zMax * gravity);
-    if (newVelocity.z > maxSpeed)
+    maxSpeed      = sqrtf(- 2.0f * zMax * gravity);
+    if (newVelocity.z > maxSpeed) {
       newVelocity.z = maxSpeed;
-  } else {
-    newVelocity.z = oldVelocity.z;
+    }
   }
   setVelocity(newVelocity);
   location = Exploding;
@@ -1838,13 +1855,12 @@ void LocalPlayer::changeScore(float newRank,
   if (!world) {
     return;
   }
-  if (newWins > 0 && world->allowShakeWins() &&
-      flagShakingWins > 0) {
+  if ((newWins > 0) && world->allowShakeWins() && (flagShakingWins > 0)) {
     flagShakingWins -= newWins;
     if (flagShakingWins <= 0) {
       flagShakingWins = 0;
       server->sendDropFlag(getPosition());
-	  setShotType(StandardShot);
+      setShotType(StandardShot);
     }
   }
 }
@@ -1852,8 +1868,9 @@ void LocalPlayer::changeScore(float newRank,
 
 void LocalPlayer::addAntidote(SceneDatabase* scene)
 {
-  if (antidoteFlag)
+  if (antidoteFlag) {
     scene->addDynamicNode(antidoteFlag);
+  }
 }
 
 

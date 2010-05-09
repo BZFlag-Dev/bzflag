@@ -683,10 +683,10 @@ void Player::updateTreads(float dt)
   float angularFactor;
 
   if ((state.status & PlayerState::UserInputs) != 0) {
-    speedFactor = state.userSpeed;
+    speedFactor   = state.userSpeed;
     angularFactor = state.userAngVel;
   } else {
-    speedFactor = relativeSpeed;
+    speedFactor   = relativeSpeed;
     angularFactor = relativeAngVel;
   }
 
@@ -1019,8 +1019,6 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
 void Player::setLandingSpeed(float velocity)
 {
-  eventHandler.PlayerLanded(*this, velocity);
-
   static BZDB_float squishiness(BZDBNAMES.SQUISHFACTOR);
   if (squishiness < 0.001f) {
     return;
@@ -1060,6 +1058,8 @@ void Player::setLandingSpeed(float velocity)
     // use a fixed decompression rate
     dimensionsRate.z = 1.0f / squishTime;
   }
+
+  eventHandler.PlayerLanded(*this, velocity);
 
   return;
 }
@@ -1247,6 +1247,13 @@ void Player::setHandicap(float _handicap)
 //  Dead-reckoning related routine
 //
 
+void* Player::pack(void* buf, uint16_t& code)
+{
+  setDeadReckoning();
+  return state.pack(buf, code);
+}
+
+
 void* Player::unpack(void* buf, uint16_t code)
 {
   double timestamp;
@@ -1396,32 +1403,42 @@ void Player::doDeadReckoning()
     const bool soundImportance = false;
     const bool localSound = (ROAM.isRoaming() && (ROAM.getMode() == Roaming::roamViewFP) && (ROAM.getTargetTank() == this));
 
-    // check for a landing
-    if (((oldStatus & PlayerState::Falling) != 0) && ((inputStatus & PlayerState::Falling) == 0)) {
-      setLandingSpeed(oldZSpeed);    // setup the squish effect
+    static BZDB_bool remoteSounds("remoteSounds");
 
-      EFFECTS.addLandEffect(getColor(), predictedPos, state.azimuth); // make it "land"
+    // check for a landing
+    if (((oldStatus   & PlayerState::Falling) != 0) &&
+        ((inputStatus & PlayerState::Falling) == 0)) {
+      // setup the squish effect
+      setLandingSpeed(oldZSpeed);
+
+      // make it "land"
+      EFFECTS.addLandEffect(getColor(), predictedPos, state.azimuth);
 
       // setup the sound
-      if (BZDB.isTrue("remoteSounds")){
-        if ((getFlag() != Flags::Burrow) || (predictedPos.z > 0.0f))
+      if (remoteSounds) {
+        if ((getFlag() != Flags::Burrow) || (predictedPos.z > 0.0f)) {
           SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
-        else    // probably never gets played
+        } else {
+          // probably never gets played
           SOUNDSYSTEM.play(SFX_BURROW, state.pos, soundImportance, localSound);
-      }
-
-      // play jumping type sounds, and then clear them
-      if (state.sounds != PlayerState::NoSounds){
-        if (BZDB.isTrue("remoteSounds")) {
-          if ((state.sounds & PlayerState::JumpSound) != 0)
-            SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
-          if ((state.sounds & PlayerState::WingsSound) != 0)
-            SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
-          if ((state.sounds & PlayerState::BounceSound) != 0)
-            SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
         }
-        state.sounds = PlayerState::NoSounds;
       }
+    }
+
+    // play jumping type sounds, and then clear them
+    if (state.sounds != PlayerState::NoSounds) {
+      if (remoteSounds) {
+        if ((state.sounds & PlayerState::JumpSound) != 0) {
+          SOUNDSYSTEM.play(SFX_JUMP, state.pos, soundImportance, localSound);
+        }
+        if ((state.sounds & PlayerState::WingsSound) != 0) {
+          SOUNDSYSTEM.play(SFX_FLAP, state.pos, soundImportance, localSound);
+        }
+        if ((state.sounds & PlayerState::BounceSound) != 0) {
+          SOUNDSYSTEM.play(SFX_BOUNCE, state.pos, soundImportance, localSound);
+        }
+      }
+      state.sounds = PlayerState::NoSounds;
     }
   }
 

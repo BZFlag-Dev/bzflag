@@ -5095,8 +5095,8 @@ static const MouseCtrlPair mouseCtrlMap[8] = {
 //  X       Y
   { NoCtrl, NoCtrl }, // . . .
   { SpinZ,  ShiftY }, // L . .
-  { ShiftX, ShiftY }, // . R .
-  { SpinZ,  SpinX  }, // L R .
+  { SpinZ,  SpinX  }, // . R .
+  { ShiftX, ShiftY }, // L R .
   { ShiftX, ShiftZ }, // . . M
   { SpinZ,  ShiftZ }, // L . M
   { SpinZ,  ShiftZ }, // . R M

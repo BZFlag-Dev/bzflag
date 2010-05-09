@@ -961,11 +961,11 @@ static MsgStringList handleMsgPlayerUpdate(const PacketInfo& pi)
   MsgStringList list = listMsgBasics(pi);
 
   void *d = (void*)pi.data;
-  float timestamp;
   uint8_t index;
+  double timestamp;
   PlayerState state;
-  d = nboUnpackFloat(d, timestamp);
   d = nboUnpackUInt8(d, index);
+  d = nboUnpackDouble(d, timestamp);
   d = state.unpack(d, pi.code);
 
   listPush(list, 1, "player: %s", strPlayer(index).c_str());
@@ -976,6 +976,17 @@ static MsgStringList handleMsgPlayerUpdate(const PacketInfo& pi)
 	   state.azimuth, state.azimuth * (180.0f / M_PI));
   listPush(list, 3, "angvel: %-8.3f = %8.3f deg/sec",
 	   state.angVel, state.angVel * (180.0f / M_PI));
+  listPush(list, 3, "phydrv: %i", state.phydrv);
+
+  uint8_t sounds = 0;
+  std::string soundStr;
+  if (state.status & PlayerState::PlaySound) {
+    sounds = state.sounds;
+    if (sounds & PlayerState::JumpSound)   { soundStr += " jump";   }
+    if (sounds & PlayerState::WingsSound)  { soundStr += " wings";  }
+    if (sounds & PlayerState::BounceSound) { soundStr += " bounce"; }
+  }
+  listPush(list, 3, "sounds: %02X%s", sounds, soundStr.c_str());
 
   return list;
 }

@@ -274,13 +274,13 @@ ServerLink::ServerLink(const std::string& serverName,
     i = recv(query, (char*)version, 8, 0);
 
     // if we got some, then we are done
-    if ( i > 0) {
+    if (i > 0) {
       logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
       logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(BzTime::getCurrent().getSeconds() - thisStartTime));
       gotNetData = true;
     } else {
       // if we have waited too long, then bail
-      if ( (BzTime::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
+      if ((BzTime::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
 	logDebugMessage(1,"CONNECT:connect time out failed\n");
 	logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 	close(query);
@@ -709,7 +709,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 }
 
 
-void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds )
+void ServerLink::sendCaps(PlayerId _id, bool downloads, bool sounds)
 {
   if (state != Okay)
     return;
@@ -1041,7 +1041,7 @@ void ServerLink::sendPaused(bool paused)
 }
 
 
-void ServerLink::sendNewPlayer( int botID, TeamColor team )
+void ServerLink::sendNewPlayer(int botID, TeamColor team)
 {
   char msg[4];
   void* buf = msg;

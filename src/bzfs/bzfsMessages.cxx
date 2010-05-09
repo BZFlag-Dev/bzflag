@@ -890,14 +890,16 @@ bool sendPlayerStateMessage(GameKeeper::Player* playerData, bool shortState)
   netMsg.broadcast(code);
 
   // bots need love too
-  bz_PlayerUpdateState	apiState;
+  bz_PlayerUpdateState apiState;
   playerStateToAPIState(apiState,playerData->getCurrentStateAsState());
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->playerHandler && otherData->player.isPlaying()) {
-      otherData->playerHandler->playerStateUpdate(playerData->getIndex(),
-						  &apiState, playerData->stateTimeStamp.getSeconds());
+      otherData->playerHandler->playerStateUpdate(
+        playerData->getIndex(), &apiState,
+        playerData->stateTimeStamp.getSeconds()
+      );
     }
   }
   return true;

@@ -739,12 +739,6 @@ inline unsigned char	Player::getAllow()
   return allow;
 }
 
-inline void*		Player::pack(void* buf, uint16_t& code)
-{
-  setDeadReckoning();
-  return state.pack(buf, code);
-}
-
 inline void Player::setZpos (float z)
 {
   state.pos[2] = z;

@@ -488,7 +488,7 @@ void GameKeeper::Player::setPlayerState(const fvec3& pos, float azimuth)
 
 void GameKeeper::Player::setPlayerState(PlayerState state, BzTime const& timestamp)
 {
-  lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
+  lagInfo.updateLag(timestamp, (state.order - lastState.order) > 1);
   player.updateIdleTime();
   lastState      = state;
   stateTimeStamp = timestamp;

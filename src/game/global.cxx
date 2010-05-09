@@ -145,7 +145,6 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_scoreboardCustomRowLen",	"-1",				false, StateDatabase::Locked },
   { "_scoreboardCustomRowName", "Motto",			false, StateDatabase::Locked },
   { "_sendShotInfo",		"",				false, StateDatabase::Locked },
-  { "_sendUserInputs",		"",				false, StateDatabase::Locked },
   { "_shieldFlight",		"2.7",				false, StateDatabase::Locked },
   { "_shockAdLife",		"0.2",				false, StateDatabase::Locked },
   { "_shockInRadius",		"_tankLength",			false, StateDatabase::Locked },

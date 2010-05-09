@@ -132,8 +132,7 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     buf = nboPackInt32(buf, phydrv);
   }
 
-  static BZDB_bool sendUserInputs("_sendUserInputs");
-  if (sendUserInputs || ((status & UserInputs) != 0)) {
+  if ((status & UserInputs) != 0) {
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
@@ -218,8 +217,7 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
     netMsg.packInt32(phydrv);
   }
 
-  static BZDB_bool sendUserInputs("_sendUserInputs");
-  if (sendUserInputs || ((status & UserInputs) != 0)) {
+  if ((status & UserInputs) != 0) {
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
@@ -251,7 +249,8 @@ void* PlayerState::unpack(void* buf, uint16_t code)
     buf = nboUnpackFVec3(buf, velocity);
     buf = nboUnpackFloat(buf, azimuth);
     buf = nboUnpackFloat(buf, angVel);
-  } else {
+  }
+  else {
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
 
     buf = nboUnpackInt16(buf, posShort[0]);

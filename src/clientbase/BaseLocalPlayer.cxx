@@ -42,7 +42,7 @@ int BaseLocalPlayer::getSalt()
 }
 
 
-void BaseLocalPlayer::update( float inputDT )
+void BaseLocalPlayer::update(float inputDT)
 {
   // save last position
   const fvec3 oldPosition = getPosition();
@@ -64,6 +64,8 @@ void BaseLocalPlayer::update( float inputDT )
     dt = dtLimit;
     doneDT -= dtLimit;
   }
+
+  clearRemoteSounds();
 
   while (doneDT > 0) {
     doUpdateMotion(dt);

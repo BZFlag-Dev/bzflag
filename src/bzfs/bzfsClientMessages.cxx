@@ -1082,11 +1082,11 @@ public:
 
     if (code == MsgPlayerUpdateSmall && len < 21)
       return false;
-    else if(len < 27)
+    else if (len < 27)
       return false;
 
-    double      timestamp;
     PlayerState state;
+    double timestamp;
 
     buf = nboUnpackDouble(buf, timestamp);
     buf = state.unpack(buf, code);
