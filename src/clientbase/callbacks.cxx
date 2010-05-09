@@ -26,7 +26,7 @@ void Callbacks::setFlagHelp(const std::string& name, void*)
     return;
   }
   if (BZDB.isTrue(name)) {
-    hud->setFlagHelp(LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration);
+    hud->setFlagHelp(LocalPlayer::getMyTank()->getFlagType(), FlagHelpDuration);
   } else {
     hud->setFlagHelp(Flags::Null, 0.0);
   }

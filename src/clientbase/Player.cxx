@@ -91,6 +91,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 , lastVisualTeam(NoTeam)
 , team(_team)
 , type(_type)
+, flagID(-1)
 , flagType(Flags::Null)
 , teleLinkSrcID(0)
 , teleLinkDstID(0)
@@ -268,7 +269,7 @@ float Player::getRadius() const
 float Player::getMaxSpeed ( void ) const
 {
   // BURROW and AGILITY will not be taken into account
-  const FlagType* flag = getFlag();
+  const FlagType* flag = getFlagType();
   float maxSpeed = BZDBCache::tankSpeed;
   if (flag == Flags::Velocity) {
     maxSpeed *= BZDB.eval(BZDBNAMES.VELOCITYAD);
@@ -457,7 +458,7 @@ void Player::updateTank(float dt, bool local)
 
 void Player::updateJumpJets(float dt)
 {
-  float jumpVel = computeJumpVelocity(getFlag());
+  float jumpVel = computeJumpVelocity(getFlagType());
   const float jetTime = 0.5f * (jumpVel / -BZDBCache::gravity);
   state.jumpJetsScale -= (dt / jetTime);
   if (state.jumpJetsScale < 0.0f) {
@@ -604,7 +605,7 @@ const Obstacle* Player::getHitBuilding(const fvec3& oldP, float oldA,
                                        const fvec3& p, float a,
                                        bool phased, bool& expel)
 {
-  const bool hasOOflag = (getFlag() == Flags::OscillationOverthruster);
+  const bool hasOOflag = (getFlagType() == Flags::OscillationOverthruster);
   const fvec3& dims = getDimensions();
   World *world = World::getWorld();
   if (!world) {
@@ -735,14 +736,19 @@ void Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 }
 
 
-void Player::setFlag(FlagType* _flag)
+void Player::setFlagID(int _flagID)
 {
-  // set the type
-  flagType = _flag;
-  if (_flag == NULL) {
-    setShotType(StandardShot);
+  const World* world = World::getWorld();
+
+  if ((_flagID < 0) || !world || (_flagID >= world->getMaxFlags())) {
+    flagID   = -1;
+    flagType = Flags::Null;
   }
-  updateFlagEffect(flagType);
+  else {
+    const Flag& flag = world->getFlag(_flagID);
+    flagID   = _flagID;
+    flagType = flag.type;
+  }
 }
 
 
@@ -1155,11 +1161,11 @@ void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
   firingInfo.shot.dt = 0.0f;
   firingInfo.lifetime = BZDB.eval(BZDBNAMES.RELOADTIME);
 
-  firingInfo.flagType = getFlag();
+  firingInfo.flagType = getFlagType();
   // wee bit o hack -- if phantom flag but not phantomized
   // the shot flag is normal -- otherwise FiringInfo will have
   // to be changed to add a real bitwise status variable
-  if (getFlag() == Flags::PhantomZone && !isFlagActive()) {
+  if (getFlagType() == Flags::PhantomZone && !isFlagActive()) {
     firingInfo.shotType = StandardShot;
   }
 
@@ -1205,7 +1211,7 @@ ShotPath *Player::addShot(ShotPath *shot, const FiringInfo &info)
   }
 
   shots[shotNum] = shot;
-  shotStatistics.recordFire(info.flagType,getForward(),shot->getVelocity());
+  shotStatistics.recordFire(info.flagType, getForward(), shot->getVelocity());
 
   return shot;
 }
@@ -1340,7 +1346,7 @@ void Player::doDeadReckoning()
 
   // if the tanks hits something in Z then update input state (we don't want to fall anymore)
   float zLimit = 0.0f;
-  if (getFlag() == Flags::Burrow) {
+  if (getFlagType() == Flags::Burrow) {
     zLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
 
@@ -1416,7 +1422,7 @@ void Player::doDeadReckoning()
 
       // setup the sound
       if (remoteSounds) {
-        if ((getFlag() != Flags::Burrow) || (predictedPos.z > 0.0f)) {
+        if ((getFlagType() != Flags::Burrow) || (predictedPos.z > 0.0f)) {
           SOUNDSYSTEM.play(SFX_LAND, state.pos, soundImportance, localSound);
         } else {
           // probably never gets played
@@ -1604,7 +1610,7 @@ bool Player::isDeadReckoningWrong() const
 
   // always send a new packet on reckoned touchdown
   float groundLimit = 0.0f;
-  if (getFlag() == Flags::Burrow) {
+  if (getFlagType() == Flags::Burrow) {
     groundLimit = BZDB.eval(BZDBNAMES.BURROWDEPTH);
   }
   if (predictedPos.z < groundLimit) {
@@ -1656,7 +1662,7 @@ bool Player::isDeadReckoningWrong() const
 void Player::setRelativeMotion()
 {
   bool falling = (state.status & short(PlayerState::Falling)) != 0;
-  if (falling && (getFlag() != Flags::Wings)) {
+  if (falling && (getFlagType() != Flags::Wings)) {
     return;    // no adjustments while falling
   }
 

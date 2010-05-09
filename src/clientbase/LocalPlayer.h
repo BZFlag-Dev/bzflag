@@ -100,8 +100,8 @@ public:
   const Player*	getRecipient() const;
 
   virtual void restart(const fvec3& pos, float azimuth);
+  void setFlagID(int id);
   bool checkHit(const Player* source, const ShotPath*& hit, float& minTime) const;
-  void setFlag(FlagType*);
   void changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
 
   void addAntidote(SceneDatabase*);

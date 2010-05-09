@@ -99,10 +99,11 @@ void RobotPlayer::getProjectedPosition(const Player *targ, fvec3& projpos) const
   double deltay = hisy - myy;
   double distance = hypotf(deltax,deltay) - BZDB.eval(BZDBNAMES.MUZZLEFRONT) - BZDBCache::tankRadius;
   if (distance <= 0) distance = 0;
+  FlagType* fType = getFlagType();
   double shotspeed = BZDB.eval(BZDBNAMES.SHOTSPEED)*
-    (getFlag() == Flags::Laser ? BZDB.eval(BZDBNAMES.LASERADVEL) :
-     getFlag() == Flags::RapidFire ? BZDB.eval(BZDBNAMES.RFIREADVEL) :
-     getFlag() == Flags::MachineGun ? BZDB.eval(BZDBNAMES.MGUNADVEL) : 1) +
+    (fType == Flags::Laser      ? BZDB.eval(BZDBNAMES.LASERADVEL) :
+     fType == Flags::RapidFire  ? BZDB.eval(BZDBNAMES.RFIREADVEL) :
+     fType == Flags::MachineGun ? BZDB.eval(BZDBNAMES.MGUNADVEL) : 1) +
       hypotf(getVelocity()[0], getVelocity()[1]);
 
   double errdistance = 1.0;

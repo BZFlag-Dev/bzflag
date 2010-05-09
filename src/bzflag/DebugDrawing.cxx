@@ -40,7 +40,7 @@ static void drawTankHitZone(const Player* tank)
     return;
   }
 
-  const bool isNarrow = (tank->getFlag() == Flags::Narrow);
+  const bool isNarrow = (tank->getFlagType() == Flags::Narrow);
 
   static BZDB_bool tankShotSpherical("_tankShotSpherical");
   static BZDB_fvec3 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);

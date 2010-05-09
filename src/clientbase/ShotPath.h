@@ -38,76 +38,86 @@
 #include "ShotStrategy.h"
 #include "SceneDatabase.h"
 
+
 class ShotStrategy;
 class ShotCollider;
 
+
 class ShotPath {
-public:
-  ShotPath(const FiringInfo&);
-  virtual ~ShotPath();
+  public:
+    ShotPath(const FiringInfo&);
+    virtual ~ShotPath();
 
-  bool isExpiring() const;
-  bool isExpired() const;
-  bool isReloaded() const;
-  const PlayerId &getPlayer() const;
-  uint16_t getShotId() const;
-  ShotType getShotType() const;
-  FlagType *getFlag() const;
-  float getLifetime() const;
-  float getReloadTime() const;
-  BzTime getStartTime() const;
-  BzTime getCurrentTime() const;
-  const fvec3& getPosition() const;
-  const fvec3& getVelocity() const;
+    inline bool isExpiring() const { return expiring; }
+    inline bool isExpired()  const { return expired;  }
+    inline bool isReloaded() const {
+      return (currentTime - startTime >= reloadTime);
+    }
+    inline const PlayerId& getPlayer() const {
+      return firingInfo.shot.player;
+    }
+    inline const fvec3&    getPosition()    const { return firingInfo.shot.pos;  }
+    inline const fvec3&    getVelocity()    const { return firingInfo.shot.vel;  }
+    inline uint16_t        getShotId()      const { return firingInfo.shot.id;   }
+    inline ShotType        getShotType()    const { return firingInfo.shotType;  }
+    inline FlagType*       getFlagType()    const { return firingInfo.flagType;  }
+    inline TeamColor       getTeam()        const { return firingInfo.shot.team; }
+    inline float           getLifetime()    const { return firingInfo.lifetime;  }
+    inline float           getReloadTime()  const { return reloadTime;  }
+    inline BzTime          getStartTime()   const { return startTime;   }
+    inline BzTime          getCurrentTime() const { return currentTime; }
 
-  float checkHit(const ShotCollider &, fvec3& hitPos) const;
-  void setExpiring();
-  void setExpired();
-  bool isStoppedByHit() const;
-  void boostReloadTime(float dt);
-  void setLocal(bool loc) {local = loc;}
-  bool isLocal(void) {return local;}
 
-  void addShot(SceneDatabase *, bool colorblind);
+    inline FiringInfo&       getFiringInfo()       { return firingInfo; }
+    inline const FiringInfo& getFiringInfo() const { return firingInfo; }
 
-  void radarRender() const;
-  FiringInfo &getFiringInfo();
-  const FiringInfo &getFiringInfo() const;
-  TeamColor getTeam() const;
+    float checkHit(const ShotCollider &, fvec3& hitPos) const;
+    void setExpiring();
+    void setExpired();
+    bool isStoppedByHit() const;
+    void boostReloadTime(float dt);
+    void setLocal(bool loc) {local = loc;}
+    bool isLocal(void) {return local;}
 
-  virtual void update(float);
+    void addShot(SceneDatabase *, bool colorblind);
 
-  //This function can be used to predict the position of the shot after a given time dt. Function returns true iff. the shot is still alive.
-  bool predictPosition(float dt, fvec3& p) const;
-  bool predictVelocity(float dt, fvec3& p) const;
+    void radarRender() const;
 
-  GfxBlock&       getGfxBlock()       { return gfxBlock; }
-  const GfxBlock& getGfxBlock() const { return gfxBlock; }
-  GfxBlock&       getRadarGfxBlock()       { return radarGfxBlock; }
-  const GfxBlock& getRadarGfxBlock() const { return radarGfxBlock; }
+    virtual void update(float);
 
-protected:
-  void updateShot(float dt);
-  const ShotStrategy *getStrategy() const;
-  ShotStrategy *getStrategy();
+    //This function can be used to predict the position of the shot after a given time dt. Function returns true iff. the shot is still alive.
+    bool predictPosition(float dt, fvec3& p) const;
+    bool predictVelocity(float dt, fvec3& p) const;
 
-  friend class ShotStrategy;
-  void setReloadTime(float);
-  void setPosition(const fvec3&);
-  void setVelocity(const fvec3&);
+    GfxBlock&       getGfxBlock()       { return gfxBlock; }
+    const GfxBlock& getGfxBlock() const { return gfxBlock; }
+    GfxBlock&       getRadarGfxBlock()       { return radarGfxBlock; }
+    const GfxBlock& getRadarGfxBlock() const { return radarGfxBlock; }
 
-private:
-  ShotStrategy *strategy; // strategy for moving shell
-  FiringInfo firingInfo; // shell information
-  float reloadTime; // time to reload
-  BzTime startTime; // time of firing
-  BzTime currentTime; // current time
-  bool expiring; // shot has almost terminated
-  bool expired; // shot has terminated
-  bool local; // shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
-  GfxBlock gfxBlock;
-  GfxBlock radarGfxBlock;
+  protected:
+    void updateShot(float dt);
+
+    inline ShotStrategy*       getStrategy()       { return strategy; }
+    inline const ShotStrategy* getStrategy() const { return strategy; }
+
+    friend class ShotStrategy;
+    void setReloadTime(float);
+    void setPosition(const fvec3&);
+    void setVelocity(const fvec3&);
+
+  private:
+    ShotStrategy *strategy; // strategy for moving shell
+    FiringInfo firingInfo; // shell information
+    float reloadTime; // time to reload
+    BzTime startTime; // time of firing
+    BzTime currentTime; // current time
+    bool expiring; // shot has almost terminated
+    bool expired; // shot has terminated
+    bool local; // shot is local, and must be ended localy, REMOVE ME WHEN THE SERVER DOES THIS
+    GfxBlock gfxBlock;
+    GfxBlock radarGfxBlock;
 };
+
 
 class LocalShotPath : public ShotPath {
 public:
@@ -116,6 +126,7 @@ public:
 
   void update(float dt);
 };
+
 
 class RemoteShotPath : public ShotPath {
 public:
@@ -126,99 +137,6 @@ public:
   void update(const ShotUpdate &shot, void *msg);
 };
 
-//
-// ShotPath
-//
-
-inline bool ShotPath::isExpiring() const
-{
-  return expiring;
-}
-
-inline bool ShotPath::isExpired() const
-{
-  return expired;
-}
-
-inline bool ShotPath::isReloaded() const
-{
-  return (currentTime - startTime >= reloadTime);
-}
-
-inline const PlayerId &ShotPath::getPlayer() const
-{
-  return firingInfo.shot.player;
-}
-
-inline uint16_t ShotPath::getShotId() const
-{
-  return firingInfo.shot.id;
-}
-
-inline ShotType ShotPath::getShotType() const
-{
-  return firingInfo.shotType;
-}
-
-inline FlagType *ShotPath::getFlag() const
-{
-  return firingInfo.flagType;
-}
-
-inline float ShotPath::getLifetime() const
-{
-  return firingInfo.lifetime;
-}
-
-inline float ShotPath::getReloadTime() const
-{
-  return reloadTime;
-}
-
-inline BzTime ShotPath::getStartTime() const
-{
-  return startTime;
-}
-
-inline BzTime ShotPath::getCurrentTime() const
-{
-  return currentTime;
-}
-
-inline const fvec3& ShotPath::getPosition() const
-{
-  return firingInfo.shot.pos;
-}
-
-inline const fvec3& ShotPath::getVelocity() const
-{
-  return firingInfo.shot.vel;
-}
-
-inline FiringInfo &ShotPath::getFiringInfo()
-{
-  return firingInfo;
-}
-
-inline const FiringInfo &ShotPath::getFiringInfo() const
-{
-  return firingInfo;
-}
-
-inline TeamColor ShotPath::getTeam() const
-{
-  return firingInfo.shot.team;
-}
-
-inline const ShotStrategy *ShotPath::getStrategy() const
-{
-  return strategy;
-}
-
-inline ShotStrategy *ShotPath::getStrategy()
-{
-  return strategy;
-}
 
 #endif /* __SHOTPATH_H__ */
 

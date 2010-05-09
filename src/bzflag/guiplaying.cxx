@@ -822,7 +822,7 @@ static void doMotion()
   }
 
   /* see if controls are reversed */
-  if (myTank->getFlag() == Flags::ReverseControls) {
+  if (myTank->getFlagType() == Flags::ReverseControls) {
     speed  = -speed;
     angVel = -angVel;
   }
@@ -1544,7 +1544,7 @@ void handleAliveMessage(void *msg)
     if (((tank != myTank) && ((ROAM.getMode() != Roaming::roamViewFP) ||
                               (tank != ROAM.getTargetTank())))
         || BZDB.isTrue("enableLocalSpawnEffect")) {
-      if (myTank->getFlag() != Flags::Colorblindness) {
+      if (myTank->getFlagType() != Flags::Colorblindness) {
         static fvec4 cbColor(1.0f, 1.0f, 1.0f, 1.0f);
         EFFECTS.addSpawnEffect(cbColor, pos);
       } else {
@@ -1701,7 +1701,7 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
 	  if (killerPlayer) {
 	    const ShotPath *shot = killerPlayer->getShot(int(shotId));
 	    if (shot != NULL)
-	      teachAutoPilot(shot->getFlag(), 1);
+	      teachAutoPilot(shot->getFlagType(), 1);
 	  }
 	}
       }
@@ -1805,7 +1805,7 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
 	const ShotPath *shot = killerPlayer->getShot(int(shotId));
 
 	//but make sure that if we are not allowing teamkills, the victim was not a suicide
-	if (shot && shot->getFlag() == Flags::Genocide &&
+	if (shot && shot->getFlagType() == Flags::Genocide &&
 	  (killerPlayer != victimPlayer || World::getWorld()->allowTeamKills())) {
 	    // go boom
 	    gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
@@ -1817,7 +1817,7 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
   // blow up robots on victim's team if shot was genocide
   if (killerPlayer && victimPlayer && shotId >= 0) {
     const ShotPath *shot = killerPlayer->getShot(int(shotId));
-    if (shot && shot->getFlag() == Flags::Genocide) {
+    if (shot && shot->getFlagType() == Flags::Genocide) {
       for (int i = 0; i < numRobots; i++) {
 	if (robots[i] &&
 	    (victimPlayer != robots[i]) &&
@@ -1854,23 +1854,23 @@ void handleGrabFlag(void *msg)
     return;
 
   // player now has flag
-  tank->setFlag(flag.type);
+  tank->setFlagID(flagIndex);
   tank->setShotType((ShotType)shot);
 
   if (tank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(id);
     if (!robot)
       return;
-    robot->setFlag(flag.type);
+    robot->setFlagID(flagIndex);
     robot->setShotType((ShotType)shot);
   }
 
   if (tank == myTank) {
-    SOUNDSYSTEM.play(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
-    updateFlag(myTank->getFlag());
+    SOUNDSYSTEM.play(myTank->getFlagType()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
+    updateFlag(myTank->getFlagType());
   }
   else if (isViewTank(tank)) {
-    SOUNDSYSTEM.play(tank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
+    SOUNDSYSTEM.play(tank->getFlagType()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
   }
   else if ((myTank->getTeam() != RabbitTeam) && tank &&
              (tank->getTeam() != myTank->getTeam()) &&
@@ -1891,7 +1891,7 @@ void handleGrabFlag(void *msg)
   }
 
   std::string message("grabbed ");
-  message += tank->getFlag()->flagName;
+  message += tank->getFlagType()->flagName;
   message += " flag";
 
   eventHandler.FlagGrabbed(flag, *tank);
@@ -1924,7 +1924,9 @@ void handleCaptureFlag(void *msg, bool &checkScores)
 
   // player no longer has flag
   if (capturer) {
-    capturer->setFlag(Flags::Null);
+    capturer->setFlagID(-1);
+    capturer->setShotType(StandardShot);
+
     if (capturer == myTank)
       updateFlag(Flags::Null);
 
@@ -2253,29 +2255,30 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
 {
   Flag& f = world->getFlag(flagIndex);
 
+  fromTank->setFlagID(-1);
   fromTank->setShotType(StandardShot);
-  fromTank->setFlag(Flags::Null);
+
+  toTank->setFlagID(flagIndex);
   toTank->setShotType(shotType);
-  toTank->setFlag(f.type);
 
   if (fromTank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(fromTank->getId());
     if (!robot)
       return;
+    robot->setFlagID(-1);
     robot->setShotType(StandardShot);
-    robot->setFlag(Flags::Null);
   }
 
   if (toTank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(toTank->getId());
     if (!robot)
       return;
+    robot->setFlagID(flagIndex);
     robot->setShotType(shotType);
-    robot->setFlag(f.type);
   }
 
   if ((fromTank == myTank) || (toTank == myTank))
-    updateFlag(myTank->getFlag());
+    updateFlag(myTank->getFlagType());
 
   const fvec3& pos = toTank->getPosition();
   if (f.type->flagTeam != ::NoTeam) {
@@ -2856,39 +2859,41 @@ void handleLimboMessage(void *msg)
 
 void handleFlagDropped(Player *tank)
 {
-
   if (tank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(tank->getId());
     if (!robot)
       return;
+    robot->setFlagID(-1);
     robot->setShotType(StandardShot);
-    robot->setFlag(Flags::Null);
-  } else {
-    tank->setShotType(StandardShot);
-
+  }
+  else {
     // skip it if player doesn't actually have a flag
-    if (tank->getFlag() == Flags::Null) return;
+    if (tank->getFlagType() == Flags::Null) {
+      return;
+    }
 
     if (tank == myTank) {
       // make sure the player must reload after theft
-      if (tank->getFlag() == Flags::Thief)
+      if (tank->getFlagType() == Flags::Thief) {
 	myTank->forceReload(BZDB.eval(BZDBNAMES.THIEFDROPTIME));
-
+      }
       // update display and play sound effects
       SOUNDSYSTEM.play(SFX_DROP_FLAG);
       updateFlag(Flags::Null);
-    } else if (isViewTank(tank)) {
+    }
+    else if (isViewTank(tank)) {
       SOUNDSYSTEM.play(SFX_DROP_FLAG);
     }
 
     // add message
     std::string message("dropped ");
-    message += tank->getFlag()->flagName;
+    message += tank->getFlagType()->flagName;
     message += " flag";
     addMessage(tank, message);
 
     // player no longer has flag
-    tank->setFlag(Flags::Null);
+    tank->setFlagID(-1);
+    tank->setShotType(StandardShot);
   }
 }
 
@@ -2903,14 +2908,14 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
   FlagType *flagType = Flags::Null;
   if (hit) {
     shotId = hit->getShotId();
-    flagType = hit->getFlag();
+    flagType = hit->getFlagType();
   }
 
   // you can't take it with you
-  const FlagType *flag = tank->getFlag();
+  const FlagType *flag = tank->getFlagType();
   if (flag != Flags::Null) {
     if (myTank->isAutoPilot())
-      teachAutoPilot(myTank->getFlag(), -1);
+      teachAutoPilot(myTank->getFlagType(), -1);
 
     // tell other players I've dropped my flag
     serverLink->sendDropFlag(tank->getPosition());
@@ -3045,7 +3050,7 @@ static void checkEnvironment()
 
   if (myTank->onSolidSurface()) {
 
-    FlagType* flagd = myTank->getFlag();
+    FlagType* flagd = myTank->getFlagType();
 
     if (flagd->flagTeam != NoTeam) {
       // have I captured a flag?
@@ -3103,19 +3108,21 @@ static void checkEnvironment()
     // force shot to terminate locally immediately (no server round trip);
     // this is to ensure that we don't get shot again by the same shot
     // after dropping our shield flag.
-    if (hit->isStoppedByHit())
+    if (hit->isStoppedByHit()) {
       serverLink->sendHit(myTank->getId(), hit->getPlayer(), hit->getShotId());
+    }
 
-    FlagType *killerFlag = hit->getFlag();
+    FlagType *killerFlag = hit->getFlagType();
     bool stopShot;
 
-    if (killerFlag == Flags::Thief) {
-      if (myTank->getFlag() != Flags::Null) {
+    if (killerFlag != Flags::Thief) {
+      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
+    }
+    else {
+      if (myTank->getFlagType() != Flags::Null) {
 	serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
       }
       stopShot = true;
-    } else {
-      stopShot = gotBlowedUp(myTank, GotShot, hit->getPlayer(), hit);
     }
 
     if (stopShot || hit->isStoppedByHit()) {
@@ -3127,11 +3134,8 @@ static void checkEnvironment()
   }
   else if (myTank->getDeathPhysicsDriver() >= 0) {
     // if not dead yet, see if i'm sitting on death
-    gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer, NULL, myTank->getDeathPhysicsDriver());
-    // this is done on the server now, we should remove this when we are sure its ok.
-    /*	else if ((waterLevel > 0.0f) && (myTank->getPosition().z <= waterLevel))
-          // if not dead yet, see if i've dropped below the death level
-          gotBlowedUp(myTank, WaterDeath, ServerPlayer); */
+    gotBlowedUp(myTank, PhysicsDriverDeath, ServerPlayer,
+                NULL, myTank->getDeathPhysicsDriver());
   }
   else {
     // if not dead yet, see if i got squished
@@ -3147,7 +3151,8 @@ static void checkEnvironment()
 
 bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *player)
 {
-  if (player->isPaused() || player->isNotResponding() || player->getFlag() == Flags::Stealth)
+  if (player->isPaused() || player->isNotResponding() ||
+      player->getFlagType() == Flags::Stealth)
     return false; // can't lock to paused, NR, or stealth
 
   if (angle >=  BZDB.eval(BZDBNAMES.LOCKONANGLE))
@@ -3169,8 +3174,9 @@ bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *
   if (distance > bestDistance)
     return false;
 
-  if (player->getFlag() == Flags::Stealth || player->getFlag() == Flags::Cloaking)
-    return myTank->getFlag() == Flags::Seer;
+  if (player->getFlagType() == Flags::Stealth ||
+      player->getFlagType() == Flags::Cloaking)
+    return myTank->getFlagType() == Flags::Seer;
 
   return true;
 }
@@ -3253,8 +3259,8 @@ void setLookAtMarker(void)
     return;
 
   std::string label = bestTarget->getCallSign();
-  if (bestTarget->getFlag() != Flags::Null) {
-    std::string flagName = bestTarget->getFlag()->flagAbbv;
+  if (bestTarget->getFlagType() != Flags::Null) {
+    std::string flagName = bestTarget->getFlagType()->flagAbbv;
     label += std::string("(") + flagName + std::string(")");
   }
   hud->AddEnhancedNamedMarker(bestTarget->getPosition(), Team::getRadarColor(bestTarget->getTeam()), label, !isKillable(bestTarget), 2.0f);
@@ -3266,7 +3272,7 @@ static inline bool tankHasShotType(const Player *tank, const FlagType *ft)
   const int maxShots = tank->getMaxShots();
   for (int i = 0; i < maxShots; i++) {
     const ShotPath *sp = tank->getShot(i);
-    if ((sp != NULL) && (sp->getFlag() == ft)) {
+    if ((sp != NULL) && (sp->getFlagType() == ft)) {
       return true;
     }
   }
@@ -3305,9 +3311,9 @@ void setTarget()
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < BZDB.eval(BZDBNAMES.LOCKONANGLE) &&	// about 8.5 degrees
-      ((myTank->getFlag() == Flags::GuidedMissile) ||		// am i locking on?
+      ((myTank->getFlagType() == Flags::GuidedMissile) ||		// am i locking on?
       tankHasShotType(myTank, Flags::GuidedMissile)) &&
-      remotePlayers[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
+      remotePlayers[i]->getFlagType() != Flags::Stealth &&		// can't lock on stealth
       !remotePlayers[i]->isPaused() &&				// can't lock on paused
       !remotePlayers[i]->isNotResponding() &&			// can't lock on not responding
       d < bestDistance) {					// is it better?
@@ -3315,7 +3321,8 @@ void setTarget()
 	bestDistance = d;
 	lockedOn = true;
     } else if (a < BZDB.eval(BZDBNAMES.TARGETINGANGLE) && // about 17 degrees
-      ((remotePlayers[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) && // can't "see" stealth unless have seer
+      ((remotePlayers[i]->getFlagType() != Flags::Stealth) ||
+       (myTank->getFlagType() == Flags::Seer)) && // can't "see" stealth unless have seer
       d < bestDistance && !lockedOn) { // is it better?
 	bestTarget = remotePlayers[i];
 	bestDistance = d;
@@ -3340,9 +3347,9 @@ void setTarget()
       msg += bestTarget->getCallSign();
       msg += " (";
       msg += Team::getName(bestTarget->getTeam());
-      if (bestTarget->getFlag() != Flags::Null) {
+      if (bestTarget->getFlagType() != Flags::Null) {
         msg += ") with ";
-        msg += bestTarget->getFlag()->flagName;
+        msg += bestTarget->getFlagType()->flagName;
       } else {
         msg += ")";
       }
@@ -3354,7 +3361,7 @@ void setTarget()
   else if (forbidIdentify) {
     // do nothing
   }
-  else if (myTank->getFlag() == Flags::Colorblindness) {
+  else if (myTank->getFlagType() == Flags::Colorblindness) {
     std::string msg("Looking at a tank");
     hud->setAlert(1, msg.c_str(), 2.0f, 0);
     msg = ColorStrings[DefaultColor] + msg;
@@ -3366,9 +3373,9 @@ void setTarget()
     msg += " (";
     msg += Team::getName(bestTarget->getTeam());
     msg += ")";
-    if (bestTarget->getFlag() != Flags::Null) {
+    if (bestTarget->getFlagType() != Flags::Null) {
       msg += " with ";
-      msg += bestTarget->getFlag()->flagName;
+      msg += bestTarget->getFlagType()->flagName;
     }
     hud->setAlert(1, msg.c_str(), 2.0f, 0);
     msg = ColorStrings[DefaultColor] + msg;
@@ -3414,8 +3421,8 @@ static void setHuntTarget()
 
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < BZDB.eval(BZDBNAMES.LOCKONANGLE) && // about 8.5 degrees
-      myTank->getFlag() == Flags::GuidedMissile && // am i locking on?
-      remotePlayers[i]->getFlag() != Flags::Stealth && // can't lock on stealth
+      myTank->getFlagType() == Flags::GuidedMissile && // am i locking on?
+      remotePlayers[i]->getFlagType() != Flags::Stealth && // can't lock on stealth
       !remotePlayers[i]->isPaused() && // can't lock on paused
       !remotePlayers[i]->isNotResponding() && // can't lock on not responding
       d < bestDistance) { // is it better?
@@ -3423,8 +3430,8 @@ static void setHuntTarget()
 	bestDistance = d;
 	lockedOn = true;
     } else if (a < BZDB.eval(BZDBNAMES.TARGETINGANGLE) && // about 17 degrees
-      ((remotePlayers[i]->getFlag() != Flags::Stealth) ||
-      (myTank->getFlag() == Flags::Seer)) && // can't "see" stealth unless have seer
+      ((remotePlayers[i]->getFlagType() != Flags::Stealth) ||
+      (myTank->getFlagType() == Flags::Seer)) && // can't "see" stealth unless have seer
       d < bestDistance && !lockedOn) { // is it better?
 	bestTarget = remotePlayers[i];
 	bestDistance = d;
@@ -3433,17 +3440,17 @@ static void setHuntTarget()
   if (!bestTarget) return;
 
   if (bestTarget->isHunted() &&
-      (myTank->getFlag() != Flags::Blindness) &&
-      (myTank->getFlag() != Flags::Colorblindness) &&
-      (bestTarget->getFlag() != Flags::Stealth)) {
+      (myTank->getFlagType() != Flags::Blindness) &&
+      (myTank->getFlagType() != Flags::Colorblindness) &&
+      (bestTarget->getFlagType() != Flags::Stealth)) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
       msg += " (";
       msg += Team::getName(bestTarget->getTeam());
-      if (bestTarget->getFlag() != Flags::Null) {
+      if (bestTarget->getFlagType() != Flags::Null) {
         msg += ") with ";
-        msg += bestTarget->getFlag()->flagName;
+        msg += bestTarget->getFlagType()->flagName;
       } else {
         msg += ")";
       }
@@ -3505,11 +3512,11 @@ static void checkEnvironment(RobotPlayer *tank)
     // play the I got shot sound
     SOUNDSYSTEM.play(SFX_HIT);
 
-    FlagType *killerFlag = hit->getFlag();
+    FlagType *killerFlag = hit->getFlagType();
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-      if (tank->getFlag() != Flags::Null)
+      if (tank->getFlagType() != Flags::Null)
 	serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
       stopShot = true;
     } else {
@@ -3551,9 +3558,11 @@ static void checkEnvironment(RobotPlayer *tank)
 
 static void checkEnvironmentForRobots()
 {
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i])
+  for (int i = 0; i < numRobots; i++) {
+    if (robots[i]) {
       checkEnvironment(robots[i]);
+    }
+  }
 }
 
 #endif
@@ -4781,7 +4790,7 @@ static void addDynamicSceneNodes()
     return;
   }
 
-  const bool seerView = (myTank->getFlag() == Flags::Seer);
+  const bool seerView = (myTank->getFlagType() == Flags::Seer);
   const bool showTreads = bzdbShowTreads ||
                           thirdPersonVars.b3rdPerson;
 
@@ -4810,13 +4819,13 @@ static void addDynamicSceneNodes()
   // add other tanks and shells
   for (int i = 0; i < curMaxPlayers; i++) {
     if (remotePlayers[i]) {
-      const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
+      const bool colorblind = (myTank->getFlagType() == Flags::Colorblindness);
       remotePlayers[i]->addShots(scene, colorblind);
 
       TeamColor effectiveTeam = RogueTeam;
       if (!colorblind) {
-        if ((remotePlayers[i]->getFlag() == Flags::Masquerade)
-            && (myTank->getFlag() != Flags::Seer)
+        if ((remotePlayers[i]->getFlagType() == Flags::Masquerade)
+            && (myTank->getFlagType() != Flags::Seer)
             && (myTank->getTeam() != ObserverTeam)) {
           effectiveTeam = myTank->getTeam();
         } else {
@@ -4830,7 +4839,7 @@ static void addDynamicSceneNodes()
       const bool showPlayer = !inCockpit || showTreads;
 
       // add player tank if required
-      if ((myTank->getFlag() == Flags::Seer) || showPlayer) {
+      if ((myTank->getFlagType() == Flags::Seer) || showPlayer) {
         remotePlayers[i]->addToScene(scene, effectiveTeam, inCockpit,
                                      seerView, showPlayer, showPlayer,
                                      thirdPersonVars.b3rdPerson);
@@ -4909,7 +4918,7 @@ void drawFrame(const float dt)
     muzzleHeight = myTank->getMuzzleHeight();
 
     fov = BZDB.eval("displayFOV");
-    if (myTank->getFlag() == Flags::WideAngle) {
+    if (myTank->getFlagType() == Flags::WideAngle) {
       fov *= 2.0f;
     }
     if (viewType == SceneRenderer::ThreeChannel) {
@@ -4942,7 +4951,7 @@ void drawFrame(const float dt)
 
   // turn blanking and inversion on/off as appropriate
   RENDERER.setBlank(myTank && (myTank->isPaused() ||
-			       (myTank->getFlag() == Flags::Blindness)));
+			       (myTank->getFlagType() == Flags::Blindness)));
   RENDERER.setInvert(myTank && myTank->isPhantomZoned());
 
   // turn on scene dimming when showing menu, when we're dead
@@ -5308,7 +5317,7 @@ static void updatePauseCountdown(float dt)
       }
       else {
 	// okay, now we pause.  first drop any team flag we may have.
-	const FlagType *flagd = myTank->getFlag();
+	const FlagType *flagd = myTank->getFlagType();
 	if (flagd->flagTeam != NoTeam) {
 	  serverLink->sendDropFlag(myTank->getPosition());
 	  myTank->setShotType(StandardShot);
@@ -5552,8 +5561,8 @@ void doTankMotions(const float /*dt*/)
 	setHuntTarget(); //spot hunt target
 
       if (!myTank->isObserver() &&
-	  ((fireButton && myTank->getFlag() == Flags::MachineGun) ||
-	   (myTank->getFlag() == Flags::TriggerHappy))) {
+	  ((fireButton && myTank->getFlagType() == Flags::MachineGun) ||
+	   (myTank->getFlagType() == Flags::TriggerHappy))) {
 	myTank->fireShot();
       }
 
@@ -6364,7 +6373,8 @@ void startPlaying()
 
     if (tex < 0) {
       done = true;
-    } else {
+    }
+    else {
       // make explosion scene node
       BillboardSceneNode *explosion = new BillboardSceneNode(zero);
       explosion->setTexture(tex);

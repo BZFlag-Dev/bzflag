@@ -868,8 +868,7 @@ void ServerLink::sendShotBegin(const FiringInfo& info)
 }
 
 
-void ServerLink::sendShotEnd(const PlayerId& source,
-  int shotId, int reason)
+void ServerLink::sendShotEnd(const PlayerId& source, int shotId, int reason)
 {
   char msg[PlayerIdPLen + 4];
   void* buf = msg;
@@ -941,7 +940,7 @@ void ServerLink::sendShotInfo(const ShotPath& shotPath,
   void* buf = msg;
   buf = nboPackUInt8(buf, uint8_t(getId()));
   buf = nboPackInt16(buf, int16_t(shotPath.getShotId()));
-  buf = shotPath.getFlag()->pack(buf);
+  buf = shotPath.getFlagType()->pack(buf);
   buf = nboPackUInt8(buf, uint8_t(infoType));
   buf = nboPackFVec3(buf, pos);
   switch (infoType) {

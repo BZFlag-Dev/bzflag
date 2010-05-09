@@ -76,13 +76,10 @@ void sendFlagUpdateMessage(int playerID)
     return;
 
   std::vector<bz_FlagUpdateRecord*> flagRecordList;
-  if (playerData->playerHandler)
-  {
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
-    {
+  if (playerData->playerHandler) {
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
       FlagInfo &flag = *FlagInfo::get(flagIndex);
-      if (flag.exist())
-      {
+      if (flag.exist()) {
 	bz_FlagUpdateRecord *flagRecord = new bz_FlagUpdateRecord;
 	flagToAPIFlag(flag, flagRecord);
 	flagRecordList.push_back(flagRecord);
@@ -90,25 +87,26 @@ void sendFlagUpdateMessage(int playerID)
     }
 
     bz_FlagUpdateRecord** flagHandle = (bz_FlagUpdateRecord**) malloc(sizeof(bz_FlagUpdateRecord*) * flagRecordList.size());
-    for (unsigned int i = 0; i < flagRecordList.size(); i++)
+    for (unsigned int i = 0; i < flagRecordList.size(); i++) {
       flagHandle[i] = flagRecordList[i];
+    }
 
     playerData->playerHandler->flagUpdate((int)flagRecordList.size(), flagHandle);
 
     free(flagHandle);
-    for (unsigned int i = 0; i < flagRecordList.size(); i++)
+    for (unsigned int i = 0; i < flagRecordList.size(); i++) {
       delete(flagRecordList[i]);
+    }
   }
-  else
-  {
+  else {
     // first find all the flags we will send and get there pointers
     std::vector<FlagInfo*> flagsToSend;
 
-    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
-    {
+    for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
       FlagInfo *info = FlagInfo::get(flagIndex);
-      if (info && info->exist() && info->getIndex() < 0xFFFF)
+      if (info && info->exist() && info->getIndex() < 0xFFFF) {
 	flagsToSend.push_back(info);
+      }
     }
 
     // now send 10 flags at at time so we dont' flood out the guys and send ALL the flags in a nice buffered message
@@ -611,8 +609,11 @@ void sendSetShotType(int playerIndex, ShotType type)
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler)
-      otherData->playerHandler->setShotType(playerIndex,(bz_eShotType)playerData->effectiveShotType);
+    if (otherData && otherData->playerHandler) {
+      otherData->playerHandler->setShotType(
+        playerIndex, (bz_eShotType)playerData->effectiveShotType
+      );
+    }
   }
 }
 
@@ -629,8 +630,10 @@ void sendMsgShotBegin(int player, unsigned short id, FiringInfo &firingInfo)
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler)
-      otherData->playerHandler->shotFired(player,id,(bz_eShotType)firingInfo.shotType);
+    if (otherData && otherData->playerHandler) {
+      otherData->playerHandler->shotFired(player, id,
+                                          (bz_eShotType)firingInfo.shotType);
+    }
   }
 }
 
@@ -646,8 +649,9 @@ void sendMsgShotEnd(int player, unsigned short id, unsigned short reason)
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler)
+    if (otherData && otherData->playerHandler) {
       otherData->playerHandler->shotEnded(player,id,reason);
+    }
   }
 }
 
@@ -663,8 +667,9 @@ void sendMsgTeleport(int player, unsigned short from, unsigned short to)
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler)
+    if (otherData && otherData->playerHandler) {
       otherData->playerHandler->playerTeleported(player,from,to);
+    }
   }
 }
 
@@ -678,8 +683,9 @@ void sendMsgAutoPilot(int player, unsigned char autopilot)
   // now do everyone who dosn't have network
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler)
-      otherData->playerHandler->playerAutopilot(player,autopilot != 0);
+    if (otherData && otherData->playerHandler) {
+      otherData->playerHandler->playerAutopilot(player, autopilot != 0);
+    }
   }
 }
 
@@ -984,8 +990,9 @@ void sendDropFlagMessage(int playerIndex, FlagInfo &flag)
 
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player* otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->playerHandler)
+    if (otherData && otherData->playerHandler) {
       otherData->playerHandler->flagUpdate(1, &flagRecord);
+    }
   }
   delete(flagRecord);
 }

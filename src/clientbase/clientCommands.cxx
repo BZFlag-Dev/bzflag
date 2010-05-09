@@ -260,7 +260,7 @@ static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*)
     return "usage: drop";
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
-    FlagType* flag = myTank->getFlag();
+    FlagType* flag = myTank->getFlagType();
     if ((flag != Flags::Null) && !myTank->isPaused() &&
         (flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
         !(flag == Flags::OscillationOverthruster &&

@@ -1417,7 +1417,7 @@ void CmdLineOptions::finalizeParsing(EntryZones& entryZones)
 
   // explicitly added flags
   for (vsitr = storedFlagCounts.begin(); vsitr != storedFlagCounts.end(); ++vsitr) {
-    size_t rptBgn = vsitr->find_first_of('{');
+    size_t rptBgn = vsitr->find_first_of("{/");
     int rptCnt = 1;
     if (rptBgn > 0) {
       rptCnt = atoi(vsitr->substr(rptBgn+1, vsitr->length() - rptBgn).c_str());

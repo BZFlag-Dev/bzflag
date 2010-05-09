@@ -48,7 +48,8 @@ public:
   void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
   PlayerType	getPlayerType() const;
-  FlagType*	getFlag() const;
+  int		getFlagID() const;
+  FlagType*	getFlagType() const;
   long		getOrder() const;
   short		getStatus() const;
   const fvec3&	getPosition() const;
@@ -86,9 +87,7 @@ public:
   inline float	getPacketLoss() const { return packetLoss; }
   inline void	setPacketLoss(float pl) { packetLoss = pl; }
 
-  inline bool hasWings() const {
-    return getFlag() && (getFlag() == Flags::Wings);
-  }
+  inline bool hasWings() const { return getFlagType() == Flags::Wings; }
 
   inline const fvec4& getColor() const {
     return color;
@@ -183,8 +182,8 @@ public:
   void		setRelativeMotion();
   void		setUserSpeed(float speed);
   void		setUserAngVel(float angvel);
+  virtual void	setFlagID(int id);
   virtual void	changeTeam(TeamColor);
-  virtual void	setFlag(FlagType*);
   virtual void	changeScore(float newRank, short newWins, short newLosses, short newTeamKills);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void		setHandicap(float handicap);
@@ -310,6 +309,7 @@ private:
   PlayerType		type;			// Human/Computer
 
   // relatively stable data
+  int			flagID;			// flag ID I'm holding (or -1)
   FlagType*		flagType;		// flag type I'm holding
   ShotType		shotType;		// the shots I fire
   fvec3			dimensions;		// current tank dimensions
@@ -396,7 +396,7 @@ private:
 
 inline bool Player::isSolid()
 {
-  return getFlag() != Flags::OscillationOverthruster;
+  return getFlagType() != Flags::OscillationOverthruster;
 }
 
 inline PlayerId		Player::getId() const
@@ -424,7 +424,12 @@ inline PlayerType	Player::getPlayerType() const
   return type;
 }
 
-inline FlagType*	Player::getFlag() const
+inline int		Player::getFlagID() const
+{
+  return flagID;
+}
+
+inline FlagType*	Player::getFlagType() const
 {
   return flagType;
 }
@@ -600,7 +605,7 @@ inline bool		Player::isExploding() const
 
 inline bool		Player::isPhantomZoned() const
 {
-  return (isFlagActive() && (getFlag() == Flags::PhantomZone));
+  return (isFlagActive() && (getFlagType() == Flags::PhantomZone));
 }
 
 inline bool		Player::isCrossingWall() const

@@ -27,6 +27,7 @@ RobotPlayer* robots[MAX_ROBOTS];
 int numRobots = 0;
 #endif
 
+
 Player* lookupPlayer(PlayerId id)
 {
   // check my tank first
@@ -37,18 +38,22 @@ Player* lookupPlayer(PlayerId id)
 
   if (id == ServerPlayer) {
     World* world = World::getWorld();
-    if (world)
+    if (world) {
       return world->getWorldWeapons();
-    else
+    } else {
       return NULL;
+    }
   }
 
-  if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
+  if ((id < curMaxPlayers) && remotePlayers[id] &&
+      (remotePlayers[id]->getId() == id)) {
     return remotePlayers[id];
+  }
 
   // it's nobody we know about
   return NULL;
 }
+
 
 RobotPlayer* lookupRobotPlayer(PlayerId id)
 {
@@ -58,6 +63,7 @@ RobotPlayer* lookupRobotPlayer(PlayerId id)
 
   return NULL;
 }
+
 
 int lookupPlayerIndex(PlayerId id)
 {
@@ -76,11 +82,13 @@ int lookupPlayerIndex(PlayerId id)
   return -1;
 }
 
+
 Player* getPlayerByIndex(int index)
 {
   if (index == -2) {
     return LocalPlayer::getMyTank();
   }
+
   if (index == ServerPlayer) {
     World *world = World::getWorld();
     if (!world) {
@@ -88,11 +96,14 @@ Player* getPlayerByIndex(int index)
     }
     return world->getWorldWeapons();
   }
+
   if (index == -1 || index >= curMaxPlayers) {
     return NULL;
   }
+
   return remotePlayers[index];
 }
+
 
 Player* getPlayerByName(const char* name)
 {
@@ -101,10 +112,12 @@ Player* getPlayerByName(const char* name)
       return remotePlayers[i];
     }
   }
-  World *world = World::getWorld();
+
+  World* world = World::getWorld();
   if (!world) {
     return NULL;
   }
+
   WorldPlayer *worldWeapons = world->getWorldWeapons();
   if (strcmp(worldWeapons->getCallSign(), name) == 0) {
     return worldWeapons;
@@ -112,24 +125,29 @@ Player* getPlayerByName(const char* name)
   return NULL;
 }
 
+
 BaseLocalPlayer* getLocalPlayer(PlayerId id)
 {
   LocalPlayer *myTank = LocalPlayer::getMyTank();
   if (myTank->getId() == id) return myTank;
 #ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i] && robots[i]->getId() == id)
+  for (int i = 0; i < numRobots; i++) {
+    if (robots[i] && robots[i]->getId() == id) {
       return robots[i];
+    }
+  }
 #endif
   return NULL;
 }
 
+
 TeamColor PlayerIdToTeam(PlayerId id)
 {
-  if (id >= 244 && id <= 250)
+  if (id >= 244 && id <= 250) {
     return TeamColor(250 - id);
-  else
+  } else {
     return NoTeam;
+  }
 }
 
 

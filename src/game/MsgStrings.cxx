@@ -1060,19 +1060,27 @@ static MsgStringList handleMsgShotBegin(const PacketInfo& pi)
   MsgStringList list = listMsgBasics(pi);
 
   void *d = (void*)pi.data;
-  FiringInfo finfo;
-  d = finfo.unpack(d);
-  const ShotUpdate& shot = finfo.shot;
+  uint8_t  playerID;
+  uint16_t shotID;
+  FiringInfo fInfo;
+
+  d = nboUnpackUInt8(d,  playerID);
+  d = nboUnpackUInt16(d, shotID);
+  d = fInfo.unpack(d);
+
+  const ShotUpdate& shot = fInfo.shot;
   listPush(list, 1, "player:   %s", strPlayer(shot.player).c_str());
+  listPush(list, 1, "playerX:  %s", strPlayer(playerID).c_str());
   listPush(list, 2, "id:       %i", shot.id);
-  listPush(list, 2, "timeSent: %f", finfo.timeSent);
+  listPush(list, 2, "idX:      %i", shotID);
+  listPush(list, 2, "timeSent: %f", fInfo.timeSent);
   listPush(list, 3, "shotPlayer: %s", strPlayer(shot.player).c_str());
   listPush(list, 3, "shotID:     %i", shot.id);
   listPush(list, 2, "team:     %s", strTeam(shot.team).c_str());
   listPush(list, 2, "pos:      %s", strVector(shot.pos).c_str());
   listPush(list, 2, "vel:      %s", strVector(shot.vel).c_str());
-  listPush(list, 1, "type:     %.2s", finfo.flagType->flagAbbv.c_str()); // FIXME ?
-  listPush(list, 2, "lifetime: %-8.3f", finfo.lifetime);
+  listPush(list, 1, "type:     %.2s", fInfo.flagType->flagAbbv.c_str());
+  listPush(list, 2, "lifetime: %-8.3f", fInfo.lifetime);
 
   return list;
 }
@@ -1137,7 +1145,7 @@ static MsgStringList handleMsgShotEnd(const PacketInfo& pi)
   d = nboUnpackInt16(d, reason);
   listPush(list, 1, "player: %s", strPlayer(player).c_str());
   listPush(list, 1, "shotid: %i", shotid);
-  listPush(list, 1, "reason: %i", reason); // FIXME
+  listPush(list, 1, "reason: %i", reason); // NOTE: always 0 ?
 
   return list;
 }

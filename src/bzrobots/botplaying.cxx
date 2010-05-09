@@ -530,14 +530,14 @@ void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
     const ShotPath *shot = killerPlayer->getShot(int(shotId));
     if (shot) {
       for (int i = 0; i < numRobots; i++) {
-		if(robots[i] != NULL) {
-		  // notify the robot that a tank was blown up
-		  ((BZRobotPlayer *)(robots[i]))->shotKilled(shot,killerPlayer,victimPlayer);
-		  // blow up robots on victim's team if shot was genocide
-	      if ((shot->getFlag() == Flags::Genocide) && (victimPlayer != robots[i]) && (victimPlayer->getTeam() == robots[i]->getTeam()) && (robots[i]->getTeam() != RogueTeam)) {
-	        gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-		  }
-		}
+        if (robots[i] != NULL) {
+          // notify the robot that a tank was blown up
+          ((BZRobotPlayer *)(robots[i]))->shotKilled(shot,killerPlayer,victimPlayer);
+          // blow up robots on victim's team if shot was genocide
+          if ((shot->getFlagType() == Flags::Genocide) && (victimPlayer != robots[i]) && (victimPlayer->getTeam() == robots[i]->getTeam()) && (robots[i]->getTeam() != RogueTeam)) {
+            gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+          }
+        }
       }
     }
   }
@@ -567,11 +567,11 @@ void handleGrabFlag(void *msg)
     return;
 
   // player now has flag
-  tank->setFlag(flag.type);
+  tank->setFlagID(flagIndex);
   tank->setShotType((ShotType)shot);
 
   std::string message("grabbed ");
-  message += tank->getFlag()->flagName;
+  message += tank->getFlagType()->flagName;
   message += " flag";
 
   addMessage(tank, message);
@@ -600,7 +600,7 @@ void handleCaptureFlag(void *msg, bool &checkScores)
 
   // player no longer has flag
   if (capturer) {
-    capturer->setFlag(Flags::Null);
+    capturer->setFlagID(-1);
     //if (capturer == myTank)
     //  updateFlag(Flags::Null);
 
@@ -879,12 +879,11 @@ void handleNewPlayer(void *msg)
 
 void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, ShotType shotType)
 {
-  Flag& f = world->getFlag(flagIndex);
-
+  fromTank->setFlagID(-1);
   fromTank->setShotType(StandardShot);
-  fromTank->setFlag(Flags::Null);
+
+  toTank->setFlagID(flagIndex);
   toTank->setShotType(shotType);
-  toTank->setFlag(f.type);
 
   std::string message(toTank->getCallSign());
   message += " stole ";
@@ -945,17 +944,16 @@ void handleFlagDropped(Player *tank)
     RobotPlayer *robot = lookupRobotPlayer(tank->getId());
     if (!robot)
       return;
+    robot->setFlagID(-1);
     robot->setShotType(StandardShot);
-    robot->setFlag(Flags::Null);
-  } else {
-    tank->setShotType(StandardShot);
-
+  }
+  else {
     // skip it if player doesn't actually have a flag
-    if (tank->getFlag() == Flags::Null) return;
+    if (tank->getFlagType() == Flags::Null) return;
 
     if (tank == myTank) {
       // make sure the player must reload after theft
-      if (tank->getFlag() == Flags::Thief)
+      if (tank->getFlagType() == Flags::Thief)
 	myTank->forceReload(BZDB.eval(BZDBNAMES.THIEFDROPTIME));
 
       // update display and play sound effects
@@ -965,12 +963,13 @@ void handleFlagDropped(Player *tank)
 
     // add message
     std::string message("dropped ");
-    message += tank->getFlag()->flagName;
+    message += tank->getFlagType()->flagName;
     message += " flag";
     addMessage(tank, message);
 
     // player no longer has flag
-    tank->setFlag(Flags::Null);
+    tank->setFlagID(-1);
+    tank->setShotType(StandardShot);
   }
 }
 
@@ -985,11 +984,11 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
   FlagType *flagType = Flags::Null;
   if (hit) {
     shotId = hit->getShotId();
-    flagType = hit->getFlag();
+    flagType = hit->getFlagType();
   }
 
   // you can't take it with you
-  const FlagType *flag = tank->getFlag();
+  const FlagType *flag = tank->getFlagType();
   if (flag != Flags::Null) {
 
 
@@ -1064,11 +1063,11 @@ static void checkEnvironment(RobotPlayer *tank)
     if (hit->isStoppedByHit())
       serverLink->sendHit(tank->getId(), hit->getPlayer(), hit->getShotId());
 
-    FlagType *killerFlag = hit->getFlag();
+    FlagType *killerFlag = hit->getFlagType();
     bool stopShot;
 
     if (killerFlag == Flags::Thief) {
-      if (tank->getFlag() != Flags::Null)
+      if (tank->getFlagType() != Flags::Null)
 	serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
       stopShot = true;
     } else {
@@ -1359,7 +1358,7 @@ static void		sendMyTankList()
 
     float reloadtime = bot->getReloadTime();
 
-    FlagType* flagtype = bot->getFlag();
+    FlagType* flagtype = bot->getFlagType();
     char *flagname;
     if (flagtype == Flags::Null) {
       flagname = "none";
@@ -1434,7 +1433,7 @@ static void		sendOtherTankList()
       statstr = "dead";
     }
 
-    FlagType* flagtype = tank->getFlag();
+    FlagType* flagtype = tank->getFlagType();
     char *flagname;
     if (flagtype == Flags::Null) {
       flagname = "none";

@@ -444,8 +444,8 @@ bool checkSquishKill(const Player* victim, const Player* killer, bool localKille
   const fvec3& victimPos = victim->getPosition();
   const fvec3& killerPos = killer->getPosition();
 
-  if (killer->getFlag() != Flags::Steamroller) {
-    if (victim->getFlag() != Flags::Burrow) {
+  if (killer->getFlagType() != Flags::Steamroller) {
+    if (victim->getFlagType() != Flags::Burrow) {
       return false;
     }
     else if ((victimPos.z >= 0.0f) || (killerPos.z < 0.0f)) {
@@ -521,12 +521,12 @@ void setTankFlags()
   // scan through flags and, for flags on
   // tanks, tell the tank about its flag.
   const int maxFlags = world->getMaxFlags();
-  for (int i = 0; i < maxFlags; i++) {
-    const Flag &flag = world->getFlag(i);
+  for (int flagID = 0; flagID < maxFlags; flagID++) {
+    const Flag &flag = world->getFlag(flagID);
     if (flag.status == FlagOnTank) {
       for (int j = 0; j < curMaxPlayers; j++) {
-	if (remotePlayers[j] && remotePlayers[j]->getId() == flag.owner) {
-	  remotePlayers[j]->setFlag(flag.type);
+	if (remotePlayers[j] && (remotePlayers[j]->getId() == flag.owner)) {
+	  remotePlayers[j]->setFlagID(flagID);
 	  break;
 	}
       }
@@ -668,7 +668,7 @@ void setRobotTarget(RobotPlayer *robot)
 	  continue;
 
         const TeamColor robotTeam = robot->getTeam();
-        const FlagType* flagType = remotePlayers[j]->getFlag();
+        const FlagType* flagType = remotePlayers[j]->getFlagType();
 	if (World::getWorld()->allowTeamFlags() &&
 	    (((robotTeam == RedTeam)    && (flagType == Flags::RedTeam))   ||
 	     ((robotTeam == GreenTeam)  && (flagType == Flags::GreenTeam)) ||
@@ -1322,12 +1322,14 @@ void handleFlagUpdate(void *msg, size_t len)
 
   size_t perFlagSize = 2 + 55;
 
-  if (len >= (2 + (perFlagSize*count)))
+  if (len >= (2 + (perFlagSize*count))) {
     for (int i = 0; i < count; i++) {
       msg = nboUnpackUInt16(msg, flagIndex);
-      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      Flag& flag = world->getFlag(int(flagIndex));
+      msg = flag.unpack(msg);
       world->initFlag(int(flagIndex));
     }
+  }
 }
 
 
@@ -1375,7 +1377,7 @@ void handleAllow(void *msg)
     localtank->setDesiredSpeed(0.0);
     localtank->setDesiredAngVel(0.0);
     // drop any team flag we may have, as would happen if we paused
-    const FlagType *flagd = localtank->getFlag();
+    const FlagType *flagd = localtank->getFlagType();
     if (flagd->flagTeam != NoTeam) {
       serverLink->sendDropFlag(localtank->getPosition());
       localtank->setShotType(StandardShot);
@@ -1416,8 +1418,9 @@ void handleDropFlag(void *msg)
   msg = flag.unpack(msg);
 
   Player *tank = lookupPlayer(id);
-  if (!tank)
+  if (!tank) {
     return;
+  }
 
   handleFlagDropped(tank);
 

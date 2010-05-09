@@ -387,7 +387,7 @@ void ScoreboardRenderer::renderCtfFlags() {
 
   for (i=0; i < curMaxPlayers; i++) {
     if ((player = world->getPlayer(i))) {
-      FlagType* flagd = player->getFlag();
+      FlagType* flagd = player->getFlagType();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
 	std::string playerInfo = ColorStrings[flagd->flagTeam];
@@ -685,7 +685,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   // carried flag
   bool coloredFlag = false;
-  FlagType* flagd = player->getFlag();
+  FlagType* flagd = player->getFlagType();
   if (flagd != Flags::Null) {
     // color special flags
     if (BZDBCache::colorful) {

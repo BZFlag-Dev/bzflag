@@ -451,7 +451,7 @@ static bool checkDrawFlags()
     return BZDB.isTrue("displayRadarFlags");
   }
   // pick the automatic mode
-  const FlagType* ft = myTank->getFlag();
+  const FlagType* ft = myTank->getFlagType();
   if ((ft == Flags::Null)     ||
       (ft == Flags::Identify) ||
       (ft->flagQuality == FlagBad)) {
@@ -620,7 +620,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   float maxRange = radarLimit;
   // when burrowed, limit radar range to (1/4)
-  if (myTank && (myTank->getFlag() == Flags::Burrow) &&
+  if (myTank && (myTank->getFlagType() == Flags::Burrow) &&
       (myTank->getPosition().z < 0.0f)) {
     maxRange = radarLimit * 0.25f;
   }
@@ -654,7 +654,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
 
-  colorblind = (myTank->getFlag() == Flags::Colorblindness);
+  colorblind = (myTank->getFlagType() == Flags::Colorblindness);
 
   // if decay is sufficiently small then boost it so it's more
   // likely a jammed radar will get a few good frames closely
@@ -785,15 +785,15 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         (!useTankModels || !observer || !player->isExploding())) {
       continue;
     }
-    if ((player->getFlag() == Flags::Stealth) &&
-        (myTank->getFlag() != Flags::Seer)) {
+    if ((player->getFlagType() == Flags::Stealth) &&
+        (myTank->getFlagType() != Flags::Seer)) {
       continue;
     }
 
     const fvec3& position = player->getPosition();
 
-    if (player->getFlag() != Flags::Null) {
-      glColor3fv(player->getFlag()->getColor());
+    if (player->getFlagType() != Flags::Null) {
+      glColor3fv(player->getFlagType()->getColor());
       drawFlagOnTank(position);
     }
 
@@ -833,7 +833,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   bool coloredShot = BZDB.isTrue("coloredradarshots");
   // draw other tanks' shells
-  bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
+  bool iSeeAll = myTank && (myTank->getFlagType() == Flags::Seer);
   maxShots = world->getMaxShots();
   for (i = 0; i < curMaxPlayers; i++) {
     RemotePlayer* player = world->getPlayer(i);
@@ -920,8 +920,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     if (myTank->getRadarGfxBlock().notBlocked()) {
       // my flag
-      if (myTank->getFlag() != Flags::Null) {
-        glColor3fv(myTank->getFlag()->getColor());
+      if (myTank->getFlagType() != Flags::Null) {
+        glColor3fv(myTank->getFlagType()->getColor());
         drawFlagOnTank(myPos);
       }
 

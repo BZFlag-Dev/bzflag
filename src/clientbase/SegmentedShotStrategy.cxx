@@ -77,7 +77,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
       const Player* myTank = LocalPlayer::getMyTank();
       if ((myTank == NULL) ||
           ((myTank->getId() != _path->getPlayer()) &&
-           (myTank->getFlag() != Flags::Seer))) {
+           (myTank->getFlagType() != Flags::Seer))) {
         boltSceneNode->setInvisible(true);
       }
     }
@@ -453,7 +453,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const LinkPhysics* physics = NULL;
     if (linkSrc != NULL) {
       const ShotPath& myPath = getPath();
-      const FlagType* flagType = myPath.getFlag();
+      const FlagType* flagType = myPath.getFlagType();
       const TeamColor teamNum = myPath.getTeam();
       const unsigned int seed = shotPath.getShotId() + i;
       linkDst = linkManager.getShotLinkDst(linkSrc, seed,
@@ -844,7 +844,8 @@ LaserStrategy::LaserStrategy(ShotPath* _path)
   const int numSegments = (const int)(getSegments().size());
   laserNodes = new LaserSceneNode*[numSegments];
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
+  TeamColor tmpTeam =
+    (myTank->getFlagType() == Flags::Colorblindness) ? RogueTeam : team;
 
   TextureManager &tm = TextureManager::instance();
   std::string imageName = Team::getImagePrefix(tmpTeam);

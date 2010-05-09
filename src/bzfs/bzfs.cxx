@@ -2249,13 +2249,14 @@ void dropFlag(FlagInfo &flag)
   // see if someone had grabbed flag.  tell 'em to drop it.
   const int playerIndex = flag.player;
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
+  if (!playerData) {
     return;
+  }
 
   flag.player = -1;
   playerData->player.resetFlag();
 
-  sendDropFlagMessage(playerIndex,flag);
+  sendDropFlagMessage(playerIndex, flag);
 }
 
 

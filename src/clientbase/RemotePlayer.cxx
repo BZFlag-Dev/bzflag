@@ -71,7 +71,7 @@ bool RemotePlayer::doEndShot(int ident, bool isHit, fvec3& pos)
     return false;
 
   // keep statistics
-  shotStatistics.recordHit(shots[index]->getFlag());
+  shotStatistics.recordHit(shots[index]->getFlagType());
 
   // don't stop if it's because were hitting something and we don't stop
   // when we hit something.

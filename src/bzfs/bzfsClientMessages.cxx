@@ -899,7 +899,7 @@ public:
     eventData.flagType = NULL;
     eventData.action = eventData.ContinueSteal;
 
-    worldEventManager.callEvents(bz_eFlagTransferredEvent,&eventData);
+    worldEventManager.callEvents(bz_eFlagTransferredEvent, &eventData);
 
     if (eventData.action != eventData.CancelSteal) {
       int oFlagIndex = toData->player.getFlag();
@@ -908,7 +908,7 @@ public:
     }
 
     if (eventData.action == eventData.ContinueSteal)
-      sendFlagTransferMessage(to,from,*FlagInfo::get(flagIndex));
+      sendFlagTransferMessage(to, from, *FlagInfo::get(flagIndex));
     return true;
   }
 };

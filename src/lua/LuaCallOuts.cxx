@@ -2316,23 +2316,12 @@ int LuaCallOuts::GetPlayerFlag(lua_State* L) // FIXME -- linear search, ew
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  if (player->getFlag() == Flags::Null) {
+  const int flagID = player->getFlagID();
+  if (flagID < 0) {
     return luaL_pushnil(L);
   }
-  World* world = World::getWorld();
-  if (world == NULL) {
-    return luaL_pushnil(L);
-  }
-  const PlayerId playerID = player->getId();
-  const int maxFlags = world->getMaxFlags();
-  for (int flagID = 0; flagID < maxFlags; flagID++) {
-    const Flag& flag = world->getFlag(flagID);
-    if ((flag.status == FlagOnTank) && (flag.owner == playerID)) {
-      lua_pushinteger(L, flag.id);
-      return 1;
-    }
-  }
-  return 0;
+  lua_pushinteger(L, flagID);
+  return 1;
 }
 
 
@@ -2342,7 +2331,7 @@ int LuaCallOuts::GetPlayerFlagType(lua_State* L)
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  const FlagType* ft = player->getFlag();
+  const FlagType* ft = player->getFlagType();
   if (ft == NULL) {
     return luaL_pushnil(L);
   }
@@ -2907,7 +2896,7 @@ int LuaCallOuts::GetShotFlagType(lua_State* L)
   if (shot == NULL) {
     return luaL_pushnil(L);
   }
-  lua_pushstring(L, shot->getFlag()->flagAbbv.c_str());
+  lua_pushstring(L, shot->getFlagType()->flagAbbv.c_str());
   return 1;
 }
 

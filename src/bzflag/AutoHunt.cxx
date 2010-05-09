@@ -712,7 +712,7 @@ static void huntPlayers()
   const float tkWarnRatio = BZDB.eval("tkwarnratio");
 
   // setup the paired flag map
-  const FlagType* myFlagType = myTank->getFlag();
+  const FlagType* myFlagType = myTank->getFlagType();
   const FlagHuntInfoMap* pairedMap = NULL;
   if (myFlagType != Flags::Null) {
     FlagPairMap::const_iterator fpm_it = FlagPairs.find(myFlagType);
@@ -737,7 +737,7 @@ static void huntPlayers()
     const float dist = distBetweenPlayers(myTank, p);
 
     // flag type
-    FlagType* ft = p->getFlag();
+    FlagType* ft = p->getFlagType();
     if (ft != Flags::Null) {
       // solo flag type
       if (myEnemy || observer) {

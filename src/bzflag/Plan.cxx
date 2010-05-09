@@ -59,7 +59,7 @@ void Plan::execute(float &, float &)
   Ray tankRay(pos, dir);
   pos[2] -= myTank->getMuzzleHeight();
 
-  if (myTank->getFlag() == Flags::ShockWave) {
+  if (myTank->getFlagType() == Flags::ShockWave) {
     BzTime now = BzTime::getTick();
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
@@ -106,7 +106,7 @@ void Plan::execute(float &, float &)
 	    myTank->validTeamTarget(remotePlayers[t])) {
 
 	  if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-	      && (myTank->getFlag() != Flags::SuperBullet))
+	      && (myTank->getFlagType() != Flags::SuperBullet))
 	    continue;
 
 	  const fvec3& tp = remotePlayers[t]->getPosition();
@@ -119,7 +119,7 @@ void Plan::execute(float &, float &)
 
 	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 
-	  if ((myTank->getFlag() == Flags::GuidedMissile) ||
+	  if ((myTank->getFlagType() == Flags::GuidedMissile) ||
 	      (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
 
 	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
@@ -127,7 +127,7 @@ void Plan::execute(float &, float &)
 		((dist < (2.0f * BZDB.eval(BZDBNAMES.SHOTSPEED))) &&
 		 (targetDiff < closeErrorLimit))) {
 	      bool isTargetObscured;
-	      if (myTank->getFlag() != Flags::SuperBullet)
+	      if (myTank->getFlagType() != Flags::SuperBullet)
 		isTargetObscured = TargetingUtils::isLocationObscured(pos, enemyPos);
 	      else
 		isTargetObscured = false;
@@ -154,8 +154,8 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   }
   const fvec3& pos = myTank->getPosition();
 
-  if ((myTank->getFlag() == Flags::Narrow) ||
-      (myTank->getFlag() == Flags::Burrow))
+  if ((myTank->getFlagType() == Flags::Narrow) ||
+      (myTank->getFlagType() == Flags::Burrow))
     return false; // take our chances
 
   float minDistance;
@@ -174,7 +174,7 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   if ((myTank->canJump()) &&
       (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))) {
     myTank->setJump();
-    return (myTank->getFlag() != Flags::Wings);
+    return (myTank->getFlagType() != Flags::Wings);
   } else if (dotProd > 0.96f) {
     speed = 1.0;
     float myAzimuth = myTank->getAngle();
@@ -230,12 +230,12 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 
       if ((shot->getShotType() == InvisibleShot ||
 	   shot->getShotType() == CloakedShot) &&
-	  (myTank->getFlag() != Flags::Seer))
+	  (myTank->getFlagType() != Flags::Seer))
 	continue; //Theoretically Roger could triangulate the sound
       if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 	continue;
       if ((shot->getShotType() == LaserShot) &&
-	  (myTank->getFlag() == Flags::Cloaking))
+	  (myTank->getFlagType() == Flags::Cloaking))
 	continue; //cloaked tanks can't die from lasers
 
       const fvec3& shotPos = shot->getPosition();
@@ -268,10 +268,14 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
     if (!shot || shot->isExpired())
       continue;
 
-    if ((shot->getShotType() == InvisibleShot || shot->getShotType() == CloakedShot) && myTank->getFlag() != Flags::Seer)
+    if ((shot->getShotType() == InvisibleShot || shot->getShotType() == CloakedShot) &&
+        (myTank->getFlagType() != Flags::Seer)) {
       continue; //Theoretically Roger could triangulate the sound
-    if (shot->getShotType() == LaserShot && myTank->getFlag() == Flags::Cloaking)
+    }
+    if (shot->getShotType() == LaserShot &&
+        myTank->getFlagType() == Flags::Cloaking) {
       continue; //cloaked tanks can't die from lasers
+    }
 
     const fvec3& shotPos = shot->getPosition();
     if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))

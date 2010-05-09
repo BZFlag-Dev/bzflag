@@ -149,7 +149,7 @@ void GuidedMissileStrategy::update(float dt)
   }
 
   if ((target != NULL) &&
-      ((target->getFlag() == Flags::Stealth) ||
+      ((target->getFlagType() == Flags::Stealth) ||
        ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
     target = NULL;
     lastTarget = NoPlayer;
@@ -270,7 +270,7 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   }
 
   if ((target != NULL) &&
-      ((target->getFlag() == Flags::Stealth) ||
+      ((target->getFlagType() == Flags::Stealth) ||
        ((target->getStatus() & short(PlayerState::Alive)) == 0))) {
     target = NULL;
   }
@@ -322,7 +322,7 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   int linkSrcID, linkDstID;
   if (linkSrc != NULL) {
     const ShotPath& myPath = getPath();
-    const FlagType* flagType = myPath.getFlag();
+    const FlagType* flagType = myPath.getFlagType();
     const TeamColor teamNum = myPath.getTeam();
     const unsigned int seed = getPath().getShotId();
     linkDst = linkManager.getShotLinkDst(linkSrc, seed,
@@ -367,7 +367,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
   int linkSrcID, linkDstID;
   if (linkSrc != NULL) {
     const ShotPath& myPath = getPath();
-    const FlagType* flagType = myPath.getFlag();
+    const FlagType* flagType = myPath.getFlagType();
     const TeamColor teamNum = myPath.getTeam();
     const unsigned int seed = getPath().getShotId();
     linkDst = linkManager.getShotLinkDst(linkSrc, seed,
