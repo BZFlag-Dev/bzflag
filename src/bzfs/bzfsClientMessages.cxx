@@ -1036,37 +1036,40 @@ class LagPingHandler : public PlayerFirstHandler
 public:
   virtual bool execute ( uint16_t &/*code*/, void * buf, int len )
   {
-    if (!player || len < 3)
+    if (!player || len < 3) {
       return false;
-
-    bool warn, kick, jittwarn, jittkick, plosswarn, plosskick;
-    char message[MessageLen];
-
-    player->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick);
-
-    if (warn) {
-      sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***", player->lagInfo.getLag());
-      sendMessage(ServerPlayer, player->getIndex(), message);
-
-      if (kick)
-	lagKick(player->getIndex());
     }
 
+    bool lagwarn, lagkick, jittwarn, jittkick, plosswarn, plosskick;
+    char message[MessageLen];
+
+    player->lagInfo.updatePingLag(buf,
+                                  lagwarn,   lagkick,
+                                  jittwarn,  jittkick,
+                                  plosswarn, plosskick);
+
+    if (lagwarn) {
+      sprintf(message,"*** Server Warning: your lag is too high (%d ms) ***", player->lagInfo.getLag());
+      sendMessage(ServerPlayer, player->getIndex(), message);
+      if (lagkick) {
+	lagKick(player->getIndex());
+      }
+    }
     if (jittwarn) {
       sprintf(message, "*** Server Warning: your jitter is too high (%d ms) ***", player->lagInfo.getJitter());
       sendMessage(ServerPlayer, player->getIndex(), message);
-
-      if (jittkick)
+      if (jittkick) {
 	jitterKick(player->getIndex());
+      }
     }
-
     if (plosswarn) {
       sprintf(message, "*** Server Warning: your packetloss is too high (%d%%) ***", player->lagInfo.getLoss());
       sendMessage(ServerPlayer, player->getIndex(), message);
-
-      if (plosskick)
+      if (plosskick) {
 	packetLossKick(player->getIndex());
+      }
     }
+
     return true;
   }
 };

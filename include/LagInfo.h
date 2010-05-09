@@ -73,7 +73,7 @@ public:
   void	updatePingLag(void *buf, bool &warn, bool &kick,
 		      bool &jittwarn, bool &jittkick,
 		      bool &plosswarn, bool &plosskick);
-  void	updateLag(BzTime const& timestamp, bool ooo);
+  void	updateLag(const BzTime& timestamp, bool ooo);
   /** get the ping seqno, if need to send one now!
    */
   int	getNextPingSeqno(bool &warn, bool &kick);
@@ -87,30 +87,37 @@ public:
   static void setPacketLossThreshold(float _packetlossthreshold, float _max);
 private:
   PlayerInfo *info;
-  // lag measurement
-  float       lagavg;
-  float       jitteravg;
-  float       lostavg;
-  float       lagalpha;
-  float       jitteralpha;
-  float       lostalpha;
+
+  float  lagavg;
+  float  jitteravg;
+  float  lostavg;
+
+  float  lagalpha;
+  float  jitteralpha;
+  float  lostalpha;
+
   int	 lagcount;
-  int	 laglastwarn;
-  int	 lagwarncount;
   int    jittercount;
-  int    jitterlastwarn;
-  int    jitterwarncount;
   int    losscount;
+
+  int	 laglastwarn;
+  int    jitterlastwarn;
   int    losslastwarn;
+
+  int	 lagwarncount;
+  int    jitterwarncount;
   int    losswarncount;
-  bool	pingpending;
-  BzTime  nextping;
-  BzTime  lastping;
-  BzTime  lastupdate;
+
+  bool	 pingpending;
   int	 pingseqno;
   int	 pingssent;
+
+  BzTime nextping;
+  BzTime lastping;
+  BzTime lastupdate;
+
   // jitter measurement
-  BzTime       lasttimestamp;
+  BzTime lasttimestamp;
 
   static float threshold;
   static float jitterthreshold;

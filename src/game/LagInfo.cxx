@@ -13,6 +13,7 @@
 /* interface header */
 #include "LagInfo.h"
 
+
 float LagInfo::threshold       = 0.0f;
 float LagInfo::jitterthreshold = 0.0f;
 float LagInfo::lossthreshold   = 0.0f;
@@ -22,11 +23,17 @@ float LagInfo::lossmax         = 0.0f;
 
 
 LagInfo::LagInfo(PlayerInfo *_info)
-  : info(_info), lagavg(0), jitteravg(0), lostavg(0), lagalpha(1),
-    jitteralpha(1), lostalpha(1), lagcount(0), laglastwarn(0), lagwarncount(0),
-    jittercount(0), jitterlastwarn(0), jitterwarncount(0), losscount(0),
-    losslastwarn(0), losswarncount(0), pingpending(false), pingseqno(0),
-    pingssent(0), lasttimestamp(0.0) {
+: info(_info)
+, lagavg(0.0f),    jitteravg(0.0f),    lostavg(0.0f)
+, lagalpha(1.0f),  jitteralpha(1.0f),  lostalpha(1.0f)
+, lagcount(0),     jittercount(0),     losscount(0)
+, laglastwarn(0),  jitterlastwarn(0),  losslastwarn(0)
+, lagwarncount(0), jitterwarncount(0), losswarncount(0)
+, pingpending(false)
+, pingseqno(0)
+, pingssent(0)
+, lasttimestamp(0.0)
+{
 }
 
 
@@ -175,7 +182,7 @@ void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
 }
 
 
-void LagInfo::updateLag(BzTime const& timestamp, bool ooo) {
+void LagInfo::updateLag(const BzTime& timestamp, bool ooo) {
   if (!info->isPlaying())
     return;
   if (ooo) {
