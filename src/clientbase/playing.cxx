@@ -314,10 +314,9 @@ void joinInternetGame(const struct in_addr *inAddress)
   if (serverLink->getState() != ServerLink::Okay) {
     switch (serverLink->getState()) {
       case ServerLink::BadVersion: {
-        static char versionError[] = "Incompatible server version XXXXXXXX";
-        strncpy(versionError + strlen(versionError) - 8,
-          serverLink->getVersion(), 8);
-        showError(versionError);
+	std::string msg = "Incompatible server version ";
+	msg += serverLink->getVersion();
+	showError(msg.c_str());
         break;
       }
       case ServerLink::Refused: {
