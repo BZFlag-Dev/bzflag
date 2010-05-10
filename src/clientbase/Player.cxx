@@ -748,6 +748,7 @@ void Player::setFlagID(int _flagID)
     flagID   = _flagID;
     flagType = world->getFlag(flagID).type;
   }
+  updateFlagEffect(flagType);
 }
 
 
@@ -912,7 +913,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
   if (cloaked && !seerView)
     return; // don't draw anything
 
-  avatar->setVisualMode(inCockpit,showTreads);
+  avatar->setVisualMode(inCockpit, showTreads);
 
   // adjust alpha for seerView
   if (seerView) {
