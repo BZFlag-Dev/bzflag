@@ -250,12 +250,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "timedctf", "..\..\plugins\t
 		{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0} = {9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "torBlock", "..\..\plugins\torBlock\torBlock.vcproj", "{F22CDA46-7835-49AC-BAB4-638987F0DCB5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
-		{9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0} = {9D41C1F7-A09D-4607-9BB8-1F7E275EBCF0}
-	EndProjectSection
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unrealCTF", "..\..\plugins\unrealCTF\unrealCTF.vcproj", "{32C35A56-7720-45A6-8AAB-67805BB73FA7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
@@ -319,10 +313,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glew_static", "..\..\src\other\glew\build\vc6\glew_static.vcproj", "{6C4DBDEF-A58A-452B-9155-6CB07D58D1BA}"
 EndProject
 Global
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug MX|Win32 = Debug MX|Win32
 		Debug_Distribution|Win32 = Debug_Distribution|Win32
@@ -884,18 +874,6 @@ Global
 		{677BC95C-44F2-4DCA-B720-99375F9A618D}.Release_Distribution|Win32.Build.0 = Release|Win32
 		{677BC95C-44F2-4DCA-B720-99375F9A618D}.Release|Win32.ActiveCfg = Release|Win32
 		{677BC95C-44F2-4DCA-B720-99375F9A618D}.Release|Win32.Build.0 = Release|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Debug MX|Win32.ActiveCfg = Debug|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Debug MX|Win32.Build.0 = Debug|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Debug_Distribution|Win32.ActiveCfg = Debug|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Debug_Distribution|Win32.Build.0 = Debug|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Debug|Win32.ActiveCfg = Debug|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Debug|Win32.Build.0 = Debug|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Release MX|Win32.ActiveCfg = Release|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Release MX|Win32.Build.0 = Release|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Release_Distribution|Win32.ActiveCfg = Release|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Release_Distribution|Win32.Build.0 = Release|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Release|Win32.ActiveCfg = Release|Win32
-		{F22CDA46-7835-49AC-BAB4-638987F0DCB5}.Release|Win32.Build.0 = Release|Win32
 		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Debug MX|Win32.ActiveCfg = Debug|Win32
 		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Debug MX|Win32.Build.0 = Debug|Win32
 		{32C35A56-7720-45A6-8AAB-67805BB73FA7}.Debug_Distribution|Win32.ActiveCfg = Debug|Win32
@@ -1043,5 +1021,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
