@@ -602,7 +602,7 @@ void handleCaptureFlag(void *msg, bool &checkScores)
   if (capturer) {
     capturer->setFlagID(-1);
     //if (capturer == myTank)
-    //  updateFlag(Flags::Null);
+    //  updateMyFlag(Flags::Null);
 
     // add message
     if (int(capturer->getTeam()) == capturedTeam) {
@@ -958,7 +958,7 @@ void handleFlagDropped(Player *tank)
 
       // update display and play sound effects
       //SOUNDSYSTEM.play(SFX_DROP_FLAG);
-      //updateFlag(Flags::Null);
+      //updateMyFlag(Flags::Null);
     }
 
     // add message

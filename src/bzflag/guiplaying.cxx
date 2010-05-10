@@ -1192,7 +1192,7 @@ void updateHighScores()
       }
 }
 
-static void updateFlag(FlagType *flag)
+static void updateMyFlag(FlagType *flag)
 {
   if (flag == Flags::Null) {
     hud->setColor(1.0f, 0.625f, 0.125f);
@@ -1867,7 +1867,7 @@ void handleGrabFlag(void *msg)
 
   if (tank == myTank) {
     SOUNDSYSTEM.play(myTank->getFlagType()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
-    updateFlag(myTank->getFlagType());
+    updateMyFlag(myTank->getFlagType());
   }
   else if (isViewTank(tank)) {
     SOUNDSYSTEM.play(tank->getFlagType()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
@@ -1928,7 +1928,7 @@ void handleCaptureFlag(void *msg, bool &checkScores)
     capturer->setShotType(StandardShot);
 
     if (capturer == myTank)
-      updateFlag(Flags::Null);
+      updateMyFlag(Flags::Null);
 
     // add message
     if (int(capturer->getTeam()) == capturedTeam) {
@@ -2278,7 +2278,7 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
   }
 
   if ((fromTank == myTank) || (toTank == myTank))
-    updateFlag(myTank->getFlagType());
+    updateMyFlag(myTank->getFlagType());
 
   const fvec3& pos = toTank->getPosition();
   if (f.type->flagTeam != ::NoTeam) {
@@ -2879,7 +2879,7 @@ void handleFlagDropped(Player *tank)
       }
       // update display and play sound effects
       SOUNDSYSTEM.play(SFX_DROP_FLAG);
-      updateFlag(Flags::Null);
+      updateMyFlag(Flags::Null);
     }
     else if (isViewTank(tank)) {
       SOUNDSYSTEM.play(SFX_DROP_FLAG);
@@ -2964,11 +2964,12 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
     }
 
     // tell server I'm dead in case it doesn't already know
-    if (reason == GotShot || reason == GotRunOver ||
-      reason == GenocideEffect || reason == SelfDestruct ||
-      reason == WaterDeath || reason == PhysicsDriverDeath)
-      serverLink->sendKilled(tank->getId(), killer, reason, shotId, flagType,
-      phydrv);
+    if ((reason == GotShot)        || (reason == GotRunOver)   ||
+        (reason == GenocideEffect) || (reason == SelfDestruct) ||
+        (reason == WaterDeath)     || (reason == PhysicsDriverDeath)) {
+      serverLink->sendKilled(tank->getId(), killer, reason,
+                             shotId, flagType, phydrv);
+    }
   }
 
   // print reason if it's my tank
@@ -3729,7 +3730,7 @@ void enteringServer(void* buf)
 
   // initialize some other stuff
   updateNumPlayers();
-  updateFlag(Flags::Null);
+  updateMyFlag(Flags::Null);
   updateHighScores();
 
   hud->setHeading(myTank->getAngle());
@@ -6343,7 +6344,7 @@ void startPlaying()
 
   // initialize control panel and hud
   updateNumPlayers();
-  updateFlag(Flags::Null);
+  updateMyFlag(Flags::Null);
   updateHighScores();
   notifyBzfKeyMapChanged();
 

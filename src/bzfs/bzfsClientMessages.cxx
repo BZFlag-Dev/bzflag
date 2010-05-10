@@ -491,6 +491,7 @@ public:
   {
     if (!player || len < 13)
       return false;
+
     if (!player->player.isCompletelyAdded())
       return false;
 
@@ -594,14 +595,16 @@ public:
 
 	    sendMessage(ServerPlayer, player->getIndex(), message);
 	  }
-	} else {
+	}
+	else {
 	  // no shots left
 	  if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0)) {
 	    // drop flag at last known position of player
 	    // also handle case where limit was set to 0
 	    fInfo.grabs = 0; // recycle this flag now
 	    dropPlayerFlag(*player, player->currentPos);
-	  } else {
+	  }
+	  else {
 	    // more shots fired than allowed
 	    // do nothing for now -- could return and not allow shot
 	  }
@@ -747,6 +750,7 @@ public:
   {
     if (!player || len < 3)
       return false;
+
     if (!player->player.isCompletelyAdded())
       return false;
 
@@ -760,24 +764,34 @@ public:
 
     buf = nboUnpackUInt8(buf, shooterPlayer);
     buf = nboUnpackInt16(buf, shot);
-    GameKeeper::Player *shooterData = GameKeeper::Player::getPlayerByIndex(shooterPlayer);
+    GameKeeper::Player *shooterData =
+      GameKeeper::Player::getPlayerByIndex(shooterPlayer);
 
     if (!shooterData)
       return true;
 
     if (shooterData->removeShot(shot & 0xff, shot >> 8, firingInfo)) {
+
       sendMsgShotEnd(shooterPlayer, shot, 1);
 
       const int flagIndex = player->player.getFlag();
       FlagInfo *flagInfo  = NULL;
-
       if (flagIndex >= 0) {
 	flagInfo = FlagInfo::get(flagIndex);
-	dropFlag(*flagInfo);
       }
+      
+      const bool shieldHit = flagInfo && (flagInfo->flag.type == Flags::Shield);
 
-      if (!flagInfo || flagInfo->flag.type != Flags::Shield)
-	playerKilled(hitPlayer, shooterPlayer, GotShot, shot, firingInfo.flagType, false, false);
+      if (shieldHit) {
+        zapFlag(*flagInfo);
+      }
+      else {
+        if (flagInfo) {
+          dropFlag(*flagInfo);
+        }
+	playerKilled(hitPlayer, shooterPlayer, GotShot,
+	             shot, firingInfo.flagType, false, false);
+      }
     }
 
     return true;
@@ -792,6 +806,7 @@ public:
   {
     if (!player || len < 4)
       return false;
+
     if (!player->player.isCompletelyAdded())
       return false;
 

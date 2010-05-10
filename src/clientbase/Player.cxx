@@ -745,9 +745,8 @@ void Player::setFlagID(int _flagID)
     flagType = Flags::Null;
   }
   else {
-    const Flag& flag = world->getFlag(_flagID);
     flagID   = _flagID;
-    flagType = flag.type;
+    flagType = world->getFlag(flagID).type;
   }
 }
 

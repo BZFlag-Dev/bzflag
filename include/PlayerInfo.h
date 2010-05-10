@@ -130,8 +130,9 @@ public:
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
-  void  setCompletelyAdded() {completelyAdded = true;}
-  bool  isCompletelyAdded() {return completelyAdded;}
+
+  void  setCompletelyAdded() { completelyAdded = true; }
+  bool  isCompletelyAdded() const { return completelyAdded; }
 
   float	jumpStartPos;
   float	allowedHeightAtJumpStart;

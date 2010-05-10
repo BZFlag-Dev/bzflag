@@ -568,7 +568,7 @@ void CmdLineOptions::parseFileOptions(const std::string& filePath)
     confStrm.getline(buffer, sizeof(buffer), delim);
     if (!confStrm.good()) {
       errorHandler.fatalError(
-        std::string("could not find bzflag configuration file on open"), 0);
+        std::string("could not read bzflag configuration file, missing newline?"), 0);
       exit(1);
     }
   }
@@ -1308,7 +1308,8 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       BZDB.set(BZDBNAMES.WORLDSIZE,
                TextUtils::format("%d", parseIntArg(i, tokens) * 2));
       std::cerr << "using world size of [" << BZDBCache::worldSize << "]" << std::endl;
-    } else {
+    }
+    else {
       std::cerr << "ERROR: bad argument [" << token << "]" << std::endl;
       usage(execName);
     }

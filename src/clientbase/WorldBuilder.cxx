@@ -264,29 +264,32 @@ void WorldBuilder::preGetWorld()
   // real players. Any tcp connection is assigned a slot.
   // So I put now 216. We should fix it though.
   const int maxPlayers = 216;
-  int i;
   world->setPlayersSize(maxPlayers);
 
-  // prepare flags array
+  // clear the flags array
   world->freeFlags();
-  world->flags = new ClientFlag[world->maxFlags];
-  world->flagNodes = new FlagSceneNode*[world->maxFlags];
-  world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];
-  for (i = 0; i < world->maxFlags; i++) {
-    world->flags[i].id = i;
-    world->flags[i].gfxBlock.init(GfxBlock::Flag, i, true);
-    world->flags[i].radarGfxBlock.init(GfxBlock::FlagRadar, i, true);
-    world->flags[i].type = Flags::Null;
-    world->flags[i].status = FlagNoExist;
-    world->flags[i].position.x = 0.0f;
-    world->flags[i].position.y = 0.0f;
-    world->flags[i].position.z = 0.0f;
-    world->flagNodes[i] = new FlagSceneNode(world->flags[i].position);
-    world->flagWarpNodes[i] = new FlagWarpSceneNode(world->flags[i].position);
-    world->flagNodes[i]->setTexture(World::flagTexture);
-  }
 
-  return;
+  // prepare the flags array
+  world->flags         = new ClientFlag[world->maxFlags];
+  world->flagNodes     = new FlagSceneNode*[world->maxFlags];
+  world->flagWarpNodes = new FlagWarpSceneNode*[world->maxFlags];
+
+  // setup the flags and flag scene nodes
+  for (int flagID = 0; flagID < world->maxFlags; flagID++) {
+    ClientFlag& flag = world->flags[flagID];
+
+    flag.id       = flagID;
+    flag.type     = Flags::Null;
+    flag.status   = FlagNoExist;
+    flag.position = fvec3(0.0f, 0.0f, 0.0f);
+
+    flag.gfxBlock.init(GfxBlock::Flag, flagID, true);
+    flag.radarGfxBlock.init(GfxBlock::FlagRadar, flagID, true);
+
+    world->flagNodes[flagID] = new FlagSceneNode(flag.position);
+    world->flagNodes[flagID]->setTexture(World::flagTexture);
+    world->flagWarpNodes[flagID] = new FlagWarpSceneNode(flag.position);
+  }
 }
 
 
@@ -303,6 +306,7 @@ World* WorldBuilder::peekWorld()
   preGetWorld();
   return world;
 }
+
 
 void WorldBuilder::setGameType(short gameType)
 {

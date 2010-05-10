@@ -2388,10 +2388,11 @@ void zapFlagByPlayer(int playerIndex)
   FlagInfo &flag = *FlagInfo::get(flagid);
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
-  if (carriedflag.type->flagTeam != ::NoTeam)
+  if (carriedflag.type->flagTeam != ::NoTeam) {
     dropPlayerFlag(*playerData, playerData->currentPos);
-  else
+  } else {
     zapFlag(flag);
+  }
 }
 
 
@@ -3124,9 +3125,12 @@ void dropFlag(FlagInfo& flagInfo, const fvec3& dropPos)
 void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos)
 {
   const int flagIndex = playerData.player.getFlag();
-  if (flagIndex < 0)
+  if (flagIndex < 0) {
     return;
+  }
+
   dropFlag(*FlagInfo::get(flagIndex), dropPos);
+
   playerData.effectiveShotType = StandardShot;
 
   bz_FlagDroppedEventData_V1 data;
@@ -3450,7 +3454,8 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
       return "all variables reset";
     } else if (BZDB.isSet(args[0])) {
       StateDatabase::Permission permission = BZDB.getPermission(args[0]);
-      if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
+      if ((permission == StateDatabase::ReadWrite) ||
+          (permission == StateDatabase::Locked)) {
 	BZDB.set(args[0], BZDB.getDefault(args[0]), StateDatabase::Server);
 	lastWorldParmChange = BzTime::getCurrent();
 	return args[0] + " reset";
@@ -3465,9 +3470,8 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
 }
 
 
-static bool requestAuthentication;
-
-static void doStuffOnPlayer(GameKeeper::Player &playerData)
+static void doStuffOnPlayer(GameKeeper::Player &playerData,
+                            bool& requestAuthentication)
 {
   int p = playerData.getIndex();
 
@@ -3550,8 +3554,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       if (FlagInfo::get(j)->player == p) {
 	dropPlayerFlag(playerData, playerData.currentPos);
 	// Should recheck if player is still available
-	if (!GameKeeper::Player::getPlayerByIndex(p))
+	if (!GameKeeper::Player::getPlayerByIndex(p)) {
 	  return;
+        }
       }
     }
   }
@@ -4386,18 +4391,19 @@ static void doCountdown(int &readySetGo, BzTime &tm)
 
 static void doPlayerStuff()
 {
-  requestAuthentication = false;
+  bool requestAuthentication = false;
 
   for (int p = 0; p < curMaxPlayers; p++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
-    if (!playerData)
-      continue;
-
-    doStuffOnPlayer(*playerData);
+    if (playerData) {
+      doStuffOnPlayer(*playerData, requestAuthentication);
+    }
   }
 
-  if (requestAuthentication)
-    listServerLink->queueMessage(ListServerLink::ADD);	// Request the listserver authentication
+  if (requestAuthentication) {
+    // request the listserver authentication
+    listServerLink->queueMessage(ListServerLink::ADD);
+  }
 }
 
 
@@ -4476,7 +4482,8 @@ static void doVoteArbiter(BzTime &tm)
 	    sendMessage(ServerPlayer, AllPlayers, message);
 	    announcedClosure = true;
 	  }
-	} else {
+	}
+	else {
 	  if (!announcedClosure) {
 	    snprintf(message, MessageLen,
 		     "The poll to %s %s was not successful", action.c_str(),
@@ -4513,18 +4520,22 @@ static void doVoteArbiter(BzTime &tm)
 		pollAction += TextUtils::format("%d minute%s", minutes, minutes > 1 ? "s" : "");
 
 	      pollAction += ".";
-	    } else if (action == "kick") {
+	    }
+	    else if (action == "kick") {
 	      pollAction = std::string("kicked.");
-	    } else if (action == "kill") {
+	    }
+	    else if (action == "kill") {
 	      pollAction = std::string("killed.");
-	    } else {
+	    }
+	    else {
 	      pollAction = action;
 	    }
 
-	    if (action != "flagreset")
+	    if (action != "flagreset") {
 	      snprintf(message, MessageLen, "%s has been %s", target.c_str(), pollAction.c_str());
-	    else
+	    } else {
 	      snprintf(message, MessageLen, "All unused flags have now been reset.");
+            }
 	    sendMessage(ServerPlayer, AllPlayers, message);
 
 	    /* regardless of whether or not the player was found, if the poll
@@ -4568,27 +4579,32 @@ static void doVoteArbiter(BzTime &tm)
 		snprintf(message,  MessageLen, "/poll %s", action.c_str());
 		removePlayer(v, message, true);
 	      }
-	    } else if (action == "set") {
+	    }
+	    else if (action == "set") {
 	      std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
 	      if ( args.size() < 2 ) {
 		logDebugMessage(1, "Poll set taking action: no action taken, not enough parameters (%s).\n",
 				(args.size() > 0 ? args[0].c_str() : "No parameters."));
-	      } else {
+	      }
+	      else {
 		StateDatabase::Permission permission = BZDB.getPermission(args[0]);
 		if (!(BZDB.isSet(args[0]) &&
 		      (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked))) {
 		  logDebugMessage(1,"Poll set taking action: no action taken, variable cannot be set\n");
-		} else {
+		}
+		else {
 		  logDebugMessage(1,"Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
 		  BZDB.set(args[0], args[1], StateDatabase::Server);
 		}
 	      }
-	    } else if (action == "reset") {
+	    }
+	    else if (action == "reset") {
 	      logDebugMessage(1,"Poll flagreset taking action: resetting unused flags.\n");
 	      for (int f = 0; f < numFlags; f++) {
 		FlagInfo &flag = *FlagInfo::get(f);
-		if (flag.player == -1)
+		if (flag.player == -1) {
 		  resetFlag(flag);
+                }
 	      }
 	    }
 	  } /* end if poll is successful */
