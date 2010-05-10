@@ -1781,7 +1781,7 @@ AC_DEFUN([CARES_CONFIGURE_ARES_SOCKLEN_T], [
               $cares_includes_ws2tcpip
               $cares_includes_sys_socket
               $cares_preprocess_callconv
-              extern int FUNCALLCONV getpeername($arg1, $arg2 *, $t *);
+              extern int getpeername($arg1, $arg2 *, $t *);
             ]],[[
               $t *lenptr = 0;
               if(0 != getpeername(0, 0, lenptr))
