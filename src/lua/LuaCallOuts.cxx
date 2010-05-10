@@ -1657,10 +1657,10 @@ int LuaCallOuts::DiffTimers(lua_State* L)
   if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
     luaL_error(L, "Incorrect arguments to DiffTimers()");
   }
-  const void* p1 = lua_touserdata(L, 1);
-  const void* p2 = lua_touserdata(L, 2);
-  const uint32_t t1 = *((const uint32_t*)(const void*)&p1);
-  const uint32_t t2 = *((const uint32_t*)(const void*)&p2);
+  const char* p1 = (char*) lua_touserdata(L, 1);
+  const char* p2 = (char*) lua_touserdata(L, 2);
+  const uint32_t t1 = uint32_t(p1 - (char*)0);
+  const uint32_t t2 = uint32_t(p2 - (char*)0);
   const uint32_t diffTime = (t1 - t2);
   lua_pushfloat(L, float(diffTime) * 0.001f); // return seconds
   return 1;

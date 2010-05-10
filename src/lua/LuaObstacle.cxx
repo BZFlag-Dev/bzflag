@@ -211,8 +211,7 @@ static void PushObstacleGUID(lua_State* L, uint32_t guid)
 {
   assert(sizeof(void*) >= sizeof(uint32_t));
 
-  void* ptr = 0;
-  *((uint32_t*)&ptr) = guid;
+  char* ptr = (char*)0 + guid;
   lua_pushlightuserdata(L, ptr);
 }
 
@@ -223,8 +222,8 @@ static inline const Obstacle* ParseObstacle(lua_State* L, int index)
 
   switch (lua_type(L, index)) {
     case LUA_TLIGHTUSERDATA: {
-      const void* ptr = (void*)lua_touserdata(L, index);
-      obsID = *((uint32_t*)&ptr);
+      const char* ptr = (char*)lua_touserdata(L, index);
+      obsID = uint32_t(ptr - (char*)0);
       break;
     }
     case LUA_TUSERDATA: {
