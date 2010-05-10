@@ -157,10 +157,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\game\BufferedNetworkMessage.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\game\BZDBCache.cxx"
 				>
 			</File>
@@ -306,10 +302,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath="..\..\include\BufferedNetworkMessage.h"
-				>
-			</File>
 			<File
 				RelativePath="..\..\include\BZDBCache.h"
 				>
