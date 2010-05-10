@@ -241,6 +241,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\game\NetMessage.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\game\PhysicsDriver.cxx"
 				>
 			</File>
@@ -364,6 +368,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\NetHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\NetMessage.h"
 				>
 			</File>
 			<File

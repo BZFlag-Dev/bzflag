@@ -196,6 +196,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BzDocket.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\bzfio.cxx"
 				>
 			</File>
@@ -208,7 +212,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BzTime.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\bzUnicode.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\common\BzVFS.cxx"
 				>
 			</File>
 			<File
@@ -276,10 +288,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BzTime.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\VotingBooth.cxx"
 				>
 			</File>
@@ -325,6 +333,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\BzDocket.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\bzfio.h"
 				>
 			</File>
@@ -337,7 +349,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\include\BzTime.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\include\bzUnicode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\BzVFS.h"
 				>
 			</File>
 			<File
@@ -422,10 +442,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\TimeBomb.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\BzTime.h"
 				>
 			</File>
 			<File

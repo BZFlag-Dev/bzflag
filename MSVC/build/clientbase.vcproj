@@ -191,6 +191,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\clientbase\GfxBlock.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\clientbase\GuidedMissileStrategy.cxx"
 				>
 			</File>
@@ -322,6 +326,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\clientbase\FlashClock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\GfxBlock.h"
 				>
 			</File>
 			<File
