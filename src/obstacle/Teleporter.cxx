@@ -406,7 +406,7 @@ const BzMaterial* Teleporter::getTeleMaterial()
   BzMaterial mat;
   mat.setTexture("caution");
   mat.setUseTextureAlpha(false);
-  mat.setDiffuse(fvec4(0.7f, 0.7, 0.1f, 1.0f));
+  mat.setDiffuse(fvec4(0.7f, 0.7f, 0.1f, 1.0f));
   mat.setUseColorOnTexture(false);
   mat.setName(matName);
 

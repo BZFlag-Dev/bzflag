@@ -1774,8 +1774,8 @@ void handlePlayerUpdate(uint16_t code, void *msg)
     // ROBOT -- play explosion now
   }
 
-  const bool oldJump = oldStatus & short(PlayerState::JumpJets);
-  const bool newJump = newStatus & short(PlayerState::JumpJets);
+  const bool oldJump = (oldStatus & short(PlayerState::JumpJets)) ? true : false;
+  const bool newJump = (newStatus & short(PlayerState::JumpJets)) ? true : false;
   if (newJump && (!oldJump || (oldJumpJets < newJumpJets))) {
     eventHandler.PlayerJumped(*tank);
   }
