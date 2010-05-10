@@ -63,9 +63,7 @@ NetMessage::NetMessage(size_t size)
 NetMessage::NetMessage(const void* fullData, size_t fullSize)
 {
   assert(fullSize >= lenCodeOffset);
-
-  const uint16_t msgSize = *((uint16_t*)fullData);
-  assert(msgSize == (fullSize - lenCodeOffset));
+  assert(*((uint16_t*)fullData) == (fullSize - lenCodeOffset));
 
   dataSize = fullSize;
   capacity = fullSize;
