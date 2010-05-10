@@ -45,7 +45,7 @@
 				Optimization="0"
 				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="..\..\include,..\..\src\other\curl\lib,..\..\src\other\curl\include;..\..\src\other\ares,..\..\src\other\zlib"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_ARES;HAVE_ZLIB_H"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_ARES;CARES_STATICLIB;HAVE_ZLIB_H"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
