@@ -12,11 +12,6 @@ so that no work is duplicated.
 --  Required for release of 3.0:
 --
 
-* Other players continue to see a white flag on a tank after SH saved
-  it from being killed even though the flag has been dropped from that
-  player's point of view.  The tank blows up normally the next time it
-  is shot.
-
 * fix the MsgPause messages
 
 * fix the Z dead-reckoning issue  (ask JeffM about it)
