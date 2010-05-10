@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="lua"
-	ProjectGUID="{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}"
-	RootNamespace="lua"
+	Name="luaClient"
+	ProjectGUID="{6AB4B81A-2BB1-4805-B8B0-5B41BAB9EC6B}"
+	RootNamespace="luaClient"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./lua_debug/"
-			IntermediateDirectory="./lua_debug/"
+			OutputDirectory="./luaclient_debug/"
+			IntermediateDirectory="./luaclient_debug/"
 			ConfigurationType="4"
 			CharacterSet="1"
 			>
@@ -41,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\..\include;.\;..\..\src;..\..\src\clientbase;..\..\src\bzflag"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -81,8 +82,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./lua_release/"
-			IntermediateDirectory="./lua_release/"
+			OutputDirectory="./luaclient_release/"
+			IntermediateDirectory="./luaclient_release/"
 			ConfigurationType="4"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
@@ -104,6 +105,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="..\..\include;.\;..\..\src;..\..\src\clientbase;..\..\src\bzflag"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -150,123 +152,59 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\other\lua\src\lapi.cxx"
+				RelativePath="..\..\src\lua\LuaBzOrg.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lauxlib.cxx"
+				RelativePath="..\..\src\lua\LuaCallInCheck.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lbaselib.cxx"
+				RelativePath="..\..\src\lua\LuaCallInDB.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lcode.cxx"
+				RelativePath="..\..\src\lua\LuaCallOuts.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\ldblib.cxx"
+				RelativePath="..\..\src\lua\LuaClientScripts.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\ldebug.cxx"
+				RelativePath="..\..\src\lua\LuaControl.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\ldo.cxx"
+				RelativePath="..\..\src\lua\LuaGameConst.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\ldump.cxx"
+				RelativePath="..\..\src\lua\LuaHandle.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lfunc.cxx"
+				RelativePath="..\..\src\lua\LuaHandleCallIns.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lgc.cxx"
+				RelativePath="..\..\src\lua\LuaKeySyms.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\linit.cxx"
+				RelativePath="..\..\src\lua\LuaRules.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\liolib.cxx"
+				RelativePath="..\..\src\lua\LuaSpatial.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\llex.cxx"
+				RelativePath="..\..\src\lua\LuaUser.cxx"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lmathlib.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lmem.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\loadlib.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lobject.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lopcodes.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\loslib.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lparser.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lstate.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lstring.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lstrlib.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\ltable.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\ltablib.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\ltm.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lundump.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lvm.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lzio.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\print.cxx"
+				RelativePath="..\..\src\lua\LuaWorld.cxx"
 				>
 			</File>
 		</Filter>
@@ -276,95 +214,55 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\other\lua\src\lapi.h"
+				RelativePath="..\..\src\lua\LuaBzOrg.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lauxlib.h"
+				RelativePath="..\..\src\lua\LuaCallInCheck.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lcode.h"
+				RelativePath="..\..\src\lua\LuaCallInDB.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\ldebug.h"
+				RelativePath="..\..\src\lua\LuaCallOuts.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\ldo.h"
+				RelativePath="..\..\src\lua\LuaClientOrder.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lfunc.h"
+				RelativePath="..\..\src\lua\LuaControl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lgc.h"
+				RelativePath="..\..\src\lua\LuaGameConst.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\llex.h"
+				RelativePath="..\..\src\lua\LuaHandle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\llimits.h"
+				RelativePath="..\..\src\lua\LuaKeySyms.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lmem.h"
+				RelativePath="..\..\src\lua\LuaRules.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lobject.h"
+				RelativePath="..\..\src\lua\LuaSpatial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lopcodes.h"
+				RelativePath="..\..\src\lua\LuaUser.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\lua\src\lparser.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lstate.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lstring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\ltable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\ltm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lua.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\luaconf.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lualib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lundump.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lvm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\other\lua\src\lzio.h"
+				RelativePath="..\..\src\lua\LuaWorld.h"
 				>
 			</File>
 		</Filter>

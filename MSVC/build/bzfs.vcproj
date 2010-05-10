@@ -139,7 +139,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src;..\..\src\lua;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -289,6 +289,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\Score.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\SendLagState.cxx"
 				>
 			</File>
 			<File
@@ -653,6 +657,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\bzfs\SendLagState.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\ServerCommand.h"
 				>
 			</File>
@@ -845,14 +853,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\LuaFloat.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\lua\LuaFloat.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\lua\LuaServer.cxx"
 				>
 			</File>
@@ -861,27 +861,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\LuaURL.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\lua\LuaURL.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\bzfs\lua\MapObject.cxx"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\bzfs\lua\MapObject.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\lua\Obstacles.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\bzfs\lua\Obstacles.h"
 				>
 			</File>
 			<File
