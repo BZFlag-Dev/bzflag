@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;../../src/bzflag"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;..\..\src;..\..\src\clientbase"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;GLEW_STATIC"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;../../src/bzflag"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;..\..\src;..\..\src\clientbase"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;GLEW_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\ogl\OpenGLPassState.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\ogl\OpenGLTexture.cxx"
 				>
 			</File>
@@ -236,6 +240,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\OpenGLMaterial.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\OpenGLPassState.h"
 				>
 			</File>
 			<File

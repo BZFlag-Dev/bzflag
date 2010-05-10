@@ -21,7 +21,7 @@
 #include "OpenGLGState.h"
 #include "bzfio.h"
 
-// bzflag headers
+// bzflag headers - FIXME - breaks abstraction
 #include "bzflag/guiplaying.h"
 #include "bzflag/MainWindow.h"
 #include "bzflag/RadarRenderer.h"

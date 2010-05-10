@@ -172,6 +172,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\lua\LuaConsole.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\lua\LuaControl.cxx"
 				>
 			</File>
@@ -231,6 +235,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lua\LuaClientOrder.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\lua\LuaConsole.h"
 				>
 			</File>
 			<File

@@ -187,6 +187,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\clientbase\EventClient.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\EventClientList.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\clientbase\EventHandler.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\clientbase\FlashClock.cxx"
 				>
 			</File>
@@ -322,6 +334,18 @@
 			</File>
 			<File
 				RelativePath="..\..\src\clientbase\EntryZone.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\ErrorHandler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\EventClient.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\EventClientList.h"
 				>
 			</File>
 			<File
