@@ -8,7 +8,11 @@ libz_la_SOURCES = \
 	compress.c \
 	crc32.c \
 	deflate.c \
-	gzio.c \
+	gzclose.c \
+	gzguts.c \
+	gzlib.c \
+	gzread.c \
+	gzwrite.c \
 	infback.c \
 	inffast.c \
 	inflate.c \
@@ -34,7 +38,7 @@ EXTRA_DIST = \
 	FAQ \
 	INDEX \
 	algorithm.txt \
-	zconf.in.h \
+	zconf.h.in \
 	zlib.3
 
 MAINTAINERCLEANFILES = Makefile.in
