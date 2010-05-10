@@ -29,9 +29,9 @@
 #include <math.h>
 
 // common headers
-#include "Address.h"
-#include "Flag.h"
+#include "global.h"
 #include "vectors.h"
+#include "Flag.h"
 
 
 class NetMessage;

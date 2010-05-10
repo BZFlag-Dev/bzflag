@@ -1764,7 +1764,8 @@ void handlePlayerUpdate(uint16_t code, void *msg)
   const short newStatus = tank->getStatus();
   const float newJumpJets = tank->getState().jumpJetsScale;
 
-  if ((oldStatus & short(PlayerState::Exploding)) == 0 && (newStatus & short(PlayerState::Exploding)) != 0) {
+  if ((oldStatus & short(PlayerState::Exploding)) == 0 &&
+      (newStatus & short(PlayerState::Exploding)) != 0) {
     // player has started exploding and we haven't gotten killed
     // message yet -- set explosion now, play sound later (when we
     // get killed message).  status is already !Alive so make player
@@ -1774,8 +1775,8 @@ void handlePlayerUpdate(uint16_t code, void *msg)
     // ROBOT -- play explosion now
   }
 
-  const bool oldJump = (oldStatus & short(PlayerState::JumpJets)) ? true : false;
-  const bool newJump = (newStatus & short(PlayerState::JumpJets)) ? true : false;
+  const bool oldJump = (oldStatus & short(PlayerState::JumpJets)) != 0;
+  const bool newJump = (newStatus & short(PlayerState::JumpJets)) != 0;
   if (newJump && (!oldJump || (oldJumpJets < newJumpJets))) {
     eventHandler.PlayerJumped(*tank);
   }

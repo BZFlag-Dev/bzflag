@@ -24,6 +24,7 @@
 
 // common headers
 #include "NetMessage.h"
+#include "Pack.h"
 
 // bzflag headers
 #include "BZDBCache.h"

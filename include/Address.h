@@ -63,17 +63,8 @@ class Address {
     std::vector <InAddr> addr;
 };
 
-typedef uint8_t		PlayerId;
-const int		PlayerIdPLen = sizeof(PlayerId);
-const int		ServerIdPLen = 8;
 
-// FIXME - enum maybe? put into namespace or class cage?
-const PlayerId		NoPlayer             = 255;
-const PlayerId		AllPlayers           = 254;
-const PlayerId		ServerPlayer         = 253;
-const PlayerId		AdminPlayers         = 252;
-const PlayerId		UnusedSpecialPlayer2 = 251; // This id is unused at present and vailable for special needs in the future
-const PlayerId		LastRealPlayer       = 243;
+const int ServerIdPLen = 8;
 
 class ServerId {
   public:
@@ -89,6 +80,7 @@ class ServerId {
     int16_t		port;			// server port
     int16_t		number;			// local player number
 };
+
 
 #endif // BZF_INET_ADDR_H
 

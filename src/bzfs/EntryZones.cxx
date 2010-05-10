@@ -10,17 +10,21 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// interface header
 #include "EntryZones.h"
-#include "CustomZone.h"
 
 #include <string>
 #include <vector>
 
+// common headers
 #include "global.h"
+#include "Pack.h"
 #include "Protocol.h"
 #include "Flag.h"
 #include "Team.h"
 
+// local headers
+#include "CustomZone.h"
 #include "WorldInfo.h"
 
 

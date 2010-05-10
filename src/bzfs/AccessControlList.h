@@ -18,8 +18,9 @@
 #include <vector>
 #include <string>
 
-#include "BzTime.h"
+#include "global.h"
 #include "Address.h"
+#include "BzTime.h"
 
 
 /** This struct contains information about a ban - the address that was banned,

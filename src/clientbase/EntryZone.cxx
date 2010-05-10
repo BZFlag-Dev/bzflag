@@ -10,8 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// implementation header
+// interface header
 #include "EntryZone.h"
+
+// common headers
+#include "Pack.h"
+
 
 EntryZone::EntryZone()
 {

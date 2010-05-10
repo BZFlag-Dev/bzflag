@@ -429,7 +429,7 @@ void Player::setExplode(const BzTime& t)
 
   if (avatar) {
     avatar->explode();
-    updateFlagEffect(Flags::Null);    // setup the flag effect to revert to normal
+    updateFlagEffect(Flags::Null);  // setup the flag effect to revert to normal
   }
 }
 

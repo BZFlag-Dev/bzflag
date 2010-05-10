@@ -216,7 +216,7 @@ static StkId adjust_varargs (lua_State *L, Proto *p, int actual) {
   if (p->is_vararg & VARARG_NEEDSARG) { /* compat. with old-style vararg? */
     int nvar = actual - nfixargs;  /* number of extra arguments */
     lua_assert(p->is_vararg & VARARG_HASARG);
-    luaC_checkGC(L);
+/*    luaC_checkGC(L); -- see  http://permalink.gmane.org/gmane.comp.lang.lua.general/65521 */
     htab = luaH_new(L, nvar, 1);  /* create `arg' table */
     for (i=0; i<nvar; i++)  /* put extra arguments into `arg' table */
       setobj2n(L, luaH_setnum(L, htab, i+1), L->top - nvar + i);

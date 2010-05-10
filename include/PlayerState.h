@@ -14,7 +14,7 @@
 #define	BZF_PLAYERSTATE_H
 
 #include "common.h"
-#include "Address.h"
+#include "global.h"
 #include "BzTime.h"
 #include "vectors.h"
 

@@ -10,8 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "LagInfo.h"
+
+// common headers
+#include "Pack.h"
 
 
 float LagInfo::threshold       = 0.0f;

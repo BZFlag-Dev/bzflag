@@ -22,6 +22,7 @@
 
 // common headers
 #include "NetMessage.h"
+#include "Pack.h"
 #include "TextUtils.h"
 
 

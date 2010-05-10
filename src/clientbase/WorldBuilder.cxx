@@ -10,24 +10,25 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "WorldBuilder.h"
 
-/* common implementation headers */
-#include "TextUtils.h"
-#include "Protocol.h"
-#include "DynamicColor.h"
-#include "TextureMatrix.h"
-#include "PhysicsDriver.h"
-#include "FlagSceneNode.h"
-#include "ObstacleMgr.h"
+// common headers
 #include "BaseBuilding.h"
-#include "MeshObstacle.h"
-#include "MeshFace.h"
 #include "BzDocket.h"
 #include "BzVFS.h"
+#include "DynamicColor.h"
+#include "FlagSceneNode.h"
+#include "MeshFace.h"
+#include "MeshObstacle.h"
+#include "ObstacleMgr.h"
+#include "Pack.h"
+#include "PhysicsDriver.h"
+#include "Protocol.h"
+#include "TextureMatrix.h"
+#include "TextUtils.h"
 
-/* compression library header */
+// compression library header
 #include "zlib.h"
 
 
