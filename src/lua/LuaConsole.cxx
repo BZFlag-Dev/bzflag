@@ -188,8 +188,8 @@ int LuaConsole::AddTab(lua_State* L)
     return luaL_pushnil(L);
   }
   const std::string label = luaL_checkstring(L, 1);
-  const bool allSrc = lua_isboolean(L, 2) && lua_toboolean(L, 2);
-  const bool allDst = lua_isboolean(L, 3) && lua_toboolean(L, 3);
+  const bool allSrc = lua_isboolean(L, 2) && lua_tobool(L, 2);
+  const bool allDst = lua_isboolean(L, 3) && lua_tobool(L, 3);
   lua_pushboolean(L, controlPanel->addTab(label, allSrc, allDst));
   return 1;
 }

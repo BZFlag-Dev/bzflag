@@ -486,7 +486,7 @@ int LuaSceneNodeMgr::SetSceneNodeActive(lua_State* L)
 {
   LuaSceneNode* sceneNode = CheckLuaSceneNode(L, 1);
   if (sceneNode) {
-    sceneNode->active = lua_toboolean(L, 2);
+    sceneNode->active = lua_tobool(L, 2);
   }
   lua_settop(L, 1);
   return 1;
@@ -523,7 +523,7 @@ int LuaSceneNodeMgr::SetSceneNodeUseArrays(lua_State* L)
 {
   LuaSceneNode* sceneNode = CheckLuaSceneNode(L, 1);
   if (sceneNode) {
-    sceneNode->renderNode.useArrays = lua_toboolean(L, 2);
+    sceneNode->renderNode.useArrays = lua_tobool(L, 2);
   }
   lua_settop(L, 1);
   return 1;
@@ -534,7 +534,7 @@ int LuaSceneNodeMgr::SetSceneNodeUseTransform(lua_State* L)
 {
   LuaSceneNode* sceneNode = CheckLuaSceneNode(L, 1);
   if (sceneNode) {
-    sceneNode->renderNode.useTransform = lua_toboolean(L, 2);
+    sceneNode->renderNode.useTransform = lua_tobool(L, 2);
   }
   lua_settop(L, 1);
   return 1;

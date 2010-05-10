@@ -223,7 +223,7 @@ static inline const Obstacle* ParseObstacle(lua_State* L, int index)
 
   switch (lua_type(L, index)) {
     case LUA_TLIGHTUSERDATA: {
-      const void* ptr = (void*)lua_topointer(L, index);
+      const void* ptr = (void*)lua_touserdata(L, index);
       obsID = *((uint32_t*)&ptr);
       break;
     }
@@ -319,14 +319,14 @@ int LuaObstacle::GetObstacleList(lua_State* L)
   const int table = 1;
 
   if (!lua_istable(L, table)) {
-    const bool containers = lua_isboolean(L, 1) && lua_toboolean(L, 1);
+    const bool containers = lua_isboolean(L, 1) && lua_tobool(L, 1);
     int index = 0;
     for (int type = 0; type < ObstacleTypeCount; type++) {
       PushObstacleList(L, index, type, containers);
     }
   }
   else {
-    const bool containers = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+    const bool containers = lua_isboolean(L, 2) && lua_tobool(L, 2);
     lua_newtable(L);
     const int newTable = lua_gettop(L);
     for (int i = 1; lua_checkgeti(L, table, i); lua_pop(L, 1), i++) {
@@ -1256,7 +1256,7 @@ int LuaObstacle::GetMeshDrawInfo(lua_State* L)
   if ((drawInfo == NULL) || !drawInfo->isValid()) {
     return luaL_pushnil(L);
   }
-  drawInfoArrayStrings = lua_isboolean(L, 2) && lua_toboolean(L, 2);
+  drawInfoArrayStrings = lua_isboolean(L, 2) && lua_tobool(L, 2);
   PushDrawInfo(L, *drawInfo);
   return 1;
 }

@@ -607,7 +607,7 @@ bool CI_AllowSpawn::execute(bz_EventData* eventData)
     return false;
   }
 
-  if (ed->allow && lua_isboolean(L, -1) && !lua_toboolean(L, -1)) {
+  if (ed->allow && lua_isboolean(L, -1) && !lua_tobool(L, -1)) {
     ed->allow = false;
     ed->handled = true;
   }

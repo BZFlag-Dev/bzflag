@@ -476,7 +476,7 @@ int LuaGLPointers::VertexAttribPointer(lua_State* L)
 
   const GLsizei   stride = (GLsizei)   luaL_checkint(L, 2);
   const GLint     width  = (GLint)     luaL_checkint(L, 3);
-  const GLboolean norm   = (GLboolean) lua_toboolean(L, 4);
+  const GLboolean norm   = (GLboolean) lua_tobool(L, 4);
 
   if ((width < 1) || (width > 4)) {
     return luaL_pushnil(L);
