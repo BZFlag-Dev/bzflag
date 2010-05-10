@@ -316,7 +316,7 @@ void Player::move(const fvec3& _pos, float _azimuth)
 {
   // update the speed of the state
   BzTime currentTime = BzTime::getCurrent();
-  const double timeDiff = (currentTime - state.lastUpdateTime);
+  const float timeDiff = (float)(currentTime - state.lastUpdateTime);
   if (timeDiff > 0.0f) {
     state.apparentVelocity = (_pos - state.pos) / timeDiff;
   }

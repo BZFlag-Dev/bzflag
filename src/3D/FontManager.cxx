@@ -810,7 +810,7 @@ void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
   // rate is how fast it should pulsate (smaller is faster)
   float pulseRate = BZDBCache::pulseRate;
 
-  float pulseFactor = fmodf(pulseTime, pulseRate) - (pulseRate * 0.5f);
+  float pulseFactor = fmodf((float)pulseTime, pulseRate) - (pulseRate * 0.5f);
   pulseFactor = fabsf(pulseFactor) / (pulseRate/2.0f);
   pulseFactor = pulseDepth * pulseFactor + (1.0f - pulseDepth);
 

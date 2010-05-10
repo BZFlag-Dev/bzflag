@@ -835,9 +835,9 @@ static int PushLinkGeometry(lua_State* L, const MeshFace::LinkGeometry& geo)
   luaset_strint(L, "sDirIndex", geo.sDirIndex);
   luaset_strint(L, "tDirIndex", geo.tDirIndex);
   luaset_strint(L, "pDirIndex", geo.pDirIndex);
-  luaset_strbool(L, "autoSscale", geo.bits & MeshFace::LinkAutoSscale);
-  luaset_strbool(L, "autoTscale", geo.bits & MeshFace::LinkAutoTscale);
-  luaset_strbool(L, "autoPscale", geo.bits & MeshFace::LinkAutoPscale);
+  luaset_strbool(L, "autoSscale", (geo.bits & MeshFace::LinkAutoSscale) ? true : false);
+  luaset_strbool(L, "autoTscale", (geo.bits & MeshFace::LinkAutoTscale) ? true : false);
+  luaset_strbool(L, "autoPscale", (geo.bits & MeshFace::LinkAutoPscale) ? true : false);
   return 1;
 }
 
