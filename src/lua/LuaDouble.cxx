@@ -20,6 +20,10 @@
 #include <math.h>
 #include <string>
 #include <string.h>
+#include <errno.h>
+#include <locale.h>
+#include <stdlib.h>
+#include <time.h>
 using std::string;
 
 // local headers
@@ -340,7 +344,7 @@ int LuaDouble::date(lua_State* L)
     luaset_strint(L,  "year",  stm->tm_year + 1900);
     luaset_strint(L,  "wday",  stm->tm_wday + 1);
     luaset_strint(L,  "yday",  stm->tm_yday + 1);
-    luaset_strbool(L, "isdst", stm->tm_isdst);
+    luaset_strbool(L, "isdst", (stm->tm_isdst ? true : false));
   }
   else {
     char cc[3];
