@@ -230,6 +230,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\lua\src\lpeg.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\lua\src\lstate.cxx"
 				>
 			</File>

@@ -208,6 +208,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\common\BzPNG.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\common\bzsignal.cxx"
 				>
 			</File>
@@ -342,6 +346,10 @@
 			</File>
 			<File
 				RelativePath="..\..\include\bzglob.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\include\BzPNG.h"
 				>
 			</File>
 			<File
