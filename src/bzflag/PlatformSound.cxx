@@ -1070,7 +1070,7 @@ bool PlatformSound::audioInnerLoop()
         break;
       }
       case SQC_MUTE: {
-        const bool mute = (cmd.data != NULL);
+        const bool mute = (cmd.code == 1);
         for (i = 0; i < MaxEvents; i++) {
           events[i].muted = mute;
         }
