@@ -276,7 +276,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\TimeKeeper.cxx"
+				RelativePath="..\..\src\common\BzTime.cxx"
 				>
 			</File>
 			<File
@@ -425,7 +425,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TimeKeeper.h"
+				RelativePath="..\..\include\BzTime.h"
 				>
 			</File>
 			<File
