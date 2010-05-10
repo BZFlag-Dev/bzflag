@@ -37,7 +37,6 @@ EXTRA_DIST = \
 	ChangeLog \
 	FAQ \
 	INDEX \
-	algorithm.txt \
 	zconf.h.in \
 	zlib.3
 
