@@ -1,5 +1,6 @@
 GL_SGI_color_table
 http://www.opengl.org/registry/specs/SGI/color_table.txt
+GL_SGI_color_table
 	GL_COLOR_TABLE_SGI 0x80D0
 	GL_POST_CONVOLUTION_COLOR_TABLE_SGI 0x80D1
 	GL_POST_COLOR_MATRIX_COLOR_TABLE_SGI 0x80D2

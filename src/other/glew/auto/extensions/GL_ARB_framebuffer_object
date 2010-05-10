@@ -1,5 +1,6 @@
 GL_ARB_framebuffer_object
 http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
+GL_ARB_framebuffer_object
 	GL_INVALID_FRAMEBUFFER_OPERATION 0x0506
 	GL_FRAMEBUFFER_ATTACHMENT_COLOR_ENCODING 0x8210
 	GL_FRAMEBUFFER_ATTACHMENT_COMPONENT_TYPE 0x8211
@@ -81,10 +82,10 @@ http://www.opengl.org/registry/specs/ARB/framebuffer_object.txt
 	void glDeleteFramebuffers (GLsizei n, const GLuint* framebuffers)
 	void glDeleteRenderbuffers (GLsizei n, const GLuint* renderbuffers)
 	void glFramebufferRenderbuffer (GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
-	void glFramebufferTexturLayer (GLenum target,GLenum attachment, GLuint texture,GLint level,GLint layer)
 	void glFramebufferTexture1D (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 	void glFramebufferTexture2D (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
 	void glFramebufferTexture3D (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLint layer)
+	void glFramebufferTextureLayer (GLenum target,GLenum attachment, GLuint texture,GLint level,GLint layer)
 	void glGenFramebuffers (GLsizei n, GLuint* framebuffers)
 	void glGenRenderbuffers (GLsizei n, GLuint* renderbuffers)
 	void glGenerateMipmap (GLenum target)

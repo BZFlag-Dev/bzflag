@@ -1,5 +1,6 @@
 GL_NV_fence
 http://www.opengl.org/registry/specs/NV/fence.txt
+GL_NV_fence
 	GL_ALL_COMPLETED_NV 0x84F2
 	GL_FENCE_STATUS_NV 0x84F3
 	GL_FENCE_CONDITION_NV 0x84F4

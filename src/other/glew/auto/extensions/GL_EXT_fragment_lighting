@@ -1,5 +1,6 @@
 GL_EXT_fragment_lighting
 http://www.opengl.org/registry/specs/EXT/fragment_lighting.txt
+GL_EXT_fragment_lighting
 	GL_FRAGMENT_LIGHTING_EXT 0x8400
 	GL_FRAGMENT_COLOR_MATERIAL_EXT 0x8401
 	GL_FRAGMENT_COLOR_MATERIAL_FACE_EXT 0x8402

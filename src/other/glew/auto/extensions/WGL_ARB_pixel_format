@@ -1,5 +1,6 @@
 WGL_ARB_pixel_format
 http://www.opengl.org/registry/specs/ARB/wgl_pixel_format.txt
+WGL_ARB_pixel_format
 	WGL_NUMBER_PIXEL_FORMATS_ARB 0x2000
 	WGL_DRAW_TO_WINDOW_ARB 0x2001
 	WGL_DRAW_TO_BITMAP_ARB 0x2002

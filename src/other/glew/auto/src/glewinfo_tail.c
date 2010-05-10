@@ -170,7 +170,7 @@ GLboolean glewCreateContext (int* pixelformat)
 void glewDestroyContext ()
 {
   if (NULL != rc) wglMakeCurrent(NULL, NULL);
-  if (NULL != rc) wglDeleteContext(wglGetCurrentContext());
+  if (NULL != rc) wglDeleteContext(rc);
   if (NULL != wnd && NULL != dc) ReleaseDC(wnd, dc);
   if (NULL != wnd) DestroyWindow(wnd);
   UnregisterClass("GLEW", GetModuleHandle(NULL));
@@ -199,7 +199,7 @@ GLboolean glewCreateContext ()
   aglDestroyPixelFormat(pf);
   /*aglSetDrawable(ctx, GetWindowPort(wnd));*/
   octx = aglGetCurrentContext();
-  if (NULL == aglSetCurrentContext(ctx)) return GL_TRUE;
+  if (GL_FALSE == aglSetCurrentContext(ctx)) return GL_TRUE;
   return GL_FALSE;
 }
 

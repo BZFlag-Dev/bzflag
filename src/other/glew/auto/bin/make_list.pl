@@ -32,7 +32,7 @@ if (@ARGV)
 
 	foreach my $ext (sort @extlist)
 	{
-		my ($extname, $exturl, $types, $tokens, $functions, $exacts) = parse_ext($ext);
+		my ($extname, $exturl, $extstring, $types, $tokens, $functions, $exacts) = parse_ext($ext);
 
 		my $extvar = $extname;
 		$extvar =~ s/GL(X*)_/GL$1EW_/;
@@ -43,7 +43,12 @@ if (@ARGV)
 		#my $pextvar = prefix_varname($extvar);
 
 		print "#ifdef $extname\n";
-		print "  CONST_CAST(" . $extvar . ") = " . $extpre . "GetExtension(\"$extname\");\n";
+
+                if (length($extstring))
+                {
+		        print "  CONST_CAST(" . $extvar . ") = " . $extpre . "GetExtension(\"$extstring\");\n";
+                }
+
 		if (keys %$functions)
 		{
 			if ($extname =~ /WGL_.*/)

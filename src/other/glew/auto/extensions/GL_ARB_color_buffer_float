@@ -1,5 +1,6 @@
 GL_ARB_color_buffer_float
 http://www.opengl.org/registry/specs/ARB/color_buffer_float.txt
+GL_ARB_color_buffer_float
 	GL_RGBA_FLOAT_MODE_ARB 0x8820
 	GL_CLAMP_VERTEX_COLOR_ARB 0x891A
 	GL_CLAMP_FRAGMENT_COLOR_ARB 0x891B

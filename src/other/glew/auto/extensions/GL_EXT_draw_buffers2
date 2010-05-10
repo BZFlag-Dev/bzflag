@@ -1,5 +1,6 @@
 GL_EXT_draw_buffers2
 http://www.opengl.org/registry/specs/EXT/draw_buffers2.txt
+GL_EXT_draw_buffers2
 	void glColorMaskIndexedEXT (GLuint buf, GLboolean r, GLboolean g, GLboolean b, GLboolean a)
 	void glDisableIndexedEXT (GLenum target, GLuint index)
 	void glEnableIndexedEXT (GLenum target, GLuint index)

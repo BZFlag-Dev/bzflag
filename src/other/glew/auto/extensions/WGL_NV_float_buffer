@@ -1,5 +1,6 @@
 WGL_NV_float_buffer
 http://www.opengl.org/registry/specs/NV/float_buffer.txt
+WGL_NV_float_buffer
 	WGL_FLOAT_COMPONENTS_NV 0x20B0
 	WGL_BIND_TO_TEXTURE_RECTANGLE_FLOAT_R_NV 0x20B1
 	WGL_BIND_TO_TEXTURE_RECTANGLE_FLOAT_RG_NV 0x20B2

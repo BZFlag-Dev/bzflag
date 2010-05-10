@@ -1,5 +1,6 @@
 GL_NV_occlusion_query
 http://www.opengl.org/registry/specs/NV/occlusion_query.txt
+GL_NV_occlusion_query
 	GL_PIXEL_COUNTER_BITS_NV 0x8864
 	GL_CURRENT_OCCLUSION_QUERY_ID_NV 0x8865
 	GL_PIXEL_COUNT_NV 0x8866

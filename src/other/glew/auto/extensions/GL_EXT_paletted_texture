@@ -1,5 +1,6 @@
 GL_EXT_paletted_texture
 http://www.opengl.org/registry/specs/EXT/paletted_texture.txt
+GL_EXT_paletted_texture
 	GL_TEXTURE_1D 0x0DE0
 	GL_TEXTURE_2D 0x0DE1
 	GL_PROXY_TEXTURE_1D 0x8063

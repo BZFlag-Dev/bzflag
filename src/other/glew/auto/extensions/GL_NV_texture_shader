@@ -1,5 +1,6 @@
 GL_NV_texture_shader
 http://www.opengl.org/registry/specs/NV/texture_shader.txt
+GL_NV_texture_shader
 	GL_OFFSET_TEXTURE_RECTANGLE_NV 0x864C
 	GL_OFFSET_TEXTURE_RECTANGLE_SCALE_NV 0x864D
 	GL_DOT_PRODUCT_TEXTURE_RECTANGLE_NV 0x864E

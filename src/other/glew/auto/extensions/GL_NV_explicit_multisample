@@ -1,5 +1,6 @@
 GL_NV_explicit_multisample
 http://www.opengl.org/registry/specs/NV/explicit_multisample.txt
+GL_NV_explicit_multisample
 	GL_SAMPLE_POSITION_NV 0x8E50
 	GL_SAMPLE_MASK_NV 0x8E51
 	GL_SAMPLE_MASK_VALUE_NV 0x8E52

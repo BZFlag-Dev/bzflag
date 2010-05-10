@@ -1,5 +1,6 @@
 GL_ARB_vertex_program
 http://www.opengl.org/registry/specs/ARB/vertex_program.txt
+GL_ARB_vertex_program
 	GL_COLOR_SUM_ARB 0x8458
 	GL_VERTEX_PROGRAM_ARB 0x8620
 	GL_VERTEX_ATTRIB_ARRAY_ENABLED_ARB 0x8622

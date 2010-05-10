@@ -1,5 +1,6 @@
 GLX_SGIX_fbconfig
 http://www.opengl.org/registry/specs/SGIX/fbconfig.txt
+GLX_SGIX_fbconfig
 	GLX_WINDOW_BIT_SGIX 0x00000001
 	GLX_RGBA_BIT_SGIX 0x00000001
 	GLX_PIXMAP_BIT_SGIX 0x00000002

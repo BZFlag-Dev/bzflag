@@ -1,5 +1,6 @@
 GL_EXT_point_parameters
 http://www.opengl.org/registry/specs/EXT/point_parameters.txt
+GL_EXT_point_parameters
 	GL_POINT_SIZE_MIN_EXT 0x8126
 	GL_POINT_SIZE_MAX_EXT 0x8127
 	GL_POINT_FADE_THRESHOLD_SIZE_EXT 0x8128

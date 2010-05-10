@@ -1,5 +1,6 @@
 GL_ARB_texture_cube_map
 http://www.opengl.org/registry/specs/ARB/texture_cube_map.txt
+GL_ARB_texture_cube_map
 	GL_NORMAL_MAP_ARB 0x8511
 	GL_REFLECTION_MAP_ARB 0x8512
 	GL_TEXTURE_CUBE_MAP_ARB 0x8513

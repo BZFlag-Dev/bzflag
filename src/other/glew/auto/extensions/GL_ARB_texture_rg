@@ -1,6 +1,9 @@
 GL_ARB_texture_rg
 http://www.opengl.org/registry/specs/ARB/texture_rg.txt
+GL_ARB_texture_rg
 	GL_RED 0x1903
+	GL_COMPRESSED_RED 0x8225
+	GL_COMPRESSED_RG 0x8226
 	GL_RG 0x8227
 	GL_RG_INTEGER 0x8228
 	GL_R8 0x8229

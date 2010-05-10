@@ -1,5 +1,6 @@
 GL_SGIX_texture_range
 http://www.opengl.org/registry/specs/SGIX/texture_range.txt
+GL_SGIX_texture_range
 	GL_RGB_SIGNED_SGIX 0x85E0
 	GL_RGBA_SIGNED_SGIX 0x85E1
 	GL_ALPHA_SIGNED_SGIX 0x85E2

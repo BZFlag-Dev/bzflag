@@ -1,5 +1,6 @@
 GL_PGI_vertex_hints
 http://www.opengl.org/registry/specs/PGI/vertex_hints.txt
+GL_PGI_vertex_hints
 	GL_VERTEX23_BIT_PGI 0x00000004
 	GL_VERTEX4_BIT_PGI 0x00000008
 	GL_COLOR3_BIT_PGI 0x00010000

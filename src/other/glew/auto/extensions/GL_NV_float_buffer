@@ -1,5 +1,6 @@
 GL_NV_float_buffer
 http://www.opengl.org/registry/specs/NV/float_buffer.txt
+GL_NV_float_buffer
 	GL_FLOAT_R_NV 0x8880
 	GL_FLOAT_RG_NV 0x8881
 	GL_FLOAT_RGB_NV 0x8882

@@ -1,5 +1,6 @@
 GL_EXT_transform_feedback
 http://www.opengl.org/registry/specs/EXT/transform_feedback.txt
+GL_EXT_transform_feedback
 	GL_TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH_EXT 0x8C76
 	GL_TRANSFORM_FEEDBACK_BUFFER_MODE_EXT 0x8C7F
 	GL_MAX_TRANSFORM_FEEDBACK_SEPARATE_COMPONENTS_EXT 0x8C80

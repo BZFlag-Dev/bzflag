@@ -1,5 +1,6 @@
 WGL_ARB_render_texture
 http://www.opengl.org/registry/specs/ARB/wgl_render_texture.txt
+WGL_ARB_render_texture
 	WGL_BIND_TO_TEXTURE_RGB_ARB 0x2070
 	WGL_BIND_TO_TEXTURE_RGBA_ARB 0x2071
 	WGL_TEXTURE_FORMAT_ARB 0x2072

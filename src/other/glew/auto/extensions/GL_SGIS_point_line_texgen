@@ -1,5 +1,6 @@
 GL_SGIS_point_line_texgen
 http://www.opengl.org/registry/specs/SGIS/point_line_texgen.txt
+GL_SGIS_point_line_texgen
 	GL_EYE_DISTANCE_TO_POINT_SGIS 0x81F0
 	GL_OBJECT_DISTANCE_TO_POINT_SGIS 0x81F1
 	GL_EYE_DISTANCE_TO_LINE_SGIS 0x81F2

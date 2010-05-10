@@ -1,5 +1,6 @@
 GL_NV_vertex_array_range
 http://www.opengl.org/registry/specs/NV/vertex_array_range.txt
+GL_NV_vertex_array_range
 	GL_VERTEX_ARRAY_RANGE_NV 0x851D
 	GL_VERTEX_ARRAY_RANGE_LENGTH_NV 0x851E
 	GL_VERTEX_ARRAY_RANGE_VALID_NV 0x851F

@@ -1,5 +1,6 @@
 GL_EXT_texture_env_combine
 http://www.opengl.org/registry/specs/EXT/texture_env_combine.txt
+GL_EXT_texture_env_combine
 	GL_COMBINE_EXT 0x8570
 	GL_COMBINE_RGB_EXT 0x8571
 	GL_COMBINE_ALPHA_EXT 0x8572

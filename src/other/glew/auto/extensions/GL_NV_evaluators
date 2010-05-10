@@ -1,5 +1,6 @@
 GL_NV_evaluators
 http://www.opengl.org/registry/specs/NV/evaluators.txt
+GL_NV_evaluators
 	GL_EVAL_2D_NV 0x86C0
 	GL_EVAL_TRIANGULAR_2D_NV 0x86C1
 	GL_MAP_TESSELLATION_NV 0x86C2

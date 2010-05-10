@@ -1,5 +1,6 @@
 WGL_EXT_pbuffer
 http://www.opengl.org/registry/specs/EXT/wgl_pbuffer.txt
+WGL_EXT_pbuffer
 	WGL_DRAW_TO_PBUFFER_EXT 0x202D
 	WGL_MAX_PBUFFER_PIXELS_EXT 0x202E
 	WGL_MAX_PBUFFER_WIDTH_EXT 0x202F

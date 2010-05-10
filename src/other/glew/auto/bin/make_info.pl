@@ -32,7 +32,7 @@ if (@ARGV)
 
 	foreach my $ext (sort @extlist)
 	{
-		my ($extname, $exturl, $types, $tokens, $functions, $exacts) = parse_ext($ext);
+		my ($extname, $exturl, $extstring, $types, $tokens, $functions, $exacts) = parse_ext($ext);
 		my $extvar = $extname;
 		$extvar =~ s/GL(X*)_/GL$1EW_/;
 		my $extpre = $extname;
@@ -50,7 +50,7 @@ if (@ARGV)
 		{
 			print "  glewPrintExt(\"$extname\", $extvar, $extpre" .
 				"ewIsSupported(\"$extname\"), $extpre" .
-				"ewGetExtension(\"$extname\"));\n";
+				"ewGetExtension(\"$extstring\"));\n";
 		}
 		output_decls($functions, \&make_pfn_info);
 		print "}\n\n";

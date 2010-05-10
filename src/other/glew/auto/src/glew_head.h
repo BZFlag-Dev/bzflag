@@ -2,7 +2,7 @@
 #define __glew_h__
 #define __GLEW_H__
 
-#if defined(__gl_h_) || defined(__GL_H__)
+#if defined(__gl_h_) || defined(__GL_H__) || defined(__X_GL_H)
 #error gl.h included before glew.h
 #endif
 #if defined(__glext_h_) || defined(__GLEXT_H_)
@@ -14,6 +14,7 @@
 
 #define __gl_h_
 #define __GL_H__
+#define __X_GL_H
 #define __glext_h_
 #define __GLEXT_H_
 #define __gl_ATI_h_
@@ -28,7 +29,7 @@
 /* <windef.h> */
 #ifndef APIENTRY
 #define GLEW_APIENTRY_DEFINED
-#  if defined(__MINGW32__)
+#  if defined(__MINGW32__) || defined(__CYGWIN__)
 #    define APIENTRY __stdcall
 #  elif (_MSC_VER >= 800) || defined(_STDCALL_SUPPORTED) || defined(__BORLANDC__)
 #    define APIENTRY __stdcall
@@ -37,14 +38,14 @@
 #  endif
 #endif
 #ifndef GLAPI
-#  if defined(__MINGW32__)
+#  if defined(__MINGW32__) || defined(__CYGWIN__)
 #    define GLAPI extern
 #  endif
 #endif
 /* <winnt.h> */
 #ifndef CALLBACK
 #define GLEW_CALLBACK_DEFINED
-#  if defined(__MINGW32__)
+#  if defined(__MINGW32__) || defined(__CYGWIN__)
 #    define CALLBACK __attribute__ ((__stdcall__))
 #  elif (defined(_M_MRX000) || defined(_M_IX86) || defined(_M_ALPHA) || defined(_M_PPC)) && !defined(MIDL_PASS)
 #    define CALLBACK __stdcall
@@ -81,7 +82,7 @@ typedef _W64 int ptrdiff_t;
 #endif
 
 #ifndef GLAPI
-#  if defined(__MINGW32__)
+#  if defined(__MINGW32__) || defined(__CYGWIN__)
 #    define GLAPI extern
 #  else
 #    define GLAPI WINGDIAPI
@@ -118,7 +119,14 @@ typedef _W64 int ptrdiff_t;
  */
 
 #include <stddef.h>
+
+/* SGI MIPSPro doesn't like stdint.h in C++ mode */
+
+#if defined(__sgi) && !defined(__GNUC__)
+#include <inttypes.h>
+#else
 #include <stdint.h>
+#endif
 
 #define GLEW_APIENTRY_DEFINED
 #define APIENTRY
@@ -168,12 +176,15 @@ typedef signed long long GLint64EXT;
 typedef unsigned long long GLuint64EXT;
 #  endif
 #else
-#  if defined(__MINGW32__)
+#  if defined(__MINGW32__) || defined(__CYGWIN__)
 #include <inttypes.h>
 #  endif
 typedef int64_t GLint64EXT;
 typedef uint64_t GLuint64EXT;
 #endif
+typedef GLint64EXT  GLint64;
+typedef GLuint64EXT GLuint64;
+typedef struct __GLsync *GLsync;
 
 #define GL_ACCUM 0x0100
 #define GL_LOAD 0x0101

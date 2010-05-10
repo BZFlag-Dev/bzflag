@@ -1,5 +1,6 @@
 GLX_EXT_visual_info
 http://www.opengl.org/registry/specs/EXT/visual_info.txt
+GLX_EXT_visual_info
 	GLX_X_VISUAL_TYPE_EXT 0x22
 	GLX_TRANSPARENT_TYPE_EXT 0x23
 	GLX_TRANSPARENT_INDEX_VALUE_EXT 0x24

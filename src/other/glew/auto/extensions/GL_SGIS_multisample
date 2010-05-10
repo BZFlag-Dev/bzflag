@@ -1,5 +1,6 @@
 GL_SGIS_multisample
 http://www.opengl.org/registry/specs/SGIS/multisample.txt
+GL_SGIS_multisample
 	GL_MULTISAMPLE_SGIS 0x809D
 	GL_SAMPLE_ALPHA_TO_MASK_SGIS 0x809E
 	GL_SAMPLE_ALPHA_TO_ONE_SGIS 0x809F

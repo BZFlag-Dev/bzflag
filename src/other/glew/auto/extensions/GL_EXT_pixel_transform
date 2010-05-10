@@ -1,5 +1,6 @@
 GL_EXT_pixel_transform
 http://www.opengl.org/registry/specs/EXT/pixel_transform.txt
+GL_EXT_pixel_transform
 	GL_PIXEL_TRANSFORM_2D_EXT 0x8330
 	GL_PIXEL_MAG_FILTER_EXT 0x8331
 	GL_PIXEL_MIN_FILTER_EXT 0x8332

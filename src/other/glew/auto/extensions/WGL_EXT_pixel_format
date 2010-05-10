@@ -1,5 +1,6 @@
 WGL_EXT_pixel_format
 http://www.opengl.org/registry/specs/EXT/wgl_pixel_format.txt
+WGL_EXT_pixel_format
 	WGL_NUMBER_PIXEL_FORMATS_EXT 0x2000
 	WGL_DRAW_TO_WINDOW_EXT 0x2001
 	WGL_DRAW_TO_BITMAP_EXT 0x2002

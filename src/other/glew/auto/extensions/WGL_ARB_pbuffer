@@ -1,5 +1,6 @@
 WGL_ARB_pbuffer
 http://www.opengl.org/registry/specs/ARB/wgl_pbuffer.txt
+WGL_ARB_pbuffer
 	WGL_DRAW_TO_PBUFFER_ARB 0x202D
 	WGL_MAX_PBUFFER_PIXELS_ARB 0x202E
 	WGL_MAX_PBUFFER_WIDTH_ARB 0x202F

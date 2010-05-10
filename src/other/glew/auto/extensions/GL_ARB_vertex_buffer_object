@@ -1,5 +1,6 @@
 GL_ARB_vertex_buffer_object
 http://www.opengl.org/registry/specs/ARB/vertex_buffer_object.txt
+GL_ARB_vertex_buffer_object
 	GL_BUFFER_SIZE_ARB 0x8764
 	GL_BUFFER_USAGE_ARB 0x8765
 	GL_ARRAY_BUFFER_ARB 0x8892

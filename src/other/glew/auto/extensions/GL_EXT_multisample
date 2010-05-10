@@ -1,5 +1,6 @@
 GL_EXT_multisample
 http://www.opengl.org/registry/specs/EXT/wgl_multisample.txt
+GL_EXT_multisample
 	GL_MULTISAMPLE_EXT 0x809D
 	GL_SAMPLE_ALPHA_TO_MASK_EXT 0x809E
 	GL_SAMPLE_ALPHA_TO_ONE_EXT 0x809F

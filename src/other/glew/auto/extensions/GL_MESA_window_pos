@@ -1,5 +1,6 @@
 GL_MESA_window_pos
 http://www.opengl.org/registry/specs/MESA/window_pos.txt
+GL_MESA_window_pos
 	void glWindowPos2dMESA (GLdouble x, GLdouble y)
 	void glWindowPos2dvMESA (const GLdouble* p)
 	void glWindowPos2fMESA (GLfloat x, GLfloat y)

@@ -1,5 +1,6 @@
 GL_NV_half_float
 http://www.opengl.org/registry/specs/NV/half_float.txt
+GL_NV_half_float
 	GL_HALF_FLOAT_NV 0x140B
 	void glColor3hNV (GLhalf red, GLhalf green, GLhalf blue)
 	void glColor3hvNV (const GLhalf* v)

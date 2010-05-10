@@ -1,5 +1,6 @@
 GL_ARB_geometry_shader4
 http://www.opengl.org/registry/specs/ARB/geometry_shader4.txt
+GL_ARB_geometry_shader4
 	GL_LINES_ADJACENCY_ARB 0xA
 	GL_LINE_STRIP_ADJACENCY_ARB 0xB
 	GL_TRIANGLES_ADJACENCY_ARB 0xC

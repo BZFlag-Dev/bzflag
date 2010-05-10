@@ -1,5 +1,6 @@
 GL_VERSION_3_0
 http://www.opengl.org/registry/doc/glspec30.20080811.pdf
+
 	GL_COMPARE_REF_TO_TEXTURE GL_COMPARE_R_TO_TEXTURE_ARB
 	GL_CLIP_DISTANCE0 GL_CLIP_PLANE0
 	GL_CLIP_DISTANCE1 GL_CLIP_PLANE1
@@ -110,15 +111,12 @@ http://www.opengl.org/registry/doc/glspec30.20080811.pdf
 	GL_QUERY_BY_REGION_NO_WAIT 0x8E16
 	void glColorMaski (GLuint, GLboolean, GLboolean, GLboolean, GLboolean)
 	void glGetBooleani_v (GLenum, GLuint, GLboolean*)
-	void glGetIntegeri_v (GLenum, GLuint, GLint*)
 	void glEnablei (GLenum, GLuint)
 	void glDisablei (GLenum, GLuint)
 	GLboolean glIsEnabledi (GLenum, GLuint)
 	void glBeginTransformFeedback (GLenum)
 	void glEndTransformFeedback (void)
-	void glBindBufferRange (GLenum, GLuint, GLuint, GLintptr, GLsizeiptr)
-	void glBindBufferBase (GLenum, GLuint, GLuint)
-	void glTransformFeedbackVaryings (GLuint, GLsizei, const GLint*, GLenum)
+	void glTransformFeedbackVaryings (GLuint, GLsizei, const GLchar **, GLenum)
 	void glGetTransformFeedbackVarying (GLuint, GLuint, GLint*)
 	void glClampColor (GLenum, GLenum)
 	void glBeginConditionalRender (GLuint, GLenum)

@@ -1,5 +1,6 @@
 GL_ARB_occlusion_query
 http://www.opengl.org/registry/specs/ARB/occlusion_query.txt
+GL_ARB_occlusion_query
 	GL_QUERY_COUNTER_BITS_ARB 0x8864
 	GL_CURRENT_QUERY_ARB 0x8865
 	GL_QUERY_RESULT_ARB 0x8866

@@ -1,5 +1,6 @@
 GL_NV_vertex_program
 http://www.opengl.org/registry/specs/NV/vertex_program.txt
+GL_NV_vertex_program
 	GL_VERTEX_PROGRAM_NV 0x8620
 	GL_VERTEX_STATE_PROGRAM_NV 0x8621
 	GL_ATTRIB_ARRAY_SIZE_NV 0x8623

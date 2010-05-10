@@ -1,5 +1,6 @@
 GL_SGI_color_matrix
 http://www.opengl.org/registry/specs/SGI/color_matrix.txt
+GL_SGI_color_matrix
 	GL_COLOR_MATRIX_SGI 0x80B1
 	GL_COLOR_MATRIX_STACK_DEPTH_SGI 0x80B2
 	GL_MAX_COLOR_MATRIX_STACK_DEPTH_SGI 0x80B3

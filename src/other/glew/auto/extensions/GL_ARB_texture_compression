@@ -1,5 +1,6 @@
 GL_ARB_texture_compression
 http://www.opengl.org/registry/specs/ARB/texture_compression.txt
+GL_ARB_texture_compression
 	GL_COMPRESSED_ALPHA_ARB 0x84E9
 	GL_COMPRESSED_LUMINANCE_ARB 0x84EA
 	GL_COMPRESSED_LUMINANCE_ALPHA_ARB 0x84EB
