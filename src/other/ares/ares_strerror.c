@@ -15,7 +15,7 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 #include <assert.h>
 #include "ares.h"
 
@@ -43,7 +43,11 @@ const char *ares_strerror(int code)
     "Misformatted string",
     "Illegal flags specified",
     "Given hostname is not numeric",
-    "Illegal hints flags specified"
+    "Illegal hints flags specified",
+    "c-ares library initialization not yet performed",
+    "Error loading iphlpapi.dll",
+    "Could not find GetNetworkParams function",
+    "DNS query cancelled"
   };
 
   if(code >= 0 && code < (int)(sizeof(errtext) / sizeof(*errtext)))

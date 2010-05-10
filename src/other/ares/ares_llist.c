@@ -1,4 +1,4 @@
-/* $Id: ares_llist.c,v 1.1 2007-10-02 02:18:01 yangtse Exp $ */
+/* $Id$ */
 
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
@@ -15,7 +15,7 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 
 #include "ares.h"
 #include "ares_private.h"

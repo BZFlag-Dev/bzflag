@@ -1,4 +1,4 @@
-/* $Id: inet_net_pton.c,v 1.13 2007-02-26 04:33:19 giva Exp $ */
+/* $Id$ */
 
 /*
  * Copyright (c) 2004 by Internet Systems Consortium, Inc. ("ISC")
@@ -17,25 +17,24 @@
  * OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "setup.h"
-
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
+#include "ares_setup.h"
 
 #ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+#  include <sys/socket.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#ifdef HAVE_ARPA_NAMESER_H
-#include <arpa/nameser.h>
+#  include <netinet/in.h>
 #endif
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
+#  include <arpa/inet.h>
 #endif
-
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
 #endif
 
 #include <ctype.h>
@@ -44,11 +43,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "ares.h"
 #include "ares_ipv6.h"
 #include "inet_net_pton.h"
 
-#if !defined(HAVE_INET_NET_PTON) || !defined(HAVE_INET_NET_PTON_IPV6) || \
-    !defined(HAVE_INET_PTON) || !defined(HAVE_INET_PTON_IPV6)
+#if !defined(HAVE_INET_NET_PTON) || !defined(HAVE_INET_NET_PTON_IPV6)
 
 /*
  * static int
@@ -83,7 +82,7 @@ inet_net_pton_ipv4(const char *src, unsigned char *dst, size_t size)
   if (ch == '0' && (src[0] == 'x' || src[0] == 'X')
       && ISXDIGIT(src[1])) {
     /* Hexadecimal: Eat nybble string. */
-    if (size <= 0U)
+    if (!size)
       goto emsgsize;
     dirty = 0;
     src++;  /* skip x or X. */
@@ -96,14 +95,14 @@ inet_net_pton_ipv4(const char *src, unsigned char *dst, size_t size)
       else
         tmp = (tmp << 4) | n;
       if (++dirty == 2) {
-        if (size-- <= 0U)
+        if (!size--)
           goto emsgsize;
         *dst++ = (unsigned char) tmp;
         dirty = 0;
       }
     }
     if (dirty) {  /* Odd trailing nybble? */
-      if (size-- <= 0U)
+      if (!size--)
         goto emsgsize;
       *dst++ = (unsigned char) (tmp << 4);
     }
@@ -119,7 +118,7 @@ inet_net_pton_ipv4(const char *src, unsigned char *dst, size_t size)
           goto enoent;
       } while ((ch = *src++) != '\0' &&
                ISDIGIT(ch));
-      if (size-- <= 0U)
+      if (!size--)
         goto emsgsize;
       *dst++ = (unsigned char) tmp;
       if (ch == '\0' || ch == '/')
@@ -181,7 +180,7 @@ inet_net_pton_ipv4(const char *src, unsigned char *dst, size_t size)
   }
   /* Extend network to cover the actual mask. */
   while (bits > ((dst - odst) * 8)) {
-    if (size-- <= 0U)
+    if (!size--)
       goto emsgsize;
     *dst++ = '\0';
   }
@@ -425,15 +424,16 @@ ares_inet_net_pton(int af, const char *src, void *dst, size_t size)
 
 #endif
 
-#if !defined(HAVE_INET_PTON) || !defined(HAVE_INET_PTON_IPV6)
+#ifndef HAVE_INET_PTON
 int ares_inet_pton(int af, const char *src, void *dst)
 {
-  int size, result;
+  int result;
+  size_t size;
 
   if (af == AF_INET)
     size = sizeof(struct in_addr);
   else if (af == AF_INET6)
-    size = sizeof(struct in6_addr);
+    size = sizeof(struct ares_in6_addr);
   else
   {
     SET_ERRNO(EAFNOSUPPORT);

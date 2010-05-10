@@ -1,7 +1,7 @@
 #ifndef __ARES_BITNCMP_H
 #define __ARES_BITNCMP_H
 
-/* $Id: bitncmp.h,v 1.3 2007-11-19 15:47:01 bagder Exp $ */
+/* $Id$ */
 
 /* Copyright (C) 2005 by Dominick Meglio
  *

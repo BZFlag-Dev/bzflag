@@ -15,11 +15,12 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ares.h"
+#include "ares_nowarn.h"
 #include "ares_private.h"
 
 /* This is an internal function.  Its contract is to read a line from
@@ -30,7 +31,7 @@
  * appropriate.  The initial value of *buf should be NULL.  After the
  * calling routine is done reading lines, it should free *buf.
  */
-int ares__read_line(FILE *fp, char **buf, int *bufsize)
+int ares__read_line(FILE *fp, char **buf, size_t *bufsize)
 {
   char *newbuf;
   size_t offset = 0;
@@ -44,9 +45,11 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize)
       *bufsize = 128;
     }
 
-  while (1)
+  for (;;)
     {
-      if (!fgets(*buf + offset, *bufsize - (int)offset, fp))
+      int bytestoread = aresx_uztosi(*bufsize - offset);
+
+      if (!fgets(*buf + offset, bytestoread, fp))
         return (offset != 0) ? 0 : (ferror(fp)) ? ARES_EFILE : ARES_EOF;
       len = offset + strlen(*buf + offset);
       if ((*buf)[len - 1] == '\n')
@@ -55,6 +58,8 @@ int ares__read_line(FILE *fp, char **buf, int *bufsize)
           break;
         }
       offset = len;
+      if(len < *bufsize - 1)
+        continue;
 
       /* Allocate more space. */
       newbuf = realloc(*buf, *bufsize * 2);

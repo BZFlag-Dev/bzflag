@@ -1,7 +1,7 @@
 #ifndef __ARES_INET_NET_PTON_H
 #define __ARES_INET_NET_PTON_H
 
-/* $Id: inet_net_pton.h,v 1.5 2007-11-19 15:47:01 bagder Exp $ */
+/* $Id$ */
 
 /* Copyright (C) 2005 by Daniel Stenberg
  *
@@ -18,7 +18,7 @@
  * without express or implied warranty.
  */
 
-#if defined(HAVE_INET_PTON) && defined(HAVE_INET_PTON_IPV6)
+#ifdef HAVE_INET_PTON
 #define ares_inet_pton(x,y,z) inet_pton(x,y,z)
 #else
 int ares_inet_pton(int af, const char *src, void *dst);

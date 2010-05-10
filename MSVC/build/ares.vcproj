@@ -43,7 +43,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\src\other\ares"
+				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;CARES_STATICLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -109,7 +110,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE"
+				AdditionalIncludeDirectories="..\..\src\other\ares"
+				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;CARES_STATICLIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -167,7 +169,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares__timeval.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_cancel.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_data.c"
 				>
 			</File>
 			<File
@@ -203,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_getopt.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_getsock.c"
 				>
 			</File>
@@ -211,11 +225,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_library_init.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_llist.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_mkquery.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_nowarn.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_options.c"
 				>
 			</File>
 			<File
@@ -228,6 +254,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_parse_ptr_reply.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_parse_srv_reply.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_parse_txt_reply.c"
 				>
 			</File>
 			<File
@@ -247,6 +281,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_strcasecmp.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_strdup.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_strerror.c"
 				>
 			</File>
@@ -256,6 +298,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\other\ares\ares_version.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_writev.c"
 				>
 			</File>
 			<File
@@ -281,7 +327,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_build.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_data.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_dns.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_getopt.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_library_init.h"
 				>
 			</File>
 			<File
@@ -289,11 +351,35 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_nowarn.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_private.h"
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\ares\ares_rules.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_setup.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_strcasecmp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_strdup.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\ares\ares_version.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\ares\ares_writev.h"
 				>
 			</File>
 			<File

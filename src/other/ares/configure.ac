@@ -1,11 +1,75 @@
-
-dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.57)
-AC_INIT(ares_init.c)
+
+dnl Version not hardcoded here. Fetched later from ares_version.h
+AC_INIT([c-ares], [1.7.1],
+  [c-ares mailing list => http://cool.haxx.se/mailman/listinfo/c-ares])
+
+CARES_OVERRIDE_AUTOCONF
+
 AC_CONFIG_SRCDIR([ares_ipv6.h])
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER([ares_config.h ares_build.h])
 AM_MAINTAINER_MODE
-AM_INIT_AUTOMAKE(c-ares, CVS)
+
+CARES_CHECK_OPTION_DEBUG
+CARES_CHECK_OPTION_OPTIMIZE
+CARES_CHECK_OPTION_WARNINGS
+CARES_CHECK_OPTION_CURLDEBUG
+CARES_CHECK_OPTION_SYMBOL_HIDING
+
+CARES_CHECK_PATH_SEPARATOR_REQUIRED
+
+dnl SED is mandatory for configure process and libtool.
+dnl Set it now, allowing it to be changed later.
+AC_PATH_PROG([SED], [sed], [not_found],
+  [$PATH:/usr/bin:/usr/local/bin])
+if test -z "$SED" || test "$SED" = "not_found"; then
+  AC_MSG_ERROR([sed not found in PATH. Cannot continue without sed.])
+fi
+AC_SUBST([SED])
+
+dnl GREP is mandatory for configure process and libtool.
+dnl Set it now, allowing it to be changed later.
+AC_PATH_PROG([GREP], [grep], [not_found],
+  [$PATH:/usr/bin:/usr/local/bin])
+if test -z "$GREP" || test "$GREP" = "not_found"; then
+  AC_MSG_ERROR([grep not found in PATH. Cannot continue without grep.])
+fi
+AC_SUBST([GREP])
+
+dnl EGREP is mandatory for configure process and libtool.
+dnl Set it now, allowing it to be changed later.
+if echo a | ($GREP -E '(a|b)') >/dev/null 2>&1; then
+  AC_MSG_CHECKING([for egrep])
+  EGREP="$GREP -E"
+  AC_MSG_RESULT([$EGREP])
+else
+  AC_PATH_PROG([EGREP], [egrep], [not_found],
+    [$PATH:/usr/bin:/usr/local/bin])
+fi
+if test -z "$EGREP" || test "$EGREP" = "not_found"; then
+  AC_MSG_ERROR([egrep not found in PATH. Cannot continue without egrep.])
+fi
+AC_SUBST([EGREP])
+
+dnl AR is mandatory for configure process and libtool.
+dnl This is target dependent, so check it as a tool.
+AC_PATH_TOOL([AR], [ar], [not_found],
+  [$PATH:/usr/bin:/usr/local/bin])
+if test -z "$AR" || test "$AR" = "not_found"; then
+  AC_MSG_ERROR([ar not found in PATH. Cannot continue without ar.])
+fi
+AC_SUBST([AR])
+
+dnl Remove non-configure distributed ares_build.h
+if test -f ${srcdir}/ares_build.h; then
+  rm -f ${srcdir}/ares_build.h
+fi
+
+dnl Fetch c-ares version from ares_version.h
+VERSION=`$SED -ne 's/^#define ARES_VERSION_STR "\(.*\)"/\1/p' ${srcdir}/ares_version.h`
+AM_INIT_AUTOMAKE([c-ares], [$VERSION])
+AC_MSG_CHECKING([c-ares version])
+AC_MSG_RESULT([$VERSION])
 
 dnl
 dnl Detect the canonical host and target build environment
@@ -15,73 +79,44 @@ AC_CANONICAL_HOST
 dnl Get system canonical name
 AC_DEFINE_UNQUOTED(OS, "${host}", [cpu-machine-OS])
 
-AC_AIX
-AC_PROG_CC
+CARES_CHECK_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_INSTALL
 
+dnl This defines _ALL_SOURCE for AIX
+CARES_CHECK_AIX_ALL_SOURCE
+
+dnl Our configure and build reentrant settings
+CARES_CONFIGURE_THREAD_SAFE
+CARES_CONFIGURE_REENTRANT
+
+dnl check for how to do large files
+AC_SYS_LARGEFILE
+
 case $host_os in
-solaris*)
-	AC_DEFINE(ETC_INET, 1, [if a /etc/inet dir is being used])
-	;;
+  solaris*)
+    AC_DEFINE(ETC_INET, 1, [if a /etc/inet dir is being used])
+    ;;
 esac
 
 dnl support building of Windows DLLs
 AC_LIBTOOL_WIN32_DLL
 
-dnl ************************************************************
-dnl Option to switch on debug options. This makes an assumption that
-dnl this is built as an 'ares' subdir in the curl source tree. Subject for
-dnl improval in the future!
-dnl
-AC_MSG_CHECKING([whether to enable debug options])
-AC_ARG_ENABLE(debug,
-AC_HELP_STRING([--enable-debug],[Enable pedantic debug options])
-AC_HELP_STRING([--disable-debug],[Disable debug options]),
-[ case "$enableval" in
-  no)
-       AC_MSG_RESULT(no)
-       ;;
-  *)   AC_MSG_RESULT(yes)
-
-    dnl when doing the debug stuff, use static library only
-    AC_DISABLE_SHARED
-
-    CFLAGS="$CFLAGS -g" 
-
-    dnl check for how to do large files, needed to get the curl_off_t check
-    dnl done right
-    AC_SYS_LARGEFILE
-
-    AC_CHECK_SIZEOF(curl_off_t, ,[
-#include <stdio.h>
-#include "$srcdir/../include/curl/curl.h"
-    ])
-
-    dnl set compiler "debug" options to become more picky, and remove
-    dnl optimize options from CFLAGS
-    CURL_CC_DEBUG_OPTS
-
-       ;;
-  esac ],
-       AC_MSG_RESULT(no)
-)
-
-dnl skip libtool C++ and Fortran compiler checks
-m4_ifdef([AC_PROG_CXX], [m4_undefine([AC_PROG_CXX])])
-m4_defun([AC_PROG_CXX],[])
-m4_ifdef([AC_PROG_F77], [m4_undefine([AC_PROG_F77])])
-m4_defun([AC_PROG_F77],[])
-
-dnl skip libtool C++ and Fortran linker checks
-m4_ifdef([AC_LIBTOOL_CXX], [m4_undefine([AC_LIBTOOL_CXX])])
-m4_defun([AC_LIBTOOL_CXX],[])
-m4_ifdef([AC_LIBTOOL_F77], [m4_undefine([AC_LIBTOOL_F77])])
-m4_defun([AC_LIBTOOL_F77],[])
-
-dnl force libtool to build static libraries with PIC on AMD64-linux
-AC_MSG_CHECKING([if arch-OS host is AMD64-linux (to build static libraries with PIC)])
+dnl force libtool to build static libraries with PIC on AMD64-Linux & FreeBSD
+AC_MSG_CHECKING([if arch-OS host is AMD64-Linux/FreeBSD (to build static libraries with PIC)])
 case $host in
-  x86_64*linux*)
+  x86_64*linux*|amd64*freebsd*|ia64*freebsd*)
+    AC_MSG_RESULT([yes])
+    with_pic=yes
+    ;;
+  *)
+    AC_MSG_RESULT([no])
+    ;;
+esac
+
+AC_MSG_CHECKING([if compiler is icc (to build with PIC)])
+case $CC in
+  icc | */icc)
     AC_MSG_RESULT([yes])
     with_pic=yes
     ;;
@@ -93,65 +128,88 @@ esac
 dnl libtool setup
 AC_PROG_LIBTOOL
 
-AC_MSG_CHECKING([if we need -no-undefined])
+AC_MSG_CHECKING([if we need CARES_BUILDING_LIBRARY])
 case $host in
-  *-*-cygwin | *-*-mingw* | *-*-pw32*)
-    need_no_undefined=yes
+  *-*-mingw*)
+    AC_DEFINE(CARES_BUILDING_LIBRARY, 1, [when building c-ares library])
+    AC_MSG_RESULT(yes)
+    AC_MSG_CHECKING([if we need CARES_STATICLIB])
+    if test "X$enable_shared" = "Xno"
+    then
+      AC_DEFINE(CARES_STATICLIB, 1, [when not building a shared library])
+      AC_MSG_RESULT(yes)
+    else
+      AC_MSG_RESULT(no)
+    fi
     ;;
   *)
-    need_no_undefined=no
+    AC_MSG_RESULT(no)
     ;;
 esac
-AC_MSG_RESULT($need_no_undefined)
-AM_CONDITIONAL(NO_UNDEFINED, test x$need_no_undefined = xyes)
-
-dnl **********************************************************************
-dnl check if this is the Intel ICC compiler, and if so make it stricter
-dnl (convert warning 147 into an error) so that it properly can detect the
-dnl gethostbyname_r() version
-dnl **********************************************************************
-CURL_DETECT_ICC([CFLAGS="$CFLAGS -we 147"])
 
 dnl **********************************************************************
 dnl platform/compiler/architecture specific checks/flags
 dnl **********************************************************************
 
-case $host in
+CARES_CHECK_COMPILER
+CARES_SET_COMPILER_BASIC_OPTS
+CARES_SET_COMPILER_DEBUG_OPTS
+CARES_SET_COMPILER_OPTIMIZE_OPTS
+CARES_SET_COMPILER_WARNING_OPTS
+
+if test "$compiler_id" = "INTEL_UNIX_C"; then
   #
-  x86_64*linux*)
-    #
-    dnl find out if icc is being used
-    if test "z$ICC" = "z"; then
-      CURL_DETECT_ICC
-    fi
-    #
-    if test "$ICC" = "yes"; then
-      dnl figure out icc version
-      AC_MSG_CHECKING([icc version])
-      iccver=`$CC -dumpversion`
-      iccnhi=`echo $iccver | cut -d . -f1`
-      iccnlo=`echo $iccver | cut -d . -f2`
-      iccnum=`(expr $iccnhi "*" 100 + $iccnlo) 2>/dev/null`
-      AC_MSG_RESULT($iccver)
-      #
-      if test "$iccnum" -ge "900" && test "$iccnum" -lt "1000"; then
-        dnl icc 9.X specific
-        CFLAGS="$CFLAGS -i-dynamic"
-      fi
-      #
-      if test "$iccnum" -ge "1000"; then
-        dnl icc 10.X or later
-        CFLAGS="$CFLAGS -shared-intel"
-      fi
-      #
-    fi
+  if test "$compiler_num" -ge "1000"; then
+    dnl icc 10.X or later
+    CFLAGS="$CFLAGS -shared-intel"
+  elif test "$compiler_num" -ge "900"; then
+    dnl icc 9.X specific
+    CFLAGS="$CFLAGS -i-dynamic"
+  fi
+  #
+fi
+
+CARES_CHECK_COMPILER_HALT_ON_ERROR
+CARES_CHECK_COMPILER_ARRAY_SIZE_NEGATIVE
+CARES_CHECK_COMPILER_SYMBOL_HIDING
+
+CARES_CHECK_NO_UNDEFINED
+AM_CONDITIONAL(NO_UNDEFINED, test x$need_no_undefined = xyes)
+
+CARES_CHECK_CURLDEBUG
+AM_CONDITIONAL(CURLDEBUG, test x$want_curldebug = xyes)
+
+dnl **********************************************************************
+dnl Compilation based checks should not be done before this point.
+dnl **********************************************************************
+
+dnl **********************************************************************
+dnl Make sure that our checks for headers windows.h winsock.h winsock2.h 
+dnl and ws2tcpip.h take precedence over any other further checks which 
+dnl could be done later using AC_CHECK_HEADER or AC_CHECK_HEADERS for
+dnl this specific header files. And do them before its results are used.
+dnl **********************************************************************
+
+CURL_CHECK_HEADER_WINDOWS
+CURL_CHECK_NATIVE_WINDOWS
+case X-"$ac_cv_native_windows" in
+  X-yes)
+    CURL_CHECK_HEADER_WINSOCK
+    CURL_CHECK_HEADER_WINSOCK2
+    CURL_CHECK_HEADER_WS2TCPIP
     ;;
-  #
+  *)
+    ac_cv_header_winsock_h="no"
+    ac_cv_header_winsock2_h="no"
+    ac_cv_header_ws2tcpip_h="no"
+    ;;
 esac
 
 dnl **********************************************************************
 dnl Checks for libraries.
 dnl **********************************************************************
+
+CARES_CHECK_LIB_XNET
 
 dnl gethostbyname without lib or in the nsl lib?
 AC_CHECK_FUNC(gethostbyname,
@@ -179,49 +237,107 @@ then
   AC_MSG_CHECKING([for gethostbyname with both nsl and socket libs])
   my_ac_save_LIBS=$LIBS
   LIBS="-lnsl -lsocket $LIBS"
-  AC_TRY_LINK( ,
-             [gethostbyname();],
-             [ dnl found it!
-             HAVE_GETHOSTBYNAME="1"
-             AC_MSG_RESULT([yes])],
-             [ dnl failed!
-             AC_MSG_RESULT([no])
-             dnl restore LIBS
-             LIBS=$my_ac_save_LIBS]
-             )
+  AC_LINK_IFELSE([
+    AC_LANG_PROGRAM([[
+    ]],[[
+      gethostbyname();
+    ]])
+  ],[
+    AC_MSG_RESULT([yes])
+    HAVE_GETHOSTBYNAME="1"
+  ],[
+    AC_MSG_RESULT([no])
+    LIBS=$my_ac_save_LIBS
+  ])
 fi
 
 if test "$HAVE_GETHOSTBYNAME" != "1"
 then
-  dnl This is for Msys/Mingw
-  AC_MSG_CHECKING([for gethostbyname in ws2_32])
-  my_ac_save_LIBS=$LIBS
-  LIBS="-lws2_32 $LIBS"
-  AC_TRY_LINK([#include <winsock2.h>],
-               [gethostbyname("www.dummysite.com");],
-               [ dnl worked!
-               ws2="yes"
-               AC_MSG_RESULT([yes])
-               HAVE_GETHOSTBYNAME="1"],
-               [ dnl failed, restore LIBS
-               LIBS=$my_ac_save_LIBS
-               AC_MSG_RESULT(no)]
-             )
+  dnl This is for winsock systems
+  if test "$ac_cv_header_windows_h" = "yes"; then
+    if test "$ac_cv_header_winsock_h" = "yes"; then
+      case $host in
+        *-*-mingw32ce*)
+          winsock_LIB="-lwinsock"
+          ;;
+        *)
+          winsock_LIB="-lwsock32"
+          ;;
+      esac
+    fi
+    if test "$ac_cv_header_winsock2_h" = "yes"; then
+      winsock_LIB="-lws2_32"
+    fi
+    if test ! -z "$winsock_LIB"; then
+      my_ac_save_LIBS=$LIBS
+      LIBS="$winsock_LIB $LIBS"
+      AC_MSG_CHECKING([for gethostbyname in $winsock_LIB])
+      AC_LINK_IFELSE([
+        AC_LANG_PROGRAM([[
+#ifdef HAVE_WINDOWS_H
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#else
+#ifdef HAVE_WINSOCK_H
+#include <winsock.h>
+#endif
+#endif
+#endif
+        ]],[[
+          gethostbyname("www.dummysite.com");
+        ]])
+      ],[
+        AC_MSG_RESULT([yes])
+        HAVE_GETHOSTBYNAME="1"
+      ],[
+        AC_MSG_RESULT([no])
+        winsock_LIB=""
+        LIBS=$my_ac_save_LIBS
+      ])
+    fi
+  fi
+fi
+
+if test "$HAVE_GETHOSTBYNAME" != "1"
+then
+  dnl This is for Minix 3.1
+  AC_MSG_CHECKING([for gethostbyname for Minix 3])
+  AC_LINK_IFELSE([
+    AC_LANG_PROGRAM([[
+/* Older Minix versions may need <net/gen/netdb.h> here instead */
+#include <netdb.h>
+    ]],[[
+      gethostbyname("www.dummysite.com");
+    ]])
+  ],[
+    AC_MSG_RESULT([yes])
+    HAVE_GETHOSTBYNAME="1"
+  ],[
+    AC_MSG_RESULT([no])
+  ])
 fi
 
 if test "$HAVE_GETHOSTBYNAME" != "1"
 then
   dnl This is for eCos with a stubbed DNS implementation
   AC_MSG_CHECKING([for gethostbyname for eCos])
-  AC_TRY_LINK([
+  AC_LINK_IFELSE([
+    AC_LANG_PROGRAM([[
 #include <stdio.h>
-#include <netdb.h>],
-               [gethostbyname("www.dummysite.com");],
-               [ dnl worked!
-               AC_MSG_RESULT([yes])
-               HAVE_GETHOSTBYNAME="1"],
-               AC_MSG_RESULT(no)
-             )
+#include <netdb.h>
+    ]],[[
+      gethostbyname("www.dummysite.com");
+    ]])
+  ],[
+    AC_MSG_RESULT([yes])
+    HAVE_GETHOSTBYNAME="1"
+  ],[
+    AC_MSG_RESULT([no])
+  ])
 fi
 
 if test "$HAVE_GETHOSTBYNAME" != "1"
@@ -234,9 +350,7 @@ then
 fi
 
 
-if test "$HAVE_GETHOSTBYNAME" = "1"; then
-  AC_DEFINE(HAVE_GETHOSTBYNAME, 1, [If you have gethostbyname])
-else
+if test "$HAVE_GETHOSTBYNAME" != "1"; then
   AC_MSG_ERROR([couldn't find libraries for gethostbyname()])
 fi
 
@@ -249,15 +363,15 @@ if test "$ac_cv_lib_resolve_strcasecmp" = "$ac_cv_func_strcasecmp"; then
                ,
                -lnsl)
 fi
+ac_cv_func_strcasecmp="no"
 
-dnl socket lib?
-# Ignore any cached detection of connect() from the BZFlag top-level
-# configure to allow Solaris to discover it in libsocket in this test.
-unset ac_cv_func_connect
-AC_CHECK_FUNC(connect, , [ AC_CHECK_LIB(socket, connect) ])
+CARES_CHECK_LIBS_CONNECT
 
-dnl dl lib?
-AC_CHECK_FUNC(dlclose, , [ AC_CHECK_LIB(dl, dlopen) ])
+dnl **********************************************************************
+dnl In case that function clock_gettime with monotonic timer is available,
+dnl check for additional required libraries.
+dnl **********************************************************************
+CURL_CHECK_LIBS_CLOCK_GETTIME_MONOTONIC
 
 AC_MSG_CHECKING([whether to use libgcc])
 AC_ARG_ENABLE(libgcc,
@@ -274,74 +388,9 @@ AC_HELP_STRING([--enable-libgcc],[use libgcc when linking]),
 )
 
 
-dnl Default is to try the thread-safe versions of a few functions
-OPT_THREAD=on
-
-dnl detect AIX 4.3 or later
-AC_MSG_CHECKING([AIX 4.3 or later])
-AC_PREPROC_IFELSE([
-#if defined(_AIX) && defined(_AIX43)
-printf("just fine");
-#else
-#error "this is not AIX 4.3 or later"
-#endif
-],
- [ AC_MSG_RESULT([yes])
-   RECENTAIX=yes
-   OPT_THREAD=off ],
- [ AC_MSG_RESULT([no]) ]
-)
-
-AC_ARG_ENABLE(thread,dnl
-AC_HELP_STRING([--disable-thread],[don't look for thread-safe functions])
-AC_HELP_STRING([--enable-thread],[look for thread-safe functions]),
-[ case "$enableval" in
-  no)
-    OPT_THREAD=off
-    AC_MSG_WARN(c-ares will not get built using thread-safe functions)
-    ;;
-  *)
-    ;;
-  esac
-]
-)
-
-if test X"$OPT_THREAD" = Xoff
-then
-  AC_DEFINE(DISABLED_THREADSAFE, 1,
-    [Set to explicitly specify we don't want to use thread-safe functions])
-fi
-
-dnl for recent AIX versions, we skip all the thread-safe checks above since
-dnl they claim a thread-safe libc using the standard API. But there are
-dnl some functions still not thread-safe. Check for these!
-
 dnl Let's hope this split URL remains working:
 dnl http://publibn.boulder.ibm.com/doc_link/en_US/a_doc_lib/aixprggd/ \
 dnl genprogc/thread_quick_ref.htm
-
-if test "x$RECENTAIX" = "xyes"; then
-
-  AC_DEFINE(_THREAD_SAFE, 1, [define this if you need it to compile thread-safe code])
-
-  dnl check if this is the IBM xlc compiler
-  dnl Details thanks to => http://predef.sourceforge.net/
-  AC_MSG_CHECKING([if this is the xlc compiler])
-  AC_EGREP_CPP([^__xlC__], [__xlC__],
-         dnl action if the text is found, this it has not been replaced by the
-         dnl cpp
-         XLC="no"
-         AC_MSG_RESULT([no]),
-         dnl the text was not found, it was replaced by the cpp
-         XLC="yes"
-         AC_MSG_RESULT([yes])
-         CFLAGS="$CFLAGS -qthreaded"
-         dnl AIX xlc has to have strict aliasing turned off. If not,
-         dnl the optimizer assumes that pointers can only point to
-         dnl an object of the same type.
-         CFLAGS="$CFLAGS -qnoansialias"
-       )
-fi
 
 
 dnl **********************************************************************
@@ -351,19 +400,8 @@ dnl **********************************************************************
 dnl Checks for header files.
 AC_HEADER_STDC
 
-dnl **********************************************************************
-dnl Make sure that our checks for headers windows.h winsock.h winsock2.h 
-dnl and ws2tcpip.h take precedence over any other further checks which 
-dnl could be done later using AC_CHECK_HEADER or AC_CHECK_HEADERS for
-dnl this specific header files. And do them before its results are used.
-dnl **********************************************************************
-
-CURL_CHECK_HEADER_WINDOWS
-CURL_CHECK_HEADER_WINSOCK
-CURL_CHECK_HEADER_WINSOCK2
-CURL_CHECK_HEADER_WS2TCPIP
-
 CURL_CHECK_HEADER_MALLOC
+CURL_CHECK_HEADER_MEMORY
 
 dnl check for a few basic system headers we need
 AC_CHECK_HEADERS(
@@ -373,13 +411,18 @@ AC_CHECK_HEADERS(
        sys/socket.h \
        sys/ioctl.h \
        sys/param.h \
+       sys/uio.h \
+       assert.h \
        netdb.h \
        netinet/in.h \
        netinet/tcp.h \
        net/if.h \
        errno.h \
+       socket.h \
+       strings.h \
        stdbool.h \
-       xti.h \
+       time.h \
+       limits.h \
        arpa/nameser.h \
        arpa/nameser_compat.h \
        arpa/inet.h,
@@ -419,11 +462,14 @@ AC_HEADER_TIME
 CURL_CHECK_STRUCT_TIMEVAL
 
 AC_CHECK_SIZEOF(size_t)
+AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
+CARES_CONFIGURE_LONG
 AC_CHECK_SIZEOF(time_t)
 
 AC_CHECK_TYPE(long long,
-   [AC_DEFINE(HAVE_LONGLONG, 1, [if your compiler supports long long])]
+   [AC_DEFINE(HAVE_LONGLONG, 1,
+     [Define to 1 if the compiler supports the 'long long' data type.])]
    longlong="yes"  
 )
 
@@ -454,8 +500,7 @@ AC_CHECK_TYPE([bool],[
 #endif
 ])
 
-# Check for socklen_t or equivalent
-CURL_CHECK_TYPE_SOCKLEN_T
+CARES_CONFIGURE_ARES_SOCKLEN_T
 
 TYPE_IN_ADDR_T
 
@@ -466,10 +511,36 @@ TYPE_SIG_ATOMIC_T
 AC_TYPE_SIGNAL
 
 CURL_CHECK_FUNC_RECV
-
+CURL_CHECK_FUNC_RECVFROM
 CURL_CHECK_FUNC_SEND
-
 CURL_CHECK_MSG_NOSIGNAL
+
+CARES_CHECK_FUNC_CLOSESOCKET
+CARES_CHECK_FUNC_CLOSESOCKET_CAMEL
+CARES_CHECK_FUNC_CONNECT
+CARES_CHECK_FUNC_FCNTL
+CARES_CHECK_FUNC_FREEADDRINFO
+CARES_CHECK_FUNC_GETADDRINFO
+CARES_CHECK_FUNC_GETHOSTBYADDR
+CARES_CHECK_FUNC_GETHOSTBYNAME
+CARES_CHECK_FUNC_GETHOSTNAME
+CARES_CHECK_FUNC_GETSERVBYPORT_R
+CARES_CHECK_FUNC_INET_NTOP
+CARES_CHECK_FUNC_INET_PTON
+CARES_CHECK_FUNC_IOCTL
+CARES_CHECK_FUNC_IOCTLSOCKET
+CARES_CHECK_FUNC_IOCTLSOCKET_CAMEL
+CARES_CHECK_FUNC_SETSOCKOPT
+CARES_CHECK_FUNC_SOCKET
+CARES_CHECK_FUNC_STRCASECMP
+CARES_CHECK_FUNC_STRCMPI
+CARES_CHECK_FUNC_STRDUP
+CARES_CHECK_FUNC_STRICMP
+CARES_CHECK_FUNC_STRNCASECMP
+CARES_CHECK_FUNC_STRNCMPI
+CARES_CHECK_FUNC_STRNICMP
+CARES_CHECK_FUNC_WRITEV
+
 
 dnl check for AF_INET6
 CARES_CHECK_CONSTANT(
@@ -637,54 +708,29 @@ AC_CHECK_MEMBER(struct addrinfo.ai_flags,
 )
 
 
-AC_CHECK_FUNCS( bitncmp \
-                gettimeofday \
-                if_indextoname,
-dnl if found
-[],
-dnl if not found, $ac_func is the name we check for
-func="$ac_func"
-AC_MSG_CHECKING([deeper for $func])
-AC_TRY_LINK( [],
-             [ $func ();],
-             AC_MSG_RESULT(yes!)
-             eval "ac_cv_func_$func=yes"
-             def=`echo "HAVE_$func" | tr 'a-z' 'A-Z'`
-             AC_DEFINE_UNQUOTED($def, 1, [If you have $func]),
-             AC_MSG_RESULT(but still no)
-             )
-)
+AC_CHECK_FUNCS([bitncmp \
+  gettimeofday \
+  if_indextoname
+],[
+],[
+  func="$ac_func"
+  AC_MSG_CHECKING([deeper for $func])
+  AC_LINK_IFELSE([
+    AC_LANG_PROGRAM([[
+    ]],[[
+      $func ();
+    ]])
+  ],[
+    AC_MSG_RESULT([yes])
+    eval "ac_cv_func_$func=yes"
+    AC_DEFINE_UNQUOTED(AS_TR_CPP([HAVE_$func]), [1],
+      [Define to 1 if you have the $func function.])
+  ],[
+    AC_MSG_RESULT([but still no])
+  ])
+])
 
 
-dnl check for inet_pton
-AC_CHECK_FUNCS(inet_pton)
-dnl Some systems have it, but not IPv6
-if test "$ac_cv_func_inet_pton" = "yes" ; then
-AC_MSG_CHECKING(if inet_pton supports IPv6)
-AC_TRY_RUN(
-  [
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-int main()
-  {
-    struct in6_addr addr6;
-    if (inet_pton(AF_INET6, "::1", &addr6) < 1)
-      exit(1);
-    else
-      exit(0);
-  }
-  ], [
-       AC_MSG_RESULT(yes)
-       AC_DEFINE_UNQUOTED(HAVE_INET_PTON_IPV6,1,[Define to 1 if inet_pton supports IPv6.])
-     ], AC_MSG_RESULT(no),AC_MSG_RESULT(no))
-fi
 dnl Check for inet_net_pton
 AC_CHECK_FUNCS(inet_net_pton)
 dnl Again, some systems have it, but not IPv6
@@ -715,39 +761,6 @@ int main()
      ], AC_MSG_RESULT(no),AC_MSG_RESULT(no))
 fi
 
-
-dnl Check for inet_ntop
-AC_CHECK_FUNCS(inet_ntop)
-dnl Again, some systems have it, but not IPv6
-if test "$ac_cv_func_inet_ntop" = "yes" ; then
-AC_MSG_CHECKING(if inet_ntop supports IPv6)
-AC_TRY_RUN(
-  [
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#include <errno.h>
-int main()
-  {
-    struct in6_addr addr6;
-    char buf[128];
-    if (inet_ntop(AF_INET6, &addr6, buf, 128) == 0 && errno == EAFNOSUPPORT)
-      exit(1);
-    else
-      exit(0);
-  }
-  ], [
-       AC_MSG_RESULT(yes)
-       AC_DEFINE_UNQUOTED(HAVE_INET_NTOP_IPV6,1,
-          [Define to 1 if inet_ntop supports IPv6.])
-     ], AC_MSG_RESULT(no),AC_MSG_RESULT(no))
-fi
 
 AC_CHECK_SIZEOF(struct in6_addr, ,
 [
@@ -811,12 +824,6 @@ dnl and get the types of five of its arguments.
 CURL_CHECK_FUNC_GETNAMEINFO
 
 
-dnl God bless non-standardized functions! We need to see which getservbyport_r
-dnl variant is available
-CARES_CHECK_GETSERVBYPORT_R
-
-CURL_CHECK_NONBLOCKING_SOCKET
-
 AC_C_BIGENDIAN(
     [AC_DEFINE(ARES_BIG_ENDIAN, 1,
       [define this if ares is built for a big endian system])],
@@ -830,8 +837,15 @@ AC_HELP_STRING([--with-random=FILE],
                [read randomness from FILE (default=/dev/urandom)]),
     [ RANDOM_FILE="$withval" ],
     [
-        dnl Check for random device
-        AC_CHECK_FILE("/dev/urandom", [ RANDOM_FILE="/dev/urandom"] )
+        dnl Check for random device.  If we're cross compiling, we can't
+        dnl check, and it's better to assume it doesn't exist than it is
+        dnl to fail on AC_CHECK_FILE or later.
+        if test "$cross_compiling" = "no"; then
+          AC_CHECK_FILE("/dev/urandom", [ RANDOM_FILE="/dev/urandom"] )
+        else
+          AC_MSG_WARN([cannot check for /dev/urandom while cross compiling; assuming none])
+        fi
+        
     ]
 )
 if test -n "$RANDOM_FILE" && test X"$RANDOM_FILE" != Xno ; then
@@ -840,4 +854,23 @@ if test -n "$RANDOM_FILE" && test X"$RANDOM_FILE" != Xno ; then
         [a suitable file/device to read random data from])
 fi
 
-AC_OUTPUT(Makefile libcares.pc)
+CARES_CHECK_OPTION_NONBLOCKING
+CARES_CHECK_NONBLOCKING_SOCKET
+
+CARES_CONFIGURE_SYMBOL_HIDING
+
+CARES_PRIVATE_LIBS="$LIBS"
+AC_SUBST(CARES_PRIVATE_LIBS)
+
+dnl squeeze whitespace out of some variables
+
+squeeze CFLAGS
+squeeze CPPFLAGS
+squeeze DEFS
+squeeze LDFLAGS
+squeeze LIBS
+
+squeeze CARES_PRIVATE_LIBS
+
+AC_CONFIG_FILES([Makefile libcares.pc])
+AC_OUTPUT

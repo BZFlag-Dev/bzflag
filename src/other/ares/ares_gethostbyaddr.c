@@ -14,18 +14,27 @@
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
  */
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
 #endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#  include <arpa/inet.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
 #endif
 
 #include <stdio.h>
@@ -33,8 +42,8 @@
 #include <string.h>
 
 #include "ares.h"
-#include "ares_private.h"
 #include "inet_net_pton.h"
+#include "ares_private.h"
 
 #ifdef WATT32
 #undef WIN32
@@ -43,8 +52,7 @@
 struct addr_query {
   /* Arguments passed to ares_gethostbyaddr() */
   ares_channel channel;
-  union ares_addr addr;
-  int family;
+  struct ares_addr addr;
   ares_host_callback callback;
   void *arg;
 
@@ -57,7 +65,8 @@ static void addr_callback(void *arg, int status, int timeouts,
                           unsigned char *abuf, int alen);
 static void end_aquery(struct addr_query *aquery, int status,
                        struct hostent *host);
-static int file_lookup(union ares_addr *addr, int family, struct hostent **host);
+static int file_lookup(struct ares_addr *addr, struct hostent **host);
+static void ptr_rr_name(char *name, const struct ares_addr *addr);
 
 void ares_gethostbyaddr(ares_channel channel, const void *addr, int addrlen,
                         int family, ares_host_callback callback, void *arg)
@@ -70,8 +79,8 @@ void ares_gethostbyaddr(ares_channel channel, const void *addr, int addrlen,
       return;
     }
 
-  if ((family == AF_INET && addrlen != sizeof(struct in_addr)) ||
-      (family == AF_INET6 && addrlen != sizeof(struct in6_addr)))
+  if ((family == AF_INET && addrlen != sizeof(aquery->addr.addrV4)) ||
+      (family == AF_INET6 && addrlen != sizeof(aquery->addr.addrV6)))
     {
       callback(arg, ARES_ENOTIMP, 0, NULL);
       return;
@@ -85,10 +94,10 @@ void ares_gethostbyaddr(ares_channel channel, const void *addr, int addrlen,
     }
   aquery->channel = channel;
   if (family == AF_INET)
-    memcpy(&aquery->addr.addr4, addr, sizeof(struct in_addr));
+    memcpy(&aquery->addr.addrV4, addr, sizeof(aquery->addr.addrV4));
   else
-    memcpy(&aquery->addr.addr6, addr, sizeof(struct in6_addr));
-  aquery->family = family;
+    memcpy(&aquery->addr.addrV6, addr, sizeof(aquery->addr.addrV6));
+  aquery->addr.family = family;
   aquery->callback = callback;
   aquery->arg = arg;
   aquery->remaining_lookups = channel->lookups;
@@ -101,48 +110,26 @@ static void next_lookup(struct addr_query *aquery)
 {
   const char *p;
   char name[128];
-  int a1, a2, a3, a4, status;
+  int status;
   struct hostent *host;
-  unsigned long addr;
 
   for (p = aquery->remaining_lookups; *p; p++)
     {
       switch (*p)
         {
         case 'b':
-          if (aquery->family == AF_INET)
-            {
-              addr = ntohl(aquery->addr.addr4.s_addr);
-              a1 = (int)((addr >> 24) & 0xff);
-              a2 = (int)((addr >> 16) & 0xff);
-              a3 = (int)((addr >> 8) & 0xff);
-              a4 = (int)(addr & 0xff);
-              sprintf(name, "%d.%d.%d.%d.in-addr.arpa", a4, a3, a2, a1);
-              aquery->remaining_lookups = p + 1;
-              ares_query(aquery->channel, name, C_IN, T_PTR, addr_callback,
-                         aquery);
-            }
-          else
-            {
-              unsigned char *bytes;
-              bytes = (unsigned char *)&aquery->addr.addr6.s6_addr;
-              sprintf(name, "%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.ip6.arpa",
-                      bytes[15]&0xf, bytes[15] >> 4, bytes[14]&0xf, bytes[14] >> 4,
-                      bytes[13]&0xf, bytes[13] >> 4, bytes[12]&0xf, bytes[12] >> 4,
-                      bytes[11]&0xf, bytes[11] >> 4, bytes[10]&0xf, bytes[10] >> 4,
-                      bytes[9]&0xf, bytes[9] >> 4, bytes[8]&0xf, bytes[8] >> 4,
-                      bytes[7]&0xf, bytes[7] >> 4, bytes[6]&0xf, bytes[6] >> 4,
-                      bytes[5]&0xf, bytes[5] >> 4, bytes[4]&0xf, bytes[4] >> 4,
-                      bytes[3]&0xf, bytes[3] >> 4, bytes[2]&0xf, bytes[2] >> 4,
-                      bytes[1]&0xf, bytes[1] >> 4, bytes[0]&0xf, bytes[0] >> 4);
-              aquery->remaining_lookups = p + 1;
-              ares_query(aquery->channel, name, C_IN, T_PTR, addr_callback,
-                         aquery);
-            }
+          ptr_rr_name(name, &aquery->addr);
+          aquery->remaining_lookups = p + 1;
+          ares_query(aquery->channel, name, C_IN, T_PTR, addr_callback,
+                     aquery);
           return;
         case 'f':
-          status = file_lookup(&aquery->addr, aquery->family, &host);
-          if (status != ARES_ENOTFOUND)
+          status = file_lookup(&aquery->addr, &host);
+
+          /* this status check below previously checked for !ARES_ENOTFOUND,
+             but we should not assume that this single error code is the one
+             that can occur, as that is in fact no longer the case */
+          if (status == ARES_SUCCESS)
             {
               end_aquery(aquery, status, host);
               return;
@@ -158,16 +145,23 @@ static void addr_callback(void *arg, int status, int timeouts,
 {
   struct addr_query *aquery = (struct addr_query *) arg;
   struct hostent *host;
+  size_t addrlen;
 
   aquery->timeouts += timeouts;
   if (status == ARES_SUCCESS)
     {
-      if (aquery->family == AF_INET)
-        status = ares_parse_ptr_reply(abuf, alen, &aquery->addr.addr4,
-                                      sizeof(struct in_addr), AF_INET, &host);
+      if (aquery->addr.family == AF_INET)
+        {
+          addrlen = sizeof(aquery->addr.addrV4);
+          status = ares_parse_ptr_reply(abuf, alen, &aquery->addr.addrV4,
+                                        (int)addrlen, AF_INET, &host);
+        }
       else
-        status = ares_parse_ptr_reply(abuf, alen, &aquery->addr.addr6,
-                                      sizeof(struct in6_addr), AF_INET6, &host);
+        {
+          addrlen = sizeof(aquery->addr.addrV6);
+          status = ares_parse_ptr_reply(abuf, alen, &aquery->addr.addrV6,
+                                        (int)addrlen, AF_INET6, &host);
+        }
       end_aquery(aquery, status, host);
     }
   else if (status == ARES_EDESTRUCTION)
@@ -185,7 +179,7 @@ static void end_aquery(struct addr_query *aquery, int status,
   free(aquery);
 }
 
-static int file_lookup(union ares_addr *addr, int family, struct hostent **host)
+static int file_lookup(struct ares_addr *addr, struct hostent **host)
 {
   FILE *fp;
   int status;
@@ -238,21 +232,21 @@ static int file_lookup(union ares_addr *addr, int family, struct hostent **host)
           return ARES_EFILE;
         }
     }
-  while ((status = ares__get_hostent(fp, family, host)) == ARES_SUCCESS)
+  while ((status = ares__get_hostent(fp, addr->family, host)) == ARES_SUCCESS)
     {
-      if (family != (*host)->h_addrtype)
+      if (addr->family != (*host)->h_addrtype)
         {
           ares_free_hostent(*host);
           continue;
         }
-      if (family == AF_INET)
+      if (addr->family == AF_INET)
         {
-          if (memcmp((*host)->h_addr, &addr->addr4, sizeof(struct in_addr)) == 0)
+          if (memcmp((*host)->h_addr, &addr->addrV4, sizeof(addr->addrV4)) == 0)
             break;
         }
-      else if (family == AF_INET6)
+      else if (addr->family == AF_INET6)
         {
-          if (memcmp((*host)->h_addr, &addr->addr6, sizeof(struct in6_addr)) == 0)
+          if (memcmp((*host)->h_addr, &addr->addrV6, sizeof(addr->addrV6)) == 0)
             break;
         }
       ares_free_hostent(*host);
@@ -263,4 +257,35 @@ static int file_lookup(union ares_addr *addr, int family, struct hostent **host)
   if (status != ARES_SUCCESS)
     *host = NULL;
   return status;
+}
+
+static void ptr_rr_name(char *name, const struct ares_addr *addr)
+{
+  if (addr->family == AF_INET)
+    {
+       unsigned long laddr = ntohl(addr->addrV4.s_addr);
+       int a1 = (int)((laddr >> 24) & 0xff);
+       int a2 = (int)((laddr >> 16) & 0xff);
+       int a3 = (int)((laddr >> 8) & 0xff);
+       int a4 = (int)(laddr & 0xff);
+       sprintf(name, "%d.%d.%d.%d.in-addr.arpa", a4, a3, a2, a1);
+    }
+  else
+    {
+       unsigned char *bytes = (unsigned char *)&addr->addrV6;
+       /* There are too many arguments to do this in one line using
+        * minimally C89-compliant compilers */
+       sprintf(name,
+                "%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.",
+                bytes[15]&0xf, bytes[15] >> 4, bytes[14]&0xf, bytes[14] >> 4,
+                bytes[13]&0xf, bytes[13] >> 4, bytes[12]&0xf, bytes[12] >> 4,
+                bytes[11]&0xf, bytes[11] >> 4, bytes[10]&0xf, bytes[10] >> 4,
+                bytes[9]&0xf, bytes[9] >> 4, bytes[8]&0xf, bytes[8] >> 4);
+       sprintf(name+strlen(name),
+                "%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.ip6.arpa",
+                bytes[7]&0xf, bytes[7] >> 4, bytes[6]&0xf, bytes[6] >> 4,
+                bytes[5]&0xf, bytes[5] >> 4, bytes[4]&0xf, bytes[4] >> 4,
+                bytes[3]&0xf, bytes[3] >> 4, bytes[2]&0xf, bytes[2] >> 4,
+                bytes[1]&0xf, bytes[1] >> 4, bytes[0]&0xf, bytes[0] >> 4);
+    }
 }

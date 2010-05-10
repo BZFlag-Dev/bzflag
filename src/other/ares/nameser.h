@@ -3,48 +3,22 @@
 #ifndef ARES_NAMESER_H
 #define ARES_NAMESER_H
 
-/* Windows-only header file provided by liren@vivisimo.com to make his Windows
-   port build */
+/* header file provided by liren@vivisimo.com */
 
-#ifndef NETWARE
-#include <process.h> /* for the _getpid() proto */
-#endif  /* !NETWARE */
-#include <sys/types.h>
+#ifndef HAVE_ARPA_NAMESER_H
 
-#ifndef NETWARE
-
-#define MAXHOSTNAMELEN 256
-
-/* Structure for scatter/gather I/O.  */
-struct iovec
-{
-    void *iov_base;     /* Pointer to data.  */
-    size_t iov_len;     /* Length of data.  */
-};
-
-#ifndef __WATCOMC__
-#define getpid() _getpid()
-#endif
-
-int ares_writev (SOCKET s, const struct iovec *vector, size_t count);
-#define writev(s,vect,count)  ares_writev(s,vect,count)
-
-#ifndef HAVE_GETTIMEOFDAY
-struct timezone { int dummy; };
-#endif
-
-int ares_gettimeofday(struct timeval *tv, struct timezone *tz);
-#define gettimeofday(tv,tz) ares_gettimeofday(tv,tz)
-
-#endif  /* !NETWARE */
-
-#define NS_CMPRSFLGS  0xc0
-#define NS_IN6ADDRSZ  16
-#define NS_INT16SZ    2
-#define NS_INADDRSZ   4
-
-  /* Flag bits indicating name compression. */
-#define INDIR_MASK    NS_CMPRSFLGS
+#define NS_PACKETSZ     512   /* maximum packet size */
+#define NS_MAXDNAME     256   /* maximum domain name */
+#define NS_MAXCDNAME    255   /* maximum compressed domain name */
+#define NS_MAXLABEL     63
+#define NS_HFIXEDSZ     12    /* #/bytes of fixed data in header */
+#define NS_QFIXEDSZ     4     /* #/bytes of fixed data in query */
+#define NS_RRFIXEDSZ    10    /* #/bytes of fixed data in r record */
+#define NS_INT16SZ      2
+#define NS_INADDRSZ     4
+#define NS_IN6ADDRSZ    16
+#define NS_CMPRSFLGS    0xc0  /* Flag bits indicating name compression. */
+#define NS_DEFAULTPORT  53    /* For both TCP and UDP. */
 
 typedef enum __ns_class {
     ns_c_invalid = 0,       /* Cookie. */
@@ -57,8 +31,6 @@ typedef enum __ns_class {
     ns_c_any = 255,         /* Wildcard match. */
     ns_c_max = 65536
 } ns_class;
-
-#define C_IN           ns_c_in
 
 typedef enum __ns_type {
     ns_t_invalid = 0,       /* Cookie. */
@@ -103,6 +75,8 @@ typedef enum __ns_type {
     ns_t_dname = 39,        /* Non-terminal DNAME (for IPv6) */
     ns_t_sink = 40,         /* Kitchen sink (experimentatl) */
     ns_t_opt = 41,          /* EDNS0 option (meta-RR) */
+    ns_t_apl = 42,          /* Address prefix list (RFC3123) */
+    ns_t_tkey = 249,        /* Transaction key */
     ns_t_tsig = 250,        /* Transaction signature. */
     ns_t_ixfr = 251,        /* Incremental zone transfer. */
     ns_t_axfr = 252,        /* Transfer zone of authority. */
@@ -113,19 +87,6 @@ typedef enum __ns_type {
     ns_t_max = 65536
 } ns_type;
 
-#define T_PTR          ns_t_ptr
-#define T_A            ns_t_a
-
-
-#define NS_DEFAULTPORT        53      /* For both TCP and UDP. */
-#define NAMESERVER_PORT        NS_DEFAULTPORT
-
-#define NS_HFIXEDSZ   12      /* #/bytes of fixed data in header */
-#define HFIXEDSZ      NS_HFIXEDSZ
-
-#define NS_QFIXEDSZ   4       /* #/bytes of fixed data in query */
-#define QFIXEDSZ       NS_QFIXEDSZ
-
 typedef enum __ns_opcode {
     ns_o_query = 0,         /* Standard query. */
     ns_o_iquery = 1,        /* Inverse query (deprecated/unsupported). */
@@ -135,25 +96,6 @@ typedef enum __ns_opcode {
     ns_o_update = 5,        /* Zone update message. */
     ns_o_max = 6
 } ns_opcode;
-
-#define QUERY          ns_o_query
-
-#define NS_MAXLABEL   63
-#define MAXLABEL       NS_MAXLABEL
-
-#define NS_RRFIXEDSZ  10      /* #/bytes of fixed data in r record */
-#define RRFIXEDSZ      NS_RRFIXEDSZ
-
-#define T_CNAME                ns_t_cname
-
-#define NS_MAXDNAME   256     /* maximum domain name */
-#define MAXDNAME      NS_MAXDNAME
-
-#define NS_MAXCDNAME  255     /* maximum compressed domain name */
-#define MAXCDNAME     NS_MAXCDNAME
-
-#define NS_PACKETSZ   512     /* maximum packet size */
-#define PACKETSZ       NS_PACKETSZ
 
 typedef enum __ns_rcode {
     ns_r_noerror = 0,       /* No error occurred. */
@@ -175,6 +117,22 @@ typedef enum __ns_rcode {
     ns_r_badtime = 18
 } ns_rcode;
 
+#endif /* HAVE_ARPA_NAMESER_H */
+
+#ifndef HAVE_ARPA_NAMESER_COMPAT_H
+
+#define PACKETSZ         NS_PACKETSZ
+#define MAXDNAME         NS_MAXDNAME
+#define MAXCDNAME        NS_MAXCDNAME
+#define MAXLABEL         NS_MAXLABEL
+#define HFIXEDSZ         NS_HFIXEDSZ
+#define QFIXEDSZ         NS_QFIXEDSZ
+#define RRFIXEDSZ        NS_RRFIXEDSZ
+#define INDIR_MASK       NS_CMPRSFLGS
+#define NAMESERVER_PORT  NS_DEFAULTPORT
+
+#define QUERY           ns_o_query
+
 #define SERVFAIL        ns_r_servfail
 #define NOTIMP          ns_r_notimpl
 #define REFUSED         ns_r_refused
@@ -183,6 +141,7 @@ typedef enum __ns_rcode {
 #define FORMERR         ns_r_formerr
 #define NXDOMAIN        ns_r_nxdomain
 
+#define C_IN            ns_c_in
 #define C_CHAOS         ns_c_chaos
 #define C_HS            ns_c_hs
 #define C_NONE          ns_c_none
@@ -229,5 +188,7 @@ typedef enum __ns_rcode {
 #define T_MAILB         ns_t_mailb
 #define T_MAILA         ns_t_maila
 #define T_ANY           ns_t_any
+
+#endif /* HAVE_ARPA_NAMESER_COMPAT_H */
 
 #endif /* ARES_NAMESER_H */

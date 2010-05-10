@@ -15,16 +15,21 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <netinet/in.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
 #endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
 #endif
 
 #include <stdlib.h>
@@ -64,17 +69,21 @@ int ares_expand_name(const unsigned char *encoded, const unsigned char *abuf,
   int len, indir = 0;
   char *q;
   const unsigned char *p;
+  union {
+    ssize_t sig;
+     size_t uns;
+  } nlen;
 
-  len = name_length(encoded, abuf, alen);
-  if (len == -1)
+  nlen.sig = name_length(encoded, abuf, alen);
+  if (nlen.sig < 0)
     return ARES_EBADNAME;
 
-  *s = malloc(len + 1);
+  *s = malloc(nlen.uns + 1);
   if (!*s)
     return ARES_ENOMEM;
   q = *s;
 
-  if (len == 0) {
+  if (nlen.uns == 0) {
     /* RFC2181 says this should be ".": the root of the DNS tree.
      * Since this function strips trailing dots though, it becomes ""
      */
@@ -171,4 +180,15 @@ static int name_length(const unsigned char *encoded, const unsigned char *abuf,
    * less than the number of labels, so subtract one.
    */
   return (n) ? n - 1 : n;
+}
+
+/* Like ares_expand_name but returns EBADRESP in case of invalid input. */
+int ares__expand_name_for_response(const unsigned char *encoded,
+                                   const unsigned char *abuf, int alen,
+                                   char **s, long *enclen)
+{
+  int status = ares_expand_name(encoded, abuf, alen, s, enclen);
+  if (status == ARES_EBADNAME)
+    status = ARES_EBADRESP;
+  return status;
 }

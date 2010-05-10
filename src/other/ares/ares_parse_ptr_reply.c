@@ -15,18 +15,28 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
 #endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
+#endif
+
+#ifdef HAVE_STRINGS_H
+#  include <strings.h>
 #endif
 
 #include <stdlib.h>
@@ -44,6 +54,9 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
   const unsigned char *aptr;
   char *ptrname, *hostname, *rr_name, *rr_data;
   struct hostent *hostent;
+  int aliascnt = 0;
+  int alias_alloc = 8;
+  char ** aliases;
 
   /* Set *host to NULL for all failure cases. */
   *host = NULL;
@@ -60,7 +73,7 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
 
   /* Expand the name from the question, and skip past the question. */
   aptr = abuf + HFIXEDSZ;
-  status = ares_expand_name(aptr, abuf, alen, &ptrname, &len);
+  status = ares__expand_name_for_response(aptr, abuf, alen, &ptrname, &len);
   if (status != ARES_SUCCESS)
     return status;
   if (aptr + len + QFIXEDSZ > abuf + alen)
@@ -72,10 +85,16 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
 
   /* Examine each answer resource record (RR) in turn. */
   hostname = NULL;
+  aliases = malloc(alias_alloc * sizeof(char *));
+  if (!aliases)
+    {
+      free(ptrname);
+      return ARES_ENOMEM;
+    }
   for (i = 0; i < (int)ancount; i++)
     {
       /* Decode the RR up to the data field. */
-      status = ares_expand_name(aptr, abuf, alen, &rr_name, &len);
+      status = ares__expand_name_for_response(aptr, abuf, alen, &rr_name, &len);
       if (status != ARES_SUCCESS)
         break;
       aptr += len;
@@ -93,18 +112,38 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
           && strcasecmp(rr_name, ptrname) == 0)
         {
           /* Decode the RR data and set hostname to it. */
-          status = ares_expand_name(aptr, abuf, alen, &rr_data, &len);
+          status = ares__expand_name_for_response(aptr, abuf, alen, &rr_data,
+                                                  &len);
           if (status != ARES_SUCCESS)
             break;
           if (hostname)
             free(hostname);
           hostname = rr_data;
+          aliases[aliascnt] = malloc((strlen(rr_data)+1) * sizeof(char *));
+          if (!aliases[aliascnt])
+            {
+              status = ARES_ENOMEM;
+              break;
+            }
+          strncpy(aliases[aliascnt], rr_data, strlen(rr_data)+1);
+          aliascnt++;
+          if (aliascnt >= alias_alloc) {
+            char **ptr;
+            alias_alloc *= 2;
+            ptr = realloc(aliases, alias_alloc * sizeof(char *));
+            if(!ptr) {
+              status = ARES_ENOMEM;
+              break;
+            }
+            aliases = ptr;
+          }
         }
 
       if (rr_class == C_IN && rr_type == T_CNAME)
         {
           /* Decode the RR data and replace ptrname with it. */
-          status = ares_expand_name(aptr, abuf, alen, &rr_data, &len);
+          status = ares__expand_name_for_response(aptr, abuf, alen, &rr_data,
+                                                  &len);
           if (status != ARES_SUCCESS)
             break;
           free(ptrname);
@@ -134,17 +173,20 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
               hostent->h_addr_list[0] = malloc(addrlen);
               if (hostent->h_addr_list[0])
                 {
-                  hostent->h_aliases = malloc(sizeof (char *));
+                  hostent->h_aliases = malloc((aliascnt+1) * sizeof (char *));
                   if (hostent->h_aliases)
                     {
                       /* Fill in the hostent and return successfully. */
                       hostent->h_name = hostname;
-                      hostent->h_aliases[0] = NULL;
+                      for (i=0 ; i<aliascnt ; i++)
+                        hostent->h_aliases[i] = aliases[i];
+                      hostent->h_aliases[aliascnt] = NULL;
                       hostent->h_addrtype = family;
                       hostent->h_length = addrlen;
                       memcpy(hostent->h_addr_list[0], addr, addrlen);
                       hostent->h_addr_list[1] = NULL;
                       *host = hostent;
+                      free(aliases);
                       free(ptrname);
                       return ARES_SUCCESS;
                     }
@@ -156,6 +198,10 @@ int ares_parse_ptr_reply(const unsigned char *abuf, int alen, const void *addr,
         }
       status = ARES_ENOMEM;
     }
+  for (i=0 ; i<aliascnt ; i++)
+    if (aliases[i]) 
+      free(aliases[i]);
+  free(aliases);
   if (hostname)
     free(hostname);
   free(ptrname);

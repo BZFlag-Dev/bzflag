@@ -1,6 +1,7 @@
-/* $Id: ares_parse_aaaa_reply.c,v 1.8 2007-11-16 09:36:00 sesse Exp $ */
+/* $Id$ */
 
-/* Copyright 2005 Dominick Meglio
+/* Copyright 1998 by the Massachusetts Institute of Technology.
+ * Copyright 2005 Dominick Meglio
  *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
@@ -15,33 +16,46 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#  include <arpa/inet.h>
+#endif
 #ifdef HAVE_ARPA_NAMESER_H
-#include <arpa/nameser.h>
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
 #endif
 #ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
+#  include <arpa/nameser_compat.h>
 #endif
+
+#ifdef HAVE_STRINGS_H
+#  include <strings.h>
 #endif
 
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
+#ifdef HAVE_LIMITS_H
+#  include <limits.h>
+#endif
+
 #include "ares.h"
 #include "ares_dns.h"
 #include "inet_net_pton.h"
 #include "ares_private.h"
 
 int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
-                          struct hostent **host, struct addr6ttl *addrttls,
+                          struct hostent **host, struct ares_addr6ttl *addrttls,
                           int *naddrttls)
 {
   unsigned int qdcount, ancount;
@@ -51,7 +65,7 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
   long len;
   const unsigned char *aptr;
   char *hostname, *rr_name, *rr_data, **aliases;
-  struct in6_addr *addrs;
+  struct ares_in6_addr *addrs;
   struct hostent *hostent;
   const int max_addr_ttls = (addrttls && naddrttls) ? *naddrttls : 0;
 
@@ -74,7 +88,7 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
 
   /* Expand the name from the question, and skip past the question. */
   aptr = abuf + HFIXEDSZ;
-  status = ares_expand_name(aptr, abuf, alen, &hostname, &len);
+  status = ares__expand_name_for_response(aptr, abuf, alen, &hostname, &len);
   if (status != ARES_SUCCESS)
     return status;
   if (aptr + len + QFIXEDSZ > abuf + alen)
@@ -87,7 +101,7 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
   /* Allocate addresses and aliases; ancount gives an upper bound for both. */
   if (host)
     {
-      addrs = malloc(ancount * sizeof(struct in6_addr));
+      addrs = malloc(ancount * sizeof(struct ares_in6_addr));
       if (!addrs)
         {
           free(hostname);
@@ -113,7 +127,7 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
   for (i = 0; i < (int)ancount; i++)
     {
       /* Decode the RR up to the data field. */
-      status = ares_expand_name(aptr, abuf, alen, &rr_name, &len);
+      status = ares__expand_name_for_response(aptr, abuf, alen, &rr_name, &len);
       if (status != ARES_SUCCESS)
         break;
       aptr += len;
@@ -129,27 +143,27 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
       aptr += RRFIXEDSZ;
 
       if (rr_class == C_IN && rr_type == T_AAAA
-          && rr_len == sizeof(struct in6_addr)
+          && rr_len == sizeof(struct ares_in6_addr)
           && strcasecmp(rr_name, hostname) == 0)
         {
           if (addrs)
             {
-              if (aptr + sizeof(struct in6_addr) > abuf + alen)
+              if (aptr + sizeof(struct ares_in6_addr) > abuf + alen)
               {
                 status = ARES_EBADRESP;
                 break;
               }
-              memcpy(&addrs[naddrs], aptr, sizeof(struct in6_addr));
+              memcpy(&addrs[naddrs], aptr, sizeof(struct ares_in6_addr));
             }
           if (naddrs < max_addr_ttls)
             {
-              struct addr6ttl * const at = &addrttls[naddrs];
-              if (aptr + sizeof(struct in6_addr) > abuf + alen)
+              struct ares_addr6ttl * const at = &addrttls[naddrs];
+              if (aptr + sizeof(struct ares_in6_addr) > abuf + alen)
               {
                 status = ARES_EBADRESP;
                 break;
               }
-              memcpy(&at->ip6addr, aptr,  sizeof(struct in6_addr));
+              memcpy(&at->ip6addr, aptr,  sizeof(struct ares_in6_addr));
               at->ttl = rr_ttl;
             }
           naddrs++;
@@ -166,7 +180,8 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
           naliases++;
 
           /* Decode the RR data and replace the hostname with it. */
-          status = ares_expand_name(aptr, abuf, alen, &rr_data, &len);
+          status = ares__expand_name_for_response(aptr, abuf, alen, &rr_data,
+                                                  &len);
           if (status != ARES_SUCCESS)
             break;
           free(hostname);
@@ -218,7 +233,7 @@ int ares_parse_aaaa_reply(const unsigned char *abuf, int alen,
                   hostent->h_name = hostname;
                   hostent->h_aliases = aliases;
                   hostent->h_addrtype = AF_INET6;
-                  hostent->h_length = sizeof(struct in6_addr);
+                  hostent->h_length = sizeof(struct ares_in6_addr);
                   for (i = 0; i < naddrs; i++)
                     hostent->h_addr_list[i] = (char *) &addrs[i];
                   hostent->h_addr_list[naddrs] = NULL;

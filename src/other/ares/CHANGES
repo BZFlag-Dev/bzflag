@@ -1,13 +1,548 @@
   Changelog for the c-ares project
 
-Version 1.5.1 (Nov 20, 2007)
+Version 1.7.1 (Mar 23, 2010)
 
-* November 20 2007 (Daniel Stenberg)
+* March 23, 2010 (Daniel Stenberg)
+- We switched from CVS to git. See http://github.com/bagder/c-ares
+
+* March 5, 2010 (Daniel Stenberg)
+- Daniel Johnson provided fixes for building with the clang compiler.
+
+* March 5, 2010 (Yang Tse)
+- Added IPv6 name servers support. Implementation has been based on code,
+  comments and feedback provided November and December of 2008 by Daniel
+  Stenberg, Gregor Jasny, Phil Blundell and myself, December 2009 by Cedric
+  Bail, and February 2010 by Jakub Hrozek on the c-ares mailing list. On
+  March I reviewed all that, selected the best of each, and adjusted or
+  extended parts of it to make the best fit.
+
+  The external and visible result of all this is that two new functions are
+  added to the external API, ares_get_servers() and ares_set_servers(), which
+  becomes now the preferred way of getting and setting name servers for any
+  ares channel as these support both IPv4 and IPv6 name servers.
+
+  In order to not break ABI compatibility, ares_init_options() with option
+  mask ARES_OPT_SERVERS and ares_save_options() may still be used in code
+  which is intended to run on IPv4-only stacks. But remember that these
+  functions do not support IPv6 name servers. This implies that if the user
+  is capable of defining or providing an IPv6 name server, and the app is
+  using ares_init_options() or ares_save_options() at some point to handle
+  the name servers, the app will likely loose IPv6 name servers.
+
+* January 28, 2010 (Daniel Stenberg)
+- Tommie Gannert pointed out a silly bug in ares_process_fd() since it didn't
+  check for broken connections like ares_process() did. Based on that, I
+  merged the two functions into a single generic one with two front-ends.
+
+* December 29, 2009 (Yang Tse)
+- Laszlo Tamas Szabo adjusted Makefile.msvc compiler options so that where
+  run-time error checks enabling compiler option /GZ was used it is replaced
+  with equivalent /RTCsu for Visual Studio 2003 and newer versions. Option
+  /GX is replaced with equivalent /EHsc for all versions. Also fixed socket
+  data type for internal configure_socket function.
+
+* December 21, 2009 (Yang Tse)
+- Ingmar Runge noticed that Windows config-win32.h configuration file
+  did not include a definition for HAVE_CLOSESOCKET which resulted in
+  function close() being inappropriately used to close sockets.
+
+Version 1.7.0 (Nov 30, 2009)
+
+* November 26, 2009 (Yang Tse)
+- Larry Lansing fixed ares_parse_srv_reply to properly parse replies
+  which might contain non-SRV answers, skipping over potential non-SRV
+  ones such as CNAMEs.
+
+* November 23, 2009 (Yang Tse)
+- Changed naming convention for c-ares libraries built with MSVC, details
+  and build instructions provided in README.msvc file.
+
+* November 22, 2009 (Yang Tse)
+- Jakub Hrozek fixed more function prototypes in man pages to sync them
+  with the ones declared in ares.h
+
+- Jakub Hrozek renamed addrttl and addr6ttl structs to ares_addrttl and
+  ares_addr6ttl in order to prevent name space pollution, along with
+  necessary changes to code base and man pages.This change does not break
+  ABI, there is no need to recompile existing applications. But existing
+  applications using these structs with the old name will need source code
+  adjustments when recompiled using c-ares 1.7.0.
+
+* November 21, 2009 (Yang Tse)
+- Added manifest stuff to Makefile.msvc.
+
+* November 20, 2009 (Yang Tse)
+- Fixed several function prototypes in man pages that were out of sync
+  with the ones declared in ares.h.  Added ares_free_data() along with
+  man page.  Updated ares_parse_srv_reply() and ares_parse_txt_reply()
+  with changes from Jakub Hrozek making these now return linked lists
+  instead of arrays, and merging the ares_free_data() adjustments.
+
+* November 10, 2009 (Yang Tse)
+- Updated MSVC 6.0 project files to match settings from Makefile.msvc.
+
+* November 9, 2009 (Yang Tse)
+- Makefile.msvc is now the reference method to build c-ares and sample
+  programs with any MSVC compiler or MS Visual Studio version.  If no
+  option or target are specified it builds dynamic and static c-ares
+  libraries in debug and release flavours and also builds all sample
+  programs using each of the different c-ares libraries.
+
+* November 2, 2009 (Yang Tse)
+- Renamed c-ares setup.h to ares_setup.h
+
+* October 31, 2009 (Yang Tse)
+- Symbol hiding configure options are named now --enable-symbol-hiding
+  and --disable-symbol-hiding in an attempt to make them less ambiguous.
+
+* October 30, 2009 (Yang Tse)
+- Many fixes for ares_parse_txt_reply()
+
+* October 29, 2009 (Daniel Stenberg)
+- Jakub Hrozek added ares_parse_txt_reply() for TXT parsing
+
+* October 29, 2009 (Yang Tse)
+- Updated MSVC 6.0 workspace and project files that allows building
+  dynamic and static c-ares libraries in debug and release flavours.
+  Additionally each of the three sample programs is built against
+  each of the four possible c-ares libraries, generating all this
+  a total number of 12 executables and 4 libraries.
+
+* October 28, 2009 (Yang Tse)
+- Initial step towards the ability to reduce c-ares exported symbols
+  when built as a shared library based on the 'visibility' attribute
+  for GNUC and Intel compilers and based on __global for Sun compilers,
+  taking also in account __declspec function decoration for Win32 and
+  Symbian DLL's.
+
+* October 27, 2009 (Yang Tse)
+- Fixed Pelles C Win32 target compilation issues.
+
+* October 23, 2009 (Yang Tse)
+- John Engelhart noticed an unreleased problem relative to a duplicate
+  ARES_ECANCELLED error code value and missing error code description.
+
+* October 7, 2009 (Yang Tse)
+- Overhauled ares__get_hostent() Fixing out of bounds memory overwrite
+  triggered with malformed /etc/hosts file. Improving parsing of /etc/hosts
+  file. Validating requested address family. Ensuring that failures always
+  return a NULL pointer. Adjusting header inclusions.
+
+* October 6, 2009 (Yang Tse)
+- Fix ssize_t redefinition errors on WIN64 reported by Alexey Simak.
+
+* September 29, 2009 (Yang Tse)
+- Make configure script also check if _REENTRANT definition is required to
+  make errno available as a preprocessor macro.
+
+* September 7, 2009 (Yang Tse)
+- Add T_SRV portability check to ares_parse_srv_reply.c
+
+* 4 Sep 2009 (Daniel Stenberg)
+- Jakub Hrozek added ares_parse_srv_reply() for SRV parsing
+
+* 3 Aug 2009 (Daniel Stenberg)
+- Joshua Kwan fixed the init routine to fill in the defaults for stuff that
+  fails to get inited by other means. This fixes a case of when the c-ares
+  init fails when internet access is fone.
+
+- Timo Teras changed the reason code used in the resolve callback done when
+  ares_cancel() is used, to be ARES_ECANCELLED instead of ARES_ETIMEOUT to
+  better allow the callback to know what's happening.
+
+* 14 Jul 2009 (Guenter Knauf)
+- renamed generated config.h to ares_config.h to avoid any future clashes
+  with config.h from other projects.
+
+* June 20 2009 (Yang Tse)
+- Refactor how libraries are checked for connect() function in configure
+  script and check for connect() as it is done for other functions.
+
+* June 19 2009 (Yang Tse)
+- Make sclose() function-like macro definition used to close a socket,
+  now solely based on HAVE_CLOSESOCKET and HAVE_CLOSESOCKET_CAMEL
+  config file preprocessor definitions
+
+* June 18 2009 (Yang Tse)
+- Add CloseSocket camel case function check for configure script.
+
+* June 17 2009 (Yang Tse)
+- Check for socket() and closesocket() as it is done for other functions
+  in configure script.
+
+* June 11 2009 (Yang Tse)
+- Modified buildconf so that when automake runs it copies missing files
+  instead of symlinking them.
+
+* June 8 2009 (Yang Tse)
+- Removed buildconf.bat from release and daily snapshot archives. This
+  file is only for CVS tree checkout builds.
+
+* May 26 2009 (Yang Tse)
+- Added --enable-curldebug configure option to enable and disable building
+  with the low-level curl debug memory tracking 'feature' to allow decoupled
+  setting from --enable-debug, allowing again to build c-ares independently
+  out of the CVS tree.
+
+  For the c-ares library option --enable-debug enables debug build features
+  which are _not_ related with memory tracking. For the c-ares library when
+  --enable-debug is given it does not enable the memory tracking feature. If
+  you wish to enable the curl debug memory tracking you must use configure
+  option --enable-curldebug explicitily to do so.
+
+  Internally, definition of preprocessor symbol DEBUGBUILD restricts code
+  which is only compiled for debug enabled builds. And symbol CURLDEBUG is
+  used to differentiate code which is _only_ used for memory tracking.
+
+  Make ares_init(), ares_dup() and ares_init_options() fail returning
+  ARES_ENOTINITIALIZED if library initialization has not been performed
+  calling ares_library_init().
+
+* May 20 2009 (Yang Tse)
+- Added ares_library_init() and ares_library_cleanup() man pages.
+
+* May 19 2009 (Yang Tse)
+- Introduced ares_library_init() and ares_library_cleanup() functions.
+
+  This is an API and ABI break for Win32/64 systems. Non-Win32/64 build targets
+  using c-ares 1.7.0 can still survive without calling these functions. Read all
+  the details on ares_library_init(3) and ares_library_cleanup(3) man pages that
+  are included.
+
+  curl/libcurl 7.19.5 is fully compatible with c-ares 1.7.0 on all systems.
+
+  In order to use c-ares 1.7.0 with curl/libcurl on Win32/64 systems it is
+  required that curl/libcurl is 7.19.5 or newer. In other words, it is not
+  possible on Win32/64 to use c-ares 1.7.0 with a curl/libcurl version less
+  than 7.19.5
+
+* May 11 2009 (Daniel Stenberg)
+- Gregor Jasny made c-ares link with libtool 's -export-symbols-regex option to
+  only expose functions starting with ares_.
+
+* May 7 2009 (Yang Tse)
+- Fix an m4 overquoting triggering a spurious 'AS_TR_CPP' symbol definition
+  attempt in generated config.h
+
+* May 2 2009 (Yang Tse)
+- Use a build-time configured ares_socklen_t data type instead of socklen_t.
+
+* April 21 2009 (Yang Tse)
+- Moved potential inclusion of system's malloc.h and memory.h header files to
+  setup_once.h.  Inclusion of each header file is based on the definition of
+  NEED_MALLOC_H and NEED_MEMORY_H respectively.
+
+* March 11 2009 (Yang Tse)
+- Japheth Cleaver fixed acountry.c replacing u_long with unsigned long.
+
+* February 20 2009 (Yang Tse)
+- Do not halt compilation when using VS2008 to build a Windows 2000 target.
+
+* February 3 2009 (Phil Blundell)
+- If the server returns garbage or nothing at all in response to an AAAA query,
+  go on and ask for A records anyway.
+
+* January 31 2009 (Daniel Stenberg)
+- ares_gethostbyname() now accepts 'AF_UNSPEC' as a family for resolving
+  either AF_INET6 or AF_INET. It works by accepting any of the looksups in the
+  hosts file, and it resolves the AAAA field with a fallback to A.
+
+* January 14 2009 (Daniel Stenberg)
+- ares.h no longer uses the HAVE_STRUCT_IN6_ADDR define check, but instead it
+  now declares the private struct ares_in6_addr for all systems instead of
+  relying on one possibly not present in the system.
+
+* January 13 2009 (Phil Blundell)
+- ares__send_query() now varies the retry timeout pseudo-randomly to avoid
+  packet storms when several queries were started at the same time.
+
+* January 11 2009 (Daniel Stenberg)
+- Phil Blundell added the internal function ares__expand_name_for_response()
+  that is now used by the ares_parse_*_reply() functions instead of the
+  ares_expand_name() simply to easier return ARES_EBADRESP for the cases where
+  the name expansion fails as in responses that really isn't expected.
+
+Version 1.6.0 (Dec 9, 2008)
+
+* December 9 2008 (Gisle Vanem)
+
+  Fixes for Win32 targets using the Watt-32 tcp/ip stack.
+
+* Dec 4 2008 (Daniel Stenberg)
+
+  Gregor Jasny provided the patch that introduces ares_set_socket_callback(),
+  and I edited it to also get duped by ares_dup().
+
+* Dec 3 2008 (Daniel Stenberg)
+
+  API changes:
+
+  I made sure the public ares_config struct looks like before and yet it
+  supports the ROTATE option thanks to c-ares now storing the "optmask"
+  internally. Thus we should be ABI compatible with the past release(s)
+  now. My efforts mentioned below should not break backwards ABI compliance.
+
+  Here's how I suggest we proceed with the API:
+
+  ares_init() will be primary "channel creator" function.
+
+  ares_init_options() will continue to work exactly like now and before. For
+  starters, it will be the (only) way to set the existing options.
+
+  ares_save_options() will continue to work like today, but will ONLY save
+  options that you can set today (including ARES_OPT_ROTATE actually) but new
+  options that we add may not be saved with this.
+
+  Instead we introduce:
+
+  ares_dup() that instead can make a new channel and clone the config used
+  from an existing channel. It will then clone all config options, including
+  future new things we add.
+
+  ares_set_*() style functions that set (new) config options. As a start we
+  simply add these for new functionality, but over time we can also introduce
+  them for existing "struct ares_options" so that we can eventually deprecate
+  the two ares_*_options() functions.
+
+  ares_get_*() style functions for extracting info from a channel handle that
+  should be used instead of ares_save_options().
+
+* Nov 26 2008 (Yang Tse)
+- Brad Spencer provided changes to allow buildconf to work on OS X.
+
+- Gerald Combs fixed a bug in ares_parse_ptr_reply() which would cause a
+  buffer to shrink instead of expand if a reply contained 8 or more records.
+
+* Nov 25 2008 (Yang Tse)
+- In preparation for the upcomming IPv6 nameservers patch, the internal
+  ares_addr union is now changed into an internal struct which also holds
+  the address family.
+
+* Nov 19 2008 (Daniel Stenberg)
+- Brad Spencer brought the new function ares_gethostbyname_file() which simply
+  resolves a host name from the given file, using the regular hosts syntax.
+
+* Nov 1 2008 (Daniel Stenberg)
+- Carlo Contavalli added support for the glibc "rotate" option, as documented
+  in man resolv.conf:
+
+  causes round robin selection of nameservers from among those listed.  This
+  has the effect of spreading the query load among all listed servers, rather
+  than having all clients try the first listed server first every time.
+
+  You can enable it with ARES_OPT_ROTATE
+
+* Oct 21 2008 (Yang Tse)
+  Charles Hardin added handling of EINPROGRESS for UDP connects.
+
+* Oct 18 2008 (Daniel Stenberg)
+  Charles Hardin made adig support a regular numerical dotted IP address for the
+  -s option as well.
+
+* Oct 7 2008 (Yang Tse)
+- Added --enable-optimize configure option to enable and disable compiler
+  optimizations to allow decoupled setting from --enable-debug.
+
+* Oct 2 2008 (Yang Tse)
+- Added --enable-warnings configure option to enable and disable strict
+  compiler warnings to allow decoupled setting from --enable-debug.
+
+* Sep 17 2008 (Yang Tse)
+- Code reorganization to allow internal/private use of "nameser.h" to any
+  system that lacks arpa/nameser.h or arpa/nameser_compat.h header files.
+
+* Sep 16 2008 (Yang Tse)
+- Code reorganization to allow internal/private use of ares_writev to any
+  system that lacks the writev function.
+
+* Sep 15 2008 (Yang Tse)
+- Code reorganization to allow internal/private use of ares_strcasecmp to any
+  system that lacks the strcasecmp function.
+
+- Improve configure detection of some string functions.
+
+* Sep 11 2008 (Yang Tse)
+- Code reorganization to allow internal/private use of ares_strdup to any
+  system that lacks the strdup function.
+
+Version 1.5.3 (Aug 29, 2008)
+
+* Aug 25 2008 (Yang Tse)
+- Improvement by Brad House:
+
+  This patch addresses an issue in which a response could be sent back to the
+  source port of a client from a different address than the request was made to.
+  This is one form of a DNS cache poisoning attack.
+
+  The patch simply uses recvfrom() rather than recv() and validates that the
+  address returned from recvfrom() matches the address of the server we have
+  connected to. Only necessary on UDP sockets as they are connection-less, TCP
+  is unaffected.
+
+- Fix by George Neill:
+  Fixed compilation of acountry sample application failure on some systems.
+
+* Aug 4 2008 (Daniel Stenberg)
+- Fix by Tofu Linden:
+
+  The symptom:
+  * Users (usually, but not always) on 2-Wire routers and the Comcast service
+  and a wired connection to their router would find that the second and
+  subsequent DNS lookups from fresh processes using c-ares to resolve the same
+  address would cause the process to never see a reply (it keeps polling for
+  around 1m15s before giving up).
+
+  The repro:
+  * On such a machine (and yeah, it took us a lot of QA to find the systems
+  that reproduce such a specific problem!), do 'ahost www.secondlife.com',
+  then do it again.  The first process's lookup will work, subsequent lookups
+  will time-out and fail.
+
+  The cause:
+  * init_id_key() was calling randomize_key() *before* it initialized
+  key->state, meaning that the randomness generated by randomize_key() is
+  immediately overwritten with deterministic values. (/dev/urandom was also
+  being read incorrectly in the c-ares version we were using, but this was
+  fixed in a later version.)
+  * This makes the stream of generated query-IDs from any new c-ares process
+  be an identical and predictable sequence of IDs.
+  * This makes the 2-Wire's default built-in DNS server detect these queries
+  as probable-duplicates and (erroneously) not respond at all.
+
+
+* Aug 4 2008 (Yang Tse)
+- Autoconf 2.62 has changed the behaviour of the AC_AIX macro which we use.
+  Prior versions of autoconf defined _ALL_SOURCE if _AIX was defined. 2.62
+  version of AC_AIX defines _ALL_SOURCE and other four preprocessor symbols
+  no matter if the system is AIX or not. To keep the traditional behaviour,
+  and an uniform one across autoconf versions AC_AIX is replaced with our
+  own internal macro CARES_CHECK_AIX_ALL_SOURCE.
+
+* Aug 1 2008 (Yang Tse)
+- Configure process now checks if the preprocessor _REENTRANT symbol is already
+  defined. If it isn't currently defined a set of checks are performed to test
+  if its definition is required to make visible to the compiler a set of *_r
+  functions. Finally, if _REENTRANT is already defined or needed it takes care
+  of making adjustments necessary to ensure that it is defined equally for the
+  configure process tests and generated config file.
+
+* Jul 20 2008 (Yang Tse)
+- When recvfrom prototype uses a void pointer for arguments 2, 5 or 6 this will
+  now cause the definition, as appropriate, of RECVFROM_TYPE_ARG2_IS_VOID,
+  RECVFROM_TYPE_ARG5_IS_VOID or RECVFROM_TYPE_ARG6_IS_VOID.
+
+* Jul 17 2008 (Yang Tse)
+- RECVFROM_TYPE_ARG2, RECVFROM_TYPE_ARG5 and RECVFROM_TYPE_ARG6 are now defined
+  to the data type pointed by its respective argument and not the pointer type.
+
+* Jul 16 2008 (Yang Tse)
+- Improved configure detection of number of arguments for getservbyport_r.
+  Detection is now based on compilation checks instead of linker ones.
+
+- Configure process now checks availability of recvfrom() socket function and
+  finds out its return type and the types of its arguments. Added definitions
+  for non-configure systems config files, and introduced macro sreadfrom which
+  will be used on udp sockets as a recvfrom() wrapper in the future.
+
+* Jul 15 2008 (Yang Tse)
+- Introduce definition of _REENTRANT symbol in setup.h to improve library
+  usability.  Previously the configure process only used the AC_SYS_LARGEFILE
+  macro for debug builds, now it is also used for non-debug ones enabling the
+  use of configure options --enable-largefile and --disable-largefile which
+  might be needed for library compatibility.  Remove checking the size of
+  curl_off_t, it is no longer needed.
+
+* Jul 3 2008 (Daniel Stenberg)
+- Phil Blundell: If you ask ares_gethostbyname() to do an AF_INET6 lookup and
+  the target host has only A records, it automatically falls back to an
+  AF_INET lookup and gives you the A results.  However, if the target host has
+  a CNAME record, this behaviour is defeated since the original query does
+  return some data even though ares_parse_aaa_reply() doesn't consider it
+  relevant. Here's a small patch to make it behave the same with and without
+  the CNAME.
+
+* Jul 2 2008 (Yang Tse)
+- Fallback to gettimeofday when monotonic clock is unavailable at run-time.
+
+* Jun 30 2008 (Daniel Stenberg)
+
+- As was pointed out to me by Andreas Schuldei, the MAXHOSTNAMELEN define is
+  not posix or anything and thus c-ares failed to build on hurd (and possibly
+  elsewhere). The define was also somewhat artificially used in the windows
+  port. Now, I instead rewrote the use of gethostbyname to enlarge the host
+  name buffer in case of need and totally avoid the use of the MAXHOSTNAMELEN
+  define. I thus also removed the defien from the namser.h file where it was
+  once added for the windows build.
+
+  I also fixed init_by_defaults() function to not leak memory in case if
+  error.
+
+* Jun 9 2008 (Yang Tse)
+
+- Make libcares.pc generated file for pkg-config include information relative
+  to the libraries needed for the static linking of c-ares.
+
+* May 30 2008 (Yang Tse)
+
+- Brad House fixed a missing header file inclusion in adig sample program.
+
+Version 1.5.2 (May 29, 2008)
+
+* May 13 2008 (Daniel Stenberg)
+
+- Introducing millisecond resolution support for the timeout option. See
+  ares_init_options()'s ARES_OPT_TIMEOUTMS.
+
+* May 9 2008 (Yang Tse)
+
+- Use monotonic time source if available, for private function ares__tvnow()
+
+* May 7 2008 (Daniel Stenberg)
+
+- Sebastian made c-ares able to return all PTR-records when doing reverse
+  lookups. It is not common practice to have multiple PTR-Records for a single
+  IP, but its perfectly legal and some sites have those.
+
+- Doug Goldstein provided a configure patch: updates autoconf 2.13 usage to
+  autoconf 2.57 usage (which is the version you have specified as the minimum
+  version). It's a minor change but it does clean up some warnings with newer
+  autoconf (specifically 2.62).
+
+* May 5 2008 (Yang Tse)
+
+- Improved parsing of resolver configuration files.
+
+* April 4 2008 (Daniel Stenberg)
+
+- Eino Tuominen improved the code when a file is used to seed the randomizer.
+
+- Alexey Simak made adig support NAPTR records
+
+- Alexey Simak fixed the VC dsp file by adding the missing source file
+  ares_expand_string.c
+
+* December 11 2007 (Gisle Vanem)
+
+- Added another sample application; acountry.c which converts an
+  IPv4-address(es) and/or host-name(s) to country-name and country-code.
+  This uses the service of the DNSBL at countries.nerd.dk.
+
+* December 3 2007 (Daniel Stenberg)
+
+- Brad Spencer fixed the configure script to assume that there's no
+  /dev/urandom when built cross-compiled as then the script cannot check for
+  it.
+
+- Erik Kline cleaned up ares_gethostbyaddr.c:next_lookup() somewhat
+
+Version 1.5.1 (Nov 21, 2007)
+
+* November 21 2007 (Daniel Stenberg)
 
 - Robin Cornelius pointed out that ares_llist.h was missing in the release
   archive for 1.5.0
 
-Version 1.5.0 (Nov 20, 2007)
+Version 1.5.0 (Nov 21, 2007)
 
 * October 2 2007 (Daniel Stenberg)
 
@@ -58,7 +593,7 @@ Version 1.5.0 (Nov 20, 2007)
 * July 14 2007 (Daniel Stenberg)
 
 - Vlad Dinulescu fixed two outstanding valgrind reports:
- 
+
   1. In ares_query.c , in find_query_by_id we compare q->qid (which is a short
   int variable) with qid, which is declared as an int variable.  Moreover,
   DNS_HEADER_SET_QID is used to set the value of qid, but DNS_HEADER_SET_QID
@@ -144,7 +679,7 @@ Version 1.4.0 (June 8, 2007)
 
 - Brad House added ares_save_options() and ares_destroy_options() that can be
   used to keep options for later re-usal when ares_init_options() is used.
-  
+
   Problem: Calling ares_init() for each lookup can be unnecessarily resource
          intensive.  On windows, it must LoadLibrary() or search the registry
          on each call to ares_init().  On unix, it must read and parse

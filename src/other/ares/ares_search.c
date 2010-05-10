@@ -15,15 +15,16 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
+#ifdef HAVE_STRINGS_H
+#  include <strings.h>
 #endif
 
 #include "ares.h"
@@ -59,7 +60,7 @@ void ares_search(ares_channel channel, const char *name, int dnsclass,
   char *s;
   const char *p;
   int status, ndots;
-            
+
   /* If name only yields one domain to search, then we don't have
    * to keep extra state, so just do an ares_query().
    */
@@ -147,7 +148,7 @@ static void search_callback(void *arg, int status, int timeouts,
   struct search_query *squery = (struct search_query *) arg;
   ares_channel channel = squery->channel;
   char *s;
-                
+
   squery->timeouts += timeouts;
 
   /* Stop searching unless we got a non-fatal error. */
@@ -160,7 +161,7 @@ static void search_callback(void *arg, int status, int timeouts,
       if (squery->trying_as_is)
         squery->status_as_is = status;
 
-      /* 
+      /*
        * If we ever get ARES_ENODATA along the way, record that; if the search
        * should run to the very end and we got at least one ARES_ENODATA,
        * then callers like ares_gethostbyname() may want to try a T_A search
@@ -237,7 +238,8 @@ static int single_domain(ares_channel channel, const char *name, char **s)
   const char *hostaliases;
   FILE *fp;
   char *line = NULL;
-  int linesize, status;
+  int status;
+  size_t linesize;
   const char *p, *q;
   int error;
 
@@ -289,10 +291,10 @@ static int single_domain(ares_channel channel, const char *name, char **s)
               if (status != ARES_SUCCESS)
                 return status;
             }
-          else 
+          else
             {
-              error = ERRNO;
-              switch(error) 
+              error = errno;
+              switch(error)
                 {
                 case ENOENT:
                 case ESRCH:
@@ -300,7 +302,7 @@ static int single_domain(ares_channel channel, const char *name, char **s)
                 default:
                   DEBUGF(fprintf(stderr, "fopen() failed with error: %d %s\n",
                                  error, strerror(error)));
-                  DEBUGF(fprintf(stderr, "Error opening file: %s\n", 
+                  DEBUGF(fprintf(stderr, "Error opening file: %s\n",
                                  hostaliases));
                   *s = NULL;
                   return ARES_EFILE;

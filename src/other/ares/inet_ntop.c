@@ -1,4 +1,4 @@
-/* $Id: inet_ntop.c,v 1.9 2007-02-26 04:33:19 giva Exp $ */
+/* $Id$ */
 
 /* Copyright (c) 1996 by Internet Software Consortium.
  *
@@ -16,23 +16,24 @@
  * SOFTWARE.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
 #ifdef HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
+#  include <sys/socket.h>
 #endif
 #ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-#ifdef HAVE_ARPA_NAMESER_H
-#include <arpa/nameser.h>
+#  include <netinet/in.h>
 #endif
 #ifdef HAVE_ARPA_INET_H
-#include <arpa/inet.h>
+#  include <arpa/inet.h>
 #endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
 #endif
 
 #include <ctype.h>
@@ -41,11 +42,12 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "ares.h"
 #include "ares_ipv6.h"
 #include "inet_ntop.h"
 
 
-#if !defined(HAVE_INET_NTOP) || !defined(HAVE_INET_NTOP_IPV6)
+#ifndef HAVE_INET_NTOP
 
 #ifdef SPRINTF_CHAR
 # define SPRINTF(x) strlen(sprintf/**/x)

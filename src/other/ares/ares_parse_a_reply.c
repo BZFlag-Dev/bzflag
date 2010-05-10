@@ -15,31 +15,46 @@
  * without express or implied warranty.
  */
 
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
 #endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#  include <arpa/inet.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
+#endif
+
+#ifdef HAVE_STRINGS_H
+#  include <strings.h>
 #endif
 
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
+#ifdef HAVE_LIMITS_H
+#  include <limits.h>
+#endif
+
 #include "ares.h"
 #include "ares_dns.h"
 #include "ares_private.h"
 
 int ares_parse_a_reply(const unsigned char *abuf, int alen,
                        struct hostent **host,
-                       struct addrttl *addrttls, int *naddrttls)
+                       struct ares_addrttl *addrttls, int *naddrttls)
 {
   unsigned int qdcount, ancount;
   int status, i, rr_type, rr_class, rr_len, rr_ttl, naddrs;
@@ -71,7 +86,7 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
 
   /* Expand the name from the question, and skip past the question. */
   aptr = abuf + HFIXEDSZ;
-  status = ares_expand_name(aptr, abuf, alen, &hostname, &len);
+  status = ares__expand_name_for_response(aptr, abuf, alen, &hostname, &len);
   if (status != ARES_SUCCESS)
     return status;
   if (aptr + len + QFIXEDSZ > abuf + alen)
@@ -83,7 +98,8 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
 
   if (host)
     {
-      /* Allocate addresses and aliases; ancount gives an upper bound for both. */
+      /* Allocate addresses and aliases; ancount gives an upper bound for
+         both. */
       addrs = malloc(ancount * sizeof(struct in_addr));
       if (!addrs)
         {
@@ -103,7 +119,7 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
       addrs = NULL;
       aliases = NULL;
     }
-  
+
   naddrs = 0;
   naliases = 0;
 
@@ -111,7 +127,7 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
   for (i = 0; i < (int)ancount; i++)
     {
       /* Decode the RR up to the data field. */
-      status = ares_expand_name(aptr, abuf, alen, &rr_name, &len);
+      status = ares__expand_name_for_response(aptr, abuf, alen, &rr_name, &len);
       if (status != ARES_SUCCESS)
         break;
       aptr += len;
@@ -141,7 +157,7 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
             }
           if (naddrs < max_addr_ttls)
             {
-              struct addrttl * const at = &addrttls[naddrs];
+              struct ares_addrttl * const at = &addrttls[naddrs];
               if (aptr + sizeof(struct in_addr) > abuf + alen)
               {
                 status = ARES_EBADRESP;
@@ -164,7 +180,8 @@ int ares_parse_a_reply(const unsigned char *abuf, int alen,
           naliases++;
 
           /* Decode the RR data and replace the hostname with it. */
-          status = ares_expand_name(aptr, abuf, alen, &rr_data, &len);
+          status = ares__expand_name_for_response(aptr, abuf, alen, &rr_data,
+                                                  &len);
           if (status != ARES_SUCCESS)
             break;
           free(hostname);

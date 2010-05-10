@@ -1,4 +1,4 @@
-/* $Id: ares_getnameinfo.c,v 1.27 2007-10-04 08:09:52 sesse Exp $ */
+/* $Id$ */
 
 /* Copyright 2005 by Dominick Meglio
  *
@@ -14,19 +14,34 @@
  * this software for any purpose.  It is provided "as is"
  * without express or implied warranty.
  */
-#include "setup.h"
+#include "ares_setup.h"
 
-#if defined(WIN32) && !defined(WATT32)
-#include "nameser.h"
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <arpa/nameser.h>
-#ifdef HAVE_ARPA_NAMESER_COMPAT_H
-#include <arpa/nameser_compat.h>
+#ifdef HAVE_GETSERVBYPORT_R
+#  if !defined(GETSERVBYPORT_R_ARGS) || \
+     (GETSERVBYPORT_R_ARGS < 4) || (GETSERVBYPORT_R_ARGS > 6)
+#    error "you MUST specifiy a valid number of arguments for getservbyport_r"
+#  endif
 #endif
+
+#ifdef HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+#endif
+#ifdef HAVE_NETINET_IN_H
+#  include <netinet/in.h>
+#endif
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+#ifdef HAVE_ARPA_INET_H
+#  include <arpa/inet.h>
+#endif
+#ifdef HAVE_ARPA_NAMESER_H
+#  include <arpa/nameser.h>
+#else
+#  include "nameser.h"
+#endif
+#ifdef HAVE_ARPA_NAMESER_COMPAT_H
+#  include <arpa/nameser_compat.h>
 #endif
 
 #ifdef HAVE_NET_IF_H
@@ -42,13 +57,9 @@
 #include <string.h>
 
 #include "ares.h"
-#include "ares_private.h"
 #include "ares_ipv6.h"
 #include "inet_ntop.h"
-
-#ifdef WATT32
-#undef WIN32
-#endif
+#include "ares_private.h"
 
 struct nameinfo_query {
   ares_nameinfo_callback callback;
@@ -63,9 +74,11 @@ struct nameinfo_query {
 };
 
 #ifdef HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID
-#define IPBUFSIZ 40+IF_NAMESIZE
+#define IPBUFSIZ \
+        (sizeof("ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255") + IF_NAMESIZE)
 #else
-#define IPBUFSIZ 40
+#define IPBUFSIZ \
+        (sizeof("ffff:ffff:ffff:ffff:ffff:ffff:255.255.255.255"))
 #endif
 
 static void nameinfo_callback(void *arg, int status, int timeouts, struct hostent *host);
@@ -77,18 +90,26 @@ static void append_scopeid(struct sockaddr_in6 *addr6, unsigned int scopeid,
 #endif
 static char *ares_striendstr(const char *s1, const char *s2);
 
-void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa, socklen_t salen,
+void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa,
+                      ares_socklen_t salen,
                       int flags, ares_nameinfo_callback callback, void *arg)
 {
   struct sockaddr_in *addr = NULL;
   struct sockaddr_in6 *addr6 = NULL;
   struct nameinfo_query *niquery;
+  unsigned int port = 0;
 
   /* Verify the buffer size */
   if (salen == sizeof(struct sockaddr_in))
-    addr = (struct sockaddr_in *)sa;
+    {
+      addr = (struct sockaddr_in *)sa;
+      port = addr->sin_port;
+    }
   else if (salen == sizeof(struct sockaddr_in6))
-    addr6 = (struct sockaddr_in6 *)sa;
+    {
+      addr6 = (struct sockaddr_in6 *)sa;
+      port = addr6->sin6_port;
+    }
   else
     {
       callback(arg, ARES_ENOTIMP, 0, NULL, NULL);
@@ -103,12 +124,7 @@ void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa, socklen_t
   if ((flags & ARES_NI_LOOKUPSERVICE) && !(flags & ARES_NI_LOOKUPHOST))
     {
       char buf[33], *service;
-      unsigned int port = 0;
 
-      if (salen == sizeof(struct sockaddr_in))
-        port = addr->sin_port;
-      else
-        port = addr6->sin6_port;
       service = lookup_service((unsigned short)(port & 0xffff),
                                flags, buf, sizeof(buf));
       callback(arg, ARES_SUCCESS, 0, NULL, service);
@@ -121,7 +137,6 @@ void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa, socklen_t
      /* A numeric host can be handled without DNS */
      if ((flags & ARES_NI_NUMERICHOST))
       {
-        unsigned int port = 0;
         char ipbuf[IPBUFSIZ];
         char srvbuf[33];
         char *service = NULL;
@@ -138,7 +153,6 @@ void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa, socklen_t
         if (salen == sizeof(struct sockaddr_in6))
           {
             ares_inet_ntop(AF_INET6, &addr6->sin6_addr, ipbuf, IPBUFSIZ);
-            port = addr6->sin6_port;
             /* If the system supports scope IDs, use it */
 #ifdef HAVE_SOCKADDR_IN6_SIN6_SCOPE_ID
             append_scopeid(addr6, flags, ipbuf, sizeof(ipbuf));
@@ -147,7 +161,6 @@ void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa, socklen_t
         else
           {
             ares_inet_ntop(AF_INET, &addr->sin_addr, ipbuf, IPBUFSIZ);
-            port = addr->sin_port;
           }
         /* They also want a service */
         if (flags & ARES_NI_LOOKUPSERVICE)
@@ -173,14 +186,16 @@ void ares_getnameinfo(ares_channel channel, const struct sockaddr *sa, socklen_t
           {
             niquery->family = AF_INET;
             memcpy(&niquery->addr.addr4, addr, sizeof(addr));
-            ares_gethostbyaddr(channel, &addr->sin_addr, sizeof(struct in_addr), AF_INET,
+            ares_gethostbyaddr(channel, &addr->sin_addr,
+                               sizeof(struct in_addr), AF_INET,
                                nameinfo_callback, niquery);
           }
         else
           {
             niquery->family = AF_INET6;
             memcpy(&niquery->addr.addr6, addr6, sizeof(addr6));
-            ares_gethostbyaddr(channel, &addr6->sin6_addr, sizeof(struct in6_addr), AF_INET6,
+            ares_gethostbyaddr(channel, &addr6->sin6_addr,
+                               sizeof(struct ares_in6_addr), AF_INET6,
                                nameinfo_callback, niquery);
           }
       }
@@ -210,6 +225,7 @@ static void nameinfo_callback(void *arg, int status, int timeouts, struct hosten
          We do this by determining our own domain name, then searching the string
          for this domain name and removing it.
        */
+#ifdef HAVE_GETHOSTNAME
       if (niquery->flags & ARES_NI_NOFQDN)
         {
            char buf[255];
@@ -222,6 +238,7 @@ static void nameinfo_callback(void *arg, int status, int timeouts, struct hosten
                  *end = 0;
              }
         }
+#endif
       niquery->callback(niquery->arg, ARES_SUCCESS, niquery->timeouts, (char *)(host->h_name),
                         service);
       return;

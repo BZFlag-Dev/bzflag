@@ -1,7 +1,7 @@
 #ifndef __ARES_LLIST_H
 #define __ARES_LLIST_H
 
-/* $Id: ares_llist.h,v 1.1 2007-10-02 02:18:01 yangtse Exp $ */
+/* $Id$ */
 
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
