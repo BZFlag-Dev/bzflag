@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="regex"
 	ProjectGUID="{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+	RootNamespace="regex"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -51,7 +52,6 @@
 				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -113,7 +113,6 @@
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
