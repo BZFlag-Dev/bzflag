@@ -9,7 +9,6 @@ libz_la_SOURCES = \
 	crc32.c \
 	deflate.c \
 	gzclose.c \
-	gzguts.c \
 	gzlib.c \
 	gzread.c \
 	gzwrite.c \
@@ -24,6 +23,7 @@ libz_la_SOURCES = \
 noinst_HEADERS = \
 	crc32.h \
 	deflate.h \
+	gzguts.h \
 	inffast.h \
 	inffixed.h \
 	inflate.h \
