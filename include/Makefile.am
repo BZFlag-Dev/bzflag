@@ -74,7 +74,6 @@ noinst_HEADERS =			\
 	LuaClientScripts.h		\
 	LuaHeader.h			\
 	MapInfo.h			\
-	MathUtils.h			\
 	MediaFile.h			\
 	MeshDrawInfo.h			\
 	MeshDrawMgr.h			\
@@ -111,7 +110,6 @@ noinst_HEADERS =			\
 	PlayerInfo.h			\
 	PlayerState.h			\
 	PolyWallSceneNode.h		\
-	PositionTracker.h		\
 	Protocol.h			\
 	PyramidBuilding.h		\
 	PyramidSceneNodeGenerator.h	\

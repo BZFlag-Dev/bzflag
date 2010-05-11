@@ -210,9 +210,7 @@ static int GetTypeFromName(const string& name)
 static void PushObstacleGUID(lua_State* L, uint32_t guid)
 {
   assert(sizeof(void*) >= sizeof(uint32_t));
-
-  char* ptr = (char*)0 + guid;
-  lua_pushlightuserdata(L, ptr);
+  lua_pushlightuserdata(L, (void*)guid);
 }
 
 

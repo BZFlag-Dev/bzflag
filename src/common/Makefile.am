@@ -29,7 +29,6 @@ libCommon_la_SOURCES  =			\
 	Language.cxx			\
 	OSFile.cxx			\
 	ParseColor.cxx			\
-	PositionTracker.cxx		\
 	StateDatabase.cxx		\
 	TextChunkManager.cxx		\
 	TextUtils.cxx			\
