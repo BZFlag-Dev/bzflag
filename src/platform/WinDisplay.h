@@ -16,11 +16,9 @@
 
 #ifndef BZF_WINDISPLAY_H
 #define	BZF_WINDISPLAY_H
-#include <map>
 
-#include "common.h"
 #include "BzfDisplay.h"
-#include "bzfgl.h"
+#include <map>
 
 class BzfKeyEvent;
 class Resolution;
