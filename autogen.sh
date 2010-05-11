@@ -92,11 +92,6 @@ if [ "x$LIBTOOL_VERSION" = "x" ] ; then
 fi
 
 
-# hack to avoid having dynamic files in SVN
-# (libtool.m4.old is libtool 1.5 compatible?)
-cp src/other/curl/m4/libtool.m4.old src/other/curl/m4/libtool.m4
-
-
 ##################
 # ident function #
 ##################
