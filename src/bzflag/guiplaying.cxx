@@ -6447,14 +6447,11 @@ void startPlaying()
   showMessage("");
   // print app version
   tmpString = ColorStrings[RedColor];
-  tmpString += "BZFlag version: \v";
+  tmpString += "BZFlag version: ";
   tmpString += getAppVersion();
   tmpString += " (";
   tmpString += getProtocolVersion();
-  tmpString += ")";
-  showMessage(tmpString);
-  tmpString = "\v";
-  tmpString += ColorStrings[RedColor];
+  tmpString += ") ";
   tmpString += "running on ";
   tmpString += getOSString();
   showMessage(tmpString);
