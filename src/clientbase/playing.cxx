@@ -97,7 +97,9 @@ static ChangePlayerTeamCallback changePlayerTeamCallback = NULL;
 
 bool downloadingData = false;
 
-static AresHandler ares;
+static AresHandler* ares = NULL;
+void initGlobalAres() { ares = new AresHandler(); }
+void killGlobalAres() { delete ares; ares = NULL; }
 
 std::vector<PlayingCallbackItem> playingCallbacks;
 
@@ -423,7 +425,7 @@ void handlePendingJoins()
 
   getAFastToken();
 
-  ares.queryHost(startupInfo.serverName);
+  ares->queryHost(startupInfo.serverName);
   waitingDNS = true;
 
   // don't try again
@@ -485,11 +487,11 @@ bool dnsLookupDone(struct in_addr &inAddress)
   timeout.tv_usec = 0;
   FD_ZERO(&readers);
   FD_ZERO(&writers);
-  ares.setFd(&readers, &writers, nfds);
+  ares->setFd(&readers, &writers, nfds);
   nfds = select(nfds + 1, (fd_set*)&readers, (fd_set*)&writers, 0, &timeout);
-  ares.process(&readers, &writers);
+  ares->process(&readers, &writers);
 
-  AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
+  AresHandler::ResolutionStatus status = ares->getHostAddress(&inAddress);
   if (status == AresHandler::Failed) {
     showError("Server not found");
     waitingDNS = false;

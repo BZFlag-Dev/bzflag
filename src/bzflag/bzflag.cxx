@@ -39,6 +39,7 @@
 /* common headers */
 #include "Address.h"
 #include "AnsiCodes.h"
+#include "AresHandler.h"
 #include "BZDBCache.h"
 #include "BundleMgr.h"
 #include "BzfMedia.h"
@@ -931,6 +932,8 @@ int initClient ( int argc, char **argv )
   if (initWinsoc() != 0)
     return 1;
 
+  initGlobalAres();
+
   //init_packetcompression();
 
   if (checkTimeBomb())
@@ -1460,6 +1463,8 @@ int postWindowInit ( void )
 void cleanupClient ( void )
 {
   // shut down
+  killGlobalAres();
+  AresHandler::globalShutdown();
   if (wordFilter != NULL)
     delete wordFilter;
   wordFilter = NULL;

@@ -47,7 +47,6 @@
 
 class NetMessage;
 
-
 void warnAboutMainFlags();
 void warnAboutRadarFlags();
 void warnAboutRadar();
@@ -118,6 +117,9 @@ void updateRobots(float dt);
 void sendRobotUpdates();
 void addRobots();
 #endif
+
+void initGlobalAres();
+void killGlobalAres();
 
 void doNetworkStuff();
 

@@ -18,7 +18,7 @@
 
 /* common implementation headers */
 #include "network.h"
-#include "bzares.h"
+#include <ares.h>
 
 class AresHandler {
  public:
@@ -41,10 +41,15 @@ class AresHandler {
   void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   void		process(fd_set *read_set, fd_set *write_set);
   ResolutionStatus getStatus() {return status;};
+
+  static bool	globalInit();
+  static void	globalShutdown();
+
  private:
   static void	staticCallback(void *arg, int statusCallback, int timeouts,
 			     struct hostent *hostent);
   void		callback(int status, struct hostent *hostent);
+
   // peer's network hostname (malloc/free'd)
   char	       *hostname;
   in_addr	hostAddress;
@@ -53,6 +58,8 @@ class AresHandler {
   bool		aresFailed;
 
   struct in_addr requestedAddress;
+
+  static bool	globallyInited;
 };
 
 #endif

@@ -29,6 +29,7 @@
 #include "bz_md5.h"
 #include "bzsignal.h"
 #include "AnsiCodes.h"
+#include "AresHandler.h"
 #include "BaseBuilding.h"
 #include "BZDBCache.h"
 #include "BzDocket.h"
@@ -5280,6 +5281,7 @@ static void cleanupServer()
   delete listServerLink;
 
   // free misc stuff
+  AresHandler::globalShutdown();
   delete clOptions; clOptions = NULL;
   FlagInfo::setSize(0);
   delete world; world = NULL;
