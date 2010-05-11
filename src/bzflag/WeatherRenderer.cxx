@@ -429,7 +429,7 @@ void WeatherRenderer::update(void)
 {
   // update the time
   BzTime now = BzTime::getCurrent();
-  float frameTime = now - lastRainTime;
+  float frameTime = (float)(now - lastRainTime);
   lastRainTime = now;
 
   std::vector<rain> dropsToAdd;

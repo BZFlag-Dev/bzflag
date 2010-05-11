@@ -37,7 +37,7 @@ static BzTime lastSend = BzTime::getCurrent();
 float SendLagState::getWaitTime()
 {
   const BzTime nowTime = BzTime::getCurrent();
-  return updateRate - (nowTime - lastSend);
+  return updateRate - (float)(nowTime - lastSend);
 }
 
 
