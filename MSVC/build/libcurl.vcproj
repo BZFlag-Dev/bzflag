@@ -131,7 +131,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="..\..\include,..\..\src\other\curl\lib,..\..\src\other\curl\include;..\..\src\other\ares,..\..\src\other\zlib"
-				PreprocessorDefinitions="WIN32;_LIB;BUILDING_LIBCURL;USE_ARES;HAVE_ZLIB_H"
+				PreprocessorDefinitions="WIN32;_LIB;BUILDING_LIBCURL;USE_ARES;CARES_STATICLIB;HAVE_ZLIB_H"
 				StringPooling="true"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

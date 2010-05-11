@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src;..\..\src\lua;..\..\src\other\curl\include;..\..\src\other\zlib\;..\..\src\bzfs\lua"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ"
 				StringPooling="true"
 				RuntimeLibrary="2"
