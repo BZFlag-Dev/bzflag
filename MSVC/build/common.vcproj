@@ -272,10 +272,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\PositionTracker.cxx"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\StateDatabase.cxx"
 				>
 			</File>
@@ -426,10 +422,6 @@
 			</File>
 			<File
 				RelativePath="..\..\include\ParseColor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\PositionTracker.h"
 				>
 			</File>
 			<File
