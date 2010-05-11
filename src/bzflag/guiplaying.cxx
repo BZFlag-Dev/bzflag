@@ -6452,24 +6452,23 @@ void startPlaying()
   tmpString += " (";
   tmpString += getProtocolVersion();
   tmpString += ") ";
-  tmpString += "running on ";
+  showMessage(tmpString);
+  // print system
+  tmpString = ColorStrings[OrangeColor];
+  tmpString += "Running on: ";
   tmpString += getOSString();
   showMessage(tmpString);
   // print copyright
-  tmpString = ColorStrings[OrangeColor];
+  tmpString = ColorStrings[YellowColor];
   tmpString += bzfcopyright;
   showMessage(tmpString);
   // print license
-  tmpString = ColorStrings[YellowColor];
+  tmpString = ColorStrings[GreenColor];
   tmpString += "Distributed under the terms of the LGPL";
   showMessage(tmpString);
   // print author
-  tmpString = ColorStrings[GreenColor];
-  tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
-  showMessage(tmpString);
-  // print maintainer
   tmpString = ColorStrings[CyanColor];
-  tmpString += "Maintainer: Tim Riker <Tim@Rikers.org>";
+  tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
   showMessage(tmpString);
   // print audio driver
   std::string audioStr;
