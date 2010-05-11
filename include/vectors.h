@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <string>
 #include <iostream>
+#include <new>
 
 
 //============================================================================//
@@ -43,15 +44,29 @@ template <typename T> inline std::string tostring(T value, const char* fmt) {
 
 
 //============================================================================//
+
+template <typename T> class vec2;
+template <typename T> class vec3;
+template <typename T> class vec4;
+
+
+//============================================================================//
 //
 //  vec2
 //
 
 template <typename T>
 class vec2 {
+
+  friend class vec3<T>;
+  friend class vec4<T>;
+
   public:
     union { T x; T r; T s; };
     union { T y; T g; T t; };
+
+  private:
+    vec2(bool) {} // does not touch the data
 
   public:
     vec2() : x((T)0), y((T)0) {}
@@ -153,10 +168,16 @@ template <typename T> std::ostream& operator<<(std::ostream& out, const vec2<T>&
 
 template <typename T>
 class vec3 {
+
+  friend class vec4<T>;
+
   public:
     union { T x; T r; T s; };
     union { T y; T g; T t; };
     union { T z; T b; T p; };
+
+  private:
+    vec3(bool) {} // does not touch the data
 
   public:
     vec3() : x((T)0), y((T)0), z((T)0) {}
@@ -177,10 +198,10 @@ class vec3 {
 
     inline vec3 operator-() const { return vec3(-x, -y, -z); }
 
-    inline       vec2<T>& xy()       { return (vec2<T>&)x; }
-    inline const vec2<T>& xy() const { return (vec2<T>&)x; }
-    inline       vec2<T>& yz()       { return (vec2<T>&)y; }
-    inline const vec2<T>& yz() const { return (vec2<T>&)y; }
+    inline       vec2<T>& xy()       { return *(new((void*)&x) vec2<T>(false)); }
+    inline const vec2<T>& xy() const { return *(new((void*)&x) vec2<T>(false)); }
+    inline       vec2<T>& yz()       { return *(new((void*)&y) vec2<T>(false)); }
+    inline const vec2<T>& yz() const { return *(new((void*)&y) vec2<T>(false)); }
 
     vec3& operator+=(const vec3& v) { x += v.x; y += v.y; z += v.z; return *this; }
     vec3& operator-=(const vec3& v) { x -= v.x; y -= v.y; z -= v.z; return *this; }
@@ -339,18 +360,18 @@ class vec4 {
 
     inline vec4 operator-() const { return vec4(-x, -y, -z, -w); }
 
-    inline       vec2<T>&  xy()       { return (vec2<T>&)x; }
-    inline const vec2<T>&  xy() const { return (vec2<T>&)x; }
-    inline       vec2<T>&  yz()       { return (vec2<T>&)y; }
-    inline const vec2<T>&  yz() const { return (vec2<T>&)y; }
-    inline       vec2<T>&  zw()       { return (vec2<T>&)z; }
-    inline const vec2<T>&  zw() const { return (vec2<T>&)z; }
-    inline       vec3<T>& xyz()       { return (vec3<T>&)x; }
-    inline const vec3<T>& xyz() const { return (vec3<T>&)x; }
-    inline       vec3<T>& yzw()       { return (vec3<T>&)y; }
-    inline const vec3<T>& yzw() const { return (vec3<T>&)y; }
-    inline       vec3<T>& rgb()       { return (vec3<T>&)x; }
-    inline const vec3<T>& rgb() const { return (vec3<T>&)x; }
+    inline       vec2<T>&  xy()       { return *(new((void*)&x) vec2<T>(false)); }
+    inline const vec2<T>&  xy() const { return *(new((void*)&x) vec2<T>(false)); }
+    inline       vec2<T>&  yz()       { return *(new((void*)&y) vec2<T>(false)); }
+    inline const vec2<T>&  yz() const { return *(new((void*)&y) vec2<T>(false)); }
+    inline       vec2<T>&  zw()       { return *(new((void*)&z) vec2<T>(false)); }
+    inline const vec2<T>&  zw() const { return *(new((void*)&z) vec2<T>(false)); }
+    inline       vec3<T>& xyz()       { return *(new((void*)&x) vec3<T>(false)); }
+    inline const vec3<T>& xyz() const { return *(new((void*)&x) vec3<T>(false)); }
+    inline       vec3<T>& yzw()       { return *(new((void*)&y) vec3<T>(false)); }
+    inline const vec3<T>& yzw() const { return *(new((void*)&y) vec3<T>(false)); }
+    inline       vec3<T>& rgb()       { return xyz(); }
+    inline const vec3<T>& rgb() const { return xyz(); }
 
     vec4& operator+=(const vec4& v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
     vec4& operator-=(const vec4& v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
@@ -430,6 +451,22 @@ typedef vec2<double> dvec2;
 typedef vec3<double> dvec3;
 typedef vec4<double> dvec4;
 
+
+//============================================================================//
+//
+//  Static assertions to check type sizes
+//
+#define VECTORS_STATIC_ASSERT(x) \
+ typedef char vectors_h_static_assert[(x) ? 1 : -1]
+
+VECTORS_STATIC_ASSERT(sizeof(fvec2) == (2 * sizeof(float)));
+VECTORS_STATIC_ASSERT(sizeof(fvec3) == (3 * sizeof(float)));
+VECTORS_STATIC_ASSERT(sizeof(fvec4) == (4 * sizeof(float)));
+VECTORS_STATIC_ASSERT(sizeof(dvec2) == (2 * sizeof(double)));
+VECTORS_STATIC_ASSERT(sizeof(dvec3) == (3 * sizeof(double)));
+VECTORS_STATIC_ASSERT(sizeof(dvec4) == (4 * sizeof(double)));
+
+#undef VECTORS_STATIC_ASSERT
 
 //============================================================================//
 
