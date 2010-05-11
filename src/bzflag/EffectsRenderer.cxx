@@ -431,12 +431,12 @@ void BasicEffect::setStartTime()
 
 bool BasicEffect::update(const BzTime time)
 {
-  age = time - startTime;
+  age = (float)(time - startTime);
 
   if (age >= lifeTime)
     return true;
 
-  deltaTime = time - lastTime;
+  deltaTime = (float)(time - lastTime);
   lastTime = time;
   return false;
 }

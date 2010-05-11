@@ -469,7 +469,7 @@ static bool chasePlayer(float &rotation, float &speed)
       rotation *= (float)M_PI / (2.0f * fabs(rotation));
       speed = dotProd; //go forward inverse rel to how much you need to turn
     } else {
-      const int64_t period = BzTime::getTick().getSeconds();
+      const int64_t period = (int64_t)BzTime::getTick().getSeconds();
       float absBias = (float)(M_PI/20.0 * (distance / 100.0));
       float bias = ((period % 4) < 2) ? absBias : -absBias;
       rotation += bias;

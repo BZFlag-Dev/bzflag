@@ -1330,7 +1330,7 @@ int HubLink::IsVisible(lua_State* L)
 
 #undef  PACK_TYPE
 #define PACK_TYPE(label, type) \
-  const type value = luaL_checkint(L, 1); \
+  const type value = (type)luaL_checkint(L, 1); \
   char buf[sizeof(type)]; \
   nboPack ## label(buf, value); \
   lua_pushlstring(L, buf, sizeof(type)); \

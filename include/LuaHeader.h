@@ -185,11 +185,11 @@ inline std::string luaL_checkstdstring(lua_State* L, int idx) {
 
 
 inline float luaL_optfloat(lua_State* L, int idx, float def) {
-  return (float)luaL_optnumber(L, idx, def);
+  return (float)luaL_optnumber(L, idx, (lua_Number)def);
 }
 
 inline double luaL_optdouble(lua_State* L, int idx, double def) {
-  return (double)luaL_optnumber(L, idx, def);
+  return (double)luaL_optnumber(L, idx, (lua_Number)def);
 }
 
 inline std::string luaL_optstdstring(lua_State* L, int idx,
