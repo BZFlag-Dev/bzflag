@@ -27,6 +27,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Creating curlbuild.h..."
+				CommandLine="copy ..\..\src\other\curl\include\curl\curlbuildWin32.h ..\..\src\other\curl\include\curl\curlbuild.h"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -247,11 +249,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\curl\lib\curl_memrchr.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\curl_rand.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\curl\lib\curl_sspi.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\other\curl\lib\curl_sspi.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\curl_threads.c"
 				>
 			</File>
 			<File
@@ -415,6 +429,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\curl\lib\imap.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\curl\lib\inet_ntop.c"
 				>
 			</File>
@@ -495,6 +513,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\curl\lib\nonblock.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\curl\lib\nss.c"
 				>
 			</File>
@@ -511,11 +533,23 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\curl\src\os-specific.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\curl\lib\parsedate.c"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\other\curl\lib\parsedate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\pingpong.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\pop3.c"
 				>
 			</File>
 			<File
@@ -540,6 +574,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\other\curl\lib\rawstr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\rtsp.c"
 				>
 			</File>
 			<File
@@ -580,6 +618,14 @@
 			</File>
 			<File
 				RelativePath="..\..\src\other\curl\lib\share.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\slist.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\smtp.c"
 				>
 			</File>
 			<File
@@ -730,6 +776,10 @@
 				RelativePath="..\..\src\other\curl\lib\version.c"
 				>
 			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\warnless.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -737,6 +787,22 @@
 			>
 			<File
 				RelativePath="..\..\src\other\curl\include\curl\curl.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\curl_memory.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\curl_memrchr.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\curl_rand.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\curl_threads.h"
 				>
 			</File>
 			<File
@@ -756,6 +822,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\curl\lib\imap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\curl\include\curl\mprintf.h"
 				>
 			</File>
@@ -764,11 +834,43 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\src\other\curl\lib\nonblock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\src\os-specific.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\pingpong.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\pop3.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\rtsp.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\slist.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\smtp.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\other\curl\include\curl\stdcheaders.h"
 				>
 			</File>
 			<File
 				RelativePath="..\..\src\other\curl\include\curl\types.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\curl\lib\warnless.h"
 				>
 			</File>
 		</Filter>

@@ -26,8 +26,8 @@ UNIX
 
    You probably need to be root when doing the last command.
 
-   If you have checked out the sources from the CVS repository, read the
-   CVS-INFO on how to proceed.
+   If you have checked out the sources from the git repository, read the
+   GIT-INFO on how to proceed.
 
    Get a full listing of all available configure options by invoking it like:
 
@@ -144,7 +144,7 @@ UNIX
 
      To get support for SCP and SFTP, build with --with-libssh2 and have
      libssh2 0.16 or later installed.
-     
+
    SPECIAL CASES
    -------------
    Some versions of uClibc require configuring with CPPFLAGS=-D_GNU_SOURCE=1
@@ -177,6 +177,9 @@ Win32
    KB140584 - How to link with the correct C Run-Time (CRT) library
               http://support.microsoft.com/kb/140584/en-us
 
+   KB190799 - Potential Errors Passing CRT Objects Across DLL Boundaries
+              http://msdn.microsoft.com/en-us/library/ms235460
+
    If your app is misbehaving in some strange way, or it is suffering
    from memory corruption, before asking for further help, please try
    first to rebuild every single library your app uses as well as your
@@ -199,12 +202,12 @@ Win32
 
    If you have any problems linking libraries or finding header files, be sure
    to verify that the provided "Makefile.m32" files use the proper paths, and
-   adjust as necessary. It is also possible to override these paths with 
+   adjust as necessary. It is also possible to override these paths with
    environment variables, for example:
 
      set ZLIB_PATH=c:\zlib-1.2.3
-     set OPENSSL_PATH=c:\openssl-0.9.8g
-     set LIBSSH2_PATH=c:\libssh2-0.17
+     set OPENSSL_PATH=c:\openssl-0.9.8k
+     set LIBSSH2_PATH=c:\libssh2-1.1
 
    ATTENTION: if you want to build with libssh2 support you have to use latest
    version 0.17 - previous versions will NOT work with 7.17.0 and later!
@@ -243,6 +246,53 @@ Win32
 
    See the separate INSTALL.devcpp file for details.
 
+   MSVC 6 caveats
+   --------------
+
+   If you use MSVC 6 it is required that you use the February 2003 edition PSDK:
+   http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdk-full.htm
+
+   Building any software with MSVC 6 without having PSDK installed is just
+   asking for trouble down the road once you have released it, you might notice
+   the problems in the first corner or ten miles ahead, depending mostly on your
+   choice of static vs dynamic runtime and third party libraries. Anyone using
+   software built in such way will at some point regret having done so.
+
+   When someone uses MSVC 6 without PSDK he is using a compiler back from 1998.
+
+   If the compiler has been updated with the installation of a service pack as
+   those mentioned in http://support.microsoft.com/kb/194022 the compiler can be
+   safely used to read source code, translate and make it object code.
+
+   But, even with the service packs mentioned above installed, the resulting
+   software generated in such an environment will be using outdated system
+   header files and libraries with bugs and security issues which have already
+   been addressed and fixed long time ago.
+
+   In order to make use of the updated system headers and fixed libraries
+   for MSVC 6, it is required that 'Platform SDK', PSDK from now onwards,
+   is installed. The specific PSDK that must be installed for MSVC 6 is the
+   February 2003 edition, which is the latest one supporting the MSVC 6 compiler,
+   this PSDK is also known as 'Windows Server 2003 PSDK' and can be downloaded
+   from http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdk-full.htm
+
+   So, building curl and libcurl with MSVC 6 without PSDK is absolutely
+   discouraged for the benefit of anyone using software built in such
+   environment. And it will not be supported in any way, as we could just
+   be hunting bugs which have already been fixed way back in 2003.
+
+   When building with MSVC 6 we attempt to detect if PSDK is not being used,
+   and if this is the case the build process will fail hard with an error
+   message stating that the February 2003 PSDK is required. This is done to
+   protect the unsuspecting and avoid PEBKAC issues.
+
+   Additionally it might happen that a die hard MSVC hacker still wants to
+   build curl and libcurl with MSVC 6 without PSDK installed, even knowing
+   that this is a highly discouraged and unsupported build environment. In
+   this case the brave of heart will be able to build in such an environment
+   with the requisite of defining preprocessor symbol ALLOW_MSVC6_WITHOUT_PSDK
+   in lib/config-win32.h and knowing that LDAP and IPv6 support will be missing.
+
    MSVC from command line
    ----------------------
 
@@ -272,7 +322,7 @@ Win32
    Before running nmake define the OPENSSL_PATH environment variable with
    the root/base directory of OpenSSL, for example:
 
-     set OPENSSL_PATH=c:\openssl-0.9.8g
+     set OPENSSL_PATH=c:\openssl-0.9.8k
 
    Then run 'nmake vc-ssl' or 'nmake vc-ssl-dll' in curl's root
    directory.  'nmake vc-ssl' will create a libcurl static and dynamic
@@ -383,7 +433,7 @@ Win32
    - Modify lib/setup.h
    - Modify lib/Makefile.vc6
    - Add defines to Project/Settings/C/C++/General/Preprocessor Definitions
-     in the libcurl.dsw/libcurl.dsp Visual C++ 6 IDE project.
+     in the vc6libcurl.dsw/vc6libcurl.dsp Visual C++ 6 IDE project.
 
 
    Important static libcurl usage note
@@ -563,9 +613,8 @@ NetWare
    - optional OpenSSL sources (version 0.9.8 or later build with BSD sockets);
      you can find precompiled packages at:
      http://www.gknw.net/development/ossl/netware/
-     for CLIB-based builds OpenSSL needs to be patched to build with BSD
-     sockets (currently only a winsock-based CLIB build is supported):
-     http://www.gknw.net/development/ossl/netware/patches/v_0.9.8g/openssl-0.9.8g.diff
+     for CLIB-based builds OpenSSL 0.9.8h or later is required  - earlier versions
+     dont support buildunf with CLIB BSD sockets.
    - optional SSH2 sources (version 0.17 or later);
 
    Set a search path to your compiler, linker and tools; on Linux make
@@ -583,7 +632,7 @@ NetWare
    a 'set | grep OSTYPE' shows the var present and set; I simply overwrote it
    with 'OSTYPE=linux-rh9-gnu' and the detection in the Makefile worked...
    Any help in testing appreciated!
-   Builds automatically created 8 times a day from current CVS are here:
+   Builds automatically created 8 times a day from current git are here:
    http://www.gknw.net/mirror/curl/autobuilds/
    the status of these builds can be viewed at the autobuild table:
    http://curl.haxx.se/auto/
@@ -623,12 +672,12 @@ eCos
    of running curl in this way is the contents of the configuration file
    printed to the console.
 
---- src/main.c	19 Jul 2006 19:09:56 -0000	1.363
-+++ src/main.c	24 Jul 2006 21:37:23 -0000
+--- src/main.c  19 Jul 2006 19:09:56 -0000    1.363
++++ src/main.c  24 Jul 2006 21:37:23 -0000
 @@ -4286,11 +4286,31 @@
  }
- 
- 
+
+
 +#ifdef __ECOS
 +#include <cyg/fileio/fileio.h>
 +MTAB_ENTRY( testfs_mte1,
@@ -637,7 +686,7 @@ eCos
 +                   "",
 +                   0);
 +#endif
- 
+
  int main(int argc, char *argv[])
  {
    int res;
@@ -655,37 +704,38 @@ eCos
 +  }
 +#endif
    memset(&config, 0, sizeof(struct Configurable));
- 
+
    config.errors = stderr; /* default errors to stderr */
 
 
 Minix
 =====
    curl can be compiled on Minix 3 using gcc or ACK (starting with
-   ver. 3.1.3).
-   
+   ver. 3.1.3).  Ensure that GNU gawk and bash are both installed and
+   available in the PATH.
+
    ACK
    ---
    Increase the heap sizes of the compiler with the command:
 
      binsizes xxl
 
-   Configure and compile with:
+   then configure and compile curl with:
 
-     ./configure CONFIG_SHELL=/bin/bigsh CC=cc LD=cc AR=/usr/bin/aal \
-                 GREP=grep CPPFLAGS='-D_POSIX_SOURCE=1 -I/usr/local/include'
+     ./configure CC=cc LD=cc AR=/usr/bin/aal GREP=grep \
+      CPPFLAGS='-D_POSIX_SOURCE=1 -I/usr/local/include'
      make
      chmem =256000 src/curl
 
    GCC
    ---
    Make sure gcc is in your PATH with the command:
-   
+
      export PATH=/usr/gnu/bin:$PATH
-   
+
    then configure and compile curl with:
 
-     ./configure CONFIG_SHELL=/bin/bigsh CC=gcc AR=/usr/gnu/bin/gar GREP=grep
+     ./configure CC=gcc AR=/usr/gnu/bin/gar GREP=grep
      make
      chmem =256000 src/curl
 
@@ -698,9 +748,35 @@ Symbian OS
       bldmake bldfiles
       abld build
 
-   to compile and install curl and libcurl. If your Symbian SDK doesn't
-   include support for P.I.P.S., you will need to contact your SDK vendor
-   to obtain that first.
+   to compile and install curl and libcurl using SBSv1. If your Symbian
+   SDK doesn't include support for P.I.P.S., you will need to contact
+   your SDK vendor to obtain that first.
+
+
+VxWorks
+========
+   Build for VxWorks is performed using cross compilation.
+   That means you build on Windows machine using VxWorks tools and
+   run the built image on the VxWorks device.
+
+   To build libcurl for VxWorks you need:
+
+      - CYGWIN (free, http://cygwin.com/)
+      - Wind River Workbench (commercial)
+
+   If you have CYGWIN and Workbench installed on you machine
+   follow after next steps:
+
+    1. Open the Command Prompt window and change directory ('cd')
+       to the libcurl 'lib' folder.
+    2. Add CYGWIN 'bin' folder to the PATH environment variable.
+       For example, type 'set PATH=C:/embedded/cygwin/bin;%PATH%'.
+    3. Adjust environment variables defined in 'Environment' section
+       of the Makefile.vxworks file to point to your software folders.
+    4. Build the libcurl by typing 'make -f ./Makefile.vxworks'
+
+   As a result the libcurl.a library should be created in the 'lib' folder.
+   To clean the build results type 'make -f ./Makefile.vxworks clean'.
 
 
 CROSS COMPILE
@@ -732,10 +808,10 @@ CROSS COMPILE
    export NM=ppc_405-nm
 
    ./configure --target=powerpc-hardhat-linux \
-	--host=powerpc-hardhat-linux \
-	--build=i586-pc-linux-gnu \
-	--prefix=/opt/hardhat/devkit/ppc/405/target/usr/local \
-	--exec-prefix=/usr/local
+        --host=powerpc-hardhat-linux \
+        --build=i586-pc-linux-gnu \
+        --prefix=/opt/hardhat/devkit/ppc/405/target/usr/local \
+        --exec-prefix=/usr/local
 
    (end script)
 
@@ -798,9 +874,9 @@ REDUCING SIZE
    .comment section).
 
    Using these techniques it is possible to create a basic HTTP-only shared
-   libcurl library for i386 Linux platforms that is only 94 KiB in size, and
-   an FTP-only library that is 87 KiB in size (as of libcurl version 7.19.1,
-   using gcc 4.2.2).
+   libcurl library for i386 Linux platforms that is only 98 KiB in size, and
+   an FTP-only library that is 94 KiB in size (as of libcurl version 7.20.0,
+   using gcc 4.3.3).
 
    You may find that statically linking libcurl to your application will
    result in a lower total size than dynamically linking.
@@ -832,6 +908,7 @@ PORTS
         - Alpha OpenVMS V7.1-1H2
         - Alpha Tru64 v5.0 5.1
         - AVR32 Linux
+        - ARM Android 1.5
         - ARM INTEGRITY
         - ARM iPhone OS
         - Cell Linux

@@ -1,10 +1,11 @@
-#ifndef _CURL_CONFIG_DOS_H
-#define _CURL_CONFIG_DOS_H
+#ifndef HEADER_CONFIG_DOS_H
+#define HEADER_CONFIG_DOS_H
 
-/* lib/config.dos - Hand crafted config file for MSDOS.
- *
- * $Id: config.dos,v 1.25 2008-11-13 18:56:56 yangtse Exp $
- */
+
+/* ================================================================ */
+/*        lib/config.dos - Hand crafted config file for DOS         */
+/* ================================================================ */
+
 #if defined(DJGPP)
   #define OS  "MSDOS/djgpp"
 #elif defined(__HIGHC__)
@@ -28,6 +29,7 @@
 #define HAVE_IOCTL_FIONBIO     1
 #define HAVE_IOCTLSOCKET       1
 #define HAVE_IOCTLSOCKET_FIONBIO   1
+#define HAVE_LIMITS_H          1
 #define HAVE_LOCALE_H          1
 #define HAVE_LONGLONG          1
 #define HAVE_MEMORY_H          1
@@ -62,7 +64,9 @@
 #define NEED_MALLOC_H          1
 
 #define RETSIGTYPE             void
+#define SIZEOF_INT             4
 #define SIZEOF_LONG_DOUBLE     16
+#define SIZEOF_SHORT           2
 #define STDC_HEADERS           1
 #define TIME_WITH_SYS_TIME     1
 
@@ -98,14 +102,17 @@
 
 #define BSD
 
-/* #define MALLOCDEBUG */
+/* CURLDEBUG definition enables memory tracking */
+/* #define CURLDEBUG */
 
-#ifdef USE_ZLIB     /* on cmd-line */
+/* USE_ZLIB on cmd-line */
+#ifdef USE_ZLIB
   #define HAVE_ZLIB_H            1
   #define HAVE_LIBZ              1
 #endif
 
-#ifdef USE_SSLEAY   /* on cmd-line */
+/* USE_SSLEAY on cmd-line */
+#ifdef USE_SSLEAY
   #define HAVE_CRYPTO_CLEANUP_ALL_EX_DATA 1
   #define HAVE_OPENSSL_ENGINE_H  1
   #define OPENSSL_NO_KRB5        1
@@ -116,17 +123,16 @@
 #define CURL_DISABLE_LDAP        1
 
 #define in_addr_t  u_long
-#define socklen_t  int
 
 #if defined(__HIGHC__) || \
-    (defined(__GNUC__) && __GNUC__ < 4)   /* gcc 4.x built-in ? */
+    (defined(__GNUC__) && (__GNUC__ < 4))
 #define ssize_t    int
 #endif
 
 #define CURL_CA_BUNDLE  getenv("CURL_CA_BUNDLE")
 
-/* Target HAVE_x section
- */
+/* Target HAVE_x section */
+
 #if defined(DJGPP)
   #define HAVE_BASENAME   1
   #define HAVE_STRCASECMP 1
@@ -151,8 +157,13 @@
   #define HAVE_SYS_TIME_H 1
 #endif
 
+#ifdef MSDOS  /* Watt-32 */
+  #define HAVE_CLOSESOCKET_CAMEL  1
+  #define CloseSocket(s)          close_s((s))
+#endif
+
 #undef word
 #undef byte
 
-#endif  /* _CURL_CONFIG_DOS_H */
+#endif /* HEADER_CONFIG_DOS_H */
 

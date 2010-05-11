@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: evhiperfifo.c,v 1.1 2008-11-21 10:10:33 bagder Exp $
  *
  * Example application source code using the multi socket interface to
  * download many files at once.

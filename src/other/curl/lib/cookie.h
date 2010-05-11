@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.h,v 1.28 2009-02-27 08:53:10 bagder Exp $
  ***************************************************************************/
 
 #include <stdio.h>

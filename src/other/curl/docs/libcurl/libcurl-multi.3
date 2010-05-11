@@ -5,7 +5,7 @@
 .\" *                            | (__| |_| |  _ <| |___
 .\" *                             \___|\___/|_| \_\_____|
 .\" *
-.\" * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+.\" * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
 .\" *
 .\" * This software is licensed as described in the file COPYING, which
 .\" * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
 .\" * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 .\" * KIND, either express or implied.
 .\" *
-.\" * $Id: libcurl-multi.3,v 1.20 2008-12-28 21:56:56 bagder Exp $
 .\" **************************************************************************
 .\"
 .TH libcurl-multi 3 "3 Feb 2007" "libcurl 7.16.0" "libcurl multi interface"
@@ -119,12 +118,12 @@ If you want to re-use an easy handle that was added to the multi handle for
 transfer, you must first remove it from the multi stack and then re-add it
 again (possibly after having altered some options at your own choice).
 .SH "MULTI_SOCKET"
-Since 7.16.0, the \fIcurl_multi_socket(3)\fP function offers a way for
+Since 7.16.0, the \fIcurl_multi_socket_action(3)\fP function offers a way for
 applications to not only avoid being forced to use select(), but it also
-offers a much more high-performance API that will make a significant difference
-for applications using large numbers of simultaneous connections.
+offers a much more high-performance API that will make a significant
+difference for applications using large numbers of simultaneous connections.
 
-\fIcurl_multi_socket(3)\fP (and \fIcurl_multi_socket_all(3)\fP) is then used
+\fIcurl_multi_socket_action(3)\fP is then used
 instead of \fIcurl_multi_perform(3)\fP.
 .SH "BLOCKING"
 A few areas in the code are still using blocking code, even when used from the
@@ -134,8 +133,10 @@ the future, you should be aware of the following current restrictions:
 .nf
  - Name resolves on non-windows unless c-ares is used
  - GnuTLS SSL connections
+ - NSS SSL connections
  - Active FTP connections
  - HTTP proxy CONNECT operations
- - TFTP transfers
+ - SOCKS proxy handshakes
  - file:// transfers
+ - TELNET transfers
 .fi

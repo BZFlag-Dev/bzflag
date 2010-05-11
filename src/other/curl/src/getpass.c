@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getpass.c,v 1.24 2008-10-24 01:27:00 yangtse Exp $
  ***************************************************************************/
 
 /* This file is a reimplementation of the previous one, due to license
@@ -54,7 +53,7 @@
 #include "memdebug.h"
 #endif
 
-#ifdef VMS
+#ifdef __VMS
 /* VMS implementation */
 #include descrip
 #include starlet
@@ -93,7 +92,7 @@ char *getpass_r(const char *prompt, char *buffer, size_t buflen)
   return buffer; /* we always return success */
 }
 #define DONE
-#endif /* VMS */
+#endif /* __VMS */
 
 
 #ifdef WIN32
@@ -124,7 +123,7 @@ char *getpass_r(const char *prompt, char *buffer, size_t buflen)
            previous one as well */
         i = i - (i>=1?2:1);
   }
-#ifndef __SYMBIAN32__  
+#ifndef __SYMBIAN32__
   /* since echo is disabled, print a newline */
   fputs("\n", stderr);
 #endif
@@ -157,7 +156,7 @@ char *getpass_r(const char *prompt, char *buffer, size_t buflen)
     if (buffer[i-1] == '\b') {
       /* remove this letter and if this is not the first key,
          remove the previous one as well */
-      if (i > 1) {   
+      if (i > 1) {
         printf("\b \b");
         i = i - 2;
       } else {

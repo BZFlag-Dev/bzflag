@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getinfo.c,v 1.67 2009-02-23 18:45:00 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -32,7 +31,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include "memory.h"
+#include "curl_memory.h"
 #include "sslgen.h"
 #include "connect.h" /* Curl_getconnectinfo() */
 #include "progress.h"
@@ -235,6 +234,19 @@ CURLcode Curl_getinfo(struct SessionHandle *data, CURLINFO info, ...)
     /* return if the condition prevented the document to get transfered */
     *param_longp = data->info.timecond;
     break;
+  case CURLINFO_RTSP_SESSION_ID:
+    *param_charp = data->set.str[STRING_RTSP_SESSION_ID];
+    break;
+  case CURLINFO_RTSP_CLIENT_CSEQ:
+    *param_longp = data->state.rtsp_next_client_CSeq;
+    break;
+  case CURLINFO_RTSP_SERVER_CSEQ:
+    *param_longp = data->state.rtsp_next_server_CSeq;
+    break;
+  case CURLINFO_RTSP_CSEQ_RECV:
+    *param_longp = data->state.rtsp_CSeq_recv;
+    break;
+
   default:
     return CURLE_BAD_FUNCTION_ARGUMENT;
   }

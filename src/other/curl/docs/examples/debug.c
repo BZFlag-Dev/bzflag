@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: debug.c,v 1.4 2008-05-22 21:20:09 danf Exp $
  */
 
 #include <stdio.h>
@@ -29,11 +28,12 @@ void dump(const char *text,
     /* without the hex output, we can fit more on screen */
     width = 0x40;
 
-  fprintf(stream, "%s, %zd bytes (0x%zx)\n", text, size, size);
+  fprintf(stream, "%s, %010.10ld bytes (0x%08.8lx)\n",
+          text, (long)size, (long)size);
 
   for(i=0; i<size; i+= width) {
 
-    fprintf(stream, "%04zx: ", i);
+    fprintf(stream, "%04.4lx: ", (long)i);
 
     if(!nohex) {
       /* hex not disabled, show it */

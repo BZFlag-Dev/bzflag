@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: cookie.c,v 1.101 2009-01-15 08:32:58 bagder Exp $
  ***************************************************************************/
 
 /***
@@ -93,15 +92,14 @@ Example set of cookies:
 #include "strequal.h"
 #include "strtok.h"
 #include "sendf.h"
-#include "memory.h"
+#include "curl_memory.h"
 #include "share.h"
 #include "strtoofft.h"
 #include "rawstr.h"
+#include "curl_memrchr.h"
 
 /* The last #include file should be: */
-#ifdef CURLDEBUG
 #include "memdebug.h"
-#endif
 
 
 static void freecookie(struct Cookie *co)
@@ -156,6 +154,20 @@ void Curl_cookie_loadfiles(struct SessionHandle *data)
   }
 }
 
+/*
+ * strstore() makes a strdup() on the 'newstr' and if '*str' is non-NULL
+ * that will be freed before the allocated string is stored there.
+ *
+ * It is meant to easily replace strdup()
+ */
+static void strstore(char **str, const char *newstr)
+{
+  if(*str)
+    free(*str);
+  *str = strdup(newstr);
+}
+
+
 /****************************************************************************
  *
  * Curl_cookie_add()
@@ -175,8 +187,8 @@ Curl_cookie_add(struct SessionHandle *data,
                 char *lineptr,   /* first character of the line */
                 const char *domain, /* default domain */
                 const char *path)   /* full path used when this cookie is set,
-                                    used to get default path for the cookie
-                                    unless set */
+                                       used to get default path for the cookie
+                                       unless set */
 {
   struct Cookie *clist;
   char name[MAX_NAME];
@@ -191,7 +203,7 @@ Curl_cookie_add(struct SessionHandle *data,
 #endif
 
   /* First, alloc and init a new struct for it */
-  co = calloc(sizeof(struct Cookie), 1);
+  co = calloc(1, sizeof(struct Cookie));
   if(!co)
     return NULL; /* bail out if we're this low on memory */
 
@@ -227,7 +239,9 @@ Curl_cookie_add(struct SessionHandle *data,
         if(1 <= sscanf(ptr, "%" MAX_NAME_TXT "[^;=]=%"
                        MAX_COOKIE_LINE_TXT "[^;\r\n]",
                        name, what)) {
-          /* this is a <name>=<what> pair */
+          /* this is a <name>=<what> pair. We use strstore() below to properly
+             deal with received cookie headers that have the same string
+             property set more than once, and then we use the last one. */
 
           const char *whatptr;
 
@@ -245,7 +259,7 @@ Curl_cookie_add(struct SessionHandle *data,
           }
 
           if(Curl_raw_equal("path", name)) {
-            co->path=strdup(whatptr);
+            strstore(&co->path, whatptr);
             if(!co->path) {
               badcookie = TRUE; /* out of memory bad */
               break;
@@ -297,8 +311,8 @@ Curl_cookie_add(struct SessionHandle *data,
                 const char *tailptr=whatptr;
                 if(tailptr[0] == '.')
                   tailptr++;
-                co->domain=strdup(tailptr); /* don't prefix w/dots
-                                               internally */
+                strstore(&co->domain, tailptr); /* don't prefix w/dots
+                                                   internally */
                 if(!co->domain) {
                   badcookie = TRUE;
                   break;
@@ -317,7 +331,7 @@ Curl_cookie_add(struct SessionHandle *data,
             }
           }
           else if(Curl_raw_equal("version", name)) {
-            co->version=strdup(whatptr);
+            strstore(&co->version, whatptr);
             if(!co->version) {
               badcookie = TRUE;
               break;
@@ -333,7 +347,7 @@ Curl_cookie_add(struct SessionHandle *data,
                cookie should be discarded immediately.
 
              */
-            co->maxage = strdup(whatptr);
+            strstore(&co->maxage, whatptr);
             if(!co->maxage) {
               badcookie = TRUE;
               break;
@@ -343,15 +357,22 @@ Curl_cookie_add(struct SessionHandle *data,
               (long)now;
           }
           else if(Curl_raw_equal("expires", name)) {
-            co->expirestr=strdup(whatptr);
+            strstore(&co->expirestr, whatptr);
             if(!co->expirestr) {
               badcookie = TRUE;
               break;
             }
-            /* Note that we store -1 in 'expires' here if the date couldn't
-               get parsed for whatever reason. This will have the effect that
-               the cookie won't match. */
+            /* Note that if the date couldn't get parsed for whatever reason,
+               the cookie will be treated as a session cookie */
             co->expires = curl_getdate(what, &now);
+
+            /* Session cookies have expires set to 0 so if we get that back
+               from the date parser let's add a second to make it a
+               non-session cookie */
+            if (co->expires == 0)
+              co->expires = 1;
+            else if( co->expires < 0 )
+                co->expires = 0;
           }
           else if(!co->name) {
             co->name = strdup(name);
@@ -390,7 +411,7 @@ Curl_cookie_add(struct SessionHandle *data,
       }
 
       ptr=semiptr+1;
-      while(ptr && *ptr && ISBLANK(*ptr))
+      while(*ptr && ISBLANK(*ptr))
         ptr++;
       semiptr=strchr(ptr, ';'); /* now, find the next semicolon */
 
@@ -410,10 +431,20 @@ Curl_cookie_add(struct SessionHandle *data,
     }
 
     if(!badcookie && !co->path && path) {
-      /* no path was given in the header line, set the default  */
-      char *endslash = strrchr(path, '/');
+      /* No path was given in the header line, set the default.
+         Note that the passed-in path to this function MAY have a '?' and
+         following part that MUST not be stored as part of the path. */
+      char *queryp = strchr(path, '?');
+
+      /* queryp is where the interesting part of the path ends, so now we
+         want to the find the last */
+      char *endslash;
+      if(!queryp)
+        endslash = strrchr(path, '/');
+      else
+        endslash = memrchr(path, '/', (size_t)(queryp - path));
       if(endslash) {
-        size_t pathlen = endslash-path+1; /* include the ending slash */
+        size_t pathlen = (size_t)(endslash-path+1); /* include ending slash */
         co->path=malloc(pathlen+1); /* one extra for the zero byte */
         if(co->path) {
           memcpy(co->path, path, pathlen);
@@ -649,7 +680,8 @@ Curl_cookie_add(struct SessionHandle *data,
 
   if(c->running)
     /* Only show this when NOT reading the cookies from a file */
-    infof(data, "%s cookie %s=\"%s\" for domain %s, path %s, expire %d\n",
+    infof(data, "%s cookie %s=\"%s\" for domain %s, path %s, "
+          "expire %" FORMAT_OFF_T "\n",
           replace_old?"Replaced":"Added", co->name, co->value,
           co->domain, co->path, co->expires);
 
@@ -742,6 +774,18 @@ struct CookieInfo *Curl_cookie_init(struct SessionHandle *data,
   return c;
 }
 
+/* sort this so that the longest path gets before the shorter path */
+static int cookie_sort(const void *p1, const void *p2)
+{
+  struct Cookie *c1 = *(struct Cookie **)p1;
+  struct Cookie *c2 = *(struct Cookie **)p2;
+
+  size_t l1 = c1->path?strlen(c1->path):0;
+  size_t l2 = c2->path?strlen(c2->path):0;
+
+  return (l2 > l1) ? 1 : (l2 < l1) ? -1 : 0 ;
+}
+
 /*****************************************************************************
  *
  * Curl_cookie_getlist()
@@ -762,6 +806,7 @@ struct Cookie *Curl_cookie_getlist(struct CookieInfo *c,
   struct Cookie *co;
   time_t now = time(NULL);
   struct Cookie *mainco=NULL;
+  size_t matches = 0;
 
   if(!c || !c->cookies)
     return NULL; /* no cookie struct or no cookies in the struct */
@@ -802,8 +847,11 @@ struct Cookie *Curl_cookie_getlist(struct CookieInfo *c,
 
             /* point the main to us */
             mainco = newco;
+
+            matches++;
           }
           else {
+            fail:
             /* failure, clear up the allocated chain and return NULL */
             while(mainco) {
               co = mainco->next;
@@ -817,6 +865,36 @@ struct Cookie *Curl_cookie_getlist(struct CookieInfo *c,
       }
     }
     co = co->next;
+  }
+
+  if(matches) {
+    /* Now we need to make sure that if there is a name appearing more than
+       once, the longest specified path version comes first. To make this
+       the swiftest way, we just sort them all based on path length. */
+    struct Cookie **array;
+    size_t i;
+
+    /* alloc an array and store all cookie pointers */
+    array = (struct Cookie **)malloc(sizeof(struct Cookie *) * matches);
+    if(!array)
+      goto fail;
+
+    co = mainco;
+
+    for(i=0; co; co = co->next)
+      array[i++] = co;
+
+    /* now sort the cookie pointers in path lenth order */
+    qsort(array, matches, sizeof(struct Cookie *), cookie_sort);
+
+    /* remake the linked list order according to the new order */
+
+    mainco = array[0]; /* start here */
+    for(i=0; i<matches-1; i++)
+      array[i]->next = array[i+1];
+    array[matches-1]->next = NULL; /* terminate the list */
+
+    free(array); /* remove the temporary data again */
   }
 
   return mainco; /* return the new list */
@@ -877,7 +955,7 @@ void Curl_cookie_clearsess(struct CookieInfo *cookies)
 {
   struct Cookie *first, *curr, *next, *prev = NULL;
 
-  if(!cookies->cookies || !cookies->cookies)
+  if(!cookies || !cookies->cookies)
     return;
 
   first = curr = prev = cookies->cookies;

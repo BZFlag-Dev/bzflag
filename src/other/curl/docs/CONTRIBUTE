@@ -28,10 +28,10 @@
  2.10 Document
  2.11 Test Cases
 
- 3. Pushing Out Your Changes 
- 3.1 Write Access to CVS Repository
- 3.2 How To Make a Patch
- 3.3 How to get your changes into the main sources
+ 3. Pushing Out Your Changes
+ 3.2 How To Make a Patch with git
+ 3.3 How To Make a Patch without git
+ 3.4 How to get your changes into the main sources
 
 ==============================================================================
 
@@ -152,7 +152,7 @@
 
  Please try to get the latest available sources to make your patches
  against. It makes the life of the developers so much easier. The very best is
- if you get the most up-to-date sources from the CVS repository, but the
+ if you get the most up-to-date sources from the git repository, but the
  latest release archive is quite OK as well!
 
 2.10 Document
@@ -175,18 +175,42 @@
  test case that verifies that it works as documented. If every submitter also
  posts a few test cases, it won't end up as a heavy burden on a single person!
 
-3. Pushing Out Your Changes 
+3. Pushing Out Your Changes
 
-3.1 Write Access to CVS Repository
+3.1 Write Access to git Repository
 
  If you are a frequent contributor, or have another good reason, you can of
- course get write access to the CVS repository and then you'll be able to
- check-in all your changes straight into the CVS tree instead of sending all
- changes by mail as patches. Just ask if this is what you'd want. You will be
- required to have posted a few quality patches first, before you can be
- granted write access.
+ course get write access to the git repository and then you'll be able to push
+ your changes straight into the git repo instead of sending changes by mail as
+ patches. Just ask if this is what you'd want. You will be required to have
+ posted a few quality patches first, before you can be granted push access.
 
-3.2 How To Make a Patch
+3.2 How To Make a Patch with git
+
+ You need to first checkout the respository:
+
+     git clone git://github.com/bagder/curl.git
+
+ You then proceed and edit all the files you like and you commit them to your
+ local repository:
+
+     git commit [file]
+
+ As usual, group your commits so that you commit all changes that at once that
+ constitutes a logical change.
+
+ Once you have done all your commits and you're happy with what you see, you
+ can make patches out of your changes that are suitable for mailing:
+
+     git format-patch remotes/origin/master
+
+ This creates files in your local directory named NNNN-[name].patch for each
+ commit.
+
+ Now send those patches off to the curl-library list. You can of course opt to
+ do that with the 'get send-email' command.
+
+3.3 How To Make a Patch without git
 
  Keep a copy of the unmodified curl sources. Make your changes in a separate
  source tree. When you think you have something that you want to offer the
@@ -214,7 +238,7 @@
    http://gnuwin32.sourceforge.net/packages/patch.htm
    http://gnuwin32.sourceforge.net/packages/diffutils.htm
 
-3.3 How to get your changes into the main sources
+3.4 How to get your changes into the main sources
 
  1. Submit your patch to the curl-library mailing list
 

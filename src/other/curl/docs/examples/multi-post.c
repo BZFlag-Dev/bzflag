@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: multi-post.c,v 1.6 2008-05-22 21:20:09 danf Exp $
  *
  * This is an example application source code using the multi interface
  * to do a multipart formpost without "blocking".
@@ -28,7 +27,7 @@ int main(int argc, char *argv[])
   struct curl_slist *headerlist=NULL;
   static const char buf[] = "Expect:";
 
-  /* Fill in the file upload field. This makes libcurl load data from  
+  /* Fill in the file upload field. This makes libcurl load data from
      the given file name when curl_easy_perform() is called. */
   curl_formadd(&formpost,
                &lastptr,

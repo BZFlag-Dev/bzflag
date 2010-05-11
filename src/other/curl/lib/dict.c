@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: dict.c,v 1.60 2008-12-19 21:14:52 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -112,7 +111,7 @@ const struct Curl_handler Curl_handler_dict = {
   PROT_DICT                             /* protocol */
 };
 
-static char *unescape_word(struct SessionHandle *data, const char *inp)
+static char *unescape_word(struct SessionHandle *data, const char *inputbuff)
 {
   char *newp;
   char *dictp;
@@ -121,11 +120,11 @@ static char *unescape_word(struct SessionHandle *data, const char *inp)
   char byte;
   int olen=0;
 
-  newp = curl_easy_unescape(data, inp, 0, &len);
+  newp = curl_easy_unescape(data, inputbuff, 0, &len);
   if(!newp)
     return NULL;
 
-  dictp = malloc(len*2 + 1); /* add one for terminating zero */
+  dictp = malloc(((size_t)len)*2 + 1); /* add one for terminating zero */
   if(dictp) {
     /* According to RFC2229 section 2.2, these letters need to be escaped with
        \[letter] */
@@ -182,7 +181,7 @@ static CURLcode dict_do(struct connectdata *conn, bool *done)
           *strategy++ = (char)0;
           nthdef = strchr(strategy, ':');
           if(nthdef) {
-            *nthdef++ = (char)0;
+            *nthdef = (char)0;
           }
         }
       }
@@ -238,7 +237,7 @@ static CURLcode dict_do(struct connectdata *conn, bool *done)
         *database++ = (char)0;
         nthdef = strchr(database, ':');
         if(nthdef) {
-          *nthdef++ = (char)0;
+          *nthdef = (char)0;
         }
       }
     }

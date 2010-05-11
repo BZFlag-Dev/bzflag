@@ -30,6 +30,9 @@
 /* Define if you have the <io.h> header file.  */
 #define HAVE_IO_H 1
 
+/* Define if you have the <limits.h> header file.  */
+#define HAVE_LIMITS_H 1
+
 /* Define if you need the malloc.h header header file even with stdlib.h  */
 #define NEED_MALLOC_H 1
 
@@ -307,11 +310,17 @@
 /*                            TYPE SIZES                            */
 /* ---------------------------------------------------------------- */
 
-/* The number of bytes in a long double.  */
+/* The size of `int', as computed by sizeof. */
+#define SIZEOF_INT 4
+
+/* The size of `long double', as computed by sizeof. */
 #define SIZEOF_LONG_DOUBLE 16
 
-/* The number of bytes in a long long.  */
+/* The size of `long long', as computed by sizeof. */
 /* #define SIZEOF_LONG_LONG 8 */
+
+/* The size of `short', as computed by sizeof. */
+#define SIZEOF_SHORT 2
 
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */

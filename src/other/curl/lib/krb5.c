@@ -2,7 +2,7 @@
  *
  * Copyright (c) 1995, 1996, 1997, 1998, 1999 Kungliga Tekniska Högskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
- * Copyright (c) 2004 - 2008 Daniel Stenberg
+ * Copyright (c) 2004 - 2009 Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,14 +46,17 @@
 #include <netdb.h>
 #endif
 #include <string.h>
-#ifdef HAVE_GSSMIT
-/* MIT style */
-#include <gssapi/gssapi.h>
-#include <gssapi/gssapi_generic.h>
-#include <gssapi/gssapi_krb5.h>
+
+#ifdef HAVE_GSSGNU
+#  include <gss.h>
+#elif defined HAVE_GSSMIT
+   /* MIT style */
+#  include <gssapi/gssapi.h>
+#  include <gssapi/gssapi_generic.h>
+#  include <gssapi/gssapi_krb5.h>
 #else
-/* Heimdal-style */
-#include <gssapi.h>
+   /* Heimdal-style */
+#  include <gssapi.h>
 #endif
 
 #include "urldata.h"
@@ -61,7 +64,7 @@
 #include "ftp.h"
 #include "sendf.h"
 #include "krb4.h"
-#include "memory.h"
+#include "curl_memory.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -162,7 +165,7 @@ krb5_auth(void *app_data, struct connectdata *conn)
   char *p;
   const char *host = conn->dns_entry->addr->ai_canonname;
   ssize_t nread;
-  socklen_t l = sizeof(conn->local_addr);
+  curl_socklen_t l = sizeof(conn->local_addr);
   struct SessionHandle *data = conn->data;
   CURLcode result;
   const char *service = "ftp", *srv_host = "host";

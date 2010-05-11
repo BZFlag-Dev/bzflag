@@ -1,5 +1,5 @@
-#ifndef __SENDF_H
-#define __SENDF_H
+#ifndef HEADER_CURL_SENDF_H
+#define HEADER_CURL_SENDF_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: sendf.h,v 1.46 2008-09-29 11:13:37 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -48,15 +47,12 @@ void Curl_failf(struct SessionHandle *, const char *fmt, ...);
 
 #define failf Curl_failf
 
-#define CLIENTWRITE_BODY   1
-#define CLIENTWRITE_HEADER 2
+#define CLIENTWRITE_BODY   (1<<0)
+#define CLIENTWRITE_HEADER (1<<1)
 #define CLIENTWRITE_BOTH   (CLIENTWRITE_BODY|CLIENTWRITE_HEADER)
 
 CURLcode Curl_client_write(struct connectdata *conn, int type, char *ptr,
                            size_t len);
-
-void Curl_read_rewind(struct connectdata *conn,
-                      size_t extraBytesRead);
 
 /* internal read-function, does plain socket only */
 int Curl_read_plain(curl_socket_t sockfd,
@@ -86,4 +82,4 @@ int Curl_debug(struct SessionHandle *handle, curl_infotype type,
                struct connectdata *conn);
 
 
-#endif /* __SENDF_H */
+#endif /* HEADER_CURL_SENDF_H */

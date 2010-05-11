@@ -3,6 +3,52 @@ join in and help us correct one or more of these! Also be sure to check the
 changelog of the current development status, as one or more of these problems
 may have been fixed since this was written!
 
+75. NTLM authentication involving unicode user name or password.
+  http://curl.haxx.se/mail/lib-2009-10/0024.html
+  http://curl.haxx.se/bug/view.cgi?id=2944325
+
+74. The HTTP spec allows headers to be merged and become comma-separated
+  instead of being repeated several times. This also include Authenticate: and
+  Proxy-Authenticate: headers and while this hardly every happens in real life
+  it will confuse libcurl which does not properly support it for all headers -
+  like those Authenticate headers.
+
+73. if a connection is made to a FTP server but the server then just never
+  sends the 220 response or otherwise is dead slow, libcurl will not
+  acknowledge the connection timeout during that phase but only the "real"
+  timeout - which may surprise users as it is probably considered to be the
+  connect phase to most people. Brought up (and is being misunderstood) in:
+  http://curl.haxx.se/bug/view.cgi?id=2844077
+
+72. "Pausing pipeline problems."
+  http://curl.haxx.se/mail/lib-2009-07/0214.html
+
+70. Problem re-using easy handle after call to curl_multi_remove_handle
+  http://curl.haxx.se/mail/lib-2009-07/0249.html
+
+68. "More questions about ares behavior".
+  http://curl.haxx.se/mail/lib-2009-08/0012.html
+
+67. When creating multipart formposts. The file name part can be encoded with
+  something beyond ascii but currently libcurl will only pass in the verbatim
+  string the app provides. There are several browsers that already do this
+  encoding. The key seems to be the updated draft to RFC2231:
+  http://tools.ietf.org/html/draft-reschke-rfc2231-in-http-02
+
+66. When using telnet, the time limitation options don't work.
+  http://curl.haxx.se/bug/view.cgi?id=2818950
+
+65. When doing FTP over a socks proxy or CONNECT through HTTP proxy and the
+  multi interface is used, libcurl will fail if the (passive) TCP connection
+  for the data transfer isn't more or less instant as the code does not
+  properly wait for the connect to be confirmed. See test case 564 for a first
+  shot at a test case.
+
+63. When CURLOPT_CONNECT_ONLY is used, the handle cannot reliably be re-used
+  for any further requests or transfers. The work-around is then to close that
+  handle with curl_easy_cleanup() and create a new. Some more details:
+  http://curl.haxx.se/mail/lib-2009-04/0300.html
+
 62. CURLOPT_TIMEOUT does not work properly with the regular multi and
   multi_socket interfaces. The work-around for apps is to simply remove the
   easy handle once the time is up. See also:
@@ -18,7 +64,8 @@ may have been fixed since this was written!
   http://curl.haxx.se/mail/lib-2008-08/0462.html
 
 59. If the CURLOPT_PORT option is used on an FTP URL like
-  "ftp://example.com/file;type=A" the ";type=A" is stripped off.
+  "ftp://example.com/file;type=A" using a proxy, the ";type=A" is stripped off.
+  See the comment in parse_remote_port()
 
 58. It seems sensible to be able to use CURLOPT_NOBODY and
   CURLOPT_FAILONERROR with FTP to detect if a file exists or not, but it is
@@ -120,7 +167,7 @@ may have been fixed since this was written!
   to VMS file structures and the perceived file sizes stat() returns. A
   possible fix would involve sending a "STRU VMS" command.
   http://curl.haxx.se/bug/view.cgi?id=1156287
-  
+
 21. FTP ASCII transfers do not follow RFC959. They don't convert the data
    accordingly (not for sending nor for receiving). RFC 959 section 3.1.1.1
    clearly describes how this should be done:

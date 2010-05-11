@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: md5.c,v 1.15 2009-02-12 20:48:44 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"

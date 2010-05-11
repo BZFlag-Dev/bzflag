@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curlx.h,v 1.6 2008-10-16 08:23:48 bagder Exp $
  ***************************************************************************/
 
 /*
@@ -51,6 +50,17 @@
   curlx_tvnow()
   curlx_tvdiff()
   curlx_tvdiff_secs()
+*/
+
+#include "nonblock.h"
+/* "nonblock.h" provides curlx_nonblock() */
+
+#include "warnless.h"
+/* "warnless.h" provides functions:
+
+  curlx_ultous()
+  curlx_ultouc()
+  curlx_uztosi()
 */
 
 /* Now setup curlx_ * names for the functions that are to become curlx_ and

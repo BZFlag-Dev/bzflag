@@ -7,7 +7,7 @@
  *
  * Copyright (c) 1995, 1996, 1997, 1998, 1999 Kungliga Tekniska Högskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
- * Copyright (c) 2004 - 2008 Daniel Stenberg
+ * Copyright (c) 2004 - 2009 Daniel Stenberg
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * $Id: krb4.c,v 1.51 2008-11-16 12:26:50 bagder Exp $
  */
 
 #include "setup.h"
@@ -63,7 +62,7 @@
 #include "sendf.h"
 #include "krb4.h"
 #include "inet_ntop.h"
-#include "memory.h"
+#include "curl_memory.h"
 
 /* The last #include file should be: */
 #include "memdebug.h"

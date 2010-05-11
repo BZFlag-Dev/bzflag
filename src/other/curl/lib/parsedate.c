@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: parsedate.c,v 1.36 2008-10-23 11:49:19 bagder Exp $
  ***************************************************************************/
 /*
   A brief summary of the date string formats this parser groks:
@@ -147,6 +146,36 @@ static const struct tzinfo tz[]= {
   {"NZST", -720},          /* New Zealand Standard */
   {"NZDT", -720 tDAYZONE}, /* New Zealand Daylight */
   {"IDLE", -720},          /* International Date Line East */
+  /* Next up: Military timezone names. RFC822 allowed these, but (as noted in
+     RFC 1123) had their signs wrong. Here we use the correct signs to match
+     actual military usage.
+   */
+  {"A",  +1 * 60},         /* Alpha */
+  {"B",  +2 * 60},         /* Bravo */
+  {"C",  +3 * 60},         /* Charlie */
+  {"D",  +4 * 60},         /* Delta */
+  {"E",  +5 * 60},         /* Echo */
+  {"F",  +6 * 60},         /* Foxtrot */
+  {"G",  +7 * 60},         /* Golf */
+  {"H",  +8 * 60},         /* Hotel */
+  {"I",  +9 * 60},         /* India */
+  /* "J", Juliet is not used as a timezone, to indicate the observer's local time */
+  {"K", +10 * 60},         /* Kilo */
+  {"L", +11 * 60},         /* Lima */
+  {"M", +12 * 60},         /* Mike */
+  {"N",  -1 * 60},         /* November */
+  {"O",  -2 * 60},         /* Oscar */
+  {"P",  -3 * 60},         /* Papa */
+  {"Q",  -4 * 60},         /* Quebec */
+  {"R",  -5 * 60},         /* Romeo */
+  {"S",  -6 * 60},         /* Sierra */
+  {"T",  -7 * 60},         /* Tango */
+  {"U",  -8 * 60},         /* Uniform */
+  {"V",  -9 * 60},         /* Victor */
+  {"W", -10 * 60},         /* Whiskey */
+  {"X", -11 * 60},         /* X-ray */
+  {"Y", -12 * 60},         /* Yankee */
+  {"Z", 0},                /* Zulu, zero meridian, a.k.a. UTC */
 };
 
 /* returns:
@@ -270,7 +299,18 @@ static time_t my_timegm(struct my_tm *tm)
            + tm->tm_hour) * 60 + tm->tm_min) * 60 + tm->tm_sec;
 }
 
-static time_t parsedate(const char *date)
+/*
+ * Curl_parsedate()
+ *
+ * Returns:
+ *
+ * PARSEDATE_OK     - a fine conversion
+ * PARSEDATE_FAIL   - failed to convert
+ * PARSEDATE_LATER  - time overflow at the far end of time_t
+ * PARSEDATE_SOONER - time underflow at the low end of time_t
+ */
+
+int Curl_parsedate(const char *date, time_t *output)
 {
   time_t t = 0;
   int wdaynum=-1;  /* day of the week number, 0-6 (mon-sun) */
@@ -318,7 +358,7 @@ static time_t parsedate(const char *date)
       }
 
       if(!found)
-        return -1; /* bad string */
+        return PARSEDATE_FAIL; /* bad string */
 
       date += len;
     }
@@ -389,7 +429,7 @@ static time_t parsedate(const char *date)
         }
 
         if(!found)
-          return -1;
+          return PARSEDATE_FAIL;
 
         date = end;
       }
@@ -405,13 +445,20 @@ static time_t parsedate(const char *date)
      (-1 == monnum) ||
      (-1 == yearnum))
     /* lacks vital info, fail */
-    return -1;
+    return PARSEDATE_FAIL;
 
 #if SIZEOF_TIME_T < 5
   /* 32 bit time_t can only hold dates to the beginning of 2038 */
-  if(yearnum > 2037)
-    return 0x7fffffff;
+  if(yearnum > 2037) {
+    *output = 0x7fffffff;
+    return PARSEDATE_LATER;
+  }
 #endif
+
+  if(yearnum < 1970) {
+    *output = 0;
+    return PARSEDATE_SOONER;
+  }
 
   tm.tm_sec = secnum;
   tm.tm_min = minnum;
@@ -441,11 +488,23 @@ static time_t parsedate(const char *date)
     t += delta;
   }
 
-  return t;
+  *output = t;
+
+  return PARSEDATE_OK;
 }
 
 time_t curl_getdate(const char *p, const time_t *now)
 {
-  (void)now;
-  return parsedate(p);
+  time_t parsed;
+  int rc = Curl_parsedate(p, &parsed);
+  (void)now; /* legacy argument from the past that we ignore */
+
+  switch(rc) {
+  case PARSEDATE_OK:
+  case PARSEDATE_LATER:
+  case PARSEDATE_SOONER:
+    return parsed;
+  }
+  /* everything else is fail */
+  return -1;
 }

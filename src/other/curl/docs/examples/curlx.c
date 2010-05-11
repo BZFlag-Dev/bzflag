@@ -115,7 +115,7 @@ static const char *curlx_usage[]={
 
 */
 
-/* 
+/*
  * We use this ZERO_NULL to avoid picky compiler warnings,
  * when assigning a NULL pointer to a function pointer var.
  */
@@ -453,7 +453,7 @@ int main(int argc, char **argv) {
   {
     FILE *outfp;
     BIO_get_fp(out,&outfp);
-    curl_easy_setopt(p.curl, CURLOPT_FILE,outfp);
+    curl_easy_setopt(p.curl, CURLOPT_WRITEDATA, outfp);
   }
 
   res = curl_easy_setopt(p.curl, CURLOPT_SSL_CTX_FUNCTION, sslctxfun)  ;

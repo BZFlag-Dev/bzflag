@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: multi-app.c,v 1.9 2008-05-22 21:20:09 danf Exp $
  *
  * This is an example application source code using the multi interface.
  */
@@ -105,20 +104,23 @@ int main(int argc, char **argv)
   /* See how the transfers went */
   while ((msg = curl_multi_info_read(multi_handle, &msgs_left))) {
     if (msg->msg == CURLMSG_DONE) {
+      int idx, found = 0;
 
-       int idx, found = 0;
+      /* Find out which handle this message is about */
+      for (idx=0; idx<HANDLECOUNT; idx++) {
+        found = (msg->easy_handle == handles[idx]);
+        if(found)
+          break;
+      }
 
-       /* Find out which handle this message is about */
-       for (idx=0; (!found && (idx<HANDLECOUNT)); idx++) found = (msg->easy_handle == handles[idx]);
-
-       switch (idx) {
-         case HTTP_HANDLE:
-           printf("HTTP transfer completed with status %d\n", msg->data.result);
-           break;
-         case FTP_HANDLE:
-           printf("FTP transfer completed with status %d\n", msg->data.result);
-           break;
-       }
+      switch (idx) {
+      case HTTP_HANDLE:
+        printf("HTTP transfer completed with status %d\n", msg->data.result);
+        break;
+      case FTP_HANDLE:
+        printf("FTP transfer completed with status %d\n", msg->data.result);
+        break;
+      }
     }
   }
 

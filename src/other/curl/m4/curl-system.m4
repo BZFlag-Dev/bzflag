@@ -5,7 +5,7 @@
 #                            | (__| |_| |  _ <| |___
 #                             \___|\___/|_| \_\_____|
 #
-# Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+# Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution. The terms
@@ -18,11 +18,10 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: curl-system.m4,v 1.2 2008-11-19 01:57:27 yangtse Exp $
 #***************************************************************************
 
 # File version for 'aclocal' use. Keep it a single number.
-# serial 2
+# serial 3
 
 
 dnl CURL_CHECK_PATH_SEPARATOR
@@ -75,5 +74,15 @@ AC_DEFUN([CURL_CHECK_PATH_SEPARATOR], [
   fi
   AC_SUBST([PATH_SEPARATOR])
   AC_SUBST([PATH])
+])
+
+
+dnl CURL_CHECK_PATH_SEPARATOR_REQUIRED
+dnl -------------------------------------------------
+dnl Use this to ensure that the path separator check
+dnl macro is only expanded and included once.
+
+AC_DEFUN([CURL_CHECK_PATH_SEPARATOR_REQUIRED], [
+  AC_REQUIRE([CURL_CHECK_PATH_SEPARATOR])dnl
 ])
 

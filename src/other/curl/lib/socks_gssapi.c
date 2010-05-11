@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: socks_gssapi.c,v 1.2 2009-01-30 19:29:25 danf Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -34,9 +33,6 @@
 #endif
 #include <string.h>
 
-#ifdef NEED_MALLOC_H
-#include <malloc.h>
-#endif
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
@@ -52,6 +48,7 @@ static gss_ctx_id_t     gss_context = GSS_C_NO_CONTEXT;
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
+#include "curl_memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
 

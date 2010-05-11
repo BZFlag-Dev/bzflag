@@ -450,7 +450,10 @@ X_OBJS= \
 	$(DIROBJ)\content_encoding.obj \
 	$(DIROBJ)\cookie.obj \
 	$(DIROBJ)\curl_addrinfo.obj \
+	$(DIROBJ)\curl_memrchr.obj \
+	$(DIROBJ)\curl_rand.obj \
 	$(DIROBJ)\curl_sspi.obj \
+	$(DIROBJ)\curl_threads.obj \
 	$(DIROBJ)\dict.obj \
 	$(DIROBJ)\easy.obj \
 	$(DIROBJ)\escape.obj \
@@ -474,6 +477,7 @@ X_OBJS= \
 	$(DIROBJ)\http_negotiate.obj \
 	$(DIROBJ)\http_ntlm.obj \
 	$(DIROBJ)\if2ip.obj \
+	$(DIROBJ)\imap.obj \
 	$(DIROBJ)\inet_ntop.obj \
 	$(DIROBJ)\inet_pton.obj \
 	$(DIROBJ)\ldap.obj \
@@ -483,13 +487,20 @@ X_OBJS= \
 	$(DIROBJ)\mprintf.obj \
 	$(DIROBJ)\multi.obj \
 	$(DIROBJ)\netrc.obj \
+        $(DIROBJ)\nonblock.obj \
 	$(DIROBJ)\parsedate.obj \
+	$(DIROBJ)\pingpong.obj \
+	$(DIROBJ)\pop3.obj \
 	$(DIROBJ)\progress.obj \
 	$(DIROBJ)\rawstr.obj \
+	$(DIROBJ)\rtsp.obj \
 	$(DIROBJ)\select.obj \
 	$(DIROBJ)\sendf.obj \
 	$(DIROBJ)\share.obj \
+	$(DIROBJ)\slist.obj \
+	$(DIROBJ)\smtp.obj \
 	$(DIROBJ)\socks.obj \
+	$(DIROBJ)\socks_gssapi.obj \
 	$(DIROBJ)\socks_sspi.obj \
 	$(DIROBJ)\speedcheck.obj \
 	$(DIROBJ)\splay.obj \
@@ -506,6 +517,7 @@ X_OBJS= \
 	$(DIROBJ)\transfer.obj \
 	$(DIROBJ)\url.obj \
 	$(DIROBJ)\version.obj \
+	$(DIROBJ)\warnless.obj \
 	$(RESOURCE)
 
 all : $(TARGET)
@@ -535,11 +547,11 @@ debug-dll\libcurl.res \
 debug-dll-ssl-dll\libcurl.res \
 debug-dll-zlib-dll\libcurl.res \
 debug-dll-ssl-dll-zlib-dll\libcurl.res: libcurl.rc
-	rc /dCURLDEBUG=1 /Fo $@ libcurl.rc
+	rc /dDEBUGBUILD=1 /Fo $@ libcurl.rc
 
 release-dll\libcurl.res \
 release-dll-ssl-dll\libcurl.res \
 release-dll-zlib-dll\libcurl.res \
 release-dll-ssl-dll-zlib-dll\libcurl.res: libcurl.rc
-	rc /dCURLDEBUG=0 /Fo $@ libcurl.rc
+	rc /dDEBUGBUILD=0 /Fo $@ libcurl.rc
 !ENDIF  # End of case where a config was provided.

@@ -1,4 +1,4 @@
-/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+/* curl_config.h.in.  Generated automatically from configure.in by autoheader.  */
 /* Name of this package! */
 #undef PACKAGE
 
@@ -47,17 +47,11 @@
 /* Define this to 'int' if ssize_t is not an available typedefed type */
 #undef ssize_t
 
-/* Type to use in place of socklen_t when system does not provide it. */
-#undef socklen_t
-
 /* Define this as a suitable file to read random data from */
 #undef RANDOM_FILE
 
 /* Define this to your Entropy Gathering Daemon socket pathname */
 #undef EGD_SOCKET
-
-/* Set to explicitly specify we don't want to use thread-safe functions */
-#define DISABLED_THREADSAFE
 
 /* Define if you want to enable IPv6 support */
 #undef ENABLE_IPV6
@@ -335,11 +329,17 @@
 /* Define as the return type of signal handlers (`int' or `void'). */
 #define RETSIGTYPE void
 
-/* The size of a `long double', as computed by sizeof. */
+/* The size of `int', as computed by sizeof. */
+#define SIZEOF_INT 4
+
+/* The size of `long double', as computed by sizeof. */
 #undef SIZEOF_LONG_DOUBLE
 
-/* The size of a `long long', as computed by sizeof. */
+/* The size of `long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
+
+/* The size of `short', as computed by sizeof. */
+#define SIZEOF_SHORT 2
 
 /* Define if you have the ANSI C header files. */
 #undef STDC_HEADERS

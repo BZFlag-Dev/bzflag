@@ -1,5 +1,5 @@
-#ifndef _CURL_MEMORY_H
-#define _CURL_MEMORY_H
+#ifndef __SLIST_H
+#define __SLIST_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2004, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,31 +20,13 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: memory.h,v 1.2 2004/10/06 07:50:18 bagder Exp $
  ***************************************************************************/
 
-#include <curl/curl.h> /* for the typedefs */
+/*
+ * Curl_slist_duplicate() duplicates a linked list. It always returns the
+ * address of the first record of the cloned list or NULL in case of an
+ * error (or if the input list was NULL).
+ */
+struct curl_slist *Curl_slist_duplicate(struct curl_slist *inlist);
 
-extern curl_malloc_callback Curl_cmalloc;
-extern curl_free_callback Curl_cfree;
-extern curl_realloc_callback Curl_crealloc;
-extern curl_strdup_callback Curl_cstrdup;
-extern curl_calloc_callback Curl_ccalloc;
-
-#ifndef CURLDEBUG
-/* Only do this define-mania if we're not using the memdebug system, as that
-   has preference on this magic. */
-#undef strdup
-#define strdup(ptr) Curl_cstrdup(ptr)
-#undef malloc
-#define malloc(size) Curl_cmalloc(size)
-#undef calloc
-#define calloc(nbelem,size) Curl_ccalloc(nbelem, size)
-#undef realloc
-#define realloc(ptr,size) Curl_crealloc(ptr, size)
-#undef free
-#define free(ptr) Curl_cfree(ptr)
-
-#endif
-
-#endif /* _CURL_MEMORY_H */
+#endif /* __SLIST_H */

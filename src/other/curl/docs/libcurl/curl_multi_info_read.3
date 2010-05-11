@@ -1,4 +1,3 @@
-.\" $Id: curl_multi_info_read.3,v 1.10 2008-12-28 21:56:56 bagder Exp $
 .\"
 .TH curl_multi_info_read 3 "18 Dec 2004" "libcurl 7.10.3" "libcurl Manual"
 .SH NAME
@@ -34,7 +33,7 @@ If more involved information is wanted, the particular "easy handle" in
 present in that struct and can thus be used in subsequent regular
 \fIcurl_easy_getinfo(3)\fP calls (or similar):
 
-.NF
+.nf
  struct CURLMsg {
    CURLMSG msg;       /* what this message means */
    CURL *easy_handle; /* the handle it concerns */
@@ -43,7 +42,7 @@ present in that struct and can thus be used in subsequent regular
      CURLcode result;   /* return code for transfer */
    } data;
  };
-
+.fi
 When \fBmsg\fP is \fICURLMSG_DONE\fP, the message identifies a transfer that
 is done, and then \fBresult\fP contains the return code for the easy handle
 that just completed.

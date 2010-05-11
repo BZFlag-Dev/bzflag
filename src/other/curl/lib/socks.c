@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,17 +18,13 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: socks.c,v 1.28 2009-01-28 21:34:16 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
-#ifndef CURL_DISABLE_PROXY
+#if !defined(CURL_DISABLE_PROXY) || defined(USE_WINDOWS_SSPI)
 #include <string.h>
 
-#ifdef NEED_MALLOC_H
-#include <malloc.h>
-#endif
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
@@ -75,7 +71,7 @@ int Curl_blockread_all(struct connectdata *conn, /* connection data */
   struct timeval tvnow;
   long conntime;
   *n = 0;
-  do {
+  for(;;) {
     tvnow = Curl_tvnow();
     /* calculating how long connection is establishing */
     conntime = Curl_tvdiff(tvnow, conn->created);
@@ -107,7 +103,7 @@ int Curl_blockread_all(struct connectdata *conn, /* connection data */
     buffersize -= nread;
     buf += nread;
     allread += nread;
-  } while(1);
+  }
   return result;
 }
 
@@ -147,7 +143,7 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
     return CURLE_OPERATION_TIMEDOUT;
   }
 
-  Curl_nonblock(sock, FALSE);
+  curlx_nonblock(sock, FALSE);
 
   /*
    * Compose socks4 request
@@ -347,7 +343,7 @@ CURLcode Curl_SOCKS4(const char *proxy_name,
     }
   }
 
-  Curl_nonblock(sock, TRUE);
+  curlx_nonblock(sock, TRUE);
 
   return CURLE_OK; /* Proxy was successful! */
 }
@@ -396,7 +392,7 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
   if(!socks5_resolve_local && hostname_len > 255)
   {
     infof(conn->data,"SOCKS5: server resolving disabled for hostnames of "
-          "length > 255 [actual len=%d]\n", hostname_len);
+          "length > 255 [actual len=%zu]\n", hostname_len);
     socks5_resolve_local = TRUE;
   }
 
@@ -409,7 +405,7 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
     return CURLE_OPERATION_TIMEDOUT;
   }
 
-  Curl_nonblock(sock, TRUE);
+  curlx_nonblock(sock, TRUE);
 
   /* wait until socket gets connected */
   result = Curl_socket_ready(CURL_SOCKET_BAD, sock, (int)timeout);
@@ -440,7 +436,7 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
   socksreq[3] = 2; /* username/password */
 #endif
 
-  Curl_nonblock(sock, FALSE);
+  curlx_nonblock(sock, FALSE);
 
   code = Curl_write_plain(conn, sock, (char *)socksreq, (2 + (int)socksreq[1]),
                           &written);
@@ -449,7 +445,7 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
     return CURLE_COULDNT_CONNECT;
   }
 
-  Curl_nonblock(sock, TRUE);
+  curlx_nonblock(sock, TRUE);
 
   result = Curl_socket_ready(sock, CURL_SOCKET_BAD, (int)timeout);
 
@@ -467,7 +463,7 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
     return CURLE_RECV_ERROR;
   }
 
-  Curl_nonblock(sock, FALSE);
+  curlx_nonblock(sock, FALSE);
 
   result=Curl_blockread_all(conn, sock, (char *)socksreq, 2, &actualread,
                             timeout);
@@ -516,11 +512,11 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
     len = 0;
     socksreq[len++] = 1;    /* username/pw subnegotiation version */
     socksreq[len++] = (char) userlen;
-    memcpy(socksreq + len, proxy_name, (int) userlen);
-    len += userlen;
+    memcpy(socksreq + len, proxy_name, userlen);
+    len += (int)userlen;
     socksreq[len++] = (char) pwlen;
-    memcpy(socksreq + len, proxy_password, (int) pwlen);
-    len += pwlen;
+    memcpy(socksreq + len, proxy_password, pwlen);
+    len += (int)pwlen;
 
     code = Curl_write_plain(conn, sock, (char *)socksreq, len, &written);
     if((code != CURLE_OK) || (len != written)) {
@@ -722,7 +718,7 @@ CURLcode Curl_SOCKS5(const char *proxy_name,
   }
 #endif
 
-  Curl_nonblock(sock, TRUE);
+  curlx_nonblock(sock, TRUE);
   return CURLE_OK; /* Proxy was successful! */
 }
 

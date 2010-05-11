@@ -1,5 +1,4 @@
 #########################################################################
-# $Id: Makefile.m32,v 1.4 2008-05-09 16:31:51 yangtse Exp $
 #
 ## Makefile for building curl examples with MingW32
 ## and optionally OpenSSL (0.9.8), libssh2 (0.18), zlib (1.2.3)
@@ -19,11 +18,11 @@ ZLIB_PATH = ../../zlib-1.2.3
 endif
 # Edit the path below to point to the base of your OpenSSL package.
 ifndef OPENSSL_PATH
-OPENSSL_PATH = ../../openssl-0.9.8g
+OPENSSL_PATH = ../../openssl-0.9.8k
 endif
 # Edit the path below to point to the base of your LibSSH2 package.
 ifndef LIBSSH2_PATH
-LIBSSH2_PATH = ../../libssh2-0.18
+LIBSSH2_PATH = ../../libssh2-1.2
 endif
 # Edit the path below to point to the base of your Novell LDAP NDK.
 ifndef LDAP_SDK

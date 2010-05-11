@@ -1,11 +1,11 @@
 #ifndef __LIB_CONFIG_MAC_H
 #define __LIB_CONFIG_MAC_H
 
-/* ================================================================ */
-/*    lib/config-mac.h - Hand crafted config file for Mac OS 9      */
-/* ================================================================ */
-/*   On Mac OS X you must run configure to generate config.h file   */
-/* ================================================================ */
+/* =================================================================== */
+/*   lib/config-mac.h - Hand crafted config file for Mac OS 9          */
+/* =================================================================== */
+/*  On Mac OS X you must run configure to generate curl_config.h file  */
+/* =================================================================== */
 
 #define OS "mac"
 
@@ -58,6 +58,9 @@
 #define HAVE_IOCTL_FIONBIO      1
 
 #define RETSIGTYPE void
+
+#define SIZEOF_INT              4
+#define SIZEOF_SHORT            2
 
 #define HAVE_GETNAMEINFO 1
 #define GETNAMEINFO_QUAL_ARG1 const

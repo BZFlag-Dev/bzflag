@@ -1,5 +1,5 @@
-#ifndef __SRC_CURL_SETUP_H
-#define __SRC_CURL_SETUP_H
+#ifndef HEADER_CURL_SRC_SETUP_H
+#define HEADER_CURL_SRC_SETUP_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: setup.h,v 1.58 2008-09-05 01:27:24 yangtse Exp $
  ***************************************************************************/
 
 #define CURL_NO_OLDIES
@@ -39,7 +38,7 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "curl_config.h"
 #else
 
 #ifdef WIN32
@@ -64,13 +63,20 @@
 
 #ifdef TPF
 #include "config-tpf.h"
-/* change which select is used for the curl command line tool */
-#define select(a,b,c,d,e) tpf_select_bsd(a,b,c,d,e)
-/* and turn off the progress meter */
-#define CONF_DEFAULT (0|CONF_NOPROGRESS)
 #endif
 
 #endif /* HAVE_CONFIG_H */
+
+/*
+ * AIX 4.3 and newer needs _THREAD_SAFE defined to build
+ * proper reentrant code. Others may also need it.
+ */
+
+#ifdef NEED_THREAD_SAFE
+#  ifndef _THREAD_SAFE
+#    define _THREAD_SAFE
+#  endif
+#endif
 
 /*
  * Tru64 needs _REENTRANT set for a few function prototypes and
@@ -84,11 +90,11 @@
 #  endif
 #endif
 
-/* 
+/*
  * Include header files for windows builds before redefining anything.
- * Use this preproessor block only to include or exclude windows.h, 
- * winsock2.h, ws2tcpip.h or winsock.h. Any other windows thing belongs 
- * to any other further and independant block.  Under Cygwin things work
+ * Use this preproessor block only to include or exclude windows.h,
+ * winsock2.h, ws2tcpip.h or winsock.h. Any other windows thing belongs
+ * to any other further and independent block.  Under Cygwin things work
  * just as under linux (e.g. <sys/socket.h>) and the winsock headers should
  * never be included when __CYGWIN__ is defined.  configure script takes
  * care of this, not defining HAVE_WINDOWS_H, HAVE_WINSOCK_H, HAVE_WINSOCK2_H,
@@ -128,6 +134,13 @@
 #  endif
 #endif
 
+#ifdef TPF
+#  include <sys/socket.h>
+   /* change which select is used for the curl command line tool */
+#  define select(a,b,c,d,e) tpf_select_bsd(a,b,c,d,e)
+   /* and turn off the progress meter */
+#  define CONF_DEFAULT (0|CONF_NOPROGRESS)
+#endif
 
 #include <stdio.h>
 
@@ -160,9 +173,6 @@ int fileno( FILE *stream);
 #include <tcp.h>
 #ifdef word
 #undef word
-#endif
-#ifndef HAVE_LIMITS_H
-#define HAVE_LIMITS_H /* we have limits.h */
 #endif
 #define DIR_CHAR      "/"
 #define DOT_CHAR      "_"
@@ -205,4 +215,4 @@ int fileno( FILE *stream);
 #include "setup_once.h"
 #endif
 
-#endif /* __SRC_CURL_SETUP_H */
+#endif /* HEADER_CURL_SRC_SETUP_H */

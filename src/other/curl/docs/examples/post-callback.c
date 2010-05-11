@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: post-callback.c,v 1.10 2008-05-22 21:20:09 danf Exp $
  *
  * An example source code that issues a HTTP POST and we provide the actual
  * data through a read callback.

@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: multi-debugcallback.c,v 1.4 2008-05-22 21:20:09 danf Exp $
  *
  * This is a very simple example using the multi interface and the debug
  * callback.
@@ -38,11 +37,12 @@ void dump(const char *text,
     /* without the hex output, we can fit more on screen */
     width = 0x40;
 
-  fprintf(stream, "%s, %zd bytes (0x%zx)\n", text, size, size);
+  fprintf(stream, "%s, %010.10ld bytes (0x%08.8lx)\n",
+          text, (long)size, (long)size);
 
   for(i=0; i<size; i+= width) {
 
-    fprintf(stream, "%04zx: ", i);
+    fprintf(stream, "%04.4lx: ", (long)i);
 
     if(!nohex) {
       /* hex not disabled, show it */
@@ -74,7 +74,7 @@ void dump(const char *text,
 
 static
 int my_trace(CURL *handle, curl_infotype type,
-             char *data, size_t size,
+             unsigned char *data, size_t size,
              void *userp)
 {
   const char *text;

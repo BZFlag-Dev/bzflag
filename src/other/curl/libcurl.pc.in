@@ -18,7 +18,6 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: libcurl.pc.in,v 1.4 2008-09-02 12:07:08 bagder Exp $
 ###########################################################################
 
 # This should most probably benefit from getting a "Requires:" field added
@@ -35,6 +34,6 @@ Name: libcurl
 URL: http://curl.haxx.se/
 Description: Library to transfer files with ftp, http, etc.
 Version: @VERSION@
-Libs: -L${libdir} -lcurl @LDFLAGS@ @LIBS@
+Libs: -L${libdir} -lcurl @LIBS@
 Libs.private: @LIBCURL_LIBS@ @LIBS@
 Cflags: -I${includedir}

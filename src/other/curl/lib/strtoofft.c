@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: strtoofft.c,v 1.13 2007-11-05 09:45:09 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

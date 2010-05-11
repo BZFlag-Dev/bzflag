@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: krb4.h,v 1.13 2008-05-09 11:27:55 mmarek Exp $
  ***************************************************************************/
 
 struct Curl_sec_client_mech {

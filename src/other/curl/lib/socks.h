@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: socks.h,v 1.7 2009-01-28 21:34:16 bagder Exp $
  ***************************************************************************/
 
 /*

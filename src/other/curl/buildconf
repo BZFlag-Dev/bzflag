@@ -19,7 +19,6 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: buildconf,v 1.65 2009-02-13 06:25:35 yangtse Exp $
 ###########################################################################
 
 die(){
@@ -88,7 +87,7 @@ if test -z "$ac_version"; then
   echo "            You need autoconf version $need_autoconf or newer installed."
   exit 1
 fi
-IFS=.; set $ac_version; IFS=' '
+old_IFS=$IFS; IFS='.'; set $ac_version; IFS=$old_IFS
 if test "$1" = "2" -a "$2" -lt "57" || test "$1" -lt "2"; then
   echo "buildconf: autoconf version $ac_version found."
   echo "            You need autoconf version $need_autoconf or newer installed."
@@ -121,7 +120,7 @@ if test -z "$ah_version"; then
   echo "            You need autoheader version 2.50 or newer installed."
   exit 1
 fi
-IFS=.; set $ah_version; IFS=' '
+old_IFS=$IFS; IFS='.'; set $ah_version; IFS=$old_IFS
 if test "$1" = "2" -a "$2" -lt "50" || test "$1" -lt "2"; then
   echo "buildconf: autoheader version $ah_version found."
   echo "            You need autoheader version 2.50 or newer installed."
@@ -143,7 +142,7 @@ if test -z "$am_version"; then
   echo "            You need automake version $need_automake or newer installed."
   exit 1
 fi
-IFS=.; set $am_version; IFS=' '
+old_IFS=$IFS; IFS='.'; set $am_version; IFS=$old_IFS
 if test "$1" = "1" -a "$2" -lt "7" || test "$1" -lt "1"; then
   echo "buildconf: automake version $am_version found."
   echo "            You need automake version $need_automake or newer installed."
@@ -191,28 +190,28 @@ else
   libtoolize=`findtool $LIBTOOLIZE`
 fi
 
-lt_pversion=`$libtool --version 2>/dev/null|head -n 1|sed -e 's/^[^0-9]*//g' -e 's/[- ].*//'`
-if test -z "$lt_pversion"; then
+lt_pver=`$libtool --version 2>/dev/null|head -n 1`
+lt_qver=`echo $lt_pver|sed -e "s/([^)]*)//g" -e "s/^[^0-9]*//g"`
+lt_version=`echo $lt_qver|sed -e "s/[- ].*//" -e "s/\([a-z]*\)$//"`
+if test -z "$lt_version"; then
   echo "buildconf: libtool not found."
   echo "            You need libtool version $LIBTOOL_WANTED_VERSION or newer installed"
   exit 1
 fi
-lt_version=`echo $lt_pversion|sed -e 's/\([a-z]*\)$//'`
-IFS=.; set $lt_version; IFS=' '
+old_IFS=$IFS; IFS='.'; set $lt_version; IFS=$old_IFS
+lt_major=$1
+lt_minor=$2
+lt_patch=$3
 lt_status="good"
 
-major=$1
-minor=$2
-patch=$3
-
-if test "$major" = "$LIBTOOL_WANTED_MAJOR"; then
-   if test "$minor" -lt "$LIBTOOL_WANTED_MINOR"; then
+if test "$lt_major" = "$LIBTOOL_WANTED_MAJOR"; then
+   if test "$lt_minor" -lt "$LIBTOOL_WANTED_MINOR"; then
       lt_status="bad"
    elif test -n "$LIBTOOL_WANTED_PATCH"; then
-       if test "$minor" -gt "$LIBTOOL_WANTED_MINOR"; then
+       if test "$lt_minor" -gt "$LIBTOOL_WANTED_MINOR"; then
          lt_status="good"
-       elif test -n "$patch"; then
-          if test "$patch" -lt "$LIBTOOL_WANTED_PATCH"; then
+       elif test -n "$lt_patch"; then
+          if test "$lt_patch" -lt "$LIBTOOL_WANTED_PATCH"; then
              lt_status="bad"
           fi
        else
@@ -221,7 +220,7 @@ if test "$major" = "$LIBTOOL_WANTED_MAJOR"; then
    fi
 fi
 if test $lt_status != "good"; then
-  echo "buildconf: libtool version $lt_pversion found."
+  echo "buildconf: libtool version $lt_version found."
   echo "            You need libtool version $LIBTOOL_WANTED_VERSION or newer installed"
   exit 1
 fi
@@ -257,15 +256,25 @@ PERL=`findtool ${PERL:-perl}`
 # Remove files generated on previous buildconf/configure run.
 #
 for fname in .deps \
+    .libs \
+    *.la \
+    *.lo \
+    *.a \
+    *.o \
+    Makefile \
     Makefile.in \
     aclocal.m4 \
     aclocal.m4.bak \
+    ares_build.h \
+    ares_config.h \
+    ares_config.h.in \
     autom4te.cache \
     compile \
     config.guess \
-    config.h \
-    config.h.in \
+    curl_config.h \
+    curl_config.h.in \
     config.log \
+    config.lt \
     config.status \
     config.sub \
     configure \
@@ -294,6 +303,11 @@ done
 echo "buildconf: running libtoolize"
 $libtoolize --copy --automake --force || die "The libtoolize command failed"
 
+if test ! -f m4/curl-functions.m4; then
+  echo "buildconf: cURL m4 macros not found"
+  exit 1
+fi
+
 echo "buildconf: running aclocal"
 ${ACLOCAL:-aclocal} -I m4 $ACLOCAL_FLAGS || die "The aclocal command line failed"
 
@@ -308,8 +322,8 @@ fi
 echo "buildconf: running autoheader"
 ${AUTOHEADER:-autoheader} || die "The autoheader command failed"
 
-echo "buildconf: cp lib/config.h.in src/config.h.in"
-cp lib/config.h.in src/config.h.in
+echo "buildconf: cp lib/curl_config.h.in src/curl_config.h.in"
+cp lib/curl_config.h.in src/curl_config.h.in
 
 echo "buildconf: running autoconf"
 ${AUTOCONF:-autoconf}     || die "The autoconf command failed"
@@ -323,6 +337,60 @@ fi
 
 echo "buildconf: running automake"
 ${AUTOMAKE:-automake} -a -c  || die "The automake command failed"
+
+#--------------------------------------------------------------------------
+# Depending on the libtool and automake versions being used, config.guess
+# might not be installed in the subdirectory until automake has finished.
+# So we can not attempt to use it until this very last buildconf stage.
+#
+
+if test ! -f ./config.guess; then
+  echo "buildconf: config.guess not found"
+else
+  buildhost=`./config.guess 2>/dev/null|head -n 1`
+  case $buildhost in
+    *-*-hpux*)
+      need_lt_major=1
+      need_lt_minor=5
+      need_lt_patch=24
+      need_lt_check="yes"
+      ;;
+  esac
+  if test ! -z "$need_lt_check"; then
+    if test -z "$lt_major"; then
+      lt_status="bad"
+    elif test "$lt_major" -gt "$need_lt_major"; then
+      lt_status="good"
+    elif test "$lt_major" -lt "$need_lt_major"; then
+      lt_status="bad"
+    elif test -z "$lt_minor"; then
+      lt_status="bad"
+    elif test "$lt_minor" -gt "$need_lt_minor"; then
+      lt_status="good"
+    elif test "$lt_minor" -lt "$need_lt_minor"; then
+      lt_status="bad"
+    elif test -z "$lt_patch"; then
+      lt_status="bad"
+    elif test "$lt_patch" -gt "$need_lt_patch"; then
+      lt_status="good"
+    elif test "$lt_patch" -lt "$need_lt_patch"; then
+      lt_status="bad"
+    else
+      lt_status="good"
+    fi
+    if test "$lt_status" != "good"; then
+      need_lt_version="$need_lt_major.$need_lt_minor.$need_lt_patch"
+      echo "buildconf: libtool version $lt_version found."
+      echo "            $buildhost requires libtool $need_lt_version or newer installed."
+      rm -f configure
+      exit 1
+    fi
+  fi
+fi
+
+#--------------------------------------------------------------------------
+# Finished succesfully.
+#
 
 echo "buildconf: OK"
 exit 0

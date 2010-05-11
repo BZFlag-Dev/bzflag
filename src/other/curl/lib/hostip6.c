@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,16 +18,12 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: hostip6.c,v 1.47 2008-10-30 19:02:23 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
 
 #include <string.h>
 
-#ifdef NEED_MALLOC_H
-#include <malloc.h>
-#endif
 #ifdef HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
@@ -46,7 +42,7 @@
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>     /* for the close() proto */
 #endif
-#ifdef  VMS
+#ifdef __VMS
 #include <in.h>
 #include <inet.h>
 #include <stdlib.h>
@@ -69,7 +65,7 @@
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
 
-#include "memory.h"
+#include "curl_memory.h"
 /* The last #include file should be: */
 #include "memdebug.h"
 
@@ -78,20 +74,6 @@
  **********************************************************************/
 #ifdef CURLRES_IPV6
 
-#ifndef CURLRES_ARES
-#ifdef CURLRES_ASYNCH
-/*
- * Curl_addrinfo_copy() is used by the asynch callback to copy a given
- * address. But this is an ipv6 build and then we don't copy the address, we
- * just return the same pointer!
- */
-Curl_addrinfo *Curl_addrinfo_copy(const void *orig, int port)
-{
-  (void) port;
-  return (Curl_addrinfo*)orig;
-}
-#endif  /* CURLRES_ASYNCH */
-#endif  /* CURLRES_ARES */
 
 #if defined(CURLDEBUG) && defined(HAVE_GETNAMEINFO)
 /* These are strictly for memory tracing and are using the same style as the
@@ -115,17 +97,13 @@ int curl_dogetnameinfo(GETNAMEINFO_QUAL_ARG1 GETNAMEINFO_TYPE_ARG1 sa,
                           host, hostlen,
                           serv, servlen,
                           flags);
-  if(0 == res) {
+  if(0 == res)
     /* success */
-    if(logfile)
-      fprintf(logfile, "GETNAME %s:%d getnameinfo()\n",
-              source, line);
-  }
-  else {
-    if(logfile)
-      fprintf(logfile, "GETNAME %s:%d getnameinfo() failed = %d\n",
-              source, line, res);
-  }
+    curl_memlog("GETNAME %s:%d getnameinfo()\n",
+                source, line);
+  else
+    curl_memlog("GETNAME %s:%d getnameinfo() failed = %d\n",
+                source, line, res);
   return res;
 }
 #endif /* defined(CURLDEBUG) && defined(HAVE_GETNAMEINFO) */
@@ -147,7 +125,7 @@ bool Curl_ipvalid(struct SessionHandle *data)
   return TRUE;
 }
 
-#if !defined(USE_THREADING_GETADDRINFO) && !defined(CURLRES_ARES)
+#if defined(CURLRES_SYNCH)
 
 #ifdef DEBUG_ADDRINFO
 static void dump_addrinfo(struct connectdata *conn, const Curl_addrinfo *ai)
@@ -191,7 +169,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
   int pf;
   struct SessionHandle *data = conn->data;
 
-  *waitp=0; /* don't wait, we have the response now */
+  *waitp = 0; /* synchronous response only */
 
   /*
    * Check if a limited name resolve has been requested.
@@ -255,6 +233,6 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
 
   return res;
 }
-#endif /* !USE_THREADING_GETADDRINFO && !CURLRES_ARES */
-#endif /* ipv6 */
+#endif /* CURLRES_SYNCH */
+#endif /* CURLRES_IPV6 */
 

@@ -1,6 +1,6 @@
 #ifdef CURLDEBUG
-#ifndef _CURL_MEDEBUG_H
-#define _CURL_MEDEBUG_H
+#ifndef _CURL_MEMDEBUG_H
+#define _CURL_MEMDEBUG_H
 /***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
@@ -8,7 +8,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -21,7 +21,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: memdebug.h,v 1.36 2008-10-30 19:02:23 yangtse Exp $
  ***************************************************************************/
 
 /*
@@ -41,9 +40,6 @@
 #include <sys/socket.h>
 #endif
 #include <stdio.h>
-#ifdef HAVE_MEMORY_H
-#include <memory.h>
-#endif
 
 #define logfile curl_debuglogfile
 
@@ -57,12 +53,17 @@ CURL_EXTERN void curl_dofree(void *ptr, int line, const char *source);
 CURL_EXTERN char *curl_dostrdup(const char *str, int line, const char *source);
 CURL_EXTERN void curl_memdebug(const char *logname);
 CURL_EXTERN void curl_memlimit(long limit);
+CURL_EXTERN void curl_memlog(const char *format, ...);
 
 /* file descriptor manipulators */
-CURL_EXTERN int curl_socket(int domain, int type, int protocol, int line , const char *);
-CURL_EXTERN int curl_sclose(int sockfd, int, const char *source);
-CURL_EXTERN int curl_accept(int s, void *addr, void *addrlen,
-                            int line, const char *source);
+CURL_EXTERN curl_socket_t curl_socket(int domain, int type, int protocol,
+                                      int line , const char *source);
+CURL_EXTERN void curl_mark_sclose(curl_socket_t sockfd,
+                                  int line , const char *source);
+CURL_EXTERN int curl_sclose(curl_socket_t sockfd,
+                            int line , const char *source);
+CURL_EXTERN curl_socket_t curl_accept(curl_socket_t s, void *a, void *alen,
+                                      int line, const char *source);
 
 /* FILE functions */
 CURL_EXTERN FILE *curl_fopen(const char *file, const char *mode, int line,
@@ -119,9 +120,8 @@ CURL_EXTERN int curl_fclose(FILE *file, int line, const char *source);
 /* sclose is probably already defined, redefine it! */
 #undef sclose
 #define sclose(sockfd) curl_sclose(sockfd,__LINE__,__FILE__)
-/* ares-adjusted define: */
-#undef closesocket
-#define closesocket(sockfd) curl_sclose(sockfd,__LINE__,__FILE__)
+
+#define fake_sclose(sockfd) curl_mark_sclose(sockfd,__LINE__,__FILE__)
 
 #undef fopen
 #define fopen(file,mode) curl_fopen(file,mode,__LINE__,__FILE__)
@@ -131,5 +131,9 @@ CURL_EXTERN int curl_fclose(FILE *file, int line, const char *source);
 
 #endif /* MEMDEBUG_NODEFINES */
 
-#endif /* _CURL_MEDEBUG_H */
+#endif /* _CURL_MEMDEBUG_H */
 #endif /* CURLDEBUG */
+
+#ifndef fake_sclose
+#define fake_sclose(x)
+#endif

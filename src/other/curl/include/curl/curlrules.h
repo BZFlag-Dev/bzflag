@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: curlrules.h,v 1.5 2008-08-25 01:18:49 yangtse Exp $
  ***************************************************************************/
 
 /* ================================================================ */
@@ -57,7 +56,7 @@
  * that the dimension of a constant array can not be a negative one.
  * In this way if the compile time verification fails, the compilation
  * will fail issuing an error. The error description wording is compiler
- * dependant but it will be quite similar to one of the following:
+ * dependent but it will be quite similar to one of the following:
  *
  *   "negative subscript or subscript is too large"
  *   "array must have at least one element"
@@ -79,6 +78,16 @@
 #ifndef CURL_SIZEOF_LONG
 #  error "CURL_SIZEOF_LONG definition is missing!"
    Error Compilation_aborted_CURL_SIZEOF_LONG_is_missing
+#endif
+
+#ifndef CURL_TYPEOF_CURL_SOCKLEN_T
+#  error "CURL_TYPEOF_CURL_SOCKLEN_T definition is missing!"
+   Error Compilation_aborted_CURL_TYPEOF_CURL_SOCKLEN_T_is_missing
+#endif
+
+#ifndef CURL_SIZEOF_CURL_SOCKLEN_T
+#  error "CURL_SIZEOF_CURL_SOCKLEN_T definition is missing!"
+   Error Compilation_aborted_CURL_SIZEOF_CURL_SOCKLEN_T_is_missing
 #endif
 
 #ifndef CURL_TYPEOF_CURL_OFF_T
@@ -153,11 +162,31 @@ typedef char
   __curl_rule_03__
     [CurlchkszGE(curl_off_t, long)];
 
+/*
+ * Verify that the size previously defined and expected for
+ * curl_socklen_t is actually the the same as the one reported
+ * by sizeof() at compile time.
+ */
+
+typedef char
+  __curl_rule_04__
+    [CurlchkszEQ(curl_socklen_t, CURL_SIZEOF_CURL_SOCKLEN_T)];
+
+/*
+ * Verify at compile time that the size of curl_socklen_t as reported
+ * by sizeof() is greater or equal than the one reported for int for
+ * the current compilation.
+ */
+
+typedef char
+  __curl_rule_05__
+    [CurlchkszGE(curl_socklen_t, int)];
+
 /* ================================================================ */
 /*          EXTERNALLY AND INTERNALLY VISIBLE DEFINITIONS           */
 /* ================================================================ */
 
-/* 
+/*
  * CURL_ISOCPP and CURL_OFF_T_C definitions are done here in order to allow
  * these to be visible and exported by the external libcurl interface API,
  * while also making them visible to the library internals, simply including
@@ -207,10 +236,17 @@ typedef char
  * Get rid of macros not intended to exist beyond this point.
  */
 
+#undef CURL_PULL_WS2TCPIP_H
 #undef CURL_PULL_SYS_TYPES_H
+#undef CURL_PULL_SYS_SOCKET_H
 #undef CURL_PULL_STDINT_H
 #undef CURL_PULL_INTTYPES_H
 
+#undef CURL_TYPEOF_CURL_SOCKLEN_T
 #undef CURL_TYPEOF_CURL_OFF_T
+
+#ifdef CURL_NO_OLDIES
+#undef CURL_FORMAT_OFF_T /* not required since 7.19.0 - obsoleted in 7.20.0 */
+#endif
 
 #endif /* __CURL_CURLRULES_H */

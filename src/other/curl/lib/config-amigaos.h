@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -20,12 +20,12 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: config-amigaos.h,v 1.17 2008-11-13 18:56:56 yangtse Exp $
  ***************************************************************************/
 
 #ifdef __AMIGA__ /* Any AmigaOS flavour */
 
 #define HAVE_ARPA_INET_H 1
+#define HAVE_CLOSESOCKET_CAMEL 1
 #define HAVE_GETHOSTBYADDR 1
 #define HAVE_INET_ADDR 1
 #define HAVE_INTTYPES_H 1
@@ -84,6 +84,9 @@
 
 #define NEED_MALLOC_H 1
 
+#define SIZEOF_INT 4
+#define SIZEOF_SHORT 2
+
 #define USE_OPENSSL 1
 #define USE_SSLEAY 1
 #define CURL_DISABLE_LDAP 1
@@ -108,9 +111,6 @@
 #define TIME_WITH_SYS_TIME 1
 
 #define in_addr_t int
-#ifndef socklen_t
-# define socklen_t int
-#endif
 
 #ifndef O_RDONLY
 # define O_RDONLY 0x0000
@@ -119,7 +119,7 @@
 #define HAVE_GETNAMEINFO 1
 #define GETNAMEINFO_QUAL_ARG1 const
 #define GETNAMEINFO_TYPE_ARG1 struct sockaddr *
-#define GETNAMEINFO_TYPE_ARG2 socklen_t
+#define GETNAMEINFO_TYPE_ARG2 int
 #define GETNAMEINFO_TYPE_ARG46 size_t
 #define GETNAMEINFO_TYPE_ARG7 int
 

@@ -10,7 +10,7 @@
  * Copyright (c) 1998, 1999 Kungliga Tekniska Högskolan
  * (Royal Institute of Technology, Stockholm, Sweden).
  *
- * Copyright (C) 2001 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2001 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * All rights reserved.
  *
@@ -65,7 +65,7 @@
 #include "curl_base64.h"
 #include "sendf.h"
 #include "ftp.h"
-#include "memory.h"
+#include "curl_memory.h"
 #include "rawstr.h"
 
 /* The last #include file should be: */
@@ -331,7 +331,7 @@ Curl_sec_send(struct connectdata *conn, int num, const char *buffer, int length)
 int
 Curl_sec_putc(struct connectdata *conn, int c, FILE *F)
 {
-  char ch = c;
+  char ch = (char)c;
   if(conn->data_prot == prot_clear)
     return putc(c, F);
 

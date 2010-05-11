@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: getenv.c,v 1.32 2008-09-12 11:18:17 yangtse Exp $
  ***************************************************************************/
 
 #include "setup.h"
@@ -27,12 +26,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef VMS
+#ifdef __VMS
 #include <unixlib.h>
 #endif
 
 #include <curl/curl.h>
-#include "memory.h"
+#include "curl_memory.h"
 
 #include "memdebug.h"
 
@@ -51,7 +50,7 @@ char *GetEnv(const char *variable)
   return (env[0] != '\0')?strdup(env):NULL;
 #else
   char *env = getenv(variable);
-#ifdef VMS
+#ifdef __VMS
   if(env && strcmp("HOME",variable) == 0)
     env = decc_translate_vms(env);
 #endif

@@ -13,11 +13,14 @@ objs =	o.base64 o.connect o.cookie o.dict \
 	o.security o.select o.sendf o.speedcheck o.ssluse \
 	o.strequal o.strtok o.telnet o.timeval \
 	o.transfer o.url o.version o.strtoofft o.sslgen o.gtls \
-	o.rawstr o.curl_addrinfo
+	o.rawstr o.curl_addrinfo o.slist o.nonblock o.curl_rand \
+	o.curl_memrchr o.imap o.pop3 o.smtp o.pingpong o.rtsp \
+	o.curl_threads o.warnless
+
 
 # Compile options:
 linkopts	= -o libcurl
-compileropts	= -mpoke-function-name -IUtilLib: -mthrowback 
+compileropts	= -mpoke-function-name -IUtilLib: -mthrowback
 
 # Project target:
 libcurl:		$(objs)
@@ -35,6 +38,15 @@ o.cookie:	c.cookie
 
 o.curl_addrinfo:	c.curl_addrinfo
 		gcc $(compileropts) -c -o curl_addrinfo.o c.curl_addrinfo
+
+o.curl_memrchr:	c.curl_memrchr
+		gcc $(compileropts) -c -o curl_memrchr.o c.curl_memrchr
+
+o.curl_rand:	c.curl_rand
+		gcc $(compileropts) -c -o curl_rand.o c.curl_rand
+
+o.curl_threads:	c.curl_threads
+		gcc $(compileropts) -c -o curl_threads.o c.curl_threads
 
 o.dict:	c.dict
 		gcc $(compileropts) -c -o dict.o c.dict
@@ -84,6 +96,9 @@ o.http_chunks:	c.http_chunks
 o.if2ip:	c.if2ip
 		gcc $(compileropts) -c -o if2ip.o c.if2ip
 
+o.imap:		c.imap
+		gcc $(compileropts) -c -o imap.o c.imap
+
 o.inet_ntop:	c.inet_ntop
 		gcc $(compileropts) -c -o inet_ntop.o c.inet_ntop
 
@@ -108,8 +123,17 @@ o.netrc:	c.netrc
 o.parsedate:	c.parsedate
 		gcc $(compileropts) -c -o parsedate.o c.parsedate
 
+o.pingpong:	c.pingpong
+		gcc $(compileropts) -c -o pingpong.o c.pingpong
+
+o.pop3:		c.pop3
+		gcc $(compileropts) -c -o pop3.o c.pop3
+
 o.progress:	c.progress
 		gcc $(compileropts) -c -o progress.o c.progress
+
+o.rtsp:		c.rtsp
+		gcc $(compileropts) -c -o rtsp.o c.rtsp
 
 o.security:	c.security
 		gcc $(compileropts) -c -o security.o c.security
@@ -119,6 +143,12 @@ o.select:	c.select
 
 o.sendf:	c.sendf
 		gcc $(compileropts) -c -o sendf.o c.sendf
+
+o.slist:	c.slist
+		gcc $(compileropts) -c -o slist.o c.slist
+
+o.smtp:		c.smtp
+		gcc $(compileropts) -c -o smtp.o c.smtp
 
 o.speedcheck:	c.speedcheck
 		gcc $(compileropts) -c -o speedcheck.o c.speedcheck
@@ -131,6 +161,9 @@ o.sslgen:	c.sslgen
 
 o.ssluse:	c.ssluse
 		gcc $(compileropts) -c -o ssluse.o c.ssluse
+
+o.nonblock:	c.nonblock
+		gcc $(compileropts) -c -o nonblock.o c.nonblock
 
 o.rawstr:	c.rawstr
 		gcc $(compileropts) -c -o rawstr.o c.rawstr
@@ -158,3 +191,6 @@ o.url:	c.url
 
 o.version:	c.version
 		gcc $(compileropts) -c -o version.o c.version
+
+o.warnless:	c.warnless
+		gcc $(compileropts) -c -o warnless.o c.warnless

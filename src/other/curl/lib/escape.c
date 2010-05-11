@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2007, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: escape.c,v 1.44 2008-10-08 01:17:51 danf Exp $
  ***************************************************************************/
 
 /* Escape and unescape URL encoding in strings. The functions return a new
@@ -31,10 +30,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "memory.h"
+#include "curl_memory.h"
 /* urldata.h and easyif.h are included for Curl_convert_... prototypes */
 #include "urldata.h"
 #include "easyif.h"
+#include "warnless.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -103,7 +103,8 @@ char *curl_easy_escape(CURL *handle, const char *string, int inlength)
     if (Curl_isalnum(in)) {
       /* just copy this */
       ns[strindex++]=in;
-    } else {
+    }
+    else {
       /* encode it */
       newlen += 2; /* the size grows with two, since this'll become a %XX */
       if(newlen > alloc) {
@@ -151,7 +152,7 @@ char *curl_easy_unescape(CURL *handle, const char *string, int length,
   char *ns = malloc(alloc);
   unsigned char in;
   int strindex=0;
-  long hex;
+  unsigned long hex;
 
 #ifndef CURL_DOES_CONVERSIONS
   /* avoid compiler warnings */
@@ -170,9 +171,9 @@ char *curl_easy_unescape(CURL *handle, const char *string, int length,
       hexstr[1] = string[2];
       hexstr[2] = 0;
 
-      hex = strtol(hexstr, &ptr, 16);
+      hex = strtoul(hexstr, &ptr, 16);
 
-      in = (unsigned char)hex; /* this long is never bigger than 255 anyway */
+      in = curlx_ultouc(hex); /* this long is never bigger than 255 anyway */
 
 #ifdef CURL_DOES_CONVERSIONS
 /* escape sequences are always in ASCII so convert them on non-ASCII hosts */

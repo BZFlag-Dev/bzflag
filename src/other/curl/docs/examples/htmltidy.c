@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: htmltidy.c,v 1.2 2008-05-22 21:20:09 danf Exp $
  *
  * Download a document and use libtidy to parse the HTML.
  * Written by Jeff Pohlmeyer

@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: synctime.c,v 1.5 2008-05-22 21:20:09 danf Exp $
  *
  * This example code only builds as-is on Windows.
  *

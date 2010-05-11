@@ -8,7 +8,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -21,7 +21,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http.h,v 1.38 2008-08-04 22:00:22 bagder Exp $
  ***************************************************************************/
 #ifndef CURL_DISABLE_HTTP
 
@@ -35,7 +34,39 @@ bool Curl_compareheader(const char *headerline,  /* line to check */
                         const char *header,   /* header keyword _with_ colon */
                         const char *content); /* content string to find */
 
+char *Curl_checkheaders(struct SessionHandle *data, const char *thisheader);
+
 char *Curl_copy_header_value(const char *h);
+
+
+/* ------------------------------------------------------------------------- */
+/*
+ * The add_buffer series of functions are used to build one large memory chunk
+ * from repeated function invokes. Used so that the entire HTTP request can
+ * be sent in one go.
+ */
+struct Curl_send_buffer {
+  char *buffer;
+  size_t size_max;
+  size_t size_used;
+};
+typedef struct Curl_send_buffer Curl_send_buffer;
+
+Curl_send_buffer *Curl_add_buffer_init(void);
+CURLcode Curl_add_bufferf(Curl_send_buffer *in, const char *fmt, ...);
+CURLcode Curl_add_buffer(Curl_send_buffer *in, const void *inptr, size_t size);
+CURLcode Curl_add_buffer_send(Curl_send_buffer *in,
+                         struct connectdata *conn,
+                         long *bytes_written,
+                         size_t included_body_bytes,
+                         int socketindex);
+
+
+CURLcode Curl_add_timecondition(struct SessionHandle *data,
+                                Curl_send_buffer *buf);
+CURLcode Curl_add_custom_headers(struct connectdata *conn,
+                                   Curl_send_buffer *req_buffer);
+
 
 /* ftp can use this as well */
 CURLcode Curl_proxyCONNECT(struct connectdata *conn,
@@ -87,5 +118,45 @@ int Curl_http_should_fail(struct connectdata *conn);
 #define TINY_INITIAL_POST_SIZE 1024
 #endif
 
-#endif
+#endif /* CURL_DISABLE_HTTP */
+
+/****************************************************************************
+ * HTTP unique setup
+ ***************************************************************************/
+struct HTTP {
+  struct FormData *sendit;
+  curl_off_t postsize; /* off_t to handle large file sizes */
+  const char *postdata;
+
+  const char *p_pragma;      /* Pragma: string */
+  const char *p_accept;      /* Accept: string */
+  curl_off_t readbytecount;
+  curl_off_t writebytecount;
+
+  /* For FORM posting */
+  struct Form form;
+
+  struct back {
+    curl_read_callback fread_func; /* backup storage for fread pointer */
+    void *fread_in;           /* backup storage for fread_in pointer */
+    const char *postdata;
+    curl_off_t postsize;
+  } backup;
+
+  enum {
+    HTTPSEND_NADA,    /* init */
+    HTTPSEND_REQUEST, /* sending a request */
+    HTTPSEND_BODY,    /* sending body */
+    HTTPSEND_LAST     /* never use this */
+  } sending;
+
+  void *send_buffer; /* used if the request couldn't be sent in one chunk,
+                        points to an allocated send_buffer struct */
+};
+
+CURLcode Curl_http_readwrite_headers(struct SessionHandle *data,
+                                     struct connectdata *conn,
+                                     ssize_t *nread,
+                                     bool *stop_reading);
+
 #endif

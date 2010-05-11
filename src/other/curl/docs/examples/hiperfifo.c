@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: hiperfifo.c,v 1.9 2008-11-19 15:31:55 bagder Exp $
  *
  * Example application source code using the multi socket interface to
  * download many files at once.

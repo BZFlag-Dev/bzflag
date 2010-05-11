@@ -4,7 +4,7 @@ pkginclude_HEADERS = \
 
 pkgincludedir= $(includedir)/curl
 
-# curlbuild.h does not exist in the CVS tree. When the original libcurl
+# curlbuild.h does not exist in the git tree. When the original libcurl
 # source code distribution archive file is created, curlbuild.h.dist is
 # renamed to curlbuild.h and included in the tarball so that it can be
 # used directly on non-configure systems.
@@ -19,8 +19,7 @@ pkgincludedir= $(includedir)/curl
 #
 # curlbuild.h.dist is not included in the source code distribution archive.
 
-EXTRA_DIST = curlbuild.h.in \
-			 curlbuildWin32.h
+EXTRA_DIST = curlbuild.h.in
 
 DISTCLEANFILES = curlbuild.h
 

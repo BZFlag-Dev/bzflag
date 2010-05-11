@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2008, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: urlglob.c,v 1.53 2008-10-14 09:12:44 bagder Exp $
  ***************************************************************************/
 
 /* client-local setup.h */
@@ -34,6 +33,7 @@
 #include <curl/mprintf.h>
 
 #include "urlglob.h"
+#include "os-specific.h"
 
 #if defined(CURLDEBUG) && defined(CURLTOOLDEBUG)
 #include "memdebug.h"
@@ -342,7 +342,7 @@ int glob_url(URLGlob** glob, char* url, int *urlnum, FILE *error)
   if(NULL == glob_buffer)
     return CURLE_OUT_OF_MEMORY;
 
-  glob_expand = calloc(sizeof(URLGlob), 1);
+  glob_expand = calloc(1, sizeof(URLGlob));
   if(NULL == glob_expand) {
     free(glob_buffer);
     return CURLE_OUT_OF_MEMORY;

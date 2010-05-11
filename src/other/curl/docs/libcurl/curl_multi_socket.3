@@ -1,4 +1,3 @@
-.\" $Id: curl_multi_socket.3,v 1.15 2008-12-28 21:56:56 bagder Exp $
 .\"
 .TH curl_multi_socket 3 "9 Jul 2006" "libcurl 7.16.0" "libcurl Manual"
 .SH NAME
@@ -6,14 +5,6 @@ curl_multi_socket \- reads/writes available data
 .SH SYNOPSIS
 .nf
 #include <curl/curl.h>
-
-CURLMcode curl_multi_socket_action(CURLM * multi_handle, 
-                                   curl_socket_t sockfd, int ev_bitmask,
-                                   int *running_handles);
-.fi
-
-.B "Now deprecated versions:"
-.nf
 CURLMcode curl_multi_socket(CURLM * multi_handle, curl_socket_t sockfd,
                             int *running_handles);
 
@@ -21,19 +12,8 @@ CURLMcode curl_multi_socket_all(CURLM *multi_handle,
                                 int *running_handles);
 .fi
 .SH DESCRIPTION
-Alternative versions of \fIcurl_multi_perform(3)\fP that allows the
-application to pass in the file descriptor/socket that has been detected to
-have \&"action" on it and let libcurl perform. This lets libcurl avoid having
-to scan through all possible file descriptors to check for action.
-
-When the application has detected action on a socket handled by libcurl, it
-should call \fIcurl_multi_socket_action(3)\fP with the \fBsockfd\fP argument
-set to the socket with the action. When the events on a socket are known, they
-can be passed as an events bitmask \fBev_bitmask\fP by first setting
-\fBev_bitmask\fP to 0, and then adding using bitwise OR (|) any combination of
-events to be chosen from CURL_CSELECT_IN, CURL_CSELECT_OUT or
-CURL_CSELECT_ERR. When the events on a socket are unknown, pass 0 instead, and
-libcurl will test the descriptor internally.
+These functions are deprecated. Do not use! See
+\fIcurl_multi_socket_action(3)\fP instead!
 
 At return, the integer \fBrunning_handles\fP points to will contain the number
 of still running easy handles within the multi handle. When this number

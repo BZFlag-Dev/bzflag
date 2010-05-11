@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: opensslthreadlock.c,v 1.3 2008-09-06 05:29:05 yangtse Exp $
  *
  * Example source code to show one way to set the necessary OpenSSL locking
  * callbacks if you want to do multi-threaded transfers with HTTPS/FTPS with

@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: http_ntlm.c,v 1.79 2009-02-27 08:53:10 bagder Exp $
  ***************************************************************************/
 #include "setup.h"
 
@@ -59,7 +58,7 @@
 #include "curl_base64.h"
 #include "http_ntlm.h"
 #include "url.h"
-#include "memory.h"
+#include "curl_memory.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -71,13 +70,17 @@
 #include "ssluse.h"
 #    ifdef USE_OPENSSL
 #      include <openssl/des.h>
-#      include <openssl/md4.h>
+#      ifndef OPENSSL_NO_MD4
+#        include <openssl/md4.h>
+#      endif
 #      include <openssl/md5.h>
 #      include <openssl/ssl.h>
 #      include <openssl/rand.h>
 #    else
 #      include <des.h>
-#      include <md4.h>
+#      ifndef OPENSSL_NO_MD4
+#        include <md4.h>
+#      endif
 #      include <md5.h>
 #      include <ssl.h>
 #      include <rand.h>
@@ -99,6 +102,12 @@
 #define DESKEY(x) &x
 #endif
 
+#ifdef OPENSSL_NO_MD4
+/* This requires MD4, but OpenSSL was compiled without it */
+#define USE_NTRESPONSES 0
+#define USE_NTLM2SESSION 0
+#endif
+
 #elif defined(USE_GNUTLS)
 
 #include "gtls.h"
@@ -118,12 +127,14 @@
 /* The last #include file should be: */
 #include "memdebug.h"
 
+#ifndef USE_NTRESPONSES 
 /* Define this to make the type-3 message include the NT response message */
 #define USE_NTRESPONSES 1
 
 /* Define this to make the type-3 message include the NTLM2Session response
    message, requires USE_NTRESPONSES. */
 #define USE_NTLM2SESSION 1
+#endif
 
 #ifndef USE_WINDOWS_SSPI
 /* this function converts from the little endian format used in the incoming
@@ -303,9 +314,8 @@ CURLntlm Curl_input_ntlm(struct connectdata *conn,
         fprintf(stderr, "\n****\n");
         fprintf(stderr, "**** Header %s\n ", header);
       });
-
-      free(buffer);
 #endif
+      free(buffer);
     }
     else {
       if(ntlm->state >= NTLMSTATE_TYPE1)
@@ -387,7 +397,7 @@ static void lm_resp(const unsigned char *keys,
   setup_des_key(keys+14, DESKEY(ks));
   DES_ecb_encrypt((DES_cblock*) plaintext, (DES_cblock*) (results+16),
                   DESKEY(ks), DES_ENCRYPT);
-#elif USE_GNUTLS
+#elif defined(USE_GNUTLS)
   gcry_cipher_hd_t des;
 
   gcry_cipher_open(&des, GCRY_CIPHER_DES, GCRY_CIPHER_MODE_ECB, 0);
@@ -448,7 +458,7 @@ static void mk_lm_hash(struct SessionHandle *data,
     setup_des_key(pw+7, DESKEY(ks));
     DES_ecb_encrypt((DES_cblock *)magic, (DES_cblock *)(lmbuffer+8),
                     DESKEY(ks), DES_ENCRYPT);
-#elif USE_GNUTLS
+#elif defined(USE_GNUTLS)
     gcry_cipher_hd_t des;
 
     gcry_cipher_open(&des, GCRY_CIPHER_DES, GCRY_CIPHER_MODE_ECB, 0);
@@ -509,7 +519,7 @@ static CURLcode mk_nt_hash(struct SessionHandle *data,
     MD4_Init(&MD4pw);
     MD4_Update(&MD4pw, pw, 2*len);
     MD4_Final(ntbuffer, &MD4pw);
-#elif USE_GNUTLS
+#elif defined(USE_GNUTLS)
     gcry_md_hd_t MD4pw;
     gcry_md_open(&MD4pw, GCRY_MD_MD4, 0);
     gcry_md_write(MD4pw, pw, 2*len);
@@ -912,7 +922,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
       MD5_CTX MD5pw;
       Curl_ossl_seed(conn->data); /* Initiate the seed if not already done */
       RAND_bytes(entropy,8);
-#elif USE_GNUTLS
+#elif defined(USE_GNUTLS)
       gcry_md_hd_t MD5pw;
       Curl_gtls_seed(conn->data); /* Initiate the seed if not already done */
       gcry_randomize(entropy, 8, GCRY_STRONG_RANDOM);
@@ -931,7 +941,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
       MD5_Init(&MD5pw);
       MD5_Update(&MD5pw, tmp, 16);
       MD5_Final(md5sum, &MD5pw);
-#elif USE_GNUTLS
+#elif defined(USE_GNUTLS)
       gcry_md_open(&MD5pw, GCRY_MD_MD5, 0);
       gcry_md_write(MD5pw, tmp, MD5_DIGEST_LENGTH);
       memcpy(md5sum, gcry_md_read (MD5pw, 0), MD5_DIGEST_LENGTH);
@@ -946,8 +956,9 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
 
       /* End of NTLM2 Session code */
     }
-    else {
+    else
 #endif
+	{
 
 #if USE_NTRESPONSES
       unsigned char ntbuffer[0x18];
@@ -965,9 +976,7 @@ CURLcode Curl_output_ntlm(struct connectdata *conn,
       /* A safer but less compatible alternative is:
        *   lm_resp(ntbuffer, &ntlm->nonce[0], lmresp);
        * See http://davenport.sourceforge.net/ntlm.html#ntlmVersion2 */
-#if USE_NTLM2SESSION
     }
-#endif
 
     lmrespoff = 64; /* size of the message header */
 #if USE_NTRESPONSES

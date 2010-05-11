@@ -18,7 +18,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: rawstr.c,v 1.3 2009-02-07 22:53:37 bagder Exp $
  ***************************************************************************/
 
 #include "setup.h"

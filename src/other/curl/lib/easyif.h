@@ -20,7 +20,6 @@
  * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
  * KIND, either express or implied.
  *
- * $Id: easyif.h,v 1.5 2006-10-27 03:47:58 yangtse Exp $
  ***************************************************************************/
 
 /*

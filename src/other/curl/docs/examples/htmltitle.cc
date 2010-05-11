@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: htmltitle.cc,v 1.4 2008-05-22 21:20:09 danf Exp $
  */
 
 // Get a web page, parse it with libxml.
@@ -142,6 +141,7 @@ static void StartElement(void *voidContext,
     context->title = "";
     context->addTitle = true;
   }
+  (void) attributes;
 }
 
 //

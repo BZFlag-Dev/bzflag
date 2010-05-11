@@ -1,6 +1,5 @@
 .\" You can view this file with:
 .\" nroff -man [file]
-.\" $Id: curl_formadd.3,v 1.19 2009-01-12 21:22:51 bagder Exp $
 .\"
 .TH curl_formadd 3 "24 June 2002" "libcurl 7.9.8" "libcurl Manual"
 .SH NAME
@@ -13,7 +12,7 @@ curl_formadd - add a section to a multipart/formdata HTTP POST
 .ad
 .SH DESCRIPTION
 curl_formadd() is used to append sections when building a multipart/formdata
-HTTP POST (sometimes referred to as rfc1867-style posts). Append one section at
+HTTP POST (sometimes referred to as RFC2388-style posts). Append one section at
 a time until you've added all the sections you want included and then you pass
 the \fIfirstitem\fP pointer as parameter to \fBCURLOPT_HTTPPOST\fP.
 \fIlastitem\fP is set after each call and on repeated invokes it should be
@@ -152,7 +151,7 @@ to a CURL_FORMADD_* constant defined in
 
  /* Add simple name/content section */
  curl_formadd(&post, &last, CURLFORM_COPYNAME, "name",
-              CURLFORM_COPYCONTENTS, "content", CURLFORM_END); 
+              CURLFORM_COPYCONTENTS, "content", CURLFORM_END);
 
  /* Add simple name/content/contenttype section */
  curl_formadd(&post, &last, CURLFORM_COPYNAME, "htmlcode",
@@ -165,8 +164,8 @@ to a CURL_FORMADD_* constant defined in
 
  /* Add ptrname/ptrcontent section */
  curl_formadd(&post, &last, CURLFORM_PTRNAME, namebuffer,
-	      CURLFORM_PTRCONTENTS, buffer, CURLFORM_NAMELENGTH,
-	      namelength, CURLFORM_END);
+              CURLFORM_PTRCONTENTS, buffer, CURLFORM_NAMELENGTH,
+              namelength, CURLFORM_END);
 
  /* Add name/ptrcontent/contenttype section */
  curl_formadd(&post, &last, CURLFORM_COPYNAME, "html_code_with_hole",

@@ -18,21 +18,26 @@
 # This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 # KIND, either express or implied.
 #
-# $Id: Makefile.am,v 1.73 2009-02-23 14:34:40 yangtse Exp $
 ###########################################################################
 
 AUTOMAKE_OPTIONS = foreign
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in \
- curl-style.el sample.emacs RELEASE-NOTES buildconf buildconf.bat 	 \
- libcurl.pc.in vc6curl.dsw MacOSX-Framework
+CMAKE_DIST = CMakeLists.txt CMake/CheckTypeSize.c.in CMake/CheckTypeSize.cmake \
+CMake/CMakeConfigurableFile.in CMake/CurlCheckCSourceCompiles.cmake	       \
+CMake/CurlCheckCSourceRuns.cmake CMake/CurlTests.c CMake/FindOpenSSL.cmake     \
+CMake/FindZLIB.cmake CMake/OtherTests.cmake CMake/Platforms/WindowsCache.cmake \
+CMake/Utilities.cmake include/curl/curlbuild.h.cmake
+
+EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in	\
+ curl-style.el sample.emacs RELEASE-NOTES buildconf 	\
+ libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST)
 
 bin_SCRIPTS = curl-config
 
 SUBDIRS = lib src
-DIST_SUBDIRS = $(SUBDIRS) include docs
+DIST_SUBDIRS = $(SUBDIRS) tests include packages docs
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libcurl.pc
@@ -40,7 +45,7 @@ pkgconfig_DATA = libcurl.pc
 dist-hook:
 	rm -rf $(top_builddir)/tests/log
 	find $(distdir) -name "*.dist" -exec rm {} \;
-	(distit=`find $(srcdir) -name "*.dist"`; \
+	(distit=`find $(srcdir) -name "*.dist" | grep -v ./ares/`; \
 	for file in $$distit; do \
 	  strip=`echo $$file | sed -e s/^$(srcdir)// -e s/\.dist//`; \
 	  cp $$file $(distdir)$$strip; \
@@ -52,12 +57,33 @@ html:
 pdf:
 	cd docs; make pdf
 
-check: examples
+check: test examples
+
+if CROSSCOMPILING
+test-full: test
+test-torture: test
+
+test:
+	@echo "NOTICE: we can't run the tests when cross-compiling!"
+
+else
+
+test:
+	@(cd tests; $(MAKE) all quiet-test)
+
+test-full:
+	@(cd tests; $(MAKE) all full-test)
+
+test-torture:
+	@(cd tests; $(MAKE) all torture-test)
+
+endif
 
 examples:
 	@(cd docs/examples; $(MAKE) check)
 
 clean-local:
+	@(cd tests; $(MAKE) clean)
 	@(cd docs; $(MAKE) clean)
 
 #

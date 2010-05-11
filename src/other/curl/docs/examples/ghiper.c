@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: ghiper.c,v 1.5 2008-05-22 21:20:09 danf Exp $
  *
  * Example application source code using the multi socket interface to
  * download many files at once.

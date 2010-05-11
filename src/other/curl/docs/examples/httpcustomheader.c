@@ -5,7 +5,6 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * $Id: httpcustomheader.c,v 1.2 2009-01-12 21:29:23 bagder Exp $
  */
 
 #include <stdio.h>
