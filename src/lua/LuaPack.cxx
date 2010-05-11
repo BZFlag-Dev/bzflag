@@ -294,12 +294,15 @@ int LuaPack::SwapBy8(lua_State* L)
 //============================================================================//
 //============================================================================//
 
+
 int LuaPack::GetEndian(lua_State* L)
 {
-  static unsigned char endianArray[4] = { 0x11, 0x22, 0x33, 0x44 };
-  static uint32_t& endian = *((uint32_t*)endianArray);
+  static const union {
+    char bytes[sizeof(uint32_t)];
+    uint32_t endian;
+  } u32bytes = { { 0x11, 0x22, 0x33, 0x44 } };
 
-  switch (endian) {
+  switch (u32bytes.endian) {
     case 0x44332211: { lua_pushliteral(L, "little");  break; }
     case 0x11223344: { lua_pushliteral(L, "big");     break; }
     case 0x22114433: { lua_pushliteral(L, "pdp");     break; }
