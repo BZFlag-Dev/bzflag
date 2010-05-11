@@ -317,10 +317,20 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glew_static", "..\..\src\other\glew\build\vc6\glew_static.vcproj", "{6C4DBDEF-A58A-452B-9155-6CB07D58D1BA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaClient", "luaclient.vcproj", "{6AB4B81A-2BB1-4805-B8B0-5B41BAB9EC6B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B} = {6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaClientGL", "luaclientGL.vcproj", "{72A02136-CFEF-49FD-BD45-EB404FA2AC16}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B} = {6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}
+		{6C4DBDEF-A58A-452B-9155-6CB07D58D1BA} = {6C4DBDEF-A58A-452B-9155-6CB07D58D1BA}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaGame", "luagame.vcproj", "{6AB4B81A-2BB1-4805-B8B0-5B41BAB9DC6B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B} = {6AB4B81A-2BB1-4805-B8B0-5B41B009DC6B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
