@@ -155,7 +155,6 @@ noinst_HEADERS =			\
 	WorldText.h			\
 	ZSceneDatabase.h		\
 	bz_Locale.h			\
-	bzares.h			\
 	bzfSDL.h			\
 	bzfgl.h				\
 	bzfio.h				\
