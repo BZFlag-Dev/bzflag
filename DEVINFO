@@ -6,27 +6,36 @@ BZFlag source code lives in the following directories:
 
 applications
 ------------
+src/bzadmin	- the BZFlag admin tool and chat client
 src/bzflag	- the BZFlag client
 src/bzfs	- the BZFlag server
-src/bzadmin	- the BZFlag admin tool and chat client
+src/bzrobots	- standalone robot client framework
 tools/		- various helper tools
 
 game dependent libraries
 ------------------------
+plugins/	- optional server plugins
+src/clientbase	- core logic for all clients
 src/game	- core game logic
-plugins/	- bzfs plugins
+src/lua		- libraries for LuaUser and LuaWorld scripts
 
 game independent, platform independent libraries
 ------------------------------------------------
-src/common	- general utility
 src/3D		- 3D geometry
+src/common	- general utility
 src/geometry	- geometric mathematics
-src/obstacle	- collision detection
-src/scene	- scene graph
-src/ogl		- wrapper classes for OpenGL
 src/mediafile	- sound and image file support
-src/regex	- BSD regular expression library
-src/zlib	- Zlib compression library
+src/obstacle	- collision detection
+src/ogl		- wrapper classes for OpenGL
+src/other/ares	- c-ares asynchronous resolver
+src/other/curl	- cURL library for transferring data with a URL
+src/other/freetype - FreeType 2 font engine
+src/other/ftgl	- FTGL font engine for OpenGL
+src/other/glew	- OpenGL Extension Wrangler Library
+src/other/lua	- Lua programming language
+src/other/regex	- BSD regular expression library
+src/other/zlib	- Zlib compression library
+src/scene	- scene graph
 
 game independent, platform dependent libraries
 ----------------------------------------------
@@ -36,10 +45,17 @@ src/platform	- general platform dependent code
 
 "other stuff"
 -------------
+BZFlag.xcodeproj/ - project definition for Apple XCode
+MSVC/		- project definitions for Microsoft Visual C
+bots/		- sample robots in several languages
+data/		- images, sounds, fonts, translations
+debian/		- packaging aids for Debian Linux
 doc/		- documentation in docbook format
 include/	- public headers
+m4/		- configuration macros
+man/		- documentation in manual page format
 misc/		- kitchen sink of anything
-web/		- website stuff
+package/	- packaging aids for specific operating systems
 
 Note that only a few directories contain code directly related to the
 game BZFlag.  In particular: bzflag, bzadmin, bzfs, plugins, and game.
