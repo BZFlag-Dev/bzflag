@@ -1,5 +1,5 @@
 
-noinst_LTLIBRARIES = libftgl.la
+lib_LTLIBRARIES = libftgl.la
 
 libftgl_la_SOURCES = \
     FTBuffer.cpp \
@@ -43,7 +43,7 @@ libftgl_la_LIBADD = \
 AM_CPPFLAGS = $(libftgl_la_CPPFLAGS)
 
 ftgldir = $(includedir)/FTGL
-noinst_HEADERS = $(ftgl_headers)
+ftgl_HEADERS = $(ftgl_headers)
 
 ftgl_headers = \
     FTGL/ftgl.h \
