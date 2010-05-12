@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\include;.\;..\..\src;..\src\clientbase;..\..\src\bzflag;..\..\src\other\glew\include"
+				AdditionalIncludeDirectories="..\..\include;.\;..\..\src;..\src\clientbase;..\..\src\bzflag;..\..\src\other\glew\include;..\..\src\other\curl\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
