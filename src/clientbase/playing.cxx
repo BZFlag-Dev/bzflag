@@ -1927,7 +1927,7 @@ static void debugNetMessages(uint16_t code, uint16_t len, void *msg)
   }
 
   // parse the style if the style string has changed
-  if (debugStyle != staticStyle) {
+  if (staticStyle != debugStyle) {
     staticStyle = debugStyle;
     parseDebugNetStyle(staticStyle, msgLevel, includeTypes, excludeTypes);
   }
