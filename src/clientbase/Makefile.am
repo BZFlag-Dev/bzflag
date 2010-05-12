@@ -16,6 +16,7 @@ libClientBase_la_SOURCES =		\
 	ActionBinding.h			\
 	BaseLocalPlayer.cxx		\
 	BaseLocalPlayer.h		\
+	ClientFlag.h			\
 	ClientIntangibilityManager.cxx	\
 	ClientIntangibilityManager.h	\
 	CommandsStandard.cxx		\
