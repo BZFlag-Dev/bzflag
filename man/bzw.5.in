@@ -362,8 +362,35 @@ Instantiates a group, and possibly modifies subobjects
 .B Material Properties
 
 Material properties may be set on several types of objects, including
-meshes, mesh faces, arcs, cones, spheres, and tetras. Here are the
-properties:
+meshes, mesh faces, arcs, cones, spheres, and tetras. There are also 
+some special material names that will be used on default objects:
+.br
+
+  GroundMaterial
+  WallMaterial
+  LinkMaterial
+  TeleMaterial
+  PyramidMaterial
+  BoxTopMaterial
+  BoxWallMaterial
+  RedBaseTopMaterial
+  RedBaseWallMaterial
+  BlueBaseTopMaterial
+  BlueBaseWallMaterial
+  GreenBaseTopMaterial
+  GreenBaseWallMaterial
+  PurpleBaseTopMaterial
+  PurpleBaseWallMaterial
+  WaterMaterial
+  LeftSkyboxMaterial
+  FrontSkyboxMaterial
+  RightSkyboxMaterial
+  BackSkyboxMaterial
+  TopSkyboxMaterial
+  BottomSkyboxMaterial
+
+.br
+Here are the material properties:
 .br
 
 \fBmaterial\fR
