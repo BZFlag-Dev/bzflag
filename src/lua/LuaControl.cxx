@@ -28,6 +28,7 @@
 #include "LuaHandle.h"
 #include "LuaHeader.h"
 #include "LuaBzOrg.h"
+#include "LuaRules.h"
 
 
 //============================================================================//
@@ -52,7 +53,9 @@ bool LuaControl::PushEntries(lua_State* L)
 
 static inline bool ValidScript(lua_State* L)
 {
-  return ((L2H(L) == luaBzOrg) || LuaHandle::GetDevMode());
+  return ((L2H(L) == luaBzOrg) ||
+          (L2H(L) == luaRules) ||
+          LuaHandle::GetDevMode());
 }
 
 
@@ -77,7 +80,7 @@ int LuaControl::Fire(lua_State* L)
     luaL_error(L, "this script can not control firing");
   }
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  if (myTank == NULL) {
+  if ((myTank == NULL) || !myTank->isAlive() || myTank->isObserver()) {
     lua_pushboolean(L, false);
     return 1;
   }
