@@ -479,19 +479,14 @@ cannot proceed.  A checklist of items to be completed follows:
   latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating README, buildDate.cxx, and
-  ChangeLog.  Version numbers in all other platform-specific
-  README.* files should also be verified.
+  This minimally includes updating README, ChangeLog, configure.ac,
+  buildDate.cxx, and the title.png image.  Version numbers in all
+  other platform-specific README.* files should also be verified.
+
+- BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
 
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
-  version numbers
-
-- Update and commit ChangeLog for changes since the last release.  Use
-  YYYY-MM-DD date of the previous release, available in the NEWS file.
-  cvs2cl.pl method is preferred but either should do.
-
-  misc/cvs2cl.pl -b -T          --OR--
-  rcs2log -h users.sourceforge.net -r "-d>YYYY-MM-DD" > ChangeLog
+  version numbers.
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.
@@ -499,10 +494,13 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
-	e.g. cvs tag v1_10_2
+	e.g. svn copy bzflag \
+	     https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/v2_99_59/
 
-- Perform a "cvs export -r vMAJOR_MINOR_RELEASE" from somewhere else
-  in the file system to obtain a tagged version of the sources.
+- Perform a
+  "svn export https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/vMAJOR_MINOR_RELEASE"
+  from somewhere else in the filesystem to obtain the tagged version
+  of the sources.
 
 - Perform a "make dist" of that export to generate a source release
   tarball.
@@ -514,9 +512,10 @@ cannot proceed.  A checklist of items to be completed follows:
 - Post the source tarball, zip and platform-specific binaries to
   SourceForge.
 
-- Increment and commit the version number in configure.ac to the
-  source repository so that later builds are immediately
-  distinguished.
+- Increment and commit the version number in configure.ac and other
+  files (see above) to the source repository so that later builds are
+  immediately distinguished.  Also, change BZ_BUILD_TYPE back to DEVEL
+  in buildDate.cxx.
 
 - Notify the following (at least):
 
@@ -534,7 +533,6 @@ John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
 jd@linuxgaming.co.uk
 updates@superdownloads.com.br
 mail -s add LSM@execpc.com < bzflag.lsm
-http://www.gbld.net/
 
 Testing the server
 ==================
