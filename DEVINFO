@@ -31,7 +31,7 @@ src/ogl		- wrapper classes for OpenGL
 src/scene	- scene graph
 
 game independent, platform independent, external libraries
------------------------------------------------------------
+----------------------------------------------------------
 src/other/ares		- c-ares asynchronous resolver
 src/other/curl		- cURL library for transferring data with a URL
 src/other/freetype	- FreeType 2 font engine
@@ -40,6 +40,11 @@ src/other/glew		- OpenGL Extension Wrangler Library
 src/other/lua		- Lua programming language
 src/other/regex		- BSD regular expression library
 src/other/zlib		- Zlib compression library
+
+Developers should make only the most essential modifications in the
+BZFlag source tree to these third party packages.  This means that we
+allow them to install extraneous files such as documentation and
+headers into the BZFlag binary tree.
 
 game independent, platform dependent libraries
 ----------------------------------------------
