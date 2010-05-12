@@ -79,6 +79,9 @@ void FTGlyphContainer::Add(FTGlyph* tempGlyph, const unsigned int charCode)
 const FTGlyph* const FTGlyphContainer::Glyph(const unsigned int charCode) const
 {
     unsigned int index = charMap->GlyphListIndex(charCode);
+    if (index > glyphs.size()) {
+      return NULL;
+    }
     return glyphs[index];
 }
 
@@ -94,8 +97,11 @@ float FTGlyphContainer::Advance(const unsigned int charCode,
 {
     unsigned int left = charMap->FontIndex(charCode);
     unsigned int right = charMap->FontIndex(nextCharCode);
+    const FTGlyph *glyph = Glyph(charCode);
+    if (!glyph)
+	return 0.0;
 
-    return face->KernAdvance(left, right).Xf() + Glyph(charCode)->Advance();
+    return face->KernAdvance(left, right).Xf() + glyph->Advance();
 }
 
 
@@ -111,7 +117,9 @@ FTPoint FTGlyphContainer::Render(const unsigned int charCode,
     if(!face->Error())
     {
         unsigned int index = charMap->GlyphListIndex(charCode);
-        kernAdvance += glyphs[index]->Render(penPosition, renderMode);
+	if (index <= glyphs.size()) {
+	    kernAdvance += glyphs[index]->Render(penPosition, renderMode);
+	}
     }
 
     return kernAdvance;

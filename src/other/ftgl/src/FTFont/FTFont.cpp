@@ -466,7 +466,8 @@ inline float FTFontImpl::AdvanceI(const T* string, const int len,
 float FTFontImpl::Advance(const char* string, const int len, FTPoint spacing)
 {
     /* The chars need to be unsigned because they are cast to int later */
-    return AdvanceI((const unsigned char *)string, len, spacing);
+    const unsigned char *ustring = (const unsigned char *)string;
+    return AdvanceI(ustring, len, spacing);
 }
 
 
