@@ -316,7 +316,7 @@ void FTVectoriser::MakeMesh(FTGL_DOUBLE zNormal, int outsetType, float outsetSiz
                     // XXX: gluTessVertex doesn't modify the data but does not
                     // specify "const" in its prototype, so we cannot cast to
                     // a const type.
-                    gluTessVertex(tobj, const_cast<GLdouble*>(d), (GLvoid *)d);
+                    gluTessVertex(tobj, (GLdouble *)d, (GLvoid *)d);
                 }
 
             gluTessEndContour(tobj);

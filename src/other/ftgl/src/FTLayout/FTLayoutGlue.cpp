@@ -76,13 +76,13 @@ void ftglDestroyLayout(FTGLlayout *l)
 
 // virtual FTBBox FTLayout::BBox(const char* string)
 extern "C++" {
-C_FUN(static FTBBox, _ftgGetlLayoutBBox, (FTGLlayout *l, const char *s),
+C_FUN(static FTBBox, _ftglGetLayoutBBox, (FTGLlayout *l, const char *s),
       return static_ftbbox, BBox, (s));
 }
 
-void ftgGetlLayoutBBox(FTGLlayout *l, const char * s, float c[6])
+void ftglGetLayoutBBox(FTGLlayout *l, const char * s, float c[6])
 {
-    FTBBox ret = _ftgGetlLayoutBBox(l, s);
+    FTBBox ret = _ftglGetLayoutBBox(l, s);
     FTPoint lower = ret.Lower(), upper = ret.Upper();
     c[0] = lower.Xf(); c[1] = lower.Yf(); c[2] = lower.Zf();
     c[3] = upper.Xf(); c[4] = upper.Yf(); c[5] = upper.Zf();
