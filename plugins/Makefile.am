@@ -56,6 +56,7 @@ EXTRA_DIST = \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\
+	INSTALL \
 	Makefile.in \
 	aclocal.m4 \
 	config.guess \
