@@ -71,8 +71,10 @@ BZDBCache::Float BZDBCache::flagRadius;
 BZDBCache::Float BZDBCache::flagPoleSize;
 BZDBCache::Float BZDBCache::flagPoleWidth;
 BZDBCache::Float BZDBCache::maxLOD;
-BZDBCache::Float BZDBCache::minGameFrameTime;
-BZDBCache::Float BZDBCache::maxGameFrameTime;
+
+BZDBCache::Float BZDBCache::gameFPS;
+BZDBCache::Float BZDBCache::gameSPF;
+BZDBCache::Bool  BZDBCache::useGameSPF;
 
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
@@ -95,7 +97,7 @@ static float getGoodNonZeroValue(float oldVal, const std::string& var)
   float newVal = BZDB.eval(var);
   if (isnan(newVal) || newVal == 0.0f) { // it's bad
     BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
-      return oldVal;
+    return oldVal;
   }
   return newVal;
 }
@@ -103,43 +105,21 @@ static float getGoodNonZeroValue(float oldVal, const std::string& var)
 
 //============================================================================//
 
-static bool parseGameFrameTimes(const std::string& str, float& minTime,
-                                                        float& maxTime)
+static float getGameFPS()
 {
-  static const float minGameFPS = 10.0f;
-  static const float maxGameFPS = 100.0f;
-  static const float minFrameTime = (1.0f / maxGameFPS);
-  static const float maxFrameTime = (1.0f / minGameFPS);
-
-  minTime = minFrameTime;
-  maxTime = maxFrameTime;
-
-  float f0, f1;
-
-  switch (sscanf(str.c_str(), "%f %f", &f0, &f1)) {
-    case 1: {
-      if (f0 < minGameFPS) { f0 = minGameFPS; }
-      if (f0 > maxGameFPS) { f0 = maxGameFPS; }
-      minTime = (1.0f / f0);
-      maxTime = (1.0f / f0);
-      break;
-    }
-    case 2: {
-      if (f0 < minGameFPS) { f0 = minGameFPS; }
-      if (f0 > maxGameFPS) { f0 = maxGameFPS; }
-      if (f1 < minGameFPS) { f1 = minGameFPS; }
-      if (f1 > maxGameFPS) { f1 = maxGameFPS; }
-      if (f0 > f1) {
-        return false;
-      }
-      minTime = (1.0f / f1);
-      maxTime = (1.0f / f0);
-      break;
-    }
-    default: { return false; }
+  float fps = BZDB.eval(BZDBNAMES.GAMEFPS);
+  if (isnan(fps)) {
+    return fps;
   }
-
-  return true;
+  if (fps < 10.0f) {
+    fps = 10.0f;
+    BZDB.setFloat(BZDBNAMES.GAMEFPS, fps);
+  }
+  else if (fps > 100.0f) {
+    fps = 100.0f;
+    BZDB.setFloat(BZDBNAMES.GAMEFPS, fps);
+  }
+  return fps;
 }
 
 
@@ -184,6 +164,7 @@ void BZDBCache::init()
   BZDB.addCallback(BZDBNAMES.FLAGPOLESIZE,     serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.FLAGPOLEWIDTH,    serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.FORBIDDEBUG,      serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.GAMEFPS,          serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.GRAVITY,          serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.MAXLOD,           serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.WORLDSIZE,        serverCallback, NULL);
@@ -194,7 +175,6 @@ void BZDBCache::init()
   BZDB.addCallback(BZDBNAMES.TANKHEIGHT,       serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKSPEED,        serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKANGVEL,       serverCallback, NULL);
-  BZDB.addCallback("_gameFPS",                 serverCallback, NULL);
 
   forbidDebug      = BZDB.isTrue(BZDBNAMES.FORBIDDEBUG);
   drawCelestial    = BZDB.isTrue(BZDBNAMES.DRAWCELESTIAL);
@@ -220,8 +200,14 @@ void BZDBCache::init()
   tankWidth        = getGoodPosValue(tankWidth,     BZDBNAMES.TANKWIDTH);
   worldSize        = getGoodPosValue(worldSize,     BZDBNAMES.WORLDSIZE);
 
-  parseGameFrameTimes(BZDB.get("_gameFPS"), (float&)minGameFrameTime,
-                                            (float&)maxGameFrameTime);
+  gameFPS = getGameFPS();
+  if (isnan((float)gameFPS)) {
+    gameSPF = 0.0f;
+    useGameSPF = false;
+  } else {
+    gameSPF = (1.0f / gameFPS);
+    useGameSPF = true;
+  }
 
   update();
 }
@@ -347,9 +333,15 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   else if (name == BZDBNAMES.FLAGPOLEWIDTH) {
     flagPoleWidth = getGoodPosValue(flagPoleWidth, BZDBNAMES.FLAGPOLEWIDTH);
   }
-  else if (name == "_gameFPS") {
-    parseGameFrameTimes(BZDB.get("_gameFPS"), (float&)minGameFrameTime,
-                                              (float&)maxGameFrameTime);
+  else if (name == BZDBNAMES.GAMEFPS) {
+    gameFPS = getGameFPS();
+    if (isnan((float)gameFPS)) {
+      gameSPF = 0.0f;
+      useGameSPF = false;
+    } else {
+      gameSPF = (1.0f / gameFPS);
+      useGameSPF = true;
+    }
   }
 }
 

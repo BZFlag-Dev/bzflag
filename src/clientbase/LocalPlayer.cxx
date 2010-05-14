@@ -243,9 +243,9 @@ void LocalPlayer::doUpdateMotion(float dt)
 
   if (debugMotion >= 1) {
     const std::string locationString = getLocationString(location);
-    logDebugMessage(0, "doUpdateMotion: %+12.6f     %.3f / %.3f\n", dt,
-                       (float)BZDBCache::minGameFrameTime,
-                       (float)BZDBCache::maxGameFrameTime);
+    logDebugMessage(0, "doUpdateMotion: %+12.6f %s/fps=%.6f/spf=%.6f\n", dt,
+                       BZDBCache::useGameSPF ? "true" : "false",
+                       (float)BZDBCache::gameFPS, (float)BZDBCache::gameSPF);
     logDebugMessage(0, "  location = %s\n", locationString.c_str());
     logDebugMessage(0, "  phydrv = %i\n", getPhysicsDriver());
     logDebugMessage(0, "  lastObstacle = %s\n",
@@ -1752,11 +1752,17 @@ bool LocalPlayer::checkHit(const Player* source,
 
     // test myself against shot
     static const fvec4 zeroMargin(0.0f, 0.0f, 0.0f, 0.0f);
-    const fvec4 *proximSize = &zeroMargin;
+    const fvec4* proximSize = &zeroMargin;
 
     static BZDB_fvec4 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
     if (!isnan(shotProxim.getData().x)) {
       proximSize = &shotProxim.getData();
+    }
+
+    // scale the Y margin for narrow tanks
+    float marginY = proximSize->y;
+    if (getFlagType() == Flags::Narrow) {
+      marginY *= getDimensionsScale().y;
     }
 
     ShotCollider collider;
@@ -1768,12 +1774,11 @@ bool LocalPlayer::checkHit(const Player* source,
     collider.size         = getDimensions() + proximSize->xyz();
     collider.size.z      += proximSize->w;
     collider.zshift       = proximSize->w;
-    collider.narrow       = (this->getFlagType() == Flags::Narrow);
     collider.bbox         = bbox;
     collider.bbox.mins.x -= proximSize->x;
     collider.bbox.maxs.x += proximSize->x;
-    collider.bbox.mins.y -= proximSize->y;
-    collider.bbox.maxs.y += proximSize->y;
+    collider.bbox.mins.y -= marginY;
+    collider.bbox.maxs.y += marginY;
     collider.bbox.mins.z -= proximSize->w;
     collider.bbox.maxs.z += proximSize->z;
     collider.bbox.addMargin(BZDBCache::shotRadius);

@@ -103,41 +103,30 @@ static void drawTankHitZone(const Player* tank)
     return;
   }
 
-  const bool isNarrow = (tank->getFlagType() == Flags::Narrow);
-
-  static BZDB_bool tankShotSpherical("_tankShotSpherical");
-  static BZDB_fvec4 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
-  const fvec4& sp = shotProxim;
-
   fvec3        pos   = tank->getPosition();
   fvec3        dims  = tank->getDimensions();
   const float  angle = tank->getAngle();
   const fvec4& color = tank->getColor();
 
-  if (tankShotSpherical && !isNarrow) {
-    GLUquadric* quad = gluNewQuadric();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glColor4f(color.r, color.g, color.b, 0.8f);
-    glPushMatrix();
-    glTranslatef(pos.x, pos.y, pos.z + (dims.z * 0.5f));
-    glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
-    glScalef(sp.x, sp.y, sp.z);
-    gluSphere(quad, 1.0f, 16, 8);
-    glPopMatrix();
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    gluDeleteQuadric(quad);
-    return;
+  static const fvec4 zeroMargin(0.0f, 0.0f, 0.0f, 0.0f);
+  const fvec4* proximSize = &zeroMargin;
+
+  static BZDB_fvec4 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
+  if (!isnan(shotProxim.getData().x)) {
+    proximSize = &shotProxim.getData();
   }
 
-  if (!isnan(sp.x)) {
-    dims   += sp.xyz();
-    pos.z  -= sp.w;
-    dims.z += sp.w;
+  // scale the Y margin for narrow tanks
+  float marginY = proximSize->y;
+  if (tank->getFlagType() == Flags::Narrow) {
+    marginY *= tank->getDimensionsScale().y;
   }
 
-  if (isNarrow) {
-    dims.y = BZDBCache::shotRadius;
-  }
+  dims.x += proximSize->x;
+  dims.y += marginY;
+  dims.z += proximSize->z;
+  dims.z += proximSize->w;
+  pos.z  -= proximSize->w;
 
   const float sr = BZDBCache::shotRadius;
   const fvec3 shotPad(sr, sr, sr);
@@ -154,7 +143,7 @@ static void drawTankHitZone(const Player* tank)
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
 
-  drawDoubleCubeLines(inner, fvec4(color.rgb() * 0.5f, 0.8),
+  drawDoubleCubeLines(inner, fvec4(color.rgb() * 0.25f, 0.8),
                       outer, fvec4(color.rgb(),        0.8));
 
   glPopMatrix();

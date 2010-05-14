@@ -29,7 +29,7 @@
 #include "GfxBlock.h"
 #include "vectors.h"
 
-/* local interface headers */
+// local headers
 class ShotPath;
 class SceneDatabase;
 class Obstacle;
@@ -72,6 +72,7 @@ public:
   float		getLocalNormalizedScore() const;
   short		getScore() const;
   const fvec3&	getDimensions() const;
+  const fvec3&	getDimensionsScale() const;
   float		getAlpha() const { return alpha; }
   float		getReloadTime() const;
 
@@ -459,6 +460,11 @@ inline const fvec3&	Player::getDimensions() const
   return dimensions;
 }
 
+inline const fvec3&	Player::getDimensionsScale() const
+{
+  return dimensionsScale;
+}
+
 inline const fvec3&	Player::getForward() const
 {
   return forward;
@@ -754,7 +760,7 @@ inline int Player::getMaxShots() const
   return (int)shots.size();
 }
 
-#endif /* __PLAYER_H__ */
+#endif // __PLAYER_H__
 
 // Local Variables: ***
 // mode: C++ ***

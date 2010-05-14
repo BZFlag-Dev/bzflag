@@ -70,6 +70,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_forbidLuaUser",		"0",				false, StateDatabase::Locked },
   { "_forbidMarkers",		"0",				false, StateDatabase::Locked },
   { "_friction",		"0",				false, StateDatabase::Locked },
+  { "_gameFPS",			"",				false, StateDatabase::Locked },
   { "_gmActivationTime",	"0.5",				false, StateDatabase::Locked },
   { "_gmAdLife",		"0.95",				false, StateDatabase::Locked },
   { "_gmAdSpeed",		"1.0",				false, StateDatabase::Locked },

@@ -73,6 +73,7 @@ class BZDBNames : public Singleton<BZDBNames> {
     const std::string FOGSTART;
     const std::string FORBIDDEBUG;
     const std::string FRICTION;
+    const std::string GAMEFPS;
     const std::string GMACTIVATIONTIME;
     const std::string GMADLIFE;
     const std::string GMADSPEED;

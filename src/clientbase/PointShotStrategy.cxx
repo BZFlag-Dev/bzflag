@@ -39,18 +39,16 @@ PointShotStrategy::~PointShotStrategy()
 
 
 static bool RayTest(const ShotCollider& tank, const Ray &relativeRay,
-                    fvec3 &position, float &minTime, const ShotPathSegment &s,
+                    fvec3 &hitPos, float &minTime, const ShotPathSegment &s,
                     const float dt, const BzTime& prevTime, const float shotRadius)
 {
   static const fvec3 tankBase(0.0f, 0.0f, -shotRadius);
 
-  // find closest approach to narrow box around tank.
-  // width of box is small if we have narrow
   float t = Intersect::timeRayHitsBlock(
     relativeRay, tankBase, tank.angle,
-    shotRadius + tank.size.x,
-    shotRadius + (tank.narrow ? 0.0f : tank.size.y),
-    shotRadius + tank.size.z + shotRadius
+    tank.size.x + shotRadius,
+    tank.size.y + shotRadius,
+    tank.size.z + (shotRadius * 2.0f)
   );
 
   if (t > minTime)
@@ -62,28 +60,24 @@ static bool RayTest(const ShotCollider& tank, const Ray &relativeRay,
   if (t > (s.end - prevTime))
     return false;
 
-  // check if shot hits tank -- get position at time t, see if in radius
-  fvec3 closestPos;
-  relativeRay.getPoint(t, closestPos);
   // save best time so far
   minTime = t;
 
-  // compute location of tank at time of hit
-  fvec3 tankPos;
-  tank.motion.getPoint(t, tankPos);
-
   // compute position of intersection
-  position = tankPos + closestPos;
-  position.z -= tank.zshift;
+  hitPos = relativeRay.getPoint(t) +
+           tank.motion.getPoint(t);
+  // compensate for the relativeRay offset
+  hitPos.z -= tank.zshift;
 
   return true;
 }
 
 
 float PointShotStrategy::checkShotHit(const ShotCollider& tank,
-                                      fvec3& position, float shotRadius) const
+                                      fvec3& hitPos, float shotRadius) const
 {
   float minTime = Infinity;
+
   // expired shot can't hit anything
   if (getPath().isExpired()) {
     return minTime;
@@ -98,10 +92,8 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
 
   // if bounding box of tank and entire shot doesn't overlap then no hit
   // we only do this for shots that keep the bbox updated
-  if (!gmTest) {
-    if (!bbox.touches(tankBBox)) {
-      return minTime;
-    }
+  if (!gmTest && !bbox.touches(tankBBox)) {
+    return minTime;
   }
 
   // check each segment in interval (prevTime,currentTime]
@@ -120,7 +112,7 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
 
       Ray relativeRay(Intersect::rayMinusRay(ray, 0.0, tankLastMotion, 0.0));
 
-      if (!RayTest(tank, relativeRay, position, minTime,
+      if (!RayTest(tank, relativeRay, hitPos, minTime,
                    segments[i], dt, prevTime, shotRadius)) {
         continue;
       }
@@ -141,9 +133,11 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
     */
 
       const ShotPathSegment& s = segments[i];
+
       // if shot segment and tank bboxes don't overlap then no hit,
       // or if it's a shot that is out of the world boundary
-      if (!s.bbox.touches(tankBBox) || (s.reason == ShotPathSegment::Boundary)) {
+      if (!s.bbox.touches(tankBBox) ||
+          (s.reason == ShotPathSegment::Boundary)) {
         continue;
       }
 
@@ -153,8 +147,8 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
       Ray relativeRay(Intersect::rayMinusRay(s.ray, diffTime,
                                              tankLastMotion, 0.0f));
 
-      if (!RayTest(tank, relativeRay, position, minTime,
-                   s, dt, prevTime, shotRadius )) {
+      if (!RayTest(tank, relativeRay, hitPos, minTime,
+                   s, dt, prevTime, shotRadius)) {
         continue;
       }
     }

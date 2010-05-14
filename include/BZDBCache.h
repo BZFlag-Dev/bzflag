@@ -119,8 +119,10 @@ class BZDBCache
     static Float tankAngVel;
     static Float tankWidth;
     static Float worldSize;
-    static Float minGameFrameTime;
-    static Float maxGameFrameTime;
+
+    static Float gameFPS; // frames per second
+    static Float gameSPF; // seconds per frame
+    static Bool  useGameSPF;
 
   private:
     static void clientCallback(const std::string &name, void *);
