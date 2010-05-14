@@ -54,5 +54,8 @@ made to the lua-5.1.4 sources for BZFlag.
 
 17. Applied the LUA_EZFOR_LOOP patch
 
+18. Applied patch-lua-5.1.4-1.diff
+    (see http://permalink.gmane.org/gmane.comp.lang.lua.general/65600)
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
