@@ -70,13 +70,15 @@ BZDBCache::Float BZDBCache::flagRadius;
 BZDBCache::Float BZDBCache::flagPoleSize;
 BZDBCache::Float BZDBCache::flagPoleWidth;
 BZDBCache::Float BZDBCache::maxLOD;
+BZDBCache::Float BZDBCache::minGameFrameTime;
+BZDBCache::Float BZDBCache::maxGameFrameTime;
 
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
 
 //============================================================================//
 
-static float getGoodPosValue (float oldVal, const std::string var )
+static float getGoodPosValue(float oldVal, const std::string& var)
 {
   float newVal = BZDB.eval(var);
   if (isnan(newVal) || newVal <= 0.0f) { // it's bad
@@ -87,7 +89,7 @@ static float getGoodPosValue (float oldVal, const std::string var )
 }
 
 
-static float getGoodNonZeroValue (float oldVal, const std::string var )
+static float getGoodNonZeroValue(float oldVal, const std::string& var)
 {
   float newVal = BZDB.eval(var);
   if (isnan(newVal) || newVal == 0.0f) { // it's bad
@@ -95,6 +97,48 @@ static float getGoodNonZeroValue (float oldVal, const std::string var )
       return oldVal;
   }
   return newVal;
+}
+
+
+//============================================================================//
+
+static bool parseGameFrameTimes(const std::string& str, float& minTime,
+                                                        float& maxTime)
+{
+  static const float minGameFPS = 10.0f;
+  static const float maxGameFPS = 100.0f;
+  static const float minFrameTime = (1.0f / maxGameFPS);
+  static const float maxFrameTime = (1.0f / minGameFPS);
+
+  minTime = minFrameTime;
+  maxTime = maxFrameTime;
+
+  float f0, f1;
+
+  switch (sscanf(str.c_str(), "%f %f", &f0, &f1)) {
+    case 1: {
+      if (f0 < minGameFPS) { f0 = minGameFPS; }
+      if (f0 > maxGameFPS) { f0 = maxGameFPS; }
+      minTime = (1.0f / f0);
+      maxTime = (1.0f / f0);
+      break;
+    }
+    case 2: {
+      if (f0 < minGameFPS) { f0 = minGameFPS; }
+      if (f0 > maxGameFPS) { f0 = maxGameFPS; }
+      if (f1 < minGameFPS) { f1 = minGameFPS; }
+      if (f1 > maxGameFPS) { f1 = maxGameFPS; }
+      if (f0 > f1) {
+        return false;
+      }
+      minTime = (1.0f / f1);
+      maxTime = (1.0f / f0);
+      break;
+    }
+    default: { return false; }
+  }
+
+  return true;
 }
 
 
@@ -148,6 +192,7 @@ void BZDBCache::init()
   BZDB.addCallback(BZDBNAMES.TANKHEIGHT,       serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKSPEED,        serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKANGVEL,       serverCallback, NULL);
+  BZDB.addCallback("_gameFPS",                 serverCallback, NULL);
 
   forbidDebug      = BZDB.isTrue(BZDBNAMES.FORBIDDEBUG);
   drawCelestial    = BZDB.isTrue(BZDBNAMES.DRAWCELESTIAL);
@@ -171,6 +216,9 @@ void BZDBCache::init()
   tankAngVel       = getGoodPosValue(tankAngVel,      BZDBNAMES.TANKANGVEL);
   tankWidth        = getGoodPosValue(tankWidth,       BZDBNAMES.TANKWIDTH);
   worldSize        = getGoodPosValue(worldSize,       BZDBNAMES.WORLDSIZE);
+
+  parseGameFrameTimes(BZDB.get("_gameFPS"), (float&)minGameFrameTime,
+                                            (float&)maxGameFrameTime);
 
   update();
 }
@@ -283,7 +331,7 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   else if (name == BZDBNAMES.TANKSPEED) {
     tankSpeed = getGoodPosValue(tankSpeed,BZDBNAMES.TANKSPEED);
   }
-// Why only in update() ?
+// Why only in update() ?   FIXME
 //  else if (name == BZDBNAMES.FLAGRADIUS) {
 //    flagRadius = BZDB.eval(BZDBNAMES.FLAGRADIUS);
 //  }
@@ -292,6 +340,10 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   }
   else if (name == BZDBNAMES.FLAGPOLEWIDTH) {
     flagPoleWidth = getGoodPosValue(flagPoleWidth,BZDBNAMES.FLAGPOLEWIDTH);
+  }
+  else if (name == "_gameFPS") {
+    parseGameFrameTimes(BZDB.get("_gameFPS"), (float&)minGameFrameTime,
+                                              (float&)maxGameFrameTime);
   }
 }
 

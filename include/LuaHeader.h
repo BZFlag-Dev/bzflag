@@ -122,6 +122,14 @@ inline int luaL_pushnil(lua_State* L)
 }
 
 
+inline int luaL_pushnilstring(lua_State* L, const char* str)
+{
+  lua_pushnil(L);
+  lua_pushstring(L, str);
+  return 2;
+}
+
+
 //============================================================================//
 
 inline int lua_toint(lua_State* L, int idx) {

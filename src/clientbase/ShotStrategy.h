@@ -41,9 +41,9 @@ class ShotCollider {
     float radius;
     fvec3 size;
 
-    bool  test2D;
+    bool  narrow;
     float angle;
-    float length;
+    float zshift;
 
     Extents bbox;
 

@@ -306,7 +306,7 @@ int LuaPack::GetEndian(lua_State* L)
     case 0x44332211: { lua_pushliteral(L, "little");  break; }
     case 0x11223344: { lua_pushliteral(L, "big");     break; }
     case 0x22114433: { lua_pushliteral(L, "pdp");     break; }
-    default:	 { lua_pushliteral(L, "unknown"); break; }
+    default:         { lua_pushliteral(L, "unknown"); break; }
   }
 
   return 1;

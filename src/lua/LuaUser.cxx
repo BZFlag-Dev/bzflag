@@ -86,8 +86,9 @@ LuaUser::LuaUser()
 	    false, false, true) // handle perms
 {
   static LuaVfsModes vfsModes;
-  vfsModes.readDefault  = BZVFS_LUA_USER BZVFS_LUA_USER_WRITE BZVFS_BASIC;
-  vfsModes.readAllowed  = BZVFS_ALL;
+  vfsModes.readDefault  = BZVFS_LUA_USER BZVFS_LUA_USER_WRITE BZVFS_MEDIA;
+  vfsModes.readAllowed  = BZVFS_LUA_USER BZVFS_LUA_USER_WRITE BZVFS_MEDIA
+                          BZVFS_LUA_READ BZVFS_LUA_WRITE;
   vfsModes.writeDefault = BZVFS_LUA_USER_WRITE;
   vfsModes.writeAllowed = BZVFS_LUA_USER_WRITE;
 

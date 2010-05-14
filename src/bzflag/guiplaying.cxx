@@ -2176,9 +2176,13 @@ void handleShotBegin(bool human, void *msg)
 
 void handleWShotBegin (void *msg)
 {
+  if (!world) {
+    return;
+  }
+
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
-
+  
   WorldPlayer *worldWeapons = world->getWorldWeapons();
 
   worldWeapons->addShot(firingInfo);

@@ -288,8 +288,8 @@ void Player::getMuzzle(fvec3& m) const
   //       scaled version of tankRadius.
 
   float front = dimensions.x;
-  static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
-  const fvec3& sp = shotProxy;
+  static BZDB_fvec4 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
+  const fvec4& sp = shotProxy;
   if (!isnan(sp.x)) {
     front += sp.x;
   }

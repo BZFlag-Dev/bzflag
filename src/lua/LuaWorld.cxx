@@ -110,8 +110,12 @@ LuaWorld::LuaWorld()
 	    true, false, true)  // handle perms
 {
   static LuaVfsModes vfsModes;
-  vfsModes.readDefault  = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE BZVFS_BASIC;
-  vfsModes.readAllowed  = BZVFS_ALL;
+  vfsModes.readDefault  = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
+                          BZVFS_LUA_RULES BZVFS_LUA_RULES_WRITE
+                          BZVFS_MEDIA;
+  vfsModes.readAllowed  = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
+                          BZVFS_LUA_RULES BZVFS_LUA_RULES_WRITE
+                          BZVFS_MEDIA;
   vfsModes.writeDefault = BZVFS_LUA_WORLD_WRITE;
   vfsModes.writeAllowed = BZVFS_LUA_WORLD_WRITE;
   if (devMode) {

@@ -803,7 +803,11 @@ LuaTexture* LuaTextureMgr::GetLuaTexture(lua_State* L, int index)
 
 int LuaTextureMgr::RefTexture(lua_State* L)
 {
-  const char* name = luaL_checkstring(L, 1);
+  const string name = luaL_checkstring(L, 1);
+
+  if (OpenGLPassState::CreatingList() && !TEXMGR.isLoaded(name)) {
+    luaL_error(L, "textures can not be created while creating display lists");
+  }
 
   void* udData = lua_newuserdata(L, sizeof(LuaTextureRef));
   new(udData) LuaTextureRef(name);
@@ -818,6 +822,10 @@ int LuaTextureMgr::RefTexture(lua_State* L)
 
 int LuaTextureMgr::CreateTexture(lua_State* L)
 {
+  if (OpenGLPassState::CreatingList()) {
+    luaL_error(L, "textures can not be created while creating display lists");
+  }
+
   const GLsizei xsize = (GLsizei)luaL_checknumber(L, 1);
   const GLsizei ysize = (GLsizei)luaL_checknumber(L, 2);
   const GLsizei zsize = 1;
@@ -968,7 +976,10 @@ bool LuaTextureMgr::ParseTexture(lua_State* L, int index)
 
   // named engine textures
   if (lua_israwstring(L, index)) {
-    const char* name = lua_tostring(L, index);
+    const string name = lua_tostring(L, index);
+    if (OpenGLPassState::CreatingList() && !TEXMGR.isLoaded(name)) {
+      luaL_error(L, "textures can not be created while creating display lists");
+    }
     const int bzTexID = TEXMGR.getTextureID(name, false);
     if (bzTexID < 0) {
       glDisable(GL_TEXTURE_2D);

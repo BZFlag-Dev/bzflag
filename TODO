@@ -77,13 +77,14 @@ so that no work is duplicated.
   and can do interactive ammo display instead of chat messages. (javawizard2539)
 
 * Change the title image to not have the flag with the version in it. Add
-  ether the flag, or some version number to the image at run time using GL
+  either the flag, or some version number to the image at run time using GL
   
 * Don't call "got blowed up" on the local client when it gets shot, send 
   a new "I got hit" message asking the server what to do. Then have the 
   server send out the death, flag transfer, or flag drop for shield message.
   This will fix a number of cheats, and allow the API to modify the game play
-  in a number of interesting ways (real freeze tag, etc ).
+  in a number of interesting ways (real freeze tag, etc ). -- don't bother
+  thinking about this, wait for an authoratative server rewrite  ;)
   
 * Move all the flag effects ( wings, OO, and other non shot effects ) into
   an enumeration that is sent with the flag, to allow for truly custom flags.

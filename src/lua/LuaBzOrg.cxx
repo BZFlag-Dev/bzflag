@@ -59,7 +59,7 @@ class CodeFetch : private cURLManager {
 	url = sourceFile;
       } else {
 	const string bzOrgURL = BZDB.get("luaBzOrgURL");
-	url = bzOrgURL.empty() ? string(sourceFile) : bzOrgURL;
+	url = !bzOrgURL.empty() ? bzOrgURL : sourceFile;
       }
       setURL(url);
       setGetMode();
@@ -134,7 +134,7 @@ LuaBzOrg::LuaBzOrg(const string& sourceCode, const string& sourceURL)
 	    true, false, true)  // handle perms
 {
   static LuaVfsModes vfsModes;
-  vfsModes.readDefault  = BZVFS_LUA_BZORG BZVFS_LUA_BZORG_WRITE BZVFS_BASIC;
+  vfsModes.readDefault  = BZVFS_LUA_BZORG BZVFS_LUA_BZORG_WRITE BZVFS_MEDIA;
   vfsModes.readAllowed  = BZVFS_ALL;
   vfsModes.writeDefault = BZVFS_LUA_BZORG_WRITE;
   vfsModes.writeAllowed = BZVFS_LUA_BZORG_WRITE;

@@ -243,12 +243,17 @@ void LocalPlayer::doUpdateMotion(float dt)
 
   if (debugMotion >= 1) {
     const std::string locationString = getLocationString(location);
-    logDebugMessage(0, "doUpdateMotion: %f\n", dt);
+    logDebugMessage(0, "doUpdateMotion: %+12.6f     %.3f / %.3f\n", dt,
+                       (float)BZDBCache::minGameFrameTime,
+                       (float)BZDBCache::maxGameFrameTime);
     logDebugMessage(0, "  location = %s\n", locationString.c_str());
-    logDebugMessage(0, "  pos = %s\n", oldPosition.tostring().c_str());
-    logDebugMessage(0, "  vel = %s\n", oldVelocity.tostring().c_str());
-    logDebugMessage(0, "  angle  = %f\n", oldAzimuth);
-    logDebugMessage(0, "  angvel = %f\n", oldAngVel);
+    logDebugMessage(0, "  phydrv = %i\n", getPhysicsDriver());
+    logDebugMessage(0, "  lastObstacle = %s\n",
+                       lastObstacle ? lastObstacle->getType() : "none");
+    logDebugMessage(0, "  pos = %s\n", oldPosition.tostring("%+12.6f").c_str());
+    logDebugMessage(0, "  vel = %s\n", oldVelocity.tostring("%+12.6f").c_str());
+    logDebugMessage(0, "  angle  = %+12.6f\n", oldAzimuth);
+    logDebugMessage(0, "  angvel = %+12.6f\n", oldAngVel);
   }
 
   // prepare new state
@@ -839,6 +844,7 @@ void LocalPlayer::doUpdateMotion(float dt)
   setAngularVelocity(newAngVel);
   setRelativeMotion();
   newAzimuth = getAngle(); // pickup the limited angle range from move()
+
   // If we are at or below the water level, send a player update now
   if (newPos.z <= world->getWaterLevel()) {
     server->sendPlayerUpdate(this);
@@ -868,11 +874,10 @@ void LocalPlayer::doUpdateMotion(float dt)
   }
 
   if (gettingSound) {
-    if ((oldPosition.x != newPos.x) || (oldPosition.y != newPos.y) ||
-	(oldPosition.z != newPos.z) || (oldAzimuth != newAzimuth)) {
+    if ((oldPosition != newPos) || (oldAzimuth != newAzimuth)) {
       SOUNDSYSTEM.setReceiver(newPos.x, newPos.y, newPos.z, newAzimuth,
-			NEAR_ZERO(dt, ZERO_TOLERANCE) ||
-			(teleported && (getFlagType() != Flags::PhantomZone)));
+                              NEAR_ZERO(dt, ZERO_TOLERANCE) ||
+                              (teleported && (getFlagType() != Flags::PhantomZone)));
     }
     if (NEAR_ZERO(dt, ZERO_TOLERANCE)) {
       SOUNDSYSTEM.setReceiverVec(newVelocity.x, newVelocity.y, newVelocity.z);
@@ -1678,7 +1683,7 @@ void LocalPlayer::explodeTank()
 
 void LocalPlayer::doMomentum(float dt,float& speed, float& angVel)
 {
-  computeMomentum(dt, getFlagType(), speed,angVel,lastSpeed,getAngularVelocity());
+  computeMomentum(dt, getFlagType(), speed, angVel, lastSpeed, getAngularVelocity());
 }
 
 
@@ -1746,29 +1751,31 @@ bool LocalPlayer::checkHit(const Player* source,
     }
 
     // test myself against shot
+    static const fvec4 zeroMargin(0.0f, 0.0f, 0.0f, 0.0f);
+    const fvec4 *proximSize = &zeroMargin;
 
-    static const fvec3 zeroMargin(0,0,0);
-    const fvec3 *proxySize = &zeroMargin;
-
-    static BZDB_fvec3 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
-    if (!isnan(shotProxy.getData().x)) {
-      proxySize = &shotProxy.getData();
+    static BZDB_fvec4 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
+    if (!isnan(shotProxim.getData().x)) {
+      proximSize = &shotProxim.getData();
     }
 
     ShotCollider collider;
-    collider.position = getPosition();
-    collider.angle    = getAngle();
-    collider.length   = BZDBCache::tankLength;
-    collider.motion   = getLastMotion();
-    collider.radius   = this->getRadius();
-    collider.size     = getDimensions() + *proxySize;
-    collider.test2D   = (this->getFlagType() == Flags::Narrow);
-    collider.bbox     = bbox;
-    collider.bbox.mins.x -= proxySize->x;
-    collider.bbox.maxs.x += proxySize->x;
-    collider.bbox.mins.y -= proxySize->y;
-    collider.bbox.maxs.y += proxySize->y;
-    collider.bbox.maxs.z += proxySize->z;
+    collider.position     = getPosition();
+    collider.position.z  -= proximSize->w;
+    collider.angle        = getAngle();
+    collider.motion       = getLastMotion();
+    collider.radius       = this->getRadius();
+    collider.size         = getDimensions() + proximSize->xyz();
+    collider.size.z      += proximSize->w;
+    collider.zshift       = proximSize->w;
+    collider.narrow       = (this->getFlagType() == Flags::Narrow);
+    collider.bbox         = bbox;
+    collider.bbox.mins.x -= proximSize->x;
+    collider.bbox.maxs.x += proximSize->x;
+    collider.bbox.mins.y -= proximSize->y;
+    collider.bbox.maxs.y += proximSize->y;
+    collider.bbox.mins.z -= proximSize->w;
+    collider.bbox.maxs.z += proximSize->z;
     collider.testLastSegment = (getId() == shot->getPlayer());
 
     fvec3 hitPos;

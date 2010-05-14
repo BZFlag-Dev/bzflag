@@ -43,8 +43,8 @@ static void drawTankHitZone(const Player* tank)
   const bool isNarrow = (tank->getFlagType() == Flags::Narrow);
 
   static BZDB_bool tankShotSpherical("_tankShotSpherical");
-  static BZDB_fvec3 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
-  const fvec3& sp = shotProxim;
+  static BZDB_fvec4 shotProxim(BZDBNAMES.TANKSHOTPROXIMITY);
+  const fvec4& sp = shotProxim;
 
   fvec3        pos   = tank->getPosition();
   fvec3        dims  = tank->getDimensions();
@@ -67,7 +67,9 @@ static void drawTankHitZone(const Player* tank)
   }
 
   if (!isnan(sp.x)) {
-    dims += sp;
+    dims   += sp.xyz();
+    pos.z  -= sp.w;
+    dims.z += sp.w;
   }
 
   if (isNarrow) {

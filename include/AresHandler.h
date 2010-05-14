@@ -25,45 +25,45 @@
 #endif
 
 class AresHandler {
- public:
-  AresHandler();
-  ~AresHandler();
+  public:
+    AresHandler();
+    ~AresHandler();
 
-  enum ResolutionStatus {
-    None = 0,
-    Failed,
-    HbAPending,
-    HbASucceeded,
-    HbNPending,
-    HbNSucceeded
-  };
+    enum ResolutionStatus {
+      None = 0,
+      Failed,
+      HbAPending,
+      HbASucceeded,
+      HbNPending,
+      HbNSucceeded
+    };
 
-  void		queryHostname(struct sockaddr *clientAddr);
-  void		queryHost(const char *hostName);
-  const char   *getHostname();
-  ResolutionStatus getHostAddress(struct in_addr *clientAddr);
-  void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
-  void		process(fd_set *read_set, fd_set *write_set);
-  ResolutionStatus getStatus() {return status;};
+    void		queryHostname(struct sockaddr *clientAddr);
+    void		queryHost(const char *hostName);
+    const char   *getHostname();
+    ResolutionStatus getHostAddress(struct in_addr *clientAddr);
+    void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
+    void		process(fd_set *read_set, fd_set *write_set);
+    ResolutionStatus getStatus() {return status;};
 
-  static bool	globalInit();
-  static void	globalShutdown();
+    static bool	globalInit();
+    static void	globalShutdown();
 
- private:
-  static void	staticCallback(void *arg, int statusCallback, int timeouts,
-			     struct hostent *hostent);
-  void		callback(int status, struct hostent *hostent);
+  private:
+    static void	staticCallback(void *arg, int statusCallback, int timeouts,
+                               struct hostent *hostent);
+    void		callback(int status, struct hostent *hostent);
 
-  // peer's network hostname (malloc/free'd)
-  char	       *hostname;
-  in_addr	hostAddress;
-  ares_channel	aresChannel;
-  ResolutionStatus status;
-  bool		aresFailed;
+    // peer's network hostname (malloc/free'd)
+    char	       *hostname;
+    in_addr	hostAddress;
+    ares_channel	aresChannel;
+    ResolutionStatus status;
+    bool		aresFailed;
 
-  struct in_addr requestedAddress;
+    struct in_addr requestedAddress;
 
-  static bool	globallyInited;
+    static bool	globallyInited;
 };
 
 #endif

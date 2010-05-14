@@ -38,15 +38,20 @@ PointShotStrategy::~PointShotStrategy()
 }
 
 
-static bool RayTest(const ShotCollider& tank, Ray &relativeRay,
+static bool RayTest(const ShotCollider& tank, const Ray &relativeRay,
                     fvec3 &position, float &minTime, const ShotPathSegment &s,
                     const float dt, const BzTime& prevTime, const float shotRadius)
 {
-  static fvec3 tankBase(0.0f, 0.0f, -0.5f * tank.size.z);
+  static fvec3 tankBase(0.0f, 0.0f, 0.0f);
 
-  // get hit time
-  // find closest approach to narrow box around tank.  width of box is small if we have narrow
-  float t = Intersect::timeRayHitsBlock(relativeRay, tankBase, tank.angle, tank.size.x, tank.test2D ? shotRadius : tank.size.y, tank.size.z);
+  // find closest approach to narrow box around tank.
+  // width of box is small if we have narrow
+  float t = Intersect::timeRayHitsBlock(
+    relativeRay, tankBase, tank.angle,
+    tank.size.x,
+    tank.narrow ? shotRadius : tank.size.y,
+    tank.size.z
+  );
 
   if (t > minTime)
     return false;
@@ -68,14 +73,15 @@ static bool RayTest(const ShotCollider& tank, Ray &relativeRay,
   tank.motion.getPoint(t, tankPos);
 
   // compute position of intersection
-  position = tankPos + closestPos + fvec3(0,0,0.5f * tank.size.z);
+  position = tankPos + closestPos;
+  position.z -= tank.zshift;
 
   return true;
 }
 
 
 float PointShotStrategy::checkShotHit(const ShotCollider& tank,
-                                      fvec3& position, float radius) const
+                                      fvec3& position, float shotRadius) const
 {
   float minTime = Infinity;
   // expired shot can't hit anything
@@ -83,10 +89,9 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
     return minTime;
   }
 
-  // tank is positioned from it's bottom so shift position up by
-  // half a tank height.
+  // shift the tank position to the bottom of its extents
   fvec3 lastTankPositionRaw = tank.motion.getOrigin();
-  lastTankPositionRaw.z += 0.5f * tank.size.z;
+  lastTankPositionRaw.z -= tank.zshift;
   Ray tankLastMotion(lastTankPositionRaw, tank.motion.getDirection());
 
   const Extents& tankBBox = tank.bbox;
@@ -98,8 +103,6 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
       return minTime;
     }
   }
-
-  float shotRadius = radius;
 
   // check each segment in interval (prevTime,currentTime]
   const float dt = float(currentTime - prevTime);
@@ -146,7 +149,9 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
 
       // construct relative shot ray:  origin and velocity relative to
       // my tank as a function of time (t=0 is start of the interval).
-      Ray relativeRay(Intersect::rayMinusRay(s.ray, float(prevTime - s.start), tankLastMotion, 0.0f));
+      const float diffTime = prevTime - s.start;
+      Ray relativeRay(Intersect::rayMinusRay(s.ray, diffTime,
+                                             tankLastMotion, 0.0f));
 
       if (!RayTest(tank, relativeRay, position, minTime,
                    s, dt, prevTime, shotRadius )) {

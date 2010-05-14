@@ -289,7 +289,9 @@ bool LuaOpenGL::PushEntries(lua_State* L)
   // should be GL_ARB_framebuffer_object, but glew 1.5.1 has
   // a typo from the following:  glFramebufferTextureLayer
   // (it should be fixed in the next version of glew)
-  if (GLEW_VERSION_2_0 && glGenFramebuffers && glGenRenderbuffers &&
+  if (GLEW_VERSION_2_0 &&
+      glGenFramebuffers &&
+      glGenRenderbuffers &&
       IsAllowed("FBO")) {
      LuaFBOMgr::PushEntries(L);
      LuaRBOMgr::PushEntries(L);
