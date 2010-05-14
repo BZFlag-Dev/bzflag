@@ -34,6 +34,69 @@
 //  drawTankDebug()
 //
 
+static void drawDoubleCubeLines(const Extents& inner, const fvec4& inColor,
+                                const Extents& outer, const fvec4& outColor)
+{
+  const fvec3 corners[2][8] = {
+    {
+      fvec3(inner.mins.x, inner.mins.y, inner.mins.z),
+      fvec3(inner.maxs.x, inner.mins.y, inner.mins.z),
+      fvec3(inner.maxs.x, inner.maxs.y, inner.mins.z),
+      fvec3(inner.mins.x, inner.maxs.y, inner.mins.z),
+      fvec3(inner.mins.x, inner.mins.y, inner.maxs.z),
+      fvec3(inner.maxs.x, inner.mins.y, inner.maxs.z),
+      fvec3(inner.maxs.x, inner.maxs.y, inner.maxs.z),
+      fvec3(inner.mins.x, inner.maxs.y, inner.maxs.z)
+    }, {
+      fvec3(outer.mins.x, outer.mins.y, outer.mins.z),
+      fvec3(outer.maxs.x, outer.mins.y, outer.mins.z),
+      fvec3(outer.maxs.x, outer.maxs.y, outer.mins.z),
+      fvec3(outer.mins.x, outer.maxs.y, outer.mins.z),
+      fvec3(outer.mins.x, outer.mins.y, outer.maxs.z),
+      fvec3(outer.maxs.x, outer.mins.y, outer.maxs.z),
+      fvec3(outer.maxs.x, outer.maxs.y, outer.maxs.z),
+      fvec3(outer.mins.x, outer.maxs.y, outer.maxs.z)
+    }
+  };
+
+  const fvec4* colors[2] = { &inColor, &outColor };
+
+  for (int i = 0; i < 2; i++) {
+
+    glColor4fv(*colors[i]);
+
+    glBegin(GL_LINE_LOOP); { // the top
+      glVertex3fv(corners[i][0]);
+      glVertex3fv(corners[i][1]);
+      glVertex3fv(corners[i][2]);
+      glVertex3fv(corners[i][3]);
+    }
+    glEnd();
+    glBegin(GL_LINE_LOOP); { // the bottom
+      glVertex3fv(corners[i][4]);
+      glVertex3fv(corners[i][5]);
+      glVertex3fv(corners[i][6]);
+      glVertex3fv(corners[i][7]);
+    }
+    glEnd();
+    glBegin(GL_LINES); { // the sides
+      glVertex3fv(corners[i][0]); glVertex3fv(corners[i][4]);
+      glVertex3fv(corners[i][1]); glVertex3fv(corners[i][5]);
+      glVertex3fv(corners[i][2]); glVertex3fv(corners[i][6]);
+      glVertex3fv(corners[i][3]); glVertex3fv(corners[i][7]);
+    }
+    glEnd();
+  }
+
+  glBegin(GL_LINES); // connect the cubes
+  for (int i = 0; i < 8; i++) {
+    glColor4fv(*colors[0]); glVertex3fv(corners[0][i]); // inner
+    glColor4fv(*colors[1]); glVertex3fv(corners[1][i]); // outer
+  }
+  glEnd();
+}
+
+
 static void drawTankHitZone(const Player* tank)
 {
   if ((tank == NULL) || tank->isObserver()) {
@@ -73,47 +136,26 @@ static void drawTankHitZone(const Player* tank)
   }
 
   if (isNarrow) {
-    static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
-    dims.y = shotRadius;
+    dims.y = BZDBCache::shotRadius;
   }
 
-  glColor4f(color.r, color.g, color.b, 0.8f);
+  const float sr = BZDBCache::shotRadius;
+  const fvec3 shotPad(sr, sr, sr);
+
+  Extents inner, outer;
+  inner.maxs =  dims;
+  inner.mins = -dims;
+  inner.mins.z = 0.0f;
+  outer = inner;
+  outer.mins -= shotPad;
+  outer.maxs += shotPad;
 
   glPushMatrix();
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
 
-  const fvec3 corners[8] = {
-    fvec3(-dims.x, -dims.y, 0.0f),
-    fvec3(+dims.x, -dims.y, 0.0f),
-    fvec3(+dims.x, +dims.y, 0.0f),
-    fvec3(-dims.x, +dims.y, 0.0f),
-    fvec3(-dims.x, -dims.y, dims.z),
-    fvec3(+dims.x, -dims.y, dims.z),
-    fvec3(+dims.x, +dims.y, dims.z),
-    fvec3(-dims.x, +dims.y, dims.z)
-  };
-
-  glBegin(GL_LINE_LOOP); {
-    glVertex3fv(corners[0]);
-    glVertex3fv(corners[1]);
-    glVertex3fv(corners[2]);
-    glVertex3fv(corners[3]);
-  } glEnd();
-
-  glBegin(GL_LINE_LOOP); {
-    glVertex3fv(corners[4]);
-    glVertex3fv(corners[5]);
-    glVertex3fv(corners[6]);
-    glVertex3fv(corners[7]);
-  } glEnd();
-
-  glBegin(GL_LINES); {
-    glVertex3fv(corners[0]); glVertex3fv(corners[4]);
-    glVertex3fv(corners[1]); glVertex3fv(corners[5]);
-    glVertex3fv(corners[2]); glVertex3fv(corners[6]);
-    glVertex3fv(corners[3]); glVertex3fv(corners[7]);
-  } glEnd();
+  drawDoubleCubeLines(inner, fvec4(color.rgb() * 0.5f, 0.8),
+                      outer, fvec4(color.rgb(),        0.8));
 
   glPopMatrix();
 }

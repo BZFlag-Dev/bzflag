@@ -2151,9 +2151,7 @@ void handleShotBegin(bool human, void *msg)
 	shooter->addShot(firingInfo);
 
 	if (SceneRenderer::instance().useQuality() >= _MEDIUM_QUALITY) {
-	  fvec3 shotPos;
-	  shooter->getMuzzle(shotPos);
-
+	  const fvec3 shotPos = shooter->getMuzzleShotPos();
 	  if (showShotEffects(shooterid)) {
 	    EFFECTS.addShotEffect(shooter->getColor(), shotPos,
 	                          shooter->getAngle(), shooter->getVelocity());

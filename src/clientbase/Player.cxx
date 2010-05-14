@@ -280,7 +280,7 @@ float Player::getMaxSpeed ( void ) const
 }
 
 
-void Player::getMuzzle(fvec3& m) const
+fvec3 Player::getMuzzleShotPos() const
 {
   // NOTE: like getRadius(), we only use dimensionsScale.x.
   //       as well, we do not use BZDB_MUZZLEFRONT, but the
@@ -288,21 +288,31 @@ void Player::getMuzzle(fvec3& m) const
   //       scaled version of tankRadius.
 
   float front = dimensions.x;
+
+  // adjust for the _tankShotProximity margin
   static BZDB_fvec4 shotProxy(BZDBNAMES.TANKSHOTPROXIMITY);
   const fvec4& sp = shotProxy;
   if (!isnan(sp.x)) {
     front += sp.x;
   }
 
+  // adjust for the shot radius
+  front += BZDBCache::shotRadius;
+
+  // small tweak if the tank is being resized
   if (dimensionsRate.x > 0.0f) {
     front += (dimensionsRate.x * 0.1f);
   }
 
+  // throw another 0.1f in for fun
   front += 0.1f;
 
-  m = state.pos;
-  m.xy() += front * forward.xy();
-  m.z    += (BZDBCache::muzzleHeight * dimensionsScale.z);
+  fvec3 pos;
+  pos = state.pos;
+  pos.xy() += front * forward.xy();
+  pos.z    += (BZDBCache::muzzleHeight * dimensionsScale.z);
+
+  return pos;
 }
 
 
@@ -1176,9 +1186,9 @@ void Player::prepareShotInfo(FiringInfo &firingInfo, bool local)
       firingInfo.shot.pos = getPosition();
     }
     else {
-      getMuzzle(firingInfo.shot.pos);
+      firingInfo.shot.pos = getMuzzleShotPos();
 
-      const fvec3& tankDir     = getForward();
+      const fvec3& tankDir = getForward();
       const fvec3& tankVel = getVelocity();
       float shotSpeed      = BZDB.eval(BZDBNAMES.SHOTSPEED);
 

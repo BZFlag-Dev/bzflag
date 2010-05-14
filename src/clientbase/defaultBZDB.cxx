@@ -112,6 +112,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "showtabs",			"2",			true,  DefPerm, NULL },
   { "showTreads",		"0",			true,  DefPerm, NULL },
   { "showVelocities",		"0",			true,  DefPerm, NULL },
+  { "shotVisualScale",		"2",			true,  DefPerm, NULL },
   { "sizedradarshots",		"0",			true,  DefPerm, NULL },
   { "stencilShadows",		"1",			true,  DefPerm, NULL },
   { "team",			"Rogue",		true,  DefPerm, NULL },

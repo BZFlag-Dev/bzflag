@@ -111,6 +111,7 @@ class BZDBCache
     static Float maxLOD;
     static Float muzzleHeight;
     static Float radarLimit;
+    static Float shotRadius;
     static Float tankHeight;
     static Float tankLength;
     static Float tankRadius;

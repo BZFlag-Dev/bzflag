@@ -132,7 +132,7 @@ void RobotPlayer::doUpdate(float dt)
 
   float tankRadius = BZDBCache::tankRadius;
   const float shotRange  = BZDB.eval(BZDBNAMES.SHOTRANGE);
-  const float shotRadius = BZDB.eval(BZDBNAMES.SHOTRADIUS);
+  const float shotRadius = BZDBCache::shotRadius;
 
   World *world = World::getWorld();
   if (!world) {

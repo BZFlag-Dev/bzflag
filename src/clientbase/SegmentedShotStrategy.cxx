@@ -64,7 +64,11 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
 
   // initialize scene nodes
   if (!headless) {
-    boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
+    boltSceneNode = new BoltSceneNode(_path->getPosition(),
+                                      _path->getVelocity());
+
+    static BZDB_float shotVisualScale("shotVisualScale");
+    boltSceneNode->setSize(shotVisualScale * BZDBCache::shotRadius);
 
     const fvec4& color = Team::getRadarColor(team);
     if (faint) {
@@ -284,8 +288,7 @@ void SegmentedShotStrategy::setCurrentSegment(int _segment)
 float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
                                       fvec3& position) const
 {
-	static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
-	return checkShotHit(tank,position,shotRadius);
+  return checkShotHit(tank, position, BZDBCache::shotRadius);
 }
 
 

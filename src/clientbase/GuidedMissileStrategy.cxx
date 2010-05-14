@@ -37,7 +37,11 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path)
 , renderTimes(0)
 , needUpdate(true)
 {
-  ptSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity());
+  ptSceneNode = new BoltSceneNode(_path->getPosition(), _path->getVelocity());
+
+  static BZDB_float shotVisualScale("shotVisualScale");
+  ptSceneNode->setSize(shotVisualScale * BZDBCache::shotRadius);
+
   TextureManager &tm = TextureManager::instance();
   int texture = tm.getTextureID("missile");
 
@@ -414,9 +418,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
   if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime) {
     return Infinity;
   }
-
-  static BZDB_float shotRadius(BZDBNAMES.SHOTRADIUS);
-  return checkShotHit(tank, position, shotRadius);
+  return checkShotHit(tank, position, BZDBCache::shotRadius);
 }
 
 

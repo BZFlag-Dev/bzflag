@@ -60,6 +60,7 @@ BZDBCache::Float BZDBCache::worldSize;
 BZDBCache::Float BZDBCache::radarLimit;
 BZDBCache::Float BZDBCache::gravity;
 BZDBCache::Float BZDBCache::muzzleHeight;
+BZDBCache::Float BZDBCache::shotRadius;
 BZDBCache::Float BZDBCache::tankWidth;
 BZDBCache::Float BZDBCache::tankLength;
 BZDBCache::Float BZDBCache::tankHeight;
@@ -187,6 +188,7 @@ void BZDBCache::init()
   BZDB.addCallback(BZDBNAMES.MAXLOD,           serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.WORLDSIZE,        serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.RADARLIMIT,       serverCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.SHOTRADIUS,       serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKWIDTH,        serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKLENGTH,       serverCallback, NULL);
   BZDB.addCallback(BZDBNAMES.TANKHEIGHT,       serverCallback, NULL);
@@ -204,18 +206,19 @@ void BZDBCache::init()
 
   maxLOD           = BZDB.eval(BZDBNAMES.MAXLOD);
   radarLimit       = BZDB.eval(BZDBNAMES.RADARLIMIT);
-  flagPoleSize     = getGoodPosValue(flagPoleSize,    BZDBNAMES.FLAGPOLESIZE);
-  flagPoleWidth    = getGoodPosValue(flagPoleWidth,   BZDBNAMES.FLAGPOLEWIDTH);
-  flagRadius       = getGoodPosValue(flagRadius,      BZDBNAMES.FLAGRADIUS);
-  gravity          = getGoodNonZeroValue(gravity,     BZDBNAMES.GRAVITY);
-  muzzleHeight     = getGoodPosValue(muzzleHeight,    BZDBNAMES.MUZZLEHEIGHT);
-  tankHeight       = getGoodPosValue(tankHeight,      BZDBNAMES.TANKHEIGHT);
-  tankLength       = getGoodPosValue(tankLength,      BZDBNAMES.TANKLENGTH);
-  tankRadius       = getGoodPosValue(tankRadius,      BZDBNAMES.TANKRADIUS);
-  tankSpeed        = getGoodPosValue(tankSpeed,       BZDBNAMES.TANKSPEED);
-  tankAngVel       = getGoodPosValue(tankAngVel,      BZDBNAMES.TANKANGVEL);
-  tankWidth        = getGoodPosValue(tankWidth,       BZDBNAMES.TANKWIDTH);
-  worldSize        = getGoodPosValue(worldSize,       BZDBNAMES.WORLDSIZE);
+  flagPoleSize     = getGoodPosValue(flagPoleSize,  BZDBNAMES.FLAGPOLESIZE);
+  flagPoleWidth    = getGoodPosValue(flagPoleWidth, BZDBNAMES.FLAGPOLEWIDTH);
+  flagRadius       = getGoodPosValue(flagRadius,    BZDBNAMES.FLAGRADIUS);
+  gravity          = getGoodNonZeroValue(gravity,   BZDBNAMES.GRAVITY);
+  muzzleHeight     = getGoodPosValue(muzzleHeight,  BZDBNAMES.MUZZLEHEIGHT);
+  shotRadius       = getGoodPosValue(shotRadius,    BZDBNAMES.SHOTRADIUS);
+  tankHeight       = getGoodPosValue(tankHeight,    BZDBNAMES.TANKHEIGHT);
+  tankLength       = getGoodPosValue(tankLength,    BZDBNAMES.TANKLENGTH);
+  tankRadius       = getGoodPosValue(tankRadius,    BZDBNAMES.TANKRADIUS);
+  tankSpeed        = getGoodPosValue(tankSpeed,     BZDBNAMES.TANKSPEED);
+  tankAngVel       = getGoodPosValue(tankAngVel,    BZDBNAMES.TANKANGVEL);
+  tankWidth        = getGoodPosValue(tankWidth,     BZDBNAMES.TANKWIDTH);
+  worldSize        = getGoodPosValue(worldSize,     BZDBNAMES.WORLDSIZE);
 
   parseGameFrameTimes(BZDB.get("_gameFPS"), (float&)minGameFrameTime,
                                             (float&)maxGameFrameTime);
@@ -314,32 +317,35 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     radarLimit = BZDB.eval(BZDBNAMES.RADARLIMIT);
   }
   else if (name == BZDBNAMES.GRAVITY) {
-    gravity = getGoodNonZeroValue(gravity,BZDBNAMES.GRAVITY);
+    gravity = getGoodNonZeroValue(gravity, BZDBNAMES.GRAVITY);
   }
   else if (name == BZDBNAMES.MUZZLEHEIGHT) {
-    muzzleHeight = getGoodNonZeroValue(gravity,BZDBNAMES.MUZZLEHEIGHT);
+    muzzleHeight = getGoodNonZeroValue(gravity, BZDBNAMES.MUZZLEHEIGHT);
+  }
+  else if (name == BZDBNAMES.SHOTRADIUS) {
+    shotRadius = getGoodPosValue(shotRadius, BZDBNAMES.SHOTRADIUS);
   }
   else if (name == BZDBNAMES.TANKWIDTH) {
-    tankWidth = getGoodPosValue(tankWidth,BZDBNAMES.TANKWIDTH);
+    tankWidth = getGoodPosValue(tankWidth, BZDBNAMES.TANKWIDTH);
   }
   else if (name == BZDBNAMES.TANKLENGTH) {
-    tankLength = getGoodPosValue(tankLength,BZDBNAMES.TANKLENGTH);
+    tankLength = getGoodPosValue(tankLength, BZDBNAMES.TANKLENGTH);
   }
   else if (name == BZDBNAMES.TANKHEIGHT) {
-    tankHeight = getGoodPosValue(tankHeight,BZDBNAMES.TANKHEIGHT);
+    tankHeight = getGoodPosValue(tankHeight, BZDBNAMES.TANKHEIGHT);
   }
   else if (name == BZDBNAMES.TANKSPEED) {
-    tankSpeed = getGoodPosValue(tankSpeed,BZDBNAMES.TANKSPEED);
+    tankSpeed = getGoodPosValue(tankSpeed, BZDBNAMES.TANKSPEED);
   }
 // Why only in update() ?   FIXME
 //  else if (name == BZDBNAMES.FLAGRADIUS) {
 //    flagRadius = BZDB.eval(BZDBNAMES.FLAGRADIUS);
 //  }
   else if (name == BZDBNAMES.FLAGPOLESIZE) {
-    flagPoleSize = getGoodPosValue(flagPoleSize,BZDBNAMES.FLAGPOLESIZE);
+    flagPoleSize = getGoodPosValue(flagPoleSize, BZDBNAMES.FLAGPOLESIZE);
   }
   else if (name == BZDBNAMES.FLAGPOLEWIDTH) {
-    flagPoleWidth = getGoodPosValue(flagPoleWidth,BZDBNAMES.FLAGPOLEWIDTH);
+    flagPoleWidth = getGoodPosValue(flagPoleWidth, BZDBNAMES.FLAGPOLEWIDTH);
   }
   else if (name == "_gameFPS") {
     parseGameFrameTimes(BZDB.get("_gameFPS"), (float&)minGameFrameTime,

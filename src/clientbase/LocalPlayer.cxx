@@ -1776,6 +1776,7 @@ bool LocalPlayer::checkHit(const Player* source,
     collider.bbox.maxs.y += proximSize->y;
     collider.bbox.mins.z -= proximSize->w;
     collider.bbox.maxs.z += proximSize->z;
+    collider.bbox.addMargin(BZDBCache::shotRadius);
     collider.testLastSegment = (getId() == shot->getPlayer());
 
     fvec3 hitPos;

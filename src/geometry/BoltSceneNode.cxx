@@ -470,14 +470,16 @@ void BoltSceneNode::BoltRenderNode::render()
   if (sceneNode->invisible) {
     return;
   }
-  const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
-  const bool experimental = (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY);
+  const float radius = sceneNode->size;
+  const int   shotLength = (int)(BZDBCache::shotLength * 3.0f);
+  const bool  experimental = (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY);
 
   const bool blackFog = RENDERER.isFogActive() && BZDBCache::blend &&
                         ((shotLength > 0) || experimental);
   if (blackFog) {
     glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
   }
+
 
   const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
@@ -492,7 +494,7 @@ void BoltSceneNode::BoltRenderNode::render()
   }
   else {
     RENDERER.getViewFrustum().executeBillboard();
-    glScalef(sceneNode->size, sceneNode->size, sceneNode->size);
+    glScalef(radius, radius, radius);
     // draw some flares
     if (sceneNode->drawFlares) {
       if (!RENDERER.isSameFrame()) {
@@ -515,12 +517,14 @@ void BoltSceneNode::BoltRenderNode::render()
 	// the bias completely, but moves it towards the equator, which is
 	// really where i want it anyway cos the flares are more noticeable
 	// there.
-	const float c = FlareSize * float(cosf(phi[i]));
-	const float s = FlareSize * float(sinf(phi[i]));
+	const float c = FlareSize * cosf(phi[i]);
+	const float s = FlareSize * sinf(phi[i]);
+	const float ti = theta[i];
+	const float fs = FlareSpread;
 	glVertex3fv(core[0]);
-	glVertex3f(c * cosf(theta[i]-FlareSpread), c * sinf(theta[i]-FlareSpread), s);
-	glVertex3f(2.0f * c * cosf(theta[i]), 2.0f * c * sinf(theta[i]), 2.0f * s);
-	glVertex3f(c * cosf(theta[i]+FlareSpread), c * sinf(theta[i]+FlareSpread), s);
+	glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
+	glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
+	glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
       }
       glEnd();
       if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
@@ -543,7 +547,7 @@ void BoltSceneNode::BoltRenderNode::render()
       glEnd();
       addTriangleCount(2);
 
-
+      // draw shot trail  (more billboarded quads)
       if ((shotLength > 0) && (sceneNode->length > 1.0e-6f)) {
         const float startSize  = 0.6f;
         const float startAlpha = 0.8f;

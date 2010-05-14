@@ -42,15 +42,15 @@ static bool RayTest(const ShotCollider& tank, const Ray &relativeRay,
                     fvec3 &position, float &minTime, const ShotPathSegment &s,
                     const float dt, const BzTime& prevTime, const float shotRadius)
 {
-  static fvec3 tankBase(0.0f, 0.0f, 0.0f);
+  static const fvec3 tankBase(0.0f, 0.0f, -shotRadius);
 
   // find closest approach to narrow box around tank.
   // width of box is small if we have narrow
   float t = Intersect::timeRayHitsBlock(
     relativeRay, tankBase, tank.angle,
-    tank.size.x,
-    tank.narrow ? shotRadius : tank.size.y,
-    tank.size.z
+    shotRadius + tank.size.x,
+    shotRadius + (tank.narrow ? 0.0f : tank.size.y),
+    shotRadius + tank.size.z + shotRadius
   );
 
   if (t > minTime)

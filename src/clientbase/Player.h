@@ -62,7 +62,7 @@ public:
   int		getPhysicsDriver() const;
   int		getDeathPhysicsDriver() const;
   float		getRadius() const;
-  void		getMuzzle(fvec3&) const;
+  fvec3		getMuzzleShotPos() const;
   float		getMuzzleHeight() const;
   short		getWins() const;
   short		getLosses() const;
