@@ -49,6 +49,8 @@ so that no work is duplicated.
 --  Should be considered for the release of 3.0:
 -- 
 
+* Fixed the zoomed radar tank-tread rendering
+
 * When flags are droped in undropable areas they need to go to the
   closest "open" area, not be resent to the origin or safe zone.
   The postion of things like the team flags mean something, so moving
