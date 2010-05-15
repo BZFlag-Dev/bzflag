@@ -57,5 +57,8 @@ made to the lua-5.1.4 sources for BZFlag.
 18. Applied patch-lua-5.1.4-1.diff
     (see http://permalink.gmane.org/gmane.comp.lang.lua.general/65600)
 
+19. Applied patch-lua-5.1.4-2.diff  (actually, diffs from the previous patch)
+    (see http://permalink.gmane.org/gmane.comp.lang.lua.general/65624)
+
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
