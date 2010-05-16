@@ -173,12 +173,8 @@ int LuaExtras::flush(lua_State* L)
 
 int LuaExtras::stderr_write(lua_State* L)
 {
-  luaL_checkstring(L, 1);
-  if (!lua_isboolean(L, 1) || !lua_tobool(L, 1)) {
-    fprintf(stderr, lua_tostring(L, 1));
-  } else {
-    fprintf(stderr, lua_tostring(L, 1));
-  }
+  const char* s = luaL_checkstring(L, 1);
+  fputs(s, stderr);
   return 0;
 }
 
