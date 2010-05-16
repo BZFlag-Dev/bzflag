@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="8.00"
 	Name="freetype"
 	ProjectGUID="{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}"
-	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -676,6 +675,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\src\base\ftfstype.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\base\ftgasp.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\src\cache\ftcache.c"
 				>
 				<FileConfiguration
@@ -814,14 +821,6 @@
 						DisableLanguageExtensions="false"
 					/>
 				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\..\src\base\ftfstype.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\src\base\ftgasp.c"
-				>
 			</File>
 			<File
 				RelativePath="..\..\..\src\base\ftglyph.c"
@@ -1237,14 +1236,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\src\base\ftgxval.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\base\ftlcdfil.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\src\base\ftmm.c"
 					>
 					<FileConfiguration
@@ -1312,14 +1303,6 @@
 					</FileConfiguration>
 				</File>
 				<File
-					RelativePath="..\..\..\src\base\ftotval.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\src\base\ftpatent.c"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\src\base\ftpfr.c"
 					>
 				</File>
@@ -1333,6 +1316,22 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\base\ftwinfnt.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\base\ftlcdfil.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\base\ftgxval.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\base\ftotval.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\src\base\ftpatent.c"
 					>
 				</File>
 				<File

@@ -57,6 +57,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 EXTRA_DIST = \
+	.gitignore \
 	ChangeLog \
 	ChangeLog.20 \
 	ChangeLog.21 \
@@ -65,10 +66,8 @@ EXTRA_DIST = \
 	Jamrules \
 	Makefile.original \
 	README \
-	README.CVS \
 	autogen.sh \
 	builds \
-	config.mk \
 	devel \
 	docs \
 	include \
