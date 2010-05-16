@@ -41,6 +41,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common.vcproj", "{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
 	ProjectSection(ProjectDependencies) = postProject
 		{CC93828F-7156-4021-9C77-9951FDADEE83} = {CC93828F-7156-4021-9C77-9951FDADEE83}
+		{417CB8F4-5AE3-45AC-B903-83DB1556303C} = {417CB8F4-5AE3-45AC-B903-83DB1556303C}
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E} = {6DD493F8-31E1-4958-A240-D157AFFCB07E}
 	EndProjectSection
 EndProject
@@ -127,6 +128,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "..\..\src\other\freetype\builds\win32\vc2008\freetype.vcproj", "{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug Multithreaded|Win32 = Debug Multithreaded|Win32
 		Debug Singlethreaded|Win32 = Debug Singlethreaded|Win32
@@ -451,9 +456,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
