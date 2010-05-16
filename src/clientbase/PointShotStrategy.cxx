@@ -143,7 +143,7 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
 
       // construct relative shot ray:  origin and velocity relative to
       // my tank as a function of time (t=0 is start of the interval).
-      const float diffTime = prevTime - s.start;
+      const float diffTime = (float)(prevTime - s.start);
       Ray relativeRay(Intersect::rayMinusRay(s.ray, diffTime,
                                              tankLastMotion, 0.0f));
 

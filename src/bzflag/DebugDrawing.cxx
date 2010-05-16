@@ -143,8 +143,8 @@ static void drawTankHitZone(const Player* tank)
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
 
-  drawDoubleCubeLines(inner, fvec4(color.rgb() * 0.25f, 0.8),
-                      outer, fvec4(color.rgb(),        0.8));
+  drawDoubleCubeLines(inner, fvec4(color.rgb() * 0.25f, 0.8f),
+                      outer, fvec4(color.rgb(),        0.8f));
 
   glPopMatrix();
 }
