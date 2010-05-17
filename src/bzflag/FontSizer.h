@@ -82,7 +82,7 @@ class FontSizer {
    * returns a font point size based on a 0->1 scale for a requested
    * input font size.  Smaller font sizes are grouped together into
    * BZDB sizes of "tinyFontSize", "smallFontSize", "mediumFontSize",
-   * "largeFontSize", and "hugeFontSize".
+   * "largeFontSize", and "giganticFontSize".
    */
   float getFontSize(int faceID = 0, float zeroToOneSize = 0.0f);
 
@@ -98,7 +98,7 @@ class FontSizer {
   float _small;
   float _medium;
   float _large;
-  float _huge;
+  float _gigantic;
 
   float _smallest;
   float _biggest;

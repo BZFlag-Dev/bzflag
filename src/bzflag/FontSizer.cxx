@@ -51,7 +51,7 @@ void FontSizer::resize(int width, int height)
   _small    = BZDB.eval("smallFontSize");
   _medium   = BZDB.eval("mediumFontSize");
   _large    = BZDB.eval("largeFontSize");
-  _gigantic = BZDB.eval("hugeFontSize");
+  _gigantic = BZDB.eval("giganticFontSize");
 
   _biggest = _gigantic; // probably, but check the rest anyways
   if (_biggest < _large)  _biggest = _large;
