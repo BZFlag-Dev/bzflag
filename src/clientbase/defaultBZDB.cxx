@@ -169,7 +169,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "smallFontSize",		"16",			true,  DefPerm, NULL },
   { "mediumFontSize",		"24",			true,  DefPerm, NULL },
   { "largeFontSize",		"32",			true,  DefPerm, NULL },
-  { "hugeFontSize",		"40",			true,  DefPerm, NULL },
+  { "giganticFontSize",		"40",			true,  DefPerm, NULL },
 
   // default font sizes for specific sections (relative 0 to 1 percentage of smallest aspect)
   { "titleFontSize",		"1/8",			true,  DefPerm, NULL },
