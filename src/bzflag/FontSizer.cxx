@@ -10,10 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "FontSizer.h"
 
-/* common implementation headers */
+// common headers
+#include "bzfio.h"
+#include "BzTime.h"
 #include "FontManager.h"
 #include "StateDatabase.h"
 #include "LocalFontFace.h"
@@ -26,6 +28,7 @@ FontSizer::FontSizer(int width, int height)
   setDebug(false);
 }
 
+
 FontSizer::FontSizer(float width, float height)
 {
   resize((int)width, (int)height);
@@ -33,53 +36,53 @@ FontSizer::FontSizer(float width, float height)
   setDebug(false);
 }
 
+
 FontSizer::~FontSizer()
 {
 }
 
-void
-FontSizer::resize(int width, int height)
+
+void FontSizer::resize(int width, int height)
 {
   _width = width;
   _height = height;
 
-  _tiny = BZDB.eval("tinyFontSize");
-  _small = BZDB.eval("smallFontSize");
+  _tiny   = BZDB.eval("tinyFontSize");
+  _small  = BZDB.eval("smallFontSize");
   _medium = BZDB.eval("mediumFontSize");
-  _large = BZDB.eval("largeFontSize");
-  _kingKongKahmehameha = BZDB.eval("hugeFontSize");
+  _large  = BZDB.eval("largeFontSize");
+  _huge   = BZDB.eval("hugeFontSize");
 
-  _biggest = _kingKongKahmehameha; // probably, but check the rest anyways
-  if (_biggest < _large) _biggest = _large;
+  _biggest = _huge; // probably, but check the rest anyways
+  if (_biggest < _large)  _biggest = _large;
   if (_biggest < _medium) _biggest = _medium;
-  if (_biggest < _small) _biggest = _small;
-  if (_biggest < _tiny) _biggest = _tiny;
+  if (_biggest < _small)  _biggest = _small;
+  if (_biggest < _tiny)   _biggest = _tiny;
 
   _smallest = _tiny; // probably, but check the rest anyways
-  if (_smallest > _small) _smallest = _small;
+  if (_smallest > _small)  _smallest = _small;
   if (_smallest > _medium) _smallest = _medium;
-  if (_smallest > _large) _smallest = _large;
-  if (_smallest > _kingKongKahmehameha) _smallest = _kingKongKahmehameha;
+  if (_smallest > _large)  _smallest = _large;
+  if (_smallest > _huge)   _smallest = _huge;
 
   setMin(0, 10);
 }
 
 
-void
-FontSizer::setMin(int charWide, int charTall)
+void FontSizer::setMin(int charWide, int charTall)
 {
   _charWide = charWide;
   _charTall = charTall;
 }
 
-float
-FontSizer::getFontSize(LocalFontFace* face, const std::string& sizeVar)
+
+float FontSizer::getFontSize(LocalFontFace* face, const std::string& sizeVar)
 {
   return getFontSize(face->getFMFace(), sizeVar);
 }
 
-float
-FontSizer::getFontSize(int faceID, const std::string& sizeVar)
+
+float FontSizer::getFontSize(int faceID, const std::string& sizeVar)
 {
   float size = BZDB.eval(sizeVar);
   if (size < 0.0f || isnan(size)) {
@@ -97,8 +100,8 @@ FontSizer::getFontSize(int faceID, const std::string& sizeVar)
   return getFontSize(faceID, size);
 }
 
-float
-FontSizer::getFontSize(int faceID, float zeroToOneSize)
+
+float FontSizer::getFontSize(int faceID, float zeroToOneSize)
 {
   float fontSize;
 
@@ -139,9 +142,22 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
   bool underMin = false;
   register float curWide;
   register float curTall;
+  static double totalTime = 0.0;
   do {
+    const BzTime t0 = BzTime::getCurrent();
     curWide = (float)_charWide * (fm.getStringWidth(faceID, fontSize, "BZFlag") / 6.0f);
     curTall = (float)_charTall * (fm.getStringHeight(faceID, fontSize));
+    const BzTime t1 = BzTime::getCurrent();
+    totalTime += (t1 - t0);
+
+    // FIXME -- leave this here until it gets fixed
+    logDebugMessage(0,
+      "FontSizer::getFontSize(%i, %5.3f, '%s')"
+      "  %8.3f for [%4ix%4i]"
+      "  (%5.3f seconds, total = %.3f)\n",
+      faceID, zeroToOneSize, fm.getFaceName(faceID),
+      fontSize, _width, _height,
+      (t1 - t0), totalTime);
 
     if (_debug) {
       printf("character grid is %d x %d\n", _charWide, _charTall);
@@ -179,10 +195,10 @@ FontSizer::getFontSize(int faceID, float zeroToOneSize)
       fontSize = _small;
     } else if ((fontSize < _medium) || (fontSize < _medium + ((_large - _medium) * 0.5f))) {
       fontSize = _medium;
-    } else if ((fontSize < _large) || (fontSize < _large + ((_kingKongKahmehameha - _large) * 0.5f))) {
+    } else if ((fontSize < _large) || (fontSize < _large + ((_huge - _large) * 0.5f))) {
       fontSize = _large;
-    } else if ((fontSize < _kingKongKahmehameha) || (fontSize < _kingKongKahmehameha + (_tiny * 0.5f))) {
-      fontSize = _kingKongKahmehameha;
+    } else if ((fontSize < _huge) || (fontSize < _huge + (_tiny * 0.5f))) {
+      fontSize = _huge;
     }
   }
 #endif
