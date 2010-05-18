@@ -40,7 +40,12 @@ static BZDB_bool debugFontSizer("debugFontSizer");
 static int getViewHeight()
 {
   MainWindow* mw = getMainWindow();
-  return mw ? mw->getHeight() : 480;
+  if (mw == NULL)  {
+    return 480;
+  }
+  const int sizex = mw->getWidth();
+  const int sizey = mw->getHeight();
+  return (sizey < sizex) ? sizey : sizex;
 }
 
 
