@@ -64,7 +64,7 @@ CLEANFILES = $(HTMLPAGES) $(PDFPAGES)
 
 EXTRA_DIST = $(man_MANS) $(HTMLPAGES) index.html $(PDFPAGES) libcurl.m4 ABI \
   symbols-in-versions
-MAN2HTML= roffit --mandir=. < $< >$@
+MAN2HTML= groff -Thtml -man $< > $@
 
 SUFFIXES = .3 .html
 

@@ -39,7 +39,7 @@ EXTRA_DIST = Makefile.b32 Makefile.m32 Makefile.vc6 Makefile.riscos $(DSP) \
  Makefile.Watcom config-tpf.h $(DOCS) $(VCPROJ) mk-ca-bundle.pl		   \
  firefox-db2pem.sh $(CMAKE_DIST) config-vxworks.h Makefile.vxworks
 
-CLEANFILES = $(DSP) $(VCPROJ)
+# CLEANFILES = $(DSP) $(VCPROJ)
 
 lib_LTLIBRARIES = libcurl.la
 LIBCURL_LIBS = @LIBCURL_LIBS@
@@ -154,18 +154,18 @@ $(DSP): msvcproj.head msvcproj.foot Makefile.am
 	echo "# End Group" $(DSPOUT); \
 	cat $(srcdir)/msvcproj.foot $(DSPOUT) )
 
-$(VCPROJ): vc8proj.head vc8proj.foot Makefile.am
-	echo "creating $(VCPROJ)"
-	@(cp $(srcdir)/vc8proj.head $(VCPROJ); \
-        win32_srcs='$(WIN32SOURCES)'; \
-        sorted_srcs=`for file in $$win32_srcs; do echo $$file; done | sort`; \
-        for file in $$sorted_srcs; do \
-	echo "<File RelativePath=\""$$file"\"></File>" $(VCPROJOUT); \
-	done; \
-	echo "</Filter><Filter	Name=\"Header Files\">" $(VCPROJOUT); \
-        win32_hdrs='$(WIN32HEADERS)'; \
-        sorted_hdrs=`for file in $$win32_hdrs; do echo $$file; done | sort`; \
-        for file in $$sorted_hdrs; do \
-	echo "<File RelativePath=\""$$file"\"></File>" $(VCPROJOUT); \
-	done; \
-	cat $(srcdir)/vc8proj.foot $(VCPROJOUT) )
+#$(VCPROJ): vc8proj.head vc8proj.foot Makefile.am
+#	echo "creating $(VCPROJ)"
+#	@(cp $(srcdir)/vc8proj.head $(VCPROJ); \
+#        win32_srcs='$(WIN32SOURCES)'; \
+#        sorted_srcs=`for file in $$win32_srcs; do echo $$file; done | sort`; \
+#        for file in $$sorted_srcs; do \
+#	echo "<File RelativePath=\""$$file"\"></File>" $(VCPROJOUT); \
+#	done; \
+#	echo "</Filter><Filter	Name=\"Header Files\">" $(VCPROJOUT); \
+#        win32_hdrs='$(WIN32HEADERS)'; \
+#        sorted_hdrs=`for file in $$win32_hdrs; do echo $$file; done | sort`; \
+#        for file in $$sorted_hdrs; do \
+#	echo "<File RelativePath=\""$$file"\"></File>" $(VCPROJOUT); \
+#	done; \
+#	cat $(srcdir)/vc8proj.foot $(VCPROJOUT) )

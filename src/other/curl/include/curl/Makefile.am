@@ -19,7 +19,7 @@ pkgincludedir= $(includedir)/curl
 #
 # curlbuild.h.dist is not included in the source code distribution archive.
 
-EXTRA_DIST = curlbuild.h.in
+EXTRA_DIST = curlbuild.h.in curlbuildWin32.h
 
 DISTCLEANFILES = curlbuild.h
 

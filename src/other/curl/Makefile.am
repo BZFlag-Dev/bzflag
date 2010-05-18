@@ -30,7 +30,7 @@ CMake/CurlCheckCSourceRuns.cmake CMake/CurlTests.c CMake/FindOpenSSL.cmake     \
 CMake/FindZLIB.cmake CMake/OtherTests.cmake CMake/Platforms/WindowsCache.cmake \
 CMake/Utilities.cmake include/curl/curlbuild.h.cmake
 
-EXTRA_DIST = CHANGES COPYING maketgz Makefile.dist curl-config.in	\
+EXTRA_DIST = CHANGES COPYING maketgz curl-config.in	\
  curl-style.el sample.emacs RELEASE-NOTES buildconf 	\
  libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST)
 
@@ -69,22 +69,22 @@ test:
 else
 
 test:
-	@(cd tests; $(MAKE) all quiet-test)
+#	@(cd tests; $(MAKE) all quiet-test)
 
-test-full:
-	@(cd tests; $(MAKE) all full-test)
+#test-full:
+#	@(cd tests; $(MAKE) all full-test)
 
-test-torture:
-	@(cd tests; $(MAKE) all torture-test)
+#test-torture:
+#	@(cd tests; $(MAKE) all torture-test)
 
 endif
 
 examples:
 	@(cd docs/examples; $(MAKE) check)
 
-clean-local:
-	@(cd tests; $(MAKE) clean)
-	@(cd docs; $(MAKE) clean)
+#clean-local:
+#	@(cd tests; $(MAKE) clean)
+#	@(cd docs; $(MAKE) clean)
 
 #
 # Build source and binary rpms. For rpm-3.0 and above, the ~/.rpmmacros
