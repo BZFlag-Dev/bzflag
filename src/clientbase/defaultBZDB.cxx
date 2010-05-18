@@ -165,13 +165,9 @@ DefaultDBItem	defaultDBItems[] = {
   { "serifFont",		"TogaSerifBold",	true,  DefPerm, NULL },
 
   // default font sizes for fixed-size items
-  { "tinyFontSize",		"8",			true,  DefPerm, NULL },
-  { "smallFontSize",		"16",			true,  DefPerm, NULL },
-  { "mediumFontSize",		"24",			true,  DefPerm, NULL },
-  { "largeFontSize",		"32",			true,  DefPerm, NULL },
-  { "giganticFontSize",		"40",			true,  DefPerm, NULL },
+  { "fontSizes",		"8 12 16 24 32 40",	true,  DefPerm, NULL },
 
-  // default font sizes for specific sections (relative 0 to 1 percentage of smallest aspect)
+  // default font sizes for specific sections (relative 0 to 1 percentage of window height)
   { "titleFontSize",		"1/8",			true,  DefPerm, NULL },
   { "headerFontSize",		"1/24",			true,  DefPerm, NULL },
   { "menuFontSize",		"1/40",			true,  DefPerm, NULL },

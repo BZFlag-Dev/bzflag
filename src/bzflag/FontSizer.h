@@ -30,6 +30,7 @@
 
 /* system interface headers */
 #include <string>
+#include <vector>
 
 class LocalFontFace;
 
@@ -38,72 +39,51 @@ class LocalFontFace;
  * sizes are appropriate and consistent for a given context size.
  */
 class FontSizer {
+  public:
+    FontSizer(int width = 640, int height = 480);
+    FontSizer(float width, float height);
+    ~FontSizer();
 
- public:
 
-  FontSizer(int width = 640, int height = 480);
-  FontSizer(float width, float height);
- ~FontSizer();
+    void setMin(int, int) {} // NOTE: this does nothing
 
-  /**
-   * adjust parameters for a different context size
-   */
-  void resize(int width, int height);
+    /**
+     * adjust parameters for a different context size
+     */
+    void resize(int width, int height); // NOTE: the values are basically ignored
 
-  /**
-   * ensure size returned will fit the provided character grid size.
-   */
-  void setMin(int charWide, int charTall);
+    /**
+     * returns a font point size based on a BZDB var containing the size.
+     * if the value is greater than 1, then it is normalized to the context
+     * size and treated as a point size.  Otherwise, it's treated as a
+     * zeroToOne value.
+     */
+    float getFontSize(LocalFontFace* face, const std::string& bzdbExpr);
 
-  /**
-   * enable/disable compile-time debugging
-   */
-  void setDebug(bool on = true) {
-    _debug = on;
-  }
+    /**
+     * returns a font point size based on a BZDB var containing the size.
+     * if the value is greater than 1, then it is normalized to the context
+     * size and treated as a point size.  Otherwise, it's treated as a
+     * zeroToOne value.
+     */
+    float getFontSize(int faceID, const std::string& bzdbExpr);
 
-  /**
-   * returns a font point size based on a BZDB var containing the size.
-   * if the value is greater than 1, then it is normalized to the context
-   * size and treated as a point size.  Otherwise, it's treated as a
-   * zeroToOne value.
-   */
-  float getFontSize(LocalFontFace* face, const std::string& fontName);
+    /**
+     * returns a font point size based on a 0->1 scale for a requested
+     * input font size.  Smaller font sizes are grouped together based on
+     * the values in the "fontSizes" BZDB variable.
+     */
+    float getFontSize(int faceID = 0, float zeroToOneSize = 0.0f);
 
-  /**
-   * returns a font point size based on a BZDB var containing the size.
-   * if the value is greater than 1, then it is normalized to the context
-   * size and treated as a point size.  Otherwise, it's treated as a
-   * zeroToOne value.
-   */
-  float getFontSize(int faceID, const std::string& fontName);
+  protected:
+    int width;  // unused
+    int height; // unused
 
-  /**
-   * returns a font point size based on a 0->1 scale for a requested
-   * input font size.  Smaller font sizes are grouped together into
-   * BZDB sizes of "tinyFontSize", "smallFontSize", "mediumFontSize",
-   * "largeFontSize", and "giganticFontSize".
-   */
-  float getFontSize(int faceID = 0, float zeroToOneSize = 0.0f);
+  private:
+    float findClosest(float size) const;
 
- protected:
-  int _width;
-  int _height;
-
-  int _charWide;
-  int _charTall;
-
- private:
-  float _tiny;
-  float _small;
-  float _medium;
-  float _large;
-  float _gigantic;
-
-  float _smallest;
-  float _biggest;
-
-  bool _debug;
+  private:
+    std::vector<float> fontSizes;
 };
 
 #endif /* __FONTSIZER_H__ */

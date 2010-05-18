@@ -34,7 +34,7 @@
 #include "guiplaying.h"
 
 
-static const int fontStep = 6;
+static const int fontStep = 3;
 
 
 TextOptionsMenu::TextOptionsMenu()
