@@ -56,6 +56,7 @@ bool HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   return MenuDefaultKey::keyPress(key);
 }
 
+
 bool HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
   if (key.button == BzfKeyEvent::PageUp ||
@@ -73,6 +74,7 @@ HelpMenu::HelpMenu(const char* title) : HUDDialog()
 			 "Page Up for previous page"));
 }
 
+
 HUDuiControl* HelpMenu::createLabel(const char* string,
 				    const char* label)
 {
@@ -83,15 +85,18 @@ HUDuiControl* HelpMenu::createLabel(const char* string,
   return control;
 }
 
+
 float HelpMenu::getLeftSide(int, int _height)
 {
   return (float)_height / 6.0f;
 }
 
+
 void HelpMenu::show()
 {
   initNavigation();
 }
+
 
 void HelpMenu::resize(int _width, int _height)
 {
@@ -143,6 +148,7 @@ void HelpMenu::resize(int _width, int _height)
 static const int numHelpMenus = 9;
 HelpMenu** HelpMenu::helpMenus = NULL;
 
+
 HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
 {
   if (!helpMenus) {
@@ -169,7 +175,8 @@ HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
   return next ? helpMenus[0] : helpMenus[numHelpMenus - 1];
 }
 
-void			HelpMenu::done()
+
+void HelpMenu::done()
 {
   if (helpMenus) {
     for (int i = 0; i < numHelpMenus; i++) {
@@ -210,6 +217,7 @@ static std::vector<std::string> GetGeneralText()
   return retval;
 }
 
+
 static std::vector<std::string> GetEnvironmentText()
 {
   std::vector<std::string> retval;
@@ -232,6 +240,7 @@ static std::vector<std::string> GetEnvironmentText()
   retval.push_back("self destructive;  shooting a laser at one is invariably fatal.");
   return retval;
 }
+
 
 static std::vector<std::string> GetFlagsText()
 {
@@ -257,6 +266,7 @@ static std::vector<std::string> GetFlagsText()
   return retval;
 }
 
+
 static std::vector<std::string> GetReadoutsIText()
 {
   std::vector<std::string> retval;
@@ -280,6 +290,7 @@ static std::vector<std::string> GetReadoutsIText()
   retval.push_back("The distance away from the small box determines the speed.");
   return retval;
 }
+
 
 static std::vector<std::string> GetReadoutsIIText()
 {

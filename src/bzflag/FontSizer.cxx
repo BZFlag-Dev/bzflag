@@ -84,7 +84,7 @@ static void setupFontSizes()
 {
   const std::string& bzdbString = bzdbFontSizes;
 
-  if (fontSizesString != bzdbString) {
+  if ((fontSizesString != bzdbString) || fontSizesString.empty()) {
 
     fontSizesString = bzdbString;
 
@@ -119,7 +119,6 @@ static void setupFontSizes()
       }
     }
   }
-
 }
 
 //============================================================================//
@@ -205,6 +204,7 @@ float FontSizer::getFontSize(int faceID, float zeroToOneSize)
 
   fontSize = findClosest(fontSize);
 
+  // y limiting
   if ((ychars > 0) && (ypixels > 0)) {
     const float ysize = float(ypixels) / float(ychars);
     const float lineHeight = fm.getStringHeight(faceID, fontSize);
@@ -213,12 +213,12 @@ float FontSizer::getFontSize(int faceID, float zeroToOneSize)
       fontSize = findClosest(fontSize);
     }
     if (debugFontSizer) {
-      printf("  y-limit: %i/%i (%.3f)\n", ypixels, ychars, ysize);
+      printf("  y-limit: %i/%i (%.3f) newHeight=%.3f\n",
+             ypixels, ychars, ysize, fm.getStringHeight(faceID, fontSize));
     }
   }
 
-  fontSize = findClosest(fontSize);
-
+  // x limiting
   if ((xchars > 0) && (xpixels > 0)) {
     const float xsize = float(xpixels) / float(xchars);
     const std::string testStr = "BZFlag";

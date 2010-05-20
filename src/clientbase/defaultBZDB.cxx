@@ -83,7 +83,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "fontOutline",		"0",			true,  DefPerm, NULL },
   { "fontOutlineConsole",	"1",			true,  DefPerm, NULL },
   { "fontOutlineStrength",	"0.5",			true,  DefPerm, NULL },
-  { "fontPreload",		"1",			true,  DefPerm, NULL },
+  { "fontPreload",		"0",			true,  DefPerm, NULL },
   { "processorAffinity",	"0",			true,  DefPerm, Callbacks::setProcessorAffinity },
   { "pulseDepth",		"0.4",			true,  DefPerm, NULL },
   { "pulseRate",		"1.0",			true,  DefPerm, NULL },
@@ -248,7 +248,7 @@ DefaultDBItem	defaultDBItems[] = {
 };
 
 
-void loadBZDBDefaults ( void )
+void loadBZDBDefaults()
 {
   for (int i = 0; i < (int)countof(defaultDBItems); ++i) {
     assert(defaultDBItems[i].name != NULL);
