@@ -40,17 +40,22 @@ class LocalFontFace;
  */
 class FontSizer {
   public:
-    FontSizer(int width = 640, int height = 480);
-    FontSizer(float width, float height);
+    FontSizer(int xpixels = 640, int ypixels = 480);
+    FontSizer(float xpixels, float ypixels);
     ~FontSizer();
-
-
-    void setMin(int, int) {} // NOTE: this does nothing
 
     /**
      * adjust parameters for a different context size
      */
-    void resize(int width, int height); // NOTE: the values are basically ignored
+    void resize(int xpixels, int ypixels);
+
+    /**
+     * set the minimum X and Y character counts
+     */
+    void setMin(int _xchars, int _ychars) {
+      xchars = _xchars;
+      ychars = _ychars;
+    }
 
     /**
      * returns a font point size based on a BZDB var containing the size.
@@ -75,15 +80,11 @@ class FontSizer {
      */
     float getFontSize(int faceID = 0, float zeroToOneSize = 0.0f);
 
-  protected:
-    int width;  // unused
-    int height; // unused
-
   private:
-    float findClosest(float size) const;
-
-  private:
-    std::vector<float> fontSizes;
+    int xpixels;
+    int ypixels;
+    int xchars;
+    int ychars;
 };
 
 #endif /* __FONTSIZER_H__ */

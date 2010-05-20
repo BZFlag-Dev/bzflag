@@ -251,7 +251,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
-  fs.setMin(0, 40);
+  fs.setMin(120, 40);
   const float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // reposition title

@@ -33,33 +33,111 @@
 
 
 //============================================================================//
+//============================================================================//
+
+static std::vector<float> fontSizes;
+static std::string        fontSizesString;
+
+static BZDB_string bzdbFontSizes("fontSizes");
 
 static BZDB_bool debugFontSizer("debugFontSizer");
 
 
+//============================================================================//
+
 static int getViewHeight()
 {
   MainWindow* mw = getMainWindow();
-  if (mw == NULL)  {
-    return 480;
-  }
-  const int sizex = mw->getWidth();
-  const int sizey = mw->getHeight();
-  return (sizey < sizex) ? sizey : sizex;
+  return (mw != NULL) ? mw->getHeight() : 480;
 }
 
+
+static float findClosest(float fontSize)
+{
+  if (fontSize > fontSizes.back()) {
+    return fontSize;
+  }
+  for (size_t i = 0; i < (fontSizes.size() - 1); i++) {
+    const float avgSize = 0.5f * (fontSizes[i] + fontSizes[i + 1]);
+    if (fontSize < avgSize) {
+      return fontSizes[i];
+    }
+  }
+  return fontSizes.back();
+}
+
+
+static void setupDefaultSizes()
+{
+  fontSizes.clear();
+  fontSizes.push_back( 8.0f);
+  fontSizes.push_back(12.0f);
+  fontSizes.push_back(16.0f);
+  fontSizes.push_back(24.0f);
+  fontSizes.push_back(32.0f);
+  fontSizes.push_back(40.0f);
+  fontSizes.push_back(64.0f);
+}
+
+
+static void setupFontSizes()
+{
+  const std::string& bzdbString = bzdbFontSizes;
+
+  if (fontSizesString != bzdbString) {
+
+    fontSizesString = bzdbString;
+
+    fontSizes.clear();
+
+    const std::vector<std::string> args =
+      TextUtils::tokenize(fontSizesString, " \t");
+    for (size_t i = 0; i < args.size(); i++) {
+      char* end;
+      const char* start = args[i].c_str();
+      const float value = strtof(start, &end);
+      if ((end != start) && !isnan(value)) {
+        if (value >= 1.0f) {
+          fontSizes.push_back(value);
+        } else {
+          fontSizes.push_back(floorf(value * getViewHeight()));
+        }
+      }
+    }
+
+    if (fontSizes.empty()) {
+      setupDefaultSizes();
+    }
+
+    std::sort(fontSizes.begin(), fontSizes.end());
+
+    if (debugFontSizer) {
+      printf("FontSizer: minSize = %.3f\n", fontSizes.front());
+      printf("FontSizer: maxSize = %.3f\n", fontSizes.back());
+      for (size_t i = 0; i < fontSizes.size(); i++) {
+        printf("FontSizer: fontSizes[%i] = %.3f\n", (int)i, fontSizes[i]);
+      }
+    }
+  }
+
+}
 
 //============================================================================//
+//============================================================================//
 
-FontSizer::FontSizer(int _width, int _height)
+FontSizer::FontSizer(int _xpixels, int _ypixels)
+: xchars(0)
+, ychars(10)
 {
-  resize(_width, _height);
+  resize(_xpixels, _ypixels);
 }
 
 
-FontSizer::FontSizer(float _width, float _height)
+FontSizer::FontSizer(float _xpixels, float _ypixels)
+: xchars(0)
+, ychars(10)
 {
-  resize((int)_width, (int)_height);
+  resize((int)_xpixels, (int)_ypixels);
 }
 
 
@@ -70,43 +148,12 @@ FontSizer::~FontSizer()
 
 //============================================================================//
 
-//============================================================================//
-
-void FontSizer::resize(int _width, int _height)
+void FontSizer::resize(int _xpixels, int _ypixels)
 {
-  width  = _width;  // unused
-  height = _height; // unused
+  xpixels = _xpixels;
+  ypixels = _ypixels;
 
-  fontSizes.clear();
-  const std::string s = BZDB.get("fontSizes");
-  std::vector<std::string> args = TextUtils::tokenize(s, " \t");
-  for (size_t i = 0; i < args.size(); i++) {
-    char* end;
-    const char* start = args[i].c_str();
-    const float value = strtof(start, &end);
-    if ((end != start) && !isnan(value)) {
-      if (value >= 1.0f) {
-        fontSizes.push_back(value);
-      } else {
-        fontSizes.push_back(floorf(value * getViewHeight()));
-      }
-    }
-  }
-  std::sort(fontSizes.begin(), fontSizes.end());
-
-  if (fontSizes.empty()) {
-    fontSizes.push_back(16.0f);
-  }
-
-  if (debugFontSizer && false) {
-    printf("FontSizer: minSize = %.3f\n", fontSizes.front());
-    printf("FontSizer: maxSize = %.3f\n", fontSizes.back());
-    for (size_t i = 0; i < fontSizes.size(); i++) {
-      printf("FontSizer: fontSizes[%i] = %.3f\n", (int)i, fontSizes[i]);
-    }
-  }
-
-  setMin(0, 10);
+  setupFontSizes();
 }
 
 
@@ -129,8 +176,16 @@ float FontSizer::getFontSize(int faceID, const std::string& bzdbExpr)
 }
 
 
-float FontSizer::getFontSize(int /*faceID*/, float zeroToOneSize)
+float FontSizer::getFontSize(int faceID, float zeroToOneSize)
 {
+  FontManager& fm = FontManager::instance();
+
+  if (debugFontSizer) {
+    printf("FontSizer: %s  0to1=%.3f, xpixels=%i, ypixels=%i"
+           " xchars=%i ychars=%i\n", fm.getFaceName(faceID),
+           zeroToOneSize, xpixels, ypixels, xchars, ychars);
+  }
+
   // sanitize and clamp inputs
   if (isnan(zeroToOneSize)) {
     return fontSizes[0];
@@ -146,33 +201,53 @@ float FontSizer::getFontSize(int /*faceID*/, float zeroToOneSize)
 
   float fontSize = (float)viewHeight * zeroToOneSize;
 
+  const float inSize = fontSize;
+
   fontSize = findClosest(fontSize);
 
+  if ((ychars > 0) && (ypixels > 0)) {
+    const float ysize = float(ypixels) / float(ychars);
+    const float lineHeight = fm.getStringHeight(faceID, fontSize);
+    if (lineHeight > ysize) {
+      fontSize *= (ysize / lineHeight);
+      fontSize = findClosest(fontSize);
+    }
+    if (debugFontSizer) {
+      printf("  y-limit: %i/%i (%.3f)\n", ypixels, ychars, ysize);
+    }
+  }
+
+  fontSize = findClosest(fontSize);
+
+  if ((xchars > 0) && (xpixels > 0)) {
+    const float xsize = float(xpixels) / float(xchars);
+    const std::string testStr = "BZFlag";
+    const float charSize =
+      fm.getStringWidth(faceID, fontSize, testStr) / float(testStr.size());;
+    if (charSize > xsize) {
+      fontSize *= (xsize / charSize);
+      fontSize = findClosest(fontSize);
+    }
+    if (debugFontSizer) {
+      const float newCharSize =
+        fm.getStringWidth(faceID, fontSize, testStr) / float(testStr.size());;
+      printf("  x-limit: %i/%i (%.3f) charSize=%.3f, newCharSize=%.3f\n",
+             xpixels, xchars, xsize, charSize, newCharSize);
+    }
+  }
+
   if (debugFontSizer) {
-    printf("FontSizer: height = %i, zeroToOne = %.3f,"
-                     " inSize = %.3f, outSize = %.3f\n",
-           viewHeight, zeroToOneSize, (float)viewHeight * zeroToOneSize, fontSize);
+    printf("  height = %i, zeroToOne = %.3f,"
+           " inSize = %.3f, outSize = %.3f, outHeight = %.3f\n",
+           viewHeight, zeroToOneSize, inSize,
+           fontSize, fm.getStringHeight(faceID, fontSize));
   }
 
   return fontSize;
 }
 
 
-float FontSizer::findClosest(float fontSize) const
-{
-  if (fontSize > fontSizes.back()) {
-    return fontSize;
-  }
-  for (size_t i = 0; i < (fontSizes.size() - 1); i++) {
-    const float avgSize = 0.5f * (fontSizes[i] + fontSizes[i + 1]);
-    if (fontSize < avgSize) {
-      return fontSizes[i];
-    }
-  }
-  return fontSizes.back();
-}
-
-
+//============================================================================//
 //============================================================================//
 
 

@@ -1388,7 +1388,7 @@ void handleAllow(void *msg)
 
   tank->setAllow(allow);
 
-  if (!BZDB.isTrue("_forbidDebug")) {
+  if (!BZDBCache::forbidDebug) {
     const unsigned char moveBits = AllowMoveForward  |
                                    AllowMoveBackward |
                                    AllowTurnLeft     |

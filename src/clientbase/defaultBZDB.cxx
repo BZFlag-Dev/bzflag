@@ -165,7 +165,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "serifFont",		"TogaSerifBold",	true,  DefPerm, NULL },
 
   // default font sizes for fixed-size items
-  { "fontSizes",		"8 12 16 24 32 40",	true,  DefPerm, NULL },
+  { "fontSizes",		"8 12 16 24 32 40 64",	true,  DefPerm, NULL },
 
   // default font sizes for specific sections (relative 0 to 1 percentage of window height)
   { "titleFontSize",		"1/8",			true,  DefPerm, NULL },
@@ -174,8 +174,8 @@ DefaultDBItem	defaultDBItems[] = {
   { "hudFontSize",		"1/64",			true,  DefPerm, NULL },
   { "alertFontSize",		"1/64",			true,  DefPerm, NULL },
   { "infoFontSize",		"1/96",			true,  DefPerm, NULL },
-  { "consoleFontSize",		"1/128",		true,  DefPerm, NULL },
-  { "scoreFontSize",		"1/128",		true,  DefPerm, NULL },
+  { "consoleFontSize",		"1/96",			true,  DefPerm, NULL },
+  { "scoreFontSize",		"1/96",			true,  DefPerm, NULL },
 
   // team based object sufixes
   { "tankTexture",		"tank",			true,  DefPerm, NULL },

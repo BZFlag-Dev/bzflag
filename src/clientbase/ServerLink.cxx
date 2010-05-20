@@ -521,7 +521,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 #ifndef BUILDING_BZADMIN
   static BZDB_int  debugMessages("debugNetMesg");
   static BZDB_bool debugUpdateMessages("debugNetUpdMesg");
-  if ((debugMessages >= 1) && !BZDB.isTrue("_forbidDebug")) {
+  if ((debugMessages >= 1) && !BZDBCache::forbidDebug) {
     if ((code != MsgPlayerUpdateSmall) || debugUpdateMessages) {
       // use the fancier MsgStrings setup
       const int msgLevel = (debugMessages - 1);

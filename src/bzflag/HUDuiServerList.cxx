@@ -35,6 +35,7 @@ float HUDuiServerList::SERVER_PERCENTAGE = 0.38f;
 float HUDuiServerList::PLAYER_PERCENTAGE = 0.10f;
 float HUDuiServerList::PING_PERCENTAGE   = 0.07f;
 
+
 HUDuiServerList::HUDuiServerList()
   : HUDuiScrollList()
   , dataList(ServerList::instance())
@@ -53,10 +54,12 @@ HUDuiServerList::HUDuiServerList()
   getNav().push_front(this);
 }
 
+
 bool HUDuiServerList::comp(HUDuiControl* first, HUDuiControl* second)
 {
   return (((HUDuiServerListItem*)first)->getServerKey() < ((HUDuiServerListItem*)second)->getServerKey());
 }
+
 
 bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second)
 {
@@ -65,7 +68,8 @@ bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second)
   return f1->getServerKey() == f2->getServerKey();
 }
 
-struct HUDuiServerList::search: public std::binary_function<HUDuiControl*, std::pair<std::string, std::string>, bool>
+
+struct HUDuiServerList::search : public std::binary_function<HUDuiControl*, std::pair<std::string, std::string>, bool>
 {
 public:
   result_type operator()(first_argument_type control, second_argument_type patterns) const
@@ -78,7 +82,8 @@ public:
     }
 };
 
-template<int sortType> struct HUDuiServerList::compare: public std::binary_function<HUDuiControl*, HUDuiControl*, bool>
+
+template<int sortType> struct HUDuiServerList::compare : public std::binary_function<HUDuiControl*, HUDuiControl*, bool>
 {
 public:
   bool operator()(HUDuiControl* first, HUDuiControl* second) const
@@ -111,7 +116,8 @@ public:
   }
 };
 
-struct HUDuiServerList::filter: public std::binary_function<HUDuiControl*, uint32_t, bool>
+
+struct HUDuiServerList::filter : public std::binary_function<HUDuiControl*, uint32_t, bool>
 {
 public:
   result_type operator()(first_argument_type control, second_argument_type _filter) const

@@ -156,7 +156,7 @@ void DebugDrawing::drawTanks()
   if (!bzdbDrawTanks) {
     return;
   }
-  if (BZDB.isTrue("_forbidDebug")) {
+  if (BZDBCache::forbidDebug) {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (!myTank || !myTank->isObserver()) {
       return; // debug forbidden, not an observer, no boxes for you!
@@ -230,7 +230,7 @@ void DebugDrawing::drawLinks()
   if (str.empty() || (str == "0")) {
     return;
   }
-  if (BZDB.isTrue("_forbidDebug")) {
+  if (BZDBCache::forbidDebug) {
     return;
   }
 
