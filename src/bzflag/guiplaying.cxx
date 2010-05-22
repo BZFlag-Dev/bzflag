@@ -660,12 +660,47 @@ static void doKeyPlaying(const BzfKeyEvent &key, bool pressed, bool haveBinding)
 }
 
 
+static bool roamMouseWheel(const BzfKeyEvent& key, bool pressed)
+{
+  if ((key.button != BzfKeyEvent::WheelUp) && 
+      (key.button != BzfKeyEvent::WheelDown)) {
+    return false;
+  }
+  if (middleMouseButton || (leftMouseButton == rightMouseButton)) {
+    return false;
+  }
+  if (!ROAM.isRoaming() || !myTank || (myTank->getTeam() != ObserverTeam)) {
+    return false;
+  }
+
+  if (pressed) {
+    const bool up = (key.button == BzfKeyEvent::WheelUp);
+    if (leftMouseButton) {
+      ROAM.changeTarget(up ? Roaming::next : Roaming::previous);
+    }
+    else if (rightMouseButton) {
+      const int newMode = ROAM.getMode() + (up ? +1 : -1);
+      if ((newMode < int(Roaming::roamViewCount)) &&
+          (newMode > int(Roaming::roamViewDisabled))) {
+        ROAM.setMode(Roaming::RoamingView(newMode));
+      }
+    }
+  }
+
+  return true;
+}
+
+
 static void doKey(const BzfKeyEvent &key, bool pressed)
 {
   switch (key.button) {
     case BzfKeyEvent::LeftMouse:   { leftMouseButton   = pressed; break; }
     case BzfKeyEvent::RightMouse:  { rightMouseButton  = pressed; break; }
     case BzfKeyEvent::MiddleMouse: { middleMouseButton = pressed; break; }
+  }
+
+  if (roamMouseWheel(key, pressed)) {
+    return;
   }
 
   if (myTank) {
@@ -677,8 +712,9 @@ static void doKey(const BzfKeyEvent &key, bool pressed)
 
   if (HUDui::getFocus()) {
     if (( pressed && HUDui::keyPress(key)) ||
-        (!pressed && HUDui::keyRelease(key)))
+        (!pressed && HUDui::keyRelease(key))) {
       return;
+    }
   }
 
   bool haveBinding = doKeyCommon(key, pressed);
