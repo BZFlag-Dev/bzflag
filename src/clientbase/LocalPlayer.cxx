@@ -218,8 +218,8 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
 
 float LocalPlayer::getNewAngVel(float old, float desired, float dt)
 {
-  if (PHYDRVMGR.getDriver(getPhysicsDriver()) == NULL) {
-    return desired;
+  if (PHYDRVMGR.getDriver(getPhysicsDriver()) != NULL) {
+    return desired; // no momentum on physics drivers
   }
   return computeAngleVelocity(old, desired, dt);
 }
