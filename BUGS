@@ -16,6 +16,11 @@ bugs formally reported on the bug tracker.
 Crashes
 -------
 
+* Bug report from zaphod: (May24, 2010)
+    "if you carry the teamflag and get shot, it doesn't drop but "disappears"
+     until you respawn, and then reappears on the base (and not on the spot you
+     got killed)."
+
 * Tanks only spawn at ground level. Complex maps that have tunnels or platforms
   may not like this (spawn out of bounds happens)  -- huh?
 
