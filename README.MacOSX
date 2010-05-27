@@ -53,3 +53,46 @@ general, source distributions are not supported for SVN checkouts.
 They are only supported for regular source release distributions.
 
 See the instructions in README and INSTALL for more details.
+
+Building Release Binaries
+-------------------------
+
+BZFlag binaries for Mac OS X are presently built as universal binaries
+targetting Tiger (10.4) on Intel machines and Panther (10.3) on PPC machines,
+respectively. It is expected that Panther support will be dropped by the
+project in the near future. The BZFlag build system presently does not support
+building against any SDK other than the native machine version. Therefore,
+BZFlag binaries must be built on the physical target platform. Additionally,
+due to possible endian-ness issues, building both the Intel and PPC components
+of a universal binary on an Intel machine results in MD5 errors, so PPC
+binaries must be built on actual PPC hardware. This is an issue with the code
+that is being looked into.
+
+The .app package for BZFlag binaries must be assembled by hand after building
+Intel and PPC binaries separately on the appropriate hardware and using the
+"lipo" command-line tool to assemble them. This includes executables for
+bzflag, bzfs, bzadmin, and each plug-in. The .app package can be obtained from
+previous releases, assembled by hand using command-line tools, or the Xcode
+project can be used to create a preliminary .app package (although the
+contents of the Resources/ and MacOSX/ subdirectories must be replaced with
+the updated files). When building binaries using the command line, plug-in
+support should be enabled by passing the "--enable-shared" option to configure.
+Application packages for Mac OS X should be named using the
+"BZFlag-<version>.app" convention. Debugging symbols should be left intact in
+the binaries, as stripping them creates linking errors at runtime in some
+cases.
+
+The final step in preparing a release binary is to create a disk image.
+It should be noted that older versions of Mac OS X have compatibility issues
+when reading disk images created on certain later versions. A disk image should
+be created large enough to accomodate the BZFlag application package (~200MB).
+After the BZFlag binary is copied in, the disk image background picture should
+be copied to the disk image and then set hidden. View preferences would then be
+modified to set the image file as the background picture of the disk image
+root folder. The root folder of the disk image should be made to auto-open
+using appropriate command-line tools, or a GUI utility such as AutoOpen
+(available freely online). When the disk image is configured as desired, the
+disk image can then be compressed by using the convert disk image function of
+Apple's disk utility. The resulting disk image should be thoroughly tested
+on multiple versions of Mac OS X and on both architectures to ensure proper
+functionality.
