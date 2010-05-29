@@ -95,7 +95,7 @@ static void setupFontSizes()
     for (size_t i = 0; i < args.size(); i++) {
       char* end;
       const char* start = args[i].c_str();
-      const float value = strtof(start, &end);
+      const float value = (float) strtod(start, &end);
       if ((end != start) && !isnan(value)) {
         if (value >= 1.0f) {
           fontSizes.push_back(value);
