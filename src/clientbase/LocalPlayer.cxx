@@ -533,22 +533,49 @@ void LocalPlayer::doUpdateMotion(float dt)
       }
     }
 
-    if ((oldLocation != InAir) && hasFlatTop &&
-	(obstacleTop != tmpPos.z) &&
-	(obstacleTop < (tmpPos.z + maxBumpHeight))) {
-      newPos.x = oldPosition.x;
-      newPos.y = oldPosition.y;
-      newPos.z = obstacleTop;
-
-      // drive over bumps
-      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
-						    newPos, newAzimuth,
-						    phased, expel);
+    if (hasFlatTop && (obstacleTop > tmpPos.z) &&
+        (obstacleTop < (tmpPos.z + maxBumpHeight))) {
+      fvec3 bumpPos = newPos;
+      bumpPos.x = oldPosition.x;
+      bumpPos.y = oldPosition.y;
+      bumpPos.z = obstacleTop;
+      static BZDB_float bumpSpeedFactor("_bumpSpeedFactor");
+      bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
+      if (debugMotion >= 1) 
+        logDebugMessage(0, "CHECK BUMP dt = %f %f %f\n", 
+                        bumpPos.x, bumpPos.y, bumpPos.z);
+      const Obstacle* bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
+						    bumpPos, newAzimuth,
+                                                    phased, expel);
       if (!bumpObstacle) {
-	move(newPos, getAngle());
-	static BZDB_float bumpSpeedFactor("_bumpSpeedFactor");
-	newPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
-	break;
+        location = OnBuilding;
+        newPos = bumpPos;
+        move(newPos, getAngle()); 
+        if (debugMotion >= 1)
+          logDebugMessage(0, "BUMPED newPos = %f %f %f; obstacleTop = %f\n", 
+                          newPos.x, newPos.y, newPos.z, obstacleTop);
+        break;
+      } else {  
+        // try to bump up again with less velocity
+        bumpPos.x = oldPosition.x;
+        bumpPos.y = oldPosition.y;
+        bumpPos.z = obstacleTop;
+        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1;
+        if (debugMotion >= 1)
+          logDebugMessage(0, "CHECK BUMP 2 dt = %f %f %f\n", 
+                          bumpPos.x, bumpPos.y, bumpPos.z);
+        bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
+                                      bumpPos, newAzimuth,
+                                      phased, expel);
+        if (!bumpObstacle) {
+          location = OnBuilding;
+          newPos = bumpPos;
+          move(newPos, getAngle());
+          if (debugMotion >= 1)
+            logDebugMessage(0, "BUMPED 2 newPos = %f %f %f; obstacleTop = %f\n", 
+                            newPos.x, newPos.y, newPos.z, obstacleTop);
+          break;
+        }
       }
     }
 
@@ -610,7 +637,8 @@ void LocalPlayer::doUpdateMotion(float dt)
     }
 
     // check for being on a building
-    if ((newPos.z > 0.0f) && (normal.z > 0.001f)) {
+    if (((newPos.z > 0.0f) && (normal.z > 0.001f)) ||
+        (newPos.z == (obstacle->getPosition().z + obstacle->getHeight()))) {
       if (location != Dead && location != Exploding && expel) {
 	location = OnBuilding;
 	lastObstacle = obstacle;

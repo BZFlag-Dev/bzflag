@@ -1779,6 +1779,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     if (!obstacle || !expel)
       break;
 
+    static BZDB_float maxBumpHeight(BZDBNAMES.MAXBUMPHEIGHT);
     float obstacleTop = obstacle->getPosition().z + obstacle->getHeight();
 
     bool hasFlatTop = obstacle->isFlatTop();
@@ -1789,23 +1790,35 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       }
     }
 
-    if (((inputStatus & PlayerState::Falling) == 0) && hasFlatTop &&
-	(obstacleTop != tmpPos.z) &&
-	(obstacleTop < (tmpPos.z + BZDB.eval(BZDBNAMES.MAXBUMPHEIGHT)))) {
-      newPos.x = startPos.x;
-      newPos.y = startPos.y;
-      newPos.z = obstacleTop;
-
-      // drive over bumps
-      const Obstacle* bumpObstacle = getHitBuilding(newPos, tmpAzimuth,
-						    newPos, newAzimuth,
-						    phased, expel);
+    if (hasFlatTop && (obstacleTop > tmpPos.z) &&
+        (obstacleTop < (tmpPos.z + maxBumpHeight))) {
+      fvec3 bumpPos = newPos;
+      bumpPos.x = startPos.x;
+      bumpPos.y = startPos.y;
+      bumpPos.z = obstacleTop;
+      static BZDB_float bumpSpeedFactor("_bumpSpeedFactor");
+      bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
+      const Obstacle* bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
+						    bumpPos, newAzimuth,
+                                                    phased, expel);
       if (!bumpObstacle) {
-        move(newPos, getAngle());
-        const float speedFactor = BZDB.eval("_bumpSpeedFactor");
-        newPos.x += newVelocity.x * ((float)dt * speedFactor);
-        newPos.y += newVelocity.y * ((float)dt * speedFactor);
+        newPos = bumpPos;
+        move(newPos, getAngle()); 
         break;
+      } else {  
+        // try to bump up again with less velocity
+        bumpPos.x = startPos.x;
+        bumpPos.y = startPos.y;
+        bumpPos.z = obstacleTop;
+        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1;
+        bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
+                                      bumpPos, newAzimuth,
+                                      phased, expel);
+        if (!bumpObstacle) {
+          newPos = bumpPos;
+          move(newPos, getAngle());
+          break;
+        }
       }
     }
 
@@ -1869,7 +1882,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
     }
 
     // check for being on a building
-    if ((newPos.z > 0.0f) && (normal.z > 0.001f)) {
+    if (((newPos.z > 0.0f) && (normal.z > 0.001f)) ||
+        (newPos.z == (obstacle->getPosition().z + obstacle->getHeight()))) {
       if (((state.status & PlayerState::DeadStatus) == 0) &&
           ((state.status & PlayerState::Exploding) == 0) && expel) {
         lastObstacle = obstacle;
