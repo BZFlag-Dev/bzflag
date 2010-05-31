@@ -542,7 +542,7 @@ void LocalPlayer::doUpdateMotion(float dt)
       static BZDB_float bumpSpeedFactor("_bumpSpeedFactor");
       bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
       if (debugMotion >= 1) 
-        logDebugMessage(0, "CHECK BUMP dt = %f %f %f\n", 
+        logDebugMessage(0, "CHECK BUMP bumpPos = %f %f %f\n", 
                         bumpPos.x, bumpPos.y, bumpPos.z);
       const Obstacle* bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
 						    bumpPos, newAzimuth,
@@ -562,7 +562,7 @@ void LocalPlayer::doUpdateMotion(float dt)
         bumpPos.z = obstacleTop;
         bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1;
         if (debugMotion >= 1)
-          logDebugMessage(0, "CHECK BUMP 2 dt = %f %f %f\n", 
+          logDebugMessage(0, "CHECK BUMP 2 bumpPos = %f %f %f\n", 
                           bumpPos.x, bumpPos.y, bumpPos.z);
         bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                       bumpPos, newAzimuth,
