@@ -405,10 +405,12 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	// unpack the message header
 	PlayerId src;
 	PlayerId dst;
+        uint8_t msgType;
 	PlayerId me = sLink.getId();
 	vbuf = nboUnpackUInt8(vbuf, src);
 	vbuf = nboUnpackUInt8(vbuf, dst);
-
+        vbuf = nboUnpackUInt8(vbuf, msgType);
+        
 	// format the message depending on src and dst
 	TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			     TeamColor(250 - dst) : NoTeam);
