@@ -66,7 +66,7 @@ EXTRA_DIST = \
 	INSTALL \
 	PORTING
 
-DISTCLEANFILES = config.cache.*
+DISTCLEANFILES = confdefs.h config.cache.*
 
 MAINTAINERCLEANFILES = \
 	aclocal.m4 \
