@@ -369,7 +369,7 @@ AC_DEFUN([CURL_CHECK_LIB_ARES], [
     clean_LIBS="$LIBS"
     embedded_ares="unknown"
     configure_runpath=`pwd`
-    embedded_ares_builddir="$configure_runpath/ares"
+    embedded_ares_builddir="$configure_runpath/../ares"	# BZFlag location
     if test -n "$want_ares_path"; then
       dnl c-ares library path has been specified
       ares_CPPFLAGS="-I$want_ares_path/include"
@@ -377,13 +377,13 @@ AC_DEFUN([CURL_CHECK_LIB_ARES], [
       ares_LIBS="-lcares"
     else
       dnl c-ares library path has not been given
-      if test -d "$srcdir/ares"; then
+      if test -d "$srcdir/../ares"; then		# BZFlag location
         dnl c-ares sources embedded in curl tree
         embedded_ares="yes"
-        AC_CONFIG_SUBDIRS(ares)
+dnl	AC_CONFIG_SUBDIRS(ares)			BZFlag handles this separately
         dnl c-ares has installable configured header files, path
         dnl inclusion fully done in makefiles for in-tree builds.
-        ares_CPPFLAGS=""
+        ares_CPPFLAGS="-I$srcdir/../ares"		# BZFlag location
         ares_LDFLAGS="-L$embedded_ares_builddir"
         ares_LIBS="-lcares"
       else
