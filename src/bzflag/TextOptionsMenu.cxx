@@ -277,12 +277,20 @@ void TextOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
     }
     case 'S': {
-      BZDB.setInt("scoreFontSize", list->getIndex() * fontStep);
+      if (list->getIndex() > 0) {
+        BZDB.setInt("scoreFontSize", list->getIndex() * fontStep);
+      } else {
+        BZDB.set("scoreFontSize", BZDB.getDefault("scoreFontSize"));
+      }
       getMainWindow()->getWindow()->callResizeCallbacks();
       break;
     }
     case 'C': {
-      BZDB.setInt("consoleFontSize", list->getIndex() * fontStep);
+      if (list->getIndex() > 0) {
+        BZDB.setInt("consoleFontSize", list->getIndex() * fontStep);
+      } else {
+        BZDB.set("consoleFontSize", BZDB.getDefault("consoleFontSize"));
+      }
       getMainWindow()->getWindow()->callResizeCallbacks();
       break;
     }

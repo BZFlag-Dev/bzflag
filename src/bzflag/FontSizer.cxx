@@ -167,6 +167,12 @@ float FontSizer::getFontSize(LocalFontFace* face, const std::string& bzdbExpr)
 float FontSizer::getFontSize(int faceID, const std::string& bzdbExpr)
 {
   const float size = BZDB.eval(bzdbExpr);
+
+  if (debugFontSizer) {
+    printf("FontSizer(BZDB='%s'/'%s' [%f])\n",
+           bzdbExpr.c_str(), BZDB.get(bzdbExpr).c_str(), size);
+  }
+
   if (size > 1.0f) {
     return size;
   }

@@ -10,26 +10,29 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-/* interface header */
+// interface header
 #include "ScoreboardRenderer.h"
 
-/* common implementation headers */
+// common headers
 #include "Bundle.h"
 #include "Team.h"
 #include "FontManager.h"
 #include "BZDBCache.h"
 #include "OpenGLGState.h"
 #include "TextUtils.h"
+#include "BzTime.h"
 #include "GfxBlock.h"
 
-/* local implementation headers */
+// local headers
 #include "FontSizer.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
+#include "Roaming.h"
 #include "AutoHunt.h"
 #include "World.h"
 #include "sound.h"
 #include "LocalFontFace.h"
+
 
 #define DEBUG_SHOWRATIOS 1
 
@@ -373,7 +376,7 @@ void ScoreboardRenderer::renderCtfFlags() {
   if (!world)
     return;
 
-  const int curMaxPlayers = world->getCurMaxPlayers();
+  const int maxPlayers = world->getCurMaxPlayers();
   FontManager &fm = FontManager::instance();
   const float x = floorf(winX);
   const float y = floorf(winY);
@@ -385,11 +388,11 @@ void ScoreboardRenderer::renderCtfFlags() {
 
   fm.setDimFactor(dimFactor);
 
-  for (i=0; i < curMaxPlayers; i++) {
+  for (i = 0; i < maxPlayers; i++) {
     if ((player = world->getPlayer(i))) {
       FlagType* flagd = player->getFlagType();
       TeamColor teamIndex = player->getTeam();
-      if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
+      if (flagd != Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
 	std::string playerInfo = ColorStrings[flagd->flagTeam];
 	snprintf(flagColor, 200, "%-12s", flagd->flagName.c_str());
 	playerInfo += flagColor;
@@ -413,9 +416,9 @@ void ScoreboardRenderer::clearHuntedTanks()
   if (!world)
     return;
 
-  const int curMaxPlayers = world->getCurMaxPlayers();
+  const int maxPlayers = world->getCurMaxPlayers();
   Player *p;
-  for (int i=0; i<curMaxPlayers; i++) {
+  for (int i = 0; i < maxPlayers; i++) {
     if ((p = world->getPlayer(i)))
       p->setHunted(false);
   }
@@ -561,11 +564,48 @@ void ScoreboardRenderer::stringAppendNormalized(std::string& s, float n)
 }
 
 
+void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
+                                        float _x1, float /*_y1*/)
+{
+  static const BzTime startTime = BzTime::getCurrent();
+ 
+  const float x0 = floorf(_x0) + 0.5f;
+  const float y0 = floorf(_y0) + 0.5f - 3.0f;
+  const float x1 = floorf(_x1) + 0.5f;
+  const float y1 = y0 + 1.0f;
+
+  const float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+  const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  const float* c0 = black;
+  const float* c1 = white;
+
+  const double diff = (BzTime::getCurrent() - startTime);
+  if (fmod(diff, 0.5) > 0.25) {
+    c0 = white;
+    c1 = black;
+  }
+
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+  glDisable(GL_BLEND);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_TEXTURE_2D);
+  glBegin(GL_LINES);
+  glColor4fv(c0); glVertex2f(x0, y1); glVertex2f(x1, y1);
+  glColor4fv(c1); glVertex2f(x0, y0); glVertex2f(x1, y0);
+  glEnd();
+  glPopAttrib();
+}
+
+
 void ScoreboardRenderer::drawPlayerScore(const Player* player,
-					 float x1, float x2, float x3, float xs, float y, bool huntCursor)
+					 float x1, float x2, float x3, float xs,
+					 float y, bool huntCursor)
 {
   // score
   char score[40], kills[40];
+
+  const int   fontID   = minorFontFace->getFMFace();
+  const float fontSize = minorFontSize;
 
   bool highlightTKratio = false;
   if (tkWarnRatio > 0.0) {
@@ -732,44 +772,48 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   FontManager &fm = FontManager::instance();
   fm.setDimFactor(dimFactor);
 
+  // highlight the roaming target
+  if (player == ROAM.getTargetTank()) {
+    const float w = fm.getStringWidth(fontID, fontSize, playerInfo);
+    const float h = fm.getStringHeight(fontID, fontSize);
+    drawRoamTarget(x3, y, x3 + w, y + h);
+  }
+
   // draw
   if (!player->isObserver()) {
     hudColor3fv(Team::getRadarColor(teamIndex));
-    fm.drawString(x1, y, 0, minorFontFace->getFMFace(), minorFontSize, score);
+    fm.drawString(x1, y, 0, fontID, fontSize, score);
     hudColor3fv(Team::getRadarColor(teamIndex));
-    fm.drawString(x2, y, 0, minorFontFace->getFMFace(), minorFontSize, kills);
+    fm.drawString(x2, y, 0, fontID, fontSize, kills);
   }
-  fm.drawString(x3, y, 0, minorFontFace->getFMFace(), minorFontSize, playerInfo);
+  fm.drawString(x3, y, 0, fontID, fontSize, playerInfo);
   if (statusInfo.size() > 0)
-    fm.drawString(xs, y, 0, minorFontFace->getFMFace(), minorFontSize, statusInfo);
+    fm.drawString(xs, y, 0, fontID, fontSize, statusInfo);
 
   // draw huntEnabled status
   if (player->isHunted()) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += "Hunt->";
-    fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace->getFMFace(), minorFontSize,
+    fm.drawString(xs - huntedArrowWidth, y, 0, fontID, fontSize,
 		  huntStr);
   } else if (player->getAutoHuntLevel()) {
     std::string huntStr = AutoHunt::getColorString(player->getAutoHuntLevel());
     huntStr += "Auto->";
-    fm.drawString(xs - huntedArrowWidth, y, 0, minorFontFace->getFMFace(), minorFontSize,
-		  huntStr);
+    fm.drawString(xs - huntedArrowWidth, y, 0, fontID, fontSize, huntStr);
   }
 
   if (huntCursor && huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "@>";
-    fm.drawString(xs - huntPlusesWidth, y, 0, minorFontFace->getFMFace(), minorFontSize,
-		  huntStr);
+    fm.drawString(xs - huntPlusesWidth, y, 0, fontID, fontSize, huntStr);
   }
 
   if (huntCursor && !huntAddMode) {
     std::string huntStr = ColorStrings[WhiteColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += "->";
-    fm.drawString(xs - huntArrowWidth, y, 0, minorFontFace->getFMFace(), minorFontSize,
-		  huntStr);
+    fm.drawString(xs - huntArrowWidth, y, 0, fontID, fontSize, huntStr);
   }
 }
 
@@ -819,25 +863,22 @@ typedef struct st_playersort sortEntry;
 
 int ScoreboardRenderer::sortCompareCp(const void* _a, const void* _b)
 {
-  sortEntry *a = (sortEntry *)_a;
-  sortEntry *b = (sortEntry *)_b;
+  const sortEntry* a = (sortEntry*) _a;
+  const sortEntry* b = (sortEntry*) _b;
   return strcasecmp(a->cp, b->cp);
 }
 
 
 int ScoreboardRenderer::sortCompareI2(const void* _a, const void* _b)
 {
-  sortEntry *a = (sortEntry *)_a;
-  sortEntry *b = (sortEntry *)_b;
-  if (a->i1 == b->i1) {
-    if (b->i2 > a->i2) return 1;
-    if (b->i2 < a->i2) return -1;
-    return 0;
-  } else if (b->i1 > a->i1) {
-    return 1;
-  } else {
-    return 0;
-  }
+  const sortEntry* a = (sortEntry*) _a;
+  const sortEntry* b = (sortEntry*) _b;
+
+  if (a->i1 < b->i1) { return +1; }
+  if (b->i1 < a->i1) { return -1; }
+  if (a->i2 < b->i2) { return +1; }
+  if (b->i2 < a->i2) { return -1; }
+  return 0;
 }
 
 
@@ -845,100 +886,136 @@ int ScoreboardRenderer::sortCompareI2(const void* _a, const void* _b)
 Player** ScoreboardRenderer::newSortedList(int sortType,
                                            bool obsLast, int *_numPlayers)
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  World *world = World::getWorld();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  World* world = World::getWorld();
 
-  if (!myTank || !world)
+  if (!myTank || !world) {
     return NULL;
+  }
 
-  const int curMaxPlayers = world->getCurMaxPlayers() +1;
+  const int maxPlayers = world->getCurMaxPlayers() +1;
   int i,j;
   int numPlayers=0;
   int numObs=0;
   Player* p;
-  sortEntry* sorter = new sortEntry [curMaxPlayers];
+  sortEntry* sorter = new sortEntry [maxPlayers];
 
   // fill the array with remote players
-  for (i=0; i<curMaxPlayers-1; i++) {
+  for (i = 0; i < maxPlayers - 1; i++) {
     if ((p = world->getPlayer(i))) {
-      if (obsLast && p->isObserver())
-	sorter[curMaxPlayers - (++numObs)].player = p;
-      else
+      if (obsLast && p->isObserver()) {
+	sorter[maxPlayers - (++numObs)].player = p;
+      } else {
 	sorter[numPlayers++].player = p;
+      }
     }
   }
   // add my tank
-  if (obsLast && myTank->isObserver())
-    sorter[curMaxPlayers - (++numObs)].player = myTank;
-  else
+  if (obsLast && myTank->isObserver()) {
+    sorter[maxPlayers - (++numObs)].player = myTank;
+  } else {
     sorter[numPlayers++].player = myTank;
+  }
 
   // sort players ...
   if (numPlayers > 0) {
-    for (i=0; i<numPlayers; i++) {
+    for (i = 0; i < numPlayers; i++) {
       p = sorter[i].player;
       switch (sortType) {
-      case SortTKs:
-	sorter[i].i1 = p->getTeamKills();
-	sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
-	break;
-      case SortTkRatio:
-	sorter[i].i1 = (p->getTKRatio() * 1000);
-	sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
-	break;
-      case SortTeam:
-	sorter[i].i1 = float(p->getTeam());
-	sorter[i].i2 = (p->getNormalizedScore() * 100000);
-	break;
-      case SortMyRatio:
-	if (p == myTank)
-	  sorter[i].i1 = -100001;
-	else
-	  sorter[i].i1 = 0 - (p->getLocalNormalizedScore() * 100000);
-	sorter[i].i2 = (p->getNormalizedScore() * 100000);
-	break;
-      case SortNormalized:
-	sorter[i].i1 = (p->getNormalizedScore() * 100000);
-	sorter[i].i2 = 0;
-	break;
-      case SortCallsign:
-	sorter[i].cp = p->getCallSign();
-	break;
-      case SortHuntLevel: {
-	const float huntLevel = float(p->getAutoHuntLevel());
-	sorter[i].i1 = p->isHunted() ? 10.0f : huntLevel;
-	sorter[i].i2 = p->getScore();
-	break;
-      }
-      default:
-	if (world->allowRabbit())
-	  sorter[i].i1 = p->getRabbitScore();
-	else
-	  sorter[i].i1 = p->getScore();
-	sorter[i].i2 = 0;
+        case SortTKs: {
+          sorter[i].i1 = p->getTeamKills();
+          sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
+          break;
+        }
+        case SortTkRatio: {
+          sorter[i].i1 = (p->getTKRatio() * 1000);
+          sorter[i].i2 = 0 - (p->getNormalizedScore() * 100000);
+          break;
+        }
+        case SortTeam: {
+          sorter[i].i1 = float(p->getTeam());
+          sorter[i].i2 = (p->getNormalizedScore() * 100000);
+          break;
+        }
+        case SortMyRatio: {
+          if (p == myTank)
+            sorter[i].i1 = -100001;
+          else
+            sorter[i].i1 = 0 - (p->getLocalNormalizedScore() * 100000);
+          sorter[i].i2 = (p->getNormalizedScore() * 100000);
+          break;
+        }
+        case SortNormalized: {
+          sorter[i].i1 = (p->getNormalizedScore() * 100000);
+          sorter[i].i2 = 0;
+          break;
+        }
+        case SortCallsign: {
+          sorter[i].cp = p->getCallSign();
+          break;
+        }
+        case SortHuntLevel: {
+          const float huntLevel = float(p->getAutoHuntLevel());
+          sorter[i].i1 = p->isHunted() ? 10.0f : huntLevel;
+          sorter[i].i2 = p->getScore();
+          break;
+        }
+        default: {
+          if (world->allowRabbit()) {
+            sorter[i].i1 = p->getRabbitScore();
+          } else {
+            sorter[i].i1 = p->getScore();
+          }
+          sorter[i].i2 = 0;
+          break;
+        }
       }
     }
-    if (sortType == SortCallsign)
+
+    if (sortType == SortCallsign) {
       qsort(sorter, numPlayers, sizeof(sortEntry), sortCompareCp);
-    else
+    } else {
       qsort(sorter, numPlayers, sizeof(sortEntry), sortCompareI2);
+    }
   }
 
   // TODO: Sort obs here (by time joined, when that info is available)
 
   Player** players = new Player *[numPlayers + numObs + 1];
-  for (i=0; i<numPlayers; i++)
+  for (i = 0; i < numPlayers; i++) {
     players[i] = sorter[i].player;
-  for (j=curMaxPlayers-numObs; j<curMaxPlayers; j++)
+  }
+  for (j = maxPlayers-numObs; j < maxPlayers; j++) {
     players[i++] = sorter[j].player;
+  }
   players[i] = NULL;
 
-  if (_numPlayers != NULL)
+  if (_numPlayers != NULL) {
     *_numPlayers = numPlayers;
+  }
 
   delete[] sorter;
 
   return players;
+}
+
+
+void ScoreboardRenderer::getPlayerList(std::vector<Player*>& players)
+{
+  players.clear();
+
+  int playerCount;
+  Player** pList = newSortedList(getSort(), true, &playerCount);
+  if (pList == NULL) {
+    return;
+  }
+  for (int i = 0; i < playerCount; i++) {
+    Player* p = pList[i];
+    if (p && (p->getTeam() != ObserverTeam)) {
+      players.push_back(p);
+    }
+  }
+  delete[] pList;
 }
 
 

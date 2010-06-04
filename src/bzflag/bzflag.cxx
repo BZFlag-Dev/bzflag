@@ -205,6 +205,7 @@ static void usage()
 		  "  -multisample\n"
 #ifdef ROBOT
 		  "  -solo <num-robots>\n"
+		  "  -bots <num-robots>\n"
 #endif
 		  "  -team <red|green|blue|purple|rogue|observer>\n"
 		  "  -time <hh:mm:ss>\n"
@@ -321,7 +322,8 @@ static void parse(int argc, char **argv)
       BZDB.set(argv[i - 1], argv[i]);
     }
 #ifdef ROBOT
-    else if (strcmp(argv[i], "-solo") == 0) {
+    else if ((strcmp(argv[i], "-solo") == 0) ||
+             (strcmp(argv[i], "-bots") == 0)) {
       checkArgc(i, argc, argv[i]);
       numRobotTanks = atoi(argv[i]);
       if (numRobotTanks < 1 || numRobotTanks > MAX_ROBOTS) {

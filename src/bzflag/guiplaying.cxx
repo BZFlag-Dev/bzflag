@@ -669,7 +669,7 @@ static bool roamMouseWheel(const BzfKeyEvent& key, bool pressed)
   if (middleMouseButton || (leftMouseButton == rightMouseButton)) {
     return false;
   }
-  if (!ROAM.isRoaming() || !myTank || (myTank->getTeam() != ObserverTeam)) {
+  if (!ROAM.isRoaming() || !myTank || !myTank->isObserver()) {
     return false;
   }
 
@@ -6496,17 +6496,17 @@ void startPlaying()
   tmpString += "Running on: ";
   tmpString += getOSString();
   showMessage(tmpString);
-  // print copyright
+  // print author
   tmpString = ColorStrings[YellowColor];
-  tmpString += bzfcopyright;
+  tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
   showMessage(tmpString);
   // print license
   tmpString = ColorStrings[GreenColor];
   tmpString += "Distributed under the terms of the LGPL";
   showMessage(tmpString);
-  // print author
+  // print copyright
   tmpString = ColorStrings[CyanColor];
-  tmpString += "Author: Chris Schoeneman <crs23@bigfoot.com>";
+  tmpString += bzfcopyright;
   showMessage(tmpString);
   // print audio driver
   std::string audioStr;

@@ -74,6 +74,78 @@ void Roaming::setMode(RoamingView newView) {
 }
 
 
+static int findPlayerInVector(const std::vector<Player*>& vec, Player* p)
+{
+  for (size_t i = 0; i < vec.size(); i++) {
+    if (p == vec[i]) {
+      return int(i);
+    }
+  }
+  return -1;
+}
+
+
+static int findPlayerIndex(PlayerId pid)
+{
+  World* world = World::getWorld();
+  for (int i = 0; i < world->getCurMaxPlayers(); i++) {
+    Player* p = world->getPlayer(i);
+    if (p && (p->getId() == pid)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+
+bool Roaming::changePlayer(RoamingTarget target)
+{
+  World* world = World::getWorld();
+
+  std::vector<Player*> players;
+  ScoreboardRenderer::getPlayerList(players);
+
+  const int pCount = int(players.size());
+  if (!world || (pCount <= 0)) {
+    targetManual = targetWinner = -1;
+    return false;
+  }
+
+  Player* current = NULL;
+  if ((targetManual >= 0) && (targetManual < world->getCurMaxPlayers())) {
+    current = getPlayerByIndex(targetManual);
+  }
+
+  const bool nextTarget = (target == next);
+
+  if (!current) {
+    Player* p = nextTarget ? players.back() : players.front();
+    targetManual = targetWinner = findPlayerIndex(p->getId());
+    return (targetManual >= 0);
+  }
+
+  int pIndex = findPlayerInVector(players, current);
+  if (pIndex < 0) {
+    targetManual = targetWinner = -1;
+  }
+  else {
+    pIndex += (nextTarget ? -1 : +1);
+    if (pIndex >= pCount) {
+      pIndex = -1;
+    }
+    if ((pIndex >= 0) && (pIndex < pCount)) {
+      Player* p = players[pIndex];
+      targetManual = targetWinner = findPlayerIndex(p->getId());
+    } else {
+      targetManual = targetWinner = -1;
+    }
+  }
+
+  return true;
+}
+
+
 void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
   bool found = false;
 
@@ -119,21 +191,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
       found = true;
     }
     else {
-      int i = 0;
-      int j = 0;
-      for (i = 0; i < world->getCurMaxPlayers(); ++i) {
-	if (target == next) {
-	  j = (targetManual + i + 2) % (world->getCurMaxPlayers() + 1) - 1;
-	} else {
-	  j = (targetManual - i + world->getCurMaxPlayers() + 1) % (world->getCurMaxPlayers() + 1) - 1;
-	}
-	if ((j == -1) ||
-	    (world->getPlayer(j) && (world->getPlayer(j)->getTeam() != ObserverTeam))) {
-	  targetManual = targetWinner = j;
-	  found = true;
-	  break;
-	}
-      }
+      found = changePlayer(target);
     }
   }
 

@@ -362,9 +362,9 @@ void HUDuiServerInfo::fillReadouts()
   std::string scripts;
   switch (luaCode) {
     case 0: { scripts = "none";  break; }
-    case 1: { scripts = "world"; break; }
-    case 2: { scripts = "rules"; break; }
-    case 3: { scripts = "rules+world"; break; }
+    case 1: { scripts = "LuaWorld"; break; }
+    case 2: { scripts = "LuaRules"; break; }
+    case 3: { scripts = "LuaRules+LuaWorld"; break; }
   }
   scripts = "Scripts: " + scripts;
   (listHUD[20])->setString(scripts);

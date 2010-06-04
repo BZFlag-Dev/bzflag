@@ -83,6 +83,9 @@ protected:
   friend class Singleton<Roaming>;
 
 private:
+  bool changePlayer(RoamingTarget targetType); // used by changeTarget()
+
+private:
   RoamingView view;
   RoamingCamera camera;
   int targetManual;

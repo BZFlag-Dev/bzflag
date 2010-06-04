@@ -17,6 +17,7 @@
 
 /* system interface headers */
 #include <string>
+#include <vector>
 
 /* common interface headers */
 #include "bzfgl.h"
@@ -25,7 +26,9 @@
 /* local interface headers */
 #include "Player.h"
 
+
 class LocalFontFace;
+
 
 /**
  * ScoreboardRenderer:
@@ -33,33 +36,6 @@ class LocalFontFace;
  */
 class ScoreboardRenderer {
 public:
-  ScoreboardRenderer();
-  ~ScoreboardRenderer();
-
-  void setDim(bool);
-  void setWindowSize(float x, float y, float width, float height);
-  void render(bool forceDisplay);
-
-  static Player* getLeader(std::string* label = NULL);
-  static const int HUNT_NONE = 0;
-  static const int HUNT_SELECTING = 1;
-  static const int HUNT_ENABLED = 2;
-
-  void setHuntState(int _state);
-  int  getHuntState() const;
-  void setHuntNextEvent();       // invoked when 'down' button pressed
-  void setHuntPrevEvent();       // invoked when 'up' button pressed
-  void setHuntSelectEvent();     // invoked when 'fire' button pressed
-  void huntKeyEvent(bool isAdd); // invoked when '7' or 'U' is pressed
-  void clearHuntedTanks();
-  void huntReset();              // invoked when joining a server
-
-  static void setAlwaysTeamScore(bool onoff);
-  static bool getAlwaysTeamScore();
-
-  static void setSort(int _sortby);
-  static int  getSort();
-  static const char** getSortLabels();
   enum SortingTypes {
     SortScore = 0,
     SortNormalized,
@@ -72,8 +48,42 @@ public:
     SortTypeCount
   };
 
+public:
+  ScoreboardRenderer();
+  ~ScoreboardRenderer();
+
+  void setDim(bool);
+  void setWindowSize(float x, float y, float width, float height);
+  void render(bool forceDisplay);
+
+  void setHuntState(int _state);
+  int  getHuntState() const;
+  void setHuntNextEvent();       // invoked when 'down' button pressed
+  void setHuntPrevEvent();       // invoked when 'up' button pressed
+  void setHuntSelectEvent();     // invoked when 'fire' button pressed
+  void huntKeyEvent(bool isAdd); // invoked when '7' or 'U' is pressed
+  void clearHuntedTanks();
+  void huntReset();              // invoked when joining a server
+
   void setTeamScoreY(float val) { teamScoreYVal = val; }
   void setRoaming(bool val) { roaming = val; }
+
+public:
+  static const int HUNT_NONE = 0;
+  static const int HUNT_SELECTING = 1;
+  static const int HUNT_ENABLED = 2;
+
+public:
+  static Player* getLeader(std::string* label = NULL);
+  static void setAlwaysTeamScore(bool onoff);
+  static bool getAlwaysTeamScore();
+
+  static void setSort(int _sortby);
+  static int  getSort();
+  static const char** getSortLabels();
+
+  // does not include observers
+  static void getPlayerList(std::vector<Player*>& players);
 
 protected:
   void hudColor3fv(const fvec4&);
@@ -83,17 +93,20 @@ protected:
   void drawPlayerScore(const Player*,
                        float x1, float x2, float x3, float xs,
                        float y, bool huntInd);
+  void drawRoamTarget(float x0, float y0, float x1, float y1);
+  void stringAppendNormalized(std::string& s, float n);
+
+protected:
   static const char* sortLabels[SortTypeCount + 1];
   static int  sortMode;
   static bool alwaysShowTeamScore;
-
-  void stringAppendNormalized(std::string& s, float n);
 
 private:
   void setMinorFontSize();
   void setLabelsFontSize(float width, float height);
   void exitSelectState();
 
+private:
   static int teamScoreCompare(const void* a, const void* b);
   static int sortCompareCp(const void* a, const void* b);
   static int sortCompareI2(const void* a, const void* b);
@@ -132,6 +145,7 @@ private:
   bool huntAddMode; // valid only if state == SELECTING
   int  numHunted;
 
+private:
   static std::string scoreSpacingLabel;
   static std::string scoreLabel;
   static std::string killSpacingLabel;

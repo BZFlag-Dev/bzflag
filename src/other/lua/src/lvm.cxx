@@ -688,7 +688,7 @@ void luaV_execute (lua_State *L, int nexeccalls) {
         setobjs2s(L, cb, ra);
 #else
         StkId cb;
-        if (ttistable(ra)) {
+        if (ttistable(ra)) { /* we ignore the __call metamethod */
           Table *h = hvalue(ra);
           if (!ttisnumber(ra+1)) { /* for k,v in t do ... end */
             if (!ttisnil(ra+1)) {
