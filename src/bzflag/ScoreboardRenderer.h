@@ -102,8 +102,7 @@ protected:
   static bool alwaysShowTeamScore;
 
 private:
-  void setMinorFontSize();
-  void setLabelsFontSize(float width, float height);
+  void setFontSize();
   void exitSelectState();
 
 private:
@@ -122,10 +121,8 @@ private:
   bool  roaming;
 
   fvec4 messageColor;
-  LocalFontFace*  minorFontFace;
-  float           minorFontSize;
-  LocalFontFace*  labelsFontFace;
-  float           labelsFontSize;
+  LocalFontFace* fontFace;
+  float          fontSize;
 
   bool  dim;
   float scoreLabelWidth;

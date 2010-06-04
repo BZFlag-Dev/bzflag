@@ -78,8 +78,7 @@ ScoreboardRenderer::ScoreboardRenderer()
   alwaysShowTeamScore = (BZDB.getIntClamped("alwaysShowTeamScore", 0, 1) != 0);
 
   // fonts
-  minorFontFace = LocalFontFace::create("consoleFont");
-  labelsFontFace = LocalFontFace::create("consoleFont");
+  fontFace = LocalFontFace::create("consoleFont");
 }
 
 
@@ -92,16 +91,14 @@ void ScoreboardRenderer::setWindowSize(float x, float y, float width, float heig
   winY = y;
   winWidth = width;
   winHeight = height;
-  setMinorFontSize();
-  setLabelsFontSize(winWidth, winHeight);
+  setFontSize();
 }
 
 
 ScoreboardRenderer::~ScoreboardRenderer()
 {
   // release fonts
-  LocalFontFace::release(minorFontFace);
-  LocalFontFace::release(labelsFontFace);
+  LocalFontFace::release(fontFace);
 }
 
 
@@ -137,29 +134,24 @@ bool ScoreboardRenderer::getAlwaysTeamScore()
 }
 
 
-void ScoreboardRenderer::setMinorFontSize()
+void ScoreboardRenderer::setFontSize()
 {
   FontManager &fm = FontManager::instance();
   FontSizer fs = FontSizer(winWidth, winHeight);
-  minorFontSize = fs.getFontSize(minorFontFace->getFMFace(), "scoreFontSize");
+  fontSize = fs.getFontSize(fontFace->getFMFace(), "scoreFontSize");
+  const int fontID = fontFace->getFMFace();
 
-  huntArrowWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "->");
-  huntPlusesWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "@>");
-  huntedArrowWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "Hunt->");
-  scoreLabelWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, scoreSpacingLabel);
-  killsLabelWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, killSpacingLabel);
-  teamScoreLabelWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, teamScoreSpacingLabel);
-  teamCountLabelWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, teamCountSpacingLabel);
-  const float spacing = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, " ");
+  huntArrowWidth      = fm.getStringWidth(fontID, fontSize, "->");
+  huntPlusesWidth     = fm.getStringWidth(fontID, fontSize, "@>");
+  huntedArrowWidth    = fm.getStringWidth(fontID, fontSize, "Hunt->");
+  scoreLabelWidth     = fm.getStringWidth(fontID, fontSize, scoreSpacingLabel);
+  killsLabelWidth     = fm.getStringWidth(fontID, fontSize, killSpacingLabel);
+  teamScoreLabelWidth = fm.getStringWidth(fontID, fontSize, teamScoreSpacingLabel);
+  teamCountLabelWidth = fm.getStringWidth(fontID, fontSize, teamCountSpacingLabel);
+  const float spacing = fm.getStringWidth(fontID, fontSize, " ");
+
   scoreLabelWidth += spacing;
   killsLabelWidth += spacing;
-}
-
-
-void ScoreboardRenderer::setLabelsFontSize(float width, float height)
-{
-  FontSizer fs = FontSizer(width, height);
-  labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "tinyFontSize");
 }
 
 
@@ -318,7 +310,7 @@ void ScoreboardRenderer::renderTeamScores()
   FontManager &fm = FontManager::instance();
   float x = winWidth;
   float y = winY;
-  float dy = ceilf(fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize));
+  float dy = ceilf(fm.getStringHeight(fontFace->getFMFace(), fontSize));
 
   World* world = World::getWorld();
   if ((world == NULL) || !world->allowTeams()) {
@@ -341,7 +333,7 @@ void ScoreboardRenderer::renderTeamScores()
 
   label = bdl->getLocalString("Team Score");
   xl = xn = x - teamScoreLabelWidth;
-  fm.drawString(xl, y, 0, minorFontFace->getFMFace(), minorFontSize, label);
+  fm.drawString(xl, y, 0, fontFace->getFMFace(), fontSize, label);
 
   for (i = RedTeam; i < NumTeams; i++) {
     if (!Team::isColorTeam(TeamColor(i)))
@@ -359,7 +351,7 @@ void ScoreboardRenderer::renderTeamScores()
     Team& team = world->getTeam(teams[i]);
     sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
     hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
-    fm.drawString(xn, y, 0, minorFontFace->getFMFace(), minorFontSize, score);
+    fm.drawString(xn, y, 0, fontFace->getFMFace(), fontSize, score);
     y -= dy;
   }
 }
@@ -380,11 +372,11 @@ void ScoreboardRenderer::renderCtfFlags() {
   FontManager &fm = FontManager::instance();
   const float x = floorf(winX);
   const float y = floorf(winY);
-  const float dy = ceilf(fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize));
+  const float dy = ceilf(fm.getStringHeight(fontFace->getFMFace(), fontSize));
   float y0 = y - dy;
 
   hudColor3fv(messageColor);
-  fm.drawString(x, y, 0, minorFontFace->getFMFace(), minorFontSize, "Team Flags");
+  fm.drawString(x, y, 0, fontFace->getFMFace(), fontSize, "Team Flags");
 
   fm.setDimFactor(dimFactor);
 
@@ -399,7 +391,7 @@ void ScoreboardRenderer::renderCtfFlags() {
 	playerInfo += ColorStrings[teamIndex];
 	playerInfo += player->getCallSign();
 
-	fm.drawString(x, y0, 0, minorFontFace->getFMFace(), minorFontSize, playerInfo);
+	fm.drawString(x, y0, 0, fontFace->getFMFace(), fontSize, playerInfo);
 	y0 -= dy;
       }
     }
@@ -445,7 +437,7 @@ void ScoreboardRenderer::renderScoreboard(void)
   Bundle *bdl = BundleMgr::getCurrentBundle();
   FontManager &fm = FontManager::instance();
 
-  const int minorFaceID = minorFontFace->getFMFace();
+  const int minorFaceID = fontFace->getFMFace();
 
   const float x1 = floorf(winX);
   const float x2 = x1 + ceilf(scoreLabelWidth);
@@ -465,20 +457,20 @@ void ScoreboardRenderer::renderScoreboard(void)
     psLabel += "  ";
     psLabel += sortLabels[sortMode];
   }
-  fm.drawString(x1, y0, 0, minorFaceID, minorFontSize, bdl->getLocalString(scoreLabel));
-  fm.drawString(x2, y0, 0, minorFaceID, minorFontSize, bdl->getLocalString(killLabel));
-  fm.drawString(x3, y0, 0, minorFaceID, minorFontSize, psLabel);
-  const float dy = ceilf(fm.getStringHeight(minorFaceID, minorFontSize));
+  fm.drawString(x1, y0, 0, minorFaceID, fontSize, bdl->getLocalString(scoreLabel));
+  fm.drawString(x2, y0, 0, minorFaceID, fontSize, bdl->getLocalString(killLabel));
+  fm.drawString(x3, y0, 0, minorFaceID, fontSize, psLabel);
+  const float dy = ceilf(fm.getStringHeight(minorFaceID, fontSize));
   float y = y0 - dy;
 
   // make room for the status marker
-  const float xs = ceilf(x3 - fm.getStringWidth(minorFaceID, minorFontSize, "+|"));
+  const float xs = ceilf(x3 - fm.getStringWidth(minorFaceID, fontSize, "+|"));
 
   if (huntState == HUNT_SELECTING) {
     std::string huntStr = ColorStrings[YellowColor];
     huntStr += ColorStrings[PulsatingColor];
     huntStr += " *SEL*";
-    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFaceID, minorFontSize, huntStr);
+    fm.drawString(xs - huntedArrowWidth, y0, 0, minorFaceID, fontSize, huntStr);
   }
 
   // grab the tk warning ratio
@@ -604,8 +596,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   // score
   char score[40], kills[40];
 
-  const int   fontID   = minorFontFace->getFMFace();
-  const float fontSize = minorFontSize;
+  const int fontID = fontFace->getFMFace();
 
   bool highlightTKratio = false;
   if (tkWarnRatio > 0.0) {
