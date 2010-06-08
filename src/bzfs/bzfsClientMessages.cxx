@@ -893,9 +893,12 @@ public:
     buf = nboUnpackUInt8(buf, to);
 
     int flagIndex = player->player.getFlag();
+
+    FlagInfo *flagInfo = FlagInfo::get(flagIndex);
+
     if (to == ServerPlayer) {
-      if (flagIndex >= 0)
-	zapFlag (*FlagInfo::get(flagIndex));
+      if (flagInfo)
+	zapFlag (*flagInfo);
       return true;
     }
 
@@ -911,7 +914,10 @@ public:
 
     eventData.fromPlayerID = player->player.getPlayerIndex();
     eventData.toPlayerID = toData->player.getPlayerIndex();
-    eventData.flagType = NULL;
+    if (flagInfo)
+      eventData.flagType = flagInfo->flag.type->flagAbbv.c_str();
+    else
+      eventData.flagType = "";
     eventData.action = eventData.ContinueSteal;
 
     worldEventManager.callEvents(bz_eFlagTransferredEvent, &eventData);
