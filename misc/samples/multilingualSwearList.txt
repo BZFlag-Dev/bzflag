@@ -425,7 +425,6 @@ biggusdikus
 bigho
 bighoe
 bigjuicynut
-biglesbian
 bignigger
 bignut
 bignutsack
@@ -1214,17 +1213,14 @@ arschgesicht            # de - "assface" (butthead)
 arschkrampe             # de - asshole
 arschloch               # de - asshole
 asch                    # de - ass
-auf wiedersehen fickakopf 	 # de - goodbye fuckhead
-blode fotze             # de - stupid cunt
-blodes arschloch        # de - stupid asshole
-das geht dich einen feuchten scheissdreck an		# de - none of your fucking business (lit. that concerns you like wet shit)
 depp                    # de - idiot
 drecksau                # de - dirty pig
-du verdammter arschficker 	 # de - you damn assfucker
 dummcopf                # de - (lit. stupid head)
 dummkopf                # de - (lit. stupid head)
 dummes huhn             # de - stupid chicken
+feuchten		# de - fucking (adjective)
 fick                    # de - fuck
+fickakopf		# de - fuckhead
 ficken			# de - fuck
 fotze                   # de - cunt
 himmeldonnerwetter      # de - *no translation--very strong curse*  (lit. heaven thunder weather)
@@ -1237,7 +1233,6 @@ kanacke                 # de - ? (insinuating something bad about the roots of a
 kot                     # de - shit
 kotklumpen              # de - piece of shit
 leck mich am arsch      # de - lick my ass
-lesbe                   # de - lesbian
 mach es dir selber      # de - go fuck yourself
 mutterficker            # de - motherfucker
 neger                   # de - nigger
