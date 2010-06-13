@@ -43,17 +43,8 @@ SUBDIRS = \
 	${FTGL_DIR} \
 	${REGEX_DIR}
 
-DIST_SUBDIRS = \
-	lua \
-	regex \
-	zlib
-
 # include the files for subconfigured packages as needed left out of the dist
 EXTRA_DIST = \
-	ares \
-	curl \
-	freetype \
-	ftgl \
 	glew
 
 MAINTAINERCLEANFILES = \

@@ -1271,28 +1271,23 @@ AC_SUBST(LIBDIR)
 # for subconfigure
 bz_configure_args="$ac_configure_args"
 
-if test x$enable_plugins != xno ; then
-    AC_CONFIG_SUBDIRS(plugins)
-    # install plugins where bzfs expects them to be
-    ac_configure_args="$ac_configure_args --libdir=$libdir"
+AC_CONFIG_SUBDIRS(plugins)
+# install plugins where bzfs expects them to be
+ac_configure_args="$ac_configure_args --libdir=$libdir"
+
+AC_CONFIG_SUBDIRS(src/other/ftgl)
+if test "x$BUILD_FTGL$BUILD_FREETYPE" = "xyesyes" ; then
+    # instruct FTGL to use the included freetype
+    ac_configure_args="$ac_configure_args --enable-freetype-build"
 fi
-if test "x$BUILD_FTGL" = "xyes" ; then
-    AC_CONFIG_SUBDIRS(src/other/ftgl)
-    if test "x$BUILD_FREETYPE" = "xyes" ; then
-	# instruct FTGL to use the included freetype
-	ac_configure_args="$ac_configure_args --enable-freetype-build"
-    fi
+
+AC_CONFIG_SUBDIRS(src/other/ares)
+if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
+    # instruct curl to use the included ares
+    ac_configure_args="$ac_configure_args --enable-ares"
 fi
-if test "x$BUILD_ARES" = "xyes" ; then
-    AC_CONFIG_SUBDIRS(src/other/ares)
-    if test "x$BUILD_CURL" = "xyes" ; then
-	# for libcurl
-	ac_configure_args="$ac_configure_args --enable-ares"
-    fi
-fi
-if test "x$BUILD_CURL" = "xyes" ; then
-    AC_CONFIG_SUBDIRS(src/other/curl)
-fi
+
+AC_CONFIG_SUBDIRS(src/other/curl)
 
 AC_CONFIG_FILES([
 	BZFlag.xcodeproj/Makefile
