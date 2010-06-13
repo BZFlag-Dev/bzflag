@@ -1,6 +1,7 @@
 EXTRA_DIST =	\
 	3D.vcproj		\
 	ares.vcproj		\
+	ares_build.h		\
 	bzadmin.vcproj		\
 	bzflag.sln		\
 	bzflag.vcproj		\
