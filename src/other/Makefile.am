@@ -113,3 +113,16 @@ MAINTAINERCLEANFILES = \
 	ftgl/msvc/Makefile.in \
 	ftgl/src/Makefile.in \
 	ftgl/test/Makefile.in
+
+distclean-local:
+	-rm -rf \
+		ftgl/demo/.deps \
+		ftgl/src/.deps \
+		ftgl/test/.deps
+
+maintainer-clean-local:
+	-rm -rf \
+		ares/autom4te.cache \
+		curl/autom4te.cache \
+		ftgl/.auto \
+		ftgl/autom4te.cache
