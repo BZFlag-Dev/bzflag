@@ -51,6 +51,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in \
 	ares/Makefile.in \
 	ares/aclocal.m4 \
+	ares/ares_config.h.in \
 	ares/ares_config.h.in~ \
 	ares/autom4te.cache \
 	ares/compile \
@@ -80,6 +81,7 @@ MAINTAINERCLEANFILES = \
 	curl/include/curl/Makefile.in \
 	curl/install-sh \
 	curl/lib/Makefile.in \
+	curl/lib/curl_config.h.in \
 	curl/lib/curl_config.h.in~ \
 	curl/ltmain.sh \
 	curl/m4/libtool.m4 \

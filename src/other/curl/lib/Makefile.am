@@ -125,34 +125,34 @@ WIN32HEADERS = $(HHEADERS) config-win32.h
 DSPOUT = | awk '{printf("%s\r\n", $$0)}' >> $(DSP)
 VCPROJOUT = | awk '{printf("%s\r\n", $$0)}' >> $(VCPROJ)
 
-$(DSP): msvcproj.head msvcproj.foot Makefile.am
-	echo "creating $(DSP)"
-	@(cp $(srcdir)/msvcproj.head $(DSP); \
-	echo "# Begin Group \"Source Files\"" $(DSPOUT); \
-        echo "" $(DSPOUT); \
-        echo "# PROP Default_Filter \"\"" $(DSPOUT); \
-        win32_srcs='$(WIN32SOURCES)'; \
-        sorted_srcs=`for file in $$win32_srcs; do echo $$file; done | sort`; \
-        for file in $$sorted_srcs; do \
-	echo "# Begin Source File" $(DSPOUT); \
-	echo "" $(DSPOUT); \
-	echo "SOURCE=.\\"$$file $(DSPOUT); \
-	echo "# End Source File" $(DSPOUT); \
-	done; \
-	echo "# End Group" $(DSPOUT); \
-	echo "# Begin Group \"Header Files\"" $(DSPOUT); \
-        echo "" $(DSPOUT); \
-        echo "# PROP Default_Filter \"\"" $(DSPOUT); \
-        win32_hdrs='$(WIN32HEADERS)'; \
-        sorted_hdrs=`for file in $$win32_hdrs; do echo $$file; done | sort`; \
-        for file in $$sorted_hdrs; do \
-	echo "# Begin Source File" $(DSPOUT); \
-	echo "" $(DSPOUT); \
-	echo "SOURCE=.\\"$$file $(DSPOUT); \
-	echo "# End Source File" $(DSPOUT); \
-	done; \
-	echo "# End Group" $(DSPOUT); \
-	cat $(srcdir)/msvcproj.foot $(DSPOUT) )
+#$(DSP): msvcproj.head msvcproj.foot Makefile.am
+#	echo "creating $(DSP)"
+#	@(cp $(srcdir)/msvcproj.head $(DSP); \
+#	echo "# Begin Group \"Source Files\"" $(DSPOUT); \
+#        echo "" $(DSPOUT); \
+#        echo "# PROP Default_Filter \"\"" $(DSPOUT); \
+#        win32_srcs='$(WIN32SOURCES)'; \
+#        sorted_srcs=`for file in $$win32_srcs; do echo $$file; done | sort`; \
+#        for file in $$sorted_srcs; do \
+#	echo "# Begin Source File" $(DSPOUT); \
+#	echo "" $(DSPOUT); \
+#	echo "SOURCE=.\\"$$file $(DSPOUT); \
+#	echo "# End Source File" $(DSPOUT); \
+#	done; \
+#	echo "# End Group" $(DSPOUT); \
+#	echo "# Begin Group \"Header Files\"" $(DSPOUT); \
+#        echo "" $(DSPOUT); \
+#        echo "# PROP Default_Filter \"\"" $(DSPOUT); \
+#        win32_hdrs='$(WIN32HEADERS)'; \
+#        sorted_hdrs=`for file in $$win32_hdrs; do echo $$file; done | sort`; \
+#        for file in $$sorted_hdrs; do \
+#	echo "# Begin Source File" $(DSPOUT); \
+#	echo "" $(DSPOUT); \
+#	echo "SOURCE=.\\"$$file $(DSPOUT); \
+#	echo "# End Source File" $(DSPOUT); \
+#	done; \
+#	echo "# End Group" $(DSPOUT); \
+#	cat $(srcdir)/msvcproj.foot $(DSPOUT) )
 
 #$(VCPROJ): vc8proj.head vc8proj.foot Makefile.am
 #	echo "creating $(VCPROJ)"
