@@ -12,6 +12,7 @@ EXTRA_DIST =	\
 	clientbase.vcproj	\
 	common.vcproj		\
 	config.h		\
+	curl/curlbuild.h	\
 	date.vcproj		\
 	fullbuild.sln		\
 	game.vcproj		\
