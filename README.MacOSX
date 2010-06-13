@@ -53,10 +53,14 @@ http://sourceforge.net/project/showfiles.php?group_id=3248&package_id=3165
 You'll want the .tar.gz source tarball, NOT the .zip source file.
 
 For either build approach, you'll need to first install the SDL
-framework into your /Library/Frameworks folder.  The SDL framework can
-be obtained from http://libsdl.org/download.php where you will need
-the "Runtime Libraries" download for Mac OS X.  Once SDL is installed,
-you may then proceed with compilation.
+framework into your /Library/Frameworks folder.
+
+Mac OS X 10.6 (Snow Leopard) PRESENTLY REQUIRES SDL VERSION 1.2 and
+will likely not work with newer 1.3+ versions.
+
+The SDL framework can be obtained from http://libsdl.org/download.php
+where you will need the "Runtime Libraries" download for Mac OS X.
+Once SDL is installed, you may then proceed with compilation.
 
 To compile using the command-line approach, open up Terminal (which is
 located in your /Applications/Utilities folder) and run the following:
