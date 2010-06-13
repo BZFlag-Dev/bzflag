@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\src\other\ares"
+				AdditionalIncludeDirectories="..\..\src\other\ares;.\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;CARES_STATICLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\other\ares"
+				AdditionalIncludeDirectories="..\..\src\other\ares;.\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;CARES_STATICLIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -325,7 +325,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_build.h"
+				RelativePath="ares_build.h"
 				>
 			</File>
 			<File
