@@ -1212,7 +1212,7 @@ arsch                   # de - ass
 arschficker             # de - assfucker
 arschgesicht            # de - "assface" (butthead)
 arschkrampe             # de - asshole
-arschlock               # de - asshole
+arschloch               # de - asshole
 asch                    # de - ass
 auf wiedersehen fickakopf 	 # de - goodbye fuckhead
 blode fotze             # de - stupid cunt
@@ -1225,6 +1225,7 @@ dummcopf                # de - (lit. stupid head)
 dummkopf                # de - (lit. stupid head)
 dummes huhn             # de - stupid chicken
 fick                    # de - fuck
+ficken			# de - fuck
 fotze                   # de - cunt
 himmeldonnerwetter      # de - *no translation--very strong curse*  (lit. heaven thunder weather)
 hosenschlange           # de - lit. - lick my trouser snake
@@ -1260,6 +1261,7 @@ sheiss                  # de - shit
 shiess                  # de - shit
 shiesse                 # de - shit
 sheisse                 # de - shit
+spasti			# de - spastic
 wichser                 # de - motherfucker
 
 
