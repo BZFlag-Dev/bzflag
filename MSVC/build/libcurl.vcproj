@@ -28,7 +28,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Creating curlbuild.h..."
-				CommandLine="copy ..\..\src\other\curl\include\curl\curlbuildWin32.h ..\..\src\other\curl\include\curl\curlbuild.h"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\src\other\curl\lib,..\..\src\other\curl\include;..\..\src\other\ares,..\..\src\other\zlib"
+				AdditionalIncludeDirectories="..\..\include;..\..\src\other\curl\lib;..\..\src\other\curl\include;..\..\src\other\ares;..\..\src\other\zlib;.\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_ARES;CARES_STATICLIB;HAVE_ZLIB_H"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -130,7 +130,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\..\include,..\..\src\other\curl\lib,..\..\src\other\curl\include;..\..\src\other\ares,..\..\src\other\zlib"
+				AdditionalIncludeDirectories="..\..\include;..\..\src\other\curl\lib;..\..\src\other\curl\include;..\..\src\other\ares;..\..\src\other\zlib;.\;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;_LIB;BUILDING_LIBCURL;USE_ARES;CARES_STATICLIB;HAVE_ZLIB_H"
 				StringPooling="true"
 				RuntimeLibrary="2"
