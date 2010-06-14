@@ -1,4 +1,4 @@
 
-This directory contains the client-side lua
-libraries for the LuaUser and LuaWorld scripts.
+This directory contains lua libraries that are
+used by both client and server script environments.
 
