@@ -67,6 +67,7 @@ MAINTAINERCLEANFILES = \
 	ares/m4/ltversion.m4 \
 	ares/m4/lt~obsolete.m4 \
 	ares/missing \
+	ares/mkinstalldirs \
 	curl/Makefile.in \
 	curl/aclocal.m4 \
 	curl/autom4te.cache \
@@ -89,6 +90,8 @@ MAINTAINERCLEANFILES = \
 	curl/m4/ltsugar.m4 \
 	curl/m4/ltversion.m4 \
 	curl/m4/lt~obsolete.m4 \
+	curl/missing \
+	curl/mkinstalldirs \
 	curl/src/Makefile.in \
 	ftgl/Makefile.in \
 	ftgl/aclocal.m4 \

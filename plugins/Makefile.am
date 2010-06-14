@@ -66,6 +66,7 @@ MAINTAINERCLEANFILES =	\
 	install-sh \
 	ltmain.sh \
 	missing \
+	mkinstalldirs \
 	m4/libtool.m4 \
 	m4/ltoptions.m4 \
 	m4/ltsugar.m4 \
