@@ -560,7 +560,7 @@ void LocalPlayer::doUpdateMotion(float dt)
         bumpPos.x = oldPosition.x;
         bumpPos.y = oldPosition.y;
         bumpPos.z = obstacleTop;
-        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1;
+        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1f;
         if (debugMotion >= 1)
           logDebugMessage(0, "CHECK BUMP 2 bumpPos = %f %f %f\n", 
                           bumpPos.x, bumpPos.y, bumpPos.z);

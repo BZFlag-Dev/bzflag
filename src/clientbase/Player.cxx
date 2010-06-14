@@ -1810,7 +1810,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
         bumpPos.x = startPos.x;
         bumpPos.y = startPos.y;
         bumpPos.z = obstacleTop;
-        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1;
+        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1f;
         bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                       bumpPos, newAzimuth,
                                       phased, expel);
