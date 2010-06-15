@@ -73,7 +73,7 @@ void ShotStatistics::recordFire( FlagType* flag, const float *pVec, const float 
   float dot = (shotNorm[0] * playerNorm[0]) + (shotNorm[1] * playerNorm[1]) + shotNorm[2] * playerNorm[2];
 
   double cos = acos(dot);
-  double radToDeg = 180.0/3.1415;
+  const double radToDeg = 180.0 / M_PI;
 
   lastShotDeviation = (float)(cos*radToDeg);
 }
