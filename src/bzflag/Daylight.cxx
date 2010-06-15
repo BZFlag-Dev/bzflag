@@ -56,7 +56,7 @@ static void getTruePosition(double julianDay,
 {
   // get local sidereal time
   const float localSidereal =
-    (float)(getGreenwichSideral(julianDay) - longitude * M_PI / 180.0);
+    (float)(getGreenwichSideral(julianDay) - longitude * radPerDeg);
 
   // rotate around polar axis (y-axis) by local sidereal time
   float tx = float(sx * cosf(localSidereal) - sz * sinf(localSidereal));
@@ -64,7 +64,7 @@ static void getTruePosition(double julianDay,
   float tz = float(sz * cosf(localSidereal) + sx * sinf(localSidereal));
 
   // rotate by latitude to local position
-  const float latRads = (float)(latitude * M_PI / 180.0);
+  const float latRads = (float)(latitude * radPerDeg);
   pos.x = tx;
   pos.y = (ty * cosf(latRads)) - (tz * sinf(latRads));
   pos.z = (tz * cosf(latRads)) + (ty * sinf(latRads));
@@ -77,7 +77,7 @@ void Daylight::getCelestialTransform(double julianDay,
 {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
-						longitude * M_PI / 180.0);
+						longitude * radPerDeg);
 
   // localSidereal is the amount the celestial sphere should be
   // rotated from the vernal equinox about the celestial axis.
@@ -88,8 +88,8 @@ void Daylight::getCelestialTransform(double julianDay,
   // north.
   const float cls = cosf(localSidereal);
   const float sls = sinf(localSidereal);
-  const float cla = cosf((float)(latitude * M_PI / 180.0));
-  const float sla = sinf((float)(latitude * M_PI / 180.0));
+  const float cla = cosf((float)(latitude * radPerDeg));
+  const float sla = sinf((float)(latitude * radPerDeg));
 
   // constant stuff
   xform[0][3] = xform[1][3] = xform[2][3] = 0.0f;
