@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;../../src/bzflag;../../src/other/curl/include;../../src/other/zlib;../../src/other/glew/include;..\..\src\other\ares"
+				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;.\curl\;../../src/bzflag;../../src/other/curl/include;../../src/other/zlib;../../src/other/glew/include;..\..\src\other\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;../../src/bzflag;../../src/other/curl/include;../../src/other/zlib;../../src/other/glew/include"
+				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;.\curl\;../../src/bzflag;../../src/other/curl/include;../../src/other/zlib;../../src/other/glew/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

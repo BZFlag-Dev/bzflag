@@ -27,7 +27,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				Description="Creating curlbuild.h..."
+				Description=""
 				CommandLine=""
 			/>
 			<Tool
