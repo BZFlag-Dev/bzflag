@@ -179,7 +179,7 @@ AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
 # compile our own curl
 AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
 
-# compile our own freetype
+# compile our own freetype2
 AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Force compilation of freetype2])
 
 # compile our own ftgl
@@ -1145,35 +1145,27 @@ if test "x$BUILD_CURL" = "xyes" ; then
 fi
 
 
-LIBFREETYPE=""
-if test "x$enable_client" != "xno"; then
 dnl figure out whether we need to build the included freetype2 library
-BUILD_FREETYPE="no (using system)"
-if test "x$enable_freetype_build" != "xyes" ; then
-    AC_CHECK_FT2([9.0.3])
-    LIBFREETYPE="$FT2_LIBS"
-fi
-AC_MSG_CHECKING(whether to build the included freetype library)
-if test "x$LIBFREETYPE" = "x" ; then
-    AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
-    BUILD_FREETYPE="yes"
-    LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
+AC_CHECK_FT2([9.0.3])
+AC_MSG_CHECKING(whether to build the included freetype2 library)
+if test "x$enable_client" != "xno" ; then
+    if test "x$enable_freetype_build" = "xyes" -o "x$FT2_LIBS" = "x" ; then
+	AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
+	CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
+	LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
+	BUILD_FREETYPE="yes"
+    else
+	CPPFLAGS="$CPPFLAGS $FT2_CFLAGS"
+	LIBFREETYPE="$FT2_LIBS"
+	BUILD_FREETYPE="no (using system)"
+    fi
 else
-    CPPFLAGS="$CPPFLAGS $FT2_CFLAGS"
+    LIBFREETYPE=""
+    BUILD_FREETYPE="no (clients disabled)"
 fi
 AC_SUBST(LIBFREETYPE)
-AC_MSG_RESULT($BUILD_FREETYPE)
 AM_CONDITIONAL(BUILD_FREETYPE, test "x$BUILD_FREETYPE" = "xyes")
-else # enable_client
-dnl clients are not being built
-BUILD_FREETYPE="no (clients disabled)"
-AC_MSG_NOTICE([Freetype2 is disabled because no clients are being built])
-AC_SUBST(LIBFREETYPE)
-AM_CONDITIONAL(BUILD_FREETYPE, false)
-fi # enable_client
-if test "x$BUILD_FREETYPE" = "xyes" ; then
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
-fi
+AC_MSG_RESULT($BUILD_FREETYPE)
 
 
 LIBFTGL=""
@@ -1276,8 +1268,8 @@ AC_CONFIG_SUBDIRS(plugins)
 ac_configure_args="$ac_configure_args --libdir=$libdir"
 
 AC_CONFIG_SUBDIRS(src/other/ftgl)
-if test "x$BUILD_FTGL$BUILD_FREETYPE" = "xyesyes" ; then
-    # instruct FTGL to use the included freetype
+if test "x$FT2_LIBS" = "x" ; then
+    # instruct FTGL to use the included freetype2
     ac_configure_args="$ac_configure_args --enable-freetype-build"
 fi
 
