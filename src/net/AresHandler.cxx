@@ -159,19 +159,20 @@ bool AresHandler::globalInit()
 {
   if (!globallyInited)
   {
-    int code = ares_library_init(ARES_LIB_INIT_ALL);
-    if (code == ARES_SUCCESS)
-    {
+#ifdef HAVE_ARES_LIBRARY_INIT
+    if (ares_library_init(ARES_LIB_INIT_ALL) == ARES_SUCCESS)
+#endif
       globallyInited = true;
-    }
   }
   return globallyInited;
 }
 
 void AresHandler::globalShutdown()
 {
+#ifdef HAVE_ARES_LIBRARY_INIT
   if (globallyInited)
     ares_library_cleanup();
+#endif
 }
 
 // Local Variables: ***

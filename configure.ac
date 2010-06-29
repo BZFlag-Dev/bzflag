@@ -1068,6 +1068,11 @@ fi
 AC_SUBST(LIBCARES)
 AC_MSG_RESULT($BUILD_ARES)
 AM_CONDITIONAL(BUILD_ARES, test "x$BUILD_ARES" = "xyes")
+if test "x$BUILD_ARES" = xyes ; then
+    AC_DEFINE([HAVE_ARES_LIBRARY_INIT],[1],[Define if libcares includes ares_library_init.])
+else
+    AC_CHECK_LIB(cares, ares_library_init, AC_DEFINE([HAVE_ARES_LIBRARY_INIT]))
+fi
 
 
 # see if we have regex functionality

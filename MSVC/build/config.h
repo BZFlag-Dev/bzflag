@@ -48,6 +48,9 @@
 /* On windows, strcasecmp is really strcmp */
 #define HAVE_STRICMP 1
 
+/* Define if libcares includes ares_library_init. */
+#define HAVE_ARES_LIBRARY_INIT 1
+
 /* Use modern template for std::count */
 #define HAVE_STD__COUNT 1
 
