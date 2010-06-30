@@ -56,8 +56,8 @@ static const char* metaName = "SceneNode";
 class LuaRenderNode : public RenderNode
 {
   public:
-    LuaRenderNode(lua_State* _L, const LuaSceneNode* _sceneNode)
-    : L(_L)
+    LuaRenderNode(lua_State* LS, const LuaSceneNode* _sceneNode)
+    : L(LS)
     , funcRef(LUA_NOREF)
     , dataRef(LUA_NOREF)
     , sceneNode(_sceneNode)

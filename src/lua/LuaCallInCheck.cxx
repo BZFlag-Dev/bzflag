@@ -26,9 +26,9 @@
 //============================================================================//
 //============================================================================//
 
-LuaCallInCheck::LuaCallInCheck(lua_State* _L, const char* name)
+LuaCallInCheck::LuaCallInCheck(lua_State* LS, const char* name)
 {
-  L = _L;
+  L = LS;
   startTop = lua_gettop(L);
   funcName = name;
 }
