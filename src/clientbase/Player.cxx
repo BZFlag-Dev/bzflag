@@ -1790,7 +1790,8 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       }
     }
 
-    if (hasFlatTop && (obstacleTop > tmpPos.z) &&
+    if (hasFlatTop && // (oldLocation != InAir) &&
+        (obstacleTop > tmpPos.z) &&
         (obstacleTop < (tmpPos.z + maxBumpHeight))) {
       fvec3 bumpPos = newPos;
       bumpPos.x = startPos.x;

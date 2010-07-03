@@ -533,7 +533,8 @@ void LocalPlayer::doUpdateMotion(float dt)
       }
     }
 
-    if (hasFlatTop && (obstacleTop > tmpPos.z) &&
+    if (hasFlatTop && (oldLocation != InAir) &&
+        (obstacleTop > tmpPos.z) &&
         (obstacleTop < (tmpPos.z + maxBumpHeight))) {
       fvec3 bumpPos = newPos;
       bumpPos.x = oldPosition.x;
