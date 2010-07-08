@@ -18,6 +18,7 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 #include "LocalFontFace.h"
+#include "BZDBCache.h"
 #include "bzUnicode.h"
 
 //
@@ -110,22 +111,27 @@ std::string HUDuiServerListItem::calculateModes()
     }
     modesText += "S ";
 
-    // lag?
-    if (server->ping.pingTime <= 0)
-      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
-    else if (server->ping.pingTime < BZDB.eval("pingLow"))
-      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "L";
-    else if (server->ping.pingTime < BZDB.eval("pingMed"))
-      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_YELLOW "L";
-    else if (server->ping.pingTime < BZDB.eval("pingHigh"))
-      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_ORANGE "L";
-    else if (server->ping.pingTime >= BZDB.eval("pingHigh") && server->ping.pingTime < INT_MAX)
-      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_RED "L";
-    else if (server->ping.pingTime >= BZDB.eval("pingHigh"))
-      modesText += ANSI_STR_PULSATING ANSI_STR_FG_RED "L";
-    else
-      // shouldn't reach here
-      modesText += ANSI_STR_BRIGHT ANSI_STR_FG_BLACK "L";
+    // shot count
+    const int maxShots = server->ping.maxShots;
+    std::string shotText;
+    if (maxShots < 0) {
+      shotText = "0";
+    } else if (maxShots <= 9) {
+      shotText = ((char)maxShots + '0');
+    } else {
+      shotText = "+";
+    }
+    std::string shotColor;
+    switch (maxShots) {
+      case 0:  { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA; break; }
+      case 1:  { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_BLUE;    break; }
+      case 2:  { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_CYAN;    break; }
+      case 3:  { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_GREEN;   break; }
+      case 4:  { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_YELLOW;  break; }
+      case 5:  { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_ORANGE;  break; }
+      default: { shotColor = ANSI_STR_BRIGHT ANSI_STR_FG_RED;     break; }
+    }
+    modesText += (shotColor + shotText);
   }
 
   return modesText;
@@ -269,8 +275,10 @@ void HUDuiServerListItem::doRender()
   if (hasFocus())
     darkness = 1.0f;
 
-  if ((domainName.compare(calculateDomainName()) == 0)||(serverName.compare(calculateServerName()) == 0)||
-      (playerCount.compare(calculatePlayers()) == 0)||(serverPing.compare(calculatePing()) == 0)) {
+  if ((domainName.compare(calculateDomainName()) == 0) ||
+      (serverName.compare(calculateServerName()) == 0) ||
+      (playerCount.compare(calculatePlayers()) == 0) ||
+      (serverPing.compare(calculatePing()) == 0)) {
     displayModes = modes = calculateModes();
     displayDomain = domainName = calculateDomainName();
     displayServer = serverName = calculateServerName();
@@ -279,32 +287,35 @@ void HUDuiServerListItem::doRender()
     resize();
   }
 
-  float modesX = getX() + spacerWidth;
+  float modesX  = getX() + spacerWidth;
   float domainX = getX() + modes_percentage*getWidth() + spacerWidth;
   float serverX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + spacerWidth;
   float playerX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + spacerWidth;
-  float pingX = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
+  float pingX   = getX() + modes_percentage*getWidth() + domain_percentage*getWidth() + server_percentage*getWidth() + player_percentage*getWidth() + spacerWidth;
 
   int faceID = getFontFace()->getFMFace();
 
   fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
 
-  // colorize server descriptions by shot counts
-  const int maxShots = server->ping.maxShots;
-  if (maxShots <= 0) {
-    color.rgb() = fvec3(0.4f, 0.0f, 0.6f);
-  } else if (maxShots == 1) {
-    color.rgb() = fvec3(0.25f, 0.25f, 1.0f);
-  } else if (maxShots == 2) {
-    color.rgb() = fvec3(0.25f, 1.0f, 0.25f);
-  } else if (maxShots == 3) {
-    color.rgb() = fvec3(1.0f, 1.0f, 0.25f);
-  } else {
-    // graded orange/red
-    const float shotScale = std::min(1.0f, log10f((float)(maxShots - 3)));
-    color.r = 1.0f;
-    color.g = 0.4f * (1.0f - shotScale);
-    color.b = 0.25f * color.g;
+  // colorize server descriptions by lag
+  if (server->ping.pingTime == INT_MAX) {
+    color.rgb() = fvec3(1.0f, 0.0f, 1.0f); // magenta
+  }
+  else {
+    static BZDB_float pingRed("pingRed");
+    float ping = float(server->ping.pingTime) * 0.001f;
+    if (ping <= 0.0f) {
+      color.rgb() = fvec3(0.0f, 0.0f, 1.0f); // blue
+    }
+    else {
+      ping /= pingRed;   // normalize
+      if (ping > 1.0f) { // clamp
+        ping = 1.0f;
+      }
+      color.r = -ping * (ping - 2.0f);
+      color.g = -(ping * ping) + 1.0f;
+      color.b = 0.0f;
+    }
   }
 
   const float fontSize = getFontSize();
