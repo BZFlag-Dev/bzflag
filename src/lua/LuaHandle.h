@@ -23,9 +23,6 @@
 // common header files
 #include "EventClient.h"
 
-// custom lua library header
-#include "other/lua/src/lua_extra.h"
-
 
 struct lua_State;
 struct FiringInfo;

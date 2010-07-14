@@ -80,7 +80,7 @@ LuaHandle::LuaHandle(const string& _name, int16_t _scriptID,
 , requestReload  (false)
 , requestDisable (false)
 {
-  assert(BZ_LUA_EXTRASPACE >= sizeof(LuaExtraSpace));
+  assert(LUAI_EXTRASPACE >= sizeof(LuaExtraSpace));
 
   L = lua_open();
   if (L == NULL) {

@@ -3008,14 +3008,18 @@ int LuaCallOuts::RemoveShot(lua_State* L)
   #include <fcntl.h>
   int LuaCallOuts::ReadStdin(lua_State* L)
   {
-    fcntl(STDIN_FILENO, F_SETFL, O_NONBLOCK);
+    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+    if (bits == -1) {
+      return luaL_pushnil(L);
+    }
+    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
     char buf[4096];
     const int r = read(STDIN_FILENO, buf, sizeof(buf));
+    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
     if (r <= 0) {
       return luaL_pushnil(L);
     }
     lua_pushlstring(L, buf, r);
-    fcntl(STDIN_FILENO, F_SETFL, 0);
     return 1;
   }
 #endif

@@ -24,8 +24,6 @@
 #include "../src/other/lua/src/lua.h"
 #include "../src/other/lua/src/lualib.h"
 #include "../src/other/lua/src/lauxlib.h"
-#include "../src/other/lua/src/lua_extra.h"
-
 
 
 //============================================================================//
@@ -58,7 +56,7 @@ struct LuaExtraSpace {
 // L2ES(L)  --  lua_State* to LuaExtraSpace*
 static inline LuaExtraSpace* L2ES(lua_State* L)
 {
-  return (LuaExtraSpace*)((char*)L - BZ_LUA_EXTRASPACE);
+  return (LuaExtraSpace*)((char*)L - LUAI_EXTRASPACE);
 }
 
 

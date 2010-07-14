@@ -11,10 +11,10 @@
 #include <limits.h>
 #include <stddef.h>
 
-#include "lua_extra.h" /*BZ*/
 
 #define LUA_EZFOR_LOOP       1 /*BZ*/
 #define LUA_READONLY_TABLES  1 /*BZ*/
+
 
 /*
 ** ==================================================================
@@ -724,7 +724,7 @@ union luai_Cast { double l_d; long l_l; };
 ** CHANGE (define) this if you really need that. This value must be
 ** a multiple of the maximum alignment required for your machine.
 */
-#define LUAI_EXTRASPACE BZ_LUA_EXTRASPACE
+#define LUAI_EXTRASPACE (8 * sizeof(void*))
 
 
 /*

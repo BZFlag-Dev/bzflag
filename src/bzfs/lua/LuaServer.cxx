@@ -405,7 +405,7 @@ static bool CreateLuaState(const std::string& script)
   vfsModes.writeDefault = BZVFS_LUA_SERVER_WRITE;
   vfsModes.writeAllowed = BZVFS_ALL;
 
-  assert(BZ_LUA_EXTRASPACE >= sizeof(LuaExtraSpace));
+  assert(LUAI_EXTRASPACE >= sizeof(LuaExtraSpace));
 
   if (L != NULL) {
     return false;
