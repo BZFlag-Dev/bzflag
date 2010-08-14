@@ -280,11 +280,18 @@ int LuaDouble::tonumber(lua_State* L)
 }
 
 
-int LuaDouble::tostring(lua_State* L) // FIXME -- optional format
+int LuaDouble::tostring(lua_State* L)
 {
   const double d1 = CheckNumber(L, 1);
-  char buf[128];
-  snprintf(buf, sizeof(buf), LUA_NUMBER_FMT, d1);
+
+  const char* fmt = LUA_NUMBER_FMT;
+  if (lua_israwstring(L, 2)) {
+    fmt = lua_tostring(L, 2);
+  }
+
+  char buf[256];
+  snprintf(buf, sizeof(buf), fmt, d1);
+
   lua_pushstring(L, buf);
   return 1;
 }
@@ -579,7 +586,10 @@ bool LuaDouble::PushEntries(lua_State* L)
   PushDouble(L, M_PI);
   lua_rawset(L, -3);
 
-  // FIXME -- need 'huge' ?
+  // add the 'huge' constant
+  lua_pushstring(L, "huge");
+  PushDouble(L, (1.0 / 0.0));
+  lua_rawset(L, -3);
 
   lua_pop(L, 1); // pop the 'double' table
 

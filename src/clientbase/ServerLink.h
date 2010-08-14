@@ -67,6 +67,7 @@ public:
   inline const std::string& getJoinServer()   const { return joinServer;   }
   inline int                getJoinPort()     const { return joinPort;     }
   inline const std::string& getJoinCallsign() const { return joinCallsign; }
+  inline const Address&     getJoinAddress()  const { return joinAddress;      }
 
   inline const std::string& getRejectionMessage() { return rejectionMessage; }
 
@@ -155,6 +156,7 @@ private:
   unsigned int previousFill;
   char txbuf[MaxPacketLen];
 
+  Address     joinAddress;
   std::string joinServer;
   int         joinPort;
   std::string joinCallsign;

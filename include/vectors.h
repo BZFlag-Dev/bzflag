@@ -75,10 +75,10 @@ class vec2 {
 
     inline vec2& operator=(const vec2& v) { x = v.x; y = v.y; return *this; }
 
-    inline T* data() { return &x; }
+    inline T*       data()       { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator T*() { return &x; }
+    inline operator       T*()       { return &x; }
     inline operator const T*() const { return &x; }
 
     inline       T& operator[](int index)       { return ((T*)&x)[index]; }
@@ -187,10 +187,10 @@ class vec3 {
 
     inline vec3& operator=(const vec3& v) { x = v.x; y = v.y; z = v.z; return *this; }
 
-    inline T* data() { return &x; }
+    inline       T* data()       { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator T*() { return &x; }
+    inline operator       T*()       { return &x; }
     inline operator const T*() const { return &x; }
 
     inline       T& operator[](int index)       { return ((T*)&x)[index]; }
@@ -249,7 +249,7 @@ class vec3 {
     }
 
     T lengthSq() const { return dot(*this, *this); }
-    T length() const { return typed_sqrt(lengthSq()); }
+    T length()   const { return typed_sqrt(lengthSq()); }
 
     static bool normalize(vec3& v) {
       const T len = v.length();
@@ -349,13 +349,13 @@ class vec4 {
 
     inline vec4& operator=(const vec4& v) { x = v.x; y = v.y; z = v.z; w = v.w; return *this; }
 
-    inline T* data() { return &x; }
+    inline T*       data()       { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator T*() { return &x; }
+    inline operator       T*()       { return &x; }
     inline operator const T*() const { return &x; }
 
-    inline T& operator[](int index) { return ((T*)&x)[index]; }
+    inline       T& operator[](int index)       { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
 
     inline vec4 operator-() const { return vec4(-x, -y, -z, -w); }
@@ -411,7 +411,7 @@ class vec4 {
     T dot(const vec4& v) const { return dot(*this, v); }
 
     T lengthSq() const { return dot(*this, *this); }
-    T length() const { return typed_sqrt(lengthSq()); }
+    T length()   const { return typed_sqrt(lengthSq()); }
 
     // for the plane equation,
     // (x * p.x) + (y * p.y) + (z * p.z) + w = 0  {for a point on the plane}

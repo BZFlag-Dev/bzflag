@@ -104,6 +104,7 @@ ServerLink::ServerLink(const std::string& serverName,
 , udpLength(0)
 , oldNeedForSpeed(false)
 , previousFill(0)
+, joinAddress(serverAddress)
 , joinServer(serverName)
 , joinPort(port)
 {

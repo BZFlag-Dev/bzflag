@@ -190,20 +190,6 @@ void LuaUtils::PushCurrentFuncEnv(lua_State* L, const char* caller)
 //============================================================================//
 //============================================================================//
 //
-//  FormatArgs()
-//
-
-/* FIXME -- FormatArgs
-bool LuaUtils::FormatArgs(lua_State* L, bool expandTables,
-			  std::vector<std::string>& result, const char* caller)
-{
-}
-*/
-
-
-//============================================================================//
-//============================================================================//
-//
 //  LowerKeys()
 //
 

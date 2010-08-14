@@ -747,7 +747,7 @@ int LuaCallOuts::GetWorldInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerAddress(lua_State* L) // FIXME
+int LuaCallOuts::GetServerAddress(lua_State* L)
 {
   if (!serverLink) {
     return luaL_pushnil(L);
@@ -777,12 +777,13 @@ int LuaCallOuts::GetServerCallsign(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerIP(lua_State* L) // FIXME
+int LuaCallOuts::GetServerIP(lua_State* L)
 {
   if (!serverLink) {
     return luaL_pushnil(L);
   }
-  return 0;
+  lua_pushstdstring(L, serverLink->getJoinAddress().getDotNotation());
+  return 1;
 }
 
 
@@ -2310,7 +2311,7 @@ int LuaCallOuts::GetPlayerTeam(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerFlag(lua_State* L) // FIXME -- linear search, ew
+int LuaCallOuts::GetPlayerFlag(lua_State* L)
 {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
