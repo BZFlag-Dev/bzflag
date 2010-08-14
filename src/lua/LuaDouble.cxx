@@ -18,6 +18,7 @@
 
 // system headers
 #include <math.h>
+#include <limits>
 #include <string>
 #include <string.h>
 #include <errno.h>
@@ -588,7 +589,7 @@ bool LuaDouble::PushEntries(lua_State* L)
 
   // add the 'huge' constant
   lua_pushstring(L, "huge");
-  PushDouble(L, (1.0 / 0.0));
+  PushDouble(L, std::numeric_limits<double>::infinity());
   lua_rawset(L, -3);
 
   lua_pop(L, 1); // pop the 'double' table
