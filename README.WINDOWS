@@ -58,8 +58,10 @@ item. Using that dialog you must set the paths to the include and lib
 dirs of any SDKs. Be sure that you use the correct lib dir for your 
 platform (x86 or x64)
 
-You may wish to also install curses and glew if you wish to do a full 
-distribution build.
+You may also need to install curses and glew if you wish to do a full
+distribution build.  Public Domain Curses is at
+http://sourceforge.net/projects/pdcurses/files/ .  The release notes
+file there explains which .zip file to use.
 
 **Running and Debugging**
 By default the compiler will copy the compiled executables to the root level
