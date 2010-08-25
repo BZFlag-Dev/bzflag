@@ -237,8 +237,8 @@ so that no work is duplicated.
   reasons, including testing out a new user-reg'd, karmafied list server,
   without needing to run multiple servers.
 
-* when game is over, autoboot everyone after some time, so server cannot be
-  blocked forever by one player just sitting there.
+* Limit the time that the "game over" message is flashed to observers.
+  One minute should be enough, or stop when a countdown begins.
 
 * make tank scene node not use a list per size mode, just use the scale matrix.
   (the disadvantage is the speed hits from GL_NORMALIZE or GL_RESCALE)
