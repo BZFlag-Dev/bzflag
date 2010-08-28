@@ -2933,9 +2933,6 @@ BZF_API bool bz_givePlayerFlag(int playerID, const char *flagType, bool force)
 	resetFlag(currentFlag);
       // reset non-team flags
     }
-    // setup bzfs' state
-    fi->grab(gkPlayer->getIndex());
-    gkPlayer->player.setFlag(fi->getIndex());
 
     // send MsgGrabFlag
     return sendGrabFlagMessage(gkPlayer->getIndex(),  *fi);

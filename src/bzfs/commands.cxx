@@ -1522,8 +1522,8 @@ bool FlagCommand::operator() (const char *message,
 	  netMsg.packUInt8(fi->player);
 	  fi->pack(netMsg);
 	  netMsg.broadcast(MsgDropFlag);
+          fPlayer->player.setFlag(-1);
 	}
-	fPlayer->player.setFlag(-1);
       }
 
       // Send the grab message to the player
