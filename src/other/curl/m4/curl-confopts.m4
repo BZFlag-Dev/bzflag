@@ -383,7 +383,7 @@ AC_DEFUN([CURL_CHECK_LIB_ARES], [
 dnl	AC_CONFIG_SUBDIRS(ares)			BZFlag handles this separately
         dnl c-ares has installable configured header files, path
         dnl inclusion fully done in makefiles for in-tree builds.
-        ares_CPPFLAGS="-I$srcdir/../ares"		# BZFlag location
+        ares_CPPFLAGS="-I$embedded_ares_builddir"	# BZFlag location
         ares_LDFLAGS="-L$embedded_ares_builddir"
         ares_LIBS="-lcares"
       else
