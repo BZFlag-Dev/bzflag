@@ -23,6 +23,7 @@
 #include "FileManager.h"
 #include "DirectoryNames.h"
 #include "version.h"
+#include "SceneRenderer.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -158,6 +159,11 @@ static std::string cmdAddHunt(const std::string&,
 static std::string cmdIconify(const std::string&,
 			      const CommandManager::ArgList& args, bool*);
 
+/** mouse box size flags
+ */
+static std::string cmdMouseBox(const std::string&,
+                               const CommandManager::ArgList& args, bool*);
+
 /** toggle mouse capture
  */
 static std::string cmdMouseGrab(const std::string&,
@@ -167,6 +173,7 @@ static std::string cmdMouseGrab(const std::string&,
  */
 static std::string cmdToggleFS(const std::string&,
 			       const CommandManager::ArgList& args, bool*);
+
 
 const struct CommandListItem commandList[] = {
   { "fire",	&cmdFire,	"fire:  fire a shot" },
@@ -188,6 +195,7 @@ const struct CommandListItem commandList[] = {
   { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
   { "addhunt",	&cmdAddHunt,	"addhunt:  add/modify hunted player(s)" },
   { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
+  { "mousebox", &cmdMouseBox, "mousebox <size>:  change the mousebox size"},
   { "mousegrab", &cmdMouseGrab, "mousegrab: toggle exclusive mouse mode" },
   { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
   { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
@@ -208,6 +216,22 @@ static std::string cmdToggleFS(const std::string&,
     return "usage: fullscreen";
   mainWindow->toggleFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
+  return std::string();
+}
+
+static std::string cmdMouseBox(const std::string&,
+                               const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 1) {
+    return "usage: mousebox <size>";
+  }
+  const char* start = args[0].c_str();
+  char* end;
+  const int value = (int) strtol(args[0].c_str(), &end, 10);
+  if (start == end) {
+    return "bad number";
+  }
+  RENDERER.setMaxMotionFactor(value);
   return std::string();
 }
 
