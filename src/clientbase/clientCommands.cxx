@@ -27,6 +27,7 @@
 #include "FileManager.h"
 #include "LuaClientScripts.h"
 #include "MotionUtils.h"
+#include "SceneRenderer.h"
 #include "TextUtils.h"
 #include "bzglob.h"
 #include "version.h"
@@ -68,6 +69,7 @@ static std::string cmdLuaWorld      (const std::string&, const CmdArgList& args,
 static std::string cmdLuaRules      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdLocalCmd      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMessagePanel  (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdMouseBox      (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdMouseGrab     (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdPause         (const std::string&, const CmdArgList& args, bool*);
 static std::string cmdRadarZoom     (const std::string&, const CmdArgList& args, bool*);
@@ -119,6 +121,7 @@ const std::vector<CommandListItem>& getCommandList()
   PUSHCMD("addhunt",       &cmdAddHunt,       "addhunt:  add/modify hunted player(s)");
   PUSHCMD("iconify",       &cmdIconify,       "iconify: iconify & pause bzflag");
   PUSHCMD("localcmd",      &cmdLocalCmd,      "localcmd: process a local command");
+  PUSHCMD("mousebox",      &cmdMouseBox,      "mousebox <size>: change the mousebox size");
   PUSHCMD("mousegrab",     &cmdMouseGrab,     "mousegrab: toggle exclusive mouse mode");
   PUSHCMD("fullscreen",    &cmdToggleFS,      "fullscreen: toggle fullscreen mode");
   PUSHCMD("autopilot",     &cmdAutoPilot,     "autopilot:  set/unset autopilot bot code");
@@ -143,6 +146,22 @@ static std::string cmdToggleFS(const std::string&, const CmdArgList& args, bool*
     return "usage: fullscreen";
   mainWindow->toggleFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
+  return std::string();
+}
+
+
+static std::string cmdMouseBox(const std::string&, const CmdArgList& args, bool*)
+{
+  if (args.size() != 1) {
+    return "usage: mousebox <size>";
+  }
+  const char* start = args[0].c_str();
+  char* end;
+  const int value = (int) strtol(args[0].c_str(), &end, 10);
+  if (start == end) {
+    return "bad number";
+  }
+  RENDERER.setMaxMotionFactor(value);
   return std::string();
 }
 
