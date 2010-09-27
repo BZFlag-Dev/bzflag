@@ -10,6 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+/* Note: all API changes should be documented as soon as the changes are made
+   on the BZFlag wiki. See http://http://my.bzflag.org/w/BZFS_API */
+
 // all the exported functions for bzfs plugins
 
 #ifndef _BZFS_API_H_
