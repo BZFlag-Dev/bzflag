@@ -5845,7 +5845,9 @@ int main(int argc, char **argv)
 
     if (resetGame && playerHadWorld) {
       playerHadWorld = false;
-      (clOptions->worldFile == "") && !Replay::enabled() && defineWorld();
+      if ((clOptions->worldFile == "") && !Replay::enabled()) {
+        defineWorld();
+      }
     }
 
     // cURLperform should be called in any case as we could incur in timeout

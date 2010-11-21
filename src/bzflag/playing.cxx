@@ -171,9 +171,9 @@ static float FarPlane = FarPlaneDefault;
 static float FarDeepPlane = FarDeepPlaneDefault;
 static float NearPlane = NearPlaneNormal;
 
-static bool leftButton   = false;
-static bool rightButton  = false;
-static bool middleButton = false;
+static bool leftMouseButton   = false;
+static bool rightMouseButton  = false;
+static bool middleMouseButton = false;
 
 
 enum BlowedUpReason {
@@ -764,13 +764,49 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 }
 
 
+static bool roamMouseWheel(const BzfKeyEvent& key, bool pressed)
+{
+  if ((key.button != BzfKeyEvent::WheelUp) && 
+      (key.button != BzfKeyEvent::WheelDown)) {
+    return false;
+  }
+  if (middleMouseButton || (leftMouseButton == rightMouseButton)) {
+    return false;
+  }
+  if (!ROAM.isRoaming() || !myTank || (myTank->getTeam() != ObserverTeam)) {
+    return false;
+  }
+
+  if (pressed) {
+    const bool roamMouseWheelSwap = BZDB.isTrue("roamMouseWheelSwap");
+    const bool up = (key.button == BzfKeyEvent::WheelUp);
+    if (leftMouseButton != roamMouseWheelSwap) {
+      ROAM.changeTarget(up ? Roaming::next : Roaming::previous);
+    }
+    else if (rightMouseButton != roamMouseWheelSwap) {
+      const int newMode = ROAM.getMode() + (up ? +1 : -1);
+      if ((newMode < int(Roaming::roamViewCount)) &&
+          (newMode > int(Roaming::roamViewDisabled))) {
+        ROAM.setMode(Roaming::RoamingView(newMode));
+      }
+    }
+  }
+
+  return true;
+}
+
+
 static void doKey(const BzfKeyEvent& key, bool pressed) {
   switch (key.button) {
-    case BzfKeyEvent::LeftMouse:   { leftButton   = pressed; break; }
-    case BzfKeyEvent::RightMouse:  { rightButton  = pressed; break; }
-    case BzfKeyEvent::MiddleMouse: { middleButton = pressed; break; }
+    case BzfKeyEvent::LeftMouse:   { leftMouseButton   = pressed; break; }
+    case BzfKeyEvent::RightMouse:  { rightMouseButton  = pressed; break; }
+    case BzfKeyEvent::MiddleMouse: { middleMouseButton = pressed; break; }
   }
     
+  if (roamMouseWheel(key, pressed)) {
+    return;
+  }
+
   if (myTank) {
     const std::string cmd = KEYMGR.get(key, pressed);
     if (cmd == "jump") {
@@ -1026,7 +1062,7 @@ static void		doEvent(BzfDisplay *disply)
       }
 
       // clear the mouse button states
-      leftButton = rightButton = middleButton = false;
+      leftMouseButton = rightMouseButton = middleMouseButton = false;
 
       // turn off the sound
       if (savedVolume == -1) {
@@ -4908,7 +4944,7 @@ static void renderRoamMouse()
 {
   if (!ROAM.isRoaming() ||
       !myTank || (myTank->getTeam() != ObserverTeam) ||
-      !(leftButton || rightButton || middleButton)) {
+      !(leftMouseButton || rightMouseButton || middleMouseButton)) {
     return;
   }
 
@@ -5217,17 +5253,31 @@ void drawFrame(const float dt)
 	  targetPoint[0] = target->getPosition()[0];
 	  targetPoint[1] = target->getPosition()[1];
 	  targetPoint[2] = target->getPosition()[2] +
-	    target->getMuzzleHeight();
+	                   target->getMuzzleHeight();
 	}
 	// camera following target
 	else if (ROAM.getMode() == Roaming::roamViewFollow) {
 	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	    eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-	    eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-	    eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-	    targetPoint[0] = target->getPosition()[0];
-	    targetPoint[1] = target->getPosition()[1];
-	    targetPoint[2] = target->getPosition()[2];
+	    if (!BZDB.isTrue("slowKeyboard")) {
+              eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+              eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+              eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+              targetPoint[0] = target->getPosition()[0];
+              targetPoint[1] = target->getPosition()[1];
+              targetPoint[2] = target->getPosition()[2];
+            } else {
+              // the same as for the roamViewTrack mode
+              eyePoint[0] = roam->pos[0];
+              eyePoint[1] = roam->pos[1];
+              eyePoint[2] = roam->pos[2];
+              targetPoint[0] = target->getPosition()[0];
+              targetPoint[1] = target->getPosition()[1];
+              targetPoint[2] = target->getPosition()[2] +
+                               target->getMuzzleHeight();
+              if (BZDB.isSet("followOffsetZ")) {
+                targetPoint[2] += BZDB.eval("followOffsetZ");
+              }
+            }
 	  }
 	}
 	// target's view
@@ -5749,6 +5799,47 @@ void drawFrame(const float dt)
 
 //============================================================================//
 
+static void roamSmoothFollow(Roaming::RoamingCamera& deltaCamera)
+{
+  Player* p = ROAM.getTargetTank();
+  if (!p) {
+    return;
+  }
+
+  const float dist   = BZDB.eval("followDist");
+  const float height = BZDB.eval("followHeight");
+  const float speedX = BZDB.eval("followSpeedX");
+  const float speedY = BZDB.eval("followSpeedY");
+  const float speedZ = BZDB.eval("followSpeedZ");
+
+  const float* pos = p->getPosition();
+  const float* fwd = p->getForward();
+  const float target[3] = {
+    pos[0] - (fwd[0] * dist),
+    pos[1] - (fwd[1] * dist),
+    pos[2] + height
+  };
+  const float* current = ROAM.getCamera()->pos;
+  const float delta[3] = {
+    target[0] - current[0],
+    target[1] - current[1],
+    target[2] - current[2]
+  };
+
+  const float theta = ROAM.getCamera()->theta;
+  const float c = cosf(theta * (float)(M_PI / 180.0f));
+  const float s = sinf(theta * (float)(M_PI / 180.0f));
+  const float f[2] = { +c, +s };
+  const float r[2] = { +s, -c };
+
+  deltaCamera.pos[0] = +speedX * ((delta[0] * f[0]) + (delta[1] * f[1]));
+  deltaCamera.pos[1] = -speedY * ((delta[0] * r[0]) + (delta[1] * r[1]));
+  deltaCamera.pos[2] = +speedZ * delta[2];
+  deltaCamera.theta = 0.0f;
+  deltaCamera.phi = 0.0f;
+}
+
+
 enum MouseButtonBits {
   leftMouseBit   = (1 << 0),
   rightMouseBit  = (1 << 1),
@@ -5791,9 +5882,9 @@ static void setupRoamingCamera(float dt)
   static Roaming::RoamingCamera prevDeltaCamera;
   static bool inited = false;
   static int prevMouseBits = 0;
-  int currMouseBits = (leftButton   ? leftMouseBit   : 0) |
-                      (rightButton  ? rightMouseBit  : 0) |
-                      (middleButton ? middleMouseBit : 0);
+  int currMouseBits = (leftMouseButton   ? leftMouseBit   : 0) |
+                      (rightMouseButton  ? rightMouseBit  : 0) |
+                      (middleMouseButton ? middleMouseBit : 0);
 
   if (!inited) {
     memset(&prevDeltaCamera, 0, sizeof(Roaming::RoamingCamera));
@@ -5875,6 +5966,9 @@ static void setupRoamingCamera(float dt)
 
   // adjust for slow keyboard
   if (BZDB.isTrue("slowKeyboard")) {
+    if (ROAM.getMode() == Roaming::roamViewFollow) {
+      roamSmoothFollow(deltaCamera);
+    }
     float st = BZDB.eval("roamSmoothTime");
     if (st < 0.1f) {
       st = 0.1f;

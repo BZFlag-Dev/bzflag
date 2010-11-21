@@ -17,6 +17,7 @@
 
 /* system interface headers */
 #include <string>
+#include <vector>
 
 /* common interface headers */
 #include "bzfgl.h"
@@ -37,7 +38,7 @@ public:
   void		setDim(bool);
   void    setWindowSize (float x, float y, float width, float height);
   void		render(bool forceDisplay);
-  static Player* getLeader(std::string *label=NULL);
+  static Player* getLeader(std::string *label = NULL);
 
   static const int HUNT_NONE = 0;
   static const int HUNT_SELECTING = 1;
@@ -69,13 +70,18 @@ public:
   void setTeamScoreY ( float val ){teamScoreYVal = val;}
   void setRoaming ( bool val ){roaming = val;}
 
+  // does not include observers
+  static void getPlayerList(std::vector<Player*>& players);
+
 protected:
   void hudColor3fv(const GLfloat*);
   void renderTeamScores (float y, float x, float dy);
-  void renderScoreboard(void);
-  void renderCtfFlags (void);
+  void renderScoreboard();
+  void renderCtfFlags();
+  void drawRoamTarget(float x0, float y0, float x1, float y1);
   void drawPlayerScore(const Player*,
-		float x1, float x2, float x3, float xs, float y, int emailLen, bool huntInd);
+		                   float x1, float x2, float x3, float xs, float y,
+		                   int emailLen, bool huntInd);
   static const char *sortLabels[SORT_MAXNUM+2];
   static int sortMode;
   static bool alwaysShowTeamScore;

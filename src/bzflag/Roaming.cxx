@@ -31,6 +31,13 @@ Roaming::Roaming() : view(roamViewDisabled),
   resetCamera();
 }
 
+
+Player* getRoamTargetTank()
+{
+  return ROAM.getTargetTank();
+}
+
+
 void Roaming::resetCamera(void) {
   camera.pos[0] = 0.0f;
   camera.pos[1] = 0.0f;
@@ -65,6 +72,79 @@ void Roaming::setMode(RoamingView newView) {
   changeTarget(previous);
 }
 
+
+static int findPlayerInVector(const std::vector<Player*>& vec, Player* p)
+{
+  for (size_t i = 0; i < vec.size(); i++) {
+    if (p == vec[i]) {
+      return int(i);
+    }
+  }
+  return -1;
+}
+
+
+static int findPlayerIndex(PlayerId pid)
+{
+  World* world = World::getWorld();
+  for (int i = 0; i < world->getCurMaxPlayers(); i++) {
+    Player* p = world->getPlayer(i);
+    if (p && (p->getId() == pid)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+
+bool Roaming::changePlayer(RoamingTarget target)
+{
+  World* world = World::getWorld();
+
+  std::vector<Player*> players;
+  ScoreboardRenderer::getPlayerList(players);
+
+  const int pCount = int(players.size());
+  if (!world || (pCount <= 0)) {
+    targetManual = targetWinner = -1;
+    return false;
+  }
+
+  Player* current = NULL;
+  if ((targetManual >= 0) && (targetManual < world->getCurMaxPlayers())) {
+    current = getPlayerByIndex(targetManual);
+  }
+
+  const bool nextTarget = (target == next);
+
+  if (!current) {
+    Player* p = nextTarget ? players.back() : players.front();
+    targetManual = targetWinner = findPlayerIndex(p->getId());
+    return (targetManual >= 0);
+  }
+
+  int pIndex = findPlayerInVector(players, current);
+  if (pIndex < 0) {
+    targetManual = targetWinner = -1;
+  }
+  else {
+    pIndex += (nextTarget ? -1 : +1);
+    if (pIndex >= pCount) {
+      pIndex = -1;
+    }
+    if ((pIndex >= 0) && (pIndex < pCount)) {
+      Player* p = players[pIndex];
+      targetManual = targetWinner = findPlayerIndex(p->getId());
+    } else {
+      targetManual = targetWinner = -1;
+    }
+  }
+
+  return true;
+}
+
+
 void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
   bool found = false;
 
@@ -79,11 +159,13 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
   if (view == roamViewFree || view == roamViewDisabled) {
     // do nothing
     found = true;
-  } else if (view == roamViewFlag) {
+  }
+  else if (view == roamViewFlag) {
     if (target == explicitSet) {
       targetFlag = explicitIndex;
       found = true;
-    } else {
+    }
+    else {
       int i, j;
       const int maxFlags = world->getMaxFlags();
       for (i = 1; i < maxFlags; ++i) {
@@ -100,30 +182,20 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
 	}
       }
     }
-  } else {
+  }
+  else {
     if (target == explicitSet) {
       targetManual = targetWinner = explicitIndex;
       found = true;
-    } else {
-      int i, j;
-      for (i = 0; i < world->getCurMaxPlayers(); ++i) {
-	if (target == next) {
-	  j = (targetManual + i + 2) % (world->getCurMaxPlayers() + 1) - 1;
-	} else {
-	  j = (targetManual - i + world->getCurMaxPlayers() + 1) % (world->getCurMaxPlayers() + 1) - 1;
-	}
-	if ((j == -1) ||
-	    (world->getPlayer(j) && (world->getPlayer(j)->getTeam() != ObserverTeam))) {
-	  targetManual = targetWinner = j;
-	  found = true;
-	  break;
-	}
-      }
+    }
+    else {
+      found = changePlayer(target);
     }
   }
 
-  if (!found)
+  if (!found) {
     view = roamViewFree;
+  }
 
   buildRoamingLabel();
 
@@ -132,12 +204,14 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     if (world) {
       tracked = world->getPlayer(targetWinner);
     }
-  } else {
+  } 
+  else {
     tracked = LocalPlayer::getMyTank();
   }
 
-  if (tracked)
+  if (tracked) {
     tracked->reportedHits = tracked->computedHits = 0;
+  }
 }
 
 void Roaming::buildRoamingLabel(void) {
@@ -275,7 +349,8 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.pos[1] += dt * (c * dc->pos[1] + s * dc->pos[0]);
     camera.theta  += dt * dc->theta;
     camera.phi    += dt * dc->phi;
-  } else {
+  }
+  else {
     float dx = camera.pos[0] - trackPos[0];
     float dy = camera.pos[1] - trackPos[1];
     float dist = sqrtf((dx * dx) + (dy * dy));
@@ -318,6 +393,14 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.phi *= (float)(180.0f / M_PI);
   }
 
+  // clamp phi
+  const float phiLimit = 90.0f - 1.0e-3f;
+  if (camera.phi > phiLimit) {
+    camera.phi = phiLimit;
+  } else if (camera.phi < -phiLimit) {
+    camera.phi = -phiLimit;
+  }
+
   // modify Z coordinate
   camera.pos[2] += dt * dc->pos[2];
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
@@ -325,7 +408,7 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.pos[2] = muzzleHeight;
     dc->pos[2] = 0.0f;
   }
-
+                  
   // adjust zoom
   camera.zoom += dt * dc->zoom;
   if (camera.zoom < BZDB.eval("roamZoomMin")) {

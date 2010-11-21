@@ -106,6 +106,14 @@ DefaultDBItem	defaultDBItems[] = {
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
 
+  // roam smooth follow settings
+  { "followDist",		"48.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "followHeight",		"10.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "followOffsetZ",		"0.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "followSpeedX",		"2.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "followSpeedY",		"1.5",			true,	StateDatabase::ReadWrite,	NULL },
+  { "followSpeedZ",		"3.0",			true,	StateDatabase::ReadWrite,	NULL },
+
   // hidden graphics rendering params
   { "useDrawInfo",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "f2bsort",			"1",			true,	StateDatabase::ReadWrite,	NULL },

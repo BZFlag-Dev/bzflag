@@ -1344,7 +1344,8 @@ mcinvert(p, cs)
 register struct parse *p;
 register cset *cs;
 {
-  if (p == p)
+  p = p;
+  if (1) /*p == p) */
 	assert(cs->multis == NULL);	/* xxx */
 }
 
@@ -1360,7 +1361,8 @@ mccase(p, cs)
 register struct parse *p;
 register cset *cs;
 {
-  if (p == p)
+  p = p;
+  if (1) /* p == p)*/
 	assert(cs->multis == NULL);	/* xxx */
 }
 

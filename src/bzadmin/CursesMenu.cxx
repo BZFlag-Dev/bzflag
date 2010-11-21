@@ -382,10 +382,10 @@ void CursesMenu::showMenu() {
   // always is visible
   int start = selection - (h / 2 - 2);
   start = (start + (h - 3) > (signed)items.size() ?
-	   items.size() - (h - 3) : start);
+	   int(items.size() - (h - 3)) : start);
   start = (start < 0 ? 0 : start);
   int end = start + (h - 3);
-  end = ((unsigned)end > items.size() ? items.size() : end);
+  end = ((unsigned)end > items.size() ? int(items.size()) : end);
 
   // show the menu items
   for (int i = start; i < end; ++i)
@@ -408,7 +408,7 @@ bool CursesMenu::handleKey(int c, std::string& str) {
   switch (c) {
   case KEY_UP:
     items[selection]->deselect();
-    selection = (selection == 0 ? items.size() - 1 : selection - 1);
+    selection = (selection == 0 ? int(items.size() - 1) : selection - 1);
     break;
   case KEY_DOWN:
     items[selection]->deselect();
