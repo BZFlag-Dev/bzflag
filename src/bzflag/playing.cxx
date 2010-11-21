@@ -5258,7 +5258,8 @@ void drawFrame(const float dt)
 	// camera following target
 	else if (ROAM.getMode() == Roaming::roamViewFollow) {
 	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
-	    if (!BZDB.isTrue("slowKeyboard")) {
+	    const bool slowKB = BZDB.isTrue("slowKeyboard");
+	    if (slowKB == (BZDB.eval("roamSmoothTime") < 0.0f)) {
               eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
               eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
               eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
@@ -5965,11 +5966,12 @@ static void setupRoamingCamera(float dt)
   }
 
   // adjust for slow keyboard
-  if (BZDB.isTrue("slowKeyboard")) {
+  float st = BZDB.eval("roamSmoothTime");
+  if (BZDB.isTrue("slowKeyboard") != (st < 0.0f)) {
     if (ROAM.getMode() == Roaming::roamViewFollow) {
       roamSmoothFollow(deltaCamera);
     }
-    float st = BZDB.eval("roamSmoothTime");
+    st = fabsf(st);
     if (st < 0.1f) {
       st = 0.1f;
     }
