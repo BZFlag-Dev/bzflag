@@ -4,12 +4,12 @@ EXTRA_DIST =				\
 	bzflag.desktop.in		\
 	bzfquery.php			\
 	bzfquery.pl			\
+	bzfquery.py			\
 	bzfquery_example.php		\
 	bzfs				\
 	bzfs.conf			\
 	bzfs_conf.html			\
 	bzfsd				\
-	bzfquery.py			\
 	bzirc.pl			\
 	bzlist.php			\
 	bzwcvt.pl			\
@@ -27,6 +27,7 @@ EXTRA_DIST =				\
 	pingtimes.sh			\
 	rebuild-bzflag			\
 	rrlog.cxx			\
+	ServerListFilter.txt		\
 	serverstats.sh			\
 	simpleSwearList.txt		\
 	snap.sh				\
