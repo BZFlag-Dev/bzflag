@@ -707,7 +707,9 @@ else
 	    FLAGS="$FLAGS -ffast-math -fno-exceptions"
 	    ;;
 	solaris*)
-	    FLAGS="$FLAGS -O"
+	    if test "x$GCC" != xyes; then
+		FLAGS="$FLAGS -O"
+	    fi
 	    ;;
 	macos|darwin*)
 	    FLAGS="$FLAGS -O3 -ffast-math -fomit-frame-pointer"
