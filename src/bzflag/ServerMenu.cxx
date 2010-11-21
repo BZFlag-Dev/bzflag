@@ -850,6 +850,7 @@ void ServerMenu::updateStatus() {
 
   // do filtering and counting
   int playerCount = 0;
+  int observerCount = 0;
   serverList.clear();
   for (unsigned int i = 0; i < realServerList.size(); ++i) {
     const ServerItem &item = realServerList.getServers()[i];
@@ -859,6 +860,7 @@ void ServerMenu::updateStatus() {
     playerCount += ping.greenCount;
     playerCount += ping.blueCount;
     playerCount += ping.purpleCount;
+    observerCount += ping.observerCount;
     // filter is already lower case.  do case insensitive matching.
     if (listFilter.check(item) && (!favView || item.favorite)) {
       serverList.addToList(item);
@@ -875,10 +877,12 @@ void ServerMenu::updateStatus() {
   args.push_back(buffer);
   sprintf(buffer, "%d", playerCount);
   args.push_back(buffer);
+  sprintf(buffer, "%d", observerCount);
+  args.push_back(buffer);
   if (favView) {
-    setStatus("Favorite servers: {1}/{2}  ({3} players)", &args);
+    setStatus("Favorite servers: {1}/{2}  ({3} players, {4} observers)", &args);
   } else {
-    setStatus("Servers found: {1}/{2}  ({3} players)", &args);
+    setStatus("Servers found: {1}/{2}  ({3} players, {4} observers)", &args);
   }
   pageLabel->setString("");
   selectedIndex = -1;
