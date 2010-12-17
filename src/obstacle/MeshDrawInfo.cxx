@@ -386,14 +386,18 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 	  if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
 	    unsigned short* array = (unsigned short*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      const float* v = verts[array[idx]];
+              const unsigned short cIndex = array[idx];
+              const Corner& corner = corners[cIndex];
+              const float* v = verts[corner.vertex];
 	      exts.expandToPoint(v);
 	    }
 	  }
 	  else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
 	    unsigned int* array = (unsigned int*)drawCmd.indices;
 	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      const float* v = verts[array[idx]];
+              const unsigned int cIndex = array[idx];
+              const Corner& corner = corners[cIndex];
+              const float* v = verts[corner.vertex];
 	      exts.expandToPoint(v);
 	    }
 	  }
