@@ -1226,6 +1226,73 @@ static void drawLines (int count, float (*vertices)[3], int color)
   return;
 }
 
+
+static void drawInsideOutsidePoints()
+{
+  std::vector<const float*> insides;
+  std::vector<const float*> outsides;
+
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+  for (unsigned int i = 0; i < meshes.size(); i++) {
+    const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
+    const int    checkCount  = mesh->getCheckCount();
+    const char*  checkTypes  = mesh->getCheckTypes();
+    const fvec3* checkPoints = mesh->getCheckPoints();
+    for (int c = 0; c < checkCount; c++) {
+      switch (checkTypes[c]) {
+        case MeshObstacle::CheckInside: {
+          insides.push_back(checkPoints[c]);
+          break;
+        }
+        case MeshObstacle::CheckOutside: {
+          outsides.push_back(checkPoints[c]);
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+  }
+
+  glPushAttrib(GL_DEPTH_BUFFER_BIT | GL_POINT_BIT | GL_LINE_BIT);
+
+  glDisable(GL_DEPTH_TEST);
+  glEnable(GL_POINT_SMOOTH);
+  glEnable(GL_LINE_SMOOTH);
+  glLineWidth(1.49f);
+  glPointSize(4.49f);
+
+  glBegin(GL_POINTS); {
+    glColor4f(0.0f, 1.0f, 0.0f, 0.8f);
+    for (size_t i = 0; i < insides.size(); i++) {
+      glVertex3fv(insides[i]);
+    }
+    glColor4f(1.0f, 0.0f, 0.0f, 0.8f);
+    for (size_t i = 0; i < outsides.size(); i++) {
+      glVertex3fv(outsides[i]);
+    }
+  }
+  glEnd();
+
+  glBegin(GL_LINES); {
+    glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+    for (size_t i = 0; i < insides.size(); i++) {
+      glVertex3f(insides[i][0], insides[i][1], 0.0f);
+      glVertex3fv(insides[i]);
+    }
+    glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+    for (size_t i = 0; i < outsides.size(); i++) {
+      glVertex3f(outsides[i][0], outsides[i][1], 0.0f);
+      glVertex3fv(outsides[i]);
+    }
+  }
+  glEnd();
+
+  glPopAttrib();
+}
+
+
 void World::drawCollisionGrid() const
 {
   GLboolean usingTextures;
@@ -1234,6 +1301,8 @@ void World::drawCollisionGrid() const
   glDisable (GL_TEXTURE_2D);
 
   COLLISIONMGR.draw (&drawLines);
+
+  drawInsideOutsidePoints();
 
   if (usingTextures) {
     glEnable (GL_TEXTURE_2D);
