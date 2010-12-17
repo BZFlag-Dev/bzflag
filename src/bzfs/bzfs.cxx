@@ -1030,6 +1030,7 @@ bool defineWorld ( void )
   strcat(hexDigest, digest.c_str());
   TimeKeeper endTime = TimeKeeper::getCurrent();
   logDebugMessage(3,"MD5 generation: %.3f seconds\n", endTime - startTime);
+  logDebugMessage(3,"MD5 = %s\n", digest.c_str());
 
   // water levels probably require flags on buildings
   const float waterLevel = world->getWaterLevel();
