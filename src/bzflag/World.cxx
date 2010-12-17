@@ -1276,12 +1276,12 @@ static void drawInsideOutsidePoints()
   glEnd();
 
   glBegin(GL_LINES); {
-    glColor4f(0.0f, 1.0f, 0.0f, 0.5f);
+    glColor4f(0.0f, 1.0f, 0.0f, 0.2f);
     for (size_t i = 0; i < insides.size(); i++) {
       glVertex3f(insides[i][0], insides[i][1], 0.0f);
       glVertex3fv(insides[i]);
     }
-    glColor4f(1.0f, 0.0f, 0.0f, 0.5f);
+    glColor4f(1.0f, 0.0f, 0.0f, 0.2f);
     for (size_t i = 0; i < outsides.size(); i++) {
       glVertex3f(outsides[i][0], outsides[i][1], 0.0f);
       glVertex3fv(outsides[i]);
