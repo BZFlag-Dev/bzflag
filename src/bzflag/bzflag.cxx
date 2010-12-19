@@ -448,7 +448,10 @@ static void		parse(int argc, char** argv)
 
 	// find the beginning of the port number, parse it
 	char* portNumber;
-	if ((portNumber = strchr(serverName, ':')) != NULL) {
+	if ((portNumber = strchr(serverName, ':')) == NULL) {
+          startupInfo.serverPort = ServerPort; // use the default
+        }
+	else {
 	  *portNumber = '\0';
 	  ++portNumber;
 	  startupInfo.serverPort = atoi(portNumber);
