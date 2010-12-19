@@ -1010,20 +1010,21 @@ void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
       glEnable(GL_POLYGON_OFFSET_FILL);
     }
 
-    if (scene && BZDBCache::showCullingGrid) {
-      scene->drawCuller();
-    }
-    const World* world = World::getWorld();
-    if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
-      world->drawCollisionGrid();
-    }
-
 
     ///////////////////////
     // THE BIG RENDERING //
     ///////////////////////
     doRender();
 
+
+    if (scene && BZDBCache::showCullingGrid) {
+      scene->drawCuller();
+    }
+
+    const World* world = World::getWorld();
+    if (scene && BZDBCache::showCollisionGrid && (world != NULL)) {
+      world->drawCollisionGrid();
+    }
 
     if (useHiddenLineOn) {
       glDisable(GL_POLYGON_OFFSET_FILL);
