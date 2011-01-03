@@ -27,10 +27,10 @@ class Authentication {
   static void init(const char *address, int port, const char *password);
   void	setPrincipalName(char *buf, int len);
   void	verifyCredential(char *buf, int len);
-  bool	isTrusted() {return trusted;};
-  std::string getPrincipal() {return principalName;};
-  bool isGlobal(void) {return globallyAuthenticated;};
-  void global(bool set) {globallyAuthenticated = set;}
+  bool	isTrusted() const { return trusted; }
+  std::string getPrincipal() const { return principalName; }
+  bool isGlobal(void) const { return globallyAuthenticated; }
+  void global(bool set) { globallyAuthenticated = set; }
 
 private:
   static bool	   authentication;

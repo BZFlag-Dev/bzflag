@@ -306,7 +306,7 @@ void FlagInfo::getTextualInfo(char *message)
 	  flag.position.x, flag.position.y, flag.position.z);
 }
 
-bool FlagInfo::exist()
+bool FlagInfo::exist() const
 {
   return flag.status != FlagNoExist;
 }

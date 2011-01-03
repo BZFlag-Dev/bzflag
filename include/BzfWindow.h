@@ -49,15 +49,15 @@ class BzfWindow {
     virtual void	setMinSize(int width, int height) = 0;
     virtual void	setFullscreen(bool) = 0;
     virtual bool	getFullscreen() const = 0;
-    virtual void	iconify() {;};
-    virtual void	deiconify() {;};
-    virtual bool	create(void) {return true;};
+    virtual void	iconify() {}
+    virtual void	deiconify() {}
+    virtual bool	create(void) {return true;}
 
     virtual void	warpMouse(int x, int y) = 0;
     virtual void	getMouse(int& x, int& y) const = 0;
     virtual void	grabMouse() = 0;
     virtual void	ungrabMouse() = 0;
-    virtual void	enableGrabMouse(bool) {;};
+    virtual void	enableGrabMouse(bool) {}
     virtual void	showMouse() = 0;
     virtual void	hideMouse() = 0;
 

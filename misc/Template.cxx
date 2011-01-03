@@ -26,9 +26,11 @@ Template::Template()
 {
 }
 
+
 Template::~Template()
 {
 }
+
 
 // Local Variables: ***
 // mode: C++ ***

@@ -13,6 +13,7 @@
 #ifndef __TEMPLATE_H__
 #define __TEMPLATE_H__
 
+
 // common header must be included before any system headers
 #include "common.h"
 
@@ -23,19 +24,20 @@
 // local interface headers
 
 
-/**
- * a Template class is just an example.  New classes should include a
- * brief description of the functionality and purpose of whatever
- * class is being implemented in doxygen format.
- */
-class Template
-{
-public:
-  Template();
-  ~Template();
+///
+// a Template class is just an example.  New classes should include a
+// brief description of the functionality and purpose of whatever
+// class is being implemented in doxygen format.
+//
+class Template {
+  public:
+    Template();
+    ~Template();
 };
 
+
 #endif  // __TEMPLATE_H__
+
 
 // Local Variables: ***
 // mode: C++ ***

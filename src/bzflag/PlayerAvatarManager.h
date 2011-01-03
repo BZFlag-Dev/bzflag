@@ -30,7 +30,7 @@ class SceneNode;
 class PlayerAvatar
 {
 public:
-  virtual ~PlayerAvatar(void) {};
+  virtual ~PlayerAvatar(void) {}
 
   virtual void move(const fvec3& pos, const fvec3& forward) = 0;
   virtual void moveIDL(const fvec4& plane) = 0;

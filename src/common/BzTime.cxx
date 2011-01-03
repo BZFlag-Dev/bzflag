@@ -451,7 +451,7 @@ void BzTime::setProcessorAffinity(int processor)
   /* linuxy fix for time travel */
   cpu_set_t mask;
   CPU_ZERO(&mask);
-  CPU_SET(processor, &mask);
+  (void) CPU_SET(processor, &mask);
   sched_setaffinity(0, sizeof(mask), &mask);
 #elif defined(WIN32)
   /* windowsy fix for time travel */

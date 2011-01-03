@@ -86,7 +86,7 @@ class UpdateTick : public bz_EventHandler {
     enum QueuedCommand { NoCmd, ReloadCmd, DisableCmd };
 
   public:
-    UpdateTick() : command(NoCmd) {}
+    UpdateTick() : active(false), command(NoCmd) {}
     ~UpdateTick() {}
 
     void queueReload() {
@@ -107,8 +107,10 @@ class UpdateTick : public bz_EventHandler {
     }
 
     void deactivate() {
-      bz_removeEvent(bz_eTickEvent, this);
-      active = false;
+      if (active) {
+        bz_removeEvent(bz_eTickEvent, this);
+        active = false;
+      }
     }
 
   private:
@@ -258,8 +260,6 @@ bool LuaServer::init(const std::string& cmdLine)
   }
 
   updateTick.activate();
-
-  bz_registerEvent(bz_eTickEvent, &updateTick);
 
   return true;
 }

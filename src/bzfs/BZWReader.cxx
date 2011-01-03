@@ -417,7 +417,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  std::string(buffer) + std::string("\" - skipping"), lineNum);
       } else {
 	readToken(buffer, sizeof(buffer));
-	if (strlen(buffer) > 0) {
+	if (buffer[0] != 0) {
 	  if (OBSTACLEMGR.findGroupDef(buffer) != NULL) {
 	    errorHandler->warning(
 	      std::string("duplicate group definition \"") +

@@ -35,8 +35,8 @@ protected:
   friend class Singleton<ClientIntangibilityManager>;
 
 private:
-  ClientIntangibilityManager() {};
-  ~ClientIntangibilityManager() {};
+  ClientIntangibilityManager() {}
+  ~ClientIntangibilityManager() {}
 
   typedef std::map<uint32_t, unsigned char> TangibilityMap;
   TangibilityMap tangibilityMap;

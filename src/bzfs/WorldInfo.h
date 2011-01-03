@@ -69,7 +69,7 @@ public:
   ~WorldInfo();
 
   void setSize(float x, float y );
-  void getSize(float& x, float& y ) { x = size.x; y = size.y; }
+  void getSize(float& x, float& y ) const { x = size.x; y = size.y; }
 
   void setGravity ( float g );
 
@@ -114,7 +114,7 @@ public:
   void finishWorld();
   int packDatabase();
 
-  bool isFinished() { return finished;}
+  bool isFinished() const { return finished;}
 
   bool saveWorldFile(const std::string& filename, std::string& fullname);
 

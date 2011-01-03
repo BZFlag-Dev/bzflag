@@ -44,7 +44,7 @@ class AresHandler {
     ResolutionStatus getHostAddress(struct in_addr *clientAddr);
     void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
     void		process(fd_set *read_set, fd_set *write_set);
-    ResolutionStatus getStatus() {return status;};
+    ResolutionStatus getStatus() {return status;}
 
     static bool	globalInit();
     static void	globalShutdown();

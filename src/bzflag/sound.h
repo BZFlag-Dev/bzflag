@@ -60,7 +60,7 @@ extern int  SFX_HIT;		  /* struck by a shot but not dead yet sound */
 class SoundSystem
 {
 public:
-  virtual ~SoundSystem() {};
+  virtual ~SoundSystem() {}
 
   virtual const char* name(void) = 0;
 

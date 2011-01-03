@@ -39,7 +39,7 @@
 class ShotEventCallbacks
 {
 public:
-  virtual ~ShotEventCallbacks(){};
+  virtual ~ShotEventCallbacks(){}
 
   virtual void shotEnded(int id) = 0;
   virtual void shotStarted(int id) = 0;

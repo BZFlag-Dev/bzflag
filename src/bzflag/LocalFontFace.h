@@ -69,7 +69,7 @@ private:
   /**
    * Disable default c'tor.
    */
-  LocalFontFace() {};
+  LocalFontFace() {}
 
   /**
    * Private c'tor for a new LocalFontFace based on a generic name.

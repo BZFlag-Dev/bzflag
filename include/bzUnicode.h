@@ -29,7 +29,7 @@ public:
     UTF8StringItr(const char* string) : curPos(string), nextPos(string)
     {
         ++(*this);
-    };
+    }
 
     /**
      * Pre-increment operator.  Reads the next unicode character and sets
@@ -101,7 +101,7 @@ public:
       return ret;
     }
 
-    virtual ~UTF8StringItr() {};
+    virtual ~UTF8StringItr() {}
 
 private:
     /**
@@ -139,7 +139,7 @@ public:
 
   inline std::string str() const { return buf; }
 
-  ~bzUTF8Char() { delete[] buf; };
+  ~bzUTF8Char() { delete[] buf; }
 
 private:
   char* buf;

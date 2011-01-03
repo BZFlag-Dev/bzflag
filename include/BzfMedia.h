@@ -82,10 +82,10 @@ class BzfMedia {
 
     // register a callback for audio processing. The passed procedure will be
     // called whenever audio needs to be filled
-    virtual void	startAudioCallback(bool (*)(void)) {};
+    virtual void	startAudioCallback(bool (*)(void)) {}
 
     // returns true if audio is running via callback
-    virtual bool	hasAudioCallback() const {return false;};
+    virtual bool	hasAudioCallback() const {return false;}
 
     // append a command to the sound effect command queue
     virtual void	writeSoundCommand(const void*, int length) = 0;

@@ -46,7 +46,7 @@ public:
   int  getIndex() const;
   bool landing(const BzTime &tm);
   void getTextualInfo(char *message);
-  bool exist();
+  bool exist() const;
 
   static FlagInfo *get(int index);
   static void setSize(int _numFlags);

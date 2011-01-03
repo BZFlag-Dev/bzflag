@@ -94,7 +94,7 @@ class MainWindow {
     void		setJoyYAxis(const std::string axis);
     void		initJoystick(std::string &joystickName);
 
-    bool		isInFault() { return faulting; };
+    bool		isInFault() { return faulting; }
 
   private:
     // no copying

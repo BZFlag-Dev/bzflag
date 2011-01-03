@@ -690,9 +690,11 @@ static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
     msg += args[i];
   }
 
+
   char msgBuf[MessageLen];
   memset(msgBuf, 0, MessageLen);
   strncpy(msgBuf, msg.c_str(), MessageLen);
+  printf("cmdSendMsg: dest=%i msg='%s'\n", msgDest, msgBuf); // FIXME
   serverLink->sendMessage(msgDest, msgBuf);
 
   return std::string();

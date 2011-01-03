@@ -32,9 +32,9 @@ class BzfDisplay {
     virtual bool	getEvent(BzfEvent&) const = 0;
     virtual bool	peekEvent(BzfEvent&) const = 0;
 
-    virtual bool	hasGetKeyMode() {return false;};
+    virtual bool	hasGetKeyMode() {return false;}
     virtual void	getModState(bool &shift, bool &control, bool &alt) {
-      shift = false; control = false; alt = false;};
+      shift = false; control = false; alt = false;}
 
     int			getWidth() const;
     int			getHeight() const;

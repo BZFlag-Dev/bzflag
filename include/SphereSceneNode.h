@@ -33,7 +33,7 @@ class SphereSceneNode : public SceneNode {
     void move(const fvec3& pos, float radius);
     void notifyStyleChange();
 
-    virtual void setShockWave(bool) { return; };
+    virtual void setShockWave(bool) { return; }
 
     virtual SceneNode** getParts(int& numParts) = 0;
 

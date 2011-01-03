@@ -50,7 +50,7 @@ struct MessageCount {
 class NetworkDataLogCallback
 {
 public:
-  virtual ~NetworkDataLogCallback(){};
+  virtual ~NetworkDataLogCallback(){}
 
   virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void *param = NULL ) = 0;
 };
@@ -121,7 +121,7 @@ public:
   size_t      getTcpReadSize ( void  );
 
   /// Request if there is any buffered udp messages waiting to be sent
-  static bool	anyUDPPending() {return pendingUDP;};
+  static bool	anyUDPPending() {return pendingUDP;}
 
   /// Send all buffered UDP messages, if any
   void		flushUDP();
@@ -252,14 +252,14 @@ private:
 
 class NewNetworkConnectionCallback {
   public:
-    virtual ~NewNetworkConnectionCallback() {};
+    virtual ~NewNetworkConnectionCallback() {}
     virtual bool accept(NetHandler *handler, int connectionID) = 0;
 };
 
 
 class NetworkDataPendingCallback {
   public:
-    virtual ~NetworkDataPendingCallback() {};
+    virtual ~NetworkDataPendingCallback() {}
     virtual bool pending(NetHandler *handler, int connectionID, bool tcp) = 0;
     virtual bool disconnected(NetHandler *handler, int connectionID) = 0;
 };

@@ -1574,7 +1574,7 @@ struct TeamSize {
   TeamColor color;
   int       current;
   int       max;
-  bool operator < (const TeamSize x) const { return x.current < current; }
+  bool operator < (const TeamSize& x) const { return x.current < current; }
 };
 
 bool teamFull(const TeamSize &x)  { return x.current == x.max; }

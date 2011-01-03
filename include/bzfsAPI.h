@@ -447,8 +447,8 @@ class BZF_API bz_EventData
     : version(1), eventType(type), eventTime( bz_getCurrentTime() )
     {
     }
-  virtual ~bz_EventData() {};
-  virtual void update() {};
+  virtual ~bz_EventData() {}
+  virtual void update() {}
 
   int version;
   bz_eEventType eventType;
@@ -1226,7 +1226,7 @@ public:
 class BZF_API bz_ReportFiledEventData_V1 : public bz_EventData
 {
 public:
-  bz_ReportFiledEventData_V1() : bz_EventData(bz_eReportFiledEvent){};
+  bz_ReportFiledEventData_V1() : bz_EventData(bz_eReportFiledEvent){}
 
   bz_ApiString from;
   bz_ApiString message;
@@ -1356,9 +1356,9 @@ private:
 class bz_NonPlayerConnectionHandler
 {
 public:
-  virtual ~bz_NonPlayerConnectionHandler() {};
+  virtual ~bz_NonPlayerConnectionHandler() {}
   virtual void pending(int connectionID, void *data, unsigned int size) = 0;
-  virtual void disconnect(int connectionID) { if (connectionID) return; };
+  virtual void disconnect(int connectionID) { if (connectionID) return; }
 };
 
 BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
@@ -1420,10 +1420,9 @@ class BZF_API bz_BasePlayerRecord
     , admin(false), op(false), canSpawn(false)
     , lag(0), jitter(0), packetLoss(0.0)
     , rank(0.0), wins(0), losses(0), teamKills(0)
-    {
-    };
+    {}
 
-  ~bz_BasePlayerRecord() {};
+  ~bz_BasePlayerRecord() {}
 
   void update(void) { bz_updatePlayerData(this); } // call to update with current data
 
@@ -1638,7 +1637,7 @@ BZF_API bz_APIStringList* bz_getHelpTopic(const char* name);
 class bz_CustomSlashCommandHandler
 {
 public:
-  virtual ~bz_CustomSlashCommandHandler() {};
+  virtual ~bz_CustomSlashCommandHandler() {}
   virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params) = 0;
   virtual const char* help(bz_ApiString /* command */) { return NULL; }
 };
@@ -1687,7 +1686,7 @@ typedef struct bz_CustomMapObjectInfo
 class bz_CustomMapObjectHandler
 {
 public:
-  virtual ~bz_CustomMapObjectHandler() {};
+  virtual ~bz_CustomMapObjectHandler() {}
   virtual bool handle(bz_ApiString object, bz_CustomMapObjectInfo *data) = 0;
 };
 
@@ -1709,7 +1708,7 @@ class BZF_API bz_APIBaseWorldObject
 {
  public:
   bz_APIBaseWorldObject() { type = eNullObject; }
-  virtual ~bz_APIBaseWorldObject() {};
+  virtual ~bz_APIBaseWorldObject() {}
   bz_eWorldObjectType type;
   bz_ApiString name;
   unsigned int id;
@@ -1793,8 +1792,8 @@ class BZF_API bz_CTFBaseWorldObject_V1 : public bz_APISolidWorldObject_V1
 class BZF_API bz_APITeleporterField_V1 : public bz_APIBaseWorldObject
 {
  public:
-  bz_APITeleporterField_V1() {};
-  virtual ~bz_APITeleporterField_V1() {};
+  bz_APITeleporterField_V1() {}
+  virtual ~bz_APITeleporterField_V1() {}
 
   float center[3];
   float maxAABBox[3];
@@ -1881,7 +1880,7 @@ BZF_API bool bz_sendPlayCustomLocalSound(int playerID, const char* soundName,
 class bz_APIPluginHandler
 {
 public:
-  virtual ~bz_APIPluginHandler() {};
+  virtual ~bz_APIPluginHandler() {}
   virtual bool handle(bz_ApiString plugin, bz_ApiString param) = 0;
 };
 // custom pluginHandler
@@ -1891,7 +1890,7 @@ BZF_API bool bz_removeCustomPluginHandler(const char* extension, bz_APIPluginHan
 class bz_GenericCallback
 {
 public:
-  virtual ~bz_GenericCallback() {};
+  virtual ~bz_GenericCallback() {}
   virtual bool call(void *param) = 0;
 };
 
@@ -1927,11 +1926,11 @@ class bz_BaseURLHandler
 {
 public:
   bz_BaseURLHandler() { version = 1; }
-  virtual ~bz_BaseURLHandler() {};
+  virtual ~bz_BaseURLHandler() {}
 
   virtual void done(const char* URL, void * data, unsigned int size, bool complete) = 0;
-  virtual void timeout(const char* /*URL*/, int /*errorCode*/) {};
-  virtual void error(const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/) {};
+  virtual void timeout(const char* /*URL*/, int /*errorCode*/) {}
+  virtual void error(const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/) {}
 
 protected:
   int version;
@@ -1958,7 +1957,7 @@ BZF_API bool bz_setclipFieldInt(const char *name, int data);
 class bz_ClipFiledNotifier
 {
 public:
-  virtual ~bz_ClipFiledNotifier() {};
+  virtual ~bz_ClipFiledNotifier() {}
   virtual void fieldChange(const char* /*field*/) = 0;
 };
 
@@ -2106,7 +2105,7 @@ class BZF_API bz_ServerSidePlayerHandler
 {
  public:
    bz_ServerSidePlayerHandler();
-  virtual ~bz_ServerSidePlayerHandler() {};
+  virtual ~bz_ServerSidePlayerHandler() {}
 
   int getPlayerID ( void ){return playerID;}
 
@@ -2116,10 +2115,10 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void added(int player) = 0; // it is required that the bot provide this method
 
   // lower level events for various things that happen in the game
-  virtual void removed(void) {};
+  virtual void removed(void) {}
   virtual void playerRemoved(int player);
   virtual void playerRejected(bz_eRejectCodes code, const char *reason);
-  virtual void playerAccepted(void) {};
+  virtual void playerAccepted(void) {}
   virtual void playerSpawned(int player, const float pos[3], float rot);
   virtual void textMessage(int dest, int source, const char *text);
   virtual void playerKilledMessage(int victimIndex, int killerIndex,
@@ -2158,12 +2157,12 @@ class BZF_API bz_ServerSidePlayerHandler
   virtual void spawned(void); // the bot has spawned
   virtual void died ( int killer ); // the bot has died from gameplay
   virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner
-  virtual void jumped ( void ){}; // the bot has left the ground
-  virtual void landed ( void ){}; // the bot has landed
-  virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){}; // the bot ran into an object
-  virtual void outOfBounds (  float /*pos*/[3]){}; // the bot ran into the outer walls
-  virtual void flagPickup ( const char* /*flag*/ ){}; // bot got a flag
-  virtual void shotChange ( bz_eShotType /*shotType*/ ){}; // bot got shot change
+  virtual void jumped ( void ){} // the bot has left the ground
+  virtual void landed ( void ){} // the bot has landed
+  virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){} // the bot ran into an object
+  virtual void outOfBounds (  float /*pos*/[3]){} // the bot ran into the outer walls
+  virtual void flagPickup ( const char* /*flag*/ ){} // bot got a flag
+  virtual void shotChange ( bz_eShotType /*shotType*/ ){} // bot got shot change
 
   // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;

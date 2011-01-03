@@ -85,7 +85,7 @@ typedef unsigned int GLDisplayList;
 class GLDisplayListCreator
 {
  public:
-  virtual ~GLDisplayListCreator() {};
+  virtual ~GLDisplayListCreator() {}
 
   virtual void buildGeometry(GLDisplayList displayList) = 0;
 };

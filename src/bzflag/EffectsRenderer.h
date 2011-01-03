@@ -41,7 +41,7 @@ class BasicEffect
 {
 public:
   BasicEffect();
-  virtual ~BasicEffect() {};
+  virtual ~BasicEffect() {}
 
   virtual void setPos(const fvec3& pos);
   virtual void setRot(const fvec3& rot);
