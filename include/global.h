@@ -58,6 +58,8 @@ enum TeamColor {
 #ifdef ROBOT
 // robots
 #define MAX_ROBOTS 100
+#else
+#define MAX_ROBOTS 0
 #endif
 
 // epsilon and very far for ray intersections

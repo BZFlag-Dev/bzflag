@@ -155,7 +155,9 @@ static void		enteringServer(void *buf);
 static void		joinInternetGame2();
 static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
+#ifdef ROBOT
 static void		setRobotTarget(RobotPlayer* robot);
+#endif
 
 static ResourceGetter	*resourceDownloader = NULL;
 
@@ -2057,6 +2059,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (!myTank->isAutoPilot())
 	    mainWindow->warpMouse();
 	  hud->setAltitudeTape(World::getWorld()->allowJumping());
+#ifdef ROBOT
 	} else if (tank->getPlayerType() == ComputerPlayer) {
 	  for (int r = 0; r < numRobots; r++) {
 	    if (robots[r] && robots[r]->getId() == playerIndex) {
@@ -2065,6 +2068,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      break;
 	    }
 	  }
+#endif
 	}
 
 	if (SceneRenderer::instance().useQuality() >= 2) {
