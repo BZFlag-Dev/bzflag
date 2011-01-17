@@ -49,7 +49,9 @@ extern NameList silencePlayers;
 
 
 Player*			lookupPlayer(PlayerId id);
+#ifdef ROBOT
 RobotPlayer*		lookupRobotPlayer(PlayerId id);
+#endif
 int			lookupPlayerIndex(PlayerId id);
 Player*			getPlayerByIndex(int index);
 Player*			getPlayerByName(const char* name);

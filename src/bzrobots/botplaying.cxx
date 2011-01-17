@@ -262,6 +262,7 @@ void updateHighScores()
       anyPlayers = true;
       break;
     }
+#ifdef ROBOT
   if (!anyPlayers) {
     for (i = 0; i < numRobots; i++)
       if (robots[i]) {
@@ -269,6 +270,7 @@ void updateHighScores()
 	break;
       }
   }
+#endif
   if (!anyPlayers) {
     return;
   }
@@ -498,7 +500,9 @@ void handleKilledMessage(void *msg, bool /*human*/, bool &checkScores)
   BaseLocalPlayer *victimLocal = getLocalPlayer(victim);
   BaseLocalPlayer *killerLocal = getLocalPlayer(killer);
   Player *victimPlayer = lookupPlayer(victim);
+#ifdef ROBOT
   Player *killerPlayer = lookupPlayer(killer);
+#endif
 
   if (victimPlayer == myTank) {
     // uh oh, i'm dead
@@ -736,18 +740,20 @@ void handleShotBegin(bool /*human*/, void *msg)
 	    ((BZRobotPlayer *)(robots[r]))->shotFired(shot,myTank);
     }
 	*/
+#ifdef ROBOT
   } else {
     RemotePlayer *shooter = remotePlayers[shooterid];
 
     if (shooterid != ServerPlayer) {
       if (shooter && remotePlayers[shooterid]->getId() == shooterid) {
-	    ShotPath *shot = shooter->addShot(firingInfo);
-		for (int r = 0; r < numRobots; r++) {
+	ShotPath *shot = shooter->addShot(firingInfo);
+	for (int r = 0; r < numRobots; r++) {
           if (robots[r])
 	        ((BZRobotPlayer *)(robots[r]))->shotFired(shot,shooter);
         }
       }
     }
+#endif
   }
 }
 
@@ -757,6 +763,7 @@ void handleWShotBegin (void *msg)
   FiringInfo firingInfo;
   msg = firingInfo.unpack(msg);
 
+#ifdef ROBOT
   WorldPlayer *worldWeapons = world->getWorldWeapons();
   ShotPath *shot = worldWeapons->addShot(firingInfo);
 
@@ -764,6 +771,7 @@ void handleWShotBegin (void *msg)
     if (robots[r])
 	  ((BZRobotPlayer *)(robots[r]))->shotFired(shot,worldWeapons);
   }
+#endif
 }
 
 
@@ -939,15 +947,7 @@ void handleLimboMessage(void *msg)
 
 void handleFlagDropped(Player *tank)
 {
-
-  if (tank->getPlayerType() == ComputerPlayer) {
-    RobotPlayer *robot = lookupRobotPlayer(tank->getId());
-    if (!robot)
-      return;
-    robot->setFlagID(-1);
-    robot->setShotType(StandardShot);
-  }
-  else {
+  if (tank->getPlayerType() != ComputerPlayer) {
     // skip it if player doesn't actually have a flag
     if (tank->getFlagType() == Flags::Null) return;
 
@@ -971,6 +971,15 @@ void handleFlagDropped(Player *tank)
     tank->setFlagID(-1);
     tank->setShotType(StandardShot);
   }
+#ifdef ROBOT
+  else {
+    RobotPlayer *robot = lookupRobotPlayer(tank->getId());
+    if (!robot)
+      return;
+    robot->setFlagID(-1);
+    robot->setShotType(StandardShot);
+  }
+#endif
 }
 
 
@@ -1029,6 +1038,7 @@ bool gotBlowedUp(BaseLocalPlayer *tank, BlowedUpReason reason, PlayerId killer,
 
 
 
+#ifdef ROBOT
 
 //
 // some robot stuff
@@ -1113,6 +1123,7 @@ static void checkEnvironmentForRobots()
     if (robots[i])
       checkEnvironment(robots[i]);
 }
+#endif
 
 void getObsCorners(const Obstacle *obstacle, bool addTankRadius, float corners[4][2])
 {
@@ -1570,6 +1581,7 @@ void leaveGame()
   entered = false;
   joiningGame = false;
 
+#ifdef ROBOT
   // shut down robot connections
   int i;
   for (i = 0; i < numRobots; i++) {
@@ -1584,6 +1596,7 @@ void leaveGame()
        itr != obstacleList.end(); ++itr)
     delete (*itr);
   obstacleList.clear();
+#endif
 
   // delete world
   World::setWorld(NULL);
@@ -1709,15 +1722,19 @@ void updatePositions ( const float dt )
 
   doTankMotions(dt);
 
+#ifdef ROBOT
   if (entered)
     updateRobots(dt);
+#endif
 }
 
+#ifdef ROBOT
 void checkEnvironment ( const float )
 {
   if (entered)
     checkEnvironmentForRobots();
 }
+#endif
 
 void doUpdates ( const float dt )
 {
@@ -1732,7 +1749,9 @@ void doUpdates ( const float dt )
 
   while (doneDT > 0) {
     updatePositions(dt);
+#ifdef ROBOT
     checkEnvironment(dt);
+#endif
 
     doneDT -= dtLimit;
 

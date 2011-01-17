@@ -1685,7 +1685,9 @@ void handleKilledMessage(void *msg, bool human, bool &checkScores)
     if (myTank->isAlive()) {
       serverLink->sendDropFlag(myTank->getPosition());
       myTank->setShotType(StandardShot);
+#ifdef ROBOT
       handleMyTankKilled(reason);
+#endif
     }
   }
 
@@ -1893,6 +1895,7 @@ void handleGrabFlag(void *msg)
   tank->setFlagID(flagIndex);
   tank->setShotType((ShotType)shot);
 
+#ifdef ROBOT
   if (tank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(id);
     if (!robot)
@@ -1900,6 +1903,7 @@ void handleGrabFlag(void *msg)
     robot->setFlagID(flagIndex);
     robot->setShotType((ShotType)shot);
   }
+#endif
 
   if (tank == myTank) {
     SOUNDSYSTEM.play(myTank->getFlagType()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD); // grabbed flag
@@ -2299,6 +2303,7 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
   toTank->setFlagID(flagIndex);
   toTank->setShotType(shotType);
 
+#ifdef ROBOT
   if (fromTank->getPlayerType() == ComputerPlayer) {
     RobotPlayer *robot = lookupRobotPlayer(fromTank->getId());
     if (!robot)
@@ -2314,6 +2319,7 @@ void handleFlagTransferred(Player *fromTank, Player *toTank, int flagIndex, Shot
     robot->setFlagID(flagIndex);
     robot->setShotType(shotType);
   }
+#endif
 
   if ((fromTank == myTank) || (toTank == myTank))
     updateMyFlag(myTank->getFlagType());
@@ -2897,14 +2903,7 @@ void handleLimboMessage(void *msg)
 
 void handleFlagDropped(Player *tank)
 {
-  if (tank->getPlayerType() == ComputerPlayer) {
-    RobotPlayer *robot = lookupRobotPlayer(tank->getId());
-    if (!robot)
-      return;
-    robot->setFlagID(-1);
-    robot->setShotType(StandardShot);
-  }
-  else {
+  if (tank->getPlayerType() != ComputerPlayer) {
     // skip it if player doesn't actually have a flag
     if (tank->getFlagType() == Flags::Null) {
       return;
@@ -2933,6 +2932,15 @@ void handleFlagDropped(Player *tank)
     tank->setFlagID(-1);
     tank->setShotType(StandardShot);
   }
+#ifdef ROBOT
+  else {
+    RobotPlayer *robot = lookupRobotPlayer(tank->getId());
+    if (!robot)
+      return;
+    robot->setFlagID(-1);
+    robot->setShotType(StandardShot);
+  }
+#endif
 }
 
 

@@ -55,6 +55,7 @@ Player* lookupPlayer(PlayerId id)
 }
 
 
+#ifdef ROBOT
 RobotPlayer* lookupRobotPlayer(PlayerId id)
 {
   for (int i = 0; i < numRobots; i++)
@@ -63,6 +64,7 @@ RobotPlayer* lookupRobotPlayer(PlayerId id)
 
   return NULL;
 }
+#endif
 
 
 int lookupPlayerIndex(PlayerId id)

@@ -196,9 +196,11 @@ void BZRobotPlayer::update(float inputDT)
 	  if(remotePlayers[i]->getTeam() >= 0 && !remotePlayers[i]->isObserver())
 		if(robotName != std::string(remotePlayers[i]->getCallSign()))
 	      tsPlayerCount++;
+#ifdef ROBOT
   for (i = 0; i < numRobots; i++)
     if (robots[i] && robots[i] != this)
 	  tsPlayerCount++;
+#endif
   // Check for wall hit
   if (hasHitWall()) {
     if (!didHitWall) {
