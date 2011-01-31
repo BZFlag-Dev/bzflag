@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -432,7 +432,8 @@ float			StateDatabase::eval(const std::string& name)
   float retn = evaluate(pre);
   variables.erase(ins_it);
 
-  evalCache[name] = retn;
+  if (retn != NaN)
+    evalCache[name] = retn;
   return retn;
 }
 
@@ -930,6 +931,10 @@ float StateDatabase::evaluate(Expression e) const
 	}
 	if (evaluationStack.size() == 0) {
 	  // syntax error
+	  // ugly hack, since gcc 2.95 doesn't have <limits>
+	  float NaN;
+	  memset(&NaN, 0xff, sizeof(NaN));
+	  return NaN;
 	}
 	// rvalue and lvalue are switched, since we're reversed
 	rvalue = evaluationStack.top(); evaluationStack.pop();
