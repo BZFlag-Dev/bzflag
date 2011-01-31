@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -49,7 +49,7 @@ bool WordFilter::simpleFilter(char *input) const
 
     word = line.substr(startPosition, endPosition-startPosition);
     // transform to lowercase
-    transform (word.begin(), word.end(), word.begin(), tolower);
+    std::transform (word.begin(), word.end(), word.begin(), tolower);
 
     findWord.word = word;
     firstchar = (unsigned char)word[0];
@@ -778,7 +778,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     }
 
     // convert the word to lowercase
-    transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);
+    std::transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);
 
     bool added = addToFilter(filterWord, std::string(""));
     if ((!added) && (verbose)) {
@@ -800,7 +800,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
  * pattern match (default) catching hundreds of variations per filter
  * word or using a simple exact word match technique (original).
  */
-bool WordFilter::filter(char *input, bool simple) const
+bool WordFilter::filter(char *input, const bool simple) const
 {
 #ifdef DEBUG
   TimeKeeper before = TimeKeeper::getCurrent();
@@ -818,7 +818,7 @@ bool WordFilter::filter(char *input, bool simple) const
   return filtered;
 }
 
-bool WordFilter::filter(std::string &input, bool simple) const
+bool WordFilter::filter(std::string &input, const bool simple) const
 {
   char input2[512] = {0};
   bool filtered = false;
