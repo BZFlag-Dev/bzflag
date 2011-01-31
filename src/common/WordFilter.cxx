@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -795,7 +795,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
  * pattern match (default) catching hundreds of variations per filter
  * word or using a simple exact word match technique (original).
  */
-bool WordFilter::filter(char *input, bool simple) const
+bool WordFilter::filter(char *input, const bool simple) const
 {
 #ifdef DEBUG
   BzTime before = BzTime::getCurrent();
@@ -813,7 +813,7 @@ bool WordFilter::filter(char *input, bool simple) const
   return filtered;
 }
 
-bool WordFilter::filter(std::string &input, bool simple) const
+bool WordFilter::filter(std::string &input, const bool simple) const
 {
   char input2[512] = {0};
   bool filtered = false;
