@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -348,7 +348,8 @@ float StateDatabase::eval(const std::string& name)
 
   Expression prefix = infixToPrefix(infix);
   const float value = evaluate(prefix);
-  evalCache[name] = value;
+  if (value != getNaN())
+    evalCache[name] = value;
 
   evalStack.erase(myStackIt);
 
