@@ -1223,13 +1223,13 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 	std::vector<std::string> endTime = TextUtils::tokenize(timeStr, std::string(":"));
 	{
 	  unsigned int sizer = endTime.size();
+          if (sizer > 3) {
+            std::cerr << "ERROR: too many arguments to -time" << std::endl;
+            usage(execName);
+          }
 	  while (sizer != 3) {
 	    endTime.push_back("00");
 	    ++sizer;
-	  }
-	  if (sizer > 3) {
-	    std::cerr << "ERROR: too many arguments to -time" << std::endl;
-	    usage(execName);
 	  }
 	}
 	time_t tnow = time(0);
