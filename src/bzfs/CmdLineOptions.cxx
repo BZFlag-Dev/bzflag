@@ -1231,6 +1231,11 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 	    endTime.push_back("00");
 	    ++sizer;
 	  }
+
+          // Force the countdown to start right away
+          gameOver = false;
+          gameStartTime = BzTime::getCurrent();
+          countdownActive = true;
 	}
 	time_t tnow = time(0);
 	struct tm *now = localtime(&tnow);
@@ -1251,7 +1256,6 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
 	timeLimit = 1800.0f;
       }
       std::cerr << "using time limit of " << (int)timeLimit << " seconds" << std::endl;
-      timeElapsed = timeLimit;
     }
     else if (token == "-timemanual") {
       timeManualStart = true;
