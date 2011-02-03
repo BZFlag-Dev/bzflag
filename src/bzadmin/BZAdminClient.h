@@ -53,7 +53,7 @@ public:
 
   /** Formats an incoming message. */
   std::string formatMessage(const std::string& msg, PlayerId src, PlayerId dst,
-		       TeamColor dstTeam, PlayerId me);
+		       TeamColor dstTeam, PlayerId me, uint8_t type = ChatMessage);
 
   /** Return the PlayerId that this client has been assigned by the server. */
   PlayerId getMyId();

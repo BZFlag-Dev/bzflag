@@ -414,7 +414,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	// format the message depending on src and dst
 	TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			     TeamColor(250 - dst) : NoTeam);
-	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
+	lastMessage.first = formatMessage((char*)vbuf, src, dst, dstTeam, me, msgType);
 	PlayerIdMap::const_iterator iterator = players.find(src);
 	lastMessage.second = (iterator == players.end() ?
 			      colorMap[NoTeam] :
@@ -564,9 +564,11 @@ void BZAdminClient::sendMessage(const std::string& msg,
 }
 
 
+// NOTE: This function assumes that there is only two message types. It is
+// possible that additional types will be added in the future.
 std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
 					 PlayerId dst, TeamColor dstTeam,
-					 PlayerId me) {
+					 PlayerId me, uint8_t type) {
   std::string formatted = "    ";
 
   // get sender and receiver
@@ -576,28 +578,19 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
   const std::string dstName = (players.count(dst) ? players[dst].name :
 			       "(UNKNOWN)");
 
-  // display action messages differently
-  bool isAction = false;
-  std::string message;
-  if ((msg[0] == '*') && (msg[1] == ' ') &&
-      (msg[msg.size () - 1] == '*') && (msg[msg.size () - 2] == '\t')) {
-    isAction = true;
-    message = msg.substr(2, msg.size() - 4);
-  } else {
-    message = msg;
-  }
+  std::string message = msg;
 
   // direct message to or from me
   if (dst == me || players.count(dst)) {
     if (!(src == me && dst == me)) {
       if (src == me) {
-	if (isAction) {
+	if (type == ActionMessage) {
 	  formatted += "[->" + message + "]";
 	} else {
 	  formatted += "[->" + dstName + "] " + message;
 	}
       } else {
-	if (isAction) {
+	if (type == ActionMessage) {
 	  formatted += "[" + message + "->]";
 	} else {
 	  formatted += "[" + srcName + "->] " + message;
@@ -615,11 +608,12 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
     else if (dstTeam != NoTeam)
       formatted += "[Team] ";
 
-    if (!isAction) {
-      formatted += srcName;
-      formatted += ": ";
-    }
-    formatted += message;
+    formatted += srcName;
+
+    if (type == ChatMessage)
+      formatted += ":";
+
+    formatted += " " + message;
   }
 
   return formatted;
