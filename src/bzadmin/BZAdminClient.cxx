@@ -585,13 +585,13 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
     if (!(src == me && dst == me)) {
       if (src == me) {
 	if (type == ActionMessage) {
-	  formatted += "[->" + message + "]";
+	  formatted += "[->" + dstName + " " + message + "]";
 	} else {
 	  formatted += "[->" + dstName + "] " + message;
 	}
       } else {
 	if (type == ActionMessage) {
-	  formatted += "[" + message + "->]";
+	  formatted += "[" + srcName + " " + message + "->]";
 	} else {
 	  formatted += "[" + srcName + "->] " + message;
 	}
