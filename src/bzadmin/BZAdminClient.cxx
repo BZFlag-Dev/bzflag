@@ -334,7 +334,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	PlayerId victim, killer;
 	FlagType* flagType;
 	int16_t shotId, reason;
-	int phydrv;
 	vbuf = nboUnpackUByte(vbuf, victim);
 	vbuf = nboUnpackUByte(vbuf, killer);
 	vbuf = nboUnpackShort(vbuf, reason);
@@ -343,7 +342,6 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	if (reason == PhysicsDriverDeath) {
 	  int32_t inPhyDrv;
 	  vbuf = nboUnpackInt(vbuf, inPhyDrv);
-	  phydrv = int(inPhyDrv);
 	}
 
 	// find the player names and build a kill message string
