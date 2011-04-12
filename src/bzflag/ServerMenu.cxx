@@ -683,8 +683,7 @@ void ServerMenu::show()
 
   // add cache items w/o re-caching them
   serversFound = 0;
-  int numItemsAdded;
-  numItemsAdded = realServerList.updateFromCache();
+  realServerList.updateFromCache();
 
   // update the status
   updateStatus();
