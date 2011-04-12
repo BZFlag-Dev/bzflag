@@ -3980,11 +3980,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (checkGarbage(message, playerData, t))
 	break;
 
-      GameKeeper::Player *toData = GameKeeper::Player::getPlayerByIndex(dstPlayer);
-      int toTeam = -1;
-      if (toData)
-		toTeam = toData->player.getTeam();
-
       bz_ChatEventData chatData;
       chatData.from = t;
       chatData.to = BZ_NULLUSER;
