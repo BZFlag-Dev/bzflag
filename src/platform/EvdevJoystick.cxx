@@ -398,6 +398,23 @@ bool		    EvdevJoystick::ffHasRumble() const
 #endif
 }
 
+#if (defined HAVE_FF_EFFECT_DIRECTIONAL || defined HAVE_FF_EFFECT_RUMBLE)
+void EvdevJoystick::writeJoystick(int count) {
+    struct input_event event;
+    ssize_t            written_byte;
+
+    event.type   = EV_FF;
+    event.code   = ff_rumble->id;
+    event.value  = count;
+    written_byte = write(joystickfd, &event, sizeof(event));
+    if (written_byte != sizeof(event))
+    	printError("Unable to write on joystick");
+}
+#else
+void EvdevJoystick::writeJoystick(int) {
+}
+#endif
+
 void		    EvdevJoystick::ffResetEffect()
 {
 #if (defined HAVE_FF_EFFECT_DIRECTIONAL || defined HAVE_FF_EFFECT_RUMBLE)
@@ -407,11 +424,7 @@ void		    EvdevJoystick::ffResetEffect()
   if ((ffHasRumble() || ffHasDirectional()) && ff_rumble->id != -1) {
 
     /* Stop the effect first */
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = 0;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(0);
 
     /* Erase the downloaded effect */
     ioctl(joystickfd, EVIOCRMFF, ff_rumble->id);
@@ -437,13 +450,8 @@ void		    EvdevJoystick::ffRumble(int count,
     return;
 
   /* Stop the previous effect we were playing, if any */
-  if (ff_rumble->id != -1) {
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = 0;
-    write(joystickfd, &event, sizeof(event));
-  }
+  if (ff_rumble->id != -1)
+    writeJoystick(0);
 
   if (count > 0) {
     /* Download an updated effect */
@@ -455,11 +463,7 @@ void		    EvdevJoystick::ffRumble(int count,
     ioctl(joystickfd, EVIOCSFF, ff_rumble);
 
     /* Play it the indicated number of times */
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = count;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(count);
   }
 }
 #else
@@ -500,11 +504,7 @@ void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration
   if (ff_rumble->type != FF_CONSTANT) {
     ffResetEffect();
   } else if (ff_rumble->id != -1) {
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = 0;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(0);
   }
 
   if (count > 0) {
@@ -523,11 +523,7 @@ void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration
       printError("Effect upload failed.");
 
     /* Play it the indicated number of times */
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = count;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(count);
   }
 }
 #else
@@ -554,11 +550,7 @@ void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration
   if (ff_rumble->type != FF_PERIODIC) {
     ffResetEffect();
   } else if (ff_rumble->id != -1) {
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = 0;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(0);
   }
 
   if (count > 0) {
@@ -589,11 +581,7 @@ void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration
       printError("Effect upload failed.");
 
     /* Play it the indicated number of times */
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = count;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(count);
   }
 }
 #else
@@ -621,11 +609,7 @@ void EvdevJoystick::ffDirectionalResistance(float time, float coefficient,
       (ff_rumble->type != FF_DAMPER)) {
     ffResetEffect();
   } else if (ff_rumble->id != -1) {
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = 0;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(0);
   }
 
   if (1 > 0) {
@@ -651,11 +635,7 @@ void EvdevJoystick::ffDirectionalResistance(float time, float coefficient,
       printError("Effect upload failed.");
 
     /* Play it just once */
-    struct input_event event;
-    event.type = EV_FF;
-    event.code = ff_rumble->id;
-    event.value = 1;
-    write(joystickfd, &event, sizeof(event));
+    writeJoystick(1);
   }
 }
 #else

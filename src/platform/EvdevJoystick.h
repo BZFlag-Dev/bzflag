@@ -108,6 +108,7 @@ class EvdevJoystick : public BzfJoystick {
     void	setButton(int button_num, int state);
     int	 mapButton(int bit_num);
     void	ffResetEffect();
+    void	writeJoystick(int count);
 
     std::map<std::string,EvdevJoystickInfo> joysticks;
 
