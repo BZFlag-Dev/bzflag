@@ -486,7 +486,8 @@ void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 		FILE *fp = fopen(item.filePath.c_str(),"wb");
 		if (fp)
 		{
-			fwrite(data,length,1,fp);
+			if (fwrite(data, length, 1, fp) != 1)
+			  logDebugMessage(1, "Unable to write to file with CURL\n");
 			fclose(fp);
 		}
 
