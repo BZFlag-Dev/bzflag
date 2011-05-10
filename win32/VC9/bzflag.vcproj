@@ -1111,6 +1111,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\src\bzflag\ServerListFilter.cxx"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzflag\ShotStatistics.cxx"
 				>
 			</File>
@@ -3339,6 +3343,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ServerLink.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzflag\ServerListFilter.h"
 				>
 			</File>
 			<File
