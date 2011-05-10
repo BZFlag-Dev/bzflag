@@ -410,7 +410,7 @@ bool ServerListFilter::parseRangeFilter(const std::string& label, char op,
 
   const char* s = param.c_str();
   char* e;
-  float value = strtof(s, &e);
+  float value = (float)strtod(s, &e);
   if ((e == s) || (param.size() != size_t(e - s))) {
     errorMessage("bad range value, '" + param + "'");
     return false;
