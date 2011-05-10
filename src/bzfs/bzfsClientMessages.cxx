@@ -602,9 +602,9 @@ public:
 	    // drop flag at last known position of player
 	    // also handle case where limit was set to 0
 	    fInfo.grabs = 0; // recycle this flag now
-	    dropPlayerFlag(*player, player->currentPos);
-	  }
-	  else {
+	    dropFlag(fInfo, player->currentPos);
+
+	  } else {
 	    // more shots fired than allowed
 	    // do nothing for now -- could return and not allow shot
 	  }
