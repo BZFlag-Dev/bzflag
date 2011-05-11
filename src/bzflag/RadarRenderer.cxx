@@ -872,6 +872,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     if (flag.radarGfxBlock.blocked()) {
       continue;
     }
+    if(BZDB.isTrue(BZDBNAMES.HIDETEAMFLAGSONRADAR)) {
+      if(flag.type->flagTeam != NoTeam) {   
+        continue;
+      }
+    }
+    if(BZDB.isTrue(BZDBNAMES.HIDEFLAGSONRADAR)) {
+      if(flag.type) {
+        continue;
+      }
+    }
     // Flags change color by height
     const float cs = colorScale(flag.position.z, muzzleHeight);
     const fvec4& flagColor = flag.type->getColor();

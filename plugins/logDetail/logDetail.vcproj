@@ -65,7 +65,7 @@
 				AdditionalDependencies="bzfs.lib"
 				OutputFile="$(OutDir)/logDetail.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../"
+				AdditionalLibraryDirectories="../../;../plugin_utils/debug/"
 				ModuleDefinitionFile="logDetail.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/logDetail.pdb"

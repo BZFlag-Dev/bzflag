@@ -85,6 +85,8 @@ class BZDBNames : public Singleton<BZDBNames> {
     const std::string HANDICAPSHOTAD;
     const std::string HANDICAPVELAD;
     const std::string HEIGHTCHECKTOL;
+    const std::string HIDEFLAGSONRADAR;
+    const std::string HIDETEAMFLAGSONRADAR;
     const std::string IDENTIFYRANGE;
     const std::string INERTIAANGULAR;
     const std::string INERTIALINEAR;
