@@ -936,19 +936,18 @@ bool defineWorld ( void )
   worldEventManager.callEvents(bz_eGetWorldEvent, &worldData);
 
   if (!worldData.generated && worldData.worldFile.size())
-	  clOptions->worldFile = worldData.worldFile.c_str();
+    clOptions->worldFile = worldData.worldFile.c_str();
 
-	clOptions->gameStyle &= ~TeamFlagGameStyle;
-	clOptions->gameStyle &= ~RabbitChaseGameStyle;
-	clOptions->gameStyle &= ~PlainGameStyle;
+  clOptions->gameStyle &= ~TeamFlagGameStyle;
+  clOptions->gameStyle &= ~RabbitChaseGameStyle;
+  clOptions->gameStyle &= ~PlainGameStyle;
 
-	if (worldData.ctf)
-		clOptions->gameStyle |= TeamFlagGameStyle;
-	else if (worldData.rabbit)
-		clOptions->gameStyle |= RabbitChaseGameStyle;
-	else
-		clOptions->gameStyle |= PlainGameStyle;
-
+  if (worldData.ctf)
+    clOptions->gameStyle |= TeamFlagGameStyle;
+  else if (worldData.rabbit)
+    clOptions->gameStyle |= RabbitChaseGameStyle;
+  else
+    clOptions->gameStyle |= PlainGameStyle;
 
   // make world and add buildings
   if (worldData.worldFile.size()) {
