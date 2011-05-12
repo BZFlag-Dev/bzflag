@@ -969,17 +969,14 @@ bool defineWorld ( void )
     // check and see if anyone wants to define the world from an event
 
     world = new WorldInfo;
-    if (!worldData.generated)	// if the plugin didn't make a world, make one
-	{
+    if (!worldData.generated) { // if the plugin didn't make a world, make one
       delete world;
       if (clOptions->gameStyle & TeamFlagGameStyle)
-		world = defineTeamWorld();
+	world = defineTeamWorld();
       else
-		world = defineRandomWorld();
-    }
-	else
-	{
-	makeWalls();
+	world = defineRandomWorld();
+    } else {
+      makeWalls();
 
       OBSTACLEMGR.makeWorld();
       world->finishWorld();
