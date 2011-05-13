@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./zlib_debug/"
-			IntermediateDirectory="./zlib_debug/"
+			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -49,10 +49,10 @@
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile="./zlib_debug/zlib.pch"
-				AssemblerListingLocation="./zlib_debug/"
-				ObjectFile="./zlib_debug/"
-				ProgramDataBaseFileName="./zlib_debug/"
+				PrecompiledHeaderFile="$(OutDir)/zlib.pch"
+				AssemblerListingLocation="$(OutDir)/"
+				ObjectFile="$(OutDir)/"
+				ProgramDataBaseFileName="$(OutDir)/"
 				BrowseInformation="1"
 				WarningLevel="3"
 				WarnAsError="false"
@@ -73,7 +73,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="./zlib_debug/zlib.lib"
+				OutputFile="$(OutDir)/zlib.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -94,8 +94,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./zlib_release/"
-			IntermediateDirectory="./zlib_release/"
+			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -127,10 +127,10 @@
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
-				PrecompiledHeaderFile="./zlib_release/zlib.pch"
-				AssemblerListingLocation="./zlib_release/"
-				ObjectFile="./zlib_release/"
-				ProgramDataBaseFileName="./zlib_release/"
+				PrecompiledHeaderFile="$(OutDir)/zlib.pch"
+				AssemblerListingLocation="$(OutDir)/"
+				ObjectFile="$(OutDir)/"
+				ProgramDataBaseFileName="$(OutDir)/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -148,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="./zlib_release/zlib.lib"
+				OutputFile="$(OutDir)/zlib.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool

@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./regex_debug/"
-			IntermediateDirectory="./regex_debug/"
+			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="./regex_debug/regex.lib"
+				OutputFile="$(OutDir)/regex.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -85,8 +85,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./regex_release/"
-			IntermediateDirectory="./regex_release/"
+			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="./regex_release/regex.lib"
+				OutputFile="$(OutDir)/regex.lib"
 			/>
 			<Tool
 				Name="VCALinkTool"
