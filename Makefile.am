@@ -1,83 +1,26 @@
-# $Id$
-
-AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
-ACLOCAL_AMFLAGS = -I m4
-
-traversal_dirs = \
-	data \
-	include \
-	man \
-	package \
-	src
-
-if BUILD_PLUGINS
-PLUGINS=plugins
-else
-PLUGINS=
-endif
-
-SUBDIRS = \
-	$(traversal_dirs) \
-	$(PLUGINS)
-
-DIST_SUBDIRS = \
-	$(traversal_dirs) \
-	debian \
-	m4 \
-	misc \
-	plugins \
-	tools \
-	MSVC \
-	BZFlag.xcodeproj
-
-EXTRA_DIST = \
-	autogen.sh \
-	authors.xml \
-	BUGS \
-	bzflag.info \
-	bzflag.lsm \
-	bzflag.spec \
-	DEVINFO \
-	PORTING \
-	README.BeOS \
-	README.IRIX \
-	README.Linux \
-	README.MINGW32 \
-	README.MacOSX \
-	README.SDL \
-	README.SOLARIS \
-	README.UNIX \
-	README.WIN32 \
-	README.XMINGW	\
-	RELNOTES
+EXTRA_DIST =	\
+	bzflag.sln	\
+	ares.vcproj	\
+	3D.vcproj	\
+	bzflag.vcproj	\
+	bzadmin.vcproj	\
+	bzfs.vcproj	\
+	common.vcproj	\
+	config.h	\
+	date.vcproj	\
+	game.vcproj	\
+	geometry.vcproj	\
+	installer.vcproj	\
+	makehtml.vcproj	\
+	man2html.vcproj	\
+	mediafile.vcproj	\
+	net.vcproj	\
+	obstacle.vcproj	\
+	ogl.vcproj	\
+	platform.vcproj	\
+	regex.vcproj	\
+	scene.vcproj	\
+	zlib.vcproj
 
 MAINTAINERCLEANFILES = \
-	aclocal.m4 \
-	configure \
-	bzflag.info \
-	bzflag.spec \
-	INSTALL \
-	Makefile.in \
-	m4/libtool.m4 \
-	m4/ltoptions.m4 \
-	m4/ltsugar.m4 \
-	m4/ltversion.m4 \
-	m4/lt~obsolete.m4
-# delete files from m4 subdirectory here to prevent dependency problems
-
-.PHONY: package debian-svn debian-release
-
-package:
-	cd package && $(MAKE) targets
-
-debian-svn: dist
-	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
-	(cd $(distdir) && debian/buildsnap svn)
-
-debian-release: debian/changelog dist
-	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
-	cp debian/changelog $(distdir)/debian/
-	(cd $(distdir) && debian/buildsnap release)
-
+	Makefile.in
