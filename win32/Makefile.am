@@ -1,4 +1,4 @@
-SUBDIRS = VC9
+SUBDIRS = build
 
 EXTRA_DIST =	\
 	bzflag.ico	\
