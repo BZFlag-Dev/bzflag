@@ -981,14 +981,35 @@ int			main(int argc, char** argv)
 
 #if (defined(_WIN32) || defined(WIN32))
     char exePath[MAX_PATH];
+    char dataPath[MAX_PATH];
     GetModuleFileName(NULL,exePath,MAX_PATH);
     char* last = strrchr(exePath,'\\');
     if (last)
       *last = '\0';
-    strcat(exePath,"\\data");
+
+    strcpy(dataPath,exePath);
+
+    char temp[MAX_PATH];
+    getcwd(temp,MAX_PATH);
+
+    // find the data dir
+    strcat(dataPath,"\\data");
+
+    if (chdir(dataPath) != 0)
+    {
+      strcpy(dataPath,exePath);
+
+      char* last = strrchr(dataPath,'\\');
+      if (last)
+	*last = '\0';
+
+      strcat(dataPath,"\\data");
+    }
+
+    chdir(temp);
     BzfMedia *media = PlatformFactory::getMedia();
     if (media)
-      media->setMediaDirectory(exePath);
+      media->setMediaDirectory(dataPath);
 #else
     // It's only checking existence of l10n directory
     std::string mediadir = DEFAULT_MEDIA_DIR;
