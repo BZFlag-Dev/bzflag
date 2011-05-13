@@ -27,7 +27,7 @@ DIST_SUBDIRS = \
 	misc \
 	plugins \
 	tools \
-	win32 \
+	MSVC \
 	BZFlag.xcodeproj
 
 EXTRA_DIST = \
