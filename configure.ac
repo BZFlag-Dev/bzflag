@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993-2010 Tim Riker
+dnl Copyright (c) 1993-2011 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -11,7 +11,7 @@ dnl IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 dnl WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 dnl
 
-AC_INIT([BZFlag], [2.0.17], [http://BZFlag.org/], [bzflag])
+AC_INIT([BZFlag], [2.3.0], [http://BZFlag.org/], [bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision $)
 

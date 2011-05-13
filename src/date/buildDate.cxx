@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,11 +24,12 @@
 #  define BZ_PROTO_VERSION	"0200"
 #endif
 
-// version numbers - also update:
+// version numbers - also update as needed:
 //  ChangeLog
 //  README
-//  package/win32/nsis/*.nsi
-//  package/win32/*.nsi
+//  configure.ac
+//  include/version.h
+//  package/win32/nsis/BZFlag.nsi
 //  tools/TextTool-W32/TextTool.rc
 //  win32/VC6/installer.dsp
 #ifndef BZ_MAJOR_VERSION
@@ -48,7 +49,7 @@
 #  define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
-const char *bzfcopyright = "Copyright (c) 1993-2010 Tim Riker";
+const char *bzfcopyright = "Copyright (c) 1993-2011 Tim Riker";
 
 
 //
