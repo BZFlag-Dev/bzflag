@@ -89,6 +89,7 @@
 		</Configuration>
 		<Configuration
 			Name="KRB5 Release|Win32"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			>
