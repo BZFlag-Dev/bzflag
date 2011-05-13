@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory="$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -71,7 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib libcurl.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
@@ -103,13 +103,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\*.exe ..\..\*.exe"
+				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;copy $(OutDir)\*.exe ..\..\bin_$(PlatformName)\"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory="$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -164,7 +164,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib libcurl.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
 				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
@@ -196,7 +196,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(OutDir)\*.pdb ..\..\*.pdb&#x0D;&#x0A;copy $(OutDir)\*.exe ..\..\*.exe&#x0D;&#x0A;"
+				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;copy $(OutDir)\*.exe ..\..\bin_$(PlatformName)\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
