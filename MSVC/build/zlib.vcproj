@@ -17,8 +17,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -94,8 +94,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="4"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"

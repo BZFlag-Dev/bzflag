@@ -16,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
@@ -52,8 +52,8 @@
 				EnableFunctionLevelLinking="true"
 				PrecompiledHeaderFile="$(OutDir)/bzfs.pch"
 				AssemblerListingLocation="$(OutDir)/"
-				ObjectFile="(OutDir)/"
-				ProgramDataBaseFileName="(OutDir)/"
+				ObjectFile="$(OutDir)/"
+				ProgramDataBaseFileName="$(OutDir)/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
 				CompileAs="0"
@@ -72,12 +72,12 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib libcurl.lib"
-				OutputFile="(OutDir)/bzfs.exe"
+				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="libcurl.lib"
 				IgnoreDefaultLibraryNames="LIBCMT"
-				ProgramDatabaseFile=".(OutDir)/bzfs.pdb"
+				ProgramDatabaseFile=".$(OutDir)/bzfs.pdb"
 				SubSystem="1"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -103,13 +103,13 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy (OutDir)\*.exe ..\..\*.exe"
+				CommandLine="copy $(OutDir)\*.exe ..\..\*.exe"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="./$(InputName)_$(PlatformName)_$(ConfigurationName)"
+			OutputDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="./$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			UseOfMFC="0"
