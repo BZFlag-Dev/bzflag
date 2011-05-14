@@ -16,9 +16,6 @@ THESE ARE LOWER PRIORITY
 * command line options that have -set <name> <value> equivalents should be
   reviewed and possibly eliminated
 
-* Hunters should be a separate team (not rogue).  Remove all the ugly
-  hunter-color and hunter-teamkill hacks.  Needs protocol breakage.
-
 * Send world weapon 'tilt' info over the wire for saving maps
 
 * look closely at how local and global logins / groups interact:

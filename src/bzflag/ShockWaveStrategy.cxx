@@ -44,14 +44,13 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
-	   (tmpTeam > RabbitTeam) ? RogueTeam : tmpTeam;
+           (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
   } else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;
   }
 
-  bool rabbitMode = World::getWorld()->allowRabbit();
-  const float* c = Team::getRadarColor(team, rabbitMode);
+  const float* c = Team::getRadarColor(team);
   if (RENDERER.useQuality() >= 3) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
@@ -84,8 +83,7 @@ void ShockWaveStrategy::update(float dt)
     currentTeam = team;
   }
 
-  bool rabbitMode = World::getWorld()->allowRabbit();
-  const float* c = Team::getRadarColor(currentTeam, rabbitMode);
+  const float* c = Team::getRadarColor(currentTeam);
 
   // fade old-style shockwaves
   if (RENDERER.useQuality() >= 3) {

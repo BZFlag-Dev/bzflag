@@ -44,7 +44,7 @@
 
 // Color definitions
 typedef enum {
-  // the first 7 codes line up with the TeamColor enum from global.h
+  // the first 8 codes line up with the TeamColor enum from global.h
   RogueColor		= 0,	// team (yellow)
   RedColor		= 1,	// team
   GreenColor		= 2,	// team
@@ -52,9 +52,8 @@ typedef enum {
   PurpleColor		= 4,	// team
   WhiteColor		= 5,	// observer
   GreyColor		= 6,	// rabbit
-
-  CyanColor		= 7,
-  OrangeColor		= 8,
+  OrangeColor		= 7,    // hunter
+  CyanColor		= 8,
 
   LastColor		= 8,	// last of the actual colors, the rest are modifiers
 
@@ -83,8 +82,8 @@ static const std::string ColorStrings[17] = {
   ANSI_STR_FG_MAGENTA,  // 4  Purple
   ANSI_STR_FG_WHITE,    // 5  White
   ANSI_STR_FG_BLACK,    // 6  Grey      (bright black is grey)
-  ANSI_STR_FG_CYAN,     // 7  Cyan
-  ANSI_STR_FG_ORANGE,	// 8  Orange	(nonstandard)
+  ANSI_STR_FG_ORANGE,	// 7  Orange	(nonstandard)
+  ANSI_STR_FG_CYAN,     // 8  Cyan
   ANSI_STR_RESET,       // 9  Reset
   ANSI_STR_PULSATING,   // 10 Pulsating
   ANSI_STR_UNDERLINE,   // 11 Underline

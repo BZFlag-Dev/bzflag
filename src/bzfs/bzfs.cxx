@@ -502,7 +502,7 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 void sendPlayerInfo() {
   void *buf, *bufStart = getDirectMessageBuffer();
   int i, numPlayers = 0;
-  for (i = 0; i <= int(ObserverTeam); i++)
+  for (i = 0; i < int(NumTeams); i++)
     numPlayers += team[i].team.size;
   buf = nboPackUByte(bufStart, numPlayers);
   for (i = 0; i < curMaxPlayers; ++i) {
@@ -556,11 +556,8 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
 			(char*)buf - (char*)bufStart, bufStart, HiddenPacket);
     }
   } else {
-    int i, numPlayers = 0;
-    for (i = 0; i <= int(ObserverTeam); i++)
-      numPlayers += team[i].team.size;
     int ipsPerPackage = (MaxPacketLen - 3) / (PlayerIdPLen + 7);
-    int c = 0;
+    int i, c = 0;
     buf = nboPackUByte(bufStart, 0); // will be overwritten later
     for (i = 0; i < curMaxPlayers; ++i) {
       playerData = GameKeeper::Player::getPlayerByIndex(i);
@@ -1440,14 +1437,14 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 // Team Size is wrong at some time
 static void fixTeamCount() {
   int playerIndex, teamNum;
-  for (teamNum = RogueTeam; teamNum < RabbitTeam; teamNum++)
+  for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++)
     team[teamNum].team.size = 0;
   for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (p && p->player.isPlaying()) {
       teamNum = p->player.getTeam();
       if (teamNum == RabbitTeam)
-	teamNum = RogueTeam;
+	teamNum = HunterTeam;
       team[teamNum].team.size++;
     }
   }
@@ -1498,18 +1495,24 @@ static TeamColor autoTeamSelect(TeamColor t)
   // Asking for Observer gives observer
   if (t == ObserverTeam)
     return ObserverTeam;
+
   // When replaying, joining tank can only be observer
   if (Replay::enabled())
     return ObserverTeam;
 
   // count current number of players
   int numplayers = 0, i = 0;
-  for (i = 0; i < int(ObserverTeam); i++)
-    numplayers += team[i].team.size;
+  for (i = 0; i < int(NumTeams); i++)
+    if (i != int(ObserverTeam))
+      numplayers += team[i].team.size;
 
   // if no player are available, join as Observer
   if (numplayers == maxRealPlayers)
     return ObserverTeam;
+
+  // if we're running rabbit chase, all non-observers start as hunters
+  if (clOptions->gameStyle & int(RabbitChaseGameStyle))
+    return HunterTeam;
 
   // If tank ask for rogues, and rogues are allowed, give it
   if ((t == RogueTeam)
@@ -2381,8 +2384,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 // are the two teams foes with the current game style?
 bool areFoes(TeamColor team1, TeamColor team2)
 {
-  return team1!=team2 ||
-	 (team1==RogueTeam && !(clOptions->gameStyle & int(RabbitChaseGameStyle)));
+  return team1!=team2 || (team1==RogueTeam);
 }
 
 
@@ -2398,8 +2400,8 @@ static void sendWorld(int playerIndex, uint32_t ptr)
     size = 0;
     left = 0;
   } else if (ptr + size >= worldDatabaseSize) {
-      size = worldDatabaseSize - ptr;
-      left = 0;
+    size = worldDatabaseSize - ptr;
+    left = 0;
   }
   buf = nboPackUInt(bufStart, uint32_t(left));
   buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
@@ -2741,12 +2743,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 	  killerData->score.kill();
 	}
       }
-
       buf = nboPackUByte(bufStart, 2);
       buf = nboPackUByte(buf, killerIndex);
       buf = killerData->score.pack(buf);
-    }
-    else {
+    } else {
       buf = nboPackUByte(bufStart, 1);
     }
 
@@ -2764,10 +2764,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       buf = nboPackUShort(buf, uint16_t(NoTeam));
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
       gameOver = true;
-	  if (clOptions->oneGameOnly) {
-		  done = true;
-		  exitCode = 0;
-	  }
+      if (clOptions->oneGameOnly) {
+        done = true;
+        exitCode = 0;
+      }
     }
   }
 

@@ -1114,10 +1114,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       const PlayerId pid = _player->getId();
       if (pid < 200) {
 	int color = _player->getTeam();
-	if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
-	  // hunters are orange (hack)
-	  color = OrangeColor;
-	} else if (color < 0 || color > 4) {
+        if (color < 0 || (color > 4 && color != HunterTeam)) {
 	  // non-teamed, rabbit are white (same as observer)
 	  color = WhiteColor;
 	}
@@ -1402,10 +1399,7 @@ static void printIpInfo (const Player *_player, const Address& addr,
   std::string colorStr;
   if (_player->getId() < 200) {
     int color = _player->getTeam();
-    if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
-      // hunters are orange (hack)
-      color = OrangeColor;
-    } else if (color < 0 || color > 4) {
+    if (color == RabbitTeam || color < 0 || color > LastColor) {
       // non-teamed, rabbit are white (same as observer)
       color = WhiteColor;
     }
@@ -2188,39 +2182,32 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  killerLocal->endShot(shotId, true);
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
-	  if (killerPlayer == myTank && wasRabbit) {
-	    // enemy
-	    killerLocal->changeScore(1, 0, 0);
-	  } else {
-	    if (victimPlayer->getTeam() == killerLocal->getTeam() &&
-		((killerLocal->getTeam() != RogueTeam)
-		 || (World::getWorld()->allowRabbit()))) {
-	      if (killerPlayer == myTank) {
-		hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
-		playLocalSound( SFX_KILL_TEAM );
-		if (myTank->isAutoPilot()) {
-		  char meaculpa[MessageLen];
-		  memset(meaculpa, 0, MessageLen);
-		  strncpy(meaculpa,
-			  "sorry, i'm just a silly machine",
-			  MessageLen);
-		  char *buf = messageMessage;
-		  buf = (char*)nboPackUByte(buf, victimPlayer->getId());
-		  nboPackString(buf, meaculpa, MessageLen-1);
-		  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-		}
-	      }
-	      // teammate
-	      killerLocal->changeScore(0, 1, 1);
-	    } else {
-	      // enemy
-	      killerLocal->changeScore(1, 0, 0);
+	  if ((victimPlayer->getTeam() == killerLocal->getTeam()) &&
+	      (killerLocal->getTeam() != RogueTeam) &&
+              !(killerPlayer == myTank && wasRabbit)) {
+            // teamkill
+	    if (killerPlayer == myTank) {
+	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
+	      playLocalSound(SFX_KILL_TEAM);
 	      if (myTank->isAutoPilot()) {
-		if (killerPlayer) {
-		  const ShotPath* shot = killerPlayer->getShot(int(shotId));
-		  if (shot != NULL)
-		    teachAutoPilot( shot->getFlag(), 1 );
-		}
+		char meaculpa[MessageLen];
+		memset(meaculpa, 0, MessageLen);
+		strncpy(meaculpa,
+			"sorry, i'm just a silly machine",
+			MessageLen);
+		char *buf = messageMessage;
+		buf = (char*)nboPackUByte(buf, victimPlayer->getId());
+		nboPackString(buf, meaculpa, MessageLen-1);
+		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+	      }
+	    }
+	  } else {
+	    // enemy
+	    if (myTank->isAutoPilot()) {
+	      if (killerPlayer) {
+		const ShotPath* shot = killerPlayer->getShot(int(shotId));
+		if (shot != NULL)
+		  teachAutoPilot(shot->getFlag(), 1);
 	      }
 	    }
 	  }
@@ -2234,8 +2221,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (victimPlayer)
 	    victimPlayer->changeLocalScore(1, 0, 0);
 	  myTank->setNemesis(victimPlayer);
-	}
-	else {
+	} else {
 	  if (killerPlayer)
 	    killerPlayer->changeLocalScore(0, 1, killerPlayer->getTeam() == victimPlayer->getTeam() ? 1 : 0);
 	  myTank->setNemesis(killerPlayer);
@@ -2282,10 +2268,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      playerStr += ColorStrings[UnderlineColor];
 	  }
 	  int color = killerPlayer->getTeam();
-	  if (World::getWorld()->allowRabbit() && (color == RogueTeam)) {
-	    // hunters are orange (hack)
-	    color = OrangeColor;
-	  }
 	  playerStr += ColorStrings[color];
 	  playerStr += killerPlayer->getCallSign();
 
@@ -2315,8 +2297,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       // blow up if killer has genocide flag and i'm on same team as victim
       // (and we're not rogues, unless in rabbit mode)
       if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
-	  victimPlayer->getTeam() == myTank->getTeam() &&
-	  ((myTank->getTeam() != RogueTeam) || World::getWorld()->allowRabbit()) && shotId >= 0) {
+	  (victimPlayer->getTeam() == myTank->getTeam()) &&
+	  (myTank->getTeam() != RogueTeam) && shotId >= 0) {
 	// now see if shot was fired with a GenocideFlag
 	const ShotPath* shot = killerPlayer->getShot(int(shotId));
 	if (shot && shot->getFlag() == Flags::Genocide) {
@@ -2502,7 +2484,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  player[i]->setHunted(false);
 	if (i != id && player[i] && player[i]->getTeam() != RogueTeam
 	    && player[i]->getTeam() != ObserverTeam) {
-	  player[i]->changeTeam(RogueTeam);
+	  player[i]->changeTeam(HunterTeam);
 	}
       }
 
@@ -2518,7 +2500,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 	  scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
 	} else if (myTank->getTeam() != ObserverTeam) {
-	  myTank->changeTeam(RogueTeam);
+	  myTank->changeTeam(HunterTeam);
 	  if (myTank->isPaused() || myTank->isAlive())
 	    wasRabbit = false;
 	  rabbit->setHunted(true);
@@ -2534,7 +2516,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (robots[r]->getId() == id)
 	    robots[r]->changeTeam(RabbitTeam);
 	  else
-	    robots[r]->changeTeam(RogueTeam);
+	    robots[r]->changeTeam(HunterTeam);
 	}
 #endif
       break;
@@ -2624,11 +2606,19 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUShort(msg, losses);
 	msg = nboUnpackUShort(msg, tks);
 
-	int i = lookupPlayerIndex(id);
-	if (i >= 0)
-	  player[i]->changeScore(wins - player[i]->getWins(),
-				 losses - player[i]->getLosses(),
-				 tks - player[i]->getTeamKills());
+        if (id == myTank->getId()) {
+          myTank->changeScore(wins - myTank->getWins(),
+			      losses - myTank->getLosses(),
+			      tks - myTank->getTeamKills());
+        } else {
+          int i = lookupPlayerIndex(id);
+	  if (i >= 0)
+	    player[i]->changeScore(wins - player[i]->getWins(),
+				  losses - player[i]->getLosses(),
+				  tks - player[i]->getTeamKills());
+          else
+            logDebugMessage(1,"Recieved score update for unknown player!\n");
+        }
       }
       break;
     }
@@ -2766,9 +2756,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	} else {
 	  const PlayerId pid = srcPlayer->getId();
 	  if (pid < 200) {
-	    if (World::getWorld()->allowRabbit() && srcPlayer && (srcPlayer->getTeam() == RogueTeam))
-	      colorStr += ColorStrings[OrangeColor]; // hunters are orange (hack)
-	    else if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+            if (srcPlayer && srcPlayer->getTeam() != NoTeam)
 	      colorStr += ColorStrings[srcPlayer->getTeam()];
 	    else
 	      colorStr += ColorStrings[RogueTeam];
@@ -2885,8 +2873,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  oldcolor = ColorStrings[RogueTeam];
 	else if (srcPlayer->getTeam() == ObserverTeam)
 	  oldcolor = ColorStrings[CyanColor];
-	else if (World::getWorld()->allowRabbit() && (srcPlayer->getTeam() == RogueTeam))
-	  oldcolor = ColorStrings[OrangeColor]; // hunters are orange (hack)
 	else
 	  oldcolor = ColorStrings[srcPlayer->getTeam()];
 	if (fromServer)
@@ -3450,10 +3436,6 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       addTankExplosion(explodePos);
     }
 
-    // i lose a point
-    if (reason != GotCaptured)
-      tank->changeScore(0, 1, 0);
-
     // tell server I'm dead in case it doesn't already know
     if (reason == GotShot || reason == GotRunOver ||
 	reason == GenocideEffect || reason == SelfDestruct ||
@@ -3504,11 +3486,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 	  } else {
 	    blowedUpNotice += killerPlayer->getCallSign();
 	    blowedUpNotice += " (";
-	    if (World::getWorld()->allowRabbit() && killerPlayer->getTeam() != RabbitTeam) {
-	      blowedUpNotice += "Hunter";
-	    } else {
-	      blowedUpNotice += Team::getName(killerPlayer->getTeam());
-	    }
+	    blowedUpNotice += Team::getName(killerPlayer->getTeam());
 	    blowedUpNotice += ")";
 	    if (flagType != Flags::Null) {
 	      blowedUpNotice += " with ";
@@ -3786,10 +3764,7 @@ void setTarget()
     std::string msg("Locked on ");
     msg += bestTarget->getCallSign();
     msg += " (";
-    if (World::getWorld()->allowRabbit() && bestTarget->getTeam() != RabbitTeam)
-      msg+= "Hunter";
-    else
-      msg += Team::getName(bestTarget->getTeam());
+    msg += Team::getName(bestTarget->getTeam());
     if (bestTarget->getFlag() != Flags::Null) {
       msg += ") with ";
       msg += bestTarget->getFlag()->flagName;
@@ -3811,16 +3786,11 @@ void setTarget()
     std::string msg("Looking at ");
     msg += bestTarget->getCallSign();
     msg += " (";
-    if (World::getWorld()->allowRabbit() && bestTarget->getTeam() != RabbitTeam)
-      msg+= "Hunter";
-    else
-      msg += Team::getName(bestTarget->getTeam());
+    msg += Team::getName(bestTarget->getTeam());
+    msg += ")";
     if (bestTarget->getFlag() != Flags::Null) {
-      msg += ") with ";
+      msg += " with ";
       msg += bestTarget->getFlag()->flagName;
-    }
-    else {
-      msg += ")";
     }
     hud->setAlert(1, msg.c_str(), 2.0f, 0);
     msg = ColorStrings[DefaultColor] + msg;
@@ -3880,7 +3850,8 @@ static void		setHuntTarget()
 
 
   if (bestTarget->isHunted() && myTank->getFlag() != Flags::Blindness &&
-      myTank->getFlag() != Flags::Colorblindness) {
+      myTank->getFlag() != Flags::Colorblindness &&
+			bestTarget->getFlag() != Flags::Stealth) {
     if (myTank->getTarget() == NULL) { // Don't interfere with GM lock display
       std::string msg("SPOTTED: ");
       msg += bestTarget->getCallSign();
@@ -4036,8 +4007,7 @@ static void		setRobotTarget(RobotPlayer* robot)
   for (int j = 0; j < curMaxPlayers; j++)
     if (player[j] && player[j]->getId() != robot->getId() &&
 	player[j]->isAlive() &&
-	((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit())
-	 || player[j]->getTeam() != robot->getTeam())) {
+	((robot->getTeam() == RogueTeam) || player[j]->getTeam() != robot->getTeam())) {
 
       if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())
 	continue;
@@ -4058,8 +4028,7 @@ static void		setRobotTarget(RobotPlayer* robot)
       }
     }
   if (myTank->isAlive() &&
-      ((robot->getTeam() == RogueTeam && !World::getWorld()->allowRabbit()) ||
-       myTank->getTeam() != robot->getTeam())) {
+      ((robot->getTeam() == RogueTeam) || myTank->getTeam() != robot->getTeam())) {
     const float priority = robot->getTargetPriority(myTank);
     if (priority > bestPriority) {
       bestTarget = myTank;
@@ -4328,7 +4297,6 @@ static void enteringServer(void *buf)
 		  (TeamColor)team==ObserverTeam?true:false);
     addMessage(NULL, teamMsg.c_str(), 3, true);
   }
-  bool rabbitMode = World::getWorld()->allowRabbit();
 
   // observer colors are actually cyan, make them black
   const bool observer = (myTank->getTeam() == ObserverTeam);
@@ -4337,7 +4305,7 @@ static void enteringServer(void *buf)
     static const GLfloat black[4] = {0.0f, 0.0f, 0.0f, 1.0f};
     borderColor = black;
   } else {
-    borderColor = Team::getRadarColor(myTank->getTeam(), rabbitMode);
+    borderColor = Team::getRadarColor(myTank->getTeam());
   }
   controlPanel->setControlColor(borderColor);
   radar->setControlColor(borderColor);
@@ -4885,7 +4853,7 @@ static void joinInternetGame2()
   LocalPlayer::setMyTank(myTank);
 
   if (world->allowRabbit() && myTank->getTeam() != ObserverTeam)
-    myTank->setTeam(RogueTeam);
+    myTank->setTeam(HunterTeam);
 
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),

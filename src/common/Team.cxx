@@ -21,8 +21,9 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 0.2f, 0.2f, 1.0f },   // blue
 				{ 1.0f, 0.0f, 1.0f },   // purple
 				{ 0.0f, 1.0f, 1.0f },   // observer
-				{ 1.0f, 1.0f, 1.0f }    // rabbit
-			};
+				{ 1.0f, 1.0f, 1.0f },   // rabbit
+                                { 1.0f, 0.5f, 0.0f }	// hunter orange
+                        };
 float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 0.0f },	// rogue
 				{ 1.0f, 0.15f, 0.15f }, // red
@@ -30,10 +31,9 @@ float			Team::radarColor[NumTeams][3] = {
 				{ 0.08f, 0.25, 1.0f},	// blue
 				{ 1.0f, 0.4f, 1.0f },	// purple
 				{ 0.0f, 1.0f, 1.0f },	// observer
-				{ 1.0f, 1.0f, 1.0f }    // rabbit
+				{ 1.0f, 1.0f, 1.0f },   // rabbit
+                                { 1.0f, 0.5f, 0.0f }	// hunter orange
 			};
-
-float			Team::hunterRadarColor[3] =  { 1.0f, 0.5f, 0.0f };	// hunter orange
 
 Team::Team()
 {
@@ -70,6 +70,7 @@ const std::string  Team::getImagePrefix(TeamColor team)
   case BlueTeam: return BZDB.get("blueTeamPrefix");
   case PurpleTeam: return BZDB.get("purpleTeamPrefix");
   case RabbitTeam: return BZDB.get("rabbitTeamPrefix");
+  case HunterTeam: return BZDB.get("hunterTeamPrefix");
   case ObserverTeam: return BZDB.get("observerTeamPrefix");
   default: return BZDB.get("rogueTeamPrefix");
   }
@@ -86,6 +87,7 @@ const char*		Team::getName(TeamColor team) // const
   case PurpleTeam: return "Purple Team";
   case ObserverTeam: return "Observer";
   case RabbitTeam: return "Rabbit";
+  case HunterTeam: return "Hunter";
   case NoTeam: return "No Team??";
   default: return "Invalid team";
   }
@@ -112,11 +114,8 @@ const float*		Team::getTankColor(TeamColor team) // const
   return tankColor[int(team)];
 }
 
-const float*		Team::getRadarColor(TeamColor team, bool rabbitMode) // const
+const float*		Team::getRadarColor(TeamColor team) // const
 {
-  if (rabbitMode && team == RogueTeam) {
-    return hunterRadarColor;
-  }
   if (int(team) < 0) {
     return radarColor[0];
   }
