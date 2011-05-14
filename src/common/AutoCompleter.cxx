@@ -229,6 +229,7 @@ void DefaultCompleter::setDefaults()
   registerWord("/retexture");
   registerWord("/roampos ");
   registerWord("/saveworld ");
+  registerWord("/serverdebug");
   registerWord("/serverquery");
   registerWord("/set");
   registerWord("/setgroup ");
