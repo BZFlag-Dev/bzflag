@@ -4871,7 +4871,7 @@ int main(int argc, char **argv)
 
   // parse arguments  (finalized later)
   parse(argc, argv, *clOptions);
-  setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros);
+  setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros, clOptions->timestampUTC);
 
   // no more defaults
   BZDB.setSaveDefault(false);

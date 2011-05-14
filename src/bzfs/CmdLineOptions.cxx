@@ -143,6 +143,7 @@ const char *usageString =
 "[-tkkr <percent>] "
 "[-ts [micros]] "
 "[-userdb <user permissions file>] "
+"[-utc] "
 "[-vars <filename>] "
 "[-version] "
 "[-world <filename>] "
@@ -251,6 +252,7 @@ const char *extraUsageString =
 "\t-ts [micros]: timestamp all console output, [micros] to include\n"
 "\t\tmicroseconds\n"
 "\t-userdb: file to read for user access permissions\n"
+"\t-utc: timestamp console output in UTC instead of local time, implies -ts\n"
 "\t-vars: file to read for worlds configuration variables\n"
 "\t-version: print version and exit\n"
 "\t-world: world file to load\n"
@@ -1136,7 +1138,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.teamKillerKickRatio = 0;
 	std::cerr << "disabling team killer kick ratio";
       }
-	} else if (strcmp(argv[i], "-ts") == 0) {
+    } else if (strcmp(argv[i], "-ts") == 0) {
       // timestamp output
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
@@ -1146,6 +1148,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	  i++;
 	}
       }
+    } else if (strcmp(argv[i], "-utc") == 0) {
+      // timestamp output
+      options.timestampLog = true;
+      options.timestampUTC = true;
     } else if (strcmp(argv[i], "-userdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       userDatabaseFile = argv[i];

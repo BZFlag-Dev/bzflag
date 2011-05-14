@@ -19,7 +19,7 @@
 
 #include "common.h"
 
-void setDebugTimestamp (bool enable, bool doMicros);
+void setDebugTimestamp (bool enable, bool doMicros, bool utc);
 void logDebugMessage(int level, const char* fmt, ...);
 
 class LoggingCallback
