@@ -17,6 +17,7 @@ EXTRA_DIST =				\
 	checkToken.php			\
 	doxyfile			\
 	filter.txt			\
+	flagbuffet.bzw			\
 	fountains.bzw			\
 	groups.conf			\
 	hix.bzw				\
