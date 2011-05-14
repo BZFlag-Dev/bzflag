@@ -4,6 +4,8 @@
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
 
+* Only players with POLL permission are eligible to vote - Bernt Hansen
+* Only allow a single end shot credit for holding the shield flag - Bernt Hansen
 * Do not inform hunters of stealthy prey - Ian Agar
 * All scores are controlled completely by the server - Daniel Remenak
 * "I think this is where we came in."
