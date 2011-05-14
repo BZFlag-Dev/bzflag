@@ -44,9 +44,7 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("fullscreen"), press));
   wayToBindActions.insert(std::make_pair(std::string("mousegrab"), press));
   wayToBindActions.insert(std::make_pair(std::string("iconify"), press));
-#ifdef SNAPPING
   wayToBindActions.insert(std::make_pair(std::string("screenshot"), press));
-#endif
   wayToBindActions.insert(std::make_pair(std::string("time backward"), press));
   wayToBindActions.insert(std::make_pair(std::string("time forward"), press));
   wayToBindActions.insert(std::make_pair(std::string("toggleRadar"), press));

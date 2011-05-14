@@ -587,11 +587,6 @@ if test x$enable_robots != xno ; then
   AC_DEFINE(ROBOT, 1, [Enabling Robots])
 fi
 
-AC_ARG_ENABLE(snapping, [  --disable-snapping      disable snapping])
-if test x$enable_snapping != xno ; then
-  AC_DEFINE(SNAPPING, 1, [Enabling Snapping])
-fi
-
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])

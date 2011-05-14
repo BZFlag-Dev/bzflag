@@ -20,6 +20,9 @@
 #include <assert.h>
 #include <time.h>
 #include <string.h>
+#ifdef HAVE_PTHREADS
+#  include <pthread.h>
+#endif
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -127,6 +130,27 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
   }
 }
 
+
+static std::deque<std::string> mutexMsgs;
+
+#if defined(HAVE_PTHREADS)
+static pthread_mutex_t controlpanel_mutex = PTHREAD_MUTEX_INITIALIZER;
+#elif defined(_WIN32)
+static CRITICAL_SECTION controlpanel_critical;
+#endif
+
+#if defined(HAVE_PTHREADS)
+# define LOCK_CONTROLPANEL_MUTEX   pthread_mutex_lock(&controlpanel_mutex);
+# define UNLOCK_CONTROLPANEL_MUTEX pthread_mutex_unlock(&controlpanel_mutex);
+#elif defined(_WIN32)
+# define LOCK_CONTROLPANEL_MUTEX   EnterCriticalSection(&controlpanel_critical);
+# define UNLOCK_CONTROLPANEL_MUTEX LeaveCriticalSection(&controlpanel_critical);
+#else
+# define LOCK_CONTROLPANEL_MUTEX
+# define UNLOCK_CONTROLPANEL_MUTEX
+#endif
+
+
 //
 // ControlPanel
 //
@@ -184,6 +208,13 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
     tabs->push_back("Misc");
   }
 
+  // construct critical section for threadsafe messages
+#if defined(HAVE_PTHREADS)
+  pthread_mutex_init(&controlpanel_mutex, NULL);
+#elif defined(_WIN32)
+  InitializeCriticalSection(&controlpanel_critical);
+#endif
+
   resize(); // need resize to set up font and window dimensions
 }
 
@@ -194,6 +225,13 @@ ControlPanel::~ControlPanel()
   window.getWindow()->removeExposeCallback(exposeCallback, this);
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
   BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
+
+  // destroy critical section for threadsafe messages
+#if defined(HAVE_PTHREADS)
+  pthread_mutex_destroy(&controlpanel_mutex, NULL);
+#elif defined(_WIN32)
+  DeleteCriticalSection(&controlpanel_critical);
+#endif
 
   if (echoToConsole && echoAnsi) {
     std::cout << ColorStrings[FinalResetColor] << std::flush;
@@ -222,6 +260,11 @@ void			ControlPanel::setControlColor(const GLfloat *color)
 
 void			ControlPanel::render(SceneRenderer& _renderer)
 {
+  while (!mutexMsgs.empty()) {
+    addMessage(mutexMsgs.front());
+    mutexMsgs.pop_front();
+  }
+
   if (!BZDB.isTrue("displayConsole")) {
     // always draw the console if its fully opaque
     const float opacity = RENDERER.getPanelOpacity();
@@ -749,6 +792,13 @@ void			ControlPanel::setMessagesMode(int _messageMode)
   else if (messageMode >= MessageChat)
     unRead[messageMode] = false;
   invalidate();
+}
+
+void ControlPanel::addMutexMessage(const std::string& msg)
+{
+  LOCK_CONTROLPANEL_MUTEX
+  mutexMsgs.push_back(msg);
+  UNLOCK_CONTROLPANEL_MUTEX
 }
 
 void			ControlPanel::addMessage(const std::string& line,

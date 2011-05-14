@@ -36,9 +36,6 @@
 /* Enabling Robots */
 #define ROBOT 1
 
-/* Enabling Snapping */
-#define SNAPPING 1
-
 /* On windows, strcasecmp is really strcmp */
 #define HAVE_STRICMP 1
 

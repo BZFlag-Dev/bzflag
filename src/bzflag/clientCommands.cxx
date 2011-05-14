@@ -14,8 +14,12 @@
 #include "commands.h"
 
 /* system implementation headers */
-#include "../zlib/zconf.h"
-#include "../zlib/zlib.h"
+#ifndef _WIN32
+#  include <sys/types.h>
+#  include <dirent.h>
+#endif
+#include <string>
+#include <vector>
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -26,6 +30,7 @@
 #include "SceneRenderer.h"
 
 /* local implementation headers */
+#include "BzPNG.h"
 #include "LocalPlayer.h"
 #include "sound.h"
 #include "ComposeDefaultKey.h"
@@ -111,12 +116,10 @@ static std::string cmdViewZoom(const std::string&,
 static std::string cmdSend(const std::string&,
 			   const CommandManager::ArgList& args, bool*);
 
-#ifdef SNAPPING
 /** capture a screenshot
  */
 static std::string cmdScreenshot(const std::string&,
 				 const CommandManager::ArgList& args, bool*);
-#endif
 
 /** time
  */
@@ -184,9 +187,7 @@ const struct CommandListItem commandList[] = {
   { "destruct", &cmdDestruct,	"destruct:  self destruct" },
   { "pause",	&cmdPause,	"pause:  pause/resume" },
   { "send",	&cmdSend,	"send {all|team|nemesis|recipient|admin}:  start composing a message" },
-#ifdef SNAPPING
   { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
-#endif
   { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
   { "roam",	&cmdRoam,	"roam {zoom|cycle} <args>:  roam around" },
   { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
@@ -660,169 +661,155 @@ static std::string cmdSend(const std::string&,
   return std::string();
 }
 
-#ifdef SNAPPING
-static std::string cmdScreenshot(const std::string&,
-				 const CommandManager::ArgList& args, bool*)
+
+struct ScreenshotData
 {
-  int snap = atoi(BZDB.get(std::string("lastScreenshot")).c_str());
+  std::string renderer;
+  unsigned char* pixels;
+  int xsize;
+  int ysize;
+  int channels;
+};
+
+#ifdef _WIN32
+static DWORD WINAPI writeScreenshot(void* data)
+#else
+static void* writeScreenshot(void* data)
+#endif
+{
+  ScreenshotData* ssdata = (ScreenshotData*)data;
+
+  const std::string dirname = getScreenShotDirName();
+  const std::string prefix  = "bzfi";
+  const std::string ext     = ".png";
+
+  // scan the directory and start numbering with the filename
+  // that follows the existing filename with the highest snap number
+  int snap = 0;
+
+#ifdef _WIN32
+  const std::string pattern = dirname + prefix + "*" + ext;
+  WIN32_FIND_DATA findData;
+  HANDLE h = FindFirstFile(pattern.c_str(), &findData);
+  if (h != INVALID_HANDLE_VALUE) {
+    std::string file;
+    while (FindNextFile(h, &findData)) {
+      file = findData.cFileName;
+      const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
+      if (snap < number) {
+        snap = number;
+      }
+    }
+  }
+#else
+  const std::string pattern = prefix + "*" + ext;
+  DIR* directory = opendir(dirname.c_str());
+  if (directory) {
+    struct dirent* contents;
+    std::string file;
+    while ((contents = readdir(directory))) {
+      file = contents->d_name;
+      if (glob_match(pattern, file)) {
+        const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
+        if (snap < number) {
+          snap = number;
+        }
+      }
+    }
+    closedir(directory);
+  }
+#endif // _WIN32
+
   snap++;
+  std::string filename = dirname + prefix + TextUtils::format("%04d", snap) + ext;
 
-  if (args.size() != 0)
-    return "usage: screenshot";
-
-  std::string filename = getScreenShotDirName();
-  filename += TextUtils::format("bzfi%04d.png", snap);
-
-  BZDB.setInt(std::string("lastScreenshot"),snap);
-
-  std::ostream* f = FILEMGR.createDataOutStream (filename.c_str(), true, true);
+  std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
   if (f != NULL) {
-    int w = mainWindow->getWidth(), h = mainWindow->getHeight();
-    const unsigned long blength = h * w * 3 + h;    //size of b[] and br[]
-    unsigned char* b = new unsigned char[blength];  //screen of pixels + column for filter type required by PNG - filtered data
 
-    // pause to prevent dt from accumulating until done screenshotting
-    LocalPlayer *myTank = LocalPlayer::getMyTank();
-    bool temp_paused = false;
-    if (myTank && !myTank->isPaused()) {
-      myTank->setPause(true);
-      temp_paused = true;
-    }
+    const std::string& renderer = ssdata->renderer;
+    unsigned char* pixels       = ssdata->pixels;
+    const int xsize             = ssdata->xsize;
+    const int ysize             = ssdata->ysize;
+    const int channels          = ssdata->channels;
 
-    //Prepare gamma table
-    const bool gammaAdjust = BZDB.isSet("gamma");
-    unsigned char gammaTable[256];
-    if (gammaAdjust) {
-      float gamma = (float) atof(BZDB.get("gamma").c_str());
-      for (int i = 0; i < 256; i++) {
-	float lum = ((float) i) / 256.0f;
-	float lumadj = pow(lum, 1.0f / gamma);
-	gammaTable[i] = (unsigned char) (lumadj * 256);
+    // Gamma-correction is preapplied by BZFlag's gamma table
+    // This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
+    if (BZDB.isSet("gamma")) {
+      const float gamma = BZDB.eval("gamma");
+      if (gamma != 1.0f) {
+        unsigned char gammaTable[256];
+        for (int i = 0; i < 256; i++) {
+          const float lum    = float(i) / 256.0f;
+          const float lumadj = pow(lum, 1.0f / gamma);
+          gammaTable[i] = (unsigned char) (lumadj * 256);
+        }
+        const int pixelCount = (xsize * ysize * channels);
+        for (int i = 0; i < pixelCount; i++) {
+          pixels[i] = gammaTable[pixels[i]];
+        }
       }
     }
 
-    /* Write a PNG stream.
-       FIXME: Note that there are several issues with this code, altho it produces perfectly fine PNGs.
-       1. We do no filtering.  Sub filters increase screenshot size, other filters would require a lot of effort to implement.
-       2. Gamma-correction is preapplied by BZFlag's gamma table.  This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
-       3. Timestamp (tIME) chunk is not added to the file, but would be a good idea.
-    */
-    int temp = 0; //temporary values for binary file writing
-    char tempByte = 0;
-    int crc = 0;  //used for running CRC values
+    const std::string versionStr = std::string("BZFlag") + getAppVersion();
+    std::vector<BzPNG::Chunk> chunks;
+    chunks.push_back(BzPNG::Chunk("tEXt", "Software", versionStr));
+    chunks.push_back(BzPNG::Chunk("tEXt", "GL Renderer", renderer));
 
-    // Write PNG headers
-    (*f) << "\211PNG\r\n\032\n";
-#define PNGTAG(t_) ((((int)t_[0]) << 24) | \
-		   (((int)t_[1]) << 16) | \
-		   (((int)t_[2]) <<  8) | \
-		   (int)t_[3])
-
-    // IHDR chunk
-    temp = htonl((int) 13);       //(length) IHDR is always 13 bytes long
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IHDR")); //(tag) IHDR
-    f->write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(w);	      //(data) Image width
-    f->write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    temp = htonl(h);	      //(data) Image height
-    f->write((char*) &temp, 4);
-    crc = crc32(crc, (unsigned char*) &temp, 4);
-    tempByte = 8;		 //(data) Image bitdepth (8 bits/sample = 24 bits/pixel)
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 2;		 //(data) Color type: RGB = 2
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    tempByte = 0;
-    int i;
-    for (i = 0; i < 3; i++) { //(data) Last three tags are compression (only 0 allowed), filtering (only 0 allowed), and interlacing (we don't use it, so it's 0)
-      f->write(&tempByte, 1);
-      crc = crc32(crc, (unsigned char*) &tempByte, 1);
+    char buf[128];
+    if (BzPNG::save(filename, chunks, xsize, ysize, channels, pixels)) {
+      snprintf(buf, sizeof(buf), "%s: %dx%d", filename.c_str(), xsize, ysize);
+    } else {
+      snprintf(buf, sizeof(buf), "%s: failed to save", filename.c_str());
     }
-    crc = htonl(crc);
-    f->write((char*) &crc, 4);    //(crc) write crc
-
-    // IDAT chunk
-    for (i = h - 1; i >= 0; i--) {
-      const unsigned long line = (h - (i + 1)) * (w * 3 + 1); //beginning of this line
-      b[line] = 0;  //filter type byte at the beginning of each scanline (0 = no filter, 1 = sub filter)
-      glReadPixels(0, i, w, 1, GL_RGB, GL_UNSIGNED_BYTE, b + line + 1); //capture line
-      // apply gamma correction if necessary
-      if (gammaAdjust) {
-	unsigned char *ptr = b + line + 1;
-	for (int j = 1; j < w * 3 + 1; j++) {
-	  *ptr = gammaTable[*ptr];
-	  ptr++;
-	}
-      }
-    }
-
-    // let the user know we're paused while saving the file
-    if (temp_paused) {
-      drawFrame(0.0f);
-    }
-
-    unsigned long zlength = blength + 15;	    //length of bz[], will be changed by zlib to the length of the compressed string contained therein
-    unsigned char* bz = new unsigned char[zlength]; //just like b, but compressed; might get bigger, so give it room
-    // compress b into bz
-    compress2(bz, &zlength, b, blength, 5);
-
-    temp = htonl(zlength);			  //(length) IDAT length after compression
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IDAT"));		   //(tag) IDAT
-    f->write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    f->write(reinterpret_cast<char*>(bz), zlength);  //(data) This line of pixels, compressed
-    crc = htonl(crc32(crc, bz, zlength));
-    f->write((char*) &crc, 4);		       //(crc) write crc
-
-    // tEXt chunk containing bzflag build/version
-    temp = htonl((int) 9 + strlen(getAppVersion()));//(length) tEXt is 9 + strlen(getAppVersion())
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("tEXt"));		   //(tag) tEXt
-    f->write((char*) &temp, 4);
-    crc = crc32(crc = 0, (unsigned char*) &temp, 4);
-    strcpy(reinterpret_cast<char*>(b), "Software"); //(data) Keyword
-    f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-    crc = crc32(crc, b, strlen(reinterpret_cast<const char*>(b)));
-    tempByte = 0;				    //(data) Null character separator
-    f->write(&tempByte, 1);
-    crc = crc32(crc, (unsigned char*) &tempByte, 1);
-    strcpy((char*) b, getAppVersion());	     //(data) Text contents (build/version)
-    f->write(reinterpret_cast<char*>(b), strlen(reinterpret_cast<const char*>(b)));
-    crc = htonl(crc32(crc, b, strlen(reinterpret_cast<const char*>(b))));
-    f->write((char*) &crc, 4);		       //(crc) write crc
-
-    // IEND chunk
-    temp = htonl((int) 0);	//(length) IEND is always 0 bytes long
-    f->write((char*) &temp, 4);
-    temp = htonl(PNGTAG("IEND")); //(tag) IEND
-    f->write((char*) &temp, 4);
-    crc = htonl(crc32(crc = 0, (unsigned char*) &temp, 4));
-    //(data) IEND has no data field
-    f->write((char*) &crc, 4);     //(crc) write crc
-    delete [] bz;
-    delete [] b;
-    delete f;
-    char notify[128];
-    snprintf(notify, 128, "%s: %dx%d", filename.c_str(), w, h);
-    controlPanel->addMessage(notify);
-
-    // unpause to prevent dt from accumulating until done screenshotting
-    if (temp_paused) {
-      myTank->setPause(false);
-    }
-    // update the display regardless of pausing
-    drawFrame(0.0f);
-
+    ControlPanel::addMutexMessage(buf);
   }
+
+  delete ssdata->pixels;
+  delete ssdata;
+
+  return NULL;
+}
+
+static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 0) {
+    return "usage: screenshot";
+  }
+
+  ScreenshotData* ssdata = new ScreenshotData;
+  ssdata->renderer += (const char*)(glGetString(GL_VENDOR));
+  ssdata->renderer += ": ";
+  ssdata->renderer += (const char*)(glGetString(GL_RENDERER));
+  ssdata->renderer += " (OpenGL ";
+  ssdata->renderer += (const char*)(glGetString(GL_VERSION));
+  ssdata->renderer += ")";
+  int w = mainWindow->getWidth();
+  int h = mainWindow->getHeight();
+  ssdata->xsize = w;
+  ssdata->ysize = h;
+  ssdata->channels = 3; // GL_RGB
+  ssdata->pixels = new unsigned char[h * w * 3];
+  glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->pixels);
+
+#if defined(HAVE_PTHREADS)
+  pthread_t thread;
+  pthread_create(&thread, NULL, writeScreenshot, (void *) ssdata);
+#elif defined(_WIN32)
+  CreateThread(
+            NULL, // Security attributes
+            0, // Stack size (0 -> default)
+            writeScreenshot,
+            ssdata,
+            0, // creation flags (0 -> run immediately)
+            NULL); // thread id return value (NULL -> don't care)
+#else
+  // no threads?  sucks to be you, but we'll still write the screenshot
+  writeScreenshot(&ssdata);
+#endif
+
   return std::string();
 }
-#endif
 
 static std::string cmdTime(const std::string&,
 			   const CommandManager::ArgList& args, bool*)
