@@ -2894,10 +2894,10 @@ bool PollCommand::operator() (const char	 *message,
   // get available voter count
   unsigned short int available = 0;
   for (int i = 0; i < curMaxPlayers; i++) {
-    // any registered/known users on the server (including observers)
+    // any registered and verified users with poll permission (including observers)
     // are eligible to vote
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->accessInfo.exists()) {
+    if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
       available++;
     }
   }
