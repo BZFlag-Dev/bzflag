@@ -452,6 +452,7 @@ static char **parseConfFile( const char *file, int &ac)
 
     if (!confStrm.good()) {
       errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
+      exit(1);
     }
 
     confStrm.seekg(0, std::ifstream::beg);
@@ -475,6 +476,7 @@ static char **parseConfFile( const char *file, int &ac)
    }
   } else {
     errorHandler.fatalError(std::string("could not find bzflag configuration file"), 0);
+    exit(1);
   }
 
   const char **av = new const char*[tokens.size()+1];
