@@ -160,22 +160,22 @@ static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
-// loging to the API
-class APILogingCallback : public LogingCallback
+// logging to the API
+class APILoggingCallback : public LoggingCallback
 {
 public:
 	void log ( int level, const char* message )
 	{
-		bz_LogingEventData data;
+		bz_LoggingEventData data;
 		data.level = level;
 		data.message = message;
 		data.time = TimeKeeper::getCurrent().getSeconds();
 
-		worldEventManager.callEvents(bz_eLogingEvent,&data);
+		worldEventManager.callEvents(bz_eLoggingEvent,&data);
 	}
 };
 
-APILogingCallback apiLogingCallback;
+APILoggingCallback apiLoggingCallback;
 
 class BZFSNetLogCB : NetworkDataLogCallback
 {
@@ -4794,7 +4794,7 @@ int main(int argc, char **argv)
   int nfound;
   votingarbiter = (VotingArbiter *)NULL;
 
-  logingCallback = &apiLogingCallback;
+  loggingCallback = &apiLoggingCallback;
 
   netLogCB.Init();
 #ifndef _WIN32

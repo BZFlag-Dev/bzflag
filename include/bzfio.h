@@ -22,15 +22,15 @@
 void setDebugTimestamp (bool enable, bool doMicros);
 void logDebugMessage(int level, const char* fmt, ...);
 
-class LogingCallback
+class LoggingCallback
 {
 public:
-	virtual ~LogingCallback(){};
+	virtual ~LoggingCallback(){};
 
 	virtual void log ( int level, const char* message ) = 0;
 };
 
-extern LogingCallback	*logingCallback;
+extern LoggingCallback	*loggingCallback;
 
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
 #if defined(NULL)
