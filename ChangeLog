@@ -4,6 +4,7 @@
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
 
+* screenshots now compressed asynchronously - Daniel Remenak, randomparticle
 * Add /serverdebug command and plugin API - Bernt Hansen
 * Add bzfs -utc command line option to log timestampes universal time - Bernt Hansen
 * Fix buffer overrun when using -ts micros on Linux - trepan, Bernt Hansen
