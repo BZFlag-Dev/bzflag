@@ -5,6 +5,7 @@ BZFlag 2.3.0  "Born Again"
 ----------------------------------------
 
 
+* Add bzfs -utc command line option to log timestampes universal time - Bernt Hansen
 * Fix buffer overrun when using -ts micros on Linux - trepan, Bernt Hansen
 * Only players with POLL permission are eligible to vote - Bernt Hansen
 * Only allow a single end shot credit for holding the shield flag - Bernt Hansen
