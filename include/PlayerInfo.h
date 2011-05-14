@@ -127,6 +127,7 @@ public:
   unsigned short int trackerID();
   static TimeKeeper now;
   int endShotCredit;
+  int endShotShieldCredit;
 
   PlayerType getType( void ) {return type;}
 

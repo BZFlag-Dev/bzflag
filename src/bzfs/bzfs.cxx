@@ -1775,6 +1775,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   playerData->player.setTeam((TeamColor)convertTeam((bz_eTeamType)autoTeamData.team));
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
+  playerData->player.endShotShieldCredit = 0;	// endShotCredit for holding the shield flag (0 or 1)
 
   // count current number of players and players+observers
   int numplayers = 0;
@@ -2973,7 +2974,14 @@ static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3
   if (flagIndex < 0) {
     return;
   }
-  dropFlag(*FlagInfo::get(flagIndex), dropPos);
+
+  FlagInfo &flag = *FlagInfo::get(flagIndex);
+  if (flag.flag.type == Flags::Shield) {
+    playerData.player.endShotCredit -= playerData.player.endShotShieldCredit;
+    playerData.player.endShotShieldCredit = 0;
+  }
+
+  dropFlag(flag, dropPos);
 
   bz_FlagDroppedEventData data;
   data.playerID = playerData.getIndex();
@@ -3899,10 +3907,10 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       if (pFlag >= 0) {
 	FlagInfo &flag = *FlagInfo::get(pFlag);
 	if (flag.flag.type == Flags::Shield) {
-	  //sendMessage(ServerPlayer, AdminPlayers, "has Shield");
-	  playerData->player.endShotCredit--;
+	  playerData->player.endShotShieldCredit = 1;
 	}
       }
+
       const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
       if ((BZDB.isTrue(StateDatabase::BZDB_ENDSHOTDETECTION) && endShotLimit > 0) &&
 	 (playerData->player.endShotCredit > endShotLimit)) {  // default endShotLimit 2
