@@ -28,9 +28,10 @@
 #include "DirectoryNames.h"
 #include "version.h"
 #include "SceneRenderer.h"
+#include "bzglob.h"
+#include "BzPNG.h"
 
 /* local implementation headers */
-#include "BzPNG.h"
 #include "LocalPlayer.h"
 #include "sound.h"
 #include "ComposeDefaultKey.h"
