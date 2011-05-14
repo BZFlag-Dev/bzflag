@@ -37,7 +37,7 @@ FileManager* Singleton<FileManager>::_instance = (FileManager*)0;
 
 FileManager::FileManager()
 {
-  // do nothing
+  dataPath = "data";
 }
 
 FileManager::~FileManager()
@@ -64,9 +64,10 @@ std::istream*			FileManager::createDataInStream(
       delete stream;
     }
 
+    
     // try data directory
     {
-      std::ifstream* stream = new std::ifstream(catPath("data", filename).c_str(), mode);
+      std::ifstream* stream = new std::ifstream(catPath(dataPath, filename).c_str(), mode);
       if (stream && *stream)
 	return stream;
       delete stream;

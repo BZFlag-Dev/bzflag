@@ -1010,6 +1010,8 @@ int			main(int argc, char** argv)
     BzfMedia *media = PlatformFactory::getMedia();
     if (media)
       media->setMediaDirectory(dataPath);
+
+    FileManager::instance().setDataPath(std::string(dataPath));
 #else
     // It's only checking existence of l10n directory
     std::string mediadir = DEFAULT_MEDIA_DIR;

@@ -57,6 +57,8 @@ public:
   OSFile& operator = (const OSFile &r);
 
   OSFile(const std::string &szName);
+  OSFile(const char *szName);
+
   OSFile(const std::string &szName, const char *szMode);
   ~OSFile();
 

@@ -59,11 +59,13 @@ public:
   */
   std::string		catPath(const std::string& a, const std::string& b) const;
 
+  void setDataPath ( const std::string &s ) {dataPath = s;}
 protected:
   friend class Singleton<FileManager>;
   FileManager();
   ~FileManager();
 
+  std::string dataPath;
 };
 
 #endif

@@ -143,6 +143,12 @@ OSFile::OSFile(const std::string &name)
   stdName(name);
 }
 
+OSFile::OSFile(const char* name)
+{
+	info = new OSFileInfo;
+	stdName(std::string(name));
+}
+
 OSFile::OSFile(const OSFile &r)
 {
   info = new OSFileInfo(*r.info);
