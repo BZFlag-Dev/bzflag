@@ -38,10 +38,10 @@ bool BZWError::fatalError(std::string errorMsg, int line)
     errorMsg = "unspecified error";
 
   // report error
-  std::cout << location << ": error";
+  std::cerr << location << ": error";
   if (line != 0)
-    std::cout << " (line " << line << ")" ;
-  std::cout << ": " << errorMsg << std::endl << std::flush;
+    std::cerr << " (line " << line << ")" ;
+  std::cerr << ": " << errorMsg << std::endl << std::flush;
   return true;
 }
 
@@ -57,10 +57,10 @@ bool BZWError::warning(std::string warningMsg, int line)
     warningMsg = "unspecified warning";
 
   // report warning
-  std::cout << location << ": warning";
+  std::cerr << location << ": warning";
   if (line != 0)
-    std::cout << " (line " << line << ")" ;
-  std::cout << ": " << warningMsg << std::endl << std::flush;
+    std::cerr << " (line " << line << ")" ;
+  std::cerr << ": " << warningMsg << std::endl << std::flush;
 
   return true;
 }
