@@ -55,6 +55,7 @@ private:
   int numObservers;
   bool serverActive;
   bool ignoreObservers;
+  double lastTime;
 };
 
 ServerControl serverControlHandler;
@@ -200,10 +201,14 @@ void ServerControl::process( bz_EventData *eventData )
 {
   ostringstream msg;
   bz_PlayerJoinPartEventData *data = (bz_PlayerJoinPartEventData *) eventData;
+  double now;
 
   if (eventData) {
     switch (eventData->eventType) {
       case bz_eTickEvent:
+	now = bz_getCurrentTime();
+	if ((now - lastTime) < 3.0f) return;
+	lastTime = now;
 	checkShutdown();
 	if (banFilename != "" )
 	  checkBanChanges();
