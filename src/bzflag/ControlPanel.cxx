@@ -228,7 +228,7 @@ ControlPanel::~ControlPanel()
 
   // destroy critical section for threadsafe messages
 #if defined(HAVE_PTHREADS)
-  pthread_mutex_destroy(&controlpanel_mutex, NULL);
+  pthread_mutex_destroy(&controlpanel_mutex);
 #elif defined(_WIN32)
   DeleteCriticalSection(&controlpanel_critical);
 #endif
