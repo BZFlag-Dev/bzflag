@@ -104,8 +104,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(CoanfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
@@ -270,8 +270,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(CoanfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(PlatformName)\$(CoanfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
