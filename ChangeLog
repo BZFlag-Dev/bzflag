@@ -3,6 +3,10 @@
 
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
+* serverControl plugin- Add option to ignore observers for server shutdowns
+* serverControl plugin- Only report ban file access errors once
+* serverControl plugin- Limit filesystem checks to once every 3 seconds
+* LogDetail plugin-Add SERVER-MAPNAME with the public server description
 * The bzfs -time command line option allows end time - Scott Wichser, Ian Agar
 * screenshots now compressed asynchronously - Daniel Remenak, randomparticle
 * Add /serverdebug command and plugin API - Bernt Hansen
