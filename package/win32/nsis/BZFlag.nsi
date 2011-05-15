@@ -144,7 +144,7 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\data\l10n\*.po
   File ..\..\..\data\l10n\*.txt
 
-  SetOutPath $INSTDIR\data\
+  SetOutPath $INSTDIR\data
   File ..\..\..\data\*.png
 
   ; make the sounds dir
@@ -205,7 +205,7 @@ Section "BZAdmin" BZAdmin
   File ..\..\..\bin_${PLATFORM}\bzadmin.exe
 
   ; Add some DLL files
-  ;SetOutPath $INSTDIR\
+  ;SetOutPath $INSTDIR
   File ..\..\..\bin_${PLATFORM}\pdcurses.dll
 
   ; Add to the doc dir
@@ -235,11 +235,11 @@ SectionGroup "BZFlag Server" BZFlagServer
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
-    File ..\..\..\misc\maps\hix.bzw
-    File ..\..\..\misc\samples\bzfs.conf
-    File ..\..\..\misc\samples\bzfs_conf.html
-    File ..\..\..\misc\samples\groups.conf
-    File ..\..\..\misc\samples\vars.txt
+    File ..\..\..\misc\hix.bzw
+    File ..\..\..\misc\bzfs.conf
+    File ..\..\..\misc\bzfs_conf.html
+    File ..\..\..\misc\groups.conf
+    File ..\..\..\misc\vars.txt
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
@@ -275,7 +275,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Add the API library and header
     SetOutPath $INSTDIR\API
     File ..\..\..\bin_${PLATFORM}\bzfs.lib
-    File ..\..\..\plugins\plugin_utils\Release\plugin_utils.lib
+    File ..\..\..\bin_${PLATFORM}\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
     File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
