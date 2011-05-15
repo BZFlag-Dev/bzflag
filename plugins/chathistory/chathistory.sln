@@ -1,21 +1,35 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chathistory", "chathistory.vcproj", "{B629554E-D0E9-4400-909B-7130F116E15D}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		release_modern_p3|Win32 = release_modern_p3|Win32
+		release_modern_p3|x64 = release_modern_p3|x64
+		release_modern|Win32 = release_modern|Win32
+		release_modern|x64 = release_modern|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug.ActiveCfg = Debug|Win32
-		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug.Build.0 = Debug|Win32
-		{B629554E-D0E9-4400-909B-7130F116E15D}.Release.ActiveCfg = Release|Win32
-		{B629554E-D0E9-4400-909B-7130F116E15D}.Release.Build.0 = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug|Win32.Build.0 = Debug|Win32
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug|x64.ActiveCfg = Debug|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Debug|x64.Build.0 = Debug|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern_p3|Win32.ActiveCfg = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern_p3|x64.ActiveCfg = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern_p3|x64.Build.0 = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern|Win32.ActiveCfg = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern|x64.ActiveCfg = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.release_modern|x64.Build.0 = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Release|Win32.ActiveCfg = Release|Win32
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Release|Win32.Build.0 = Release|Win32
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Release|x64.ActiveCfg = Release|x64
+		{B629554E-D0E9-4400-909B-7130F116E15D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
