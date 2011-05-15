@@ -5,8 +5,17 @@
 ;--------------------------------
 ;BZFlag Version Variables
 
-  !define VER_MAJOR 2.99
-  !define VER_MINOR .60.20100530
+  !define VER_MAJOR 2.3
+  !define VER_MINOR .0.20110515
+  
+  !define PLATFORM Win32
+; !define PLATFORM x64
+
+  !define RUNTIME_PLATFORM x86
+; !define RUNTIME_PLATFORM x64
+
+  !define BITNESS 32Bit
+; !define BITNESS 64Bit
 
 ;--------------------------------
 ;Compression options
@@ -28,11 +37,11 @@
 ;Configuration
 
   ;General
-  Name "BZFlag ${VER_MAJOR}${VER_MINOR}"
-  OutFile "..\..\..\dist\bzflag-${VER_MAJOR}${VER_MINOR}.exe"
+  Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
+  OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}"
+  InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
 
   ; Make it look pretty in XP
   XPStyle on
@@ -67,7 +76,7 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nClick Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nClick Next to continue."
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
@@ -76,7 +85,7 @@
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag${VER_MAJOR}${VER_MINOR}" 
+  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}" 
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -117,7 +126,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bzflag.exe
+  File ..\..\..\bin_${PLATFORM}\bzflag.exe
   
   ; make the data dir
   SetOutPath $INSTDIR\data
@@ -125,7 +134,9 @@ Section "!BZFlag (Required)" BZFlag
 
   ; make the fonts dir
   SetOutPath $INSTDIR\data\fonts
-  File ..\..\..\data\fonts\*.ttf
+  File ..\..\..\data\fonts\*.png
+  File ..\..\..\data\fonts\*.fmt
+  File ..\..\..\data\fonts\*.License
   File ..\..\..\data\fonts\README
 
   ; make the l10n dir
@@ -133,60 +144,39 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\data\l10n\*.po
   File ..\..\..\data\l10n\*.txt
 
-  SetOutPath $INSTDIR\data\skins\blue
-  File ..\..\..\data\skins\blue\*.png
-
-  SetOutPath $INSTDIR\data\skins\red
-  File ..\..\..\data\skins\red\*.png
-
-  SetOutPath $INSTDIR\data\skins\green
-  File ..\..\..\data\skins\green\*.png
-
-  SetOutPath $INSTDIR\data\skins\purple
-  File ..\..\..\data\skins\purple\*.png
-
-  SetOutPath $INSTDIR\data\skins\hunter
-  File ..\..\..\data\skins\hunter\*.png
-
-  SetOutPath $INSTDIR\data\skins\observer
-  File ..\..\..\data\skins\observer\*.png
-
-  SetOutPath $INSTDIR\data\skins\rabbit
-  File ..\..\..\data\skins\rabbit\*.png
-
-  SetOutPath $INSTDIR\data\skins\rogue
-  File ..\..\..\data\skins\rogue\*.png
+  SetOutPath $INSTDIR\data\
+  File ..\..\..\data\*.png
 
   ; make the sounds dir
-  SetOutPath $INSTDIR\data\sounds
-  File ..\..\..\data\sounds\*.wav
+  SetOutPath $INSTDIR\data
+  File ..\..\..\data\*.wav
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
   File ..\ReadMe.win32.html
   File ..\..\..\COPYING
-  File ..\..\..\man\bzflag.html
+  File ..\..\..\bin_${PLATFORM}\docs\bzflag.html
 
   ; Add some DLL files
   SetOutPath $INSTDIR
-  File ..\..\..\libcurl.dll
+  File ..\..\..\bin_${PLATFORM}\libcurl.dll
 
   ; This requires the Visual C++ 2008 SP1 runtime file to be located in
   ; the same directory as the NSIS script
   ; http://www.microsoft.com/downloads/details.aspx?familyid=2051A0C1-C9B5-4B0A-A8F5-770A549FD78C
   SetOutPath $TEMP
-  DetailPrint "Installing Visual C++ 2008 SP1 runtime"         
-  File vcredist_x86.exe  
-  ExecWait "$TEMP\vcredist_x86.exe /q"         
+  DetailPrint "Installing Visual C++ 2008 SP1 ${BITNESS} runtime"         
+  File vcredist_${RUNTIME_PLATFORM}.exe  
+  ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /q"         
   DetailPrint "Cleaning up"         
-  Delete $TEMP\vcredist_x86.exe
+  Delete $TEMP\vcredist_${RUNTIME_PLATFORM}.exe
 
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
 
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "DisplayName" "BZFlag ${VER_MAJOR}${VER_MINOR} (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}" "DisplayName" "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS} (remove only)"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -212,15 +202,15 @@ Section "BZAdmin" BZAdmin
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bzadmin.exe
+  File ..\..\..\bin_${PLATFORM}\bzadmin.exe
 
   ; Add some DLL files
   ;SetOutPath $INSTDIR\
-  ;File ..\..\..\curses.dll
+  File ..\..\..\bin_${PLATFORM}\pdcurses.dll
 
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\..\..\man\bzadmin.html
+  File ..\..\..\bin_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
@@ -241,7 +231,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Set output path to the installation directory.
     SetOutPath $INSTDIR
     ; Put file there
-    File ..\..\..\bzfs.exe
+    File ..\..\..\bin_${PLATFORM}\bzfs.exe
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
@@ -253,8 +243,8 @@ SectionGroup "BZFlag Server" BZFlagServer
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
-    File ..\..\..\man\bzfs.html
-    File ..\..\..\man\bzw.html
+    File ..\..\..\bin_${PLATFORM}\docs\bzfs.html
+    File ..\..\..\bin_${PLATFORM}\docs\bzw.html
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
@@ -278,13 +268,13 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugins" BZFlagServer_Plugins
     ; Include the plugins
     SetOutPath $INSTDIR
-    File ..\..\..\plugins\*.dll
+    File ..\..\..\bin_${PLATFORM}\plugins\*.dll
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\bzfs.lib
+    File ..\..\..\bin_${PLATFORM}\bzfs.lib
     File ..\..\..\plugins\plugin_utils\Release\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
     File ..\..\..\plugins\plugin_utils\*.h
@@ -294,13 +284,13 @@ SectionGroupEnd
 Section "Quick Launch Shortcuts" QuickLaunch
   ;shortcut in the "quick launch bar"
   SetOutPath $INSTDIR
-  CreateShortCut "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  CreateShortCut "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
 SectionEnd
 
 Section "Desktop Icon" Desktop
   ;shortcut on the "desktop"
   SetOutPath $INSTDIR
-  CreateShortCut "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  CreateShortCut "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
 SectionEnd
 
 ;--------------------------------
@@ -333,8 +323,8 @@ SectionEnd
 
 Section "Uninstall"
   ;remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}"
-  DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
+  DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
   DeleteRegKey HKCU "Software\BZFlag"
 
   ; remove files
@@ -344,14 +334,7 @@ Section "Uninstall"
   Delete $INSTDIR\data\*.*
   Delete $INSTDIR\data\fonts\*.*
   Delete $INSTDIR\data\l10n\*.*
-  Delete $INSTDIR\data\skins\blue\*.*
-  Delete $INSTDIR\data\skins\red\*.*
-  Delete $INSTDIR\data\skins\green\*.*
-  Delete $INSTDIR\data\skins\purple\*.*
-  Delete $INSTDIR\data\skins\rabbit\*.*
-  Delete $INSTDIR\data\skins\observer\*.*
-  Delete $INSTDIR\data\skins\hunter\*.*
-  Delete $INSTDIR\data\skins\rogue\*.*
+  Delete $INSTDIR\data\*.*
 
   Delete $INSTDIR\API\*.*
 
@@ -363,15 +346,6 @@ Section "Uninstall"
   RMDir "$INSTDIR\API"
   RMDir "$INSTDIR\data\l10n"
   RMDir "$INSTDIR\data\fonts"
-  RMDir "$INSTDIR\data\skins\blue"
-  RMDir "$INSTDIR\data\skins\green"
-  RMDir "$INSTDIR\data\skins\hunter"
-  RMDir "$INSTDIR\data\skins\red"
-  RMDir "$INSTDIR\data\skins\purple"
-  RMDir "$INSTDIR\data\skins\rabbit"
-  RMDir "$INSTDIR\data\skins\observer"
-  RMDir "$INSTDIR\data\skins\rogue"
-  RMDir "$INSTDIR\data\skins\"
   RMDir "$INSTDIR\data"
   RMDir "$INSTDIR\misc"
   RMDir "$INSTDIR\doc"
@@ -387,8 +361,8 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Doc"
   RMDir "$SMPROGRAMS\$MUI_TEMP"
 
-  Delete "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR}.lnk"
-  Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR}.lnk"
+  Delete "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
+  Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
   
   ;Delete empty start menu parent diretories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
