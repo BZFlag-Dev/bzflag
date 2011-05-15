@@ -129,6 +129,7 @@ extern bool	    done;
 extern bool	    gameOver;
 extern TeamInfo	team[NumTeams];
 extern int	     numFlags;
+extern TimeKeeper	gameStartTime;
 extern bool	    countdownActive;
 extern int	     countdownDelay;
 extern TimeKeeper      countdownPauseStart;

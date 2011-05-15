@@ -19,6 +19,8 @@
  */
 #include "CmdLineOptions.h"
 
+// System headers
+#include <time.h>
 
 // implementation-specific bzflag headers
 #include "version.h"
@@ -136,7 +138,7 @@ const char *usageString =
 "[-synclocation] "
 "[-t] "
 "[-tftimeout <seconds>] "
-"[-time <seconds>] "
+"[-time {<seconds>|endTime}] "
 "[-timemanual] "
 "[-tk] "
 "[-tkannounce] "
@@ -244,7 +246,7 @@ const char *extraUsageString =
 "\t-synclocation: synchronize latitude and longitude on all clients\n"
 "\t-t: allow teleporters\n"
 "\t-tftimeout: set timeout for team flag zapping (default=30)\n"
-"\t-time: set time limit on each game\n"
+"\t-time: set time limit on each game in format of either seconds or ending time in h[h]:[mm:[ss]] format\n"
 "\t-timemanual: countdown for timed games is started with /countdown\n"
 "\t-tk: player does not die when killing a teammate\n"
 "\t-tkannounce: announces team kills to the admin channel\n"
@@ -1119,13 +1121,49 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds" << std::endl;
     } else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(1, i, argc, argv[i]);
-      options.timeLimit = (float)atof(argv[i]);
+      const std::string timeStr = argv[i];
+      // If there is no colon in the time, consider it to be the time limit in seconds
+      if (timeStr.find(':') == std::string::npos) {
+        options.timeLimit = (float)atof(timeStr.c_str());
+      }
+      // Otherwise treat it as the end time
+      else {
+        std::vector<std::string> endTime = TextUtils::tokenize(timeStr, std::string(":"));
+        {
+          unsigned int sizer = endTime.size();
+          if (sizer > 3) {
+            std::cerr << "ERROR: too many arguments to -time" << std::endl;
+            usage(argv[0]);
+          }
+          while (sizer != 3) {
+            endTime.push_back("00");
+            ++sizer;
+          }
+
+          // Force the countdown to start right away
+          gameOver = false;
+          gameStartTime = TimeKeeper::getCurrent();
+          countdownActive = true;
+        }
+        time_t tnow = time(0);
+        struct tm *now = localtime(&tnow);
+        unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
+          cmdHour = atoi(endTime[0].c_str()),
+          cmdMin = atoi(endTime[1].c_str()),
+          cmdSec = atoi(endTime[2].c_str());
+        unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
+          secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
+        if (secsToday > secsTill) { //if the requested time has already past
+          options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
+        } else {
+          options.timeLimit = (float)(secsTill - secsToday);
+        }
+      }
       if (options.timeLimit <= 0.0f) {
-	// league matches are 30 min
-	options.timeLimit = 1800.0f;
+        // league matches are 30 min
+        options.timeLimit = 1800.0f;
       }
       std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
-      options.timeElapsed = options.timeLimit;
     } else if (strcmp(argv[i], "-timemanual") == 0) {
       options.timeManualStart = true;
     } else if (strcmp(argv[i], "-tk") == 0) {

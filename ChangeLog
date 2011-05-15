@@ -3,7 +3,7 @@
 
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
-
+* The bzfs -time command line option allows end time - Scott Wichser, Ian Agar
 * screenshots now compressed asynchronously - Daniel Remenak, randomparticle
 * Add /serverdebug command and plugin API - Bernt Hansen
 * Add bzfs -utc command line option to log timestampes universal time - Bernt Hansen
