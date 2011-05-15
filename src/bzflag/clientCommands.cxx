@@ -766,7 +766,7 @@ static void* writeScreenshot(void* data)
     ControlPanel::addMutexMessage(buf);
   }
 
-  delete ssdata->pixels;
+  delete[] ssdata->pixels;
   delete ssdata;
 
   return NULL;
