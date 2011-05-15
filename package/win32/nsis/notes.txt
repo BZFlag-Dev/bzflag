@@ -1,0 +1,2 @@
+The installer will want the current visual C++ redist installer to be in this folder.
+It needs at least VC 2008 SP1.
