@@ -309,6 +309,12 @@ AC_CHECK_LIB(m, sqrtf)
 AC_CHECK_LIB([socket], [socket])
 AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
 
+# see if pthreads are in libc_r (as on FreeBSD) or libpthread
+AC_CHECK_LIB([c_r], [pthread_create], LIBPTHREAD="-lc_r", 
+    [AC_CHECK_LIB([pthread], [pthread_create], LIBPTHREAD="-lpthread",
+     LIBPTHREAD="")]
+)
+
 # check for various IEEE and c99 standard math functions in libm
 AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
 AC_CHECK_LIB([m], [asinf], [AC_DEFINE([HAVE_ASINF],[1],[libm includes asinf])])
@@ -418,6 +424,26 @@ if test x$with_glew != xno ; then
   LIBS=$tmpLIBS
 fi
 AC_SUBST(GLEW_LIBS)
+
+# try out pthreads if it's enabled, disable it if we don't have it
+AC_MSG_CHECKING([for working pthreads])
+if test "x$enable_threads" != "xno" ; then
+    tmpLIBS=$LIBS
+    LIBS=$LIBPTHREAD
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <pthread.h>]],
+				    [[pthread_t thread;
+				      pthread_create(&thread, NULL, NULL, NULL);]])],
+		   [pthread_check="yes"], [pthread_check="no"])
+    if test $pthread_check = "yes"; then
+	AC_DEFINE(HAVE_PTHREADS, 1, [posix-compliant threading is available])
+	LIBS="$tmpLIBS $LIBS"
+	CONF_CXXFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
+	CONF_CFLAGS="$CONF_CFLAGS -D_REENTRANT"
+    else
+	LIBS=$tmpLIBS
+    fi
+    AC_MSG_RESULT([$pthread_check])
+fi
 
 case $host_os in
   mingw32*)
