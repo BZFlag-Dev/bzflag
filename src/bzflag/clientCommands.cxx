@@ -806,7 +806,7 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
             NULL); // thread id return value (NULL -> don't care)
 #else
   // no threads?  sucks to be you, but we'll still write the screenshot
-  writeScreenshot(&ssdata);
+  writeScreenshot(ssdata);
 #endif
 
   return std::string();
