@@ -21,7 +21,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0202"
+#  define BZ_PROTO_VERSION	"0203"
 #endif
 
 // version numbers - also update as needed:
@@ -41,7 +41,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV	        2	
+#  define BZ_REV	        3	
 #endif
 
 // DEVEL | RC# | STABLE | MAINT
@@ -57,7 +57,7 @@ const char *bzfcopyright = "Copyright (c) 1993-2011 Tim Riker";
 //  -DBZ_BUILD_DATE for the build, here it's voided.
 //
 //  Could someone explain the reason for the
-//  inconience caused by the ./configure method? This
+//  inconvenience caused by the ./configure method? This
 //  way is simple, touch the *.cxx to get a new time
 //  stamp (no big recompiles). If this file is updated,
 //  you are also forced to get a new timestamp.

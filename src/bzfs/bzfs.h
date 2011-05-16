@@ -158,6 +158,25 @@ void resetTeamScores ( void );
 void startCountdown ( int delay, float limit, const char *buyWho );
 
 void makeWalls ( void );
+
+// peer list
+struct NetConnectedPeer {
+	int socket;
+	int player;
+
+	NetHandler*                    netHandler;
+	bz_NonPlayerConnectionHandler* apiHandler;
+
+	std::list<std::string> sendChunks;
+	std::string bufferedInput;
+
+	TimeKeeper startTime;
+	bool   sent;
+	bool   deleteMe;
+};
+
+extern std::map<int, NetConnectedPeer> netConnectedPeers;
+
 #endif
 
 // Local Variables: ***

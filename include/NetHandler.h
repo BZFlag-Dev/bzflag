@@ -70,6 +70,8 @@ public:
   */
   NetHandler(PlayerInfo *_info, const struct sockaddr_in &_clientAddr,
 	     int _playerIndex, int _fd);
+
+  NetHandler(const struct sockaddr_in &_clientAddr, int _fd);
   /** The default destructor
       free all internal resources, and close the tcp connection
   */
@@ -140,26 +142,35 @@ public:
   static int	whoIsAtIP(const std::string& IP);
   in_addr	getIPAddress();
   const char*	getHostname();
-  bool	  reverseDNSDone();
+  bool		reverseDNSDone();
+
+  size_t	getTcpReadSize (){ return tcplen;}
+
+  void setPlayer ( PlayerInfo* p, int index );
 
   int getPlayerID ( void ){ return playerIndex;}
+
+  int getFD ( void ) { return fd;}
+  struct sockaddr_in getUADDR ( void ) { return uaddr;}
 
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
   /// Cannot be undone.
   void		closing();
 
+  RxStatus    receive(size_t length);
+  void flushData ( void ){tcplen = 0;}
+
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
   int  bufferedSend(const void *buffer, size_t length);
   bool isMyUdpAddrPort(struct sockaddr_in uaddr);
-  RxStatus    receive(size_t length);
 #ifdef NETWORK_STATS
   void	countMessage(uint16_t code, int len, int direction);
   void	dumpMessageStats();
 #endif
-  AresHandler	   ares;
+  AresHandler	   *ares;
 
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok

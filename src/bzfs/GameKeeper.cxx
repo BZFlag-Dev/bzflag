@@ -50,6 +50,27 @@ GameKeeper::Player::Player(int _playerIndex,
   isParting = false;
 }
 
+GameKeeper::Player::Player(int _playerIndex,
+			   NetHandler *handler,
+			   tcpCallback _clientCallback):
+  player(_playerIndex), lagInfo(&player),
+  playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+  needThisHostbanChecked(false)
+{
+  playerList[playerIndex] = this;
+
+  lastState.order  = 0;
+  // Timestamp 0.0 -> not yet available
+  stateTimeStamp   = 0.0f;
+  gameTimeRate = GameTime::startRate;
+  gameTimeNext = TimeKeeper::getCurrent();
+  netHandler = handler;
+  _LSAState = start;
+  bzIdentifier = "";
+  isParting = false;
+  netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
+}
+
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();

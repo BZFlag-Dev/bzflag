@@ -63,6 +63,8 @@
 #include "bzfsPlugins.h"
 #endif
 
+std::map<int, NetConnectedPeer> netConnectedPeers;
+
 VotingArbiter *votingarbiter = NULL;
 
 // pass through the SELECT loop
@@ -1125,12 +1127,6 @@ static void acceptClient()
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
 
-   // send server version and playerid
-  char buffer[9];
-  memcpy(buffer, getServerVersion(), 8);
-  // send 0xff if list is full
-  buffer[8] = (char)0xff;
-
   int keepalive = 1, n;
   n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
 		 (SSOType)&keepalive, sizeof(int));
@@ -1138,45 +1134,67 @@ static void acceptClient()
     nerror("couldn't set keepalive");
   }
 
+  // they aren't a player yet till they send us the connection string
+  NetConnectedPeer peer;
+  peer.netHandler = new NetHandler(clientAddr, fd);
+  peer.apiHandler = NULL;
+  peer.player = -1;
+  peer.socket = fd;
+  peer.deleteMe = false;
+  peer.sent = false;
+  peer.startTime = TimeKeeper::getCurrent();
+
+  netConnectedPeers[fd] = peer;
+
+}
+
+static bool MakePlayer ( NetHandler *handler )
+{
+  // send server version and playerid
+  char buffer[9];
+  memcpy(buffer, getServerVersion(), 8);
+  // send 0xff if list is full
+  buffer[8] = (char)0xff;
+
   PlayerId playerIndex;
 
   // find open slot in players list
   PlayerId minPlayerId = 0, maxPlayerId = (PlayerId)MaxPlayers;
   if (Replay::enabled()) {
-     minPlayerId = MaxPlayers;
-     maxPlayerId = MaxPlayers + ReplayObservers;
+    minPlayerId = MaxPlayers;
+    maxPlayerId = MaxPlayers + ReplayObservers;
   }
   playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
 
   if (playerIndex < maxPlayerId) {
     logDebugMessage(1,"Player [%d] accept() from %s:%d on %i\n", playerIndex,
-	inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+      inet_ntoa(handler->getUADDR().sin_addr), ntohs(handler->getUADDR().sin_port), handler->getFD());
 
     if (playerIndex >= curMaxPlayers)
       curMaxPlayers = playerIndex+1;
   } else { // full? reject by closing socket
     logDebugMessage(1,"all slots occupied, rejecting accept() from %s:%d on %i\n",
-	   inet_ntoa(clientAddr.sin_addr), ntohs(clientAddr.sin_port), fd);
+      inet_ntoa(handler->getUADDR().sin_addr), ntohs(handler->getUADDR().sin_port), handler->getFD());
 
     // send back 0xff before closing
-    send(fd, (const char*)buffer, sizeof(buffer), 0);
+    send(handler->getFD(), (const char*)buffer, sizeof(buffer), 0);
 
-    close(fd);
-    return;
+    close(handler->getFD());
+    return false;
   }
 
   buffer[8] = (uint8_t)playerIndex;
-  send(fd, (const char*)buffer, sizeof(buffer), 0);
+  send(handler->getFD(), (const char*)buffer, sizeof(buffer), 0);
 
   // FIXME add new client server welcome packet here when client code is ready
-  new GameKeeper::Player(playerIndex, clientAddr, fd, handleTcp);
+  new GameKeeper::Player(playerIndex, handler, handleTcp);
 
   // send the GameTime
   GameKeeper::Player* gkPlayer =
     GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (gkPlayer != NULL
-      && gkPlayer->player.isHuman()) {
-    sendGameTime(gkPlayer);
+    && gkPlayer->player.isHuman() ) {
+      sendGameTime(gkPlayer);
   }
 
   // if game was over and this is the first player then game is on
@@ -1191,6 +1209,7 @@ static void acceptClient()
       }
     }
   }
+  return true;
 }
 
 
@@ -4784,6 +4803,72 @@ void initGroups()
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
 
+static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& write_set)
+{
+  if (peer.deleteMe)
+    return; // skip it, it's dead to us, we'll close and purge it later
+
+  NetHandler* netHandler = peer.netHandler;
+
+  if (peer.apiHandler == NULL && peer.player == -1)
+  {
+    // they arn't anything yet, see if they have any data
+
+     RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
+     if ((e != ReadAll) && (e != ReadPart)) 
+     {
+       // there was an error and they arn't a player, kill them
+       if (e == ReadError)
+	 nerror("error on read");
+       else
+       {
+	 if (e == ReadHuge)
+	   logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", sockFD);
+	 peer.deleteMe = true;
+	 return;
+       }
+     }
+     else
+     {
+	// the dude has sent SOME data
+	peer.sent = true;
+
+	unsigned int readSize = netHandler->getTcpReadSize();
+	void *buf = netHandler->getTcpBuffer();
+	int fd = sockFD;
+
+	const char*  header = BZ_CONNECT_HEADER;
+	const size_t headerLen = strlen(header);
+
+	char* tmp = (char*)malloc(readSize+1);
+	strncpy(tmp,(char*)buf,readSize);
+	tmp[readSize] = '\0';
+
+	peer.bufferedInput += tmp;
+
+       if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
+       {
+	 netHandler->flushData();
+	 // it's a player
+	 if (!MakePlayer(netHandler))
+	   peer.deleteMe = true;
+	 else
+	   peer.player = netHandler->getPlayerID();
+
+	 return;
+       }
+       else
+       {
+	  // it isn't a player yet, see if anyone else wants it.
+
+	 //TODO ADD API STUFF HERE
+
+	 peer.deleteMe = true;
+       }
+     }
+  }
+}
+
 
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
@@ -4844,7 +4929,7 @@ int main(int argc, char **argv)
 
 #endif /* defined(_WIN32) */
 
-  bzfsrand(time(0));
+  bzfsrand((unsigned int)time(0));
 
   Flags::init();
 
@@ -5256,28 +5341,30 @@ int main(int argc, char **argv)
 
     // send replay packets
     // (this check and response should follow immediately after the select() call)
-    if (Replay::playing()) {
+    if (Replay::playing())
       Replay::sendPackets ();
-    }
 
     // game time updates
-    if (!Replay::enabled()) {
+    if (!Replay::enabled())
       sendPendingGameTime();
-    }
+
 
     // synchronize PlayerInfo
     tm = TimeKeeper::getCurrent();
     PlayerInfo::setCurrentTime(tm);
 
     // players see a countdown
-    if (countdownDelay >= 0) {
+    if (countdownDelay >= 0)
+    {
       static TimeKeeper timePrevious = tm;
       if (readySetGo == -1)
 	readySetGo = countdownDelay;
 
-      if (tm - timePrevious > 0.9f) {
+      if (tm - timePrevious > 0.9f)
+      {
 	timePrevious = tm;
-	if (readySetGo == 0) {
+	if (readySetGo == 0)
+	{
 	  sendMessage(ServerPlayer, AllPlayers, "The match has started!...Good Luck Teams!");
 	  countdownDelay = -1; // reset back to "unset"
 	  countdownResumeDelay = -1; // reset back to "unset"
@@ -5296,12 +5383,14 @@ int main(int argc, char **argv)
 
 	  // kill any players that are playing already
 	  GameKeeper::Player *player;
-	  if (clOptions->gameStyle & int(TeamFlagGameStyle)) {
-	    for (int j = 0; j < curMaxPlayers; j++) {
+	  if (clOptions->gameStyle & int(TeamFlagGameStyle))
+	  {
+	    for (int j = 0; j < curMaxPlayers; j++)
+	    {
 	      void *buf, *bufStart = getDirectMessageBuffer();
 	      player = GameKeeper::Player::getPlayerByIndex(j);
 	      if (!player || player->player.isObserver() || !player->player.isPlaying())
-					continue;
+		continue;
 
 	      // the server gets to capture the flag -- send some
 	      // bogus player id
@@ -5311,11 +5400,9 @@ int main(int argc, char **argv)
 	      TeamColor vteam = player->player.getTeam();
 
 	      buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
-	      buf = nboPackUShort
-		(buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
+	      buf = nboPackUShort(buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
 	      buf = nboPackUShort(buf, uint16_t(1 + (int(vteam) % 4)));
-	      directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart,
-			    bufStart);
+	      directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 
 	      // kick 'em while they're down
 	      playerKilled(j, curMaxPlayers, 0, -1, Flags::Null, -1);
@@ -5328,9 +5415,8 @@ int main(int argc, char **argv)
 	  }
 
 	  // reset all flags
-	  for (int j = 0; j < numFlags; j++) {
+	  for (int j = 0; j < numFlags; j++) 
 	    zapFlag(*FlagInfo::get(j));
-	  }
 
 	  // quietly reset team scores in case of a capture during the countdown
 	  resetTeamScores();
@@ -5342,7 +5428,9 @@ int main(int argc, char **argv)
 	  gameData.duration = clOptions->timeLimit;
 	  worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
 
-	} else {
+	}
+	else
+	{
 	  if ((readySetGo == countdownDelay) && (countdownDelay > 0))
 	    sendMessage(ServerPlayer, AllPlayers, "Start your engines!......");
 
@@ -5353,29 +5441,35 @@ int main(int argc, char **argv)
     } // end check if countdown delay is active
 
     // players see the announce of resuming the countdown
-    if (countdownResumeDelay >= 0) {
+    if (countdownResumeDelay >= 0)
+    {
 	static TimeKeeper timePrevious = tm;
-	if (tm - timePrevious > 0.9f) {
+	if (tm - timePrevious > 0.9f)
+	{
 	    timePrevious = tm;
-	    if (gameOver) {
+	    if (gameOver)
 		countdownResumeDelay = -1; // reset back to "unset"
-	    } else if (countdownResumeDelay == 0) {
+	    else if (countdownResumeDelay == 0)
+	    {
 		countdownResumeDelay = -1; // reset back to "unset"
 		clOptions->countdownPaused = false;
 		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
-	    } else {
-		sendMessage(ServerPlayer, AllPlayers,
-			      TextUtils::format("%i...", countdownResumeDelay).c_str());
+	    }
+	    else
+	    {
+		sendMessage(ServerPlayer, AllPlayers,TextUtils::format("%i...", countdownResumeDelay).c_str());
 		--countdownResumeDelay;
 	    }
 	} // end check if second has elapsed
     } // end check if countdown resuming delay is active
 
     // see if game time ran out or if we are paused
-    if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f) {
+    if (!gameOver && countdownActive && clOptions->timeLimit > 0.0f)
+    {
       float newTimeElapsed = (float)(tm - gameStartTime);
       float timeLeft = clOptions->timeLimit - newTimeElapsed;
-      if (timeLeft <= 0.0f && !countdownPauseStart) {
+      if (timeLeft <= 0.0f && !countdownPauseStart)
+      {
 	timeLeft = 0.0f;
 	gameOver = true;
 	countdownActive = false;
@@ -5390,7 +5484,8 @@ int main(int argc, char **argv)
 	worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
       }
 
-      if (countdownActive && clOptions->countdownPaused && !countdownPauseStart) {
+      if (countdownActive && clOptions->countdownPaused && !countdownPauseStart)
+      {
 	// we have a new pause
 	countdownPauseStart = tm;
 	void *buf, *bufStart = getDirectMessageBuffer ();
@@ -5398,8 +5493,8 @@ int main(int argc, char **argv)
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
-      if (countdownActive && !clOptions->countdownPaused
-	  && (countdownResumeDelay < 0) && countdownPauseStart) {
+      if (countdownActive && !clOptions->countdownPaused && (countdownResumeDelay < 0) && countdownPauseStart)
+      {
 	// resumed
 	gameStartTime += (tm - countdownPauseStart);
 	countdownPauseStart = TimeKeeper::getNullTime ();
@@ -5410,17 +5505,16 @@ int main(int argc, char **argv)
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
       }
 
-      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f ||
-	   clOptions->addedTime != 0.0f)
-	  && !clOptions->countdownPaused && (countdownResumeDelay < 0)) {
+      if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f) && !clOptions->countdownPaused && (countdownResumeDelay < 0))
+      {
 	// send update every 30 seconds, when the game is over, or when time adjusted
-	if (clOptions->addedTime != 0.0f) {
+	if (clOptions->addedTime != 0.0f)
+	{
 	  (timeLeft + clOptions->addedTime <= 0.0f) ? timeLeft = 0.0f : clOptions->timeLimit += clOptions->addedTime;
-	  if (timeLeft > 0.0f) timeLeft += clOptions->addedTime;
+	  if (timeLeft > 0.0f)
+	    timeLeft += clOptions->addedTime;
 	  // inform visitors about the change
-	  sendMessage(ServerPlayer, AdminPlayers,
-		      TextUtils::format("Adjusting the countdown by %f seconds",
-					clOptions->addedTime).c_str());
+	  sendMessage(ServerPlayer, AdminPlayers,TextUtils::format("Adjusting the countdown by %f seconds",clOptions->addedTime).c_str());
 	  clOptions->addedTime = 0.0f; //reset
 	}
 
@@ -5428,7 +5522,8 @@ int main(int argc, char **argv)
 	buf = nboPackInt (bufStart, (int32_t) timeLeft);
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
 	clOptions->timeElapsed = newTimeElapsed;
-	if (clOptions->oneGameOnly && timeLeft == 0.0f) {
+	if (clOptions->oneGameOnly && timeLeft == 0.0f) 
+	{
 	  done = true;
 	  exitCode = 0;
 	}
@@ -5792,13 +5887,54 @@ int main(int argc, char **argv)
 	}
       }
 
+      // see if we have any thing from people won arn't players yet
+      std::map<int,NetConnectedPeer>::iterator peerItr;
+
+      // get a list of connections to purge, then purge them
+      std::vector<int> toKill;
+      for (peerItr  = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
+      {
+	  if (peerItr->second.deleteMe)
+	    toKill.push_back(peerItr->first);
+      }
+
+      for (unsigned int i = 0; i < toKill.size(); i++) 
+      {
+	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end())
+	{
+	  NetConnectedPeer &peer = netConnectedPeers[toKill[i]];
+	  if (peer.netHandler)
+	    delete(peer.netHandler);
+	  peer.netHandler = NULL;
+	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
+	}
+      }
+
+      // process the connections
+      for (peerItr  = netConnectedPeers.begin(); peerItr != netConnectedPeers.end(); ++peerItr)
+	processConnectedPeer(peerItr->second, peerItr->first, read_set, write_set);
+
+      // remove anyone that became a player since they will be handled by the rest of the code
+      // there net handler was transfered to the player class
+      toKill.clear();
+      for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
+      {
+	if (peerItr->second.player != -1)
+	  toKill.push_back(peerItr->first);
+      }
+      for (unsigned int i = 0; i < toKill.size(); i++) 
+      {
+	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end())
+	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
+      }
+
       // process eventual resolver requests
       NetHandler::checkDNS(&read_set, &write_set);
 
       // now check messages from connected players and send queued messages
       GameKeeper::Player *playerData;
       NetHandler *netPlayer;
-      for (i = 0; i < curMaxPlayers; i++) {
+      for (int i = 0; i < curMaxPlayers; i++) {
 	playerData = GameKeeper::Player::getPlayerByIndex(i);
 	if (!playerData)
 	  continue;

@@ -50,6 +50,7 @@ public:
   public:
     Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd,
 	   tcpCallback _clientCallback);
+    Player(int _playerIndex, NetHandler *handler, tcpCallback _clientCallback);
     ~Player();
 
     int	    getIndex();

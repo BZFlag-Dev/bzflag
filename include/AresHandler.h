@@ -41,6 +41,7 @@ class AresHandler {
     HbNSucceeded
   };
 
+  void		setIndex ( int i ) {index = i;}
   void		queryHostname(struct sockaddr *clientAddr);
   void		queryHost(char *hostName);
   const char   *getHostname();

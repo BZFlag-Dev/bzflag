@@ -1076,6 +1076,15 @@ public:
 BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
 BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
 
+// non player data handlers
+class bz_NonPlayerConnectionHandler
+{
+public:
+  virtual ~bz_NonPlayerConnectionHandler() {}
+  virtual void pending(int connectionID, void *data, unsigned int size) = 0;
+  virtual void disconnect(int connectionID) { if (connectionID) return; }
+};
+
 // player info
 
 class bz_PlayerRecord;

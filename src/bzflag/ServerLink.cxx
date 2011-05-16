@@ -127,6 +127,13 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   // for UDP, used later
   memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
 
+  bool okay = true;
+  int fdMax = query;
+  struct timeval timeout;
+  fd_set write_set;
+  fd_set read_set;
+  int nfound;
+
 #if !defined(_WIN32)
   const bool okay = true;
   int fdMax = query;
@@ -175,7 +182,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
 
   hThread = CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
-  const bool okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
+  okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
   if(!okay)
     TerminateThread(hThread ,1);
 
@@ -199,15 +206,87 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     return;
   }
 #endif // !defined(_WIN32)
-  i = recv(query, (char*)version, 8, 0);
-  if (i < 8)
-    goto done;
 
-  if (debugLevel >= 1) {
-    char cServerVersion[128];
-    sprintf(cServerVersion,"Server version: '%8s'",version);
-    printError(cServerVersion);
+  // send out the connect header
+  // this will let the server know we are BZFS protocol.
+  // after the server gets this it will send back a version for us to check
+  int sendRepply = ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
+
+  logDebugMessage(2,"CONNECT:send in connect returned %d\n",sendRepply);
+
+  // wait to get data back. we are still blocking so these
+  // calls should be sync.
+
+  FD_ZERO(&read_set);
+  FD_ZERO(&write_set);
+  FD_SET((unsigned int)query, &read_set);
+  FD_SET((unsigned int)query, &write_set);
+
+  timeout.tv_sec = long(10);
+  timeout.tv_usec = 0;
+
+  // pick some limit to time out on ( in seconds )
+  double thisStartTime = TimeKeeper::getCurrent().getSeconds();
+  double connectTimeout = 30.0;
+  if (BZDB.isSet("connectionTimeout"))
+    connectTimeout = BZDB.eval("connectionTimeout")  ;
+
+  bool gotNetData = false;
+
+  // loop calling select untill we read some data back.
+  // its only 8 bytes so it better come back in one packet.
+  int loopCount = 0;
+  while(!gotNetData) {
+    loopCount++;
+    nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
+
+    // there has to be at least one socket active, or we are screwed
+    if (nfound <= 0) {
+      logDebugMessage(1,"CONNECT:select in connect failed, nfound = %d\n",nfound);
+      close(query);
+      return;
+    }
+
+    // try and get data back from the server
+    i = recv(query, (char*)version, 8, 0);
+
+    // if we got some, then we are done
+    if (i > 0) {
+      logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
+      logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
+      gotNetData = true;
+    } else {
+      // if we have waited too long, then bail
+      if ((TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
+	logDebugMessage(1,"CONNECT:connect time out failed\n");
+	logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+	close(query);
+	return;
+      }
+
+      TimeKeeper::sleep(0.25f);
+    }
   }
+
+  logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+
+  // if we got back less then the expected connect responce (BZFSXXXX)
+  // then something went bad, and we are done.
+  if (i < 8) {
+    close(query);
+    return;
+  }
+
+  // since we are connected, we can go non blocking
+  // on BSD sockets systems
+  // all other messages after this are handled via the normal
+  // message system
+#if !defined(_WIN32)
+  if (BzfNetwork::setNonBlocking(query) < 0) {
+    close(query);
+    return;
+  }
+#endif
 
   // FIXME is it ok to try UDP always?
   server_abilities |= CanDoUDP;

@@ -110,8 +110,10 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile) {
 
   for (int i = 0; i < maxHandlers; i++) {
     NetHandler *player = netPlayer[i];
-    if (player) {
-      player->ares.setFd(read_set, write_set, maxFile);
+    if (player)
+    {
+      if (player->ares)
+	player->ares->setFd(read_set, write_set, maxFile);
     }
   }
 }
@@ -228,7 +230,10 @@ void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set) {
   for (int i = 0; i < maxHandlers; i++) {
     NetHandler *player = netPlayer[i];
     if (player)
-      player->ares.process(read_set, write_set);
+    {
+      if (player->ares)
+	player->ares->process(read_set, write_set);
+    }
   }
 }
 
@@ -237,10 +242,13 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : ares(_playerIndex), info(_info), playerIndex(_playerIndex), fd(_fd),
+  : info(_info), playerIndex(_playerIndex), fd(_fd),
     tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
+
+  ares = new AresHandler(_playerIndex);
+
   // store address information for player
   AddrLen addr_len = sizeof(clientAddr);
   memcpy(&uaddr, &clientAddr, addr_len);
@@ -268,7 +276,55 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 #endif
   if (!netPlayer[playerIndex])
     netPlayer[playerIndex] = this;
-  ares.queryHostname((struct sockaddr *) &clientAddr);
+  ares->queryHostname((struct sockaddr *) &clientAddr);
+}
+
+NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
+:fd(_fd),
+tcplen(0), closed(false),
+outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
+udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false)
+{
+  ares = NULL;
+  info = NULL;
+  playerIndex = -1;
+  // store address information for player
+  AddrLen addr_len = sizeof(_clientAddr);
+  memcpy(&uaddr, &_clientAddr, addr_len);
+  peer = Address(uaddr);
+
+  // update player state
+  time = info->now;
+#ifdef NETWORK_STATS
+
+  // initialize the inbound/outbound counters to zero
+  msgBytes[0] = 0;
+  perSecondTime[0] = time;
+  perSecondCurrentMsg[0] = 0;
+  perSecondMaxMsg[0] = 0;
+  perSecondCurrentBytes[0] = 0;
+  perSecondMaxBytes[0] = 0;
+
+  msgBytes[1] = 0;
+  perSecondTime[1] = time;
+  perSecondCurrentMsg[1] = 0;
+  perSecondMaxMsg[1] = 0;
+  perSecondCurrentBytes[1] = 0;
+  perSecondMaxBytes[1] = 0;
+
+#endif
+}
+
+void NetHandler::setPlayer ( PlayerInfo* p, int index )
+{
+  ares = new AresHandler(index);
+
+  playerIndex = index;
+  info = p;
+
+  if (!netPlayer[playerIndex])
+    netPlayer[playerIndex] = this;
+  ares->queryHostname((struct sockaddr *) &uaddr);
 }
 
 NetHandler::~NetHandler() {
@@ -276,6 +332,8 @@ NetHandler::~NetHandler() {
   if (info->isPlaying())
     dumpMessageStats();
 #endif
+  if (ares)
+    delete(ares);
   // shutdown TCP socket
   shutdown(fd, 2);
   close(fd);
@@ -710,12 +768,17 @@ in_addr NetHandler::getIPAddress() {
 }
 
 const char *NetHandler::getHostname() {
-  return ares.getHostname();
+  if (!ares)
+    return NULL;
+  return ares->getHostname();
 }
 
 bool NetHandler::reverseDNSDone()
 {
-  AresHandler::ResolutionStatus status = ares.getStatus();
+  if (!ares)
+    return false;
+
+  AresHandler::ResolutionStatus status = ares->getStatus();
   return (status == AresHandler::Failed)
     || (status == AresHandler::HbASucceeded);
 }
