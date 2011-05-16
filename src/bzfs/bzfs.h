@@ -177,6 +177,9 @@ struct NetConnectedPeer {
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;
 
+extern unsigned int maxNonPlayerDataChunk;
+extern void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
+
 #endif
 
 // Local Variables: ***

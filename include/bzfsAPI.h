@@ -45,6 +45,9 @@
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetVersion ( void ) { return BZ_API_VERSION;}
 
+// current time (leave method here, used in bz_EventData constructor)
+BZF_API double bz_getCurrentTime(void);
+
 // versioning
 BZF_API int bz_APIVersion ( void );
 
@@ -93,6 +96,7 @@ typedef enum
   bz_eFlagResetEvent,
   bz_eAllowCTFCapEvent,
   bz_eMsgDebugEvent,
+  bz_eNewNonPlayerConnection,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -315,16 +319,22 @@ BZF_API bzAPIStringList* bz_newStringList ( void );
 BZF_API void bz_deleteStringList( bzAPIStringList * l );
 
 // event data types
-class bz_EventData
+class BZF_API bz_EventData
 {
 public:
-  bz_EventData(){eventType = bz_eNullEvent;}
-  virtual ~bz_EventData(){};
+  bz_EventData(bz_eEventType type =  bz_eNullEvent)
+    : version(1), eventType(type), eventTime( bz_getCurrentTime() )
+  {
+  }
+  virtual ~bz_EventData() {}
+  virtual void update() {}
 
-  bz_eEventType	eventType;
+  int version;
+  bz_eEventType eventType;
+  double eventTime;
 };
 
-class bz_CTFCaptureEventData : public bz_EventData
+class BZF_API bz_CTFCaptureEventData : public bz_EventData
 {
 public:
   bz_CTFCaptureEventData()
@@ -345,7 +355,7 @@ public:
   double time;
 };
 
-class bz_PlayerDieEventData : public bz_EventData
+class BZF_API bz_PlayerDieEventData : public bz_EventData
 {
 public:
   bz_PlayerDieEventData()
@@ -374,7 +384,7 @@ public:
   double time;
 };
 
-class bz_PlayerSpawnEventData : public bz_EventData
+class BZF_API bz_PlayerSpawnEventData : public bz_EventData
 {
 public:
   bz_PlayerSpawnEventData()
@@ -398,7 +408,7 @@ public:
   double time;
 };
 
-class bz_ChatEventData : public bz_EventData
+class BZF_API bz_ChatEventData : public bz_EventData
 {
 public:
   bz_ChatEventData()
@@ -421,7 +431,7 @@ public:
   double time;
 };
 
-class bz_PlayerJoinPartEventData : public bz_EventData
+class BZF_API bz_PlayerJoinPartEventData : public bz_EventData
 {
 public:
   bz_PlayerJoinPartEventData()
@@ -447,7 +457,7 @@ public:
   double time;
 };
 
-class bz_UnknownSlashCommandEventData : public bz_EventData
+class BZF_API bz_UnknownSlashCommandEventData : public bz_EventData
 {
 public:
   bz_UnknownSlashCommandEventData()
@@ -468,7 +478,7 @@ public:
   double time;
 };
 
-class  bz_GetPlayerSpawnPosEventData : public bz_EventData
+class BZF_API bz_GetPlayerSpawnPosEventData : public bz_EventData
 {
 public:
   bz_GetPlayerSpawnPosEventData()
@@ -496,7 +506,7 @@ public:
   double time;
 };
 
-class bz_AllowPlayerEventData : public bz_EventData
+class BZF_API bz_AllowPlayerEventData : public bz_EventData
 {
 public:
   bz_AllowPlayerEventData()
@@ -520,7 +530,7 @@ public:
   double time;
 };
 
-class bz_TickEventData : public bz_EventData
+class BZF_API bz_TickEventData : public bz_EventData
 {
 public:
   bz_TickEventData()
@@ -533,7 +543,7 @@ public:
   double time;
 };
 
-class bz_GenerateWorldEventData : public bz_EventData
+class BZF_API bz_GenerateWorldEventData : public bz_EventData
 {
 public:
   bz_GenerateWorldEventData()
@@ -556,7 +566,7 @@ public:
   double eventTime;
 };
 
-class bz_GetPlayerInfoEventData : public bz_EventData
+class BZF_API bz_GetPlayerInfoEventData : public bz_EventData
 {
 public:
   bz_GetPlayerInfoEventData()
@@ -583,7 +593,7 @@ public:
   double time;
 };
 
-class bz_GetAutoTeamEventData : public bz_EventData
+class BZF_API bz_GetAutoTeamEventData : public bz_EventData
 {
 public:
   bz_GetAutoTeamEventData()
@@ -602,7 +612,7 @@ public:
   bool handled;
 };
 
-class  bz_AllowSpawnData : public bz_EventData
+class BZF_API bz_AllowSpawnData : public bz_EventData
 {
 public:
   bz_AllowSpawnData()
@@ -627,7 +637,7 @@ public:
   double time;
 };
 
-class  bz_ListServerUpdateEvent : public bz_EventData
+class BZF_API bz_ListServerUpdateEvent : public bz_EventData
 {
 public:
   bz_ListServerUpdateEvent()
@@ -647,7 +657,7 @@ public:
   double time;
 };
 
-class bz_BanEventData : public bz_EventData
+class BZF_API bz_BanEventData : public bz_EventData
 {
 public:
   bz_BanEventData()
@@ -666,7 +676,7 @@ public:
   bzApiString reason;
 };
 
-class bz_HostBanEventData : public bz_EventData
+class BZF_API bz_HostBanEventData : public bz_EventData
 {
 public:
   bz_HostBanEventData()
@@ -683,7 +693,7 @@ public:
   bzApiString reason;
 };
 
-class bz_KickEventData : public bz_EventData
+class BZF_API bz_KickEventData : public bz_EventData
 {
 public:
   bz_KickEventData()
@@ -699,7 +709,7 @@ public:
   bzApiString reason;
 };
 
-class bz_KillEventData : public bz_EventData
+class BZF_API bz_KillEventData : public bz_EventData
 {
 public:
   bz_KillEventData()
@@ -715,7 +725,7 @@ public:
   bzApiString reason;
 };
 
-class bz_PlayerPausedEventData : public bz_EventData
+class BZF_API bz_PlayerPausedEventData : public bz_EventData
 {
 public:
   bz_PlayerPausedEventData()
@@ -732,7 +742,7 @@ public:
   bool pause;
 };
 
-class bz_MessageFilteredEventData : public bz_EventData
+class BZF_API bz_MessageFilteredEventData : public bz_EventData
 {
 public:
   bz_MessageFilteredEventData()
@@ -750,7 +760,7 @@ public:
   bzApiString		filteredMessage;
 };
 
-class bz_GameStartEndEventData : public bz_EventData
+class BZF_API bz_GameStartEndEventData : public bz_EventData
 {
 public:
   bz_GameStartEndEventData()
@@ -765,7 +775,7 @@ public:
   double duration;
 };
 
-class bz_SlashCommandEventData : public bz_EventData
+class BZF_API bz_SlashCommandEventData : public bz_EventData
 {
 public:
   bz_SlashCommandEventData()
@@ -785,7 +795,7 @@ public:
 };
 
 
-class bz_PlayerAuthEventData : public bz_EventData
+class BZF_API bz_PlayerAuthEventData : public bz_EventData
 {
 public:
   bz_PlayerAuthEventData()
@@ -799,7 +809,7 @@ public:
   int playerID;
 };
 
-class bz_ServerMsgEventData : public bz_EventData
+class BZF_API bz_ServerMsgEventData : public bz_EventData
 {
 public:
   bz_ServerMsgEventData()
@@ -820,7 +830,7 @@ public:
   double time;
 };
 
-class bz_ShotFiredEventData : public bz_EventData
+class BZF_API bz_ShotFiredEventData : public bz_EventData
 {
 public:
   bz_ShotFiredEventData()
@@ -839,7 +849,7 @@ public:
   int		playerID;
 };
 
-class bz_PlayerUpdateEventData : public bz_EventData
+class BZF_API bz_PlayerUpdateEventData : public bz_EventData
 {
 public:
   bz_PlayerUpdateEventData()
@@ -865,7 +875,7 @@ public:
   double time;
 };
 
-class bz_NetTransferEventData : public bz_EventData
+class BZF_API bz_NetTransferEventData : public bz_EventData
 {
 public:
   bz_NetTransferEventData()
@@ -893,7 +903,7 @@ public:
   unsigned char* data;
 };
 
-class bz_LoggingEventData : public bz_EventData
+class BZF_API bz_LoggingEventData : public bz_EventData
 {
 public:
   bz_LoggingEventData()
@@ -910,7 +920,7 @@ public:
   bzApiString message;
 };
 
-class bz_ShotEndedEventData : public bz_EventData
+class BZF_API bz_ShotEndedEventData : public bz_EventData
 {
 public:
 
@@ -930,7 +940,7 @@ public:
 };
 
 
-class bz_FlagTransferredEventData : public bz_EventData
+class BZF_API bz_FlagTransferredEventData : public bz_EventData
 {
 public:
   enum Action {
@@ -956,7 +966,7 @@ public:
   enum Action action;
 };
 
-class bz_FlagGrabbedEventData : public bz_EventData
+class BZF_API bz_FlagGrabbedEventData : public bz_EventData
 {
 public:
 
@@ -977,7 +987,7 @@ public:
   float	pos[3];
 };
 
-class bz_FlagDroppedEventData : public bz_EventData
+class BZF_API bz_FlagDroppedEventData : public bz_EventData
 {
 public:
 
@@ -998,7 +1008,7 @@ public:
   float	pos[3];
 };
 
-class bz_FlagResetEventData : public bz_EventData
+class BZF_API bz_FlagResetEventData : public bz_EventData
 {
 public:
   bz_FlagResetEventData()
@@ -1019,7 +1029,7 @@ public:
   float	pos[3];
 };
 
-class bz_AllowCTFCapEventData : public bz_EventData
+class BZF_API bz_AllowCTFCapEventData : public bz_EventData
 {
 public:
   bz_AllowCTFCapEventData()
@@ -1043,7 +1053,7 @@ public:
   bool	    allow;
 };
 
-class bz_MsgDebugEventData : public bz_EventData
+class BZF_API bz_MsgDebugEventData : public bz_EventData
 {
 public:
   bz_MsgDebugEventData()
@@ -1064,6 +1074,22 @@ public:
   int playerID;
 };
 
+
+class BZF_API bz_NewNonPlayerConnectionEventData_V1 : public bz_EventData
+{
+public:
+
+  bz_NewNonPlayerConnectionEventData_V1() : bz_EventData(bz_eNewNonPlayerConnection)
+    , connectionID(-1)
+    , data(0), size(0)
+  {
+  }
+
+  int connectionID;
+  void* data;
+  unsigned int size;
+};
+
 // event handler callback
 class bz_EventHandler
 {
@@ -1075,6 +1101,7 @@ public:
 
 BZF_API bool bz_registerEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
 BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHandler );
+BZF_API bool bz_flushEvents ( bz_EventHandler* eventHandler );
 
 // non player data handlers
 class bz_NonPlayerConnectionHandler
@@ -1084,6 +1111,15 @@ public:
   virtual void pending(int connectionID, void *data, unsigned int size) = 0;
   virtual void disconnect(int connectionID) { if (connectionID) return; }
 };
+
+BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
+BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
+BZF_API bool bz_sendNonPlayerData(int connectionID, const void *data, unsigned int size);
+BZF_API bool bz_disconnectNonPlayerConnection(int connectionID);
+BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount(int connectionID);
+
+BZF_API const char* bz_getNonPlayerConnectionIP(int connectionID);
+BZF_API const char* bz_getNonPlayerConnectionHost(int connectionID);
 
 // player info
 
@@ -1196,7 +1232,6 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt);
 
 // time API
-BZF_API double bz_getCurrentTime ( void );
 BZF_API float bz_getMaxWaitTime ( void );
 BZF_API void bz_setMaxWaitTime ( float maxTime );
 

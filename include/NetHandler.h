@@ -160,11 +160,11 @@ public:
 
   RxStatus    receive(size_t length);
   void flushData ( void ){tcplen = 0;}
+  int  bufferedSend(const void *buffer, size_t length);
 
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
-  int  bufferedSend(const void *buffer, size_t length);
   bool isMyUdpAddrPort(struct sockaddr_in uaddr);
 #ifdef NETWORK_STATS
   void	countMessage(uint16_t code, int len, int direction);

@@ -63,6 +63,7 @@
 #include "bzfsPlugins.h"
 #endif
 
+unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int, NetConnectedPeer> netConnectedPeers;
 
 VotingArbiter *votingarbiter = NULL;
@@ -4803,8 +4804,22 @@ void initGroups()
     PlayerAccessInfo::readGroupsFile(groupsFile);
 }
 
+void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
+{
+  if (peer.sendChunks.empty()) {
+    return;
+  }
+
+  const std::string& chunk = peer.sendChunks.front();
+  peer.netHandler->bufferedSend(chunk.data(), chunk.size());
+
+  peer.sendChunks.pop_front();
+}
+
 static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& write_set)
 {
+  double connectionTimeout = 30.0; // timeout in seconds
+
   if (peer.deleteMe)
     return; // skip it, it's dead to us, we'll close and purge it later
 
@@ -4845,6 +4860,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	tmp[readSize] = '\0';
 
 	peer.bufferedInput += tmp;
+	free(tmp);
 
        if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
        {
@@ -4860,12 +4876,44 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
        else
        {
 	  // it isn't a player yet, see if anyone else wants it.
+	 // build up a buffer of all the data that is pending
+	 while (e == ReadAll)
+	 {
+	    netHandler->flushData();
+	    e = netHandler->receive(256);
 
-	 //TODO ADD API STUFF HERE
+	    readSize = netHandler->getTcpReadSize();
+	    buf = netHandler->getTcpBuffer();
 
-	 peer.deleteMe = true;
+	    tmp = (char*)malloc(readSize+1);
+	    strncpy(tmp,(char*)buf,readSize);
+	    tmp[readSize] = '\0';
+
+	    peer.bufferedInput += tmp;
+	    free(tmp);
+	 }
+	 netHandler->flushData();
+
+	 // call an event to let people know we got a new connect
+	 bz_NewNonPlayerConnectionEventData_V1 eventData;
+
+	 eventData.data = (void*)peer.bufferedInput.c_str();
+	 eventData.size =  peer.bufferedInput.size();
+	 eventData.connectionID = sockFD;
+
+	 worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
+
+	 // if someone wanted him they'd have set his handler and he'll never get here again
        }
      }
+  }
+  
+  if (peer.apiHandler != NULL) // if we have a handler then send out what we got
+    sendBufferedNetDataForPeer(peer);
+  else if (peer.apiHandler == NULL && peer.player == -1)
+  {
+    if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
+      peer.deleteMe = true; // nobody loves him
   }
 }
 

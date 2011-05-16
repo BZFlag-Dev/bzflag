@@ -695,6 +695,157 @@ BZF_API bool bz_removeEvent ( bz_eEventType eventType, bz_EventHandler* eventHan
   return true;
 }
 
+BZF_API bool bz_flushEvents(bz_EventHandler* eventHandler)
+{
+  if (!eventHandler)
+    return false;
+
+  return worldEventManager.removeHandler(eventHandler);
+}
+
+//-------------------------------------------------------------------------
+//
+// utility
+//
+
+static inline NetConnectedPeer* getNonPlayerPeer(int connID)
+{
+  std::map<int, NetConnectedPeer>::iterator it = netConnectedPeers.find(connID);
+  if (it == netConnectedPeers.end()) {
+    return NULL;
+  }
+  NetConnectedPeer* peer = &(it->second);
+  if (peer->player != -1) {
+    return NULL;
+  }
+  return peer;
+}
+
+
+BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler)
+{
+  if (!handler) {
+    return false;
+  }
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if ((peer == NULL) || (peer->apiHandler != NULL)) {
+    return false;
+  }
+  peer->apiHandler = handler;
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler *handler)
+{
+  if (!handler) {
+    return false;
+  }
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if ((peer == NULL) || (peer->apiHandler != handler)) {
+    return false;
+  }
+  peer->apiHandler = NULL;
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int size)
+{
+  if ((data == NULL) || (size <= 0)) {
+    return false;
+  }
+
+  NetConnectedPeer* peer = getNonPlayerPeer(connID);
+  if (peer == NULL) {
+    return false;
+  }
+
+  const bool sendOneNow = peer->sendChunks.empty();
+
+  unsigned int chunkSize = 0;
+
+  for (unsigned int pos = 0; pos < size; pos += chunkSize) {
+    const unsigned int left = (size - pos);
+
+    chunkSize = (left < maxNonPlayerDataChunk) ? left : maxNonPlayerDataChunk;
+
+    peer->sendChunks.push_back(std::string((char*)data + pos, chunkSize));
+  }
+
+  // send off at least one now if it was empty
+  if (sendOneNow) {
+    sendBufferedNetDataForPeer(*peer);
+  }
+
+  return true;
+}
+
+
+BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount(int connectionID)
+{
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if (peer == NULL) {
+    return 0;
+  }
+  return peer->sendChunks.size();
+}
+
+
+BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID )
+{
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if (peer == NULL) {
+    return NULL;
+  }
+
+  unsigned int address = (unsigned int)peer->netHandler->getIPAddress().s_addr;
+  unsigned char* a = (unsigned char*)&address;
+
+  return TextUtils::format("%d.%d.%d.%d",a[0],a[1],a[2],a[3]).c_str();
+}
+
+
+BZF_API const char* bz_getNonPlayerConnectionHost ( int connectionID )
+{
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if (peer == NULL) {
+    return NULL;
+  }
+  return peer->netHandler->getHostname();
+}
+
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
+{
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if (peer == NULL) {
+    return false;
+  }
+
+  // flush out the rest of it's sends
+  while (!peer->sendChunks.empty()) {
+    sendBufferedNetDataForPeer(*peer);
+  }
+
+  if (peer->apiHandler) {
+    peer->apiHandler->disconnect(connectionID);
+  }
+
+  peer->netHandler->flushData();
+  delete(peer->netHandler);
+  peer->netHandler = NULL;
+  peer->apiHandler = NULL;
+  peer->sendChunks.clear();
+  peer->deleteMe = true;
+
+  return true;
+}
+
 BZF_API bool bz_updatePlayerData ( bz_PlayerRecord *playerRecord )
 {
   if (!playerRecord)
