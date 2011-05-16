@@ -82,7 +82,6 @@ class WinDisplay : public BzfDisplay {
 
     // resolution info
     HWND		hwnd;
-    bool		using3Dfx;
     int			fullWidth;
     int			fullHeight;
     Resolution*		resolutions;

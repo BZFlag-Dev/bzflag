@@ -3,6 +3,7 @@
 
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
+* Removed -3Dfx, -no3Dfx. Moved -geometry ->  -window <geometry-spec> - David Anderson
 * Add ricochet on a per object basis for .bzw files - David Anderson
 * serverControl plugin- Add option to ignore observers for server shutdowns
 * serverControl plugin- Only report ban file access errors once

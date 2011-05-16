@@ -173,7 +173,6 @@ static void		setVisual(BzfVisual* visual)
 static void		usage()
 {
   printFatalError("usage: %s"
-	" [-3dfx] [-no3dfx]"
 	" [-anonymous]"
 	" [-badwords <filterfile>]"
 	" [-config <configfile>]"
@@ -183,7 +182,6 @@ static void		usage()
 	" [{-dir | -directory} <data-directory>]"
 	" [-e | -echo]"
 	" [-ea | -echoAnsi]"
-	" [{-g | -geometry} <geometry-spec>]"
 	" [-h | -help | --help]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <list-server-url>] [-nolist]"
@@ -198,7 +196,7 @@ static void		usage()
 	" [-time hh:mm:ss] [-notime]"
 	" [-v | -version | --version]"
 	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
-	" [-window]"
+	" [-window <geometry-spec>]"
 	" [-zoom <zoom-factor>]"
 	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
@@ -250,20 +248,6 @@ static void		parse(int argc, char** argv)
 	     strcmp(argv[i], "-help") == 0 ||
 	     strcmp(argv[i], "--help") == 0) {
       usage();
-    } else if (strcmp(argv[i], "-g") == 0 || strcmp(argv[i], "-geometry") == 0) {
-      checkArgc(i, argc, argv[i]);
-      int w, h, x, y, count;
-      char xs = '+', ys = '+';
-      if (strcmp(argv[i], "default") != 0 &&
-	  (((count = sscanf(argv[i], "%dx%d%c%d%c%d",
-		&w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) ||
-	  (xs != '-' && xs != '+') || (ys != '-' && ys != '+'))) {
-	printFatalError("Invalid argument for %s.\n"
-			"Correct format is <width>x<height>[+|-]<x>[+|-]<y>.",
-			argv[i-1]);
-	usage();
-      }
-      BZDB.set("geometry", argv[i]);
     } else if (strcmp(argv[i], "-latitude") == 0) {
       checkArgc(i, argc, argv[i]);
       double latitude = atof(argv[i]);
@@ -351,18 +335,18 @@ static void		parse(int argc, char** argv)
       exit(0);
     } else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
-    } else if (strcmp(argv[i], "-3dfx") == 0 || strcmp(argv[i], "-3Dfx") == 0) {
-#if !defined(__linux__)
-      putenv("MESA_GLX_FX=fullscreen");
-#else
-      setenv("MESA_GLX_FX", "fullscreen", 1);
-#endif
-    } else if (strcmp(argv[i], "-no3dfx") == 0 || strcmp(argv[i], "-no3Dfx") == 0) {
-#if !defined(__linux__)
-      putenv("MESA_GLX_FX=");
-#else
-      unsetenv("MESA_GLX_FX");
-#endif
+      checkArgc(i, argc, argv[i]);
+      int w, h, x, y, count;
+      char xs ='+', ys='+';
+      if (strcmp(argv[i], "default") != 0 
+         && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) 
+         || (xs != '-' && xs != '+') 
+         || (ys != '-' && ys != '+')))
+      {
+        printFatalError("Invalid argument for %s. \nCorrect format is <width>x<height>[+|-]<x>[+|-].", argv[i-1]);
+        usage();
+      }
+      BZDB.set("geometry", argv[i]);
 #ifdef DEBUG
     } else if (strcmp(argv[i], "-date") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -1084,8 +1068,7 @@ int			main(int argc, char** argv)
   }
 
   // set window size (we do it here because the OpenGL context isn't yet
-  // bound and 3Dfx passthrough cards use the window size to determine
-  // the resolution to use)
+  // bound.)
   const bool useFullscreen = needsFullscreen();
   if (useFullscreen) {
 #ifndef HAVE_SDL
@@ -1223,13 +1206,12 @@ int			main(int argc, char** argv)
   // add the zbuffer callback here, after the OpenGL context is initialized
   BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
 
-  // if we're running on 3Dfx fullscreen add a fake cursor.
-  // let the defaults file override this, though.
+  //add a fake cursor. Let the defaults file override this, though.
   if (!BZDB.isSet("fakecursor")) {
     // check that the glrenderer is Mesa Glide
-    if ((glRenderer != NULL) && (strncmp(glRenderer, "Mesa Glide", 10) == 0 ||
-	strncmp(glRenderer, "3Dfx", 4) == 0))
+    if ((glRenderer != NULL) && (strncmp(glRenderer, "Mesa Glide", 10) == 0)){
       BZDB.set("fakecursor", "1");
+    }
   }
 
   // set gamma if set in resources and we have gamma control
