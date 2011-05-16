@@ -619,7 +619,6 @@ int			main(int argc, char** argv)
     printFatalError("Failed to initialize winsock.  Terminating.\n");
     return 1;
   }
-  initGlobalAres();
   if (LOBYTE(wsaData.wVersion) != major ||
       HIBYTE(wsaData.wVersion) != minor) {
     printFatalError("Version mismatch in winsock;"
@@ -630,6 +629,8 @@ int			main(int argc, char** argv)
     return bail(1);
   }
 #endif
+
+  initGlobalAres();
 
   WordFilter *filter = (WordFilter *)NULL;
 
