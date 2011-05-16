@@ -135,16 +135,12 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   int nfound;
 
 #if !defined(_WIN32)
-  const bool okay = true;
-  int fdMax = query;
+  okay = true;
+  fdMax = query;
   if (BzfNetwork::setNonBlocking(query) < 0) {
     close(query);
     return;
   }
-  struct timeval timeout;
-  fd_set write_set;
-  fd_set read_set;
-  int nfound;
   if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0) {
     if (getErrno() != EINPROGRESS) {
       close(query);
