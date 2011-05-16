@@ -211,7 +211,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 		     vertices, normals, texcoords, faces.size(),
 		     noclusters, smoothBounce,
 		     driveThrough || forcePassable,
-		     shootThrough || forcePassable);
+		     shootThrough || forcePassable, 
+		     ricochet);
 
   mesh->setName(name);
 

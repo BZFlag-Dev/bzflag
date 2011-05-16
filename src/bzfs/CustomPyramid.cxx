@@ -64,6 +64,7 @@ CustomPyramid::CustomPyramid()
     phydrv[i] = -1;
     drivethrough[i] = false;
     shootthrough[i] = false;
+    ricochets[i] = false;
   }
 
   return;
@@ -282,7 +283,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     PyramidBuilding* pyr =
       new PyramidBuilding(pos, rotation,
 			  fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-			  driveThrough, shootThrough);
+			  driveThrough, shootThrough, ricochet);
     if (flipz || (size[2] < 0.0f)) {
       pyr->setZFlip();
     }
@@ -376,7 +377,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
   MeshObstacle* mesh = new MeshObstacle(xform, checkTypes, checkPoints,
 					verts, norms, txcds, FaceCount,
-					false, false, false, false);
+					false, false, false, false, false);
 
   // get the material refs
   const BzMaterial* mats[FaceCount];
@@ -394,35 +395,35 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   iv.push_back(1); iv.push_back(2); iv.push_back(4);
   it.push_back(0); it.push_back(1); it.push_back(2);
   mesh->addFace(iv, in, it, mats[XP], phydrv[XP], false, false,
-		drivethrough[XP], shootthrough[XP], false);
+		drivethrough[XP], shootthrough[XP], ricochets[XP],  false);
 
   // XN
   iv.clear(); it.clear();
   iv.push_back(3); iv.push_back(0); iv.push_back(4);
   it.push_back(3); it.push_back(4); it.push_back(5);
   mesh->addFace(iv, in, it, mats[XN], phydrv[XN], false, false,
-		drivethrough[XN], shootthrough[XN], false);
+		drivethrough[XN], shootthrough[XN], ricochets[XN], false);
 
   // YP
   iv.clear(); it.clear();
   iv.push_back(2); iv.push_back(3); iv.push_back(4);
   it.push_back(6); it.push_back(7); it.push_back(8);
   mesh->addFace(iv, in, it, mats[YP], phydrv[YP], false, false,
-		drivethrough[YP], shootthrough[YP], false);
+		drivethrough[YP], shootthrough[YP], ricochets[XN], false);
 
   // YN
   iv.clear(); it.clear();
   iv.push_back(0); iv.push_back(1); iv.push_back(4);
   it.push_back(9); it.push_back(10); it.push_back(11);
   mesh->addFace(iv, in, it, mats[YN], phydrv[YN], false, false,
-		drivethrough[YN], shootthrough[YN], false);
+		drivethrough[YN], shootthrough[YN], ricochets[YN], false);
 
   // ZN
   iv.clear(); it.clear();
   iv.push_back(1); iv.push_back(0); iv.push_back(3); iv.push_back(2);
   it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
   mesh->addFace(iv, in, it, mats[ZN], phydrv[ZN], false, false,
-		drivethrough[ZN], shootthrough[ZN], false);
+		drivethrough[ZN], shootthrough[ZN], ricochets[ZN], false);
 
   // to be or not to be...
   if (mesh->isValid()) {

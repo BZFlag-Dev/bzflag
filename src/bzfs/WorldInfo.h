@@ -82,15 +82,15 @@ public:
 
   void addBox(float x, float y, float z, float r,
 	      float w, float d, float h,
-	      bool drive = false, bool shoot = false);
+	      bool drive = false, bool shoot = false, bool rico = false);
   void addPyramid(float x, float y, float z, float r,
 		  float w, float d, float h,
-		  bool drive = false, bool shoot = false, bool flipZ = false);
+		  bool drive = false, bool shoot = false, bool rico = false, bool flipZ = false);
   void addTeleporter(float x, float y, float z, float r,
 		     float w, float d, float h, float b,
-		     bool horizontal, bool drive = false, bool shoot = false);
+		     bool horizontal, bool drive = false, bool shoot = false, bool rico = false);
   void addBase(const float pos[3], float r, const float size[3],
-	       int color, bool drive = false, bool shoot = false);
+	       int color, bool drive = false, bool shoot = false, bool rico = false);
 
   float getWaterLevel() const;
   float getMaxWorldHeight() const;

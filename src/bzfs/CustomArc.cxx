@@ -148,7 +148,7 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
   if (!boxStyle) {
     arc = new ArcObstacle(transform, pos, size, rotation, angle, ratio,
 			  texsize, useNormals, divisions, mats, phydrv,
-			  smoothBounce, driveThrough, shootThrough);
+			  smoothBounce, driveThrough, shootThrough, ricochet);
   } else {
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
@@ -162,7 +162,7 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     newSize[2] = size[2];
     arc = new ArcObstacle(xform, origin, newSize, (float)(M_PI * 0.25), angle, ratio,
 			  texsize, useNormals, divisions, mats, phydrv,
-			  smoothBounce, driveThrough, shootThrough);
+			  smoothBounce, driveThrough, shootThrough, ricochet);
   }
 
   if (arc->isValid()) {

@@ -65,6 +65,7 @@ void GroupInstance::init()
   material = NULL;
   driveThrough = false;
   shootThrough = false;
+  ricochet     = false;
 
   return;
 }
@@ -156,6 +157,12 @@ void GroupInstance::setShootThrough()
   return;
 }
 
+void GroupInstance::setCanRicochet()
+{
+  ricochet = true;
+  return;
+}
+
 
 void GroupInstance::addMaterialSwap(const BzMaterial* srcMat,
 				    const BzMaterial* dstMat)
@@ -218,6 +225,7 @@ void* GroupInstance::pack(void* buf)
   if (modifyMaterial)	   bits |= (1 << 3);
   if (driveThrough)	   bits |= (1 << 4);
   if (shootThrough)	   bits |= (1 << 5);
+  if (ricochet)            bits |= (1 << 6);
   buf = nboPackUByte(buf, bits);
 
   if (modifyTeam) {
@@ -274,6 +282,7 @@ void* GroupInstance::unpack(void* buf)
   modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
   driveThrough =	((bits & (1 << 4)) == 0) ? false : true;
   shootThrough =	((bits & (1 << 5)) == 0) ? false : true;
+  ricochet =            ((bits & (1 << 6)) == 0) ? false : true;
 
   if (modifyTeam) {
     uint16_t tmpTeam;
@@ -374,13 +383,9 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     }
   }
 
-  if (driveThrough) {
-    out << indent << "  driveThrough " << phydrv << std::endl;
-  }
-  if (shootThrough) {
-    out << indent << "  shootTHrough " << phydrv << std::endl;
-  }
-
+  if (driveThrough) {out << indent << "  driveThrough"  << std::endl;}
+  if (shootThrough) {out << indent << "  shootThrough"  << std::endl;}
+  if (ricochet)     {out << indent << "  ricochet"      << std::endl;}
   out << indent << "end" << std::endl;
 
   return;
@@ -676,7 +681,7 @@ void GroupDefinition::replaceBasesWithBoxes()
       new BoxBuilding(base->getPosition(), base->getRotation(),
 		      baseSize[0], baseSize[1], baseSize[2],
 		      base->isDriveThrough(), base->isShootThrough(),
-		      false);
+		      base->canRicochet(), false);
     delete base;
     list.remove(i);
     i--;

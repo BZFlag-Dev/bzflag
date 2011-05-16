@@ -64,7 +64,7 @@ class Obstacle {
 			 can pass through it
   */
   Obstacle(const float* pos, float rotation, float hwidth, float hbreadth,
-	   float height, bool drive = false, bool shoot = false);
+	   float height, bool drive = false, bool shoot = false, bool rico = false);
 
   /** This function makes a copy using the given transform */
   virtual Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -194,9 +194,14 @@ class Obstacle {
       this object, @c false if either can not */
   bool isPassable() const;
 
+  /** This function returns @c true if  bullets will bounce off of this 
+   * object, @c false if they simply die of contact */
+  bool canRicochet() const;
+
   /** This function sets the "zFlip" flag of this obstacle, i.e. if it's
       upside down. */
   void setZFlip(void);
+
 
   /** This function returns the "zFlip" flag of this obstacle.
       @see setZFlip()
@@ -274,6 +279,7 @@ class Obstacle {
     float angle;
     bool driveThrough;
     bool shootThrough;
+    bool ricochet;
     bool ZFlip;
     char source;
 
@@ -342,6 +348,11 @@ inline bool Obstacle::isShootThrough() const
 inline bool Obstacle::isPassable() const
 {
   return (driveThrough && shootThrough);
+}
+
+inline bool Obstacle::canRicochet() const
+{
+  return ricochet;
 }
 
 inline void Obstacle::setSource(char _source)

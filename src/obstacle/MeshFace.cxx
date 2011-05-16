@@ -50,7 +50,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh)
 MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 		   float** _vertices, float** _normals, float** _texcoords,
 		   const BzMaterial* _bzMaterial, int physics,
-		   bool _noclusters, bool bounce, bool drive, bool shoot)
+		   bool _noclusters, bool bounce, bool drive, bool shoot, bool rico)
 {
   mesh = _mesh;
   vertexCount = _vertexCount;
@@ -63,6 +63,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet = rico;
   edges = NULL;
   edgePlanes = NULL;
   specialData = NULL;
@@ -563,6 +564,7 @@ void *MeshFace::pack(void *buf) const
   stateByte |= isShootThrough() ? (1 << 3) : 0;
   stateByte |= smoothBounce     ? (1 << 4) : 0;
   stateByte |= noclusters       ? (1 << 5) : 0;
+  stateByte |= canRicochet()    ? (1 << 6) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   // vertices
@@ -613,6 +615,7 @@ void *MeshFace::unpack(void *buf)
   shootThrough = (stateByte & (1 << 3)) != 0;
   smoothBounce = (stateByte & (1 << 4)) != 0;
   noclusters   = (stateByte & (1 << 5)) != 0;
+  ricochet     = (stateByte & (1 << 6)) != 0;
 
   // vertices
   buf = nboUnpackInt(buf, inTmp);
@@ -765,6 +768,9 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     if (shootThrough && !mesh->isShootThrough()) {
       out << indent << "    shootThrough" << std::endl;
     }
+  }
+  if (ricochet &&  !mesh->canRicochet()) {
+    out << indent << "  ricochet" << std::endl;
   }
 
   out << indent << "  endface" << std::endl;

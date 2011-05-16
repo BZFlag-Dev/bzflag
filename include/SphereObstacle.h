@@ -40,7 +40,7 @@ class SphereObstacle : public Obstacle {
 		   float _rotation, const float _texsize[2],
 		   bool _useNormals, bool hemisphere,
 		   int _divisions, const BzMaterial* mats[MaterialCount],
-		   int physics, bool bounce, bool drive, bool shoot);
+		   int physics, bool bounce, bool drive, bool shoot, bool ricochet);
     ~SphereObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;

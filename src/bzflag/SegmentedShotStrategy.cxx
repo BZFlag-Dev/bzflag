@@ -412,7 +412,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     float t = timeLeft + minTime;
     int face;
     bool hitGround = getGround(r, Epsilon, t);
-    Obstacle* building = (Obstacle*)((e != Through) ? getFirstBuilding(r, Epsilon, t) : NULL);
+    Obstacle* building = (Obstacle*)((e == Through) ? NULL : getFirstBuilding(r, Epsilon, t));
     const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
     t -= minTime;
     minTime = 0.0f;
@@ -472,35 +472,42 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
       switch (e) {
-	case Stop:
-	  timeLeft = 0.0f;
-	break;
+	case Stop: {
+	  if(!building->canRicochet()) {
+	    timeLeft = 0.0f;
+	    break;
+          } else {
 
-      case Reflect: {
-	// move origin to point of reflection
-	o[0] += t * d[0];
-	o[1] += t * d[1];
-	o[2] += t * d[2];
+	  }
+        }     
+        case Reflect: {
+	  // move origin to point of reflection
+	  o[0] += t * d[0];
+	  o[1] += t * d[1];
+	  o[2] += t * d[2];
 
-	// reflect direction about normal to building
-	float normal[3];
-	building->get3DNormal(o, normal);
-	reflect(d, normal);
-	reason = ShotPathSegment::Ricochet;
-	}
-	break;
+	  // reflect direction about normal to building
+	  float normal[3];
+	  building->get3DNormal(o, normal);
+	  reflect(d, normal);
+	  reason = ShotPathSegment::Ricochet;
+	  break;
+        }
 
-      case Through:
-	assert(0);
+        case Through: {
+	  assert(0);
+	  break;
+	}  
       }
     }
-    else if (hitGround)	// we hit the ground
-    {
+    else if (hitGround) { // we hit the ground
+    
       switch (e) {
 	case Stop:
-	case Through:
+	case Through: {
 	  timeLeft = 0.0f;
 	  break;
+	}
 
 	case Reflect: {
 	  // move origin to point of reflection

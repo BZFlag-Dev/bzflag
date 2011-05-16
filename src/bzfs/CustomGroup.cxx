@@ -140,6 +140,9 @@ void CustomGroup::writeToGroupDef(GroupDefinition *grpdef) const
   if (shootThrough) {
     group->setShootThrough();
   }
+  if(ricochet) {
+    group->setCanRicochet();
+  }
 
   group->setName(name);
 

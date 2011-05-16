@@ -586,7 +586,7 @@ WorldInfo *defineTeamWorld()
 	case RedTeam: {
 	  p[0] = (-worldSize + baseSize) / 2.0f;
 	  p[1] = 0.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  myWorld->addBase(p, 0.0f, size, t, false, false, false);
 	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
 	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
 	  break;
@@ -594,7 +594,7 @@ WorldInfo *defineTeamWorld()
 	case GreenTeam: {
 	  p[0] = (worldSize - baseSize) / 2.0f;
 	  p[1] = 0.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  myWorld->addBase(p, 0.0f, size, t, false, false, false);
 	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
 	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
 	  break;
@@ -602,7 +602,7 @@ WorldInfo *defineTeamWorld()
 	case BlueTeam: {
 	  p[0] = 0.0f;
 	  p[1] = (-worldSize + baseSize) / 2.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  myWorld->addBase(p, 0.0f, size, t, false, false, false);
 	  zone.addFlagSafety(p[0] - safeOff, p[1] + safeOff, myWorld);
 	  zone.addFlagSafety(p[0] + safeOff, p[1] + safeOff, myWorld);
 	  break;
@@ -610,7 +610,7 @@ WorldInfo *defineTeamWorld()
 	case PurpleTeam: {
 	  p[0] = 0.0f;
 	  p[1] = (worldSize - baseSize) / 2.0f;
-	  myWorld->addBase(p, 0.0f, size, t, false, false);
+	  myWorld->addBase(p, 0.0f, size, t, false, false, false);
 	  zone.addFlagSafety(p[0] - safeOff, p[1] - safeOff, myWorld);
 	  zone.addFlagSafety(p[0] + safeOff, p[1] - safeOff, myWorld);
 	  break;

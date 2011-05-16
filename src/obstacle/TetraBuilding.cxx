@@ -44,7 +44,7 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
 			     const bool _useNormals[4],
 			     const bool _useTexcoords[4],
 			     const BzMaterial* _materials[4],
-			     bool drive, bool shoot)
+			     bool drive, bool shoot, bool rico)
 {
   // tetra specific parameters
   memcpy (vertices, _vertices, sizeof(vertices));
@@ -58,6 +58,7 @@ TetraBuilding::TetraBuilding(const MeshTransform& xform,
   // common obstace parameters
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
 
   finalize();
 
@@ -79,7 +80,7 @@ Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
   TetraBuilding* copy =
     new TetraBuilding(tmpXform, vertices, normals, texcoords,
 		      useNormals, useTexcoords, (const BzMaterial**)materials,
-		      driveThrough, shootThrough);
+		      driveThrough, shootThrough, ricochet);
   return copy;
 }
 
@@ -122,7 +123,7 @@ MeshObstacle* TetraBuilding::makeMesh()
 
   mesh = new MeshObstacle(transform,
 			  checkTypes, checkPoints, verts, norms, texcds,
-			  4, false, false, driveThrough, shootThrough);
+			  4, false, false, driveThrough, shootThrough, ricochet);
 
   // add the faces to the mesh
   std::vector<int> vlist;
@@ -316,6 +317,7 @@ void *TetraBuilding::pack(void* buf) const
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? (1 << 0) : 0;
   stateByte |= isShootThrough() ? (1 << 1) : 0;
+  stateByte |= canRicochet()    ? (1 << 2) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   // pack the transform
@@ -370,6 +372,7 @@ void *TetraBuilding::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & (1 << 0)) != 0;
   shootThrough = (stateByte & (1 << 1)) != 0;
+  ricochet     = (stateByte & (1 << 2)) != 0;
 
   // unpack the transform
   buf = transform.unpack(buf);
@@ -489,6 +492,9 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
     if (isShootThrough()) {
       out << indent << "\tshootthrough" << std::endl;
     }
+  }
+  if (canRicochet()) {
+    out << indent << "  ricochet" << std::endl;
   }
   out << indent << "end" << std::endl;
 

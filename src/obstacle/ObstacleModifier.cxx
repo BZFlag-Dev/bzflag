@@ -49,6 +49,7 @@ void ObstacleModifier::init()
   // passable bits
   driveThrough = false;
   shootThrough = false;
+  ricochet     = false;
 
   return;
 }
@@ -138,6 +139,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
 
   driveThrough = grpinst.driveThrough || obsMod.driveThrough;
   shootThrough = grpinst.shootThrough || obsMod.shootThrough;
+  ricochet     = grpinst.ricochet     || obsMod.ricochet;
 
   return;
 }
@@ -226,6 +228,16 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
       for (int i = 0; i < mesh->getFaceCount(); i++) {
 	MeshFace* face = (MeshFace*) mesh->getFace(i);
 	face->shootThrough = true;
+      }
+    }
+  }
+  if (ricochet) {
+    obstacle->ricochet = true;
+    if (obstacle->getType() == MeshObstacle::getClassName()) {
+      const MeshObstacle* mesh = (MeshObstacle*) obstacle;
+      for (int i = 0; i < mesh->getFaceCount(); i++) {
+        MeshFace* face = (MeshFace*) mesh->getFace(i);
+	face->ricochet = true;
       }
     }
   }

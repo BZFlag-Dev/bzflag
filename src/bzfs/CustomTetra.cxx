@@ -130,7 +130,7 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
   }
   TetraBuilding* tetra = new TetraBuilding(transform, vertices, normals, texcoords,
 					   useNormals, useTexcoords,
-					   mats, driveThrough, shootThrough);
+					   mats, driveThrough, shootThrough, ricochet);
   if (tetra->isValid()) {
     groupdef->addObstacle(tetra);
   } else {

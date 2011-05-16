@@ -247,11 +247,14 @@ Instantiates a group, and possibly modifies subobjects
 .br
 \fB  shootthrough\fR  # make all subobjects shootthrough
 .br
+\fB  ricochet \fR     # make all subobjects ricochet
 \fB  phydrv\fR example_phydrv     # reassign any valid physics drivers
 .br
 \fB  matref\fR example_material # set material properties
-.br
+
                             # (except for the color)
+.br
+\fB matswap\fR oldMat newMat #replace a given material in the instance
 .br
 \fBend\fR
 .br
@@ -1071,6 +1074,8 @@ obstacle :=
 .br
 	| "passable"
 .br
+        | "ricochet"
+.br
 	| location
 .br
 .TP
@@ -1385,6 +1390,8 @@ face :=
 	| "drivethrough"
 .br
 	| "shootthrough"
+.br
+	| "ricochet"
 .br
 	| "passable"
 .br

@@ -32,8 +32,8 @@ Teleporter::Teleporter()
 
 Teleporter::Teleporter(const float* p, float a, float w,
 		       float b, float h, float _border, bool _horizontal,
-		       bool drive, bool shoot) :
-			 Obstacle(p, a, w, b, h, drive, shoot),
+		       bool drive, bool shoot, bool rico) :
+			 Obstacle(p, a, w, b, h, drive, shoot, rico),
 			 border(_border), horizontal(_horizontal)
 {
   finalize();
@@ -62,7 +62,7 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 
   Teleporter* copy =
     new Teleporter(newPos, newAngle, newSize[0], newSize[1], newSize[2],
-		   border, horizontal, driveThrough, shootThrough);
+		   border, horizontal, driveThrough, shootThrough, ricochet);
 
   copy->setName(name);
 
@@ -158,7 +158,7 @@ void Teleporter::makeLinks()
       bvrts[i][2] = p[2] + ((h - br) * params[i][1]);
     }
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
-			    NULL, -1, false, false, true, true);
+			    NULL, -1, false, false, true, true, false);
 
     for (i = 0; i < 4 ;i++) {
       fvrts[i][0] = p[0] - (wlen[0] + (blen[0] * params[i][0]));
@@ -166,7 +166,7 @@ void Teleporter::makeLinks()
       fvrts[i][2] = p[2] + ((h - br) * params[i][1]);
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
-			     NULL, -1, false, false, true, true);
+			     NULL, -1, false, false, true, true, false);
   }
   else {
     float xlen = w - br;
@@ -184,14 +184,14 @@ void Teleporter::makeLinks()
     bvrts[3][1] = p[1] + ((cos_val * ylen) + (sin_val * -xlen));
     bvrts[3][2] = p[2] + h - br;
     backLink = new MeshFace(NULL, 4, bvrts, NULL, btxcds,
-			    NULL, -1, false, false, true, true);
+			    NULL, -1, false, false, true, true, false);
 
     for (i = 0; i < 4; i++) {
       memcpy(fvrts[i], bvrts[3 - i], sizeof(float[3])); // reverse order
       fvrts[i][2] = p[2] + h; // change the height
     }
     frontLink = new MeshFace(NULL, 4, fvrts, NULL, ftxcds,
-			     NULL, -1, false, false, true, true);
+			     NULL, -1, false, false, true, true, false);
   }
 
   return;
@@ -538,6 +538,7 @@ void* Teleporter::pack(void* buf) const
   unsigned char stateByte = 0;
   stateByte |= isDriveThrough() ? _DRIVE_THRU : 0;
   stateByte |= isShootThrough() ? _SHOOT_THRU : 0;
+  stateByte |= canRicochet()    ? _RICOCHET   : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -561,6 +562,7 @@ void* Teleporter::unpack(void* buf)
   buf = nboUnpackUByte(buf, stateByte);
   driveThrough = (stateByte & _DRIVE_THRU) != 0;
   shootThrough = (stateByte & _SHOOT_THRU) != 0;
+  ricochet     = (stateByte & _RICOCHET)   != 0;
 
   finalize();
 
@@ -599,6 +601,9 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
   out << indent << "  border " << getBorder() << std::endl;
   if (horizontal) {
     out << indent << "  horizontal" << std::endl;
+  }
+  if (ricochet) {
+    out << indent << "  ricochet" << std::endl;
   }
   out << indent << "end" << std::endl;
   return;

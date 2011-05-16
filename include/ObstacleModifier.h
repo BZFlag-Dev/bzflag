@@ -45,6 +45,7 @@ class ObstacleModifier {
 
     bool driveThrough;
     bool shootThrough;
+    bool ricochet;
 };
 
 

@@ -50,6 +50,7 @@ MeshObstacle::MeshObstacle()
   noclusters = false;
   smoothBounce = false;
   driveThrough = false;
+  ricochet = false;
   shootThrough = false;
   inverted = false;
   drawInfo = NULL;
@@ -86,7 +87,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
 			   const std::vector<cfvec3>& normalList,
 			   const std::vector<cfvec2>& texcoordList,
 			   int _faceCount, bool _noclusters,
-			   bool bounce, bool drive, bool shoot)
+			   bool bounce, bool drive, bool shoot, bool rico)
 {
   unsigned int i;
 
@@ -129,6 +130,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
   smoothBounce = bounce;
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet = rico;
 
   drawInfo = NULL;
 
@@ -141,7 +143,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 			   const std::vector<int>& _texcoords,
 			   const BzMaterial* _material, int phydrv,
 			   bool _noclusters,
-			   bool bounce, bool drive, bool shoot,
+			   bool bounce, bool drive, bool shoot, bool rico,
 			   bool triangulate)
 {
   // protect the face list from overrun
@@ -184,6 +186,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   bounce = bounce || smoothBounce;
   drive = drive || driveThrough;
   shoot = shoot || shootThrough;
+  rico  = rico  || ricochet;
 
   // override the triangulation setting depending on count
   triangulate = triangulate && (count > 3);
@@ -195,11 +198,11 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     int tmpDebugLevel = debugLevel;
     debugLevel = 0;
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-			_noclusters, bounce, drive, shoot);
+			_noclusters, bounce, drive, shoot, rico);
     debugLevel = tmpDebugLevel;
   } else {
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-			_noclusters, bounce, drive, shoot);
+			_noclusters, bounce, drive, shoot, rico);
   }
 
   // check its validity
@@ -238,7 +241,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 	}
 	makeFacePointers(triV, triN, triT, v, n, t);
 	face = new MeshFace(this, 3, v, n, t, _material, phydrv,
-			    _noclusters, bounce, drive, shoot);
+			    _noclusters, bounce, drive, shoot, rico);
 	if (face->isValid()) {
 	  faces[faceCount] = face;
 	  faceCount++;
@@ -324,7 +327,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     // load blanks for pure visual meshes
     copy = new MeshObstacle(xform, ctlist, clist,
 			    vlist, nlist, tlist, 0, noclusters,
-			    smoothBounce, driveThrough, shootThrough);
+			    smoothBounce, driveThrough, shootThrough, ricochet);
   } else {
     for (i = 0; i < checkCount; i++) {
       ctlist.push_back(checkTypes[i]);
@@ -338,7 +341,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 
     copy = new MeshObstacle(xform, ctlist, clist,
 			    vlist, nlist, tlist, faceCount, noclusters,
-			    smoothBounce, driveThrough, shootThrough);
+			    smoothBounce, driveThrough, shootThrough, ricochet);
 
     for (i = 0; i < faceCount; i++) {
       copyFace(i, copy);
@@ -377,7 +380,8 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
   mesh->addFace(vlist, nlist, tlist, face->getMaterial(),
 		face->getPhysicsDriver(), face->noClusters(),
 		face->isSmoothBounce(),
-		face->isDriveThrough(), face->isShootThrough(), false);
+		face->isDriveThrough(), face->isShootThrough(),
+		face->canRicochet(), false);
   return;
 }
 
@@ -698,6 +702,7 @@ void *MeshObstacle::pack(void *buf) const
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= noclusters       ? (1 << 3) : 0;
   stateByte |= drawInfoOwner    ? (1 << 4) : 0;
+  stateByte |= canRicochet()    ? (1 << 5) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -766,6 +771,7 @@ void *MeshObstacle::unpack(void *buf)
   smoothBounce  = (stateByte & (1 << 2)) != 0;
   noclusters    = (stateByte & (1 << 3)) != 0;
   drawInfoOwner = (stateByte & (1 << 4)) != 0;
+  ricochet      = (stateByte & (1 << 5)) != 0;
 
   if (drawInfoOwner && (vertexCount >= 1)) {
     // remove the extraneous vertex
@@ -877,6 +883,9 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     if (shootThrough) {
       out << indent << "  shootThrough" << std::endl;
     }
+  }
+  if (ricochet) {
+    out << indent << "  ricochet" << std::endl;
   }
 
   int i, j;

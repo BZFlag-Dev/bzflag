@@ -33,6 +33,7 @@ Obstacle::Obstacle()
   angle = 0;
   driveThrough = false;
   shootThrough = false;
+  ricochet     = false;
   ZFlip = false;
   source = WorldSource;
 
@@ -42,7 +43,7 @@ Obstacle::Obstacle()
 
 Obstacle::Obstacle(const float* _pos, float _angle,
 		   float _width, float _breadth, float _height,
-		   bool drive, bool shoot)
+		   bool drive, bool shoot, bool rico)
 {
   pos[0] = _pos[0];
   pos[1] = _pos[1];
@@ -54,6 +55,7 @@ Obstacle::Obstacle(const float* _pos, float _angle,
 
   driveThrough = drive;
   shootThrough = shoot;
+  ricochet     = rico;
   ZFlip = false;
   source = WorldSource;
 

@@ -25,7 +25,7 @@ class WallObstacle : public Obstacle {
   public:
 			WallObstacle();
 			WallObstacle(const float* pos, float rotation,
-				     float breadth, float height);
+				     float breadth, float height, bool ricochet);
 			~WallObstacle();
 
     const char*		getType() const;

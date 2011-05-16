@@ -27,6 +27,7 @@ public:
 protected:
   bool driveThrough;
   bool shootThrough;
+  bool ricochet;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */

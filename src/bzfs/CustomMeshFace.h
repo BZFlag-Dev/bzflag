@@ -42,6 +42,7 @@ class CustomMeshFace {
     bool smoothBounce;
     bool driveThrough;
     bool shootThrough;
+    bool ricochet;
 };
 
 

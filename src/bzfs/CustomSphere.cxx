@@ -124,7 +124,7 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
   SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
 					      useNormals, hemisphere, divisions, mats,
 					      phydrv,
-					      smoothBounce, driveThrough, shootThrough);
+					      smoothBounce, driveThrough, shootThrough, ricochet);
 
   if (sphere->isValid()) {
     groupdef->addObstacle(sphere);

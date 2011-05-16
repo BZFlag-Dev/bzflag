@@ -49,6 +49,7 @@ class CustomPyramid : public WorldFileObstacle {
     float texoffset[FaceCount][2];
     bool drivethrough[FaceCount];
     bool shootthrough[FaceCount];
+    bool ricochets[FaceCount];
     BzMaterial materials[FaceCount];
 
     static const char* faceNames[FaceCount];
