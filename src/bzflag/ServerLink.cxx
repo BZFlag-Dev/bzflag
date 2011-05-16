@@ -188,7 +188,10 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
 #endif // !defined(_WIN32)
   if (!okay)
-    goto done;
+  {
+    close(query);
+    return;
+  }
 
   // get server version and verify
 #if !defined(_WIN32)
@@ -301,7 +304,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
       rejectionMessage = message;
     }
 
-    goto done;
+    close(query);
+    return;
   }
 
   // read local player's id
@@ -321,7 +325,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     return;
   if (id == 0xff) {
     state = Rejected;
-    goto done;
+    close(query);
+    return;
   }
 
 #if !defined(_WIN32)
@@ -353,8 +358,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   }
   return;
 
-done:
-  close(query);
 }
 
 ServerLink::~ServerLink()
@@ -576,25 +579,26 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 #if defined(NETWORK_STATS)
   if (rlen >= 0) bytesReceived += rlen;
 #endif
-  if (rlen == int(len)) goto success;	// got whole thing
-
-  // keep reading until we get the whole message
-  tlen = rlen;
-  while (rlen >= 1 && tlen < int(len)) {
-    FD_ZERO(&read_set);
-    FD_SET((unsigned int)fd, &read_set);
-    nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
-    if (nfound == 0) continue;
-    if (nfound < 0) return -1;
-    rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
-    if (rlen >= 0) tlen += rlen;
-#if defined(NETWORK_STATS)
-  if (rlen >= 0) bytesReceived += rlen;
-#endif
+  if (rlen != int(len))
+  {
+    // keep reading until we get the whole message
+    tlen = rlen;
+    while (rlen >= 1 && tlen < int(len)) 
+    {
+	FD_ZERO(&read_set);
+	FD_SET((unsigned int)fd, &read_set);
+	nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
+	if (nfound == 0) continue;
+	if (nfound < 0) return -1;
+	rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
+	if (rlen >= 0) tlen += rlen;
+    #if defined(NETWORK_STATS)
+      if (rlen >= 0) bytesReceived += rlen;
+    #endif
+    }
+    if (tlen < int(len)) return -1;
   }
-  if (tlen < int(len)) return -1;
 
-success:
 // FIXME -- packet recording
 if (packetStream) {
   long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
