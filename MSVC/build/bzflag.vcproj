@@ -89,7 +89,7 @@
 				OutputFile="$(OutDir)/bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\src\3D\debug"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/bzflag.pdb"
 				SubSystem="2"

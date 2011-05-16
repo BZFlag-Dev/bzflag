@@ -18,21 +18,19 @@
 
 /* common implementation headers */
 #include "network.h"
-
-extern "C" {
-#ifdef LOCAL_CARES
-#include "bzares.h"
-#include "bzares_version.h"
+#if defined(BUILD_ARES)
+#include "../src/other/ares/ares.h"
 #else
-#include "ares.h"
-#include "ares_version.h"
+#include <ares.h>
 #endif
-}
 
 class AresHandler {
  public:
   AresHandler(int index);
   ~AresHandler();
+
+  static bool	globalInit();
+  static void	globalShutdown();
 
   enum ResolutionStatus {
     None = 0,
@@ -66,6 +64,8 @@ class AresHandler {
   ares_channel	aresChannel;
   ResolutionStatus status;
   bool		aresFailed;
+
+  static bool	globallyInited;
 };
 
 #endif

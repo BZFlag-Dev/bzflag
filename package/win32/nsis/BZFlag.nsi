@@ -160,6 +160,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Add some DLL files
   SetOutPath $INSTDIR
   File ..\..\..\bin_${PLATFORM}\libcurl.dll
+  File ..\..\..\bin_${PLATFORM}\ares.dll
 
   ; This requires the Visual C++ 2008 SP1 runtime file to be located in
   ; the same directory as the NSIS script

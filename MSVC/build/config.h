@@ -109,6 +109,9 @@
 #define HAVE_STD__MIN 1
 #define HAVE_STD__MAX 1
 
+#define HAVE_ARES_LIBRARY_INIT 1
+#define BUILD_ARES 1
+
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}

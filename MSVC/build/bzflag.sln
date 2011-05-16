@@ -57,6 +57,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mediafile", "mediafile.vcpr
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "net", "net.vcproj", "{7B2595ED-CCB8-4D19-87F2-9A52C7F26EF8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{417CB8F4-5AE3-45AC-B903-83DB1556303C} = {417CB8F4-5AE3-45AC-B903-83DB1556303C}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "obstacle", "obstacle.vcproj", "{91C01688-CEB5-4CF3-B13D-6EF86D630523}"
 EndProject

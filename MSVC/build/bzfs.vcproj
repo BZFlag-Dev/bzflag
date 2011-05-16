@@ -74,11 +74,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib  ares.lib"
 				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="libcurl.lib"
+				AdditionalLibraryDirectories="ares_$(PlatformName)_$(ConfigurationName)"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile=".$(OutDir)/bzfs.pdb"
 				SubSystem="1"
@@ -167,11 +167,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib  ares.lib"
 				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="libcurl.lib"
+				AdditionalLibraryDirectories="ares_$(PlatformName)_$(ConfigurationName)"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile=".$(OutDir)/bzfs.pdb"
 				SubSystem="1"
@@ -260,11 +260,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib ares.lib"
 				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="libcurl.lib"
+				AdditionalLibraryDirectories="ares_$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/bzfs.pdb"
 				SubSystem="1"
@@ -354,11 +354,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib"
+				AdditionalDependencies="ws2_32.lib winmm.lib odbc32.lib odbccp32.lib  ares.lib"
 				OutputFile="$(OutDir)/bzfs.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="libcurl.lib"
+				AdditionalLibraryDirectories="ares_$(PlatformName)_$(ConfigurationName)"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/bzfs.pdb"
 				SubSystem="1"

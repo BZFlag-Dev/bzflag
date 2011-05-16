@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <string.h>
 
+bool AresHandler::globallyInited = false;
 
 AresHandler::AresHandler(int _index)
   : index(_index), hostname(NULL), status(None)
@@ -28,6 +29,15 @@ AresHandler::AresHandler(int _index)
   static const char* lookups = "fb";
   struct ares_options opts;
   opts.lookups = (char*)lookups; // we cheat, libares uses strdup
+
+  /* start up our resolver */
+  if (!globallyInited) {
+    aresFailed = !globalInit();
+    if (aresFailed) {
+      status = Failed;
+      logDebugMessage(2,"Ares failed initializing library\n");
+    }
+  }
 
   /* start up our resolver */
   int code = ares_init_options (&aresChannel, &opts, ARES_OPT_LOOKUPS);
@@ -48,6 +58,27 @@ AresHandler::~AresHandler()
     hostname = NULL;
   }
 }
+
+bool AresHandler::globalInit()
+{
+  if (!globallyInited)
+  {
+#ifdef HAVE_ARES_LIBRARY_INIT
+    if (ares_library_init(ARES_LIB_INIT_ALL) == ARES_SUCCESS)
+#endif
+      globallyInited = true;
+  }
+  return globallyInited;
+}
+
+void AresHandler::globalShutdown()
+{
+#ifdef HAVE_ARES_LIBRARY_INIT
+  if (globallyInited)
+    ares_library_cleanup();
+#endif
+}
+
 
 void AresHandler::queryHostname(struct sockaddr *clientAddr)
 {

@@ -93,6 +93,9 @@ bool shouldGrabMouse();
 void setRoamingLabel();
 void drawFrame(const float dt);
 
+void initGlobalAres();
+void killGlobalAres();
+
 extern void joinGame();
 
 extern HUDRenderer	*hud;

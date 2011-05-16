@@ -5868,6 +5868,9 @@ int main(int argc, char **argv)
   delete listServerLink;
 
   // free misc stuff
+  AresHandler::globalShutdown();
+
+  // free misc stuff
   delete clOptions; clOptions = NULL;
   FlagInfo::setSize(0);
   delete world; world = NULL;

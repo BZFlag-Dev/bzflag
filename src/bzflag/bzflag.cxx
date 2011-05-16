@@ -37,6 +37,7 @@
 
 /* common headers */
 #include "Address.h"
+#include "AresHandler.h"
 #include "BZDBCache.h"
 #include "BZDBLocal.h"
 #include "BundleMgr.h"
@@ -634,6 +635,7 @@ int			main(int argc, char** argv)
     printFatalError("Failed to initialize winsock.  Terminating.\n");
     return 1;
   }
+  initGlobalAres();
   if (LOBYTE(wsaData.wVersion) != major ||
       HIBYTE(wsaData.wVersion) != minor) {
     printFatalError("Version mismatch in winsock;"
@@ -1359,6 +1361,11 @@ int			main(int argc, char** argv)
   }
 
   // shut down
+
+
+  killGlobalAres();
+  AresHandler::globalShutdown();
+
   if (filter != NULL)
     delete filter;
   filter = NULL;

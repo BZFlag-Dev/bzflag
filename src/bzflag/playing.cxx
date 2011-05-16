@@ -224,7 +224,9 @@ static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
 static bool	     downloadingInitialTexture = false;
 
-static AresHandler      ares(0);
+static AresHandler* ares = NULL;
+void initGlobalAres() { ares = new AresHandler(0); }
+void killGlobalAres() { delete ares; ares = NULL; }
 
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
@@ -6175,7 +6177,7 @@ static void		playingLoop()
       if (strcmp(startupInfo.token, "badtoken") == 0)
 	startupInfo.token[0] = '\0';
 
-      ares.queryHost(startupInfo.serverName);
+      ares->queryHost(startupInfo.serverName);
       waitingDNS = true;
 
       // don't try again
@@ -6190,13 +6192,13 @@ static void		playingLoop()
       timeout.tv_usec = 0;
       FD_ZERO(&readers);
       FD_ZERO(&writers);
-      ares.setFd(&readers, &writers, nfds);
+      ares->setFd(&readers, &writers, nfds);
       nfds = select(nfds + 1, (fd_set*)&readers, (fd_set*)&writers, 0,
 		    &timeout);
-      ares.process(&readers, &writers);
+      ares->process(&readers, &writers);
 
       struct in_addr inAddress;
-      AresHandler::ResolutionStatus status = ares.getHostAddress(&inAddress);
+      AresHandler::ResolutionStatus status = ares->getHostAddress(&inAddress);
       if (status == AresHandler::Failed) {
 	HUDDialogStack::get()->setFailedMessage("Server not found");
 	waitingDNS = false;
