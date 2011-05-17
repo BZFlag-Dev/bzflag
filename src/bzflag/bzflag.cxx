@@ -679,7 +679,7 @@ int			main(int argc, char** argv)
   createCacheSignature();
 
   // initialize global objects and classes
-  bzfsrand(time(0));
+  bzfsrand((unsigned int)time(0));
 
     // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {

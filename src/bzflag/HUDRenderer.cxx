@@ -67,7 +67,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 				showCompose(false),
 				showCracks(true),
 				dater(false),
-				lastTimeChange(time(NULL)),
+				lastTimeChange((unsigned long)time(NULL)),
 				triangleCount(0),
 				radarTriangleCount(0)
 {
@@ -736,7 +736,7 @@ void			HUDRenderer::renderStatus(void)
     if (BZDB.eval("timedate") == 2) {
       if (time(NULL) - lastTimeChange >= 2) {
 	dater = !dater;
-	lastTimeChange = time(NULL);
+	lastTimeChange = (unsigned int)time(NULL);
       }
     } else {
       dater = (BZDB.eval("timedate") == 1);
