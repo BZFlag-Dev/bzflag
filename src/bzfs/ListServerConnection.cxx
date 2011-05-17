@@ -109,6 +109,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     const char tokBadIdentifier[]  = "TOKBAD: ";
     const char unknownPlayer[]     = "UNK: ";
     const char bzIdentifier[]      = "BZID: ";
+    const char ownerIdentifier[]   = "OWNER: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
@@ -140,6 +141,8 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
 	callsign = base + strlen(unknownPlayer);
 	authReply  = true;
+      } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))){
+        setPublicOwner(base + strlen(ownerIdentifier));
       } else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
 	std::string line = base;
 	std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);

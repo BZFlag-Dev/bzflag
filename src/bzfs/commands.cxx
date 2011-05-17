@@ -488,6 +488,15 @@ public:
 };
 
 
+class OwnerCommand : ServerCommand {
+public:
+  OwnerCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
+
 static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
 static PartCommand	  partCommand;
@@ -542,6 +551,7 @@ static CmdList		  cmdList;
 static CmdHelp		  cmdHelp;
 static ModCountCommand    modCountCommand;
 static DebugCommand       debugCommand;
+static OwnerCommand       ownerCommand;
 
 CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
 CmdList::CmdList()			 : ServerCommand("/?",
@@ -648,6 +658,8 @@ ModCountCommand::ModCountCommand() : ServerCommand("/modcount",
   "[+-seconds] - adjust countdown (if any)") {}
 DebugCommand::DebugCommand()		 : ServerCommand("/serverdebug",
   "[value] - set debug level or display the current setting") {}
+OwnerCommand::OwnerCommand()		 : ServerCommand("/owner",
+  "display the server owner's BZBB name") {}
 
 
 class NoDigit {
@@ -3684,6 +3696,23 @@ bool DebugCommand::operator() (const char *message,
 
   return true;
 }
+
+
+bool OwnerCommand::operator() (const char* /*message*/,
+                               GameKeeper::Player *playerData)
+{
+  const int playerIndex = playerData->getIndex();
+  const std::string& owner = getPublicOwner();
+  if (owner.empty()) {
+    sendMessage(ServerPlayer, playerIndex, "server has no registered owner");
+  } else {
+    std::string msg = "this server's registered owner is: ";
+    msg += owner;
+    sendMessage(ServerPlayer, playerIndex, msg.c_str());
+  }
+  return true;
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

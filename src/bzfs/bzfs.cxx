@@ -725,6 +725,26 @@ PingPacket getTeamCounts()
   return pingReply;
 }
 
+
+//============================================================================//
+
+static std::string publicOwner = "";
+
+
+const std::string& getPublicOwner()
+{
+  return publicOwner;
+}
+
+
+void setPublicOwner(const std::string& owner)
+{
+  publicOwner = owner;
+}
+
+
+//============================================================================//
+
 void publicize()
 {
   /* // hangup any previous list server sockets

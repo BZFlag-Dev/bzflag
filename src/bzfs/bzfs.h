@@ -117,6 +117,9 @@ extern TeamColor  whoseBase(float x, float y, float z);
 bool defineWorld ( void );
 bool saveWorldCache( const char* file = NULL );
 
+extern const std::string& getPublicOwner();
+extern void               setPublicOwner(const std::string& owner);
+
 void rescanForBans ( bool isOperator = false, const char* callsign = NULL, int playerID = -1 );
 
 // initialize permission groups
