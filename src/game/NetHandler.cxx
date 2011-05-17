@@ -329,7 +329,7 @@ void NetHandler::setPlayer ( PlayerInfo* p, int index )
 
 NetHandler::~NetHandler() {
 #ifdef NETWORK_STATS
-  if (info->isPlaying())
+  if (info && info->isPlaying())
     dumpMessageStats();
 #endif
   if (ares)
