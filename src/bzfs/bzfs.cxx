@@ -4816,7 +4816,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   peer.sendChunks.pop_front();
 }
 
-static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& write_set)
+static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*read_set*/, fd_set& /*write_set*/)
 {
   double connectionTimeout = 30.0; // timeout in seconds
 
@@ -4850,7 +4850,6 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 
 	unsigned int readSize = netHandler->getTcpReadSize();
 	void *buf = netHandler->getTcpBuffer();
-	int fd = sockFD;
 
 	const char*  header = BZ_CONNECT_HEADER;
 	const size_t headerLen = strlen(header);
@@ -5946,15 +5945,15 @@ int main(int argc, char **argv)
 	    toKill.push_back(peerItr->first);
       }
 
-      for (unsigned int i = 0; i < toKill.size(); i++) 
+      for (unsigned int j = 0; j < toKill.size(); j++) 
       {
-	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end())
+	if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
 	{
-	  NetConnectedPeer &peer = netConnectedPeers[toKill[i]];
+	  NetConnectedPeer &peer = netConnectedPeers[toKill[j]];
 	  if (peer.netHandler)
 	    delete(peer.netHandler);
 	  peer.netHandler = NULL;
-	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
+	  netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
 	}
       }
 
@@ -5970,10 +5969,10 @@ int main(int argc, char **argv)
 	if (peerItr->second.player != -1)
 	  toKill.push_back(peerItr->first);
       }
-      for (unsigned int i = 0; i < toKill.size(); i++) 
+      for (unsigned int j = 0; j < toKill.size(); j++) 
       {
-	if (netConnectedPeers.find(toKill[i]) != netConnectedPeers.end())
-	  netConnectedPeers.erase(netConnectedPeers.find(toKill[i]));
+	if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
+	  netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
       }
 
       // process eventual resolver requests
@@ -5982,14 +5981,14 @@ int main(int argc, char **argv)
       // now check messages from connected players and send queued messages
       GameKeeper::Player *playerData;
       NetHandler *netPlayer;
-      for (int i = 0; i < curMaxPlayers; i++) {
-	playerData = GameKeeper::Player::getPlayerByIndex(i);
+      for (int j = 0; j < curMaxPlayers; j++) {
+	playerData = GameKeeper::Player::getPlayerByIndex(j);
 	if (!playerData)
 	  continue;
 	netPlayer = playerData->netHandler;
 	// send whatever we have ... if any
 	if (netPlayer->pflush(&write_set) == -1) {
-	  removePlayer(i, "ECONNRESET/EPIPE", false);
+	  removePlayer(j, "ECONNRESET/EPIPE", false);
 	  continue;
 	}
 	playerData->handleTcpPacket(&read_set);
