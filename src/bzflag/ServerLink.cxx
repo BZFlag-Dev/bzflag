@@ -254,19 +254,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     }
   }
 
-  // get server version and verify
-#if !defined(_WIN32)
-  FD_ZERO(&read_set);
-  FD_SET((unsigned int)query, &read_set);
-  timeout.tv_sec = long(5);
-  timeout.tv_usec = 0;
-  nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
-  if (nfound <= 0) {
-    close(query);
-    return;
-  }
-#endif // !defined(_WIN32)
-
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 
   // if we got back less then the expected connect responce (BZFSXXXX)
