@@ -60,7 +60,8 @@ struct CmdLineOptions
     rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
     servermsg(""), advertisemsg(""), worldFile(""),
     pingInterface(""), password(""),
-    listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
+    listServerOverridden(false),
+    publicizedTitle(""), publicizedAddress(""), publicizedKey(""),
     advertiseGroups("EVERYONE"),
     suppressMasterBanList(false), masterBanListOverridden(false),
     maxShots(1), maxTeamScore(0), maxPlayerScore(0),
@@ -115,6 +116,7 @@ struct CmdLineOptions
 
   std::string	publicizedTitle;
   std::string	publicizedAddress;
+  std::string	publicizedKey;
   std::string	advertiseGroups;
 
   bool			suppressMasterBanList;

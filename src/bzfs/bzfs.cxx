@@ -5018,6 +5018,18 @@ int main(int argc, char **argv)
     }
   }
 
+  if (clOptions->publicizeServer && clOptions->publicizedKey.empty()) {
+    logDebugMessage(0,
+      "\n"
+      "WARNING:\n"
+      "  Publicly listed bzfs servers must register using the '-publickey <key>'\n"
+      "  option. A web page describing list-server policies and procedures can\n"
+      "  be found at the following location:\n"
+      "\n"
+      "    http://my.bzflag.org/w/ServerAuthentication\n"
+      "\n");
+  }
+
 #ifdef _USE_BZ_API
   // see if we are going to load any plugins
   initPlugins();

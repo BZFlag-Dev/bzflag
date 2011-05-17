@@ -215,6 +215,7 @@ const char *extraUsageString =
 "\t-public <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
+"\t-publickey <key>\n"
 "\t-q: don't listen for or respond to pings\n"
 "\t+r: all shots ricochet\n"
 "\t-rabbit [score|killer|random]: rabbit chase style\n"
@@ -870,7 +871,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(1, i, argc, argv[i]);
       // at least put password someplace that ps won't see
       options.password = argv[i];
-      memset(argv[i], ' ', options.password.size());
+      memset(argv[i], 'X', options.password.size());
     } else if (strcmp(argv[i], "-pidfile") == 0) {
       unsigned int pid = 0;
 	  checkArgc(1, i, argc, argv[i]);
@@ -942,6 +943,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.listServerURL.push_back(argv[i]);
+    } else if (strcmp(argv[i], "-publickey") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
+      checkArgc(1, i, argc, argv[i]);
+      // at least put publickey someplace that ps won't see
+      options.publicizedKey = argv[i];
+      memset(argv[i], 'X', options.publicizedKey.size());
     } else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings
       checkFromWorldFile(argv[i], fromWorldFile);

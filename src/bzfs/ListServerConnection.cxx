@@ -371,6 +371,10 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += getAppVersion();
   msg += "&checktokens=";
 
+  if (clOptions && !clOptions->publicizedKey.empty()) {
+    msg += "&key=" + clOptions->publicizedKey;
+  }
+
   std::set<std::string> callSigns;
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
   for (int i = 0; i < curMaxPlayers; i++) {
