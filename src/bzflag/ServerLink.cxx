@@ -193,19 +193,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     return;
   }
 
-  // get server version and verify
-#if !defined(_WIN32)
-  FD_ZERO(&read_set);
-  FD_SET((unsigned int)query, &read_set);
-  timeout.tv_sec = long(5);
-  timeout.tv_usec = 0;
-  nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
-  if (nfound <= 0) {
-    close(query);
-    return;
-  }
-#endif // !defined(_WIN32)
-
   // send out the connect header
   // this will let the server know we are BZFS protocol.
   // after the server gets this it will send back a version for us to check
@@ -266,6 +253,19 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
       TimeKeeper::sleep(0.25f);
     }
   }
+
+  // get server version and verify
+#if !defined(_WIN32)
+  FD_ZERO(&read_set);
+  FD_SET((unsigned int)query, &read_set);
+  timeout.tv_sec = long(5);
+  timeout.tv_usec = 0;
+  nfound = select(fdMax + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
+  if (nfound <= 0) {
+    close(query);
+    return;
+  }
+#endif // !defined(_WIN32)
 
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 
