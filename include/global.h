@@ -88,7 +88,8 @@ enum GameStyle {
   ShakableGameStyle =	 0x0040, // can drop bad flags
   AntidoteGameStyle =	 0x0080, // anti-bad flags
   HandicapGameStyle =	 0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
-  RabbitChaseGameStyle = 0x0200  // rabbit chase
+  RabbitChaseGameStyle = 0x0200,  // rabbit chase
+  NoTeamKillsGameStyle = 0x0400
   // add here before reusing old ones above
 };
 

@@ -57,6 +57,7 @@ bzfs \- BZFlag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
+[\fB\-noTeamKills\fR]
 [\fB\-p \fIport\fR]
 [\fB\-packetlossdrop \fIwarn\-count\fR]
 [\fB\-packetlosswarn \fR\fIpercent\fR]
@@ -304,6 +305,9 @@ declared the winner and the game is over.
 .TP
 .B \-noMasterBanlist
 Server will not attempt to load the master ban list from the internet.
+.TP
+.B \-noTeamKills
+Players on the same team are immune to eachother's shots. Rogue is excepted.
 .TP
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.

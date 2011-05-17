@@ -846,6 +846,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
       checkArgc(1, i, argc, argv[i]);
       options.masterBanListURL.push_back(argv[i]);
+    } else if (strcmp(argv[i], "-noTeamKills") == 0) {
+      // disable team killing
+      options.gameStyle |= int(NoTeamKillsGameStyle);
     } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);
