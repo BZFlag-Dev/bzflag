@@ -4526,17 +4526,15 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
 
   // simple ruleset, if player sends a MsgShotBegin over TCP he/she
   // must not be using the UDP link
-  if (clOptions->requireUDP && playerData != NULL && !playerData->player.isBot()) {
+  if (true && playerData != NULL && !playerData->player.isBot()) {
     if (code == MsgShotBegin) {
       char message[MessageLen];
-      snprintf(message, MessageLen, "Your end is not using UDP, turn on udp");
+      snprintf(message, MessageLen, "Your end is not using UDP.");
       sendMessage(ServerPlayer, i, message);
 
-      snprintf(message, MessageLen, "upgrade your client http://BZFlag.org/ or");
+      snprintf(message, MessageLen, "Turn on UDP on your firewall or router.");
       sendMessage(ServerPlayer, i, message);
 
-      snprintf(message, MessageLen, "Try another server, Bye!");
-      sendMessage(ServerPlayer, i, message);
       removePlayer(i, "no UDP");
       return;
     }

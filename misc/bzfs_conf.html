@@ -66,11 +66,6 @@
 						d.writeln("-p " + mainform.port.value + "<br/><br/>");
 					}
 
-					if (mainform.udp_required.checked) {
-						d.writeln("#Require UDP<br/>");
-						d.writeln("-requireudp<br/><br/>");
-					}
-
 					if (mainform.listen_interface.value.length > 0) {
 						d.writeln("#Listen on this network interface<br/>");
 						d.writeln("-i " + mainform.listen_interface.value + "<br/><br/>");
@@ -624,10 +619,6 @@
 							<td><input type="text" name="port" value="5154" size="30" title="Initial port clients connect on"/></td>
 						</tr>
 						<tr>
-							<td>UDP Required</td>
-							<td>
-								<input type="checkbox" name="udp_required" title="Specify how UDP protocol is used"/>
-							</td>
 							<td>Listen On Interface</td>
 							<td><input type="text" name="listen_interface" size="30" title="Listen on this network interface"/></td>
 						</tr>

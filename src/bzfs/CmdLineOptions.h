@@ -71,7 +71,7 @@ struct CmdLineOptions
     adminlagannounce(-1.0), lagannounce(-1.0), lagwarnthresh(-1.0), jitterwarnthresh(-1.0),
     idlekickthresh(-1.0), timeLimit(0.0f), timeElapsed(0.0f), addedTime(0.0f),
     linearAcceleration(_DEFAULT_LIN_ACCEL), angularAcceleration(_DEFAULT_ANGLE_ACCELL), useGivenPort(false),
-    useFallbackPort(false), requireUDP(false), randomBoxes(false),
+    useFallbackPort(false), randomBoxes(false),
     randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
     oneGameOnly(false), timeManualStart(false), randomHeights(false),
     useTeleporters(false), teamKillerDies(true), printScore(false),
@@ -150,7 +150,6 @@ struct CmdLineOptions
 
   bool			useGivenPort;
   bool			useFallbackPort;
-  bool			requireUDP;
   bool			randomBoxes;
   bool			randomCTF;
   bool			flagsOnBuildings;
