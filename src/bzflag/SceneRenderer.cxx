@@ -1135,8 +1135,8 @@ void SceneRenderer::renderPreDimming()
 static bool setupMapFog()
 {
   std::string fogModeStr;
-  if ((BZDB.get(StateDatabase::BZDB_FOGMODE) == "none") ||
-      !BZDB.isTrue("fogEffect")) {
+  if (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")
+  {
     glDisable(GL_FOG);
     glHint(GL_FOG_HINT, GL_FASTEST);
     return false;
@@ -1166,7 +1166,7 @@ static bool setupMapFog()
     fogColor[0] = fogColor[1] = fogColor[2] = 0.1f;
     fogColor[3] = 0.0f; // has no effect
   }
-  if (BZDB.evalInt("fogEffect") >= 2) {
+  if (BZDB.evalInt("fogEffect") >= 1) {
     glHint(GL_FOG_HINT, GL_NICEST);
   } else {
     glHint(GL_FOG_HINT, GL_FASTEST);

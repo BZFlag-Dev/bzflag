@@ -72,7 +72,6 @@ EffectsMenu::EffectsMenu()
   option->setLabel("Fog:");
   option->setCallback(callback, (void*)"F");
   options = &option->getList();
-  options->push_back(std::string("Off"));
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Nice"));
   option->update();

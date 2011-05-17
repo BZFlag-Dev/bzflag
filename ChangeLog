@@ -3,6 +3,7 @@
 
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
+* Accepted patch from McSpider, removed client option to turn off fog - David Anderson
 * Accepted patch from McSpider, added -noTeamKills option - David Anderson
 * Removed -3Dfx, -no3Dfx. Moved -geometry ->  -window <geometry-spec> - David Anderson
 * Add ricochet on a per object basis for .bzw files - David Anderson
