@@ -15,6 +15,7 @@
 
 /* common implementation headers */
 #include "BZDBCache.h"
+#include "playing.h"
 
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
@@ -42,20 +43,36 @@ int BaseLocalPlayer::getSalt()
   return salt << 8;
 }
 
-void BaseLocalPlayer::update()
+void BaseLocalPlayer::update(float inputDT)
 {
-  // avoid potential accuracy problems at very high framerates by
-  // simply skipping the update step until at least 1ms has passed
-  const float dt = float(TimeKeeper::getTick() - lastTime);
-  if (dt < 0.001f)
-    return;
-
   // save last position
   const float* oldPosition = getPosition();
+
+  // update by time step
+  float dt = float(TimeKeeper::getTick() - lastTime);
+  if (dt < MIN_DT_LIMIT)
+    return;
+
   lastPosition[0] = oldPosition[0];
   lastPosition[1] = oldPosition[1];
   lastPosition[2] = oldPosition[2];
+  
+  lastTime = TimeKeeper::getTick();
 
+  if (inputDT > 0)
+    dt = inputDT;
+
+  if (dt < MIN_DT_LIMIT)
+    dt = MIN_DT_LIMIT;
+
+  float dtLimit = MAX_DT_LIMIT;
+  float doneDT = dt;
+  if (dt > dtLimit) {
+    dt = dtLimit;
+    doneDT -= dtLimit;
+  }
+
+  while (doneDT > 0) {
   // update by time step
   lastTime = TimeKeeper::getTick();
   doUpdateMotion(dt);
@@ -91,6 +108,14 @@ void BaseLocalPlayer::update()
 
   // do remaining update stuff
   doUpdate(dt);
+
+  // subtract another chunk
+  doneDT -= dtLimit;
+
+  // if we only have a nubby left, don't do a full dt.
+  if (doneDT < dtLimit)
+    dt = doneDT;
+  }
 }
 
 Ray BaseLocalPlayer::getLastMotion() const

@@ -30,7 +30,7 @@ class BaseLocalPlayer : public Player {
   BaseLocalPlayer(const PlayerId&, const char* name, const char* email);
   ~BaseLocalPlayer();
 
-  void update();
+  void update(float inputDT = -1.0f);
   Ray getLastMotion() const;
   const float (*getLastMotionBBox() const)[3];
 
