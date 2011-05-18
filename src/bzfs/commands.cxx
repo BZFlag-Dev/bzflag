@@ -3632,7 +3632,7 @@ void parseServerCommand(const char *message, int t)
     // see if we have a registerd custom command and call it
     if (itr != customCommands.end()) {
       // if it handles it, then we are good
-      if (itr->second->handle(t, command, APIMessage, &APIParams))
+      if (itr->second->SlashCommand(t, command, APIMessage, &APIParams))
 	return;
     }
 

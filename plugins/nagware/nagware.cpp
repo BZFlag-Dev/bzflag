@@ -67,7 +67,7 @@ class Nagware : public bz_Plugin, public bz_CustomSlashCommandHandler
 	  virtual void Cleanup ();
 
     virtual void Event ( bz_EventData *eventData );
-    virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
+    virtual bool SlashCommand ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
 
   protected:
 
@@ -341,7 +341,7 @@ void Nagware::Event ( bz_EventData *eventData )
 }
 
 // handle /nag command
-bool Nagware::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
+bool Nagware::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "nag"))   // is it for me ?

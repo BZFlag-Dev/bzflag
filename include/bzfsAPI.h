@@ -366,8 +366,7 @@ typedef enum {
   eAlive,		// player is alive
   ePaused,		// player is paused
   eExploding,		// currently blowing up
-  eTeleporting,		// teleported recently
-  eInBuilding		// has OO and is in a building
+  eTeleporting		// teleported recently
 } bz_ePlayerStatus;
 
 typedef struct bz_PlayerUpdateState {
@@ -1172,7 +1171,7 @@ class bz_CustomSlashCommandHandler
 {
 public:
   virtual ~bz_CustomSlashCommandHandler(){};
-  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
+  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
 
 };
 
@@ -1282,7 +1281,7 @@ class bz_CustomMapObjectHandler
 {
 public:
   virtual ~bz_CustomMapObjectHandler(){};
-  virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data ) = 0;
+  virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data ) = 0;
 
 };
 
@@ -1302,7 +1301,7 @@ class bz_APIPluginHandler
 {
 public:
   virtual ~bz_APIPluginHandler(){};
-  virtual bool handle ( bz_ApiString plugin, bz_ApiString param ) = 0;
+  virtual bool APIPlugin ( bz_ApiString plugin, bz_ApiString param ) = 0;
 };
 // custom pluginHandler
 BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );

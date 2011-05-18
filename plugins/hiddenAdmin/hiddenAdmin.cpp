@@ -25,8 +25,6 @@ void HiddenAdmin::Init(const char* /*commandLine*/ )
   bz_debugMessage(4,"HiddenAdmin plugin loaded");
 
   Register(bz_eGetPlayerInfoEvent);
-
-  return;
 }
 
 void HiddenAdmin::Event ( bz_EventData *eventData )

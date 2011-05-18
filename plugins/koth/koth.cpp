@@ -10,7 +10,7 @@
 class KOTHMapHandler : public bz_CustomMapObjectHandler
 {
 public:
-	virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data );
+	virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data );
 };
 
 KOTHMapHandler	kothmaphandler;
@@ -19,7 +19,7 @@ class KOTHCommands : public bz_CustomSlashCommandHandler
 {
 public:
   virtual ~KOTHCommands(){};
-  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
+  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
 KOTHCommands kothcommands;
@@ -168,7 +168,7 @@ public:
 
 KOTHZone kothzone;
 
-bool KOTHMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
+bool KOTHMapHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "KOTH" || !data)
 		return false;
@@ -686,7 +686,7 @@ void KOTHHandler::Event( bz_EventData *eventData )
 }
 
 
-bool KOTHCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
+bool KOTHCommands::SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();

@@ -314,7 +314,7 @@ bool loadPlugin ( std::string plugin, std::string config )
   if (itr != customPluginMap.end() && itr->second)
   {
     bz_APIPluginHandler *handler = itr->second;
-    return handler->handle(plugin,config);
+    return handler->APIPlugin(plugin,config);
   }
   else
   {
@@ -377,7 +377,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~DynamicPluginCommands(){};
-	virtual bool handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
+	virtual bool SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
 	{
 		bz_BasePlayerRecord	record;
 

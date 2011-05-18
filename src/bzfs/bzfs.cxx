@@ -6113,7 +6113,7 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
       playerState.status |= PlayerState::Alive;
       break;
     case ePaused:
-      playerState.status |= PlayerState::Paused;
+	  playerState.status |= PlayerState::Paused;
       break;
     case eExploding:
       playerState.status |= PlayerState::Exploding;

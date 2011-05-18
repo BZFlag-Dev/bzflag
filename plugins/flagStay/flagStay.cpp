@@ -11,7 +11,7 @@
 class FlagStayZoneHandler : public bz_CustomMapObjectHandler
 {
 public:
-	virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data );
+	virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data );
 };
 
 FlagStayZoneHandler	flagStayZoneHandler;
@@ -102,7 +102,7 @@ public:
 
 std::vector <FlagStayZone> zoneList;
 
-bool FlagStayZoneHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
+bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "FLAGSTAYZONE" || !data)
 		return false;

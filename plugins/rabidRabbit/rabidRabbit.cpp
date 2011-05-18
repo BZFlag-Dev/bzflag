@@ -10,7 +10,7 @@
 class RabidRabbitHandler : public bz_CustomMapObjectHandler
 {
 public:
-  virtual bool handle(bz_ApiString object, bz_CustomMapObjectInfo *data);
+  virtual bool MapObject(bz_ApiString object, bz_CustomMapObjectInfo *data);
 };
 
 RabidRabbitHandler rabidrabbithandler;
@@ -136,7 +136,7 @@ public:
 
 std::vector <RabidRabbitZone> zoneList;
 
-bool RabidRabbitHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo *data)
+bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *data)
 {
   if (object == "RRSOUNDOFF")
     rrzoneinfo.soundEnabled = false;

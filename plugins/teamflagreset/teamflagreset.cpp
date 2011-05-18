@@ -52,7 +52,7 @@ class TeamFlagResetIOHandler : public bz_CustomSlashCommandHandler
 {
 public:
   virtual ~TeamFlagResetIOHandler(){};
-  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
+  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
 BZ_PLUGIN(TeamFlagResetHandler)
@@ -243,7 +243,7 @@ void TeamFlagResetHandler::Event ( bz_EventData *eventData )
 	return;
 }
 
-bool TeamFlagResetIOHandler::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
+bool TeamFlagResetIOHandler::SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();

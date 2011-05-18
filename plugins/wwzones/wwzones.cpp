@@ -30,7 +30,7 @@ public:
 	virtual void Cleanup ();
 	virtual void Event ( bz_EventData *eventData );
 
-	virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data );
+	virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data );
 
 };
 
@@ -140,7 +140,7 @@ public:
 
 std::vector <WWZone> zoneList;
 
-bool WWZEventHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
+bool WWZEventHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "WWZONE" || !data)
 		return false;

@@ -10,7 +10,7 @@
 class KeepAwayMapHandler : public bz_CustomMapObjectHandler
 {
 public:
-	virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data );
+	virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data );
 };
 
 KeepAwayMapHandler	keepawaymaphandler;
@@ -30,7 +30,7 @@ class KeepAwayCommands : public bz_CustomSlashCommandHandler
 {
 public:
   virtual ~KeepAwayCommands(){};
-  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
+  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
 KeepAwayCommands keepawaycommands;
@@ -243,7 +243,7 @@ std::string convertFlag(std::string flagAbbrev)
 	return "";
 }
 
-bool KeepAwayMapHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
+bool KeepAwayMapHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "KEEPAWAY" || !data)
 		return false;
@@ -902,7 +902,7 @@ void KeepAwayEventHandler::Event ( bz_EventData *eventData )
 	}
 }
 
-bool KeepAwayCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
+bool KeepAwayCommands::SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();

@@ -247,7 +247,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 	  data.name = bz_ApiString(customObject);
 	  for (unsigned int i = 0; i < customLines.size(); i++)
 	    data.data.push_back(customLines[i]);
-	  customObjectMap[customObject]->handle(bz_ApiString(customObject),&data);
+	  customObjectMap[customObject]->MapObject(bz_ApiString(customObject),&data);
 	  object = NULL;
 	}
 	object = NULL;

@@ -28,7 +28,7 @@ public:
 	virtual void Init ( const char* config);
 	virtual void Cleanup ();
 	virtual void Event ( bz_EventData *eventData );
-	virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
+	virtual bool SlashCommand ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
 
 protected:
 
@@ -43,8 +43,6 @@ float saveTimeLimit = 0;
 
 // list to hold the available match durations
 bz_APIStringList* timeList = bz_newStringList();
-
-TimeLimit timeLimit;
 
 // Displays the available match durations
 void showMatchDurations(int playerID)
@@ -142,7 +140,7 @@ void parseCommand ( const char* commandLine )
 }
 
 
-bool TimeLimit::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
+bool TimeLimit::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
 
   if (strcasecmp (cmd.c_str(), "timelimit")) {
@@ -231,7 +229,7 @@ void TimeLimit::Init ( const char* commandLine )
 
   saveTimeLimit = bz_getTimeLimit();
 
-  bz_registerCustomSlashCommand ("timelimit", &timeLimit); 
+  bz_registerCustomSlashCommand ("timelimit",this); 
   Register(bz_ePlayerJoinEvent);
   Register(bz_eGameEndEvent);
 

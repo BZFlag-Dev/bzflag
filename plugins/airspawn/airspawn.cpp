@@ -11,7 +11,6 @@
 class airspawn : public bz_Plugin
 {
 public:
-
   virtual const char* Name (){return "Airspawn";}
   virtual void Init ( const char* config);
   virtual void Event ( bz_EventData *eventData );

@@ -37,7 +37,7 @@ public:
 	virtual void Init ( const char* config );
 	virtual void Cleanup ( void );
   virtual void Event ( bz_EventData *eventData );
-  virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
+  virtual bool SlashCommand ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
   bz_eTeamType colorNameToDef (const char *color);
   const char *colorDefToName (bz_eTeamType team);
 
@@ -296,7 +296,7 @@ bool checkPerms (int playerID, const char *htfCmd, const char *permName)
 
 
 // handle /htf command
-bool HTFscore::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
+bool HTFscore::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "htf"))   // is it for me ?

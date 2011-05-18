@@ -20,7 +20,7 @@ public:
 		bz_debugMessage(4,"killall plugin unloaded");
 	}
 
-  virtual bool handle ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* /*params*/ )
+  virtual bool SlashCommand ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* /*params*/ )
   {
     bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
     if (!player)

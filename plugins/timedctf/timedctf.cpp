@@ -55,7 +55,7 @@ class TCTFCommands : public bz_CustomSlashCommandHandler
 {
 public:
   virtual ~TCTFCommands(){};
-  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
+  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
 class TCTFHandler : public bz_Plugin
@@ -575,7 +575,7 @@ void TCTFPlayerUpdates ( bz_EventData *eventData )
 	return;
 }
 
-bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
+bool TCTFCommands::SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
