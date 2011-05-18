@@ -5368,10 +5368,11 @@ int main(int argc, char **argv)
     }
 
     // see if we are within the plug requested max wait time
-    float pluginMaxWait = getPluginMinWaitTime();
-
+#ifdef _USE_BZ_API
+    const float pluginMaxWait = getPluginMinWaitTime();
     if (waitTime > pluginMaxWait)
       waitTime = pluginMaxWait;
+#endif
 
     // don't wait (used by CURL and MsgEnter)
     if (dontWait) {
@@ -6112,7 +6113,7 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
       playerState.status |= PlayerState::Alive;
       break;
     case ePaused:
-      //FIXME      playerState.status |= PlayerState::Paused;
+      playerState.status |= PlayerState::Paused;
       break;
     case eExploding:
       playerState.status |= PlayerState::Exploding;
@@ -6121,6 +6122,8 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
       playerState.status |= PlayerState::Teleporting;
       break;
 
+    default: // FIXME
+      break;
   //  case eInBuilding:
    //   playerState.status |= PlayerState::InBuilding;
   //    break;

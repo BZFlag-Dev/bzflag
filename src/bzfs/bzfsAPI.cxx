@@ -704,12 +704,22 @@ void bz_Plugin::Flush ()
 
 BZF_API bool bz_pluginExists(const char* name)
 {
+#ifdef _USE_BZ_API
   return getPlugin(name) != NULL;
+#else
+  (void)name;
+  return false;
+#endif
 }
 
 BZF_API bz_Plugin* bz_getPlugin(const char* name)
 {
+#ifdef _USE_BZ_API
   return getPlugin(name);
+#else
+  (void)name;
+  return NULL;
+#endif
 }
 
 //-------------------------------------------------------------------------
