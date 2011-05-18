@@ -237,7 +237,7 @@ void killAllHunters(std::string messagepass)
 void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 {
 
-  if (eventData->eventType = bz_ePlayerDieEvent)
+  if (eventData->eventType == bz_ePlayerDieEvent)
   {
     bz_PlayerDieEventData_V1 *DieData = (bz_PlayerDieEventData_V1*)eventData;
 

@@ -38,14 +38,16 @@ void airspawn::Event ( bz_EventData *eventData )
 {
   switch (eventData->eventType)
   {
-	case bz_eGetPlayerSpawnPosEvent:
+  case bz_eGetPlayerSpawnPosEvent:
     {
-      bz_GetPlayerSpawnPosEventData *spawn = (bz_GetPlayerSpawnPosEventData*)eventData;
+      bz_GetPlayerSpawnPosEventData_V1 *spawn = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
 
       float randPos = rand()/(float)RAND_MAX;
       spawn->pos[2] += randPos * spawnRange;
       spawn->handled = true;
     }
+    break;
+  default:
     break;
   }
 }

@@ -26,7 +26,7 @@ void HiddenAdmin::Init(const char* /*commandLine*/ )
 
   Register(bz_eGetPlayerInfoEvent);
 
-  return 0;
+  return;
 }
 
 void HiddenAdmin::Event ( bz_EventData *eventData )

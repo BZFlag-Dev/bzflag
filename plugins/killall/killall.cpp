@@ -8,7 +8,7 @@ class KillAll : public bz_Plugin, bz_CustomSlashCommandHandler
 public:
 	virtual const char* Name(){return "Kill All";}
 
-	virtual void Init ( const char* config )
+	virtual void Init ( const char* /* config */ )
 	{
 		bz_debugMessage(4,"killall plugin loaded");
 		bz_registerCustomSlashCommand ( "killall", this );

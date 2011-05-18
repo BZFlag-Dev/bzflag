@@ -12,7 +12,7 @@ class PlayHistoryTracker : public bz_Plugin
 {
 public:
 	virtual const char* Name (){return "Play History Tracker";}
-	virtual void Init ( const char* config)
+	virtual void Init ( const char* /* config */)
 	{
 		bz_debugMessage(4,"PlayHistoryTracker plugin loaded");
 

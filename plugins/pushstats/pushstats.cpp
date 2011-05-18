@@ -12,7 +12,7 @@ class StatPush : public bz_Plugin
 {
 public:
 	virtual const char* Name (){return "Stats Pusher";}
-	virtual void Init ( const char* config)
+	virtual void Init ( const char* /* config */)
 	{
 		bz_debugMessage(4,"pushstats plugin loaded");
 
