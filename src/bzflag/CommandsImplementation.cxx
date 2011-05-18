@@ -133,6 +133,12 @@ class ForceRadarCommand : LocalCommand {
     bool operator() (const char *commandLine);
 };
 
+class DebugLevelCommand : LocalCommand {
+  public:
+    DebugLevelCommand();
+    bool operator() (const char *commandLine);
+};
+
 
 // class instantiations
 static CommandList	  commandList;
@@ -151,6 +157,7 @@ static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static ForceRadarCommand  forceRadarCommand;
+static DebugLevelCommand  DebugLevelCommand;;
 
 
 // class constructors
@@ -166,6 +173,7 @@ RoamPosCommand::RoamPosCommand()		: LocalCommand("/roampos") {}
 SaveMsgsCommand::SaveMsgsCommand()		: LocalCommand("/savemsgs") {}
 SaveWorldCommand::SaveWorldCommand()		: LocalCommand("/saveworld") {}
 ForceRadarCommand::ForceRadarCommand()		: LocalCommand("/forceradar") {}
+DebugLevelCommand::DebugLevelCommand()		: LocalCommand("/debug") {}
 SetCommand::SetCommand()			: LocalCommand("/set") {}
 SilenceCommand::SilenceCommand()		: LocalCommand("/silence") {}
 UnsilenceCommand::UnsilenceCommand()		: LocalCommand("/unsilence") {}
@@ -789,7 +797,27 @@ bool ForceRadarCommand::operator() (const char*)
   BZDB.setFloat(StateDatabase::BZDB_RADARLIMIT, value, StateDatabase::Server);
   return true;
 }
-    
+
+
+bool DebugLevelCommand::operator() (const char* cmdLine)
+{
+  const std::vector<std::string> args = TextUtils::tokenize(cmdLine, " ");
+  if (args.size() < 2) {
+    std::string msg = "debug level is ";
+    msg += TextUtils::itoa(debugLevel);
+    addMessage(NULL, msg);
+    return true;
+  }
+
+  debugLevel = atoi(args[1].c_str());
+
+  char buf[128];
+  snprintf(buf, sizeof(buf), "debug level set to %i", debugLevel);
+  addMessage(NULL, buf);
+
+  return true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***

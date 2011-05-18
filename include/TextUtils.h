@@ -345,6 +345,15 @@ namespace TextUtils {
     return -1;
   }
 
+  /** integer to string
+   */
+  inline std::string itoa(int value, const char* fmt = "%i")
+  {
+    char buf[64];
+    snprintf(buf, sizeof(buf), fmt, value);
+    return std::string(buf);
+  }
+
   /** url-encodes a string
    */
   std::string url_encode(const std::string &text);
