@@ -206,6 +206,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serverControl", "..\..\plug
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shockwaveDeath", "..\..\plugins\shockwaveDeath\shockwaveDeath.vcproj", "{71A8E9FF-58CE-459C-9BD7-9C5706DB6491}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "teamflagreset", "..\..\plugins\teamflagreset\teamflagreset.vcproj", "{A7AF7B05-55FA-4995-A50A-1C120AC61FF6}"
 	ProjectSection(ProjectDependencies) = postProject
