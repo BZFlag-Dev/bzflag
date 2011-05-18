@@ -98,6 +98,7 @@ const char *usageString =
 "[-mts <score>] "
 "[-noMasterBanlist] "
 "[-noradar] "
+"[-offa] "
 "[-p <port>] "
 "[-packetlossdrop <num>] "
 "[-packetlosswarn <%>] "
@@ -164,7 +165,7 @@ const char *extraUsageString =
 "\t-badwords: bad-word file\n"
 "\t-ban ip{,ip}*: ban players based on ip address\n"
 "\t-banfile: specify a file to load and store the banlist in\n"
-"\t-c: capture-the-flag style game,\n"
+"\t-c: classic capture-the-flag style game,\n"
 "\t-cache: url to get binary formatted world\n"
 "\t-cacheout: generate a binary cache file\n"
 "\t-conf: configuration file\n"
@@ -201,6 +202,7 @@ const char *extraUsageString =
 "\t-mts: set team score limit on each game\n"
 "\t-noMasterBanlist: has public servers ignore the master ban list\n"
 "\t-noradar: disallow the use of radar\n"
+"\t-offa: teamless free-for-all game stye\n"
 "\t-p: use alternative port (default=5154)\n"
 "\t-packetlossdrop: drop player after this many packetloss warnings\n"
 "\t-packetlosswarn: packetloss warning threshold [%]\n"
@@ -559,7 +561,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 
   // InertiaGameStyle maintained just for compatibility
   // Same effect is achieved setting linear/angular Acceleration
-  options.gameStyle |= int(InertiaGameStyle);
+  options.gameOptions |= int(InertiaGameStyle);
 
   // parse command line
   int playerCountArg = 0,playerCountArg2 = 0;
@@ -609,12 +611,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     } else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
-      options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle & int(RabbitChaseGameStyle)) {
-	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-	std::cerr << "Capture the flag assumed" << std::endl;
+      if (options.gameType == RabbitChase) {
+        std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+        std::cerr << "Capture the flag assumed" << std::endl;
       }
+      options.gameType = ClassicCTF;
     } else if (strcmp(argv[i], "-cache") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
@@ -641,12 +642,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // CTF with random world
       options.randomCTF = true;
       // capture the flag style
-      options.gameStyle |= int(TeamFlagGameStyle);
-      if (options.gameStyle & int(RabbitChaseGameStyle)) {
-	options.gameStyle &= ~int(RabbitChaseGameStyle);
-	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-	std::cerr << "Capture the flag assumed" << std::endl;
+      if (options.gameType == RabbitChase) {
+        std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+        std::cerr << "Capture the flag assumed" << std::endl;
       }
+      options.gameType = ClassicCTF;
     } else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
@@ -760,10 +760,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.pingInterface = argv[i];
     } else if (strcmp(argv[i], "-j") == 0) {
       // allow jumping
-      options.gameStyle |= int(JumpingGameStyle);
+      options.gameOptions |= int(JumpingGameStyle);
     } else if (strcmp(argv[i], "-handicap") == 0) {
       // allow handicap advantage
-      options.gameStyle |= int(HandicapGameStyle);
+      options.gameOptions |= int(HandicapGameStyle);
     } else if (strcmp(argv[i], "-jitterdrop") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.maxjitterwarn = atoi(argv[i]);
@@ -846,7 +846,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.masterBanListURL.push_back(argv[i]);
     } else if (strcmp(argv[i], "-noTeamKills") == 0) {
       // disable team killing
-      options.gameStyle |= int(NoTeamKillsGameStyle);
+      options.gameOptions |= int(NoTeamKillsGameStyle);
     } else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
       checkFromWorldFile(argv[i], fromWorldFile);
@@ -956,15 +956,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       handlePings = false;
     } else if (strcmp(argv[i], "+r") == 0) {
       // all shots ricochet style
-      options.gameStyle |= int(RicochetGameStyle);
+      options.gameOptions |= int(RicochetGameStyle);
     } else if (strcmp(argv[i], "-rabbit") == 0) {
       // rabbit chase style
-      options.gameStyle |= int(RabbitChaseGameStyle);
-      if (options.gameStyle & int(TeamFlagGameStyle)) {
-	options.gameStyle &= ~int(TeamFlagGameStyle);
-	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
-	std::cerr << "Rabbit Chase assumed" << std::endl;;
+      if (options.gameType == ClassicCTF) {
+        std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
+        std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
+      options.gameType = RabbitChase;
       // default selection style
       options.rabbitSelection = ScoreRabbitSelection;
 
@@ -1014,7 +1013,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     } else if (strcmp(argv[i], "-sa") == 0) {
       // insert antidote flags
-      options.gameStyle |= int(AntidoteGameStyle);
+      options.gameOptions |= int(AntidoteGameStyle);
     } else if (strcmp(argv[i], "-sb") == 0) {
       // respawns on buildings
       options.respawnOnBuildings = true;
@@ -1091,7 +1090,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	options.shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
       }
-      options.gameStyle |= int(ShakableGameStyle);
+      options.gameOptions |= int(ShakableGameStyle);
     } else if (strcmp(argv[i], "-sw") == 0) {
       // set shake win count
       checkArgc(1, i, argc, argv[i]);
@@ -1105,7 +1104,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       } else {
 	options.shakeWins = uint16_t(count);
       }
-      options.gameStyle |= int(ShakableGameStyle);
+      options.gameOptions |= int(ShakableGameStyle);
     } else if (strcmp(argv[i], "-synctime") == 0) {
       // client clocks should be synchronized to server clock
       BZDB.set(StateDatabase::BZDB_SYNCTIME, "1.0"); // any positive number
@@ -1117,6 +1116,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.useTeleporters = true;
       if (options.worldFile != "")
 	std::cerr << "-t is meaningless when using a custom world, ignoring" << std::endl;
+    } else if (strcmp(argv[i], "-offa") == 0) {
+      // capture the flag style
+      if (options.gameType == RabbitChase || options.gameType == ClassicCTF) {
+        std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
+        std::cerr << "Open Free-for-all assumed" << std::endl;
+      }
+      options.gameType = OpenFFA;
     } else if (strcmp(argv[i], "-tftimeout") == 0) {
       // use team flag timeout
       checkArgc(1, i, argc, argv[i]);
@@ -1303,16 +1309,16 @@ static int addZoneTeamFlags(int startIndex,
 void finalizeParsing(int /*argc*/, char **argv,
 		     CmdLineOptions &options, EntryZones& entryZones)
 {
-  if (options.flagsOnBuildings && !(options.gameStyle & JumpingGameStyle)) {
+  if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {
     std::cerr << "flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
   }
 
-  if (options.gameStyle & int(RabbitChaseGameStyle)) {
+   if (options.gameType == RabbitChase) {
     for (int j = RedTeam; j <= PurpleTeam; j++) {
       if (options.maxTeam[j] > 0
 	  && options.maxTeam[RogueTeam] != maxRealPlayers)
-	std::cout << "only rogues are allowed in Rabbit Style; zeroing out "
+	std::cout << "only rogues are allowed in Rabbit Chase; zeroing out "
 		  << Team::getName((TeamColor) j) << std::endl;
       options.maxTeam[j] = 0;
     }
@@ -1343,12 +1349,12 @@ void finalizeParsing(int /*argc*/, char **argv,
   forbidden.insert(Flags::Null);
 
   // first disallow flags inconsistent with game style
-  if (options.gameStyle & JumpingGameStyle) {
+  if (options.gameOptions & JumpingGameStyle) {
     forbidden.insert(Flags::Jumping);
   } else {
     forbidden.insert(Flags::NoJumping);
   }
-  if (options.gameStyle & RicochetGameStyle) {
+  if (options.gameOptions & RicochetGameStyle) {
     forbidden.insert(Flags::Ricochet);
   }
   if (!options.useTeleporters && (options.worldFile == "")) {
@@ -1359,7 +1365,7 @@ void finalizeParsing(int /*argc*/, char **argv,
     forbidden.insert(Flags::Colorblindness);
     forbidden.insert(Flags::Masquerade);
   }
-  if ((options.gameStyle & TeamFlagGameStyle) == 0) {
+  if ((options.gameType == ClassicCTF) == 0) {
     forbidden.insert(Flags::RedTeam);
     forbidden.insert(Flags::GreenTeam);
     forbidden.insert(Flags::BlueTeam);
@@ -1396,7 +1402,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   };
 
   // make sure there is at least one team flag for each active team
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameType == ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if ((options.maxTeam[col] > 0) &&
 	  (options.numTeamFlags[col] <= 0) &&
@@ -1440,7 +1446,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   // allocate space for extra flags
   numFlags = options.numExtraFlags;
   // allocate space for team flags
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameType & ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       if (options.maxTeam[col] > 0) {
 	numFlags += options.numTeamFlags[col];
@@ -1468,7 +1474,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // add team flags (ordered)
   int f = 0;
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameType == ClassicCTF) {
     if (options.maxTeam[RedTeam] > 0) {
       f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
       for (int n = 0; n < options.numTeamFlags[RedTeam]; n++) {
@@ -1497,7 +1503,7 @@ void finalizeParsing(int /*argc*/, char **argv,
 
   // super flags?
   if (f < numFlags) {
-    options.gameStyle |= int(SuperFlagGameStyle);
+    options.gameOptions |= int(SuperFlagGameStyle);
   }
 
   // add normal flags
@@ -1534,7 +1540,7 @@ void finalizeParsing(int /*argc*/, char **argv,
   }
 
   // sum the sources of team flags
-  if (options.gameStyle & TeamFlagGameStyle) {
+  if (options.gameType & ClassicCTF) {
     for (int col = RedTeam; col <= PurpleTeam; col++) {
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
@@ -1542,21 +1548,27 @@ void finalizeParsing(int /*argc*/, char **argv,
 
 
   // debugging
-  logDebugMessage(1,"style: %x\n", options.gameStyle);
-  if (options.gameStyle & int(TeamFlagGameStyle))
+  logDebugMessage(1,"type: %d\n", options.gameType);
+  if (options.gameType == ClassicCTF)
     logDebugMessage(1,"  capture the flag\n");
-  if (options.gameStyle & int(RabbitChaseGameStyle))
+  if (options.gameType == RabbitChase)
     logDebugMessage(1,"  rabbit chase\n");
-  if (options.gameStyle & int(SuperFlagGameStyle))
+  if (options.gameType == OpenFFA)
+    logDebugMessage(1,"  open free-for-all\n");
+  if (options.gameType == TeamFFA)
+    logDebugMessage(1,"  teamed free-for-all\n");
+  
+  logDebugMessage(1,"options: %c\n", options.gameOptions);
+  if (options.gameOptions & int(SuperFlagGameStyle))
     logDebugMessage(1,"  super flags allowed\n");
-  if (options.gameStyle & int(JumpingGameStyle))
+  if (options.gameOptions & int(JumpingGameStyle))
     logDebugMessage(1,"  jumping allowed\n");
-  if (options.gameStyle & int(RicochetGameStyle))
+  if (options.gameOptions & int(RicochetGameStyle))
     logDebugMessage(1,"  all shots ricochet\n");
-  if (options.gameStyle & int(ShakableGameStyle))
+  if (options.gameOptions & int(ShakableGameStyle))
     logDebugMessage(1,"  shakable bad flags: timeout=%f, wins=%i\n",
-	   0.1f * float(options.shakeTimeout), options.shakeWins);
-  if (options.gameStyle & int(AntidoteGameStyle))
+    0.1f * float(options.shakeTimeout), options.shakeWins);
+  if (options.gameOptions & int(AntidoteGameStyle))
     logDebugMessage(1,"  antidote flags\n");
 
   return;

@@ -1743,7 +1743,7 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
   // get the spawn position
   SpawnPosition* spawnPosition = new SpawnPosition(playeID,
     (!clOptions->respawnOnBuildings) || (player->player.isBot()),
-    clOptions->gameStyle & TeamFlagGameStyle);
+    clOptions->gameType == ClassicCTF);
 
   pos[0] = spawnPosition->getX();
   pos[1] = spawnPosition->getY();
@@ -2810,9 +2810,11 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 
 BZF_API	bz_eGameType bz_getGameType ( void  )
 {
-  if (clOptions->gameStyle & TeamFlagGameStyle)
+  if (clOptions->gameType == ClassicCTF)
     return eCTFGame;
-  else if (clOptions->gameStyle & RabbitChaseGameStyle)
+  else if (clOptions->gameType == OpenFFA)
+    return eOpenFFAGame;
+  else if (clOptions->gameType == RabbitChase)
     return eRabbitGame;
 
   return eFFAGame;

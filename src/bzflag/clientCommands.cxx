@@ -618,9 +618,17 @@ static std::string cmdSend(const std::string&,
     buf = nboPackUByte(buf, AllPlayers);
     composePrompt = "Send to all: ";
   } else if (args[0] == "team") {
-    void* buf = messageMessage;
-    buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
-    composePrompt = "Send to teammates: ";
+    if (World::getWorld()->allowTeams())
+    {
+      void* buf = messageMessage;
+      buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
+      composePrompt = "Send to teammates: ";
+    }
+    else {
+      void* buf = messageMessage;
+      buf = nboPackUByte(buf, AllPlayers);
+      composePrompt = "Send to all: ";
+    }
   } else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
     if (!nemesis) return std::string();

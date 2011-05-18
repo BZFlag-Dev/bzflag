@@ -116,6 +116,7 @@ extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 bool defineWorld ( void );
 bool saveWorldCache( const char* file = NULL );
+bool allowTeams ( void );
 
 extern const std::string& getPublicOwner();
 extern void               setPublicOwner(const std::string& owner);

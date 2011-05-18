@@ -206,15 +206,17 @@ bool ServerListFilter::check(const ServerItem& item) const
   const PingPacket& p = item.ping;
 
   // boolean filters
-  const uint16_t style = p.gameStyle;
-  if (!jump     .check(style & JumpingGameStyle))     { return false; }
-  if (!rico     .check(style & RicochetGameStyle))    { return false; }
-  if (!flags    .check(style & SuperFlagGameStyle))   { return false; }
-  if (!teams    .check(style & TeamFlagGameStyle))    { return false; }
-  if (!handi    .check(style & HandicapGameStyle))    { return false; }
-  if (!rabbit   .check(style & RabbitChaseGameStyle)) { return false; }
-  if (!inertia  .check(style & InertiaGameStyle))     { return false; }
-  if (!antidote .check(style & AntidoteGameStyle))    { return false; }
+  const uint16_t type = p.gameType;
+  if (!flags    .check(type == TeamFFA))   { return false; }
+  if (!teams    .check(type == ClassicCTF))  { return false; }
+  if (!rabbit   .check(type == RabbitChase)) { return false; }
+  
+  const uint16_t options = p.gameOptions;
+  if (!jump     .check(options & JumpingGameStyle))     { return false; }
+  if (!rico     .check(options & RicochetGameStyle))    { return false; }
+  if (!handi    .check(options & HandicapGameStyle))    { return false; }
+  if (!inertia  .check(options & InertiaGameStyle))     { return false; }
+  if (!antidote .check(options & AntidoteGameStyle))    { return false; }
 
   if (!replay   .check(isReplay(item))) { return false; }
   if (!favorite .check(item.favorite))  { return false; }

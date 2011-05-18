@@ -54,6 +54,7 @@ class World {
     bool		allowShakeWins() const;
     bool		allowRabbit() const;
     bool		allowHandicap() const;
+    bool		allowTeams() const;
     float		getWaterLevel() const;
     const BzMaterial*	getWaterMaterial() const;
     const BzMaterial*	getLinkMaterial() const;
@@ -147,7 +148,8 @@ class World {
     void		freeMeshDrawMgrs();
 
   private:
-    short		gameStyle;
+    short		gameType;
+    short   gameOptions;
     float		linearAcceleration;
     float		angularAcceleration;
     int			maxPlayers;
@@ -196,54 +198,59 @@ class World {
 // World
 //
 
-inline bool		World::allowTeamFlags() const
+inline  bool		World::allowTeams() const
 {
-  return (gameStyle & short(TeamFlagGameStyle)) != 0;
+  return gameType != OpenFFA;
 }
 
-inline bool             World::allowTeamKills() const
+inline bool		World::allowTeamFlags() const
 {
-  return(gameStyle & short(NoTeamKillsGameStyle)) == 0;
+  return gameType == ClassicCTF;
+}
+
+inline bool		World::allowTeamKills() const
+{
+  return(gameOptions & short(NoTeamKillsGameStyle)) == 0;
 }
 
 inline bool		World::allowSuperFlags() const
 {
-  return (gameStyle & short(SuperFlagGameStyle)) != 0;
+  return (gameOptions & short(SuperFlagGameStyle)) != 0;
 }
 
 inline bool		World::allowJumping() const
 {
-  return (gameStyle & short(JumpingGameStyle)) != 0;
+  return (gameOptions & short(JumpingGameStyle)) != 0;
 }
 
 inline bool		World::allShotsRicochet() const
 {
-  return (gameStyle & short(RicochetGameStyle)) != 0;
+  return (gameOptions & short(RicochetGameStyle)) != 0;
 }
 
 inline bool		World::allowAntidote() const
 {
-  return (gameStyle & short(AntidoteGameStyle)) != 0;
+  return (gameOptions & short(AntidoteGameStyle)) != 0;
 }
 
 inline bool		World::allowShakeTimeout() const
 {
-  return (gameStyle & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
+  return (gameOptions & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
 }
 
 inline bool		World::allowShakeWins() const
 {
-  return (gameStyle & short(ShakableGameStyle)) != 0 && shakeWins != 0;
+  return (gameOptions & short(ShakableGameStyle)) != 0 && shakeWins != 0;
 }
 
 inline bool		World::allowRabbit() const
 {
-  return (gameStyle & short(RabbitChaseGameStyle)) != 0;
+  return gameType == RabbitChase;
 }
 
 inline bool		World::allowHandicap() const
 {
-  return (gameStyle & short(HandicapGameStyle)) != 0;
+  return (gameOptions & short(HandicapGameStyle)) != 0;
 }
 
 inline float		World::getWaterLevel() const

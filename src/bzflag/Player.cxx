@@ -1032,7 +1032,7 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
 {
   TeamColor myTeam = getTeam();
   TeamColor targetTeam = possibleTarget->getTeam();
-  if (myTeam != targetTeam) {
+  if (myTeam != targetTeam || !World::getWorld()->allowTeams()) {
     return true;
   }
 

@@ -359,6 +359,7 @@ typedef enum
 typedef enum
 {
   eFFAGame= 0,
+  eOpenFFAGame,
   eCTFGame,
   eRabbitGame
 }bz_eGameType;

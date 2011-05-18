@@ -301,18 +301,19 @@ Help2Menu::Help2Menu() : HelpMenu("General")
   listHUD.push_back(createLabel("Rogues have no teammates (not even other rogues),so they cannot shoot"));
   listHUD.push_back(createLabel("teammates and they don't have a team score."));
   listHUD.push_back(createLabel(""));
-  listHUD.push_back(createLabel("There are three styles of play, determined by the server configuration:  capture-"));
-  listHUD.push_back(createLabel("the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"));
-  listHUD.push_back(createLabel("highest score by shooting opponents.  The object in rabbit chase is to be the highest score"));
-  listHUD.push_back(createLabel("so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"));
-  listHUD.push_back(createLabel("capture enemy flags while preventing opponents from capturing yours.  In this"));
-  listHUD.push_back(createLabel("style, each team (but not rogues) has a team base and each team with at least"));
-  listHUD.push_back(createLabel("one player has a team flag which has the color of the team.  To capture a flag,"));
-  listHUD.push_back(createLabel("you must grab it and bring it back to your team base (you must be on the ground"));
-  listHUD.push_back(createLabel("in your base to register the capture).  Capturing a flag destroys all the players"));
-  listHUD.push_back(createLabel("on that team and gives your team score a bonus;  the players will restart on"));
-  listHUD.push_back(createLabel("their team base.  Taking your flag onto an enemy base counts as a capture against"));
-  listHUD.push_back(createLabel("your team but not for the enemy team."));
+  listHUD.push_back(createLabel("There are four styles of play, determined by the server configuration:  capture-"));
+  listHUD.push_back(createLabel("the-flag, rabbit-chase, free-for-all and open-free-for-all.  In free-for-all the"));
+  listHUD.push_back(createLabel("object is simply to get the highest score by shooting opponents.  In open-free-"));
+  listHUD.push_back(createLabel("for-all highest score is still the goal but there are no teams.  In rabbit chase,"));
+  listHUD.push_back(createLabel("the white tank tries to stay alive while all other tanks try to hunt and kill it."));
+  listHUD.push_back(createLabel("The object in capture-the-flag is to capture enemy flags while preventing opponents"));
+  listHUD.push_back(createLabel(" from capturing yours.  In this style, each team (but not rogues) has a team base"));
+  listHUD.push_back(createLabel("and each team with at least one player has a team flag which has the color of the team."));
+  listHUD.push_back(createLabel("To capture a flag, you must grab it and bring it back to your team base (you must be"));
+  listHUD.push_back(createLabel("on the ground in your base to register the capture).  Capturing a flag destroys"));
+  listHUD.push_back(createLabel("all the players on that team and gives your team score a bonus;  the players will"));
+  listHUD.push_back(createLabel("restart on their team base.  Taking your flag onto an enemy base counts as a capture"));
+  listHUD.push_back(createLabel("against your team but not for the enemy team."));
 }
 
 //
