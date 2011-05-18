@@ -157,7 +157,7 @@ static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static ForceRadarCommand  forceRadarCommand;
-static DebugLevelCommand  DebugLevelCommand;;
+static DebugLevelCommand  DebugLevelCommand;
 
 
 // class constructors
