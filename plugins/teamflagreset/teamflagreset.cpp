@@ -94,7 +94,6 @@ void TeamFlagResetHandler::Init ( const char* commandLineParameter )
   if (timelimitparam > 0)
 	  tfr.idleTime = timelimitparam * 60;
 
-  bz_debugMessage(4,"teamflagreset plugin loaded");
   Register(bz_eTickEvent);
   bz_registerCustomSlashCommand("tfrtime",&teamflagresetiohandler);
   bz_registerCustomSlashCommand("tfroff",&teamflagresetiohandler);
@@ -104,7 +103,6 @@ void TeamFlagResetHandler::Init ( const char* commandLineParameter )
 
 void TeamFlagResetHandler::Cleanup ( void )
 {
-  bz_debugMessage(4,"teamflagreset plugin unloaded");
   Flush();
   bz_removeCustomSlashCommand("tfrtime");
   bz_removeCustomSlashCommand("tfroff");

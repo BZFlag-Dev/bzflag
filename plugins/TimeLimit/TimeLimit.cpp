@@ -232,8 +232,6 @@ void TimeLimit::Init ( const char* commandLine )
   bz_registerCustomSlashCommand ("timelimit",this); 
   Register(bz_ePlayerJoinEvent);
   Register(bz_eGameEndEvent);
-
-  bz_debugMessage(1,"TimeLimit plugin loaded");
 }
 
 
@@ -246,7 +244,6 @@ void TimeLimit::Cleanup ( void )
   bz_removeCustomSlashCommand ("timelimit");
   Flush();
 
-  bz_debugMessage(1,"TimeLimit plugin unloaded");
 
   // set default timelimit back before unloading
   bz_setTimeLimit(saveTimeLimit);

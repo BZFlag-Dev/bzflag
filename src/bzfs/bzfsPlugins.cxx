@@ -25,6 +25,7 @@
 #include "bzfsAPI.h"
 #include "DirectoryNames.h"
 
+#include "WorldEventManager.h"
 
 #ifdef _WIN32
 std::string extension = ".dll";
@@ -173,7 +174,13 @@ bool load1Plugin ( std::string plugin, std::string config )
 
 				p->Init(config.c_str());
 
+				bz_PluginLoadUnloadEventData_V1 evt;
+				evt.plugin = p;
+				evt.eventType = bz_ePluginLoaded;
+				worldEventManager.callEvents(&evt);
+
 				logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
+				bz_debugMessagef(4,"%s plugin loaded",pluginRecord.name.c_str());
 				return true;
 			}
 			else
@@ -197,7 +204,13 @@ void unload1Plugin ( int iPluginID )
 
 	trPluginRecord &plugin = vPluginList[iPluginID];
 
+	bz_PluginLoadUnloadEventData_V1 evt;
+	evt.plugin = plugin.plugin;
+	evt.eventType = bz_ePluginUnloaded;
+	worldEventManager.callEvents(&evt);
+
 	plugin.plugin->Cleanup();
+	bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
 
 	lpProc = (void (__cdecl *)(bz_Plugin*))GetProcAddress(plugin.handle, "bz_FreePlugin");
 	if (lpProc)
@@ -265,8 +278,13 @@ bool load1Plugin ( std::string plugin, std::string config )
 				pluginRecord.filename = plugin;
 				vPluginList.push_back(pluginRecord);
 				logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
+				bz_debugMessagef(4,"%s plugin loaded",pluginRecord.name.c_str());
 
 				p->Init(config.c_str());
+				bz_PluginLoadUnloadEventData_V1 evt;
+				evt.plugin = p;
+				evt.eventType = bz_ePluginLoaded;
+				worldEventManager.callEvents(&evt);
 				return true;
 			}
 		}
@@ -286,7 +304,13 @@ void unload1Plugin ( int iPluginID )
 	void (*lpProc)(bz_Plugin*);
 	trPluginRecord &plugin = vPluginList[iPluginID];
 
+	bz_PluginLoadUnloadEventData_V1 evt;
+	evt.plugin = plugin.plugin;
+	evt.eventType = bz_ePluginUnloaded;
+	worldEventManager.callEvents(&evt);
+
 	plugin.plugin->Cleanup();
+	bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
 
 	*(void**) &lpProc = dlsym(plugin.handle, "bz_FreePlugin");
 	if (lpProc)

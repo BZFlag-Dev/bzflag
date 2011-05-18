@@ -376,7 +376,6 @@ void HTFscore::Init(const char* cmdLine)
   Register(bz_eCaptureEvent);
   Register(bz_eGameStartEvent);
   Register(bz_eGameEndEvent);
-  bz_debugMessagef(1, "HoldTheFlag plugin loaded - v%s", HOLDTHEFLAG_VER);
 }
 
 void HTFscore::Cleanup(void)
@@ -384,8 +383,6 @@ void HTFscore::Cleanup(void)
 	htfScore = NULL;
 	Flush();
   bz_removeCustomSlashCommand ("htf");
-
-  bz_debugMessage(1, "HoldTheFlag plugin unloaded");
 }
 
 

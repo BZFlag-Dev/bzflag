@@ -39,7 +39,6 @@ void KeepAwayEventHandler::Init(const char* /*commandLine*/)
 {
 	MaxWaitTime = 0.5f;
 
-	bz_debugMessage(4,"keepaway plugin loaded");
 	bz_registerCustomMapObject("keepaway",&keepawaymaphandler);
 	Register(bz_ePlayerUpdateEvent);
 	Register(bz_ePlayerPausedEvent);
@@ -68,7 +67,6 @@ void KeepAwayEventHandler::Init(const char* /*commandLine*/)
 void KeepAwayEventHandler::Cleanup(void)
 {
 	Flush();
-	bz_debugMessage(4,"keepaway plugin unloaded");
 	bz_removeCustomMapObject("keepaway");
 	bz_removeCustomSlashCommand("kastatus");
 	bz_removeCustomSlashCommand("kaon");

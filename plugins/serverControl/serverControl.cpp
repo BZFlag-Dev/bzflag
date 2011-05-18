@@ -28,8 +28,8 @@ enum action { join , part };
 class ServerControl : public bz_Plugin
 {
 public:
-	virtual const char* Name (){return "Server Control";}
-	virtual void Init ( const char* config);
+  virtual const char* Name (){return "Server Control";}
+  virtual void Init ( const char* config);
 
   virtual void Event( bz_EventData *eventData );
   int loadConfig(const char *cmdLine);

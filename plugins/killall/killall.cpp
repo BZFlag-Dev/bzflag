@@ -10,14 +10,12 @@ public:
 
 	virtual void Init ( const char* /* config */ )
 	{
-		bz_debugMessage(4,"killall plugin loaded");
 		bz_registerCustomSlashCommand ( "killall", this );
 	}
 
 	virtual void Cleanup ( void )
 	{
 		bz_removeCustomSlashCommand ( "killall" );
-		bz_debugMessage(4,"killall plugin unloaded");
 	}
 
   virtual bool SlashCommand ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* /*params*/ )

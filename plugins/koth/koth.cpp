@@ -40,7 +40,6 @@ BZ_PLUGIN(KOTHHandler)
 void KOTHHandler::Init(const char* /*commandLine*/){
 	MaxWaitTime = 0.5f;
 
-	bz_debugMessage(4,"koth plugin loaded");
 	bz_registerCustomMapObject("KOTH",&kothmaphandler);
 	Register(bz_ePlayerUpdateEvent);
 	Register(bz_ePlayerPausedEvent);
@@ -63,7 +62,6 @@ void KOTHHandler::Init(const char* /*commandLine*/){
 void KOTHHandler::Cleanup(void){
 
 	Flush();
-	bz_debugMessage(4,"koth plugin unloaded");
 	bz_removeCustomMapObject("KOTH");
 	bz_removeCustomSlashCommand("kothstatus");
 	bz_removeCustomSlashCommand("kothon");

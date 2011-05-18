@@ -109,7 +109,6 @@ void TCTFHandler::Init( const char* commandLine )
   if (timelimitparameter > 0)
 	  tctf.timeLimit = timelimitparameter * 60;
 
-  bz_debugMessage(4,"timedctf plugin loaded");
   Register(bz_eCaptureEvent);
   Register(bz_ePlayerJoinEvent);
   Register(bz_ePlayerUpdateEvent);
@@ -127,7 +126,6 @@ void TCTFHandler::Init( const char* commandLine )
 void TCTFHandler::Cleanup ( void )
 {
 	Flush();
-  bz_debugMessage(4,"timedctf plugin unloaded");
   bz_removeCustomSlashCommand("tctfstatus");
   bz_removeCustomSlashCommand("tctftime");
   bz_removeCustomSlashCommand("tctfon");

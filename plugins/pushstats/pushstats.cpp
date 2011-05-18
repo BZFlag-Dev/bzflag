@@ -14,8 +14,6 @@ public:
 	virtual const char* Name (){return "Stats Pusher";}
 	virtual void Init ( const char* /* config */)
 	{
-		bz_debugMessage(4,"pushstats plugin loaded");
-
 		Register(bz_eListServerUpdateEvent);
 		Register(bz_ePlayerPartEvent);
 		Register(bz_eGetWorldEvent);

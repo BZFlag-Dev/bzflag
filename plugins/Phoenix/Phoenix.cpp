@@ -25,8 +25,6 @@ public:
     Register(bz_eGetPlayerSpawnPosEvent);
     Register(bz_ePlayerPartEvent);
     Register(bz_eCaptureEvent);
-
-    bz_debugMessage(4,"Phoenix plugin loaded");
   }
 
   virtual void Event ( bz_EventData *eventData )

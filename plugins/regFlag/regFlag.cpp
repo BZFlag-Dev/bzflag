@@ -17,7 +17,6 @@ BZ_PLUGIN(RegFlag)
 
 void RegFlag::Init( const char* /*commandLine*/ )
 {
-  bz_debugMessage(4,"regFlag plugin loaded");
   Register(bz_ePlayerUpdateEvent);
 }
 

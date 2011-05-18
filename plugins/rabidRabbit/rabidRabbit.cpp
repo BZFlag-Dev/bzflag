@@ -31,7 +31,6 @@ BZ_PLUGIN(RabidRabbitEventHandler)
 void RabidRabbitEventHandler::Init(const char* /*commandLineParameter*/)
 {
   MaxWaitTime = 1.0f;
-  bz_debugMessage(4,"rabidRabbit plugin loaded");
   bz_registerCustomMapObject("RABIDRABBITZONE",&rabidrabbithandler);
   bz_registerCustomMapObject("RRSOUNDOFF",&rabidrabbithandler);
   bz_registerCustomMapObject("RRCYCLEONDIE",&rabidrabbithandler);
@@ -45,7 +44,6 @@ void RabidRabbitEventHandler::Cleanup(void)
   bz_removeCustomMapObject("RABIDRABBITZONE");
   bz_removeCustomMapObject("RRSOUNDOFF");
   bz_removeCustomMapObject("RRCYCLEONDIE");
-  bz_debugMessage(4,"rabidRabbit plugin unloaded");
 }
 
 class RRZoneInfo

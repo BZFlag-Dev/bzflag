@@ -22,8 +22,6 @@ BZ_PLUGIN(airspawn)
 
 void airspawn::Init ( const char* commandLine )
 {
-  bz_debugMessage(4,"airspawn plugin loaded");
-
   spawnRange = 0;
   if ( commandLine )
     spawnRange = (float)atof(commandLine);

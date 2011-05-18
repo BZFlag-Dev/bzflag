@@ -22,7 +22,6 @@ BZ_PLUGIN(RogueGenoHandler)
 
 void RogueGenoHandler::Init( const char* commandLine )
 {
-  bz_debugMessage(4,"rogueGenocide plugin loaded");
   Register(bz_ePlayerDieEvent);
 
   std::string param = commandLine;

@@ -161,8 +161,6 @@ unsigned int		maxChatLines;
 
 void ChatEvents::Init ( const char* commandLine )
 {
-  bz_debugMessage(4,"ChatEvents plugin loaded");
-
   maxChatLines = 1000;
   if (commandLine)
   {
@@ -183,8 +181,6 @@ void ChatEvents::Cleanup( void )
   bz_removeCustomSlashCommand("flushchat");
 
   Flush();
-
-  bz_debugMessage(4,"ChatEvents plugin unloaded");
 }
 
 

@@ -14,8 +14,6 @@ public:
 	virtual const char* Name (){return "Play History Tracker";}
 	virtual void Init ( const char* /* config */)
 	{
-		bz_debugMessage(4,"PlayHistoryTracker plugin loaded");
-
 		Register(bz_ePlayerDieEvent);
 		Register(bz_ePlayerPartEvent);
 		Register(bz_ePlayerSpawnEvent);

@@ -38,7 +38,6 @@ BZ_PLUGIN(WWZEventHandler)
 
 void WWZEventHandler::Init (const char* /*commandLineParameter*/){
 
-	bz_debugMessage(4,"wwzones plugin loaded");
 	bz_registerCustomMapObject("WWZONE",this);
 	Register(bz_eTickEvent);
 
@@ -48,7 +47,6 @@ void WWZEventHandler::Init (const char* /*commandLineParameter*/){
 void WWZEventHandler::Cleanup (void){
 
 	Flush();
-	bz_debugMessage(4,"wwzones plugin unloaded");
 	bz_removeCustomMapObject("WWZONE");
 }
 

@@ -268,6 +268,8 @@ typedef enum
   bz_eAllowCTFCaptureEvent,
   bz_eMsgDebugEvent,
   bz_eNewNonPlayerConnection,
+  bz_ePluginLoaded,
+  bz_ePluginUnloaded,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -947,6 +949,24 @@ public:
   unsigned int size;
 };
 
+class BZF_API bz_PluginLoadUnloadEventData_V1 : public bz_EventData
+{
+public:
+
+  bz_PluginLoadUnloadEventData_V1() : bz_EventData(bz_ePluginLoaded)
+    , plugin(NULL)
+  {
+  }
+
+  bz_Plugin* plugin;
+};
+
+// logging
+BZF_API void bz_debugMessage ( int debugLevel, const char* message );
+BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
+BZF_API int bz_getDebugLevel ( void );
+BZF_API int bz_setDebugLevel ( int debugLevel );
+
 // plug-in registration
 
 class BZF_API bz_Plugin
@@ -968,7 +988,7 @@ public:
 protected:
   bool Register (bz_eEventType eventType);
   bool Remove (bz_eEventType eventType);
-  void Flush ();
+  void Flush  ();
 };
 
 BZF_API bool bz_pluginExists(const char* name);
@@ -1132,12 +1152,6 @@ BZF_API int bz_getBZDBVarList( bz_APIStringList	*varList );
 
 BZF_API void bz_resetBZDBVar( const char* variable );
 BZF_API void bz_resetALLBZDBVars( void );
-
-// logging
-BZF_API void bz_debugMessage ( int debugLevel, const char* message );
-BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
-BZF_API int bz_getDebugLevel ( void );
-BZF_API int bz_setDebugLevel ( int debugLevel );
 
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );

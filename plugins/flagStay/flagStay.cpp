@@ -29,7 +29,6 @@ BZ_PLUGIN(EventHandler)
 
 void EventHandler::Init ( const char* /*commandLine*/ )
 {
-  bz_debugMessage(4,"flagStay plugin loaded");
   bz_registerCustomMapObject("FLAGSTAYZONE",&flagStayZoneHandler);
 
   Register(bz_ePlayerUpdateEvent);
@@ -39,7 +38,6 @@ void EventHandler::Cleanup ( void )
 {
   Flush();
   bz_removeCustomMapObject("FLAGSTAYZONE");
-  bz_debugMessage(4,"flagStay plugin unloaded");
 }
 
 class FlagStayZone

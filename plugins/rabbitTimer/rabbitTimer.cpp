@@ -129,8 +129,6 @@ void rabbitTimer::Init(const char* commandLine)
 	Register(bz_ePlayerDieEvent);
 	Register(bz_ePlayerPartEvent);
 	Register(bz_eTickEvent);
-
-	bz_debugMessage(4, "rabbitTimer plugin loaded");
 }
 
 

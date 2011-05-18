@@ -23,7 +23,6 @@ void GameStartEndHandler::Init( const char* commandLine )
 {
   Register(bz_eGameStartEvent);
   Register(bz_eGameEndEvent);
-  bz_debugMessage(4,"recordmatch plugin loaded");
   filename = commandLine;
 }
 

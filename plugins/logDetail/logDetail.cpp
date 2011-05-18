@@ -47,7 +47,6 @@ void LogDetail::Init ( const char* /*commandLine*/ )
   Register(bz_ePlayerPartEvent);
   Register(bz_ePlayerAuthEvent);
   Register(bz_eMessageFilteredEvent);
-  bz_debugMessage(4, "logDetail plugin loaded");
 
   bz_debugMessage(0, "SERVER-STATUS Running");
   bz_debugMessagef(0, "SERVER-MAPNAME %s", bz_getPublicDescription().c_str());
