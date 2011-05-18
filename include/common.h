@@ -41,6 +41,10 @@
 
 extern int debugLevel;
 
+
+#define UNUSED(x) ((void)(x))  // to avoid warnings
+
+
 /* near zero by some epsilon convenience define since relying on
 * the floating point unit for proper equivalence is not safe
 */

@@ -1529,7 +1529,7 @@ public:
     eOtherDeath
   }SmiteReason;
 
-  void rejected ( bz_eRejectCodes, const char* reason){}; // the bot was rejectd for some reason
+  void rejected ( bz_eRejectCodes, const char* /*reason*/){}; // the bot was rejectd for some reason
   virtual void spawned(void); // the bot has spawned
   virtual void died ( int killer ); // the bot has died from gameplay
   virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner
