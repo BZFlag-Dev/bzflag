@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="plugin_utils"
 	ProjectGUID="{645768BE-97C8-4DE4-9100-111BD2808B35}"
+	RootNamespace="plugin_utils"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -81,7 +82,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.lib $(ProjectDir)\..\..\bin_$(PlatformName)\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.lib&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration

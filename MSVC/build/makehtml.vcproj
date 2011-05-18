@@ -31,7 +31,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="building HTML"
-				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call $(ProjectDir)makeHTML.bat"
+				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call &quot;$(ProjectDir)makeHTML.bat&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying HTML to Docs Dir"
-				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\"
+				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -59,7 +59,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="building HTML"
-				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call $(ProjectDir)makeHTML.bat"
+				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call &quot;$(ProjectDir)makeHTML.bat&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -73,7 +73,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying HTML to Docs Dir"
-				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\"
+				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -88,7 +88,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="building HTML"
-				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call $(ProjectDir)makeHTML.bat"
+				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call &quot;$(ProjectDir)makeHTML.bat&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -101,7 +101,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying HTML to Docs Dir"
-				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\"
+				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -116,7 +116,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="building HTML"
-				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call $(ProjectDir)makeHTML.bat"
+				CommandLine="copy .\man2html_$(PlatformName)_$(ConfigurationName)\*.exe ..\..\man\&#x0D;&#x0A;call &quot;$(ProjectDir)makeHTML.bat&quot;&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -130,7 +130,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Copying HTML to Docs Dir"
-				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\"
+				CommandLine="mkdir ..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir ..\..\bin_$(PlatformName)\docs&#x0D;&#x0A;copy ..\..\man\*.html ..\..\bin_$(PlatformName)\docs\&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -274,7 +274,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="$(InputDir)$(InputName).html"
+					CommandLine="$(InputDir)$(InputName).html&#x0D;&#x0A;"
 					Outputs="$(InputDir)bzw.html"
 				/>
 			</FileConfiguration>
@@ -292,7 +292,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="$(InputDir)$(InputName).html"
+					CommandLine="$(InputDir)$(InputName).html&#x0D;&#x0A;"
 					Outputs="$(InputDir)bzw.html"
 				/>
 			</FileConfiguration>

@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="HoldTheFlag"
 	ProjectGUID="{0D4F5307-9240-4880-A289-C30F112F99A1}"
+	RootNamespace="HoldTheFlag"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -99,7 +100,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -184,7 +185,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -267,7 +268,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -351,7 +352,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

@@ -4,6 +4,7 @@
 	Version="9.00"
 	Name="playHistoryTracker"
 	ProjectGUID="{81495CFD-E8CC-4F99-B285-4CBAEDB6D808}"
+	RootNamespace="playHistoryTracker"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -98,89 +99,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
-			ConfigurationType="2"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\include\&quot;;&quot;$(ProjectDir)\..\plugin_utils\&quot;;&quot;$(BZAPI_INC_DIR)\&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;playHistoryTracker_EXPORTS"
-				RuntimeLibrary="2"
-				UsePrecompiledHeader="0"
-				WarningLevel="3"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="bzfs.lib"
-				OutputFile="$(OutDir)/playHistoryTracker.dll"
-				LinkIncremental="1"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\BZFS_$(PlatformName)_$(ConfigurationName)\&quot;;&quot;$(ProjectDir)\..\..\bin_$(PlatformName)\&quot;;&quot;$(BZAPI_LIB_DIR)\&quot;"
-				ModuleDefinitionFile="playHistoryTracker.def"
-				GenerateDebugInformation="true"
-				ProgramDatabaseFile="Release/$(ProjectName).pdb"
-				SubSystem="2"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				ImportLibrary="$(OutDir)/playHistoryTracker.lib"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -264,7 +183,89 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
+			/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			IntermediateDirectory="$(SolutionDir)$(ProjectName)_$(PlatformName)_$(ConfigurationName)"
+			ConfigurationType="2"
+			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			CharacterSet="2"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\include\&quot;;&quot;$(ProjectDir)\..\plugin_utils\&quot;;&quot;$(BZAPI_INC_DIR)\&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;playHistoryTracker_EXPORTS"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="0"
+				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="bzfs.lib"
+				OutputFile="$(OutDir)/playHistoryTracker.dll"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\BZFS_$(PlatformName)_$(ConfigurationName)\&quot;;&quot;$(ProjectDir)\..\..\bin_$(PlatformName)\&quot;;&quot;$(BZAPI_LIB_DIR)\&quot;"
+				ModuleDefinitionFile="playHistoryTracker.def"
+				GenerateDebugInformation="true"
+				ProgramDatabaseFile="Release/$(ProjectName).pdb"
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary="$(OutDir)/playHistoryTracker.lib"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -347,7 +348,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="mkdir $(ProjectDir)..\..\bin_$(PlatformName)&#x0D;&#x0A;mkdir $(ProjectDir)..\..\bin_$(PlatformName)\plugins&#x0D;&#x0A;copy $(OutDir)\*.dll $(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&#x0D;&#x0A;"
+				CommandLine="mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)&quot;&#x0D;&#x0A;mkdir &quot;$(ProjectDir)..\..\bin_$(PlatformName)\plugins&quot;&#x0D;&#x0A;copy &quot;$(OutDir)\*.dll&quot; &quot;$(ProjectDir)\..\..\bin_$(PlatformName)\plugins\&quot;&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -371,7 +372,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32"
+					Name="Debug|x64"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -379,7 +380,7 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Debug|x64"
+					Name="Release|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
