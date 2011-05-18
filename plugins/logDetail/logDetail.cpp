@@ -255,7 +255,7 @@ std::string LogDetail::displayTeam( bz_eTeamType team )
 void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 {
   bz_APIIntList *playerList = bz_newIntList();
-  bz_BasePlayerRecord *player = data->record;
+  bz_BasePlayerRecord *player = NULL;
   std::ostringstream msg;
   char playerStatus;
   int numPlayers;
