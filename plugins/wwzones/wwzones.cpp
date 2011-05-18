@@ -21,38 +21,35 @@ public:
 
 WWINFO wwinfo;
 
-BZ_GET_PLUGIN_VERSION
-
-class WWZHandler : public bz_CustomMapObjectHandler
+class WWZEventHandler : public bz_Plugin, bz_CustomMapObjectHandler
 {
 public:
-	virtual bool handle ( bzApiString object, bz_CustomMapObjectInfo *data );
+
+	virtual const char* Name (){return "World Weapon Zones";}
+	virtual void Init ( const char* config);
+	virtual void Cleanup ();
+	virtual void Event ( bz_EventData *eventData );
+
+	virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data );
+
 };
 
-WWZHandler	wwzhandler;
+BZ_PLUGIN(WWZEventHandler)
 
-class WWZEventHandler : public bz_EventHandler
-{
-public:
-	virtual void process ( bz_EventData *eventData );
-};
-
-WWZEventHandler wwzeventHandler;
-
-BZF_PLUGIN_CALL int bz_Load (const char* /*commandLineParameter*/){
+void WWZEventHandler::Init (const char* /*commandLineParameter*/){
 
 	bz_debugMessage(4,"wwzones plugin loaded");
-	bz_registerCustomMapObject("WWZONE",&wwzhandler);
-	bz_registerEvent(bz_eTickEvent,&wwzeventHandler);
-	return 0;
+	bz_registerCustomMapObject("WWZONE",this);
+	Register(bz_eTickEvent);
+
+	MaxWaitTime = wwinfo.tickTime;
 }
 
-BZF_PLUGIN_CALL int bz_Unload (void){
+void WWZEventHandler::Cleanup (void){
 
-	bz_removeEvent(bz_eTickEvent,&wwzeventHandler);
+	Flush();
 	bz_debugMessage(4,"wwzones plugin unloaded");
 	bz_removeCustomMapObject("WWZONE");
-	return 0;
 }
 
 class WWZPlyrInfo
@@ -101,7 +98,7 @@ public:
 	float xMax,xMin,yMax,yMin,zMax,zMin;
 	float rad;
 
-	bzApiString zoneWeapon;
+	bz_ApiString zoneWeapon;
 	float zoneWeaponLifetime, zoneWeaponPosition[3], zoneWeaponTilt, zoneWeaponDirection, zoneWeaponDT;
 	double zoneWeaponMinFireTime, zoneWeaponTimeDelay, zoneWeaponLastFired;
 	bool zoneWeaponRepeat, zoneWeaponInfoMessage, zoneWeaponFired, zoneWeaponSentMessage;
@@ -143,7 +140,7 @@ public:
 
 std::vector <WWZone> zoneList;
 
-bool WWZHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
+bool WWZEventHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "WWZONE" || !data)
 		return false;
@@ -155,7 +152,7 @@ bool WWZHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 	{
 		std::string line = data->data.get(i).c_str();
 
-		bzAPIStringList *nubs = bz_newStringList();
+		bz_APIStringList *nubs = bz_newStringList();
 		nubs->tokenize(line.c_str()," ",0,true);
 
 		if ( nubs->size() > 0)
@@ -228,7 +225,8 @@ bool WWZHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
 		bz_deleteStringList(nubs);
 	}
 	zoneList.push_back(newZone);
-	bz_setMaxWaitTime ( (float)wwinfo.tickTime );
+
+	MaxWaitTime = wwinfo.tickTime;
 	return true;
 }
 
@@ -283,23 +281,23 @@ inline bool OKToFire(int zoneNum, int plyrNum)
 	return false;
 }
 
-void WWZEventHandler::process ( bz_EventData *eventData )
+void WWZEventHandler::Event ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eTickEvent)
 		return;
 
-	bzAPIIntList *playerList = bz_newIntList();
+	bz_APIIntList *playerList = bz_newIntList();
 	bz_getPlayerIndexList ( playerList );
 
 	for ( unsigned int h = 0; h < playerList->size(); h++ )
 	{
-	bz_PlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](h));
+	bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](h));
 
 			if (player){
 
 				for ( unsigned int i = 0; i < zoneList.size(); i++ )
 				{
-					if (zoneList[i].pointIn(player->pos) && player->spawned)
+					if (zoneList[i].pointIn(player->lastKnownState.pos) && player->spawned)
 					{
 						if (wasHere(i, player->playerID) && OKToFire(i, player->playerID) && !zoneList[i].zoneWeaponFired)
 						{

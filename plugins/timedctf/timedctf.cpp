@@ -3,8 +3,6 @@
 #include "bzfsAPI.h"
 #include <cstring>
 
-BZ_GET_PLUGIN_VERSION
-
 // event handler callback
 
 class TCTF
@@ -53,42 +51,27 @@ public:
 
 TCTF tctf;
 
-class TCTFFlagCapped : public bz_EventHandler
-{
-public:
-	virtual void	process ( bz_EventData *eventData );
-};
-
-class TCTFPlayerUpdates : public bz_EventHandler
-{
-public:
-	virtual void	process ( bz_EventData *eventData );
-};
-
-class TCTFTickEvents : public bz_EventHandler
-{
-public:
-	virtual void	process ( bz_EventData *eventData );
-};
-
 class TCTFCommands : public bz_CustomSlashCommandHandler
 {
 public:
   virtual ~TCTFCommands(){};
-  virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *param );
+  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
-class TCTFPlayerJoined : public bz_EventHandler
+class TCTFHandler : public bz_Plugin
 {
 public:
-	virtual void	process ( bz_EventData *eventData );
+
+	virtual const char* Name (){return "Timed CTF";}
+	virtual void Init ( const char* config);
+	virtual void Cleanup ();
+	virtual void Event ( bz_EventData *eventData );
+
 };
 
-TCTFFlagCapped tctfflagcapped;
-TCTFPlayerUpdates tctfplayerupdates;
-TCTFTickEvents tctftickevents;
+BZ_PLUGIN(TCTFHandler)
+
 TCTFCommands tctfcommands;
-TCTFPlayerJoined tctfplayerjoined;
 
 double ConvertToInt(std::string inmessage){
 
@@ -118,7 +101,7 @@ double ConvertToInt(std::string inmessage){
 	return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+void TCTFHandler::Init( const char* commandLine )
 {
   std::string parameter = commandLine;
   double timelimitparameter = ConvertToInt(parameter);
@@ -127,10 +110,10 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
 	  tctf.timeLimit = timelimitparameter * 60;
 
   bz_debugMessage(4,"timedctf plugin loaded");
-  bz_registerEvent(bz_eCaptureEvent,&tctfflagcapped);
-  bz_registerEvent(bz_ePlayerJoinEvent,&tctfplayerjoined);
-  bz_registerEvent(bz_ePlayerUpdateEvent,&tctfplayerupdates);
-  bz_registerEvent(bz_eTickEvent,&tctftickevents);
+  Register(bz_eCaptureEvent);
+  Register(bz_ePlayerJoinEvent);
+  Register(bz_ePlayerUpdateEvent);
+  Register(bz_eTickEvent);
   bz_registerCustomSlashCommand("tctfstatus",&tctfcommands);
   bz_registerCustomSlashCommand("tctftime",&tctfcommands);
   bz_registerCustomSlashCommand("tctfon",&tctfcommands);
@@ -139,16 +122,12 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
   bz_registerCustomSlashCommand("fairctfoff",&tctfcommands);
   bz_registerCustomSlashCommand("tctfsoundon",&tctfcommands);
   bz_registerCustomSlashCommand("tctfsoundoff",&tctfcommands);
-  return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+void TCTFHandler::Cleanup ( void )
 {
+	Flush();
   bz_debugMessage(4,"timedctf plugin unloaded");
-  bz_removeEvent(bz_eCaptureEvent,&tctfflagcapped);
-  bz_removeEvent(bz_ePlayerJoinEvent,&tctfplayerjoined);
-  bz_removeEvent(bz_ePlayerUpdateEvent,&tctfplayerupdates);
-  bz_removeEvent(bz_eTickEvent,&tctftickevents);
   bz_removeCustomSlashCommand("tctfstatus");
   bz_removeCustomSlashCommand("tctftime");
   bz_removeCustomSlashCommand("tctfon");
@@ -157,7 +136,6 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
   bz_removeCustomSlashCommand("fairctfoff");
   bz_removeCustomSlashCommand("tctfsoundon");
   bz_removeCustomSlashCommand("tctfsoundoff");
-  return 0;
 }
 
 void ResetTeamData(){
@@ -239,12 +217,12 @@ bool TeamsBalanced(){
 
 void KillTeam(bz_eTeamType TeamToKill){
 
-	bzAPIIntList *playerList = bz_newIntList();
+	bz_APIIntList *playerList = bz_newIntList();
 	bz_getPlayerIndexList ( playerList );
 
 	for ( unsigned int i = 0; i < playerList->size(); i++ ){
 
-		bz_PlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 			if (player){
 
@@ -348,12 +326,12 @@ bool OnlyOneTeamPlaying(){
 	return false;
 }
 
-void TCTFPlayerJoined::process ( bz_EventData *eventData )
+void TCTFPlayerJoined ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerJoinEvent)
     return;
 
-	bz_PlayerJoinPartEventData *JoinData = (bz_PlayerJoinPartEventData*)eventData;
+	bz_PlayerJoinPartEventData_V1 *JoinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 
 	// if teams are not even, notify joiner no CTF.
 	// this should never be true if fair ctf is disabled (see definition of tctf.fairCTF):
@@ -378,7 +356,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 
 	// if teams even, notify joiner how much time is left to CTF for their team:
 
-	if (JoinData->team == eRedTeam  && tctf.timerRunning){
+	if (JoinData->record->team == eRedTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.redLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
@@ -386,7 +364,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 		return;
 	}
 
-	if (JoinData->team == eGreenTeam  && tctf.timerRunning){
+	if (JoinData->record->team == eGreenTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.greenLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
@@ -394,7 +372,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 		return;
 	}
 
-	if (JoinData->team == eBlueTeam  && tctf.timerRunning){
+	if (JoinData->record->team == eBlueTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.blueLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
@@ -402,7 +380,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 		return;
 	}
 
-	if (JoinData->team == ePurpleTeam  && tctf.timerRunning){
+	if (JoinData->record->team == ePurpleTeam  && tctf.timerRunning){
 		tctf.timeElapsed = bz_getCurrentTime () - tctf.purpleLastTime;
 		tctf.timeRemaining = tctf.timeLimit - tctf.timeElapsed;
 		tctf.adjTime = (int)(tctf.timeRemaining / 60);
@@ -413,7 +391,7 @@ void TCTFPlayerJoined::process ( bz_EventData *eventData )
 	return;
 }
 
-void TCTFFlagCapped::process ( bz_EventData *eventData )
+void TCTFFlagCapped ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eCaptureEvent)
     return;
@@ -423,7 +401,7 @@ void TCTFFlagCapped::process ( bz_EventData *eventData )
 	if (!tctf.enabled || !tctf.timerRunning)
 		return;
 
-	bz_CTFCaptureEventData *CapData = (bz_CTFCaptureEventData*)eventData;
+	bz_CTFCaptureEventData_V1 *CapData = (bz_CTFCaptureEventData_V1*)eventData;
 
 	// if team caps, reset their timer and notify their team
 
@@ -461,7 +439,7 @@ void TCTFFlagCapped::process ( bz_EventData *eventData )
 
 // this is where most of the decisions are made - a little clunky, but seems to work:
 
-void TCTFTickEvents::process ( bz_EventData *eventData )
+void TCTFTickEvents ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eTickEvent)
 		return;
@@ -572,7 +550,7 @@ void TCTFTickEvents::process ( bz_EventData *eventData )
 	return;
 }
 
-void TCTFPlayerUpdates::process ( bz_EventData *eventData )
+void TCTFPlayerUpdates ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_ePlayerUpdateEvent)
 		return;
@@ -581,7 +559,7 @@ void TCTFPlayerUpdates::process ( bz_EventData *eventData )
 
 	if (!tctf.fairCTF){
 
-		int playerID = ((bz_PlayerUpdateEventData*)eventData)->playerID;
+		int playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->playerID;
 		const char* FlagHeld = bz_getPlayerFlag(playerID);
 
 		if (FlagHeld != NULL){
@@ -597,12 +575,12 @@ void TCTFPlayerUpdates::process ( bz_EventData *eventData )
 	return;
 }
 
-bool TCTFCommands::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList * /*_param*/ )
+bool TCTFCommands::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
 
-	bz_PlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
+	bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
 	if (fromPlayer) {
 	  if (!fromPlayer->admin) {
@@ -716,6 +694,18 @@ bool TCTFCommands::handle ( int playerID, bzApiString _command, bzApiString _mes
 	}
 
 	return false;
+}
+
+void TCTFHandler::Event( bz_EventData *eventData )
+{
+	if (eventData->eventType == bz_ePlayerUpdateEvent)
+		TCTFPlayerUpdates(eventData);
+	else if (eventData->eventType == bz_eTickEvent)
+		TCTFTickEvents(eventData);
+	else if (eventData->eventType == bz_eCaptureEvent)
+		TCTFFlagCapped(eventData);
+	else if (eventData->eventType == bz_ePlayerJoinEvent)
+		TCTFPlayerJoined(eventData);
 }
 
 // Local Variables: ***

@@ -21,21 +21,20 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 
-BZ_GET_PLUGIN_VERSION
-
 using namespace std;
 
 enum action { join , part };
 
-class ServerControl : public bz_EventHandler
+class ServerControl : public bz_Plugin
 {
 public:
-  ServerControl() {};
-  virtual ~ServerControl() {};
-  virtual void process( bz_EventData *eventData );
+	virtual const char* Name (){return "Server Control";}
+	virtual void Init ( const char* config);
+
+  virtual void Event( bz_EventData *eventData );
   int loadConfig(const char *cmdLine);
 private:
-  void countPlayers( action act, bz_PlayerJoinPartEventData *data );
+  void countPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
   void checkShutdown( void );
   void checkBanChanges( void );
   void checkMasterBanChanges( void );
@@ -57,25 +56,16 @@ private:
   double lastTime;
 };
 
-ServerControl serverControlHandler;
+BZ_PLUGIN(ServerControl)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* cmdLine)
+void ServerControl::Init ( const char* cmdLine )
 {
-  if (serverControlHandler.loadConfig(cmdLine) < 0) return -1;
+  if (loadConfig(cmdLine) < 0)
+	  return;
 
-  bz_registerEvent(bz_ePlayerJoinEvent, &serverControlHandler);
-  bz_registerEvent(bz_ePlayerPartEvent, &serverControlHandler);
-  bz_registerEvent(bz_eTickEvent, &serverControlHandler);
-  bz_setMaxWaitTime( 3.0 );
-  return 0;
-}
-
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_removeEvent(bz_ePlayerJoinEvent, &serverControlHandler);
-  bz_removeEvent(bz_ePlayerPartEvent, &serverControlHandler);
-  bz_removeEvent(bz_eTickEvent, &serverControlHandler);
-  return 0;
+  Register(bz_ePlayerJoinEvent);
+  Register(bz_ePlayerPartEvent);
+  Register(bz_eTickEvent);
 }
 
 int ServerControl::loadConfig(const char *cmdLine)
@@ -196,10 +186,10 @@ void ServerControl::checkShutdown( void ) {
   }
 }
 
-void ServerControl::process( bz_EventData *eventData )
+void ServerControl::Event( bz_EventData *eventData )
 {
   ostringstream msg;
-  bz_PlayerJoinPartEventData *data = (bz_PlayerJoinPartEventData *) eventData;
+  bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
   double now;
 
   if (eventData) {
@@ -215,9 +205,9 @@ void ServerControl::process( bz_EventData *eventData )
 	  checkMasterBanChanges();
 	break;
       case bz_ePlayerJoinEvent:
-	if (data->team >= eRogueTeam &&
-	    data->team <= eHunterTeam &&
-	    data->callsign != "")  {
+	if (data->record->team >= eRogueTeam &&
+	    data->record->team <= eHunterTeam &&
+	    data->record->callsign != "")  {
 	  serverActive = true;
 	}
 	countPlayers( join , data );
@@ -232,10 +222,10 @@ void ServerControl::process( bz_EventData *eventData )
   }
 }
 
-void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData *data)
+void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *data)
 {
-  bzAPIIntList *playerList = bz_newIntList();
-  bz_PlayerRecord *player;
+  bz_APIIntList *playerList = bz_newIntList();
+  bz_BasePlayerRecord *player;
   ostringstream msg;
   string str;
   int numLines = 0;

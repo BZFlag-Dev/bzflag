@@ -3,8 +3,6 @@
 #include "bzfsAPI.h"
 #include <cstring>
 
-BZ_GET_PLUGIN_VERSION
-
 // event handler callback
 
 class TFR
@@ -41,20 +39,23 @@ public:
 
 TFR tfr;
 
-class TeamFlagResetHandler : public bz_EventHandler
+class TeamFlagResetHandler : public bz_Plugin
 {
 public:
-	virtual void	process ( bz_EventData *eventData );
+	virtual const char* Name (){return "Team Flag Reset";}
+	virtual void Init ( const char* config);
+	virtual void Cleanup ();
+	virtual void	Event ( bz_EventData *eventData );
 };
 
 class TeamFlagResetIOHandler : public bz_CustomSlashCommandHandler
 {
 public:
   virtual ~TeamFlagResetIOHandler(){};
-  virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *param );
+  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param );
 };
 
-TeamFlagResetHandler	teamflagresethandler;
+BZ_PLUGIN(TeamFlagResetHandler)
 TeamFlagResetIOHandler	teamflagresetiohandler;
 
 double ConvertToInteger(std::string msg){
@@ -85,7 +86,7 @@ double ConvertToInteger(std::string msg){
 	return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLineParameter )
+void TeamFlagResetHandler::Init ( const char* commandLineParameter )
 {
   std::string param = commandLineParameter;
   double timelimitparam = ConvertToInteger(param);
@@ -94,23 +95,21 @@ BZF_PLUGIN_CALL int bz_Load ( const char* commandLineParameter )
 	  tfr.idleTime = timelimitparam * 60;
 
   bz_debugMessage(4,"teamflagreset plugin loaded");
-  bz_registerEvent(bz_eTickEvent,&teamflagresethandler);
+  Register(bz_eTickEvent);
   bz_registerCustomSlashCommand("tfrtime",&teamflagresetiohandler);
   bz_registerCustomSlashCommand("tfroff",&teamflagresetiohandler);
   bz_registerCustomSlashCommand("tfron",&teamflagresetiohandler);
   bz_registerCustomSlashCommand("tfrstatus",&teamflagresetiohandler);
-  return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+void TeamFlagResetHandler::Cleanup ( void )
 {
   bz_debugMessage(4,"teamflagreset plugin unloaded");
-  bz_removeEvent(bz_eTickEvent,&teamflagresethandler);
+  Flush();
   bz_removeCustomSlashCommand("tfrtime");
   bz_removeCustomSlashCommand("tfroff");
   bz_removeCustomSlashCommand("tfron");
   bz_removeCustomSlashCommand("tfrstatus");
-  return 0;
 }
 
 void ResetFlagData(){
@@ -126,7 +125,7 @@ void ResetFlagData(){
 
 }
 
-void resetTeamFlag (bzApiString flagSent)
+void resetTeamFlag (bz_ApiString flagSent)
 {
 	for ( unsigned int i = 0; i < bz_getNumFlags(); i++ )
 	{
@@ -135,7 +134,7 @@ void resetTeamFlag (bzApiString flagSent)
 	}
 }
 
-void TeamFlagResetHandler::process ( bz_EventData *eventData )
+void TeamFlagResetHandler::Event ( bz_EventData *eventData )
 {
 	if (eventData->eventType != bz_eTickEvent)
 		return;
@@ -143,14 +142,14 @@ void TeamFlagResetHandler::process ( bz_EventData *eventData )
 	if (tfr.timerOff == true)
 		return;
 
-	bzAPIIntList *playerList = bz_newIntList();
+	bz_APIIntList *playerList = bz_newIntList();
 	bz_getPlayerIndexList ( playerList );
 
 	// check to see if anyone has picked up a team flag & count players per team
 
 	for ( unsigned int i = 0; i < playerList->size(); i++ ){
 
-		bz_PlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
+		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
 		if (player) {
 
@@ -244,12 +243,12 @@ void TeamFlagResetHandler::process ( bz_EventData *eventData )
 	return;
 }
 
-bool TeamFlagResetIOHandler::handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList * /*_param*/ )
+bool TeamFlagResetIOHandler::handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
 {
 	std::string command = _command.c_str();
 	std::string message = _message.c_str();
 
-	bz_PlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
+	bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
 
 	if (fromPlayer) {
 	  if (!fromPlayer->admin) {

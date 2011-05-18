@@ -17,30 +17,32 @@
 #include <sstream>
 #include "bzregex.h"
 
-BZ_GET_PLUGIN_VERSION
-
 #define TIMELIMIT_VER "1.0.4"
 #define MAX_TIMES 20
 
-class TimeLimit : public bz_EventHandler, public bz_CustomSlashCommandHandler
+class TimeLimit : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
+public:
 
-		public:
-				  virtual void process ( bz_EventData *eventData );
-				  virtual bool handle ( int playerID, bzApiString, bzApiString, bzAPIStringList*);
+	virtual const char* Name (){return "Time Limit";}
+	virtual void Init ( const char* config);
+	virtual void Cleanup ();
+	virtual void Event ( bz_EventData *eventData );
+	virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
 
-		protected:
+protected:
 
-		private:
+private:
 
 };
 
+BZ_PLUGIN(TimeLimit)
 
 // variable to save the original -time value
 float saveTimeLimit = 0;
 
 // list to hold the available match durations
-bzAPIStringList* timeList = bz_newStringList();
+bz_APIStringList* timeList = bz_newStringList();
 
 TimeLimit timeLimit;
 
@@ -73,7 +75,6 @@ bool isValidCmdLine(const char * regex, const char * commandLine)
 // Checks if it's a valid match duration or not
 bool isValidTime ( float timelimit )
 {
-
  if ( timeList->size() == 0 ) return true;
 
  for (unsigned i=0; i < timeList->size(); i++) {
@@ -81,18 +82,16 @@ bool isValidTime ( float timelimit )
       return true;
     }
  }
-
  return false;
 }
 
 
-void TimeLimit::process ( bz_EventData *eventData )
+void TimeLimit::Event ( bz_EventData *eventData )
 {
-
   switch(eventData->eventType)
   {
     case bz_ePlayerJoinEvent: {
-	    bzAPIIntList *playerList = bz_newIntList();
+	    bz_APIIntList *playerList = bz_newIntList();
 	    bz_getPlayerIndexList (playerList);
 
 	    // if it's the first player that joins , then reset the time to default
@@ -130,7 +129,7 @@ void parseCommand ( const char* commandLine )
 {
   if (isValidCmdLine("^[0-9]+-[0-9]+$",commandLine)) {
     
-    bzAPIStringList* range = bz_newStringList();
+    bz_APIStringList* range = bz_newStringList();
 
     range->tokenize(commandLine, "-", 2, false);
 
@@ -143,7 +142,7 @@ void parseCommand ( const char* commandLine )
 }
 
 
-bool TimeLimit::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringList* cmdParams )
+bool TimeLimit::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
 
   if (strcasecmp (cmd.c_str(), "timelimit")) {
@@ -184,7 +183,7 @@ bool TimeLimit::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIString
     return true;
     }  
 
-  bz_PlayerRecord *playerRecord;
+  bz_BasePlayerRecord *playerRecord;
   playerRecord = bz_getPlayerByIndex(playerID);
 
   // resets the timer to the default
@@ -226,42 +225,33 @@ bool TimeLimit::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIString
 
 }
 
-
-
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+void TimeLimit::Init ( const char* commandLine )
 {
-
   parseCommand(commandLine);
 
   saveTimeLimit = bz_getTimeLimit();
 
   bz_registerCustomSlashCommand ("timelimit", &timeLimit); 
-  bz_registerEvent(bz_ePlayerJoinEvent, &timeLimit);
-  bz_registerEvent(bz_eGameEndEvent, &timeLimit);
+  Register(bz_ePlayerJoinEvent);
+  Register(bz_eGameEndEvent);
 
   bz_debugMessage(1,"TimeLimit plugin loaded");
-
-  return 0;
-
 }
 
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+void TimeLimit::Cleanup ( void )
 {
 
   // set default timelimit back before unloading
   //bz_setTimeLimit(saveTimeLimit);
 
   bz_removeCustomSlashCommand ("timelimit");
-  bz_removeEvent (bz_ePlayerJoinEvent, &timeLimit);  
-  bz_removeEvent(bz_eGameEndEvent, &timeLimit);  
+  Flush();
 
   bz_debugMessage(1,"TimeLimit plugin unloaded");
 
   // set default timelimit back before unloading
   bz_setTimeLimit(saveTimeLimit);
-
-  return 0;
 }
 
 // Local Variables: ***

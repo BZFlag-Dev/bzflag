@@ -4,43 +4,35 @@
 #include "bzfsAPI.h"
 #include <string>
 
-BZ_GET_PLUGIN_VERSION
-
 // event handler callback
-class SWDeathHandler : public bz_EventHandler
+class SWDeathHandler : public bz_Plugin
 {
 public:
-  virtual void	process ( bz_EventData *eventData );
+	virtual const char* Name (){return "Shockwave Death";}
+	virtual void Init ( const char* config);
+  virtual void	Event ( bz_EventData *eventData );
 };
 
-SWDeathHandler	swDeathHandler;
+BZ_PLUGIN(SWDeathHandler)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+void SWDeathHandler::Init( const char* commandLine )
 {
   bz_debugMessage(4,"shockwaveDeath plugin loaded");
 
-  bz_registerEvent(bz_ePlayerDieEvent,&swDeathHandler);
+  Register(bz_ePlayerDieEvent);
 
   std::string param = commandLine;
 
   if (param == "usevictim")
 	  bz_debugMessage(0,"shockwaveDeath plugin no longer takes any paramaters");
-  return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_removeEvent(bz_ePlayerDieEvent,&swDeathHandler);
-  bz_debugMessage(4,"shockwaveDeath plugin unloaded");
-  return 0;
-}
-
-void SWDeathHandler::process ( bz_EventData *eventData )
+void SWDeathHandler::Event ( bz_EventData *eventData )
 {
   if (eventData->eventType != bz_ePlayerDieEvent)
     return;
 
-  bz_PlayerDieEventData *dieData = (bz_PlayerDieEventData*)eventData;
+  bz_PlayerDieEventData_V1 *dieData = (bz_PlayerDieEventData_V1*)eventData;
 
   int playerToUse = BZ_SERVER;
 
@@ -49,7 +41,7 @@ void SWDeathHandler::process ( bz_EventData *eventData )
   if (bz_BZDBItemExists("_swDeathReloadFactor") && bz_getBZDBDouble("_swDeathReloadFactor") > 0)
     reloadTime *= (float)bz_getBZDBDouble("_swDeathReloadFactor");
 
-  bz_fireWorldWep("SW",reloadTime,playerToUse,dieData->pos,0,0,0,0.0f);
+  bz_fireWorldWep("SW",reloadTime,playerToUse,dieData->state.pos,0,0,0,0.0f);
 }
 
 // Local Variables: ***
