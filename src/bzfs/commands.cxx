@@ -992,16 +992,15 @@ bool MsgCommand::operator() (const char	 *message,
   sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
 
   // event handler goodness
-  bz_ChatEventData chatData;
+  bz_ChatEventData_V1 chatData;
   chatData.from = playerData->getIndex();
   chatData.to = to;
 
   chatData.message = arguments.c_str() + messageStart + 1;
-  chatData.time = TimeKeeper::getCurrent().getSeconds();
 
   // send any events that want to watch the chat
   // everyone
-  worldEventManager.callEvents(bz_eChatMessageEvent,&chatData);
+  worldEventManager.callEvents(bz_eFilteredChatMessageEvent,&chatData);
 
   return true;
 }
@@ -1022,7 +1021,7 @@ bool PasswordCommand::operator() (const char	 *message,
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
       // Notify plugins of player authentication change
-      bz_PlayerAuthEventData commandData;
+      bz_PlayerAuthEventData_V1 commandData;
       commandData.playerID = t;
       worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
     } else {
@@ -1134,9 +1133,8 @@ bool SuperkillCommand::operator() (const char	 *,
   {
 	  gameOver = true;
 	  // fire off a game end event
-	  bz_GameStartEndEventData	gameData;
+	  bz_GameStartEndEventData_V1	gameData;
 	  gameData.eventType = bz_eGameEndEvent;
-	  gameData.time = TimeKeeper::getCurrent().getSeconds();
 	  gameData.duration = clOptions->timeLimit;
 	  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
   }
@@ -1167,9 +1165,8 @@ bool GameOverCommand::operator() (const char	 *,
   }
 
   // fire off a game end event
-  bz_GameStartEndEventData	gameData;
+  bz_GameStartEndEventData_V1	gameData;
   gameData.eventType = bz_eGameEndEvent;
-  gameData.time = TimeKeeper::getCurrent().getSeconds();
   gameData.duration = clOptions->timeLimit;
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 
@@ -2124,7 +2121,7 @@ bool IdentifyCommand::operator() (const char	 *message,
 	sendIPUpdate(t, -1);
 	sendPlayerInfo();
 	// Notify plugins of player authentication change
-	bz_PlayerAuthEventData commandData;
+	bz_PlayerAuthEventData_V1 commandData;
 	commandData.playerID = t;
 	worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
 
@@ -3599,10 +3596,9 @@ void parseServerCommand(const char *message, int t)
     return;
 
   // Notify plugins of slash command execution request
-  bz_SlashCommandEventData commandData;
+  bz_SlashCommandEventData_V1 commandData;
   commandData.from = t;
   commandData.message = message;
-  commandData.time = TimeKeeper::getCurrent().getSeconds();
 
   worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
@@ -3623,9 +3619,9 @@ void parseServerCommand(const char *message, int t)
     tmCustomSlashCommandMap::iterator itr =
       customCommands.find(TextUtils::tolower(params[0]));
 
-    bzApiString	command = params[0];
-    bzApiString APIMessage;
-	bzAPIStringList	APIParams;
+    bz_ApiString	command = params[0];
+    bz_ApiString APIMessage;
+	bz_APIStringList	APIParams;
 
     for ( unsigned int i = 1; i < params.size(); i++)
       APIParams.push_back(params[i]);
@@ -3641,10 +3637,9 @@ void parseServerCommand(const char *message, int t)
     }
 
     // lets see if anyone wants to handle the unhandled event
-    bz_UnknownSlashCommandEventData commandData1;
+    bz_UnknownSlashCommandEventData_V1 commandData1;
     commandData1.from = t;
     commandData1.message = message;
-    commandData1.time = TimeKeeper::getCurrent().getSeconds();
 
     worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
     if (commandData1.handled) // did anyone do it?

@@ -4,40 +4,30 @@
 #include "bzfsAPI.h"
 #include <stdio.h>
 
-class GameStartEndHandler : public bz_EventHandler
+class GameStartEndHandler : public bz_Plugin
 {
 public:
-	virtual void process ( bz_EventData *eventData );
+  virtual const char* Name (){return "Record Match";}
+  virtual void Init ( const char* config);
+  virtual void Event ( bz_EventData *eventData );
 };
 
-GameStartEndHandler	gameStartEndHandler;
+BZ_PLUGIN(GameStartEndHandler)
 
 std::string path;
 bool started = false;
 std::string filename;
 
-BZ_GET_PLUGIN_VERSION
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+void GameStartEndHandler::Init( const char* commandLine )
 {
-	bz_registerEvent(bz_eGameStartEvent,&gameStartEndHandler);
-	bz_registerEvent(bz_eGameEndEvent,&gameStartEndHandler);
-	bz_debugMessage(4,"recordmatch plugin loaded");
-
-	filename = commandLine;
-  return 0;
+  Register(bz_eGameStartEvent);
+  Register(bz_eGameEndEvent);
+  bz_debugMessage(4,"recordmatch plugin loaded");
+  filename = commandLine;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-	bz_debugMessage(4,"recordmatch plugin unloaded");
-	bz_removeEvent(bz_eGameStartEvent,&gameStartEndHandler);
-	bz_removeEvent(bz_eGameEndEvent,&gameStartEndHandler);
-
-  return 0;
-}
-
-void GameStartEndHandler::process( bz_EventData *eventData )
+void GameStartEndHandler::Event( bz_EventData *eventData )
 {
 	switch(eventData->eventType)
 	{

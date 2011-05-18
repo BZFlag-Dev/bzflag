@@ -39,8 +39,9 @@ tmCustomPluginMap customPluginMap;
 
 typedef struct
 {
-	std::string plugin;
-
+	std::string name;
+	std::string filename;
+	bz_Plugin* plugin;
 #ifdef _WIN32
 	HINSTANCE	handle;
 #else
@@ -50,92 +51,134 @@ typedef struct
 
 std::string findPlugin ( std::string pluginName )
 {
-	// see if we can just open the bloody thing
-	FILE	*fp = fopen(pluginName.c_str(),"rb");
-	if (fp)
-	{
-		fclose(fp);
-		return pluginName;
-	}
+  // see if we can just open the bloody thing
+  FILE	*fp = fopen(pluginName.c_str(),"rb");
+  if (fp)
+  {
+	  fclose(fp);
+	  return pluginName;
+  }
 
-	// now try it with the standard extension
-	std::string name = pluginName + extension;
-	fp = fopen(name.c_str(),"rb");
-	if (fp)
-	{
-		fclose(fp);
-		return name;
-	}
+  // now try it with the standard extension
+  std::string name = pluginName + extension;
+  fp = fopen(name.c_str(),"rb");
+  if (fp)
+  {
+	  fclose(fp);
+	  return name;
+  }
 
-	// check the local users plugins dir
-	name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
-	fp = fopen(name.c_str(),"rb");
-	if (fp)
-	{
-		fclose(fp);
-		return name;
-	}
+  // check the local users plugins dir
+  name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
+  fp = fopen(name.c_str(),"rb");
+  if (fp)
+  {
+	  fclose(fp);
+	  return name;
+  }
 
-	// check the global plugins dir
-	name = globalPluginDir + pluginName + extension;
-	fp = fopen(name.c_str(),"rb");
-	if (fp)
-	{
-		fclose(fp);
-		return name;
-	}
+  // check the global plugins dir
+  name = globalPluginDir + pluginName + extension;
+  fp = fopen(name.c_str(),"rb");
+  if (fp)
+  {
+	  fclose(fp);
+	  return name;
+  }
 
-	return std::string("");
+  return std::string("");
 }
 
 std::vector<trPluginRecord>	vPluginList;
 
 void unload1Plugin ( int iPluginID );
 
+bool PluginExists ( const char* n )
+{
+  std::string name = n;
+
+  std::vector<trPluginRecord>::iterator itr = vPluginList.begin();
+  while ( itr != vPluginList.end())
+  {
+    if (itr->name == name)
+      return true;
+    itr++;
+  }
+  return false;
+}
+
+bz_Plugin* getPlugin( const char* n )
+{
+  std::string name = n;
+
+  std::vector<trPluginRecord>::iterator itr = vPluginList.begin();
+  while ( itr != vPluginList.end())
+  {
+    if (itr->name == name)
+      return itr->plugin;
+    itr++;
+  }
+  return NULL;
+}
+
 #ifdef _WIN32
 #  include <windows.h>
 
 int getPluginVersion ( HINSTANCE hLib )
 {
-	int (*lpProc)(void);
-	lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetVersion");
-	if (lpProc)
-		return lpProc();
-	return 0;
+  int (*lpProc)(void);
+  lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetMinVersion");
+  if (lpProc)
+	  return lpProc();
+  return 0;
 }
 
 bool load1Plugin ( std::string plugin, std::string config )
 {
-	int (*lpProc)(const char*);
+	bz_Plugin* (*lpProc)(void);
 
 	std::string realPluginName = findPlugin(plugin);
 
 	HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
 	if (hLib)
 	{
-		if (getPluginVersion(hLib) < BZ_API_VERSION)
+		if (getPluginVersion(hLib) > BZ_API_VERSION)
 		{
-			logDebugMessage(1,"Plugin:%s found but expects an older API version (%d), upgrade it\n",plugin.c_str(),getPluginVersion(hLib));
+			logDebugMessage(1,"Plugin:%s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),getPluginVersion(hLib));
 			FreeLibrary(hLib);
 			return false;
 		}
 		else
 		{
-			lpProc = (int (__cdecl *)(const char*))GetProcAddress(hLib, "bz_Load");
+			lpProc = (bz_Plugin* (__cdecl *)(void))GetProcAddress(hLib, "bz_GetPlugin");
 			if (lpProc)
 			{
-				lpProc(config.c_str());
-				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
+				bz_Plugin* p = lpProc();
+				if (!p)
+				  return false;
+
+				std::string name  = p->Name();
+				if (PluginExists(name.c_str()))
+				{
+				  FreeLibrary(hLib);
+				  return false;
+				}
 
 				trPluginRecord pluginRecord;
+				pluginRecord.name = name;
 				pluginRecord.handle = hLib;
-				pluginRecord.plugin = plugin;
+				pluginRecord.plugin = p;
+				pluginRecord.filename = plugin;
 				vPluginList.push_back(pluginRecord);
+
+				p->Init(config.c_str());
+
+				logDebugMessage(1,"Plugin:%s loaded from $s\n",pluginRecord.name.c_str(),plugin.c_str());
 				return true;
 			}
 			else
 			{
-				logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method\n",plugin.c_str());
+				logDebugMessage(1,"Plugin:%s found but does not contain bz_GetPlugin method\n",plugin.c_str());
 				FreeLibrary(hLib);
 				return false;
 			}
@@ -150,18 +193,21 @@ bool load1Plugin ( std::string plugin, std::string config )
 
 void unload1Plugin ( int iPluginID )
 {
-	int (*lpProc)(void);
+	void (*lpProc)(bz_Plugin*);
 
 	trPluginRecord &plugin = vPluginList[iPluginID];
 
-	lpProc = (int (__cdecl *)(void))GetProcAddress(plugin.handle, "bz_Unload");
+	plugin.plugin->Cleanup();
+
+	lpProc = (void (__cdecl *)(bz_Plugin*))GetProcAddress(plugin.handle, "bz_FreePlugin");
 	if (lpProc)
-		lpProc();
+		lpProc(plugin.plugin);
 	else
-		logDebugMessage(1,"Plugin does not contain bz_UnLoad method\n");
+		logDebugMessage(1,"Plugin does not contain bz_FreePlugin method, leaking memory\n");
 
 	FreeLibrary(plugin.handle);
 	plugin.handle = NULL;
+	plugin.plugin = NULL;
 }
 #else
 
@@ -171,7 +217,7 @@ std::vector<void*>	vLibHandles;
 int getPluginVersion ( void* hLib )
 {
 	int (*lpProc)(void);
-	*(void**) &lpProc = dlsym(hLib,"bz_GetVersion");
+	*(void**) &lpProc = dlsym(hLib,"bz_GetMinVersion");
 	if (lpProc)
 		return (*lpProc)();
 	return 0;
@@ -179,37 +225,48 @@ int getPluginVersion ( void* hLib )
 
 bool load1Plugin ( std::string plugin, std::string config )
 {
-	int (*lpProc)(const char*);
+	bz_Plugin* (*lpProc)();
 
 	std::string realPluginName = findPlugin(plugin);
 
 	void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
 	if (hLib)
 	{
-		if (dlsym(hLib, "bz_Load") == NULL) {
+		if (dlsym(hLib, "bz_GetPlugin") == NULL) {
 			logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
 			dlclose(hLib);
 			return false;
 		}
 
 		int version = getPluginVersion(hLib);
-		if (version < BZ_API_VERSION)
+		if (version > BZ_API_VERSION)
 		{
-			logDebugMessage(1,"Plugin:%s found but expects an older API version (%d), upgrade it\n", plugin.c_str(), version);
+			logDebugMessage(1,"Plugin:%s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(), version);
 			dlclose(hLib);
 			return false;
 		}
 		else
 		{
-			*(void**) &lpProc = dlsym(hLib,"bz_Load");
+			*(void**) &lpProc = dlsym(hLib,"bz_GetPlugin");
 			if (lpProc)
 			{
-				(*lpProc)(config.c_str());
-				logDebugMessage(1,"Plugin:%s loaded\n",plugin.c_str());
+				bz_Plugin * p = (*lpProc)();
+				if (!p)
+				  return false;
+
+				std::string name  = p->Name();
+				if (PluginExists(name.c_str()))
+				  return false;
+
 				trPluginRecord pluginRecord;
 				pluginRecord.handle = hLib;
-				pluginRecord.plugin = plugin;
+				pluginRecord.name = name;
+				pluginRecord.plugin = p;
+				pluginRecord.filename = plugin;
 				vPluginList.push_back(pluginRecord);
+				logDebugMessage(1,"Plugin:%s loaded from $s\n",pluginRecord.name.c_str(),plugin.c_str());
+
+				p->Init(config.c_str());
 				return true;
 			}
 		}
@@ -226,38 +283,43 @@ bool load1Plugin ( std::string plugin, std::string config )
 
 void unload1Plugin ( int iPluginID )
 {
-	int (*lpProc)(void);
+	void (*lpProc)(bz_Plugin*);
 	trPluginRecord &plugin = vPluginList[iPluginID];
 
-	*(void**) &lpProc = dlsym(plugin.handle, "bz_Unload");
+	plugin.plugin->Cleanup();
+
+	*(void**) &lpProc = dlsym(plugin.handle, "bz_FreePlugin");
 	if (lpProc)
-		(*lpProc)();
+		(*lpProc)(plugin.plugin);
 	else
-		logDebugMessage(1,"Plugin does not contain bz_UnLoad method, error %s\n",dlerror());
+		logDebugMessage(1,"Plugin does not contain bz_FreePlugin method, error %s. Leaking memory\n",dlerror());
 
 	dlclose(plugin.handle);
 	plugin.handle = NULL;
+	plugin.plugin = NULL;
 }
 #endif
 
 
 bool loadPlugin ( std::string plugin, std::string config )
 {
-	// check and see if it's an extension we have a handler for
-	std::string ext;
+  // check and see if it's an extension we have a handler for
+  std::string ext;
 
-	std::vector<std::string> parts = TextUtils::tokenize(plugin,std::string("."));
-	ext = parts[parts.size()-1];
+  std::vector<std::string> parts = TextUtils::tokenize(plugin,std::string("."));
+  ext = parts[parts.size()-1];
 
-	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
+  tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
-	if (itr != customPluginMap.end() && itr->second)
-	{
-		bz_APIPluginHandler *handler = itr->second;
-		return handler->handle(plugin,config);
-	}
-	else
-		return load1Plugin(plugin,config);
+  if (itr != customPluginMap.end() && itr->second)
+  {
+    bz_APIPluginHandler *handler = itr->second;
+    return handler->handle(plugin,config);
+  }
+  else
+  {
+    return load1Plugin(plugin,config);
+  }
 }
 
 bool unloadPlugin ( std::string plugin )
@@ -265,7 +327,7 @@ bool unloadPlugin ( std::string plugin )
 	// unload the first one of the name we find
 	for (unsigned int i = 0; i < vPluginList.size();i++)
 	{
-		if ( vPluginList[i].plugin == plugin )
+		if ( vPluginList[i].name == plugin || vPluginList[i].filename == plugin )
 		{
 			unload1Plugin(i);
 			vPluginList.erase(vPluginList.begin()+i);
@@ -288,11 +350,25 @@ void unloadPlugins ( void )
 
 std::vector<std::string> getPluginList ( void )
 {
-	std::vector<std::string> plugins;
-	for (unsigned int i = 0; i < vPluginList.size();i++)
-		plugins.push_back(vPluginList[i].plugin);
+  std::vector<std::string> plugins;
+  for (unsigned int i = 0; i < vPluginList.size();i++)
+    plugins.push_back(vPluginList[i].name);
 
-	return plugins;
+  return plugins;
+}
+
+float getPluginMinWaitTime ( void )
+{
+  float maxTime = 1000.0;
+
+  std::vector<std::string> plugins;
+  for (unsigned int i = 0; i < vPluginList.size();i++)
+  {
+    if (vPluginList[i].plugin && vPluginList[i].plugin->MaxWaitTime < maxTime)
+      maxTime = vPluginList[i].plugin->MaxWaitTime;
+  }
+
+  return maxTime;
 }
 
 void parseServerCommand(const char *message, int dstPlayerId);
@@ -301,14 +377,14 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
 public:
 	virtual ~DynamicPluginCommands(){};
-	virtual bool handle ( int playerID, bzApiString _command, bzApiString _message, bzAPIStringList *params )
+	virtual bool handle ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
 	{
-		bz_PlayerRecord	record;
+		bz_BasePlayerRecord	record;
 
 		std::string command = _command.c_str();
 		std::string message = _message.c_str();
 
-		bz_PlayerRecord	*p = bz_getPlayerByIndex(playerID);
+		bz_BasePlayerRecord	*p = bz_getPlayerByIndex(playerID);
 		if (!p)
 			return false;
 

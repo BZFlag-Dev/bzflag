@@ -9,11 +9,27 @@ typedef struct
    float x,y,z,a;
 }trDeathPos;
 
-std::map<int,trDeathPos>  lastDeaded;
 
-class PhoenixEvents : public bz_EventHandler
+
+class PhoenixEvents : public bz_Plugin
 {
-  virtual void process ( bz_EventData *eventData )
+public:
+
+  std::map<int,trDeathPos>  lastDeaded;
+  virtual const char* Name (){return "Phoenix";}
+  virtual void Init ( const char* /*config*/ )
+  {
+    lastDeaded.clear();
+
+    Register(bz_ePlayerDieEvent);
+    Register(bz_eGetPlayerSpawnPosEvent);
+    Register(bz_ePlayerPartEvent);
+    Register(bz_eCaptureEvent);
+
+    bz_debugMessage(4,"Phoenix plugin loaded");
+  }
+
+  virtual void Event ( bz_EventData *eventData )
   {
     switch(eventData->eventType)
     {
@@ -23,13 +39,13 @@ class PhoenixEvents : public bz_EventHandler
 
       case bz_ePlayerDieEvent:
 	{
-	  bz_PlayerDieEventData* data = (bz_PlayerDieEventData*)eventData;
+	  bz_PlayerDieEventData_V1* data = (bz_PlayerDieEventData_V1*)eventData;
 
 	  trDeathPos pos;
-	  pos.x = data->pos[0];
-	  pos.y = data->pos[1];
-	  pos.z = data->pos[2];
-	  pos.a = data->rot;
+	  pos.x = data->state.pos[0];
+	  pos.y = data->state.pos[1];
+	  pos.z = data->state.pos[2];
+	  pos.a = data->state.rotation;
 
 	  lastDeaded[data->playerID] = pos;
 	}
@@ -37,7 +53,7 @@ class PhoenixEvents : public bz_EventHandler
 
       case bz_eGetPlayerSpawnPosEvent:
 	{
-	  bz_GetPlayerSpawnPosEventData* data = (bz_GetPlayerSpawnPosEventData*)eventData;
+	  bz_GetPlayerSpawnPosEventData_V1* data = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
 
 	  if (lastDeaded.find(data->playerID) == lastDeaded.end())
 	    break;
@@ -54,7 +70,7 @@ class PhoenixEvents : public bz_EventHandler
 
       case bz_ePlayerPartEvent:
 	{
-	  bz_PlayerJoinPartEventData* data = (bz_PlayerJoinPartEventData*)eventData;
+	  bz_PlayerJoinPartEventData_V1* data = (bz_PlayerJoinPartEventData_V1*)eventData;
 	  if (lastDeaded.find(data->playerID) != lastDeaded.end())
 	    lastDeaded.erase(lastDeaded.find(data->playerID));
 	}
@@ -65,34 +81,8 @@ class PhoenixEvents : public bz_EventHandler
   }
 };
 
-PhoenixEvents phoenixEvents;
+BZ_PLUGIN(PhoenixEvents)
 
-BZ_GET_PLUGIN_VERSION
-
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
-{
-  lastDeaded.clear();
-
-  bz_registerEvent(bz_ePlayerDieEvent,&phoenixEvents);
-  bz_registerEvent(bz_eGetPlayerSpawnPosEvent,&phoenixEvents);
-  bz_registerEvent(bz_ePlayerPartEvent,&phoenixEvents);
-  bz_registerEvent(bz_eCaptureEvent,&phoenixEvents);
-
-  bz_debugMessage(4,"Phoenix plugin loaded");
-  return 0;
-}
-
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_removeEvent(bz_ePlayerDieEvent,&phoenixEvents);
-  bz_removeEvent(bz_eGetPlayerSpawnPosEvent,&phoenixEvents);
-  bz_removeEvent(bz_ePlayerPartEvent,&phoenixEvents);
-  bz_removeEvent(bz_eCaptureEvent,&phoenixEvents);
-
-  lastDeaded.clear();
-  bz_debugMessage(4,"Phoenix plugin unloaded");
-  return 0;
-}
 
 // Local Variables: ***
 // mode:C++ ***

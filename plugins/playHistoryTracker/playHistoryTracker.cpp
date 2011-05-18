@@ -6,19 +6,23 @@
 #include <string>
 #include <map>
 
-BZ_GET_PLUGIN_VERSION
-
 // event handler callback
 
-class PlayHistoryTracker : public bz_EventHandler
+class PlayHistoryTracker : public bz_Plugin
 {
 public:
-  PlayHistoryTracker();
-  virtual ~PlayHistoryTracker();
+	virtual const char* Name (){return "Play History Tracker";}
+	virtual void Init ( const char* config)
+	{
+		bz_debugMessage(4,"PlayHistoryTracker plugin loaded");
 
-  virtual void process ( bz_EventData *eventData );
+		Register(bz_ePlayerDieEvent);
+		Register(bz_ePlayerPartEvent);
+		Register(bz_ePlayerSpawnEvent);
+		Register(bz_ePlayerJoinEvent);
+	}
 
-  virtual bool autoDelete ( void ) { return false;} // this will be used for more then one event
+  virtual void Event ( bz_EventData *eventData );
 protected:
 
   typedef struct
@@ -33,30 +37,8 @@ protected:
   std::map<int, trPlayerHistoryRecord > playerList;
 };
 
-PlayHistoryTracker	historyTracker;
+BZ_PLUGIN(PlayHistoryTracker)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
-{
-  bz_debugMessage(4,"PlayHistoryTracker plugin loaded");
-
-  bz_registerEvent(bz_ePlayerDieEvent,&historyTracker);
-  bz_registerEvent(bz_ePlayerPartEvent,&historyTracker);
-  bz_registerEvent(bz_ePlayerSpawnEvent,&historyTracker);
-  bz_registerEvent(bz_ePlayerJoinEvent,&historyTracker);
-
-  return 0;
-}
-
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_removeEvent(bz_ePlayerDieEvent,&historyTracker);
-  bz_removeEvent(bz_ePlayerPartEvent,&historyTracker);
-  bz_removeEvent(bz_ePlayerSpawnEvent,&historyTracker);
-  bz_removeEvent(bz_ePlayerJoinEvent,&historyTracker);
-
-  bz_debugMessage(4,"PlayHistoryTracker plugin unloaded");
-  return 0;
-}
 
 // ----------------- SpreeTracker-----------------
 
@@ -71,15 +53,7 @@ BZF_PLUGIN_CALL int bz_Unload ( void )
 
 std::map<int, trPlayerHistoryRecord > playerList; */
 
-PlayHistoryTracker::PlayHistoryTracker()
-{
-}
-
-PlayHistoryTracker::~PlayHistoryTracker()
-{
-}
-
-void PlayHistoryTracker::process ( bz_EventData *eventData )
+void PlayHistoryTracker::Event( bz_EventData *eventData )
 {
   switch (eventData->eventType)
   {
@@ -89,11 +63,11 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 
   case bz_ePlayerDieEvent:
     {
-      bz_PlayerDieEventData	*deathRecord = ( bz_PlayerDieEventData*)eventData;
+      bz_PlayerDieEventData_V1	*deathRecord = ( bz_PlayerDieEventData_V1*)eventData;
 
       std::string killerCallSign = "UNKNOWN";
 
-      bz_PlayerRecord	*killerData;
+      bz_BasePlayerRecord	*killerData;
 
       killerData = bz_getPlayerByIndex(deathRecord->killerID);
 
@@ -121,8 +95,8 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
 	}
 
 	record.spreeTotal = 0;
-	record.startTime = deathRecord->time;
-	record.lastUpdateTime = deathRecord->time;
+	record.startTime = deathRecord->eventTime;
+	record.lastUpdateTime = deathRecord->eventTime;
 
       }
 
@@ -132,7 +106,7 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
       {
 	trPlayerHistoryRecord	&record = playerList.find(deathRecord->killerID)->second;
 	record.spreeTotal++;
-	record.lastUpdateTime = deathRecord->time;
+	record.lastUpdateTime = deathRecord->eventTime;
 
 	std::string message;
 
@@ -182,19 +156,19 @@ void PlayHistoryTracker::process ( bz_EventData *eventData )
     {
       trPlayerHistoryRecord playerRecord;
 
-      playerRecord.playerID = (( bz_PlayerJoinPartEventData*)eventData)->playerID;
-      playerRecord.callsign = (( bz_PlayerJoinPartEventData*)eventData)->callsign.c_str();
+      playerRecord.playerID = (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID;
+      playerRecord.callsign = (( bz_PlayerJoinPartEventData_V1*)eventData)->record->callsign.c_str();
       playerRecord.spreeTotal = 0;
-      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData*)eventData)->time;
+      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData_V1*)eventData)->eventTime;
       playerRecord.startTime = playerRecord.lastUpdateTime;
 
-      playerList[(( bz_PlayerJoinPartEventData*)eventData)->playerID] = playerRecord;
+      playerList[(( bz_PlayerJoinPartEventData_V1*)eventData)->playerID] = playerRecord;
     }
     break;
 
   case  bz_ePlayerPartEvent:
     {
-      std::map<int, trPlayerHistoryRecord >::iterator	itr = playerList.find( (( bz_PlayerJoinPartEventData*)eventData)->playerID );
+      std::map<int, trPlayerHistoryRecord >::iterator	itr = playerList.find( (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID );
       if (itr != playerList.end())
 	playerList.erase(itr);
     }

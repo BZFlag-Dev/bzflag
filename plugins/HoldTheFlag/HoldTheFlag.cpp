@@ -2,21 +2,16 @@
 //
 // $Id$
 
-
 #include "bzfsAPI.h"
 #include <map>
 #include <stdio.h>
 #include <stdarg.h>
 
-BZ_GET_PLUGIN_VERSION
-
 #define HOLDTHEFLAG_VER "1.00.02"
 #define DO_FLAG_RESET 1
 #define DEFAULT_TEAM eGreenTeam
 
-
 #define MAX_PLAYERID 255
-
 
 typedef struct {
   bool isValid;
@@ -35,11 +30,14 @@ int nextCapNum = 0;
 int NumPlayers=0;
 int Leader;
 
-class HTFscore : public bz_EventHandler, public bz_CustomSlashCommandHandler
+class HTFscore : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
 public:
-  virtual void process ( bz_EventData *eventData );
-  virtual bool handle ( int playerID, bzApiString, bzApiString, bzAPIStringList*);
+	virtual const char* Name() {return "Hold the Flag";}
+	virtual void Init ( const char* config );
+	virtual void Cleanup ( void );
+  virtual void Event ( bz_EventData *eventData );
+  virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
   bz_eTeamType colorNameToDef (const char *color);
   const char *colorDefToName (bz_eTeamType team);
 
@@ -48,9 +46,9 @@ protected:
 private:
 };
 
-HTFscore htfScore;
+BZ_PLUGIN(HTFscore)
 
-
+HTFscore *htfScore = NULL;
 
 bz_eTeamType HTFscore::colorNameToDef (const char *color)
 {
@@ -95,7 +93,6 @@ const char *HTFscore::colorDefToName (bz_eTeamType team)
   }
 }
 
-
 bool listAdd (int playerID, const char *callsign)
 {
   if (playerID>MAX_PLAYERID || playerID<0)
@@ -126,9 +123,6 @@ int sort_compare (const void *_p1, const void *_p2){
   return Players[p2].capNum - Players[p1].capNum;
   return 0;
 }
-
-
-
 
 void dispScores (int who)
 {
@@ -164,7 +158,6 @@ void dispScores (int who)
   Leader = sortList[0];
 }
 
-
 void resetScores (void)
 {
   for (int i=0; i<MAX_PLAYERID; i++){
@@ -173,7 +166,6 @@ void resetScores (void)
   }
   nextCapNum = 0;
 }
-
 
 void htfCapture (int who)
 {
@@ -201,7 +193,6 @@ void htfStartGame (void)
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has begun, good luck!");
 }
 
-
 void htfEndGame (void)
 {
   if (htfEnabled && matchActive){
@@ -217,22 +208,19 @@ void htfEndGame (void)
 
 }
 
-
 void sendHelp (int who)
 {
   bz_sendTextMessage(BZ_SERVER, who, "HTF commands: reset, off, on, stats");
 }
-
 
 /************************** (SUB)COMMAND Implementations ... **************************/
 
 void htfStats (int who)
 {
   bz_sendTextMessagef(BZ_SERVER, who, "HTF plugin version %s", HOLDTHEFLAG_VER);
-  bz_sendTextMessagef(BZ_SERVER, who,  "  Team: %s", htfScore.colorDefToName(htfTeam));
+  bz_sendTextMessagef(BZ_SERVER, who,  "  Team: %s", htfScore->colorDefToName(htfTeam));
   bz_sendTextMessagef(BZ_SERVER, who,  "  Flag Reset: %s" , DO_FLAG_RESET ? "ENabled":"DISabled");
 }
-
 
 void htfReset (int who)
 {
@@ -252,49 +240,45 @@ void htfEnable (bool onoff, int who)
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, msg);
 }
 
-
-
-
-
 // handle events
-void HTFscore::process ( bz_EventData *eventData )
+void HTFscore::Event ( bz_EventData *eventData )
 {
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
     char msg[255];
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
-bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
-    if (htfTeam!=eNoTeam && joinData->team!=htfTeam && joinData->team != eObservers){
-      sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore.colorDefToName(htfTeam));
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
+bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
+    if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers){
+      sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore->colorDefToName(htfTeam));
       bz_kickUser (joinData->playerID, msg, true);
       return;
     }
-    if (joinData->team == htfTeam)
-      listAdd (joinData->playerID, joinData->callsign.c_str());
+    if (joinData->record->team == htfTeam)
+      listAdd (joinData->playerID, joinData->record->callsign.c_str());
 
   // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
-bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
+bz_debugMessagef(3, "++++++ HTFscore: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
 
-    if (joinData->team == htfTeam)
+    if (joinData->record->team== htfTeam)
       listDel (joinData->playerID);
 
   // flag CAPTURE
   } else if (eventData->eventType == bz_eCaptureEvent) {
-    bz_CTFCaptureEventData *capData = (bz_CTFCaptureEventData*)eventData;
+    bz_CTFCaptureEventData_V1 *capData = (bz_CTFCaptureEventData_V1*)eventData;
     htfCapture (capData->playerCapping);
 
   // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
-bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
+bz_debugMessagef(2, "++++++ HTFscore: Game START (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
     htfStartGame ();
 
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
-bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
+bz_debugMessagef(2, "++++++ HTFscore: Game END (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
     htfEndGame ();
   }
 }
@@ -312,7 +296,7 @@ bool checkPerms (int playerID, const char *htfCmd, const char *permName)
 
 
 // handle /htf command
-bool HTFscore::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringList* cmdParams )
+bool HTFscore::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "htf"))   // is it for me ?
@@ -359,7 +343,7 @@ bool parseCommandLine (const char *cmdLine)
     return false;
   htfTeam = eGreenTeam;
   if (strcasecmp (cmdLine, "TEAM=") == 0){
-    if ((htfTeam = htfScore.colorNameToDef(cmdLine+5)) == eNoTeam)
+    if ((htfTeam = htfScore->colorNameToDef(cmdLine+5)) == eNoTeam)
       return commandLineHelp ();
   } else
     return commandLineHelp ();
@@ -367,15 +351,16 @@ bool parseCommandLine (const char *cmdLine)
 }
 
 
-BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
+void HTFscore::Init(const char* cmdLine)
 {
-  bz_PlayerRecord *playerRecord;
+	htfScore = this;
+  bz_BasePlayerRecord *playerRecord;
 
   if (parseCommandLine (cmdLine))
-    return -1;
+    return;
 
   // get current list of player indices ...
-  bzAPIIntList *playerList = bz_newIntList();
+  bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
   for (unsigned int i = 0; i < playerList->size(); i++){
     if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
@@ -385,26 +370,22 @@ BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
   }
   bz_deleteIntList (playerList);
 
-  bz_registerCustomSlashCommand ("htf", &htfScore);
-  bz_registerEvent(bz_ePlayerJoinEvent, &htfScore);
-  bz_registerEvent(bz_ePlayerPartEvent, &htfScore);
-  bz_registerEvent(bz_eCaptureEvent, &htfScore);
-  bz_registerEvent(bz_eGameStartEvent, &htfScore);
-  bz_registerEvent(bz_eGameEndEvent, &htfScore);
+  bz_registerCustomSlashCommand ("htf", this);
+  Register(bz_ePlayerJoinEvent);
+  Register(bz_ePlayerPartEvent);
+  Register(bz_eCaptureEvent);
+  Register(bz_eGameStartEvent);
+  Register(bz_eGameEndEvent);
   bz_debugMessagef(1, "HoldTheFlag plugin loaded - v%s", HOLDTHEFLAG_VER);
-  return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload (void)
+void HTFscore::Cleanup(void)
 {
+	htfScore = NULL;
+	Flush();
   bz_removeCustomSlashCommand ("htf");
-  bz_removeEvent (bz_ePlayerJoinEvent, &htfScore);
-  bz_removeEvent (bz_ePlayerPartEvent, &htfScore);
-  bz_removeEvent (bz_eCaptureEvent, &htfScore);
-  bz_removeEvent (bz_eGameStartEvent, &htfScore);
-  bz_removeEvent (bz_eGameEndEvent, &htfScore);
+
   bz_debugMessage(1, "HoldTheFlag plugin unloaded");
-  return 0;
 }
 
 

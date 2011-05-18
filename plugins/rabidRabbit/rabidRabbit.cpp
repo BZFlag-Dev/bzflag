@@ -7,52 +7,45 @@
 #include <cmath>
 #include <cstdlib>
 
-BZ_GET_PLUGIN_VERSION
-
 class RabidRabbitHandler : public bz_CustomMapObjectHandler
 {
 public:
-  virtual bool handle(bzApiString object, bz_CustomMapObjectInfo *data);
+  virtual bool handle(bz_ApiString object, bz_CustomMapObjectInfo *data);
 };
 
 RabidRabbitHandler rabidrabbithandler;
 
-class RabidRabbitEventHandler : public bz_EventHandler
+class RabidRabbitEventHandler : public bz_Plugin
 {
 public:
-  virtual void process(bz_EventData *eventData);
+  virtual const char* Name (){return "Rabid Rabit";}
+  virtual void Init ( const char* config);
+  virtual void Cleanup ();
+
+  virtual void Event(bz_EventData *eventData);
 };
 
-RabidRabbitEventHandler	rabidrabbiteventHandler;
+BZ_PLUGIN(RabidRabbitEventHandler)
 
-class RabidRabbitDieEventHandler : public bz_EventHandler
+
+void RabidRabbitEventHandler::Init(const char* /*commandLineParameter*/)
 {
-public:
-  virtual void process(bz_EventData *eventData);
-};
-
-RabidRabbitDieEventHandler rabidrabbitdieeventhandler;
-
-BZF_PLUGIN_CALL int bz_Load(const char* /*commandLineParameter*/)
-{
+  MaxWaitTime = 1.0f;
   bz_debugMessage(4,"rabidRabbit plugin loaded");
   bz_registerCustomMapObject("RABIDRABBITZONE",&rabidrabbithandler);
   bz_registerCustomMapObject("RRSOUNDOFF",&rabidrabbithandler);
   bz_registerCustomMapObject("RRCYCLEONDIE",&rabidrabbithandler);
-  bz_registerEvent(bz_eTickEvent,&rabidrabbiteventHandler);
-  bz_registerEvent(bz_ePlayerDieEvent ,&rabidrabbitdieeventhandler);
-  return 0;
+  Register(bz_eTickEvent);
+  Register(bz_ePlayerDieEvent);
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
+void RabidRabbitEventHandler::Cleanup(void)
 {
-  bz_removeEvent(bz_eTickEvent,&rabidrabbiteventHandler);
-  bz_removeEvent(bz_ePlayerDieEvent,&rabidrabbitdieeventhandler);
+  Flush();
   bz_removeCustomMapObject("RABIDRABBITZONE");
   bz_removeCustomMapObject("RRSOUNDOFF");
   bz_removeCustomMapObject("RRCYCLEONDIE");
   bz_debugMessage(4,"rabidRabbit plugin unloaded");
-  return 0;
 }
 
 class RRZoneInfo
@@ -104,7 +97,7 @@ public:
   float xMax,xMin,yMax,yMin,zMax,zMin;
   float rad;
 
-  bzApiString WW;
+  bz_ApiString WW;
   float WWLifetime, WWPosition[3], WWTilt, WWDirection, WWDT;
   double pi, WWLastFired, WWRepeat;
   bool WWFired;
@@ -143,7 +136,7 @@ public:
 
 std::vector <RabidRabbitZone> zoneList;
 
-bool RabidRabbitHandler::handle(bzApiString object, bz_CustomMapObjectInfo *data)
+bool RabidRabbitHandler::handle(bz_ApiString object, bz_CustomMapObjectInfo *data)
 {
   if (object == "RRSOUNDOFF")
     rrzoneinfo.soundEnabled = false;
@@ -160,7 +153,7 @@ bool RabidRabbitHandler::handle(bzApiString object, bz_CustomMapObjectInfo *data
   for (unsigned int i = 0; i < data->data.size(); i++) {
     std::string line = data->data.get(i).c_str();
 
-    bzAPIStringList *nubs = bz_newStringList();
+    bz_APIStringList *nubs = bz_newStringList();
     nubs->tokenize(line.c_str()," ",0,true);
 
     if (nubs->size() > 0) {
@@ -206,19 +199,18 @@ bool RabidRabbitHandler::handle(bzApiString object, bz_CustomMapObjectInfo *data
   }
 
   zoneList.push_back(newZone);
-  bz_setMaxWaitTime((float)0.1);
   return true;
 }
 
 void killAllHunters(std::string messagepass)
 {
-  bzAPIIntList *playerList = bz_newIntList();
+  bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList(playerList);
 
 
   for (unsigned int i = 0; i < playerList->size(); i++){
 
-    bz_PlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
     if (player) {
       if (player->team != eRabbitTeam) {
@@ -242,8 +234,23 @@ void killAllHunters(std::string messagepass)
 }
 
 
-void RabidRabbitEventHandler::process(bz_EventData *eventData)
+void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 {
+
+  if (eventData->eventType = bz_ePlayerDieEvent)
+  {
+    bz_PlayerDieEventData_V1 *DieData = (bz_PlayerDieEventData_V1*)eventData;
+
+    if (rrzoneinfo.cycleOnDie && DieData->team == eRabbitTeam) {
+      unsigned int i = rrzoneinfo.currentKillZone;
+      if (i == (zoneList.size() - 1))
+	rrzoneinfo.currentKillZone = 0;
+      else
+	rrzoneinfo.currentKillZone++;
+    }
+    return;
+  }
+
   if ((eventData->eventType != bz_eTickEvent) || (zoneList.size() < 2))
     return;
 
@@ -264,16 +271,16 @@ void RabidRabbitEventHandler::process(bz_EventData *eventData)
     }
   }
 
-  bzAPIIntList *playerList = bz_newIntList();
+  bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList(playerList);
 
   for (unsigned int h = 0; h < playerList->size(); h++) {
-    bz_PlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](h));
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](h));
 
     if (player) {
 
       for (unsigned int i = 0; i < zoneList.size(); i++) {
-	if (zoneList[i].pointIn(player->pos) &&
+	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
 	    player->spawned && player->team == eRabbitTeam &&
 	    rrzoneinfo.currentKillZone != i && !rrzoneinfo.rabbitNotifiedWrongZone) {
 	  bz_sendTextMessage(BZ_SERVER,player->playerID,
@@ -282,13 +289,13 @@ void RabidRabbitEventHandler::process(bz_EventData *eventData)
 	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
 	}
 
-	if (!zoneList[i].pointIn(player->pos) &&
+	if (!zoneList[i].pointIn(player->lastKnownState.pos) &&
 	    player->spawned && player->team == eRabbitTeam &&
 	    rrzoneinfo.rabbitNotifiedWrongZone &&
 	    rrzoneinfo.rabbitNotifiedWrongZoneNum == i)
 	  rrzoneinfo.rabbitNotifiedWrongZone = false;
 
-	if (zoneList[i].pointIn(player->pos) &&
+	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
 	    player->spawned &&
 	    player->team == eRabbitTeam &&
 	    rrzoneinfo.currentKillZone == i &&
@@ -307,7 +314,7 @@ void RabidRabbitEventHandler::process(bz_EventData *eventData)
 	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
 	}
 
-	if (zoneList[i].pointIn(player->pos) &&
+	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
 	    player->spawned &&
 	    player->team != eRabbitTeam &&
 	    zoneList[i].zonekillhunter) {
@@ -323,23 +330,6 @@ void RabidRabbitEventHandler::process(bz_EventData *eventData)
   return;
 }
 
-void RabidRabbitDieEventHandler::process(bz_EventData *eventData)
-{
-  if (eventData->eventType != bz_ePlayerDieEvent)
-    return;
-
-  bz_PlayerDieEventData *DieData = (bz_PlayerDieEventData*)eventData;
-
-  if (rrzoneinfo.cycleOnDie && DieData->team == eRabbitTeam) {
-    unsigned int i = rrzoneinfo.currentKillZone;
-    if (i == (zoneList.size() - 1))
-      rrzoneinfo.currentKillZone = 0;
-    else
-      rrzoneinfo.currentKillZone++;
-  }
-
-  return;
-}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -5,42 +5,32 @@
 #include <string>
 #include <map>
 
-BZ_GET_PLUGIN_VERSION
 
 // event handler callback
-class RogueGenoHandler : public bz_EventHandler
+class RogueGenoHandler : public bz_Plugin
 {
 public:
-  virtual void process ( bz_EventData *eventData );
+	virtual const char* Name (){return "Rogue Geoncide";}
+	virtual void Init ( const char* config);
 
-  virtual bool autoDelete ( void ) { return false;} // this will be used for more then one event
+  virtual void Event ( bz_EventData *eventData );
 
   bool noSuicide;
 };
 
-RogueGenoHandler	rogueGenoHandler;
+BZ_PLUGIN(RogueGenoHandler)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
+void RogueGenoHandler::Init( const char* commandLine )
 {
   bz_debugMessage(4,"rogueGenocide plugin loaded");
-  bz_registerEvent(bz_ePlayerDieEvent,&rogueGenoHandler);
+  Register(bz_ePlayerDieEvent);
 
   std::string param = commandLine;
 
-  rogueGenoHandler.noSuicide = (param == "nosuicide");
-
-  return 0;
+  noSuicide = (param == "nosuicide");
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_removeEvent(bz_ePlayerDieEvent,&rogueGenoHandler);
-  bz_debugMessage(4,"rogueGenocide plugin unloaded");
-  return 0;
-}
-
-
-void RogueGenoHandler::process ( bz_EventData *eventData )
+void RogueGenoHandler::Event ( bz_EventData *eventData )
 {
   switch (eventData->eventType) {
   default:
@@ -50,7 +40,7 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
   // wait for a tank death and start checking for genocide and rogues
   case bz_ePlayerDieEvent:
     {
-      bz_PlayerDieEventData	*dieData = (bz_PlayerDieEventData*)eventData;
+      bz_PlayerDieEventData_V1	*dieData = (bz_PlayerDieEventData_V1*)eventData;
       //if its not a genocide kill, dont care
       if (dieData->flagKilledWith != "G" )
 	break;
@@ -62,14 +52,14 @@ void RogueGenoHandler::process ( bz_EventData *eventData )
 	break;
 
       // if the tank killed was a rogue, kill all rogues.
-      bzAPIIntList	*playerList = bz_newIntList();
+      bz_APIIntList	*playerList = bz_newIntList();
 
       bz_getPlayerIndexList(playerList);
 
       for ( unsigned int i = 0; i < playerList->size(); i++)
       {
 	int targetID = (*playerList)[i];
-	bz_PlayerRecord *playRec = bz_getPlayerByIndex ( targetID );
+	bz_BasePlayerRecord *playRec = bz_getPlayerByIndex ( targetID );
 	if (!playRec) continue;
 
 	// the sucker is a spawned rogue, kill him.  This generates another death event,

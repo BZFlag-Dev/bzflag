@@ -8,41 +8,39 @@
 #include <cmath>
 #include <cstdlib>
 
-BZ_GET_PLUGIN_VERSION
-
 class FlagStayZoneHandler : public bz_CustomMapObjectHandler
 {
 public:
-	virtual bool handle ( bzApiString object, bz_CustomMapObjectInfo *data );
+	virtual bool handle ( bz_ApiString object, bz_CustomMapObjectInfo *data );
 };
 
 FlagStayZoneHandler	flagStayZoneHandler;
 
-class EventHandler : public bz_EventHandler
+class EventHandler : public bz_Plugin
 {
 public:
-	virtual void process ( bz_EventData *eventData );
+	virtual const char* Name (){return "Flag Stay Zones";}
+	virtual void Init ( const char* cl );
+	virtual void Cleanup ();
+	virtual void Event ( bz_EventData *eventData );
 };
 
-EventHandler eventHandler;
+BZ_PLUGIN(EventHandler)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+void EventHandler::Init ( const char* /*commandLine*/ )
 {
   bz_debugMessage(4,"flagStay plugin loaded");
   bz_registerCustomMapObject("FLAGSTAYZONE",&flagStayZoneHandler);
 
-  bz_registerEvent(bz_ePlayerUpdateEvent,&eventHandler);
-  return 0;
+  Register(bz_ePlayerUpdateEvent);
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
+void EventHandler::Cleanup ( void )
 {
-  bz_removeEvent(bz_ePlayerUpdateEvent,&eventHandler);
+  Flush();
   bz_removeCustomMapObject("FLAGSTAYZONE");
   bz_debugMessage(4,"flagStay plugin unloaded");
-  return 0;
 }
-
 
 class FlagStayZone
 {
@@ -104,7 +102,7 @@ public:
 
 std::vector <FlagStayZone> zoneList;
 
-bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *data )
+bool FlagStayZoneHandler::handle ( bz_ApiString object, bz_CustomMapObjectInfo *data )
 {
 	if (object != "FLAGSTAYZONE" || !data)
 		return false;
@@ -116,7 +114,7 @@ bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *d
 	{
 		std::string line = data->data.get(i).c_str();
 
-		bzAPIStringList *nubs = bz_newStringList();
+		bz_APIStringList *nubs = bz_newStringList();
 		nubs->tokenize(line.c_str()," ",0,true);
 
 		if ( nubs->size() > 0)
@@ -160,7 +158,7 @@ bool FlagStayZoneHandler::handle ( bzApiString object, bz_CustomMapObjectInfo *d
 
 std::map<int,int>	playeIDToZoneMap;
 
-void EventHandler::process ( bz_EventData *eventData )
+void EventHandler::Event ( bz_EventData *eventData )
 {
 	float pos[3] = {0};
 
@@ -169,17 +167,17 @@ void EventHandler::process ( bz_EventData *eventData )
 	switch (eventData->eventType)
 	{
 	case bz_ePlayerUpdateEvent:
-		pos[0] = ((bz_PlayerUpdateEventData*)eventData)->pos[0];
-		pos[1] = ((bz_PlayerUpdateEventData*)eventData)->pos[1];
-		pos[2] = ((bz_PlayerUpdateEventData*)eventData)->pos[2];
-		playerID = ((bz_PlayerUpdateEventData*)eventData)->playerID;
+		pos[0] = ((bz_PlayerUpdateEventData_V1*)eventData)->state.pos[0];
+		pos[1] = ((bz_PlayerUpdateEventData_V1*)eventData)->state.pos[1];
+		pos[2] = ((bz_PlayerUpdateEventData_V1*)eventData)->state.pos[2];
+		playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->playerID;
 		break;
 
 	case bz_eShotFiredEvent:
-		pos[0] = ((bz_ShotFiredEventData*)eventData)->pos[0];
-		pos[1] = ((bz_ShotFiredEventData*)eventData)->pos[1];
-		pos[2] = ((bz_ShotFiredEventData*)eventData)->pos[2];
-		playerID = ((bz_ShotFiredEventData*)eventData)->playerID;
+		pos[0] = ((bz_ShotFiredEventData_V1*)eventData)->pos[0];
+		pos[1] = ((bz_ShotFiredEventData_V1*)eventData)->pos[1];
+		pos[2] = ((bz_ShotFiredEventData_V1*)eventData)->pos[2];
+		playerID = ((bz_ShotFiredEventData_V1*)eventData)->playerID;
 		break;
 
 	default:

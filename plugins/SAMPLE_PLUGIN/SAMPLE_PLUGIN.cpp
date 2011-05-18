@@ -4,20 +4,23 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 
-BZ_GET_PLUGIN_VERSION
+class SAMPLE_PLUGIN : public bz_Plugin
+{
+	virtual const char* Name (){return "SAMPLE PLUGIN";}
+	virtual void Init ( const char* config);
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+	virtual void Event ( bz_EventData *eventData ){return;}
+
+};
+
+BZ_PLUGIN(SAMPLE_PLUGIN)
+
+void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
 {
   bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
-  return 0;
+  
+  // init events here with Register();
 }
-
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_debugMessage(4,"SAMPLE_PLUGIN plugin unloaded");
-  return 0;
-}
-
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

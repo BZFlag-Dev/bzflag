@@ -6,8 +6,6 @@
 #include <vector>
 #include <stdio.h>
 
-BZ_GET_PLUGIN_VERSION
-
 #define NAGWAREPLUG_VER "1.00.03"
 #define MAX_PLAYERID    255
 #define EVENT_FREQUENCY 15      // number of seconds between checks
@@ -61,23 +59,24 @@ char      ConfigFilename[256] = "";
 float     NextEventTime = 0.0f;
 
 
-class Nagware : public bz_EventHandler, public bz_CustomSlashCommandHandler
+class Nagware : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
   public:
-    virtual void process ( bz_EventData *eventData );
-    virtual bool handle ( int playerID, bzApiString, bzApiString, bzAPIStringList*);
+	  virtual const char* Name (){return "NAGWARE";}
+	  virtual void Init ( const char* config);
+	  virtual void Cleanup ();
+
+    virtual void Event ( bz_EventData *eventData );
+    virtual bool handle ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
 
   protected:
 
   private:
 };
 
-Nagware nagware;	// 'my' instance
-
-
+BZ_PLUGIN(Nagware)
 
 bool readConfig (char *filename, NagConfig *cfg, int playerID);
-
 
 double nextRepeat (double playerTime, MsgEnt *m){
   if (m->repeat == 0)
@@ -306,48 +305,43 @@ bool checkPerms (int playerID, const char *nagCmd, const char *permName)
 */
 
 // handle events
-void Nagware::process ( bz_EventData *eventData )
+void Nagware::Event ( bz_EventData *eventData )
 {
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
-    bz_debugMessagef(4, "+++ nagware: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
-    bz_PlayerRecord *pr;
-    pr = bz_getPlayerByIndex ( joinData->playerID );
-    if (pr) {
-      listAdd (joinData->playerID, joinData->callsign.c_str(), joinData->team, pr==NULL? false: pr->verified, joinData->time);
-      bz_freePlayerRecord (pr);
-    }
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
+    bz_debugMessagef(4, "+++ nagware: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
+    listAdd (joinData->playerID, joinData->record->callsign.c_str(), joinData->record->team, joinData->record->verified, joinData->eventTime);
 
   // player PART
   } else if (eventData->eventType == bz_ePlayerPartEvent) {
-    bz_PlayerJoinPartEventData *joinData = (bz_PlayerJoinPartEventData*)eventData;
-    bz_debugMessagef(4, "+++ nagware: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->team, joinData->callsign.c_str()); fflush (stdout);
+    bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
+    bz_debugMessagef(4, "+++ nagware: Player PARTED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
     listDel (joinData->playerID);
 
   // game START
   } else if (eventData->eventType == bz_eGameStartEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
-    bz_debugMessagef(4, "+++ nagware: Game START (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
-    MatchStartTime = msgData->time;
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
+    bz_debugMessagef(4, "+++ nagware: Game START (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
+    MatchStartTime = msgData->eventTime;
 
   // game END
   } else if (eventData->eventType == bz_eGameEndEvent) {
-    bz_GameStartEndEventData *msgData = (bz_GameStartEndEventData*)eventData;
-    bz_debugMessagef(4, "+++ nagware: Game END (%f, %f)", msgData->time, msgData->duration); fflush (stdout);
+    bz_GameStartEndEventData_V1 *msgData = (bz_GameStartEndEventData_V1*)eventData;
+    bz_debugMessagef(4, "+++ nagware: Game END (%f, %f)", msgData->eventTime, msgData->duration); fflush (stdout);
     MatchStartTime = 0.0f;
     // can determine length of match, and adjust event times if needed.
 
   // tick
   } else if (eventData->eventType == bz_eTickEvent) {
-    bz_TickEventData *msgData = (bz_TickEventData*)eventData;
-    tickEvent ((float)msgData->time);
+    bz_TickEventData_V1 *msgData = (bz_TickEventData_V1*)eventData;
+    tickEvent ((float)msgData->eventTime);
 
   }
 }
 
 // handle /nag command
-bool Nagware::handle ( int playerID, bzApiString cmd, bzApiString, bzAPIStringList* cmdParams )
+bool Nagware::handle ( int playerID, bz_ApiString cmd, bz_ApiString, bz_APIStringList* cmdParams )
 {
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "nag"))   // is it for me ?
@@ -414,16 +408,18 @@ bool parseCommandLine (const char *cmdLine)
   return false;
 }
 
-BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
+void Nagware::Init(const char* cmdLine)
 {
-  bz_PlayerRecord *playerRecord;
+	MaxWaitTime = 1.0f;
+
+  bz_BasePlayerRecord *playerRecord;
   double now = bz_getCurrentTime();
 
   if (parseCommandLine (cmdLine))
-    return -1;
+    return;
 
   // get current list of player indices ...
-  bzAPIIntList *playerList = bz_newIntList();
+  bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
   for (unsigned int i = 0; i < playerList->size(); i++){
     if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
@@ -433,31 +429,22 @@ BZF_PLUGIN_CALL int bz_Load (const char* cmdLine)
   }
   bz_deleteIntList (playerList);
 
-  bz_registerCustomSlashCommand ("nag", &nagware);
-  bz_registerEvent(bz_ePlayerJoinEvent, &nagware);
-  bz_registerEvent(bz_ePlayerPartEvent, &nagware);
-  bz_registerEvent(bz_eGameStartEvent, &nagware);
-  bz_registerEvent(bz_eGameEndEvent, &nagware);
-  bz_registerEvent(bz_eTickEvent, &nagware);
-  bz_setMaxWaitTime (1.0f);
+  bz_registerCustomSlashCommand ("nag", this);
+  Register(bz_ePlayerJoinEvent);
+  Register(bz_ePlayerPartEvent);
+  Register(bz_eGameStartEvent);
+  Register(bz_eGameEndEvent);
+  Register(bz_eTickEvent);
 
   bz_debugMessagef(0, "+++ nagware plugin loaded - v%s", NAGWAREPLUG_VER);
-  return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload (void)
+void Nagware::Cleanup(void)
 {
   bz_removeCustomSlashCommand ("nag");
-  bz_removeEvent (bz_ePlayerJoinEvent, &nagware);
-  bz_removeEvent (bz_ePlayerPartEvent, &nagware);
-  bz_removeEvent (bz_eGameStartEvent, &nagware);
-  bz_removeEvent (bz_eGameEndEvent, &nagware);
-  bz_removeEvent (bz_eTickEvent, &nagware);
+  Flush();
   bz_debugMessage(0, "+++ nagware plugin unloaded");
-  return 0;
 }
-
-
 
 /*
  * Read Configuration file...

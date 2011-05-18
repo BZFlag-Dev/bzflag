@@ -4,6 +4,6 @@ DESCRIPTION  'keepaway Windows Dynamic Link Library'
 EXPORTS
     ; Explicit exports can go here
 
-bz_GetVersion
-bz_Load
-bz_Unload
+bz_GetPlugin
+bz_FreePlugin
+bz_GetMinVersion

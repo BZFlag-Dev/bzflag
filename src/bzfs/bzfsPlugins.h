@@ -27,6 +27,10 @@ bool removeCustomPluginHandler ( std::string extension, bz_APIPluginHandler *han
 
 std::vector<std::string> getPluginList ( void );
 
+float getPluginMinWaitTime ( void );
+
+bz_Plugin* getPlugin( const char* name );
+
 #endif //_BZFS_PLUGINS_H_
 
 // Local Variables: ***

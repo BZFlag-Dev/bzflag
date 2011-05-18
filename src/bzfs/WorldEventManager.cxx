@@ -31,8 +31,7 @@ WorldEventManager::~WorldEventManager()
     tvEventList::iterator itr = eventItr->second.begin();
     while ( itr != eventItr->second.end() )
     {
-      if ((*itr) && (*itr)->autoDelete())
-	delete (*itr);
+      delete (*itr);
       *itr = NULL;
 
       itr++;
@@ -134,6 +133,85 @@ void WorldEventManager::callEvents (  bz_EventData  *eventData )
 int WorldEventManager::getEventCount ( bz_eEventType eventType )
 {
   return (int)getEventList(eventType).size();
+}
+
+bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
+{
+  if (!plugin)
+    return false;
+
+  bz_EventHandler *handler = new bz_EventHandler();
+  handler->plugin = plugin;
+
+  if (worldEventManager.getEventCount(eventType) == 0)
+    worldEventManager.addEvent(eventType,handler);
+  else
+  {
+    tvEventList& list = worldEventManager.eventList[eventType];
+    tvEventList::iterator itr = list.begin();
+    while (itr != list.end())
+    {
+      if ((*itr)->plugin == plugin)
+	return false;
+      itr++;
+    }
+  }
+  return true;
+}
+
+bool RemoveEvent ( bz_eEventType eventType, bz_Plugin* plugin )
+{
+  if (!plugin || worldEventManager.getEventCount(eventType) == 0)
+    return false;
+
+  tvEventList& list = worldEventManager.eventList[eventType];
+
+  tvEventList::iterator itr = list.begin();
+  while (itr != list.end())
+  {
+    bz_EventHandler* handler = *itr;
+
+    if (handler->plugin == plugin)
+    {
+      itr = list.erase(itr);
+      delete(handler);
+      return true;
+    }
+    else
+      itr++;
+  }
+
+  return false;
+}
+
+bool FlushEvents(bz_Plugin* plugin)
+{
+  if (!plugin)
+    return false;
+
+  bool foundOne = false;
+
+  tmEventTypeList::iterator typeIt;
+  for (typeIt = worldEventManager.eventList.begin(); typeIt != worldEventManager.eventList.end(); ++typeIt) 
+  {
+    tvEventList& evList = typeIt->second;
+    tvEventList::iterator listIt = evList.begin();
+    while (listIt != evList.end())
+    {
+      bz_EventHandler* handler = *listIt;
+
+      if (handler->plugin == plugin)
+      {
+	listIt = evList.erase(listIt);
+	delete(handler);
+	foundOne = true;
+      }
+      else
+	listIt++;
+    }
+  }
+
+  return foundOne;
 }
 
 

@@ -4,43 +4,37 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 
-BZ_GET_PLUGIN_VERSION
-
-class RegFlag : public bz_EventHandler
+class RegFlag : public bz_Plugin
 {
 public:
-  virtual void process ( bz_EventData *eventData );
+	virtual const char* Name (){return "RegFlag";}
+	virtual void Init ( const char* config);
+
+	virtual void Event ( bz_EventData *eventData );
 };
 
-RegFlag RegFlagHandler;
+BZ_PLUGIN(RegFlag)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
+void RegFlag::Init( const char* /*commandLine*/ )
 {
   bz_debugMessage(4,"regFlag plugin loaded");
-  bz_registerEvent(bz_ePlayerUpdateEvent, &RegFlagHandler);
-  return 0;
+  Register(bz_ePlayerUpdateEvent);
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_debugMessage(4,"regFlag plugin unloaded");
-  bz_removeEvent(bz_ePlayerUpdateEvent, &RegFlagHandler);
-  return 0;
-}
 
-void RegFlag::process ( bz_EventData *eventData )
+void RegFlag::Event ( bz_EventData *eventData )
 {
-  bz_PlayerRecord *player = NULL;
+  bz_BasePlayerRecord *player = NULL;
   int playerID = -1;
 
   switch (eventData->eventType)
     {
     case bz_ePlayerUpdateEvent:
-      playerID = ((bz_PlayerUpdateEventData*)eventData)->playerID;
+      playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->playerID;
       break;
 
     case bz_eShotFiredEvent:
-      playerID = ((bz_ShotFiredEventData*)eventData)->playerID;
+      playerID = ((bz_PlayerUpdateEventData_V1*)eventData)->playerID;
       break;
 
     default:

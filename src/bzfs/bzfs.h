@@ -149,7 +149,6 @@ extern uint16_t	maxPlayers;
 extern uint16_t	maxRealPlayers;
 extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
-extern float	   pluginMaxWait;
 
 extern bool		  publiclyDisconected;
 
@@ -182,6 +181,11 @@ extern std::map<int, NetConnectedPeer> netConnectedPeers;
 
 extern unsigned int maxNonPlayerDataChunk;
 extern void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
+
+// utils
+void playerStateToAPIState(bz_PlayerUpdateState &apiState, const PlayerState &playerState);
+void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState &apiState);
+
 
 #endif
 

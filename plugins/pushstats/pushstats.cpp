@@ -6,13 +6,25 @@
 
 #include<string>
 
-BZ_GET_PLUGIN_VERSION
-
 std::string url;
 
-class StatPush : public bz_EventHandler
+class StatPush : public bz_Plugin
 {
 public:
+	virtual const char* Name (){return "Stats Pusher";}
+	virtual void Init ( const char* config)
+	{
+		bz_debugMessage(4,"pushstats plugin loaded");
+
+		Register(bz_eListServerUpdateEvent);
+		Register(bz_ePlayerPartEvent);
+		Register(bz_eGetWorldEvent);
+
+		if (bz_BZDBItemExists("_statURL"))
+			url = bz_getBZDBString("_statURL").c_str();
+		if (!url.size())
+			url = "http://stattrack.bzflag.org/track/";
+	}
 
 	const char* getTeamName ( bz_eTeamType team )
 	{
@@ -41,7 +53,7 @@ public:
 
 	void buildHTMLPlayer ( std::string &params, int playerID, int index )
 	{
-		bz_PlayerRecord	*player = bz_getPlayerByIndex(playerID);
+		bz_BasePlayerRecord	*player = bz_getPlayerByIndex(playerID);
 		if (player)
 		{
 			params += format("&callsign%d=%s",index,bz_urlEncode(player->callsign.c_str()));
@@ -68,7 +80,7 @@ public:
 
 	void buildHTMLPlayerList ( std::string &params, int skip = -1 )
 	{
-		bzAPIIntList *players = bz_newIntList();
+		bz_APIIntList *players = bz_newIntList();
 		bz_getPlayerIndexList(players);;
 		if (players && players->size())
 		{
@@ -93,8 +105,8 @@ public:
 
 	bool getPushHeader(std::string &header)
 	{
-		bzApiString host = bz_getPublicAddr();
-		bzApiString desc = bz_getPublicDescription();
+		bz_ApiString host = bz_getPublicAddr();
+		bz_ApiString desc = bz_getPublicDescription();
 
 		header += "&isgameserver=1";
 
@@ -172,13 +184,13 @@ public:
 		hash += (i * 1000);
 
 		i = 0;
-		bzAPIIntList *players = bz_newIntList();
+		bz_APIIntList *players = bz_newIntList();
 		bz_getPlayerIndexList(players);;
 		if (players && players->size())
 		{
 			for (unsigned int p = 0; p < players->size(); p++ )
 			{
-				bz_PlayerRecord	*player = bz_getPlayerByIndex(players->get(p));
+				bz_BasePlayerRecord	*player = bz_getPlayerByIndex(players->get(p));
 
 				//int playerID = players->get(p);
 				if (player)
@@ -206,7 +218,7 @@ public:
 		params += format("&hash=%d",hash);
 	}
 
-	virtual void process ( bz_EventData *eventData )
+	virtual void Event ( bz_EventData *eventData )
 	{
 		{
 			if (!eventData || !bz_getPublic())
@@ -214,7 +226,7 @@ public:
 
 			if (eventData->eventType == bz_eGetWorldEvent)
 			{
-				bz_GenerateWorldEventData *data = (bz_GenerateWorldEventData*)eventData;
+				bz_GetWorldEventData_V1 *data = (bz_GetWorldEventData_V1*)eventData;
 				mapFile = data->worldFile.c_str();
 				if (!mapFile.size())
 					mapFile = "Random";
@@ -223,7 +235,7 @@ public:
 			{
 				if (eventData->eventType == bz_eListServerUpdateEvent) 
 				{
-					bz_ListServerUpdateEvent *data = (bz_ListServerUpdateEvent*)eventData;
+					bz_ListServerUpdateEvent_V1 *data = (bz_ListServerUpdateEvent_V1*)eventData;
 
 					const char *c = strrchr(data->address.c_str(),':');
 					if (!c)
@@ -242,7 +254,7 @@ public:
 				}
 				else if (eventData->eventType == bz_ePlayerPartEvent) 
 				{
-					bz_PlayerJoinPartEventData *data = (bz_PlayerJoinPartEventData*)eventData;
+					bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
 					std::string params = "action=part";
 					getPushHeader(params);
 
@@ -262,33 +274,8 @@ public:
 	std::string port;
 };
 
-StatPush pusher; 
+BZ_PLUGIN(StatPush)
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
-{
-  bz_debugMessage(4,"pushstats plugin loaded");
-
-  bz_registerEvent(bz_eListServerUpdateEvent,&pusher);
-  bz_registerEvent(bz_ePlayerPartEvent,&pusher);
-  bz_registerEvent(bz_eGetWorldEvent,&pusher);
-
-  if (bz_BZDBItemExists("_statURL"))
-	  url = bz_getBZDBString("_statURL").c_str();
-  if (!url.size())
-	  url = "http://stattrack.bzflag.org/track/";
-
-  return 0;
-}
-
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_debugMessage(4,"pushstats plugin unloaded");
-
-  bz_removeEvent(bz_eListServerUpdateEvent,&pusher);
-  bz_removeEvent(bz_ePlayerPartEvent,&pusher);
-  bz_removeEvent(bz_eGetWorldEvent,&pusher);
-  return 0;
-}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -3,15 +3,26 @@
 
 #include "bzfsAPI.h"
 
-BZ_GET_PLUGIN_VERSION
-
-
-class KillAll : public bz_CustomSlashCommandHandler
+class KillAll : public bz_Plugin, bz_CustomSlashCommandHandler
 {
 public:
-  virtual bool handle ( int playerID, bzApiString /*command*/, bzApiString /*message*/, bzAPIStringList* /*params*/ )
+	virtual const char* Name(){return "Kill All";}
+
+	virtual void Init ( const char* config )
+	{
+		bz_debugMessage(4,"killall plugin loaded");
+		bz_registerCustomSlashCommand ( "killall", this );
+	}
+
+	virtual void Cleanup ( void )
+	{
+		bz_removeCustomSlashCommand ( "killall" );
+		bz_debugMessage(4,"killall plugin unloaded");
+	}
+
+  virtual bool handle ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* /*params*/ )
   {
-    bz_PlayerRecord *player = bz_getPlayerByIndex(playerID);
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
     if (!player)
       return true;
 
@@ -27,7 +38,7 @@ public:
 
     bz_sendTextMessage(BZ_SERVER,BZ_ALLUSERS,msg.c_str());
 
-    bzAPIIntList *playerList = bz_newIntList();
+    bz_APIIntList *playerList = bz_newIntList();
 
     bz_getPlayerIndexList ( playerList );
 
@@ -41,21 +52,9 @@ public:
   }
 };
 
-KillAll killall;
+BZ_PLUGIN(KillAll)
+ 
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
-{
-  bz_debugMessage(4,"killall plugin loaded");
-  bz_registerCustomSlashCommand ( "killall", &killall );
-  return 0;
-}
-
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
-  bz_removeCustomSlashCommand ( "killall" );
-  bz_debugMessage(4,"killall plugin unloaded");
-  return 0;
-}
 
 // Local Variables: ***
 // mode:C++ ***
