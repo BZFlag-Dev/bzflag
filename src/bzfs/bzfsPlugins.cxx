@@ -144,7 +144,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	{
 		if (getPluginVersion(hLib) > BZ_API_VERSION)
 		{
-			logDebugMessage(1,"Plugin:%s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),getPluginVersion(hLib));
+			logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),getPluginVersion(hLib));
 			FreeLibrary(hLib);
 			return false;
 		}
@@ -173,12 +173,12 @@ bool load1Plugin ( std::string plugin, std::string config )
 
 				p->Init(config.c_str());
 
-				logDebugMessage(1,"Plugin:%s loaded from $s\n",pluginRecord.name.c_str(),plugin.c_str());
+				logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
 				return true;
 			}
 			else
 			{
-				logDebugMessage(1,"Plugin:%s found but does not contain bz_GetPlugin method\n",plugin.c_str());
+				logDebugMessage(1,"Plugin: %s found but does not contain bz_GetPlugin method\n",plugin.c_str());
 				FreeLibrary(hLib);
 				return false;
 			}
@@ -186,7 +186,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	}
 	else
 	{
-		logDebugMessage(1,"Plugin:%s not found\n",plugin.c_str());
+		logDebugMessage(1,"Plugin: %s not found\n",plugin.c_str());
 		return false;
 	}
 }
@@ -201,9 +201,9 @@ void unload1Plugin ( int iPluginID )
 
 	lpProc = (void (__cdecl *)(bz_Plugin*))GetProcAddress(plugin.handle, "bz_FreePlugin");
 	if (lpProc)
-		lpProc(plugin.plugin);
+	  lpProc(plugin.plugin);
 	else
-		logDebugMessage(1,"Plugin does not contain bz_FreePlugin method, leaking memory\n");
+	  logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d. Leaking memory.\n",iPluginID);
 
 	FreeLibrary(plugin.handle);
 	plugin.handle = NULL;
@@ -233,7 +233,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	if (hLib)
 	{
 		if (dlsym(hLib, "bz_GetPlugin") == NULL) {
-			logDebugMessage(1,"Plugin:%s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
+			logDebugMessage(1,"Plugin: %s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
 			dlclose(hLib);
 			return false;
 		}
@@ -241,7 +241,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		int version = getPluginVersion(hLib);
 		if (version > BZ_API_VERSION)
 		{
-			logDebugMessage(1,"Plugin:%s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(), version);
+			logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(), version);
 			dlclose(hLib);
 			return false;
 		}
@@ -264,7 +264,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 				pluginRecord.plugin = p;
 				pluginRecord.filename = plugin;
 				vPluginList.push_back(pluginRecord);
-				logDebugMessage(1,"Plugin:%s loaded from $s\n",pluginRecord.name.c_str(),plugin.c_str());
+				logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
 
 				p->Init(config.c_str());
 				return true;
@@ -273,11 +273,11 @@ bool load1Plugin ( std::string plugin, std::string config )
 	}
 	else
 	{
-		logDebugMessage(1,"Plugin:%s not found, error %s\n",plugin.c_str(), dlerror());
+		logDebugMessage(1,"Plugin: %s not found, error %s\n",plugin.c_str(), dlerror());
 		return false;
 	}
 
-	logDebugMessage(1,"If you see this, there is something terribly wrong.\n");
+	logDebugMessage(1,"Plugin: load1Plugin() coding error\n");
 	return false;
 }
 
@@ -290,9 +290,9 @@ void unload1Plugin ( int iPluginID )
 
 	*(void**) &lpProc = dlsym(plugin.handle, "bz_FreePlugin");
 	if (lpProc)
-		(*lpProc)(plugin.plugin);
+	  (*lpProc)(plugin.plugin);
 	else
-		logDebugMessage(1,"Plugin does not contain bz_FreePlugin method, error %s. Leaking memory\n",dlerror());
+	  logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d, error %s. Leaking memory.\n",iPluginID,dlerror());
 
 	dlclose(plugin.handle);
 	plugin.handle = NULL;
