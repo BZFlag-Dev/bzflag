@@ -957,12 +957,12 @@ public:
   virtual ~bz_Plugin();
 
   virtual const char* Name () = 0;
-  virtual void Init ( const char* config) = 0;
-  virtual void Cleanup (){Flush();}
-  virtual void Event ( bz_EventData *eventData ){return;}
+  virtual void Init(const char* config) = 0;
+  virtual void Cleanup() {Flush();}
+  virtual void Event(bz_EventData* /*eventData*/) { return; }
 
   // used for inter plugin communication
-  virtual void GeneralCallback ( const char* name, void * data){return;}
+  virtual void GeneralCallback( const char* /*name*/, void* /*data*/) { return; }
 
   float MaxWaitTime;
 
