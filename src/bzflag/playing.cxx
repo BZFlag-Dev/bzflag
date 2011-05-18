@@ -3759,24 +3759,31 @@ void setTarget()
   if (!lockedOn) myTank->setTarget(NULL);
   if (!bestTarget) return;
 
+  const bool forbidIdentify = BZDB.isTrue("_forbidIdentify");
+
   if (lockedOn) {
     myTank->setTarget(bestTarget);
     myTank->setNemesis(bestTarget);
 
     std::string msg("Locked on ");
-    msg += bestTarget->getCallSign();
-    msg += " (";
-    msg += Team::getName(bestTarget->getTeam());
-    if (bestTarget->getFlag() != Flags::Null) {
-      msg += ") with ";
-      msg += bestTarget->getFlag()->flagName;
-    }
-    else {
-      msg += ")";
+    if (!forbidIdentify) {
+      msg += bestTarget->getCallSign();
+      msg += " (";
+      msg += Team::getName(bestTarget->getTeam());
+      if (bestTarget->getFlag() != Flags::Null) {
+        msg += ") with ";
+        msg += bestTarget->getFlag()->flagName;
+      }
+      else {
+        msg += ")";
+      }
     }
     hud->setAlert(1, msg.c_str(), 2.0f, 1);
     msg = ColorStrings[DefaultColor] + msg;
     addMessage(NULL, msg);
+  }
+  else if (forbidIdentify) {
+    addMessage(NULL, "'identify' disabled on this server");
   }
   else if (myTank->getFlag() == Flags::Colorblindness) {
     std::string msg("Looking at a tank");
@@ -3801,8 +3808,12 @@ void setTarget()
   }
 }
 
-static void		setHuntTarget()
+static void setHuntTarget()
 {
+  if (BZDB.isTrue("_forbidHunting")) {
+    return;
+  }
+
   // get info about my tank
   const float c = cosf(-myTank->getAngle());
   const float s = sinf(-myTank->getAngle());
