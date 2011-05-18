@@ -48,6 +48,7 @@ GameKeeper::Player::Player(int _playerIndex,
   _LSAState = start;
   bzIdentifier = "";
   isParting = false;
+  playerHandler = NULL;
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -69,6 +70,27 @@ GameKeeper::Player::Player(int _playerIndex,
   bzIdentifier = "";
   isParting = false;
   netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
+  playerHandler = NULL;
+}
+
+GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
+  : player(_playerIndex), lagInfo(&player),
+  playerIndex(_playerIndex), closed(false), clientCallback(NULL),
+  needThisHostbanChecked(false)
+{
+  playerList[playerIndex] = this;
+
+  lastState.order  = 0;
+  // Timestamp 0.0 -> not yet available
+  stateTimeStamp   = 0.0f;
+  gameTimeRate = GameTime::startRate;
+  gameTimeNext = TimeKeeper::getCurrent();
+  netHandler = NULL;
+  _LSAState = start;
+  bzIdentifier = "";
+  isParting = false;
+  netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
+  playerHandler = handler;
 }
 
 GameKeeper::Player::~Player()

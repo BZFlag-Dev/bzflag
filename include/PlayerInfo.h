@@ -81,9 +81,12 @@ public:
   void  *packUpdate(void *buf);
   void  *packId(void *buf);
   bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
+  bool  processEnter ( uint16_t &rejectCode, char *rejectMsg );
   const char *getCallSign() const;
+  void setCallSign(const char * c);
   const char *getEMail() const;
   const char *getToken() const;
+  void setToken(const char * c);
   void	clearToken();
   void       *packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
@@ -99,6 +102,7 @@ public:
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
   const char *getClientVersion();
+  void setClientVersion(const char * c);
   void getClientVersionNumbers(int& major, int& minor, int& revision);
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
@@ -130,6 +134,7 @@ public:
   int endShotShieldCredit;
 
   PlayerType getType( void ) {return type;}
+  void setType( PlayerType t ) {type = t;}
 
 private:
 

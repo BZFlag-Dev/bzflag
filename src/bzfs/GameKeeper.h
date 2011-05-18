@@ -35,6 +35,7 @@
 #include "NetHandler.h"
 #include "Authentication.h"
 #include "messages.h"
+#include "bzfsAPI.h"
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -51,6 +52,7 @@ public:
     Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd,
 	   tcpCallback _clientCallback);
     Player(int _playerIndex, NetHandler *handler, tcpCallback _clientCallback);
+    Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
     ~Player();
 
     int	    getIndex();
@@ -132,6 +134,9 @@ public:
 
     // flag to let us know the player is on it's way out
     bool  isParting;
+
+    // logic class for server side players
+    bz_ServerSidePlayerHandler*	playerHandler;
 
   private:
     static Player    *playerList[PlayerSlot];

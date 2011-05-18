@@ -158,7 +158,6 @@ bool		  publiclyDisconected = false;
 
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
-static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
@@ -227,8 +226,18 @@ static bool realPlayer(const PlayerId& id)
   return playerData && playerData->player.isPlaying() && !playerData->isParting;
 }
 
+static bool realPlayerWithNet(const PlayerId& id)
+{
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
+  return playerData && playerData->netHandler && playerData->player.isPlaying() && !playerData->isParting;
+}
+
+
 static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
 {
+  if (!playerData.netHandler)
+    return l;
+
   int result = playerData.netHandler->pwrite(b, l);
   if (result == -1)
     removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
@@ -268,12 +277,11 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
   directMessage(*playerData, code, len, msg);
 }
 
-
 void broadcastMessage(uint16_t code, int len, const void *msg)
 {
   // send message to everyone
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (realPlayer(i)) {
+    if (realPlayerWithNet(i)) {
       directMessage(i, code, len, msg);
     }
   }
@@ -1173,14 +1181,8 @@ static void acceptClient()
 
 }
 
-static bool MakePlayer ( NetHandler *handler )
+PlayerId getNewPlayerID()
 {
-  // send server version and playerid
-  char buffer[9];
-  memcpy(buffer, getServerVersion(), 8);
-  // send 0xff if list is full
-  buffer[8] = (char)0xff;
-
   PlayerId playerIndex;
 
   // find open slot in players list
@@ -1191,7 +1193,26 @@ static bool MakePlayer ( NetHandler *handler )
   }
   playerIndex = GameKeeper::Player::getFreeIndex(minPlayerId, maxPlayerId);
 
-  if (playerIndex < maxPlayerId) {
+  if (playerIndex >= maxPlayerId)
+    return 0xff;
+
+  if (playerIndex >= curMaxPlayers)
+    curMaxPlayers = playerIndex + 1;
+
+  return playerIndex;
+}
+
+static bool MakePlayer ( NetHandler *handler )
+{
+  // send server version and playerid
+  char buffer[9];
+  memcpy(buffer, getServerVersion(), 8);
+  // send 0xff if list is full
+  buffer[8] = (char)0xff;
+
+  PlayerId playerIndex = getNewPlayerID();
+
+  if (playerIndex != 0xff) {
     logDebugMessage(1,"Player [%d] accept() from %s:%d on %i\n", playerIndex,
       inet_ntoa(handler->getUADDR().sin_addr), ntohs(handler->getUADDR().sin_port), handler->getFD());
 
@@ -1222,6 +1243,12 @@ static bool MakePlayer ( NetHandler *handler )
       sendGameTime(gkPlayer);
   }
 
+  checkGameOn();
+  return true;
+}
+
+void checkGameOn()
+{
   // if game was over and this is the first player then game is on
   if (gameOver) {
     int count = GameKeeper::Player::count();
@@ -1234,7 +1261,6 @@ static bool MakePlayer ( NetHandler *handler )
       }
     }
   }
-  return true;
 }
 
 
@@ -1324,10 +1350,36 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
-  // filter the message, and send it
-  sendFilteredMessage(srcPlayer, dstPlayer, message);
-
+  sendChatMessage(srcPlayer, dstPlayer, message);
   return;
+}
+
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message)
+{
+  bz_ChatEventData_V1 chatData;
+  chatData.from = BZ_SERVER;
+  if (srcPlayer != ServerPlayer)
+    chatData.from = srcPlayer;
+
+  chatData.to = BZ_NULLUSER;
+
+  if (dstPlayer == AllPlayers)
+    chatData.to = BZ_ALLUSERS;
+  else if ( dstPlayer == AdminPlayers )
+    chatData.team = eAdministrators;
+  else if ( dstPlayer > LastRealPlayer )
+    chatData.team = convertTeam((TeamColor)(250-dstPlayer));
+  else
+    chatData.to = dstPlayer;
+
+  chatData.message = message;
+
+  // send any events that want to watch the chat
+  if (chatData.message.size())
+    worldEventManager.callEvents(bz_eRawChatMessageEvent,&chatData);
+
+  if (chatData.message.size())
+    sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
 }
 
 void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
@@ -1683,7 +1735,6 @@ static std::string evaluateString(const std::string &raw)
 
 static bool spawnSoon = false;
 
-static void playerAlive(int playerIndex);
 
 static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
@@ -2340,6 +2391,13 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     buf = nboPackUByte(bufStart, playerIndex);
     broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
 
+    for (int i = 0; i < curMaxPlayers; i++) {
+      GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+      if ((p == NULL) || !p->playerHandler || playerIndex == p->getIndex())
+	continue;
+      p->playerHandler->playerRemoved(playerIndex);
+    }
+
     // decrease team size
     int teamNum = int(playerData->player.getTeam());
     --team[teamNum].team.size;
@@ -2545,7 +2603,7 @@ static void sendQueryPlayers(int playerIndex)
   }
 }
 
-static void playerAlive(int playerIndex)
+void playerAlive(int playerIndex)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2708,6 +2766,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   if (killer)
     dieEvent.killerTeam = convertTeam(killer->getTeam());
 
+  dieEvent.driverID = phydrv;
   dieEvent.flagKilledWith = flagType->flagAbbv;
 
   playerStateToAPIState(dieEvent.state, victimData->lastState);
@@ -3007,7 +3066,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 }
 
 
-static void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
+void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
 {
   const int flagIndex = playerData.player.getFlag();
   if (flagIndex < 0) {
@@ -4218,6 +4277,9 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf, code);
 
+      bz_PlayerUpdateEventData_V1 puEventData;
+      playerStateToAPIState(puEventData.lastState,state);
+
       // observer updates are not relayed
       if (playerData->player.isObserver()) {
 		// skip all of the checks
@@ -4226,7 +4288,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 		}
 	// tell the API that they moved.
 
-	bz_PlayerUpdateEventData_V1 puEventData;
 	playerStateToAPIState(puEventData.state,state);
 	puEventData.stateTime = TimeKeeper::getCurrent().getSeconds();
 	puEventData.playerID = playerData->getIndex();
@@ -4857,6 +4918,9 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 	peer.sent = true;
 
 	unsigned int readSize = netHandler->getTcpReadSize();
+
+	if (readSize == 0) return;
+
 	void *buf = netHandler->getTcpBuffer();
 
 	const char*  header = BZ_CONNECT_HEADER;
@@ -6005,7 +6069,7 @@ int main(int argc, char **argv)
       NetHandler *netPlayer;
       for (int j = 0; j < curMaxPlayers; j++) {
 	playerData = GameKeeper::Player::getPlayerByIndex(j);
-	if (!playerData)
+	if (!playerData || !playerData->netHandler)
 	  continue;
 	netPlayer = playerData->netHandler;
 	// send whatever we have ... if any

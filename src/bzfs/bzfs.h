@@ -116,8 +116,9 @@ extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 bool defineWorld ( void );
 bool saveWorldCache( const char* file = NULL );
-bool allowTeams ( void );
 
+void playerAlive(int playerIndex);
+bool allowTeams ( void );
 extern const std::string& getPublicOwner();
 extern void               setPublicOwner(const std::string& owner);
 
@@ -160,7 +161,14 @@ void resumeCountdown ( const char *resumedBy );
 void resetTeamScores ( void );
 void startCountdown ( int delay, float limit, const char *buyWho );
 
+void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
+void playerAlive(int playerIndex);
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message);
+
 void makeWalls ( void );
+
+PlayerId getNewPlayerID();
+void checkGameOn();
 
 // peer list
 struct NetConnectedPeer {

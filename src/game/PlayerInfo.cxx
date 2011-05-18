@@ -118,6 +118,11 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
 
+  return processEnter(rejectCode, rejectMsg);;
+}
+
+bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
+{
   // terminate the strings
   callSign[CallSignLen - 1] = '\0';
   email[EmailLen - 1] = '\0';
@@ -126,7 +131,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   cleanEMail();
 
   logDebugMessage(2,"Player %s [%d] sent version string: %s\n",
-	 callSign, playerIndex, clientVersion);
+    callSign, playerIndex, clientVersion);
   int major, minor, rev;
   if (sscanf(clientVersion, "%d.%d.%d", &major, &minor, &rev) == 3) {
     clientVersionMajor = major;
@@ -134,7 +139,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     clientVersionRevision = rev;
   }
   logDebugMessage(4,"Player %s version code parsed as:  %i.%i.%i\n", callSign,
-	 clientVersionMajor, clientVersionMinor, clientVersionRevision);
+    clientVersionMajor, clientVersionMinor, clientVersionRevision);
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
@@ -169,7 +174,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
     if (filterData->filter(cs, simpleFiltering)) {
       rejectCode = RejectBadCallsign;
       strcpy(rejectMsg,
-	     "The callsign was rejected. Try a different callsign.");
+	"The callsign was rejected. Try a different callsign.");
       return false;
     }
   }
@@ -189,13 +194,19 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   if (token[0] == 0) {
     strcpy(token, "NONE");
   }
-
   return true;
 }
 
 const char *PlayerInfo::getCallSign() const {
   return callSign;
 }
+
+void PlayerInfo::setCallSign(const char * c)
+{
+  if (c != NULL)
+    strcpy(callSign,c);
+}
+
 
 bool PlayerInfo::isCallSignReadable() {
   // callsign readability filter, make sure there are more alphanum than non
@@ -300,6 +311,12 @@ const char *PlayerInfo::getToken() const {
   return token;
 }
 
+void PlayerInfo::setToken(const char * c)
+{
+  if (c != NULL)
+    strcpy(token,c);
+}
+
 void PlayerInfo::clearToken() {
   token[0] = '\0';
 }
@@ -350,6 +367,12 @@ bool PlayerInfo::isFlagTransitSafe() {
 
 const char *PlayerInfo::getClientVersion() {
   return clientVersion;
+}
+
+void PlayerInfo::setClientVersion(const char * c)
+{
+  if (c != NULL)
+    strcpy(clientVersion,c);
 }
 
 void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)

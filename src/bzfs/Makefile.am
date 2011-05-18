@@ -101,6 +101,7 @@ bzfs_SOURCES = \
 	Score.cxx	\
 	ServerCommand.cxx		\
 	ServerCommand.h			\
+	ServerSidePlayer.cxx		\
 	SpawnPolicy.cxx	\
 	SpawnPolicy.h	\
 	SpawnPosition.cxx \
