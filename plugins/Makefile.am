@@ -16,7 +16,6 @@ SUBDIRS = \
 	nagware \
 	playHistoryTracker \
 	pushstats \
-	python \
 	rabbitTimer \
 	rabidRabbit \
 	recordmatch \
