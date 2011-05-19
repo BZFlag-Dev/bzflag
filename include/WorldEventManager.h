@@ -56,7 +56,7 @@ public:
   tvEventList getEventList ( bz_eEventType eventType);
   void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
   void callEvents ( bz_EventData	*eventData );
-  void callEvents ( bz_EventData	&eventData ){callEvents(&eventData);}
+  void callEvents ( const bz_EventData	&eventData ){callEvents((bz_EventData*)&eventData);}
 
   int getEventCount ( bz_eEventType eventType );
 
