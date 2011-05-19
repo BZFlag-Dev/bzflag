@@ -56,24 +56,21 @@ bool Score::isTK() {
 }
 
 void Score::tK() {
-  if (KeepPlayerScores)
-  {
+  if (KeepPlayerScores) {
     ++tks;
     worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eTKs, tks-1, tks));
   }
 }
 
 void Score::killedBy() {
-  if (KeepPlayerScores)
-  {
+  if (KeepPlayerScores) {
     ++losses;
     worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eLosses, losses-1, losses));
   }
 }
 
 void Score::kill() {
-  if (KeepPlayerScores)
-  {
+  if (KeepPlayerScores) {
     ++wins;
     worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eWins, wins-1, wins));
   }
