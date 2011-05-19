@@ -222,33 +222,37 @@ static void		parse(int argc, char** argv)
     if (strcmp(argv[i], "-a") == 0 ||
 		strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
-    } else if (strcmp(argv[i], "-config") == 0) {
+    }
+    else if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-	} else if (strcmp(argv[i], "-configdir") == 0) {
-		checkArgc(i, argc, argv[i]);
-		// the setting has already been done in parseConfigName()
-	} else if ((strcmp(argv[i], "-d") == 0) ||
-	       (strcmp(argv[i], "-debug") == 0)) {
-      debugLevel++;
-    } else if ((strcmp(argv[i], "-dir") == 0) ||
-	       (strcmp(argv[i], "-directory") == 0)) {
+    }
+    else if (strcmp(argv[i], "-configdir") == 0) {
+      checkArgc(i, argc, argv[i]);
+      // the setting has already been done in parseConfigName()
+    }
+    else if ((strcmp(argv[i], "-dir") == 0) ||
+	     (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
       if (strlen(argv[i]) == 0) {
 	BZDB.unset("directory");
       } else {
 	BZDB.set("directory", argv[i]);
       }
-    } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
+    }
+    else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
-    } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
+    }
+    else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
       echoToConsole = true;
       echoAnsi = true;
-    } else if (strcmp(argv[i], "-h") == 0 ||
+    }
+    else if (strcmp(argv[i], "-h") == 0 ||
 	     strcmp(argv[i], "-help") == 0 ||
 	     strcmp(argv[i], "--help") == 0) {
       usage();
-    } else if (strcmp(argv[i], "-latitude") == 0) {
+    }
+    else if (strcmp(argv[i], "-latitude") == 0) {
       checkArgc(i, argc, argv[i]);
       double latitude = atof(argv[i]);
       if (latitude < -90.0 || latitude > 90.0) {
@@ -256,7 +260,8 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB.set("latitude", argv[i]);
-    } else if (strcmp(argv[i], "-longitude") == 0) {
+    }
+    else if (strcmp(argv[i], "-longitude") == 0) {
       checkArgc(i, argc, argv[i]);
       double longitude = atof(argv[i]);
       if (longitude < -180.0 || longitude > 180.0) {
@@ -264,7 +269,8 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB.set("longitude", argv[i]);
-    } else if (strcmp(argv[i], "-list") == 0) {
+    }
+    else if (strcmp(argv[i], "-list") == 0) {
       checkArgc(i, argc, argv[i]);
       if (strcmp(argv[i], "default") == 0) {
 	BZDB.set("list", BZDB.getDefault("list"));
@@ -272,7 +278,8 @@ static void		parse(int argc, char** argv)
 	startupInfo.listServerURL = argv[i];
 	BZDB.set("list", argv[i]);
       }
-    } else if (strcmp(argv[i], "-locale") == 0) {
+    }
+    else if (strcmp(argv[i], "-locale") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("locale", argv[i]);
     } else if (strcmp(argv[i], "-motd") == 0) {
@@ -283,18 +290,23 @@ static void		parse(int argc, char** argv)
 	BZDB.set("motdServer", argv[i]);
       }
       BZDB.unset("disableMOTD");
-    } else if (strcmp(argv[i], "-nomotd") == 0) {
+    }
+    else if (strcmp(argv[i], "-nomotd") == 0) {
       BZDB.set("disableMOTD", "1");
-    } else if (strcmp(argv[i], "-nolist") == 0) {
+    }
+    else if (strcmp(argv[i], "-nolist") == 0) {
       startupInfo.listServerURL = "";
       BZDB.set("list", "");
-    } else if (strcmp(argv[i], "-m") == 0 ||
+    }
+    else if (strcmp(argv[i], "-m") == 0 ||
 		strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
-    } else if (strcmp(argv[i], "-multisample") == 0) {
+    }
+    else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB.set("_multisample", "1");
 #ifdef ROBOT
-    } else if (strcmp(argv[i], "-solo") == 0) {
+    }
+    else if (strcmp(argv[i], "-solo") == 0) {
       checkArgc(i, argc, argv[i]);
       numRobotTanks = atoi(argv[i]);
       if (numRobotTanks < 1 || numRobotTanks > MAX_ROBOTS) {
@@ -302,7 +314,8 @@ static void		parse(int argc, char** argv)
 	usage();
       }
 #endif
-    } else if (strcmp(argv[i], "-team") == 0) {
+    }
+    else if (strcmp(argv[i], "-team") == 0) {
       checkArgc(i, argc, argv[i]);
       if ((strcmp(argv[i], "a") == 0) ||
 	  (strcmp(argv[i], "auto") == 0) ||
@@ -333,7 +346,8 @@ static void		parse(int argc, char** argv)
 		bzfcopyright);
       bail(0);
       exit(0);
-    } else if (strcmp(argv[i], "-window") == 0) {
+    }
+    else if (strcmp(argv[i], "-window") == 0) {
       BZDB.set("_window", "1");
       checkArgc(i, argc, argv[i]);
       int w, h, x, y, count;
@@ -348,7 +362,8 @@ static void		parse(int argc, char** argv)
       }
       BZDB.set("geometry", argv[i]);
 #ifdef DEBUG
-    } else if (strcmp(argv[i], "-date") == 0) {
+    }
+    else if (strcmp(argv[i], "-date") == 0) {
       checkArgc(i, argc, argv[i]);
       int month, day, year;
       // FIXME: should use iso yyyy.mm.dd format
@@ -365,15 +380,19 @@ static void		parse(int argc, char** argv)
       userTime.tm_mon = month - 1;
       userTime.tm_year = year;
 #endif
-    } else if (strcmp(argv[i], "-time") == 0) {
+    }
+    else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("fixedTime", argv[i]);
-    } else if (strcmp(argv[i], "-notime") == 0) {
+    }
+    else if (strcmp(argv[i], "-notime") == 0) {
       BZDB.unset("fixedTime");
-    } else if (strcmp(argv[i], "-view") == 0) {
+    }
+    else if (strcmp(argv[i], "-view") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("view", argv[i]);
-    } else if (strcmp(argv[i], "-zoom") == 0) {
+    }
+    else if (strcmp(argv[i], "-zoom") == 0) {
       checkArgc(i, argc, argv[i]);
       const int zoom = atoi(argv[i]);
       if (zoom < 1 || zoom > 8) {
@@ -381,7 +400,8 @@ static void		parse(int argc, char** argv)
 	usage();
       }
       BZDB.set("displayZoom", argv[i]);
-    } else if (strcmp(argv[i], "-zbuffer") == 0) {
+    }
+    else if (strcmp(argv[i], "-zbuffer") == 0) {
       checkArgc(i, argc, argv[i]);
       if (strcmp(argv[i], "on") == 0) {
 	BZDB.set("zbuffer", "1");
@@ -391,86 +411,117 @@ static void		parse(int argc, char** argv)
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-    } else if (strcmp(argv[i], "-eyesep") == 0) {
+    }
+    else if (strcmp(argv[i], "-eyesep") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("eyesep", argv[i]);
-    } else if (strcmp(argv[i], "-focal") == 0) {
+    }
+    else if (strcmp(argv[i], "-focal") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("focal", argv[i]);
-    } else if (strncmp(argv[i], "-psn", 4) == 0) {
+    }
+    else if (strncmp(argv[i], "-psn", 4) == 0) {
       std::vector<std::string> args;
       args.push_back(argv[i]);
       printError("Ignoring Finder argument \"{1}\"", &args);
       // ignore process serial number argument (-psn_x_xxxx for MacOS X
-    } else if (strcmp(argv[i], "-badwords") == 0) {
+    }
+    else if (strcmp(argv[i], "-badwords") == 0) {
       checkArgc(i, argc, argv[i], "Missing bad word filter file");
       BZDB.set("filterFilename", argv[i], StateDatabase::ReadOnly);
-    } else if (argv[i][0] != '-') {
-      if (i == argc-1) {
-
-	// find the beginning of the server name, parse the callsign
-	char* serverName;
-	if ((serverName = strchr(argv[i], '@')) != NULL) {
-    char* password;
-	  *serverName = '\0';
-	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
-	    printFatalError("Callsign truncated.");
-	  strncpy(startupInfo.callsign, argv[i],
-		  sizeof(startupInfo.callsign) - 1);
-	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-	  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
-      *(strchr(startupInfo.callsign, ':')) = '\0';
-	    *password = '\0', ++password;
-	    if (strlen(argv[i]) >= sizeof(startupInfo.password))
-	      printFatalError("Password truncated.");
-	    strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
-	    startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
     }
-	  ++serverName;
-	} else {
-	  serverName = argv[i];
-	}
-
-	// find the beginning of the port number, parse it
-	char* portNumber;
-	if ((portNumber = strchr(serverName, ':')) == NULL) {
-          startupInfo.serverPort = ServerPort; // use the default
+    else if (argv[i][0] != '-') {
+      if (i == (argc - 1)) {
+        // find the beginning of the server name, parse the callsign
+        char *serverName;
+        if ((serverName = strchr(argv[i], '@')) != NULL) {
+          char *password;
+          *serverName = '\0';
+          if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
+            printFatalError("Callsign truncated.");
+          }
+          strncpy(startupInfo.callsign, argv[i],
+                  sizeof(startupInfo.callsign) - 1);
+          startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+          if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
+            *(strchr(startupInfo.callsign, ':')) = '\0';
+            *password = '\0', ++password;
+            if (strlen(argv[i]) >= sizeof(startupInfo.password)) {
+              printFatalError("Password truncated.");
+            }
+            strncpy(startupInfo.password, password,
+                    sizeof(startupInfo.password) - 1);
+            startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+          }
+          ++serverName;
         }
-	else {
-	  *portNumber = '\0';
-	  ++portNumber;
-	  startupInfo.serverPort = atoi(portNumber);
-	  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-	    startupInfo.serverPort = ServerPort;
-	    printFatalError("Bad port, using default %d.",
-			    startupInfo.serverPort);
-	  }
-	}
-	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
-	  printFatalError("Server name too long.  Ignoring.");
-	} else {
-	  strcpy(startupInfo.serverName, serverName);
-	  startupInfo.autoConnect = true;
-	}
-      } else {
+        else {
+          serverName = argv[i];
+        }
+
+        // find the beginning of the port number, parse it
+        char *portNumber;
+        if ((portNumber = strchr(serverName, ':')) == NULL) {
+          startupInfo.serverPort = ServerPort;  // use the default
+        }
+        else {
+          *portNumber = '\0';
+          ++portNumber;
+          startupInfo.serverPort = atoi(portNumber);
+          if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
+            startupInfo.serverPort = ServerPort;
+            printFatalError("Bad port, using default %d.", startupInfo.serverPort);
+          }
+        }
+        if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
+          printFatalError("Server name too long.  Ignoring.");
+        }
+        else {
+          strcpy(startupInfo.serverName, serverName);
+          startupInfo.autoConnect = true;
+        }
+      }
+      else {
 	printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
       }
-    } else {
+    }
+    else if (strcmp(argv[i], "-debug") == 0) {
+      debugLevel++;
+    }
+    // has to be the last option that starts with -d
+    else if (strncmp(argv[i], "-d", 2) == 0) {
+      const char num = argv[i][2];
+      if ((num >= '0') && (num <= '9') && (argv[i][3] == 0)) {
+        debugLevel = num - '0';
+      }
+      else {
+        const char* c = argv[i] + 2;
+        while (*c != 0) {
+          if (*c != 'd') {
+            printFatalError("Unknown option %s.", argv[i]);
+            usage();
+          }
+          c++;
+        }
+        debugLevel += (int)((c - argv[i]) - 1);
+      }
+    }
+    else {
       printFatalError("Unknown option %s.", argv[i]);
       usage();
     }
   }
 }
 
-static void		parseConfigName(int argc, char** argv)
+static void parseConfigName(int argc, char** argv)
 {
-	for (int i = 1; i < argc; i++) {
-		if (strcmp(argv[i], "-configdir") == 0) {
-			checkArgc(i, argc, argv[i]);
-			setCustomConfigDir(argv[i]);
-			alternateConfig += argv[i];
-		}
-	}
+  for (int i = 1; i < argc; i++) {
+    if (strcmp(argv[i], "-configdir") == 0) {
+      checkArgc(i, argc, argv[i]);
+      setCustomConfigDir(argv[i]);
+      alternateConfig += argv[i];
+    }
+  }
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -486,7 +537,7 @@ static void		parseConfigName(int argc, char** argv)
 // (so user won't have to wait through performance testing again).
 //
 
-void			dumpResources()
+void dumpResources()
 {
   // collect new configuration
 
