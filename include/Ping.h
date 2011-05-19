@@ -25,7 +25,7 @@
 
 
 // 4 uint16's and 13 uint8's hex encoded
-static const int	PingPacketHexPackedSize = 4 * 7 + 2 * 13;
+static const int	PingPacketHexPackedSize = 5 * 7 + 2 * 13;
 
 
 /** PingPacket:
