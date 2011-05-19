@@ -388,7 +388,7 @@ float getPluginMinWaitTime ( void )
   std::vector<std::string> plugins;
   for (unsigned int i = 0; i < vPluginList.size();i++)
   {
-    if (vPluginList[i].plugin && vPluginList[i].plugin->MaxWaitTime < maxTime)
+    if (vPluginList[i].plugin &&  (vPluginList[i].plugin->MaxWaitTime > 0) && (vPluginList[i].plugin->MaxWaitTime < maxTime))
       maxTime = vPluginList[i].plugin->MaxWaitTime;
   }
 
