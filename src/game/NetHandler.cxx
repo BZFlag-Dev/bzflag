@@ -548,8 +548,10 @@ RxStatus NetHandler::tcpReceive() {
   return ReadAll;
 }
 
-RxStatus NetHandler::receive(size_t length) {
+RxStatus NetHandler::receive(size_t length, bool *retry) {
   RxStatus returnValue;
+  if (retry)
+    *retry = false;
   if ((int)length <= tcplen)
     return ReadAll;
   int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
@@ -565,9 +567,11 @@ RxStatus NetHandler::receive(size_t length) {
     const int err = getErrno();
 
     // ignore if it's one of these errors
-    if (err == EAGAIN || err == EINTR)
+    if (err == EAGAIN || err == EINTR){
+      if (retry)
+	*retry = true;
       returnValue = ReadPart;
-    else if (err == ECONNRESET || err == EPIPE) {
+    }else if (err == ECONNRESET || err == EPIPE) {
       // if socket is closed then give up
       returnValue = ReadReset;
     } else {

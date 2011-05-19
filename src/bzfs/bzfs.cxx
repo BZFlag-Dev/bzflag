@@ -4922,7 +4922,16 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
   {
     // they arn't anything yet, see if they have any data
 
-     RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER));
+     bool retry = false;
+
+     RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
+     if (retry) // go untill we don't get a retry
+     {
+       bool r = retry;
+       while (r)
+	 e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&r);
+     }
+
      if ((e != ReadAll) && (e != ReadPart)) 
      {
        // there was an error and they arn't a player, kill them

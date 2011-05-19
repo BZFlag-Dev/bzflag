@@ -158,7 +158,7 @@ public:
   /// Cannot be undone.
   void		closing();
 
-  RxStatus    receive(size_t length);
+  RxStatus    receive(size_t length, bool* retry = NULL);
   void flushData ( void ){tcplen = 0;}
   int  bufferedSend(const void *buffer, size_t length);
 
