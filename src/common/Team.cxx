@@ -144,6 +144,16 @@ void			Team::setColors(TeamColor team,
   radarColor[teamIndex][2] = radar[2];
 }
 
+void 			Team::Win(TeamColor team)
+{
+	++won;
+}
+void 			Team::Loss(TeamColor team)
+{
+	++lost;
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -629,12 +629,15 @@ void resumeCountdown ( const char *resumedBy )
 
 void resetTeamScores ( void )
 {
-	// reset team scores
-	for (int i = RedTeam; i <= PurpleTeam; i++)
-	{
-		team[i].team.lost = team[i].team.won = 0;
-	}
-	sendTeamUpdate();
+  // reset team scores
+  for (int i = RedTeam; i <= PurpleTeam; i++)
+  {
+    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,team[i].team.getWins(),0));
+    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,team[i].team.getLosses(),0));
+    team[i].team.setLosses(0);
+   team[i].team.setWins(0);
+  }
+  sendTeamUpdate();
 }
 
 void startCountdown ( int delay, float limit, const char *buyWho )
@@ -1072,8 +1075,8 @@ bool defineWorld ( void )
   int i;
   for (i = 0; i < NumTeams; i++) {
     team[i].team.size = 0;
-    team[i].team.won = 0;
-    team[i].team.lost = 0;
+    team[i].team.setWins(0);
+    team[i].team.setLosses(0);
   }
   FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++) {
@@ -1136,7 +1139,7 @@ static void dumpScore()
   }
   std::cout << "#teams";
   for (int i = int(RedTeam); i < NumTeams; i++) {
-    std::cout << ' ' << team[i].team.won << '-' << team[i].team.lost << ' ' << Team::getName(TeamColor(i));
+    std::cout << ' ' << team[i].team.getWins() << '-' << team[i].team.getLosses() << ' ' << Team::getName(TeamColor(i));
   }
   GameKeeper::Player::dumpScore();
   std::cout << "#end\n";
@@ -1945,8 +1948,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   team[teamIndex].team.size++;
   if (team[teamIndex].team.size == 1
       && Team::isColorTeam((TeamColor)teamIndex)) {
-    team[teamIndex].team.won = 0;
-    team[teamIndex].team.lost = 0;
+    team[teamIndex].team.setWins(0);
+    team[teamIndex].team.setLosses(0);
   }
 
   // send new player updates on each player, all existing flags, and all teams.
@@ -2704,10 +2707,10 @@ void playerAlive(int playerIndex)
   }
 }
 
-static void checkTeamScore(int playerIndex, int teamIndex)
+void checkTeamScore(int playerIndex, int teamIndex)
 {
   if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex))) return;
-  if (team[teamIndex].team.won - team[teamIndex].team.lost >= clOptions->maxTeamScore) {
+  if (team[teamIndex].team.getWins() - team[teamIndex].team.getLosses() >= clOptions->maxTeamScore) {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
     buf = nboPackUShort(buf, uint16_t(teamIndex));
@@ -2872,7 +2875,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   if (clOptions->gameType == RabbitChase) {
     if (victimIndex == rabbitIndex)
       anointNewRabbit(killerIndex);
-  } else {
+  } else if (Score::KeepTeamScores){
     // change the team scores -- rogues don't have team scores.  don't
     // change team scores for individual player's kills in capture the
     // flag mode.
@@ -2882,18 +2885,30 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       int killerTeam = -1;
       if (killer && victim->getTeam() == killer->getTeam()) {
 	if (!killer->isTeam(RogueTeam)) {
+	  int delta = 0;
 	  if (killerIndex == victimIndex)
-	    team[int(victim->getTeam())].team.lost += 1;
+	    delta += 1;
 	  else
-	    team[int(victim->getTeam())].team.lost += 2;
+	    delta += 2;
+
+	  int old = team[int(victim->getTeam())].team.getLosses();
+	  team[int(victim->getTeam())].team.setLosses(old+delta);
+	  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()),bz_eLosses,old,old+delta));
 	}
       } else {
 	if (killer && !killer->isTeam(RogueTeam)) {
 	  winningTeam = int(killer->getTeam());
-	  team[winningTeam].team.won++;
+
+	  int old = team[winningTeam].team.getWins();
+	  team[winningTeam].team.setWins(old+1);
+	  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()),bz_eWins,old,old+1));
 	}
 	if (!victim->isTeam(RogueTeam))
-	  team[int(victim->getTeam())].team.lost++;
+	{
+	  int old = team[int(victim->getTeam())].team.getLosses();
+	  team[int(victim->getTeam())].team.setLosses(old+1);
+	  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()),bz_eLosses,old,old+1));
+	}
 	if (killer)
 	  killerTeam = killer->getTeam();
       }
@@ -3191,20 +3206,29 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     zapFlagByPlayer(i);
   }
 
-  // update score (rogues can't capture flags)
-  int winningTeam = (int)NoTeam;
-  if (teamIndex != int(playerData->player.getTeam())) {
-    // player captured enemy flag
-    winningTeam = int(playerData->player.getTeam());
-    team[winningTeam].team.won++;
+  if (Score::KeepTeamScores)
+  {
+    // update score (rogues can't capture flags)
+    int winningTeam = (int)NoTeam;
+    if (teamIndex != int(playerData->player.getTeam())) {
+      // player captured enemy flag
+      winningTeam = int(playerData->player.getTeam());
+
+      int old = team[winningTeam].team.getWins();
+      team[winningTeam].team.setWins(old+1);
+      worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(winningTeam),bz_eWins,old,old+1));
+    }
+    int old = team[teamIndex].team.getLosses();
+    team[teamIndex].team.setLosses(old+1);
+    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(teamIndex),bz_eLosses,old,old+1));
+
+    sendTeamUpdate(-1, winningTeam, teamIndex);
+  #ifdef PRINTSCORE
+    dumpScore();
+  #endif
+    if (winningTeam != (int)NoTeam)
+      checkTeamScore(playerIndex, winningTeam);
   }
-  team[teamIndex].team.lost++;
-  sendTeamUpdate(-1, winningTeam, teamIndex);
-#ifdef PRINTSCORE
-  dumpScore();
-#endif
-  if (winningTeam != (int)NoTeam)
-    checkTeamScore(playerIndex, winningTeam);
 }
 
 static void shotFired(int playerIndex, void *buf, int len)

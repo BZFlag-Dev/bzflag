@@ -12,15 +12,23 @@
 
 /* interface header */
 #include "Score.h"
+#include "bzfsAPI.h"
+#include "WorldEventManager.h"
 
 // bzflag library headers
 #include "Pack.h"
+
+// API headers for notification
 
 float Score::tkKickRatio = 3.0;
 int   Score::score       = 999;
 bool  Score::randomRanking = false;
 
+bool Score::KeepPlayerScores = true;
+bool Score::KeepTeamScores = true;
+
 Score::Score(): wins(0), losses(0), tks(0) {
+  playerID = -1;
 }
 
 void Score::dump() {
@@ -48,15 +56,18 @@ bool Score::isTK() {
 }
 
 void Score::tK() {
-  tks++;
+  if (KeepPlayerScores)
+    worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eTKs, tks, ++tks));
 }
 
 void Score::killedBy() {
-  losses++;
+  if (KeepPlayerScores)
+    worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eLosses, losses, ++losses));
 }
 
 void Score::kill() {
-  wins++;
+  if (KeepPlayerScores)
+    worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eWins, wins, ++wins));
 }
 
 void *Score::pack(void *buf) {

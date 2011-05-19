@@ -169,6 +169,7 @@ void makeWalls ( void );
 
 PlayerId getNewPlayerID();
 void checkGameOn();
+void checkTeamScore(int playerIndex, int teamIndex);
 
 // peer list
 struct NetConnectedPeer {

@@ -1094,6 +1094,15 @@ BZF_API unsigned int bz_getTeamPlayerLimit (bz_eTeamType _team)
   return 0;
 }
 
+BZF_API void bz_computePlayerScore( bool enabled )
+{
+  Score::KeepPlayerScores = enabled;
+}
+
+BZF_API bool bz_computingPlayerScore( void )
+{
+  return Score::KeepPlayerScores;
+}
 
 BZF_API bool bz_setPlayerWins (int playerId, int wins)
 {
@@ -1102,7 +1111,9 @@ BZF_API bool bz_setPlayerWins (int playerId, int wins)
   if (!player)
     return false;
 
+  int oldWins = player->score.getWins();
   player->score.setWins(wins);
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eWins, oldWins, wins));
   broadcastPlayerScoreUpdate(playerId);
   return true;
 }
@@ -1125,7 +1136,10 @@ BZF_API bool bz_setPlayerLosses (int playerId, int losses)
   if (!player)
     return false;
 
+  int old = player->score.getLosses();
   player->score.setLosses(losses);
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eLosses, old, losses));
+
   broadcastPlayerScoreUpdate(playerId);
   return true;
 }
@@ -1137,7 +1151,10 @@ BZF_API bool bz_setPlayerTKs(int playerId, int tks)
   if (!player)
     return false;
 
+  int old = player->score.getTKs();
   player->score.setTKs(tks);
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eTKs, old, tks));
+
   broadcastPlayerScoreUpdate(playerId);
   return true;
 }
@@ -1149,9 +1166,18 @@ BZF_API bool bz_resetPlayerScore(int playerId)
   if (!player)
     return false;
 
+  int old = player->score.getWins();
   player->score.setWins(0);
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eWins, old, 0));
+
+  old = player->score.getLosses();
   player->score.setLosses(0);
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eLosses, old, 0));
+
+  old = player->score.getTKs();
   player->score.setTKs(0);
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eTKs, old, 0));
+
   broadcastPlayerScoreUpdate(playerId);
   return true;
 }
@@ -2201,6 +2227,16 @@ BZF_API int bz_getTeamCount ( bz_eTeamType _team )
   return count;
 }
 
+BZF_API void bz_computeTeamScore( bool enabled )
+{
+  Score::KeepTeamScores = enabled;
+}
+
+BZF_API bool bz_computingTeamScore( void )
+{
+  return Score::KeepTeamScores;
+}
+
 BZF_API int bz_getTeamScore ( bz_eTeamType _team )
 {
   int teamIndex = (int)convertTeam(_team);
@@ -2208,7 +2244,7 @@ BZF_API int bz_getTeamScore ( bz_eTeamType _team )
   if ( teamIndex < 0 || teamIndex >= NumTeams)
     return 0;
 
-  return team[teamIndex].team.won - team[teamIndex].team.lost;
+  return team[teamIndex].team.getWins() - team[teamIndex].team.getLosses();
 }
 
 BZF_API int bz_getTeamWins ( bz_eTeamType _team )
@@ -2218,7 +2254,7 @@ BZF_API int bz_getTeamWins ( bz_eTeamType _team )
   if ( teamIndex < 0 || teamIndex >= NumTeams)
     return 0;
 
-  return team[teamIndex].team.won ;
+  return team[teamIndex].team.getWins() ;
 }
 
 BZF_API int bz_getTeamLosses ( bz_eTeamType _team )
@@ -2228,7 +2264,7 @@ BZF_API int bz_getTeamLosses ( bz_eTeamType _team )
   if ( teamIndex < 0 || teamIndex >= NumTeams)
     return 0;
 
-  return team[teamIndex].team.lost;
+  return team[teamIndex].team.getLosses();
 }
 
 BZF_API void bz_setTeamWins (bz_eTeamType _team, int wins )
@@ -2238,7 +2274,11 @@ BZF_API void bz_setTeamWins (bz_eTeamType _team, int wins )
   if ( teamIndex < 0 || teamIndex >= NumTeams)
     return ;
 
-  team[teamIndex].team.won = wins;
+  int old = team[teamIndex].team.getWins();
+  team[teamIndex].team.setWins(wins);
+  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,wins));
+
+  checkTeamScore(-1, teamIndex);
   sendTeamUpdate(-1,teamIndex);
 }
 
@@ -2249,7 +2289,9 @@ BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
   if ( teamIndex < 0 || teamIndex >= NumTeams)
     return ;
 
-  team[teamIndex].team.lost = losses;
+  int old = team[teamIndex].team.getLosses();
+  team[teamIndex].team.setLosses(losses);
+  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,losses));
   sendTeamUpdate(-1,teamIndex);
 }
 
@@ -2262,16 +2304,28 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
 
   if ( teamIndex >= 0 )
   {
-    team[teamIndex].team.won = 0;
-    team[teamIndex].team.lost = 0;
+    int old = team[teamIndex].team.getWins();
+    team[teamIndex].team.setWins(0);
+    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,0));
+
+    team[teamIndex].team.getLosses();
+    team[teamIndex].team.setLosses(0);
+    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,0));
+
     sendTeamUpdate(-1,teamIndex);
   }
   else
   {
     for ( int i =0; i < NumTeams; i++)
     {
-      team[i].team.won = 0;
-      team[i].team.lost = 0;
+      int old = team[i].team.getWins();
+      team[i].team.setWins(0);
+      worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,old,0));
+
+      team[i].team.getLosses();
+      team[i].team.setLosses(0);
+      worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,old,0));
+
       sendTeamUpdate(-1,i);
     }
   }

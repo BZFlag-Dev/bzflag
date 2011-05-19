@@ -49,6 +49,7 @@ GameKeeper::Player::Player(int _playerIndex,
   bzIdentifier = "";
   isParting = false;
   playerHandler = NULL;
+  score.playerID = _playerIndex;
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -71,6 +72,7 @@ GameKeeper::Player::Player(int _playerIndex,
   isParting = false;
   netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
   playerHandler = NULL;
+  score.playerID = _playerIndex;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
@@ -91,6 +93,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   isParting = false;
   netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
   playerHandler = handler;
+  score.playerID = _playerIndex;
 }
 
 GameKeeper::Player::~Player()

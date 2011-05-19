@@ -270,6 +270,8 @@ typedef enum
   bz_eNewNonPlayerConnection,
   bz_ePluginLoaded,
   bz_ePluginUnloaded,
+  bz_ePlayerScoreChanged,
+  bz_eTeamScoreChanged,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -964,6 +966,42 @@ public:
   bz_Plugin* plugin;
 };
 
+
+typedef enum
+{
+  bz_eWins,
+  bz_eLosses,
+  bz_eTKs
+}bz_eScoreElement;
+
+class BZF_API bz_PlayerScoreChangeEventData_V1 : public bz_EventData
+{
+public:
+  bz_PlayerScoreChangeEventData_V1( int id, bz_eScoreElement e, int lastV, int thisv) : bz_EventData(bz_ePlayerScoreChanged)
+    , playerID(id), element(e), thisValue(thisv), lastValue(lastV)
+  {
+  }
+
+  int playerID;
+  bz_eScoreElement element;
+  int thisValue;
+  int lastValue;
+};
+
+class BZF_API bz_TeamScoreChangeEventData_V1 : public bz_EventData
+{
+public:
+  bz_TeamScoreChangeEventData_V1(bz_eTeamType t, bz_eScoreElement e, int lastV, int thisv) : bz_EventData(bz_eTeamScoreChanged)
+    , team(t), element(e), thisValue(thisv), lastValue(lastV)
+  {
+  }
+
+  bz_eTeamType team;
+  bz_eScoreElement element;
+  int thisValue;
+  int lastValue;
+};
+
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
 BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
@@ -1101,6 +1139,9 @@ BZF_API bool bz_setPlayerOperator ( int playerId );
 BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team );
 
 // player score
+BZF_API void bz_computePlayerScore( bool enabled );
+BZF_API bool bz_computingPlayerScore( void );
+
 BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
 BZF_API bool bz_setPlayerTKs (int playerId, int tks);
@@ -1189,7 +1230,6 @@ class bz_CustomSlashCommandHandler
 public:
   virtual ~bz_CustomSlashCommandHandler(){};
   virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
-
 };
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
@@ -1325,6 +1365,10 @@ BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPlugi
 BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginHandler * handler );
 
 // team info
+
+BZF_API void bz_computeTeamScore( bool enabled );
+BZF_API bool bz_computingTeamScore( void );
+
 BZF_API int bz_getTeamCount (bz_eTeamType team );
 BZF_API int bz_getTeamScore (bz_eTeamType team );
 BZF_API int bz_getTeamWins (bz_eTeamType team );

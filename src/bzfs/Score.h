@@ -19,6 +19,8 @@
 class Score {
  public:
   Score();
+  int playerID;
+
   void  dump();
   /** Take into account the quality of player wins/(wins+loss)
       Try to penalize winning casuality
@@ -38,6 +40,8 @@ class Score {
   void	setLosses(int v){losses = v;}
   void	setTKs(int v){tks = v;}
 
+  static bool KeepPlayerScores;
+  static bool KeepTeamScores;
 
   static void setTeamKillRatio(int _tkKickRatio);
   static void setWinLimit(int _score);

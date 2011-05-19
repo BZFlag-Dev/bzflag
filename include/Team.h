@@ -44,11 +44,21 @@ struct Team {
 
   public:
     unsigned short	size;			// num players on team
-    unsigned short	won;			// wins by team members
-    unsigned short	lost;			// losses by team members
+
+    short getWins() { return won;}
+    short getLosses() { return lost;}
+    void setWins(short v) { won = v;}
+    void setLosses(short v) { lost = v;}
+
+    void Win(TeamColor);
+    void Loss(TeamColor);
 
     static float	tankColor[NumTeams][3];
     static float	radarColor[NumTeams][3];
+ 
+protected:
+    unsigned short	won;			// wins by team members
+    unsigned short	lost;			// losses by team members
 
 };
 
