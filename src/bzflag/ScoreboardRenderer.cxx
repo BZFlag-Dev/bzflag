@@ -240,7 +240,7 @@ int ScoreboardRenderer::teamScoreCompare(const void* _c, const void* _d)
 {
   Team* c = World::getWorld()->getTeams()+*(int*)_c;
   Team* d = World::getWorld()->getTeams()+*(int*)_d;
-  return (d->won-d->lost) - (c->won-c->lost);
+  return (d->getWins()-d->getLosses()) - (c->getWins()-c->getLosses());
 }
 
 // invoked by playing.cxx when 'prev' is pressed
@@ -351,7 +351,7 @@ void ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   char score[44];
   for (i = 0 ; i < teamCount; i++){
     Team& team = World::getWorld()->getTeam(teams[i]);
-    sprintf(score, "%3d (%3d-%-3d) %3d", team.won - team.lost, team.won, team.lost, team.size);
+    sprintf(score, "%3d (%3d-%-3d) %3d", team.getWins() - team.getLosses(), team.getWins(), team.getLosses(), team.size);
     hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
     y -= dy;

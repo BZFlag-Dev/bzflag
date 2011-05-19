@@ -918,25 +918,6 @@ void			HUDRenderer::renderStatus(void)
   fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
 }
 
-int HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
-{
-  RemotePlayer* a = World::getWorld()->getPlayer(*(int*)_a);
-  RemotePlayer* b = World::getWorld()->getPlayer(*(int*)_b);
-  if (World::getWorld()->allowRabbit())
-    return b->getRabbitScore() - a->getRabbitScore();
-  else
-    return b->getScore() - a->getScore();
-}
-
-int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
-{
-  Team* c = World::getWorld()->getTeams()+*(int*)_c;
-  Team* d = World::getWorld()->getTeams()+*(int*)_d;
-
-  return (d->won-d->lost) - (c->won-c->lost);
-}
-
-
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
   if (!World::getWorld()) return;

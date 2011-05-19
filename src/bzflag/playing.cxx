@@ -1216,12 +1216,12 @@ static void		updateHighScores()
 
   if (myTank && Team::isColorTeam(myTank->getTeam())) {
     const Team& myTeam = World::getWorld()->getTeam(int(myTank->getTeam()));
-    bestScore = myTeam.won - myTeam.lost;
+    bestScore = myTeam.getWins() - myTeam.getLosses();
     haveBest = true;
     for (i = 0; i < NumTeams; i++) {
       if (i == int(myTank->getTeam())) continue;
       const Team& team = World::getWorld()->getTeam(i);
-      if (team.size > 0 && team.won - team.lost >= bestScore) {
+      if (team.size > 0 && team.getWins() - team.getLosses() >= bestScore) {
 	haveBest = false;
 	break;
       }
