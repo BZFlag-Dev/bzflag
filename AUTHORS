@@ -1,4 +1,4 @@
-                                                 -*- coding: utf-8 -*-
+						 -*- coding: utf-8 -*-
 BZFlag Contributors
 ===================
 
@@ -34,13 +34,13 @@ these are the names you will likely see the most.
 
 Chris Schoeneman <crs23@bigfoot.com>
 	Active: 1992-2000
-Jeff Myers (JeffM2501, Patlabor221) <JeffM2501@users.sourceforge.net>
+Jeff Myers (JeffM2501) <JeffM2501@users.sourceforge.net>
 	Active: 1997-Current
 Tim Riker <Tim@Rikers.org>
 	Active: 1999-2005
 Frank Thilo (chestal) <thilo@unix-ag.org>
 	Active: 2001-2004
-David Trowbridge (purple_cow, captain_proton) <davidtrowbridge@users.sourceforge.net>
+David Trowbridge (purple_cow) <trowbrds@gmail.com>
 	Active: 2001-2004
 Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
 	Active: 2001-2005
@@ -72,20 +72,25 @@ Colin Bayer <vogon_jeltz@users.sourceforge.net>
 -- 2001 --
 Jeremiah Moss (CobraA1) <jeremiah_moss@cobraa1.com>
 Frank Thilo (chestal) <thilo@unix-ag.org>
-David Trowbridge (captain_proton, purple_cow) <davidtrowbridge@users.sourceforge.net>
+David Trowbridge (purple_cow) <trowbrds@gmail.com>
 Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
 -- 2003 --
-Lars Luthman
+Lars Luthman (larsl)
 Sean Morrison (learner, brlcad) <learner@brlcad.org>
 Alfredo Tupone (c3po) <alfredo@tupone.it>
 Daniel Remenak <dtremenak@users.sourceforge.net>
 Bryan Jennings (bryjen)
 -- 2004 --
 Ian Agar (lan56)
-Julio Jimenez (_Manu_, jujibo)
+Julio Jimenez (Manu, jujibo)
 -- 2005 --
 Mark Thomas (menotume)
+Bernt Hansen (Thumper, bthansen)
 -- 2006 --
+-- 2007 --
+-- 2008 --
+Jeff Makey (BulletCatcher) <bullet_catcher@users.sourceforge.net>
+-- 2009 --
 
 
 CODE CONTRIBUTORS
@@ -142,16 +147,18 @@ Adam Krell
 François Revol (mmu_man)
 Micah Dowty (scanline)
 Dennis Pedersen (dmp)
-Bernt Hansen (bthansen)
+Bernt Hansen (Thumper)
 -- 2004 --
 Nils McCarthy (shkoo)
-Scott Wichser
+Scott Wichser (blast007)
 Andrew Heyn
 -- 2005 --
+David Vuorio
 Steve Krenzel (sgk284)
 Simon Richard Grint
 Angelina Carlton (bzgirl)
-Fred Cods
+Frederic Jolliton (cods)
+Matthew Sachs
 Andrew Keyser
 Frank Evers (pimpinella)
 Nathan Goings
@@ -161,25 +168,75 @@ Garrett Padera
 Mike Weisenborn (orange)
 Joshua Rogers
 Daniel Mulford
-David Vuorio
 Thomas Stauer
-Greg Alkire
-Armin Rigo
 -- 2006 --
-Matthew Marshall
+Andrew McNabb (amcnabb)
+Stephan Hradek (Skeeve)
+Jon Brandvein (Workaphobia)
+Felix Monniger (Linuxx0r)
+(uso)
+Michael Sheppard (mike_s_)
+Thomas Matelich (sosedada)
+Geoffrey Sneddon (gsnedders)
+Petteri Aimonen (jpa)
+Markus (links_2004)
+Jim Melton (jwmelto/Flash)
+(harry666t)
 -- 2007 --
-Chris Wible (l4m3rthanyou)
-Joshua Bodine (macsforme)
+(randomparticle/snick)
+Lou Nigro (LouMan)
+Darek Dawidowski ([darek])
+Joshua Bodine (Constitution)
+Phillip (the_vaxorcist)
+Christophe Henry (sbgodin)
+Chris Wible (L4m3r)
+Jørgen Pedersen Tjernø (daxxar)
 -- 2008 --
-Timothy Van Ruitenbeek (pacman87)
+Alexander Boyd (javawizard2539)
+James Lawrence (spldart)
+Istvan Szakats (Wyk3d)
+Luke Rewega (Lukstr)
 Steven Mertens (catay)
-Jeff Makey (bullet_catcher)
-Jim Melton
+Paul Blokus (Paul_PL)
+Eric M. McIntyre (mcintyem)
+Alexander Law
 -- 2009 --
+Mathew Eis (Bulldozer)
+Mayur Bhosle (mayurbhosle)
+Russell Bryant (russellbryant)
 -- 2010 --
--- 2011 --
+(cobrafast)
+--2011--
+David Anderson (mdskpr)
 Ben K. (McSpider)
 
+
+GOOGLE SUMMER OF CODE
+---------------------
+
+BZFlag has been proud to take part in the Google Summer of Code
+(http://code.google.com/soc/) in 2007, 2008, and 2009.  The
+student contributors for each year are listed.
+
+-- 2007 --
+Chris Wible (L4m3r)
+Kornel Kisielewicz (epyon)
+Jude Nelson (jude)
+Jørgen Pedersen Tjernø (daxxar)
+
+-- 2008 --
+Luke Rewega (Lukstr)
+David Sanders (KingofCamelot)
+Joshua Bodine (Constitution)
+Harrison Reiser (bugQ)
+Istvan Szakats (Wyk3d)
+Kornel Kisielewicz (epyon)
+
+-- 2009 --
+Istvan Szakats (Wyk3d)
+Mathew Eis (Bulldozer, KingRobot)
+Quentin Pradet (Cygal)
+William Hahne (Will07c5)
 
 
 SERVERS AND INFRASTRUCTURE
@@ -189,10 +246,19 @@ Open Source Technology Group, Inc.
   SourceForge.net project resources
 
 Tim Riker
-  original list server
+  original list server (rikers.org)
 
 Cameron Mandrake (nidhoggr)
-  current list server
+  second generation list server (secretplace.us)
+
+Sean Morrison (learner)
+  third generation list server (bzflag.bz)
+
+Tucker McLean (Noodleman)
+  stats site (stats.bzflag.org)
+
+Joe Van Overberghe (donny_baker)
+  mediawiki site (my.bzflag.org/wiki)
 
 
 CORPORATE AND ORGANIZATION SUPPORT
@@ -220,8 +286,8 @@ Open Source Technology Group, Inc.
 Peer-Directed Projects Center
   Freenode IRC network
 
-The Beat Suite, www.beatsuite.com
-  admin message beep sound
+Google Inc
+  Summer of Code 2007, 2008
 
 
 SPECIAL THANKS
@@ -245,7 +311,19 @@ Erin Shaw
 Don Greenberg
 Adam Rosen
 Nafees Bin Zafar
-Harry Keller
+Kyle Van Essen
+
+Mac OS X Disk Mounting Image Backgrounds:
+-- 1.7g0r6, 1.7g0r7 --
+Reid Ellis
+-- 1.10.* --
+Tupone Alfredo (c3po)
+-- 2.0.4 --
+Mark Thomas (menotume)
+-- 2.0.6 --
+Harry Keller (Saturos)
+-- 2.0.10 --
+Harry Keller (Saturos)
 
 
 NOTES
@@ -272,8 +350,6 @@ from the game
 rosen was a former coworker with some good suggestions
 
 trowbridge began work on bzedit circa 1999
-
-Harry Keller has created much of the website and in game logo artwork used today.
 
 ---
 If any corrections or additions need to be made, please contact one of
