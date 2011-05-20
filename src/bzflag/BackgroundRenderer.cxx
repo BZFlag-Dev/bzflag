@@ -1635,9 +1635,6 @@ void BackgroundRenderer::doInitDisplayLists()
   // ground
   //
 
-  // RIVA 128 can't repeat texture uv's too much.  if we're using one
-  // of those, only texture the ground inside the game area.
-  float uv[2];
   const GLfloat groundSize = 10.0f * worldSize;
   const GLfloat gameSize = 0.5f * worldSize;
   GLfloat groundPlane[4][3];
@@ -1743,10 +1740,6 @@ void BackgroundRenderer::doInitDisplayLists()
       cloudsInner[i][2] = cloudsOuter[i][2];
     }
 
-    // make cloud display list.  RIVA 128 doesn't interpolate alpha,
-    // so on that system use full alpha everywhere.
-    GLfloat minAlpha = 0.0f;
-
     cloudsList = glGenLists(1);
     glNewList(cloudsList, GL_COMPILE);
     {
@@ -1770,7 +1763,7 @@ void BackgroundRenderer::doInitDisplayLists()
 
       // outer clouds -- fade to zero opacity at outer edge
       glBegin(GL_TRIANGLE_STRIP);
-	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 	glTexCoord2f(cloudRepeats * squareShape[1][0],
 		     cloudRepeats * squareShape[1][1]);
 	glVertex3fv(cloudsOuter[1]);
@@ -1779,7 +1772,7 @@ void BackgroundRenderer::doInitDisplayLists()
 		     uvScale * cloudRepeats * squareShape[1][1]);
 	glVertex3fv(cloudsInner[1]);
 
-	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 	glTexCoord2f(cloudRepeats * squareShape[2][0],
 		     cloudRepeats * squareShape[2][1]);
 	glVertex3fv(cloudsOuter[2]);
@@ -1788,7 +1781,7 @@ void BackgroundRenderer::doInitDisplayLists()
 		     uvScale * cloudRepeats * squareShape[2][1]);
 	glVertex3fv(cloudsInner[2]);
 
-	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 	glTexCoord2f(cloudRepeats * squareShape[3][0],
 		     cloudRepeats * squareShape[3][1]);
 	glVertex3fv(cloudsOuter[3]);
@@ -1797,7 +1790,7 @@ void BackgroundRenderer::doInitDisplayLists()
 		     uvScale * cloudRepeats * squareShape[3][1]);
 	glVertex3fv(cloudsInner[3]);
 
-	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 	glTexCoord2f(cloudRepeats * squareShape[0][0],
 		     cloudRepeats * squareShape[0][1]);
 	glVertex3fv(cloudsOuter[0]);
@@ -1806,7 +1799,7 @@ void BackgroundRenderer::doInitDisplayLists()
 		     uvScale * cloudRepeats * squareShape[0][1]);
 	glVertex3fv(cloudsInner[0]);
 
-	glColor4f(1.0f, 1.0f, 1.0f, minAlpha);
+	glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
 	glTexCoord2f(cloudRepeats * squareShape[1][0],
 		     cloudRepeats * squareShape[1][1]);
 	glVertex3fv(cloudsOuter[1]);
