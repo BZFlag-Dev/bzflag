@@ -3,6 +3,8 @@
 
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
+
+* Allow plugins to register custom flag types - Daniel Remenak
 * Forced *image.bzflag.org for image downloads until user sets 
   otherwise - David Anderson
 * Accepted patch from McSpider, added OpenFFA - David Anderson
