@@ -79,9 +79,9 @@ class MeshDrawInfo {
     int getLodCount() const;
     const DrawLod* getDrawLods() const;
 
-    const fvec3* getVertices() const;
-    const fvec3* getNormals() const;
-    const fvec2* getTexcoords() const;
+    const afvec3* getVertices() const;
+    const afvec3* getNormals() const;
+    const afvec2* getTexcoords() const;
 
     int getRadarCount() const;
     const DrawLod* getRadarLods() const;
@@ -124,16 +124,16 @@ class MeshDrawInfo {
     // elements
     int cornerCount;
     Corner* corners;
-    fvec3* vertices;
-    fvec3* normals;
-    fvec2* texcoords;
+    afvec3* vertices;
+    afvec3* normals;
+    afvec2* texcoords;
 
     int rawVertCount;
-    fvec3* rawVerts;
+    afvec3* rawVerts;
     int rawNormCount;
-    fvec3* rawNorms;
+    afvec3* rawNorms;
     int rawTxcdCount;
-    fvec2* rawTxcds;
+    afvec2* rawTxcds;
 
     int lodCount;
     DrawLod* lods;
@@ -185,15 +185,15 @@ inline const DrawLod* MeshDrawInfo::getDrawLods() const
 {
   return lods;
 }
-inline const fvec3* MeshDrawInfo::getVertices() const
+inline const afvec3* MeshDrawInfo::getVertices() const
 {
   return vertices;
 }
-inline const fvec3* MeshDrawInfo::getNormals() const
+inline const afvec3* MeshDrawInfo::getNormals() const
 {
   return normals;
 }
-inline const fvec2* MeshDrawInfo::getTexcoords() const
+inline const afvec2* MeshDrawInfo::getTexcoords() const
 {
   return texcoords;
 }

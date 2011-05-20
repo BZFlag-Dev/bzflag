@@ -156,6 +156,7 @@ noinst_HEADERS =			\
 	bzregex.h			\
 	resource.h			\
 	vectors.h			\
+	vectors_old.h			\
 	version.h			\
 	win32.h
 

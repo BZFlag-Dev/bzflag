@@ -114,8 +114,8 @@ class MeshFace : public Obstacle {
     bool noclusters;
     int phydrv;
 
-    fvec4 plane;
-    fvec4* edgePlanes;
+    afvec4 plane;
+    afvec4* edgePlanes;
 
     MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
 		     // not currently used for anything

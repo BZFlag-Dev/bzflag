@@ -26,14 +26,14 @@
 
 
 // triangulation parameters
-static fvec3 Normal; // FIXME, uNormal, vNormal;
-//static fvec2* MVertsSpace = NULL;
+static afvec3 Normal; // FIXME, uNormal, vNormal;
+//static afvec2* MVertsSpace = NULL;
 static const float* const *Verts = NULL;
 static int Count = 0;
 static int* WorkSet = NULL;
 
 
-static bool vec3norm(fvec3 v)
+static bool vec3norm(afvec3 v)
 {
   const float len = sqrtf(vec3dot(v, v));
   if (len < 1.0e-6f) {
@@ -72,10 +72,10 @@ static inline bool isConvex(int w0, int w1, int w2)
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
   const int v2 = WorkSet[w2];
-  fvec3 e0, e1;
+  afvec3 e0, e1;
   vec3sub(e0, Verts[v1], Verts[v0]);
   vec3sub(e1, Verts[v2], Verts[v1]);
-  fvec3 cross;
+  afvec3 cross;
   vec3cross(cross, e0, e1);
   if (vec3dot(cross, Normal) <= 0.0f) {
     return false;
@@ -92,13 +92,13 @@ static inline bool isFaceClear(int w0, int w1, int w2)
   const int v2 = WorkSet[w2];
 
   // setup the edges
-  fvec3 edges[3];
+  afvec3 edges[3];
   vec3sub(edges[0], Verts[v1], Verts[v0]);
   vec3sub(edges[1], Verts[v2], Verts[v1]);
   vec3sub(edges[2], Verts[v0], Verts[v2]);
 
   // get the triangle normal
-  fvec3 normal;
+  afvec3 normal;
   vec3cross(normal, edges[0], edges[1]);
 
   // setup the planes
@@ -134,7 +134,7 @@ static inline float getDot(int w0, int w1, int w2)
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
   const int v2 = WorkSet[w2];
-  fvec3 e0, e1;
+  afvec3 e0, e1;
   vec3sub(e0, Verts[v1], Verts[v0]);
   vec3sub(e1, Verts[v2], Verts[v1]);
   vec3norm(e0);

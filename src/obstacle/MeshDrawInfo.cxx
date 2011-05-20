@@ -297,7 +297,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
   }
 
   int vCount;
-  const fvec3* verts;
+  const afvec3* verts;
   if (rawVertCount > 0) {
     vCount = rawVertCount;
     verts = rawVerts;
@@ -331,7 +331,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
       float maxZ = -MAXFLOAT;
       float maxDistSqr = -MAXFLOAT;
       for (int v = 0; v < vCount; v++) {
-	const fvec3& p = verts[v];
+	const afvec3& p = verts[v];
 	if (p[2] < minZ) {
 	  minZ = p[2];
 	}
@@ -433,9 +433,9 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
     return false;
   }
 
-  const fvec3* verts;
-  const fvec3* norms;
-  const fvec2* txcds;
+  const afvec3* verts;
+  const afvec3* norms;
+  const afvec2* txcds;
   if (rawVertCount > 0) {
     verts = rawVerts;
     norms = rawNorms;
@@ -447,14 +447,14 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
   }
 
   // make the element arrays
-  vertices = new fvec3[cornerCount];
-  normals = new fvec3[cornerCount];
-  texcoords = new fvec2[cornerCount];
+  vertices = new afvec3[cornerCount];
+  normals = new afvec3[cornerCount];
+  texcoords = new afvec2[cornerCount];
   for (int i = 0; i < cornerCount; i++) {
     Corner& corner = corners[i];
-    memcpy(vertices[i],  verts[corner.vertex],   sizeof(fvec3));
-    memcpy(normals[i],   norms[corner.normal],   sizeof(fvec3));
-    memcpy(texcoords[i], txcds[corner.texcoord], sizeof(fvec2));
+    memcpy(vertices[i],  verts[corner.vertex],   sizeof(afvec3));
+    memcpy(normals[i],   norms[corner.normal],   sizeof(afvec3));
+    memcpy(texcoords[i], txcds[corner.texcoord], sizeof(afvec2));
   }
 
   // tally the triangle counts
@@ -961,25 +961,25 @@ bool MeshDrawInfo::parse(std::istream& input)
   // make raw verts
   if (pVerts.size() > 0) {
     rawVertCount = pVerts.size();
-    rawVerts = new fvec3[rawVertCount];
+    rawVerts = new afvec3[rawVertCount];
     for (i = 0; i < rawVertCount; i++) {
-      memcpy(rawVerts[i], pVerts[i].data, sizeof(fvec3));
+      memcpy(rawVerts[i], pVerts[i].data, sizeof(afvec3));
     }
   }
   // make raw norms
   if (pNorms.size() > 0) {
     rawNormCount = pNorms.size();
-    rawNorms = new fvec3[rawNormCount];
+    rawNorms = new afvec3[rawNormCount];
     for (i = 0; i < rawNormCount; i++) {
-      memcpy(rawNorms[i], pNorms[i].data, sizeof(fvec3));
+      memcpy(rawNorms[i], pNorms[i].data, sizeof(afvec3));
     }
   }
   // make raw texcoords
   if (pTxcds.size() > 0) {
     rawTxcdCount = pTxcds.size();
-    rawTxcds = new fvec2[rawTxcdCount];
+    rawTxcds = new afvec2[rawTxcdCount];
     for (i = 0; i < rawTxcdCount; i++) {
-      memcpy(rawTxcds[i], pTxcds[i].data, sizeof(fvec2));
+      memcpy(rawTxcds[i], pTxcds[i].data, sizeof(afvec2));
     }
   }
 
@@ -1044,19 +1044,19 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
 
   // raw vertices
   for (i = 0; i < rawVertCount; i++) {
-    const fvec3& v = rawVerts[i];
+    const afvec3& v = rawVerts[i];
     out << indent << "  vertex " << v[0] << " " << v[1] << " "
 				 << v[2] << std::endl;
   }
   // raw normals
   for (i = 0; i < rawNormCount; i++) {
-    const fvec3& n = rawNorms[i];
+    const afvec3& n = rawNorms[i];
     out << indent << "  normal " << n[0] << " " << n[1] << " "
 				 << n[2] << std::endl;
   }
   // raw texcoords
   for (i = 0; i < rawTxcdCount; i++) {
-    const fvec2& t = rawTxcds[i];
+    const afvec2& t = rawTxcds[i];
     out << indent << "  texcoord " << t[0] << " " << t[1] << std::endl;
   }
 
@@ -1188,13 +1188,13 @@ int MeshDrawInfo::packSize() const
 
   // raw vertices
   fullSize += sizeof(int32_t); // count
-  fullSize += sizeof(fvec3) * rawVertCount;
+  fullSize += sizeof(afvec3) * rawVertCount;
   // raw normals
   fullSize += sizeof(int32_t); // count
-  fullSize += sizeof(fvec3) * rawNormCount;
+  fullSize += sizeof(afvec3) * rawNormCount;
   // raw texcoords
   fullSize += sizeof(int32_t); // count
-  fullSize += sizeof(fvec2) * rawTxcdCount;
+  fullSize += sizeof(afvec2) * rawTxcdCount;
 
   // lods
   fullSize += sizeof(int32_t); // count
@@ -1324,21 +1324,21 @@ void* MeshDrawInfo::unpack(void* buf)
   // raw vertices
   buf = nboUnpackInt (buf, s32);
   rawVertCount = s32;
-  rawVerts = new fvec3[rawVertCount];
+  rawVerts = new afvec3[rawVertCount];
   for (i = 0; i < rawVertCount; i++) {
     buf = nboUnpackVector(buf, rawVerts[i]);
   }
   // raw normals
   buf = nboUnpackInt (buf, s32);
   rawNormCount = s32;
-  rawNorms = new fvec3[rawNormCount];
+  rawNorms = new afvec3[rawNormCount];
   for (i = 0; i < rawNormCount; i++) {
     buf = nboUnpackVector(buf, rawNorms[i]);
   }
   // raw texcoords
   buf = nboUnpackInt (buf, s32);
   rawTxcdCount = s32;
-  rawTxcds = new fvec2[rawTxcdCount];
+  rawTxcds = new afvec2[rawTxcdCount];
   for (i = 0; i < rawTxcdCount; i++) {
     buf = nboUnpackFloat(buf, rawTxcds[i][0]);
     buf = nboUnpackFloat(buf, rawTxcds[i][1]);

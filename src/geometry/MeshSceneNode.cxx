@@ -93,7 +93,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     setSphere(drawInfo->getSphere());
   } else {
     // sloppy way to recalcuate the transformed extents
-    fvec3 c[8];
+    afvec3 c[8];
     c[0][0] = c[6][0] = c[5][0] = c[3][0] = diExts.mins[0];
     c[7][0] = c[1][0] = c[2][0] = c[4][0] = diExts.maxs[0];
     c[0][1] = c[1][1] = c[5][1] = c[4][1] = diExts.mins[1];
@@ -109,9 +109,9 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     lengthAdj = +MAXFLOAT;
     for (int a = 0; a < 3; a++) {
       const float oldWidth = diExts.maxs[a] - diExts.mins[a];
-      const fvec3& s = c[0]; // all mins
+      const afvec3& s = c[0]; // all mins
       // mins, except: c[1] -> max[0], c[3] -> max[1], c[5] -> max[2]
-      const fvec3& e = c[(a * 2) + 1];
+      const afvec3& e = c[(a * 2) + 1];
       const float d[3] = {s[0] - e[0], s[1] - e[1], s[2] - e[2]};
       const float newWidth = sqrtf(d[0]*d[0] + d[1]*d[1] + d[2]*d[2]);
       if (oldWidth > 0.0f) {
@@ -252,7 +252,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
       SetNode& set = lod.sets[i];
       if (set.meshMat.animRepos) {
 	const float* s = drawLods[level].sets[i].sphere;
-	fvec3 pos;
+	afvec3 pos;
 	pos[0] = (cos_val * s[0]) - (sin_val * s[1]);
 	pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
 	pos[2] = s[2];
@@ -369,8 +369,8 @@ void MeshSceneNode::notifyStyleChange()
 			       drawSet.triangleCount);
 	mat.animRepos = false;
       } else {
-	fvec3 setPos;
-	memcpy(setPos, drawSet.sphere, sizeof(fvec3));
+	afvec3 setPos;
+	memcpy(setPos, drawSet.sphere, sizeof(afvec3));
 	if (xformTool != NULL) {
 	  xformTool->modifyVertex(setPos);
 	}

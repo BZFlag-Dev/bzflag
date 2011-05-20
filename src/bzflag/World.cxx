@@ -1238,7 +1238,7 @@ static void drawInsideOutsidePoints()
     const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
     const int    checkCount  = mesh->getCheckCount();
     const char*  checkTypes  = mesh->getCheckTypes();
-    const fvec3* checkPoints = mesh->getCheckPoints();
+    const afvec3* checkPoints = mesh->getCheckPoints();
     for (int c = 0; c < checkCount; c++) {
       switch (checkTypes[c]) {
         case MeshObstacle::CheckInside: {

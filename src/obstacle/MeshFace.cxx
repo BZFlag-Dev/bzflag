@@ -108,7 +108,7 @@ void MeshFace::finalize()
     if ((debugLevel >= 3) && (mesh != NULL)) {
       logDebugMessage(0,":");
       for (i = 0; i < vertexCount; i++) {
-	logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	logDebugMessage(0," %i", (int)((afvec3*)vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
@@ -140,7 +140,7 @@ void MeshFace::finalize()
       if ((debugLevel >= 3) && (mesh != NULL)) {
 	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
-	  logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	  logDebugMessage(0," %i", (int)((afvec3*)vertices[i] - mesh->getVertices()));
 	}
 	print(std::cerr, "");
       }
@@ -159,7 +159,7 @@ void MeshFace::finalize()
       if ((debugLevel >= 3) && (mesh != NULL)) {
 	logDebugMessage(0,":");
 	for (i = 0; i < vertexCount; i++) {
-	  logDebugMessage(0," %i", (int)((fvec3*)vertices[i] - mesh->getVertices()));
+	  logDebugMessage(0," %i", (int)((afvec3*)vertices[i] - mesh->getVertices()));
 	}
 	print(std::cerr, "");
       }
@@ -186,7 +186,7 @@ void MeshFace::finalize()
   ZFlip = false;
 
   // make the edge planes
-  edgePlanes = new fvec4[vertexCount];
+  edgePlanes = new afvec4[vertexCount];
   for (v = 0; v < vertexCount; v++) {
     float edge[3];
     const int next = (v + 1) % vertexCount;
@@ -451,7 +451,7 @@ bool MeshFace::inBox(const float* p, float _angle,
   // probably be the dominant polygon types).
 
   float pln[4]; // translated plane
-  fvec3* v = new fvec3[vertexCount]; // translated vertices
+  afvec3* v = new afvec3[vertexCount]; // translated vertices
   const float cos_val = cosf(-_angle);
   const float sin_val = sinf(-_angle);
   for (i = 0; i < vertexCount; i++) {
@@ -570,14 +570,14 @@ void *MeshFace::pack(void *buf) const
   // vertices
   buf = nboPackInt(buf, vertexCount);
   for (int i = 0; i < vertexCount; i++) {
-    int32_t index = (fvec3*)vertices[i] - mesh->getVertices();
+    int32_t index = (afvec3*)vertices[i] - mesh->getVertices();
     buf = nboPackInt(buf, index);
   }
 
   // normals
   if (useNormals()) {
     for (int i = 0; i < vertexCount; i++) {
-      int32_t index = (fvec3*)normals[i] - mesh->getNormals();
+      int32_t index = (afvec3*)normals[i] - mesh->getNormals();
       buf = nboPackInt(buf, index);
     }
   }
@@ -585,7 +585,7 @@ void *MeshFace::pack(void *buf) const
   // texcoords
   if (useTexcoords()) {
     for (int i = 0; i < vertexCount; i++) {
-      int32_t index = (fvec2*)texcoords[i] - mesh->getTexcoords();
+      int32_t index = (afvec2*)texcoords[i] - mesh->getTexcoords();
       buf = nboPackInt(buf, index);
     }
   }
@@ -696,7 +696,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
 
   out << indent << "    vertices";
   for (i = 0; i < vertexCount; i++) {
-    int index = (fvec3*)vertices[i] - mesh->getVertices();
+    int index = (afvec3*)vertices[i] - mesh->getVertices();
     out << " " << index;
   }
   if (debugLevel >= 3) {
@@ -710,7 +710,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (normals != NULL) {
     out << indent << "    normals";
     for (i = 0; i < vertexCount; i++) {
-      int index = (fvec3*)normals[i] - mesh->getNormals();
+      int index = (afvec3*)normals[i] - mesh->getNormals();
       out << " " << index;
     }
     if (debugLevel >= 3) {
@@ -725,7 +725,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if (texcoords != NULL) {
     out << indent << "    texcoords";
     for (i = 0; i < vertexCount; i++) {
-      int index = (fvec2*)texcoords[i] - mesh->getTexcoords();
+      int index = (afvec2*)texcoords[i] - mesh->getTexcoords();
       out << " " << index;
     }
     if (debugLevel >= 3) {

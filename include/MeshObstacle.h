@@ -92,10 +92,10 @@ class MeshObstacle : public Obstacle {
     bool containsPointNoOctree(const float point[3]) const;
 
     const char *getCheckTypes() const;
-    const fvec3 *getCheckPoints() const;
-    const fvec3 *getVertices() const;
-    const fvec3 *getNormals() const;
-    const fvec2 *getTexcoords() const;
+    const afvec3 *getCheckPoints() const;
+    const afvec3 *getVertices() const;
+    const afvec3 *getNormals() const;
+    const afvec2 *getTexcoords() const;
     int getCheckCount() const;
     int getVertexCount() const;
     int getNormalCount() const;
@@ -130,13 +130,13 @@ class MeshObstacle : public Obstacle {
 
     int checkCount;
     char* checkTypes;
-    fvec3* checkPoints;
+    afvec3* checkPoints;
     int vertexCount;
-    fvec3* vertices;
+    afvec3* vertices;
     int normalCount;
-    fvec3* normals;
+    afvec3* normals;
     int texcoordCount;
-    fvec2* texcoords;
+    afvec2* texcoords;
     int faceCount, faceSize;
     MeshFace** faces;
     bool smoothBounce;
@@ -153,22 +153,22 @@ inline const char *MeshObstacle::getCheckTypes() const
   return checkTypes;
 }
 
-inline const fvec3 *MeshObstacle::getCheckPoints() const
+inline const afvec3 *MeshObstacle::getCheckPoints() const
 {
   return checkPoints;
 }
 
-inline const fvec3 *MeshObstacle::getVertices() const
+inline const afvec3 *MeshObstacle::getVertices() const
 {
   return vertices;
 }
 
-inline const fvec3 *MeshObstacle::getNormals() const
+inline const afvec3 *MeshObstacle::getNormals() const
 {
   return normals;
 }
 
-inline const fvec2 *MeshObstacle::getTexcoords() const
+inline const afvec2 *MeshObstacle::getTexcoords() const
 {
   return texcoords;
 }
