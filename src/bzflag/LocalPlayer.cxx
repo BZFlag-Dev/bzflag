@@ -1371,14 +1371,16 @@ void			LocalPlayer::doJump()
     return;
   }
 
-  // add jump velocity (actually, set the vertical component since you
-  // can only jump if resting on something)
+  // jump velocity
   const float* oldVelocity = getVelocity();
   float newVelocity[3];
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
   if (flag == Flags::Wings) {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+    // if you're falling, wings will just slow you down
+    if (oldVelocity[2] < 0)
+      newVelocity[2] += oldVelocity[2];
   } else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
     newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
