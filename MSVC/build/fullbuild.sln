@@ -98,7 +98,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libcurl.vcproj",
 		{417CB8F4-5AE3-45AC-B903-83DB1556303C} = {417CB8F4-5AE3-45AC-B903-83DB1556303C}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "..\..\src\other\freetype\builds\win32\vc2008\freetype.vcproj", "{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freetype", "..\..\other_src\freetype\builds\win32\vc2008\freetype.vcproj", "{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzadmin", "bzadmin.vcproj", "{CA597E05-FD07-4AE3-B963-81C858F26D56}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -309,12 +309,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lua", "lua.vcproj", "{6AB4B
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "clientbase", "clientbase.vcproj", "{7973F5D5-9733-44F5-B10B-4BAEB4F9545D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ftgl_static", "..\..\src\other\ftgl\msvc\vc9\ftgl_static.vcproj", "{1D758EEA-59C3-46E4-BEF5-16DCCA8C0B21}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ftgl_static", "..\..\other_src\ftgl\msvc\vc9\ftgl_static.vcproj", "{1D758EEA-59C3-46E4-BEF5-16DCCA8C0B21}"
 	ProjectSection(ProjectDependencies) = postProject
 		{78B079BD-9FC7-4B9E-B4A6-96DA0F00248B} = {78B079BD-9FC7-4B9E-B4A6-96DA0F00248B}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glew_static", "..\..\src\other\glew\build\vc6\glew_static.vcproj", "{6C4DBDEF-A58A-452B-9155-6CB07D58D1BA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glew_static", "..\..\other_src\glew\build\vc6\glew_static.vcproj", "{6C4DBDEF-A58A-452B-9155-6CB07D58D1BA}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "luaClient", "luaclient.vcproj", "{6AB4B81A-2BB1-4805-B8B0-5B41BAB9EC6B}"
 	ProjectSection(ProjectDependencies) = postProject

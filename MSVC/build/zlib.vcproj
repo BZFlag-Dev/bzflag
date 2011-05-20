@@ -176,7 +176,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\other\zlib\adler32.c"
+				RelativePath="..\..\other_src\zlib\adler32.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -201,7 +201,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\compress.c"
+				RelativePath="..\..\other_src\zlib\compress.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -226,7 +226,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\crc32.c"
+				RelativePath="..\..\other_src\zlib\crc32.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -251,7 +251,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\deflate.c"
+				RelativePath="..\..\other_src\zlib\deflate.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -276,52 +276,27 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\gzclose.c"
+				RelativePath="..\..\other_src\zlib\gzclose.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\gzguts.h"
+				RelativePath="..\..\other_src\zlib\gzguts.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\gzlib.c"
+				RelativePath="..\..\other_src\zlib\gzlib.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\gzread.c"
+				RelativePath="..\..\other_src\zlib\gzread.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\gzwrite.c"
+				RelativePath="..\..\other_src\zlib\gzwrite.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\inffast.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\other\zlib\inflate.c"
+				RelativePath="..\..\other_src\zlib\inffast.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -346,7 +321,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\inftrees.c"
+				RelativePath="..\..\other_src\zlib\inflate.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -371,7 +346,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\trees.c"
+				RelativePath="..\..\other_src\zlib\inftrees.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -396,7 +371,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\uncompr.c"
+				RelativePath="..\..\other_src\zlib\trees.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -421,7 +396,32 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\zutil.c"
+				RelativePath="..\..\other_src\zlib\uncompr.c"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="0"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+						BasicRuntimeChecks="3"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						Optimization="2"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\other_src\zlib\zutil.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -451,47 +451,47 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\src\other\zlib\deflate.h"
+				RelativePath="..\..\other_src\zlib\deflate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\infblock.h"
+				RelativePath="..\..\other_src\zlib\infblock.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\infcodes.h"
+				RelativePath="..\..\other_src\zlib\infcodes.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\inffast.h"
+				RelativePath="..\..\other_src\zlib\inffast.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\inffixed.h"
+				RelativePath="..\..\other_src\zlib\inffixed.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\inftrees.h"
+				RelativePath="..\..\other_src\zlib\inftrees.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\infutil.h"
+				RelativePath="..\..\other_src\zlib\infutil.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\trees.h"
+				RelativePath="..\..\other_src\zlib\trees.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\zconf.h"
+				RelativePath="..\..\other_src\zlib\zconf.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\zlib.h"
+				RelativePath="..\..\other_src\zlib\zlib.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\zlib\zutil.h"
+				RelativePath="..\..\other_src\zlib\zutil.h"
 				>
 			</File>
 		</Filter>

@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories=".\;..\..\include;..\..\src\bzrobots;..\..\src\clientbase;..\..\src\bzflag;..\..\src\other\curl\include;..\..\src\other\glew\include"
+				AdditionalIncludeDirectories=".\;..\..\include;..\..\src\bzrobots;..\..\src\clientbase;..\..\src\bzflag;..\..\other_src\curl\include;..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"

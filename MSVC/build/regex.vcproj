@@ -154,19 +154,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\other\regex\regcomp.c"
+				RelativePath="..\..\other_src\regex\regcomp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\regerror.c"
+				RelativePath="..\..\other_src\regex\regerror.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\regexec.c"
+				RelativePath="..\..\other_src\regex\regexec.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\regfree.c"
+				RelativePath="..\..\other_src\regex\regfree.c"
 				>
 			</File>
 		</Filter>
@@ -180,19 +180,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\cclass.h"
+				RelativePath="..\..\other_src\regex\cclass.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\cname.h"
+				RelativePath="..\..\other_src\regex\cname.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\regex2.h"
+				RelativePath="..\..\other_src\regex\regex2.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\regex\utils.h"
+				RelativePath="..\..\other_src\regex\utils.h"
 				>
 			</File>
 		</Filter>

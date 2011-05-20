@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;..\..\src;..\..\src\clientbase"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\other_src\glew\include;..\..\src;..\..\src\clientbase"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;GLEW_STATIC"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\src\other\glew\include;..\..\src;..\..\src\clientbase"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\other_src\glew\include;..\..\src;..\..\src\clientbase"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;GLEW_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -209,7 +209,7 @@
 				Name="GLEW"
 				>
 				<File
-					RelativePath="..\..\src\other\glew\src\glew.c"
+					RelativePath="..\..\other_src\glew\src\glew.c"
 					>
 				</File>
 			</Filter>

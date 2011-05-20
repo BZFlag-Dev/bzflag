@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\src\other\ares;.\"
+				AdditionalIncludeDirectories="..\..\other_src\ares;.\"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;CARES_STATICLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\..\src\other\ares;.\"
+				AdditionalIncludeDirectories="..\..\other_src\ares;.\"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_NONSTDC_NO_DEPRECATE;CARES_STATICLIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -155,163 +155,163 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\other\ares\ares__close_sockets.c"
+				RelativePath="..\..\other_src\ares\ares__close_sockets.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares__get_hostent.c"
+				RelativePath="..\..\other_src\ares\ares__get_hostent.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares__read_line.c"
+				RelativePath="..\..\other_src\ares\ares__read_line.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares__timeval.c"
+				RelativePath="..\..\other_src\ares\ares__timeval.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_cancel.c"
+				RelativePath="..\..\other_src\ares\ares_cancel.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_data.c"
+				RelativePath="..\..\other_src\ares\ares_data.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_destroy.c"
+				RelativePath="..\..\other_src\ares\ares_destroy.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_expand_name.c"
+				RelativePath="..\..\other_src\ares\ares_expand_name.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_expand_string.c"
+				RelativePath="..\..\other_src\ares\ares_expand_string.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_fds.c"
+				RelativePath="..\..\other_src\ares\ares_fds.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_free_hostent.c"
+				RelativePath="..\..\other_src\ares\ares_free_hostent.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_free_string.c"
+				RelativePath="..\..\other_src\ares\ares_free_string.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_gethostbyaddr.c"
+				RelativePath="..\..\other_src\ares\ares_gethostbyaddr.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_gethostbyname.c"
+				RelativePath="..\..\other_src\ares\ares_gethostbyname.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_getopt.c"
+				RelativePath="..\..\other_src\ares\ares_getopt.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_getsock.c"
+				RelativePath="..\..\other_src\ares\ares_getsock.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_init.c"
+				RelativePath="..\..\other_src\ares\ares_init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_library_init.c"
+				RelativePath="..\..\other_src\ares\ares_library_init.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_llist.c"
+				RelativePath="..\..\other_src\ares\ares_llist.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_mkquery.c"
+				RelativePath="..\..\other_src\ares\ares_mkquery.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_nowarn.c"
+				RelativePath="..\..\other_src\ares\ares_nowarn.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_options.c"
+				RelativePath="..\..\other_src\ares\ares_options.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_a_reply.c"
+				RelativePath="..\..\other_src\ares\ares_parse_a_reply.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_aaaa_reply.c"
+				RelativePath="..\..\other_src\ares\ares_parse_aaaa_reply.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_ptr_reply.c"
+				RelativePath="..\..\other_src\ares\ares_parse_ptr_reply.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_srv_reply.c"
+				RelativePath="..\..\other_src\ares\ares_parse_srv_reply.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_parse_txt_reply.c"
+				RelativePath="..\..\other_src\ares\ares_parse_txt_reply.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_process.c"
+				RelativePath="..\..\other_src\ares\ares_process.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_query.c"
+				RelativePath="..\..\other_src\ares\ares_query.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_search.c"
+				RelativePath="..\..\other_src\ares\ares_search.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_send.c"
+				RelativePath="..\..\other_src\ares\ares_send.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_strcasecmp.c"
+				RelativePath="..\..\other_src\ares\ares_strcasecmp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_strdup.c"
+				RelativePath="..\..\other_src\ares\ares_strdup.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_strerror.c"
+				RelativePath="..\..\other_src\ares\ares_strerror.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_timeout.c"
+				RelativePath="..\..\other_src\ares\ares_timeout.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_version.c"
+				RelativePath="..\..\other_src\ares\ares_version.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_writev.c"
+				RelativePath="..\..\other_src\ares\ares_writev.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\bitncmp.c"
+				RelativePath="..\..\other_src\ares\bitncmp.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\inet_net_pton.c"
+				RelativePath="..\..\other_src\ares\inet_net_pton.c"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\windows_port.c"
+				RelativePath="..\..\other_src\ares\windows_port.c"
 				>
 			</File>
 		</Filter>
@@ -321,7 +321,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\other\ares\ares.h"
+				RelativePath="..\..\other_src\ares\ares.h"
 				>
 			</File>
 			<File
@@ -329,67 +329,67 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_data.h"
+				RelativePath="..\..\other_src\ares\ares_data.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_dns.h"
+				RelativePath="..\..\other_src\ares\ares_dns.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_getopt.h"
+				RelativePath="..\..\other_src\ares\ares_getopt.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_library_init.h"
+				RelativePath="..\..\other_src\ares\ares_library_init.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_llist.h"
+				RelativePath="..\..\other_src\ares\ares_llist.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_nowarn.h"
+				RelativePath="..\..\other_src\ares\ares_nowarn.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_private.h"
+				RelativePath="..\..\other_src\ares\ares_private.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_rules.h"
+				RelativePath="..\..\other_src\ares\ares_rules.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_setup.h"
+				RelativePath="..\..\other_src\ares\ares_setup.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_strcasecmp.h"
+				RelativePath="..\..\other_src\ares\ares_strcasecmp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_strdup.h"
+				RelativePath="..\..\other_src\ares\ares_strdup.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_version.h"
+				RelativePath="..\..\other_src\ares\ares_version.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\ares_writev.h"
+				RelativePath="..\..\other_src\ares\ares_writev.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\bitncmp.h"
+				RelativePath="..\..\other_src\ares\bitncmp.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\inet_net_pton.h"
+				RelativePath="..\..\other_src\ares\inet_net_pton.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\other\ares\nameser.h"
+				RelativePath="..\..\other_src\ares\nameser.h"
 				>
 			</File>
 		</Filter>
