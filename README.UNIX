@@ -1,7 +1,7 @@
 README for Unix platforms
 -------------------------
 
-Unix is the native OS of bzflag so the build works best on Unix
+Unix is the native OS of BZFlag so the build works best on Unix
 and Linux.  The instructions in README are correct for building
 on Unix.
 

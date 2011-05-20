@@ -1,26 +1,6 @@
-			   BZFlag 2.0.17
+			    BZFlag 2.4.0
 			 http://BZFlag.org/
 		Copyright (c) 1993-2010 Tim Riker
-
-Maintainer
-==========
-
-Tim Riker <Tim@Rikers.org>
-http://rikers.org/
-
-Original Author
-===============
-
-Chris Schoeneman
-475 Hawthorne Av
-Palo Alto, CA 94301
-crs23@bigfoot.com
-
-See the AUTHORS file for more authorship details.
-
-
-Introduction
-============
 
 BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
 capture the Flag game.  At its heart, the game is a 3D first person
@@ -29,9 +9,32 @@ was originally written for SGI computers running Irix, but now runs
 and is actively maintained on Windows, Linux, Mac OS X, BSD, Solaris,
 and other platforms.  The game is distributed under the LGPL license.
 
-This is the BZFlag README file.  It includes simple build
-instructions, user community references, other information for BZFlag
-development, and a manifest of the source code layout.
+This is the BZFlag README file.  This file includes introductory build
+instructions, user community interaction references, information for
+getting involved in BZFlag development, a manifest of the source code
+layout, basic usage expectations, contact information, and more.
+
+
+Table of Contents
+=================
+    Introduction
+    Table of Contents
+    Obtaining BZFlag
+    Compiling and Installation
+	Short Version
+	Long Version
+    Communication
+	Internet Relay Chat
+	Mailing Lists
+	Bulletin Boards
+	Wiki
+    Bug Reports and Support
+    Providing Contributions
+    Source Tree Organization
+    Frequently Asked Questions
+    Notes on "CHEAT" servers and network abuse
+    Project History and Contributions
+    Contact
 
 
 Obtaining BZFlag
@@ -42,21 +45,21 @@ BZFlag Project Site:  http://sf.net/projects/bzflag
 
 The main BZFlag website provides access to most all of the resources
 available for the game.  The binary and source distributions of BZFlag
-are, however, provided on the Sourceforge project site.  Compiled
+are, however, provided on the SourceForge project site.  Compiled
 versions are distributed as installable packages, disk images, and
 more, with details varying depending on the platform.  Source code
 distributions are provided and archived in various formats as well.
 See the project site for the download links.
 
-BZFlag is also available directly from SVN.  To obtain BZflag from
+BZFlag is also available directly from SVN.  To obtain BZFlag from
 SVN, a bit more familiarity with software development is expected.
-Sometimes active BZFlag development is on SVN trunk, sometimes it is on
+Sometimes active BZFlag development is on SVN HEAD, sometimes it is on
 a branch, sometimes it's in multiple places.  Inquire on the #bzflag
 IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
 to where the current development activity resides.  If you're familiar
 enough, anonymous SVN access is provided:
 
-    svn co https://bzflag.svn.sourceforge.net/svnroot/bzflag/trunk/bzflag bzflag
+     svn co https://bzflag.svn.sourceforge.net/svnroot/bzflag/trunk/bzflag bzflag
 
 
 Compiling and Installation
@@ -96,10 +99,10 @@ The script will report whether sufficient versions of the GNU Build
 System tools (i.e. autoconf, automake, and libtool) that were detected
 and if successful, a configure script will be generated.  If the
 script fails, submit a report to the developers containing the output
-of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One of
-the most common failures is having insufficient versions or mismatched
-combinations of the GNU Build System tools, make sure your tools are
-recent.
+of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One
+of the most common failures is having insufficient versions or
+mismatched combinations of the GNU Build System tools, make sure your
+tools are recent.
 
 Now that you have a configure script and presuming the previous step
 was successful, you can configure BZFlag:
@@ -107,10 +110,10 @@ was successful, you can configure BZFlag:
   % ./configure --help
 
 There are a variety of options possible when configuring BZFlag.  Most
-notably, you'll want to use the --disable-static and --enable-shared
-options if you are building server plugins.
+notably, you'll probably want to use the --enable-shared option if you
+are building server plugins.
 
-  % ./configure --disable-static --enable-shared
+  % ./configure --enable-shared
 
 You may want to create a 'work' directory and configure from there to
 have all the build products and binary executables get placed in a
@@ -124,12 +127,23 @@ dependencies that should be installed before running configure:
 
   OpenGL 1.0+
   libSDL 1.2+
-  libCURL 7+
 
-If you're on an operating sytem that uses a packaging system
+If you're on an operating system that uses a packaging system
 (e.g. apt, portage, ports, etc), be sure to install the development
 kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
-headers are made available.
+headers are made available.  You may also want to manually install
+other dependencies that BZFlag automatically provides if you do not
+have them pre-installed:
+
+  c-ares
+  libCURL
+  FreeType2
+  FTGL
+  libregex (usually provided as part of libc)
+  zlib
+
+The README.Linux file includes a detailed list of of the packages
+needed to compile and run BZFlag on some popular Linux distributions.
 
 The final summary at the end of running configure will report whether
 the client will be built or not.  Once configure has been run, you may
@@ -145,12 +159,13 @@ with or without installing:
 
   % src/bzflag/bzflag
 
-BZFlag looks for data files in a path defined during compile, in ./data/ ,
-or in the previously specified data path only.  As part of the tarball/svn
-checkout, the base data library is located in <installed-locale>/bzflag/data. 
-This means that to test in a working directory you need to tell bzflag 
-where to find these files if there is not a 'data' directory in your current
-directory.  This can be done with a symlink:
+BZFlag looks for data files in a path defined during compile, in
+./data/ , or in the previously specified data path only.  As part of
+the tarball/cvs checkout, the base data library is located in
+<installed-locale>/bzflag/data.  This means that to test in a working
+directory you need to tell bzflag where to find these files if there
+is not a 'data' directory in your current directory.  This can be done
+with a symbolic link:
 
   % ln -s ./path/to/bzflag/data
 
@@ -241,7 +256,7 @@ latter is for coding and development discussion only.  There are also
 lists dedicated to SVN activity, league discussions, and server
 administration.
 
-To join a mailing list, go to the Sourceforge mailing list page on the
+To join a mailing list, go to the SourceForge mailing list page on the
 project site: http://sourceforge.net/mail/?group_id=3248 and follow
 the links for joining the respective mailing lists that interest you.
 
@@ -258,7 +273,7 @@ registration in order to play.  See the board FAQ and Getting Started
 pages for new users.
 
 In addition to the main bulletin boards, there are forums on the
-Sourceforge project site available here:
+SourceForge project site available here:
 
 http://sourceforge.net/forum/?group_id=3248
 
@@ -275,27 +290,6 @@ The wiki does require a simple registration in order to make
 modifications as a means to minimize abuse, but serves as a
 communication forum and ongoing discussion arena for the game's
 development.
-
-
-Contributions
-=============
-
-Patches should be entered into the BZFlag patch tracking system at:
-
-http://sourceforge.net/tracker/?group_id=3248&atid=303248
-
-Patches are preferred in the unified diff format.  From a SVN
-checkout, a unified diff patch file may be created as follows:
-
-  % svn diff > patch.diff
-
-If you like, you may also send mail to either the BZFlag development
-mailing list or to Tim@Rikers.org (the development mailing list is
-preferred) to discuss contributions to the official BZFlag source
-code.  Contributions are gladly accepted for modifications that do not
-affect the core gameplay.  Interacting with the other developers in
-the IRC channel is recommended for any changes which will affect
-gameplay.
 
 
 Bug Reports and Support
@@ -319,35 +313,49 @@ Alternatively, the IRC channel, discussion forums, and mailing lists
 are also viable avenues for resolving issues.
 
 
-Contributors
-============
+Providing Contributions
+=======================
 
-BZFlag has a long history of development and considerable community
-involvement since it became an Open Source project.  See the AUTHORS
-file for more details.
+Patches should be entered into the BZFlag patch tracking system at:
+
+http://sourceforge.net/tracker/?group_id=3248&atid=303248
+
+Patches are preferred in the unified diff format.  From a SVN
+checkout, a unified diff patch file may be created as follows:
+
+  % svn diff > patch.diff
+
+If you like, you may also send mail to either the BZFlag development
+mailing list or to Tim@Rikers.org (the development mailing list is
+preferred) to discuss contributions to the official BZFlag source
+code.  Contributions are gladly accepted for modifications that do not
+affect the core gameplay.  Interacting with the other developers in
+the IRC channel is recommended for any changes which will affect
+gameplay.
 
 
 Source Tree Organization
 ========================
 
-After unpacking a source distribution, you should have the following
-files in the new 'bzflag' directory:
+After unpacking a source distribution, you should have at least the
+following files in the new 'bzflag' directory:
 
   README	- this file
   README.*	- platform specific details
+  AUTHORS	- project contributors
   BUGS		- a list of known bugs
-  BZFlag.xcode  - Mac OS X XCode project
-  ChangeLog	- source code changes since previous release
+  BZFlag.xcode/	- Mac OS X XCode project
   COPYING	- the license for BZFlag
-  NEWS		- history of visible changes for each release
+  ChangeLog	- source code changes since previous release
   DEVINFO       - information for developers
+  NEWS		- history of visible changes for each release
   PORTING	- a guide for porting BZFlag
-  RELNOTES	- placeholder - see NEWS
   TODO		- incomplete list of things to do
+  autogen.sh	- build system preparation script
+  configure.ac	- build system configuration script template
   data/		- data files (sounds, images, etc.)
-  debian/	- debian apt files
-  Dev-C++/	- Dev-C++ project files
-  doc/		- partial documentation in doxygen format
+  debian/	- Debian apt files
+  doc/		- partial documentation in Doxygen format
   include/	- include headers for libraries
   man/		- man pages
   misc/		- miscellaneous goo
@@ -357,7 +365,9 @@ files in the new 'bzflag' directory:
     bzadmin/      - bzadmin app source code (text admin/chat client)
     bzflag/	  - bzflag app source code (game client)
     bzfs/	  - bzfs app source code (game server)
+    bzrobots/	  - bzrobots app source code (headless game client)
     common/	  - general purpose classes
+    date/         - unified version and build date stamping for apps
     game/	  - game library used by both the server and client(s)
     geometry/	  - geometry rendering classes
     mediafile/	  - classes for reading resources
@@ -367,7 +377,7 @@ files in the new 'bzflag' directory:
     platform/	  - platform dependent code
       MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
-    zlib/	  - compression library
+    world/	  - game world objects library
   tools/	- various helper utilities
   win32/	- stuff for building on the Windows platform
 
@@ -381,40 +391,112 @@ places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
 
-Miscellaneous
-=============
-
-UDP added by Frank Siegert, frank@this.net, frank@bzflag.de
-
-BZFlag implements UDP unicast relay networking. This provides much
-better timing and stability compared to just TCP.
-
-One of the more frequent questions, UDP does not work, why?
+Frequently Asked Questions
+==========================
 
 - When I connect to a newer server with this client others report they
   can see me but I get 'black caps' after a few seconds for all other
   players?
 
-Two possibilities:
+BZFlag requires both TCP and UDP unicast relay networking for most
+servers.  Make sure that your router and any configured firewall is
+forwarding UDP traffic over the port you are connecting to on the
+server.
 
-a) you are behind a NAT router that is not forwarding UDP traffic to
-   your system. Try reconfiguring the router to do NAT on UDP packets.
+- Every now and then the client seems to randomly crash.  Is there
+  anything that can be done about it?
 
-b) you are behind a firewall or a desktop firewall (e.g. ZoneAlarm)
-   that is blocking incoming UDP traffic. Please reconfigure or disable
-   your firewall(extreme solution) for the game, for more intelligent 
-   desktop firewalls set them up to let UDP port 17200 to 17220 through.
+There are LOTS of reasons why the client might crash and unfortunately
+no means to readily diagnose the cause without developer tools.  You
+can try to disable the 'Lighting' option in the menu, which is a known
+cause of issues on some platforms (e.g. Mac OS X).  Otherwise, please
+report the issue and, if possible, provide a stack trace of the crash
+(these are auto-generated for Windows and Mac OS X platforms).
+
+Public Internet Servers and the "list server"
+=============================================
+
+The bzflag project offers a public server listing service that allows
+players to find servers to play on. This service is run for the
+benefit of the project. As of Version 3.0, BZFLS servers that wish to
+be listed on the public list server must provide an authentication key
+that ties the server to a specific global user. This is done to
+provide contact information for players and project
+staff. Authentication keys are automatically generated at
+http://my.bzflag.org/listkeys/
+
+Notes on "CHEAT" servers and network abuse
+==========================================
+
+While the license for BZFlag certainly allows users to run any server
+modification that they wish or to modify the code in any way, we ask
+that people do not publish or host "cheat" clients or servers to the
+general public for use.  We also expect that users will abide by basic
+usage guidelines of reasonable and tolerable behavior that are not
+detrimental to the game's heritage of a fun gaming environment for
+all.
+
+We understand the desire to expand, modify, and improve the game and
+its sources including the ability to test out new features publicly.
+These modified clients and servers generally provide some advantage
+over unmodified clients and are generally discouraged for widespread
+use.  As such, we ask that anyone wishing to host or otherwise
+participate in a game that involves a modified client or server to
+register under a different network protocol than the current public
+release by modifying BZ_PROTO_VERSION in the src/date/buildDate.cxx
+file.  This will let modified games be played and prevent modified
+clients from being used on public unmodified servers.
+
+Any individuals that are found to be contributing to abuse of the
+public services being provided may be subject to bans or other access
+restrictions.  Abuse generally consists of any disruption to one of
+BZFlag's network services including denial of service attacks,
+spamming of BZFlag web sites or servers, disruptive gameplay on
+multiple public servers, intrusion attempts, password sniffing, or any
+other behavior that is deemed inappropriate.
+
+The BZFlag project administrators reserve the right to remove public
+listings of any game servers for any reason whatsoever, including
+removal of servers or banning of individuals that do not follow this
+request.  Similarly, the BZFlag project administrators also reserve
+the right to limit access or otherwise block any players from public
+service access at any time.  These actions may include the suspension
+or removal of global accounts and limiting access to the web site
+services including web site services, list server access, bulletin
+board forum access, and any league resources.
+
+In general, the entire network is provided by the community for the
+community as an entirely volunteer and contributed effort.  We ask
+that all players recognize and respect the time, effort, and resources
+involved and that we're all generally here to have a good time.
 
 
-Notes on "CHEAT" servers
-=============
-While the license for bzflag allows users to run any server modification
-that they wish, or to modify the code in any way. We ask that people do not
-publish or host "cheat" type clients or servers that ruin the game for people.
-We understand the desire to expand and modify the game and it's sources, so we
-ask that anyone wishing to run a game that uses modified code or logic on
-a different network protocol then the current public release. This will let
-moded games be played, and prevent moded clients from being used on public un-moded
-games. The bzflag project administrators reserve the right to remove public listing
-of any game servers that do not follow this rule. We also reserve the right to
-remove any global accounts or access to public services at any time.
+Project History and Contributions
+=================================
+
+BZFlag was primarily originally authored by Chris Schoeneman
+<crs23@bigfoot.com> in the early 1990's.  After several years of
+development, Chris turned over copyright and maintainership of the
+game to Tim Riker.
+
+BZFlag continues today to be maintained and developed by the Open
+Source community under Tim's maintainership with contributions coming
+in from all over the world.  See the AUTHORS file for more details on
+contributions to the project.
+
+
+Contact
+=======
+
+Any of the core developers listed in the AUTHORS file are generally
+receptive to being contacted for most matters relating to the game.
+Internet Relay Chat (IRC) or e-mail is generally the expected method
+of interaction with IRC being generally preferred.  The project
+maintainer is available for most legal matters, public relations, and
+project development matters as well:
+
+Tim Riker <Tim@Rikers.org>
+http://rikers.org/
+
+Happy Shooting!
+The BZFlag Development Team
