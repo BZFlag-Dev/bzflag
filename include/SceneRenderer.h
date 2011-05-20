@@ -220,7 +220,6 @@ private:
   float		panelOpacity;
   int		radarSize;
   int		maxMotionFactor;
-  bool		useFogHack;
   bool		useStencilOn;
   ViewType	viewType;
   bool		inOrder;

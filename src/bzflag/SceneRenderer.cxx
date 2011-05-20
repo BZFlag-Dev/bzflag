@@ -103,7 +103,6 @@ SceneRenderer::SceneRenderer() :
 				panelOpacity(0.3f),
 				radarSize(4),
 				maxMotionFactor(5),
-				useFogHack(false),
 				viewType(Normal),
 				inOrder(false),
 				depthRange(0),
@@ -170,14 +169,6 @@ void SceneRenderer::setWindow(MainWindow* _window) {
 
   // can only do hidden line if polygon offset is available
   canUseHiddenLine = true;
-
-  // check if we're running OpenGL 1.1.  if so we'll use the fog hack
-  // to fade the screen;  otherwise fall back on a full screen blended
-  // polygon.
-  // NOTE, the 1.1 check seems stupid as some cards do it fine, check the config
-  // people with crap cards can just turn it on
-    if (BZDB.isTrue("useFogHack"))
-    useFogHack = true;
 
   // prepare context with stuff that'll never change
   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
@@ -753,12 +744,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
   // fog setup
   mapFog = setupMapFog();
-  const bool reallyUseFogHack = !mapFog && useFogHack &&
-				(useQualityValue >= 2);
-  if (reallyUseFogHack) {
-    renderPreDimming();
-  }
-
 
   mirror = (BZDB.get(StateDatabase::BZDB_MIRROR) != "none")
 	   && BZDB.isTrue("userMirror");
@@ -860,11 +845,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   // finalize dimming
   if (mapFog) {
     glDisable(GL_FOG);
-  }
-  if (reallyUseFogHack) {
-    if ((teleporterProximity > 0.0f) || useDimming) {
-      glDisable(GL_FOG);
-    }
   } else {
     renderPostDimming();
   }
