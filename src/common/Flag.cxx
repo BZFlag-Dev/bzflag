@@ -254,8 +254,8 @@ namespace Flags {
 
 void* FlagType::pack(void* buf) const
 {
-  buf = nboPackUByte(buf, flagAbbv[0]);
-  buf = nboPackUByte(buf, flagAbbv[1]);
+  buf = nboPackUByte(buf, (flagAbbv.size() > 0) ? flagAbbv[0] : 0);
+  buf = nboPackUByte(buf, (flagAbbv.size() > 1) ? flagAbbv[1] : 0);
   return buf;
 }
 
