@@ -1594,10 +1594,6 @@ void BackgroundRenderer::doInitDisplayLists()
   weather.rebuildContext();
   EFFECTS.rebuildContext();
 
-  // need some workarounds on RIVA 128
-  bool isRiva128 = (strncmp((const char*)glGetString(GL_RENDERER),
-						"RIVA 128", 8) == 0);
-
   //
   // sky stuff
   //
@@ -1655,45 +1651,7 @@ void BackgroundRenderer::doInitDisplayLists()
     gameArea[i][2] = 0.0f;
   }
 
-  if (isRiva128) {
-    simpleGroundList[2] = glGenLists(1);
-    glNewList(simpleGroundList[2], GL_COMPILE);
-    {
-      glBegin(GL_TRIANGLE_STRIP);
-	renderer.getGroundUV(gameArea[0], uv);
-	glTexCoord2f(uv[0], uv[1]);
-	glVertex2fv(gameArea[0]);
-	renderer.getGroundUV(gameArea[1], uv);
-	glTexCoord2f(uv[0], uv[1]);
-	glVertex2fv(gameArea[1]);
-	renderer.getGroundUV(gameArea[3], uv);
-	glTexCoord2f(uv[0], uv[1]);
-	glVertex2fv(gameArea[3]);
-	renderer.getGroundUV(gameArea[2], uv);
-	glTexCoord2f(uv[0], uv[1]);
-	glVertex2fv(gameArea[2]);
-      glEnd();
-
-      glTexCoord2f(0.0f, 0.0f);
-      glBegin(GL_TRIANGLE_STRIP);
-	glVertex2fv(gameArea[0]);
-	glVertex2fv(groundPlane[0]);
-
-	glVertex2fv(gameArea[1]);
-	glVertex2fv(groundPlane[1]);
-
-	glVertex2fv(gameArea[2]);
-	glVertex2fv(groundPlane[2]);
-
-	glVertex2fv(gameArea[3]);
-	glVertex2fv(groundPlane[3]);
-
-	glVertex2fv(gameArea[0]);
-	glVertex2fv(groundPlane[0]);
-      glEnd();
-    }
-    glEndList();
-  } else {
+  {
     GLfloat xmin, xmax;
     GLfloat ymin, ymax;
     GLfloat xdist, ydist;
@@ -1788,8 +1746,6 @@ void BackgroundRenderer::doInitDisplayLists()
     // make cloud display list.  RIVA 128 doesn't interpolate alpha,
     // so on that system use full alpha everywhere.
     GLfloat minAlpha = 0.0f;
-    if (isRiva128)
-      minAlpha = 1.0f;
 
     cloudsList = glGenLists(1);
     glNewList(cloudsList, GL_COMPILE);
