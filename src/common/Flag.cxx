@@ -31,8 +31,6 @@ FlagSet *FlagType::flagSets = NULL;
 const int FlagType::packSize = FlagPackSize;
 FlagSet FlagType::customFlags;
 
-static const char NullString[2] = { '\0', '\0' };
-
 // Initialize flag description singletons in our Flags namespace
 namespace Flags {
   FlagType *Null;
@@ -85,7 +83,7 @@ namespace Flags {
 
   void init()
   {
-    Null	= new FlagType( "", NullString, FlagNormal, NormalShot, FlagGood, NoTeam, NULL );
+    Null	= new FlagType( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, NULL );
 
     RedTeam	= new FlagType( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, ::RedTeam,
 					    "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
