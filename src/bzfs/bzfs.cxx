@@ -2978,7 +2978,7 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
 
   bz_FlagGrabbedEventData_V1	data;
   data.flagID = flag.getIndex();
-  data.flagType = flag.flag.type->flagAbbv;
+  data.flagType = flag.flag.type->flagAbbv.c_str();
   memcpy(data.pos,fpos,sizeof(float)*3);
   data.playerID = playerIndex;
 
@@ -3099,7 +3099,7 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   bz_FlagDroppedEventData_V1 data;
   data.playerID = playerData.getIndex();
   data.flagID = flagIndex;
-  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv;
+  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv.c_str();
   memcpy(data.pos, dropPos, sizeof(float)*3);
 
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
@@ -3869,8 +3869,19 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       /* Pack a message with the list of missing flags */
       buf = bufStart = getDirectMessageBuffer();
       for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
-	if ((*m_it) != Flags::Null)
-	  buf = (*m_it)->pack(buf);
+	if ((*m_it) != Flags::Null) {
+	  if ((*m_it)->custom) {
+	    // custom flag, tell the client about it
+	    static char cfbuffer[MaxPacketLen];
+	    char *cfbufStart = &cfbuffer[0] + 2 * sizeof(uint16_t);
+	    char *cfbuf = cfbufStart;
+	    cfbuf = (char*)(*m_it)->packCustom(cfbuf);
+	    directMessage(t, MsgFlagType, cfbuf-cfbufStart, cfbufStart);
+	  } else {
+	    // they should already know about this one, dump it back to them
+	    buf = (*m_it)->pack(buf); 
+	  }
+	}
       }
       directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
       break;

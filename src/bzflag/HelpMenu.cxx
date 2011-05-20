@@ -406,11 +406,11 @@ Help5Menu::Help5Menu() : HelpMenu("Good Flags")
 
     if (((*it)->flagQuality != FlagGood) ||
 	((*it)->flagTeam != NoTeam) ||
-	(strcmp((*it)->flagName,"") == 0)) {
+	(strcmp((*it)->flagName.c_str(),"") == 0)) {
       continue;
     }
 
-    listHUD.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str()));
+    listHUD.push_back(createLabel((*it)->flagHelp.c_str(), (*it)->label().c_str()));
   }
 }
 
@@ -442,11 +442,11 @@ Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
 
     if (((*it)->flagQuality != FlagBad) ||
 	((*it)->flagTeam != NoTeam) ||
-	(strcmp((*it)->flagName,"") == 0)) {
+	(strcmp((*it)->flagName.c_str(),"") == 0)) {
       continue;
     }
 
-    listHUD.push_back(createLabel((*it)->flagHelp, (*it)->label().c_str()));
+    listHUD.push_back(createLabel((*it)->flagHelp.c_str(), (*it)->label().c_str()));
   }
 }
 

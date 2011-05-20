@@ -1,0 +1,1 @@
+Simple sample plugin for showing how to use custom flags.

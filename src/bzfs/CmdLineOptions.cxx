@@ -277,6 +277,11 @@ const char *extraUsageString =
 "\n";
 
 
+// temp variables for carrying flag options from parse to finalize
+static std::vector<std::string> storedFlagDisallows;
+static std::vector<std::string> storedFlagCounts;
+static std::map<std::string, int> storedFlagLimits;
+
 /* private */
 
 static void printVersion()
@@ -301,7 +306,7 @@ static void extraUsage(const char *pname)
   std::cout << "\nUsage: " << pname << ' ' << usageString << std::endl;
   std::cout << std::endl << extraUsageString << std::endl << "Flag codes:\n";
   for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it) {
-    sprintf(buffer, "\t%2.2s %s\n", (*it->second).flagAbbv, (*it->second).flagName);
+    snprintf(buffer, 64, "\t%2.2s %s\n", (*it->second).flagAbbv.c_str(), (*it->second).flagName.c_str());
     std::cout << buffer;
   }
   exit(0);
@@ -643,25 +648,20 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // Theoretically we could merge the options specified in the conf file after parsing
       // the cmd line options. But for now just override them on the spot
       parse(ac, av, options);
-
       for (int j = 0; j < ac; j++)
 	free(av[j]);
       delete[] av;
-
       options.numAllowedFlags = 0;
-
-    }
-    else if (strcmp(argv[i], "-cr") == 0) {
+    } else if (strcmp(argv[i], "-cr") == 0)  {
       // CTF with random world
       options.randomCTF = true;
       // capture the flag style
-      if (options.gameType == RabbitChase) {
-        std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-        std::cerr << "Capture the flag assumed" << std::endl;
+      if (options.gameType == RabbitChase)  {
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
       }
       options.gameType = ClassicCTF;
-    }
-    else if (strcmp(argv[i], "-density") ==0) {
+    } else if (strcmp(argv[i], "-density") ==0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
 	i++;
@@ -697,57 +697,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-f") == 0) {
       // disallow given flag
       checkArgc(1, i, argc, argv[i]);
-      if (strcmp(argv[i], "bad") == 0) {
-	FlagSet badFlags = Flag::getBadFlags();
-	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-	  options.flagDisallowed[*it] = true;
-      } else if (strcmp(argv[i], "good") == 0) {
-	FlagSet goodFlags = Flag::getGoodFlags();
-	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-	  options.flagDisallowed[*it] = true;
-      } else {
-	FlagType* fDesc = Flag::getDescFromAbbreviation(argv[i]);
-	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
-	  usage(argv[0]);
-	}
-	options.flagDisallowed[fDesc] = true;
-      }
+      storedFlagDisallows.push_back(argv[i]);
     }
     else if (strcmp(argv[i], "+f") == 0) {
       // add required flag
       checkArgc(1, i, argc, argv[i]);
-
-      char *repeatStr = strchr(argv[i], '{');
-      int rptCnt = 1;
-      if (repeatStr != NULL) {
-	*(repeatStr++) = 0;
-	rptCnt = atoi(repeatStr);
-	if (rptCnt <= 0)
-	  rptCnt = 1;
-      }
-      if (strcmp(argv[i], "good") == 0) {
-	FlagSet goodFlags = Flag::getGoodFlags();
-	for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-	  options.flagCount[*it] += rptCnt;
-      } else if (strcmp(argv[i], "bad") == 0) {
-	FlagSet badFlags = Flag::getBadFlags();
-	for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-	  options.flagCount[*it] += rptCnt;
-      } else if (strcmp(argv[i], "team") == 0) {
-	for (int t = RedTeam; t <= PurpleTeam; t++)
-	  options.numTeamFlags[t] += rptCnt;
-      } else {
-	FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
-	if (fDesc == Flags::Null) {
-	  std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
-	  usage(argv[0]);
-	} else if (fDesc->flagTeam != NoTeam) {
-	  options.numTeamFlags[fDesc->flagTeam] += rptCnt;
-	} else {
-	  options.flagCount[fDesc] += rptCnt;
-	}
-      }
+      storedFlagCounts.push_back(argv[i]);
     }
     else if (strcmp(argv[i], "-fb") == 0) {
       // flags on buildings
@@ -1119,29 +1074,22 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
     }
     else if (strcmp(argv[i], "-sl") == 0) {
-      // add required flag
+      // shot limits
       checkArgc(2, i, argc, argv[i]);
-      FlagType *fDesc = Flag::getDescFromAbbreviation(argv[i]);
-      if (fDesc == Flags::Null) {
-	std::cerr << "invalid flag \"" << argv[i] << "\"" << std::endl;
-	usage(argv[0]);
+      i++; // move past the flag descriptor for now (we'll store it in a bit)
+      int x = 1;
+      if (isdigit(argv[i][0])){
+        x = atoi(argv[i]);
+        if (x < 1){
+          std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
+          x = 1;
+        }
       } else {
-	i++;
-	int x = 10;
-	if (isdigit(argv[i][0])){
-	  x = atoi(argv[i]);
-	  if (x < 1){
-	    std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
-	    x = 1;
-	  }
-	} else {
-	  std::cerr << "invalid shot limit \"" << argv[i] << "\"" << std::endl;
-	  usage(argv[0]);
-	}
-	options.flagLimit[fDesc] = x;
+        std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
+        usage(argv[0]);
       }
-    }
-    else if (strcmp(argv[i], "-spamtime") == 0) {
+      storedFlagLimits[argv[i-1]] = x;
+    } else if (strcmp(argv[i], "-spamtime") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.msgTimer = atoi(argv[i]);
       std::cerr << "using spam time of " << options.msgTimer << "\n";
@@ -1428,6 +1376,63 @@ void finalizeParsing(int /*argc*/, char **argv,
     }
   }
 
+  // disallowed flags
+  std::vector<std::string>::iterator vsitr;
+  for (vsitr = storedFlagDisallows.begin(); vsitr != storedFlagDisallows.end(); ++vsitr) {
+    if (strcmp(vsitr->c_str(), "bad") == 0) {
+      FlagSet badFlags = Flag::getBadFlags();
+      for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
+        options.flagDisallowed[*it] = true;
+    } else if (strcmp(vsitr->c_str(), "good") == 0) {
+      FlagSet goodFlags = Flag::getGoodFlags();
+      for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
+        options.flagDisallowed[*it] = true;
+    } else {
+      FlagType* fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
+      if (fDesc == Flags::Null) {
+        std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
+        usage(argv[0]);
+      }
+      options.flagDisallowed[fDesc] = true;
+    }
+  }
+  storedFlagDisallows.clear();
+
+  // explicitly added flags
+  for (vsitr = storedFlagCounts.begin(); vsitr != storedFlagCounts.end(); ++vsitr) {
+    size_t rptBgn = vsitr->find_first_of('{');
+    int rptCnt = 1;
+    if (rptBgn > 0) {
+      rptCnt = atoi(vsitr->substr(rptBgn+1, vsitr->length() - rptBgn).c_str());
+      if (rptCnt <= 0)
+        rptCnt = 1;
+      (*vsitr) = vsitr->substr(0, rptBgn);
+    }
+    if (strcmp(vsitr->c_str(), "good") == 0) {
+      FlagSet goodFlags = Flag::getGoodFlags();
+      for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
+        options.flagCount[*it] += rptCnt;
+    } else if (strcmp(vsitr->c_str(), "bad") == 0) {
+      FlagSet badFlags = Flag::getBadFlags();
+      for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
+        options.flagCount[*it] += rptCnt;
+    } else if (strcmp(vsitr->c_str(), "team") == 0) {
+      for (int t = RedTeam; t <= PurpleTeam; t++)
+        options.numTeamFlags[t] += rptCnt;
+    } else {
+      FlagType *fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
+      if (fDesc == Flags::Null) {
+        std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
+        usage(argv[0]);
+      } else if (fDesc->flagTeam != NoTeam) {
+        options.numTeamFlags[fDesc->flagTeam] += rptCnt;
+      } else {
+        options.flagCount[fDesc] += rptCnt;
+      }
+    }
+  }
+  storedFlagCounts.clear();
+
   if (!accLimitSet) {
     printf("Note: no acceleration limit has been set.  Players using \"mouse\n"
 	   "enhancements\" may cause problems on this server due to very high\n"
@@ -1609,6 +1614,20 @@ void finalizeParsing(int /*argc*/, char **argv,
   if (f < numFlags) {
     options.gameOptions |= int(SuperFlagGameStyle);
   }
+
+  // shot limits
+  std::map<std::string, int>::iterator msiitr;
+  for (msiitr = storedFlagLimits.begin(); msiitr != storedFlagLimits.end(); ++msiitr) {
+    FlagType *fDesc = Flag::getDescFromAbbreviation(msiitr->first.c_str());
+    if (fDesc == Flags::Null) {
+      std::cerr << "ERROR: invalid flag [" << msiitr->first << "]" << std::endl;
+      usage(argv[0]);
+    } else {
+      // this parameter has already been validated
+      options.flagLimit[fDesc] = msiitr->second;
+    }
+  }
+  storedFlagLimits.clear();
 
   // add normal flags
   for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();

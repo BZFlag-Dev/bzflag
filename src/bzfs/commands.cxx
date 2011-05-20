@@ -1440,7 +1440,7 @@ bool FlagCommand::operator() (const char	 *message,
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
 	       playerData->player.getCallSign(),
-	       fi->flag.type->flagAbbv, fi->getIndex(),
+	       fi->flag.type->flagAbbv.c_str(), fi->getIndex(),
 	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);
@@ -1575,7 +1575,7 @@ bool FlagCommand::operator() (const char	 *message,
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s gave flag %s/%i to %s",
 	       playerData->player.getCallSign(),
-	       fi->flag.type->flagAbbv, fi->getIndex(),
+	       fi->flag.type->flagAbbv.c_str(), fi->getIndex(),
 	       gkPlayer->player.getCallSign());
       sendMessage(ServerPlayer, t, buffer);
       sendMessage(ServerPlayer, AdminPlayers, buffer);

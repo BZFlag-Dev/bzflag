@@ -280,7 +280,7 @@ void FlagInfo::getTextualInfo(char *message)
 {
   sprintf(message, "#%-3d i:%-3s p:%-3d r:%-2d g:%-2d s:%-2d "
 		   "p:{%.1f, %.1f, %.1f}",
-	  flagIndex, flag.type->flagAbbv, player,
+	  flagIndex, flag.type->flagAbbv.c_str(), player,
 	  required ? 1 : 0, grabs, flag.status,
 	  flag.position[0], flag.position[1], flag.position[2]);
 }

@@ -1242,7 +1242,7 @@ static void		updateFlag(FlagType* flag)
   else {
     const float* color = flag->getColor();
     hud->setColor(color[0], color[1], color[2]);
-    hud->setAlert(2, flag->flagName, 3.0f, flag->endurance == FlagSticky);
+    hud->setAlert(2, flag->flagName.c_str(), 3.0f, flag->endurance == FlagSticky);
   }
 
   if (BZDB.isTrue("displayFlagHelp"))
@@ -2980,6 +2980,14 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgFlagType: 
+      {
+      FlagType* typ = NULL;
+      FlagType::unpackCustom(msg, typ);
+      logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
+      break;
+      }
+
     case MsgPlayerInfo: {
       uint8_t numPlayers;
       int i;
@@ -4688,6 +4696,9 @@ void		leaveGame()
 
   // reset the BZDB variables
   BZDB.iterate(resetServerVar, NULL);
+
+  // purge any custom flags we may have accumulated
+  Flags::clearCustomFlags();
 
   return;
 }

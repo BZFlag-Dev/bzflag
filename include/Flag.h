@@ -109,15 +109,18 @@ typedef std::set<FlagType*> FlagSet;
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
 public:
-  FlagType( const char* name, const char* abbv, FlagEndurance _endurance,
-	    ShotType sType, FlagQuality quality, TeamColor team, const char* help ) {
-    flagName = name;
-    flagAbbv = abbv;
+  FlagType( const std::string& name, const std::string& abbv, FlagEndurance _endurance,
+	    ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
+	    bool _custom = false ) :
+    flagName(name),
+    flagAbbv(abbv),
+    flagHelp(help)
+  {
     endurance = _endurance;
     flagShot = sType;
     flagQuality = quality;
-    flagHelp = help;
     flagTeam = team;
+    custom = _custom;
 
     /* allocate flagset array on first use to work around mipspro
      * std::set compiler bug of making flagSets a fixed array.
@@ -126,9 +129,11 @@ public:
       flagSets = new FlagSet[NumQualities];
     }
 
+    if (custom)
+      customFlags.insert(this);
+
     flagSets[flagQuality].insert(this);
     getFlagMap()[flagAbbv] = this;
-    flagCount++;
   }
 
   /** returns a label of flag name and abbreviation with the flag name
@@ -138,7 +143,7 @@ public:
 
   /** returns information about a flag including the name, abbreviation, and
    * description.  format is "name ([+|-]abbrev): description" where +|-
-   * indicates whether the flag is inherintly good or bad by default.
+   * indicates whether the flag is inherently good or bad by default.
    */
   const std::string information() const;
 
@@ -148,25 +153,28 @@ public:
   /** network serialization */
   void* pack(void* buf) const;
   void* fakePack(void* buf) const;
+  void* packCustom(void* buf) const;
 
   /** network deserialization */
   static void* unpack(void* buf, FlagType* &desc);
+  static void* unpackCustom(void* buf, FlagType* &desc);
 
   /** Static wrapper function that makes sure that the flag map is
    * initialized before it's used.
    */
   static FlagTypeMap& getFlagMap();
 
-  const char* flagName;
-  const char* flagAbbv;
+  const std::string flagName;
+  const std::string flagAbbv;
+  const std::string flagHelp;
   FlagEndurance	endurance;
-  const char* flagHelp;
   FlagQuality flagQuality;
   ShotType flagShot;
   TeamColor flagTeam;
+  bool custom;
 
-  static int flagCount;
   static FlagSet *flagSets;
+  static FlagSet customFlags;
   static const int packSize;
 };
 
@@ -241,6 +249,9 @@ namespace Flags {
       namespace. */
   void init();
   void kill();
+
+  /** Clear all the custom flags (i.e. when switching servers) */
+  void clearCustomFlags();
 }
 
 #endif // BZF_FLAG_H

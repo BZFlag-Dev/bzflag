@@ -18,6 +18,7 @@
 /* system implementation headers */
 #include <math.h>
 #include <string>
+#include <assert.h>
 #include <string.h>
 
 /* common implementation headers */
@@ -26,9 +27,9 @@
 #include "TextUtils.h"
 
 
-int FlagType::flagCount = 0;
 FlagSet *FlagType::flagSets = NULL;
 const int FlagType::packSize = FlagPackSize;
+FlagSet FlagType::customFlags;
 
 static const char NullString[2] = { '\0', '\0' };
 
@@ -182,8 +183,8 @@ namespace Flags {
 
   void kill()
   {
-    delete Null;
-    delete RedTeam;
+    clearCustomFlags();
+
     delete GreenTeam;
     delete BlueTeam;
     delete PurpleTeam;
@@ -232,6 +233,25 @@ namespace Flags {
 
     delete[] FlagType::flagSets;
   }
+
+  void clearCustomFlags()
+  {
+    FlagSet::iterator itr, nitr;
+    for (int q = 0; q < (int)NumQualities; ++q) {
+      for (itr = FlagType::flagSets[q].begin(); itr != FlagType::flagSets[q].end(); ++itr) {
+	if ((*itr)->custom) {
+	  FlagType::getFlagMap().erase((*itr)->flagAbbv);
+	  nitr = itr;
+	  ++nitr;
+	  delete (*itr);
+	  FlagType::flagSets[q].erase(itr);
+	  itr = nitr;
+	  if (itr == FlagType::flagSets[q].end()) break;
+	}
+      }
+    }
+    FlagType::customFlags.clear();
+  }
 }
 
 void* FlagType::pack(void* buf) const
@@ -250,10 +270,48 @@ void* FlagType::fakePack(void* buf) const
 
 void* FlagType::unpack(void* buf, FlagType* &type)
 {
-  unsigned char abbv[3] = {0,0,0};
+  unsigned char abbv[3] = {0, 0, 0};
   buf = nboUnpackUByte(buf, abbv[0]);
   buf = nboUnpackUByte(buf, abbv[1]);
   type = Flag::getDescFromAbbreviation((const char *)abbv);
+  return buf;
+}
+
+void* FlagType::packCustom(void* buf) const
+{
+  buf = pack(buf);
+  buf = nboPackUByte(buf, uint8_t(flagQuality));
+  buf = nboPackUByte(buf, uint8_t(flagShot));
+  buf = nboPackStdString(buf, flagName);
+  buf = nboPackStdString(buf, flagHelp);
+  return buf;
+}
+
+void* FlagType::unpackCustom(void* buf, FlagType* &type)
+{
+  uint8_t *abbv = new uint8_t[3];
+  abbv[0]=abbv[1]=abbv[2]=0;
+  buf = nboUnpackUByte(buf, abbv[0]);
+  buf = nboUnpackUByte(buf, abbv[1]);
+
+  uint8_t quality, shot;
+  buf = nboUnpackUByte(buf, quality);
+  buf = nboUnpackUByte(buf, shot);
+
+  // make copies to keep - note that these will need to be deleted.
+  std::string sName, sHelp;
+  buf = nboUnpackStdString(buf, sName);
+  buf = nboUnpackStdString(buf, sHelp);
+
+  FlagEndurance e = FlagUnstable;
+  switch((FlagQuality)quality) {
+    case FlagGood: e = FlagUnstable; break;
+    case FlagBad: e = FlagSticky; break;
+    default: assert(false); // shouldn't happen
+  }
+
+  type = new FlagType(sName, reinterpret_cast<const char*>(&abbv[0]),
+		      e, (ShotType)shot, (FlagQuality)quality, NoTeam, sHelp, true);
   return buf;
 }
 
@@ -355,13 +413,13 @@ const std::string FlagType::label() const
 
   /* convert to lowercase so we can uppercase the abbreviation later */
   std::string caseName = "";
-  for (i = 0; i < strlen(flagName); i++) {
-    caseName += tolower(flagName[i]);
+  for (i = 0; i < flagName.size(); i++) {
+    caseName += tolower(flagName.c_str()[i]);
   }
 
   /* modify the flag name to exemplify the abbreviation */
   int charPosition;
-  for (i = 0; i < strlen(flagAbbv); i++) {
+  for (i = 0; i < flagAbbv.size(); i++) {
 
     charPosition = caseName.find_first_of(tolower(flagAbbv[i]), 0);
 
@@ -388,8 +446,8 @@ const std::string FlagType::label() const
   } else {
     /* non-team flags */
     caseName += TextUtils::format(" (%c%s)",
-				    flagQuality==FlagGood?'+':'-',
-				    flagAbbv);
+				  flagQuality==FlagGood?'+':'-',
+				  flagAbbv.c_str());
   }
 
   return caseName;
@@ -399,8 +457,8 @@ const std::string FlagType::label() const
 const std::string FlagType::information() const
 {
   return TextUtils::format("%s: %s",
-			     label().c_str(),
-			     flagHelp);
+			   label().c_str(),
+			   flagHelp.c_str());
 }
 
 // Local Variables: ***
