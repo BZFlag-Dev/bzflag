@@ -2800,8 +2800,6 @@ BZF_API void bz_reloadUsers()
   userDatabase.clear();
   passwordDatabase.clear();
 
-  if (passFile.size())
-    readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
   GameKeeper::Player::reloadAccessDatabase();

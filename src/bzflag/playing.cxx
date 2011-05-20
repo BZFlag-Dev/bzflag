@@ -2750,38 +2750,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
 
-      if (fromServer) {
-	/* if the server tells us that we need to identify, and we have
-	 * already stored a password key for this server -- send it on
-	 * over back to auto-identify.
-	 */
-	static const char passwdRequest[] = "Identify with /identify";
-	if (!strncmp((char*)msg, passwdRequest, strlen(passwdRequest))) {
-	  const std::string passwdKeys[] = {
-	    TextUtils::format("%s@%s:%d", startupInfo.callsign, startupInfo.serverName, startupInfo.serverPort),
-	    TextUtils::format("%s:%d", startupInfo.serverName, startupInfo.serverPort),
-	    TextUtils::format("%s@%s", startupInfo.callsign, startupInfo.serverName),
-	    TextUtils::format("%s", startupInfo.serverName),
-	    TextUtils::format("%s", startupInfo.callsign),
-	    "@" // catch-all for all callsign/server/ports
-	  };
-
-	  for (size_t j = 0; j < countof(passwdKeys); j++) {
-	    if (BZDB.isSet(passwdKeys[j])) {
-	      std::string passwdResponse = "/identify "
-		+ BZDB.get(passwdKeys[j]);
-	      addMessage(0, ("Autoidentifying with password stored for "
-			     + passwdKeys[j]).c_str(), 2, false);
-	      void *buf = messageMessage;
-	      buf = nboPackUByte(buf, ServerPlayer);
-	      nboPackString(buf, (void*) passwdResponse.c_str(), MessageLen);
-	      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-	      break;
-	    }
-	  }
-	}
-      }
-
       // if filtering is turned on, filter away the goo
       if (wordfilter != NULL) {
 	wordfilter->filter((char *)msg);

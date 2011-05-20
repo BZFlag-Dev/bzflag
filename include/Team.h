@@ -52,8 +52,8 @@ struct Team {
 
     static float	tankColor[NumTeams][3];
     static float	radarColor[NumTeams][3];
- 
-protected:
+
+ private:
     unsigned short	won;			// wins by team members
     unsigned short	lost;			// losses by team members
 

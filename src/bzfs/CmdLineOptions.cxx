@@ -102,7 +102,6 @@ const char *usageString =
 "[-p <port>] "
 "[-packetlossdrop <num>] "
 "[-packetlosswarn <%>] "
-"[-passdb <password file>] "
 "[-passwd <password>] "
 "[-pidfile <filename>] "
 "[-poll <variable>=<value>] "
@@ -206,7 +205,6 @@ const char *extraUsageString =
 "\t-p: use alternative port (default=5154)\n"
 "\t-packetlossdrop: drop player after this many packetloss warnings\n"
 "\t-packetlosswarn: packetloss warning threshold [%]\n"
-"\t-passdb: file to read for user passwords\n"
 "\t-passwd: specify a <password> for operator commands\n"
 "\t-pidfile: write the process id into <filename> on startup\n"
 "\t-poll: configure several aspects of the in-game polling system\n"
@@ -873,12 +871,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-packetlosswarn") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.packetlosswarnthresh = atoi(argv[i])/1000.0f;
-    }
-    else if (strcmp(argv[i], "-passdb") == 0) {
-      checkFromWorldFile(argv[i], fromWorldFile);
-      checkArgc(1, i, argc, argv[i]);
-      passFile = argv[i];
-      std::cerr << "using password file \"" << argv[i] << "\"" << std::endl;
     }
     else if (strcmp(argv[i], "-passwd") == 0 || strcmp(argv[i], "-password") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);

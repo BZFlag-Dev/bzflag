@@ -21,7 +21,7 @@
 #include "HUDui.h"
 
 
-const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, Register, Identify, ClientQuery};
+const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, ClientQuery};
 
 /* FIXME - note the important numModes and numNonAdminModes values inited here
  * when new commands are added, the indices need to be adjusted here.
@@ -162,9 +162,6 @@ void			ServerCommandKey::updatePrompt()
     case FlagHistory: hud->setComposing("Flag History", false); break;
     case Password: hud->setComposing("Admin Password:", true); break;
     case Report: hud->setComposing("Send Report to Server:", true); break;
-    case Register: hud->setComposing("Register your nick [enter pass]:", true); break;
-    case Identify: hud->setComposing("Login [enter pass]:", true); break;
-    case Setpass: hud->setComposing("Set your password [enter pass]:", true); break;
     case Grouplist: hud->setComposing("List Groups", false); break;
     case Groupperms: hud->setComposing("List Permissions", false); break;
     case Vote: hud->setComposing("Vote:", true); break;
@@ -335,9 +332,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       case FlagHistory: sendMsg = "/flaghistory"; break;
       case Password: sendMsg = "/password "+ message; break;
       case Report: sendMsg = "/report "+ message; break;
-      case Register: sendMsg = "/register "+ message; break;
-      case Identify: sendMsg = "/identify "+ message; break;
-      case Setpass: sendMsg = "/setpass "+ message; break;
       case Grouplist: sendMsg = "/grouplist"; break;
       case Groupperms: sendMsg = "/groupperms"; break;
       case Vote: sendMsg = "/vote " + message; break;

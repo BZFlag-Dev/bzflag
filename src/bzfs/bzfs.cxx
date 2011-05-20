@@ -2096,12 +2096,10 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     if (playerData->accessInfo.isIdentifyRequired()) {
       sendMessage(ServerPlayer, playerIndex,
 		  "This callsign is registered.  "
-		  "You must identify yourself before playing.");
+		  "You must use global registration.");
     } else {
       sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
     }
-    if (playerData->accessInfo.hasRealPassword())
-      sendMessage(ServerPlayer, playerIndex, "Identify with /identify <your password>");
   }
 
   dropAssignedFlag(playerIndex);
@@ -2645,7 +2643,7 @@ void playerAlive(int playerIndex)
 
   // make sure the user identifies themselves if required.
   if (!playerData->accessInfo.isAllowedToEnter()) {
-    sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must identify yourself");
+    sendMessage(ServerPlayer, playerIndex, "This callsign is registered.  You must use global identification");
     sendMessage(ServerPlayer, playerIndex, "before playing or use a different callsign.");
     removePlayer(playerIndex, "unidentified");
     return;
@@ -2658,7 +2656,6 @@ void playerAlive(int playerIndex)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
     sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
     sendMessage(ServerPlayer, playerIndex, "This server may require identification before you can join.");
-    sendMessage(ServerPlayer, playerIndex, "Please use /identify, or /register if you have not registerd your callsign or");
     sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
 	spawnAllowData.allow = false;
 	}
@@ -5390,8 +5387,6 @@ int main(int argc, char **argv)
 
   // load up the access permissions & stuff
   initGroups();
-  if (passFile.size())
-    readPassFile(passFile);
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
 
