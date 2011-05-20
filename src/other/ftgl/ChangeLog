@@ -1,4 +1,4 @@
-2008-06-19 13:11  sammy
+﻿2008-06-19 13:11  sammy
 
 	* [r1193] NEWS, configure.ac:
 	  * Updated NEWS file.
@@ -6936,4 +6936,5 @@
 
 	* [r1] .:
 	  New repository initialized by cvs2svn.
+
 
