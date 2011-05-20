@@ -52,104 +52,95 @@
 class FTCharToGlyphIndexMap
 {
     public:
-
         typedef unsigned long CharacterCode;
         typedef signed long GlyphIndex;
 
-        enum
-        {
-            NumberOfBuckets = 256,
-            BucketSize = 256,
-            IndexNotFound = -1
-        };
+        // XXX: always ensure that 1 << (3 * BucketIdxBits) >= UnicodeValLimit
+        static const int BucketIdxBits = 7;
+        static const int BucketIdxSize = 1 << BucketIdxBits;
+        static const int BucketIdxMask = BucketIdxSize - 1;
+
+        static const CharacterCode UnicodeValLimit = 0x110000;
+        static const int IndexNotFound = -1;
 
         FTCharToGlyphIndexMap()
         {
-            this->Indices = 0;
+            Indices = 0;
         }
 
         virtual ~FTCharToGlyphIndexMap()
         {
-            if(this->Indices)
-            {
-                // Free all buckets
-                this->clear();
-
-                // Free main structure
-                delete [] this->Indices;
-                this->Indices = 0;
-            }
+            // Free all buckets
+            clear();
         }
 
         inline void clear()
         {
-            if(this->Indices)
+            for(int j = 0; Indices && j < BucketIdxSize; j++)
             {
-                for(int i = 0; i < FTCharToGlyphIndexMap::NumberOfBuckets; i++)
+                for(int i = 0; Indices[j] && i < BucketIdxSize; i++)
                 {
-                    if(this->Indices[i])
-                    {
-                        delete [] this->Indices[i];
-                        this->Indices[i] = 0;
-                    }
+                    delete[] Indices[j][i];
+                    Indices[j][i] = 0;
                 }
+                delete[] Indices[j];
+                Indices[j] = 0;
             }
+            delete[] Indices;
+            Indices = 0;
         }
 
         const GlyphIndex find(CharacterCode c)
         {
-            if(!this->Indices)
-            {
+            int OuterIdx = (c >> (BucketIdxBits * 2)) & BucketIdxMask;
+            int InnerIdx = (c >> BucketIdxBits) & BucketIdxMask;
+            int Offset = c & BucketIdxMask;
+
+            if (c >= UnicodeValLimit || !Indices
+                 || !Indices[OuterIdx] || !Indices[OuterIdx][InnerIdx])
                 return 0;
-            }
 
-            // Find position of char code in buckets
-            div_t pos = div(c, FTCharToGlyphIndexMap::BucketSize);
+            GlyphIndex g = Indices[OuterIdx][InnerIdx][Offset];
 
-            if(!this->Indices[pos.quot])
-            {
-                return 0;
-            }
-
-            const FTCharToGlyphIndexMap::GlyphIndex *ptr = &this->Indices[pos.quot][pos.rem];
-            if(*ptr == FTCharToGlyphIndexMap::IndexNotFound)
-            {
-                return 0;
-            }
-
-            return *ptr;
+            return (g != IndexNotFound) ? g : 0;
         }
 
         void insert(CharacterCode c, GlyphIndex g)
         {
-            if(!this->Indices)
+            int OuterIdx = (c >> (BucketIdxBits * 2)) & BucketIdxMask;
+            int InnerIdx = (c >> BucketIdxBits) & BucketIdxMask;
+            int Offset = c & BucketIdxMask;
+
+            if (c >= UnicodeValLimit)
+                return;
+
+            if (!Indices)
             {
-                this->Indices = new GlyphIndex* [FTCharToGlyphIndexMap::NumberOfBuckets];
-                for(int i = 0; i < FTCharToGlyphIndexMap::NumberOfBuckets; i++)
-                {
-                    this->Indices[i] = 0;
-                }
+                Indices = new GlyphIndex** [BucketIdxSize];
+                for(int i = 0; i < BucketIdxSize; i++)
+                    Indices[i] = 0;
             }
 
-            // Find position of char code in buckets
-            div_t pos = div(c, FTCharToGlyphIndexMap::BucketSize);
-
-            // Allocate bucket if does not exist yet
-            if(!this->Indices[pos.quot])
+            if (!Indices[OuterIdx])
             {
-                this->Indices[pos.quot] = new GlyphIndex [FTCharToGlyphIndexMap::BucketSize];
-                for(int i = 0; i < FTCharToGlyphIndexMap::BucketSize; i++)
-                {
-                    this->Indices[pos.quot][i] = FTCharToGlyphIndexMap::IndexNotFound;
-                }
+                Indices[OuterIdx] = new GlyphIndex* [BucketIdxSize];
+                for(int i = 0; i < BucketIdxSize; i++)
+                    Indices[OuterIdx][i] = 0;
             }
 
-            this->Indices[pos.quot][pos.rem] = g;
+            if (!Indices[OuterIdx][InnerIdx])
+            {
+                Indices[OuterIdx][InnerIdx] = new GlyphIndex [BucketIdxSize];
+                for(int i = 0; i < BucketIdxSize; i++)
+                    Indices[OuterIdx][InnerIdx][i] = IndexNotFound;
+            }
+
+            Indices[OuterIdx][InnerIdx][Offset] = g;
         }
 
     private:
-        GlyphIndex** Indices;
+        GlyphIndex*** Indices;
 };
 
-
 #endif  //  __FTCharToGlyphIndexMap__
+

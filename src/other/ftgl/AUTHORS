@@ -23,6 +23,7 @@ Contributors:
    Jeff Myers (JeffM2501) <JeffM2501@users.sourceforge.net> (Windows fixes)
    Daniel Remenak <dtremenak@users.sourceforge.net> (Windows fixes)
    Coleman Kane (build system fixes)
+   Charles Huet <packadal@gmail.com>
 
 Portions derived from ConvertUTF.c Copyright (C) 2001-2004 Unicode, Inc.
 

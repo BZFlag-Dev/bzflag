@@ -282,16 +282,8 @@ namespace Flags {
 
 void* FlagType::pack(void* buf) const
 {
-  if (flagAbbv.size() > 0)
-    buf = nboPackUInt8(buf, flagAbbv[0]);
-  else
-    buf = nboPackUInt8(buf, 0);
-
-  if (flagAbbv.size() > 1)
-    buf = nboPackUInt8(buf, flagAbbv[1]);
-  else
-    buf = nboPackUInt8(buf, 0);
-
+  buf = nboPackUInt8(buf, (flagAbbv.size() > 0) ? flagAbbv[0] : 0);
+  buf = nboPackUInt8(buf, (flagAbbv.size() > 1) ? flagAbbv[1] : 0);
   return buf;
 }
 

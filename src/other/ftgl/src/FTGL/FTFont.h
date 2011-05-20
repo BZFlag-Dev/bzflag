@@ -469,6 +469,16 @@ FTGL_EXPORT int ftglAttachData(FTGLfont* font, const unsigned char * data,
                                size_t size);
 
 /**
+ * Set the glyph loading flags. By default, fonts use the most
+ * sensible flags when loading a font's glyph using FT_Load_Glyph().
+ * This function allows to override the default flags.
+ *
+ * @param font  An FTGLfont* object.
+ * @param flags  The glyph loading flags.
+ */
+FTGL_EXPORT void ftglSetFontGlyphLoadFlags(FTGLfont* font, FT_Int flags);
+
+/**
  * Set the character map for the face.
  *
  * @param font  An FTGLfont* object.

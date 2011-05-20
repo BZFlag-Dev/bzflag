@@ -69,4 +69,6 @@ EXTRA_DIST = \
 	images/metrics.svg \
 	$(NULL)
 
+MAINTAINERCLEANFILES = Makefile.in
+
 NULL =

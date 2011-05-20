@@ -178,16 +178,16 @@ const FTPoint& FTTextureGlyphImpl::RenderImpl(const FTPoint& pen,
 
     glBegin(GL_QUADS);
         glTexCoord2f(uv[0].Xf(), uv[0].Yf());
-        glVertex2f(dx, dy);
+        glVertex3f(dx, dy, pen.Zf());
 
         glTexCoord2f(uv[0].Xf(), uv[1].Yf());
-        glVertex2f(dx, dy - destHeight);
+        glVertex3f(dx, dy - destHeight, pen.Zf());
 
         glTexCoord2f(uv[1].Xf(), uv[1].Yf());
-        glVertex2f(dx + destWidth, dy - destHeight);
+        glVertex3f(dx + destWidth, dy - destHeight, pen.Zf());
 
         glTexCoord2f(uv[1].Xf(), uv[0].Yf());
-        glVertex2f(dx + destWidth, dy);
+        glVertex3f(dx + destWidth, dy, pen.Zf());
     glEnd();
 
     return advance;

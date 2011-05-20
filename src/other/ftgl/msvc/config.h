@@ -41,3 +41,8 @@
 // quell spurious portable-function deprecation warnings
 #define _CRT_SECURE_NO_DEPRECATE 1
 #define _POSIX_ 1
+
+// use __FUNCTION__
+#define __FUNC__ __FUNCTION__
+
+#define PACKAGE_VERSION "2.2.0"

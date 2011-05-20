@@ -34,8 +34,11 @@ Use FTGL
 
 To use FTGL in your own projects you will need to link against either the
 static lib, or the DLL export lib. All builds use the multithreaded runtime.
+If built with the export lib, your project will need to ship with the
+FTGL .dll file in order to be usable.
 
-Your project will also need to include freetype2 and OpenGL.
+Your project will also need to include the freetype2 and OpenGL .dll files
+in order to be usable.
 
 For instructions on using Freetype go to www.freetype.org
 For instructions on using OpenGL go to www.opengl.org

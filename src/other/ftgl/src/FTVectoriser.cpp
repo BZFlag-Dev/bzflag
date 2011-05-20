@@ -58,6 +58,8 @@ void CALLBACK ftglVertex(void* data, FTMesh* mesh)
 
 void CALLBACK ftglCombine(FTGL_DOUBLE coords[3], void* vertex_data[4], GLfloat weight[4], void** outData, FTMesh* mesh)
 {
+    (void)vertex_data; (void)weight;
+
     const FTGL_DOUBLE* vertex = static_cast<const FTGL_DOUBLE*>(coords);
     *outData = const_cast<FTGL_DOUBLE*>(mesh->Combine(vertex[0], vertex[1], vertex[2]));
 }
@@ -118,7 +120,7 @@ void FTMesh::End()
 }
 
 
-const FTTesselation* const FTMesh::Tesselation(size_t index) const
+FTTesselation const * FTMesh::Tesselation(size_t index) const
 {
     return (index < tesselationList.size()) ? tesselationList[index] : NULL;
 }
@@ -255,7 +257,7 @@ size_t FTVectoriser::PointCount()
 }
 
 
-const FTContour* const FTVectoriser::Contour(size_t index) const
+FTContour const * FTVectoriser::Contour(size_t index) const
 {
     return (index < ContourCount()) ? contourList[index] : NULL;
 }

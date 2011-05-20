@@ -19,7 +19,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(FREETYPE)/include&quot;;../;../../src/"
+				AdditionalIncludeDirectories="&quot;$(FREETYPE)/include&quot;;&quot;$(FREETYPE)/include/freetype2&quot;;../;../../src/"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;FTGL_LIBRARY"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
@@ -33,14 +33,14 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype234_D.lib"
-				OutputFile="../Build/ftgl_D.dll"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype.lib"
+				OutputFile="../Build/ftgl_d.dll"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(FREETYPE)/objs"
+				AdditionalLibraryDirectories="$(FREETYPE)/lib"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile="../Build/ftgl_D.pdb"
+				ProgramDatabaseFile="../Build/ftgl_d.pdb"
 				SubSystem="2"
-				ImportLibrary="../Build/ftgl_D.lib"
+				ImportLibrary="../Build/ftgl_d.lib"
 				TargetMachine="1"/>
 			<Tool
 				Name="VCMIDLTool"/>
@@ -71,7 +71,7 @@
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(FREETYPE)/include&quot;;../;../../src/"
+				AdditionalIncludeDirectories="&quot;$(FREETYPE)/include&quot;;&quot;$(FREETYPE)/include/freetype2&quot;;../;../../src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;FTGL_LIBRARY"
 				RuntimeLibrary="2"
 				RuntimeTypeInfo="TRUE"
@@ -83,10 +83,10 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype234.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib opengl32.lib glu32.lib freetype.lib"
 				OutputFile="../Build/ftgl.dll"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(FREETYPE)/objs"
+				AdditionalLibraryDirectories="$(FREETYPE)/lib"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile="../Build/ftgl.pdb"
 				SubSystem="2"
@@ -161,6 +161,9 @@
 			</File>
 			<File
 				RelativePath="..\..\src\FTFont\FTFontGlue.cpp">
+			</File>
+			<File
+				RelativePath="..\..\src\FTGL.cpp">
 			</File>
 			<File
 				RelativePath="..\..\src\FTGlyph\FTGlyph.cpp">

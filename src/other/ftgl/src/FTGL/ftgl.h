@@ -65,6 +65,21 @@ namespace FTGL
         ALIGN_RIGHT   = 2,
         ALIGN_JUSTIFY = 3
     } TextAlignment;
+
+    typedef enum
+    {
+        CONFIG_VERSION = 1,
+    } ConfigString;
+
+    /**
+     * Return a string describing the current %FTGL instance
+     *
+     * @param config  Name of the string to retrieve. Can be one of:
+     *                 - CONFIG_VERSION: return the %FTGL release number.
+     * @return  A pointer to a constant string containing the requested
+     *          information, or 0 in case of invalid argument.
+     */
+    extern char const *GetString(ConfigString config);
 }
 #else
 #   define FTGL_RENDER_FRONT 0x0001
@@ -76,6 +91,18 @@ namespace FTGL
 #   define FTGL_ALIGN_CENTER  1
 #   define FTGL_ALIGN_RIGHT   2
 #   define FTGL_ALIGN_JUSTIFY 3
+
+#   define FTGL_CONFIG_VERSION 1
+
+    /**
+     * Return a string describing the current %FTGL instance
+     *
+     * @param config  Name of the string to retrieve. Can be one of:
+     *                 - FTGL_CONFIG_VERSION: return the %FTGL release number.
+     * @return  A pointer to a constant string containing the requested
+     *          information, or NULL in case of invalid argument.
+     */
+    extern char const *ftglGetString(int config);
 #endif
 
 // Compiler-specific conditional compilation

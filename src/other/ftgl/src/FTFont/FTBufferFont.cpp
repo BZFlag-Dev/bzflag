@@ -231,12 +231,13 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
     bool inCache = false;
 
     // Protect blending functions and GL_TEXTURE_2D
-    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT);
+    glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_TEXTURE_ENV_MODE);
 
     // Protect glPixelStorei() calls
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
 
     glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     // Search whether the string is already in a texture we uploaded
     for(int n = 0; n < BUFFER_CACHE_SIZE; n++)
@@ -304,23 +305,23 @@ inline FTPoint FTBufferFontImpl::RenderI(const T* string, const int len,
         buffer->Size(0, 0);
     }
 
-    FTPoint low = position + bbox.Lower();
-    FTPoint up = position + bbox.Upper();
+    FTPoint low = position + bbox.Lower() - FTPoint(padding, padding);
+    FTPoint up = position + bbox.Upper() + FTPoint(padding, padding);
 
     glBegin(GL_QUADS);
         glNormal3f(0.0f, 0.0f, 1.0f);
-        glTexCoord2f(padding / texWidth,
-                     (texHeight - height + padding) / texHeight);
-        glVertex2f(low.Xf(), up.Yf());
-        glTexCoord2f(padding / texWidth,
-                     (texHeight - padding) / texHeight);
-        glVertex2f(low.Xf(), low.Yf());
-        glTexCoord2f((width - padding) / texWidth,
-                     (texHeight - padding) / texHeight);
-        glVertex2f(up.Xf(), low.Yf());
-        glTexCoord2f((width - padding) / texWidth,
-                     (texHeight - height + padding) / texHeight);
-        glVertex2f(up.Xf(), up.Yf());
+        glTexCoord2f(0.0f,
+                     1.0f / texHeight * (texHeight - height));
+        glVertex3f(low.Xf(), up.Yf(), position.Zf());
+        glTexCoord2f(0.0f,
+                     1.0f);
+        glVertex3f(low.Xf(), low.Yf(), position.Zf());
+        glTexCoord2f(1.0f / texWidth * width,
+                     1.0f);
+        glVertex3f(up.Xf(), low.Yf(), position.Zf());
+        glTexCoord2f(1.0f / texWidth * width,
+                     1.0f / texHeight * (texHeight - height));
+        glVertex3f(up.Xf(), up.Yf(), position.Zf());
     glEnd();
 
     glPopClientAttrib();

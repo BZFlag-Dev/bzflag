@@ -126,6 +126,9 @@ static void RenderScene(void)
 
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
     glPushMatrix();
         glTranslatef(-0.9f, -0.2f, -10.0f);
@@ -240,6 +243,9 @@ int main(int argc, char **argv)
 
     ftglSetFontFaceSize(font[2], 80, 72);
     ftglSetFontCharMap(font[2], ft_encoding_unicode);
+
+    fprintf(stderr, "Using FTGL version %s\n",
+            ftglGetString(FTGL_CONFIG_VERSION));
 
     /* Run GLUT loop */
     glutMainLoop();

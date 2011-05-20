@@ -2,7 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- * Copyright (c) 2008 Sam Hocevar <sam@hocevar.net>
+ * Copyright (c) 2008-2010 Sam Hocevar <sam@hocevar.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -45,16 +45,29 @@ class FTPolygonFontImpl : public FTFontImpl
          * Set the outset distance for the font. Only implemented by
          * FTOutlineFont, FTPolygonFont and FTExtrudeFont
          *
-         * @param depth  The outset distance.
+         * @param outset  The outset distance.
          */
         virtual void Outset(float o) { outset = o; }
 
+        virtual FTPoint Render(const char *s, const int len,
+                               FTPoint position, FTPoint spacing,
+                               int renderMode);
+
+        virtual FTPoint Render(const wchar_t *s, const int len,
+                               FTPoint position, FTPoint spacing,
+                               int renderMode);
+
     private:
         /**
-         * The outset distance (front and back) for the font.
+         * The outset distance for the font.
          */
         float outset;
+
+        /* Internal generic Render() implementation */
+        template <typename T>
+        inline FTPoint RenderI(const T *s, const int len,
+                               FTPoint position, FTPoint spacing, int mode);
 };
 
-#endif  //  __FTPolygonFontImpl__
+#endif // __FTPolygonFontImpl__
 

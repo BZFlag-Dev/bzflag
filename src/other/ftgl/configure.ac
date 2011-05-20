@@ -2,13 +2,12 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(FTGL, 2.2.0, [sam@hocevar.net], ftgl)
+AC_INIT(FTGL, 2.2.0, [https://sourceforge.net/projects/ftgl/], ftgl)
 AC_CONFIG_SRCDIR(src/FTPoint.cpp)
 AC_CONFIG_AUX_DIR(.auto)
+AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([1.6 no-define dist-zip dist-bzip2])
 AM_CONFIG_HEADER(config.h)
-
-AC_ARG_ENABLE(freetype_build, [  --enable-freetype-build     Use included version of freetype2])
 
 FTGL_PROG_CXX
 
@@ -39,6 +38,8 @@ dnl AC_C_CONST
 dnl AC_C_INLINE
 AM_PROG_CC_C_O
 
+FTGL_CPP_FUNC
+
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADER([stdlib.h])
@@ -51,17 +52,8 @@ AC_CHECK_FUNCS(strndup)
 
 AC_PATH_X
 
-if test "x$enable_freetype_build" != "xyes" ; then
-  AC_CHECK_FT2([9.0.3],[],
-	       [AC_MSG_ERROR([FreeType2 is required to compile this library])])
-else
-  # BZFlag-specific, need to be a proper subconfigure
-  AC_MSG_NOTICE([Using the included FreeType2])
-  FT2_CPPFLAGS='-I${top_srcdir}/../freetype/include'
-  FT2_LIBS='${top_builddir}/../freetype/libfreetype.la -lz'
-  AC_SUBST(FT2_CPPFLAGS)
-  AC_SUBST(FT2_LIBS)
-fi
+AC_CHECK_FT2([9.0.3],[],
+             [AC_MSG_ERROR([FreeType2 is required to compile this library])])
 
 AC_PATH_XTRA
 
@@ -79,8 +71,11 @@ dnl may conflict.
 CPPFLAGS="$CPPFLAGS -I\${top_srcdir}/src"
 
 # Warning flags
-CPPFLAGS="${CPPFLAGS} -Wall -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare"
-CFLAGS="${CFLAGS} -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs"
+BC_COMPILER_AND_LINKER_RECOGNIZES([-W -Wall -Wundef -Wfloat-equal  -Wpointer-arith -Wcast-align -Wcast-qual -Wshadow -Wsign-compare -Winline -Waggregate-return], [warning])
+BC_COMPILER_AND_LINKER_RECOGNIZES([-Wstrict-prototypes -Wmissing-prototypes -Wnested-externs], [warncflags], [no])
+if test "x$bc_warncflags_works" = "xyes" ; then
+    CFLAGS="$CFLAGS -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs"
+fi
 
 # Build HTML documentatin?
 AC_PATH_PROG(DOXYGEN, doxygen, no)
@@ -92,7 +87,7 @@ AC_PATH_PROG(KPSEWHICH, kpsewhich, no)
 AC_PATH_PROG(DVIPS, dvips, no)
 AC_PATH_PROG(CONVERT, convert, no)
 AC_PATH_PROG(EPSTOPDF, epstopdf, no)
-AC_PATH_TOOL(SED, sed, no)
+AC_PATH_PROGS(SED, gsed sed, no)
 if test "${DVIPS}" = "no" -o "${KPSEWHICH}" = "no" -o "${EPSTOPDF}" = "no" \
      -o "${CONVERT}" = "no" -o "${SED}" = "no"; then
   LATEX="no"

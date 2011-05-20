@@ -405,6 +405,8 @@ inline void FTSimpleLayoutImpl::RenderSpaceI(const T *string, const int len,
                                              FTPoint position, int renderMode,
                                              const float extraSpace)
 {
+    (void)position;
+
     float space = 0.0;
 
     // If there is space to distribute, count the number of spaces

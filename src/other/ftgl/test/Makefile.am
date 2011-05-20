@@ -1,9 +1,12 @@
 
 if HAVE_CPPUNIT
 if HAVE_GLUT
-noinst_PROGRAMS = CTest CXXTest
+cppunit_tests = CTest CXXTest
 endif
 endif
+
+noinst_PROGRAMS = $(cppunit_tests)
+TESTS = $(cppunit_tests)
 
 CXXTest_SOURCES = \
     $(DEACTIVATED) \
@@ -66,6 +69,8 @@ CTest_CPPFLAGS = \
 CTest_CFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 CTest_LDFLAGS = $(FT2_LIBS) $(GLUT_LIBS)
 CTest_LDADD = ../src/libftgl.la
+
+MAINTAINERCLEANFILES = Makefile.in
 
 NULL =
 

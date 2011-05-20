@@ -180,7 +180,8 @@ FTGL_EXPORT void ftglSetLayoutLineLength(FTGLlayout *, const float);
 FTGL_EXPORT float ftglGetLayoutLineLength(FTGLlayout *);
 
 FTGL_EXPORT void ftglSetLayoutAlignment(FTGLlayout *, const int);
-FTGL_EXPORT int ftglGetLayoutAlignement(FTGLlayout *);
+FTGL_EXPORT int ftglGetLayoutAlignment(FTGLlayout *);
+FTGL_EXPORT int ftglGetLayoutAlignement(FTGLlayout *); // old typo
 
 FTGL_EXPORT void ftglSetLayoutLineSpacing(FTGLlayout *, const float);
 FTGL_EXPORT float ftglGetLayoutLineSpacing(FTGLlayout *);

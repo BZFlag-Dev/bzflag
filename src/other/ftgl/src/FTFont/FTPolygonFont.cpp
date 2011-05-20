@@ -2,7 +2,7 @@
  * FTGL - OpenGL font library
  *
  * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- * Copyright (c) 2008 Sam Hocevar <sam@hocevar.net>
+ * Copyright (c) 2008-2010 Sam Hocevar <sam@hocevar.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -85,5 +85,42 @@ FTPolygonFontImpl::FTPolygonFontImpl(FTFont *ftFont,
   outset(0.0f)
 {
     load_flags = FT_LOAD_NO_HINTING;
+}
+
+
+template <typename T>
+inline FTPoint FTPolygonFontImpl::RenderI(const T* string, const int len,
+                                          FTPoint position, FTPoint spacing,
+                                          int renderMode)
+{
+    // Protect GL_POLYGON
+    glPushAttrib(GL_POLYGON_BIT);
+
+    // Activate front and back face filling. If the caller wants only
+    // front face, it can set proper culling.
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    FTPoint tmp = FTFontImpl::Render(string, len,
+                                     position, spacing, renderMode);
+
+    glPopAttrib();
+
+    return tmp;
+}
+
+
+FTPoint FTPolygonFontImpl::Render(const char * string, const int len,
+                                  FTPoint position, FTPoint spacing,
+                                  int renderMode)
+{
+    return RenderI(string, len, position, spacing, renderMode);
+}
+
+
+FTPoint FTPolygonFontImpl::Render(const wchar_t * string, const int len,
+                                  FTPoint position, FTPoint spacing,
+                                  int renderMode)
+{
+    return RenderI(string, len, position, spacing, renderMode);
 }
 

@@ -150,7 +150,7 @@ void ftglDestroyGlyph(FTGLglyph *g)
 {
     if(!g || !g->ptr)
     {
-        fprintf(stderr, "FTGL warning: NULL pointer in %s\n", __FUNCTION__);
+        fprintf(stderr, "FTGL warning: NULL pointer in %s\n", __FUNC__);
         return;
     }
     delete g->ptr;

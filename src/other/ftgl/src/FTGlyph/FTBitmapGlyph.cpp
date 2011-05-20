@@ -109,6 +109,8 @@ FTBitmapGlyphImpl::~FTBitmapGlyphImpl()
 
 const FTPoint& FTBitmapGlyphImpl::RenderImpl(const FTPoint& pen, int renderMode)
 {
+    (void)renderMode;
+
     if(data)
     {
         float dx, dy;

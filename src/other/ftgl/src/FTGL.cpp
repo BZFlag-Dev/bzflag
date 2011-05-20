@@ -1,8 +1,7 @@
 /*
  * FTGL - OpenGL font library
  *
- * Copyright (c) 2001-2004 Henry Maddocks <ftgl@opengl.geek.nz>
- * Copyright (c) 2008 Sam Hocevar <sam@hocevar.net>
+ * Copyright (c) 2008-2010 Sam Hocevar <sam@hocevar.net>
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
@@ -26,89 +25,29 @@
 
 #include "config.h"
 
-#include "FTGL/ftgl.h"
-
 #include "FTInternals.h"
-#include "FTGlyphImpl.h"
 
+namespace FTGL {
 
-//
-//  FTGlyph
-//
-
-
-FTGlyph::FTGlyph(FT_GlyphSlot glyph)
+char const *GetString(ConfigString config)
 {
-    impl = new FTGlyphImpl(glyph);
-}
-
-
-FTGlyph::FTGlyph(FTGlyphImpl *pImpl)
-{
-    impl = pImpl;
-}
-
-
-FTGlyph::~FTGlyph()
-{
-    delete impl;
-}
-
-
-float FTGlyph::Advance() const
-{
-    return impl->Advance();
-}
-
-
-const FTBBox& FTGlyph::BBox() const
-{
-    return impl->BBox();
-}
-
-
-FT_Error FTGlyph::Error() const
-{
-    return impl->Error();
-}
-
-
-//
-//  FTGlyphImpl
-//
-
-
-FTGlyphImpl::FTGlyphImpl(FT_GlyphSlot glyph, bool useList) : err(0)
-{
-    (void)useList;
-
-    if(glyph)
+    switch(config)
     {
-        bBox = FTBBox(glyph);
-        advance = FTPoint(glyph->advance.x / 64.0f,
-                          glyph->advance.y / 64.0f);
+    case CONFIG_VERSION:
+        return PACKAGE_VERSION;
     }
+
+    return 0;
 }
 
+} // namespace FTGL
 
-FTGlyphImpl::~FTGlyphImpl()
-{}
+FTGL_BEGIN_C_DECLS
 
-
-float FTGlyphImpl::Advance() const
+char const *ftglGetString(int config)
 {
-    return advance.Xf();
+    return FTGL::GetString(static_cast<FTGL::ConfigString>(config));
 }
 
-
-const FTBBox& FTGlyphImpl::BBox() const
-{
-    return bBox;
-}
-
-
-FT_Error FTGlyphImpl::Error() const
-{
-    return err;
-}
+FTGL_END_C_DECLS
 

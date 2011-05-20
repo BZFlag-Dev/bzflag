@@ -151,7 +151,7 @@ void ftglDestroyFont(FTGLfont *f)
 {
     if(!f || !f->ptr)
     {
-        fprintf(stderr, "FTGL warning: NULL pointer in %s\n", __FUNCTION__);
+        fprintf(stderr, "FTGL warning: NULL pointer in %s\n", __FUNC__);
         return;
     }
     delete f->ptr;

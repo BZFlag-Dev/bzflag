@@ -12,6 +12,7 @@ libftgl_la_SOURCES = \
     FTContour.h \
     FTFace.cpp \
     FTFace.h \
+    FTGL.cpp \
     FTGlyphContainer.cpp \
     FTGlyphContainer.h \
     FTInternals.h \
@@ -30,7 +31,7 @@ libftgl_la_SOURCES = \
     $(ftlayout_sources) \
     $(ftgl_headers) \
     $(NULL)
-libftgl_la_CPPFLAGS = -IFTGlyph -IFTFont -IFTLayout $(FT2_CPPFLAGS)
+libftgl_la_CPPFLAGS = -IFTGlyph -IFTFont -IFTLayout
 libftgl_la_CXXFLAGS = $(FT2_CFLAGS) $(GL_CFLAGS)
 libftgl_la_LDFLAGS = \
         -no-undefined -version-number $(LT_VERSION)
@@ -117,5 +118,7 @@ ftlayout_sources = \
     FTLayout/FTSimpleLayout.cpp \
     FTLayout/FTSimpleLayoutImpl.h \
     $(NULL)
+
+MAINTAINERCLEANFILES = Makefile.in
 
 NULL =

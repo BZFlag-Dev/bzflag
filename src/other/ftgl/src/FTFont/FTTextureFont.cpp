@@ -74,17 +74,19 @@ FTGlyph* FTTextureFont::MakeGlyph(FT_GlyphSlot ftGlyph)
 //
 
 
-static inline GLuint NextPowerOf2(GLuint in)
+static inline GLuint ClampSize(GLuint in, GLuint maxTextureSize)
 {
-     in -= 1;
+    // Find next power of two
+    --in;
+    in |= in >> 16;
+    in |= in >> 8;
+    in |= in >> 4;
+    in |= in >> 2;
+    in |= in >> 1;
+    ++in;
 
-     in |= in >> 16;
-     in |= in >> 8;
-     in |= in >> 4;
-     in |= in >> 2;
-     in |= in >> 1;
-
-     return in + 1;
+    // Clamp to max texture size
+    return in < maxTextureSize ? in : maxTextureSize;
 }
 
 
@@ -174,16 +176,22 @@ void FTTextureFontImpl::CalculateTextureSize()
     {
         maximumGLTextureSize = 1024;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint*)&maximumGLTextureSize);
-        assert(maximumGLTextureSize); // If you hit this then you have an invalid OpenGL context.
+        assert(maximumGLTextureSize); // Indicates an invalid OpenGL context
     }
 
-    textureWidth = NextPowerOf2((remGlyphs * glyphWidth) + (padding * 2));
-    textureWidth = textureWidth > maximumGLTextureSize ? maximumGLTextureSize : textureWidth;
+    // Texture width required for numGlyphs glyphs. Will probably not be
+    // large enough, but we try to fit as many glyphs in one line as possible
+    textureWidth = ClampSize(glyphWidth * numGlyphs + padding * 2,
+                             maximumGLTextureSize);
 
-    int h = static_cast<int>((textureWidth - (padding * 2)) / glyphWidth + 0.5);
+    // Number of lines required for that many glyphs in a line
+    int tmp = (textureWidth - (padding * 2)) / glyphWidth;
+    tmp = tmp > 0 ? tmp : 1;
+    tmp = (numGlyphs + (tmp - 1)) / tmp; // round division up
 
-    textureHeight = NextPowerOf2(((numGlyphs / h) + 1) * glyphHeight);
-    textureHeight = textureHeight > maximumGLTextureSize ? maximumGLTextureSize : textureHeight;
+    // Texture height required for tmp lines of glyphs
+    textureHeight = ClampSize(glyphHeight * tmp + padding * 2,
+                              maximumGLTextureSize);
 }
 
 
@@ -232,9 +240,10 @@ inline FTPoint FTTextureFontImpl::RenderI(const T* string, const int len,
                                           int renderMode)
 {
     // Protect GL_TEXTURE_2D
-    glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+    glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TEXTURE_ENV_MODE);
 
     glEnable(GL_TEXTURE_2D);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     FTTextureGlyphImpl::ResetActiveTexture();
 

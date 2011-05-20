@@ -1798,7 +1798,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
       bumpPos.y = startPos.y;
       bumpPos.z = obstacleTop;
       static BZDB_float bumpSpeedFactor("_bumpSpeedFactor");
-      bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
+      bumpPos.xy() += newVelocity.xy() * ((float)dt * bumpSpeedFactor);
       const Obstacle* bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
 						    bumpPos, newAzimuth,
                                                     phased, expel);
@@ -1811,7 +1811,7 @@ bool Player::getHitCorrection(const fvec3& startPos, const float startAzimuth,
         bumpPos.x = startPos.x;
         bumpPos.y = startPos.y;
         bumpPos.z = obstacleTop;
-        bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1f;
+        bumpPos.xy() += newVelocity.xy() * ((float)dt * bumpSpeedFactor) * 0.1f;
         bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                       bumpPos, newAzimuth,
                                       phased, expel);

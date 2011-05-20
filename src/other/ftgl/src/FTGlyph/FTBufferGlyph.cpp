@@ -90,6 +90,8 @@ FTBufferGlyphImpl::~FTBufferGlyphImpl()
 
 const FTPoint& FTBufferGlyphImpl::RenderImpl(const FTPoint& pen, int renderMode)
 {
+    (void)renderMode;
+
     if(has_bitmap)
     {
         FTPoint pos(buffer->Pos() + pen + corner);

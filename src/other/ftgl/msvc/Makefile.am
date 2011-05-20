@@ -35,4 +35,6 @@ vc9_files = \
     vc9/trackball.vcproj \
     $(NULL)
 
+MAINTAINERCLEANFILES = Makefile.in
+
 NULL =
