@@ -6,26 +6,45 @@ BZFlag source code lives in the following directories:
 
 applications
 ------------
+src/bzadmin	- the BZFlag admin tool and chat client
 src/bzflag	- the BZFlag client
 src/bzfs	- the BZFlag server
-src/bzadmin	- the BZFlag admin tool and chat client
+src/bzrobots	- standalone robot client framework
 tools/		- various helper tools
 
 game dependent libraries
 ------------------------
+plugins/	- optional server plugins
+src/clientbase	- core logic for all clients
 src/game	- core game logic
+src/lua		- libraries for lua script environments
+		  (LuaUser, LuaBzOrg, LuaWorld, LuaRules, and LuaServer)
 
 game independent, platform independent libraries
 ------------------------------------------------
+src/3D		- 3D geometry  (actually; not much 3D here, fonts and textures)
 src/common	- general utility
-src/3D		- 3D geometry
 src/geometry	- geometric mathematics
-src/obstacle	- collision detection
-src/scene	- scene graph
-src/ogl		- wrapper classes for OpenGL
 src/mediafile	- sound and image file support
-src/regex	- BSD regular expression library
-src/zlib	- Zlib compression library
+src/obstacle	- collision detection
+src/ogl		- wrapper classes for OpenGL
+src/scene	- scene graph
+
+game independent, platform independent, external libraries
+----------------------------------------------------------
+src/other/ares		- c-ares asynchronous resolver
+src/other/curl		- cURL library for transferring data with a URL
+src/other/freetype	- FreeType 2 font engine
+src/other/ftgl		- FTGL font engine for OpenGL
+src/other/glew		- OpenGL Extension Wrangler Library
+src/other/lua		- Lua programming language
+src/other/regex		- BSD regular expression library
+src/other/zlib		- Zlib compression library
+
+Developers should make only the most essential modifications in the
+BZFlag source tree to these third party packages.  This means that we
+allow them to install extraneous files such as documentation and
+headers into the BZFlag binary tree.
 
 game independent, platform dependent libraries
 ----------------------------------------------
@@ -35,18 +54,26 @@ src/platform	- general platform dependent code
 
 "other stuff"
 -------------
+BZFlag.xcodeproj/ - project definition for Apple XCode
+MSVC/		- project definitions for Microsoft Visual C
+bots/		- sample robots in several languages
+data/		- images, sounds, fonts, translations
+debian/		- packaging aids for Debian Linux
+doc/		- documentation in docbook format
 include/	- public headers
+m4/		- configuration macros
+man/		- documentation in manual page format
 misc/		- kitchen sink of anything
-web/		- website stuff
+package/	- packaging aids for specific operating systems
 
 Note that only a few directories contain code directly related to the
-game BZFlag.  In particular: bzflag, bzadmin, bzfs, and game. (And
-obstacle, but that will hopefully be made more general some day.) The
-rest of the code could potentially be used in a different game. If
-your code is BZFlag specific then it should go into one of the above
-directories (game if it can potentially be used by more than one app,
-otherwise into the appropriate app directory).  If not then put it in
-one of the other directories or add a new directory.
+game BZFlag.  In particular: bzflag, bzadmin, bzfs, plugins, and game.
+(And obstacle, but that will hopefully be made more general some day.)
+The rest of the code could potentially be used in a different game.
+If your code is BZFlag specific then it should go into one of the
+above directories (game if it can potentially be used by more than one
+app, otherwise into the appropriate app directory).  If not then put
+it in one of the other directories or add a new directory.
 
 
 Coding conventions
@@ -62,7 +89,7 @@ Follow the above organization when introducing new files.  Any code
 that would potentially be useful in another game goes outside of the
 app directories and outside the game directory.  Platform dependent
 code normally goes into platform, net.  Code that is specific to
-bzflag should go into the game directory.  There are README files in
+BZFlag should go into the game directory.  There are README files in
 most all of the source directories that describe what belongs in those
 directories
 
@@ -72,8 +99,9 @@ directory off the top-level.  Header files for classes introduced in
 an application directory should never go into a #include outside of
 that application directory.
 
-C files use the .c extension. C++ files use the .cxx extension.
-Header files for both C and C++ use the .h extension.
+C files use the .c extension.  C++ files use the .cxx extension for
+everything except plugins which use the .cpp extension.  Header files
+for both C and C++ use the .h extension.
 
 Headers
 -------
@@ -101,9 +129,9 @@ exceptions to this such as simple utility classes that are local to
 that same file's implementation.  If it's a public class, though, it's
 usually best to separate it out into another file by itself.
 
-Avoid "extern" in C files. This prevents the compiler from type checking in
-most cases. If you need access to something, put it in a header. That's what
-headers are for.
+Avoid "extern" in C files.  This prevents the compiler from type
+checking in most cases.  If you need access to something, put it in a
+header.  That's what headers are for.
 
 C++ features
 ------------
@@ -119,7 +147,7 @@ These should still be avoided:
 
   exceptions		-- still poorly supported on old lame compilers
   run-time typing	-- if you find yourself needing RTTI, its often a
-			   sign of bad design. try to find another way to
+			   sign of bad design.  Try to find another way to
 			   implement your idea.
 
 Multiple inheritance is strongly discouraged unless in the Java style
@@ -127,18 +155,30 @@ of single implementation inheritance and multiple interface
 inheritance.  Multiple inheritance otherwise can quickly lead to very
 hard to understand code.
 
+To prevent ambiguity, do not use the C++ "using" keyword just to avoid
+typing explicit references to the "std" namespace.  Other namespaces,
+especially those defined in BZFlag code, may be introduced with
+"using" when it improves code readability.
+
+Only use standard C++ language features, at no time should any
+compiler-specific extensions be used (GNU or VisualC++ extensions).
+If an extension can not be avoided then it must be able to be disabled
+or replaced using a #define in config.h.  BZFlag is a cross-platform
+application so it is important to remember that not all builds will
+use your specific compiler.
+
 Formatting
 ----------
 Everybody has their own style and has things they don't like about any
-other style.  Well we can't have a zillion styles in the code. So
-follow the BZFlag if you want your contribution included.  The source
-code serves for examples but some rules:
+other style.  Well, we can't have a zillion styles in the code, so
+follow the BZFlag style if you want your contribution included.  The
+source code serves for examples of the following rules.
 
-  1)  indents are 2 characters. Tabs are 8 characters. There are vi and
-      emacs settings in each file to adopt, enforce, remind, and
-      encourage this convention. Suggestions welcome here for setting
-      up other environments. Here are the lines that should be included
-      at the end of source files:
+  1)  Indents are 2 characters.  Tabs are 8 characters.  There are vi
+      and emacs settings in each file to adopt, enforce, remind, and
+      encourage this convention.  Suggestions are welcome here for
+      setting up other environments.  Here are the lines that should
+      be included at the end of source files:
 
 	// Local Variables: ***
 	// mode: C++ ***
@@ -148,84 +188,100 @@ code serves for examples but some rules:
 	// End: ***
 	// ex: shiftwidth=2 tabstop=8
 
-  2)  the opening brace of all blocks goes on the same line as the
+      In emacs the the indent-region command (bound to C-M-\ by
+      default) does a good job of making the needed changes to conform
+      to this convention.  Installing exTabSettings in MSVC will make
+      it conform.
+
+  2)  The opening brace of all blocks goes on the same line as the
       statement introducing it except for functions and classes where
-      it goes on the following line. the closing brace is indented
+      it goes on the following line.  The closing brace is indented
       like the statement except for functions where it aligns with the
-      open brace.  for example:
+      open brace.  For example:
 
-        void foo()
-        {
-          for (;;) {
-            if (expr) {
-            }
-          }
-        }
+	void foo()
+	{
+	  for (;;) {
+	    if (expr) {
+	    }
+	  }
+	}
 
-  3)  an else clause goes on the same line (there are many unacceptable
+  3)  An else clause goes on the same line (there are many unacceptable
       alternatives):
 
-        if (expr) {
-        } else {
-        }
+	if (expr) {
+	} else {
+	}
 	*note that old code had the else on the next line,
 	 please clean this up wherever you may find it*
 
-  4)  if *either* the if block or else block requires brackets then
+  4)  If *either* the if block or else block requires brackets then
       they both get brackets.  if neither requires brackets then use
-      brackets on both or neither at your discretion. In case both
+      brackets on both or neither at your discretion.  In case both
       styles are allowed, don't change the existing code just because
       it is not coded like you prefer.
 
-  5)  when using `delete' or `delete[]' don't bother to test the
+  5)  When using `delete' or `delete[]' don't bother to test the
       pointer if it's NULL first.  use new and delete rather than
       malloc and free.
 
-  6)  data members should be usually private unless making plain old
+  6)  Data members should be usually private unless making plain old
       data.  separate methods from data in class definitions with
       (possibly redundant) access specifiers.  public c'tors/d'tors
       should be first, followed by public member functions, protected
       member functions, private member functions, and data members.
 
-  7)  macro names are all capitals, class names have the first letter
+  7)  Macro names are all capitals, class names have the first letter
       of each word capitalized, all other names have the first letter
-      of each word except the first capitalized.  only macros may use
-      underscores except a leading underscore in a method parameter
-      name is allowed to make it different from a member variable.
+      of each word except the first capitalized.  Only macros may use
+      underscores, except for in the names of method parameters where
+      a leading underscore is allowed to make it different from a
+      member variable.
 
-        #define FOO bar
-        class MyClass {
-        public:
-            void        addStuff(int addMe, int _y) { y = addMe + y; }
+	#define FOO bar
+	class MyClass {
+	public:
+	    void        addStuff(int addMe, int _y) { y = addMe + _y; }
 
-        private:
-            int         y;
-        };
+	private:
+	    int         y;
+	};
 
-  8)  put spaces after statements followed by expressions and spaces
-      around operators.  for example:
-        if (a == b)
+  8)  Put spaces after statements followed by expressions and spaces
+      around operators.  For example:
+	if (a == b)
       not
-        if(a==b)
+	if(a==b)
 
   9)  Do not leave old commented code hanging around and do not submit
-      patches with "// Added by foo on xx" comments. This is what
+      patches with "// Added by foo on xx" comments.  This is what
       version control software is for.
 
- 10)  Do not code very long line. Try to stay within 80 column if possible,
-      for any reason you should raise that limit, don't go over 132.
+ 10)  Do not code very long lines.  Try to stay within 80 columns if
+      possible, but don't go over 132 if you should raise that limit
+      for some reason.
 
 Violations of these rules in the existing code are not excuses to
-follow suit.  Non-conformant code may be fixed.  Patches to
-non-conformant code should follow the non-conformant code's style if
+follow suit.  Non-conforming code may be fixed.  Patches to
+non-conforming code should follow the non-conforming code's style if
 following the rules would cause an ugly mess.
+
+Performance
+-----------
+
+If the code you are editing is in a performance-critical section of
+BZFlag (that is, if it is called multiple times per frame on the
+client, or per server loop on the server), you should profile the
+proposed changes.  The new code does not necessarily need to be
+faster, but a quantitative analysis is required.
 
 
 Committing Changes
 ==================
 
-Make atomic changes in a way that a system will be working, or at
-least will be buildable, before and after committing a set of changes.
+Make atomic changes in a way that a system will be working, or at least
+will compile successfully, before and after committing a set of changes.
 
 Try to separate out bigger commits into smaller ones.  In particular,
 if a change involves multiple functionality changes, the commit should
@@ -238,11 +294,11 @@ Making Patches
 
 If you do not have source code commit access and would like to propose
 a change for inclusion, you should create a patch.  Patches should be
-submitted to the Sourceforge project site patches tracker at:
+submitted to the SourceForge project site patches tracker at:
 
 https://sourceforge.net/tracker/?func=add&group_id=3248&atid=303248
 
-You can create a patch for submission to Sourceforge from a source
+You can create a patch for submission to SourceForge from a source
 checkout using the following command:
 
 svn diff -u > my_patch_name.diff
@@ -255,7 +311,7 @@ diff -u src/bzfs/somefile.cxx /dev/null >> my_patch_name.diff
 If your patch requires the addition of new files, simply include these
 new files individually or in a tarball as part of the patch submission.
 
-In general, patches should be relatively small succint changes that
+In general, patches should be relatively small succinct changes that
 can be readily reviewed, tested, and applied.  Patches that are
 difficult to review, test, or apply will likely not be accepted.  That
 said, creating useful patches that have been discussed with the
@@ -332,35 +388,35 @@ A profile build is specified via:
 
 Sounds
 ======
-Sounds are stored as uncompressed 22.050KHz WAV files. We will likely move to
-OGG someday.
+Sounds are stored as uncompressed 22.050KHz WAV files.  We will likely
+move to OGG someday.
 
 
 Images
 ======
-Images are stored as portable network graphics (.png). Compression is
+Images are stored as portable network graphics (.png).  Compression is
 okay, but no additional options such as interlacing.
 
 
 BZDB
 ====
 BZDB is the generic name:value pair database within bzflag and
-bzfs. Its useful for data that can be serialized to a string that
-needs to be accessible to many areas of the code. It also provides
+bzfs.  It is useful for data that can be serialized to a string that
+needs to be accessible to many areas of the code.  It also provides
 facilities for saving persistent pairs to the config file and
 downloading variables from the server.
 
-BZDB is not an object broker, and isn't meant to be. If you have data
+BZDB is not an object broker, and isn't meant to be.  If you have data
 within an object that needs to be accessible from a number of places,
 but don't want to pass the object around, you could store that data
 within BZDB (if accessed often, such as game variables like gravity,
 you will need a cached version anyway to avoid the overhead of
-lookup). Using BZDB adds unnecessary overhead if objects generally
+lookup).  Using BZDB adds unnecessary overhead if objects generally
 keep their data hidden without needing persistent state.
 
 Basically, if your data can be serialized to a string, and it makes
 sense to do so (eg: config file option, game variable downloaded from
-server), use BZDB. If you wanted an object broker, use a freakin'
+server), use BZDB.  If you wanted an object broker, use a freakin'
 global.
 
 
@@ -380,8 +436,8 @@ All "development" versions use an odd number for the minor version
 number.  All "release" versions use an even number for the minor
 version, e.g.. 1.9.x is a development version for a future 1.10
 release.  Release versions also use even revision version
-numbers. Maintenance work is done on odd numbered revisions and
-releases are even numbered. For development versions the revision
+numbers.  Maintenance work is done on odd numbered revisions and
+releases are even numbered.  For development versions the revision
 version represents significant feature changes or stages in a
 development version, such as a change to the network protocol or a
 move to a definite testing stage.  For "release" versions, the
@@ -389,7 +445,7 @@ revision represents patches or bug fixes to the base release, but not
 new feature development.  This allows the developers to "leave some
 room" for patches and emergency fixes to a release line.
 
-The network protocol version is a string. When changes to the protocol
+The network protocol version is a string.  When changes to the protocol
 are made that render it incompatible with prior releases, the version
 number of the protocol must be changed.  This is necessary to prevent
 incompatible clients from attempting connections.  When a change is
@@ -426,7 +482,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - All code is committed to the repository.
 
-- ChangeLog includes a comment for all items added since the previous
+- NEWS includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
 - Man files, bzfs_conf.html, and bzfs.conf files are updated with
@@ -449,7 +505,7 @@ cannot proceed.  A checklist of items to be completed follows:
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
 	e.g. svn copy bzflag \
-	     https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/v2_0_17/
+	     https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/v2_99_59/
 
 - Perform a
   "svn export https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/vMAJOR_MINOR_RELEASE"
@@ -476,8 +532,11 @@ cannot proceed.  A checklist of items to be completed follows:
 bzflag-users@lists.SourceForge.net
 news on http://BZFlag.org/
 news on http://sourceforge.net/projects/bzflag/
-http://slashdot.org/
 http://freshmeat.net/projects/bzflag/ (rank BZFlag here!)
+
+- Optionally notify the following:
+
+http://slashdot.org/
 http://happypenguin.org/ (BZFlag is now #2 in the ratings!)
 news@linuxgames.com - http://LinuxGames.com/
 John Gowin <jgowin@linuxorbit.com> (thanx for the review!)
@@ -492,28 +551,3 @@ An example line to use for bzfs testing is:
 
 src/bzfs/bzfs -c -d -d -d +f good +f bad -fb -j -ms 3 -password \
  password -s 10 -sa -sb -sw 1 -st 15 -world misc/hix.bzw
-
-Tarball Naming Convention
-=========================
-
-The name of the tarball of a normal release should be
-
-bzflag-x.y.z.tar.bz2 (or .gz or .zip)
-
-At times it happens that post release change should be uploaded,
-while not changing the release, or a prerelease is made for testing
-purpose. The naming convention, then, should adhere to this selection:
-bzflag-x.y.z_alpha.tar.bz2
-bzflag-x.y.z_beta.tar.bz2
-bzflag-x.y.z_pre.tar.bz2
-bzflag-x.y.z_rc.tar.bz2
-bzflag-x.y.z_p.tar.bz2
-
-where the word alpha, beta, pre, rc and p can have a trailing number.
-Assuming identical version parts, the suffixes are ordered as follows
-(lower means older): _alpha < _beta < _pre < _rc < (no suffix) < _p.
-
-When comparing identical suffixes with trailing integers, the one with
-the larger integer will be considered most recent.
-
-Never upload different tarball with the same name.
