@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;.\curl\;../../src/bzflag;../../other_src/curl/include;../../other_src/zlib;../../other_src/glew/include;..\..\src\other\ares"
+				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;.\curl\;../../src/bzflag;../../other_src/curl/include;../../other_src/zlib;../../other_src/glew/include;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
