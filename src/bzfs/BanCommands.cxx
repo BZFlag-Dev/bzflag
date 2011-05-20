@@ -139,6 +139,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class MuteListCommand : ServerCommand {
+public:
+  MuteListCommand();
+
+  virtual bool operator() (const char    *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class MasterBanCommand : ServerCommand {
 public:
   MasterBanCommand();
@@ -161,6 +169,7 @@ static IdUnbanCommand     idUnbanCommand;
 static IdBanListCommand   idBanListCommand;
 static MuteCommand	  muteCommand;
 static UnmuteCommand	  unmuteCommand;
+static MuteListCommand	  muteListCommand;
 static MasterBanCommand   masterBanCommand;
 
 KickCommand::KickCommand()		 : ServerCommand("/kick",
@@ -191,6 +200,8 @@ MuteCommand::MuteCommand()		 : ServerCommand("/mute",
   "<#slot|PlayerName|\"Player Name\"> - remove the ability for a player to communicate with other players") {}
 UnmuteCommand::UnmuteCommand()		 : ServerCommand("/unmute",
   "<#slot|PlayerName|\"Player Name\"> - restore the TALK permission to a previously muted player") {}
+MuteListCommand::MuteListCommand()	 : ServerCommand("/mutelist",
+  "list the players current muted") {}
 MasterBanCommand::MasterBanCommand()	 : ServerCommand("/masterban",
   "<flush|reload|list> - manage the masterban list") {}
 
@@ -278,6 +289,30 @@ bool UnmuteCommand::operator() (const char	 *message,
     snprintf(msg, MessageLen, "player id #%d \"%s\" is now unmuted.", i,
 	     unmuteData->player.getCallSign());
     sendMessage(ServerPlayer, t, msg);
+  }
+  return true;
+}
+
+bool MuteListCommand::operator() (const char * /* message */,
+				  GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::mute)) {
+    sendMessage(ServerPlayer, t,
+		"You do not have permission to run the mutelist command");
+    return true;
+  }
+
+  sendMessage(ServerPlayer, t, "Muted Players");
+  sendMessage(ServerPlayer, t, "-------------");
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *iPlayerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (iPlayerData) {
+      if (!iPlayerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+        sendMessage(ServerPlayer, t, iPlayerData->player.getCallSign());
+      }
+    }
   }
   return true;
 }
