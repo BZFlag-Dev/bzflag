@@ -137,8 +137,6 @@ have them pre-installed:
 
   c-ares
   libCURL
-  FreeType2
-  FTGL
   libregex (usually provided as part of libc)
   zlib
 
@@ -365,7 +363,6 @@ following files in the new 'bzflag' directory:
     bzadmin/      - bzadmin app source code (text admin/chat client)
     bzflag/	  - bzflag app source code (game client)
     bzfs/	  - bzfs app source code (game server)
-    bzrobots/	  - bzrobots app source code (headless game client)
     common/	  - general purpose classes
     date/         - unified version and build date stamping for apps
     game/	  - game library used by both the server and client(s)

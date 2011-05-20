@@ -9,16 +9,12 @@ applications
 src/bzadmin	- the BZFlag admin tool and chat client
 src/bzflag	- the BZFlag client
 src/bzfs	- the BZFlag server
-src/bzrobots	- standalone robot client framework
 tools/		- various helper tools
 
 game dependent libraries
 ------------------------
 plugins/	- optional server plugins
-src/clientbase	- core logic for all clients
 src/game	- core game logic
-src/lua		- libraries for lua script environments
-		  (LuaUser, LuaBzOrg, LuaWorld, LuaRules, and LuaServer)
 
 game independent, platform independent libraries
 ------------------------------------------------
@@ -34,10 +30,7 @@ game independent, platform independent, external libraries
 ----------------------------------------------------------
 src/other/ares		- c-ares asynchronous resolver
 src/other/curl		- cURL library for transferring data with a URL
-src/other/freetype	- FreeType 2 font engine
-src/other/ftgl		- FTGL font engine for OpenGL
 src/other/glew		- OpenGL Extension Wrangler Library
-src/other/lua		- Lua programming language
 src/other/regex		- BSD regular expression library
 src/other/zlib		- Zlib compression library
 
@@ -56,10 +49,8 @@ src/platform	- general platform dependent code
 -------------
 BZFlag.xcodeproj/ - project definition for Apple XCode
 MSVC/		- project definitions for Microsoft Visual C
-bots/		- sample robots in several languages
 data/		- images, sounds, fonts, translations
 debian/		- packaging aids for Debian Linux
-doc/		- documentation in docbook format
 include/	- public headers
 m4/		- configuration macros
 man/		- documentation in manual page format
