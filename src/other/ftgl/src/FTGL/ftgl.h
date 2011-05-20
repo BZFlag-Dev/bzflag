@@ -68,7 +68,7 @@ namespace FTGL
 
     typedef enum
     {
-        CONFIG_VERSION = 1,
+        CONFIG_VERSION = 1
     } ConfigString;
 
     /**
