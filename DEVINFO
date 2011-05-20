@@ -32,14 +32,14 @@ src/scene	- scene graph
 
 game independent, platform independent, external libraries
 ----------------------------------------------------------
-src/other/ares		- c-ares asynchronous resolver
-src/other/curl		- cURL library for transferring data with a URL
-src/other/freetype	- FreeType 2 font engine
-src/other/ftgl		- FTGL font engine for OpenGL
-src/other/glew		- OpenGL Extension Wrangler Library
-src/other/lua		- Lua programming language
-src/other/regex		- BSD regular expression library
-src/other/zlib		- Zlib compression library
+other_src/ares		- c-ares asynchronous resolver
+other_src/curl		- cURL library for transferring data with a URL
+other_src/freetype	- FreeType 2 font engine
+other_src/ftgl		- FTGL font engine for OpenGL
+other_src/glew		- OpenGL Extension Wrangler Library
+other_src/lua		- Lua programming language
+other_src/regex		- BSD regular expression library
+other_src/zlib		- Zlib compression library
 
 Developers should make only the most essential modifications in the
 BZFlag source tree to these third party packages.  This means that we

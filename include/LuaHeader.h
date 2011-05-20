@@ -21,9 +21,9 @@
 #include "vectors.h"
 
 // lua headers
-#include "../src/other/lua/src/lua.h"
-#include "../src/other/lua/src/lualib.h"
-#include "../src/other/lua/src/lauxlib.h"
+#include "../other_src/lua/src/lua.h"
+#include "../other_src/lua/src/lualib.h"
+#include "../other_src/lua/src/lauxlib.h"
 
 
 //============================================================================//

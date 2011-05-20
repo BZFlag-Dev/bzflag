@@ -1,9 +1,9 @@
 lib_LTLIBRARIES = libfreetype.la
 
 AM_CPPFLAGS = \
-	-I${top_srcdir}/src/other/freetype/include \
-	-I${top_srcdir}/src/other/freetype/include/freetype \
-	-I${top_srcdir}/src/other/freetype/include/freetype/config \
+	-I${top_srcdir}/other_src/freetype/include \
+	-I${top_srcdir}/other_src/freetype/include/freetype \
+	-I${top_srcdir}/other_src/freetype/include/freetype/config \
 	-DFT_CONFIG_OPTION_SYSTEM_ZLIB \
 	-DDARWIN_NO_CARBON \
 	-DFT_CONFIG_CONFIG_H="<ftconfig.h>" \

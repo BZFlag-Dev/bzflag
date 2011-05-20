@@ -184,7 +184,7 @@ int LuaExtras::stderr_write(lua_State* L)
 //
 //  traceback()
 //
-//  - copied directly from src/other/lua/src/ldblib.c
+//  - copied directly from other_src/lua/src/ldblib.c
 //
 
 static lua_State *getthread (lua_State *L, int *arg) {
@@ -262,10 +262,10 @@ int LuaExtras::traceback(lua_State *L)  // db_errorfb() function
 //  dump()  &  listing()
 //
 
-#include "other/lua/src/lstate.h"
-#include "other/lua/src/llimits.h"
+#include "../other_src/lua/src/lstate.h"
+#include "../other_src/lua/src/llimits.h"
 #define luac_c // for luaU_print()
-#include "other/lua/src/lundump.h"
+#include "../other_src/lua/src/lundump.h"
 
 
 #define api_checknelems(L, n)  api_check(L, (n) <= (L->top - L->base))

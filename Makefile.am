@@ -9,6 +9,7 @@ traversal_dirs = \
 	doc \
 	man \
 	package \
+	other_src \
 	src
 
 if BUILD_PLUGINS

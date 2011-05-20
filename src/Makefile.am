@@ -55,7 +55,6 @@ endif # CLIENT_INCLUDED
 
 # the order matters
 SUBDIRS = \
-	other \
 	$(core_dirs) \
 	$(CLIENT_DIRS) \
 	${BZFS_DIR} \

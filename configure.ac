@@ -120,6 +120,9 @@ if test x$with_SDL != xno; then
     with_SDL=yes
 fi
 
+# use ccache?
+AC_ARG_ENABLE(ccache,  [  --disable-ccache          disable the use of ccache])
+
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins,  [  --enable-plugins          turn on compilation of plugins])
 if test x$enable_plugins != xno ; then
@@ -230,10 +233,12 @@ AC_CHECK_PROG(AR, ar, ar)
 AC_SUBST(AR)
 AC_SUBST(AR_FLAGS)
 
-AC_PATH_PROG(CCACHE, ccache)
-if test "$CCACHE" ; then
-    CC="ccache $CC"
-    CXX="ccache $CXX"
+if test "x$enable_ccache" != "xno" ; then
+  AC_PATH_PROG(CCACHE, ccache)
+  if test "$CCACHE" ; then
+      CC="ccache $CC"
+      CXX="ccache $CXX"
+  fi
 fi
 
 AC_CHECK_TOOL(WINDRES, windres, :)
@@ -380,7 +385,7 @@ AC_CHECK_HEADERS( \
 	unistd.h \
 	values.h \
 )
-# nameser_compat.h used by src/other/ares
+# nameser_compat.h used by other_src/ares
 
 if test "x$enable_regex_build" != "xyes" ; then
     AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]) )
@@ -1063,7 +1068,7 @@ BUILD_ARES="no (using system)"
 if test "x$ares_works" = "xno" ; then
     AC_DEFINE(BUILD_ARES, 1, [Build the included ares lookup library])
     BUILD_ARES="yes"
-    LIBCARES='${top_builddir}/src/other/ares/libcares.la'
+    LIBCARES='${top_builddir}/other_src/ares/libcares.la'
 fi
 AC_SUBST(LIBCARES)
 AC_MSG_RESULT($BUILD_ARES)
@@ -1106,7 +1111,7 @@ BUILD_REGEX="no (using system)"
 if test "x$regex_works" = "xno" ; then
     AC_DEFINE(BUILD_REGEX, 1, [Build the included regular expression library])
     BUILD_REGEX="yes"
-    LIBREGEX='${top_builddir}/src/other/regex/libregex.la'
+    LIBREGEX='${top_builddir}/other_src/regex/libregex.la'
 fi
 AC_SUBST(LIBREGEX)
 AC_MSG_RESULT($BUILD_REGEX)
@@ -1120,13 +1125,13 @@ BUILD_ZLIB="no (using system)"
 if test "x$LIBZ" = "x" ; then
     AC_DEFINE(BUILD_ZLIB, 1, [Build the included zlib compression library])
     BUILD_ZLIB="yes"
-    LIBZ='${top_builddir}/src/other/zlib/libz.la'
+    LIBZ='${top_builddir}/other_src/zlib/libz.la'
 fi
 AC_SUBST(LIBZ)
 AC_MSG_RESULT($BUILD_ZLIB)
 AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
 if test "x$BUILD_ZLIB" = "xyes" ; then
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/zlib"
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/other_src/zlib"
 fi
 
 
@@ -1140,13 +1145,13 @@ AC_MSG_CHECKING(whether to build the included curl library)
 if test "x$LIBCURL" = "x" ; then
     AC_DEFINE(BUILD_CURL, 1, [Build the included curl library])
     BUILD_CURL="yes"
-    LIBCURL='${top_builddir}/src/other/curl/lib/libcurl.la'
+    LIBCURL='${top_builddir}/other_src/curl/lib/libcurl.la'
 fi
 dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
 AC_MSG_RESULT($BUILD_CURL)
 AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
 if test "x$BUILD_CURL" = "xyes" ; then
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/curl/include"
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/other_src/curl/include"
 fi
 
 
@@ -1156,8 +1161,8 @@ AC_MSG_CHECKING(whether to build the included freetype2 library)
 if test "x$enable_client" != "xno" ; then
     if test "x$enable_freetype_build" = "xyes" -o "x$FT2_LIBS" = "x" ; then
 	AC_DEFINE(BUILD_FREETYPE, 1, [Build the included freetype2 library])
-	CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/freetype/include"
-	LIBFREETYPE='${top_builddir}/src/other/freetype/libfreetype.la'
+	CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/other_src/freetype/include"
+	LIBFREETYPE='${top_builddir}/other_src/freetype/libfreetype.la'
 	BUILD_FREETYPE="yes"
     else
 	CPPFLAGS="$CPPFLAGS $FT2_CFLAGS"
@@ -1194,7 +1199,7 @@ AC_MSG_CHECKING(whether to build the included ftgl library)
 if test "x$LIBFTGL" = "x" ; then
     AC_DEFINE(BUILD_FTGL, 1, [Build the included ftgl library])
     BUILD_FTGL="yes"
-    LIBFTGL='${top_builddir}/src/other/ftgl/src/libftgl.la'
+    LIBFTGL='${top_builddir}/other_src/ftgl/src/libftgl.la'
 fi
 AC_SUBST(LIBFTGL)
 AC_MSG_RESULT($BUILD_FTGL)
@@ -1207,10 +1212,10 @@ AC_SUBST(LIBFTGL)
 AM_CONDITIONAL(BUILD_FTGL, false)
 fi # enable_client
 if test "x$BUILD_FTGL" = "xyes" ; then
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/ftgl/src"
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/other_src/ftgl/src"
 fi
 
-LIBLUA='${top_builddir}/src/other/lua/liblua.la'
+LIBLUA='${top_builddir}/other_src/lua/liblua.la'
 AC_SUBST(LIBLUA)
 
 # GLEW
@@ -1236,7 +1241,7 @@ AC_MSG_CHECKING(whether to build the included GLEW library)
 BUILD_GLEW="no (using system)"
 if test "x$GLEW_LIBS" = "x" ; then
     BUILD_GLEW="yes"
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
+    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/other_src/glew/include"
 fi
 AC_MSG_RESULT($BUILD_GLEW)
 else # enable_client
@@ -1272,19 +1277,19 @@ AC_CONFIG_SUBDIRS(plugins)
 # install plugins where bzfs expects them to be
 ac_configure_args="$ac_configure_args --libdir=$libdir"
 
-AC_CONFIG_SUBDIRS(src/other/ftgl)
+AC_CONFIG_SUBDIRS(other_src/ftgl)
 if test "x$FT2_LIBS" = "x" ; then
     # instruct FTGL to use the included freetype2
     ac_configure_args="$ac_configure_args --enable-freetype-build"
 fi
 
-AC_CONFIG_SUBDIRS(src/other/ares)
+AC_CONFIG_SUBDIRS(other_src/ares)
 if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
     # instruct curl to use the included ares
     ac_configure_args="$ac_configure_args --enable-ares"
 fi
 
-AC_CONFIG_SUBDIRS(src/other/curl)
+AC_CONFIG_SUBDIRS(other_src/curl)
 
 AC_CONFIG_FILES([
 	BZFlag.xcodeproj/Makefile
@@ -1324,6 +1329,11 @@ AC_CONFIG_FILES([
 	man/bzfs.6
 	man/bzw.5
 	misc/Makefile
+	other_src/Makefile
+	other_src/freetype/Makefile
+	other_src/lua/Makefile
+	other_src/regex/Makefile
+	other_src/zlib/Makefile
 	package/Makefile
 	package/irix/Makefile
 	package/linux/Makefile
@@ -1349,11 +1359,6 @@ AC_CONFIG_FILES([
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
-	src/other/Makefile
-	src/other/freetype/Makefile
-	src/other/lua/Makefile
-	src/other/regex/Makefile
-	src/other/zlib/Makefile
 	src/platform/MacOSX/BZFlag-Info.plist
 	src/platform/MacOSX/Makefile
 	src/platform/Makefile
