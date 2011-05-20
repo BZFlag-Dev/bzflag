@@ -505,7 +505,7 @@ cannot proceed.  A checklist of items to be completed follows:
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
 	e.g. svn copy bzflag \
-	     https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/v2_99_59/
+	     https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/v2_4_0/
 
 - Perform a
   "svn export https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/vMAJOR_MINOR_RELEASE"
