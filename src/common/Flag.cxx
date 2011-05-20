@@ -83,7 +83,7 @@ namespace Flags {
 
   void init()
   {
-    Null	= new FlagType( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, NULL );
+    Null	= new FlagType( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, "" );
 
     RedTeam	= new FlagType( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, ::RedTeam,
 					    "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
