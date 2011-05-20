@@ -9,8 +9,8 @@ bzlua_LDFLAGS  = -static
 bzluac_LDFLAGS = -static
 bzlua_SOURCES  = src/lua.cxx
 bzluac_SOURCES = src/luac.cxx
-bzlua_LDADD  = $(LIBLUA) -lreadline
-bzluac_LDADD = $(LIBLUA) -lreadline
+bzlua_LDADD  = $(LIBLUA) -lreadline -ldl
+bzluac_LDADD = $(LIBLUA) -lreadline -ldl
 endif
 
 # works for linux and macos

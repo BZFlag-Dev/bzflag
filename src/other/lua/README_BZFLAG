@@ -17,7 +17,7 @@ made to the lua-5.1.4 sources for BZFlag.
      #undef LUA_NUMBER_DOUBLE
 
      /*BZ #define LUA_NUMBER  double */
-     #define LUA_NUMBER  float                                               
+     #define LUA_NUMBER  float
 
      /*BZ #define LUA_NUMBER_SCAN "%lf" */
      #define LUA_NUMBER_SCAN "%f"
@@ -40,25 +40,21 @@ made to the lua-5.1.4 sources for BZFlag.
 
 9. Applied the __usedindex metamethod patch  (svn r19401)
 
-11. Disabled precompiled chunks in luaU_undump()  (svn r19459)
+10. Disabled precompiled chunks in luaU_undump()  (svn r19459)
 
-12. Added the lpeg library
+11. Added the lpeg library
 
-13. Added the table.readonly() feature
+12. Added the table.readonly() feature
 
-14. Added the table.create() feature
+13. Added the table.create() feature
 
-15. Added the lua_seterrorfunc() feature
+14. Added the lua_seterrorfunc() feature
 
-16. Applied the mergesort patch
+15. Applied the mergesort patch
 
-17. Applied the LUA_EZFOR_LOOP patch
+16. Applied the LUA_EZFOR_LOOP patch
 
-18. Applied patch-lua-5.1.4-1.diff
-    (see http://permalink.gmane.org/gmane.comp.lang.lua.general/65600)
-
-19. Applied patch-lua-5.1.4-2.diff  (actually, diffs from the previous patch)
-    (see http://permalink.gmane.org/gmane.comp.lang.lua.general/65624)
+17. Applied http://www.lua.org/ftp/patch-lua-5.1.4-3
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
