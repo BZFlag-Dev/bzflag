@@ -99,6 +99,10 @@ void Score::setRandomRanking() {
   randomRanking = true;
 }
 
+int Score::getHandicap() {
+  return losses - wins;
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

@@ -47,6 +47,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
 	       const char* name, const char* _email, const PlayerType _type) :
   lastObstacle(NULL),
   pauseMessageState(false),
+  handicap(0.0f),
   notResponding(false),
   hunted(false),
   id(_id),
@@ -1403,6 +1404,11 @@ void Player::setIpAddress(const Address& addr)
   haveIpAddr = true;
 }
 
+
+void Player::setHandicap(float _handicap)
+{
+    handicap = _handicap;
+}
 
 // Local Variables: ***
 // mode:C++ ***

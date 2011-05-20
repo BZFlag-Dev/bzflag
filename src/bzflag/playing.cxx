@@ -2599,6 +2599,43 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
+    case MsgHandicap: {
+      PlayerId id;
+      uint8_t numHandicaps;
+      int16_t handicap;
+      msg = nboUnpackUByte(msg, numHandicaps);
+      for (uint8_t s = 0; s < numHandicaps; s++) {
+	msg = nboUnpackUByte(msg, id);
+	msg = nboUnpackShort(msg, handicap);
+	Player *sPlayer = NULL;
+        if (id == myTank->getId()) {
+	  sPlayer = myTank;
+        } else {
+          int i = lookupPlayerIndex(id);
+	  if (i >= 0)
+	    sPlayer = player[i];
+	  else
+	    logDebugMessage(1, "Received handicap update for unknown player!\n");
+        }
+	if (sPlayer) {
+	  // a relative score of -50 points will provide maximum handicap
+	  float normalizedHandicap = float(handicap)
+	    / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+
+	  /* limit how much of a handicap is afforded, and only provide
+	   * handicap advantages instead of disadvantages.
+	   */
+	  if (normalizedHandicap > 1.0f)
+	    // advantage
+	    normalizedHandicap  = 1.0f;
+	  else if (normalizedHandicap < 0.0f)
+	    // disadvantage
+	    normalizedHandicap  = 0.0f;
+
+	  sPlayer->setHandicap(normalizedHandicap);
+        }
+      }
+    }
     case MsgScore: {
       uint8_t numScores;
       PlayerId id;
@@ -2611,19 +2648,20 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUShort(msg, losses);
 	msg = nboUnpackUShort(msg, tks);
 
+	Player *sPlayer = NULL;
         if (id == myTank->getId()) {
-          myTank->changeScore(wins - myTank->getWins(),
-			      losses - myTank->getLosses(),
-			      tks - myTank->getTeamKills());
+	  sPlayer = myTank;
         } else {
           int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    player[i]->changeScore(wins - player[i]->getWins(),
-				  losses - player[i]->getLosses(),
-				  tks - player[i]->getTeamKills());
-          else
-            logDebugMessage(1,"Recieved score update for unknown player!\n");
+	    sPlayer = player[i];
+	  else
+            logDebugMessage(1,"Received score update for unknown player!\n");
         }
+	if (sPlayer)
+          sPlayer->changeScore(wins - myTank->getWins(),
+			       losses - myTank->getLosses(),
+			       tks - myTank->getTeamKills());
       }
       break;
     }

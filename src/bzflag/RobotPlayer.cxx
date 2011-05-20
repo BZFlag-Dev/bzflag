@@ -337,13 +337,6 @@ void			RobotPlayer::restart(const float* pos, float _azimuth)
 
 }
 
-// just use losses - wins
-int			 RobotPlayer::getHandicapScoreBase() const
-{
-  return getLosses() - getWins();
-}
-
-
 float			RobotPlayer::getTargetPriority(const
 							Player* _target) const
 {
