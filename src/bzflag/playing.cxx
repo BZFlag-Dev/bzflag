@@ -2662,9 +2662,9 @@ static void		handleServerMessage(bool human, uint16_t code,
             logDebugMessage(1,"Received score update for unknown player!\n");
         }
 	if (sPlayer)
-          sPlayer->changeScore(wins - myTank->getWins(),
-			       losses - myTank->getLosses(),
-			       tks - myTank->getTeamKills());
+          sPlayer->changeScore(wins - sPlayer->getWins(),
+			       losses - sPlayer->getLosses(),
+			       tks - sPlayer->getTeamKills());
       }
       break;
     }
