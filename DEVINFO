@@ -177,7 +177,11 @@ other style.  Well, we can't have a zillion styles in the code, so
 follow the BZFlag style if you want your contribution included.  The
 source code serves for examples of the following rules.
 
-  1)  Indents are 2 characters.  Tabs are 8 characters.  There are vi
+
+  1)  Indentation style should comply with the options in:
+        misc/astyle.conf
+
+  2)  Indents are 2 spaces.  Tabs are not to be used.  There are vi
       and emacs settings in each file to adopt, enforce, remind, and
       encourage this convention.  Suggestions are welcome here for
       setting up other environments.  Here are the lines that should
@@ -196,34 +200,10 @@ source code serves for examples of the following rules.
       to this convention.  Installing exTabSettings in MSVC will make
       it conform.
 
-  2)  The opening brace of all blocks goes on the same line as the
-      statement introducing it except for functions and classes where
-      it goes on the following line.  The closing brace is indented
-      like the statement except for functions where it aligns with the
-      open brace.  For example:
+  3)  Use // commenting instead of /* */, whenever possible.
 
-	void foo()
-	{
-	  for (;;) {
-	    if (expr) {
-	    }
-	  }
-	}
-
-  3)  An else clause goes on the same line (there are many unacceptable
-      alternatives):
-
-	if (expr) {
-	} else {
-	}
-	*note that old code had the else on the next line,
-	 please clean this up wherever you may find it*
-
-  4)  If *either* the if block or else block requires brackets then
-      they both get brackets.  if neither requires brackets then use
-      brackets on both or neither at your discretion.  In case both
-      styles are allowed, don't change the existing code just because
-      it is not coded like you prefer.
+  4)  All control statements should have braces, even one-lines.
+      Please add them if you see that there are missing.
 
   5)  When using `delete' or `delete[]' don't bother to test the
       pointer if it's NULL first.  use new and delete rather than
@@ -244,25 +224,18 @@ source code serves for examples of the following rules.
 
 	#define FOO bar
 	class MyClass {
-	public:
-	    void        addStuff(int addMe, int _y) { y = addMe + _y; }
-
-	private:
-	    int         y;
+	  public:
+	    void addStuff(int addMe, int _y) { y = addMe + _y; }
+	  private:
+	    int y;
 	};
 
-  8)  Put spaces after statements followed by expressions and spaces
-      around operators.  For example:
-	if (a == b)
-      not
-	if(a==b)
-
-  9)  Do not leave old commented code hanging around and do not submit
+  8)  Do not leave old commented code hanging around and do not submit
       patches with "// Added by foo on xx" comments.  This is what
       version control software is for.
 
- 10)  Do not code very long lines.  Try to stay within 80 columns if
-      possible, but don't go over 132 if you should raise that limit
+  9)  Do not code very long lines.  Try to stay within 80 columns if
+      possible, but don't go over 100 if you should raise that limit
       for some reason.
 
 Violations of these rules in the existing code are not excuses to
@@ -291,6 +264,10 @@ if a change involves multiple functionality changes, the commit should
 be broken up into smaller coherent chunks.  This way if a bug or other
 issue with a particular commit is later encountered, the change can be
 more easily isolated and undone or fixed.
+
+Note that there is a SVL hook script that requires new and renamed files
+to provide the correct  svn:mime-type  and  svn:eol-style  settings.
+
 
 Making Patches
 --------------
@@ -369,6 +346,7 @@ Works that are derivations of existing works in the project are
 subject to the current project license (LGPL).  Authors that submit
 works must have the legal right to agree to these terms, either as
 original author or authorized licensee of derived works.
+
 
 Testing
 =======
