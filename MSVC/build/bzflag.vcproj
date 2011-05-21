@@ -52,7 +52,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;..\..\other_src\zlib;.\;..\..\other_src\curl\include;..\..\other_src\glew\include;..\..\src\clientbase;..\..\src\bzflag;..\..\other_src\ares;.\curl"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;..\..\other_src\zlib;.\;..\..\other_src\curl\include;..\..\other_src\glew\include;..\..\src\clientbase;..\..\src\bzflag;..\..\other_src\ares;.\curl"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -154,7 +154,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;..\..\other_src\zlib;.\;..\..\other_src\curl\include;..\..\other_src\glew\include;..\..\src\clientbase;..\..\src\bzflag;..\..\other_src\ares;.\curl"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;..\..\other_src\zlib;.\;..\..\other_src\curl\include;..\..\other_src\glew\include;..\..\src\clientbase;..\..\src\bzflag;..\..\other_src\ares;.\curl"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -951,7 +951,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ListServer.h"
+				RelativePath="..\..\src\include\ListServer.h"
 				>
 			</File>
 			<File
@@ -1015,7 +1015,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Protocol.h"
+				RelativePath="..\..\src\include\Protocol.h"
 				>
 			</File>
 			<File
@@ -1071,7 +1071,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SceneRenderer.h"
+				RelativePath="..\..\src\include\SceneRenderer.h"
 				>
 			</File>
 			<File
@@ -1127,7 +1127,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Singleton.h"
+				RelativePath="..\..\src\include\Singleton.h"
 				>
 			</File>
 			<File
@@ -1155,11 +1155,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TextureManager.h"
+				RelativePath="..\..\src\include\TextureManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TextUtils.h"
+				RelativePath="..\..\src\include\TextUtils.h"
 				>
 			</File>
 			<File
@@ -1171,7 +1171,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\version.h"
+				RelativePath="..\..\src\include\version.h"
 				>
 			</File>
 			<File

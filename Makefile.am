@@ -4,7 +4,6 @@ AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
 ACLOCAL_AMFLAGS = -I m4
 
 traversal_dirs = \
-	include \
 	data \
 	doc \
 	man \
@@ -129,7 +128,7 @@ all-local:
 	  $(ECHO) $(ECHO_N) "Elapsed time since configuration: " ;\
 	  sh $(top_srcdir)/misc/elapsed.sh @CONF_TIME@ ;\
 	  $(ECHO) $(ECHO_N) "Elapsed compilation time: " ;\
-	  sh $(top_srcdir)/misc/elapsed.sh `cat $(top_srcdir)/include/datestamp` ;\
+	  sh $(top_srcdir)/misc/elapsed.sh `cat $(top_srcdir)/src/include/datestamp` ;\
 	  $(ECHO) "---" ;\
 	  $(ECHO) "Run 'make install' to begin installation into $(prefix)" ;\
 	fi

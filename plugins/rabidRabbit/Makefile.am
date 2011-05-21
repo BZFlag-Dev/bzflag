@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = rabidRabbit.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 rabidRabbit_la_SOURCES = rabidRabbit.cpp

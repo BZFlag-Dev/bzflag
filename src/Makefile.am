@@ -24,6 +24,7 @@ endif
 
 # needed by clients and server, always build
 core_dirs = \
+	include \
 	date \
 	common \
 	net \

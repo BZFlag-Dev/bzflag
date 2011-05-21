@@ -1,6 +1,8 @@
 AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
 ACLOCAL_AMFLAGS = -I m4
 
+CPPFLAGS = $(CPPFLAGS) -I../../src/include
+
 SUBDIRS = \
 	plugin_utils \
 	HoldTheFlag \

@@ -168,7 +168,7 @@ EXTRA_DIST = \
 	NewMedia.cxx \
 	README
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(SDL_CFLAGS) @CONF_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/src/include $(SDL_CFLAGS) @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 MAINTAINERCLEANFILES = Makefile.in

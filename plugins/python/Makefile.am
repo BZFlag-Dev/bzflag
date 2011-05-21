@@ -1,7 +1,7 @@
 # change EXTRA to lib to enable this plugin
 # lib_LTLIBRARIES = PyBZFlag.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 EXTRA_LTLIBRARIES = PyBZFlag.la

@@ -6,7 +6,7 @@ bin_PROGRAMS = bzfs
 
 AM_CPPFLAGS = \
 	-DINSIDE_BZ \
-	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src/include \
 	$(LIBCURL_CPPFLAGS) \
 	-DINSTALL_LIB_DIR=\"$(libdir)/\" \
 	@CONF_CPPFLAGS@

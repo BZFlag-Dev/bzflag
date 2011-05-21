@@ -10,7 +10,7 @@ bin_PROGRAMS = bzrobots
 lib_LTLIBRARIES = TestRobot.la $(libbzrobot)
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src/include \
 	-I$(top_srcdir)/src/clientbase \
 	-I$(top_srcdir)/src/bzflag \
 	$(SDL_CFLAGS) \

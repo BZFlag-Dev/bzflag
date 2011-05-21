@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;.\;..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -121,7 +121,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -284,43 +284,43 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\include\BzfDisplay.h"
+				RelativePath="..\..\src\include\BzfDisplay.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzfEvent.h"
+				RelativePath="..\..\src\include\BzfEvent.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfgl.h"
+				RelativePath="..\..\src\include\bzfgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfio.h"
+				RelativePath="..\..\src\include\bzfio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzfJoystick.h"
+				RelativePath="..\..\src\include\BzfJoystick.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzfMedia.h"
+				RelativePath="..\..\src\include\BzfMedia.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzfVisual.h"
+				RelativePath="..\..\src\include\BzfVisual.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzfWindow.h"
+				RelativePath="..\..\src\include\BzfWindow.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Clipboard.h"
+				RelativePath="..\..\src\include\Clipboard.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common.h"
+				RelativePath="..\..\src\include\common.h"
 				>
 			</File>
 			<File
@@ -328,7 +328,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ErrorHandler.h"
+				RelativePath="..\..\src\include\ErrorHandler.h"
 				>
 			</File>
 			<File
@@ -336,19 +336,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLGState.h"
+				RelativePath="..\..\src\include\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Pack.h"
+				RelativePath="..\..\src\include\Pack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PlatformFactory.h"
+				RelativePath="..\..\src\include\PlatformFactory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\resource.h"
+				RelativePath="..\..\src\include\resource.h"
 				>
 			</File>
 			<File
@@ -356,11 +356,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzTime.h"
+				RelativePath="..\..\src\include\BzTime.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\VerticalSync.h"
+				RelativePath="..\..\src\include\VerticalSync.h"
 				>
 			</File>
 			<File

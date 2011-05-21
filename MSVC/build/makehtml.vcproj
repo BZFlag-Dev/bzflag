@@ -121,7 +121,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\include\global.h"
+			RelativePath="..\..\src\include\global.h"
 			>
 		</File>
 	</Files>

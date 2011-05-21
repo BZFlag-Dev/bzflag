@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="../../include/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
+				AdditionalIncludeDirectories="../../src/include/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../include/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
+				AdditionalIncludeDirectories="../../src/include/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -305,127 +305,127 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\include\BZDBCache.h"
+				RelativePath="..\..\src\include\BZDBCache.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BZDBNames.h"
+				RelativePath="..\..\src\include\BZDBNames.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BzMaterial.h"
+				RelativePath="..\..\src\include\BzMaterial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\CollisionManager.h"
+				RelativePath="..\..\src\include\CollisionManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\CommandCompleter.h"
+				RelativePath="..\..\src\include\CommandCompleter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\DirectoryNames.h"
+				RelativePath="..\..\src\include\DirectoryNames.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Flag.h"
+				RelativePath="..\..\src\include\Flag.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Frustum.h"
+				RelativePath="..\..\src\include\Frustum.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\GameTime.h"
+				RelativePath="..\..\src\include\GameTime.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Intersect.h"
+				RelativePath="..\..\src\include\Intersect.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LagInfo.h"
+				RelativePath="..\..\src\include\LagInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LinkManager.h"
+				RelativePath="..\..\src\include\LinkManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MapInfo.h"
+				RelativePath="..\..\src\include\MapInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MotionUtils.h"
+				RelativePath="..\..\src\include\MotionUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MsgStrings.h"
+				RelativePath="..\..\src\include\MsgStrings.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\NetHandler.h"
+				RelativePath="..\..\src\include\NetHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\NetMessage.h"
+				RelativePath="..\..\src\include\NetMessage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PhysicsDriver.h"
+				RelativePath="..\..\src\include\PhysicsDriver.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PlayerInfo.h"
+				RelativePath="..\..\src\include\PlayerInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PlayerState.h"
+				RelativePath="..\..\src\include\PlayerState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Ray.h"
+				RelativePath="..\..\src\include\Ray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ServerItem.h"
+				RelativePath="..\..\src\include\ServerItem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ServerList.h"
+				RelativePath="..\..\src\include\ServerList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ServerListCache.h"
+				RelativePath="..\..\src\include\ServerListCache.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ServerPing.h"
+				RelativePath="..\..\src\include\ServerPing.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ShotManager.h"
+				RelativePath="..\..\src\include\ShotManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ShotUpdate.h"
+				RelativePath="..\..\src\include\ShotUpdate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\StartupInfo.h"
+				RelativePath="..\..\src\include\StartupInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Team.h"
+				RelativePath="..\..\src\include\Team.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\VotingArbiter.h"
+				RelativePath="..\..\src\include\VotingArbiter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\WorldText.h"
+				RelativePath="..\..\src\include\WorldText.h"
 				>
 			</File>
 		</Filter>

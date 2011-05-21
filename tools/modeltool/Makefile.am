@@ -22,7 +22,7 @@ modeltool_SOURCES =	\
 	wavefrontOBJ.cxx\
 	wavefrontOBJ.h
 
-modeltool_CPPFLAGS = -I$(top_srcdir)/include
+modeltool_CPPFLAGS = -I$(top_srcdir)/src/include
 modeltool_LDADD = $(top_builddir)/src/common/libCommon.la
 
 EXTRA_DIST = example.diconf

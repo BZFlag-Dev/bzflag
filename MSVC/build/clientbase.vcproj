@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;.\curl\;../../src/bzflag;../../other_src/curl/include;../../other_src/zlib;../../other_src/glew/include;..\..\other_src\ares"
+				AdditionalIncludeDirectories="../../src/clientbase;../../src/include;./;.\curl\;../../src/bzflag;../../other_src/curl/include;../../other_src/zlib;../../other_src/glew/include;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../../src/clientbase;../../include;./;.\curl\;../../src/bzflag;../../other_src/curl/include;../../other_src/zlib;../../other_src/glew/include"
+				AdditionalIncludeDirectories="../../src/clientbase;../../src/include;./;.\curl\;../../src/bzflag;../../other_src/curl/include;../../other_src/zlib;../../other_src/glew/include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -337,15 +337,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ErrorHandler.h"
+				RelativePath="..\..\src\include\ErrorHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EventClient.h"
+				RelativePath="..\..\src\include\EventClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EventClientList.h"
+				RelativePath="..\..\src\include\EventClientList.h"
 				>
 			</File>
 			<File
@@ -353,7 +353,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\GfxBlock.h"
+				RelativePath="..\..\src\include\GfxBlock.h"
 				>
 			</File>
 			<File

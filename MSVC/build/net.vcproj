@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../../include/;..\..\other_src\ares"
+				AdditionalIncludeDirectories="./;../../src/include/;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;CARES_STATICLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;../../include/"
+				AdditionalIncludeDirectories="./;../../src/include/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;CARES_STATICLIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -182,27 +182,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\include\Address.h"
+				RelativePath="..\..\src\include\Address.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\AresHandler.h"
+				RelativePath="..\..\src\include\AresHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\multicast.h"
+				RelativePath="..\..\src\include\multicast.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\network.h"
+				RelativePath="..\..\src\include\network.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Pack.h"
+				RelativePath="..\..\src\include\Pack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Ping.h"
+				RelativePath="..\..\src\include\Ping.h"
 				>
 			</File>
 		</Filter>

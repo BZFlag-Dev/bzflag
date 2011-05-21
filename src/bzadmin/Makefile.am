@@ -6,7 +6,7 @@ bin_PROGRAMS = bzadmin
 
 AM_CPPFLAGS = \
 	-DBUILDING_BZADMIN \
-	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src/include \
 	-I$(top_srcdir)/src/bzflag \
 	-I$(top_srcdir)/src/clientbase \
 	$(LIBCURL_CPPFLAGS) \

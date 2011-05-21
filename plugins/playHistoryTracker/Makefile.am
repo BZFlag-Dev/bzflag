@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = playHistoryTracker.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 playHistoryTracker_la_SOURCES = playHistoryTracker.cpp

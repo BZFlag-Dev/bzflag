@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories=".\;.\curl;..\..\include;..\..\other_src\curl\lib;..\..\other_src\curl\include;..\..\other_src\ares;..\..\other_src\zlib"
+				AdditionalIncludeDirectories=".\;.\curl;..\..\src\include;..\..\other_src\curl\lib;..\..\other_src\curl\include;..\..\other_src\ares;..\..\other_src\zlib"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;BUILDING_LIBCURL;USE_ARES;CARES_STATICLIB;HAVE_ZLIB_H"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -130,7 +130,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\..\include;..\..\other_src\curl\lib;..\..\other_src\curl\include;..\..\other_src\ares;..\..\other_src\zlib;.\;.\curl;$(NOINHERIT)"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\other_src\curl\lib;..\..\other_src\curl\include;..\..\other_src\ares;..\..\other_src\zlib;.\;.\curl;$(NOINHERIT)"
 				PreprocessorDefinitions="WIN32;_LIB;BUILDING_LIBCURL;USE_ARES;CARES_STATICLIB;HAVE_ZLIB_H"
 				StringPooling="true"
 				RuntimeLibrary="2"

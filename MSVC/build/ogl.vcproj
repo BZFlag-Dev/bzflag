@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\other_src\glew\include;..\..\src;..\..\src\clientbase"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;.\;..\..\other_src\glew\include;..\..\src;..\..\src\clientbase"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;GLEW_STATIC"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;..\..\other_src\glew\include;..\..\src;..\..\src\clientbase"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;.\;..\..\other_src\glew\include;..\..\src;..\..\src\clientbase"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;GLEW_STATIC"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -219,43 +219,43 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\include\bzfgl.h"
+				RelativePath="..\..\src\include\bzfgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfio.h"
+				RelativePath="..\..\src\include\bzfio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common.h"
+				RelativePath="..\..\src\include\common.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLGState.h"
+				RelativePath="..\..\src\include\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLLight.h"
+				RelativePath="..\..\src\include\OpenGLLight.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLMaterial.h"
+				RelativePath="..\..\src\include\OpenGLMaterial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLPassState.h"
+				RelativePath="..\..\src\include\OpenGLPassState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLTexture.h"
+				RelativePath="..\..\src\include\OpenGLTexture.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLUtils.h"
+				RelativePath="..\..\src\include\OpenGLUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\RenderNode.h"
+				RelativePath="..\..\src\include\RenderNode.h"
 				>
 			</File>
 		</Filter>

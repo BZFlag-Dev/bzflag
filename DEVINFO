@@ -52,6 +52,10 @@ src/date	- build dates and versioning
 src/net		- networking
 src/platform	- general platform dependent code
 
+bzflag headers
+--------------
+src/include/	- bzflag headers
+
 "other stuff"
 -------------
 BZFlag.xcodeproj/ - project definition for Apple XCode
@@ -60,7 +64,6 @@ bots/		- sample robots in several languages
 data/		- images, sounds, fonts, translations
 debian/		- packaging aids for Debian Linux
 doc/		- documentation in docbook format
-include/	- public headers
 m4/		- configuration macros
 man/		- documentation in manual page format
 misc/		- kitchen sink of anything

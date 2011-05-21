@@ -262,10 +262,10 @@ int LuaExtras::traceback(lua_State *L)  // db_errorfb() function
 //  dump()  &  listing()
 //
 
-#include "../other_src/lua/src/lstate.h"
-#include "../other_src/lua/src/llimits.h"
+#include "../../other_src/lua/src/lstate.h"
+#include "../../other_src/lua/src/llimits.h"
 #define luac_c // for luaU_print()
-#include "../other_src/lua/src/lundump.h"
+#include "../../other_src/lua/src/lundump.h"
 
 
 #define api_checknelems(L, n)  api_check(L, (n) <= (L->top - L->base))

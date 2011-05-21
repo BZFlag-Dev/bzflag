@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -275,59 +275,59 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\include\ArcObstacle.h"
+				RelativePath="..\..\src\include\ArcObstacle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BaseBuilding.h"
+				RelativePath="..\..\src\include\BaseBuilding.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BaseSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\BaseSceneNodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BoxBuilding.h"
+				RelativePath="..\..\src\include\BoxBuilding.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BoxSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\BoxSceneNodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfgl.h"
+				RelativePath="..\..\src\include\bzfgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfio.h"
+				RelativePath="..\..\src\include\bzfio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common.h"
+				RelativePath="..\..\src\include\common.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ConeObstacle.h"
+				RelativePath="..\..\src\include\ConeObstacle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EmptySceneNodeGenerator.h"
+				RelativePath="..\..\src\include\EmptySceneNodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshDrawInfo.h"
+				RelativePath="..\..\src\include\MeshDrawInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshFace.h"
+				RelativePath="..\..\src\include\MeshFace.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshObstacle.h"
+				RelativePath="..\..\src\include\MeshObstacle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\MeshSceneNodeGenerator.h"
 				>
 			</File>
 			<File
@@ -335,63 +335,63 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Obstacle.h"
+				RelativePath="..\..\src\include\Obstacle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ObstacleList.h"
+				RelativePath="..\..\src\include\ObstacleList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ObstacleMgr.h"
+				RelativePath="..\..\src\include\ObstacleMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ObstacleModifier.h"
+				RelativePath="..\..\src\include\ObstacleModifier.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ObstacleSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\ObstacleSceneNodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLGState.h"
+				RelativePath="..\..\src\include\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PyramidBuilding.h"
+				RelativePath="..\..\src\include\PyramidBuilding.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PyramidSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\PyramidSceneNodeGenerator.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\QuadWallSceneNode.h"
+				RelativePath="..\..\src\include\QuadWallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Ray.h"
+				RelativePath="..\..\src\include\Ray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\RenderNode.h"
+				RelativePath="..\..\src\include\RenderNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SceneNode.h"
+				RelativePath="..\..\src\include\SceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SphereObstacle.h"
+				RelativePath="..\..\src\include\SphereObstacle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Teleporter.h"
+				RelativePath="..\..\src\include\Teleporter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TeleporterSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\TeleporterSceneNodeGenerator.h"
 				>
 			</File>
 			<File
@@ -399,19 +399,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TriWallSceneNode.h"
+				RelativePath="..\..\src\include\TriWallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\WallObstacle.h"
+				RelativePath="..\..\src\include\WallObstacle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\WallSceneNode.h"
+				RelativePath="..\..\src\include\WallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\WallSceneNodeGenerator.h"
+				RelativePath="..\..\src\include\WallSceneNodeGenerator.h"
 				>
 			</File>
 		</Filter>

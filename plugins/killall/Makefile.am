@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = killall.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 killall_la_SOURCES = killall.cpp

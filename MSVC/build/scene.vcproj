@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -120,7 +120,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -199,15 +199,15 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\include\BSPSceneDatabase.h"
+				RelativePath="..\src\include\BSPSceneDatabase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\bzfgl.h"
+				RelativePath="..\src\include\bzfgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\common.h"
+				RelativePath="..\src\include\common.h"
 				>
 			</File>
 			<File
@@ -219,35 +219,35 @@
 				>
 			</File>
 			<File
-				RelativePath="..\include\OpenGLGState.h"
+				RelativePath="..\src\include\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\RenderNode.h"
+				RelativePath="..\src\include\RenderNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\SceneDatabase.h"
+				RelativePath="..\src\include\SceneDatabase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\SceneNode.h"
+				RelativePath="..\src\include\SceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\SphereSceneNode.h"
+				RelativePath="..\src\include\SphereSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\ViewFrustum.h"
+				RelativePath="..\src\include\ViewFrustum.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\WallSceneNode.h"
+				RelativePath="..\src\include\WallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\include\ZSceneDatabase.h"
+				RelativePath="..\src\include\ZSceneDatabase.h"
 				>
 			</File>
 		</Filter>

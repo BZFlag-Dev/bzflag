@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;.\curl\;..\..\src;..\..\src\lua;..\..\other_src\curl\include;..\..\other_src\zlib\;..\..\src\bzfs\lua;..\..\other_src\ares"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;.\;.\curl\;..\..\src;..\..\src\lua;..\..\other_src\curl\include;..\..\other_src\zlib\;..\..\src\bzfs\lua;..\..\other_src\ares"
 				PreprocessorDefinitions="_CONSOLE;WIN32;NDEBUG;INSIDE_BZ;CARES_STATICLIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -139,7 +139,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;.\curl\;..\..\src;..\..\src\lua;..\..\other_src\curl\include;..\..\other_src\zlib\;..\..\src\bzfs\lua;..\..\other_src\ares"
+				AdditionalIncludeDirectories="..\..\src\include;..\..\win32;.\;.\curl\;..\..\src;..\..\src\lua;..\..\other_src\curl\include;..\..\other_src\zlib\;..\..\src\bzfs\lua;..\..\other_src\ares"
 				PreprocessorDefinitions="_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;CARES_STATICLIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -637,7 +637,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PlayerInfo.h"
+				RelativePath="..\..\src\include\PlayerInfo.h"
 				>
 			</File>
 			<File
@@ -685,7 +685,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\WorldEventManager.h"
+				RelativePath="..\..\src\include\WorldEventManager.h"
 				>
 			</File>
 			<File
@@ -721,7 +721,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfsAPI.h"
+				RelativePath="..\..\src\include\bzfsAPI.h"
 				>
 			</File>
 			<File

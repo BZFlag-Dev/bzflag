@@ -126,7 +126,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../include;../plugin_utils/"
+				AdditionalIncludeDirectories="../../src/include;../plugin_utils/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;bzfscron_EXPORTS"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
@@ -234,7 +234,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE53FBFB}"
 			>
 			<File
-				RelativePath="..\..\include\bzfsAPI.h"
+				RelativePath="..\..\src\include\bzfsAPI.h"
 				>
 			</File>
 			<File

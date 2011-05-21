@@ -90,7 +90,7 @@ dnl automatically when doing a make dist for convenience.
 AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
 
 dnl all configured definitions get written here
-AM_CONFIG_HEADER([include/config.h])
+AM_CONFIG_HEADER([src/include/config.h])
 
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
@@ -1321,7 +1321,6 @@ AC_CONFIG_FILES([
 	doc/guide/Tactics/Makefile
 	doc/howto/Makefile
 	doc/man/Makefile
-	include/Makefile
 	m4/Makefile
 	man/Makefile
 	man/bzadmin.6
@@ -1354,6 +1353,7 @@ AC_CONFIG_FILES([
 	src/geometry/Makefile
 	src/geometry/models/Makefile
 	src/geometry/models/tank/Makefile
+	src/include/Makefile
 	src/lua/Makefile
 	src/mediafile/Makefile
 	src/net/Makefile
@@ -1381,8 +1381,8 @@ ac_configure_args="$bz_configure_args"
 dnl # AC_OUTPUT won't update the config.h.in template timestamp if the
 dnl # file is unchanged.  forcibly update the timestamp so autoheader
 dnl # doesn't try to invoke.
-dnl if test ! "x`cat include/config.h.in`" = "x" ; then
-dnl     touch include/config.h.in
+dnl if test ! "x`cat src/include/config.h.in`" = "x" ; then
+dnl     touch src/include/config.h.in
 dnl fi
 
 

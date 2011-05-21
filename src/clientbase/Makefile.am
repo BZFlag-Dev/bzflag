@@ -4,7 +4,7 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/src/include \
 	-I$(top_srcdir)/src/bzflag \
 	$(LIBCURL_CPPFLAGS) \
 	@CONF_CPPFLAGS@

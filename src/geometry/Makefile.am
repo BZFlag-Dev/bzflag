@@ -2,7 +2,7 @@ SUBDIRS = models
 
 noinst_LTLIBRARIES = libGeometry.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/src/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libGeometry_la_LDFLAGS = -static

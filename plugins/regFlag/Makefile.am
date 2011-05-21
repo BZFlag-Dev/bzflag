@@ -1,10 +1,10 @@
 lib_LTLIBRARIES = regFlag.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 regFlag_la_SOURCES = regFlag.cpp
-regFlag_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugin_utils
+regFlag_la_CXXFLAGS= -I$(top_srcdir)/src/include -I$(top_srcdir)/plugin_utils
 regFlag_la_LDFLAGS = -module -avoid-version
 regFlag_la_LIBADD = $(top_builddir)/plugin_utils/libplugin_utils.la
 

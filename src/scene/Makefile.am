@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libSceneDB.la
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -I$(top_srcdir)/include @CONF_CPPFLAGS@
+AM_CPPFLAGS = -I$(top_srcdir)/src/include @CONF_CPPFLAGS@
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libSceneDB_la_LDFLAGS = -static

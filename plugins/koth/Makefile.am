@@ -1,6 +1,6 @@
 lib_LTLIBRARIES = koth.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
+AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 koth_la_SOURCES = koth.cpp

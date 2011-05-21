@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -118,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include,..\..\win32,.\,..\..\other_src\glew\include"
+				AdditionalIncludeDirectories="..\..\src\include,..\..\win32,.\,..\..\other_src\glew\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -354,67 +354,67 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\include\BillboardSceneNode.h"
+				RelativePath="..\..\src\include\BillboardSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\BoltSceneNode.h"
+				RelativePath="..\..\src\include\BoltSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\bzfgl.h"
+				RelativePath="..\..\src\include\bzfgl.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\common.h"
+				RelativePath="..\..\src\include\common.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EighthDBaseSceneNode.h"
+				RelativePath="..\..\src\include\EighthDBaseSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EighthDBoxSceneNode.h"
+				RelativePath="..\..\src\include\EighthDBoxSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EighthDimSceneNode.h"
+				RelativePath="..\..\src\include\EighthDimSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EighthDimShellNode.h"
+				RelativePath="..\..\src\include\EighthDimShellNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\EighthDPyrSceneNode.h"
+				RelativePath="..\..\src\include\EighthDPyrSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Factory.h"
+				RelativePath="..\..\src\include\Factory.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\FlagSceneNode.h"
+				RelativePath="..\..\src\include\FlagSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\FlagWarpSceneNode.h"
+				RelativePath="..\..\src\include\FlagWarpSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\global.h"
+				RelativePath="..\..\src\include\global.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\LaserSceneNode.h"
+				RelativePath="..\..\src\include\LaserSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshDrawMgr.h"
+				RelativePath="..\..\src\include\MeshDrawMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshFragSceneNode.h"
+				RelativePath="..\..\src\include\MeshFragSceneNode.h"
 				>
 			</File>
 			<File
@@ -422,79 +422,79 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\MeshSceneNode.h"
+				RelativePath="..\..\src\include\MeshSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLGState.h"
+				RelativePath="..\..\src\include\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLLight.h"
+				RelativePath="..\..\src\include\OpenGLLight.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLMaterial.h"
+				RelativePath="..\..\src\include\OpenGLMaterial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\OpenGLTexture.h"
+				RelativePath="..\..\src\include\OpenGLTexture.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\PolyWallSceneNode.h"
+				RelativePath="..\..\src\include\PolyWallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\QuadWallSceneNode.h"
+				RelativePath="..\..\src\include\QuadWallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\RenderNode.h"
+				RelativePath="..\..\src\include\RenderNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SceneNode.h"
+				RelativePath="..\..\src\include\SceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SceneRenderer.h"
+				RelativePath="..\..\src\include\SceneRenderer.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ShellSceneNode.h"
+				RelativePath="..\..\src\include\ShellSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ShotSceneNode.h"
+				RelativePath="..\..\src\include\ShotSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\SphereSceneNode.h"
+				RelativePath="..\..\src\include\SphereSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TankGeometryMgr.h"
+				RelativePath="..\..\src\include\TankGeometryMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TankSceneNode.h"
+				RelativePath="..\..\src\include\TankSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TracerSceneNode.h"
+				RelativePath="..\..\src\include\TracerSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\TriWallSceneNode.h"
+				RelativePath="..\..\src\include\TriWallSceneNode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\ViewFrustum.h"
+				RelativePath="..\..\src\include\ViewFrustum.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\WallSceneNode.h"
+				RelativePath="..\..\src\include\WallSceneNode.h"
 				>
 			</File>
 		</Filter>
