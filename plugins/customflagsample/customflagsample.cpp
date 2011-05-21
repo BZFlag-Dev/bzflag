@@ -3,8 +3,6 @@
 
 #include "bzfsAPI.h"
 
-BZ_GET_PLUGIN_VERSION
-
 // event handler callback
 class CustomFlagSample : public bz_Plugin
 {
@@ -15,6 +13,8 @@ public:
   virtual void Cleanup ( void );
   virtual void Event ( bz_EventData *eventData );
 };
+
+BZ_PLUGIN(CustomFlagSample);
 
 void CustomFlagSample::Event(bz_EventData *eventData)
 {
