@@ -70,7 +70,7 @@ std::string		getConfigDirName( const char* versionName )
   std::string name("C:");
   char dir[MAX_PATH];
   ITEMIDLIST* idl;
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_LOCAL_APPDATA , &idl))) {
     if (SHGetPathFromIDList(idl, dir)) {
       struct stat statbuf;
       if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
@@ -85,7 +85,7 @@ std::string		getConfigDirName( const char* versionName )
   }
 
   // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
-  name += "\\My BZFlag Files\\";
+  name += "\\BZFlag\\";
   if (versionName) {
     name += versionName;
     name += "\\";
