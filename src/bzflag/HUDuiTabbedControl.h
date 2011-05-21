@@ -12,11 +12,11 @@
 
 /*
  * HUDuiTabbedControl:
- *	Fill this in.
+ *  Fill this in.
  */
 
-#ifndef	__HUDUITABBEDCONTROL_H__
-#define	__HUDUITABBEDCONTROL_H__
+#ifndef __HUDUITABBEDCONTROL_H__
+#define __HUDUITABBEDCONTROL_H__
 
 // ancestor class
 #include "HUDuiNestedContainer.h"
@@ -26,15 +26,15 @@
 
 class HUDuiTabbedControl : public HUDuiNestedContainer {
   public:
-      HUDuiTabbedControl();
-      ~HUDuiTabbedControl();
+    HUDuiTabbedControl();
+    ~HUDuiTabbedControl();
 
     HUDuiControl* getActiveTab() { return activeControl; }
     std::string getActiveTabName() { return tabs[activeTab].first; }
 
     void setActiveTab(size_t tab);
 
-    void addTab(HUDuiControl* tabControl, std::string tabName, size_t index = (size_t) -1);
+    void addTab(HUDuiControl* tabControl, std::string tabName, size_t index = (size_t) - 1);
     void removeTab(HUDuiControl* control, std::string tabName);
     void removeTab(size_t tabIndex);
 
@@ -53,7 +53,7 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
     void drawTabs();
     void drawTabBody();
 
-    void addControl(HUDuiControl *control);
+    void addControl(HUDuiControl* control);
 
     bool doKeyPress(const BzfKeyEvent& key);
 
@@ -73,6 +73,6 @@ class HUDuiTabbedControl : public HUDuiNestedContainer {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

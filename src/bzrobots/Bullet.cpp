@@ -14,21 +14,19 @@
 #include "Bullet.h"
 
 BZRobots::Bullet::Bullet() :
-      heading(0.0f),
-      headingRadians(0.0f),
-          ownerName(""),
-      velocity(0.0f),
-      victimName(""),
-      x(0.0f),
-      y(0.0f),
-          z(0.0f),
-          active(false)
-{
+  heading(0.0f),
+  headingRadians(0.0f),
+  ownerName(""),
+  velocity(0.0f),
+  victimName(""),
+  x(0.0f),
+  y(0.0f),
+  z(0.0f),
+  active(false) {
 
 }
 
-BZRobots::Bullet::~Bullet()
-{
+BZRobots::Bullet::~Bullet() {
 
 }
 
@@ -36,6 +34,6 @@ BZRobots::Bullet::~Bullet()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

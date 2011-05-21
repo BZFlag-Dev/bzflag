@@ -12,7 +12,7 @@
 
 /**
  * GameTime:
- *	Manages network timing.
+ *  Manages network timing.
  *      Time is stored as doubles representing seconds
  */
 
@@ -59,16 +59,14 @@ static BZDB_int debugGameTime("debugGameTime");
 
 //============================================================================//
 
-static inline double getRawTime()
-{
+static inline double getRawTime() {
   return BzTime::getCurrent().getSeconds();
 }
 
 
 //============================================================================//
 
-static void calcAvgRate()
-{
+static void calcAvgRate() {
   // FIXME - this is weak
   const size_t count = timeRecs.size();
   if (count == 0) {
@@ -91,7 +89,8 @@ static void calcAvgRate()
     if (locDiff != 0.0) {
       avgRate = ((double)netDiff / (double)locDiff);
       avgPoint = last;
-    } else {
+    }
+    else {
       // don't update
     }
   }
@@ -101,8 +100,7 @@ static void calcAvgRate()
 
 //============================================================================//
 
-void GameTime::reset()
-{
+void GameTime::reset() {
   stepTime = 0;
   avgRate = 1.0;
   avgPoint.netTime = 0;
@@ -112,8 +110,7 @@ void GameTime::reset()
 }
 
 
-static void resetToRecord(const TimeRecord& record)
-{
+static void resetToRecord(const TimeRecord& record) {
   avgRate = 1.0;
   avgPoint = record;
   stepTime = record.netTime;
@@ -124,8 +121,7 @@ static void resetToRecord(const TimeRecord& record)
 }
 
 
-void GameTime::update()
-{
+void GameTime::update() {
   std::list<TimeRecord>::iterator it;
   const size_t count = timeRecs.size();
   if (count == 0) {
@@ -141,9 +137,9 @@ void GameTime::update()
     const TimeRecord& tr = *timeRecs.begin();
     const double diffTime = stepTime - tr.netTime;
     if ((diffTime < -maxTime) || (diffTime > +maxTime) ||
-	(avgRate < minRate) || (avgRate > maxRate)) {
+        (avgRate < minRate) || (avgRate > maxRate)) {
       logDebugMessage(4, "GameTime: discontinuity: usecs = %f, rate = %f\n",
-		      diffTime, avgRate);
+                      diffTime, avgRate);
       resetToRecord(tr);
     }
   }
@@ -156,14 +152,12 @@ void GameTime::update()
 
 //============================================================================//
 
-double GameTime::getStepTime()
-{
+double GameTime::getStepTime() {
   return stepTime;
 }
 
 
-void GameTime::setStepTime()
-{
+void GameTime::setStepTime() {
   static double lastStep = 0;
   const double thisStep = getRawTime();
   if (timeRecs.size() <= 0) {
@@ -188,26 +182,24 @@ void GameTime::setStepTime()
 }
 
 
-void GameTime::serverStepTime()
-{
+void GameTime::serverStepTime() {
   stepTime = getRawTime();
 }
 
 
 //============================================================================//
 
-int GameTime::packSize()
-{
+int GameTime::packSize() {
   return sizeof(double) + sizeof(float);
 }
 
 
-void* GameTime::pack(void *buf, float lag)
-{
+void* GameTime::pack(void* buf, float lag) {
   float halfLag;
   if ((lag < 0.0f) || (lag > 10.0f)) {
     halfLag = 0.075f; // assume a 150ms delay
-  } else {
+  }
+  else {
     halfLag = (lag * 0.5f);
   }
   buf = nboPackDouble(buf, getRawTime());
@@ -216,12 +208,12 @@ void* GameTime::pack(void *buf, float lag)
 }
 
 
-void GameTime::pack(NetMessage& netMsg, float lag)
-{
+void GameTime::pack(NetMessage& netMsg, float lag) {
   float halfLag;
   if ((lag < 0.0f) || (lag > 10.0f)) {
     halfLag = 0.075f; // assume a 150ms delay
-  } else {
+  }
+  else {
     halfLag = (lag * 0.5f);
   }
   netMsg.packDouble(getRawTime());
@@ -229,8 +221,7 @@ void GameTime::pack(NetMessage& netMsg, float lag)
 }
 
 
-void* GameTime::unpack(void *buf)
-{
+void* GameTime::unpack(void* buf) {
   double msgTime;
   float halfLag;
   buf = nboUnpackDouble(buf, msgTime);
@@ -252,7 +243,7 @@ void* GameTime::unpack(void *buf)
     while (timeRecs.size() > 0) {
       TimeRecord back = *timeRecs.rbegin();
       if ((localTime - back.localTime) < maxRecordAge) {
-	break;
+        break;
       }
       timeRecs.pop_back();
     }
@@ -270,9 +261,9 @@ void* GameTime::unpack(void *buf)
   }
   if (debugGameTime >= 1) {
     logDebugMessage(0,
-      "GameTime::unpack()"
-      " net:%.3f local:%.3f diff:%.3f step:%.3f halfLag:%.3f rate:%.6f\n",
-      netTime, localTime, netTime - localTime, stepTime, halfLag, avgRate);
+                    "GameTime::unpack()"
+                    " net:%.3f local:%.3f diff:%.3f step:%.3f halfLag:%.3f rate:%.6f\n",
+                    netTime, localTime, netTime - localTime, stepTime, halfLag, avgRate);
   }
 
   return buf;
@@ -286,6 +277,6 @@ void* GameTime::unpack(void *buf)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

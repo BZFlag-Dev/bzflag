@@ -24,40 +24,40 @@
 // HUDuiLabel
 //
 
-HUDuiLabel::HUDuiLabel() : HUDuiControl()
-{
+HUDuiLabel::HUDuiLabel() : HUDuiControl() {
   darker = false;
   params = NULL;
   color = textColor;
 }
 
 
-HUDuiLabel::~HUDuiLabel()
-{
-  if (params)
+HUDuiLabel::~HUDuiLabel() {
+  if (params) {
     delete params;
+  }
 }
 
 
-std::string HUDuiLabel::getString() const
-{
+std::string HUDuiLabel::getString() const {
   std::string theString;
-  Bundle *bdl = BundleMgr::getCurrentBundle();
-  if (params)
+  Bundle* bdl = BundleMgr::getCurrentBundle();
+  if (params) {
     theString = bdl->formatMessage(label, params);
-  else
+  }
+  else {
     theString = bdl->getLocalString(label);
+  }
 
   return theString;
 }
 
 
-void HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
-{
+void HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params) {
   label = _string;
   if (_params) {
-    if (params != NULL)
+    if (params != NULL) {
       delete params;
+    }
 
     params = new std::vector<std::string>(*_params);
   }
@@ -65,16 +65,15 @@ void HUDuiLabel::setString(const std::string& _string, const std::vector<std::st
 }
 
 
-void HUDuiLabel::onSetFont()
-{
+void HUDuiLabel::onSetFont() {
   HUDuiControl::onSetFont();
 }
 
 
-bool HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
-{
-  if (HUDuiControl::doKeyPress(key))
+bool HUDuiLabel::doKeyPress(const BzfKeyEvent& key) {
+  if (HUDuiControl::doKeyPress(key)) {
     return true;
+  }
 
   switch (key.unicode) {
     case 13:
@@ -86,39 +85,37 @@ bool HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 }
 
 
-bool HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
-{
+bool HUDuiLabel::doKeyRelease(const BzfKeyEvent&) {
   return false;
 }
 
 
-void HUDuiLabel::setDarker(bool d)
-{
+void HUDuiLabel::setDarker(bool d) {
   darker = d;
 }
 
 
-void HUDuiLabel::setColor(float r, float g, float b)
-{
+void HUDuiLabel::setColor(float r, float g, float b) {
   color.r = r;
   color.g = g;
   color.b = b;
 }
 
 
-void HUDuiLabel::doRender()
-{
+void HUDuiLabel::doRender() {
   if (getFontFace() < 0) {
     return;
   }
   // render string
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   float darkness;
   if (hasFocus()) {
     darkness = 1.0f;
-  } else if (!darker) {
+  }
+  else if (!darker) {
     darkness = 0.7f;
-  } else {
+  }
+  else {
     darkness = 0.4f;
   }
   fm.setDarkness(darkness);
@@ -132,6 +129,6 @@ void HUDuiLabel::doRender()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -14,9 +14,8 @@
 #include "RobotControl.h"
 
 
-RobotCallbacks *RobotControl::CallbackSet(BZRobotPlayer *rrp)
-{
-  RobotCallbacks *cbset = new RobotCallbacks;
+RobotCallbacks* RobotControl::CallbackSet(BZRobotPlayer* rrp) {
+  RobotCallbacks* cbset = new RobotCallbacks;
   cbset->data = rrp;
   cbset->Ahead = &RobotControl::Ahead;
   cbset->Back = &RobotControl::Back;
@@ -100,563 +99,483 @@ RobotCallbacks *RobotControl::CallbackSet(BZRobotPlayer *rrp)
   return cbset;
 }
 
-void RobotControl::Ahead(void *_rrp,double distance)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Ahead(void* _rrp, double distance) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botAhead(distance);
 }
 
-void RobotControl::Back(void *_rrp,double distance)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Back(void* _rrp, double distance) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botBack(distance);
 }
 
-void RobotControl::ClearAllEvents(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::ClearAllEvents(void* _rrp) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botClearAllEvents();
 }
 
-void RobotControl::DoNothing(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::DoNothing(void* _rrp) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botDoNothing();
 }
 
-void RobotControl::Execute(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Execute(void* _rrp) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botExecute();
 }
 
-void RobotControl::Fire(void *_rrp, double power)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Fire(void* _rrp, double power) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botFire(power);
 }
 
-BZRobots::Bullet* RobotControl::FireBullet(void *_rrp, double power)
-{
-  if(!_rrp) return NULL;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+BZRobots::Bullet* RobotControl::FireBullet(void* _rrp, double power) {
+  if (!_rrp) { return NULL; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botFireBullet(power);
 }
 
-std::list<BZRobots::Event> RobotControl::GetAllEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetAllEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetAllEvents();
 }
 
-double RobotControl::GetBattleFieldLength(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetBattleFieldLength(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetBattleFieldLength();
 }
 
-double RobotControl::GetBattleFieldWidth(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetBattleFieldWidth(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetBattleFieldWidth();
 }
 
-std::list<BZRobots::Event> RobotControl::GetBulletHitBulletEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetBulletHitBulletEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetBulletHitBulletEvents();
 }
 
-std::list<BZRobots::Event> RobotControl::GetBulletHitEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetBulletHitEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetBulletHitEvents();
 }
 
-std::list<BZRobots::Event> RobotControl::GetBulletMissedEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetBulletMissedEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetBulletMissedEvents();
 }
 
-double RobotControl::GetDistanceRemaining(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetDistanceRemaining(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetDistanceRemaining();
 }
 
-double RobotControl::GetEnergy(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetEnergy(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetEnergy();
 }
 
-double RobotControl::GetGunCoolingRate(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetGunCoolingRate(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetGunCoolingRate();
 }
 
-double RobotControl::GetGunHeading(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetGunHeading(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetGunHeading();
 }
 
-double RobotControl::GetGunHeadingRadians(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetGunHeadingRadians(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetGunHeadingRadians();
 }
 
-double RobotControl::GetGunHeat(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetGunHeat(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetGunHeat();
 }
 
-double RobotControl::GetGunTurnRemaining(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetGunTurnRemaining(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetGunTurnRemaining();
 }
 
-double RobotControl::GetGunTurnRemainingRadians(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetGunTurnRemainingRadians(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetGunTurnRemainingRadians();
 }
 
-double RobotControl::GetHeading(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetHeading(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetHeading();
 }
 
-double RobotControl::GetHeadingRadians(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetHeadingRadians(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetHeadingRadians();
 }
 
-double RobotControl::GetHeight(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetHeight(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetHeight();
 }
 
-std::list<BZRobots::Event> RobotControl::GetHitByBulletEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetHitByBulletEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetHitByBulletEvents();
 }
 
-std::list<BZRobots::Event> RobotControl::GetHitRobotEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetHitRobotEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetHitRobotEvents();
 }
 
-std::list<BZRobots::Event> RobotControl::GetHitWallEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetHitWallEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetHitWallEvents();
 }
 
-double RobotControl::GetLength(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetLength(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetLength();
 }
 
-std::string RobotControl::GetName(void *_rrp)
-{
-  if(!_rrp) return "";
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::string RobotControl::GetName(void* _rrp) {
+  if (!_rrp) { return ""; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetName();
 }
 
-int RobotControl::GetNumRounds(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+int RobotControl::GetNumRounds(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetNumRounds();
 }
 
-int RobotControl::GetOthers(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+int RobotControl::GetOthers(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetOthers();
 }
 
-double RobotControl::GetRadarHeading(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetRadarHeading(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetRadarHeading();
 }
 
-double RobotControl::GetRadarHeadingRadians(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetRadarHeadingRadians(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetRadarHeadingRadians();
 }
 
-double RobotControl::GetRadarTurnRemaining(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetRadarTurnRemaining(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetRadarTurnRemaining();
 }
 
-double RobotControl::GetRadarTurnRemainingRadians(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetRadarTurnRemainingRadians(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetRadarTurnRemainingRadians();
 }
 
-std::list<BZRobots::Event> RobotControl::GetRobotDeathEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetRobotDeathEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetRobotDeathEvents();
 }
 
-int RobotControl::GetRoundNum(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+int RobotControl::GetRoundNum(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetRoundNum();
 }
 
-std::list<BZRobots::Event> RobotControl::GetScannedRobotEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetScannedRobotEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetScannedRobotEvents();
 }
 
-std::list<BZRobots::Event> RobotControl::GetStatusEvents(void *_rrp)
-{
-  if(!_rrp) { std::list<BZRobots::Event> events; return events; }
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+std::list<BZRobots::Event> RobotControl::GetStatusEvents(void* _rrp) {
+  if (!_rrp) { std::list<BZRobots::Event> events; return events; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetStatusEvents();
 }
 
-double RobotControl::GetTime(void *_rrp)
-{
-  if(!_rrp) return 0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetTime(void* _rrp) {
+  if (!_rrp) { return 0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetTime();
 }
 
-double RobotControl::GetTurnRemaining(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetTurnRemaining(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetTurnRemaining();
 }
 
-double RobotControl::GetTurnRemainingRadians(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetTurnRemainingRadians(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetTurnRemainingRadians();
 }
 
-double RobotControl::GetVelocity(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetVelocity(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetVelocity();
 }
 
-double RobotControl::GetWidth(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetWidth(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetWidth();
 }
 
-double RobotControl::GetX(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetX(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetX();
 }
 
-double RobotControl::GetY(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetY(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetY();
 }
 
-double RobotControl::GetZ(void *_rrp)
-{
-  if(!_rrp) return 0.0;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+double RobotControl::GetZ(void* _rrp) {
+  if (!_rrp) { return 0.0; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botGetZ();
 }
 
-bool RobotControl::IsAdjustGunForRobotTurn(void *_rrp)
-{
-  if(!_rrp) return true;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+bool RobotControl::IsAdjustGunForRobotTurn(void* _rrp) {
+  if (!_rrp) { return true; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botIsAdjustGunForRobotTurn();
 }
 
-bool RobotControl::IsAdjustRadarForGunTurn(void *_rrp)
-{
-  if(!_rrp) return true;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+bool RobotControl::IsAdjustRadarForGunTurn(void* _rrp) {
+  if (!_rrp) { return true; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botIsAdjustRadarForGunTurn();
 }
 
-bool RobotControl::IsAdjustRadarForRobotTurn(void *_rrp)
-{
-  if(!_rrp) return true;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+bool RobotControl::IsAdjustRadarForRobotTurn(void* _rrp) {
+  if (!_rrp) { return true; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botIsAdjustRadarForRobotTurn();
 }
 
-void RobotControl::Resume(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Resume(void* _rrp) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botResume();
 }
 
-void RobotControl::Scan(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Scan(void* _rrp) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botScan();
 }
 
-void RobotControl::SetAdjustGunForRobotTurn(void *_rrp, bool independent)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetAdjustGunForRobotTurn(void* _rrp, bool independent) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetAdjustGunForRobotTurn(independent);
 }
 
-void RobotControl::SetAdjustRadarForGunTurn(void *_rrp, bool independent)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetAdjustRadarForGunTurn(void* _rrp, bool independent) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetAdjustRadarForGunTurn(independent);
 }
 
-void RobotControl::SetAdjustRadarForRobotTurn(void *_rrp, bool independent)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetAdjustRadarForRobotTurn(void* _rrp, bool independent) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetAdjustRadarForRobotTurn(independent);
 }
 
-void RobotControl::SetAhead(void *_rrp,double distance)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetAhead(void* _rrp, double distance) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetAhead(distance);
 }
 
-void RobotControl::SetBack(void *_rrp,double distance)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetBack(void* _rrp, double distance) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetBack(distance);
 }
 
-void RobotControl::SetFire(void *_rrp, double power)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetFire(void* _rrp, double power) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetFire(power);
 }
 
-BZRobots::Bullet* RobotControl::SetFireBullet(void *_rrp, double power)
-{
-  if(!_rrp) return NULL;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+BZRobots::Bullet* RobotControl::SetFireBullet(void* _rrp, double power) {
+  if (!_rrp) { return NULL; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   return rrp->botSetFireBullet(power);
 }
 
-void RobotControl::SetMaxTurnRate(void *_rrp,double turnRate)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetMaxTurnRate(void* _rrp, double turnRate) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetMaxTurnRate(turnRate);
 }
 
-void RobotControl::SetMaxVelocity(void *_rrp,double speed)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetMaxVelocity(void* _rrp, double speed) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetMaxVelocity(speed);
 }
 
-void RobotControl::SetResume(void *_rrp)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetResume(void* _rrp) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetResume();
 }
 
-void RobotControl::SetStop(void *_rrp,bool overwrite)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetStop(void* _rrp, bool overwrite) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetStop(overwrite);
 }
 
-void RobotControl::SetTurnLeft(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetTurnLeft(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetTurnLeft(turn);
 }
 
-void RobotControl::SetTurnLeftRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetTurnLeftRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetTurnLeftRadians(turn);
 }
 
-void RobotControl::SetTurnRight(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetTurnRight(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetTurnRight(turn);
 }
 
-void RobotControl::SetTurnRightRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::SetTurnRightRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botSetTurnRightRadians(turn);
 }
 
-void RobotControl::Stop(void *_rrp,bool overwrite)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::Stop(void* _rrp, bool overwrite) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botStop(overwrite);
 }
 
-void RobotControl::TurnGunLeft(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnGunLeft(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnGunLeft(turn);
 }
 
-void RobotControl::TurnGunLeftRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnGunLeftRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnGunLeftRadians(turn);
 }
 
-void RobotControl::TurnGunRight(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnGunRight(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnGunRight(turn);
 }
 
-void RobotControl::TurnGunRightRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnGunRightRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnGunRightRadians(turn);
 }
 
-void RobotControl::TurnLeft(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnLeft(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnLeft(turn);
 }
 
-void RobotControl::TurnLeftRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnLeftRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnLeftRadians(turn);
 }
 
-void RobotControl::TurnRadarLeft(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnRadarLeft(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnRadarLeft(turn);
 }
 
-void RobotControl::TurnRadarLeftRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnRadarLeftRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnRadarLeftRadians(turn);
 }
 
-void RobotControl::TurnRadarRight(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnRadarRight(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnRadarRight(turn);
 }
 
-void RobotControl::TurnRadarRightRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnRadarRightRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnRadarRightRadians(turn);
 }
 
-void RobotControl::TurnRight(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnRight(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnRight(turn);
 }
 
-void RobotControl::TurnRightRadians(void *_rrp,double turn)
-{
-  if(!_rrp) return;
-  BZRobotPlayer *rrp = (BZRobotPlayer *)_rrp;
+void RobotControl::TurnRightRadians(void* _rrp, double turn) {
+  if (!_rrp) { return; }
+  BZRobotPlayer* rrp = (BZRobotPlayer*)_rrp;
   rrp->botTurnRightRadians(turn);
 }
 
@@ -665,6 +584,6 @@ void RobotControl::TurnRightRadians(void *_rrp,double turn)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

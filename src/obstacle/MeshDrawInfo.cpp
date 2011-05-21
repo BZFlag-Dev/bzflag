@@ -50,7 +50,7 @@ static DrawCmdLabel drawLabels[] = {
   {"points",    DrawCmd::DrawPoints},
   {"lines",     DrawCmd::DrawLines},
   {"lineloop",  DrawCmd::DrawLineLoop},
-  {"linestrip",	DrawCmd::DrawLineStrip},
+  {"linestrip", DrawCmd::DrawLineStrip},
   {"tris",      DrawCmd::DrawTriangles},
   {"tristrip",  DrawCmd::DrawTriangleStrip},
   {"trifan",    DrawCmd::DrawTriangleFan},
@@ -69,8 +69,7 @@ static int compareLengthPerPixel(const void* a, const void* b);
 //============================================================================//
 //============================================================================//
 
-MeshDrawInfo::MeshDrawInfo(const std::vector<std::string>& options)
-{
+MeshDrawInfo::MeshDrawInfo(const std::vector<std::string>& options) {
   init(); // server-side constructor
 
   lodOptions = options;
@@ -79,18 +78,16 @@ MeshDrawInfo::MeshDrawInfo(const std::vector<std::string>& options)
 }
 
 
-MeshDrawInfo::MeshDrawInfo()
-{
+MeshDrawInfo::MeshDrawInfo() {
   init(); // client-side unpacking constructor
   return;
 }
 
 
 MeshDrawInfo::MeshDrawInfo(const MeshDrawInfo* di,
-			   const MeshTransform& xform,
-			   const std::map<const BzMaterial*,
-					  const BzMaterial*>& _matMap)
-{
+                           const MeshTransform& xform,
+                           const std::map < const BzMaterial*,
+                           const BzMaterial* > & _matMap) {
   init(); // client side copy constructor
 
   source = di; // a copy this is
@@ -123,20 +120,18 @@ MeshDrawInfo::MeshDrawInfo(const MeshDrawInfo* di,
 }
 
 
-MeshDrawInfo::~MeshDrawInfo()
-{
-  logDebugMessage(4,"~MeshDrawInfo(): source = %p\n", source);
+MeshDrawInfo::~MeshDrawInfo() {
+  logDebugMessage(4, "~MeshDrawInfo(): source = %p\n", source);
   fflush(stdout); fflush(stderr);
 
   clear();
 
-  logDebugMessage(4,"~MeshDrawInfo(): done\n");
+  logDebugMessage(4, "~MeshDrawInfo(): done\n");
   fflush(stdout); fflush(stderr);
 }
 
 
-void MeshDrawInfo::clear()
-{
+void MeshDrawInfo::clear() {
   // drawMgr is freed externally
   if (source == NULL) {
     delete[] corners;
@@ -164,8 +159,7 @@ void MeshDrawInfo::clear()
 }
 
 
-void MeshDrawInfo::init()
-{
+void MeshDrawInfo::init() {
   name = "";
 
   valid = true;
@@ -207,10 +201,9 @@ void MeshDrawInfo::init()
 }
 
 
-bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
-{
+bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
   if (mesh == NULL) {
-    logDebugMessage(0,"ERROR: drawInfo has no mesh\n");
+    logDebugMessage(0, "ERROR: drawInfo has no mesh\n");
     return false;
   }
 
@@ -219,7 +212,8 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
     vCount = rawVertCount;
     nCount = rawNormCount;
     tCount = rawTxcdCount;
-  } else {
+  }
+  else {
     vCount = mesh->getVertexCount();
     nCount = mesh->getNormalCount();
     tCount = mesh->getTexcoordCount();
@@ -231,9 +225,9 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
     const int n = corners[i].normal;
     const int t = corners[i].texcoord;
     if ((v < 0) || (v >= vCount) ||
-	(n < 0) || (n >= nCount) ||
-	(t < 0) || (t >= tCount)) {
-      logDebugMessage(0,"ERROR: Bad corner: %i %i %i\n", v, n, t);
+        (n < 0) || (n >= nCount) ||
+        (t < 0) || (t >= tCount)) {
+      logDebugMessage(0, "ERROR: Bad corner: %i %i %i\n", v, n, t);
       return false;
     }
   }
@@ -244,31 +238,31 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
     for (int set = 0; set < drawLod.count; set++) {
       DrawSet& drawSet = drawLod.sets[set];
       for (int cmd = 0; cmd < drawSet.count; cmd++) {
-	DrawCmd& drawCmd = drawSet.cmds[cmd];
-	if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
-	  unsigned short* array = (unsigned short*)drawCmd.indices;
-	  for (int idx = 0; idx < drawCmd.count; idx++) {
-	    if ((int)array[idx] >= cornerCount) {
-	      logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
-	                      array[idx], cornerCount);
-	      return false;
-	    }
-	  }
-	}
-	else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
-	  unsigned int* array = (unsigned int*)drawCmd.indices;
-	  for (int idx = 0; idx < drawCmd.count; idx++) {
-	    if ((int)array[idx] >= cornerCount) {
-	      logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
-	                      array[idx], cornerCount);
-	      return false;
-	    }
-	  }
-	}
-	else {
-	  logDebugMessage(0,"ERROR: Bad index type (%i)\n", drawCmd.indexType);
-	  return false;
-	}
+        DrawCmd& drawCmd = drawSet.cmds[cmd];
+        if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
+          unsigned short* array = (unsigned short*)drawCmd.indices;
+          for (int idx = 0; idx < drawCmd.count; idx++) {
+            if ((int)array[idx] >= cornerCount) {
+              logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
+                              array[idx], cornerCount);
+              return false;
+            }
+          }
+        }
+        else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
+          unsigned int* array = (unsigned int*)drawCmd.indices;
+          for (int idx = 0; idx < drawCmd.count; idx++) {
+            if ((int)array[idx] >= cornerCount) {
+              logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
+                              array[idx], cornerCount);
+              return false;
+            }
+          }
+        }
+        else {
+          logDebugMessage(0, "ERROR: Bad index type (%i)\n", drawCmd.indexType);
+          return false;
+        }
       }
     }
   }
@@ -276,8 +270,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const
 }
 
 
-static int compareLengthPerPixel(const void* a, const void* b)
-{
+static int compareLengthPerPixel(const void* a, const void* b) {
   const DrawLod* lodA = (const DrawLod*)a;
   const DrawLod* lodB = (const DrawLod*)b;
   const float lenA = lodA->lengthPerPixel;
@@ -285,16 +278,17 @@ static int compareLengthPerPixel(const void* a, const void* b)
   // higher resolution meshes for smaller lengths per pixel
   if (lenA < lenB) {
     return -1;
-  } else if (lenA > lenB) {
+  }
+  else if (lenA > lenB) {
     return +1;
-  } else {
+  }
+  else {
     return 0;
   }
 }
 
 
-bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
-{
+bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh) {
   valid = validate(mesh);
   if (!valid) {
     return false;
@@ -305,39 +299,41 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
   if (rawVertCount > 0) {
     vCount = rawVertCount;
     verts = rawVerts;
-  } else {
+  }
+  else {
     vCount = mesh->getVertexCount();
     verts = mesh->getVertices();
   }
 
   Extents tmpExts;
   const bool calcCenter = (sphere.x == +MAXFLOAT) &&
-			  (sphere.y == +MAXFLOAT) &&
-			  (sphere.z == +MAXFLOAT);
+                          (sphere.y == +MAXFLOAT) &&
+                          (sphere.z == +MAXFLOAT);
   const bool calcRadius = (sphere.w == +MAXFLOAT);
   const bool calcExtents = (extents.mins == tmpExts.mins) &&
-			   (extents.maxs == tmpExts.maxs);
+                           (extents.maxs == tmpExts.maxs);
 
   // calculate the extents?
   if (calcCenter || calcRadius || calcExtents) {
     if ((animInfo == NULL) || (animInfo->angvel == 0.0f)) {
       // no animation, use the raw vertices
       for (int v = 0; v < vCount; v++) {
-	tmpExts.expandToPoint(verts[v]);
+        tmpExts.expandToPoint(verts[v]);
       }
-    } else {
+    }
+    else {
       // factor in the rotation animation
       float minZ = +MAXFLOAT;
       float maxZ = -MAXFLOAT;
       float maxDistSqr = -MAXFLOAT;
       for (int v = 0; v < vCount; v++) {
-	const fvec3& p = verts[v];
-	if (p.z < minZ) { minZ = p.z; }
-	if (p.z > maxZ) { maxZ = p.z; }
-	const float distSqr = p.xy().lengthSq();
-	if (distSqr > maxDistSqr) {
-	  maxDistSqr = distSqr;
-	}
+        const fvec3& p = verts[v];
+        if (p.z < minZ) { minZ = p.z; }
+        if (p.z > maxZ) { maxZ = p.z; }
+        const float distSqr = p.xy().lengthSq();
+        if (distSqr > maxDistSqr) {
+          maxDistSqr = distSqr;
+        }
       }
       const float dist = sqrtf(maxDistSqr);
       tmpExts.mins = fvec3(-dist, -dist, minZ);
@@ -364,39 +360,39 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
     for (int set = 0; set < drawLod.count; set++) {
       DrawSet& drawSet = drawLod.sets[set];
       const bool calcSetCenter = (drawSet.sphere.x == +MAXFLOAT) &&
-				 (drawSet.sphere.y == +MAXFLOAT) &&
-				 (drawSet.sphere.z == +MAXFLOAT);
+                                 (drawSet.sphere.y == +MAXFLOAT) &&
+                                 (drawSet.sphere.z == +MAXFLOAT);
       const bool calcSetRadius = (drawSet.sphere.w == +MAXFLOAT);
       if (calcSetCenter || calcSetRadius) {
-	Extents exts;
-	for (int cmd = 0; cmd < drawSet.count; cmd++) {
-	  DrawCmd& drawCmd = drawSet.cmds[cmd];
-	  if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
-	    unsigned short* array = (unsigned short*)drawCmd.indices;
-	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      const unsigned short cIndex = array[idx];
-	      const Corner& corner = corners[cIndex];
-	      const fvec3& v = verts[corner.vertex];
-	      exts.expandToPoint(v);
-	    }
-	  }
-	  else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
-	    unsigned int* array = (unsigned int*)drawCmd.indices;
-	    for (int idx = 0; idx < drawCmd.count; idx++) {
-	      const unsigned int cIndex = array[idx];
-	      const Corner& corner = corners[cIndex];
-	      const fvec3& v = verts[corner.vertex];
-	      exts.expandToPoint(v);
-	    }
-	  }
-	}
-	if (calcSetCenter) {
-	  drawSet.sphere.xyz() = 0.5f * (exts.maxs + exts.mins);
-	}
-	if (calcSetRadius) {
-	  const fvec3 d = exts.maxs - exts.mins;
-	  drawSet.sphere.w = 0.25f * d.lengthSq(); // radius squared
-	}
+        Extents exts;
+        for (int cmd = 0; cmd < drawSet.count; cmd++) {
+          DrawCmd& drawCmd = drawSet.cmds[cmd];
+          if (drawCmd.indexType == DrawCmd::DrawIndexUShort) {
+            unsigned short* array = (unsigned short*)drawCmd.indices;
+            for (int idx = 0; idx < drawCmd.count; idx++) {
+              const unsigned short cIndex = array[idx];
+              const Corner& corner = corners[cIndex];
+              const fvec3& v = verts[corner.vertex];
+              exts.expandToPoint(v);
+            }
+          }
+          else if (drawCmd.indexType == DrawCmd::DrawIndexUInt) {
+            unsigned int* array = (unsigned int*)drawCmd.indices;
+            for (int idx = 0; idx < drawCmd.count; idx++) {
+              const unsigned int cIndex = array[idx];
+              const Corner& corner = corners[cIndex];
+              const fvec3& v = verts[corner.vertex];
+              exts.expandToPoint(v);
+            }
+          }
+        }
+        if (calcSetCenter) {
+          drawSet.sphere.xyz() = 0.5f * (exts.maxs + exts.mins);
+        }
+        if (calcSetRadius) {
+          const fvec3 d = exts.maxs - exts.mins;
+          drawSet.sphere.w = 0.25f * d.lengthSq(); // radius squared
+        }
       }
     }
   }
@@ -408,8 +404,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 }
 
 
-bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
-{
+bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh) {
   serverSide = false;
 
   valid = validate(mesh);
@@ -424,7 +419,8 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
     verts = rawVerts;
     norms = rawNorms;
     txcds = rawTxcds;
-  } else {
+  }
+  else {
     verts = mesh->getVertices();
     norms = mesh->getNormals();
     txcds = mesh->getTexcoords();
@@ -448,22 +444,22 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
       DrawSet& drawSet = drawLod.sets[set];
       int tris = 0;
       for (int cmd = 0; cmd < drawSet.count; cmd++) {
-	DrawCmd& drawCmd = drawSet.cmds[cmd];
-	const int points = drawCmd.count;
-	switch(drawCmd.drawMode) {
-	  // NOTE: points and lines are each counted as a triangle
-	  case DrawCmd::DrawPoints:	   tris += points;	break;
-	  case DrawCmd::DrawLines:	   tris += points / 2;	break;
-	  case DrawCmd::DrawLineLoop:      tris += points;	break;
-	  case DrawCmd::DrawLineStrip:     tris += points - 1;	break;
-	  case DrawCmd::DrawTriangles:     tris += points / 3;	break;
-	  case DrawCmd::DrawTriangleStrip: tris += points - 2;	break;
-	  case DrawCmd::DrawTriangleFan:   tris += points - 2;	break;
-	  case DrawCmd::DrawQuads:	   tris += points / 2;	break;
-	  case DrawCmd::DrawQuadStrip:     tris += points - 2;	break;
-	  case DrawCmd::DrawPolygon:       tris += points - 2;	break;
-	  default: break;
-	}
+        DrawCmd& drawCmd = drawSet.cmds[cmd];
+        const int points = drawCmd.count;
+        switch (drawCmd.drawMode) {
+            // NOTE: points and lines are each counted as a triangle
+          case DrawCmd::DrawPoints:    tris += points;  break;
+          case DrawCmd::DrawLines:     tris += points / 2;  break;
+          case DrawCmd::DrawLineLoop:      tris += points;  break;
+          case DrawCmd::DrawLineStrip:     tris += points - 1;  break;
+          case DrawCmd::DrawTriangles:     tris += points / 3;  break;
+          case DrawCmd::DrawTriangleStrip: tris += points - 2;  break;
+          case DrawCmd::DrawTriangleFan:   tris += points - 2;  break;
+          case DrawCmd::DrawQuads:     tris += points / 2;  break;
+          case DrawCmd::DrawQuadStrip:     tris += points - 2;  break;
+          case DrawCmd::DrawPolygon:       tris += points - 2;  break;
+          default: break;
+        }
       }
       drawSet.triangleCount = tris;
     }
@@ -478,25 +474,23 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
 
 //============================================================================//
 
-void MeshDrawInfo::setName(const std::string& _name)
-{
+void MeshDrawInfo::setName(const std::string& _name) {
   name = _name;
   return;
 }
 
 
-MeshDrawMgr* MeshDrawInfo::getDrawMgr() const
-{
+MeshDrawMgr* MeshDrawInfo::getDrawMgr() const {
   if (!isCopy()) {
     return drawMgr;
-  } else {
+  }
+  else {
     return source->getDrawMgr();
   }
 }
 
 
-void MeshDrawInfo::getMaterials(MaterialSet& matSet) const
-{
+void MeshDrawInfo::getMaterials(MaterialSet& matSet) const {
   for (int i = 0; i < lodCount; i++) {
     DrawLod& lod = lods[i];
     for (int j = 0; j < lod.count; j++) {
@@ -508,15 +502,14 @@ void MeshDrawInfo::getMaterials(MaterialSet& matSet) const
 }
 
 
-bool MeshDrawInfo::isInvisible() const
-{
+bool MeshDrawInfo::isInvisible() const {
   for (int i = 0; i < lodCount; i++) {
     DrawLod& lod = lods[i];
     for (int j = 0; j < lod.count; j++) {
       DrawSet& set = lod.sets[j];
       const BzMaterial* mat = set.material;
       if (mat->getDiffuse().a != 0.0f) {
-	return false;
+        return false;
       }
     }
   }
@@ -526,8 +519,7 @@ bool MeshDrawInfo::isInvisible() const
 
 //============================================================================//
 
-void MeshDrawInfo::updateAnimation(double time)
-{
+void MeshDrawInfo::updateAnimation(double time) {
   if (animInfo != NULL) {
     const float angle = (float)fmod((double)animInfo->angvel * time, 360.0);
     const float radians = angle * (float)(M_PI / 180.0);
@@ -551,22 +543,22 @@ bool MeshDrawInfo::convertEnums(const UintMap& drawMap, const UintMap& typeMap)
     for (mat = 0; mat < materialCount; mat++) {
       DrawSet& set = sets[(lod * materialCount) + mat];
       for (cmd = 0; cmd < set.count; cmd++) {
-	std::map<unsigned int, unsigned int>::const_iterator it;
-	DrawCmd& command = set.cmds[cmd];
-	// draw type
-	it = drawMap.find(command.drawMode);
-	if (it == drawMap.end()) {
-	  status = false;
-	} else {
-	  command.drawMode = it->second;
-	}
-	// index type
-	it = typeMap.find(command.indexType);
-	if (it == typeMap.end()) {
-	  status = false;
-	} else {
-	  command.indexType = it->second;
-	}
+  std::map<unsigned int, unsigned int>::const_iterator it;
+  DrawCmd& command = set.cmds[cmd];
+  // draw type
+  it = drawMap.find(command.drawMode);
+  if (it == drawMap.end()) {
+    status = false;
+  } else {
+    command.drawMode = it->second;
+  }
+  // index type
+  it = typeMap.find(command.indexType);
+  if (it == typeMap.end()) {
+    status = false;
+  } else {
+    command.indexType = it->second;
+  }
       }
     }
   }
@@ -579,16 +571,16 @@ bool MeshDrawInfo::convertEnums(const UintMap& drawMap, const UintMap& typeMap)
       // draw type
       it = drawMap.find(command.drawMode);
       if (it == drawMap.end()) {
-	status = false;
+  status = false;
       } else {
-	command.drawMode = it->second;
+  command.drawMode = it->second;
       }
       // index type
       it = typeMap.find(command.indexType);
       if (it == typeMap.end()) {
-	status = false;
+  status = false;
       } else {
-	command.indexType = it->second;
+  command.indexType = it->second;
       }
     }
   }
@@ -602,8 +594,7 @@ bool MeshDrawInfo::convertEnums(const UintMap& drawMap, const UintMap& typeMap)
 static std::map<std::string, unsigned int> drawModeMap;
 
 
-static void setupDrawModeMap()
-{
+static void setupDrawModeMap() {
   drawModeMap["points"] =    DrawCmd::DrawPoints;
   drawModeMap["lines"] =     DrawCmd::DrawLines;
   drawModeMap["lineloop"] =  DrawCmd::DrawLineLoop;
@@ -618,30 +609,27 @@ static void setupDrawModeMap()
 }
 
 
-static inline void finishLine(std::istream& input)
-{
+static inline void finishLine(std::istream& input) {
   std::string dummy;
   std::getline(input, dummy);
   return;
 }
 
 
-static bool parseCorner(std::istream& input, Corner& corner)
-{
+static bool parseCorner(std::istream& input, Corner& corner) {
   bool success = true;
   if (!(input >> corner.vertex) ||
       !(input >> corner.normal) ||
       !(input >> corner.texcoord)) {
     success = false;
-    logDebugMessage(0,"Bad corner\n");
+    logDebugMessage(0, "Bad corner\n");
   }
   return success;
 }
 
 
 static bool parseDrawCmd(std::istream& input, const std::string& mode,
-			 DrawCmd& cmd)
-{
+                         DrawCmd& cmd) {
   // parse the draw mode
   std::map<std::string, unsigned int>::const_iterator it;
   it = drawModeMap.find(mode);
@@ -669,8 +657,7 @@ static bool parseDrawCmd(std::istream& input, const std::string& mode,
 }
 
 
-static bool parseDrawSet(std::istream& input, DrawSet& set)
-{
+static bool parseDrawSet(std::istream& input, DrawSet& set) {
   bool success = true;
 
   std::vector<DrawCmd> pCmds;
@@ -688,30 +675,31 @@ static bool parseDrawSet(std::istream& input, DrawSet& set)
     else if (strcasecmp(label.c_str(), "end") == 0) {
       break;
     }
-    else if (strcasecmp(label.c_str(),"dlist") == 0) {
+    else if (strcasecmp(label.c_str(), "dlist") == 0) {
       set.wantList = true;
     }
     else if (strcasecmp(label.c_str(), "center") == 0) {
       if (!(parms >> set.sphere.x) || !(parms >> set.sphere.y) ||
-	  !(parms >> set.sphere.z)) {
-	success = false;
-	logDebugMessage(0,"Bad center\n");
+          !(parms >> set.sphere.z)) {
+        success = false;
+        logDebugMessage(0, "Bad center\n");
       }
     }
     else if (strcasecmp(label.c_str(), "sphere") == 0) {
       if (!(parms >> set.sphere.x) || !(parms >> set.sphere.y) ||
-	  !(parms >> set.sphere.z) || !(parms >> set.sphere.w)) {
-	success = false;
-	logDebugMessage(0,"Bad sphere\n");
+          !(parms >> set.sphere.z) || !(parms >> set.sphere.w)) {
+        success = false;
+        logDebugMessage(0, "Bad sphere\n");
       }
     }
     else {
       DrawCmd cmd;
       if (parseDrawCmd(parms, label, cmd)) {
-	pCmds.push_back(cmd);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad drawSet\n");
+        pCmds.push_back(cmd);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad drawSet\n");
       }
     }
   }
@@ -727,8 +715,7 @@ static bool parseDrawSet(std::istream& input, DrawSet& set)
 }
 
 
-static bool parseDrawLod(std::istream& input, DrawLod& lod)
-{
+static bool parseDrawLod(std::istream& input, DrawLod& lod) {
   bool success = true;
 
   std::vector<DrawSet> pSets;
@@ -747,29 +734,32 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod)
       break;
     }
     else if ((strcasecmp(cmd.c_str(), "length") == 0) ||
-	     (strcasecmp(cmd.c_str(), "lengthPerPixel") == 0)) {
+             (strcasecmp(cmd.c_str(), "lengthPerPixel") == 0)) {
       float lengthPerPixel;
       if (parms >> lengthPerPixel) {
-	lod.lengthPerPixel = lengthPerPixel;
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad lengthPerPixel:\n");
+        lod.lengthPerPixel = lengthPerPixel;
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad lengthPerPixel:\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "matref") == 0) {
       std::string matName;
       if (parms >> matName) {
-	DrawSet set;
-	set.material = MATERIALMGR.findMaterial(matName);
-	if (parseDrawSet(input, set)) {
-	  pSets.push_back(set);
-	} else {
-	  success = false;
-	  logDebugMessage(0,"Bad material:\n");
-	}
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad drawLod parameter:\n");
+        DrawSet set;
+        set.material = MATERIALMGR.findMaterial(matName);
+        if (parseDrawSet(input, set)) {
+          pSets.push_back(set);
+        }
+        else {
+          success = false;
+          logDebugMessage(0, "Bad material:\n");
+        }
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad drawLod parameter:\n");
       }
     }
   }
@@ -785,8 +775,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod)
 }
 
 
-bool MeshDrawInfo::parse(std::istream& input)
-{
+bool MeshDrawInfo::parse(std::istream& input) {
   BzTime start = BzTime::getCurrent();
 
   bool success = true;
@@ -828,38 +817,39 @@ bool MeshDrawInfo::parse(std::istream& input)
     }
     else if (strcasecmp(cmd.c_str(), "angvel") == 0) {
       if (animInfo != NULL) {
-	success = false;
-	logDebugMessage(0,"Double angvel\n");
+        success = false;
+        logDebugMessage(0, "Double angvel\n");
       }
       float angvel;
       if (parms >> angvel) {
-	animInfo = new AnimationInfo;
-	animInfo->angvel = angvel;
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad angvel\n");
+        animInfo = new AnimationInfo;
+        animInfo->angvel = angvel;
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad angvel\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "extents") == 0) {
       if (!(parms >> extents.mins.x) || !(parms >> extents.mins.y) ||
-	  !(parms >> extents.mins.z) || !(parms >> extents.maxs.x) ||
-	  !(parms >> extents.maxs.y) || !(parms >> extents.maxs.z)) {
-	success = false;
-	logDebugMessage(0,"Bad extents\n");
+          !(parms >> extents.mins.z) || !(parms >> extents.maxs.x) ||
+          !(parms >> extents.maxs.y) || !(parms >> extents.maxs.z)) {
+        success = false;
+        logDebugMessage(0, "Bad extents\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "center") == 0) {
       if (!(parms >> sphere.x) || !(parms >> sphere.y) ||
-	  !(parms >> sphere.z)) {
-	success = false;
-	logDebugMessage(0,"Bad center\n");
+          !(parms >> sphere.z)) {
+        success = false;
+        logDebugMessage(0, "Bad center\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "sphere") == 0) {
       if (!(parms >> sphere.x) || !(parms >> sphere.y) ||
-	  !(parms >> sphere.z) || !(parms >> sphere.w)) {
-	success = false;
-	logDebugMessage(0,"Bad sphere\n");
+          !(parms >> sphere.z) || !(parms >> sphere.w)) {
+        success = false;
+        logDebugMessage(0, "Bad sphere\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "option") == 0) {
@@ -870,53 +860,59 @@ bool MeshDrawInfo::parse(std::istream& input)
     else if (strcasecmp(cmd.c_str(), "corner") == 0) {
       Corner corner;
       if (parseCorner(parms, corner)) {
-	pCorners.push_back(corner);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad corner\n");
+        pCorners.push_back(corner);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad corner\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "vertex") == 0) {
       fvec3 v;
       if ((parms >> v.x) && (parms >> v.y) && (parms >> v.z)) {
-	pVerts.push_back(v);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad Vertex\n");
+        pVerts.push_back(v);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad Vertex\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "normal") == 0) {
       fvec3 n;
       if ((parms >> n.x) && (parms >> n.y) && (parms >> n.z)) {
-	pNorms.push_back(n);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad Normal\n");
+        pNorms.push_back(n);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad Normal\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "texcoord") == 0) {
       fvec2 t;
       if ((parms >> t[0]) && (parms >> t[1])) {
-	pTxcds.push_back(t);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad Texcoord\n");
+        pTxcds.push_back(t);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad Texcoord\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "lod") == 0) {
       if (parseDrawLod(input, lod)) {
-	pLods.push_back(lod);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad lod\n");
+        pLods.push_back(lod);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad lod\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "radarlod") == 0) {
       if (parseDrawLod(input, lod)) {
-	pRadarLods.push_back(lod);
-      } else {
-	success = false;
-	logDebugMessage(0,"Bad radarlod\n");
+        pRadarLods.push_back(lod);
+      }
+      else {
+        success = false;
+        logDebugMessage(0, "Bad radarlod\n");
       }
     }
   }
@@ -974,15 +970,15 @@ bool MeshDrawInfo::parse(std::istream& input)
     for (i = 0; i < lodCount; i++) {
       DrawLod& lodref = lods[i];
       for (int j = 0; j < lodref.count; j++) {
-	DrawSet& set = lodref.sets[j];
-	set.wantList = true;
+        DrawSet& set = lodref.sets[j];
+        set.wantList = true;
       }
     }
     for (i = 0; i < radarCount; i++) {
       DrawLod& lodref = radarLods[i];
       for (int j = 0; j < lodref.count; j++) {
-	DrawSet& set = lodref.sets[j];
-	set.wantList = true;
+        DrawSet& set = lodref.sets[j];
+        set.wantList = true;
       }
     }
   }
@@ -990,7 +986,7 @@ bool MeshDrawInfo::parse(std::istream& input)
   if (debugLevel >= 4) {
     BzTime end = BzTime::getCurrent();
     const float elapsed = float(end - start);
-    logDebugMessage(0,"MeshDrawInfo::parse() processed in %f seconds.\n", elapsed);
+    logDebugMessage(0, "MeshDrawInfo::parse() processed in %f seconds.\n", elapsed);
   }
 
   return success;
@@ -999,8 +995,7 @@ bool MeshDrawInfo::parse(std::istream& input)
 
 //============================================================================//
 
-static std::string debugIndex(int index)
-{
+static std::string debugIndex(int index) {
   if (debugLevel >= 1) {
     return " # " + TextUtils::itoa(index);
   }
@@ -1008,8 +1003,7 @@ static std::string debugIndex(int index)
 }
 
 
-void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
-{
+void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const {
   int i;
 
   out << indent << "drawInfo" << std::endl;
@@ -1020,15 +1014,15 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
   }
 
   out << indent << "  extents " << extents.mins.x << " "
-				<< extents.mins.y << " "
-				<< extents.mins.z << " "
-				<< extents.maxs.x << " "
-				<< extents.maxs.y << " "
-				<< extents.maxs.z << std::endl;
+      << extents.mins.y << " "
+      << extents.mins.z << " "
+      << extents.maxs.x << " "
+      << extents.maxs.y << " "
+      << extents.maxs.z << std::endl;
   out << indent << "  sphere " << sphere.x << " "
-			       << sphere.y << " "
-			       << sphere.z << " "
-			       << sphere.w << std::endl;
+      << sphere.y << " "
+      << sphere.z << " "
+      << sphere.w << std::endl;
 
   if (animInfo != NULL) {
     const float angvel = animInfo->angvel;
@@ -1057,9 +1051,9 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
   for (i = 0; i < cornerCount; i++) {
     const Corner& corner = corners[i];
     out << indent << "  corner " << corner.vertex << " "
-				 << corner.normal << " "
-				 << corner.texcoord
-				 << debugIndex(i) << std::endl;
+        << corner.normal << " "
+        << corner.texcoord
+        << debugIndex(i) << std::endl;
   }
 
   // normal draw sets
@@ -1073,30 +1067,30 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
       MATERIALMGR.printReference(out, set.material);
       out << std::endl;
       if (set.wantList) {
-	out << indent << "      dlist" << std::endl;
+        out << indent << "      dlist" << std::endl;
       }
       out << indent << "      sphere " << set.sphere.x << " "
-				       << set.sphere.y << " "
-				       << set.sphere.z << " "
-				       << set.sphere.w << std::endl;
+          << set.sphere.y << " "
+          << set.sphere.z << " "
+          << set.sphere.w << std::endl;
       const int cmdCount = set.count;
       for (int k = 0; k < cmdCount; k++) {
-	const DrawCmd& command = set.cmds[k];
-	unsigned int mode = command.drawMode;
-	if (mode < DrawCmd::DrawModeCount) {
-	  out << indent << "      " << drawLabels[mode].name;
-	  for (int e = 0; e < command.count; e++) {
-	    if (command.indexType == DrawCmd::DrawIndexUShort) {
-	      unsigned short* data = (unsigned short*) command.indices;
-	      out << " " << data[e];
-	    }
-	    else if (command.indexType == DrawCmd::DrawIndexUInt) {
-	      unsigned int* data = (unsigned int*) command.indices;
-	      out << " " << data[e];
-	    }
-	  }
-	  out << std::endl;
-	}
+        const DrawCmd& command = set.cmds[k];
+        unsigned int mode = command.drawMode;
+        if (mode < DrawCmd::DrawModeCount) {
+          out << indent << "      " << drawLabels[mode].name;
+          for (int e = 0; e < command.count; e++) {
+            if (command.indexType == DrawCmd::DrawIndexUShort) {
+              unsigned short* data = (unsigned short*) command.indices;
+              out << " " << data[e];
+            }
+            else if (command.indexType == DrawCmd::DrawIndexUInt) {
+              unsigned int* data = (unsigned int*) command.indices;
+              out << " " << data[e];
+            }
+          }
+          out << std::endl;
+        }
       }
       out << indent << "    end  # material ";
       MATERIALMGR.printReference(out, set.material);
@@ -1116,26 +1110,26 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
       MATERIALMGR.printReference(out, set.material);
       out << std::endl;
       if (set.wantList) {
-	out << indent << "      dlist" << std::endl;
+        out << indent << "      dlist" << std::endl;
       }
       const int cmdCount = set.count;
       for (int k = 0; k < cmdCount; k++) {
-	const DrawCmd& command = set.cmds[k];
-	unsigned int mode = command.drawMode;
-	if (mode < DrawCmd::DrawModeCount) {
-	  out << indent << "      " << drawLabels[mode].name;
-	  for (int e = 0; e < command.count; e++) {
-	    if (command.indexType == DrawCmd::DrawIndexUShort) {
-	      unsigned short* data = (unsigned short*) command.indices;
-	      out << " " << data[e];
-	    }
-	    else if (command.indexType == DrawCmd::DrawIndexUInt) {
-	      unsigned int* data = (unsigned int*) command.indices;
-	      out << " " << data[e];
-	    }
-	  }
-	  out << std::endl;
-	}
+        const DrawCmd& command = set.cmds[k];
+        unsigned int mode = command.drawMode;
+        if (mode < DrawCmd::DrawModeCount) {
+          out << indent << "      " << drawLabels[mode].name;
+          for (int e = 0; e < command.count; e++) {
+            if (command.indexType == DrawCmd::DrawIndexUShort) {
+              unsigned short* data = (unsigned short*) command.indices;
+              out << " " << data[e];
+            }
+            else if (command.indexType == DrawCmd::DrawIndexUInt) {
+              unsigned int* data = (unsigned int*) command.indices;
+              out << " " << data[e];
+            }
+          }
+          out << std::endl;
+        }
       }
       out << indent << "    end  # material ";
       MATERIALMGR.printReference(out, set.material);
@@ -1152,8 +1146,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
 
 //============================================================================//
 
-int MeshDrawInfo::packSize() const
-{
+int MeshDrawInfo::packSize() const {
   int i;
   int fullSize = 0;
 
@@ -1211,8 +1204,7 @@ int MeshDrawInfo::packSize() const
 }
 
 
-void* MeshDrawInfo::pack(void* buf) const
-{
+void* MeshDrawInfo::pack(void* buf) const {
   int i;
 
   // name
@@ -1236,36 +1228,36 @@ void* MeshDrawInfo::pack(void* buf) const
   }
 
   // corners
-  buf = nboPackInt32 (buf, cornerCount);
+  buf = nboPackInt32(buf, cornerCount);
   for (i = 0; i < cornerCount; i++) {
     buf = corners[i].pack(buf);
   }
 
   // raw vertices
-  buf = nboPackInt32 (buf, rawVertCount);
+  buf = nboPackInt32(buf, rawVertCount);
   for (i = 0; i < rawVertCount; i++) {
     buf = nboPackFVec3(buf, rawVerts[i]);
   }
   // raw normals
-  buf = nboPackInt32 (buf, rawNormCount);
+  buf = nboPackInt32(buf, rawNormCount);
   for (i = 0; i < rawNormCount; i++) {
     buf = nboPackFVec3(buf, rawNorms[i]);
   }
   // raw texcoords
-  buf = nboPackInt32 (buf, rawTxcdCount);
+  buf = nboPackInt32(buf, rawTxcdCount);
   for (i = 0; i < rawTxcdCount; i++) {
     buf = nboPackFloat(buf, rawTxcds[i][0]);
     buf = nboPackFloat(buf, rawTxcds[i][1]);
   }
 
   // lods
-  buf = nboPackInt32 (buf, lodCount);
+  buf = nboPackInt32(buf, lodCount);
   for (i = 0; i < lodCount; i++) {
     buf = lods[i].pack(buf);
   }
 
   // radar lods
-  buf = nboPackInt32 (buf, radarCount);
+  buf = nboPackInt32(buf, radarCount);
   for (i = 0; i < radarCount; i++) {
     buf = radarLods[i].pack(buf);
   }
@@ -1279,8 +1271,7 @@ void* MeshDrawInfo::pack(void* buf) const
 }
 
 
-void* MeshDrawInfo::unpack(void* buf)
-{
+void* MeshDrawInfo::unpack(void* buf) {
   int i;
   int32_t i32;
 
@@ -1288,7 +1279,7 @@ void* MeshDrawInfo::unpack(void* buf)
   buf = nboUnpackStdString(buf, name);
 
   // options
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   lodOptions.clear();
   for (i = 0; i < i32; i++) {
     std::string option;
@@ -1309,7 +1300,7 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // corners
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   cornerCount = i32;
   corners = new Corner[cornerCount];
   for (i = 0; i < cornerCount; i++) {
@@ -1317,21 +1308,21 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // raw vertices
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   rawVertCount = i32;
   rawVerts = new fvec3[rawVertCount];
   for (i = 0; i < rawVertCount; i++) {
     buf = nboUnpackFVec3(buf, rawVerts[i]);
   }
   // raw normals
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   rawNormCount = i32;
   rawNorms = new fvec3[rawNormCount];
   for (i = 0; i < rawNormCount; i++) {
     buf = nboUnpackFVec3(buf, rawNorms[i]);
   }
   // raw texcoords
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   rawTxcdCount = i32;
   rawTxcds = new fvec2[rawTxcdCount];
   for (i = 0; i < rawTxcdCount; i++) {
@@ -1340,7 +1331,7 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // lods
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   lodCount = i32;
   lods = new DrawLod[lodCount];
   for (i = 0; i < lodCount; i++) {
@@ -1348,7 +1339,7 @@ void* MeshDrawInfo::unpack(void* buf)
   }
 
   // radar lods
-  buf = nboUnpackInt32 (buf, i32);
+  buf = nboUnpackInt32(buf, i32);
   radarCount = i32;
   radarLods = new DrawLod[radarCount];
   for (i = 0; i < radarCount; i++) {
@@ -1366,33 +1357,30 @@ void* MeshDrawInfo::unpack(void* buf)
 
 //============================================================================//
 
-Corner::Corner()
-{
+Corner::Corner() {
   vertex = normal = texcoord = -1;
   return;
 }
 
 
-Corner::~Corner()
-{
+Corner::~Corner() {
   return;
 }
 
 
-int Corner::packSize() const
-{
+int Corner::packSize() const {
   if ((vertex   > MaxUShort) || (vertex   < 0) ||
       (normal   > MaxUShort) || (normal   < 0) ||
       (texcoord > MaxUShort) || (texcoord < 0)) {
     return sizeof(uint8_t) + (3 * sizeof(int32_t));
-  } else {
+  }
+  else {
     return sizeof(uint8_t) + (3 * sizeof(int16_t));
   }
 }
 
 
-void* Corner::pack(void* buf) const
-{
+void* Corner::pack(void* buf) const {
   if ((vertex > MaxUShort) || (vertex < 0) ||
       (normal > MaxUShort) || (normal < 0) ||
       (texcoord > MaxUShort) || (texcoord < 0)) {
@@ -1400,7 +1388,8 @@ void* Corner::pack(void* buf) const
     buf = nboPackInt32(buf, vertex);
     buf = nboPackInt32(buf, normal);
     buf = nboPackInt32(buf, texcoord);
-  } else {
+  }
+  else {
     buf = nboPackUInt8(buf, 1);
     buf = nboPackUInt16(buf, vertex);
     buf = nboPackUInt16(buf, normal);
@@ -1410,8 +1399,7 @@ void* Corner::pack(void* buf) const
 }
 
 
-void* Corner::unpack(void* buf)
-{
+void* Corner::unpack(void* buf) {
   uint8_t u8;
   buf = nboUnpackUInt8(buf, u8);
   if (u8 == 0) {
@@ -1422,7 +1410,8 @@ void* Corner::unpack(void* buf)
     normal = i32;
     buf = nboUnpackInt32(buf, i32);
     texcoord = i32;
-  } else {
+  }
+  else {
     uint16_t u16;
     buf = nboUnpackUInt16(buf, u16);
     vertex = u16;
@@ -1437,8 +1426,7 @@ void* Corner::unpack(void* buf)
 
 //============================================================================//
 
-DrawCmd::DrawCmd()
-{
+DrawCmd::DrawCmd() {
   drawMode = DrawTriangleStrip;
   count = 0;
   indices = NULL;
@@ -1447,8 +1435,7 @@ DrawCmd::DrawCmd()
 }
 
 
-void DrawCmd::finalize()
-{
+void DrawCmd::finalize() {
   if (indexType == DrawIndexUShort) {
     return; // safety
   }
@@ -1480,41 +1467,40 @@ void DrawCmd::finalize()
     shortArray[i] = tmp[i];
   }
   indexType = DrawIndexUShort;
-  delete[] (unsigned int*)indices;
+  delete[](unsigned int*)indices;
   indices = shortArray;
 
   return;
 }
 
 
-void DrawCmd::clear()
-{
+void DrawCmd::clear() {
   if (indexType == DrawIndexUInt) {
-    delete[] (unsigned int*)indices;
-  } else {
-    delete[] (unsigned short*)indices;
+    delete[](unsigned int*)indices;
+  }
+  else {
+    delete[](unsigned short*)indices;
   }
   return;
 }
 
 
-int DrawCmd::packSize() const
-{
+int DrawCmd::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(uint32_t); // draw mode
   fullSize += sizeof(int32_t); // count
   fullSize += sizeof(uint32_t); // index type
   if (indexType == DrawIndexUShort) {
     fullSize += count * sizeof(uint16_t);
-  } else {
+  }
+  else {
     fullSize += count * sizeof(uint32_t);
   }
   return fullSize;
 }
 
 
-void* DrawCmd::pack(void* buf) const
-{
+void* DrawCmd::pack(void* buf) const {
   buf = nboPackUInt32(buf, drawMode);
   buf = nboPackInt32(buf, count);
   buf = nboPackUInt32(buf, indexType);
@@ -1523,7 +1509,8 @@ void* DrawCmd::pack(void* buf) const
       uint16_t tmp = ((unsigned short*)indices)[i];
       buf = nboPackUInt16(buf, tmp);
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < count; i++) {
       uint32_t tmp = ((unsigned int*)indices)[i];
       buf = nboPackUInt32(buf, tmp);
@@ -1533,8 +1520,7 @@ void* DrawCmd::pack(void* buf) const
 }
 
 
-void* DrawCmd::unpack(void* buf)
-{
+void* DrawCmd::unpack(void* buf) {
   uint16_t u16;
   int32_t i32;
   uint32_t u32;
@@ -1551,7 +1537,8 @@ void* DrawCmd::unpack(void* buf)
       buf = nboUnpackUInt16(buf, u16);
       ((unsigned short*)indices)[i] = u16;
     }
-  } else {
+  }
+  else {
     indices = new unsigned int[count];
     for (int i = 0; i < count; i++) {
       buf = nboUnpackUInt32(buf, u32);
@@ -1564,8 +1551,7 @@ void* DrawCmd::unpack(void* buf)
 
 //============================================================================//
 
-DrawSet::DrawSet()
-{
+DrawSet::DrawSet() {
   count = 0;
   cmds = NULL;
   material = NULL;
@@ -1575,8 +1561,7 @@ DrawSet::DrawSet()
 }
 
 
-void DrawSet::clear()
-{
+void DrawSet::clear() {
   for (int i = 0; i < count; i++) {
     cmds[i].clear();
   }
@@ -1585,8 +1570,7 @@ void DrawSet::clear()
 }
 
 
-int DrawSet::packSize() const
-{
+int DrawSet::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(uint32_t); // count
   for (int i = 0; i < count; i++) {
@@ -1600,8 +1584,7 @@ int DrawSet::packSize() const
 }
 
 
-void* DrawSet::pack(void* buf) const
-{
+void* DrawSet::pack(void* buf) const {
   buf = nboPackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     buf = cmds[i].pack(buf);
@@ -1623,8 +1606,7 @@ void* DrawSet::pack(void* buf) const
 }
 
 
-void* DrawSet::unpack(void* buf)
-{
+void* DrawSet::unpack(void* buf) {
   int32_t i32;
   buf = nboUnpackInt32(buf, i32);
   count = i32;
@@ -1651,8 +1633,7 @@ void* DrawSet::unpack(void* buf)
 
 //============================================================================//
 
-DrawLod::DrawLod()
-{
+DrawLod::DrawLod() {
   count = 0;
   sets = NULL;
   lengthPerPixel = 0.0f;
@@ -1660,8 +1641,7 @@ DrawLod::DrawLod()
 }
 
 
-void DrawLod::clear()
-{
+void DrawLod::clear() {
   for (int i = 0; i < count; i++) {
     sets[i].clear();
   }
@@ -1670,8 +1650,7 @@ void DrawLod::clear()
 }
 
 
-int DrawLod::packSize() const
-{
+int DrawLod::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(uint32_t); // count
   for (int i = 0; i < count; i++) {
@@ -1682,8 +1661,7 @@ int DrawLod::packSize() const
 }
 
 
-void* DrawLod::pack(void* buf) const
-{
+void* DrawLod::pack(void* buf) const {
   buf = nboPackInt32(buf, count);
   for (int i = 0; i < count; i++) {
     buf = sets[i].pack(buf);
@@ -1693,8 +1671,7 @@ void* DrawLod::pack(void* buf) const
 }
 
 
-void* DrawLod::unpack(void* buf)
-{
+void* DrawLod::unpack(void* buf) {
   int32_t i32;
   buf = nboUnpackInt32(buf, i32);
   count = i32;
@@ -1710,8 +1687,7 @@ void* DrawLod::unpack(void* buf)
 
 //============================================================================//
 
-AnimationInfo::AnimationInfo()
-{
+AnimationInfo::AnimationInfo() {
   angle = 0.0f;
   angvel = 0.0f;
   dummy = "";
@@ -1719,8 +1695,7 @@ AnimationInfo::AnimationInfo()
 }
 
 
-int AnimationInfo::packSize() const
-{
+int AnimationInfo::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(float); // angvel
   fullSize += nboStdStringPackSize(dummy);
@@ -1728,18 +1703,16 @@ int AnimationInfo::packSize() const
 }
 
 
-void* AnimationInfo::pack(void* buf) const
-{
+void* AnimationInfo::pack(void* buf) const {
   buf = nboPackFloat(buf, angvel);
-   buf= nboPackStdString(buf, dummy);
+  buf = nboPackStdString(buf, dummy);
   return buf;
 }
 
 
-void* AnimationInfo::unpack(void* buf)
-{
+void* AnimationInfo::unpack(void* buf) {
   buf = nboUnpackFloat(buf, angvel);
-  buf= nboUnpackStdString(buf, dummy);
+  buf = nboUnpackStdString(buf, dummy);
   return buf;
 }
 
@@ -1750,6 +1723,6 @@ void* AnimationInfo::unpack(void* buf)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

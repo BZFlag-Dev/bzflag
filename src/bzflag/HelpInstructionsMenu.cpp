@@ -25,25 +25,22 @@
 #include "LocalFontFace.h"
 
 HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::string> text)
-  : HelpMenu(title)
-{
+  : HelpMenu(title) {
   // add controls
   addControl(createLabel(""), false);
 
   std::vector<std::string>::iterator it;
-  for (it = text.begin(); it != text.end(); ++it)
-  {
+  for (it = text.begin(); it != text.end(); ++it) {
     addControl(createLabel((*it).c_str()), false);
   }
 }
 
-void HelpInstructionsMenu::resize(int _width, int _height)
-{
+void HelpInstructionsMenu::resize(int _width, int _height) {
   HelpMenu::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
   // find good font size
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   std::vector<HUDuiElement*>& listHUD = getElements();
   const int count = (const int)listHUD.size();
   const LocalFontFace* fontFace = listHUD[2]->getFontFace();
@@ -60,16 +57,14 @@ void HelpInstructionsMenu::resize(int _width, int _height)
   std::vector<HUDuiElement*>& listHUD = getElements();
   for (int i = 2; i < count; ++i) {
     float thisLength = fm.getStringWidth(fontFace->getFMFace(), fontSize, ((HUDuiLabel*)listHUD[i])->getString());
-    if (thisLength > longestLength)
-    {
+    if (thisLength > longestLength) {
       longestLength = thisLength;
       longestString = ((HUDuiLabel*)listHUD[i])->getString();
     }
   }
 
   // make the longest fit perfectly in the working width, and use that font size
-  for (fontSize = ((float)_height / 5.0f); longestLength > workingWidth; --fontSize)
-  {
+  for (fontSize = ((float)_height / 5.0f); longestLength > workingWidth; --fontSize) {
     longestLength = fm.getStringWidth(fontFace->getFMFace(), fontSize, longestString);
   }
 #endif
@@ -89,6 +84,6 @@ void HelpInstructionsMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

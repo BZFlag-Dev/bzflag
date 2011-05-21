@@ -25,11 +25,11 @@ struct lua_State;
 class LuaRBOData {
   public:
     LuaRBOData()
-    : id(0)
-    , target(GL_RENDERBUFFER)
-    , format(GL_RGBA)
-    , xsize(0)
-    , ysize(0)
+      : id(0)
+      , target(GL_RENDERBUFFER)
+      , format(GL_RGBA)
+      , xsize(0)
+      , ysize(0)
     {}
     virtual ~LuaRBOData() {};
 
@@ -93,6 +93,6 @@ extern LuaRBOMgr luaRBOMgr;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -12,11 +12,11 @@
 
 /*
  * HUDNavigationQueue:
- *	User interface class to control menu navigation and focus.
+ *  User interface class to control menu navigation and focus.
  */
 
-#ifndef	__HUDNAVIGATIONQUEUE_H__
-#define	__HUDNAVIGATIONQUEUE_H__
+#ifndef __HUDNAVIGATIONQUEUE_H__
+#define __HUDNAVIGATIONQUEUE_H__
 
 /* common header */
 #include "common.h"
@@ -39,31 +39,31 @@ typedef size_t (*HUDNavigationCallback)(size_t oldFocus, size_t proposedFocus, H
 typedef std::list< std::pair<HUDNavigationCallback, void*> > HUDuiNavCallbackList;
 
 class HUDNavigationQueue : public std::deque<HUDuiControl*> {
-public:
-  HUDNavigationQueue();
+  public:
+    HUDNavigationQueue();
 
-  void next();
-  void prev();
+    void next();
+    void prev();
 
-  bool set(size_t index);
-  bool set(HUDuiControl* control);
+    bool set(size_t index);
+    bool set(HUDuiControl* control);
 
-  bool setWithoutFocus(size_t index);
-  bool setWithoutFocus(HUDuiControl* control);
+    bool setWithoutFocus(size_t index);
+    bool setWithoutFocus(HUDuiControl* control);
 
-  HUDuiControl* get() const;
-  size_t getIndex() const;
+    HUDuiControl* get() const;
+    size_t getIndex() const;
 
-  void addCallback(HUDNavigationCallback cb, void* data);
-  void removeCallback(HUDNavigationCallback cb, void* data);
+    void addCallback(HUDNavigationCallback cb, void* data);
+    void removeCallback(HUDNavigationCallback cb, void* data);
 
-  static const size_t SkipSetFocus = ~(size_t)0;
+    static const size_t SkipSetFocus = ~(size_t)0;
 
-private:
-  bool internal_set(size_t index, HUDNavChangeMethod changeMethod, bool setFocus = true);
+  private:
+    bool internal_set(size_t index, HUDNavChangeMethod changeMethod, bool setFocus = true);
 
-  size_t focus;
-  HUDuiNavCallbackList callbackList;
+    size_t focus;
+    HUDuiNavCallbackList callbackList;
 };
 
 #endif // __HUDNAVIGATIONQUEUE_H__
@@ -72,6 +72,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

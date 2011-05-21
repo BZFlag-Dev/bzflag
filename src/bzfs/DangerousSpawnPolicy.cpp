@@ -26,26 +26,24 @@
 #include "DropGeometry.h"
 
 
-DangerousSpawnPolicy::DangerousSpawnPolicy()
-{
+DangerousSpawnPolicy::DangerousSpawnPolicy() {
 }
 
-DangerousSpawnPolicy::~DangerousSpawnPolicy()
-{
+DangerousSpawnPolicy::~DangerousSpawnPolicy() {
 }
 
 void DangerousSpawnPolicy::getPosition(fvec3& pos, int playerId,
-                                       bool onGroundOnly, bool notNearEdges)
-{
+                                       bool onGroundOnly, bool notNearEdges) {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
    * spawn.
    */
 
-  GameKeeper::Player *playerData
+  GameKeeper::Player* playerData
     = GameKeeper::Player::getPlayerByIndex(playerId);
-  if (!playerData)
+  if (!playerData) {
     return;
+  }
 
   const PlayerInfo& pi = playerData->player;
   TeamColor t = pi.getTeam();
@@ -59,12 +57,13 @@ void DangerousSpawnPolicy::getPosition(fvec3& pos, int playerId,
      * position on one of their team's available bases.
      */
 
-    TeamBases &teamBases = bases[t];
-    const TeamBase &base = teamBases.getRandomBase();
+    TeamBases& teamBases = bases[t];
+    const TeamBase& base = teamBases.getRandomBase();
     base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
 
-  } else {
+  }
+  else {
     /* *** "dangerous" spawn position selection occurs below here. ***
      *
      * Basic idea is to try to pick a dangerous spawn location,
@@ -86,69 +85,70 @@ void DangerousSpawnPolicy::getPosition(fvec3& pos, int playerId,
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getPlayerSpawnPoint(&pi, testPos)) {
-	if (notNearEdges) {
-	  // don't spawn close to map edges in CTF mode
-	  testPos.x = ((float)bzfrand() - 0.5f) * size * 0.5f;
-	  testPos.y = ((float)bzfrand() - 0.5f) * size * 0.5f;
-	} else {
-	  testPos.x = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-	  testPos.y = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-	}
-	testPos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
+        if (notNearEdges) {
+          // don't spawn close to map edges in CTF mode
+          testPos.x = ((float)bzfrand() - 0.5f) * size * 0.5f;
+          testPos.y = ((float)bzfrand() - 0.5f) * size * 0.5f;
+        }
+        else {
+          testPos.x = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+          testPos.y = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+        }
+        testPos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 
       const float waterLevel = world->getWaterLevel();
       float minZ = 0.0f;
       if (waterLevel > minZ) {
-	minZ = waterLevel;
+        minZ = waterLevel;
       }
       float maxZ = maxHeight;
       if (onGroundOnly) {
-	maxZ = 0.0f;
+        maxZ = 0.0f;
       }
 
       if (DropGeometry::dropPlayer(testPos, minZ, maxZ)) {
-	foundspot = true;
+        foundspot = true;
       }
 
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
-	tries = 0;
-	if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
-	  if (bestDist < 0.0f) { // haven't found a single spot
-	    //Just drop the sucka in, and pray
-	    pos.x = testPos.x;
-	    pos.y = testPos.y;
-	    pos.z = maxHeight;
-	    logDebugMessage(1,"Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
-	  }
-	  break;
-	}
+        tries = 0;
+        if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
+          if (bestDist < 0.0f) { // haven't found a single spot
+            //Just drop the sucka in, and pray
+            pos.x = testPos.x;
+            pos.y = testPos.y;
+            pos.z = maxHeight;
+            logDebugMessage(1, "Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
+          }
+          break;
+        }
       }
 
       // check if spot is dangerous enough
       bool dangerous = isImminentlyDangerous(testPos);
       if (foundspot && !dangerous) {
-	float enemyAngle;
-	float dist = enemyProximityCheck(enemyAngle);
-	if (dist < bestDist) { // best so far
-	  bestDist = dist;
-	  pos = testPos;
-	}
-	if (bestDist < minProximity) { // close enough, stop looking
-	  foundspot = true;
-	}
-	minProximity *= 1.01f; // relax requirements a little
-      } else if (dangerous) {
-	foundspot = true;
+        float enemyAngle;
+        float dist = enemyProximityCheck(enemyAngle);
+        if (dist < bestDist) { // best so far
+          bestDist = dist;
+          pos = testPos;
+        }
+        if (bestDist < minProximity) { // close enough, stop looking
+          foundspot = true;
+        }
+        minProximity *= 1.01f; // relax requirements a little
+      }
+      else if (dangerous) {
+        foundspot = true;
       }
     }
   }
 }
 
-void DangerousSpawnPolicy::getAzimuth(float &azimuth)
-{
+void DangerousSpawnPolicy::getAzimuth(float& azimuth) {
   azimuth = (float)(bzfrand() * 2.0 * M_PI);
 }
 
@@ -157,6 +157,6 @@ void DangerousSpawnPolicy::getAzimuth(float &azimuth)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

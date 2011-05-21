@@ -37,8 +37,7 @@ using namespace BzPNG;
 //
 
 static void writeChunk(std::stringstream& ss, const char type[4],
-                       const void* data, size_t len)
-{
+                       const void* data, size_t len) {
   uint32_t count;
   nboPackUInt32(&count, len);
   ss.write((const char*) &count, sizeof(uint32_t));
@@ -58,8 +57,7 @@ static void writeChunk(std::stringstream& ss, const char type[4],
 
 
 std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
-                          size_t sx, size_t sy, size_t cc, const void* pixels)
-{
+                          size_t sx, size_t sy, size_t cc, const void* pixels) {
   uint8_t colorType;
   switch (cc) {
     case 1: { colorType = 0; break; } // greyscale
@@ -94,9 +92,10 @@ std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
     const Chunk& chunk = extraChunks[i];
     if (chunk.type.size() != 4) {
       return "ERROR: bad chunk type size";
-    } else {
+    }
+    else {
       writeChunk(ss, chunk.type.data(), chunk.data.data(),
-                                            chunk.data.size());
+                 chunk.data.size());
     }
   }
 
@@ -126,8 +125,7 @@ std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
 
 bool BzPNG::save(const std::string& filename,
                  const std::vector<Chunk>& extraChunks,
-                 size_t sx, size_t sy, size_t cc, const void* pixels)
-{
+                 size_t sx, size_t sy, size_t cc, const void* pixels) {
   const std::string pngData = create(extraChunks, sx, sy, cc, pixels);
 
   if ((pngData.size() < 5) || (pngData.substr(0, 5) == "ERROR")) {
@@ -155,7 +153,7 @@ bool BzPNG::save(const std::string& filename,
 
 /*
 float* MediaFile::readSound(const std::string& filename,
-			    int* _numFrames, int* rate)
+          int* _numFrames, int* rate)
 {
   // try opening as an audio file
   std::istream* stream;
@@ -167,7 +165,7 @@ float* MediaFile::readSound(const std::string& filename,
   float* audio = NULL;
   if (file != NULL) {
     // get the audio info
-    *rate	   = file->getFramesPerSecond();
+    *rate    = file->getFramesPerSecond();
     int numChannels = file->getNumChannels();
     int numFrames   = file->getNumFrames();
     int sampleWidth = file->getSampleWidth();
@@ -190,36 +188,36 @@ float* MediaFile::readSound(const std::string& filename,
 
       // convert
       if (numChannels == 1) {
-	if (sampleWidth == 1) {
-	  signed char* src = reinterpret_cast<signed char*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i] = audio[2 * i + 1] = 257.0f * static_cast<float>(*src);
-	    src += step;
-	  }
-	} else {
-	  int16_t* src = reinterpret_cast<int16_t*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i] = audio[2 * i + 1] = static_cast<float>(*src);
-	    src += step;
-	  }
-	}
+  if (sampleWidth == 1) {
+    signed char* src = reinterpret_cast<signed char*>(raw);
+    for (int i = 0; i < numFrames; ++i) {
+      audio[2 * i] = audio[2 * i + 1] = 257.0f * static_cast<float>(*src);
+      src += step;
+    }
+  } else {
+    int16_t* src = reinterpret_cast<int16_t*>(raw);
+    for (int i = 0; i < numFrames; ++i) {
+      audio[2 * i] = audio[2 * i + 1] = static_cast<float>(*src);
+      src += step;
+    }
+  }
       } else {
-	step *= 2;
-	if (sampleWidth == 1) {
-	  signed char* src = reinterpret_cast<signed char*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i]     = 257.0f * static_cast<float>(src[0]);
-	    audio[2 * i + 1] = 257.0f * static_cast<float>(src[1]);
-	    src += step;
-	  }
-	} else {
-	  int16_t* src = reinterpret_cast<int16_t*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i]     = static_cast<float>(src[0]);
-	    audio[2 * i + 1] = static_cast<float>(src[1]);
-	    src += step;
-	  }
-	}
+  step *= 2;
+  if (sampleWidth == 1) {
+    signed char* src = reinterpret_cast<signed char*>(raw);
+    for (int i = 0; i < numFrames; ++i) {
+      audio[2 * i]     = 257.0f * static_cast<float>(src[0]);
+      audio[2 * i + 1] = 257.0f * static_cast<float>(src[1]);
+      src += step;
+    }
+  } else {
+    int16_t* src = reinterpret_cast<int16_t*>(raw);
+    for (int i = 0; i < numFrames; ++i) {
+      audio[2 * i]     = static_cast<float>(src[0]);
+      audio[2 * i + 1] = static_cast<float>(src[1]);
+      src += step;
+    }
+  }
       }
     }
 
@@ -245,6 +243,6 @@ float* MediaFile::readSound(const std::string& filename,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

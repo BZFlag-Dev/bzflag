@@ -26,7 +26,7 @@
 class MacDisplay : public BzfDisplay {
   public:
     MacDisplay();
-    MacDisplay (const char *name, const char *videoFormat);
+    MacDisplay(const char* name, const char* videoFormat);
     ~MacDisplay() {};
 
     bool isValid() const { return is_valid;   }
@@ -53,7 +53,7 @@ class MacDisplay : public BzfDisplay {
 
     bool doSetResolution(int) { return false; }
 
-    void getKey(BzfKeyEvent &bzf_event, char key, ::UInt32 code) const;
+    void getKey(BzfKeyEvent& bzf_event, char key, ::UInt32 code) const;
 
     //ResInfo *res_info;
     int screen_width;
@@ -79,6 +79,6 @@ class MacDisplay : public BzfDisplay {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

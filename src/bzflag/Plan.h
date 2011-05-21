@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	PLAN_H
-#define	PLAN_H
+#ifndef PLAN_H
+#define PLAN_H
 
 // bzflag global header
 #include "common.h"
@@ -30,148 +30,140 @@ class ShotPath;
  * allowing for short medium and long range plans to cooperate to
  * produce a better playing bot.
  */
-class Plan
-{
-public:
-  Plan( float planDuration );
-  virtual ~Plan();
-  /**
-   * checks to make sure this plan is still valid. The default
-   * implementation just checks for an expiration time, to keep
-   * roger from bullheadedly trying something that just aint
-   * gonna work. You can override this method for specific plans
-   *
-   * @returns whether this plan is still valid
-   */
-  virtual bool isValid();
+class Plan {
+  public:
+    Plan(float planDuration);
+    virtual ~Plan();
+    /**
+     * checks to make sure this plan is still valid. The default
+     * implementation just checks for an expiration time, to keep
+     * roger from bullheadedly trying something that just aint
+     * gonna work. You can override this method for specific plans
+     *
+     * @returns whether this plan is still valid
+     */
+    virtual bool isValid();
 
-  /**
-   * determines if this plan is a longer range plan that can
-   * only be accomplished with smaller steps. Hunting a player
-   * might consist of avoiding a building, or weaving, for instance.
-   * if this method returns true, than this plan is just a coordinator
-   * of sub plans.
-   *
-   * @returns whether this plan uses sub plans
-   */
-  virtual bool usesSubPlan() = 0;
+    /**
+     * determines if this plan is a longer range plan that can
+     * only be accomplished with smaller steps. Hunting a player
+     * might consist of avoiding a building, or weaving, for instance.
+     * if this method returns true, than this plan is just a coordinator
+     * of sub plans.
+     *
+     * @returns whether this plan uses sub plans
+     */
+    virtual bool usesSubPlan() = 0;
 
-  /**
-   * creates a sub plan to be placed on the stack to accomplish
-   * this plan's goals. This method only gets called if usesSubPlan
-   * return true.
-   *
-   * @returns a plan that can be used to accomplish part of this task
-   */
-  virtual Plan *createSubPlan() = 0;
+    /**
+     * creates a sub plan to be placed on the stack to accomplish
+     * this plan's goals. This method only gets called if usesSubPlan
+     * return true.
+     *
+     * @returns a plan that can be used to accomplish part of this task
+     */
+    virtual Plan* createSubPlan() = 0;
 
-  /**
-   * execute the plan. The default implementation just attempts
-   * to shoot at enemies. Overridden methods should call this base
-   * implementation. This method only gets called if usesSubPlan
-   * return false.
-   *
-   * @param rotation an output reference to the desired rotation
-   * @param speed an output reference to the desired speed
-   */
-  virtual void execute(float &rotation, float &speed);
+    /**
+     * execute the plan. The default implementation just attempts
+     * to shoot at enemies. Overridden methods should call this base
+     * implementation. This method only gets called if usesSubPlan
+     * return false.
+     *
+     * @param rotation an output reference to the desired rotation
+     * @param speed an output reference to the desired speed
+     */
+    virtual void execute(float& rotation, float& speed);
 
-  /**
-   * checks to see if i am in imminent danger. If so move so
-   * that my danger level goes down. Avoiding bullets
-   * is not a plan, it operates a more subconscious level.
-   *
-   * returns whether or not we avoided a bullet
-   */
-  static bool avoidBullet(float &rotation, float &speed);
+    /**
+     * checks to see if i am in imminent danger. If so move so
+     * that my danger level goes down. Avoiding bullets
+     * is not a plan, it operates a more subconscious level.
+     *
+     * returns whether or not we avoided a bullet
+     */
+    static bool avoidBullet(float& rotation, float& speed);
 
-private:
-  static ShotPath *findWorstBullet(float &minDistance);
-  BzTime planExpiration;
-  BzTime lastShot;
+  private:
+    static ShotPath* findWorstBullet(float& minDistance);
+    BzTime planExpiration;
+    BzTime lastShot;
 };
 
-class PlanStack
-{
-public:
-  PlanStack();
-  ~PlanStack();
-  void execute(float &rotation, float &speed);
-private:
-  std::stack<Plan *> plans;
+class PlanStack {
+  public:
+    PlanStack();
+    ~PlanStack();
+    void execute(float& rotation, float& speed);
+  private:
+    std::stack<Plan*> plans;
 };
 
-class TopLevelPlan : public Plan
-{
-public:
-  TopLevelPlan();
+class TopLevelPlan : public Plan {
+  public:
+    TopLevelPlan();
 
-  virtual bool isValid();
-  virtual bool usesSubPlan();
-  virtual Plan *createSubPlan() ;
+    virtual bool isValid();
+    virtual bool usesSubPlan();
+    virtual Plan* createSubPlan() ;
 };
 
-class GotoPointPlan : public Plan
-{
-public:
-  GotoPointPlan(const fvec3& pt);
+class GotoPointPlan : public Plan {
+  public:
+    GotoPointPlan(const fvec3& pt);
 
-  virtual bool usesSubPlan();
-  virtual Plan *createSubPlan() ;
-  virtual void execute(float &rotation, float &speed);
+    virtual bool usesSubPlan();
+    virtual Plan* createSubPlan() ;
+    virtual void execute(float& rotation, float& speed);
 
-private:
-  fvec3 gotoPt;
+  private:
+    fvec3 gotoPt;
 };
 
-class WeavePlan : public Plan
-{
-public:
-  WeavePlan(int pID, bool right );
+class WeavePlan : public Plan {
+  public:
+    WeavePlan(int pID, bool right);
 
-  virtual bool isValid();
-  virtual bool usesSubPlan();
-  virtual Plan* createSubPlan();
-  virtual void execute(float &rotation, float &speed);
+    virtual bool isValid();
+    virtual bool usesSubPlan();
+    virtual Plan* createSubPlan();
+    virtual void execute(float& rotation, float& speed);
 
-private:
-  int playerID;
-  bool weaveRight;
+  private:
+    int playerID;
+    bool weaveRight;
 };
 
-class HuntPlayerPlan : public Plan
-{
-public:
-  HuntPlayerPlan();
+class HuntPlayerPlan : public Plan {
+  public:
+    HuntPlayerPlan();
 
-  virtual bool isValid();
-  virtual bool usesSubPlan();
-  virtual Plan *createSubPlan();
+    virtual bool isValid();
+    virtual bool usesSubPlan();
+    virtual Plan* createSubPlan();
 
-private:
-  int playerID;
+  private:
+    int playerID;
 };
 
-class HuntTeamFlagPlan : public Plan
-{
-public:
-  HuntTeamFlagPlan();
+class HuntTeamFlagPlan : public Plan {
+  public:
+    HuntTeamFlagPlan();
 
-  virtual bool isValid();
-  virtual bool usesSubPlan();
-  virtual Plan *createSubPlan();
-private:
-  int flagID;
+    virtual bool isValid();
+    virtual bool usesSubPlan();
+    virtual Plan* createSubPlan();
+  private:
+    int flagID;
 };
 
-class CaptureFlagPlan : public Plan
-{
-public:
-  CaptureFlagPlan();
+class CaptureFlagPlan : public Plan {
+  public:
+    CaptureFlagPlan();
 
-  virtual bool isValid();
-  virtual bool usesSubPlan();
-  virtual Plan *createSubPlan();
+    virtual bool isValid();
+    virtual bool usesSubPlan();
+    virtual Plan* createSubPlan();
 };
 
 #endif
@@ -180,6 +172,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

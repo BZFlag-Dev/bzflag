@@ -27,7 +27,7 @@
 // local implementation headers
 #include "common.h"
 
-void printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
+void printError(const std::string& fmt, const std::vector<std::string> *parms = NULL);
 
 #endif // __BZF_PRINT_ERROR_H__
 
@@ -35,6 +35,6 @@ void printError(const std::string &fmt, const std::vector<std::string> *parms = 
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

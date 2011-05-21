@@ -27,50 +27,46 @@ int Obstacle::objCounter = 0;
 
 
 Obstacle::Obstacle()
-: pos(0.0f, 0.0f, 0.0f)
-, size(0.0f, 0.0f, 0.0f)
-, angle(0.0f)
-, driveThrough(0)
-, shootThrough(0)
-, ricochet(false)
-, zFlip(false)
-, source(WorldSource)
-, listID(0)
-, insideNodeCount(0)
-, insideNodes(NULL)
-{
+  : pos(0.0f, 0.0f, 0.0f)
+  , size(0.0f, 0.0f, 0.0f)
+  , angle(0.0f)
+  , driveThrough(0)
+  , shootThrough(0)
+  , ricochet(false)
+  , zFlip(false)
+  , source(WorldSource)
+  , listID(0)
+  , insideNodeCount(0)
+  , insideNodes(NULL) {
   // do nothing
 }
 
 
 Obstacle::Obstacle(const fvec3& _pos, float _angle,
-		   float _width, float _breadth, float _height,
-		   unsigned char drive, unsigned char shoot, bool rico)
-: pos(_pos)
-, size(_width, _breadth, _height)
-, angle(_angle)
-, driveThrough(drive)
-, shootThrough(shoot)
-, ricochet(rico)
-, zFlip(false)
-, source(WorldSource)
-, listID(0)
-, insideNodeCount(0)
-, insideNodes(NULL)
-{
+                   float _width, float _breadth, float _height,
+                   unsigned char drive, unsigned char shoot, bool rico)
+  : pos(_pos)
+  , size(_width, _breadth, _height)
+  , angle(_angle)
+  , driveThrough(drive)
+  , shootThrough(shoot)
+  , ricochet(rico)
+  , zFlip(false)
+  , source(WorldSource)
+  , listID(0)
+  , insideNodeCount(0)
+  , insideNodes(NULL) {
   // do nothing
 }
 
 
-Obstacle::~Obstacle()
-{
+Obstacle::~Obstacle() {
   delete[] insideNodes;
   return;
 }
 
 
-bool Obstacle::isValid() const
-{
+bool Obstacle::isValid() const {
   for (int a = 0; a < 3; a++) {
     if ((extents.mins[a] < -maxExtent) || (extents.maxs[a] > maxExtent)) {
       return false;
@@ -80,8 +76,7 @@ bool Obstacle::isValid() const
 }
 
 
-void Obstacle::setExtents()
-{
+void Obstacle::setExtents() {
   const float abs_cos = fabsf(cosf(angle));
   const float abs_sin = fabsf(sinf(angle));
   const float xspan = (abs_cos * size.x) + (abs_sin * size.y);
@@ -96,20 +91,17 @@ void Obstacle::setExtents()
 }
 
 
-bool Obstacle::isFlatTop() const
-{
+bool Obstacle::isFlatTop() const {
   return false;
 }
 
 
-void Obstacle::setZFlip()
-{
+void Obstacle::setZFlip() {
   zFlip = true;
 }
 
 
-bool Obstacle::isCrossing(const fvec3&, float, float, float, float, fvec4*) const
-{
+bool Obstacle::isCrossing(const fvec3&, float, float, float, float, fvec4*) const {
   // never crossing by default
   return false;
 }
@@ -120,8 +112,7 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
                              float width, float breadth,
                              const fvec3& oPos, float oAzimuth,
                              float oWidth, float oBreadth, float oHeight,
-                             fvec3& normal) const
-{
+                             fvec3& normal) const {
   static const fvec2 square[4] = {
     fvec2(+1.0f, +1.0f),
     fvec2(-1.0f, +1.0f),
@@ -147,8 +138,8 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
     d.z = 0;
     int side;
     const float t = Intersect::timeAndSideRayHitsRect(Ray(p, d),
-				                      oPos, oAzimuth,
-				                      oWidth, oBreadth, side);
+                                                      oPos, oAzimuth,
+                                                      oWidth, oBreadth, side);
     if (side >= 0 && t <= minTime) {
       minTime = t;
       bestSide = side;
@@ -162,7 +153,8 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
       minTime = t;
       bestSide = 4;
     }
-  } else if (pos2.z == pos1.z) {
+  }
+  else if (pos2.z == pos1.z) {
     if (pos1.z == (oHeight + oPos.z)) {
       minTime = 0.0f;
       bestSide = 4;
@@ -215,7 +207,7 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
   }
   else {
     const float _angle = (float)(0.5 * M_PI * (float)bestSide +
-			minTime * (azimuth2 - azimuth1) + azimuth1);
+                                 minTime * (azimuth2 - azimuth1) + azimuth1);
     normal.x = -cosf(_angle);
     normal.y = -sinf(_angle);
     normal.z = 0.0f;
@@ -224,8 +216,7 @@ float Obstacle::getHitNormal(const fvec3& pos1, float azimuth1,
 }
 
 
-void Obstacle::addInsideSceneNode(SceneNode* node)
-{
+void Obstacle::addInsideSceneNode(SceneNode* node) {
   insideNodeCount++;
   SceneNode** tmp = new SceneNode*[insideNodeCount];
   memcpy(tmp, insideNodes, (insideNodeCount - 1) * sizeof(SceneNode*));
@@ -235,8 +226,7 @@ void Obstacle::addInsideSceneNode(SceneNode* node)
 }
 
 
-void Obstacle::freeInsideSceneNodeList()
-{
+void Obstacle::freeInsideSceneNodeList() {
   insideNodeCount = 0;
   delete[] insideNodes;
   insideNodes = NULL;
@@ -244,20 +234,17 @@ void Obstacle::freeInsideSceneNodeList()
 }
 
 
-int Obstacle::getInsideSceneNodeCount() const
-{
+int Obstacle::getInsideSceneNodeCount() const {
   return insideNodeCount;
 }
 
 
-SceneNode** Obstacle::getInsideSceneNodeList() const
-{
+SceneNode** Obstacle::getInsideSceneNodeList() const {
   return insideNodes;
 }
 
 
-Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
-{
+Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const {
   std::cout << "ERROR: Obstacle::copyWithTransform()" << std::endl;
   exit(1);
   // umm, yeah...make the compiler happy...
@@ -269,6 +256,6 @@ Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

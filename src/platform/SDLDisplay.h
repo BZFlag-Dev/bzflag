@@ -11,11 +11,11 @@
  */
 
 /* SDLDisplay:
- *	Encapsulates an SDL display
+ *  Encapsulates an SDL display
  */
 
 #ifndef __SDLDISPLAY_H__
-#define	__SDLDISPLAY_H__
+#define __SDLDISPLAY_H__
 
 /* interface headers */
 #include "bzfSDL.h"
@@ -24,37 +24,37 @@
 
 
 class SDLDisplay : public BzfDisplay {
- public:
-  SDLDisplay();
-  ~SDLDisplay();
-  bool createWindow();
-  virtual bool isValid() const {return true;};
-  bool isEventPending() const;
-  bool getEvent(BzfEvent&) const;
-  bool peekEvent(BzfEvent&) const;
-  bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
-  void setFullscreen(bool);
-  bool getFullscreen() const;
-  void setWindowSize(int width, int height);
-  void getWindowSize(int& width, int& height);
-  void doSetVideoMode();
-  void enableGrabMouse(bool);
-  bool hasGetKeyMode() {return true;};
-  void getModState(bool &shift, bool &control, bool &alt);
- private:
-  bool setupEvent(BzfEvent&, const SDL_Event&) const;
-  bool doSetResolution(int) {return true;};
-  bool fullScreen;
-  int  base_width;
-  int  base_height;
-  bool canGrabMouse;
-  // to avoid flashing we memorize the old values used to build the window
-  bool oldFullScreen;
-  int  oldWidth;
-  int  oldHeight;
+  public:
+    SDLDisplay();
+    ~SDLDisplay();
+    bool createWindow();
+    virtual bool isValid() const {return true;};
+    bool isEventPending() const;
+    bool getEvent(BzfEvent&) const;
+    bool peekEvent(BzfEvent&) const;
+    bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
+    void setFullscreen(bool);
+    bool getFullscreen() const;
+    void setWindowSize(int width, int height);
+    void getWindowSize(int& width, int& height);
+    void doSetVideoMode();
+    void enableGrabMouse(bool);
+    bool hasGetKeyMode() {return true;};
+    void getModState(bool& shift, bool& control, bool& alt);
+  private:
+    bool setupEvent(BzfEvent&, const SDL_Event&) const;
+    bool doSetResolution(int) {return true;};
+    bool fullScreen;
+    int  base_width;
+    int  base_height;
+    bool canGrabMouse;
+    // to avoid flashing we memorize the old values used to build the window
+    bool oldFullScreen;
+    int  oldWidth;
+    int  oldHeight;
 
-  int  defaultWidth;
-  int  defaultHeight;
+    int  defaultWidth;
+    int  defaultHeight;
 };
 
 #endif // __SDLDISPLAY_H__
@@ -63,6 +63,6 @@ class SDLDisplay : public BzfDisplay {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

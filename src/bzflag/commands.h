@@ -26,9 +26,9 @@ struct CommandListItem {
   CommandListItem(const char* n,
                   CommandManager::CommandFunction f,
                   const char* h)
-  : name(n)
-  , func(f)
-  , help(h)
+    : name(n)
+    , func(f)
+    , help(h)
   {}
   const char* name;
   CommandManager::CommandFunction  func;
@@ -45,6 +45,6 @@ extern const std::vector<CommandListItem>& getCommandList();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

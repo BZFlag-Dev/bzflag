@@ -17,21 +17,20 @@
 #include <stdio.h>
 
 // evaluates to the (approximate) vertical retrace speed of modeinfo _r
-#define getRetrace(_r)	((int)(0.5f + (1000.0f * (_r)->dotclock) / \
-					((_r)->htotal * (_r)->vtotal)))
+#define getRetrace(_r)  ((int)(0.5f + (1000.0f * (_r)->dotclock) / \
+          ((_r)->htotal * (_r)->vtotal)))
 
-static int		resolutionCompare(const void* _a, const void* _b)
-{
+static int    resolutionCompare(const void* _a, const void* _b) {
   const XF86VidModeModeInfo* a = *((const XF86VidModeModeInfo**)_a);
   const XF86VidModeModeInfo* b = *((const XF86VidModeModeInfo**)_b);
 
   // test the stuff we actually care about
-  if (a->hdisplay < b->hdisplay) return -1;
-  if (a->hdisplay > b->hdisplay) return 1;
-  if (a->vdisplay < b->vdisplay) return -1;
-  if (a->vdisplay > b->vdisplay) return 1;
-  if (getRetrace(a) < getRetrace(b)) return -1;
-  if (getRetrace(a) > getRetrace(b)) return 1;
+  if (a->hdisplay < b->hdisplay) { return -1; }
+  if (a->hdisplay > b->hdisplay) { return 1; }
+  if (a->vdisplay < b->vdisplay) { return -1; }
+  if (a->vdisplay > b->vdisplay) { return 1; }
+  if (getRetrace(a) < getRetrace(b)) { return -1; }
+  if (getRetrace(a) > getRetrace(b)) { return 1; }
 
   // other info can be ordered arbitrarily
   return 0;
@@ -42,25 +41,23 @@ static int		resolutionCompare(const void* _a, const void* _b)
 //
 
 LinuxDisplayMode::LinuxDisplayMode() : display(NULL),
-				numResolutions(0),
-				lastResolution(-1),
-				resolutions(NULL),
-				origNumResolutions(0),
-				origResolutions(NULL)
-{
+  numResolutions(0),
+  lastResolution(-1),
+  resolutions(NULL),
+  origNumResolutions(0),
+  origResolutions(NULL) {
   // do nothing
 }
 
-LinuxDisplayMode::~LinuxDisplayMode()
-{
+LinuxDisplayMode::~LinuxDisplayMode() {
   delete[] resolutions;
-  if (origResolutions)
+  if (origResolutions) {
     XFree(origResolutions);
+  }
 }
 
-XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
-				int& numModes, int& currentMode)
-{
+XDisplayMode::ResInfo** LinuxDisplayMode::init(XDisplay* _display,
+                                               int& numModes, int& currentMode) {
   int i, eventbase, errorbase;
 
   // save display for later
@@ -68,27 +65,30 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
 
   // Check if we have the XF86 vidmode extension
   if (!XF86VidModeQueryExtension(display->getRep()->getDisplay(),
-				&eventbase, &errorbase))
+                                 &eventbase, &errorbase)) {
     return NULL;
+  }
 
   // get available resolutions
   if (!XF86VidModeGetAllModeLines(display->getRep()->getDisplay(),
-				display->getRep()->getScreen(),
-				&numResolutions, &origResolutions))
+                                  display->getRep()->getScreen(),
+                                  &numResolutions, &origResolutions)) {
     return NULL;
+  }
 
   // get current resolution
   int dotclock;
   XF86VidModeModeLine mode;
   XF86VidModeGetModeLine(display->getRep()->getDisplay(),
-				display->getRep()->getScreen(),
-				&dotclock, &mode);
+                         display->getRep()->getScreen(),
+                         &dotclock, &mode);
 
   // make a copy of the original data
   origNumResolutions = numResolutions;
   resolutions = new XF86VidModeModeInfo*[numResolutions];
-  for (i = 0; i < numResolutions; i++)
+  for (i = 0; i < numResolutions; i++) {
     resolutions[i] = origResolutions[i];
+  }
 
   // sort resolutions
   qsort(resolutions, numResolutions, sizeof(resolutions[0]), resolutionCompare);
@@ -97,39 +97,44 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
   int current;
   for (current = 0; current < numResolutions; current++) {
     const XF86VidModeModeInfo* r = resolutions[current];
-    if (dotclock	== (int)r->dotclock &&
-	mode.hdisplay   == r->hdisplay &&
-	mode.hsyncstart == r->hsyncstart &&
-	mode.hsyncend   == r->hsyncend &&
-	mode.htotal     == r->htotal &&
-	mode.vdisplay   == r->vdisplay &&
-	mode.vsyncstart == r->vsyncstart &&
-	mode.vsyncend   == r->vsyncend &&
-	mode.vtotal     == r->vtotal &&
-	mode.flags      == r->flags)
+    if (dotclock  == (int)r->dotclock &&
+        mode.hdisplay   == r->hdisplay &&
+        mode.hsyncstart == r->hsyncstart &&
+        mode.hsyncend   == r->hsyncend &&
+        mode.htotal     == r->htotal &&
+        mode.vdisplay   == r->vdisplay &&
+        mode.vsyncstart == r->vsyncstart &&
+        mode.vsyncend   == r->vsyncend &&
+        mode.vtotal     == r->vtotal &&
+        mode.flags      == r->flags) {
       break;
+    }
   }
 
   // no switching if current mode not found
-  if (current == numResolutions)
+  if (current == numResolutions) {
     return NULL;
+  }
 
   // compress out modes that are (effectively) duplicates.  never
   // remove the current mode.
-  for (i = 0; i < numResolutions - 1; ) {
+  for (i = 0; i < numResolutions - 1;) {
     if (resolutionCompare(resolutions + i, resolutions + i + 1) == 0) {
       // is next resolution the current mode?  if so then move it down
       // so we don't blow it away.
-      if (current == i + 1)
-	resolutions[i] = resolutions[i + 1];
+      if (current == i + 1) {
+        resolutions[i] = resolutions[i + 1];
+      }
 
       // move remaining resolutions down (overwriting the one after i)
-      for (int j = i + 2; j < numResolutions; j++)
-	resolutions[j - 1] = resolutions[j];
+      for (int j = i + 2; j < numResolutions; j++) {
+        resolutions[j - 1] = resolutions[j];
+      }
 
       // do we move the current resolution down too?
-      if (current > i)
-	current--;
+      if (current > i) {
+        current--;
+      }
 
       // now one less resolution
       numResolutions--;
@@ -145,7 +150,7 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
   for (i = 0; i < numResolutions; i++) {
     const XF86VidModeModeInfo* r = resolutions[i];
     snprintf(name, sizeof name, "%dx%d @%d", r->hdisplay, r->vdisplay,
-					getRetrace(r));
+             getRetrace(r));
     resInfo[i] = new ResInfo(name, r->hdisplay, r->vdisplay, getRetrace(r));
   }
 
@@ -156,18 +161,15 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
   return resInfo;
 }
 
-bool			LinuxDisplayMode::set(int index)
-{
+bool      LinuxDisplayMode::set(int index) {
   return doSet(index, true);
 }
 
-bool			LinuxDisplayMode::setDefault(int index)
-{
+bool      LinuxDisplayMode::setDefault(int index) {
   return doSet(index, false);
 }
 
-bool			LinuxDisplayMode::doSet(int index, bool position)
-{
+bool      LinuxDisplayMode::doSet(int index, bool position) {
   // ignore attempts to set video format to current format.
   // normally this only happens when restoring the default
   // format, when BzfDisplay deliberately forces the change.
@@ -176,8 +178,9 @@ bool			LinuxDisplayMode::doSet(int index, bool position)
   // format.  however, irix isn't so clever and may cause
   // the display to flicker even when the format isn't
   // really changing.
-  if (index == lastResolution || numResolutions <= 1)
+  if (index == lastResolution || numResolutions <= 1) {
     return true;
+  }
 
   // deactivate windows before resolution change.  if we don't do this
   // then the app will almost certainly crash in the OpenGL driver.
@@ -185,8 +188,8 @@ bool			LinuxDisplayMode::doSet(int index, bool position)
 
   // change resolution
   if (XF86VidModeSwitchToMode(display->getRep()->getDisplay(),
-				display->getRep()->getScreen(),
-				resolutions[index])) {
+                              display->getRep()->getScreen(),
+                              resolutions[index])) {
     if (position) {
       // kludge for accelerated GLX.  when we set the view port after
       // changing the resolution just before quiting, GLX does not
@@ -196,7 +199,7 @@ bool			LinuxDisplayMode::doSet(int index, bool position)
       // the other windows.  without this code, a workaround for the
       // problem is ctrl_alt_+ or ctrl_alt_- to force a resize.
       XF86VidModeSetViewPort(display->getRep()->getDisplay(),
-				display->getRep()->getScreen(), 0, 0);
+                             display->getRep()->getScreen(), 0, 0);
     }
     XSync(display->getRep()->getDisplay(), false);
     lastResolution = index;
@@ -217,6 +220,6 @@ bool			LinuxDisplayMode::doSet(int index, bool position)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

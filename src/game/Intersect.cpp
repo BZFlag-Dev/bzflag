@@ -18,64 +18,81 @@
 using namespace Intersect;
 
 // get angle of normal vector to axis aligned rect centered at origin by point p
-static float getNormalOrigRect(const fvec2& p, float dx, float dy)
-{
-  if (p.x > dx) {					// east of box
-    if (p.y > dy)					//  ne corner
+static float getNormalOrigRect(const fvec2& p, float dx, float dy) {
+  if (p.x > dx) {         // east of box
+    if (p.y > dy) {       //  ne corner
       return atan2f(p.y - dy, p.x - dx);
-    else if (p.y < -dy)				//  se corner
+    }
+    else if (p.y < -dy) {     //  se corner
       return atan2f(p.y + dy, p.x - dx);
-    else						//  east side
+    }
+    else {          //  east side
       return 0.0f;
+    }
   }
 
-  if (p.x < -dx) {					// west of box
-    if (p.y > dy)					//  nw corner
+  if (p.x < -dx) {          // west of box
+    if (p.y > dy) {       //  nw corner
       return atan2f(p.y - dy, p.x + dx);
-    else if (p.y < -dy)				//  sw corner
+    }
+    else if (p.y < -dy) {     //  sw corner
       return atan2f(p.y + dy, p.x + dx);
-    else						//  west side
+    }
+    else {          //  west side
       return (float)M_PI;
+    }
   }
 
-  if (p.y > dy)					// north of box
+  if (p.y > dy) {       // north of box
     return (float)(0.5 * M_PI);
+  }
 
-  if (p.y < -dy)					// south of box
+  if (p.y < -dy) {        // south of box
     return (float)(1.5 * M_PI);
+  }
 
   // inside box
-  if (p.x > 0.0f) {					// inside east
-    if (p.y > 0.0f) {					//  inside ne quadrant
-      if (dy * p.x > dx * p.y)			//   east wall
-	return 0.0f;
-      else						//   north wall
-	return (float)(0.5 * M_PI);
-    } else {						//  inside se quadrant
-      if (dy * p.x > -dx * p.y)			//   east wall
-	return 0.0f;
-      else						//   south wall
-	return (float)(1.5 * M_PI);
+  if (p.x > 0.0f) {         // inside east
+    if (p.y > 0.0f) {         //  inside ne quadrant
+      if (dy * p.x > dx * p.y) {    //   east wall
+        return 0.0f;
+      }
+      else {          //   north wall
+        return (float)(0.5 * M_PI);
+      }
     }
-  } else {						// inside west
-    if (p.y > 0.0f) {					//  inside nw quadrant
-      if (dy * p.x < -dx * p.y)			//   west wall
-	return (float)M_PI;
-      else						//   north wall
-	return (float)(0.5 * M_PI);
-    } else {						//  inside sw quadrant
-      if (dy * p.x < dx * p.y)			//   west wall
-	return (float)M_PI;
-      else						//   south wall
-	return (float)(1.5 * M_PI);
+    else {              //  inside se quadrant
+      if (dy * p.x > -dx * p.y) {   //   east wall
+        return 0.0f;
+      }
+      else {          //   south wall
+        return (float)(1.5 * M_PI);
+      }
+    }
+  }
+  else {              // inside west
+    if (p.y > 0.0f) {         //  inside nw quadrant
+      if (dy * p.x < -dx * p.y) {   //   west wall
+        return (float)M_PI;
+      }
+      else {          //   north wall
+        return (float)(0.5 * M_PI);
+      }
+    }
+    else {              //  inside sw quadrant
+      if (dy * p.x < dx * p.y) {    //   west wall
+        return (float)M_PI;
+      }
+      else {          //   south wall
+        return (float)(1.5 * M_PI);
+      }
     }
   }
 }
 
 
 void Intersect::getNormalRect(const fvec3& p1, const fvec3& p2,
-                              float angle, float dx, float dy, fvec3& n)
-{
+                              float angle, float dx, float dy, fvec3& n) {
   // translate origin
   const fvec3 pa = p1 - p2;
 
@@ -95,39 +112,46 @@ void Intersect::getNormalRect(const fvec3& p1, const fvec3& p2,
 
 
 // true iff axis aligned rect centered at origin intersects circle
-static bool testOrigRectCircle(float dx, float dy, const fvec2& p, float r)
-{
+static bool testOrigRectCircle(float dx, float dy, const fvec2& p, float r) {
   // Algorithm from Graphics Gems, pp51-53.
   const float rr = r * r;
   const float rx = -p.x;
   const float ry = -p.y;
-  if (rx + dx < 0.0) {					// west of rect
-    if (ry + dy < 0.0)					//  sw corner
+  if (rx + dx < 0.0) {          // west of rect
+    if (ry + dy < 0.0) {        //  sw corner
       return (rx + dx) * (rx + dx) + (ry + dy) * (ry + dy) < rr;
-    else if (ry - dy > 0.0)				//  nw corner
+    }
+    else if (ry - dy > 0.0) {     //  nw corner
       return (rx + dx) * (rx + dx) + (ry - dy) * (ry - dy) < rr;
-    else						//  due west
+    }
+    else {          //  due west
       return rx + dx > -r;
-  } else if (rx - dx > 0.0) {				// east of rect
-    if (ry + dy < 0.0)					//  se corner
+    }
+  }
+  else if (rx - dx > 0.0) {         // east of rect
+    if (ry + dy < 0.0) {        //  se corner
       return (rx - dx) * (rx - dx) + (ry + dy) * (ry + dy) < rr;
-    else if (ry - dy > 0.0)				//  ne corner
+    }
+    else if (ry - dy > 0.0) {     //  ne corner
       return (rx - dx) * (rx - dx) + (ry - dy) * (ry - dy) < rr;
-    else						//  due east
+    }
+    else {          //  due east
       return rx - dx < r;
-  } else if (ry + dy < 0.0) {				// due south
+    }
+  }
+  else if (ry + dy < 0.0) {         // due south
     return ry + dy > -r;
-  } else if (ry - dy > 0.0) {				// due north
+  }
+  else if (ry - dy > 0.0) {         // due north
     return ry - dy < r;
   }
 
-  return true;						// circle origin in rect
+  return true;            // circle origin in rect
 }
 
 
 bool Intersect::testRectCircle(const fvec3& p1, float angle,
-                               float dx, float dy, const fvec3& p2, float r)
-{
+                               float dx, float dy, const fvec3& p2, float r) {
   // translate origin
   const fvec3 pa = p2 - p1;
 
@@ -142,8 +166,7 @@ bool Intersect::testRectCircle(const fvec3& p1, float angle,
 
 
 // ray r1 started at time t1 minus ray r2 started at time t2
-Ray Intersect::rayMinusRay(const Ray& r1, float t1, const Ray& r2, float t2)
-{
+Ray Intersect::rayMinusRay(const Ray& r1, float t1, const Ray& r2, float t2) {
   // get points at respective times
   fvec3 p1, p2;
   r1.getPoint(t1, p1);
@@ -161,12 +184,12 @@ Ray Intersect::rayMinusRay(const Ray& r1, float t1, const Ray& r2, float t2)
 }
 
 
-float Intersect::rayAtDistanceFromOrigin(const Ray& r, float radius)
-{
+float Intersect::rayAtDistanceFromOrigin(const Ray& r, float radius) {
   const fvec3& d = r.getDirection();
 
-  if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0)
+  if (d[0] == 0.0 && d[1] == 0.0 && d[2] == 0.0) {
     return 0.0f;
+  }
 
   const fvec3& p = r.getOrigin();
   const float a = d[0] * d[0] + d[1] * d[1] + d[2] * d[2];
@@ -174,134 +197,169 @@ float Intersect::rayAtDistanceFromOrigin(const Ray& r, float radius)
   const float c = p[0] * p[0] + p[1] * p[1] + p[2] * p[2] - radius * radius;
   const float disc = b * b - a * c;
 
-  if (disc < 0.0f)
-    return -1.0f;		// misses sphere
+  if (disc < 0.0f) {
+    return -1.0f;  // misses sphere
+  }
 
   const float d1_2 = sqrtf(disc);
   const float t0 = b + d1_2;
   const float t1 = b - d1_2;
 
   if (t0 < t1) {
-    if (t0 < 0.0f)
+    if (t0 < 0.0f) {
       return t1 / a;
-    else
+    }
+    else {
       return t0 / a;
-  } else {
-    if (t1 < 0.0)
+    }
+  }
+  else {
+    if (t1 < 0.0) {
       return t0 / a;
-    else
+    }
+    else {
       return t1 / a;
+    }
   }
 }
 
 
 // block covers interval x=[-dx, dx], y=[-dy, dy], z=[0.0, dz]
 float Intersect::timeRayHitsOrigBox(const fvec3& p, const fvec3& v,
-                                    float dx, float dy, float dz)
-{
+                                    float dx, float dy, float dz) {
   float tx, ty, tz;
 
   // there's gotta be a better way to do this whole thing
 
-  if (fabsf(p[0]) <= dx && fabsf(p[1]) <= dy && p[2] >= 0.0 && p[2] <= dz)
-    return 0.0;						// inside
-
-  if (p[0] > dx) {					// to east
-    if (v[0] >= 0.0)
-      return -1.0f;					//  going east
-    else
-      tx = (dx - p[0]) / v[0];				//  get east wall hit
-  } else if (p[0] < -dx) {				// to west
-    if (v[0] <= 0.0)
-      return -1.0f;					//  going west
-    else
-      tx = -(dx + p[0]) / v[0];				//  get west wall hit
-  } else {
-    tx = -1.0f;						// doesn't matter
+  if (fabsf(p[0]) <= dx && fabsf(p[1]) <= dy && p[2] >= 0.0 && p[2] <= dz) {
+    return 0.0;  // inside
   }
 
-  if (p[1] > dy) {					// to north
-    if (v[1] >= 0.0)
-      return -1.0f;					//  going north
-    else
-      ty = (dy - p[1]) / v[1];				//  get north wall hit
-  } else if (p[1] < -dy) {		       		// to south
-    if (v[1] <= 0.0)
-      return -1.0f;					//  going south
-    else
-      ty = -(dy + p[1]) / v[1];				//  get north wall hit
-  } else {
-    ty = -1.0f;						// doesn't matter
+  if (p[0] > dx) {          // to east
+    if (v[0] >= 0.0) {
+      return -1.0f;  //  going east
+    }
+    else {
+      tx = (dx - p[0]) / v[0];  //  get east wall hit
+    }
+  }
+  else if (p[0] < -dx) {          // to west
+    if (v[0] <= 0.0) {
+      return -1.0f;  //  going west
+    }
+    else {
+      tx = -(dx + p[0]) / v[0];  //  get west wall hit
+    }
+  }
+  else {
+    tx = -1.0f;           // doesn't matter
   }
 
-  if (p[2] > dz) {					// above
-    if (v[2] >= 0.0)
-      return -1.0f;					//  going up
-    else
-      tz = (dz - p[2]) / v[2];				//  get ceiling hit
-  } else if (p[2] < 0.0) {				// below
-    if (v[2] <= 0.0)
-      return -1.0f;					//  going down
-    else
-      tz = -p[2] / v[2];				//  get floor hit
-  } else {
-    tz = -1.0f;						// doesn't matter
+  if (p[1] > dy) {          // to north
+    if (v[1] >= 0.0) {
+      return -1.0f;  //  going north
+    }
+    else {
+      ty = (dy - p[1]) / v[1];  //  get north wall hit
+    }
+  }
+  else if (p[1] < -dy) {                // to south
+    if (v[1] <= 0.0) {
+      return -1.0f;  //  going south
+    }
+    else {
+      ty = -(dy + p[1]) / v[1];  //  get north wall hit
+    }
+  }
+  else {
+    ty = -1.0f;           // doesn't matter
+  }
+
+  if (p[2] > dz) {          // above
+    if (v[2] >= 0.0) {
+      return -1.0f;  //  going up
+    }
+    else {
+      tz = (dz - p[2]) / v[2];  //  get ceiling hit
+    }
+  }
+  else if (p[2] < 0.0) {          // below
+    if (v[2] <= 0.0) {
+      return -1.0f;  //  going down
+    }
+    else {
+      tz = -p[2] / v[2];  //  get floor hit
+    }
+  }
+  else {
+    tz = -1.0f;           // doesn't matter
   }
 
   // throw out solutions < 0.0 or that intersect outside box
   if (tx < 0.0 ||
       fabsf(p[1] + tx * v[1]) > dy ||
       p[2] + tx * v[2] < 0.0 ||
-      p[2] + tx * v[2] > dz)
+      p[2] + tx * v[2] > dz) {
     tx = -1.0f;
+  }
   if (ty < 0.0 ||
       fabsf(p[0] + ty * v[0]) > dx ||
       p[2] + ty * v[2] < 0.0 ||
-      p[2] + ty * v[2] > dz)
+      p[2] + ty * v[2] > dz) {
     ty = -1.0f;
+  }
   if (tz < 0.0 ||
       fabsf(p[0] + tz * v[0]) > dx ||
-      fabsf(p[1] + tz * v[1]) > dy)
+      fabsf(p[1] + tz * v[1]) > dy) {
     tz = -1.0f;
+  }
 
-  if (tx < 0.0 && ty < 0.0 && tz < 0.0)
-    return -1.0f;	// no hits
+  if (tx < 0.0 && ty < 0.0 && tz < 0.0) {
+    return -1.0f;  // no hits
+  }
 
   // pick closest valid solution
   if (tx < 0.0f) {
-    if (ty < 0.0f)
+    if (ty < 0.0f) {
       return tz;
-    if (tz < 0.0f || ty < tz)
+    }
+    if (tz < 0.0f || ty < tz) {
       return ty;
+    }
     return tz;
-  } else if (ty < 0.0f) {
-    if (tz < 0.0 || tx < tz)
+  }
+  else if (ty < 0.0f) {
+    if (tz < 0.0 || tx < tz) {
       return tx;
+    }
     return tz;
-  } else if (tz < 0.0f) {
-    if (tx < ty)
+  }
+  else if (tz < 0.0f) {
+    if (tx < ty) {
       return tx;
+    }
     return ty;
-  } else {
-    if (tx < ty && tx < tz)
+  }
+  else {
+    if (tx < ty && tx < tz) {
       return tx;
-    if (ty < tz)
+    }
+    if (ty < tz) {
       return ty;
+    }
     return tz;
   }
 }
 
 
 // block covers interval x=[-dx, dx], y=[-dy, dy], z=[0.0, dz]
-float Intersect::timeRayHitsOrigBox(const Ray& ray, float dx, float dy, float dz)
-{
+float Intersect::timeRayHitsOrigBox(const Ray& ray, float dx, float dy, float dz) {
   return timeRayHitsOrigBox(ray.getOrigin(), ray.getDirection(), dx, dy, dz);
 }
 
 
 float Intersect::timeRayHitsBlock(const Ray& r, const fvec3& p1,
-                                  float angle, float dx, float dy, float dz)
-{
+                                  float angle, float dx, float dy, float dz) {
   // get names for ray info
   const fvec3& p2 = r.getOrigin();
   const fvec3& d = r.getDirection();
@@ -329,9 +387,8 @@ float Intersect::timeRayHitsBlock(const Ray& r, const fvec3& p1,
 /** Computing ray travel time to the plane described by 3 points
  */
 static float timeRayHitsPlane(const fvec3& pb, const fvec3& db,
-			      const fvec3& x1, const fvec3& x2,
-			      const fvec3& x3)
-{
+                              const fvec3& x1, const fvec3& x2,
+                              const fvec3& x3) {
   // Compute the 2 vectors describing the plane
   const fvec3 u = x2 - x1;
   const fvec3 v = x3 - x1;
@@ -364,8 +421,7 @@ static float timeRayHitsPlane(const fvec3& pb, const fvec3& db,
 
 
 float Intersect::timeRayHitsPyramids(const Ray& r, const fvec3& p1, float angle,
-                                     float dx, float dy, float dz, bool flipZ)
-{
+                                     float dx, float dy, float dz, bool flipZ) {
   const float epsilon = 1.0e-3f;
 
   // get names for ray info
@@ -401,8 +457,8 @@ float Intersect::timeRayHitsPyramids(const Ray& r, const fvec3& p1, float angle,
   // trying to get to the pyramid removing half space at time
   // start with the 4 faces, and end with the base
   float residualTemp;
-  fvec3 x1( -dx,  -dy, 0.0f);
-  fvec3 x2( +dx,  -dy, 0.0f);
+  fvec3 x1(-dx,  -dy, 0.0f);
+  fvec3 x2(+dx,  -dy, 0.0f);
   fvec3 x3(0.0f, 0.0f,   dz);
 
   residualTemp = timeRayHitsPlane(pb, db, x1, x2, x3);
@@ -456,7 +512,8 @@ float Intersect::timeRayHitsPyramids(const Ray& r, const fvec3& p1, float angle,
   float scaledDistance;
   if (pb.x * dy > pb.y * dx) {
     scaledDistance = dz * (dx - pb.x) - (pb.z * dx);
-  } else {
+  }
+  else {
     scaledDistance = dz * (dy - pb.y) - (pb.z * dy);
   }
 
@@ -470,8 +527,7 @@ float Intersect::timeRayHitsPyramids(const Ray& r, const fvec3& p1, float angle,
 
 // rect covers interval x=[-dx, dx], y=[-dy, dy]
 float Intersect::timeAndSideRayHitsOrigRect(const fvec3& p, const fvec3& v,
-                                            float dx, float dy, int& side)
-{
+                                            float dx, float dy, int& side) {
   // check if inside
   if (fabsf(p[0]) <= dx && fabsf(p[1]) <= dy) {
     side = -2;
@@ -482,41 +538,56 @@ float Intersect::timeAndSideRayHitsOrigRect(const fvec3& p, const fvec3& v,
   side = -1;
 
   float tx, ty;
-  if (p[0] > dx) {					// to east
-    if (v[0] >= 0.0f)
-      return -1.0f;					//  going east
-    else
-      tx = (dx - p[0]) / v[0];				//  get east wall hit
-  } else if (p[0] < -dx) {				// to west
-    if (v[0] <= 0.0f)
-      return -1.0f;					//  going west
-    else
-      tx = -(dx + p[0]) / v[0];				//  get west wall hit
-  } else {
-    tx = -1.0f;						// doesn't matter
+  if (p[0] > dx) {          // to east
+    if (v[0] >= 0.0f) {
+      return -1.0f;  //  going east
+    }
+    else {
+      tx = (dx - p[0]) / v[0];  //  get east wall hit
+    }
+  }
+  else if (p[0] < -dx) {          // to west
+    if (v[0] <= 0.0f) {
+      return -1.0f;  //  going west
+    }
+    else {
+      tx = -(dx + p[0]) / v[0];  //  get west wall hit
+    }
+  }
+  else {
+    tx = -1.0f;           // doesn't matter
   }
 
-  if (p[1] > dy) {					// to north
-    if (v[1] >= 0.0f)
-      return -1.0f;					//  going north
-    else
-      ty = (dy - p[1]) / v[1];				//  get north wall hit
-  } else if (p[1] < -dy) {				// to south
-    if (v[1] <= 0.0f)
-	return -1.0f;					//  going south
-    else
-	ty = -(dy + p[1]) / v[1];			//  get north wall hit
-  } else {
-    ty = -1.0f;						// doesn't matter
+  if (p[1] > dy) {          // to north
+    if (v[1] >= 0.0f) {
+      return -1.0f;  //  going north
+    }
+    else {
+      ty = (dy - p[1]) / v[1];  //  get north wall hit
+    }
+  }
+  else if (p[1] < -dy) {          // to south
+    if (v[1] <= 0.0f) {
+      return -1.0f;  //  going south
+    }
+    else {
+      ty = -(dy + p[1]) / v[1];  //  get north wall hit
+    }
+  }
+  else {
+    ty = -1.0f;           // doesn't matter
   }
 
   // throw out solutions < 0.0 or that intersect outside box
-  if (fabsf(p[1] + tx * v[1]) > dy)
+  if (fabsf(p[1] + tx * v[1]) > dy) {
     tx = -1.0f;
-  if (fabsf(p[0] + ty * v[0]) > dx)
+  }
+  if (fabsf(p[0] + ty * v[0]) > dx) {
     ty = -1.0f;
-  if (tx < 0.0f && ty < 0.0f)
-    return -1.0f;		// no hits
+  }
+  if (tx < 0.0f && ty < 0.0f) {
+    return -1.0f;  // no hits
+  }
 
   // pick closest valid solution
   if (tx < 0.0f || (ty >= 0.0f && ty < tx)) {
@@ -529,8 +600,7 @@ float Intersect::timeAndSideRayHitsOrigRect(const fvec3& p, const fvec3& v,
 
 
 float Intersect::timeAndSideRayHitsRect(const Ray& r, const fvec3& p1, float angle,
-                                        float dx, float dy, int& side)
-{
+                                        float dx, float dy, int& side) {
   // get names for ray info
   const fvec3& p2 = r.getOrigin();
   const fvec3& d = r.getDirection();
@@ -556,13 +626,13 @@ float Intersect::timeAndSideRayHitsRect(const Ray& r, const fvec3& p1, float ang
 
 
 static bool testOrigRectRect(const fvec2& p, float angle,
-			     float dx1, float dy1, float dx2, float dy2)
-{
-  static const float	box[4][2] =	{ {  1.0,  1.0 }, {  1.0, -1.0 },
-					  { -1.0, -1.0 }, { -1.0,  1.0 } };
+                             float dx1, float dy1, float dx2, float dy2) {
+  static const float  box[4][2] = { {  1.0,  1.0 }, {  1.0, -1.0 },
+    { -1.0, -1.0 }, { -1.0,  1.0 }
+  };
   const float c = cosf(angle), s = sinf(angle);
   float corner1[4][2];
-  int	i, region[4][2];
+  int i, region[4][2];
 
   // return true if the second rectangle is within the first
   // hint:  cos(+a) = cos(-a)  and  -sin(a) = sin(-a)
@@ -580,8 +650,9 @@ static bool testOrigRectRect(const fvec2& p, float angle,
     region[i][0] = corner1[i][0] < -dx2 ? -1 : (corner1[i][0] > dx2 ? 1 : 0);
     region[i][1] = corner1[i][1] < -dy2 ? -1 : (corner1[i][1] > dy2 ? 1 : 0);
 
-    if (!region[i][0] && !region[i][1])
+    if (!region[i][0] && !region[i][1]) {
       return true;
+    }
   }
 
   // check each edge of rect1
@@ -592,28 +663,36 @@ static bool testOrigRectRect(const fvec2& p, float angle,
     // if the edge lies completely to one side of rect2 then continue
     // if it crosses the center then return true
     if (region[i][0] == region[j][0]) {
-      if (region[i][0] == 0 && region[i][1] != region[j][1])
-	return true;
-      else
-	continue;
-    } else if (region[i][1] == region[j][1]) {
-      if (region[i][1] == 0)
-	return true;
-      else
-	continue;
+      if (region[i][0] == 0 && region[i][1] != region[j][1]) {
+        return true;
+      }
+      else {
+        continue;
+      }
+    }
+    else if (region[i][1] == region[j][1]) {
+      if (region[i][1] == 0) {
+        return true;
+      }
+      else {
+        continue;
+      }
     }
 
     // determine corners of rect2 the edge might pass between
     if (region[i][0] == 0) {
       corner2[0] = region[j][0] * dx2;
       corner2[1] = region[i][1] * dy2;
-    } else if (region[j][0] == 0) {
+    }
+    else if (region[j][0] == 0) {
       corner2[0] = region[i][0] * dx2;
       corner2[1] = region[j][1] * dy2;
-    } else if (region[i][1] == 0) {
+    }
+    else if (region[i][1] == 0) {
       corner2[0] = region[i][0] * dx2;
       corner2[1] = region[j][1] * dy2;
-    } else {
+    }
+    else {
       corner2[0] = region[j][0] * dx2;
       corner2[1] = region[i][1] * dy2;
     }
@@ -621,17 +700,17 @@ static bool testOrigRectRect(const fvec2& p, float angle,
     // see if edge crosses the rectangle
     e[0] = corner1[j][0] - corner1[i][0];
     e[1] = corner1[j][1] - corner1[i][1];
-    if ((e[1]*(corner2[0]-corner1[i][0])-e[0]*(corner2[1]-corner1[i][1])) *
-	(e[1]*(corner2[0]+corner1[i][0])-e[0]*(corner2[1]+corner1[i][1])) > 0.0)
+    if ((e[1] * (corner2[0] - corner1[i][0]) - e[0] * (corner2[1] - corner1[i][1])) *
+        (e[1] * (corner2[0] + corner1[i][0]) - e[0] * (corner2[1] + corner1[i][1])) > 0.0) {
       return true;
+    }
   }
   return false;
 }
 
 
 bool Intersect::testRectRect(const fvec3& p1, float angle1, float dx1, float dy1,
-                             const fvec3& p2, float angle2, float dx2, float dy2)
-{
+                             const fvec3& p2, float angle2, float dx2, float dy2) {
   // translate origin
   fvec2 pa;
   pa[0] = p2[0] - p1[0];
@@ -650,10 +729,10 @@ bool Intersect::testRectRect(const fvec3& p1, float angle1, float dx1, float dy1
 
 
 bool Intersect::testRectInRect(const fvec3& p1, float angle1, float dx1, float dy1,
-                               const fvec3& p2, float angle2, float dx2, float dy2)
-{
-  static const float	box[4][2] =	{ {  1.0,  1.0 }, {  1.0, -1.0 },
-					  { -1.0, -1.0 }, { -1.0,  1.0 } };
+                               const fvec3& p2, float angle2, float dx2, float dy2) {
+  static const float  box[4][2] = { {  1.0,  1.0 }, {  1.0, -1.0 },
+    { -1.0, -1.0 }, { -1.0,  1.0 }
+  };
 
   // translate origin
   float pa[2];
@@ -671,16 +750,16 @@ bool Intersect::testRectInRect(const fvec3& p1, float angle1, float dx1, float d
   for (int i = 0; i < 4; i++) {
     const float x = pb[0] + c2 * dx2 * box[i][0] - s2 * dy2 * box[i][1];
     const float y = pb[1] + s2 * dx2 * box[i][0] + c2 * dy2 * box[i][1];
-    if (fabsf(x) > dx1 || fabsf(y) > dy1)
+    if (fabsf(x) > dx1 || fabsf(y) > dy1) {
       return false;
+    }
   }
   return true;
 }
 
 
 static inline void projectAxisBox(const fvec3& dir, const Extents& extents,
-				  float* minDist, float* maxDist)
-{
+                                  float* minDist, float* maxDist) {
   static fvec3 i;
   static fvec3 o;
 
@@ -689,7 +768,8 @@ static inline void projectAxisBox(const fvec3& dir, const Extents& extents,
     if (dir[t] > 0.0f) {
       i[t] = extents.maxs[t];
       o[t] = extents.mins[t];
-    } else {
+    }
+    else {
       i[t] = extents.mins[t];
       o[t] = extents.maxs[t];
     }
@@ -701,7 +781,8 @@ static inline void projectAxisBox(const fvec3& dir, const Extents& extents,
   if (idist < odist) {
     *minDist = idist;
     *maxDist = odist;
-  } else {
+  }
+  else {
     *minDist = odist;
     *maxDist = idist;
   }
@@ -711,9 +792,8 @@ static inline void projectAxisBox(const fvec3& dir, const Extents& extents,
 
 
 static inline void projectPolygon(const fvec3& dir,
-				  int count, const fvec3* points,
-				  float* minDist, float* maxDist)
-{
+                                  int count, const fvec3* points,
+                                  float* minDist, float* maxDist) {
   float mind = MAXFLOAT;
   float maxd = -MAXFLOAT;
 
@@ -738,8 +818,7 @@ static inline void projectPolygon(const fvec3& dir,
 // return true if polygon touches the axis aligned box
 // *** assumes that an extents test has already been done ***
 bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
-                                     const fvec4& plane, const Extents& extents)
-{
+                                     const fvec4& plane, const Extents& extents) {
   int t;
   static fvec3 i; // inside point  (assuming partial)
   static fvec3 o; // outside point (assuming partial)
@@ -749,7 +828,8 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
     if (plane[t] > 0.0f) {
       i[t] = extents.maxs[t];
       o[t] = extents.mins[t];
-    } else {
+    }
+    else {
       i[t] = extents.mins[t];
       o[t] = extents.maxs[t];
     }
@@ -775,7 +855,7 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
       const fvec3 cross = fvec3::cross(edge, axis);
       const float lengthSq = cross.lengthSq();
       if (lengthSq < 0.001f) {
-	continue;
+        continue;
       }
       // find the projected distances
       float boxMinDist, boxMaxDist;
@@ -784,7 +864,7 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
       projectPolygon(cross, pointCount, points, &polyMinDist, &polyMaxDist);
       // check if this is a separation axis
       if ((boxMinDist > polyMaxDist) || (boxMaxDist < polyMinDist)) {
-	return false;
+        return false;
       }
     }
   }
@@ -797,8 +877,7 @@ bool Intersect::testPolygonInAxisBox(int pointCount, const fvec3* points,
 // possible values are Outside, Partial, and Contained.
 // the frustum plane normals point inwards
 IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
-                                               const Frustum* frustum)
-{
+                                               const Frustum* frustum) {
   // FIXME - use a sphere vs. cone test first?
 
   fvec3 inside;  // inside point  (assuming partial)
@@ -807,7 +886,7 @@ IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
   IntersectLevel result = Contained;
 
   // FIXME - 0 is the near clip plane, not that useful really?
-  //	 OpenGL should easily clip the few items sneak in
+  //   OpenGL should easily clip the few items sneak in
 
   const int planeCount = frustum->getPlaneCount();
 
@@ -820,11 +899,12 @@ IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
     // on the normal vector for the plane
     for (int t = 0; t < 3; t++) {
       if (plane[t] > 0.0f) {
-	inside[t]  = extents.maxs[t];
-	outside[t] = extents.mins[t];
-      } else {
-	inside[t]  = extents.mins[t];
-	outside[t] = extents.maxs[t];
+        inside[t]  = extents.maxs[t];
+        outside[t] = extents.mins[t];
+      }
+      else {
+        inside[t]  = extents.mins[t];
+        outside[t] = extents.maxs[t];
       }
     }
 
@@ -850,8 +930,7 @@ IntersectLevel Intersect::testAxisBoxInFrustum(const Extents& extents,
 // the occluder plane normals point inwards
 IntersectLevel Intersect::testAxisBoxOcclusion(const Extents& extents,
                                                const fvec4* planes,
-                                               int planeCount)
-{
+                                               int planeCount) {
   static int s, t;
   static fvec3 inside;  // inside point  (assuming partial)
   static fvec3 outside; // outside point (assuming partial)
@@ -867,11 +946,12 @@ IntersectLevel Intersect::testAxisBoxOcclusion(const Extents& extents,
     // on the normal vector for the plane
     for (t = 0; t < 3; t++) {
       if (plane[t] > 0.0f) {
-	inside[t]  = extents.maxs[t];
-	outside[t] = extents.mins[t];
-      } else {
-	inside[t]  = extents.mins[t];
-	outside[t] = extents.maxs[t];
+        inside[t]  = extents.maxs[t];
+        outside[t] = extents.mins[t];
+      }
+      else {
+        inside[t]  = extents.mins[t];
+        outside[t] = extents.maxs[t];
       }
     }
 
@@ -882,9 +962,9 @@ IntersectLevel Intersect::testAxisBoxOcclusion(const Extents& extents,
     }
 
     // FIXME - if we don't do occlusion by SceneNode,
-    //	 then ditch the partial test. This will
-    //	 save an extra dot product, and reduce
-    //	 the likely number of loops
+    //   then ditch the partial test. This will
+    //   save an extra dot product, and reduce
+    //   the likely number of loops
 
     // check the outside length
     len = plane.planeDist(outside);
@@ -899,8 +979,7 @@ IntersectLevel Intersect::testAxisBoxOcclusion(const Extents& extents,
 // return true if the ray hits the box
 // if it does hit, set the inTime value
 bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
-                                   float* inTime)
-{
+                                   float* inTime) {
   int a;
   const fvec3& o = ray->getOrigin();
   const fvec3& v = ray->getDirection();
@@ -911,14 +990,14 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
   for (a = 0; a < 3; a++) {
     if (o[a] < exts.mins[a]) {
       if (v[a] <= 0.0f) {
-	return false;
+        return false;
       }
       zone[a] = -1;
       inside = false;
     }
     else if (o[a] > exts.maxs[a]) {
       if (v[a] >= 0.0f) {
-	return false;
+        return false;
       }
       zone[a] = +1;
       inside = false;
@@ -977,8 +1056,7 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& exts,
 // return true if the ray hits the box
 // if it does hit, set the inTime and outTime values
 bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& extents,
-                                   float* inTime, float* outTime)
-{
+                                   float* inTime, float* outTime) {
   if (!testRayHitsAxisBox(ray, extents, inTime)) {
     return false;
   }
@@ -992,9 +1070,11 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& extents,
   for (a = 0; a < 3; a++) {
     if (v[a] == 0.0f) {
       hitTime[a] = MAXFLOAT;
-    } else if (v[a] < 0.0f) {
+    }
+    else if (v[a] < 0.0f) {
       hitTime[a] = (extents.mins[a] - o[a]) / v[a];
-    } else {
+    }
+    else {
       hitTime[a] = (extents.maxs[a] - o[a]) / v[a];
     }
   }
@@ -1017,6 +1097,6 @@ bool Intersect::testRayHitsAxisBox(const Ray* ray, const Extents& extents,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

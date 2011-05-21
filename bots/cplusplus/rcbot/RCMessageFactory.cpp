@@ -25,8 +25,7 @@
 
 
 template<>
-void RCMessageFactory<RCRequest>::initialize()
-{
+void RCMessageFactory<RCRequest>::initialize() {
   RCREQUEST.Register<IdentifyFrontend>("IdentifyFrontend");
   ADD_REQUEST(Execute);
   ADD_REQUEST(SetSpeed);
@@ -65,8 +64,7 @@ void RCMessageFactory<RCRequest>::initialize()
 
 
 template<>
-void RCMessageFactory<RCReply>::initialize()
-{
+void RCMessageFactory<RCReply>::initialize() {
   RCREPLY.Register<IdentifyBackend>("IdentifyBackend");
   ADD_REPLY(Event);
   ADD_REPLY(CommandDone);
@@ -95,8 +93,7 @@ void RCMessageFactory<RCReply>::initialize()
 
 
 template<>
-void RCMessageFactory<RCEvent>::initialize()
-{
+void RCMessageFactory<RCEvent>::initialize() {
   ADD_EVENT(HitWall);
   ADD_EVENT(Death);
 }
@@ -106,6 +103,6 @@ void RCMessageFactory<RCEvent>::initialize()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

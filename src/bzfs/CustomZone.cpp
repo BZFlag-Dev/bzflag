@@ -34,8 +34,7 @@
 #include "Team.h"
 
 
-CustomZone::CustomZone(const MeshFace* f)
-{
+CustomZone::CustomZone(const MeshFace* f) {
   face = f;
   pos = fvec3(0.0f, 0.0f, 0.0f);
   size = fvec3(1.0f, 1.0f, 1.0f);
@@ -47,8 +46,7 @@ CustomZone::CustomZone(const MeshFace* f)
 
 
 // make a safety zone for all team flags
-void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
-{
+void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo) {
   pos = fvec3(x, y, 0.0f);
   size = fvec3(0.0f, 0.0f, 0.0f);
   rotation = 0.0f;
@@ -67,8 +65,7 @@ void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
 }
 
 
-void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
-{
+void CustomZone::addZoneFlagCount(FlagType* flagType, int count) {
   ZoneFlagMap::iterator it = zoneFlagMap.find(flagType);
   if (it != zoneFlagMap.end()) {
     count += it->second;
@@ -81,8 +78,7 @@ void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
 }
 
 
-bool CustomZone::read(const char *cmd, std::istream& input)
-{
+bool CustomZone::read(const char* cmd, std::istream& input) {
   const std::string lower = TextUtils::tolower(cmd);
   if ((lower == "flag") ||
       (lower == "zoneflag") || (lower == "fixedflag") ||
@@ -102,8 +98,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 }
 
 
-bool CustomZone::readLine(const std::string& cmd, const std::string& line)
-{
+bool CustomZone::readLine(const std::string& cmd, const std::string& line) {
   const std::string lower = TextUtils::tolower(cmd);
 
   std::istringstream parms(line);
@@ -112,43 +107,43 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line)
     std::string flag;
     while (parms >> flag) {
       if (flag == "good") {
-	FlagSet &fs = Flag::getGoodFlags();
-	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
-	  FlagType *f = *it;
-	  if (f->endurance != FlagNormal) { // Null and Team flags
-	    const std::string& qual = getFlagTypeQualifier(f);
-	    if (qual.size() > 0) {
-	      qualifiers.push_back(qual);
-	    }
-	  }
-	}
+        FlagSet& fs = Flag::getGoodFlags();
+        for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
+          FlagType* f = *it;
+          if (f->endurance != FlagNormal) { // Null and Team flags
+            const std::string& qual = getFlagTypeQualifier(f);
+            if (qual.size() > 0) {
+              qualifiers.push_back(qual);
+            }
+          }
+        }
       }
       else if (flag == "bad") {
-	FlagSet &fs = Flag::getBadFlags();
-	for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
-	  FlagType *f = *it;
-	  if (f->endurance != FlagNormal) { // Null and Team flags
-	    const std::string& qual = getFlagTypeQualifier(f);
-	    if (qual.size() > 0) {
-	      qualifiers.push_back(qual);
-	    }
-	  }
-	}
+        FlagSet& fs = Flag::getBadFlags();
+        for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
+          FlagType* f = *it;
+          if (f->endurance != FlagNormal) { // Null and Team flags
+            const std::string& qual = getFlagTypeQualifier(f);
+            if (qual.size() > 0) {
+              qualifiers.push_back(qual);
+            }
+          }
+        }
       }
       else {
-	FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
-	if (f == Flags::Null) {
-	  logDebugMessage(0, "WARNING: bad flag type: %s\n", flag.c_str());
-	  return false;
-	}
-	if (f->endurance == FlagNormal) {
-	  logDebugMessage(0, "WARNING: you probably want a safety: %s\n", flag.c_str());
-	  return false;
-	}
-	const std::string& qual = getFlagTypeQualifier(f);
-	if (qual.size() > 0) {
-	  qualifiers.push_back(qual);
-	}
+        FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
+        if (f == Flags::Null) {
+          logDebugMessage(0, "WARNING: bad flag type: %s\n", flag.c_str());
+          return false;
+        }
+        if (f->endurance == FlagNormal) {
+          logDebugMessage(0, "WARNING: you probably want a safety: %s\n", flag.c_str());
+          return false;
+        }
+        const std::string& qual = getFlagTypeQualifier(f);
+        if (qual.size() > 0) {
+          qualifiers.push_back(qual);
+        }
       }
     }
 
@@ -168,30 +163,31 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line)
     }
 
     if (flag == "good") {
-      FlagSet &fs = Flag::getGoodFlags();
+      FlagSet& fs = Flag::getGoodFlags();
       for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
-	FlagType *f = *it;
-	if (f->endurance != FlagNormal) { // Null and Team flags
-	  addZoneFlagCount(f, count);
-	}
+        FlagType* f = *it;
+        if (f->endurance != FlagNormal) { // Null and Team flags
+          addZoneFlagCount(f, count);
+        }
       }
     }
     else if (flag == "bad") {
-      FlagSet &fs = Flag::getBadFlags();
+      FlagSet& fs = Flag::getBadFlags();
       for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
-	FlagType *f = *it;
-	if (f->endurance != FlagNormal) { // Null and Team flags
-	  addZoneFlagCount(f, count);
-	}
+        FlagType* f = *it;
+        if (f->endurance != FlagNormal) { // Null and Team flags
+          addZoneFlagCount(f, count);
+        }
       }
     }
     else {
-      FlagType *f = Flag::getDescFromAbbreviation(flag.c_str());
+      FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
       if (f != Flags::Null) {
-	addZoneFlagCount(f, count);
-      } else {
-	logDebugMessage(0, "WARNING: bad zoneflag type: %s\n", flag.c_str());
-	return false;
+        addZoneFlagCount(f, count);
+      }
+      else {
+        logDebugMessage(0, "WARNING: bad zoneflag type: %s\n", flag.c_str());
+        return false;
       }
     }
   }
@@ -201,17 +197,18 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line)
 
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams)) {
-	logDebugMessage(0, "WARNING: bad team number: %i\n", color);
-	return false;
+        logDebugMessage(0, "WARNING: bad team number: %i\n", color);
+        return false;
       }
       std::string qual;
       if (safety) {
-	qual = getFlagSafetyQualifier(color);
-      } else {
-	qual = getPlayerTeamQualifier(color);
+        qual = getFlagSafetyQualifier(color);
+      }
+      else {
+        qual = getPlayerTeamQualifier(color);
       }
       if (qual.size() > 0) {
-	qualifiers.push_back(qual);
+        qualifiers.push_back(qual);
       }
     }
     if (qualifiers.size() == 0) {
@@ -241,14 +238,12 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line)
 }
 
 
-void CustomZone::writeToWorld(WorldInfo* worldInfo) const
-{
-  worldInfo->addZone( this );
+void CustomZone::writeToWorld(WorldInfo* worldInfo) const {
+  worldInfo->addZone(this);
 }
 
 
-void CustomZone::getRandomPoint(fvec3& pt) const
-{
+void CustomZone::getRandomPoint(fvec3& pt) const {
   if (face) {
     pt = useCenter ? face->calcCenter() : face->getRandomPoint();
     return;
@@ -271,8 +266,7 @@ void CustomZone::getRandomPoint(fvec3& pt) const
 }
 
 
-float CustomZone::getDistToPoint(const fvec3& point) const
-{
+float CustomZone::getDistToPoint(const fvec3& point) const {
   if (face) {
     return (face->calcCenter() - point).length();
   }
@@ -282,8 +276,7 @@ float CustomZone::getDistToPoint(const fvec3& point) const
 }
 
 
-static std::string makeIntQualifier(char prefix, int value)
-{
+static std::string makeIntQualifier(char prefix, int value) {
   static std::string qual;
   char buffer[16];
   snprintf(buffer, 16, "%c%i", prefix, value);
@@ -291,8 +284,7 @@ static std::string makeIntQualifier(char prefix, int value)
   return qual;
 }
 
-static int checkIntQualifier(char prefix, const std::string& qual)
-{
+static int checkIntQualifier(char prefix, const std::string& qual) {
   if (qual[0] == prefix) {
     const char* start = qual.c_str() + 1;
     char* end;
@@ -305,79 +297,74 @@ static int checkIntQualifier(char prefix, const std::string& qual)
 }
 
 
-const std::string& CustomZone::getFlagIdQualifier(int flagId)
-{
+const std::string& CustomZone::getFlagIdQualifier(int flagId) {
   static std::string qual;
   qual = makeIntQualifier('#', flagId);
   return qual;
 }
 
-int CustomZone::getFlagIdFromQualifier(const std::string& qual)
-{
+int CustomZone::getFlagIdFromQualifier(const std::string& qual) {
   return checkIntQualifier('#', qual);
 }
 
 
-const std::string& CustomZone::getFlagTypeQualifier(FlagType* flagType)
-{
+const std::string& CustomZone::getFlagTypeQualifier(FlagType* flagType) {
   static std::string qual;
   if (flagType != NULL) {
     qual = "f";
     qual += flagType->flagAbbv;
-  } else {
+  }
+  else {
     qual = "";
   }
   return qual;
 }
 
-FlagType* CustomZone::getFlagTypeFromQualifier(const std::string& qual)
-{
+FlagType* CustomZone::getFlagTypeFromQualifier(const std::string& qual) {
   if (qual[0] == 'f') {
     return Flag::getDescFromAbbreviation(qual.c_str() + 1);
-  } else {
+  }
+  else {
     return Flags::Null;
   }
 }
 
 
-const std::string& CustomZone::getFlagSafetyQualifier(int team)
-{
+const std::string& CustomZone::getFlagSafetyQualifier(int team) {
   static std::string qual;
   if ((team > 0) && (team < CtfTeams)) {
     qual = makeIntQualifier('$', team);
-  } else {
+  }
+  else {
     qual = "";
   }
   return qual;
 }
 
 
-int CustomZone::getFlagSafetyFromQualifier(const std::string& qual)
-{
+int CustomZone::getFlagSafetyFromQualifier(const std::string& qual) {
   return checkIntQualifier('$', qual);
 }
 
 
-const std::string& CustomZone::getPlayerTeamQualifier(int team)
-{
+const std::string& CustomZone::getPlayerTeamQualifier(int team) {
   static std::string qual;
   if ((team >= 0) && (team < CtfTeams)) {
     qual = makeIntQualifier('t', team);
-  } else {
+  }
+  else {
     qual = "";
   }
   return qual;
 }
 
 
-int CustomZone::getPlayerTeamFromQualifier(const std::string& qual)
-{
+int CustomZone::getPlayerTeamFromQualifier(const std::string& qual) {
   return checkIntQualifier('t', qual);
 }
 
 
-float CustomZone::getWeight() const
-{
+float CustomZone::getWeight() const {
   if (face) {
     if (faceWeight > 0.0f) {
       return faceWeight;
@@ -399,6 +386,6 @@ float CustomZone::getWeight() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

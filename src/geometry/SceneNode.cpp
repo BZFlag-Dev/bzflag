@@ -28,8 +28,7 @@
 #include "SceneRenderer.h"
 
 
-SceneNode::SceneNode()
-{
+SceneNode::SceneNode() {
   memset(sphere, 0, sizeof(float) & 4);
 
   setCenter(0.0f, 0.0f, 0.0f);
@@ -43,111 +42,98 @@ SceneNode::SceneNode()
 }
 
 
-SceneNode::~SceneNode()
-{
+SceneNode::~SceneNode() {
   // do nothing
 }
 
 
 bool SceneNode::showColor = true;
 
-void SceneNode::setStipple(float alpha)
-{
-  if (showColor)
+void SceneNode::setStipple(float alpha) {
+  if (showColor) {
     OpenGLGState::setStipple(alpha);
+  }
 }
 
-void SceneNode::glColor3f(float r, float g, float b)
-{
-  if (showColor)
+void SceneNode::glColor3f(float r, float g, float b) {
+  if (showColor) {
     ::glColor3f(r, g, b);
+  }
 }
-void SceneNode::glColor4f(float r, float g, float b, float a)
-{
-  if (showColor)
+void SceneNode::glColor4f(float r, float g, float b, float a) {
+  if (showColor) {
     ::glColor4f(r, g, b, a);
+  }
 }
-void SceneNode::glColor3fv(const float* rgb)
-{
-  if (showColor)
+void SceneNode::glColor3fv(const float* rgb) {
+  if (showColor) {
     ::glColor3fv(rgb);
+  }
 }
-void SceneNode::glColor4fv(const float* rgba)
-{
-  if (showColor)
+void SceneNode::glColor4fv(const float* rgba) {
+  if (showColor) {
     ::glColor4fv(rgba);
+  }
 }
 
 
-void SceneNode::setColorOverride(bool on)
-{
+void SceneNode::setColorOverride(bool on) {
   showColor = !on;
 }
 
 
-void SceneNode::setRadius(float radiusSquared)
-{
+void SceneNode::setRadius(float radiusSquared) {
   sphere.w = radiusSquared;
 }
 
 
-void SceneNode::setCenter(const fvec3& center)
-{
+void SceneNode::setCenter(const fvec3& center) {
   sphere.xyz() = center;
 }
 
 
-void SceneNode::setCenter(float x, float y, float z)
-{
+void SceneNode::setCenter(float x, float y, float z) {
   sphere.xyz() = fvec3(x, y, z);
 }
 
 
-void SceneNode::setSphere(const fvec4& _sphere)
-{
+void SceneNode::setSphere(const fvec4& _sphere) {
   sphere = _sphere;
 }
 
 
-void SceneNode::notifyStyleChange()
-{
+void SceneNode::notifyStyleChange() {
   // do nothing
 }
 
 
-void SceneNode::addRenderNodes(SceneRenderer&)
-{
+void SceneNode::addRenderNodes(SceneRenderer&) {
   // do nothing
 }
 
 
-void SceneNode::addShadowNodes(SceneRenderer&)
-{
+void SceneNode::addShadowNodes(SceneRenderer&) {
   // do nothing
 }
 
 
-void SceneNode::addLight(SceneRenderer&)
-{
+void SceneNode::addLight(SceneRenderer&) {
   // do nothing
 }
 
 
-float SceneNode::getDistanceSq(const fvec3& eye) const
-{
+float SceneNode::getDistanceSq(const fvec3& eye) const {
   return (eye - sphere.xyz()).lengthSq();
 }
 
 
-int SceneNode::split(const fvec4&, SceneNode*&, SceneNode*&) const
-{
+int SceneNode::split(const fvec4&, SceneNode*&, SceneNode*&) const {
   // can't split me
   return 1;
 }
 
 
-bool SceneNode::cull(const ViewFrustum& view) const
-{
+bool SceneNode::cull(const ViewFrustum& view) const {
   // if center of object is outside view frustum and distance is
   // greater than radius of object then cull.
   const int planeCount = view.getPlaneCount();
@@ -163,16 +149,14 @@ bool SceneNode::cull(const ViewFrustum& view) const
 }
 
 
-bool SceneNode::cullShadow(int, const fvec4*) const
-{
+bool SceneNode::cullShadow(int, const fvec4*) const {
   // currently only used for dynamic nodes by ZSceneDatabase
   // we let the octree deal with the static nodes
   return true;
 }
 
 
-bool SceneNode::inAxisBox (const Extents& exts) const
-{
+bool SceneNode::inAxisBox(const Extents& exts) const {
   if (!extents.touches(exts)) {
     return false;
   }
@@ -180,27 +164,23 @@ bool SceneNode::inAxisBox (const Extents& exts) const
 }
 
 
-int SceneNode::getVertexCount () const
-{
+int SceneNode::getVertexCount() const {
   return 0;
 }
 
 
-const fvec3& SceneNode::getVertex(int) const
-{
+const fvec3& SceneNode::getVertex(int) const {
   static const fvec3 junk;
   return junk;
 }
 
 
-void SceneNode::getRenderNodes(std::vector<RenderSet>&)
-{
+void SceneNode::getRenderNodes(std::vector<RenderSet>&) {
   return; // do nothing
 }
 
 
-void SceneNode::renderRadar()
-{
+void SceneNode::renderRadar() {
   printf("SceneNode::renderRadar() called, implement in subclass\n");
   return;
 }
@@ -212,14 +192,12 @@ void SceneNode::renderRadar()
 //
 
 fvec2Array::fvec2Array(const fvec2Array& a) :
-				size(a.size)
-{
+  size(a.size) {
   data = new fvec2[size];
   ::memcpy(data, a.data, size * sizeof(fvec2));
 }
 
-fvec2Array& fvec2Array::operator=(const fvec2Array& a)
-{
+fvec2Array& fvec2Array::operator=(const fvec2Array& a) {
   if (this != &a) {
     delete[] data;
     size = a.size;
@@ -235,14 +213,12 @@ fvec2Array& fvec2Array::operator=(const fvec2Array& a)
 //
 
 fvec3Array::fvec3Array(const fvec3Array& a) :
-				size(a.size)
-{
+  size(a.size) {
   data = new fvec3[size];
   ::memcpy(data, a.data, size * sizeof(fvec3));
 }
 
-fvec3Array& fvec3Array::operator=(const fvec3Array& a)
-{
+fvec3Array& fvec3Array::operator=(const fvec3Array& a) {
   if (this != &a) {
     delete[] data;
     size = a.size;
@@ -257,6 +233,6 @@ fvec3Array& fvec3Array::operator=(const fvec3Array& a)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

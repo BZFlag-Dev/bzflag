@@ -45,8 +45,7 @@ static const char* sourceFile = "bzUser.lua";
 //============================================================================//
 //============================================================================//
 
-void LuaUser::LoadHandler()
-{
+void LuaUser::LoadHandler() {
   if (luaUser) {
     return;
   }
@@ -68,8 +67,7 @@ void LuaUser::LoadHandler()
 }
 
 
-void LuaUser::FreeHandler()
-{
+void LuaUser::FreeHandler() {
   delete luaUser;
 }
 
@@ -78,13 +76,12 @@ void LuaUser::FreeHandler()
 //============================================================================//
 
 LuaUser::LuaUser()
-: LuaHandle("LuaUser",
-	    LUA_USER_SCRIPT_ID,
-	    LUA_USER_GAME_ORDER,
-	    LUA_USER_DRAW_WORLD_ORDER,
-	    LUA_USER_DRAW_SCREEN_ORDER,
-	    false, false, true) // handle perms
-{
+  : LuaHandle("LuaUser",
+              LUA_USER_SCRIPT_ID,
+              LUA_USER_GAME_ORDER,
+              LUA_USER_DRAW_WORLD_ORDER,
+              LUA_USER_DRAW_SCREEN_ORDER,
+              false, false, true) { // handle perms
   static LuaVfsModes vfsModes;
   vfsModes.readDefault  = BZVFS_LUA_USER BZVFS_LUA_USER_WRITE BZVFS_MEDIA;
   vfsModes.readAllowed  = BZVFS_LUA_USER BZVFS_LUA_USER_WRITE BZVFS_MEDIA
@@ -127,8 +124,7 @@ LuaUser::LuaUser()
 }
 
 
-LuaUser::~LuaUser()
-{
+LuaUser::~LuaUser() {
   if (L != NULL) {
     Shutdown();
     KillLua();
@@ -145,6 +141,6 @@ LuaUser::~LuaUser()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

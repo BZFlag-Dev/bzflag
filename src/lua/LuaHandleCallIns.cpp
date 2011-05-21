@@ -44,8 +44,7 @@ using std::set;
 //============================================================================//
 //============================================================================//
 
-static bool PopBool(lua_State* L, bool def)
-{
+static bool PopBool(lua_State* L, bool def) {
   if (!lua_isboolean(L, -1)) {
     lua_pop(L, 1);
     return def;
@@ -59,8 +58,7 @@ static bool PopBool(lua_State* L, bool def)
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::Shutdown()
-{
+void LuaHandle::Shutdown() {
   LUA_CALL_IN_CHECK(L, 0)
 
   // NOTE: we don't use PushCallIn() here because Shutdown() is not managed by
@@ -75,8 +73,7 @@ void LuaHandle::Shutdown()
 }
 
 
-void LuaHandle::Update()
-{
+void LuaHandle::Update() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_Update)) {
     return; // the call is not defined
@@ -86,8 +83,7 @@ void LuaHandle::Update()
 }
 
 
-void LuaHandle::BZDBChange(const string& name)
-{
+void LuaHandle::BZDBChange(const string& name) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_BZDBChange)) {
     return; // the call is not defined
@@ -99,8 +95,7 @@ void LuaHandle::BZDBChange(const string& name)
 }
 
 
-void LuaHandle::ServerJoined()
-{
+void LuaHandle::ServerJoined() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_ServerJoined)) {
     return; // the call is not defined
@@ -110,8 +105,7 @@ void LuaHandle::ServerJoined()
 }
 
 
-void LuaHandle::ServerParted()
-{
+void LuaHandle::ServerParted() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_ServerParted)) {
     return; // the call is not defined
@@ -124,8 +118,7 @@ void LuaHandle::ServerParted()
 //============================================================================//
 //============================================================================//
 
-bool LuaHandle::CommandFallback(const std::string& cmd)
-{
+bool LuaHandle::CommandFallback(const std::string& cmd) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_CommandFallback)) {
     return false; // the call is not defined
@@ -141,8 +134,7 @@ bool LuaHandle::CommandFallback(const std::string& cmd)
 }
 
 
-bool LuaHandle::RecvCommand(const std::string& cmd)
-{
+bool LuaHandle::RecvCommand(const std::string& cmd) {
   LUA_CALL_IN_CHECK(L, 1)
 
   // NOTE: we don't use PushCallIn() here because RecvCommand() is not managed
@@ -164,9 +156,8 @@ bool LuaHandle::RecvCommand(const std::string& cmd)
 
 
 void LuaHandle::RecvLuaData(int srcPlayerID, int srcScriptID,
-			    int dstPlayerID, int dstScriptID,
-			    int status, const std::string& data)
-{
+                            int dstPlayerID, int dstScriptID,
+                            int status, const std::string& data) {
   LUA_CALL_IN_CHECK(L, 6)
   if (!PushCallIn(LUA_CI_RecvLuaData)) {
     return; // the call is not defined
@@ -184,8 +175,7 @@ void LuaHandle::RecvLuaData(int srcPlayerID, int srcScriptID,
 
 
 void LuaHandle::RecvChatMsg(const std::string& msg,
-			    int srcID, int dstID, bool action)
-{
+                            int srcID, int dstID, bool action) {
   LUA_CALL_IN_CHECK(L, 4)
   if (!PushCallIn(LUA_CI_RecvChatMsg)) {
     return; // the call is not defined
@@ -203,8 +193,7 @@ void LuaHandle::RecvChatMsg(const std::string& msg,
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::PlayerAdded(const Player& player)
-{
+void LuaHandle::PlayerAdded(const Player& player) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_PlayerAdded)) {
     return; // the call is not defined
@@ -216,8 +205,7 @@ void LuaHandle::PlayerAdded(const Player& player)
 }
 
 
-void LuaHandle::PlayerRemoved(const Player& player)
-{
+void LuaHandle::PlayerRemoved(const Player& player) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_PlayerRemoved)) {
     return; // the call is not defined
@@ -229,8 +217,7 @@ void LuaHandle::PlayerRemoved(const Player& player)
 }
 
 
-void LuaHandle::PlayerSpawned(const Player& player)
-{
+void LuaHandle::PlayerSpawned(const Player& player) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_PlayerSpawned)) {
     return; // the call is not defined
@@ -243,8 +230,7 @@ void LuaHandle::PlayerSpawned(const Player& player)
 
 
 void LuaHandle::PlayerKilled(const Player& victim, const Player* killer,
-			     int reason, const FlagType* flagType, int phyDrv)
-{
+                             int reason, const FlagType* flagType, int phyDrv) {
   LUA_CALL_IN_CHECK(L, 5)
   if (!PushCallIn(LUA_CI_PlayerKilled)) {
     return; // the call is not defined
@@ -254,7 +240,8 @@ void LuaHandle::PlayerKilled(const Player& victim, const Player* killer,
 
   if (killer) {
     lua_pushinteger(L, killer->getId()); // 2
-  } else {
+  }
+  else {
     lua_pushnil(L); // 2
   }
 
@@ -262,13 +249,15 @@ void LuaHandle::PlayerKilled(const Player& victim, const Player* killer,
 
   if (flagType) {
     lua_pushstring(L, flagType->flagAbbv.c_str()); // 4
-  } else {
+  }
+  else {
     lua_pushnil(L); // 4
   }
 
   if (phyDrv < 0) {
     lua_pushboolean(L, false); // 5
-  } else {
+  }
+  else {
     lua_pushinteger(L, phyDrv); // 5
   }
 
@@ -276,8 +265,7 @@ void LuaHandle::PlayerKilled(const Player& victim, const Player* killer,
 }
 
 
-void LuaHandle::PlayerJumped(const Player& player)
-{
+void LuaHandle::PlayerJumped(const Player& player) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_PlayerJumped)) {
     return; // the call is not defined
@@ -289,8 +277,7 @@ void LuaHandle::PlayerJumped(const Player& player)
 }
 
 
-void LuaHandle::PlayerLanded(const Player& player, float vel)
-{
+void LuaHandle::PlayerLanded(const Player& player, float vel) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_PlayerLanded)) {
     return; // the call is not defined
@@ -303,8 +290,7 @@ void LuaHandle::PlayerLanded(const Player& player, float vel)
 }
 
 
-void LuaHandle::PlayerTeleported(const Player& player, int srcLink, int dstLink)
-{
+void LuaHandle::PlayerTeleported(const Player& player, int srcLink, int dstLink) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_PlayerTeleported)) {
     return; // the call is not defined
@@ -318,8 +304,7 @@ void LuaHandle::PlayerTeleported(const Player& player, int srcLink, int dstLink)
 }
 
 
-void LuaHandle::PlayerTeamChange(const Player& player, int oldTeam)
-{
+void LuaHandle::PlayerTeamChange(const Player& player, int oldTeam) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_PlayerTeamChange)) {
     return; // the call is not defined
@@ -332,8 +317,7 @@ void LuaHandle::PlayerTeamChange(const Player& player, int oldTeam)
 }
 
 
-void LuaHandle::PlayerScoreChange(const Player& player)
-{
+void LuaHandle::PlayerScoreChange(const Player& player) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_PlayerScoreChange)) {
     return; // the call is not defined
@@ -348,8 +332,7 @@ void LuaHandle::PlayerScoreChange(const Player& player)
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::ShotAdded(const FiringInfo& info)
-{
+void LuaHandle::ShotAdded(const FiringInfo& info) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_ShotAdded)) {
     return; // the call is not defined
@@ -367,8 +350,7 @@ void LuaHandle::ShotAdded(const FiringInfo& info)
 }
 
 
-void LuaHandle::ShotRemoved(const FiringInfo& info)
-{
+void LuaHandle::ShotRemoved(const FiringInfo& info) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_ShotRemoved)) {
     return; // the call is not defined
@@ -385,8 +367,7 @@ void LuaHandle::ShotRemoved(const FiringInfo& info)
 
 
 void LuaHandle::ShotRicochet(const ShotPath& path,
-			     const float* pos, const float* normal)
-{
+                             const float* pos, const float* normal) {
   LUA_CALL_IN_CHECK(L, 7)
   if (!PushCallIn(LUA_CI_ShotRicochet)) {
     return; // the call is not defined
@@ -409,8 +390,7 @@ void LuaHandle::ShotRicochet(const ShotPath& path,
 }
 
 
-void LuaHandle::ShotTeleported(const ShotPath& path, int srcLink, int dstLink)
-{
+void LuaHandle::ShotTeleported(const ShotPath& path, int srcLink, int dstLink) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_ShotTeleported)) {
     return; // the call is not defined
@@ -432,8 +412,7 @@ void LuaHandle::ShotTeleported(const ShotPath& path, int srcLink, int dstLink)
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::FlagAdded(const Flag& flag)
-{
+void LuaHandle::FlagAdded(const Flag& flag) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_FlagAdded)) {
     return; // the call is not defined
@@ -441,7 +420,8 @@ void LuaHandle::FlagAdded(const Flag& flag)
 
   if (L2H(L)->HasFullRead()) {
     lua_pushinteger(L, flag.id);
-  } else {
+  }
+  else {
     lua_pushnil(L);
   }
   lua_pushstdstring(L, flag.type->flagAbbv);
@@ -450,8 +430,7 @@ void LuaHandle::FlagAdded(const Flag& flag)
 }
 
 
-void LuaHandle::FlagRemoved(const Flag& flag)
-{
+void LuaHandle::FlagRemoved(const Flag& flag) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_FlagRemoved)) {
     return; // the call is not defined
@@ -459,7 +438,8 @@ void LuaHandle::FlagRemoved(const Flag& flag)
 
   if (L2H(L)->HasFullRead()) {
     lua_pushinteger(L, flag.id);
-  } else {
+  }
+  else {
     lua_pushnil(L);
   }
   lua_pushstdstring(L, flag.type->flagAbbv);
@@ -468,8 +448,7 @@ void LuaHandle::FlagRemoved(const Flag& flag)
 }
 
 
-void LuaHandle::FlagGrabbed(const Flag& flag, const Player& player)
-{
+void LuaHandle::FlagGrabbed(const Flag& flag, const Player& player) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_FlagGrabbed)) {
     return; // the call is not defined
@@ -477,7 +456,8 @@ void LuaHandle::FlagGrabbed(const Flag& flag, const Player& player)
 
   if (L2H(L)->HasFullRead()) {
     lua_pushinteger(L, flag.id);
-  } else {
+  }
+  else {
     lua_pushnil(L);
   }
   lua_pushstdstring(L, flag.type->flagAbbv);
@@ -487,8 +467,7 @@ void LuaHandle::FlagGrabbed(const Flag& flag, const Player& player)
 }
 
 
-void LuaHandle::FlagDropped(const Flag& flag, const Player& player)
-{
+void LuaHandle::FlagDropped(const Flag& flag, const Player& player) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_FlagDropped)) {
     return; // the call is not defined
@@ -496,7 +475,8 @@ void LuaHandle::FlagDropped(const Flag& flag, const Player& player)
 
   if (L2H(L)->HasFullRead()) {
     lua_pushinteger(L, flag.id);
-  } else {
+  }
+  else {
     lua_pushnil(L);
   }
   lua_pushstdstring(L, flag.type->flagAbbv);
@@ -506,8 +486,7 @@ void LuaHandle::FlagDropped(const Flag& flag, const Player& player)
 }
 
 
-void LuaHandle::FlagCaptured(const Flag& flag, const Player* player)
-{
+void LuaHandle::FlagCaptured(const Flag& flag, const Player* player) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_FlagCaptured)) {
     return; // the call is not defined
@@ -515,7 +494,8 @@ void LuaHandle::FlagCaptured(const Flag& flag, const Player* player)
 
   if (L2H(L)->HasFullRead()) {
     lua_pushinteger(L, flag.id);
-  } else {
+  }
+  else {
     lua_pushnil(L);
   }
 
@@ -523,7 +503,8 @@ void LuaHandle::FlagCaptured(const Flag& flag, const Player* player)
 
   if (player == NULL) {
     lua_pushnil(L);
-  } else {
+  }
+  else {
     lua_pushinteger(L, player->getId());
   }
 
@@ -532,8 +513,7 @@ void LuaHandle::FlagCaptured(const Flag& flag, const Player* player)
 
 
 void LuaHandle::FlagTransferred(const Flag& flag,
-				const Player& src, const Player& dst)
-{
+                                const Player& src, const Player& dst) {
   LUA_CALL_IN_CHECK(L, 4)
   if (!PushCallIn(LUA_CI_FlagTransferred)) {
     return; // the call is not defined
@@ -541,7 +521,8 @@ void LuaHandle::FlagTransferred(const Flag& flag,
 
   if (L2H(L)->HasFullRead()) {
     lua_pushinteger(L, flag.id);
-  } else {
+  }
+  else {
     lua_pushnil(L);
   }
   lua_pushstdstring(L, flag.type->flagAbbv);
@@ -555,8 +536,7 @@ void LuaHandle::FlagTransferred(const Flag& flag,
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::GLResize()
-{
+void LuaHandle::GLResize() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_GLResize)) {
     return; // the call is not defined
@@ -569,8 +549,7 @@ void LuaHandle::GLResize()
 //
 // NOTE:  'GLContextInit' vs. 'GLReload'  name change
 //
-void LuaHandle::GLContextInit()
-{
+void LuaHandle::GLContextInit() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_GLReload)) {
     return; // the call is not defined
@@ -580,8 +559,7 @@ void LuaHandle::GLContextInit()
 }
 
 
-void LuaHandle::GLUnmapped()
-{
+void LuaHandle::GLUnmapped() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_GLUnmapped)) {
     return; // the call is not defined
@@ -591,8 +569,7 @@ void LuaHandle::GLUnmapped()
 }
 
 
-void LuaHandle::GLContextFree()
-{
+void LuaHandle::GLContextFree() {
   return; // do nothing, lua scripts should not need it
 }
 
@@ -625,8 +602,7 @@ DRAW_CALLIN(DrawRadar)
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::GotGfxBlock(int type, int id)
-{
+void LuaHandle::GotGfxBlock(int type, int id) {
   LUA_CALL_IN_CHECK(L, 2)
 
   // NOTE: we don't use PushCallIn() here because this is not managed by
@@ -644,8 +620,7 @@ void LuaHandle::GotGfxBlock(int type, int id)
 }
 
 
-void LuaHandle::LostGfxBlock(int type, int id)
-{
+void LuaHandle::LostGfxBlock(int type, int id) {
   LUA_CALL_IN_CHECK(L, 2)
 
   // NOTE: we don't use PushCallIn() here because this is not managed by
@@ -666,8 +641,7 @@ void LuaHandle::LostGfxBlock(int type, int id)
 //============================================================================//
 //============================================================================//
 
-bool LuaHandle::KeyPress(bool taken, int key, int mods)
-{
+bool LuaHandle::KeyPress(bool taken, int key, int mods) {
   BzfDisplay* dpy = getDisplay();
   if (dpy == NULL) {
     return false;
@@ -690,8 +664,7 @@ bool LuaHandle::KeyPress(bool taken, int key, int mods)
 }
 
 
-bool LuaHandle::KeyRelease(bool taken, int key, int mods)
-{
+bool LuaHandle::KeyRelease(bool taken, int key, int mods) {
   BzfDisplay* dpy = getDisplay();
   if (dpy == NULL) {
     return false;
@@ -714,8 +687,7 @@ bool LuaHandle::KeyRelease(bool taken, int key, int mods)
 }
 
 
-bool LuaHandle::UnicodeText(bool taken, uint32_t unicode)
-{
+bool LuaHandle::UnicodeText(bool taken, uint32_t unicode) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_UnicodeText)) {
     return false; // the call is not defined, do not take the event
@@ -733,8 +705,7 @@ bool LuaHandle::UnicodeText(bool taken, uint32_t unicode)
 }
 
 
-bool LuaHandle::MousePress(bool taken, int x, int y, int button)
-{
+bool LuaHandle::MousePress(bool taken, int x, int y, int button) {
   LUA_CALL_IN_CHECK(L, 4)
   if (!PushCallIn(LUA_CI_MousePress)) {
     return false; // the call is not defined, do not take the event
@@ -753,8 +724,7 @@ bool LuaHandle::MousePress(bool taken, int x, int y, int button)
 }
 
 
-bool LuaHandle::MouseRelease(bool taken, int x, int y, int button)
-{
+bool LuaHandle::MouseRelease(bool taken, int x, int y, int button) {
   LUA_CALL_IN_CHECK(L, 4)
   if (!PushCallIn(LUA_CI_MouseRelease)) {
     return false; // the call is not defined, do not take the event
@@ -773,8 +743,7 @@ bool LuaHandle::MouseRelease(bool taken, int x, int y, int button)
 }
 
 
-bool LuaHandle::MouseMove(bool taken, int x, int y)
-{
+bool LuaHandle::MouseMove(bool taken, int x, int y) {
   LUA_CALL_IN_CHECK(L, 3)
   if (!PushCallIn(LUA_CI_MouseMove)) {
     return false; // the call is not defined, do not take the event
@@ -792,8 +761,7 @@ bool LuaHandle::MouseMove(bool taken, int x, int y)
 }
 
 
-bool LuaHandle::MouseWheel(bool taken, float value)
-{
+bool LuaHandle::MouseWheel(bool taken, float value) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_MouseWheel)) {
     return false; // the call is not defined, do not take the event
@@ -810,8 +778,7 @@ bool LuaHandle::MouseWheel(bool taken, float value)
 }
 
 
-bool LuaHandle::IsAbove(int x, int y)
-{
+bool LuaHandle::IsAbove(int x, int y) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_IsAbove)) {
     return false; // the call is not defined
@@ -828,8 +795,7 @@ bool LuaHandle::IsAbove(int x, int y)
 }
 
 
-string LuaHandle::GetTooltip(int x, int y)
-{
+string LuaHandle::GetTooltip(int x, int y) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_GetTooltip)) {
     return ""; // the call is not defined
@@ -855,8 +821,7 @@ string LuaHandle::GetTooltip(int x, int y)
 
 
 void LuaHandle::WordComplete(const string& line,
-			     set<string>& partials)
-{
+                             set<string>& partials) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_WordComplete)) {
     return;
@@ -872,7 +837,7 @@ void LuaHandle::WordComplete(const string& line,
   if (lua_istable(L, table)) {
     for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
       if (lua_israwstring(L, -1)) {
-	partials.insert(lua_tostring(L, -1));
+        partials.insert(lua_tostring(L, -1));
       }
     }
   }
@@ -886,8 +851,7 @@ void LuaHandle::WordComplete(const string& line,
 //============================================================================//
 //============================================================================//
 
-bool LuaHandle::ForbidSpawn()
-{
+bool LuaHandle::ForbidSpawn() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_ForbidSpawn)) {
     return false;
@@ -901,8 +865,7 @@ bool LuaHandle::ForbidSpawn()
 }
 
 
-bool LuaHandle::ForbidJump()
-{
+bool LuaHandle::ForbidJump() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_ForbidJump)) {
     return false;
@@ -916,8 +879,7 @@ bool LuaHandle::ForbidJump()
 }
 
 
-bool LuaHandle::ForbidFlagDrop()
-{
+bool LuaHandle::ForbidFlagDrop() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_ForbidFlagDrop)) {
     return false;
@@ -931,8 +893,7 @@ bool LuaHandle::ForbidFlagDrop()
 }
 
 
-bool LuaHandle::ForbidShot()
-{
+bool LuaHandle::ForbidShot() {
   LUA_CALL_IN_CHECK(L, 0)
   if (!PushCallIn(LUA_CI_ForbidShot)) {
     return false;
@@ -946,8 +907,7 @@ bool LuaHandle::ForbidShot()
 }
 
 
-bool LuaHandle::ForbidShotLock(const Player& player)
-{
+bool LuaHandle::ForbidShotLock(const Player& player) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_ForbidShotLock)) {
     return false;
@@ -964,8 +924,7 @@ bool LuaHandle::ForbidShotLock(const Player& player)
 
 
 bool LuaHandle::ForbidShotHit(const Player& player,
-                              const ShotPath& shot, const fvec3& pos)
-{
+                              const ShotPath& shot, const fvec3& pos) {
   LUA_CALL_IN_CHECK(L, 5)
   if (!PushCallIn(LUA_CI_ForbidShotHit)) {
     return false;
@@ -998,6 +957,6 @@ bool LuaHandle::ForbidShotHit(const Player& player,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

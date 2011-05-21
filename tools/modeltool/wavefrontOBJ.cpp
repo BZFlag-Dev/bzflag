@@ -29,8 +29,7 @@
 #include "wavefrontOBJ.h"
 
 
-static void underscoreBeforeNumbers(std::string& name)
-{
+static void underscoreBeforeNumbers(std::string& name) {
   const char first = name[0];
   if ((first >= '0') && (first <= '9')) {
     std::string tmp = "_";
@@ -41,23 +40,22 @@ static void underscoreBeforeNumbers(std::string& name)
 }
 
 
-static void readMTL ( CModel &model, std::string file )
-{
-  FILE *fp = fopen(file.c_str(),"rb");
-  if (!fp)
-  {
-    printf ("Could not open MTL file %s\n", file.c_str());
+static void readMTL(CModel& model, std::string file) {
+  FILE* fp = fopen(file.c_str(), "rb");
+  if (!fp) {
+    printf("Could not open MTL file %s\n", file.c_str());
     return;
   }
-  else
-    printf ("Loading MTL file %s\n", file.c_str());
+  else {
+    printf("Loading MTL file %s\n", file.c_str());
+  }
 
-  fseek(fp,0,SEEK_END);
+  fseek(fp, 0, SEEK_END);
   int size = ftell(fp);
-  fseek(fp,0,SEEK_SET);
+  fseek(fp, 0, SEEK_SET);
 
-  char* pData = (char*)malloc(size+1);
-  fread(pData,size,1,fp);
+  char* pData = (char*)malloc(size + 1);
+  fread(pData, size, 1, fp);
   pData[size] = 0;
 
   fclose(fp);
@@ -67,107 +65,93 @@ static void readMTL ( CModel &model, std::string file )
   std::string fileText = pData;
   free(pData);
 
-  fileText = TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
+  fileText = TextUtils::replace_all(fileText, std::string("\r"), std::string(""));
 
   std::vector<std::string> lines = TextUtils::tokenize(fileText, lineTerminator);
 
-  if ( lines.size() < 2 )
+  if (lines.size() < 2) {
     return;
+  }
 
-  CMaterial	material;
+  CMaterial material;
   std::string matName;
   material.clear();
 
   std::vector<std::string>::iterator lineItr = lines.begin();
-  while (lineItr != lines.end())
-  {
-  // do a trim here
+  while (lineItr != lines.end()) {
+    // do a trim here
 
-    std::vector<std::string> lineParts = TextUtils::tokenize(*lineItr,std::string(" "));
+    std::vector<std::string> lineParts = TextUtils::tokenize(*lineItr, std::string(" "));
 
-    if (lineParts.size() > 1)
-    {
+    if (lineParts.size() > 1) {
       std::string tag = lineParts[0];
-      if (tag != "#")
-      {
-	if (TextUtils::tolower(tag) == "newmtl")
-	{
-	  matName = lineParts[1];
-	  underscoreBeforeNumbers(matName);
-	  model.materials[matName] = material;
-	}
-	if (TextUtils::tolower(tag) == "ka")
-	{
-	  if (lineParts.size() > 3)
-	  {
-	    model.materials[matName].ambient[0] = (float)atof(lineParts[1].c_str());
-	    model.materials[matName].ambient[1] = (float)atof(lineParts[2].c_str());
-	    model.materials[matName].ambient[2] = (float)atof(lineParts[3].c_str());
-	  }
-	}
-	if (TextUtils::tolower(tag) == "kd")
-	{
-	  if (lineParts.size() > 3)
-	  {
-	    model.materials[matName].diffuse[0] = (float)atof(lineParts[1].c_str());
-	    model.materials[matName].diffuse[1] = (float)atof(lineParts[2].c_str());
-	    model.materials[matName].diffuse[2] = (float)atof(lineParts[3].c_str());
-	  }
-	}
-	if (TextUtils::tolower(tag) == "d")
-	{
-	  if (lineParts.size() > 1)
-	  {
-	    model.materials[matName].ambient[3] = (float)atof(lineParts[1].c_str());
-	    model.materials[matName].diffuse[3] = (float)atof(lineParts[1].c_str());
-	  }
-	}
-	if (TextUtils::tolower(tag) == "ks")
-	{
-	  if (lineParts.size() > 3)
-	  {
-	    model.materials[matName].specular[0] = (float)atof(lineParts[1].c_str());
-	    model.materials[matName].specular[1] = (float)atof(lineParts[2].c_str());
-	    model.materials[matName].specular[2] = (float)atof(lineParts[3].c_str());
-	  }
-	}
+      if (tag != "#") {
+        if (TextUtils::tolower(tag) == "newmtl") {
+          matName = lineParts[1];
+          underscoreBeforeNumbers(matName);
+          model.materials[matName] = material;
+        }
+        if (TextUtils::tolower(tag) == "ka") {
+          if (lineParts.size() > 3) {
+            model.materials[matName].ambient[0] = (float)atof(lineParts[1].c_str());
+            model.materials[matName].ambient[1] = (float)atof(lineParts[2].c_str());
+            model.materials[matName].ambient[2] = (float)atof(lineParts[3].c_str());
+          }
+        }
+        if (TextUtils::tolower(tag) == "kd") {
+          if (lineParts.size() > 3) {
+            model.materials[matName].diffuse[0] = (float)atof(lineParts[1].c_str());
+            model.materials[matName].diffuse[1] = (float)atof(lineParts[2].c_str());
+            model.materials[matName].diffuse[2] = (float)atof(lineParts[3].c_str());
+          }
+        }
+        if (TextUtils::tolower(tag) == "d") {
+          if (lineParts.size() > 1) {
+            model.materials[matName].ambient[3] = (float)atof(lineParts[1].c_str());
+            model.materials[matName].diffuse[3] = (float)atof(lineParts[1].c_str());
+          }
+        }
+        if (TextUtils::tolower(tag) == "ks") {
+          if (lineParts.size() > 3) {
+            model.materials[matName].specular[0] = (float)atof(lineParts[1].c_str());
+            model.materials[matName].specular[1] = (float)atof(lineParts[2].c_str());
+            model.materials[matName].specular[2] = (float)atof(lineParts[3].c_str());
+          }
+        }
 
-	if (TextUtils::tolower(tag) == "ns")
-	{
-	  if (lineParts.size() > 1)
-	  {
-	    float shine = (float)atof(lineParts[1].c_str());
-	    // convert MTL "Ns" to OpenGL shininess  [0 - 100] => [0 - 128]
-	    shine = shine / 100.0f;
-	    if (shine < 0.0f)
-	      shine = 0.0f;
-	    else if (shine > 1.0f)
-	      shine = 1.0f;
+        if (TextUtils::tolower(tag) == "ns") {
+          if (lineParts.size() > 1) {
+            float shine = (float)atof(lineParts[1].c_str());
+            // convert MTL "Ns" to OpenGL shininess  [0 - 100] => [0 - 128]
+            shine = shine / 100.0f;
+            if (shine < 0.0f) {
+              shine = 0.0f;
+            }
+            else if (shine > 1.0f) {
+              shine = 1.0f;
+            }
 
-	    model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
-	  }
-	}
+            model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
+          }
+        }
 
-	if (TextUtils::tolower(tag) == "ke")
-	{
-	  if (lineParts.size() > 3)
-	  {
-	    model.materials[matName].emission[0] = (float)atof(lineParts[1].c_str());
-	    model.materials[matName].emission[1] = (float)atof(lineParts[2].c_str());
-	    model.materials[matName].emission[2] = (float)atof(lineParts[3].c_str());
-	  }
-	}
-	if (TextUtils::tolower(tag) == "map_kd")
-	{
-	  if (lineParts.size() > 1)
-	  {
-	    std::string texture = lineParts[1];
-	    if (texture[0] == '.')
-	      texture = texture.c_str()+2;
+        if (TextUtils::tolower(tag) == "ke") {
+          if (lineParts.size() > 3) {
+            model.materials[matName].emission[0] = (float)atof(lineParts[1].c_str());
+            model.materials[matName].emission[1] = (float)atof(lineParts[2].c_str());
+            model.materials[matName].emission[2] = (float)atof(lineParts[3].c_str());
+          }
+        }
+        if (TextUtils::tolower(tag) == "map_kd") {
+          if (lineParts.size() > 1) {
+            std::string texture = lineParts[1];
+            if (texture[0] == '.') {
+              texture = texture.c_str() + 2;
+            }
 
-	    model.materials[matName].texture = texture;
-	  }
-	}
+            model.materials[matName].texture = texture;
+          }
+        }
       }
     }
     lineItr++;
@@ -175,62 +159,62 @@ static void readMTL ( CModel &model, std::string file )
 }
 
 
-void parseOBJVertSection(const std::string &section,
-                         int &vert, int& norm, int& txcd,
-                         int vCount, int nCount, int tCount)
-{
+void parseOBJVertSection(const std::string& section,
+                         int& vert, int& norm, int& txcd,
+                         int vCount, int nCount, int tCount) {
   // TextUtils::tokenize() does not make 3
   // strings from "1//2", so do it the hard way
   const std::string::size_type npos = std::string::npos;
   std::string::size_type pos1, pos2 = npos;
   pos1 = section.find_first_of('/');
 
-  if (pos1 != npos)
+  if (pos1 != npos) {
     pos2 = section.find_first_of('/', pos1 + 1);
+  }
 
   std::string vertPart, uvPart, normPart;
 
-  if (pos1 == npos)
+  if (pos1 == npos) {
     vertPart = section;
-  else
-  {
+  }
+  else {
     vertPart = section.substr(0, pos1);
 
-    if (pos2 == npos)
+    if (pos2 == npos) {
       uvPart = section.substr(pos1 + 1, npos);
-    else
-    {
+    }
+    else {
       uvPart = section.substr(pos1 + 1, pos2 - pos1 - 1);
       normPart = section.substr(pos2 + 1, npos);
     }
   }
 
-  if (vertPart.size() > 0)
-  {
+  if (vertPart.size() > 0) {
     int index = atoi(vertPart.c_str());
 
-    if (index < 0)
+    if (index < 0) {
       index = (vCount + 1) + index;
+    }
 
     vert = index - 1;
   }
 
-  if (uvPart.size() > 0)
-  {
+  if (uvPart.size() > 0) {
     int index = atoi(uvPart.c_str());
 
-    if (index < 0)
+    if (index < 0) {
       index = (tCount + 1) + index;
+    }
 
     txcd = index - 1;
   }
 
-  if (normPart.size() > 0)
-  {
+  if (normPart.size() > 0) {
     int index = atoi(normPart.c_str());
 
-    if (index < 0)
+    if (index < 0) {
       index = (nCount + 1) + index;
+    }
 
     norm = index - 1;
   }
@@ -238,8 +222,7 @@ void parseOBJVertSection(const std::string &section,
 
 
 static bool checkArgCount(int reqCount, int count,
-                          const std::string& type, int lineNum)
-{
+                          const std::string& type, int lineNum) {
   if (count < (reqCount + 1)) {
     // FIXME -- lineNum is wrong because of the way the file is parsed
     printf("ERROR: not enough parameters for \"%s\" at line %i\n",
@@ -250,23 +233,21 @@ static bool checkArgCount(int reqCount, int count,
 }
 
 
-void readOBJ ( CModel &model, std::string file )
-{
+void readOBJ(CModel& model, std::string file) {
   model.clear();
 
-  FILE *fp = fopen(file.c_str(),"r");
-  if (!fp)
-  {
-    printf ("Could not open OBJ file %s\n", file.c_str());
+  FILE* fp = fopen(file.c_str(), "r");
+  if (!fp) {
+    printf("Could not open OBJ file %s\n", file.c_str());
     return;
   }
 
-  fseek(fp,0,SEEK_END);
+  fseek(fp, 0, SEEK_END);
   int size = ftell(fp);
-  fseek(fp,0,SEEK_SET);
+  fseek(fp, 0, SEEK_SET);
 
-  char* pData = (char*)malloc(size+1);
-  fread(pData,size,1,fp);
+  char* pData = (char*)malloc(size + 1);
+  fread(pData, size, 1, fp);
   pData[size] = 0;
 
   fclose(fp);
@@ -274,14 +255,14 @@ void readOBJ ( CModel &model, std::string file )
   // figure out the base path
   std::string baseFilePath;
 
-  const char *p = strrchr (file.c_str(),'\\');
-  if ( !p )
-    p = strrchr (file.c_str(),'/');
+  const char* p = strrchr(file.c_str(), '\\');
+  if (!p) {
+    p = strrchr(file.c_str(), '/');
+  }
 
-  if (p)
-  {
+  if (p) {
     baseFilePath = file;
-    baseFilePath.erase(baseFilePath.begin()+(p-file.c_str()+1),baseFilePath.end());
+    baseFilePath.erase(baseFilePath.begin() + (p - file.c_str() + 1), baseFilePath.end());
   }
 
   std::string lineTerminator = "\n";
@@ -289,14 +270,15 @@ void readOBJ ( CModel &model, std::string file )
   std::string fileText = pData;
   free(pData);
 
-  fileText = TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
+  fileText = TextUtils::replace_all(fileText, std::string("\r"), std::string(""));
 
-  std::vector<std::string> lines = TextUtils::tokenize(fileText,lineTerminator);
+  std::vector<std::string> lines = TextUtils::tokenize(fileText, lineTerminator);
 
-  if ( lines.size() < 2 )
+  if (lines.size() < 2) {
     return;
+  }
 
-  CMesh	     mesh;
+  CMesh      mesh;
   tvVec3List temp_verts;
   tvVec3List temp_normals;
   tvVec2List temp_texCoords;
@@ -321,22 +303,22 @@ void readOBJ ( CModel &model, std::string file )
       if (!checkArgCount(1, lineParts.size(), element, lineNum)) {
         continue;
       }
-      readMTL(model,baseFilePath+lineParts[1]);
+      readMTL(model, baseFilePath + lineParts[1]);
     }
     else if (element == "v") {
       if (!checkArgCount(3, lineParts.size(), element, lineNum)) {
         continue;
       }
       CVector3 vert;
-      vert.x = (float)atof(lineParts[1].c_str())*globalScale+globalShift[0];
+      vert.x = (float)atof(lineParts[1].c_str()) * globalScale + globalShift[0];
 
       if (flipYZ) {
-        vert.y = -1.0f*(float)atof(lineParts[3].c_str())*globalScale+globalShift[1];
-        vert.z = (float)atof(lineParts[2].c_str())*globalScale+globalShift[2];
+        vert.y = -1.0f * (float)atof(lineParts[3].c_str()) * globalScale + globalShift[1];
+        vert.z = (float)atof(lineParts[2].c_str()) * globalScale + globalShift[2];
       }
       else {
-        vert.y = (float)atof(lineParts[2].c_str())*globalScale+globalShift[1];
-        vert.z = (float)atof(lineParts[3].c_str())*globalScale+globalShift[2];
+        vert.y = (float)atof(lineParts[2].c_str()) * globalScale + globalShift[1];
+        vert.z = (float)atof(lineParts[3].c_str()) * globalScale + globalShift[2];
       }
 
       temp_verts.push_back(vert);
@@ -359,7 +341,7 @@ void readOBJ ( CModel &model, std::string file )
       norm.x = (float)atof(lineParts[1].c_str());
 
       if (flipYZ) {
-        norm.y = -1.0f* (float)atof(lineParts[3].c_str());
+        norm.y = -1.0f * (float)atof(lineParts[3].c_str());
         norm.z = (float)atof(lineParts[2].c_str());
       }
       else {
@@ -416,11 +398,11 @@ void readOBJ ( CModel &model, std::string file )
       const int tSize = (int)face.texCoords.size();
 
       if ((nSize != 0) && (nSize != vSize)) {
-        printf ("vertex/normal count mismatch\n");
+        printf("vertex/normal count mismatch\n");
         valid = false;
       }
       if ((tSize != 0) && (tSize != vSize)) {
-        printf ("vertex/texcoord count mismatch\n");
+        printf("vertex/texcoord count mismatch\n");
         valid = false;
       }
       if (valid) {
@@ -456,11 +438,11 @@ void readOBJ ( CModel &model, std::string file )
       const int tSize = (int)strip.texCoords.size();
 
       if ((nSize != 0) && (nSize != vSize)) {
-        printf ("vertex/normal count mismatch\n");
+        printf("vertex/normal count mismatch\n");
         valid = false;
       }
       if ((tSize != 0) && (tSize != vSize)) {
-        printf ("vertex/texcoord count mismatch\n");
+        printf("vertex/texcoord count mismatch\n");
         valid = false;
       }
       if (valid) {
@@ -472,7 +454,7 @@ void readOBJ ( CModel &model, std::string file )
         continue;
       }
       if (mesh.strips.size()) { // there has to be a last strip
-        CTriStrip &strip = mesh.strips[mesh.strips.size()-1];
+        CTriStrip& strip = mesh.strips[mesh.strips.size() - 1];
 
         int partCount = (int)lineParts.size();
 
@@ -496,11 +478,11 @@ void readOBJ ( CModel &model, std::string file )
         const int tSize = (int)strip.texCoords.size();
 
         if ((nSize != 0) && (nSize != vSize)) {
-          printf ("vertex/normal count mismatch\n");
+          printf("vertex/normal count mismatch\n");
           valid = false;
         }
         if ((tSize != 0) && (tSize != vSize)) {
-          printf ("vertex/texcoord count mismatch\n");
+          printf("vertex/texcoord count mismatch\n");
           valid = false;
         }
       }
@@ -517,6 +499,6 @@ void readOBJ ( CModel &model, std::string file )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

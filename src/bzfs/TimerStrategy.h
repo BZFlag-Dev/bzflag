@@ -32,67 +32,67 @@
 #include "BzTime.h"
 
 class BaseTimerStrategy {
-public:
-  BaseTimerStrategy (const float duration);
-  BaseTimerStrategy (const BzTime endTime);
+  public:
+    BaseTimerStrategy(const float duration);
+    BaseTimerStrategy(const BzTime endTime);
 
-  virtual ~BaseTimerStrategy() {};
+    virtual ~BaseTimerStrategy() {};
 
-  virtual bool pause(const float delay = 0.0f);
-  virtual bool resume(const float delay = 0.0f);
+    virtual bool pause(const float delay = 0.0f);
+    virtual bool resume(const float delay = 0.0f);
 
-  virtual BaseTimerStrategy* action(BzTime& tm) = 0;
+    virtual BaseTimerStrategy* action(BzTime& tm) = 0;
 
-private:
-  void update();
-  BzTime startTime;
-  BzTime pauseTime;
-  float	offset;
-  float _duration;
+  private:
+    void update();
+    BzTime startTime;
+    BzTime pauseTime;
+    float offset;
+    float _duration;
 };
 
 class GameTimerStrategy : public BaseTimerStrategy {
-public:
-  GameTimerStrategy (const float duration) : BaseTimerStrategy(duration) {};
-  GameTimerStrategy (const BzTime endTime) : BaseTimerStrategy(endTime) {};
+  public:
+    GameTimerStrategy(const float duration) : BaseTimerStrategy(duration) {};
+    GameTimerStrategy(const BzTime endTime) : BaseTimerStrategy(endTime) {};
 
-  virtual ~BaseTimerStrategy() {};
+    virtual ~BaseTimerStrategy() {};
 
-private:
-  float getTimeLeft();
+  private:
+    float getTimeLeft();
 
-  bool expired();
+    bool expired();
 
-  void sendGameStartEvent();
-  void sendGameEndEvent();
-  void sendMsgTimeUpdate(float timeLeft);
+    void sendGameStartEvent();
+    void sendGameEndEvent();
+    void sendMsgTimeUpdate(float timeLeft);
 }
 
 class GameCountdownStrategy : public GameTimerStrategy {
-public:
-  GameCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
-  GameCountdownStrategy (const BzTime endTime) : GameTimerStrategy(endTime) {};
-  ~GameCountdownStrategy() {};
+  public:
+    GameCountdownStrategy(const float duration) : GameTimerStrategy(duration) {};
+    GameCountdownStrategy(const BzTime endTime) : GameTimerStrategy(endTime) {};
+    ~GameCountdownStrategy() {};
 
-  BaseTimerStrategy* action(BzTime& tm);
+    BaseTimerStrategy* action(BzTime& tm);
 }
 
 class ManualCountdownStarterStrategy : public GameTimerStrategy {
-public:
-  ManualCountdownStarterStrategy (const float duration) : GameTimerStrategy(duration) {};
-  ManualCountdownStarterStrategy (const BzTime endTime) : GameTimerStrategy(endTime) {};
-  ~ManualCountdownStarterStrategy() {};
+  public:
+    ManualCountdownStarterStrategy(const float duration) : GameTimerStrategy(duration) {};
+    ManualCountdownStarterStrategy(const BzTime endTime) : GameTimerStrategy(endTime) {};
+    ~ManualCountdownStarterStrategy() {};
 
-  BaseTimerStrategy* action(BzTime& tm);
+    BaseTimerStrategy* action(BzTime& tm);
 }
 
 class ManualCountdownStrategy : public GameTimerStrategy {
-public:
-  ManualCountdownStrategy (const float duration) : GameTimerStrategy(duration) {};
-  ManualCountdownStrategy (const BzTime endTime) : GameTimerStrategy(endTime) {};
-  ~ManualCountdownStrategy() {};
+  public:
+    ManualCountdownStrategy(const float duration) : GameTimerStrategy(duration) {};
+    ManualCountdownStrategy(const BzTime endTime) : GameTimerStrategy(endTime) {};
+    ~ManualCountdownStrategy() {};
 
-  BaseTimerStrategy* action(BzTime& tm);
+    BaseTimerStrategy* action(BzTime& tm);
 }
 #endif /* _TIMERSTRATEGY_H */
 
@@ -100,6 +100,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

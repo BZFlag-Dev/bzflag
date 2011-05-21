@@ -17,8 +17,7 @@
  * effect if we have a FF-enabled joystick connected and the user
  * has enabled force feedback.
  */
-namespace ForceFeedback
-{
+namespace ForceFeedback {
   void death();
   void shotFired();
   void laserFired();
@@ -32,6 +31,6 @@ namespace ForceFeedback
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

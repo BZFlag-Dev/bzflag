@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__HUDDIALOGSTACK_H__
-#define	__HUDDIALOGSTACK_H__
+#ifndef __HUDDIALOGSTACK_H__
+#define __HUDDIALOGSTACK_H__
 
 /* common header */
 #include "common.h"
@@ -25,26 +25,26 @@ class HUDDialog;
 /** general utility class for the HUDDialog
  */
 class HUDDialogStack {
-public:
-  static HUDDialogStack* get();
+  public:
+    static HUDDialogStack* get();
 
-  bool isActive() const;
-  HUDDialog* top() const;
-  void push(HUDDialog*);
-  void pop();
+    bool isActive() const;
+    HUDDialog* top() const;
+    void push(HUDDialog*);
+    void pop();
 
-  void render();
-  void setFailedMessage(const char *msg);
+    void render();
+    void setFailedMessage(const char* msg);
 
-  HUDDialogStack();
-  ~HUDDialogStack();
+    HUDDialogStack();
+    ~HUDDialogStack();
 
-private:
-  static void resize(void*);
+  private:
+    static void resize(void*);
 
-private:
-  std::vector<HUDDialog*> stack;
-  static HUDDialogStack globalStack;
+  private:
+    std::vector<HUDDialog*> stack;
+    static HUDDialogStack globalStack;
 };
 
 
@@ -54,6 +54,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

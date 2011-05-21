@@ -18,7 +18,7 @@
 
 #define CFGMGR (ConfigFileManager::instance())
 
-void writeBZDB(const std::string& name, void *stream);
+void writeBZDB(const std::string& name, void* stream);
 void writeKEYMGR(const std::string& name, bool press, const std::string& command, void* stream);
 
 /**
@@ -28,32 +28,32 @@ void writeKEYMGR(const std::string& name, bool press, const std::string& command
 */
 
 class ConfigFileManager : public Singleton<ConfigFileManager> {
-public:
-  /** Read a configuration file.
-   read(filename) uses FileManager to open the stream and returns
-   false if the file cannot be opened.  they all call parse().
-  */
-  bool				read(const std::string& filename);
-  /** Read a configuration file.
-   read(filename) uses FileManager to open the stream and returns
-   false if the file cannot be opened.  they all call parse().
-  */
-  void				read(std::istream&);
+  public:
+    /** Read a configuration file.
+     read(filename) uses FileManager to open the stream and returns
+     false if the file cannot be opened.  they all call parse().
+    */
+    bool        read(const std::string& filename);
+    /** Read a configuration file.
+     read(filename) uses FileManager to open the stream and returns
+     false if the file cannot be opened.  they all call parse().
+    */
+    void        read(std::istream&);
 
-  /** Write out a configuration file.
-   Writes to a format that the CommandManager can understand
-  */
-  bool				write(const std::string& filename);
+    /** Write out a configuration file.
+     Writes to a format that the CommandManager can understand
+    */
+    bool        write(const std::string& filename);
 
 
-protected:
-  friend class Singleton<ConfigFileManager>;
-  ConfigFileManager();
-  ~ConfigFileManager();
+  protected:
+    friend class Singleton<ConfigFileManager>;
+    ConfigFileManager();
+    ~ConfigFileManager();
 
-private:
-  // parse a config file
-  bool				parse(std::istream&);
+  private:
+    // parse a config file
+    bool        parse(std::istream&);
 
 };
 
@@ -63,6 +63,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

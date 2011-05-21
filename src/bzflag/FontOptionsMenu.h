@@ -33,8 +33,7 @@ class FontOptionsMenu : public HUDDialog {
     FontOptionsMenu();
     ~FontOptionsMenu();
 
-    HUDuiDefaultKey* getDefaultKey()
-    {
+    HUDuiDefaultKey* getDefaultKey() {
       return MenuDefaultKey::getInstance();
     }
     void execute();
@@ -56,6 +55,6 @@ class FontOptionsMenu : public HUDDialog {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

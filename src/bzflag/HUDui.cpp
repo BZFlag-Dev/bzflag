@@ -17,39 +17,33 @@
 // HUDui
 //
 
-HUDuiControl*		HUDui::focus = NULL;
-HUDuiDefaultKey*	HUDui::defaultKey = NULL;
+HUDuiControl*   HUDui::focus = NULL;
+HUDuiDefaultKey*  HUDui::defaultKey = NULL;
 
-HUDuiControl*		HUDui::getFocus()
-{
+HUDuiControl*   HUDui::getFocus() {
   return focus;
 }
 
-void			HUDui::setFocus(HUDuiControl* _focus)
-{
+void      HUDui::setFocus(HUDuiControl* _focus) {
   focus = _focus;
 }
 
-HUDuiDefaultKey*	HUDui::getDefaultKey()
-{
+HUDuiDefaultKey*  HUDui::getDefaultKey() {
   return defaultKey;
 }
 
-void			HUDui::setDefaultKey(HUDuiDefaultKey* _defaultKey)
-{
+void      HUDui::setDefaultKey(HUDuiDefaultKey* _defaultKey) {
   defaultKey = _defaultKey;
 }
 
-bool			HUDui::keyPress(const BzfKeyEvent& key)
-{
-  if (defaultKey && defaultKey->keyPress(key)) return true;
-  if (focus && focus->doKeyPress(key)) return true;
+bool      HUDui::keyPress(const BzfKeyEvent& key) {
+  if (defaultKey && defaultKey->keyPress(key)) { return true; }
+  if (focus && focus->doKeyPress(key)) { return true; }
 
   bool handlerFound = false;
   HUDuiControl* currentControl = focus;
-  while (!handlerFound)
-  {
-    if (!currentControl->isNested()) return false;
+  while (!handlerFound) {
+    if (!currentControl->isNested()) { return false; }
     currentControl = currentControl->getParent();
     handlerFound = currentControl->doKeyPress(key);
   }
@@ -57,16 +51,14 @@ bool			HUDui::keyPress(const BzfKeyEvent& key)
   return handlerFound;
 }
 
-bool			HUDui::keyRelease(const BzfKeyEvent& key)
-{
-  if (defaultKey && defaultKey->keyRelease(key)) return true;
-  if (focus && focus->doKeyRelease(key)) return true;
+bool      HUDui::keyRelease(const BzfKeyEvent& key) {
+  if (defaultKey && defaultKey->keyRelease(key)) { return true; }
+  if (focus && focus->doKeyRelease(key)) { return true; }
 
   bool handlerFound = false;
   HUDuiControl* currentControl = focus;
-  while (!handlerFound)
-  {
-    if (!currentControl->isNested()) return false;
+  while (!handlerFound) {
+    if (!currentControl->isNested()) { return false; }
     currentControl = currentControl->getParent();
     handlerFound = currentControl->doKeyRelease(key);
   }
@@ -79,6 +71,6 @@ bool			HUDui::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

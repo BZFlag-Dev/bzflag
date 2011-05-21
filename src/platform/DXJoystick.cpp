@@ -36,11 +36,10 @@
 std::vector<DIDEVICEINSTANCE> DXJoystick::devices;
 std::map<std::string, LPDIRECTINPUTEFFECT> DXJoystick::effectDatabase;
 
-DXJoystick::DXJoystick() : device(NULL)
-{
+DXJoystick::DXJoystick() : device(NULL) {
   HINSTANCE hinst = GetModuleHandle(NULL);
   HRESULT success = DirectInput8Create(hinst, DIRECTINPUT_VERSION, IID_IDirectInput8,
-					(void**)&directInput, NULL);
+                                       (void**)&directInput, NULL);
 
   if (success != DI_OK) {
     DXError("Could not initialize DirectInput", success);
@@ -50,11 +49,11 @@ DXJoystick::DXJoystick() : device(NULL)
   enumerateDevices();
 }
 
-DXJoystick::~DXJoystick()
-{
+DXJoystick::~DXJoystick() {
   // unacquire the joystick
-  if (device)
+  if (device) {
     device->Unacquire();
+  }
 
   // release DX objects
   if (device) {
@@ -67,8 +66,7 @@ DXJoystick::~DXJoystick()
   }
 }
 
-void	      DXJoystick::initJoystick(const char* joystickName)
-{
+void        DXJoystick::initJoystick(const char* joystickName) {
   // turn it off
   if (!joystickName || (strcasecmp(joystickName, "off") == 0) || (strcmp(joystickName, "") == 0)) {
     device = NULL;
@@ -85,7 +83,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
       break;
     }
   }
-  HRESULT success = directInput->CreateDevice(thisDevice,&device, NULL);
+  HRESULT success = directInput->CreateDevice(thisDevice, &device, NULL);
 
   if (success != DI_OK) {
     DXError("Could not initialize device", success);
@@ -98,7 +96,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    */
 
   success = device->SetCooperativeLevel(WinWindow::getHandle(),
-					DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+                                        DISCL_BACKGROUND | DISCL_EXCLUSIVE);
 
   if (success != DI_OK) {
     // couldn't grab device, what to do now?
@@ -142,9 +140,9 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   DIPROPRANGE range;
   range.diph.dwSize       = sizeof(range);
   range.diph.dwHeaderSize = sizeof(range.diph);
-  range.diph.dwHow	  = DIPH_BYOFFSET;
-  range.lMin		  = -1000;
-  range.lMax		  = +1000;
+  range.diph.dwHow    = DIPH_BYOFFSET;
+  range.lMin      = -1000;
+  range.lMax      = +1000;
 
   range.diph.dwObj = DIJOFS_X;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
@@ -164,7 +162,8 @@ void	      DXJoystick::initJoystick(const char* joystickName)
     success = device->SetProperty(DIPROP_RANGE, &range.diph);
     if (success == DI_OK) {
       yAxis = "Slider 1";
-    } else {
+    }
+    else {
       // couldn't set y axis range, what to do now?
       DXError("Could not set speed (Y axis range)", success);
       device = NULL;
@@ -174,33 +173,39 @@ void	      DXJoystick::initJoystick(const char* joystickName)
 
   range.diph.dwObj = DIJOFS_Z;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
+  if (success == DI_OK) {
     axes["Z"] = true;
+  }
 
   range.diph.dwObj = DIJOFS_RX;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
+  if (success == DI_OK) {
     axes["Rx"] = true;
+  }
 
   range.diph.dwObj = DIJOFS_RY;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
+  if (success == DI_OK) {
     axes["Ry"] = true;
+  }
 
   range.diph.dwObj = DIJOFS_RZ;
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
+  if (success == DI_OK) {
     axes["Rz"] = true;
+  }
 
   range.diph.dwObj = DIJOFS_SLIDER(0);
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
+  if (success == DI_OK) {
     axes["Slider 1"] = true;
+  }
 
   range.diph.dwObj = DIJOFS_SLIDER(1);
   success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
+  if (success == DI_OK) {
     axes["Slider 2"] = true;
+  }
 
   /*
    * Acquire the device so that we can get input from it.
@@ -209,34 +214,32 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   reaquireDevice();
 }
 
-bool	      DXJoystick::joystick() const
-{
+bool        DXJoystick::joystick() const {
   return (device != NULL);
 }
 
-void	      DXJoystick::getJoy(int& x, int& y)
-{
-  if (!device) return;
+void        DXJoystick::getJoy(int& x, int& y) {
+  if (!device) { return; }
 
   DIJOYSTATE state = pollDevice();
 
-  if (xAxis == "X")	 x = state.lX;
-  else if (xAxis == "Y")  x = state.lY;
-  else if (xAxis == "Z")  x = state.lZ;
-  else if (xAxis == "Rx") x = state.lRx;
-  else if (xAxis == "Ry") x = state.lRy;
-  else if (xAxis == "Rz") x = state.lRz;
-  else if (xAxis == "Slider 1") x = state.rglSlider[0];
-  else if (xAxis == "Slider 2") x = state.rglSlider[1];
+  if (xAxis == "X") { x = state.lX; }
+  else if (xAxis == "Y") { x = state.lY; }
+  else if (xAxis == "Z") { x = state.lZ; }
+  else if (xAxis == "Rx") { x = state.lRx; }
+  else if (xAxis == "Ry") { x = state.lRy; }
+  else if (xAxis == "Rz") { x = state.lRz; }
+  else if (xAxis == "Slider 1") { x = state.rglSlider[0]; }
+  else if (xAxis == "Slider 2") { x = state.rglSlider[1]; }
 
-  if (yAxis == "X")	 y = state.lX;
-  else if (yAxis == "Y")  y = state.lY;
-  else if (yAxis == "Z")  y = state.lZ;
-  else if (yAxis == "Rx") y = state.lRx;
-  else if (yAxis == "Ry") y = state.lRy;
-  else if (yAxis == "Rz") y = state.lRz;
-  else if (yAxis == "Slider 1") y = state.rglSlider[0];
-  else if (yAxis == "Slider 2") y = state.rglSlider[1];
+  if (yAxis == "X") { y = state.lX; }
+  else if (yAxis == "Y") { y = state.lY; }
+  else if (yAxis == "Z") { y = state.lZ; }
+  else if (yAxis == "Rx") { y = state.lRx; }
+  else if (yAxis == "Ry") { y = state.lRy; }
+  else if (yAxis == "Rz") { y = state.lRz; }
+  else if (yAxis == "Slider 1") { y = state.rglSlider[0]; }
+  else if (yAxis == "Slider 2") { y = state.rglSlider[1]; }
 
   // ballistics
   x = (x * abs(x)) / 1000;
@@ -245,24 +248,23 @@ void	      DXJoystick::getJoy(int& x, int& y)
   return;
 }
 
-unsigned long DXJoystick::getJoyButtons()
-{
-  if (!device) return 0;
+unsigned long DXJoystick::getJoyButtons() {
+  if (!device) { return 0; }
 
   DIJOYSTATE state = pollDevice();
 
   unsigned long buttons = 0;
 
   for (int i = 0; i < 32; i++) {
-    if (state.rgbButtons[i] & 0x80)
+    if (state.rgbButtons[i] & 0x80) {
       buttons |= (1 << i);
+    }
   }
 
   return buttons;
 }
 
-DIJOYSTATE    DXJoystick::pollDevice()
-{
+DIJOYSTATE    DXJoystick::pollDevice() {
   DIJOYSTATE state;
 
   HRESULT success = device->Poll();
@@ -277,33 +279,30 @@ DIJOYSTATE    DXJoystick::pollDevice()
   return state;
 }
 
-void	      DXJoystick::getJoyDevices(std::vector<std::string> &list) const
-{
+void        DXJoystick::getJoyDevices(std::vector<std::string> &list) const {
   for (unsigned int i = 0; i < devices.size(); i++) {
     list.push_back(devices[i].tszProductName);
   }
 }
 
-void	      DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
-{
+void        DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const {
   list.clear();
-  std::map<std::string,bool>::const_iterator itr = axes.begin();
+  std::map<std::string, bool>::const_iterator itr = axes.begin();
   while (itr != axes.end()) {
-    if (itr->second == true)
+    if (itr->second == true) {
       list.push_back(itr->first);
+    }
     ++itr;
   }
 }
 
-void	      DXJoystick::setXAxis(std::string axis)
-{
-  if (axes[axis] == false) return;
+void        DXJoystick::setXAxis(std::string axis) {
+  if (axes[axis] == false) { return; }
   xAxis = axis;
 }
 
-void	      DXJoystick::setYAxis(std::string axis)
-{
-  if (axes[axis] == false) return;
+void        DXJoystick::setYAxis(std::string axis) {
+  if (axes[axis] == false) { return; }
   yAxis = axis;
 }
 
@@ -311,10 +310,10 @@ void	      DXJoystick::setYAxis(std::string axis)
  * Cool force feedback functions.
  */
 
-bool	      DXJoystick::ffHasRumble() const
-{
-  if (!device)
+bool        DXJoystick::ffHasRumble() const {
+  if (!device) {
     return false;
+  }
 
   DIDEVCAPS caps;
   caps.dwSize = sizeof(DIDEVCAPS);
@@ -328,17 +327,18 @@ bool	      DXJoystick::ffHasRumble() const
   }
 
   // if we support force feedback, assume we support rumble
-  if (caps.dwFlags & DIDC_FORCEFEEDBACK)
+  if (caps.dwFlags & DIDC_FORCEFEEDBACK) {
     return true;
+  }
 
   return false;
 }
 
-void	      DXJoystick::ffRumble(int count, float delay, float duration,
-				   float strong_motor, float weak_motor)
-{
-  if (!ffHasRumble())
+void        DXJoystick::ffRumble(int count, float delay, float duration,
+                                 float strong_motor, float weak_motor) {
+  if (!ffHasRumble()) {
     return;
+  }
 
   /*
    * Create a constant "rumbling" effect with the specified parameters
@@ -352,8 +352,9 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
    * FF_RUMBLE API (which bzflag's is patterned after) was designed for.
    */
   float combined = strong_motor + weak_motor / 2.0f;
-  if (combined > 1.0f)
+  if (combined > 1.0f) {
     combined = 1.0f;
+  }
 
   constantForce.lMagnitude = (LONG)(DI_FFNOMINALMAX * combined);
 
@@ -412,8 +413,9 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   }
 
   // play the thing
-  if (effectDatabase[effectType])
+  if (effectDatabase[effectType]) {
     success = effectDatabase[effectType]->Start(count, 0);
+  }
 
   if (success != DI_OK) {
     // uh-oh, no worky
@@ -423,12 +425,12 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   return;
 }
 
-void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
-					  float x_direction, float y_direction,
-					  float strength)
-{
-  if (!ffHasDirectional())
+void  DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
+                                        float x_direction, float y_direction,
+                                        float strength) {
+  if (!ffHasDirectional()) {
     return;
+  }
 
   /*
    * Create a constant effect with the specified parameters
@@ -452,7 +454,8 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
      */
     DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
     LONG  dir[2] = {(int)(1000.0f * x_direction),
-		    (int)(1000.0f * y_direction)};
+                    (int)(1000.0f * y_direction)
+                   };
 
     LPDIRECTINPUTEFFECT createdEffect = NULL;
 
@@ -493,8 +496,9 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
   }
 
   // play the thing
-  if (effectDatabase[effectType])
+  if (effectDatabase[effectType]) {
     success = effectDatabase[effectType]->Start(count, 0);
+  }
 
   if (success != DI_OK) {
     // uh-oh, no worky
@@ -504,12 +508,12 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
   return;
 }
 
-void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
-					  float x_direction, float y_direction,
-					  float amplitude, float period, PeriodicType type)
-{
-  if (!ffHasDirectional())
+void  DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
+                                        float x_direction, float y_direction,
+                                        float amplitude, float period, PeriodicType type) {
+  if (!ffHasDirectional()) {
     return;
+  }
 
   /*
    * Create a constant effect with the specified parameters
@@ -536,7 +540,8 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
      */
     DWORD axes[2] = {DIJOFS_X, DIJOFS_Y};
     LONG  dir[2] = {(int)(1000.0f * x_direction),
-		    (int)(1000.0f * y_direction)};
+                    (int)(1000.0f * y_direction)
+                   };
 
     LPDIRECTINPUTEFFECT createdEffect = NULL;
 
@@ -586,8 +591,9 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
   }
 
   // play the thing
-  if (effectDatabase[effectType])
+  if (effectDatabase[effectType]) {
     success = effectDatabase[effectType]->Start(count, 0);
+  }
 
   if (success != DI_OK) {
     // uh-oh, no worky
@@ -597,11 +603,11 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
   return;
 }
 
-void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
-					    float saturation, ResistanceType type)
-{
-  if (!ffHasDirectional())
+void  DXJoystick::ffDirectionalResistance(float time, float coefficient,
+                                          float saturation, ResistanceType type) {
+  if (!ffHasDirectional()) {
     return;
+  }
 
   /*
    * Create a resistance effect with the specified parameters
@@ -680,8 +686,9 @@ void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
   }
 
   // play the thing
-  if (effectDatabase[effectType])
+  if (effectDatabase[effectType]) {
     success = effectDatabase[effectType]->Start(1, 0);
+  }
 
   if (success != DI_OK) {
     // uh-oh, no worky
@@ -691,23 +698,22 @@ void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
   return;
 }
 
-bool	DXJoystick::ffHasDirectional() const
-{
+bool  DXJoystick::ffHasDirectional() const {
   /* FIXME: sadly, there's no easy way to figure out what TYPE of
      force feedback a windows joystick supports :( */
   return ffHasRumble();
 }
 
-void DXJoystick::enumerateDevices()
-{
-  if (!directInput)
+void DXJoystick::enumerateDevices() {
+  if (!directInput) {
     return;
+  }
 
   devices.clear();
 
   HRESULT success = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL ,
-					     &deviceEnumCallback, NULL,
-					     DIEDFL_ATTACHEDONLY);
+                                             &deviceEnumCallback, NULL,
+                                             DIEDFL_ATTACHEDONLY);
 
   if (success != DI_OK) {
     DXError("Could not enumerate DirectInput devices", success);
@@ -715,10 +721,10 @@ void DXJoystick::enumerateDevices()
   }
 }
 
-void DXJoystick::reaquireDevice()
-{
-  if (!device)
+void DXJoystick::reaquireDevice() {
+  if (!device) {
     return;
+  }
 
   // try to reaquire the device
   HRESULT success = device->Acquire();
@@ -730,10 +736,10 @@ void DXJoystick::reaquireDevice()
   }
 }
 
-void DXJoystick::resetFF()
-{
-  if (!device)
+void DXJoystick::resetFF() {
+  if (!device) {
     return;
+  }
 
   HRESULT success = device->SendForceFeedbackCommand(DISFFC_RESET);
 
@@ -746,8 +752,7 @@ void DXJoystick::resetFF()
 
 /* error handling */
 
-void DXJoystick::DXError(const char* situation, HRESULT problem)
-{
+void DXJoystick::DXError(const char* situation, HRESULT problem) {
   // uh-oh, no worky
   std::string msg;
 
@@ -769,43 +774,57 @@ void DXJoystick::DXError(const char* situation, HRESULT problem)
   }
 
   // print error messages
-  if (problem == (HRESULT)DIERR_DEVICENOTREG)
+  if (problem == (HRESULT)DIERR_DEVICENOTREG) {
     msg = "Device not registered";
-  else if (problem == (HRESULT)DIERR_INVALIDPARAM)
+  }
+  else if (problem == (HRESULT)DIERR_INVALIDPARAM) {
     msg = "Invalid parameter";
-  else if (problem == (HRESULT)DIERR_NOTINITIALIZED)
+  }
+  else if (problem == (HRESULT)DIERR_NOTINITIALIZED) {
     msg = "Device not initialized";
-  else if (problem == (HRESULT)DI_BUFFEROVERFLOW)
+  }
+  else if (problem == (HRESULT)DI_BUFFEROVERFLOW) {
     msg = "Buffer overflow";
-  else if (problem == (HRESULT)DIERR_BADDRIVERVER)
+  }
+  else if (problem == (HRESULT)DIERR_BADDRIVERVER) {
     msg = "Bad or incompatible device driver";
-  else if (problem == (HRESULT)DIERR_EFFECTPLAYING)
+  }
+  else if (problem == (HRESULT)DIERR_EFFECTPLAYING) {
     msg = "Effect already playing";
-  else if (problem == (HRESULT)DIERR_INCOMPLETEEFFECT)
+  }
+  else if (problem == (HRESULT)DIERR_INCOMPLETEEFFECT) {
     msg = "Incomplete effect";
-  else if (problem == (HRESULT)DIERR_MOREDATA)
+  }
+  else if (problem == (HRESULT)DIERR_MOREDATA) {
     msg = "Return buffer not large enough";
-  else if (problem == (HRESULT)DIERR_NOTACQUIRED)
+  }
+  else if (problem == (HRESULT)DIERR_NOTACQUIRED) {
     msg = "Device not acquired";
-  else if (problem == (HRESULT)DIERR_NOTDOWNLOADED)
+  }
+  else if (problem == (HRESULT)DIERR_NOTDOWNLOADED) {
     msg = "Effect not downloaded";
-  else if (problem == (HRESULT)DIERR_NOTINITIALIZED)
+  }
+  else if (problem == (HRESULT)DIERR_NOTINITIALIZED) {
     msg = "Device not initialized";
-  else if (problem == (HRESULT)DIERR_OUTOFMEMORY)
+  }
+  else if (problem == (HRESULT)DIERR_OUTOFMEMORY) {
     msg = "Out of memory";
-  else if (problem == (HRESULT)DIERR_UNSUPPORTED)
+  }
+  else if (problem == (HRESULT)DIERR_UNSUPPORTED) {
     msg = "Action not supported by driver";
-  else
+  }
+  else {
     msg = TextUtils::format("Unknown error (%d)", (int)problem);
+  }
   printError(TextUtils::format("%s (%s).", situation, msg.c_str()));
 }
 
 /* Nasty callbacks 'cause DirectX sucks */
 
-BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* /*pvRef*/)
-{
-  if (!device)
+BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* /*pvRef*/) {
+  if (!device) {
     return DIENUM_STOP;
+  }
 
   devices.push_back(*device);
 
@@ -819,6 +838,6 @@ BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* /
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

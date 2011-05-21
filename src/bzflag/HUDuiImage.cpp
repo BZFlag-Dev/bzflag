@@ -23,16 +23,13 @@
 // HUDuiImage
 //
 
-HUDuiImage::HUDuiImage() : HUDuiElement()
-{
+HUDuiImage::HUDuiImage() : HUDuiElement() {
 }
 
-HUDuiImage::~HUDuiImage()
-{
+HUDuiImage::~HUDuiImage() {
 }
 
-void			HUDuiImage::setTexture(const int t)
-{
+void      HUDuiImage::setTexture(const int t) {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(t);
   builder.setBlending();
@@ -40,24 +37,23 @@ void			HUDuiImage::setTexture(const int t)
   texture = t;
 }
 
-void			HUDuiImage::doRender()
-{
+void      HUDuiImage::doRender() {
   const float _height = getHeight();
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   const float _width = _height * (1.0f / tm.GetAspectRatio(texture));
   const float xx = getX();
   const float yy = getY();
   gstate.setState();
   glColor3fv(textColor);
   glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f);
-    glVertex2f(xx, yy);
-    glTexCoord2f(1.0f, 0.0f);
-    glVertex2f(xx + _width, yy);
-    glTexCoord2f(1.0f, 1.0f);
-    glVertex2f(xx + _width, yy + _height);
-    glTexCoord2f(0.0f, 1.0f);
-    glVertex2f(xx, yy + _height);
+  glTexCoord2f(0.0f, 0.0f);
+  glVertex2f(xx, yy);
+  glTexCoord2f(1.0f, 0.0f);
+  glVertex2f(xx + _width, yy);
+  glTexCoord2f(1.0f, 1.0f);
+  glVertex2f(xx + _width, yy + _height);
+  glTexCoord2f(0.0f, 1.0f);
+  glVertex2f(xx, yy + _height);
   glEnd();
 }
 
@@ -65,6 +61,6 @@ void			HUDuiImage::doRender()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

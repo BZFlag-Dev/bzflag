@@ -18,7 +18,7 @@
 
 class Occluder {
   public:
-    Occluder(const SceneNode *node);
+    Occluder(const SceneNode* node);
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
     Intersect::IntersectLevel doCullAxisBox(const Extents& exts);
@@ -71,8 +71,7 @@ class OccluderManager {
     Occluder* occluders[MAX_OCCLUDERS];
 };
 
-inline void Occluder::addScore(unsigned int score)
-{
+inline void Occluder::addScore(unsigned int score) {
   unsigned int tmp = cullScore + score;
   if (tmp > cullScore) {
     cullScore = tmp;
@@ -80,29 +79,24 @@ inline void Occluder::addScore(unsigned int score)
   return;
 }
 
-inline void Occluder::divScore()
-{
+inline void Occluder::divScore() {
   cullScore = cullScore >> 1;
   return;
 }
 
-inline int Occluder::getScore() const
-{
+inline int Occluder::getScore() const {
   return cullScore;
 }
 
-inline const SceneNode* Occluder::getSceneNode()const
-{
+inline const SceneNode* Occluder::getSceneNode()const {
   return sceneNode;
 }
 
-inline int Occluder::getVertexCount() const
-{
+inline int Occluder::getVertexCount() const {
   return vertexCount;
 }
 
-inline int OccluderManager::getOccluderCount () const
-{
+inline int OccluderManager::getOccluderCount() const {
   return activeOccluders;
 }
 
@@ -110,6 +104,6 @@ inline int OccluderManager::getOccluderCount () const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

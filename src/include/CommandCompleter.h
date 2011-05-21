@@ -23,7 +23,7 @@
  */
 class CommandCompleter : public AutoCompleter {
 
- public:
+  public:
 
     /** ctor sets default words */
     CommandCompleter();
@@ -42,6 +42,6 @@ class CommandCompleter : public AutoCompleter {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

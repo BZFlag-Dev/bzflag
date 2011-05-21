@@ -31,8 +31,7 @@ const int FormatMenu::NumReadouts = 4;
 const int FormatMenu::NumItems = 30;
 const int FormatMenu::NumColumns = 3;
 
-bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key) {
   if (key.unicode == 0) {
     switch (key.button) {
       case BzfKeyEvent::PageUp: {
@@ -52,77 +51,82 @@ bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   return MenuDefaultKey::keyPress(key);
 }
 
-bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
+bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key) {
   switch (key.button) {
     case BzfKeyEvent::PageUp:
     case BzfKeyEvent::PageDown:
       return true;
   }
   switch (key.unicode) {
-    case 27:	// escape
-    case 13:	// return
+    case 27:  // escape
+    case 13:  // return
       return true;
   }
   return MenuDefaultKey::keyRelease(key);
 }
 
-size_t FormatMenu::navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* obj)
-{
+size_t FormatMenu::navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* obj) {
   FormatMenu* fm = (FormatMenu*)obj;
   // sync the menu's selected page with the focus item.
   if (changeMethod == hnNext) {
     if (oldFocus + 1 != proposedFocus) {
       // we have wrapped
       fm->setPage(fm->page + 1);
-    } else if (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "") {
+    }
+    else if (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "") {
       // there was an odd number of items on the last page, and
       // we have run off the end of the list...wrap early
       fm->setPage(0);
       proposedFocus = 0;
     }
-  } else if (changeMethod == hnPrev) {
+  }
+  else if (changeMethod == hnPrev) {
     if (oldFocus - 1 != proposedFocus) {
       // we have wrapped backwards
       fm->setPage(fm->page - 1);
       // find the last non-empty entry (i.e. if we wrapped from first to last page)
-      while (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "")
-	--proposedFocus;
+      while (((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "") {
+        --proposedFocus;
+      }
     }
-  } else {
+  }
+  else {
     // switched pages - if this entry is empty, find the last non-empty entry
-    while (proposedFocus > 0 && ((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "")
+    while (proposedFocus > 0 && ((HUDuiLabel*)(fm->getNav()[proposedFocus]))->getString() == "") {
       --proposedFocus;
+    }
   }
   return proposedFocus;
 }
 
-FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
-{
+FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL) {
   int i;
 
   numFormats = display->getNumResolutions();
   badFormats = new bool[numFormats];
-  for (i = 0; i < numFormats; i++)
+  for (i = 0; i < numFormats; i++) {
     badFormats[i] = false;
+  }
 
   // add controls
   addLabel("Video Format", "");
-  addLabel("", "");			// instructions
-  addLabel("", "Current Format:");	// current format readout
-  addLabel("", "");			// page readout
+  addLabel("", "");     // instructions
+  addLabel("", "Current Format:");  // current format readout
+  addLabel("", "");     // page readout
   currentLabel = (HUDuiLabel*)(getElements()[NumReadouts - 2]);
   pageLabel = (HUDuiLabel*)(getElements()[NumReadouts - 1]);
 
   // add resolution list items
-  for (i = 0; i < NumItems; ++i)
+  for (i = 0; i < NumItems; ++i) {
     addLabel("", "", true);
+  }
 
   // fill in static labels
   if (numFormats < 2) {
     currentLabel->setString("<switching not available>");
     HUDui::setFocus(NULL);
-  } else {
+  }
+  else {
     HUDuiLabel* label = (HUDuiLabel*)(getElements()[NumReadouts - 3]);
     label->setString("Press Enter to select and T to test a format. Esc to exit.");
     initNavigation();
@@ -130,14 +134,12 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
   }
 }
 
-FormatMenu::~FormatMenu()
-{
+FormatMenu::~FormatMenu() {
   getNav().removeCallback(&navCallback, this);
   delete[] badFormats;
 }
 
-void FormatMenu::addLabel(const char* msg, const char* _label, bool navigable)
-{
+void FormatMenu::addLabel(const char* msg, const char* _label, bool navigable) {
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString(msg);
@@ -145,20 +147,22 @@ void FormatMenu::addLabel(const char* msg, const char* _label, bool navigable)
   addControl(label, navigable);
 }
 
-void FormatMenu::setPage(int _page)
-{
-  if (_page == page) // no change
+void FormatMenu::setPage(int _page) {
+  if (_page == page) { // no change
     return;
+  }
 
   // switch pages
   page = _page;
 
   // wrap from last page to first
-  if (page > (int)(numFormats / NumItems))
+  if (page > (int)(numFormats / NumItems)) {
     page = 0;
+  }
   // wrap from first page back to last
-  if (page < 0)
+  if (page < 0) {
     page = (int)(numFormats / NumItems);
+  }
 
   // fill items
   const int base = page * NumItems;
@@ -166,12 +170,15 @@ void FormatMenu::setPage(int _page)
   for (int i = 0; i < NumItems; ++i) {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[i + NumReadouts];
     if (base + i < numFormats)
-      if (badFormats[base + i])
+      if (badFormats[base + i]) {
         label->setString("<unloadable>");
-      else
+      }
+      else {
         label->setString(display->getResolution(base + i)->name);
-    else
+      }
+    else {
       label->setString("");
+    }
   }
 
   // change page label
@@ -186,8 +193,7 @@ void FormatMenu::setPage(int _page)
   }
 }
 
-void FormatMenu::show()
-{
+void FormatMenu::show() {
   pageLabel->setString("");
   int selectedIndex = getDisplay()->getResolution();
   // sync focus and selection
@@ -198,21 +204,21 @@ void FormatMenu::show()
   currentLabel->setString(display->getResolution(display->getResolution())->name);
 }
 
-void FormatMenu::execute()
-{
+void FormatMenu::execute() {
   setFormat(false);
 }
 
-void FormatMenu::setFormat(bool test)
-{
+void FormatMenu::setFormat(bool test) {
   int selectedIndex = (page * NumItems) + (int)getNav().getIndex();
-  if (selectedIndex >= numFormats || badFormats[selectedIndex])
+  if (selectedIndex >= numFormats || badFormats[selectedIndex]) {
     return;
+  }
 
   if (!setVideoFormat(selectedIndex, test)) {
     // can't load format
     badFormats[selectedIndex] = true;
-  } else if (!test) {
+  }
+  else if (!test) {
     // print OpenGL renderer, which might have changed
     printError((const char*)glGetString(GL_RENDERER));
   }
@@ -220,12 +226,11 @@ void FormatMenu::setFormat(bool test)
   currentLabel->setString(display->getResolution(display->getResolution())->name);
 }
 
-void FormatMenu::resize(int _width, int _height)
-{
+void FormatMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -246,7 +251,7 @@ void FormatMenu::resize(int _width, int _height)
   }
 
   // reposition test and current format messages
-  fs.setMin(24*NumColumns, std::max(NumItems / NumColumns, 10));
+  fs.setMin(24 * NumColumns, std::max(NumItems / NumColumns, 10));
   float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
   {
     HUDuiLabel* label = (HUDuiLabel*)listHUD[1];
@@ -297,6 +302,6 @@ void FormatMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -15,8 +15,8 @@
 
 class WorldInfo;
 
-extern WorldInfo *defineTeamWorld();
-extern WorldInfo *defineRandomWorld();
+extern WorldInfo* defineTeamWorld();
+extern WorldInfo* defineRandomWorld();
 
 #endif // __WORLD_GENERATORS_H__
 
@@ -24,6 +24,6 @@ extern WorldInfo *defineRandomWorld();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

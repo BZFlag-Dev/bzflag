@@ -42,16 +42,15 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
                                       float uOffset, float vOffset,
                                       float uRepeats, float vRepeats,
                                       bool fixedUVs)
-: wall(_wall)
-, style(0)
-, ds(uCount)
-, dt(vCount)
-, dsq(uCount / 4)
-, dsr(uCount % 4)
-, normal(_normal)
-, vertex((uCount+1) * (vCount+1))
-, uv((uCount+1) * (vCount+1))
-{
+  : wall(_wall)
+  , style(0)
+  , ds(uCount)
+  , dt(vCount)
+  , dsq(uCount / 4)
+  , dsr(uCount % 4)
+  , normal(_normal)
+  , vertex((uCount + 1) * (vCount + 1))
+  , uv((uCount + 1) * (vCount + 1)) {
   for (int n = 0, j = 0; j <= vCount; j++) {
     const float t = (float)j / (float)vCount;
     for (int i = 0; i <= uCount; n++, i++) {
@@ -93,60 +92,59 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
 }
 
 
-QuadWallSceneNode::Geometry::~Geometry()
-{
+QuadWallSceneNode::Geometry::~Geometry() {
   // do nothing
 }
 
 
-#define	RENDER(_e)							\
-  for (int k = 0, t = 0; t < dt; t++) {					\
-    glBegin(GL_TRIANGLE_STRIP);						\
-    for (int s = 0; s < dsq; k += 4, s++) {				\
-      _e(k+ds+1);							\
-      _e(k);								\
-      _e(k+ds+2);							\
-      _e(k+1);								\
-      _e(k+ds+3);							\
-      _e(k+2);								\
-      _e(k+ds+4);							\
-      _e(k+3);								\
-    }									\
-    switch (dsr) {							\
-      case 3:								\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-	/* fall through */						\
-      case 2:								\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-	/* fall through */						\
-      case 1:								\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-	/* fall through */						\
-      case 0:								\
-	/* don't forget right edge of last quad on row */		\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-    }									\
-    glEnd();								\
+#define RENDER(_e)              \
+  for (int k = 0, t = 0; t < dt; t++) {         \
+    glBegin(GL_TRIANGLE_STRIP);           \
+    for (int s = 0; s < dsq; k += 4, s++) {       \
+      _e(k+ds+1);             \
+      _e(k);                \
+      _e(k+ds+2);             \
+      _e(k+1);                \
+      _e(k+ds+3);             \
+      _e(k+2);                \
+      _e(k+ds+4);             \
+      _e(k+3);                \
+    }                 \
+    switch (dsr) {              \
+      case 3:               \
+  _e(k+ds+1);             \
+  _e(k);                \
+  k++;                \
+  /* fall through */            \
+      case 2:               \
+  _e(k+ds+1);             \
+  _e(k);                \
+  k++;                \
+  /* fall through */            \
+      case 1:               \
+  _e(k+ds+1);             \
+  _e(k);                \
+  k++;                \
+  /* fall through */            \
+      case 0:               \
+  /* don't forget right edge of last quad on row */   \
+  _e(k+ds+1);             \
+  _e(k);                \
+  k++;                \
+    }                 \
+    glEnd();                \
   }
-#define EMITV(_i)	glVertex3fv(vertex[_i])
-#define EMITVT(_i)	glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
+#define EMITV(_i) glVertex3fv(vertex[_i])
+#define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
 
-void QuadWallSceneNode::Geometry::render()
-{
+void QuadWallSceneNode::Geometry::render() {
   wall->applyColor();
   glNormal3fv(normal);
   if (style >= 2) {
     drawVT();
-  } else {
+  }
+  else {
     drawV();
   }
   addTriangleCount(triangles);
@@ -154,8 +152,7 @@ void QuadWallSceneNode::Geometry::render()
 }
 
 
-void QuadWallSceneNode::Geometry::renderShadow()
-{
+void QuadWallSceneNode::Geometry::renderShadow() {
   int last = (ds + 1) * dt;
   glBegin(GL_TRIANGLE_STRIP);
   glVertex3fv(vertex[last]);
@@ -167,20 +164,17 @@ void QuadWallSceneNode::Geometry::renderShadow()
 }
 
 
-void QuadWallSceneNode::Geometry::drawV() const
-{
+void QuadWallSceneNode::Geometry::drawV() const {
   RENDER(EMITV)
 }
 
 
-void QuadWallSceneNode::Geometry::drawVT() const
-{
+void QuadWallSceneNode::Geometry::drawVT() const {
   RENDER(EMITVT)
 }
 
 
-const fvec3& QuadWallSceneNode::Geometry::getVertex(int i) const
-{
+const fvec3& QuadWallSceneNode::Geometry::getVertex(int i) const {
   return vertex[i];
 }
 
@@ -196,8 +190,7 @@ QuadWallSceneNode::QuadWallSceneNode(const fvec3& base,
                                      float vOffset,
                                      float uRepeats,
                                      float vRepeats,
-                                     bool makeLODs)
-{
+                                     bool makeLODs) {
   init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs, false);
 }
 
@@ -208,8 +201,7 @@ QuadWallSceneNode::QuadWallSceneNode(const fvec3& base,
                                      float uRepeats,
                                      float vRepeats,
                                      bool makeLODs,
-                                     bool fixedUVs)
-{
+                                     bool fixedUVs) {
   init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs, fixedUVs);
 }
 
@@ -222,8 +214,7 @@ void QuadWallSceneNode::init(const fvec3& base,
                              float uRepeats,
                              float vRepeats,
                              bool makeLODs,
-                             bool fixedUVs)
-{
+                             bool fixedUVs) {
   // record plane and bounding sphere info
   fvec4 myPlane;
   myPlane.xyz() = fvec3::cross(uEdge, vEdge);
@@ -259,26 +250,27 @@ void QuadWallSceneNode::init(const fvec3& base,
   int uElements = int(uLength) / 2;
   int vElements = int(vLength) / 2;
   int uLevels = 1, vLevels = 1;
-  while (uElements >>= 1) uLevels++;
-  while (vElements >>= 1) vLevels++;
+  while (uElements >>= 1) { uLevels++; }
+  while (vElements >>= 1) { vLevels++; }
   int numLevels = (uLevels < vLevels ? uLevels : vLevels);
 
   // if overly rectangular then add levels to square it up
   bool needsSquaring = false;
   if (makeLODs) {
-    if (uLevels >= vLevels+2) {
+    if (uLevels >= vLevels + 2) {
       needsSquaring = true;
       numLevels += (uLevels - vLevels) / 2;
     }
-    else if (vLevels >= uLevels+2) {
+    else if (vLevels >= uLevels + 2) {
       needsSquaring = true;
       numLevels += (vLevels - uLevels) / 2;
     }
   }
 
   // if no lod's required then don't make any except most coarse
-  if (!makeLODs)
+  if (!makeLODs) {
     numLevels = 1;
+  }
 
   // make level of detail and element area arrays
   nodes = new Geometry*[numLevels];
@@ -290,9 +282,9 @@ void QuadWallSceneNode::init(const fvec3& base,
   vElements = 1;
   areas[level] = area;
   nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
+                                base, uEdge, vEdge,
+                                getPlaneRaw(), uOffset, vOffset,
+                                uRepeats, vRepeats, fixedUVs);
   shadowNode = new Geometry(this, uElements, vElements,
                             base, uEdge, vEdge,
                             getPlaneRaw(), uOffset, vOffset,
@@ -306,12 +298,12 @@ void QuadWallSceneNode::init(const fvec3& base,
     if (uLevels > vLevels) {
       int count = (uLevels - vLevels) / 2;
       while (count-- > 0) {
-	uElements <<= 2;
-	areas[level] = area / (float)uElements;
-	nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
+        uElements <<= 2;
+        areas[level] = area / (float)uElements;
+        nodes[level++] = new Geometry(this, uElements, vElements,
+                                      base, uEdge, vEdge,
+                                      getPlaneRaw(), uOffset, vOffset,
+                                      uRepeats, vRepeats, fixedUVs);
 
       }
       area /= (float)uElements;
@@ -319,12 +311,12 @@ void QuadWallSceneNode::init(const fvec3& base,
     else {
       int count = (vLevels - uLevels) / 2;
       while (count-- > 0) {
-	vElements <<= 2;
-	areas[level] = area / (float)vElements;
-	nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
+        vElements <<= 2;
+        areas[level] = area / (float)vElements;
+        nodes[level++] = new Geometry(this, uElements, vElements,
+                                      base, uEdge, vEdge,
+                                      getPlaneRaw(), uOffset, vOffset,
+                                      uRepeats, vRepeats, fixedUVs);
 
       }
       area /= (float)vElements;
@@ -338,9 +330,9 @@ void QuadWallSceneNode::init(const fvec3& base,
     area *= 0.25f;
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlaneRaw(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
+                                  base, uEdge, vEdge,
+                                  getPlaneRaw(), uOffset, vOffset,
+                                  uRepeats, vRepeats, fixedUVs);
   }
 
   // record extents info
@@ -354,20 +346,19 @@ void QuadWallSceneNode::init(const fvec3& base,
 }
 
 
-QuadWallSceneNode::~QuadWallSceneNode()
-{
+QuadWallSceneNode::~QuadWallSceneNode() {
   // free LODs
   const int numLevels = getNumLODs();
-  for (int i = 0; i < numLevels; i++)
+  for (int i = 0; i < numLevels; i++) {
     delete nodes[i];
+  }
   delete[] nodes;
   delete shadowNode;
 }
 
 
 int QuadWallSceneNode::split(const fvec4& _plane,
-                             SceneNode*& front, SceneNode*& back) const
-{
+                             SceneNode*& front, SceneNode*& back) const {
   // need to reorder vertices into counterclockwise order
   fvec3Array vertex(4);
   fvec2Array uv(4);
@@ -381,22 +372,19 @@ int QuadWallSceneNode::split(const fvec4& _plane,
 }
 
 
-void QuadWallSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void QuadWallSceneNode::addRenderNodes(SceneRenderer& renderer) {
   const int lod = pickLevelOfDetail(renderer);
   nodes[lod]->setStyle(getStyle());
   renderer.addRenderNode(nodes[lod], getWallGState());
 }
 
 
-void QuadWallSceneNode::addShadowNodes(SceneRenderer& renderer)
-{
+void QuadWallSceneNode::addShadowNodes(SceneRenderer& renderer) {
   renderer.addShadowNode(shadowNode);
 }
 
 
-bool QuadWallSceneNode::inAxisBox(const Extents& exts) const
-{
+bool QuadWallSceneNode::inAxisBox(const Extents& exts) const {
   if (!extents.touches(exts)) {
     return false;
   }
@@ -413,30 +401,26 @@ bool QuadWallSceneNode::inAxisBox(const Extents& exts) const
 }
 
 
-int QuadWallSceneNode::getVertexCount () const
-{
+int QuadWallSceneNode::getVertexCount() const {
   return 4;
 }
 
 
-const fvec3& QuadWallSceneNode::getVertex (int vertex) const
-{
+const fvec3& QuadWallSceneNode::getVertex(int vertex) const {
   // re-map these to a counter-clockwise order
   const int remap[4] = {0, 1, 3, 2};
   return nodes[0]->getVertex(remap[vertex]);
 }
 
 
-void QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
-{
+void QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes) {
   RenderSet rs = { nodes[0], getWallGState() };
   rnodes.push_back(rs);
   return;
 }
 
 
-void QuadWallSceneNode::renderRadar()
-{
+void QuadWallSceneNode::renderRadar() {
   if (plane[2] > 0.0f) {
     nodes[0]->renderRadar();
   }
@@ -448,6 +432,6 @@ void QuadWallSceneNode::renderRadar()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

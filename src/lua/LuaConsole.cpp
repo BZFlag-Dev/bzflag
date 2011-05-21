@@ -36,8 +36,7 @@ typedef ControlPanel::MessageQueue MessageQueue;
 //============================================================================//
 //============================================================================//
 
-bool LuaConsole::PushEntries(lua_State* L)
-{
+bool LuaConsole::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, GetTabMessageCount);
   PUSH_LUA_CFUNC(L, GetTabMessages);
   PUSH_LUA_CFUNC(L, GetTabTopic);
@@ -62,8 +61,7 @@ bool LuaConsole::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline int ParseTab(lua_State* L, int index)
-{
+static inline int ParseTab(lua_State* L, int index) {
   if (controlPanel == NULL) {
     return -1;
   }
@@ -88,8 +86,7 @@ static inline int ParseTab(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaConsole::GetTabMessageCount(lua_State* L)
-{
+int LuaConsole::GetTabMessageCount(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -103,8 +100,7 @@ int LuaConsole::GetTabMessageCount(lua_State* L)
 }
 
 
-int LuaConsole::GetTabMessages(lua_State* L)
-{
+int LuaConsole::GetTabMessages(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -137,8 +133,7 @@ int LuaConsole::GetTabMessages(lua_State* L)
 
 //============================================================================//
 
-int LuaConsole::GetTabTopic(lua_State* L)
-{
+int LuaConsole::GetTabTopic(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -148,8 +143,7 @@ int LuaConsole::GetTabTopic(lua_State* L)
 }
 
 
-int LuaConsole::SetTabTopic(lua_State* L)
-{
+int LuaConsole::SetTabTopic(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -160,8 +154,7 @@ int LuaConsole::SetTabTopic(lua_State* L)
 }
 
 
-int LuaConsole::GetActiveTab(lua_State* L)
-{
+int LuaConsole::GetActiveTab(lua_State* L) {
   if (controlPanel == NULL) {
     return luaL_pushnil(L);
   }
@@ -171,8 +164,7 @@ int LuaConsole::GetActiveTab(lua_State* L)
 }
 
 
-int LuaConsole::SetActiveTab(lua_State* L)
-{
+int LuaConsole::SetActiveTab(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -182,8 +174,7 @@ int LuaConsole::SetActiveTab(lua_State* L)
 }
 
 
-int LuaConsole::AddTab(lua_State* L)
-{
+int LuaConsole::AddTab(lua_State* L) {
   if (controlPanel == NULL) {
     return luaL_pushnil(L);
   }
@@ -195,8 +186,7 @@ int LuaConsole::AddTab(lua_State* L)
 }
 
 
-int LuaConsole::RemoveTab(lua_State* L)
-{
+int LuaConsole::RemoveTab(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -207,8 +197,7 @@ int LuaConsole::RemoveTab(lua_State* L)
 }
 
 
-int LuaConsole::RenameTab(lua_State* L)
-{
+int LuaConsole::RenameTab(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -220,8 +209,7 @@ int LuaConsole::RenameTab(lua_State* L)
 }
 
 
-int LuaConsole::ClearTab(lua_State* L)
-{
+int LuaConsole::ClearTab(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -231,8 +219,7 @@ int LuaConsole::ClearTab(lua_State* L)
 }
 
 
-int LuaConsole::SwapTabs(lua_State* L)
-{
+int LuaConsole::SwapTabs(lua_State* L) {
   const int tabID1 = ParseTab(L, 1);
   const int tabID2 = ParseTab(L, 2);
   if ((tabID1 < 0) || (tabID2 < 0)) {
@@ -243,8 +230,7 @@ int LuaConsole::SwapTabs(lua_State* L)
 }
 
 
-int LuaConsole::GetTabID(lua_State* L)
-{
+int LuaConsole::GetTabID(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -254,8 +240,7 @@ int LuaConsole::GetTabID(lua_State* L)
 }
 
 
-int LuaConsole::GetTabLabel(lua_State* L)
-{
+int LuaConsole::GetTabLabel(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0) {
     return luaL_pushnil(L);
@@ -265,16 +250,14 @@ int LuaConsole::GetTabLabel(lua_State* L)
 }
 
 
-int LuaConsole::IsValidTab(lua_State* L)
-{
+int LuaConsole::IsValidTab(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   lua_pushboolean(L, tabID >= 0);
   return 1;
 }
 
 
-int LuaConsole::IsTabLocked(lua_State* L)
-{
+int LuaConsole::IsTabLocked(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0)  {
     return luaL_pushnil(L);
@@ -285,8 +268,7 @@ int LuaConsole::IsTabLocked(lua_State* L)
 
 
 
-int LuaConsole::IsTabUnread(lua_State* L)
-{
+int LuaConsole::IsTabUnread(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0)  {
     return luaL_pushnil(L);
@@ -296,8 +278,7 @@ int LuaConsole::IsTabUnread(lua_State* L)
 }
 
 
-int LuaConsole::IsTabVisible(lua_State* L)
-{
+int LuaConsole::IsTabVisible(lua_State* L) {
   const int tabID = ParseTab(L, 1);
   if (tabID < 0)  {
     return luaL_pushnil(L);
@@ -314,6 +295,6 @@ int LuaConsole::IsTabVisible(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATSDEFAULTKEY_H__
-#define	__SHOTSTATSDEFAULTKEY_H__
+#ifndef __SHOTSTATSDEFAULTKEY_H__
+#define __SHOTSTATSDEFAULTKEY_H__
 
 /* common interface headers */
 #include "BzfEvent.h"
@@ -20,16 +20,16 @@
 #include "HUDuiDefaultKey.h"
 
 class ShotStatsDefaultKey : public HUDuiDefaultKey {
-public:
-  ShotStatsDefaultKey();
-  ~ShotStatsDefaultKey();
+  public:
+    ShotStatsDefaultKey();
+    ~ShotStatsDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
-  static ShotStatsDefaultKey* getInstance();
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
+    static ShotStatsDefaultKey* getInstance();
 
-private:
-  static ShotStatsDefaultKey instance;
+  private:
+    static ShotStatsDefaultKey instance;
 };
 
 
@@ -39,6 +39,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

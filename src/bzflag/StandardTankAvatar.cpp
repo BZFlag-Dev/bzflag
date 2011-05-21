@@ -19,15 +19,15 @@
 #include "OpenGLMaterial.h"
 
 
-StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const fvec3& pos, const fvec3& forward )
-{
-  tankNode = new TankSceneNode(pos,forward);
+StandardTankAvatar::StandardTankAvatar(int /* playerID */, const fvec3& pos, const fvec3& forward) {
+  tankNode = new TankSceneNode(pos, forward);
   IDLNode = new TankIDLSceneNode(tankNode);
 
   const float sphereRad = (1.5f * BZDBCache::tankRadius);
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     pausedSphere = new SphereLodSceneNode(pos, sphereRad);
-  } else {
+  }
+  else {
     pausedSphere = new SphereBspSceneNode(pos, sphereRad);
   }
   pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
@@ -36,8 +36,7 @@ StandardTankAvatar::StandardTankAvatar ( int /* playerID */, const fvec3& pos, c
 }
 
 
-StandardTankAvatar::~StandardTankAvatar ( void )
-{
+StandardTankAvatar::~StandardTankAvatar(void) {
   delete IDLNode;
   delete tankNode;
   delete pausedSphere;
@@ -45,38 +44,32 @@ StandardTankAvatar::~StandardTankAvatar ( void )
 
 
 
-void StandardTankAvatar::move ( const fvec3& pos, const fvec3& forward )
-{
-  tankNode->move(pos,forward);
+void StandardTankAvatar::move(const fvec3& pos, const fvec3& forward) {
+  tankNode->move(pos, forward);
 }
 
 
-void StandardTankAvatar::moveIDL ( const fvec4& plane )
-{
+void StandardTankAvatar::moveIDL(const fvec4& plane) {
   IDLNode->move(plane);
 }
 
 
-void StandardTankAvatar::movePause ( const fvec3& pos, float rad )
-{
-  pausedSphere->move(pos,rad);
+void StandardTankAvatar::movePause(const fvec3& pos, float rad) {
+  pausedSphere->move(pos, rad);
 }
 
 
-void StandardTankAvatar::setTurnOffsets ( const float left, const float right )
-{
-  tankNode->addTreadOffsets(left,right);
+void StandardTankAvatar::setTurnOffsets(const float left, const float right) {
+  tankNode->addTreadOffsets(left, right);
 }
 
 
-void StandardTankAvatar::setScale ( const fvec3& scale)
-{
+void StandardTankAvatar::setScale(const fvec3& scale) {
   tankNode->setDimensions(scale);
 }
 
 
-void StandardTankAvatar::setScale ( teAvatarScaleModes mode )
-{
+void StandardTankAvatar::setScale(teAvatarScaleModes mode) {
   switch (mode) {
     case eNormal: { tankNode->setNormal(); break; }
     case eFat:    { tankNode->setObese();  break; }
@@ -87,14 +80,12 @@ void StandardTankAvatar::setScale ( teAvatarScaleModes mode )
 }
 
 
-void StandardTankAvatar::explode ( void )
-{
+void StandardTankAvatar::explode(void) {
   tankNode->rebuildExplosion();
 }
 
 
-void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color )
-{
+void StandardTankAvatar::setVisualTeam(TeamColor visualTeam, const fvec4& color) {
   tankNode->setColor(color);
 
   // only do all this junk when the effective team color actually changes
@@ -118,20 +109,21 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color
     emissive = &rabbitEmissive;
     specular = &rabbitSpecular;
     shininess = rabbitShininess;
-  } else {
+  }
+  else {
     emissive = &tankEmissive;
     specular = &tankSpecular;
     shininess = tankShininess;
   }
 
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   std::string texName;
   texName = Team::getImagePrefix(visualTeam);
 
   texName += BZDB.get("tankTexture");
 
   // now after we did all that, see if they have a user texture
-  tankTexture = tm.getTextureID(texName,false);
+  tankTexture = tm.getTextureID(texName, false);
 
   tankNode->setMaterial(OpenGLMaterial(*specular, *emissive, shininess));
   tankNode->setTexture(tankTexture);
@@ -141,19 +133,19 @@ void StandardTankAvatar::setVisualTeam (TeamColor visualTeam, const fvec4& color
 }
 
 
-void StandardTankAvatar::setColor ( const fvec4& color )
-{
+void StandardTankAvatar::setColor(const fvec4& color) {
   tankNode->setColor(color);
 }
 
 
-void StandardTankAvatar::setVisualMode ( bool inCockpit, bool showTreads )
-{
+void StandardTankAvatar::setVisualMode(bool inCockpit, bool showTreads) {
   // setup the visibility properties
-  if (inCockpit && !showTreads)
+  if (inCockpit && !showTreads) {
     tankNode->setOnlyShadows(true);
-  else
+  }
+  else {
     tankNode->setOnlyShadows(false);
+  }
 
   tankNode->setInTheCockpit(inCockpit);
 
@@ -164,45 +156,39 @@ void StandardTankAvatar::setVisualMode ( bool inCockpit, bool showTreads )
 }
 
 
-void StandardTankAvatar::setAnimationValues ( float explodeParam, float jumpParam )
-{
+void StandardTankAvatar::setAnimationValues(float explodeParam, float jumpParam) {
   tankNode->setExplodeFraction(explodeParam);
   tankNode->setJumpJets(jumpParam);
 }
 
 
-void StandardTankAvatar::setClippingPlane (const fvec4* plane)
-{
+void StandardTankAvatar::setClippingPlane(const fvec4* plane) {
   tankNode->setClipPlane(plane);
 }
 
 
-std::vector<SceneNode*> StandardTankAvatar::getSceneNodes ( void )
-{
+std::vector<SceneNode*> StandardTankAvatar::getSceneNodes(void) {
   std::vector<SceneNode*> l;
   l.push_back(tankNode);
   return l;
 }
 
 
-std::vector<SceneNode*> StandardTankAvatar::getIDLSceneNodes ( void )
-{
+std::vector<SceneNode*> StandardTankAvatar::getIDLSceneNodes(void) {
   std::vector<SceneNode*> l;
   l.push_back(IDLNode);
   return l;
 }
 
 
-std::vector<SceneNode*> StandardTankAvatar::getPauseSceneNodes ( void )
-{
+std::vector<SceneNode*> StandardTankAvatar::getPauseSceneNodes(void) {
   std::vector<SceneNode*> l;
   l.push_back(pausedSphere);
   return l;
 }
 
 
-void StandardTankAvatar::renderRadar ( void )
-{
+void StandardTankAvatar::renderRadar(void) {
   tankNode->renderRadar();
 }
 
@@ -211,6 +197,6 @@ void StandardTankAvatar::renderRadar ( void )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

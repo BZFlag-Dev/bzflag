@@ -27,8 +27,7 @@
 #include "EffectsRenderer.h"
 #include "LocalFontFace.h"
 
-EffectsMenu::EffectsMenu()
-{
+EffectsMenu::EffectsMenu() {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -270,22 +269,19 @@ EffectsMenu::EffectsMenu()
 }
 
 
-EffectsMenu::~EffectsMenu()
-{
+EffectsMenu::~EffectsMenu() {
 }
 
 
-void EffectsMenu::execute()
-{
+void EffectsMenu::execute() {
 }
 
 
-void EffectsMenu::resize(int _width, int _height)
-{
+void EffectsMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -318,7 +314,8 @@ void EffectsMenu::resize(int _width, int _height)
     listHUD[i]->setPosition(x, y);
     if ((i == 3) || (i == 4) || (i == 6) || (i == 8)) {
       y -= 1.75f * h;
-    } else {
+    }
+    else {
       y -= 1.0f * h;
     }
   }
@@ -326,7 +323,7 @@ void EffectsMenu::resize(int _width, int _height)
   // load current settings
   i = 1;
   ((HUDuiList*)listHUD[i++])->setIndex(int((BZDB.eval("userRainScale")
-					    * 10.0f) + 0.5f));
+                                            * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fogEffect"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("shotLength"));
@@ -340,13 +337,15 @@ void EffectsMenu::resize(int _width, int _height)
   }
   ((HUDuiList*)listHUD[i++])->setIndex(treadIndex);
   ((HUDuiList*)listHUD[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f)
-					   + 0.5f));
+                                           + 0.5f));
   TrackMarks::AirCullStyle style = TrackMarks::getAirCulling();
   if (style == TrackMarks::NoAirCull) {
     ((HUDuiList*)listHUD[i++])->setIndex(0);
-  } else if (style != TrackMarks::FullAirCull) {
+  }
+  else if (style != TrackMarks::FullAirCull) {
     ((HUDuiList*)listHUD[i++])->setIndex(1);
-  } else {
+  }
+  else {
     ((HUDuiList*)listHUD[i++])->setIndex(2);
   }
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useFancyEffects") ? 1 : 0);
@@ -364,8 +363,7 @@ void EffectsMenu::resize(int _width, int _height)
 }
 
 
-void EffectsMenu::callback(HUDuiControl* w, void* data)
-{
+void EffectsMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
@@ -379,7 +377,7 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'F':
-	BZDB.setInt("fogEffect", list->getIndex());
+      BZDB.setInt("fogEffect", list->getIndex());
       break;
 
     case 'T': {
@@ -388,18 +386,18 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     }
     case 'a': {
       switch (list->getIndex()) {
-	case 1:
-	  BZDB.set("animatedTreads", "1");
-	  BZDB.set("treadStyle", "0");
-	  break;
-	case 2:
-	  BZDB.set("animatedTreads", "1");
-	  BZDB.set("treadStyle", "1");
-	  break;
-	default:
-	  BZDB.set("animatedTreads", "0");
-	  BZDB.set("treadStyle", "0");
-	  break;
+        case 1:
+          BZDB.set("animatedTreads", "1");
+          BZDB.set("treadStyle", "0");
+          break;
+        case 2:
+          BZDB.set("animatedTreads", "1");
+          BZDB.set("treadStyle", "1");
+          break;
+        default:
+          BZDB.set("animatedTreads", "0");
+          BZDB.set("treadStyle", "0");
+          break;
       }
       RENDERER.setRebuildTanks();
       break;
@@ -412,18 +410,20 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
     case 'c': {
       int culling = list->getIndex();
       if (culling <= 0) {
-	TrackMarks::setAirCulling(TrackMarks::NoAirCull);
-      } else if (culling == 1) {
-	TrackMarks::setAirCulling(TrackMarks::InitAirCull);
-      } else {
-	TrackMarks::setAirCulling(TrackMarks::FullAirCull);
+        TrackMarks::setAirCulling(TrackMarks::NoAirCull);
+      }
+      else if (culling == 1) {
+        TrackMarks::setAirCulling(TrackMarks::InitAirCull);
+      }
+      else {
+        TrackMarks::setAirCulling(TrackMarks::FullAirCull);
       }
       break;
     }
     case 'x': {
       BZDB.setInt("shotLength", list->getIndex());
       RENDERER.notifyStyleChange(); // bolt glBlendFunc() may change
-     break;
+      break;
     }
     case 'f': {
       BZDB.set("useFancyEffects", list->getIndex() ? "1" : "0");
@@ -481,6 +481,6 @@ void EffectsMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

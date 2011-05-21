@@ -30,41 +30,37 @@ struct RejoinNode {
 };
 
 
-RejoinList::RejoinList()
-{
+RejoinList::RejoinList() {
   queue.clear(); // call me paranoid
 }
 
-RejoinList::~RejoinList()
-{
+RejoinList::~RejoinList() {
   std::list<struct RejoinNode*>::iterator it;
   for (it = queue.begin(); it != queue.end(); it++) {
-    RejoinNode *rn = *it;
+    RejoinNode* rn = *it;
     delete rn;
   }
   queue.clear();
 }
 
 
-bool RejoinList::add(int playerIndex)
-{
-  GameKeeper::Player *playerData
+bool RejoinList::add(int playerIndex) {
+  GameKeeper::Player* playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (playerData == NULL) {
     return false;
   }
   RejoinNode* rn = new RejoinNode;
-  strncpy (rn->callsign, playerData->player.getCallSign(), CallSignLen-1);
+  strncpy(rn->callsign, playerData->player.getCallSign(), CallSignLen - 1);
   rn->joinTime = BzTime::getCurrent();
-  queue.push_back (rn);
+  queue.push_back(rn);
   return true;
 }
 
 
-void RejoinList::remove(int playerIndex)
-{
-  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  const char *callsign = playerData->player.getCallSign();
+void RejoinList::remove(int playerIndex) {
+  GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  const char* callsign = playerData->player.getCallSign();
   if (!playerData || !callsign) {
     return;
   }
@@ -72,8 +68,8 @@ void RejoinList::remove(int playerIndex)
   std::list<struct RejoinNode*>::iterator it;
   it = queue.begin();
   while (it != queue.end()) {
-    RejoinNode *rn = *it;
-    if (strcasecmp (rn->callsign, callsign) == 0) {
+    RejoinNode* rn = *it;
+    if (strcasecmp(rn->callsign, callsign) == 0) {
       delete rn;
       it = queue.erase(it);
       return;
@@ -83,11 +79,10 @@ void RejoinList::remove(int playerIndex)
 }
 
 
-float RejoinList::waitTime(int playerIndex)
-{
-  GameKeeper::Player *playerData
+float RejoinList::waitTime(int playerIndex) {
+  GameKeeper::Player* playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  const char *callsign = playerData->player.getCallSign();
+  const char* callsign = playerData->player.getCallSign();
   if (!playerData || !callsign) {
     return 0.0f;
   }
@@ -99,7 +94,7 @@ float RejoinList::waitTime(int playerIndex)
   // remove old entries
   it = queue.begin();
   while (it != queue.end()) {
-    RejoinNode *rn = *it;
+    RejoinNode* rn = *it;
     if (rn->joinTime <= thenTime) {
       delete rn;
       it = queue.erase(it);
@@ -111,8 +106,8 @@ float RejoinList::waitTime(int playerIndex)
   float value = 0.0f;
   it = queue.begin();
   while (it != queue.end()) {
-    RejoinNode *rn = *it;
-    if (strcasecmp (rn->callsign, callsign) == 0) {
+    RejoinNode* rn = *it;
+    if (strcasecmp(rn->callsign, callsign) == 0) {
       value = float(rn->joinTime - thenTime);
     }
     it++;
@@ -125,6 +120,6 @@ float RejoinList::waitTime(int playerIndex)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

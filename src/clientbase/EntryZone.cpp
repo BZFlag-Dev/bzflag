@@ -17,8 +17,7 @@
 #include "Pack.h"
 
 
-EntryZone::EntryZone()
-{
+EntryZone::EntryZone() {
   pos = fvec3(0.0f, 0.0f, 0.0f);
   size = fvec3(1.0f, 1.0f, 1.0f);
   rot = 0.0f;
@@ -29,8 +28,7 @@ EntryZone::EntryZone()
 }
 
 
-void* EntryZone::unpack(void* buf)
-{
+void* EntryZone::unpack(void* buf) {
   uint16_t flagCount, teamCount, safetyCount;
 
   buf = nboUnpackFVec3(buf, pos);
@@ -42,8 +40,8 @@ void* EntryZone::unpack(void* buf)
 
   int i;
   for (i = 0; i < flagCount; i++) {
-    FlagType *type;
-    buf = FlagType::unpack (buf, type);
+    FlagType* type;
+    buf = FlagType::unpack(buf, type);
     flags.push_back(type);
   }
   for (i = 0; i < teamCount; i++) {
@@ -65,6 +63,6 @@ void* EntryZone::unpack(void* buf)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

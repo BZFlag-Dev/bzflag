@@ -34,19 +34,16 @@ extern void dumpResources();
 extern std::string alternateConfig;
 
 
-bool SaveMenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool SaveMenuDefaultKey::keyPress(const BzfKeyEvent& key) {
   return MenuDefaultKey::keyPress(key);
 }
 
-bool SaveMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
+bool SaveMenuDefaultKey::keyRelease(const BzfKeyEvent& key) {
   return MenuDefaultKey::keyRelease(key);
 }
 
 
-SaveMenu::SaveMenu()
-{
+SaveMenu::SaveMenu() {
   // add controls
   HUDuiLabel* label;
 
@@ -74,36 +71,32 @@ SaveMenu::SaveMenu()
   addControl(frame);
 }
 
-void SaveMenu::setFileName(std::string& fname)
-{
-     filename = fname;
+void SaveMenu::setFileName(std::string& fname) {
+  filename = fname;
 }
 
-std::string SaveMenu::getFileName()
-{
-     return filename;
+std::string SaveMenu::getFileName() {
+  return filename;
 }
 
-SaveMenu::~SaveMenu()
-{
+SaveMenu::~SaveMenu() {
 }
 
-void SaveMenu::resize(int _width, int _height)
-{
+void SaveMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font
   fs.setMin(0, 10);
   float fontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
-  fs.setMin(0,20);
+  fs.setMin(0, 20);
   float smallFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
-  fs.setMin(0,30);
+  fs.setMin(0, 30);
   float midFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
 
@@ -145,11 +138,10 @@ void SaveMenu::resize(int _width, int _height)
   frame->setSize(0.5f * getWidth() + 2.0f * gapSize, fontHeight * 4.0f);
 }
 
-void SaveMenu::execute()
-{
+void SaveMenu::execute() {
   HUDuiElement* _focus = getNav().get();
   std::vector<HUDuiElement*>& listHUD = getElements();
-  if (_focus == listHUD[2]){ //OK
+  if (_focus == listHUD[2]) { //OK
     HUDDialogStack::get()->pop();
   }
 }
@@ -159,6 +151,6 @@ void SaveMenu::execute()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

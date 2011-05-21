@@ -11,11 +11,11 @@
  */
 
 /* TriWallSceneNode:
- *	Encapsulates information for rendering a triangular wall.
+ *  Encapsulates information for rendering a triangular wall.
  */
 
-#ifndef	BZF_TRI_WALL_SCENE_NODE_H
-#define	BZF_TRI_WALL_SCENE_NODE_H
+#ifndef BZF_TRI_WALL_SCENE_NODE_H
+#define BZF_TRI_WALL_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"
@@ -28,20 +28,20 @@ class TriWallSceneNode : public WallSceneNode {
                      bool makeLODs = true);
     ~TriWallSceneNode();
 
-    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
+    int     split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
-    void		renderRadar();
+    void    addRenderNodes(SceneRenderer&);
+    void    addShadowNodes(SceneRenderer&);
+    void    renderRadar();
 
-    bool		inAxisBox (const Extents& exts) const;
+    bool    inAxisBox(const Extents& exts) const;
 
-    int			getVertexCount () const;
-    const fvec3&	getVertex (int vertex) const;
+    int     getVertexCount() const;
+    const fvec3&  getVertex(int vertex) const;
 
-    bool		cull(const ViewFrustum&) const;
+    bool    cull(const ViewFrustum&) const;
 
-    void		getRenderNodes(std::vector<RenderSet>& rnodes);
+    void    getRenderNodes(std::vector<RenderSet>& rnodes);
 
   protected:
     class Geometry : public RenderNode {
@@ -50,28 +50,28 @@ class TriWallSceneNode : public WallSceneNode {
                  const fvec3& base, const fvec3& uEdge, const fvec3& vEdge,
                  const float* normal, float uRepeats, float vRepeats);
         ~Geometry();
-	void		setStyle(int _style) { style = _style; }
-	void		render();
-	void		renderShadow();
-	const fvec3&	getVertex(int i) const;
-	const fvec3&	getPosition() const { return wall->getCenter(); }
+        void    setStyle(int _style) { style = _style; }
+        void    render();
+        void    renderShadow();
+        const fvec3&  getVertex(int i) const;
+        const fvec3&  getPosition() const { return wall->getCenter(); }
       private:
-	void		drawV() const;
-	void		drawVT() const;
+        void    drawV() const;
+        void    drawVT() const;
       private:
-	WallSceneNode*	wall;
-	int		style;
-	int		de;
-	const float*	normal;
+        WallSceneNode*  wall;
+        int   style;
+        int   de;
+        const float*  normal;
       public:
-	fvec3Array	vertex;
-	fvec2Array	uv;
-	int	     triangles;
+        fvec3Array  vertex;
+        fvec2Array  uv;
+        int      triangles;
     };
 
   private:
-    Geometry**		nodes;
-    Geometry*		shadowNode;
+    Geometry**    nodes;
+    Geometry*   shadowNode;
 };
 
 #endif // BZF_TRI_WALL_SCENE_NODE_H
@@ -80,6 +80,6 @@ class TriWallSceneNode : public WallSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -45,15 +45,13 @@ static BZDB_bool debugFontSizer("debugFontSizer");
 
 //============================================================================//
 
-static int getViewHeight()
-{
+static int getViewHeight() {
   MainWindow* mw = getMainWindow();
   return (mw != NULL) ? mw->getHeight() : 480;
 }
 
 
-static float findClosest(float fontSize)
-{
+static float findClosest(float fontSize) {
   if (fontSize > fontSizes.back()) {
     return fontSize;
   }
@@ -67,10 +65,9 @@ static float findClosest(float fontSize)
 }
 
 
-static void setupDefaultSizes()
-{
+static void setupDefaultSizes() {
   fontSizes.clear();
-  fontSizes.push_back( 8.0f);
+  fontSizes.push_back(8.0f);
   fontSizes.push_back(12.0f);
   fontSizes.push_back(16.0f);
   fontSizes.push_back(24.0f);
@@ -80,8 +77,7 @@ static void setupDefaultSizes()
 }
 
 
-static void setupFontSizes()
-{
+static void setupFontSizes() {
   const std::string& bzdbString = bzdbFontSizes;
 
   if ((fontSizesString != bzdbString) || fontSizesString.empty()) {
@@ -99,7 +95,8 @@ static void setupFontSizes()
       if ((end != start) && !isnan(value)) {
         if (value >= 1.0f) {
           fontSizes.push_back(value);
-        } else {
+        }
+        else {
           fontSizes.push_back(floorf(value * getViewHeight()));
         }
       }
@@ -125,30 +122,26 @@ static void setupFontSizes()
 //============================================================================//
 
 FontSizer::FontSizer(int _xpixels, int _ypixels)
-: xchars(0)
-, ychars(10)
-{
+  : xchars(0)
+  , ychars(10) {
   resize(_xpixels, _ypixels);
 }
 
 
 FontSizer::FontSizer(float _xpixels, float _ypixels)
-: xchars(0)
-, ychars(10)
-{
+  : xchars(0)
+  , ychars(10) {
   resize((int)_xpixels, (int)_ypixels);
 }
 
 
-FontSizer::~FontSizer()
-{
+FontSizer::~FontSizer() {
 }
 
 
 //============================================================================//
 
-void FontSizer::resize(int _xpixels, int _ypixels)
-{
+void FontSizer::resize(int _xpixels, int _ypixels) {
   xpixels = _xpixels;
   ypixels = _ypixels;
 
@@ -158,14 +151,12 @@ void FontSizer::resize(int _xpixels, int _ypixels)
 
 //============================================================================//
 
-float FontSizer::getFontSize(LocalFontFace* face, const std::string& bzdbExpr)
-{
+float FontSizer::getFontSize(LocalFontFace* face, const std::string& bzdbExpr) {
   return getFontSize(face->getFMFace(), bzdbExpr);
 }
 
 
-float FontSizer::getFontSize(int faceID, const std::string& bzdbExpr)
-{
+float FontSizer::getFontSize(int faceID, const std::string& bzdbExpr) {
   const float size = BZDB.eval(bzdbExpr);
 
   if (debugFontSizer) {
@@ -181,8 +172,7 @@ float FontSizer::getFontSize(int faceID, const std::string& bzdbExpr)
 }
 
 
-float FontSizer::getFontSize(int faceID, float zeroToOneSize)
-{
+float FontSizer::getFontSize(int faceID, float zeroToOneSize) {
   FontManager& fm = FontManager::instance();
 
   if (debugFontSizer) {
@@ -261,6 +251,6 @@ float FontSizer::getFontSize(int faceID, float zeroToOneSize)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

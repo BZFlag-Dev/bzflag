@@ -28,17 +28,16 @@
 //
 
 ShotPath::ShotPath(const FiringInfo& info)
-: firingInfo(info)
-, reloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
-, startTime(BzTime::getCurrent())
-, currentTime(BzTime::getCurrent())
-, expiring(false)
-, expired(false)
-, local(false)
-, gfxBlock     (GfxBlock::Shot,      (info.shot.player << 16) | info.shot.id, true)
-, radarGfxBlock(GfxBlock::ShotRadar, (info.shot.player << 16) | info.shot.id, true)
-{
-  switch(info.shotType) {
+  : firingInfo(info)
+  , reloadTime(BZDB.eval(BZDBNAMES.RELOADTIME))
+  , startTime(BzTime::getCurrent())
+  , currentTime(BzTime::getCurrent())
+  , expiring(false)
+  , expired(false)
+  , local(false)
+  , gfxBlock(GfxBlock::Shot, (info.shot.player << 16) | info.shot.id, true)
+  , radarGfxBlock(GfxBlock::ShotRadar, (info.shot.player << 16) | info.shot.id, true) {
+  switch (info.shotType) {
     default:
       strategy = new NormalShotStrategy(this);
       break;
@@ -82,40 +81,34 @@ ShotPath::ShotPath(const FiringInfo& info)
 }
 
 
-ShotPath::~ShotPath()
-{
+ShotPath::~ShotPath() {
   delete strategy;
 }
 
 
-float ShotPath::checkHit(const ShotCollider& tank, fvec3& position) const
-{
+float ShotPath::checkHit(const ShotCollider& tank, fvec3& position) const {
   return strategy->checkHit(tank, position);
 }
 
 
-bool ShotPath::isStoppedByHit() const
-{
+bool ShotPath::isStoppedByHit() const {
   return strategy->isStoppedByHit();
 }
 
 
-void ShotPath::addShot(SceneDatabase* scene, bool colorblind)
-{
+void ShotPath::addShot(SceneDatabase* scene, bool colorblind) {
   strategy->addShot(scene, colorblind);
 }
 
 
-void ShotPath::radarRender() const
-{
+void ShotPath::radarRender() const {
   if (!isExpired()) {
     strategy->radarRender();
   }
 }
 
 
-void ShotPath::updateShot(float dt)
-{
+void ShotPath::updateShot(float dt) {
   // get new time step and set current time
   currentTime += dt;
 
@@ -123,39 +116,35 @@ void ShotPath::updateShot(float dt)
   if (!expired) {
     if (expiring) {
       setExpired();
-    } else {
+    }
+    else {
       getStrategy()->update(dt);
     }
   }
 }
 
 
-void ShotPath::setReloadTime(float _reloadTime)
-{
+void ShotPath::setReloadTime(float _reloadTime) {
   reloadTime = _reloadTime;
 }
 
 
-void ShotPath::setPosition(const fvec3& pos)
-{
+void ShotPath::setPosition(const fvec3& pos) {
   firingInfo.shot.pos = pos;
 }
 
 
-void ShotPath::setVelocity(const fvec3& vel)
-{
+void ShotPath::setVelocity(const fvec3& vel) {
   firingInfo.shot.vel = vel;
 }
 
 
-void ShotPath::setExpiring()
-{
+void ShotPath::setExpiring() {
   expiring = true;
 }
 
 
-void ShotPath::setExpired()
-{
+void ShotPath::setExpired() {
   expiring = true;
   expired = true;
   getStrategy()->expire();
@@ -163,26 +152,22 @@ void ShotPath::setExpired()
 }
 
 
-void ShotPath::boostReloadTime(float dt)
-{
+void ShotPath::boostReloadTime(float dt) {
   reloadTime += dt;
 }
 
 
-bool ShotPath::predictPosition(float dt, fvec3& p) const
-{
+bool ShotPath::predictPosition(float dt, fvec3& p) const {
   return getStrategy()->predictPosition(dt, p);
 }
 
 
-bool ShotPath::predictVelocity(float dt, fvec3& p) const
-{
+bool ShotPath::predictVelocity(float dt, fvec3& p) const {
   return getStrategy()->predictVelocity(dt, p);
 }
 
 
-void ShotPath::update(float dt)
-{
+void ShotPath::update(float dt) {
   // update shot
   updateShot(dt);
 }
@@ -194,21 +179,18 @@ void ShotPath::update(float dt)
 //
 
 LocalShotPath::LocalShotPath(const FiringInfo& info)
-: ShotPath(info)
-{
+  : ShotPath(info) {
   // do nothing
   setLocal(true);
 }
 
 
-LocalShotPath::~LocalShotPath()
-{
+LocalShotPath::~LocalShotPath() {
   // do nothing
 }
 
 
-void LocalShotPath::update(float dt)
-{
+void LocalShotPath::update(float dt) {
   getFiringInfo().shot.dt += dt;
   updateShot(dt);
 
@@ -223,27 +205,23 @@ void LocalShotPath::update(float dt)
 //
 
 RemoteShotPath::RemoteShotPath(const FiringInfo& info)
-: ShotPath(info)
-{
+  : ShotPath(info) {
   // do nothing
 }
 
 
-RemoteShotPath::~RemoteShotPath()
-{
+RemoteShotPath::~RemoteShotPath() {
   // do nothing
 }
 
 
-void RemoteShotPath::update(float dt)
-{
+void RemoteShotPath::update(float dt) {
   // update shot
   updateShot(dt);
 }
 
 
-void RemoteShotPath::update(const ShotUpdate& shot, void* msg)
-{
+void RemoteShotPath::update(const ShotUpdate& shot, void* msg) {
   // update shot info
   getFiringInfo().shot = shot;
 
@@ -256,6 +234,6 @@ void RemoteShotPath::update(const ShotUpdate& shot, void* msg)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

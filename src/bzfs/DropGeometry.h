@@ -17,11 +17,10 @@
 #include "vectors.h"
 
 
-namespace DropGeometry
-{
-  bool dropFlag     (fvec3& pos, float minZ, float maxZ);
-  bool dropPlayer   (fvec3& pos, float minZ, float maxZ);
-  bool dropTeamFlag (fvec3& pos, float minZ, float maxZ, int team);
+namespace DropGeometry {
+  bool dropFlag(fvec3& pos, float minZ, float maxZ);
+  bool dropPlayer(fvec3& pos, float minZ, float maxZ);
+  bool dropTeamFlag(fvec3& pos, float minZ, float maxZ, int team);
 }
 
 
@@ -31,6 +30,6 @@ namespace DropGeometry
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

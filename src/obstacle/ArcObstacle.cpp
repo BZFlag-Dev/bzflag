@@ -26,20 +26,18 @@
 const char* ArcObstacle::typeName = "ArcObstacle";
 
 
-ArcObstacle::ArcObstacle()
-{
+ArcObstacle::ArcObstacle() {
   return;
 }
 
 
 ArcObstacle::ArcObstacle(const MeshTransform& xform,
-			 const fvec3& _pos, const fvec3& _size,
-			 float _rotation, float _sweepAngle, float _ratio,
-			 const float _texsize[4], bool _useNormals,
-			 int _divisions, const BzMaterial* mats[MaterialCount],
-			 int physics, bool bounce,
-			 unsigned char drive, unsigned char shoot, bool rico)
-{
+                         const fvec3& _pos, const fvec3& _size,
+                         float _rotation, float _sweepAngle, float _ratio,
+                         const float _texsize[4], bool _useNormals,
+                         int _divisions, const BzMaterial* mats[MaterialCount],
+                         int physics, bool bounce,
+                         unsigned char drive, unsigned char shoot, bool rico) {
   // common obstacle parameters
   pos = _pos;
   size = _size;
@@ -65,60 +63,52 @@ ArcObstacle::ArcObstacle(const MeshTransform& xform,
 }
 
 
-ArcObstacle::~ArcObstacle()
-{
+ArcObstacle::~ArcObstacle() {
   return;
 }
 
 
-Obstacle* ArcObstacle::copyWithTransform(const MeshTransform& xform) const
-{
+Obstacle* ArcObstacle::copyWithTransform(const MeshTransform& xform) const {
   MeshTransform tmpXform = transform;
   tmpXform.append(xform);
 
   ArcObstacle* copy =
     new ArcObstacle(tmpXform, pos, size, angle, sweepAngle, ratio,
-		    texsize, useNormals, divisions,
-		    (const BzMaterial**)materials, phydrv,
-		    smoothBounce, driveThrough, shootThrough, ricochet);
+                    texsize, useNormals, divisions,
+                    (const BzMaterial**)materials, phydrv,
+                    smoothBounce, driveThrough, shootThrough, ricochet);
   return copy;
 }
 
 
-const char* ArcObstacle::getType() const
-{
+const char* ArcObstacle::getType() const {
   return typeName;
 }
 
 
-const char* ArcObstacle::getClassName() // const
-{
+const char* ArcObstacle::getClassName() { // const
   return typeName;
 }
 
 
-bool ArcObstacle::isValid() const
-{
+bool ArcObstacle::isValid() const {
   return true;
 }
 
 
-bool ArcObstacle::isFlatTop() const
-{
+bool ArcObstacle::isFlatTop() const {
   return true;
 }
 
 
-void ArcObstacle::finalize()
-{
+void ArcObstacle::finalize() {
   return;
 }
 
 
 //============================================================================//
 
-MeshObstacle* ArcObstacle::makeMesh()
-{
+MeshObstacle* ArcObstacle::makeMesh() {
   MeshObstacle* mesh;
 
   bool isPie = false;    // has no inside edge
@@ -141,14 +131,14 @@ MeshObstacle* ArcObstacle::makeMesh()
 
   // adjust the texture sizes   FIXME: finish texsz[2] & texsz[3]
   float texsz[4];
-  memcpy (texsz, texsize, sizeof(float[4]));
+  memcpy(texsz, texsize, sizeof(float[4]));
   if (texsz[0] < 0.0f) {
     // unless you want to do elliptic integrals, here's
     // the Ramanujan approximation for the circumference
     // of an ellipse  (it will be rounded anyways)
     const float circ =
       (float)M_PI * ((3.0f * (sz.x + sz.y)) -
-	      sqrtf((sz.x + (3.0f * sz.y)) * (sz.y + (3.0f * sz.x))));
+                     sqrtf((sz.x + (3.0f * sz.y)) * (sz.y + (3.0f * sz.x))));
     // make sure it's an integral number so that the edges line up
     texsz[0] = -floorf(circ / texsz[0]);
   }
@@ -172,11 +162,11 @@ MeshObstacle* ArcObstacle::makeMesh()
   }
 
   // more validity checking
-  if (divisions <= (int) ((a + minSize) / M_PI)) {
+  if (divisions <= (int)((a + minSize) / M_PI)) {
     return NULL;
   }
 
-  if (fabsf ((float)M_PI - fmodf (a + (float)M_PI, (float)M_PI * 2.0f)) < minSize) {
+  if (fabsf((float)M_PI - fmodf(a + (float)M_PI, (float)M_PI * 2.0f)) < minSize) {
     isCircle = true;
   }
 
@@ -198,7 +188,8 @@ MeshObstacle* ArcObstacle::makeMesh()
 
   if (isPie) {
     mesh = makePie(isCircle, a, r, sz.z, outrad, squish, texsz);
-  } else {
+  }
+  else {
     mesh = makeRing(isCircle, a, r, sz.z, inrad, outrad, squish, texsz);
   }
 
@@ -207,7 +198,8 @@ MeshObstacle* ArcObstacle::makeMesh()
 
   if (mesh->isValid()) {
     return mesh;
-  } else {
+  }
+  else {
     delete mesh;
     return NULL;
   }
@@ -215,9 +207,8 @@ MeshObstacle* ArcObstacle::makeMesh()
 
 
 MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
-				   float h, float radius, float squish,
-				   float texsz[4])
-{
+                                   float h, float radius, float squish,
+                                   float texsz[4]) {
   MeshObstacle* mesh;
   int i;
 
@@ -234,7 +225,8 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
   if (isCircle) {
     v.x = pos.x;
     v.y = pos.y;
-  } else {
+  }
+  else {
     const float dir = r + (0.5f * a);
     v.x = pos.x + (cosf(dir) * radius * 0.5f);
     v.y = pos.y + (sinf(dir) * radius * 0.5f * squish);
@@ -272,13 +264,13 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
       vertices.push_back(v);
       // normal
       if (useNormals) {
-	n.z = 0.0f;
-	n.x = cos_val * squish;
-	n.y = sin_val;
-	float len = 1.0f / sqrtf((n.x * n.x) + (n.y * n.y));
-	n.x = n.x * len;
-	n.y = n.y * len;
-	normals.push_back(n);
+        n.z = 0.0f;
+        n.x = cos_val * squish;
+        n.y = sin_val;
+        float len = 1.0f / sqrtf((n.x * n.x) + (n.y * n.y));
+        n.x = n.x * len;
+        n.y = n.y * len;
+        normals.push_back(n);
       }
     }
 
@@ -329,7 +321,8 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
   if (isCircle) {
     vlen = divisions * 2;
     nlen = divisions;
-  } else {
+  }
+  else {
     vlen = (divisions + 1) * 2;
     nlen = (divisions + 1);
   }
@@ -347,13 +340,13 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 // handy macros
 #define PV(x) (((x) + (i * 2)) % vlen)
 #define PN(x) (((x) + i) % nlen)
-#define PTO(x) ((x) + (i * 2))		     // outside edge
+#define PTO(x) ((x) + (i * 2))         // outside edge
 #define PTC(x) (((divisions + 1) * 2) + (x) + i)   // around the disc
 #define PTCI(x) (((divisions + 1) * 3) - (x) - i - 1)
 
     // outside
     push4Ints(vlist, PV(0), PV(2), PV(3), PV(1));
-    if (useNormals) push4Ints(nlist, PN(0), PN(1), PN(1), PN(0));
+    if (useNormals) { push4Ints(nlist, PN(0), PN(1), PN(1), PN(0)); }
     push4Ints(tlist, PTO(0), PTO(2), PTO(3), PTO(1));
     addFace(mesh, vlist, nlist, tlist, materials[Outside], phydrv);
 
@@ -388,9 +381,8 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
 
 MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
-				    float h, float inrad, float outrad,
-				    float squish, float texsz[4])
-{
+                                    float h, float inrad, float outrad,
+                                    float squish, float texsz[4]) {
   MeshObstacle* mesh;
 
   // setup the coordinates
@@ -415,7 +407,8 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
     v.z = pos.z + (2.0f * height);
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::OutsideCheck);
-  } else {
+  }
+  else {
     // up
     v.z = pos.z + (2.0f * height);
     checkPoints.push_back(v);
@@ -470,17 +463,17 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
       vertices.push_back(v);
       // inside normal
       if (useNormals) {
-	n.z = 0.0f;
-	n.x = -cos_val * squish;
-	n.y = -sin_val;
-	float len = 1.0f / sqrtf((n.x * n.x) + (n.y * n.y));
-	n.x = n.x * len;
-	n.y = n.y * len;
-	normals.push_back(n);
-	// outside normal
-	n.x = -n.x;
-	n.y = -n.y;
-	normals.push_back(n);
+        n.z = 0.0f;
+        n.x = -cos_val * squish;
+        n.y = -sin_val;
+        float len = 1.0f / sqrtf((n.x * n.x) + (n.y * n.y));
+        n.x = n.x * len;
+        n.y = n.y * len;
+        normals.push_back(n);
+        // outside normal
+        n.x = -n.x;
+        n.y = -n.y;
+        normals.push_back(n);
       }
     }
 
@@ -502,16 +495,17 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
   }
 
   mesh = new MeshObstacle(transform, checkTypes, checkPoints,
-			  vertices, normals, texcoords, fcount,
-			  false, smoothBounce,
-			  driveThrough, shootThrough, ricochet);
+                          vertices, normals, texcoords, fcount,
+                          false, smoothBounce,
+                          driveThrough, shootThrough, ricochet);
 
   // now make the faces
   int vlen, nlen;
   if (isCircle) {
     vlen = divisions * 4;
     nlen = divisions * 2;
-  } else {
+  }
+  else {
     vlen = (divisions + 1) * 4;
     nlen = (divisions + 1) * 2;
   }
@@ -530,13 +524,13 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
 
     // inside
     push4Ints(vlist, RV(4), RV(0), RV(1), RV(5));
-    if (useNormals) push4Ints(nlist, RN(2), RN(0), RN(0), RN(2));
+    if (useNormals) { push4Ints(nlist, RN(2), RN(0), RN(0), RN(2)); }
     push4Ints(tlist, RIT(2), RIT(0), RIT(1), RIT(3));
     addFace(mesh, vlist, nlist, tlist, materials[Inside], phydrv);
 
     // outside
     push4Ints(vlist, RV(2), RV(6), RV(7), RV(3));
-    if (useNormals) push4Ints(nlist, RN(1), RN(3), RN(3), RN(1));
+    if (useNormals) { push4Ints(nlist, RN(1), RN(3), RN(3), RN(1)); }
     push4Ints(tlist, RT(0), RT(2), RT(3), RT(1));
     addFace(mesh, vlist, nlist, tlist, materials[Outside], phydrv);
 
@@ -571,61 +565,53 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
 
 //============================================================================//
 
-float ArcObstacle::intersect(const Ray&) const
-{
+float ArcObstacle::intersect(const Ray&) const {
   assert(false);
   return -1.0f;
 }
 
 
-void ArcObstacle::getNormal(const fvec3&, fvec3&) const
-{
+void ArcObstacle::getNormal(const fvec3&, fvec3&) const {
   assert(false);
   return;
 }
 
 
-void ArcObstacle::get3DNormal(const fvec3&, fvec3&) const
-{
+void ArcObstacle::get3DNormal(const fvec3&, fvec3&) const {
   assert(false);
   return;
 }
 
 
 bool ArcObstacle::getHitNormal(const fvec3&, float, const fvec3&, float,
-			       float, float, float, fvec3&) const
-{
+                               float, float, float, fvec3&) const {
   assert(false);
   return false;
 }
 
 
-bool ArcObstacle::inCylinder(const fvec3&, float, float) const
-{
+bool ArcObstacle::inCylinder(const fvec3&, float, float) const {
   assert(false);
   return false;
 }
 
 
-bool ArcObstacle::inBox(const fvec3&, float, float, float, float) const
-{
+bool ArcObstacle::inBox(const fvec3&, float, float, float, float) const {
   assert(false);
   return false;
 }
 
 
 bool ArcObstacle::inMovingBox(const fvec3&, float, const fvec3&, float,
-			      float, float, float) const
-{
+                              float, float, float) const {
   assert(false);
   return false;
 }
 
 
 bool ArcObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
-			  float /*dx*/, float /*dy*/, float /*height*/,
-			  fvec4* /*_plane*/) const
-{
+                             float /*dx*/, float /*dy*/, float /*height*/,
+                             fvec4* /*_plane*/) const {
   assert(false);
   return false;
 }
@@ -633,8 +619,7 @@ bool ArcObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
 
 //============================================================================//
 
-void* ArcObstacle::pack(void* buf) const
-{
+void* ArcObstacle::pack(void* buf) const {
   buf = transform.pack(buf);
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFVec3(buf, size);
@@ -666,8 +651,7 @@ void* ArcObstacle::pack(void* buf) const
 }
 
 
-void* ArcObstacle::unpack(void* buf)
-{
+void* ArcObstacle::unpack(void* buf) {
   int32_t inTmp;
   buf = transform.unpack(buf);
   buf = nboUnpackFVec3(buf, pos);
@@ -706,8 +690,7 @@ void* ArcObstacle::unpack(void* buf)
 }
 
 
-int ArcObstacle::packSize() const
-{
+int ArcObstacle::packSize() const {
   int fullSize = 0;
   fullSize += transform.packSize();
   fullSize += sizeof(fvec3);
@@ -726,16 +709,15 @@ int ArcObstacle::packSize() const
 
 //============================================================================//
 
-void ArcObstacle::print(std::ostream& out, const std::string& indent) const
-{
+void ArcObstacle::print(std::ostream& out, const std::string& indent) const {
   int i;
 
   out << indent << "arc" << std::endl;
 
   out << indent << "  position " << pos.x << " "
-				 << pos.y << " " << pos.z << std::endl;
+      << pos.y << " " << pos.z << std::endl;
   out << indent << "  size " << size.x << " "
-			     << size.y << " " << size.z << std::endl;
+      << size.y << " " << size.z << std::endl;
   out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  ratio " << ratio << std::endl;
@@ -744,11 +726,11 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
   transform.printTransforms(out, indent);
 
   out << indent << "  texsize " << texsize[0] << " " << texsize[1] << " "
-				<< texsize[2] << " " << texsize[3]
-				<< std::endl;
+      << texsize[2] << " " << texsize[3]
+      << std::endl;
 
   const char* sideNames[MaterialCount] =
-    { "top", "bottom", "inside", "outside", "startside", "endside" };
+  { "top", "bottom", "inside", "outside", "startside", "endside" };
   for (i = 0; i < MaterialCount; i++) {
     out << indent << "  " << sideNames[i] << " matref ";
     MATERIALMGR.printReference(out, materials[i]);
@@ -760,7 +742,8 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
     out << indent << "  phydrv ";
     if (driver->getName().size() > 0) {
       out << driver->getName();
-    } else {
+    }
+    else {
       out << phydrv;
     }
     out << std::endl;
@@ -795,6 +778,6 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,11 +11,11 @@
  */
 
 /* TextSceneNode:
- *	Encapsulates information for rendering world text.
+ *  Encapsulates information for rendering world text.
  */
 
-#ifndef	BZF_TEXT_SCENE_NODE_H
-#define	BZF_TEXT_SCENE_NODE_H
+#ifndef BZF_TEXT_SCENE_NODE_H
+#define BZF_TEXT_SCENE_NODE_H
 
 
 #include "common.h"
@@ -38,7 +38,7 @@ class TextSceneNode : public SceneNode {
 
     void setRawText(const std::string& rawText);
 
-    bool inAxisBox (const Extents&) const;
+    bool inAxisBox(const Extents&) const;
 
     void notifyStyleChange();
 
@@ -52,21 +52,21 @@ class TextSceneNode : public SceneNode {
   protected:
     class TextRenderNode : public RenderNode {
 
-      friend class TextSceneNode;
+        friend class TextSceneNode;
 
       public:
-	TextRenderNode(TextSceneNode*, const WorldText* text);
-	~TextRenderNode();
+        TextRenderNode(TextSceneNode*, const WorldText* text);
+        ~TextRenderNode();
 
-	void setText(const std::string& text);
+        void setText(const std::string& text);
 
-	void render();
-	void renderRadar();
-	void renderShadow();
+        void render();
+        void renderRadar();
+        void renderShadow();
 
-	const fvec3& getPosition() const { return sceneNode->getCenter(); }
+        const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
-	const fvec4* getColorPtr() const { return colorPtr; }
+        const fvec4* getColorPtr() const { return colorPtr; }
 
       private:
         int  getFontID() const;
@@ -77,7 +77,7 @@ class TextSceneNode : public SceneNode {
         bool checkDist() const;
         void singleLineXForm() const;
 
-	void drawDebug();
+        void drawDebug();
 
         void initXFormList();
         void freeXFormList();
@@ -87,7 +87,7 @@ class TextSceneNode : public SceneNode {
         static void bzdbCallback(const std::string& name, void* userData);
 
       private:
-	TextSceneNode* sceneNode;
+        TextSceneNode* sceneNode;
 
         const WorldText text;
 
@@ -138,6 +138,6 @@ class TextSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

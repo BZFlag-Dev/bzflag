@@ -21,18 +21,15 @@
 // SceneDatabase
 //
 
-SceneDatabase::SceneDatabase()
-{
+SceneDatabase::SceneDatabase() {
   // do nothing
 }
 
-SceneDatabase::~SceneDatabase()
-{
+SceneDatabase::~SceneDatabase() {
   // do nothing
 }
 
-void SceneDatabase::setOccluderManager(int)
-{
+void SceneDatabase::setOccluderManager(int) {
   // do nothing
 }
 
@@ -41,6 +38,6 @@ void SceneDatabase::setOccluderManager(int)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

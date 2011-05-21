@@ -36,7 +36,7 @@
 
 // opaque version number increments on protocol incompatibility
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0117"
+#  define BZ_PROTO_VERSION  "0117"
 #endif
 // ditto for bzrobots
 #ifndef BZROBOTS_PROTO_VERSION
@@ -49,23 +49,23 @@
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
 #ifndef BZ_MAJOR_VERSION
-#  define BZ_MAJOR_VERSION	2
+#  define BZ_MAJOR_VERSION  2
 #endif
 
 #ifndef BZ_MINOR_VERSION
-#  define BZ_MINOR_VERSION	99
+#  define BZ_MINOR_VERSION  99
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		60
+#  define BZ_REV    60
 #endif
 
 // DEVEL | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"DEVEL"
+#  define BZ_BUILD_TYPE   "DEVEL"
 #endif
 
-const char *bzfcopyright = "Copyright (c) 1993-2010 Tim Riker";
+const char* bzfcopyright = "Copyright (c) 1993-2010 Tim Riker";
 
 
 //
@@ -90,74 +90,69 @@ const char *bzfcopyright = "Copyright (c) 1993-2010 Tim Riker";
 /* *nix gets this from the passed from my the Makefile */
 static const char buildDate[] = {__DATE__};
 
-static const char monthsOfYear[][4] = {"Jan","Feb","Mar","Apr","May","Jun",
-                                       "Jul","Aug","Sep","Oct","Nov","Dec"};
+static const char monthsOfYear[][4] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                                       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                                      };
 
-int getBuildDate()
-{
+int getBuildDate() {
   int year = 1900, month, day = 0;
   char monthStr[4];
 
   sscanf(buildDate, "%4s %d %d", monthStr, &day, &year);
 
   for (month = 12; month > 1; --month) {
-    if (strcmp(monthStr, monthsOfYear[month-1]) == 0)
+    if (strcmp(monthStr, monthsOfYear[month - 1]) == 0) {
       break;
+    }
   }
 
-  return 10000*year + 100*month + day;
+  return 10000 * year + 100 * month + day;
 }
 #endif
 // down here so above gets created
 #include "version.h"
 
-const char*		getProtocolVersion()
-{
+const char*   getProtocolVersion() {
   static std::string protVersion = BZ_PROTO_VERSION;
   return protVersion.c_str();
 }
 
-const char*		getRobotsProtocolVersion()
-{
+const char*   getRobotsProtocolVersion() {
   static std::string robotsProtVersion = BZROBOTS_PROTO_VERSION;
   return robotsProtVersion.c_str();
 }
 
-const char*		getServerVersion()
-{
+const char*   getServerVersion() {
   static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
   return serverVersion.c_str();
 }
 
-const char*		getMajorMinorVersion()
-{
-  static std::string	version = "";
-  if (!version.size()){
-    std::ostringstream	versionStream;
+const char*   getMajorMinorVersion() {
+  static std::string  version = "";
+  if (!version.size()) {
+    std::ostringstream  versionStream;
     versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION;
     version = versionStream.str();
   }
   return version.c_str();
 }
 
-const char*		getMajorMinorRevVersion()
-{
-  static std::string	version = "";
-  if (!version.size()){
-    std::ostringstream	versionStream;
+const char*   getMajorMinorRevVersion() {
+  static std::string  version = "";
+  if (!version.size()) {
+    std::ostringstream  versionStream;
     versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV;
     version = versionStream.str();
   }
   return version.c_str();
 }
 
-const char*		getAppVersion()
-{
-  static std::string	appVersion = "";
-  if (!appVersion.size()){
-    std::ostringstream	appVersionStream;
+const char*   getAppVersion() {
+  static std::string  appVersion = "";
+  if (!appVersion.size()) {
+    std::ostringstream  appVersionStream;
     appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE
-	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
+                     << "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";
 #endif
@@ -166,8 +161,7 @@ const char*		getAppVersion()
   return appVersion.c_str();
 }
 
-std::string		getOSString()
-{
+std::string   getOSString() {
   std::string versionString = "unknown";
 #ifdef _WIN32
   // build up version string
@@ -179,11 +173,13 @@ std::string		getOSString()
   GetNativeSystemInfo(&systemInfo);
 
   std::string platform = "Win32";
-  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64)
+  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64) {
     platform = "Win64";
-  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64)
+  }
+  if (systemInfo.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64) {
     platform = "WinIA64";
-  versionString = TextUtils::format("%s %d.%d.%d sp%d.%d",platform.c_str(),versionInfo.dwMajorVersion,versionInfo.dwMinorVersion,versionInfo.dwBuildNumber, versionInfo.wServicePackMajor,versionInfo.wServicePackMinor);
+  }
+  versionString = TextUtils::format("%s %d.%d.%d sp%d.%d", platform.c_str(), versionInfo.dwMajorVersion, versionInfo.dwMinorVersion, versionInfo.dwBuildNumber, versionInfo.wServicePackMajor, versionInfo.wServicePackMinor);
 #else
 #ifdef __APPLE__
   OSErr err = noErr;
@@ -205,7 +201,8 @@ std::string		getOSString()
     reply << systemMinor;
     reply << ".";
     reply << systemBugFix;
-  } else {
+  }
+  else {
     reply << "unknown system version (Gestalt error)";
   }
 
@@ -217,7 +214,8 @@ std::string		getOSString()
   char* architecture = (char*) malloc(length);
   if (sysctlbyname("hw.machine", architecture, &length, NULL, 0) == 0) {
     reply << " " << architecture;
-  } else {
+  }
+  else {
     reply << " unknown architecture";
   }
   free(architecture);
@@ -252,14 +250,16 @@ std::string		getOSString()
   if (uname(&buf) == -1) {
     perror("uname");
     versionString = "unix unknown";
-  } else {
+  }
+  else {
     std::vector<std::string> rtok = TextUtils::tokenize(buf.release, ".", 4);
     std::string rel;
     unsigned int i;
     // use up to three period separated elements of the release string
     for (i = 0; i < 3 && i < rtok.size(); i++) {
-      if (rel.size() > 0)
-	rel += ".";
+      if (rel.size() > 0) {
+        rel += ".";
+      }
       rel += rtok[i];
     }
     // "Linux 2.6.27 x86_64" for example
@@ -275,6 +275,6 @@ std::string		getOSString()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

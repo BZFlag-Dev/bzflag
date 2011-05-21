@@ -36,8 +36,7 @@ BZRobots::RobotStatus::RobotStatus() :
   botVelocity(0.0f),
   botX(0.0f),
   botY(0.0f),
-  botZ(0.0f)
-{
+  botZ(0.0f) {
 
 }
 
@@ -65,7 +64,7 @@ BZRobots::RobotStatus::RobotStatus(
   double _botX,
   double _botY,
   double _botZ
-  ) :
+) :
   botDistanceRemaining(_botDistanceRemaining),
   botEnergy(_botEnergy),
   botGunHeading(_botGunHeading),
@@ -88,13 +87,11 @@ BZRobots::RobotStatus::RobotStatus(
   botVelocity(_botVelocity),
   botX(_botX),
   botY(_botY),
-  botZ(_botZ)
-{
+  botZ(_botZ) {
 
 }
 
-BZRobots::RobotStatus::~RobotStatus()
-{
+BZRobots::RobotStatus::~RobotStatus() {
 
 }
 
@@ -103,6 +100,6 @@ BZRobots::RobotStatus::~RobotStatus()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

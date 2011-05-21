@@ -35,55 +35,50 @@ static const float defLineSpace = 1.1f;
 //============================================================================//
 
 WorldText::WorldText()
-: name("")
-, data("")
-, font("")
-, fontSize(defFontSize)
-, justify(0.0f)
-, lineSpace(defLineSpace)
-, fixedWidth(0.0f)
-, lengthPerPixel(0.0f)
-, useBZDB(false)
-, billboard(false)
-, bzMaterial(NULL)
-, fromGroup(false)
-{
+  : name("")
+  , data("")
+  , font("")
+  , fontSize(defFontSize)
+  , justify(0.0f)
+  , lineSpace(defLineSpace)
+  , fixedWidth(0.0f)
+  , lengthPerPixel(0.0f)
+  , useBZDB(false)
+  , billboard(false)
+  , bzMaterial(NULL)
+  , fromGroup(false) {
 }
 
 
 WorldText::WorldText(const WorldText& wt)
-: name(wt.name)
-, data(wt.data)
-, font(wt.font)
-, fontSize(wt.fontSize)
-, justify(wt.justify)
-, lineSpace(wt.lineSpace)
-, fixedWidth(wt.fixedWidth)
-, lengthPerPixel(wt.lengthPerPixel)
-, useBZDB(wt.useBZDB)
-, billboard(wt.billboard)
-, bzMaterial(wt.bzMaterial)
-, fromGroup(wt.fromGroup)
-{
+  : name(wt.name)
+  , data(wt.data)
+  , font(wt.font)
+  , fontSize(wt.fontSize)
+  , justify(wt.justify)
+  , lineSpace(wt.lineSpace)
+  , fixedWidth(wt.fixedWidth)
+  , lengthPerPixel(wt.lengthPerPixel)
+  , useBZDB(wt.useBZDB)
+  , billboard(wt.billboard)
+  , bzMaterial(wt.bzMaterial)
+  , fromGroup(wt.fromGroup) {
   xform = wt.xform;
 }
 
 
-WorldText::~WorldText()
-{
+WorldText::~WorldText() {
 }
 
 
-WorldText* WorldText::copyWithTransform(const MeshTransform& transform) const
-{
+WorldText* WorldText::copyWithTransform(const MeshTransform& transform) const {
   WorldText* newText = new WorldText(*this);
   newText->xform.append(transform);
   return newText;
 }
 
 
-bool WorldText::isValid() const
-{
+bool WorldText::isValid() const {
   if (data.empty()) {
     return false;
   }
@@ -91,8 +86,7 @@ bool WorldText::isValid() const
 }
 
 
-int WorldText::packSize() const
-{
+int WorldText::packSize() const {
   int fullSize = 0;
 
   fullSize += nboStdStringPackSize(name);
@@ -114,8 +108,7 @@ int WorldText::packSize() const
 }
 
 
-void* WorldText::pack(void* buf) const
-{
+void* WorldText::pack(void* buf) const {
   buf = nboPackStdString(buf, name);
   buf = nboPackStdString(buf, font);
   buf = nboPackStdString(buf, data);
@@ -140,8 +133,7 @@ void* WorldText::pack(void* buf) const
 }
 
 
-void* WorldText::unpack(void* buf)
-{
+void* WorldText::unpack(void* buf) {
   buf = nboUnpackStdString(buf, name);
   buf = nboUnpackStdString(buf, font);
   buf = nboUnpackStdString(buf, data);
@@ -171,8 +163,7 @@ void* WorldText::unpack(void* buf)
 }
 
 
-void WorldText::print(std::ostream& out, const std::string& indent) const
-{
+void WorldText::print(std::ostream& out, const std::string& indent) const {
   out << indent << "text" << std::endl;
 
   if (name.size() > 0) {
@@ -183,7 +174,8 @@ void WorldText::print(std::ostream& out, const std::string& indent) const
     if (data.size() > 0) {
       out << indent << "  string " << data << std::endl;
     }
-  } else {
+  }
+  else {
     if (data.size() > 0) {
       out << indent << "  varName " << data << std::endl;
     }
@@ -229,6 +221,6 @@ void WorldText::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

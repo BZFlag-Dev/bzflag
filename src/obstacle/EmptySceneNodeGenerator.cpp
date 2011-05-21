@@ -17,12 +17,10 @@
 // EmptySceneNodeGenerator
 //
 
-EmptySceneNodeGenerator::~EmptySceneNodeGenerator()
-{
+EmptySceneNodeGenerator::~EmptySceneNodeGenerator() {
 }
 
-WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool)
-{
+WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool) {
   return NULL;
 }
 
@@ -30,6 +28,6 @@ WallSceneNode* EmptySceneNodeGenerator::getNextNode(float, float, bool)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

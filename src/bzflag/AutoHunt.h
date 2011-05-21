@@ -19,8 +19,7 @@
 #include <string>
 
 
-namespace AutoHunt
-{
+namespace AutoHunt {
   void update();
 
   const char* getColorString(int level);
@@ -45,6 +44,6 @@ namespace AutoHunt
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

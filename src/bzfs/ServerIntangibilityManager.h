@@ -26,28 +26,27 @@
 
 #define _INVALID_TANGIBILITY 255
 
-class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager>
-{
-public:
-  void setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible);
+class ServerIntangibilityManager :   public Singleton<ServerIntangibilityManager> {
+  public:
+    void setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible);
 
-  void sendNewPlayerWorldTangibility(int playerID);
+    void sendNewPlayerWorldTangibility(int playerID);
 
-  void resetTangibility(void);
+    void resetTangibility(void);
 
-  unsigned char getWorldObjectTangibility( const Obstacle *obs );
-  unsigned char getWorldObjectTangibility(uint32_t objectGUID);
+    unsigned char getWorldObjectTangibility(const Obstacle* obs);
+    unsigned char getWorldObjectTangibility(uint32_t objectGUID);
 
-protected:
-  friend class Singleton<ServerIntangibilityManager>;
+  protected:
+    friend class Singleton<ServerIntangibilityManager>;
 
-private:
-  ServerIntangibilityManager(){};
-  ~ServerIntangibilityManager(){};
+  private:
+    ServerIntangibilityManager() {};
+    ~ServerIntangibilityManager() {};
 
-  // obstacle id to tangilibilty map
-  typedef std::map<uint32_t, unsigned char> TangibilityMap;
-  TangibilityMap tangibilityMap;
+    // obstacle id to tangilibilty map
+    typedef std::map<uint32_t, unsigned char> TangibilityMap;
+    TangibilityMap tangibilityMap;
 };
 
 #endif  /*__SERVERINTANGIBILITYMANAGER_H__ */
@@ -56,6 +55,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

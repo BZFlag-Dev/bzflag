@@ -16,8 +16,8 @@
  * unfortunately this can include far more than necessary
  */
 
-#ifndef	BZF_NETWORK_H
-#define	BZF_NETWORK_H
+#ifndef BZF_NETWORK_H
+#define BZF_NETWORK_H
 
 #include "common.h"
 
@@ -40,78 +40,78 @@
 
 #if !defined(_WIN32)
 
-  #include <sys/time.h>
-  #include <sys/ioctl.h>
-  #include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
 
-  #ifndef GUSI_20
-  #  include <sys/param.h>
-  #endif
+#ifndef GUSI_20
+#  include <sys/param.h>
+#endif
 
-  #include <net/if.h>
-  #include <netinet/in.h>
+#include <net/if.h>
+#include <netinet/in.h>
 
-  #if defined(__linux__)
-  /* these are defined in both socket.h and tcp.h without ifdef guards. */
-  #  undef TCP_NODELAY
-  #  undef TCP_MAXSEG
-  #endif
+#if defined(__linux__)
+/* these are defined in both socket.h and tcp.h without ifdef guards. */
+#  undef TCP_NODELAY
+#  undef TCP_MAXSEG
+#endif
 
-  #include <netinet/tcp.h>
-  #include <arpa/inet.h>
-  #ifdef HAVE_NETDB_H
-  #  include <netdb.h>
-  #endif
-  #ifdef HAVE_BSTRING_H
-  #  include <bstring.h>
-  #endif
+#include <netinet/tcp.h>
+#include <arpa/inet.h>
+#ifdef HAVE_NETDB_H
+#  include <netdb.h>
+#endif
+#ifdef HAVE_BSTRING_H
+#  include <bstring.h>
+#endif
 
-  #if defined(sun)
-  /* setsockopt prototypes the 4th arg as const char*. */
-  #  define SSOType   const char*
-  /* connect prototypes the 2nd arg without const */
-  #  define CNCTType  struct sockaddr
-  #endif
+#if defined(sun)
+/* setsockopt prototypes the 4th arg as const char*. */
+#  define SSOType   const char*
+/* connect prototypes the 2nd arg without const */
+#  define CNCTType  struct sockaddr
+#endif
 
-  /* BeOS net_server has closesocket(), which _must_ be used in place of close() */
-  #if defined(__BEOS__) && (IPPROTO_TCP != 6)
-  #  define close(__x) closesocket(__x)
-  #endif
+/* BeOS net_server has closesocket(), which _must_ be used in place of close() */
+#if defined(__BEOS__) && (IPPROTO_TCP != 6)
+#  define close(__x) closesocket(__x)
+#endif
 
-  #define herror(msg) bzfherror(msg)
+#define herror(msg) bzfherror(msg)
 
 #else /* !defined(_WIN32) */
 
-  #define MAXHOSTNAMELEN  64
+#define MAXHOSTNAMELEN  64
 
-  #define EINPROGRESS  WSAEWOULDBLOCK  /* FIXME -- WSAEINPROGRESS ? */
-  #define EWOULDBLOCK  WSAEWOULDBLOCK
-  #define ECONNRESET   WSAECONNRESET
-  #define EBADMSG      WSAECONNRESET   /* not defined by windows */
+#define EINPROGRESS  WSAEWOULDBLOCK  /* FIXME -- WSAEINPROGRESS ? */
+#define EWOULDBLOCK  WSAEWOULDBLOCK
+#define ECONNRESET   WSAECONNRESET
+#define EBADMSG      WSAECONNRESET   /* not defined by windows */
 
-  // shutdown() types
-  #ifndef   SHUT_RD
-  #  define SHUT_RD SD_RECEIVE
-  #endif
-  #ifndef   SHUT_WR
-  #  define SHUT_WR SD_SEND
-  #endif
-  #ifndef   SHUT_RDWR
-  #  define SHUT_RDWR SD_BOTH
-  #endif
+// shutdown() types
+#ifndef   SHUT_RD
+#  define SHUT_RD SD_RECEIVE
+#endif
+#ifndef   SHUT_WR
+#  define SHUT_WR SD_SEND
+#endif
+#ifndef   SHUT_RDWR
+#  define SHUT_RDWR SD_BOTH
+#endif
 
-  /* setsockopt prototypes the 4th arg as const char*. */
-  #define SSOType		const char*
+/* setsockopt prototypes the 4th arg as const char*. */
+#define SSOType   const char*
 
-  inline int close(SOCKET s) { return closesocket(s); }
-  #define ioctl(__fd, __req, __arg) ioctlsocket(__fd, __req, (u_long*)__arg)
-  #define gethostbyaddr(__addr, __len, __type) \
+inline int close(SOCKET s) { return closesocket(s); }
+#define ioctl(__fd, __req, __arg) ioctlsocket(__fd, __req, (u_long*)__arg)
+#define gethostbyaddr(__addr, __len, __type) \
             gethostbyaddr((const char*)__addr, __len, __type)
 
-  extern "C" {
-    int  inet_aton(const char* cp, struct in_addr* pin);
-    void herror(const char* msg);
-  }
+extern "C" {
+  int  inet_aton(const char* cp, struct in_addr* pin);
+  void herror(const char* msg);
+}
 
 #endif /* !defined(_WIN32) */
 
@@ -142,7 +142,7 @@ class BzfNetwork {
     static int  closeSocket(int fd);
     static int  setNonBlocking(int fd);
     static int  setBlocking(int fd);
-    static bool	parseURL(const std::string& url,
+    static bool parseURL(const std::string& url,
                          std::string& protocol, std::string& hostname,
                          int& port, std::string& pathname);
     enum ConnState {
@@ -162,6 +162,6 @@ class BzfNetwork {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

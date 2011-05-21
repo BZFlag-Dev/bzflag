@@ -59,7 +59,7 @@ extern void glLineRing(float radius, float width = 1.0f);
 
 // draw an outline box with the outside at the bounds, and inset by the thickness
 extern void glOutlineBoxCP(float thickness, float centerX, float centerY,
-                    float width, float height, float depth = 0.0f);
+                           float width, float height, float depth = 0.0f);
 inline void glOutlineBoxCP(float t, int x, int y, int w, int h, int d = 0) {
   glOutlineBoxCP(t, (float)x, (float)y, (float)w, (float)h, (float)d);
 }
@@ -82,43 +82,41 @@ typedef unsigned int GLDisplayList;
 #define _INVALID_LIST INVALID_GL_ID
 
 
-class GLDisplayListCreator
-{
- public:
-  virtual ~GLDisplayListCreator() {}
+class GLDisplayListCreator {
+  public:
+    virtual ~GLDisplayListCreator() {}
 
-  virtual void buildGeometry(GLDisplayList displayList) = 0;
+    virtual void buildGeometry(GLDisplayList displayList) = 0;
 };
 
 
-class DisplayListSystem
-{
- public:
-  static DisplayListSystem& Instance() {
-    static DisplayListSystem dls;
-    return dls;
-  }
+class DisplayListSystem {
+  public:
+    static DisplayListSystem& Instance() {
+      static DisplayListSystem dls;
+      return dls;
+    }
 
-  ~DisplayListSystem();
+    ~DisplayListSystem();
 
-  GLDisplayList newList(GLDisplayListCreator *creator);
-  void freeList(GLDisplayList displayList);
+    GLDisplayList newList(GLDisplayListCreator* creator);
+    void freeList(GLDisplayList displayList);
 
-  void flushLists();
+    void flushLists();
 
-  void callList(GLDisplayList displayList);
-  void callListsV(std::vector<GLDisplayList> &displayLists);
+    void callList(GLDisplayList displayList);
+    void callListsV(std::vector<GLDisplayList> &displayLists);
 
- protected:
-  DisplayListSystem();
+  protected:
+    DisplayListSystem();
 
-  typedef struct _DisplayList {
-    GLDisplayListCreator	*creator;
-    unsigned int		list;
-  } DisplayList;
+    typedef struct _DisplayList {
+      GLDisplayListCreator*  creator;
+      unsigned int    list;
+    } DisplayList;
 
-  std::map<GLDisplayList,DisplayList>	lists;
-  GLDisplayList				lastList;
+    std::map<GLDisplayList, DisplayList> lists;
+    GLDisplayList       lastList;
 };
 
 
@@ -129,6 +127,6 @@ class DisplayListSystem
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -31,9 +31,8 @@ const int PyrPolygons = 20;
 
 EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
                                          const fvec3& size, float rotation)
-: EighthDimSceneNode(PyrPolygons)
-, renderNode(this, pos, size, rotation)
-{
+  : EighthDimSceneNode(PyrPolygons)
+  , renderNode(this, pos, size, rotation) {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
@@ -74,14 +73,12 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const fvec3& pos,
 }
 
 
-EighthDPyrSceneNode::~EighthDPyrSceneNode()
-{
+EighthDPyrSceneNode::~EighthDPyrSceneNode() {
   // do nothing
 }
 
 
-void EighthDPyrSceneNode::notifyStyleChange()
-{
+void EighthDPyrSceneNode::notifyStyleChange() {
   EighthDimSceneNode::notifyStyleChange();
 
   OpenGLGStateBuilder builder(gstate);
@@ -97,8 +94,7 @@ void EighthDPyrSceneNode::notifyStyleChange()
 }
 
 
-void EighthDPyrSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void EighthDPyrSceneNode::addRenderNodes(SceneRenderer& renderer) {
   EighthDimSceneNode::addRenderNodes(renderer);
   renderer.addRenderNode(&renderNode, &gstate);
 }
@@ -109,11 +105,10 @@ void EighthDPyrSceneNode::addRenderNodes(SceneRenderer& renderer)
 //
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
-				const EighthDPyrSceneNode* _sceneNode,
-				const fvec3& pos,
-				const fvec3& size, float rotation) :
-				sceneNode(_sceneNode)
-{
+  const EighthDPyrSceneNode* _sceneNode,
+  const fvec3& pos,
+  const fvec3& size, float rotation) :
+  sceneNode(_sceneNode) {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
@@ -133,13 +128,11 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
   corner[4].z = pos.z + size.z;
 }
 
-EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()
-{
+EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode() {
   // do nothing
 }
 
-void			EighthDPyrSceneNode::EighthDPyrRenderNode::render()
-{
+void      EighthDPyrSceneNode::EighthDPyrRenderNode::render() {
   myColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINE_LOOP);
   glVertex3fv(corner[0]);
@@ -159,6 +152,6 @@ void			EighthDPyrSceneNode::EighthDPyrRenderNode::render()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

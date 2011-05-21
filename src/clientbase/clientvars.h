@@ -25,9 +25,9 @@
 #include "Team.h"
 
 
-extern LocalPlayer *myTank;
-extern World *world;
-extern Team *teams;
+extern LocalPlayer* myTank;
+extern World* world;
+extern Team* teams;
 
 #ifdef ROBOT
 extern std::vector<BzfRegion*> obstacleList;  // for robots
@@ -40,7 +40,7 @@ extern std::vector<BzfRegion*> obstacleList;  // for robots
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
 

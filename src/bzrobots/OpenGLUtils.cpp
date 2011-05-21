@@ -18,66 +18,53 @@
 #include <math.h>
 
 
-float getFloatColor ( int )
-{
+float getFloatColor(int) {
   return 0.0f;
 }
 
-void setColor ( float [3], int, int, int )
-{
+void setColor(float [3], int, int, int) {
 }
 
-void glSetColor ( float [3], float)
-{
+void glSetColor(float [3], float) {
 }
 
-void glTranslatefv ( float [3] )
-{
+void glTranslatefv(float [3]) {
 }
 
-void glQuad ( float, float, eAlignment, float )
-{
+void glQuad(float, float, eAlignment, float) {
 }
 
-void glLineRing ( float, float )
-{
+void glLineRing(float, float) {
 }
 
 // DisplayListSystem
 
-DisplayListSystem::~DisplayListSystem()
-{
+DisplayListSystem::~DisplayListSystem() {
 }
 
-void DisplayListSystem::flushLists ( void )
-{
+void DisplayListSystem::flushLists(void) {
 }
 
-GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *)
-{
+GLDisplayList DisplayListSystem::newList(GLDisplayListCreator*) {
   return GLDisplayList();
 }
 
-void DisplayListSystem::freeList (GLDisplayList)
-{
+void DisplayListSystem::freeList(GLDisplayList) {
 }
 
-void DisplayListSystem::callList (GLDisplayList)
-{
+void DisplayListSystem::callList(GLDisplayList) {
 }
 
-void DisplayListSystem::callListsV (std::vector<GLDisplayList> &)
-{
+void DisplayListSystem::callListsV(std::vector<GLDisplayList> &) {
 }
 
-DisplayListSystem::DisplayListSystem()
-{
+DisplayListSystem::DisplayListSystem() {
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

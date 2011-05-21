@@ -20,8 +20,7 @@
 #define TIME_BOMB ""
 #endif
 
-bool			timeBombBoom()
-{
+bool      timeBombBoom() {
   const char* timeBomb = timeBombString();
   if (timeBomb) {
     int day, month, year;
@@ -29,17 +28,16 @@ bool			timeBombBoom()
     time(&t);
     const struct tm* tm = localtime(&t);
     sscanf(timeBomb, "%d/%d/%d", &month, &day, &year);
-    if (tm->tm_year > year - 1900) return true;
-    if (tm->tm_year == year - 1900 && tm->tm_mon > month - 1) return true;
-    if (tm->tm_mon == month - 1 && tm->tm_mday >= day) return true;
+    if (tm->tm_year > year - 1900) { return true; }
+    if (tm->tm_year == year - 1900 && tm->tm_mon > month - 1) { return true; }
+    if (tm->tm_mon == month - 1 && tm->tm_mday >= day) { return true; }
   }
   return false;
 }
 
-const char*		timeBombString()
-{
+const char*   timeBombString() {
   static const char timeBomb[] = TIME_BOMB;
-  if (timeBomb[0] == '\0') return NULL;
+  if (timeBomb[0] == '\0') { return NULL; }
   return timeBomb;
 }
 
@@ -47,6 +45,6 @@ const char*		timeBombString()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

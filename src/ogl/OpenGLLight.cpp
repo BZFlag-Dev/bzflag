@@ -28,13 +28,12 @@ int OpenGLLight::maxLights = 0;
 
 
 OpenGLLight::OpenGLLight()
-: pos(0.0f, 0.0f, 1.0f, 0.0f)
-, color(0.8f, 0.8f, 0.8f, 1.0f)
-, atten(1.0f, 0.0f, 0.0f)
-, maxDist(50.0f)
-, onlyReal(false)
-, onlyGround(false)
-{
+  : pos(0.0f, 0.0f, 1.0f, 0.0f)
+  , color(0.8f, 0.8f, 0.8f, 1.0f)
+  , atten(1.0f, 0.0f, 0.0f)
+  , maxDist(50.0f)
+  , onlyReal(false)
+  , onlyGround(false) {
   //
   // Here's the equation for maxDist:
   //
@@ -52,8 +51,7 @@ OpenGLLight::OpenGLLight()
 }
 
 
-OpenGLLight::OpenGLLight(const OpenGLLight& l)
-{
+OpenGLLight::OpenGLLight(const OpenGLLight& l) {
   pos = l.pos;
   color = l.color;
   atten = l.atten;
@@ -65,8 +63,7 @@ OpenGLLight::OpenGLLight(const OpenGLLight& l)
 }
 
 
-OpenGLLight& OpenGLLight::operator=(const OpenGLLight& l)
-{
+OpenGLLight& OpenGLLight::operator=(const OpenGLLight& l) {
   if (this != &l) {
     freeLists();
     pos = l.pos;
@@ -80,8 +77,7 @@ OpenGLLight& OpenGLLight::operator=(const OpenGLLight& l)
 }
 
 
-void OpenGLLight::makeLists()
-{
+void OpenGLLight::makeLists() {
   const int numLights = getMaxLights();
 
   // invalidate the lists
@@ -91,81 +87,71 @@ void OpenGLLight::makeLists()
   }
 
   OpenGLGState::registerContextInitializer(freeContext,
-					   initContext, (void*)this);
+                                           initContext, (void*)this);
   return;
 }
 
 
-OpenGLLight::~OpenGLLight()
-{
+OpenGLLight::~OpenGLLight() {
   OpenGLGState::unregisterContextInitializer(freeContext,
-					     initContext, (void*)this);
+                                             initContext, (void*)this);
   freeLists();
   delete[] lists;
   return;
 }
 
 
-void OpenGLLight::setDirection(const fvec3& _pos)
-{
+void OpenGLLight::setDirection(const fvec3& _pos) {
   freeLists();
   pos = fvec4(_pos, 0.0f);
 }
 
 
-void OpenGLLight::setPosition(const fvec3& _pos)
-{
+void OpenGLLight::setPosition(const fvec3& _pos) {
   freeLists();
   pos = fvec4(_pos, 1.0f);
 }
 
 
-void OpenGLLight::setColor(float r, float g, float b)
-{
+void OpenGLLight::setColor(float r, float g, float b) {
   freeLists();
   color = fvec4(r, g, b, 1.0f);
 }
 
 
-void OpenGLLight::setColor(const fvec4& rgba)
-{
+void OpenGLLight::setColor(const fvec4& rgba) {
   freeLists();
   color = rgba;
 }
 
 
-void OpenGLLight::setAttenuation(const fvec3& _atten)
-{
+void OpenGLLight::setAttenuation(const fvec3& _atten) {
   freeLists();
   atten = _atten;
 }
 
 
-void OpenGLLight::setAttenuation(int index, float value)
-{
+void OpenGLLight::setAttenuation(int index, float value) {
   freeLists();
   atten[index] = value;
 }
 
 
-void OpenGLLight::setOnlyReal(bool value)
-{
+void OpenGLLight::setOnlyReal(bool value) {
   freeLists();
   onlyReal = value;
   return;
 }
 
 
-void OpenGLLight::setOnlyGround(bool value)
-{
+void OpenGLLight::setOnlyGround(bool value) {
   freeLists();
   onlyGround = value;
   return;
 }
 
 
-void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
-{
+void OpenGLLight::calculateImportance(const ViewFrustum& frustum) {
   // far away lights (directional) count the most
   // (shouldn't happen for dynamic lights?)
   if (pos.w == 0.0f) {
@@ -190,8 +176,8 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
       const fvec4& plane = frustum.getSide(i);
       const float len = plane.planeDist(pos.xyz());
       if (len < -maxDist) {
-	importance = -1.0f;
-	return;
+        importance = -1.0f;
+        return;
       }
     }
   }
@@ -209,7 +195,8 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
   // compute the 'importance' factor
   if (dist == 0.0f) {
     importance = 0.5f * MAXFLOAT;
-  } else {
+  }
+  else {
     importance = 1.0f / dist;
   }
 
@@ -217,15 +204,15 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 }
 
 
-void OpenGLLight::enableLight(int index, bool on) // const
-{
-  static const fvec4 onAmbient (0.0f, 0.0f, 0.0f, 1.0f);
+void OpenGLLight::enableLight(int index, bool on) { // const
+  static const fvec4 onAmbient(0.0f, 0.0f, 0.0f, 1.0f);
   static const fvec4 offAmbient(0.0f, 0.0f, 0.0f, 0.0f);
   const GLenum light = (GL_LIGHT0 + index);
   if (on) {
     glEnable(light);
     glLightfv(light, GL_AMBIENT, onAmbient); // for shaders
-  } else {
+  }
+  else {
     glDisable(light);
     glLightfv(light, GL_AMBIENT, offAmbient); // for shaders
   }
@@ -233,8 +220,7 @@ void OpenGLLight::enableLight(int index, bool on) // const
 }
 
 
-void OpenGLLight::execute(int index, bool useList) const
-{
+void OpenGLLight::execute(int index, bool useList) const {
   if (!useList) {
     genLight((unsigned int)(GL_LIGHT0 + index));
     return;
@@ -255,8 +241,7 @@ void OpenGLLight::execute(int index, bool useList) const
 }
 
 
-void OpenGLLight::genLight(unsigned int light) const
-{
+void OpenGLLight::genLight(unsigned int light) const {
   glLightfv(light, GL_POSITION, pos);
   glLightfv(light, GL_DIFFUSE, color);
   glLightfv(light, GL_SPECULAR, color);
@@ -268,8 +253,7 @@ void OpenGLLight::genLight(unsigned int light) const
 }
 
 
-void OpenGLLight::freeLists()
-{
+void OpenGLLight::freeLists() {
   const int numLights = getMaxLights();
   for (int i = 0; i < numLights; i++) {
     if (lists[i] != INVALID_GL_LIST_ID) {
@@ -281,8 +265,7 @@ void OpenGLLight::freeLists()
 }
 
 
-int OpenGLLight::getMaxLights()
-{
+int OpenGLLight::getMaxLights() {
   if (maxLights == 0) {
     glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
   }
@@ -290,15 +273,13 @@ int OpenGLLight::getMaxLights()
 }
 
 
-void OpenGLLight::freeContext(void* self)
-{
+void OpenGLLight::freeContext(void* self) {
   ((OpenGLLight*)self)->freeLists();
   return;
 }
 
 
-void OpenGLLight::initContext(void* /*self*/)
-{
+void OpenGLLight::initContext(void* /*self*/) {
   // execute() will rebuild the lists
   return;
 }
@@ -308,6 +289,6 @@ void OpenGLLight::initContext(void* /*self*/)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

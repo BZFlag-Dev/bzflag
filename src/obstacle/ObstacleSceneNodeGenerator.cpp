@@ -18,13 +18,11 @@
 //
 
 ObstacleSceneNodeGenerator::ObstacleSceneNodeGenerator() :
-				node(0)
-{
+  node(0) {
   // do nothing
 }
 
-ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
-{
+ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator() {
   // do nothing
 }
 
@@ -32,6 +30,6 @@ ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

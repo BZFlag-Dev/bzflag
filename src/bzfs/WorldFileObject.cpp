@@ -25,14 +25,12 @@
 #include <iostream>
 #include <vector>
 
-WorldFileObject::WorldFileObject()
-{
+WorldFileObject::WorldFileObject() {
   name = "";
 }
 
 
-bool WorldFileObject::read(const char *cmd, std::istream& input)
-{
+bool WorldFileObject::read(const char* cmd, std::istream& input) {
   if (strcasecmp(cmd, "name") == 0) {
     input >> name;
     return true;
@@ -41,22 +39,19 @@ bool WorldFileObject::read(const char *cmd, std::istream& input)
 }
 
 
-void WorldFileObject::writeToWorld(WorldInfo*) const
-{
+void WorldFileObject::writeToWorld(WorldInfo*) const {
   std::cout << "ERROR: writeToWorld() called improperly" << std::endl;
   return;
 }
 
 
-void WorldFileObject::writeToManager() const
-{
+void WorldFileObject::writeToManager() const {
   std::cout << "ERROR: writeToManager() called improperly" << std::endl;
   return;
 }
 
 
-void WorldFileObject::writeToGroupDef(GroupDefinition*) const
-{
+void WorldFileObject::writeToGroupDef(GroupDefinition*) const {
   std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
   return;
 }
@@ -65,8 +60,7 @@ void WorldFileObject::writeToGroupDef(GroupDefinition*) const
 /** delete all of the world file objects from a vector list
  */
 
-void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
-{
+void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist) {
   const int n = wlist.size();
   for (int i = 0; i < n; ++i) {
     delete wlist[i];
@@ -79,6 +73,6 @@ void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

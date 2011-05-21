@@ -28,8 +28,7 @@
 #include "MeshDrawInfo.h"
 
 
-CustomMesh::CustomMesh(const char* meshName)
-{
+CustomMesh::CustomMesh(const char* meshName) {
   name = meshName;
   face = NULL;
   weapon = NULL;
@@ -46,8 +45,7 @@ CustomMesh::CustomMesh(const char* meshName)
 }
 
 
-CustomMesh::~CustomMesh()
-{
+CustomMesh::~CustomMesh() {
   if (face != NULL) {
     std::cout << "discarded incomplete mesh face" << std::endl;
     delete face;
@@ -73,8 +71,7 @@ CustomMesh::~CustomMesh()
 }
 
 
-bool CustomMesh::read(const char *cmd, std::istream& input)
-{
+bool CustomMesh::read(const char* cmd, std::istream& input) {
   bool materror;
 
   if (strncasecmp(cmd, "lod", 3) == 0) {
@@ -88,7 +85,8 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "endface") == 0) {
     if (face == NULL) {
       std::cout << "extra 'endface' keyword found" << std::endl;
-    } else {
+    }
+    else {
       faces.push_back(face);
       face = NULL;
     }
@@ -96,7 +94,8 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
   else if (strcasecmp(cmd, "endweapon") == 0) {
     if (weapon == NULL) {
       std::cout << "extra 'endweapon' keyword found" << std::endl;
-    } else {
+    }
+    else {
       weapons.push_back(weapon);
       weapon = NULL;
     }
@@ -119,7 +118,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       delete face;
     }
     face = new CustomMeshFace(material, phydrv, noclusters,
-			      smoothBounce, driveThrough, shootThrough);
+                              smoothBounce, driveThrough, shootThrough);
   }
   else if (strcasecmp(cmd, "weapon") == 0) {
     if (weapon != NULL) {
@@ -192,9 +191,9 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     else {
       drawInfo = new MeshDrawInfo();
       if (!drawInfo->parse(input)) {
-	std::cout << "WARNING: invalid drawInfo" << std::endl;
-	delete drawInfo;
-	drawInfo = NULL;
+        std::cout << "WARNING: invalid drawInfo" << std::endl;
+        delete drawInfo;
+        drawInfo = NULL;
       }
     }
   }
@@ -213,8 +212,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomMesh::writeToGroupDef(GroupDefinition* groupdef) const {
   // include the old style parameters
   MeshTransform xform;
   if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
@@ -236,10 +234,11 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     if (decorative) {
       vert.x = vert.y = vert.z = (Obstacle::maxExtent * 2.0f);
       if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
-	logDebugMessage(0,"WARNING: mesh is supposed to be decorative, setting to passable\n");
-	forcePassable = true;
+        logDebugMessage(0, "WARNING: mesh is supposed to be decorative, setting to passable\n");
+        forcePassable = true;
       }
-    } else {
+    }
+    else {
       vert.x = vert.y = vert.z = 0.0f;
     }
     ((std::vector<fvec3>*)&vertices)->push_back(vert);
@@ -247,11 +246,11 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 
   MeshObstacle* mesh =
     new MeshObstacle(xform, checkTypes, checkPoints,
-		     vertices, normals, texcoords, faces.size(),
-		     noclusters, smoothBounce,
-		     driveThrough || forcePassable,
-		     shootThrough || forcePassable,
-		     ricochet);
+                     vertices, normals, texcoords, faces.size(),
+                     noclusters, smoothBounce,
+                     driveThrough || forcePassable,
+                     shootThrough || forcePassable,
+                     ricochet);
 
   mesh->setName(name);
 
@@ -280,7 +279,8 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     ((MeshDrawInfo*)drawInfo)->serverSetup(mesh);
     if (drawInfo->isValid()) {
       mesh->setDrawInfo(drawInfo);
-    } else {
+    }
+    else {
       delete drawInfo;
     }
   }
@@ -295,6 +295,6 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -24,22 +24,21 @@
 
 /* protected */
 
-void VotingArbiter::updatePollers(void)
-{
+void VotingArbiter::updatePollers(void) {
   while (!_pollers.empty()) {
     poller_t& p = _pollers.front();
     if ((BzTime::getCurrent() - p.lastRequest) > _voteRepeatTime) {
       // remove pollers that expired their repoll timeout
       _pollers.pop_front();
-    } else {
+    }
+    else {
       break;
     }
   }
   return;
 }
 
-bool VotingArbiter::isPollerWaiting(const std::string &name) const
-{
+bool VotingArbiter::isPollerWaiting(const std::string& name) const {
   for (unsigned int i = 0; i < _pollers.size(); i++) {
     if (TextUtils::compare_nocase(_pollers[i].name, name) == 0) {
       return true;
@@ -51,8 +50,7 @@ bool VotingArbiter::isPollerWaiting(const std::string &name) const
 
 /* public */
 
-bool VotingArbiter::forgetPoll(void)
-{
+bool VotingArbiter::forgetPoll(void) {
   if (_votingBooth != NULL) {
     delete _votingBooth;
     _votingBooth = NULL;
@@ -69,8 +67,7 @@ bool VotingArbiter::forgetPoll(void)
   return true;
 }
 
-bool VotingArbiter::poll(const std::string &player, const std::string &playerRequesting, std::string action, std::string playerIP)
-{
+bool VotingArbiter::poll(const std::string& player, const std::string& playerRequesting, std::string action, std::string playerIP) {
   poller_t p;
   std::string message;
   bool tooSoon;
@@ -112,34 +109,28 @@ bool VotingArbiter::poll(const std::string &player, const std::string &playerReq
   return true;
 }
 
-bool VotingArbiter::pollToKick(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
-{
+bool VotingArbiter::pollToKick(const std::string& player, const std::string& playerRequesting, const std::string& playerIP) {
   return (this->poll(player, playerRequesting, std::string("kick"), playerIP));
 }
 
-bool VotingArbiter::pollToKill(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
-{
+bool VotingArbiter::pollToKill(const std::string& player, const std::string& playerRequesting, const std::string& playerIP) {
   return (this->poll(player, playerRequesting, std::string("kill"), playerIP));
 }
 
-bool VotingArbiter::pollToBan(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
-{
+bool VotingArbiter::pollToBan(const std::string& player, const std::string& playerRequesting, const std::string& playerIP) {
   return (this->poll(player, playerRequesting, std::string("ban"), playerIP));
 }
 
-bool VotingArbiter::pollToSet(const std::string &setting, const std::string &playerRequesting)
-{
+bool VotingArbiter::pollToSet(const std::string& setting, const std::string& playerRequesting) {
   return (this->poll(setting, playerRequesting, std::string("set")));
 }
 
-bool VotingArbiter::pollToResetFlags(const std::string &playerRequesting)
-{
-  std::string flags=std::string("flags");
+bool VotingArbiter::pollToResetFlags(const std::string& playerRequesting) {
+  std::string flags = std::string("flags");
   return (this->poll(flags, playerRequesting, std::string("reset")));
 }
 
-bool VotingArbiter::closePoll(void)
-{
+bool VotingArbiter::closePoll(void) {
   if (this->isPollClosed()) {
     return true;
   }
@@ -150,14 +141,12 @@ bool VotingArbiter::closePoll(void)
   return true;
 }
 
-bool VotingArbiter::setAvailableVoters(unsigned short int count)
-{
+bool VotingArbiter::setAvailableVoters(unsigned short int count) {
   _maxVotes = count;
   return true;
 }
 
-bool VotingArbiter::grantSuffrage(const std::string &player)
-{
+bool VotingArbiter::grantSuffrage(const std::string& player) {
   for (unsigned int i = 0; i < _suffraged.size(); i++) {
     if (TextUtils::compare_nocase(_suffraged[i], player) == 0) {
       return true;
@@ -167,8 +156,7 @@ bool VotingArbiter::grantSuffrage(const std::string &player)
   return true;
 }
 
-bool VotingArbiter::hasSuffrage(const std::string &player) const
-{
+bool VotingArbiter::hasSuffrage(const std::string& player) const {
   // is there a poll to vote on?
   if (!this->isPollOpen()) {
     return false;
@@ -199,12 +187,11 @@ bool VotingArbiter::hasSuffrage(const std::string &player) const
   return true;
 }
 
-bool VotingArbiter::hasVoted(const std::string &player) const{
+bool VotingArbiter::hasVoted(const std::string& player) const {
   return _votingBooth->hasVoted(TextUtils::tolower(player));
 }
 
-bool VotingArbiter::voteYes(const std::string &player)
-{
+bool VotingArbiter::voteYes(const std::string& player) {
   if (!this->knowsPoll() || this->isPollClosed()) {
     return false;
   }
@@ -217,8 +204,7 @@ bool VotingArbiter::voteYes(const std::string &player)
   return (_votingBooth->vote(TextUtils::tolower(player), "yes"));
 }
 
-bool VotingArbiter::voteNo(const std::string &player)
-{
+bool VotingArbiter::voteNo(const std::string& player) {
   if (!this->knowsPoll() || this->isPollClosed()) {
     return false;
   }
@@ -231,24 +217,21 @@ bool VotingArbiter::voteNo(const std::string &player)
   return (_votingBooth->vote(TextUtils::tolower(player), "no"));
 }
 
-unsigned long int VotingArbiter::getYesCount(void) const
-{
+unsigned long int VotingArbiter::getYesCount(void) const {
   if (!this->knowsPoll()) {
     return 0;
   }
   return _votingBooth->getVoteCount("yes");
 }
 
-unsigned long int VotingArbiter::getNoCount(void) const
-{
+unsigned long int VotingArbiter::getNoCount(void) const {
   if (!this->knowsPoll()) {
     return 0;
   }
   return _votingBooth->getVoteCount("no");
 }
 
-unsigned long int VotingArbiter::getAbstentionCount(void) const
-{
+unsigned long int VotingArbiter::getAbstentionCount(void) const {
   // cannot abstain if there is no poll
   if (!this->knowsPoll()) {
     return 0;
@@ -260,8 +243,7 @@ unsigned long int VotingArbiter::getAbstentionCount(void) const
   return count;
 }
 
-bool VotingArbiter::isPollSuccessful(void) const
-{
+bool VotingArbiter::isPollSuccessful(void) const {
   if (!this->knowsPoll()) {
     return false;
   }
@@ -285,8 +267,7 @@ bool VotingArbiter::isPollSuccessful(void) const
   return false;
 }
 
-bool VotingArbiter::isPollSureToFail(void) const
-{
+bool VotingArbiter::isPollSureToFail(void) const {
   if (!this->knowsPoll()) {
     return true; // hrm, maybe false
   }
@@ -309,8 +290,7 @@ bool VotingArbiter::isPollSureToFail(void) const
   return false;
 }
 
-unsigned short int VotingArbiter::timeRemaining(void) const
-{
+unsigned short int VotingArbiter::timeRemaining(void) const {
   if (_votingBooth == NULL) {
     return 0;
   }
@@ -327,8 +307,7 @@ unsigned short int VotingArbiter::timeRemaining(void) const
   return (unsigned short int)remaining;
 }
 
-bool VotingArbiter::retractVote(const std::string &player)
-{
+bool VotingArbiter::retractVote(const std::string& player) {
   if (_votingBooth == NULL) {
     return false;
   }
@@ -340,6 +319,6 @@ bool VotingArbiter::retractVote(const std::string &player)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

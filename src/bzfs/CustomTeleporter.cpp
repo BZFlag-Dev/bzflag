@@ -22,8 +22,7 @@
 #include "ObstacleMgr.h"
 
 
-CustomTeleporter::CustomTeleporter(const char* _telename)
-{
+CustomTeleporter::CustomTeleporter(const char* _telename) {
   telename = _telename;
   size.x = 0.5f * BZDB.eval(BZDBNAMES.TELEWIDTH);
   size.y = BZDB.eval(BZDBNAMES.TELEBREADTH);
@@ -33,8 +32,7 @@ CustomTeleporter::CustomTeleporter(const char* _telename)
 }
 
 
-bool CustomTeleporter::read(const char *cmd, std::istream& input)
-{
+bool CustomTeleporter::read(const char* cmd, std::istream& input) {
   if (strcasecmp(cmd, "border") == 0) {
     input >> border;
   }
@@ -48,8 +46,7 @@ bool CustomTeleporter::read(const char *cmd, std::istream& input)
 }
 
 
-static std::string cleanName(const std::string& n)
-{
+static std::string cleanName(const std::string& n) {
   std::string name = n;
 
   if (name.empty()) {
@@ -75,13 +72,12 @@ static std::string cleanName(const std::string& n)
 }
 
 
-void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomTeleporter::writeToGroupDef(GroupDefinition* groupdef) const {
   Teleporter* tele =
     new Teleporter(transform, pos, rotation,
-		   fabsf(size.x), fabsf(size.y), fabsf(size.z),
-		   border, texSize,
-		   driveThrough, shootThrough, ricochet);
+                   fabsf(size.x), fabsf(size.y), fabsf(size.z),
+                   border, texSize,
+                   driveThrough, shootThrough, ricochet);
 
 //  std::string finalName = !telename.empty() ? telename : name;
 
@@ -99,6 +95,6 @@ void CustomTeleporter::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

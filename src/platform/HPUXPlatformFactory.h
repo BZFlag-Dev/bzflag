@@ -11,28 +11,28 @@
  */
 
 /* HPUXPlatformFactory:
- *	Factory for Sun Sparc/HPUX platform stuff.
+ *  Factory for Sun Sparc/HPUX platform stuff.
  */
 
 #ifndef BZF_HPUXPLATFORM_FACTORY_H
-#define	BZF_HPUXPLATFORM_FACTORY_H
+#define BZF_HPUXPLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
 class HPUXPlatformFactory : public PlatformFactory {
   public:
-			HPUXPlatformFactory();
-			~HPUXPlatformFactory();
+    HPUXPlatformFactory();
+    ~HPUXPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+    BzfDisplay*   createDisplay(const char* name, const char*);
+    BzfVisual*    createVisual(const BzfDisplay*);
+    BzfWindow*    createWindow(const BzfDisplay*, BzfVisual*);
 
   private:
-			HPUXPlatformFactory(const HPUXPlatformFactory&);
-    HPUXPlatformFactory&	operator=(const HPUXPlatformFactory&);
+    HPUXPlatformFactory(const HPUXPlatformFactory&);
+    HPUXPlatformFactory&  operator=(const HPUXPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*   createMedia();
 };
 
 #endif // BZF_HPUXPLATFORM_FACTORY_H
@@ -41,6 +41,6 @@ class HPUXPlatformFactory : public PlatformFactory {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -60,65 +60,61 @@ fvec4 FontManager::underlineColor(0.0f, 0.0f, 0.0f, 0.0f);
  * This class encapsulates implementation details that we don't want
  * exposed in the header
  */
-class BZFontFace_impl
-{
-public:
-  /**
-   * Default constructor (required to allow this in a vector)
-   */
-  BZFontFace_impl() {}
+class BZFontFace_impl {
+  public:
+    /**
+     * Default constructor (required to allow this in a vector)
+     */
+    BZFontFace_impl() {}
 
-  /**
-   * Preferred constructor
-   */
-  BZFontFace_impl(std::string const& name_, std::string const& path_)
-    : privateName(name_), path(path_)
-  {
-  }
+    /**
+     * Preferred constructor
+     */
+    BZFontFace_impl(std::string const& name_, std::string const& path_)
+      : privateName(name_), path(path_) {
+    }
 
-  /**
-   * Accessor for the face name
-   */
-  std::string name() const { return privateName; }
+    /**
+     * Accessor for the face name
+     */
+    std::string name() const { return privateName; }
 
-  /**
-   * release all loaded sizes
-   */
-  void clear();
+    /**
+     * release all loaded sizes
+     */
+    void clear();
 
-  /**
-   * Accessor to retrieve a particular font size from this face
-   */
-  FTFont* getSize(size_t size)
-  {
-    // Because the sizes are kept in a map, a request for a size that
-    // doesn't exist will create a new entry in the map with a
-    // default-constructed pointer (0). This isn't naive, it's
-    // sophisticated
-    return sizes[size];
-  }
+    /**
+     * Accessor to retrieve a particular font size from this face
+     */
+    FTFont* getSize(size_t size) {
+      // Because the sizes are kept in a map, a request for a size that
+      // doesn't exist will create a new entry in the map with a
+      // default-constructed pointer (0). This isn't naive, it's
+      // sophisticated
+      return sizes[size];
+    }
 
-  /**
-   * Mutator to set a particular font size from this face.
-   * Takes over ownership of the allocated memory
-   */
-  void setSize(size_t size, FTFont* font)
-  {
-    delete sizes[size];
-    sizes[size] = font;
-  }
+    /**
+     * Mutator to set a particular font size from this face.
+     * Takes over ownership of the allocated memory
+     */
+    void setSize(size_t size, FTFont* font) {
+      delete sizes[size];
+      sizes[size] = font;
+    }
 
-  /**
-   * Font size factory
-   */
-  FTFont* loadSize(size_t size);
+    /**
+     * Font size factory
+     */
+    FTFont* loadSize(size_t size);
 
-private:
-  std::string privateName;
-  std::string path;
+  private:
+    std::string privateName;
+    std::string path;
 
-  typedef std::map<size_t, FTFont*> FontSizes;
-  FontSizes sizes;
+    typedef std::map<size_t, FTFont*> FontSizes;
+    FontSizes sizes;
 };
 
 
@@ -140,8 +136,7 @@ namespace {
   /**
    * return the ftgl representation for a given font of a given size
    */
-  FTFont* getGLFont(int face, int size)
-  {
+  FTFont* getGLFont(int face, int size) {
     FTFont* font(0);
     if (face < 0 || face >= (int)fontFaces.size()) {
       std::cerr << "invalid font face specified" << std::endl;
@@ -157,8 +152,8 @@ namespace {
 
 #if debugging
     std::cout << "getGLFont CREATED face:" << face
-	      << " size:" << size << " " << (void*)font
-	      << std::endl;
+              << " size:" << size << " " << (void*)font
+              << std::endl;
 #endif
 
     return font;
@@ -167,13 +162,12 @@ namespace {
 }
 
 
-void BZFontFace_impl::clear()
-{
+void BZFontFace_impl::clear() {
   for (FontSizes::iterator itr = sizes.begin(); itr != sizes.end(); ++itr) {
 #if debugging
     if (itr->second != 0) {
       std::cout << "BZFontFace_impl::clear font [" << name() << "]:" << (void*)(itr->second)
-		<< " size:" << itr->first << std::endl;
+                << " size:" << itr->first << std::endl;
     }
 #endif
     setSize(itr->first, NULL); // frees all sizes
@@ -182,8 +176,7 @@ void BZFontFace_impl::clear()
 
 
 
-FTFont* BZFontFace_impl::loadSize(size_t size)
-{
+FTFont* BZFontFace_impl::loadSize(size_t size) {
   FTFont* font(0);
 
   bool useBitmapFont = BZDB.isTrue("useBitmapFonts");
@@ -194,10 +187,12 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
     }
   }
 
-  if(useBitmapFont)
+  if (useBitmapFont) {
     font = new CRAP_FONT(path.c_str());
-  else
+  }
+  else {
     font = new FONT(path.c_str());
+  }
 
   if (!font || font->Error() != 0) {
     // TODO: what can we do to try to resolve this?
@@ -238,14 +233,13 @@ FTFont* BZFontFace_impl::loadSize(size_t size)
 }
 
 FontManager::FontManager()
-: Singleton<FontManager>()
-, opacity(1.0f)
-, dimFactor(0.2f)
-, darkness(1.0f)
-, rawBlending(false)
-, flooring(true)
-, useOutline(true)
-{
+  : Singleton<FontManager>()
+  , opacity(1.0f)
+  , dimFactor(0.2f)
+  , darkness(1.0f)
+  , rawBlending(false)
+  , flooring(true)
+  , useOutline(true) {
 #if debugging
   std::cout << "CONSTRUCTING FONT MANAGER" << std::endl;
 #endif
@@ -257,15 +251,13 @@ FontManager::FontManager()
 }
 
 
-FontManager::~FontManager()
-{
+FontManager::~FontManager() {
   clear();
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
 }
 
 
-int FontManager::load(const std::string& fileName)
-{
+int FontManager::load(const std::string& fileName) {
   int id = -1;
 
 #if debugging
@@ -306,10 +298,10 @@ int FontManager::load(const std::string& fileName)
 }
 
 
-int FontManager::loadAll(std::string directory)
-{
-  if (directory.size() == 0)
+int FontManager::loadAll(std::string directory) {
+  if (directory.size() == 0) {
     return 0;
+  }
 
   // save this in case we have to rebuild
   fontDirectory = directory;
@@ -321,8 +313,9 @@ int FontManager::loadAll(std::string directory)
   while (dir.getNextFile(file, "*.ttf", true)) {
     if (load(file.getFullOSPath().c_str()) >= 0) {
       count++;
-    } else {
-      logDebugMessage(4,"Font Texture load failed: %s\n", file.getOSName().c_str());
+    }
+    else {
+      logDebugMessage(4, "Font Texture load failed: %s\n", file.getOSName().c_str());
     }
   } // end while iteration over ttf files
 
@@ -330,21 +323,19 @@ int FontManager::loadAll(std::string directory)
 }
 
 
-void FontManager::clear(void)
-{
+void FontManager::clear(void) {
 #if debugging
   std::cout << "FontManager::clear" << std::endl;
 #endif
 
   std::for_each(fontFaces.begin(), fontFaces.end(),
-		std::mem_fun_ref(&BZFontFace_impl::clear) );
+                std::mem_fun_ref(&BZFontFace_impl::clear));
 
   return;
 }
 
 
-bool FontManager::freeFontFile(const std::string& fileName)
-{
+bool FontManager::freeFontFile(const std::string& fileName) {
   const int id = lookupFileID(fileName);
   if (id < 0) {
     return false;
@@ -354,8 +345,7 @@ bool FontManager::freeFontFile(const std::string& fileName)
 }
 
 
-int FontManager::lookupID(std::string const& faceName)
-{
+int FontManager::lookupID(std::string const& faceName) {
   IdMap::const_iterator it = name2id.find(faceName);
   if (it == name2id.end()) {
     return -1;
@@ -364,8 +354,7 @@ int FontManager::lookupID(std::string const& faceName)
 }
 
 
-int FontManager::lookupFileID(std::string const& fileName)
-{
+int FontManager::lookupFileID(std::string const& fileName) {
   IdMap::const_iterator it = file2id.find(fileName);
   if (it == file2id.end()) {
     return -1;
@@ -374,8 +363,7 @@ int FontManager::lookupFileID(std::string const& fileName)
 }
 
 
-int FontManager::getFaceID(std::string const& faceName, bool quietly)
-{
+int FontManager::getFaceID(std::string const& faceName, bool quietly) {
   const int id = lookupID(faceName);
   if (id >= 0) {
     return id;
@@ -395,16 +383,14 @@ int FontManager::getFaceID(std::string const& faceName, bool quietly)
 }
 
 
-int FontManager::getNumFaces(void)
-{
+int FontManager::getNumFaces(void) {
   return (int)fontFaces.size();
 }
 
 
-const char* FontManager::getFaceName(int faceID)
-{
+const char* FontManager::getFaceName(int faceID) {
   if ((faceID < 0) || (faceID > getNumFaces())) {
-    logDebugMessage(2,"Trying to fetch name for invalid Font Face ID %d\n", faceID);
+    logDebugMessage(2, "Trying to fetch name for invalid Font Face ID %d\n", faceID);
     return (char*)NULL;
   }
 
@@ -420,8 +406,7 @@ static float italicMatrix[16] = {
 };
 
 
-static float calcOutlineOpacity(float bias, float strength)
-{
+static float calcOutlineOpacity(float bias, float strength) {
   // bias is the output value when (strength == 0.5)
   const float k2 = (2.0f - (4.0f * bias));
   const float k1 = (1.0f - k2);
@@ -431,10 +416,9 @@ static float calcOutlineOpacity(float bias, float strength)
 
 
 void FontManager::drawString(float x, float y, float z, int faceID, float size,
-			     const std::string& text,
-			     const fvec4* resetColor,
-			     fontJustification align)
-{
+                             const std::string& text,
+                             const fvec4* resetColor,
+                             fontJustification align) {
   static BZDB_float maxFontSize("maxFontSize"); // FIXME?
   if (size > maxFontSize) {
     size = maxFontSize;
@@ -501,7 +485,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   FTFont* theFont = getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
-    logDebugMessage(2,"Trying to draw with an invalid font face ID %d\n", faceID);
+    logDebugMessage(2, "Trying to draw with an invalid font face ID %d\n", faceID);
     return;
   }
 
@@ -529,7 +513,8 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   if (resetColor != NULL) {
     color.rgb() = resetColor->rgb() * darkness;
     color.a = opacity;
-  } else {
+  }
+  else {
     color = fvec4(-1.0f, -1.0f, -1.0f, opacity);
     resetColor = &BrightColors[WhiteColor];
   }
@@ -543,7 +528,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
   int endSend = -1;
   for (int i = 0; i < textlen - 1; i++) {
     // split the string at ANSI codes
-    if (text[i] == '\033' && text[i+1] == '[') {
+    if (text[i] == '\033' && text[i + 1] == '[') {
       endSend = i;
       break;
     }
@@ -578,57 +563,62 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       width = getStringWidth(faceID, size, rendertext);
 
       glPushMatrix(); {
-	if (align == AlignCenter) {
-	  glTranslatef(x - (width * 0.5f), y, z);
-	} else if (align == AlignRight) {
-	  glTranslatef(x - width, y, z);
-	} else {
-	  glTranslatef(x, y, z);
-	}
+        if (align == AlignCenter) {
+          glTranslatef(x - (width * 0.5f), y, z);
+        }
+        else if (align == AlignRight) {
+          glTranslatef(x - width, y, z);
+        }
+        else {
+          glTranslatef(x, y, z);
+        }
 
         if (italic) {
           glTranslatef(-0.25f * (height * italicMatrix[4]), 0.0f, 0.0f);
           glMultMatrixf(italicMatrix);
         }
 
-	// draw the underline before the text
-	if (underline) {
-	  if (!rawBlending) {
+        // draw the underline before the text
+        if (underline) {
+          if (!rawBlending) {
             glEnable(GL_BLEND);
           }
           glDisable(GL_TEXTURE_2D);
-	  if (bright && underlineColor[0] >= 0) {
-	    myColor4fv(underlineColor);
-	  } else if (underlineColor[0] >= 0) {
-	    myColor4fv(dimUnderlineColor);
-	  } else if (color[0] >= 0) {
-	    myColor4fv(color);
-	  }
+          if (bright && underlineColor[0] >= 0) {
+            myColor4fv(underlineColor);
+          }
+          else if (underlineColor[0] >= 0) {
+            myColor4fv(dimUnderlineColor);
+          }
+          else if (color[0] >= 0) {
+            myColor4fv(color);
+          }
 
-	  glBegin(GL_LINES); {
-	    // drop below the baseline into the descent a little
-	    glVertex2f(0.0f, height * -0.25f);
-	    glVertex2f(width, height * -0.25f);
-	  } glEnd();
-	  glEnable(GL_TEXTURE_2D);
-	}
+          glBegin(GL_LINES); {
+            // drop below the baseline into the descent a little
+            glVertex2f(0.0f, height * -0.25f);
+            glVertex2f(width, height * -0.25f);
+          } glEnd();
+          glEnable(GL_TEXTURE_2D);
+        }
 
-	if (color[0] >= 0) {
-	  myColor4fv(color);
-	}
+        if (color[0] >= 0) {
+          myColor4fv(color);
+        }
 
-	if (!rawBlending) {
-	  glEnable(GL_BLEND);
-	  if (reverse) {
-	    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
-	  } else {
-	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	  }
-	}
-	theFont->Render(rendertext, -1, FTPoint(), FTPoint(), FTGL::RENDER_ALL);
+        if (!rawBlending) {
+          glEnable(GL_BLEND);
+          if (reverse) {
+            glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+          }
+          else {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+          }
+        }
+        theFont->Render(rendertext, -1, FTPoint(), FTPoint(), FTGL::RENDER_ALL);
 
-	// restore
-	buffer[endSend] = savechar;
+        // restore
+        buffer[endSend] = savechar;
 
       } glPopMatrix();
 
@@ -636,7 +626,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       x += width;
 
       if (color[0] >= 0) {
-	myColor4f(1, 1, 1, 1);
+        myColor4f(1, 1, 1, 1);
       }
     }
 
@@ -644,15 +634,15 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       // startSend = (int)text.find('m', endSend) + 1;
       startSend = -1;
       for (int i = 0; i < textlen; i++) {
-	if (text[endSend + i] == 'm') {
-	  startSend = endSend + i;
-	  break;
-	}
+        if (text[endSend + i] == 'm') {
+          startSend = endSend + i;
+          break;
+        }
       }
       startSend++;
       if (startSend == 0) {
         logDebugMessage(1,
-          "drawString found an ansi sequence that didn't terminate");
+                        "drawString found an ansi sequence that didn't terminate");
         break; // break out of the while loop
       }
     }
@@ -664,10 +654,10 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       // int pos = text.find('m', endSend);
       int pos = -1;
       for (int i = 0; i < textlen; i++) {
-	if (text[endSend + i] == 'm') {
-	  pos = endSend + i;
-	  break;
-	}
+        if (text[endSend + i] == 'm') {
+          pos = endSend + i;
+          break;
+        }
       }
 
       // string tmpText = text.substr(endSend, pos - endSend + 1);
@@ -680,68 +670,83 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
       // colors
       for (int i = 0; i <= LastColor; i++) {
-	if (strcasecmp(tmpText, ColorStrings[i]) == 0) {
-	  if (bright) {
-	    color.rgb() = BrightColors[i].rgb() * darkness;
-	  } else {
-	    color.rgb() = BrightColors[i].rgb() * darkDim;
-	  }
-	  tookCareOfANSICode = true;
-	  break;
-	}
+        if (strcasecmp(tmpText, ColorStrings[i]) == 0) {
+          if (bright) {
+            color.rgb() = BrightColors[i].rgb() * darkness;
+          }
+          else {
+            color.rgb() = BrightColors[i].rgb() * darkDim;
+          }
+          tookCareOfANSICode = true;
+          break;
+        }
       }
 
       // didn't find a matching color
       if (!tookCareOfANSICode) {
-	// settings other than color
-	if (strcasecmp(tmpText, ANSI_STR_RESET) == 0) {
-	  bright = true;
-	  italic = false;
-	  pulsating = false;
-	  underline = false;
-	  reverse = false;
-	  color.rgb() = resetColor->rgb() * darkness;
-	} else if (strcasecmp(tmpText, ANSI_STR_RESET_FINAL) == 0) {
-	  bright = false;
-	  italic = false;
-	  pulsating = false;
-	  underline = false;
-	  reverse = false;
-	  color.rgb() = resetColor->rgb() * darkDim;
-	} else if (strcasecmp(tmpText, ANSI_STR_BRIGHT) == 0) {
-	  bright = true;
-	} else if (strcasecmp(tmpText, ANSI_STR_DIM) == 0) {
-	  bright = false;
-	} else if (strcasecmp(tmpText, ANSI_STR_NORMAL) == 0) {
-	  bright = false; // bzflag only has 2 levels, not 3
-	} else if (strcasecmp(tmpText, ANSI_STR_ITALIC) == 0) {
-	  italic = true;
-	} else if (strcasecmp(tmpText, ANSI_STR_NO_ITALIC) == 0) {
-	  italic = false;
-	} else if (strcasecmp(tmpText, ANSI_STR_UNDERLINE) == 0) {
-	  underline = true;
-	} else if (strcasecmp(tmpText, ANSI_STR_NO_UNDERLINE) == 0) {
-	  underline = false;
-	} else if (strcasecmp(tmpText, ANSI_STR_PULSATING) == 0) {
-	  pulsating = true;
-	} else if (strcasecmp(tmpText, ANSI_STR_NO_PULSATE) == 0) {
-	  pulsating = false;
-	} else if (strcasecmp(tmpText, ANSI_STR_REVERSE) == 0) {
-	  reverse = true;
-	} else if (strcasecmp(tmpText, ANSI_STR_NO_REVERSE) == 0) {
-	  reverse = false;
-	} else {
-	  // print out the code nicely so that it matches the C string
-	  logDebugMessage(2,"ANSI Code [");
-	  for (int i = 0; i < (int)strlen(tmpText); i++) {
-	    if (isprint(tmpText[i])) {
-	      logDebugMessage(2, "%c", tmpText[i]);
-	    } else {
-	      logDebugMessage(2, "\\%03o", tmpText[i]);
-	    }
-	  }
-	  logDebugMessage(2, "] not supported\n");
-	}
+        // settings other than color
+        if (strcasecmp(tmpText, ANSI_STR_RESET) == 0) {
+          bright = true;
+          italic = false;
+          pulsating = false;
+          underline = false;
+          reverse = false;
+          color.rgb() = resetColor->rgb() * darkness;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_RESET_FINAL) == 0) {
+          bright = false;
+          italic = false;
+          pulsating = false;
+          underline = false;
+          reverse = false;
+          color.rgb() = resetColor->rgb() * darkDim;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_BRIGHT) == 0) {
+          bright = true;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_DIM) == 0) {
+          bright = false;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_NORMAL) == 0) {
+          bright = false; // bzflag only has 2 levels, not 3
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_ITALIC) == 0) {
+          italic = true;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_NO_ITALIC) == 0) {
+          italic = false;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_UNDERLINE) == 0) {
+          underline = true;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_NO_UNDERLINE) == 0) {
+          underline = false;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_PULSATING) == 0) {
+          pulsating = true;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_NO_PULSATE) == 0) {
+          pulsating = false;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_REVERSE) == 0) {
+          reverse = true;
+        }
+        else if (strcasecmp(tmpText, ANSI_STR_NO_REVERSE) == 0) {
+          reverse = false;
+        }
+        else {
+          // print out the code nicely so that it matches the C string
+          logDebugMessage(2, "ANSI Code [");
+          for (int i = 0; i < (int)strlen(tmpText); i++) {
+            if (isprint(tmpText[i])) {
+              logDebugMessage(2, "%c", tmpText[i]);
+            }
+            else {
+              logDebugMessage(2, "\\%03o", tmpText[i]);
+            }
+          }
+          logDebugMessage(2, "] not supported\n");
+        }
       }
 
       // restore
@@ -750,9 +755,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
     endSend = -1;
     for (int i = startSend; i < textlen - 1; i++) {
-      if (text[i] == '\033' && text[i+1] == '[') {
-	endSend = i;
-	break;
+      if (text[i] == '\033' && text[i + 1] == '[') {
+        endSend = i;
+        break;
       }
     }
 
@@ -769,15 +774,14 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
 
 float FontManager::getStringWidth(int faceID, float size, const std::string& text,
-                                  bool alreadyStripped)
-{
+                                  bool alreadyStripped) {
   if (text.empty()) {
     return 0.0f;
   }
 
   FTFont* theFont = getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
-    logDebugMessage(2,"Trying to find length of string for an invalid font face ID %d\n", faceID);
+    logDebugMessage(2, "Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
   }
 
@@ -791,8 +795,7 @@ float FontManager::getStringWidth(int faceID, float size, const std::string& tex
 }
 
 
-float FontManager::getStringHeight(int font, float size)
-{
+float FontManager::getStringHeight(int font, float size) {
   const FTFont* theFont = getGLFont(font, (int)size);
   if (theFont == NULL) {
     return 0;
@@ -801,8 +804,7 @@ float FontManager::getStringHeight(int font, float size)
 }
 
 
-void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
-{
+void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const {
   const double pulseTime = BzTime::getCurrent().getSeconds();
 
   // depth is how dark it should get (1.0 is to black)
@@ -811,26 +813,27 @@ void FontManager::getPulseColor(const fvec4& color, fvec4& pulseColor) const
   float pulseRate = BZDBCache::pulseRate;
 
   float pulseFactor = fmodf((float)pulseTime, pulseRate) - (pulseRate * 0.5f);
-  pulseFactor = fabsf(pulseFactor) / (pulseRate/2.0f);
+  pulseFactor = fabsf(pulseFactor) / (pulseRate / 2.0f);
   pulseFactor = pulseDepth * pulseFactor + (1.0f - pulseDepth);
 
   pulseColor.rgb() = color.rgb() * pulseFactor;
 }
 
 
-void FontManager::underlineCallback(const std::string &, void *)
-{
+void FontManager::underlineCallback(const std::string&, void*) {
   // set underline color
   const std::string uColor = BZDB.get("underlineColor");
   if (strcasecmp(uColor.c_str(), "text") == 0) {
     underlineColor[0] = -1.0f;
     underlineColor[1] = -1.0f;
     underlineColor[2] = -1.0f;
-  } else if (strcasecmp(uColor.c_str(), "cyan") == 0) {
+  }
+  else if (strcasecmp(uColor.c_str(), "cyan") == 0) {
     underlineColor[0] = BrightColors[CyanColor][0];
     underlineColor[1] = BrightColors[CyanColor][1];
     underlineColor[2] = BrightColors[CyanColor][2];
-  } else if (strcasecmp(uColor.c_str(), "grey") == 0) {
+  }
+  else if (strcasecmp(uColor.c_str(), "grey") == 0) {
     underlineColor[0] = BrightColors[GreyColor][0];
     underlineColor[1] = BrightColors[GreyColor][1];
     underlineColor[2] = BrightColors[GreyColor][2];
@@ -838,21 +841,19 @@ void FontManager::underlineCallback(const std::string &, void *)
 }
 
 
-void FontManager::initContext(void*)
-{
+void FontManager::initContext(void*) {
 #if debugging
   std::cout << "initContext called\n" << fontFaces.size() << " faces loaded" << std::endl;
 #endif
 }
 
 
-void FontManager::freeContext(void* data)
-{
+void FontManager::freeContext(void* data) {
 #if debugging
   std::cout << "freeContext called\n"
-	    << "clearing " << fontFaces.size() << " fonts" << std::endl;
+            << "clearing " << fontFaces.size() << " fonts" << std::endl;
 #endif
-  FontManager* fm( static_cast<FontManager*>(data) );
+  FontManager* fm(static_cast<FontManager*>(data));
   fm->clear();
 }
 
@@ -861,6 +862,6 @@ void FontManager::freeContext(void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

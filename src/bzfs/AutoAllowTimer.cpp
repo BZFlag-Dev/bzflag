@@ -22,24 +22,22 @@
 // bzfs specific headers
 #include "bzfs.h"
 
-AutoAllowTimerTickHandler::AutoAllowTimerTickHandler()
-{
+AutoAllowTimerTickHandler::AutoAllowTimerTickHandler() {
 }
 
-AutoAllowTimerTickHandler::~AutoAllowTimerTickHandler()
-{
+AutoAllowTimerTickHandler::~AutoAllowTimerTickHandler() {
 }
 
-void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
-{
-  if (!eventData || eventData->eventType != bz_eTickEvent)
+void AutoAllowTimerTickHandler::process(bz_EventData* eventData) {
+  if (!eventData || eventData->eventType != bz_eTickEvent) {
     return;
+  }
 
   float autoallowtime = BZDB.eval(BZDBNAMES.AUTOALLOWTIME);
   BzTime now = BzTime::getCurrent();
 
-  for (int i=0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(i);
     if (!player || player->player.isObserver() || !player->player.isPlaying()) {
       continue;
     }
@@ -50,8 +48,8 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
 
     if (!player->player.canShoot() || !player->player.canMove()) {
       if (now - player->player.allowChangeTime > autoallowtime) {
-	sendMessageAllow(player->getIndex(), AllowAll);
-	player->player.setAllow(AllowAll);
+        sendMessageAllow(player->getIndex(), AllowAll);
+        player->player.setAllow(AllowAll);
       }
     }
   }
@@ -61,6 +59,6 @@ void AutoAllowTimerTickHandler::process(bz_EventData *eventData)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

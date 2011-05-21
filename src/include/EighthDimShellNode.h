@@ -14,8 +14,8 @@
  *  Wraps a normal SceneNode within an inverted-view environment.
  */
 
-#ifndef	BZF_EIGHTH_DIM_SHELL_NODE_H
-#define	BZF_EIGHTH_DIM_SHELL_NODE_H
+#ifndef BZF_EIGHTH_DIM_SHELL_NODE_H
+#define BZF_EIGHTH_DIM_SHELL_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -23,7 +23,7 @@
 
 class EighthDimShellNode : public SceneNode {
   public:
-    EighthDimShellNode(SceneNode *sceneNode, bool ownTheNode);
+    EighthDimShellNode(SceneNode* sceneNode, bool ownTheNode);
     ~EighthDimShellNode();
 
     bool cull(const ViewFrustum&) const;
@@ -33,17 +33,17 @@ class EighthDimShellNode : public SceneNode {
   protected:
     class ShellRenderNode : public RenderNode {
       public:
-	ShellRenderNode(RenderNode *renderNode,
-			const OpenGLGState* gstate);
-	~ShellRenderNode();
-	void render();
-	void renderShadow() { return; }
-	const fvec3& getPosition() const { return renderNode->getPosition(); }
+        ShellRenderNode(RenderNode* renderNode,
+                        const OpenGLGState* gstate);
+        ~ShellRenderNode();
+        void render();
+        void renderShadow() { return; }
+        const fvec3& getPosition() const { return renderNode->getPosition(); }
       public:
-	const OpenGLGState* getGState() const;
+        const OpenGLGState* getGState() const;
       private:
-	OpenGLGState gstate;
-	RenderNode* renderNode;
+        OpenGLGState gstate;
+        RenderNode* renderNode;
     };
 
   private:
@@ -64,6 +64,6 @@ class EighthDimShellNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

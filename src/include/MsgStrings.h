@@ -33,21 +33,21 @@ typedef std::vector<MsgString> MsgStringList;
 namespace MsgStrings {
 
   // returns the name of the code  (doesn't need init())
-  const char *strMsgCode(uint16_t code);
+  const char* strMsgCode(uint16_t code);
 
   void init();
-  void reset();			// clean up all tracked state
-  void useDNS(bool);		// look up hostnames based on IPs?
-  void colorize(bool);		// use ANSI color codes?
-  void trackState(bool);	// track game state?
+  void reset();     // clean up all tracked state
+  void useDNS(bool);    // look up hostnames based on IPs?
+  void colorize(bool);    // use ANSI color codes?
+  void trackState(bool);  // track game state?
 
   int knownPacketTypes();
 
   // Messages from the server to the client
-  MsgStringList msgFromServer(uint16_t len, uint16_t code, const void *data);
+  MsgStringList msgFromServer(uint16_t len, uint16_t code, const void* data);
 
   // Messages from the client to the server  (currently unimplemented)
-  MsgStringList msgFromClient(uint16_t len, uint16_t code, const void *data);
+  MsgStringList msgFromClient(uint16_t len, uint16_t code, const void* data);
 }
 
 #endif // __MSG_STRINGS_H__
@@ -57,6 +57,6 @@ namespace MsgStrings {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

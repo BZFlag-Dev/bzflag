@@ -33,42 +33,41 @@ using namespace std;
 enum action
 {join, part};
 
-class ServerControl:public bz_EventHandler
-{
-public:
-  ServerControl() {};
-  virtual ~ServerControl() {};
-  virtual void process(bz_EventData * eventData);
-  int loadConfig(const char *cmdLine);
-private:
-  void countPlayers(action act, bz_PlayerJoinPartEventData_V1 *data);
-  void checkShutdown(void);
-  void checkBanChanges(void);
-  void checkMasterBanChanges(void);
-  void fileAccessTime(const std::string filename, time_t *mtime, bool *error);
-  string banFilename;
-  string masterBanFilename;
-  string resetServerOnceFilename;
-  string resetServerAlwaysFilename;
-  string banReloadMessage;
-  string masterBanReloadMessage;
-  time_t banFileAccessTime;
-  bool banFileErrorLogged;
-  time_t masterBanFileAccessTime;
-  bool masterBanErrorLogged;
-  int numPlayers;
-  int numObservers;
-  bool serverActive;
-  bool ignoreObservers;
-  double lastTime;
+class ServerControl: public bz_EventHandler {
+  public:
+    ServerControl() {};
+    virtual ~ServerControl() {};
+    virtual void process(bz_EventData* eventData);
+    int loadConfig(const char* cmdLine);
+  private:
+    void countPlayers(action act, bz_PlayerJoinPartEventData_V1* data);
+    void checkShutdown(void);
+    void checkBanChanges(void);
+    void checkMasterBanChanges(void);
+    void fileAccessTime(const std::string filename, time_t* mtime, bool* error);
+    string banFilename;
+    string masterBanFilename;
+    string resetServerOnceFilename;
+    string resetServerAlwaysFilename;
+    string banReloadMessage;
+    string masterBanReloadMessage;
+    time_t banFileAccessTime;
+    bool banFileErrorLogged;
+    time_t masterBanFileAccessTime;
+    bool masterBanErrorLogged;
+    int numPlayers;
+    int numObservers;
+    bool serverActive;
+    bool ignoreObservers;
+    double lastTime;
 };
 
 ServerControl serverControlHandler;
 
-BZF_PLUGIN_CALL int bz_Load(const char *cmdLine)
-{
-  if (serverControlHandler.loadConfig(cmdLine) < 0)
+BZF_PLUGIN_CALL int bz_Load(const char* cmdLine) {
+  if (serverControlHandler.loadConfig(cmdLine) < 0) {
     return -1;
+  }
 
   bz_registerEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_registerEvent(bz_ePlayerPartEvent, &serverControlHandler);
@@ -77,8 +76,7 @@ BZF_PLUGIN_CALL int bz_Load(const char *cmdLine)
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   bz_removeEvent(bz_ePlayerJoinEvent, &serverControlHandler);
   bz_removeEvent(bz_ePlayerPartEvent, &serverControlHandler);
   bz_removeEvent(bz_eTickEvent, &serverControlHandler);
@@ -86,13 +84,13 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   return 0;
 }
 
-int ServerControl::loadConfig(const char *cmdLine)
-{
+int ServerControl::loadConfig(const char* cmdLine) {
   PluginConfig config = PluginConfig(cmdLine);
   string section = "ServerControl";
 
-  if (config.errors)
+  if (config.errors) {
     return -1;
+  }
 
   serverActive = false;
   countPlayers(join, NULL);
@@ -112,72 +110,87 @@ int ServerControl::loadConfig(const char *cmdLine)
    * Report settings
    */
   // Ban file
-  if (banFilename == "")
+  if (banFilename == "") {
     bz_debugMessagef(1, "ServerControl - No banfile checks - no BanFile specified");
-  else
+  }
+  else {
     bz_debugMessagef(1, "ServerControl - Monitoring ban file: %s", banFilename.c_str());
+  }
   // Ban reload message
-  if (banReloadMessage == "")
+  if (banReloadMessage == "") {
     bz_debugMessagef(1, "ServerControl - No BanReloadMessage notification");
-  else
+  }
+  else {
     bz_debugMessagef(1, "ServerControl - BanReloadMessage: %s", banReloadMessage.c_str());
+  }
   // Masterban file
-  if (masterBanFilename == "")
+  if (masterBanFilename == "") {
     bz_debugMessagef(1, "ServerControl - No masterban file checks - no MasterbanFile specified");
-  else
+  }
+  else {
     bz_debugMessagef(1, "ServerControl - Monitoring master ban file: %s", masterBanFilename.c_str());
+  }
   // Master Ban reload message
-  if (masterBanReloadMessage == "")
+  if (masterBanReloadMessage == "") {
     bz_debugMessagef(1, "ServerControl - No MasterBanReloadMessage notification");
-  else
+  }
+  else {
     bz_debugMessagef(1, "ServerControl - MasterBanReloadMessage: %s", masterBanReloadMessage.c_str());
+  }
   // Reset Server Once file
-  if (resetServerOnceFilename == "")
+  if (resetServerOnceFilename == "") {
     bz_debugMessagef(1, "ServerControl - No ResetServerOnceFile specified");
-  else
+  }
+  else {
     bz_debugMessagef(1, "ServerControl - Using ResetServerOnceFile: %s", resetServerOnceFilename.c_str());
+  }
   // Reset Server Always file
-  if (resetServerAlwaysFilename == "")
+  if (resetServerAlwaysFilename == "") {
     bz_debugMessagef(1, "ServerControl - No ResetServerAlwaysFile specified");
-  else
+  }
+  else {
     bz_debugMessagef(1, "ServerControl - Using ResetServerAlwaysFile: %s", resetServerAlwaysFilename.c_str());
+  }
 
   // Ignore Observers
-  if (ignoreObservers)
+  if (ignoreObservers) {
     bz_debugMessage(1, "ServerControl - Ignoring Observers for server restarts");
-  else
+  }
+  else {
     bz_debugMessage(1, "ServerControl - Server must be empty for server restarts");
+  }
 
   /* Set the initial ban file access times */
   masterBanErrorLogged = false;
   banFileErrorLogged = false;
-  if (masterBanFilename != "")
+  if (masterBanFilename != "") {
     fileAccessTime(masterBanFilename, &masterBanFileAccessTime, &masterBanErrorLogged);
-  if (banFilename != "")
+  }
+  if (banFilename != "") {
     fileAccessTime(banFilename, &banFileAccessTime, &banFileErrorLogged);
+  }
 
   return 0;
 }
 
-void ServerControl::fileAccessTime(const std::string filename, time_t *mtime, bool *error)
-{
+void ServerControl::fileAccessTime(const std::string filename, time_t* mtime, bool* error) {
   struct stat buf;
 
   if (stat(filename.c_str(), &buf) == 0) {
     *mtime = buf.st_mtime;
     *error = false;
-  } else {
+  }
+  else {
     *mtime = 0;
     if (!*error) {
       bz_debugMessagef(0, "ServerControl - Can't stat the banfile %s",
-		       filename.c_str());
+                       filename.c_str());
       *error = true;
     }
   }
 }
 
-void ServerControl::checkShutdown(void)
-{
+void ServerControl::checkShutdown(void) {
   // Check for server shutdown
   //
   // We shutdown the server in the following cases:
@@ -188,64 +201,65 @@ void ServerControl::checkShutdown(void)
   if ((numPlayers <= 0) || (ignoreObservers && (numPlayers - numObservers) <= 0)) { // No players
     if (resetServerOnceFilename != "") {
       std::ifstream resetOnce(resetServerOnceFilename.c_str());
-      if (resetOnce) {		// Reset server once exists
-	resetOnce.close();
-	remove( resetServerOnceFilename.c_str() );
-	bz_debugMessagef(2, "ServerControl - Reset Server Once - SHUTDOWN");
-	bz_shutdown();
-      } else if (resetServerAlwaysFilename != "" && serverActive) {
-	// Server was active - some non-observer player connected
-	std::ifstream resetAlways(resetServerAlwaysFilename.c_str());
-	if (resetAlways) {	// Reset server always exists
-	  resetAlways.close();
-	  bz_debugMessagef(2, "ServerControl - Reset Server Always - SHUTDOWN");
-	  bz_shutdown();
-	}
+      if (resetOnce) {    // Reset server once exists
+        resetOnce.close();
+        remove(resetServerOnceFilename.c_str());
+        bz_debugMessagef(2, "ServerControl - Reset Server Once - SHUTDOWN");
+        bz_shutdown();
+      }
+      else if (resetServerAlwaysFilename != "" && serverActive) {
+        // Server was active - some non-observer player connected
+        std::ifstream resetAlways(resetServerAlwaysFilename.c_str());
+        if (resetAlways) {  // Reset server always exists
+          resetAlways.close();
+          bz_debugMessagef(2, "ServerControl - Reset Server Always - SHUTDOWN");
+          bz_shutdown();
+        }
       }
     }
   }
 }
 
-void ServerControl::process(bz_EventData * eventData)
-{
+void ServerControl::process(bz_EventData* eventData) {
   ostringstream msg;
-  bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
+  bz_PlayerJoinPartEventData_V1* data = (bz_PlayerJoinPartEventData_V1*) eventData;
   double now;
 
   if (eventData) {
     switch (eventData->eventType) {
       case bz_eTickEvent:
-	now = bz_getCurrentTime();
-	if ((now - lastTime) < 3.0f) return;
-	lastTime = now;
-	checkShutdown();
-	if (banFilename != "" )
-	  checkBanChanges();
-	if (masterBanFilename != "")
-	  checkMasterBanChanges();
-	break;
+        now = bz_getCurrentTime();
+        if ((now - lastTime) < 3.0f) { return; }
+        lastTime = now;
+        checkShutdown();
+        if (banFilename != "") {
+          checkBanChanges();
+        }
+        if (masterBanFilename != "") {
+          checkMasterBanChanges();
+        }
+        break;
       case bz_ePlayerJoinEvent:
-	if (data->record->team >= eRogueTeam &&
-	    data->record->team <= eHunterTeam &&
-	    data->record->callsign != "")  {
-	  serverActive = true;
-	}
-	countPlayers( join , data );
-	break;
+        if (data->record->team >= eRogueTeam &&
+            data->record->team <= eHunterTeam &&
+            data->record->callsign != "")  {
+          serverActive = true;
+        }
+        countPlayers(join , data);
+        break;
       case bz_ePlayerPartEvent:
-	countPlayers( part , data );
-	checkShutdown();
-	break;
+        countPlayers(part , data);
+        checkShutdown();
+        break;
       default :
-	break;
+        break;
     }
   }
 }
 
-void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 * data)
-{
-  bz_APIIntList *playerList = bz_newIntList();
-  bz_BasePlayerRecord *player;
+void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1* data) {
+  bz_APIIntList* playerList = bz_newIntList();
+  bz_BasePlayerRecord* player;
   ostringstream msg;
   string str;
   int numLines = 0;
@@ -257,12 +271,13 @@ void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 * dat
     player = bz_getPlayerByIndex(playerList->get(i));
     if (player) {
       if (act == join || (data && (player->playerID != data->playerID) &&
-			  (player->callsign != ""))) {
-	if (player->callsign != "") {
-	  if (player->team == eObservers)
-	    numObs++;
-	  numLines++;
-	}
+                          (player->callsign != ""))) {
+        if (player->callsign != "") {
+          if (player->team == eObservers) {
+            numObs++;
+          }
+          numLines++;
+        }
       }
       bz_freePlayerRecord(player);
     }
@@ -273,8 +288,7 @@ void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 * dat
   bz_deleteIntList(playerList);
 }
 
-void ServerControl::checkBanChanges(void)
-{
+void ServerControl::checkBanChanges(void) {
   time_t mtime;
   fileAccessTime(banFilename, &mtime, &banFileErrorLogged);
 
@@ -286,8 +300,7 @@ void ServerControl::checkBanChanges(void)
   }
 }
 
-void ServerControl::checkMasterBanChanges(void)
-{
+void ServerControl::checkMasterBanChanges(void) {
   time_t mtime;
   fileAccessTime(masterBanFilename, &mtime, &masterBanErrorLogged);
   if (mtime != masterBanFileAccessTime) {
@@ -302,6 +315,6 @@ void ServerControl::checkMasterBanChanges(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

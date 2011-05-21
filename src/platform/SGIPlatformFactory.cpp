@@ -16,25 +16,21 @@
 #include "XWindow.h"
 #include "SGIMedia.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
-{
-  if (!instance) instance = new SGIPlatformFactory;
+PlatformFactory*  PlatformFactory::getInstance() {
+  if (!instance) { instance = new SGIPlatformFactory; }
   return instance;
 }
 
-SGIPlatformFactory::SGIPlatformFactory()
-{
+SGIPlatformFactory::SGIPlatformFactory() {
   // do nothing
 }
 
-SGIPlatformFactory::~SGIPlatformFactory()
-{
+SGIPlatformFactory::~SGIPlatformFactory() {
   // do nothing
 }
 
-BzfDisplay*		SGIPlatformFactory::createDisplay(
-				const char* name, const char*)
-{
+BzfDisplay*   SGIPlatformFactory::createDisplay(
+  const char* name, const char*) {
   XDisplay* display = new XDisplay(name, new SGIDisplayMode);
   if (!display || !display->isValid()) {
     delete display;
@@ -43,20 +39,17 @@ BzfDisplay*		SGIPlatformFactory::createDisplay(
   return display;
 }
 
-BzfVisual*		SGIPlatformFactory::createVisual(
-				const BzfDisplay* display)
-{
+BzfVisual*    SGIPlatformFactory::createVisual(
+  const BzfDisplay* display) {
   return new XVisual((const XDisplay*)display);
 }
 
-BzfWindow*		SGIPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
+BzfWindow*    SGIPlatformFactory::createWindow(
+  const BzfDisplay* display, BzfVisual* visual) {
   return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-BzfMedia*		SGIPlatformFactory::createMedia()
-{
+BzfMedia*   SGIPlatformFactory::createMedia() {
   return new SGIMedia;
 }
 
@@ -64,6 +57,6 @@ BzfMedia*		SGIPlatformFactory::createMedia()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

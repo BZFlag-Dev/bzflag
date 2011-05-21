@@ -23,16 +23,16 @@
 
 
 class WorldFileLocation : public WorldFileObject {
-public:
-  WorldFileLocation();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void writeToWorld(WorldInfo*) const;
-  void *pack(void *buf) const;
-protected:
-  fvec3 pos;
-  fvec3 size;
-  float rotation;
-  MeshTransform transform;
+  public:
+    WorldFileLocation();
+    virtual bool read(const char* cmd, std::istream&);
+    virtual void writeToWorld(WorldInfo*) const;
+    void* pack(void* buf) const;
+  protected:
+    fvec3 pos;
+    fvec3 size;
+    float rotation;
+    MeshTransform transform;
 };
 
 inline void WorldFileLocation::writeToWorld(WorldInfo*) const {}
@@ -43,6 +43,6 @@ inline void WorldFileLocation::writeToWorld(WorldInfo*) const {}
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

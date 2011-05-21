@@ -14,8 +14,8 @@
  *   Information about the map
  */
 
-#ifndef	BZF_MAP_INFO_H
-#define	BZF_MAP_INFO_H
+#ifndef BZF_MAP_INFO_H
+#define BZF_MAP_INFO_H
 
 #include "common.h"
 #include <string>
@@ -46,8 +46,8 @@ class MapInfo {
     void print(std::ostream& out, const std::string& indent) const;
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
   private:
     InfoVec infoVec;
@@ -61,6 +61,6 @@ class MapInfo {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

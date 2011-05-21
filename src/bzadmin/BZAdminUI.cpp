@@ -21,13 +21,13 @@
 void BZAdminUI::handleNewPacket(uint16_t) {
   if (client.getLastMessage().first.size() > 0)
     outputMessage(client.getLastMessage().first,
-		  client.getLastMessage().second);
+                  client.getLastMessage().second);
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

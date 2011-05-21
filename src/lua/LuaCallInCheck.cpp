@@ -26,22 +26,20 @@
 //============================================================================//
 //============================================================================//
 
-LuaCallInCheck::LuaCallInCheck(lua_State* LS, const char* name)
-{
+LuaCallInCheck::LuaCallInCheck(lua_State* LS, const char* name) {
   L = LS;
   startTop = lua_gettop(L);
   funcName = name;
 }
 
 
-LuaCallInCheck::~LuaCallInCheck()
-{
+LuaCallInCheck::~LuaCallInCheck() {
   const int endTop = lua_gettop(L);
   if (startTop != endTop) {
     LuaLog(0,
-      "LuaCallInCheck mismatch for %s():  start = %i,  end = %i\n",
-      funcName, startTop, endTop
-    );
+           "LuaCallInCheck mismatch for %s():  start = %i,  end = %i\n",
+           funcName, startTop, endTop
+          );
   }
 }
 
@@ -55,6 +53,6 @@ LuaCallInCheck::~LuaCallInCheck()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

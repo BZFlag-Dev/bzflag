@@ -11,11 +11,11 @@
  */
 
 /* BzMaterial:
- *	Encapsulates a material in the game environment.
+ *  Encapsulates a material in the game environment.
  */
 
-#ifndef	BZ_MATERIAL_H
-#define	BZ_MATERIAL_H
+#ifndef BZ_MATERIAL_H
+#define BZ_MATERIAL_H
 
 #include "common.h"
 
@@ -30,8 +30,8 @@
 
 class BzMaterial;
 typedef std::set<const BzMaterial*> MaterialSet;
-typedef std::map<const BzMaterial*,
-		 const BzMaterial*> MaterialMap;
+typedef std::map < const BzMaterial*,
+        const BzMaterial* > MaterialMap;
 
 
 class BzMaterial {
@@ -153,8 +153,8 @@ class BzMaterial {
     bool isInvisible() const;
 
     int packSize() const;
-    void *pack(void *) const;
-    void *unpack(void *);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
     void printMTL(std::ostream& out, const std::string& indent) const;
@@ -232,19 +232,16 @@ class BzMaterial {
     static BzMaterial defaultMaterial;
 };
 
-inline const BzMaterial* BzMaterial::getDefault()
-{
+inline const BzMaterial* BzMaterial::getDefault() {
   return &defaultMaterial;
 }
 
-inline void BzMaterial::setReference()
-{
+inline void BzMaterial::setReference() {
   referenced = true;
   return;
 }
 
-inline bool BzMaterial::getReference() const
-{
+inline bool BzMaterial::getReference() const {
   return referenced;
 }
 
@@ -290,6 +287,6 @@ extern BzMaterialManager MATERIALMGR;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -42,34 +42,29 @@ const int LuaGLBufferMgr::maxDataSize = (64 * 1024 * 1024);
 //============================================================================//
 
 LuaGLBuffer::LuaGLBuffer(const LuaGLBufferData& bufData)
-: LuaGLBufferData(bufData)
-{
+  : LuaGLBufferData(bufData) {
   OpenGLGState::registerContextInitializer(StaticFreeContext,
-					   StaticInitContext, this);
+                                           StaticInitContext, this);
 }
 
 
-LuaGLBuffer::~LuaGLBuffer()
-{
+LuaGLBuffer::~LuaGLBuffer() {
   FreeContext();
   OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-					     StaticInitContext, this);
+                                             StaticInitContext, this);
 }
 
 
-void LuaGLBuffer::Delete()
-{
+void LuaGLBuffer::Delete() {
   FreeContext();
 }
 
 
-void LuaGLBuffer::InitContext()
-{
+void LuaGLBuffer::InitContext() {
 }
 
 
-void LuaGLBuffer::FreeContext()
-{
+void LuaGLBuffer::FreeContext() {
   if (id == 0) {
     return;
   }
@@ -78,14 +73,12 @@ void LuaGLBuffer::FreeContext()
 }
 
 
-void LuaGLBuffer::StaticInitContext(void* data)
-{
+void LuaGLBuffer::StaticInitContext(void* data) {
   ((LuaGLBuffer*)data)->InitContext();
 }
 
 
-void LuaGLBuffer::StaticFreeContext(void* data)
-{
+void LuaGLBuffer::StaticFreeContext(void* data) {
   ((LuaGLBuffer*)data)->FreeContext();
 }
 
@@ -93,21 +86,18 @@ void LuaGLBuffer::StaticFreeContext(void* data)
 //============================================================================//
 //============================================================================//
 
-LuaGLBufferMgr::LuaGLBufferMgr()
-{
+LuaGLBufferMgr::LuaGLBufferMgr() {
 }
 
 
-LuaGLBufferMgr::~LuaGLBufferMgr()
-{
+LuaGLBufferMgr::~LuaGLBufferMgr() {
 }
 
 
 //============================================================================//
 //============================================================================//
 
-bool LuaGLBufferMgr::PushEntries(lua_State* L)
-{
+bool LuaGLBufferMgr::PushEntries(lua_State* L) {
   CreateMetatable(L);
 
   PUSH_LUA_CFUNC(L, CreateBuffer);
@@ -123,8 +113,7 @@ bool LuaGLBufferMgr::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-const LuaGLBuffer* LuaGLBufferMgr::TestLuaGLBuffer(lua_State* L, int index)
-{
+const LuaGLBuffer* LuaGLBufferMgr::TestLuaGLBuffer(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     return NULL;
   }
@@ -132,8 +121,7 @@ const LuaGLBuffer* LuaGLBufferMgr::TestLuaGLBuffer(lua_State* L, int index)
 }
 
 
-const LuaGLBuffer* LuaGLBufferMgr::CheckLuaGLBuffer(lua_State* L, int index)
-{
+const LuaGLBuffer* LuaGLBufferMgr::CheckLuaGLBuffer(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected GLBuffer");
   }
@@ -141,8 +129,7 @@ const LuaGLBuffer* LuaGLBufferMgr::CheckLuaGLBuffer(lua_State* L, int index)
 }
 
 
-LuaGLBuffer* LuaGLBufferMgr::GetLuaGLBuffer(lua_State* L, int index)
-{
+LuaGLBuffer* LuaGLBufferMgr::GetLuaGLBuffer(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected GLBuffer");
   }
@@ -153,25 +140,23 @@ LuaGLBuffer* LuaGLBufferMgr::GetLuaGLBuffer(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaGLBufferMgr::GetTypeSize(GLenum type)
-{
+int LuaGLBufferMgr::GetTypeSize(GLenum type) {
   switch (type) {
-    case GL_BYTE:	   { return sizeof(GLbyte);   }
+    case GL_BYTE:    { return sizeof(GLbyte);   }
     case GL_UNSIGNED_BYTE:  { return sizeof(GLubyte);  }
-    case GL_SHORT:	  { return sizeof(GLshort);  }
+    case GL_SHORT:    { return sizeof(GLshort);  }
     case GL_UNSIGNED_SHORT: { return sizeof(GLushort); }
     case GL_HALF_FLOAT:     { return sizeof(GLhalf);   }
-    case GL_INT:	    { return sizeof(GLint);    }
+    case GL_INT:      { return sizeof(GLint);    }
     case GL_UNSIGNED_INT:   { return sizeof(GLuint);   }
-    case GL_FLOAT:	  { return sizeof(GLfloat);  }
-    case GL_DOUBLE:	 { return sizeof(GLdouble); }
+    case GL_FLOAT:    { return sizeof(GLfloat);  }
+    case GL_DOUBLE:  { return sizeof(GLdouble); }
   }
   return -1;
 }
 
 
-int LuaGLBufferMgr::GetIndexTypeSize(GLenum type)
-{
+int LuaGLBufferMgr::GetIndexTypeSize(GLenum type) {
   switch (type) {
     case GL_UNSIGNED_INT:   { return sizeof(GLuint);   }
     case GL_UNSIGNED_BYTE:  { return sizeof(GLubyte);  }
@@ -185,8 +170,7 @@ int LuaGLBufferMgr::GetIndexTypeSize(GLenum type)
 //============================================================================//
 
 template<typename T>
-int CalcMaxElem(int bytes, const void* indices)
-{
+int CalcMaxElem(int bytes, const void* indices) {
   int maxElem = 0;
   const size_t typeSize = sizeof(T);
   const size_t count = (bytes / typeSize);
@@ -203,13 +187,12 @@ int CalcMaxElem(int bytes, const void* indices)
 }
 
 
-int LuaGLBufferMgr::CalcMaxElement(GLenum type, int bytes, const void* indices)
-{
+int LuaGLBufferMgr::CalcMaxElement(GLenum type, int bytes, const void* indices) {
   if ((bytes <= 0) || (indices == NULL)) {
     return -1;
   }
   switch (type) {
-    case GL_UNSIGNED_INT:   { return CalcMaxElem<GLuint>  (bytes, indices); }
+    case GL_UNSIGNED_INT:   { return CalcMaxElem<GLuint> (bytes, indices); }
     case GL_UNSIGNED_BYTE:  { return CalcMaxElem<GLubyte> (bytes, indices); }
     case GL_UNSIGNED_SHORT: { return CalcMaxElem<GLushort>(bytes, indices); }
   }
@@ -220,10 +203,9 @@ int LuaGLBufferMgr::CalcMaxElement(GLenum type, int bytes, const void* indices)
 //============================================================================//
 //============================================================================//
 
-bool LuaGLBufferMgr::CreateMetatable(lua_State* L)
-{
+bool LuaGLBufferMgr::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
-  luaset_strfunc(L,  "__gc",	MetaGC);
+  luaset_strfunc(L,  "__gc",  MetaGC);
   luaset_strfunc(L,  "__index",     MetaIndex);
   luaset_strfunc(L,  "__newindex",  MetaNewindex);
   luaset_strstr(L, "__metatable", "no access");
@@ -232,16 +214,14 @@ bool LuaGLBufferMgr::CreateMetatable(lua_State* L)
 }
 
 
-int LuaGLBufferMgr::MetaGC(lua_State* L)
-{
+int LuaGLBufferMgr::MetaGC(lua_State* L) {
   LuaGLBuffer* buf = GetLuaGLBuffer(L, 1);
   buf->~LuaGLBuffer();
   return 0;
 }
 
 
-int LuaGLBufferMgr::MetaIndex(lua_State* L)
-{
+int LuaGLBufferMgr::MetaIndex(lua_State* L) {
   const LuaGLBuffer* buf = CheckLuaGLBuffer(L, 1);
   if (!lua_israwstring(L, 2)) {
     return luaL_pushnil(L);
@@ -261,8 +241,7 @@ int LuaGLBufferMgr::MetaIndex(lua_State* L)
 }
 
 
-int LuaGLBufferMgr::MetaNewindex(lua_State* /*L*/)
-{
+int LuaGLBufferMgr::MetaNewindex(lua_State* /*L*/) {
   return 0;
 }
 
@@ -271,8 +250,7 @@ int LuaGLBufferMgr::MetaNewindex(lua_State* /*L*/)
 //============================================================================//
 
 const void* LuaGLBufferMgr::ParseArgs(lua_State* L, int index,
-				      LuaGLBufferData& bufData)
-{
+                                      LuaGLBufferData& bufData) {
   const char* data = NULL;
   size_t size = 0;
   bufData.size = 0;
@@ -315,8 +293,7 @@ const void* LuaGLBufferMgr::ParseArgs(lua_State* L, int index,
 
 
 const void* LuaGLBufferMgr::ParseTable(lua_State* L, int index,
-				       LuaGLBufferData& bufData)
-{
+                                       LuaGLBufferData& bufData) {
   const char* data = NULL;
 
   size_t offset = 0;
@@ -328,23 +305,23 @@ const void* LuaGLBufferMgr::ParseTable(lua_State* L, int index,
     if (lua_israwstring(L, -2)) {
       const string key = lua_tostring(L, -2);
       if (key == "data") {
-	data = luaL_checklstring(L, -1, &size);
+        data = luaL_checklstring(L, -1, &size);
       }
       else if (key == "offset") {
-	offset = (size_t)luaL_checkint(L, -1);
+        offset = (size_t)luaL_checkint(L, -1);
       }
       else if (key == "size") {
-	maxSize = (size_t)luaL_checkint(L, -1);
-	haveMaxSize = true;
+        maxSize = (size_t)luaL_checkint(L, -1);
+        haveMaxSize = true;
       }
       else if (key == "target") {
-	bufData.target = (GLenum)luaL_checkint(L, -1);
+        bufData.target = (GLenum)luaL_checkint(L, -1);
       }
       else if (key == "usage") {
-	bufData.usage = (GLenum)luaL_checkint(L, -1);
+        bufData.usage = (GLenum)luaL_checkint(L, -1);
       }
       else if (key == "indexType") {
-	bufData.indexType = (GLenum)luaL_checkint(L, -1);
+        bufData.indexType = (GLenum)luaL_checkint(L, -1);
       }
     }
   }
@@ -358,10 +335,10 @@ const void* LuaGLBufferMgr::ParseTable(lua_State* L, int index,
 
     if (haveMaxSize) {
       if (maxSize > size) {
-	luaL_error(L, "requested size exceeds data size");
+        luaL_error(L, "requested size exceeds data size");
       }
       else if (maxSize < size) {
-	size = maxSize;
+        size = maxSize;
       }
     }
   }
@@ -375,8 +352,7 @@ const void* LuaGLBufferMgr::ParseTable(lua_State* L, int index,
 
 
 void LuaGLBufferMgr::IndexCheck(lua_State* L,
-				LuaGLBufferData& bufData, const void* data)
-{
+                                LuaGLBufferData& bufData, const void* data) {
   bufData.indexMax      = 0;
   bufData.indexTypeSize = 0;
 
@@ -406,8 +382,7 @@ void LuaGLBufferMgr::IndexCheck(lua_State* L,
 
 
 void LuaGLBufferMgr::SetBufferData(const LuaGLBufferData& bufData,
-				   const void* data)
-{
+                                   const void* data) {
   glBindBuffer(bufData.target, bufData.id);
   glBufferData(bufData.target, bufData.size, data, bufData.usage);
   glBindBuffer(bufData.target, 0);
@@ -417,8 +392,7 @@ void LuaGLBufferMgr::SetBufferData(const LuaGLBufferData& bufData,
 //============================================================================//
 //============================================================================//
 
-int LuaGLBufferMgr::CreateBuffer(lua_State* L)
-{
+int LuaGLBufferMgr::CreateBuffer(lua_State* L) {
   LuaGLBufferData bufData;
 
   const char* data = NULL;
@@ -458,8 +432,7 @@ int LuaGLBufferMgr::CreateBuffer(lua_State* L)
 }
 
 
-int LuaGLBufferMgr::DeleteBuffer(lua_State* L)
-{
+int LuaGLBufferMgr::DeleteBuffer(lua_State* L) {
   if (OpenGLGState::isExecutingInitFuncs()) {
     luaL_error(L, "gl.DeleteBuffer can not be used in GLReload");
   }
@@ -472,8 +445,7 @@ int LuaGLBufferMgr::DeleteBuffer(lua_State* L)
 }
 
 
-int LuaGLBufferMgr::BufferData(lua_State* L)
-{
+int LuaGLBufferMgr::BufferData(lua_State* L) {
   LuaGLBuffer* buf = GetLuaGLBuffer(L, 1);
   if (!buf->IsValid()) {
     lua_pushboolean(L, false);
@@ -508,8 +480,7 @@ int LuaGLBufferMgr::BufferData(lua_State* L)
 }
 
 
-int LuaGLBufferMgr::BufferSubData(lua_State* L)
-{
+int LuaGLBufferMgr::BufferSubData(lua_State* L) {
   LuaGLBuffer* buf = GetLuaGLBuffer(L, 1);
   if (!buf->IsValid()) {
     lua_pushboolean(L, false);
@@ -540,7 +511,7 @@ int LuaGLBufferMgr::BufferSubData(lua_State* L)
       luaL_error(L, "index buffer target type can not be changed");
     }
     if (((glOffset % buf->indexTypeSize) != 0) ||
-	((size     % buf->indexTypeSize) != 0)) {
+        ((size     % buf->indexTypeSize) != 0)) {
       luaL_error(L, "index buffer subdata must be aligned");
     }
   }
@@ -571,8 +542,7 @@ int LuaGLBufferMgr::BufferSubData(lua_State* L)
 }
 
 
-int LuaGLBufferMgr::GetBufferSubData(lua_State* L)
-{
+int LuaGLBufferMgr::GetBufferSubData(lua_State* L) {
   const LuaGLBuffer* buf = CheckLuaGLBuffer(L, 1);
   if (!buf->IsValid()) {
     lua_pushboolean(L, false);
@@ -619,6 +589,6 @@ int LuaGLBufferMgr::GetBufferSubData(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

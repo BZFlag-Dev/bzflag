@@ -11,11 +11,11 @@
  */
 
 /* SphereSceneNode:
- *	Encapsulates information for rendering a sphere.
+ *  Encapsulates information for rendering a sphere.
  */
 
-#ifndef	BZF_SPHERE_SCENE_NODE_H
-#define	BZF_SPHERE_SCENE_NODE_H
+#ifndef BZF_SPHERE_SCENE_NODE_H
+#define BZF_SPHERE_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -41,10 +41,10 @@ class SphereSceneNode : public SceneNode {
     virtual void addShadowNodes(SceneRenderer&) = 0;
 
   protected:
-    float		radius;
-    fvec4		color;
-    bool		transparent;
-    OpenGLGState	gstate;
+    float   radius;
+    fvec4   color;
+    bool    transparent;
+    OpenGLGState  gstate;
 };
 
 
@@ -76,21 +76,21 @@ class SphereLodSceneNode : public SphereSceneNode {
 
   protected:
     class SphereLodRenderNode : public RenderNode {
-      friend class SphereLodSceneNode;
+        friend class SphereLodSceneNode;
       public:
-	SphereLodRenderNode(const SphereLodSceneNode*);
-	~SphereLodRenderNode();
-	void setLod(int lod);
-	void render();
-	const fvec3& getPosition() const { return sceneNode->getCenter(); }
+        SphereLodRenderNode(const SphereLodSceneNode*);
+        ~SphereLodRenderNode();
+        void setLod(int lod);
+        void render();
+        const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
-	const SphereLodSceneNode* sceneNode;
-	int lod;
+        const SphereLodSceneNode* sceneNode;
+        int lod;
     };
 
   private:
-    SphereLodRenderNode	renderNode;
+    SphereLodRenderNode renderNode;
     bool shockWave;
     bool inside;
 
@@ -105,97 +105,97 @@ class SphereLodSceneNode : public SphereSceneNode {
 
 //============================================================================//
 
-const int		SphereRes = 8;
-const int		SphereLowRes = 6;
+const int   SphereRes = 8;
+const int   SphereLowRes = 6;
 
 class SphereBspSceneNode;
 
 class SphereFragmentSceneNode : public SceneNode {
   public:
-			SphereFragmentSceneNode(int theta, int phi,
-					SphereBspSceneNode* sphere);
-			~SphereFragmentSceneNode();
+    SphereFragmentSceneNode(int theta, int phi,
+                            SphereBspSceneNode* sphere);
+    ~SphereFragmentSceneNode();
 
-    void		move();
+    void    move();
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void    addRenderNodes(SceneRenderer&);
+    void    addShadowNodes(SceneRenderer&);
 
-  // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
-  // following declaration isn't public it generates an error when trying
-  // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
-  // SphereBspSceneNode::SphereBspRenderNode.  i think this is a bug in the
-  // compiler because:
-  //   no other compiler complains
-  //   public/protected/private adjust access not visibility
-  //     SphereBspSceneNode isn't requesting access, it's granting it
+    // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
+    // following declaration isn't public it generates an error when trying
+    // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
+    // SphereBspSceneNode::SphereBspRenderNode.  i think this is a bug in the
+    // compiler because:
+    //   no other compiler complains
+    //   public/protected/private adjust access not visibility
+    //     SphereBspSceneNode isn't requesting access, it's granting it
 //  protected:
   public:
     class FragmentRenderNode : public RenderNode {
       public:
-			FragmentRenderNode(const SphereBspSceneNode*,
-				int theta, int phi);
-			~FragmentRenderNode();
-	const fvec3&	getVertex() const;
-	void		render();
-	const fvec3&	getPosition() const;
+        FragmentRenderNode(const SphereBspSceneNode*,
+                           int theta, int phi);
+        ~FragmentRenderNode();
+        const fvec3&  getVertex() const;
+        void    render();
+        const fvec3&  getPosition() const;
       private:
-	const SphereBspSceneNode*	sceneNode;
-	int		theta, phi;
-	int		theta2, phi2;
+        const SphereBspSceneNode* sceneNode;
+        int   theta, phi;
+        int   theta2, phi2;
     };
     friend class FragmentRenderNode;
 
   private:
-    SphereBspSceneNode*	parentSphere;
-    FragmentRenderNode	renderNode;
+    SphereBspSceneNode* parentSphere;
+    FragmentRenderNode  renderNode;
 };
 
 class SphereBspSceneNode : public SphereSceneNode {
-  friend class SphereFragmentSceneNode;
-  friend class SphereFragmentSceneNode::FragmentRenderNode;
+    friend class SphereFragmentSceneNode;
+    friend class SphereFragmentSceneNode::FragmentRenderNode;
   public:
-			SphereBspSceneNode(const fvec3& pos, float radius);
-			~SphereBspSceneNode();
+    SphereBspSceneNode(const fvec3& pos, float radius);
+    ~SphereBspSceneNode();
 
-    void		setColor(float r, float g,
-				 float b, float a = 1.0f);
-    void		setColor(const fvec4& rgba);
-    void		move(const fvec3& pos, float radius);
+    void    setColor(float r, float g,
+                     float b, float a = 1.0f);
+    void    setColor(const fvec4& rgba);
+    void    move(const fvec3& pos, float radius);
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void    addRenderNodes(SceneRenderer&);
+    void    addShadowNodes(SceneRenderer&);
 
-    SceneNode**		getParts(int& numParts);
+    SceneNode**   getParts(int& numParts);
 
   protected:
-    float		getRadius() const { return radius; }
+    float   getRadius() const { return radius; }
 
   private:
-    void		freeParts();
+    void    freeParts();
 
   protected:
     class SphereBspRenderNode : public RenderNode {
-      friend class SphereBspSceneNode;
-      friend class SphereFragmentSceneNode::FragmentRenderNode;
+        friend class SphereBspSceneNode;
+        friend class SphereFragmentSceneNode::FragmentRenderNode;
       public:
-			SphereBspRenderNode(const SphereBspSceneNode*);
-			~SphereBspRenderNode();
-	void		setHighResolution(bool);
-	void		setBaseIndex(int index);
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        SphereBspRenderNode(const SphereBspSceneNode*);
+        ~SphereBspRenderNode();
+        void    setHighResolution(bool);
+        void    setBaseIndex(int index);
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	const SphereBspSceneNode* sceneNode;
-	bool		highResolution;
-	int		baseIndex;
-	static fvec3	geom[2 * SphereRes * (SphereRes + 1)];
-	static fvec3	lgeom[SphereLowRes * (SphereLowRes + 1)];
+        const SphereBspSceneNode* sceneNode;
+        bool    highResolution;
+        int   baseIndex;
+        static fvec3  geom[2 * SphereRes * (SphereRes + 1)];
+        static fvec3  lgeom[SphereLowRes * (SphereLowRes + 1)];
     };
     friend class SphereBspRenderNode;
 
   private:
-    SphereBspRenderNode	renderNode;
+    SphereBspRenderNode renderNode;
     SphereFragmentSceneNode** parts;
 };
 
@@ -209,6 +209,6 @@ class SphereBspSceneNode : public SphereSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

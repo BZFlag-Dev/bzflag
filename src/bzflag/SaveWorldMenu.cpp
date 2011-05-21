@@ -24,8 +24,7 @@
 #include "LocalFontFace.h"
 
 
-SaveWorldMenu::SaveWorldMenu()
-{
+SaveWorldMenu::SaveWorldMenu() {
   // add controls
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
@@ -47,22 +46,20 @@ SaveWorldMenu::SaveWorldMenu()
   initNavigation();
 }
 
-SaveWorldMenu::~SaveWorldMenu()
-{
+SaveWorldMenu::~SaveWorldMenu() {
 }
 
 
-HUDuiDefaultKey* SaveWorldMenu::getDefaultKey()
-{
+HUDuiDefaultKey* SaveWorldMenu::getDefaultKey() {
   return MenuDefaultKey::getInstance();
 }
 
-void SaveWorldMenu::execute()
-{
-  World *world = World::getWorld();
+void SaveWorldMenu::execute() {
+  World* world = World::getWorld();
   if (world == NULL) {
     status->setString("No world loaded to save");
-  } else {
+  }
+  else {
     std::string fullname;
     BZDB.set("saveAsMeshes", "0");
     BZDB.set("saveFlatFile", "0");
@@ -71,24 +68,24 @@ void SaveWorldMenu::execute()
       std::string newLabel = "World Saved: ";
       newLabel += fullname;
       status->setString(newLabel);
-    } else {
+    }
+    else {
       std::string newLabel = "Error Saving: ";
       newLabel += fullname;
       status->setString(newLabel);
     }
   }
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const float statusWidth = fm.getStringWidth(status->getFontFace()->getFMFace(),
-    status->getFontSize(), status->getString());
+                                              status->getFontSize(), status->getString());
   status->setPosition(0.5f * ((float)width - statusWidth), status->getY());
 }
 
-void SaveWorldMenu::resize(int _width, int _height)
-{
+void SaveWorldMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
   const LocalFontFace* fontFace = title->getFontFace();
@@ -114,7 +111,7 @@ void SaveWorldMenu::resize(int _width, int _height)
   const float h = fm.getStringHeight(fontFace->getFMFace(), fontSize);
   const int count = (const int)listHUD.size();
   int i;
-  for (i = 1; i < count-1; i++) {
+  for (i = 1; i < count - 1; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
@@ -130,6 +127,6 @@ void SaveWorldMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -33,8 +33,7 @@ static const int MAX_LUA_TEXTURE_UNITS = 32;
 
 //============================================================================//
 
-class LuaTexture
-{
+class LuaTexture {
   public:
     LuaTexture();
     virtual ~LuaTexture();
@@ -135,6 +134,6 @@ extern LuaTextureMgr luaTextureMgr;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -18,42 +18,42 @@
 /** This ABC represents an image file. It has subclasses for different image
     formats. */
 class ImageFile : public MediaFile {
-public:
-  /** Close the image file.  This does *not* destroy the stream. */
-  virtual ~ImageFile();
+  public:
+    /** Close the image file.  This does *not* destroy the stream. */
+    virtual ~ImageFile();
 
-  // note -- all concrete ImageFile types should have a method to
-  // return the default file extension for files in the format:
-  // static std::string getExtension();
+    // note -- all concrete ImageFile types should have a method to
+    // return the default file extension for files in the format:
+    // static std::string getExtension();
 
-  /** Pixels are stored I, IA, RGB, or RGBA, depending on the number
-      of channels.  Rows are stored left to right, bottom to top.
-      Buffer must be at least getNumChannels() * getWidth() * getHeight()
-      bytes. */
-  virtual bool read(void* buffer) = 0;
+    /** Pixels are stored I, IA, RGB, or RGBA, depending on the number
+        of channels.  Rows are stored left to right, bottom to top.
+        Buffer must be at least getNumChannels() * getWidth() * getHeight()
+        bytes. */
+    virtual bool read(void* buffer) = 0;
 
-  /** Returns true if the stream was successfully opened as an image file. */
-  bool isOpen() const;
+    /** Returns true if the stream was successfully opened as an image file. */
+    bool isOpen() const;
 
-  /** Get the number of channels in the image file. Channels are 8 bits. */
-  int			getNumChannels() const;
+    /** Get the number of channels in the image file. Channels are 8 bits. */
+    int     getNumChannels() const;
 
-  /** Get the width of the image file. */
-  int			getWidth() const;
+    /** Get the width of the image file. */
+    int     getWidth() const;
 
-  /** Get the height of the image file. */
-  int			getHeight() const;
+    /** Get the height of the image file. */
+    int     getHeight() const;
 
-protected:
-  ImageFile(std::istream*);
+  protected:
+    ImageFile(std::istream*);
 
-  /** Save info about the stream.  Called by the derived c'tor. */
-  void init(int numChannels, int width, int height);
+    /** Save info about the stream.  Called by the derived c'tor. */
+    void init(int numChannels, int width, int height);
 
-private:
-  bool			open;
-  int			numChannels;
-  int			width, height;
+  private:
+    bool      open;
+    int     numChannels;
+    int     width, height;
 };
 
 #endif
@@ -62,6 +62,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

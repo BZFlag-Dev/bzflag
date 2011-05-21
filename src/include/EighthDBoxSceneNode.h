@@ -11,12 +11,12 @@
  */
 
 /* EighthDBoxSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a box building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a box building.
  */
 
-#ifndef	BZF_EIGHTHD_BOX_SCENE_NODE_H
-#define	BZF_EIGHTHD_BOX_SCENE_NODE_H
+#ifndef BZF_EIGHTHD_BOX_SCENE_NODE_H
+#define BZF_EIGHTHD_BOX_SCENE_NODE_H
 
 #include "common.h"
 #include "EighthDimSceneNode.h"
@@ -25,27 +25,27 @@ class EighthDBoxSceneNode : public EighthDimSceneNode {
   public:
     EighthDBoxSceneNode(const fvec3& pos,
                         const fvec3& size, float rotation);
-			~EighthDBoxSceneNode();
+    ~EighthDBoxSceneNode();
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void    notifyStyleChange();
+    void    addRenderNodes(SceneRenderer&);
 
   protected:
     class EighthDBoxRenderNode : public RenderNode {
       public:
-			EighthDBoxRenderNode(const EighthDBoxSceneNode*,
-				const fvec3& pos,
-				const fvec3& size, float rotation);
-			~EighthDBoxRenderNode();
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        EighthDBoxRenderNode(const EighthDBoxSceneNode*,
+                             const fvec3& pos,
+                             const fvec3& size, float rotation);
+        ~EighthDBoxRenderNode();
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	const EighthDBoxSceneNode* sceneNode;
-	fvec3		corner[8];
+        const EighthDBoxSceneNode* sceneNode;
+        fvec3   corner[8];
     };
 
   private:
-    OpenGLGState	 gstate;
+    OpenGLGState   gstate;
     EighthDBoxRenderNode renderNode;
 };
 
@@ -55,6 +55,6 @@ class EighthDBoxSceneNode : public EighthDimSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

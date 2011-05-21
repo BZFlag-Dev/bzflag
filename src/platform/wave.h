@@ -17,25 +17,25 @@
 
 /* A very simple wav file reader */
 
-#define	WAV_FORMAT_UNKNOWN		(0x0000)
-#define	WAV_FORMAT_PCM			(0x0001)
-#define	WAV_FORMAT_ADPCM		(0x0002)
-#define	WAV_FORMAT_ALAW			(0x0006)
-#define	WAV_FORMAT_MULAW		(0x0007)
-#define	WAV_FORMAT_OKI_ADPCM		(0x0010)
-#define	WAV_FORMAT_DIGISTD		(0x0015)
-#define	WAV_FORMAT_DIGIFIX		(0x0016)
-#define	IBM_FORMAT_MULAW		(0x0101)
-#define	IBM_FORMAT_ALAW			(0x0102)
-#define	IBM_FORMAT_ADPCM		(0x0103)
+#define WAV_FORMAT_UNKNOWN    (0x0000)
+#define WAV_FORMAT_PCM      (0x0001)
+#define WAV_FORMAT_ADPCM    (0x0002)
+#define WAV_FORMAT_ALAW     (0x0006)
+#define WAV_FORMAT_MULAW    (0x0007)
+#define WAV_FORMAT_OKI_ADPCM    (0x0010)
+#define WAV_FORMAT_DIGISTD    (0x0015)
+#define WAV_FORMAT_DIGIFIX    (0x0016)
+#define IBM_FORMAT_MULAW    (0x0101)
+#define IBM_FORMAT_ALAW     (0x0102)
+#define IBM_FORMAT_ADPCM    (0x0103)
 
 /*
    Open the given filename as a wav file. Read the header and return the
    parameters in the rest of the arguments.
    Returns an open FILE if successful or NULL for error.
 */
-FILE* openWavFile(const char *filename, short *format, long *speed,
-		int *numFrames, short *numChannels, short *width);
+FILE* openWavFile(const char* filename, short* format, long* speed,
+                  int* numFrames, short* numChannels, short* width);
 /*
   Close the given wave file.
 */
@@ -46,7 +46,7 @@ void closeWavFile(FILE*);
   numSamples should be (*numFrames) * (*numChannels).
   Return 0 if successful or -1 for error.
 */
-int readWavData(FILE*, char *data, int numSamples, int width);
+int readWavData(FILE*, char* data, int numSamples, int width);
 
 #endif
 
@@ -55,6 +55,6 @@ int readWavData(FILE*, char *data, int numSamples, int width);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

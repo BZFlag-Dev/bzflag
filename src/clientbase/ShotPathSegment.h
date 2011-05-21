@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTPATHSEGMENT_H__
-#define	__SHOTPATHSEGMENT_H__
+#ifndef __SHOTPATHSEGMENT_H__
+#define __SHOTPATHSEGMENT_H__
 
 /* common interface headers */
 #include "BzTime.h"
@@ -29,7 +29,7 @@ class ShotPathSegment {
 
     ShotPathSegment();
     ShotPathSegment(const BzTime& start, const BzTime& end,
-                                const Ray& r, Reason = Initial);
+                    const Ray& r, Reason = Initial);
     ShotPathSegment(const ShotPathSegment&);
     ShotPathSegment& operator=(const ShotPathSegment&);
 
@@ -62,6 +62,6 @@ class ShotPathSegment {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

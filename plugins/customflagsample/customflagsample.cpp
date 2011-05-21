@@ -19,60 +19,60 @@ BZ_GET_PLUGIN_VERSION
 
 
 class CustomFlagSampleHandler : public bz_EventHandler {
-public:
-  void process(bz_EventData *eventData)
-  {
-    switch (eventData->eventType) {
+  public:
+    void process(bz_EventData* eventData) {
+      switch (eventData->eventType) {
 
-      default: {
-	// no, sir, we didn't ask for THIS!!
-	bz_debugMessage(1, "customflagsample: received event with unrequested eventType!");
-	return;
-      }
+        default: {
+          // no, sir, we didn't ask for THIS!!
+          bz_debugMessage(1, "customflagsample: received event with unrequested eventType!");
+          return;
+        }
 
-      case bz_eFlagTransferredEvent: {
-	bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;
-	if (fte->flagType == "CF")
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag transferred!");
-	break;
-      }
+        case bz_eFlagTransferredEvent: {
+          bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;
+          if (fte->flagType == "CF") {
+            bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag transferred!");
+          }
+          break;
+        }
 
-      case bz_eFlagGrabbedEvent: {
-	bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;
-	if (fge->flagType == "CF")
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag grabbed!");
-	break;
-      }
+        case bz_eFlagGrabbedEvent: {
+          bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;
+          if (fge->flagType == "CF") {
+            bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag grabbed!");
+          }
+          break;
+        }
 
-      case bz_eFlagDroppedEvent: {
-	bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;
-	if (fde->flagType == "CF")
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag dropped!");
-	break;
-      }
+        case bz_eFlagDroppedEvent: {
+          bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;
+          if (fde->flagType == "CF") {
+            bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag dropped!");
+          }
+          break;
+        }
 
-      case bz_eShotFiredEvent: {
-	bz_ShotFiredEventData_V1* sfed = (bz_ShotFiredEventData_V1*)eventData;
-	int p = sfed->playerID;
-	bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(p);
-	if (!playerRecord) break;
-	if (playerRecord->currentFlag == "Custom Flag (+CF)")
-	  {
-	    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Shot fired by %s with Custom Flag!", playerRecord->callsign.c_str());
-	    // this user must be cool, add 10 to their score
-	    bz_setPlayerWins(p, bz_getPlayerWins(p)+10);
-	  }
-	break;
+        case bz_eShotFiredEvent: {
+          bz_ShotFiredEventData_V1* sfed = (bz_ShotFiredEventData_V1*)eventData;
+          int p = sfed->playerID;
+          bz_BasePlayerRecord* playerRecord = bz_getPlayerByIndex(p);
+          if (!playerRecord) { break; }
+          if (playerRecord->currentFlag == "Custom Flag (+CF)") {
+            bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Shot fired by %s with Custom Flag!", playerRecord->callsign.c_str());
+            // this user must be cool, add 10 to their score
+            bz_setPlayerWins(p, bz_getPlayerWins(p) + 10);
+          }
+          break;
+        }
       }
     }
-  }
 
 };
 
 CustomFlagSampleHandler cfs;
 
-BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/)
-{
+BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/) {
   bz_debugMessage(4, "customflagsample plugin loaded");
 
   // register our special custom flag
@@ -87,8 +87,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/)
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   // unregister our events
   bz_removeEvent(bz_eFlagTransferredEvent, &cfs);
   bz_removeEvent(bz_eFlagGrabbedEvent, &cfs);
@@ -104,6 +103,6 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_BUNDLEMGR_H
-#define	BZF_BUNDLEMGR_H
+#ifndef BZF_BUNDLEMGR_H
+#define BZF_BUNDLEMGR_H
 
 #include "common.h"
 
@@ -26,27 +26,26 @@
 
 class Bundle;
 
-typedef std::map<std::string,Bundle *> BundleMap;
+typedef std::map<std::string, Bundle*> BundleMap;
 
-class BundleMgr
-{
-public:
-	BundleMgr(const std::string &path, const std::string &bundleName);
-	~BundleMgr();
-	Bundle *getBundle(const std::string &locale, bool setcur = true);
+class BundleMgr {
+  public:
+    BundleMgr(const std::string& path, const std::string& bundleName);
+    ~BundleMgr();
+    Bundle* getBundle(const std::string& locale, bool setcur = true);
 
-	static Bundle *getCurrentBundle();
-	static bool getLocaleList(std::vector<std::string> *list);
+    static Bundle* getCurrentBundle();
+    static bool getLocaleList(std::vector<std::string> *list);
 
-private:
-	BundleMgr(const BundleMgr &xBundleMgr);
-	BundleMgr& operator=(const BundleMgr &xBundleMgr);
+  private:
+    BundleMgr(const BundleMgr& xBundleMgr);
+    BundleMgr& operator=(const BundleMgr& xBundleMgr);
 
-	static std::string bundlePath;
-	std::string bundleName;
-	BundleMap bundles;
+    static std::string bundlePath;
+    std::string bundleName;
+    BundleMap bundles;
 
-	static Bundle *currentBundle;
+    static Bundle* currentBundle;
 };
 
 #endif
@@ -55,6 +54,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

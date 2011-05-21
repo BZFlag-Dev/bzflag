@@ -11,11 +11,11 @@
  */
 
 /* LaserSceneNode:
- *	Encapsulates information for rendering a laser beam.
+ *  Encapsulates information for rendering a laser beam.
  */
 
-#ifndef	BZF_LASER_SCENE_NODE_H
-#define	BZF_LASER_SCENE_NODE_H
+#ifndef BZF_LASER_SCENE_NODE_H
+#define BZF_LASER_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -25,28 +25,28 @@ class LaserSceneNode : public SceneNode {
     LaserSceneNode(const fvec3& pos, const fvec3& forward);
     ~LaserSceneNode();
 
-    void		setTexture(const int);
+    void    setTexture(const int);
 
-    bool		cull(const ViewFrustum&) const;
+    bool    cull(const ViewFrustum&) const;
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void    notifyStyleChange();
+    void    addRenderNodes(SceneRenderer&);
 
-    void		setColor ( float r, float g, float b );
-    void		setCenterColor ( float r, float g, float b );
-    void		setFirst ( void ) {first = true;}
+    void    setColor(float r, float g, float b);
+    void    setCenterColor(float r, float g, float b);
+    void    setFirst(void) {first = true;}
   protected:
     class LaserRenderNode : public RenderNode {
       public:
         LaserRenderNode(const LaserSceneNode*);
         ~LaserRenderNode();
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	void renderFlatLaser();
-	void renderGeoLaser();
-	const LaserSceneNode* sceneNode;
-	static float	geom[6][2];
+        void renderFlatLaser();
+        void renderGeoLaser();
+        const LaserSceneNode* sceneNode;
+        static float  geom[6][2];
     };
     fvec4 color;
     fvec4 centerColor;
@@ -54,11 +54,11 @@ class LaserSceneNode : public SceneNode {
     friend class LaserRenderNode;
 
   private:
-    float		azimuth, elevation;
-    float		length;
-    bool		texturing;
-    OpenGLGState	gstate;
-    LaserRenderNode	renderNode;
+    float   azimuth, elevation;
+    float   length;
+    bool    texturing;
+    OpenGLGState  gstate;
+    LaserRenderNode renderNode;
 
 };
 
@@ -68,6 +68,6 @@ class LaserSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

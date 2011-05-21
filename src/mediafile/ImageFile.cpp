@@ -16,42 +16,35 @@
 // ImageFile
 //
 
-ImageFile::ImageFile(std::istream* _stream) : MediaFile(_stream), open(false)
-{
+ImageFile::ImageFile(std::istream* _stream) : MediaFile(_stream), open(false) {
   // do nothing
 }
 
-ImageFile::~ImageFile()
-{
+ImageFile::~ImageFile() {
   // do nothing
 }
 
-void			ImageFile::init(int _numChannels,
-					int _width, int _height)
-{
-  open	= true;
+void      ImageFile::init(int _numChannels,
+                          int _width, int _height) {
+  open  = true;
   numChannels = _numChannels;
   width       = _width;
   height      = _height;
 }
 
-bool			ImageFile::isOpen() const
-{
+bool      ImageFile::isOpen() const {
   return open;
 }
 
-int			ImageFile::getNumChannels() const
-{
+int     ImageFile::getNumChannels() const {
   return numChannels;
 }
 
-int			ImageFile::getWidth() const
-{
+int     ImageFile::getWidth() const {
   return width;
 }
 
-int			ImageFile::getHeight() const
-{
+int     ImageFile::getHeight() const {
   return height;
 }
 
@@ -59,6 +52,6 @@ int			ImageFile::getHeight() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

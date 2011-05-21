@@ -28,9 +28,9 @@ namespace BzPNG {
     Chunk(const std::string& t, // for tEXt chunks
           const std::string& keyword,
           const std::string& text)
-          : type(t)
-          , data(keyword + std::string(1, 0) + text)
-          {}
+      : type(t)
+      , data(keyword + std::string(1, 0) + text)
+    {}
     std::string type; // must be 4 bytes
     std::string data;
   };
@@ -51,6 +51,6 @@ namespace BzPNG {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

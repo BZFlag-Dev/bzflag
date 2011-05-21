@@ -31,7 +31,7 @@
 class CustomLink : public WorldFileObject {
   public:
     CustomLink(bool linkSet);
-    virtual bool read(const char *cmd, std::istream& input);
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
   protected:
@@ -47,6 +47,6 @@ class CustomLink : public WorldFileObject {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

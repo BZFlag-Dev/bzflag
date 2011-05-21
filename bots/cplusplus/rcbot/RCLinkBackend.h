@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__RCLINKBACKEND_H__
-#define	__RCLINKBACKEND_H__
+#ifndef __RCLINKBACKEND_H__
+#define __RCLINKBACKEND_H__
 
 #include "common.h"
 
@@ -28,31 +28,30 @@
  * Remote Control Link, Backend: Encapsulates communication between backend and
  * frontend, from the backends point of view.
  */
-class RCLinkBackend : public RCLink
-{
+class RCLinkBackend : public RCLink {
 
-private:
-  RCRequest *requests;
-  RCEvent *events;
-  void sendEvent();
+  private:
+    RCRequest* requests;
+    RCEvent* events;
+    void sendEvent();
 
-public:
-  RCLinkBackend();
-  ~RCLinkBackend();
+  public:
+    RCLinkBackend();
+    ~RCLinkBackend();
 
-  void update();
-  bool parseCommand(char *cmdline);
-  RCRequest* popRequest();
-  RCRequest* peekRequest();
-  void pushEvent(RCEvent *event);
-  RCEvent* popEvent();
-  bool tryAccept();
-  State getDisconnectedState();
-  void sendAck(RCRequest *req);
-  void sendPacket ( const char *data, unsigned int size, bool killit = false );
+    void update();
+    bool parseCommand(char* cmdline);
+    RCRequest* popRequest();
+    RCRequest* peekRequest();
+    void pushEvent(RCEvent* event);
+    RCEvent* popEvent();
+    bool tryAccept();
+    State getDisconnectedState();
+    void sendAck(RCRequest* req);
+    void sendPacket(const char* data, unsigned int size, bool killit = false);
 
-  bool ssend(const char *message);
-  bool sendf(const char *format, ...) BZ_ATTR_23;
+    bool ssend(const char* message);
+    bool sendf(const char* format, ...) BZ_ATTR_23;
 };
 
 #endif /* __RCLINKBACKEND_H__ */
@@ -61,6 +60,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

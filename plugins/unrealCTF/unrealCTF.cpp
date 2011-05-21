@@ -18,17 +18,15 @@
 
 BZ_GET_PLUGIN_VERSION
 
-class UnrealCTFEventHandler : public bz_EventHandler
-{
-public:
-  virtual void process ( bz_EventData *eventData );
+class UnrealCTFEventHandler : public bz_EventHandler {
+  public:
+    virtual void process(bz_EventData* eventData);
 };
 
-typedef struct
-{
+typedef struct {
   int id;
   int caried;
-}TeamFlagStatusRecord;
+} TeamFlagStatusRecord;
 
 TeamFlagStatusRecord  redFlag;
 TeamFlagStatusRecord  greenFlag;
@@ -36,106 +34,106 @@ TeamFlagStatusRecord  blueFlag;
 TeamFlagStatusRecord  purpleFlag;
 
 bool gotFlags;
-void checkFlags ( void );
+void checkFlags(void);
 
 UnrealCTFEventHandler unrealCTFEventHandler;
 
-BZF_PLUGIN_CALL int bz_Load ( const char* /*commandLine*/ )
-{
-  bz_registerEvent ( bz_eAllowFlagGrabEvent, &unrealCTFEventHandler );
-  bz_registerEvent ( bz_eFlagGrabbedEvent, &unrealCTFEventHandler );
-  bz_registerEvent ( bz_eAllowCTFCaptureEvent, &unrealCTFEventHandler );
-  bz_registerEvent ( bz_eWorldFinalized, &unrealCTFEventHandler );
-  bz_registerEvent ( bz_ePlayerJoinEvent, &unrealCTFEventHandler );
+BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/) {
+  bz_registerEvent(bz_eAllowFlagGrabEvent, &unrealCTFEventHandler);
+  bz_registerEvent(bz_eFlagGrabbedEvent, &unrealCTFEventHandler);
+  bz_registerEvent(bz_eAllowCTFCaptureEvent, &unrealCTFEventHandler);
+  bz_registerEvent(bz_eWorldFinalized, &unrealCTFEventHandler);
+  bz_registerEvent(bz_ePlayerJoinEvent, &unrealCTFEventHandler);
 
-  if (bz_anyPlayers())
+  if (bz_anyPlayers()) {
     checkFlags();
-  bz_debugMessage(4,"unrealCTF plugin loaded");
+  }
+  bz_debugMessage(4, "unrealCTF plugin loaded");
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload ( void )
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   gotFlags = false;
-  bz_removeEvent ( bz_eAllowFlagGrabEvent, &unrealCTFEventHandler );
-  bz_removeEvent ( bz_ePlayerJoinEvent, &unrealCTFEventHandler );
-  bz_removeEvent ( bz_eFlagGrabbedEvent, &unrealCTFEventHandler );
-  bz_removeEvent ( bz_eAllowCTFCaptureEvent, &unrealCTFEventHandler );
-  bz_removeEvent ( bz_eWorldFinalized, &unrealCTFEventHandler );
-  bz_debugMessage(4,"unrealCTF plugin unloaded");
+  bz_removeEvent(bz_eAllowFlagGrabEvent, &unrealCTFEventHandler);
+  bz_removeEvent(bz_ePlayerJoinEvent, &unrealCTFEventHandler);
+  bz_removeEvent(bz_eFlagGrabbedEvent, &unrealCTFEventHandler);
+  bz_removeEvent(bz_eAllowCTFCaptureEvent, &unrealCTFEventHandler);
+  bz_removeEvent(bz_eWorldFinalized, &unrealCTFEventHandler);
+  bz_debugMessage(4, "unrealCTF plugin unloaded");
   return 0;
 }
 
-bz_eTeamType teamFromFlag ( int i )
-{
+bz_eTeamType teamFromFlag(int i) {
   std::string name = bz_getFlagName(i).c_str();
-  if ( name == "R*" )
+  if (name == "R*") {
     return eRedTeam;
+  }
 
-  if ( name == "G*" )
+  if (name == "G*") {
     return eGreenTeam;
+  }
 
-  if ( name == "B*" )
+  if (name == "B*") {
     return eBlueTeam;
+  }
 
-  if ( name == "P*" )
+  if (name == "P*") {
     return ePurpleTeam;
+  }
 
   return eNoTeam;
 }
 
-void zapTeamFlagToBase ( bz_eTeamType team )
-{
-  if ( team == eRedTeam )
-  {
+void zapTeamFlagToBase(bz_eTeamType team) {
+  if (team == eRedTeam) {
     redFlag.caried = -1;
     bz_resetFlag(redFlag.id);
   }
 
-  if ( team == eGreenTeam  )
-  {
+  if (team == eGreenTeam) {
     greenFlag.caried = -1;
-    bz_resetFlag ( greenFlag.id);
+    bz_resetFlag(greenFlag.id);
   }
 
-  if ( team == eBlueTeam  )
-  {
+  if (team == eBlueTeam) {
     blueFlag.caried = -1;
-    bz_resetFlag ( blueFlag.id);
+    bz_resetFlag(blueFlag.id);
   }
 
-  if ( team == ePurpleTeam  )
-  {
+  if (team == ePurpleTeam) {
     purpleFlag.caried = -1;
-    bz_resetFlag ( purpleFlag.id);
+    bz_resetFlag(purpleFlag.id);
   }
 }
 
-void checkFlags ( void )
-{
-  if (gotFlags)
+void checkFlags(void) {
+  if (gotFlags) {
     return;
+  }
 
-  bz_setBZDBBool("_grabOwnFlag",true);
+  bz_setBZDBBool("_grabOwnFlag", true);
 
   int flagCount = bz_getNumFlags();
-  for ( int i = 0; i < flagCount; i++ )
-  {
+  for (int i = 0; i < flagCount; i++) {
     std::string name = bz_getFlagName(i).c_str();
 
     bz_eTeamType team = teamFromFlag(i);
 
-    if ( team == eRedTeam )
+    if (team == eRedTeam) {
       redFlag.id = i;
+    }
 
-    if ( team == eGreenTeam  )
+    if (team == eGreenTeam) {
       greenFlag.id = i;
+    }
 
-    if ( team == eBlueTeam  )
+    if (team == eBlueTeam) {
       blueFlag.id = i;
+    }
 
-    if ( team == ePurpleTeam  )
+    if (team == ePurpleTeam) {
       purpleFlag.id = i;
+    }
 
     zapTeamFlagToBase(team);
   }
@@ -143,92 +141,98 @@ void checkFlags ( void )
   gotFlags = true;
 }
 
-void setTeamFlagPickup ( bz_eTeamType team, int player )
-{
-  if ( team == eRedTeam )
+void setTeamFlagPickup(bz_eTeamType team, int player) {
+  if (team == eRedTeam) {
     redFlag.caried = player;
+  }
 
-  if ( team == eGreenTeam  )
+  if (team == eGreenTeam) {
     greenFlag.caried = player;
+  }
 
-  if ( team == eBlueTeam  )
+  if (team == eBlueTeam) {
     blueFlag.caried = player;
+  }
 
-  if ( team == ePurpleTeam  )
+  if (team == ePurpleTeam) {
     purpleFlag.caried = player;
+  }
 }
 
-int getTeamFlagCarier ( bz_eTeamType team)
-{
-  if ( team == eRedTeam )
+int getTeamFlagCarier(bz_eTeamType team) {
+  if (team == eRedTeam) {
     return redFlag.caried;
+  }
 
-  if ( team == eGreenTeam  )
+  if (team == eGreenTeam) {
     return greenFlag.caried;
+  }
 
-  if ( team == eBlueTeam  )
+  if (team == eBlueTeam) {
     return blueFlag.caried;
+  }
 
-  if ( team == ePurpleTeam  )
+  if (team == ePurpleTeam) {
     return purpleFlag.caried;
+  }
 
   return -1;
 }
 
-void UnrealCTFEventHandler::process ( bz_EventData *eventData )
-{
-  if (!eventData)
+void UnrealCTFEventHandler::process(bz_EventData* eventData) {
+  if (!eventData) {
     return;
+  }
 
-  switch(eventData->eventType)
-  {
+  switch (eventData->eventType) {
     case bz_ePlayerJoinEvent: // just in case we loaded, noone was here, and we didn't check the flags
-      if (!gotFlags)
-	checkFlags();
-      break;
-
-    case bz_eAllowFlagGrabEvent:
-      {
-	bz_AllowFlagGrabEventData_V1 *allowGrab = (bz_AllowFlagGrabEventData_V1*)eventData;
-	bz_eTeamType flagTeam = teamFromFlag(allowGrab->flagID);
-	if ( flagTeam == eNoTeam)
-	  break;
-
-	bz_eTeamType playerTeam = bz_getPlayerTeam(allowGrab->playerID);
-	if (playerTeam == eRogueTeam || playerTeam == flagTeam)
-	{
-	  zapTeamFlagToBase(flagTeam);
-	  allowGrab->allow = false;
-	}
-
+      if (!gotFlags) {
+        checkFlags();
       }
       break;
 
-    case bz_eFlagGrabbedEvent:
-    {
-	bz_FlagGrabbedEventData_V1 *grabbed = (bz_FlagGrabbedEventData_V1*)eventData;
-	bz_eTeamType flagTeam = teamFromFlag(grabbed->flagID);
-	if ( flagTeam == eNoTeam)
-	  break;
+    case bz_eAllowFlagGrabEvent: {
+      bz_AllowFlagGrabEventData_V1* allowGrab = (bz_AllowFlagGrabEventData_V1*)eventData;
+      bz_eTeamType flagTeam = teamFromFlag(allowGrab->flagID);
+      if (flagTeam == eNoTeam) {
+        break;
+      }
 
-	bz_eTeamType playerTeam = bz_getPlayerTeam(grabbed->playerID);
-	if (playerTeam == eRogueTeam || playerTeam == flagTeam)
-	  zapTeamFlagToBase(flagTeam);
-	else
-	  setTeamFlagPickup(flagTeam,grabbed->playerID);
+      bz_eTeamType playerTeam = bz_getPlayerTeam(allowGrab->playerID);
+      if (playerTeam == eRogueTeam || playerTeam == flagTeam) {
+        zapTeamFlagToBase(flagTeam);
+        allowGrab->allow = false;
+      }
+
     }
     break;
 
-    case bz_eAllowCTFCaptureEvent:
-      {
-	bz_AllowCTFCaptureEventData_V1* CTFCap = (bz_AllowCTFCaptureEventData_V1*)eventData;
-
-	CTFCap->killTeam = false;
-
-	// only let them cap if there flag is not caried
-	CTFCap->allow = getTeamFlagCarier(CTFCap->teamCapping) == -1;
+    case bz_eFlagGrabbedEvent: {
+      bz_FlagGrabbedEventData_V1* grabbed = (bz_FlagGrabbedEventData_V1*)eventData;
+      bz_eTeamType flagTeam = teamFromFlag(grabbed->flagID);
+      if (flagTeam == eNoTeam) {
+        break;
       }
-      break;
+
+      bz_eTeamType playerTeam = bz_getPlayerTeam(grabbed->playerID);
+      if (playerTeam == eRogueTeam || playerTeam == flagTeam) {
+        zapTeamFlagToBase(flagTeam);
+      }
+      else {
+        setTeamFlagPickup(flagTeam, grabbed->playerID);
+      }
+    }
+    break;
+
+    case bz_eAllowCTFCaptureEvent: {
+      bz_AllowCTFCaptureEventData_V1* CTFCap = (bz_AllowCTFCaptureEventData_V1*)eventData;
+
+      CTFCap->killTeam = false;
+
+      // only let them cap if there flag is not caried
+      CTFCap->allow = getTeamFlagCarier(CTFCap->teamCapping) == -1;
+    }
+    break;
 
     case bz_eWorldFinalized:
       gotFlags = false;
@@ -241,6 +245,6 @@ void UnrealCTFEventHandler::process ( bz_EventData *eventData )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

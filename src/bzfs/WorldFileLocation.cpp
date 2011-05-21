@@ -29,15 +29,13 @@
 
 
 WorldFileLocation::WorldFileLocation()
-: pos(0.0f, 0.0f, 0.0f)
-, size(1.0f, 1.0f, 1.0f)
-, rotation(0.0f)
-{
+  : pos(0.0f, 0.0f, 0.0f)
+  , size(1.0f, 1.0f, 1.0f)
+  , rotation(0.0f) {
 }
 
 
-bool WorldFileLocation::read(const char *cmd, std::istream& input)
-{
+bool WorldFileLocation::read(const char* cmd, std::istream& input) {
   //
   // Position, Size, and Rotation
   //
@@ -53,14 +51,14 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
   }
   else if ((strcasecmp(cmd, "rot") == 0) ||
-	     (strcasecmp(cmd, "rotation") == 0)) {
+           (strcasecmp(cmd, "rotation") == 0)) {
     if (!(input >> rotation)) {
       return false;
     }
     // convert to radians
     rotation = (float)(rotation * (M_PI / 180.0));
   }
-  else if (strcasecmp ("shift", cmd) == 0) {
+  else if (strcasecmp("shift", cmd) == 0) {
     fvec3 data;
     if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -68,7 +66,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
     transform.addShift(data);
   }
-  else if (strcasecmp ("scale", cmd) == 0) {
+  else if (strcasecmp("scale", cmd) == 0) {
     fvec3 data;
     if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -76,7 +74,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
     transform.addScale(data);
   }
-  else if (strcasecmp ("shear", cmd) == 0) {
+  else if (strcasecmp("shear", cmd) == 0) {
     fvec3 data;
     if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -84,7 +82,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
     transform.addShear(data);
   }
-  else if (strcasecmp ("spin", cmd) == 0) {
+  else if (strcasecmp("spin", cmd) == 0) {
     float angle;
     fvec3 normal;
     if (!(input >> angle >> normal.x >> normal.y >> normal.z)) {
@@ -93,7 +91,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     }
     transform.addSpin(angle, normal);
   }
-  else if (strcasecmp ("xform", cmd) == 0) {
+  else if (strcasecmp("xform", cmd) == 0) {
     std::string _name;
     if (!(input >> _name)) {
       std::cout << "parameters errors " << std::endl;
@@ -115,8 +113,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
 }
 
 
-void* WorldFileLocation::pack(void *buf) const
-{
+void* WorldFileLocation::pack(void* buf) const {
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFVec3(buf, size);
   buf = nboPackFloat(buf, rotation);
@@ -128,6 +125,6 @@ void* WorldFileLocation::pack(void *buf) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -23,81 +23,68 @@
 
 
 ShotStrategy::ShotStrategy(ShotPath* _path) :
-  path(_path)
-{
+  path(_path) {
   // do nothing
 }
 
 
-ShotStrategy::~ShotStrategy()
-{
+ShotStrategy::~ShotStrategy() {
   // do nothing
 }
 
 
-bool ShotStrategy::isStoppedByHit() const
-{
+bool ShotStrategy::isStoppedByHit() const {
   return true;
 }
 
 
-void ShotStrategy::sendUpdate(const FiringInfo&) const
-{
+void ShotStrategy::sendUpdate(const FiringInfo&) const {
   // do nothing by default -- normal shots don't need updates
 }
 
 
-void ShotStrategy::readUpdate( void*)
-{
+void ShotStrategy::readUpdate(void*) {
   // do nothing by default -- normal shots don't need updates
 }
 
 
-void ShotStrategy::expire()
-{
+void ShotStrategy::expire() {
   // do nothing by default
 }
 
 
-void ShotStrategy::setReloadTime(float t) const
-{
+void ShotStrategy::setReloadTime(float t) const {
   path->setReloadTime(t);
 }
 
 
-void ShotStrategy::setPosition(const fvec3& pos) const
-{
+void ShotStrategy::setPosition(const fvec3& pos) const {
   path->setPosition(pos);
 }
 
 
-void ShotStrategy::setVelocity(const fvec3& vel) const
-{
+void ShotStrategy::setVelocity(const fvec3& vel) const {
   path->setVelocity(vel);
 }
 
 
-void ShotStrategy::setExpiring() const
-{
+void ShotStrategy::setExpiring() const {
   path->setExpiring();
 }
 
 
-void ShotStrategy::setExpired() const
-{
+void ShotStrategy::setExpired() const {
   path->setExpired();
 }
 
 
-FiringInfo& ShotStrategy::getFiringInfo(ShotPath* p) const
-{
+FiringInfo& ShotStrategy::getFiringInfo(ShotPath* p) const {
   return p->getFiringInfo();
 }
 
 
 const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
-					       float min, float& t)
-{
+                                               float min, float& t) {
   const Obstacle* closestObstacle = NULL;
   unsigned int i = 0;
 
@@ -108,8 +95,8 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
     if (!wall->isShootThrough()) {
       const float wallt = wall->intersect(ray);
       if ((wallt > min) && (wallt < t)) {
-	t = wallt;
-	closestObstacle = wall;
+        t = wallt;
+        closestObstacle = wall;
       }
     }
   }
@@ -137,8 +124,7 @@ const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,
 
 
 const Obstacle* ShotStrategy::getFirstLinkSrc(const Ray& ray,
-                                              float min, float& t)
-{
+                                              float min, float& t) {
   const Obstacle* closestObstacle = NULL;
 
   // check everything else
@@ -164,8 +150,7 @@ const Obstacle* ShotStrategy::getFirstLinkSrc(const Ray& ray,
 }
 
 
-void ShotStrategy::reflect(fvec3& v, const fvec3& n) // const
-{
+void ShotStrategy::reflect(fvec3& v, const fvec3& n) { // const
   // normal is assumed to be normalized, v needn't be
   float d = -2.0f * fvec3::dot(v, n);
 
@@ -187,10 +172,10 @@ void ShotStrategy::reflect(fvec3& v, const fvec3& n) // const
 }
 
 
-bool ShotStrategy::getGround(const Ray& r, float min, float &t)
-{
-  if (r.getDirection().z >= 0.0f)
+bool ShotStrategy::getGround(const Ray& r, float min, float& t) {
+  if (r.getDirection().z >= 0.0f) {
     return false;
+  }
 
   float groundT = r.getOrigin().z / -r.getDirection().z;
   if ((groundT > min) && (groundT < t)) {
@@ -204,6 +189,6 @@ bool ShotStrategy::getGround(const Ray& r, float min, float &t)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

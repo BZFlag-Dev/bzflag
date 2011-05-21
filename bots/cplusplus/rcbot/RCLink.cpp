@@ -34,29 +34,28 @@
 #define SPECIFICLOGGER (*specificLogger)
 
 
-RCLink::RCLink(std::ostream *logger) :
+RCLink::RCLink(std::ostream* logger) :
   isFrontEnd(false),
   status(Disconnected),
   listenfd(-1),
   connfd(-1),
   output_overflow(false),
-  specificLogger(logger)
-{
+  specificLogger(logger) {
 }
 
-RCLink::~RCLink()
-{
+RCLink::~RCLink() {
 }
 
 /* Waits forever for data to come down on connfd. (NOTE: doesn't check listenfd,
  * so only use this if you're ignoring connects.) */
-bool RCLink::waitForData()
-{
+bool RCLink::waitForData() {
 #ifdef _USE_FAKE_NET
-  if(isFrontEnd)
+  if (isFrontEnd) {
     return fakeNetPendingFrontEnd() > 0;
-  else
+  }
+  else {
     return fakeNetPendingBackEnd() > 0;
+  }
 #else
 
   if (status != Connected) {
@@ -77,15 +76,15 @@ bool RCLink::waitForData()
       error = strerror(getErrno());
       SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(getErrno()) << std::endl;
       return false;
-    } else if (socks > 0) {
+    }
+    else if (socks > 0) {
       return true;
     }
   }
 #endif
 }
 
-void RCLink::startListening(int port)
-{
+void RCLink::startListening(int port) {
 #ifdef _USE_FAKE_NET
   return;
 #else
@@ -101,12 +100,13 @@ void RCLink::startListening(int port)
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listenfd == -1)
+  if (listenfd == -1) {
     return;
+  }
 
- /* Used so we can re-bind to our port while a previous connection is
-  * still in TIME_WAIT state.
-  */
+  /* Used so we can re-bind to our port while a previous connection is
+   * still in TIME_WAIT state.
+   */
   const char reuse_addr = 1;
 
   setsockopt(connfd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
@@ -121,7 +121,7 @@ void RCLink::startListening(int port)
     return;
   }
 
-	// Note: BzfNetwork::setNonBlocking() appears to do the same thing
+  // Note: BzfNetwork::setNonBlocking() appears to do the same thing
   //int flags = fcntl(listenfd, F_GETFL);
   //fcntl(listenfd, F_SETFL, flags | O_NONBLOCK);
 
@@ -132,8 +132,7 @@ void RCLink::startListening(int port)
 #endif
 }
 
-bool RCLink::tryAccept()
-{
+bool RCLink::tryAccept() {
 #ifdef _USE_FAKE_NET
   return fakeNetConnect;
 #else
@@ -149,7 +148,7 @@ bool RCLink::tryAccept()
     return false;
   }
 
-	// Note: BzfNetwork::setNonBlocking() appears to do the same thing
+  // Note: BzfNetwork::setNonBlocking() appears to do the same thing
   //int flags = fcntl(connfd, F_GETFL);
   //fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
@@ -169,37 +168,33 @@ bool RCLink::tryAccept()
 }
 
 
-bool RCLink::connect(const char *host, int port)
-{
+bool RCLink::connect(const char* host, int port) {
 #ifndef _USE_FAKE_NET
   status = Disconnected;
   connfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (connfd < 0)
-    {
-      error = strerror(getErrno());
-      return false;
-    }
+  if (connfd < 0) {
+    error = strerror(getErrno());
+    return false;
+  }
 
   sockaddr_in remote;
   remote.sin_port = htons(port);
   remote.sin_family = AF_INET;
 
-  hostent *hostdata = gethostbyname(host);
-  if (hostdata == NULL)
-  {
-		char	buffer[256];
-		error = sprintf(&buffer[0],"gethostbyname error: %d",h_errno);
+  hostent* hostdata = gethostbyname(host);
+  if (hostdata == NULL) {
+    char  buffer[256];
+    error = sprintf(&buffer[0], "gethostbyname error: %d", h_errno);
     return false;
   }
   memcpy(&remote.sin_addr.s_addr, hostdata->h_addr_list[0], hostdata->h_length);
 
-  if (::connect(connfd, (sockaddr *)&remote, sizeof(remote)) < 0)
-  {
+  if (::connect(connfd, (sockaddr*)&remote, sizeof(remote)) < 0) {
     error = strerror(getErrno());
     return false;
   }
 
-	// Note: BzfNetwork::setNonBlocking() appears to do the same thing
+  // Note: BzfNetwork::setNonBlocking() appears to do the same thing
   //int flags = fcntl(connfd, F_GETFL);
   //fcntl(connfd, F_SETFL, flags | O_NONBLOCK);
 
@@ -208,21 +203,22 @@ bool RCLink::connect(const char *host, int port)
 
   input_toolong = false;
 #else
-	fakeNetConnect = true;
+  fakeNetConnect = true;
 #endif
   status = Connecting;
   send_amount = recv_amount = 0;
   return true;
 }
 
-bool RCLink::ssend(const char* message)
-{
+bool RCLink::ssend(const char* message) {
   unsigned int messagelen = (unsigned int)strlen(message);
 #ifdef _USE_FAKE_NET
-  if (isFrontEnd)
-    fakeNetSendToBackEnd(messagelen,message);
-  else
-    fakeNetSendToFrontEnd(messagelen,message);
+  if (isFrontEnd) {
+    fakeNetSendToBackEnd(messagelen, message);
+  }
+  else {
+    fakeNetSendToFrontEnd(messagelen, message);
+  }
   return true;
 #else
   if (output_overflow) {
@@ -251,8 +247,7 @@ bool RCLink::ssend(const char* message)
 /*
  * Wraps vsendf.
  */
-bool RCLink::sendf(const char *format, ...)
-{
+bool RCLink::sendf(const char* format, ...) {
   va_list ap;
   bool ret;
 
@@ -267,11 +262,10 @@ bool RCLink::sendf(const char *format, ...)
  * Use vsnprintf to send a message on the RCLink.  We send all or nothing
  * (if we run out of buffer space).
  */
-bool RCLink::vsendf(const char *format, va_list ap)
-{
+bool RCLink::vsendf(const char* format, va_list ap) {
 #ifdef _USE_FAKE_NET
   char temp[RC_LINK_SENDBUFLEN];
-  vsnprintf(temp,RC_LINK_SENDBUFLEN, format, ap);
+  vsnprintf(temp, RC_LINK_SENDBUFLEN, format, ap);
   return send(temp);
 #else
   int messagelen;
@@ -282,7 +276,7 @@ bool RCLink::vsendf(const char *format, va_list ap)
   }
 
   messagelen = vsnprintf(sendbuf + send_amount,
-			 RC_LINK_SENDBUFLEN - send_amount, format, ap);
+                         RC_LINK_SENDBUFLEN - send_amount, format, ap);
 #ifdef PROTOCOL_DEBUG
   SPECIFICLOGGER << "[vsendf] " << (sendbuf + send_amount); SPECIFICLOGGER.flush();
 #endif
@@ -304,16 +298,16 @@ bool RCLink::vsendf(const char *format, va_list ap)
 /*
  * Send as much data as possible from our outgoing buffer.
  */
-int RCLink::updateWrite()
-{
+int RCLink::updateWrite() {
 #ifdef _USE_FAKE_NET
   return 0;
 #else
-  char *bufptr = sendbuf;
+  char* bufptr = sendbuf;
   int prev_send_amount = send_amount;
 
-  if (status != Connected && status != Connecting)
+  if (status != Connected && status != Connecting) {
     return -1;
+  }
 
   if (output_overflow) {
     int errorlen = strlen(RC_LINK_OVERFLOW_MSG);
@@ -323,9 +317,10 @@ int RCLink::updateWrite()
       send_amount += errorlen;
       output_overflow = false;
       SPECIFICLOGGER << "RCLink: Clearing output_overflow." << std::endl;
-    } else {
+    }
+    else {
       SPECIFICLOGGER << "RCLink: Couldn't fix overflow. errorlen = " << errorlen
-		     << ", send_amount = " << send_amount << std::endl;
+                     << ", send_amount = " << send_amount << std::endl;
     }
   }
 
@@ -334,14 +329,16 @@ int RCLink::updateWrite()
       break;
     }
 
-    int nwritten = send(connfd, bufptr, send_amount,0);
+    int nwritten = send(connfd, bufptr, send_amount, 0);
     if (nwritten == -1 && getErrno() == EAGAIN) {
       break;
-    } else if (nwritten == -1) {
+    }
+    else if (nwritten == -1) {
       SPECIFICLOGGER << "RCLink: Write failed. Disconnecting. Error: " << strerror(errno) << std::endl;
       status = SocketError;
       return -1;
-    } else {
+    }
+    else {
       bufptr += nwritten;
       send_amount -= nwritten;
     }
@@ -359,36 +356,31 @@ int RCLink::updateWrite()
  * Fill up the receive buffer with any available incoming data.  Return the
  * number of bytes of data read or -1 if the connection has died.
  */
-int RCLink::updateRead()
-{
+int RCLink::updateRead() {
   int prev_recv_amount = recv_amount;
 
 #ifdef _USE_FAKE_NET
-	if (!fakeNetConnect) {
-		printf("bad fakenet\n");
+  if (!fakeNetConnect) {
+    printf("bad fakenet\n");
     return -1;
-	}
+  }
 
-  if (isFrontEnd)
-    {
-      while (fakeNetPendingFrontEnd())
-	{
-	  int nread = (int)fakeNetNextPacketSizeFrontEnd();
-	  memcpy(recvbuf+recv_amount,fakeNetNextPacketDataFrontEnd(),nread);
-	  fakeNetPopPendingPacketFrontEnd();
-	  recv_amount += nread;
-	}
+  if (isFrontEnd) {
+    while (fakeNetPendingFrontEnd()) {
+      int nread = (int)fakeNetNextPacketSizeFrontEnd();
+      memcpy(recvbuf + recv_amount, fakeNetNextPacketDataFrontEnd(), nread);
+      fakeNetPopPendingPacketFrontEnd();
+      recv_amount += nread;
     }
-  else
-    {
-      while (fakeNetPendingBackEnd())
-	{
-	  int nread = (int)fakeNetNextPacketSizeBackEnd();
-	  memcpy(recvbuf+recv_amount,fakeNetNextPacketDataBackEnd(),nread);
-	  fakeNetPopPendingPacketBackEnd();
-	  recv_amount += nread;
-	}
+  }
+  else {
+    while (fakeNetPendingBackEnd()) {
+      int nread = (int)fakeNetNextPacketSizeBackEnd();
+      memcpy(recvbuf + recv_amount, fakeNetNextPacketDataBackEnd(), nread);
+      fakeNetPopPendingPacketBackEnd();
+      recv_amount += nread;
     }
+  }
 #else
 
   if (status != Connected && status != Connecting) {
@@ -397,23 +389,27 @@ int RCLink::updateRead()
 
   // read in as much data as possible
   while (true) {
-    if (recv_amount == RC_LINK_RECVBUFLEN)
+    if (recv_amount == RC_LINK_RECVBUFLEN) {
       break;
+    }
 
-    int nread = recv(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount,0);
-		int	errnum = getErrno();
+    int nread = recv(connfd, recvbuf + recv_amount, RC_LINK_RECVBUFLEN - recv_amount, 0);
+    int errnum = getErrno();
     if (nread == 0) {
       SPECIFICLOGGER << "RCLink: Remote host closed connection." << std::endl;
       status = getDisconnectedState();
       return -1;
-    } else if (nread == -1 && errnum != 0 && errnum != EAGAIN && errnum != EWOULDBLOCK) {
+    }
+    else if (nread == -1 && errnum != 0 && errnum != EAGAIN && errnum != EWOULDBLOCK) {
       SPECIFICLOGGER << "RCLink: Read failed. Error: " << strerror(errnum) << std::endl;
       status = SocketError;
       return -1;
-    } else if (nread == -1) {
+    }
+    else if (nread == -1) {
       // got no data (remember, read is set to be nonblocking)
       break;
-    } else {
+    }
+    else {
       recv_amount += nread;
     }
   }
@@ -425,11 +421,10 @@ int RCLink::updateRead()
  * Parse as many objects as possible (via parseCommand).
  * Return the number created.
  */
-int RCLink::updateParse(int maxlines)
-{
+int RCLink::updateParse(int maxlines) {
   int ncommands = 0;
-  char *bufptr = recvbuf;
-  char *newline;
+  char* bufptr = recvbuf;
+  char* newline;
 
   if (recv_amount == 0) {
     return 0;
@@ -446,26 +441,30 @@ int RCLink::updateParse(int maxlines)
       break;
     }
 
-    newline = (char *)memchr(bufptr, '\n', recv_amount);
+    newline = (char*)memchr(bufptr, '\n', recv_amount);
     if (newline == NULL) {
       if (input_toolong) {
         // We're throwing out everything up to the next newline.
         recv_amount = 0;
         break;
-      } else {
+      }
+      else {
         // We need to read more before we can do anything.
         break;
       }
-    } else {
+    }
+    else {
       // We have a full input line.
       recv_amount -= newline - bufptr + 1;
 
       if (input_toolong) {
         input_toolong = false;
-      } else {
-        if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr+1) == '\n')) {
+      }
+      else {
+        if (*bufptr == '\n' || (*bufptr == '\r' && *(bufptr + 1) == '\n')) {
           // empty line: ignore
-        } else {
+        }
+        else {
           *newline = '\0';
           if (parseCommand(bufptr)) {
             ncommands++;
@@ -496,94 +495,90 @@ int RCLink::updateParse(int maxlines)
 
 // fakenet cruft
 
-std::vector<CLocalTransferPacket> messagesToFront,messagesToBack;
+std::vector<CLocalTransferPacket> messagesToFront, messagesToBack;
 
 bool fakeNetConnect = false;
 
-void fakenetConnectFrontToBack ( void )
-{
+void fakenetConnectFrontToBack(void) {
   fakeNetConnect = true;
 }
 
-void fakenetDisconect ( void )
-{
+void fakenetDisconect(void) {
   fakeNetResetBackEnd();
 }
 
-void fakeNetResetFrontEnd ( void )
-{
+void fakeNetResetFrontEnd(void) {
   fakeNetConnect = false;
   messagesToFront.clear();
 }
 
-void fakeNetResetBackEnd ( void )
-{
+void fakeNetResetBackEnd(void) {
   fakeNetConnect = false;
   messagesToBack.clear();
 }
 
-void fakeNetSendToFrontEnd( unsigned int s, const  char *d )
-{
-  messagesToFront.push_back(CLocalTransferPacket(s,d));
+void fakeNetSendToFrontEnd(unsigned int s, const  char* d) {
+  messagesToFront.push_back(CLocalTransferPacket(s, d));
 }
 
-void fakeNetSendToBackEnd( unsigned int s, const  char *d )
-{
-  messagesToBack.push_back(CLocalTransferPacket(s,d));
+void fakeNetSendToBackEnd(unsigned int s, const  char* d) {
+  messagesToBack.push_back(CLocalTransferPacket(s, d));
 }
 
-unsigned int fakeNetPendingFrontEnd( void )
-{
+unsigned int fakeNetPendingFrontEnd(void) {
   return (unsigned int)messagesToFront.size();
 }
 
-unsigned int fakeNetPendingBackEnd( void )
-{
+unsigned int fakeNetPendingBackEnd(void) {
   return (unsigned int)messagesToBack.size();
 }
 
-unsigned int fakeNetNextPacketSizeFrontEnd( void )
-{
-  if(messagesToFront.size())
+unsigned int fakeNetNextPacketSizeFrontEnd(void) {
+  if (messagesToFront.size()) {
     return messagesToFront[0].size;
-  else
+  }
+  else {
     return 0;
+  }
 }
 
-unsigned int fakeNetNextPacketSizeBackEnd( void )
-{
-  if(messagesToBack.size())
+unsigned int fakeNetNextPacketSizeBackEnd(void) {
+  if (messagesToBack.size()) {
     return messagesToBack[0].size;
-  else
+  }
+  else {
     return 0;
+  }
 }
 
-char* fakeNetNextPacketDataFrontEnd( void )
-{
-  if(messagesToFront.size())
+char* fakeNetNextPacketDataFrontEnd(void) {
+  if (messagesToFront.size()) {
     return messagesToFront[0].data;
-  else
+  }
+  else {
     return NULL;
+  }
 }
 
-char* fakeNetNextPacketDataBackEnd( void )
-{
-  if(messagesToBack.size())
+char* fakeNetNextPacketDataBackEnd(void) {
+  if (messagesToBack.size()) {
     return messagesToBack[0].data;
-  else
+  }
+  else {
     return NULL;
+  }
 }
 
-void fakeNetPopPendingPacketFrontEnd( void )
-{
-  if (messagesToFront.size())
+void fakeNetPopPendingPacketFrontEnd(void) {
+  if (messagesToFront.size()) {
     messagesToFront.erase(messagesToFront.begin());
+  }
 }
 
-void fakeNetPopPendingPacketBackEnd( void )
-{
-  if (messagesToBack.size())
+void fakeNetPopPendingPacketBackEnd(void) {
+  if (messagesToBack.size()) {
     messagesToBack.erase(messagesToBack.begin());
+  }
 }
 
 
@@ -591,6 +586,6 @@ void fakeNetPopPendingPacketBackEnd( void )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

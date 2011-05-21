@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_RAY_H
-#define	BZF_RAY_H
+#ifndef BZF_RAY_H
+#define BZF_RAY_H
 
 #include "common.h"
 #include <string.h> // for memset()
@@ -50,6 +50,6 @@ class Ray {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

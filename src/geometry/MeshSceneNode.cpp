@@ -58,8 +58,7 @@
 float MeshSceneNode::LodScale = 1.0f;
 float MeshSceneNode::RadarLodScale = 1.0f;
 
-MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
-{
+MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh) {
   mesh = _mesh;
 
   lodCount = 0;
@@ -92,7 +91,8 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
   if (xformTool == NULL) {
     extents = drawInfo->getExtents();
     setSphere(drawInfo->getSphere());
-  } else {
+  }
+  else {
     // sloppy way to recalcuate the transformed extents
     fvec3 c[8];
     c[0].x = c[6].x = c[5].x = c[3].x = diExts.mins.x;
@@ -115,10 +115,10 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       const fvec3& e = c[(a * 2) + 1];
       const float newWidth = (s - e).length();
       if (oldWidth > 0.0f) {
-	const float scale = (newWidth / oldWidth);
-	if (scale < lengthAdj) {
-	  lengthAdj = scale;
-	}
+        const float scale = (newWidth / oldWidth);
+        if (scale < lengthAdj) {
+          lengthAdj = scale;
+        }
       }
     }
     // adjust the sphere
@@ -188,22 +188,23 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       setNode.node->setPosition(setPos);
 
       setNode.radarNode =
-	new MeshRenderNode(drawMgr, &xformList, normalize,
-			   mat.colorPtr, lod, set, drawSet.triangleCount);
+        new MeshRenderNode(drawMgr, &xformList, normalize,
+                           mat.colorPtr, lod, set, drawSet.triangleCount);
       setNode.radarNode->setPosition(setPos);
 
       if (!mat.needsSorting) {
-	mat.animRepos = false;
+        mat.animRepos = false;
       }
       else {
-	if ((drawInfo->getAnimationInfo() != NULL) &&
-	    (fabsf(drawSet.sphere.x) > 0.001f) &&
-	    (fabsf(drawSet.sphere.y) > 0.001f)) {
-	  animRepos = true;
-	  mat.animRepos = true;
-	} else {
-	  mat.animRepos = false;
-	}
+        if ((drawInfo->getAnimationInfo() != NULL) &&
+            (fabsf(drawSet.sphere.x) > 0.001f) &&
+            (fabsf(drawSet.sphere.y) > 0.001f)) {
+          animRepos = true;
+          mat.animRepos = true;
+        }
+        else {
+          mat.animRepos = false;
+        }
       }
     }
   }
@@ -215,8 +216,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
 }
 
 
-MeshSceneNode::~MeshSceneNode()
-{
+MeshSceneNode::~MeshSceneNode() {
   //FIXME - delete radar lods  (once they're implemented)
   for (int i = 0; i < lodCount; i++) {
     LodNode& lod = lods[i];
@@ -239,8 +239,7 @@ MeshSceneNode::~MeshSceneNode()
 }
 
 
-inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
-{
+inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf) {
   const fvec3& eye = vf.getEye();
   const fvec3& pos = getSphere().xyz();
   const fvec3& dir = vf.getDirection();
@@ -255,8 +254,7 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 }
 
 
-inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
-{
+inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf) {
   // FIXME: adjust for ray direction
   const fvec3& eye = vf.getEye();
   const fvec3& pos = getSphere().xyz();
@@ -272,8 +270,7 @@ inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
 }
 
 
-inline int MeshSceneNode::calcRadarLod()
-{
+inline int MeshSceneNode::calcRadarLod() {
   for (int i = (radarCount - 1); i > 0; i--) {
     if (radarLengths[i] < RadarLodScale) {
       return i;
@@ -283,8 +280,7 @@ inline int MeshSceneNode::calcRadarLod()
 }
 
 
-void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void MeshSceneNode::addRenderNodes(SceneRenderer& renderer) {
   const ViewFrustum& vf = renderer.getViewFrustum();
   const int level = (lodCount == 1) ? 0 : calcNormalLod(vf);
   LodNode& lod = lods[level];
@@ -298,15 +294,15 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     for (int i = 0; i < lod.count; i++) {
       SetNode& set = lod.sets[i];
       if (set.meshMat.animRepos) {
-	const fvec4& s = drawLods[level].sets[i].sphere;
-	fvec3 pos;
-	pos.x = (cos_val * s.x) - (sin_val * s.y);
-	pos.y = (sin_val * s.x) + (cos_val * s.y);
-	pos.z = s.z;
-	if (xformTool != NULL) {
-	  xformTool->modifyVertex(pos);
-	}
-	set.node->setPosition(pos);
+        const fvec4& s = drawLods[level].sets[i].sphere;
+        fvec3 pos;
+        pos.x = (cos_val * s.x) - (sin_val * s.y);
+        pos.y = (sin_val * s.x) + (cos_val * s.y);
+        pos.z = s.z;
+        if (xformTool != NULL) {
+          xformTool->modifyVertex(pos);
+        }
+        set.node->setPosition(pos);
       }
     }
   }
@@ -322,8 +318,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 }
 
 
-void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
-{
+void MeshSceneNode::addShadowNodes(SceneRenderer& renderer) {
   const ViewFrustum& vf = renderer.getViewFrustum();
   const int level = (lodCount == 1) ? 0 : calcShadowLod(vf);
   LodNode& lod = lods[level];
@@ -338,8 +333,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void MeshSceneNode::renderRadar()
-{
+void MeshSceneNode::renderRadar() {
   const int level = (lodCount == 1) ? 0 : calcRadarLod();
   LodNode& lod = radarLods[level];
   for (int i = 0; i < lod.count; i++) {
@@ -371,15 +365,14 @@ void MeshSceneNode::renderRadar()
 }
 
 
-bool MeshSceneNode::cull(const ViewFrustum& frustum) const
-{
+bool MeshSceneNode::cull(const ViewFrustum& frustum) const {
   // if the Visibility culler tells us that we're
   // fully visible, then skip the rest of these tests
   if (octreeState == OctreeVisible) {
     return false;
   }
 
-  const Frustum* f = (const Frustum *) &frustum;
+  const Frustum* f = (const Frustum*) &frustum;
   if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
@@ -389,15 +382,13 @@ bool MeshSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-bool MeshSceneNode::inAxisBox(const Extents& exts) const
-{
+bool MeshSceneNode::inAxisBox(const Extents& exts) const {
   // quick and dirty
   return extents.touches(exts);
 }
 
 
-void MeshSceneNode::notifyStyleChange()
-{
+void MeshSceneNode::notifyStyleChange() {
   const DrawLod* drawLods = drawInfo->getDrawLods();
 
   for (int lod = 0; lod < lodCount; lod++) {
@@ -412,8 +403,8 @@ void MeshSceneNode::notifyStyleChange()
       const DrawSet& drawSet = drawLods[lod].sets[set];
       const Extents* extPtr = &extents;
       if ((drawSet.triangleCount < 100) ||
-	  !BZDBCache::lighting || mat.bzmat->getNoLighting()) {
-	extPtr = NULL;
+          !BZDBCache::lighting || mat.bzmat->getNoLighting()) {
+        extPtr = NULL;
       }
       setNode.node->setExtents(extPtr);
     }
@@ -423,8 +414,7 @@ void MeshSceneNode::notifyStyleChange()
 }
 
 
-const BzMaterial* MeshSceneNode::convertMaterial(const BzMaterial* bzmat)
-{
+const BzMaterial* MeshSceneNode::convertMaterial(const BzMaterial* bzmat) {
   const MaterialMap* matMap = drawInfo->getMaterialMap();
   if (matMap == NULL) {
     return bzmat;
@@ -433,14 +423,14 @@ const BzMaterial* MeshSceneNode::convertMaterial(const BzMaterial* bzmat)
   MaterialMap::const_iterator it = matMap->find(bzmat);
   if (it == matMap->end()) {
     return bzmat;
-  } else {
+  }
+  else {
     return it->second;
   }
 }
 
 
-void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
-{
+void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat) {
   bzMat2gstate(mat->bzmat, mat->gstate, mat->color, mat->colorPtr);
 
   mat->drawRadar    = !mat->bzmat->getNoRadar();
@@ -449,8 +439,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 }
 
 
-void MeshSceneNode::makeXFormList()
-{
+void MeshSceneNode::makeXFormList() {
   GLenum error;
   const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
   if (xformTool != NULL) {
@@ -459,12 +448,12 @@ void MeshSceneNode::makeXFormList()
     while (true) {
       error = glGetError();
       if (error == GL_NO_ERROR) {
-	break;
+        break;
       }
       errCount++; // avoid a possible spin-lock?
       if (errCount > 666) {
-	logDebugMessage(0,"ERROR: MeshSceneNode::makeXFormList() glError: %i\n", error);
-	return; // don't make the list, something is borked
+        logDebugMessage(0, "ERROR: MeshSceneNode::makeXFormList() glError: %i\n", error);
+        return; // don't make the list, something is borked
       }
     };
 
@@ -489,7 +478,7 @@ void MeshSceneNode::makeXFormList()
 
     error = glGetError();
     if (error != GL_NO_ERROR) {
-      logDebugMessage(0,"ERROR: MeshSceneNode::makeXFormList() failed: %i\n", error);
+      logDebugMessage(0, "ERROR: MeshSceneNode::makeXFormList() failed: %i\n", error);
       xformList = INVALID_GL_LIST_ID;
     }
   }
@@ -497,8 +486,7 @@ void MeshSceneNode::makeXFormList()
 }
 
 
-void MeshSceneNode::freeXFormList()
-{
+void MeshSceneNode::freeXFormList() {
   if (xformList != INVALID_GL_LIST_ID) {
     glDeleteLists(xformList, 1);
     xformList = INVALID_GL_LIST_ID;
@@ -507,22 +495,19 @@ void MeshSceneNode::freeXFormList()
 }
 
 
-void MeshSceneNode::initContext(void* data)
-{
+void MeshSceneNode::initContext(void* data) {
   ((MeshSceneNode*)data)->makeXFormList();
   return;
 }
 
 
-void MeshSceneNode::freeContext(void* data)
-{
+void MeshSceneNode::freeContext(void* data) {
   ((MeshSceneNode*)data)->freeXFormList();
   return;
 }
 
 
-void MeshSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
-{
+void MeshSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes) {
   // NOTES:
   // - used for ShellNodes
   // - send out the highest LOD, because only used up close
@@ -544,8 +529,7 @@ void MeshSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 //////////////////////////
 
 void MeshSceneNode::setLodScale(int pixelsX, float fovx,
-				int pixelsY, float fovy)
-{
+                                int pixelsY, float fovy) {
   const float lppx = 2.0f * sinf(fovx * 0.5f) / (float)pixelsX;
   const float lppy = 2.0f * sinf(fovy * 0.5f) / (float)pixelsY;
   const float lpp = (lppx < lppy) ? lppx : lppy;
@@ -555,8 +539,7 @@ void MeshSceneNode::setLodScale(int pixelsX, float fovx,
 }
 
 
-void MeshSceneNode::setRadarLodScale(float lengthPerPixel)
-{
+void MeshSceneNode::setRadarLodScale(float lengthPerPixel) {
   RadarLodScale = lengthPerPixel * BZDB.eval("radarLodScale");
   return;
 }
@@ -566,6 +549,6 @@ void MeshSceneNode::setRadarLodScale(float lengthPerPixel)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

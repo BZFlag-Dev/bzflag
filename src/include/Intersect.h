@@ -14,8 +14,8 @@
  * Utilities for doing intersection calculations.
  */
 
-#ifndef	BZF_INTERSECT_H
-#define	BZF_INTERSECT_H
+#ifndef BZF_INTERSECT_H
+#define BZF_INTERSECT_H
 
 #include "common.h"
 #include "vectors.h"
@@ -120,6 +120,6 @@ namespace Intersect {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

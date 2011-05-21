@@ -81,8 +81,7 @@ BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
 //============================================================================//
 
-static float getGoodPosValue(float oldVal, const std::string& var)
-{
+static float getGoodPosValue(float oldVal, const std::string& var) {
   float newVal = BZDB.eval(var);
   if (isnan(newVal) || newVal <= 0.0f) { // it's bad
     BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
@@ -92,8 +91,7 @@ static float getGoodPosValue(float oldVal, const std::string& var)
 }
 
 
-static float getGoodNonZeroValue(float oldVal, const std::string& var)
-{
+static float getGoodNonZeroValue(float oldVal, const std::string& var) {
   float newVal = BZDB.eval(var);
   if (isnan(newVal) || newVal == 0.0f) { // it's bad
     BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
@@ -105,8 +103,7 @@ static float getGoodNonZeroValue(float oldVal, const std::string& var)
 
 //============================================================================//
 
-static float getGameFPS()
-{
+static float getGameFPS() {
   float fps = BZDB.eval(BZDBNAMES.GAMEFPS);
   if (isnan(fps)) {
     return fps;
@@ -125,8 +122,7 @@ static float getGameFPS()
 
 //============================================================================//
 
-void BZDBCache::init()
-{
+void BZDBCache::init() {
   // Client-side variables
   BZDB.addCallback("displayMainFlags",          clientCallback, NULL);
   BZDB.addCallback("radarStyle",                clientCallback, NULL);
@@ -204,7 +200,8 @@ void BZDBCache::init()
   if (isnan((float)gameFPS)) {
     gameSPF = 0.0f;
     useGameSPF = false;
-  } else {
+  }
+  else {
     gameSPF = (1.0f / gameFPS);
     useGameSPF = true;
   }
@@ -215,63 +212,85 @@ void BZDBCache::init()
 
 //============================================================================//
 
-void BZDBCache::clientCallback(const std::string& name, void *)
-{
-  if (name == "blend")
+void BZDBCache::clientCallback(const std::string& name, void*) {
+  if (name == "blend") {
     blend = BZDB.isTrue("blend");
-  else if (name == "displayMainFlags")
+  }
+  else if (name == "displayMainFlags") {
     displayMainFlags = BZDB.isTrue("displayMainFlags");
-  else if (name == "texture")
+  }
+  else if (name == "texture") {
     texture = BZDB.isTrue("texture");
-  else if (name == "zbuffer")
+  }
+  else if (name == "zbuffer") {
     zbuffer = BZDB.isTrue("zbuffer");
-  else if (name == "tesselation")
+  }
+  else if (name == "tesselation") {
     tesselation = BZDB.isTrue("tesselation");
-  else if (name == "lighting")
+  }
+  else if (name == "lighting") {
     lighting = BZDB.isTrue("lighting");
-  else if (name == "smooth")
+  }
+  else if (name == "smooth") {
     smooth = BZDB.isTrue("smooth");
-  else if (name == "colorful")
+  }
+  else if (name == "colorful") {
     colorful = BZDB.isTrue("colorful");
-  else if (name == "radarStyle")
+  }
+  else if (name == "radarStyle") {
     radarStyle = BZDB.evalInt("radarStyle");
-  else if (name == "radarTankPixels")
+  }
+  else if (name == "radarTankPixels") {
     radarTankPixels = BZDB.eval("radarTankPixels");
-  else if (name == "shadowMode")
+  }
+  else if (name == "shadowMode") {
     shadowMode = BZDB.evalInt("shadowMode");
-  else if (name == "shadowAlpha")
+  }
+  else if (name == "shadowAlpha") {
     shadowAlpha = BZDB.eval("shadowAlpha");
-  else if (name == "animatedTreads")
+  }
+  else if (name == "animatedTreads") {
     animatedTreads = BZDB.isTrue("animatedTreads");
-  else if (name == "shotLength")
+  }
+  else if (name == "shotLength") {
     shotLength = BZDB.eval("shotLength");
-  else if (name == "leadingShotLine")
+  }
+  else if (name == "leadingShotLine") {
     leadingShotLine = BZDB.isTrue("leadingShotLine");
-  else if (name == "showShotGuide")
+  }
+  else if (name == "showShotGuide") {
     showShotGuide = BZDB.isTrue("showShotGuide");
-  else if (name == "flagChunks")
+  }
+  else if (name == "flagChunks") {
     flagChunks = BZDB.evalInt("flagChunks");
-  else if (name == "pulseRate")
+  }
+  else if (name == "pulseRate") {
     pulseRate = BZDB.eval("pulseRate");
-  else if (name == "pulseDepth")
+  }
+  else if (name == "pulseDepth") {
     pulseDepth = BZDB.eval("pulseDepth");
-  else if (name == "showCollisionGrid")
+  }
+  else if (name == "showCollisionGrid") {
     showCollisionGrid = BZDB.isTrue("showCollisionGrid");
-  else if (name == "showCullingGrid")
+  }
+  else if (name == "showCullingGrid") {
     showCullingGrid = BZDB.isTrue("showCullingGrid");
-  else if (name == "hudGUIBorderOpacityFactor")
+  }
+  else if (name == "hudGUIBorderOpacityFactor") {
     hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
-  else if (name == "maxFlagLOD")
+  }
+  else if (name == "maxFlagLOD") {
     maxFlagLOD = BZDB.evalInt("maxFlagLOD");
-  else if (name == "vsync")
+  }
+  else if (name == "vsync") {
     vsync = BZDB.evalInt("vsync");
+  }
 }
 
 
 //============================================================================//
 
-void BZDBCache::serverCallback(const std::string& name, void *)
-{
+void BZDBCache::serverCallback(const std::string& name, void*) {
   if (name == BZDBNAMES.FORBIDDEBUG) {
     forbidDebug = BZDB.isTrue(BZDBNAMES.FORBIDDEBUG);
   }
@@ -297,7 +316,7 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     maxLOD = BZDB.eval(BZDBNAMES.MAXLOD);
   }
   else if (name == BZDBNAMES.WORLDSIZE) {
-    worldSize = getGoodPosValue(worldSize,BZDBNAMES.WORLDSIZE);
+    worldSize = getGoodPosValue(worldSize, BZDBNAMES.WORLDSIZE);
   }
   else if (name == BZDBNAMES.RADARLIMIT) {
     radarLimit = BZDB.eval(BZDBNAMES.RADARLIMIT);
@@ -338,7 +357,8 @@ void BZDBCache::serverCallback(const std::string& name, void *)
     if (isnan((float)gameFPS)) {
       gameSPF = 0.0f;
       useGameSPF = false;
-    } else {
+    }
+    else {
       gameSPF = (1.0f / gameFPS);
       useGameSPF = true;
     }
@@ -362,6 +382,6 @@ void BZDBCache::update() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

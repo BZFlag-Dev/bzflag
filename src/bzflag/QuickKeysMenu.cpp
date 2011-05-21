@@ -25,8 +25,7 @@
 #include "LocalFontFace.h"
 
 
-QuickKeysMenu::QuickKeysMenu()
-{
+QuickKeysMenu::QuickKeysMenu() {
   // add controls
   addControl(createLabel("Define Quick Keys"), false);
   addControl(createLabel("Notice: depending on platform not all keys might work"), false);
@@ -35,12 +34,12 @@ QuickKeysMenu::QuickKeysMenu()
   addControl(createLabel("Send to Team"), false);
 
   int i;
-  for (i=1; i < 11; ++i) {
+  for (i = 1; i < 11; ++i) {
     std::string keyLabel = TextUtils::format("Alt-F%d", i);
     addControl(createInput(keyLabel));
   }
 
-  for (i=1; i < 11; ++i) {
+  for (i = 1; i < 11; ++i) {
     std::string keyLabel = TextUtils::format("Ctrl-F%d", i);
     addControl(createInput(keyLabel));
   }
@@ -48,68 +47,67 @@ QuickKeysMenu::QuickKeysMenu()
   initNavigation();
 }
 
-QuickKeysMenu::~QuickKeysMenu()
-{
+QuickKeysMenu::~QuickKeysMenu() {
 }
 
-HUDuiDefaultKey* QuickKeysMenu::getDefaultKey()
-{
+HUDuiDefaultKey* QuickKeysMenu::getDefaultKey() {
   return MenuDefaultKey::getInstance();
 }
 
-void QuickKeysMenu::show()
-{
+void QuickKeysMenu::show() {
   HUDNavigationQueue& controls = getNav();
 
   int i;
-  for (i=1; i < 11; ++i) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i - 1]);
+  for (i = 1; i < 11; ++i) {
+    HUDuiTypeIn* entry = static_cast<HUDuiTypeIn*>(controls[i - 1]);
     std::string keyName = TextUtils::format("quickMessage%d", i);
     std::string keyValue = BZDB.get(keyName);
     entry->setString(keyValue);
   }
 
-  for (i=1; i < 11; ++i) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i + 9]);
+  for (i = 1; i < 11; ++i) {
+    HUDuiTypeIn* entry = static_cast<HUDuiTypeIn*>(controls[i + 9]);
     std::string keyName = TextUtils::format("quickTeamMessage%d", i);
     std::string keyValue = BZDB.get(keyName);
     entry->setString(keyValue);
   }
 }
 
-void QuickKeysMenu::dismiss()
-{
+void QuickKeysMenu::dismiss() {
   HUDNavigationQueue& controls = getNav();
 
   int i;
-  for (i=1; i < 11; ++i) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i - 1]);
+  for (i = 1; i < 11; ++i) {
+    HUDuiTypeIn* entry = static_cast<HUDuiTypeIn*>(controls[i - 1]);
     std::string keyValue = entry->getString();
     std::string keyName = TextUtils::format("quickMessage%d", i);
-    if (keyValue.empty() && BZDB.isSet(keyName))
+    if (keyValue.empty() && BZDB.isSet(keyName)) {
       BZDB.unset(keyName);
-    else if (!keyValue.empty())
+    }
+    else if (!keyValue.empty()) {
       BZDB.set(keyName, keyValue);
+    }
   }
 
-  for (i=1; i < 11; ++i) {
-    HUDuiTypeIn *entry = static_cast<HUDuiTypeIn*>(controls[i + 9]);
+  for (i = 1; i < 11; ++i) {
+    HUDuiTypeIn* entry = static_cast<HUDuiTypeIn*>(controls[i + 9]);
     std::string keyValue = entry->getString();
     std::string keyName = TextUtils::format("quickTeamMessage%d", i);
-    if (keyValue.empty() && BZDB.isSet(keyName))
+    if (keyValue.empty() && BZDB.isSet(keyName)) {
       BZDB.unset(keyName);
-    else if (!keyValue.empty())
+    }
+    else if (!keyValue.empty()) {
       BZDB.set(keyName, keyValue);
+    }
   }
 }
 
-void QuickKeysMenu::resize(int _width, int _height)
-{
+void QuickKeysMenu::resize(int _width, int _height) {
   int i;
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -130,7 +128,7 @@ void QuickKeysMenu::resize(int _width, int _height)
   title->setPosition(x, y);
 
   // reposition help
-  HUDuiLabel*help = (HUDuiLabel*)listHUD[1];
+  HUDuiLabel* help = (HUDuiLabel*)listHUD[1];
   help->setFontSize(fontSize);
   const float helpWidth = fm.getStringWidth(fontFace->getFMFace(), fontSize, help->getString());
   const float bigHeight = fm.getStringHeight(fontFace->getFMFace(), fontSize);
@@ -139,12 +137,12 @@ void QuickKeysMenu::resize(int _width, int _height)
   help->setPosition(x, y);
 
   // reposition column titles
-  HUDuiLabel *all = (HUDuiLabel*)listHUD[2];
+  HUDuiLabel* all = (HUDuiLabel*)listHUD[2];
   all->setFontSize(fontSize);
   x = 0.1f * _width;
   y -= 1.5f * bigHeight;
   all->setPosition(x, y);
-  HUDuiLabel *team = (HUDuiLabel*)listHUD[3];
+  HUDuiLabel* team = (HUDuiLabel*)listHUD[3];
   team->setFontSize(fontSize);
   x = 0.6f * _width;
   team->setPosition(x, y);
@@ -167,15 +165,14 @@ void QuickKeysMenu::resize(int _width, int _height)
 
   x = 0.60f * (float)_width;
   y = topY;
-  for (;i < count; ++i) {
+  for (; i < count; ++i) {
     navItems[i]->setFontSize(fontSize);
     navItems[i]->setPosition(x, y);
     y -= 1.0f * h;
   }
 }
 
-HUDuiLabel* QuickKeysMenu::createLabel(const std::string &str)
-{
+HUDuiLabel* QuickKeysMenu::createLabel(const std::string& str) {
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
   label->setString(str);
@@ -183,8 +180,7 @@ HUDuiLabel* QuickKeysMenu::createLabel(const std::string &str)
 }
 
 
-HUDuiTypeIn* QuickKeysMenu::createInput(const std::string &label)
-{
+HUDuiTypeIn* QuickKeysMenu::createInput(const std::string& label) {
   HUDuiTypeIn* entry = new HUDuiTypeIn;
   entry->setFontFace(MainMenu::getFontFace());
   entry->setLabel(label);
@@ -196,6 +192,6 @@ HUDuiTypeIn* QuickKeysMenu::createInput(const std::string &label)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

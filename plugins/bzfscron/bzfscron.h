@@ -17,42 +17,40 @@
 #include "bzfsAPI.h"
 
 // -- Event handler class
-class CronPlayer : public bz_ServerSidePlayerHandler
-{
-public:
-  CronPlayer(); // c'tor
-  void added(int player);
-  void playerRejected(bz_eRejectCodes code, const char *reason);
-  void sendCommand(std::string message); // expose inherited protected member sendChatMessage
+class CronPlayer : public bz_ServerSidePlayerHandler {
+  public:
+    CronPlayer(); // c'tor
+    void added(int player);
+    void playerRejected(bz_eRejectCodes code, const char* reason);
+    void sendCommand(std::string message); // expose inherited protected member sendChatMessage
 
-  bool valid (void){return playerID >= 0;}
+    bool valid(void) {return playerID >= 0;}
 };
 
-class CronManager : public bz_EventHandler
-{
-public:
-  CronManager();
-  ~CronManager();
+class CronManager : public bz_EventHandler {
+  public:
+    CronManager();
+    ~CronManager();
 
-  void process(bz_EventData *eventData);
-  bool autoDelete(void) {return false;};
+    void process(bz_EventData* eventData);
+    bool autoDelete(void) {return false;};
 
-  bool connect();
-  void sendMessage(std::string message);
+    bool connect();
+    void sendMessage(std::string message);
 
-  void addJob(CronJob &job) {jobs.push_back(job);};
-  void clearJobs() {jobs.clear();};
+    void addJob(CronJob& job) {jobs.push_back(job);};
+    void clearJobs() {jobs.clear();};
 
-  void setCrontab(std::string _crontab) {this->crontab = _crontab;};
-  bool reload();
-  void list(int playerID) const;
+    void setCrontab(std::string _crontab) {this->crontab = _crontab;};
+    bool reload();
+    void list(int playerID) const;
 
-private:
-  std::vector<CronJob> jobs;
-  double lastTick;
-  int lastMinute;
-  std::string crontab;
-  CronPlayer* player;
+  private:
+    std::vector<CronJob> jobs;
+    double lastTick;
+    int lastMinute;
+    std::string crontab;
+    CronPlayer* player;
 };
 
 extern CronManager cron;
@@ -61,6 +59,6 @@ extern CronManager cron;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

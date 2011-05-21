@@ -11,15 +11,15 @@
  */
 
 /* Address:
- *	Encapsulates an Internet address
+ *  Encapsulates an Internet address
  *
  * PlayerId:
- *	Unique network id for a player.  Can be sent
- *	across the net.
+ *  Unique network id for a player.  Can be sent
+ *  across the net.
  */
 
-#ifndef	BZF_INET_ADDR_H
-#define	BZF_INET_ADDR_H
+#ifndef BZF_INET_ADDR_H
+#define BZF_INET_ADDR_H
 
 #include "common.h"
 
@@ -32,31 +32,31 @@
 #include "network.h"
 #include "Pack.h"
 
-typedef struct in_addr	InAddr;			// shorthand
+typedef struct in_addr  InAddr;     // shorthand
 
 class Address {
   public:
-			Address();
-			Address(const std::string&);
-			Address(const Address&);
-			Address(const InAddr&);		    // input in nbo
-			Address(const struct sockaddr_in&); // input in nbo
-			~Address();
-    Address&		operator=(const Address&);
+    Address();
+    Address(const std::string&);
+    Address(const Address&);
+    Address(const InAddr&);       // input in nbo
+    Address(const struct sockaddr_in&); // input in nbo
+    ~Address();
+    Address&    operator=(const Address&);
 
-			operator InAddr() const;
-    bool		operator==(const Address&) const;
-    bool		operator!=(const Address&) const;
-    bool		isAny() const;
-    bool		isPrivate() const;
-    std::string		getDotNotation() const;
-    uint8_t		getIPVersion() const;
+    operator InAddr() const;
+    bool    operator==(const Address&) const;
+    bool    operator!=(const Address&) const;
+    bool    isAny() const;
+    bool    isPrivate() const;
+    std::string   getDotNotation() const;
+    uint8_t   getIPVersion() const;
 
-    void*		pack(void*) const;
-    void*		unpack(void*);
+    void*   pack(void*) const;
+    void*   unpack(void*);
 
-    static Address	getHostAddress(const std::string hostname = std::string(""));
-    static std::string	getHostByAddress(InAddr);
+    static Address  getHostAddress(const std::string hostname = std::string(""));
+    static std::string  getHostByAddress(InAddr);
     static const std::string getHostName(const std::string hostname = std::string(""));
 
   private:
@@ -68,17 +68,17 @@ const int ServerIdPLen = 8;
 
 class ServerId {
   public:
-    void*		pack(void*) const;
-    void*		unpack(void*);
+    void*   pack(void*) const;
+    void*   unpack(void*);
 
-    bool		operator==(const ServerId&) const;
-    bool		operator!=(const ServerId&) const;
+    bool    operator==(const ServerId&) const;
+    bool    operator!=(const ServerId&) const;
 
   public:
     // host and port in network byte order
-    InAddr		serverHost;		// server host
-    int16_t		port;			// server port
-    int16_t		number;			// local player number
+    InAddr    serverHost;   // server host
+    int16_t   port;     // server port
+    int16_t   number;     // local player number
 };
 
 
@@ -88,6 +88,6 @@ class ServerId {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

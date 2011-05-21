@@ -16,17 +16,15 @@
 #ifndef __PYTHON_PLAYER_H__
 #define __PYTHON_PLAYER_H__
 
-namespace Python
-{
+namespace Python {
 
-typedef struct
-{
-  PyObject_HEAD
+  typedef struct {
+    PyObject_HEAD
 
-  bz_PlayerRecord *record;
-} Player;
+    bz_PlayerRecord* record;
+  } Player;
 
-PyObject *CreatePlayer (int id);
+  PyObject* CreatePlayer(int id);
 
 };
 
@@ -36,6 +34,6 @@ PyObject *CreatePlayer (int id);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -58,21 +58,18 @@ static BZDB_bool debugTextDraw("debugTextDraw");
 //  static callbacks
 //
 
-void TextSceneNode::TextRenderNode::bzdbCallback(const std::string& name, void* data)
-{
+void TextSceneNode::TextRenderNode::bzdbCallback(const std::string& name, void* data) {
   const std::string value = BZDB.get(name);
   ((TextRenderNode*)data)->setRawText(value);
 }
 
 
-void TextSceneNode::TextRenderNode::initContext(void* data)
-{
+void TextSceneNode::TextRenderNode::initContext(void* data) {
   ((TextRenderNode*)data)->initXFormList();
 }
 
 
-void TextSceneNode::TextRenderNode::freeContext(void* data)
-{
+void TextSceneNode::TextRenderNode::freeContext(void* data) {
   ((TextRenderNode*)data)->freeXFormList();
 }
 
@@ -84,8 +81,7 @@ void TextSceneNode::TextRenderNode::freeContext(void* data)
 //
 
 TextSceneNode::TextSceneNode(const WorldText* _text)
-: renderNode(this, _text)
-{
+  : renderNode(this, _text) {
   calcPlane();
 
   // NOTE: TextRenderNode() constructor calls calcSphere() and calcExtents()
@@ -94,13 +90,11 @@ TextSceneNode::TextSceneNode(const WorldText* _text)
 }
 
 
-TextSceneNode::~TextSceneNode()
-{
+TextSceneNode::~TextSceneNode() {
 }
 
 
-bool TextSceneNode::inAxisBox(const Extents& exts) const
-{
+bool TextSceneNode::inAxisBox(const Extents& exts) const {
   fvec3 points[5];
   getPoints(points);
   return Intersect::testPolygonInAxisBox(4, points, plane, exts)
@@ -110,8 +104,7 @@ bool TextSceneNode::inAxisBox(const Extents& exts) const
 
 //============================================================================//
 
-void TextSceneNode::calcPlane()
-{
+void TextSceneNode::calcPlane() {
   const WorldText& text = renderNode.text;
 
   if (!text.bzMaterial->getNoCulling()) { // FIXME ? || text.billboard) {
@@ -129,8 +122,7 @@ void TextSceneNode::calcPlane()
 }
 
 
-void TextSceneNode::calcSphere(const fvec3 points[5])
-{
+void TextSceneNode::calcSphere(const fvec3 points[5]) {
   const fvec3& orig  = points[4];
   const float radius = getMaxDist(points);
   fvec4 tmpSphere(orig, (radius * radius));
@@ -140,8 +132,7 @@ void TextSceneNode::calcSphere(const fvec3 points[5])
 
 
 
-void TextSceneNode::calcExtents(const fvec3 points[5])
-{
+void TextSceneNode::calcExtents(const fvec3 points[5]) {
   const WorldText& text = renderNode.text;
 
   extents.reset();
@@ -160,8 +151,7 @@ void TextSceneNode::calcExtents(const fvec3 points[5])
 }
 
 
-void TextSceneNode::getPoints(fvec3 points[5]) const
-{
+void TextSceneNode::getPoints(fvec3 points[5]) const {
   const WorldText& text = renderNode.text;
 
   float yp = 0.0f;
@@ -172,7 +162,8 @@ void TextSceneNode::getPoints(fvec3 points[5]) const
     if (ySpan < 0.0f) {
       yp = +1.5f;
       yn = ySpan - 0.5f;
-    } else {
+    }
+    else {
       yp = +1.5f + ySpan;
       yn = -0.5f;
     }
@@ -212,8 +203,7 @@ void TextSceneNode::getPoints(fvec3 points[5]) const
 }
 
 
-float TextSceneNode::getMaxDist(const fvec3 points[5]) const
-{
+float TextSceneNode::getMaxDist(const fvec3 points[5]) const {
   float maxDistSqr = 0.0f;
   for (int i = 0; i < 4; i++) {
     const float distSqr = (points[4] - points[i]).lengthSq();
@@ -227,8 +217,7 @@ float TextSceneNode::getMaxDist(const fvec3 points[5]) const
 
 //============================================================================//
 
-void TextSceneNode::notifyStyleChange()
-{
+void TextSceneNode::notifyStyleChange() {
   const WorldText& text = renderNode.text;
 
   OpenGLGStateBuilder builder;
@@ -274,7 +263,8 @@ void TextSceneNode::notifyStyleChange()
                                bzmat->getEmission(),
                                bzmat->getShininess());
     builder.setMaterial(oglMaterial, RENDERER.useQuality() > _LOW_QUALITY);
-  } else {
+  }
+  else {
     builder.enableMaterial(false);
   }
   builder.setShading(GL_FLAT);
@@ -288,8 +278,7 @@ void TextSceneNode::notifyStyleChange()
 
 //============================================================================//
 
-bool TextSceneNode::cull(const ViewFrustum& frustum) const
-{
+bool TextSceneNode::cull(const ViewFrustum& frustum) const {
   const WorldText& text = renderNode.text;
   // see if our eye is behind the plane
   if (!text.billboard && !text.bzMaterial->getNoCulling()) {
@@ -300,13 +289,12 @@ bool TextSceneNode::cull(const ViewFrustum& frustum) const
   }
 
   // now do an extents check
-  const Frustum* frustumPtr = (const Frustum *) &frustum;
+  const Frustum* frustumPtr = (const Frustum*) &frustum;
   return (Intersect::testAxisBoxInFrustum(extents, frustumPtr) == Intersect::Outside);
 }
 
 
-bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const
-{
+bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const {
   // FIXME -- use extents?
   const fvec4& s = getSphere();
   for (int i = 0; i < planeCount; i++) {
@@ -321,24 +309,21 @@ bool TextSceneNode::cullShadow(int planeCount, const fvec4* planes) const
 
 //============================================================================//
 
-void TextSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void TextSceneNode::addRenderNodes(SceneRenderer& renderer) {
   if (renderNode.getColorPtr()->a > 0.0f) {
     renderer.addRenderNode(&renderNode, &gstate);
   }
 }
 
 
-void TextSceneNode::addShadowNodes(SceneRenderer& renderer)
-{
+void TextSceneNode::addShadowNodes(SceneRenderer& renderer) {
   if (renderNode.getColorPtr()->a > 0.0f) {
     renderer.addShadowNode(&renderNode);
   }
 }
 
 
-void TextSceneNode::renderRadar()
-{
+void TextSceneNode::renderRadar() {
   renderNode.renderRadar();
 }
 
@@ -349,8 +334,7 @@ void TextSceneNode::renderRadar()
 //  static text routines
 //
 
-static void breakLines(const std::string& source, std::vector<std::string>& lines)
-{
+static void breakLines(const std::string& source, std::vector<std::string>& lines) {
   lines.clear();
   const char* c = source.c_str();
   const char* s = c;
@@ -362,7 +346,8 @@ static void breakLines(const std::string& source, std::vector<std::string>& line
       }
       c++;
       s = c;
-    } else {
+    }
+    else {
       c++;
     }
   }
@@ -377,17 +362,16 @@ static void breakLines(const std::string& source, std::vector<std::string>& line
 
 TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
                                               const WorldText* _text)
-: sceneNode(_sceneNode)
-, text(*_text)
-, xformList(INVALID_GL_LIST_ID)
-, fontID(-1)
-, fontSize(text.fontSize)
-, fixedWidth(0.0f)
-, noRadar(text.bzMaterial->getNoRadar())
-, noShadow(text.bzMaterial->getNoShadowCast()) // FIXME
-, triangles(0)
-{
-  FontManager &fm = FontManager::instance();
+  : sceneNode(_sceneNode)
+  , text(*_text)
+  , xformList(INVALID_GL_LIST_ID)
+  , fontID(-1)
+  , fontSize(text.fontSize)
+  , fixedWidth(0.0f)
+  , noRadar(text.bzMaterial->getNoRadar())
+  , noShadow(text.bzMaterial->getNoShadowCast()) // FIXME
+  , triangles(0) {
+  FontManager& fm = FontManager::instance();
 
   linesPtr = &lines;
 
@@ -416,10 +400,9 @@ TextSceneNode::TextRenderNode::TextRenderNode(TextSceneNode* _sceneNode,
 }
 
 
-TextSceneNode::TextRenderNode::~TextRenderNode()
-{
+TextSceneNode::TextRenderNode::~TextRenderNode() {
   if (CacheManager::isCacheFileType(text.font)) {
-    FontManager &fm = FontManager::instance();
+    FontManager& fm = FontManager::instance();
     const std::string localName = CACHEMGR.getLocalName(text.font);
     fm.freeFontFile(localName);
   }
@@ -434,9 +417,8 @@ TextSceneNode::TextRenderNode::~TextRenderNode()
 
 //============================================================================//
 
-int TextSceneNode::TextRenderNode::getFontID() const
-{
-  FontManager &fm = FontManager::instance();
+int TextSceneNode::TextRenderNode::getFontID() const {
+  FontManager& fm = FontManager::instance();
 
   int id = -1;
   if (!CacheManager::isCacheFileType(text.font)) {
@@ -461,8 +443,7 @@ int TextSceneNode::TextRenderNode::getFontID() const
 
 //============================================================================//
 
-void TextSceneNode::TextRenderNode::singleLineXForm() const
-{
+void TextSceneNode::TextRenderNode::singleLineXForm() const {
   if (text.fixedWidth > 0.0f) {
     const float newWidth = (text.fixedWidth * fontSize);
     glScalef(newWidth / widths[0], 1.0f, 1.0f);
@@ -473,8 +454,7 @@ void TextSceneNode::TextRenderNode::singleLineXForm() const
 }
 
 
-void TextSceneNode::TextRenderNode::initXFormList()
-{
+void TextSceneNode::TextRenderNode::initXFormList() {
   MeshTransform::Tool xformTool(text.xform);
   GLenum error;
 
@@ -488,7 +468,7 @@ void TextSceneNode::TextRenderNode::initXFormList()
     errCount++; // avoid a possible spin-lock?
     if (errCount > 666) {
       logDebugMessage(0,
-        "ERROR: TextSceneNode::initXFormList() glError: %i\n", error);
+                      "ERROR: TextSceneNode::initXFormList() glError: %i\n", error);
       return; // don't make the list, something is borked
     }
   };
@@ -497,7 +477,7 @@ void TextSceneNode::TextRenderNode::initXFormList()
   float matrix[16];
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
-      matrix[(i*4)+j] = xformTool.getMatrix()[(j*4)+i];
+      matrix[(i * 4) + j] = xformTool.getMatrix()[(j * 4) + i];
     }
   }
 
@@ -516,14 +496,13 @@ void TextSceneNode::TextRenderNode::initXFormList()
   error = glGetError();
   if (error != GL_NO_ERROR) {
     logDebugMessage(0,
-      "ERROR: TextSceneNode::initXFormList() failed: %i\n", error);
+                    "ERROR: TextSceneNode::initXFormList() failed: %i\n", error);
     xformList = INVALID_GL_LIST_ID;
   }
 }
 
 
-void TextSceneNode::TextRenderNode::freeXFormList()
-{
+void TextSceneNode::TextRenderNode::freeXFormList() {
   glDeleteLists(xformList, 1);
   xformList = INVALID_GL_LIST_ID;
 }
@@ -531,8 +510,7 @@ void TextSceneNode::TextRenderNode::freeXFormList()
 
 //============================================================================//
 
-void TextSceneNode::TextRenderNode::setRawText(const std::string& rawText)
-{
+void TextSceneNode::TextRenderNode::setRawText(const std::string& rawText) {
   breakLines(TextUtils::unescape_colors(rawText), lines);
 
   stripped.clear();
@@ -541,7 +519,7 @@ void TextSceneNode::TextRenderNode::setRawText(const std::string& rawText)
   }
 
   widths.clear();
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   for (size_t i = 0; i < lines.size(); i++) {
     widths.push_back(fm.getStringWidth(fontID, fontSize, lines[i]));
   }
@@ -572,8 +550,7 @@ void TextSceneNode::TextRenderNode::setRawText(const std::string& rawText)
 }
 
 
-void TextSceneNode::TextRenderNode::countTriangles()
-{
+void TextSceneNode::TextRenderNode::countTriangles() {
   triangles = 0;
   for (size_t i = 0; i < stripped.size(); i++) {
     const std::string& line = stripped[i];
@@ -588,8 +565,7 @@ void TextSceneNode::TextRenderNode::countTriangles()
 
 //============================================================================//
 
-inline bool TextSceneNode::TextRenderNode::checkDist() const
-{
+inline bool TextSceneNode::TextRenderNode::checkDist() const {
   if (!useLengthPerPixel) {
     return true;
   }
@@ -611,8 +587,7 @@ inline bool TextSceneNode::TextRenderNode::checkDist() const
 static bool wantCheckDist = true;
 
 
-void TextSceneNode::TextRenderNode::render()
-{
+void TextSceneNode::TextRenderNode::render() {
   if (wantCheckDist && !checkDist()) {
     return;
   }
@@ -694,8 +669,7 @@ void TextSceneNode::TextRenderNode::render()
 }
 
 
-void TextSceneNode::TextRenderNode::renderRadar()
-{
+void TextSceneNode::TextRenderNode::renderRadar() {
   if (noRadar || !text.bzMaterial->getRadarSpecial()) {
     return;
   }
@@ -714,8 +688,7 @@ void TextSceneNode::TextRenderNode::renderRadar()
 }
 
 
-void TextSceneNode::TextRenderNode::renderShadow()
-{
+void TextSceneNode::TextRenderNode::renderShadow() {
   if (noShadow) {
     return;
   }
@@ -747,8 +720,7 @@ void TextSceneNode::TextRenderNode::renderShadow()
 }
 
 
-void TextSceneNode::TextRenderNode::drawDebug()
-{
+void TextSceneNode::TextRenderNode::drawDebug() {
   myColor4fv(*colorPtr);
 
   fvec3 points[5];
@@ -771,7 +743,7 @@ void TextSceneNode::TextRenderNode::drawDebug()
   color.a = alpha;
   glColor4fv(color);
   glBegin(GL_POINTS);
-    glVertex3fv(points[4]);
+  glVertex3fv(points[4]);
   glEnd();
 
   glLineWidth(1.0f);
@@ -787,6 +759,6 @@ void TextSceneNode::TextRenderNode::drawDebug()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

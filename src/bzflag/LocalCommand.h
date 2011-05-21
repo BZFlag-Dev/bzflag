@@ -22,18 +22,18 @@
 
 class LocalCommand {
   public:
-    static bool execute(const char *commandToken);
+    static bool execute(const char* commandToken);
 
   protected:
     LocalCommand(std::string _commandName);
     virtual ~LocalCommand();
 
-    virtual bool operator () (const char *commandToken);
+    virtual bool operator()(const char* commandToken);
 
     std::string commandName;
 
   protected:
-    typedef std::map<std::string, LocalCommand *> MapOfCommands;
+    typedef std::map<std::string, LocalCommand*> MapOfCommands;
 
     static MapOfCommands* mapOfCommands;
 
@@ -46,6 +46,6 @@ class LocalCommand {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

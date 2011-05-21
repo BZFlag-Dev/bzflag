@@ -34,32 +34,27 @@
 
 //============================================================================//
 
-TeamBases::TeamBases()
-{
+TeamBases::TeamBases() {
   color = RedTeam;
 }
 
 
-void TeamBases::addBase(const Obstacle* obs)
-{
+void TeamBases::addBase(const Obstacle* obs) {
   teamBases.push_back(TeamBase(obs));
 }
 
 
-int TeamBases::size() const
-{
+int TeamBases::size() const {
   return teamBases.size();
 }
 
 
-TeamColor TeamBases::getTeam() const
-{
+TeamColor TeamBases::getTeam() const {
   return color;
 }
 
 
-const fvec3& TeamBases::getBasePosition(int base) const
-{
+const fvec3& TeamBases::getBasePosition(int base) const {
   if ((base < 0) || (base >= (int)teamBases.size())) {
     base = 0;
   }
@@ -67,8 +62,7 @@ const fvec3& TeamBases::getBasePosition(int base) const
 }
 
 
-float TeamBases::findBaseZ(const fvec3& testPos) const
-{
+float TeamBases::findBaseZ(const fvec3& testPos) const {
   TeamBaseList::const_iterator it;
   for (it = teamBases.begin(); it != teamBases.end(); ++it) {
     const Obstacle* obs = it->getObstacle();
@@ -105,15 +99,13 @@ float TeamBases::findBaseZ(const fvec3& testPos) const
 
 //============================================================================//
 
-const TeamBase& TeamBases::getRandomBase()
-{
+const TeamBase& TeamBases::getRandomBase() {
   const int index = (int)(bzfrand() * (double)teamBases.size());
   return teamBases[index % teamBases.size()];
 }
 
 
-void TeamBase::getTopCenter(fvec3& topPos) const
-{
+void TeamBase::getTopCenter(fvec3& topPos) const {
   if (obstacle->getTypeID() == faceType) {
     const MeshFace* face = (const MeshFace*) obstacle;
     topPos = face->calcCenter();
@@ -127,8 +119,7 @@ void TeamBase::getTopCenter(fvec3& topPos) const
 }
 
 
-void TeamBase::getRandomPosition(fvec3& randPos) const
-{
+void TeamBase::getRandomPosition(fvec3& randPos) const {
   if (obstacle->getTypeID() == faceType) {
     const MeshFace* face = (const MeshFace*) obstacle;
     const fvec3 rPos = face->getRandomPoint();
@@ -161,6 +152,6 @@ void TeamBase::getRandomPosition(fvec3& randPos) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__QUITMENU_H__
+#ifndef __QUITMENU_H__
 #define __QUITMENU_H__
 
 /* system interface headers */
@@ -26,27 +26,27 @@
 
 
 class QuitMenuDefaultKey : public MenuDefaultKey {
-public:
-  QuitMenuDefaultKey() { }
-  ~QuitMenuDefaultKey() { }
+  public:
+    QuitMenuDefaultKey() { }
+    ~QuitMenuDefaultKey() { }
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
 };
 
 
 class QuitMenu : public HUDDialog {
-public:
-  QuitMenu();
-  ~QuitMenu();
+  public:
+    QuitMenu();
+    ~QuitMenu();
 
-  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
-  void execute();
-  void resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
+    void execute();
+    void resize(int width, int height);
 
-private:
-  QuitMenuDefaultKey defaultKey;
+  private:
+    QuitMenuDefaultKey defaultKey;
 
 };
 
@@ -57,6 +57,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

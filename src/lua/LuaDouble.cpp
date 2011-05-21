@@ -37,14 +37,12 @@ const char* LuaDouble::metaName = "Double";
 //============================================================================//
 //============================================================================//
 
-bool LuaDouble::IsDouble(lua_State* L, int index)
-{
+bool LuaDouble::IsDouble(lua_State* L, int index) {
   return (lua_getuserdataextra(L, index) == metaName);
 }
 
 
-double* LuaDouble::TestDouble(lua_State* L, int index)
-{
+double* LuaDouble::TestDouble(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     return NULL;
   }
@@ -53,8 +51,7 @@ double* LuaDouble::TestDouble(lua_State* L, int index)
 }
 
 
-double* LuaDouble::TestNumber(lua_State* L, int index)
-{
+double* LuaDouble::TestNumber(lua_State* L, int index) {
   static double value = 0.0f;
   if (lua_israwnumber(L, index)) {
     value = (double)lua_tonumber(L, index);
@@ -68,8 +65,7 @@ double* LuaDouble::TestNumber(lua_State* L, int index)
 }
 
 
-double LuaDouble::CheckDouble(lua_State* L, int index)
-{
+double LuaDouble::CheckDouble(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_typerror(L, index, "Double");
   }
@@ -78,8 +74,7 @@ double LuaDouble::CheckDouble(lua_State* L, int index)
 }
 
 
-double LuaDouble::CheckDouble(lua_State* L, int index, const char* type)
-{
+double LuaDouble::CheckDouble(lua_State* L, int index, const char* type) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_typerror(L, index, type);
   }
@@ -88,8 +83,7 @@ double LuaDouble::CheckDouble(lua_State* L, int index, const char* type)
 }
 
 
-double LuaDouble::CheckNumber(lua_State* L, int index)
-{
+double LuaDouble::CheckNumber(lua_State* L, int index) {
   if (lua_israwnumber(L, index)) {
     return (double)lua_tonumber(L, index);
   }
@@ -97,8 +91,7 @@ double LuaDouble::CheckNumber(lua_State* L, int index)
 }
 
 
-double LuaDouble::CheckNumber(lua_State* L, int index, const char* type)
-{
+double LuaDouble::CheckNumber(lua_State* L, int index, const char* type) {
   if (lua_israwnumber(L, index)) {
     return (double)lua_tonumber(L, index);
   }
@@ -106,8 +99,7 @@ double LuaDouble::CheckNumber(lua_State* L, int index, const char* type)
 }
 
 
-void LuaDouble::PushDouble(lua_State* L, double value)
-{
+void LuaDouble::PushDouble(lua_State* L, double value) {
   double* doublePtr = (double*)lua_newuserdata(L, sizeof(double));
   *doublePtr = value;
 
@@ -117,8 +109,7 @@ void LuaDouble::PushDouble(lua_State* L, double value)
 }
 
 
-int LuaDouble::CreateDouble(lua_State* L, int index)
-{
+int LuaDouble::CreateDouble(lua_State* L, int index) {
   if (!lua_israwstring(L, index)) {
     PushDouble(L, CheckNumber(L, index, "Double, number, or string"));
     return 1;
@@ -136,8 +127,7 @@ int LuaDouble::CreateDouble(lua_State* L, int index)
 }
 
 
-int LuaDouble::CallCreate(lua_State* L)
-{
+int LuaDouble::CallCreate(lua_State* L) {
   return CreateDouble(L, 2);
 }
 
@@ -145,8 +135,7 @@ int LuaDouble::CallCreate(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-bool LuaDouble::CreateMetatable(lua_State* L)
-{
+bool LuaDouble::CreateMetatable(lua_State* L) {
   const int doubleTable = lua_gettop(L);
 
   luaL_newmetatable(L, metaName); {
@@ -178,34 +167,33 @@ bool LuaDouble::CreateMetatable(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline void PushDoubleString(lua_State* L, double d)
-{
+static inline void PushDoubleString(lua_State* L, double d) {
   static char buf[LUAI_MAXNUMBER2STR];
   snprintf(buf, LUAI_MAXNUMBER2STR, LUA_NUMBER_FMT, d);
   lua_pushstring(L, buf);
 }
 
 
-int LuaDouble::MetaTOSTRING(lua_State* L)
-{
+int LuaDouble::MetaTOSTRING(lua_State* L) {
   PushDoubleString(L, CheckDouble(L, 1));
   return 1;
 }
 
 
-int LuaDouble::MetaCONCAT(lua_State* L)
-{
+int LuaDouble::MetaCONCAT(lua_State* L) {
   const double* dptr1 = TestDouble(L, 1);
   if (dptr1 != NULL) {
     PushDoubleString(L, *dptr1);
-  } else {
+  }
+  else {
     lua_pushvalue(L, 1);
   }
 
   const double* dptr2 = TestDouble(L, 2);
   if (dptr2 != NULL) {
     PushDoubleString(L, *dptr2);
-  } else {
+  }
+  else {
     lua_pushvalue(L, 2);
   }
 
@@ -261,28 +249,24 @@ int LuaDouble::MetaLE(lua_State* L) {
 //============================================================================//
 //============================================================================//
 
-int LuaDouble::create(lua_State* L)
-{
+int LuaDouble::create(lua_State* L) {
   return CreateDouble(L, 1);
 }
 
 
-int LuaDouble::isdouble(lua_State* L)
-{
+int LuaDouble::isdouble(lua_State* L) {
   lua_pushboolean(L, lua_getuserdataextra(L, 1) == metaName);
   return 1;
 }
 
 
-int LuaDouble::tonumber(lua_State* L)
-{
+int LuaDouble::tonumber(lua_State* L) {
   lua_pushnumber(L, (lua_Number) CheckNumber(L, 1));
   return 1;
 }
 
 
-int LuaDouble::tostring(lua_State* L)
-{
+int LuaDouble::tostring(lua_State* L) {
   const double d1 = CheckNumber(L, 1);
 
   const char* fmt = LUA_NUMBER_FMT;
@@ -298,16 +282,14 @@ int LuaDouble::tostring(lua_State* L)
 }
 
 
-int LuaDouble::pack(lua_State* L)
-{
+int LuaDouble::pack(lua_State* L) {
   const double d1 = CheckNumber(L, 1);
   lua_pushlstring(L, (char*)&d1, sizeof(double));
   return 1;
 }
 
 
-int LuaDouble::unpack(lua_State* L)
-{
+int LuaDouble::unpack(lua_State* L) {
   size_t len;
   const char* s = luaL_checklstring(L, 1, &len);
   const size_t offset = luaL_optint(L, 2, 1) - 1;
@@ -322,8 +304,7 @@ int LuaDouble::unpack(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaDouble::date(lua_State* L)
-{
+int LuaDouble::date(lua_State* L) {
   // NOTE: heavily copied from lua/src/loslib.cpp : os_date()
 
   const double d = LuaDouble::CheckDouble(L, 1);
@@ -360,8 +341,9 @@ int LuaDouble::date(lua_State* L)
     cc[0] = '%'; cc[2] = '\0';
     luaL_buffinit(L, &b);
     for (; *s; s++) {
-      if (*s != '%' || *(s + 1) == '\0')  // no conversion specifier?
+      if (*s != '%' || *(s + 1) == '\0') { // no conversion specifier?
         luaL_addchar(&b, *s);
+      }
       else {
         size_t reslen;
         char buff[256];  // should be big enough for any conversion result
@@ -380,14 +362,12 @@ int LuaDouble::date(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline bool double_isnan(double d)
-{
+static inline bool double_isnan(double d) {
   return (d != d);
 }
 
 
-static inline int double_isinf(double d)
-{
+static inline int double_isinf(double d) {
   if (d != (d + d)) {
     return 0;
   }
@@ -409,7 +389,8 @@ int LuaDouble::ld_isinf(lua_State* L) {
   const int infState = double_isinf(CheckNumber(L, 1));
   if (infState) {
     lua_pushint(L, infState);
-  } else {
+  }
+  else {
     lua_pushboolean(L, false);
   }
   return 1;
@@ -524,8 +505,7 @@ int LuaDouble::ld_tanh(lua_State* L) {
 //============================================================================//
 //============================================================================//
 
-bool LuaDouble::PushEntries(lua_State* L)
-{
+bool LuaDouble::PushEntries(lua_State* L) {
   lua_newtable(L);
 
   lua_pushliteral(L, "double");
@@ -606,6 +586,6 @@ bool LuaDouble::PushEntries(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

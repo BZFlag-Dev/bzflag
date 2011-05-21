@@ -15,40 +15,37 @@
 #include <stdio.h>
 #include <string.h>
 
-static void		ltohs(int16_t* data)
-{
+static void   ltohs(int16_t* data) {
   unsigned char* b = (unsigned char*)data;
   *data = (int16_t)((uint16_t)b[0] + ((uint16_t)b[1] << 8));
 }
 
-static void		ltohl(int32_t* data)
-{
+static void   ltohl(int32_t* data) {
   unsigned char* b = (unsigned char*)data;
   *data = (int32_t)((uint32_t)b[0] + ((uint32_t)b[1] << 8) +
-			((uint32_t)b[2] << 16) + ((uint32_t)b[3] << 24));
+                    ((uint32_t)b[2] << 16) + ((uint32_t)b[3] << 24));
 }
 
-static int		readShort(FILE* file, int16_t* data)
-{
+static int    readShort(FILE* file, int16_t* data) {
   unsigned char b[2];
-  if (fread(&b, 1, 2, file) != 2)
+  if (fread(&b, 1, 2, file) != 2) {
     return -1;
+  }
   *data = (int16_t)((uint16_t)b[0] + ((uint16_t)b[1] << 8));
   return 0;
 }
 
-static int		readLong(FILE* file, int32_t* data)
-{
+static int    readLong(FILE* file, int32_t* data) {
   unsigned char b[4];
-  if (fread(&b, 1, 4, file) != 4)
+  if (fread(&b, 1, 4, file) != 4) {
     return -1;
+  }
   *data = (int32_t)((uint32_t)b[0] + ((uint32_t)b[1] << 8) +
-			((uint32_t)b[2] << 16) + ((uint32_t)b[3] << 24));
+                    ((uint32_t)b[2] << 16) + ((uint32_t)b[3] << 24));
   return 0;
 }
 
-static int		readHeader(FILE* file, char *tag, int32_t *size)
-{
+static int    readHeader(FILE* file, char* tag, int32_t* size) {
   if (fread(tag, 1, 4, file) != 4) {
     fprintf(stderr, "Failed to read tag\n");
     return -1;
@@ -60,41 +57,42 @@ static int		readHeader(FILE* file, char *tag, int32_t *size)
   return 0;
 }
 
-static int		skipChunk(FILE* file, int size)
-{
-  if (size != 0)
+static int    skipChunk(FILE* file, int size) {
+  if (size != 0) {
     return 0;
+  }
   return fseek(file, size, SEEK_CUR);
 }
 
-static int		findChunk(FILE* file, const char *tag, int32_t *size)
-{
+static int    findChunk(FILE* file, const char* tag, int32_t* size) {
   char curtag[4];
 
   while (1) {
-    if (readHeader(file, curtag, size))
+    if (readHeader(file, curtag, size)) {
       return -1;
-    if (memcmp(curtag, tag, 4) == 0)
+    }
+    if (memcmp(curtag, tag, 4) == 0) {
       return 0;
-    if (skipChunk(file, *size))
+    }
+    if (skipChunk(file, *size)) {
       return -1;
+    }
   }
 }
 
 class FileCloser {
   public:
     FileCloser(FILE* _file) : file(_file) { }
-    ~FileCloser() { if (file) fclose(file); }
-    void		release() { file = NULL; }
+    ~FileCloser() { if (file) { fclose(file); } }
+    void    release() { file = NULL; }
 
   private:
-    FILE*		file;
+    FILE*   file;
 };
 
-FILE*			openWavFile(const char *filename,
-				short *format, long *speed,
-				int *samples, short *channels, short *width)
-{
+FILE*     openWavFile(const char* filename,
+                      short* format, long* speed,
+                      int* samples, short* channels, short* width) {
   FILE* file;
   int16_t blockAlign, bitsPerSample, data16;
   int32_t bytesPerSec, len, data32;
@@ -102,16 +100,18 @@ FILE*			openWavFile(const char *filename,
 
   // open file
   file = fopen(filename, "rb");
-  if (!file)
+  if (!file) {
     return NULL;
+  }
 
   // automatically close file when we return
   FileCloser closer(file);
 
   // check that it's a valid sound file
   tag[4] = 0;
-  if (readHeader(file, tag, &len))
+  if (readHeader(file, tag, &len)) {
     return NULL;
+  }
   if (strcmp(tag, "RIFF") != 0) {
     fprintf(stderr, "File isn't a RIFF file\n");
     return NULL;
@@ -155,10 +155,10 @@ FILE*			openWavFile(const char *filename,
     fprintf(stderr, "Couldn't read bits per sample\n");
     return NULL;
   }
-  if (bitsPerSample==8) *width=1;
-  else if (bitsPerSample==16) *width=2;
-  else if (bitsPerSample==32) *width=4;
-  else return NULL;
+  if (bitsPerSample == 8) { *width = 1; }
+  else if (bitsPerSample == 16) { *width = 2; }
+  else if (bitsPerSample == 32) { *width = 4; }
+  else { return NULL; }
 
   // go find the data
   skipChunk(file, len - 16);
@@ -172,15 +172,14 @@ FILE*			openWavFile(const char *filename,
   return file;
 }
 
-void			closeWavFile(FILE* file)
-{
-  if (file)
+void      closeWavFile(FILE* file) {
+  if (file) {
     fclose(file);
+  }
 }
 
-int			readWavData(FILE* file, char *data,
-				int numSamples, int width)
-{
+int     readWavData(FILE* file, char* data,
+                    int numSamples, int width) {
   // read data
   int temp = fread(data, 1, width * numSamples, file);
   if (temp != width * numSamples) {
@@ -191,13 +190,15 @@ int			readWavData(FILE* file, char *data,
   // byte swap
   if (width == 2) {
     int16_t* sample = (int16_t*)data;
-    for (int i = 0; i < numSamples; ++i)
+    for (int i = 0; i < numSamples; ++i) {
       ltohs(sample + i);
+    }
   }
   else if (width == 4) {
     int32_t* sample = (int32_t*)data;
-    for (int i = 0; i < numSamples; ++i)
+    for (int i = 0; i < numSamples; ++i) {
       ltohl(sample + i);
+    }
   }
 
   return 0;
@@ -213,18 +214,18 @@ int			readWavData(FILE* file, char *data,
 #include <sys/ioctl.h>
 #include <sys/soundcard.h>
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   FILE* file;
   int16_t format, channels, width;
   long speed;
   int fd, samples;
-  char *data;
+  char* data;
   int stereo;
-  int audioOutputRate=22050;
+  int audioOutputRate = 22050;
   int sndformat;
   audio_buf_info info;
 
-  if (argc!=2) {
+  if (argc != 2) {
     fprintf(stderr, "Pass a wave file as an argument\n");
     return -1;
   }
@@ -256,48 +257,48 @@ int main(int argc, char *argv[]) {
     }
   }
 #if BYTE_ORDER == BIG_ENDIAN
-  sndformat=AFMT_S16_BE;
+  sndformat = AFMT_S16_BE;
 #else
-  sndformat=AFMT_S16_LE;
+  sndformat = AFMT_S16_LE;
 #endif
   int oldFormat = sndformat;
-  if ((ioctl(fd, SNDCTL_DSP_SETFMT, &sndformat)==-1) ||
-      sndformat!=oldFormat) {
+  if ((ioctl(fd, SNDCTL_DSP_SETFMT, &sndformat) == -1) ||
+      sndformat != oldFormat) {
     fprintf(stderr, "Format now %d\n", sndformat);
     close(fd);
     fprintf(stderr, "Couldn't put audio in 16bit mode\n");
     return -1;
   }
   stereo = 1;
-  if ((ioctl(fd, SNDCTL_DSP_STEREO, &stereo)==-1) ||
-      stereo!=1) {
+  if ((ioctl(fd, SNDCTL_DSP_STEREO, &stereo) == -1) ||
+      stereo != 1) {
     close(fd);
     fprintf(stderr, "Couldn't set stereo mode\n");
     return -1;
   }
-  if ((ioctl(fd, SNDCTL_DSP_SPEED, &audioOutputRate)==-1) ||
-      audioOutputRate!=22050) {
+  if ((ioctl(fd, SNDCTL_DSP_SPEED, &audioOutputRate) == -1) ||
+      audioOutputRate != 22050) {
     close(fd);
     fprintf(stderr, "Couldn't set rate to %d\n", 22050);
     return -1;
   }
-  write(fd, data, samples*channels);
+  write(fd, data, samples * channels);
   fprintf(stderr, "sound is %dus\n", samples * (1000000 / audioOutputRate));
 
   // FIXME: can/should use BzTime
   usleep(samples * (1000000 / audioOutputRate));
-/*
-  while (1) {
-    if (ioctl(fd, SNDCTL_DSP_GETOSPACE, &info)==-1) {
-      fprintf(stderr, "Couldn't read sound buffer space\n");
-      return -1;
+  /*
+    while (1) {
+      if (ioctl(fd, SNDCTL_DSP_GETOSPACE, &info)==-1) {
+        fprintf(stderr, "Couldn't read sound buffer space\n");
+        return -1;
+      }
+      fprintf(stderr, "fragstotal=%d fragssize=%d bytes=%d\n",
+        info.fragstotal, info.fragsize, info.bytes);
+      if (info.bytes==info.fragstotal*info.fragsize) break;
+      usleep(10000);
     }
-    fprintf(stderr, "fragstotal=%d fragssize=%d bytes=%d\n",
-	    info.fragstotal, info.fragsize, info.bytes);
-    if (info.bytes==info.fragstotal*info.fragsize) break;
-    usleep(10000);
-  }
-*/
+  */
   close(fd);
   return 0;
 }
@@ -308,6 +309,6 @@ int main(int argc, char *argv[]) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

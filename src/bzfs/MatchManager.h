@@ -25,96 +25,94 @@
 
 #include "bzfsAPI.h"
 
-class CountDown
-{
-public:
-  CountDown( double interval=1, int count=10 );
-  ~CountDown() {};
+class CountDown {
+  public:
+    CountDown(double interval = 1, int count = 10);
+    ~CountDown() {};
 
-  int getCounter();
-  void setCounter(int count);
-  void doReset();
-  bool doCountdown();
-  bool inProgress();
+    int getCounter();
+    void setCounter(int count);
+    void doReset();
+    bool doCountdown();
+    bool inProgress();
 
-private:
+  private:
 
-  double _interval;
-  double _currentTime;
-  double _previousTime;
-  int _startCount, _counter;
+    double _interval;
+    double _currentTime;
+    double _previousTime;
+    int _startCount, _counter;
 
 };
 
 
-class MatchManager : public Singleton<MatchManager> , bz_EventHandler , bz_CustomSlashCommandHandler
-{
-public:
-  // API event
-  virtual void process ( bz_EventData *eventData );
+class MatchManager : public Singleton<MatchManager> , bz_EventHandler , bz_CustomSlashCommandHandler {
+  public:
+    // API event
+    virtual void process(bz_EventData* eventData);
 
-  // custom slash
-  virtual bool handle ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params );
+    // custom slash
+    virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList* params);
 
-  void init();
+    void init();
 
-protected:
-  friend class Singleton<MatchManager>;
+  protected:
+    friend class Singleton<MatchManager>;
 
-  typedef enum {
-    eOff,
-    ePregame,
-    eOn,
-    ePostgame
-  } MatchState;
+    typedef enum {
+      eOff,
+      ePregame,
+      eOn,
+      ePostgame
+    } MatchState;
 
-  MatchState matchState;
+    MatchState matchState;
 
-  bool paused;
-  bool report;
-  double resumeTime;
-  double startTime;
-  double pauseTime;
-  double duration;
-  double resetTime;
-  double endTime;
+    bool paused;
+    bool report;
+    double resumeTime;
+    double startTime;
+    double pauseTime;
+    double duration;
+    double resetTime;
+    double endTime;
 
-  double currentTime;
-private:
+    double currentTime;
+  private:
 
-  MatchManager();
-  ~MatchManager();
+    MatchManager();
+    ~MatchManager();
 
-  // countdown timers
+    // countdown timers
 
-  CountDown preGameTimer;
-  CountDown endTimer;
+    CountDown preGameTimer;
+    CountDown endTimer;
 
-  // start future BZDB vars
-  double _matchPregameTime;
-  double _matchDuration;
-  double _matchEndCountdown;
-  double _matchResetTime;
+    // start future BZDB vars
+    double _matchPregameTime;
+    double _matchDuration;
+    double _matchEndCountdown;
+    double _matchResetTime;
 
-  bool _matchDisallowJoins;
-  bool _matchResetScoreOnEnd;
-  bool _matchReportMatches;
-  // end future BZDB vars
+    bool _matchDisallowJoins;
+    bool _matchResetScoreOnEnd;
+    bool _matchReportMatches;
+    // end future BZDB vars
 
-  // methods
-  void start ( int playerID, bz_APIStringList *params );
-  void end ( int playerID, bz_APIStringList *params );
-  void pause ( int playerID, bz_APIStringList *params );
-  void substitute ( int playerID, bz_APIStringList *params );
+    // methods
+    void start(int playerID, bz_APIStringList* params);
+    void end(int playerID, bz_APIStringList* params);
+    void pause(int playerID, bz_APIStringList* params);
+    void substitute(int playerID, bz_APIStringList* params);
 
-  void doPregame();
-  void doOngame();
-  void doPostgame();
-  void doReportgame();
+    void doPregame();
+    void doOngame();
+    void doPostgame();
+    void doReportgame();
 
-  void disablePlayerSpawn();
-  void resetTeamScores();
-  void resetPlayerScores();
+    void disablePlayerSpawn();
+    void resetTeamScores();
+    void resetPlayerScores();
 
 };
 
@@ -124,6 +122,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

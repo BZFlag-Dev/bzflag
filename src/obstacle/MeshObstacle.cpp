@@ -38,8 +38,7 @@
 const char* MeshObstacle::typeName = "MeshObstacle";
 
 
-MeshObstacle::MeshObstacle()
-{
+MeshObstacle::MeshObstacle() {
   faceCount = faceSize = 0;
   faces = NULL;
   edges = NULL;
@@ -63,8 +62,7 @@ MeshObstacle::MeshObstacle()
 
 
 static void fvec3ListToArray(const std::vector<fvec3>& list,
-			      int& count, fvec3* &array)
-{
+                             int& count, fvec3* &array) {
   count = list.size();
   array = new fvec3[count];
   for (int i = 0; i < count; i++) {
@@ -74,8 +72,7 @@ static void fvec3ListToArray(const std::vector<fvec3>& list,
 }
 
 static void arrayToCfvec3List(const fvec3* array, int count,
-			      std::vector<fvec3>& list)
-{
+                              std::vector<fvec3>& list) {
   list.clear();
   for (int i = 0; i < count; i++) {
     list.push_back(array[i]);
@@ -85,14 +82,13 @@ static void arrayToCfvec3List(const fvec3* array, int count,
 
 
 MeshObstacle::MeshObstacle(const MeshTransform& transform,
-			   const std::vector<char>& checkTypesL,
-			   const std::vector<fvec3>& checkList,
-			   const std::vector<fvec3>& verticeList,
-			   const std::vector<fvec3>& normalList,
-			   const std::vector<fvec2>& texcoordList,
-			   int _faceCount, bool _noclusters, bool bounce,
-			   unsigned char drive, unsigned char shoot, bool rico)
-{
+                           const std::vector<char>& checkTypesL,
+                           const std::vector<fvec3>& checkList,
+                           const std::vector<fvec3>& verticeList,
+                           const std::vector<fvec3>& normalList,
+                           const std::vector<fvec2>& texcoordList,
+                           int _faceCount, bool _noclusters, bool bounce,
+                           unsigned char drive, unsigned char shoot, bool rico) {
   unsigned int i;
 
   // get the transform tool
@@ -146,15 +142,13 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
 }
 
 
-bool MeshObstacle::addWeapon(const std::vector<std::string>& lines)
-{
+bool MeshObstacle::addWeapon(const std::vector<std::string>& lines) {
   weapons.push_back(lines);
   return true;
 }
 
 
-static bool hasZoneFixedFlag(const MeshFace::SpecialData* sd)
-{
+static bool hasZoneFixedFlag(const MeshFace::SpecialData* sd) {
   if ((sd == NULL) || sd->zoneParams.empty()) {
     return false;
   }
@@ -170,13 +164,12 @@ static bool hasZoneFixedFlag(const MeshFace::SpecialData* sd)
 
 
 bool MeshObstacle::addFace(const std::vector<int>& _vertices,
-			   const std::vector<int>& _normals,
-			   const std::vector<int>& _texcoords,
-			   const BzMaterial* _material, int phydrv,
-			   bool _noclusters, bool bounce,
-			   unsigned char drive, unsigned char shoot, bool rico,
-			   bool triangulate, const MeshFace::SpecialData* sd)
-{
+                           const std::vector<int>& _normals,
+                           const std::vector<int>& _texcoords,
+                           const BzMaterial* _material, int phydrv,
+                           bool _noclusters, bool bounce,
+                           unsigned char drive, unsigned char shoot, bool rico,
+                           bool triangulate, const MeshFace::SpecialData* sd) {
   // protect the face list from overrun
   if (faceCount >= faceSize) {
     return false;
@@ -231,11 +224,12 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     int tmpDebugLevel = debugLevel;
     debugLevel = 0;
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-			_noclusters, bounce, drive, shoot, rico, sd);
+                        _noclusters, bounce, drive, shoot, rico, sd);
     debugLevel = tmpDebugLevel;
-  } else {
+  }
+  else {
     face = new MeshFace(this, count, v, n, t, _material, phydrv,
-			_noclusters, bounce, drive, shoot, rico, sd);
+                        _noclusters, bounce, drive, shoot, rico, sd);
   }
 
   // check its validity
@@ -258,7 +252,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     else {
       //
       logDebugMessage(1,
-        "WARNING: face triangulated into %u new faces\n", triSize);
+                      "WARNING: face triangulated into %u new faces\n", triSize);
       // warn if a zone with fixedFlag was split
       if (hasZoneFixedFlag(sd)) {
         logDebugMessage(0, "WARNING: face zone with fixedFlags was split\n");
@@ -272,29 +266,30 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
       faceSize += extra;
       // add the triangles
       for (i = 0; i < triSize; i++) {
-	std::vector<int> triV, triN, triT;
-	for (int j = 0; j < 3; j++) {
-	  const int index = triIndices[i].indices[j];
-	  triV.push_back(_vertices[index]);
-	  if (_normals.size() > 0) {
-	    triN.push_back(_normals[index]);
-	  }
-	  if (_texcoords.size() > 0) {
-	    triT.push_back(_texcoords[index]);
-	  }
-	}
-	makeFacePointers(triV, triN, triT, v, n, t);
-	face = new MeshFace(this, 3, v, n, t, _material, phydrv,
-			    _noclusters, bounce, drive, shoot, rico, sd);
-	if (face->isValid()) {
-	  faces[faceCount] = face;
-	  faceCount++;
+        std::vector<int> triV, triN, triT;
+        for (int j = 0; j < 3; j++) {
+          const int index = triIndices[i].indices[j];
+          triV.push_back(_vertices[index]);
+          if (_normals.size() > 0) {
+            triN.push_back(_normals[index]);
+          }
+          if (_texcoords.size() > 0) {
+            triT.push_back(_texcoords[index]);
+          }
+        }
+        makeFacePointers(triV, triN, triT, v, n, t);
+        face = new MeshFace(this, 3, v, n, t, _material, phydrv,
+                            _noclusters, bounce, drive, shoot, rico, sd);
+        if (face->isValid()) {
+          faces[faceCount] = face;
+          faceCount++;
           if (face->isSpecial()) {
             hasSpecialFaces = true;
           }
-	} else {
-	  delete face;
-	}
+        }
+        else {
+          delete face;
+        }
       }
     }
   }
@@ -309,12 +304,11 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 
 
 void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
-				    const std::vector<int>& _normals,
-				    const std::vector<int>& _texcoords,
-				    const fvec3**& v,
-				    const fvec3**& n,
-				    const fvec2**& t)
-{
+                                    const std::vector<int>& _normals,
+                                    const std::vector<int>& _texcoords,
+                                    const fvec3** & v,
+                                    const fvec3** & n,
+                                    const fvec2** & t) {
   const int count = _vertices.size();
 
   // use the indices to makes lists of pointers
@@ -344,8 +338,7 @@ void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
 }
 
 
-MeshObstacle::~MeshObstacle()
-{
+MeshObstacle::~MeshObstacle() {
   delete[] checkTypes;
   delete[] checkPoints;
   delete[] vertices;
@@ -361,8 +354,7 @@ MeshObstacle::~MeshObstacle()
 }
 
 
-Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
-{
+Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const {
   int i;
   MeshObstacle* copy;
   std::vector<char> ctlist;
@@ -376,8 +368,8 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
       ((faceCount <= 0) || (driveThrough && shootThrough))) {
     // load blanks for pure visual meshes
     copy = new MeshObstacle(xform, ctlist, clist,
-			    vlist, nlist, tlist, 0, noclusters,
-			    smoothBounce, driveThrough, shootThrough, ricochet);
+                            vlist, nlist, tlist, 0, noclusters,
+                            smoothBounce, driveThrough, shootThrough, ricochet);
     copy->setName(name);
   }
   else {
@@ -392,8 +384,8 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     }
 
     copy = new MeshObstacle(xform, ctlist, clist,
-			    vlist, nlist, tlist, faceCount, noclusters,
-			    smoothBounce, driveThrough, shootThrough, ricochet);
+                            vlist, nlist, tlist, faceCount, noclusters,
+                            smoothBounce, driveThrough, shootThrough, ricochet);
     copy->setName(name);
 
     for (i = 0; i < faceCount; i++) {
@@ -411,8 +403,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 }
 
 
-void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
-{
+void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const {
   MeshFace* face = faces[f];
 
   std::vector<int> vlist;
@@ -435,16 +426,15 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
   }
 
   mesh->addFace(vlist, nlist, tlist, face->getMaterial(),
-		face->getPhysicsDriver(), face->noClusters(),
-		face->isSmoothBounce(),
-		face->isDriveThrough(), face->isShootThrough(),
-		face->canRicochet(), false, face->getSpecialData());
+                face->getPhysicsDriver(), face->noClusters(),
+                face->isSmoothBounce(),
+                face->isDriveThrough(), face->isShootThrough(),
+                face->canRicochet(), false, face->getSpecialData());
   return;
 }
 
 
-void MeshObstacle::finalize()
-{
+void MeshObstacle::finalize() {
   // set the face IDs
   for (int f = 0; f < faceCount; f++) {
     faces[f]->setFaceID(f);
@@ -504,8 +494,7 @@ typedef std::map<VertPair, FacePair> EdgeMap;
 typedef std::map<MeshFace*, std::vector<MeshFace::EdgeRef> > FaceEdges;
 
 
-void MeshObstacle::makeEdges() // FIXME -- incomplete
-{
+void MeshObstacle::makeEdges() { // FIXME -- incomplete
   if (isPassable()) {
     return;
   }
@@ -529,14 +518,17 @@ void MeshObstacle::makeEdges() // FIXME -- incomplete
       if (useFace0) {
         if (facePair.f0 == NULL) {
           facePair.f0 = face;
-        } else {
+        }
+        else {
           logDebugMessage(4, "non-manifold mesh -- f0 overlap\n");
           return;
         }
-      } else {
+      }
+      else {
         if (facePair.f1 == NULL) {
           facePair.f1 = face;
-        } else {
+        }
+        else {
           logDebugMessage(4, "non-manifold mesh -- f1 overlap\n");
           return;
         }
@@ -577,26 +569,25 @@ void MeshObstacle::makeEdges() // FIXME -- incomplete
     faceEdges[facePair.f1].push_back(MeshFace::EdgeRef(&edge, -1));
   }
 
-/* FIXME -- add the edges to the faces
-  FaceEdges::const_iterator feIt;
-  for (feIt = faceEdges.begin(); feIt != faceEdges.end(); ++feIt) {
-    MeshFace* face = feIt->first;
-    face->edges = new MeshFace::EdgeRef[face->getVertexCount()];
-    const std::vector<MeshFace::EdgeRef>& refs = feIt->second;
-    std::vector<MeshFace::EdgeRef>::const_iterator refIt;
-    for (size_t r = 0; r < refs.size(); r++) {
-      face->edges[r] = refs[r];
+  /* FIXME -- add the edges to the faces
+    FaceEdges::const_iterator feIt;
+    for (feIt = faceEdges.begin(); feIt != faceEdges.end(); ++feIt) {
+      MeshFace* face = feIt->first;
+      face->edges = new MeshFace::EdgeRef[face->getVertexCount()];
+      const std::vector<MeshFace::EdgeRef>& refs = feIt->second;
+      std::vector<MeshFace::EdgeRef>::const_iterator refIt;
+      for (size_t r = 0; r < refs.size(); r++) {
+        face->edges[r] = refs[r];
+      }
     }
-  }
-*/
+  */
 }
 
 
 //============================================================================//
 
 // true if any vertex is shared between the two faces
-bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1)
-{
+bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1) {
   for (int v0 = 0; v0 <  face0->getVertexCount(); v0++) {
     for (int v1 = 0; v1 <  face1->getVertexCount(); v1++) {
       if (face0->vertices[v0] == face1->vertices[v1]) {
@@ -611,8 +602,7 @@ bool MeshObstacle::areNeighbors(MeshFace* face0, MeshFace* face1)
 FIXME - sheared box has bad behavior, so it's disable via the 'n[2] == 0'
 FIXME - only works for simple meshes
 */
-void MeshObstacle::setupTopNeighbors()
-{
+void MeshObstacle::setupTopNeighbors() {
   fvec3 n;
   float h;
   for (int f = 0; f < faceCount; f++) {
@@ -622,55 +612,53 @@ void MeshObstacle::setupTopNeighbors()
     for (int nf = 0; nf < faceCount; nf++) {
       MeshFace* face1 = getFace(nf);
       if ((nf != f) && !face0->isFlatTop() && areNeighbors(face0, face1))
-        if ((h == face1->getVertex(0)[2]) && face1->isFlatTop() && (n[2] == 0))
+        if ((h == face1->getVertex(0)[2]) && face1->isFlatTop() && (n[2] == 0)) {
           face0->setTopNeighbor(face1);
+        }
     }
   }
 }
 
 //============================================================================//
 
-const char* MeshObstacle::getType() const
-{
+const char* MeshObstacle::getType() const {
   return typeName;
 }
 
 
-const char* MeshObstacle::getClassName() // const
-{
+const char* MeshObstacle::getClassName() { // const
   return typeName;
 }
 
 
-void MeshObstacle::setDrawInfo(MeshDrawInfo* di)
-{
+void MeshObstacle::setDrawInfo(MeshDrawInfo* di) {
   if (drawInfo != NULL) {
     logDebugMessage(0,
                     "ERROR: MeshObstacle::setMeshDrawInfo() already exists\n");
     exit(1);
-  } else {
+  }
+  else {
     drawInfo = di;
   }
   return;
 }
 
 
-bool MeshObstacle::isValid() const
-{
+bool MeshObstacle::isValid() const {
   // check the planes
-/* FIXME - kill the whole thing for one bad face?
-  for (int f = 0; f < faceCount; f++) {
-    if (!faces[f]->isValid()) {
-      return false;
+  /* FIXME - kill the whole thing for one bad face?
+    for (int f = 0; f < faceCount; f++) {
+      if (!faces[f]->isValid()) {
+        return false;
+      }
     }
-  }
-*/
+  */
 
   // now check the vertices
   for (int v = 0; v < vertexCount; v++) {
     for (int a = 0; a < 3; a++) {
       if (fabsf(vertices[v][a]) > maxExtent) {
-	return false;
+        return false;
       }
     }
   }
@@ -679,8 +667,7 @@ bool MeshObstacle::isValid() const
 }
 
 
-bool MeshObstacle::containsPoint(const fvec3& point) const
-{
+bool MeshObstacle::containsPoint(const fvec3& point) const {
   if (checkCount <= 0) {
     return false;
   }
@@ -708,15 +695,15 @@ bool MeshObstacle::containsPoint(const fvec3& point) const
       Ray ray(point, dir);
       bool hitFace = false;
       for (f = 0; f < faceCount; f++) {
-	const MeshFace* face = faces[f];
-	const float hittime = face->intersect(ray);
-	if ((hittime > 0.0f) && (hittime <= 1.0f)) {
-	  hitFace = true;
-	  break;
-	}
+        const MeshFace* face = faces[f];
+        const float hittime = face->intersect(ray);
+        if ((hittime > 0.0f) && (hittime <= 1.0f)) {
+          hitFace = true;
+          break;
+        }
       }
       if (!hitFace) {
-	return true;
+        return true;
       }
     }
     else if (checkTypes[c] == OutsideCheck) {
@@ -725,21 +712,21 @@ bool MeshObstacle::containsPoint(const fvec3& point) const
       Ray ray(checkPoints[c], dir);
       bool hitFace = false;
       for (f = 0; f < faceCount; f++) {
-	const MeshFace* face = faces[f];
-	const float hittime = face->intersect(ray);
-	if ((hittime > 0.0f) && (hittime <= 1.0f)) {
-	  hitFace = true;
-	  break;
-	}
+        const MeshFace* face = faces[f];
+        const float hittime = face->intersect(ray);
+        if ((hittime > 0.0f) && (hittime <= 1.0f)) {
+          hitFace = true;
+          break;
+        }
       }
       if (!hitFace) {
-	return false;
+        return false;
       }
     }
     else {
       logDebugMessage(0, "checkType (%i) is not supported yet\n",
-                         checkTypes[c]);
-      exit (1);
+                      checkTypes[c]);
+      exit(1);
     }
   }
 
@@ -747,33 +734,28 @@ bool MeshObstacle::containsPoint(const fvec3& point) const
 }
 
 
-bool MeshObstacle::containsPointConvex(const fvec3& point, bool trace) const
-{
+bool MeshObstacle::containsPointConvex(const fvec3& point, bool trace) const {
   return trace && point.x != 0.0f; // FIXME
 }
 
 
 bool MeshObstacle::containsPointParity(const fvec3& point,
-                                       bool inside, bool trace) const
-{
+                                       bool inside, bool trace) const {
   return inside && trace && point.x != 0.0f; // FIXME
 }
 
 
-float MeshObstacle::intersect(const Ray& /*ray*/) const
-{
+float MeshObstacle::intersect(const Ray& /*ray*/) const {
   return -1.0f; // rays only intersect with mesh faces
 }
 
 
-void MeshObstacle::get3DNormal(const fvec3& /*p*/, fvec3& /*n*/) const
-{
+void MeshObstacle::get3DNormal(const fvec3& /*p*/, fvec3& /*n*/) const {
   return; // this should never be called if intersect() is always < 0.0f
 }
 
 
-void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
-{
+void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const {
   const fvec3 center(pos.x, pos.y, pos.z + (0.5f * size.z));
   fvec3 out = p - center;
   if (out.z < 0.0f) {
@@ -783,7 +765,8 @@ void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
   float lengthSq = out.lengthSq();
   if (lengthSq > 0.0f) {
     n = out * (1.0f / sqrtf(lengthSq));
-  } else {
+  }
+  else {
     n = fvec3(0.0f, 0.0f, 1.0f);
   }
 
@@ -794,48 +777,42 @@ void MeshObstacle::getNormal(const fvec3& p, fvec3& n) const
 bool MeshObstacle::getHitNormal(const fvec3& /*oldPos*/, float /*oldAngle*/,
                                 const fvec3& p, float /*angle*/,
                                 float, float, float /*height*/,
-                                fvec3& n) const
-{
+                                fvec3& n) const {
   getNormal(p, n);
   return true;
 }
 
 
 bool MeshObstacle::inCylinder(const fvec3& p,
-			       float /*radius*/, float height) const
-{
+                              float /*radius*/, float height) const {
   const fvec3 mid(p.x, p.y, p.z + (0.5f * height));
   return containsPoint(mid);
 }
 
 
 bool MeshObstacle::inBox(const fvec3& p, float /*angle*/,
-			 float /*dx*/, float /*dy*/, float height) const
-{
+                         float /*dx*/, float /*dy*/, float height) const {
   const fvec3 mid(p.x, p.y, p.z + (0.5f * height));
   return containsPoint(mid);
 }
 
 
 bool MeshObstacle::inMovingBox(const fvec3&, float,
-			       const fvec3& p, float /*angle*/,
-			       float /*dx*/, float /*dy*/, float height) const
-{
+                               const fvec3& p, float /*angle*/,
+                               float /*dx*/, float /*dy*/, float height) const {
   const fvec3 mid(p.x, p.y, p.z + (0.5f * height));
   return containsPoint(mid);
 }
 
 
 bool MeshObstacle::isCrossing(const fvec3& /*p*/, float /*angle*/,
-			       float /*dx*/, float /*dy*/, float /*height*/,
-			       fvec4* /*plane*/) const
-{
+                              float /*dx*/, float /*dy*/, float /*height*/,
+                              fvec4* /*plane*/) const {
   return false; // the MeshFaces should handle this case
 }
 
 
-int MeshObstacle::packSize() const
-{
+int MeshObstacle::packSize() const {
   int fullSize = 0;
 
   fullSize += sizeof(uint8_t); // state byte
@@ -869,8 +846,7 @@ int MeshObstacle::packSize() const
 }
 
 
-void *MeshObstacle::pack(void *buf) const
-{
+void* MeshObstacle::pack(void* buf) const {
   int i;
 
   const bool drawInfoOwner = (drawInfo != NULL) && !drawInfo->isCopy();
@@ -930,8 +906,7 @@ void *MeshObstacle::pack(void *buf) const
 }
 
 
-void *MeshObstacle::unpack(void *buf)
-{
+void* MeshObstacle::unpack(void* buf) {
   int i;
   int32_t inTmp;
 
@@ -1030,8 +1005,7 @@ void *MeshObstacle::unpack(void *buf)
 }
 
 
-static std::string debugIndex(int index)
-{
+static std::string debugIndex(int index) {
   if (debugLevel >= 1) {
     return " # " + TextUtils::itoa(index);
   }
@@ -1039,8 +1013,7 @@ static std::string debugIndex(int index)
 }
 
 
-void MeshObstacle::print(std::ostream& out, const std::string& indent) const
-{
+void MeshObstacle::print(std::ostream& out, const std::string& indent) const {
   out << indent << "mesh" << std::endl;
 
   out << indent << "# faces = " << faceCount << std::endl;
@@ -1049,11 +1022,11 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
   out << indent << "# normals = " << normalCount << std::endl;
   out << indent << "# texcoords = " << texcoordCount << std::endl;
   out << indent << "# mins = " << extents.mins.x << " "
-			       << extents.mins.y << " "
-			       << extents.mins.z << std::endl;
+      << extents.mins.y << " "
+      << extents.mins.z << std::endl;
   out << indent << "# maxs = " << extents.maxs.x << " "
-			       << extents.maxs.y << " "
-			       << extents.maxs.z << std::endl;
+      << extents.maxs.y << " "
+      << extents.maxs.z << std::endl;
 
   if (!name.empty() && (name[0] != '$')) {
     out << indent << "  name " << name << std::endl;
@@ -1066,8 +1039,9 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
     out << indent << "  smoothBounce" << std::endl;
   }
   if (driveThrough && shootThrough) {
-      out << indent << "  passable" << std::endl;
-  } else {
+    out << indent << "  passable" << std::endl;
+  }
+  else {
     if (driveThrough) {
       out << indent << "  driveThrough" << std::endl;
     }
@@ -1131,8 +1105,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 bool MeshObstacle::makeTexcoords(const fvec2& autoScale,
                                  const fvec4& plane,
                                  const std::vector<fvec3>& vertices,
-                                 std::vector<fvec2>& texcoords)
-{
+                                 std::vector<fvec2>& texcoords) {
   const float defScale = 1.0f / 8.0f;
   const float sScale = (autoScale.s == 0.0f) ? defScale : 1.0f / autoScale.s;
   const float tScale = (autoScale.t == 0.0f) ? defScale : 1.0f / autoScale.t;
@@ -1162,7 +1135,8 @@ bool MeshObstacle::makeTexcoords(const fvec2& autoScale,
     else {
       if (horizontal) {
         texcoords[i].s = sScale * v.x;
-      } else {
+      }
+      else {
         texcoords[i].s = sScale * ((nh.x * v.y) - (nh.y * v.x));
       }
     }
@@ -1173,7 +1147,8 @@ bool MeshObstacle::makeTexcoords(const fvec2& autoScale,
     else {
       if (horizontal) {
         texcoords[i].t = tScale * v.y;
-      } else {
+      }
+      else {
         texcoords[i].t = tScale * (v.z * vs);
       }
     }
@@ -1183,15 +1158,15 @@ bool MeshObstacle::makeTexcoords(const fvec2& autoScale,
 }
 
 
-void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) const
-{
+void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) const {
   // save as OBJ
   int i;
 
   out << "# OBJ - start" << std::endl;
   if (!name.empty() && (name[0] != '$')) {
     out << "o " << name << "_" << getObjCounter() << std::endl;
-  } else {
+  }
+  else {
     out << "o unnamed_" << getObjCounter() << std::endl;
   }
 
@@ -1292,19 +1267,20 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
 
       // texcoords
       if (useTexcoords) {
-	int tIndex = &face->getTexcoord(i) - texcoords;
-	tIndex = tIndex - fullTxcdCount;
-	out << "/" << tIndex;
-      } else {
+        int tIndex = &face->getTexcoord(i) - texcoords;
+        tIndex = tIndex - fullTxcdCount;
+        out << "/" << tIndex;
+      }
+      else {
         out << "/" << usedExtraTxcds - (int)extraTexcoords.size();
         usedExtraTxcds++;
       }
 
       // normals
       if (useNormals) {
-	int nIndex = &face->getNormal(i) - normals;
-	nIndex = nIndex - fullNormCount;
-	out << "/" << nIndex;
+        int nIndex = &face->getNormal(i) - normals;
+        nIndex = nIndex - fullNormCount;
+        out << "/" << nIndex;
       }
       else {
         out << "/" << usedExtraNorms - (int)extraNormals.size();
@@ -1330,6 +1306,6 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

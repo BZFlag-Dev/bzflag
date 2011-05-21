@@ -24,25 +24,22 @@
 #include "DirectoryNames.h"
 
 
-bool	   Authentication::authentication = false;
+bool     Authentication::authentication = false;
 
-Authentication::Authentication() : trusted(false), globallyAuthenticated(false)
-{
+Authentication::Authentication() : trusted(false), globallyAuthenticated(false) {
 }
 
-void Authentication::cleanUp()
-{
+void Authentication::cleanUp() {
 }
 
 
-void Authentication::init(const char *, int , const char *)
-{
+void Authentication::init(const char*, int , const char*) {
 }
 
-void Authentication::setPrincipalName(char *buf, int len)
-{
-  if (len > 1023)
+void Authentication::setPrincipalName(char* buf, int len) {
+  if (len > 1023) {
     return;
+  }
 
   // Saving principal name
   char name[1024];
@@ -50,18 +47,18 @@ void Authentication::setPrincipalName(char *buf, int len)
   name[len] = 0;
   principalName = name;
 
-  if (!authentication)
+  if (!authentication) {
     return;
+  }
 }
 
-void Authentication::verifyCredential(char *, int)
-{
+void Authentication::verifyCredential(char*, int) {
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

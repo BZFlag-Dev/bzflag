@@ -40,15 +40,15 @@ class LinkPhysics;
 
 class MeshFace : public Obstacle {
 
-  friend class MeshObstacle;
-  friend class ObstacleModifier;
+    friend class MeshObstacle;
+    friend class ObstacleModifier;
 
   public:
     static const char* getClassName(); // const
   private:
     static const char* typeName;
 
-  //==========================================================================//
+    //==========================================================================//
 
   public:
     struct Edge {
@@ -83,15 +83,15 @@ class MeshFace : public Obstacle {
 
     struct LinkGeometry {
       LinkGeometry()
-      : centerIndex(-1) // index to a vertex
-      , sDirIndex(-1)   // index to a normal
-      , tDirIndex(-1)   // index to a normal
-      , pDirIndex(-1)   // index to a normal
-      , sScale(1.0f)
-      , tScale(1.0f)
-      , pScale(0.0f) // note the 0.0f
-      , angle(0.0f)
-      , bits(LinkAutoSscale | LinkAutoTscale | LinkAutoPscale)
+        : centerIndex(-1) // index to a vertex
+        , sDirIndex(-1)   // index to a normal
+        , tDirIndex(-1)   // index to a normal
+        , pDirIndex(-1)   // index to a normal
+        , sScale(1.0f)
+        , tScale(1.0f)
+        , pScale(0.0f) // note the 0.0f
+        , angle(0.0f)
+        , bits(LinkAutoSscale | LinkAutoTscale | LinkAutoPscale)
       {}
       int centerIndex;
       int sDirIndex;
@@ -110,8 +110,8 @@ class MeshFace : public Obstacle {
 
     struct SpecialData {
       SpecialData()
-      : stateBits(0)
-      , baseTeam(-1)
+        : stateBits(0)
+        , baseTeam(-1)
       {}
 
       uint16_t stateBits; // uses SpecialBits enum
@@ -134,7 +134,7 @@ class MeshFace : public Obstacle {
       void print(std::ostream& out, const std::string& indent) const;
     };
 
-  //==========================================================================//
+    //==========================================================================//
 
   private:
     enum PlaneBits {
@@ -146,7 +146,7 @@ class MeshFace : public Obstacle {
       WallPlane = (1 << 5)
     };
 
-  //==========================================================================//
+    //==========================================================================//
 
   public:
     MeshFace(class MeshObstacle* mesh);
@@ -310,7 +310,7 @@ class MeshFace : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  //==========================================================================//
+    //==========================================================================//
 
   public:
     mutable float scratchPad;
@@ -343,7 +343,7 @@ class MeshFace : public Obstacle {
     char planeBits;
 
     SpecialData* specialData;
-	
+
     MeshFace* topNeighbor;
 };
 
@@ -355,6 +355,6 @@ class MeshFace : public Obstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

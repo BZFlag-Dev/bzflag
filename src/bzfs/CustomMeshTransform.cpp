@@ -25,23 +25,20 @@
 #include "vectors.h"
 
 
-CustomMeshTransform::CustomMeshTransform()
-{
+CustomMeshTransform::CustomMeshTransform() {
   transform = new MeshTransform;
   return;
 }
 
 
-CustomMeshTransform::~CustomMeshTransform()
-{
+CustomMeshTransform::~CustomMeshTransform() {
   delete transform;
   return;
 }
 
 
-bool CustomMeshTransform::read(const char *cmd, std::istream& input)
-{
-  if (strcasecmp ("shift", cmd) == 0) {
+bool CustomMeshTransform::read(const char* cmd, std::istream& input) {
+  if (strcasecmp("shift", cmd) == 0) {
     fvec3 data;
     if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -49,7 +46,7 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
     }
     transform->addShift(data);
   }
-  else if (strcasecmp ("scale", cmd) == 0) {
+  else if (strcasecmp("scale", cmd) == 0) {
     fvec3 data;
     if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -57,7 +54,7 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
     }
     transform->addScale(data);
   }
-  else if (strcasecmp ("shear", cmd) == 0) {
+  else if (strcasecmp("shear", cmd) == 0) {
     fvec3 data;
     if (!(input >> data.x >> data.y >> data.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -65,7 +62,7 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
     }
     transform->addShear(data);
   }
-  else if (strcasecmp ("spin", cmd) == 0) {
+  else if (strcasecmp("spin", cmd) == 0) {
     float degrees;
     fvec3 normal;
     if (!(input >> degrees >> normal.x >> normal.y >> normal.z)) {
@@ -74,7 +71,7 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
     }
     transform->addSpin(degrees, normal);
   }
-  else if (strcasecmp ("xform", cmd) == 0) {
+  else if (strcasecmp("xform", cmd) == 0) {
     std::string _name;
     if (!(input >> _name)) {
       std::cout << "parameters errors " << std::endl;
@@ -83,7 +80,8 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
     int xform = TRANSFORMMGR.findTransform(_name);
     if (xform == -1) {
       std::cout << "couldn't find Transform: " << _name << std::endl;
-    } else {
+    }
+    else {
       transform->addReference(xform);
     }
   }
@@ -96,12 +94,11 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMeshTransform::writeToManager() const
-{
+void CustomMeshTransform::writeToManager() const {
   transform->setName(name);
   if ((name.size() > 0) && (TRANSFORMMGR.findTransform(name) >= 0)) {
     std::cout << "WARNING: duplicate transform"
-	      << " (" << name << ")" << std::endl;
+              << " (" << name << ")" << std::endl;
   }
   transform->finalize();
   TRANSFORMMGR.addTransform(transform);
@@ -114,6 +111,6 @@ void CustomMeshTransform::writeToManager() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

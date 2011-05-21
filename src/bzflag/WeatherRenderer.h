@@ -12,12 +12,12 @@
 
 /*
  * WeatherRenderer:
- *	Encapsulates rendering of weather stuff (rain and clouds)
+ *  Encapsulates rendering of weather stuff (rain and clouds)
  *
  */
 
-#ifndef	BZF_WEATHER_RENDERER_H
-#define	BZF_WEATHER_RENDERER_H
+#ifndef BZF_WEATHER_RENDERER_H
+#define BZF_WEATHER_RENDERER_H
 
 #include "common.h"
 
@@ -36,101 +36,100 @@
 
 #include "OpenGLUtils.h"
 
-class WeatherRenderer : public GLDisplayListCreator
-{
-public:
-  WeatherRenderer();
-  virtual ~WeatherRenderer();
+class WeatherRenderer : public GLDisplayListCreator {
+  public:
+    WeatherRenderer();
+    virtual ~WeatherRenderer();
 
-  virtual void buildGeometry ( GLDisplayList displayList );
+    virtual void buildGeometry(GLDisplayList displayList);
 
-  // called once to setup the rain state, load lists and materials and stuff
-  void init(void);
+    // called once to setup the rain state, load lists and materials and stuff
+    void init(void);
 
-  // called each time the rain state needs to change, i.e. when the bzdb stuff changes
-  void set(void);
+    // called each time the rain state needs to change, i.e. when the bzdb stuff changes
+    void set(void);
 
-  // called to update the rain simulation state.
-  void update(void);
+    // called to update the rain simulation state.
+    void update(void);
 
-  // called to draw the rain for the current frame
-  void draw(const SceneRenderer& sr);
+    // called to draw the rain for the current frame
+    void draw(const SceneRenderer& sr);
 
-protected:
-  OpenGLGState				rainGState;
-  OpenGLGState				texturedRainState;
-  OpenGLGState				puddleState;
-  std::string				rainSkin;
-  std::vector<std::string>		rainTextures;
-  fvec4					rainColor[2];
-  float					rainSize[2];
-  int					rainDensity;
-  float					rainSpeed;
-  float					rainSpeedMod;
-  float					rainSpread;
-  bool					doPuddles;
-  bool					doLineRain;
-  bool					doBillBoards;
-  bool					spinRain;
-  bool					cullRoofTops;
-  bool					roofPuddles;
-  float					rainStartZ;
-  float					rainEndZ;
-  float					maxPuddleTime;
-  float					puddleSpeed;
-  fvec4					puddleColor;
+  protected:
+    OpenGLGState        rainGState;
+    OpenGLGState        texturedRainState;
+    OpenGLGState        puddleState;
+    std::string       rainSkin;
+    std::vector<std::string>    rainTextures;
+    fvec4         rainColor[2];
+    float         rainSize[2];
+    int         rainDensity;
+    float         rainSpeed;
+    float         rainSpeedMod;
+    float         rainSpread;
+    bool          doPuddles;
+    bool          doLineRain;
+    bool          doBillBoards;
+    bool          spinRain;
+    bool          cullRoofTops;
+    bool          roofPuddles;
+    float         rainStartZ;
+    float         rainEndZ;
+    float         maxPuddleTime;
+    float         puddleSpeed;
+    fvec4         puddleColor;
 
-  GLDisplayList				dropList;
-  GLDisplayList				puddleList;
+    GLDisplayList       dropList;
+    GLDisplayList       puddleList;
 
-public:
-  typedef struct {
-    fvec3		pos;
-    float		speed;
-    float		roofTop;
-    int			texture;
-  } rain;
+  public:
+    typedef struct {
+      fvec3   pos;
+      float   speed;
+      float   roofTop;
+      int     texture;
+    } rain;
 
-protected:
-  std::vector<rain>	raindrops;
+  protected:
+    std::vector<rain> raindrops;
 
-  typedef struct {
-    fvec3		pos;
-    float		time;
-    int			texture;
-  } puddle;
-  std::vector<puddle>	puddles;
+    typedef struct {
+      fvec3   pos;
+      float   time;
+      int     texture;
+    } puddle;
+    std::vector<puddle> puddles;
 
-  BzTime		lastRainTime;
+    BzTime    lastRainTime;
 
-  bool updateDrop(std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd);
-  bool updatePuddle(std::vector<puddle>::iterator &splash, float frameTime);
+    bool updateDrop(std::vector<rain>::iterator& drop, float frameTime, std::vector<rain> &toAdd);
+    bool updatePuddle(std::vector<puddle>::iterator& splash, float frameTime);
 
-  void drawDrop(rain &drop, const SceneRenderer& sr);
-  void drawPuddle(puddle &splash);
+    void drawDrop(rain& drop, const SceneRenderer& sr);
+    void drawPuddle(puddle& splash);
 
-  // some kinda culling
-  void addDrop(rain &drop);
+    // some kinda culling
+    void addDrop(rain& drop);
 
-  int keyFromPos(float x, float y);
+    int keyFromPos(float x, float y);
 
-  float			gridSize;
-  float			keyFactor;
+    float     gridSize;
+    float     keyFactor;
 
-protected:
-  struct visibleChunk {
-    Extents bbox;
-    std::vector<rain> drops;
-  };
+  protected:
+    struct visibleChunk {
+      Extents bbox;
+      std::vector<rain> drops;
+    };
 
-  std::map<int, visibleChunk>	chunkMap;
+    std::map<int, visibleChunk> chunkMap;
 
-  void setChunkFromDrop(visibleChunk &chunk, rain &drop);
+    void setChunkFromDrop(visibleChunk& chunk, rain& drop);
 
-  bool dbItemSet(const char* name);
+    bool dbItemSet(const char* name);
 
-  int	rainCount;
-  int	cellCount;
+    int rainCount;
+    int cellCount;
 };
 
 #endif // BZF_WEATHER_RENDERER_H
@@ -139,6 +138,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,11 +11,11 @@
  */
 
 /* WinDisplay:
- *	Encapsulates an Windows windows display
+ *  Encapsulates an Windows windows display
  */
 
 #ifndef BZF_WINDISPLAY_H
-#define	BZF_WINDISPLAY_H
+#define BZF_WINDISPLAY_H
 
 #include "BzfDisplay.h"
 #include <map>
@@ -24,72 +24,72 @@ class BzfKeyEvent;
 class Resolution;
 
 class WinDisplay : public BzfDisplay {
-public:
-  WinDisplay(const char* displayName,
-	     const char* videoFormat);
-  ~WinDisplay();
-
-  virtual bool	isValid() const;
-  bool		isEventPending() const;
-  bool		getEvent(BzfEvent&) const;
-  bool		hasGetKeyMode() {return true;};
-  void		getModState(bool &shift, bool &control, bool &alt);
-
-  bool		setDefaultResolution() const;
-
-  int		getFullWidth() const;
-  int		getFullHeight() const;
-
-  bool		peekEvent(BzfEvent& event) const;
-
-
-  // for other Windows stuff
-  class Rep {
   public:
-    Rep(const char*);
-    ~Rep();
+    WinDisplay(const char* displayName,
+               const char* videoFormat);
+    ~WinDisplay();
 
-    void	ref();
-    void	unref();
+    virtual bool  isValid() const;
+    bool    isEventPending() const;
+    bool    getEvent(BzfEvent&) const;
+    bool    hasGetKeyMode() {return true;};
+    void    getModState(bool& shift, bool& control, bool& alt);
+
+    bool    setDefaultResolution() const;
+
+    int   getFullWidth() const;
+    int   getFullHeight() const;
+
+    bool    peekEvent(BzfEvent& event) const;
+
+
+    // for other Windows stuff
+    class Rep {
+      public:
+        Rep(const char*);
+        ~Rep();
+
+        void  ref();
+        void  unref();
+
+      private:
+        static LONG WINAPI windowProc(HWND, UINT, WPARAM, LPARAM);
+
+      private:
+        int   refCount;
+
+      public:
+        HINSTANCE hInstance;
+    };
+    Rep*    getRep() const { return rep; }
 
   private:
-    static LONG WINAPI windowProc(HWND, UINT, WPARAM, LPARAM);
+    WinDisplay(const WinDisplay&);
+    WinDisplay& operator=(const WinDisplay&);
 
+    bool    getKey(const MSG&, BzfKeyEvent&) const;
+    bool    isNastyKey(const MSG&) const;
+
+    bool    doSetResolution(int);
+    ResInfo** getVideoFormats(int& num, int& current);
+    static bool canChangeDepth();
+
+    bool windowsEventToBZFEvent(MSG& msg, BzfEvent& event) const;
   private:
-    int		refCount;
+    Rep*    rep;
 
-  public:
-    HINSTANCE	hInstance;
-  };
-  Rep*		getRep() const { return rep; }
+    // resolution info
+    HWND    hwnd;
+    int   fullWidth;
+    int   fullHeight;
+    Resolution* resolutions;
 
-private:
-  WinDisplay(const WinDisplay&);
-  WinDisplay&	operator=(const WinDisplay&);
+    // for key to character translations
+    mutable bool  translated;
+    mutable std::map<int, int> keyUpDownMap;
 
-  bool		getKey(const MSG&, BzfKeyEvent&) const;
-  bool		isNastyKey(const MSG&) const;
-
-  bool		doSetResolution(int);
-  ResInfo**	getVideoFormats(int& num, int& current);
-  static bool	canChangeDepth();
-
-  bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
-private:
-  Rep*		rep;
-
-  // resolution info
-  HWND		hwnd;
-  int		fullWidth;
-  int		fullHeight;
-  Resolution*	resolutions;
-
-  // for key to character translations
-  mutable bool	translated;
-  mutable std::map<int, int> keyUpDownMap;
-
-  // keyboard mapping
-  static const int	buttonMap[];
+    // keyboard mapping
+    static const int  buttonMap[];
 };
 
 #endif // BZF_WINDISPLAY_H
@@ -98,6 +98,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

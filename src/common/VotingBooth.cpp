@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 
-const short int VotingBooth::RETRACTED_VOTE=-2;
+const short int VotingBooth::RETRACTED_VOTE = -2;
 
 /* private */
 
@@ -30,29 +30,25 @@ const short int VotingBooth::RETRACTED_VOTE=-2;
 /* public: */
 
 VotingBooth::VotingBooth(std::string question)
-  : _question(question)
-{
+  : _question(question) {
   return;
 }
 
 VotingBooth::VotingBooth(const VotingBooth& booth)
   : _question(booth._question),
     _choice(booth._choice),
-    _vote(booth._vote)
-{
+    _vote(booth._vote) {
   return;
 }
 
-VotingBooth::~VotingBooth(void)
-{
+VotingBooth::~VotingBooth(void) {
   return;
 }
 
 
 /* convenience func that sets up and returns a default poll */
-VotingBooth *YesNoVotingBooth(std::string question)
-{
-  VotingBooth *poll = new VotingBooth(question);
+VotingBooth* YesNoVotingBooth(std::string question) {
+  VotingBooth* poll = new VotingBooth(question);
 
   poll->addResponse("no");
   poll->addResponse("yes");
@@ -61,8 +57,7 @@ VotingBooth *YesNoVotingBooth(std::string question)
 }
 
 
-bool VotingBooth::addResponse(const std::string response)
-{
+bool VotingBooth::addResponse(const std::string response) {
   if (response.size() == 0) {
     return false;
   }
@@ -73,8 +68,7 @@ bool VotingBooth::addResponse(const std::string response)
 }
 
 
-bool VotingBooth::hasVoted(const std::string voterName) const
-{
+bool VotingBooth::hasVoted(const std::string voterName) const {
   if (voterName.size() <= 0) {
     return false;
   }
@@ -85,8 +79,7 @@ bool VotingBooth::hasVoted(const std::string voterName) const
 }
 
 
-bool VotingBooth::vote(std::string voterName, std::string response)
-{
+bool VotingBooth::vote(std::string voterName, std::string response) {
   if (this->hasVoted(voterName)) {
     /* voters are not allowed to vote multiple times */
     return false;
@@ -104,8 +97,7 @@ bool VotingBooth::vote(std::string voterName, std::string response)
   return true;
 }
 
-bool VotingBooth::retractVote(const std::string voterName)
-{
+bool VotingBooth::retractVote(const std::string voterName) {
   VoterResponseMap::iterator i = _vote.find(voterName);
 
   /* if not found, then nothing to retract */
@@ -118,14 +110,13 @@ bool VotingBooth::retractVote(const std::string voterName)
   return false;
 }
 
-unsigned long int VotingBooth::getVoteCount(const std::string response) const
-{
-  unsigned long int total=0;
+unsigned long int VotingBooth::getVoteCount(const std::string response) const {
+  unsigned long int total = 0;
 
   for (VoterResponseMap::const_iterator i = _vote.begin();
        i != _vote.end(); ++i) {
     /* negative indices indicate an uncounted vote (perhaps retracted) */
-    if ( (i->second >= 0) && (_choice[i->second] == response) ) {
+    if ((i->second >= 0) && (_choice[i->second] == response)) {
       total++;
     }
   }
@@ -133,9 +124,8 @@ unsigned long int VotingBooth::getVoteCount(const std::string response) const
 }
 
 
-unsigned long int VotingBooth::getTotalVotes(void) const
-{
-  unsigned long int total=0;
+unsigned long int VotingBooth::getTotalVotes(void) const {
+  unsigned long int total = 0;
 
   for (std::vector<std::string>::const_iterator i = _choice.begin();
        i != _choice.end(); ++i) {
@@ -149,6 +139,6 @@ unsigned long int VotingBooth::getTotalVotes(void) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

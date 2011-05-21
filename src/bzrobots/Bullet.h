@@ -17,37 +17,37 @@
 
 namespace BZRobots {
 
-class Bullet {
-public:
-  Bullet();
-  virtual ~Bullet();
+  class Bullet {
+    public:
+      Bullet();
+      virtual ~Bullet();
 
-  inline double getHeading() const { return heading; }
-  inline double getHeadingRadians() const { return headingRadians; }
-  inline std::string getName() const { return ownerName; }
-  inline double getPower() const { return 3.0f; }
-  inline double getVelocity() const { return velocity; }
-  inline std::string getVictim() const { return victimName; }
-  inline double getX() const { return x; }
-  inline double getY() const { return y; }
-  inline double getZ() const { return z; }
-  inline bool isActive() const { return active; }
+      inline double getHeading() const { return heading; }
+      inline double getHeadingRadians() const { return headingRadians; }
+      inline std::string getName() const { return ownerName; }
+      inline double getPower() const { return 3.0f; }
+      inline double getVelocity() const { return velocity; }
+      inline std::string getVictim() const { return victimName; }
+      inline double getX() const { return x; }
+      inline double getY() const { return y; }
+      inline double getZ() const { return z; }
+      inline bool isActive() const { return active; }
 
-protected:
-  double heading;
-  double headingRadians;
-  std::string ownerName;
-  double velocity;
-  std::string victimName;
-  double x, y, z;
-  bool active;
-};
+    protected:
+      double heading;
+      double headingRadians;
+      std::string ownerName;
+      double velocity;
+      std::string victimName;
+      double x, y, z;
+      bool active;
+  };
 
 } // namespace BZRobots
 
 #else
 namespace BZRobots {
-class Bullet;
+  class Bullet;
 }
 #endif /* __BULLET_H__ */
 
@@ -55,6 +55,6 @@ class Bullet;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

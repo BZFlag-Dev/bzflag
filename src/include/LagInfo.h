@@ -44,87 +44,87 @@
 /** This class monitors the lag time for each client
 */
 class LagInfo {
-public:
-  /** A default constructor.
-      It needs a pointer to the Player basic Info,
-   */
-  LagInfo(PlayerInfo *_info);
+  public:
+    /** A default constructor.
+        It needs a pointer to the Player basic Info,
+     */
+    LagInfo(PlayerInfo* _info);
 
-  /** Resetting lag value
-  */
-  void	reset();
-  /** Getting lag value (in milliseconds)
-  */
-  int	getLag() const;
-  /** Getting jitter value (in milliseconds)
-  */
-  int	getJitter() const;
-  /** Getting packetloss value (in percent)
-  */
-  int	getLoss() const;
-  /** Get the floating point value of the lag (in seconds)
-  */
-  float	getLagAvg() const;
-  /** Get a printable version of lag statistics
-  */
-  void	getLagStats(char* msg, bool isAdmin) const;
-  /** functions to be called whenever a playerUpdate or ping message arrives
-   */
-  void	updatePingLag(void *buf, bool &warn, bool &kick,
-		      bool &jittwarn, bool &jittkick,
-		      bool &plosswarn, bool &plosskick);
-  void	updateLag(const BzTime& timestamp, bool ooo);
-  /** get the ping seqno, if need to send one now!
-   */
-  int	getNextPingSeqno(bool &warn, bool &kick);
-  /** update the latency
-   */
-  void	updateLatency(float &waitTime);
-  /** set the threshold for warning/kicking
-   */
-  static void setThreshold(float _threshold, float _max);
-  static void setJitterThreshold(float _jitterthreshold, float _max);
-  static void setPacketLossThreshold(float _packetlossthreshold, float _max);
-private:
-  PlayerInfo *info;
+    /** Resetting lag value
+    */
+    void  reset();
+    /** Getting lag value (in milliseconds)
+    */
+    int getLag() const;
+    /** Getting jitter value (in milliseconds)
+    */
+    int getJitter() const;
+    /** Getting packetloss value (in percent)
+    */
+    int getLoss() const;
+    /** Get the floating point value of the lag (in seconds)
+    */
+    float getLagAvg() const;
+    /** Get a printable version of lag statistics
+    */
+    void  getLagStats(char* msg, bool isAdmin) const;
+    /** functions to be called whenever a playerUpdate or ping message arrives
+     */
+    void  updatePingLag(void* buf, bool& warn, bool& kick,
+                        bool& jittwarn, bool& jittkick,
+                        bool& plosswarn, bool& plosskick);
+    void  updateLag(const BzTime& timestamp, bool ooo);
+    /** get the ping seqno, if need to send one now!
+     */
+    int getNextPingSeqno(bool& warn, bool& kick);
+    /** update the latency
+     */
+    void  updateLatency(float& waitTime);
+    /** set the threshold for warning/kicking
+     */
+    static void setThreshold(float _threshold, float _max);
+    static void setJitterThreshold(float _jitterthreshold, float _max);
+    static void setPacketLossThreshold(float _packetlossthreshold, float _max);
+  private:
+    PlayerInfo* info;
 
-  float  lagavg;
-  float  jitteravg;
-  float  lostavg;
+    float  lagavg;
+    float  jitteravg;
+    float  lostavg;
 
-  float  lagalpha;
-  float  jitteralpha;
-  float  lostalpha;
+    float  lagalpha;
+    float  jitteralpha;
+    float  lostalpha;
 
-  int	 lagcount;
-  int    jittercount;
-  int    losscount;
+    int  lagcount;
+    int    jittercount;
+    int    losscount;
 
-  int	 laglastwarn;
-  int    jitterlastwarn;
-  int    losslastwarn;
+    int  laglastwarn;
+    int    jitterlastwarn;
+    int    losslastwarn;
 
-  int	 lagwarncount;
-  int    jitterwarncount;
-  int    losswarncount;
+    int  lagwarncount;
+    int    jitterwarncount;
+    int    losswarncount;
 
-  bool	 pingpending;
-  int	 pingseqno;
-  int	 pingssent;
+    bool   pingpending;
+    int  pingseqno;
+    int  pingssent;
 
-  BzTime nextping;
-  BzTime lastping;
-  BzTime lastupdate;
+    BzTime nextping;
+    BzTime lastping;
+    BzTime lastupdate;
 
-  // jitter measurement
-  BzTime lasttimestamp;
+    // jitter measurement
+    BzTime lasttimestamp;
 
-  static float threshold;
-  static float jitterthreshold;
-  static float lossthreshold;
-  static float max;
-  static float jittermax;
-  static float lossmax;
+    static float threshold;
+    static float jitterthreshold;
+    static float lossthreshold;
+    static float max;
+    static float jittermax;
+    static float lossmax;
 };
 
 #endif
@@ -133,6 +133,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

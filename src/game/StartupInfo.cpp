@@ -21,20 +21,18 @@
 
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
-			     autoConnect(false),
-			     serverPort(ServerPort),
-			     team(AutomaticTeam),
-			     listServerURL(DefaultListServerURL),
-			     listServerPort(ServerPort + 1)
-{
+  autoConnect(false),
+  serverPort(ServerPort),
+  team(AutomaticTeam),
+  listServerURL(DefaultListServerURL),
+  listServerPort(ServerPort + 1) {
   strcpy(serverName, "");
   strcpy(callsign, "");
   strcpy(password, "");
   strcpy(referrer, "");
 }
 
-StartupInfo::~StartupInfo()
-{
+StartupInfo::~StartupInfo() {
   memset(password, 0, PasswordLen);
 }
 
@@ -42,6 +40,6 @@ StartupInfo::~StartupInfo()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -85,23 +85,23 @@
 // define our OS
 
 #ifndef BZ_BUILD_OS
-	#ifdef WIN64
-		#ifdef _DEBUG
-			#define DEBUG
-			#define DEBUG_RENDERING
-			#define BZ_BUILD_OS			"W64VC9D"
-		#else
-			#define BZ_BUILD_OS			"W64VC9"
-		#endif //_DEBUG
-	#else
-		#ifdef _DEBUG
-			#define DEBUG
-			#define DEBUG_RENDERING
-			#define BZ_BUILD_OS			"W32VC9D"
-		#else
-			#define BZ_BUILD_OS			"W32VC9"
-		#endif //_DEBUG
-	#endif // WIN64
+#ifdef WIN64
+#ifdef _DEBUG
+#define DEBUG
+#define DEBUG_RENDERING
+#define BZ_BUILD_OS     "W64VC9D"
+#else
+#define BZ_BUILD_OS     "W64VC9"
+#endif //_DEBUG
+#else
+#ifdef _DEBUG
+#define DEBUG
+#define DEBUG_RENDERING
+#define BZ_BUILD_OS     "W32VC9D"
+#else
+#define BZ_BUILD_OS     "W32VC9"
+#endif //_DEBUG
+#endif // WIN64
 #endif //BZ_BUILD_OS
 
 #define SIZEOF_SHORT_INT     2
@@ -147,13 +147,13 @@
 
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
-inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer); fflush(stdout);}
+inline void W32_DEBUG_TRACE(const char* buffer) {printf("%s", buffer); fflush(stdout);}
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

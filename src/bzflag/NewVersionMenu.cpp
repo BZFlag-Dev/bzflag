@@ -37,14 +37,13 @@
 
 /* as platforms get added to the automatic upgrade system, update this */
 #if defined(WIN32)
-  #define AUTOUPGRADE 1
+#define AUTOUPGRADE 1
 #else
-  #undef AUTOUPGRADE
+#undef AUTOUPGRADE
 #endif
 
 NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::string date) :
-cURLManager(), byteTransferred(0)
-{
+  cURLManager(), byteTransferred(0) {
   // prep for possible download
   setURL(url);
 #ifdef AUTOUPGRADE
@@ -119,37 +118,35 @@ cURLManager(), byteTransferred(0)
 
 }
 
-NewVersionMenu::~NewVersionMenu()
-{
+NewVersionMenu::~NewVersionMenu() {
 }
 
-void NewVersionMenu::execute()
-{
+void NewVersionMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (!_focus) {
     return;
 #ifdef AUTOUPGRADE
-  } else if (_focus == yes) {
+  }
+  else if (_focus == yes) {
     addHandle();
 #endif
-  } else if (_focus == no) {
+  }
+  else if (_focus == no) {
     HUDDialogStack::get()->pop();
   }
 }
 
-void NewVersionMenu::collectData(char* ptr, int len)
-{
+void NewVersionMenu::collectData(char* ptr, int len) {
   char buffer[128];
   double size = 0;
   getFileSize(size);
   cURLManager::collectData(ptr, len);
   byteTransferred += len;
-  snprintf(buffer, 128, "Downloading update: %d/%d KB", byteTransferred/1024, (int)size/1024);
+  snprintf(buffer, 128, "Downloading update: %d/%d KB", byteTransferred / 1024, (int)size / 1024);
   ((HUDuiLabel*)status)->setString(buffer);
 }
 
-void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
-{
+void NewVersionMenu::finalization(char* data, unsigned int length, bool good) {
   if (good && data) {
     if (length) {
       // received update.  Now what to do with it?
@@ -159,8 +156,9 @@ void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
       // write data to temporary file
       const std::string tempfile = getTempDirName() + "\\temp-upgrade.exe";
       FILE* temp = fopen(tempfile.c_str(), "wb");
-      if (temp)
-	fwrite(data, 1, length, temp);
+      if (temp) {
+        fwrite(data, 1, length, temp);
+      }
       fclose(temp);
       // start the program
       char* args [2];
@@ -168,32 +166,37 @@ void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
       args[1] = NULL;
       const int result = (const int)_spawnvp(_P_DETACH, tempfile.c_str(), args);
       if (result < 0) {
-	if (errno == ENOENT)
-	  ((HUDuiLabel*)status)->setString("Failed... can't find upgrade installer.");
-	else if (errno == ENOMEM)
-	  ((HUDuiLabel*)status)->setString("Failed... not enough memory.");
-	else if (errno == ENOEXEC)
-	  ((HUDuiLabel*)status)->setString("Failed... installer is not executable.");
-	else
-	  ((HUDuiLabel*)status)->setString(TextUtils::format("Failed... unknown error (%d).", errno).c_str());
-	logDebugMessage(1,"Failed to start upgrade installer (%s) - error %d.\n", tempfile, errno);
-      } else {
-	((HUDuiLabel*)status)->setString("Installer started.");
-	CommandsStandard::quit();
+        if (errno == ENOENT) {
+          ((HUDuiLabel*)status)->setString("Failed... can't find upgrade installer.");
+        }
+        else if (errno == ENOMEM) {
+          ((HUDuiLabel*)status)->setString("Failed... not enough memory.");
+        }
+        else if (errno == ENOEXEC) {
+          ((HUDuiLabel*)status)->setString("Failed... installer is not executable.");
+        }
+        else {
+          ((HUDuiLabel*)status)->setString(TextUtils::format("Failed... unknown error (%d).", errno).c_str());
+        }
+        logDebugMessage(1, "Failed to start upgrade installer (%s) - error %d.\n", tempfile, errno);
+      }
+      else {
+        ((HUDuiLabel*)status)->setString("Installer started.");
+        CommandsStandard::quit();
       }
 #endif
     }
-  } else {
+  }
+  else {
     status->setLabel("Download Failed!");
   }
 }
 
-void NewVersionMenu::resize(int _width, int _height)
-{
+void NewVersionMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font
@@ -288,6 +291,6 @@ void NewVersionMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

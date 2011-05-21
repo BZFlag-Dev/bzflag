@@ -11,12 +11,12 @@
  */
 
 /* OccluderSceneNode:
- *	Encapsulates information for an occluder
+ *  Encapsulates information for an occluder
  *      plane. Occluders are never rendered.
  */
 
-#ifndef	BZF_OCCLUDER_SCENE_NODE_H
-#define	BZF_OCCLUDER_SCENE_NODE_H
+#ifndef BZF_OCCLUDER_SCENE_NODE_H
+#define BZF_OCCLUDER_SCENE_NODE_H
 
 #include "common.h"
 
@@ -37,8 +37,8 @@ class OccluderSceneNode : public SceneNode {
     void addRenderNodes(SceneRenderer&) { return; }
     void renderRadar() { return; }
 
-    int getVertexCount () const { return vertexCount; }
-    const fvec3& getVertex (int vertex) const { return vertices[vertex]; }
+    int getVertexCount() const { return vertexCount; }
+    const fvec3& getVertex(int vertex) const { return vertices[vertex]; }
 
   private:
     int vertexCount;
@@ -52,6 +52,6 @@ class OccluderSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

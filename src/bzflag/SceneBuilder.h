@@ -12,11 +12,11 @@
 
 /*
  * SceneDatabaseBuilder:
- *	Encapsulates creation of display database
+ *  Encapsulates creation of display database
  */
 
-#ifndef	BZF_SCENE_BUILDER_H
-#define	BZF_SCENE_BUILDER_H
+#ifndef BZF_SCENE_BUILDER_H
+#define BZF_SCENE_BUILDER_H
 
 #include "common.h"
 
@@ -57,7 +57,7 @@ class SceneDatabaseBuilder {
 
   private:
     // disallow duplication
-			SceneDatabaseBuilder(const SceneDatabaseBuilder&);
+    SceneDatabaseBuilder(const SceneDatabaseBuilder&);
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
   private:
@@ -73,14 +73,14 @@ class SceneDatabaseBuilder {
 
     bool  teleporterLOD;
 
-/* FIXME - find the default materials before generating?
-    const BzMaterial* wallMaterial;
-    const BzMaterial* pyramidMaterial;
-    const BzMaterial* boxTopMaterial;
-    const BzMaterial* boxWallMaterial;
-    const BzMaterial* baseTopMaterials[5];
-    const BzMaterial* baseWallMaterials[5];
-*/
+    /* FIXME - find the default materials before generating?
+        const BzMaterial* wallMaterial;
+        const BzMaterial* pyramidMaterial;
+        const BzMaterial* boxTopMaterial;
+        const BzMaterial* boxWallMaterial;
+        const BzMaterial* baseTopMaterials[5];
+        const BzMaterial* baseWallMaterials[5];
+    */
 };
 
 #endif // BZF_SCENE_BUILDER_H
@@ -89,6 +89,6 @@ class SceneDatabaseBuilder {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

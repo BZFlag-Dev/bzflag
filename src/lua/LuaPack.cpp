@@ -37,8 +37,7 @@ using std::max;
 //============================================================================//
 //============================================================================//
 
-bool LuaPack::PushEntries(lua_State* L)
-{
+bool LuaPack::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, PackU8);
   PUSH_LUA_CFUNC(L, PackU16);
   PUSH_LUA_CFUNC(L, PackU32);
@@ -77,23 +76,23 @@ bool LuaPack::PushEntries(lua_State* L)
 //============================================================================//
 
 template <typename T>
-int PackType(lua_State* L)
-{
+int PackType(lua_State* L) {
   vector<T> vals;
 
   // collect the values
   if (lua_istable(L, 1)) {
     for (int i = 1; lua_checkgeti(L, 1, i); lua_pop(L, 1), i++) {
       if (lua_israwnumber(L, -1)) {
-	vals.push_back((T)lua_tonumber(L, -1));
+        vals.push_back((T)lua_tonumber(L, -1));
       }
       else {
-	const double* dptr = LuaDouble::TestDouble(L, -1);
-	if (dptr != NULL) {
-	  vals.push_back((T)(*dptr));
-	} else {
-	  break; // not a lua_Number or a LuaDouble
-	}
+        const double* dptr = LuaDouble::TestDouble(L, -1);
+        if (dptr != NULL) {
+          vals.push_back((T)(*dptr));
+        }
+        else {
+          break; // not a lua_Number or a LuaDouble
+        }
       }
     }
   }
@@ -101,15 +100,16 @@ int PackType(lua_State* L)
     const int args = lua_gettop(L);
     for (int i = 1; i <= args; i++) {
       if (lua_israwnumber(L, i)) {
-	vals.push_back((T)lua_tonumber(L, i));
+        vals.push_back((T)lua_tonumber(L, i));
       }
       else {
-	const double* dptr = LuaDouble::TestDouble(L, i);
-	if (dptr != NULL) {
-	  vals.push_back((T)(*dptr));
-	} else {
-	  break; // not a lua_Number or a LuaDouble
-	}
+        const double* dptr = LuaDouble::TestDouble(L, i);
+        if (dptr != NULL) {
+          vals.push_back((T)(*dptr));
+        }
+        else {
+          break; // not a lua_Number or a LuaDouble
+        }
       }
     }
   }
@@ -135,20 +135,19 @@ int LuaPack::PackU8(lua_State*  L) { return PackType<uint8_t> (L); }
 int LuaPack::PackU16(lua_State* L) { return PackType<uint16_t>(L); }
 int LuaPack::PackU32(lua_State* L) { return PackType<uint32_t>(L); }
 int LuaPack::PackU64(lua_State* L) { return PackType<uint64_t>(L); }
-int LuaPack::PackI8(lua_State*  L) { return PackType<int8_t>  (L); }
+int LuaPack::PackI8(lua_State*  L) { return PackType<int8_t> (L); }
 int LuaPack::PackI16(lua_State* L) { return PackType<int16_t> (L); }
 int LuaPack::PackI32(lua_State* L) { return PackType<int32_t> (L); }
 int LuaPack::PackI64(lua_State* L) { return PackType<int64_t> (L); }
-int LuaPack::PackF32(lua_State* L) { return PackType<float>   (L); }
-int LuaPack::PackF64(lua_State* L) { return PackType<double>  (L); }
+int LuaPack::PackF32(lua_State* L) { return PackType<float> (L); }
+int LuaPack::PackF64(lua_State* L) { return PackType<double> (L); }
 
 
 //============================================================================//
 //============================================================================//
 
 template <typename T>
-int UnpackType(lua_State* L, bool defaultToDoubles = false)
-{
+int UnpackType(lua_State* L, bool defaultToDoubles = false) {
   int index = 1;
   bool pushDoubles = defaultToDoubles;
   if (lua_isboolean(L, index)) {
@@ -182,7 +181,8 @@ int UnpackType(lua_State* L, bool defaultToDoubles = false)
     const T value = *((T*)str);
     if (pushDoubles) {
       LuaDouble::PushDouble(L, (double)(static_cast<lua_Number>(value)));
-    } else {
+    }
+    else {
       lua_pushnumber(L, static_cast<lua_Number>(value));
     }
     return 1;
@@ -202,7 +202,8 @@ int UnpackType(lua_State* L, bool defaultToDoubles = false)
       LuaDouble::PushDouble(L, (double)(static_cast<lua_Number>(value)));
       lua_rawseti(L, -2, (i + 1));
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < tableCount; i++) {
       const T value = *(((T*)str) + i);
       lua_pushnumber(L, static_cast<lua_Number>(value));
@@ -217,19 +218,18 @@ int LuaPack::UnpackU8(lua_State*  L) { return UnpackType<uint8_t> (L, false); }
 int LuaPack::UnpackU16(lua_State* L) { return UnpackType<uint16_t>(L, false); }
 int LuaPack::UnpackU32(lua_State* L) { return UnpackType<uint32_t>(L, true);  }
 int LuaPack::UnpackU64(lua_State* L) { return UnpackType<uint64_t>(L, true);  }
-int LuaPack::UnpackI8(lua_State*  L) { return UnpackType<int8_t>  (L, false); }
+int LuaPack::UnpackI8(lua_State*  L) { return UnpackType<int8_t> (L, false); }
 int LuaPack::UnpackI16(lua_State* L) { return UnpackType<int16_t> (L, false); }
 int LuaPack::UnpackI32(lua_State* L) { return UnpackType<int32_t> (L, true);  }
 int LuaPack::UnpackI64(lua_State* L) { return UnpackType<int64_t> (L, true);  }
-int LuaPack::UnpackF32(lua_State* L) { return UnpackType<float>   (L, false); }
-int LuaPack::UnpackF64(lua_State* L) { return UnpackType<double>  (L, true);  }
+int LuaPack::UnpackF32(lua_State* L) { return UnpackType<float> (L, false); }
+int LuaPack::UnpackF64(lua_State* L) { return UnpackType<double> (L, true);  }
 
 
 //============================================================================//
 //============================================================================//
 
-int LuaPack::SwapBy2(lua_State* L)
-{
+int LuaPack::SwapBy2(lua_State* L) {
   size_t size;
   const char* data = lua_tolstring(L, 1, &size);
   if ((size % 2) != 0) {
@@ -246,8 +246,7 @@ int LuaPack::SwapBy2(lua_State* L)
 }
 
 
-int LuaPack::SwapBy4(lua_State* L)
-{
+int LuaPack::SwapBy4(lua_State* L) {
   size_t size;
   const char* data = lua_tolstring(L, 1, &size);
   if ((size % 4) != 0) {
@@ -267,8 +266,7 @@ int LuaPack::SwapBy4(lua_State* L)
 
 
 
-int LuaPack::SwapBy8(lua_State* L)
-{
+int LuaPack::SwapBy8(lua_State* L) {
   size_t size;
   const char* data = lua_tolstring(L, 1, &size);
   if ((size % 8) != 0) {
@@ -295,8 +293,7 @@ int LuaPack::SwapBy8(lua_State* L)
 //============================================================================//
 
 
-int LuaPack::GetEndian(lua_State* L)
-{
+int LuaPack::GetEndian(lua_State* L) {
   static const union {
     char bytes[sizeof(uint32_t)];
     uint32_t endian;
@@ -316,8 +313,7 @@ int LuaPack::GetEndian(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaPack::CreatePNG(lua_State* L)
-{
+int LuaPack::CreatePNG(lua_State* L) {
   const int sizex    = luaL_checkint(L, 1);
   const int sizey    = luaL_checkint(L, 2);
   const int channels = luaL_checkint(L, 3);
@@ -344,50 +340,50 @@ int LuaPack::CreatePNG(lua_State* L)
   if (lua_istable(L, 5)) {
     for (int i = 1; lua_checkgeti(L, 5, i); lua_pop(L, 1), i++) {
       if (!lua_istable(L, -1)) {
-	lua_pushnil(L);
-	lua_pushliteral(L, "invalid chunk description");
-	return 2;
+        lua_pushnil(L);
+        lua_pushliteral(L, "invalid chunk description");
+        return 2;
       }
 
       const int chunkTable = lua_gettop(L);
       lua_getfield(L, chunkTable, "type");
       if (!lua_israwstring(L, -1)) {
-	lua_pushnil(L);
-	lua_pushliteral(L, "bad chunk type");
-	return 2;
+        lua_pushnil(L);
+        lua_pushliteral(L, "bad chunk type");
+        return 2;
       }
       const std::string type = lua_tostring(L, -1);
       lua_pop(L, 1);
 
       lua_getfield(L, chunkTable, "data");
       if (lua_israwstring(L, -1)) {
-	const std::string data = lua_tostdstring(L, -1);
-	lua_pop(L, 1);
+        const std::string data = lua_tostdstring(L, -1);
+        lua_pop(L, 1);
 
-	chunks.push_back(BzPNG::Chunk(type, data));
+        chunks.push_back(BzPNG::Chunk(type, data));
       }
       else {
-	lua_pop(L, 1);
+        lua_pop(L, 1);
 
-	lua_getfield(L, chunkTable, "keyword");
-	if (!lua_israwstring(L, -1)) {
-	  lua_pushnil(L);
-	  lua_pushliteral(L, "missing chunk data (and keyword)");
-	  return 2;
-	}
-	const std::string keyword = lua_tostdstring(L, -1);
-	lua_pop(L, 1);
+        lua_getfield(L, chunkTable, "keyword");
+        if (!lua_israwstring(L, -1)) {
+          lua_pushnil(L);
+          lua_pushliteral(L, "missing chunk data (and keyword)");
+          return 2;
+        }
+        const std::string keyword = lua_tostdstring(L, -1);
+        lua_pop(L, 1);
 
-	lua_getfield(L, chunkTable, "text");
-	if (!lua_israwstring(L, -1)) {
-	  lua_pushnil(L);
-	  lua_pushliteral(L, "missing chunk data (and keyword)");
-	  return 2;
-	}
-	const std::string text = lua_tostdstring(L, -1);
-	lua_pop(L, 1);
+        lua_getfield(L, chunkTable, "text");
+        if (!lua_israwstring(L, -1)) {
+          lua_pushnil(L);
+          lua_pushliteral(L, "missing chunk data (and keyword)");
+          return 2;
+        }
+        const std::string text = lua_tostdstring(L, -1);
+        lua_pop(L, 1);
 
-	chunks.push_back(BzPNG::Chunk(type, keyword, text));
+        chunks.push_back(BzPNG::Chunk(type, keyword, text));
       }
     }
   }
@@ -409,6 +405,6 @@ int LuaPack::CreatePNG(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

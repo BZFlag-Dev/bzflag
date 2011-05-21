@@ -38,8 +38,7 @@ static const ColorMap& getColorMap();
 //============================================================================//
 //============================================================================//
 
-static int parseHexChar(char c)
-{
+static int parseHexChar(char c) {
   if ((c >= '0') && (c <= '9')) {
     return (c - '0');
   }
@@ -51,8 +50,7 @@ static int parseHexChar(char c)
 }
 
 
-static bool parseHexFormat(const char* str, fvec4& color)
-{
+static bool parseHexFormat(const char* str, fvec4& color) {
   int bytes[8];
   int index;
   for (index = 0; index < 8; index++) {
@@ -111,8 +109,7 @@ static bool parseHexFormat(const char* str, fvec4& color)
 //============================================================================//
 //============================================================================//
 
-static bool parseFloatFormat(const char* str, fvec4& color)
-{
+static bool parseFloatFormat(const char* str, fvec4& color) {
   fvec4 tmp(1.0f, 1.0f, 1.0f, 1.0f);
   const int count = sscanf(str, "%f %f %f %f", &tmp.r, &tmp.g, &tmp.b, &tmp.a);
   switch (count) {
@@ -126,8 +123,7 @@ static bool parseFloatFormat(const char* str, fvec4& color)
 //============================================================================//
 //============================================================================//
 
-static bool parseNamedFormat(const char* str, fvec4& color)
-{
+static bool parseNamedFormat(const char* str, fvec4& color) {
   const char* end = TextUtils::skipNonWhitespace(str);
   const size_t nameLen = (end - str);
   if (nameLen <= 0) {
@@ -160,8 +156,7 @@ static bool parseNamedFormat(const char* str, fvec4& color)
 //============================================================================//
 //============================================================================//
 
-bool parseColorCString(const char* str, fvec4& color)
-{
+bool parseColorCString(const char* str, fvec4& color) {
   static const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
   // default to opaque white
@@ -198,14 +193,12 @@ bool parseColorCString(const char* str, fvec4& color)
 }
 
 
-bool parseColorString(const std::string& str, fvec4& color)
-{
+bool parseColorString(const std::string& str, fvec4& color) {
   return parseColorCString(str.c_str(), color);
 }
 
 
-bool parseColorStream(std::istream& input, fvec4& color)
-{
+bool parseColorStream(std::istream& input, fvec4& color) {
   std::string line;
   std::getline(input, line);
   input.putback('\n');
@@ -217,8 +210,7 @@ bool parseColorStream(std::istream& input, fvec4& color)
 //============================================================================//
 //============================================================================//
 
-static const ColorMap& getColorMap()
-{
+static const ColorMap& getColorMap() {
   static ColorMap colorMap;
 
   if (!colorMap.empty()) {
@@ -1006,6 +998,6 @@ static const ColorMap& getColorMap()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

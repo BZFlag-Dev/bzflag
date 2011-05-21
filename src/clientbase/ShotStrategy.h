@@ -12,9 +12,9 @@
 
 /*
  * ShotStrategy:
- *	Interface for all shot flight path strategies.  A
- *	strategy encapsulates the algorithm for computing
- *	the path taken by a shot.
+ *  Interface for all shot flight path strategies.  A
+ *  strategy encapsulates the algorithm for computing
+ *  the path taken by a shot.
  */
 
 #ifndef __SHOTSTRATEGY_H__
@@ -37,7 +37,7 @@
 class ShotCollider {
   public:
     fvec3 position;
-    Ray	  motion;
+    Ray   motion;
     float radius;
     fvec3 size;
 
@@ -79,23 +79,22 @@ class ShotStrategy {
     static const Obstacle* getFirstBuilding(const Ray&, float min, float& t);
     static const Obstacle* getFirstLinkSrc(const Ray&, float min, float& t);
 
-    static void		reflect(fvec3& v, const fvec3& n); // const
+    static void   reflect(fvec3& v, const fvec3& n); // const
 
   protected:
-    const ShotPath&	getPath() const;
-    FiringInfo&		getFiringInfo(ShotPath*) const;
-    void		setReloadTime(float) const;
-    void		setPosition(const fvec3&) const;
-    void		setVelocity(const fvec3&) const;
-    void		setExpiring() const;
-    void		setExpired() const;
+    const ShotPath& getPath() const;
+    FiringInfo&   getFiringInfo(ShotPath*) const;
+    void    setReloadTime(float) const;
+    void    setPosition(const fvec3&) const;
+    void    setVelocity(const fvec3&) const;
+    void    setExpiring() const;
+    void    setExpired() const;
 
   private:
     ShotPath* path;
 };
 
-inline const ShotPath&	ShotStrategy::getPath() const
-{
+inline const ShotPath&  ShotStrategy::getPath() const {
   return *path;
 }
 
@@ -106,6 +105,6 @@ inline const ShotPath&	ShotStrategy::getPath() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,7 +11,7 @@
  */
 
 #ifndef __BZFWINDOW_H__
-#define	__BZFWINDOW_H__
+#define __BZFWINDOW_H__
 
 #include "common.h"
 
@@ -23,67 +23,67 @@ class BzfDisplay;
 
 class BzfWindowCB {
   public:
-    void		(*cb)(void*);
-    void*		data;
+    void (*cb)(void*);
+    void*   data;
 };
 
 /** BzfWindow:
- *	Abstract, platform independent base for OpenGL windows.
+ *  Abstract, platform independent base for OpenGL windows.
  */
 class BzfWindow {
   public:
-			BzfWindow(const BzfDisplay*);
-    virtual		~BzfWindow();
+    BzfWindow(const BzfDisplay*);
+    virtual   ~BzfWindow();
 
-    const BzfDisplay*	getDisplay() const { return display; }
-    virtual bool	isValid() const = 0;
+    const BzfDisplay* getDisplay() const { return display; }
+    virtual bool  isValid() const = 0;
 
-    virtual void	showWindow(bool) = 0;
+    virtual void  showWindow(bool) = 0;
 
-    virtual void	getPosition(int& x, int& y) = 0;
-    virtual void	getSize(int& width, int& height) const = 0;
+    virtual void  getPosition(int& x, int& y) = 0;
+    virtual void  getSize(int& width, int& height) const = 0;
 
-    virtual void	setTitle(const char*) = 0;
-    virtual void	setPosition(int x, int y) = 0;
-    virtual void	setSize(int width, int height) = 0;
-    virtual void	setMinSize(int width, int height) = 0;
-    virtual void	setFullscreen(bool) = 0;
-    virtual bool	getFullscreen() const = 0;
-    virtual void	iconify() {}
-    virtual void	deiconify() {}
-    virtual bool	create(void) {return true;}
+    virtual void  setTitle(const char*) = 0;
+    virtual void  setPosition(int x, int y) = 0;
+    virtual void  setSize(int width, int height) = 0;
+    virtual void  setMinSize(int width, int height) = 0;
+    virtual void  setFullscreen(bool) = 0;
+    virtual bool  getFullscreen() const = 0;
+    virtual void  iconify() {}
+    virtual void  deiconify() {}
+    virtual bool  create(void) {return true;}
 
-    virtual void	warpMouse(int x, int y) = 0;
-    virtual void	getMouse(int& x, int& y) const = 0;
-    virtual void	grabMouse() = 0;
-    virtual void	ungrabMouse() = 0;
-    virtual void	enableGrabMouse(bool) {}
-    virtual void	showMouse() = 0;
-    virtual void	hideMouse() = 0;
+    virtual void  warpMouse(int x, int y) = 0;
+    virtual void  getMouse(int& x, int& y) const = 0;
+    virtual void  grabMouse() = 0;
+    virtual void  ungrabMouse() = 0;
+    virtual void  enableGrabMouse(bool) {}
+    virtual void  showMouse() = 0;
+    virtual void  hideMouse() = 0;
 
-    virtual void	setGamma(float) = 0;
-    virtual float	getGamma() const = 0;
-    virtual bool	hasGammaControl() const = 0;
+    virtual void  setGamma(float) = 0;
+    virtual float getGamma() const = 0;
+    virtual bool  hasGammaControl() const = 0;
 
-    virtual void	makeCurrent() = 0;
-    virtual void	yieldCurrent();
-    virtual void	releaseCurrent();
-    virtual void	swapBuffers() = 0;
-    virtual void	makeContext() = 0;
-    virtual void	freeContext() = 0;
+    virtual void  makeCurrent() = 0;
+    virtual void  yieldCurrent();
+    virtual void  releaseCurrent();
+    virtual void  swapBuffers() = 0;
+    virtual void  makeContext() = 0;
+    virtual void  freeContext() = 0;
 
-    void		callExposeCallbacks() const;
-    void		addExposeCallback(void (*cb)(void*), void* data);
-    void		removeExposeCallback(void (*cb)(void*), void* data);
+    void    callExposeCallbacks() const;
+    void    addExposeCallback(void (*cb)(void*), void* data);
+    void    removeExposeCallback(void (*cb)(void*), void* data);
 
-    void		callResizeCallbacks() const;
-    void		addResizeCallback(void (*cb)(void*), void* data);
-    void		removeResizeCallback(void (*cb)(void*), void* data);
+    void    callResizeCallbacks() const;
+    void    addResizeCallback(void (*cb)(void*), void* data);
+    void    removeResizeCallback(void (*cb)(void*), void* data);
 
   private:
-    const BzfDisplay*	display;
-    std::vector<BzfWindowCB>	exposeCallbacks;
-    std::vector<BzfWindowCB>	resizeCallbacks;
+    const BzfDisplay* display;
+    std::vector<BzfWindowCB>  exposeCallbacks;
+    std::vector<BzfWindowCB>  resizeCallbacks;
 };
 
 
@@ -93,6 +93,6 @@ class BzfWindow {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

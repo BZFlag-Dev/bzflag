@@ -53,48 +53,47 @@
 typedef CommandManager::ArgList CmdArgList;
 
 
-static std::string cmdAddHunt       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdAutoPilot     (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdDestruct      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdDrop          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdFire          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdHubCompose    (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdHunt          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdIconify       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdIdentify      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdJump          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaBzOrg      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaUser       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaWorld      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLuaRules      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdLocalCmd      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdMessagePanel  (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdMouseBox      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdMouseGrab     (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdPause         (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdRadarZoom     (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdRestart       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdRoam          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdScreenshot    (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdScrollPanel   (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdSend          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdSendMsg       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdServerCommand (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdSilence       (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdShotStats     (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdTime          (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdToggleConsole (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdToggleFlags   (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdToggleFS      (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdToggleRadar   (const std::string&, const CmdArgList& args, bool*);
-static std::string cmdViewZoom      (const std::string&, const CmdArgList& args, bool*);
+static std::string cmdAddHunt(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdDestruct(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdFire(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdHubCompose(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdHunt(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdIconify(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdIdentify(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdJump(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaBzOrg(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaUser(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaWorld(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLuaRules(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdLocalCmd(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdMouseBox(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdMouseGrab(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdPause(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdRadarZoom(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdRoam(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdScreenshot(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdScrollPanel(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdSend(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdServerCommand(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdSilence(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdTime(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdToggleConsole(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdToggleFlags(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdToggleFS(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdToggleRadar(const std::string&, const CmdArgList& args, bool*);
+static std::string cmdViewZoom(const std::string&, const CmdArgList& args, bool*);
 
 
 static std::vector<CommandListItem> commandVector;
 
 
-const std::vector<CommandListItem>& getCommandList()
-{
+const std::vector<CommandListItem>& getCommandList() {
   if (!commandVector.empty()) {
     return commandVector;
   }
@@ -140,18 +139,17 @@ const std::vector<CommandListItem>& getCommandList()
 }
 
 
-static std::string cmdToggleFS(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdToggleFS(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: fullscreen";
+  }
   mainWindow->toggleFullscreen();
   mainWindow->getWindow()->callResizeCallbacks();
   return std::string();
 }
 
 
-static std::string cmdMouseBox(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdMouseBox(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() != 1) {
     return "usage: mousebox <size>";
   }
@@ -166,10 +164,10 @@ static std::string cmdMouseBox(const std::string&, const CmdArgList& args, bool*
 }
 
 
-static std::string cmdMouseGrab(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdMouseGrab(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: mousegrab";
+  }
   const bool grabbing = !(BZDB.isTrue("mousegrab"));
   BZDB.set("mousegrab", grabbing ? "true" : "false");
   mainWindow->enableGrabMouse(grabbing);
@@ -177,18 +175,18 @@ static std::string cmdMouseGrab(const std::string&, const CmdArgList& args, bool
 }
 
 
-static std::string cmdIconify(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdIconify(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: iconify";
-  if (!BZDB.isTrue("Win32NoMin"))
+  }
+  if (!BZDB.isTrue("Win32NoMin")) {
     mainWindow->iconify();
+  }
   return std::string();
 }
 
 
-static std::string cmdLocalCmd(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdLocalCmd(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() < 1) {
     return "usage: localcmd command args";
   }
@@ -202,29 +200,32 @@ static std::string cmdLocalCmd(const std::string&, const CmdArgList& args, bool*
 }
 
 
-static std::string cmdJump(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdJump(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: jump";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank != NULL)
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (myTank != NULL) {
     myTank->setJump();
+  }
   return std::string();
 }
 
 
 static std::string cmdToggleFlags(const std::string&, const
-                                  CmdArgList& args, bool*)
-{
-  if (args.size() != 1)
+                                  CmdArgList& args, bool*) {
+  if (args.size() != 1) {
     return "usage: main|radar";
+  }
   if (args[0] == "main") {
     CMDMGR.run("toggle displayMainFlags");
     warnAboutMainFlags();
-  } else if (args[0] == "radar") {
+  }
+  else if (args[0] == "radar") {
     CMDMGR.run("toggle displayRadarFlags");
     warnAboutRadarFlags();
-  } else {
+  }
+  else {
     return "usage: main|radar";
   }
 
@@ -232,8 +233,7 @@ static std::string cmdToggleFlags(const std::string&, const
 }
 
 
-static std::string cmdToggleRadar(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdToggleRadar(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() != 0) {
     return "usage: toggleRadar";
   }
@@ -246,8 +246,7 @@ static std::string cmdToggleRadar(const std::string&, const CmdArgList& args, bo
 }
 
 
-static std::string cmdToggleConsole(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdToggleConsole(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() != 0) {
     return "usage: toggleConsole";
   }
@@ -260,11 +259,11 @@ static std::string cmdToggleConsole(const std::string&, const CmdArgList& args, 
 }
 
 
-static std::string cmdFire(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdFire(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: fire";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (fireButton &&
       (myTank != NULL) && myTank->isAlive() && !myTank->isObserver()) {
     myTank->fireShot();
@@ -273,11 +272,11 @@ static std::string cmdFire(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: drop";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
     FlagType* flag = myTank->getFlagType();
     if ((flag != Flags::Null) && !myTank->isPaused() &&
@@ -296,11 +295,11 @@ static std::string cmdDrop(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdIdentify(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdIdentify(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: identify";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
     if (myTank->isAlive() && !myTank->isPaused()) {
       setTarget();
@@ -310,11 +309,11 @@ static std::string cmdIdentify(const std::string&, const CmdArgList& args, bool*
 }
 
 
-static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: restart";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if ((myTank != NULL) && entered && canSpawn) {
     if (!gameOver
         && !myTank->isSpawning()
@@ -327,7 +326,7 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
         CmdArgList zoomArgs;
         std::string resetArg = "reset";
         zoomArgs.push_back(resetArg);
-        cmdViewZoom("", zoomArgs,NULL);
+        cmdViewZoom("", zoomArgs, NULL);
       }
     }
   }
@@ -335,30 +334,31 @@ static std::string cmdRestart(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdDestruct(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdDestruct(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: destruct";
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  }
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
     if (destructCountdown > 0.0f) {
       destructCountdown = 0.0f;
       hud->setAlert(1, "Self Destruct canceled", 1.5f, true);
-    } else {
-        destructCountdown = 5.0f;
-      }
+    }
+    else {
+      destructCountdown = 5.0f;
+    }
   }
   return std::string();
 }
 
 
-static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdPause(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: pause";
+  }
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  ServerLink        *server = ServerLink::getServer();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  ServerLink*        server = ServerLink::getServer();
   if (!pausedByUnmap && myTank && myTank->isAlive() && !myTank->isAutoPilot()) {
     if (myTank->isPaused()) {
       // already paused, so unpause
@@ -394,12 +394,12 @@ static std::string cmdPause(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: autopilot";
+  }
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   if (BZDB.isTrue(BZDBNAMES.DISABLEBOTS) && !myTank->isAutoPilot()) {
     hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
@@ -434,24 +434,28 @@ static std::string cmdAutoPilot(const std::string&, const CmdArgList& args, bool
 }
 
 
-static std::string cmdRadarZoom(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 1)
+static std::string cmdRadarZoom(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 1) {
     return "usage: radarZoom {in|out}";
+  }
 
   float range = BZDB.eval("displayRadarRange");
 
   if (args[0] == "out") {
     range *= 1.05f;
-    if (range > 2.0f)
+    if (range > 2.0f) {
       range = 2.0f;
+    }
     BZDB.setFloat("displayRadarRange", range);
-  } else if (args[0] == "in") {
+  }
+  else if (args[0] == "in") {
     range /= 1.05f;
-    if (range < 0.005f)
+    if (range < 0.005f) {
       range = 0.005f;
+    }
     BZDB.setFloat("displayRadarRange", range);
-  } else {
+  }
+  else {
     return "usage: radarZoom {in|out}";
   }
 
@@ -459,42 +463,50 @@ static std::string cmdRadarZoom(const std::string&, const CmdArgList& args, bool
 }
 
 
-static std::string cmdViewZoom(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 1)
+static std::string cmdViewZoom(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 1) {
     return "usage: viewZoom {in|out|toggle}";
+  }
 
   float fov = BZDB.eval("displayFOV");
   float defFov = BZDB.eval("defaultFOV");
 
   if (args[0] == "out") {
     fov += 1.0f;
-    if (fov > defFov)
+    if (fov > defFov) {
       fov = defFov;
+    }
     BZDB.setFloat("displayFOV", fov);
-  } else if (args[0] == "in") {
+  }
+  else if (args[0] == "in") {
     fov -= 1.0f;
-    if (fov < 15.0f)
+    if (fov < 15.0f) {
       fov = 15.0f;
+    }
     BZDB.setFloat("displayFOV", fov);
-  } else if (args[0] == "toggle") {
-    if (fov < (defFov+15.0f)*0.5f) { // 60+15/2
+  }
+  else if (args[0] == "toggle") {
+    if (fov < (defFov + 15.0f) * 0.5f) { // 60+15/2
       fov = defFov;
-    } else {
+    }
+    else {
       fov = 15.0f;
     }
     BZDB.setFloat("displayFOV", fov);
     // also toggle the observer fov
     if (ROAM.getZoom() != defFov) {
       ROAM.setZoom(defFov);
-    } else {
+    }
+    else {
       ROAM.setZoom(15.0f);
     }
-  } else if (args[0] == "reset") {
+  }
+  else if (args[0] == "reset") {
     fov = defFov;
     ROAM.setZoom(defFov);
     BZDB.setFloat("displayFOV", fov);
-  } else {
+  }
+  else {
     return "usage: viewZoom {in|out|toggle|reset}";
   }
 
@@ -502,8 +514,7 @@ static std::string cmdViewZoom(const std::string&, const CmdArgList& args, bool*
 }
 
 
-static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, bool*) {
   if (controlPanel == NULL) {
     return "";
   }
@@ -549,8 +560,7 @@ static std::string cmdMessagePanel(const std::string&, const CmdArgList& args, b
 }
 
 
-static std::string cmdSend(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdSend(const std::string&, const CmdArgList& args, bool*) {
   static ComposeDefaultKey composeKeyHandler;
   if (args.size() != 1) {
     return "usage: send {all|team|nemesis|recipient|admin}";
@@ -572,15 +582,17 @@ static std::string cmdSend(const std::string&, const CmdArgList& args, bool*)
     if (World::getWorld() && World::getWorld()->allowTeams()) {
       msgDestination = TeamToPlayerId(myTank->getTeam());
       composePrompt = "Send to teammates: ";
-    } else {
+    }
+    else {
       msgDestination = AllPlayers;
       composePrompt = "Send to all: ";
     }
   }
   else if (args[0] == "nemesis") {
     const Player* nemesis = myTank->getNemesis();
-    if (!nemesis)
+    if (!nemesis) {
       return std::string();
+    }
     msgDestination = nemesis->getId();
     composePrompt = "Send to ";
     composePrompt += nemesis->getCallSign();
@@ -620,8 +632,7 @@ static std::string cmdSend(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() < 1) {
     return "usage: sendmsg {all|team|nemesis|recipient|admin} <message>";
   }
@@ -644,7 +655,8 @@ static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
   else if (args[0] == "team") {
     if (World::getWorld() && World::getWorld()->allowTeams()) {
       msgDest = TeamToPlayerId(myTank->getTeam());
-    } else {
+    }
+    else {
       msgDest = AllPlayers;
     }
   }
@@ -700,8 +712,7 @@ static std::string cmdSendMsg(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-struct ScreenshotData
-{
+struct ScreenshotData {
   std::string renderer;
   unsigned char* pixels;
   int xsize;
@@ -780,7 +791,7 @@ static void* writeScreenshot(void* data)
         for (int i = 0; i < 256; i++) {
           const float lum    = float(i) / 256.0f;
           const float lumadj = pow(lum, 1.0f / gamma);
-          gammaTable[i] = (unsigned char) (lumadj * 256);
+          gammaTable[i] = (unsigned char)(lumadj * 256);
         }
         const int pixelCount = (xsize * ysize * channels);
         for (int i = 0; i < pixelCount; i++) {
@@ -797,7 +808,8 @@ static void* writeScreenshot(void* data)
     char buf[128];
     if (BzPNG::save(filename, chunks, xsize, ysize, channels, pixels)) {
       snprintf(buf, sizeof(buf), "%s: %dx%d", filename.c_str(), xsize, ysize);
-    } else {
+    }
+    else {
       snprintf(buf, sizeof(buf), "%s: failed to save", filename.c_str());
     }
     ControlPanel::addMutexMessage(buf);
@@ -810,8 +822,7 @@ static void* writeScreenshot(void* data)
 }
 
 
-static std::string cmdScreenshot(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdScreenshot(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() != 0) {
     return "usage: screenshot";
   }
@@ -833,15 +844,15 @@ static std::string cmdScreenshot(const std::string&, const CmdArgList& args, boo
 
 #if defined(HAVE_PTHREADS)
   pthread_t thread;
-  pthread_create(&thread, NULL, writeScreenshot, (void *) ssdata);
+  pthread_create(&thread, NULL, writeScreenshot, (void*) ssdata);
 #elif defined(_WIN32)
   CreateThread(
-            NULL, // Security attributes
-            0, // Stack size (0 -> default)
-            writeScreenshot,
-            ssdata,
-            0, // creation flags (0 -> run immediately)
-            NULL); // thread id return value (NULL -> don't care)
+    NULL, // Security attributes
+    0, // Stack size (0 -> default)
+    writeScreenshot,
+    ssdata,
+    0, // creation flags (0 -> run immediately)
+    NULL); // thread id return value (NULL -> don't care)
 #else
   // no threads?  sucks to be you, but we'll still write the screenshot
   writeScreenshot(&ssdata);
@@ -851,8 +862,7 @@ static std::string cmdScreenshot(const std::string&, const CmdArgList& args, boo
 }
 
 
-static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool*) {
   if (args.size() != 0) {
     return "usage: screenshot";
   }
@@ -864,8 +874,7 @@ static std::string cmdShotStats(const std::string&, const CmdArgList& args, bool
 }
 
 
-static std::string cmdTime(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdTime(const std::string&, const CmdArgList& args, bool*) {
   // FIXME - time should be moved into BZDB
   if (args.size() != 1) {
     return "usage: time {forward|backward|<seconds>}";
@@ -883,7 +892,8 @@ static std::string cmdTime(const std::string&, const CmdArgList& args, bool*)
     seconds = (float)strtod(args[0].c_str(), &end);
     if (end != args[0].c_str()) {
       clockAdjust += seconds;
-    } else {
+    }
+    else {
       return "usage: time {forward|backward|<seconds>}";
     }
   }
@@ -891,62 +901,77 @@ static std::string cmdTime(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdRoam(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() == 0)
+static std::string cmdRoam(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() == 0) {
     return "usage: roam {zoom|cycle} <args>";
-  if (!ROAM.isRoaming())
+  }
+  if (!ROAM.isRoaming()) {
     return std::string();
+  }
   if (args[0] == "zoom") {
-    if (args.size() != 2)
-      return "usage: roam zoom {in|out|normal|stop}";
-    if (!roamButton || args[1] == "stop") {
-      roamDZoom = 0.0f;
-    } else if (args[1] == "out") {
-      roamDZoom = +2.0f * BZDBCache::tankSpeed;
-    } else if (args[1] == "in") {
-      roamDZoom = -2.0f * BZDBCache::tankSpeed;
-    } else if (args[1] == "normal") {
-      ROAM.setZoom(60.0f);
-    } else {
+    if (args.size() != 2) {
       return "usage: roam zoom {in|out|normal|stop}";
     }
-  } else if (args[0] == "cycle") {
-    if (args.size() != 3)
+    if (!roamButton || args[1] == "stop") {
+      roamDZoom = 0.0f;
+    }
+    else if (args[1] == "out") {
+      roamDZoom = +2.0f * BZDBCache::tankSpeed;
+    }
+    else if (args[1] == "in") {
+      roamDZoom = -2.0f * BZDBCache::tankSpeed;
+    }
+    else if (args[1] == "normal") {
+      ROAM.setZoom(60.0f);
+    }
+    else {
+      return "usage: roam zoom {in|out|normal|stop}";
+    }
+  }
+  else if (args[0] == "cycle") {
+    if (args.size() != 3) {
       return "usage: roam cycle {type|subject} {forward|backward}";
+    }
     if (args[1] == "type") {
       if (args[2] == "forward") {
         ROAM.setMode(Roaming::RoamingView((ROAM.getMode() + 1) % Roaming::roamViewCount));
-      } else if (args[2] == "backward") {
+      }
+      else if (args[2] == "backward") {
         int setto = (ROAM.getMode() - 1) % Roaming::roamViewCount;
-        if (setto < 0) setto += Roaming::roamViewCount;
+        if (setto < 0) { setto += Roaming::roamViewCount; }
         ROAM.setMode(Roaming::RoamingView(setto));
-      } else {
+      }
+      else {
         return "usage: roam cycle {type|subject} {forward|backward}";
       }
-    } else if (args[1] == "subject") {
+    }
+    else if (args[1] == "subject") {
       if (args[2] == "forward") {
         ROAM.changeTarget(Roaming::next);
-      } else if (args[2] == "backward") {
+      }
+      else if (args[2] == "backward") {
         ROAM.changeTarget(Roaming::previous);
-      } else {
+      }
+      else {
         return "usage: roam cycle {type|subject} {forward|backward}";
       }
-    } else {
+    }
+    else {
       return "usage: roam cycle {type|subject} {forward|backward}";
     }
-  } else {
+  }
+  else {
     return "usage: roam {zoom|cycle} <args>";
   }
   return std::string();
 }
 
 
-static std::string cmdSilence(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdSilence(const std::string&, const CmdArgList& args, bool*) {
   static SilenceDefaultKey silenceKeyHandler;
-  if (args.size() != 0)
+  if (args.size() != 0) {
     return "usage: silence";
+  }
   messageHistoryIndex = 0;
   hud->setComposing("[Un]Silence: ");
   HUDui::setDefaultKey(&silenceKeyHandler);
@@ -954,19 +979,18 @@ static std::string cmdSilence(const std::string&, const CmdArgList& args, bool*)
 }
 
 
-static std::string cmdServerCommand(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdServerCommand(const std::string&, const CmdArgList& args, bool*) {
   static ServerCommandKey serverCommandKeyHandler;
   if (args.size() != 0) {
     return "usage: servercommand";
   }
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank) {
     return "use only when connected";
   }
   static bool prevAdmin = myTank->isAdmin();
-  if (!prevAdmin && myTank->isAdmin()) serverCommandKeyHandler.adminInit();
-  if (prevAdmin && !myTank->isAdmin()) serverCommandKeyHandler.nonAdminInit();
+  if (!prevAdmin && myTank->isAdmin()) { serverCommandKeyHandler.adminInit(); }
+  if (prevAdmin && !myTank->isAdmin()) { serverCommandKeyHandler.nonAdminInit(); }
   prevAdmin = myTank->isAdmin();
 
   messageHistoryIndex = 0;
@@ -976,8 +1000,7 @@ static std::string cmdServerCommand(const std::string&, const CmdArgList& args, 
 }
 
 
-static std::string cmdHubCompose(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdHubCompose(const std::string&, const CmdArgList& args, bool*) {
   static HubComposeKey hubComposeKey;
 
   const bool keepAlive = (args.size() == 1) && (args[0] == "keepalive");
@@ -992,8 +1015,7 @@ static std::string cmdHubCompose(const std::string&, const CmdArgList& args, boo
 }
 
 
-static std::string cmdScrollPanel(const std::string&, const CmdArgList& args, bool*)
-{
+static std::string cmdScrollPanel(const std::string&, const CmdArgList& args, bool*) {
   if ((args.size() < 1) || (args.size() > 2)) {
     return "usage: scrollpanel {up|up_page|down|down_page|top|bottom} [count]\n";
   }
@@ -1006,46 +1028,51 @@ static std::string cmdScrollPanel(const std::string&, const CmdArgList& args, bo
   // whence - (0 = set, 1 = cur, 2 = end)
   if (args[0] == "up") {
     controlPanel->setMessagesOffset(+linecount, 1 /* current */, false);
-  } else if (args[0] == "down") {
+  }
+  else if (args[0] == "down") {
     controlPanel->setMessagesOffset(-linecount, 1 /* current */, false);
-  } else if (args[0] == "up_page") {
+  }
+  else if (args[0] == "up_page") {
     controlPanel->setMessagesOffset(+count, 1 /* current */, true);
-  } else if (args[0] == "down_page") {
+  }
+  else if (args[0] == "down_page") {
     controlPanel->setMessagesOffset(-count, 1 /* current */, true);
-  } else if (args[0] == "top") {
+  }
+  else if (args[0] == "top") {
     controlPanel->setMessagesOffset(123456789, 0 /* set */, false);
-  } else if (args[0] == "bottom") {
+  }
+  else if (args[0] == "bottom") {
     controlPanel->setMessagesOffset(0, 0 /* set */, false);
   }
   return std::string();
 }
 
 
-static std::string cmdHunt(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdHunt(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: hunt";
-  hud->getScoreboard()->huntKeyEvent (false);
+  }
+  hud->getScoreboard()->huntKeyEvent(false);
   return std::string();
 }
 
 
-static std::string cmdAddHunt(const std::string&, const CmdArgList& args, bool*)
-{
-  if (args.size() != 0)
+static std::string cmdAddHunt(const std::string&, const CmdArgList& args, bool*) {
+  if (args.size() != 0) {
     return "usage: addhunt";
-  hud->getScoreboard()->huntKeyEvent (true);
+  }
+  hud->getScoreboard()->huntKeyEvent(true);
   return std::string();
 }
 
 
-static std::string concatArgs(const CmdArgList& args)
-{
+static std::string concatArgs(const CmdArgList& args) {
   std::string line;
   for (size_t i = 0; i < args.size(); i++) {
     if (i == 0) {
       line = args[i];
-    } else {
+    }
+    else {
       line += " " + args[i];
     }
   }
@@ -1053,8 +1080,7 @@ static std::string concatArgs(const CmdArgList& args)
 }
 
 
-static std::string cmdLuaUser(const std::string& cmd, const CmdArgList& args, bool*)
-{
+static std::string cmdLuaUser(const std::string& cmd, const CmdArgList& args, bool*) {
   if (args.size() < 1) {
     return "usage: luauser { reload | disable | status }";
   }
@@ -1063,8 +1089,7 @@ static std::string cmdLuaUser(const std::string& cmd, const CmdArgList& args, bo
 }
 
 
-static std::string cmdLuaBzOrg(const std::string& cmd, const CmdArgList& args, bool*)
-{
+static std::string cmdLuaBzOrg(const std::string& cmd, const CmdArgList& args, bool*) {
   if (args.size() < 1) {
     return "usage: luabzorg { reload | disable | status }";
   }
@@ -1073,8 +1098,7 @@ static std::string cmdLuaBzOrg(const std::string& cmd, const CmdArgList& args, b
 }
 
 
-static std::string cmdLuaWorld(const std::string& cmd, const CmdArgList& args, bool*)
-{
+static std::string cmdLuaWorld(const std::string& cmd, const CmdArgList& args, bool*) {
   if (args.size() < 1) {
     return "usage: luaworld { reload | disable | status }";
   }
@@ -1083,8 +1107,7 @@ static std::string cmdLuaWorld(const std::string& cmd, const CmdArgList& args, b
 }
 
 
-static std::string cmdLuaRules(const std::string& cmd, const CmdArgList& args, bool*)
-{
+static std::string cmdLuaRules(const std::string& cmd, const CmdArgList& args, bool*) {
   if (args.size() < 1) {
     return "usage: luarules { reload | disable | status }";
   }
@@ -1097,6 +1120,6 @@ static std::string cmdLuaRules(const std::string& cmd, const CmdArgList& args, b
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

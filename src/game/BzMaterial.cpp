@@ -38,21 +38,18 @@
 BzMaterialManager MATERIALMGR;
 
 
-BzMaterialManager::BzMaterialManager()
-{
+BzMaterialManager::BzMaterialManager() {
   return;
 }
 
 
-BzMaterialManager::~BzMaterialManager()
-{
+BzMaterialManager::~BzMaterialManager() {
   clear();
   return;
 }
 
 
-void BzMaterialManager::clear()
-{
+void BzMaterialManager::clear() {
   for (unsigned int i = 0; i < materials.size(); i++) {
     delete materials[i];
   }
@@ -62,13 +59,12 @@ void BzMaterialManager::clear()
 }
 
 
-const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
-{
+const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material) {
   for (unsigned int i = 0; i < materials.size(); i++) {
     if (*material == *(materials[i])) {
       const std::string& name = material->getName();
       if (name.size() > 0) {
-	materials[i]->addAlias(name);
+        materials[i]->addAlias(name);
       }
       return materials[i];
     }
@@ -83,16 +79,16 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
 }
 
 
-const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) const
-{
+const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) const {
   if (target.size() <= 0) {
     return NULL;
   }
   else if ((target[0] >= '0') && (target[0] <= '9')) {
-    int index = atoi (target.c_str());
+    int index = atoi(target.c_str());
     if ((index < 0) || (index >= (int)materials.size())) {
       return NULL;
-    } else {
+    }
+    else {
       return materials[index];
     }
   }
@@ -105,14 +101,14 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
       const BzMaterial* mat = materials[i];
       // check the base name
       if (target == mat->getName()) {
-	return mat;
+        return mat;
       }
       // check the aliases
       const std::vector<std::string>& aliases = mat->getAliases();
       for (unsigned int j = 0; j < aliases.size(); j++) {
-	if (target == aliases[j]) {
-	  return mat;
-	}
+        if (target == aliases[j]) {
+          return mat;
+        }
       }
     }
     return NULL;
@@ -120,8 +116,7 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
 }
 
 
-const BzMaterial* BzMaterialManager::getMaterial(int id) const
-{
+const BzMaterial* BzMaterialManager::getMaterial(int id) const {
   if ((id < 0) || (id >= (int)materials.size())) {
     return BzMaterial::getDefault();
   }
@@ -129,8 +124,7 @@ const BzMaterial* BzMaterialManager::getMaterial(int id) const
 }
 
 
-int BzMaterialManager::getIndex(const BzMaterial* material) const
-{
+int BzMaterialManager::getIndex(const BzMaterial* material) const {
   for (unsigned int i = 0; i < materials.size(); i++) {
     if (material == materials[i]) {
       return i;
@@ -140,8 +134,7 @@ int BzMaterialManager::getIndex(const BzMaterial* material) const
 }
 
 
-void* BzMaterialManager::pack(void* buf)
-{
+void* BzMaterialManager::pack(void* buf) {
   buf = nboPackUInt32(buf, (unsigned int)materials.size());
   for (unsigned int i = 0; i < materials.size(); i++) {
     buf = materials[i]->pack(buf);
@@ -151,11 +144,10 @@ void* BzMaterialManager::pack(void* buf)
 }
 
 
-void* BzMaterialManager::unpack(void* buf)
-{
+void* BzMaterialManager::unpack(void* buf) {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt32 (buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     BzMaterial* mat = new BzMaterial;
     buf = mat->unpack(buf);
@@ -166,9 +158,8 @@ void* BzMaterialManager::unpack(void* buf)
 }
 
 
-int BzMaterialManager::packSize()
-{
-  int fullSize = sizeof (uint32_t);
+int BzMaterialManager::packSize() {
+  int fullSize = sizeof(uint32_t);
   for (unsigned int i = 0; i < materials.size(); i++) {
     fullSize += materials[i]->packSize();
   }
@@ -176,8 +167,7 @@ int BzMaterialManager::packSize()
 }
 
 
-void BzMaterialManager::print(std::ostream& out, const std::string& indent) const
-{
+void BzMaterialManager::print(std::ostream& out, const std::string& indent) const {
   for (unsigned int i = 0; i < materials.size(); i++) {
     materials[i]->print(out, indent);
   }
@@ -185,8 +175,7 @@ void BzMaterialManager::print(std::ostream& out, const std::string& indent) cons
 }
 
 
-void BzMaterialManager::printMTL(std::ostream& out, const std::string& indent) const
-{
+void BzMaterialManager::printMTL(std::ostream& out, const std::string& indent) const {
   for (unsigned int i = 0; i < materials.size(); i++) {
     materials[i]->printMTL(out, indent);
   }
@@ -195,8 +184,7 @@ void BzMaterialManager::printMTL(std::ostream& out, const std::string& indent) c
 
 
 void BzMaterialManager::printReference(std::ostream& out,
-				       const BzMaterial* mat) const
-{
+                                       const BzMaterial* mat) const {
   if (mat == NULL) {
     out << "-1";
     return;
@@ -209,21 +197,21 @@ void BzMaterialManager::printReference(std::ostream& out,
   if (mat->getName().size() > 0) {
     out << mat->getName();
     return;
-  } else {
+  }
+  else {
     out << index;
     return;
   }
 }
 
 
-void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const
-{
+void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const {
   set.clear();
   for (unsigned int i = 0; i < materials.size(); i++) {
     const BzMaterial* mat = materials[i];
     for (int j = 0; j < mat->getTextureCount(); j++) {
       if (mat->getReference() || !referenced) {
-	set.insert(mat->getTexture(j));
+        set.insert(mat->getTexture(j));
       }
     }
   }
@@ -232,13 +220,12 @@ void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const
 
 
 void BzMaterialManager::setTextureLocal(const std::string& url,
-					const std::string& local)
-{
+                                        const std::string& local) {
   for (unsigned int i = 0; i < materials.size(); i++) {
     BzMaterial* mat = materials[i];
     for (int j = 0; j < mat->getTextureCount(); j++) {
       if (mat->getTexture(j) == url) {
-	mat->setTextureLocal(j, local);
+        mat->setTextureLocal(j, local);
       }
     }
   }
@@ -255,8 +242,7 @@ BzMaterial BzMaterial::defaultMaterial;
 const std::string BzMaterial::nullString = "";
 
 
-std::string BzMaterial::convertTexture(const std::string& oldTex)
-{
+std::string BzMaterial::convertTexture(const std::string& oldTex) {
   static std::map<std::string, std::string> convMap;
 
   if (convMap.empty()) {
@@ -284,11 +270,11 @@ std::string BzMaterial::convertTexture(const std::string& oldTex)
 
         convMap[oldName] = newName;
         logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
-                           oldName.c_str(), newName.c_str());
+                        oldName.c_str(), newName.c_str());
         oldName += ".png";
         convMap[oldName] = newName;
         logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
-                           oldName.c_str(), newName.c_str());
+                        oldName.c_str(), newName.c_str());
       }
     }
   }
@@ -296,7 +282,7 @@ std::string BzMaterial::convertTexture(const std::string& oldTex)
   std::map<std::string, std::string>::const_iterator it = convMap.find(oldTex);
   if (it != convMap.end()) {
     logDebugMessage(0, "WARNING: converted texture '%s' to '%s'\n",
-                       oldTex.c_str(), it->second.c_str());
+                    oldTex.c_str(), it->second.c_str());
     return it->second;
   }
 
@@ -304,8 +290,7 @@ std::string BzMaterial::convertTexture(const std::string& oldTex)
 }
 
 
-void BzMaterial::reset()
-{
+void BzMaterial::reset() {
   order = 0;
   dynamicColor = -1;
 
@@ -349,8 +334,7 @@ void BzMaterial::reset()
 }
 
 
-BzMaterial::BzMaterial()
-{
+BzMaterial::BzMaterial() {
   textures = NULL;
   shaders = NULL;
   reset();
@@ -358,16 +342,14 @@ BzMaterial::BzMaterial()
 }
 
 
-BzMaterial::~BzMaterial()
-{
+BzMaterial::~BzMaterial() {
   delete[] textures;
   delete[] shaders;
   return;
 }
 
 
-BzMaterial::BzMaterial(const BzMaterial& m)
-{
+BzMaterial::BzMaterial(const BzMaterial& m) {
   textures = NULL;
   shaders = NULL;
   *this = m;
@@ -375,8 +357,7 @@ BzMaterial::BzMaterial(const BzMaterial& m)
 }
 
 
-BzMaterial& BzMaterial::operator=(const BzMaterial& m)
-{
+BzMaterial& BzMaterial::operator=(const BzMaterial& m) {
   int i;
 
   referenced = false;
@@ -412,7 +393,8 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   textureCount = m.textureCount;
   if (textureCount > 0) {
     textures = new TextureInfo[textureCount];
-  } else {
+  }
+  else {
     textures = NULL;
   }
   for (i = 0; i < textureCount; i++) {
@@ -423,7 +405,8 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
   shaderCount = m.shaderCount;
   if (shaderCount > 0) {
     shaders = new ShaderInfo[shaderCount];
-  } else {
+  }
+  else {
     shaders = NULL;
   }
   for (i = 0; i < shaderCount; i++) {
@@ -434,8 +417,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
 }
 
 
-bool BzMaterial::operator==(const BzMaterial& m) const
-{
+bool BzMaterial::operator==(const BzMaterial& m) const {
   int i;
 
   if ((order != m.order) ||
@@ -460,12 +442,12 @@ bool BzMaterial::operator==(const BzMaterial& m) const
   }
   for (i = 0; i < textureCount; i++) {
     if ((textures[i].name != m.textures[i].name) ||
-	(textures[i].matrix != m.textures[i].matrix) ||
-	(textures[i].combineMode != m.textures[i].combineMode) ||
-	(textures[i].useAlpha != m.textures[i].useAlpha) ||
-	(textures[i].useColor != m.textures[i].useColor) ||
-	(textures[i].useSphereMap != m.textures[i].useSphereMap) ||
-	(textures[i].autoScale != m.textures[i].autoScale)) {
+        (textures[i].matrix != m.textures[i].matrix) ||
+        (textures[i].combineMode != m.textures[i].combineMode) ||
+        (textures[i].useAlpha != m.textures[i].useAlpha) ||
+        (textures[i].useColor != m.textures[i].useColor) ||
+        (textures[i].useSphereMap != m.textures[i].useSphereMap) ||
+        (textures[i].autoScale != m.textures[i].autoScale)) {
       return false;
     }
   }
@@ -483,8 +465,7 @@ bool BzMaterial::operator==(const BzMaterial& m) const
 }
 
 
-void* BzMaterial::pack(void* buf) const
-{
+void* BzMaterial::pack(void* buf) const {
   int i;
 
   buf = nboPackStdString(buf, name);
@@ -545,8 +526,7 @@ void* BzMaterial::pack(void* buf) const
 }
 
 
-void* BzMaterial::unpack(void* buf)
-{
+void* BzMaterial::unpack(void* buf) {
   int i;
   int32_t inTmp;
 
@@ -621,8 +601,7 @@ void* BzMaterial::unpack(void* buf)
 }
 
 
-int BzMaterial::packSize() const
-{
+int BzMaterial::packSize() const {
   int fullSize = 0;
 
   fullSize += nboStdStringPackSize(name); // name
@@ -664,19 +643,17 @@ int BzMaterial::packSize() const
 }
 
 
-static void printColor(std::ostream& out, const char *name,
-		       const fvec4& color, const fvec4& reference)
-{
+static void printColor(std::ostream& out, const char* name,
+                       const fvec4& color, const fvec4& reference) {
   if (color != reference) {
     out << name << color.r << " " << color.g << " "
-		<< color.b << " " << color.a << std::endl;
+        << color.b << " " << color.a << std::endl;
   }
   return;
 }
 
 
-void BzMaterial::print(std::ostream& out, const std::string& indent) const
-{
+void BzMaterial::print(std::ostream& out, const std::string& indent) const {
   int i;
 
   out << indent << "material # " << id << std::endl;
@@ -699,7 +676,8 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
     if ((dyncol != NULL) && (dyncol->getName().size() > 0)) {
       out << dyncol->getName();
-    } else {
+    }
+    else {
       out << dynamicColor;
     }
     out << std::endl;
@@ -716,7 +694,7 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
   }
   if ((poFactor != 0.0f) || (poUnits != 0.0f)) {
     out << indent << "  depthoffset " << poFactor << " "
-                                      << poUnits << std::endl;
+        << poUnits << std::endl;
   }
   if (!blendFactors.empty()) {
     out << indent << "  blending " << blendFactors << std::endl;
@@ -765,9 +743,10 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
       out << indent << "    texmat ";
       const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texinfo->matrix);
       if ((texmat != NULL) && (texmat->getName().size() > 0)) {
-	out << texmat->getName();
-      } else {
-	out << texinfo->matrix;
+        out << texmat->getName();
+      }
+      else {
+        out << texinfo->matrix;
       }
       out << std::endl;
     }
@@ -797,17 +776,18 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 }
 
 
-void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) const
-{
+void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) const {
   out << "newmtl ";
   if (name.size() > 0) {
     out << name << std::endl;
-  } else {
+  }
+  else {
     out << MATERIALMGR.getIndex(this) << std::endl;
   }
   if (noLighting) {
     out << "illum 0" << std::endl;
-  } else {
+  }
+  else {
     out << "illum 2" << std::endl;
   }
   out << "d "   << diffuse.a << std::endl;
@@ -844,8 +824,7 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) cons
 // Parameter setting
 //
 
-bool BzMaterial::setName(const std::string& matname)
-{
+bool BzMaterial::setName(const std::string& matname) {
   if (matname.size() <= 0) {
     name = "";
     return false;
@@ -860,8 +839,7 @@ bool BzMaterial::setName(const std::string& matname)
   return true;
 }
 
-bool BzMaterial::addAlias(const std::string& alias)
-{
+bool BzMaterial::addAlias(const std::string& alias) {
   if (alias.size() <= 0) {
     name = "";
     return false;
@@ -871,146 +849,124 @@ bool BzMaterial::addAlias(const std::string& alias)
     return false;
   }
   else {
-    for ( unsigned int i = 0; i < (unsigned int)aliases.size(); i++)
-    {
-      if ( aliases[i] == alias )
-	return true;
+    for (unsigned int i = 0; i < (unsigned int)aliases.size(); i++) {
+      if (aliases[i] == alias) {
+        return true;
+      }
     }
     aliases.push_back(alias); // only add it if it's new
   }
   return true;
 }
 
-void BzMaterial::setOrder(int value)
-{
+void BzMaterial::setOrder(int value) {
   order = value;
   return;
 }
 
-void BzMaterial::setDynamicColor(int dyncol)
-{
+void BzMaterial::setDynamicColor(int dyncol) {
   dynamicColor = dyncol;
   return;
 }
 
-void BzMaterial::setAmbient(const fvec4& color)
-{
+void BzMaterial::setAmbient(const fvec4& color) {
   ambient = color;
   return;
 }
 
-void BzMaterial::setDiffuse(const fvec4& color)
-{
+void BzMaterial::setDiffuse(const fvec4& color) {
   diffuse = color;
   return;
 }
 
-void BzMaterial::setSpecular(const fvec4& color)
-{
+void BzMaterial::setSpecular(const fvec4& color) {
   specular = color;
   return;
 }
 
-void BzMaterial::setEmission(const fvec4& color)
-{
+void BzMaterial::setEmission(const fvec4& color) {
   emission = color;
   return;
 }
 
-void BzMaterial::setShininess(float shine)
-{
+void BzMaterial::setShininess(float shine) {
   shininess = shine;
   return;
 }
 
-void BzMaterial::setAlphaThreshold(float thresh)
-{
+void BzMaterial::setAlphaThreshold(float thresh) {
   alphaThreshold = thresh;
   return;
 }
 
-void BzMaterial::setPolygonOffset(float factor, float units)
-{
+void BzMaterial::setPolygonOffset(float factor, float units) {
   poFactor = factor;
   poUnits  = units;
   return;
 }
 
-void BzMaterial::setRadarSpecial(bool value)
-{
+void BzMaterial::setRadarSpecial(bool value) {
   radarSpecial = value;
   return;
 }
 
-void BzMaterial::setOccluder(bool value)
-{
+void BzMaterial::setOccluder(bool value) {
   occluder = value;
   return;
 }
 
-void BzMaterial::setNoRadarOutline(bool value)
-{
+void BzMaterial::setNoRadarOutline(bool value) {
   noRadarOutline = value;
   return;
 }
 
-void BzMaterial::setGroupAlpha(bool value)
-{
+void BzMaterial::setGroupAlpha(bool value) {
   groupAlpha = value;
   return;
 }
 
-void BzMaterial::setNoRadar(bool value)
-{
+void BzMaterial::setNoRadar(bool value) {
   noRadar = value;
   return;
 }
 
-void BzMaterial::setNoShadowCast(bool value)
-{
+void BzMaterial::setNoShadowCast(bool value) {
   noShadowCast = value;
   return;
 }
 
-void BzMaterial::setNoShadowRecv(bool value)
-{
+void BzMaterial::setNoShadowRecv(bool value) {
   noShadowRecv = value;
   return;
 }
 
-void BzMaterial::setTextureShadow(bool value)
-{
+void BzMaterial::setTextureShadow(bool value) {
   texShadow = value;
   return;
 }
 
-void BzMaterial::setNoCulling(bool value)
-{
+void BzMaterial::setNoCulling(bool value) {
   noCulling = value;
   return;
 }
 
-void BzMaterial::setNoSorting(bool value)
-{
+void BzMaterial::setNoSorting(bool value) {
   noSorting = value;
   return;
 }
 
-void BzMaterial::setFlatShade(bool value)
-{
+void BzMaterial::setFlatShade(bool value) {
   flatShade = value;
   return;
 }
 
-void BzMaterial::setNoLighting(bool value)
-{
+void BzMaterial::setNoLighting(bool value) {
   noLighting = value;
   return;
 }
 
 
-void BzMaterial::addTexture(const std::string& texname)
-{
+void BzMaterial::addTexture(const std::string& texname) {
   textureCount++;
   TextureInfo* tmpinfo = new TextureInfo[textureCount];
   for (int i = 0; i < (textureCount - 1); i++) {
@@ -1033,67 +989,60 @@ void BzMaterial::addTexture(const std::string& texname)
   return;
 }
 
-void BzMaterial::setTexture(const std::string& texname)
-{
+void BzMaterial::setTexture(const std::string& texname) {
   if (textureCount <= 0) {
     addTexture(texname);
-  } else {
+  }
+  else {
     textures[textureCount - 1].name = convertTexture(texname);
   }
 
   return;
 }
 
-void BzMaterial::setTextureLocal(int texid, const std::string& localname)
-{
+void BzMaterial::setTextureLocal(int texid, const std::string& localname) {
   if ((texid >= 0) && (texid < textureCount)) {
     textures[texid].localname = localname;
   }
   return;
 }
 
-void BzMaterial::setTextureMatrix(int matrix)
-{
+void BzMaterial::setTextureMatrix(int matrix) {
   if (textureCount > 0) {
     textures[textureCount - 1].matrix = matrix;
   }
   return;
 }
 
-void BzMaterial::setCombineMode(int mode)
-{
+void BzMaterial::setCombineMode(int mode) {
   if (textureCount > 0) {
     textures[textureCount - 1].combineMode = mode;
   }
   return;
 }
 
-void BzMaterial::setUseTextureAlpha(bool value)
-{
+void BzMaterial::setUseTextureAlpha(bool value) {
   if (textureCount > 0) {
     textures[textureCount - 1].useAlpha = value;
   }
   return;
 }
 
-void BzMaterial::setUseColorOnTexture(bool value)
-{
+void BzMaterial::setUseColorOnTexture(bool value) {
   if (textureCount > 0) {
     textures[textureCount - 1].useColor = value;
   }
   return;
 }
 
-void BzMaterial::setUseSphereMap(bool value)
-{
+void BzMaterial::setUseSphereMap(bool value) {
   if (textureCount > 0) {
     textures[textureCount - 1].useSphereMap = value;
   }
   return;
 }
 
-void BzMaterial::setTextureAutoScale(const fvec2& scale)
-{
+void BzMaterial::setTextureAutoScale(const fvec2& scale) {
   if (textureCount > 0) {
     textures[textureCount - 1].autoScale = scale;
   }
@@ -1101,8 +1050,7 @@ void BzMaterial::setTextureAutoScale(const fvec2& scale)
 }
 
 
-void BzMaterial::clearTextures()
-{
+void BzMaterial::clearTextures() {
   delete[] textures;
   textures = NULL;
   textureCount = 0;
@@ -1110,19 +1058,18 @@ void BzMaterial::clearTextures()
 }
 
 
-void BzMaterial::setShader(const std::string& shadername)
-{
+void BzMaterial::setShader(const std::string& shadername) {
   if (shaderCount <= 0) {
     addShader(shadername);
-  } else {
+  }
+  else {
     shaders[shaderCount - 1].name = shadername;
   }
 
   return;
 }
 
-void BzMaterial::addShader(const std::string& shaderName)
-{
+void BzMaterial::addShader(const std::string& shaderName) {
   shaderCount++;
   ShaderInfo* tmpinfo = new ShaderInfo[shaderCount];
   for (int i = 0; i < (shaderCount - 1); i++) {
@@ -1135,8 +1082,7 @@ void BzMaterial::addShader(const std::string& shaderName)
 }
 
 
-void BzMaterial::clearShaders()
-{
+void BzMaterial::clearShaders() {
   delete[] shaders;
   shaders = NULL;
   shaderCount = 0;
@@ -1149,220 +1095,194 @@ void BzMaterial::clearShaders()
 // Parameter retrieval
 //
 
-const std::string& BzMaterial::getName() const
-{
+const std::string& BzMaterial::getName() const {
   return name;
 }
 
-const std::vector<std::string>& BzMaterial::getAliases() const
-{
+const std::vector<std::string>& BzMaterial::getAliases() const {
   return aliases;
 }
 
-int BzMaterial::getOrder() const
-{
+int BzMaterial::getOrder() const {
   return order;
 }
 
-int BzMaterial::getDynamicColor() const
-{
+int BzMaterial::getDynamicColor() const {
   return dynamicColor;
 }
 
-const fvec4& BzMaterial::getAmbient() const
-{
+const fvec4& BzMaterial::getAmbient() const {
   return ambient;
 }
 
-const fvec4& BzMaterial::getDiffuse() const
-{
+const fvec4& BzMaterial::getDiffuse() const {
   return diffuse;
 }
 
-const fvec4& BzMaterial::getSpecular() const
-{
+const fvec4& BzMaterial::getSpecular() const {
   return specular;
 }
 
-const fvec4& BzMaterial::getEmission() const
-{
+const fvec4& BzMaterial::getEmission() const {
   return emission;
 }
 
-float BzMaterial::getShininess() const
-{
+float BzMaterial::getShininess() const {
   return shininess;
 }
 
-float BzMaterial::getAlphaThreshold() const
-{
+float BzMaterial::getAlphaThreshold() const {
   return alphaThreshold;
 }
 
-bool BzMaterial::getPolygonOffset(float& factor, float& units) const
-{
+bool BzMaterial::getPolygonOffset(float& factor, float& units) const {
   factor = poFactor;
   units  = poUnits;
   return (poFactor != 0.0f) || (poUnits != 0.0f);
 }
 
-bool BzMaterial::getRadarSpecial() const
-{
+bool BzMaterial::getRadarSpecial() const {
   return radarSpecial;
 }
 
-bool BzMaterial::getOccluder() const
-{
+bool BzMaterial::getOccluder() const {
   return occluder;
 }
 
-bool BzMaterial::getNoRadarOutline() const
-{
+bool BzMaterial::getNoRadarOutline() const {
   return noRadarOutline;
 }
 
-bool BzMaterial::getGroupAlpha() const
-{
+bool BzMaterial::getGroupAlpha() const {
   return groupAlpha;
 }
 
-bool BzMaterial::getNoRadar() const
-{
+bool BzMaterial::getNoRadar() const {
   return noRadar;
 }
 
-bool BzMaterial::getNoShadowCast() const
-{
+bool BzMaterial::getNoShadowCast() const {
   return noShadowCast;
 }
 
-bool BzMaterial::getNoShadowRecv() const
-{
+bool BzMaterial::getNoShadowRecv() const {
   return noShadowRecv;
 }
 
-bool BzMaterial::getTextureShadow() const
-{
+bool BzMaterial::getTextureShadow() const {
   return texShadow;
 }
 
-bool BzMaterial::getNoCulling() const
-{
+bool BzMaterial::getNoCulling() const {
   return noCulling;
 }
 
-bool BzMaterial::getNoSorting() const
-{
+bool BzMaterial::getNoSorting() const {
   return noSorting;
 }
 
-bool BzMaterial::getFlatShade() const
-{
+bool BzMaterial::getFlatShade() const {
   return flatShade;
 }
 
-bool BzMaterial::getNoLighting() const
-{
+bool BzMaterial::getNoLighting() const {
   return noLighting;
 }
 
 
-int BzMaterial::getTextureCount() const
-{
+int BzMaterial::getTextureCount() const {
   return textureCount;
 }
 
-const std::string& BzMaterial::getTexture(int texid) const
-{
+const std::string& BzMaterial::getTexture(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].name;
-  } else {
+  }
+  else {
     return nullString;
   }
 }
 
-const std::string& BzMaterial::getTextureLocal(int texid) const
-{
+const std::string& BzMaterial::getTextureLocal(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].localname;
-  } else {
+  }
+  else {
     return nullString;
   }
 }
 
-int BzMaterial::getTextureMatrix(int texid) const
-{
+int BzMaterial::getTextureMatrix(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].matrix;
-  } else {
+  }
+  else {
     return -1;
   }
 }
 
-int BzMaterial::getCombineMode(int texid) const
-{
+int BzMaterial::getCombineMode(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].combineMode;
-  } else {
+  }
+  else {
     return -1;
   }
 }
 
-bool BzMaterial::getUseTextureAlpha(int texid) const
-{
+bool BzMaterial::getUseTextureAlpha(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].useAlpha;
-  } else {
+  }
+  else {
     return false;
   }
 }
 
-bool BzMaterial::getUseColorOnTexture(int texid) const
-{
+bool BzMaterial::getUseColorOnTexture(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].useColor;
-  } else {
+  }
+  else {
     return false;
   }
 }
 
-bool BzMaterial::getUseSphereMap(int texid) const
-{
+bool BzMaterial::getUseSphereMap(int texid) const {
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].useSphereMap;
-  } else {
+  }
+  else {
     return false;
   }
 }
 
-const fvec2& BzMaterial::getTextureAutoScale(int texid) const
-{
+const fvec2& BzMaterial::getTextureAutoScale(int texid) const {
   static const fvec2 defScale(0.0f, 0.0f);
   if ((texid >= 0) && (texid < textureCount)) {
     return textures[texid].autoScale;
-  } else {
+  }
+  else {
     return defScale;
   }
 }
 
 
-int BzMaterial::getShaderCount() const
-{
+int BzMaterial::getShaderCount() const {
   return shaderCount;
 }
 
-const std::string& BzMaterial::getShader(int shdid) const
-{
+const std::string& BzMaterial::getShader(int shdid) const {
   if ((shdid >= 0) && (shdid < shaderCount)) {
     return shaders[shdid].name;
-  } else {
+  }
+  else {
     return nullString;
   }
 }
 
 
-bool BzMaterial::isInvisible() const
-{
+bool BzMaterial::isInvisible() const {
   const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
   if ((diffuse.a == 0.0f) && (dyncol == NULL) &&
       !((textureCount > 0) && !textures[0].useColor)) {
@@ -1374,8 +1294,7 @@ bool BzMaterial::isInvisible() const
 
 //============================================================================//
 
-static bool testBlendFactor(const std::string& s)
-{
+static bool testBlendFactor(const std::string& s) {
   static std::set<std::string> factors;
   if (factors.empty()) {
     factors.insert("one");
@@ -1398,8 +1317,7 @@ static bool testBlendFactor(const std::string& s)
 }
 
 
-bool BzMaterial::testBlendFactors(const std::string& s)
-{
+bool BzMaterial::testBlendFactors(const std::string& s) {
   if (s == "disable")          { return true; }
   else if (s == "add")         { return true; }
   else if (s == "addalpha")    { return true; }
@@ -1430,6 +1348,6 @@ bool BzMaterial::testBlendFactors(const std::string& s)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -18,10 +18,10 @@
 
 
 struct CommandsItem {
-public:
-  const char* name;
-  CommandManager::CommandFunction func;
-  const char* help;
+  public:
+    const char* name;
+    CommandManager::CommandFunction func;
+    const char* help;
 };
 extern const struct CommandsItem commands[];
 
@@ -29,11 +29,11 @@ extern const struct CommandsItem commands[];
 /** standard commands
  */
 class CommandsStandard {
-public:
-  static void		add();
-  static void		remove();
-  static void		quit();
-  static bool		isQuit();
+  public:
+    static void   add();
+    static void   remove();
+    static void   quit();
+    static bool   isQuit();
 };
 
 
@@ -43,6 +43,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,7 +11,7 @@
  */
 
 /* OpenGLMaterial:
- *	Encapsulates an OpenGL material.
+ *  Encapsulates an OpenGL material.
  *
  * All materials are for front and back faces.
  * OpenGLMaterial reference counts so copying or assigning a
@@ -27,8 +27,8 @@
  * <, <=, >, >= define an arbitrary ordering of materials.
  */
 
-#ifndef	BZF_OPENGL_MATERIAL_H
-#define	BZF_OPENGL_MATERIAL_H
+#ifndef BZF_OPENGL_MATERIAL_H
+#define BZF_OPENGL_MATERIAL_H
 
 #include "common.h"
 #include "vectors.h"
@@ -41,72 +41,68 @@ class OpenGLMaterial {
                    float shininess = 0.0f);
     OpenGLMaterial(const OpenGLMaterial&);
     ~OpenGLMaterial();
-    OpenGLMaterial&	operator=(const OpenGLMaterial&);
+    OpenGLMaterial& operator=(const OpenGLMaterial&);
 
-    bool		operator==(const OpenGLMaterial&) const;
-    bool		operator!=(const OpenGLMaterial&) const;
-    bool		operator<(const OpenGLMaterial&) const;
+    bool    operator==(const OpenGLMaterial&) const;
+    bool    operator!=(const OpenGLMaterial&) const;
+    bool    operator<(const OpenGLMaterial&) const;
 
-    const fvec4&	getSpecularColor() const;
-    const fvec4&	getEmissiveColor() const;
-    float		getShininess() const;
+    const fvec4&  getSpecularColor() const;
+    const fvec4&  getEmissiveColor() const;
+    float   getShininess() const;
 
-    void		setQuality(bool highQuality);
+    void    setQuality(bool highQuality);
 
-    bool		isValid() const;
-    void		execute() const;
+    bool    isValid() const;
+    void    execute() const;
 
   private:
     class Rep {
       public:
-			~Rep();
-	void		ref();
-	void		unref();
-	void		execute();
-	static Rep*	getRep(const fvec4& specular,
-	                       const fvec4& emissive,
-	                       float shininess);
+        ~Rep();
+        void    ref();
+        void    unref();
+        void    execute();
+        static Rep* getRep(const fvec4& specular,
+                           const fvec4& emissive,
+                           float shininess);
       private:
         Rep(const fvec4& specular,
             const fvec4& emissive,
             float shininess);
-	static void	freeContext(void*);
-	static void	initContext(void*);
+        static void freeContext(void*);
+        static void initContext(void*);
       public:
-	int		refCount;
-	Rep*		prev;
-	Rep*		next;
-	unsigned int	list;
-	fvec4		specular;
-	fvec4		emissive;
-	float		shininess;
-	static Rep*	head;
-        bool		highQuality;
+        int   refCount;
+        Rep*    prev;
+        Rep*    next;
+        unsigned int  list;
+        fvec4   specular;
+        fvec4   emissive;
+        float   shininess;
+        static Rep* head;
+        bool    highQuality;
     };
-    Rep*		rep;
+    Rep*    rep;
 };
 
 //
 // OpenGLMaterial
 //
 
-inline const fvec4&	OpenGLMaterial::getSpecularColor() const
-{
+inline const fvec4& OpenGLMaterial::getSpecularColor() const {
   return rep->specular;
 }
 
-inline const fvec4&	OpenGLMaterial::getEmissiveColor() const
-{
+inline const fvec4& OpenGLMaterial::getEmissiveColor() const {
   return rep->emissive;
 }
 
-inline float		OpenGLMaterial::getShininess() const
-{
+inline float    OpenGLMaterial::getShininess() const {
   return rep->shininess;
 }
 
-inline void		OpenGLMaterial::setQuality(bool highQuality)
-{
+inline void   OpenGLMaterial::setQuality(bool highQuality) {
   rep->highQuality = highQuality;
 }
 
@@ -117,6 +113,6 @@ inline void		OpenGLMaterial::setQuality(bool highQuality)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

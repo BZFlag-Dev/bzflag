@@ -35,8 +35,7 @@
 #include "guiplaying.h"
 
 
-HubMenu::HubMenu()
-{
+HubMenu::HubMenu() {
   std::vector<std::string>* options;
 
   // cache font face id
@@ -115,18 +114,16 @@ HubMenu::HubMenu()
 }
 
 
-HubMenu::~HubMenu()
-{
+HubMenu::~HubMenu() {
 }
 
 
-void HubMenu::resize(int _width, int _height)
-{
+void HubMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
   int i;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
   const int faceID = fontFace->getFMFace();
 
@@ -179,8 +176,7 @@ void HubMenu::resize(int _width, int _height)
 }
 
 
-void HubMenu::execute()
-{
+void HubMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == connectLabel) {
     if (!BZDB.get("hubServer").empty()) {
@@ -217,8 +213,7 @@ void HubMenu::execute()
 }
 
 
-void HubMenu::callback(HUDuiControl* w, void* data)
-{
+void HubMenu::callback(HUDuiControl* w, void* data) {
   switch (((const char*)data)[0]) {
     case 'a': {
       HUDuiList* list = (HUDuiList*)w;
@@ -248,6 +243,6 @@ void HubMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

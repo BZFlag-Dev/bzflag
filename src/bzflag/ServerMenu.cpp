@@ -28,47 +28,51 @@
 #include "playing.h"
 
 
-bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
-  ServerList &serverList = ServerList::instance();
+bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key) {
+  ServerList& serverList = ServerList::instance();
 
   HUDuiControl* activeTabControl = menu->tabbedControl->getActiveTab();
   HUDuiServerList* activeServerList = NULL;
 
   // The currently active tab is the custom tab creation control. We don't handle
   // any key presses for that here, so pass it on, and return the result we get.
-  if (activeTabControl == menu->customTabControl) // Is this the right way to check?
+  if (activeTabControl == menu->customTabControl) { // Is this the right way to check?
     return MenuDefaultKey::keyPress(key);
+  }
   // The currently active tab is NOT the custom tab, so let's try casting it as a
   // HUDuiServerList control. For the server browser we only expect controls of type
   // HUDuiServerListCustomTab, or HUDuiServerList. However, since we are using a
   // HUDuiTabbedControl, we could have any subclass of HUDuiControl, so we have to
   // be careful to check what class we are dealing with when executing key presses.
-  else
+  else {
     activeServerList = dynamic_cast<HUDuiServerList*>(activeTabControl);
+  }
 
   // The active tab is not the custom tab control, and is not a HUDuiServerList
   // Right now we're handling input that affects either custom tab creation, or
   // server list browsing. Since this is neither, return false, we don't handle it.
-  if ((activeServerList == 0)||(activeServerList == NULL))
+  if ((activeServerList == 0) || (activeServerList == NULL))
     // dynamic_cast returns 0 if it fails
+  {
     return false;
+  }
 
   // These key presses should only be processed when the user has a server selected.
   // As such, we should check to see if the server list, or the tabbed control have
   // focus, and if they do, ignore these key presses for now. Also check that the
   // user has a server selected.
-  if ((!activeServerList->hasFocus())&&(!menu->tabbedControl->hasFocus())&&
-     (activeServerList->getSelectedServer() != NULL)){
+  if ((!activeServerList->hasFocus()) && (!menu->tabbedControl->hasFocus()) &&
+      (activeServerList->getSelectedServer() != NULL)) {
     // The favorite key was pressed
     if (key.unicode == 'f') {
       // Check to see if we're on the favorites list, if we are, ignore keypress
       if (activeServerList == menu->favoritesList) {
-	return false;
-      } else {
-	// Mark it as a favorite server
-	serverList.markAsFavorite(activeServerList->getSelectedServer());
-	return true;
+        return false;
+      }
+      else {
+        // Mark it as a favorite server
+        serverList.markAsFavorite(activeServerList->getSelectedServer());
+        return true;
       }
     }
 
@@ -76,18 +80,21 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     if (key.unicode == 'h') {
       // Design decision: Don't let users remove any servers from the normal server
       // list. Let's keep this as a pure representation of all the available servers
-      if (activeServerList == menu->normalList)
+      if (activeServerList == menu->normalList) {
         return false;
+      }
 
       // If we're on the favorites list, we need to unmark the server
       // as a favorite server in order to remove it from the list
-      if (activeServerList == menu->favoritesList)
+      if (activeServerList == menu->favoritesList) {
         serverList.unmarkAsFavorite(activeServerList->getSelectedServer());
+      }
 
       // If we're on the recents list, we need to unmark the server
       // as a recent server in order to remove it from the list
-      if (activeServerList == menu->recentList)
+      if (activeServerList == menu->recentList) {
         serverList.unmarkAsRecent(activeServerList->getSelectedServer());
+      }
 
       // Remove the selected server from the active server list
       activeServerList->removeItem(activeServerList->getSelectedServer());
@@ -99,14 +106,15 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.unicode == 'c') {
     // Design decision: Don't let users remove any servers from the normal server
     // list. Let's keep this as a pure representation of all the available servers
-    if (activeServerList == menu->normalList)
+    if (activeServerList == menu->normalList) {
       return false;
+    }
 
     // If we're on the favorites list, cycle through all favorite servers and unmark
     // them as favorites. This may be a bad idea, it's fairly easy to accidentally
     // clear your favorites list using this functionality.
     if (activeServerList == menu->favoritesList) {
-      for (size_t i=0; i<activeServerList->getSize(); i++) {
+      for (size_t i = 0; i < activeServerList->getSize(); i++) {
         serverList.unmarkAsFavorite(activeServerList->get(i)->getServer());
       }
     }
@@ -114,7 +122,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     // If we're on the recent server list, cycle through all
     // recent servers and unmark them as a recent server.
     if (activeServerList == menu->recentList) {
-      for (size_t i=0; i<activeServerList->getSize(); i++) {
+      for (size_t i = 0; i < activeServerList->getSize(); i++) {
         serverList.unmarkAsRecent(activeServerList->get(i)->getServer());
       }
     }
@@ -129,9 +137,10 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.unicode == 'v') {
     // Do nothing if the user is on any of the standard tabs
     if ((activeServerList == menu->favoritesList) ||
-	(activeServerList == menu->normalList) ||
-	(activeServerList == menu->recentList))
+        (activeServerList == menu->normalList) ||
+        (activeServerList == menu->recentList)) {
       return false;
+    }
 
     // Remove the current tab from the tabbed control
     std::string tabName = menu->tabbedControl->getActiveTabName();
@@ -151,12 +160,11 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 }
 
 
-bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
+bool ServerMenuDefaultKey::keyRelease(const BzfKeyEvent& key) {
   switch (key.unicode) {
-  case 27: // escape
-  case 13: // return
-    return true;
+    case 27: // escape
+    case 13: // return
+      return true;
   }
 
   return false;
@@ -177,8 +185,7 @@ ServerMenu::ServerMenu()
   , serverList(ServerList::instance())
   , defaultKey(this)
   , title(0)
-  , help(0)
-{
+  , help(0) {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -194,7 +201,8 @@ ServerMenu::ServerMenu()
     normalList = cachedLists[0].first;
     recentList = cachedLists[1].first;
     favoritesList = cachedLists[2].first;
-  } else {
+  }
+  else {
     normalList = new HUDuiServerList;
     favoritesList = new HUDuiServerList;
     recentList = new HUDuiServerList;
@@ -223,7 +231,7 @@ ServerMenu::ServerMenu()
   tabbedControl->addTab(recentList, "Recent");
   tabbedControl->addTab(favoritesList, "Favorites");
 
-  for (size_t i=3; i<cachedLists.size(); i++) {
+  for (size_t i = 3; i < cachedLists.size(); i++) {
     cachedLists[i].first->setFontFace(fontFace);
     tabbedControl->addTab(cachedLists[i].first, cachedLists[i].second);
   }
@@ -244,17 +252,15 @@ ServerMenu::ServerMenu()
 }
 
 
-ServerMenu::~ServerMenu()
-{
+ServerMenu::~ServerMenu() {
   serverList.removeServerCallback(newServer, normalList);
   serverList.removeFavoriteServerCallback(newServer, favoritesList);
   serverList.removeRecentServerCallback(newServer, recentList);
 }
 
 
-void ServerMenu::newServer(ServerItem* addedServer, void* data)
-{
-  HUDuiServerList* serverData( static_cast<HUDuiServerList*>(data) );
+void ServerMenu::newServer(ServerItem* addedServer, void* data) {
+  HUDuiServerList* serverData(static_cast<HUDuiServerList*>(data));
 
   // Server already has a ping
   if (addedServer->ping.pingTime != 0) {
@@ -277,15 +283,13 @@ void ServerMenu::newServer(ServerItem* addedServer, void* data)
 }
 
 
-void ServerMenu::execute()
-{
+void ServerMenu::execute() {
   if ((tabbedControl->getActiveTab() == customTabControl) &&
-      (dynamic_cast<HUDuiServerListCustomTab*>(tabbedControl->getActiveTab())->createNew->hasFocus()))
-  {
+      (dynamic_cast<HUDuiServerListCustomTab*>(tabbedControl->getActiveTab())->createNew->hasFocus())) {
     HUDuiServerList* newServerList = customTabControl->createServerList();
     listsCache.addNewList(newServerList, customTabControl->tabName->getString());
     tabbedControl->addTab(newServerList, customTabControl->tabName->getString(), tabbedControl->getTabCount() - 1);
-    for (size_t i=0; i<serverList.size(); i++) {
+    for (size_t i = 0; i < serverList.size(); i++) {
       newServerList->addItem(serverList.getServerAt(i));
     }
     //newServerList->searchServers(customTabControl->serverName->getString());
@@ -293,15 +297,16 @@ void ServerMenu::execute()
     return;
   }
 
-  if ((tabbedControl->hasFocus())||
-      (tabbedControl->getActiveTab()->hasFocus())||
-      (tabbedControl->getActiveTabName() == "Create New Tab"))
+  if ((tabbedControl->hasFocus()) ||
+      (tabbedControl->getActiveTab()->hasFocus()) ||
+      (tabbedControl->getActiveTabName() == "Create New Tab")) {
     return;
+  }
 
   // update startup info
   StartupInfo* info = getStartupInfo();
   ServerItem* selectedServer = dynamic_cast<HUDuiServerList*>(tabbedControl->getActiveTab())->getSelectedServer();
-  strncpy(info->serverName, selectedServer->name.c_str(), ServerNameLen-1);
+  strncpy(info->serverName, selectedServer->name.c_str(), ServerNameLen - 1);
   info->serverPort = ntohs((unsigned short) selectedServer->ping.serverId.port);
 
   // all done
@@ -309,12 +314,11 @@ void ServerMenu::execute()
 }
 
 
-void ServerMenu::resize(int _width, int _height)
-{
+void ServerMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // reposition title
@@ -331,46 +335,45 @@ void ServerMenu::resize(int _width, int _height)
   y = (float)_height - titleHeight;
   title->setPosition(x, y);
 
-  fs.setMin(40,10);
+  fs.setMin(40, 10);
   const float fontSize = fs.getFontSize(fontFace->getFMFace(), "alertFontSize");
 
   float edgeSpacer = fm.getStringWidth(fontFace->getFMFace(), fontSize, "X");
   float bottomSpacer = fm.getStringHeight(fontFace->getFMFace(), fontSize);
 
-  float remainingSpace = y - bottomSpacer*2;
-  float listHeight = remainingSpace*0.65f;
+  float remainingSpace = y - bottomSpacer * 2;
+  float listHeight = remainingSpace * 0.65f;
 
-  tabbedControl->setSize((_width - (2*edgeSpacer)),listHeight);
-  serverInfo->setSize((_width - (2*edgeSpacer)), (remainingSpace - 4*bottomSpacer)*0.35f);
+  tabbedControl->setSize((_width - (2 * edgeSpacer)), listHeight);
+  serverInfo->setSize((_width - (2 * edgeSpacer)), (remainingSpace - 4 * bottomSpacer) * 0.35f);
 
-  y = y - (titleHeight/2) - tabbedControl->getHeight();
+  y = y - (titleHeight / 2) - tabbedControl->getHeight();
 
   float helpLength = fm.getStringWidth(fontFace->getFMFace(), fontSize, help->getString());
 
   tabbedControl->setPosition(edgeSpacer, y);
-  serverInfo->setPosition(edgeSpacer, bottomSpacer/2 + bottomSpacer);
-  help->setPosition((_width - helpLength)/2, bottomSpacer/2);
+  serverInfo->setPosition(edgeSpacer, bottomSpacer / 2 + bottomSpacer);
+  help->setPosition((_width - helpLength) / 2, bottomSpacer / 2);
   tabbedControl->setFontSize(fontSize);
   serverInfo->setFontSize(fontSize);
   help->setFontSize(fontSize);
 }
 
 
-void ServerMenu::updateStatus()
-{
+void ServerMenu::updateStatus() {
   if (tabbedControl->hasFocus() ||
       tabbedControl->getActiveTab()->hasFocus() ||
       tabbedControl->getActiveTabName() == "Create New Tab") {
     serverInfo->setServerItem(NULL);
-  } else {
+  }
+  else {
     serverInfo->setServerItem(dynamic_cast<HUDuiServerList*>(tabbedControl->getActiveTab())->getSelectedServer());
   }
 }
 
 
-void ServerMenu::playingCB(void* _self)
-{
-  ServerList &list = ServerList::instance();
+void ServerMenu::playingCB(void* _self) {
+  ServerList& list = ServerList::instance();
   PingsMap::iterator itr = ServerMenu::activePings.begin();
 
   std::vector<std::string> itemsToBoot;
@@ -382,8 +385,9 @@ void ServerMenu::playingCB(void* _self)
       if (server != NULL) {
         server->ping.pingTime = itr->second.first->calcLag();
         server->ping.pinging = false;
-        for (size_t j=0; j<(itr->second.second.size()); j++)
+        for (size_t j = 0; j < (itr->second.second.size()); j++) {
           itr->second.second[j]->addItem(server);
+        }
         itemsToBoot.push_back(itr->first);
       }
     }
@@ -409,6 +413,6 @@ void ServerMenu::playingCB(void* _self)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

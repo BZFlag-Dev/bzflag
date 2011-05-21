@@ -12,10 +12,9 @@
 
 #include "bzfsAPI.h"
 
-class CronCommand : public bz_CustomSlashCommandHandler
-{
-public:
-  bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params);
+class CronCommand : public bz_CustomSlashCommandHandler {
+  public:
+    bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList* params);
 };
 
 int registerCronCommand();
@@ -24,6 +23,6 @@ int registerCronCommand();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -52,8 +52,7 @@ using std::string;
 //============================================================================//
 //============================================================================//
 
-void LuaClientScripts::Init()
-{
+void LuaClientScripts::Init() {
   luaCallInDB.Init();
 
   LuaOpenGL::Init();
@@ -64,8 +63,7 @@ void LuaClientScripts::Init()
 }
 
 
-void LuaClientScripts::Free()
-{
+void LuaClientScripts::Free() {
   LuaUserFreeHandler();
   LuaBzOrgFreeHandler();
   LuaWorldFreeHandler();
@@ -77,8 +75,7 @@ void LuaClientScripts::Free()
 }
 
 
-void LuaClientScripts::Update()
-{
+void LuaClientScripts::Update() {
   LuaSceneNodeMgr::ClearSceneNodes();
   LuaClientScripts::LuaUserUpdate();
   LuaClientScripts::LuaBzOrgUpdate();
@@ -90,8 +87,7 @@ void LuaClientScripts::Update()
 //============================================================================//
 //============================================================================//
 
-void LuaClientScripts::AddSceneNodes(SceneDatabase& scene)
-{
+void LuaClientScripts::AddSceneNodes(SceneDatabase& scene) {
   LuaSceneNodeMgr::AddSceneNodes(scene);
 }
 
@@ -121,8 +117,7 @@ void LuaClientScripts::SetDevMode(bool value) { LuaHandle::SetDevMode(value); }
 //============================================================================//
 //============================================================================//
 
-void LuaClientScripts::LuaUserUpdate()
-{
+void LuaClientScripts::LuaUserUpdate() {
   LuaServerPingMgr::Update(); // NOTE: doesn't really belong here
 
   if (luaUser == NULL) {
@@ -137,7 +132,8 @@ void LuaClientScripts::LuaUserUpdate()
 
     if (luaUser != NULL) {
       showMessage("LuaUser reloaded" + reason);
-    } else {
+    }
+    else {
       showMessage("LuaUser reload failed" + reason);
     }
   }
@@ -152,8 +148,7 @@ void LuaClientScripts::LuaUserUpdate()
 }
 
 
-void LuaClientScripts::LuaBzOrgUpdate()
-{
+void LuaClientScripts::LuaBzOrgUpdate() {
   if (luaBzOrg == NULL) {
     return;
   }
@@ -166,7 +161,8 @@ void LuaClientScripts::LuaBzOrgUpdate()
 
     if (LuaBzOrg::IsActive()) {
       showMessage("LuaBzOrg reloading" + reason);
-    } else {
+    }
+    else {
       showMessage("LuaBzOrg reload failed" + reason);
     }
   }
@@ -181,8 +177,7 @@ void LuaClientScripts::LuaBzOrgUpdate()
 }
 
 
-void LuaClientScripts::LuaWorldUpdate()
-{
+void LuaClientScripts::LuaWorldUpdate() {
   if (luaWorld == NULL) {
     return;
   }
@@ -195,7 +190,8 @@ void LuaClientScripts::LuaWorldUpdate()
 
     if (luaWorld != NULL) {
       showMessage("LuaWorld reloaded" + reason);
-    } else {
+    }
+    else {
       showMessage("LuaWorld reload failed" + reason);
     }
   }
@@ -210,8 +206,7 @@ void LuaClientScripts::LuaWorldUpdate()
 }
 
 
-void LuaClientScripts::LuaRulesUpdate()
-{
+void LuaClientScripts::LuaRulesUpdate() {
   if (luaRules == NULL) {
     return;
   }
@@ -224,7 +219,8 @@ void LuaClientScripts::LuaRulesUpdate()
 
     if (luaRules != NULL) {
       showMessage("LuaRules reloaded" + reason);
-    } else {
+    }
+    else {
       showMessage("LuaRules reload failed" + reason);
     }
   }
@@ -242,8 +238,7 @@ void LuaClientScripts::LuaRulesUpdate()
 //============================================================================//
 //============================================================================//
 
-bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
-{
+bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine) {
   const string prefix = "luauser";
   const char* c = cmdLine.c_str();
   if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
@@ -257,7 +252,8 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
     if (BZDB.isTrue("_forbidLuaUser")) {
       showMessage("This server forbids LuaUser scripts");
       return false;
-    } else {
+    }
+    else {
       LuaUser::LoadHandler();
     }
   }
@@ -271,13 +267,14 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
   else if (cmd == "status") {
     if (luaUser != NULL) {
       showMessage("LuaUser is enabled");
-    } else {
+    }
+    else {
       showMessage("LuaUser is disabled");
     }
   }
   else if (cmd == "") {
     addMessage(NULL,
-	       "/luauser < status | reload | disable | custom_command ... >");
+               "/luauser < status | reload | disable | custom_command ... >");
   }
   else if (luaUser != NULL) {
     return luaUser->RecvCommand(c);
@@ -290,8 +287,7 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine)
 }
 
 
-bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine)
-{
+bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine) {
   const string prefix = "luabzorg";
   const char* c = cmdLine.c_str();
   if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
@@ -305,7 +301,8 @@ bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine)
     if (BZDB.isTrue("_forbidLuaBzOrg")) {
       showMessage("This server forbids LuaBzOrg scripts");
       return false;
-    } else {
+    }
+    else {
       LuaBzOrg::LoadHandler();
     }
   }
@@ -329,7 +326,7 @@ bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine)
   }
   else if (cmd == "") {
     addMessage(NULL,
-	       "/luabzorg < status | reload | disable | custom_command ... >");
+               "/luabzorg < status | reload | disable | custom_command ... >");
   }
   else if (luaBzOrg != NULL) {
     return luaBzOrg->RecvCommand(c);
@@ -342,8 +339,7 @@ bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine)
 }
 
 
-bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
-{
+bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine) {
   const World* world = World::getWorld();
   if (world == NULL) {
     return false;
@@ -371,13 +367,14 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
   else if (cmd == "status") {
     if (luaWorld != NULL) {
       showMessage("LuaWorld is enabled");
-    } else {
+    }
+    else {
       showMessage("LuaWorld is disabled");
     }
   }
   else if (cmd == "") {
     addMessage(NULL,
-	       "/luaworld < status | reload | disable | custom_command ... >");
+               "/luaworld < status | reload | disable | custom_command ... >");
   }
   else if (luaWorld != NULL) {
     return luaWorld->RecvCommand(c);
@@ -390,8 +387,7 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine)
 }
 
 
-bool LuaClientScripts::LuaRulesCommand(const std::string& cmdLine)
-{
+bool LuaClientScripts::LuaRulesCommand(const std::string& cmdLine) {
   const World* world = World::getWorld();
   if (world == NULL) {
     return false;
@@ -427,13 +423,14 @@ bool LuaClientScripts::LuaRulesCommand(const std::string& cmdLine)
   else if (cmd == "status") {
     if (luaRules != NULL) {
       showMessage("LuaRules is enabled");
-    } else {
+    }
+    else {
       showMessage("LuaRules is disabled");
     }
   }
   else if (cmd == "") {
     addMessage(NULL,
-	       "/luarules < status | reload | disable | custom_command ... >");
+               "/luarules < status | reload | disable | custom_command ... >");
   }
   else if (luaRules != NULL) {
     if (!GetDevMode()) {
@@ -453,8 +450,7 @@ bool LuaClientScripts::LuaRulesCommand(const std::string& cmdLine)
 //============================================================================//
 //============================================================================//
 
-void LuaClientScripts::LuaUserUpdateForbidden()
-{
+void LuaClientScripts::LuaUserUpdateForbidden() {
   if (luaUser == NULL) {
     return;
   }
@@ -466,8 +462,7 @@ void LuaClientScripts::LuaUserUpdateForbidden()
 }
 
 
-void LuaClientScripts::LuaBzOrgUpdateForbidden()
-{
+void LuaClientScripts::LuaBzOrgUpdateForbidden() {
   if (!LuaBzOrg::IsActive()) {
     return;
   }
@@ -487,6 +482,6 @@ void LuaClientScripts::LuaBzOrgUpdateForbidden()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

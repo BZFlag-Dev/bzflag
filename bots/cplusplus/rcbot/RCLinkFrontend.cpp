@@ -28,18 +28,17 @@
 #include "RCMessageFactory.h"
 
 
-RCLink::State RCLinkFrontend::getDisconnectedState()
-{
+RCLink::State RCLinkFrontend::getDisconnectedState() {
   return RCLink::Disconnected;
 }
 
-bool RCLinkFrontend::sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot)
-{
-  if (!sendm(request))
+bool RCLinkFrontend::sendAndProcess(const RCRequest& request, const BZAdvancedRobot* bot) {
+  if (!sendm(request)) {
     return false;
+  }
   waitForReply(request.getType());
 
-  RCReply *reply = popReply();
+  RCReply* reply = popReply();
   while (reply != NULL) {
     reply->updateBot(bot);
     reply = popReply();
@@ -48,30 +47,32 @@ bool RCLinkFrontend::sendAndProcess(const RCRequest &request, const BZAdvancedRo
   return true;
 }
 
-bool RCLinkFrontend::hasReply(const std::string command) const
-{
-  RCReply *reply = replies;
+bool RCLinkFrontend::hasReply(const std::string command) const {
+  RCReply* reply = replies;
   while (reply != NULL) {
-    if (reply->getType() == "CommandDone" && ((CommandDoneReply *)reply)->command == command)
+    if (reply->getType() == "CommandDone" && ((CommandDoneReply*)reply)->command == command) {
       return true;
+    }
     reply = reply->getNext();
   }
 
   return false;
 }
 
-bool RCLinkFrontend::waitForReply(const std::string command)
-{
-  if (status != Connected)
+bool RCLinkFrontend::waitForReply(const std::string command) {
+  if (status != Connected) {
     return false;
+  }
 
-  if (hasReply(command))
+  if (hasReply(command)) {
     return true;
+  }
 
   while (waitForData()) {
     update();
-    if (hasReply(command))
+    if (hasReply(command)) {
       return true;
+    }
   }
 
   // We only get here if waitForData() returns false -> an error occured.
@@ -82,10 +83,10 @@ bool RCLinkFrontend::waitForReply(const std::string command)
  * Check for activity.  If possible, fill up the recvbuf with incoming data
  * and build up RCReply objects as appropriate.
  */
-bool RCLinkFrontend::update()
-{
-  if (status != Connected && status != Connecting)
+bool RCLinkFrontend::update() {
+  if (status != Connected && status != Connecting) {
     return false;
+  }
 
   updateWrite();
   int amount = updateRead();
@@ -97,14 +98,16 @@ bool RCLinkFrontend::update()
 
   if (status == Connected) {
     updateParse();
-  } else if (status == Connecting) {
+  }
+  else if (status == Connecting) {
     int ncommands = updateParse(1);
     if (ncommands) {
-      RCReply *rep = popReply();
+      RCReply* rep = popReply();
       if (rep && rep->getType() == "IdentifyBackend") {
         sendm(IdentifyFrontend(getRobotsProtocolVersion()));
         status = Connected;
-      } else {
+      }
+      else {
         FRONTENDLOGGER << "RCLink: Expected an 'IdentifyBackend'." << std::endl;
         close(connfd);
         status = Disconnected;
@@ -120,20 +123,20 @@ bool RCLinkFrontend::update()
  * Return true if an RCReply was successfully created.  If it failed,
  * return false.
  */
-bool RCLinkFrontend::parseCommand(char *cmdline)
-{
-  RCReply *rep;
+bool RCLinkFrontend::parseCommand(char* cmdline) {
+  RCReply* rep;
   int argc;
-  char *argv[RC_LINK_MAXARGS];
-  char *s, *tkn;
+  char* argv[RC_LINK_MAXARGS];
+  char* s, *tkn;
 
   s = cmdline;
   for (argc = 0; argc < RC_LINK_MAXARGS; argc++) {
     tkn = strtok(s, " \r\t");
     s = NULL;
     argv[argc] = tkn;
-    if (tkn == NULL || *tkn == '\0')
+    if (tkn == NULL || *tkn == '\0') {
       break;
+    }
   }
 
   rep = RCREPLY.Message(argv[0]);
@@ -142,44 +145,46 @@ bool RCLinkFrontend::parseCommand(char *cmdline)
     close(connfd);
     status = Disconnected;
     return false;
-  } else {
+  }
+  else {
     switch (rep->parse(argv + 1, argc - 1)) {
       case ParseOk:
-	if (replies == NULL)
-	  replies = rep;
-	else
-	  replies->append(rep);
-	return true;
+        if (replies == NULL) {
+          replies = rep;
+        }
+        else {
+          replies->append(rep);
+        }
+        return true;
       case InvalidArgumentCount:
-	FRONTENDLOGGER << "RCLinkFrontend: Invalid number of arguments (" << argc - 1
-		       << ") for reply: '" << argv[0] << "'" << std::endl;
-	close(connfd);
-	status = Disconnected;
-	return false;
+        FRONTENDLOGGER << "RCLinkFrontend: Invalid number of arguments (" << argc - 1
+                       << ") for reply: '" << argv[0] << "'" << std::endl;
+        close(connfd);
+        status = Disconnected;
+        return false;
       case InvalidArguments:
-	FRONTENDLOGGER << "RCLinkFrontend: Invalid arguments for reply: '" << argv[0] << "'" << std::endl;
-	close(connfd);
-	status = Disconnected;
-	return false;
+        FRONTENDLOGGER << "RCLinkFrontend: Invalid arguments for reply: '" << argv[0] << "'" << std::endl;
+        close(connfd);
+        status = Disconnected;
+        return false;
       default:
-	FRONTENDLOGGER << "RCLinkFrontend: Parse neither succeeded or failed with a known failcode. WTF?" << std::endl;
-	close(connfd);
-	status = Disconnected;
-	return false;
+        FRONTENDLOGGER << "RCLinkFrontend: Parse neither succeeded or failed with a known failcode. WTF?" << std::endl;
+        close(connfd);
+        status = Disconnected;
+        return false;
     }
   }
 }
 
-RCReply* RCLinkFrontend::popReply()
-{
-  RCReply *rep = replies;
-  if (rep != NULL)
+RCReply* RCLinkFrontend::popReply() {
+  RCReply* rep = replies;
+  if (rep != NULL) {
     replies = rep->getNext();
+  }
   return rep;
 }
 
-RCReply* RCLinkFrontend::peekReply()
-{
+RCReply* RCLinkFrontend::peekReply() {
   return replies;
 }
 
@@ -187,6 +192,6 @@ RCReply* RCLinkFrontend::peekReply()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

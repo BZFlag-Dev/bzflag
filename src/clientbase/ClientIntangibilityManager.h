@@ -22,24 +22,23 @@
 
 #define _INVALID_TANGIBILITY 255
 
-class ClientIntangibilityManager : public Singleton<ClientIntangibilityManager>
-{
-public:
-  void setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible);
+class ClientIntangibilityManager : public Singleton<ClientIntangibilityManager> {
+  public:
+    void setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible);
 
-  void resetTangibility(void);
+    void resetTangibility(void);
 
-  unsigned char getWorldObjectTangibility(const Obstacle *obs);
+    unsigned char getWorldObjectTangibility(const Obstacle* obs);
 
-protected:
-  friend class Singleton<ClientIntangibilityManager>;
+  protected:
+    friend class Singleton<ClientIntangibilityManager>;
 
-private:
-  ClientIntangibilityManager() {}
-  ~ClientIntangibilityManager() {}
+  private:
+    ClientIntangibilityManager() {}
+    ~ClientIntangibilityManager() {}
 
-  typedef std::map<uint32_t, unsigned char> TangibilityMap;
-  TangibilityMap tangibilityMap;
+    typedef std::map<uint32_t, unsigned char> TangibilityMap;
+    TangibilityMap tangibilityMap;
 };
 
 #endif  /*__CLIENTINTANGIBILITYMANAGER_H__ */
@@ -48,6 +47,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

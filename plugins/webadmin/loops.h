@@ -22,264 +22,249 @@
 #include "commonItems.h"
 #include <vector>
 
-void initLoops ( Templateiser &ts );
-void freeLoops ( void );
+void initLoops(Templateiser& ts);
+void freeLoops(void);
 
-class LoopHandler : public TemplateCallbackClass
-{
-public:
-  LoopHandler();
-  virtual ~LoopHandler(){};
-  virtual void keyCallback (std::string &data, const std::string &key);
-  virtual bool ifCallback (const std::string &key);
+class LoopHandler : public TemplateCallbackClass {
+  public:
+    LoopHandler();
+    virtual ~LoopHandler() {};
+    virtual void keyCallback(std::string& data, const std::string& key);
+    virtual bool ifCallback(const std::string& key);
 
-  virtual bool loopCallback (const std::string &key);// calls setSize and increments untill it's done
+    virtual bool loopCallback(const std::string& key); // calls setSize and increments untill it's done
 
-protected:
-  virtual bool atStart ( void );
-  virtual bool increment ( void );
-  virtual bool done ( void );
+  protected:
+    virtual bool atStart(void);
+    virtual bool increment(void);
+    virtual bool done(void);
 
-  virtual bool inLoop ( void );
+    virtual bool inLoop(void);
 
-  virtual size_t getStart ( void ){return 0;}
-  virtual size_t getNext ( size_t n ){return n+1;}
-  virtual void terminate ( void ){return;}
+    virtual size_t getStart(void) {return 0;}
+    virtual size_t getNext(size_t n) {return n + 1;}
+    virtual void terminate(void) {return;}
 
-  // versions that ensure that the item is valid
-  virtual void getKey (size_t item, std::string &data, const std::string &key){};
-  virtual bool getIF  (size_t item, const std::string &key){return false;}
+    // versions that ensure that the item is valid
+    virtual void getKey(size_t item, std::string& data, const std::string& key) {};
+    virtual bool getIF(size_t item, const std::string& key) {return false;}
 
-  virtual void setSize ( void ){return;} // called by the loop callback for each new loop
+    virtual void setSize(void) {return;}   // called by the loop callback for each new loop
 
-  size_t pos;
-  size_t size;
+    size_t pos;
+    size_t size;
 };
 
-class PlayerLoop : public LoopHandler, NewPageCallback
-{
-public:
-  PlayerLoop(Templateiser &ts);
-  ~PlayerLoop();
-  virtual void setSize ( void );
-  virtual void keyCallback (std::string &data, const std::string &key);
-  virtual bool ifCallback (const std::string &key);
+class PlayerLoop : public LoopHandler, NewPageCallback {
+  public:
+    PlayerLoop(Templateiser& ts);
+    ~PlayerLoop();
+    virtual void setSize(void);
+    virtual void keyCallback(std::string& data, const std::string& key);
+    virtual bool ifCallback(const std::string& key);
 
-  virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
+    virtual void newPage(const std::string& pagename, const HTTPRequest& request);
 
-  int getPlayerID ( void );
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
-  virtual bool getIF  (size_t item, const std::string &key);
+    int getPlayerID(void);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
+    virtual bool getIF(size_t item, const std::string& key);
 
-  std::vector<int>  idList;
+    std::vector<int>  idList;
 
-  int playerID;
+    int playerID;
 };
 
-class NavLoop : public LoopHandler
-{
-public:
-  NavLoop(Templateiser &ts);
+class NavLoop : public LoopHandler {
+  public:
+    NavLoop(Templateiser& ts);
 
-  virtual void keyCallback (std::string &data, const std::string &key);
-  virtual void setSize ( void );
+    virtual void keyCallback(std::string& data, const std::string& key);
+    virtual void setSize(void);
 
-  void computePageList ( void );
-  std::string currentTemplate;
-  std::vector<std::string> pages;
+    void computePageList(void);
+    std::string currentTemplate;
+    std::vector<std::string> pages;
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
-  virtual bool getIF  (size_t item, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
+    virtual bool getIF(size_t item, const std::string& key);
 
 };
 
-class VarsLoop : public LoopHandler
-{
-public:
-  VarsLoop(Templateiser &ts);
-  virtual void setSize ( void );
+class VarsLoop : public LoopHandler {
+  public:
+    VarsLoop(Templateiser& ts);
+    virtual void setSize(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
 
-  std::vector<std::string> keys;
-  std::vector<std::string> values;
+    std::vector<std::string> keys;
+    std::vector<std::string> values;
 };
 
-class PermsLoop : public LoopHandler
-{
-public:
-  PermsLoop(Templateiser &ts);
+class PermsLoop : public LoopHandler {
+  public:
+    PermsLoop(Templateiser& ts);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
 
-  std::vector<std::string> perms;
+    std::vector<std::string> perms;
 };
 
-class ChatLoop : public LoopHandler, bz_EventHandler, NewPageCallback
-{
-public:
-  ChatLoop(Templateiser &ts);
-  virtual ~ChatLoop();
-  virtual void setSize ( void );
+class ChatLoop : public LoopHandler, bz_EventHandler, NewPageCallback {
+  public:
+    ChatLoop(Templateiser& ts);
+    virtual ~ChatLoop();
+    virtual void setSize(void);
 
-  virtual void process(bz_EventData *eventData);
-  virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
+    virtual void process(bz_EventData* eventData);
+    virtual void newPage(const std::string& pagename, const HTTPRequest& request);
 
-  virtual bool loopCallback (const std::string &key);
-  virtual void keyCallback (std::string &data, const std::string &key);
-  virtual bool ifCallback (const std::string &key);
+    virtual bool loopCallback(const std::string& key);
+    virtual void keyCallback(std::string& data, const std::string& key);
+    virtual bool ifCallback(const std::string& key);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
-  virtual bool getIF  (size_t item, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
+    virtual bool getIF(size_t item, const std::string& key);
 
-  virtual size_t getStart ( void );
+    virtual size_t getStart(void);
 
-  typedef struct
-  {
-    std::string time;
-    std::string from;
-    std::string to;
-    std::string fromTeam;
-    std::string message;
-    bz_eTeamType  teamType;
-  }ChatMessage;
+    typedef struct {
+      std::string time;
+      std::string from;
+      std::string to;
+      std::string fromTeam;
+      std::string message;
+      bz_eTeamType  teamType;
+    } ChatMessage;
 
-  std::vector<ChatMessage> messages;
-  size_t chatLimit;
-  size_t formChatLimit;
+    std::vector<ChatMessage> messages;
+    size_t chatLimit;
+    size_t formChatLimit;
 };
 
-class LogLoop : public LoopHandler, bz_EventHandler, NewPageCallback
-{
-public:
-  LogLoop(Templateiser &ts);
-  virtual ~LogLoop();
-  virtual void setSize ( void );
+class LogLoop : public LoopHandler, bz_EventHandler, NewPageCallback {
+  public:
+    LogLoop(Templateiser& ts);
+    virtual ~LogLoop();
+    virtual void setSize(void);
 
-  virtual void process(bz_EventData *eventData);
-  virtual void newPage ( const std::string &pagename, const HTTPRequest &request );
+    virtual void process(bz_EventData* eventData);
+    virtual void newPage(const std::string& pagename, const HTTPRequest& request);
 
-  void getLogAsFile ( std::string &file );
-  void clearLog ( void );
+    void getLogAsFile(std::string& file);
+    void clearLog(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
 
-  virtual size_t getStart ( void );
+    virtual size_t getStart(void);
 
-  typedef struct
-  {
-    std::string time;
-    std::string message;
-  }LogMessage;
+    typedef struct {
+      std::string time;
+      std::string message;
+    } LogMessage;
 
-  std::vector<LogMessage> messages;
-  size_t displayLimit;
+    std::vector<LogMessage> messages;
+    size_t displayLimit;
 
-private:
-  void logChatMessage ( bz_ChatEventData_V1 *data, LogMessage &message );
-  void logJoinPartMessage ( bz_PlayerJoinPartEventData_V1 *data, LogMessage &message, bool join );
-  void logSpawnMessage ( bz_PlayerSpawnEventData_V1 *data, LogMessage &message );
-  void logDieMessage ( bz_PlayerDieEventData_V1 *data, LogMessage &message );
+  private:
+    void logChatMessage(bz_ChatEventData_V1* data, LogMessage& message);
+    void logJoinPartMessage(bz_PlayerJoinPartEventData_V1* data, LogMessage& message, bool join);
+    void logSpawnMessage(bz_PlayerSpawnEventData_V1* data, LogMessage& message);
+    void logDieMessage(bz_PlayerDieEventData_V1* data, LogMessage& message);
 
-  void logGetWorldMessage ( bz_GetWorldEventData_V1 *data, LogMessage &message );
-  void logWorldDoneMessage ( LogMessage &message );
+    void logGetWorldMessage(bz_GetWorldEventData_V1* data, LogMessage& message);
+    void logWorldDoneMessage(LogMessage& message);
 
-  void logBanMessage ( bz_BanEventData_V1 *data, LogMessage &message );
-  void logHostBanMessage ( bz_HostBanEventData_V1 *data, LogMessage &message );
-  void logIDBanMessage ( bz_IdBanEventData_V1 *data, LogMessage &message );
-  void logKickMessage ( bz_KickEventData_V1 *data, LogMessage &message );
-  void logKillMessage ( bz_KillEventData_V1 *data, LogMessage &message );
-  void logPausedMessage ( bz_PlayerPausedEventData_V1 *data, LogMessage &message );
-  void logGameStartEndMessage ( bz_GameStartEndEventData_V1 *data, LogMessage &message, bool start );
-  void logSlashMessage ( bz_SlashCommandEventData_V1 *data, LogMessage &message );
-  void logAuthMessage ( bz_PlayerAuthEventData_V1 *data, LogMessage &message );
-  void logReportMessage ( bz_ReportFiledEventData_V1 *data, LogMessage &message );
+    void logBanMessage(bz_BanEventData_V1* data, LogMessage& message);
+    void logHostBanMessage(bz_HostBanEventData_V1* data, LogMessage& message);
+    void logIDBanMessage(bz_IdBanEventData_V1* data, LogMessage& message);
+    void logKickMessage(bz_KickEventData_V1* data, LogMessage& message);
+    void logKillMessage(bz_KillEventData_V1* data, LogMessage& message);
+    void logPausedMessage(bz_PlayerPausedEventData_V1* data, LogMessage& message);
+    void logGameStartEndMessage(bz_GameStartEndEventData_V1* data, LogMessage& message, bool start);
+    void logSlashMessage(bz_SlashCommandEventData_V1* data, LogMessage& message);
+    void logAuthMessage(bz_PlayerAuthEventData_V1* data, LogMessage& message);
+    void logReportMessage(bz_ReportFiledEventData_V1* data, LogMessage& message);
 };
 
-class IPBanLoop : public LoopHandler, NewPageCallback
-{
-public:
-  IPBanLoop(Templateiser &ts);
-  ~IPBanLoop(void);
-  virtual void setSize ( void );
-  void newPage ( const std::string &pagename, const HTTPRequest &request );
+class IPBanLoop : public LoopHandler, NewPageCallback {
+  public:
+    IPBanLoop(Templateiser& ts);
+    ~IPBanLoop(void);
+    virtual void setSize(void);
+    void newPage(const std::string& pagename, const HTTPRequest& request);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
-  virtual bool getIF  (size_t item, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
+    virtual bool getIF(size_t item, const std::string& key);
 
-  virtual size_t getNext ( size_t n );
+    virtual size_t getNext(size_t n);
 
-  bool filterMasterBans;
+    bool filterMasterBans;
 };
 
-class HostBanLoop : public LoopHandler
-{
-public:
-  HostBanLoop(Templateiser &ts);
-  virtual void setSize ( void );
+class HostBanLoop : public LoopHandler {
+  public:
+    HostBanLoop(Templateiser& ts);
+    virtual void setSize(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
-  virtual bool getIF  (size_t item, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
+    virtual bool getIF(size_t item, const std::string& key);
 };
 
-class IDBanLoop : public LoopHandler
-{
-public:
-  IDBanLoop(Templateiser &ts);
-  virtual void setSize ( void );
+class IDBanLoop : public LoopHandler {
+  public:
+    IDBanLoop(Templateiser& ts);
+    virtual void setSize(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
-  virtual bool getIF  (size_t item, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
+    virtual bool getIF(size_t item, const std::string& key);
 };
 
-class PlayerGroupLoop : public LoopHandler
-{
-public:
-  PlayerGroupLoop(Templateiser &ts);
-  virtual void setSize ( void );
+class PlayerGroupLoop : public LoopHandler {
+  public:
+    PlayerGroupLoop(Templateiser& ts);
+    virtual void setSize(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
 
-  std::vector<std::string> groups;
+    std::vector<std::string> groups;
 };
 
-class FlagHistoryLoop : public LoopHandler
-{
-public:
-  FlagHistoryLoop(Templateiser &ts);
-  virtual void setSize ( void );
+class FlagHistoryLoop : public LoopHandler {
+  public:
+    FlagHistoryLoop(Templateiser& ts);
+    virtual void setSize(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
 
-  std::vector<std::string> history;
+    std::vector<std::string> history;
 };
 
-class ReportsLoop : public LoopHandler
-{
-public:
-  ReportsLoop(Templateiser &ts);
-  virtual void setSize ( void );
+class ReportsLoop : public LoopHandler {
+  public:
+    ReportsLoop(Templateiser& ts);
+    virtual void setSize(void);
 
-protected:
-  virtual void getKey (size_t item, std::string &data, const std::string &key);
+  protected:
+    virtual void getKey(size_t item, std::string& data, const std::string& key);
 };
 
 
 
 
-extern NavLoop *navLoop;
-extern LogLoop *logLoop;
+extern NavLoop* navLoop;
+extern LogLoop* logLoop;
 
 
 #endif //_PAGES_H_
@@ -288,6 +273,6 @@ extern LogLoop *logLoop;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

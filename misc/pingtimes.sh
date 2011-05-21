@@ -80,6 +80,6 @@ echo "Done."
 # tab-width: 8 ***
 # sh-basic-offset: 2 ***
 # sh-indentation: 2 ***
-# indent-tabs-mode: t ***
+# indent-tabs-mode: nil ***
 # End: ***
 # ex: shiftwidth=2 tabstop=8

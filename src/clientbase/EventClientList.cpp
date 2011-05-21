@@ -27,8 +27,7 @@
 //============================================================================//
 
 inline bool EventClientList::lessThan(const EventClient* a,
-                                      const EventClient* b)
-{
+                                      const EventClient* b) {
   if ((a == &DummyEventClient::instance) ||
       (b == &DummyEventClient::instance)) {
     return false;
@@ -50,8 +49,7 @@ inline bool EventClientList::lessThan(const EventClient* a,
 
 //============================================================================//
 
-bool EventClientList::insert(EventClient* ec)
-{
+bool EventClientList::insert(EventClient* ec) {
   // forbid duplicates
   for (iterator it = clients.begin(); it != clients.end(); ++it) {
     EventClient* ec2 = *it;
@@ -78,8 +76,7 @@ bool EventClientList::insert(EventClient* ec)
 
 //============================================================================//
 
-bool EventClientList::remove(const EventClient* ec)
-{
+bool EventClientList::remove(const EventClient* ec) {
   for (iterator it = clients.begin(); it != clients.end(); ++it) {
     EventClient* ec2 = *it;
     if (ec == ec2) {
@@ -93,8 +90,7 @@ bool EventClientList::remove(const EventClient* ec)
 
 //============================================================================//
 
-void EventClientList::purify()
-{
+void EventClientList::purify() {
   clients.remove(&DummyEventClient::instance);
 }
 

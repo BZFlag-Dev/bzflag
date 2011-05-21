@@ -11,11 +11,11 @@
  */
 
 /* BaseResources:
- *	Interface for resource classes
+ *  Interface for resource classes
  */
 
 #ifndef BZF_BASE_RESOURCES_H
-#define	BZF_BASE_RESOURCES_H
+#define BZF_BASE_RESOURCES_H
 
 #include "common.h"
 
@@ -26,37 +26,36 @@ class std::ostream;
 
 class BaseResources {
   public:
-			BaseResources();
-			BaseResources(const BaseResources&);
-			~BaseResources();
-    BaseResources&	operator=(const BaseResources&);
+    BaseResources();
+    BaseResources(const BaseResources&);
+    ~BaseResources();
+    BaseResources&  operator=(const BaseResources&);
 
-    bool		hasName(const std::string&) const;
+    bool    hasName(const std::string&) const;
     const std::vector<std::string>& getNames() const;
 
-    void		addName(const std::string&);
+    void    addName(const std::string&);
 
   protected:
-  static std::ostream&	print(std::ostream&, const std::string& name,
-					const char* format, ...); // const
-    static bool	match(const std::string& wildName,
-					const std::string& name); // const
+    static std::ostream&  print(std::ostream&, const std::string& name,
+                                const char* format, ...); // const
+    static bool match(const std::string& wildName,
+                      const std::string& name); // const
   private:
-    static int		doMatch(const char* pattern,
-					const char* string); // const
-    static int		matchStar(const char* pattern,
-					const char* string); // const
+    static int    doMatch(const char* pattern,
+                          const char* string); // const
+    static int    matchStar(const char* pattern,
+                            const char* string); // const
 
   private:
-    std::vector<std::string>	names;
+    std::vector<std::string>  names;
 };
 
 //
 // BaseResources
 //
 
-inline const std::vector<std::string>&	BaseResources::getNames() const
-{
+inline const std::vector<std::string>&  BaseResources::getNames() const {
   return names;
 }
 
@@ -66,6 +65,6 @@ inline const std::vector<std::string>&	BaseResources::getNames() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

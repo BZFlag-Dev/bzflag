@@ -12,12 +12,12 @@
 
 /*
  * HUDuiControl:
- *	User interface class and functions for the basic interactive
- *	UI control.
+ *  User interface class and functions for the basic interactive
+ *  UI control.
  */
 
-#ifndef	__HUDUICONTROL_H__
-#define	__HUDUICONTROL_H__
+#ifndef __HUDUICONTROL_H__
+#define __HUDUICONTROL_H__
 
 /* common header */
 #include "common.h"
@@ -36,17 +36,17 @@
 class HUDuiControl;
 class HUDNavigationQueue;
 
-typedef void		(*HUDuiCallback)(HUDuiControl*, void*);
+typedef void (*HUDuiCallback)(HUDuiControl*, void*);
 
 class HUDuiControl : public HUDuiElement {
-  friend class HUDui;
+    friend class HUDui;
   public:
-			HUDuiControl();
-    virtual		~HUDuiControl();
+    HUDuiControl();
+    virtual   ~HUDuiControl();
 
-    void		setCallback(HUDuiCallback, void*);
-    HUDuiCallback	getCallback() const;
-    void*		getUserData() const;
+    void    setCallback(HUDuiCallback, void*);
+    HUDuiCallback getCallback() const;
+    void*   getUserData() const;
 
     bool isNested() { return nested; }
     void isNested(bool _nested);
@@ -58,37 +58,37 @@ class HUDuiControl : public HUDuiElement {
 
     HUDNavigationQueue* getNavList() { return navList; }
 
-    bool		hasFocus() const;
-    void		showFocus(bool);
+    bool    hasFocus() const;
+    void    showFocus(bool);
 
-    virtual void		setNavQueue(HUDNavigationQueue*);
+    virtual void    setNavQueue(HUDNavigationQueue*);
 
-    void		render();
+    void    render();
 
     bool isAtNavQueueIndex(size_t index);
 
     static int  getArrow() { return arrow; }
 
   protected:
-    virtual bool	doKeyPress(const BzfKeyEvent&);
-    virtual bool	doKeyRelease(const BzfKeyEvent&);
+    virtual bool  doKeyPress(const BzfKeyEvent&);
+    virtual bool  doKeyRelease(const BzfKeyEvent&);
 
-    void		renderFocus();
+    void    renderFocus();
 
-    void		doCallback();
+    void    doCallback();
 
   private:
-    bool		showingFocus;
-    HUDNavigationQueue*	navList;
+    bool    showingFocus;
+    HUDNavigationQueue* navList;
   protected:
-    HUDuiCallback	cb;
-    void*		userData;
+    HUDuiCallback cb;
+    void*   userData;
   private:
     static OpenGLGState* gstate;
-    static int	  arrow;
-    static int		arrowFrame;
-    static BzTime	lastTime;
-    static int		totalCount;
+    static int    arrow;
+    static int    arrowFrame;
+    static BzTime lastTime;
+    static int    totalCount;
 
     bool nested;
     HUDuiControl* parent;
@@ -100,6 +100,6 @@ class HUDuiControl : public HUDuiElement {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

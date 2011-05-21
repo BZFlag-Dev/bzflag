@@ -36,8 +36,7 @@ LuaCallInDB luaCallInDB;
 //============================================================================//
 //============================================================================//
 
-const string& LuaCallInDB::GetEventName(const string& callInName) const
-{
+const string& LuaCallInDB::GetEventName(const string& callInName) const {
   static const string GLContextInitStr = "GLContextInit";
   if (callInName == "GLReload") {
     return GLContextInitStr;
@@ -46,8 +45,7 @@ const string& LuaCallInDB::GetEventName(const string& callInName) const
 }
 
 
-const string& LuaCallInDB::GetCallInName(const string& eventName) const
-{
+const string& LuaCallInDB::GetCallInName(const string& eventName) const {
   static const string GLReloadStr = "GLReload";
   if (eventName == "GLContextInit") {
     return GLReloadStr;
@@ -59,8 +57,7 @@ const string& LuaCallInDB::GetCallInName(const string& eventName) const
 //============================================================================//
 //============================================================================//
 
-bool LuaCallInDB::SetupCallIn(int code, const string& name)
-{
+bool LuaCallInDB::SetupCallIn(int code, const string& name) {
   map<int, string>::const_iterator codeIt = codeToName.find(code);
   if (codeIt != codeToName.end()) {
     printf("call-in code: %i\n", codeIt->first);
@@ -85,32 +82,29 @@ bool LuaCallInDB::SetupCallIn(int code, const string& name)
 //============================================================================//
 //============================================================================//
 
-LuaCallInDB::LuaCallInDB()
-{
+LuaCallInDB::LuaCallInDB() {
 }
 
 
-LuaCallInDB::~LuaCallInDB()
-{
+LuaCallInDB::~LuaCallInDB() {
 }
 
 
-bool LuaCallInDB::Init()
-{
+bool LuaCallInDB::Init() {
   // NOTE: less chance of typos doing it this way
-  const int NO_REQS	= 0;
+  const int NO_REQS = 0;
   const int REQ_FULL_READ  = (1 << 0);
   const int REQ_GAME_CTRL  = (1 << 1);
   const int REQ_INPUT_CTRL = (1 << 2);
 
   // loopType
-  const char* BASIC	  = "BASIC";
+  const char* BASIC   = "BASIC";
   const char* FIRST_TRUE     = "FIRST_TRUE";
   const char* BOOLEAN_OR = "BOOLEAN_OR";
 //  const char* FIRST_FALSE    = "FIRST_FALSE";
 //  const char* FIRST_NUMBER = "FIRST_NUMBER";
   const char* FIRST_STRING   = "FIRST_STRING";
-  const char* SPECIAL	= "SPECIAL";
+  const char* SPECIAL = "SPECIAL";
 
   // singleScript
   const char* ANY_SCRIPT      = "";
@@ -120,15 +114,15 @@ bool LuaCallInDB::Init()
 //  const char* ONLY_LuaRules   = "LuaRules";
 
 #define ADD_CI(n, bits, retType, singleScript) \
-  const char* n = #n;	       \
+  const char* n = #n;        \
   SetupCallIn(LUA_CI_ ## n, n);     \
-  infoMap[#n] = CallInInfo(	 \
-    LUA_CI_ ## n, n,		\
+  infoMap[#n] = CallInInfo(  \
+    LUA_CI_ ## n, n,    \
     ((bits) & REQ_FULL_READ)  != 0, \
     ((bits) & REQ_GAME_CTRL)  != 0, \
     ((bits) & REQ_INPUT_CTRL) != 0, \
     (strncmp(#n, "Draw", 4) == 0),  \
-    false,			  \
+    false,        \
     singleScript, retType)
 
   ///////////////////////////////////
@@ -218,6 +212,6 @@ bool LuaCallInDB::Init()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

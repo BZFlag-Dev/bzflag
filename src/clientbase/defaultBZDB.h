@@ -12,26 +12,26 @@
 
 /*
  * defaultBZDB.h:
- *	defaults for the BZDB
+ *  defaults for the BZDB
  */
 
-#ifndef	__DEFAULT_BZDB_H__
-#define	__DEFAULT_BZDB_H__
+#ifndef __DEFAULT_BZDB_H__
+#define __DEFAULT_BZDB_H__
 
 #include "StateDatabase.h"
 
 // default database entries
 struct DefaultDBItem {
-  const char*			name;
-  const char*			value;
-  bool				persistent;
-  StateDatabase::Permission	permission;
-  StateDatabase::Callback	callback;
+  const char*     name;
+  const char*     value;
+  bool        persistent;
+  StateDatabase::Permission permission;
+  StateDatabase::Callback callback;
 };
 
-extern DefaultDBItem	defaultDBItems[];
+extern DefaultDBItem  defaultDBItems[];
 
-void loadBZDBDefaults ( void );
+void loadBZDBDefaults(void);
 
 #endif // __DEFAULT_BZDB_H__
 
@@ -39,6 +39,6 @@ void loadBZDBDefaults ( void );
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

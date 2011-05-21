@@ -27,8 +27,7 @@
 //============================================================================//
 //============================================================================//
 
-bool LuaGLConst::PushEntries(lua_State* L)
-{
+bool LuaGLConst::PushEntries(lua_State* L) {
 #define PUSH_GL(cmd) luaset_strnum(L, #cmd, GL_ ## cmd)
 
   // Drawing Primitives
@@ -278,6 +277,6 @@ bool LuaGLConst::PushEntries(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

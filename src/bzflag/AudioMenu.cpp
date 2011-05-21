@@ -32,8 +32,7 @@
 #include "LocalFontFace.h"
 #include "Mumble.h"
 
-AudioMenu::AudioMenu()
-{
+AudioMenu::AudioMenu() {
   // add controls
   std::string currentDriver = BZDB.get("audioDriver");
   std::string currentDevice = BZDB.get("audioDevice");
@@ -54,16 +53,17 @@ AudioMenu::AudioMenu()
   if (SOUNDSYSTEM.active()) {
     options->push_back(std::string("Off"));
     option->createSlider(10);
-  } else {
+  }
+  else {
     options->push_back(std::string("Unavailable"));
   }
   option->update();
   addControl(option);
 
-/* Right now only SDL_Media has a setDriver function.
-   Disable driver selection for others as it gets saved in config
-   and can screw things up if you switch from non-SDL to SDL build.
-   If more platforms get setDriver functions, they can be added. */
+  /* Right now only SDL_Media has a setDriver function.
+     Disable driver selection for others as it gets saved in config
+     and can screw things up if you switch from non-SDL to SDL build.
+     If more platforms get setDriver functions, they can be added. */
 
   // Driver
 #ifdef HAVE_SDL
@@ -114,27 +114,25 @@ AudioMenu::AudioMenu()
   initNavigation();
 }
 
-AudioMenu::~AudioMenu()
-{
+AudioMenu::~AudioMenu() {
 }
 
-void			AudioMenu::execute()
-{
+void      AudioMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == driver) {
     BZDB.set("audioDriver", driver->getString().c_str());
-  } else if (_focus == device) {
+  }
+  else if (_focus == device) {
     BZDB.set("audioDevice", device->getString().c_str());
   }
 }
 
-void			AudioMenu::resize(int _width, int _height)
-{
+void      AudioMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
   int i;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -167,7 +165,7 @@ void			AudioMenu::resize(int _width, int _height)
 
   i = 1;
   // sound
-  ((HUDuiList*)listHUD[i++])->setIndex((int)(SOUNDSYSTEM.getVolume()*10));
+  ((HUDuiList*)listHUD[i++])->setIndex((int)(SOUNDSYSTEM.getVolume() * 10));
 #ifdef HAVE_SDL
   i++; // driver
   i++; // device
@@ -176,7 +174,7 @@ void			AudioMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("mumblePosition") ? 1 : 0);
 }
 
-void			AudioMenu::callback(HUDuiControl* w, void* data) {
+void      AudioMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
   std::vector<std::string> *options = &list->getList();
   std::string selectedOption = (*options)[list->getIndex()];
@@ -195,7 +193,8 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
       if (oldState != newState) {
         if (newState) {
           Mumble::init();
-        } else {
+        }
+        else {
           Mumble::kill();
         }
       }
@@ -208,6 +207,6 @@ void			AudioMenu::callback(HUDuiControl* w, void* data) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

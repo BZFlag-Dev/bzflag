@@ -132,20 +132,20 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("}", "time +30"));
   defaultBinding.insert(BindingTable::value_type("{", "time -30"));
 
-					       /* A - unused */
+  /* A - unused */
   defaultBinding.insert(BindingTable::value_type("B", "viewZoom toggle"));
-					       /* C - unused */
-					       /* D - unused */
-					       /* E - unused */
+  /* C - unused */
+  /* D - unused */
+  /* E - unused */
   defaultBinding.insert(BindingTable::value_type("F", "toggle displayFlagHelp"));
-					       /* G - unused */
+  /* G - unused */
   defaultBinding.insert(BindingTable::value_type("H", "hubcompose"));
-					       /* I - identify/restart (above) */
+  /* I - identify/restart (above) */
   defaultBinding.insert(BindingTable::value_type("J", "toggleFlags main"));
   defaultBinding.insert(BindingTable::value_type("K", "silence"));
   defaultBinding.insert(BindingTable::value_type("L", "toggle displayLabels"));
-					       /* M - send team (above) */
-					       /* N - send all (above) */
+  /* M - send team (above) */
+  /* N - send all (above) */
   defaultBinding.insert(BindingTable::value_type("O", "servercommand"));
   defaultBinding.insert(BindingTable::value_type("P", "pause"));
   defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
@@ -155,9 +155,9 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("U", "hunt"));
   defaultBinding.insert(BindingTable::value_type("V", "toggle slowMotion"));
   defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
-					       /* X - unused */
+  /* X - unused */
   defaultBinding.insert(BindingTable::value_type("Y", "toggle showDrawTime"));
-					       /* Z - send admin (above) */
+  /* Z - send admin (above) */
   defaultBinding.insert(BindingTable::value_type("Delete", "destruct"));
 
   // Default movement keys
@@ -208,11 +208,11 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Alt+U",  "luauser reload"));
   defaultBinding.insert(BindingTable::value_type("Alt+W",  "luaworld reload"));
   defaultBinding.insert(BindingTable::value_type("Alt+B",  "luabzorg reload"));
-/* FIXME -- bindings to disable client lua scripts
-  defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
-  defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
-  defaultBinding.insert(BindingTable::value_type("Ctrl+B", "luabzorg disable"));
-*/
+  /* FIXME -- bindings to disable client lua scripts
+    defaultBinding.insert(BindingTable::value_type("Ctrl+U", "luauser disable"));
+    defaultBinding.insert(BindingTable::value_type("Ctrl+W", "luaworld disable"));
+    defaultBinding.insert(BindingTable::value_type("Ctrl+B", "luabzorg disable"));
+  */
 }
 
 void ActionBinding::resetBindings() {
@@ -235,44 +235,50 @@ void ActionBinding::getFromBindings() {
 }
 
 void ActionBinding::onScanCB(const std::string& name, bool,
-			     const std::string& cmd, void*)
-{
+                             const std::string& cmd, void*) {
   ActionBinding::instance().associate(name, cmd, false);
 }
 
 void ActionBinding::associate(std::string key,
-			      std::string action,
-			      bool keyBind) {
+                              std::string action,
+                              bool keyBind) {
   BindingTable::iterator index, next;
-  if (!wayToBindActions.count(action))
+  if (!wayToBindActions.count(action)) {
     return;
+  }
   PressStatusBind newStatusBind = wayToBindActions[action];
-  for (index = bindingTable.lower_bound( key );
-       index != bindingTable.upper_bound( key );
+  for (index = bindingTable.lower_bound(key);
+       index != bindingTable.upper_bound(key);
        index = next) {
     next = index;
     ++next;
     if (newStatusBind == both) {
-      if (keyBind)
-	unbind(index->second, key);
-      bindingTable.erase(index);
-    } else if (newStatusBind == press) {
-      if (wayToBindActions[index->second] != release) {
-	if (keyBind)
-	  unbind(index->second, key);
-	bindingTable.erase(index);
+      if (keyBind) {
+        unbind(index->second, key);
       }
-    } else {
+      bindingTable.erase(index);
+    }
+    else if (newStatusBind == press) {
+      if (wayToBindActions[index->second] != release) {
+        if (keyBind) {
+          unbind(index->second, key);
+        }
+        bindingTable.erase(index);
+      }
+    }
+    else {
       if (wayToBindActions[index->second] != press) {
-	if (keyBind)
-	  unbind(index->second, key);
-	bindingTable.erase(index);
+        if (keyBind) {
+          unbind(index->second, key);
+        }
+        bindingTable.erase(index);
       }
     }
   }
   bindingTable.insert(BindingTable::value_type(key, action));
-  if (keyBind)
+  if (keyBind) {
     bind(action, key);
+  }
 }
 
 void ActionBinding::deassociate(std::string action) {
@@ -319,6 +325,6 @@ void ActionBinding::unbind(std::string action, std::string key) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

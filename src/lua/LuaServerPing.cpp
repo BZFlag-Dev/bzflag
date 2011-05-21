@@ -43,16 +43,15 @@ LuaServerPingMgr::PingSet LuaServerPingMgr::pings;
 //
 
 LuaServerPing::LuaServerPing(lua_State* L, int _funcRef, int _selfRef,
-			     double _addr, int _port)
-: serverPing(NULL)
-, pingL(L)
-, funcRef(_funcRef)
-, selfRef(_selfRef)
-, done(false)
-, lag(-1)
-, addr(_addr)
-, port(_port)
-{
+                             double _addr, int _port)
+  : serverPing(NULL)
+  , pingL(L)
+  , funcRef(_funcRef)
+  , selfRef(_selfRef)
+  , done(false)
+  , lag(-1)
+  , addr(_addr)
+  , port(_port) {
   LuaServerPingMgr::pings.insert(this);
 
   InAddr inAddr;
@@ -67,14 +66,12 @@ LuaServerPing::LuaServerPing(lua_State* L, int _funcRef, int _selfRef,
 }
 
 
-LuaServerPing::~LuaServerPing()
-{
+LuaServerPing::~LuaServerPing() {
   Cancel();
 }
 
 
-void LuaServerPing::Update()
-{
+void LuaServerPing::Update() {
   if (!serverPing || done) {
     return;
   }
@@ -104,8 +101,7 @@ void LuaServerPing::Update()
 }
 
 
-void LuaServerPing::Cancel()
-{
+void LuaServerPing::Cancel() {
   if (funcRef != LUA_NOREF) {
     luaL_unref(pingL, LUA_REGISTRYINDEX, funcRef);
     funcRef = LUA_NOREF;
@@ -128,16 +124,14 @@ void LuaServerPing::Cancel()
 //  LuaServerPingMgr
 //
 
-bool LuaServerPingMgr::PushEntries(lua_State* L)
-{
+bool LuaServerPingMgr::PushEntries(lua_State* L) {
   CreateMetatable(L);
   PUSH_LUA_CFUNC(L, SendServerPing);
   return true;
 }
 
 
-void LuaServerPingMgr::Update()
-{
+void LuaServerPingMgr::Update() {
   PingSet::iterator it, nextIt;
   for (it = pings.begin(); it != pings.end(); it = nextIt) {
     nextIt = it;
@@ -150,8 +144,7 @@ void LuaServerPingMgr::Update()
 //============================================================================//
 //============================================================================//
 
-bool LuaServerPingMgr::CreateMetatable(lua_State* L)
-{
+bool LuaServerPingMgr::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
 
   lua_pushliteral(L, "__gc"); // garbage collection
@@ -177,19 +170,17 @@ bool LuaServerPingMgr::CreateMetatable(lua_State* L)
 }
 
 
-int  LuaServerPingMgr::MetaGC(lua_State* L)
-{
+int  LuaServerPingMgr::MetaGC(lua_State* L) {
   LuaServerPing* ping = CheckServerPing(L, 1);
   ping->~LuaServerPing();
   return 0;
 }
 
 
-int LuaServerPingMgr::MetaToString(lua_State* L)
-{
+int LuaServerPingMgr::MetaToString(lua_State* L) {
   LuaServerPing* ping = CheckServerPing(L, 1);
   lua_pushfstring(L, "ping(%p,%g:%i)", (void*)ping,
-		  ping->GetAddress(), ping->GetPort());
+                  ping->GetAddress(), ping->GetPort());
   return 1;
 }
 
@@ -197,8 +188,7 @@ int LuaServerPingMgr::MetaToString(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-LuaServerPing* LuaServerPingMgr::CheckServerPing(lua_State* L, int index)
-{
+LuaServerPing* LuaServerPingMgr::CheckServerPing(lua_State* L, int index) {
   return (LuaServerPing*)luaL_checkudata(L, index, metaName);
 }
 
@@ -206,8 +196,7 @@ LuaServerPing* LuaServerPingMgr::CheckServerPing(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaServerPingMgr::SendServerPing(lua_State* L)
-{
+int LuaServerPingMgr::SendServerPing(lua_State* L) {
   lua_settop(L, 3);
 
   const double addr = LuaDouble::CheckDouble(L, 1);
@@ -237,32 +226,28 @@ int LuaServerPingMgr::SendServerPing(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaServerPingMgr::Cancel(lua_State* L)
-{
+int LuaServerPingMgr::Cancel(lua_State* L) {
   LuaServerPing* ping = CheckServerPing(L, 1);
   ping->Cancel();
   return 0;
 }
 
 
-int LuaServerPingMgr::IsDone(lua_State* L)
-{
+int LuaServerPingMgr::IsDone(lua_State* L) {
   LuaServerPing* ping = CheckServerPing(L, 1);
   lua_pushboolean(L, ping->IsDone());
   return 1;
 }
 
 
-int LuaServerPingMgr::GetLag(lua_State* L)
-{
+int LuaServerPingMgr::GetLag(lua_State* L) {
   LuaServerPing* ping = CheckServerPing(L, 1);
   lua_pushint(L, ping->GetLag());
   return 1;
 }
 
 
-int LuaServerPingMgr::GetAddress(lua_State* L)
-{
+int LuaServerPingMgr::GetAddress(lua_State* L) {
   LuaServerPing* ping = CheckServerPing(L, 1);
   LuaDouble::PushDouble(L, ping->GetAddress());
   lua_pushint(L, ping->GetPort());
@@ -278,6 +263,6 @@ int LuaServerPingMgr::GetAddress(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

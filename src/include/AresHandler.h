@@ -38,32 +38,32 @@ class AresHandler {
       HbNSucceeded
     };
 
-    void		queryHostname(struct sockaddr *clientAddr);
-    void		queryHost(const char *hostName);
-    const char   *getHostname();
-    ResolutionStatus getHostAddress(struct in_addr *clientAddr);
-    void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
-    void		process(fd_set *read_set, fd_set *write_set);
+    void    queryHostname(struct sockaddr* clientAddr);
+    void    queryHost(const char* hostName);
+    const char*   getHostname();
+    ResolutionStatus getHostAddress(struct in_addr* clientAddr);
+    void    setFd(fd_set* read_set, fd_set* write_set, int& maxFile);
+    void    process(fd_set* read_set, fd_set* write_set);
     ResolutionStatus getStatus() {return status;}
 
-    static bool	globalInit();
-    static void	globalShutdown();
+    static bool globalInit();
+    static void globalShutdown();
 
   private:
-    static void	staticCallback(void *arg, int statusCallback, int timeouts,
-                               struct hostent *hostent);
-    void		callback(int status, struct hostent *hostent);
+    static void staticCallback(void* arg, int statusCallback, int timeouts,
+                               struct hostent* hostent);
+    void    callback(int status, struct hostent* hostent);
 
     // peer's network hostname (malloc/free'd)
-    char	       *hostname;
-    in_addr	hostAddress;
-    ares_channel	aresChannel;
+    char*         hostname;
+    in_addr hostAddress;
+    ares_channel  aresChannel;
     ResolutionStatus status;
-    bool		aresFailed;
+    bool    aresFailed;
 
     struct in_addr requestedAddress;
 
-    static bool	globallyInited;
+    static bool globallyInited;
 };
 
 #endif
@@ -72,6 +72,6 @@ class AresHandler {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

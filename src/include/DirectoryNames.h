@@ -29,8 +29,8 @@ extern std::string getWorldDirName();
 
 extern void setCustomConfigDir(const char* dir);
 
-extern std::string getModuleDir ( void );
-extern std::string getModuleName ( void );
+extern std::string getModuleDir(void);
+extern std::string getModuleName(void);
 
 
 #endif  // __DIRECTORY_NAMES_H__
@@ -40,6 +40,6 @@ extern std::string getModuleName ( void );
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

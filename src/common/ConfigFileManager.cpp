@@ -26,8 +26,7 @@ template <>
 ConfigFileManager* Singleton<ConfigFileManager>::_instance = (ConfigFileManager*)0;
 
 
-void writeBZDB(const std::string& name, void *stream)
-{
+void writeBZDB(const std::string& name, void* stream) {
   std::ostream& s = *static_cast<std::ostream*>(stream);
   std::string value = BZDB.get(name);
   std::string defaultVal = BZDB.getDefault(name);
@@ -42,7 +41,8 @@ void writeBZDB(const std::string& name, void *stream)
   // quotify the key if there's a space
   if (name.find(' ') != name.npos) {
     newkey = std::string("\"") + name + "\"";
-  } else {
+  }
+  else {
     newkey = name;
   }
 
@@ -51,8 +51,7 @@ void writeBZDB(const std::string& name, void *stream)
 
 
 void writeKEYMGR(const std::string& name, bool press,
-                 const std::string& command, void* stream)
-{
+                 const std::string& command, void* stream) {
   std::ostream& s = *static_cast<std::ostream*>(stream);
   // quotify anything with a space
   std::string value = name;
@@ -68,18 +67,15 @@ void writeKEYMGR(const std::string& name, bool press,
 }
 
 
-ConfigFileManager::ConfigFileManager()
-{
+ConfigFileManager::ConfigFileManager() {
 }
 
 
-ConfigFileManager::~ConfigFileManager()
-{
+ConfigFileManager::~ConfigFileManager() {
 }
 
 
-bool ConfigFileManager::parse(std::istream& stream)
-{
+bool ConfigFileManager::parse(std::istream& stream) {
   char buffer[MaximumLineLength];
   while (!stream.eof()) {
     stream.getline(buffer, MaximumLineLength);
@@ -89,8 +85,7 @@ bool ConfigFileManager::parse(std::istream& stream)
 }
 
 
-bool ConfigFileManager::read(const std::string& filename)
-{
+bool ConfigFileManager::read(const std::string& filename) {
   std::istream* stream = FILEMGR.createDataInStream(filename);
   if (stream == NULL) {
     return false;
@@ -101,14 +96,12 @@ bool ConfigFileManager::read(const std::string& filename)
 }
 
 
-void ConfigFileManager::read(std::istream& stream)
-{
+void ConfigFileManager::read(std::istream& stream) {
   parse(stream);
 }
 
 
-bool ConfigFileManager::write(const std::string& filename)
-{
+bool ConfigFileManager::write(const std::string& filename) {
   std::ostream* stream = FILEMGR.createDataOutStream(filename);
   if (stream == NULL) {
     return false;
@@ -124,6 +117,6 @@ bool ConfigFileManager::write(const std::string& filename)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -24,37 +24,32 @@
 #include <algorithm>
 
 
-AutoCompleter::WordRecord::WordRecord(const std::string& w, bool q)
-{
+AutoCompleter::WordRecord::WordRecord(const std::string& w, bool q) {
   word = w;
   quoteString = q;
 }
 
-bool AutoCompleter::WordRecord::operator<(const WordRecord& w) const
-{
+bool AutoCompleter::WordRecord::operator<(const WordRecord& w) const {
   return (word < w.word);
 }
 
-bool AutoCompleter::WordRecord::operator==(const WordRecord& w) const
-{
+bool AutoCompleter::WordRecord::operator==(const WordRecord& w) const {
   return (word == w.word);
 }
 
-bool AutoCompleter::WordRecord::operator!=(const WordRecord& w) const
-{
+bool AutoCompleter::WordRecord::operator!=(const WordRecord& w) const {
   return (word != w.word);
 }
 
 
-void AutoCompleter::registerWord(const std::string& str, bool quoteString)
-{
+void AutoCompleter::registerWord(const std::string& str, bool quoteString) {
   // only use 'quoteString' if it applies
   if (quoteString) {
     quoteString = false;
     for (int i = 0; i < (int)str.size(); i++) {
       if (isspace(str[i])) {
-	quoteString = true;
-	break;
+        quoteString = true;
+        break;
       }
     }
   }
@@ -63,23 +58,22 @@ void AutoCompleter::registerWord(const std::string& str, bool quoteString)
 }
 
 
-void AutoCompleter::unregisterWord(const std::string& str)
-{
+void AutoCompleter::unregisterWord(const std::string& str) {
   WordRecord rec(str, false);
   while (true) {
     std::vector<WordRecord>::iterator iter =
       std::lower_bound(words.begin(), words.end(), rec);
     if (iter != words.end() && *iter == rec) {
       words.erase(iter);
-    } else {
+    }
+    else {
       return;
     }
   }
 }
 
 
-std::string AutoCompleter::complete(const std::string& str, std::string* matches)
-{
+std::string AutoCompleter::complete(const std::string& str, std::string* matches) {
   if (str.size() == 0) {
     return str;
   }
@@ -110,18 +104,19 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
     if (first != last) {
       std::vector<WordRecord>::iterator it = first;
       for (it = first; it != (last + 1); it++) {
-	std::string tmp2 = it->word;
-	// strip the trailing whitespace
-	while ((tmp2.size() > 0) && isspace(tmp2[tmp2.size() - 1])) {
-	  tmp2.resize(tmp2.size() - 1);
-	}
-	if (tmp2.size() > 0) {
-	  if (it->quoteString) {
-	    *matches += "\"" + tmp2 + "\" ";
-	  } else {
-	    *matches += tmp2 + " ";
-	  }
-	}
+        std::string tmp2 = it->word;
+        // strip the trailing whitespace
+        while ((tmp2.size() > 0) && isspace(tmp2[tmp2.size() - 1])) {
+          tmp2.resize(tmp2.size() - 1);
+        }
+        if (tmp2.size() > 0) {
+          if (it->quoteString) {
+            *matches += "\"" + tmp2 + "\" ";
+          }
+          else {
+            *matches += tmp2 + " ";
+          }
+        }
       }
     }
   }
@@ -130,11 +125,11 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
 
   // return the largest common prefix without any spaces
   const int minLen = first->word.size() < last->word.size() ?
-		     first->word.size() : last->word.size();
+                     first->word.size() : last->word.size();
   int i;
   for (i = 0; i < minLen; ++i) {
     if ((!noQuotes && isspace(first->word[i])) ||
-	(first->word[i] != last->word[i])) {
+        (first->word[i] != last->word[i])) {
       break;
     }
   }
@@ -142,15 +137,15 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
   if (!noQuotes && first->quoteString && (first == last)) {
     const std::string quoted = "\"" + first->word + "\"";
     return (head + quoted);
-  } else {
+  }
+  else {
     return (head + first->word.substr(0, i));
   }
 }
 
 
 void AutoCompleter::complete(const std::string& line,
-                             std::set<std::string>& matches)
-{
+                             std::set<std::string>& matches) {
   if (line.size() == 0) {
     return;
   }
@@ -188,7 +183,8 @@ void AutoCompleter::complete(const std::string& line,
         for (size_t i = 0; i < tmp2.size(); i++) {
           if (tmp2[i] != ' ') {
             escaped += tmp2[i];
-          } else {
+          }
+          else {
             escaped += "\\ ";
           }
         }
@@ -203,6 +199,6 @@ void AutoCompleter::complete(const std::string& line,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

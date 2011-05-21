@@ -16,8 +16,7 @@
 #include "Frustum.h"
 
 
-Frustum::Frustum()
-{
+Frustum::Frustum() {
   static fvec3 defaultEye(0.0f, 0.0f, 0.0f);
   static fvec3 defaultTarget(0.0f, 1.0f, 0.0f);
   static float identity[16] = {
@@ -33,27 +32,24 @@ Frustum::Frustum()
   ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
   ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
 
-  setProjection((float)(M_PI/4.0), 1.0f, 100.0f, 1000.0f, 1, 1, 1);
+  setProjection((float)(M_PI / 4.0), 1.0f, 100.0f, 1000.0f, 1, 1, 1);
   setView(defaultEye, defaultTarget);
 }
 
 
-Frustum::~Frustum()
-{
+Frustum::~Frustum() {
   // do nothing
 }
 
 
-float Frustum::getEyeDepth(const float* p) const
-{
+float Frustum::getEyeDepth(const float* p) const {
   return (viewMatrix[2]  * p[0]) +
          (viewMatrix[6]  * p[1]) +
          (viewMatrix[10] * p[2]) + viewMatrix[14];
 }
 
 
-void Frustum::setView(const fvec3& _eye, const fvec3& _target)
-{
+void Frustum::setView(const fvec3& _eye, const fvec3& _target) {
   // set eye and target points
   eye    = _eye;
   target = _target;
@@ -143,21 +139,20 @@ void Frustum::setView(const fvec3& _eye, const fvec3& _target)
 }
 
 
-void Frustum::setFarPlaneCull(bool useCulling)
-{
+void Frustum::setFarPlaneCull(bool useCulling) {
   // far clip plane
   if (useCulling) {
     planeCount = 6;
-  } else {
+  }
+  else {
     planeCount = 5;
   }
 }
 
 
 void Frustum::setProjection(float fov,
-			    float _m_near, float _m_far, float _m_deep_far,
-			    int width, int height, int viewHeight)
-{
+                            float _m_near, float _m_far, float _m_deep_far,
+                            int width, int height, int viewHeight) {
   // do easy stuff
   m_near     = _m_near;
   m_far      = _m_far;
@@ -200,8 +195,7 @@ void Frustum::setProjection(float fov,
 }
 
 
-void Frustum::setOffset(float eyeOffset, float focalPlane)
-{
+void Frustum::setOffset(float eyeOffset, float focalPlane) {
   projectionMatrix[12] = 0.5f * eyeOffset * projectionMatrix[0];
   projectionMatrix[8] = projectionMatrix[12] / focalPlane;
   deepProjectionMatrix[8] = projectionMatrix[8];
@@ -209,8 +203,7 @@ void Frustum::setOffset(float eyeOffset, float focalPlane)
 }
 
 
-void Frustum::makePlane(const fvec3& v1, const fvec3& v2, int index)
-{
+void Frustum::makePlane(const fvec3& v1, const fvec3& v2, int index) {
   // get normal by crossing v1 and v2 and normalizing
   const fvec3 dir = fvec3::cross(v1, v2).normalize();
   const float dist = -fvec3::dot(eye, dir);
@@ -220,8 +213,7 @@ void Frustum::makePlane(const fvec3& v1, const fvec3& v2, int index)
 
 // these next two functions should be more generic
 // flipX, flipY, flipZ, all with and offset along the axis
-void Frustum::flipVertical()
-{
+void Frustum::flipVertical() {
   eye.z = -eye.z;
   target.z = -target.z;
   setView(eye, target);
@@ -232,8 +224,7 @@ void Frustum::flipVertical()
 }
 
 
-void Frustum::flipHorizontal()
-{
+void Frustum::flipHorizontal() {
   eye.x = -eye.x;
   target.x = -target.x;
   setView(eye, target);
@@ -244,8 +235,7 @@ void Frustum::flipHorizontal()
 
 
 // used for radar culling, not really a frustum
-void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
-{
+void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth) {
   // setup the eye, and the clipping planes
   eye = view.getEye();
 
@@ -288,6 +278,6 @@ void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

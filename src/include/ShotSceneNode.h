@@ -11,11 +11,11 @@
  */
 
 /* ShotSceneNode:
- *	Interface for shot scene nodes.
+ *  Interface for shot scene nodes.
  */
 
-#ifndef	BZF_SHOT_SCENE_NODE_H
-#define	BZF_SHOT_SCENE_NODE_H
+#ifndef BZF_SHOT_SCENE_NODE_H
+#define BZF_SHOT_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -34,6 +34,6 @@ class ShotSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

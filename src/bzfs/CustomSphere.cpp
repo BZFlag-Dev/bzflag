@@ -32,8 +32,7 @@
 const char* CustomSphere::sideNames[MaterialCount] = { "edge", "bottom" };
 
 
-CustomSphere::CustomSphere()
-{
+CustomSphere::CustomSphere() {
   divisions = 4;
   pos.z = 10.0f;
   size = fvec3(10.0f, 10.0f, 10.0f);
@@ -48,14 +47,12 @@ CustomSphere::CustomSphere()
 }
 
 
-CustomSphere::~CustomSphere()
-{
+CustomSphere::~CustomSphere() {
   return;
 }
 
 
-bool CustomSphere::read(const char *cmd, std::istream& input)
-{
+bool CustomSphere::read(const char* cmd, std::istream& input) {
   bool materror;
 
   if (strcasecmp(cmd, "divisions") == 0) {
@@ -71,7 +68,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     size = fvec3(radius, radius, radius);
   }
   else if ((strcasecmp(cmd, "hemi") == 0) ||
-	   (strcasecmp(cmd, "hemisphere") == 0)) {
+           (strcasecmp(cmd, "hemisphere") == 0)) {
     hemisphere = true;
   }
   else if (strcasecmp(cmd, "texsize") == 0) {
@@ -102,7 +99,7 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     }
   }
   else if (parseMaterialsByName(cmd, input, materials, sideNames,
-				MaterialCount, materror)) {
+                                MaterialCount, materror)) {
     if (materror) {
       return false;
     }
@@ -115,23 +112,23 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomSphere::writeToGroupDef(GroupDefinition* groupdef) const {
   int i;
   const BzMaterial* mats[MaterialCount];
   for (i = 0; i < MaterialCount; i++) {
     mats[i] = MATERIALMGR.addMaterial(&materials[i]);
   }
   SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
-					      useNormals, hemisphere, divisions, mats,
-					      phydrv, smoothBounce,
-					      driveThrough, shootThrough, ricochet);
+                                              useNormals, hemisphere, divisions, mats,
+                                              phydrv, smoothBounce,
+                                              driveThrough, shootThrough, ricochet);
 
   sphere->setName(name.c_str());
 
   if (sphere->isValid()) {
     groupdef->addObstacle(sphere);
-  } else {
+  }
+  else {
     delete sphere;
   }
 
@@ -143,6 +140,6 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

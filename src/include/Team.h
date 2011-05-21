@@ -15,8 +15,8 @@
  *   Encapsulates information about a team
  */
 
-#ifndef	BZF_TEAM_H
-#define	BZF_TEAM_H
+#ifndef BZF_TEAM_H
+#define BZF_TEAM_H
 
 #include "common.h"
 
@@ -40,12 +40,12 @@ struct Team {
     void* unpack(void*);
 
     static const std::string getImagePrefix(TeamColor);  // const
-    static const char*	getName(TeamColor);              // const
-    static const char*	getShortName(TeamColor);         // const
-    static TeamColor	getTeam(const std::string name); // const
-    static const fvec4&	getTankColor(TeamColor);         // const
-    static const fvec4&	getRadarColor(TeamColor team);   // const
-    static bool	        isColorTeam(TeamColor);          // const
+    static const char*  getName(TeamColor);              // const
+    static const char*  getShortName(TeamColor);         // const
+    static TeamColor  getTeam(const std::string name); // const
+    static const fvec4& getTankColor(TeamColor);         // const
+    static const fvec4& getRadarColor(TeamColor team);   // const
+    static bool         isColorTeam(TeamColor);          // const
 
     static void setColors(TeamColor, const fvec4& tank, const fvec4& radar);
 
@@ -69,6 +69,6 @@ struct Team {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

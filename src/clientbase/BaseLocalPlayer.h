@@ -27,32 +27,32 @@
 
 
 class BaseLocalPlayer : public Player {
- public:
-  BaseLocalPlayer(const PlayerId&, const char* name,
-		  const PlayerType type);
-  ~BaseLocalPlayer();
+  public:
+    BaseLocalPlayer(const PlayerId&, const char* name,
+                    const PlayerType type);
+    ~BaseLocalPlayer();
 
-  virtual void update(float inputDT = -1.0f);
-  Ray getLastMotion() const;
-  const Extents& getLastMotionBBox() const;
+    virtual void update(float inputDT = -1.0f);
+    Ray getLastMotion() const;
+    const Extents& getLastMotionBBox() const;
 
-  virtual void changeTeam(TeamColor newTeam) { Player::changeTeam(newTeam); }
-  virtual void explodeTank() = 0;
-  virtual bool checkHit(const Player* source,
-			const ShotPath*& hit, float& minTime) const = 0;
- protected:
-  int getSalt();
-  virtual void doUpdate(float dt) = 0;
-  virtual void doUpdateMotion(float dt) = 0;
+    virtual void changeTeam(TeamColor newTeam) { Player::changeTeam(newTeam); }
+    virtual void explodeTank() = 0;
+    virtual bool checkHit(const Player* source,
+                          const ShotPath*& hit, float& minTime) const = 0;
+  protected:
+    int getSalt();
+    virtual void doUpdate(float dt) = 0;
+    virtual void doUpdateMotion(float dt) = 0;
 
- protected:
-  BzTime lastTime;
-  fvec3 lastPosition;
-  // bbox of last motion
-  Extents bbox;
+  protected:
+    BzTime lastTime;
+    fvec3 lastPosition;
+    // bbox of last motion
+    Extents bbox;
 
- private:
-  int salt;
+  private:
+    int salt;
 };
 
 
@@ -62,6 +62,6 @@ class BaseLocalPlayer : public Player {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

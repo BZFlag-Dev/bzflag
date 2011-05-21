@@ -20,13 +20,13 @@
 
 /* ugly hack for pyconfig.h */
 #ifndef HAVE_NCURSES_H
-  #include <Python.h>
+#include <Python.h>
 #else
-  #undef HAVE_NCURSES_H
-  #include <Python.h>
-  #ifndef HAVE_NCURSES_H
-    #define HAVE_NCURSES_H
-  #endif
+#undef HAVE_NCURSES_H
+#include <Python.h>
+#ifndef HAVE_NCURSES_H
+#define HAVE_NCURSES_H
+#endif
 #endif
 
 
@@ -41,19 +41,19 @@
 #endif
 
 class PythonLoader : public RobotScript {
-  PyObject *module, *ctor;
-  PyObject *pyrobot;
+    PyObject* module, *ctor;
+    PyObject* pyrobot;
 
-  bool initialized;
-  bool initialize();
-  bool addSysPath(std::string path);
+    bool initialized;
+    bool initialize();
+    bool addSysPath(std::string path);
 
   public:
     PythonLoader();
     ~PythonLoader();
     bool load(std::string filename);
-    BZRobots::Robot *create(void);
-    void destroy(BZRobots::Robot *instance);
+    BZRobots::Robot* create(void);
+    void destroy(BZRobots::Robot* instance);
 };
 
 #endif /* __PYTHONSCRIPT_H__ */
@@ -62,6 +62,6 @@ class PythonLoader : public RobotScript {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

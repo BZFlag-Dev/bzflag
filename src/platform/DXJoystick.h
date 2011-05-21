@@ -11,38 +11,38 @@
  */
 
 /* DXJoystick:
- *	Encapsulates a Windows DirectInput 8+ joystick with
- *	force feedback support
+ *  Encapsulates a Windows DirectInput 8+ joystick with
+ *  force feedback support
  */
 
 #ifndef BZF_DXJOY_H
-#define	BZF_DXJOY_H
+#define BZF_DXJOY_H
 
 #include "BzfJoystick.h"
 
 #ifndef BROKEN_DINPUT
 
-  // only require a runtime that has what we actually use (e.g. force feedback support)
-  #define DIRECTINPUT_VERSION 0x0800
-  #include <dinput.h>
+// only require a runtime that has what we actually use (e.g. force feedback support)
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 
-  // Don't try compile this if we don't have an up-to-date DX
-  #if defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0800)
-    // We can use DInput.  It's not broken, and it's new enough
-    #define USE_DINPUT 1
-  #else
-    // DInput is not new enough to use
-    #if defined(USE_DINPUT)
-      #undef USE_DINPUT
-    #endif
-  #endif
+// Don't try compile this if we don't have an up-to-date DX
+#if defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0800)
+// We can use DInput.  It's not broken, and it's new enough
+#define USE_DINPUT 1
+#else
+// DInput is not new enough to use
+#if defined(USE_DINPUT)
+#undef USE_DINPUT
+#endif
+#endif
 
 #else
 
-  // Make sure we don't use DInput at all (even headers) if it's broken
-  #ifdef USE_DINPUT
-  #undef USE_DINPUT
-  #endif
+// Make sure we don't use DInput at all (even headers) if it's broken
+#ifdef USE_DINPUT
+#undef USE_DINPUT
+#endif
 
 #endif
 
@@ -56,43 +56,43 @@ typedef std::map<std::string, LPDIRECTINPUTEFFECT> EffectMap;
 
 class DXJoystick : public BzfJoystick {
   public:
-		DXJoystick();
-		~DXJoystick();
+    DXJoystick();
+    ~DXJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
+    void  initJoystick(const char* joystickName);
+    bool  joystick() const;
+    void  getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string axis);
-    void	setYAxis(const std::string axis);
-    bool	ffHasRumble() const;
-    void	ffRumble(int count,
-			 float delay, float duration,
-			 float strong_motor, float weak_motor=0.0f);
-    bool	ffHasDirectional() const;
-    void	ffDirectionalConstant(int count,
-				      float delay, float duration,
-				      float x_direction, float y_direction,
-				      float strength);
-    void	ffDirectionalPeriodic(int count,
-				      float delay, float duration,
-				      float x_direction, float y_direction,
-				      float amplitude, float period,
-				      PeriodicType type);
-    void	ffDirectionalResistance(float time, float coefficient,
-				      float saturation, ResistanceType type);
+    void  getJoyDevices(std::vector<std::string> &list) const;
+    void  getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void  setXAxis(const std::string axis);
+    void  setYAxis(const std::string axis);
+    bool  ffHasRumble() const;
+    void  ffRumble(int count,
+                   float delay, float duration,
+                   float strong_motor, float weak_motor = 0.0f);
+    bool  ffHasDirectional() const;
+    void  ffDirectionalConstant(int count,
+                                float delay, float duration,
+                                float x_direction, float y_direction,
+                                float strength);
+    void  ffDirectionalPeriodic(int count,
+                                float delay, float duration,
+                                float x_direction, float y_direction,
+                                float amplitude, float period,
+                                PeriodicType type);
+    void  ffDirectionalResistance(float time, float coefficient,
+                                  float saturation, ResistanceType type);
 
   private:
-    DIJOYSTATE	pollDevice();
-    void	reaquireDevice();
-    void	enumerateDevices();
-    void	resetFF();
+    DIJOYSTATE  pollDevice();
+    void  reaquireDevice();
+    void  enumerateDevices();
+    void  resetFF();
 
-    void	DXError(const char* situation, HRESULT problem);
+    void  DXError(const char* situation, HRESULT problem);
 
-    std::map<std::string,bool> axes;
+    std::map<std::string, bool> axes;
     std::string xAxis;
     std::string yAxis;
 
@@ -115,6 +115,6 @@ class DXJoystick : public BzfJoystick {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

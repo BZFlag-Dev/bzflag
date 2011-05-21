@@ -34,16 +34,16 @@ class MacVisual : public BzfVisual {
     void setDoubleBuffer(bool);
     void setIndex(int minDepth);
     void setRGBA(int minRed, int minGreen,
-    int minBlue, int minAlpha);
+                 int minBlue, int minAlpha);
     void setDepth(int minDepth);
     void setStencil(int minDepth);
     void setAccum(int minRed, int minGreen,
-    int minBlue, int minAlpha);
+                  int minBlue, int minAlpha);
     void setStereo(bool);
     void setMultisample(int minSamples);
 
     bool build();
-  //    AGLPixelFormat get() const { return pixel_format; }
+    //    AGLPixelFormat get() const { return pixel_format; }
 
     void reset() { attributes.clear(); }
     void addAttribute1(GLint attribute);
@@ -55,7 +55,7 @@ class MacVisual : public BzfVisual {
     void removeAttribute2(GLint attribute);
 
   private:
-    const MacDisplay *display;
+    const MacDisplay* display;
     // attributes we would like for our pixel format
     // last attribute must be AGL_NONE
     std::vector<GLint>       attributes;
@@ -68,6 +68,6 @@ class MacVisual : public BzfVisual {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

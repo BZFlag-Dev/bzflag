@@ -27,19 +27,17 @@ ShotStatsDefaultKey ShotStatsDefaultKey::instance;
 ShotStatsDefaultKey::ShotStatsDefaultKey() { }
 ShotStatsDefaultKey::~ShotStatsDefaultKey() { }
 
-ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance()
-{
+ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance() {
   return &instance;
 }
 
-bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key) {
   // special keys to get out
   switch (key.unicode) {
-    case 27:	// escape
+    case 27:  // escape
       HUDDialogStack::get()->pop();
       return true;
-    case 13:	// return
+    case 13:  // return
       HUDDialogStack::get()->top()->execute();
       return true;
   }
@@ -60,8 +58,7 @@ bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& /* key */)
-{
+bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& /* key */) {
   return true;
 }
 
@@ -70,6 +67,6 @@ bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& /* key */)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

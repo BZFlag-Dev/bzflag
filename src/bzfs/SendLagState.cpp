@@ -34,15 +34,13 @@ static BzTime lastSend = BzTime::getCurrent();
 
 //============================================================================//
 
-float SendLagState::getWaitTime()
-{
+float SendLagState::getWaitTime() {
   const BzTime nowTime = BzTime::getCurrent();
   return updateRate - (float)(nowTime - lastSend);
 }
 
 
-void SendLagState::update()
-{
+void SendLagState::update() {
   if (BZDB.isSet("_sendLagRate")) {
     updateRate = BZDB.eval("_sendLagRate");
   }
@@ -93,6 +91,6 @@ void SendLagState::update()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

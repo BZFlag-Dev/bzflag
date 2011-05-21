@@ -11,47 +11,47 @@
  */
 
 /* ShellSceneNode:
- *	Encapsulates information for rendering a regular
- *	looking shot (as opposed to a shock wave or laser).
+ *  Encapsulates information for rendering a regular
+ *  looking shot (as opposed to a shock wave or laser).
  */
 
-#ifndef	BZF_SHELL_SCENE_NODE_H
-#define	BZF_SHELL_SCENE_NODE_H
+#ifndef BZF_SHELL_SCENE_NODE_H
+#define BZF_SHELL_SCENE_NODE_H
 
 #include "common.h"
 #include "ShotSceneNode.h"
 
-const float		ShellRadius = 0.5f;
+const float   ShellRadius = 0.5f;
 
 class ShellSceneNode : public ShotSceneNode {
   public:
-			ShellSceneNode(const fvec3& pos, const fvec3& forward);
-			~ShellSceneNode();
+    ShellSceneNode(const fvec3& pos, const fvec3& forward);
+    ~ShellSceneNode();
 
-    void		move(const fvec3& pos, const fvec3& forward);
+    void    move(const fvec3& pos, const fvec3& forward);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void    notifyStyleChange();
+    void    addRenderNodes(SceneRenderer&);
+    void    addShadowNodes(SceneRenderer&);
 
   protected:
     class ShellRenderNode : public RenderNode {
       public:
-			ShellRenderNode(const ShellSceneNode*);
-			~ShellRenderNode();
-	void		setLighting(bool);
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        ShellRenderNode(const ShellSceneNode*);
+        ~ShellRenderNode();
+        void    setLighting(bool);
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	const ShellSceneNode* sceneNode;
-	bool		lighted;
+        const ShellSceneNode* sceneNode;
+        bool    lighted;
     };
     friend class ShellRenderNode;
 
   private:
-    float		azimuth, elevation;
-    OpenGLGState	gstate;
-    ShellRenderNode	renderNode;
+    float   azimuth, elevation;
+    OpenGLGState  gstate;
+    ShellRenderNode renderNode;
     static const fvec3 shellVertex[9];
     static const fvec3 shellNormal[10];
 };
@@ -62,6 +62,6 @@ class ShellSceneNode : public ShotSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -29,7 +29,7 @@
 
 class DynamicColor {
 
-  friend class DynamicColorManager;
+    friend class DynamicColorManager;
 
   public:
     DynamicColor();
@@ -112,8 +112,7 @@ class DynamicColor {
     float statesLength;
 };
 
-inline bool DynamicColor::canHaveAlpha() const
-{
+inline bool DynamicColor::canHaveAlpha() const {
   return possibleAlpha;
 }
 
@@ -166,6 +165,6 @@ extern DynamicColorManager DYNCOLORMGR;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

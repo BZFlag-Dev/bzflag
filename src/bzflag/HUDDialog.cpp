@@ -18,49 +18,46 @@
 #include "HUDuiControl.h"
 #include "HUDNavigationQueue.h"
 
-HUDDialog::HUDDialog()
-{
+HUDDialog::HUDDialog() {
   height = width = 0;
 }
 
-HUDDialog::~HUDDialog()
-{
+HUDDialog::~HUDDialog() {
   // delete all elements left on render list
   size_t count = renderList.size();
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     delete renderList[i];
+  }
 }
 
-void			HUDDialog::render()
-{
+void      HUDDialog::render() {
   // render all elements on the render list
   size_t count = renderList.size();
-  for (size_t i = 0; i < count; i++)
+  for (size_t i = 0; i < count; i++) {
     renderList[i]->render();
+  }
 }
 
-void			HUDDialog::resize(int _width, int _height)
-{
-  width		= _width;
-  height	= _height;
+void      HUDDialog::resize(int _width, int _height) {
+  width   = _width;
+  height  = _height;
 }
 
-void			HUDDialog::addControl(HUDuiElement *element)
-{
+void      HUDDialog::addControl(HUDuiElement* element) {
   renderList.push_back(element);
 }
 
-void			HUDDialog::addControl(HUDuiControl *control, bool navigable)
-{
+void      HUDDialog::addControl(HUDuiControl* control, bool navigable) {
   addControl((HUDuiElement*)control);
-  if (navigable)
+  if (navigable) {
     navList.push_back(control);
+  }
 }
 
-void			HUDDialog::initNavigation()
-{
-  for (HUDNavigationQueue::iterator itr = navList.begin(); itr != navList.end(); ++itr)
+void      HUDDialog::initNavigation() {
+  for (HUDNavigationQueue::iterator itr = navList.begin(); itr != navList.end(); ++itr) {
     (*itr)->setNavQueue(&navList);
+  }
   navList.set((size_t)0);
 }
 
@@ -68,6 +65,6 @@ void			HUDDialog::initNavigation()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__STARTUPINFO_H__
-#define	__STARTUPINFO_H__
+#ifndef __STARTUPINFO_H__
+#define __STARTUPINFO_H__
 
 #include "common.h"
 
@@ -22,24 +22,23 @@
 #include "Team.h"
 
 
-class StartupInfo
-{
-public:
-  StartupInfo();
-  ~StartupInfo();
+class StartupInfo {
+  public:
+    StartupInfo();
+    ~StartupInfo();
 
-  bool hasConfiguration;
-  bool autoConnect;
-  char serverName[ServerNameLen];
-  unsigned int serverPort;
-  TeamColor team;
-  char callsign[CallSignLen];
-  char password[PasswordLen];
-  char token[TokenLen];
-  char referrer[ReferrerLen];
-  std::string listServerURL;
-  int listServerPort;
-  std::string motto;
+    bool hasConfiguration;
+    bool autoConnect;
+    char serverName[ServerNameLen];
+    unsigned int serverPort;
+    TeamColor team;
+    char callsign[CallSignLen];
+    char password[PasswordLen];
+    char token[TokenLen];
+    char referrer[ReferrerLen];
+    std::string listServerURL;
+    int listServerPort;
+    std::string motto;
 };
 
 
@@ -49,6 +48,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

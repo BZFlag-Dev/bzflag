@@ -12,30 +12,30 @@
 
 /*
  * HUDuiImage:
- *	User interface classes and functions for the heads-up display's
+ *  User interface classes and functions for the heads-up display's
  * independent images.
  */
 
-#ifndef	__HUDUIIMAGE_H__
-#define	__HUDUIIMAGE_H__
+#ifndef __HUDUIIMAGE_H__
+#define __HUDUIIMAGE_H__
 
 #include "HUDuiElement.h"
 #include "OpenGLGState.h"
 
 class HUDuiImage : public HUDuiElement {
   public:
-			HUDuiImage();
-			~HUDuiImage();
+    HUDuiImage();
+    ~HUDuiImage();
 
-    void		setTexture(const int);
-    int			getTexture();
+    void    setTexture(const int);
+    int     getTexture();
 
   protected:
-    void		doRender();
+    void    doRender();
 
   private:
-    OpenGLGState	gstate;
-    int			texture;
+    OpenGLGState  gstate;
+    int     texture;
 };
 
 inline int HUDuiImage::getTexture() {
@@ -48,6 +48,6 @@ inline int HUDuiImage::getTexture() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

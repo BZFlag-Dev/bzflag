@@ -24,24 +24,23 @@ class WorldInfo;
 class GroupDefinition;
 
 
-class WorldFileObject
-{
-public:
-  WorldFileObject();
-  virtual ~WorldFileObject() { }
+class WorldFileObject {
+  public:
+    WorldFileObject();
+    virtual ~WorldFileObject() { }
 
-  virtual bool read(const char *cmd, std::istream&);
+    virtual bool read(const char* cmd, std::istream&);
 
-  virtual bool usesManager() { return false; }
-  virtual bool usesGroupDef() { return true; }
-  virtual void writeToWorld(WorldInfo*) const;
-  virtual void writeToManager() const;
-  virtual void writeToGroupDef(GroupDefinition*) const;
+    virtual bool usesManager() { return false; }
+    virtual bool usesGroupDef() { return true; }
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual void writeToManager() const;
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
-  std::string typeName;
+    std::string typeName;
 
-protected:
-  std::string name;
+  protected:
+    std::string name;
 };
 
 
@@ -53,6 +52,6 @@ void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

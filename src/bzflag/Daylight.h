@@ -15,8 +15,8 @@
  * julian days are big numbers so doubles are a must.
  */
 
-#ifndef	BZF_DAYLIGHT_H
-#define	BZF_DAYLIGHT_H
+#ifndef BZF_DAYLIGHT_H
+#define BZF_DAYLIGHT_H
 
 #include "common.h"
 #include "vectors.h"
@@ -37,7 +37,7 @@ namespace Daylight {
   // transform a direction from the celestial coordinate system
   void getCelestialTransform(double julianDay,
                              float latitude, float longitude,
-                             float (&xform)[4][4]);
+                             float(&xform)[4][4]);
 
   // sets color of sun.  if it's nighttime, the sun is actually the moon.
   void getSunColor(const fvec3& sunDir,
@@ -67,6 +67,6 @@ namespace Daylight {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

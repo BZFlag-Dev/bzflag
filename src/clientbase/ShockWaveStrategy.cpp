@@ -23,11 +23,10 @@
 #include "playing.h"
 
 
-ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
+ShockWaveStrategy::ShockWaveStrategy(ShotPath* _path) :
   ShotStrategy(_path),
   radius(BZDB.eval(BZDBNAMES.SHOCKINRADIUS)),
-  radius2(radius * radius)
-{
+  radius2(radius* radius) {
   // setup shot
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(BZDBNAMES.SHOCKADLIFE);
@@ -37,7 +36,8 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode = new SphereLodSceneNode(pos, radius);
     shockNode->setShockWave(true);
-  } else {
+  }
+  else {
     shockNode = new SphereBspSceneNode(pos, radius);
   }
 
@@ -45,8 +45,9 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
-	   (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
-  } else {
+           (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
+  }
+  else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;
   }
@@ -54,20 +55,19 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
   const fvec4& c = Team::getRadarColor(team);
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
-  } else {
+  }
+  else {
     shockNode->setColor(c[0], c[1], c[2], 0.75f);
   }
 }
 
 
-ShockWaveStrategy::~ShockWaveStrategy()
-{
+ShockWaveStrategy::~ShockWaveStrategy() {
   delete shockNode;
 }
 
 
-void ShockWaveStrategy::update(float dt)
-{
+void ShockWaveStrategy::update(float dt) {
   const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
   const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
 
@@ -83,7 +83,8 @@ void ShockWaveStrategy::update(float dt)
   if ((myTank->getFlagType() == Flags::Colorblindness) &&
       (getPath().getPlayer() != ServerPlayer)) {
     currentTeam = RogueTeam;
-  } else {
+  }
+  else {
     currentTeam = team;
   }
 
@@ -92,18 +93,18 @@ void ShockWaveStrategy::update(float dt)
   // fade old-style shockwaves
   if (RENDERER.useQuality() >= _HIGH_QUALITY) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
-  } else {
+  }
+  else {
     const float frac = (radius - shockIn) / (shockOut - shockIn);
     shockNode->setColor(c[0], c[1], c[2], 0.75f - (0.5f * frac));
   }
 
   // expire when full size
-  if (radius >= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) setExpired();
+  if (radius >= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) { setExpired(); }
 }
 
 
-bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
-{
+bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const {
   const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
   const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
 
@@ -112,7 +113,7 @@ bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
     return false;
   }
 
-  const float *pos = getPath().getPosition();
+  const float* pos = getPath().getPosition();
   p[0] = pos[0];
   p[1] = pos[1];
   p[2] = pos[2];
@@ -120,8 +121,7 @@ bool ShockWaveStrategy::predictPosition(float dt, fvec3& p) const
 }
 
 
-bool ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
-{
+bool ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const {
   const float shockIn  = BZDB.eval(BZDBNAMES.SHOCKINRADIUS);
   const float shockOut = BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS);
 
@@ -138,8 +138,7 @@ bool ShockWaveStrategy::predictVelocity(float dt, fvec3& p) const
 }
 
 
-float ShockWaveStrategy::checkHit(const ShotCollider& tank, fvec3& position) const
-{
+float ShockWaveStrategy::checkHit(const ShotCollider& tank, fvec3& position) const {
   // return if player is inside radius of destruction -- note that a
   // shock wave can kill anything inside the radius, be it behind or
   // in a building or even zoned.
@@ -155,20 +154,17 @@ float ShockWaveStrategy::checkHit(const ShotCollider& tank, fvec3& position) con
 }
 
 
-bool ShockWaveStrategy::isStoppedByHit() const
-{
+bool ShockWaveStrategy::isStoppedByHit() const {
   return false;
 }
 
 
-void ShockWaveStrategy::addShot(SceneDatabase* scene, bool)
-{
+void ShockWaveStrategy::addShot(SceneDatabase* scene, bool) {
   scene->addDynamicSphere(shockNode);
 }
 
 
-void ShockWaveStrategy::radarRender() const
-{
+void ShockWaveStrategy::radarRender() const {
   // draw circle of current radius
   static const int sides = 20;
   const fvec3& shotPos = getPath().getPosition();
@@ -176,7 +172,7 @@ void ShockWaveStrategy::radarRender() const
   for (int i = 0; i < sides; i++) {
     const float angle = (float)(2.0 * M_PI * double(i) / double(sides));
     glVertex2f(shotPos[0] + radius * cosf(angle),
-	       shotPos[1] + radius * sinf(angle));
+               shotPos[1] + radius * sinf(angle));
   }
   glEnd();
 }
@@ -186,6 +182,6 @@ void ShockWaveStrategy::radarRender() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

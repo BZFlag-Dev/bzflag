@@ -42,13 +42,11 @@ WorldDownLoader::WorldDownLoader() :
   worldPtr(0),
   worldDatabase(NULL),
   isCacheTemp(false),
-  cacheOut(NULL)
-{
+  cacheOut(NULL) {
 }
 
 
-WorldDownLoader::~WorldDownLoader()
-{
+WorldDownLoader::~WorldDownLoader() {
   if (worldBuilder) {
     delete worldBuilder;
     worldBuilder = NULL;
@@ -64,25 +62,25 @@ WorldDownLoader::~WorldDownLoader()
 }
 
 
-void WorldDownLoader::start(char *hexDigest)
-{
+void WorldDownLoader::start(char* hexDigest) {
   md5Digest = &hexDigest[1];
   if (isCached(hexDigest)) {
     loadCached();
-  } else if (worldUrl.size()) {
+  }
+  else if (worldUrl.size()) {
     showError(("Loading world from " + worldUrl).c_str());
     setProgressFunction(curlProgressFunc, (char*)worldUrl.c_str());
     setURL(worldUrl);
     addHandle();
     worldUrl = ""; // clear the state
-  } else {
+  }
+  else {
     askToBZFS();
   }
 }
 
 
-void WorldDownLoader::stop()
-{
+void WorldDownLoader::stop() {
   if (joiningGame) {
     if (worldBuilder) {
       delete worldBuilder;
@@ -96,22 +94,19 @@ void WorldDownLoader::stop()
 }
 
 
-void WorldDownLoader::setCacheURL(char *cacheURL)
-{
+void WorldDownLoader::setCacheURL(char* cacheURL) {
   worldUrl = cacheURL;
 }
 
 
-void WorldDownLoader::setCacheTemp(bool cacheTemp)
-{
+void WorldDownLoader::setCacheTemp(bool cacheTemp) {
   isCacheTemp = cacheTemp;
 }
 
 
-uint32_t WorldDownLoader::processChunk(void *buf, uint16_t len, int bytesLeft)
-{
+uint32_t WorldDownLoader::processChunk(void* buf, uint16_t len, int bytesLeft) {
   if (cacheOut) {
-    cacheOut->write((char *)buf, len);
+    cacheOut->write((char*)buf, len);
   }
 
   worldPtr += len;
@@ -140,25 +135,27 @@ uint32_t WorldDownLoader::processChunk(void *buf, uint16_t len, int bytesLeft)
 }
 
 
-void WorldDownLoader::cleanCache()
-{
+void WorldDownLoader::cleanCache() {
   // setup the world cache limit
   int cacheLimit = (10 * 1024 * 1024);
   if (BZDB.isSet("worldCacheLimit")) {
     const int dbCacheLimit = BZDB.evalInt("worldCacheLimit");
     // the old limit was 100 Kbytes, too small
-    if (dbCacheLimit == (100 * 1024))
+    if (dbCacheLimit == (100 * 1024)) {
       BZDB.setInt("worldCacheLimit", cacheLimit);
-    else
+    }
+    else {
       cacheLimit = dbCacheLimit;
-  } else {
+    }
+  }
+  else {
     BZDB.setInt("worldCacheLimit", cacheLimit);
   }
 
   const std::string worldPath = getCacheDirName();
 
   while (true) {
-    char *oldestFile = NULL;
+    char* oldestFile = NULL;
     int oldestSize = 0;
     int totalSize = 0;
 
@@ -169,55 +166,57 @@ void WorldDownLoader::cleanCache()
     if (h != INVALID_HANDLE_VALUE) {
       FILETIME oldestTime;
       while (FindNextFile(h, &findData)) {
-	if ((oldestFile == NULL) ||
-	  (CompareFileTime(&oldestTime, &findData.ftLastAccessTime) > 0)) {
-	    if (oldestFile)
-	      free(oldestFile);
+        if ((oldestFile == NULL) ||
+            (CompareFileTime(&oldestTime, &findData.ftLastAccessTime) > 0)) {
+          if (oldestFile) {
+            free(oldestFile);
+          }
 
-	    oldestFile = strdup(findData.cFileName);
-	    oldestSize = findData.nFileSizeLow;
-	    oldestTime = findData.ftLastAccessTime;
-	}
-	totalSize += findData.nFileSizeLow;
+          oldestFile = strdup(findData.cFileName);
+          oldestSize = findData.nFileSizeLow;
+          oldestTime = findData.ftLastAccessTime;
+        }
+        totalSize += findData.nFileSizeLow;
       }
       FindClose(h);
     }
 #else
-    DIR *directory = opendir(worldPath.c_str());
+    DIR* directory = opendir(worldPath.c_str());
     if (directory) {
-      struct dirent *contents;
+      struct dirent* contents;
       struct stat statbuf;
       time_t oldestTime = time(NULL);
       while ((contents = readdir(directory))) {
-	const std::string filename = contents->d_name;
-	const std::string fullname = worldPath + filename;
-	stat(fullname.c_str(), &statbuf);
-	if (S_ISREG(statbuf.st_mode) && (filename.size() > 4) &&
-	  (filename.substr(filename.size() - 4) == ".bwc")) {
-	    if ((oldestFile == NULL) || (statbuf.st_atime < oldestTime)) {
-	      if (oldestFile) {
-		free(oldestFile);
-	      }
-	      oldestFile = strdup(contents->d_name);
-	      oldestSize = statbuf.st_size;
-	      oldestTime = statbuf.st_atime;
-	    }
-	    totalSize += statbuf.st_size;
-	}
+        const std::string filename = contents->d_name;
+        const std::string fullname = worldPath + filename;
+        stat(fullname.c_str(), &statbuf);
+        if (S_ISREG(statbuf.st_mode) && (filename.size() > 4) &&
+            (filename.substr(filename.size() - 4) == ".bwc")) {
+          if ((oldestFile == NULL) || (statbuf.st_atime < oldestTime)) {
+            if (oldestFile) {
+              free(oldestFile);
+            }
+            oldestFile = strdup(contents->d_name);
+            oldestSize = statbuf.st_size;
+            oldestTime = statbuf.st_atime;
+          }
+          totalSize += statbuf.st_size;
+        }
       }
       closedir(directory);
     }
 #endif
 
     // any valid cache files?
-    if (oldestFile == NULL)
+    if (oldestFile == NULL) {
       return;
+    }
 
     // is the cache small enough?
     if (totalSize < cacheLimit) {
       if (oldestFile != NULL) {
-	free(oldestFile);
-	oldestFile = NULL;
+        free(oldestFile);
+        oldestFile = NULL;
       }
       return;
     }
@@ -231,8 +230,7 @@ void WorldDownLoader::cleanCache()
 }
 
 
-void WorldDownLoader::askToBZFS()
-{
+void WorldDownLoader::askToBZFS() {
   // Why do we use the error status for this?
   showError("Downloading World...");
   char message[MaxPacketLen];
@@ -248,9 +246,8 @@ void WorldDownLoader::askToBZFS()
 }
 
 
-bool WorldDownLoader::isCached(char *hexDigest)
-{
-  std::istream *cachedWorld;
+bool WorldDownLoader::isCached(char* hexDigest) {
+  std::istream* cachedWorld;
   bool cached    = false;
   worldHash = hexDigest;
   worldCachePath = getCacheDirName();
@@ -265,8 +262,7 @@ bool WorldDownLoader::isCached(char *hexDigest)
 }
 
 
-void WorldDownLoader::loadCached()
-{
+void WorldDownLoader::loadCached() {
   // can't get a cache from nothing
   if (worldCachePath.size() == 0) {
     joiningGame = false;
@@ -274,16 +270,16 @@ void WorldDownLoader::loadCached()
   }
 
   // lookup the cached world
-  std::istream *cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
+  std::istream* cachedWorld = FILEMGR.createDataInStream(worldCachePath, true);
   if (!cachedWorld) {
-    showError("World cache files disappeared.  Join canceled",true);
+    showError("World cache files disappeared.  Join canceled", true);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
   }
 
   // status update
-  showError("Loading world into memory...",true);
+  showError("Loading world into memory...", true);
 
   // get the world size
   cachedWorld->seekg(0, std::ios::end);
@@ -292,9 +288,9 @@ void WorldDownLoader::loadCached()
 
   // load the cached world
   cachedWorld->seekg(0);
-  char *localWorldDatabase = new char[charSize];
+  char* localWorldDatabase = new char[charSize];
   if (!localWorldDatabase) {
-    showError("Error loading cached world.  Join canceled",true);
+    showError("Error loading cached world.  Join canceled", true);
     remove(worldCachePath.c_str());
     joiningGame = false;
     return;
@@ -304,9 +300,9 @@ void WorldDownLoader::loadCached()
   cachedWorld = NULL;
 
   // verify
-  showError("Verifying world integrity...",true);
+  showError("Verifying world integrity...", true);
   MD5 md5;
-  md5.update((unsigned char *)localWorldDatabase, charSize);
+  md5.update((unsigned char*)localWorldDatabase, charSize);
   md5.finalize();
   std::string digest = md5.hexdigest();
   if (digest != md5Digest) {
@@ -323,7 +319,7 @@ void WorldDownLoader::loadCached()
   }
 
   // make world
-  showError("Preparing world...",true);
+  showError("Preparing world...", true);
   if (!worldBuilder->unpack(localWorldDatabase)) {
     // world didn't make for some reason
     if (worldBuilder) {
@@ -357,13 +353,12 @@ void WorldDownLoader::loadCached()
 }
 
 
-void WorldDownLoader::markOld(std::string &fileName)
-{
+void WorldDownLoader::markOld(std::string& fileName) {
 #ifdef _WIN32
   FILETIME ft;
   HANDLE h = CreateFile(fileName.c_str(),
-    FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA, 0, NULL,
-    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+                        FILE_WRITE_ATTRIBUTES | FILE_WRITE_EA, 0, NULL,
+                        OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
   if (h != INVALID_HANDLE_VALUE) {
     SYSTEMTIME st;
     memset(&st, 0, sizeof(st));
@@ -384,32 +379,34 @@ void WorldDownLoader::markOld(std::string &fileName)
 }
 
 
-void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
-{
+void WorldDownLoader::finalization(char* data, unsigned int length, bool good) {
   if (good) {
     worldDatabase = data;
     theData       = NULL;
     MD5 md5;
-    md5.update((unsigned char *)worldDatabase, length);
+    md5.update((unsigned char*)worldDatabase, length);
     md5.finalize();
     std::string digest = md5.hexdigest();
     if (digest != md5Digest) {
       showError("Download from URL failed");
       askToBZFS();
-    } else {
-      std::ostream *cache =
-	FILEMGR.createDataOutStream(worldCachePath, true, true);
+    }
+    else {
+      std::ostream* cache =
+        FILEMGR.createDataOutStream(worldCachePath, true, true);
       if (cache != NULL) {
-	cache->write(worldDatabase, length);
-	delete cache;
-	cache = NULL;
-	loadCached();
-      } else {
-	showError("Problem writing cache");
-	askToBZFS();
+        cache->write(worldDatabase, length);
+        delete cache;
+        cache = NULL;
+        loadCached();
+      }
+      else {
+        showError("Problem writing cache");
+        askToBZFS();
       }
     }
-  } else {
+  }
+  else {
     askToBZFS();
   }
 }

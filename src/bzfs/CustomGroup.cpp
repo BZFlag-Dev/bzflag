@@ -30,8 +30,7 @@
 
 
 CustomGroup::CustomGroup(const std::string& groupDef,
-                         const std::string& groupName)
-{
+                         const std::string& groupName) {
   group = new GroupInstance(groupDef);
   if (groupDef.empty()) {
     std::cout << "WARNING: group instance has no group definition" << std::endl;
@@ -41,21 +40,21 @@ CustomGroup::CustomGroup(const std::string& groupDef,
 }
 
 
-CustomGroup::~CustomGroup()
-{
+CustomGroup::~CustomGroup() {
   delete group;
   return;
 }
 
 
-bool CustomGroup::read(const char *cmd, std::istream& input) {
+bool CustomGroup::read(const char* cmd, std::istream& input) {
 
   if (strcasecmp(cmd, "team") == 0) {
     int team;
     if (!(input >> team) || (team < 0) || (team >= CtfTeams)) {
       std::cout << "bad team specification" << std::endl;
       return false;
-    } else {
+    }
+    else {
       group->setTeam(team);
     }
   }
@@ -64,7 +63,8 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     if (!parseColorStream(input, tint)) {
       std::cout << "bad " << cmd << " specification" << std::endl;
       return false;
-    } else {
+    }
+    else {
       group->setTint(tint);
     }
   }
@@ -77,7 +77,8 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     int phydrv = PHYDRVMGR.findDriver(drvname);
     if ((phydrv == -1) && (drvname != "-1")) {
       std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
-    } else {
+    }
+    else {
       group->setPhysicsDriver(phydrv);
     }
   }
@@ -89,8 +90,9 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     const BzMaterial* matref = MATERIALMGR.findMaterial(materialName);
     if ((matref == NULL) && (materialName != "-1")) {
       std::cout << "couldn't find reference material: " << materialName
-		<< std::endl;
-    } else {
+                << std::endl;
+    }
+    else {
       group->setMaterial(matref);
     }
   }
@@ -105,10 +107,12 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     if (srcMat == NULL) {
       std::cout << "couldn't find matswap source: "
                 << srcName << std::endl;
-    } else if (dstMat == NULL) {
+    }
+    else if (dstMat == NULL) {
       std::cout << "couldn't find matswap destination: "
                 << dstName << std::endl;
-    } else {
+    }
+    else {
       group->addMaterialSwap(srcMat, dstMat);
     }
   }
@@ -123,10 +127,12 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
     if ((srcDrv < 0) && (srcName != "-1")) {
       std::cout << "couldn't find phydrvswap source: "
                 << srcName << std::endl;
-    } else if ((dstDrv < 0) && (dstName != "-1")) {
+    }
+    else if ((dstDrv < 0) && (dstName != "-1")) {
       std::cout << "couldn't find phydrvswap destination: "
                 << srcName << std::endl;
-    } else {
+    }
+    else {
       group->addPhydrvSwap(srcDrv, dstDrv);
     }
   }
@@ -171,8 +177,7 @@ bool CustomGroup::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomGroup::writeToGroupDef(GroupDefinition *groupDef) const
-{
+void CustomGroup::writeToGroupDef(GroupDefinition* groupDef) const {
   // include the old style parameters
   MeshTransform xform;
   if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
@@ -198,7 +203,8 @@ void CustomGroup::writeToGroupDef(GroupDefinition *groupDef) const
   // make the group instance
   if (group->getGroupDef().size() > 0) {
     groupDef->addGroupInstance(group);
-  } else {
+  }
+  else {
     delete group;
   }
   group = NULL;
@@ -211,6 +217,6 @@ void CustomGroup::writeToGroupDef(GroupDefinition *groupDef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

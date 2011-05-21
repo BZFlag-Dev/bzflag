@@ -20,27 +20,25 @@
 // FIXME: Shouldn't need to depend on GUI elements
 #include "guiplaying.h"
 
-void Callbacks::setFlagHelp(const std::string& name, void*)
-{
+void Callbacks::setFlagHelp(const std::string& name, void*) {
   if (LocalPlayer::getMyTank() == NULL) {
     return;
   }
   if (BZDB.isTrue(name)) {
     hud->setFlagHelp(LocalPlayer::getMyTank()->getFlagType(), FlagHelpDuration);
-  } else {
+  }
+  else {
     hud->setFlagHelp(Flags::Null, 0.0);
   }
 }
 
 
-void Callbacks::setDebugLevel(const std::string& name, void*)
-{
+void Callbacks::setDebugLevel(const std::string& name, void*) {
   debugLevel = BZDB.evalInt(name);
 }
 
 
-void Callbacks::setDepthBuffer(const std::string& name, void*)
-{
+void Callbacks::setDepthBuffer(const std::string& name, void*) {
   /* if zbuffer was set and not available, unset it */
   if (BZDB.isTrue(name)) {
     GLint value;
@@ -56,8 +54,7 @@ void Callbacks::setDepthBuffer(const std::string& name, void*)
 }
 
 
-void Callbacks::setProcessorAffinity(const std::string& name, void*)
-{
+void Callbacks::setProcessorAffinity(const std::string& name, void*) {
   if (BZDB.evalInt(name) >= 0) {
     BzTime::setProcessorAffinity(BZDB.evalInt(name));
   }
@@ -68,6 +65,6 @@ void Callbacks::setProcessorAffinity(const std::string& name, void*)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

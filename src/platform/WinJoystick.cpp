@@ -29,16 +29,13 @@
 #pragma warning(4:4800)
 #endif
 
-WinJoystick::WinJoystick() : inited(false)
-{
+WinJoystick::WinJoystick() : inited(false) {
 }
 
-WinJoystick::~WinJoystick()
-{
+WinJoystick::~WinJoystick() {
 }
 
-void	      WinJoystick::initJoystick(const char* joystickName)
-{
+void        WinJoystick::initJoystick(const char* joystickName) {
   inited = false;
 
   if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, "")) {
@@ -50,10 +47,12 @@ void	      WinJoystick::initJoystick(const char* joystickName)
     return;
   }
 
-  if (joystickName[9] == '1')
+  if (joystickName[9] == '1') {
     JoystickID = JOYSTICKID1;
-  else if (joystickName[9] == '2')
+  }
+  else if (joystickName[9] == '2') {
     JoystickID = JOYSTICKID2;
+  }
 
   JOYINFO joyInfo;
   JOYCAPS joyCaps;
@@ -120,15 +119,14 @@ void	      WinJoystick::initJoystick(const char* joystickName)
   inited = true;
 }
 
-bool	      WinJoystick::joystick() const
-{
+bool        WinJoystick::joystick() const {
   return inited;
 }
 
-void	      WinJoystick::getJoy(int& x, int& y)
-{
-  if (!inited)
+void        WinJoystick::getJoy(int& x, int& y) {
+  if (!inited) {
     return;
+  }
 
   JOYINFOEX joyInfo;
   // we're only interested in position
@@ -174,10 +172,10 @@ void	      WinJoystick::getJoy(int& x, int& y)
 
 }
 
-unsigned long WinJoystick::getJoyButtons()
-{
-  if (!inited)
+unsigned long WinJoystick::getJoyButtons() {
+  if (!inited) {
     return 0;
+  }
 
   JOYINFOEX joyInfo;
   // we're only interested in buttons
@@ -192,43 +190,42 @@ unsigned long WinJoystick::getJoyButtons()
 
   unsigned long retbuts = joyInfo.dwButtons;
   unsigned long buttons = 0;
-  if (retbuts & JOY_BUTTON1)  buttons = buttons | 0x00000001;
-  if (retbuts & JOY_BUTTON2)  buttons = buttons | 0x00000002;
-  if (retbuts & JOY_BUTTON3)  buttons = buttons | 0x00000004;
-  if (retbuts & JOY_BUTTON4)  buttons = buttons | 0x00000008;
-  if (retbuts & JOY_BUTTON5)  buttons = buttons | 0x00000010;
-  if (retbuts & JOY_BUTTON6)  buttons = buttons | 0x00000020;
-  if (retbuts & JOY_BUTTON7)  buttons = buttons | 0x00000040;
-  if (retbuts & JOY_BUTTON8)  buttons = buttons | 0x00000080;
-  if (retbuts & JOY_BUTTON9)  buttons = buttons | 0x00000100;
-  if (retbuts & JOY_BUTTON10) buttons = buttons | 0x00000200;
-  if (retbuts & JOY_BUTTON11) buttons = buttons | 0x00000400;
-  if (retbuts & JOY_BUTTON12) buttons = buttons | 0x00000800;
-  if (retbuts & JOY_BUTTON13) buttons = buttons | 0x00001000;
-  if (retbuts & JOY_BUTTON14) buttons = buttons | 0x00002000;
-  if (retbuts & JOY_BUTTON15) buttons = buttons | 0x00004000;
-  if (retbuts & JOY_BUTTON16) buttons = buttons | 0x00008000;
-  if (retbuts & JOY_BUTTON17) buttons = buttons | 0x00010000;
-  if (retbuts & JOY_BUTTON18) buttons = buttons | 0x00020000;
-  if (retbuts & JOY_BUTTON19) buttons = buttons | 0x00040000;
-  if (retbuts & JOY_BUTTON20) buttons = buttons | 0x00080000;
-  if (retbuts & JOY_BUTTON21) buttons = buttons | 0x00100000;
-  if (retbuts & JOY_BUTTON22) buttons = buttons | 0x00200000;
-  if (retbuts & JOY_BUTTON23) buttons = buttons | 0x00400000;
-  if (retbuts & JOY_BUTTON24) buttons = buttons | 0x00800000;
-  if (retbuts & JOY_BUTTON25) buttons = buttons | 0x01000000;
-  if (retbuts & JOY_BUTTON26) buttons = buttons | 0x02000000;
-  if (retbuts & JOY_BUTTON27) buttons = buttons | 0x04000000;
-  if (retbuts & JOY_BUTTON28) buttons = buttons | 0x08000000;
-  if (retbuts & JOY_BUTTON29) buttons = buttons | 0x10000000;
-  if (retbuts & JOY_BUTTON30) buttons = buttons | 0x20000000;
-  if (retbuts & JOY_BUTTON31) buttons = buttons | 0x40000000;
-  if (retbuts & JOY_BUTTON32) buttons = buttons | 0x80000000;
+  if (retbuts & JOY_BUTTON1) { buttons = buttons | 0x00000001; }
+  if (retbuts & JOY_BUTTON2) { buttons = buttons | 0x00000002; }
+  if (retbuts & JOY_BUTTON3) { buttons = buttons | 0x00000004; }
+  if (retbuts & JOY_BUTTON4) { buttons = buttons | 0x00000008; }
+  if (retbuts & JOY_BUTTON5) { buttons = buttons | 0x00000010; }
+  if (retbuts & JOY_BUTTON6) { buttons = buttons | 0x00000020; }
+  if (retbuts & JOY_BUTTON7) { buttons = buttons | 0x00000040; }
+  if (retbuts & JOY_BUTTON8) { buttons = buttons | 0x00000080; }
+  if (retbuts & JOY_BUTTON9) { buttons = buttons | 0x00000100; }
+  if (retbuts & JOY_BUTTON10) { buttons = buttons | 0x00000200; }
+  if (retbuts & JOY_BUTTON11) { buttons = buttons | 0x00000400; }
+  if (retbuts & JOY_BUTTON12) { buttons = buttons | 0x00000800; }
+  if (retbuts & JOY_BUTTON13) { buttons = buttons | 0x00001000; }
+  if (retbuts & JOY_BUTTON14) { buttons = buttons | 0x00002000; }
+  if (retbuts & JOY_BUTTON15) { buttons = buttons | 0x00004000; }
+  if (retbuts & JOY_BUTTON16) { buttons = buttons | 0x00008000; }
+  if (retbuts & JOY_BUTTON17) { buttons = buttons | 0x00010000; }
+  if (retbuts & JOY_BUTTON18) { buttons = buttons | 0x00020000; }
+  if (retbuts & JOY_BUTTON19) { buttons = buttons | 0x00040000; }
+  if (retbuts & JOY_BUTTON20) { buttons = buttons | 0x00080000; }
+  if (retbuts & JOY_BUTTON21) { buttons = buttons | 0x00100000; }
+  if (retbuts & JOY_BUTTON22) { buttons = buttons | 0x00200000; }
+  if (retbuts & JOY_BUTTON23) { buttons = buttons | 0x00400000; }
+  if (retbuts & JOY_BUTTON24) { buttons = buttons | 0x00800000; }
+  if (retbuts & JOY_BUTTON25) { buttons = buttons | 0x01000000; }
+  if (retbuts & JOY_BUTTON26) { buttons = buttons | 0x02000000; }
+  if (retbuts & JOY_BUTTON27) { buttons = buttons | 0x04000000; }
+  if (retbuts & JOY_BUTTON28) { buttons = buttons | 0x08000000; }
+  if (retbuts & JOY_BUTTON29) { buttons = buttons | 0x10000000; }
+  if (retbuts & JOY_BUTTON30) { buttons = buttons | 0x20000000; }
+  if (retbuts & JOY_BUTTON31) { buttons = buttons | 0x40000000; }
+  if (retbuts & JOY_BUTTON32) { buttons = buttons | 0x80000000; }
   return buttons;
 }
 
-void	      WinJoystick::getJoyDevices(std::vector<std::string> &list) const
-{
+void        WinJoystick::getJoyDevices(std::vector<std::string> &list) const {
   list.clear();
   if (joyGetNumDevs() != 0) {
     // we have at least one joystick driver, get the name of both joystick IDs if they exist.
@@ -242,43 +239,44 @@ void	      WinJoystick::getJoyDevices(std::vector<std::string> &list) const
   }
 }
 
-void	      WinJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
-{
+void        WinJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const {
   list.clear();
-  if (!inited)
+  if (!inited) {
     return;
+  }
 
   for (unsigned int i = 0; i < axes.size(); ++i) {
-    if (axes[i].exists)
+    if (axes[i].exists) {
       list.push_back(axes[i].name);
+    }
   }
 }
 
-void	      WinJoystick::setXAxis(const std::string axis)
-{
-  if (!inited)
+void        WinJoystick::setXAxis(const std::string axis) {
+  if (!inited) {
     return;
+  }
 
   for (unsigned int i = 0; i < axes.size(); ++i) {
     if (axes[i].exists) {
       if (axes[i].name == axis) {
-	xIndex = i;
-	break;
+        xIndex = i;
+        break;
       }
     }
   }
 }
 
-void	      WinJoystick::setYAxis(const std::string axis)
-{
-  if (!inited)
+void        WinJoystick::setYAxis(const std::string axis) {
+  if (!inited) {
     return;
+  }
 
   for (unsigned int i = 0; i < axes.size(); ++i) {
     if (axes[i].exists) {
       if (axes[i].name == axis) {
-	yIndex = i;
-	break;
+        yIndex = i;
+        break;
       }
     }
   }
@@ -289,6 +287,6 @@ void	      WinJoystick::setYAxis(const std::string axis)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -23,7 +23,7 @@ class CustomWaterLevel : public WorldFileObject {
   public:
     CustomWaterLevel();
     ~CustomWaterLevel();
-    virtual bool read(const char *cmd, std::istream& input);
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToWorld(WorldInfo*) const;
     virtual bool usesGroupDef() { return false; }
   private:
@@ -38,6 +38,6 @@ class CustomWaterLevel : public WorldFileObject {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

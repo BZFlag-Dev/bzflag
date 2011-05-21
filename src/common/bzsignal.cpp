@@ -14,8 +14,7 @@
 
 /* Unix systems implemnt signal() differently */
 /* modified from "UNIX Network Programming" */
-SIG_PF bzSignal(int signo, SIG_PF func)
-{
+SIG_PF bzSignal(int signo, SIG_PF func) {
 #ifdef _WIN32
   return signal(signo, func);
 #else /* _WIN32 */
@@ -33,14 +32,16 @@ SIG_PF bzSignal(int signo, SIG_PF func)
     /* SunOS 4.x */
     act.sa_flags |= SA_INTERRUPT;
 #endif
-  } else {
+  }
+  else {
 #ifdef SA_RESTART
     /* SVR4, 4.4BSD */
     act.sa_flags |= SA_RESTART;
 #endif
   }
-  if (sigaction(signo, &act, &oact) < 0)
+  if (sigaction(signo, &act, &oact) < 0) {
     return SIG_ERR;
+  }
   return oact.sa_handler;
 #endif /* _WIN32 */
 }
@@ -49,6 +50,6 @@ SIG_PF bzSignal(int signo, SIG_PF func)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

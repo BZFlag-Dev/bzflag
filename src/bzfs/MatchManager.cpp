@@ -22,8 +22,7 @@
 
 /** Utility Countdown class */
 
-CountDown::CountDown(double interval, int count)
-{
+CountDown::CountDown(double interval, int count) {
   _interval = interval;
   _currentTime = 0;
   _previousTime = 0;
@@ -31,25 +30,21 @@ CountDown::CountDown(double interval, int count)
   _counter = _startCount;
 }
 
-int CountDown::getCounter()
-{
+int CountDown::getCounter() {
   return _counter;
 }
 
-void CountDown::setCounter(int count)
-{
+void CountDown::setCounter(int count) {
   _startCount = _counter = count + 1;
 }
 
-void CountDown::doReset()
-{
+void CountDown::doReset() {
   _currentTime = bz_getCurrentTime();
   _previousTime = _currentTime;
   _counter = _startCount;
 }
 
-bool CountDown::doCountdown()
-{
+bool CountDown::doCountdown() {
   _currentTime = bz_getCurrentTime();
 
   if ((_currentTime - _previousTime) > _interval) {
@@ -61,8 +56,7 @@ bool CountDown::doCountdown()
   return false;
 }
 
-bool CountDown::inProgress()
-{
+bool CountDown::inProgress() {
   return (_counter > 1);
 }
 
@@ -75,8 +69,7 @@ MatchManager* Singleton<MatchManager>::_instance = (MatchManager*)0;
 /**
  * default constructor, protected because of singleton
  */
-MatchManager::MatchManager() : Singleton<MatchManager>()
-{
+MatchManager::MatchManager() : Singleton<MatchManager>() {
   // start future BZDB vars
   _matchPregameTime = 60;
   _matchDuration = 1800;
@@ -104,37 +97,38 @@ MatchManager::MatchManager() : Singleton<MatchManager>()
   currentTime = 0;
 
   // register events & commands
-  bz_registerCustomSlashCommand("match",this);
-  bz_registerEvent(bz_eGetAutoTeamEvent,this);
-  bz_registerEvent(bz_eTickEvent,this);
-  bz_registerEvent(bz_eReportFiledEvent,this);
+  bz_registerCustomSlashCommand("match", this);
+  bz_registerEvent(bz_eGetAutoTeamEvent, this);
+  bz_registerEvent(bz_eTickEvent, this);
+  bz_registerEvent(bz_eReportFiledEvent, this);
 
-  bz_setMaxWaitTime(0.1f,"MATCHMANAGER");
+  bz_setMaxWaitTime(0.1f, "MATCHMANAGER");
 }
 
 /**
  * default destructor, protected because of singleton
  */
-MatchManager::~MatchManager()
-{
+MatchManager::~MatchManager() {
   bz_removeCustomSlashCommand("match");
-  bz_removeEvent(bz_eGetAutoTeamEvent,this);
-  bz_removeEvent(bz_eTickEvent,this);
-  bz_removeEvent(bz_eReportFiledEvent,this);
+  bz_removeEvent(bz_eGetAutoTeamEvent, this);
+  bz_removeEvent(bz_eTickEvent, this);
+  bz_removeEvent(bz_eReportFiledEvent, this);
 
   bz_clearMaxWaitTime("MATCHMANAGER");
 }
 
-void MatchManager::start (int playerID, bz_APIStringList *params)
-{
-  if (matchState == eOn || matchState == ePregame)
-    bz_sendTextMessage (BZ_SERVER, playerID, "A match is currently in progress");
+void MatchManager::start(int playerID, bz_APIStringList* params) {
+  if (matchState == eOn || matchState == ePregame) {
+    bz_sendTextMessage(BZ_SERVER, playerID, "A match is currently in progress");
+  }
   else {
     if (matchState == eOff || matchState == ePostgame) {
-      if (params->size() == 2)
-	duration = atoi(params->get(1).c_str());
-      else
-	duration = _matchDuration;
+      if (params->size() == 2) {
+        duration = atoi(params->get(1).c_str());
+      }
+      else {
+        duration = _matchDuration;
+      }
 
       matchState = ePregame;
       preGameTimer.doReset();
@@ -150,81 +144,83 @@ void MatchManager::start (int playerID, bz_APIStringList *params)
       resetTeamScores();
       resetPlayerScores();
 
-      bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "A match will start in %.0f seconds", _matchPregameTime);
+      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "A match will start in %.0f seconds", _matchPregameTime);
     }
   }
 }
 
-void MatchManager::end (int playerID, bz_APIStringList * /* params */)
-{
+void MatchManager::end(int playerID, bz_APIStringList* /* params */) {
   if (matchState == eOn) {
     matchState = ePostgame;
     paused = false;
-    bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "The match ended after %.0f seconds", bz_getCurrentTime() - startTime);
-  } else {
-    bz_sendTextMessage (BZ_SERVER, playerID, "No match in progress");
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "The match ended after %.0f seconds", bz_getCurrentTime() - startTime);
+  }
+  else {
+    bz_sendTextMessage(BZ_SERVER, playerID, "No match in progress");
   }
 }
 
-void MatchManager::pause (int playerID, bz_APIStringList *params)
-{
+void MatchManager::pause(int playerID, bz_APIStringList* params) {
 
   // pause can only be used when a match is in progress
   if (matchState == eOn) {
     double d = 0;
 
-    if (params->size() == 2)
+    if (params->size() == 2) {
       d = atoi(params->get(1).c_str());
+    }
 
     // resume the match when already paused else pause
     if (paused) {
       resumeTime = bz_getCurrentTime() + d;
-      bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "The match will be resumed in %.0f seconds", resumeTime - currentTime);
-    } else {
-      paused=true;
+      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "The match will be resumed in %.0f seconds", resumeTime - currentTime);
+    }
+    else {
+      paused = true;
       pauseTime = bz_getCurrentTime();
 
       if (d > 0) {
-	resumeTime = bz_getCurrentTime() + d;
-	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "The match will be paused for %.0f seconds", resumeTime - currentTime);
-      } else {
-	bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "The match is paused");
+        resumeTime = bz_getCurrentTime() + d;
+        bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "The match will be paused for %.0f seconds", resumeTime - currentTime);
+      }
+      else {
+        bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "The match is paused");
       }
     }
-  } else {
-    bz_sendTextMessagef (BZ_SERVER, playerID, "No match to pause");
+  }
+  else {
+    bz_sendTextMessagef(BZ_SERVER, playerID, "No match to pause");
   }
 }
 
-void MatchManager::substitute (int /* playerID */, bz_APIStringList * /* params */)
-{
+void MatchManager::substitute(int /* playerID */, bz_APIStringList* /* params */) {
 
 }
 
-void MatchManager::doPregame()
-{
+void MatchManager::doPregame() {
   if (preGameTimer.inProgress()) {
-    if (preGameTimer.doCountdown())
-      bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "%d ...", preGameTimer.getCounter());
-  } else {
+    if (preGameTimer.doCountdown()) {
+      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%d ...", preGameTimer.getCounter());
+    }
+  }
+  else {
     matchState = eOn;
     endTimer.setCounter((int) _matchEndCountdown);
     endTimer.doReset();
     startTime = currentTime;
 
-    bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "The match started");
+    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "The match started");
   }
 }
 
-void MatchManager::doOngame()
-{
+void MatchManager::doOngame() {
 
   // check if someone unpaused the match, if so resume it
   if (paused && currentTime >= resumeTime && resumeTime != -1) {
     duration += currentTime - pauseTime;
     paused = false;
 
-    bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Match resumed after %.0f seconds", currentTime - pauseTime);
+    bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Match resumed after %.0f seconds", currentTime - pauseTime);
 
     resumeTime = -1;
     pauseTime = -1;
@@ -233,95 +229,96 @@ void MatchManager::doOngame()
   // start match end countdown
   if (!paused && currentTime >= ((startTime + duration) - _matchEndCountdown)) {
     if (endTimer.inProgress()) {
-      if (endTimer.doCountdown())
-	bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Still %d sec to go before match ends", endTimer.getCounter());
-    } else {
+      if (endTimer.doCountdown()) {
+        bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Still %d sec to go before match ends", endTimer.getCounter());
+      }
+    }
+    else {
       matchState = ePostgame;
       endTime = startTime + duration + resetTime;
-      bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "The match ended");
-      if (report)
-	doReportgame();
+      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "The match ended");
+      if (report) {
+        doReportgame();
+      }
 
       startTime = -1;
     }
   }
 }
 
-void MatchManager::doPostgame()
-{
+void MatchManager::doPostgame() {
   if (currentTime >= endTime) {
     matchState = eOff;
-    bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Free play is resumed");
+    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Free play is resumed");
   }
 }
 
-void MatchManager::doReportgame()
-{
-  bz_fileReport("report scores to the report channel","MatchMaker");
+void MatchManager::doReportgame() {
+  bz_fileReport("report scores to the report channel", "MatchMaker");
 }
 
-void MatchManager::disablePlayerSpawn()
-{
-  bz_APIIntList * players = bz_getPlayerIndexList();
+void MatchManager::disablePlayerSpawn() {
+  bz_APIIntList* players = bz_getPlayerIndexList();
 
   for (unsigned int i = 0; i < players->size(); i++) {
     if (bz_getPlayerTeam(players->get(i)) != eObservers) {
-      if (bz_setPlayerSpawnable(players->get(i), false))
-	bz_debugMessagef(2, "DEBUG :: no spawn success :: player => %d ", players->get(i));
-      else
-	bz_debugMessagef(2, "DEBUG :: no spawn failed :: player => %d ", players->get(i));
+      if (bz_setPlayerSpawnable(players->get(i), false)) {
+        bz_debugMessagef(2, "DEBUG :: no spawn success :: player => %d ", players->get(i));
+      }
+      else {
+        bz_debugMessagef(2, "DEBUG :: no spawn failed :: player => %d ", players->get(i));
+      }
     }
   }
 
 }
 
-void MatchManager::resetTeamScores()
-{
+void MatchManager::resetTeamScores() {
 
 }
 
-void MatchManager::resetPlayerScores()
-{
+void MatchManager::resetPlayerScores() {
 
 }
 
-void MatchManager::process (bz_EventData *eventData)
-{
+void MatchManager::process(bz_EventData* eventData) {
 
-  if (!eventData)
+  if (!eventData) {
     return;
+  }
 
   if (eventData->eventType == bz_eGetAutoTeamEvent) {
 
   }
 
   if (eventData->eventType == bz_eTickEvent) {
-    currentTime = ((bz_TickEventData_V1 *) eventData)->eventTime;
+    currentTime = ((bz_TickEventData_V1*) eventData)->eventTime;
 
     if (matchState == ePregame) {
       doPregame();
-    } else {
+    }
+    else {
       if (matchState == eOn) {
-	doOngame();
-      } else {
-	if (matchState == ePostgame)
-	  doPostgame();
+        doOngame();
+      }
+      else {
+        if (matchState == ePostgame) {
+          doPostgame();
+        }
       }
     }
   }
 
 
-  if (eventData->eventType == bz_eReportFiledEvent)
-  {
-    bz_ReportFiledEventData_V1 * data = (bz_ReportFiledEventData_V1 *) eventData;
+  if (eventData->eventType == bz_eReportFiledEvent) {
+    bz_ReportFiledEventData_V1* data = (bz_ReportFiledEventData_V1*) eventData;
     bz_debugMessagef(2, "DEBUG :: version => %d reporter => %s :: message => %s :: time => %.0f",
-		     data->version, data->from.c_str(), data->message.c_str(), data->eventTime);
+                     data->version, data->from.c_str(), data->message.c_str(), data->eventTime);
   }
 
 }
 
-bool MatchManager::handle (int playerID, bz_ApiString command, bz_ApiString /* message */, bz_APIStringList *params)
-{
+bool MatchManager::handle(int playerID, bz_ApiString command, bz_ApiString /* message */, bz_APIStringList* params) {
 
   if (command == "match") {
     double now = bz_getCurrentTime();
@@ -330,71 +327,75 @@ bool MatchManager::handle (int playerID, bz_ApiString command, bz_ApiString /* m
       std::string msg;
       switch (matchState) {
 
-	default:
-	  msg = "No match is in progress";
-	  break;
+        default:
+          msg = "No match is in progress";
+          break;
 
-	case ePregame:
-	  msg = TextUtils::format("Match will start in %.0f seconds", startTime - now);
-	  break;
+        case ePregame:
+          msg = TextUtils::format("Match will start in %.0f seconds", startTime - now);
+          break;
 
-	case eOn:
-	  if (!paused)
-	    msg = TextUtils::format("Match is in progress, still %.0f seconds to go", (startTime + duration) - now);
-	  else
-	    msg = "Match is paused";
-	  break;
+        case eOn:
+          if (!paused) {
+            msg = TextUtils::format("Match is in progress, still %.0f seconds to go", (startTime + duration) - now);
+          }
+          else {
+            msg = "Match is paused";
+          }
+          break;
 
-	case ePostgame:
-	  msg = TextUtils::format("Match is over, server will resume free play in %.0f seconds",endTime - now);
-	  break;
+        case ePostgame:
+          msg = TextUtils::format("Match is over, server will resume free play in %.0f seconds", endTime - now);
+          break;
       }
 
-      bz_sendTextMessagef (BZ_SERVER, playerID, "%s", msg.c_str());
+      bz_sendTextMessagef(BZ_SERVER, playerID, "%s", msg.c_str());
       return true;
 
-    } else {
+    }
+    else {
       // check if player has the perms to exectue the match command
       if (!bz_hasPerm(playerID, "MATCH")) {
-	bz_sendTextMessage (BZ_SERVER, playerID, "You do not have permission to run the match command");
-	return true;
+        bz_sendTextMessage(BZ_SERVER, playerID, "You do not have permission to run the match command");
+        return true;
       }
 
       if (params->size()) {
-	bz_ApiString action = params->get(0);
-	action.tolower();
+        bz_ApiString action = params->get(0);
+        action.tolower();
 
-	if (action == "start") {
-	  start(playerID, params);
-	  return true;
-	}
+        if (action == "start") {
+          start(playerID, params);
+          return true;
+        }
 
-	if (action == "end") {
-	  end(playerID, params);
-	  return true;
-	}
+        if (action == "end") {
+          end(playerID, params);
+          return true;
+        }
 
-	if (action == "pause") {
-	  pause(playerID, params);
-	  return true;
-	}
+        if (action == "pause") {
+          pause(playerID, params);
+          return true;
+        }
 
-	if (action == "sub") {
-	  substitute(playerID, params);
-	  return true;
-	}
+        if (action == "sub") {
+          substitute(playerID, params);
+          return true;
+        }
 
-	if (action == "noreport") {
-	  if (report) {
-	    report = false;
-	    bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Reporting is disabled.");
-	  } else {
-	    report = true;
-	    bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Reporting is enabled.");
-	  }
+        if (action == "noreport") {
+          if (report) {
+            report = false;
+            bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Reporting is disabled.");
+          }
+          else {
+            report = true;
+            bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Reporting is enabled.");
+          }
 
-	  return true;
-	}
+          return true;
+        }
       }
     }
   }
@@ -406,8 +407,7 @@ bool MatchManager::handle (int playerID, bz_ApiString command, bz_ApiString /* m
  * Init the MatchManager. Should be hooked into bzfs.cpp at some point,
  * but not yet as this is far from finished.
  */
-void MatchManager::init()
-{
+void MatchManager::init() {
   bz_debugMessage(2, "Initialize MatchManager");
 }
 
@@ -415,6 +415,6 @@ void MatchManager::init()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

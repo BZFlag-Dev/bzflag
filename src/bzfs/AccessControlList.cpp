@@ -38,32 +38,31 @@
 #include "bzfs.h"
 
 
-void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, double period,
-			    const char *reason, bool fromMaster)
-{
-  BanInfo toban(ipAddr, bannedBy, period,fromMaster);
-  if (reason) toban.reason = reason;
+void AccessControlList::ban(in_addr& ipAddr, const char* bannedBy, double period,
+                            const char* reason, bool fromMaster) {
+  BanInfo toban(ipAddr, bannedBy, period, fromMaster);
+  if (reason) { toban.reason = reason; }
   banList_t::iterator oldit = std::find(banList.begin(), banList.end(), toban);
-  if (oldit != banList.end()) // IP already in list? -> replace
+  if (oldit != banList.end()) { // IP already in list? -> replace
     *oldit = toban;
-  else
+  }
+  else {
     banList.push_back(toban);
+  }
 }
 
 
-bool AccessControlList::ban(std::string &ipList, const char *bannedBy, double period,
-			    const char *reason, bool fromMaster)
-{
-  return ban(ipList.c_str(), bannedBy, period, reason,fromMaster);
+bool AccessControlList::ban(std::string& ipList, const char* bannedBy, double period,
+                            const char* reason, bool fromMaster) {
+  return ban(ipList.c_str(), bannedBy, period, reason, fromMaster);
 }
 
 
-bool AccessControlList::ban(const char *ipList, const char *bannedBy, double period,
-			    const char *reason, bool fromMaster)
-{
-  char *buf = strdup(ipList);
-  char *pStart = buf;
-  char *pSep;
+bool AccessControlList::ban(const char* ipList, const char* bannedBy, double period,
+                            const char* reason, bool fromMaster) {
+  char* buf = strdup(ipList);
+  char* pStart = buf;
+  char* pSep;
   bool added = false;
 
   in_addr mask;
@@ -85,36 +84,35 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, double per
 }
 
 
-void AccessControlList::hostBan(std::string hostpat, const char *bannedBy, double period,
-				const char *reason, bool fromMaster)
-{
-  HostBanInfo toban(hostpat, bannedBy, period,fromMaster);
-  if (reason) toban.reason = reason;
+void AccessControlList::hostBan(std::string hostpat, const char* bannedBy, double period,
+                                const char* reason, bool fromMaster) {
+  HostBanInfo toban(hostpat, bannedBy, period, fromMaster);
+  if (reason) { toban.reason = reason; }
   hostBanList_t::iterator oldit = std::find(hostBanList.begin(), hostBanList.end(), toban);
   if (oldit != hostBanList.end()) {
     *oldit = toban;
-  } else {
+  }
+  else {
     hostBanList.push_back(toban);
   }
 }
 
 
-void AccessControlList::idBan(std::string idpat, const char *bannedBy, double period,
-			      const char *reason, bool fromMaster)
-{
+void AccessControlList::idBan(std::string idpat, const char* bannedBy, double period,
+                              const char* reason, bool fromMaster) {
   IdBanInfo toban(idpat, bannedBy, period, fromMaster);
-  if (reason) toban.reason = reason;
+  if (reason) { toban.reason = reason; }
   idBanList_t::iterator oldit = std::find(idBanList.begin(), idBanList.end(), toban);
   if (oldit != idBanList.end()) {
     *oldit = toban;
-  } else {
+  }
+  else {
     idBanList.push_back(toban);
   }
 }
 
 
-bool AccessControlList::unban(in_addr &ipAddr)
-{
+bool AccessControlList::unban(in_addr& ipAddr) {
   banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr));
   if (it != banList.end()) {
     banList.erase(it, banList.end());
@@ -124,36 +122,35 @@ bool AccessControlList::unban(in_addr &ipAddr)
 }
 
 
-bool AccessControlList::unban(std::string &ipList)
-{
+bool AccessControlList::unban(std::string& ipList) {
   return unban(ipList.c_str());
 }
 
 
-bool AccessControlList::unban(const char *ipList)
-{
-  char *buf = strdup(ipList);
-  char *pStart = buf;
-  char *pSep;
+bool AccessControlList::unban(const char* ipList) {
+  char* buf = strdup(ipList);
+  char* pStart = buf;
+  char* pSep;
   bool success = false;
 
   in_addr mask;
   while ((pSep = strchr(pStart, ',')) != NULL) {
     *pSep = 0;
-    if (convert(pStart, mask))
-      success|=unban(mask);
+    if (convert(pStart, mask)) {
+      success |= unban(mask);
+    }
     *pSep = ',';
     pStart = pSep + 1;
   }
-  if (convert(pStart, mask))
-    success|=unban(mask);
+  if (convert(pStart, mask)) {
+    success |= unban(mask);
+  }
   free(buf);
   return success;
 }
 
 
-bool AccessControlList::hostUnban(std::string hostpat)
-{
+bool AccessControlList::hostUnban(std::string hostpat) {
   hostBanList_t::iterator it = std::remove(hostBanList.begin(), hostBanList.end(), HostBanInfo(hostpat));
   if (it != hostBanList.end()) {
     hostBanList.erase(it, hostBanList.end());
@@ -163,8 +160,7 @@ bool AccessControlList::hostUnban(std::string hostpat)
 }
 
 
-bool AccessControlList::idUnban(std::string idpat)
-{
+bool AccessControlList::idUnban(std::string idpat) {
   idBanList_t::iterator it = std::remove(idBanList.begin(), idBanList.end(), IdBanInfo(idpat));
   if (it != idBanList.end()) {
     idBanList.erase(it, idBanList.end());
@@ -174,8 +170,7 @@ bool AccessControlList::idUnban(std::string idpat)
 }
 
 
-bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
-{
+bool AccessControlList::validate(const in_addr& ipAddr, BanInfo* info) {
   expire();
 
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
@@ -196,9 +191,9 @@ bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
       mask.s_addr = htonl(tmp.s_addr);
     }
 
-    if (mask.s_addr == ipAddr.s_addr)	{
+    if (mask.s_addr == ipAddr.s_addr) {
       if (info) {
-	*info = *it;
+        *info = *it;
       }
       return false;
     }
@@ -207,8 +202,7 @@ bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
 }
 
 
-bool AccessControlList::hostValidate(const char *hostname, HostBanInfo *info)
-{
+bool AccessControlList::hostValidate(const char* hostname, HostBanInfo* info) {
   expire();
 
   const std::string upperHost = TextUtils::toupper(hostname);
@@ -216,8 +210,9 @@ bool AccessControlList::hostValidate(const char *hostname, HostBanInfo *info)
   for (hostBanList_t::iterator it = hostBanList.begin(); it != hostBanList.end(); ++it) {
     const std::string upperPattern = TextUtils::toupper(it->hostpat);
     if (glob_match(upperPattern, upperHost)) {
-      if (info)
-	*info = *it;
+      if (info) {
+        *info = *it;
+      }
       return false;
     }
   }
@@ -226,16 +221,16 @@ bool AccessControlList::hostValidate(const char *hostname, HostBanInfo *info)
 }
 
 
-bool AccessControlList::idValidate(const char *id, IdBanInfo *info)
-{
+bool AccessControlList::idValidate(const char* id, IdBanInfo* info) {
   expire();
   if (strlen(id) == 0) {
     return true;
   }
   for (idBanList_t::iterator it = idBanList.begin(); it != idBanList.end(); ++it) {
     if (TextUtils::compare_nocase(id, it->idpat.c_str()) == 0) {
-      if (info)
-	*info = *it;
+      if (info) {
+        *info = *it;
+      }
       return false;
     }
   }
@@ -244,8 +239,7 @@ bool AccessControlList::idValidate(const char *id, IdBanInfo *info)
 }
 
 
-static std::string makeGlobPattern(const char* str)
-{
+static std::string makeGlobPattern(const char* str) {
   if (str == NULL) {
     return "*";
   }
@@ -259,35 +253,37 @@ static std::string makeGlobPattern(const char* str)
   if (pattern.find('*') == std::string::npos) {
     pattern = "*" + pattern + "*";
   }
-  printf ("PATTERN = \"%s\"\n", pattern.c_str());
+  printf("PATTERN = \"%s\"\n", pattern.c_str());
   return pattern;
 }
 
 
-std::string AccessControlList::getBanMaskString(in_addr mask)
-{
+std::string AccessControlList::getBanMaskString(in_addr mask) {
   std::ostringstream os;
   os << (ntohl(mask.s_addr) >> 24) << '.';
   if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
     os << "*.*.*";
-  } else {
+  }
+  else {
     os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
     if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
       os << "*.*";
-    } else {
+    }
+    else {
       os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
-      if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	os << "*";
-      else
-	os << (ntohl(mask.s_addr) & 0xff);
+      if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff) {
+        os << "*";
+      }
+      else {
+        os << (ntohl(mask.s_addr) & 0xff);
+      }
     }
   }
   return os.str();
 }
 
 
-void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
-{
+void AccessControlList::sendBan(PlayerId id, const BanInfo& baninfo) {
   std::ostringstream os;
   os << getBanMaskString(baninfo.addr);
 
@@ -295,11 +291,13 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
   double duration = baninfo.banEnd - BzTime::getCurrent();
   if (duration < 365.0f * 24 * 3600)
     os << std::setiosflags(std::ios::fixed) << std::setprecision(1)
-       << " (" << duration/60 << " minutes)";
-  if( baninfo.fromMaster )
+       << " (" << duration / 60 << " minutes)";
+  if (baninfo.fromMaster) {
     os << " (m)";
-  if (baninfo.bannedBy.length())
+  }
+  if (baninfo.bannedBy.length()) {
     os << " banned by: " << baninfo.bannedBy;
+  }
   sendMessage(ServerPlayer, id, os.str().c_str());
 
   // add reason, if any
@@ -311,8 +309,7 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 }
 
 
-void AccessControlList::sendBans(PlayerId id, const char* pattern)
-{
+void AccessControlList::sendBans(PlayerId id, const char* pattern) {
   expire();
   sendMessage(ServerPlayer, id, "IP Ban List");
   sendMessage(ServerPlayer, id, "-----------");
@@ -323,9 +320,9 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
     if (bi.fromMaster &&
-	(glob_match(glob, getBanMaskString(bi.addr)) ||
-	 glob_match(glob, TextUtils::toupper(bi.reason)) ||
-	 glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
+        (glob_match(glob, getBanMaskString(bi.addr)) ||
+         glob_match(glob, TextUtils::toupper(bi.reason)) ||
+         glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
       sendBan(id, *it);
     }
   }
@@ -334,17 +331,16 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
     if (!bi.fromMaster &&
-	(glob_match(glob, getBanMaskString(bi.addr)) ||
-	 glob_match(glob, TextUtils::toupper(bi.reason)) ||
-	 glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
+        (glob_match(glob, getBanMaskString(bi.addr)) ||
+         glob_match(glob, TextUtils::toupper(bi.reason)) ||
+         glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
       sendBan(id, *it);
     }
   }
 }
 
 
-void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
-{
+void AccessControlList::sendHostBans(PlayerId id, const char* pattern) {
   expire();
   sendMessage(ServerPlayer, id, "Host Ban List");
   sendMessage(ServerPlayer, id, "-------------");
@@ -356,12 +352,12 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
 
     const HostBanInfo& bi = *it;
     if (!glob_match(glob, TextUtils::toupper(bi.hostpat)) &&
-	!glob_match(glob, TextUtils::toupper(bi.reason)) &&
-	!glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
+        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
       continue;
     }
 
-    char *pMsg = banlistmessage;
+    char* pMsg = banlistmessage;
     snprintf(pMsg, MessageLen, "%s", bi.hostpat.c_str());
 
     // print duration when < 1 year
@@ -392,8 +388,7 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
 }
 
 
-void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
-{
+void AccessControlList::sendIdBans(PlayerId id, const char* pattern) {
   expire();
   sendMessage(ServerPlayer, id, "BZID Ban List");
   sendMessage(ServerPlayer, id, "-------------");
@@ -405,17 +400,18 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 
     const IdBanInfo& bi = *it;
     if (!glob_match(glob, TextUtils::toupper(bi.idpat)) &&
-	!glob_match(glob, TextUtils::toupper(bi.reason)) &&
-	!glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
+        !glob_match(glob, TextUtils::toupper(bi.reason)) &&
+        !glob_match(glob, TextUtils::toupper(bi.bannedBy))) {
       continue;
     }
 
-    char *pMsg = banlistmessage;
+    char* pMsg = banlistmessage;
 
     bool useQuotes = (bi.idpat.find_first_of(" \t") != std::string::npos);
     if (useQuotes) {
       snprintf(pMsg, MessageLen, "\"%s\"", bi.idpat.c_str());
-    } else {
+    }
+    else {
       snprintf(pMsg, MessageLen, "%s", bi.idpat.c_str());
     }
 
@@ -449,8 +445,9 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
 
 bool AccessControlList::load() {
 
-  if (banFile.size() == 0)
+  if (banFile.size() == 0) {
     return true;
+  }
 
   // clear all local bans
   purgeLocals();
@@ -459,7 +456,9 @@ bool AccessControlList::load() {
   std::ifstream is(banFile.c_str());
   if (!is.good())
     // file does not exist, but that's OK, we'll create it later if needed
+  {
     return true;
+  }
 
   // try to read ban entries
   std::string ipAddress, hostpat, bzId, bannedBy, reason, tmp;
@@ -469,13 +468,14 @@ bool AccessControlList::load() {
     is >> ipAddress;
     if (ipAddress == "host:") {
       is >> hostpat;
-    } else if (ipAddress == "bzid:") {
+    }
+    else if (ipAddress == "bzid:") {
       is.ignore(1);
       std::getline(is, bzId);
     }
     is >> tmp;
     if (tmp != "end:") {
-      logDebugMessage(3,"Banfile: bad 'end:' line\n");
+      logDebugMessage(3, "Banfile: bad 'end:' line\n");
       return false;
     }
     is >> banEnd;
@@ -484,39 +484,41 @@ bool AccessControlList::load() {
       // ban command use minute as ban time
       banEnd -= double(time(NULL));
       banEnd /= 60;
-      if (banEnd == 0) banEnd = -1;
+      if (banEnd == 0) { banEnd = -1; }
     }
     is >> tmp;
     if (tmp != "banner:") {
-      logDebugMessage(3,"Banfile: bad 'banner:' line\n");
+      logDebugMessage(3, "Banfile: bad 'banner:' line\n");
       return false;
     }
     is.ignore(1);
     std::getline(is, bannedBy);
     is >> tmp;
     if (tmp != "reason:") {
-      logDebugMessage(3,"Banfile: bad 'reason:' line\n");
+      logDebugMessage(3, "Banfile: bad 'reason:' line\n");
       return false;
     }
     is.ignore(1);
     std::getline(is, reason);
     is >> std::ws;
-    if (banEnd < 0) continue;
+    if (banEnd < 0) { continue; }
     if (ipAddress == "host:") {
-      hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	      (reason.size() > 0 ? reason.c_str() : NULL));
-    } else if (ipAddress == "bzid:") {
-      idBan(bzId, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	    (reason.size() > 0 ? reason.c_str() : NULL));
-    } else {
+      hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
+              (reason.size() > 0 ? reason.c_str() : NULL));
+    }
+    else if (ipAddress == "bzid:") {
+      idBan(bzId, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
+            (reason.size() > 0 ? reason.c_str() : NULL));
+    }
+    else {
       std::string::size_type n;
       while ((n = ipAddress.find('*')) != std::string::npos) {
-	ipAddress.replace(n, 1, "255");
+        ipAddress.replace(n, 1, "255");
       }
-      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	       (reason.size() > 0 ? reason.c_str() : NULL))) {
-	logDebugMessage(3,"Banfile: bad ban\n");
-	return false;
+      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
+               (reason.size() > 0 ? reason.c_str() : NULL))) {
+        logDebugMessage(3, "Banfile: bad ban\n");
+        return false;
       }
     }
   }
@@ -529,65 +531,70 @@ int AccessControlList::merge(const std::string& banData) {
     return 0;
   }
   int bansAdded = 0;
-  std::stringstream is(banData,std::stringstream::in);
+  std::stringstream is(banData, std::stringstream::in);
 
   // try to read ban entries
   std::string ipAddress, hostpat, bzId, bannedBy, reason, tmp;
   double banEnd;
-  is>>std::ws;
+  is >> std::ws;
   while (!is.eof()) {
     is >> ipAddress;
     if (ipAddress == "host:") {
       is >> hostpat;
-    } else if (ipAddress == "bzid:") {
+    }
+    else if (ipAddress == "bzid:") {
       is.ignore(1);
       std::getline(is, bzId);
     }
     is >> tmp;
     if (tmp != "end:") {
-      logDebugMessage(3,"Banfile: bad 'end:' line\n");
+      logDebugMessage(3, "Banfile: bad 'end:' line\n");
       return bansAdded;
     }
     is >> banEnd;
     if (banEnd != 0) {
       banEnd -= double(time(NULL));
       banEnd /= 60;
-      if (banEnd == 0)
-	banEnd = -1;
+      if (banEnd == 0) {
+        banEnd = -1;
+      }
     }
     is >> tmp;
     if (tmp != "banner:") {
-      logDebugMessage(3,"Banfile: bad 'banner:' line\n");
+      logDebugMessage(3, "Banfile: bad 'banner:' line\n");
       return bansAdded;
     }
     is.ignore(1);
     std::getline(is, bannedBy);
     is >> tmp;
     if (tmp != "reason:") {
-      logDebugMessage(3,"Banfile: bad 'reason:' line\n");
+      logDebugMessage(3, "Banfile: bad 'reason:' line\n");
       return bansAdded;
     }
     is.ignore(1);
     std::getline(is, reason);
     is >> std::ws;
-    if (banEnd < 0)
+    if (banEnd < 0) {
       continue;
+    }
     if (ipAddress == "host:") {
-      hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	      (reason.size() > 0 ? reason.c_str() : NULL),true);
+      hostBan(hostpat, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
+              (reason.size() > 0 ? reason.c_str() : NULL), true);
       bansAdded++;
-    } else if (ipAddress == "bzid:") {
-      idBan(bzId, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	    (reason.size() > 0 ? reason.c_str() : NULL));
-    } else {
+    }
+    else if (ipAddress == "bzid:") {
+      idBan(bzId, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
+            (reason.size() > 0 ? reason.c_str() : NULL));
+    }
+    else {
       std::string::size_type n;
       while ((n = ipAddress.find('*')) != std::string::npos) {
-	ipAddress.replace(n, 1, "255");
+        ipAddress.replace(n, 1, "255");
       }
-      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	  (reason.size() > 0 ? reason.c_str() : NULL),true)) {
-	logDebugMessage(3,"Banfile: bad ban\n");
-	return bansAdded;
+      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
+               (reason.size() > 0 ? reason.c_str() : NULL), true)) {
+        logDebugMessage(3, "Banfile: bad ban\n");
+        return bansAdded;
       }
       bansAdded++;
     }
@@ -597,44 +604,50 @@ int AccessControlList::merge(const std::string& banData) {
 
 
 void AccessControlList::save() {
-  if (banFile.size() == 0)
+  if (banFile.size() == 0) {
     return;
+  }
   std::ofstream os(banFile.c_str());
   if (!os.good()) {
-    std::cerr<<"Could not open "<<banFile<<std::endl;
+    std::cerr << "Could not open " << banFile << std::endl;
     return;
   }
 
   double duration;
 
   for (banList_t::const_iterator it = banList.begin(); it != banList.end(); ++it) {
-    if (!it->fromMaster) {	// don't save stuff from the master list
+    if (!it->fromMaster) {  // don't save stuff from the master list
       // print address
       in_addr mask = it->addr;
       os << ((ntohl(mask.s_addr) >> 24) % 256) << '.';
       if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
-	os << "*.*.*";
-      } else {
-	os << ((ntohl(mask.s_addr) >> 16) % 256) << '.';
-	if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
-	  os << "*.*";
-	} else {
-	  os << ((ntohl(mask.s_addr) >> 8) % 256) << '.';
-	  if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	    os << "*";
-	  else
-	    os << (ntohl(mask.s_addr) % 256);
-	}
+        os << "*.*.*";
+      }
+      else {
+        os << ((ntohl(mask.s_addr) >> 16) % 256) << '.';
+        if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
+          os << "*.*";
+        }
+        else {
+          os << ((ntohl(mask.s_addr) >> 8) % 256) << '.';
+          if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff) {
+            os << "*";
+          }
+          else {
+            os << (ntohl(mask.s_addr) % 256);
+          }
+        }
       }
       os << '\n';
 
       // print ban end, banner, and reason
       if (it->banEnd.getSeconds() ==
-	  BzTime::getSunExplodeTime().getSeconds()) {
-	os << "end: 0" << '\n';
-      } else {
+          BzTime::getSunExplodeTime().getSeconds()) {
+        os << "end: 0" << '\n';
+      }
+      else {
         duration =  it->banEnd.getSeconds() + time(NULL) - BzTime::getCurrent().getSeconds();
-        os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration <<'\n';
+        os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration << '\n';
       }
       os << "banner: " << it->bannedBy << '\n';
       os << "reason: " << it->reason << '\n';
@@ -647,11 +660,12 @@ void AccessControlList::save() {
 
     // print ban end, banner, and reason
     if (ith->banEnd.getSeconds() ==
-	BzTime::getSunExplodeTime().getSeconds()) {
+        BzTime::getSunExplodeTime().getSeconds()) {
       os << "end: 0" << '\n';
-    } else {
+    }
+    else {
       duration =  ith->banEnd.getSeconds() + time(NULL) - BzTime::getCurrent().getSeconds();
-      os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration <<'\n';
+      os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration << '\n';
     }
     os << "banner: " << ith->bannedBy << '\n';
     os << "reason: " << ith->reason << '\n';
@@ -663,11 +677,12 @@ void AccessControlList::save() {
 
     // print ban end, banner, and reason
     if (iti->banEnd.getSeconds() ==
-	BzTime::getSunExplodeTime().getSeconds()) {
+        BzTime::getSunExplodeTime().getSeconds()) {
       os << "end: 0" << '\n';
-    } else {
+    }
+    else {
       duration =  iti->banEnd.getSeconds() + time(NULL) - BzTime::getCurrent().getSeconds();
-      os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration <<'\n';
+      os << "end: " << std::setiosflags(std::ios::fixed) << std::setprecision(0) << duration << '\n';
     }
     os << "banner: " << iti->bannedBy << '\n';
     os << "reason: " << iti->reason << '\n';
@@ -679,25 +694,30 @@ void AccessControlList::save() {
 void AccessControlList::purge(bool master) {
   // selectively remove bans, depending on their origin
   // (local or from master list)
-  banList_t::iterator	bItr = banList.begin();
-  while (bItr != banList.end()){
-    if (bItr->fromMaster == master)
+  banList_t::iterator bItr = banList.begin();
+  while (bItr != banList.end()) {
+    if (bItr->fromMaster == master) {
       bItr = banList.erase(bItr);
-    else
+    }
+    else {
       bItr++;
+    }
   }
-  hostBanList_t::iterator	hItr = hostBanList.begin();
+  hostBanList_t::iterator hItr = hostBanList.begin();
   while (hItr != hostBanList.end()) {
-    if (hItr->fromMaster == master)
+    if (hItr->fromMaster == master) {
       hItr = hostBanList.erase(hItr);
-    else
+    }
+    else {
       hItr++;
+    }
   }
-  idBanList_t::iterator	iItr = idBanList.begin();
+  idBanList_t::iterator iItr = idBanList.begin();
   while (iItr != idBanList.end()) {
     if (iItr->fromMaster == master) {
       iItr = idBanList.erase(iItr);
-    } else {
+    }
+    else {
       iItr++;
     }
   }
@@ -716,8 +736,7 @@ void AccessControlList::purgeMasters(void) {
 }
 
 
-std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterBans(void) const
-{
+std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterBans(void) const {
   std::vector<std::pair<std::string, std::string> > bans;
   std::string explain;
 
@@ -725,9 +744,9 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (bItr = banList.begin(); bItr != banList.end(); bItr++) {
     if (bItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
-				  bItr->reason.c_str(), bItr->bannedBy.c_str());
+                                  bItr->reason.c_str(), bItr->bannedBy.c_str());
       const std::pair<std::string, std::string>
-	baninfo = std::make_pair(std::string(inet_ntoa(bItr->addr)), explain);
+      baninfo = std::make_pair(std::string(inet_ntoa(bItr->addr)), explain);
       bans.push_back(baninfo);
     }
   }
@@ -735,9 +754,9 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (hItr = hostBanList.begin(); hItr != hostBanList.end(); hItr++) {
     if (hItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
-				  hItr->reason.c_str(), hItr->bannedBy.c_str());
+                                  hItr->reason.c_str(), hItr->bannedBy.c_str());
       const std::pair<std::string, std::string>
-	baninfo = std::make_pair(hItr->hostpat, explain);
+      baninfo = std::make_pair(hItr->hostpat, explain);
       bans.push_back(baninfo);
     }
   }
@@ -745,9 +764,9 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   for (iItr = idBanList.begin(); iItr != idBanList.end(); iItr++) {
     if (iItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
-				  iItr->reason.c_str(), iItr->bannedBy.c_str());
+                                  iItr->reason.c_str(), iItr->bannedBy.c_str());
       const std::pair<std::string, std::string>
-	baninfo = std::make_pair(iItr->idpat, explain);
+      baninfo = std::make_pair(iItr->idpat, explain);
       bans.push_back(baninfo);
     }
   }
@@ -756,58 +775,65 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
 }
 
 
-bool AccessControlList::convert(char *ip, in_addr &mask) {
+bool AccessControlList::convert(char* ip, in_addr& mask) {
   unsigned char b[4];
-  char *pPeriod;
+  char* pPeriod;
 
   for (int i = 0; i < 3; i++) {
     pPeriod = strchr(ip, '.');
     if (pPeriod) {
       *pPeriod = 0;
-      if (strcmp("*", ip) == 0)
-	b[i] = 255;
-      else
-	b[i] = atoi(ip);
+      if (strcmp("*", ip) == 0) {
+        b[i] = 255;
+      }
+      else {
+        b[i] = atoi(ip);
+      }
       *pPeriod = '.';
       ip = pPeriod + 1;
-    } else {
+    }
+    else {
       return false;
     }
   }
-  if (strcmp("*", ip) == 0)
+  if (strcmp("*", ip) == 0) {
     b[3] = 255;
-  else
+  }
+  else {
     b[3] = atoi(ip);
+  }
 
-  mask.s_addr= htonl(((unsigned int)b[0] << 24) |
-		     ((unsigned int)b[1] << 16) |
-		     ((unsigned int)b[2] << 8)  |
-		      (unsigned int)b[3]);
+  mask.s_addr = htonl(((unsigned int)b[0] << 24) |
+                      ((unsigned int)b[1] << 16) |
+                      ((unsigned int)b[2] << 8)  |
+                      (unsigned int)b[3]);
   return true;
 }
 
 
-void AccessControlList::expire()
-{
+void AccessControlList::expire() {
   BzTime now = BzTime::getCurrent();
   for (banList_t::iterator it = banList.begin(); it != banList.end();) {
     if (it->banEnd <= now) {
       it = banList.erase(it);
-    } else {
+    }
+    else {
       ++it;
     }
   }
   for (hostBanList_t::iterator ith = hostBanList.begin(); ith != hostBanList.end();) {
     if (ith->banEnd <= now) {
       ith = hostBanList.erase(ith);
-    } else {
+    }
+    else {
       ++ith;
     }
   }
   for (idBanList_t::iterator iti = idBanList.begin(); iti != idBanList.end();) {
     if (iti->banEnd <= now) {
       iti = idBanList.erase(iti);
-    } else {
+    }
+    else {
       ++iti;
     }
   }
@@ -818,6 +844,6 @@ void AccessControlList::expire()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

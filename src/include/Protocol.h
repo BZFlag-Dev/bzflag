@@ -14,8 +14,8 @@
  * Communication protocol constants
  */
 
-#ifndef	BZF_PROTOCOL_H
-#define	BZF_PROTOCOL_H
+#ifndef BZF_PROTOCOL_H
+#define BZF_PROTOCOL_H
 
 #include "common.h"
 
@@ -48,7 +48,7 @@ enum PlayerAttribute {
 };
 
 // null message code -- should never be sent
-const uint16_t	MsgNull = 0x0000;
+const uint16_t  MsgNull = 0x0000;
 
 // server message codes
 const uint16_t MsgAccept            = 0x6163; // 'ac'
@@ -205,7 +205,7 @@ enum CustomSoundBits {
   SoundVelocity  = (1 << 3), // a fvec3 specifies the source velocity
   SoundDirection = (1 << 4)  // a fvec3 specifies the direction, followed
 };                           // by two floats for the inner/outer cone angles,
-                             // and one float for the outer cone gain
+// and one float for the outer cone gain
 
 enum BlowedUpReason {
   GotKilledMsg,
@@ -240,118 +240,118 @@ const uint16_t MsgLagPing = 0x7069; // 'pi'
   <== outgoing messages to all players
 
 player to server messages:
-  MsgEnter		player is joining game
-			--> id, type, updates, team, name
-			<-- MsgReject (if rejected)
-			<-- MsgAccept (if accepted)
-			if accepted, new player is sent (following MsgAccept):
-			<-- MsgTeamUpdate (one per team)
-			<-- MsgFlagUpdate (one per existing flag)
-			<-- MsgAddPlayer (one per already joined player)
-			add, finally, sent to all:
-			<== MsgAddPlayer (player being accepted)
-  MsgExit		player is signing off
-			--> /id/
-			<== MsgRemovePlayer
-  MsgGetWorld		request for playing field database
-			--> bytes read so far
-			<-- MsgGetWorld
-  MsgQueryGame		request for game state
-			<-- MsgQueryGame
-  MsgQueryPlayers	request for player list
-			<-- MsgQueryPlayers
-  MsgAlive		player says he's coming alive
-			--> /id,
-			<== MsgAlive
-  MsgKilled		player says he's been killed
-			--> /id,/ killer-id, reason, killer-shot-id
-			<== MsgKilled
-  MsgNewRabbit		player is relinquishing rabbitship
-  MsgGrabFlag		player wants to grab flag
-			--> /id,/ flag
-			<== MsgGrabFlag
-  MsgDropFlag		player wants to drop flag
-			--> /id,/ position
-			<== MsgDropFlag
-			<== MsgFlagUpdate
-  MsgCaptureFlag	player captured flag
-			--> /id,/ team (team flag was taken to)
-			<== MsgCaptureFlag
-			<== MsgFlagUpdate
-  MsgSetVar		<== count/[name/value]*
-  MsgShotBegin		player has fired a shot
-			--> FiringInfo
-			<== MsgShotBegin
-  MsgShotEnd		shot has terminated
-			--> shooter id, shot number, reason
-			<== MsgShotEnd
-  MsgTeleport		player has teleported
-			--> /id,/ from-teleporter, to-teleporter
-			<== MsgTeleport
-  MsgMessage		player is sending a message
-			--> /id,/ target-id/team-id, message string
-			<== MsgMessage
-  MsgWantWHash		(player wants md5 of world file
-			-->
+  MsgEnter    player is joining game
+      --> id, type, updates, team, name
+      <-- MsgReject (if rejected)
+      <-- MsgAccept (if accepted)
+      if accepted, new player is sent (following MsgAccept):
+      <-- MsgTeamUpdate (one per team)
+      <-- MsgFlagUpdate (one per existing flag)
+      <-- MsgAddPlayer (one per already joined player)
+      add, finally, sent to all:
+      <== MsgAddPlayer (player being accepted)
+  MsgExit   player is signing off
+      --> /id/
+      <== MsgRemovePlayer
+  MsgGetWorld   request for playing field database
+      --> bytes read so far
+      <-- MsgGetWorld
+  MsgQueryGame    request for game state
+      <-- MsgQueryGame
+  MsgQueryPlayers request for player list
+      <-- MsgQueryPlayers
+  MsgAlive    player says he's coming alive
+      --> /id,
+      <== MsgAlive
+  MsgKilled   player says he's been killed
+      --> /id,/ killer-id, reason, killer-shot-id
+      <== MsgKilled
+  MsgNewRabbit    player is relinquishing rabbitship
+  MsgGrabFlag   player wants to grab flag
+      --> /id,/ flag
+      <== MsgGrabFlag
+  MsgDropFlag   player wants to drop flag
+      --> /id,/ position
+      <== MsgDropFlag
+      <== MsgFlagUpdate
+  MsgCaptureFlag  player captured flag
+      --> /id,/ team (team flag was taken to)
+      <== MsgCaptureFlag
+      <== MsgFlagUpdate
+  MsgSetVar   <== count/[name/value]*
+  MsgShotBegin    player has fired a shot
+      --> FiringInfo
+      <== MsgShotBegin
+  MsgShotEnd    shot has terminated
+      --> shooter id, shot number, reason
+      <== MsgShotEnd
+  MsgTeleport   player has teleported
+      --> /id,/ from-teleporter, to-teleporter
+      <== MsgTeleport
+  MsgMessage    player is sending a message
+      --> /id,/ target-id/team-id, message string
+      <== MsgMessage
+  MsgWantWHash    (player wants md5 of world file
+      -->
   MsgNegotiateFlags     -->flagCount/[flagabbv]
-  MsgPause		-->true or false
+  MsgPause    -->true or false
 
 
 server to player messages:
-  MsgSuperKill		player must disconnect from server
-			<== <none>
-  MsgTimeUpdate		game time left, if == 0 player is dead and can't restart
-			<== time (left, in seconds)
-  MsgScoreOver		score limit reached, player is dead and can't restart
-			<== id (winner), team (winner)
-  MsgAccept		player request is accepted
-			<== <none>
-  MsgReject		player request is rejected
-			<== <none>
-  MsgAddPlayer		notification of new tank in game
-			<== id, type, team, name
-  MsgRemovePlayer	player has exited the server
-			<== id
-  MsgAdminInfo		update of players' IP addresses
-			only sent to players with the PLAYERLIST permission.
-			<-- count, [chunklen, id, bitfield, address]*
-  MsgPlayerInfo		update of players status
-			<-- count, [id, bitfield]*
-  MsgFlagUpdate		update of flag info
-			<== count, [flag, flag-info]*
-  MsgTeamUpdate		update of team info
-			<== teamcount, [team, team-info]
-  MsgGetWorld		chunk of world database
-			<-- bytes left, next 256 byte chunk of world database
-  MsgAlive		player is alive
-			<== id, position, forward-vector
-  MsgKilled		player is dead
-			<== id (victim id), killer-id, reason, killer-shot-id
-  MsgGrabFlag		notification that flag is grabbed
-			<== id (grabber), flag, flag-info
-  MsgDropFlag		notification that flag is in air
-			<== id (dropper), flag, flag-info
-  MsgCaptureFlag	notification that flag has been captured
-			<== id (capturer), flag, team
-  MsgShotBegin		some player has fired a shot
-			<== FiringInfo
-  MsgShotEnd		shot has expired
-			<== id (shooter id), shot number, reason
-  MsgScore		player score has changed
-			<== num-scores [id (player id), rank, wins, losses, tks]*n
-  MsgTeleport		player has teleported
-			<== id, from-teleporter, to-teleporter
-  MsgMessage		message to players
-			<== from-id, to-id/team-id, message string
-  MsgQueryGame		game status
-  MsgQueryPlayers	list of players
-  MsgWantWHash		md5 digest of world file
-			<== temp|perm, digest
-  MsgNegotiateFlags	<== flagCount/[flagabbv]
-  MsgNewRabbit		a new rabbit has been anointed
-			<== id
-  MsgPause		<== id/true or false
-  MsgAllow		<== id, movement (bool), shooting (bool)
+  MsgSuperKill    player must disconnect from server
+      <== <none>
+  MsgTimeUpdate   game time left, if == 0 player is dead and can't restart
+      <== time (left, in seconds)
+  MsgScoreOver    score limit reached, player is dead and can't restart
+      <== id (winner), team (winner)
+  MsgAccept   player request is accepted
+      <== <none>
+  MsgReject   player request is rejected
+      <== <none>
+  MsgAddPlayer    notification of new tank in game
+      <== id, type, team, name
+  MsgRemovePlayer player has exited the server
+      <== id
+  MsgAdminInfo    update of players' IP addresses
+      only sent to players with the PLAYERLIST permission.
+      <-- count, [chunklen, id, bitfield, address]*
+  MsgPlayerInfo   update of players status
+      <-- count, [id, bitfield]*
+  MsgFlagUpdate   update of flag info
+      <== count, [flag, flag-info]*
+  MsgTeamUpdate   update of team info
+      <== teamcount, [team, team-info]
+  MsgGetWorld   chunk of world database
+      <-- bytes left, next 256 byte chunk of world database
+  MsgAlive    player is alive
+      <== id, position, forward-vector
+  MsgKilled   player is dead
+      <== id (victim id), killer-id, reason, killer-shot-id
+  MsgGrabFlag   notification that flag is grabbed
+      <== id (grabber), flag, flag-info
+  MsgDropFlag   notification that flag is in air
+      <== id (dropper), flag, flag-info
+  MsgCaptureFlag  notification that flag has been captured
+      <== id (capturer), flag, team
+  MsgShotBegin    some player has fired a shot
+      <== FiringInfo
+  MsgShotEnd    shot has expired
+      <== id (shooter id), shot number, reason
+  MsgScore    player score has changed
+      <== num-scores [id (player id), rank, wins, losses, tks]*n
+  MsgTeleport   player has teleported
+      <== id, from-teleporter, to-teleporter
+  MsgMessage    message to players
+      <== from-id, to-id/team-id, message string
+  MsgQueryGame    game status
+  MsgQueryPlayers list of players
+  MsgWantWHash    md5 digest of world file
+      <== temp|perm, digest
+  MsgNegotiateFlags <== flagCount/[flagabbv]
+  MsgNewRabbit    a new rabbit has been anointed
+      <== id
+  MsgPause    <== id/true or false
+  MsgAllow    <== id, movement (bool), shooting (bool)
 */
 
 #endif // BZF_PROTOCOL_H
@@ -360,6 +360,6 @@ server to player messages:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

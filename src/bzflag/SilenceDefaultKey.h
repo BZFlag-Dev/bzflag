@@ -18,10 +18,10 @@
 
 
 class SilenceDefaultKey : public HUDuiDefaultKey {
-public:
-  SilenceDefaultKey();
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
+  public:
+    SilenceDefaultKey();
+    bool    keyPress(const BzfKeyEvent&);
+    bool    keyRelease(const BzfKeyEvent&);
 };
 
 #endif
@@ -30,6 +30,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

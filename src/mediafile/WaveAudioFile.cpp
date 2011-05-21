@@ -13,22 +13,22 @@
 #include "WaveAudioFile.h"
 #include <string.h>
 
-#define	WAV_FORMAT_UNKNOWN	(0x0000)
-#define	WAV_FORMAT_PCM		(0x0001)
-#define	WAV_FORMAT_ADPCM	(0x0002)
-#define	WAV_FORMAT_ALAW		(0x0006)
-#define	WAV_FORMAT_MULAW	(0x0007)
-#define	WAV_FORMAT_OKI_ADPCM	(0x0010)
-#define	WAV_FORMAT_DIGISTD	(0x0015)
-#define	WAV_FORMAT_DIGIFIX	(0x0016)
-#define	IBM_FORMAT_MULAW	(0x0101)
-#define	IBM_FORMAT_ALAW		(0x0102)
-#define	IBM_FORMAT_ADPCM	(0x0103)
+#define WAV_FORMAT_UNKNOWN  (0x0000)
+#define WAV_FORMAT_PCM    (0x0001)
+#define WAV_FORMAT_ADPCM  (0x0002)
+#define WAV_FORMAT_ALAW   (0x0006)
+#define WAV_FORMAT_MULAW  (0x0007)
+#define WAV_FORMAT_OKI_ADPCM  (0x0010)
+#define WAV_FORMAT_DIGISTD  (0x0015)
+#define WAV_FORMAT_DIGIFIX  (0x0016)
+#define IBM_FORMAT_MULAW  (0x0101)
+#define IBM_FORMAT_ALAW   (0x0102)
+#define IBM_FORMAT_ADPCM  (0x0103)
 
-WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input)
-{
-  if (input == NULL)
+WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input) {
+  if (input == NULL) {
     return;
+  }
 
   char tag[4];
   uint32_t length;
@@ -99,18 +99,15 @@ WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input)
   init(_framesPerSecond, _numChannels, _numFrames, _sampWidth);
 }
 
-WaveAudioFile::~WaveAudioFile()
-{
+WaveAudioFile::~WaveAudioFile() {
   // do nothing
 }
 
-std::string	WaveAudioFile::getExtension()
-{
+std::string WaveAudioFile::getExtension() {
   return ".wav";
 }
 
-bool		WaveAudioFile::read(void* buffer, int _numFrames)
-{
+bool    WaveAudioFile::read(void* buffer, int _numFrames) {
   // read data
   const int width = getSampleWidth();
   const int numSamples = _numFrames * getNumChannels();
@@ -128,15 +125,17 @@ bool		WaveAudioFile::read(void* buffer, int _numFrames)
 
     case 2: {
       uint16_t* samples = reinterpret_cast<uint16_t*>(buffer);
-      for (int i = 0; i < numSamples; ++i)
-	swap16LE(samples + i);
+      for (int i = 0; i < numSamples; ++i) {
+        swap16LE(samples + i);
+      }
       break;
     }
 
     case 4: {
       uint32_t* samples = reinterpret_cast<uint32_t*>(buffer);
-      for (int i = 0; i < numSamples; ++i)
-	swap32LE(samples + i);
+      for (int i = 0; i < numSamples; ++i) {
+        swap32LE(samples + i);
+      }
       break;
     }
   }
@@ -144,21 +143,21 @@ bool		WaveAudioFile::read(void* buffer, int _numFrames)
   return true;
 }
 
-bool		WaveAudioFile::readHeader(char* tag, uint32_t* length)
-{
+bool    WaveAudioFile::readHeader(char* tag, uint32_t* length) {
   readRaw(tag, 4);
   *length = read32LE();
   return isOkay();
 }
 
-bool		WaveAudioFile::findChunk(const char* tag, uint32_t* length)
-{
+bool    WaveAudioFile::findChunk(const char* tag, uint32_t* length) {
   while (isOkay()) {
     char curtag[4];
-    if (!readHeader(curtag, length))
+    if (!readHeader(curtag, length)) {
       return false;
-    if (memcmp(curtag, tag, 4) == 0)
+    }
+    if (memcmp(curtag, tag, 4) == 0) {
       return true;
+    }
     skip(*length);
     readHeader(curtag, length);
   }
@@ -169,6 +168,6 @@ bool		WaveAudioFile::findChunk(const char* tag, uint32_t* length)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

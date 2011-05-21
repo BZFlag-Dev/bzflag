@@ -62,14 +62,13 @@ static bool PushKilledReasons(lua_State* L);
 //============================================================================//
 //============================================================================//
 
-bool LuaGameConst::PushEntries(lua_State* L)
-{
+bool LuaGameConst::PushEntries(lua_State* L) {
   return
     PushGameTypes(L)       &&
     PushGameOptionBits(L)  &&
     PushPlayerTypes(L)     &&
     PushPlayerStateBits(L) &&
-    PushTeams(L)	   &&
+    PushTeams(L)     &&
     PushChatTeams(L)       &&
     PushShotTypes(L)       &&
     PushAnsiCodes(L)       &&
@@ -88,8 +87,7 @@ bool LuaGameConst::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushGameTypes(lua_State* L)
-{
+static bool PushGameTypes(lua_State* L) {
   lua_pushliteral(L, "GAMETYPE");
   lua_newtable(L);
 
@@ -104,12 +102,11 @@ static bool PushGameTypes(lua_State* L)
 }
 
 
-static bool PushGameOptionBits(lua_State* L)
-{
+static bool PushGameOptionBits(lua_State* L) {
   lua_pushliteral(L, "GAMEBITS");
   lua_newtable(L);
 
-  LuaSetDualPair(L, "REPLAY",	ReplayServer);
+  LuaSetDualPair(L, "REPLAY", ReplayServer);
   LuaSetDualPair(L, "SUPER_FLAGS",   SuperFlagGameStyle);
   LuaSetDualPair(L, "NO_TEAM_KILLS", NoTeamKills);
   LuaSetDualPair(L, "JUMPING",       JumpingGameStyle);
@@ -130,8 +127,7 @@ static bool PushGameOptionBits(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushTeams(lua_State* L)
-{
+static bool PushTeams(lua_State* L) {
   lua_pushliteral(L, "TEAM");
   lua_newtable(L);
 
@@ -155,8 +151,7 @@ static bool PushTeams(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushChatTeams(lua_State* L)
-{
+static bool PushChatTeams(lua_State* L) {
   lua_pushliteral(L, "CHAT_TEAM");
   lua_newtable(L);
 
@@ -186,14 +181,13 @@ static bool PushChatTeams(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushShotTypes(lua_State* L)
-{
+static bool PushShotTypes(lua_State* L) {
   lua_pushliteral(L, "SHOT");
   lua_newtable(L);
 
   LuaSetDualPair(L, "NONE",       NoShot);
   LuaSetDualPair(L, "STANDARD",   StandardShot);
-  LuaSetDualPair(L, "GM",	  GMShot);
+  LuaSetDualPair(L, "GM",   GMShot);
   LuaSetDualPair(L, "LASER",      LaserShot);
   LuaSetDualPair(L, "THIEF",      ThiefShot);
   LuaSetDualPair(L, "SUPER",      SuperShot);
@@ -214,8 +208,7 @@ static bool PushShotTypes(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushPlayerTypes(lua_State* L)
-{
+static bool PushPlayerTypes(lua_State* L) {
   lua_pushliteral(L, "PLAYER_TYPE");
   lua_newtable(L);
 
@@ -232,12 +225,11 @@ static bool PushPlayerTypes(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushPlayerStateBits(lua_State* L)
-{
+static bool PushPlayerStateBits(lua_State* L) {
   lua_pushliteral(L, "PLAYER_BIT");
   lua_newtable(L);
 
-  LuaSetDualPair(L, "ALIVE",	 PlayerState::Alive);
+  LuaSetDualPair(L, "ALIVE",   PlayerState::Alive);
   LuaSetDualPair(L, "EXPLODING",     PlayerState::Exploding);
   LuaSetDualPair(L, "TELEPORTING",   PlayerState::Teleporting);
   LuaSetDualPair(L, "FLAG_ACTIVE",   PlayerState::FlagActive);
@@ -247,7 +239,7 @@ static bool PushPlayerStateBits(lua_State* L)
   LuaSetDualPair(L, "USER_INPUTS",   PlayerState::UserInputs);
   LuaSetDualPair(L, "JUMP_JETS",     PlayerState::JumpJets);
   LuaSetDualPair(L, "PLAY_SOUND",    PlayerState::PlaySound);
-  LuaSetDualPair(L, "ZONED",	 PlayerState::PhantomZoned);
+  LuaSetDualPair(L, "ZONED",   PlayerState::PhantomZoned);
   LuaSetDualPair(L, "IN_BUILDING",   PlayerState::InBuilding);
   LuaSetDualPair(L, "BACKED_OFF",    PlayerState::BackedOff);
 
@@ -260,18 +252,17 @@ static bool PushPlayerStateBits(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushAnsiCodes(lua_State* L)
-{
+static bool PushAnsiCodes(lua_State* L) {
   lua_pushliteral(L, "ANSI_COLOR");
   lua_newtable(L);
 
-  luaset_strstr(L, "RESET",	ANSI_STR_RESET_FINAL);
+  luaset_strstr(L, "RESET", ANSI_STR_RESET_FINAL);
   luaset_strstr(L, "RESET_BRIGHT", ANSI_STR_RESET);
   luaset_strstr(L, "BRIGHT",       ANSI_STR_BRIGHT);
-  luaset_strstr(L, "DIM",	  ANSI_STR_DIM);
+  luaset_strstr(L, "DIM",   ANSI_STR_DIM);
   luaset_strstr(L, "UNDERLINE",    ANSI_STR_UNDERLINE);
   luaset_strstr(L, "NO_UNDERLINE", ANSI_STR_NO_UNDERLINE);
-  luaset_strstr(L, "BLINK",	ANSI_STR_PULSATING);
+  luaset_strstr(L, "BLINK", ANSI_STR_PULSATING);
   luaset_strstr(L, "NO_BLINK",     ANSI_STR_NO_PULSATE);
   luaset_strstr(L, "REVERSE",      ANSI_STR_REVERSE);
   luaset_strstr(L, "NO_REVERSE",   ANSI_STR_NO_REVERSE);
@@ -295,8 +286,7 @@ static bool PushAnsiCodes(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushObstacleTypes(lua_State* L)
-{
+static bool PushObstacleTypes(lua_State* L) {
   lua_pushliteral(L, "OBSTACLE");
   lua_newtable(L);
 
@@ -319,8 +309,7 @@ static bool PushObstacleTypes(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushGfxBlockTypes(lua_State* L) // FIXME -- uppercase?
-{
+static bool PushGfxBlockTypes(lua_State* L) { // FIXME -- uppercase?
   lua_pushliteral(L, "GFXBLOCK_TYPE");
   lua_newtable(L);
   for (int i = 0; i < GfxBlock::BlockTypeCount; i++) {
@@ -342,8 +331,7 @@ static bool PushGfxBlockTypes(lua_State* L) // FIXME -- uppercase?
 //============================================================================//
 //============================================================================//
 
-static bool PushRoamModes(lua_State* L)
-{
+static bool PushRoamModes(lua_State* L) {
   lua_pushliteral(L, "ROAM");
   lua_newtable(L);
 
@@ -363,8 +351,7 @@ static bool PushRoamModes(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushConsoleTypes(lua_State* L)
-{
+static bool PushConsoleTypes(lua_State* L) {
   lua_pushliteral(L, "CONSOLE");
   lua_newtable(L);
 
@@ -383,8 +370,7 @@ static bool PushConsoleTypes(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushMouseButtons(lua_State* L)
-{
+static bool PushMouseButtons(lua_State* L) {
   lua_pushliteral(L, "MOUSE");
   lua_newtable(L);
 
@@ -401,8 +387,7 @@ static bool PushMouseButtons(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushFlagStates(lua_State* L)
-{
+static bool PushFlagStates(lua_State* L) {
   lua_pushliteral(L, "FLAG_STATE");
   lua_newtable(L);
 
@@ -422,8 +407,7 @@ static bool PushFlagStates(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushFlagQualities(lua_State* L)
-{
+static bool PushFlagQualities(lua_State* L) {
   lua_pushliteral(L, "FLAG_QUALITY");
   lua_newtable(L);
 
@@ -439,8 +423,7 @@ static bool PushFlagQualities(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushFlagEndurance(lua_State* L)
-{
+static bool PushFlagEndurance(lua_State* L) {
   lua_pushliteral(L, "FLAG_ENDURANCE");
   lua_newtable(L);
 
@@ -457,18 +440,17 @@ static bool PushFlagEndurance(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushKilledReasons(lua_State* L)
-{
+static bool PushKilledReasons(lua_State* L) {
   lua_pushliteral(L, "KILL_REASON");
   lua_newtable(L);
 
   LuaSetDualPair(L, "MESSAGE",       GotKilledMsg);
-  LuaSetDualPair(L, "SHOT",	  GotShot);
+  LuaSetDualPair(L, "SHOT",   GotShot);
   LuaSetDualPair(L, "RUN_OVER",      GotRunOver);
   LuaSetDualPair(L, "CAPTURED",      GotCaptured);
   LuaSetDualPair(L, "GENOCIDE",      GenocideEffect);
   LuaSetDualPair(L, "SELF_DESTRUCT", SelfDestruct);
-  LuaSetDualPair(L, "WATER",	 WaterDeath);
+  LuaSetDualPair(L, "WATER",   WaterDeath);
 
   lua_rawset(L, -3);
 
@@ -484,6 +466,6 @@ static bool PushKilledReasons(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

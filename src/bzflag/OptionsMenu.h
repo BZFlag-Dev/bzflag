@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__OPTIONSMENU_H__
-#define	__OPTIONSMENU_H__
+#ifndef __OPTIONSMENU_H__
+#define __OPTIONSMENU_H__
 
 #include "common.h"
 
@@ -33,43 +33,42 @@
 #include "SaveMenu.h"
 
 class OptionsMenu : public HUDDialog {
-public:
-  OptionsMenu();
-  ~OptionsMenu();
+  public:
+    OptionsMenu();
+    ~OptionsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void		execute();
-  void		resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey() {
+      return MenuDefaultKey::getInstance();
+    }
+    void    execute();
+    void    resize(int width, int height);
 
-  static void	callback(HUDuiControl* w, void* data);
+    static void callback(HUDuiControl* w, void* data);
 
-private:
-  HUDuiControl*	guiOptions;
-  HUDuiControl*	textOptions;
-  HUDuiControl*	radarOptions;
-  HUDuiControl*	effectsOptions;
-  HUDuiControl*	cacheOptions;
-  HUDuiControl*	hubOptions;
-  HUDuiControl*	saveWorld;
-  HUDuiControl* saveSettings;
-  HUDuiControl*	inputSetting;
-  HUDuiControl*	audioSetting;
-  HUDuiControl*	displaySetting;
+  private:
+    HUDuiControl* guiOptions;
+    HUDuiControl* textOptions;
+    HUDuiControl* radarOptions;
+    HUDuiControl* effectsOptions;
+    HUDuiControl* cacheOptions;
+    HUDuiControl* hubOptions;
+    HUDuiControl* saveWorld;
+    HUDuiControl* saveSettings;
+    HUDuiControl* inputSetting;
+    HUDuiControl* audioSetting;
+    HUDuiControl* displaySetting;
 
-  GUIOptionsMenu*   guiOptionsMenu;
-  TextOptionsMenu*  textOptionsMenu;
-  RadarOptionsMenu* radarOptionsMenu;
-  EffectsMenu*      effectsMenu;
-  CacheMenu*        cacheMenu;
-  HubMenu*          hubMenu;
-  SaveWorldMenu*    saveWorldMenu;
-  InputMenu*        inputMenu;
-  AudioMenu*        audioMenu;
-  DisplayMenu*      displayMenu;
-  SaveMenu*         saveMenu;
+    GUIOptionsMenu*   guiOptionsMenu;
+    TextOptionsMenu*  textOptionsMenu;
+    RadarOptionsMenu* radarOptionsMenu;
+    EffectsMenu*      effectsMenu;
+    CacheMenu*        cacheMenu;
+    HubMenu*          hubMenu;
+    SaveWorldMenu*    saveWorldMenu;
+    InputMenu*        inputMenu;
+    AudioMenu*        audioMenu;
+    DisplayMenu*      displayMenu;
+    SaveMenu*         saveMenu;
 };
 
 
@@ -79,6 +78,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

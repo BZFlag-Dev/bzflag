@@ -27,29 +27,27 @@
 
 
 // command classes used by the API
-class ShutdownCommand : private ServerCommand
-{
-public:
-  ShutdownCommand();
+class ShutdownCommand : private ServerCommand {
+  public:
+    ShutdownCommand();
 
-  virtual bool operator() (const char	 *commandLine, GameKeeper::Player *playerData);
+    virtual bool operator()(const char*  commandLine, GameKeeper::Player* playerData);
 };
 
-class SuperkillCommand : private ServerCommand
-{
-public:
-  SuperkillCommand();
+class SuperkillCommand : private ServerCommand {
+  public:
+    SuperkillCommand();
 
-  virtual bool operator() (const char	 *commandLine, GameKeeper::Player *playerData);
+    virtual bool operator()(const char*  commandLine, GameKeeper::Player* playerData);
 };
 
 // parser for the server commands
-void parseServerCommand(const char *message, int dstPlayerId);
+void parseServerCommand(const char* message, int dstPlayerId);
 
-typedef std::map<std::string, bz_CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
+typedef std::map<std::string, bz_CustomSlashCommandHandler*>  tmCustomSlashCommandMap;
 
-void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandler* handler );
-void removeCustomSlashCommand ( std::string command );
+void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler);
+void removeCustomSlashCommand(std::string command);
 
 extern ShutdownCommand shutdownCommand;
 extern SuperkillCommand superkillCommand;
@@ -60,6 +58,6 @@ extern SuperkillCommand superkillCommand;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -27,7 +27,7 @@ class Octree {
     Octree();
     ~Octree();
 
-    void clear ();
+    void clear();
 
     void addNodes(SceneNode** list, int listSize, int depth, int elements);
 
@@ -58,7 +58,7 @@ class Octree {
 class OctreeNode {
   public:
     OctreeNode(unsigned char depth, const Extents& exts,
-	             SceneNode** list, int listSize);
+               SceneNode** list, int listSize);
     ~OctreeNode();
 
     void getFrustumList() const;
@@ -99,33 +99,27 @@ class OctreeNode {
 };
 
 
-inline int OctreeNode::getCount() const
-{
+inline int OctreeNode::getCount() const {
   return count;
 }
 
-inline SceneNode** OctreeNode::getList() const
-{
+inline SceneNode** OctreeNode::getList() const {
   return list;
 }
 
-inline int OctreeNode::getListSize() const
-{
+inline int OctreeNode::getListSize() const {
   return listSize;
 }
 
-inline int OctreeNode::getChildren() const
-{
+inline int OctreeNode::getChildren() const {
   return childCount;
 }
 
-inline OctreeNode* OctreeNode::getChild(int child)
-{
+inline OctreeNode* OctreeNode::getChild(int child) {
   return children[child];
 }
 
-inline const Extents* Octree::getVisualExtents() const
-{
+inline const Extents* Octree::getVisualExtents() const {
   return &visualExtents;
 }
 
@@ -136,6 +130,6 @@ inline const Extents* Octree::getVisualExtents() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

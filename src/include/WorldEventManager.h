@@ -19,7 +19,7 @@
  */
 
 #ifndef WORLD_EVENT_MANAGER_H
-#define	WORLD_EVENT_MANAGER_H
+#define WORLD_EVENT_MANAGER_H
 
 /* the venerable common header */
 #include "common.h"
@@ -39,22 +39,21 @@
 typedef std::vector<bz_EventHandler*>        tvEventList;
 typedef std::map<bz_eEventType, tvEventList> tmEventTypeList;
 
-class WorldEventManager : public Singleton<WorldEventManager>
-{
-public:
-  WorldEventManager();
-  ~WorldEventManager();
+class WorldEventManager : public Singleton<WorldEventManager> {
+  public:
+    WorldEventManager();
+    ~WorldEventManager();
 
-  void addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
-  void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
-  bool removeHandler(bz_EventHandler* theEvent );
-  tvEventList getEventList ( bz_eEventType eventType);
-  void callEvents ( bz_eEventType eventType, bz_EventData *eventData );
-  void callEvents ( bz_EventData &eventData ) {callEvents(eventData.eventType,&eventData);}
+    void addEvent(bz_eEventType eventType, bz_EventHandler* theEvent);
+    void removeEvent(bz_eEventType eventType, bz_EventHandler* theEvent);
+    bool removeHandler(bz_EventHandler* theEvent);
+    tvEventList getEventList(bz_eEventType eventType);
+    void callEvents(bz_eEventType eventType, bz_EventData* eventData);
+    void callEvents(bz_EventData& eventData) {callEvents(eventData.eventType, &eventData);}
 
-  int getEventCount ( bz_eEventType eventType );
-protected:
-  tmEventTypeList eventList;
+    int getEventCount(bz_eEventType eventType);
+  protected:
+    tmEventTypeList eventList;
 
 };
 
@@ -64,6 +63,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

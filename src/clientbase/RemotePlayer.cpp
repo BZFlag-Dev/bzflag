@@ -19,12 +19,12 @@
 
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
-			   const char* _name, const PlayerType _type)
-: Player(_id, _team, _name, _type)
-{
+                           const char* _name, const PlayerType _type)
+  : Player(_id, _team, _name, _type) {
   if (World::getWorld()) {
     numShots = World::getWorld()->getMaxShots();
-  } else {
+  }
+  else {
     numShots = 0;
   }
   shots.resize(numShots);
@@ -34,49 +34,51 @@ RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,
 }
 
 
-RemotePlayer::~RemotePlayer()
-{
+RemotePlayer::~RemotePlayer() {
 }
 
 
-ShotPath *RemotePlayer::addShot(FiringInfo& info)
-{
+ShotPath* RemotePlayer::addShot(FiringInfo& info) {
   prepareShotInfo(info);
   return Player::addShot(new RemoteShotPath(info), info);
 }
 
 
-bool RemotePlayer::doEndShot(int ident, bool isHit, fvec3& pos)
-{
+bool RemotePlayer::doEndShot(int ident, bool isHit, fvec3& pos) {
   const int index = ident & 255;
   const int salt = (ident >> 8) & 127;
 
   // special id used in some messages (and really shouldn't be sent here)
-  if (ident == -1)
+  if (ident == -1) {
     return false;
+  }
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= numShots || !shots[index])
+  if (index < 0 || index >= numShots || !shots[index]) {
     return false;
+  }
 
   // ignore shots that already ending
-  if (shots[index]->isExpired() || shots[index]->isExpiring())
+  if (shots[index]->isExpired() || shots[index]->isExpiring()) {
     return false;
+  }
 
   // ignore shots that have the wrong salt.  since we reuse shot indices
   // it's possible for an old MsgShotEnd to arrive after we've started a
   // new shot.  that's where the salt comes in.  it changes for each shot
   // so we can identify an old shot from a new one.
-  if (salt != ((shots[index]->getShotId() >> 8) & 127))
+  if (salt != ((shots[index]->getShotId() >> 8) & 127)) {
     return false;
+  }
 
   // keep statistics
   shotStatistics.recordHit(shots[index]->getFlagType());
 
   // don't stop if it's because were hitting something and we don't stop
   // when we hit something.
-  if (isHit && !shots[index]->isStoppedByHit())
+  if (isHit && !shots[index]->isStoppedByHit()) {
     return false;
+  }
 
   // end it
   pos = shots[index]->getPosition();
@@ -85,8 +87,7 @@ bool RemotePlayer::doEndShot(int ident, bool isHit, fvec3& pos)
 }
 
 
-void RemotePlayer::updateShots(float dt)
-{
+void RemotePlayer::updateShots(float dt) {
   for (int i = 0; i < numShots; i++) {
     if (shots[i]) {
       shots[i]->update(dt);
@@ -99,6 +100,6 @@ void RemotePlayer::updateShots(float dt)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

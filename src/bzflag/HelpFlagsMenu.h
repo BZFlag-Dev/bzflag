@@ -20,16 +20,16 @@
 #include "Flag.h"
 
 class HelpFlagsMenu : public HelpMenu {
-public:
-  HelpFlagsMenu(FlagQuality quality);
-  ~HelpFlagsMenu() { }
+  public:
+    HelpFlagsMenu(FlagQuality quality);
+    ~HelpFlagsMenu() { }
 
-protected:
-  float getLeftSide(int width, int height);
+  protected:
+    float getLeftSide(int width, int height);
 
-private:
-  // disable default constructor
-  HelpFlagsMenu();
+  private:
+    // disable default constructor
+    HelpFlagsMenu();
 };
 
 #endif /* __HELPFLAGSMENU_H__ */
@@ -38,6 +38,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

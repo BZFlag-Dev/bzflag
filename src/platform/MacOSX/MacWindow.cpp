@@ -18,11 +18,10 @@
 #include "MacWindow.h"
 
 __BEGIN_DECLS
-extern WindowRef GetWindowRefFromNativeWindow(void * nativeWindow);
+extern WindowRef GetWindowRefFromNativeWindow(void* nativeWindow);
 __END_DECLS
 
-struct Settings
-{
+struct Settings {
   bool Use_Main_Display;
   bool Switch_Display;
   bool Capture_Display;
@@ -47,15 +46,14 @@ struct Settings
     Capture_Display = true;
     Switch_Display = true;
     Window_Size = CGSizeMake(CGDisplayPixelsWide(kCGDirectMainDisplay),
-	CGDisplayPixelsHigh(kCGDirectMainDisplay));
+                             CGDisplayPixelsHigh(kCGDirectMainDisplay));
     Display_Hz = 60;
     VBL_Synch = false; //CAPS-LOCK overrides
     depth = 24;
   }
 } settings;
 
-static double get_time()
-{
+static double get_time() {
   struct timeval tod;
 
   gettimeofday(&tod, NULL);
@@ -64,36 +62,35 @@ static double get_time()
 }
 
 #ifndef USE_DSP
-  #define GLOBAL_OFFSET_X 0
-  #define GLOBAL_OFFSET_Y 20
+#define GLOBAL_OFFSET_X 0
+#define GLOBAL_OFFSET_Y 20
 #else
-  #define GLOBAL_OFFSET_X 0
-  #define GLOBAL_OFFSET_Y 0
+#define GLOBAL_OFFSET_X 0
+#define GLOBAL_OFFSET_Y 0
 #endif
 
 //Point gMousePosition;
 bool gMouseGrabbed;
 
-class GLContext
-{
-  const CGLPixelFormatAttribute* GetPixelFormat(u_int32_t display_id = 0x01,
-      int color = settings.depth, int depth = 16, int stencil = 0) {
-    static CGLPixelFormatAttribute attribs[32];
+class GLContext {
+    const CGLPixelFormatAttribute* GetPixelFormat(u_int32_t display_id = 0x01,
+                                                  int color = settings.depth, int depth = 16, int stencil = 0) {
+      static CGLPixelFormatAttribute attribs[32];
 
-    CGLPixelFormatAttribute* attrib = attribs;
+      CGLPixelFormatAttribute* attrib = attribs;
 
-    *attrib++ = kCGLPFANoRecovery;
-    *attrib++ = kCGLPFADoubleBuffer;
-    *attrib++ = kCGLPFAAccelerated;
-    *attrib++ = kCGLPFAFullScreen;
-    *attrib++ = kCGLPFADisplayMask; *attrib++ = (CGLPixelFormatAttribute) display_id;
-    *attrib++ = kCGLPFAColorSize; *attrib++ = (CGLPixelFormatAttribute) color;
-    *attrib++ = kCGLPFADepthSize; *attrib++ = (CGLPixelFormatAttribute) depth;
-    *attrib++ = kCGLPFAStencilSize; *attrib++ = (CGLPixelFormatAttribute) stencil;
-    *attrib++ = (CGLPixelFormatAttribute) 0;
+      *attrib++ = kCGLPFANoRecovery;
+      *attrib++ = kCGLPFADoubleBuffer;
+      *attrib++ = kCGLPFAAccelerated;
+      *attrib++ = kCGLPFAFullScreen;
+      *attrib++ = kCGLPFADisplayMask; *attrib++ = (CGLPixelFormatAttribute) display_id;
+      *attrib++ = kCGLPFAColorSize; *attrib++ = (CGLPixelFormatAttribute) color;
+      *attrib++ = kCGLPFADepthSize; *attrib++ = (CGLPixelFormatAttribute) depth;
+      *attrib++ = kCGLPFAStencilSize; *attrib++ = (CGLPixelFormatAttribute) stencil;
+      *attrib++ = (CGLPixelFormatAttribute) 0;
 
-    return attribs;
-  }
+      return attribs;
+    }
 
   public:
 
@@ -101,7 +98,7 @@ class GLContext
     CGLContextObj cgl_context;
 
     GLContext() {
-      bounds = CGRectMake(0,0,0,0);
+      bounds = CGRectMake(0, 0, 0, 0);
       cgl_context = NULL;
     }
 
@@ -117,36 +114,41 @@ class GLContext
 #else
       GLint num_pixel_formats;
 #endif
-		
-		
+
+
 
       CGLError err = CGLChoosePixelFormat(GetPixelFormat(display_id, 24), &pixel_format, &num_pixel_formats);
 
-      if (err || !pixel_format)
-	return false;
+      if (err || !pixel_format) {
+        return false;
+      }
 
       err = CGLCreateContext(pixel_format, NULL, &cgl_context);
 
-      if (err)
-	return false;
+      if (err) {
+        return false;
+      }
 
       CGLDestroyPixelFormat(pixel_format);
       pixel_format = NULL;
 
       err = CGLSetCurrentContext(cgl_context);
 
-      if (err)
-	return false;
+      if (err) {
+        return false;
+      }
 
       err = CGLSetFullScreen(cgl_context);
 
-      if (err)
-	return false;
+      if (err) {
+        return false;
+      }
 
       bounds = display_rect;
 
-      if (settings.VBL_Synch)
-	SetVBLSynch(true);
+      if (settings.VBL_Synch) {
+        SetVBLSynch(true);
+      }
 
       // spit out OpenGL capabilities
       fprintf(stderr, "----------------------------------------------------------------\n");
@@ -154,13 +156,13 @@ class GLContext
       fprintf(stderr, "Renderer:   \"%s\"\n", glGetString(GL_RENDERER));
       fprintf(stderr, "Version:    \"%s\"\n", glGetString(GL_VERSION));
       fprintf(stderr, "Extensions:\n");
-      const GLubyte * extensions = glGetString(GL_EXTENSIONS);
-      char * tmp = new char[strlen((const char *)extensions)+2];
-      strncpy(tmp, (const char *)extensions, strlen((const char *)extensions)+1);
-      char * word;
-      char * sep = " \t";
-      for(word = strtok(tmp, sep); word != NULL; word = strtok(NULL, sep)) {
-	fprintf(stderr, "\t%s\n", word);
+      const GLubyte* extensions = glGetString(GL_EXTENSIONS);
+      char* tmp = new char[strlen((const char*)extensions) + 2];
+      strncpy(tmp, (const char*)extensions, strlen((const char*)extensions) + 1);
+      char* word;
+      char* sep = " \t";
+      for (word = strtok(tmp, sep); word != NULL; word = strtok(NULL, sep)) {
+        fprintf(stderr, "\t%s\n", word);
       }
       delete [] tmp;
       tmp = NULL;
@@ -170,10 +172,10 @@ class GLContext
 
     void Reset() {
       if (cgl_context) {
-	CGLSetCurrentContext(NULL);
-	CGLClearDrawable(cgl_context);
-	CGLDestroyContext(cgl_context);
-	cgl_context = NULL;
+        CGLSetCurrentContext(NULL);
+        CGLClearDrawable(cgl_context);
+        CGLDestroyContext(cgl_context);
+        cgl_context = NULL;
       }
     }
 
@@ -211,13 +213,15 @@ class GLContext
 
     void Flush() {
       // glFinish(); //CGLFlushDrawable says don't call glFinsh first
-      if (cgl_context)
-	CGLFlushDrawable(cgl_context);
+      if (cgl_context) {
+        CGLFlushDrawable(cgl_context);
+      }
     }
 
     void Process() {
-      if (!cgl_context)
-	return;
+      if (!cgl_context) {
+        return;
+      }
 
       static float t0 = get_time();
 
@@ -225,38 +229,39 @@ class GLContext
 
       bool vbl_synch = false;
 
-      if (settings.VBL_Synch != vbl_synch)
-	SetVBLSynch(vbl_synch);
+      if (settings.VBL_Synch != vbl_synch) {
+        SetVBLSynch(vbl_synch);
+      }
 
       float t1 = fabs(sin(t));
 
-      glClearColor(0,0,0.1*t1,0);
+      glClearColor(0, 0, 0.1 * t1, 0);
       glClear(GL_COLOR_BUFFER_BIT);
 
       SetOrthographic();
 
       glPushMatrix();
 
-      glTranslatef(bounds.size.width*0.5f-64.0,0,0);
-      glTranslatef((bounds.size.width*0.5f-64.0-(1-0.435))*sin(t*3),0,0);
+      glTranslatef(bounds.size.width * 0.5f - 64.0, 0, 0);
+      glTranslatef((bounds.size.width * 0.5f - 64.0 - (1 - 0.435))*sin(t * 3), 0, 0);
 
       glBegin(GL_QUADS);
 
-      glColor3f(fabs(cos(t)),0,fabs(sin(t)));
+      glColor3f(fabs(cos(t)), 0, fabs(sin(t)));
       glVertex2f(0.0, 0.435);
 
-      glColor3f(fabs(cos(t)),fabs(sin(t)),0);
+      glColor3f(fabs(cos(t)), fabs(sin(t)), 0);
       glVertex2f(0.0, bounds.size.height);
 
-      glColor3f(0,fabs(cos(t)),fabs(sin(t)));
+      glColor3f(0, fabs(cos(t)), fabs(sin(t)));
       glVertex2f(128.0, bounds.size.height);
 
-      glColor3f(fabs(sin(t)),0,fabs(cos(t)));
+      glColor3f(fabs(sin(t)), 0, fabs(cos(t)));
       glVertex2f(128.0, 0.435);
 
       glEnd();
 
-      float frame[4] = { 1,1,1,1};
+      float frame[4] = { 1, 1, 1, 1};
       glColor4fv(frame);
 
       glBegin(GL_LINE_LOOP);
@@ -279,128 +284,136 @@ class GLContext
     }
 } gl_context;
 
-long get_value(CFDictionaryRef values, CFStringRef key)
-{
+long get_value(CFDictionaryRef values, CFStringRef key) {
   CFNumberRef number_value = (CFNumberRef) CFDictionaryGetValue(values, key);
 
-  if (!number_value)
+  if (!number_value) {
     return -1;
+  }
 
   long int_value;
 
-  if (!CFNumberGetValue(number_value, kCFNumberLongType, &int_value))
+  if (!CFNumberGetValue(number_value, kCFNumberLongType, &int_value)) {
     return -1;
+  }
 
   return int_value;
 }
 
-class DirectDisplay
-{
-  CGDisplayCount num_displays;
-  CGDirectDisplayID* display_ids;
+class DirectDisplay {
+    CGDisplayCount num_displays;
+    CGDirectDisplayID* display_ids;
 
-  void DumpDisplayModeValues(CFDictionaryRef /* values */) {
-  /*
-    dprintf("   ----- Display Mode Info for %d -----\n", get_value(values, kCGDisplayMode));
-    dprintf("   Bounds = %d x %d\n", get_value(values, kCGDisplayWidth), get_value(values, kCGDisplayHeight));
-    dprintf("   bpp = %d, hz = %d\n", get_value(values, kCGDisplayBitsPerPixel), get_value(values,  kCGDisplayRefreshRate));
-  */
-  }
+    void DumpDisplayModeValues(CFDictionaryRef /* values */) {
+      /*
+        dprintf("   ----- Display Mode Info for %d -----\n", get_value(values, kCGDisplayMode));
+        dprintf("   Bounds = %d x %d\n", get_value(values, kCGDisplayWidth), get_value(values, kCGDisplayHeight));
+        dprintf("   bpp = %d, hz = %d\n", get_value(values, kCGDisplayBitsPerPixel), get_value(values,  kCGDisplayRefreshRate));
+      */
+    }
 
-public:
+  public:
 
-  DirectDisplay() {
-    num_displays = 0;
-    display_ids = 0;
-  }
+    DirectDisplay() {
+      num_displays = 0;
+      display_ids = 0;
+    }
 
-  int Init() {
-     if (CGGetActiveDisplayList(0, NULL, &num_displays) != CGDisplayNoErr || num_displays == 0)
-      return 0;
+    int Init() {
+      if (CGGetActiveDisplayList(0, NULL, &num_displays) != CGDisplayNoErr || num_displays == 0) {
+        return 0;
+      }
 
-    display_ids = new CGDirectDisplayID[num_displays];
+      display_ids = new CGDirectDisplayID[num_displays];
 
-    if (CGGetActiveDisplayList(num_displays, display_ids, &num_displays) != CGDisplayNoErr)
-      return false;
+      if (CGGetActiveDisplayList(num_displays, display_ids, &num_displays) != CGDisplayNoErr) {
+        return false;
+      }
 
-    return num_displays;
-  }
+      return num_displays;
+    }
 
-  CGRect GetDisplayBounds(CGDisplayCount display_num) {
-    if (display_num >= num_displays)
-      return CGRectMake(0,0,0,0);
+    CGRect GetDisplayBounds(CGDisplayCount display_num) {
+      if (display_num >= num_displays) {
+        return CGRectMake(0, 0, 0, 0);
+      }
 
-    return CGDisplayBounds(display_ids[display_num]);
-  }
+      return CGDisplayBounds(display_ids[display_num]);
+    }
 
-  u_int32_t GetOpenGLDisplayID(CGDisplayCount display_num) {
-    if (display_num >= num_displays)
-      return 0;
+    u_int32_t GetOpenGLDisplayID(CGDisplayCount display_num) {
+      if (display_num >= num_displays) {
+        return 0;
+      }
 
-    return CGDisplayIDToOpenGLDisplayMask(display_ids[display_num]);
-  }
+      return CGDisplayIDToOpenGLDisplayMask(display_ids[display_num]);
+    }
 
-  CGDirectDisplayID GetDirectDisplayID(CGDisplayCount display_num) {
-    if (display_num >= num_displays)
-      return 0;
+    CGDirectDisplayID GetDirectDisplayID(CGDisplayCount display_num) {
+      if (display_num >= num_displays) {
+        return 0;
+      }
 
-    return display_ids[display_num];
-  }
+      return display_ids[display_num];
+    }
 
-  void DumpCurrentDisplayMode(CGDisplayCount display_num) {
-    if (display_num >= num_displays)
-      return;
+    void DumpCurrentDisplayMode(CGDisplayCount display_num) {
+      if (display_num >= num_displays) {
+        return;
+      }
 
-    CFDictionaryRef display_mode_values = CGDisplayCurrentMode(display_ids[display_num]);
+      CFDictionaryRef display_mode_values = CGDisplayCurrentMode(display_ids[display_num]);
 
-    DumpDisplayModeValues(display_mode_values);
-  }
+      DumpDisplayModeValues(display_mode_values);
+    }
 
-  void DumpDisplayModes(CGDisplayCount display_num) {
-    if (display_num >= num_displays)
-      return;
+    void DumpDisplayModes(CGDisplayCount display_num) {
+      if (display_num >= num_displays) {
+        return;
+      }
 
 //    CFArrayRef display_modes = CGDisplayAvailableModes(display_ids[display_num]);
 
 //    CFIndex num_modes = CFArrayGetCount(display_modes);
-  }
+    }
 
-  bool SetDisplayMode(CGDisplayCount display_num, const CGSize& size, size_t bpp, CGRefreshRate hz) {
-    if (display_num >= num_displays)
-      return false;
+    bool SetDisplayMode(CGDisplayCount display_num, const CGSize& size, size_t bpp, CGRefreshRate hz) {
+      if (display_num >= num_displays) {
+        return false;
+      }
 
-    CFDictionaryRef display_mode_values = CGDisplayBestModeForParametersAndRefreshRate(display_ids[display_num], bpp, (size_t) size.width, (size_t) size.height, hz, NULL);
+      CFDictionaryRef display_mode_values = CGDisplayBestModeForParametersAndRefreshRate(display_ids[display_num], bpp, (size_t) size.width, (size_t) size.height, hz, NULL);
 
 //    int display_hz = get_value(display_mode_values,  kCGDisplayRefreshRate);
 
-    CGDisplayErr err = CGDisplaySwitchToMode(display_ids[display_num], display_mode_values);
+      CGDisplayErr err = CGDisplaySwitchToMode(display_ids[display_num], display_mode_values);
 
-    return err == CGDisplayNoErr;
-  }
+      return err == CGDisplayNoErr;
+    }
 
-  bool Capture(CGDisplayCount display_num) {
-    if (display_num >= num_displays || CGDisplayIsCaptured(display_ids[display_num]))
-      return false;
+    bool Capture(CGDisplayCount display_num) {
+      if (display_num >= num_displays || CGDisplayIsCaptured(display_ids[display_num])) {
+        return false;
+      }
 
-    return CGDisplayCapture(display_ids[display_num]) == CGDisplayNoErr;
-  }
+      return CGDisplayCapture(display_ids[display_num]) == CGDisplayNoErr;
+    }
 
-  bool Release(CGDisplayCount display_num = 0) {
-    if (display_num >= num_displays || !CGDisplayIsCaptured(display_ids[display_num]))
-      return false;
+    bool Release(CGDisplayCount display_num = 0) {
+      if (display_num >= num_displays || !CGDisplayIsCaptured(display_ids[display_num])) {
+        return false;
+      }
 
-    return CGDisplayRelease(display_ids[display_num]) == CGDisplayNoErr;
-  }
+      return CGDisplayRelease(display_ids[display_num]) == CGDisplayNoErr;
+    }
 } displays;
 
-void Display(void)
-{
+void Display(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
-			BzfWindow(display)
-{
+MacWindow::MacWindow(const MacDisplay* display, MacVisual* visual) :
+  BzfWindow(display) {
 //  GLboolean ok;
 //  int argc = 0;
 //  char **argv = {NULL};
@@ -431,22 +444,22 @@ MacWindow::MacWindow(const MacDisplay *display, MacVisual *visual) :
   makeCurrent();
 
   CGGetDisplayTransferByFormula(kCGDirectMainDisplay,
-			       &settings.redMin, &settings.redMax, &settings.redGamma,
-			       &settings.greenMin, &settings.greenMax, &settings.greenGamma,
-			       &settings.blueMin, &settings.blueMax, &settings.blueGamma);
+                                &settings.redMin, &settings.redMax, &settings.redGamma,
+                                &settings.greenMin, &settings.greenMax, &settings.greenGamma,
+                                &settings.blueMin, &settings.blueMax, &settings.blueGamma);
   settings.gamma = (settings.redGamma + settings.greenGamma + settings.blueGamma) / 3.0;
 
 #ifdef DEBUG
-  std::cout << "Initial gamma settings: " << settings.gamma << " for (" << settings.redGamma << "," << settings.greenGamma << "," <<settings.blueGamma << std::endl;
+  std::cout << "Initial gamma settings: " << settings.gamma << " for (" << settings.redGamma << "," << settings.greenGamma << "," << settings.blueGamma << std::endl;
 #endif
 
   //hideMouse();
 }
 
-MacWindow::~MacWindow()
-{
-  if (window != NULL)
+MacWindow::~MacWindow() {
+  if (window != NULL) {
     DisposeWindow(window);
+  }
 
   showMouse();
   gl_context.Reset();
@@ -458,9 +471,9 @@ bool MacWindow::isValid() const { return true; }
 
 void MacWindow::showWindow(bool) {}
 
-void MacWindow::getPosition(int &x, int &y) { x = 0, y = 0; }
+void MacWindow::getPosition(int& x, int& y) { x = 0, y = 0; }
 
-void MacWindow::getSize(int &width, int &height) const {
+void MacWindow::getSize(int& width, int& height) const {
 
   width = CGDisplayPixelsWide(kCGDirectMainDisplay);
   height = CGDisplayPixelsHigh(kCGDirectMainDisplay);
@@ -468,10 +481,9 @@ void MacWindow::getSize(int &width, int &height) const {
   // width = settings.Window_Size.height;
 }
 
-void MacWindow::setTitle(const char *) {}
+void MacWindow::setTitle(const char*) {}
 void MacWindow::setPosition(int, int) {}
-void MacWindow::setSize(int width, int height)
-{
+void MacWindow::setSize(int width, int height) {
   settings.Window_Size.width = width;
   settings.Window_Size.height = height;
 
@@ -481,7 +493,7 @@ void MacWindow::setSize(int width, int height)
   if (num_displays == 0) {
     return;
   }
-  int display_index = settings.Use_Main_Display ? 0 : num_displays-1;
+  int display_index = settings.Use_Main_Display ? 0 : num_displays - 1;
   u_int32_t display_id = displays.GetOpenGLDisplayID(display_index);
 
   if (settings.Capture_Display) {
@@ -494,9 +506,9 @@ void MacWindow::setSize(int width, int height)
     }
   }
 
-  CGRect window_rect = CGRectMake(0,0, settings.Window_Size.width, settings.Window_Size.height);
+  CGRect window_rect = CGRectMake(0, 0, settings.Window_Size.width, settings.Window_Size.height);
   if (!settings.Switch_Display) {
-    window_rect.origin = CGPointMake(32,32);
+    window_rect.origin = CGPointMake(32, 32);
   }
 
   if (!gl_context.Init(display_id, window_rect)) {
@@ -505,68 +517,61 @@ void MacWindow::setSize(int width, int height)
 
 }
 
-void MacWindow::setMinSize(int, int)
-{
+void MacWindow::setMinSize(int, int) {
 #ifndef USE_DSP
-  if (window == NULL) return;
+  if (window == NULL) { return; }
 
   // Not sure what this wants, leave out for now.
   //CollapseWindow(window, true);
 #endif
 }
 
-void MacWindow::setFullscreen(bool)
-{
+void MacWindow::setFullscreen(bool) {
   // do nothing for now
 }
 
-bool MacWindow::getFullscreen() const
-{
+bool MacWindow::getFullscreen() const {
   // always fullscreen
   return true;
 }
 
-void MacWindow::warpMouse(int x, int y)
-{
+void MacWindow::warpMouse(int x, int y) {
   CGDisplayErr cgErr;
   CGPoint  mp;
 
-  mp = CGPointMake(x,y);
+  mp = CGPointMake(x, y);
   cgErr = CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, mp);
 }
 
-void MacWindow::getMouse(int &x, int &y) const {
+void MacWindow::getMouse(int& x, int& y) const {
   Point   tmpMouse;
   GrafPtr savedPort;
 
   GetPort(&savedPort);
   //SetPort(window);
   GetMouse(&tmpMouse);  // returns mouse location in coords of local
-			  // window which must be set
+  // window which must be set
   x = tmpMouse.h;
   y = tmpMouse.v;
   SetPort(savedPort);
 }
 
-void MacWindow::grabMouse()
-{
-	// CGAssociateMouseAndMouseCursorPosition() does not have the
-	// expected effect. Comment out for now.
-//	CGAssociateMouseAndMouseCursorPosition(false);
-	gMouseGrabbed = true;
+void MacWindow::grabMouse() {
+  // CGAssociateMouseAndMouseCursorPosition() does not have the
+  // expected effect. Comment out for now.
+//  CGAssociateMouseAndMouseCursorPosition(false);
+  gMouseGrabbed = true;
 }
-void MacWindow::ungrabMouse()
-{
-	// CGAssociateMouseAndMouseCursorPosition() does not have the
-	// expected effect. Comment out for now.
-//	CGAssociateMouseAndMouseCursorPosition(true);
-	gMouseGrabbed = false;
+void MacWindow::ungrabMouse() {
+  // CGAssociateMouseAndMouseCursorPosition() does not have the
+  // expected effect. Comment out for now.
+//  CGAssociateMouseAndMouseCursorPosition(true);
+  gMouseGrabbed = false;
 }
 void MacWindow::showMouse() { ShowCursor(); }
 void MacWindow::hideMouse() { HideCursor(); }
 
-void MacWindow::setGamma(float value)
-{
+void MacWindow::setGamma(float value) {
   CGDisplayErr err;
 
   settings.gamma = value;
@@ -574,12 +579,12 @@ void MacWindow::setGamma(float value)
 #ifdef DEBUG
   std::cout << "Setting Gamma to " << value << std::endl;
 #endif
-  err = CGSetDisplayTransferByFormula( kCGDirectMainDisplay,
-				       settings.redMin, settings.redMax, 1.0 / value, //red
-				       settings.greenMin, settings.greenMax, 1.0 / value, //green
-				       settings.blueMin, settings.blueMax, 1.0 / value); //blue
+  err = CGSetDisplayTransferByFormula(kCGDirectMainDisplay,
+                                      settings.redMin, settings.redMax, 1.0 / value, //red
+                                      settings.greenMin, settings.greenMax, 1.0 / value, //green
+                                      settings.blueMin, settings.blueMax, 1.0 / value); //blue
 }
-float MacWindow::getGamma()	const { return settings.gamma;   }
+float MacWindow::getGamma() const { return settings.gamma;   }
 bool MacWindow::hasGammaControl() const { return true; }
 
 void MacWindow::makeContext() {}
@@ -594,6 +599,6 @@ void MacWindow::swapBuffers() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

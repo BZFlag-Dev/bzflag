@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__COLLISION_GRID__
-#define	__COLLISION_GRID__
+#ifndef __COLLISION_GRID__
+#define __COLLISION_GRID__
 
 #include "common.h"
 
@@ -94,7 +94,7 @@ class CollisionManager {
 
     // test against a box and return a split list
     //const SplitObsList *boxTestSplit(const fvec3& pos, float angle,
-    //				  float dx, float dy, float dz) const;
+    //          float dx, float dy, float dz) const;
 
     // drawing function
     void draw(DrawLinesFunc drawLinesFunc);
@@ -116,7 +116,7 @@ extern CollisionManager COLLISIONMGR;
 
 class ColDetNode {
   public:
-    ColDetNode(unsigned char depth, const Extents& exts, ObsList *fullList);
+    ColDetNode(unsigned char depth, const Extents& exts, ObsList* fullList);
     ~ColDetNode();
 
     int getCount() const;
@@ -152,43 +152,37 @@ class ColDetNode {
 };
 
 
-inline int ColDetNode::getCount() const
-{
+inline int ColDetNode::getCount() const {
   return count;
 }
 
-inline const ObsList* ColDetNode::getList() const
-{
+inline const ObsList* ColDetNode::getList() const {
   return &fullList;
 }
 
-inline const Extents& ColDetNode::getExtents() const
-{
+inline const Extents& ColDetNode::getExtents() const {
   return extents;
 }
 
-inline float ColDetNode::getInTime() const
-{
+inline float ColDetNode::getInTime() const {
   return inTime;
 }
 
-inline float ColDetNode::getOutTime() const
-{
+inline float ColDetNode::getOutTime() const {
   return outTime;
 }
 
 
-inline int CollisionManager::getObstacleCount() const
-{
+inline int CollisionManager::getObstacleCount() const {
   if (root == NULL) {
     return 0;
-  } else {
+  }
+  else {
     return root->getCount();
   }
 }
 
-inline const Extents& CollisionManager::getWorldExtents() const
-{
+inline const Extents& CollisionManager::getWorldExtents() const {
   return worldExtents;
 }
 
@@ -203,6 +197,6 @@ inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

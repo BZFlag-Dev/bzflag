@@ -30,16 +30,14 @@
 
 //============================================================================//
 
-CustomDynamicColor::CustomDynamicColor(const char* dyncolName)
-{
+CustomDynamicColor::CustomDynamicColor(const char* dyncolName) {
   name = dyncolName;
   dyncol = new DynamicColor;
   return;
 }
 
 
-CustomDynamicColor::~CustomDynamicColor()
-{
+CustomDynamicColor::~CustomDynamicColor() {
   delete dyncol;
   return;
 }
@@ -47,9 +45,8 @@ CustomDynamicColor::~CustomDynamicColor()
 
 //============================================================================//
 
-bool CustomDynamicColor::read(const char *cmd, std::istream& input)
-{
-  if (strcasecmp ("varName", cmd) == 0) {
+bool CustomDynamicColor::read(const char* cmd, std::istream& input) {
+  if (strcasecmp("varName", cmd) == 0) {
     std::string varName;
     if (!(input >> varName)) {
       std::cout << "missing variable name" << std::endl;
@@ -57,7 +54,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     }
     dyncol->setVariableName(varName);
   }
-  else if (strcasecmp ("varTime", cmd) == 0) {
+  else if (strcasecmp("varTime", cmd) == 0) {
     float varTime;
     if (!(input >> varTime)) {
       std::cout << "missing variable timing" << std::endl;
@@ -65,7 +62,7 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     }
     dyncol->setVariableTiming(varTime);
   }
-  else if (strcasecmp ("varNoAlpha", cmd) == 0) {
+  else if (strcasecmp("varNoAlpha", cmd) == 0) {
     dyncol->setVariableNoAlpha(true);
   }
   else if (strcasecmp("delay", cmd) == 0) {
@@ -131,12 +128,11 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
 
 //============================================================================//
 
-void CustomDynamicColor::writeToManager() const
-{
+void CustomDynamicColor::writeToManager() const {
   dyncol->setName(name);
   if ((name.size() > 0) && (DYNCOLORMGR.findColor(name) >= 0)) {
     std::cout << "WARNING: duplicate dynamic color"
-	      << " (" << name << ")" << std::endl;
+              << " (" << name << ")" << std::endl;
   }
   dyncol->finalize();
   DYNCOLORMGR.addColor(dyncol);
@@ -151,6 +147,6 @@ void CustomDynamicColor::writeToManager() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

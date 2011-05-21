@@ -28,8 +28,7 @@
 // HUDuiServerListCustomTab
 //
 
-HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
-{
+HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer() {
   tabName = new HUDuiTypeIn();
   tabName->setLabel("Enter Tab Name:");
   tabName->setString("New Tab");
@@ -155,63 +154,56 @@ HUDuiServerListCustomTab::HUDuiServerListCustomTab() : HUDuiNestedContainer()
 }
 
 
-HUDuiServerListCustomTab::~HUDuiServerListCustomTab()
-{
+HUDuiServerListCustomTab::~HUDuiServerListCustomTab() {
   getNav().removeCallback(callback, this);
 }
 
 
-size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data)
-{
-  if ((oldFocus == 0)&&(changeMethod == hnPrev))
-  {
+size_t HUDuiServerListCustomTab::callback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void* data) {
+  if ((oldFocus == 0) && (changeMethod == hnPrev)) {
     ((HUDuiServerListCustomTab*)data)->getNavList()->prev();
-    if (((HUDuiServerListCustomTab*)data)->getNavList()->get()->isContainer())
+    if (((HUDuiServerListCustomTab*)data)->getNavList()->get()->isContainer()) {
       ((HUDuiNestedContainer*)((HUDuiServerListCustomTab*)data)->getNavList()->get())->getNav().set(((HUDuiServerListCustomTab*)data)->getNavList()->get());
+    }
     return HUDNavigationQueue::SkipSetFocus;
   }
 
-  if ((oldFocus == ((HUDuiServerListCustomTab*)data)->getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
+  if ((oldFocus == ((HUDuiServerListCustomTab*)data)->getNav().size() - 1) && (changeMethod == hnNext)) { proposedFocus = oldFocus; }
 
   return proposedFocus;
 }
 
 
-void HUDuiServerListCustomTab::setSize(float width, float height)
-{
+void HUDuiServerListCustomTab::setSize(float width, float height) {
   HUDuiControl::setSize(width, height);
 
   resize();
 }
 
 
-void HUDuiServerListCustomTab::setFontSize(float size)
-{
+void HUDuiServerListCustomTab::setFontSize(float size) {
   HUDuiControl::setFontSize(size);
 
   resize();
 }
 
 
-void HUDuiServerListCustomTab::setFontFace(const LocalFontFace* face)
-{
+void HUDuiServerListCustomTab::setFontFace(const LocalFontFace* face) {
   HUDuiControl::setFontFace(face);
 
   resize();
 }
 
 
-void HUDuiServerListCustomTab::setPosition(float x, float y)
-{
+void HUDuiServerListCustomTab::setPosition(float x, float y) {
   HUDuiControl::setPosition(x, y);
 
   resize();
 }
 
 
-void HUDuiServerListCustomTab::resize()
-{
-  FontManager &fm = FontManager::instance();
+void HUDuiServerListCustomTab::resize() {
+  FontManager& fm = FontManager::instance();
 
   float _fontheight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
@@ -356,50 +348,69 @@ void HUDuiServerListCustomTab::resize()
 }
 
 
-HUDuiServerList* HUDuiServerListCustomTab::createServerList()
-{
+HUDuiServerList* HUDuiServerListCustomTab::createServerList() {
   getNav().set((size_t) 0);
   HUDuiServerList* newServerList = new HUDuiServerList;
-  if (emptyServer->getList().at(emptyServer->getIndex()) == "False")
+  if (emptyServer->getList().at(emptyServer->getIndex()) == "False") {
     newServerList->toggleFilter(HUDuiServerList::EmptyServer);
-  if (fullServer->getList().at(fullServer->getIndex()) == "False")
+  }
+  if (fullServer->getList().at(fullServer->getIndex()) == "False") {
     newServerList->toggleFilter(HUDuiServerList::FullServer);
-  if (teamFFAServers->getList().at(teamFFAServers->getIndex()) == "False")
+  }
+  if (teamFFAServers->getList().at(teamFFAServers->getIndex()) == "False") {
     newServerList->toggleFilter(HUDuiServerList::TeamFFAGameMode);
-  if (openFFAServers->getList().at(openFFAServers->getIndex()) == "False")
+  }
+  if (openFFAServers->getList().at(openFFAServers->getIndex()) == "False") {
     newServerList->toggleFilter(HUDuiServerList::OpenFFAGameMode);
-  if (classicCTFServers->getList().at(classicCTFServers->getIndex()) == "False")
+  }
+  if (classicCTFServers->getList().at(classicCTFServers->getIndex()) == "False") {
     newServerList->toggleFilter(HUDuiServerList::ClassicCTFGameMode);
-  if (rabbitChaseServers->getList().at(rabbitChaseServers->getIndex()) == "False")
+  }
+  if (rabbitChaseServers->getList().at(rabbitChaseServers->getIndex()) == "False") {
     newServerList->toggleFilter(HUDuiServerList::RabbitChaseGameMode);
-  if (jumping->getList().at(jumping->getIndex()) == "On")
+  }
+  if (jumping->getList().at(jumping->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::JumpingOn);
-  if (jumping->getList().at(jumping->getIndex()) == "Off")
+  }
+  if (jumping->getList().at(jumping->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::JumpingOff);
-  if (handicap->getList().at(handicap->getIndex()) == "On")
+  }
+  if (handicap->getList().at(handicap->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::HandicapOn);
-  if (handicap->getList().at(handicap->getIndex()) == "Off")
+  }
+  if (handicap->getList().at(handicap->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::HandicapOff);
-  if (ricochet->getList().at(ricochet->getIndex()) == "On")
+  }
+  if (ricochet->getList().at(ricochet->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::RicochetOn);
-  if (ricochet->getList().at(ricochet->getIndex()) == "Off")
+  }
+  if (ricochet->getList().at(ricochet->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::RicochetOff);
-  if (antidoteFlag->getList().at(antidoteFlag->getIndex()) == "On")
+  }
+  if (antidoteFlag->getList().at(antidoteFlag->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::AntidoteFlagOn);
-  if (antidoteFlag->getList().at(antidoteFlag->getIndex()) == "Off")
+  }
+  if (antidoteFlag->getList().at(antidoteFlag->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::AntidoteFlagOff);
-  if (superFlags->getList().at(superFlags->getIndex()) == "On")
+  }
+  if (superFlags->getList().at(superFlags->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::SuperFlagsOn);
-  if (superFlags->getList().at(superFlags->getIndex()) == "Off")
+  }
+  if (superFlags->getList().at(superFlags->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::SuperFlagsOff);
-  if (luaWorld->getList().at(luaWorld->getIndex()) == "On")
+  }
+  if (luaWorld->getList().at(luaWorld->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::LuaWorldOn);
-  if (luaWorld->getList().at(luaWorld->getIndex()) == "Off")
+  }
+  if (luaWorld->getList().at(luaWorld->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::LuaWorldOff);
-  if (luaRules->getList().at(luaRules->getIndex()) == "On")
+  }
+  if (luaRules->getList().at(luaRules->getIndex()) == "On") {
     newServerList->toggleFilter(HUDuiServerList::LuaRulesOn);
-  if (luaRules->getList().at(luaRules->getIndex()) == "Off")
+  }
+  if (luaRules->getList().at(luaRules->getIndex()) == "Off") {
     newServerList->toggleFilter(HUDuiServerList::LuaRulesOff);
+  }
 
   newServerList->domainNameFilter(domainName->getString());
   newServerList->serverNameFilter(serverName->getString());
@@ -408,8 +419,7 @@ HUDuiServerList* HUDuiServerListCustomTab::createServerList()
 }
 
 
-void HUDuiServerListCustomTab::doRender()
-{
+void HUDuiServerListCustomTab::doRender() {
   if (getFontFace() < 0) {
     return;
   }
@@ -445,6 +455,6 @@ void HUDuiServerListCustomTab::doRender()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

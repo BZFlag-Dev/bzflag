@@ -20,8 +20,7 @@
 /* local implementation headers */
 #include "HUDuiControl.h"
 
-HelpCreditsMenu::HelpCreditsMenu() : HelpMenu("Credits")
-{
+HelpCreditsMenu::HelpCreditsMenu() : HelpMenu("Credits") {
   // add controls
   addControl(createLabel("Tim Riker", "Maintainer:"), false);
   addControl(createLabel("", ""), false);
@@ -48,8 +47,7 @@ HelpCreditsMenu::HelpCreditsMenu() : HelpMenu("Credits")
   addControl(createLabel("Tim Riker", "Copyright (c) 1993 - 2009"), false);
 }
 
-float HelpCreditsMenu::getLeftSide(int _width, int _height)
-{
+float HelpCreditsMenu::getLeftSide(int _width, int _height) {
   return 0.5f * _width - _height / 20.0f;
 }
 
@@ -57,6 +55,6 @@ float HelpCreditsMenu::getLeftSide(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

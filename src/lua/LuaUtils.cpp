@@ -33,14 +33,12 @@ using std::set;
 //============================================================================//
 //============================================================================//
 
-void LuaLog(int level, const std::string& msg)
-{
+void LuaLog(int level, const std::string& msg) {
   logDebugMessage(level, msg);
 }
 
 
-void LuaLog(int level, const char* fmt, ...)
-{
+void LuaLog(int level, const char* fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   logDebugMessageArgs(level, fmt, ap);
@@ -59,18 +57,17 @@ static bool CopyPushData(lua_State* dst, lua_State* src, int index);
 static bool CopyPushTable(lua_State* dst, lua_State* src, int index);
 
 
-static inline int PosLuaIndex(lua_State* src, int index)
-{
+static inline int PosLuaIndex(lua_State* src, int index) {
   if (index > 0) {
     return index;
-  } else {
+  }
+  else {
     return (lua_gettop(src) + index + 1);
   }
 }
 
 
-static bool CopyPushData(lua_State* dst, lua_State* src, int index)
-{
+static bool CopyPushData(lua_State* dst, lua_State* src, int index) {
   const int type = lua_type(src, index);
   switch (type) {
     case LUA_TBOOLEAN: {
@@ -100,8 +97,7 @@ static bool CopyPushData(lua_State* dst, lua_State* src, int index)
 }
 
 
-static bool CopyPushTable(lua_State* dst, lua_State* src, int index)
-{
+static bool CopyPushTable(lua_State* dst, lua_State* src, int index) {
   if (copyDepth > maxCopyDepth) {
     lua_pushnil(dst); // push something
     return false;
@@ -121,8 +117,7 @@ static bool CopyPushTable(lua_State* dst, lua_State* src, int index)
 }
 
 
-int LuaUtils::CopyData(lua_State* dst, lua_State* src, int count)
-{
+int LuaUtils::CopyData(lua_State* dst, lua_State* src, int count) {
   const int srcTop = lua_gettop(src);
   const int dstTop = lua_gettop(dst);
   if (srcTop < count) {
@@ -146,8 +141,7 @@ int LuaUtils::CopyData(lua_State* dst, lua_State* src, int count)
 //============================================================================//
 //============================================================================//
 
-static void PushCurrentFunc(lua_State* L, const char* caller)
-{
+static void PushCurrentFunc(lua_State* L, const char* caller) {
   // get the current function
   lua_Debug ar;
   if (lua_getstack(L, 1, &ar) == 0) {
@@ -162,14 +156,14 @@ static void PushCurrentFunc(lua_State* L, const char* caller)
 }
 
 
-static void PushFunctionEnv(lua_State* L, const char* caller, int funcIndex)
-{
+static void PushFunctionEnv(lua_State* L, const char* caller, int funcIndex) {
   lua_getfenv(L, funcIndex);
   lua_pushliteral(L, "__fenv");
   lua_rawget(L, -2);
   if (lua_isnil(L, -1)) {
     lua_pop(L, 1); // there is no fenv proxy
-  } else {
+  }
+  else {
     lua_remove(L, -2); // remove the orig table, leave the proxy
   }
 
@@ -179,8 +173,7 @@ static void PushFunctionEnv(lua_State* L, const char* caller, int funcIndex)
 }
 
 
-void LuaUtils::PushCurrentFuncEnv(lua_State* L, const char* caller)
-{
+void LuaUtils::PushCurrentFuncEnv(lua_State* L, const char* caller) {
   PushCurrentFunc(L, caller);
   PushFunctionEnv(L, caller, -1);
   lua_remove(L, -2); // remove the function
@@ -196,8 +189,7 @@ void LuaUtils::PushCurrentFuncEnv(lua_State* L, const char* caller)
 static int lowerKeysTable = 0;
 
 
-static bool LowerKeysCheck(lua_State* L, int table)
-{
+static bool LowerKeysCheck(lua_State* L, int table) {
   bool used = false;
   lua_pushvalue(L, table);
   lua_rawget(L, lowerKeysTable);
@@ -212,8 +204,7 @@ static bool LowerKeysCheck(lua_State* L, int table)
 }
 
 
-static bool LowerKeysReal(lua_State* L, int depth)
-{
+static bool LowerKeysReal(lua_State* L, int depth) {
   lua_checkstack(L, 4);
 
   const int table = lua_gettop(L);
@@ -233,20 +224,20 @@ static bool LowerKeysReal(lua_State* L, int depth)
       const string rawKey = lua_tostring(L, -2);
       const string lowerKey = TextUtils::tolower(rawKey);
       if (rawKey != lowerKey) {
-	// removed the mixed case entry
-	lua_pushvalue(L, -2); // the key
-	lua_pushnil(L);
-	lua_rawset(L, table);
-	// does the lower case key alread exist in the table?
-	lua_pushstring(L, lowerKey.c_str());
-	lua_rawget(L, table);
-	if (lua_isnil(L, -1)) {
-	  // lower case does not exist, add it to the changed table
-	  lua_pushstring(L, lowerKey.c_str());
-	  lua_pushvalue(L, -3); // the value
-	  lua_rawset(L, changed);
-	}
-	lua_pop(L, 1);
+        // removed the mixed case entry
+        lua_pushvalue(L, -2); // the key
+        lua_pushnil(L);
+        lua_rawset(L, table);
+        // does the lower case key alread exist in the table?
+        lua_pushstring(L, lowerKey.c_str());
+        lua_rawget(L, table);
+        if (lua_isnil(L, -1)) {
+          // lower case does not exist, add it to the changed table
+          lua_pushstring(L, lowerKey.c_str());
+          lua_pushvalue(L, -3); // the value
+          lua_rawset(L, changed);
+        }
+        lua_pop(L, 1);
       }
     }
   }
@@ -264,8 +255,7 @@ static bool LowerKeysReal(lua_State* L, int depth)
 }
 
 
-bool LuaUtils::LowerKeys(lua_State* L, int table)
-{
+bool LuaUtils::LowerKeys(lua_State* L, int table) {
   if (!lua_istable(L, table)) {
     return false;
   }
@@ -288,19 +278,21 @@ bool LuaUtils::LowerKeys(lua_State* L, int table)
 //============================================================================//
 //============================================================================//
 
-void LuaUtils::PrintStack(lua_State* L)
-{
+void LuaUtils::PrintStack(lua_State* L) {
   const int top = lua_gettop(L);
   for (int i = 1; i <= top; i++) {
     printf("\t%i: type = %s (%p)\n", i, luaL_typename(L, i), lua_topointer(L, i));
     const int type = lua_type(L, i);
     if (type == LUA_TSTRING) {
       printf("\t\t%s\n", lua_tostring(L, i));
-    } else if (type == LUA_TNUMBER) {
+    }
+    else if (type == LUA_TNUMBER) {
       printf("\t\t%f\n", lua_tonumber(L, i));
-    } else if (type == LUA_TBOOLEAN) {
+    }
+    else if (type == LUA_TBOOLEAN) {
       printf("\t\t%s\n", lua_tobool(L, i) ? "true" : "false");
-    } else {
+    }
+    else {
       printf("\n");
     }
   }
@@ -310,8 +302,7 @@ void LuaUtils::PrintStack(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaUtils::Print(lua_State* L)
-{
+int LuaUtils::Print(lua_State* L) {
   // copied from lua/src/lib/lbaselib.c
   string msg = "";
   const int args = lua_gettop(L); // number of arguments
@@ -319,7 +310,7 @@ int LuaUtils::Print(lua_State* L)
   lua_getglobal(L, "tostring");
 
   for (int i = 1; i <= args; i++) {
-    const char *s;
+    const char* s;
     lua_pushvalue(L, -1);     // function to be called
     lua_pushvalue(L, i);      // value to print
     lua_call(L, 1, 1);
@@ -331,7 +322,7 @@ int LuaUtils::Print(lua_State* L)
       msg += ", ";
     }
     msg += s;
-    lua_pop(L, 1);	    // pop result
+    lua_pop(L, 1);      // pop result
   }
   LuaLog(0, msg);
 
@@ -345,20 +336,20 @@ int LuaUtils::Print(lua_State* L)
   const int table = 1;
   for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
     if (lua_israwnumber(L, -2)) {  // only numeric keys
-      const char *s;
+      const char* s;
       lua_pushvalue(L, -3);     // function to be called
-      lua_pushvalue(L, -2  );    // value to print
+      lua_pushvalue(L, -2);      // value to print
       lua_call(L, 1, 1);
       s = lua_tostring(L, -1);  // get result
       if (s == NULL) {
-	return luaL_error(L, "`tostring' must return a string to `print'");
+        return luaL_error(L, "`tostring' must return a string to `print'");
       }
       if (!first) {
-	msg += ", ";
+        msg += ", ";
       }
       msg += s;
       first = false;
-      lua_pop(L, 1);	    // pop result
+      lua_pop(L, 1);      // pop result
     }
   }
   LuaLog(0, msg);
@@ -370,8 +361,7 @@ int LuaUtils::Print(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-bool LuaUtils::ClientWriteCheck(const string& varName)
-{
+bool LuaUtils::ClientWriteCheck(const string& varName) {
   if (!BZDB.isSet(varName)) {
     return true;
   }
@@ -387,6 +377,6 @@ bool LuaUtils::ClientWriteCheck(const string& varName)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

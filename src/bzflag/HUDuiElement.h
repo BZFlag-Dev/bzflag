@@ -12,12 +12,12 @@
 
 /*
  * HUDuiElement:
- *	User interface class and functions for a visual noninteractive
- *	UI element.
+ *  User interface class and functions for a visual noninteractive
+ *  UI element.
  */
 
-#ifndef	__HUDUIELEMENT_H__
-#define	__HUDUIELEMENT_H__
+#ifndef __HUDUIELEMENT_H__
+#define __HUDUIELEMENT_H__
 
 /* bzflag common header */
 #include "common.h"
@@ -32,49 +32,49 @@
 class LocalFontFace;
 
 class HUDuiElement {
-  friend class HUDui;
+    friend class HUDui;
   public:
-			HUDuiElement();
-    virtual		~HUDuiElement();
+    HUDuiElement();
+    virtual   ~HUDuiElement();
 
-    float		getX() const;
-    float		getY() const;
-    float		getWidth() const;
-    float		getHeight() const;
-    float		getLabelWidth() const;
-    std::string		getLabel() const;
-    const LocalFontFace*	getFontFace() const;
-    float		getFontSize() const;
+    float   getX() const;
+    float   getY() const;
+    float   getWidth() const;
+    float   getHeight() const;
+    float   getLabelWidth() const;
+    std::string   getLabel() const;
+    const LocalFontFace*  getFontFace() const;
+    float   getFontSize() const;
 
-    virtual void		setPosition(float x, float y);
-    virtual void		setSize(float width, float height);
-    void		setLabelWidth(float width);
-    void		setLabel(const std::string& label);
-    virtual void		setFontFace(const LocalFontFace* face);
-    virtual void		setFontSize(float size);
+    virtual void    setPosition(float x, float y);
+    virtual void    setSize(float width, float height);
+    void    setLabelWidth(float width);
+    void    setLabel(const std::string& label);
+    virtual void    setFontFace(const LocalFontFace* face);
+    virtual void    setFontSize(float size);
 
-    virtual void	render();
+    virtual void  render();
 
   protected:
-    virtual void	onSetFont();
-    virtual void	doRender() = 0;
+    virtual void  onSetFont();
+    virtual void  doRender() = 0;
 
-    void		renderLabel();
+    void    renderLabel();
 
-    static const fvec4	dimTextColor;
-    static const fvec4	moreDimTextColor;
-    static const fvec4	textColor;
+    static const fvec4  dimTextColor;
+    static const fvec4  moreDimTextColor;
+    static const fvec4  textColor;
 
-    bool		skipRenderLabel;
-    float		fontHeight;
+    bool    skipRenderLabel;
+    float   fontHeight;
 
   private:
-    const LocalFontFace*	elementFontFace;
-    float		elementFontSize;
-    float		elementX, elementY;
-    float		elementWidth, elementHeight;
-    float		desiredLabelWidth, trueLabelWidth;
-    std::string		label;
+    const LocalFontFace*  elementFontFace;
+    float   elementFontSize;
+    float   elementX, elementY;
+    float   elementWidth, elementHeight;
+    float   desiredLabelWidth, trueLabelWidth;
+    std::string   label;
 };
 
 //
@@ -82,26 +82,22 @@ class HUDuiElement {
 //
 
 inline
-float			HUDuiElement::getX() const
-{
+float     HUDuiElement::getX() const {
   return elementX;
 }
 
 inline
-float			HUDuiElement::getY() const
-{
+float     HUDuiElement::getY() const {
   return elementY;
 }
 
 inline
-float			HUDuiElement::getWidth() const
-{
+float     HUDuiElement::getWidth() const {
   return elementWidth;
 }
 
 inline
-float			HUDuiElement::getHeight() const
-{
+float     HUDuiElement::getHeight() const {
   return elementHeight;
 }
 
@@ -111,6 +107,6 @@ float			HUDuiElement::getHeight() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

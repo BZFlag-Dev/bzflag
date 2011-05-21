@@ -11,11 +11,11 @@
  */
 
 /* ArcObstacle:
- *	Encapsulates an arc in the game environment.
+ *  Encapsulates an arc in the game environment.
  */
 
-#ifndef	BZF_ARC_OBSTACLE_H
-#define	BZF_ARC_OBSTACLE_H
+#ifndef BZF_ARC_OBSTACLE_H
+#define BZF_ARC_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -40,12 +40,12 @@ class ArcObstacle : public Obstacle {
 
     ArcObstacle();
     ArcObstacle(const MeshTransform& transform,
-		const fvec3& _pos, const fvec3& _size,
-		float _rotation, float _angle, float _ratio,
-		const float _texsize[4], bool _useNormals,
-		int _divisions, const BzMaterial* mats[MaterialCount],
-		int physics, bool bounce,
-		unsigned char drive, unsigned char shoot, bool ricochet);
+                const fvec3& _pos, const fvec3& _size,
+                float _rotation, float _angle, float _ratio,
+                const float _texsize[4], bool _useNormals,
+                int _divisions, const BzMaterial* mats[MaterialCount],
+                int physics, bool bounce,
+                unsigned char drive, unsigned char shoot, bool ricochet);
     ~ArcObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -78,18 +78,18 @@ class ArcObstacle : public Obstacle {
                     fvec4* plane) const;
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 
   private:
     void finalize();
     MeshObstacle* makePie(bool isCircle, float a, float r, float h,
-			  float radius, float squish, float texsz[4]);
+                          float radius, float squish, float texsz[4]);
     MeshObstacle* makeRing(bool isCircle, float a, float r, float h,
-			   float inrad, float outrad, float squish,
-			   float texsz[4]);
+                           float inrad, float outrad, float squish,
+                           float texsz[4]);
   private:
     static const char* typeName;
 
@@ -111,6 +111,6 @@ class ArcObstacle : public Obstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

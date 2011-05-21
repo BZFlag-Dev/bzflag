@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SERVERMENU_H__
-#define	__SERVERMENU_H__
+#ifndef __SERVERMENU_H__
+#define __SERVERMENU_H__
 
 #include "common.h"
 
@@ -33,57 +33,57 @@
 class ServerMenu;
 
 class ServerMenuDefaultKey : public MenuDefaultKey {
-public:
-  ServerMenuDefaultKey(ServerMenu* _menu) :
-    menu(_menu) { }
-  ~ServerMenuDefaultKey() { }
+  public:
+    ServerMenuDefaultKey(ServerMenu* _menu) :
+      menu(_menu) { }
+    ~ServerMenuDefaultKey() { }
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
-private:
-  ServerMenu* menu;
+  private:
+    ServerMenu* menu;
 };
 
 class ServerMenu : public HUDDialog {
-  typedef std::map<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*> > > PingsMap;
-public:
-  ServerMenu();
-  ~ServerMenu();
+    typedef std::map<std::string, std::pair<ServerPing*, std::vector<HUDuiServerList*> > > PingsMap;
+  public:
+    ServerMenu();
+    ~ServerMenu();
 
-  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
+    HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
 
-  void		execute();
-  void		resize(int width, int height);
+    void    execute();
+    void    resize(int width, int height);
 
-  static void newServer(ServerItem* addedServer, void* data);
+    static void newServer(ServerItem* addedServer, void* data);
 
-public: 			// need better encapsulation
-  HUDuiServerList* normalList;
-  HUDuiServerList* recentList;
-  HUDuiServerList* favoritesList;
+  public:       // need better encapsulation
+    HUDuiServerList* normalList;
+    HUDuiServerList* recentList;
+    HUDuiServerList* favoritesList;
 
-  HUDuiTabbedControl* tabbedControl;
-  HUDuiServerInfo* serverInfo;
-  HUDuiServerListCustomTab* customTabControl;
+    HUDuiTabbedControl* tabbedControl;
+    HUDuiServerInfo* serverInfo;
+    HUDuiServerListCustomTab* customTabControl;
 
-private:
-  HUDuiServerListCache &listsCache;
-  ServerList &serverList;
+  private:
+    HUDuiServerListCache& listsCache;
+    ServerList& serverList;
 
-  static void	callback(HUDuiControl* w, void* data);
+    static void callback(HUDuiControl* w, void* data);
 
-  void updateStatus();
-  void markAsFavorite(ServerItem* item);
+    void updateStatus();
+    void markAsFavorite(ServerItem* item);
 
-  static void playingCB(void*);
+    static void playingCB(void*);
 
-  static PingsMap activePings;
+    static PingsMap activePings;
 
-  ServerMenuDefaultKey	defaultKey;
+    ServerMenuDefaultKey  defaultKey;
 
-  HUDuiLabel* title;
-  HUDuiLabel* help;
+    HUDuiLabel* title;
+    HUDuiLabel* help;
 };
 
 
@@ -93,6 +93,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

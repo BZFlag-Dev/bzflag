@@ -19,85 +19,66 @@
 /* private */
 
 /* protected */
-bool Country::isValid(int)
-{
+bool Country::isValid(int) {
   return false;
 }
-bool Country::isValid(const std::string &)
-{
+bool Country::isValid(const std::string&) {
   return false;
 }
 
 /* public: */
 
-Country::Country(std::string)
-{
+Country::Country(std::string) {
 }
-Country::~Country()
-{
+Country::~Country() {
 }
 
-int Country::number() const
-{
+int Country::number() const {
   return 0;
 }
-std::string Country::iso2() const
-{
+std::string Country::iso2() const {
   return "";
 }
-std::string Country::iso3() const
-{
+std::string Country::iso3() const {
   return "";
 }
-std::string Country::englishName() const
-{
+std::string Country::englishName() const {
   return "";
 }
-std::string Country::frenchName() const
-{
+std::string Country::frenchName() const {
   return "";
 }
 
 
-int Country::number(int country)
-{
+int Country::number(int country) {
   // XXX - validate number
   return country;
 }
-int Country::number(const std::string& )
-{
+int Country::number(const std::string&) {
   return 0;
 }
-std::string Country::iso2(int)
-{
+std::string Country::iso2(int) {
   return "";
 }
-std::string Country::iso2(const std::string &)
-{
+std::string Country::iso2(const std::string&) {
   return "";
 }
-std::string Country::iso3(int)
-{
+std::string Country::iso3(int) {
   return "";
 }
-std::string Country::iso3(const std::string& )
-{
+std::string Country::iso3(const std::string&) {
   return "";
 }
-std::string Country::englishName(int)
-{
+std::string Country::englishName(int) {
   return "";
 }
-std::string Country::englishName(const std::string& )
-{
+std::string Country::englishName(const std::string&) {
   return "";
 }
-std::string Country::frenchName(int)
-{
+std::string Country::frenchName(int) {
   return "";
 }
-std::string Country::frenchName(const std::string& )
-{
+std::string Country::frenchName(const std::string&) {
   return "";
 }
 
@@ -106,6 +87,6 @@ std::string Country::frenchName(const std::string& )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

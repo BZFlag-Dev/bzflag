@@ -33,16 +33,16 @@ CronManager cron;
 
 BZ_GET_PLUGIN_VERSION
 
-BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
-{
+BZF_PLUGIN_CALL int bz_Load(const char* commandLine) {
   // should have a filename on the command line.  try to open it.
   if (!commandLine) {
     bz_debugMessage(1, "bzfscron: no crontab specified");
     return 1;
   }
   cron.setCrontab(commandLine);
-  if (!cron.reload())
+  if (!cron.reload()) {
     return 2;
+  }
 
   // we have a granularity of 1 minute but we want to run things ASAP in that minute
   // since we rely on "real time" and not "relative time". n+<=5 sec should not hurt.
@@ -56,15 +56,15 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine)
 
   bz_debugMessage(4, BCVERSION ": plugin loaded");
 
-  if (!cron.connect())
+  if (!cron.connect()) {
     bz_debugMessage(1, BCVERSION ": fake player could not connect!");
+  }
 
   bz_debugMessage(4, BCVERSION ": fake player connected");
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   bz_removeEvent(bz_eTickEvent, &cron);
   bz_debugMessage(4, BCVERSION ": plugin unloaded");
   return 0;
@@ -132,83 +132,81 @@ void CronManager::list(int playerID) const {
   }
 }
 
-void CronManager::process(bz_EventData *eventData) {
+void CronManager::process(bz_EventData* eventData) {
   switch (eventData->eventType) {
 
-  default: {
-    // no, sir, we didn't ask for THIS!!
-    bz_debugMessage(1, "bzfscron: received event with unrequested eventType!");
-    return;
-  }
-
-  case bz_eTickEvent: {
-    bz_TickEventData_V1* event = (bz_TickEventData_V1*)eventData;
-
-    // ignore ticks that are less than 5 seconds apart
-    if (lastTick + 4.95f > event->eventTime)
+    default: {
+      // no, sir, we didn't ask for THIS!!
+      bz_debugMessage(1, "bzfscron: received event with unrequested eventType!");
       return;
-    lastTick = event->eventTime;
-    bz_debugMessage(4, "bzfscron: tick!");
+    }
 
-    // ensure that the minute has changed
-    bz_Time t;
-    bz_getLocaltime(&t);
-    if (t.minute == lastMinute)
-      return;
-    lastMinute = t.minute;
-    bz_debugMessage(4, "bzfscron: minute change");
+    case bz_eTickEvent: {
+      bz_TickEventData_V1* event = (bz_TickEventData_V1*)eventData;
 
-    // make sure we have a valid player
-    if (!player || !player->valid()) return;
-
-    // iterate through all the jobs.  if they match the current minute, run them.
-    std::vector<CronJob>::iterator itr;
-    for (itr = jobs.begin(); itr != jobs.end(); ++itr)
-      if (itr->matches(t.minute, t.hour, t.day, t.month, dow(t.month, t.day, t.year))) {
-	bz_debugMessage(4, format("bzfscron: job matched at %d-%d-%d %d:%d - \"%s\"", t.year, t.month, t.day, t.hour, t.minute, itr->getCommand().c_str()).c_str());
-	player->sendCommand(itr->getCommand());
+      // ignore ticks that are less than 5 seconds apart
+      if (lastTick + 4.95f > event->eventTime) {
+        return;
       }
+      lastTick = event->eventTime;
+      bz_debugMessage(4, "bzfscron: tick!");
 
-    break;
-  }
+      // ensure that the minute has changed
+      bz_Time t;
+      bz_getLocaltime(&t);
+      if (t.minute == lastMinute) {
+        return;
+      }
+      lastMinute = t.minute;
+      bz_debugMessage(4, "bzfscron: minute change");
+
+      // make sure we have a valid player
+      if (!player || !player->valid()) { return; }
+
+      // iterate through all the jobs.  if they match the current minute, run them.
+      std::vector<CronJob>::iterator itr;
+      for (itr = jobs.begin(); itr != jobs.end(); ++itr)
+        if (itr->matches(t.minute, t.hour, t.day, t.month, dow(t.month, t.day, t.year))) {
+          bz_debugMessage(4, format("bzfscron: job matched at %d-%d-%d %d:%d - \"%s\"", t.year, t.month, t.day, t.hour, t.minute, itr->getCommand().c_str()).c_str());
+          player->sendCommand(itr->getCommand());
+        }
+
+      break;
+    }
   }
 }
 
-bool CronManager::connect()
-{
+bool CronManager::connect() {
   // Create fake player
   player = new CronPlayer();
   return (bz_addServerSidePlayer(player) >= 0);
 }
 
-CronPlayer::CronPlayer()
-{
+CronPlayer::CronPlayer() {
   playerID = -1;
 }
 
-void CronPlayer::added(int player)
-{
+void CronPlayer::added(int player) {
   if (player == playerID) { // oh look, it's ME!
     // set my information
     setPlayerData("bzfscron", "" /*token*/, BCVERSION, eObservers);
 
     // I think I'll make myself admin, so I can run all sorts of fun commands
-    if (!bz_setPlayerOperator(playerID))
+    if (!bz_setPlayerOperator(playerID)) {
       bz_debugMessage(1, "bzfscron: unable to make myself an administrator");
+    }
 
     // But nobody needs to know I'm admin, 'cause I can't do anything unless crontab told me to
     bz_grantPerm(playerID, bz_perm_hideAdmin);
   }
 }
 
-void CronPlayer::playerRejected(bz_eRejectCodes /* code */, const char *reason)
-{
+void CronPlayer::playerRejected(bz_eRejectCodes /* code */, const char* reason) {
   std::string temp = format("Player rejected (reason: %s)", reason);
   bz_debugMessage(1, temp.c_str());
 }
 
-void CronPlayer::sendCommand(std::string message)
-{
+void CronPlayer::sendCommand(std::string message) {
   sendChatMessage(message.c_str());
 }
 
@@ -216,6 +214,6 @@ void CronPlayer::sendCommand(std::string message)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

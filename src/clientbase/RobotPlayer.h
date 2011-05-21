@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef	BZF_ROBOT_PLAYER_H
-#define	BZF_ROBOT_PLAYER_H
+#ifndef BZF_ROBOT_PLAYER_H
+#define BZF_ROBOT_PLAYER_H
 
 #include "common.h"
 
@@ -38,35 +38,35 @@ class RobotPlayer : public LocalPlayer {
   public:
     RobotPlayer(const PlayerId&, const char* name, ServerLink*);
 
-    float		getTargetPriority(const Player*) const;
-    const Player*	getTarget() const;
-    void		setTarget(const Player*);
-    static void		setObstacleList(std::vector<BzfRegion*>*);
+    float   getTargetPriority(const Player*) const;
+    const Player* getTarget() const;
+    void    setTarget(const Player*);
+    static void   setObstacleList(std::vector<BzfRegion*>*);
 
-    void		restart(const fvec3& pos, float azimuth);
-    void		explodeTank();
-
-  private:
-    void		doUpdate(float dt);
-    void		doUpdateMotion(float dt);
-    BzfRegion*		findRegion(const fvec2&, fvec2&) const;
-    float		getRegionExitPoint(
-				const fvec2&, const fvec2&,
-				const fvec2&, const fvec2&,
-				fvec2&, float& priority);
-     void		findPath(RegionPriorityQueue& queue,
-				BzfRegion* region, BzfRegion* targetRegion,
-				const fvec2&, int mailbox);
-
-     void		projectPosition(const Player *targ, const float t, fvec3& pos) const;
-     void		getProjectedPosition(const Player *targ, fvec3& projpos) const;
+    void    restart(const fvec3& pos, float azimuth);
+    void    explodeTank();
 
   private:
-    const Player*	target;
-    std::vector<RegionPoint>	path;
-    int			pathIndex;
-    float		timerForShot;
-    bool		drivingForward;
+    void    doUpdate(float dt);
+    void    doUpdateMotion(float dt);
+    BzfRegion*    findRegion(const fvec2&, fvec2&) const;
+    float   getRegionExitPoint(
+      const fvec2&, const fvec2&,
+      const fvec2&, const fvec2&,
+      fvec2&, float& priority);
+    void   findPath(RegionPriorityQueue& queue,
+                    BzfRegion* region, BzfRegion* targetRegion,
+                    const fvec2&, int mailbox);
+
+    void   projectPosition(const Player* targ, const float t, fvec3& pos) const;
+    void   getProjectedPosition(const Player* targ, fvec3& projpos) const;
+
+  private:
+    const Player* target;
+    std::vector<RegionPoint>  path;
+    int     pathIndex;
+    float   timerForShot;
+    bool    drivingForward;
     static std::vector<BzfRegion*>* obstacleList;
 };
 
@@ -76,6 +76,6 @@ class RobotPlayer : public LocalPlayer {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

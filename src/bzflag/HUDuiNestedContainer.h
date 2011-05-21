@@ -12,12 +12,12 @@
 
 /*
  * HUDuiNestedContainer:
- *	User interface base class for nested containers. Nested containers
- *	allow child controls to be added to a control.
+ *  User interface base class for nested containers. Nested containers
+ *  allow child controls to be added to a control.
  */
 
-#ifndef	__HUDUINESTEDCONTAINER_H__
-#define	__HUDUINESTEDCONTAINER_H__
+#ifndef __HUDUINESTEDCONTAINER_H__
+#define __HUDUINESTEDCONTAINER_H__
 
 // ancestor class
 #include "HUDuiControl.h"
@@ -26,8 +26,8 @@
 
 class HUDuiNestedContainer : public HUDuiControl {
   public:
-      HUDuiNestedContainer();
-      ~HUDuiNestedContainer();
+    HUDuiNestedContainer();
+    ~HUDuiNestedContainer();
 
     HUDuiControl* getFocus() const { return nestedNavList.get(); }
     const HUDNavigationQueue& getNav() const { return nestedNavList; }
@@ -55,6 +55,6 @@ class HUDuiNestedContainer : public HUDuiControl {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,11 +11,11 @@
  */
 
 /* SDLVisual:
- *	Encapsulates an SDL visual
+ *  Encapsulates an SDL visual
  */
 
 #ifndef __SDLVISUAL_H__
-#define	__SDLVISUAL_H__
+#define __SDLVISUAL_H__
 
 /* interface headers */
 #include "BzfVisual.h"
@@ -23,19 +23,19 @@
 
 
 class SDLVisual : public BzfVisual {
- public:
-  SDLVisual(const SDLDisplay*) { ;};
-  void setLevel(int) {;};
-  void setDoubleBuffer(bool);
-  void setIndex(int) {;};
-  void setRGBA(int minRed, int minGreen,
-	       int minBlue, int minAlpha);
-  void setDepth(int minDepth);
-  void setStencil(int minDepth);
-  void setAccum(int, int, int, int) {;};
-  void setStereo(bool);
-  void setMultisample(int) {;};
-  bool build() {return true;};
+  public:
+    SDLVisual(const SDLDisplay*) { ;};
+    void setLevel(int) {;};
+    void setDoubleBuffer(bool);
+    void setIndex(int) {;};
+    void setRGBA(int minRed, int minGreen,
+                 int minBlue, int minAlpha);
+    void setDepth(int minDepth);
+    void setStencil(int minDepth);
+    void setAccum(int, int, int, int) {;};
+    void setStereo(bool);
+    void setMultisample(int) {;};
+    bool build() {return true;};
 };
 
 #endif // __SDLVISUAL_H__
@@ -44,6 +44,6 @@ class SDLVisual : public BzfVisual {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

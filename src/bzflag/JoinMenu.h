@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__JOINMENU_H__
-#define	__JOINMENU_H__
+#ifndef __JOINMENU_H__
+#define __JOINMENU_H__
 
 #include "common.h"
 
@@ -46,37 +46,37 @@ class JoinMenu : public HUDDialog {
     JoinMenu();
     ~JoinMenu();
 
-    HUDuiDefaultKey*	getDefaultKey();
+    HUDuiDefaultKey*  getDefaultKey();
 
-    void		show();
-    void		execute();
-    void		dismiss();
-    void		resize(int width, int height);
-    void		updateTeamTexture();
-
-  private:
-    static void		teamCallback(HUDuiControl*, void*);
-    TeamColor		getTeam() const;
-    void		setTeam(TeamColor);
-    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
-    void		setFailedMessage(const char* msg);
-    void		loadInfo();
+    void    show();
+    void    execute();
+    void    dismiss();
+    void    resize(int width, int height);
+    void    updateTeamTexture();
 
   private:
-    float		center;
-    HUDuiTypeIn*	callsign;
-    HUDuiTypeIn*	password;
-    HUDuiTypeIn*	motto;
-    HUDuiList*		team;
-    HUDuiImage*		teamIcon;
-    HUDuiTypeIn*	server;
-    HUDuiTypeIn*	port;
-    HUDuiLabel*		status;
-    HUDuiLabel*		startServer;
-    HUDuiLabel*		findServer;
-    HUDuiLabel*		connectLabel;
-    HUDuiLabel*		failedMessage;
-    ServerMenu*		serverMenu;
+    static void   teamCallback(HUDuiControl*, void*);
+    TeamColor   getTeam() const;
+    void    setTeam(TeamColor);
+    void    setStatus(const char*, const std::vector<std::string> *parms = NULL);
+    void    setFailedMessage(const char* msg);
+    void    loadInfo();
+
+  private:
+    float   center;
+    HUDuiTypeIn*  callsign;
+    HUDuiTypeIn*  password;
+    HUDuiTypeIn*  motto;
+    HUDuiList*    team;
+    HUDuiImage*   teamIcon;
+    HUDuiTypeIn*  server;
+    HUDuiTypeIn*  port;
+    HUDuiLabel*   status;
+    HUDuiLabel*   startServer;
+    HUDuiLabel*   findServer;
+    HUDuiLabel*   connectLabel;
+    HUDuiLabel*   failedMessage;
+    ServerMenu*   serverMenu;
 };
 
 
@@ -86,6 +86,6 @@ class JoinMenu : public HUDDialog {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

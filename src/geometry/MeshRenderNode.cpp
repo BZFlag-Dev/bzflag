@@ -34,10 +34,9 @@
 
 
 MeshRenderNode::MeshRenderNode(MeshDrawMgr* _drawMgr,
-			       GLuint* _xformList, bool _normalize,
-			       const fvec4* _color,
-			       int _lod, int _set, int tris)
-{
+                               GLuint* _xformList, bool _normalize,
+                               const fvec4* _color,
+                               int _lod, int _set, int tris) {
   drawMgr = _drawMgr;
   xformList = _xformList;
   normalize = _normalize;
@@ -49,8 +48,7 @@ MeshRenderNode::MeshRenderNode(MeshDrawMgr* _drawMgr,
 }
 
 
-void MeshRenderNode::render()
-{
+void MeshRenderNode::render() {
   const bool switchLights = (exts != NULL);
   if (switchLights) {
     RENDERER.disableLights(*exts);
@@ -89,8 +87,7 @@ void MeshRenderNode::render()
 }
 
 
-void MeshRenderNode::renderRadar()
-{
+void MeshRenderNode::renderRadar() {
   if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
     glCallList(*xformList);
@@ -108,8 +105,7 @@ void MeshRenderNode::renderRadar()
 }
 
 
-void MeshRenderNode::renderShadow()
-{
+void MeshRenderNode::renderShadow() {
   if (*xformList != INVALID_GL_LIST_ID) {
     glPushMatrix();
     glCallList(*xformList);
@@ -134,6 +130,6 @@ void MeshRenderNode::renderShadow()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,16 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_AUTOPILOT_H
-#define	BZF_AUTOPILOT_H
+#ifndef BZF_AUTOPILOT_H
+#define BZF_AUTOPILOT_H
 
 #include "common.h"
 
 // common headers
 #include "Flag.h"
 
-void doAutoPilot(float &rotation, float &speed);
-void teachAutoPilot(FlagType *, int);
+void doAutoPilot(float& rotation, float& speed);
+void teachAutoPilot(FlagType*, int);
 
 #endif // BZF_AUTOPILOT_H
 
@@ -27,6 +27,6 @@ void teachAutoPilot(FlagType *, int);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

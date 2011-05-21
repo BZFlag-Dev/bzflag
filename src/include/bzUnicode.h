@@ -18,17 +18,15 @@
 /**
  * Provides a way to easily walk multibyte unicode strings encoded by UTF8.
  */
-class UTF8StringItr
-{
-public:
+class UTF8StringItr {
+  public:
     /**
      * Constructor.  Also reads the first character and stores it.
      *
      * @param string  The buffer to iterate.  No copy is made.
      */
-    UTF8StringItr(const char* string) : curPos(string), nextPos(string)
-    {
-        ++(*this);
+    UTF8StringItr(const char* string) : curPos(string), nextPos(string) {
+      ++(*this);
     }
 
     /**
@@ -43,30 +41,28 @@ public:
      * the state appropriately.
      * Note - not protected against overruns.
      */
-    inline UTF8StringItr operator++(int)
-    {
-        UTF8StringItr temp = *this;
-        ++*this;
-        return temp;
+    inline UTF8StringItr operator++(int) {
+      UTF8StringItr temp = *this;
+      ++*this;
+      return temp;
     }
 
     /**
      * Equality operator.  Two UTF8StringItrs are considered equal
      * if they have the same current buffer and buffer position.
      */
-    inline bool operator==(const UTF8StringItr& right) const
-    {
-        if (curPos == right.getBufferFromHere())
-            return true;
-        return false;
+    inline bool operator==(const UTF8StringItr& right) const {
+      if (curPos == right.getBufferFromHere()) {
+        return true;
+      }
+      return false;
     }
 
     /**
      * Assignment operator for const char*s.  Reset the iterator to
      * the location pointed to.
      */
-    inline void operator=(const char* value)
-    {
+    inline void operator=(const char* value) {
       curPos = nextPos = value;
       ++(*this);
     }
@@ -93,17 +89,17 @@ public:
      *
      * Not optimized (and operator+= is slow); do not use in performance-critical code.
      */
-    inline static std::wstring wideStringFromUTF8(const std::string& nstr)
-    {
+    inline static std::wstring wideStringFromUTF8(const std::string& nstr) {
       std::wstring ret;
-      for (UTF8StringItr itr(nstr.c_str()); (*itr != 0); ++itr)
-	ret += (wchar_t)(*itr);
+      for (UTF8StringItr itr(nstr.c_str()); (*itr != 0); ++itr) {
+        ret += (wchar_t)(*itr);
+      }
       return ret;
     }
 
     virtual ~UTF8StringItr() {}
 
-private:
+  private:
     /**
      * The buffer position of the first element in the current character.
      */
@@ -134,19 +130,19 @@ private:
 /// converts a single wide character to a c-style string containing a UTF8
 /// representation of the same character.
 class bzUTF8Char {
-public:
-  bzUTF8Char(unsigned int ch);
+  public:
+    bzUTF8Char(unsigned int ch);
 
-  inline std::string str() const { return buf; }
+    inline std::string str() const { return buf; }
 
-  ~bzUTF8Char() { delete[] buf; }
+    ~bzUTF8Char() { delete[] buf; }
 
-private:
-  char* buf;
+  private:
+    char* buf;
 
-  static const unsigned char firstByteMark[7];
-  static const unsigned int byteMask;
-  static const unsigned int byteMark;
+    static const unsigned char firstByteMark[7];
+    static const unsigned int byteMask;
+    static const unsigned int byteMark;
 };
 
 #endif // __BZUNICODE_H__
@@ -155,6 +151,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

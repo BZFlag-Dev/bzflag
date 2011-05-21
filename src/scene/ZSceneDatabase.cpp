@@ -35,8 +35,7 @@
 
 
 // utility function
-static int compareZExtents(const void* a, const void* b)
-{
+static int compareZExtents(const void* a, const void* b) {
   const SceneNode* nodeA = *((const SceneNode**)a);
   const SceneNode* nodeB = *((const SceneNode**)b);
   const Extents& eA = nodeA->getExtents();
@@ -47,8 +46,7 @@ static int compareZExtents(const void* a, const void* b)
 }
 
 
-ZSceneDatabase::ZSceneDatabase()
-{
+ZSceneDatabase::ZSceneDatabase() {
   staticCount = staticSize = 0;
   dynamicCount = dynamicSize = 0;
   staticList = dynamicList = culledList = NULL;
@@ -59,8 +57,7 @@ ZSceneDatabase::ZSceneDatabase()
 }
 
 
-ZSceneDatabase::~ZSceneDatabase()
-{
+ZSceneDatabase::~ZSceneDatabase() {
   // free static nodes
   for (int i = 0; i < staticCount; i++) {
     delete staticList[i];
@@ -78,20 +75,19 @@ ZSceneDatabase::~ZSceneDatabase()
 }
 
 
-void ZSceneDatabase::finalizeStatics()
-{
+void ZSceneDatabase::finalizeStatics() {
   return;
 }
 
 
-bool ZSceneDatabase::addStaticNode(SceneNode* object, bool /*dontFree*/)
-{
+bool ZSceneDatabase::addStaticNode(SceneNode* object, bool /*dontFree*/) {
   if (staticCount == staticSize) {
-    if (staticSize == 0) staticSize = 15;
-    else staticSize += staticSize + 1;
+    if (staticSize == 0) { staticSize = 15; }
+    else { staticSize += staticSize + 1; }
     SceneNode** newStatic = new SceneNode*[staticSize];
-    if (staticList)
+    if (staticList) {
       ::memcpy(newStatic, staticList, staticCount * sizeof(SceneNode*));
+    }
     delete[] staticList;
     staticList = newStatic;
   }
@@ -101,15 +97,15 @@ bool ZSceneDatabase::addStaticNode(SceneNode* object, bool /*dontFree*/)
 }
 
 
-void ZSceneDatabase::addDynamicNode(SceneNode* object)
-{
+void ZSceneDatabase::addDynamicNode(SceneNode* object) {
   object->notifyStyleChange();
   if (dynamicCount == dynamicSize) {
-    if (dynamicSize == 0) dynamicSize = 15;
-    else dynamicSize += dynamicSize + 1;
+    if (dynamicSize == 0) { dynamicSize = 15; }
+    else { dynamicSize += dynamicSize + 1; }
     SceneNode** newDynamic = new SceneNode*[dynamicSize];
-    if (dynamicList)
+    if (dynamicList) {
       ::memcpy(newDynamic, dynamicList,  dynamicCount * sizeof(SceneNode*));
+    }
     delete[] dynamicList;
     dynamicList = newDynamic;
   }
@@ -118,44 +114,39 @@ void ZSceneDatabase::addDynamicNode(SceneNode* object)
 }
 
 
-void ZSceneDatabase::addDynamicSphere(SphereSceneNode* n)
-{
+void ZSceneDatabase::addDynamicSphere(SphereSceneNode* n) {
   // just add sphere -- don't need to break it up for hidden surfaces
   addDynamicNode(n);
 }
 
 
-void ZSceneDatabase::removeDynamicNodes()
-{
+void ZSceneDatabase::removeDynamicNodes() {
   dynamicCount = 0;
 }
 
 
-void ZSceneDatabase::removeAllNodes()
-{
+void ZSceneDatabase::removeAllNodes() {
   staticCount = 0;
   dynamicCount = 0;
 }
 
 
-bool ZSceneDatabase::isOrdered()
-{
+bool ZSceneDatabase::isOrdered() {
   return false;
 }
 
 
-const Extents* ZSceneDatabase::getVisualExtents() const
-{
+const Extents* ZSceneDatabase::getVisualExtents() const {
   if (octree) {
     return octree->getVisualExtents();
-  } else {
+  }
+  else {
     return NULL;
   }
 }
 
 
-void ZSceneDatabase::updateNodeStyles()
-{
+void ZSceneDatabase::updateNodeStyles() {
   for (int i = 0; i < staticCount; i++) {
     staticList[i]->notifyStyleChange();
   }
@@ -163,8 +154,7 @@ void ZSceneDatabase::updateNodeStyles()
 }
 
 
-void ZSceneDatabase::setOccluderManager(int occl)
-{
+void ZSceneDatabase::setOccluderManager(int occl) {
   if (octree) {
     octree->setOccluderManager(occl);
   }
@@ -172,8 +162,7 @@ void ZSceneDatabase::setOccluderManager(int occl)
 }
 
 
-void ZSceneDatabase::setupCullList()
-{
+void ZSceneDatabase::setupCullList() {
   static BZDB_int currentDepth(BZDBNAMES.CULLDEPTH);
   static BZDB_int currentElements(BZDBNAMES.CULLELEMENTS);
 
@@ -191,7 +180,7 @@ void ZSceneDatabase::setupCullList()
     }
     else {
       if (culledList != staticList) {
-	delete culledList;
+        delete culledList;
       }
       culledList = staticList;
       culledCount = staticCount;
@@ -202,8 +191,7 @@ void ZSceneDatabase::setupCullList()
 }
 
 
-void ZSceneDatabase::makeCuller()
-{
+void ZSceneDatabase::makeCuller() {
   delete octree;
   octree = new Octree;
 
@@ -213,10 +201,10 @@ void ZSceneDatabase::makeCuller()
   qsort(staticList, staticCount, sizeof(SceneNode*), compareZExtents);
 
   // make the tree
-  octree->addNodes (staticList, staticCount, cullDepth, cullElements);
+  octree->addNodes(staticList, staticCount, cullDepth, cullElements);
 
   float elapsed = (float)(BzTime::getCurrent() - startTime);
-  logDebugMessage(2,"SceneNode Octree processed in %.3f seconds.\n", elapsed);
+  logDebugMessage(2, "SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
   if (culledList != staticList) {
     delete culledList;
@@ -227,8 +215,7 @@ void ZSceneDatabase::makeCuller()
 }
 
 
-void ZSceneDatabase::addLights(SceneRenderer& renderer)
-{
+void ZSceneDatabase::addLights(SceneRenderer& renderer) {
   // add the lights from the dynamic nodes
   for (int i = 0; i < dynamicCount; i++) {
     dynamicList[i]->addLight(renderer);
@@ -295,15 +282,14 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer,
 }
 
 
-void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
-{
+void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf) {
   // see if we need an octree, or if it needs to be rebuilt
   setupCullList();
 
   // cull if we're supposed to
   if (octree) {
-    const Frustum* f = (const Frustum *) &vf;
-    culledCount = octree->getRadarList (culledList, staticCount, f);
+    const Frustum* f = (const Frustum*) &vf;
+    culledCount = octree->getRadarList(culledList, staticCount, f);
 
     // sort based on heights
     if (BZDBCache::radarStyle == SceneRenderer::FastSortedRadar) {
@@ -324,8 +310,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
 
 void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
                                     bool staticNodes,
-                                    bool dynamicNodes)
-{
+                                    bool dynamicNodes) {
   int i;
   const ViewFrustum& frustum = renderer.getViewFrustum();
   const fvec3& eye = frustum.getEye();
@@ -336,11 +321,11 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
 
     // cull if we're supposed to
     if (octree) {
-      const Frustum* f = (const Frustum *) &frustum;
-      culledCount = octree->getFrustumList (culledList, staticCount, f);
+      const Frustum* f = (const Frustum*) &frustum;
+      culledCount = octree->getFrustumList(culledList, staticCount, f);
     }
 
-    const Frustum* frustumPtr = (const Frustum *) &frustum;
+    const Frustum* frustumPtr = (const Frustum*) &frustum;
 
     // add the static nodes
     for (i = 0; i < culledCount; i++) {
@@ -388,10 +373,9 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer,
 }
 
 
-void ZSceneDatabase::drawCuller()
-{
+void ZSceneDatabase::drawCuller() {
   if (octree) {
-    octree->draw ();
+    octree->draw();
   }
   return;
 }
@@ -401,6 +385,6 @@ void ZSceneDatabase::drawCuller()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

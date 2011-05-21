@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	GFX_BLOCK_H
-#define	GFX_BLOCK_H
+#ifndef GFX_BLOCK_H
+#define GFX_BLOCK_H
 
 #include "common.h"
 
@@ -74,7 +74,7 @@ class GfxBlock {
 
 class GfxBlockMgr {
 
-  friend class GfxBlock;
+    friend class GfxBlock;
 
   public:
     enum BlockID {
@@ -180,6 +180,6 @@ class GfxBlockMgr {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

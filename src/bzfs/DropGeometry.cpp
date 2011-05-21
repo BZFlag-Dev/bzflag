@@ -36,14 +36,14 @@
 // Datatype Definitions
 //
 class HoldingList {
-public:
-  HoldingList();
-  ~HoldingList();
-  void copy(const ObsList* list);
-public:
-  int size;
-  int count;
-  Obstacle** list;
+  public:
+    HoldingList();
+    ~HoldingList();
+    void copy(const ObsList* list);
+  public:
+    int size;
+    int count;
+    Obstacle** list;
 };
 
 static HoldingList rayList; // ray intersection list
@@ -57,15 +57,14 @@ static bool isDeathLanding(const Obstacle* landing);
 static bool isOpposingTeam(const Obstacle* obs, int team);
 static bool isValidLanding(const Obstacle* obs);
 static bool isValidClearance(const fvec3& pos, float radius,
-			     float height, int team);
+                             float height, int team);
 static bool dropIt(fvec3& pos, float minZ, float maxZ,
-		   float radius, float height, int team);
+                   float radius, float height, int team);
 
 
 //============================================================================//
 
-bool DropGeometry::dropPlayer(fvec3& pos, float minZ, float maxZ)
-{
+bool DropGeometry::dropPlayer(fvec3& pos, float minZ, float maxZ) {
   // fudge-it to avoid spawn stickiness on obstacles
   const float fudge = 0.001f;
   const float tankHeight = BZDBCache::tankHeight + fudge;
@@ -75,15 +74,13 @@ bool DropGeometry::dropPlayer(fvec3& pos, float minZ, float maxZ)
 }
 
 
-bool DropGeometry::dropFlag(fvec3& pos, float minZ, float maxZ)
-{
+bool DropGeometry::dropFlag(fvec3& pos, float minZ, float maxZ) {
   const float flagHeight = BZDB.eval(BZDBNAMES.FLAGHEIGHT);
   return dropIt(pos, minZ, maxZ, BZDBCache::tankRadius, flagHeight, -1);
 }
 
 
-bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ, int team)
-{
+bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ, int team) {
   // team flags do not get real clearance checks (radius = 0)
   // if you want to put some smarts in to check for wedging
   // (flag is stuck amongst obstacles), then add the code into
@@ -95,8 +92,7 @@ bool DropGeometry::dropTeamFlag(fvec3& pos, float minZ, float maxZ, int team)
 
 //============================================================================//
 
-static inline bool isDeathLanding(const Obstacle* obs)
-{
+static inline bool isDeathLanding(const Obstacle* obs) {
   if (obs->getTypeID() == faceType) {
     const MeshFace* face = (const MeshFace*) obs;
     int driver = face->getPhysicsDriver();
@@ -109,8 +105,7 @@ static inline bool isDeathLanding(const Obstacle* obs)
 }
 
 
-static inline bool isOpposingTeam(const Obstacle* obs, int team)
-{
+static inline bool isOpposingTeam(const Obstacle* obs, int team) {
   if (team < 0) {
     return false;
   }
@@ -124,8 +119,7 @@ static inline bool isOpposingTeam(const Obstacle* obs, int team)
 }
 
 
-static inline bool isValidLanding(const Obstacle* obs)
-{
+static inline bool isValidLanding(const Obstacle* obs) {
   // must be a flattop buildings
   if (!obs->isFlatTop()) {
     return false;
@@ -146,8 +140,7 @@ static inline bool isValidLanding(const Obstacle* obs)
 
 
 static bool isValidClearance(const fvec3& pos, float radius,
-			     float height, int team)
-{
+                             float height, int team) {
   const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
 
   // invalid if it touches a building
@@ -156,17 +149,17 @@ static bool isValidClearance(const fvec3& pos, float radius,
     const float zTop = obs->getExtents().maxs.z;
     if (zTop > pos.z) {
       if (obs->inCylinder(pos, radius, height)) {
-	return false;
+        return false;
       }
     }
     else {
       // do not check coplanars unless they are fatal
       if (isDeathLanding(obs) || isOpposingTeam(obs, team)) {
-	const float fudge = 0.001f; // dig in a little to make sure
-	const fvec3 testPos(pos.x, pos.y, pos.z - fudge);
-	if (obs->inCylinder(testPos, radius, height + fudge)) {
-	  return false;
-	}
+        const float fudge = 0.001f; // dig in a little to make sure
+        const fvec3 testPos(pos.x, pos.y, pos.z - fudge);
+        if (obs->inCylinder(testPos, radius, height + fudge)) {
+          return false;
+        }
       }
     }
   }
@@ -175,33 +168,35 @@ static bool isValidClearance(const fvec3& pos, float radius,
 }
 
 
-static int compareAscending(const void* a, const void* b)
-{
+static int compareAscending(const void* a, const void* b) {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
   const float topA = obsA->getExtents().maxs.z;
   const float topB = obsB->getExtents().maxs.z;
   if (topA < topB) {
     return -1;
-  } else if (topA > topB) {
+  }
+  else if (topA > topB) {
     return +1;
-  } else {
+  }
+  else {
     return 0;
   }
 }
 
 
-static int compareDescending(const void* a, const void* b)
-{
+static int compareDescending(const void* a, const void* b) {
   const Obstacle* obsA = *((const Obstacle**)a);
   const Obstacle* obsB = *((const Obstacle**)b);
   const float topA = obsA->getExtents().maxs.z;
   const float topB = obsB->getExtents().maxs.z;
   if (topA < topB) {
     return +1;
-  } else if (topA > topB) {
+  }
+  else if (topA > topB) {
     return -1;
-  } else {
+  }
+  else {
     return 0;
   }
 }
@@ -210,8 +205,7 @@ static int compareDescending(const void* a, const void* b)
 //============================================================================//
 
 static bool dropIt(fvec3& pos, float minZ, float maxZ,
-		   float radius, float height, int team)
-{
+                   float radius, float height, int team) {
   int i;
 
   // special case, just check the ground
@@ -219,7 +213,8 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
     pos.z = 0.0f;
     if (isValidClearance(pos, radius, height, team)) {
       return true;
-    } else {
+    }
+    else {
       return false;
     }
   }
@@ -251,29 +246,30 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
       const float zTop = obs->getExtents().maxs.z;
       // make sure that it's within the limits
       if ((zTop > startZ) || (zTop > maxZ)) {
-	continue;
+        continue;
       }
       if (zTop < minZ) {
-	break;
+        break;
       }
       pos.z = zTop;
 
       if (obs->intersect(ray) >= 0.0f) {
-	if (isValidLanding(obs) &&
-	    isValidClearance(pos, radius, height, team)) {
-	  return true;
-	} else {
-	  // a potential hit surface was tested and failed, unless
-	  // we want to pass through it, we have to return false.
-	  return false;
-	}
+        if (isValidLanding(obs) &&
+            isValidClearance(pos, radius, height, team)) {
+          return true;
+        }
+        else {
+          // a potential hit surface was tested and failed, unless
+          // we want to pass through it, we have to return false.
+          return false;
+        }
       }
     }
     // check the ground
     if (minZ <= 0.0f) {
       pos.z = 0.0f;
       if (isValidClearance(pos, radius, height, team)) {
-	return true;
+        return true;
       }
     }
   }
@@ -286,17 +282,17 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
       const float zTop = obs->getExtents().maxs.z;
       // make sure that it's within the limits
       if ((zTop < startZ) || (zTop < minZ)) {
-	continue;
+        continue;
       }
       if (zTop > maxZ) {
-	return false;
+        return false;
       }
       pos.z = zTop;
 
       if (isValidLanding(obs) &&
-	  (obs->intersect(ray) >= 0.0f) &&
-	  isValidClearance(pos, radius, height, team)) {
-	return true;
+          (obs->intersect(ray) >= 0.0f) &&
+          isValidClearance(pos, radius, height, team)) {
+        return true;
       }
     }
   }
@@ -307,21 +303,18 @@ static bool dropIt(fvec3& pos, float minZ, float maxZ,
 
 //============================================================================//
 
-HoldingList::HoldingList()
-{
+HoldingList::HoldingList() {
   size = count = 0;
   list = NULL;
   return;
 }
 
-HoldingList::~HoldingList()
-{
+HoldingList::~HoldingList() {
   delete[] list;
   return;
 }
 
-void HoldingList::copy(const ObsList* olist)
-{
+void HoldingList::copy(const ObsList* olist) {
   if (olist->count > size) {
     // increase the list size
     delete[] list;
@@ -341,6 +334,6 @@ void HoldingList::copy(const ObsList* olist)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -37,8 +37,7 @@
 
 // NOTE: terminate all strings with '/' or '\\'
 
-std::string configDir(bool set, const char *str)
-{
+std::string configDir(bool set, const char* str) {
   static std::string customConfigDir = std::string("");
   if (set) {
     customConfigDir = std::string(str);
@@ -47,52 +46,50 @@ std::string configDir(bool set, const char *str)
 }
 
 
-void			setCustomConfigDir(const char *str)
-{
-  std::string temp = TextUtils::replace_all(std::string(str),std::string("\""),std::string(""));
+void      setCustomConfigDir(const char* str) {
+  std::string temp = TextUtils::replace_all(std::string(str), std::string("\""), std::string(""));
   configDir(1, temp.c_str());
 }
 
 
-std::string getModuleDir ( void )
-{
+std::string getModuleDir(void) {
 #ifdef _WIN32
-	char exePath[MAX_PATH];
-	GetModuleFileName(NULL,exePath,MAX_PATH);
-	char *last = strrchr(exePath,'\\');
-	if (last+1)
-		*last = '\0';
+  char exePath[MAX_PATH];
+  GetModuleFileName(NULL, exePath, MAX_PATH);
+  char* last = strrchr(exePath, '\\');
+  if (last + 1) {
+    *last = '\0';
+  }
 
-	return std::string(exePath);
+  return std::string(exePath);
 #else
-	return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
+  return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
 #endif
 }
 
-std::string getModuleName ( void )
-{
+std::string getModuleName(void) {
 #ifdef _WIN32
-	char exePath[MAX_PATH];
-	GetModuleFileName(NULL,exePath,MAX_PATH);
-	return std::string(exePath);
+  char exePath[MAX_PATH];
+  GetModuleFileName(NULL, exePath, MAX_PATH);
+  return std::string(exePath);
 #else
-	return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
+  return "SOMEONE SET ME TO SOMETHING REAL!!!!!!!";
 #endif
 }
 
 
-std::string		getConfigDirName( const char* versionName )
-{
+std::string   getConfigDirName(const char* versionName) {
   std::string customConfigDir = configDir(0, NULL);
   if (customConfigDir.size() > 0) {
     if (versionName)
 #if defined(_WIN32)
-      return customConfigDir+versionName+"\\";
+      return customConfigDir + versionName + "\\";
 #else
-      return customConfigDir+versionName+"/";
+      return customConfigDir + versionName + "/";
 #endif
-    else
+    else {
       return customConfigDir;
+    }
   }
 
 #if defined(_WIN32)
@@ -102,8 +99,9 @@ std::string		getConfigDirName( const char* versionName )
   if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
     if (SHGetPathFromIDList(idl, dir)) {
       struct stat statbuf;
-      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	name = dir;
+      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0) {
+        name = dir;
+      }
     }
 
     IMalloc* shalloc;
@@ -127,23 +125,23 @@ std::string		getConfigDirName( const char* versionName )
   ::FSRef libraryFolder;
   ::OSErr err;
   err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
-  if(err == ::noErr) {
+  if (err == ::noErr) {
     char buff[1024];
     err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
-    if(err == ::noErr) {
+    if (err == ::noErr) {
       std::strcat(buff, "/BZFlag/");
       if (versionName) {
-	std::strncat(buff, versionName, 1024 - strlen(buff) - 1);
-	std::strncat(buff, "/", 1024 - strlen(buff) - 1);
+        std::strncat(buff, versionName, 1024 - strlen(buff) - 1);
+        std::strncat(buff, "/", 1024 - strlen(buff) - 1);
       }
-     name = buff;
+      name = buff;
     }
   }
   customConfigDir = name;
   return name;
 #else
   std::string name;
-  struct passwd *pwent = getpwuid(getuid());
+  struct passwd* pwent = getpwuid(getuid());
   if (pwent && pwent->pw_dir) {
     name += std::string(pwent->pw_dir);
     name += "/";
@@ -158,16 +156,14 @@ std::string		getConfigDirName( const char* versionName )
 #endif
 }
 
-static std::string		setupString(std::string dir)
-{
+static std::string    setupString(std::string dir) {
   std::string name = getConfigDirName();
   name += dir;
   name += BZ_DIRECTORY_SEPARATOR;
   return name;
 }
 
-std::string getCacheDirName()
-{
+std::string getCacheDirName() {
   std::string name = getConfigDirName();
   name += "cache";
 #if !defined (_WIN32) && !defined (__APPLE__)
@@ -183,18 +179,15 @@ std::string getCacheDirName()
 }
 
 
-std::string getRecordDirName()
-{
+std::string getRecordDirName() {
   return setupString("recordings");
 }
 
-std::string getScreenShotDirName()
-{
+std::string getScreenShotDirName() {
   return setupString("screenshots");
 }
 
-std::string getTempDirName()
-{
+std::string getTempDirName() {
 // FIXME: needs something for Windows and maybe other platforms
 #if defined(_WIN32)
   std::string name = getConfigDirName();
@@ -203,7 +196,8 @@ std::string getTempDirName()
   std::string name;
   if (getenv("TMPDIR")) {
     name = getenv("TMPDIR");
-  } else {
+  }
+  else {
     name = "/tmp";
   }
 #endif
@@ -211,8 +205,7 @@ std::string getTempDirName()
   return name;
 }
 
-std::string getWorldDirName()
-{
+std::string getWorldDirName() {
   return setupString("worlds");
 }
 
@@ -220,6 +213,6 @@ std::string getWorldDirName()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

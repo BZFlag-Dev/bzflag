@@ -23,36 +23,31 @@
 
 //============================================================================//
 
-LinkDef::LinkDef()
-{
+LinkDef::LinkDef() {
 }
 
 
 LinkDef::LinkDef(const LinkDef& def)
-: srcs(def.srcs)
-, dsts(def.dsts)
-, physics(def.physics)
-{
+  : srcs(def.srcs)
+  , dsts(def.dsts)
+  , physics(def.physics) {
 }
 
 
-LinkDef::~LinkDef()
-{
+LinkDef::~LinkDef() {
 }
 
 
 //============================================================================//
 
-void LinkDef::addSrc(const std::string& src)
-{
+void LinkDef::addSrc(const std::string& src) {
   if (!src.empty()) {
     srcs.push_back(src);
   }
 }
 
 
-void LinkDef::addDst(const std::string& dst)
-{
+void LinkDef::addDst(const std::string& dst) {
   if (!dst.empty()) {
     dsts.push_back(dst);
   }
@@ -61,8 +56,7 @@ void LinkDef::addDst(const std::string& dst)
 
 //============================================================================//
 
-LinkDef LinkDef::prepend(const std::string& prefix)
-{
+LinkDef LinkDef::prepend(const std::string& prefix) {
   LinkDef def;
   def.physics = physics;
   for (size_t i = 0; i < srcs.size(); i++) {
@@ -83,8 +77,7 @@ LinkDef LinkDef::prepend(const std::string& prefix)
 
 //============================================================================//
 
-int LinkDef::packSize() const
-{
+int LinkDef::packSize() const {
   int fullSize = 0;
 
   fullSize += sizeof(uint16_t); // src count
@@ -103,8 +96,7 @@ int LinkDef::packSize() const
 }
 
 
-void* LinkDef::pack(void* buf) const
-{
+void* LinkDef::pack(void* buf) const {
   uint16_t count;
 
   count = (uint16_t)srcs.size();
@@ -125,8 +117,7 @@ void* LinkDef::pack(void* buf) const
 }
 
 
-void* LinkDef::unpack(void* buf)
-{
+void* LinkDef::unpack(void* buf) {
   uint16_t count;
 
   buf = nboUnpackUInt16(buf, count);
@@ -151,8 +142,7 @@ void* LinkDef::unpack(void* buf)
 
 //============================================================================//
 
-void LinkDef::print(std::ostream& out, const std::string& indent) const
-{
+void LinkDef::print(std::ostream& out, const std::string& indent) const {
   out << indent << "link" << std::endl;
   for (size_t i = 0; i < srcs.size(); i++) {
     out << indent << "  addSrc " << srcs[i] << std::endl;
@@ -172,6 +162,6 @@ void LinkDef::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

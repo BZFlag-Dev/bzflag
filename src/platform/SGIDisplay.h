@@ -11,11 +11,11 @@
  */
 
 /* SGIDisplayMode:
- *	SGI video mode switching extension
+ *  SGI video mode switching extension
  */
 
 #ifndef BZF_SGIDISPLAY_H
-#define	BZF_SGIDISPLAY_H
+#define BZF_SGIDISPLAY_H
 
 #include "XDisplay.h"
 #if defined(__sgi) && !defined(NO_XSGIVC)
@@ -31,25 +31,25 @@ class Resolution;
 class SGIDisplayMode : public XDisplayMode {
   public:
 #if defined(USE_XSGIVC_EXT)
-			SGIDisplayMode();
-			~SGIDisplayMode();
+    SGIDisplayMode();
+    ~SGIDisplayMode();
 
-    ResInfo**		init(XDisplay* owner, int& num, int& current);
-    bool		set(int);
+    ResInfo**   init(XDisplay* owner, int& num, int& current);
+    bool    set(int);
 
   private:
-    XDisplay*		display;
-    int			numResolutions;
-    int			lastResolution;
-    Resolution**	resolutions;
-    int			defaultChannel;
-    int			numVideoChannels;
-    int			numVideoCombos;
-    int*		numVideoFormats;
-    Resolution***	videoFormats;
-    Resolution**	videoCombos;
-    int*		defaultVideoFormats;
-    char*		defaultVideoCombo;
+    XDisplay*   display;
+    int     numResolutions;
+    int     lastResolution;
+    Resolution**  resolutions;
+    int     defaultChannel;
+    int     numVideoChannels;
+    int     numVideoCombos;
+    int*    numVideoFormats;
+    Resolution*** videoFormats;
+    Resolution**  videoCombos;
+    int*    defaultVideoFormats;
+    char*   defaultVideoCombo;
 #endif
 };
 
@@ -59,6 +59,6 @@ class SGIDisplayMode : public XDisplayMode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

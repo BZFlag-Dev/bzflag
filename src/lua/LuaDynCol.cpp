@@ -30,8 +30,7 @@ using std::string;
 //============================================================================//
 //============================================================================//
 
-bool LuaDynCol::PushEntries(lua_State* L)
-{
+bool LuaDynCol::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, GetDynColName);
   PUSH_LUA_CFUNC(L, GetDynCol);
   PUSH_LUA_CFUNC(L, SetDynCol);
@@ -44,8 +43,7 @@ bool LuaDynCol::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline const DynamicColor* ParseDynCol(lua_State* L, int index)
-{
+static inline const DynamicColor* ParseDynCol(lua_State* L, int index) {
   const int dyncolIndex = luaL_checkint(L, index);
   return DYNCOLORMGR.getColor(dyncolIndex);
 }
@@ -54,8 +52,7 @@ static inline const DynamicColor* ParseDynCol(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaDynCol::GetDynColName(lua_State* L)
-{
+int LuaDynCol::GetDynColName(lua_State* L) {
   const DynamicColor* dyncol = ParseDynCol(L, 1);
   if (dyncol == NULL) {
     return luaL_pushnil(L);
@@ -65,8 +62,7 @@ int LuaDynCol::GetDynColName(lua_State* L)
 }
 
 
-int LuaDynCol::GetDynCol(lua_State* L)
-{
+int LuaDynCol::GetDynCol(lua_State* L) {
   const DynamicColor* dyncol = ParseDynCol(L, 1);
   if (dyncol == NULL) {
     return luaL_pushnil(L);
@@ -76,8 +72,7 @@ int LuaDynCol::GetDynCol(lua_State* L)
 }
 
 
-int LuaDynCol::SetDynCol(lua_State* L)
-{
+int LuaDynCol::SetDynCol(lua_State* L) {
   DynamicColor* dyncol = const_cast<DynamicColor*>(ParseDynCol(L, 1));
   if (dyncol == NULL) {
     return luaL_pushnil(L);
@@ -90,8 +85,7 @@ int LuaDynCol::SetDynCol(lua_State* L)
 }
 
 
-int LuaDynCol::GetDynColCanHaveAlpha(lua_State* L)
-{
+int LuaDynCol::GetDynColCanHaveAlpha(lua_State* L) {
   const DynamicColor* dyncol = ParseDynCol(L, 1);
   if (dyncol == NULL) {
     return luaL_pushnil(L);
@@ -109,6 +103,6 @@ int LuaDynCol::GetDynColCanHaveAlpha(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

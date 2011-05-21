@@ -27,11 +27,11 @@
  * is not supported here.
  *
  * When the exponent is 2047 (all bits set), and:
- *	all mantissa bits are zero,
- *	value is infinity*sign,
- *	mantissa is non-zero, and:
- *		msb of mantissa=0:  signaling NAN
- *		msb of mantissa=1:  quiet NAN
+ *  all mantissa bits are zero,
+ *  value is infinity*sign,
+ *  mantissa is non-zero, and:
+ *    msb of mantissa=0:  signaling NAN
+ *    msb of mantissa=1:  quiet NAN
  *
  * Note that neither the input or output buffers need be word aligned,
  * for greatest flexability in converting data, even though this
@@ -51,40 +51,44 @@
 
 
 typedef enum {
-    BZ_LITTLE_ENDIAN    = 1234, /* LSB first: i386, VAX order */
-    BZ_BIG_ENDIAN       = 4321, /* MSB first: 68000, IBM, network order */
-    BZ_PDP_ENDIAN       = 3412  /* LSB first in word, MSW first in long */
+  BZ_LITTLE_ENDIAN    = 1234, /* LSB first: i386, VAX order */
+  BZ_BIG_ENDIAN       = 4321, /* MSB first: 68000, IBM, network order */
+  BZ_PDP_ENDIAN       = 3412  /* LSB first in word, MSW first in long */
 } bz_endian_t;
 
 static const int SIZEOF_NETWORK_DOUBLE = 8;
 
 
 inline bz_endian_t
-bz_byteorder()
-{
-    const union bob {
-        unsigned long i;
-        unsigned char c[sizeof(unsigned long)];
-    } b = {1};
+bz_byteorder() {
+  const union bob {
+    unsigned long i;
+    unsigned char c[sizeof(unsigned long)];
+  } b = {1};
 
-   /* give run-time test preference to compile-time endian, tested
-    * much faster than stashing in a static.
-    */
+  /* give run-time test preference to compile-time endian, tested
+   * much faster than stashing in a static.
+   */
 #ifdef WORDS_BIGENDIAN
-    if (b.c[sizeof(unsigned long)-1])
-        return BZ_BIG_ENDIAN;
-    if (b.c[0])
-        return BZ_LITTLE_ENDIAN;
+  if (b.c[sizeof(unsigned long) - 1]) {
+    return BZ_BIG_ENDIAN;
+  }
+  if (b.c[0]) {
+    return BZ_LITTLE_ENDIAN;
+  }
 #else
-    if (b.c[0])
-        return BZ_LITTLE_ENDIAN;
-    if (b.c[sizeof(unsigned long)-1])
-        return BZ_BIG_ENDIAN;
+  if (b.c[0]) {
+    return BZ_LITTLE_ENDIAN;
+  }
+  if (b.c[sizeof(unsigned long) - 1]) {
+    return BZ_BIG_ENDIAN;
+  }
 #endif
-    if (b.c[1])
-        return BZ_PDP_ENDIAN;
+  if (b.c[1]) {
+    return BZ_PDP_ENDIAN;
+  }
 
-    return (bz_endian_t)0;
+  return (bz_endian_t)0;
 }
 
 
@@ -92,37 +96,36 @@ bz_byteorder()
  * Host to Network Doubles
  */
 void
-htond(register unsigned char *out, register const unsigned char *in, int count)
-{
-    register int i;
+htond(register unsigned char* out, register const unsigned char* in, int count) {
+  register int i;
 
-    switch (bz_byteorder()) {
-	case BZ_BIG_ENDIAN:
-	    /*
-	     * First, the case where the system already operates in
-	     * IEEE format internally, using big-endian order.  These
-	     * are the lucky ones.
-	     */
-	    memcpy(out, in, count*8);
-	    return;
-	case BZ_LITTLE_ENDIAN:
-	default:
-	    /*
-	     * This machine uses IEEE, but in little-endian byte order
-	     */
-	    for ( i=count-1; i >= 0; i-- )  {
-		*out++ = in[7];
-		*out++ = in[6];
-		*out++ = in[5];
-		*out++ = in[4];
-		*out++ = in[3];
-		*out++ = in[2];
-		*out++ = in[1];
-		*out++ = in[0];
-		in += SIZEOF_NETWORK_DOUBLE;
-	    }
-	    return;
-    }
+  switch (bz_byteorder()) {
+    case BZ_BIG_ENDIAN:
+      /*
+       * First, the case where the system already operates in
+       * IEEE format internally, using big-endian order.  These
+       * are the lucky ones.
+       */
+      memcpy(out, in, count * 8);
+      return;
+    case BZ_LITTLE_ENDIAN:
+    default:
+      /*
+       * This machine uses IEEE, but in little-endian byte order
+       */
+      for (i = count - 1; i >= 0; i--)  {
+        *out++ = in[7];
+        *out++ = in[6];
+        *out++ = in[5];
+        *out++ = in[4];
+        *out++ = in[3];
+        *out++ = in[2];
+        *out++ = in[1];
+        *out++ = in[0];
+        in += SIZEOF_NETWORK_DOUBLE;
+      }
+      return;
+  }
 }
 
 
@@ -130,45 +133,45 @@ htond(register unsigned char *out, register const unsigned char *in, int count)
  * Network to Host Doubles
  */
 void
-ntohd(register unsigned char *out, register const unsigned char *in, int count)
-{
-    register int i;
+ntohd(register unsigned char* out, register const unsigned char* in, int count) {
+  register int i;
 
-    switch (bz_byteorder()) {
-	case BZ_BIG_ENDIAN:
-	    /*
-	     *  First, the case where the system already operates in
-	     *  IEEE format internally, using big-endian order.  These
-	     *  are the lucky ones.
-	     */
-	    if ( sizeof(double) != SIZEOF_NETWORK_DOUBLE )
-		std::cerr << "ntohd:  sizeof(double) != SIZEOF_NETWORK_DOUBLE" << std::endl;
-	    memcpy(out, in, count*SIZEOF_NETWORK_DOUBLE);
-	    return;
-	case BZ_LITTLE_ENDIAN:
-	default:
-	    /*
-	     * This machine uses IEEE, but in little-endian byte order
-	     */
-	    for ( i=count-1; i >= 0; i-- )  {
-		*out++ = in[7];
-		*out++ = in[6];
-		*out++ = in[5];
-		*out++ = in[4];
-		*out++ = in[3];
-		*out++ = in[2];
-		*out++ = in[1];
-		*out++ = in[0];
-		in += SIZEOF_NETWORK_DOUBLE;
-	    }
-	    return;
-    }
+  switch (bz_byteorder()) {
+    case BZ_BIG_ENDIAN:
+      /*
+       *  First, the case where the system already operates in
+       *  IEEE format internally, using big-endian order.  These
+       *  are the lucky ones.
+       */
+      if (sizeof(double) != SIZEOF_NETWORK_DOUBLE) {
+        std::cerr << "ntohd:  sizeof(double) != SIZEOF_NETWORK_DOUBLE" << std::endl;
+      }
+      memcpy(out, in, count * SIZEOF_NETWORK_DOUBLE);
+      return;
+    case BZ_LITTLE_ENDIAN:
+    default:
+      /*
+       * This machine uses IEEE, but in little-endian byte order
+       */
+      for (i = count - 1; i >= 0; i--)  {
+        *out++ = in[7];
+        *out++ = in[6];
+        *out++ = in[5];
+        *out++ = in[4];
+        *out++ = in[3];
+        *out++ = in[2];
+        *out++ = in[1];
+        *out++ = in[0];
+        in += SIZEOF_NETWORK_DOUBLE;
+      }
+      return;
+  }
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

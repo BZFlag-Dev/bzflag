@@ -29,28 +29,28 @@
  */
 class HUDuiServerListCache : public Singleton<HUDuiServerListCache> {
 
-public:
-  HUDuiServerListCache();
-  ~HUDuiServerListCache();
+  public:
+    HUDuiServerListCache();
+    ~HUDuiServerListCache();
 
-  void	saveCache();
-  bool	loadCache();
-  void	clearCache();
+    void  saveCache();
+    bool  loadCache();
+    void  clearCache();
 
-  std::vector<std::pair<HUDuiServerList*, std::string> > readCachedLists() { return cachedLists; }
+    std::vector<std::pair<HUDuiServerList*, std::string> > readCachedLists() { return cachedLists; }
 
-  void addNewList(HUDuiServerList* newList, std::string tabName);
-  void removeList(HUDuiServerList* list, std::string tabName);
+    void addNewList(HUDuiServerList* newList, std::string tabName);
+    void removeList(HUDuiServerList* list, std::string tabName);
 
-protected:
-  friend class Singleton<HUDuiServerListCache>;
+  protected:
+    friend class Singleton<HUDuiServerListCache>;
 
-private:
-  void applySort(int index, int _sort, bool reverse);
-  std::string getCacheFilename() const;
-  static const size_t max_string = 200;
-  std::vector<std::pair<HUDuiServerList*, std::string> > cachedLists;
-  bool cacheLoaded;
+  private:
+    void applySort(int index, int _sort, bool reverse);
+    std::string getCacheFilename() const;
+    static const size_t max_string = 200;
+    std::vector<std::pair<HUDuiServerList*, std::string> > cachedLists;
+    bool cacheLoaded;
 };
 
 #endif  /* __SERVERLIST_H__ */
@@ -59,6 +59,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

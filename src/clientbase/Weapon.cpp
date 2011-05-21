@@ -17,8 +17,7 @@
 #include "Pack.h"
 
 
-Weapon::Weapon()
-{
+Weapon::Weapon() {
   type = Flags::Null;
   pos = fvec3(0.0f, 0.0f, 0.0f);
   dir = 0.0f;
@@ -27,8 +26,7 @@ Weapon::Weapon()
 }
 
 
-void* Weapon::unpack(void* buf)
-{
+void* Weapon::unpack(void* buf) {
   uint16_t delayCount;
 
   buf = FlagType::unpack(buf, type);
@@ -52,6 +50,6 @@ void* Weapon::unpack(void* buf)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

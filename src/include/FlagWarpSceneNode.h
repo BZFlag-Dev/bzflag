@@ -11,12 +11,12 @@
  */
 
 /* FlagWarpSceneNode:
- *	Encapsulates information for rendering the little cloud
- *	that appears when a flag is coming or going.
+ *  Encapsulates information for rendering the little cloud
+ *  that appears when a flag is coming or going.
  */
 
-#ifndef	BZF_FLAG_WARP_SCENE_NODE_H
-#define	BZF_FLAG_WARP_SCENE_NODE_H
+#ifndef BZF_FLAG_WARP_SCENE_NODE_H
+#define BZF_FLAG_WARP_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -26,30 +26,30 @@ class FlagWarpSceneNode : public SceneNode {
     FlagWarpSceneNode(const fvec3& pos);
     ~FlagWarpSceneNode();
 
-    void		setSizeFraction(float);
+    void    setSizeFraction(float);
 
-    float		getDistanceSq(const fvec3& eye) const;
-    void		move(const fvec3& pos);
+    float   getDistanceSq(const fvec3& eye) const;
+    void    move(const fvec3& pos);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void    notifyStyleChange();
+    void    addRenderNodes(SceneRenderer&);
 
   protected:
     class FlagWarpRenderNode : public RenderNode {
       public:
-			FlagWarpRenderNode(const FlagWarpSceneNode*);
-			~FlagWarpRenderNode();
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        FlagWarpRenderNode(const FlagWarpSceneNode*);
+        ~FlagWarpRenderNode();
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	const FlagWarpSceneNode* sceneNode;
+        const FlagWarpSceneNode* sceneNode;
     };
     friend class FlagWarpRenderNode;
 
   private:
-    float		size;
-    OpenGLGState	gstate;
-    FlagWarpRenderNode	renderNode;
+    float   size;
+    OpenGLGState  gstate;
+    FlagWarpRenderNode  renderNode;
     static const fvec4  color[7];
 };
 
@@ -59,6 +59,6 @@ class FlagWarpSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

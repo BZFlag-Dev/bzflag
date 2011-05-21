@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	LUA_CLIENT_SCRIPTS_H
+#ifndef LUA_CLIENT_SCRIPTS_H
 #define LUA_CLIENT_SCRIPTS_H
 
 #include "common.h"
@@ -21,8 +21,7 @@
 class SceneDatabase;
 
 
-namespace LuaClientScripts
-{
+namespace LuaClientScripts {
   void Init();
   void Free();
 
@@ -68,6 +67,6 @@ namespace LuaClientScripts
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

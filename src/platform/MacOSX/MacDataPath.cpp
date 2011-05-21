@@ -15,21 +15,21 @@
 // if -directory is not used, this function is used to get the default path
 // to the data directory which is located in the same directory as the
 // application bundle
-char *GetMacOSXDataPath(void)
-{
-  ::CFBundleRef	appBundle		= NULL;
-  ::CFURLRef	resourceURL		= NULL;
-  char *		string			= NULL;
-  static char	basePath[2048]	= "<undefined resource path>";
+char* GetMacOSXDataPath(void) {
+  ::CFBundleRef appBundle   = NULL;
+  ::CFURLRef  resourceURL   = NULL;
+  char*     string      = NULL;
+  static char basePath[2048]  = "<undefined resource path>";
 
   if ((appBundle = ::CFBundleGetMainBundle()) == NULL
       || (resourceURL = ::CFBundleCopyResourcesDirectoryURL(appBundle)) == NULL) {
     return NULL;
   }
-  if(!::CFURLGetFileSystemRepresentation(resourceURL,
-					 true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
+  if (!::CFURLGetFileSystemRepresentation(resourceURL,
+                                          true, reinterpret_cast<UInt8*>(basePath), sizeof(basePath))) {
     string = NULL;
-  } else {
+  }
+  else {
     string = basePath;
   }
   ::CFRelease(resourceURL);
@@ -41,6 +41,6 @@ char *GetMacOSXDataPath(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

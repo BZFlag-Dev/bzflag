@@ -32,42 +32,40 @@ EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
 // utils for geo
 static void drawRingYZ(float rad, float z, float topsideOffset = 0,
-		       float bottomUV = 0, float ZOffset = 0,
-		       float topUV = 1.0f, int segments = 32,
-		       float uScale = 2.0f);
+                       float bottomUV = 0, float ZOffset = 0,
+                       float topUV = 1.0f, int segments = 32,
+                       float uScale = 2.0f);
 static void drawRingXY(float rad, float z, float topsideOffset = 0,
-		       float bottomUV = 0, float topUV = 1.0f,
-		       int segments = 32, float uScale = 2.0f);
+                       float bottomUV = 0, float topUV = 1.0f,
+                       int segments = 32, float uScale = 2.0f);
 static void drawRingZ(float innerRad, float outerRad,
-		      float innerUV = 0.0f , float outerUV = 1.0f,
-		      float ZOffset = 0, int segments = 32,
-		      float uScale = 1.0f);
+                      float innerUV = 0.0f , float outerUV = 1.0f,
+                      float ZOffset = 0, int segments = 32,
+                      float uScale = 1.0f);
 
 static void RadialToCartesian(float angle, float rad, fvec3& pos);
 
 
-EffectsRenderer::EffectsRenderer()
-{
+EffectsRenderer::EffectsRenderer() {
 }
 
-EffectsRenderer::~EffectsRenderer()
-{
-  for (unsigned int i = 0; i < effectsList.size(); i++)
+EffectsRenderer::~EffectsRenderer() {
+  for (unsigned int i = 0; i < effectsList.size(); i++) {
     delete(effectsList[i]);
+  }
 
   effectsList.clear();
 }
 
-void EffectsRenderer::init(void)
-{
-  for (unsigned int i = 0; i < effectsList.size(); i++)
+void EffectsRenderer::init(void) {
+  for (unsigned int i = 0; i < effectsList.size(); i++) {
     delete(effectsList[i]);
+  }
 
   effectsList.clear();
 }
 
-void EffectsRenderer::update(void)
-{
+void EffectsRenderer::update(void) {
   const BzTime time = BzTime::getTick();
 
   tvEffectsList::iterator i = effectsList.begin();
@@ -75,26 +73,27 @@ void EffectsRenderer::update(void)
     if ((*i)->update(time)) {
       delete((*i));
       i = effectsList.erase(i);
-    } else {
+    }
+    else {
       i++;
     }
   }
 }
 
-void EffectsRenderer::draw(const SceneRenderer& sr)
-{
+void EffectsRenderer::draw(const SceneRenderer& sr) {
   // FIXME: really should check here for only the things that are VISIBLE!!!
-  for (unsigned int i = 0; i < effectsList.size(); i++)
+  for (unsigned int i = 0; i < effectsList.size(); i++) {
     effectsList[i]->draw(sr);
+  }
 }
 
-void EffectsRenderer::addSpawnEffect(const fvec4& rgba, const fvec3& pos )
-{
-  if (!useFancyEffects)
+void EffectsRenderer::addSpawnEffect(const fvec4& rgba, const fvec3& pos) {
+  if (!useFancyEffects) {
     return;
+  }
 
-  BasicEffect *effect = NULL;
-  switch(BZDB.evalInt("spawnEffect")) {
+  BasicEffect* effect = NULL;
+  switch (BZDB.evalInt("spawnEffect")) {
     case 1:
       effect = new StdSpawnEffect;
       break;
@@ -120,8 +119,7 @@ void EffectsRenderer::addSpawnEffect(const fvec4& rgba, const fvec3& pos )
   }
 }
 
-std::vector<std::string> EffectsRenderer::getSpawnEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getSpawnEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("Off"));
   ret.push_back(std::string("Blossom"));
@@ -132,15 +130,15 @@ std::vector<std::string> EffectsRenderer::getSpawnEffectTypes(void)
 }
 
 void EffectsRenderer::addShotEffect(const fvec4& rgba, const fvec3& pos,
-				    float rot, const fvec3& vel, int _type)
-{
-  if (!useFancyEffects)
+                                    float rot, const fvec3& vel, int _type) {
+  if (!useFancyEffects) {
     return;
+  }
 
   int flashType = (_type >= 0) ? _type : BZDB.evalInt("shotEffect");
 
-  BasicEffect *effect = NULL;
-  switch(flashType) {
+  BasicEffect* effect = NULL;
+  switch (flashType) {
     case 1:
       effect = new StdShotEffect;
       break;
@@ -167,8 +165,7 @@ void EffectsRenderer::addShotEffect(const fvec4& rgba, const fvec3& pos,
   }
 }
 
-std::vector<std::string> EffectsRenderer::getShotEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getShotEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("Off"));
   ret.push_back(std::string("Smoke Rings"));
@@ -179,13 +176,13 @@ std::vector<std::string> EffectsRenderer::getShotEffectTypes(void)
 }
 
 void EffectsRenderer::addGMPuffEffect(const fvec3& pos, const fvec2& rot,
-				      const fvec3* velPtr)
-{
-  if (!useFancyEffects)
+                                      const fvec3* velPtr) {
+  if (!useFancyEffects) {
     return;
+  }
 
-  BasicEffect *effect = NULL;
-  switch(BZDB.evalInt("gmPuffEffect")) {
+  BasicEffect* effect = NULL;
+  switch (BZDB.evalInt("gmPuffEffect")) {
     case 1:
       // handled outside this manager in the "old" code
       // FIXME: it'd be nice to move that here
@@ -211,8 +208,7 @@ void EffectsRenderer::addGMPuffEffect(const fvec3& pos, const fvec2& rot,
   }
 }
 
-std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("Off"));
   ret.push_back(std::string("Classic Puff"));
@@ -222,13 +218,13 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes(void)
 }
 
 void EffectsRenderer::addDeathEffect(const fvec4& rgba, const fvec3& pos,
-				     float rot)
-{
-  if (!useFancyEffects)
+                                     float rot) {
+  if (!useFancyEffects) {
     return;
+  }
 
-  BasicEffect *effect = NULL;
-  switch(BZDB.evalInt("deathEffect")) {
+  BasicEffect* effect = NULL;
+  switch (BZDB.evalInt("deathEffect")) {
     case 1:
       effect = new StdDeathEffect;
       break;
@@ -247,8 +243,7 @@ void EffectsRenderer::addDeathEffect(const fvec4& rgba, const fvec3& pos,
   }
 }
 
-std::vector<std::string> EffectsRenderer::getDeathEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getDeathEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("Off"));
   ret.push_back(std::string("We Got Death Star"));
@@ -257,13 +252,13 @@ std::vector<std::string> EffectsRenderer::getDeathEffectTypes(void)
 }
 
 // landing effects
-void EffectsRenderer::addLandEffect(const fvec4& rgba, const fvec3& pos, float rot)
-{
-  if (!useFancyEffects)
+void EffectsRenderer::addLandEffect(const fvec4& rgba, const fvec3& pos, float rot) {
+  if (!useFancyEffects) {
     return;
+  }
 
-  BasicEffect *effect = NULL;
-  switch(BZDB.evalInt("landEffect")) {
+  BasicEffect* effect = NULL;
+  switch (BZDB.evalInt("landEffect")) {
     case 1:
       effect = new StdLandEffect;
       break;
@@ -278,8 +273,7 @@ void EffectsRenderer::addLandEffect(const fvec4& rgba, const fvec3& pos, float r
   }
 }
 
-std::vector<std::string> EffectsRenderer::getLandEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getLandEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("Off"));
   ret.push_back(std::string("Dirt Flash"));
@@ -289,13 +283,13 @@ std::vector<std::string> EffectsRenderer::getLandEffectTypes(void)
 
 void EffectsRenderer::addRicoEffect(const fvec3& pos,
                                     const fvec3& normal,
-                                    const fvec3* velPtr)
-{
-  if (!useFancyEffects)
+                                    const fvec3* velPtr) {
+  if (!useFancyEffects) {
     return;
+  }
 
-  BasicEffect *effect = NULL;
-  switch(BZDB.evalInt("ricoEffect")) {
+  BasicEffect* effect = NULL;
+  switch (BZDB.evalInt("ricoEffect")) {
     case 1:
       effect = new StdRicoEffect;
       break;
@@ -321,8 +315,7 @@ void EffectsRenderer::addRicoEffect(const fvec3& pos,
   }
 }
 
-std::vector<std::string> EffectsRenderer::getRicoEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getRicoEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("Off"));
   ret.push_back(std::string("Ring"));
@@ -333,8 +326,7 @@ std::vector<std::string> EffectsRenderer::getRicoEffectTypes(void)
 
 void EffectsRenderer::addShotTeleportEffect(const fvec3& pos,
                                             const fvec3& vel,
-					    const fvec4* clipPlane)
-{
+                                            const fvec4* clipPlane) {
   if (!useFancyEffects) {
     return;
   }
@@ -350,7 +342,8 @@ void EffectsRenderer::addShotTeleportEffect(const fvec3& pos,
     case 2: { // with clipping
       if (!clipPlane) {
         effect = new StdShotTeleportEffect(2.0f, NULL);
-      } else {
+      }
+      else {
         effect = new StdShotTeleportEffect(3.0f, clipPlane);
         p -= vel.normalize();
       }
@@ -376,8 +369,7 @@ void EffectsRenderer::addShotTeleportEffect(const fvec3& pos,
   }
 }
 
-std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes(void)
-{
+std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes(void) {
   std::vector<std::string> ret;
   ret.push_back(std::string("None"));
   ret.push_back(std::string("IDL"));
@@ -390,11 +382,10 @@ std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes(void)
 //****************** effects base class*******************************
 
 BasicEffect::BasicEffect()
-: position(0.0f, 0.0f, 0.0f)
-, rotation(0.0f, 0.0f, 0.0f)
-, velocity(0.0f, 0.0f, 0.0f)
-, color(0.0f, 0.0f, 0.0f, 1.0f)
-{
+  : position(0.0f, 0.0f, 0.0f)
+  , rotation(0.0f, 0.0f, 0.0f)
+  , velocity(0.0f, 0.0f, 0.0f)
+  , color(0.0f, 0.0f, 0.0f, 1.0f) {
   startTime = BzTime::getCurrent();
 
   lifeTime = 0;
@@ -402,39 +393,34 @@ BasicEffect::BasicEffect()
   deltaTime = 0;
 }
 
-void BasicEffect::setPos(const fvec3& pos)
-{
+void BasicEffect::setPos(const fvec3& pos) {
   position = pos;
 }
 
-void BasicEffect::setRot(const fvec3& rot)
-{
+void BasicEffect::setRot(const fvec3& rot) {
   rotation = rot;
 }
 
-void BasicEffect::setVel(const fvec3& vel)
-{
+void BasicEffect::setVel(const fvec3& vel) {
   velocity = vel;
 }
 
-void BasicEffect::setColor(const fvec4& rgba)
-{
+void BasicEffect::setColor(const fvec4& rgba) {
   color = rgba;
 }
 
-void BasicEffect::setStartTime()
-{
+void BasicEffect::setStartTime() {
   startTime = BzTime::getTick();
   lastTime = startTime;
   deltaTime = 0;
 }
 
-bool BasicEffect::update(const BzTime time)
-{
+bool BasicEffect::update(const BzTime time) {
   age = (float)(time - startTime);
 
-  if (age >= lifeTime)
+  if (age >= lifeTime) {
     return true;
+  }
 
   deltaTime = (float)(time - lastTime);
   lastTime = time;
@@ -442,41 +428,39 @@ bool BasicEffect::update(const BzTime time)
 }
 
 //******************StdSpawnEffect****************
-StdSpawnEffect::StdSpawnEffect() : BasicEffect()
-{
-  texture = TextureManager::instance().getTextureID("wavy_flare",false);
+StdSpawnEffect::StdSpawnEffect() : BasicEffect() {
+  texture = TextureManager::instance().getTextureID("wavy_flare", false);
   lifeTime = 1.5f;
   radius = 1.75f;
 
   OpenGLGStateBuilder gstate;
   gstate.reset();
   gstate.setShading();
-  gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+  gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdSpawnEffect::~StdSpawnEffect()
-{
+StdSpawnEffect::~StdSpawnEffect() {
 }
 
-bool StdSpawnEffect::update(const BzTime time)
-{
+bool StdSpawnEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
-  radius += deltaTime*7;
+  radius += deltaTime * 7;
   return false;
 }
 
-void StdSpawnEffect::draw(const SceneRenderer &)
-{
+void StdSpawnEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   glTranslatef(position.x, position.y, position.z + 0.1f);
@@ -488,7 +472,7 @@ void StdSpawnEffect::draw(const SceneRenderer &)
   glColor4f(color.r, color.g, color.b, 1.0f - ageParam);
   glDepthMask(0);
 
-  drawRingXY(radius * 0.1f, 2.5f + (age * 2), 0,0, 1.0f, 32, 5.0f);
+  drawRingXY(radius * 0.1f, 2.5f + (age * 2), 0, 0, 1.0f, 32, 5.0f);
   drawRingXY(radius * 0.5f, 1.5f + (ageParam / 1.0f * 2), 0.5f, 0.5f);
   drawRingXY(radius, 2, 0, 0, 1.0f, 32, 1.0f);
 
@@ -498,19 +482,18 @@ void StdSpawnEffect::draw(const SceneRenderer &)
 }
 
 //******************ConeSpawnEffect****************
-bool ConeSpawnEffect::update(const BzTime time)
-{
+bool ConeSpawnEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   radius += deltaTime * 5;
   return false;
 }
 
-void ConeSpawnEffect::draw(const SceneRenderer &)
-{
+void ConeSpawnEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   glTranslatef(position.x, position.y, position.z + 0.1f);
@@ -541,24 +524,22 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 
 
 //******************RingSpawnEffect****************
-RingSpawnEffect::RingSpawnEffect()
-{
+RingSpawnEffect::RingSpawnEffect() {
   radius = 4.0f;
   maxZ = 10.0f;
 }
 
-bool RingSpawnEffect::update(const BzTime time)
-{
+bool RingSpawnEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   return false;
 }
 
-void RingSpawnEffect::draw(const SceneRenderer &)
-{
+void RingSpawnEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   glTranslatef(position.x, position.y, position.z);
@@ -573,27 +554,29 @@ void RingSpawnEffect::draw(const SceneRenderer &)
   const float bigRange = ringRange * 3;
 
   float coreAlpha = 1;
-  if (age >= bigRange)
+  if (age >= bigRange) {
     coreAlpha = 1.0f - ((age - bigRange) / (lifeTime - bigRange));
+  }
 
-  for (int n = 0; n < 4; ++n)
+  for (int n = 0; n < 4; ++n) {
     drawRing(n, coreAlpha);
+  }
 
   glColor4f(1, 1, 1, 1);
   glDepthMask(1);
   glPopMatrix();
 }
 
-void RingSpawnEffect::drawRing(int n, float coreAlpha)
-{
+void RingSpawnEffect::drawRing(int n, float coreAlpha) {
   float posZ = 0;
   float alpha;
 
-  if (age > (ringRange * (n-1))) { // this ring in?
+  if (age > (ringRange * (n - 1))) { // this ring in?
     if (age < ringRange * n) { // the ring is still coming in
-      posZ = maxZ - ((age - ringRange * (n-1)) / ringRange) * (maxZ - n * 2.5f);
+      posZ = maxZ - ((age - ringRange * (n - 1)) / ringRange) * (maxZ - n * 2.5f);
       alpha = (age - ringRange) / (ringRange * n);
-    } else {
+    }
+    else {
       posZ = n * 2.5f;
       alpha = coreAlpha;
     }
@@ -607,9 +590,8 @@ void RingSpawnEffect::drawRing(int n, float coreAlpha)
 }
 
 //******************StdShotEffect****************
-StdShotEffect::StdShotEffect() : BasicEffect()
-{
-  texture = TextureManager::instance().getTextureID("wavy_flare",false);
+StdShotEffect::StdShotEffect() : BasicEffect() {
+  texture = TextureManager::instance().getTextureID("wavy_flare", false);
   lifeTime = 1.5f;
   radius = 0.125f;
 
@@ -617,32 +599,31 @@ StdShotEffect::StdShotEffect() : BasicEffect()
   OpenGLGStateBuilder gstate;
   gstate.reset();
   gstate.setShading();
-  gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+  gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdShotEffect::~StdShotEffect()
-{
+StdShotEffect::~StdShotEffect() {
 }
 
-bool StdShotEffect::update(const BzTime time)
-{
+bool StdShotEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   radius += deltaTime * 6;
   return false;
 }
 
-void StdShotEffect::draw(const SceneRenderer &)
-{
+void StdShotEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   fvec3 pos = position + (age * velocity);
@@ -655,8 +636,9 @@ void StdShotEffect::draw(const SceneRenderer &)
   color.r = color.g = color.b = 1;
 
   float alpha = 0.5f - (age / lifeTime);
-  if (alpha < 0.001f)
+  if (alpha < 0.001f) {
     alpha = 0.001f;
+  }
 
   glColor4f(color.r, color.g, color.b, alpha);
   glDepthMask(0);
@@ -669,46 +651,47 @@ void StdShotEffect::draw(const SceneRenderer &)
 }
 
 //******************FlashShotEffect****************
-FlashShotEffect::FlashShotEffect() : StdShotEffect()
-{
+FlashShotEffect::FlashShotEffect() : StdShotEffect() {
   // we use the jump jet texture upside-down to get a decent muzzle flare effect
-  texture = TextureManager::instance().getTextureID("jumpjets",false);
+  texture = TextureManager::instance().getTextureID("jumpjets", false);
   lifeTime = 0.75f;
   radius = 0.5f;
 
   OpenGLGStateBuilder gstate;
   gstate.reset();
   gstate.setShading();
-  gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+  gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-bool FlashShotEffect::update(const BzTime time)
-{
+bool FlashShotEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   // do stuff that may be need to be done every time to an image
-  if (age < lifeTime / 2)
+  if (age < lifeTime / 2) {
     length = 6 * (age / lifeTime);
-  else
+  }
+  else {
     length = 6 * (1 - (age / lifeTime));
+  }
 
   return false;
 }
 
-void FlashShotEffect::draw(const SceneRenderer &)
-{
+void FlashShotEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
-  fvec3 pos = position +(age * velocity);
+  fvec3 pos = position + (age * velocity);
 
   glTranslatef(pos.x, pos.y, pos.z);
   glRotatef(270.0f + (rotation.z * RAD2DEGf), 0.0f, 0.0f, 1.0f);
@@ -718,8 +701,9 @@ void FlashShotEffect::draw(const SceneRenderer &)
   color.r = color.g = color.b = 1;
 
   float alpha = 0.8f - (age / lifeTime);
-  if (alpha < 0.001f)
+  if (alpha < 0.001f) {
     alpha = 0.001f;
+  }
 
   glColor4f(color.r, color.g, color.b, alpha);
   glDepthMask(0);
@@ -761,9 +745,8 @@ void FlashShotEffect::draw(const SceneRenderer &)
 }
 
 //******************StdDeathEffect****************
-StdDeathEffect::StdDeathEffect() : BasicEffect()
-{
-  texture = TextureManager::instance().getTextureID("blend_flash",false);
+StdDeathEffect::StdDeathEffect() : BasicEffect() {
+  texture = TextureManager::instance().getTextureID("blend_flash", false);
   lifeTime = 1.25f;
   radius = 2.0f;
 
@@ -774,29 +757,28 @@ StdDeathEffect::StdDeathEffect() : BasicEffect()
   gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdDeathEffect::~StdDeathEffect()
-{
+StdDeathEffect::~StdDeathEffect() {
 }
 
-bool StdDeathEffect::update(const BzTime time)
-{
+bool StdDeathEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   radius += deltaTime * 25;
   return false;
 }
 
-void StdDeathEffect::draw(const SceneRenderer &)
-{
+void StdDeathEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   glTranslatef(position.x, position.y, position.z);
@@ -842,9 +824,8 @@ void StdDeathEffect::draw(const SceneRenderer &)
 }
 
 //******************StdLandEffect****************
-StdLandEffect::StdLandEffect() : BasicEffect()
-{
-  texture = TextureManager::instance().getTextureID("dusty_flare",false);
+StdLandEffect::StdLandEffect() : BasicEffect() {
+  texture = TextureManager::instance().getTextureID("dusty_flare", false);
   lifeTime = 1.0f;
   radius = 2.5f;
 
@@ -854,29 +835,28 @@ StdLandEffect::StdLandEffect() : BasicEffect()
   gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdLandEffect::~StdLandEffect()
-{
+StdLandEffect::~StdLandEffect() {
 }
 
-bool StdLandEffect::update(const BzTime time)
-{
+bool StdLandEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   radius += deltaTime * 3.5f;
   return false;
 }
 
-void StdLandEffect::draw(const SceneRenderer &)
-{
+void StdLandEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   glTranslatef(position.x, position.y, position.z);
@@ -898,9 +878,8 @@ void StdLandEffect::draw(const SceneRenderer &)
 }
 
 //******************StdGMPuffEffect****************
-StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
-{
-  texture = TextureManager::instance().getTextureID("blend_flash",false);
+StdGMPuffEffect::StdGMPuffEffect() : BasicEffect() {
+  texture = TextureManager::instance().getTextureID("blend_flash", false);
   lifeTime = 6.5f;
   radius = 0.125f;
 
@@ -911,29 +890,28 @@ StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
   gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdGMPuffEffect::~StdGMPuffEffect()
-{
+StdGMPuffEffect::~StdGMPuffEffect() {
 }
 
-bool StdGMPuffEffect::update(const BzTime time)
-{
+bool StdGMPuffEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   radius += deltaTime * 0.5f;
   return false;
 }
 
-void StdGMPuffEffect::draw(const SceneRenderer &)
-{
+void StdGMPuffEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   fvec3 pos = position + (age * velocity);
@@ -947,8 +925,9 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
   color.r = color.g = color.b = 1;
 
   float alpha = 0.5f - (age / lifeTime);
-  if (alpha < 0.000001f)
+  if (alpha < 0.000001f) {
     alpha = 0.000001f;
+  }
 
   glColor4f(color.r, color.g, color.b, alpha);
   glDepthMask(0);
@@ -961,9 +940,8 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 }
 
 //******************StdRicoEffect****************
-StdRicoEffect::StdRicoEffect() : BasicEffect()
-{
-  texture = TextureManager::instance().getTextureID("blend_flash",false);
+StdRicoEffect::StdRicoEffect() : BasicEffect() {
+  texture = TextureManager::instance().getTextureID("blend_flash", false);
   lifeTime = 0.5f;
   radius = 0.25f;
 
@@ -973,29 +951,28 @@ StdRicoEffect::StdRicoEffect() : BasicEffect()
   gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdRicoEffect::~StdRicoEffect()
-{
+StdRicoEffect::~StdRicoEffect() {
 }
 
-bool StdRicoEffect::update(const BzTime time)
-{
+bool StdRicoEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   radius += deltaTime * 6.5f;
   return false;
 }
 
-void StdRicoEffect::draw(const SceneRenderer &)
-{
+void StdRicoEffect::draw(const SceneRenderer&) {
   glPushMatrix();
 
   fvec3 pos = position + (age * velocity);
@@ -1009,8 +986,9 @@ void StdRicoEffect::draw(const SceneRenderer &)
   color.r = color.g = color.b = 1;
 
   float alpha = 0.5f - (age / lifeTime);
-  if (alpha < 0.000001f)
+  if (alpha < 0.000001f) {
     alpha = 0.000001f;
+  }
 
   glColor4f(color.r, color.g, color.b, alpha);
   glDepthMask(0);
@@ -1024,11 +1002,10 @@ void StdRicoEffect::draw(const SceneRenderer &)
 
 //******************StdShotTeleportEffect****************
 StdShotTeleportEffect::StdShotTeleportEffect(float len, const fvec4* cp)
-: BasicEffect()
-, length(len)
-, clipPlane(cp)
-{
-  texture = TextureManager::instance().getTextureID("dusty_flare",false);
+  : BasicEffect()
+  , length(len)
+  , clipPlane(cp) {
+  texture = TextureManager::instance().getTextureID("dusty_flare", false);
   lifeTime = 4.0f;
   radius = 0.25f;
 
@@ -1038,29 +1015,28 @@ StdShotTeleportEffect::StdShotTeleportEffect(float len, const fvec4* cp)
   gstate.setBlending((GLenum) GL_SRC_ALPHA, (GLenum) GL_ONE_MINUS_SRC_ALPHA);
   gstate.setAlphaFunc();
 
-  if (texture >-1)
+  if (texture > -1) {
     gstate.setTexture(texture);
+  }
 
   ringState = gstate.getState();
 }
 
-StdShotTeleportEffect::~StdShotTeleportEffect()
-{
+StdShotTeleportEffect::~StdShotTeleportEffect() {
 }
 
-bool StdShotTeleportEffect::update(const BzTime time)
-{
+bool StdShotTeleportEffect::update(const BzTime time) {
   // see if it's time to die
   // if not update all those fun times
-  if (BasicEffect::update(time))
+  if (BasicEffect::update(time)) {
     return true;
+  }
 
   //radius += deltaTime*6.5f;
   return false;
 }
 
-void StdShotTeleportEffect::draw(const SceneRenderer&)
-{
+void StdShotTeleportEffect::draw(const SceneRenderer&) {
   const GLenum clipperID = GL_CLIP_PLANE0;
   if (clipPlane) {
     double cp[4] = {
@@ -1110,20 +1086,19 @@ void StdShotTeleportEffect::draw(const SceneRenderer&)
 
 //******************************** geo utiliys********************************
 
-static void RadialToCartesian(float angle, float rad, fvec3& pos)
-{
+static void RadialToCartesian(float angle, float rad, fvec3& pos) {
   pos.x = sinf(angle * DEG2RADf) * rad;
   pos.y = cosf(angle * DEG2RADf) * rad;
 }
 
 static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
-		       float topUV, int segments, float uScale )
-{
+                       float topUV, int segments, float uScale) {
   for (int i = 0; i < segments; i ++) {
-    float thisAng = 360.0f/segments * i;
-    float nextAng = 360.0f/segments * (i+1);
-    if (i + 1 >= segments)
+    float thisAng = 360.0f / segments * i;
+    float nextAng = 360.0f / segments * (i + 1);
+    if (i + 1 >= segments) {
       nextAng = 0;
+    }
 
     fvec3 thispos(0.0f, 0.0f, 0.0f);
     fvec3 nextPos(0.0f, 0.0f, 0.0f);
@@ -1162,22 +1137,22 @@ static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
   }
 }
 
-static float clampedZ(float z, float offset)
-{
-  if (z + offset > 0.0f)
+static float clampedZ(float z, float offset) {
+  if (z + offset > 0.0f) {
     return z;
+  }
   return -offset;
 }
 
-static void drawRingZ (float innerRad, float outerRad,
-		       float innerUV, float outerUV,
-		       float ZOffset, int segments, float uScale )
-{
+static void drawRingZ(float innerRad, float outerRad,
+                      float innerUV, float outerUV,
+                      float ZOffset, int segments, float uScale) {
   for (int i = 0; i < segments; i ++) {
-    float thisAng = 360.0f/segments * i;
-    float nextAng = 360.0f/segments * (i+1);
-    if (i + 1 >= segments)
+    float thisAng = 360.0f / segments * i;
+    float nextAng = 360.0f / segments * (i + 1);
+    if (i + 1 >= segments) {
       nextAng = 0;
+    }
 
     fvec3 thisposR1;
     fvec3 thisposR2;
@@ -1226,13 +1201,13 @@ static void drawRingZ (float innerRad, float outerRad,
 }
 
 static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
-		       float ZOffset, float topUV, int segments, float uScale)
-{
+                       float ZOffset, float topUV, int segments, float uScale) {
   for (int i = 0; i < segments; i ++) {
     float thisAng = 360.0f / segments * i;
     float nextAng = 360.0f / segments * (i + 1);
-    if (i + 1 >= segments)
+    if (i + 1 >= segments) {
       nextAng = 0;
+    }
 
     fvec3 thispos;
     fvec3 nextPos;
@@ -1297,6 +1272,6 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

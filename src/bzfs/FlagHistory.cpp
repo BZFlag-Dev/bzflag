@@ -19,31 +19,31 @@
 
 #define MAX_FLAG_HISTORY (10)
 
-void FlagHistory::clear()
-{
+void FlagHistory::clear() {
   flagHistory.clear();
 }
 
-void FlagHistory::get(char message[])
-{
-    char flag[MessageLen];
-    std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
+void FlagHistory::get(char message[]) {
+  char flag[MessageLen];
+  std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
 
-    while (fhIt != flagHistory.end()) {
-      FlagType * fDesc = (FlagType*)(*fhIt);
-      if (fDesc->endurance == FlagNormal)
-	snprintf(flag, MessageLen, "(*%c) ", fDesc->flagName.c_str()[0]);
-      else
-	snprintf(flag, MessageLen, "(%s) ", fDesc->flagAbbv.c_str());
-      strncat(message, flag, sizeof(message) - strlen(message) - 1);
-      fhIt++;
+  while (fhIt != flagHistory.end()) {
+    FlagType* fDesc = (FlagType*)(*fhIt);
+    if (fDesc->endurance == FlagNormal) {
+      snprintf(flag, MessageLen, "(*%c) ", fDesc->flagName.c_str()[0]);
     }
+    else {
+      snprintf(flag, MessageLen, "(%s) ", fDesc->flagAbbv.c_str());
+    }
+    strncat(message, flag, sizeof(message) - strlen(message) - 1);
+    fhIt++;
+  }
 }
 
-void FlagHistory::add(FlagType* type)
-{
-  if (flagHistory.size() >= MAX_FLAG_HISTORY)
+void FlagHistory::add(FlagType* type) {
+  if (flagHistory.size() >= MAX_FLAG_HISTORY) {
     flagHistory.erase(flagHistory.begin());
+  }
   flagHistory.push_back(type);
 }
 
@@ -51,6 +51,6 @@ void FlagHistory::add(FlagType* type)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

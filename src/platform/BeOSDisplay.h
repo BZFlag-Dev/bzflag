@@ -11,7 +11,7 @@
  */
 
 /* BeOSDisplay:
- *	Encapsulates an BeOS windows display
+ *  Encapsulates an BeOS windows display
  */
 
 #ifndef BZF_BEOSDISPLAY_H
@@ -26,30 +26,30 @@ class Resolution;
 class BeOSWindow;
 
 class BeOSDisplay : public BzfDisplay {
-public:
-  BeOSDisplay(const char* displayName, const char* videoFormat);
-  ~BeOSDisplay();
+  public:
+    BeOSDisplay(const char* displayName, const char* videoFormat);
+    ~BeOSDisplay();
 
-  bool				isValid() const;
-  bool				isEventPending() const;
-  bool				getEvent(BzfEvent&) const;
-  bool				peekEvent(BzfEvent&) const;
+    bool        isValid() const;
+    bool        isEventPending() const;
+    bool        getEvent(BzfEvent&) const;
+    bool        peekEvent(BzfEvent&) const;
 
-  void				postBzfEvent(BzfEvent&);
+    void        postBzfEvent(BzfEvent&);
 
-private:
-  BeOSDisplay(const BeOSDisplay&);
-  BeOSDisplay&			operator=(const BeOSDisplay&);
+  private:
+    BeOSDisplay(const BeOSDisplay&);
+    BeOSDisplay&      operator=(const BeOSDisplay&);
 
-  bool				doSetResolution(int);
-  bool				doSetDefaultResolution();
+    bool        doSetResolution(int);
+    bool        doSetDefaultResolution();
 
-private:
-  BScreen				*bScreen;
-  /* Event stuff */
-  port_id				eventPort;
-public: //XXX
-  BeOSWindow			*beosWin;
+  private:
+    BScreen*       bScreen;
+    /* Event stuff */
+    port_id       eventPort;
+  public: //XXX
+    BeOSWindow*      beosWin;
 };
 
 #endif // BZF_BEOSDISPLAY_H
@@ -58,6 +58,6 @@ public: //XXX
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

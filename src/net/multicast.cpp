@@ -29,9 +29,8 @@
 #include "ErrorHandler.h"
 
 
-int			openBroadcast(int port, const char* service,
-					struct sockaddr_in* addr)
-{
+int     openBroadcast(int port, const char* service,
+                      struct sockaddr_in* addr) {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
 #else
@@ -48,14 +47,14 @@ int			openBroadcast(int port, const char* service,
 
   /* lookup service and check port */
   if (service) {
-    struct servent *sp = getservbyname(service, "udp");
+    struct servent* sp = getservbyname(service, "udp");
     if (!sp) {
       if (port <= 0) {
-	std::vector<std::string> args;
-	args.push_back(service);
+        std::vector<std::string> args;
+        args.push_back(service);
 
-	printError("openBroadcast: No udp service {1}", &args);
-	return -1;
+        printError("openBroadcast: No udp service {1}", &args);
+        return -1;
       }
     }
     else {
@@ -65,7 +64,7 @@ int			openBroadcast(int port, const char* service,
   if (port <= 0) {
     std::vector<std::string> args;
     char buf[10];
-    sprintf(buf,"%d", port);
+    sprintf(buf, "%d", port);
     args.push_back(buf);
     printError("openBroadcast: Invalid port {1}", &args);
     return -1;
@@ -85,7 +84,7 @@ int			openBroadcast(int port, const char* service,
 #if defined(SO_REUSEPORT)
   /* set reuse port */
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
+                 (SSOType)&optOn, sizeof(optOn)) < 0) {
     nerror("openBroadcast: setsockopt SO_REUSEPORT");
     close(fd);
     return -1;
@@ -93,7 +92,7 @@ int			openBroadcast(int port, const char* service,
 #elif defined(SO_REUSEADDR)
   /* set reuse address */
   if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
+                 (SSOType)&optOn, sizeof(optOn)) < 0) {
     nerror("openBroadcast: setsockopt SO_REUSEADDR");
     close(fd);
     return -1;
@@ -109,7 +108,7 @@ int			openBroadcast(int port, const char* service,
 
   /* make broadcast */
   if (setsockopt(fd, SOL_SOCKET, SO_BROADCAST,
-				(SSOType)&optOn, sizeof(optOn)) < 0) {
+                 (SSOType)&optOn, sizeof(optOn)) < 0) {
     nerror("openBroadcast: setsockopt SO_BROADCAST");
     close(fd);
     return -1;
@@ -133,8 +132,9 @@ int			openBroadcast(int port, const char* service,
   // get the list of interface names
   conf.ifc_len = sizeof(req);
   conf.ifc_ifcu.ifcu_req = req;
-  for (i = 0; i < numInterfaces; ++i)
+  for (i = 0; i < numInterfaces; ++i) {
     req[i].ifr_ifrn.ifrn_name[0] = 0;
+  }
   if (ioctl(fd, SIOCGIFCONF, &conf) < 0) {
     nerror("openBroadcast: getting interface list");
     close(fd);
@@ -144,20 +144,24 @@ int			openBroadcast(int port, const char* service,
   // get the broadcast address on each interface
   for (i = 0; i < numInterfaces; ++i) {
     // if no name then we're done
-    if (req[i].ifr_ifrn.ifrn_name[0] == 0)
+    if (req[i].ifr_ifrn.ifrn_name[0] == 0) {
       break;
+    }
 
     // if we can't get the address then skip this interface
-    if (ioctl(fd, SIOCGIFBRDADDR, req + i) < 0)
+    if (ioctl(fd, SIOCGIFBRDADDR, req + i) < 0) {
       continue;
+    }
 
     // if the address is the loopback broadcast address then skip it
     const sockaddr_in* ifbaddr = (const sockaddr_in*)
-					&req[i].ifr_ifru.ifru_broadaddr;
-    if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu)
+                                 &req[i].ifr_ifru.ifru_broadaddr;
+    if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu) {
       continue;
-    if (ifbaddr->sin_addr.s_addr == 0)
+    }
+    if (ifbaddr->sin_addr.s_addr == 0) {
       continue;
+    }
 
     // got the broadcast address on the interface
     addr->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
@@ -182,18 +186,16 @@ int			openBroadcast(int port, const char* service,
   return fd;
 }
 
-int			closeBroadcast(int fd)
-{
-  if (fd == -1) return 0;
+int     closeBroadcast(int fd) {
+  if (fd == -1) { return 0; }
   return close(fd);
 }
 
-int			sendBroadcast(int fd, const void* buffer,
-					int bufferLength,
-					const struct sockaddr_in* addr)
-{
+int     sendBroadcast(int fd, const void* buffer,
+                      int bufferLength,
+                      const struct sockaddr_in* addr) {
   return sendto(fd, (const char*)buffer, bufferLength, 0,
-				(const struct sockaddr*)addr, sizeof(*addr));
+                (const struct sockaddr*)addr, sizeof(*addr));
 }
 
 
@@ -206,18 +208,17 @@ int			sendBroadcast(int fd, const void* buffer,
 * to skip this hack */
 
 #ifndef socklen_t
-	#define socklen_t int
+#define socklen_t int
 #endif
 #endif //WIN32
 
-int			recvBroadcast(int fd, void* buffer, int bufferLength,
-					 struct sockaddr_in* addr)
-{
+int     recvBroadcast(int fd, void* buffer, int bufferLength,
+                      struct sockaddr_in* addr) {
   struct sockaddr_in from;
   size_t fromLength = sizeof(from);
 
   int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,
-				(struct sockaddr*)&from, (socklen_t*) &fromLength);
+                           (struct sockaddr*)&from, (socklen_t*) &fromLength);
   if (byteCount < 0) {
     if (getErrno() == EWOULDBLOCK) {
       return 0;
@@ -227,7 +228,7 @@ int			recvBroadcast(int fd, void* buffer, int bufferLength,
       return -1;
     }
   }
-  if (addr) *addr = from;
+  if (addr) { *addr = from; }
   return byteCount;
 }
 
@@ -235,6 +236,6 @@ int			recvBroadcast(int fd, void* buffer, int bufferLength,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

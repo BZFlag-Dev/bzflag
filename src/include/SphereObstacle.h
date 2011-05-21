@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_SPHERE_OBSTACLE_H
-#define	BZF_SPHERE_OBSTACLE_H
+#ifndef BZF_SPHERE_OBSTACLE_H
+#define BZF_SPHERE_OBSTACLE_H
 
 /* common header */
 #include "common.h"
@@ -27,10 +27,9 @@
 
 
 /** SphereObstacle:
- *	Encapsulates a cone in the game environment.
+ *  Encapsulates a cone in the game environment.
  */
-class SphereObstacle : public Obstacle
-{
+class SphereObstacle : public Obstacle {
   public:
 
     enum {
@@ -78,8 +77,8 @@ class SphereObstacle : public Obstacle
                     fvec4* plane) const;
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 
@@ -107,6 +106,6 @@ class SphereObstacle : public Obstacle
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

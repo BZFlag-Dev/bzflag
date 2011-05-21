@@ -11,56 +11,56 @@
  */
 
 /* PolyWallSceneNode:
- *	Encapsulates information for rendering a planar
- *	polygonal wall.  Does not support level of detail.
+ *  Encapsulates information for rendering a planar
+ *  polygonal wall.  Does not support level of detail.
  */
 
-#ifndef	BZF_POLY_WALL_SCENE_NODE_H
-#define	BZF_POLY_WALL_SCENE_NODE_H
+#ifndef BZF_POLY_WALL_SCENE_NODE_H
+#define BZF_POLY_WALL_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"
 
 class PolyWallSceneNode : public WallSceneNode {
   public:
-			PolyWallSceneNode(const fvec3Array& vertices,
-					const fvec2Array& uvs);
-			~PolyWallSceneNode();
+    PolyWallSceneNode(const fvec3Array& vertices,
+                      const fvec2Array& uvs);
+    ~PolyWallSceneNode();
 
-    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
+    int     split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
-    void		renderRadar();
+    void    addRenderNodes(SceneRenderer&);
+    void    addShadowNodes(SceneRenderer&);
+    void    renderRadar();
 
-    void		getRenderNodes(std::vector<RenderSet>& rnodes);
+    void    getRenderNodes(std::vector<RenderSet>& rnodes);
 
   protected:
     class Geometry : public RenderNode {
       public:
-			Geometry(PolyWallSceneNode*,
-				const fvec3Array& vertices,
-				const fvec2Array& uvs,
-				const float* normal);
-			~Geometry();
-	void		setStyle(int _style) { style = _style; }
-	void		render();
-	const fvec3&	getPosition() const { return wall->getCenter(); }
+        Geometry(PolyWallSceneNode*,
+                 const fvec3Array& vertices,
+                 const fvec2Array& uvs,
+                 const float* normal);
+        ~Geometry();
+        void    setStyle(int _style) { style = _style; }
+        void    render();
+        const fvec3&  getPosition() const { return wall->getCenter(); }
       private:
-	void		drawV() const;
-	void		drawVT() const;
+        void    drawV() const;
+        void    drawVT() const;
       private:
-	PolyWallSceneNode* wall;
-	int		style;
-	const float*	normal;
+        PolyWallSceneNode* wall;
+        int   style;
+        const float*  normal;
       public:
-	fvec3Array	vertex;
-	fvec2Array	uv;
+        fvec3Array  vertex;
+        fvec2Array  uv;
     };
 
   private:
-    Geometry*		node;
-    Geometry*		shadowNode;
+    Geometry*   node;
+    Geometry*   shadowNode;
 };
 
 #endif // BZF_POLY_WALL_SCENE_NODE_H
@@ -69,6 +69,6 @@ class PolyWallSceneNode : public WallSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

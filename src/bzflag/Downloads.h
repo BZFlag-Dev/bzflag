@@ -21,29 +21,28 @@
 /* system interface headers */
 #include <string>
 
-class Downloads : public Singleton<Downloads>
-{
-public:
-  void startDownloads(bool doDownloads, bool updateDownloads, bool referencing);
-  void finalizeDownloads();
-  void removeTextures(); // free the downloaded GL textures
-  bool requestFinalized();
-  bool authorizedServer(const std::string& hostname);
+class Downloads : public Singleton<Downloads> {
+  public:
+    void startDownloads(bool doDownloads, bool updateDownloads, bool referencing);
+    void finalizeDownloads();
+    void removeTextures(); // free the downloaded GL textures
+    bool requestFinalized();
+    bool authorizedServer(const std::string& hostname);
 
-  AccessList* getAccessList() const { return downloadAccessList; }
+    AccessList* getAccessList() const { return downloadAccessList; }
 
-protected:
-  friend class Singleton<Downloads>;
+  protected:
+    friend class Singleton<Downloads>;
 
-private:
-  Downloads();
-  ~Downloads();
+  private:
+    Downloads();
+    ~Downloads();
 
-  void printAuthNotice();
-  bool checkAuthorizations(BzMaterialManager::TextureSet& set);
+    void printAuthNotice();
+    bool checkAuthorizations(BzMaterialManager::TextureSet& set);
 
-  AccessList * downloadAccessList;
-  bool textureDownloading;
+    AccessList* downloadAccessList;
+    bool textureDownloading;
 };
 
 
@@ -56,6 +55,6 @@ bool parseHostname(const std::string& url, std::string& hostname);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

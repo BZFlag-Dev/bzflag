@@ -12,21 +12,21 @@
 
 /*
  * HUDuiDefaultKey:
- *	User interface class for the heads-up display.
+ *  User interface class for the heads-up display.
  */
 
-#ifndef	__HUDUIDEFAULTKEY_H__
-#define	__HUDUIDEFAULTKEY_H__
+#ifndef __HUDUIDEFAULTKEY_H__
+#define __HUDUIDEFAULTKEY_H__
 
 #include "BzfEvent.h"
 
 class HUDuiDefaultKey {
   public:
-			HUDuiDefaultKey();
-    virtual		~HUDuiDefaultKey();
+    HUDuiDefaultKey();
+    virtual   ~HUDuiDefaultKey();
 
-    virtual bool	keyPress(const BzfKeyEvent&);
-    virtual bool	keyRelease(const BzfKeyEvent&);
+    virtual bool  keyPress(const BzfKeyEvent&);
+    virtual bool  keyRelease(const BzfKeyEvent&);
 };
 
 #endif // __HUDUIDEFAULTKEY_H__
@@ -35,6 +35,6 @@ class HUDuiDefaultKey {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

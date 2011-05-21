@@ -11,11 +11,11 @@
  */
 
 /* LinuxDisplay:
- *	An X display with XFree86 vidmode extension
+ *  An X display with XFree86 vidmode extension
  */
 
 #ifndef BZF_LINUXDISPLAY_H
-#define	BZF_LINUXDISPLAY_H
+#define BZF_LINUXDISPLAY_H
 
 #include "XDisplay.h"
 #if defined(XF86VIDMODE_EXT)
@@ -28,22 +28,22 @@
 class LinuxDisplayMode : public XDisplayMode {
   public:
 #if defined(USE_XF86VIDMODE_EXT)
-			LinuxDisplayMode();
-			~LinuxDisplayMode();
+    LinuxDisplayMode();
+    ~LinuxDisplayMode();
 
-    ResInfo**		init(XDisplay* owner, int& num, int& current);
-    bool		set(int);
-    bool		setDefault(int);
-
-  private:
-    bool		doSet(int, bool position);
+    ResInfo**   init(XDisplay* owner, int& num, int& current);
+    bool    set(int);
+    bool    setDefault(int);
 
   private:
-    XDisplay*		display;
-    int			numResolutions;
-    int			lastResolution;
+    bool    doSet(int, bool position);
+
+  private:
+    XDisplay*   display;
+    int     numResolutions;
+    int     lastResolution;
     XF86VidModeModeInfo** resolutions;
-    int			origNumResolutions;
+    int     origNumResolutions;
     XF86VidModeModeInfo** origResolutions;
 #endif
 };
@@ -54,6 +54,6 @@ class LinuxDisplayMode : public XDisplayMode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

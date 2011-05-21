@@ -22,36 +22,31 @@
 const char* PyramidBuilding::typeName = "PyramidBuilding";
 
 
-PyramidBuilding::PyramidBuilding()
-{
+PyramidBuilding::PyramidBuilding() {
 }
 
 
 PyramidBuilding::PyramidBuilding(const fvec3& p, float a,
-				float w, float b, float h,
-				unsigned char drive, unsigned char shoot, bool rico)
-: Obstacle(p, a, w, b, h, drive, shoot, rico)
-{
+                                 float w, float b, float h,
+                                 unsigned char drive, unsigned char shoot, bool rico)
+  : Obstacle(p, a, w, b, h, drive, shoot, rico) {
   finalize();
   return;
 }
 
 
-PyramidBuilding::~PyramidBuilding()
-{
+PyramidBuilding::~PyramidBuilding() {
   // do nothing
 }
 
 
-void PyramidBuilding::finalize()
-{
+void PyramidBuilding::finalize() {
   Obstacle::setExtents();
   return;
 }
 
 
-Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
-{
+Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const {
   fvec3 newPos = pos;
   fvec3 newSize = size;
   float newAngle = angle;
@@ -62,7 +57,7 @@ Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
 
   PyramidBuilding* copy =
     new PyramidBuilding(newPos, newAngle, newSize.x, newSize.y, newSize.z,
-			driveThrough, shootThrough, ricochet);
+                        driveThrough, shootThrough, ricochet);
 
   copy->zFlip = !(getZFlip() == flipped);
 
@@ -70,28 +65,24 @@ Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
 }
 
 
-const char* PyramidBuilding::getType() const
-{
+const char* PyramidBuilding::getType() const {
   return typeName;
 }
 
 
-const char* PyramidBuilding::getClassName() // const
-{
+const char* PyramidBuilding::getClassName() { // const
   return typeName;
 }
 
 
-float PyramidBuilding::intersect(const Ray& r) const
-{
+float PyramidBuilding::intersect(const Ray& r) const {
   return Intersect::timeRayHitsPyramids(r, getPosition(), getRotation(),
                                         getWidth(), getBreadth(), getHeight(),
                                         getZFlip());
 }
 
 
-void PyramidBuilding::getNormal(const fvec3& p, fvec3& n) const
-{
+void PyramidBuilding::getNormal(const fvec3& p, fvec3& n) const {
   // get normal in z = const plane
   const float s = shrinkFactor(p.z);
   Intersect::getNormalRect(p, getPosition(), getRotation(),
@@ -102,18 +93,19 @@ void PyramidBuilding::getNormal(const fvec3& p, fvec3& n) const
   float top =  getPosition().z + getHeight();
   float bottom = getPosition().z;
 
-  if (s ==0) {
+  if (s == 0) {
     if (getZFlip()) {
       if (p.z >= top) {
-	n.x = n.y = 0;
-	n.z = 1;
-	return;
+        n.x = n.y = 0;
+        n.z = 1;
+        return;
       }
-    } else {
+    }
+    else {
       if (p.z <= bottom) {
-	n.x = n.y = 0;
-	n.z = -1;
-	return;
+        n.x = n.y = 0;
+        n.z = -1;
+        return;
       }
     }
   }
@@ -125,13 +117,13 @@ void PyramidBuilding::getNormal(const fvec3& p, fvec3& n) const
   n.y *= h * getHeight();
   n.z = h * getWidth();
 
-  if (getZFlip())
+  if (getZFlip()) {
     n.z *= -1;
+  }
 }
 
 
-void PyramidBuilding::get3DNormal(const fvec3& p, fvec3& n) const
-{
+void PyramidBuilding::get3DNormal(const fvec3& p, fvec3& n) const {
   const float epsilon = ZERO_TOLERANCE;
 
   // get normal in z = const plane
@@ -141,21 +133,22 @@ void PyramidBuilding::get3DNormal(const fvec3& p, fvec3& n) const
 
   // make sure we are not way above or way below it
   // above is good so we can drive on it when it's flipped
-  float top =  getPosition().z+getHeight();
+  float top =  getPosition().z + getHeight();
   float bottom = getPosition().z;
 
   if (s == 0) {
     if (getZFlip()) {
       if (p.z >= top) {
-	n.x = n.y = 0;
-	n.z = 1;
-	return;
+        n.x = n.y = 0;
+        n.z = 1;
+        return;
       }
-    } else {
+    }
+    else {
       if (p.z <= bottom) {
-	n.x = n.y = 0;
-	n.z = -1;
-	return;
+        n.x = n.y = 0;
+        n.z = -1;
+        return;
       }
     }
   }
@@ -164,7 +157,8 @@ void PyramidBuilding::get3DNormal(const fvec3& p, fvec3& n) const
     n.x = n.y = 0;
     if (getZFlip()) {
       n.z = 1;
-    } else {
+    }
+    else {
       n.z = -1;
     }
     return;
@@ -176,7 +170,7 @@ void PyramidBuilding::get3DNormal(const fvec3& p, fvec3& n) const
   // FIXME -- fugly beyond belief
   float baseLength = getWidth();
   const float normalAngle = atan2f(n.y, n.x);
-  const float rightAngle = fabsf(fmodf(normalAngle - getRotation() + (float)(M_PI/2.0), (float)M_PI));
+  const float rightAngle = fabsf(fmodf(normalAngle - getRotation() + (float)(M_PI / 2.0), (float)M_PI));
   if ((rightAngle < 0.1) || (rightAngle > (M_PI - 0.1))) {
     baseLength = getBreadth();
   }
@@ -192,25 +186,25 @@ void PyramidBuilding::get3DNormal(const fvec3& p, fvec3& n) const
 
 
 bool PyramidBuilding::inCylinder(const fvec3& p,
-                                 float radius, float height) const
-{
+                                 float radius, float height) const {
   // really rough -- doesn't decrease size with height
   return (p.z < (getPosition().z + getHeight()))
-  &&     ((p.z+height) >= getPosition().z)
-  &&     Intersect::testRectCircle(getPosition(), getRotation(),
-                                   getWidth(), getBreadth(), p, radius);
+         && ((p.z + height) >= getPosition().z)
+         &&     Intersect::testRectCircle(getPosition(), getRotation(),
+                                          getWidth(), getBreadth(), p, radius);
 }
 
 
 bool PyramidBuilding::inBox(const fvec3& p, float a,
-                            float dx, float dy, float height) const
-{
+                            float dx, float dy, float height) const {
   // Tank is below pyramid ?
-  if (p.z + height < getPosition().z)
+  if (p.z + height < getPosition().z) {
     return false;
+  }
   // Tank is above pyramid ?
-  if (p.z >= getPosition().z + getHeight())
+  if (p.z >= getPosition().z + getHeight()) {
     return false;
+  }
   // Could be inside. Then check collision with the rectangle at object height
   // This is a rectangle reduced by shrinking but pass the height that we are
   // not so sure where collision can be
@@ -221,17 +215,15 @@ bool PyramidBuilding::inBox(const fvec3& p, float a,
 
 
 bool PyramidBuilding::inMovingBox(const fvec3&, float,
-				  const fvec3& p, float _angle,
-				  float dx, float dy, float dz) const
-{
-  return inBox (p, _angle, dx, dy, dz);
+                                  const fvec3& p, float _angle,
+                                  float dx, float dy, float dz) const {
+  return inBox(p, _angle, dx, dy, dz);
 }
 
 
 bool PyramidBuilding::isCrossing(const fvec3& p, float a,
                                  float dx, float dy,
-                                 float height, fvec4* planePtr) const
-{
+                                 float height, fvec4* planePtr) const {
   // if not inside or contained then not crossing
   if (!inBox(p, a, dx, dy, height) ||
       Intersect::testRectInRect(getPosition(), getRotation(),
@@ -258,7 +250,8 @@ bool PyramidBuilding::isCrossing(const fvec3& p, float a,
     plane.y = ((x < 0.0) ? -sinf(a2) : sinf(a2));
     pw.x = p2.x + getWidth() * plane.x;
     pw.y = p2.y + getWidth() * plane.y;
-  } else {
+  }
+  else {
     plane.x = ((y < 0.0) ? sinf(a2) : -sinf(a2));
     plane.y = ((y < 0.0) ? -cosf(a2) : cosf(a2));
     pw.x = p2.x + getBreadth() * plane.x;
@@ -278,8 +271,7 @@ bool PyramidBuilding::isCrossing(const fvec3& p, float a,
 bool PyramidBuilding::getHitNormal(const fvec3& pos1, float,
                                    const fvec3& pos2, float,
                                    float, float, float height,
-                                   fvec3& normal) const
-{
+                                   fvec3& normal) const {
   // pyramids height and flipping
   // normalize height sign and report that in flip
   float oHeight = getHeight();
@@ -307,7 +299,8 @@ bool PyramidBuilding::getHitNormal(const fvec3& pos1, float,
     // base of higher object is over the plateau
     normal.z = 1;
     return true;
-  } else if (!flip && objLow + height < oBottom) {
+  }
+  else if (!flip && objLow + height < oBottom) {
     // top of lower object is below the base
     normal.z = -1;
     return true;
@@ -326,16 +319,16 @@ bool PyramidBuilding::getHitNormal(const fvec3& pos1, float,
   normal.y *= h * oHeight;
   normal.z  = h * getWidth();
 
-  if (flip)
+  if (flip) {
     normal.z = -normal.z;
+  }
   return true;
 }
 
 
-void PyramidBuilding::getCorner(int index, fvec3& _pos) const
-{
+void PyramidBuilding::getCorner(int index, fvec3& _pos) const {
   const fvec3& base = getPosition();
-  const float top= getHeight() + base.z;
+  const float top = getHeight() + base.z;
 
   fvec2 polarity;
 
@@ -363,8 +356,7 @@ void PyramidBuilding::getCorner(int index, fvec3& _pos) const
 }
 
 
-float PyramidBuilding::shrinkFactor(float z, float height) const
-{
+float PyramidBuilding::shrinkFactor(float z, float height) const {
   float shrink;
 
   // Normalize Height and flip to have height > 0
@@ -375,12 +367,13 @@ float PyramidBuilding::shrinkFactor(float z, float height) const
     oHeight = - oHeight;
   }
 
- // Remove heights bias
+// Remove heights bias
   const fvec3& _pos = getPosition();
   z -= _pos.z;
   if (oHeight <= ZERO_TOLERANCE) {
     shrink = 1.0f;
-  } else {
+  }
+  else {
     // Normalize heights
     z /= oHeight;
 
@@ -393,29 +386,30 @@ float PyramidBuilding::shrinkFactor(float z, float height) const
     // shrink is that
     if (flip) {
       shrink = z;
-    } else {
+    }
+    else {
       shrink = 1.0f - z;
     }
   }
 
   // clamp in 0 .. 1
-  if (shrink < 0.0)
+  if (shrink < 0.0) {
     shrink = 0.0;
-  else if (shrink > 1.0)
+  }
+  else if (shrink > 1.0) {
     shrink = 1.0;
+  }
 
   return shrink;
 }
 
 
-bool PyramidBuilding::isFlatTop() const
-{
+bool PyramidBuilding::isFlatTop() const {
   return getZFlip();
 }
 
 
-void* PyramidBuilding::pack(void* buf) const
-{
+void* PyramidBuilding::pack(void* buf) const {
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
   buf = nboPackFVec3(buf, size);
@@ -431,8 +425,7 @@ void* PyramidBuilding::pack(void* buf) const
 }
 
 
-void* PyramidBuilding::unpack(void* buf)
-{
+void* PyramidBuilding::unpack(void* buf) {
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFVec3(buf, size);
@@ -450,8 +443,7 @@ void* PyramidBuilding::unpack(void* buf)
 }
 
 
-int PyramidBuilding::packSize() const
-{
+int PyramidBuilding::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(fvec3);   // pos
   fullSize += sizeof(fvec3);   // size
@@ -461,23 +453,23 @@ int PyramidBuilding::packSize() const
 }
 
 
-void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
-{
+void PyramidBuilding::print(std::ostream& out, const std::string& indent) const {
   out << indent << "pyramid" << std::endl;
   const fvec3& _pos = getPosition();
   out << indent << "  position " << _pos.x << " " << _pos.y << " "
-				 << _pos.z << std::endl;
+      << _pos.z << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
-			     << " " << getHeight() << std::endl;
+      << " " << getHeight() << std::endl;
   out << indent << "  rotation " << (getRotation() * RAD2DEGf)
-				 << std::endl;
+      << std::endl;
   if (getZFlip()) {
     out << indent << "  flipz" << std::endl;
   }
 
   if (isPassable()) {
     out << indent << "  passable" << std::endl;
-  } else {
+  }
+  else {
     if (isDriveThrough()) {
       out << indent << "  drivethrough" << std::endl;
     }
@@ -493,23 +485,21 @@ void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
 }
 
 
-static void outputFloat(std::ostream& out, float value)
-{
+static void outputFloat(std::ostream& out, float value) {
   char buffer[32];
   snprintf(buffer, 30, " %.8f", value);
   out << buffer;
   return;
 }
 
-void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
-{
+void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const {
   int i;
   fvec3 verts[5] = {
     fvec3(-1.0f, -1.0f, 0.0f),
     fvec3(+1.0f, -1.0f, 0.0f),
     fvec3(+1.0f, +1.0f, 0.0f),
     fvec3(-1.0f, +1.0f, 0.0f),
-    fvec3( 0.0f,  0.0f, 1.0f)
+    fvec3(0.0f,  0.0f, 1.0f)
   };
   const float sqrt1_2 = (float)M_SQRT1_2;
   fvec3 norms[5] = {
@@ -520,9 +510,9 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
   const fvec3& s = getSize();
   const float k = 1.0f / 8.0f;
   fvec2 txcds[7] = {
-    fvec2(0.0f, 0.0f), fvec2(k*s.x, 0.0f), fvec2(k*s.x, k*s.y),
-    fvec2(0.0f, k*s.y), fvec2(0.5f*k*s.x, k*sqrtf(s.x*s.x+s.z*s.z)),
-    fvec2(k*s.y, 0.0f), fvec2(0.5f*k*s.y, k*sqrtf(s.y*s.y+s.z*s.z))
+    fvec2(0.0f, 0.0f), fvec2(k* s.x, 0.0f), fvec2(k* s.x, k* s.y),
+    fvec2(0.0f, k* s.y), fvec2(0.5f * k* s.x, k* sqrtf(s.x* s.x + s.z* s.z)),
+    fvec2(k* s.y, 0.0f), fvec2(0.5f * k* s.y, k* sqrtf(s.y* s.y + s.z* s.z))
   };
   MeshTransform xform;
   const float degrees = getRotation() * RAD2DEGf;
@@ -586,6 +576,6 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

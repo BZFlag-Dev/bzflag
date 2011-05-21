@@ -28,21 +28,19 @@ MenuDefaultKey MenuDefaultKey::instance;
 MenuDefaultKey::MenuDefaultKey() { }
 MenuDefaultKey::~MenuDefaultKey() { }
 
-MenuDefaultKey* MenuDefaultKey::getInstance()
-{
+MenuDefaultKey* MenuDefaultKey::getInstance() {
   return &instance;
 }
 
-bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool MenuDefaultKey::keyPress(const BzfKeyEvent& key) {
   switch (key.unicode) {
-    case 27:	// escape
-      SOUNDSYSTEM.play(SFX_DROP_FLAG,NULL,false,true);
+    case 27:  // escape
+      SOUNDSYSTEM.play(SFX_DROP_FLAG, NULL, false, true);
       HUDDialogStack::get()->pop();
       return true;
 
-    case 13:	// return
-      SOUNDSYSTEM.play(SFX_GRAB_FLAG,NULL,false,true);
+    case 13:  // return
+      SOUNDSYSTEM.play(SFX_GRAB_FLAG, NULL, false, true);
       HUDDialogStack::get()->top()->execute();
       return true;
   }
@@ -55,11 +53,10 @@ bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
   return false;
 }
 
-bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
+bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key) {
   switch (key.unicode) {
-    case 27:	// escape
-    case 13:	// return
+    case 27:  // escape
+    case 13:  // return
       return true;
   }
   return false;
@@ -70,6 +67,6 @@ bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

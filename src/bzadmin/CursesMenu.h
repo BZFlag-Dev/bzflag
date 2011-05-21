@@ -44,44 +44,44 @@ typedef void (*MenuCallback)(CursesMenu&);
     @see CursesMenu
 */
 class CursesMenuItem {
-public:
-  /** @c str is the text content of this item. It will be displayed in
-      the menu. */
-  CursesMenuItem(const std::string& str = "");
-  /** This destructor does nothing, but we need a virtual destructor since
-      we have virtual member functions. */
-  virtual ~CursesMenuItem();
-  /** This is the function that displays the menu item in the terminal.
-      @param menuWin  the curses window to display the item in
-      @param line     the line in the window that the item should be
-		      displayed on
-      @param col      the column in the window where the left edge of the
-		      item should be
-      @param width    the width of the item (in characters)
-      @param selected true if this item is selected, false if it is not
-  */
-  virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-			bool selected);
-  /** This function handles a key press. It is called when the menu is active,
-      this item is the selected item, and the user presses a key on the
-      keyboard. If the menu item wants to send a command to the server
-      it should put the command in @c str and return @c true, otherwise
-      it should return @c false.
-      @param c    the key code
-      @param str  if the menu item wants to send a command to the server it
-		  should be stored here
-      @param menu this is the menu that the item lives in, the menu item is
-		  allowed to modify it (e.g. to clear it and add new menu
-		  items if we want to go to a submenu)
-      @return     true if a command should be sent to the server, false if not
-  */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+  public:
+    /** @c str is the text content of this item. It will be displayed in
+        the menu. */
+    CursesMenuItem(const std::string& str = "");
+    /** This destructor does nothing, but we need a virtual destructor since
+        we have virtual member functions. */
+    virtual ~CursesMenuItem();
+    /** This is the function that displays the menu item in the terminal.
+        @param menuWin  the curses window to display the item in
+        @param line     the line in the window that the item should be
+            displayed on
+        @param col      the column in the window where the left edge of the
+            item should be
+        @param width    the width of the item (in characters)
+        @param selected true if this item is selected, false if it is not
+    */
+    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
+                          bool selected);
+    /** This function handles a key press. It is called when the menu is active,
+        this item is the selected item, and the user presses a key on the
+        keyboard. If the menu item wants to send a command to the server
+        it should put the command in @c str and return @c true, otherwise
+        it should return @c false.
+        @param c    the key code
+        @param str  if the menu item wants to send a command to the server it
+        should be stored here
+        @param menu this is the menu that the item lives in, the menu item is
+        allowed to modify it (e.g. to clear it and add new menu
+        items if we want to go to a submenu)
+        @return     true if a command should be sent to the server, false if not
+    */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
 
-  /** This function is called when the menu item is deselected. */
-  virtual void deselect();
+    /** This function is called when the menu item is deselected. */
+    virtual void deselect();
 
-protected:
-  std::string text;
+  protected:
+    std::string text;
 };
 
 
@@ -89,16 +89,16 @@ protected:
     receives an "enter" key press it goes to a submenu.
 */
 class SubmenuCMItem : public CursesMenuItem {
- public:
-  /** @c str is the text of this menu item, @c callback is the callback that
-      will be used as the new rebuilder function by the menu when this item
-      receives an "enter" key press. */
-  SubmenuCMItem(const std::string& str, MenuCallback callback);
-  /** If @c c is a key code for the enter key, this function will change
-      the rebuilder function of @c menu to @c cb. Other keys are ignored. */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
- protected:
-  MenuCallback cb;
+  public:
+    /** @c str is the text of this menu item, @c callback is the callback that
+        will be used as the new rebuilder function by the menu when this item
+        receives an "enter" key press. */
+    SubmenuCMItem(const std::string& str, MenuCallback callback);
+    /** If @c c is a key code for the enter key, this function will change
+        the rebuilder function of @c menu to @c cb. Other keys are ignored. */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+  protected:
+    MenuCallback cb;
 };
 
 
@@ -109,76 +109,76 @@ class SubmenuCMItem : public CursesMenuItem {
     @see MenuCallback
 */
 class CallbackCMItem : public CursesMenuItem {
- public:
-  /** @c str is the text of this menu item, @c callback is the callback that
-      will be called when the user presses enter and this item is selected. */
-  CallbackCMItem(const std::string& str, MenuCallback callback);
-  /** If @c c is a key code for the enter key, this function will call the
-      callback. If it's something else it will be ignored. */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
- protected:
-  MenuCallback cb;
+  public:
+    /** @c str is the text of this menu item, @c callback is the callback that
+        will be called when the user presses enter and this item is selected. */
+    CallbackCMItem(const std::string& str, MenuCallback callback);
+    /** If @c c is a key code for the enter key, this function will call the
+        callback. If it's something else it will be ignored. */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+  protected:
+    MenuCallback cb;
 };
 
 
 /** This menu item type just sends a command to the server when it received
     an enter key press. */
 class CommandCMItem : public CursesMenuItem {
-public:
-  /** @c str is the text that will be shown on the menu item, @c cmd is
-      the command that will be sent to the server. If @c update is true
-      the menu will be updated immediately after the user presses enter.
-  */
-  CommandCMItem(const std::string& str, const std::string& cmd,
-		bool update = false);
-  /** If @c c is a key code for the enter key, this function will put
-      the @c command in @c str and return @c false. If it's something
-      else it will be ignored. */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
-protected:
-  std::string command;
-  bool forceUpdate;
+  public:
+    /** @c str is the text that will be shown on the menu item, @c cmd is
+        the command that will be sent to the server. If @c update is true
+        the menu will be updated immediately after the user presses enter.
+    */
+    CommandCMItem(const std::string& str, const std::string& cmd,
+                  bool update = false);
+    /** If @c c is a key code for the enter key, this function will put
+        the @c command in @c str and return @c false. If it's something
+        else it will be ignored. */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+  protected:
+    std::string command;
+    bool forceUpdate;
 };
 
 
 /** This menu item type displays the value of a boolean variable and
     lets the user toggle it. */
 class BoolCMItem : public CursesMenuItem {
- public:
-  /** This creates a BoolCMItem which displays and edits the value of
-      the bool variable @c variable. @c trueText and @c falseText are
-      the values that are displayed when the variable is true or false. */
-  BoolCMItem(std::string name, bool& variable, std::string trueText = "true",
-	     std::string falseText = "false");
-  /** This function displays the name of the variable and it's value. */
-  virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-			bool selected);
-  /** This function handles key presses from the user. Space toggles the
-      variable value, any other key is ignored. */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
- protected:
-  bool& varRef;
-  std::string trueTxt, falseTxt;
+  public:
+    /** This creates a BoolCMItem which displays and edits the value of
+        the bool variable @c variable. @c trueText and @c falseText are
+        the values that are displayed when the variable is true or false. */
+    BoolCMItem(std::string name, bool& variable, std::string trueText = "true",
+               std::string falseText = "false");
+    /** This function displays the name of the variable and it's value. */
+    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
+                          bool selected);
+    /** This function handles key presses from the user. Space toggles the
+        variable value, any other key is ignored. */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+  protected:
+    bool& varRef;
+    std::string trueTxt, falseTxt;
 };
 
 
 /** This menu item type displays the filter status of a message type and
     lets the user toggle it. */
 class FilterCMItem : public CursesMenuItem {
- public:
-  /** This creates a FilterCMItem which displays and edits the filter status
-      of the message type @c msgType in the client @c client. */
-  FilterCMItem(const std::string& msgType, BZAdminClient& c);
-  /** This function displays the name of the message type and it's status. */
-  virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-			bool selected);
-  /** This function handles key presses from the user. Space toggles the
-      variable value, any other key is ignored. */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
- protected:
-  std::string messageType;
-  BZAdminClient& client;
-  uint16_t numMsgType;
+  public:
+    /** This creates a FilterCMItem which displays and edits the filter status
+        of the message type @c msgType in the client @c client. */
+    FilterCMItem(const std::string& msgType, BZAdminClient& c);
+    /** This function displays the name of the message type and it's status. */
+    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
+                          bool selected);
+    /** This function handles key presses from the user. Space toggles the
+        variable value, any other key is ignored. */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+  protected:
+    std::string messageType;
+    BZAdminClient& client;
+    uint16_t numMsgType;
 };
 
 
@@ -186,38 +186,38 @@ class FilterCMItem : public CursesMenuItem {
     the user edit it. It doesn't know if the player has permission to
     edit the values, but if not the server will complain. */
 class BZDBCMItem : public CursesMenuItem {
-public:
-  /** This creates a BZDBCMItem which displays the variable with the name
-      @c variable. */
-  BZDBCMItem(const std::string& variable);
-  /** This function displays the name and the value of this item's
-      BZDB variable. */
-  virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-			bool selected);
-  /** This function handles key presses when this item is selected. It has code
-      that allows the user to edit the value of this items BZDB variable.
-      When the user has edited the value and hits the enter key, a @c /set
-      command will be placed in @c str and @c true will be returned. */
-  virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
-  /** This stops editing the variable value without touching BZDB
-      (same effect as when the user hits the escape key). */
-  virtual void deselect();
-protected:
-  bool editing;
-  std::string editString;
+  public:
+    /** This creates a BZDBCMItem which displays the variable with the name
+        @c variable. */
+    BZDBCMItem(const std::string& variable);
+    /** This function displays the name and the value of this item's
+        BZDB variable. */
+    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
+                          bool selected);
+    /** This function handles key presses when this item is selected. It has code
+        that allows the user to edit the value of this items BZDB variable.
+        When the user has edited the value and hits the enter key, a @c /set
+        command will be placed in @c str and @c true will be returned. */
+    virtual bool handleKey(int c, std::string& str, CursesMenu& menu);
+    /** This stops editing the variable value without touching BZDB
+        (same effect as when the user hits the escape key). */
+    virtual void deselect();
+  protected:
+    bool editing;
+    std::string editString;
 };
 
 
 /** This menu item type displays information about a player. In the future it
     might also allow the user to ban and kick the player. */
 class PlayerCMItem : public CursesMenuItem {
-public:
-  PlayerCMItem(const PlayerIdMap& players, PlayerId playerId);
-  virtual void showItem(WINDOW* menuWin, int line, int col, int width,
-			bool selected);
-protected:
-  const PlayerIdMap& playerMap;
-  PlayerId id;
+  public:
+    PlayerCMItem(const PlayerIdMap& players, PlayerId playerId);
+    virtual void showItem(WINDOW* menuWin, int line, int col, int width,
+                          bool selected);
+  protected:
+    const PlayerIdMap& playerMap;
+    PlayerId id;
 };
 
 
@@ -229,69 +229,69 @@ protected:
     @see CursesMenuItem
 */
 class CursesMenu {
-public:
+  public:
 
-  /** CursesUI is our friend. (ugly, should be done differently) */
-  friend class CursesUI;
+    /** CursesUI is our friend. (ugly, should be done differently) */
+    friend class CursesUI;
 
-  CursesMenu(BZAdminClient& c);
+    CursesMenu(BZAdminClient& c);
 
-  /** This is needed to delete the dynamically allocated
-      CursesMenuItem objects. */
-  ~CursesMenu();
+    /** This is needed to delete the dynamically allocated
+        CursesMenuItem objects. */
+    ~CursesMenu();
 
-  /** This function changes the menu header. */
-  void setHeader(const std::string& newHeader);
+    /** This function changes the menu header. */
+    void setHeader(const std::string& newHeader);
 
-  /** This function adds an item to the menu. The item has to be
-      dynamically allocated, and this CursesMenu object will delete the
-      item when it's no longer used. */
-  void addItem(CursesMenuItem* item);
+    /** This function adds an item to the menu. The item has to be
+        dynamically allocated, and this CursesMenu object will delete the
+        item when it's no longer used. */
+    void addItem(CursesMenuItem* item);
 
-  /** This function clears the menu (removes and deletes all items). */
-  void clear();
+    /** This function clears the menu (removes and deletes all items). */
+    void clear();
 
-  /** This function shows the menu. */
-  void showMenu();
+    /** This function shows the menu. */
+    void showMenu();
 
-  /** This function handles a key. If the key generates a command that should
-      be sent to the server that command will be places in @c str and @c true
-      will be returned. */
-  bool handleKey(int c, std::string& str);
+    /** This function handles a key. If the key generates a command that should
+        be sent to the server that command will be places in @c str and @c true
+        will be returned. */
+    bool handleKey(int c, std::string& str);
 
-  /** Set the curses window that this menu will be displayed in. */
-  void setWindow(WINDOW* win);
+    /** Set the curses window that this menu will be displayed in. */
+    void setWindow(WINDOW* win);
 
-  /** Sets the callback function that is used to update this menu. */
-  void setUpdateCallback(MenuCallback cb);
+    /** Sets the callback function that is used to update this menu. */
+    void setUpdateCallback(MenuCallback cb);
 
-  /** Force the menu to update itself using the current rebuilder function
-      next time it gets the chance. */
-  void forceUpdate();
+    /** Force the menu to update itself using the current rebuilder function
+        next time it gets the chance. */
+    void forceUpdate();
 
-  /** This function updates the menu if neccessary. */
-  void rebuild();
+    /** This function updates the menu if neccessary. */
+    void rebuild();
 
-  /** Return a reference to the map of message types that will cause the menu
-      to redraw itself. If the associated @c bool is true, the menu will also
-      be completely rebuilt (menu items can be removed or added). */
-  std::map<uint16_t, bool>& getUpdateTypes();
+    /** Return a reference to the map of message types that will cause the menu
+        to redraw itself. If the associated @c bool is true, the menu will also
+        be completely rebuilt (menu items can be removed or added). */
+    std::map<uint16_t, bool>& getUpdateTypes();
 
-  /** This function updates the menu if @c msgType is in the set of message
-      types that will cause the menu to update. */
-  void handleNewPacket(uint16_t msgType);
+    /** This function updates the menu if @c msgType is in the set of message
+        types that will cause the menu to update. */
+    void handleNewPacket(uint16_t msgType);
 
-protected:
+  protected:
 
-  std::string header;
-  std::vector<CursesMenuItem*> items;
-  int selection;
-  WINDOW* window;
-  MenuCallback rebuilder;
-  BZAdminClient& client;
-  const PlayerIdMap& players;
-  bool dirty;
-  std::map<uint16_t, bool> updateOnMsg;
+    std::string header;
+    std::vector<CursesMenuItem*> items;
+    int selection;
+    WINDOW* window;
+    MenuCallback rebuilder;
+    BZAdminClient& client;
+    const PlayerIdMap& players;
+    bool dirty;
+    std::map<uint16_t, bool> updateOnMsg;
 };
 
 #endif
@@ -301,6 +301,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

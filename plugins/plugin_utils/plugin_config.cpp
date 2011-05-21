@@ -26,8 +26,7 @@
  * Default section if none is specified is [global]
  */
 
-PluginConfig::PluginConfig(const std::string &filename)
-{
+PluginConfig::PluginConfig(const std::string& filename) {
   configFilename = filename;
   whitespace = " \t\r";
   errors = 0;
@@ -35,17 +34,15 @@ PluginConfig::PluginConfig(const std::string &filename)
   parse();
 }
 
-std::string PluginConfig::item(const std::string &section, const std::string &key)
-{
-  std::string s = section,k = key;
+std::string PluginConfig::item(const std::string& section, const std::string& key) {
+  std::string s = section, k = key;
   makelower(s);
   makelower(k);
 
   return sections[s][k];
 }
 
-void PluginConfig::parse(void)
-{
+void PluginConfig::parse(void) {
   std::string line;
   std::string section;
   std::string key;
@@ -89,11 +86,11 @@ void PluginConfig::parse(void)
       /* Check if the last non whitespace character is a close bracket */
       end = line.find_last_not_of(whitespace);
       if (line[end] == ']') {
-	end = line.find_last_not_of(whitespace, end - 1);
-	/* Got a section header - save it */
-	section = line.substr(start, end - start + 1);
-	bz_debugMessagef(4, "PluginConfig: Found section [%s]", section.c_str());
-	continue;
+        end = line.find_last_not_of(whitespace, end - 1);
+        /* Got a section header - save it */
+        section = line.substr(start, end - start + 1);
+        bz_debugMessagef(4, "PluginConfig: Found section [%s]", section.c_str());
+        continue;
       }
       /*
        * We either got a valid section or we have a
@@ -112,8 +109,9 @@ void PluginConfig::parse(void)
 
     /* If there is no '=' sign then ignore the line - treated as a comment */
     if (equalPos == std::string::npos) {
-      if (line.find_first_not_of(whitespace) != std::string::npos)
-	bz_debugMessagef(1, "PluginConfig: Malformed line ignored: %s", line.c_str());
+      if (line.find_first_not_of(whitespace) != std::string::npos) {
+        bz_debugMessagef(1, "PluginConfig: Malformed line ignored: %s", line.c_str());
+      }
       continue;
     }
 
@@ -124,10 +122,12 @@ void PluginConfig::parse(void)
     /* Extract the value */
     start = line.find_first_not_of(whitespace, equalPos + 1);
     end = line.find_last_not_of(whitespace);
-    if (start == std::string::npos || end == std::string::npos)
+    if (start == std::string::npos || end == std::string::npos) {
       value = "";
-    else
+    }
+    else {
       value = line.substr(start, end - start + 1);
+    }
 
     makelower(key);
     makelower(section);
@@ -144,6 +144,6 @@ void PluginConfig::parse(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

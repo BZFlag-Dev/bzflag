@@ -43,18 +43,17 @@ AccessList* LuaHTTPMgr::accessList = NULL;
 //============================================================================//
 
 LuaHTTP::LuaHTTP(lua_State* LS, const std::string& _url)
-: httpL(LS)
-, active(false)
-, success(false)
-, fileSize(-1.0)
-, fileRemoteSize(-1.0)
-, fileTime(0)
-, httpCode(0)
-, url(_url)
-, postData("")
-, funcRef(LUA_NOREF)
-, selfRef(LUA_NOREF)
-{
+  : httpL(LS)
+  , active(false)
+  , success(false)
+  , fileSize(-1.0)
+  , fileRemoteSize(-1.0)
+  , fileTime(0)
+  , httpCode(0)
+  , url(_url)
+  , postData("")
+  , funcRef(LUA_NOREF)
+  , selfRef(LUA_NOREF) {
   selfRef = luaL_ref(httpL, LUA_REGISTRYINDEX);
 
   long timeout = 0;
@@ -72,45 +71,45 @@ LuaHTTP::LuaHTTP(lua_State* LS, const std::string& _url)
     funcArg++;
     for (lua_pushnil(httpL); lua_next(httpL, table) != 0; lua_pop(httpL, 1)) {
       if (lua_israwstring(httpL, -2)) {
-	const std::string key = lua_tostring(httpL, -2);
-	if (key == "post") {
-	  postData = luaL_checkstring(httpL, -1);
-	}
-	else if (key == "timeout") {
-	  timeout = (long)luaL_checkint(httpL, -1);
-	}
-	else if (key == "noBody") {
-	  luaL_checktype(httpL, -1, LUA_TBOOLEAN);
-	  if (lua_tobool(httpL, -1)) {
-	    noBody = true;
-	  }
-	}
-	else if (key == "header") {
-	  luaL_checktype(httpL, -1, LUA_TBOOLEAN);
-	  if (lua_tobool(httpL, -1)) {
-	    header = true;
-	  }
-	}
-	else if (key == "failOnError") {
-	  luaL_checktype(httpL, -1, LUA_TBOOLEAN);
-	  if (lua_tobool(httpL, -1)) {
-	    setFailOnError();
-	  }
-	}
-	else if (key == "httpHeader") {
-	  if (lua_israwstring(httpL, -1)) {
-	    httpHeaders.push_back(lua_tostring(httpL, -1));
-	  }
-	  else if (lua_type(httpL, -1) == LUA_TTABLE) {
-	    const int t = lua_gettop(httpL);
-	    for (int i = 1; lua_checkgeti(httpL, t, i) != 0; lua_pop(httpL, 1), i++) {
-	      httpHeaders.push_back(luaL_checkstring(httpL, -1));
-	    }
-	  }
-	  else {
-	    luaL_error(httpL, "'httpHeaders' expects a string or table");
-	  }
-	}
+        const std::string key = lua_tostring(httpL, -2);
+        if (key == "post") {
+          postData = luaL_checkstring(httpL, -1);
+        }
+        else if (key == "timeout") {
+          timeout = (long)luaL_checkint(httpL, -1);
+        }
+        else if (key == "noBody") {
+          luaL_checktype(httpL, -1, LUA_TBOOLEAN);
+          if (lua_tobool(httpL, -1)) {
+            noBody = true;
+          }
+        }
+        else if (key == "header") {
+          luaL_checktype(httpL, -1, LUA_TBOOLEAN);
+          if (lua_tobool(httpL, -1)) {
+            header = true;
+          }
+        }
+        else if (key == "failOnError") {
+          luaL_checktype(httpL, -1, LUA_TBOOLEAN);
+          if (lua_tobool(httpL, -1)) {
+            setFailOnError();
+          }
+        }
+        else if (key == "httpHeader") {
+          if (lua_israwstring(httpL, -1)) {
+            httpHeaders.push_back(lua_tostring(httpL, -1));
+          }
+          else if (lua_type(httpL, -1) == LUA_TTABLE) {
+            const int t = lua_gettop(httpL);
+            for (int i = 1; lua_checkgeti(httpL, t, i) != 0; lua_pop(httpL, 1), i++) {
+              httpHeaders.push_back(luaL_checkstring(httpL, -1));
+            }
+          }
+          else {
+            luaL_error(httpL, "'httpHeaders' expects a string or table");
+          }
+        }
       }
     }
   }
@@ -154,8 +153,7 @@ LuaHTTP::LuaHTTP(lua_State* LS, const std::string& _url)
 }
 
 
-LuaHTTP::~LuaHTTP()
-{
+LuaHTTP::~LuaHTTP() {
   logDebugMessage(6, "LuaHTTP: deleting %s userdata\n", url.c_str());
   if (active) {
     removeHandle();
@@ -164,8 +162,7 @@ LuaHTTP::~LuaHTTP()
 }
 
 
-void LuaHTTP::ClearRefs()
-{
+void LuaHTTP::ClearRefs() {
   if (funcRef != LUA_NOREF) {
     luaL_unref(httpL, LUA_REGISTRYINDEX, funcRef);
     funcRef = LUA_NOREF;
@@ -177,8 +174,7 @@ void LuaHTTP::ClearRefs()
 }
 
 
-void LuaHTTP::finalization(char* data, unsigned int length, bool good)
-{
+void LuaHTTP::finalization(char* data, unsigned int length, bool good) {
   active = false;
 
   good = good && (data != NULL);
@@ -229,14 +225,13 @@ void LuaHTTP::finalization(char* data, unsigned int length, bool good)
   // call the function
   if (lua_pcall(httpL, args, 0, 0) != 0) {
     logDebugMessage(0, "LuaHTTP callback error (%s): %s\n",
-		    url.c_str(), lua_tostring(httpL, -1));
+                    url.c_str(), lua_tostring(httpL, -1));
     lua_pop(httpL, 1);
   }
 }
 
 
-bool LuaHTTP::Cancel()
-{
+bool LuaHTTP::Cancel() {
   if (!active) {
     return false;
   }
@@ -247,8 +242,7 @@ bool LuaHTTP::Cancel()
 }
 
 
-bool LuaHTTP::PushFunc(lua_State* L) const
-{
+bool LuaHTTP::PushFunc(lua_State* L) const {
   if (httpL != L) {
     return false;
   }
@@ -261,8 +255,7 @@ bool LuaHTTP::PushFunc(lua_State* L) const
 }
 
 
-time_t LuaHTTP::GetFileTime()
-{
+time_t LuaHTTP::GetFileTime() {
   if (!active) {
     return fileTime;
   }
@@ -270,8 +263,7 @@ time_t LuaHTTP::GetFileTime()
   return getFileTime(tmp) ? tmp : 0;
 }
 
-double LuaHTTP::GetFileSize()
-{
+double LuaHTTP::GetFileSize() {
   if (!active) {
     return fileSize;
   }
@@ -280,8 +272,7 @@ double LuaHTTP::GetFileSize()
 }
 
 
-double LuaHTTP::GetFileRemoteSize()
-{
+double LuaHTTP::GetFileRemoteSize() {
   if (!active) {
     return fileRemoteSize;
   }
@@ -290,8 +281,7 @@ double LuaHTTP::GetFileRemoteSize()
 }
 
 
-bool LuaHTTP::GetFileData(unsigned int offset, std::string& data) const
-{
+bool LuaHTTP::GetFileData(unsigned int offset, std::string& data) const {
   if (!theData || (theLen < offset)) {
     return false;
   }
@@ -307,8 +297,7 @@ bool LuaHTTP::GetFileData(unsigned int offset, std::string& data) const
 //  LuaHTTPMgr
 //
 
-bool LuaHTTPMgr::PushEntries(lua_State* L)
-{
+bool LuaHTTPMgr::PushEntries(lua_State* L) {
   CreateMetatable(L);
 
   PUSH_LUA_CFUNC(L, Fetch);
@@ -330,8 +319,7 @@ bool LuaHTTPMgr::PushEntries(lua_State* L)
 }
 
 
-void LuaHTTPMgr::SetAccessList(AccessList* list)
-{
+void LuaHTTPMgr::SetAccessList(AccessList* list) {
   accessList = list;
 }
 
@@ -339,20 +327,17 @@ void LuaHTTPMgr::SetAccessList(AccessList* list)
 //============================================================================//
 //============================================================================//
 
-const LuaHTTP* LuaHTTPMgr::TestHTTP(lua_State* L, int index)
-{
+const LuaHTTP* LuaHTTPMgr::TestHTTP(lua_State* L, int index) {
   return (LuaHTTP*)luaL_testudata(L, index, metaName);
 }
 
 
-const LuaHTTP* LuaHTTPMgr::CheckHTTP(lua_State* L, int index)
-{
+const LuaHTTP* LuaHTTPMgr::CheckHTTP(lua_State* L, int index) {
   return (LuaHTTP*)luaL_checkudata(L, index, metaName);
 }
 
 
-LuaHTTP* LuaHTTPMgr::GetURL(lua_State* L, int index)
-{
+LuaHTTP* LuaHTTPMgr::GetURL(lua_State* L, int index) {
   return (LuaHTTP*)luaL_testudata(L, index, metaName);
 }
 
@@ -360,8 +345,7 @@ LuaHTTP* LuaHTTPMgr::GetURL(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-bool LuaHTTPMgr::CreateMetatable(lua_State* L)
-{
+bool LuaHTTPMgr::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
 
   luaset_strfunc(L, "__gc",       MetaGC);
@@ -392,16 +376,14 @@ bool LuaHTTPMgr::CreateMetatable(lua_State* L)
 }
 
 
-int LuaHTTPMgr::MetaGC(lua_State* L)
-{
+int LuaHTTPMgr::MetaGC(lua_State* L) {
   LuaHTTP* fetch = GetURL(L, 1);
   fetch->~LuaHTTP();
   return 0;
 }
 
 
-int LuaHTTPMgr::MetaToString(lua_State* L)
-{
+int LuaHTTPMgr::MetaToString(lua_State* L) {
   LuaHTTP* fetch = GetURL(L, 1);
   lua_pushfstring(L, "http(%p,%s)", (void*)fetch, fetch->GetURL().c_str());
   return 1;
@@ -411,8 +393,7 @@ int LuaHTTPMgr::MetaToString(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int ParseURL(lua_State* L, const std::string& url, std::string& hostname)
-{
+static int ParseURL(lua_State* L, const std::string& url, std::string& hostname) {
   std::string protocol, path;
   int port;
   if (!BzfNetwork::parseURL(url, protocol, hostname, port, path)) {
@@ -432,8 +413,7 @@ static int ParseURL(lua_State* L, const std::string& url, std::string& hostname)
 //============================================================================//
 //============================================================================//
 
-int LuaHTTPMgr::Fetch(lua_State* L)
-{
+int LuaHTTPMgr::Fetch(lua_State* L) {
   std::string url = luaL_checkstring(L, 1);
 
   // default to http
@@ -463,7 +443,7 @@ int LuaHTTPMgr::Fetch(lua_State* L)
   lua_setmetatable(L, -2);
 
   lua_pushvalue(L, -1); // push a copy of the userdata for
-			// the LuaHTTP constructor to reference
+  // the LuaHTTP constructor to reference
 
   LuaHTTP* fetch = new(data) LuaHTTP(L, url);
   if (!fetch->GetActive()) {
@@ -478,48 +458,42 @@ int LuaHTTPMgr::Fetch(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaHTTPMgr::Cancel(lua_State* L)
-{
+int LuaHTTPMgr::Cancel(lua_State* L) {
   LuaHTTP* fetch = GetURL(L, 1);
   lua_pushboolean(L, fetch->Cancel());
   return 1;
 }
 
 
-int LuaHTTPMgr::Length(lua_State* L)
-{
+int LuaHTTPMgr::Length(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushinteger(L, fetch->GetLength());
   return 1;
 }
 
 
-int LuaHTTPMgr::Success(lua_State* L)
-{
+int LuaHTTPMgr::Success(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushboolean(L, fetch->GetSuccess());
   return 1;
 }
 
 
-int LuaHTTPMgr::IsActive(lua_State* L)
-{
+int LuaHTTPMgr::IsActive(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushboolean(L, fetch->GetActive());
   return 1;
 }
 
 
-int LuaHTTPMgr::GetURL(lua_State* L)
-{
+int LuaHTTPMgr::GetURL(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
   lua_pushstdstring(L, fetch->GetURL());
   return 1;
 }
 
 
-int LuaHTTPMgr::GetPostData(lua_State* L)
-{
+int LuaHTTPMgr::GetPostData(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
   const std::string& postData = fetch->GetPostData();
   if (postData.empty()) {
@@ -530,8 +504,7 @@ int LuaHTTPMgr::GetPostData(lua_State* L)
 }
 
 
-int LuaHTTPMgr::GetCallback(lua_State* L)
-{
+int LuaHTTPMgr::GetCallback(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
   if (!fetch->PushFunc(L)) {
     return luaL_pushnil(L);
@@ -540,24 +513,21 @@ int LuaHTTPMgr::GetCallback(lua_State* L)
 }
 
 
-int LuaHTTPMgr::GetFileSize(lua_State* L)
-{
+int LuaHTTPMgr::GetFileSize(lua_State* L) {
   LuaHTTP* fetch = const_cast<LuaHTTP*>(CheckHTTP(L, 1));
   LuaDouble::PushDouble(L, fetch->GetFileSize());
   return 1;
 }
 
 
-int LuaHTTPMgr::GetFileRemoteSize(lua_State* L)
-{
+int LuaHTTPMgr::GetFileRemoteSize(lua_State* L) {
   LuaHTTP* fetch = const_cast<LuaHTTP*>(CheckHTTP(L, 1));
   LuaDouble::PushDouble(L, fetch->GetFileRemoteSize());
   return 1;
 }
 
 
-int LuaHTTPMgr::GetFileTime(lua_State* L)
-{
+int LuaHTTPMgr::GetFileTime(lua_State* L) {
   LuaHTTP* fetch = const_cast<LuaHTTP*>(CheckHTTP(L, 1));
 
   const time_t t = fetch->GetFileTime();
@@ -579,8 +549,7 @@ int LuaHTTPMgr::GetFileTime(lua_State* L)
 }
 
 
-int LuaHTTPMgr::GetFileData(lua_State* L)
-{
+int LuaHTTPMgr::GetFileData(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
 
   double offset = 0.0;
@@ -600,8 +569,7 @@ int LuaHTTPMgr::GetFileData(lua_State* L)
 }
 
 
-int LuaHTTPMgr::GetHttpCode(lua_State* L)
-{
+int LuaHTTPMgr::GetHttpCode(lua_State* L) {
   const LuaHTTP* fetch = CheckHTTP(L, 1);
 
   const long code = fetch->GetHttpCode();
@@ -611,8 +579,7 @@ int LuaHTTPMgr::GetHttpCode(lua_State* L)
 }
 
 
-int LuaHTTPMgr::TestAccess(lua_State* L)
-{
+int LuaHTTPMgr::TestAccess(lua_State* L) {
   const std::string hostname = luaL_checkstring(L, 1);
   if ((accessList == NULL) || accessList->alwaysAuthorized()) {
     lua_pushboolean(L, 1);
@@ -634,7 +601,7 @@ int LuaHTTPMgr::TestAccess(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
 

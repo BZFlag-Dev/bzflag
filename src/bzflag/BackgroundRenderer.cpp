@@ -42,9 +42,9 @@ static const fvec3 squareShape[4] = {
 };
 
 
-fvec3			BackgroundRenderer::skyPyramid[5];
-const float		BackgroundRenderer::cloudRepeats = 3.0f;
-static const int	NumMountainFaces = 16;
+fvec3     BackgroundRenderer::skyPyramid[5];
+const float   BackgroundRenderer::cloudRepeats = 3.0f;
+static const int  NumMountainFaces = 16;
 
 fvec4 BackgroundRenderer::groundColor[4];
 fvec4 BackgroundRenderer::groundColorInv[4];
@@ -66,17 +66,16 @@ const fvec4 BackgroundRenderer::receiverColorInv = fvec4(0.55f, 0.3f, 0.55f, 1.0
 
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
-: blank(false)
-, invert(false)
-, style(0)
-, gridSpacing(60.0f)	// meters
-, gridCount(4.0f)
-, mountainsAvailable(false)
-, numMountainTextures(0)
-, mountainsGState(NULL)
-, cloudDriftU(0.0f)
-, cloudDriftV(0.0f)
-{
+  : blank(false)
+  , invert(false)
+  , style(0)
+  , gridSpacing(60.0f)  // meters
+  , gridCount(4.0f)
+  , mountainsAvailable(false)
+  , numMountainTextures(0)
+  , mountainsGState(NULL)
+  , cloudDriftU(0.0f)
+  , cloudDriftV(0.0f) {
   static bool init = false;
   OpenGLGStateBuilder gstate;
   static const fvec4 black(0.0f, 0.0f, 0.0f, 1.0f);
@@ -92,7 +91,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
   sunXFormList = _INVALID_LIST;
   moonList = _INVALID_LIST;
   starXFormList = _INVALID_LIST;
-  lowGroundList	= DisplayListSystem::Instance().newList(this);
+  lowGroundList = DisplayListSystem::Instance().newList(this);
   mediumGroundList = DisplayListSystem::Instance().newList(this);
   cloudsList = DisplayListSystem::Instance().newList(this);
   // initialize global to class stuff
@@ -110,7 +109,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
   setupSkybox();
   setupGroundMaterials();
 
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
 
   // make grid stuff
   gstate.reset();
@@ -148,7 +147,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
 
   // make cloud stuff
   cloudsAvailable = false;
-  int cloudsTexture = tm.getTextureID( "clouds" );
+  int cloudsTexture = tm.getTextureID("clouds");
   if (cloudsTexture >= 0) {
     cloudsAvailable = true;
     gstate.reset();
@@ -174,39 +173,40 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
     numMountainTextures = 0;
     do {
       char text[256];
-      sprintf (text, "mountain%d", numMountainTextures + 1);
-      mountainTexture = tm.getTextureID (text, (numMountainTextures == 0));
+      sprintf(text, "mountain%d", numMountainTextures + 1);
+      mountainTexture = tm.getTextureID(text, (numMountainTextures == 0));
       if (mountainTexture >= 0) {
-	const ImageInfo & info = tm.getInfo (mountainTexture);
-	height = info.y;
-	width += info.x;
-	numMountainTextures++;
+        const ImageInfo& info = tm.getInfo(mountainTexture);
+        height = info.y;
+        width += info.x;
+        numMountainTextures++;
       }
-    } while (mountainTexture >= 0);
+    }
+    while (mountainTexture >= 0);
 
     if (numMountainTextures > 0) {
       mountainsAvailable = true;
 
       // prepare common gstate
-      gstate.reset ();
-      gstate.setShading ();
-      gstate.setBlending ();
-      gstate.setMaterial (defaultMaterial, RENDERER.useQuality() > _LOW_QUALITY);
-      gstate.setAlphaFunc ();
+      gstate.reset();
+      gstate.setShading();
+      gstate.setBlending();
+      gstate.setMaterial(defaultMaterial, RENDERER.useQuality() > _LOW_QUALITY);
+      gstate.setAlphaFunc();
 
       if (numMountainTextures > 1) {
-	width -= 2 * numMountainTextures;
+        width -= 2 * numMountainTextures;
       }
       // find power of two at least as large as height
       int scaledHeight = 1;
       while (scaledHeight < height) {
-	scaledHeight <<= 1;
+        scaledHeight <<= 1;
       }
 
       // choose minimum width
       int minWidth = scaledHeight;
       if (minWidth > scaledHeight) {
-	minWidth = scaledHeight;
+        minWidth = scaledHeight;
       }
       mountainsMinWidth = minWidth;
 
@@ -214,11 +214,11 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
       mountainsGState = new OpenGLGState[numMountainTextures];
       mountanLists.clear();
       for (i = 0; i < numMountainTextures; i++) {
-	char text[256];
-	sprintf (text, "mountain%d", i + 1);
-	gstate.setTexture (tm.getTextureID (text));
-	mountainsGState[i] = gstate.getState ();
-	mountanLists.push_back(DisplayListSystem::Instance().newList(this));
+        char text[256];
+        sprintf(text, "mountain%d", i + 1);
+        gstate.setTexture(tm.getTextureID(text));
+        mountainsGState[i] = gstate.getState();
+        mountanLists.push_back(DisplayListSystem::Instance().newList(this));
       }
     }
   }
@@ -232,9 +232,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&)
 }
 
 
-BackgroundRenderer::~BackgroundRenderer()
-{
-  DisplayListSystem &ds = DisplayListSystem::Instance();
+BackgroundRenderer::~BackgroundRenderer() {
+  DisplayListSystem& ds = DisplayListSystem::Instance();
 
   ds.freeList(sunXFormList);
   ds.freeList(moonList);
@@ -242,8 +241,9 @@ BackgroundRenderer::~BackgroundRenderer()
   ds.freeList(lowGroundList);
   ds.freeList(mediumGroundList);
   ds.freeList(cloudsList);
-  for ( unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++ )
+  for (unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
     ds.freeList(mountanLists[i]);
+  }
 
   mountanLists.clear();
 
@@ -252,19 +252,19 @@ BackgroundRenderer::~BackgroundRenderer()
 }
 
 
-void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
-{
+void BackgroundRenderer::bzdbCallback(const std::string& name, void* data) {
   BackgroundRenderer* br = (BackgroundRenderer*) data;
-  if (name == "_skyColor")
+  if (name == "_skyColor") {
     br->setSkyColors();
-  else if (name == "_cloudHeightMult")
+  }
+  else if (name == "_cloudHeightMult") {
     br->resetCloudList();
+  }
   return;
 }
 
 
-void BackgroundRenderer::resetCloudList()
-{
+void BackgroundRenderer::resetCloudList() {
   if (cloudsList > 0) {
     DisplayListSystem::Instance().freeList(cloudsList);
     cloudsList = DisplayListSystem::Instance().newList(this);
@@ -272,9 +272,8 @@ void BackgroundRenderer::resetCloudList()
 }
 
 
-void BackgroundRenderer::setupGroundMaterials()
-{
-  TextureManager &tm = TextureManager::instance();
+void BackgroundRenderer::setupGroundMaterials() {
+  TextureManager& tm = TextureManager::instance();
 
   // see if we have a map specified material
   const BzMaterial* bzmat = MATERIALMGR.findMaterial("GroundMaterial");
@@ -286,7 +285,8 @@ void BackgroundRenderer::setupGroundMaterials()
     // default ground material
     memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
     groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
-  } else {
+  }
+  else {
     // map specified material
     ((BzMaterial*)bzmat)->setReference();
     for (int i = 0; i < 4; i++) {
@@ -295,16 +295,17 @@ void BackgroundRenderer::setupGroundMaterials()
     if (bzmat->getTextureCount() > 0) {
       groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0), false);
       if (groundTextureID < 0) {
-	// use the default as a backup (default color too)
-	memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
-	groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
-      } else {
-	// only apply the texture matrix if the texture is valid
-	const int texMatId = bzmat->getTextureMatrix(0);
-	const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
-	if (texmat != NULL) {
-	  groundTextureMatrix = texmat->getMatrix();
-	}
+        // use the default as a backup (default color too)
+        memcpy(groundColor, defaultGroundColor, sizeof(fvec4[4]));
+        groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture"), true);
+      }
+      else {
+        // only apply the texture matrix if the texture is valid
+        const int texMatId = bzmat->getTextureMatrix(0);
+        const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
+        if (texmat != NULL) {
+          groundTextureMatrix = texmat->getMatrix();
+        }
       }
     }
   }
@@ -357,11 +358,11 @@ void BackgroundRenderer::setupGroundMaterials()
 }
 
 
-void BackgroundRenderer::notifyStyleChange()
-{
+void BackgroundRenderer::notifyStyleChange() {
   if (BZDBCache::texture) {
     styleIndex = BZDBCache::lighting ? 3 : 2;
-  } else {
+  }
+  else {
     styleIndex = BZDBCache::lighting ? 1 : 0;
   }
 
@@ -382,16 +383,14 @@ void BackgroundRenderer::notifyStyleChange()
 }
 
 
-void BackgroundRenderer::resize()
-{
+void BackgroundRenderer::resize() {
   resizeSky();
 }
 
 
 void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
-				      const float sunDir[3],
-				      const float moonDir[3])
-{
+                                      const float sunDir[3],
+                                      const float moonDir[3]) {
   // set sun and moon positions
   sunDirection[0] = sunDir[0];
   sunDirection[1] = sunDir[1];
@@ -406,10 +405,10 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
 }
 
 
-void BackgroundRenderer::buildMountain(unsigned int index)
-{
-  if (numMountainTextures == 0)
+void BackgroundRenderer::buildMountain(unsigned int index) {
+  if (numMountainTextures == 0) {
     return;
+  }
 
   float worldSize = BZDBCache::worldSize;
 
@@ -426,8 +425,9 @@ void BackgroundRenderer::buildMountain(unsigned int index)
     for (i = 0; i <= numFacesPerTexture; i++) {
       const float angle = angleScale * (float)(i + n);
       float frac = (float)i / (float)numFacesPerTexture;
-      if (numMountainTextures != 1)
-	frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
+      if (numMountainTextures != 1) {
+        frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
+      }
       glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
       glTexCoord2f(frac, 0.02f);
       glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.0f);
@@ -441,21 +441,21 @@ void BackgroundRenderer::buildMountain(unsigned int index)
       const float angle = (float)(M_PI + angleScale * (double)(i + n));
       float frac = (float)i / (float)numFacesPerTexture;
 
-      if (numMountainTextures != 1)
-	frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
+      if (numMountainTextures != 1) {
+        frac = (frac * (float)(mountainsMinWidth - 2) + 1.0f) / (float)mountainsMinWidth;
+      }
 
       glNormal3f((float)(-M_SQRT1_2 * cosf(angle)), (float)(-M_SQRT1_2 * sinf(angle)), (float)M_SQRT1_2);
       glTexCoord2f(frac, 0.02f);
       glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle),  0.0f);
       glTexCoord2f(frac, 0.99f);
-      glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.45f * worldSize*hightScale);
+      glVertex3f(2.25f * worldSize * cosf(angle), 2.25f * worldSize * sinf(angle), 0.45f * worldSize * hightScale);
     }
   } glEnd();
 }
 
 
-void BackgroundRenderer::setSkyColors()
-{
+void BackgroundRenderer::setSkyColors() {
   // change sky colors according to the sun position
   fvec4 colors[4];
   Daylight::getSkyColor(sunDirection, colors);
@@ -467,8 +467,7 @@ void BackgroundRenderer::setSkyColors()
 }
 
 
-void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
-{
+void BackgroundRenderer::buildGeometry(GLDisplayList displayList) {
   if (!lastRenderer) {
     return;
   }
@@ -509,7 +508,7 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
   float xtexdist, ytexdist;
   fvec2 vec;
 
-#define GROUND_DIVS	(4)	//FIXME -- seems to be enough
+#define GROUND_DIVS (4) //FIXME -- seems to be enough
 
   xmax = groundPlane[0].x;
   ymax = groundPlane[0].y;
@@ -545,15 +544,15 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
   if (displayList == sunXFormList) {
     glPushMatrix();
     glRotatef((float)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
-	      0.0f, 0.0f, 1.0f);
+              0.0f, 0.0f, 1.0f);
     glRotatef((float)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
 
     glBegin(GL_TRIANGLE_FAN); {
       glVertex3f(2.0f * worldSize, 0.0f, 0.0f);
       for (int i = 0; i < 20; i++) {
-	const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
-	glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
-		   sunRadius * cosf(angle));
+        const float angle = (float)(2.0 * M_PI * double(i) / 19.0);
+        glVertex3f(2.0f * worldSize, sunRadius * sinf(angle),
+                   sunRadius * cosf(angle));
       }
     } glEnd();
 
@@ -569,15 +568,15 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
     glBegin(GL_TRIANGLE_STRIP); {
       // glTexCoord2f(0,-1);
       glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);
-      for (int i = 0; i < moonSegements-1; i++) {
-	const float angle = (float)(0.5 * M_PI * double(i-(moonSegements/2)-1) / (moonSegements/2.0));
-	float sinAngle = sinf(angle);
-	float cosAngle = cosf(angle);
-	// glTexCoord2f(coverage*cosAngle,sinAngle);
-	glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle,moonRadius * sinAngle);
+      for (int i = 0; i < moonSegements - 1; i++) {
+        const float angle = (float)(0.5 * M_PI * double(i - (moonSegements / 2) - 1) / (moonSegements / 2.0));
+        float sinAngle = sinf(angle);
+        float cosAngle = cosf(angle);
+        // glTexCoord2f(coverage*cosAngle,sinAngle);
+        glVertex3f(2.0f * worldSize, coverage * moonRadius * cosAngle, moonRadius * sinAngle);
 
-	// glTexCoord2f(cosAngle,sinAngle);
-	glVertex3f(2.0f * worldSize, moonRadius * cosAngle,moonRadius * sinAngle);
+        // glTexCoord2f(cosAngle,sinAngle);
+        glVertex3f(2.0f * worldSize, moonRadius * cosAngle, moonRadius * sinAngle);
       }
       // glTexCoord2f(0,1);
       glVertex3f(2.0f * worldSize, 0.0f, moonRadius);
@@ -592,8 +591,8 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 
     glBegin(GL_POINTS); {
       for (int i = 0; i < (int)NumStars; i++) {
-	glColor3fv(stars[i]);
-	glVertex3fv(stars[i] + 3);
+        glColor3fv(stars[i]);
+        glVertex3fv(stars[i] + 3);
       }
     } glEnd();
 
@@ -608,22 +607,22 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
 
       glBegin(GL_TRIANGLE_STRIP); {
 
-	glTexCoord2f(xtexmin, ytexoff + ytexdist);
-	glVertex2f(xmin, yoff + ydist);
-	glTexCoord2f(xtexmin, ytexoff);
-	glVertex2f(xmin, yoff);
+        glTexCoord2f(xtexmin, ytexoff + ytexdist);
+        glVertex2f(xmin, yoff + ydist);
+        glTexCoord2f(xtexmin, ytexoff);
+        glVertex2f(xmin, yoff);
 
-	for (int j = 0; j < GROUND_DIVS; j++) {
-	  float xoff, xtexoff;
+        for (int j = 0; j < GROUND_DIVS; j++) {
+          float xoff, xtexoff;
 
-	  xoff = xmin + xdist * (float)(j + 1);
-	  xtexoff = xtexmin + xtexdist * (float)(j + 1);
+          xoff = xmin + xdist * (float)(j + 1);
+          xtexoff = xtexmin + xtexdist * (float)(j + 1);
 
-	  glTexCoord2f(xtexoff, ytexoff + ytexdist);
-	  glVertex2f(xoff, yoff + ydist);
-	  glTexCoord2f(xtexoff, ytexoff);
-	  glVertex2f(xoff, yoff);
-	}
+          glTexCoord2f(xtexoff, ytexoff + ytexdist);
+          glVertex2f(xoff, yoff + ydist);
+          glTexCoord2f(xtexoff, ytexoff);
+          glVertex2f(xoff, yoff);
+        }
       } glEnd();
     }
   }
@@ -674,15 +673,14 @@ void BackgroundRenderer::buildGeometry(GLDisplayList displayList)
     // check for mountans
     for (unsigned int i = 0; i < (unsigned int)mountanLists.size(); i++) {
       if (displayList == mountanLists[i]) {
-	buildMountain(i);
+        buildMountain(i);
       }
     }
   }
 }
 
 
-void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
-{
+void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer) {
   setSkyColors();
 
   lastRenderer = (SceneRenderer*)&renderer;
@@ -693,7 +691,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   doSunset  = Daylight::getSunsetTop(sunDirection, sunsetTop);
 
   // make pretransformed display list for sun
-  DisplayListSystem &ds = DisplayListSystem::Instance();
+  DisplayListSystem& ds = DisplayListSystem::Instance();
 
   ds.freeList(sunXFormList);
   sunXFormList = ds.newList(this);
@@ -708,26 +706,25 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::addCloudDrift(float uDrift, float vDrift)
-{
+void BackgroundRenderer::addCloudDrift(float uDrift, float vDrift) {
   cloudDriftU += 0.01f * uDrift / cloudRepeats;
   cloudDriftV += 0.01f * vDrift / cloudRepeats;
-  if (cloudDriftU > 1.0f) cloudDriftU -= 1.0f;
-  else if (cloudDriftU < 0.0f) cloudDriftU += 1.0f;
-  if (cloudDriftV > 1.0f) cloudDriftV -= 1.0f;
-  else if (cloudDriftV < 0.0f) cloudDriftV += 1.0f;
+  if (cloudDriftU > 1.0f) { cloudDriftU -= 1.0f; }
+  else if (cloudDriftU < 0.0f) { cloudDriftU += 1.0f; }
+  if (cloudDriftV > 1.0f) { cloudDriftV -= 1.0f; }
+  else if (cloudDriftV < 0.0f) { cloudDriftV += 1.0f; }
 }
 
 
 void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
-				   bool mirror)
-{
+                                   bool mirror) {
   if (!BZDBCache::drawSky || GfxBlockMgr::sky.blocked()) {
     return;
   }
   if (renderer.useQuality() > _LOW_QUALITY) {
     drawSky(renderer, mirror);
-  } else {
+  }
+  else {
     // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
     // to draw solid color sky and ground.
     MainWindow& window = renderer.getWindow();
@@ -747,20 +744,26 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 
     // draw ground -- first get the color (assume it's all green)
     float _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-    if (fullWindow && viewType == SceneRenderer::ThreeChannel)
+    if (fullWindow && viewType == SceneRenderer::ThreeChannel) {
       glScissor(x, y, width, height >> 1);
-    else if (fullWindow && viewType == SceneRenderer::Stacked)
+    }
+    else if (fullWindow && viewType == SceneRenderer::Stacked) {
       glScissor(x, y, width, height >> 1);
+    }
 #ifndef USE_GL_STEREO
-    else if (fullWindow && viewType == SceneRenderer::Stereo)
+    else if (fullWindow && viewType == SceneRenderer::Stereo) {
       glScissor(x, y, width, height >> 1);
+    }
 #endif
-    else
+    else {
       glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-    if (invert)
+    }
+    if (invert) {
       glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
-    else
+    }
+    else {
       glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
+    }
     glClear(GL_COLOR_BUFFER_BIT);
 
     // back to normal
@@ -772,8 +775,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 }
 
 
-void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow)
-{
+void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow) {
   if (renderer.useQuality() > _LOW_QUALITY) {
     drawGround();
     return;
@@ -815,7 +817,8 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow)
 
   if (invert) {
     glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
-  } else {
+  }
+  else {
     glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
   }
 
@@ -830,8 +833,7 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer, bool fullWindow)
 
 
 void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
-					     bool drawingMirror)
-{
+                                             bool drawingMirror) {
   // zbuffer should be disabled.  either everything is coplanar with
   // the ground or is drawn back to front and is occluded by everything
   // drawn after it.  also use projection with very far clipping plane.
@@ -852,16 +854,17 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
-	!drawingMirror && BZDBCache::drawGroundLights &&
-	GfxBlockMgr::lights.notBlocked()) {
+        !drawingMirror && BZDBCache::drawGroundLights &&
+        GfxBlockMgr::lights.notBlocked()) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= _HIGH_QUALITY)) {
-	//	  (BZDB.get(BZDBNAMES.FOGMODE) == "none")) {
-	// not really tesselation, but it is tied to the "Best" lighting,
-	// avoid on foggy maps, because the blending function accumulates
-	// too much brightness.
-	drawAdvancedGroundReceivers(renderer);
-      } else {
-	drawGroundReceivers(renderer);
+        //    (BZDB.get(BZDBNAMES.FOGMODE) == "none")) {
+        // not really tesselation, but it is tied to the "Best" lighting,
+        // avoid on foggy maps, because the blending function accumulates
+        // too much brightness.
+        drawAdvancedGroundReceivers(renderer);
+      }
+      else {
+        drawGroundReceivers(renderer);
       }
     }
   }
@@ -885,7 +888,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
       glPushMatrix();
       glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
       DisplayListSystem::Instance().callList(cloudsList);
-      glLoadIdentity();	// maybe works around bug in some systems
+      glLoadIdentity(); // maybe works around bug in some systems
       glPopMatrix();
       glMatrixMode(GL_MODELVIEW);
     }
@@ -893,8 +896,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 }
 
 
-void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
-{
+void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update) {
   if (blank) {
     return;
   }
@@ -928,8 +930,7 @@ void BackgroundRenderer::resizeSky() {
 }
 
 
-void BackgroundRenderer::setupSkybox()
-{
+void BackgroundRenderer::setupSkybox() {
   haveSkybox = false;
 
   int i;
@@ -960,8 +961,8 @@ void BackgroundRenderer::setupSkybox()
   if (i != 6) {
     while (i >= 0) {
       if ((bzmats[i] != NULL) && (bzmats[i]->getTextureCount() > 0)) {
-	// NOTE: this could delete textures the might be used elsewhere
-	tm.removeTexture(bzmats[i]->getTextureLocal(0));
+        // NOTE: this could delete textures the might be used elsewhere
+        tm.removeTexture(bzmats[i]->getTextureLocal(0));
       }
       i--;
     }
@@ -985,7 +986,7 @@ void BackgroundRenderer::setupSkybox()
     for (int c = 0; c < 4; c++) {
       skyboxColor[i][c] = 0.0f;
       for (int f = 0; f < 3; f++) {
-	skyboxColor[i][c] += bzmats[cornerFaces[i][f]]->getDiffuse()[c];
+        skyboxColor[i][c] += bzmats[cornerFaces[i][f]]->getDiffuse()[c];
       }
       skyboxColor[i][c] /= 3.0f;
     }
@@ -997,14 +998,13 @@ void BackgroundRenderer::setupSkybox()
 }
 
 
-void BackgroundRenderer::drawSkybox()
-{
+void BackgroundRenderer::drawSkybox() {
   // sky box must fit inside far clipping plane
   // (adjusted for the deepProjection matrix)
   const float d = 3.0f * BZDBCache::worldSize;
   const float verts[8][3] = {
-    {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
-    {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
+    { -d, -d, -d}, { +d, -d, -d}, { +d, +d, -d}, { -d, +d, -d},
+    { -d, -d, +d}, { +d, -d, +d}, { +d, +d, +d}, { -d, +d, +d}
   };
   const float txcds[4][2] = {
     {1.0f, 0.0f}, {0.0f, 0.0f},
@@ -1089,8 +1089,7 @@ void BackgroundRenderer::drawSkybox()
 }
 
 
-void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
-{
+void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror) {
   glPushMatrix();
 
   const bool doSkybox = haveSkybox && (renderer.useQuality() >= _HIGH_QUALITY);
@@ -1099,29 +1098,30 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     // rotate sky so that horizon-point-toward-sun-color is actually
     // toward the sun
     glRotatef((float)((atan2f(sunDirection[1], sunDirection[0]) * 180.0 + 135.0) / M_PI),
-	      0.0f, 0.0f, 1.0f);
+              0.0f, 0.0f, 1.0f);
 
     // draw sky
     skyGState.setState();
     if (!doSunset) {
       // just a pyramid
       glBegin(GL_TRIANGLE_FAN); {
-	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+        glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
-    } else {
+    }
+    else {
       // overall shape is a pyramid, but the solar sides are two
       // triangles each.  the top triangle is all zenith color,
       // the bottom goes from zenith to sun-dir color.
       glBegin(GL_TRIANGLE_FAN); {
-	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyAntiSunDirColor);  glVertex3fv(skyPyramid[1]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
       } glEnd();
 
       float sunsetTopPoint[3];
@@ -1129,18 +1129,18 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
       sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
       sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
       glBegin(GL_TRIANGLES); {
-	glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
-	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
-	                                 glVertex3fv(skyPyramid[4]);
-	                                 glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
-	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
-	glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
-	glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
-	glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyZenithColor);      glVertex3fv(skyPyramid[4]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+        glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+        glVertex3fv(skyPyramid[4]);
+        glVertex3fv(sunsetTopPoint);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[0]);
+        glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
+        glColor3fv(skyCrossSunDirColor); glVertex3fv(skyPyramid[2]);
+        glColor3fv(skyZenithColor);      glVertex3fv(sunsetTopPoint);
+        glColor3fv(skySunDirColor);      glVertex3fv(skyPyramid[3]);
       } glEnd();
     }
   }
@@ -1163,7 +1163,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     drawSkybox();
   }
 
-  DisplayListSystem &ds = DisplayListSystem::Instance();
+  DisplayListSystem& ds = DisplayListSystem::Instance();
 
   if (drawCelestial) {
     if (sunDirection[2] > -0.009f) {
@@ -1194,8 +1194,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 }
 
 
-void BackgroundRenderer::drawGround()
-{
+void BackgroundRenderer::drawGround() {
   if (!BZDBCache::drawGround || GfxBlockMgr::ground.blocked()) {
     return;
   }
@@ -1204,12 +1203,14 @@ void BackgroundRenderer::drawGround()
   if (invert) {
     glColor4fv(groundColorInv[styleIndex]);
     invGroundGState[styleIndex].setState();
-  } else {
+  }
+  else {
     fvec4 color;
     if (BZDB.isSet("groundOverrideColor") &&
         parseColorString(BZDB.get("groundOverrideColor"), color)) {
       glColor4fv(color);
-    } else {
+    }
+    else {
       glColor4fv(groundColor[styleIndex]);
     }
     groundGState[styleIndex].setState();
@@ -1227,8 +1228,7 @@ void BackgroundRenderer::drawGround()
 }
 
 
-void BackgroundRenderer::drawGroundCentered()
-{
+void BackgroundRenderer::drawGroundCentered() {
   const float groundSize = 10.0f * BZDBCache::worldSize;
   const float centerSize = 128.0f;
 
@@ -1278,8 +1278,7 @@ void BackgroundRenderer::drawGroundCentered()
 }
 
 
-void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
-{
+void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer) {
   const fvec3& pos = renderer.getViewFrustum().getEye();
   const float xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
   const float yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
@@ -1290,8 +1289,8 @@ void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
   gridGState.setState();
 
   // x lines
-  if (doShadows) glColor3f(0.0f, 0.75f, 0.5f);
-  else glColor3f(0.0f, 0.4f, 0.3f);
+  if (doShadows) { glColor3f(0.0f, 0.75f, 0.5f); }
+  else { glColor3f(0.0f, 0.4f, 0.3f); }
   glBegin(GL_LINES); {
     for (i = -xhalf; i <= xhalf; i += gridSpacing) {
       glVertex2f(x0 + i, y0 - yhalf);
@@ -1300,8 +1299,8 @@ void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
   } glEnd();
 
   // z lines
-  if (doShadows) glColor3f(0.5f, 0.75f, 0.0f);
-  else glColor3f(0.3f, 0.4f, 0.0f);
+  if (doShadows) { glColor3f(0.5f, 0.75f, 0.0f); }
+  else { glColor3f(0.3f, 0.4f, 0.0f); }
   glBegin(GL_LINES); {
     for (i = -yhalf; i <= yhalf; i += gridSpacing) {
       glVertex2f(x0 - xhalf, y0 + i);
@@ -1311,8 +1310,7 @@ void BackgroundRenderer::drawGroundGrid(SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::multShadowMatrix() const
-{
+void BackgroundRenderer::multShadowMatrix() const {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
   static float shadowProjection[16] = {
@@ -1327,8 +1325,7 @@ void BackgroundRenderer::multShadowMatrix() const
 }
 
 
-void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
-{
+void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer) {
   // draw sun shadows -- stippled or stencilled so that overlapping shadows
   // don't accumulate darkness. make and multiply by shadow projection matrix.
   multShadowMatrix();
@@ -1395,11 +1392,10 @@ void BackgroundRenderer::drawGroundShadows(SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
-{
+void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer) {
   static const int receiverRings = 4;
   static const int receiverSlices = 8;
-  static const float receiverRingSize = 1.2f;	// meters
+  static const float receiverRingSize = 1.2f; // meters
   static fvec2 angle[receiverSlices + 1];
 
   static bool init = false;
@@ -1447,8 +1443,8 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     // maximum value
     const float maxVal =
       (lightColor.r > lightColor.g) ?
-       ((lightColor.r > lightColor.b) ? lightColor.r : lightColor.b) :
-       ((lightColor.g > lightColor.b) ? lightColor.g : lightColor.b);
+      ((lightColor.r > lightColor.b) ? lightColor.r : lightColor.b) :
+        ((lightColor.g > lightColor.b) ? lightColor.g : lightColor.b);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < 0.02f) {
@@ -1473,7 +1469,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       color.a = I;
       glColor4fv(color);
       for (j = 0; j <= receiverSlices; j++) {
-	glVertex2fv(receiverRingSize * angle[j]);
+        glVertex2fv(receiverRingSize * angle[j]);
       }
     } glEnd();
     triangleCount += receiverSlices;
@@ -1489,23 +1485,24 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       float innerAlpha = I;
 
       if (i + 1 == receiverRings) {
-	I = 0.0f;
-      } else {
-	d = hypotf(outerSize, pos[2]);
-	I = B / (atten[0] + d * (atten[1] + d * atten[2]));
-	I *= pos[2] / d;
+        I = 0.0f;
+      }
+      else {
+        d = hypotf(outerSize, pos[2]);
+        I = B / (atten[0] + d * (atten[1] + d * atten[2]));
+        I *= pos[2] / d;
       }
       float outerAlpha = I;
 
       glBegin(GL_QUAD_STRIP); {
-	for (j = 0; j <= receiverSlices; j++) {
-	  color.a = innerAlpha;
-	  glColor4fv(color);
-	  glVertex2fv(innerSize * angle[j]);
-	  color.a = outerAlpha;
-	  glColor4fv(color);
-	  glVertex2fv(outerSize * angle[j]);
-	}
+        for (j = 0; j <= receiverSlices; j++) {
+          color.a = innerAlpha;
+          glColor4fv(color);
+          glVertex2fv(innerSize * angle[j]);
+          color.a = outerAlpha;
+          glColor4fv(color);
+          glVertex2fv(outerSize * angle[j]);
+        }
       } glEnd();
     }
     triangleCount += (receiverSlices * receiverRings * 2);
@@ -1520,8 +1517,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
-{
+void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer) {
   static const float minLuminance = 0.01f;
   static const int   receiverSlices = 32;
   static const float receiverRingSize = 0.5f; // meters
@@ -1611,9 +1607,9 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
     // maximum value
     const float maxVal =
-       (baseColor.r > baseColor.g) ?
+      (baseColor.r > baseColor.g) ?
       ((baseColor.r > baseColor.b) ? baseColor.r : baseColor.b) :
-      ((baseColor.g > baseColor.b) ? baseColor.g : baseColor.b);
+        ((baseColor.g > baseColor.b) ? baseColor.g : baseColor.b);
 
     // if I is too attenuated, don't bother drawing anything
     if ((I * maxVal) < minLuminance) {
@@ -1642,7 +1638,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       glColor3fv(outerColor);
       outerSize = receiverRingSize;
       for (j = 0; j <= receiverSlices; j++) {
-	glVertex2fv(outerSize * angle[j]);
+        glVertex2fv(outerSize * angle[j]);
       }
     } glEnd();
     triangleCount += receiverSlices;
@@ -1659,18 +1655,18 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
       I *= pos[2] / d; // diffuse angle factor
       if ((I * maxVal) < minLuminance) {
-	I = 0.0f;
-	moreRings = false; // bail after this ring
+        I = 0.0f;
+        moreRings = false; // bail after this ring
       }
       outerColor = I * baseColor;
 
       glBegin(GL_QUAD_STRIP); {
-	for (j = 0; j <= receiverSlices; j++) {
-	  glColor3fv(innerColor);
-	  glVertex2fv(innerSize * angle[j]);
-	  glColor3fv(outerColor);
-	  glVertex2fv(outerSize * angle[j]);
-	}
+        for (j = 0; j <= receiverSlices; j++) {
+          glColor3fv(innerColor);
+          glVertex2fv(innerSize * angle[j]);
+          glColor3fv(outerColor);
+          glVertex2fv(outerSize * angle[j]);
+        }
       } glEnd();
     }
     triangleCount += (receiverSlices * 2 * (i - 2));
@@ -1690,8 +1686,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 }
 
 
-void BackgroundRenderer::drawMountains(void)
-{
+void BackgroundRenderer::drawMountains(void) {
   glColor3f(1.0f, 1.0f, 1.0f);
   for (int i = 0; i < numMountainTextures; i++) {
     mountainsGState[i].setState();
@@ -1700,11 +1695,11 @@ void BackgroundRenderer::drawMountains(void)
 }
 
 
-const fvec3* BackgroundRenderer::getSunDirection() const
-{
+const fvec3* BackgroundRenderer::getSunDirection() const {
   if (Daylight::areShadowsCast(sunDirection)) {
     return &sunDirection;
-  } else {
+  }
+  else {
     return NULL;
   }
 }
@@ -1714,6 +1709,6 @@ const fvec3* BackgroundRenderer::getSunDirection() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

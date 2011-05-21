@@ -27,40 +27,34 @@
 //============================================================================//
 //============================================================================//
 
-MapInfo::MapInfo()
-{
+MapInfo::MapInfo() {
 }
 
 
-MapInfo::MapInfo(const InfoVec& lines)
-{
+MapInfo::MapInfo(const InfoVec& lines) {
   infoVec = lines;
   finalize();
 }
 
 
-MapInfo::~MapInfo()
-{
+MapInfo::~MapInfo() {
 }
 
 
-void MapInfo::clear()
-{
+void MapInfo::clear() {
   infoVec.clear();
   infoMap.clear();
 }
 
 
-void MapInfo::setLines(const InfoVec& lines)
-{
+void MapInfo::setLines(const InfoVec& lines) {
   clear();
   infoVec = lines;
   finalize();
 }
 
 
-static bool ParseKeyValue(const std::string& line, std::string& key, std::string& value)
-{
+static bool ParseKeyValue(const std::string& line, std::string& key, std::string& value) {
   const char* c = line.c_str();
 
   // find the start
@@ -102,8 +96,7 @@ static bool ParseKeyValue(const std::string& line, std::string& key, std::string
 }
 
 
-void MapInfo::finalize()
-{
+void MapInfo::finalize() {
   infoMap.clear();
   for (size_t i = 0; i < infoVec.size(); i++) {
     std::string key, value;
@@ -114,8 +107,7 @@ void MapInfo::finalize()
 }
 
 
-const std::vector<std::string>* MapInfo::getValue(const std::string& key) const
-{
+const std::vector<std::string>* MapInfo::getValue(const std::string& key) const {
   InfoMap::const_iterator it = infoMap.find(key);
   if (it == infoMap.end()) {
     return NULL;
@@ -127,8 +119,7 @@ const std::vector<std::string>* MapInfo::getValue(const std::string& key) const
 //============================================================================//
 //============================================================================//
 
-int MapInfo::packSize() const
-{
+int MapInfo::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(uint32_t);
   for (uint32_t i = 0; i < infoVec.size(); i++) {
@@ -138,8 +129,7 @@ int MapInfo::packSize() const
 }
 
 
-void* MapInfo::pack(void* buf) const
-{
+void* MapInfo::pack(void* buf) const {
   uint32_t count = (uint32_t)infoVec.size();
   buf = nboPackUInt32(buf, count);
   for (uint32_t i = 0; i < count; i++) {
@@ -149,8 +139,7 @@ void* MapInfo::pack(void* buf) const
 }
 
 
-void* MapInfo::unpack(void* buf)
-{
+void* MapInfo::unpack(void* buf) {
   infoVec.clear();
   uint32_t count;
   buf = nboUnpackUInt32(buf, count);
@@ -164,8 +153,7 @@ void* MapInfo::unpack(void* buf)
 }
 
 
-void MapInfo::print(std::ostream& out, const std::string& indent) const
-{
+void MapInfo::print(std::ostream& out, const std::string& indent) const {
   if (infoVec.empty()) {
     return;
   }
@@ -185,6 +173,6 @@ void MapInfo::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

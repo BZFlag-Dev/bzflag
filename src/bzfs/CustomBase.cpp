@@ -22,8 +22,7 @@
 #include "ObstacleMgr.h"
 
 
-CustomBase::CustomBase()
-{
+CustomBase::CustomBase() {
   pos = fvec3(0.0f, 0.0f, 0.0f);
   rotation = 0.0f;
   size.x = size.y = BZDB.eval(BZDBNAMES.BASESIZE);
@@ -34,17 +33,19 @@ CustomBase::CustomBase()
 }
 
 
-bool CustomBase::read(const char *cmd, std::istream& input) {
+bool CustomBase::read(const char* cmd, std::istream& input) {
   if ((strcasecmp(cmd, "team")  == 0) ||
       (strcasecmp(cmd, "color") == 0)) {
     input >> color;
     if ((color <= 0) || (color >= CtfTeams)) {
       return false;
     }
-  } else if (strcasecmp(cmd, "oncap") == 0) {
+  }
+  else if (strcasecmp(cmd, "oncap") == 0) {
     triggerWorldWep = true;
     input >> worldWepType;
-  } else {
+  }
+  else {
     if (!WorldFileObstacle::read(cmd, input)) {
       return false;
     }
@@ -53,8 +54,7 @@ bool CustomBase::read(const char *cmd, std::istream& input) {
 }
 
 
-void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomBase::writeToGroupDef(GroupDefinition* groupdef) const {
   const fvec3 absSize(fabsf(size.x), fabsf(size.y), fabsf(size.z));
   BaseBuilding* base = new BaseBuilding(pos, rotation, absSize, color, ricochet);
   base->setName(name.c_str());
@@ -72,6 +72,6 @@ void CustomBase::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

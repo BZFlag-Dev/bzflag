@@ -21,54 +21,54 @@ class NetMessage;
 
 
 class Score {
-public:
-  Score();
+  public:
+    Score();
 
-  void  dump() const;
+    void  dump() const;
 
-  /** Take into account the quality of player wins/(wins+loss)
-      Try to penalize winning casuality
-  */
-  float ranking() const;
-  bool  isTK() const;
-  void  tK();
-  void  killedBy();
-  void  kill();
-  void *pack(void *buf) const;
-  void pack(NetMessage& netMsg) const;
+    /** Take into account the quality of player wins/(wins+loss)
+        Try to penalize winning casuality
+    */
+    float ranking() const;
+    bool  isTK() const;
+    void  tK();
+    void  killedBy();
+    void  kill();
+    void* pack(void* buf) const;
+    void pack(NetMessage& netMsg) const;
 
-  bool  reached() const {
-    return wins - losses >= score;
-  }
-  int	getWins() const {
-    return wins;
-  }
-  int	getLosses() const {
-    return losses;
-  }
-  int	getTKs() const {
-    return tks;
-  }
-  int   getHandicap() const {
-    return losses - wins;
-  }
+    bool  reached() const {
+      return wins - losses >= score;
+    }
+    int getWins() const {
+      return wins;
+    }
+    int getLosses() const {
+      return losses;
+    }
+    int getTKs() const {
+      return tks;
+    }
+    int   getHandicap() const {
+      return losses - wins;
+    }
 
-  void	setWins(int v){wins = v;}
-  void	setLosses(int v){losses = v;}
-  void	setTKs(int v){tks = v;}
+    void  setWins(int v) {wins = v;}
+    void  setLosses(int v) {losses = v;}
+    void  setTKs(int v) {tks = v;}
 
-  static void setTeamKillRatio(int _tkKickRatio);
-  static void setWinLimit(int _score);
-  static void setRandomRanking();
+    static void setTeamKillRatio(int _tkKickRatio);
+    static void setWinLimit(int _score);
+    static void setRandomRanking();
 
-private:
-  // player's score
-  int wins, losses, tks;
+  private:
+    // player's score
+    int wins, losses, tks;
 
-  // Tk index
-  static float tkKickRatio;
-  static int   score;
-  static bool  randomRanking;
+    // Tk index
+    static float tkKickRatio;
+    static int   score;
+    static bool  randomRanking;
 
 };
 
@@ -78,6 +78,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

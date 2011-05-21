@@ -16,16 +16,16 @@
 #include "bzfsAPI.h"
 #include "PlayerState.h"
 
-void initPlugins ( void );
+void initPlugins(void);
 
-bool loadPlugin ( std::string plugin, std::string config );
-bool unloadPlugin ( std::string plugin );
-void unloadPlugins ( void );
+bool loadPlugin(std::string plugin, std::string config);
+bool unloadPlugin(std::string plugin);
+void unloadPlugins(void);
 
-bool registerCustomPluginHandler ( std::string extension, bz_APIPluginHandler *handler );
-bool removeCustomPluginHandler ( std::string extension, bz_APIPluginHandler *handler );
+bool registerCustomPluginHandler(std::string extension, bz_APIPluginHandler* handler);
+bool removeCustomPluginHandler(std::string extension, bz_APIPluginHandler* handler);
 
-std::vector<std::string> getPluginList ( void );
+std::vector<std::string> getPluginList(void);
 
 extern std::string lastPluginDir;
 
@@ -35,6 +35,6 @@ extern std::string lastPluginDir;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

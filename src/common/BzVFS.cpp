@@ -39,17 +39,15 @@ BzVFS bzVFS;
 
 #ifndef WIN32
 
-  static int bzMkdir(const std::string& path)
-  {
-    return mkdir(path.c_str(), 0755);
-  }
+static int bzMkdir(const std::string& path) {
+  return mkdir(path.c_str(), 0755);
+}
 
-  typedef struct stat bzstat_t;
+typedef struct stat bzstat_t;
 
-  static int bzStat(const std::string& path, bzstat_t* buf)
-  {
-    return stat(path.c_str(), buf);
-  }
+static int bzStat(const std::string& path, bzstat_t* buf) {
+  return stat(path.c_str(), buf);
+}
 
 #else // WIN32
 
@@ -60,23 +58,21 @@ BzVFS bzVFS;
 #    define S_ISREG(m) (((m) & _S_IFREG) != 0)
 #  endif
 
-  static int bzMkdir(const std::string& path)
-  {
-    return mkdir(path.c_str());
-  }
+static int bzMkdir(const std::string& path) {
+  return mkdir(path.c_str());
+}
 
-  typedef struct _stat bzstat_t;
+typedef struct _stat bzstat_t;
 
-  static int bzStat(const std::string& path, bzstat_t* buf)
-  {
-    // Windows sucks yet again, if there is a trailing  "/"
-    // at the end of the filename, _stat will return -1.
-    std::string p = path;
-    while (p.find_last_of('/') == (p.size() - 1)) {
-      p.resize(p.size() - 1);
-    }
-    return _stat(p.c_str(), buf);
+static int bzStat(const std::string& path, bzstat_t* buf) {
+  // Windows sucks yet again, if there is a trailing  "/"
+  // at the end of the filename, _stat will return -1.
+  std::string p = path;
+  while (p.find_last_of('/') == (p.size() - 1)) {
+    p.resize(p.size() - 1);
   }
+  return _stat(p.c_str(), buf);
+}
 
 #endif // WIN32
 
@@ -84,8 +80,7 @@ BzVFS bzVFS;
 //============================================================================//
 //============================================================================//
 
-static std::string backSlashToFrontSlash(const std::string& path)
-{
+static std::string backSlashToFrontSlash(const std::string& path) {
   std::string p = path;
   std::replace(p.begin(), p.end(), '\\', '/');
   return p;
@@ -98,8 +93,7 @@ static std::string backSlashToFrontSlash(const std::string& path)
 //  Utility functions
 //
 
-static bool bzFileExists(const std::string& path)
-{
+static bool bzFileExists(const std::string& path) {
   bzstat_t statbuf;
   if (bzStat(path, &statbuf) != 0) {
     return false;
@@ -108,8 +102,7 @@ static bool bzFileExists(const std::string& path)
 }
 
 
-static int bzFileSize(const std::string& path)
-{
+static int bzFileSize(const std::string& path) {
   bzstat_t statbuf;
   if (bzStat(path, &statbuf) != 0) {
     return -1;
@@ -118,8 +111,7 @@ static int bzFileSize(const std::string& path)
 }
 
 
-static bool bzReadFile(const std::string& path, std::string& data)
-{
+static bool bzReadFile(const std::string& path, std::string& data) {
   const int size = bzFileSize(path);
   if (size < 0) {
     return false;
@@ -146,8 +138,7 @@ static bool bzReadFile(const std::string& path, std::string& data)
 
 
 static bool bzWriteFile(const std::string& path,
-                        const std::string& data, const char* mode)
-{
+                        const std::string& data, const char* mode) {
   FILE* file = fopen(path.c_str(), mode);
   if (file == NULL) {
     return false;
@@ -161,8 +152,7 @@ static bool bzWriteFile(const std::string& path,
 //============================================================================//
 //============================================================================//
 
-bool BzVFS::createPathDirs(const std::string& root, const std::string& path)
-{
+bool BzVFS::createPathDirs(const std::string& root, const std::string& path) {
   if (path.empty()) {
     return false;
   }
@@ -189,8 +179,7 @@ bool BzVFS::createPathDirs(const std::string& root, const std::string& path)
 //  Raw FS
 //
 
-class RawFS : public BzFS
-{
+class RawFS : public BzFS {
   public:
     RawFS(const std::string& r) : root(BzVFS::cleanDirPath(r)) {}
     ~RawFS() {}
@@ -266,12 +255,10 @@ class RawFS : public BzFS
 //  UrlFS  --  FIXME -- not finished
 //
 
-class UrlFS : public RawFS
-{
+class UrlFS : public RawFS {
   public:
     UrlFS(const std::string& path)
-    : RawFS(path)
-    {
+      : RawFS(path) {
       prefix = BzVFS::cleanDirPath(path);
       std::string::size_type lastSlash = prefix.find_last_of('/');
       if (lastSlash != std::string::npos) {
@@ -361,8 +348,7 @@ class UrlFS : public RawFS
 //
 
 
-class DocketFS : public BzFS
-{
+class DocketFS : public BzFS {
   public:
     DocketFS(BzDocket* d) : docket(d) {}
     ~DocketFS() { delete docket; }
@@ -425,13 +411,11 @@ class DocketFS : public BzFS
 //  BzVFS
 //
 
-BzVFS::BzVFS()
-{
+BzVFS::BzVFS() {
 }
 
 
-BzVFS::~BzVFS()
-{
+BzVFS::~BzVFS() {
   clear();
 }
 
@@ -439,8 +423,7 @@ BzVFS::~BzVFS()
 //============================================================================//
 //============================================================================//
 
-void BzVFS::clear()
-{
+void BzVFS::clear() {
   FSMap::iterator it;
   for (it = fsMap.begin(); it != fsMap.end(); ++it) {
     delete it->second;
@@ -449,8 +432,7 @@ void BzVFS::clear()
 }
 
 
-bool BzVFS::addFS(const std::string& name, BzDocket* docket)
-{
+bool BzVFS::addFS(const std::string& name, BzDocket* docket) {
   if (docket == NULL) {
     return false;
   }
@@ -462,8 +444,7 @@ bool BzVFS::addFS(const std::string& name, BzDocket* docket)
 }
 
 
-bool BzVFS::addFS(const std::string& name, const std::string& root)
-{
+bool BzVFS::addFS(const std::string& name, const std::string& root) {
   if (root.empty()) {
     return false;
   }
@@ -475,8 +456,7 @@ bool BzVFS::addFS(const std::string& name, const std::string& root)
 }
 
 
-bool BzVFS::removeFS(const std::string& name)
-{
+bool BzVFS::removeFS(const std::string& name) {
   FSMap::iterator it = fsMap.find(name);
   if (it != fsMap.end()) {
     delete it->second;
@@ -487,8 +467,7 @@ bool BzVFS::removeFS(const std::string& name)
 }
 
 
-bool BzVFS::setFSWritable(const std::string& name, bool value)
-{
+bool BzVFS::setFSWritable(const std::string& name, bool value) {
   FSMap::iterator it = fsMap.find(name);
   if (it == fsMap.end()) {
     return false;
@@ -498,8 +477,7 @@ bool BzVFS::setFSWritable(const std::string& name, bool value)
 }
 
 
-const BzDocket* BzVFS::getDocket(const std::string& modes) const
-{
+const BzDocket* BzVFS::getDocket(const std::string& modes) const {
   for (size_t i = 0; i < modes.size(); i++) {
     char str[2] = { 0, 0 };
     str[0] = modes[i];
@@ -518,8 +496,7 @@ const BzDocket* BzVFS::getDocket(const std::string& modes) const
 //============================================================================//
 //============================================================================//
 
-bool BzVFS::safePath(const std::string& path)
-{
+bool BzVFS::safePath(const std::string& path) {
   if (path.empty()) {
     return true;
   }
@@ -539,8 +516,7 @@ bool BzVFS::safePath(const std::string& path)
 
 
 void BzVFS::getSystems(const std::string& modes,
-                       std::vector<BzFS*>& fileSystems)
-{
+                       std::vector<BzFS*>& fileSystems) {
   for (size_t i = 0; i < modes.size(); i++) {
     char str[2] = { 0, 0 };
     str[0] = modes[i];
@@ -552,8 +528,7 @@ void BzVFS::getSystems(const std::string& modes,
 }
 
 
-std::string BzVFS::cleanDirPath(const std::string& path)
-{
+std::string BzVFS::cleanDirPath(const std::string& path) {
   if (path.empty()) {
     return path;
   }
@@ -565,8 +540,7 @@ std::string BzVFS::cleanDirPath(const std::string& path)
 }
 
 
-std::string BzVFS::cleanFilePath(const std::string& path)
-{
+std::string BzVFS::cleanFilePath(const std::string& path) {
   return backSlashToFrontSlash(path);
 }
 
@@ -575,8 +549,7 @@ std::string BzVFS::cleanFilePath(const std::string& path)
 //============================================================================//
 
 std::string BzVFS::allowModes(const std::string& wanted,
-                              const std::string& allowed)
-{
+                              const std::string& allowed) {
   std::string modes;
   for (size_t i = 0; i < wanted.size(); i++) {
     if (allowed.find(wanted[i]) != std::string::npos) {
@@ -588,8 +561,7 @@ std::string BzVFS::allowModes(const std::string& wanted,
 
 
 std::string BzVFS::forbidModes(const std::string& wanted,
-                               const std::string& forbidden)
-{
+                               const std::string& forbidden) {
   std::string modes;
   for (size_t i = 0; i < wanted.size(); i++) {
     if (forbidden.find(wanted[i]) == std::string::npos) {
@@ -601,8 +573,7 @@ std::string BzVFS::forbidModes(const std::string& wanted,
 
 
 bool BzVFS::parseModes(const std::string& inPath,  std::string& outPath,
-                       const std::string& inModes, std::string& outModes)
-{
+                       const std::string& inModes, std::string& outModes) {
   if (inPath.empty() || (inPath[0] != ':')) {
     outPath  = inPath;
     outModes = inModes;
@@ -622,8 +593,7 @@ bool BzVFS::parseModes(const std::string& inPath,  std::string& outPath,
 //============================================================================//
 //============================================================================//
 
-bool BzVFS::fileExists(const std::string& path, const std::string& modes)
-{
+bool BzVFS::fileExists(const std::string& path, const std::string& modes) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -646,8 +616,7 @@ bool BzVFS::fileExists(const std::string& path, const std::string& modes)
 }
 
 
-int BzVFS::fileSize(const std::string& path, const std::string& modes)
-{
+int BzVFS::fileSize(const std::string& path, const std::string& modes) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return -1;
@@ -672,8 +641,7 @@ int BzVFS::fileSize(const std::string& path, const std::string& modes)
 
 
 bool BzVFS::readFile(const std::string& path, const std::string& modes,
-                     std::string& data)
-{
+                     std::string& data) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -698,8 +666,7 @@ bool BzVFS::readFile(const std::string& path, const std::string& modes,
 
 
 bool BzVFS::writeFile(const std::string& path, const std::string& modes,
-                      const std::string& data)
-{
+                      const std::string& data) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -723,8 +690,7 @@ bool BzVFS::writeFile(const std::string& path, const std::string& modes,
 
 
 bool BzVFS::appendFile(const std::string& path, const std::string& modes,
-                       const std::string& data)
-{
+                       const std::string& data) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -747,8 +713,7 @@ bool BzVFS::appendFile(const std::string& path, const std::string& modes,
 }
 
 
-bool BzVFS::removeFile(const std::string& path, const std::string& modes)
-{
+bool BzVFS::removeFile(const std::string& path, const std::string& modes) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -772,8 +737,7 @@ bool BzVFS::removeFile(const std::string& path, const std::string& modes)
 
 
 bool BzVFS::renameFile(const std::string& oldpath, const std::string& modes,
-                       const std::string& newpath)
-{
+                       const std::string& newpath) {
   std::string outPath, outModes;
   if (!parseModes(oldpath, outPath, modes, outModes)) {
     return false;
@@ -801,8 +765,7 @@ bool BzVFS::renameFile(const std::string& oldpath, const std::string& modes,
 }
 
 
-bool BzVFS::createDir(const std::string& path, const std::string& modes)
-{
+bool BzVFS::createDir(const std::string& path, const std::string& modes) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -829,8 +792,7 @@ bool BzVFS::dirList(const std::string& path,
                     const std::string& modes,
                     bool recursive,
                     std::vector<std::string>& dirs,
-                    std::vector<std::string>& files)
-{
+                    std::vector<std::string>& files) {
   std::string outPath, outModes;
   if (!parseModes(path, outPath, modes, outModes)) {
     return false;
@@ -867,8 +829,7 @@ bool BzVFS::rawDirList(const std::string& root,
                        const std::string& path,
                        bool recursive,
                        std::vector<std::string>& dirs,
-                       std::vector<std::string>& files)
-{
+                       std::vector<std::string>& files) {
 #ifndef WIN32
 
   const std::string fullPath = root + path;

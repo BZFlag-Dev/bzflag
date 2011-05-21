@@ -12,11 +12,11 @@
 
 /*
  * HUDui:
- *	User interface class for the heads-up display and menu system.
+ *  User interface class for the heads-up display and menu system.
  */
 
-#ifndef	__HUDUI_H__
-#define	__HUDUI_H__
+#ifndef __HUDUI_H__
+#define __HUDUI_H__
 
 #include "BzfEvent.h"
 #include "HUDuiControl.h"
@@ -25,16 +25,16 @@
 class HUDui {
   public:
     static HUDuiControl* getFocus();
-    static void		setFocus(HUDuiControl*);
+    static void   setFocus(HUDuiControl*);
 
     static HUDuiDefaultKey* getDefaultKey();
-    static void		setDefaultKey(HUDuiDefaultKey*);
+    static void   setDefaultKey(HUDuiDefaultKey*);
 
-    static bool	keyPress(const BzfKeyEvent&);
-    static bool	keyRelease(const BzfKeyEvent&);
+    static bool keyPress(const BzfKeyEvent&);
+    static bool keyRelease(const BzfKeyEvent&);
 
   private:
-    static HUDuiControl *focus;
+    static HUDuiControl* focus;
     static HUDuiDefaultKey* defaultKey;
 };
 
@@ -44,6 +44,6 @@ class HUDui {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

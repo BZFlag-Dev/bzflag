@@ -28,9 +28,8 @@
 
 
 CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
-			       bool _noclusters,
-			       bool bounce, unsigned char drive, unsigned char shoot)
-{
+                               bool _noclusters,
+                               bool bounce, unsigned char drive, unsigned char shoot) {
   phydrv = physics;
   noclusters = _noclusters;
   smoothBounce = bounce;
@@ -41,8 +40,7 @@ CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
 }
 
 
-static void getIntList(std::istream& input, std::vector<int>& list)
-{
+static void getIntList(std::istream& input, std::vector<int>& list) {
   std::string args;
   int value;
 
@@ -59,26 +57,25 @@ static void getIntList(std::istream& input, std::vector<int>& list)
 }
 
 
-bool CustomMeshFace::read(const char *cmd, std::istream& input)
-{
+bool CustomMeshFace::read(const char* cmd, std::istream& input) {
   bool materror;
 
   if (strcasecmp(cmd, "vertices") == 0) {
-    getIntList (input, vertices);
+    getIntList(input, vertices);
     if (vertices.size() < 3) {
       std::cout << "mesh faces need at least 3 vertices" << std::endl;
       return false;
     }
   }
   else if (strcasecmp(cmd, "normals") == 0) {
-    getIntList (input, normals);
+    getIntList(input, normals);
     if (normals.size() < 3) {
       std::cout << "mesh faces need at least 3 normals" << std::endl;
       return false;
     }
   }
   else if (strcasecmp(cmd, "texcoords") == 0) {
-    getIntList (input, texcoords);
+    getIntList(input, texcoords);
     if (texcoords.size() < 3) {
       std::cout << "mesh faces need at least 3 texcoords" << std::endl;
       return false;
@@ -321,8 +318,7 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMeshFace::write(MeshObstacle *mesh) const
-{
+void CustomMeshFace::write(MeshObstacle* mesh) const {
   const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
 
   // does this face need special data?
@@ -334,9 +330,9 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
   }
 
   mesh->addFace(vertices, normals, texcoords, matref, phydrv,
-		noclusters, smoothBounce,
-		driveThrough, shootThrough, ricochet,
-		true /* triangulate if required */, sd);
+                noclusters, smoothBounce,
+                driveThrough, shootThrough, ricochet,
+                true /* triangulate if required */, sd);
   return;
 }
 
@@ -345,6 +341,6 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -26,46 +26,44 @@
 #include "WinJoystick.h"
 #include "StateDatabase.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
-{
-  if (!instance) instance = new WinPlatformFactory;
+PlatformFactory*  PlatformFactory::getInstance() {
+  if (!instance) { instance = new WinPlatformFactory; }
   return instance;
 }
 
 #ifdef HAVE_SDL
-SDLWindow*		WinPlatformFactory::sdlWindow = NULL;
+SDLWindow*    WinPlatformFactory::sdlWindow = NULL;
 #endif
-WinWindow*		WinPlatformFactory::winWindow = NULL;
+WinWindow*    WinPlatformFactory::winWindow = NULL;
 
-WinPlatformFactory::WinPlatformFactory()
-{
+WinPlatformFactory::WinPlatformFactory() {
   // do nothing
 }
 
-WinPlatformFactory::~WinPlatformFactory()
-{
+WinPlatformFactory::~WinPlatformFactory() {
   // do nothing
 }
 
-BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
-					      const char* videoFormat)
-{
+BzfDisplay* WinPlatformFactory::createDisplay(const char* name,
+                                              const char* videoFormat) {
   bool useNative = true;
 #ifdef HAVE_SDL
-  if (BZDB.isSet("SDLVideo") && BZDB.isTrue("SDLVideo"))
+  if (BZDB.isSet("SDLVideo") && BZDB.isTrue("SDLVideo")) {
     useNative = false;
+  }
 #endif
 
-  BzfDisplay *display;
+  BzfDisplay* display;
   if (useNative) {
     WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
-    display		= winDisplay;
-  } else {
+    display   = winDisplay;
+  }
+  else {
 #ifdef HAVE_SDL
     SDLDisplay* sdlDisplay = new SDLDisplay();
-    display		= sdlDisplay;
+    display   = sdlDisplay;
 #else
-    display		= NULL;
+    display   = NULL;
 #endif
   }
   if (!display || !display->isValid()) {
@@ -75,17 +73,18 @@ BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
   return display;
 }
 
-BzfVisual*		WinPlatformFactory::createVisual(
-				const BzfDisplay* display)
-{
+BzfVisual*    WinPlatformFactory::createVisual(
+  const BzfDisplay* display) {
   bool useNative = true;
 #ifdef HAVE_SDL
-  if (BZDB.isSet("SDLVideo") && BZDB.isTrue("SDLVideo"))
+  if (BZDB.isSet("SDLVideo") && BZDB.isTrue("SDLVideo")) {
     useNative = false;
+  }
 #endif
 
-  if (useNative)
+  if (useNative) {
     return new WinVisual((const WinDisplay*)display);
+  }
   else
 #ifdef HAVE_SDL
     return new SDLVisual((const SDLDisplay*)display);
@@ -94,19 +93,20 @@ BzfVisual*		WinPlatformFactory::createVisual(
 #endif
 }
 
-BzfWindow*		WinPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
+BzfWindow*    WinPlatformFactory::createWindow(
+  const BzfDisplay* display, BzfVisual* visual) {
   bool useNative = true;
 #ifdef HAVE_SDL
-  if (BZDB.isSet("SDLVideo") && BZDB.isTrue("SDLVideo"))
+  if (BZDB.isSet("SDLVideo") && BZDB.isTrue("SDLVideo")) {
     useNative = false;
+  }
 #endif
 
   if (useNative) {
     winWindow = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
     return winWindow;
-  } else {
+  }
+  else {
 #ifdef HAVE_SDL
     sdlWindow = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
     return sdlWindow;
@@ -116,15 +116,15 @@ BzfWindow*		WinPlatformFactory::createWindow(
   }
 }
 
-BzfMedia*		WinPlatformFactory::createMedia()
-{
+BzfMedia*   WinPlatformFactory::createMedia() {
   bool useNative = true;
 #ifndef HAVE_DSOUND_H
   useNative = false;
 #endif
 #ifdef HAVE_SDL
-  if (BZDB.isSet("SDLAudio") && BZDB.isTrue("SDLAudio"))
+  if (BZDB.isSet("SDLAudio") && BZDB.isTrue("SDLAudio")) {
     useNative = false;
+  }
 #endif
 
   if (useNative) {
@@ -133,7 +133,8 @@ BzfMedia*		WinPlatformFactory::createMedia()
 #else
     return NULL;
 #endif
-  } else {
+  }
+  else {
 #ifdef HAVE_SDL
     return new SDLMedia();
 #else
@@ -142,12 +143,12 @@ BzfMedia*		WinPlatformFactory::createMedia()
   }
 }
 
-BzfJoystick*		WinPlatformFactory::createJoystick()
-{
+BzfJoystick*    WinPlatformFactory::createJoystick() {
   bool useNative = true;
 #ifdef HAVE_SDL
-  if (BZDB.isSet("SDLJoystick") && BZDB.isTrue("SDLJoystick"))
+  if (BZDB.isSet("SDLJoystick") && BZDB.isTrue("SDLJoystick")) {
     useNative = false;
+  }
 #endif
   if (useNative) {
 #if defined(USE_DINPUT)
@@ -155,7 +156,8 @@ BzfJoystick*		WinPlatformFactory::createJoystick()
 #else
     return new WinJoystick();
 #endif
-  } else {
+  }
+  else {
 #if defined(HAVE_SDL)
     return new SDLJoystick();
 #else
@@ -168,6 +170,6 @@ BzfJoystick*		WinPlatformFactory::createJoystick()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

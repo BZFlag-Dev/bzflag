@@ -40,8 +40,7 @@ static const int REENTRANT      = (1 << 4);
 
 
 void EventHandler::SetupEvent(const std::string& eName, EventClientList* ecList,
-                              int orderType, LoopType loopType, int bits)
-{
+                              int orderType, LoopType loopType, int bits) {
   assert(eventMap.find(eName) == eventMap.end());
   const bool reqFullRead  = ((bits & REQ_FULL_READ)  ? true : false);
   const bool reqGameCtrl  = ((bits & REQ_GAME_CTRL)  ? true : false);
@@ -65,8 +64,7 @@ void EventHandler::SetupEvent(const std::string& eName, EventClientList* ecList,
 //============================================================================//
 //============================================================================//
 
-EventHandler::EventHandler()
-{
+EventHandler::EventHandler() {
   const int ScriptIDOrder   = EventClient::ScriptIDOrder;
   const int GameStateOrder  = EventClient::GameStateOrder;
   const int DrawWorldOrder  = EventClient::DrawWorldOrder;
@@ -140,19 +138,17 @@ EventHandler::EventHandler()
 }
 
 
-EventHandler::~EventHandler()
-{
+EventHandler::~EventHandler() {
 }
 
 
 //============================================================================//
 //============================================================================//
 
-void EventHandler::Purify()
-{
+void EventHandler::Purify() {
   if (!dirtyLists.empty()) {
     logDebugMessage(3, "EventHandler::Purify() purifying %i list\n",
-                       (int)dirtyLists.size());
+                    (int)dirtyLists.size());
   }
   std::set<EventClientList*>::iterator it;
   for (it = dirtyLists.begin(); it != dirtyLists.end(); ++it) {
@@ -162,8 +158,7 @@ void EventHandler::Purify()
 }
 
 
-void EventHandler::AddClient(EventClient* ec)
-{
+void EventHandler::AddClient(EventClient* ec) {
   if (ec->GetName().empty()) {
     logDebugMessage(0, "EventClients must have valid names");
     return;
@@ -177,8 +172,7 @@ void EventHandler::AddClient(EventClient* ec)
 }
 
 
-void EventHandler::RemoveClient(EventClient* ec)
-{
+void EventHandler::RemoveClient(EventClient* ec) {
   clientList.remove(ec);
   clientList.purify();
   clientSet.erase(ec);
@@ -201,8 +195,7 @@ void EventHandler::RemoveClient(EventClient* ec)
 //============================================================================//
 //============================================================================//
 
-void EventHandler::GetEventList(std::vector<std::string>& eventList) const
-{
+void EventHandler::GetEventList(std::vector<std::string>& eventList) const {
   eventList.clear();
   EventMap::const_iterator it;
   for (it = eventMap.begin(); it != eventMap.end(); ++it) {
@@ -212,56 +205,48 @@ void EventHandler::GetEventList(std::vector<std::string>& eventList) const
 
 
 const EventHandler::EventInfo*
-  EventHandler::GetEventInfo(const std::string& eName) const
-{
+EventHandler::GetEventInfo(const std::string& eName) const {
   EventMap::const_iterator it = eventMap.find(eName);
   return (it != eventMap.end()) ? &(it->second) : NULL;
 }
 
 
-bool EventHandler::IsKnown(const std::string& eName) const
-{
+bool EventHandler::IsKnown(const std::string& eName) const {
   return GetEventInfo(eName) != NULL;
 }
 
 
-bool EventHandler::IsManaged(const std::string& eName) const
-{
+bool EventHandler::IsManaged(const std::string& eName) const {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && (ei->GetList() != NULL);
 }
 
 
-bool EventHandler::IsReversed(const std::string& eName) const
-{
+bool EventHandler::IsReversed(const std::string& eName) const {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && ei->IsReversed();
 }
 
 
-bool EventHandler::IsReentrant(const std::string& eName) const
-{
+bool EventHandler::IsReentrant(const std::string& eName) const {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && ei->IsReentrant();
 }
 
 
-bool EventHandler::ReqFullRead(const std::string& eName) const
-{
+bool EventHandler::ReqFullRead(const std::string& eName) const {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && ei->ReqFullRead();
 }
 
 
-bool EventHandler::ReqGameCtrl(const std::string& eName) const
-{
+bool EventHandler::ReqGameCtrl(const std::string& eName) const {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && ei->ReqGameCtrl();
 }
 
 
-bool EventHandler::ReqInputCtrl(const std::string& eName) const
-{
+bool EventHandler::ReqInputCtrl(const std::string& eName) const {
   const EventInfo* ei = GetEventInfo(eName);
   return (ei != NULL) && ei->ReqInputCtrl();
 }
@@ -270,8 +255,7 @@ bool EventHandler::ReqInputCtrl(const std::string& eName) const
 //============================================================================//
 //============================================================================//
 
-bool EventHandler::CanUseEvent(EventClient* ec, const EventInfo& ei) const
-{
+bool EventHandler::CanUseEvent(EventClient* ec, const EventInfo& ei) const {
   if ((ei.ReqFullRead()  && !ec->HasFullRead()) ||
       (ei.ReqGameCtrl()  && !ec->HasGameCtrl()) ||
       (ei.ReqInputCtrl() && !ec->HasInputCtrl())) {
@@ -281,8 +265,7 @@ bool EventHandler::CanUseEvent(EventClient* ec, const EventInfo& ei) const
 }
 
 
-bool EventHandler::InsertEvent(EventClient* ec, const std::string& ciName)
-{
+bool EventHandler::InsertEvent(EventClient* ec, const std::string& ciName) {
   if (clientSet.find(ec) == clientSet.end()) {
     return false;
   }
@@ -302,8 +285,7 @@ bool EventHandler::InsertEvent(EventClient* ec, const std::string& ciName)
 }
 
 
-bool EventHandler::RemoveEvent(EventClient* ec, const std::string& ciName)
-{
+bool EventHandler::RemoveEvent(EventClient* ec, const std::string& ciName) {
   if (clientSet.find(ec) == clientSet.end()) {
     return false;
   }
@@ -323,8 +305,7 @@ bool EventHandler::RemoveEvent(EventClient* ec, const std::string& ciName)
 //============================================================================//
 //============================================================================//
 
-const char* EventHandler::GetLoopTypeName(LoopType type) const
-{
+const char* EventHandler::GetLoopTypeName(LoopType type) const {
   switch (type) {
     case Basic:       { return "BASIC";        }
     case Special:     { return "SPECIAL";      }
@@ -343,8 +324,7 @@ const char* EventHandler::GetLoopTypeName(LoopType type) const
 
 void EventHandler::RecvLuaData(int srcPlayerID, int srcScriptID,
                                int dstPlayerID, int dstScriptID,
-                               int status, const std::string& data)
-{
+                               int status, const std::string& data) {
   EventClientList& ecList = listRecvLuaData;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -392,8 +372,7 @@ DRAW_CALLIN(DrawRadar)
 //============================================================================//
 //============================================================================//
 
-bool EventHandler::CommandFallback(const std::string& cmd)
-{
+bool EventHandler::CommandFallback(const std::string& cmd) {
   EventClientList& ecList = listCommandFallback;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -405,8 +384,7 @@ bool EventHandler::CommandFallback(const std::string& cmd)
 }
 
 
-bool EventHandler::KeyPress(bool taken, int key, int mods)
-{
+bool EventHandler::KeyPress(bool taken, int key, int mods) {
   EventClientList& ecList = listKeyPress;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -416,8 +394,7 @@ bool EventHandler::KeyPress(bool taken, int key, int mods)
 }
 
 
-bool EventHandler::KeyRelease(bool taken, int key, int mods)
-{
+bool EventHandler::KeyRelease(bool taken, int key, int mods) {
   EventClientList& ecList = listKeyRelease;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -427,8 +404,7 @@ bool EventHandler::KeyRelease(bool taken, int key, int mods)
 }
 
 
-bool EventHandler::UnicodeText(bool taken, uint32_t unicode)
-{
+bool EventHandler::UnicodeText(bool taken, uint32_t unicode) {
   EventClientList& ecList = listUnicodeText;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -438,8 +414,7 @@ bool EventHandler::UnicodeText(bool taken, uint32_t unicode)
 }
 
 
-bool EventHandler::MousePress(bool taken, int x, int y, int button)
-{
+bool EventHandler::MousePress(bool taken, int x, int y, int button) {
   EventClientList& ecList = listMousePress;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -449,8 +424,7 @@ bool EventHandler::MousePress(bool taken, int x, int y, int button)
 }
 
 
-bool EventHandler::MouseRelease(bool taken, int x, int y, int button)
-{
+bool EventHandler::MouseRelease(bool taken, int x, int y, int button) {
   EventClientList& ecList = listMouseRelease;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -460,8 +434,7 @@ bool EventHandler::MouseRelease(bool taken, int x, int y, int button)
 }
 
 
-bool EventHandler::MouseMove(bool taken, int x, int y)
-{
+bool EventHandler::MouseMove(bool taken, int x, int y) {
   EventClientList& ecList = listMouseMove;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -471,8 +444,7 @@ bool EventHandler::MouseMove(bool taken, int x, int y)
 }
 
 
-bool EventHandler::MouseWheel(bool taken, float value)
-{
+bool EventHandler::MouseWheel(bool taken, float value) {
   EventClientList& ecList = listMouseWheel;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -482,8 +454,7 @@ bool EventHandler::MouseWheel(bool taken, float value)
 }
 
 
-bool EventHandler::IsAbove(int x, int y)
-{
+bool EventHandler::IsAbove(int x, int y) {
   EventClientList& ecList = listIsAbove;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -495,8 +466,7 @@ bool EventHandler::IsAbove(int x, int y)
 }
 
 
-std::string EventHandler::GetTooltip(int x, int y)
-{
+std::string EventHandler::GetTooltip(int x, int y) {
   EventClientList& ecList = listGetTooltip;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -509,8 +479,7 @@ std::string EventHandler::GetTooltip(int x, int y)
 }
 
 
-void EventHandler::WordComplete(const std::string& line, std::set<std::string>& partials)
-{
+void EventHandler::WordComplete(const std::string& line, std::set<std::string>& partials) {
   EventClientList& ecList = listWordComplete;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -527,8 +496,7 @@ void EventHandler::WordComplete(const std::string& line, std::set<std::string>& 
 //============================================================================//
 //============================================================================//
 
-bool EventHandler::ForbidSpawn()
-{
+bool EventHandler::ForbidSpawn() {
   EventClientList& ecList = listForbidSpawn;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -540,8 +508,7 @@ bool EventHandler::ForbidSpawn()
 }
 
 
-bool EventHandler::ForbidJump()
-{
+bool EventHandler::ForbidJump() {
   EventClientList& ecList = listForbidJump;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -553,8 +520,7 @@ bool EventHandler::ForbidJump()
 }
 
 
-bool EventHandler::ForbidFlagDrop()
-{
+bool EventHandler::ForbidFlagDrop() {
   EventClientList& ecList = listForbidFlagDrop;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -566,8 +532,7 @@ bool EventHandler::ForbidFlagDrop()
 }
 
 
-bool EventHandler::ForbidShot()
-{
+bool EventHandler::ForbidShot() {
   EventClientList& ecList = listForbidShot;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -579,8 +544,7 @@ bool EventHandler::ForbidShot()
 }
 
 
-bool EventHandler::ForbidShotLock(const Player& player)
-{
+bool EventHandler::ForbidShotLock(const Player& player) {
   EventClientList& ecList = listForbidShotLock;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {
@@ -593,8 +557,7 @@ bool EventHandler::ForbidShotLock(const Player& player)
 
 
 bool EventHandler::ForbidShotHit(const Player& player,
-                                  const ShotPath& shot, const fvec3& pos)
-{
+                                 const ShotPath& shot, const fvec3& pos) {
   EventClientList& ecList = listForbidShotHit;
   EventClientList::const_iterator it;
   for (it = ecList.begin(); it != ecList.end(); ++it) {

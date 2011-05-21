@@ -23,47 +23,41 @@ template <>
 ShotManager* Singleton<ShotManager>::_instance = (ShotManager*)0;
 
 
-ShotManager::ShotManager()
-{
+ShotManager::ShotManager() {
 }
 
-ShotManager::~ShotManager()
-{
+ShotManager::~ShotManager() {
 }
 
-int ShotManager::newShot (FiringInfo * /*info*/, int /*param*/)
-{
+int ShotManager::newShot(FiringInfo* /*info*/, int /*param*/) {
   return 0;
 }
 
-void ShotManager::update (double /*dt*/)
-{
+void ShotManager::update(double /*dt*/) {
 }
 
-void ShotManager::addEventHandler (ShotEventCallbacks *cb)
-{
+void ShotManager::addEventHandler(ShotEventCallbacks* cb) {
   callbacks.push_back(cb);
 }
 
-void ShotManager::removeEventHandler (ShotEventCallbacks *cb)
-{
+void ShotManager::removeEventHandler(ShotEventCallbacks* cb) {
   for (size_t i = 0; i < callbacks.size(); i++) {
     if (cb == callbacks[i]) {
-      callbacks.erase(callbacks.begin()+i);
+      callbacks.erase(callbacks.begin() + i);
       return;
     }
   }
 }
 
 ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/)
-: lifetime(0.0)
-, range(0.0)
-, pos(0.0f, 0.0f, 0.0f)
-, vec(0.0f, 0.0f, 0.0f)
-{
+  : lifetime(0.0)
+  , range(0.0)
+  , pos(0.0f, 0.0f, 0.0f)
+  , vec(0.0f, 0.0f, 0.0f) {
   if (info) {
     startTime = info->timeSent;
-  } else {
+  }
+  else {
     startTime = BzTime::getCurrent().getSeconds();
   }
 
@@ -79,6 +73,6 @@ ShotManager::Shot::Shot(FiringInfo* info, int /*GUID*/, int /*p*/)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

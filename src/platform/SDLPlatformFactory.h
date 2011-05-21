@@ -11,28 +11,28 @@
  */
 
 /* SDLPlatformFactory:
- *	Factory for SDL platform stuff.
+ *  Factory for SDL platform stuff.
  */
 
 #ifndef BZF_SDL_PLATFORM_FACTORY_H
-#define	BZF_SDL_PLATFORM_FACTORY_H
+#define BZF_SDL_PLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
 class SdlPlatformFactory : public PlatformFactory {
- public:
-  SdlPlatformFactory();
-  ~SdlPlatformFactory();
+  public:
+    SdlPlatformFactory();
+    ~SdlPlatformFactory();
 
-  BzfDisplay*		createDisplay(const char* name, const char*);
-  BzfVisual*		createVisual(const BzfDisplay*);
-  BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-  BzfMedia*		createMedia();
-  BzfJoystick*		createJoystick();
+    BzfDisplay*   createDisplay(const char* name, const char*);
+    BzfVisual*    createVisual(const BzfDisplay*);
+    BzfWindow*    createWindow(const BzfDisplay*, BzfVisual*);
+    BzfMedia*   createMedia();
+    BzfJoystick*    createJoystick();
 
- private:
-  SdlPlatformFactory(const SdlPlatformFactory&);
-  SdlPlatformFactory& operator=(const SdlPlatformFactory&);
+  private:
+    SdlPlatformFactory(const SdlPlatformFactory&);
+    SdlPlatformFactory& operator=(const SdlPlatformFactory&);
 };
 
 #endif // BZF_SDL_PLATFORM_FACTORY_H
@@ -41,6 +41,6 @@ class SdlPlatformFactory : public PlatformFactory {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

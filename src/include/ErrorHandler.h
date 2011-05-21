@@ -15,7 +15,7 @@
  */
 
 #ifndef BZF_ERROR_HANDLER_H
-#define	BZF_ERROR_HANDLER_H
+#define BZF_ERROR_HANDLER_H
 
 // common header first
 #include "common.h"
@@ -28,11 +28,11 @@
 #include "common.h"
 #include "Bundle.h"
 
-typedef void		(*ErrorCallback)(const char*);
+typedef void (*ErrorCallback)(const char*);
 
-ErrorCallback		setErrorCallback(ErrorCallback);
-void			printError(const std::string &fmt, const std::vector<std::string> *parms = NULL);
-void			printFatalError(const char* fmt, ...) BZ_ATTR_12;
+ErrorCallback   setErrorCallback(ErrorCallback);
+void      printError(const std::string& fmt, const std::vector<std::string> *parms = NULL);
+void      printFatalError(const char* fmt, ...) BZ_ATTR_12;
 
 #endif // BZF_ERROR_HANDLER_H
 
@@ -40,6 +40,6 @@ void			printFatalError(const char* fmt, ...) BZ_ATTR_12;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

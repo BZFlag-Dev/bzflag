@@ -50,23 +50,20 @@ LuaFBOMgr luaFBOMgr;
 //============================================================================//
 
 LuaFBO::LuaFBO(const LuaFBOData& fboData)
-: LuaFBOData(fboData)
-{
+  : LuaFBOData(fboData) {
   OpenGLGState::registerContextInitializer(StaticFreeContext,
-					   StaticInitContext, this);
+                                           StaticInitContext, this);
 }
 
 
-LuaFBO::~LuaFBO()
-{
+LuaFBO::~LuaFBO() {
   FreeContext();
   OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-					     StaticInitContext, this);
+                                             StaticInitContext, this);
 }
 
 
-void LuaFBO::Delete(lua_State* L)
-{
+void LuaFBO::Delete(lua_State* L) {
   FreeContext();
 
   if (luaRef == LUA_NOREF) {
@@ -77,13 +74,11 @@ void LuaFBO::Delete(lua_State* L)
 }
 
 
-void LuaFBO::InitContext()
-{
+void LuaFBO::InitContext() {
 }
 
 
-void LuaFBO::FreeContext()
-{
+void LuaFBO::FreeContext() {
   if (id == 0) {
     return;
   }
@@ -92,14 +87,12 @@ void LuaFBO::FreeContext()
 }
 
 
-void LuaFBO::StaticInitContext(void* data)
-{
+void LuaFBO::StaticInitContext(void* data) {
   ((LuaFBO*)data)->InitContext();
 }
 
 
-void LuaFBO::StaticFreeContext(void* data)
-{
+void LuaFBO::StaticFreeContext(void* data) {
   ((LuaFBO*)data)->FreeContext();
 }
 
@@ -107,21 +100,18 @@ void LuaFBO::StaticFreeContext(void* data)
 //============================================================================//
 //============================================================================//
 
-LuaFBOMgr::LuaFBOMgr()
-{
+LuaFBOMgr::LuaFBOMgr() {
 }
 
 
-LuaFBOMgr::~LuaFBOMgr()
-{
+LuaFBOMgr::~LuaFBOMgr() {
 }
 
 
 //============================================================================//
 //============================================================================//
 
-bool LuaFBOMgr::PushEntries(lua_State* L)
-{
+bool LuaFBOMgr::PushEntries(lua_State* L) {
   CreateMetatable(L);
 
   PUSH_LUA_CFUNC(L, CreateFBO);
@@ -135,10 +125,9 @@ bool LuaFBOMgr::PushEntries(lua_State* L)
 }
 
 
-bool LuaFBOMgr::CreateMetatable(lua_State* L)
-{
+bool LuaFBOMgr::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
-  luaset_strfunc(L,  "__gc",	MetaGC);
+  luaset_strfunc(L,  "__gc",  MetaGC);
   luaset_strfunc(L,  "__index",     MetaIndex);
   luaset_strfunc(L,  "__newindex",  MetaNewindex);
   luaset_strstr(L, "__metatable", "no access");
@@ -150,8 +139,7 @@ bool LuaFBOMgr::CreateMetatable(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-const LuaFBO* LuaFBOMgr::TestLuaFBO(lua_State* L, int index)
-{
+const LuaFBO* LuaFBOMgr::TestLuaFBO(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     return NULL;
   }
@@ -159,8 +147,7 @@ const LuaFBO* LuaFBOMgr::TestLuaFBO(lua_State* L, int index)
 }
 
 
-const LuaFBO* LuaFBOMgr::CheckLuaFBO(lua_State* L, int index)
-{
+const LuaFBO* LuaFBOMgr::CheckLuaFBO(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected FBO");
   }
@@ -168,8 +155,7 @@ const LuaFBO* LuaFBOMgr::CheckLuaFBO(lua_State* L, int index)
 }
 
 
-LuaFBO* LuaFBOMgr::GetLuaFBO(lua_State* L, int index)
-{
+LuaFBO* LuaFBOMgr::GetLuaFBO(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected FBO");
   }
@@ -180,8 +166,7 @@ LuaFBO* LuaFBOMgr::GetLuaFBO(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaFBOMgr::MetaGC(lua_State* L)
-{
+int LuaFBOMgr::MetaGC(lua_State* L) {
   LuaFBO* fbo = GetLuaFBO(L, 1);
   fbo->Delete(L);
   fbo->~LuaFBO();
@@ -189,8 +174,7 @@ int LuaFBOMgr::MetaGC(lua_State* L)
 }
 
 
-int LuaFBOMgr::MetaIndex(lua_State* L)
-{
+int LuaFBOMgr::MetaIndex(lua_State* L) {
   const LuaFBO* fbo = CheckLuaFBO(L, 1);
   if (fbo->luaRef == LUA_NOREF) {
     return luaL_pushnil(L);
@@ -205,8 +189,7 @@ int LuaFBOMgr::MetaIndex(lua_State* L)
 }
 
 
-int LuaFBOMgr::MetaNewindex(lua_State* L)
-{
+int LuaFBOMgr::MetaNewindex(lua_State* L) {
   LuaFBO* fbo = GetLuaFBO(L, 1);
   if (fbo->luaRef == LUA_NOREF) {
     return 0;
@@ -234,8 +217,8 @@ int LuaFBOMgr::MetaNewindex(lua_State* L)
       glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFBO);
       glBindFramebuffer(fbo->target, fbo->id);
       if (lua_israwnumber(L, 3)) {
-	const GLenum buffer = (GLenum)lua_tointeger(L, 3);
-	glReadBuffer(buffer);
+        const GLenum buffer = (GLenum)lua_tointeger(L, 3);
+        glReadBuffer(buffer);
       }
       glBindFramebuffer(fbo->target, currentFBO);
     }
@@ -257,8 +240,7 @@ int LuaFBOMgr::MetaNewindex(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static GLenum GetBindingEnum(GLenum target)
-{
+static GLenum GetBindingEnum(GLenum target) {
   switch (target) {
     case GL_FRAMEBUFFER:      { return GL_FRAMEBUFFER_BINDING;      }
     case GL_DRAW_FRAMEBUFFER: { return GL_DRAW_FRAMEBUFFER_BINDING; }
@@ -273,8 +255,7 @@ static GLenum GetBindingEnum(GLenum target)
 //============================================================================//
 //============================================================================//
 
-GLenum LuaFBOMgr::ParseAttachment(const string& name)
-{
+GLenum LuaFBOMgr::ParseAttachment(const string& name) {
   static map<string, GLenum> attachMap;
   if (attachMap.empty()) {
     attachMap["depth"]   = GL_DEPTH_ATTACHMENT;
@@ -308,9 +289,8 @@ GLenum LuaFBOMgr::ParseAttachment(const string& name)
 //============================================================================//
 
 bool LuaFBOMgr::AttachObject(lua_State* L, int index,
-			     LuaFBO* fbo, GLenum attachID,
-			     GLenum attachTarget, GLenum attachLevel)
-{
+                             LuaFBO* fbo, GLenum attachID,
+                             GLenum attachTarget, GLenum attachLevel) {
   if (lua_isnil(L, index)) {
     // nil object
     glFramebufferTexture2D(fbo->target, attachID, GL_TEXTURE_2D, 0, 0);
@@ -327,7 +307,7 @@ bool LuaFBOMgr::AttachObject(lua_State* L, int index,
       attachTarget = tex->GetTarget();
     }
     glFramebufferTexture2D(fbo->target, attachID, attachTarget,
-			   tex->GetTexID(), attachLevel);
+                           tex->GetTexID(), attachLevel);
     fbo->xsize = tex->GetSizeX();
     fbo->ysize = tex->GetSizeY();
     return true;
@@ -349,8 +329,7 @@ bool LuaFBOMgr::AttachObject(lua_State* L, int index,
 
 
 bool LuaFBOMgr::ApplyAttachment(lua_State* L, int index,
-				LuaFBO* fbo, const GLenum attachID)
-{
+                                LuaFBO* fbo, const GLenum attachID) {
   if (attachID == 0) {
     return false;
   }
@@ -380,8 +359,7 @@ bool LuaFBOMgr::ApplyAttachment(lua_State* L, int index,
 }
 
 
-bool LuaFBOMgr::ApplyDrawBuffers(lua_State* L, int index)
-{
+bool LuaFBOMgr::ApplyDrawBuffers(lua_State* L, int index) {
   if (lua_israwnumber(L, index)) {
     const GLenum buffer = (GLenum)lua_tointeger(L, index);
     glDrawBuffer(buffer);
@@ -414,8 +392,7 @@ bool LuaFBOMgr::ApplyDrawBuffers(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaFBOMgr::CreateFBO(lua_State* L)
-{
+int LuaFBOMgr::CreateFBO(lua_State* L) {
   LuaFBOData fboData;
 
   const int table = 1;
@@ -424,7 +401,8 @@ int LuaFBOMgr::CreateFBO(lua_State* L)
     lua_getfield(L, table, "target");
     if (lua_israwnumber(L, -1)) {
       fboData.target = (GLenum)lua_tointeger(L, -1);
-    } else {
+    }
+    else {
       lua_pop(L, 1);
     }
   }
@@ -458,14 +436,14 @@ int LuaFBOMgr::CreateFBO(lua_State* L)
   if (lua_istable(L, table)) {
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-	const string key = lua_tostring(L, -2);
-	const GLenum type = ParseAttachment(key);
-	if (type != 0) {
-	  ApplyAttachment(L, -1, fbo, type);
-	}
-	else if (key == "drawBuffers") {
-	  ApplyDrawBuffers(L, -1);
-	}
+        const string key = lua_tostring(L, -2);
+        const GLenum type = ParseAttachment(key);
+        if (type != 0) {
+          ApplyAttachment(L, -1, fbo, type);
+        }
+        else if (key == "drawBuffers") {
+          ApplyDrawBuffers(L, -1);
+        }
       }
     }
   }
@@ -477,8 +455,7 @@ int LuaFBOMgr::CreateFBO(lua_State* L)
 }
 
 
-int LuaFBOMgr::DeleteFBO(lua_State* L)
-{
+int LuaFBOMgr::DeleteFBO(lua_State* L) {
   if (OpenGLGState::isExecutingInitFuncs()) {
     luaL_error(L, "gl.DeleteFBO can not be used in GLReload");
   }
@@ -491,8 +468,7 @@ int LuaFBOMgr::DeleteFBO(lua_State* L)
 }
 
 
-int LuaFBOMgr::IsValidFBO(lua_State* L)
-{
+int LuaFBOMgr::IsValidFBO(lua_State* L) {
   if (lua_isnil(L, 1) || !lua_isuserdata(L, 1)) {
     lua_pushboolean(L, false);
     return 1;
@@ -523,8 +499,7 @@ int LuaFBOMgr::IsValidFBO(lua_State* L)
 }
 
 
-int LuaFBOMgr::ActiveFBO(lua_State* L)
-{
+int LuaFBOMgr::ActiveFBO(lua_State* L) {
   LuaOpenGL::CheckDrawingEnabled(L, __FUNCTION__);
 
   const LuaFBO* fbo = CheckLuaFBO(L, 1);
@@ -590,8 +565,7 @@ int LuaFBOMgr::ActiveFBO(lua_State* L)
 }
 
 
-int LuaFBOMgr::UnsafeSetFBO(lua_State* L)
-{
+int LuaFBOMgr::UnsafeSetFBO(lua_State* L) {
   //LuaOpenGL::CheckDrawingEnabled(L, __FUNCTION__);
 
   if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
@@ -612,8 +586,7 @@ int LuaFBOMgr::UnsafeSetFBO(lua_State* L)
 
 //============================================================================//
 
-int LuaFBOMgr::BlitFBO(lua_State* L)
-{
+int LuaFBOMgr::BlitFBO(lua_State* L) {
   if (lua_israwnumber(L, 1)) {
     const GLint x0Src = (GLint)luaL_checknumber(L, 1);
     const GLint y0Src = (GLint)luaL_checknumber(L, 2);
@@ -629,8 +602,8 @@ int LuaFBOMgr::BlitFBO(lua_State* L)
     const GLenum filter = (GLenum)luaL_optint(L, 10, GL_NEAREST);
 
     glBlitFramebuffer(x0Src, y0Src, x1Src, y1Src,
-		      x0Dst, y0Dst, x1Dst, y1Dst,
-		      mask, filter);
+                      x0Dst, y0Dst, x1Dst, y1Dst,
+                      mask, filter);
   }
   else {
     const LuaFBO* fboSrc = CheckLuaFBO(L, 1);
@@ -657,8 +630,8 @@ int LuaFBOMgr::BlitFBO(lua_State* L)
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboDst->id);
 
     glBlitFramebuffer(x0Src, y0Src, x1Src, y1Src,
-		      x0Dst, y0Dst, x1Dst, y1Dst,
-		      mask, filter);
+                      x0Dst, y0Dst, x1Dst, y1Dst,
+                      mask, filter);
 
     glBindFramebuffer(GL_FRAMEBUFFER, currentFBO);
   }
@@ -675,6 +648,6 @@ int LuaFBOMgr::BlitFBO(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

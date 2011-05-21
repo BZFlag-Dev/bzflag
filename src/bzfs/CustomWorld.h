@@ -23,18 +23,17 @@
 #include "WorldInfo.h"
 
 
-class CustomWorld : public WorldFileObject
-{
-public:
-  CustomWorld();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void writeToWorld(WorldInfo*) const;
-  virtual bool usesGroupDef() { return false; }
+class CustomWorld : public WorldFileObject {
+  public:
+    CustomWorld();
+    virtual bool read(const char* cmd, std::istream&);
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
 
-protected:
-  bool createWalls;
-  double _size;
-  double _fHeight;
+  protected:
+    bool createWalls;
+    double _size;
+    double _fHeight;
 };
 
 
@@ -42,8 +41,8 @@ struct CustomObjectMapData {
   CustomObjectMapData() : handler(NULL) {}
   CustomObjectMapData(bz_CustomMapObjectHandler* h,
                       const std::string& end)
-  : handler(h)
-  , endToken(end)
+    : handler(h)
+    , endToken(end)
   {}
   bz_CustomMapObjectHandler* handler;
   std::string endToken;
@@ -53,8 +52,8 @@ extern CustomObjectMap customObjectMap;
 
 
 bool registerCustomMapObject(const char* object, const char* end,
-                             bz_CustomMapObjectHandler *handler);
-bool removeCustomMapObject ( const char* object );
+                             bz_CustomMapObjectHandler* handler);
+bool removeCustomMapObject(const char* object);
 
 
 #endif  /* __CUSTOMWORLD_H__ */
@@ -63,6 +62,6 @@ bool removeCustomMapObject ( const char* object );
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

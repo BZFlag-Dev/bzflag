@@ -10,14 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__HUDDIALOG_H__
-#define	__HUDDIALOG_H__
+#ifndef __HUDDIALOG_H__
+#define __HUDDIALOG_H__
 
 /* common */
 #include "common.h"
 
 #if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
+#pragma warning(disable: 4786)
 #endif
 
 /* system headers */
@@ -31,43 +31,43 @@ class HUDuiDefaultKey;
 
 /**
  * HUDDialog:
- *	A dialog of HUDuiControls.
+ *  A dialog of HUDuiControls.
  */
 class HUDDialog {
   public:
-			HUDDialog();
-    virtual		~HUDDialog();
+    HUDDialog();
+    virtual   ~HUDDialog();
 
-    void			render();
+    void      render();
 
-    virtual HUDuiDefaultKey*	getDefaultKey() = 0;
-    virtual void		show() {}
-    virtual void		execute() = 0;
-    virtual void		dismiss() {}
-    virtual void		resize(int _width, int _height);
-    virtual void		setFailedMessage(const char *) {}
+    virtual HUDuiDefaultKey*  getDefaultKey() = 0;
+    virtual void    show() {}
+    virtual void    execute() = 0;
+    virtual void    dismiss() {}
+    virtual void    resize(int _width, int _height);
+    virtual void    setFailedMessage(const char*) {}
 
-    HUDuiControl*		getFocus() const { return navList.get(); }
+    HUDuiControl*   getFocus() const { return navList.get(); }
 
     void reFocus() { navList.set(navList.getIndex()); }
 
   protected:
-    void			addControl(HUDuiElement* element);
-    void			addControl(HUDuiControl* control, bool navigable = true);
+    void      addControl(HUDuiElement* element);
+    void      addControl(HUDuiControl* control, bool navigable = true);
 
-    const HUDNavigationQueue&	getNav() const { return navList; }
-    HUDNavigationQueue&		getNav() { return navList; }
+    const HUDNavigationQueue& getNav() const { return navList; }
+    HUDNavigationQueue&   getNav() { return navList; }
 
-    const std::vector<HUDuiElement*>&	getElements() const { return renderList; }
-    std::vector<HUDuiElement*>&		getElements() { return renderList; }
+    const std::vector<HUDuiElement*>& getElements() const { return renderList; }
+    std::vector<HUDuiElement*>&   getElements() { return renderList; }
 
-    int				getHeight() const { return height; }
-    int				getWidth() const { return width; }
+    int       getHeight() const { return height; }
+    int       getWidth() const { return width; }
 
-    void			initNavigation();
+    void      initNavigation();
 
   protected:
-    int				height, width;
+    int       height, width;
 
   private:
     /* renderList contains all elements which are to be rendered.
@@ -76,8 +76,8 @@ class HUDDialog {
      * Elements which are on not on the render list will not be automatically
      * deleted.
      */
-    std::vector<HUDuiElement*>	renderList;
-    HUDNavigationQueue		navList;
+    std::vector<HUDuiElement*>  renderList;
+    HUDNavigationQueue    navList;
 };
 
 
@@ -87,6 +87,6 @@ class HUDDialog {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

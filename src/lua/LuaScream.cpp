@@ -30,21 +30,18 @@ const char* LuaScream::metaName = "Scream";
 //============================================================================//
 //============================================================================//
 
-LuaScream::LuaScream()
-{
+LuaScream::LuaScream() {
 }
 
 
-LuaScream::~LuaScream()
-{
+LuaScream::~LuaScream() {
 }
 
 
 //============================================================================//
 //============================================================================//
 
-bool LuaScream::PushEntries(lua_State* L)
-{
+bool LuaScream::PushEntries(lua_State* L) {
   CreateMetatable(L);
 
   PUSH_LUA_CFUNC(L, CreateScream);
@@ -56,8 +53,7 @@ bool LuaScream::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-bool LuaScream::CreateMetatable(lua_State* L)
-{
+bool LuaScream::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
   luaset_strfunc(L,  "__gc",       MetaGC);
   luaset_strfunc(L,  "__index",    MetaIndex);
@@ -68,8 +64,7 @@ bool LuaScream::CreateMetatable(lua_State* L)
 }
 
 
-int LuaScream::MetaGC(lua_State* L)
-{
+int LuaScream::MetaGC(lua_State* L) {
   int* refPtr = GetScreamRef(L, 1);
   lua_rawgeti(L, LUA_REGISTRYINDEX, *refPtr);
   if (lua_isfunction(L, -1)) {
@@ -87,8 +82,7 @@ int LuaScream::MetaGC(lua_State* L)
 }
 
 
-int LuaScream::MetaIndex(lua_State* L)
-{
+int LuaScream::MetaIndex(lua_State* L) {
   int* refPtr = GetScreamRef(L, 1);
   const string key = luaL_checkstring(L, 2);
   if (key == "func") {
@@ -99,8 +93,7 @@ int LuaScream::MetaIndex(lua_State* L)
 }
 
 
-int LuaScream::MetaNewindex(lua_State* L)
-{
+int LuaScream::MetaNewindex(lua_State* L) {
   int* refPtr = GetScreamRef(L, 1);
   const string key = luaL_checkstring(L, 2);
   if (key == "func") {
@@ -113,8 +106,7 @@ int LuaScream::MetaNewindex(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int* LuaScream::GetScreamRef(lua_State* L, int index)
-{
+int* LuaScream::GetScreamRef(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected Scream");
   }
@@ -125,8 +117,7 @@ int* LuaScream::GetScreamRef(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaScream::CreateScream(lua_State* L)
-{
+int LuaScream::CreateScream(lua_State* L) {
   if (lua_isnoneornil(L, 1)) {
     luaL_error(L, "Incorrect arguments to CreateScream()");
   }
@@ -151,6 +142,6 @@ int LuaScream::CreateScream(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -18,51 +18,47 @@
 
 // Use only lower case command name
 ServerCommand::ServerCommand(std::string _commandName,
-			     std::string _oneLineHelp)
-  : commandName(_commandName)
-{
+                             std::string _oneLineHelp)
+  : commandName(_commandName) {
   (*getMapRef())[commandName] = this;
   oneLineHelp = commandName;
-  if (_oneLineHelp != "")
+  if (_oneLineHelp != "") {
     oneLineHelp += " " + _oneLineHelp;
+  }
 }
 
-ServerCommand::~ServerCommand()
-{
+ServerCommand::~ServerCommand() {
   (*getMapRef()).erase(commandName);
 }
 
-bool ServerCommand::execute(const char	 *commandLine,
-			    GameKeeper::Player *playerData)
-{
-  MapOfCommands &commandMap = *getMapRef();
+bool ServerCommand::execute(const char*   commandLine,
+                            GameKeeper::Player* playerData) {
+  MapOfCommands& commandMap = *getMapRef();
   int i = TextUtils::firstNonvisible(commandLine);
-  if (i < 0) i = strlen(commandLine);
+  if (i < 0) { i = strlen(commandLine); }
   std::string commandToken(commandLine, i);
 
   MapOfCommands::iterator it
     = commandMap.find(TextUtils::tolower(commandToken));
-  if (it == commandMap.end())
+  if (it == commandMap.end()) {
     return false;
+  }
 
   /* run the actual command */
   return (*(it->second))(commandLine, playerData);
 }
 
-bool ServerCommand::operator() (const char *, GameKeeper::Player *)
-{
+bool ServerCommand::operator()(const char*, GameKeeper::Player*) {
   return true;
 }
 
-ServerCommand::MapOfCommands *ServerCommand::getMapRef()
-{
+ServerCommand::MapOfCommands* ServerCommand::getMapRef() {
   static MapOfCommands mapOfCommands;
 
   return &mapOfCommands;
 }
 
-std::string ServerCommand::getHelp()
-{
+std::string ServerCommand::getHelp() {
   return oneLineHelp;
 }
 
@@ -70,6 +66,6 @@ std::string ServerCommand::getHelp()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

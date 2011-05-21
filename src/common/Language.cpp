@@ -31,15 +31,12 @@ Language::Language(int numberCode, std::string iso2Code, std::string iso3Code, s
     _iso2(iso2Code),
     _iso3(iso3Code),
     _english(english),
-    _french(french)
-{
+    _french(french) {
 }
-Language::~Language()
-{
+Language::~Language() {
 }
 
-bool Language::addLanguage(Language&)
-{
+bool Language::addLanguage(Language&) {
 
   return false;
 }
@@ -47,8 +44,7 @@ bool Language::addLanguage(Language&)
 
 /* public: */
 
-unsigned int Language::loadFromFile(std::string filename, bool verbose)
-{
+unsigned int Language::loadFromFile(std::string filename, bool verbose) {
   unsigned int totalAdded = 0;
   char buffer[2048];
   std::istream* stream = FILEMGR.createDataInStream(filename);
@@ -73,7 +69,7 @@ unsigned int Language::loadFromFile(std::string filename, bool verbose)
     position = languageLine.find_first_of("#\r\n");
 
     // trim trailing comments
-    if ((position >=0) && (position < (int)languageLine.length())) {
+    if ((position >= 0) && (position < (int)languageLine.length())) {
       languageLine = languageLine.substr(0, position);
     }
 
@@ -110,7 +106,8 @@ unsigned int Language::loadFromFile(std::string filename, bool verbose)
 
     if (addLanguage(lang) && verbose) {
       std::cout << std::endl << "Language is already added: " << iso2;
-    } else {
+    }
+    else {
       totalAdded++;
     }
 
@@ -124,67 +121,52 @@ unsigned int Language::loadFromFile(std::string filename, bool verbose)
 } // end loadFromFile
 
 
-int Language::number() const
-{
+int Language::number() const {
   return _number;
 }
-std::string Language::iso2() const
-{
+std::string Language::iso2() const {
   return _iso2;
 }
-std::string Language::iso3() const
-{
+std::string Language::iso3() const {
   return _iso3;
 }
-std::string Language::englishName() const
-{
+std::string Language::englishName() const {
   return _english;
 }
-std::string Language::frenchName() const
-{
+std::string Language::frenchName() const {
   return _french;
 }
 
 
-int Language::number(int country)
-{
+int Language::number(int country) {
   // XXX - validate number
   return country;
 }
-int Language::number(std::string)
-{
+int Language::number(std::string) {
   return 0;
 }
-std::string Language::iso2(int)
-{
+std::string Language::iso2(int) {
   return "";
 }
-std::string Language::iso2(std::string)
-{
+std::string Language::iso2(std::string) {
   return "";
 }
-std::string Language::iso3(int)
-{
+std::string Language::iso3(int) {
   return "";
 }
-std::string Language::iso3(std::string)
-{
+std::string Language::iso3(std::string) {
   return "";
 }
-std::string Language::englishName(int)
-{
+std::string Language::englishName(int) {
   return "";
 }
-std::string Language::englishName(std::string)
-{
+std::string Language::englishName(std::string) {
   return "";
 }
-std::string Language::frenchName(int)
-{
+std::string Language::frenchName(int) {
   return "";
 }
-std::string Language::frenchName(std::string)
-{
+std::string Language::frenchName(std::string) {
   return "";
 }
 
@@ -193,6 +175,6 @@ std::string Language::frenchName(std::string)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

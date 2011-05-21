@@ -22,79 +22,87 @@
 #include "guiplaying.h"
 
 static BzfJoystick*     getJoystick();
-static bool	     useForceFeedback(const char *type = "Rumble");
+static bool      useForceFeedback(const char* type = "Rumble");
 
 
-static BzfJoystick*     getJoystick()
-{
-  MainWindow *win = getMainWindow();
-  if (win)
+static BzfJoystick*     getJoystick() {
+  MainWindow* win = getMainWindow();
+  if (win) {
     return win->getJoystick();
-  else
+  }
+  else {
     return NULL;
+  }
 }
 
-static bool	     useForceFeedback(const char *type)
-{
+static bool      useForceFeedback(const char* type) {
   BzfJoystick* js = getJoystick();
 
   /* There must be a joystick class, and we need an opened joystick device */
-  if (!js)
+  if (!js) {
     return false;
-  if (!js->joystick())
+  }
+  if (!js->joystick()) {
     return false;
+  }
 
   /* Joystick must be the current input method */
-  if (LocalPlayer::getMyTank()->getInputMethod() != LocalPlayer::Joystick)
+  if (LocalPlayer::getMyTank()->getInputMethod() != LocalPlayer::Joystick) {
     return false;
+  }
 
   /* Did the user enable force feedback of this type? */
-  if (BZDB.get("forceFeedback") != type)
+  if (BZDB.get("forceFeedback") != type) {
     return false;
+  }
 
   return true;
 }
 
 namespace ForceFeedback {
 
-  void death()
-  {
+  void death() {
     /* Nice long hard rumble for death */
-    if (useForceFeedback("Rumble"))
+    if (useForceFeedback("Rumble")) {
       getJoystick()->ffRumble(1, 0.0f, 1.5f, 1.0f, 0.0f);
-    else if (useForceFeedback("Directional"))
+    }
+    else if (useForceFeedback("Directional")) {
       getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.5f, 1.0f, 0.0f, 1.0f, 0.15f, BzfJoystick::FF_SawtoothDown);
+    }
   }
 
-  void shotFired()
-  {
+  void shotFired() {
     /* Tiny little kick for a normal shot being fired */
-    if (useForceFeedback("Rumble"))
+    if (useForceFeedback("Rumble")) {
       getJoystick()->ffRumble(1, 0.0f, 0.1f, 0.0f, 1.0f);
-    else if (useForceFeedback("Directional"))
+    }
+    else if (useForceFeedback("Directional")) {
       getJoystick()->ffDirectionalConstant(1, 0.0f, 0.1f, 0.0f, -1.0f, 0.5f);
+    }
   }
 
-  void laserFired()
-  {
+  void laserFired() {
     /* Funky pulsating rumble for the laser.
      * (Only tested so far with the Logitech Wingman Cordless Rumblepad,
      *  some quirks in its driver may mean it's feeling a little different
      *  than it should)
      */
-    if (useForceFeedback("Rumble"))
+    if (useForceFeedback("Rumble")) {
       getJoystick()->ffRumble(4, 0.01f, 0.02f, 1.0f, 1.0f);
-    else if (useForceFeedback("Directional"))
+    }
+    else if (useForceFeedback("Directional")) {
       getJoystick()->ffDirectionalPeriodic(4, 0.1f, 0.1f, 0.0f, -1.0f, 0.5f, 0.05f, BzfJoystick::FF_Sine);
+    }
   }
 
-  void shockwaveFired()
-  {
+  void shockwaveFired() {
     /* try to 'match' the shockwave sound */
-    if (useForceFeedback("Rumble"))
+    if (useForceFeedback("Rumble")) {
       getJoystick()->ffRumble(1, 0.0f, 0.5f, 0.0f, 1.0f);
-    else if (useForceFeedback("Directional"))
+    }
+    else if (useForceFeedback("Directional")) {
       getJoystick()->ffDirectionalPeriodic(1, 0.0f, 1.0f, 0.0f, -1.0f, 0.5f, 0.1f, BzfJoystick::FF_Sine);
+    }
   }
 
   /* Burrowed, oscillating, etc, tanks get a special resistance force
@@ -102,13 +110,12 @@ namespace ForceFeedback {
    * of force-on time.
    */
   static BzTime friction_timer = BzTime::getSunGenesisTime();
-  void solidMatterFriction()
-  {
+  void solidMatterFriction() {
     /* There is no way to simulate this with a rumble effect */
     if (useForceFeedback("Directional")) {
       if ((BzTime::getCurrent() - friction_timer) >= 0.5f) {
-	getJoystick()->ffDirectionalResistance(0.5f, 1.0f, 0.5f, BzfJoystick::FF_Position);
-	friction_timer = BzTime::getCurrent();
+        getJoystick()->ffDirectionalResistance(0.5f, 1.0f, 0.5f, BzfJoystick::FF_Position);
+        friction_timer = BzTime::getCurrent();
       }
     }
   }
@@ -118,6 +125,6 @@ namespace ForceFeedback {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

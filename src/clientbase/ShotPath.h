@@ -12,14 +12,14 @@
 
 /*
  * ShotPath:
- *	Encapsulates the path a shot follows.  Most paths can
- *	be computed at the instant of firing (though they may
- *	terminate early because of a hit).  Some paths need
- *	to be updated continuously during flight.
+ *  Encapsulates the path a shot follows.  Most paths can
+ *  be computed at the instant of firing (though they may
+ *  terminate early because of a hit).  Some paths need
+ *  to be updated continuously during flight.
  *
  * RemoteShotPath:
- *	A ShotPath acting as a proxy for a remote ShotPath.
- *	Created by a LocalPlayer on behalf of a RemotePlayer.
+ *  A ShotPath acting as a proxy for a remote ShotPath.
+ *  Created by a LocalPlayer on behalf of a RemotePlayer.
  */
 
 #ifndef __SHOTPATH_H__
@@ -71,7 +71,7 @@ class ShotPath {
     inline FiringInfo&       getFiringInfo()       { return firingInfo; }
     inline const FiringInfo& getFiringInfo() const { return firingInfo; }
 
-    float checkHit(const ShotCollider &, fvec3& hitPos) const;
+    float checkHit(const ShotCollider&, fvec3& hitPos) const;
     void setExpiring();
     void setExpired();
     bool isStoppedByHit() const;
@@ -79,7 +79,7 @@ class ShotPath {
     void setLocal(bool loc) {local = loc;}
     bool isLocal(void) {return local;}
 
-    void addShot(SceneDatabase *, bool colorblind);
+    void addShot(SceneDatabase*, bool colorblind);
 
     void radarRender() const;
 
@@ -106,7 +106,7 @@ class ShotPath {
     void setVelocity(const fvec3&);
 
   private:
-    ShotStrategy *strategy; // strategy for moving shell
+    ShotStrategy* strategy; // strategy for moving shell
     FiringInfo firingInfo; // shell information
     float reloadTime; // time to reload
     BzTime startTime; // time of firing
@@ -120,21 +120,21 @@ class ShotPath {
 
 
 class LocalShotPath : public ShotPath {
-public:
-  LocalShotPath(const FiringInfo &);
-  ~LocalShotPath();
+  public:
+    LocalShotPath(const FiringInfo&);
+    ~LocalShotPath();
 
-  void update(float dt);
+    void update(float dt);
 };
 
 
 class RemoteShotPath : public ShotPath {
-public:
-  RemoteShotPath(const FiringInfo &);
-  ~RemoteShotPath();
+  public:
+    RemoteShotPath(const FiringInfo&);
+    ~RemoteShotPath();
 
-  void update(float dt);
-  void update(const ShotUpdate &shot, void *msg);
+    void update(float dt);
+    void update(const ShotUpdate& shot, void* msg);
 };
 
 
@@ -144,6 +144,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

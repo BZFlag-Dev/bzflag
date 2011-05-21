@@ -12,11 +12,11 @@
 
 /*
  * HUDuiServerList:
- *	User interface class for displaying the servers in a ServerList.
+ *  User interface class for displaying the servers in a ServerList.
  */
 
-#ifndef	__HUDUISERVERLIST_H__
-#define	__HUDUISERVERLIST_H__
+#ifndef __HUDUISERVERLIST_H__
+#define __HUDUISERVERLIST_H__
 
 // ancestor class
 #include "HUDuiScrollList.h"
@@ -29,7 +29,7 @@
 
 class HUDuiServerList : public HUDuiScrollList {
   public:
-      HUDuiServerList();
+    HUDuiServerList();
 
     typedef enum {
       EmptyServer         = (1 << 0),
@@ -106,7 +106,7 @@ class HUDuiServerList : public HUDuiScrollList {
     void setFontFace(const LocalFontFace* face);
     void setSize(float width, float height);
 
-    ServerList &dataList;
+    ServerList& dataList;
 
   protected:
     struct filter;
@@ -147,6 +147,6 @@ class HUDuiServerList : public HUDuiScrollList {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

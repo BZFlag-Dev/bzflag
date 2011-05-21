@@ -56,10 +56,11 @@ class CodeFetch : private cURLManager {
   public:
     CodeFetch() {
       if (!LuaHandle::GetDevMode()) {
-	url = sourceFile;
-      } else {
-	const string bzOrgURL = BZDB.get("luaBzOrgURL");
-	url = !bzOrgURL.empty() ? bzOrgURL : sourceFile;
+        url = sourceFile;
+      }
+      else {
+        const string bzOrgURL = BZDB.get("luaBzOrgURL");
+        url = !bzOrgURL.empty() ? bzOrgURL : sourceFile;
       }
       setURL(url);
       setGetMode();
@@ -73,17 +74,17 @@ class CodeFetch : private cURLManager {
       codeFetch = NULL;
     }
 
-    void finalization(char *data, unsigned int length, bool good) {
+    void finalization(char* data, unsigned int length, bool good) {
       if (luaBzOrg) {
-	return;
+        return;
       }
       if (!good) {
-	LuaLog(0, "LuaBzOrg code fetch failed: %s\n", url.c_str());
-	return;
+        LuaLog(0, "LuaBzOrg code fetch failed: %s\n", url.c_str());
+        return;
       }
       luaBzOrg = new LuaBzOrg(string(data, length), url);
       if (luaBzOrg->L == NULL) {
-	delete luaBzOrg;
+        delete luaBzOrg;
       }
     }
 
@@ -95,8 +96,7 @@ class CodeFetch : private cURLManager {
 //============================================================================//
 //============================================================================//
 
-void LuaBzOrg::LoadHandler()
-{
+void LuaBzOrg::LoadHandler() {
   if (!BZDB.isTrue("luaBzOrg")) {
     return;
   }
@@ -109,15 +109,13 @@ void LuaBzOrg::LoadHandler()
 }
 
 
-void LuaBzOrg::FreeHandler()
-{
+void LuaBzOrg::FreeHandler() {
   delete codeFetch;
   delete luaBzOrg;
 }
 
 
-bool LuaBzOrg::IsActive()
-{
+bool LuaBzOrg::IsActive() {
   return ((luaBzOrg != NULL) || (codeFetch != NULL));
 }
 
@@ -126,13 +124,12 @@ bool LuaBzOrg::IsActive()
 //============================================================================//
 
 LuaBzOrg::LuaBzOrg(const string& sourceCode, const string& sourceURL)
-: LuaHandle("LuaBzOrg",
-	    LUA_BZORG_SCRIPT_ID,
-	    LUA_BZORG_GAME_ORDER,
-	    LUA_BZORG_DRAW_WORLD_ORDER,
-	    LUA_BZORG_DRAW_SCREEN_ORDER,
-	    true, false, true)  // handle perms
-{
+  : LuaHandle("LuaBzOrg",
+              LUA_BZORG_SCRIPT_ID,
+              LUA_BZORG_GAME_ORDER,
+              LUA_BZORG_DRAW_WORLD_ORDER,
+              LUA_BZORG_DRAW_SCREEN_ORDER,
+              true, false, true) { // handle perms
   static LuaVfsModes vfsModes;
   vfsModes.readDefault  = BZVFS_LUA_BZORG BZVFS_LUA_BZORG_WRITE BZVFS_MEDIA;
   vfsModes.readAllowed  = BZVFS_ALL;
@@ -140,7 +137,7 @@ LuaBzOrg::LuaBzOrg(const string& sourceCode, const string& sourceURL)
   vfsModes.writeAllowed = BZVFS_LUA_BZORG_WRITE;
   if (devMode) {
     vfsModes.readDefault = BZVFS_LUA_USER
-			   BZVFS_LUA_BZORG BZVFS_LUA_BZORG_WRITE BZVFS_BASIC;
+                           BZVFS_LUA_BZORG BZVFS_LUA_BZORG_WRITE BZVFS_BASIC;
   }
 
   luaBzOrg = this;
@@ -172,8 +169,7 @@ LuaBzOrg::LuaBzOrg(const string& sourceCode, const string& sourceURL)
 }
 
 
-LuaBzOrg::~LuaBzOrg()
-{
+LuaBzOrg::~LuaBzOrg() {
   if (L != NULL) {
     Shutdown();
     KillLua();
@@ -190,6 +186,6 @@ LuaBzOrg::~LuaBzOrg()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

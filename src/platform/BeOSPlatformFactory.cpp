@@ -22,10 +22,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-PlatformFactory*		PlatformFactory::getInstance()
-{
-  if (instance == NULL)
+PlatformFactory*    PlatformFactory::getInstance() {
+  if (instance == NULL) {
     instance = new BeOSPlatformFactory;
+  }
   return instance;
 }
 
@@ -35,8 +35,7 @@ static int own_BApp_created = 0;
 static int refcount = 0;
 
 /* create the BApplication and Run() it */
-static int32 bapp_thread(void *arg)
-{
+static int32 bapp_thread(void* arg) {
   new BApplication("application/x-vnd.bzflag");
   own_BApp_created = 1;
   be_app->Run();
@@ -46,22 +45,21 @@ static int32 bapp_thread(void *arg)
   return B_OK;
 }
 
-BeOSPlatformFactory::BeOSPlatformFactory()
-{
+BeOSPlatformFactory::BeOSPlatformFactory() {
   /* create the BApplication only if needed */
   if (refcount++ == 0) {
     /* needed by libmedia */
     if (be_app == NULL) {
       bapp_thid = spawn_thread(bapp_thread, "bzflag BApplication", B_NORMAL_PRIORITY, NULL);
       resume_thread(bapp_thid);
-      while (!own_BApp_created)
-	snooze(50000);
+      while (!own_BApp_created) {
+        snooze(50000);
+      }
     }
   }
 }
 
-BeOSPlatformFactory::~BeOSPlatformFactory()
-{
+BeOSPlatformFactory::~BeOSPlatformFactory() {
   /* destroy the BApplication if we created it */
   if (--refcount == 0 && own_BApp_created) {
     be_app->Lock();
@@ -71,9 +69,8 @@ BeOSPlatformFactory::~BeOSPlatformFactory()
   }
 }
 
-BzfDisplay*				BeOSPlatformFactory::createDisplay(
-								const char* name, const char*videoFormat)
-{
+BzfDisplay*       BeOSPlatformFactory::createDisplay(
+  const char* name, const char* videoFormat) {
 
   BeOSDisplay* display = new BeOSDisplay(name, videoFormat);
   if (!display || !display->isValid()) {
@@ -84,27 +81,25 @@ BzfDisplay*				BeOSPlatformFactory::createDisplay(
   return display;
 }
 
-BzfVisual*				BeOSPlatformFactory::createVisual(
-								const BzfDisplay* display)
-{
-  return new BeOSVisual((BeOSDisplay *)display);
+BzfVisual*        BeOSPlatformFactory::createVisual(
+  const BzfDisplay* display) {
+  return new BeOSVisual((BeOSDisplay*)display);
 }
 
-BzfWindow*				BeOSPlatformFactory::createWindow(
-								const BzfDisplay* display, BzfVisual* visual)
-{
-  BeOSWindow *win;
-  win = new BeOSWindow((BeOSDisplay *)display, (BeOSVisual *)visual);
-  if (!win)
+BzfWindow*        BeOSPlatformFactory::createWindow(
+  const BzfDisplay* display, BzfVisual* visual) {
+  BeOSWindow* win;
+  win = new BeOSWindow((BeOSDisplay*)display, (BeOSVisual*)visual);
+  if (!win) {
     return NULL;
-  ((BeOSDisplay *)display)->beosWin = win;
+  }
+  ((BeOSDisplay*)display)->beosWin = win;
 //  win->applyVisual(visual);
 //  win->makeCurrent(); /* activate the OpenGL context for this thread */
   return win;
 }
 
-BzfMedia*				BeOSPlatformFactory::createMedia()
-{
+BzfMedia*       BeOSPlatformFactory::createMedia() {
   return new BeOSMedia;
 }
 
@@ -113,6 +108,6 @@ BzfMedia*				BeOSPlatformFactory::createMedia()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

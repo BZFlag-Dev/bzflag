@@ -25,14 +25,14 @@ static const double siderealHoursPerHour = 1.002737908;
 static const double epoch = 2415020.0;
 
 
-static double getGreenwichSideral(double julianDay)
-{
+static double getGreenwichSideral(double julianDay) {
   // true position requires sidereal time of midnight at prime meridian.
   // get midnight of given julian day (midnight has decimal of .5)
   double jdMidnight = floor(julianDay);
   if ((julianDay - jdMidnight) >= 0.5) {
     jdMidnight += 0.5;
-  } else {
+  }
+  else {
     jdMidnight -= 0.5;
   }
 
@@ -52,8 +52,7 @@ static double getGreenwichSideral(double julianDay)
 static void getTruePosition(double julianDay,
                             float latitude, float longitude,
                             double sx, double sy, double sz,
-                            fvec3& pos)
-{
+                            fvec3& pos) {
   // get local sidereal time
   const float localSidereal =
     (float)(getGreenwichSideral(julianDay) - longitude * radPerDeg);
@@ -73,11 +72,10 @@ static void getTruePosition(double julianDay,
 
 void Daylight::getCelestialTransform(double julianDay,
                                      float latitude, float longitude,
-                                     float (&xform)[4][4])
-{
+                                     float(&xform)[4][4]) {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
-						longitude * radPerDeg);
+                                      longitude * radPerDeg);
 
   // localSidereal is the amount the celestial sphere should be
   // rotated from the vernal equinox about the celestial axis.
@@ -110,24 +108,23 @@ void Daylight::getCelestialTransform(double julianDay,
 
 
 void Daylight::getSunPosition(double julianDay, float latitude,
-                              float longitude, fvec3& pos)
-{
+                              float longitude, fvec3& pos) {
   double T = (julianDay - epoch) / 36525.0;
   double geometricMeanLongitude = radPerDeg *
-    ((0.0003025 * T + 36000.76892) * T + 279.69668);
+                                  ((0.0003025 * T + 36000.76892) * T + 279.69668);
   geometricMeanLongitude = fmod(geometricMeanLongitude, 2.0 * M_PI);
 
   double meanAnomaly = radPerDeg *
-    (358.47583 + ((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
+                       (358.47583 + ((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
   meanAnomaly = fmod(meanAnomaly, 2.0 * M_PI);
 
 //  double eccentricity = 0.01675104 +
-//		T * (-0.000000126 * T - 0.0000418);
+//    T * (-0.000000126 * T - 0.0000418);
 
   double C = radPerDeg *
-    (sin(meanAnomaly) * (1.919460 - (0.004789 + 0.000014 * T) * T) +
-     sin(2.0 * meanAnomaly) * (0.020094 - 0.0001 * T) +
-     sin(3.0 * meanAnomaly) * 0.000293);
+             (sin(meanAnomaly) * (1.919460 - (0.004789 + 0.000014 * T) * T) +
+              sin(2.0 * meanAnomaly) * (0.020094 - 0.0001 * T) +
+              sin(3.0 * meanAnomaly) * 0.000293);
   C = fmod(C, 2.0 * M_PI);
 
   double trueLongitude = geometricMeanLongitude + C;
@@ -135,7 +132,7 @@ void Daylight::getSunPosition(double julianDay, float latitude,
 
   // get obliquity (earth's tilt)
   double obliquity = radPerDeg *
-    (23.452294 + (-0.0130125 + (-0.00000164 + 0.000000503 * T) * T) * T);
+                     (23.452294 + (-0.0130125 + (-0.00000164 + 0.000000503 * T) * T) * T);
   obliquity = fmod(obliquity, 2.0 * M_PI);
 
   // position of sun if earth didn't rotate:
@@ -150,55 +147,54 @@ void Daylight::getSunPosition(double julianDay, float latitude,
 
 
 void Daylight::getMoonPosition(double julianDay, float latitude,
-                               float longitude, fvec3& pos)
-{
+                               float longitude, fvec3& pos) {
   double T = (julianDay - epoch) / 36525.0;
   double e = 1.0 + (-0.002495 - 0.00000752 * T) * T;
   double meanLongitude = radPerDeg *
-    (270.434164 + (481267.8831 + (-0.001133 + 0.0000019 * T) * T) * T);
+                         (270.434164 + (481267.8831 + (-0.001133 + 0.0000019 * T) * T) * T);
   meanLongitude = fmod(meanLongitude, 2.0 * M_PI);
 
   double meanAnomaly = radPerDeg *
-    (296.104608 + (477198.8491 + (0.009192 + 0.0000144 * T) * T) * T);
+                       (296.104608 + (477198.8491 + (0.009192 + 0.0000144 * T) * T) * T);
   meanAnomaly = fmod(meanAnomaly, 2.0 * M_PI);
 
   double meanElongation = radPerDeg *
-    (350.737486 + (445267.1142 + (-0.001436 + 0.0000019 * T) * T) * T);
+                          (350.737486 + (445267.1142 + (-0.001436 + 0.0000019 * T) * T) * T);
   meanElongation = fmod(meanElongation, 2.0 * M_PI);
   double meanElongation2 = 2.0 * meanElongation;
 
   double distFromAscendingNode = radPerDeg *
-    (11.250889 + (483202.0251 + (-0.003211 - 0.0000003 * T) * T) * T);
+                                 (11.250889 + (483202.0251 + (-0.003211 - 0.0000003 * T) * T) * T);
   distFromAscendingNode = fmod(distFromAscendingNode, 2.0 * M_PI);
 
   // get sun's meanAnomaly
   double solMeanAnomaly = radPerDeg *
-    (358.47583 + ((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
+                          (358.47583 + ((0.0000033 * T + 0.000150) * T + 35999.04975) * T);
   solMeanAnomaly = fmod(solMeanAnomaly, 2.0 * M_PI);
 
   // get moon's geocentric latitude and longitude
   double geocentricLongitude = meanLongitude + radPerDeg *
-		(6.288750 * sin(meanAnomaly) +
-		 1.274018 * sin(meanElongation2 - meanAnomaly) +
-		 0.658309 * sin(meanElongation2) +
-		 0.213616 * sin(2.0 * meanAnomaly) +
-		-0.185596 * sin(solMeanAnomaly) * e +
-		-0.114336 * sin(2.0 * distFromAscendingNode));
+                               (6.288750 * sin(meanAnomaly) +
+                                1.274018 * sin(meanElongation2 - meanAnomaly) +
+                                0.658309 * sin(meanElongation2) +
+                                0.213616 * sin(2.0 * meanAnomaly) +
+                                -0.185596 * sin(solMeanAnomaly) * e +
+                                -0.114336 * sin(2.0 * distFromAscendingNode));
   double geocentricLatitude = radPerDeg *
-		(5.128189 * sin(distFromAscendingNode) +
-		 0.280606 * sin(meanAnomaly + distFromAscendingNode) +
-		 0.277693 * sin(meanAnomaly - distFromAscendingNode) +
-		 0.173238 * sin(meanElongation2 - distFromAscendingNode) +
-		 0.055413 * sin(meanElongation2 + distFromAscendingNode - meanAnomaly) +
-		 0.046272 * sin(meanElongation2 - distFromAscendingNode - meanAnomaly) +
-		 0.032573 * sin(meanElongation2 + distFromAscendingNode) +
-		 0.017198 * sin(2.0 * meanAnomaly + distFromAscendingNode));
+                              (5.128189 * sin(distFromAscendingNode) +
+                               0.280606 * sin(meanAnomaly + distFromAscendingNode) +
+                               0.277693 * sin(meanAnomaly - distFromAscendingNode) +
+                               0.173238 * sin(meanElongation2 - distFromAscendingNode) +
+                               0.055413 * sin(meanElongation2 + distFromAscendingNode - meanAnomaly) +
+                               0.046272 * sin(meanElongation2 - distFromAscendingNode - meanAnomaly) +
+                               0.032573 * sin(meanElongation2 + distFromAscendingNode) +
+                               0.017198 * sin(2.0 * meanAnomaly + distFromAscendingNode));
   geocentricLongitude = fmod(geocentricLongitude, 2.0 * M_PI);
   geocentricLatitude = fmod(geocentricLatitude, 2.0 * M_PI);
 
   // get obliquity (earth's tilt)
   double obliquity = radPerDeg *
-    (23.452294 + (-0.0130125 + (-0.00000164 + 0.000000503 * T) * T) * T);
+                     (23.452294 + (-0.0130125 + (-0.00000164 + 0.000000503 * T) * T) * T);
   obliquity = fmod(obliquity, 2.0 * M_PI);
 
   // position of moon if earth didn't rotate:
@@ -223,13 +219,12 @@ static const float dayElevation      =  0.087f; // ~sin(5)
 
 
 void Daylight::getSunColor(const fvec3& sunDir,
-                           fvec4& color, fvec4& ambient, float& brightness)
-{
-  static const fvec4 highSunColor (1.75f, 1.75f, 1.4f, 1.0f);
-  static const fvec4 lowSunColor  (0.75f, 0.27f, 0.0f, 1.0f);
-  static const fvec4 moonColor    (0.4f,  0.4f,  0.4f, 1.0f);
-  static const fvec4 nightAmbient (0.3f,  0.3f,  0.3f, 1.0f);
-  static const fvec4 dayAmbient   (0.35f, 0.5f,  0.5f, 1.0f);
+                           fvec4& color, fvec4& ambient, float& brightness) {
+  static const fvec4 highSunColor(1.75f, 1.75f, 1.4f, 1.0f);
+  static const fvec4 lowSunColor(0.75f, 0.27f, 0.0f, 1.0f);
+  static const fvec4 moonColor(0.4f,  0.4f,  0.4f, 1.0f);
+  static const fvec4 nightAmbient(0.3f,  0.3f,  0.3f, 1.0f);
+  static const fvec4 dayAmbient(0.35f, 0.5f,  0.5f, 1.0f);
 
   // color and brightness
   if (sunDir.z <= -0.009f) {
@@ -264,8 +259,7 @@ void Daylight::getSunColor(const fvec3& sunDir,
 }
 
 
-bool Daylight::getSunsetTop(const fvec3& sunDir, float& topAltitude)
-{
+bool Daylight::getSunsetTop(const fvec3& sunDir, float& topAltitude) {
   if ((sunDir.z > nightElevation) &&
       (sunDir.z < dayElevation)) {
     topAltitude = (sunDir.z - nightElevation) /
@@ -276,13 +270,12 @@ bool Daylight::getSunsetTop(const fvec3& sunDir, float& topAltitude)
 }
 
 
-void Daylight::getSkyColor(const fvec3& sunDir, fvec4 sky[4])
-{
-  static const fvec4 nightColor    (0.04f, 0.04f, 0.08f, 1.0f);
-  static const fvec4 zenithColor   (0.25f, 0.55f, 0.86f, 1.0f);
-  static const fvec4 horizonColor  (0.43f, 0.75f, 0.95f, 1.0f);
-  static const fvec4 sunrise1Color (0.30f, 0.12f, 0.08f, 1.0f);
-  static const fvec4 sunrise2Color (0.47f, 0.12f, 0.08f, 1.0f);
+void Daylight::getSkyColor(const fvec3& sunDir, fvec4 sky[4]) {
+  static const fvec4 nightColor(0.04f, 0.04f, 0.08f, 1.0f);
+  static const fvec4 zenithColor(0.25f, 0.55f, 0.86f, 1.0f);
+  static const fvec4 horizonColor(0.43f, 0.75f, 0.95f, 1.0f);
+  static const fvec4 sunrise1Color(0.30f, 0.12f, 0.08f, 1.0f);
+  static const fvec4 sunrise2Color(0.47f, 0.12f, 0.08f, 1.0f);
 
   // sky colors
   if (sunDir.z < nightElevation) {
@@ -344,14 +337,12 @@ void Daylight::getSkyColor(const fvec3& sunDir, fvec4 sky[4])
 }
 
 
-bool Daylight::areShadowsCast(const fvec3& sunDir)
-{
+bool Daylight::areShadowsCast(const fvec3& sunDir) {
   return sunDir.z > (0.5 * dayElevation);
 }
 
 
-bool Daylight::areStarsVisible(const fvec3& sunDir)
-{
+bool Daylight::areStarsVisible(const fvec3& sunDir) {
   return sunDir.z < dawnElevation;
 }
 
@@ -360,6 +351,6 @@ bool Daylight::areStarsVisible(const fvec3& sunDir)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

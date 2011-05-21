@@ -43,15 +43,13 @@
 const float RadarRenderer::colorFactor = 40.0f;
 
 
-RadarRenderer::~RadarRenderer()
-{
+RadarRenderer::~RadarRenderer() {
   clearRadarObjects();
 }
 
 
-void RadarRenderer::clearRadarObjects()
-{
-  DisplayListSystem &ds = DisplayListSystem::Instance();
+void RadarRenderer::clearRadarObjects() {
+  DisplayListSystem& ds = DisplayListSystem::Instance();
 
   RadarObjectMap::iterator itr;
   for (itr = radarObjectLists.begin(); itr != radarObjectLists.end(); ++itr) {
@@ -63,18 +61,17 @@ void RadarRenderer::clearRadarObjects()
 
 
 RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
-: world(_world)
-, x(0)
-, y(0)
-, w(0)
-, h(0)
-, dimming(0.0f)
-, decay(0.01f)
-, teamColor(0.0f, 0.0f, 0.0f, 1.0f)
-, jammed(false)
-, colorblind(false)
-, multiSampled(false)
-{
+  : world(_world)
+  , x(0)
+  , y(0)
+  , w(0)
+  , h(0)
+  , dimming(0.0f)
+  , decay(0.01f)
+  , teamColor(0.0f, 0.0f, 0.0f, 1.0f)
+  , jammed(false)
+  , colorblind(false)
+  , multiSampled(false) {
 
   clearRadarObjects();
   lastFast = false;
@@ -83,30 +80,28 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
   GLint bits;
   glGetIntergerv(GL_SAMPLES_SGIS, &bits);
-  if (bits > 0) multiSampled = true;
+  if (bits > 0) { multiSampled = true; }
 #endif
 }
 
 
-void RadarRenderer::setWorld(World* _world)
-{
+void RadarRenderer::setWorld(World* _world) {
   world = _world;
   clearRadarObjects();
 }
 
 
-void RadarRenderer::setControlColor(const fvec4* color)
-{
+void RadarRenderer::setControlColor(const fvec4* color) {
   if (color != NULL) {
     teamColor = *color;
-  } else {
+  }
+  else {
     teamColor = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
   }
 }
 
 
-void RadarRenderer::setShape(int _x, int _y, int _w, int _h)
-{
+void RadarRenderer::setShape(int _x, int _y, int _w, int _h) {
   x = _x;
   y = _y;
   w = _w;
@@ -114,30 +109,26 @@ void RadarRenderer::setShape(int _x, int _y, int _w, int _h)
 }
 
 
-void RadarRenderer::setJammed(bool _jammed)
-{
+void RadarRenderer::setJammed(bool _jammed) {
   jammed = _jammed;
   decay = 0.01;
 }
 
 
-void RadarRenderer::setDimming(float newDimming)
-{
+void RadarRenderer::setDimming(float newDimming) {
   dimming = (1.0f - newDimming > 1.0f) ? 1.0f :
             (1.0f - newDimming < 0.0f) ? 0.0f : 1.0f - newDimming;
 }
 
 
-void RadarRenderer::drawShot(const ShotPath* shot)
-{
+void RadarRenderer::drawShot(const ShotPath* shot) {
   glBegin(GL_POINTS); {
     glVertex2fv(shot->getPosition());
   } glEnd();
 }
 
 
-void RadarRenderer::drawTank(const Player* player, bool allowFancy)
-{
+void RadarRenderer::drawTank(const Player* player, bool allowFancy) {
   glPushMatrix();
 
   const fvec3& pos = player->getPosition();
@@ -148,7 +139,8 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
   float size;
   if (tankRadius < minSize) {
     size = minSize;
-  } else {
+  }
+  else {
     size = tankRadius;
   }
   if (pos.z < 0.0f) {
@@ -173,7 +165,8 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
     glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     if (useTankModels) {
       drawFancyTank(player);
-    } else {
+    }
+    else {
       const fvec3& dims = player->getDimensions();
       glRectf(-dims.x, -dims.y, +dims.x, +dims.y);
     }
@@ -205,8 +198,7 @@ void RadarRenderer::drawTank(const Player* player, bool allowFancy)
 }
 
 
-void RadarRenderer::drawFancyTank(const Player* player)
-{
+void RadarRenderer::drawFancyTank(const Player* player) {
   if (smooth) {
     glDisable(GL_BLEND);
   }
@@ -241,8 +233,7 @@ void RadarRenderer::drawFancyTank(const Player* player)
 
 
 void RadarRenderer::drawHuntLevel(const Player* player,
-				  float tankSize, float heightBoxSize)
-{
+                                  float tankSize, float heightBoxSize) {
   const int huntLevel = player->getAutoHuntLevel();
   const int chevrons = AutoHunt::getChevronCount(huntLevel);
   if (chevrons < 1) {
@@ -326,8 +317,7 @@ void RadarRenderer::drawHuntLevel(const Player* player,
 }
 
 
-void RadarRenderer::drawFlag(const fvec3& pos)
-{
+void RadarRenderer::drawFlag(const fvec3& pos) {
   float s = BZDBCache::flagRadius > 3.0f * ps ? BZDBCache::flagRadius : 3.0f * ps;
   glBegin(GL_LINES);
   glVertex2f(pos.x - s, pos.y);
@@ -341,8 +331,7 @@ void RadarRenderer::drawFlag(const fvec3& pos)
   glEnd();
 }
 
-void RadarRenderer::drawFlagOnTank(const fvec3& pos)
-{
+void RadarRenderer::drawFlagOnTank(const fvec3& pos) {
   glPushMatrix();
 
   // align it to the screen axes
@@ -369,8 +358,7 @@ void RadarRenderer::drawFlagOnTank(const fvec3& pos)
 }
 
 
-void RadarRenderer::renderFrame(SceneRenderer& renderer)
-{
+void RadarRenderer::renderFrame(SceneRenderer& renderer) {
   const MainWindow& window = renderer.getWindow();
 
   glMatrixMode(GL_PROJECTION);
@@ -396,7 +384,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
   float outlineOpacity = RENDERER.getPanelOpacity();
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;
-  if (outlineOpacity < 1.0f ) {
+  if (outlineOpacity < 1.0f) {
     outlineOpacity = (outlineOpacity * fudgeFactor) + (1.0f - fudgeFactor);
   }
 
@@ -404,7 +392,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     glEnable(GL_BLEND);
   }
   glColor4f(teamColor.r, teamColor.g, teamColor.b, outlineOpacity);
-  glOutlineBoxHV(10,left,top,right,bottom);
+  glOutlineBoxHV(10, left, top, right, bottom);
   if (BZDBCache::blend) {
     glDisable(GL_BLEND);
   }
@@ -415,12 +403,14 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   if ((opacity < 1.0f) && (opacity > 0.0f)) {
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
     // draw nice blended background
-    if (BZDBCache::blend && opacity < 1.0f)
+    if (BZDBCache::blend && opacity < 1.0f) {
       glEnable(GL_BLEND);
+    }
     glColor4f(0.0f, 0.0f, 0.0f, opacity);
     glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-    if (BZDBCache::blend && opacity < 1.0f)
+    if (BZDBCache::blend && opacity < 1.0f) {
       glDisable(GL_BLEND);
+    }
   }
 
   // note that this scissor setup is used for the reset of the rendering
@@ -441,12 +431,11 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 }
 
 
-static bool checkDrawFlags()
-{
+static bool checkDrawFlags() {
   if (!BZDB.isTrue("autoFlagDisplay")) {
     return BZDB.isTrue("displayRadarFlags");
   }
-  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank) {
     return BZDB.isTrue("displayRadarFlags");
   }
@@ -461,8 +450,7 @@ static bool checkDrawFlags()
 }
 
 
-bool RadarRenderer::executeScissor()
-{
+bool RadarRenderer::executeScissor() {
   const MainWindow& window = RENDERER.getWindow();
   const int ox = window.getOriginX();
   const int oy = window.getOriginY();
@@ -471,8 +459,7 @@ bool RadarRenderer::executeScissor()
 }
 
 
-bool RadarRenderer::executeTransform(bool localView)
-{
+bool RadarRenderer::executeTransform(bool localView) {
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!world || !myTank) {
     return false;
@@ -497,8 +484,8 @@ bool RadarRenderer::executeTransform(bool localView)
     maxHeight = (double)visExts->maxs.z;
   }
   glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-	  -yCenter * yUnit, (ySize - yCenter) * yUnit,
-	  -(maxHeight + 10.0), (maxHeight + 10.0));
+          -yCenter * yUnit, (ySize - yCenter) * yUnit,
+          -(maxHeight + 10.0), (maxHeight + 10.0));
 
   // prepare modelview matrix
   glMatrixMode(GL_MODELVIEW);
@@ -517,8 +504,7 @@ bool RadarRenderer::executeTransform(bool localView)
 }
 
 
-void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
-{
+void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange) {
   TextureManager& tm = TextureManager::instance();
   const int noiseTexture = tm.getTextureID("noise");
 
@@ -549,13 +535,13 @@ void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
     tm.bind(noiseTexture);
 
     glBegin(GL_QUADS); {
-      glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
+      glTexCoord2f(np[noisePattern + 0], np[noisePattern + 1]);
       glVertex2f(-radarRange, -radarRange);
-      glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
+      glTexCoord2f(np[noisePattern + 2], np[noisePattern + 1]);
       glVertex2f(+radarRange, -radarRange);
-      glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
+      glTexCoord2f(np[noisePattern + 2], np[noisePattern + 3]);
       glVertex2f(+radarRange, +radarRange);
-      glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
+      glTexCoord2f(np[noisePattern + 0], np[noisePattern + 3]);
       glVertex2f(-radarRange, +radarRange);
     } glEnd();
 
@@ -567,9 +553,9 @@ void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
     tm.bind(noiseTexture);
 
     glBegin(GL_QUADS); {
-      glTexCoord2f(0.0f, 0.0f); glVertex2f(-radarRange,-radarRange);
-      glTexCoord2f(1.0f, 0.0f); glVertex2f( radarRange,-radarRange);
-      glTexCoord2f(1.0f, 1.0f); glVertex2f( radarRange, radarRange);
+      glTexCoord2f(0.0f, 0.0f); glVertex2f(-radarRange, -radarRange);
+      glTexCoord2f(1.0f, 0.0f); glVertex2f(radarRange, -radarRange);
+      glTexCoord2f(1.0f, 1.0f); glVertex2f(radarRange, radarRange);
       glTexCoord2f(0.0f, 1.0f); glVertex2f(-radarRange, radarRange);
     } glEnd();
 
@@ -582,8 +568,7 @@ void RadarRenderer::drawNoise(SceneRenderer& renderer, float radarRange)
 }
 
 
-void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
-{
+void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer) {
   RenderNode::resetTriangleCount();
 
   const float radarLimit = BZDBCache::radarLimit;
@@ -605,16 +590,17 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
   smooth = !multiSampled && BZDBCache::smooth;
   const bool fastRadar = BZDBCache::zbuffer && BZDBCache::texture &&
-    ((BZDBCache::radarStyle == SceneRenderer::FastRadar) ||
-     (BZDBCache::radarStyle == SceneRenderer::FastSortedRadar));
-  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+                         ((BZDBCache::radarStyle == SceneRenderer::FastRadar) ||
+                          (BZDBCache::radarStyle == SceneRenderer::FastSortedRadar));
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   // setup the desired range
   static BZDB_float displayRadarRange("displayRadarRange");
   float radarRange = displayRadarRange;
   if (radarRange >= 0.0f) {
     radarRange *= radarLimit; // relative
-  } else {
+  }
+  else {
     radarRange = -radarRange; // absolute
   }
 
@@ -662,7 +648,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   // frames in a row.
   if (decay <= 0.015f) {
     decay = 1.0f;
-  } else {
+  }
+  else {
     decay *= 0.5f;
   }
 
@@ -674,14 +661,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   float tankLength = BZDBCache::tankLength;
   const float testMin = 8.0f * ps;
   // maintain the aspect ratio if it isn't square
-  if ((tankWidth > testMin) &&  (tankLength > testMin)) {
+  if ((tankWidth > testMin) && (tankLength > testMin)) {
     useTankDimensions = true;
-  } else {
+  }
+  else {
     useTankDimensions = false;
   }
   if (useTankDimensions && (renderer.useQuality() >= _HIGH_QUALITY)) {
     useTankModels = true;
-  } else {
+  }
+  else {
     useTankModels = false;
   }
 
@@ -704,7 +693,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       glColor3f(0.5f, 0.3125f, 0.0625f);
       glVertex2f(0.0f, radarRange);
       glVertex2f(0.0f, 0.0f);
-    }	else {
+    }
+    else {
       glBegin(GL_LINE_STRIP);
       glVertex2f(-viewWidth, radarRange);
       glVertex2f(0.0f, 0.0f);
@@ -753,7 +743,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   }
 
   // draw world weapon shots
-  WorldPlayer *worldWeapons = world->getWorldWeapons();
+  WorldPlayer* worldWeapons = world->getWorldWeapons();
   maxShots = worldWeapons->getMaxShots();
   for (i = 0; i < maxShots; i++) {
     const ShotPath* shot = worldWeapons->getShot(i);
@@ -801,7 +791,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     if (player->isPaused() || player->isNotResponding()) {
       const float dimfactor = 0.4f;
       glColor3fv(Team::getRadarColor(visTeam).rgb() * dimfactor);
-    } else {
+    }
+    else {
       glColor3fv(Team::getRadarColor(visTeam));
     }
 
@@ -820,10 +811,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         const fvec4 normalBlinkColor(0.0f, 0.8f, 0.9f, 1.0f);
         if (player->getTeam() == GreenTeam) {
           glColor3fv(greenBlinkColor);
-        } else {
+        }
+        else {
           glColor3fv(normalBlinkColor);
         }
-      } else {
+      }
+      else {
         glColor3fv(Team::getRadarColor(player->getTeam()));
       }
     }
@@ -837,7 +830,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
   maxShots = world->getMaxShots();
   for (i = 0; i < curMaxPlayers; i++) {
     RemotePlayer* player = world->getPlayer(i);
-    if (!player) continue;
+    if (!player) { continue; }
     for (int j = 0; j < maxShots; j++) {
       const ShotPath* shot = player->getShot(j);
       if (shot && shot->getRadarGfxBlock().notBlocked() &&
@@ -846,7 +839,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         if (coloredShot) {
           const TeamColor visTeam = colorblind ? RogueTeam : player->getTeam();
           glColor3fv(Team::getRadarColor(visTeam).rgb() * cs);
-        } else {
+        }
+        else {
           glColor3f(cs, cs, cs);
         }
         shot->radarRender();
@@ -872,13 +866,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     if (flag.radarGfxBlock.blocked()) {
       continue;
     }
-    if(BZDB.isTrue(BZDBNAMES.HIDETEAMFLAGSONRADAR)) {
-      if(flag.type->flagTeam != NoTeam) {   
+    if (BZDB.isTrue(BZDBNAMES.HIDETEAMFLAGSONRADAR)) {
+      if (flag.type->flagTeam != NoTeam) {
         continue;
       }
     }
-    if(BZDB.isTrue(BZDBNAMES.HIDEFLAGSONRADAR)) {
-      if(flag.type) {
+    if (BZDB.isTrue(BZDBNAMES.HIDEFLAGSONRADAR)) {
+      if (flag.type) {
         continue;
       }
     }
@@ -969,8 +963,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 }
 
 
-float RadarRenderer::colorScale(const float z, const float h)
-{
+float RadarRenderer::colorScale(const float z, const float h) {
   float scaleColor;
   if (BZDBCache::radarStyle > SceneRenderer::NormalRadar) {
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -978,17 +971,22 @@ float RadarRenderer::colorScale(const float z, const float h)
     // Scale color so that objects that are close to tank's level are opaque
     const float zTank = myTank->getPosition().z;
 
-    if (zTank > (z + h))
+    if (zTank > (z + h)) {
       scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
-    else if (zTank < z)
+    }
+    else if (zTank < z) {
       scaleColor = 1.0f - (z - zTank) / colorFactor;
-    else
+    }
+    else {
       scaleColor = 1.0f;
+    }
 
     // Don't fade all the way
-    if (scaleColor < 0.35f)
+    if (scaleColor < 0.35f) {
       scaleColor = 0.35f;
-  } else {
+    }
+  }
+  else {
     scaleColor = 1.0f;
   }
 
@@ -996,29 +994,31 @@ float RadarRenderer::colorScale(const float z, const float h)
 }
 
 
-float RadarRenderer::transScale(const float z, const float h)
-{
+float RadarRenderer::transScale(const float z, const float h) {
   float scaleColor;
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   // Scale color so that objects that are close to tank's level are opaque
   const float zTank = myTank->getPosition().z;
-  if (zTank > (z + h))
+  if (zTank > (z + h)) {
     scaleColor = 1.0f - (zTank - (z + h)) / colorFactor;
-  else if (zTank < z)
+  }
+  else if (zTank < z) {
     scaleColor = 1.0f - (z - zTank) / colorFactor;
-  else
+  }
+  else {
     scaleColor = 1.0f;
+  }
 
-  if (scaleColor < 0.5f)
+  if (scaleColor < 0.5f) {
     scaleColor = 0.5f;
+  }
 
   return scaleColor;
 }
 
 
-void RadarRenderer::renderObstacles(bool fastRadar, float _range)
-{
+void RadarRenderer::renderObstacles(bool fastRadar, float _range) {
   if (smooth) {
     glEnable(GL_BLEND);
     glEnable(GL_LINE_SMOOTH);
@@ -1034,7 +1034,8 @@ void RadarRenderer::renderObstacles(bool fastRadar, float _range)
   // draw the boxes, pyramids, and meshes
   if (!fastRadar) {
     renderBoxPyrMesh();
-  } else {
+  }
+  else {
     renderBoxPyrMeshFast(_range);
   }
 
@@ -1054,8 +1055,7 @@ void RadarRenderer::renderObstacles(bool fastRadar, float _range)
 }
 
 
-void RadarRenderer::renderWalls()
-{
+void RadarRenderer::renderWalls() {
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   int count = walls.size();
   glColor3f(0.25f, 0.5f, 0.5f);
@@ -1075,28 +1075,27 @@ void RadarRenderer::renderWalls()
 }
 
 
-void RadarRenderer::renderBoxPyrMeshFast(float _range)
-{
+void RadarRenderer::renderBoxPyrMeshFast(float _range) {
   // FIXME - This is hack code at the moment, but even when
-  //	 rendering the full world, it draws the aztec map
-  //	 3X faster (the culling algo is actually slows us
-  //	 down in that case)
-  //	   - need a better default gradient texture
-  //	     (better colors, and tied in to show max jump height?)
-  //	   - build a procedural texture if default is missing
-  //	   - use a GL_TEXTURE_1D
-  //	   - setup the octree to return Z sorted elements (partially done)
-  //	   - add a renderClass() member to SceneNode (also for coloring)
-  //	   - also add a renderShadow() member (they don't need sorting,
-  //	     and if you don't have double-buffering, you shouldn't be
-  //	     using shadows)
-  //	   - vertex shaders would be faster
-  //	   - it would probably be a better approach to attach a radar
-  //	     rendering object to each obstacle... no time
+  //   rendering the full world, it draws the aztec map
+  //   3X faster (the culling algo is actually slows us
+  //   down in that case)
+  //     - need a better default gradient texture
+  //       (better colors, and tied in to show max jump height?)
+  //     - build a procedural texture if default is missing
+  //     - use a GL_TEXTURE_1D
+  //     - setup the octree to return Z sorted elements (partially done)
+  //     - add a renderClass() member to SceneNode (also for coloring)
+  //     - also add a renderShadow() member (they don't need sorting,
+  //       and if you don't have double-buffering, you shouldn't be
+  //       using shadows)
+  //     - vertex shaders would be faster
+  //     - it would probably be a better approach to attach a radar
+  //       rendering object to each obstacle... no time
 
   // get the texture
   int gradientTexId = -1;
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   gradientTexId = tm.getTextureID("radar", false);
 
   // safety: no texture, no service
@@ -1164,8 +1163,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
   return;
 }
 
-void RadarRenderer::buildGeometry(GLDisplayList displayList)
-{
+void RadarRenderer::buildGeometry(GLDisplayList displayList) {
   // we need to make the geometry for one of our lists
   // see if the list is one of our objects
   // if it is build the geometry
@@ -1202,8 +1200,7 @@ void RadarRenderer::buildGeometry(GLDisplayList displayList)
 // boxes and pyramids can share the same code, since they render just a box
 // and optimisation for super fast radar may be to just use this radar box
 // for meshes as well
-void RadarRenderer::buildBoxPyr(const Obstacle* object)
-{
+void RadarRenderer::buildBoxPyr(const Obstacle* object) {
   //  const float z = object->getPosition().z;
   //  const float bh = object->getHeight();
 
@@ -1223,8 +1220,7 @@ void RadarRenderer::buildBoxPyr(const Obstacle* object)
 }
 
 
-void RadarRenderer::buildMeshGeo(const MeshObstacle* mesh, RadarObjectType type)
-{
+void RadarRenderer::buildMeshGeo(const MeshObstacle* mesh, RadarObjectType type) {
   const int faces = mesh->getFaceCount();
 
   for (int f = 0; f < faces; f++) {
@@ -1261,8 +1257,7 @@ void RadarRenderer::buildMeshGeo(const MeshObstacle* mesh, RadarObjectType type)
 }
 
 
-void RadarRenderer::buildOutline(const Obstacle* object)
-{
+void RadarRenderer::buildOutline(const Obstacle* object) {
   //  const float z = object->getPosition().z;
   //  const float bh = object->getHeight();
 
@@ -1281,11 +1276,10 @@ void RadarRenderer::buildOutline(const Obstacle* object)
 }
 
 
-void RadarRenderer::renderBoxPyrMesh()
-{
+void RadarRenderer::renderBoxPyrMesh() {
   const bool enhanced = (BZDBCache::radarStyle > SceneRenderer::NormalRadar);
 
-  DisplayListSystem &ds = DisplayListSystem::Instance();
+  DisplayListSystem& ds = DisplayListSystem::Instance();
 
   // if the object list is empty, we need to add the objects to it
   // this will generate the object geometry once and store
@@ -1295,17 +1289,18 @@ void RadarRenderer::renderBoxPyrMesh()
   if (!radarObjectLists.size()) {
     // add box buildings.
     const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
-    for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
+    for (unsigned int i = 0; i < (unsigned int)boxes.size(); i++) {
       if (((BoxBuilding*)boxes[i])->isInvisible()) {
-	continue;
+        continue;
       }
-      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(BoxBuilding*)boxes[i]);
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr, (BoxBuilding*)boxes[i]);
     }
 
     // add pyramid buildings
     const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
-    for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++)
-      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr,(PyramidBuilding*)pyramids[i]);
+    for (unsigned int i = 0; i < (unsigned int)pyramids.size(); i++) {
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyr, (PyramidBuilding*)pyramids[i]);
+    }
 
     // add meshes
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
@@ -1314,18 +1309,19 @@ void RadarRenderer::renderBoxPyrMesh()
       // if the mesh has no death faces, it'll be an empty list, no big loss.
       // we could flag each object if it has any death faces on load and keep
       // that as part of obstacle, to clean this up, but it may not be too bad.
-      radarObjectLists[ds.newList(this)] = RadarObject(eMesh,(MeshObstacle*)meshes[i]);
-      radarObjectLists[ds.newList(this)] = RadarObject(eMeshDeathFaces,(MeshObstacle*)meshes[i]);
+      radarObjectLists[ds.newList(this)] = RadarObject(eMesh, (MeshObstacle*)meshes[i]);
+      radarObjectLists[ds.newList(this)] = RadarObject(eMeshDeathFaces, (MeshObstacle*)meshes[i]);
     }
 
     // add the outlines for boxes and pyramids
-    for (unsigned int i = 0; i < (unsigned int )boxes.size(); i++) {
-      if (((BoxBuilding*)boxes[i])->isInvisible())
-	continue;
-      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(BoxBuilding*)boxes[i]);
+    for (unsigned int i = 0; i < (unsigned int)boxes.size(); i++) {
+      if (((BoxBuilding*)boxes[i])->isInvisible()) {
+        continue;
+      }
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline, (BoxBuilding*)boxes[i]);
     }
-    for (unsigned int i = 0; i < (unsigned int )pyramids.size(); i++) {
-      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline,(PyramidBuilding*)pyramids[i]);
+    for (unsigned int i = 0; i < (unsigned int)pyramids.size(); i++) {
+      radarObjectLists[ds.newList(this)] = RadarObject(eBoxPyrOutline, (PyramidBuilding*)pyramids[i]);
     }
   }
 
@@ -1350,38 +1346,41 @@ void RadarRenderer::renderBoxPyrMesh()
       // we want to minimise these changes to the state
       // so don't do them every object.
       if (thisType != lastType) {
-	if (thisType == eBoxPyr) {
-	  if (!smooth) {
-	    // smoothing has blending disabled
-	    if (enhanced) {
-	      glEnable(GL_BLEND); // always blend the polygons if we're enhanced
+        if (thisType == eBoxPyr) {
+          if (!smooth) {
+            // smoothing has blending disabled
+            if (enhanced) {
+              glEnable(GL_BLEND); // always blend the polygons if we're enhanced
             }
-	  } else {
-	    // smoothing has blending enabled
-	    if (!enhanced) {
-	      glDisable(GL_BLEND); // don't blend the polygons if we're not enhanced
+          }
+          else {
+            // smoothing has blending enabled
+            if (!enhanced) {
+              glDisable(GL_BLEND); // don't blend the polygons if we're not enhanced
             }
-	  }
-	} else if (thisType == eBoxPyrOutline) {
-	  if (!enhanced) {
-	    glEnable(GL_CULL_FACE);
           }
-	  if (smooth) {
-	    glDisable(GL_POLYGON_SMOOTH);
-	    glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
-	  } else if (enhanced) {
-	    glDisable(GL_BLEND);
-	  }
-	}
-	else {
-	  // draw mesh obstacles
-	  if (smooth) {
-	    glEnable(GL_POLYGON_SMOOTH);
+        }
+        else if (thisType == eBoxPyrOutline) {
+          if (!enhanced) {
+            glEnable(GL_CULL_FACE);
           }
-	  if (!enhanced) {
-	    glDisable(GL_CULL_FACE);
+          if (smooth) {
+            glDisable(GL_POLYGON_SMOOTH);
+            glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
           }
-	}
+          else if (enhanced) {
+            glDisable(GL_BLEND);
+          }
+        }
+        else {
+          // draw mesh obstacles
+          if (smooth) {
+            glEnable(GL_POLYGON_SMOOTH);
+          }
+          if (!enhanced) {
+            glDisable(GL_CULL_FACE);
+          }
+        }
       }
 
       const float alpha = transScale(z, bh);
@@ -1400,7 +1399,7 @@ void RadarRenderer::renderBoxPyrMesh()
 
       // draw all lists, except outlines when we arn't smoothing
       if (thisType != eBoxPyrOutline || (thisType == eBoxPyrOutline && smooth)) {
-	ds.callList(list);
+        ds.callList(list);
       }
 
       itr++;
@@ -1410,8 +1409,7 @@ void RadarRenderer::renderBoxPyrMesh()
 }
 
 
-void RadarRenderer::renderBasesAndTeles()
-{
+void RadarRenderer::renderBasesAndTeles() {
   // draw teleporters
   const LinkManager::FaceVec linkSrcs = linkManager.getLinkSrcs();
   if (!linkSrcs.empty()) {
@@ -1432,13 +1430,13 @@ void RadarRenderer::renderBasesAndTeles()
   // draw team bases
   if (world->allowTeamFlags()) {
     for (int i = 1; i < NumTeams; i++) {
-      for (int j = 0; /* no-op */;j++) {
-	const Obstacle* bp = world->getBase(i, j);
-	if (bp == NULL) {
-	  break;
+      for (int j = 0; /* no-op */; j++) {
+        const Obstacle* bp = world->getBase(i, j);
+        if (bp == NULL) {
+          break;
         }
-	glColor3fv(Team::getRadarColor(TeamColor(i)));
-	glBegin(GL_LINE_LOOP);
+        glColor3fv(Team::getRadarColor(TeamColor(i)));
+        glBegin(GL_LINE_LOOP);
         if (bp->getTypeID() == faceType) {
           const MeshFace* face = (const MeshFace*)bp;
           if (!face->getMaterial()->getNoRadarOutline()) {
@@ -1463,7 +1461,7 @@ void RadarRenderer::renderBasesAndTeles()
           glVertex2f(pos.x + r * cosf(rot - beta),
                      pos.y + r * sinf(rot - beta));
         }
-	glEnd();
+        glEnd();
       }
     }
   }
@@ -1472,8 +1470,7 @@ void RadarRenderer::renderBasesAndTeles()
 }
 
 
-int RadarRenderer::getFrameTriangleCount() const
-{
+int RadarRenderer::getFrameTriangleCount() const {
   return triangleCount;
 }
 
@@ -1482,6 +1479,6 @@ int RadarRenderer::getFrameTriangleCount() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

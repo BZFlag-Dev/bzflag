@@ -20,8 +20,8 @@ class EventClientList {
   public:
     EventClientList() : orderType(-1), reversed(false) {}
     EventClientList(int _orderType, bool _reversed)
-    : orderType(_orderType)
-    , reversed(_reversed)
+      : orderType(_orderType)
+      , reversed(_reversed)
     {}
 
     ~EventClientList() {}

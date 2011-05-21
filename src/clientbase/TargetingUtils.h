@@ -19,19 +19,18 @@
 // common headers
 #include "vectors.h"
 
-class TargetingUtils
-{
-public:
-  static float normalizeAngle(float ang);
-  static void  getUnitVector(const fvec3& src, const fvec3& target, fvec3& unitVector);
-  static void  get3DUnitVector(const fvec3& src, const fvec3& target, fvec3& unitVector);
-  static float getTargetDistance(const fvec3& src, const fvec3& target);
-  static float getTargetAzimuth(const fvec3& src, const fvec3& target);
-  static float getTargetRotation(float startAzimuth, float targetAzimuth);
-  static float getTargetAngleDifference(const fvec3& src, float srcAzimuth, const fvec3& target);
-  static bool  isLocationObscured(const fvec3& src, const fvec3& target);
-  static float getOpenDistance(const fvec3& src, const float azimuth);
-  static bool  getFirstCollisionPoint(const fvec3& src, const fvec3& target, fvec3& collisionPt);
+class TargetingUtils {
+  public:
+    static float normalizeAngle(float ang);
+    static void  getUnitVector(const fvec3& src, const fvec3& target, fvec3& unitVector);
+    static void  get3DUnitVector(const fvec3& src, const fvec3& target, fvec3& unitVector);
+    static float getTargetDistance(const fvec3& src, const fvec3& target);
+    static float getTargetAzimuth(const fvec3& src, const fvec3& target);
+    static float getTargetRotation(float startAzimuth, float targetAzimuth);
+    static float getTargetAngleDifference(const fvec3& src, float srcAzimuth, const fvec3& target);
+    static bool  isLocationObscured(const fvec3& src, const fvec3& target);
+    static float getOpenDistance(const fvec3& src, const float azimuth);
+    static bool  getFirstCollisionPoint(const fvec3& src, const fvec3& target, fvec3& collisionPt);
 };
 
 #endif
@@ -40,6 +39,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

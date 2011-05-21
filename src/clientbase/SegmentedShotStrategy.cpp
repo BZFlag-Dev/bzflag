@@ -42,9 +42,8 @@ static BZDB_int debugShotSegments("debugShotSegments");
 
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
                                              bool useSuperTexture, bool faint)
-: PointShotStrategy(_path)
-, endObstacle(NULL)
-{
+  : PointShotStrategy(_path)
+  , endObstacle(NULL) {
   // initialize times
   prevTime = getPath().getStartTime();
   lastTime = currentTime = prevTime;
@@ -56,8 +55,9 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
-	   (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
-  } else {
+           (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
+  }
+  else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;
   }
@@ -74,7 +74,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
     if (faint) {
       boltSceneNode->setColor(color.r, color.g, color.b, 0.2f);
       boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
-    } else {
+    }
+    else {
       boltSceneNode->setColor(color.r, color.g, color.b, 1.0f);
     }
     if (_path->getShotType() == CloakedShot) {
@@ -86,23 +87,24 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path,
       }
     }
 
-    TextureManager &tm = TextureManager::instance();
+    TextureManager& tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(team);
-    if (useSuperTexture)
+    if (useSuperTexture) {
       imageName += BZDB.get("superPrefix");
+    }
     imageName += BZDB.get("boltTexture");
 
     boltSceneNode->phasingShot = useSuperTexture;
 
     int texture = tm.getTextureID(imageName);
-    if (texture >= 0)
+    if (texture >= 0) {
       boltSceneNode->setTexture(texture);
+    }
   }
 }
 
 
-SegmentedShotStrategy::~SegmentedShotStrategy()
-{
+SegmentedShotStrategy::~SegmentedShotStrategy() {
   // free scene nodes
   if (!headless) {
     delete boltSceneNode;
@@ -110,8 +112,7 @@ SegmentedShotStrategy::~SegmentedShotStrategy()
 }
 
 
-static bool wantShotInfo(char type)
-{
+static bool wantShotInfo(char type) {
   static BZDB_string sendShotInfo("_sendShotInfo");
   const std::string& si = sendShotInfo;
   if (si == "1") {
@@ -121,8 +122,7 @@ static bool wantShotInfo(char type)
 }
 
 
-void SegmentedShotStrategy::update(float dt)
-{
+void SegmentedShotStrategy::update(float dt) {
   prevTime = currentTime;
   currentTime += dt;
 
@@ -142,9 +142,9 @@ void SegmentedShotStrategy::update(float dt)
 
         const ShotPathSegment& segm = segments[segment];
 
-	switch (segm.reason) {
-	  case ShotPathSegment::Boundary: {
-	    break;
+        switch (segm.reason) {
+          case ShotPathSegment::Boundary: {
+            break;
           }
           case ShotPathSegment::Through: {
             break;
@@ -152,7 +152,7 @@ void SegmentedShotStrategy::update(float dt)
           case ShotPathSegment::Initial: {
             break;
           }
-	  case ShotPathSegment::Ricochet: {
+          case ShotPathSegment::Ricochet: {
             // play ricochet sound.  ricochet of local player's shots
             // are important, others are not.
             const bool important = (getPath().getPlayer() == myTankId);
@@ -172,7 +172,7 @@ void SegmentedShotStrategy::update(float dt)
             if (wantShotInfo(ShotInfoRicochet) &&
                 (getPath().getPlayer() == myTankId)) {
               const uint32_t guid =
-                segm.hitObstacle ? segm.hitObstacle->getGUID() : (uint32_t)-1;
+                segm.hitObstacle ? segm.hitObstacle->getGUID() : (uint32_t) - 1;
               serverLink->sendShotInfo(getPath(), ShotInfoRicochet, pos, guid);
             }
             break;
@@ -186,7 +186,7 @@ void SegmentedShotStrategy::update(float dt)
                                             segm.ray.getDirection(),
                                             clipPlane);
               eventHandler.ShotTeleported(getPath(), segm.linkSrcID,
-                                                     segm.linkDstID);
+                                          segm.linkDstID);
             }
             if (wantShotInfo(ShotInfoTeleport) &&
                 (getPath().getPlayer() == myTankId)) {
@@ -194,12 +194,12 @@ void SegmentedShotStrategy::update(float dt)
               const float timeDiff = (float)(prevSeg.end - prevSeg.start);
               const fvec3 prevPos = prevSeg.ray.getPoint(timeDiff);
               serverLink->sendShotInfo(getPath(), ShotInfoTeleport, prevPos,
-                                       (uint32_t)-1,
+                                       (uint32_t) - 1,
                                        segm.linkSrcID, segm.linkDstID);
             }
-	    break;
+            break;
           }
-	}
+        }
       }
     }
   }
@@ -216,7 +216,8 @@ void SegmentedShotStrategy::update(float dt)
           if (wantShotInfo(ShotInfoExpired)) {
             serverLink->sendShotInfo(getPath(), ShotInfoExpired, pos);
           }
-        } else {
+        }
+        else {
           if (wantShotInfo(ShotInfoStopped)) {
             serverLink->sendShotInfo(getPath(), ShotInfoStopped, pos,
                                      endObstacle->getGUID());
@@ -235,15 +236,14 @@ void SegmentedShotStrategy::update(float dt)
 }
 
 
-bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const
-{
+bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const {
   BzTime ctime = currentTime;
   ctime += dt;
   int cur = 0;
   // see if we've moved to another segment
   const int numSegments = (const int)segments.size();
-  while (cur < numSegments && segments[cur].end < ctime) cur++;
-  if (cur >= numSegments) return false;
+  while (cur < numSegments && segments[cur].end < ctime) { cur++; }
+  if (cur >= numSegments) { return false; }
 
   segments[segment].ray.getPoint(float(ctime - segments[segment].start), p);
 
@@ -251,8 +251,7 @@ bool SegmentedShotStrategy::predictPosition(float dt, fvec3& p) const
 }
 
 
-bool SegmentedShotStrategy::predictVelocity(float dt, fvec3& p) const
-{
+bool SegmentedShotStrategy::predictVelocity(float dt, fvec3& p) const {
   BzTime ctime = currentTime;
   ctime += dt;
   int cur = 0;
@@ -267,33 +266,28 @@ bool SegmentedShotStrategy::predictVelocity(float dt, fvec3& p) const
 }
 
 
-void SegmentedShotStrategy::setCurrentTime(const BzTime& _currentTime)
-{
+void SegmentedShotStrategy::setCurrentTime(const BzTime& _currentTime) {
   currentTime = _currentTime;
 }
 
 
-const BzTime& SegmentedShotStrategy::getLastTime() const
-{
+const BzTime& SegmentedShotStrategy::getLastTime() const {
   return lastTime;
 }
 
 
-void SegmentedShotStrategy::setCurrentSegment(int _segment)
-{
+void SegmentedShotStrategy::setCurrentSegment(int _segment) {
   segment = _segment;
 }
 
 
 float SegmentedShotStrategy::checkHit(const ShotCollider& tank,
-                                      fvec3& position) const
-{
+                                      fvec3& position) const {
   return checkShotHit(tank, position, BZDBCache::shotRadius);
 }
 
 
-void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
-{
+void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind) {
   const ShotPath& shotPath = getPath();
   boltSceneNode->move(shotPath.getPosition(), shotPath.getVelocity());
   if (boltSceneNode->getColorblind() != colorblind) {
@@ -303,19 +297,19 @@ void SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
     const fvec4& color = Team::getRadarColor(currentTeam);
     boltSceneNode->setColor(color.r, color.g, color.b);
 
-    TextureManager &tm = TextureManager::instance();
+    TextureManager& tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(currentTeam);
     imageName += BZDB.get("boltTexture");
     int texture = tm.getTextureID(imageName);
-    if (texture >= 0)
+    if (texture >= 0) {
       boltSceneNode->setTexture(texture);
+    }
   }
   scene->addDynamicNode(boltSceneNode);
 }
 
 
-void SegmentedShotStrategy::radarRender() const
-{
+void SegmentedShotStrategy::radarRender() const {
   const fvec3& orig = getPath().getPosition();
   const int length  = BZDBCache::linedRadarShots;
   const int size    = BZDBCache::sizedRadarShots;
@@ -330,7 +324,8 @@ void SegmentedShotStrategy::radarRender() const
     glVertex2fv(orig);
     if (BZDBCache::leadingShotLine) {
       glVertex2fv(orig.xy() + dir.xy());
-    } else {
+    }
+    else {
       glVertex2fv(orig.xy() - dir.xy());
     }
     glEnd();
@@ -344,7 +339,8 @@ void SegmentedShotStrategy::radarRender() const
       glEnd();
       glPointSize(1.0f);
     }
-  } else {
+  }
+  else {
     if (size > 0) {
       // draw a sized bullet
       glPointSize((float)size);
@@ -353,7 +349,8 @@ void SegmentedShotStrategy::radarRender() const
       glEnd();
       glPointSize(1.0f);
 
-    } else {
+    }
+    else {
       // draw the tiny little bullet
       glBegin(GL_POINTS);
       glVertex2fv(orig);
@@ -364,8 +361,7 @@ void SegmentedShotStrategy::radarRender() const
 }
 
 
-void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
-{
+void SegmentedShotStrategy::makeSegments(ObstacleEffect e) {
   segments.clear();
 
   World* world = World::getWorld();
@@ -420,7 +416,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const bool hitGround = getGround(testRay, Epsilon, t);
     const Obstacle* building =
       (e == Through) ? getFirstLinkSrc(testRay, Epsilon, t)
-                     : getFirstBuilding(testRay, Epsilon, t);
+      : getFirstBuilding(testRay, Epsilon, t);
 
 
     t -= minTime;
@@ -448,7 +444,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // above the top of the wall then ignore the hit.
     const bool ignoreHit = (building != NULL) && (e == Reflect) &&
                            (building->getTypeID() == wallType) &&
-	                   (nextOrig.z > building->getHeight());
+                           (nextOrig.z > building->getHeight());
 
     // check for teleportation
     const MeshFace* linkSrc = MeshFace::getShotLinkSrc(building);
@@ -507,12 +503,13 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       hitObstacle = building;
 
       switch (e) {
-	case Stop: {
-	  if (!building->canRicochet()) {
+        case Stop: {
+          if (!building->canRicochet()) {
             timeLeft = 0.0f;
             endObstacle = building;
             break;
-          } else {
+          }
+          else {
             // pass-through to the Reflect case
           }
         }
@@ -533,23 +530,23 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         }
       }
     }
-    else if (hitGround)	{ // we hit the ground
+    else if (hitGround) { // we hit the ground
       switch (e) {
-	case Stop:
-	case Through: {
-	  timeLeft = 0.0f;
-	  break;
+        case Stop:
+        case Through: {
+          timeLeft = 0.0f;
+          break;
         }
-	case Reflect: {
-	  // move origin to point of reflection
+        case Reflect: {
+          // move origin to point of reflection
           orig = nextOrig;
 
-	  // reflect direction about normal to ground
-	  const fvec3 zPos(0.0f, 0.0f, 1.0f);
-	  reflect(vel, zPos);
-	  reason = ShotPathSegment::Ricochet;
-	  break;
-	}
+          // reflect direction about normal to ground
+          const fvec3 zPos(0.0f, 0.0f, 1.0f);
+          reflect(vel, zPos);
+          reason = ShotPathSegment::Ricochet;
+          break;
+        }
       }
     }
   }
@@ -563,14 +560,15 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     for (size_t j = 1; j < numSegments; ++j) {
       bbox.expandToBox(segments[j].bbox);
     }
-  } else {
+  }
+  else {
     bbox.reset();
   }
 
   if ((debugShotSegments >= 1) && !BZDBCache::forbidDebug) {
     logDebugMessage(0, "\n");
     logDebugMessage(0, "SegShotStrategy %i\n", (int)getPath().getFiringInfo().shot.id);
-    for (size_t s = 0; s< segments.size(); s++) {
+    for (size_t s = 0; s < segments.size(); s++) {
       const ShotPathSegment& sps = segments[s];
       const fvec3 endPos = sps.ray.getPoint((float)(sps.end - sps.start));
       const std::string reasonStr = ShotPathSegment::getReasonString(sps.reason).c_str();
@@ -591,8 +589,7 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 }
 
 
-const std::vector<ShotPathSegment>& SegmentedShotStrategy::getSegments() const
-{
+const std::vector<ShotPathSegment>& SegmentedShotStrategy::getSegments() const {
   return segments;
 }
 
@@ -602,15 +599,13 @@ const std::vector<ShotPathSegment>& SegmentedShotStrategy::getSegments() const
 //
 
 NormalShotStrategy::NormalShotStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, false)
-{
+  : SegmentedShotStrategy(_path, false) {
   // make segments
   makeSegments(Stop);
 }
 
 
-NormalShotStrategy::~NormalShotStrategy()
-{
+NormalShotStrategy::~NormalShotStrategy() {
   // do nothing
 }
 
@@ -620,23 +615,21 @@ NormalShotStrategy::~NormalShotStrategy()
 //
 
 RapidFireStrategy::RapidFireStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, false)
-{
+  : SegmentedShotStrategy(_path, false) {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(BZDBNAMES.RFIREADLIFE);
   float fireAdVel = BZDB.eval(BZDBNAMES.RFIREADVEL);
   f.shot.vel *= fireAdVel;
   setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(BZDBNAMES.RFIREADRATE));
+                / BZDB.eval(BZDBNAMES.RFIREADRATE));
 
   // make segments
   makeSegments(Stop);
 }
 
 
-RapidFireStrategy::~RapidFireStrategy()
-{
+RapidFireStrategy::~RapidFireStrategy() {
   // do nothing
 }
 
@@ -645,17 +638,16 @@ RapidFireStrategy::~RapidFireStrategy()
 // ThiefStrategy
 //
 
-ThiefStrategy::ThiefStrategy(ShotPath *_path)
-: SegmentedShotStrategy(_path, false)
-, cummTime(0.0f)
-{
+ThiefStrategy::ThiefStrategy(ShotPath* _path)
+  : SegmentedShotStrategy(_path, false)
+  , cummTime(0.0f) {
   // speed up shell and decrease lifetime
   FiringInfo& f = getFiringInfo(_path);
   f.lifetime *= BZDB.eval(BZDBNAMES.THIEFADLIFE);
   float thiefAdVel = BZDB.eval(BZDBNAMES.THIEFADSHOTVEL);
   f.shot.vel *= thiefAdVel;
   setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(BZDBNAMES.THIEFADRATE));
+                / BZDB.eval(BZDBNAMES.THIEFADRATE));
 
   // make segments
   makeSegments(Stop);
@@ -666,7 +658,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path)
   const int numSegments = (const int)(getSegments().size());
   thiefNodes = new LaserSceneNode*[numSegments];
 
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   int texture = tm.getTextureID("thief");
 
   for (int i = 0; i < numSegments; i++) {
@@ -684,15 +676,14 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path)
       thiefNodes[i]->setFirst();
     }
 
-    thiefNodes[i]->setColor(0,1,1);
-    thiefNodes[i]->setCenterColor(0,0,0);
+    thiefNodes[i]->setColor(0, 1, 1);
+    thiefNodes[i]->setCenterColor(0, 0, 0);
   }
   setCurrentSegment(numSegments - 1);
 }
 
 
-ThiefStrategy::~ThiefStrategy()
-{
+ThiefStrategy::~ThiefStrategy() {
   const size_t numSegments = (getSegments().size());
   for (size_t i = 0; i < numSegments; i++) {
     delete thiefNodes[i];
@@ -701,8 +692,7 @@ ThiefStrategy::~ThiefStrategy()
 }
 
 
-void ThiefStrategy::update(float dt)
-{
+void ThiefStrategy::update(float dt) {
   cummTime += dt;
   if (cummTime >= endTime) {
     setExpired();
@@ -710,8 +700,7 @@ void ThiefStrategy::update(float dt)
 }
 
 
-void ThiefStrategy::addShot(SceneDatabase* scene, bool)
-{
+void ThiefStrategy::addShot(SceneDatabase* scene, bool) {
   // thief is so fast we always show every segment
   const size_t numSegments = (getSegments().size());
   for (size_t i = 0; i < numSegments; i++) {
@@ -720,193 +709,7 @@ void ThiefStrategy::addShot(SceneDatabase* scene, bool)
 }
 
 
-void ThiefStrategy::radarRender() const
-{
-  // draw all segments
-  const std::vector<ShotPathSegment>& segmts = getSegments();
-  const size_t numSegments = segmts.size();
-  glBegin(GL_LINES);
-    for (size_t i = 0; i < numSegments; i++) {
-      const ShotPathSegment& segm = segmts[i];
-      const fvec3& origin = segm.ray.getOrigin();
-      const fvec3& direction = segm.ray.getDirection();
-      const float dt = float(segm.end - segm.start);
-      glVertex2fv(origin);
-      glVertex2fv(origin.xy() + (dt * direction.xy()));
-    }
-  glEnd();
-}
-
-
-bool ThiefStrategy::isStoppedByHit() const
-{
-  return false;
-}
-
-
-//
-// MachineGunStrategy
-//
-
-MachineGunStrategy::MachineGunStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, false)
-{
-  // speed up shell and decrease lifetime
-  FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(BZDBNAMES.MGUNADLIFE);
-  float mgunAdVel = BZDB.eval(BZDBNAMES.MGUNADVEL);
-  f.shot.vel *= mgunAdVel;
-  setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(BZDBNAMES.MGUNADRATE));
-
-  // make segments
-  makeSegments(Stop);
-}
-
-
-MachineGunStrategy::~MachineGunStrategy()
-{
-  // do nothing
-}
-
-
-//
-// RicochetStrategy
-//
-
-RicochetStrategy::RicochetStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, false)
-{
-  // make segments that bounce
-  makeSegments(Reflect);
-}
-
-
-RicochetStrategy::~RicochetStrategy()
-{
-  // do nothing
-}
-
-
-//
-// SuperBulletStrategy
-//
-
-SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, true)
-{
-  // make segments that go through buildings
-  makeSegments(Through);
-}
-
-SuperBulletStrategy::~SuperBulletStrategy()
-{
-  // do nothing
-}
-
-
-//
-// PhantomBulletStrategy
-//
-
-PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, false,true)
-{
-  // make segments that go through buildings
-  makeSegments(Through);
-}
-
-PhantomBulletStrategy::~PhantomBulletStrategy()
-{
-  // do nothing
-}
-
-
-//
-// LaserStrategy
-//
-
-LaserStrategy::LaserStrategy(ShotPath* _path)
-: SegmentedShotStrategy(_path, false)
-, cummTime(0.0f)
-{
-  // speed up shell and decrease lifetime
-  FiringInfo& f = getFiringInfo(_path);
-  f.lifetime *= BZDB.eval(BZDBNAMES.LASERADLIFE);
-  float laserAdVel = BZDB.eval(BZDBNAMES.LASERADVEL);
-  f.shot.vel *= laserAdVel;
-  setReloadTime(_path->getReloadTime()
-		/ BZDB.eval(BZDBNAMES.LASERADRATE));
-
-  // make segments
-  makeSegments(Stop);
-  setCurrentTime(getLastTime());
-  endTime = f.lifetime;
-
-  // make laser scene nodes
-  const int numSegments = (const int)(getSegments().size());
-  laserNodes = new LaserSceneNode*[numSegments];
-  const LocalPlayer* myTank = LocalPlayer::getMyTank();
-  TeamColor tmpTeam =
-    (myTank->getFlagType() == Flags::Colorblindness) ? RogueTeam : team;
-
-  TextureManager &tm = TextureManager::instance();
-  std::string imageName = Team::getImagePrefix(tmpTeam);
-  imageName += BZDB.get("laserTexture");
-  int texture = tm.getTextureID(imageName);
-
-  for (int i = 0; i < numSegments; i++) {
-    const ShotPathSegment& segm = getSegments()[i];
-    const float t = float(segm.end - segm.start);
-    const Ray& ray = segm.ray;
-    const fvec3& rawdir = ray.getDirection();
-    const fvec3 dir = t * rawdir;
-    laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
-    if (texture >= 0)
-      laserNodes[i]->setTexture(texture);
-
-      const fvec4& color = Team::getRadarColor(tmpTeam);
-      laserNodes[i]->setColor(color.r, color.g, color.b);
-
-      if (i == 0) {
-        laserNodes[i]->setFirst();
-      }
-  }
-  setCurrentSegment(numSegments - 1);
-}
-
-
-LaserStrategy::~LaserStrategy()
-{
-  const size_t numSegments = getSegments().size();
-  for (size_t i = 0; i < numSegments; i++) {
-    delete laserNodes[i];
-  }
-  delete[] laserNodes;
-}
-
-
-void LaserStrategy::update(float dt)
-{
-  cummTime += dt;
-  if (cummTime >= endTime) {
-    setExpired();
-  }
-}
-
-
-void LaserStrategy::addShot(SceneDatabase* scene, bool)
-{
-  // laser is so fast we always show every segment
-  const size_t numSegments = getSegments().size();
-  for (size_t i = 0; i < numSegments; i++) {
-    scene->addDynamicNode(laserNodes[i]);
-  }
-}
-
-
-void LaserStrategy::radarRender() const
-{
+void ThiefStrategy::radarRender() const {
   // draw all segments
   const std::vector<ShotPathSegment>& segmts = getSegments();
   const size_t numSegments = segmts.size();
@@ -923,8 +726,179 @@ void LaserStrategy::radarRender() const
 }
 
 
-bool LaserStrategy::isStoppedByHit() const
-{
+bool ThiefStrategy::isStoppedByHit() const {
+  return false;
+}
+
+
+//
+// MachineGunStrategy
+//
+
+MachineGunStrategy::MachineGunStrategy(ShotPath* _path)
+  : SegmentedShotStrategy(_path, false) {
+  // speed up shell and decrease lifetime
+  FiringInfo& f = getFiringInfo(_path);
+  f.lifetime *= BZDB.eval(BZDBNAMES.MGUNADLIFE);
+  float mgunAdVel = BZDB.eval(BZDBNAMES.MGUNADVEL);
+  f.shot.vel *= mgunAdVel;
+  setReloadTime(_path->getReloadTime()
+                / BZDB.eval(BZDBNAMES.MGUNADRATE));
+
+  // make segments
+  makeSegments(Stop);
+}
+
+
+MachineGunStrategy::~MachineGunStrategy() {
+  // do nothing
+}
+
+
+//
+// RicochetStrategy
+//
+
+RicochetStrategy::RicochetStrategy(ShotPath* _path)
+  : SegmentedShotStrategy(_path, false) {
+  // make segments that bounce
+  makeSegments(Reflect);
+}
+
+
+RicochetStrategy::~RicochetStrategy() {
+  // do nothing
+}
+
+
+//
+// SuperBulletStrategy
+//
+
+SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path)
+  : SegmentedShotStrategy(_path, true) {
+  // make segments that go through buildings
+  makeSegments(Through);
+}
+
+SuperBulletStrategy::~SuperBulletStrategy() {
+  // do nothing
+}
+
+
+//
+// PhantomBulletStrategy
+//
+
+PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path)
+  : SegmentedShotStrategy(_path, false, true) {
+  // make segments that go through buildings
+  makeSegments(Through);
+}
+
+PhantomBulletStrategy::~PhantomBulletStrategy() {
+  // do nothing
+}
+
+
+//
+// LaserStrategy
+//
+
+LaserStrategy::LaserStrategy(ShotPath* _path)
+  : SegmentedShotStrategy(_path, false)
+  , cummTime(0.0f) {
+  // speed up shell and decrease lifetime
+  FiringInfo& f = getFiringInfo(_path);
+  f.lifetime *= BZDB.eval(BZDBNAMES.LASERADLIFE);
+  float laserAdVel = BZDB.eval(BZDBNAMES.LASERADVEL);
+  f.shot.vel *= laserAdVel;
+  setReloadTime(_path->getReloadTime()
+                / BZDB.eval(BZDBNAMES.LASERADRATE));
+
+  // make segments
+  makeSegments(Stop);
+  setCurrentTime(getLastTime());
+  endTime = f.lifetime;
+
+  // make laser scene nodes
+  const int numSegments = (const int)(getSegments().size());
+  laserNodes = new LaserSceneNode*[numSegments];
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
+  TeamColor tmpTeam =
+    (myTank->getFlagType() == Flags::Colorblindness) ? RogueTeam : team;
+
+  TextureManager& tm = TextureManager::instance();
+  std::string imageName = Team::getImagePrefix(tmpTeam);
+  imageName += BZDB.get("laserTexture");
+  int texture = tm.getTextureID(imageName);
+
+  for (int i = 0; i < numSegments; i++) {
+    const ShotPathSegment& segm = getSegments()[i];
+    const float t = float(segm.end - segm.start);
+    const Ray& ray = segm.ray;
+    const fvec3& rawdir = ray.getDirection();
+    const fvec3 dir = t * rawdir;
+    laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
+    if (texture >= 0) {
+      laserNodes[i]->setTexture(texture);
+    }
+
+    const fvec4& color = Team::getRadarColor(tmpTeam);
+    laserNodes[i]->setColor(color.r, color.g, color.b);
+
+    if (i == 0) {
+      laserNodes[i]->setFirst();
+    }
+  }
+  setCurrentSegment(numSegments - 1);
+}
+
+
+LaserStrategy::~LaserStrategy() {
+  const size_t numSegments = getSegments().size();
+  for (size_t i = 0; i < numSegments; i++) {
+    delete laserNodes[i];
+  }
+  delete[] laserNodes;
+}
+
+
+void LaserStrategy::update(float dt) {
+  cummTime += dt;
+  if (cummTime >= endTime) {
+    setExpired();
+  }
+}
+
+
+void LaserStrategy::addShot(SceneDatabase* scene, bool) {
+  // laser is so fast we always show every segment
+  const size_t numSegments = getSegments().size();
+  for (size_t i = 0; i < numSegments; i++) {
+    scene->addDynamicNode(laserNodes[i]);
+  }
+}
+
+
+void LaserStrategy::radarRender() const {
+  // draw all segments
+  const std::vector<ShotPathSegment>& segmts = getSegments();
+  const size_t numSegments = segmts.size();
+  glBegin(GL_LINES);
+  for (size_t i = 0; i < numSegments; i++) {
+    const ShotPathSegment& segm = segmts[i];
+    const fvec3& origin = segm.ray.getOrigin();
+    const fvec3& direction = segm.ray.getDirection();
+    const float dt = float(segm.end - segm.start);
+    glVertex2fv(origin);
+    glVertex2fv(origin.xy() + (dt * direction.xy()));
+  }
+  glEnd();
+}
+
+
+bool LaserStrategy::isStoppedByHit() const {
   return false;
 }
 
@@ -933,6 +907,6 @@ bool LaserStrategy::isStoppedByHit() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

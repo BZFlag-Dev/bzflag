@@ -43,24 +43,21 @@ const char* LuaGLQueryMgr::metaName = "GLQuery";
 //
 
 LuaGLQuery::LuaGLQuery(GLuint _id, GLenum _target)
-: id(_id)
-, target(_target)
-{
+  : id(_id)
+  , target(_target) {
   OpenGLGState::registerContextInitializer(StaticFreeContext,
-					   StaticInitContext, this);
+                                           StaticInitContext, this);
 }
 
 
-LuaGLQuery::~LuaGLQuery()
-{
+LuaGLQuery::~LuaGLQuery() {
   FreeContext();
   OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-					     StaticInitContext, this);
+                                             StaticInitContext, this);
 }
 
 
-bool LuaGLQuery::Delete()
-{
+bool LuaGLQuery::Delete() {
   if (id == 0) {
     return false;
   }
@@ -70,13 +67,11 @@ bool LuaGLQuery::Delete()
 }
 
 
-void LuaGLQuery::InitContext()
-{
+void LuaGLQuery::InitContext() {
 }
 
 
-void LuaGLQuery::FreeContext()
-{
+void LuaGLQuery::FreeContext() {
   if (id == 0) {
     return;
   }
@@ -85,14 +80,12 @@ void LuaGLQuery::FreeContext()
 }
 
 
-void LuaGLQuery::StaticInitContext(void* data)
-{
+void LuaGLQuery::StaticInitContext(void* data) {
   ((LuaGLQuery*)data)->InitContext();
 }
 
 
-void LuaGLQuery::StaticFreeContext(void* data)
-{
+void LuaGLQuery::StaticFreeContext(void* data) {
   ((LuaGLQuery*)data)->FreeContext();
 }
 
@@ -103,8 +96,7 @@ void LuaGLQuery::StaticFreeContext(void* data)
 //  LuaGLQueryMgr
 //
 
-bool LuaGLQueryMgr::PushEntries(lua_State* L)
-{
+bool LuaGLQueryMgr::PushEntries(lua_State* L) {
   CreateMetatable(L);
 
   PUSH_LUA_CFUNC(L, CreateQuery);
@@ -122,8 +114,7 @@ bool LuaGLQueryMgr::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-const LuaGLQuery* LuaGLQueryMgr::TestLuaGLQuery(lua_State* L, int index)
-{
+const LuaGLQuery* LuaGLQueryMgr::TestLuaGLQuery(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     return NULL;
   }
@@ -131,8 +122,7 @@ const LuaGLQuery* LuaGLQueryMgr::TestLuaGLQuery(lua_State* L, int index)
 }
 
 
-const LuaGLQuery* LuaGLQueryMgr::CheckLuaGLQuery(lua_State* L, int index)
-{
+const LuaGLQuery* LuaGLQueryMgr::CheckLuaGLQuery(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected GLQuery");
   }
@@ -140,8 +130,7 @@ const LuaGLQuery* LuaGLQueryMgr::CheckLuaGLQuery(lua_State* L, int index)
 }
 
 
-LuaGLQuery* LuaGLQueryMgr::GetLuaGLQuery(lua_State* L, int index)
-{
+LuaGLQuery* LuaGLQueryMgr::GetLuaGLQuery(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected GLQuery");
   }
@@ -152,8 +141,7 @@ LuaGLQuery* LuaGLQueryMgr::GetLuaGLQuery(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-bool LuaGLQueryMgr::CreateMetatable(lua_State* L)
-{
+bool LuaGLQueryMgr::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
   luaset_strfunc(L,  "__gc",    MetaGC);
   luaset_strfunc(L,  "__index", MetaIndex);
@@ -163,16 +151,14 @@ bool LuaGLQueryMgr::CreateMetatable(lua_State* L)
 }
 
 
-int LuaGLQueryMgr::MetaGC(lua_State* L)
-{
+int LuaGLQueryMgr::MetaGC(lua_State* L) {
   LuaGLQuery* query = GetLuaGLQuery(L, 1);
   query->~LuaGLQuery();
   return 0;
 }
 
 
-int LuaGLQueryMgr::MetaIndex(lua_State* L)
-{
+int LuaGLQueryMgr::MetaIndex(lua_State* L) {
   const LuaGLQuery* query = CheckLuaGLQuery(L, 1);
   if (query == NULL) {
     return luaL_pushnil(L);
@@ -195,8 +181,7 @@ int LuaGLQueryMgr::MetaIndex(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaGLQueryMgr::CreateQuery(lua_State* L)
-{
+int LuaGLQueryMgr::CreateQuery(lua_State* L) {
   // generate the query id
   GLuint queryID;
   glGenQueries(1, &queryID);
@@ -217,8 +202,7 @@ int LuaGLQueryMgr::CreateQuery(lua_State* L)
 }
 
 
-int LuaGLQueryMgr::DeleteQuery(lua_State* L)
-{
+int LuaGLQueryMgr::DeleteQuery(lua_State* L) {
   if (OpenGLGState::isExecutingInitFuncs()) {
     luaL_error(L, "gl.DeleteQuery can not be used in GLReload");
   }
@@ -231,8 +215,7 @@ int LuaGLQueryMgr::DeleteQuery(lua_State* L)
 }
 
 
-int LuaGLQueryMgr::RunQuery(lua_State* L)
-{
+int LuaGLQueryMgr::RunQuery(lua_State* L) {
   static bool running = false;
 
   if (running) {
@@ -270,8 +253,7 @@ int LuaGLQueryMgr::RunQuery(lua_State* L)
 }
 
 
-int LuaGLQueryMgr::GetQuery(lua_State* L)
-{
+int LuaGLQueryMgr::GetQuery(lua_State* L) {
   const LuaGLQuery* query = CheckLuaGLQuery(L, 1);
   if ((query == NULL) || !query->IsValid()) {
     luaL_error(L, "invalid query object");
@@ -286,8 +268,7 @@ int LuaGLQueryMgr::GetQuery(lua_State* L)
 }
 
 
-int LuaGLQueryMgr::BeginEndConditionalRender(lua_State* L)
-{
+int LuaGLQueryMgr::BeginEndConditionalRender(lua_State* L) {
   LuaOpenGL::CheckDrawingEnabled(L, __FUNCTION__);
 
   const LuaGLQuery* query = CheckLuaGLQuery(L, 1);
@@ -307,7 +288,7 @@ int LuaGLQueryMgr::BeginEndConditionalRender(lua_State* L)
 
   if (error != 0) {
     LuaLog(1, "gl.BeginEndConditionRender: error(%i) = %s",
-	   error, lua_tostring(L, -1));
+           error, lua_tostring(L, -1));
     lua_error(L);
   }
 
@@ -323,6 +304,6 @@ int LuaGLQueryMgr::BeginEndConditionalRender(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

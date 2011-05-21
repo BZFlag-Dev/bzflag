@@ -34,8 +34,7 @@
 //============================================================================//
 //============================================================================//
 
-bool LuaControl::PushEntries(lua_State* L)
-{
+bool LuaControl::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, Move);
   PUSH_LUA_CFUNC(L, Fire);
   PUSH_LUA_CFUNC(L, Jump);
@@ -51,8 +50,7 @@ bool LuaControl::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline bool ValidScript(lua_State* L)
-{
+static inline bool ValidScript(lua_State* L) {
   return ((L2H(L) == luaBzOrg) ||
           (L2H(L) == luaRules) ||
           LuaHandle::GetDevMode());
@@ -62,8 +60,7 @@ static inline bool ValidScript(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaControl::Move(lua_State* L)
-{
+int LuaControl::Move(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control movement");
   }
@@ -74,8 +71,7 @@ int LuaControl::Move(lua_State* L)
 }
 
 
-int LuaControl::Fire(lua_State* L)
-{
+int LuaControl::Fire(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control firing");
   }
@@ -89,8 +85,7 @@ int LuaControl::Fire(lua_State* L)
 }
 
 
-int LuaControl::Jump(lua_State* L)
-{
+int LuaControl::Jump(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control jumps");
   }
@@ -103,8 +98,7 @@ int LuaControl::Jump(lua_State* L)
 }
 
 
-int LuaControl::Spawn(lua_State* L)
-{
+int LuaControl::Spawn(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control spawns");
   }
@@ -113,8 +107,7 @@ int LuaControl::Spawn(lua_State* L)
 }
 
 
-int LuaControl::Pause(lua_State* L)
-{
+int LuaControl::Pause(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control pausing");
   }
@@ -123,8 +116,7 @@ int LuaControl::Pause(lua_State* L)
 }
 
 
-int LuaControl::DropFlag(lua_State* L)
-{
+int LuaControl::DropFlag(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control flag drops");
   }
@@ -133,8 +125,7 @@ int LuaControl::DropFlag(lua_State* L)
 }
 
 
-int LuaControl::SetTarget(lua_State* L)
-{
+int LuaControl::SetTarget(lua_State* L) {
   if (!ValidScript(L)) {
     luaL_error(L, "this script can not control target locks");
   }
@@ -151,6 +142,6 @@ int LuaControl::SetTarget(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

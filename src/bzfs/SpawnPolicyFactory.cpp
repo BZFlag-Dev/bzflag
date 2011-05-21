@@ -30,11 +30,10 @@ static bool _policiesInitialized = _init();
 
 /* public */
 
-SpawnPolicy *
-SpawnPolicyFactory::Policy(std::string policy)
-{
+SpawnPolicy*
+SpawnPolicyFactory::Policy(std::string policy) {
   std::string lcPolicy = TextUtils::tolower(policy);
-  SpawnPolicy *p = (SpawnPolicy*)NULL;
+  SpawnPolicy* p = (SpawnPolicy*)NULL;
 
   /* empty indicates request for default */
   if (lcPolicy == "") {
@@ -58,26 +57,22 @@ SpawnPolicyFactory::Policy(std::string policy)
 
 
 void
-SpawnPolicyFactory::setDefault(std::string policy)
-{
+SpawnPolicyFactory::setDefault(std::string policy) {
   _defaultPolicy = policy;
 }
 
 
 /* private */
 
-SpawnPolicyFactory::SpawnPolicyFactory()
-{
+SpawnPolicyFactory::SpawnPolicyFactory() {
 }
 
-SpawnPolicyFactory::~SpawnPolicyFactory()
-{
+SpawnPolicyFactory::~SpawnPolicyFactory() {
 }
 
 /* register all the available known policies */
 static bool
-_init()
-{
+_init() {
   static bool _initialized = false;
   if (!_initialized) {
     SPAWNPOLICY.Register<DefaultSpawnPolicy>("default");
@@ -93,6 +88,6 @@ _init()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

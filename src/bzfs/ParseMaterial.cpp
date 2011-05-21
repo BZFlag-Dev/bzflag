@@ -26,8 +26,7 @@
 
 
 bool parseMaterials(const char* cmd, std::istream& input,
-		    BzMaterial* materials, int materialCount, bool& error)
-{
+                    BzMaterial* materials, int materialCount, bool& error) {
   int i;
   error = false;
 
@@ -94,12 +93,12 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     else {
       for (i = 0; i < materialCount; i++) {
-	materials[i].setAmbient(ambient);
+        materials[i].setAmbient(ambient);
       }
     }
   }
   else if ((strcasecmp(cmd, "diffuse") == 0) || // currently used by bzflag
-	     (strcasecmp(cmd, "color") == 0)) {
+           (strcasecmp(cmd, "color") == 0)) {
     fvec4 diffuse;
     error = !parseColorStream(input, diffuse);
     if (error) {
@@ -107,7 +106,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     else {
       for (i = 0; i < materialCount; i++) {
-	materials[i].setDiffuse(diffuse);
+        materials[i].setDiffuse(diffuse);
       }
     }
   }
@@ -119,7 +118,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     else {
       for (i = 0; i < materialCount; i++) {
-	materials[i].setSpecular(specular);
+        materials[i].setSpecular(specular);
       }
     }
   }
@@ -131,7 +130,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     else {
       for (i = 0; i < materialCount; i++) {
-	materials[i].setEmission(emission);
+        materials[i].setEmission(emission);
       }
     }
   }
@@ -252,7 +251,7 @@ bool parseMaterials(const char* cmd, std::istream& input,
     }
     else {
       for (i = 0; i < materialCount; i++) {
-	materials[i].setTexture(name);
+        materials[i].setTexture(name);
       }
     }
   }
@@ -352,24 +351,23 @@ bool parseMaterials(const char* cmd, std::istream& input,
 
 
 bool parseMaterialsByName(const char* cmd, std::istream& input,
-			  BzMaterial* materials, const char** names,
-			  int materialCount, bool& error)
-{
+                          BzMaterial* materials, const char** names,
+                          int materialCount, bool& error) {
   error = false;
 
   for (int n = 0; n < materialCount; n++) {
-    if (strcasecmp (cmd, names[n]) == 0) {
+    if (strcasecmp(cmd, names[n]) == 0) {
       std::string line, matcmd;
       std::getline(input, line);
       std::istringstream parms(line);
       input.putback('\n');
       if (!(parms >> matcmd)) {
-	error = true;
+        error = true;
       }
       else {
-	if (!parseMaterials(matcmd.c_str(), parms, &materials[n], 1, error)) {
-	  error = true;
-	}
+        if (!parseMaterials(matcmd.c_str(), parms, &materials[n], 1, error)) {
+          error = true;
+        }
       }
       return true;
     }
@@ -383,6 +381,6 @@ bool parseMaterialsByName(const char* cmd, std::istream& input,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

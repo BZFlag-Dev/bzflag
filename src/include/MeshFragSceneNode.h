@@ -11,13 +11,13 @@
  */
 
 /* MeshFragSceneNode:
- *	Encapsulates information for rendering a mesh fragment
+ *  Encapsulates information for rendering a mesh fragment
  *      (a collection of faces with the same material properties).
- *	Does not support level of detail.
+ *  Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_FRAG_SCENE_NODE_H
-#define	BZF_MESH_FRAG_SCENE_NODE_H
+#ifndef BZF_MESH_FRAG_SCENE_NODE_H
+#define BZF_MESH_FRAG_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"
@@ -56,31 +56,31 @@ class MeshFragSceneNode : public WallSceneNode {
   protected:
     class Geometry : public RenderNode {
       public:
-	Geometry(MeshFragSceneNode* node);
-	~Geometry();
+        Geometry(MeshFragSceneNode* node);
+        ~Geometry();
 
-	void init();
-	void setStyle(int _style) { style = _style; }
-	void render();
-	void renderRadar();
-	void renderShadow();
-	const fvec3& getPosition() const { return sceneNode->getCenter(); }
-
-      private:
-	inline void drawV() const; // draw with just vertices
-	inline void drawVT() const; // draw with texcoords
-	inline void drawVN() const; // draw with normals
-	inline void drawVTN() const; // draw with texcoords and normals
-
-	void initDisplayList();
-	void freeDisplayList();
-	static void initContext(void *data);
-	static void freeContext(void *data);
+        void init();
+        void setStyle(int _style) { style = _style; }
+        void render();
+        void renderRadar();
+        void renderShadow();
+        const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
-	int style;
-	unsigned int list;
-	MeshFragSceneNode* sceneNode;
+        inline void drawV() const; // draw with just vertices
+        inline void drawVT() const; // draw with texcoords
+        inline void drawVN() const; // draw with normals
+        inline void drawVTN() const; // draw with texcoords and normals
+
+        void initDisplayList();
+        void freeDisplayList();
+        static void initContext(void* data);
+        static void freeContext(void* data);
+
+      private:
+        int style;
+        unsigned int list;
+        MeshFragSceneNode* sceneNode;
     };
 
   private:
@@ -97,7 +97,7 @@ class MeshFragSceneNode : public WallSceneNode {
     float* normals;
     float* texcoords;
 
-  friend class MeshFragSceneNode::Geometry;
+    friend class MeshFragSceneNode::Geometry;
 };
 
 
@@ -107,6 +107,6 @@ class MeshFragSceneNode : public WallSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

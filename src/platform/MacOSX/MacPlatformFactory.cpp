@@ -27,19 +27,19 @@
 #  include "MacMedia.h"
 #endif
 
-PlatformFactory* PlatformFactory::getInstance()
-{
-  if (!instance)
+PlatformFactory* PlatformFactory::getInstance() {
+  if (!instance) {
     instance = new MacPlatformFactory();
+  }
 
   return instance;
 }
 
 
 #ifdef HAVE_SDL
-BzfDisplay* MacPlatformFactory::createDisplay(const char *, const char *) {
+BzfDisplay* MacPlatformFactory::createDisplay(const char*, const char*) {
 #else
-BzfDisplay* MacPlatformFactory::createDisplay(const char *name, const char *videoFormat) {
+BzfDisplay* MacPlatformFactory::createDisplay(const char* name, const char* videoFormat) {
 #endif
   if (!display)
 #ifdef HAVE_SDL
@@ -51,7 +51,7 @@ BzfDisplay* MacPlatformFactory::createDisplay(const char *name, const char *vide
   return display;
 }
 
-BzfVisual* MacPlatformFactory::createVisual(const BzfDisplay *_display) {
+BzfVisual* MacPlatformFactory::createVisual(const BzfDisplay* _display) {
   if (!visual)
 #ifdef HAVE_SDL
     visual = new SDLVisual((const SDLDisplay*)_display);
@@ -62,7 +62,7 @@ BzfVisual* MacPlatformFactory::createVisual(const BzfDisplay *_display) {
   return visual;
 }
 
-BzfWindow* MacPlatformFactory::createWindow(const BzfDisplay *_display, BzfVisual *_visual) {
+BzfWindow* MacPlatformFactory::createWindow(const BzfDisplay* _display, BzfVisual* _visual) {
   if (!window)
 #ifdef HAVE_SDL
     window = new SDLWindow((const SDLDisplay*)_display, (SDLVisual*)_visual);
@@ -106,6 +106,6 @@ MacPlatformFactory::~MacPlatformFactory() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

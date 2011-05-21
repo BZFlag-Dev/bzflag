@@ -76,9 +76,9 @@ class LuaShaderMgr {
 
   private:
     static GLuint CompileObject(const std::vector<std::string>& sources,
-				GLenum type, bool& success);
+                                GLenum type, bool& success);
     static bool ParseSources(lua_State* L, int table,
-			     const char* type, std::vector<std::string>& srcs);
+                             const char* type, std::vector<std::string>& srcs);
 
   private: // call-outs
     static int CreateShader(lua_State* L);
@@ -96,7 +96,7 @@ class LuaShaderMgr {
     static int GetActiveAttribs(lua_State* L);
     static int GetAttribLocation(lua_State* L);
 
-    static int SetShaderParameter(lua_State* );
+    static int SetShaderParameter(lua_State*);
 
     static int GetShaderLog(lua_State* L);
 };
@@ -108,6 +108,6 @@ class LuaShaderMgr {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,15 +11,15 @@
  */
 
 /* RenderNode:
- *	Encapsulates information for rendering geometry with a
- *	single gstate.
+ *  Encapsulates information for rendering geometry with a
+ *  single gstate.
  *
  * RenderNodeList:
- *	Keeps a list of RenderNode* and can render them in order.
+ *  Keeps a list of RenderNode* and can render them in order.
  */
 
-#ifndef	BZF_RENDER_NODE_H
-#define	BZF_RENDER_NODE_H
+#ifndef BZF_RENDER_NODE_H
+#define BZF_RENDER_NODE_H
 
 #include "common.h"
 #include "vectors.h"
@@ -38,7 +38,7 @@ class RenderNode {
     virtual const fvec3& getPosition() const = 0;
 
     static int  getTriangleCount();
-    static void	resetTriangleCount();
+    static void resetTriangleCount();
 
   protected:
     static void addTriangleCount(int triCount);
@@ -48,8 +48,7 @@ class RenderNode {
 };
 
 
-inline void RenderNode::addTriangleCount(int count)
-{
+inline void RenderNode::addTriangleCount(int count) {
   triangleCount += count;
   return;
 }
@@ -72,14 +71,13 @@ class RenderNodeList {
     void grow();
 
   private:
-    int	count;
-    int	size;
+    int count;
+    int size;
     RenderNode** list;
 };
 
 
-inline void RenderNodeList::append(RenderNode* node)
-{
+inline void RenderNodeList::append(RenderNode* node) {
   if (count == size) {
     grow();
   }
@@ -102,10 +100,10 @@ class RenderNodeGStateList {
     // public for the qsort() comparison function
     struct Item {
       public:
-	typedef const OpenGLGState* GStatePtr;
-	RenderNode*	node;
-	GStatePtr	gstate;
-	float		depth;
+        typedef const OpenGLGState* GStatePtr;
+        RenderNode* node;
+        GStatePtr gstate;
+        float   depth;
     };
 
   private:
@@ -123,8 +121,7 @@ class RenderNodeGStateList {
 
 
 inline void RenderNodeGStateList::append(RenderNode* node,
-					 const OpenGLGState* gstate)
-{
+                                         const OpenGLGState* gstate) {
   if (count == size) {
     grow();
   }
@@ -142,6 +139,6 @@ inline void RenderNodeGStateList::append(RenderNode* node,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

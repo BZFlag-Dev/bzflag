@@ -44,98 +44,103 @@ ServerList* Singleton<ServerList>::_instance = (ServerList*)0;
 ServerList::ServerList() :
   phase(-1),
   serverCache(ServerListCache::get()),
-  pingBcastSocket(-1)
-{
+  pingBcastSocket(-1) {
 }
 
-ServerList::~ServerList()
-{
+ServerList::~ServerList() {
   _shutDown();
 }
 
-void ServerList::startServerPings(StartupInfo *info)
-{
+void ServerList::startServerPings(StartupInfo* info) {
 
   // schedule lookup of server list url.  dereference URL chain every
   // time instead of only first time just in case one of the pointers
   // has changed.
-  if (phase > -1 && phase < 4)
+  if (phase > -1 && phase < 4) {
     return;
-  if (info->listServerURL.size() == 0)
+  }
+  if (info->listServerURL.size() == 0) {
     phase = -1;
-  else
+  }
+  else {
     phase = 0;
+  }
 
   // also try broadcast
   pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-  if (pingBcastSocket != -1)
+  if (pingBcastSocket != -1) {
     PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
+  }
 }
 
-void ServerList::readServerList()
-{
-  char *base = (char *)theData;
-  char *endS = base + theLen;
-  const char *tokenIdentifier = "TOKEN: ";
-  const char *noTokenIdentifier = "NOTOK: ";
-  const char *errorIdentifier = "ERROR: ";
-  const char *noticeIdentifier = "NOTICE: ";
+void ServerList::readServerList() {
+  char* base = (char*)theData;
+  char* endS = base + theLen;
+  const char* tokenIdentifier = "TOKEN: ";
+  const char* noTokenIdentifier = "NOTOK: ";
+  const char* errorIdentifier = "ERROR: ";
+  const char* noticeIdentifier = "NOTICE: ";
   // walks entire reply including HTTP headers
   while (base < endS) {
     // find next newline
     char* scan = base;
-    while (scan < endS && *scan != '\n')
+    while (scan < endS && *scan != '\n') {
       scan++;
+    }
 
     // if no newline then no more complete replies
-    if (scan >= endS)
+    if (scan >= endS) {
       break;
+    }
     *scan++ = '\0';
 
     // look for TOKEN: and save token if found also look for NOTOK:
     // and record "badtoken" into the token string and print an
     // error
     if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-      strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
-	      TokenLen);
+      strncpy(startupInfo->token, (char*)(base + strlen(tokenIdentifier)),
+              TokenLen);
 #ifdef DEBUG
       printError("got token:");
       printError(startupInfo->token);
 #endif
       base = scan;
       continue;
-    } else if (!strncmp(base, noTokenIdentifier,
-			strlen(noTokenIdentifier))) {
+    }
+    else if (!strncmp(base, noTokenIdentifier,
+                      strlen(noTokenIdentifier))) {
       printError("ERROR: did not get token:");
       printError(base);
       strcpy(startupInfo->token, "badtoken\0");
       base = scan;
       continue;
-    } else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier))) {
+    }
+    else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier))) {
       printError(base);
       strcpy(startupInfo->token, "badtoken\0");
       base = scan;
       continue;
-    } else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
+    }
+    else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
       printError(base);
       base = scan;
       continue;
     }
     // parse server info
-    char *scan2, *name, *version, *infoServer, *address, *title;
+    char* scan2, *name, *version, *infoServer, *address, *title;
     name = base;
     version = name;
-    while (*version && !isspace(*version))  version++;
-    while (*version &&  isspace(*version)) *version++ = 0;
+    while (*version && !isspace(*version)) { version++; }
+    while (*version &&  isspace(*version)) { *version++ = 0; }
     infoServer = version;
-    while (*infoServer && !isspace(*infoServer))  infoServer++;
-    while (*infoServer &&  isspace(*infoServer)) *infoServer++ = 0;
+    while (*infoServer && !isspace(*infoServer)) { infoServer++; }
+    while (*infoServer &&  isspace(*infoServer)) { *infoServer++ = 0; }
     address = infoServer;
-    while (*address && !isspace(*address))  address++;
-    while (*address &&  isspace(*address)) *address++ = 0;
+    while (*address && !isspace(*address)) { address++; }
+    while (*address &&  isspace(*address)) { *address++ = 0; }
     title = address;
-    while (*title && !isspace(*title))  title++;
-    while (*title &&  isspace(*title)) *title++ = 0;
+    while (*title && !isspace(*title)) { title++; }
+    while (*title &&  isspace(*title)) { *title++ = 0; }
 
     // extract port number from address
     unsigned int port = ServerPort;
@@ -147,25 +152,25 @@ void ServerList::readServerList()
 
     // check info
     if (strcmp(version, getServerVersion()) == 0 &&
-	(int)strlen(infoServer) == PingPacketHexPackedSize &&
-	port >= 1 && port <= 65535) {
+        (int)strlen(infoServer) == PingPacketHexPackedSize &&
+        port >= 1 && port <= 65535) {
       // store info
       ServerItem serverInfo;
       serverInfo.ping.unpackHex(infoServer);
       int dot[4] = {127, 0, 0, 1};
-      if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
-	if (dot[0] >= 0 && dot[0] <= 255 &&
-	    dot[1] >= 0 && dot[1] <= 255 &&
-	    dot[2] >= 0 && dot[2] <= 255 &&
-	    dot[3] >= 0 && dot[3] <= 255) {
-	  InAddr addr;
-	  unsigned char* paddr = (unsigned char*)&addr.s_addr;
-	  paddr[0] = (unsigned char)dot[0];
-	  paddr[1] = (unsigned char)dot[1];
-	  paddr[2] = (unsigned char)dot[2];
-	  paddr[3] = (unsigned char)dot[3];
-	  serverInfo.ping.serverId.serverHost = addr;
-	}
+      if (sscanf(address, "%d.%d.%d.%d", dot + 0, dot + 1, dot + 2, dot + 3) == 4) {
+        if (dot[0] >= 0 && dot[0] <= 255 &&
+            dot[1] >= 0 && dot[1] <= 255 &&
+            dot[2] >= 0 && dot[2] <= 255 &&
+            dot[3] >= 0 && dot[3] <= 255) {
+          InAddr addr;
+          unsigned char* paddr = (unsigned char*)&addr.s_addr;
+          paddr[0] = (unsigned char)dot[0];
+          paddr[1] = (unsigned char)dot[1];
+          paddr[2] = (unsigned char)dot[2];
+          paddr[3] = (unsigned char)dot[3];
+          serverInfo.ping.serverId.serverHost = addr;
+        }
       }
       serverInfo.ping.serverId.port = htons((int16_t)port);
       serverInfo.name = name;
@@ -174,14 +179,14 @@ void ServerList::readServerList()
       // construct description
       serverInfo.description = serverInfo.name;
       if (port != ServerPort) {
-	char portBuf[20];
-	sprintf(portBuf, "%d", port);
-	serverInfo.description += ":";
-	serverInfo.description += portBuf;
+        char portBuf[20];
+        sprintf(portBuf, "%d", port);
+        serverInfo.description += ":";
+        serverInfo.description += portBuf;
       }
       if (strlen(title) > 0) {
-	serverInfo.description += "; ";
-	serverInfo.description += title;
+        serverInfo.description += "; ";
+        serverInfo.description += title;
       }
 
       serverInfo.cached = false;
@@ -194,13 +199,12 @@ void ServerList::readServerList()
   }
 
   // remove parsed replies
-  theLen -= int(base - (char *)theData);
+  theLen -= int(base - (char*)theData);
   memmove(theData, base, theLen);
 }
 
 
-void ServerList::sort()
-{
+void ServerList::sort() {
   // make sure the list is sorted before we go inserting in order!
   //std::sort(servers.begin(), servers.end());
 }
@@ -208,8 +212,7 @@ void ServerList::sort()
 
 // FIXME: the list gets jacked.  maybe the stl::erase below are a
 // bunch of other things, but needs to be tested/rewritten more.
-void ServerList::addToList(ServerItem info, bool doCache)
-{
+void ServerList::addToList(ServerItem info, bool doCache) {
   // update if we already have it
   int i;
 
@@ -219,7 +222,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
   for (serverIterator = servers.begin(); serverIterator != servers.end(); serverIterator++) {
     const ServerItem& server = (*serverIterator).second;
     if ((server.ping.serverId.serverHost.s_addr == info.ping.serverId.serverHost.s_addr) &&
-	(server.ping.serverId.port == info.ping.serverId.port)) {
+        (server.ping.serverId.port == info.ping.serverId.port)) {
       // retain age so it can stay sorted same agewise
       info.setAge(server.getAgeMinutes(), server.getAgeSeconds());
       servers.erase(serverIterator); // erase this item
@@ -248,11 +251,13 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
   // mark server in current list if it is a favorite server
   std::string serverAddress = info.getAddrName();
-  if (serverCache->isFavorite(serverAddress))
+  if (serverCache->isFavorite(serverAddress)) {
     info.favorite = true;
+  }
 
-  if (serverCache->isRecent(serverAddress))
+  if (serverCache->isRecent(serverAddress)) {
     info.recent = true;
+  }
 
   // Get the server's server key
   const ServerItem& constInfo = info;
@@ -268,7 +273,8 @@ void ServerList::addToList(ServerItem info, bool doCache)
   if (insertPoint == -1) { // no spot to insert it into -- goes on back
     //servers.push_back(info);
     servers.insert(std::pair<std::string, ServerItem>(serverKey, constInfo));
-  } else {  // found a spot to insert it into
+  }
+  else {    // found a spot to insert it into
     //servers.insert(servers.begin() + insertPoint, info);
     std::map<std::string, ServerItem>::iterator location = servers.begin();
     std::advance(location, insertPoint);
@@ -285,7 +291,8 @@ void ServerList::addToList(ServerItem info, bool doCache)
     iter = serverCache->find(serverAddress);  // find entry to allow update
     if (iter != serverCache->end()) { // if we find it, update it
       iter->second = info;
-    } else {
+    }
+    else {
       // insert into cache -- wasn't found
       serverCache->insert(serverAddress, info);
     }
@@ -297,21 +304,21 @@ void ServerList::addToList(ServerItem info, bool doCache)
   }
 
   if (serverKeyCallbackList.find(info.getServerKey()) != serverKeyCallbackList.end()) {
-    for (size_t j=0; j<serverKeyCallbackList[info.getServerKey()].size(); j++) {
+    for (size_t j = 0; j < serverKeyCallbackList[info.getServerKey()].size(); j++) {
       serverKeyCallbackList[info.getServerKey()][j].first(&info, serverKeyCallbackList[info.getServerKey()][j].second);
     }
   }
 
   if (info.favorite) {
     for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
-	 itr != favoritesCallbackList.end(); ++itr) {
+         itr != favoritesCallbackList.end(); ++itr) {
       (*itr).first(&info, (*itr).second);
     }
   }
 
   if (info.recent) {
     for (ServerCallbackList::iterator itr = recentCallbackList.begin();
-	 itr != recentCallbackList.end(); ++itr) {
+         itr != recentCallbackList.end(); ++itr) {
       (*itr).first(&info, (*itr).second);
     }
   }
@@ -319,7 +326,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
 /*
 // mark server identified by host:port string as favorite
-void		    ServerList::markFav(const std::string &serverAddress, bool fav)
+void        ServerList::markFav(const std::string &serverAddress, bool fav)
 {
 std::map<std::string, ServerItem>::iterator serverIterator;
 
@@ -333,11 +340,10 @@ break;
 }
 }
 */
-void ServerList::markAsRecent(ServerItem* item)
-{
+void ServerList::markAsRecent(ServerItem* item) {
   std::string addrname = item->getAddrName();
   ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
-  if (i!= serverCache->end()) {
+  if (i != serverCache->end()) {
     i->second.recent = true;
     i->second.recentTime = item->getNow();
   }
@@ -351,11 +357,10 @@ void ServerList::markAsRecent(ServerItem* item)
   }
 }
 
-void ServerList::unmarkAsRecent(ServerItem* item)
-{
+void ServerList::unmarkAsRecent(ServerItem* item) {
   std::string addrname = item->getAddrName();
   ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
-  if (i!= serverCache->end()) {
+  if (i != serverCache->end()) {
     i->second.recent = false;
   }
 
@@ -363,11 +368,10 @@ void ServerList::unmarkAsRecent(ServerItem* item)
   item->recentTime = 0;
 }
 
-void ServerList::markAsFavorite(ServerItem* item)
-{
+void ServerList::markAsFavorite(ServerItem* item) {
   std::string addrname = item->getAddrName();
   ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
-  if (i!= serverCache->end()) {
+  if (i != serverCache->end()) {
     i->second.favorite = true;
   }
 
@@ -379,27 +383,26 @@ void ServerList::markAsFavorite(ServerItem* item)
   }
 }
 
-void ServerList::unmarkAsFavorite(ServerItem* item)
-{
+void ServerList::unmarkAsFavorite(ServerItem* item) {
   std::string addrname = item->getAddrName();
   ServerListCache::SRV_STR_MAP::iterator i = serverCache->find(addrname);
-  if (i!= serverCache->end()) {
+  if (i != serverCache->end()) {
     i->second.favorite = false;
   }
 
   item->favorite = false;
 }
 
-ServerItem* ServerList::lookupServer(std::string key)
-{
-  if (servers.find(key) != servers.end())
+ServerItem* ServerList::lookupServer(std::string key) {
+  if (servers.find(key) != servers.end()) {
     return &(servers[key]);
-  else
+  }
+  else {
     return NULL;
+  }
 }
 
-ServerItem* ServerList::getServerAt(size_t index)
-{
+ServerItem* ServerList::getServerAt(size_t index) {
   std::map<std::string, ServerItem>::iterator serverIterator;
 
   serverIterator = servers.begin();
@@ -408,8 +411,7 @@ ServerItem* ServerList::getServerAt(size_t index)
   return &((*serverIterator).second);
 }
 
-void			ServerList::checkEchos(StartupInfo *info)
-{
+void      ServerList::checkEchos(StartupInfo* info) {
   startupInfo = info;
 
   // *** NOTE *** searching spinner update was here
@@ -420,13 +422,13 @@ void			ServerList::checkEchos(StartupInfo *info)
     std::string url = info->listServerURL;
 
     std::string msg = "action=LIST&version=";
-    msg	    += getServerVersion();
-    msg	    += "&clientversion=";
-    msg	    += TextUtils::url_encode(std::string(getAppVersion()));
-    msg	    += "&callsign=";
-    msg	    += TextUtils::url_encode(info->callsign);
-    msg	    += "&password=";
-    msg	    += TextUtils::url_encode(info->password);
+    msg     += getServerVersion();
+    msg     += "&clientversion=";
+    msg     += TextUtils::url_encode(std::string(getAppVersion()));
+    msg     += "&callsign=";
+    msg     += TextUtils::url_encode(info->callsign);
+    msg     += "&password=";
+    msg     += TextUtils::url_encode(info->password);
     setPostMode(msg);
     setURL(url);
     addHandle();
@@ -451,10 +453,11 @@ void			ServerList::checkEchos(StartupInfo *info)
     }
     int fdMax = pingBcastSocket;
 
-    const int nfound = select(fdMax+1, (fd_set*)&read_set,
-			      (fd_set*)&write_set, 0, &timeout);
-    if (nfound <= 0)
+    const int nfound = select(fdMax + 1, (fd_set*)&read_set,
+                              (fd_set*)&write_set, 0, &timeout);
+    if (nfound <= 0) {
       break;
+    }
 
     // check broadcast sockets
     ServerItem serverInfo;
@@ -462,16 +465,15 @@ void			ServerList::checkEchos(StartupInfo *info)
 
     if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
       if (serverInfo.ping.read(pingBcastSocket, &addr)) {
-	serverInfo.ping.serverId.serverHost = addr.sin_addr;
-	serverInfo.cached = false;
-	addToListWithLookup(serverInfo);
+        serverInfo.ping.serverId.serverHost = addr.sin_addr;
+        serverInfo.cached = false;
+        addToListWithLookup(serverInfo);
       }
     }
   } // end loop waiting for input/output on any list server
 }
 
-void			ServerList::addToListWithLookup(ServerItem& info)
-{
+void      ServerList::addToListWithLookup(ServerItem& info) {
   info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
 
   // tack on port number to description if not default
@@ -488,10 +490,10 @@ void			ServerList::addToListWithLookup(ServerItem& info)
 }
 
 // add the entire cache to the server list
-void			ServerList::addCacheToList()
-{
-  if (addedCacheToList)
+void      ServerList::addCacheToList() {
+  if (addedCacheToList) {
     return;
+  }
   addedCacheToList = true;
   for (ServerListCache::SRV_STR_MAP::iterator iter = serverCache->begin();
        iter != serverCache->end(); iter++) {
@@ -499,8 +501,7 @@ void			ServerList::addCacheToList()
   }
 }
 
-void ServerList::collectData(char *ptr, int len)
-{
+void ServerList::collectData(char* ptr, int len) {
   phase = 2;
 
   cURLManager::collectData(ptr, len);
@@ -508,34 +509,30 @@ void ServerList::collectData(char *ptr, int len)
   readServerList();
 }
 
-void ServerList::finalization(char *, unsigned int, bool good)
-{
+void ServerList::finalization(char*, unsigned int, bool good) {
   if (!good) {
     printError("Can't talk with list server");
     addCacheToList();
     phase = -1;
-  } else {
+  }
+  else {
     phase = 4;
   }
 }
 
-const std::map<std::string, ServerItem>& ServerList::getServers()
-{
+const std::map<std::string, ServerItem>& ServerList::getServers() {
   return servers;
 }
 
-std::map<std::string, ServerItem>::size_type ServerList::size()
-{
+std::map<std::string, ServerItem>::size_type ServerList::size() {
   return servers.size();
 }
 
-void ServerList::clear()
-{
+void ServerList::clear() {
   servers.clear();
 }
 
-int ServerList::updateFromCache()
-{
+int ServerList::updateFromCache() {
   // clear server list
   clear();
 
@@ -546,7 +543,7 @@ int ServerList::updateFromCache()
     // if maxCacheAge is 0 we add nothing
     // if the item is young enough we add it
     if (serverCache->getMaxCacheAge() != 0
-	&& iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
+        && iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
       addToList(iter->second);
       numItemsAdded ++;
     }
@@ -555,23 +552,19 @@ int ServerList::updateFromCache()
   return numItemsAdded;
 }
 
-bool ServerList::searchActive() const
-{
+bool ServerList::searchActive() const {
   return (phase < 4) ? true : false;
 }
 
-bool ServerList::serverFound() const
-{
+bool ServerList::serverFound() const {
   return (phase >= 2) ? true : false;
 }
 
-void ServerList::addServerCallback(ServerListCallback _cb, void* _data)
-{
+void ServerList::addServerCallback(ServerListCallback _cb, void* _data) {
   serverCallbackList.push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
 }
 
-void ServerList::removeServerCallback(ServerListCallback _cb, void* data)
-{
+void ServerList::removeServerCallback(ServerListCallback _cb, void* data) {
   for (ServerCallbackList::iterator itr = serverCallbackList.begin();
        itr != serverCallbackList.end(); ++itr) {
     if (itr->first == _cb && itr->second == data) {
@@ -581,25 +574,22 @@ void ServerList::removeServerCallback(ServerListCallback _cb, void* data)
   }
 }
 
-void ServerList::addServerKeyCallback(std::string key, ServerListCallback _cb, void* _data)
-{
+void ServerList::addServerKeyCallback(std::string key, ServerListCallback _cb, void* _data) {
   serverKeyCallbackList[key].push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
 }
 
-void ServerList::removeServerKeyCallback(std::string key, ServerListCallback _cb, void* data)
-{
+void ServerList::removeServerKeyCallback(std::string key, ServerListCallback _cb, void* data) {
   std::vector<std::pair<ServerListCallback, void*> >::iterator it = std::find(serverKeyCallbackList[key].begin(), serverKeyCallbackList[key].end(), std::make_pair<ServerListCallback, void*>(_cb, data));
-  if (it != serverKeyCallbackList[key].end())
+  if (it != serverKeyCallbackList[key].end()) {
     serverKeyCallbackList[key].erase(it);
+  }
 }
 
-void ServerList::addFavoriteServerCallback(ServerListCallback _cb, void* _data)
-{
+void ServerList::addFavoriteServerCallback(ServerListCallback _cb, void* _data) {
   favoritesCallbackList.push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
 }
 
-void ServerList::removeFavoriteServerCallback(ServerListCallback _cb, void* data)
-{
+void ServerList::removeFavoriteServerCallback(ServerListCallback _cb, void* data) {
   for (ServerCallbackList::iterator itr = favoritesCallbackList.begin();
        itr != favoritesCallbackList.end(); ++itr) {
     if (itr->first == _cb && itr->second == data) {
@@ -609,13 +599,11 @@ void ServerList::removeFavoriteServerCallback(ServerListCallback _cb, void* data
   }
 }
 
-void ServerList::addRecentServerCallback(ServerListCallback _cb, void* _data)
-{
+void ServerList::addRecentServerCallback(ServerListCallback _cb, void* _data) {
   recentCallbackList.push_back(std::make_pair<ServerListCallback, void*>(_cb, _data));
 }
 
-void ServerList::removeRecentServerCallback(ServerListCallback _cb, void* data)
-{
+void ServerList::removeRecentServerCallback(ServerListCallback _cb, void* data) {
   for (ServerCallbackList::iterator itr = recentCallbackList.begin();
        itr != recentCallbackList.end(); ++itr) {
     if (itr->first == _cb && itr->second == data) {
@@ -625,8 +613,7 @@ void ServerList::removeRecentServerCallback(ServerListCallback _cb, void* data)
   }
 }
 
-void ServerList::_shutDown()
-{
+void ServerList::_shutDown() {
   // close broadcast socket
   closeBroadcast(pingBcastSocket);
   pingBcastSocket = -1;
@@ -636,6 +623,6 @@ void ServerList::_shutDown()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

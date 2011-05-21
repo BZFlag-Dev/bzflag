@@ -44,32 +44,28 @@
 // NOTE: this should be based on visual pixel area
 static int minLightDisabling = 100;
 
-MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node)
-{
+MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node) {
   style = 0;
   sceneNode = node;
   list = INVALID_GL_LIST_ID;
-  OpenGLGState::registerContextInitializer (freeContext, initContext, this);
+  OpenGLGState::registerContextInitializer(freeContext, initContext, this);
   return;
 }
 
 
-MeshFragSceneNode::Geometry::~Geometry()
-{
-  OpenGLGState::unregisterContextInitializer (freeContext, initContext, this);
+MeshFragSceneNode::Geometry::~Geometry() {
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
   return;
 }
 
 
-void MeshFragSceneNode::Geometry::init()
-{
+void MeshFragSceneNode::Geometry::init() {
   initDisplayList();
   return;
 }
 
 
-void MeshFragSceneNode::Geometry::initDisplayList()
-{
+void MeshFragSceneNode::Geometry::initDisplayList() {
   if (list != INVALID_GL_LIST_ID) {
     glDeleteLists(list, 1);
   }
@@ -84,8 +80,7 @@ void MeshFragSceneNode::Geometry::initDisplayList()
 }
 
 
-void MeshFragSceneNode::Geometry::freeDisplayList()
-{
+void MeshFragSceneNode::Geometry::freeDisplayList() {
   if (list != INVALID_GL_LIST_ID) {
     glDeleteLists(list, 1);
   }
@@ -94,22 +89,19 @@ void MeshFragSceneNode::Geometry::freeDisplayList()
 }
 
 
-void MeshFragSceneNode::Geometry::freeContext(void *data)
-{
+void MeshFragSceneNode::Geometry::freeContext(void* data) {
   ((MeshFragSceneNode::Geometry*)data)->freeDisplayList();
   return;
 }
 
 
-void MeshFragSceneNode::Geometry::initContext(void *data)
-{
+void MeshFragSceneNode::Geometry::initContext(void* data) {
   ((MeshFragSceneNode::Geometry*)data)->initDisplayList();
   return;
 }
 
 
-inline void MeshFragSceneNode::Geometry::drawV() const
-{
+inline void MeshFragSceneNode::Geometry::drawV() const {
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -123,8 +115,7 @@ inline void MeshFragSceneNode::Geometry::drawV() const
 }
 
 
-inline void MeshFragSceneNode::Geometry::drawVT() const
-{
+inline void MeshFragSceneNode::Geometry::drawVT() const {
   glDisableClientState(GL_NORMAL_ARRAY);
 
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
@@ -137,8 +128,7 @@ inline void MeshFragSceneNode::Geometry::drawVT() const
 }
 
 
-inline void MeshFragSceneNode::Geometry::drawVN() const
-{
+inline void MeshFragSceneNode::Geometry::drawVN() const {
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
@@ -151,8 +141,7 @@ inline void MeshFragSceneNode::Geometry::drawVN() const
 }
 
 
-inline void MeshFragSceneNode::Geometry::drawVTN() const
-{
+inline void MeshFragSceneNode::Geometry::drawVTN() const {
   glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
   glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
   glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
@@ -162,11 +151,10 @@ inline void MeshFragSceneNode::Geometry::drawVTN() const
 }
 
 
-void MeshFragSceneNode::Geometry::render()
-{
+void MeshFragSceneNode::Geometry::render() {
   const int triangles = sceneNode->arrayCount;
   const bool switchLights = (triangles >= minLightDisabling)
-			    && BZDBCache::lighting;
+                            && BZDBCache::lighting;
   if (switchLights) {
     RENDERER.disableLights(sceneNode->extents);
   }
@@ -181,13 +169,16 @@ void MeshFragSceneNode::Geometry::render()
     if (BZDBCache::lighting) {
       if (BZDBCache::texture) {
         drawVTN();
-      } else {
+      }
+      else {
         drawVN();
       }
-    } else {
+    }
+    else {
       if (BZDBCache::texture) {
         drawVT();
-      } else {
+      }
+      else {
         drawV();
       }
     }
@@ -203,12 +194,12 @@ void MeshFragSceneNode::Geometry::render()
 }
 
 
-void MeshFragSceneNode::Geometry::renderRadar()
-{
+void MeshFragSceneNode::Geometry::renderRadar() {
   const int triangles = sceneNode->arrayCount;
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
-  } else {
+  }
+  else {
     glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
     glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
   }
@@ -217,12 +208,12 @@ void MeshFragSceneNode::Geometry::renderRadar()
 }
 
 
-void MeshFragSceneNode::Geometry::renderShadow()
-{
+void MeshFragSceneNode::Geometry::renderShadow() {
   const int triangles = sceneNode->arrayCount;
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
-  } else {
+  }
+  else {
     glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
     glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
   }
@@ -237,12 +228,11 @@ void MeshFragSceneNode::Geometry::renderShadow()
 //
 
 MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
-: renderNode(this)
-, radarSpecial(false)
-{
+  : renderNode(this)
+  , radarSpecial(false) {
   int i, j, k;
 
-  assert ((_faceCount > 0) && (_faces != NULL));
+  assert((_faceCount > 0) && (_faces != NULL));
 
   // set the count
   faces = _faces;
@@ -296,7 +286,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     if (!face->useTexcoords()) {
       fvec3Array v(face->getVertexCount());
       for (j = 0; j < face->getVertexCount(); j++) {
-	v[j] = face->getVertex(j);
+        v[j] = face->getVertex(j);
       }
       const fvec2& autoScale = bzmat->getTextureAutoScale(0);
       MeshSceneNodeGenerator::makeTexcoords(autoScale, face->getPlane(), v, t);
@@ -307,30 +297,33 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 
     for (j = 0; j < tcount; j++) {
       for (k = 0; k < 3 ; k++) {
-	const int aIndex = (arrayIndex + (j * 3) + k);
-	int vIndex; // basically GL_TRIANGLE_FAN done the hard way
-	if (k == 0) {
-	  vIndex = 0;
-	} else {
-	  vIndex = (j + k) % face->getVertexCount();
-	}
+        const int aIndex = (arrayIndex + (j * 3) + k);
+        int vIndex; // basically GL_TRIANGLE_FAN done the hard way
+        if (k == 0) {
+          vIndex = 0;
+        }
+        else {
+          vIndex = (j + k) % face->getVertexCount();
+        }
 
-	// get the vertices
-	memcpy(&vertices[aIndex * 3], face->getVertex(vIndex), sizeof(float[3]));
+        // get the vertices
+        memcpy(&vertices[aIndex * 3], face->getVertex(vIndex), sizeof(float[3]));
 
-	// get the normals
-	if (face->useNormals()) {
-	  memcpy(&normals[aIndex * 3], face->getNormal(vIndex), sizeof(float[3]));
-	} else {
-	  memcpy(&normals[aIndex * 3], face->getPlane(), sizeof(float[3]));
-	}
+        // get the normals
+        if (face->useNormals()) {
+          memcpy(&normals[aIndex * 3], face->getNormal(vIndex), sizeof(float[3]));
+        }
+        else {
+          memcpy(&normals[aIndex * 3], face->getPlane(), sizeof(float[3]));
+        }
 
-	// get the texcoords
-	if (face->useTexcoords()) {
-	  memcpy(&texcoords[aIndex * 2], face->getTexcoord(vIndex), sizeof(float[2]));
-	} else {
-	  memcpy(&texcoords[aIndex * 2], t[vIndex], sizeof(float[2]));
-	}
+        // get the texcoords
+        if (face->useTexcoords()) {
+          memcpy(&texcoords[aIndex * 2], face->getTexcoord(vIndex), sizeof(float[2]));
+        }
+        else {
+          memcpy(&texcoords[aIndex * 2], t[vIndex], sizeof(float[2]));
+        }
       }
     }
 
@@ -345,8 +338,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
 }
 
 
-MeshFragSceneNode::~MeshFragSceneNode()
-{
+MeshFragSceneNode::~MeshFragSceneNode() {
   delete[] faces;
   delete[] vertices;
   delete[] normals;
@@ -355,15 +347,14 @@ MeshFragSceneNode::~MeshFragSceneNode()
 }
 
 
-bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const
-{
+bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const {
   // if the Visibility culler tells us that we're
   // fully visible, then skip the rest of these tests
   if (octreeState == OctreeVisible) {
     return false;
   }
 
-  const Frustum* f = (const Frustum *) &frustum;
+  const Frustum* f = (const Frustum*) &frustum;
   if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
@@ -373,8 +364,7 @@ bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
-{
+bool MeshFragSceneNode::inAxisBox(const Extents& exts) const {
   // NOTE: it should be OK to use the faces while building
 
   fvec3 pos;
@@ -396,8 +386,7 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 }
 
 
-void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer) {
   renderNode.setStyle(getStyle());
   if (getColorPtr()->a > 0.0f) {
     renderer.addRenderNode(&renderNode, getWallGState());
@@ -406,8 +395,7 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 }
 
 
-void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
-{
+void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer) {
   if (!noShadow) {
     if (getColorPtr()->a > 0.0f) {
       renderer.addShadowNode(&renderNode);
@@ -417,8 +405,7 @@ void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void MeshFragSceneNode::renderRadar()
-{
+void MeshFragSceneNode::renderRadar() {
   if (noRadar) {
     return;
   }
@@ -448,8 +435,7 @@ void MeshFragSceneNode::renderRadar()
 }
 
 
-void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
-{
+void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes) {
   RenderSet rs = { &renderNode, getWallGState() };
   rnodes.push_back(rs);
   return;
@@ -460,6 +446,6 @@ void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

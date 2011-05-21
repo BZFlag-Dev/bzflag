@@ -35,21 +35,18 @@ DynamicWorldText DynamicWorldText::bzdbWorldText;
 
 
 DynamicWorldText::DynamicWorldText()
-: needStyleChange(true)
-{
+  : needStyleChange(true) {
 }
 
 
-DynamicWorldText::~DynamicWorldText()
-{
+DynamicWorldText::~DynamicWorldText() {
   clear();
 }
 
 
 //============================================================================//
 
-void DynamicWorldText::clear()
-{
+void DynamicWorldText::clear() {
   AddedMap::iterator ait;
   for (ait = addedTexts.begin(); ait != addedTexts.end(); ++ait) {
     WorldText* text = ait->second;
@@ -70,8 +67,7 @@ void DynamicWorldText::clear()
 
 //============================================================================//
 
-void DynamicWorldText::addRenderNodes(SceneRenderer& renderer)
-{
+void DynamicWorldText::addRenderNodes(SceneRenderer& renderer) {
   const ViewFrustum& vf = renderer.getViewFrustum();
   NodeMap::const_iterator it;
   if (!needStyleChange) {
@@ -95,8 +91,7 @@ void DynamicWorldText::addRenderNodes(SceneRenderer& renderer)
 }
 
 
-void DynamicWorldText::addShadowNodes(SceneRenderer& renderer)
-{
+void DynamicWorldText::addShadowNodes(SceneRenderer& renderer) {
   NodeMap::const_iterator it;
 
   const fvec4* planes = NULL;
@@ -119,8 +114,7 @@ void DynamicWorldText::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void DynamicWorldText::renderRadar()
-{
+void DynamicWorldText::renderRadar() {
   NodeMap::const_iterator it;
   for (it = nodes.begin(); it != nodes.end(); ++it) {
     TextSceneNode* node = it->second;
@@ -131,15 +125,13 @@ void DynamicWorldText::renderRadar()
 
 //============================================================================//
 
-void DynamicWorldText::addText(const WorldText* text)
-{
+void DynamicWorldText::addText(const WorldText* text) {
   worldTexts.insert(text);
   nodes[text] = new TextSceneNode(text);
 }
 
 
-bool DynamicWorldText::insertText(WorldText* text)
-{
+bool DynamicWorldText::insertText(WorldText* text) {
   if (World::getWorld() == NULL) {
     return false;
   }
@@ -152,8 +144,7 @@ bool DynamicWorldText::insertText(WorldText* text)
 }
 
 
-bool DynamicWorldText::removeText(const std::string& name)
-{
+bool DynamicWorldText::removeText(const std::string& name) {
   AddedMap::iterator textIT = addedTexts.find(name);
   if (textIT == addedTexts.end()) {
     return false;
@@ -171,14 +162,12 @@ bool DynamicWorldText::removeText(const std::string& name)
 }
 
 
-void DynamicWorldText::notifyStyleChange()
-{
+void DynamicWorldText::notifyStyleChange() {
   needStyleChange = true;
 }
 
 
-void DynamicWorldText::getFontURLs(std::set<std::string>& fontURLs) const
-{
+void DynamicWorldText::getFontURLs(std::set<std::string>& fontURLs) const {
   AddedMap::const_iterator ait;
   for (ait = addedTexts.begin(); ait != addedTexts.end(); ait++) {
     const WorldText* text = ait->second;
@@ -196,6 +185,6 @@ void DynamicWorldText::getFontURLs(std::set<std::string>& fontURLs) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

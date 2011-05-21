@@ -16,21 +16,18 @@
 #include "QuadWallSceneNode.h"
 
 
-BaseSceneNodeGenerator::BaseSceneNodeGenerator(const BaseBuilding* _base) : base(_base)
-{
+BaseSceneNodeGenerator::BaseSceneNodeGenerator(const BaseBuilding* _base) : base(_base) {
   // do nothing
 }
 
-BaseSceneNodeGenerator::~BaseSceneNodeGenerator()
-{
+BaseSceneNodeGenerator::~BaseSceneNodeGenerator() {
   // do nothing
 }
 
-WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeats, bool lod)
-{
+WallSceneNode*  BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeats, bool lod) {
   const float height = base->getHeight() + base->getPosition()[2];
-  if(getNodeNumber() >= 1 && height == 0) return NULL;
-  if(getNodeNumber() >= 6) return NULL;
+  if (getNodeNumber() >= 1 && height == 0) { return NULL; }
+  if (getNodeNumber() >= 6) { return NULL; }
   fvec3 bPoint, sCorner, tCorner;
 
   bool fixedUVs = false;
@@ -43,44 +40,45 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
     fixedUVs = true;
   }
   else {
-    switch(incNodeNumber()) {
+    switch (incNodeNumber()) {
       case 1:  // This is the top polygon
-	base->getCorner(4, bPoint);
-	base->getCorner(5, sCorner);
-	base->getCorner(7, tCorner);
-	fixedUVs = true;
-	break;
+        base->getCorner(4, bPoint);
+        base->getCorner(5, sCorner);
+        base->getCorner(7, tCorner);
+        fixedUVs = true;
+        break;
       case 2:
-	base->getCorner(0, bPoint);
-	base->getCorner(1, sCorner);
-	base->getCorner(4, tCorner);
-	break;
+        base->getCorner(0, bPoint);
+        base->getCorner(1, sCorner);
+        base->getCorner(4, tCorner);
+        break;
       case 3:
-	base->getCorner(1, bPoint);
-	base->getCorner(2, sCorner);
-	base->getCorner(5, tCorner);
-	break;
+        base->getCorner(1, bPoint);
+        base->getCorner(2, sCorner);
+        base->getCorner(5, tCorner);
+        break;
       case 4:
-	base->getCorner(2, bPoint);
-	base->getCorner(3, sCorner);
-	base->getCorner(6, tCorner);
-	break;
+        base->getCorner(2, bPoint);
+        base->getCorner(3, sCorner);
+        base->getCorner(6, tCorner);
+        break;
       case 5:
-	base->getCorner(3, bPoint);
-	base->getCorner(0, sCorner);
-	base->getCorner(7, tCorner);
-	break;
+        base->getCorner(3, bPoint);
+        base->getCorner(0, sCorner);
+        base->getCorner(7, tCorner);
+        break;
       case 6:  // This is the bottom polygon
-	fixedUVs = true;
-	if (base->getPosition()[2] > 0.0f) {
-	  // Only generate if above ground level
-	  base->getCorner(0, bPoint);
-	  base->getCorner(3, sCorner);
-	  base->getCorner(1, tCorner);
-	}
-	else
-	  return NULL;
-	break;
+        fixedUVs = true;
+        if (base->getPosition()[2] > 0.0f) {
+          // Only generate if above ground level
+          base->getCorner(0, bPoint);
+          base->getCorner(3, sCorner);
+          base->getCorner(1, tCorner);
+        }
+        else {
+          return NULL;
+        }
+        break;
 
     }
   }
@@ -97,6 +95,6 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

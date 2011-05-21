@@ -39,41 +39,36 @@
 //============================================================================//
 
 WallSceneNode::WallSceneNode()
-: style(0)
-, numLODs(0)
-, elementAreas(NULL)
-, bzMaterial(NULL)
-, color(fvec4(1.0f, 1.0f, 1.0f, 1.0f))
-, colorPtr(&color)
-{
+  : style(0)
+  , numLODs(0)
+  , elementAreas(NULL)
+  , bzMaterial(NULL)
+  , color(fvec4(1.0f, 1.0f, 1.0f, 1.0f))
+  , colorPtr(&color) {
   noPlane = false;
 }
 
 
-WallSceneNode::~WallSceneNode()
-{
+WallSceneNode::~WallSceneNode() {
   // free element area table
   delete[] elementAreas;
 }
 
 
-void WallSceneNode::setNumLODs(int num, float* areas)
-{
+void WallSceneNode::setNumLODs(int num, float* areas) {
   numLODs = num;
   elementAreas = areas;
 }
 
 
-void WallSceneNode::setPlane(const fvec4& _plane)
-{
+void WallSceneNode::setPlane(const fvec4& _plane) {
   // store normalized plane equation
   plane = _plane;
   plane *= (1.0f / plane.xyz().length());
 }
 
 
-bool WallSceneNode::cull(const ViewFrustum& frustum) const
-{
+bool WallSceneNode::cull(const ViewFrustum& frustum) const {
   // cull if eye is behind (or on) plane
   const fvec3& eye = frustum.getEye();
   const float eyeDist = plane.planeDist(eye);
@@ -100,7 +95,7 @@ bool WallSceneNode::cull(const ViewFrustum& frustum) const
     if (d[i] < 0.0f) {
       d2[i] = d[i] * d[i];
       if (d2[i] > mySphere.w) {
-	return true;
+        return true;
       }
       inside = false;
     }
@@ -114,7 +109,7 @@ bool WallSceneNode::cull(const ViewFrustum& frustum) const
   // most complicated test:  for sides sphere is behind, see if
   // center is beyond radius times the sine of the angle between
   // the normals, or equivalently:
-  //	distance^2 > radius^2 * (1 - cos^2)
+  //  distance^2 > radius^2 * (1 - cos^2)
   // if so the wall is outside the view frustum
   for (i = 0; i < planeCount; i++) {
     if (d[i] >= 0.0f) {
@@ -132,8 +127,7 @@ bool WallSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
-{
+int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const {
   if (!BZDBCache::tesselation) {
     return 0;
   }
@@ -162,18 +156,19 @@ int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
     // choose lod based on distance and element areas;
     int j;
     for (j = 0; j < numLODs - 1; j++)
-      if (elementAreas[j] < d)
-	break;
+      if (elementAreas[j] < d) {
+        break;
+      }
 
     // use new lod if more detailed
-    if (j > bestLOD) bestLOD = j;
+    if (j > bestLOD) { bestLOD = j; }
   }
 
   // FIXME -- if transient texture warper is active then possibly
   // bump up LOD if view point is close to wall.
 
   // limit lod to maximum allowed
-  if (bestLOD > BZDBCache::maxLOD) bestLOD = (int)BZDBCache::maxLOD;
+  if (bestLOD > BZDBCache::maxLOD) { bestLOD = (int)BZDBCache::maxLOD; }
 
   // return highest level required -- note that we don't care about
   // the view point because, being flat, the wall would always
@@ -182,22 +177,19 @@ int WallSceneNode::pickLevelOfDetail(const SceneRenderer& renderer) const
 }
 
 
-float WallSceneNode::getDistanceSq(const fvec3& eye) const
-{
+float WallSceneNode::getDistanceSq(const fvec3& eye) const {
   const float d = plane.planeDist(eye);
   return (d * d);
 }
 
 
-void WallSceneNode::setBzMaterial(const BzMaterial* bzmat)
-{
+void WallSceneNode::setBzMaterial(const BzMaterial* bzmat) {
   assert(bzmat != NULL);
   bzMaterial = bzmat;
 }
 
 
-void WallSceneNode::burnLighting()
-{
+void WallSceneNode::burnLighting() {
   if (BZDBCache::lighting ||
       bzMaterial->getNoLighting() ||
       (colorPtr != &color)) { // dynamic color
@@ -230,8 +222,7 @@ void WallSceneNode::burnLighting()
 }
 
 
-void WallSceneNode::notifyStyleChange()
-{
+void WallSceneNode::notifyStyleChange() {
   if (bzMaterial == NULL) {
     OpenGLGStateBuilder builder;
     gstate = builder.getState();
@@ -251,29 +242,27 @@ void WallSceneNode::notifyStyleChange()
 }
 
 
-void WallSceneNode::copyStyle(WallSceneNode* node)
-{
+void WallSceneNode::copyStyle(WallSceneNode* node) {
   gstate = node->gstate;
   bzMaterial = node->bzMaterial;
   color = node->color;
   if (node->colorPtr == &node->color) {
     colorPtr = &color;
-  } else {
+  }
+  else {
     colorPtr = node->colorPtr; // dynamic color
   }
 }
 
 
-void WallSceneNode::applyColor() const
-{
+void WallSceneNode::applyColor() const {
   myColor4fv(*colorPtr);
 }
 
 int WallSceneNode::splitWall(const fvec4& splitPlane,
-			     const fvec3Array& vertices,
-			     const fvec2Array& texcoords,
-			     SceneNode*& front, SceneNode*& back) // const
-{
+                             const fvec3Array& vertices,
+                             const fvec2Array& texcoords,
+                             SceneNode*& front, SceneNode*& back) { // const
   int i;
   const int count = vertices.getSize();
   const float fudgeFactor = 0.001f;
@@ -292,7 +281,8 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
   if (count > staticSize) {
     array = new unsigned char[count];
     dists = new float[count];
-  } else {
+  }
+  else {
     array = staticArray;
     dists = staticDists;
   }
@@ -347,12 +337,12 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
 
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
-	firstFront = next;
+        firstFront = next;
       }
     }
     if (array[next] & BACK_SIDE) {
       if (!(array[i] & BACK_SIDE)) {
-	firstBack = next;
+        firstBack = next;
       }
     }
   }
@@ -384,9 +374,9 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
     fvec3 splitVertex;
     fvec2 splitUV;
     splitEdge(dists[firstFront], dists[lastBack],
-	      vertices[firstFront], vertices[lastBack],
-	      texcoords[firstFront], texcoords[lastBack],
-	      splitVertex, splitUV);
+              vertices[firstFront], vertices[lastBack],
+              texcoords[firstFront], texcoords[lastBack],
+              splitVertex, splitUV);
     vertexFront[0] = splitVertex;
     uvFront[0] = splitUV;
     frontIndex++; // bump up the head
@@ -398,9 +388,9 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
     fvec3 splitVertex;
     fvec2 splitUV;
     splitEdge(dists[firstBack], dists[lastFront],
-	      vertices[firstBack], vertices[lastFront],
-	      texcoords[firstBack], texcoords[lastFront],
-	      splitVertex, splitUV);
+              vertices[firstBack], vertices[lastFront],
+              texcoords[firstBack], texcoords[lastFront],
+              splitVertex, splitUV);
     vertexBack[0] = splitVertex;
     uvBack[0] = splitUV;
     backIndex++; // bump up the head
@@ -440,10 +430,9 @@ int WallSceneNode::splitWall(const fvec4& splitPlane,
 
 
 void WallSceneNode::splitEdge(float d1, float d2,
-			      const fvec3& p1,  const fvec3& p2,
-			      const fvec2& uv1, const fvec2& uv2,
-			      fvec3& p, fvec2& uv) // const
-{
+                              const fvec3& p1,  const fvec3& p2,
+                              const fvec2& uv1, const fvec2& uv2,
+                              fvec3& p, fvec2& uv) { // const
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);
   if (t1 != 0.0f) { // shouldn't happen
@@ -458,13 +447,12 @@ void WallSceneNode::splitEdge(float d1, float d2,
 }
 
 
-bool WallSceneNode::inAxisBox (const Extents& /*exts*/) const
-{
+bool WallSceneNode::inAxisBox(const Extents& /*exts*/) const {
   // this should never happen, only the TriWallSceneNode
   // and QuadWallSceneNode version of this function will
   // be called
-  printf ("WallSceneNode::inAxisBox() was called!\n");
-  exit (1);
+  printf("WallSceneNode::inAxisBox() was called!\n");
+  exit(1);
   return false;
 }
 
@@ -472,6 +460,6 @@ bool WallSceneNode::inAxisBox (const Extents& /*exts*/) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

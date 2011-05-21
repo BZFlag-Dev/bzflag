@@ -26,36 +26,36 @@
 
 class ServerItem {
 
-public:
-  ServerItem();
-  ~ServerItem();
-  void		writeToFile(std::ostream& out) const; // serialize out
-  bool		readFromFile(std::istream& in); // serialize in
-  void		resetAge(); // set last updated to now
-  void		setAge(time_t minutes, time_t seconds);
-  std::string   getServerKey() const;
-  int		getPlayerCount() const;
-  std::string	getAddrName() const;
-  time_t	getAgeMinutes() const;
-  time_t	getAgeSeconds() const;
-  std::string	getAgeString() const; // nifty formated age string
-  time_t	getNow() const; // current time
-  unsigned int	getSortFactor() const;
-  void splitAddrTitle(std::string& addr, std::string& title) const;
+  public:
+    ServerItem();
+    ~ServerItem();
+    void    writeToFile(std::ostream& out) const; // serialize out
+    bool    readFromFile(std::istream& in); // serialize in
+    void    resetAge(); // set last updated to now
+    void    setAge(time_t minutes, time_t seconds);
+    std::string   getServerKey() const;
+    int   getPlayerCount() const;
+    std::string getAddrName() const;
+    time_t  getAgeMinutes() const;
+    time_t  getAgeSeconds() const;
+    std::string getAgeString() const; // nifty formated age string
+    time_t  getNow() const; // current time
+    unsigned int  getSortFactor() const;
+    void splitAddrTitle(std::string& addr, std::string& title) const;
 
-public:
-  std::string	name;
-  unsigned int	port;
-  std::string	description;
-  PingPacket	ping;
-  time_t	updateTime; // last time I was updated
-  bool		cached;     // was I cached ?
-  bool		favorite;   // favorite server, user selection
-  bool		recent;     // recent server
-  time_t	recentTime; // when it was made recent;
+  public:
+    std::string name;
+    unsigned int  port;
+    std::string description;
+    PingPacket  ping;
+    time_t  updateTime; // last time I was updated
+    bool    cached;     // was I cached ?
+    bool    favorite;   // favorite server, user selection
+    bool    recent;     // recent server
+    time_t  recentTime; // when it was made recent;
 };
 
-bool	operator<(const ServerItem &left, const ServerItem &right);
+bool  operator<(const ServerItem& left, const ServerItem& right);
 
 #endif /* __SERVERITEM_H__ */
 
@@ -63,6 +63,6 @@ bool	operator<(const ServerItem &left, const ServerItem &right);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

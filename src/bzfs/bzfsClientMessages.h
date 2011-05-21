@@ -16,43 +16,41 @@
 #include "global.h"
 #include "bzfs.h"
 
-void packWorldSettings ( void );
+void packWorldSettings(void);
 
 
-class PlayerNetworkMessageHandler
-{
-public:
-  virtual ~PlayerNetworkMessageHandler(){};
+class PlayerNetworkMessageHandler {
+  public:
+    virtual ~PlayerNetworkMessageHandler() {};
 
-  virtual void *unpackPlayer ( void * buf, int len ) = 0;
-  virtual bool execute ( uint16_t &code, void * buf, int len ) = 0;
+    virtual void* unpackPlayer(void* buf, int len) = 0;
+    virtual bool execute(uint16_t& code, void* buf, int len) = 0;
 
-  GameKeeper::Player *getPlayer(void) { return player; }
+    GameKeeper::Player* getPlayer(void) { return player; }
 
-protected:
-  GameKeeper::Player *player;
+  protected:
+    GameKeeper::Player* player;
 };
 
 
 extern std::map<uint16_t, PlayerNetworkMessageHandler*> playerNetworkHandlers;
 
-class ClientNetworkMessageHandler
-{
-public:
-  virtual ~ClientNetworkMessageHandler(){};
-  virtual bool execute ( NetHandler *handler, uint16_t &code, void * buf, int len ) = 0;
+class ClientNetworkMessageHandler {
+  public:
+    virtual ~ClientNetworkMessageHandler() {};
+    virtual bool execute(NetHandler* handler, uint16_t& code, void* buf, int len) = 0;
 };
 
 
 extern std::map<uint16_t, ClientNetworkMessageHandler*> clientNetworkHandlers;
 
 
-void registerDefaultHandlers ( void );
-void cleanupDefaultHandlers ( void );
+void registerDefaultHandlers(void);
+void cleanupDefaultHandlers(void);
 
 
 // util functions
-bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state,
+bool updatePlayerState(GameKeeper::Player* playerData, PlayerState& state,
                        float timeStamp, bool shortState);
 
 
@@ -63,6 +61,6 @@ bool updatePlayerState(GameKeeper::Player *playerData, PlayerState &state,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

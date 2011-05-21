@@ -22,37 +22,32 @@
 const char* BoxBuilding::typeName = "BoxBuilding";
 
 
-BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false)
-{
+BoxBuilding::BoxBuilding() : Obstacle(), noNodes(false) {
 }
 
 
 BoxBuilding::BoxBuilding(const fvec3& p, float a, float w, float b, float h,
                          unsigned char drive, unsigned char shoot, bool rico,
                          bool invisible)
-: Obstacle(p, a, w, b, h, drive, shoot, rico)
-, noNodes(invisible)
-{
+  : Obstacle(p, a, w, b, h, drive, shoot, rico)
+  , noNodes(invisible) {
   finalize();
   return;
 }
 
 
-BoxBuilding::~BoxBuilding()
-{
+BoxBuilding::~BoxBuilding() {
   // do nothing
 }
 
 
-void BoxBuilding::finalize()
-{
+void BoxBuilding::finalize() {
   Obstacle::setExtents();
   return;
 }
 
 
-Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const
-{
+Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const {
   fvec3 newPos = pos;
   fvec3 newSize = size;
   float newAngle = angle;
@@ -68,33 +63,28 @@ Obstacle* BoxBuilding::copyWithTransform(const MeshTransform& xform) const
 }
 
 
-const char* BoxBuilding::getType() const
-{
+const char* BoxBuilding::getType() const {
   return typeName;
 }
 
 
-const char* BoxBuilding::getClassName() // const
-{
+const char* BoxBuilding::getClassName() { // const
   return typeName;
 }
 
 
-float BoxBuilding::intersect(const Ray& r) const
-{
+float BoxBuilding::intersect(const Ray& r) const {
   return Intersect::timeRayHitsBlock(r, getPosition(), getRotation(),
                                      getWidth(), getBreadth(), getHeight());
 }
 
 
-void BoxBuilding::getNormal(const fvec3& p, fvec3& n) const
-{
+void BoxBuilding::getNormal(const fvec3& p, fvec3& n) const {
   Intersect::getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
 
-void BoxBuilding::get3DNormal(const fvec3& p, fvec3& n) const
-{
+void BoxBuilding::get3DNormal(const fvec3& p, fvec3& n) const {
   // This bit of cruft causes bullets to bounce of buildings in the z direction
   if (fabs(p[2] - getPosition()[2]) < Epsilon) {
     n[0] = 0.0f;
@@ -112,54 +102,53 @@ void BoxBuilding::get3DNormal(const fvec3& p, fvec3& n) const
 }
 
 
-bool BoxBuilding::inCylinder(const fvec3& p, float radius, float height) const
-{
+bool BoxBuilding::inCylinder(const fvec3& p, float radius, float height) const {
   return (p[2] < (getPosition()[2] + getHeight()))
-  && ((p[2]+height) >= getPosition()[2])
-  &&     Intersect::testRectCircle(getPosition(), getRotation(),
-                                   getWidth(), getBreadth(), p, radius);
+         && ((p[2] + height) >= getPosition()[2])
+         &&     Intersect::testRectCircle(getPosition(), getRotation(),
+                                          getWidth(), getBreadth(), p, radius);
 }
 
 
 bool BoxBuilding::inBox(const fvec3& p, float a,
-                        float dx, float dy, float height) const
-{
+                        float dx, float dy, float height) const {
   return (p[2] < (getPosition()[2] + getHeight()))
-  &&     ((p[2]+height) >= getPosition()[2])
-  &&     Intersect::testRectRect(getPosition(), getRotation(),
-                                 getWidth(), getBreadth(), p, a, dx, dy);
+         && ((p[2] + height) >= getPosition()[2])
+         &&     Intersect::testRectRect(getPosition(), getRotation(),
+                                        getWidth(), getBreadth(), p, a, dx, dy);
 }
 
 
 bool BoxBuilding::inMovingBox(const fvec3& oldP, float,
                               const fvec3& p, float a,
-                              float dx, float dy, float height) const
-{
+                              float dx, float dy, float height) const {
   float higherZ;
   float lowerZ;
   if (oldP[2] > p[2]) {
     higherZ = oldP[2];
     lowerZ  = p[2];
-  } else {
+  }
+  else {
     higherZ = p[2];
     lowerZ  = oldP[2];
   }
-  if (lowerZ >= (getPosition()[2] + getHeight()))
+  if (lowerZ >= (getPosition()[2] + getHeight())) {
     return false;
-  if ((higherZ + height) < getPosition()[2])
+  }
+  if ((higherZ + height) < getPosition()[2]) {
     return false;
+  }
   return Intersect::testRectRect(getPosition(), getRotation(), getWidth(), getBreadth(),
-		                 p, a, dx, dy);
+                                 p, a, dx, dy);
 }
 
 
 bool BoxBuilding::isCrossing(const fvec3& p, float a,
-                             float dx, float dy, float height, fvec4* planePtr) const
-{
+                             float dx, float dy, float height, fvec4* planePtr) const {
   // if not inside or contained then not crossing
   if (!inBox(p, a, dx, dy, height) ||
-	Intersect::testRectInRect(getPosition(), getRotation(),
-	                          getWidth(), getBreadth(), p, a, dx, dy)) {
+      Intersect::testRectInRect(getPosition(), getRotation(),
+                                getWidth(), getBreadth(), p, a, dx, dy)) {
     return false;
   }
   if (!planePtr) {
@@ -199,16 +188,14 @@ bool BoxBuilding::isCrossing(const fvec3& p, float a,
 bool BoxBuilding::getHitNormal(const fvec3& pos1, float azimuth1,
                                const fvec3& pos2, float azimuth2,
                                float width, float breadth, float,
-                               fvec3& normal) const
-{
+                               fvec3& normal) const {
   return Obstacle::getHitNormal(pos1, azimuth1, pos2, azimuth2, width, breadth,
-			getPosition(), getRotation(), getWidth(), getBreadth(),
-			getHeight(), normal) >= 0.0f;
+                                getPosition(), getRotation(), getWidth(), getBreadth(),
+                                getHeight(), normal) >= 0.0f;
 }
 
 
-void BoxBuilding::getCorner(int index, fvec3& _pos) const
-{
+void BoxBuilding::getCorner(int index, fvec3& _pos) const {
   const fvec3& base = getPosition();
   const float c = cosf(getRotation());
   const float s = sinf(getRotation());
@@ -233,19 +220,18 @@ void BoxBuilding::getCorner(int index, fvec3& _pos) const
       break;
   }
   _pos[2] = base[2];
-  if (index >= 4)
+  if (index >= 4) {
     _pos[2] += getHeight();
+  }
 }
 
 
-bool BoxBuilding::isFlatTop() const
-{
+bool BoxBuilding::isFlatTop() const {
   return true;
 }
 
 
-void* BoxBuilding::pack(void* buf) const
-{
+void* BoxBuilding::pack(void* buf) const {
   buf = nboPackFVec3(buf, pos);
   buf = nboPackFloat(buf, angle);
   buf = nboPackFVec3(buf, size);
@@ -260,8 +246,7 @@ void* BoxBuilding::pack(void* buf) const
 }
 
 
-void* BoxBuilding::unpack(void* buf)
-{
+void* BoxBuilding::unpack(void* buf) {
   buf = nboUnpackFVec3(buf, pos);
   buf = nboUnpackFloat(buf, angle);
   buf = nboUnpackFVec3(buf, size);
@@ -278,8 +263,7 @@ void* BoxBuilding::unpack(void* buf)
 }
 
 
-int BoxBuilding::packSize() const
-{
+int BoxBuilding::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(fvec3);   // pos
   fullSize += sizeof(fvec3);   // size
@@ -289,19 +273,19 @@ int BoxBuilding::packSize() const
 }
 
 
-void BoxBuilding::print(std::ostream& out, const std::string& indent) const
-{
+void BoxBuilding::print(std::ostream& out, const std::string& indent) const {
   out << indent << "box" << std::endl;
   const fvec3& myPos = getPosition();
   out << indent << "  position " << myPos[0] << " " << myPos[1] << " "
-				 << myPos[2] << std::endl;
+      << myPos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
-			     << " " << getHeight() << std::endl;
+      << " " << getHeight() << std::endl;
   out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
-				 << std::endl;
+      << std::endl;
   if (isPassable()) {
     out << indent << "  passable" << std::endl;
-  } else {
+  }
+  else {
     if (isDriveThrough()) {
       out << indent << "  drivethrough" << std::endl;
     }
@@ -317,16 +301,14 @@ void BoxBuilding::print(std::ostream& out, const std::string& indent) const
 }
 
 
-static void outputFloat(std::ostream& out, float value)
-{
+static void outputFloat(std::ostream& out, float value) {
   char buffer[32];
   snprintf(buffer, 30, " %.8f", value);
   out << buffer;
   return;
 }
 
-void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
-{
+void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const {
   int i;
   fvec3 verts[8] = {
     fvec3(-1.0f, -1.0f, 0.0f),
@@ -346,9 +328,9 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
   const fvec3& s = getSize();
   const float k = 1.0f / 8.0f;
   fvec2 txcds[8] = {
-    fvec2(0.0f, 0.0f), fvec2(k*s[0], 0.0f), fvec2(k*s[0], k*s[2]),
-    fvec2(0.0f, k*s[2]), fvec2(k*s[1], 0.0f), fvec2(k*s[1], k*s[2]),
-    fvec2(k*s[0], k*s[1]), fvec2(0.0f, k*s[1])
+    fvec2(0.0f, 0.0f), fvec2(k* s[0], 0.0f), fvec2(k* s[0], k* s[2]),
+    fvec2(0.0f, k* s[2]), fvec2(k* s[1], 0.0f), fvec2(k* s[1], k* s[2]),
+    fvec2(k* s[0], k* s[1]), fvec2(0.0f, k* s[1])
   };
   MeshTransform xform;
   const float degrees = getRotation() * (float)(180.0 / M_PI);
@@ -409,6 +391,6 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) con
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

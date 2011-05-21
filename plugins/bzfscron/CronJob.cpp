@@ -23,8 +23,9 @@
 // debug util func
 static std::string vector_dump(std::vector<int> &iv) {
   std::string tmp = "<";
-  for (std::vector<int>::iterator itr = iv.begin(); itr != iv.end(); ++itr)
+  for (std::vector<int>::iterator itr = iv.begin(); itr != iv.end(); ++itr) {
     tmp += format(" %d", *itr);
+  }
   tmp += " >";
   return tmp;
 }
@@ -42,8 +43,8 @@ CronJob::~CronJob() {
 }
 
 void CronJob::setJob(std::string job) {
-  if (job.size() == 0) return;
-  if (no_whitespace(job).size() == 0) return;
+  if (job.size() == 0) { return; }
+  if (no_whitespace(job).size() == 0) { return; }
 
   // parse the string we're given into five vectors of n ints and a command
   // note: this is rather expensive
@@ -51,7 +52,7 @@ void CronJob::setJob(std::string job) {
 
   // first bust it up into tokens based on whitespace.
   // the first five are the timing values and the 'sixth through nth' is the command.
-  std::vector<std::string> toks = tokenize(job, " \t", 6,false);
+  std::vector<std::string> toks = tokenize(job, " \t", 6, false);
 
   // hokey dokey.  now we have six strings and we need five arrays of ints and one string out of them.
   minutes = parseTimeList(toks[0], 0, 59);
@@ -62,8 +63,8 @@ void CronJob::setJob(std::string job) {
   command = toks[5];
 
   // sunday is both 7 and 0, make sure we have both or neither
-  if (isInVector(weekdays, 0) && !isInVector(weekdays, 7)) weekdays.push_back(7);
-  else if (isInVector(weekdays, 7) && !isInVector(weekdays, 0)) weekdays.push_back(0);
+  if (isInVector(weekdays, 0) && !isInVector(weekdays, 7)) { weekdays.push_back(7); }
+  else if (isInVector(weekdays, 7) && !isInVector(weekdays, 0)) { weekdays.push_back(0); }
 
   int debugLevel = bz_getDebugLevel();
   // dump the list if we're debuggering
@@ -91,26 +92,30 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   }
 
   // Now tokenize on ","
-  std::vector<std::string> stage1 = tokenize(list, ",",0,false);
+  std::vector<std::string> stage1 = tokenize(list, ",", 0, false);
   // No tokens?  That's cool too.
-  if (stage1.size() == 0) stage1.push_back(list);
+  if (stage1.size() == 0) { stage1.push_back(list); }
 
   // And for each token, blow up any "-" ranges and "*" ranges.
   for (std::vector<std::string>::iterator itr = stage1.begin(); itr != stage1.end(); ++itr) {
     if ((*itr).find("*") != std::string::npos) {
       bz_debugMessage(4, "bzfscron: exploding * range");
-      for (int i = min; i <= max; ++i)
-	vi.push_back(i);
-    } else if ((pos = (int)(*itr).find("-")) != std::string::npos) {
+      for (int i = min; i <= max; ++i) {
+        vi.push_back(i);
+      }
+    }
+    else if ((pos = (int)(*itr).find("-")) != std::string::npos) {
       bz_debugMessage(4, "bzfscron: exploding x-y range");
       int rmin = 0, rmax = 0;
       rmin = atoi((*itr).substr(0, pos).c_str());
       rmax = atoi((*itr).substr(pos + 1).c_str());
-      if (rmin < min) rmin = min;
-      if (rmax > max) rmax = max;
-      for (int i = rmin; i <= rmax; ++i)
-	vi.push_back(i);
-    } else {
+      if (rmin < min) { rmin = min; }
+      if (rmax > max) { rmax = max; }
+      for (int i = rmin; i <= rmax; ++i) {
+        vi.push_back(i);
+      }
+    }
+    else {
       bz_debugMessage(4, "bzfscron: using single int");
       vi.push_back(atoi((*itr).c_str()));
     }
@@ -121,11 +126,13 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   if (period > 1) {
     std::vector<int> vp;
     for (std::vector<int>::iterator itr2 = vi.begin(); itr2 != vi.end(); ++itr2) {
-      if (((*itr2) == 0) || ((*itr2) % period == 0))
-	vp.push_back(*itr2);
+      if (((*itr2) == 0) || ((*itr2) % period == 0)) {
+        vp.push_back(*itr2);
+      }
     }
     return vp;
-  } else {
+  }
+  else {
     return vi;
   }
 }
@@ -133,16 +140,17 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
 bool CronJob::matches(int n, int h, int d, int m, int w) const {
   // if we are supposed to execute now, return true, otherwise return false
   return (isInVector(minutes, n) &&
-	  isInVector(hours, h) &&
-	  isInVector(days, d) &&
-	  isInVector(months, m) &&
-	  isInVector(weekdays, w));
+          isInVector(hours, h) &&
+          isInVector(days, d) &&
+          isInVector(months, m) &&
+          isInVector(weekdays, w));
 }
 
 bool CronJob::isInVector(const std::vector<int> &iv, const int x) {
   for (std::vector<int>::const_iterator itr = iv.begin(); itr != iv.end(); ++itr) {
-    if (*itr == x)
+    if (*itr == x) {
       return true;
+    }
   }
   return false;
 }
@@ -151,6 +159,6 @@ bool CronJob::isInVector(const std::vector<int> &iv, const int x) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

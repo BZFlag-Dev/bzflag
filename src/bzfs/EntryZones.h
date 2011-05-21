@@ -25,27 +25,26 @@
 
 
 typedef std::vector<CustomZone> ZoneList;
-typedef std::vector<std::pair<int,float> > QPairList;
+typedef std::vector<std::pair<int, float> > QPairList;
 typedef std::map<std::string, QPairList> QualifierMap;
 
 
-class EntryZones
-{
+class EntryZones {
   public:
     EntryZones();
 
-    void addZone(const CustomZone *zone);
+    void addZone(const CustomZone* zone);
     void addZoneFlag(int zone, int flagId);
 
     void calculateQualifierLists();
 
-    bool getZonePoint(const std::string &qualifier, fvec3& pt) const;
-    bool getSafetyPoint(const std::string &qualifier,
-			const fvec3& pos, fvec3& pt) const;
+    bool getZonePoint(const std::string& qualifier, fvec3& pt) const;
+    bool getSafetyPoint(const std::string& qualifier,
+                        const fvec3& pos, fvec3& pt) const;
 
-    bool getRandomPoint(const std::string &qual, fvec3& pt) const;
-    bool getClosePoint(const std::string &qual, const fvec3& pos,
-		       fvec3& pt) const;
+    bool getRandomPoint(const std::string& qual, fvec3& pt) const;
+    bool getClosePoint(const std::string& qual, const fvec3& pos,
+                       fvec3& pt) const;
 
     const ZoneList& getZoneList() const;
 
@@ -56,10 +55,10 @@ class EntryZones
     ZoneList zones;
     QualifierMap qmap;
 
-    void makeSplitLists (int zone,
-			 std::vector<FlagType*> &flags,
-			 std::vector<TeamColor> &teams,
-			 std::vector<TeamColor> &safety) const;
+    void makeSplitLists(int zone,
+                        std::vector<FlagType*> &flags,
+                        std::vector<TeamColor> &teams,
+                        std::vector<TeamColor> &safety) const;
 };
 
 #endif
@@ -68,6 +67,6 @@ class EntryZones
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

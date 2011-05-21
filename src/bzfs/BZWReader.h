@@ -31,46 +31,46 @@ class WorldFileObject;
 class WorldInfo;
 
 class BZWReader : private cURLManager {
-public:
-  BZWReader(const std::string &filename);
-  BZWReader(std::istream &in);
-  ~BZWReader();
+  public:
+    BZWReader(const std::string& filename);
+    BZWReader(std::istream& in);
+    ~BZWReader();
 
-  // external interface
-  WorldInfo *defineWorldFromFile();
+    // external interface
+    WorldInfo* defineWorldFromFile();
 
-private:
-  // functions for internal use
-  void readToken(char *buffer, int n);
-  bool readWorldStream(std::vector<WorldFileObject*>& wlist,
-		       class GroupDefinition* groupDef,
-		       bool& gotWorld);
-  void finalization(char *data, unsigned int length, bool good);
+  private:
+    // functions for internal use
+    void readToken(char* buffer, int n);
+    bool readWorldStream(std::vector<WorldFileObject*>& wlist,
+                         class GroupDefinition* groupDef,
+                         bool& gotWorld);
+    void finalization(char* data, unsigned int length, bool good);
 
-  bool parseNormalObject(const char* token, WorldFileObject** object);
-  bool parseCustomObject(const char* token, bool& error, int& lineNum,
-                         std::vector<WorldFileObject*>& wlist,
-                         GroupDefinition* groupDef, bool& gotWorld);
-  bool readRawLines(std::string& args, std::vector<std::string>& lines,
-                    const std::string& endToken, int& lineNum);
+    bool parseNormalObject(const char* token, WorldFileObject** object);
+    bool parseCustomObject(const char* token, bool& error, int& lineNum,
+                           std::vector<WorldFileObject*>& wlist,
+                           GroupDefinition* groupDef, bool& gotWorld);
+    bool readRawLines(std::string& args, std::vector<std::string>& lines,
+                      const std::string& endToken, int& lineNum);
 
-  // stream to open
-  std::string location;
-  std::istream *input;
+    // stream to open
+    std::string location;
+    std::istream* input;
 
-  // data/dependent objects
-  BZWError *errorHandler;
+    // data/dependent objects
+    BZWError* errorHandler;
 
-  // no default constructor
-  BZWReader();
+    // no default constructor
+    BZWReader();
 
-  std::string httpData;
+    std::string httpData;
 
-  // states if we read from a blob
-  bool fromBlob;
+    // states if we read from a blob
+    bool fromBlob;
 
-  // mapinfo text lines
-  std::vector<std::string> mapInfoLines;
+    // mapinfo text lines
+    std::vector<std::string> mapInfoLines;
 };
 
 #endif
@@ -79,6 +79,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

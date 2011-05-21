@@ -17,14 +17,14 @@
 #include "BaseBuilding.h"
 
 class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
-			~BaseSceneNodeGenerator();
+    friend class SceneDatabaseBuilder;
+    ~BaseSceneNodeGenerator();
   public:
-    WallSceneNode*	getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool);
   protected:
-			BaseSceneNodeGenerator(const BaseBuilding *);
+    BaseSceneNodeGenerator(const BaseBuilding*);
   private:
-    const BaseBuilding *base;
+    const BaseBuilding* base;
 };
 
 #endif
@@ -33,6 +33,6 @@ class BaseSceneNodeGenerator : public ObstacleSceneNodeGenerator {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -22,29 +22,25 @@
 /**
  * Plan
  */
-Plan::Plan(float planDuration)
-{
+Plan::Plan(float planDuration) {
   planExpiration = BzTime::getCurrent();
   planExpiration += planDuration;
 }
 
 
-Plan::~Plan()
-{
+Plan::~Plan() {
 }
 
 
-bool Plan::isValid()
-{
+bool Plan::isValid() {
   BzTime now = BzTime();
   float delta = float(now - planExpiration);
   return (delta < 0.0f);
 }
 
-void Plan::execute(float &, float &)
-{
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  World *world = World::getWorld();
+void Plan::execute(float&, float&) {
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  World* world = World::getWorld();
   if (!myTank || !world) {
     return;
   }
@@ -64,35 +60,37 @@ void Plan::execute(float &, float &)
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && remotePlayers[t] &&
-	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
-	    !remotePlayers[t]->isNotResponding()) {
+        if (t != myTank->getId() && remotePlayers[t] &&
+            remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+            !remotePlayers[t]->isNotResponding()) {
 
-	  const fvec3& tp = remotePlayers[t]->getPosition();
-	  const fvec3& tv = remotePlayers[t]->getVelocity();
-	  // toss in some lag adjustment/future prediction - 300 millis
-	  fvec3 enemyPos = tp + (0.3f * tv);
-	  if (enemyPos.z < 0.0f) {
-	    enemyPos.z = 0.0f;
+          const fvec3& tp = remotePlayers[t]->getPosition();
+          const fvec3& tv = remotePlayers[t]->getVelocity();
+          // toss in some lag adjustment/future prediction - 300 millis
+          fvec3 enemyPos = tp + (0.3f * tv);
+          if (enemyPos.z < 0.0f) {
+            enemyPos.z = 0.0f;
           }
 
-	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
-	  if (dist <= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) {
-	    if (!myTank->validTeamTarget(remotePlayers[t])) {
-	      hasSWTarget = false;
-	      t = curMaxPlayers;
-	    } else {
-	      hasSWTarget = true;
-	    }
-	  }
-	}
+          float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
+          if (dist <= BZDB.eval(BZDBNAMES.SHOCKOUTRADIUS)) {
+            if (!myTank->validTeamTarget(remotePlayers[t])) {
+              hasSWTarget = false;
+              t = curMaxPlayers;
+            }
+            else {
+              hasSWTarget = true;
+            }
+          }
+        }
       }
       if (hasSWTarget) {
         myTank->fireShot();
         lastShot = BzTime::getTick();
       }
     }
-  } else {
+  }
+  else {
     BzTime now = BzTime::getTick();
     if (now - lastShot >= (1.0f / world->getMaxShots())) {
 
@@ -100,69 +98,73 @@ void Plan::execute(float &, float &)
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && remotePlayers[t] &&
-	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
-	    !remotePlayers[t]->isNotResponding() &&
-	    myTank->validTeamTarget(remotePlayers[t])) {
+        if (t != myTank->getId() && remotePlayers[t] &&
+            remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+            !remotePlayers[t]->isNotResponding() &&
+            myTank->validTeamTarget(remotePlayers[t])) {
 
-	  if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-	      && (myTank->getFlagType() != Flags::SuperBullet))
-	    continue;
-
-	  const fvec3& tp = remotePlayers[t]->getPosition();
-	  const fvec3& tv = remotePlayers[t]->getVelocity();
-	  // toss in some lag adjustment/future prediction - 300 millis
-	  fvec3 enemyPos = tp + (0.3f * tv);
-	  if (enemyPos.z < 0.0f) {
-	    enemyPos.z = 0.0f;
+          if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+              && (myTank->getFlagType() != Flags::SuperBullet)) {
+            continue;
           }
 
-	  float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
+          const fvec3& tp = remotePlayers[t]->getPosition();
+          const fvec3& tv = remotePlayers[t]->getVelocity();
+          // toss in some lag adjustment/future prediction - 300 millis
+          fvec3 enemyPos = tp + (0.3f * tv);
+          if (enemyPos.z < 0.0f) {
+            enemyPos.z = 0.0f;
+          }
 
-	  if ((myTank->getFlagType() == Flags::GuidedMissile) ||
-	      (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
+          float dist = TargetingUtils::getTargetDistance(pos, enemyPos);
 
-	    float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
-	    if ((targetDiff < errorLimit) ||
-		((dist < (2.0f * BZDB.eval(BZDBNAMES.SHOTSPEED))) &&
-		 (targetDiff < closeErrorLimit))) {
-	      bool isTargetObscured;
-	      if (myTank->getFlagType() != Flags::SuperBullet)
-		isTargetObscured = TargetingUtils::isLocationObscured(pos, enemyPos);
-	      else
-		isTargetObscured = false;
+          if ((myTank->getFlagType() == Flags::GuidedMissile) ||
+              (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight)) {
 
-	      if (!isTargetObscured) {
-		myTank->fireShot();
-		lastShot = now;
-		t = curMaxPlayers;
-	      }
-	    }
-	  }
-	}
+            float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
+            if ((targetDiff < errorLimit) ||
+                ((dist < (2.0f * BZDB.eval(BZDBNAMES.SHOTSPEED))) &&
+                 (targetDiff < closeErrorLimit))) {
+              bool isTargetObscured;
+              if (myTank->getFlagType() != Flags::SuperBullet) {
+                isTargetObscured = TargetingUtils::isLocationObscured(pos, enemyPos);
+              }
+              else {
+                isTargetObscured = false;
+              }
+
+              if (!isTargetObscured) {
+                myTank->fireShot();
+                lastShot = now;
+                t = curMaxPlayers;
+              }
+            }
+          }
+        }
       }
     }
   }
 }
 
-bool Plan::avoidBullet(float &rotation, float &speed)
-{
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  World *world = World::getWorld();
+bool Plan::avoidBullet(float& rotation, float& speed) {
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  World* world = World::getWorld();
   if (!myTank || !world) {
     return false;
   }
   const fvec3& pos = myTank->getPosition();
 
   if ((myTank->getFlagType() == Flags::Narrow) ||
-      (myTank->getFlagType() == Flags::Burrow))
-    return false; // take our chances
+      (myTank->getFlagType() == Flags::Burrow)) {
+    return false;  // take our chances
+  }
 
   float minDistance;
-  ShotPath *shot = findWorstBullet(minDistance);
+  ShotPath* shot = findWorstBullet(minDistance);
 
-  if ((shot == NULL) || (minDistance > 100.0f))
+  if ((shot == NULL) || (minDistance > 100.0f)) {
     return false;
+  }
 
   const fvec3& shotPos = shot->getPosition();
   const fvec3& shotVel = shot->getVelocity();
@@ -172,34 +174,42 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   const float  dotProd = fvec2::dot(trueVec, shotUnitVec);
 
   if ((myTank->canJump()) &&
-      (minDistance < (std::max(dotProd,0.5f) * BZDBCache::tankLength * 2.25f))) {
+      (minDistance < (std::max(dotProd, 0.5f) * BZDBCache::tankLength * 2.25f))) {
     myTank->setJump();
     return (myTank->getFlagType() != Flags::Wings);
-  } else if (dotProd > 0.96f) {
+  }
+  else if (dotProd > 0.96f) {
     speed = 1.0;
     float myAzimuth = myTank->getAngle();
-    float rotation1 = TargetingUtils::normalizeAngle((float)((shotAngle + M_PI/2.0) - myAzimuth));
+    float rotation1 = TargetingUtils::normalizeAngle((float)((shotAngle + M_PI / 2.0) - myAzimuth));
 
-    float rotation2 = TargetingUtils::normalizeAngle((float)((shotAngle - M_PI/2.0) - myAzimuth));
+    float rotation2 = TargetingUtils::normalizeAngle((float)((shotAngle - M_PI / 2.0) - myAzimuth));
 
-    float zCross = shotUnitVec[0]*trueVec[1] - shotUnitVec[1]*trueVec[0];
+    float zCross = shotUnitVec[0] * trueVec[1] - shotUnitVec[1] * trueVec[0];
 
     if (zCross > 0.0f) { //if i am to the left of the shot from shooter pov
       rotation = rotation1;
-      if (fabs(rotation1) < fabs(rotation2))
-	speed = 1.0f;
-      else if (dotProd > 0.98f)
-	speed = -0.5f;
-      else
-	speed = 0.5f;
-    } else {
+      if (fabs(rotation1) < fabs(rotation2)) {
+        speed = 1.0f;
+      }
+      else if (dotProd > 0.98f) {
+        speed = -0.5f;
+      }
+      else {
+        speed = 0.5f;
+      }
+    }
+    else {
       rotation = rotation2;
-      if (fabs(rotation2) < fabs(rotation1))
-	speed = 1.0f;
-      else if (dotProd > 0.98f)
-	speed = -0.5f;
-      else
-	speed = 0.5f;
+      if (fabs(rotation2) < fabs(rotation1)) {
+        speed = 1.0f;
+      }
+      else if (dotProd > 0.98f) {
+        speed = -0.5f;
+      }
+      else {
+        speed = 0.5f;
+      }
     }
 
     return true;
@@ -207,66 +217,73 @@ bool Plan::avoidBullet(float &rotation, float &speed)
   return false;
 }
 
-ShotPath *Plan::findWorstBullet(float &minDistance)
-{
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  World *world = World::getWorld();
+ShotPath* Plan::findWorstBullet(float& minDistance) {
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  World* world = World::getWorld();
   if (!myTank || !world) {
     return NULL;
   }
   const fvec3& pos = myTank->getPosition();
-  ShotPath *minPath = NULL;
+  ShotPath* minPath = NULL;
 
   minDistance = Infinity;
   for (int t = 0; t < curMaxPlayers; t++) {
-    if (t == myTank->getId() || !remotePlayers[t])
+    if (t == myTank->getId() || !remotePlayers[t]) {
       continue;
+    }
 
     const int maxShots = remotePlayers[t]->getMaxShots();
     for (int s = 0; s < maxShots; s++) {
       ShotPath* shot = remotePlayers[t]->getShot(s);
-      if (!shot || shot->isExpired())
-	continue;
+      if (!shot || shot->isExpired()) {
+        continue;
+      }
 
       if ((shot->getShotType() == InvisibleShot ||
-	   shot->getShotType() == CloakedShot) &&
-	  (myTank->getFlagType() != Flags::Seer))
-	continue; //Theoretically Roger could triangulate the sound
-      if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned())
-	continue;
+           shot->getShotType() == CloakedShot) &&
+          (myTank->getFlagType() != Flags::Seer)) {
+        continue;  //Theoretically Roger could triangulate the sound
+      }
+      if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()) {
+        continue;
+      }
       if ((shot->getShotType() == LaserShot) &&
-	  (myTank->getFlagType() == Flags::Cloaking))
-	continue; //cloaked tanks can't die from lasers
+          (myTank->getFlagType() == Flags::Cloaking)) {
+        continue;  //cloaked tanks can't die from lasers
+      }
 
       const fvec3& shotPos = shot->getPosition();
       if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
-	  (shot->getShotType() != GMShot))
-	continue;
+          (shot->getShotType() != GMShot)) {
+        continue;
+      }
 
       const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
       if (dist < minDistance) {
-	const fvec3& shotVel = shot->getVelocity();
-	float shotAngle = atan2f(shotVel[1], shotVel[0]);
-	float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
+        const fvec3& shotVel = shot->getVelocity();
+        float shotAngle = atan2f(shotVel[1], shotVel[0]);
+        float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
-	float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
-	float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+        float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
+        float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
 
-	if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
-	  continue;
+        if (dotProd <= 0.1f) { //pretty wide angle, evasive actions prolly aren't gonna work
+          continue;
+        }
 
-	minDistance = dist;
-	minPath = shot;
+        minDistance = dist;
+        minPath = shot;
       }
     }
   }
 
   float oldDistance = minDistance;
-  WorldPlayer *wp = world->getWorldWeapons();
+  WorldPlayer* wp = world->getWorldWeapons();
   for (int w = 0; w < wp->getMaxShots(); w++) {
     ShotPath* shot = wp->getShot(w);
-    if (!shot || shot->isExpired())
+    if (!shot || shot->isExpired()) {
       continue;
+    }
 
     if ((shot->getShotType() == InvisibleShot || shot->getShotType() == CloakedShot) &&
         (myTank->getFlagType() != Flags::Seer)) {
@@ -278,28 +295,32 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
     }
 
     const fvec3& shotPos = shot->getPosition();
-    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot))
+    if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getShotType() != GMShot)) {
       continue;
+    }
 
-    const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
+    const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
     if (dist < minDistance) {
       const fvec3& shotVel = shot->getVelocity();
       float shotAngle = atan2f(shotVel[1], shotVel[0]);
       float shotUnitVec[2] = {cosf(shotAngle), sinf(shotAngle)};
 
       float trueVec[2] = { (pos[0] - shotPos[0]) / dist,
-			   (pos[1] - shotPos[1]) / dist };
+                           (pos[1] - shotPos[1]) / dist
+                         };
       float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
 
-      if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
-	continue;
+      if (dotProd <= 0.1f) { //pretty wide angle, evasive actions prolly aren't gonna work
+        continue;
+      }
 
       minDistance = dist;
       minPath = shot;
     }
   }
-  if (oldDistance < minDistance)
-    minDistance = oldDistance; //pick the closer bullet
+  if (oldDistance < minDistance) {
+    minDistance = oldDistance;  //pick the closer bullet
+  }
   return minPath;
 }
 
@@ -308,14 +329,12 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
  * PlanStack
  */
 
-PlanStack::PlanStack()
-{
-  Plan *pPlan = new TopLevelPlan();
+PlanStack::PlanStack() {
+  Plan* pPlan = new TopLevelPlan();
   plans.push(pPlan);
 }
 
-PlanStack::~PlanStack()
-{
+PlanStack::~PlanStack() {
   while (plans.size() > 0) {
     Plan* pPlan = plans.top();
     delete pPlan;
@@ -323,12 +342,12 @@ PlanStack::~PlanStack()
   }
 }
 
-void PlanStack::execute(float &rotation, float &speed)
-{
-  if (Plan::avoidBullet(rotation, speed))
+void PlanStack::execute(float& rotation, float& speed) {
+  if (Plan::avoidBullet(rotation, speed)) {
     return;
+  }
 
-  Plan *pPlan = NULL;
+  Plan* pPlan = NULL;
 
   while (plans.size() > 0) {
     pPlan = plans.top();
@@ -351,22 +370,20 @@ void PlanStack::execute(float &rotation, float &speed)
  */
 
 TopLevelPlan::TopLevelPlan()
-  : Plan(0)
-{
+  : Plan(0) {
 }
 
-bool TopLevelPlan::isValid()
-{ //always valid
+bool TopLevelPlan::isValid() {
+  //always valid
   return true;
 }
 
-bool TopLevelPlan::usesSubPlan()
-{
+bool TopLevelPlan::usesSubPlan() {
   return true;
 }
 
-Plan *TopLevelPlan::createSubPlan()
-{ //TODO: Pick a plan
+Plan* TopLevelPlan::createSubPlan() {
+  //TODO: Pick a plan
   return NULL;
 }
 
@@ -376,23 +393,19 @@ Plan *TopLevelPlan::createSubPlan()
  */
 
 GotoPointPlan::GotoPointPlan(const fvec3& pt)
-: Plan(20.0f)
-, gotoPt(pt)
-{
+  : Plan(20.0f)
+  , gotoPt(pt) {
 }
 
-bool GotoPointPlan::usesSubPlan()
-{
+bool GotoPointPlan::usesSubPlan() {
   return false;
 }
 
-Plan *GotoPointPlan::createSubPlan()
-{
+Plan* GotoPointPlan::createSubPlan() {
   return NULL;
 }
 
-void GotoPointPlan::execute(float &rotation, float &speed)
-{
+void GotoPointPlan::execute(float& rotation, float& speed) {
   //TODO: goto point, then
 
   Plan::execute(rotation, speed);
@@ -402,42 +415,40 @@ void GotoPointPlan::execute(float &rotation, float &speed)
  * WeavePlan
  */
 
-WeavePlan::WeavePlan(int pID, bool right )
-  : Plan(10.0)
-{
+WeavePlan::WeavePlan(int pID, bool right)
+  : Plan(10.0) {
   playerID = pID;
   weaveRight = right;
 }
 
-bool WeavePlan::isValid()
-{
-  Player *pPlayer = lookupPlayer(playerID);
-  if (pPlayer == NULL)
+bool WeavePlan::isValid() {
+  Player* pPlayer = lookupPlayer(playerID);
+  if (pPlayer == NULL) {
     return false;
+  }
 
-  if (!pPlayer->isAlive())
+  if (!pPlayer->isAlive()) {
     return false;
+  }
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   const fvec3& pVel = myTank->getVelocity();
-  if ((pVel[0] == 0.0f) && (pVel[1] == 0.0f) && (pVel[2] == 0.0f))
+  if ((pVel[0] == 0.0f) && (pVel[1] == 0.0f) && (pVel[2] == 0.0f)) {
     return false;
+  }
 
   return true;
 }
 
-bool WeavePlan::usesSubPlan()
-{
+bool WeavePlan::usesSubPlan() {
   return false;
 }
 
-Plan* WeavePlan::createSubPlan()
-{
+Plan* WeavePlan::createSubPlan() {
   return NULL;
 }
 
-void WeavePlan::execute(float &rotation, float &speed)
-{
+void WeavePlan::execute(float& rotation, float& speed) {
   //TODO: weave, then
 
   Plan::execute(rotation, speed);
@@ -448,47 +459,48 @@ void WeavePlan::execute(float &rotation, float &speed)
  */
 
 HuntPlayerPlan::HuntPlayerPlan()
-  :Plan(300.0f)
-{
+  : Plan(300.0f) {
   //Pick a player ID to hunt
   playerID = 0;
 }
 
-bool HuntPlayerPlan::isValid()
-{
-  if (!Plan::isValid())
+bool HuntPlayerPlan::isValid() {
+  if (!Plan::isValid()) {
     return false;
+  }
 
-  Player *pPlayer = lookupPlayer(playerID);
-  if (pPlayer == NULL)
+  Player* pPlayer = lookupPlayer(playerID);
+  if (pPlayer == NULL) {
     return false;
+  }
 
-  if (!pPlayer->isAlive())
+  if (!pPlayer->isAlive()) {
     return false;
+  }
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (pPlayer->getTeam() == myTank->getTeam())
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
+  if (pPlayer->getTeam() == myTank->getTeam()) {
     return false;
+  }
 
   return true;
 }
 
-bool HuntPlayerPlan::usesSubPlan()
-{
+bool HuntPlayerPlan::usesSubPlan() {
   return true;
 }
 
-Plan *HuntPlayerPlan::createSubPlan()
-{
-  Player *pPlayer = lookupPlayer(playerID);
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+Plan* HuntPlayerPlan::createSubPlan() {
+  Player* pPlayer = lookupPlayer(playerID);
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   bool isObscured = TargetingUtils::isLocationObscured(myTank->getPosition(),
-						       pPlayer->getPosition());
+                                                       pPlayer->getPosition());
   if (isObscured) {
     fvec3 pt;
     // fill in pt with a open spot to go to
     return new GotoPointPlan(pt);
-  } else {
+  }
+  else {
     return new WeavePlan(playerID, bzfrand() > 0.5f);
   }
 }
@@ -499,22 +511,18 @@ Plan *HuntPlayerPlan::createSubPlan()
  */
 
 HuntTeamFlagPlan::HuntTeamFlagPlan()
-  :Plan(300.0f)
-{
+  : Plan(300.0f) {
 }
 
-bool HuntTeamFlagPlan::isValid()
-{
+bool HuntTeamFlagPlan::isValid() {
   return false;
 }
 
-bool HuntTeamFlagPlan::usesSubPlan()
-{
+bool HuntTeamFlagPlan::usesSubPlan() {
   return true;
 }
 
-Plan *HuntTeamFlagPlan::createSubPlan()
-{
+Plan* HuntTeamFlagPlan::createSubPlan() {
   return NULL;
 }
 
@@ -523,22 +531,18 @@ Plan *HuntTeamFlagPlan::createSubPlan()
  */
 
 CaptureFlagPlan::CaptureFlagPlan()
-  :Plan(1200.0f)
-{
+  : Plan(1200.0f) {
 }
 
-bool CaptureFlagPlan::isValid()
-{
+bool CaptureFlagPlan::isValid() {
   return false;
 }
 
-bool CaptureFlagPlan::usesSubPlan()
-{
+bool CaptureFlagPlan::usesSubPlan() {
   return true;
 }
 
-Plan *CaptureFlagPlan::createSubPlan()
-{
+Plan* CaptureFlagPlan::createSubPlan() {
   return NULL;
 }
 
@@ -546,6 +550,6 @@ Plan *CaptureFlagPlan::createSubPlan()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

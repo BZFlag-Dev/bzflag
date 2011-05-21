@@ -21,7 +21,7 @@ void SDLVisual::setDoubleBuffer(bool on) {
 }
 
 void SDLVisual::setRGBA(int minRed, int minGreen,
-			int minBlue, int minAlpha) {
+                        int minBlue, int minAlpha) {
   SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   minRed);
   SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, minGreen);
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  minBlue);
@@ -30,8 +30,9 @@ void SDLVisual::setRGBA(int minRed, int minGreen,
 #define SDL_BUGGY_MAX_DEPTH 24
 
 void SDLVisual::setDepth(int minDepth) {
-  if (minDepth > SDL_BUGGY_MAX_DEPTH)
+  if (minDepth > SDL_BUGGY_MAX_DEPTH) {
     minDepth = SDL_BUGGY_MAX_DEPTH;
+  }
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, minDepth);
 }
 
@@ -48,6 +49,6 @@ void SDLVisual::setStereo(bool on) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

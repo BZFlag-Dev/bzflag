@@ -25,23 +25,22 @@
 /** this class provides options for setting the gui
  */
 class DisplayMenu : public HUDDialog {
-public:
-  DisplayMenu();
-  ~DisplayMenu();
+  public:
+    DisplayMenu();
+    ~DisplayMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, void* data);
-private:
-  FormatMenu*	formatMenu;
-  HUDuiControl*	videoFormat;
-  bool gridOptions;
-  static int	gammaToIndex(float);
-  static float	indexToGamma(int);
+    HUDuiDefaultKey* getDefaultKey() {
+      return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, void* data);
+  private:
+    FormatMenu* formatMenu;
+    HUDuiControl* videoFormat;
+    bool gridOptions;
+    static int  gammaToIndex(float);
+    static float  indexToGamma(int);
 };
 
 extern void setSceneDatabase();
@@ -52,6 +51,6 @@ extern void setSceneDatabase();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

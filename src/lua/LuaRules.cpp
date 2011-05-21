@@ -47,8 +47,7 @@ static const char* sourceFile = "bzRules.lua";
 //============================================================================//
 //============================================================================//
 
-void LuaRules::LoadHandler()
-{
+void LuaRules::LoadHandler() {
   if (luaRules) {
     return;
   }
@@ -70,8 +69,7 @@ void LuaRules::LoadHandler()
 }
 
 
-void LuaRules::FreeHandler()
-{
+void LuaRules::FreeHandler() {
   delete luaRules;
 }
 
@@ -79,15 +77,13 @@ void LuaRules::FreeHandler()
 //============================================================================//
 //============================================================================//
 
-static bool BzdbReadCheck(const std::string& name)
-{
+static bool BzdbReadCheck(const std::string& name) {
   return ((BZDB.isSet(name)) &&
           (BZDB.getPermission(name) == StateDatabase::Server));
 }
 
 
-static bool BzdbWriteCheck(const std::string& /*name*/)
-{
+static bool BzdbWriteCheck(const std::string& /*name*/) {
   return false;
 }
 
@@ -96,13 +92,12 @@ static bool BzdbWriteCheck(const std::string& /*name*/)
 //============================================================================//
 
 LuaRules::LuaRules()
-: LuaHandle("LuaRules",
-	    LUA_RULES_SCRIPT_ID,
-	    LUA_RULES_GAME_ORDER,
-	    LUA_RULES_DRAW_WORLD_ORDER,
-	    LUA_RULES_DRAW_SCREEN_ORDER,
-	    true, true, true)  // handle perms
-{
+  : LuaHandle("LuaRules",
+              LUA_RULES_SCRIPT_ID,
+              LUA_RULES_GAME_ORDER,
+              LUA_RULES_DRAW_WORLD_ORDER,
+              LUA_RULES_DRAW_SCREEN_ORDER,
+              true, true, true) { // handle perms
   static LuaVfsModes vfsModes;
   vfsModes.readDefault  = BZVFS_LUA_RULES;
   vfsModes.readAllowed  = BZVFS_LUA_RULES;
@@ -148,8 +143,7 @@ LuaRules::LuaRules()
 }
 
 
-LuaRules::~LuaRules()
-{
+LuaRules::~LuaRules() {
   if (L != NULL) {
     Shutdown();
     KillLua();
@@ -166,6 +160,6 @@ LuaRules::~LuaRules()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

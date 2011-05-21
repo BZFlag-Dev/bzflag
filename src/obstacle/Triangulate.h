@@ -27,7 +27,7 @@ typedef struct {
 } TriIndices;
 
 extern void triangulateFace(int count, const fvec3** verts,
-			    std::vector<TriIndices>& tris);
+                            std::vector<TriIndices>& tris);
 
 
 #endif  /* __TRIANGULATE_H__ */
@@ -36,6 +36,6 @@ extern void triangulateFace(int count, const fvec3** verts,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

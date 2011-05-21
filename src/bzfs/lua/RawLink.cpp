@@ -65,9 +65,8 @@ class Link : public bz_NonPlayerConnectionHandler {
 //============================================================================//
 
 Link::Link(lua_State* L, int _id)
-: id(_id)
-, funcRef(LUA_NOREF)
-{
+  : id(_id)
+  , funcRef(LUA_NOREF) {
   if (linkMap.find(id) != linkMap.end()) {
     return;
   }
@@ -89,8 +88,7 @@ Link::Link(lua_State* L, int _id)
 }
 
 
-Link::~Link()
-{
+Link::~Link() {
   bz_removeNonPlayerConnectionHandler(id, this);
   linkMap.erase(id);
 
@@ -101,8 +99,7 @@ Link::~Link()
 }
 
 
-void Link::pending(int /*id*/, void* data, unsigned int size)
-{
+void Link::pending(int /*id*/, void* data, unsigned int size) {
   lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return;
@@ -124,13 +121,14 @@ void Link::pending(int /*id*/, void* data, unsigned int size)
 
   if (data == NULL) {
     lua_pushnil(L);
-  } else {
+  }
+  else {
     lua_pushlstring(L, (char*)data, size);
   }
 
   if (lua_pcall(L, 2, 0, 0) != 0) {
     bz_debugMessagef(0, "LuaRawLink callback error (%i): %s\n",
-		     id, lua_tostring(L, -1));
+                     id, lua_tostring(L, -1));
     lua_pop(L, 1);
     return;
   }
@@ -139,8 +137,7 @@ void Link::pending(int /*id*/, void* data, unsigned int size)
 }
 
 
-void Link::disconnect(int /*id*/)
-{
+void Link::disconnect(int /*id*/) {
   pending(id, NULL, 0);
   delete this;
 }
@@ -149,8 +146,7 @@ void Link::disconnect(int /*id*/)
 //============================================================================//
 //============================================================================//
 
-bool RawLink::PushEntries(lua_State* L)
-{
+bool RawLink::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, AttachRawLink);
   PUSH_LUA_CFUNC(L, DetachRawLink);
   PUSH_LUA_CFUNC(L, WriteRawLink);
@@ -163,8 +159,7 @@ bool RawLink::PushEntries(lua_State* L)
 }
 
 
-bool RawLink::CleanUp(lua_State* /*L*/)
-{
+bool RawLink::CleanUp(lua_State* /*L*/) {
   LinkMap::iterator it;
   for (it = linkMap.begin(); it != linkMap.end(); ++it) {
     delete it->second;
@@ -178,8 +173,7 @@ bool RawLink::CleanUp(lua_State* /*L*/)
 //============================================================================//
 //============================================================================//
 
-static int AttachRawLink(lua_State* L)
-{
+static int AttachRawLink(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
 
   if (!lua_isnoneornil(L, 2) && !lua_isfunction(L, 2)) {
@@ -197,8 +191,7 @@ static int AttachRawLink(lua_State* L)
 }
 
 
-static int DetachRawLink(lua_State* L)
-{
+static int DetachRawLink(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
   LinkMap::iterator it = linkMap.find(linkID);
   if (it == linkMap.end()) {
@@ -211,8 +204,7 @@ static int DetachRawLink(lua_State* L)
 }
 
 
-static int WriteRawLink(lua_State* L)
-{
+static int WriteRawLink(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
   if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
@@ -224,8 +216,7 @@ static int WriteRawLink(lua_State* L)
 }
 
 
-static int DisconnectRawLink(lua_State* L)
-{
+static int DisconnectRawLink(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
   if (linkMap.find(linkID) == linkMap.end()) {
     return 0;
@@ -235,24 +226,21 @@ static int DisconnectRawLink(lua_State* L)
 }
 
 
-static int GetRawLinkIP(lua_State* L)
-{
+static int GetRawLinkIP(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
   lua_pushstring(L, bz_getNonPlayerConnectionIP(linkID));
   return 1;
 }
 
 
-static int GetRawLinkHost(lua_State* L)
-{
+static int GetRawLinkHost(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
   lua_pushstring(L, bz_getNonPlayerConnectionHost(linkID));
   return 1;
 }
 
 
-static int GetRawLinkQueued(lua_State* L)
-{
+static int GetRawLinkQueued(lua_State* L) {
   const int linkID = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getNonPlayerConnectionOutboundPacketCount(linkID));
   return 1;
@@ -266,6 +254,6 @@ static int GetRawLinkQueued(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

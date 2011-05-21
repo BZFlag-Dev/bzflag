@@ -11,11 +11,11 @@
  */
 
 /* MeshObstacle:
- *	Encapsulates a mesh object in the game environment.
+ *  Encapsulates a mesh object in the game environment.
  */
 
-#ifndef	BZF_MESH_OBSTACLE_H
-#define	BZF_MESH_OBSTACLE_H
+#ifndef BZF_MESH_OBSTACLE_H
+#define BZF_MESH_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -33,7 +33,7 @@ class MeshDrawInfo;
 
 class MeshObstacle : public Obstacle {
 
-  friend class ObstacleModifier;
+    friend class ObstacleModifier;
 
   public:
     static bool makeTexcoords(const fvec2& autoScale,
@@ -44,13 +44,13 @@ class MeshObstacle : public Obstacle {
   public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
-		 const std::vector<char>& checkTypes,
-		 const std::vector<fvec3>& checkPoints,
-		 const std::vector<fvec3>& vertices,
-		 const std::vector<fvec3>& normals,
-		 const std::vector<fvec2>& texcoords,
-		 int faceCount, bool noclusters, bool smoothBounce,
-		 unsigned char drive, unsigned char shoot, bool ricochet);
+                 const std::vector<char>& checkTypes,
+                 const std::vector<fvec3>& checkPoints,
+                 const std::vector<fvec3>& vertices,
+                 const std::vector<fvec3>& normals,
+                 const std::vector<fvec2>& texcoords,
+                 int faceCount, bool noclusters, bool smoothBounce,
+                 unsigned char drive, unsigned char shoot, bool ricochet);
 
     bool addFace(const std::vector<int>& vertices,
                  const std::vector<int>& normals,
@@ -96,18 +96,18 @@ class MeshObstacle : public Obstacle {
 
     bool inCylinder(const fvec3& p, float radius, float height) const;
     bool inBox(const fvec3& p, float angle,
-	       float halfWidth, float halfBreadth, float height) const;
+               float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const fvec3& oldP, float oldAngle,
-		     const fvec3& newP, float newAngle,
-		     float halfWidth, float halfBreadth, float height) const;
+                     const fvec3& newP, float newAngle,
+                     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const fvec3& p, float angle,
-		    float halfWidth, float halfBreadth, float height,
-		    fvec4* plane) const;
+                    float halfWidth, float halfBreadth, float height,
+                    fvec4* plane) const;
 
     bool getHitNormal(const fvec3& pos1, float azimuth1,
-		      const fvec3& pos2, float azimuth2,
-		      float halfWidth, float halfBreadth,
-		      float height, fvec3& normal) const;
+                      const fvec3& pos2, float azimuth2,
+                      float halfWidth, float halfBreadth,
+                      float height, fvec3& normal) const;
 
     bool containsPoint(const fvec3& point) const;
 
@@ -144,24 +144,24 @@ class MeshObstacle : public Obstacle {
 
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
-	
+
   private:
     void makeFacePointers(const std::vector<int>& _vertices,
-			  const std::vector<int>& _normals,
-			  const std::vector<int>& _texcoords,
-			  const fvec3**& v, const fvec3**& n, const fvec2**& t);
+                          const std::vector<int>& _normals,
+                          const std::vector<int>& _texcoords,
+                          const fvec3** & v, const fvec3** & n, const fvec2** & t);
     void makeEdges();
     bool containsPointConvex(const fvec3& p, bool trace) const;
     bool containsPointParity(const fvec3& p, bool inside, bool trace) const;
 
   private:
     static const char* typeName;
-	
+
     bool areNeighbors(MeshFace* f0, MeshFace* f1);
     void setupTopNeighbors();
 
@@ -181,8 +181,8 @@ class MeshObstacle : public Obstacle {
     bool smoothBounce;
     bool noclusters;
     bool invertedTransform; // used during building. can be ditched if
-		            // edge tables are setup with bi-directional
-		            // ray-vs-face tests and parity counts.
+    // edge tables are setup with bi-directional
+    // ray-vs-face tests and parity counts.
     bool hasSpecialFaces;
     std::vector<std::vector<std::string> > weapons;
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
@@ -195,6 +195,6 @@ class MeshObstacle : public Obstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

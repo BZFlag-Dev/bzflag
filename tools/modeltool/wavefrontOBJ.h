@@ -20,7 +20,7 @@
 #include "model.h"
 #include <string>
 
-void readOBJ ( CModel &model, std::string file );
+void readOBJ(CModel& model, std::string file);
 
 #endif //_WAVEFRONT_OBJ_H_
 
@@ -28,6 +28,6 @@ void readOBJ ( CModel &model, std::string file );
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

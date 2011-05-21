@@ -20,23 +20,23 @@
 
 
 class Authentication {
- public:
-  Authentication();
+  public:
+    Authentication();
 
-  static void cleanUp();
-  static void init(const char *address, int port, const char *password);
-  void	setPrincipalName(char *buf, int len);
-  void	verifyCredential(char *buf, int len);
-  bool	isTrusted() const { return trusted; }
-  std::string getPrincipal() const { return principalName; }
-  bool isGlobal(void) const { return globallyAuthenticated; }
-  void global(bool set) { globallyAuthenticated = set; }
+    static void cleanUp();
+    static void init(const char* address, int port, const char* password);
+    void  setPrincipalName(char* buf, int len);
+    void  verifyCredential(char* buf, int len);
+    bool  isTrusted() const { return trusted; }
+    std::string getPrincipal() const { return principalName; }
+    bool isGlobal(void) const { return globallyAuthenticated; }
+    void global(bool set) { globallyAuthenticated = set; }
 
-private:
-  static bool	   authentication;
-  bool		  trusted;
-  std::string	   principalName;
-  bool		   globallyAuthenticated;
+  private:
+    static bool    authentication;
+    bool      trusted;
+    std::string    principalName;
+    bool       globallyAuthenticated;
 };
 
 #endif
@@ -45,6 +45,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

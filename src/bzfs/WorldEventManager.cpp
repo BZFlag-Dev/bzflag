@@ -31,18 +31,16 @@ extern bz_eTeamType convertTeam(TeamColor team);
 extern TeamColor convertTeam(bz_eTeamType team);
 
 //-------------------WorldEventManager--------------------
-WorldEventManager::WorldEventManager()
-{
+WorldEventManager::WorldEventManager() {
 }
 
-WorldEventManager::~WorldEventManager()
-{
+WorldEventManager::~WorldEventManager() {
 }
 
-void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEvent)
-{
-  if (!theEvent)
+void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEvent) {
+  if (!theEvent) {
     return;
+  }
 
   if (eventList.find(eventType) == eventList.end()) {
     tvEventList newList;
@@ -52,26 +50,28 @@ void WorldEventManager::addEvent(bz_eEventType eventType, bz_EventHandler* theEv
   eventList.find(eventType)->second.push_back(theEvent);
 }
 
-void WorldEventManager::removeEvent(bz_eEventType eventType, bz_EventHandler* theEvent)
-{
-  if (!theEvent)
+void WorldEventManager::removeEvent(bz_eEventType eventType, bz_EventHandler* theEvent) {
+  if (!theEvent) {
     return;
+  }
 
   tmEventTypeList::iterator eventTypeItr = eventList.find(eventType);
-  if (eventTypeItr == eventList.end())
+  if (eventTypeItr == eventList.end()) {
     return;
+  }
 
   tvEventList::iterator itr = eventTypeItr->second.begin();
   while (itr != eventTypeItr->second.end()) {
-    if (*itr == theEvent)
+    if (*itr == theEvent) {
       itr = eventTypeItr->second.erase(itr);
-    else
+    }
+    else {
       itr++;
+    }
   }
 }
 
-bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
-{
+bool WorldEventManager::removeHandler(bz_EventHandler* theEvent) {
   bool foundOne = false;
 
   tmEventTypeList::iterator typeIt;
@@ -82,7 +82,8 @@ bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
       if (*listIt == theEvent) {
         listIt = evList.erase(listIt);
         foundOne = true;
-      } else {
+      }
+      else {
         listIt++;
       }
     }
@@ -91,32 +92,32 @@ bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
   return foundOne;
 }
 
-tvEventList WorldEventManager::getEventList (bz_eEventType eventType)
-{
+tvEventList WorldEventManager::getEventList(bz_eEventType eventType) {
   tvEventList eList;
 
   tmEventTypeList::iterator itr = eventList.find(eventType);
-  if (itr == eventList.end())
+  if (itr == eventList.end()) {
     return eList;
+  }
 
   eList = itr->second;
   return eList;
 }
 
-void WorldEventManager::callEvents(bz_eEventType eventType, bz_EventData *eventData)
-{
-  if (!eventData)
+void WorldEventManager::callEvents(bz_eEventType eventType, bz_EventData* eventData) {
+  if (!eventData) {
     return;
+  }
 
   eventData->eventType = eventType;
-  tvEventList	eList = getEventList(eventType);
+  tvEventList eList = getEventList(eventType);
 
-  for (unsigned int i = 0; i < eList.size(); i++)
+  for (unsigned int i = 0; i < eList.size(); i++) {
     eList[i]->process(eventData);
+  }
 }
 
-int WorldEventManager::getEventCount(bz_eEventType eventType)
-{
+int WorldEventManager::getEventCount(bz_eEventType eventType) {
   return (int)getEventList(eventType).size();
 }
 
@@ -124,6 +125,6 @@ int WorldEventManager::getEventCount(bz_eEventType eventType)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

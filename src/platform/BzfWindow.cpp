@@ -19,16 +19,13 @@
 // common implementation headers
 #include "ErrorHandler.h"
 
-BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display)
-{
+BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display) {
 }
 
-BzfWindow::~BzfWindow()
-{
+BzfWindow::~BzfWindow() {
 }
 
-void			BzfWindow::callExposeCallbacks() const
-{
+void      BzfWindow::callExposeCallbacks() const {
   const int count = exposeCallbacks.size();
   for (int i = 0; i < count; i++) {
     const BzfWindowCB& cb = exposeCallbacks[i];
@@ -36,29 +33,26 @@ void			BzfWindow::callExposeCallbacks() const
   }
 }
 
-void			BzfWindow::addExposeCallback(
-				void (*_cb)(void*), void* data)
-{
+void      BzfWindow::addExposeCallback(
+  void (*_cb)(void*), void* data) {
   BzfWindowCB cb;
   cb.cb = _cb;
   cb.data = data;
   exposeCallbacks.push_back(cb);
 }
 
-void			BzfWindow::removeExposeCallback(
-				void (*_cb)(void*), void* data)
-{
+void      BzfWindow::removeExposeCallback(
+  void (*_cb)(void*), void* data) {
   std::vector<BzfWindowCB>::iterator it = exposeCallbacks.begin();
-  for(; it != exposeCallbacks.end(); it++) {
-    if((it->cb == _cb) && (it->data == data)) {
+  for (; it != exposeCallbacks.end(); it++) {
+    if ((it->cb == _cb) && (it->data == data)) {
       exposeCallbacks.erase(it);
       break;
     }
   }
 }
 
-void			BzfWindow::callResizeCallbacks() const
-{
+void      BzfWindow::callResizeCallbacks() const {
   const int count = resizeCallbacks.size();
   for (int i = 0; i < count; i++) {
     const BzfWindowCB& cb = resizeCallbacks[i];
@@ -66,41 +60,37 @@ void			BzfWindow::callResizeCallbacks() const
   }
 }
 
-void			BzfWindow::addResizeCallback(
-				void (*_cb)(void*), void* data)
-{
+void      BzfWindow::addResizeCallback(
+  void (*_cb)(void*), void* data) {
   BzfWindowCB cb;
   cb.cb = _cb;
   cb.data = data;
   resizeCallbacks.push_back(cb);
 }
 
-void			BzfWindow::removeResizeCallback(
-				void (*_cb)(void*), void* data)
-{
+void      BzfWindow::removeResizeCallback(
+  void (*_cb)(void*), void* data) {
   std::vector<BzfWindowCB>::iterator it = resizeCallbacks.begin();
-  for(; it != resizeCallbacks.end(); it++) {
-    if((it->cb == _cb) && (it->data == data)) {
+  for (; it != resizeCallbacks.end(); it++) {
+    if ((it->cb == _cb) && (it->data == data)) {
       resizeCallbacks.erase(it);
       break;
     }
   }
 }
 
-void			BzfWindow::yieldCurrent(void)
-{
-	// do nothing
+void      BzfWindow::yieldCurrent(void) {
+  // do nothing
 }
 
-void			BzfWindow::releaseCurrent(void)
-{
-	// do nothing
+void      BzfWindow::releaseCurrent(void) {
+  // do nothing
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

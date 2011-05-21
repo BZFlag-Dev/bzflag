@@ -26,8 +26,7 @@
 #include "guiplaying.h"
 #include "LocalFontFace.h"
 
-CacheMenu::CacheMenu()
-{
+CacheMenu::CacheMenu() {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -126,14 +125,12 @@ CacheMenu::CacheMenu()
 }
 
 
-CacheMenu::~CacheMenu()
-{
+CacheMenu::~CacheMenu() {
   return;
 }
 
 
-void CacheMenu::execute()
-{
+void CacheMenu::execute() {
   HUDuiControl* _focus = getNav().get();
 
   if (_focus == cacheSize) {
@@ -144,53 +141,55 @@ void CacheMenu::execute()
       HUDuiTypeIn* inputField = (HUDuiTypeIn*) _focus;
       inputField->setString("0");
     }
-  } else if (_focus == updateDownloadCache) {
+  }
+  else if (_focus == updateDownloadCache) {
     controlPanel->addMessage("Updating Downloads");
     Downloads::instance().startDownloads(true, true, true);
-  } else if (_focus == clearDownloadCache) {
+  }
+  else if (_focus == clearDownloadCache) {
     const std::string oldSize = BZDB.get("maxCacheMB");
     BZDB.set("maxCacheMB", "0");
     CACHEMGR.loadIndex();
     CACHEMGR.limitCacheSize();
     CACHEMGR.saveIndex();
     BZDB.set("maxCacheMB", oldSize);
-	controlPanel->addMessage("Download Cache Cleared",ControlPanel::MessageMisc);
-  } else if (_focus == clearServerListCache) {
+    controlPanel->addMessage("Download Cache Cleared", ControlPanel::MessageMisc);
+  }
+  else if (_focus == clearServerListCache) {
     if ((ServerListCache::get())->clearCache()) {
-      controlPanel->addMessage("Server List Cache Cleared",ControlPanel::MessageMisc);
-    } else {
+      controlPanel->addMessage("Server List Cache Cleared", ControlPanel::MessageMisc);
+    }
+    else {
       // already cleared -- do nothing
     }
   }
 }
 
 
-void CacheMenu::setFailedMessage(const char* msg)
-{
+void CacheMenu::setFailedMessage(const char* msg) {
   failedMessage->setString(msg);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const float _width = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(),
-					 failedMessage->getFontSize(), failedMessage->getString());
+                                         failedMessage->getFontSize(), failedMessage->getString());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
 
-void CacheMenu::resize(int _width, int _height)
-{
+void CacheMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
   center = 0.5f * (float)_width;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   const float titleFontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
-  fs.setMin(0,20);
+  fs.setMin(0, 20);
   const float fontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // reposition title
@@ -216,7 +215,8 @@ void CacheMenu::resize(int _width, int _height)
     listHUD[i]->setPosition(x, y);
     if ((i == 2) || (i == 4) || (i == 7)) {
       y -= 1.75f * h;
-    } else {
+    }
+    else {
       y -= 1.0f * h;
     }
   }
@@ -227,17 +227,17 @@ void CacheMenu::resize(int _width, int _height)
   // server cache age
   int index = 0;
   switch ((ServerListCache::get())->getMaxCacheAge()) {
-  case 0: index = 0; break;
-  case 5: index = 1; break;
-  case 15: index = 2; break;
-  case 30: index = 3; break;
-  case 60: index = 4; break;
-  case 60*5: index = 5; break;
-  case 60*15: index = 6; break;
-  case 60*24: index = 7; break;
-  case 60*24*15: index = 8; break;
-  case 60*24*30: index = 9; break;
-  default: index = 4;
+    case 0: index = 0; break;
+    case 5: index = 1; break;
+    case 15: index = 2; break;
+    case 30: index = 3; break;
+    case 60: index = 4; break;
+    case 60*5: index = 5; break;
+    case 60*15: index = 6; break;
+    case 60*24: index = 7; break;
+    case 60*24*15: index = 8; break;
+    case 60*24*30: index = 9; break;
+    default: index = 4;
   }
   ((HUDuiList*)listHUD[i++])->setIndex(index);
   i++; // clear cache label
@@ -253,37 +253,36 @@ void CacheMenu::resize(int _width, int _height)
 }
 
 
-void CacheMenu::callback(HUDuiControl* w, void* data)
-{
+void CacheMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
-  case 'd': {
-    BZDB.set("doDownloads", list->getIndex() ? "1" : "0");
-    break;
-  }
-  case 'u': {
-    BZDB.set("updateDownloads", list->getIndex() ? "1" : "0");
-    break;
-  }
-  case 's': { // server cache
-    time_t minutes = 0;
-    int index = list->getIndex();
-    switch (index) {
-    case 0: minutes = 0; break;
-    case 1: minutes = 5; break;
-    case 2: minutes = 15; break;
-    case 3: minutes = 30; break;
-    case 4: minutes = 60; break;
-    case 5: minutes = 60*5; break;
-    case 6: minutes = 60*15; break;
-    case 7: minutes = 60*24; break;
-    case 8: minutes = 60*24*15; break;
-    case 9: minutes = 60*24*30; break;
+    case 'd': {
+      BZDB.set("doDownloads", list->getIndex() ? "1" : "0");
+      break;
     }
-    (ServerListCache::get())->setMaxCacheAge(minutes);
-    break;
-  }
+    case 'u': {
+      BZDB.set("updateDownloads", list->getIndex() ? "1" : "0");
+      break;
+    }
+    case 's': { // server cache
+      time_t minutes = 0;
+      int index = list->getIndex();
+      switch (index) {
+        case 0: minutes = 0; break;
+        case 1: minutes = 5; break;
+        case 2: minutes = 15; break;
+        case 3: minutes = 30; break;
+        case 4: minutes = 60; break;
+        case 5: minutes = 60*5; break;
+        case 6: minutes = 60*15; break;
+        case 7: minutes = 60*24; break;
+        case 8: minutes = 60*24*15; break;
+        case 9: minutes = 60*24*30; break;
+      }
+      (ServerListCache::get())->setMaxCacheAge(minutes);
+      break;
+    }
   }
 
   return;
@@ -294,6 +293,6 @@ void CacheMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -1540,6 +1540,6 @@ AC_MSG_RESULT([])
 # mode: autoconf
 # sh-indentation: 4
 # sh-basic-offset: 4
-# indent-tabs-mode: t
+# indent-tabs-mode: nil
 # End:
 # ex: shiftwidth=4 tabstop=8

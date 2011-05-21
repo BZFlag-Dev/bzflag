@@ -23,46 +23,42 @@
 #include "Protocol.h"
 
 
-ServerPing::ServerPing() : fd(-1), received(0), samples(4), timeout(1), interval(1)
-{
+ServerPing::ServerPing() : fd(-1), received(0), samples(4), timeout(1), interval(1) {
 
 }
 
 ServerPing::ServerPing(const Address& addr, int port, size_t _samples, double _interval, double tms) :
-  fd(-1), received(0), samples(_samples), timeout(tms), interval(_interval)
-{
+  fd(-1), received(0), samples(_samples), timeout(tms), interval(_interval) {
   saddr.sin_family = AF_INET;
   saddr.sin_port = htons(port);
   saddr.sin_addr = addr;
 }
 
-ServerPing::~ServerPing()
-{
+ServerPing::~ServerPing() {
   closeSocket();
 }
 
-void ServerPing::start()
-{
+void ServerPing::start() {
   closeSocket();
   activepings.clear();
   openSocket();
 }
 
-int ServerPing::calcLag()
-{
+int ServerPing::calcLag() {
   if (done()) {
     BzTime total;
     size_t packetslost = 0;
     for (std::vector<pingdesc>::iterator i = activepings.begin(); i != activepings.end(); ++i) {
       if ((*i).recvtime.getSeconds()) {
-	total += i->recvtime - i->senttime;
-      } else {
-	++packetslost;
+        total += i->recvtime - i->senttime;
+      }
+      else {
+        ++packetslost;
       }
     }
 
     if (packetslost == samples) {
-      return INT_MAX;		    // This is bad
+      return INT_MAX;       // This is bad
     }
 
     return (int)((total.getSeconds() * 1000.0) / (double)samples - (double)packetslost);
@@ -71,30 +67,25 @@ int ServerPing::calcLag()
   return 0;
 }
 
-bool ServerPing::done()
-{
+bool ServerPing::done() {
   return (received == samples || (activepings.size() == samples && (BzTime::getCurrent() - activepings.back().senttime) > timeout));
 }
 
-void ServerPing::setAddress(const Address& addr, int port)
-{
+void ServerPing::setAddress(const Address& addr, int port) {
   saddr.sin_family = AF_INET;
   saddr.sin_port = htons(port);
   saddr.sin_addr = addr;
 }
 
-void ServerPing::setTimeout(double tms)
-{
+void ServerPing::setTimeout(double tms) {
   timeout = tms;
 }
 
-void ServerPing::setInterval(double _interval)
-{
+void ServerPing::setInterval(double _interval) {
   interval = _interval;
 }
 
-void ServerPing::doPings()
-{
+void ServerPing::doPings() {
   if (activepings.size() < samples && (activepings.empty() || BzTime::getCurrent() - activepings.back().senttime > interval)) {
     pingdesc pd;
     pd.senttime = BzTime::getCurrent();
@@ -108,15 +99,16 @@ void ServerPing::doPings()
 
     FD_ZERO(&readset);
     FD_SET(fd, &readset);
-    if (select(fd+1, (fd_set*)&readset, NULL, NULL, &timeo) > 0) {
+    if (select(fd + 1, (fd_set*)&readset, NULL, NULL, &timeo) > 0) {
       unsigned char tag;
       uint16_t len, code;
       char buffer[1 + 4];
-      void *buf = buffer;
+      void* buf = buffer;
       int n = recvfrom(fd, buffer, 1 + 4, 0, 0, 0);
 
-      if (n < 4)
+      if (n < 4) {
         return;
+      }
 
       buf = nboUnpackUInt16(buf, len);
       buf = nboUnpackUInt16(buf, code);
@@ -127,32 +119,32 @@ void ServerPing::doPings()
         ++received;
       }
     }
-  } else {
+  }
+  else {
     closeSocket();
   }
 }
 
-void ServerPing::sendPing(unsigned char tag)
-{
+void ServerPing::sendPing(unsigned char tag) {
   char buffer[1 + 4];
-  void *buf = buffer;
+  void* buf = buffer;
   buf = nboPackUInt16(buf, 1); //len
   buf = nboPackUInt16(buf, MsgEchoRequest);
   buf = nboPackUInt8(buf, tag);
   sendto(fd, buffer, 1 + 4, 0, (struct sockaddr*)&saddr, sizeof(saddr));
 }
 
-void ServerPing::openSocket()
-{
+void ServerPing::openSocket() {
   fd = (int)socket(AF_INET, SOCK_DGRAM, 0);
-  if (fd < 0)
+  if (fd < 0) {
     logDebugMessage(1, "Failed to send server ping\n");
+  }
 }
 
-void ServerPing::closeSocket()
-{
-  if (fd > 0)
+void ServerPing::closeSocket() {
+  if (fd > 0) {
     close(fd);
+  }
   fd = -1;
 }
 
@@ -160,6 +152,6 @@ void ServerPing::closeSocket()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

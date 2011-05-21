@@ -51,20 +51,18 @@ __END_DECLS
 #include "USBJoystick.h"
 
 
-USBJoystick::USBJoystick() : status(false)
-{
+USBJoystick::USBJoystick() : status(false) {
 }
 
-USBJoystick::~USBJoystick()
-{
-  if (status == true)
+USBJoystick::~USBJoystick() {
+  if (status == true) {
     close(fd);
+  }
 }
 
-void USBJoystick::initJoystick(const char *name)
-{
+void USBJoystick::initJoystick(const char* name) {
   report_desc_t rd;
-  hid_data *d;
+  hid_data* d;
   hid_item h;
   int report_id;
 
@@ -72,8 +70,9 @@ void USBJoystick::initJoystick(const char *name)
   hids = NULL;
   num_axis = 0;
 
-  if ((fd = open(name, O_RDONLY | O_NONBLOCK)) < 0)
+  if ((fd = open(name, O_RDONLY | O_NONBLOCK)) < 0) {
     return;
+  }
 
   if ((rd = hid_get_report_desc(fd)) == 0) {
     close(fd);
@@ -81,53 +80,56 @@ void USBJoystick::initJoystick(const char *name)
   }
 
   data_buf_size = hid_report_size(rd, hid_input, &report_id);
-  if ((data_buf = (char *)malloc(data_buf_size)) == NULL) {
+  if ((data_buf = (char*)malloc(data_buf_size)) == NULL) {
     hid_dispose_report_desc(rd);
   }
   data_buf_offset = (report_id != 0);
 
   int is_joystick = 0;
   int interesting_hid = FALSE;
-  for (d = hid_start_parse(rd, 1 << hid_input); hid_get_item(d, &h); ) {
+  for (d = hid_start_parse(rd, 1 << hid_input); hid_get_item(d, &h);) {
     int page = HID_PAGE(h.usage);
     int usage = HID_USAGE(h.usage);
     is_joystick = is_joystick ||
-      (h.kind == hid_collection && page == HUP_GENERIC_DESKTOP &&
-      (usage == HUG_JOYSTICK || usage == HUG_GAME_PAD));
+                  (h.kind == hid_collection && page == HUP_GENERIC_DESKTOP &&
+                   (usage == HUG_JOYSTICK || usage == HUG_GAME_PAD));
 
-    if (h.kind != hid_input)
+    if (h.kind != hid_input) {
       continue;
+    }
 
-    if (!is_joystick)
+    if (!is_joystick) {
       continue;
+    }
 
     interesting_hid = TRUE;
     if (page == HUP_GENERIC_DESKTOP) {
       int which_axis;
       switch (usage) {
-	case HUG_X:
-	case HUG_RX: which_axis = 0; break;
-	case HUG_Y:
-	case HUG_RY: which_axis = 1; break;
-	case HUG_Z:
-	case HUG_RZ: which_axis = 2; break;
-	default: interesting_hid = FALSE;
+        case HUG_X:
+        case HUG_RX: which_axis = 0; break;
+        case HUG_Y:
+        case HUG_RY: which_axis = 1; break;
+        case HUG_Z:
+        case HUG_RZ: which_axis = 2; break;
+        default: interesting_hid = FALSE;
       }
       if (interesting_hid) {
-	axis_const[which_axis] = 1000 + (2000 * h.logical_maximum) /
-	  (h.logical_minimum - h.logical_maximum);
-	axis_scale[which_axis] = (2000 * 10000) /
-	  (h.logical_maximum - h.logical_minimum);
-	axis[which_axis] = (h.logical_minimum + h.logical_maximum) / 2;
-	if (num_axis < (which_axis + 1))
-	  num_axis = which_axis + 1;
+        axis_const[which_axis] = 1000 + (2000 * h.logical_maximum) /
+                                 (h.logical_minimum - h.logical_maximum);
+        axis_scale[which_axis] = (2000 * 10000) /
+                                 (h.logical_maximum - h.logical_minimum);
+        axis[which_axis] = (h.logical_minimum + h.logical_maximum) / 2;
+        if (num_axis < (which_axis + 1)) {
+          num_axis = which_axis + 1;
+        }
       }
     }
     if (interesting_hid) {
-      struct hid_item *newhid = new struct hid_item;
+      struct hid_item* newhid = new struct hid_item;
       if (newhid == NULL) {
-	close(fd);
-	return;
+        close(fd);
+        return;
       }
       *newhid = h;
       newhid->next = hids;
@@ -139,19 +141,18 @@ void USBJoystick::initJoystick(const char *name)
   status = true;
 }
 
-void USBJoystick::poll()
-{
+void USBJoystick::poll() {
   int len;
 
-/*
-* The device will buffer a lot of deltas. This can lead to a lot of
-* latency. To avoid this, we will empty the buffer every time.
-* It's possible the device may report only changed entries, so we
-* must process all of the frames to avoid dropping buttons (for example).
-*/
+  /*
+  * The device will buffer a lot of deltas. This can lead to a lot of
+  * latency. To avoid this, we will empty the buffer every time.
+  * It's possible the device may report only changed entries, so we
+  * must process all of the frames to avoid dropping buttons (for example).
+  */
   while ((len = read(fd, data_buf, data_buf_size)) == data_buf_size) {
 
-    struct hid_item *h;
+    struct hid_item* h;
 
     for (h = hids; h; h = h->next) {
       int d = hid_get_data(data_buf + data_buf_offset, h);
@@ -160,52 +161,51 @@ void USBJoystick::poll()
 
       int which_axis;
       if (page == HUP_GENERIC_DESKTOP) {
-	switch (usage) {
-	  case HUG_X:
-	  case HUG_RX: which_axis = 0; break;
-	  case HUG_Y:
-	  case HUG_RY: which_axis = 1; break;
-	  case HUG_Z:
-	  case HUG_RZ: which_axis = 2; break;
-	}
-	axis[which_axis] = d;
-      } else if (page == HUP_BUTTON) {
-	buttons &= ~ (1 << (usage - 1));
-	buttons |= (d == h->logical_maximum)?1 << (usage - 1):0;
+        switch (usage) {
+          case HUG_X:
+          case HUG_RX: which_axis = 0; break;
+          case HUG_Y:
+          case HUG_RY: which_axis = 1; break;
+          case HUG_Z:
+          case HUG_RZ: which_axis = 2; break;
+        }
+        axis[which_axis] = d;
+      }
+      else if (page == HUP_BUTTON) {
+        buttons &= ~(1 << (usage - 1));
+        buttons |= (d == h->logical_maximum) ? 1 << (usage - 1) : 0;
       }
     }
   }
 
 }
 
-bool USBJoystick::joystick() const
-{
+bool USBJoystick::joystick() const {
   return status;
 }
 
-void USBJoystick::getJoy(int &x, int &y)
-{
+void USBJoystick::getJoy(int& x, int& y) {
   if (status) {
     poll();
     x = (axis[0] * axis_scale[0]) / 10000 + axis_const[0];
     y = (axis[1] * axis_scale[1]) / 10000 + axis_const[1];
-  } else {
+  }
+  else {
     x = y = 0;
   }
 }
 
-unsigned long USBJoystick::getJoyButtons()
-{
+unsigned long USBJoystick::getJoyButtons() {
   if (status) {
     poll();
     return buttons;
-  } else {
+  }
+  else {
     return 0;
   }
 }
 
-void USBJoystick::getJoyDevices(std::vector<std::string> &list) const
-{
+void USBJoystick::getJoyDevices(std::vector<std::string> &list) const {
   //FIXME: Not implemented
   list.clear();
 }
@@ -217,6 +217,6 @@ void USBJoystick::getJoyDevices(std::vector<std::string> &list) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_MGR_H
-#define	BZF_OBSTACLE_MGR_H
+#ifndef BZF_OBSTACLE_MGR_H
+#define BZF_OBSTACLE_MGR_H
 
 #include "common.h"
 
@@ -54,7 +54,7 @@ class WorldText;
 
 class GroupInstance {
 
-  friend class ObstacleModifier;
+    friend class ObstacleModifier;
 
   public:
     typedef std::map<int, int>                  IntSwapMap;
@@ -76,7 +76,7 @@ class GroupInstance {
     void setShootThrough();
     void setCanRicochet();
     void addMaterialSwap(const BzMaterial* src,
-			 const BzMaterial* dst);
+                         const BzMaterial* dst);
     void addPhydrvSwap(int srcID, int dstID);
     void addTextSwap(const std::string& src,
                      const std::string& dst);
@@ -143,7 +143,7 @@ class GroupDefinition {
     void sort(int (*compare)(const void* a, const void* b));
 
     void makeGroups(const MeshTransform& xform,
-		    const ObstacleModifier& obsMod) const;
+                    const ObstacleModifier& obsMod) const;
 
     void replaceBasesWithBoxes();
     void deleteInvalidObstacles();
@@ -261,8 +261,7 @@ class GroupDefinitionMgr {
 };
 
 
-inline Obstacle* GroupDefinitionMgr::getObstacleFromID(uint32_t guid)
-{
+inline Obstacle* GroupDefinitionMgr::getObstacleFromID(uint32_t guid) {
   const ObstacleType type = Obstacle::getTypeIDFromGUID(guid);
 
   const ObstacleList* oList;
@@ -304,6 +303,6 @@ extern GroupDefinitionMgr OBSTACLEMGR;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

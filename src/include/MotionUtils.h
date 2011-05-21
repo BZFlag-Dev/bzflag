@@ -23,7 +23,7 @@
 
 float computeAngleVelocity(float old, float desired, float dt);
 float computeMaxAngleVelocity(FlagType* flag, float z);
-float computeMaxLinVelocity( FlagType* flag, float z);
+float computeMaxLinVelocity(FlagType* flag, float z);
 void  computeMomentum(float dt, FlagType* flag,
                       float& speed, float& angVel,
                       const float lastSpeed, const float lastAngVel);
@@ -38,6 +38,6 @@ float computeGroundLimit(FlagType* flag);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

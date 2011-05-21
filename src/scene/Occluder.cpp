@@ -36,8 +36,7 @@ using namespace Intersect;
 
 const int OccluderManager::MaxOccluders = MAX_OCCLUDERS;
 
-OccluderManager::OccluderManager()
-{
+OccluderManager::OccluderManager() {
   activeOccluders = 0;
   allowedOccluders = 0;
   for (int i = 0; i < MaxOccluders; i++) {
@@ -46,14 +45,12 @@ OccluderManager::OccluderManager()
 }
 
 
-OccluderManager::~OccluderManager()
-{
+OccluderManager::~OccluderManager() {
   clear();
 }
 
 
-void OccluderManager::clear()
-{
+void OccluderManager::clear() {
   activeOccluders = 0;
   for (int i = 0; i < MaxOccluders; i++) {
     delete occluders[i];
@@ -62,8 +59,7 @@ void OccluderManager::clear()
 }
 
 
-void OccluderManager::setMaxOccluders(int size)
-{
+void OccluderManager::setMaxOccluders(int size) {
   if (size > MaxOccluders) {
     size = MaxOccluders;
   }
@@ -89,8 +85,7 @@ void OccluderManager::setMaxOccluders(int size)
 
 
 IntersectLevel OccluderManager::occlude(const Extents& exts,
-					unsigned int score)
-{
+                                        unsigned int score) {
   IntersectLevel level = Outside;
 
   for (int i = 0; i < activeOccluders; i++) {
@@ -100,7 +95,7 @@ IntersectLevel OccluderManager::occlude(const Extents& exts,
       oc->addScore(score);
       return Contained;
       // FIXME - this only makes sense for randomly selected
-      //	 occluders where there can be overlap
+      //   occluders where there can be overlap
     }
     else if (tmp == Partial) {
       level = Partial;
@@ -111,8 +106,7 @@ IntersectLevel OccluderManager::occlude(const Extents& exts,
 }
 
 
-bool OccluderManager::occludePeek(const Extents& exts)
-{
+bool OccluderManager::occludePeek(const Extents& exts) {
   int i;
   bool result = false;
 
@@ -128,8 +122,7 @@ bool OccluderManager::occludePeek(const Extents& exts)
 }
 
 
-void OccluderManager::update(const Frustum* frustum)
-{
+void OccluderManager::update(const Frustum* frustum) {
 //  const float* e = frustum->getEye();
 //  printf("Eye = %s\n", e.tostring().c_str());
 
@@ -147,8 +140,7 @@ void OccluderManager::update(const Frustum* frustum)
 }
 
 
-static void print_scores(Occluder** olist, int count, const char* str)
-{
+static void print_scores(Occluder** olist, int count, const char* str) {
   return;
   // FIXME - debugging
   bool first = true;
@@ -156,8 +148,8 @@ static void print_scores(Occluder** olist, int count, const char* str)
     int score = olist[i]->getScore();
     if (score > 0) {
       if (first) {
-	printf("%s(%i):", str, count);
-	first = false;
+        printf("%s(%i):", str, count);
+        first = false;
       }
       printf(" %i", score);
     }
@@ -168,8 +160,7 @@ static void print_scores(Occluder** olist, int count, const char* str)
 }
 
 
-void OccluderManager::select(const SceneNode* const* list, int listCount)
-{
+void OccluderManager::select(const SceneNode* const* list, int listCount) {
   int oc;
 
   // see if our limit has changed
@@ -190,7 +181,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
   // remove the useless occluders
   for (oc = 0; oc < activeOccluders; oc++) {
     if ((occluders[oc]->getScore() <= 0) ||
-	(oc == (allowedOccluders - 1))) { // always have a spare
+        (oc == (allowedOccluders - 1))) { // always have a spare
       delete occluders[oc];
       activeOccluders--;
       occluders[oc] = occluders[activeOccluders];
@@ -219,8 +210,8 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
       delete occluders[activeOccluders];
       occluders[activeOccluders] = NULL;
       target--; // protect against a list full of nonvalid occluders.
-		// could also tally the valid occluder sceneNodes, but
-		// that would eat up CPU time in a large list
+      // could also tally the valid occluder sceneNodes, but
+      // that would eat up CPU time in a large list
     }
     else {
       activeOccluders++;
@@ -239,8 +230,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
 }
 
 
-static int compareOccluders(const void* a, const void* b)
-{
+static int compareOccluders(const void* a, const void* b) {
   Occluder** ptrA = (Occluder**)a;
   Occluder** ptrB = (Occluder**)b;
   int scoreA = (*ptrA)->getScore();
@@ -258,14 +248,12 @@ static int compareOccluders(const void* a, const void* b)
 }
 
 
-void OccluderManager::sort()
-{
+void OccluderManager::sort() {
   qsort(occluders, activeOccluders, sizeof(Occluder*), compareOccluders);
 }
 
 
-void OccluderManager::draw() const
-{
+void OccluderManager::draw() const {
   for (int i = 0; i < activeOccluders; i++) {
     occluders[i]->draw();
   }
@@ -282,8 +270,7 @@ const bool Occluder::DrawEdges = true;
 const bool Occluder::DrawNormals = false;
 const bool Occluder::DrawVertices = true;
 
-Occluder::Occluder(const SceneNode* node)
-{
+Occluder::Occluder(const SceneNode* node) {
   sceneNode = node;
   planes = NULL;
   vertices = NULL;
@@ -308,22 +295,19 @@ Occluder::Occluder(const SceneNode* node)
 }
 
 
-Occluder::~Occluder()
-{
+Occluder::~Occluder() {
   // do nothing
   delete[] planes;
   delete[] vertices;
 }
 
 
-IntersectLevel Occluder::doCullAxisBox(const Extents& exts)
-{
+IntersectLevel Occluder::doCullAxisBox(const Extents& exts) {
   return testAxisBoxOcclusion(exts, planes, planeCount);
 }
 
 
-bool Occluder::doCullSceneNode(SceneNode* node)
-{
+bool Occluder::doCullSceneNode(SceneNode* node) {
   // FIXME - not yet implemented
   node = node;
   return false;
@@ -331,8 +315,7 @@ bool Occluder::doCullSceneNode(SceneNode* node)
 
 
 static bool makePlane(const fvec3& p1, const fvec3& p2, const fvec3& pc,
-                      fvec4& r)
-{
+                      fvec4& r) {
   // make vectors from points
   const fvec3 x = p1 - pc;
   const fvec3 y = p2 - pc;
@@ -349,8 +332,7 @@ static bool makePlane(const fvec3& p1, const fvec3& p2, const fvec3& pc,
   return true;
 }
 
-bool Occluder::makePlanes(const Frustum* frustum)
-{
+bool Occluder::makePlanes(const Frustum* frustum) {
   // occluders can't have their back towards the camera
   const fvec4& plane = *sceneNode->getPlane();
   const fvec3& eye = frustum->getEye();
@@ -375,8 +357,7 @@ bool Occluder::makePlanes(const Frustum* frustum)
 }
 
 
-void Occluder::draw() const
-{
+void Occluder::draw() const {
   int v;
   const fvec4 colors[5] = {
     fvec4(1.0f, 0.0f, 1.0f, 1.0f), // purple  (occluder's normal)
@@ -418,12 +399,12 @@ void Occluder::draw() const
       glBegin(GL_LINES);
       glColor4fv(colors[(v % 4) + 1]);
       if (DrawEdges) {
-	glVertex3fv(vertices[v]);
-	glVertex3fv(vertices[vn]);
+        glVertex3fv(vertices[v]);
+        glVertex3fv(vertices[vn]);
       }
       if (DrawNormals) {
-	glVertex3fv(midpoint);
-	glVertex3fv(outwards);
+        glVertex3fv(midpoint);
+        glVertex3fv(outwards);
       }
       glEnd();
     }
@@ -449,8 +430,7 @@ void Occluder::draw() const
 }
 
 
-void Occluder::print(const char* string) const
-{
+void Occluder::print(const char* string) const {
   // FIXME - debugging
   printf("%s: %p, V = %i, P = %i\n", string,
          (void*)sceneNode, vertexCount, planeCount);
@@ -469,6 +449,6 @@ void Occluder::print(const char* string) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

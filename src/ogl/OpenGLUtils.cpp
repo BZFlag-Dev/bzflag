@@ -37,8 +37,7 @@
 //============================================================================//
 
 void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
-                  fvec4& color, const fvec4*& colorPtr)
-{
+                  fvec4& color, const fvec4*& colorPtr) {
   // cheat a little
   ((BzMaterial*)bzmat)->setReference();
 
@@ -55,7 +54,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
 
   // texturing
   if (BZDBCache::texture && (bzmat->getTextureCount() > 0)) {
-    TextureManager &tm = TextureManager::instance();
+    TextureManager& tm = TextureManager::instance();
     int texID = -1;
 
     const std::string& texName = bzmat->getTextureLocal(0);
@@ -99,8 +98,8 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
   builder.setShading(GL_FLAT);
   if (BZDBCache::lighting && !bzmat->getNoLighting()) {
     OpenGLMaterial oglMaterial(bzmat->getSpecular(),
-			       bzmat->getEmission(),
-			       bzmat->getShininess());
+                               bzmat->getEmission(),
+                               bzmat->getShininess());
     builder.setMaterial(oglMaterial, RENDERER.useQuality() > _LOW_QUALITY);
     if (!bzmat->getFlatShade()) {
       builder.setShading(GL_SMOOTH);
@@ -111,7 +110,8 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
   if (useDiffuseColor) {
     color = bzmat->getDiffuse();
     colorAlpha = (color.a < 1.0f);
-  } else {
+  }
+  else {
     // set it to white, this should only happen when
     // we've gotten a user texture, and there's a
     // request to not use the material's diffuse color.
@@ -123,7 +123,8 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
   if (dyncol != NULL) {
     colorPtr = &dyncol->getColor();
     colorAlpha = dyncol->canHaveAlpha(); // override
-  } else {
+  }
+  else {
     colorPtr = &color;
   }
 
@@ -136,7 +137,8 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     if (parseBlendFactors(blendFactors, src, dst)) {
       if (BZDBCache::blend) {
         builder.setBlending(src, dst);
-      } else {
+      }
+      else {
         builder.resetBlending();
       }
       builder.setStipple(1.0f);
@@ -153,11 +155,13 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
         builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         builder.setStipple(1.0f);
         needsSorting = true;
-      } else {
+      }
+      else {
         builder.resetBlending();
         if (dyncol != NULL) {
           builder.setStipple(0.5f);
-        } else {
+        }
+        else {
           builder.setStipple(color.a);
         }
       }
@@ -192,8 +196,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
 //============================================================================//
 //============================================================================//
 
-static bool parseBlendFactor(const std::string& s, GLenum& factor)
-{
+static bool parseBlendFactor(const std::string& s, GLenum& factor) {
   static std::map<std::string, GLenum> factors;
   if (factors.empty()) {
     factors["one"]  = GL_ONE;
@@ -217,8 +220,7 @@ static bool parseBlendFactor(const std::string& s, GLenum& factor)
 }
 
 
-bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst)
-{
+bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst) {
   if (s == "disable") {
     src = GL_ONE; dst = GL_ZERO;
     return true;
@@ -262,79 +264,73 @@ bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst)
 //============================================================================//
 //============================================================================//
 
-float getFloatColor(int val)
-{
+float getFloatColor(int val) {
   return val / 255.0f;
 }
 
-void setColor(float dst[3], int r, int g, int b)
-{
+void setColor(float dst[3], int r, int g, int b) {
   dst[0] = getFloatColor(r);
   dst[1] = getFloatColor(g);
   dst[2] = getFloatColor(b);
 }
 
-void glSetColor(const float c[3], float alpha)
-{
+void glSetColor(const float c[3], float alpha) {
   glColor4f(c[0], c[1], c[2], alpha);
 }
 
-void glTranslatefv (const float v[3] )
-{
+void glTranslatefv(const float v[3]) {
   glTranslatef(v[0], v[1], v[2]);
 }
 
-void glQuad ( float x, float y, eAlignment align, float scale )
-{
+void glQuad(float x, float y, eAlignment align, float scale) {
   glPushMatrix();
 
   x *= scale;
   y *= scale;
 
-  switch ( align )
-    {
+  switch (align) {
     case eCenter:
-      glTranslatef(-x*0.5f,-y*0.5f,0);
+      glTranslatef(-x * 0.5f, -y * 0.5f, 0);
       break;
     case eLowerLeft:
       break;
     case eLowerRight:
-      glTranslatef(-x,0,0);
+      glTranslatef(-x, 0, 0);
       break;
     case eUpperLeft:
-      glTranslatef(0,-y,0);
+      glTranslatef(0, -y, 0);
       break;
     case eUpperRight:
-      glTranslatef(-x,-y,0);
+      glTranslatef(-x, -y, 0);
       break;
     case eCenterLeft:
-      glTranslatef(0,-y*0.5f,0);
+      glTranslatef(0, -y * 0.5f, 0);
       break;
     case eCenterRight:
-      glTranslatef(-x,-y*0.5f,0);
+      glTranslatef(-x, -y * 0.5f, 0);
       break;
     case eCenterTop:
-      glTranslatef(-x*0.5f,-y,0);
+      glTranslatef(-x * 0.5f, -y, 0);
       break;
     case eCenterBottom:
-      glTranslatef(-x*0.5f,0,0);
+      glTranslatef(-x * 0.5f, 0, 0);
       break;
-    }
+  }
 
   glBegin(GL_QUADS);
 
-  glNormal3f(0,0,1);
-  glTexCoord2f(0,1);
-  glVertex3f(0,0,0);
+  glNormal3f(0, 0, 1);
+  glTexCoord2f(0, 1);
+  glVertex3f(0, 0, 0);
 
-  glTexCoord2f(1,1);
-  glVertex3f(x,0,0);
+  glTexCoord2f(1, 1);
+  glVertex3f(x, 0, 0);
 
-  glTexCoord2f(1,0);
-  glVertex3f(x,y,0);
+  glTexCoord2f(1, 0);
+  glVertex3f(x, y, 0);
 
-  glTexCoord2f(0,0);
-  glVertex3f(0,y,0);
+  glTexCoord2f(0, 0);
+  glVertex3f(0, y, 0);
 
   glEnd();
 
@@ -343,154 +339,157 @@ void glQuad ( float x, float y, eAlignment align, float scale )
 
 #define GL_RAD_CON 0.017453292519943295769236907684886f
 
-void glLineRing ( float radius, float width )
-{
+void glLineRing(float radius, float width) {
   int segments = 180;
 
   glDisable(GL_TEXTURE_2D);
   glLineWidth(width);
   glBegin(GL_LINE_LOOP);
-  for (float a = 0; a < 360.0f; a += segments/360.0f)
-    glVertex3f(cosf(a*GL_RAD_CON)*radius,sinf(a*GL_RAD_CON)*radius,0);
+  for (float a = 0; a < 360.0f; a += segments / 360.0f) {
+    glVertex3f(cosf(a * GL_RAD_CON)*radius, sinf(a * GL_RAD_CON)*radius, 0);
+  }
   glEnd();
   glLineWidth(1);
   glEnable(GL_TEXTURE_2D);
 }
 
-void glOutlineBoxCP ( float thickness, float centerX, float centerY, float width, float height, float depth )
-{
+void glOutlineBoxCP(float thickness, float centerX, float centerY, float width, float height, float depth) {
   glPushMatrix();
-  glTranslatef(centerX,centerY,depth);
+  glTranslatef(centerX, centerY, depth);
 
-  if (thickness <= 0)
+  if (thickness <= 0) {
     thickness = 1.0f;
+  }
 
   // ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
 
-  glNormal3f(0,0,1);
+  glNormal3f(0, 0, 1);
   glBegin(GL_QUADS);
 
   // draw the top
-  glVertex2f(width,height);
-  glVertex2f(-width,height);
-  glVertex2f(-width+thickness,height-thickness);
-  glVertex2f(width-thickness,height-thickness);
+  glVertex2f(width, height);
+  glVertex2f(-width, height);
+  glVertex2f(-width + thickness, height - thickness);
+  glVertex2f(width - thickness, height - thickness);
 
   // draw the bottom
-  glVertex2f(width,-height);
-  glVertex2f(width-thickness,-height+thickness);
-  glVertex2f(-width+thickness,-height+thickness);
-  glVertex2f(-width,-height);
+  glVertex2f(width, -height);
+  glVertex2f(width - thickness, -height + thickness);
+  glVertex2f(-width + thickness, -height + thickness);
+  glVertex2f(-width, -height);
 
   // draw the right
-  glVertex2f(width,height);
-  glVertex2f(width-thickness,height-thickness);
-  glVertex2f(width-thickness,-height+thickness);
-  glVertex2f(width,-height);
+  glVertex2f(width, height);
+  glVertex2f(width - thickness, height - thickness);
+  glVertex2f(width - thickness, -height + thickness);
+  glVertex2f(width, -height);
 
   // draw the left
-  glVertex2f(-width,height);
-  glVertex2f(-width,-height);
-  glVertex2f(-width+thickness,-height+thickness);
-  glVertex2f(-width+thickness,height-thickness);
+  glVertex2f(-width, height);
+  glVertex2f(-width, -height);
+  glVertex2f(-width + thickness, -height + thickness);
+  glVertex2f(-width + thickness, height - thickness);
 
   glEnd();
 
   glPopMatrix();
 }
 
-void glOutlineBoxHV ( float thickness, float minX, float minY, float maxX, float maxY, float depth )
-{
+void glOutlineBoxHV(float thickness, float minX, float minY, float maxX, float maxY, float depth) {
   glPushMatrix();
-  glTranslatef(0,0,depth);
+  glTranslatef(0, 0, depth);
 
-  if (thickness <= 0)
+  if (thickness <= 0) {
     thickness = 1.0f;
+  }
 
   // ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
 
-  glNormal3f(0,0,1);
+  glNormal3f(0, 0, 1);
   glBegin(GL_QUADS);
 
   // draw the top
-  glVertex2f(maxX,maxY);
-  glVertex2f(minX,maxY);
-  glVertex2f(minX+thickness,maxY-thickness);
-  glVertex2f(maxX-thickness,maxY-thickness);
+  glVertex2f(maxX, maxY);
+  glVertex2f(minX, maxY);
+  glVertex2f(minX + thickness, maxY - thickness);
+  glVertex2f(maxX - thickness, maxY - thickness);
 
   // draw the bottom
-  glVertex2f(maxX,minY);
-  glVertex2f(maxX-thickness,minY+thickness);
-  glVertex2f(minX+thickness,minY+thickness);
-  glVertex2f(minX,minY);
+  glVertex2f(maxX, minY);
+  glVertex2f(maxX - thickness, minY + thickness);
+  glVertex2f(minX + thickness, minY + thickness);
+  glVertex2f(minX, minY);
 
   // draw the right
-  glVertex2f(maxX,maxY);
-  glVertex2f(maxX-thickness,maxY-thickness);
-  glVertex2f(maxX-thickness,minY+thickness);
-  glVertex2f(maxX,minY);
+  glVertex2f(maxX, maxY);
+  glVertex2f(maxX - thickness, maxY - thickness);
+  glVertex2f(maxX - thickness, minY + thickness);
+  glVertex2f(maxX, minY);
 
   // draw the right
-  glVertex2f(minX,maxY);
-  glVertex2f(minX,minY);
-  glVertex2f(minX+thickness,minY+thickness);
-  glVertex2f(minX+thickness,maxY-thickness);
+  glVertex2f(minX, maxY);
+  glVertex2f(minX, minY);
+  glVertex2f(minX + thickness, minY + thickness);
+  glVertex2f(minX + thickness, maxY - thickness);
 
   glEnd();
 
   glPopMatrix();
 }
 
-void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabWidth, float tabHeight, float depth )
-{
+void glOutlineTabbedBox(float thickness, float minX, float minY, float maxX, float maxY, float tabInset, float tabWidth, float tabHeight, float depth) {
   glPushMatrix();
-  glTranslatef(0,0,depth);
+  glTranslatef(0, 0, depth);
 
-  if (thickness <= 0)
+  if (thickness <= 0) {
     thickness = 1.0f;
+  }
 
   float width = maxX - minX;
   // can't have a tab larger then the width for now
   // this is realy just for errors
-  if (tabWidth > width)
+  if (tabWidth > width) {
     tabWidth = width;
+  }
 
   // if for some reason the tab inset would push the tab off the end, clamp it to the end
-  if (tabInset > width-tabWidth)
-    tabInset = width-tabWidth;
+  if (tabInset > width - tabWidth) {
+    tabInset = width - tabWidth;
+  }
 
-  if (tabHeight < 0 )
+  if (tabHeight < 0) {
     tabHeight = 0;
+  }
 
   // ok, now what we do here is make this sucker into quads, the sizes are the outer size, and we inset by the thickness
 
-  glNormal3f(0,0,1);
+  glNormal3f(0, 0, 1);
   glBegin(GL_QUADS);
 
   // draw the bottom
-  glVertex2f(maxX,minY);
-  glVertex2f(maxX-thickness,minY+thickness);
-  glVertex2f(minX+thickness,minY+thickness);
-  glVertex2f(minX,minY);
+  glVertex2f(maxX, minY);
+  glVertex2f(maxX - thickness, minY + thickness);
+  glVertex2f(minX + thickness, minY + thickness);
+  glVertex2f(minX, minY);
 
   // draw the left
-  glVertex2f(minX,maxY);
-  glVertex2f(minX,minY);
-  glVertex2f(minX+thickness,minY+thickness);
-  glVertex2f(minX+thickness,maxY-thickness);
+  glVertex2f(minX, maxY);
+  glVertex2f(minX, minY);
+  glVertex2f(minX + thickness, minY + thickness);
+  glVertex2f(minX + thickness, maxY - thickness);
 
   // draw the right
-  glVertex2f(maxX,maxY);
-  glVertex2f(maxX-thickness,maxY-thickness);
-  glVertex2f(maxX-thickness,minY+thickness);
-  glVertex2f(maxX,minY);
+  glVertex2f(maxX, maxY);
+  glVertex2f(maxX - thickness, maxY - thickness);
+  glVertex2f(maxX - thickness, minY + thickness);
+  glVertex2f(maxX, minY);
 
 
   // draw the top
-  glVertex2f(maxX,maxY);
-  glVertex2f(minX,maxY);
-  glVertex2f(minX+thickness,maxY-thickness);
-  glVertex2f(maxX-thickness,maxY-thickness);
+  glVertex2f(maxX, maxY);
+  glVertex2f(minX, maxY);
+  glVertex2f(minX + thickness, maxY - thickness);
+  glVertex2f(maxX - thickness, maxY - thickness);
 
   glEnd();
 
@@ -501,29 +500,27 @@ void glOutlineTabbedBox ( float thickness, float minX, float minY, float maxX, f
 
 // DisplayListSystem
 
-DisplayListSystem::~DisplayListSystem()
-{
+DisplayListSystem::~DisplayListSystem() {
   flushLists();
 }
 
-void DisplayListSystem::flushLists ( void )
-{
-  std::map<GLDisplayList,DisplayList>::iterator itr = lists.begin();
+void DisplayListSystem::flushLists(void) {
+  std::map<GLDisplayList, DisplayList>::iterator itr = lists.begin();
 
-  while (itr != lists.end())
-    {
-      if (itr->second.list != INVALID_GL_ID)
-	glDeleteLists(itr->second.list, 1);
-
-      itr->second.list = INVALID_GL_ID;
-      itr++;
+  while (itr != lists.end()) {
+    if (itr->second.list != INVALID_GL_ID) {
+      glDeleteLists(itr->second.list, 1);
     }
+
+    itr->second.list = INVALID_GL_ID;
+    itr++;
+  }
 }
 
-GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *creator)
-{
-  if (!creator)
+GLDisplayList DisplayListSystem::newList(GLDisplayListCreator* creator) {
+  if (!creator) {
     return 0;
+  }
 
   DisplayList displayList;
   displayList.creator = creator;
@@ -534,43 +531,42 @@ GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *creator)
   return lastList;
 }
 
-void DisplayListSystem::freeList (GLDisplayList displayList)
-{
-  std::map<GLDisplayList,DisplayList>::iterator itr = lists.find(displayList);
-  if (itr == lists.end())
+void DisplayListSystem::freeList(GLDisplayList displayList) {
+  std::map<GLDisplayList, DisplayList>::iterator itr = lists.find(displayList);
+  if (itr == lists.end()) {
     return;
+  }
 
-  if (itr->second.list != INVALID_GL_ID)
+  if (itr->second.list != INVALID_GL_ID) {
     glDeleteLists(itr->second.list, 1);
+  }
 
   lists.erase(itr);
 }
 
-void DisplayListSystem::callList (GLDisplayList displayList)
-{
-  std::map<GLDisplayList,DisplayList>::iterator itr = lists.find(displayList);
-  if (itr == lists.end())
+void DisplayListSystem::callList(GLDisplayList displayList) {
+  std::map<GLDisplayList, DisplayList>::iterator itr = lists.find(displayList);
+  if (itr == lists.end()) {
     return;
+  }
 
-  if (itr->second.list == INVALID_GL_ID)
-    {
-      itr->second.list = glGenLists(1);
-      glNewList(itr->second.list,GL_COMPILE);
-      itr->second.creator->buildGeometry(displayList);
-      glEndList();
-    }
+  if (itr->second.list == INVALID_GL_ID) {
+    itr->second.list = glGenLists(1);
+    glNewList(itr->second.list, GL_COMPILE);
+    itr->second.creator->buildGeometry(displayList);
+    glEndList();
+  }
 
   glCallList(itr->second.list);
 }
 
-void DisplayListSystem::callListsV (std::vector<GLDisplayList> &displayLists)
-{
-  for (unsigned int i = 0; i < displayLists.size(); i++)
+void DisplayListSystem::callListsV(std::vector<GLDisplayList> &displayLists) {
+  for (unsigned int i = 0; i < displayLists.size(); i++) {
     callList(displayLists[i]);
+  }
 }
 
-DisplayListSystem::DisplayListSystem()
-{
+DisplayListSystem::DisplayListSystem() {
   lastList = 0;
 }
 
@@ -578,6 +574,6 @@ DisplayListSystem::DisplayListSystem()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

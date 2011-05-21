@@ -25,44 +25,43 @@
 #include "Robot.h"
 #include "RobotCallbacks.h"
 
-class RobotScript
-{
-public:
-  RobotScript();
-  virtual ~RobotScript() {}
+class RobotScript {
+  public:
+    RobotScript();
+    virtual ~RobotScript() {}
 
-  static RobotScript *loadFile(std::string filename);
+    static RobotScript* loadFile(std::string filename);
 
-  void setPlayer(BZRobotPlayer *_botplayer);
-  bool hasPlayer();
+    void setPlayer(BZRobotPlayer* _botplayer);
+    bool hasPlayer();
 
-  void start();
-  void stop();
+    void start();
+    void stop();
 
-  bool loaded() const { return _loaded; }
-  bool running() const { return _running; }
-  std::string getError() const { return error; }
+    bool loaded() const { return _loaded; }
+    bool running() const { return _running; }
+    std::string getError() const { return error; }
 
-protected:
-  virtual bool load(std::string /*filename*/) { return false; }
-  virtual BZRobots::Robot *create(void) { return NULL; }
-  virtual void destroy(BZRobots::Robot * /*instance*/) { }
+  protected:
+    virtual bool load(std::string /*filename*/) { return false; }
+    virtual BZRobots::Robot* create(void) { return NULL; }
+    virtual void destroy(BZRobots::Robot* /*instance*/) { }
 
-private:
-  BZRobots::Robot *robot;
-  BZRobotPlayer *botplayer;
-  RobotCallbacks *bzrobotcb;
+  private:
+    BZRobots::Robot* robot;
+    BZRobotPlayer* botplayer;
+    RobotCallbacks* bzrobotcb;
 
 #ifndef _WIN32
-  pthread_t rthread;
+    pthread_t rthread;
 #else
-  HANDLE rthread;
+    HANDLE rthread;
 #endif // _WIN32
 
-protected:
-  bool _loaded;
-  bool _running;
-  std::string error;
+  protected:
+    bool _loaded;
+    bool _running;
+    std::string error;
 };
 
 #endif /* __SCRIPTTOOL_H__ */
@@ -71,6 +70,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

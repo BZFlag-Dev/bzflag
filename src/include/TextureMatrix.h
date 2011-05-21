@@ -24,7 +24,7 @@
 
 class TextureMatrix {
 
-  friend class TextureMatrixManager;
+    friend class TextureMatrixManager;
 
   public:
     TextureMatrix();
@@ -95,8 +95,7 @@ class TextureMatrix {
     float matrix[4][4];
 };
 
-inline const float* TextureMatrix::getMatrix() const
-{
+inline const float* TextureMatrix::getMatrix() const {
   return (const float*) matrix;
 }
 
@@ -133,6 +132,6 @@ extern TextureMatrixManager TEXMATRIXMGR;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

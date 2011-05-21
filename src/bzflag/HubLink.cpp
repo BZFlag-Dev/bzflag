@@ -49,8 +49,7 @@ const std::string HubLink::codeFileName = "hub.lua";
 //============================================================================//
 //============================================================================//
 
-void HubLink::debugf(int level, const char* fmt, ...)
-{
+void HubLink::debugf(int level, const char* fmt, ...) {
   static BZDB_int debugHub("debugHub");
   if (level > debugHub) {
     return;
@@ -68,28 +67,25 @@ void HubLink::debugf(int level, const char* fmt, ...)
 
 HubLink::HubLink(const std::string& _hostPort,
                  const std::string& _luaCode)
-: hostPort(_hostPort)
-, state(StateInit)
-, ares(NULL)
-, L(NULL)
-, sock(-1)
-, recvTotal(0)
-, sendTotal(0)
-, luaCode(_luaCode)
-, wantDisable(false)
-{
+  : hostPort(_hostPort)
+  , state(StateInit)
+  , ares(NULL)
+  , L(NULL)
+  , sock(-1)
+  , recvTotal(0)
+  , sendTotal(0)
+  , luaCode(_luaCode)
+  , wantDisable(false) {
   // do nothing
 }
 
 
-HubLink::~HubLink()
-{
+HubLink::~HubLink() {
   clear();
 }
 
 
-void HubLink::clear()
-{
+void HubLink::clear() {
   if (L != NULL) {
     shutdown();
     lua_close(L);
@@ -129,8 +125,7 @@ void HubLink::clear()
 }
 
 
-void HubLink::fail(const std::string& msg)
-{
+void HubLink::fail(const std::string& msg) {
   state = StateFailed;
   debugf(1, "entered StateFailed\n");
   failMsg = msg;
@@ -138,14 +133,12 @@ void HubLink::fail(const std::string& msg)
 }
 
 
-void HubLink::fail(const std::string& msg, int errnum)
-{
+void HubLink::fail(const std::string& msg, int errnum) {
   fail(msg + std::string(socket_strerror(errnum)));
 }
 
 
-bool HubLink::parseHostPort(std::string& host, int& port)
-{
+bool HubLink::parseHostPort(std::string& host, int& port) {
   if (hostPort.empty()) {
     return false;
   }
@@ -170,8 +163,7 @@ bool HubLink::parseHostPort(std::string& host, int& port)
 }
 
 
-const char* HubLink::getStateString() const
-{
+const char* HubLink::getStateString() const {
   switch (state) {
     case StateInit:    { return "initializing";  }
     case StateDNS:     { return "dns lookup";    }
@@ -187,14 +179,12 @@ const char* HubLink::getStateString() const
 //============================================================================//
 //============================================================================//
 
-std::string HubLink::getLuaCodeFilename() const
-{
+std::string HubLink::getLuaCodeFilename() const {
   return getConfigDirName(BZ_CONFIG_DIR_VERSION) + codeFileName;
 }
 
 
-bool HubLink::loadFile(const std::string& path, std::string& data) const
-{
+bool HubLink::loadFile(const std::string& path, std::string& data) const {
   data = "";
 
   gzFile file = gzopen(path.c_str(), "rb");
@@ -207,7 +197,8 @@ bool HubLink::loadFile(const std::string& path, std::string& data) const
     const int bytes = gzread(file, buf, sizeof(buf));
     if (bytes > 0) {
       data.append(buf, bytes);
-    } else {
+    }
+    else {
       break;
     }
   }
@@ -217,8 +208,7 @@ bool HubLink::loadFile(const std::string& path, std::string& data) const
 }
 
 
-bool HubLink::saveFile(const std::string& path, const std::string& data) const
-{
+bool HubLink::saveFile(const std::string& path, const std::string& data) const {
   // open with binary mode and truncation enabled
   const std::string gzName = path;
   std::ostream* out = FILEMGR.createDataOutStream(path, true, true);
@@ -235,8 +225,7 @@ bool HubLink::saveFile(const std::string& path, const std::string& data) const
 //============================================================================//
 //============================================================================//
 
-bool HubLink::update()
-{
+bool HubLink::update() {
   switch (state) {
     case StateInit:    { stateInit();    break; }
     case StateDNS:     { stateDNS();     break; }
@@ -260,8 +249,7 @@ bool HubLink::update()
 
 //============================================================================//
 
-void HubLink::stateInit()
-{
+void HubLink::stateInit() {
   std::string host;
   int port;
   if (!parseHostPort(host, port)) {
@@ -278,8 +266,7 @@ void HubLink::stateInit()
 
 //============================================================================//
 
-void HubLink::stateDNS()
-{
+void HubLink::stateDNS() {
   int port;
   std::string host;
   if (!parseHostPort(host, port)) {
@@ -342,8 +329,7 @@ void HubLink::stateDNS()
 
 //============================================================================//
 
-void HubLink::stateConnect()
-{
+void HubLink::stateConnect() {
   switch (BzfNetwork::getConnectionState(sock)) {
     case BzfNetwork::CONNSTATE_CONN_FAILURE:
     case BzfNetwork::CONNSTATE_QUERY_FAILURE: {
@@ -409,8 +395,7 @@ void HubLink::stateConnect()
 
 //============================================================================//
 
-void HubLink::stateGetCode()
-{
+void HubLink::stateGetCode() {
   if (!updateRecv(true) || !updateSend()) {
     return;
   }
@@ -453,7 +438,8 @@ void HubLink::stateGetCode()
     // save the new code (after it has been successfully used)
     if (!saveFile(getLuaCodeFilename(), luaCode)) {
       debugf(1, "warning, could not save the uncompressed lua code\n");
-    } else {
+    }
+    else {
       // remove the gzip file
       remove(gzFilename.c_str());
     }
@@ -468,7 +454,8 @@ void HubLink::stateGetCode()
     if (recvData(data)) {
       recvTotal -= data.size();
       recvQueue.pop_front();
-    } else {
+    }
+    else {
       break;
     }
   }
@@ -477,8 +464,7 @@ void HubLink::stateGetCode()
 
 //============================================================================//
 
-void HubLink::stateReady()
-{
+void HubLink::stateReady() {
   if (!updateRecv(false) || !updateSend()) {
     return;
   }
@@ -492,8 +478,7 @@ void HubLink::stateReady()
 //  network queue routines
 //
 
-bool HubLink::updateSend()
-{
+bool HubLink::updateSend() {
   while (sendTotal > 0) {
     const std::string& data = sendQueue.front();
     const int bytes = (int) send(sock, data.c_str(), data.size(), 0);
@@ -501,7 +486,8 @@ bool HubLink::updateSend()
       sendTotal -= bytes;
       if (bytes == (int)data.size()) {
         sendQueue.pop_front();
-      } else {
+      }
+      else {
         const std::string s = data.substr(bytes);
         sendQueue.pop_front();
         sendQueue.push_front(s);
@@ -528,8 +514,7 @@ bool HubLink::updateSend()
 }
 
 
-bool HubLink::updateRecv(bool useBuffer)
-{
+bool HubLink::updateRecv(bool useBuffer) {
   char buf[4096];
   while (true) {
     const int bytes = (int) recv(sock, buf, sizeof(buf), 0);
@@ -537,7 +522,8 @@ bool HubLink::updateRecv(bool useBuffer)
       debugf(4, "received %i bytes\n", bytes);
       if (!useBuffer) {
         recvData(std::string(buf, bytes));
-      } else {
+      }
+      else {
         recvTotal += bytes;
         recvQueue.push_back(std::string(buf, bytes));
       }
@@ -563,16 +549,14 @@ bool HubLink::updateRecv(bool useBuffer)
 }
 
 
-bool HubLink::sendData(const std::string& data)
-{
+bool HubLink::sendData(const std::string& data) {
   sendQueue.push_back(data);
   sendTotal += data.size();
   return updateSend();
 }
 
 
-bool HubLink::combineRecv(size_t minSize)
-{
+bool HubLink::combineRecv(size_t minSize) {
   if (recvTotal < minSize) {
     return false;
   }
@@ -585,8 +569,7 @@ bool HubLink::combineRecv(size_t minSize)
 }
 
 
-bool HubLink::readData(int bytes, std::string& data)
-{
+bool HubLink::readData(int bytes, std::string& data) {
   data.clear();
 
   if (bytes <= 0) {
@@ -614,8 +597,7 @@ bool HubLink::readData(int bytes, std::string& data)
 }
 
 
-bool HubLink::peekData(int bytes, std::string& data)
-{
+bool HubLink::peekData(int bytes, std::string& data) {
   data.clear();
 
   if (bytes <= 0) {
@@ -632,8 +614,7 @@ bool HubLink::peekData(int bytes, std::string& data)
 }
 
 
-bool HubLink::sendChunk(const std::string& chunk)
-{
+bool HubLink::sendChunk(const std::string& chunk) {
   char lenBuf[sizeof(uint32_t)];
   nboPackUInt32(lenBuf, (uint32_t)chunk.size());
   const std::string lenStr = std::string(lenBuf, sizeof(uint32_t));
@@ -641,8 +622,7 @@ bool HubLink::sendChunk(const std::string& chunk)
 }
 
 
-bool HubLink::readChunk(std::string& chunk)
- {
+bool HubLink::readChunk(std::string& chunk) {
   chunk = "";
 
   const size_t lenSize = sizeof(uint32_t);
@@ -683,6 +663,6 @@ bool HubLink::readChunk(std::string& chunk)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

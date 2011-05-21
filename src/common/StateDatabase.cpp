@@ -38,8 +38,7 @@
 #include "BzTime.h"
 
 
-void _debugLookups(const std::string &name)
-{
+void _debugLookups(const std::string& name) {
   typedef std::map<std::string, int> EvalCntMap;
   static const float interval = 20.0f;
 
@@ -48,10 +47,12 @@ void _debugLookups(const std::string &name)
   static BzTime last = BzTime::getCurrent();
 
   EvalCntMap::iterator it = cnts.find(name);
-  if (it == cnts.end())
+  if (it == cnts.end()) {
     cnts[name] = 1;
-  else
+  }
+  else {
     it->second++;
+  }
 
   BzTime now = BzTime::getCurrent();
   if ((now - last) <= interval) {
@@ -65,8 +66,9 @@ void _debugLookups(const std::string &name)
   }
 
   for (std::multimap<int, std::string>::iterator it2 = order.begin(); it2 != order.end(); ++it2) {
-    if (-it2->first / interval < 1.0f)
+    if (-it2->first / interval < 1.0f) {
       break;
+    }
     logDebugMessage(1, "%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
   }
 
@@ -90,13 +92,12 @@ StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)NULL;
 //
 
 StateDatabase::Item::Item()
-: value()
-, defValue()
-, isSet(false)
-, isTrue(false)
-, save(true) // FIXME -- false by default?
-, permission(ReadWrite)
-{
+  : value()
+  , defValue()
+  , isSet(false)
+  , isTrue(false)
+  , save(true) // FIXME -- false by default?
+  , permission(ReadWrite) {
   // do nothing
 }
 
@@ -106,22 +107,19 @@ StateDatabase::Item::Item()
 // StateDatabase
 //
 
-StateDatabase::StateDatabase() : debug(false), saveDefault(false)
-{
+StateDatabase::StateDatabase() : debug(false), saveDefault(false) {
   // do nothing
 }
 
 
-StateDatabase::~StateDatabase()
-{
+StateDatabase::~StateDatabase() {
   // do nothing
 }
 
 
 void StateDatabase::set(const std::string& name,
-			const std::string& value,
-			Permission accessLevel)
-{
+                        const std::string& value,
+                        Permission accessLevel) {
 
   ItemMap::iterator it = lookup(name);
   Item& item = it->second;
@@ -146,28 +144,24 @@ void StateDatabase::set(const std::string& name,
 
 
 void StateDatabase::setInt(const std::string& name, const int& value,
-			   Permission accessLevel)
-{
+                           Permission accessLevel) {
   set(name, TextUtils::format("%d", value), accessLevel);
 }
 
 
 void StateDatabase::setBool(const std::string& name, const bool& value,
-			    Permission accessLevel)
-{
+                            Permission accessLevel) {
   set(name, value ? std::string("1") : std::string("0"), accessLevel);
 }
 
 
 void StateDatabase::setFloat(const std::string& name, const float& value,
-			     Permission accessLevel)
-{
+                             Permission accessLevel) {
   set(name, TextUtils::format("%f", value), accessLevel);
 }
 
 
-void StateDatabase::unset(const std::string& name, Permission accessLevel)
-{
+void StateDatabase::unset(const std::string& name, Permission accessLevel) {
   ItemMap::iterator it = lookup(name);
   if (accessLevel >= it->second.permission) {
     it->second.value  = "";
@@ -178,8 +172,7 @@ void StateDatabase::unset(const std::string& name, Permission accessLevel)
 }
 
 
-void StateDatabase::touch(const std::string& name, Permission accessLevel)
-{
+void StateDatabase::touch(const std::string& name, Permission accessLevel) {
   ItemMap::iterator it = lookup(name);
   if (accessLevel >= it->second.permission) {
     notify(it);
@@ -187,93 +180,86 @@ void StateDatabase::touch(const std::string& name, Permission accessLevel)
 }
 
 
-void StateDatabase::setPersistent(const std::string& name, bool save)
-{
+void StateDatabase::setPersistent(const std::string& name, bool save) {
   ItemMap::iterator it = lookup(name);
   it->second.save = save;
 }
 
 
 void StateDatabase::setDefault(const std::string& name,
-                               const std::string& value)
-{
+                               const std::string& value) {
   ItemMap::iterator it = lookup(name);
   it->second.defValue = value;
 }
 
 
 void StateDatabase::setPermission(const std::string& name,
-                                  Permission permission)
-{
+                                  Permission permission) {
   ItemMap::iterator it = lookup(name);
   it->second.permission = permission;
 }
 
 
 void StateDatabase::addCallback(const std::string& name,
-				Callback callback, void* userData)
-{
+                                Callback callback, void* userData) {
   ItemMap::iterator it = lookup(name);
   it->second.callbacks.add(callback, userData);
 }
 
 
 void StateDatabase::removeCallback(const std::string& name,
-				   Callback callback, void* userData)
-{
+                                   Callback callback, void* userData) {
   ItemMap::iterator it = lookup(name);
   it->second.callbacks.remove(callback, userData);
 }
 
 
-void StateDatabase::addGlobalCallback(Callback callback, void* userData)
-{
+void StateDatabase::addGlobalCallback(Callback callback, void* userData) {
   globalCallbacks.add(callback, userData);
 }
 
 
-void StateDatabase::removeGlobalCallback(Callback callback, void* userData)
-{
+void StateDatabase::removeGlobalCallback(Callback callback, void* userData) {
   globalCallbacks.remove(callback, userData);
 }
 
 
-bool StateDatabase::isSet(const std::string& name) const
-{
+bool StateDatabase::isSet(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   return !(it == items.end() || !it->second.isSet);
 }
 
 
-std::string StateDatabase::get(const std::string& name) const
-{
+std::string StateDatabase::get(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   if (it == items.end() || !it->second.isSet) {
     return std::string();
-  } else {
+  }
+  else {
     return it->second.value;
   }
 }
 
 
 int StateDatabase::getIntClamped(const std::string& name,
-                                 const int min, const int max) const
-{
+                                 const int min, const int max) const {
   int val;
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
 
   if (it == items.end() || !it->second.isSet) {
     val = 0;
-  } else {
+  }
+  else {
     val = atoi(it->second.value.c_str());
   }
 
   if (val < min) {
     return min;
-  } else if (val > max) {
+  }
+  else if (val > max) {
     return max;
   }
 
@@ -281,8 +267,7 @@ int StateDatabase::getIntClamped(const std::string& name,
 }
 
 
-static float getNaN()
-{
+static float getNaN() {
   // ugly hack, since gcc 2.95 doesn't have <limits>
   float NaN;
   memset(&NaN, 0xff, sizeof(float));
@@ -291,8 +276,7 @@ static float getNaN()
 
 
 void StateDatabase::addDependents(ItemMap::iterator& it,
-                                  const StringSet& dependents)
-{
+                                  const StringSet& dependents) {
   const std::string& name = it->first;
   Item& item = it->second;
 
@@ -313,8 +297,7 @@ void StateDatabase::addDependents(ItemMap::iterator& it,
 }
 
 
-float StateDatabase::eval(const std::string& name)
-{
+float StateDatabase::eval(const std::string& name) {
   static StringSet evalStack;
 
   // avoid recursive evaluation
@@ -348,8 +331,9 @@ float StateDatabase::eval(const std::string& name)
 
   Expression prefix = infixToPrefix(infix);
   const float value = evaluate(prefix);
-  if (value != getNaN())
+  if (value != getNaN()) {
     evalCache[name] = value;
+  }
 
   evalStack.erase(myStackIt);
 
@@ -360,15 +344,13 @@ float StateDatabase::eval(const std::string& name)
 }
 
 
-int StateDatabase::evalInt(const std::string& name)
-{
+int StateDatabase::evalInt(const std::string& name) {
   const float value = eval(name);
   return isnan(value) ? 0 : (int)value;
 }
 
 
-fvec2 StateDatabase::evalFVec2(const std::string& name)
-{
+fvec2 StateDatabase::evalFVec2(const std::string& name) {
   static const fvec2 nanValue(getNaN(), getNaN());
   if (!isSet(name)) {
     return nanValue;
@@ -385,8 +367,7 @@ fvec2 StateDatabase::evalFVec2(const std::string& name)
 }
 
 
-fvec3 StateDatabase::evalFVec3(const std::string& name)
-{
+fvec3 StateDatabase::evalFVec3(const std::string& name) {
   static const fvec3 nanValue(getNaN(), getNaN(), getNaN());
   if (!isSet(name)) {
     return nanValue;
@@ -403,8 +384,7 @@ fvec3 StateDatabase::evalFVec3(const std::string& name)
 }
 
 
-fvec4 StateDatabase::evalFVec4(const std::string& name)
-{
+fvec4 StateDatabase::evalFVec4(const std::string& name) {
   static const fvec4 nanValue(getNaN(), getNaN(), getNaN(), getNaN());
   if (!isSet(name)) {
     return nanValue;
@@ -421,82 +401,76 @@ fvec4 StateDatabase::evalFVec4(const std::string& name)
 }
 
 
-bool StateDatabase::evalTriplet(const std::string& name, float data[4])
-{
+bool StateDatabase::evalTriplet(const std::string& name, float data[4]) {
   if (!isSet(name) || !data) {
     return false;
   }
-  if (sscanf(get(name).c_str(), "%f %f %f", data, data+1, data+2) != 3) {
+  if (sscanf(get(name).c_str(), "%f %f %f", data, data + 1, data + 2) != 3) {
     return false;
   }
   return true;
 }
 
 
-bool StateDatabase::evalPair(const std::string& name, float data[2])
-{
+bool StateDatabase::evalPair(const std::string& name, float data[2]) {
   if (!isSet(name) || !data) {
     return false;
   }
-  if (sscanf(get(name).c_str(), "%f %f", data, data+1) != 2) {
+  if (sscanf(get(name).c_str(), "%f %f", data, data + 1) != 2) {
     return false;
   }
   return true;
 }
 
 
-bool StateDatabase::isTrue(const std::string& name) const
-{
+bool StateDatabase::isTrue(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   return !(it == items.end() || !it->second.isTrue);
 }
 
 
-bool StateDatabase::isEmpty(const std::string& name) const
-{
+bool StateDatabase::isEmpty(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   return (it == items.end() || !it->second.isSet ||
-	  it->second.value.empty());
+          it->second.value.empty());
 }
 
 
-bool StateDatabase::isPersistent(const std::string& name) const
-{
+bool StateDatabase::isPersistent(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   return (it != items.end() && it->second.save);
 }
 
 
-std::string StateDatabase::getDefault(const std::string& name) const
-{
+std::string StateDatabase::getDefault(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   if (it != items.end()) {
     return it->second.defValue;
-  } else {
+  }
+  else {
     return "";
   }
 }
 
 
 StateDatabase::Permission
-  StateDatabase::getPermission(const std::string& name) const
-{
+StateDatabase::getPermission(const std::string& name) const {
   DEBUG_LOOKUPS(name);
   ItemMap::const_iterator it = items.find(name);
   if (it != items.end()) {
     return it->second.permission;
-  } else {
+  }
+  else {
     return ReadWrite;
   }
 }
 
 
-StateDatabase::ItemMap::iterator StateDatabase::lookup(const std::string& name)
-{
+StateDatabase::ItemMap::iterator StateDatabase::lookup(const std::string& name) {
   DEBUG_LOOKUPS(name);
   ItemMap::iterator it = items.find(name);
   if (it == items.end()) {
@@ -507,8 +481,7 @@ StateDatabase::ItemMap::iterator StateDatabase::lookup(const std::string& name)
 }
 
 
-void StateDatabase::notify(ItemMap::iterator it)
-{
+void StateDatabase::notify(ItemMap::iterator it) {
   const std::string& name = it->first;
   const Item& item = it->second;
 
@@ -548,15 +521,13 @@ void StateDatabase::notify(ItemMap::iterator it)
 
 
 bool StateDatabase::onCallback(Callback callback,
-                               void* userData, void* iterateData)
-{
+                               void* userData, void* iterateData) {
   callback(*static_cast<std::string*>(iterateData), userData);
   return true;
 }
 
 
-void StateDatabase::iterate(Callback callback, void* userData) const
-{
+void StateDatabase::iterate(Callback callback, void* userData) const {
   assert(callback != NULL);
 
   for (ItemMap::const_iterator it = items.begin(); it != items.end(); ++it) {
@@ -567,8 +538,7 @@ void StateDatabase::iterate(Callback callback, void* userData) const
 }
 
 
-void StateDatabase::write(Callback callback, void* userData) const
-{
+void StateDatabase::write(Callback callback, void* userData) const {
   assert(callback != NULL);
 
   for (ItemMap::const_iterator it = items.begin(); it != items.end(); ++it) {
@@ -594,17 +564,15 @@ void StateDatabase::setSaveDefault(bool save) {
 //  StateDatabase::ExpressionToken
 //
 
-StateDatabase::ExpressionToken::ExpressionToken()
-{
+StateDatabase::ExpressionToken::ExpressionToken() {
   tokenType = number;
   tokenContents.number = 0;
 }
 
 
-StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
-{
+StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType) {
   tokenType = _tokenType;
-  switch(tokenType) {
+  switch (tokenType) {
     case number:
       tokenContents.number = 0;
       break;
@@ -617,17 +585,15 @@ StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
 }
 
 
-StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType, Contents _tokenContents)
-{
+StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType, Contents _tokenContents) {
   tokenType = _tokenType;
   tokenContents = _tokenContents;
 }
 
 
-void StateDatabase::ExpressionToken::setType(Type _tokenType)
-{
+void StateDatabase::ExpressionToken::setType(Type _tokenType) {
   tokenType = _tokenType;
-  switch(tokenType) {
+  switch (tokenType) {
     case number:
       tokenContents.number = 0;
       break;
@@ -640,68 +606,58 @@ void StateDatabase::ExpressionToken::setType(Type _tokenType)
 }
 
 
-void StateDatabase::ExpressionToken::setContents(Contents _tokenContents)
-{
+void StateDatabase::ExpressionToken::setContents(Contents _tokenContents) {
   tokenContents = _tokenContents;
 }
 
 
-void StateDatabase::ExpressionToken::setNumber(double num)
-{
+void StateDatabase::ExpressionToken::setNumber(double num) {
   tokenType = number;
   tokenContents.number = num;
 }
 
 
-void StateDatabase::ExpressionToken::setVariable(std::string var)
-{
+void StateDatabase::ExpressionToken::setVariable(std::string var) {
   tokenType = variable;
   tokenContents.variable = var;
 }
 
 
-void StateDatabase::ExpressionToken::setOper(Operator op)
-{
+void StateDatabase::ExpressionToken::setOper(Operator op) {
   tokenType = oper;
   tokenContents.oper = op;
 }
 
 
-StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType() const
-{
+StateDatabase::ExpressionToken::Type StateDatabase::ExpressionToken::getTokenType() const {
   return tokenType;
 }
 
 
-StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents() const
-{
+StateDatabase::ExpressionToken::Contents StateDatabase::ExpressionToken::getTokenContents() const {
   return tokenContents;
 }
 
 
-double StateDatabase::ExpressionToken::getNumber() const
-{
+double StateDatabase::ExpressionToken::getNumber() const {
   // note that the necessary type check must be done first
   return tokenContents.number;
 }
 
 
-std::string StateDatabase::ExpressionToken::getVariable() const
-{
+std::string StateDatabase::ExpressionToken::getVariable() const {
   // note that the necessary type check must be done first
   return tokenContents.variable;
 }
 
 
-StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator() const
-{
+StateDatabase::ExpressionToken::Operator StateDatabase::ExpressionToken::getOperator() const {
   // note that the necessary type check must be done first
   return tokenContents.oper;
 }
 
 
-int StateDatabase::ExpressionToken::getPrecedence() const
-{
+int StateDatabase::ExpressionToken::getPrecedence() const {
   switch (tokenContents.oper) {
     case add:      { return 1; }
     case subtract: { return 1; }
@@ -720,8 +676,7 @@ int StateDatabase::ExpressionToken::getPrecedence() const
 //  static StateDatabase operators
 //
 
-std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst)
-{
+std::istream& operator >> (std::istream& src, StateDatabase::ExpressionToken& dst) {
   char temp;
   std::string tempname;
 
@@ -741,7 +696,7 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
   else if ((temp == '+') || (temp == '-') || (temp == '*') || (temp == '/') ||
            (temp == '^') || (temp == '(') || (temp == ')')) {
     // operator
-    switch(temp) {
+    switch (temp) {
       case '+': { dst.setOper(StateDatabase::ExpressionToken::add);      break; }
       case '-': { dst.setOper(StateDatabase::ExpressionToken::subtract); break; }
       case '*': { dst.setOper(StateDatabase::ExpressionToken::multiply); break; }
@@ -771,8 +726,7 @@ std::istream&operator >> (std::istream& src, StateDatabase::ExpressionToken& dst
 }
 
 
-std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
-{
+std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst) {
   char temp;
   std::string tempname;
 
@@ -821,8 +775,7 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
 }
 
 
-std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionToken& src)
-{
+std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionToken& src) {
   switch (src.getTokenType()) {
     case StateDatabase::ExpressionToken::number: {
       dst << src.getNumber();
@@ -830,14 +783,14 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionTok
     }
     case StateDatabase::ExpressionToken::oper: {
       switch (src.getOperator()) {
-	case StateDatabase::ExpressionToken::add:      { dst << '+'; break; }
-	case StateDatabase::ExpressionToken::subtract: { dst << '-'; break; }
-	case StateDatabase::ExpressionToken::multiply: { dst << '*'; break; }
-	case StateDatabase::ExpressionToken::divide:   { dst << '/'; break; }
-	case StateDatabase::ExpressionToken::power:    { dst << '^'; break; }
-	case StateDatabase::ExpressionToken::lparen:   { dst << '('; break; }
-	case StateDatabase::ExpressionToken::rparen:   { dst << ')'; break; }
-	case StateDatabase::ExpressionToken::none:     { break; }
+        case StateDatabase::ExpressionToken::add:      { dst << '+'; break; }
+        case StateDatabase::ExpressionToken::subtract: { dst << '-'; break; }
+        case StateDatabase::ExpressionToken::multiply: { dst << '*'; break; }
+        case StateDatabase::ExpressionToken::divide:   { dst << '/'; break; }
+        case StateDatabase::ExpressionToken::power:    { dst << '^'; break; }
+        case StateDatabase::ExpressionToken::lparen:   { dst << '('; break; }
+        case StateDatabase::ExpressionToken::rparen:   { dst << ')'; break; }
+        case StateDatabase::ExpressionToken::none:     { break; }
       }
       break;
     }
@@ -850,8 +803,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionTok
 }
 
 
-std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
-{
+std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst) {
   StateDatabase::ExpressionToken temp;
   char tempc;
 
@@ -870,8 +822,7 @@ std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst)
 }
 
 
-std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
-{
+std::string& operator >> (std::string& src, StateDatabase::Expression& dst) {
   StateDatabase::ExpressionToken temp;
 
   dst.clear();
@@ -888,8 +839,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
 }
 
 
-std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src)
-{
+std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src) {
   if (src.size()) {
     for (unsigned int i = 0; i < src.size() - 1; i++) {
       dst << src[i] << ' ';
@@ -900,8 +850,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& s
 }
 
 
-StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
-{
+StateDatabase::Expression StateDatabase::infixToPrefix(const Expression& infix) {
   Expression postfix, prefix;
   std::stack<ExpressionToken> operators;
 
@@ -912,25 +861,26 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
     }
     else if (i->getTokenType() == ExpressionToken::oper) {
       if (i->getOperator() == ExpressionToken::lparen) {
-	operators.push(*i);
+        operators.push(*i);
       }
       else if (i->getOperator() == ExpressionToken::rparen) {
-	// unstack operators until a matching (is found
-	while ((operators.size() > 0) &&
-	       (operators.top().getOperator() != ExpressionToken::lparen)) {
-	  postfix.push_back(operators.top()); operators.pop();
-	}
-	// discard (
-	if (operators.size() > 0) // handle extra-rparen case
-	  operators.pop();
+        // unstack operators until a matching (is found
+        while ((operators.size() > 0) &&
+               (operators.top().getOperator() != ExpressionToken::lparen)) {
+          postfix.push_back(operators.top()); operators.pop();
+        }
+        // discard (
+        if (operators.size() > 0) { // handle extra-rparen case
+          operators.pop();
+        }
       }
       else {
-	while ((operators.size() > 0) &&
-	       (operators.top().getPrecedence() < i->getPrecedence()) &&
-	       (operators.top().getOperator() != ExpressionToken::lparen)) {
-	  postfix.push_back(operators.top()); operators.pop();
-	}
-	operators.push(*i);
+        while ((operators.size() > 0) &&
+               (operators.top().getPrecedence() < i->getPrecedence()) &&
+               (operators.top().getOperator() != ExpressionToken::lparen)) {
+          postfix.push_back(operators.top()); operators.pop();
+        }
+        operators.push(*i);
       }
     }
   }
@@ -947,79 +897,79 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
 }
 
 
-float StateDatabase::evaluate(Expression e)
-{
+float StateDatabase::evaluate(Expression e) {
   std::stack<ExpressionToken> evaluationStack;
   ExpressionToken tok, lvalue, rvalue;
   bool unary;
 
   for (Expression::reverse_iterator i = e.rbegin(); i != e.rend(); i++) {
     unary = false;
-    switch(i->getTokenType()) {
+    switch (i->getTokenType()) {
       case ExpressionToken::number: {
-	evaluationStack.push(*i);
-	break;
+        evaluationStack.push(*i);
+        break;
       }
       case ExpressionToken::variable: {
-	// strip off '$'?
-	tok.setNumber(eval(i->getVariable()));
-	evaluationStack.push(tok);
-	break;
+        // strip off '$'?
+        tok.setNumber(eval(i->getVariable()));
+        evaluationStack.push(tok);
+        break;
       }
       case ExpressionToken::oper: {
-	if ((i->getOperator() == ExpressionToken::lparen) ||
-	    (i->getOperator() == ExpressionToken::rparen)) {
-	  break;  // should not have any parens here, skip them
-	}
-	if (evaluationStack.size() == 0) {
-	  // syntax error
-	  return getNaN();
-	}
-	// rvalue and lvalue are switched, since we're reversed
-	rvalue = evaluationStack.top(); evaluationStack.pop();
-	if (evaluationStack.size() == 0) {
-	  unary = true; // syntax error or unary operator
-	}
-	if (!unary) {
-	  lvalue = evaluationStack.top(); evaluationStack.pop();
-	}
-	switch(i->getOperator()) {
-	  case ExpressionToken::add: {
-	    tok.setNumber(lvalue.getNumber() + rvalue.getNumber());
-	    evaluationStack.push(tok);
-	    break;
-	  }
-	  case ExpressionToken::subtract: {
-	    if (unary) {
-	      tok.setNumber(-rvalue.getNumber());
-	    } else {
-	      tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
+        if ((i->getOperator() == ExpressionToken::lparen) ||
+            (i->getOperator() == ExpressionToken::rparen)) {
+          break;  // should not have any parens here, skip them
+        }
+        if (evaluationStack.size() == 0) {
+          // syntax error
+          return getNaN();
+        }
+        // rvalue and lvalue are switched, since we're reversed
+        rvalue = evaluationStack.top(); evaluationStack.pop();
+        if (evaluationStack.size() == 0) {
+          unary = true; // syntax error or unary operator
+        }
+        if (!unary) {
+          lvalue = evaluationStack.top(); evaluationStack.pop();
+        }
+        switch (i->getOperator()) {
+          case ExpressionToken::add: {
+            tok.setNumber(lvalue.getNumber() + rvalue.getNumber());
+            evaluationStack.push(tok);
+            break;
+          }
+          case ExpressionToken::subtract: {
+            if (unary) {
+              tok.setNumber(-rvalue.getNumber());
             }
-	    evaluationStack.push(tok);
-	    break;
-	  }
-	  case ExpressionToken::multiply: {
-	    tok.setNumber(lvalue.getNumber() * rvalue.getNumber());
-	    evaluationStack.push(tok);
-	    break;
-	  }
-	  case ExpressionToken::divide: {
-	    tok.setNumber(lvalue.getNumber() / rvalue.getNumber());
-	    evaluationStack.push(tok);
-	    break;
-	  }
-	  case ExpressionToken::power: {
-	    tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
-	    evaluationStack.push(tok);
-	    break;
-	  }
-	  default: {
-	    // lparen and rparen should have been stripped out
-	    // throw something here, too
-	    break;
-	  }
-	}
-	break;
+            else {
+              tok.setNumber(lvalue.getNumber() - rvalue.getNumber());
+            }
+            evaluationStack.push(tok);
+            break;
+          }
+          case ExpressionToken::multiply: {
+            tok.setNumber(lvalue.getNumber() * rvalue.getNumber());
+            evaluationStack.push(tok);
+            break;
+          }
+          case ExpressionToken::divide: {
+            tok.setNumber(lvalue.getNumber() / rvalue.getNumber());
+            evaluationStack.push(tok);
+            break;
+          }
+          case ExpressionToken::power: {
+            tok.setNumber(pow(lvalue.getNumber(), rvalue.getNumber()));
+            evaluationStack.push(tok);
+            break;
+          }
+          default: {
+            // lparen and rparen should have been stripped out
+            // throw something here, too
+            break;
+          }
+        }
+        break;
       }
     }
   }
@@ -1036,6 +986,6 @@ float StateDatabase::evaluate(Expression e)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

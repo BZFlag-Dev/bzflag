@@ -26,39 +26,39 @@
 
 
 PointShotStrategy::PointShotStrategy(ShotPath* _path, bool useGMtest)
-: ShotStrategy(_path)
-, gmTest(useGMtest)
-{
+  : ShotStrategy(_path)
+  , gmTest(useGMtest) {
 }
 
 
 
-PointShotStrategy::~PointShotStrategy()
-{
+PointShotStrategy::~PointShotStrategy() {
 }
 
 
-static bool RayTest(const ShotCollider& tank, const Ray &relativeRay,
-                    fvec3 &hitPos, float &minTime, const ShotPathSegment &s,
-                    const float dt, const BzTime& prevTime, const float shotRadius)
-{
+static bool RayTest(const ShotCollider& tank, const Ray& relativeRay,
+                    fvec3& hitPos, float& minTime, const ShotPathSegment& s,
+                    const float dt, const BzTime& prevTime, const float shotRadius) {
   static const fvec3 tankBase(0.0f, 0.0f, -shotRadius);
 
   float t = Intersect::timeRayHitsBlock(
-    relativeRay, tankBase, tank.angle,
-    tank.size.x + shotRadius,
-    tank.size.y + shotRadius,
-    tank.size.z + (shotRadius * 2.0f)
-  );
+              relativeRay, tankBase, tank.angle,
+              tank.size.x + shotRadius,
+              tank.size.y + shotRadius,
+              tank.size.z + (shotRadius * 2.0f)
+            );
 
-  if (t > minTime)
+  if (t > minTime) {
     return false;
+  }
 
   // make sure time falls within segment
-  if ((t < 0.0f) || (t > dt))
+  if ((t < 0.0f) || (t > dt)) {
     return false;
-  if (t > (s.end - prevTime))
+  }
+  if (t > (s.end - prevTime)) {
     return false;
+  }
 
   // save best time so far
   minTime = t;
@@ -74,8 +74,7 @@ static bool RayTest(const ShotCollider& tank, const Ray &relativeRay,
 
 
 float PointShotStrategy::checkShotHit(const ShotCollider& tank,
-                                      fvec3& hitPos, float shotRadius) const
-{
+                                      fvec3& hitPos, float shotRadius) const {
   float minTime = Infinity;
 
   // expired shot can't hit anything
@@ -120,17 +119,17 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
   }
   else {
     for (i = lastSegment; i <= segment && i < numSegments; i++) {
-    // can never hit your own first laser segment
+      // can never hit your own first laser segment
       if ((i == 0) && tank.testLastSegment &&
           (getPath().getShotType() == LaserShot)) {
         continue;
       }
 
-    /*
-      // skip segments that don't overlap in time with current interval
-      if (segments[i].end <= prevTime) continue;
-      if (currentTime <= segments[i].start) break;
-    */
+      /*
+        // skip segments that don't overlap in time with current interval
+        if (segments[i].end <= prevTime) continue;
+        if (currentTime <= segments[i].start) break;
+      */
 
       const ShotPathSegment& s = segments[i];
 
@@ -162,6 +161,6 @@ float PointShotStrategy::checkShotHit(const ShotCollider& tank,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

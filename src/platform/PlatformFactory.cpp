@@ -16,11 +16,10 @@
 #include "BzfMedia.h"
 #include "BzfJoystick.h"
 
-PlatformFactory*	PlatformFactory::instance = 0;
-BzfMedia*		PlatformFactory::media = 0;
+PlatformFactory*  PlatformFactory::instance = 0;
+BzfMedia*   PlatformFactory::media = 0;
 
-PlatformFactory::PlatformFactory()
-{
+PlatformFactory::PlatformFactory() {
 #ifdef HAVE_SDL
   Uint32 flags = 0;
 #ifdef DEBUG
@@ -33,25 +32,23 @@ PlatformFactory::PlatformFactory()
 #endif
 }
 
-PlatformFactory::~PlatformFactory()
-{
+PlatformFactory::~PlatformFactory() {
 #ifdef HAVE_SDL
-  if (media)
+  if (media) {
     media->closeAudio();
+  }
   SDL_Quit();
 #endif
   delete media;
 }
 
-BzfJoystick*		PlatformFactory::createJoystick()
-{
+BzfJoystick*    PlatformFactory::createJoystick() {
   // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
   return new BzfJoystick();
 }
 
-BzfMedia*		PlatformFactory::getMedia()
-{
-  if (!media) media = getInstance()->createMedia();
+BzfMedia*   PlatformFactory::getMedia() {
+  if (!media) { media = getInstance()->createMedia(); }
   return media;
 }
 
@@ -59,6 +56,6 @@ BzfMedia*		PlatformFactory::getMedia()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

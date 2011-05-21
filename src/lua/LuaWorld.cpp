@@ -47,8 +47,7 @@ static const char* sourceFile = "bzWorld.lua";
 //============================================================================//
 //============================================================================//
 
-void LuaWorld::LoadHandler()
-{
+void LuaWorld::LoadHandler() {
   if (luaWorld) {
     return;
   }
@@ -74,8 +73,7 @@ void LuaWorld::LoadHandler()
 }
 
 
-void LuaWorld::FreeHandler()
-{
+void LuaWorld::FreeHandler() {
   delete luaWorld;
 }
 
@@ -83,14 +81,12 @@ void LuaWorld::FreeHandler()
 //============================================================================//
 //============================================================================//
 
-static bool BzdbReadCheck(const std::string& name)
-{
+static bool BzdbReadCheck(const std::string& name) {
   return (name != "password");
 }
 
 
-static bool BzdbWriteCheck(const std::string& name)
-{
+static bool BzdbWriteCheck(const std::string& name) {
   if (name == "password") {
     return false;
   }
@@ -102,13 +98,12 @@ static bool BzdbWriteCheck(const std::string& name)
 //============================================================================//
 
 LuaWorld::LuaWorld()
-: LuaHandle("LuaWorld",
-	    LUA_WORLD_SCRIPT_ID,
-	    LUA_WORLD_GAME_ORDER,
-	    LUA_WORLD_DRAW_WORLD_ORDER,
-	    LUA_WORLD_DRAW_SCREEN_ORDER,
-	    true, false, true)  // handle perms
-{
+  : LuaHandle("LuaWorld",
+              LUA_WORLD_SCRIPT_ID,
+              LUA_WORLD_GAME_ORDER,
+              LUA_WORLD_DRAW_WORLD_ORDER,
+              LUA_WORLD_DRAW_SCREEN_ORDER,
+              true, false, true) { // handle perms
   static LuaVfsModes vfsModes;
   vfsModes.readDefault  = BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE
                           BZVFS_LUA_RULES BZVFS_LUA_RULES_WRITE
@@ -120,7 +115,7 @@ LuaWorld::LuaWorld()
   vfsModes.writeAllowed = BZVFS_LUA_WORLD_WRITE;
   if (devMode) {
     vfsModes.readDefault = BZVFS_LUA_USER
-			   BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE BZVFS_BASIC;
+                           BZVFS_LUA_WORLD BZVFS_LUA_WORLD_WRITE BZVFS_BASIC;
 
   }
 
@@ -159,8 +154,7 @@ LuaWorld::LuaWorld()
 }
 
 
-LuaWorld::~LuaWorld()
-{
+LuaWorld::~LuaWorld() {
   if (L != NULL) {
     Shutdown();
     KillLua();
@@ -177,6 +171,6 @@ LuaWorld::~LuaWorld()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

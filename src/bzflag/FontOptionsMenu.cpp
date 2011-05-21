@@ -38,9 +38,8 @@ FontOptionsMenu* FontOptionsMenu::fontOptionsMenu = NULL;
 
 //============================================================================//
 
-static void addFaces(HUDuiList* option)
-{
-  FontManager &fm = FontManager::instance();
+static void addFaces(HUDuiList* option) {
+  FontManager& fm = FontManager::instance();
   std::vector<std::string>& options = option->getList();
   const int faceCount = fm.getNumFaces();
   for (int face = 0; face < faceCount; face++) {
@@ -51,8 +50,7 @@ static void addFaces(HUDuiList* option)
 
 
 static void setOptionFont(const std::string& faceName,
-                          LocalFontFace*& facePtr, HUDuiList* list)
-{
+                          LocalFontFace*& facePtr, HUDuiList* list) {
   if (facePtr != NULL) {
     LocalFontFace::release(facePtr);
   }
@@ -72,10 +70,9 @@ static void setOptionFont(const std::string& faceName,
 //============================================================================//
 
 FontOptionsMenu::FontOptionsMenu()
-: consoleFont(NULL)
-, serifFont(NULL)
-, sansSerifFont(NULL)
-{
+  : consoleFont(NULL)
+  , serifFont(NULL)
+  , sansSerifFont(NULL) {
   fontOptionsMenu = this;
 
   // cache font face ID
@@ -124,8 +121,7 @@ FontOptionsMenu::FontOptionsMenu()
 }
 
 
-FontOptionsMenu::~FontOptionsMenu()
-{
+FontOptionsMenu::~FontOptionsMenu() {
   LocalFontFace::release(consoleFont);
   LocalFontFace::release(serifFont);
   LocalFontFace::release(sansSerifFont);
@@ -133,17 +129,15 @@ FontOptionsMenu::~FontOptionsMenu()
 }
 
 
-void FontOptionsMenu::execute()
-{
+void FontOptionsMenu::execute() {
 }
 
 
-void FontOptionsMenu::resize(int _width, int _height)
-{
+void FontOptionsMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -176,14 +170,13 @@ void FontOptionsMenu::resize(int _width, int _height)
 
   // load current settings
   int i = 1;
-  setOptionFont(BZDB.get("consoleFont"),   consoleFont,   (HUDuiList*)listHUD[i++]);
-  setOptionFont(BZDB.get("serifFont"),     serifFont,     (HUDuiList*)listHUD[i++]);
+  setOptionFont(BZDB.get("consoleFont"),   consoleFont, (HUDuiList*)listHUD[i++]);
+  setOptionFont(BZDB.get("serifFont"),     serifFont, (HUDuiList*)listHUD[i++]);
   setOptionFont(BZDB.get("sansSerifFont"), sansSerifFont, (HUDuiList*)listHUD[i++]);
 }
 
 
-void FontOptionsMenu::callback(HUDuiControl* w, void* data)
-{
+void FontOptionsMenu::callback(HUDuiControl* w, void* data) {
   FontOptionsMenu* menu = fontOptionsMenu;
   if (menu == NULL) {
     return;
@@ -217,6 +210,6 @@ void FontOptionsMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

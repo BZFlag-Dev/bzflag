@@ -11,11 +11,11 @@
  */
 
 /* ConeObstacle:
- *	Encapsulates a cone in the game environment.
+ *  Encapsulates a cone in the game environment.
  */
 
-#ifndef	BZF_CONE_OBSTACLE_H
-#define	BZF_CONE_OBSTACLE_H
+#ifndef BZF_CONE_OBSTACLE_H
+#define BZF_CONE_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -75,8 +75,8 @@ class ConeObstacle : public Obstacle {
                     fvec4* plane) const;
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 
@@ -103,6 +103,6 @@ class ConeObstacle : public Obstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

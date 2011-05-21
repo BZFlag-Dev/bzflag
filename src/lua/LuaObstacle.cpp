@@ -50,8 +50,7 @@ using std::vector;
 //============================================================================//
 //============================================================================//
 
-bool LuaObstacle::PushEntries(lua_State* L)
-{
+bool LuaObstacle::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, GetObstacleList);
   PUSH_LUA_CFUNC(L, GetObstacleName);
   PUSH_LUA_CFUNC(L, GetObstacleType);
@@ -132,10 +131,9 @@ bool LuaObstacle::PushEntries(lua_State* L)
 //
 
 static bool makeTexcoords(const fvec2& autoScale,
-			  const fvec4& plane,
-			  const vector<fvec3>& vertices,
-			  vector<fvec2>& texcoords)
-{
+                          const fvec4& plane,
+                          const vector<fvec3>& vertices,
+                          vector<fvec2>& texcoords) {
   const float defScale = 1.0f / 8.0f;
   const float sScale = (autoScale.s == 0.0f) ? defScale : 1.0f / autoScale.s;
   const float tScale = (autoScale.t == 0.0f) ? defScale : 1.0f / autoScale.t;
@@ -162,9 +160,10 @@ static bool makeTexcoords(const fvec2& autoScale,
     }
     else {
       if (horizontal) {
-	texcoords[i].s = sScale * v.x;
-      } else {
-	texcoords[i].s = sScale * ((nh.x * v.y) - (nh.y * v.x));
+        texcoords[i].s = sScale * v.x;
+      }
+      else {
+        texcoords[i].s = sScale * ((nh.x * v.y) - (nh.y * v.x));
       }
     }
 
@@ -173,9 +172,10 @@ static bool makeTexcoords(const fvec2& autoScale,
     }
     else {
       if (horizontal) {
-	texcoords[i].t = tScale * v.y;
-      } else {
-	texcoords[i].t = tScale * (v.z * vs);
+        texcoords[i].t = tScale * v.y;
+      }
+      else {
+        texcoords[i].t = tScale * (v.z * vs);
       }
     }
   }
@@ -186,9 +186,8 @@ static bool makeTexcoords(const fvec2& autoScale,
 //============================================================================//
 //============================================================================//
 
-static int GetTypeFromName(const string& name)
-{
-       if (name == "wall")   { return wallType;   }
+static int GetTypeFromName(const string& name) {
+  if (name == "wall")   { return wallType;   }
   else if (name == "box")    { return boxType;    }
   else if (name == "pyr")    { return pyrType;    }
   else if (name == "base")   { return baseType;   }
@@ -207,15 +206,13 @@ static int GetTypeFromName(const string& name)
 //  Utility routines
 //
 
-static void PushObstacleGUID(lua_State* L, uint32_t guid)
-{
+static void PushObstacleGUID(lua_State* L, uint32_t guid) {
   assert(sizeof(void*) >= sizeof(uint32_t));
   lua_pushlightuserdata(L, (void*)guid);
 }
 
 
-static inline const Obstacle* ParseObstacle(lua_State* L, int index)
-{
+static inline const Obstacle* ParseObstacle(lua_State* L, int index) {
   uint32_t obsID;
 
   switch (lua_type(L, index)) {
@@ -227,9 +224,10 @@ static inline const Obstacle* ParseObstacle(lua_State* L, int index)
     case LUA_TUSERDATA: {
       const double* d = LuaDouble::TestDouble(L, index);
       if (d != NULL) {
-	obsID = (uint32_t) *d;
-      } else {
-	return NULL;
+        obsID = (uint32_t) * d;
+      }
+      else {
+        return NULL;
       }
       break;
     }
@@ -242,8 +240,7 @@ static inline const Obstacle* ParseObstacle(lua_State* L, int index)
 }
 
 
-static inline const MeshFace* ParseMeshFace(lua_State* L, int index)
-{
+static inline const MeshFace* ParseMeshFace(lua_State* L, int index) {
   const Obstacle* face = ParseObstacle(L, index);
   if (face == NULL) {
     return NULL;
@@ -255,8 +252,7 @@ static inline const MeshFace* ParseMeshFace(lua_State* L, int index)
 }
 
 
-static inline WorldText* ParseWorldText(lua_State* L, int index)
-{
+static inline WorldText* ParseWorldText(lua_State* L, int index) {
   const int textID = luaL_checkint(L, index);
   const std::vector<WorldText*>& texts = OBSTACLEMGR.getTexts();
   if ((textID < 0) || (textID >= (int)texts.size())) {
@@ -266,8 +262,7 @@ static inline WorldText* ParseWorldText(lua_State* L, int index)
 }
 
 
-static bool isContainer(const Obstacle* obs)
-{
+static bool isContainer(const Obstacle* obs) {
   switch (obs->getTypeID()) {
     case teleType:
     case arcType:
@@ -282,9 +277,8 @@ static bool isContainer(const Obstacle* obs)
 }
 
 
-static bool PushObstacleList(lua_State* L, int&index,
-			     int type, bool containers)
-{
+static bool PushObstacleList(lua_State* L, int& index,
+                             int type, bool containers) {
   const GroupDefinition& world = OBSTACLEMGR.getWorld();
   if ((type < 0) || (type >= ObstacleTypeCount)) {
     return false;
@@ -309,8 +303,7 @@ static bool PushObstacleList(lua_State* L, int&index,
 //  Basic obstacle queries
 //
 
-int LuaObstacle::GetObstacleList(lua_State* L)
-{
+int LuaObstacle::GetObstacleList(lua_State* L) {
   lua_settop(L, 1);
   lua_newtable(L);
   const int table = 1;
@@ -329,17 +322,17 @@ int LuaObstacle::GetObstacleList(lua_State* L)
     for (int i = 1; lua_checkgeti(L, table, i); lua_pop(L, 1), i++) {
       int type = -1;
       if (lua_israwnumber(L, -1)) {
-	type = lua_toint(L, -1);
+        type = lua_toint(L, -1);
       }
       else if (lua_israwstring(L, -1)) {
-	type = GetTypeFromName(lua_tostring(L, -1));
+        type = GetTypeFromName(lua_tostring(L, -1));
       }
       if (type >= 0) {
-	lua_pushinteger(L, type);
-	lua_newtable(L);
-	int index = 0;
-	PushObstacleList(L, index, type, containers);
-	lua_rawset(L, newTable);
+        lua_pushinteger(L, type);
+        lua_newtable(L);
+        int index = 0;
+        PushObstacleList(L, index, type, containers);
+        lua_rawset(L, newTable);
       }
     }
   }
@@ -348,8 +341,7 @@ int LuaObstacle::GetObstacleList(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleName(lua_State* L)
-{
+int LuaObstacle::GetObstacleName(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -359,8 +351,7 @@ int LuaObstacle::GetObstacleName(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleType(lua_State* L)
-{
+int LuaObstacle::GetObstacleType(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -370,8 +361,7 @@ int LuaObstacle::GetObstacleType(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleTypeID(lua_State* L)
-{
+int LuaObstacle::GetObstacleTypeID(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -381,8 +371,7 @@ int LuaObstacle::GetObstacleTypeID(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleDriveThrough(lua_State* L)
-{
+int LuaObstacle::GetObstacleDriveThrough(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -392,8 +381,7 @@ int LuaObstacle::GetObstacleDriveThrough(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleShootThrough(lua_State* L)
-{
+int LuaObstacle::GetObstacleShootThrough(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -403,8 +391,7 @@ int LuaObstacle::GetObstacleShootThrough(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleRicochet(lua_State* L)
-{
+int LuaObstacle::GetObstacleRicochet(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -414,8 +401,7 @@ int LuaObstacle::GetObstacleRicochet(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstaclePosition(lua_State* L)
-{
+int LuaObstacle::GetObstaclePosition(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -425,8 +411,7 @@ int LuaObstacle::GetObstaclePosition(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleSize(lua_State* L)
-{
+int LuaObstacle::GetObstacleSize(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -436,8 +421,7 @@ int LuaObstacle::GetObstacleSize(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleRotation(lua_State* L)
-{
+int LuaObstacle::GetObstacleRotation(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -449,8 +433,7 @@ int LuaObstacle::GetObstacleRotation(lua_State* L)
 
 
 
-int LuaObstacle::GetObstacleFlatTop(lua_State* L)
-{
+int LuaObstacle::GetObstacleFlatTop(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -460,8 +443,7 @@ int LuaObstacle::GetObstacleFlatTop(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleExtents(lua_State* L)
-{
+int LuaObstacle::GetObstacleExtents(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -473,8 +455,7 @@ int LuaObstacle::GetObstacleExtents(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleTeam(lua_State* L)
-{
+int LuaObstacle::GetObstacleTeam(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -488,8 +469,7 @@ int LuaObstacle::GetObstacleTeam(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleFlipZ(lua_State* L)
-{
+int LuaObstacle::GetObstacleFlipZ(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -499,8 +479,7 @@ int LuaObstacle::GetObstacleFlipZ(lua_State* L)
 }
 
 
-int LuaObstacle::GetObstacleBorder(lua_State* L)
-{
+int LuaObstacle::GetObstacleBorder(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -520,8 +499,7 @@ int LuaObstacle::GetObstacleBorder(lua_State* L)
 //  Meshes and faces
 //
 
-int LuaObstacle::GetMeshFaceCount(lua_State* L)
-{
+int LuaObstacle::GetMeshFaceCount(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
 
   if (obs->getTypeID() != meshType) {
@@ -535,8 +513,7 @@ int LuaObstacle::GetMeshFaceCount(lua_State* L)
 }
 
 
-int LuaObstacle::GetMeshFace(lua_State* L)
-{
+int LuaObstacle::GetMeshFace(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
 
   if (obs->getTypeID() != meshType) {
@@ -555,8 +532,7 @@ int LuaObstacle::GetMeshFace(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceMesh(lua_State* L)
-{
+int LuaObstacle::GetFaceMesh(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -571,8 +547,7 @@ int LuaObstacle::GetFaceMesh(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceElementCount(lua_State* L)
-{
+int LuaObstacle::GetFaceElementCount(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -583,8 +558,7 @@ int LuaObstacle::GetFaceElementCount(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceVerts(lua_State* L)
-{
+int LuaObstacle::GetFaceVerts(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -603,8 +577,7 @@ int LuaObstacle::GetFaceVerts(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceNorms(lua_State* L)
-{
+int LuaObstacle::GetFaceNorms(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -626,8 +599,7 @@ int LuaObstacle::GetFaceNorms(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceTxcds(lua_State* L)
-{
+int LuaObstacle::GetFaceTxcds(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -677,8 +649,7 @@ int LuaObstacle::GetFaceTxcds(lua_State* L)
 }
 
 
-int LuaObstacle::GetFacePlane(lua_State* L)
-{
+int LuaObstacle::GetFacePlane(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -693,8 +664,7 @@ int LuaObstacle::GetFacePlane(lua_State* L)
 }
 
 
-int LuaObstacle::GetFacePhyDrv(lua_State* L)
-{
+int LuaObstacle::GetFacePhyDrv(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -703,15 +673,15 @@ int LuaObstacle::GetFacePhyDrv(lua_State* L)
   const int phydrv = face->getPhysicsDriver();
   if (phydrv < 0) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushinteger(L, phydrv);
   }
   return 1;
 }
 
 
-int LuaObstacle::GetFaceMaterial(lua_State* L)
-{
+int LuaObstacle::GetFaceMaterial(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -721,8 +691,7 @@ int LuaObstacle::GetFaceMaterial(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceSmoothBounce(lua_State* L)
-{
+int LuaObstacle::GetFaceSmoothBounce(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -738,8 +707,7 @@ int LuaObstacle::GetFaceSmoothBounce(lua_State* L)
 //  Special MeshFace properties
 //
 
-int LuaObstacle::GetFaceBaseTeam(lua_State* L)
-{
+int LuaObstacle::GetFaceBaseTeam(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -753,8 +721,7 @@ int LuaObstacle::GetFaceBaseTeam(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceLinkName(lua_State* L)
-{
+int LuaObstacle::GetFaceLinkName(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -767,8 +734,7 @@ int LuaObstacle::GetFaceLinkName(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceLinkSrcID(lua_State* L)
-{
+int LuaObstacle::GetFaceLinkSrcID(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -782,8 +748,7 @@ int LuaObstacle::GetFaceLinkSrcID(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceLinkSrcAttribs(lua_State* L)
-{
+int LuaObstacle::GetFaceLinkSrcAttribs(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -807,8 +772,7 @@ int LuaObstacle::GetFaceLinkSrcAttribs(lua_State* L)
 }
 
 
-static void PushFVec3Table(lua_State* L, const std::string& n, const fvec3& v)
-{
+static void PushFVec3Table(lua_State* L, const std::string& n, const fvec3& v) {
   lua_pushstdstring(L, n);
   lua_newtable(L);
   luaset_strnum(L, "x", v.x);
@@ -818,8 +782,7 @@ static void PushFVec3Table(lua_State* L, const std::string& n, const fvec3& v)
 }
 
 
-static int PushLinkGeometry(lua_State* L, const MeshFace::LinkGeometry& geo)
-{
+static int PushLinkGeometry(lua_State* L, const MeshFace::LinkGeometry& geo) {
   lua_createtable(L, 0, 15);
   PushFVec3Table(L, "center", geo.center);
   PushFVec3Table(L, "sDir", geo.sDir);
@@ -840,8 +803,7 @@ static int PushLinkGeometry(lua_State* L, const MeshFace::LinkGeometry& geo)
 }
 
 
-int LuaObstacle::GetFaceLinkSrcGeometry(lua_State* L)
-{
+int LuaObstacle::GetFaceLinkSrcGeometry(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -853,8 +815,7 @@ int LuaObstacle::GetFaceLinkSrcGeometry(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceLinkDstGeometry(lua_State* L)
-{
+int LuaObstacle::GetFaceLinkDstGeometry(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -866,8 +827,7 @@ int LuaObstacle::GetFaceLinkDstGeometry(lua_State* L)
 }
 
 
-int LuaObstacle::GetFaceZoneParams(lua_State* L)
-{
+int LuaObstacle::GetFaceZoneParams(lua_State* L) {
   const MeshFace* face = ParseMeshFace(L, 1);
   if (face == NULL) {
     return luaL_pushnil(L);
@@ -895,8 +855,7 @@ int LuaObstacle::GetFaceZoneParams(lua_State* L)
 //  links
 //
 
-int LuaObstacle::GetLinkSrcIDs(lua_State* L)
-{
+int LuaObstacle::GetLinkSrcIDs(lua_State* L) {
   const std::string srcName = luaL_checkstring(L, 1);
 
   lua_newtable(L);
@@ -912,8 +871,7 @@ int LuaObstacle::GetLinkSrcIDs(lua_State* L)
 }
 
 
-int LuaObstacle::GetLinkDstIDs(lua_State* L)
-{
+int LuaObstacle::GetLinkDstIDs(lua_State* L) {
   const std::string dstName = luaL_checkstring(L, 1);
 
   lua_newtable(L);
@@ -929,8 +887,7 @@ int LuaObstacle::GetLinkDstIDs(lua_State* L)
 }
 
 
-int LuaObstacle::GetLinkSrcName(lua_State* L)
-{
+int LuaObstacle::GetLinkSrcName(lua_State* L) {
   const int linkSrcID = luaL_checkint(L, 1);
   const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
   if (face == NULL) {
@@ -941,8 +898,7 @@ int LuaObstacle::GetLinkSrcName(lua_State* L)
 }
 
 
-int LuaObstacle::GetLinkDstName(lua_State* L)
-{
+int LuaObstacle::GetLinkDstName(lua_State* L) {
   const int linkDstID = luaL_checkint(L, 1);
   const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
   if (face == NULL) {
@@ -953,8 +909,7 @@ int LuaObstacle::GetLinkDstName(lua_State* L)
 }
 
 
-int LuaObstacle::GetLinkSrcFace(lua_State* L)
-{
+int LuaObstacle::GetLinkSrcFace(lua_State* L) {
   const int linkSrcID = luaL_checkint(L, 1);
   const MeshFace* face = linkManager.getLinkSrcFace(linkSrcID);
   if (face == NULL) {
@@ -965,8 +920,7 @@ int LuaObstacle::GetLinkSrcFace(lua_State* L)
 }
 
 
-int LuaObstacle::GetLinkDstFace(lua_State* L)
-{
+int LuaObstacle::GetLinkDstFace(lua_State* L) {
   const int linkDstID = luaL_checkint(L, 1);
   const MeshFace* face = linkManager.getLinkDstFace(linkDstID);
   if (face == NULL) {
@@ -977,8 +931,7 @@ int LuaObstacle::GetLinkDstFace(lua_State* L)
 }
 
 
-int LuaObstacle::GetLinkDestinations(lua_State* L)
-{
+int LuaObstacle::GetLinkDestinations(lua_State* L) {
   L = L;
   const int linkSrcID = luaL_checkint(L, 1);
   const MeshFace* srcFace = linkManager.getLinkSrcFace(linkSrcID);
@@ -1009,8 +962,7 @@ int LuaObstacle::GetLinkDestinations(lua_State* L)
 static bool drawInfoArrayStrings = false;
 
 
-static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
-{
+static void PushDrawCmd(lua_State* L, const DrawCmd& cmd) {
   lua_newtable(L);
 
   luaset_strint(L, "mode", cmd.drawMode);
@@ -1022,14 +974,14 @@ static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
       luaset_strstr(L,   "type", "UNSIGNED_SHORT");
       lua_pushliteral(L, "data");
       lua_pushlstring(L, (const char*) cmd.indices,
-			 cmd.count * sizeof(unsigned short));
+                      cmd.count * sizeof(unsigned short));
       lua_rawset(L, -3);
     }
     else if (cmd.indexType == DrawCmd::DrawIndexUInt) {
       luaset_strstr(L,   "type", "UNSIGNED_INT");
       lua_pushliteral(L, "data");
       lua_pushlstring(L, (const char*) cmd.indices,
-		      cmd.count * sizeof(unsigned int));
+                      cmd.count * sizeof(unsigned int));
       lua_rawset(L, -3);
     }
   }
@@ -1038,15 +990,15 @@ static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
     if (cmd.indexType == DrawCmd::DrawIndexUShort) {
       unsigned short* array = (unsigned short*)cmd.indices;
       for (int i = 0; i < cmd.count; i++) {
-	lua_pushinteger(L, array[i]);
-	lua_rawseti(L, -2, i + 1);
+        lua_pushinteger(L, array[i]);
+        lua_rawseti(L, -2, i + 1);
       }
     }
     else if (cmd.indexType == DrawCmd::DrawIndexUInt) {
       unsigned int* array = (unsigned int*)cmd.indices;
       for (int i = 0; i < cmd.count; i++) {
-	lua_pushinteger(L, array[i]);
-	lua_rawseti(L, -2, i + 1);
+        lua_pushinteger(L, array[i]);
+        lua_rawseti(L, -2, i + 1);
       }
     }
   }
@@ -1054,8 +1006,7 @@ static void PushDrawCmd(lua_State* L, const DrawCmd& cmd)
 }
 
 
-static void PushDrawSet(lua_State* L, const DrawSet& set)
-{
+static void PushDrawSet(lua_State* L, const DrawSet& set) {
   lua_newtable(L);
 
   luaset_strint(L, "material", set.material->getID());
@@ -1079,8 +1030,7 @@ static void PushDrawSet(lua_State* L, const DrawSet& set)
 }
 
 
-static void PushDrawLod(lua_State* L, const DrawLod& lod)
-{
+static void PushDrawLod(lua_State* L, const DrawLod& lod) {
   lua_newtable(L);
 
   luaset_strnum(L, "lengthPerPixel", lod.lengthPerPixel);
@@ -1095,8 +1045,7 @@ static void PushDrawLod(lua_State* L, const DrawLod& lod)
 }
 
 
-static void PushTransform(lua_State* L, const MeshTransform::Tool& tool)
-{
+static void PushTransform(lua_State* L, const MeshTransform::Tool& tool) {
   lua_newtable(L);
 
   luaset_strbool(L, "inverted", tool.isInverted());
@@ -1113,8 +1062,7 @@ static void PushTransform(lua_State* L, const MeshTransform::Tool& tool)
 }
 
 
-static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
-{
+static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info) {
   lua_newtable(L);
 
   luaset_strstr(L, "name", info.getName());
@@ -1223,8 +1171,7 @@ static void PushDrawInfo(lua_State* L, const MeshDrawInfo& info)
 }
 
 
-int LuaObstacle::HasMeshDrawInfo(lua_State* L)
-{
+int LuaObstacle::HasMeshDrawInfo(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -1239,8 +1186,7 @@ int LuaObstacle::HasMeshDrawInfo(lua_State* L)
 }
 
 
-int LuaObstacle::GetMeshDrawInfo(lua_State* L)
-{
+int LuaObstacle::GetMeshDrawInfo(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   if (obs == NULL) {
     return luaL_pushnil(L);
@@ -1261,111 +1207,100 @@ int LuaObstacle::GetMeshDrawInfo(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaObstacle::GetWorldTextCount(lua_State* L)
-{
+int LuaObstacle::GetWorldTextCount(lua_State* L) {
   lua_pushinteger(L, OBSTACLEMGR.getTexts().size());
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextName(lua_State* L)
-{
+int LuaObstacle::GetWorldTextName(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushstdstring(L, text->name);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextData(lua_State* L)
-{
+int LuaObstacle::GetWorldTextData(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   if (text->useBZDB) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushstdstring(L, text->data);
   }
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextVarName(lua_State* L)
-{
+int LuaObstacle::GetWorldTextVarName(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   if (!text->useBZDB) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushstdstring(L, text->data);
   }
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextFont(lua_State* L)
-{
+int LuaObstacle::GetWorldTextFont(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushstdstring(L, text->font);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextFontSize(lua_State* L)
-{
+int LuaObstacle::GetWorldTextFontSize(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushfloat(L, text->fontSize);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextLineSpace(lua_State* L)
-{
+int LuaObstacle::GetWorldTextLineSpace(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushfloat(L, text->lineSpace);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextJustify(lua_State* L)
-{
+int LuaObstacle::GetWorldTextJustify(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushfloat(L, text->justify);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextFixedWidth(lua_State* L)
-{
+int LuaObstacle::GetWorldTextFixedWidth(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushfloat(L, text->fixedWidth);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextLengthPerPixel(lua_State* L)
-{
+int LuaObstacle::GetWorldTextLengthPerPixel(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushfloat(L, text->lengthPerPixel);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextBillboard(lua_State* L)
-{
+int LuaObstacle::GetWorldTextBillboard(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushboolean(L, text->billboard);
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextMaterial(lua_State* L)
-{
+int LuaObstacle::GetWorldTextMaterial(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   lua_pushinteger(L, text->bzMaterial->getID());
   return 1;
 }
 
 
-int LuaObstacle::GetWorldTextTransform(lua_State* L)
-{
+int LuaObstacle::GetWorldTextTransform(lua_State* L) {
   const WorldText* text = ParseWorldText(L, 1);
   const MeshTransform& xform = text->xform;
   const MeshTransform::Tool tool(xform);
@@ -1380,8 +1315,7 @@ int LuaObstacle::GetWorldTextTransform(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaObstacle::GetObstaclesInBox(lua_State* L)
-{
+int LuaObstacle::GetObstaclesInBox(lua_State* L) {
   const fvec3 pos     = luaL_checkfvec3(L, 2);
   const fvec3 size    = luaL_checkfvec3(L, 5);
   const float radians = luaL_optfloat(L, 8, 0.0f);
@@ -1401,7 +1335,7 @@ int LuaObstacle::GetObstaclesInBox(lua_State* L)
     const float sx = (pv.x > nv.x) ? pv.x : nv.x;
     const float sy = (pv.y > nv.y) ? pv.y : nv.y;
     exts.mins = fvec3(pos.x - sx, pos.y - sy, pos.z),
-    exts.maxs = fvec3(pos.x + sx, pos.y + sy, pos.z + size.z);
+         exts.maxs = fvec3(pos.x + sx, pos.y + sy, pos.z + size.z);
   }
 
   const ObsList* obsList = COLLISIONMGR.axisBoxTest(exts);
@@ -1422,8 +1356,7 @@ int LuaObstacle::GetObstaclesInBox(lua_State* L)
 }
 
 
-int LuaObstacle::ObstacleBoxTest(lua_State* L)
-{
+int LuaObstacle::ObstacleBoxTest(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   const fvec3 pos     = luaL_checkfvec3(L, 2);
   const fvec3 size    = luaL_checkfvec3(L, 5);
@@ -1433,15 +1366,15 @@ int LuaObstacle::ObstacleBoxTest(lua_State* L)
 }
 
 
-int LuaObstacle::ObstacleRayTest(lua_State* L)
-{
+int LuaObstacle::ObstacleRayTest(lua_State* L) {
   const Obstacle* obs = ParseObstacle(L, 1);
   const fvec3 pos = luaL_checkfvec3(L, 2);
   const fvec3 vel = luaL_checkfvec3(L, 5);
   const float rayTime = obs->intersect(Ray(pos, vel));
   if (rayTime < 0.0f) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushfloat(L, rayTime);
   }
   return 1;
@@ -1456,6 +1389,6 @@ int LuaObstacle::ObstacleRayTest(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

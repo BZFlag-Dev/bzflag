@@ -21,28 +21,28 @@
 #include "HelpMenu.h"
 
 class HelpKeymapMenu : public HelpMenu {
-public:
-  HelpKeymapMenu();
-  ~HelpKeymapMenu() { }
+  public:
+    HelpKeymapMenu();
+    ~HelpKeymapMenu() { }
 
-  void		resize(int width, int height);
+    void    resize(int width, int height);
 
-  void		onScan(const std::string& name, bool, const std::string&);
-  static void	onScanCB(const std::string& name, bool press,
-			 const std::string& cmd, void* userData);
+    void    onScan(const std::string& name, bool, const std::string&);
+    static void onScanCB(const std::string& name, bool press,
+                         const std::string& cmd, void* userData);
 
-protected:
-  float		getLeftSide(int width, int height);
+  protected:
+    float   getLeftSide(int width, int height);
 
-private:
-  void		initKeymap(const std::string& name, int index);
-  struct keymap {
-    int index;	// ui label index
-    std::string key1;
-    std::string key2;
-  };
-  typedef std::map<std::string, keymap> KeyKeyMap;
-  KeyKeyMap	mappable;
+  private:
+    void    initKeymap(const std::string& name, int index);
+    struct keymap {
+      int index;  // ui label index
+      std::string key1;
+      std::string key2;
+    };
+    typedef std::map<std::string, keymap> KeyKeyMap;
+    KeyKeyMap mappable;
 };
 
 #endif /* __HELPKEYMAPMENU_H__ */
@@ -51,6 +51,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

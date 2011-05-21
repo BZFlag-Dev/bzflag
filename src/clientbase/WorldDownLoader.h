@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_WORLDDOWNLOADER_H
-#define	BZF_WORLDDOWNLOADER_H
+#ifndef BZF_WORLDDOWNLOADER_H
+#define BZF_WORLDDOWNLOADER_H
 
 #include "common.h"
 
@@ -27,28 +27,28 @@ class WorldDownLoader : private cURLManager {
     WorldDownLoader();
     ~WorldDownLoader();
 
-    void start(char *hexDigest);
+    void start(char* hexDigest);
     void stop();
-    void setCacheURL(char *cacheURL);
+    void setCacheURL(char* cacheURL);
     void setCacheTemp(bool cacheTemp);
-    uint32_t processChunk(void *buf, uint16_t len, int bytesLeft);
+    uint32_t processChunk(void* buf, uint16_t len, int bytesLeft);
     void cleanCache();
 
   private:
     void askToBZFS();
-    bool isCached(char *hexDigest);
+    bool isCached(char* hexDigest);
     void loadCached();
-    void markOld(std::string &fileName);
-    virtual void finalization(char *data, unsigned int length, bool good);
+    void markOld(std::string& fileName);
+    virtual void finalization(char* data, unsigned int length, bool good);
 
     std::string worldUrl;
     std::string worldHash;
     std::string worldCachePath;
     std::string md5Digest;
     uint32_t worldPtr;
-    char *worldDatabase;
+    char* worldDatabase;
     bool isCacheTemp;
-    std::ostream *cacheOut;
+    std::ostream* cacheOut;
 };
 
 
@@ -58,6 +58,6 @@ class WorldDownLoader : private cURLManager {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

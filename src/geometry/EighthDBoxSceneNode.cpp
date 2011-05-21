@@ -31,9 +31,8 @@ const int BoxPolygons = 60;
 
 EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
                                          const fvec3& size, float rotation)
-: EighthDimSceneNode(BoxPolygons)
-, renderNode(this, pos, size, rotation)
-{
+  : EighthDimSceneNode(BoxPolygons)
+  , renderNode(this, pos, size, rotation) {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
@@ -72,14 +71,12 @@ EighthDBoxSceneNode::EighthDBoxSceneNode(const fvec3& pos,
 }
 
 
-EighthDBoxSceneNode::~EighthDBoxSceneNode()
-{
+EighthDBoxSceneNode::~EighthDBoxSceneNode() {
   // do nothing
 }
 
 
-void EighthDBoxSceneNode::notifyStyleChange()
-{
+void EighthDBoxSceneNode::notifyStyleChange() {
   EighthDimSceneNode::notifyStyleChange();
 
   OpenGLGStateBuilder builder(gstate);
@@ -95,8 +92,7 @@ void EighthDBoxSceneNode::notifyStyleChange()
 }
 
 
-void EighthDBoxSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void EighthDBoxSceneNode::addRenderNodes(SceneRenderer& renderer) {
   EighthDimSceneNode::addRenderNodes(renderer);
   renderer.addRenderNode(&renderNode, &gstate);
 }
@@ -107,11 +103,10 @@ void EighthDBoxSceneNode::addRenderNodes(SceneRenderer& renderer)
 //
 
 EighthDBoxSceneNode::EighthDBoxRenderNode::EighthDBoxRenderNode(
-				const EighthDBoxSceneNode* _sceneNode,
-				const fvec3& pos,
-				const fvec3& size, float rotation) :
-				sceneNode(_sceneNode)
-{
+  const EighthDBoxSceneNode* _sceneNode,
+  const fvec3& pos,
+  const fvec3& size, float rotation) :
+  sceneNode(_sceneNode) {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
@@ -130,14 +125,12 @@ EighthDBoxSceneNode::EighthDBoxRenderNode::EighthDBoxRenderNode(
 }
 
 
-EighthDBoxSceneNode::EighthDBoxRenderNode::~EighthDBoxRenderNode()
-{
+EighthDBoxSceneNode::EighthDBoxRenderNode::~EighthDBoxRenderNode() {
   // do nothing
 }
 
 
-void EighthDBoxSceneNode::EighthDBoxRenderNode::render()
-{
+void EighthDBoxSceneNode::EighthDBoxRenderNode::render() {
   myColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINE_LOOP);
   glVertex3fv(corner[0]);
@@ -163,6 +156,6 @@ void EighthDBoxSceneNode::EighthDBoxRenderNode::render()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

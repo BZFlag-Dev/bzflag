@@ -19,15 +19,15 @@
 #include <string>
 
 class HelpInstructionsMenu : public HelpMenu {
-public:
-  HelpInstructionsMenu(const char* title, std::vector<std::string> text);
-  ~HelpInstructionsMenu() { }
+  public:
+    HelpInstructionsMenu(const char* title, std::vector<std::string> text);
+    ~HelpInstructionsMenu() { }
 
-  void resize(int width, int height);
+    void resize(int width, int height);
 
-private:
-  // no default constructor
-  HelpInstructionsMenu();
+  private:
+    // no default constructor
+    HelpInstructionsMenu();
 };
 
 #endif /* __HELPINSTRUCTIONSMENU_H__ */
@@ -36,6 +36,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

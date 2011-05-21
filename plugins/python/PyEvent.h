@@ -15,17 +15,15 @@
 #ifndef __PYTHON_EVENT_H__
 #define __PYTHON_EVENT_H__
 
-namespace Python
-{
+namespace Python {
 
-class Event
-{
-public:
-  Event ();
-  PyObject *GetSubModule ();
-private:
-  PyObject *module;
-};
+  class Event {
+    public:
+      Event();
+      PyObject* GetSubModule();
+    private:
+      PyObject* module;
+  };
 
 };
 
@@ -35,6 +33,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

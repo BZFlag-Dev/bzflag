@@ -38,8 +38,7 @@
 static const std::string hubPrefix = "/hub ";
 
 
-void HubComposeKey::init(bool keep)
-{
+void HubComposeKey::init(bool keep) {
   keepAlive = keep;
   messageHistoryIndex = 0;
   hud->setComposing("HUB:");
@@ -50,22 +49,21 @@ void HubComposeKey::init(bool keep)
 }
 
 
-static bool isWordCompletion(const BzfKeyEvent& key)
-{
+static bool isWordCompletion(const BzfKeyEvent& key) {
   if ((key.unicode == 6) || // ^F
       (key.unicode == 9) || // <TAB>
       ((key.modifiers == 0) && (key.button == BzfKeyEvent::F2))) {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
 
 
-bool HubComposeKey::keyPress(const BzfKeyEvent& key)
-{
+bool HubComposeKey::keyPress(const BzfKeyEvent& key) {
   bool sendIt;
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
     // jump while typing
     myTank->setJump();
@@ -76,7 +74,7 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
       ((myTank->getInputMethod() != LocalPlayer::Keyboard) ||
        myTank->isObserver())) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down)) {
+        (key.button == BzfKeyEvent::Down)) {
       return true;
     }
   }
@@ -178,17 +176,17 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
       const size_t mhLen = messageHistory.size();
       size_t i;
       for (i = 0; i < mhLen; i++) {
-	if (messageHistory[i] == message) {
-	  messageHistory.erase(messageHistory.begin() + i);
-	  messageHistory.push_front(message);
-	  break;
-	}
+        if (messageHistory[i] == message) {
+          messageHistory.erase(messageHistory.begin() + i);
+          messageHistory.push_front(message);
+          break;
+        }
       }
       if (i == mhLen) {
-	if (mhLen >= MAX_MESSAGE_HISTORY) {
-	  messageHistory.pop_back();
-	}
-	messageHistory.push_front(message);
+        if (mhLen >= MAX_MESSAGE_HISTORY) {
+          messageHistory.pop_back();
+        }
+        messageHistory.push_front(message);
       }
     }
   }
@@ -207,8 +205,7 @@ bool HubComposeKey::keyPress(const BzfKeyEvent& key)
 }
 
 
-bool HubComposeKey::keyRelease(const BzfKeyEvent& key)
-{
+bool HubComposeKey::keyRelease(const BzfKeyEvent& key) {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
@@ -221,18 +218,21 @@ bool HubComposeKey::keyRelease(const BzfKeyEvent& key)
       (myTank->getInputMethod() != LocalPlayer::Keyboard)) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.size()) {
-	hud->setComposeString(messageHistory[messageHistoryIndex]);
-	messageHistoryIndex++;
-      } else {
-	hud->setComposeString(std::string());
+        hud->setComposeString(messageHistory[messageHistoryIndex]);
+        messageHistoryIndex++;
+      }
+      else {
+        hud->setComposeString(std::string());
       }
       return true;
-    } else if (key.button == BzfKeyEvent::Down) {
+    }
+    else if (key.button == BzfKeyEvent::Down) {
       if (messageHistoryIndex > 0) {
-	messageHistoryIndex--;
-	hud->setComposeString(messageHistory[messageHistoryIndex]);
-      } else {
-	hud->setComposeString(std::string());
+        messageHistoryIndex--;
+        hud->setComposeString(messageHistory[messageHistoryIndex]);
+      }
+      else {
+        hud->setComposeString(std::string());
       }
       return true;
     }
@@ -252,6 +252,6 @@ bool HubComposeKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

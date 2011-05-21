@@ -28,46 +28,41 @@
 
 
 EighthDimSceneNode::EighthDimSceneNode(int numPolygons)
-: renderNode(this, numPolygons)
-{
+  : renderNode(this, numPolygons) {
   // do nothing
 }
 
 
-EighthDimSceneNode::~EighthDimSceneNode()
-{
+EighthDimSceneNode::~EighthDimSceneNode() {
   // do nothing
 }
 
 
-bool EighthDimSceneNode::cull(const ViewFrustum&) const
-{
+bool EighthDimSceneNode::cull(const ViewFrustum&) const {
   // no culling
   return false;
 }
 
 
-void EighthDimSceneNode::notifyStyleChange()
-{
+void EighthDimSceneNode::notifyStyleChange() {
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
   if (BZDB.isTrue("blend")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  } else {
+  }
+  else {
     builder.setStipple(0.75f);
   }
   gstate = builder.getState();
 }
 
 
-void EighthDimSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void EighthDimSceneNode::addRenderNodes(SceneRenderer& renderer) {
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
 
-void EighthDimSceneNode::setPolygon(int index, const fvec3 vertices[3])
-{
+void EighthDimSceneNode::setPolygon(int index, const fvec3 vertices[3]) {
   renderNode.setPolygon(index, vertices);
 }
 
@@ -77,11 +72,10 @@ void EighthDimSceneNode::setPolygon(int index, const fvec3 vertices[3])
 //
 
 EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
-				const EighthDimSceneNode* _sceneNode,
-				int numPolys)
-: sceneNode(_sceneNode)
-, numPolygons(numPolys)
-{
+  const EighthDimSceneNode* _sceneNode,
+  int numPolys)
+  : sceneNode(_sceneNode)
+  , numPolygons(numPolys) {
   color = new fvec4[numPolygons];
   polys = new Vert3[numPolygons];
 
@@ -95,15 +89,13 @@ EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
 }
 
 
-EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
-{
+EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode() {
   delete[] color;
   delete[] polys;
 }
 
 
-void EighthDimSceneNode::EighthDimRenderNode::render()
-{
+void EighthDimSceneNode::EighthDimRenderNode::render() {
   // draw polygons
   glBegin(GL_TRIANGLES);
   for (int i = 0; i < numPolygons; i++) {
@@ -117,8 +109,7 @@ void EighthDimSceneNode::EighthDimRenderNode::render()
 
 
 void EighthDimSceneNode::EighthDimRenderNode::setPolygon(int index,
-                                                         const fvec3 v[3])
-{
+                                                         const fvec3 v[3]) {
   polys[index][0] = v[0];
   polys[index][1] = v[1];
   polys[index][2] = v[2];
@@ -129,6 +120,6 @@ void EighthDimSceneNode::EighthDimRenderNode::setPolygon(int index,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

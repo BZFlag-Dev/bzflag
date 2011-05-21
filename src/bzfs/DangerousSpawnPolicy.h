@@ -23,24 +23,23 @@
 /** a DangerousSpawnPolicy is a SpawnPolicy that just generates a mostly
  *  dangerous (yet hopefully still valid) position and drops you there.
  */
-class DangerousSpawnPolicy : public DefaultSpawnPolicy
-{
-public:
-  DangerousSpawnPolicy();
-  virtual ~DangerousSpawnPolicy();
+class DangerousSpawnPolicy : public DefaultSpawnPolicy {
+  public:
+    DangerousSpawnPolicy();
+    virtual ~DangerousSpawnPolicy();
 
-  virtual const char *Name() const {
-    static const char *name = "Dangerous";
-    return name;
-  }
+    virtual const char* Name() const {
+      static const char* name = "Dangerous";
+      return name;
+    }
 
-  virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
-  virtual void getAzimuth(float &azimuth);
+    virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
+    virtual void getAzimuth(float& azimuth);
 
-private:
-  /* internal use */
-  TeamColor   team;
-  fvec3       testPos;
+  private:
+    /* internal use */
+    TeamColor   team;
+    fvec3       testPos;
 };
 
 #endif  /*__DANGEROUSSPAWNPOLICY_H__ */
@@ -49,6 +48,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

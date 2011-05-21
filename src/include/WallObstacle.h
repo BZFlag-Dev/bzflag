@@ -11,11 +11,11 @@
  */
 
 /* WallObstacle:
- *	Encapsulates an infinite wall in the game environment.
+ *  Encapsulates an infinite wall in the game environment.
  */
 
-#ifndef	BZF_WALL_OBSTACLE_H
-#define	BZF_WALL_OBSTACLE_H
+#ifndef BZF_WALL_OBSTACLE_H
+#define BZF_WALL_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -28,28 +28,28 @@ class WallObstacle : public Obstacle {
                  float breadth, float height, bool ricochet);
     ~WallObstacle();
 
-    const char*		getType() const;
-    ObstacleType	getTypeID() const { return wallType; }
+    const char*   getType() const;
+    ObstacleType  getTypeID() const { return wallType; }
 
-    static const char*	getClassName(); // const
+    static const char*  getClassName(); // const
 
-    float		intersect(const Ray&) const;
-    void		getNormal(const fvec3& p, fvec3& n) const;
+    float   intersect(const Ray&) const;
+    void    getNormal(const fvec3& p, fvec3& n) const;
 
-    bool		inCylinder(const fvec3& p, float radius, float height) const;
-    bool		inBox(const fvec3& p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const fvec3& oldP, float oldAngle,
-				    const fvec3& newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
-    bool		getHitNormal(const fvec3& pos1, float azimuth1,
-                                     const fvec3& pos2, float azimuth2,
-                                     float halfWidth, float halfBreadth,
-                                     float height, fvec3& normal) const;
+    bool    inCylinder(const fvec3& p, float radius, float height) const;
+    bool    inBox(const fvec3& p, float angle,
+                  float halfWidth, float halfBreadth, float height) const;
+    bool    inMovingBox(const fvec3& oldP, float oldAngle,
+                        const fvec3& newP, float newAngle,
+                        float halfWidth, float halfBreadth, float height) const;
+    bool    getHitNormal(const fvec3& pos1, float azimuth1,
+                         const fvec3& pos2, float azimuth2,
+                         float halfWidth, float halfBreadth,
+                         float height, fvec3& normal) const;
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 
@@ -57,8 +57,8 @@ class WallObstacle : public Obstacle {
     void finalize();
 
   private:
-    fvec4		plane;
-    static const char*	typeName;
+    fvec4   plane;
+    static const char*  typeName;
 };
 
 #endif // BZF_WALL_OBSTACLE_H
@@ -67,6 +67,6 @@ class WallObstacle : public Obstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

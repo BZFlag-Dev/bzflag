@@ -116,16 +116,16 @@ class LuaCallInDB {
     struct CallInInfo {
       CallInInfo() {}
       CallInInfo(int c, const char* n,
-		 bool fullRead, bool gameCtrl, bool inputCtrl,
-		 bool rev, bool rec, const char* ss, const char* lt)
-      : code(c), name(n)
-      , reqFullRead(fullRead)
-      , reqGameCtrl(gameCtrl)
-      , reqInputCtrl(inputCtrl)
-      , reversed(rev)
-      , reentrant(rec)
-      , loopType(lt)
-      , singleScript(ss)
+                 bool fullRead, bool gameCtrl, bool inputCtrl,
+                 bool rev, bool rec, const char* ss, const char* lt)
+        : code(c), name(n)
+        , reqFullRead(fullRead)
+        , reqGameCtrl(gameCtrl)
+        , reqInputCtrl(inputCtrl)
+        , reversed(rev)
+        , reentrant(rec)
+        , loopType(lt)
+        , singleScript(ss)
       {}
       int code;
       std::string name;
@@ -145,30 +145,26 @@ class LuaCallInDB {
   public:
     void SetupMaps();
 
-    inline const std::map<int, std::string>& GetCodeToNameMap() const
-    {
+    inline const std::map<int, std::string>& GetCodeToNameMap() const {
       return codeToName;
     }
 
-    inline const std::map<std::string, int>& GetNameToCodeMap() const
-    {
+    inline const std::map<std::string, int>& GetNameToCodeMap() const {
       return nameToCode;
     }
 
-    inline int GetCode(const std::string& ciName) const
-    {
+    inline int GetCode(const std::string& ciName) const {
       std::map<std::string, int>::const_iterator it = nameToCode.find(ciName);
       if (it == nameToCode.end()) {
-	return 0;
+        return 0;
       }
       return it->second;
     }
 
-    inline const std::string* GetName(int ciCode) const
-    {
+    inline const std::string* GetName(int ciCode) const {
       std::map<int, std::string>::const_iterator it = codeToName.find(ciCode);
       if (it == codeToName.end()) {
-	return NULL;
+        return NULL;
       }
       return &(it->second);
     }
@@ -197,6 +193,6 @@ extern LuaCallInDB luaCallInDB;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

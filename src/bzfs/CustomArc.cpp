@@ -41,8 +41,7 @@ const char* CustomArc::sideNames[MaterialCount] = {
 };
 
 
-CustomArc::CustomArc()
-{
+CustomArc::CustomArc() {
   divisions = 16;
   size = fvec3(10.0f, 10.0f, 10.0f);
   ratio = 1.0f;
@@ -64,14 +63,12 @@ CustomArc::CustomArc()
 }
 
 
-CustomArc::~CustomArc()
-{
+CustomArc::~CustomArc() {
   return;
 }
 
 
-bool CustomArc::read(const char *cmd, std::istream& input)
-{
+bool CustomArc::read(const char* cmd, std::istream& input) {
   bool materror;
 
   if (strcasecmp(cmd, "divisions") == 0) {
@@ -117,7 +114,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
     }
   }
   else if (parseMaterialsByName(cmd, input, materials, sideNames,
-				MaterialCount, materror)) {
+                                MaterialCount, materror)) {
     if (materror) {
       return false;
     }
@@ -130,8 +127,7 @@ bool CustomArc::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomArc::writeToGroupDef(GroupDefinition* groupdef) const {
   int i;
   const BzMaterial* mats[MaterialCount];
   for (i = 0; i < MaterialCount; i++) {
@@ -145,7 +141,8 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
 
   if (arc->isValid()) {
     groupdef->addObstacle(arc);
-  } else {
+  }
+  else {
     delete arc;
   }
 
@@ -157,6 +154,6 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

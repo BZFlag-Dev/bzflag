@@ -27,19 +27,19 @@
 
 /** This class is an interface for bzadmin that reads commands from stdin. */
 class StdInUI : public BZAdminUI {
-public:
+  public:
 
-  StdInUI(BZAdminClient& c);
+    StdInUI(BZAdminClient& c);
 
-  bool checkCommand(std::string& str);
+    bool checkCommand(std::string& str);
 
-  /** This function returns a pointer to a dynamically allocated
-      StdInUI object. */
-  static BZAdminUI* creator(BZAdminClient&);
+    /** This function returns a pointer to a dynamically allocated
+        StdInUI object. */
+    static BZAdminUI* creator(BZAdminClient&);
 
-protected:
+  protected:
 
-  static UIAdder uiAdder;
+    static UIAdder uiAdder;
 };
 
 #endif
@@ -48,6 +48,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

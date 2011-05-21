@@ -34,172 +34,170 @@
 #include "BzTime.h"
 
 
-class PlayerAccessInfo
-{
-public:
-  PlayerAccessInfo();
+class PlayerAccessInfo {
+  public:
+    PlayerAccessInfo();
 
-  // player access info
-  enum AccessPerm {
-    actionMessage = 0,
-    adminMessageReceive,
-    adminMessageSend,
-    antiban,
-    antikick,
-    antikill,
-    antipoll,
-    antipollban,
-    antipollkick,
-    antipollkill,
-    ban,
-    banlist,
-    countdown,
-    date,
-    endGame,
-    flagHistory,
-    flagMaster,
-    flagMod,
-    hideAdmin,
-    idleStats,
-    info,
-    jitterwarn,
-    kick,
-    kill,
-    lagStats,
-    lagwarn,
-    listPlugins,
-    listPerms,
-    luaServer,
-    masterBan,
-    modCount,
-    mute,
-    packetlosswarn,
-    playerList,
-    poll,
-    pollBan,
-    pollKick,
-    pollKill,
-    pollSet,
-    pollFlagReset,
-    privateMessage,
-    record,
-    rejoin,
-    removePerms,
-    replay,
-    say,
-    sendHelp,
-    setAll,
-    setPerms,
-    setVar,
-    shortBan,
-    showOthers,
-    shutdownServer,
-    spawn,
-    superKill,
-    talk,
-    unban,
-    unmute,
-    veto,
-    viewReports,
-    vote,
-    // just so we know how many rights there
-    // are this dosn't do anything really, just
-    // make sure it's the last real right
-    lastPerm
-  };
+    // player access info
+    enum AccessPerm {
+      actionMessage = 0,
+      adminMessageReceive,
+      adminMessageSend,
+      antiban,
+      antikick,
+      antikill,
+      antipoll,
+      antipollban,
+      antipollkick,
+      antipollkill,
+      ban,
+      banlist,
+      countdown,
+      date,
+      endGame,
+      flagHistory,
+      flagMaster,
+      flagMod,
+      hideAdmin,
+      idleStats,
+      info,
+      jitterwarn,
+      kick,
+      kill,
+      lagStats,
+      lagwarn,
+      listPlugins,
+      listPerms,
+      luaServer,
+      masterBan,
+      modCount,
+      mute,
+      packetlosswarn,
+      playerList,
+      poll,
+      pollBan,
+      pollKick,
+      pollKill,
+      pollSet,
+      pollFlagReset,
+      privateMessage,
+      record,
+      rejoin,
+      removePerms,
+      replay,
+      say,
+      sendHelp,
+      setAll,
+      setPerms,
+      setVar,
+      shortBan,
+      showOthers,
+      shutdownServer,
+      spawn,
+      superKill,
+      talk,
+      unban,
+      unmute,
+      veto,
+      viewReports,
+      vote,
+      // just so we know how many rights there
+      // are this dosn't do anything really, just
+      // make sure it's the last real right
+      lastPerm
+    };
 
-  enum GroupStates {
-    isGroup,  // we can check if this is a group or a player
-    isDefault,   // mark default groups
-    isReferenced, // do not allow to alter group perms once it's referenced
-    lastState
-  };
+    enum GroupStates {
+      isGroup,  // we can check if this is a group or a player
+      isDefault,   // mark default groups
+      isReferenced, // do not allow to alter group perms once it's referenced
+      lastState
+    };
 
-  void	setName(const char* callSign);
+    void  setName(const char* callSign);
 
-  std::string getName();
+    std::string getName();
 
-  bool	gotAccessFailure();
-  void	setLoginFail();
-  bool	passwordAttemptsMax();
+    bool  gotAccessFailure();
+    void  setLoginFail();
+    bool  passwordAttemptsMax();
 
-  /** have successfully provided server password */
-  void  setOperator();
-  bool	isOperator() const;
+    /** have successfully provided server password */
+    void  setOperator();
+    bool  isOperator() const;
 
-  /** have ability to ban */
-  bool	isAdmin() const;
+    /** have ability to ban */
+    bool  isAdmin() const;
 
-  /** are not marked as hidden admins */
-  bool	showAsAdmin() const;
+    /** are not marked as hidden admins */
+    bool  showAsAdmin() const;
 
-  void	setPermissionRights();
-  void	reloadInfo();
+    void  setPermissionRights();
+    void  reloadInfo();
 
-  bool	hasGroup(const std::string& group);
-  bool	addGroup(const std::string &group);
-  bool	removeGroup(const std::string& group);
-  bool	canSet(const std::string& group);
+    bool  hasGroup(const std::string& group);
+    bool  addGroup(const std::string& group);
+    bool  removeGroup(const std::string& group);
+    bool  canSet(const std::string& group);
 
-  bool	hasPerm(AccessPerm right) const;
-  void	grantPerm(AccessPerm right);
-  void	revokePerm(AccessPerm right);
+    bool  hasPerm(AccessPerm right) const;
+    void  grantPerm(AccessPerm right);
+    void  revokePerm(AccessPerm right);
 
-  bool	hasCustomPerm(const char* right) const;
+    bool  hasCustomPerm(const char* right) const;
 
-  bool	isRegistered() const;
-  bool	isAllowedToEnter();
-  bool	isVerified() const;
-  uint8_t     getPlayerProperties();
-  void	storeInfo();
-  bool	exists();
-  static PlayerAccessInfo &getUserInfo(const std::string &nick);
-  static bool readGroupsFile(const std::string &filename);
-  static bool readPermsFile(const std::string &filename);
-  static bool writePermsFile(const std::string &filename);
-  static void updateDatabases();
-  std::bitset<lastPerm>		explicitAllows;
-  std::bitset<lastPerm>		explicitDenys;
-  std::bitset<lastState>	groupState;
-  std::vector<std::string>	groups;
-  std::vector<std::string>	customPerms;
-  bool				hasALLPerm;
-  bool				regAtJoin;
+    bool  isRegistered() const;
+    bool  isAllowedToEnter();
+    bool  isVerified() const;
+    uint8_t     getPlayerProperties();
+    void  storeInfo();
+    bool  exists();
+    static PlayerAccessInfo& getUserInfo(const std::string& nick);
+    static bool readGroupsFile(const std::string& filename);
+    static bool readPermsFile(const std::string& filename);
+    static bool writePermsFile(const std::string& filename);
+    static void updateDatabases();
+    std::bitset<lastPerm>   explicitAllows;
+    std::bitset<lastPerm>   explicitDenys;
+    std::bitset<lastState>  groupState;
+    std::vector<std::string>  groups;
+    std::vector<std::string>  customPerms;
+    bool        hasALLPerm;
+    bool        regAtJoin;
 
-private:
-  bool				verified;
-  BzTime			loginTime;
-  int				loginAttempts;
+  private:
+    bool        verified;
+    BzTime      loginTime;
+    int       loginAttempts;
 
-  /** server operator that has provided the server password */
-  bool				serverop;
+    /** server operator that has provided the server password */
+    bool        serverop;
 
-  // number of times they have tried to /password
-  int passwordAttempts;
-  // player's registration name
-  std::string regName;
+    // number of times they have tried to /password
+    int passwordAttempts;
+    // player's registration name
+    std::string regName;
 };
 
 typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
 
-extern PlayerAccessMap	groupAccess;
-extern PlayerAccessMap	userDatabase;
+extern PlayerAccessMap  groupAccess;
+extern PlayerAccessMap  userDatabase;
 
-extern std::string		groupsFile;
-extern std::string		userDatabaseFile;
+extern std::string    groupsFile;
+extern std::string    userDatabaseFile;
 
-inline void makeupper(std::string& str)
-{
+inline void makeupper(std::string& str) {
   std::transform(str.begin(), str.end(), str.begin(), (int(*)(int))toupper);
 }
 
-bool userExists(const std::string &nick);
+bool userExists(const std::string& nick);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
-PlayerAccessInfo::AccessPerm permFromName(const std::string &name);
-void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
+PlayerAccessInfo::AccessPerm permFromName(const std::string& name);
+void parsePermissionString(const std::string& permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
 bool groupHasPermission(std::string group, PlayerAccessInfo::AccessPerm perm);
 
-uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
+uint8_t GetPlayerProperties(bool registered, bool verified, bool admin);
 
 #endif
 
@@ -208,6 +206,6 @@ uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

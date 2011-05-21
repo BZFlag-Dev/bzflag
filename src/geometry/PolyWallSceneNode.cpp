@@ -29,46 +29,43 @@
 //
 
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
-				const fvec3Array& _vertex,
-				const fvec2Array& _uv,
-				const float* _normal) :
-				wall(_wall),
-				normal(_normal),
-				vertex(_vertex),
-				uv(_uv)
-{
+                                      const fvec3Array& _vertex,
+                                      const fvec2Array& _uv,
+                                      const float* _normal) :
+  wall(_wall),
+  normal(_normal),
+  vertex(_vertex),
+  uv(_uv) {
   // do nothing
 }
 
-PolyWallSceneNode::Geometry::~Geometry()
-{
+PolyWallSceneNode::Geometry::~Geometry() {
   // do nothing
 }
 
-void			PolyWallSceneNode::Geometry::render()
-{
+void      PolyWallSceneNode::Geometry::render() {
   wall->applyColor();
   glNormal3fv(normal);
   if (style >= 2) {
     drawVT();
-  } else {
+  }
+  else {
     drawV();
   }
   addTriangleCount(vertex.getSize() - 2);
   return;
 }
 
-void			PolyWallSceneNode::Geometry::drawV() const
-{
+void      PolyWallSceneNode::Geometry::drawV() const {
   const int count = vertex.getSize();
   glBegin(GL_TRIANGLE_FAN);
-  for (int i = 0; i < count; i++)
+  for (int i = 0; i < count; i++) {
     glVertex3fv(vertex[i]);
+  }
   glEnd();
 }
 
-void			PolyWallSceneNode::Geometry::drawVT() const
-{
+void      PolyWallSceneNode::Geometry::drawVT() const {
   const int count = vertex.getSize();
   glBegin(GL_TRIANGLE_FAN);
   for (int i = 0; i < count; i++) {
@@ -83,8 +80,7 @@ void			PolyWallSceneNode::Geometry::drawVT() const
 //
 
 PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
-                                     const fvec2Array& uv)
-{
+                                     const fvec2Array& uv) {
   const int count = vertex.getSize();
   assert(uv.getSize() == count);
 
@@ -113,27 +109,27 @@ PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
   const fvec4& norm = getPlaneRaw();
   const int ignoreAxis =
     (fabsf(norm.x) > fabsf(norm.y)) ? ((fabsf(norm.x) > fabsf(norm.z)) ? 0 : 2)
-                                    : ((fabsf(norm.y) > fabsf(norm.z)) ? 1 : 2);
+      : ((fabsf(norm.y) > fabsf(norm.z)) ? 1 : 2);
 
   // project vertices onto plane
   fvec2Array flat(vertex.getSize());
   switch (ignoreAxis) {
     case 0:
       for (i = 0; i < count; i++) {
-	flat[i][0] = vertex[i][1];
-	flat[i][1] = vertex[i][2];
+        flat[i][0] = vertex[i][1];
+        flat[i][1] = vertex[i][2];
       }
       break;
     case 1:
       for (i = 0; i < count; i++) {
-	flat[i][0] = vertex[i][2];
-	flat[i][1] = vertex[i][0];
+        flat[i][0] = vertex[i][2];
+        flat[i][1] = vertex[i][0];
       }
       break;
     case 2:
       for (i = 0; i < count; i++) {
-	flat[i][0] = vertex[i][0];
-	flat[i][1] = vertex[i][1];
+        flat[i][0] = vertex[i][0];
+        flat[i][1] = vertex[i][1];
       }
       break;
   }
@@ -170,42 +166,36 @@ PolyWallSceneNode::PolyWallSceneNode(const fvec3Array& vertex,
   setSphere(mySphere);
 }
 
-PolyWallSceneNode::~PolyWallSceneNode()
-{
+PolyWallSceneNode::~PolyWallSceneNode() {
   delete node;
   delete shadowNode;
 }
 
-int			PolyWallSceneNode::split(const fvec4& _plane,
-				SceneNode*& front, SceneNode*& back) const
-{
+int     PolyWallSceneNode::split(const fvec4& _plane,
+                                 SceneNode*& front, SceneNode*& back) const {
   return WallSceneNode::splitWall(_plane, node->vertex, node->uv, front, back);
 }
 
-void			PolyWallSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
-{
+void      PolyWallSceneNode::addRenderNodes(
+  SceneRenderer& renderer) {
   node->setStyle(getStyle());
   renderer.addRenderNode(node, getWallGState());
 }
 
-void			PolyWallSceneNode::addShadowNodes(
-				SceneRenderer& renderer)
-{
+void      PolyWallSceneNode::addShadowNodes(
+  SceneRenderer& renderer) {
   renderer.addShadowNode(shadowNode);
 }
 
 
-void PolyWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
-{
+void PolyWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes) {
   RenderSet rs = { node, getWallGState() };
   rnodes.push_back(rs);
   return;
 }
 
 
-void PolyWallSceneNode::renderRadar()
-{
+void PolyWallSceneNode::renderRadar() {
   if (plane[2] > 0.0f) {
     node->renderRadar();
   }
@@ -217,6 +207,6 @@ void PolyWallSceneNode::renderRadar()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -27,8 +27,7 @@ const int mask = 0x00FFFFFF; // 2^24, a float's contiguous integer range
 //============================================================================//
 //============================================================================//
 
-bool LuaBitOps::PushEntries(lua_State* L)
-{
+bool LuaBitOps::PushEntries(lua_State* L) {
   lua_pushliteral(L, "bit");
   lua_newtable(L);
 
@@ -48,14 +47,12 @@ bool LuaBitOps::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline unsigned int luaL_checkuint(lua_State* L, int index)
-{
+static inline unsigned int luaL_checkuint(lua_State* L, int index) {
   return (unsigned int)luaL_checkint(L, index);
 }
 
 
-int LuaBitOps::bit_test(lua_State* L)
-{
+int LuaBitOps::bit_test(lua_State* L) {
   const unsigned int value = luaL_checkuint(L, 1) & mask;
   const unsigned int bit   = luaL_checkuint(L, 2) & mask;
   lua_pushboolean(L, value & bit);
@@ -63,8 +60,7 @@ int LuaBitOps::bit_test(lua_State* L)
 }
 
 
-int LuaBitOps::bit_or(lua_State* L)
-{
+int LuaBitOps::bit_or(lua_State* L) {
   unsigned int result = 0x00000000;
   for (int i = 1; !lua_isnone(L, i); i++) {
     result = result | luaL_checkuint(L, i);
@@ -74,8 +70,7 @@ int LuaBitOps::bit_or(lua_State* L)
 }
 
 
-int LuaBitOps::bit_and(lua_State* L)
-{
+int LuaBitOps::bit_and(lua_State* L) {
   unsigned int result = 0xFFFFFFFF;
   for (int i = 1; !lua_isnone(L, i); i++) {
     result = result & luaL_checkuint(L, i);
@@ -85,8 +80,7 @@ int LuaBitOps::bit_and(lua_State* L)
 }
 
 
-int LuaBitOps::bit_xor(lua_State* L)
-{
+int LuaBitOps::bit_xor(lua_State* L) {
   unsigned int result = 0x00000000;
   for (int i = 1; !lua_isnone(L, i); i++) {
     result = result ^ luaL_checkuint(L, i);
@@ -96,16 +90,14 @@ int LuaBitOps::bit_xor(lua_State* L)
 }
 
 
-int LuaBitOps::bit_inv(lua_State* L)
-{
+int LuaBitOps::bit_inv(lua_State* L) {
   const unsigned int result = ~luaL_checkuint(L, 1);
   lua_pushinteger(L, result & mask);
   return 1;
 }
 
 
-int LuaBitOps::bit_bits(lua_State* L)
-{
+int LuaBitOps::bit_bits(lua_State* L) {
   unsigned int result = 0x00000000;
   for (int i = 1; !lua_isnone(L, i); i++) {
     const int bit = (unsigned int)luaL_checkint(L, i);
@@ -124,6 +116,6 @@ int LuaBitOps::bit_bits(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

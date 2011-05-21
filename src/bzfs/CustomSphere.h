@@ -27,7 +27,7 @@ class CustomSphere : public WorldFileObstacle {
   public:
     CustomSphere();
     ~CustomSphere();
-    virtual bool read(const char *cmd, std::istream& input);
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
   private:
@@ -54,6 +54,6 @@ class CustomSphere : public WorldFileObstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

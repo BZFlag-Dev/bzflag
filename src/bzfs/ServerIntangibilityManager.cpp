@@ -22,15 +22,13 @@ ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance =
 
 
 void ServerIntangibilityManager::setWorldObjectTangibility(uint32_t objectGUID,
-                                                           unsigned char tangible)
-{
+                                                           unsigned char tangible) {
   tangibilityMap[objectGUID] = tangible;
   sendMsgTangibilityUpdate(objectGUID, tangible);
 }
 
 
-void ServerIntangibilityManager::sendNewPlayerWorldTangibility(int playerID)
-{
+void ServerIntangibilityManager::sendNewPlayerWorldTangibility(int playerID) {
   if (false) {
     // FIXME -- disabled sendNewPlayerWorldTangibility until meshFaces are fixed
     TangibilityMap::iterator itr;
@@ -42,14 +40,13 @@ void ServerIntangibilityManager::sendNewPlayerWorldTangibility(int playerID)
 }
 
 
-unsigned char ServerIntangibilityManager::getWorldObjectTangibility(uint32_t objectGUID)
-{
+unsigned char ServerIntangibilityManager::getWorldObjectTangibility(uint32_t objectGUID) {
   TangibilityMap::iterator itr = tangibilityMap.find(objectGUID);
   if (itr != tangibilityMap.end()) {
     return itr->second;
   }
 
-  const Obstacle *obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
+  const Obstacle* obs = OBSTACLEMGR.getObstacleFromID(objectGUID);
   if (!obs) {
     return _INVALID_TANGIBILITY;
   }
@@ -58,24 +55,24 @@ unsigned char ServerIntangibilityManager::getWorldObjectTangibility(uint32_t obj
 }
 
 
-unsigned char ServerIntangibilityManager::getWorldObjectTangibility(const Obstacle *obs)
-{
-  if (!obs)
+unsigned char ServerIntangibilityManager::getWorldObjectTangibility(const Obstacle* obs) {
+  if (!obs) {
     return _INVALID_TANGIBILITY;
+  }
 
   if (false) {
     // FIXME -- obstacle GUID's are broken, meshFaces are not accounted for
     TangibilityMap::iterator itr = tangibilityMap.find(obs->getGUID());
-    if (itr != tangibilityMap.end())
+    if (itr != tangibilityMap.end()) {
       return itr->second;
+    }
   }
 
   return obs->isDriveThrough() ? _INVALID_TANGIBILITY : 0;
 }
 
 
-void ServerIntangibilityManager::resetTangibility(void)
-{
+void ServerIntangibilityManager::resetTangibility(void) {
   tangibilityMap.clear();
   sendMsgTangibilityReset();
 }
@@ -85,6 +82,6 @@ void ServerIntangibilityManager::resetTangibility(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

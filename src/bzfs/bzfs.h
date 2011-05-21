@@ -51,58 +51,58 @@
 extern const std::string& getPublicOwner();
 extern void setPublicOwner(const std::string& owner);
 
-extern void sendMessage(int	 playerIndex,
-			PlayerId    dstPlayer,
-			const char *message,
-			uint8_t    type = ChatMessage);
-extern void removePlayer(int	 playerIndex,
-			 const char *reason,
-			 bool	notify = true);
-extern void sendPlayerMessage(GameKeeper::Player *playerData,
-			      PlayerId dstPlayer,
-			      const char *message);
+extern void sendMessage(int  playerIndex,
+                        PlayerId    dstPlayer,
+                        const char* message,
+                        uint8_t    type = ChatMessage);
+extern void removePlayer(int   playerIndex,
+                         const char* reason,
+                         bool notify = true);
+extern void sendPlayerMessage(GameKeeper::Player* playerData,
+                              PlayerId dstPlayer,
+                              const char* message);
 
-extern void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, uint8_t type = ChatMessage);
+extern void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char* message, uint8_t type = ChatMessage);
 extern void pausePlayer(int playerIndex, bool paused);
-extern void sendFlagUpdate(FlagInfo &flag);
-extern void dropFlag(FlagInfo &flag);
+extern void sendFlagUpdate(FlagInfo& flag);
+extern void dropFlag(FlagInfo& flag);
 extern void sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void sendPlayerInfo();
 
-extern NetHandler *getPlayerNetHandler(int playerIndex);
+extern NetHandler* getPlayerNetHandler(int playerIndex);
 
 extern int  getCurMaxPlayers();
 extern PingPacket getTeamCounts();
 extern void zapFlagByPlayer(int playerIndex);
-extern void resetFlag(FlagInfo &flag);
+extern void resetFlag(FlagInfo& flag);
 extern void dropFlag(FlagInfo& flag, const fvec3& dropPos);
 extern void publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 extern void checkGameOn();
 extern PlayerId getNewPlayerID();
-extern PlayerId getNewPlayer(NetHandler *netHandler);
+extern PlayerId getNewPlayer(NetHandler* netHandler);
 extern PlayerId getNewBot(PlayerId hostPlayer, int botID);
 extern bool validPlayerCallsign(int playerIndex);
-extern void addPlayer(int playerIndex, GameKeeper::Player *playerData);
+extern void addPlayer(int playerIndex, GameKeeper::Player* playerData);
 extern bool updatePlayerState(GameKeeper::Player* playerData, PlayerState& state, BzTime const& timeStamp, bool shortState);
-extern void rejectPlayer(int playerIndex, uint16_t code, const char *reason);
+extern void rejectPlayer(int playerIndex, uint16_t code, const char* reason);
 extern bool worldStateChanging();
-extern void searchFlag(GameKeeper::Player &playerData);
+extern void searchFlag(GameKeeper::Player& playerData);
 extern void playerAlive(int playerIndex);
 extern int  lookupPlayer(const PlayerId& id);
-extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType *flagType, int phydrv, bool respawnOnBase = false);
-extern void dropPlayerFlag(GameKeeper::Player &playerData, const fvec3& dropPos);
+extern void playerKilled(int victimIndex, int killerIndex, BlowedUpReason reason, int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase = false);
+extern void dropPlayerFlag(GameKeeper::Player& playerData, const fvec3& dropPos);
 extern void captureFlag(int playerIndex, TeamColor teamCaptured);
-extern bool invalidPlayerAction(PlayerInfo &p, int t, const char *action);
+extern bool invalidPlayerAction(PlayerInfo& p, int t, const char* action);
 extern bool allowTeams();
-extern void pauseCountdown(const char *pausedBy);
-extern void resumeCountdown(const char *resumedBy);
+extern void pauseCountdown(const char* pausedBy);
+extern void resumeCountdown(const char* resumedBy);
 extern void resetTeamScores();
-extern void startCountdown(int delay, float limit, const char *buyWho);
+extern void startCountdown(int delay, float limit, const char* buyWho);
 extern bool defineWorld();
 extern bool saveWorldCache(const char* fileName = NULL);
 extern void rescanForBans(const char* callsign = NULL, int playerID = -1);
-extern void zapFlag(FlagInfo &flag);
+extern void zapFlag(FlagInfo& flag);
 extern void anointNewRabbit(int killerId = NoPlayer);
 extern void spawnPlayer(int playerIndex);
 
@@ -110,53 +110,51 @@ extern void lagKick(int playerIndex);
 extern void jitterKick(int playerIndex);
 extern void packetLossKick(int playerIndex);
 
-typedef struct _CheatProtectionOptions
-{
+typedef struct _CheatProtectionOptions {
   bool doHeightChecks;
   bool doSpeedChecks;
-  _CheatProtectionOptions()
-  {
+  _CheatProtectionOptions() {
     doHeightChecks = true;
     doSpeedChecks = true;
   }
 } CheatProtectionOptions;
-extern CheatProtectionOptions	cheatProtectionOptions;
+extern CheatProtectionOptions cheatProtectionOptions;
 
 // initialize permission groups
 extern void initGroups();
 
-extern BasesList	bases;
-extern CmdLineOptions	*clOptions;
-extern uint16_t		curMaxPlayers;
-extern bool		serverDone;
-extern bool		gameOver;
-extern BzTime		gameStartTime;
-extern TeamInfo		teamInfos[NumTeams];
-extern int		numFlags;
-extern bool		countdownActive;
-extern int		countdownDelay;
-extern BzTime	countdownPauseStart;
-extern int		countdownResumeTime;
-extern char		hexDigest[50];
-extern WorldInfo	*world;
-extern char		*worldDatabase;
-extern uint32_t		worldDatabaseSize;
-extern char		worldSettings[WorldSettingsSize];
-extern uint8_t		rabbitIndex;
-extern float		speedTolerance;
-extern bool		handlePings;
-extern uint16_t		maxPlayers;
-extern uint16_t		maxRealPlayers;
-extern float		pluginWorldSize;
-extern float		pluginWorldHeight;
-extern std::map<std::string,float> APIWaitTimes;
-extern bool		isIdentifyFlagIn;
-extern bool		worldWasSentToAPlayer;
-extern RejoinList	rejoinList;
-extern bool		publiclyDisconnected;
-extern VotingArbiter	*votingArbiter;
-extern PingPacket	pingReply;
-extern Address		serverAddress;
+extern BasesList  bases;
+extern CmdLineOptions* clOptions;
+extern uint16_t   curMaxPlayers;
+extern bool   serverDone;
+extern bool   gameOver;
+extern BzTime   gameStartTime;
+extern TeamInfo   teamInfos[NumTeams];
+extern int    numFlags;
+extern bool   countdownActive;
+extern int    countdownDelay;
+extern BzTime countdownPauseStart;
+extern int    countdownResumeTime;
+extern char   hexDigest[50];
+extern WorldInfo*  world;
+extern char*   worldDatabase;
+extern uint32_t   worldDatabaseSize;
+extern char   worldSettings[WorldSettingsSize];
+extern uint8_t    rabbitIndex;
+extern float    speedTolerance;
+extern bool   handlePings;
+extern uint16_t   maxPlayers;
+extern uint16_t   maxRealPlayers;
+extern float    pluginWorldSize;
+extern float    pluginWorldHeight;
+extern std::map<std::string, float> APIWaitTimes;
+extern bool   isIdentifyFlagIn;
+extern bool   worldWasSentToAPlayer;
+extern RejoinList rejoinList;
+extern bool   publiclyDisconnected;
+extern VotingArbiter*  votingArbiter;
+extern PingPacket pingReply;
+extern Address    serverAddress;
 
 // FIXME - this should not be hangin out here
 extern bool dontWait;
@@ -181,7 +179,7 @@ struct NetConnectedPeer {
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;
 
-extern void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
+extern void sendBufferedNetDataForPeer(NetConnectedPeer& peer);
 
 #endif /* __BZFS_H__ */
 
@@ -189,6 +187,6 @@ extern void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

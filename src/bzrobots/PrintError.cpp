@@ -12,7 +12,6 @@
 
 #include "PrintError.h"
 
-void			printError(const std::string &fmt, const std::vector<std::string> *parms)
-{
+void      printError(const std::string& fmt, const std::vector<std::string> *parms) {
 
 }

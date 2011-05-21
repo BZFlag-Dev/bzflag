@@ -32,36 +32,35 @@
 class MeshObstacle;
 
 
-class CustomWeapon : public WorldFileLocation
-{
-public:
-  CustomWeapon(const MeshObstacle* mesh = NULL);
+class CustomWeapon : public WorldFileLocation {
+  public:
+    CustomWeapon(const MeshObstacle* mesh = NULL);
 
-  bool readLine(const std::string& cmd, const std::string& line);
+    bool readLine(const std::string& cmd, const std::string& line);
 
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void writeToWorld(WorldInfo*) const;
-  virtual bool usesGroupDef() { return false; }
+    virtual bool read(const char* cmd, std::istream&);
+    virtual void writeToWorld(WorldInfo*) const;
+    virtual bool usesGroupDef() { return false; }
 
-  static const float minWeaponDelay;
+    static const float minWeaponDelay;
 
-protected:
-  FlagType *type;
+  protected:
+    FlagType* type;
 
-  float initdelay;
-  std::vector<float> delay;
+    float initdelay;
+    std::vector<float> delay;
 
-  float tilt;
-  TeamColor teamColor;
+    float tilt;
+    TeamColor teamColor;
 
-  int eventTeam;
-  bz_eEventType triggerType;
+    int eventTeam;
+    bz_eEventType triggerType;
 
-  static BzTime sync;
+    static BzTime sync;
 
-  const MeshObstacle* mesh;
-  int posVertex;
-  int dirNormal;
+    const MeshObstacle* mesh;
+    int posVertex;
+    int dirNormal;
 };
 
 #endif  /* __CUSTOMWEAPON_H__ */
@@ -70,6 +69,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

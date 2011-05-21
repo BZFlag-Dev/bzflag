@@ -29,16 +29,14 @@
 #include "DirectoryNames.h"
 
 
-static inline char* eatWhite(char* c)
-{
+static inline char* eatWhite(char* c) {
   while ((*c != '\0') && isspace(*c)) {
     c++;
   }
   return c;
 }
 
-static inline char* eatNonWhite(char* c)
-{
+static inline char* eatNonWhite(char* c) {
   while ((*c != '\0') && !isspace(*c)) {
     c++;
   }
@@ -46,8 +44,7 @@ static inline char* eatNonWhite(char* c)
 }
 
 
-AccessList::AccessList(const std::string& _filename, const char* content)
-{
+AccessList::AccessList(const std::string& _filename, const char* content) {
   filename = getConfigDirName();
   filename += _filename;
 
@@ -63,20 +60,17 @@ AccessList::AccessList(const std::string& _filename, const char* content)
 }
 
 
-AccessList::~AccessList()
-{
+AccessList::~AccessList() {
   return;
 }
 
 
-const std::string& AccessList::getFileName() const
-{
+const std::string& AccessList::getFileName() const {
   return filename;
 }
 
 
-bool AccessList::reload()
-{
+bool AccessList::reload() {
   patterns.clear();
   alwaysAuth = false;
 
@@ -86,7 +80,7 @@ bool AccessList::reload()
   }
 
   char buf[256];
-  while (fgets (buf, 256, file) != NULL) {
+  while (fgets(buf, 256, file) != NULL) {
 
     char* c = eatWhite(buf);
 
@@ -94,7 +88,7 @@ bool AccessList::reload()
     char* tmp = c;
     while (*tmp != '\0') {
       if ((*tmp == '\r') || (*tmp == '\n')) {
-	*tmp = '\0';
+        *tmp = '\0';
       }
       tmp++;
     }
@@ -123,14 +117,14 @@ bool AccessList::reload()
       c = c + 4;
     }
     else {
-      logDebugMessage(1,"%s: malformed line (%s)\n", filename.c_str(), buf);
+      logDebugMessage(1, "%s: malformed line (%s)\n", filename.c_str(), buf);
       continue; // ignore this line
     }
 
     c = eatWhite(c);
 
     if (*c == '\0') {
-      logDebugMessage(1,"%s: missing pattern (%s)\n", filename.c_str(), buf);
+      logDebugMessage(1, "%s: missing pattern (%s)\n", filename.c_str(), buf);
       continue; // ignore this line
     }
 
@@ -143,7 +137,7 @@ bool AccessList::reload()
     pattern.pattern = c;
     patterns.push_back(pattern);
 
-    logDebugMessage(4,"AccessList(%s):  added  (%i: %s)\n", filename.c_str(), type, c);
+    logDebugMessage(4, "AccessList(%s):  added  (%i: %s)\n", filename.c_str(), type, c);
   }
 
   fclose(file);
@@ -154,8 +148,7 @@ bool AccessList::reload()
 }
 
 
-bool AccessList::computeAlwaysAuth() const
-{
+bool AccessList::computeAlwaysAuth() const {
   for (unsigned int i = 0; i < patterns.size(); i++) {
     const AccessPattern& p = patterns[i];
     if ((p.type == deny) || (p.type == deny_regex)) {
@@ -172,39 +165,39 @@ bool AccessList::computeAlwaysAuth() const
 }
 
 
-bool AccessList::authorized(const std::vector<std::string>& strings) const
-{
+bool AccessList::authorized(const std::vector<std::string>& strings) const {
   for (unsigned int i = 0; i < patterns.size(); i++) {
     const AccessPattern& p = patterns[i];
     if ((p.type == allow) || (p.type == deny)) {
       // simple globbing
       for (unsigned int s = 0; s < strings.size(); s++) {
-	const std::string upperString = TextUtils::toupper(strings[s]);
-	const std::string upperPattern = TextUtils::toupper(p.pattern);
-	if (glob_match(upperPattern, upperString)) {
-	  if (p.type == allow) {
-	    return true;
-	  }
-	  else if (p.type == deny) {
-	    return false;
-	  }
-	}
+        const std::string upperString = TextUtils::toupper(strings[s]);
+        const std::string upperPattern = TextUtils::toupper(p.pattern);
+        if (glob_match(upperPattern, upperString)) {
+          if (p.type == allow) {
+            return true;
+          }
+          else if (p.type == deny) {
+            return false;
+          }
+        }
       }
-    } else {
+    }
+    else {
       // regular expression
       regex_t re;
       if (regcomp(&re, p.pattern.c_str(), REG_EXTENDED | REG_ICASE) != 0) {
-	continue;
+        continue;
       }
       for (unsigned int s = 0; s < strings.size(); s++) {
-	if (regexec(&re, strings[s].c_str(), 0, NULL, 0) == 0) {
-	  if (p.type == allow_regex) {
-	    return true;
-	  }
-	  else if (p.type == deny_regex) {
-	    return false;
-	  }
-	}
+        if (regexec(&re, strings[s].c_str(), 0, NULL, 0) == 0) {
+          if (p.type == allow_regex) {
+            return true;
+          }
+          else if (p.type == deny_regex) {
+            return false;
+          }
+        }
       }
       regfree(&re);
     }
@@ -214,8 +207,7 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
 }
 
 
-void AccessList::makeContent(const char* content) const
-{
+void AccessList::makeContent(const char* content) const {
   FILE* file = fopen(filename.c_str(), "w");
   if (file == NULL) {
     return;
@@ -230,6 +222,6 @@ void AccessList::makeContent(const char* content) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

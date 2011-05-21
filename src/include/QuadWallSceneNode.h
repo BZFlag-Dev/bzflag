@@ -11,11 +11,11 @@
  */
 
 /* QuadWallSceneNode:
- *	Encapsulates information for rendering a quadrilateral wall.
+ *  Encapsulates information for rendering a quadrilateral wall.
  */
 
-#ifndef	BZF_QUAD_WALL_SCENE_NODE_H
-#define	BZF_QUAD_WALL_SCENE_NODE_H
+#ifndef BZF_QUAD_WALL_SCENE_NODE_H
+#define BZF_QUAD_WALL_SCENE_NODE_H
 
 #include "common.h"
 #include "vectors.h"
@@ -38,26 +38,26 @@ class QuadWallSceneNode : public WallSceneNode {
                       bool makeLODs);
     ~QuadWallSceneNode();
 
-    int			split(const fvec4&, SceneNode*&, SceneNode*&) const;
+    int     split(const fvec4&, SceneNode*&, SceneNode*&) const;
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
-    void		renderRadar();
+    void    addRenderNodes(SceneRenderer&);
+    void    addShadowNodes(SceneRenderer&);
+    void    renderRadar();
 
 
-    bool		inAxisBox (const Extents& exts) const;
+    bool    inAxisBox(const Extents& exts) const;
 
-    int			getVertexCount () const;
-    const		fvec3& getVertex (int vertex) const;
+    int     getVertexCount() const;
+    const   fvec3& getVertex(int vertex) const;
 
-    virtual void	getRenderNodes(std::vector<RenderSet>& rnodes);
+    virtual void  getRenderNodes(std::vector<RenderSet>& rnodes);
 
   private:
-    void		init(const fvec3& base,
-                             const fvec3& uEdge, const fvec3& vEdge,
-                             float uOffset, float vOffset,
-                             float uRepeats, float vRepeats,
-                             bool makeLODs, bool fixedUVs);
+    void    init(const fvec3& base,
+                 const fvec3& uEdge, const fvec3& vEdge,
+                 float uOffset, float vOffset,
+                 float uRepeats, float vRepeats,
+                 bool makeLODs, bool fixedUVs);
 
   protected:
     class Geometry : public RenderNode {
@@ -67,29 +67,29 @@ class QuadWallSceneNode : public WallSceneNode {
                  const float* normal, float uOffset, float vOffset,
                  float uRepeats, float vRepeats, bool fixedUVs);
         ~Geometry();
-	void		setStyle(int _style) { style = _style; }
-	void		render();
-	void		renderShadow();
-	const fvec3&	getVertex(int i) const;
-	const fvec3&	getPosition() const { return wall->getCenter(); }
+        void    setStyle(int _style) { style = _style; }
+        void    render();
+        void    renderShadow();
+        const fvec3&  getVertex(int i) const;
+        const fvec3&  getPosition() const { return wall->getCenter(); }
       private:
-	void		drawV() const;
-	void		drawVT() const;
+        void    drawV() const;
+        void    drawVT() const;
       private:
-	WallSceneNode*	wall;
-	int		style;
-	int		ds, dt;
-	int		dsq, dsr;
-	const float*	normal;
+        WallSceneNode*  wall;
+        int   style;
+        int   ds, dt;
+        int   dsq, dsr;
+        const float*  normal;
       public:
-	fvec3Array	vertex;
-	fvec2Array	uv;
-	int		triangles;
+        fvec3Array  vertex;
+        fvec2Array  uv;
+        int   triangles;
     };
 
   private:
-    Geometry**		nodes;
-    Geometry*		shadowNode;
+    Geometry**    nodes;
+    Geometry*   shadowNode;
 };
 
 #endif // BZF_QUAD_WALL_SCENE_NODE_H
@@ -98,6 +98,6 @@ class QuadWallSceneNode : public WallSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

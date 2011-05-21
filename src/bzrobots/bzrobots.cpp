@@ -84,14 +84,14 @@
 
 int beginendCount = 0;
 
-const char*		argv0;
-static bool		anonymous = false;
-static std::string	anonymousName("anonymous");
-std::string		alternateConfig;
-static bool		noAudio = false;
-struct tm		userTime;
-bool			echoToConsole = false;
-bool			echoAnsi = false;
+const char*   argv0;
+static bool   anonymous = false;
+static std::string  anonymousName("anonymous");
+std::string   alternateConfig;
+static bool   noAudio = false;
+struct tm   userTime;
+bool      echoToConsole = false;
+bool      echoAnsi = false;
 
 // Function in botplaying.cpp:
 void botStartPlaying();
@@ -106,222 +106,251 @@ int numRobotTanks = 1;
 //
 
 // so that Windows can kill the wsa stuff if needed
-int bail ( int returnCode )
-{
+int bail(int returnCode) {
 #ifdef _WIN32
   WSACleanup();
 #endif
   return returnCode;
 }
 
-static void		setTeamColor(TeamColor team, const std::string& str)
-{
+static void   setTeamColor(TeamColor team, const std::string& str) {
   fvec4 color;
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, color, Team::getRadarColor(team));
 }
 
-static void		setRadarColor(TeamColor team, const std::string& str)
-{
+static void   setRadarColor(TeamColor team, const std::string& str) {
   fvec4 color;
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, Team::getTankColor(team), color);
 }
 
-static void		usage()
-{
+static void   usage() {
   printFatalError("usage: %s"
-		  " [-anonymous]"
-		  " [-badwords <filterfile>]"
-		  " [-config <configfile>]"
-		  " [-configdir <config dir name>]"
-		  " [-d | -debug]"
-		  " [{-dir | -directory} <data-directory>]"
-		  " [-e | -echo]"
-		  " [-ea | -echoAnsi]"
-		  " [-h | -help | --help]"
-		  " [-locale <locale>]"
-		  " [-m | -mute]"
-		  " [-motd <motd-url>] [-nomotd]"
-		  " [-team {red|green|blue|purple|rogue|observer}]"
-		  " [-v | -version | --version]"
-		  " [callsign[:password]@]server[:port] scriptfile\n\nExiting.", argv0);
+                  " [-anonymous]"
+                  " [-badwords <filterfile>]"
+                  " [-config <configfile>]"
+                  " [-configdir <config dir name>]"
+                  " [-d | -debug]"
+                  " [{-dir | -directory} <data-directory>]"
+                  " [-e | -echo]"
+                  " [-ea | -echoAnsi]"
+                  " [-h | -help | --help]"
+                  " [-locale <locale>]"
+                  " [-m | -mute]"
+                  " [-motd <motd-url>] [-nomotd]"
+                  " [-team {red|green|blue|purple|rogue|observer}]"
+                  " [-v | -version | --version]"
+                  " [callsign[:password]@]server[:port] scriptfile\n\nExiting.", argv0);
   exit(1);
 }
 
-static void checkArgc(int& i, int argc, const char* option, const char *type = "Missing")
-{
-  if ((i+1) == argc) {
+static void checkArgc(int& i, int argc, const char* option, const char* type = "Missing") {
+  if ((i + 1) == argc) {
     printFatalError("%s argument for %s\n", type, option);
     usage();
   }
   i++; // just skip the option argument string
 }
 
-static void		parse(int argc, char** argv)
-{
+static void   parse(int argc, char** argv) {
   // = 9;
   // Defaults
   startupInfo.team = AutomaticTeam;
   strncpy(startupInfo.serverName, "localhost", \
-	  sizeof(startupInfo.serverName) - 1);
+          sizeof(startupInfo.serverName) - 1);
   startupInfo.serverPort = 5154;
   strncpy(startupInfo.callsign, "anonymouscoward", \
-	  sizeof(startupInfo.callsign) - 1);
+          sizeof(startupInfo.callsign) - 1);
 
 
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-a") == 0 ||
         strcmp(argv[i], "-anonymous") == 0) {
       anonymous = true;
-    } else if (strcmp(argv[i], "-config") == 0) {
+    }
+    else if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-    } else if (strcmp(argv[i], "-configdir") == 0) {
+    }
+    else if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
-    } else if ((strcmp(argv[i], "-d") == 0) ||
-	       (strcmp(argv[i], "-debug") == 0)) {
+    }
+    else if ((strcmp(argv[i], "-d") == 0) ||
+             (strcmp(argv[i], "-debug") == 0)) {
       debugLevel++;
-    } else if ((strcmp(argv[i], "-dir") == 0) ||
-	       (strcmp(argv[i], "-directory") == 0)) {
+    }
+    else if ((strcmp(argv[i], "-dir") == 0) ||
+             (strcmp(argv[i], "-directory") == 0)) {
       checkArgc(i, argc, argv[i]);
-      if (strlen(argv[i]) == 0)
+      if (strlen(argv[i]) == 0) {
         BZDB.unset("directory");
-      else
+      }
+      else {
         BZDB.set("directory", argv[i]);
-    } else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
+      }
+    }
+    else if (strcmp(argv[i], "-e") == 0 || strcmp(argv[i], "-echo") == 0) {
       echoToConsole = true;
-    } else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
+    }
+    else if (strcmp(argv[i], "-ea") == 0 || strcmp(argv[i], "-echoAnsi") == 0) {
       echoToConsole = true;
       echoAnsi = true;
-    } else if (strcmp(argv[i], "-h") == 0 ||
-	       strcmp(argv[i], "-help") == 0 ||
-	       strcmp(argv[i], "--help") == 0) {
+    }
+    else if (strcmp(argv[i], "-h") == 0 ||
+             strcmp(argv[i], "-help") == 0 ||
+             strcmp(argv[i], "--help") == 0) {
       usage();
-    } else if (strcmp(argv[i], "-locale") == 0) {
+    }
+    else if (strcmp(argv[i], "-locale") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("locale", argv[i]);
-    } else if (strcmp(argv[i], "-motd") == 0) {
+    }
+    else if (strcmp(argv[i], "-motd") == 0) {
       checkArgc(i, argc, argv[i]);
       if (strcmp(argv[i], "default") == 0) {
         BZDB.set("motdServer", BZDB.getDefault("motdServer"));
-      } else {
+      }
+      else {
         BZDB.set("motdServer", argv[i]);
       }
       BZDB.unset("disableMOTD");
-    } else if (strcmp(argv[i], "-nomotd") == 0) {
+    }
+    else if (strcmp(argv[i], "-nomotd") == 0) {
       BZDB.set("disableMOTD", "1");
-    } else if (strcmp(argv[i], "-m") == 0 ||
-	       strcmp(argv[i], "-mute") == 0) {
+    }
+    else if (strcmp(argv[i], "-m") == 0 ||
+             strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
-    } else if (strcmp(argv[i], "-posnoise") == 0) {
+    }
+    else if (strcmp(argv[i], "-posnoise") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("bzrcPosNoise", argv[i]);
-    } else if (strcmp(argv[i], "-angnoise") == 0) {
+    }
+    else if (strcmp(argv[i], "-angnoise") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("bzrcAngNoise", argv[i]);
-    } else if (strcmp(argv[i], "-velnoise") == 0) {
+    }
+    else if (strcmp(argv[i], "-velnoise") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("bzrcVelNoise", argv[i]);
-    } else if (strcmp(argv[i], "-team") == 0) {
+    }
+    else if (strcmp(argv[i], "-team") == 0) {
       checkArgc(i, argc, argv[i]);
       if ((strcmp(argv[i], "a") == 0) ||
           (strcmp(argv[i], "auto") == 0) ||
           (strcmp(argv[i], "automatic") == 0)) {
         startupInfo.team = AutomaticTeam;
-      }	else if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0) {
+      }
+      else if (strcmp(argv[i], "r") == 0 || strcmp(argv[i], "red") == 0) {
         startupInfo.team = RedTeam;
-      } else if (strcmp(argv[i], "g") == 0 || strcmp(argv[i], "green") == 0) {
+      }
+      else if (strcmp(argv[i], "g") == 0 || strcmp(argv[i], "green") == 0) {
         startupInfo.team = GreenTeam;
-      } else if (strcmp(argv[i], "b") == 0 || strcmp(argv[i], "blue") == 0) {
+      }
+      else if (strcmp(argv[i], "b") == 0 || strcmp(argv[i], "blue") == 0) {
         startupInfo.team = BlueTeam;
-      } else if (strcmp(argv[i], "p") == 0 || strcmp(argv[i], "purple") == 0) {
+      }
+      else if (strcmp(argv[i], "p") == 0 || strcmp(argv[i], "purple") == 0) {
         startupInfo.team = PurpleTeam;
-      } else if (strcmp(argv[i], "z") == 0 || strcmp(argv[i], "rogue") == 0) {
+      }
+      else if (strcmp(argv[i], "z") == 0 || strcmp(argv[i], "rogue") == 0) {
         startupInfo.team = RogueTeam;
-      } else if (strcmp(argv[i], "o") == 0 || strcmp(argv[i], "observer") == 0) {
+      }
+      else if (strcmp(argv[i], "o") == 0 || strcmp(argv[i], "observer") == 0) {
         startupInfo.team = ObserverTeam;
-      } else {
-        printFatalError("Invalid argument for %s.", argv[i-1]);
+      }
+      else {
+        printFatalError("Invalid argument for %s.", argv[i - 1]);
         usage();
       }
-    } else if (strcmp(argv[i], "-v") == 0 ||
-	       strcmp(argv[i], "-version") == 0 ||
-	       strcmp(argv[i], "--version") == 0) {
+    }
+    else if (strcmp(argv[i], "-v") == 0 ||
+             strcmp(argv[i], "-version") == 0 ||
+             strcmp(argv[i], "--version") == 0) {
       printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
-		      getAppVersion(),
-		      getProtocolVersion(),
-		      bzfcopyright);
+                      getAppVersion(),
+                      getProtocolVersion(),
+                      bzfcopyright);
       bail(0);
       exit(0);
-    } else if (strncmp(argv[i], "-psn", 4) == 0) {
+    }
+    else if (strncmp(argv[i], "-psn", 4) == 0) {
       std::vector<std::string> args;
       args.push_back(argv[i]);
       printError("Ignoring Finder argument \"{1}\"", &args);
       // ignore process serial number argument (-psn_x_xxxx for MacOS X
-    } else if (strcmp(argv[i], "-badwords") == 0) {
+    }
+    else if (strcmp(argv[i], "-badwords") == 0) {
       checkArgc(i, argc, argv[i], "Missing bad word filter file");
       BZDB.set("filterFilename", argv[i], StateDatabase::ReadOnly);
-    } else if (argv[i][0] != '-') {
+    }
+    else if (argv[i][0] != '-') {
       if (i == argc - 2) {
-		// find the beginning of the server name, parse the callsign
-		char *serverName;
-		if ((serverName = strchr(argv[i], '@')) != NULL) {
-		  char *password;
-		  *serverName = '\0';
-		  if (strlen(argv[i]) >= sizeof(startupInfo.callsign))
-			printFatalError("Callsign truncated.");
-		  strncpy(startupInfo.callsign, argv[i],
-			  sizeof(startupInfo.callsign) - 1);
-		  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-		  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
-			*(strchr(startupInfo.callsign, ':')) = '\0';
-			*password = '\0', ++password;
-			if (strlen(argv[i]) >= sizeof(startupInfo.password))
-			  printFatalError("Password truncated.");
-			strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
-			startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-		  }
-		  ++serverName;
-		} else {
-		  serverName = argv[i];
-		}
+        // find the beginning of the server name, parse the callsign
+        char* serverName;
+        if ((serverName = strchr(argv[i], '@')) != NULL) {
+          char* password;
+          *serverName = '\0';
+          if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
+            printFatalError("Callsign truncated.");
+          }
+          strncpy(startupInfo.callsign, argv[i],
+                  sizeof(startupInfo.callsign) - 1);
+          startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+          if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
+            *(strchr(startupInfo.callsign, ':')) = '\0';
+            *password = '\0', ++password;
+            if (strlen(argv[i]) >= sizeof(startupInfo.password)) {
+              printFatalError("Password truncated.");
+            }
+            strncpy(startupInfo.password, password, sizeof(startupInfo.password) - 1);
+            startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+          }
+          ++serverName;
+        }
+        else {
+          serverName = argv[i];
+        }
 
-		// find the beginning of the port number, parse it
-		char *portNumber;
-		if ((portNumber = strchr(serverName, ':')) != NULL) {
-		  *portNumber = '\0';
-		  ++portNumber;
-		  startupInfo.serverPort = atoi(portNumber);
-		  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-			startupInfo.serverPort = ServerPort;
-			printFatalError("Bad port, using default %d.",
-					startupInfo.serverPort);
-		  }
-		}
-		if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
-		  printFatalError("Server name too long.  Ignoring.");
-		} else {
-		  strncpy(startupInfo.serverName, serverName, ServerNameLen-1);
-		  startupInfo.autoConnect = true;
-		}
-      } else if (i == argc - 1) {
+        // find the beginning of the port number, parse it
+        char* portNumber;
+        if ((portNumber = strchr(serverName, ':')) != NULL) {
+          *portNumber = '\0';
+          ++portNumber;
+          startupInfo.serverPort = atoi(portNumber);
+          if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
+            startupInfo.serverPort = ServerPort;
+            printFatalError("Bad port, using default %d.",
+                            startupInfo.serverPort);
+          }
+        }
+        if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
+          printFatalError("Server name too long.  Ignoring.");
+        }
+        else {
+          strncpy(startupInfo.serverName, serverName, ServerNameLen - 1);
+          startupInfo.autoConnect = true;
+        }
+      }
+      else if (i == argc - 1) {
         BZDB.set("robotScript", argv[i]);
-      } else {
+      }
+      else {
         printFatalError("Unexpected: %s. Server & scriptname must go after all options.", argv[i]);
       }
-    } else {
+    }
+    else {
       printFatalError("Unknown option %s.", argv[i]);
       usage();
     }
   }
 }
 
-static void		parseConfigName(int argc, char** argv)
-{
+static void   parseConfigName(int argc, char** argv) {
   for (int i = 1; i < argc; i++) {
     if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
@@ -339,11 +368,10 @@ static void		parseConfigName(int argc, char** argv)
 }
 
 
-static void createCacheSignature ()
-{
+static void createCacheSignature() {
   // This file is to be used by archiving and mirroring tools avoid
   // this directory (and any of its sub-directories). Please see:
-  //	 < http://www.brynosaurus.com/cachedir/ >
+  //   < http://www.brynosaurus.com/cachedir/ >
 
   const char cacheSignature[] = "Signature: 8a477f597d28d172789f06886806bc55\n";
   const char cacheComment[] =
@@ -362,21 +390,19 @@ static void createCacheSignature ()
   return;
 }
 
-bool checkTimeBomb ( void )
-{
+bool checkTimeBomb(void) {
   // check time bomb
   if (timeBombBoom()) {
     printFatalError("This release expired on %s. \n"
-		    "Please upgrade to the latest release. \n"
-		    "Exiting.", timeBombString());
+                    "Please upgrade to the latest release. \n"
+                    "Exiting.", timeBombString());
     bail(0);
     return true;
   }
   return false;
 }
 
-void setupBZDB ( void )
-{
+void setupBZDB(void) {
   // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
     assert(globalDBItems[gi].name != NULL);
@@ -391,8 +417,7 @@ void setupBZDB ( void )
   BZDBCache::init();
 }
 
-void setupConfigs ( void )
-{
+void setupConfigs(void) {
   // read resources
   if (alternateConfig != "") {
     if (CFGMGR.read(alternateConfig)) {
@@ -408,10 +433,12 @@ void setupConfigs ( void )
     }
   }
 
-  if (startupInfo.hasConfiguration)
+  if (startupInfo.hasConfiguration) {
     ActionBinding::instance().getFromBindings();
-  else
-    ActionBinding::instance().resetBindings();    // bind default keys
+  }
+  else {
+    ActionBinding::instance().resetBindings();  // bind default keys
+  }
 
   ServerListCache::get()->loadCache();
 
@@ -419,12 +446,12 @@ void setupConfigs ( void )
   if (startupInfo.hasConfiguration) {
     if (BZDB.isSet("callsign")) {
       strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
-	      sizeof(startupInfo.callsign) - 1);
+              sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
     if (BZDB.isSet("password")) {
       strncpy(startupInfo.password, BZDB.get("password").c_str(),
-	      sizeof(startupInfo.password) - 1);
+              sizeof(startupInfo.password) - 1);
       startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
     }
 
@@ -434,7 +461,7 @@ void setupConfigs ( void )
     }
     if (BZDB.isSet("server")) {
       strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
-	      sizeof(startupInfo.serverName) - 1);
+              sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
     }
     if (BZDB.isSet("port")) {
@@ -442,28 +469,38 @@ void setupConfigs ( void )
     }
 
     // check for reassigned team colors
-    if (BZDB.isSet("roguecolor"))
+    if (BZDB.isSet("roguecolor")) {
       setTeamColor(RogueTeam, BZDB.get("roguecolor"));
-    if (BZDB.isSet("redcolor"))
+    }
+    if (BZDB.isSet("redcolor")) {
       setTeamColor(RedTeam, BZDB.get("redcolor"));
-    if (BZDB.isSet("greencolor"))
+    }
+    if (BZDB.isSet("greencolor")) {
       setTeamColor(GreenTeam, BZDB.get("greencolor"));
-    if (BZDB.isSet("bluecolor"))
+    }
+    if (BZDB.isSet("bluecolor")) {
       setTeamColor(BlueTeam, BZDB.get("bluecolor"));
-    if (BZDB.isSet("purplecolor"))
+    }
+    if (BZDB.isSet("purplecolor")) {
       setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
+    }
 
     // check for reassigned radar colors
-    if (BZDB.isSet("rogueradar"))
+    if (BZDB.isSet("rogueradar")) {
       setRadarColor(RogueTeam, BZDB.get("rogueradar"));
-    if (BZDB.isSet("redradar"))
+    }
+    if (BZDB.isSet("redradar")) {
       setRadarColor(RedTeam, BZDB.get("redradar"));
-    if (BZDB.isSet("greenradar"))
+    }
+    if (BZDB.isSet("greenradar")) {
       setRadarColor(GreenTeam, BZDB.get("greenradar"));
-    if (BZDB.isSet("blueradar"))
+    }
+    if (BZDB.isSet("blueradar")) {
       setRadarColor(BlueTeam, BZDB.get("blueradar"));
-    if (BZDB.isSet("purpleradar"))
+    }
+    if (BZDB.isSet("purpleradar")) {
       setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
+    }
 
     // ignore window name in config file (it's used internally)
     BZDB.unset("_window");
@@ -471,19 +508,19 @@ void setupConfigs ( void )
 
     // however, if the "__window" setting is enabled, let it through
     if (BZDB.isSet("__window"))
-      if (BZDB.isTrue("__window"))
+      if (BZDB.isTrue("__window")) {
         BZDB.set("_window", "1");
+      }
   }
 }
 
 
 //
 // main()
-//	initialize application and enter event loop
+//  initialize application and enter event loop
 //
 
-int main(int argc, char **argv)
-{
+int main(int argc, char** argv) {
 #ifdef _WIN32
   // startup winsock
   static const int major = 2, minor = 2;
@@ -495,10 +532,10 @@ int main(int argc, char **argv)
   if (LOBYTE(wsaData.wVersion) != major ||
       HIBYTE(wsaData.wVersion) != minor) {
     printFatalError("Version mismatch in winsock;"
-		    "  got %d.%d, expected %d.%d.  Terminating.\n",
-		    (int)LOBYTE(wsaData.wVersion),
-		    (int)HIBYTE(wsaData.wVersion),
-		    major, minor);
+                    "  got %d.%d, expected %d.%d.  Terminating.\n",
+                    (int)LOBYTE(wsaData.wVersion),
+                    (int)HIBYTE(wsaData.wVersion),
+                    major, minor);
     return bail(1);
   }
 #endif
@@ -509,8 +546,9 @@ int main(int argc, char **argv)
 
   //init_packetcompression();
 
-  if (checkTimeBomb())
+  if (checkTimeBomb()) {
     return 0;
+  }
 
   createCacheSignature();
 
@@ -531,12 +569,13 @@ int main(int argc, char **argv)
   if (getenv("BZFLAGID")) {
     BZDB.set("callsign", getenv("BZFLAGID"));
     strncpy(startupInfo.callsign, getenv("BZFLAGID"),
-	    sizeof(startupInfo.callsign) - 1);
+            sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  } else if (getenv("BZID")) {
+  }
+  else if (getenv("BZID")) {
     BZDB.set("callsign", getenv("BZID"));
     strncpy(startupInfo.callsign, getenv("BZID"),
-	    sizeof(startupInfo.callsign) - 1);
+            sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   }
   time_t timeNow;
@@ -565,8 +604,9 @@ int main(int argc, char **argv)
     BZDB.set("directory", directory);
   }
 
-  if (debugLevel >= 4)
+  if (debugLevel >= 4) {
     BZDB.setDebug(true);
+  }
 
   // see if there is a _default_ badwords file
   if (!BZDB.isSet("filterFilename")) {
@@ -597,12 +637,13 @@ int main(int argc, char **argv)
       std::cout << "Loading " << filterFilename << std::endl;
       unsigned int count = wordFilter->loadFromFile(filterFilename, true);
       std::cout << "Loaded " << count << " words" << std::endl;
-    } else {
+    }
+    else {
       std::cerr << "WARNING: A proper file name was not given for the -badwords argument" << std::endl;
     }
   }
 
-  BundleMgr *bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzrobots");
+  BundleMgr* bm = new BundleMgr(PlatformFactory::getMedia()->getMediaDirectory(), "bzrobots");
   World::setBundleMgr(bm);
 
   std::string locale = BZDB.isSet("locale") ? BZDB.get("locale") : "default";
@@ -617,8 +658,9 @@ int main(int argc, char **argv)
   botStartPlaying();
 
   // shut down
-  if (wordFilter != NULL)
+  if (wordFilter != NULL) {
     delete wordFilter;
+  }
   wordFilter = NULL;
   Flags::kill();
 
@@ -641,6 +683,6 @@ int main(int argc, char **argv)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

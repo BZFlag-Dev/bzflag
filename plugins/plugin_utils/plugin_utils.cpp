@@ -17,8 +17,7 @@
 #include "base64.h"
 
 
-std::string base64_encode(const std::string &text)
-{
+std::string base64_encode(const std::string& text) {
   // convert to base64
   std::string dest;
 
@@ -27,229 +26,228 @@ std::string base64_encode(const std::string &text)
   return dest;
 }
 
-std::string base64_decode(const std::string &text)
-{
+std::string base64_decode(const std::string& text) {
   // convert back to binary
   std::string dest;
 
-  base64::decode(text.begin(), text.end(),std::back_inserter(dest));
+  base64::decode(text.begin(), text.end(), std::back_inserter(dest));
   return dest;
 }
 
-const char* bzu_GetTeamName(bz_eTeamType team)
-{
+const char* bzu_GetTeamName(bz_eTeamType team) {
   switch (team) {
 
-  case eRedTeam:
-    return "Red";
+    case eRedTeam:
+      return "Red";
 
-  case eGreenTeam:
-    return "Green";
+    case eGreenTeam:
+      return "Green";
 
-  case eBlueTeam:
-    return "Blue";
+    case eBlueTeam:
+      return "Blue";
 
-  case ePurpleTeam:
-    return "Purple";
+    case ePurpleTeam:
+      return "Purple";
 
-  case eRogueTeam:
-    return "Rogue";
+    case eRogueTeam:
+      return "Rogue";
 
-  case eObservers:
-    return "Observer";
+    case eObservers:
+      return "Observer";
 
-  case eRabbitTeam:
-    return "Rabbit";
+    case eRabbitTeam:
+      return "Rabbit";
 
-  case eHunterTeam:
-    return "Hunter";
+    case eHunterTeam:
+      return "Hunter";
 
-  default:
-    break;
+    default:
+      break;
   }
 
   return "Unknown";
 }
 
-std::string printTime(bz_Time *ts, const char* _timezone)
-{
+std::string printTime(bz_Time* ts, const char* _timezone) {
   std::string time;
-  appendTime(time,ts,_timezone);
+  appendTime(time, ts, _timezone);
   return time;
 }
 
 //Date: Mon, 23 Jun 2008 17:50:22 GMT
 
-void appendTime(std::string & text, bz_Time *ts, const char* _timezone)
-{
-  switch(ts->dayofweek) {
-  case 1:
-    text += "Mon";
-    break;
-  case 2:
-    text += "Tue";
-    break;
-  case 3:
-    text += "Wed";
-    break;
-  case 4:
-    text += "Thu";
-    break;
-  case 5:
-    text += "Fri";
-    break;
-  case 6:
-    text += "Sat";
-    break;
-  case 0:
-    text += "Sun";
-    break;
+void appendTime(std::string& text, bz_Time* ts, const char* _timezone) {
+  switch (ts->dayofweek) {
+    case 1:
+      text += "Mon";
+      break;
+    case 2:
+      text += "Tue";
+      break;
+    case 3:
+      text += "Wed";
+      break;
+    case 4:
+      text += "Thu";
+      break;
+    case 5:
+      text += "Fri";
+      break;
+    case 6:
+      text += "Sat";
+      break;
+    case 0:
+      text += "Sun";
+      break;
   }
 
-  text += format(", %d ",ts->day);
+  text += format(", %d ", ts->day);
 
-  switch(ts->month) {
-  case 0:
-    text += "Jan";
-    break;
-  case 1:
-    text += "Feb";
-    break;
-  case 2:
-    text += "Mar";
-    break;
-  case 3:
-    text += "Apr";
-    break;
-  case 4:
-    text += "May";
-    break;
-  case 5:
-    text += "Jun";
-    break;
-  case 6:
-    text += "Jul";
-    break;
-  case 7:
-    text += "Aug";
-    break;
-  case 8:
-    text += "Sep";
-    break;
-  case 9:
-    text += "Oct";
-    break;
-  case 10:
-    text += "Nov";
-    break;
-  case 11:
-    text += "Dec";
-    break;
+  switch (ts->month) {
+    case 0:
+      text += "Jan";
+      break;
+    case 1:
+      text += "Feb";
+      break;
+    case 2:
+      text += "Mar";
+      break;
+    case 3:
+      text += "Apr";
+      break;
+    case 4:
+      text += "May";
+      break;
+    case 5:
+      text += "Jun";
+      break;
+    case 6:
+      text += "Jul";
+      break;
+    case 7:
+      text += "Aug";
+      break;
+    case 8:
+      text += "Sep";
+      break;
+    case 9:
+      text += "Oct";
+      break;
+    case 10:
+      text += "Nov";
+      break;
+    case 11:
+      text += "Dec";
+      break;
   }
 
-  text += format(" %d %d:%d:%d ",ts->year,ts->hour,ts->minute,ts->second);
-  if (_timezone)
+  text += format(" %d %d:%d:%d ", ts->year, ts->hour, ts->minute, ts->second);
+  if (_timezone) {
     text += _timezone;
-  else
+  }
+  else {
     text += "GMT";
+  }
 }
 
-std::string no_whitespace(const std::string &s)
-{
+std::string no_whitespace(const std::string& s) {
   const int sourcesize = (int)s.size();
 
   int count = 0, i = 0, j = 0;
   for (i = 0; i < sourcesize; i++)
-    if (!isWhitespace(s[i]))
+    if (!isWhitespace(s[i])) {
       count++;
+    }
 
   // create result string of correct size
   std::string result(count, ' ');
 
   for (i = 0, j = 0; i < sourcesize; i++)
-    if (!isWhitespace(s[i]))
+    if (!isWhitespace(s[i])) {
       result[j++] = s[i];
+    }
 
   return result;
 }
 
-const std::string& tolower(const std::string& s, std::string& dest)
-{
-  for (std::string::const_iterator i=s.begin(), end=s.end(); i!=end; ++i)
+const std::string& tolower(const std::string& s, std::string& dest) {
+  for (std::string::const_iterator i = s.begin(), end = s.end(); i != end; ++i) {
     dest += ::tolower(*i);
+  }
 
   return dest;
 }
 
-const std::string& toupper(const std::string& s, std::string& dest)
-{
-  for (std::string::const_iterator i=s.begin(), end=s.end(); i!=end; ++i)
+const std::string& toupper(const std::string& s, std::string& dest) {
+  for (std::string::const_iterator i = s.begin(), end = s.end(); i != end; ++i) {
     dest += ::toupper(*i);
+  }
 
   return dest;
 }
 
-const std::string& tolower(const char* s, std::string& dest)
-{
-  if (!s)
+const std::string& tolower(const char* s, std::string& dest) {
+  if (!s) {
     return dest;
+  }
 
-  for (size_t i =0,end = strlen(s); i < end; i++)
+  for (size_t i = 0, end = strlen(s); i < end; i++) {
     dest += ::tolower(s[i]);
+  }
 
   return dest;
 }
 
-const std::string& toupper(const char* s, std::string& dest)
-{
-  if (!s)
+const std::string& toupper(const char* s, std::string& dest) {
+  if (!s) {
     return dest;
+  }
 
-  for (size_t i =0,end = strlen(s); i < end; i++)
+  for (size_t i = 0, end = strlen(s); i < end; i++) {
     dest += ::toupper(s[i]);
+  }
 
   return dest;
 }
 
-const std::string& makelower(std::string& s)
-{
-  for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
+const std::string& makelower(std::string& s) {
+  for (std::string::iterator i = s.begin(), end = s.end(); i != end; ++i) {
     *i = ::tolower(*i);
+  }
 
   return s;
 }
 
-const std::string& makeupper(std::string& s)
-{
-  for (std::string::iterator i=s.begin(), end=s.end(); i!=end; ++i)
+const std::string& makeupper(std::string& s) {
+  for (std::string::iterator i = s.begin(), end = s.end(); i != end; ++i) {
     *i = ::toupper(*i);
+  }
 
   return s;
 }
 
-std::string format(const char* fmt, ...)
-{
+std::string format(const char* fmt, ...) {
   va_list args;
   va_start(args, fmt);
   char temp[2048];
-  vsprintf(temp,fmt, args);
+  vsprintf(temp, fmt, args);
   std::string result = temp;
   va_end(args);
   return result;
 }
 
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims,
-				  const int maxTokens, const bool useQuotes, size_t offset)
-{
+std::vector<std::string> tokenize(const std::string& in, const std::string& delims,
+                                  const int maxTokens, const bool useQuotes, size_t offset) {
   std::vector<std::string> tokens;
   int numTokens = 0;
   bool inQuote = false;
 
   std::ostringstream currentToken;
 
-  std::string::size_type pos = in.find_first_not_of(delims,offset);
+  std::string::size_type pos = in.find_first_not_of(delims, offset);
   int currentChar  = (pos == std::string::npos) ? -1 : in[pos];
-  bool enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
+  bool enoughTokens = (maxTokens && (numTokens >= (maxTokens - 1)));
 
   while (pos != std::string::npos && !enoughTokens) {
 
@@ -263,53 +261,57 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
       tokenDone = false;
 
       if (delims.find(currentChar) != std::string::npos && !inQuote) { // currentChar is a delim
-	pos ++;
-	break; // breaks out of while loop
+        pos ++;
+        break; // breaks out of while loop
       }
 
       if (!useQuotes) {
-	currentToken << char(currentChar);
-      } else {
+        currentToken << char(currentChar);
+      }
+      else {
 
-	switch (currentChar) {
-	case '\\' : // found a backslash
-	  if (foundSlash) {
-	    currentToken << char(currentChar);
-	    foundSlash = false;
-	  } else {
-	    foundSlash = true;
-	  }
-	  break;
-	case '\"' : // found a quote
-	  if (foundSlash) { // found \"
-	    currentToken << char(currentChar);
-	    foundSlash = false;
-	  } else { // found unescaped "
-	    if (inQuote) { // exiting a quote
-	      // finish off current token
-	      tokenDone = true;
-	      inQuote = false;
-	      //slurp off one additional delimeter if possible
-	      if (pos+1 < in.size() &&
-		  delims.find(in[pos+1]) != std::string::npos) {
-		pos++;
-	      }
+        switch (currentChar) {
+          case '\\' : // found a backslash
+            if (foundSlash) {
+              currentToken << char(currentChar);
+              foundSlash = false;
+            }
+            else {
+              foundSlash = true;
+            }
+            break;
+          case '\"' : // found a quote
+            if (foundSlash) { // found \"
+              currentToken << char(currentChar);
+              foundSlash = false;
+            }
+            else {   // found unescaped "
+              if (inQuote) { // exiting a quote
+                // finish off current token
+                tokenDone = true;
+                inQuote = false;
+                //slurp off one additional delimeter if possible
+                if (pos + 1 < in.size() &&
+                    delims.find(in[pos + 1]) != std::string::npos) {
+                  pos++;
+                }
 
-	    } else { // entering a quote
-	      // finish off current token
-	      tokenDone = true;
-	      inQuote = true;
-	    }
-	  }
-	  break;
-	default:
-	  if (foundSlash) { // don't care about slashes except for above cases
-	    currentToken << '\\';
-	    foundSlash = false;
-	  }
-	  currentToken << char(currentChar);
-	  break;
-	}
+              }
+              else {   // entering a quote
+                // finish off current token
+                tokenDone = true;
+                inQuote = true;
+              }
+            }
+            break;
+          default:
+            if (foundSlash) { // don't care about slashes except for above cases
+              currentToken << '\\';
+              foundSlash = false;
+            }
+            currentToken << char(currentChar);
+            break;
+        }
       }
 
       pos++;
@@ -322,58 +324,62 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
       numTokens ++;
     }
 
-    enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
-    if (enoughTokens)
+    enoughTokens = (maxTokens && (numTokens >= (maxTokens - 1)));
+    if (enoughTokens) {
       break;
-    else
-      pos = in.find_first_not_of(delims,pos);
+    }
+    else {
+      pos = in.find_first_not_of(delims, pos);
+    }
 
   } // end of getting all tokens -- either EOL or max tokens reached
 
   if (enoughTokens && pos != std::string::npos) {
     std::string lastToken = in.substr(pos);
-    if (lastToken.size() > 0)
+    if (lastToken.size() > 0) {
       tokens.push_back(lastToken);
+    }
   }
 
   return tokens;
 }
 
-std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
-{
+std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe) {
   std::string result;
   std::string::size_type beginPos = 0;
   std::string::size_type endPos = 0;
   std::ostringstream tempStream;
 
   endPos = in.find(replaceMe);
-  if (endPos == std::string::npos)
-    return in; // can't find anything to replace
-  if (replaceMe.empty()) return in; // can't replace nothing with something -- can do reverse
+  if (endPos == std::string::npos) {
+    return in;  // can't find anything to replace
+  }
+  if (replaceMe.empty()) { return in; } // can't replace nothing with something -- can do reverse
 
   while (endPos != std::string::npos) {
     // push the  part up to
-    tempStream << in.substr(beginPos,endPos-beginPos);
+    tempStream << in.substr(beginPos, endPos - beginPos);
     tempStream << withMe;
     beginPos = endPos + replaceMe.size();
-    endPos = in.find(replaceMe,beginPos);
+    endPos = in.find(replaceMe, beginPos);
   }
   tempStream << in.substr(beginPos);
   return tempStream.str();
 }
 
-std::string url_encode(const std::string &text)
-{
+std::string url_encode(const std::string& text) {
   char hex[5];
   std::string destination;
-  for (int i=0;  i < (int) text.size(); i++) {
+  for (int i = 0;  i < (int) text.size(); i++) {
     char c = text[i];
     if (isAlphanumeric(c)) {
-      destination+=c;
-    } else if (isWhitespace(c)) {
-      destination+='+';
-    } else {
-      destination+='%';
+      destination += c;
+    }
+    else if (isWhitespace(c)) {
+      destination += '+';
+    }
+    else {
+      destination += '%';
       sprintf(hex, "%-2.2X", c);
       destination.append(hex);
     }
@@ -381,14 +387,14 @@ std::string url_encode(const std::string &text)
   return destination;
 }
 
-std::string url_decode(const std::string &text)
-{
+std::string url_decode(const std::string& text) {
   std::string destination;
 
   std::string::const_iterator itr = text.begin();
   while (itr != text.end()) {
-    if (*itr != '%' && *itr != '+')
+    if (*itr != '%' && *itr != '+') {
       destination += *itr++;
+    }
     else if (*itr == '+') {
       destination += " ";
       itr++;
@@ -397,76 +403,80 @@ std::string url_decode(const std::string &text)
       char hex[5] = "0x00";
 
       itr++;
-      if (itr == text.end())
-	return destination;
+      if (itr == text.end()) {
+        return destination;
+      }
 
       hex[2] = *itr;
 
       itr++;
-      if (itr == text.end())
-	return destination;
+      if (itr == text.end()) {
+        return destination;
+      }
 
       hex[3] = *itr;
 
       unsigned int val = 0;
-      sscanf(hex,"%x",&val);
-      if (val != 0)
-	destination += (char)val;
+      sscanf(hex, "%x", &val);
+      if (val != 0) {
+        destination += (char)val;
+      }
       itr++;
     }
   }
   return destination;
 }
 
-size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset)
-{
+size_t find_first_substr(const std::string& findin, const std::string findwhat, size_t offset) {
   if (findwhat.size()) {
     for (size_t f = offset; f < findin.size(); f++) {
       if (findin[f] == findwhat[0]) {
-	size_t start = f;
-	for (size_t w = 1; w < findwhat.size(); w++) {
-	  if (f+w > findin.size())
-	    return std::string::npos;
-	  if (findin[f+w] != findwhat[w]) {
-	    f+=w;
-	    w = findwhat.size();
-	  }
-	}
-	if (start == f)
-	  return f;
+        size_t start = f;
+        for (size_t w = 1; w < findwhat.size(); w++) {
+          if (f + w > findin.size()) {
+            return std::string::npos;
+          }
+          if (findin[f + w] != findwhat[w]) {
+            f += w;
+            w = findwhat.size();
+          }
+        }
+        if (start == f) {
+          return f;
+        }
       }
     }
   }
   return std::string::npos;
 }
 
-std::string getStringRange ( const std::string &find, size_t start, size_t end )
-{
+std::string getStringRange(const std::string& find, size_t start, size_t end) {
   std::string ret;
 
-  if (end <= start || start > find.size() || end > find.size())
+  if (end <= start || start > find.size() || end > find.size()) {
     return ret;
+  }
 
-  for ( size_t p = start; p <= end; p++)
+  for (size_t p = start; p <= end; p++) {
     ret += find[p];
+  }
 
   return ret;
 }
 
 
-void trimLeadingWhitespace(std::string &text)
-{
-  for(size_t s = 0; s < text.size(); s++) {
+void trimLeadingWhitespace(std::string& text) {
+  for (size_t s = 0; s < text.size(); s++) {
     if (!isWhitespace(text[s])) {
-      if (s)
-	text.erase(text.begin()+s-1);
+      if (s) {
+        text.erase(text.begin() + s - 1);
+      }
       return;
     }
   }
 }
 
-std::string trimLeadingWhitespace(const std::string &text)
-{
+std::string trimLeadingWhitespace(const std::string& text) {
   std::string s = text;
   trimLeadingWhitespace(s);
   return s;
@@ -474,9 +484,8 @@ std::string trimLeadingWhitespace(const std::string &text)
 
 std::vector<std::string> perms;
 
-const std::vector<std::string> bzu_standardPerms (void)
-{
-  if (perms.empty()){
+const std::vector<std::string> bzu_standardPerms(void) {
+  if (perms.empty()) {
     perms.push_back("actionMessage");
     perms.push_back("adminMessageReceive");
     perms.push_back("adminMessageSend");
@@ -546,6 +555,6 @@ const std::vector<std::string> bzu_standardPerms (void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

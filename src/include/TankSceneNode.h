@@ -11,11 +11,11 @@
  */
 
 /* TankSceneNode:
- *	Encapsulates information for rendering a tank
+ *  Encapsulates information for rendering a tank
  */
 
-#ifndef	BZF_TANK_SCENE_NODE_H
-#define	BZF_TANK_SCENE_NODE_H
+#ifndef BZF_TANK_SCENE_NODE_H
+#define BZF_TANK_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -34,41 +34,41 @@ class TankIDLSceneNode : public SceneNode {
 
     virtual void notifyStyleChange();
     virtual void addRenderNodes(SceneRenderer&);
-  // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
-  // following declaration isn't public it generates an error when trying
-  // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
-  // SphereSceneNode::SphereRenderNode.  i think this is a bug in the
-  // compiler because:
-  //   no other compiler complains
-  //   public/protected/private adjust access not visibility
-  //     SphereSceneNode isn't requesting access, it's granting it
+    // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
+    // following declaration isn't public it generates an error when trying
+    // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
+    // SphereSceneNode::SphereRenderNode.  i think this is a bug in the
+    // compiler because:
+    //   no other compiler complains
+    //   public/protected/private adjust access not visibility
+    //     SphereSceneNode isn't requesting access, it's granting it
 //  protected:
   public:
     class IDLRenderNode : public RenderNode {
       public:
         IDLRenderNode(const TankIDLSceneNode*);
         ~IDLRenderNode();
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	const TankIDLSceneNode* sceneNode;
-	static const int	idlFaces[][5];
-	static const fvec3	idlVertex[];
+        const TankIDLSceneNode* sceneNode;
+        static const int  idlFaces[][5];
+        static const fvec3  idlVertex[];
     };
     friend class IDLRenderNode;
 
   protected:
-    const TankSceneNode	*tank;
-    fvec4		plane;
-    OpenGLGState	gstate;
-    IDLRenderNode	renderNode;
+    const TankSceneNode* tank;
+    fvec4   plane;
+    OpenGLGState  gstate;
+    IDLRenderNode renderNode;
 };
 
 
 class TankSceneNode : public SceneNode {
 
-  friend class TankIDLSceneNode;
-  friend class TankIDLSceneNode::IDLRenderNode;
+    friend class TankIDLSceneNode;
+    friend class TankIDLSceneNode::IDLRenderNode;
 
   public:
     TankSceneNode(const fvec3& pos, const fvec3& forward);
@@ -118,85 +118,85 @@ class TankSceneNode : public SceneNode {
         TankRenderNode(const TankSceneNode*);
         ~TankRenderNode();
 
-	void		setShadow();
-	void		setRadar(bool);
-	void		setTreads(bool);
-	void		setTankLOD(TankGeometryEnums::TankLOD);
-	void		setTankSize(TankGeometryEnums::TankSize);
-	void		sortOrder(bool above, bool towards, bool left);
-	void		setNarrowWithDepth(bool narrow);
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        void    setShadow();
+        void    setRadar(bool);
+        void    setTreads(bool);
+        void    setTankLOD(TankGeometryEnums::TankLOD);
+        void    setTankSize(TankGeometryEnums::TankSize);
+        void    sortOrder(bool above, bool towards, bool left);
+        void    setNarrowWithDepth(bool narrow);
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
 
-	void		render();
-	void		renderPart(TankGeometryEnums::TankPart part);
-	void		renderParts();
-	void		renderTopParts();
-	void		renderLeftParts();
-	void		renderRightParts();
-	void		renderNarrowWithDepth();
-	void		renderLights();
-	void		renderJumpJets();
-	void		setupPartColor(TankGeometryEnums::TankPart part);
-	bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
+        void    render();
+        void    renderPart(TankGeometryEnums::TankPart part);
+        void    renderParts();
+        void    renderTopParts();
+        void    renderLeftParts();
+        void    renderRightParts();
+        void    renderNarrowWithDepth();
+        void    renderLights();
+        void    renderJumpJets();
+        void    setupPartColor(TankGeometryEnums::TankPart part);
+        bool    setupTextureMatrix(TankGeometryEnums::TankPart part);
 
       protected:
-	const TankSceneNode* sceneNode;
-	TankGeometryEnums::TankLOD drawLOD;
-	TankGeometryEnums::TankSize drawSize;
-	const fvec4*	color;
-	float		alpha;
-	bool		isRadar;
-	bool		isTreads;
-	bool		isShadow;
-	bool		left;
-	bool		above;
-	bool		towards;
-	bool		isExploding;
-	bool		narrowWithDepth;
-	float		explodeFraction;
-	static const fvec3 centerOfGravity[TankGeometryEnums::LastTankPart];
+        const TankSceneNode* sceneNode;
+        TankGeometryEnums::TankLOD drawLOD;
+        TankGeometryEnums::TankSize drawSize;
+        const fvec4*  color;
+        float   alpha;
+        bool    isRadar;
+        bool    isTreads;
+        bool    isShadow;
+        bool    left;
+        bool    above;
+        bool    towards;
+        bool    isExploding;
+        bool    narrowWithDepth;
+        float   explodeFraction;
+        static const fvec3 centerOfGravity[TankGeometryEnums::LastTankPart];
     };
     friend class TankRenderNode;
   protected:
-    float		azimuth;
-    float		elevation;
-    float		baseRadius;
-    fvec3		dimensions; // tank dimensions
-    float		leftTreadOffset;
-    float		rightTreadOffset;
-    float		leftWheelOffset;
-    float		rightWheelOffset;
-    bool		useDimensions;
-    bool		useOverride;
-    bool		onlyShadows;
-    bool		transparent, sort;
-    float		spawnFraction;
-    float		explodeFraction;
-    bool		clip;
-    bool		inTheCockpit;
-    fvec4		colorOverride;
-    fvec4		color;
-    dvec4		clipPlane;
-    OpenGLGState	gstate;
-    OpenGLGState	treadState;
-    OpenGLGState	lightsGState;
-    TankRenderNode	tankRenderNode;
-    TankRenderNode	treadsRenderNode;
-    TankRenderNode	shadowRenderNode;
+    float   azimuth;
+    float   elevation;
+    float   baseRadius;
+    fvec3   dimensions; // tank dimensions
+    float   leftTreadOffset;
+    float   rightTreadOffset;
+    float   leftWheelOffset;
+    float   rightWheelOffset;
+    bool    useDimensions;
+    bool    useOverride;
+    bool    onlyShadows;
+    bool    transparent, sort;
+    float   spawnFraction;
+    float   explodeFraction;
+    bool    clip;
+    bool    inTheCockpit;
+    fvec4   colorOverride;
+    fvec4   color;
+    dvec4   clipPlane;
+    OpenGLGState  gstate;
+    OpenGLGState  treadState;
+    OpenGLGState  lightsGState;
+    TankRenderNode  tankRenderNode;
+    TankRenderNode  treadsRenderNode;
+    TankRenderNode  shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    fvec3		vel[TankGeometryEnums::LastTankPart];
-    fvec4		spin[TankGeometryEnums::LastTankPart];
-    bool		jumpJetsOn;
-    float		jumpJetsScale;
-    float		jumpJetsLengths[4];
-    fvec3		jumpJetsPositions[4];
-    OpenGLLight		jumpJetsRealLight;
-    OpenGLLight		jumpJetsGroundLights[4];
-    OpenGLGState	jumpJetsGState;
+    fvec3   vel[TankGeometryEnums::LastTankPart];
+    fvec4   spin[TankGeometryEnums::LastTankPart];
+    bool    jumpJetsOn;
+    float   jumpJetsScale;
+    float   jumpJetsLengths[4];
+    fvec3   jumpJetsPositions[4];
+    OpenGLLight   jumpJetsRealLight;
+    OpenGLLight   jumpJetsGroundLights[4];
+    OpenGLGState  jumpJetsGState;
 
-    static int		maxLevel;
-    static const int	numLOD;
-    static fvec3	jumpJetsModel[4];
+    static int    maxLevel;
+    static const int  numLOD;
+    static fvec3  jumpJetsModel[4];
 };
 
 
@@ -206,6 +206,6 @@ class TankSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -24,20 +24,19 @@
 /** this class provides options for audio
  */
 class AudioMenu : public HUDDialog {
-public:
-  AudioMenu();
-  ~AudioMenu();
+  public:
+    AudioMenu();
+    ~AudioMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, void* data);
-private:
-  HUDuiTypeIn*	driver;
-  HUDuiTypeIn*	device;
+    HUDuiDefaultKey* getDefaultKey() {
+      return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, void* data);
+  private:
+    HUDuiTypeIn*  driver;
+    HUDuiTypeIn*  device;
 };
 
 
@@ -47,6 +46,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

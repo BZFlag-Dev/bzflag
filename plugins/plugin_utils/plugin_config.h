@@ -41,24 +41,23 @@
  * Debug level 4 (-dddd) provides information about the parsing process
  */
 
-class PluginConfig
-{
-public:
-  PluginConfig(const std::string &filename);
-  ~PluginConfig() {};
-  std::string item(const std::string &section, const std::string &key);
-  unsigned int errors;
-private:
-  std::string whitespace;
-  void parse(void);
-  std::map<std::string, std::map<std::string, std::string> > sections;
-  std::string configFilename;
+class PluginConfig {
+  public:
+    PluginConfig(const std::string& filename);
+    ~PluginConfig() {};
+    std::string item(const std::string& section, const std::string& key);
+    unsigned int errors;
+  private:
+    std::string whitespace;
+    void parse(void);
+    std::map<std::string, std::map<std::string, std::string> > sections;
+    std::string configFilename;
 };
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -32,12 +32,12 @@ class MacMedia : public BzfMedia {
     void closeAudio();
 
     bool isAudioBrainDead() const;
-    bool startAudioThread(void (*)(void*), void *);
+    bool startAudioThread(void (*)(void*), void*);
     void stopAudioThread();
     bool hasAudioThread() const;
     bool isAudioTooEmpty() const;
 
-    void writeAudioFrames(const float *, int);
+    void writeAudioFrames(const float*, int);
     void writeSoundCommand(const void*, int);
     bool readSoundCommand(void*, int);
 
@@ -62,9 +62,9 @@ class MacMedia : public BzfMedia {
 
     void (*audio_proc)(void*);
 
-    SInt16 *buffer;
-    SInt16 *rpos;
-    SInt16 *wpos;
+    SInt16* buffer;
+    SInt16* rpos;
+    SInt16* wpos;
 
     int num_samples;
 
@@ -77,6 +77,6 @@ class MacMedia : public BzfMedia {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

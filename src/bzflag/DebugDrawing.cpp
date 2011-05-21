@@ -35,8 +35,7 @@
 //
 
 static void drawDoubleCubeLines(const Extents& inner, const fvec4& inColor,
-                                const Extents& outer, const fvec4& outColor)
-{
+                                const Extents& outer, const fvec4& outColor) {
   const fvec3 corners[2][8] = {
     {
       fvec3(inner.mins.x, inner.mins.y, inner.mins.z),
@@ -97,8 +96,7 @@ static void drawDoubleCubeLines(const Extents& inner, const fvec4& inColor,
 }
 
 
-static void drawTankHitZone(const Player* tank)
-{
+static void drawTankHitZone(const Player* tank) {
   if ((tank == NULL) || tank->isObserver()) {
     return;
   }
@@ -150,8 +148,7 @@ static void drawTankHitZone(const Player* tank)
 }
 
 
-void DebugDrawing::drawTanks()
-{
+void DebugDrawing::drawTanks() {
   static BZDB_bool bzdbDrawTanks("debugTankDraw");
   if (!bzdbDrawTanks) {
     return;
@@ -193,38 +190,33 @@ void DebugDrawing::drawTanks()
 //  drawLinkDebug(), and friends
 //
 
-static void srcSTPPoint(const fvec3& center, const fvec3& dir, float scale)
-{
+static void srcSTPPoint(const fvec3& center, const fvec3& dir, float scale) {
   scale = (scale == 0.0f) ? 1.0f : (1.0f / scale);
   glVertex3fv(center + (scale * dir));
 }
 
 
-static void srcSTPLine(const fvec3& center, const fvec3& dir, float scale)
-{
+static void srcSTPLine(const fvec3& center, const fvec3& dir, float scale) {
   scale = (scale == 0.0f) ? 1.0f : (1.0f / scale);
   glVertex3fv(center);
   glVertex3fv(center + (scale * dir));
 }
 
 
-static void dstSTPPoint(const fvec3& center, const fvec3& dir, float scale)
-{
+static void dstSTPPoint(const fvec3& center, const fvec3& dir, float scale) {
   scale = (scale == 0.0f) ? 1.0f : scale;
   glVertex3fv(center + (scale * dir));
 }
 
 
-static void dstSTPLine(const fvec3& center, const fvec3& dir, float scale)
-{
+static void dstSTPLine(const fvec3& center, const fvec3& dir, float scale) {
   scale = (scale == 0.0f) ? 1.0f : scale;
   glVertex3fv(center);
   glVertex3fv(center + (scale * dir));
 }
 
 
-void DebugDrawing::drawLinks()
-{
+void DebugDrawing::drawLinks() {
   static BZDB_string bzdbStr("debugLinkDraw");
   const std::string str = bzdbStr;
   if (str.empty() || (str == "0")) {
@@ -391,6 +383,6 @@ void DebugDrawing::drawLinks()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

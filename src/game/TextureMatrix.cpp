@@ -32,21 +32,18 @@
 TextureMatrixManager TEXMATRIXMGR;
 
 
-TextureMatrixManager::TextureMatrixManager()
-{
+TextureMatrixManager::TextureMatrixManager() {
   return;
 }
 
 
-TextureMatrixManager::~TextureMatrixManager()
-{
+TextureMatrixManager::~TextureMatrixManager() {
   clear();
   return;
 }
 
 
-void TextureMatrixManager::clear()
-{
+void TextureMatrixManager::clear() {
   std::vector<TextureMatrix*>::iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     delete *it;
@@ -56,8 +53,7 @@ void TextureMatrixManager::clear()
 }
 
 
-void TextureMatrixManager::update()
-{
+void TextureMatrixManager::update() {
   const double gameTime = GameTime::getStepTime();
   std::vector<TextureMatrix*>::iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
@@ -68,34 +64,34 @@ void TextureMatrixManager::update()
 }
 
 
-void TextureMatrix::setMatrix(const float value[4][4])
-{
+void TextureMatrix::setMatrix(const float value[4][4]) {
   memcpy(matrix, value, sizeof(float[4][4]));
 }
 
 
-int TextureMatrixManager::addMatrix(TextureMatrix* texmat)
-{
-  matrices.push_back (texmat);
+int TextureMatrixManager::addMatrix(TextureMatrix* texmat) {
+  matrices.push_back(texmat);
   return ((int)matrices.size() - 1);
 }
 
 
-int TextureMatrixManager::findMatrix(const std::string& texmat) const
-{
+int TextureMatrixManager::findMatrix(const std::string& texmat) const {
   if (texmat.size() <= 0) {
     return -1;
-  } else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
-    int index = atoi (texmat.c_str());
+  }
+  else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
+    int index = atoi(texmat.c_str());
     if ((index < 0) || (index >= (int)matrices.size())) {
       return -1;
-    } else {
+    }
+    else {
       return index;
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < (int)matrices.size(); i++) {
       if (matrices[i]->getName() == texmat) {
-	return i;
+        return i;
       }
     }
     return -1;
@@ -103,18 +99,17 @@ int TextureMatrixManager::findMatrix(const std::string& texmat) const
 }
 
 
-const TextureMatrix* TextureMatrixManager::getMatrix(int id) const
-{
+const TextureMatrix* TextureMatrixManager::getMatrix(int id) const {
   if ((id >= 0) && (id < (int)matrices.size())) {
     return matrices[id];
-  } else {
+  }
+  else {
     return NULL;
   }
 }
 
 
-void TextureMatrixManager::getVariables(std::set<std::string>& vars) const
-{
+void TextureMatrixManager::getVariables(std::set<std::string>& vars) const {
   std::vector<TextureMatrix*>::const_iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
@@ -125,9 +120,8 @@ void TextureMatrixManager::getVariables(std::set<std::string>& vars) const
 }
 
 
-int TextureMatrixManager::packSize() const
-{
-  int fullSize = sizeof (uint32_t);
+int TextureMatrixManager::packSize() const {
+  int fullSize = sizeof(uint32_t);
   std::vector<TextureMatrix*>::const_iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
@@ -137,8 +131,7 @@ int TextureMatrixManager::packSize() const
 }
 
 
-void * TextureMatrixManager::pack(void *buf) const
-{
+void* TextureMatrixManager::pack(void* buf) const {
   std::vector<TextureMatrix*>::const_iterator it;
   buf = nboPackUInt32(buf, (unsigned int)matrices.size());
   for (it = matrices.begin(); it != matrices.end(); it++) {
@@ -149,11 +142,10 @@ void * TextureMatrixManager::pack(void *buf) const
 }
 
 
-void * TextureMatrixManager::unpack(void *buf)
-{
+void* TextureMatrixManager::unpack(void* buf) {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt32 (buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     TextureMatrix* texmat = new TextureMatrix;
     buf = texmat->unpack(buf);
@@ -164,8 +156,7 @@ void * TextureMatrixManager::unpack(void *buf)
 
 
 void TextureMatrixManager::print(std::ostream& out,
-				 const std::string& indent) const
-{
+                                 const std::string& indent) const {
   std::vector<TextureMatrix*>::const_iterator it;
   for (it = matrices.begin(); it != matrices.end(); it++) {
     TextureMatrix* texmat = *it;
@@ -195,8 +186,7 @@ static const float partialIdentity[3][2] = {
 };
 
 
-static void makeFullMatrix(float f[4][4], const float p[3][2])
-{
+static void makeFullMatrix(float f[4][4], const float p[3][2]) {
   // we assume that the other elements have been initialized
   f[0][0] = p[0][0];
   f[0][1] = p[0][1];
@@ -208,8 +198,7 @@ static void makeFullMatrix(float f[4][4], const float p[3][2])
 }
 
 
-static void multiply(float m[3][2], const float n[3][2])
-{
+static void multiply(float m[3][2], const float n[3][2]) {
   float t[3][2];
   t[0][0] = (m[0][0] * n[0][0]) + (m[0][1] * n[1][0]);
   t[0][1] = (m[0][0] * n[0][1]) + (m[0][1] * n[1][1]);
@@ -222,40 +211,39 @@ static void multiply(float m[3][2], const float n[3][2])
 }
 
 
-static void shift(float m[3][2], float ushf, float vshf)
-{
+static void shift(float m[3][2], float ushf, float vshf) {
   const float t[3][2] = {{1.0f, 0.0f},
-			 {0.0f, 1.0f},
-			 {ushf, vshf}};
+    {0.0f, 1.0f},
+    {ushf, vshf}
+  };
   multiply(m, t);
   return;
 }
 
 
-static void scale(float m[3][2], float uscl, float vscl)
-{
+static void scale(float m[3][2], float uscl, float vscl) {
   const float t[3][2] = {{uscl, 0.0f},
-			 {0.0f, vscl},
-			 {0.0f, 0.0f}};
+    {0.0f, vscl},
+    {0.0f, 0.0f}
+  };
   multiply(m, t);
   return;
 }
 
 
-static void spin(float m[3][2], float radians)
-{
+static void spin(float m[3][2], float radians) {
   const float crd = cosf(radians);
   const float srd = sinf(radians);
-  const float t[3][2] = {{+crd, +srd},
-			 {-srd, +crd},
-			 {0.0f, 0.0f}};
+  const float t[3][2] = {{ +crd, +srd},
+    { -srd, +crd},
+    {0.0f, 0.0f}
+  };
   multiply(m, t);
   return;
 }
 
 
-TextureMatrix::TextureMatrix()
-{
+TextureMatrix::TextureMatrix() {
   name = "";
 
   // load the identity matrices
@@ -281,8 +269,7 @@ TextureMatrix::TextureMatrix()
 }
 
 
-TextureMatrix::~TextureMatrix()
-{
+TextureMatrix::~TextureMatrix() {
   if (!spinVar.empty()) {
     BZDB.removeCallback(spinVar, staticSpinCallback, this);
   }
@@ -298,24 +285,20 @@ TextureMatrix::~TextureMatrix()
 
 //============================================================================//
 
-void TextureMatrix::staticSpinCallback(const std::string& name, void* data)
-{
+void TextureMatrix::staticSpinCallback(const std::string& name, void* data) {
   ((TextureMatrix*)data)->spinCallback(name);
 }
 
-void TextureMatrix::staticScaleCallback(const std::string& name, void* data)
-{
+void TextureMatrix::staticScaleCallback(const std::string& name, void* data) {
   ((TextureMatrix*)data)->scaleCallback(name);
 }
 
-void TextureMatrix::staticShiftCallback(const std::string& name, void* data)
-{
+void TextureMatrix::staticShiftCallback(const std::string& name, void* data) {
   ((TextureMatrix*)data)->shiftCallback(name);
 }
 
 
-void TextureMatrix::spinCallback(const std::string& /*name*/)
-{
+void TextureMatrix::spinCallback(const std::string& /*name*/) {
   const float value = BZDB.eval(spinVar);
   if (!isnan(value)) {
     spinFreq = value;
@@ -323,8 +306,7 @@ void TextureMatrix::spinCallback(const std::string& /*name*/)
 }
 
 
-void TextureMatrix::scaleCallback(const std::string& /*name*/)
-{
+void TextureMatrix::scaleCallback(const std::string& /*name*/) {
   const fvec4 values = BZDB.evalFVec4(scaleVar);
   if (!isnan(values.x)) {
     uScaleFreq = values.x;
@@ -335,8 +317,7 @@ void TextureMatrix::scaleCallback(const std::string& /*name*/)
 }
 
 
-void TextureMatrix::shiftCallback(const std::string& /*name*/)
-{
+void TextureMatrix::shiftCallback(const std::string& /*name*/) {
   const fvec2 values = BZDB.evalFVec2(shiftVar);
   if (!isnan(values.x)) {
     uShiftFreq = values.x;
@@ -347,8 +328,7 @@ void TextureMatrix::shiftCallback(const std::string& /*name*/)
 
 //============================================================================//
 
-void TextureMatrix::finalize()
-{
+void TextureMatrix::finalize() {
   useStatic = false;
   useDynamic = false;
 
@@ -370,7 +350,7 @@ void TextureMatrix::finalize()
     const float radians = rotation * (float)(M_PI / 180.0);
 
     shift(staticMatrix, -(uFixedShift + uFixedCenter),
-	  -(vFixedShift + vFixedCenter));
+          -(vFixedShift + vFixedCenter));
     spin(staticMatrix, -radians);
     if ((uFixedScale != 0.0f) && (vFixedScale != 0.0f)) {
       scale(staticMatrix, (1.0f / uFixedScale), (1.0f / vFixedScale));
@@ -387,44 +367,41 @@ void TextureMatrix::finalize()
 }
 
 
-bool TextureMatrix::setName(const std::string& texmat)
-{
+bool TextureMatrix::setName(const std::string& texmat) {
   if (texmat.size() <= 0) {
     name = "";
     return false;
-  } else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
+  }
+  else if ((texmat[0] >= '0') && (texmat[0] <= '9')) {
     name = "";
     return false;
-  } else {
+  }
+  else {
     name = texmat;
   }
   return true;
 }
 
 
-const std::string& TextureMatrix::getName() const
-{
+const std::string& TextureMatrix::getName() const {
   return name;
 }
 
 
-void TextureMatrix::setStaticShift (float u, float v)
-{
+void TextureMatrix::setStaticShift(float u, float v) {
   uFixedShift = u;
   vFixedShift = v;
   return;
 }
 
 
-void TextureMatrix::setStaticSpin (float angle)
-{
+void TextureMatrix::setStaticSpin(float angle) {
   rotation = angle;
   return;
 }
 
 
-void TextureMatrix::setStaticScale (float u, float v)
-{
+void TextureMatrix::setStaticScale(float u, float v) {
   if (u != 0.0f) {
     uFixedScale = u;
   }
@@ -435,32 +412,28 @@ void TextureMatrix::setStaticScale (float u, float v)
 }
 
 
-void TextureMatrix::setStaticCenter (float u, float v)
-{
+void TextureMatrix::setStaticCenter(float u, float v) {
   uFixedCenter = u;
   vFixedCenter = v;
   return;
 }
 
 
-void TextureMatrix::setDynamicShift (float uFreq, float vFreq)
-{
+void TextureMatrix::setDynamicShift(float uFreq, float vFreq) {
   uShiftFreq = uFreq;
   vShiftFreq = vFreq;
   return;
 }
 
 
-void TextureMatrix::setDynamicSpin (float freq)
-{
+void TextureMatrix::setDynamicSpin(float freq) {
   spinFreq = freq;
   return;
 }
 
 
-void TextureMatrix::setDynamicScale (float uFreq, float vFreq,
-				     float _uScale, float _vScale)
-{
+void TextureMatrix::setDynamicScale(float uFreq, float vFreq,
+                                    float _uScale, float _vScale) {
   uScaleFreq = uFreq;
   vScaleFreq = vFreq;
   if (_uScale >= 1.0f) {
@@ -473,16 +446,14 @@ void TextureMatrix::setDynamicScale (float uFreq, float vFreq,
 }
 
 
-void TextureMatrix::setDynamicCenter (float u, float v)
-{
+void TextureMatrix::setDynamicCenter(float u, float v) {
   uCenter = u;
   vCenter = v;
   return;
 }
 
 
-void TextureMatrix::setDynamicSpinVar(const std::string& var)
-{
+void TextureMatrix::setDynamicSpinVar(const std::string& var) {
   if (!spinVar.empty()) {
     BZDB.removeCallback(spinVar, staticSpinCallback, this);
   }
@@ -494,8 +465,7 @@ void TextureMatrix::setDynamicSpinVar(const std::string& var)
 }
 
 
-void TextureMatrix::setDynamicScaleVar(const std::string& var)
-{
+void TextureMatrix::setDynamicScaleVar(const std::string& var) {
   if (!scaleVar.empty()) {
     BZDB.removeCallback(scaleVar, staticScaleCallback, this);
   }
@@ -507,8 +477,7 @@ void TextureMatrix::setDynamicScaleVar(const std::string& var)
 }
 
 
-void TextureMatrix::setDynamicShiftVar(const std::string& var)
-{
+void TextureMatrix::setDynamicShiftVar(const std::string& var) {
   if (!shiftVar.empty()) {
     BZDB.removeCallback(shiftVar, staticShiftCallback, this);
   }
@@ -520,8 +489,7 @@ void TextureMatrix::setDynamicShiftVar(const std::string& var)
 }
 
 
-void TextureMatrix::update (double t)
-{
+void TextureMatrix::update(double t) {
   if (!useDynamic) {
     // the matrix has already been setup with the
     // static tranformations, or an identity matrix.
@@ -562,8 +530,7 @@ void TextureMatrix::update (double t)
 }
 
 
-int TextureMatrix::packSize() const
-{
+int TextureMatrix::packSize() const {
   int fullSize = 0;
   fullSize += nboStdStringPackSize(name);
   fullSize += sizeof(uint8_t);
@@ -594,13 +561,12 @@ int TextureMatrix::packSize() const
 }
 
 
-void * TextureMatrix::pack(void *buf) const
-{
-  buf = nboPackStdString (buf, name);
+void* TextureMatrix::pack(void* buf) const {
+  buf = nboPackStdString(buf, name);
 
   uint8_t state = 0;
-  if (useStatic)  state |= (1 << 0);
-  if (useDynamic) state |= (1 << 1);
+  if (useStatic) { state |= (1 << 0); }
+  if (useDynamic) { state |= (1 << 1); }
   buf = nboPackUInt8(buf, state);
 
   if (useStatic) {
@@ -632,13 +598,12 @@ void * TextureMatrix::pack(void *buf) const
 }
 
 
-void * TextureMatrix::unpack(void *buf)
-{
-  buf = nboUnpackStdString (buf, name);
+void* TextureMatrix::unpack(void* buf) {
+  buf = nboUnpackStdString(buf, name);
 
   uint8_t state;
-  buf = nboUnpackUInt8 (buf, state);
-  useStatic =  (state & (1 << 0)) != 0;
+  buf = nboUnpackUInt8(buf, state);
+  useStatic = (state & (1 << 0)) != 0;
   useDynamic = (state & (1 << 1)) != 0;
 
   if (useStatic) {
@@ -673,8 +638,7 @@ void * TextureMatrix::unpack(void *buf)
 }
 
 
-void TextureMatrix::print(std::ostream& out, const std::string& indent) const
-{
+void TextureMatrix::print(std::ostream& out, const std::string& indent) const {
   out << indent << "textureMatrix" << std::endl;
 
   if (name.size() > 0) {
@@ -704,9 +668,9 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
       out << indent << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;
     }
     if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
-	(uScale != 1.0f) || (vScale != 1.0f)) {
+        (uScale != 1.0f) || (vScale != 1.0f)) {
       out << indent << "  scale " << uScaleFreq << " " << vScaleFreq << " "
-	  << uScale << " " << vScale << std::endl;
+          << uScale << " " << vScale << std::endl;
     }
     if (uCenter != 0.5f) {
       out << indent << "  center " << uCenter << " " << vCenter << std::endl;
@@ -732,6 +696,6 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -22,13 +22,12 @@
 #include "ScriptLoaderFactory.h"
 
 /* static entry point for threading */
-static void *startBot(void *bot) {
-  ((BZRobots::Robot *)bot)->run();
+static void* startBot(void* bot) {
+  ((BZRobots::Robot*)bot)->run();
   return NULL;
 }
 
-RobotScript::RobotScript()
-{
+RobotScript::RobotScript() {
   robot = NULL;
   botplayer = NULL;
   bzrobotcb = NULL;
@@ -37,8 +36,7 @@ RobotScript::RobotScript()
   error = "Invalid script filename.";
 }
 
-RobotScript *RobotScript::loadFile(std::string filename)
-{
+RobotScript* RobotScript::loadFile(std::string filename) {
   std::string::size_type extension_pos = filename.find_last_of(".");
   if (extension_pos == std::string::npos || extension_pos >= filename.length()) {
     return new RobotScript();
@@ -49,28 +47,26 @@ RobotScript *RobotScript::loadFile(std::string filename)
     return new RobotScript();
   }
 
-  RobotScript *scriptTool = SCRIPTTOOLFACTORY.scriptTool(extension);
+  RobotScript* scriptTool = SCRIPTTOOLFACTORY.scriptTool(extension);
   scriptTool->load(filename);
 
   return scriptTool;
 }
 
-void RobotScript::setPlayer(BZRobotPlayer *_botplayer)
-{
+void RobotScript::setPlayer(BZRobotPlayer* _botplayer) {
   botplayer = _botplayer;
   botplayer->setRobot(robot);
   bzrobotcb = RobotControl::CallbackSet(_botplayer);
-  if(robot)
-	robot->setCallbacks(bzrobotcb);
+  if (robot) {
+    robot->setCallbacks(bzrobotcb);
+  }
 }
 
-bool RobotScript::hasPlayer()
-{
+bool RobotScript::hasPlayer() {
   return (botplayer != NULL);
 }
 
-void RobotScript::start()
-{
+void RobotScript::start() {
   if (!robot) {
     robot = create();
   }
@@ -82,7 +78,7 @@ void RobotScript::start()
   }
 
 #ifndef _WIN32
-  pthread_create( &rthread, NULL, startBot, robot);
+  pthread_create(&rthread, NULL, startBot, robot);
 #else
   rthread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE) startBot, robot, 0, 0);
 #endif // _WIN32
@@ -90,8 +86,7 @@ void RobotScript::start()
   _running = true;
 }
 
-void RobotScript::stop()
-{
+void RobotScript::stop() {
 #ifndef _WIN32
   pthread_join(rthread, NULL);
   pthread_detach(rthread);
@@ -119,6 +114,6 @@ void RobotScript::stop()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

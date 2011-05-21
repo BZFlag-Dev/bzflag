@@ -29,21 +29,18 @@ template <>
 CommandManager* Singleton<CommandManager>::_instance = (CommandManager*)0;
 
 
-CommandManager::CommandManager()
-{
+CommandManager::CommandManager() {
   // do nothing
 }
 
 
-CommandManager::~CommandManager()
-{
+CommandManager::~CommandManager() {
   // do nothing
 }
 
 
 void CommandManager::add(const std::string& name, CommandFunction func,
-                         const std::string& help)
-{
+                         const std::string& help) {
   commands.erase(name);
   CmdInfo info;
   info.func = func;
@@ -52,18 +49,17 @@ void CommandManager::add(const std::string& name, CommandFunction func,
 }
 
 
-void CommandManager::remove(const std::string& name)
-{
+void CommandManager::remove(const std::string& name) {
   commands.erase(name);
 }
 
 
-std::string CommandManager::getHelp(const std::string& name) const
-{
+std::string CommandManager::getHelp(const std::string& name) const {
   // look up command
   Commands::const_iterator index = commands.find(name);
-  if (index == commands.end())
+  if (index == commands.end()) {
     return "";
+  }
 
   // return help string
   return index->second.help;
@@ -71,24 +67,24 @@ std::string CommandManager::getHelp(const std::string& name) const
 
 
 std::string CommandManager::run(const std::string& name,
-                                const ArgList& args, bool* ret) const
-{
+                                const ArgList& args, bool* ret) const {
   // look up command
   Commands::const_iterator index = commands.find(name);
   if (index == commands.end()) {
-    if (ret)
+    if (ret) {
       *ret = false;
+    }
     return TextUtils::format("Command %s not found", name.c_str());
   }
-  if (ret)
+  if (ret) {
     *ret = true;
+  }
   // run it
-  return (*index->second.func)(name, args,ret);
+  return (*index->second.func)(name, args, ret);
 }
 
 
-std::string CommandManager::run(const std::string& cmd,bool *ret) const
-{
+std::string CommandManager::run(const std::string& cmd, bool* ret) const {
   std::string result;
   const char* scan = cmd.c_str();
 
@@ -100,25 +96,28 @@ std::string CommandManager::run(const std::string& cmd,bool *ret) const
     // parse command name
     scan = TextUtils::skipWhitespace(scan);
     scan = readValue(scan, &name);
-    if (scan != NULL)
+    if (scan != NULL) {
       scan = TextUtils::skipWhitespace(scan);
+    }
 
     // parse arguments
     while (scan != NULL && *scan != '\0' && *scan != ';') {
       std::string value;
       scan = readValue(scan, &value);
       if (scan != NULL) {
-	scan = TextUtils::skipWhitespace(scan);
-	args.push_back(value);
+        scan = TextUtils::skipWhitespace(scan);
+        args.push_back(value);
       }
     }
 
     // run it or report error
     if (scan == NULL) {
-      if (ret)
-  	*ret = false;
+      if (ret) {
+        *ret = false;
+      }
       return std::string("Error parsing command");
-    } else if (name[0] != '#') {
+    }
+    else if (name[0] != '#') {
       result = run(name, args, ret);
     }
 
@@ -134,58 +133,62 @@ std::string CommandManager::run(const std::string& cmd,bool *ret) const
 }
 
 
-void CommandManager::iterate(Callback callback, void* userData) const
-{
+void CommandManager::iterate(Callback callback, void* userData) const {
   assert(callback != NULL);
 
   for (Commands::const_iterator index = commands.begin();
-       index != commands.end(); ++index)
+       index != commands.end(); ++index) {
     (*callback)(index->first, userData);
+  }
 }
 
 
-const char* CommandManager::readValue(const char* cmd, std::string* value)
-{
-  if (*cmd == '\"')
+const char* CommandManager::readValue(const char* cmd, std::string* value) {
+  if (*cmd == '\"') {
     return readQuoted(cmd + 1, value);
-  else if (*cmd != '\0')
+  }
+  else if (*cmd != '\0') {
     return readUnquoted(cmd, value);
-  else
+  }
+  else {
     return cmd;
+  }
 }
 
 
-const char* CommandManager::readUnquoted(const char* cmd, std::string* value)
-{
+const char* CommandManager::readUnquoted(const char* cmd, std::string* value) {
   // read up to next whitespace.  escapes are not interpreted.
   const char* start = cmd;
-  while (*cmd != '\0' && !iswspace(*cmd) && *cmd != ';')
+  while (*cmd != '\0' && !iswspace(*cmd) && *cmd != ';') {
     ++cmd;
+  }
   *value = std::string(start, cmd - start);
   return cmd;
 }
 
 
-const char* CommandManager::readQuoted(const char* cmd, std::string* value)
-{
+const char* CommandManager::readQuoted(const char* cmd, std::string* value) {
   *value = "";
   bool escaped = false;
   for (; *cmd != '\0'; ++cmd) {
     if (escaped) {
       switch (*cmd) {
-	case 't': value->append("\t", 1); break;
-	case 'n': value->append("\n", 1); break;
-	case 'r': value->append("\r", 1); break;
-	case '\\': value->append("\\", 1); break;
-	case '\"': value->append("\"", 1); break;
-	default: value->append(cmd, 1); break;
+        case 't': value->append("\t", 1); break;
+        case 'n': value->append("\n", 1); break;
+        case 'r': value->append("\r", 1); break;
+        case '\\': value->append("\\", 1); break;
+        case '\"': value->append("\"", 1); break;
+        default: value->append(cmd, 1); break;
       }
       escaped = false;
-    } else if (*cmd == '\\') {
+    }
+    else if (*cmd == '\\') {
       escaped = true;
-    } else if (*cmd == '\"') {
+    }
+    else if (*cmd == '\"') {
       return cmd + 1;
-    } else {
+    }
+    else {
       value->append(cmd, 1);
     }
   }
@@ -199,6 +202,6 @@ const char* CommandManager::readQuoted(const char* cmd, std::string* value)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

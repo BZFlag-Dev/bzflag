@@ -58,7 +58,7 @@ inline int wresize(WINDOW*, int, int) {
 }
 
 inline int cr_waddstr(WINDOW* w, const char* str) {
-  return waddstr(w, const_cast<char *>(str));
+  return waddstr(w, const_cast<char*>(str));
 }
 #undef waddstr
 #define waddstr(W, C) cr_waddstr(W, C)
@@ -113,36 +113,36 @@ inline int cr_waddstr(WINDOW* w, const char* str) {
 
 // old pdcurses requires some workarounds
 #if (!defined(PDC_BUILD) || PDC_BUILD < 2800)
-  // stop ugly macros from polluting our namespace (pdcurses doesn't use
-  // the NOMACROS preprocessor variable)
-  #undef erase
-  inline int erase() {
-    return werase(stdscr);
-  }
+// stop ugly macros from polluting our namespace (pdcurses doesn't use
+// the NOMACROS preprocessor variable)
+#undef erase
+inline int erase() {
+  return werase(stdscr);
+}
 
-  #undef clear
-  inline int clear() {
-    return wclear(stdscr);
-  }
+#undef clear
+inline int clear() {
+  return wclear(stdscr);
+}
 
-  #undef move
-  inline int move(int y, int x) {
-    return wmove(stdscr, y, x);
-  }
+#undef move
+inline int move(int y, int x) {
+  return wmove(stdscr, y, x);
+}
 
-  #undef nonl
-  inline int nonl() {
-    return OK;
-  }
+#undef nonl
+inline int nonl() {
+  return OK;
+}
 
-  // wrap some functions to make it compatible with ncurses
-  inline int pd_waddstr(WINDOW* w, const char* str) {
-    return waddstr(w, const_cast<char *>(str));
-  }
-  #define waddstr(W, C) pd_waddstr(W, C)
+// wrap some functions to make it compatible with ncurses
+inline int pd_waddstr(WINDOW* w, const char* str) {
+  return waddstr(w, const_cast<char*>(str));
+}
+#define waddstr(W, C) pd_waddstr(W, C)
 
-  // wresize needs to preserve the pointer to the window
-  #define wresize(w, l, c) ((w = resize_window(w, l, c)) ? OK : ERR)
+// wresize needs to preserve the pointer to the window
+#define wresize(w, l, c) ((w = resize_window(w, l, c)) ? OK : ERR)
 #endif // old pdcurses
 
 #ifdef XCURSES
@@ -173,6 +173,6 @@ inline void use_default_colors() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

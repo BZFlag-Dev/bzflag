@@ -82,16 +82,14 @@ static std::map<int, std::string> code2name;
 //
 
 static void pushNamedString(lua_State* L, const char* key,
-                                          const char* value)
-{
+                            const char* value) {
   lua_pushstring(L, key);
   lua_pushstring(L, value);
   lua_rawset(L, -3);
 }
 
 
-static void pushNamedInt(lua_State* L, const char* key, int value)
-{
+static void pushNamedInt(lua_State* L, const char* key, int value) {
   lua_pushstring(L, key);
   lua_pushinteger(L, value);
   lua_rawset(L, -3);
@@ -99,8 +97,7 @@ static void pushNamedInt(lua_State* L, const char* key, int value)
 
 
 static void limitMembers(lua_State* L, const char* table,
-                         const std::vector<std::string>& functions)
-{
+                         const std::vector<std::string>& functions) {
   lua_newtable(L);
   const int nt = lua_gettop(L); // new table
   lua_getglobal(L, table);
@@ -113,8 +110,7 @@ static void limitMembers(lua_State* L, const char* table,
 }
 
 
-static void setupCallInMaps()
-{
+static void setupCallInMaps() {
   if (!name2code.empty()) {
     return;
   }
@@ -141,8 +137,7 @@ static void setupCallInMaps()
 
 //============================================================================//
 
-bool HubLink::createLua(const std::string& code)
-{
+bool HubLink::createLua(const std::string& code) {
   setupCallInMaps();
 
   L = luaL_newstate();
@@ -197,7 +192,7 @@ bool HubLink::createLua(const std::string& code)
 
   const char* chunkName = codeFileName.c_str();
   if (luaL_loadbuffer(L, code.c_str(), code.size(), chunkName) != 0) {
-    std::string msg= "error: ";
+    std::string msg = "error: ";
     msg += lua_tostring(L, -1);
     fail(msg);
     return false;
@@ -227,8 +222,7 @@ bool HubLink::createLua(const std::string& code)
 }
 
 
-bool HubLink::pushAnsiCodes()
-{
+bool HubLink::pushAnsiCodes() {
   lua_newtable(L);
 
   pushNamedString(L, "RESET",        ANSI_STR_RESET_FINAL);
@@ -260,8 +254,7 @@ bool HubLink::pushAnsiCodes()
 }
 
 
-bool HubLink::pushConstants()
-{
+bool HubLink::pushConstants() {
   lua_newtable(L);
 
   pushNamedInt(L, "ALLTABS", ControlPanel::MessageAllTabs);
@@ -280,8 +273,7 @@ bool HubLink::pushConstants()
 
 //============================================================================//
 
-bool HubLink::pushCallIn(int ciCode, int inArgs)
-{
+bool HubLink::pushCallIn(int ciCode, int inArgs) {
   if (L == NULL) {
     return false;
   }
@@ -297,8 +289,7 @@ bool HubLink::pushCallIn(int ciCode, int inArgs)
 }
 
 
-bool HubLink::runCallIn(int inArgs, int outArgs)
-{
+bool HubLink::runCallIn(int inArgs, int outArgs) {
   if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
     debugf(1, "error, %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
@@ -313,8 +304,7 @@ bool HubLink::runCallIn(int inArgs, int outArgs)
 //  Lua Call-Ins
 //
 
-void HubLink::shutdown()
-{
+void HubLink::shutdown() {
   if (!pushCallIn(CI_Shutdown, 0)) {
     return;
   }
@@ -322,8 +312,7 @@ void HubLink::shutdown()
 }
 
 
-void HubLink::updateLua()
-{
+void HubLink::updateLua() {
   if (!pushCallIn(CI_Update, 0)) {
     return;
   }
@@ -331,8 +320,7 @@ void HubLink::updateLua()
 }
 
 
-void HubLink::recvCommand(const std::string& cmd)
-{
+void HubLink::recvCommand(const std::string& cmd) {
   if (!pushCallIn(CI_RecvCommand, 1)) {
     return;
   }
@@ -343,8 +331,7 @@ void HubLink::recvCommand(const std::string& cmd)
 }
 
 
-bool HubLink::recvData(const std::string& data)
-{
+bool HubLink::recvData(const std::string& data) {
   if (!pushCallIn(CI_RecvData, 1)) {
     return false;
   }
@@ -367,8 +354,7 @@ bool HubLink::recvData(const std::string& data)
 
 
 void HubLink::serverJoined(const std::string& location, int port,
-                           const std::string& callsign)
-{
+                           const std::string& callsign) {
   if (!pushCallIn(CI_ServerJoined, 3)) {
     return;
   }
@@ -381,8 +367,7 @@ void HubLink::serverJoined(const std::string& location, int port,
 }
 
 
-void HubLink::serverParted()
-{
+void HubLink::serverParted() {
   if (!pushCallIn(CI_ServerParted, 0)) {
     return;
   }
@@ -391,8 +376,7 @@ void HubLink::serverParted()
 
 
 void HubLink::wordComplete(const std::string& line,
-                           std::set<std::string>& matches)
-{
+                           std::set<std::string>& matches) {
   if (!pushCallIn(CI_WordComplete, 1)) {
     return;
   }
@@ -417,8 +401,7 @@ void HubLink::wordComplete(const std::string& line,
 }
 
 
-void HubLink::tabAdded(const std::string& name)
-{
+void HubLink::tabAdded(const std::string& name) {
   if (!pushCallIn(CI_TabAdded, 1)) {
     return;
   }
@@ -429,8 +412,7 @@ void HubLink::tabAdded(const std::string& name)
 }
 
 
-void HubLink::tabRemoved(const std::string& name)
-{
+void HubLink::tabRemoved(const std::string& name) {
   if (!pushCallIn(CI_TabRemoved, 1)) {
     return;
   }
@@ -441,8 +423,7 @@ void HubLink::tabRemoved(const std::string& name)
 }
 
 
-void HubLink::activeTabChanged()
-{
+void HubLink::activeTabChanged() {
   if (!pushCallIn(CI_ActiveTabChanged, 0)) {
     return;
   }
@@ -451,8 +432,7 @@ void HubLink::activeTabChanged()
 }
 
 
-void HubLink::bzdbChange(const std::string& varName)
-{
+void HubLink::bzdbChange(const std::string& varName) {
   if (!pushCallIn(CI_BZDBChange, 1)) {
     return;
   }
@@ -463,8 +443,7 @@ void HubLink::bzdbChange(const std::string& varName)
 }
 
 
-void HubLink::startComposing()
-{
+void HubLink::startComposing() {
   if (!pushCallIn(CI_StartComposing, 0)) {
     return;
   }
@@ -478,8 +457,7 @@ void HubLink::startComposing()
 //  Lua Call-Outs
 //
 
-static inline HubLink* GetLink(lua_State* L)
-{
+static inline HubLink* GetLink(lua_State* L) {
   lua_rawgeti(L, LUA_REGISTRYINDEX, thisIndex);
   if (!lua_isuserdata(L, -1)) {
     luaL_error(L, "Internal error -- missing 'thisIndex'");
@@ -490,8 +468,7 @@ static inline HubLink* GetLink(lua_State* L)
 }
 
 
-static int CheckTab(lua_State* L, int index)
-{
+static int CheckTab(lua_State* L, int index) {
   const int type = lua_type(L, index);
   if ((type != LUA_TNUMBER) && (type != LUA_TSTRING)) {
     luaL_error(L, "expected number or string");
@@ -511,8 +488,7 @@ static int ReadStdin(lua_State* L);
 #endif
 
 
-bool HubLink::pushCallOuts()
-{
+bool HubLink::pushCallOuts() {
   lua_newtable(L);
 
   PUSH_LUA_CFUNC(L, GetCallIn);
@@ -606,8 +582,7 @@ bool HubLink::pushCallOuts()
 
 //============================================================================//
 
-int HubLink::GetCallIn(lua_State* L)
-{
+int HubLink::GetCallIn(lua_State* L) {
   const std::string ciName = luaL_checkstring(L, 1);
   std::map<std::string, int>::const_iterator it = name2code.find(ciName);
   if (it == name2code.end()) {
@@ -623,8 +598,7 @@ int HubLink::GetCallIn(lua_State* L)
 }
 
 
-int HubLink::SetCallIn(lua_State* L)
-{
+int HubLink::SetCallIn(lua_State* L) {
   const std::string ciName = luaL_checkstring(L, 1);
   std::map<std::string, int>::const_iterator it = name2code.find(ciName);
   if (it == name2code.end()) {
@@ -648,21 +622,19 @@ int HubLink::SetCallIn(lua_State* L)
 
 //============================================================================//
 
-int HubLink::Reload(lua_State* L)
-{
+int HubLink::Reload(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
   }
   link->reloadHostPort = lua_israwstring(L, 1) ? lua_tostring(L, 1)
-                                               : link->getHostPort();
+                         : link->getHostPort();
   link->reloadLuaCode  = luaL_optstring(L, 2, "");
   return 0;
 }
 
 
-int HubLink::Disable(lua_State* L)
-{
+int HubLink::Disable(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
@@ -674,8 +646,7 @@ int HubLink::Disable(lua_State* L)
 
 //============================================================================//
 
-int HubLink::AddTab(lua_State* L)
-{
+int HubLink::AddTab(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
@@ -695,8 +666,7 @@ int HubLink::AddTab(lua_State* L)
 }
 
 
-int HubLink::RemoveTab(lua_State* L)
-{
+int HubLink::RemoveTab(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
@@ -711,8 +681,7 @@ int HubLink::RemoveTab(lua_State* L)
 }
 
 
-int HubLink::ClearTab(lua_State* L)
-{
+int HubLink::ClearTab(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -722,8 +691,7 @@ int HubLink::ClearTab(lua_State* L)
 }
 
 
-int HubLink::SwapTabs(lua_State* L)
-{
+int HubLink::SwapTabs(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -734,8 +702,7 @@ int HubLink::SwapTabs(lua_State* L)
 }
 
 
-int HubLink::RenameTab(lua_State* L)
-{
+int HubLink::RenameTab(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
@@ -755,8 +722,7 @@ int HubLink::RenameTab(lua_State* L)
 }
 
 
-int HubLink::GetTabCount(lua_State* L)
-{
+int HubLink::GetTabCount(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -765,8 +731,7 @@ int HubLink::GetTabCount(lua_State* L)
 }
 
 
-int HubLink::GetTabIndex(lua_State* L)
-{
+int HubLink::GetTabIndex(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -779,8 +744,7 @@ int HubLink::GetTabIndex(lua_State* L)
 }
 
 
-int HubLink::GetTabLabel(lua_State* L)
-{
+int HubLink::GetTabLabel(lua_State* L) {
   if (!controlPanel) {
     lua_pushnil(L);
     return 1;
@@ -800,8 +764,7 @@ int HubLink::GetTabLabel(lua_State* L)
 }
 
 
-int HubLink::GetActiveTab(lua_State* L)
-{
+int HubLink::GetActiveTab(lua_State* L) {
   if (!controlPanel) {
     lua_pushnil(L);
     return 1;
@@ -821,8 +784,7 @@ int HubLink::GetActiveTab(lua_State* L)
 }
 
 
-int HubLink::SetActiveTab(lua_State* L)
-{
+int HubLink::SetActiveTab(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -832,8 +794,7 @@ int HubLink::SetActiveTab(lua_State* L)
 }
 
 
-int HubLink::GetTabTopic(lua_State* L)
-{
+int HubLink::GetTabTopic(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -843,8 +804,7 @@ int HubLink::GetTabTopic(lua_State* L)
 }
 
 
-int HubLink::SetTabTopic(lua_State* L)
-{
+int HubLink::SetTabTopic(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -855,8 +815,7 @@ int HubLink::SetTabTopic(lua_State* L)
 }
 
 
-int HubLink::IsTabDirty(lua_State* L)
-{
+int HubLink::IsTabDirty(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -868,8 +827,7 @@ int HubLink::IsTabDirty(lua_State* L)
 
 //============================================================================//
 
-int HubLink::GetStringWidth(lua_State* L)
-{
+int HubLink::GetStringWidth(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -882,8 +840,7 @@ int HubLink::GetStringWidth(lua_State* L)
 }
 
 
-int HubLink::GetConsoleWidth(lua_State* L)
-{
+int HubLink::GetConsoleWidth(lua_State* L) {
   if (!controlPanel) {
     return 0;
   }
@@ -894,8 +851,7 @@ int HubLink::GetConsoleWidth(lua_State* L)
 
 //============================================================================//
 
-int HubLink::GetComposePrompt(lua_State* L)
-{
+int HubLink::GetComposePrompt(lua_State* L) {
   if (hud == NULL) {
     lua_pushnil(L);
     return 1;
@@ -914,8 +870,7 @@ int HubLink::GetComposePrompt(lua_State* L)
 }
 
 
-int HubLink::SetComposePrompt(lua_State* L)
-{
+int HubLink::SetComposePrompt(lua_State* L) {
   if (hud == NULL) {
     return 0;
   }
@@ -933,8 +888,7 @@ int HubLink::SetComposePrompt(lua_State* L)
 }
 
 
-int HubLink::GetComposeString(lua_State* L)
-{
+int HubLink::GetComposeString(lua_State* L) {
   if (hud == NULL) {
     lua_pushnil(L);
     return 1;
@@ -953,8 +907,7 @@ int HubLink::GetComposeString(lua_State* L)
 }
 
 
-int HubLink::SetComposeString(lua_State* L)
-{
+int HubLink::SetComposeString(lua_State* L) {
   if (hud == NULL) {
     return 0;
   }
@@ -974,8 +927,7 @@ int HubLink::SetComposeString(lua_State* L)
 
 //============================================================================//
 
-int HubLink::SendData(lua_State* L)
-{
+int HubLink::SendData(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     return 0;
@@ -988,8 +940,7 @@ int HubLink::SendData(lua_State* L)
 
 //============================================================================//
 
-int HubLink::Print(lua_State* L)
-{
+int HubLink::Print(lua_State* L) {
   const std::string msg = luaL_checkstring(L, 1);
 
   switch (lua_type(L, 2)) {
@@ -1011,8 +962,7 @@ int HubLink::Print(lua_State* L)
 }
 
 
-int HubLink::Alert(lua_State* L)
-{
+int HubLink::Alert(lua_State* L) {
   const std::string msg = luaL_checkstring(L, 1);
   const int   priority  = luaL_optint(L, 2, 0);
   const float duration  = luaL_optfloat(L, 3, 3.0f);
@@ -1023,8 +973,7 @@ int HubLink::Alert(lua_State* L)
 }
 
 
-int HubLink::PlaySound(lua_State* L)
-{
+int HubLink::PlaySound(lua_State* L) {
   const char* soundName  = luaL_checkstring(L, 1);
   const int   soundCode  = SOUNDSYSTEM.getID(soundName);
   const bool  ignoreMute = lua_isboolean(L, 2) && lua_toboolean(L, 2);
@@ -1042,24 +991,21 @@ int HubLink::PlaySound(lua_State* L)
 
 //============================================================================//
 
-int HubLink::CalcMD5(lua_State* L)
-{
+int HubLink::CalcMD5(lua_State* L) {
   const std::string text = luaL_checkstdstring(L, 1);
   lua_pushstdstring(L, MD5(text).hexdigest());
   return 1;
 }
 
 
-int HubLink::StripAnsiCodes(lua_State* L)
-{
+int HubLink::StripAnsiCodes(lua_State* L) {
   const char* text = luaL_checkstring(L, 1);
   lua_pushstdstring(L, stripAnsiCodes(text));
   return 1;
 }
 
 
-int HubLink::UnescapeAnsiCodes(lua_State* L)
-{
+int HubLink::UnescapeAnsiCodes(lua_State* L) {
   const char* text = luaL_checkstring(L, 1);
   lua_pushstdstring(L, TextUtils::unescape_colors(text));
   return 1;
@@ -1068,8 +1014,7 @@ int HubLink::UnescapeAnsiCodes(lua_State* L)
 
 //============================================================================//
 
-int HubLink::SetBZDB(lua_State* L)
-{
+int HubLink::SetBZDB(lua_State* L) {
   const std::string key    = luaL_checkstring(L, 1);
   const std::string value  = luaL_checkstring(L, 2);
   const bool usePersistent = lua_isboolean(L, 3);
@@ -1092,8 +1037,7 @@ int HubLink::SetBZDB(lua_State* L)
 }
 
 
-int HubLink::GetBZDB(lua_State* L)
-{
+int HubLink::GetBZDB(lua_State* L) {
   const std::string key = luaL_checkstring(L, 1);
   if (!BZDB.isSet(key)) {
     lua_pushnil(L);
@@ -1105,20 +1049,18 @@ int HubLink::GetBZDB(lua_State* L)
 
 //============================================================================//
 
-static std::string setupFilename(const char* filename)
-{
+static std::string setupFilename(const char* filename) {
   if ((strlen(filename) <= 4)
-   || (strncmp(filename, "hub_", 4) != 0)
-   || (strstr(filename,  "..")   != NULL)
-   || (strpbrk(filename, "/:\\") != NULL)) {
+      || (strncmp(filename, "hub_", 4) != 0)
+      || (strstr(filename,  "..")   != NULL)
+      || (strpbrk(filename, "/:\\") != NULL)) {
     return "";
   }
   return getConfigDirName(BZ_CONFIG_DIR_VERSION) + filename;
 }
 
 
-int HubLink::LoadFile(lua_State* L)
-{
+int HubLink::LoadFile(lua_State* L) {
   const std::string filename = setupFilename(luaL_checkstring(L, 1));
   if (filename.empty()) {
     return 0;
@@ -1153,8 +1095,7 @@ int HubLink::LoadFile(lua_State* L)
 }
 
 
-static int luaSaveFile(lua_State* L, const char* mode)
-{
+static int luaSaveFile(lua_State* L, const char* mode) {
   const std::string filename = setupFilename(luaL_checkstring(L, 1));
   const std::string data = luaL_checkstdstring(L, 2);
   if (filename.empty()) {
@@ -1186,20 +1127,17 @@ static int luaSaveFile(lua_State* L, const char* mode)
 }
 
 
-int HubLink::SaveFile(lua_State* L)
-{
+int HubLink::SaveFile(lua_State* L) {
   return luaSaveFile(L, "wb");
 }
 
 
-int HubLink::AppendFile(lua_State* L)
-{
+int HubLink::AppendFile(lua_State* L) {
   return luaSaveFile(L, "ab");
 }
 
 
-int HubLink::RemoveFile(lua_State* L)
-{
+int HubLink::RemoveFile(lua_State* L) {
   const std::string filename = setupFilename(luaL_checkstring(L, 1));
   if (filename.empty()) {
     lua_pushnil(L);
@@ -1221,8 +1159,7 @@ int HubLink::RemoveFile(lua_State* L)
 
 //============================================================================//
 
-int HubLink::GetCode(lua_State* L)
-{
+int HubLink::GetCode(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     lua_pushnil(L);
@@ -1233,15 +1170,13 @@ int HubLink::GetCode(lua_State* L)
 }
 
 
-int HubLink::GetTime(lua_State* L)
-{
+int HubLink::GetTime(lua_State* L) {
   LuaDouble::PushDouble(L, BzTime::getCurrent().getSeconds());
   return 1;
 }
 
 
-int HubLink::GetVersion(lua_State* L)
-{
+int HubLink::GetVersion(lua_State* L) {
   lua_pushstring(L, getMajorMinorRevVersion());
   lua_pushstring(L, getAppVersion());
   lua_pushstdstring(L, getOSString());
@@ -1249,8 +1184,7 @@ int HubLink::GetVersion(lua_State* L)
 }
 
 
-int HubLink::GetHubServer(lua_State* L)
-{
+int HubLink::GetHubServer(lua_State* L) {
   HubLink* link = GetLink(L);
   if (link == NULL) {
     lua_pushnil(L);
@@ -1261,8 +1195,7 @@ int HubLink::GetHubServer(lua_State* L)
 }
 
 
-int HubLink::GetServerInfo(lua_State* L)
-{
+int HubLink::GetServerInfo(lua_State* L) {
   const ServerLink* srvLink = ServerLink::getServer();
   if ((srvLink == NULL) ||
       (srvLink->getState() != ServerLink::Okay)) {
@@ -1278,16 +1211,14 @@ int HubLink::GetServerInfo(lua_State* L)
 }
 
 
-int HubLink::GetOpenGLString(lua_State* L)
-{
+int HubLink::GetOpenGLString(lua_State* L) {
   const int pname = (GLenum) luaL_checkint(L, 1);
   lua_pushstring(L, (const char*)glGetString((GLenum)pname));
   return 1;
 }
 
 
-int HubLink::GetOpenGLNumbers(lua_State* L)
-{
+int HubLink::GetOpenGLNumbers(lua_State* L) {
   const int pname = luaL_checkint(L, 1);
   const int count = luaL_optint(L, 2, 1);
   GLdouble buf[256];
@@ -1306,8 +1237,7 @@ int HubLink::GetOpenGLNumbers(lua_State* L)
 
 //============================================================================//
 
-int HubLink::GetKeyBindings(lua_State* L)
-{
+int HubLink::GetKeyBindings(lua_State* L) {
   const std::string command = luaL_checkstring(L, 1);
   const bool press = !lua_isboolean(L, 2) || lua_toboolean(L, 2);
   std::vector<std::string> keys = KEYMGR.getKeysFromCommand(command, press);
@@ -1320,8 +1250,7 @@ int HubLink::GetKeyBindings(lua_State* L)
 }
 
 
-int HubLink::IsVisible(lua_State* L)
-{
+int HubLink::IsVisible(lua_State* L) {
   lua_pushboolean(L, !isUnmapped());
   return 1;
 }
@@ -1335,15 +1264,15 @@ int HubLink::IsVisible(lua_State* L)
   nboPack ## label(buf, value); \
   lua_pushlstring(L, buf, sizeof(type)); \
   return 1;
-int HubLink::PackInt8  (lua_State* L) { PACK_TYPE(Int8,   int8_t)   }
-int HubLink::PackInt16 (lua_State* L) { PACK_TYPE(Int16,  int16_t)  }
-int HubLink::PackInt32 (lua_State* L) { PACK_TYPE(Int32,  int32_t)  }
-int HubLink::PackInt64 (lua_State* L) { PACK_TYPE(Int64,  int64_t)  }
-int HubLink::PackUInt8 (lua_State* L) { PACK_TYPE(UInt8,  uint8_t)  }
+int HubLink::PackInt8(lua_State* L) { PACK_TYPE(Int8,   int8_t)   }
+int HubLink::PackInt16(lua_State* L) { PACK_TYPE(Int16,  int16_t)  }
+int HubLink::PackInt32(lua_State* L) { PACK_TYPE(Int32,  int32_t)  }
+int HubLink::PackInt64(lua_State* L) { PACK_TYPE(Int64,  int64_t)  }
+int HubLink::PackUInt8(lua_State* L) { PACK_TYPE(UInt8,  uint8_t)  }
 int HubLink::PackUInt16(lua_State* L) { PACK_TYPE(UInt16, uint16_t) }
 int HubLink::PackUInt32(lua_State* L) { PACK_TYPE(UInt32, uint32_t) }
 int HubLink::PackUInt64(lua_State* L) { PACK_TYPE(UInt64, uint64_t) }
-int HubLink::PackFloat (lua_State* L) { PACK_TYPE(Float,  float)    }
+int HubLink::PackFloat(lua_State* L) { PACK_TYPE(Float,  float)    }
 int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
 #undef PACK_TYPE
 
@@ -1358,15 +1287,15 @@ int HubLink::PackDouble(lua_State* L) { PACK_TYPE(Double, double)   }
   nboUnpack ## label((void*)s, value); \
   lua_pushnumber(L, (lua_Number)value); \
   return 1;
-int HubLink::UnpackInt8  (lua_State* L) { UNPACK_TYPE(Int8,   int8_t)   }
-int HubLink::UnpackInt16 (lua_State* L) { UNPACK_TYPE(Int16,  int16_t)  }
-int HubLink::UnpackInt32 (lua_State* L) { UNPACK_TYPE(Int32,  int32_t)  }
-int HubLink::UnpackInt64 (lua_State* L) { UNPACK_TYPE(Int64,  int64_t)  }
-int HubLink::UnpackUInt8 (lua_State* L) { UNPACK_TYPE(UInt8,  uint8_t)  }
+int HubLink::UnpackInt8(lua_State* L) { UNPACK_TYPE(Int8,   int8_t)   }
+int HubLink::UnpackInt16(lua_State* L) { UNPACK_TYPE(Int16,  int16_t)  }
+int HubLink::UnpackInt32(lua_State* L) { UNPACK_TYPE(Int32,  int32_t)  }
+int HubLink::UnpackInt64(lua_State* L) { UNPACK_TYPE(Int64,  int64_t)  }
+int HubLink::UnpackUInt8(lua_State* L) { UNPACK_TYPE(UInt8,  uint8_t)  }
 int HubLink::UnpackUInt16(lua_State* L) { UNPACK_TYPE(UInt16, uint16_t) }
 int HubLink::UnpackUInt32(lua_State* L) { UNPACK_TYPE(UInt32, uint32_t) }
 int HubLink::UnpackUInt64(lua_State* L) { UNPACK_TYPE(UInt64, uint64_t) }
-int HubLink::UnpackFloat (lua_State* L) { UNPACK_TYPE(Float,  float)    }
+int HubLink::UnpackFloat(lua_State* L) { UNPACK_TYPE(Float,  float)    }
 int HubLink::UnpackDouble(lua_State* L) { UNPACK_TYPE(Double, double)   }
 #undef UNPACK_TYPE
 
@@ -1376,24 +1305,23 @@ int HubLink::UnpackDouble(lua_State* L) { UNPACK_TYPE(Double, double)   }
 
 // whacky bit of dev'ing fun
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
-  #include <unistd.h>
-  #include <fcntl.h>
-  static int ReadStdin(lua_State* L)
-  {
-    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
-    if (bits == -1) {
-      return 0;
-    }
-    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
-    char buf[4096];
-    const int r = read(STDIN_FILENO, buf, sizeof(buf));
-    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
-    if (r <= 0) {
-      return 0;
-    }
-    lua_pushlstring(L, buf, r);
-    return 1;
+#include <unistd.h>
+#include <fcntl.h>
+static int ReadStdin(lua_State* L) {
+  int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+  if (bits == -1) {
+    return 0;
   }
+  fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
+  char buf[4096];
+  const int r = read(STDIN_FILENO, buf, sizeof(buf));
+  fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
+  if (r <= 0) {
+    return 0;
+  }
+  lua_pushlstring(L, buf, r);
+  return 1;
+}
 #endif
 
 
@@ -1405,6 +1333,6 @@ int HubLink::UnpackDouble(lua_State* L) { UNPACK_TYPE(Double, double)   }
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

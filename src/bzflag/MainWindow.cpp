@@ -26,40 +26,36 @@
 //
 
 MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick)
-: window(_window)
-, joystick(_joystick)
-, quit(false)
-, quadrant(FullWindow)
-, isFullscreen(false)
-, isFullView(true)
-, allowMouseGrab(true)
-, grabEnabled(true)
-, zoomFactor(1)
-, width(0)
-, minWidth(MinX)
-, minHeight(MinY)
-, faulting(false)
-{
+  : window(_window)
+  , joystick(_joystick)
+  , quit(false)
+  , quadrant(FullWindow)
+  , isFullscreen(false)
+  , isFullView(true)
+  , allowMouseGrab(true)
+  , grabEnabled(true)
+  , zoomFactor(1)
+  , width(0)
+  , minWidth(MinX)
+  , minHeight(MinY)
+  , faulting(false) {
   window->addResizeCallback(resizeCB, this);
   window->addExposeCallback(exposeCB, this);
   //  resize();
 }
 
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
   window->removeResizeCallback(resizeCB, this);
 }
 
 
-void MainWindow::setZoomFactor(int _zoomFactor)
-{
+void MainWindow::setZoomFactor(int _zoomFactor) {
   zoomFactor = _zoomFactor;
 }
 
 
-void MainWindow::setMinSize(int _minWidth, int _minHeight)
-{
+void MainWindow::setMinSize(int _minWidth, int _minHeight) {
   minWidth = _minWidth;
   minHeight = _minHeight;
   window->setMinSize(minWidth, minHeight);
@@ -67,28 +63,24 @@ void MainWindow::setMinSize(int _minWidth, int _minHeight)
 }
 
 
-void MainWindow::setPosition(int x, int y)
-{
+void MainWindow::setPosition(int x, int y) {
   window->setPosition(x, y);
 }
 
 
-void MainWindow::setSize(int _width, int _height)
-{
+void MainWindow::setSize(int _width, int _height) {
   window->setSize(_width, _height);
   resize();
 }
 
 
-void MainWindow::showWindow(bool on)
-{
+void MainWindow::showWindow(bool on) {
   window->showWindow(on);
-  if (on) resize();
+  if (on) { resize(); }
 }
 
 
-inline int MainWindow::getYOffset() const
-{
+inline int MainWindow::getYOffset() const {
   if (quadrant == FullWindow) {
     return 0;
   }
@@ -96,29 +88,25 @@ inline int MainWindow::getYOffset() const
 }
 
 
-void MainWindow::warpMouse()
-{
+void MainWindow::warpMouse() {
   // move mouse to center of view window (zero motion box)
   window->warpMouse((width >> 1) + xOrigin, (viewHeight >> 1) + getYOffset());
 }
 
 
-void MainWindow::warpMouse(int mx, int my)
-{
+void MainWindow::warpMouse(int mx, int my) {
   window->warpMouse(mx, my);
 }
 
 
-void MainWindow::warpMouseCenterX()
-{
+void MainWindow::warpMouseCenterX() {
   int mx, my;
   getMousePosition(mx, my);
   window->warpMouse((width >> 1) + xOrigin, my + (viewHeight >> 1) + getYOffset());
 }
 
 
-void MainWindow::warpMouseCenterY()
-{
+void MainWindow::warpMouseCenterY() {
   int mx, my;
   getMousePosition(mx, my);
   const int y = (viewHeight >> 1) + getYOffset();
@@ -126,78 +114,67 @@ void MainWindow::warpMouseCenterY()
 }
 
 
-void MainWindow::getMousePosition(int& mx, int& my) const
-{
+void MainWindow::getMousePosition(int& mx, int& my) const {
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
   my -= (viewHeight >> 1) + getYOffset();
 }
 
 
-void MainWindow::grabMouse()
-{
-  if (allowMouseGrab) window->grabMouse();
+void MainWindow::grabMouse() {
+  if (allowMouseGrab) { window->grabMouse(); }
 }
 
 
-void MainWindow::ungrabMouse()
-{
-  if (allowMouseGrab) window->ungrabMouse();
+void MainWindow::ungrabMouse() {
+  if (allowMouseGrab) { window->ungrabMouse(); }
 }
 
 
-void MainWindow::enableGrabMouse(bool on)
-{
+void MainWindow::enableGrabMouse(bool on) {
   window->enableGrabMouse(on);
   grabEnabled = on;
 }
 
 
-bool MainWindow::isGrabEnabled(void)
-{
+bool MainWindow::isGrabEnabled(void) {
   return grabEnabled;
 }
 
 
-bool MainWindow::getFullscreen() const
-{
+bool MainWindow::getFullscreen() const {
   return window->getFullscreen();
 }
 
 
-void MainWindow::setFullscreen()
-{
+void MainWindow::setFullscreen() {
   window->setFullscreen(true);
   resize();
 }
 
 
-void MainWindow::toggleFullscreen()
-{
+void MainWindow::toggleFullscreen() {
   isFullscreen = window->getFullscreen();
   window->setFullscreen(!isFullscreen);
   resize();
 }
 
 
-void MainWindow::setFullView(bool _isFullView)
-{
+void MainWindow::setFullView(bool _isFullView) {
   isFullView = _isFullView;
 }
 
 
-void MainWindow::setNoMouseGrab()
-{
+void MainWindow::setNoMouseGrab() {
   allowMouseGrab = false;
 }
 
 
-void MainWindow::setQuadrant(Quadrant _quadrant)
-{
+void MainWindow::setQuadrant(Quadrant _quadrant) {
   int inWidth = trueWidth;
-  if (inWidth < MinX) inWidth = MinX;
+  if (inWidth < MinX) { inWidth = MinX; }
   int inHeight = trueHeight;
-  if (inHeight < MinY) inHeight = MinY;
+  if (inHeight < MinY) { inHeight = MinY; }
 
   quadrant = _quadrant;
   switch (quadrant) {
@@ -206,9 +183,10 @@ void MainWindow::setQuadrant(Quadrant _quadrant)
       width = inWidth;
       height = inHeight;
       if (isFullView) {
-	viewHeight = height;
-      } else {
-	viewHeight = inHeight * (46 - RENDERER.getRadarSize()) / 60;
+        viewHeight = height;
+      }
+      else {
+        viewHeight = inHeight * (46 - RENDERER.getRadarSize()) / 60;
       }
       xOrigin = 0;
       yOrigin = 0;
@@ -218,25 +196,25 @@ void MainWindow::setQuadrant(Quadrant _quadrant)
       height = inHeight >> 1;
       viewHeight = height;
       xOrigin = 0;
-      yOrigin = (inHeight+1) >> 1;
+      yOrigin = (inHeight + 1) >> 1;
       break;
     case UpperRight:
-      width = (inWidth+1) >> 1;
+      width = (inWidth + 1) >> 1;
       height = inHeight >> 1;
       viewHeight = height;
       xOrigin = inWidth >> 1;
-      yOrigin = (inHeight+1) >> 1;
+      yOrigin = (inHeight + 1) >> 1;
       break;
     case LowerLeft:
       width = inWidth >> 1;
-      height = (inHeight+1) >> 1;
+      height = (inHeight + 1) >> 1;
       viewHeight = height;
       xOrigin = 0;
       yOrigin = 0;
       break;
     case LowerRight:
-      width = (inWidth+1) >> 1;
-      height = (inHeight+1) >> 1;
+      width = (inWidth + 1) >> 1;
+      height = (inHeight + 1) >> 1;
       viewHeight = height;
       xOrigin = inWidth >> 1;
       yOrigin = 0;
@@ -246,7 +224,7 @@ void MainWindow::setQuadrant(Quadrant _quadrant)
       height = inHeight >> 1;
       viewHeight = height;
       xOrigin = 0;
-      yOrigin = (inHeight+1) >> 1;
+      yOrigin = (inHeight + 1) >> 1;
       break;
     case LowerHalf:
       width = inWidth;
@@ -261,8 +239,7 @@ void MainWindow::setQuadrant(Quadrant _quadrant)
 }
 
 
-void MainWindow::resize()
-{
+void MainWindow::resize() {
   window->getSize(trueWidth, trueHeight);
   window->makeCurrent();
   if (!window->create()) {
@@ -275,83 +252,70 @@ void MainWindow::resize()
 }
 
 
-void MainWindow::resizeCB(void* _self)
-{
+void MainWindow::resizeCB(void* _self) {
   MainWindow* self = (MainWindow*)_self;
   self->resize();
 }
 
 
-void MainWindow::exposeCB(void* /*_self*/)
-{
+void MainWindow::exposeCB(void* /*_self*/) {
   if (!BZDB.isTrue("blockExposeRecontext")) {
     OpenGLGState::initContext();
   }
 }
 
 
-void MainWindow::iconify()
-{
+void MainWindow::iconify() {
   window->iconify();
 }
 
 
-void MainWindow::deiconify()
-{
+void MainWindow::deiconify() {
   window->deiconify();
 }
 
 
-bool MainWindow::haveJoystick() const
-{
+bool MainWindow::haveJoystick() const {
   return joystick->joystick();
 }
 
 
-void MainWindow::getJoyPosition(int& jx, int& jy) const
-{
+void MainWindow::getJoyPosition(int& jx, int& jy) const {
   joystick->getJoy(jx, jy);
 }
 
 
-unsigned long MainWindow::getJoyButtonSet() const
-{
+unsigned long MainWindow::getJoyButtonSet() const {
   return joystick->getJoyButtons();
 }
 
 
-unsigned int MainWindow::getJoyHatswitch(int switchno) const
-{
+unsigned int MainWindow::getJoyHatswitch(int switchno) const {
   return joystick->getHatswitch(switchno);
 }
 
 
-unsigned int MainWindow::getJoyDeviceNumHats() const
-{
+unsigned int MainWindow::getJoyDeviceNumHats() const {
   return joystick->getJoyDeviceNumHats();
 }
 
 
-void MainWindow::getJoyDevices(std::vector<std::string>& list) const
-{
+void MainWindow::getJoyDevices(std::vector<std::string>& list) const {
   joystick->getJoyDevices(list);
 }
 
 
-void MainWindow::getJoyDeviceAxes(std::vector<std::string>& list) const
-{
+void MainWindow::getJoyDeviceAxes(std::vector<std::string>& list) const {
   joystick->getJoyDeviceAxes(list);
 }
 
 
-void MainWindow::setJoyXAxis(const std::string axis)
-{
+void MainWindow::setJoyXAxis(const std::string axis) {
   joystick->setXAxis(axis);
 }
 
 
-void MainWindow::setJoyYAxis(const std::string axis)
-{
+void MainWindow::setJoyYAxis(const std::string axis) {
   joystick->setYAxis(axis);
 }
 
@@ -365,6 +329,6 @@ void MainWindow::initJoystick(std::string& joystickName) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

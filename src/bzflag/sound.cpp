@@ -25,7 +25,7 @@
 #include "TextUtils.h"
 
 template <>
-SoundManager* Singleton<SoundManager>::_instance =(SoundManager*)0;
+SoundManager* Singleton<SoundManager>::_instance = (SoundManager*)0;
 
 
 int SFX_FIRE = -1;
@@ -65,15 +65,13 @@ int SFX_HIT = -1;
 
 //============================================================================//
 
-SoundManager::SoundManager()
-{
+SoundManager::SoundManager() {
   currentSystem = new PlatformSound();
   registerSystem(currentSystem);
 }
 
 
-SoundManager::~SoundManager()
-{
+SoundManager::~SoundManager() {
   if (currentSystem) {
     currentSystem->shutdown();
   }
@@ -85,26 +83,22 @@ SoundManager::~SoundManager()
 }
 
 
-SoundSystem& SoundManager::getSystem(void)
-{
+SoundSystem& SoundManager::getSystem(void) {
   return *currentSystem;
 }
 
 
-void SoundManager::registerSystem(SoundSystem *sys)
-{
+void SoundManager::registerSystem(SoundSystem* sys) {
   soundSystems.push_back(sys);
 }
 
 
-std::vector<SoundSystem*> SoundManager::listSystems(void)
-{
+std::vector<SoundSystem*> SoundManager::listSystems(void) {
   return soundSystems;
 }
 
 
-void SoundManager::activateSoundSystem(SoundSystem* sys)
-{
+void SoundManager::activateSoundSystem(SoundSystem* sys) {
   if (!sys) {
     return;
   }
@@ -131,10 +125,10 @@ void SoundManager::activateSoundSystem(SoundSystem* sys)
 }
 
 
-void SoundManager::activateSoundSystem(const std::string &name)
-{
-  if (!name.size())
+void SoundManager::activateSoundSystem(const std::string& name) {
+  if (!name.size()) {
     return;
+  }
 
   for (size_t i = 0; i < soundSystems.size(); i++) {
     if (soundSystems[i]->name() == name) {
@@ -154,8 +148,7 @@ void SoundManager::activateSoundSystem(const std::string &name)
 static bool foundSoundFile = false;
 
 
-int SoundSystem::getStandardSoundID(const std::string& filename)
-{
+int SoundSystem::getStandardSoundID(const std::string& filename) {
   const int soundCode = getID(filename);
   if (soundCode >= 0) {
     foundSoundFile = true;
@@ -164,8 +157,7 @@ int SoundSystem::getStandardSoundID(const std::string& filename)
 }
 
 
-bool SoundSystem::setStandardSoundIDs ( void )
-{
+bool SoundSystem::setStandardSoundIDs(void) {
   foundSoundFile = false;
 
   SFX_SHOT_BOOM       = getStandardSoundID("boom");
@@ -212,6 +204,6 @@ bool SoundSystem::setStandardSoundIDs ( void )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

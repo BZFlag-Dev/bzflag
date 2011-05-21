@@ -11,17 +11,17 @@
  */
 
 /* ZSceneDatabase:
- *	Database of geometry to render using Z-buffer algorithm
+ *  Database of geometry to render using Z-buffer algorithm
  */
 
-#ifndef	BZF_Z_SCENE_DATABASE_H
-#define	BZF_Z_SCENE_DATABASE_H
+#ifndef BZF_Z_SCENE_DATABASE_H
+#define BZF_Z_SCENE_DATABASE_H
 
 #include "common.h"
 #include "SceneDatabase.h"
 
 class ZSceneDatabase : public SceneDatabase {
-  friend class ZSceneIterator;
+    friend class ZSceneIterator;
   public:
     ZSceneDatabase();
     ~ZSceneDatabase();
@@ -37,7 +37,7 @@ class ZSceneDatabase : public SceneDatabase {
 
     void updateNodeStyles();
     void addLights(SceneRenderer& renderer);
-    void addShadowNodes(SceneRenderer &renderer,
+    void addShadowNodes(SceneRenderer& renderer,
                         bool staticNodes,
                         bool dynamicNodes);
     void addRenderNodes(SceneRenderer& renderer,
@@ -79,6 +79,6 @@ class ZSceneDatabase : public SceneDatabase {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

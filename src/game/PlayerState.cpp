@@ -37,37 +37,36 @@ const float smallMaxAngVel = 0.001f * smallScale;
 
 
 PlayerState::PlayerState()
-: order(0)
-, status(DeadStatus)
-, pos(0.0f, 0.0f, 0.0f)
-, velocity(0.0f, 0.0f, 0.0f)
-, azimuth(0.0f)
-, angVel(0.0f)
-, phydrv(-1)
-, apparentVelocity(0.0f, 0.0f, 0.0f)
-, lastUpdateTime(BzTime::getSunGenesisTime())
-, userSpeed(0.0f)
-, userAngVel(0.0f)
-, jumpJetsScale(0.0f)
-, sounds(NoSounds)
-{
+  : order(0)
+  , status(DeadStatus)
+  , pos(0.0f, 0.0f, 0.0f)
+  , velocity(0.0f, 0.0f, 0.0f)
+  , azimuth(0.0f)
+  , angVel(0.0f)
+  , phydrv(-1)
+  , apparentVelocity(0.0f, 0.0f, 0.0f)
+  , lastUpdateTime(BzTime::getSunGenesisTime())
+  , userSpeed(0.0f)
+  , userAngVel(0.0f)
+  , jumpJetsScale(0.0f)
+  , sounds(NoSounds) {
 }
 
 
-static float clampedValue(float input, float max)
-{
+static float clampedValue(float input, float max) {
   if (input > max) {
     return max;
-  } else if (input < -max) {
+  }
+  else if (input < -max) {
     return -max;
-  } else {
+  }
+  else {
     return input;
   }
 }
 
 
-void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
-{
+void* PlayerState::pack(void* buf, uint16_t& code, bool increment) {
   if (increment) {
     order++;
   }
@@ -98,20 +97,21 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
 
-    for (int i=0; i<3; i++) {
-      posShort[i] = (int16_t) ((pos[i] * smallScale) / smallMaxDist);
-      velShort[i] = (int16_t) ((velocity[i] * smallScale) / smallMaxVel);
+    for (int i = 0; i < 3; i++) {
+      posShort[i] = (int16_t)((pos[i] * smallScale) / smallMaxDist);
+      velShort[i] = (int16_t)((velocity[i] * smallScale) / smallMaxVel);
     }
 
     // put the angle between -M_PI and +M_PI
-    float angle = fmodf (azimuth, (float)M_PI * 2.0f);
+    float angle = fmodf(azimuth, (float)M_PI * 2.0f);
     if (angle > M_PI) {
       angle -= (float)(M_PI * 2.0);
-    } else if (angle < -M_PI) {
+    }
+    else if (angle < -M_PI) {
       angle += (float)(M_PI * 2.0);
     }
-    aziShort    = (int16_t) ((angle * smallScale) / M_PI);
-    angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
+    aziShort    = (int16_t)((angle * smallScale) / M_PI);
+    angVelShort = (int16_t)((angVel * smallScale) / smallMaxAngVel);
 
     buf = nboPackInt16(buf, posShort[0]);
     buf = nboPackInt16(buf, posShort[1]);
@@ -125,7 +125,7 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 
   if ((status & JumpJets) != 0) {
     float tmp = clampedValue(jumpJetsScale, 1.0f);
-    buf = nboPackInt16(buf, (int16_t) (tmp * smallScale));
+    buf = nboPackInt16(buf, (int16_t)(tmp * smallScale));
   }
 
   if ((status & OnDriver) != 0) {
@@ -136,11 +136,11 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
-    int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
+    int16_t speed = (int16_t)((tmp * smallScale) / smallMaxVel);
     buf = nboPackInt16(buf, speed);
     // pack userAngVel
     tmp = clampedValue(userAngVel, smallMaxAngVel);
-    int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
+    int16_t angvel = (int16_t)((tmp * smallScale) / smallMaxAngVel);
     buf = nboPackInt16(buf, angvel);
   }
 
@@ -152,8 +152,7 @@ void* PlayerState::pack(void* buf, uint16_t& code, bool increment)
 }
 
 
-void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
-{
+void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment) {
   if (increment) {
     order++;
   }
@@ -183,20 +182,21 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
 
     int16_t posShort[3], velShort[3], aziShort, angVelShort;
 
-    for (int i=0; i<3; i++) {
-      posShort[i] = (int16_t) ((pos[i] * smallScale) / smallMaxDist);
-      velShort[i] = (int16_t) ((velocity[i] * smallScale) / smallMaxVel);
+    for (int i = 0; i < 3; i++) {
+      posShort[i] = (int16_t)((pos[i] * smallScale) / smallMaxDist);
+      velShort[i] = (int16_t)((velocity[i] * smallScale) / smallMaxVel);
     }
 
     // put the angle between -M_PI and +M_PI
-    float angle = fmodf (azimuth, (float)M_PI * 2.0f);
+    float angle = fmodf(azimuth, (float)M_PI * 2.0f);
     if (angle > M_PI) {
       angle -= (float)(M_PI * 2.0);
-    } else if (angle < -M_PI) {
+    }
+    else if (angle < -M_PI) {
       angle += (float)(M_PI * 2.0);
     }
-    aziShort = (int16_t) ((angle * smallScale) / M_PI);
-    angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
+    aziShort = (int16_t)((angle * smallScale) / M_PI);
+    angVelShort = (int16_t)((angVel * smallScale) / smallMaxAngVel);
 
     netMsg.packInt16(posShort[0]);
     netMsg.packInt16(posShort[1]);
@@ -210,7 +210,7 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
 
   if ((status & JumpJets) != 0) {
     float tmp = clampedValue(jumpJetsScale, 1.0f);
-    netMsg.packInt16((int16_t) (tmp * smallScale));
+    netMsg.packInt16((int16_t)(tmp * smallScale));
   }
 
   if ((status & OnDriver) != 0) {
@@ -221,11 +221,11 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
     float tmp;
     // pack userSpeed
     tmp = clampedValue(userSpeed, smallMaxVel);
-    int16_t speed = (int16_t) ((tmp * smallScale) / smallMaxVel);
+    int16_t speed = (int16_t)((tmp * smallScale) / smallMaxVel);
     netMsg.packInt16(speed);
     // pack userAngVel
     tmp = clampedValue(userAngVel, smallMaxAngVel);
-    int16_t angvel = (int16_t) ((tmp * smallScale) / smallMaxAngVel);
+    int16_t angvel = (int16_t)((tmp * smallScale) / smallMaxAngVel);
     netMsg.packInt16(angvel);
   }
 
@@ -235,8 +235,7 @@ void PlayerState::pack(NetMessage& netMsg, uint16_t& code, bool increment)
 }
 
 
-void* PlayerState::unpack(void* buf, uint16_t code)
-{
+void* PlayerState::unpack(void* buf, uint16_t code) {
   int32_t inOrder;
   int16_t inStatus;
   buf = nboUnpackInt32(buf, inOrder);
@@ -262,7 +261,7 @@ void* PlayerState::unpack(void* buf, uint16_t code)
     buf = nboUnpackInt16(buf, aziShort);
     buf = nboUnpackInt16(buf, angVelShort);
 
-    for (int i=0; i<3; i++) {
+    for (int i = 0; i < 3; i++) {
       pos[i] = ((float)posShort[i] * smallMaxDist) / smallScale;
       velocity[i] = ((float)velShort[i] * smallMaxVel) / smallScale;
     }
@@ -274,7 +273,8 @@ void* PlayerState::unpack(void* buf, uint16_t code)
     int16_t jumpJetsShort;
     buf = nboUnpackInt16(buf, jumpJetsShort);
     jumpJetsScale = ((float)jumpJetsShort) / smallScale;
-  } else {
+  }
+  else {
     jumpJetsScale = 0.0f;
   }
 
@@ -282,7 +282,8 @@ void* PlayerState::unpack(void* buf, uint16_t code)
     int32_t inPhyDrv;
     buf = nboUnpackInt32(buf, inPhyDrv);
     phydrv = int(inPhyDrv);
-  } else {
+  }
+  else {
     phydrv = -1;
   }
 
@@ -292,14 +293,16 @@ void* PlayerState::unpack(void* buf, uint16_t code)
     buf = nboUnpackInt16(buf, userAngVelShort);
     userSpeed = ((float)userSpeedShort * smallMaxVel) / smallScale;
     userAngVel = ((float)userAngVelShort * smallMaxAngVel) / smallScale;
-  } else {
+  }
+  else {
     userSpeed = 0.0f;
     userAngVel = 0.0f;
   }
 
   if ((inStatus & PlaySound) != 0) {
     buf = nboUnpackUInt8(buf, sounds);
-  } else {
+  }
+  else {
     sounds = NoSounds;
   }
 
@@ -311,6 +314,6 @@ void* PlayerState::unpack(void* buf, uint16_t code)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

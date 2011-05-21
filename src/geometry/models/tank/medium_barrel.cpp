@@ -16,37 +16,37 @@
 
 using namespace TankGeometryUtils;
 
-int TankGeometryUtils::buildMedBarrel ( void )
-{
-	int count = 0;
-	if (buildGeoFromObj("/medium/barrel.obj",count))
-		return count;
+int TankGeometryUtils::buildMedBarrel(void) {
+  int count = 0;
+  if (buildGeoFromObj("/medium/barrel.obj", count)) {
+    return count;
+  }
 
   glShadeModel(GL_SMOOTH);
   glBegin(GL_TRIANGLE_STRIP);
-    doNormal3f(0.0f, -1.0f, 0.0f);
-    doVertex3f(1.570f, -0.18f, 1.530f);
-    doVertex3f(4.940f, -0.126f, 1.530f);
-    doNormal3f(0.0f, 0.0f, 1.0f);
-    doVertex3f(1.570f, 0.0f, 1.710f);
-    doVertex3f(4.940f, 0.0f, 1.660f);
-    doNormal3f(0.0f, 1.0f, 0.0f);
-    doVertex3f(1.570f, 0.18f, 1.530f);
-    doVertex3f(4.940f, 0.126f, 1.530f);
-    doNormal3f(0.0f, 0.0f, -1.0f);
-    doVertex3f(1.570f, 0.0f, 1.350f);
-    doVertex3f(4.940f, 0.0f, 1.410f);
-    doNormal3f(0.0f, -1.0f, 0.0f);
-    doVertex3f(1.570f, -0.18f, 1.530f);
-    doVertex3f(4.940f, -0.126f, 1.530f);
+  doNormal3f(0.0f, -1.0f, 0.0f);
+  doVertex3f(1.570f, -0.18f, 1.530f);
+  doVertex3f(4.940f, -0.126f, 1.530f);
+  doNormal3f(0.0f, 0.0f, 1.0f);
+  doVertex3f(1.570f, 0.0f, 1.710f);
+  doVertex3f(4.940f, 0.0f, 1.660f);
+  doNormal3f(0.0f, 1.0f, 0.0f);
+  doVertex3f(1.570f, 0.18f, 1.530f);
+  doVertex3f(4.940f, 0.126f, 1.530f);
+  doNormal3f(0.0f, 0.0f, -1.0f);
+  doVertex3f(1.570f, 0.0f, 1.350f);
+  doVertex3f(4.940f, 0.0f, 1.410f);
+  doNormal3f(0.0f, -1.0f, 0.0f);
+  doVertex3f(1.570f, -0.18f, 1.530f);
+  doVertex3f(4.940f, -0.126f, 1.530f);
   glEnd(); // 8 tris
   glShadeModel(GL_FLAT);
   glBegin(GL_TRIANGLE_FAN);
-    doNormal3f(1.000000f, 0.000000f, 0.000000f);
-    doVertex3f(4.940f, 0.0f, 1.410f);
-    doVertex3f(4.940f, 0.126f, 1.530f);
-    doVertex3f(4.940f, 0.0f, 1.660f);
-    doVertex3f(4.940f, -0.126f, 1.530f);
+  doNormal3f(1.000000f, 0.000000f, 0.000000f);
+  doVertex3f(4.940f, 0.0f, 1.410f);
+  doVertex3f(4.940f, 0.126f, 1.530f);
+  doVertex3f(4.940f, 0.0f, 1.660f);
+  doVertex3f(4.940f, -0.126f, 1.530f);
   glEnd(); // 2 tris
 
   return 10;
@@ -56,6 +56,6 @@ int TankGeometryUtils::buildMedBarrel ( void )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

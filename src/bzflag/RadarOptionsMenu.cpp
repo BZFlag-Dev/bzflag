@@ -33,8 +33,7 @@
 #include "guiplaying.h"
 
 
-RadarOptionsMenu::RadarOptionsMenu()
-{
+RadarOptionsMenu::RadarOptionsMenu() {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -115,22 +114,19 @@ RadarOptionsMenu::RadarOptionsMenu()
 }
 
 
-RadarOptionsMenu::~RadarOptionsMenu()
-{
+RadarOptionsMenu::~RadarOptionsMenu() {
 }
 
 
-void RadarOptionsMenu::execute()
-{
+void RadarOptionsMenu::execute() {
 }
 
 
-void RadarOptionsMenu::resize(int _width, int _height)
-{
+void RadarOptionsMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -173,8 +169,7 @@ void RadarOptionsMenu::resize(int _width, int _height)
 }
 
 
-void RadarOptionsMenu::callback(HUDuiControl* w, void* data)
-{
+void RadarOptionsMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
@@ -210,6 +205,6 @@ void RadarOptionsMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

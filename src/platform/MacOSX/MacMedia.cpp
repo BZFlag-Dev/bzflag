@@ -24,12 +24,11 @@ static SndCallBackUPP gCarbonSndCallBackUPP = nil;
 static int queued_chunks = 0;
 
 
-void MacMedia::setMediaDirectory(const std::string& _dir)
-{
+void MacMedia::setMediaDirectory(const std::string& _dir) {
   struct stat statbuf;
-  const char *mdir = _dir.c_str();
+  const char* mdir = _dir.c_str();
 
-  extern char *GetMacOSXDataPath(void);
+  extern char* GetMacOSXDataPath(void);
   if ((stat(mdir, &statbuf) != 0) || !S_ISDIR(statbuf.st_mode)) {
     /* try the Resource folder if invoked from a .app bundled */
     mdir = GetMacOSXDataPath();
@@ -56,13 +55,12 @@ void MacMedia::setMediaDirectory(const std::string& _dir)
 }
 
 
-static pascal void callbackProc(SndChannelPtr, SndCommand *)
-{
+static pascal void callbackProc(SndChannelPtr, SndCommand*) {
   queued_chunks--;
 }
 
 MacMedia::MacMedia() {
-  gCarbonSndCallBackUPP = NewSndCallBackUPP (callbackProc);
+  gCarbonSndCallBackUPP = NewSndCallBackUPP(callbackProc);
 }
 
 MacMedia::~MacMedia() {}
@@ -89,14 +87,15 @@ bool MacMedia::openAudio() {
   channel = new SndChannel;
   channel->userInfo = 0;
   channel->qLength  = 128;
-  error = SndNewChannel (&channel, sampledSynth, initStereo, callback);
+  error = SndNewChannel(&channel, sampledSynth, initStereo, callback);
 
-  if (error != noErr)
+  if (error != noErr) {
     return false;
+  }
 
   header.numChannels   = 2;
   header.sampleRate    = rate22050hz;
-  header.encode	= extSH;
+  header.encode = extSH;
   header.sampleSize    = 16;
   header.numFrames     = CHUNK_SIZE;
 
@@ -106,11 +105,13 @@ bool MacMedia::openAudio() {
 }
 
 void    MacMedia::closeAudio() {
-  if (channel)
-    SndDisposeChannel (channel, true);
+  if (channel) {
+    SndDisposeChannel(channel, true);
+  }
 
-  if (buffer)
+  if (buffer) {
     delete buffer;
+  }
   buffer = (SInt16*)NULL;
 }
 
@@ -118,8 +119,7 @@ bool MacMedia::isAudioBrainDead() const {
   return false;
 }
 
-bool MacMedia::startAudioThread(void (*proc)(void*), void*)
-{
+bool MacMedia::startAudioThread(void (*proc)(void*), void*) {
   audio_proc = proc;
 
   audio_proc(NULL);
@@ -133,47 +133,47 @@ bool MacMedia::hasAudioThread() const {
   return false;
 }
 
-bool MacMedia::isAudioTooEmpty () const {
+bool MacMedia::isAudioTooEmpty() const {
   return queued_chunks <= 20;
 }
 
 void MacMedia::writeAudio(void) {
   OSErr iErr = noErr;
-  SndCommand			playCmd;
-  SndCommand			callBack;
+  SndCommand      playCmd;
+  SndCommand      callBack;
 
   header.samplePtr = (char*)buffer;
 
   playCmd.cmd = bufferCmd;
-  playCmd.param1 = 0;	  // unused
+  playCmd.param1 = 0;   // unused
   playCmd.param2 = (long)&header;
 
   callBack.cmd = callBackCmd;
-  callBack.param1 = 0;	  // which buffer to fill, 0 buffer, 1, 0, ...
+  callBack.param1 = 0;    // which buffer to fill, 0 buffer, 1, 0, ...
 
 
   channel->callBack = gCarbonSndCallBackUPP;
 
-  iErr = SndDoCommand (channel, &playCmd, true);
-  if (noErr != iErr)
+  iErr = SndDoCommand(channel, &playCmd, true);
+  if (noErr != iErr) {
     return;
+  }
 
   queued_chunks++;
 
   iErr = SndDoCommand(channel, &callBack, true);
-  if (noErr != iErr)
+  if (noErr != iErr) {
     return;
+  }
 }
 
-void    MacMedia::writeAudioFrames(const float *samples, int numFrames)
-{
+void    MacMedia::writeAudioFrames(const float* samples, int numFrames) {
   int numSamples = 2 * numFrames;
-  while (numSamples > BUFFER_SIZE)
-  {
+  while (numSamples > BUFFER_SIZE) {
     for (int j = 0; j < BUFFER_SIZE; j++)
-      if (samples[j] < -32767.0f) buffer[j] = -32767;
-      else if (samples[j] > 32767.0f) buffer[j] = 32767;
-      else buffer[j] = short(samples[j]);
+      if (samples[j] < -32767.0f) { buffer[j] = -32767; }
+      else if (samples[j] > 32767.0f) { buffer[j] = 32767; }
+      else { buffer[j] = short(samples[j]); }
     writeAudio();
     samples += BUFFER_SIZE;
     numSamples -= BUFFER_SIZE;
@@ -181,33 +181,37 @@ void    MacMedia::writeAudioFrames(const float *samples, int numFrames)
 
   if (numSamples > 0) {
     for (int j = 0; j < numSamples; j++)
-      if (samples[j] < -32767.0f)
-	buffer[j] = -32767;
-      else if (samples[j] > 32767.0f)
-	buffer[j] = 32767;
-      else
-	buffer[j] = short(samples[j]);
+      if (samples[j] < -32767.0f) {
+        buffer[j] = -32767;
+      }
+      else if (samples[j] > 32767.0f) {
+        buffer[j] = 32767;
+      }
+      else {
+        buffer[j] = short(samples[j]);
+      }
     writeAudio();
   }
 }
 
-void MacMedia::writeSoundCommand(const void *data, int length) {
-  char *temp = new char[length];
+void MacMedia::writeSoundCommand(const void* data, int length) {
+  char* temp = new char[length];
   memcpy(temp, data, length);
   command_queue.push(temp);
 }
 
-bool MacMedia::readSoundCommand  (void *data, int length) {
+bool MacMedia::readSoundCommand(void* data, int length) {
   if (!command_queue.empty()) {
-    char *temp = command_queue.front();
-    memcpy (data, temp, length);
+    char* temp = command_queue.front();
+    memcpy(data, temp, length);
     command_queue.pop();
     delete temp;
     temp = (char*)NULL;
     return true;
   }
-  else
+  else {
     return false;
+  }
 }
 
 int     MacMedia::getAudioOutputRate() const {
@@ -222,14 +226,13 @@ int     MacMedia::getAudioBufferChunkSize() const {
   return CHUNK_SIZE;
 }
 
-void MacMedia::audioSleep(bool, double)
-{
+void MacMedia::audioSleep(bool, double) {
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

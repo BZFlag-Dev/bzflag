@@ -14,8 +14,8 @@
  * main game loop stuff
  */
 
-#ifndef	BZF_GUIPLAYING_H
-#define	BZF_GUIPLAYING_H
+#ifndef BZF_GUIPLAYING_H
+#define BZF_GUIPLAYING_H
 
 #include "common.h"
 
@@ -55,7 +55,7 @@ std::vector<std::string>& getSilenceList();
 
 void setRoamingLabel();
 void drawFrame(const float dt);
-void injectMessages(uint16_t code, uint16_t len, void *msg);
+void injectMessages(uint16_t code, uint16_t len, void* msg);
 
 extern BzfDisplay* display;
 extern ControlPanel* controlPanel;
@@ -75,6 +75,6 @@ extern bool middleMouseButton;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

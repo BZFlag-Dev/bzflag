@@ -34,33 +34,31 @@
 
 template<class C>
 class RCMessageFactory : public Singleton< RCMessageFactory<C> >,
-			 public Factory<C, std::string>
-{
+  public Factory<C, std::string> {
 
-public:
-  void setLink(RCLink *_link)
-  {
-    link = _link;
-  }
+  public:
+    void setLink(RCLink* _link) {
+      link = _link;
+    }
 
-  C *Message(std::string s)
-  {
-    C *pointer = Factory<C, std::string>::Create(s);
-    if (pointer != NULL)
-      pointer->setLink(link);
+    C* Message(std::string s) {
+      C* pointer = Factory<C, std::string>::Create(s);
+      if (pointer != NULL) {
+        pointer->setLink(link);
+      }
 
-    return pointer;
-  }
+      return pointer;
+    }
 
-  static void initialize();
+    static void initialize();
 
-protected:
-  friend class Singleton<RCMessageFactory>;
+  protected:
+    friend class Singleton<RCMessageFactory>;
 
-private:
-  RCLink *link;
-  RCMessageFactory() { }
-  ~RCMessageFactory() { }
+  private:
+    RCLink* link;
+    RCMessageFactory() { }
+    ~RCMessageFactory() { }
 };
 
 // initialize the singleton
@@ -73,6 +71,6 @@ T* Singleton<T>::_instance = NULL;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

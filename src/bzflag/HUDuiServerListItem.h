@@ -12,12 +12,12 @@
 
 /*
  * HUDuiServerListItem:
- *	User interface class for server list items. Acts as a UI wrapper
- *	for a ServerItem.
+ *  User interface class for server list items. Acts as a UI wrapper
+ *  for a ServerItem.
  */
 
-#ifndef	__HUDUISERVERLISTITEM_H__
-#define	__HUDUISERVERLISTITEM_H__
+#ifndef __HUDUISERVERLISTITEM_H__
+#define __HUDUISERVERLISTITEM_H__
 
 // ancestor class
 #include "HUDuiControl.h"
@@ -30,14 +30,14 @@
 
 class HUDuiServerListItem : public HUDuiControl {
   public:
-      HUDuiServerListItem();
-      HUDuiServerListItem(ServerItem* item);
-      HUDuiServerListItem(std::string key);
-      ~HUDuiServerListItem();
+    HUDuiServerListItem();
+    HUDuiServerListItem(ServerItem* item);
+    HUDuiServerListItem(std::string key);
+    ~HUDuiServerListItem();
 
     void setSize(float width, float height);
     void setFontSize(float size);
-    void setFontFace(const LocalFontFace *face);
+    void setFontFace(const LocalFontFace* face);
 
     void setColumnSizes(float modes_percent, float domain, float server, float player, float ping);
 
@@ -61,7 +61,7 @@ class HUDuiServerListItem : public HUDuiControl {
     std::string shorten(std::string string, float width);
 
   private:
-    ServerList &serverList;
+    ServerList& serverList;
     std::string serverKey;
 
     std::string modes;
@@ -84,7 +84,7 @@ class HUDuiServerListItem : public HUDuiControl {
 
     float spacerWidth;
 
-    FontManager &fm;
+    FontManager& fm;
 };
 
 #endif // __HUDuiServerListItem_H__
@@ -93,6 +93,6 @@ class HUDuiServerListItem : public HUDuiControl {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

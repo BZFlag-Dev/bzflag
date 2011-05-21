@@ -41,100 +41,97 @@
 #endif
 
 
-typedef enum
-{
+typedef enum {
   eFileStart,
   eCurentPos,
   eFileEnd
-}teFilePos;
+} teFilePos;
 
-void setOSFileBaseDir(const std::string &dir);
-void OSFileOSToStdDir(std::string &dir);
+void setOSFileBaseDir(const std::string& dir);
+void OSFileOSToStdDir(std::string& dir);
 
-class OSFile
-{
-public:
-  OSFile();
-  OSFile(const OSFile &r);
-  OSFile& operator = (const OSFile &r);
+class OSFile {
+  public:
+    OSFile();
+    OSFile(const OSFile& r);
+    OSFile& operator = (const OSFile& r);
 
-  OSFile(const std::string &szName);
-  OSFile(const std::string &szName, const char *szMode);
-  ~OSFile();
+    OSFile(const std::string& szName);
+    OSFile(const std::string& szName, const char* szMode);
+    ~OSFile();
 
-  bool open(const std::string &szName, const char *szMode);
-  bool open(const char *szMode);
-  bool close();
+    bool open(const std::string& szName, const char* szMode);
+    bool open(const char* szMode);
+    bool close();
 
-  void stdName(const std::string &szName);
-  void osName(const std::string &szName);
+    void stdName(const std::string& szName);
+    void osName(const std::string& szName);
 
-  FILE* getFile();
+    FILE* getFile();
 
-  std::string getStdName();
-  std::string getOSName();
+    std::string getStdName();
+    std::string getOSName();
 
-  std::string getFileName();
+    std::string getFileName();
 
-  std::string getExtension();
+    std::string getExtension();
 
-  std::string getFullOSPath();
+    std::string getFullOSPath();
 
-  std::string getOSFileDir();
+    std::string getOSFileDir();
 
-  bool isOpen();
+    bool isOpen();
 
-  int read(void* data, int size, int count = 1);
-  unsigned char readChar();
-  int scanChar(unsigned char *pChar);
-  const char* scanStr();
-  std::string readLine();
-  int write(const void* data, int size);
-  void flush();
+    int read(void* data, int size, int count = 1);
+    unsigned char readChar();
+    int scanChar(unsigned char* pChar);
+    const char* scanStr();
+    std::string readLine();
+    int write(const void* data, int size);
+    void flush();
 
-  int seek(teFilePos ePos, int iOffset);
-  unsigned int size();
-  unsigned int tell();
+    int seek(teFilePos ePos, int iOffset);
+    unsigned int size();
+    unsigned int tell();
 
-  void setUseGlobalPath(bool use = false);
-protected:
-  class OSFileInfo;
-  OSFileInfo    *info;
+    void setUseGlobalPath(bool use = false);
+  protected:
+    class OSFileInfo;
+    OSFileInfo*    info;
 };
 
 
-class OSDir
-{
-public:
-  OSDir();
-  OSDir(const OSDir &r);
-  OSDir& operator = (const OSDir &r);
-  OSDir(const std::string &DirName);
-  ~OSDir();
+class OSDir {
+  public:
+    OSDir();
+    OSDir(const OSDir& r);
+    OSDir& operator = (const OSDir& r);
+    OSDir(const std::string& DirName);
+    ~OSDir();
 
-  void setStdDir(const std::string &DirName);
-  void setOSDir(const std::string &DirName);
+    void setStdDir(const std::string& DirName);
+    void setOSDir(const std::string& DirName);
 
-  void makeStdDir(const std::string &DirName);
-  void makeOSDir(const std::string &DirName);
+    void makeStdDir(const std::string& DirName);
+    void makeOSDir(const std::string& DirName);
 
-  bool getNextFile(OSFile &oFile, bool bRecursive);
-  bool getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive);
+    bool getNextFile(OSFile& oFile, bool bRecursive);
+    bool getNextFile(OSFile& oFile, const char* fileMask, bool bRecursive);
 
-  int getFileScanCount();
+    int getFileScanCount();
 
-  std::string getStdName();
-  std::string getOSName();
-  std::string getFullOSPath();
+    std::string getStdName();
+    std::string getOSName();
+    std::string getFullOSPath();
 
-  std::string getOSFileDir();
+    std::string getOSFileDir();
 
-protected:
-  class OSDirInfo;
-  OSDirInfo    *info;
+  protected:
+    class OSDirInfo;
+    OSDirInfo*    info;
 
-  bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
-  bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
+    bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
+    bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
 };
 
 
@@ -144,6 +141,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

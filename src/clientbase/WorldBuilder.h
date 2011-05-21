@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__WORLDBUILDER_H__
-#define	__WORLDBUILDER_H__
+#ifndef __WORLDBUILDER_H__
+#define __WORLDBUILDER_H__
 
 #include "common.h"
 
@@ -29,31 +29,31 @@ class Obstacle;
  */
 class WorldBuilder {
   public:
-			WorldBuilder();
-			~WorldBuilder();
+    WorldBuilder();
+    ~WorldBuilder();
 
-    void*		unpack(void*);
-    void	       *unpackGameSettings(void*);
+    void*   unpack(void*);
+    void*         unpackGameSettings(void*);
 
-    World*		getWorld();
-    World*		peekWorld();	// doesn't give up ownership
+    World*    getWorld();
+    World*    peekWorld();  // doesn't give up ownership
 
-    void		setGameType(short gameType);
-    void		setGameOptions(short gameOptions);
-    void		setMaxPlayers(int maxPlayers);
-    void		setMaxShots(int maxSimultaneousShots);
-    void		setMaxFlags(int maxFlags);
-    void		setBotsPerIP(int botsPerIP);
-    void		setShakeTimeout(float timeout) const;
-    void		setShakeWins(int wins) const;
-    void		setBase(const Obstacle* obs);
-
-  private:
-    void		preGetWorld();
+    void    setGameType(short gameType);
+    void    setGameOptions(short gameOptions);
+    void    setMaxPlayers(int maxPlayers);
+    void    setMaxShots(int maxSimultaneousShots);
+    void    setMaxFlags(int maxFlags);
+    void    setBotsPerIP(int botsPerIP);
+    void    setShakeTimeout(float timeout) const;
+    void    setShakeWins(int wins) const;
+    void    setBase(const Obstacle* obs);
 
   private:
-    bool		owned;
-    World*		world;
+    void    preGetWorld();
+
+  private:
+    bool    owned;
+    World*    world;
 };
 
 
@@ -63,6 +63,6 @@ class WorldBuilder {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

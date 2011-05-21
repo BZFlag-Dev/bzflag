@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SERVERPING_H__
-#define	__SERVERPING_H__
+#ifndef __SERVERPING_H__
+#define __SERVERPING_H__
 
 /* common comes first */
 #include "common.h"
@@ -29,44 +29,42 @@
  * the lag.  Create one, set the options, call doPings till it's done,
  * then get the results.
  */
-class ServerPing
-{
-public:
-  ServerPing();
-  ServerPing(const Address& addr, int port, size_t _samples = 4, double interval = 1, double tms = 1);
-  ~ServerPing();
-  void start();
-  int calcLag();
-  bool done();
-  void setAddress(const Address& addr, int port);
-  void setTimeout(double tms);
-  void setInterval(double _interval);
-  void doPings();
+class ServerPing {
+  public:
+    ServerPing();
+    ServerPing(const Address& addr, int port, size_t _samples = 4, double interval = 1, double tms = 1);
+    ~ServerPing();
+    void start();
+    int calcLag();
+    bool done();
+    void setAddress(const Address& addr, int port);
+    void setTimeout(double tms);
+    void setInterval(double _interval);
+    void doPings();
 
-private:
-  void openSocket(); //Dirty low-level stuff
-  void closeSocket();
-  void sendPing(unsigned char tag);
-  struct sockaddr_in saddr;
+  private:
+    void openSocket(); //Dirty low-level stuff
+    void closeSocket();
+    void sendPing(unsigned char tag);
+    struct sockaddr_in saddr;
 
-  struct pingdesc
-  {
-    BzTime senttime;
-    BzTime recvtime;
-  };
+    struct pingdesc {
+      BzTime senttime;
+      BzTime recvtime;
+    };
 
-  std::vector<pingdesc> activepings;
+    std::vector<pingdesc> activepings;
 
-  int fd;
+    int fd;
 
-  size_t received;
+    size_t received;
 
-  const size_t samples;
+    const size_t samples;
 
-  double timeout;
-  double interval;
+    double timeout;
+    double interval;
 
-  BzTime starttime;
+    BzTime starttime;
 };
 
 #endif  /* __SERVERPING_H__ */
@@ -75,6 +73,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

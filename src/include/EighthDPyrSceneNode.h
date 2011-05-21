@@ -11,12 +11,12 @@
  */
 
 /* EighthDBoxSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a pyramid building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a pyramid building.
  */
 
-#ifndef	BZF_EIGHTHD_PYR_SCENE_NODE_H
-#define	BZF_EIGHTHD_PYR_SCENE_NODE_H
+#ifndef BZF_EIGHTHD_PYR_SCENE_NODE_H
+#define BZF_EIGHTHD_PYR_SCENE_NODE_H
 
 #include "common.h"
 #include "EighthDimSceneNode.h"
@@ -27,25 +27,25 @@ class EighthDPyrSceneNode : public EighthDimSceneNode {
                         const fvec3& size, float rotation);
     ~EighthDPyrSceneNode();
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void    notifyStyleChange();
+    void    addRenderNodes(SceneRenderer&);
 
   protected:
     class EighthDPyrRenderNode : public RenderNode {
       public:
-			EighthDPyrRenderNode(const EighthDPyrSceneNode*,
-				const fvec3& pos,
-				const fvec3& size, float rotation);
-			~EighthDPyrRenderNode();
-	void		render();
-	const fvec3&	getPosition() const { return sceneNode->getCenter(); }
+        EighthDPyrRenderNode(const EighthDPyrSceneNode*,
+                             const fvec3& pos,
+                             const fvec3& size, float rotation);
+        ~EighthDPyrRenderNode();
+        void    render();
+        const fvec3&  getPosition() const { return sceneNode->getCenter(); }
       private:
-	const EighthDPyrSceneNode* sceneNode;
-	fvec3		corner[5];
+        const EighthDPyrSceneNode* sceneNode;
+        fvec3   corner[5];
     };
 
   private:
-    OpenGLGState	 gstate;
+    OpenGLGState   gstate;
     EighthDPyrRenderNode renderNode;
 };
 
@@ -55,6 +55,6 @@ class EighthDPyrSceneNode : public EighthDimSceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

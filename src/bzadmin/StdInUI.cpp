@@ -36,8 +36,9 @@ bool StdInUI::checkCommand(std::string& str) {
     return true;
   }
   std::getline(std::cin, str);
-  if (str == "")
+  if (str == "") {
     return false;
+  }
   return true;
 }
 
@@ -50,6 +51,6 @@ BZAdminUI* StdInUI::creator(BZAdminClient& client) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

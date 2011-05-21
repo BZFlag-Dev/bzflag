@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_LIST_H
-#define	BZF_OBSTACLE_LIST_H
+#ifndef BZF_OBSTACLE_LIST_H
+#define BZF_OBSTACLE_LIST_H
 
 #include "common.h"
 
@@ -39,16 +39,13 @@ class ObstacleList {
     Obstacle** list;
 };
 
-inline unsigned int ObstacleList::size() const
-{
+inline unsigned int ObstacleList::size() const {
   return listCount;
 }
-inline Obstacle* ObstacleList::operator[](int index) const
-{
+inline Obstacle* ObstacleList::operator[](int index) const {
   return list[index];
 }
-inline void ObstacleList::remove(unsigned int index)
-{
+inline void ObstacleList::remove(unsigned int index) {
   if ((index < listCount) && (listCount > 0)) {
     listCount--;
     list[index] = list[listCount]; // order is not preserved
@@ -63,6 +60,6 @@ inline void ObstacleList::remove(unsigned int index)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

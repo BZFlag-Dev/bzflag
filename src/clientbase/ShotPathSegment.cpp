@@ -14,22 +14,20 @@
 #include "ShotPathSegment.h"
 
 
-ShotPathSegment::ShotPathSegment()
-{
+ShotPathSegment::ShotPathSegment() {
   // do nothing
 }
 
 
 ShotPathSegment::ShotPathSegment(const BzTime& _start, const BzTime& _end,
                                  const Ray& _ray, Reason _reason)
-: start(_start)
-, end(_end)
-, ray(_ray)
-, reason(_reason)
-, hitObstacle(NULL)
-, linkSrcID(-1)
-, linkDstID(-1)
-{
+  : start(_start)
+  , end(_end)
+  , ray(_ray)
+  , reason(_reason)
+  , hitObstacle(NULL)
+  , linkSrcID(-1)
+  , linkDstID(-1) {
   // compute bounding box
   bbox.expandToPoint(ray.getOrigin());             // start
   bbox.expandToPoint(ray.getPoint(float(end - start))); // end
@@ -37,20 +35,18 @@ ShotPathSegment::ShotPathSegment(const BzTime& _start, const BzTime& _end,
 
 
 ShotPathSegment::ShotPathSegment(const ShotPathSegment& segment)
-: start(segment.start)
-, end(segment.end)
-, ray(segment.ray)
-, reason(segment.reason)
-, bbox(segment.bbox)
-, hitObstacle(segment.hitObstacle)
-, linkSrcID(segment.linkSrcID)
-, linkDstID(segment.linkDstID)
-{
+  : start(segment.start)
+  , end(segment.end)
+  , ray(segment.ray)
+  , reason(segment.reason)
+  , bbox(segment.bbox)
+  , hitObstacle(segment.hitObstacle)
+  , linkSrcID(segment.linkSrcID)
+  , linkDstID(segment.linkDstID) {
 }
 
 
-ShotPathSegment& ShotPathSegment::operator=(const ShotPathSegment& segment)
-{
+ShotPathSegment& ShotPathSegment::operator=(const ShotPathSegment& segment) {
   if (this != &segment) {
     start = segment.start;
     end = segment.end;
@@ -69,6 +65,6 @@ ShotPathSegment& ShotPathSegment::operator=(const ShotPathSegment& segment)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

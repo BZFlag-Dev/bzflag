@@ -12,12 +12,12 @@
 
 /*
  * HUDuiServerInfo:
- *	User interface class for displaying detailed information from
- *	a ServerItem.
+ *  User interface class for displaying detailed information from
+ *  a ServerItem.
  */
 
-#ifndef	__HUDUISERVERINFO_H__
-#define	__HUDUISERVERINFO_H__
+#ifndef __HUDUISERVERINFO_H__
+#define __HUDUISERVERINFO_H__
 
 // ancestor class
 #include "HUDuiControl.h"
@@ -28,8 +28,8 @@
 
 class HUDuiServerInfo : public HUDuiControl {
   public:
-      HUDuiServerInfo();
-      ~HUDuiServerInfo();
+    HUDuiServerInfo();
+    ~HUDuiServerInfo();
 
     void setServerItem(ServerItem* item);
 
@@ -57,6 +57,6 @@ class HUDuiServerInfo : public HUDuiControl {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -17,21 +17,17 @@
 // FIXME -- should use a heap
 
 RegionPriorityQueue::Node::Node(BzfRegion* _region, float _priority) :
-  next(0), region(_region), priority(_priority)
-{
+  next(0), region(_region), priority(_priority) {
 }
 
-RegionPriorityQueue::RegionPriorityQueue() : head(0)
-{
+RegionPriorityQueue::RegionPriorityQueue() : head(0) {
 }
 
-RegionPriorityQueue::~RegionPriorityQueue()
-{
+RegionPriorityQueue::~RegionPriorityQueue() {
   removeAll();
 }
 
-void RegionPriorityQueue::insert(BzfRegion* region, float priority)
-{
+void RegionPriorityQueue::insert(BzfRegion* region, float priority) {
   Node* node = new Node(region, priority);
   if (!head || priority < head->priority) {
     node->next = head;
@@ -39,15 +35,15 @@ void RegionPriorityQueue::insert(BzfRegion* region, float priority)
   }
   else {
     Node* scan = head;
-    while (scan->next && priority >= scan->next->priority)
+    while (scan->next && priority >= scan->next->priority) {
       scan = scan->next;
+    }
     node->next = scan->next;
     scan->next = node;
   }
 }
 
-BzfRegion* RegionPriorityQueue::remove()
-{
+BzfRegion* RegionPriorityQueue::remove() {
   Node* tmp = head;
   head = head->next;
   BzfRegion* region = tmp->region;
@@ -55,8 +51,7 @@ BzfRegion* RegionPriorityQueue::remove()
   return region;
 }
 
-void RegionPriorityQueue::removeAll()
-{
+void RegionPriorityQueue::removeAll() {
   while (head) {
     Node* next = head->next;
     delete head;
@@ -65,8 +60,7 @@ void RegionPriorityQueue::removeAll()
   head = 0;
 }
 
-bool RegionPriorityQueue::isEmpty() const
-{
+bool RegionPriorityQueue::isEmpty() const {
   return (head == 0);
 }
 
@@ -74,6 +68,6 @@ bool RegionPriorityQueue::isEmpty() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

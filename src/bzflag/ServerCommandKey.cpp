@@ -51,20 +51,21 @@ namespace {
    * utility
    */
   inline void append_if(std::string& dest, std::string const& source) {
-    if ( ! source.empty() ) {
+    if (! source.empty()) {
       dest += " ";
       dest += source;
     }
   }
 //
   const ServerCommandKey::Mode nonAdminModes [] = {ServerCommandKey::LagStats,
-						   ServerCommandKey::IdleStats,
-						   ServerCommandKey::FlagHistory,
-						   ServerCommandKey::Report,
-						   ServerCommandKey::Password,
-						   ServerCommandKey::ClientQuery};
+                                                   ServerCommandKey::IdleStats,
+                                                   ServerCommandKey::FlagHistory,
+                                                   ServerCommandKey::Report,
+                                                   ServerCommandKey::Password,
+                                                   ServerCommandKey::ClientQuery
+                                                  };
 
-  const int numNonAdminModes( sizeof(nonAdminModes)/sizeof(nonAdminModes[0]) );
+  const int numNonAdminModes(sizeof(nonAdminModes) / sizeof(nonAdminModes[0]));
 }
 
 
@@ -73,13 +74,11 @@ namespace {
  */
 ServerCommandKey::ServerCommandKey()
   : mode(nonAdminModes[0])
-  , numModes(Password + 1 - Kick) // brittle... no good portable way to deal with this
-{
+  , numModes(Password + 1 - Kick) { // brittle... no good portable way to deal with this
 }
 
 
-void ServerCommandKey::nonAdminInit()
-{
+void ServerCommandKey::nonAdminInit() {
   // if we are in a non admin mode stay there
   bool inNonAdminCommand = false;
   for (int i = 0; i < numNonAdminModes; i++) {
@@ -88,57 +87,57 @@ void ServerCommandKey::nonAdminInit()
       break;
     }
   }
-  if (!inNonAdminCommand)
+  if (!inNonAdminCommand) {
     mode = nonAdminModes[0];
+  }
 
   updatePrompt();
 }
 
 
-void ServerCommandKey::adminInit()
-{
+void ServerCommandKey::adminInit() {
   updatePrompt();
 }
 
 
-void ServerCommandKey::init()
-{
+void ServerCommandKey::init() {
   updatePrompt();
 }
 
 
-void ServerCommandKey::updatePrompt()
-{
+void ServerCommandKey::updatePrompt() {
   std::string composePrompt, banPattern;
   // decide what should be on the composing prompt
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank) {
     // make sure we actually have a tank
     return;
   }
 
   bool allowEdit = true;  // default to true, only need to indicate which are false
-  const Player *recipient = myTank->getRecipient();
+  const Player* recipient = myTank->getRecipient();
 
   switch (mode) {
     case Kick: {
       if (recipient) {
-	composePrompt = "Kick -> ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += " :";
-      } else {
-	composePrompt = "Kick :";
+        composePrompt = "Kick -> ";
+        composePrompt += recipient->getCallSign();
+        composePrompt += " :";
+      }
+      else {
+        composePrompt = "Kick :";
       }
       break;
     }
     case Kill: {
       if (recipient) {
-	composePrompt = "Kill -> ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += " :";
-      } else {
-	composePrompt = "Kill :";
+        composePrompt = "Kill -> ";
+        composePrompt += recipient->getCallSign();
+        composePrompt += " :";
+      }
+      else {
+        composePrompt = "Kill :";
       }
       break;
     }
@@ -147,44 +146,48 @@ void ServerCommandKey::updatePrompt()
     case Ban2:
     case Ban3: {
       if (recipient) {
-	// Set the prompt and enable editing/composing --> allows to enter ban time
-	/* FIXME: temporarily breaking bans for playerid->ubyte
-	 banPattern = makePattern(recipient->id.serverHost);
-	 composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
-	*/
-	return; // remove this when the above is fixed
-      } else {
-	composePrompt = "Ban :";
+        // Set the prompt and enable editing/composing --> allows to enter ban time
+        /* FIXME: temporarily breaking bans for playerid->ubyte
+         banPattern = makePattern(recipient->id.serverHost);
+         composePrompt = "Ban " + banPattern + " -> " + recipient->getCallSign() + " :";
+        */
+        return; // remove this when the above is fixed
+      }
+      else {
+        composePrompt = "Ban :";
       }
       break;
     }
     case Showgroup: {
       if (recipient) {
-	composePrompt = "Show player's groups -> ";
-	composePrompt += recipient->getCallSign();
-	allowEdit = false;
-      } else {
-	composePrompt = "Show player's group :";
+        composePrompt = "Show player's groups -> ";
+        composePrompt += recipient->getCallSign();
+        allowEdit = false;
+      }
+      else {
+        composePrompt = "Show player's group :";
       }
       break;
     }
     case Setgroup: {
       if (recipient) {
-	composePrompt = "Set player's group -> ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += " :";
-      } else {
-	composePrompt = "Set player's group :";
+        composePrompt = "Set player's group -> ";
+        composePrompt += recipient->getCallSign();
+        composePrompt += " :";
+      }
+      else {
+        composePrompt = "Set player's group :";
       }
       break;
     }
     case Removegroup: {
       if (recipient) {
-	composePrompt = "Remove player from group -> ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += " :";
-      } else {
-	composePrompt = "Remove player from group :";
+        composePrompt = "Remove player from group -> ";
+        composePrompt += recipient->getCallSign();
+        composePrompt += " :";
+      }
+      else {
+        composePrompt = "Remove player from group :";
       }
       break;
     }
@@ -315,13 +318,12 @@ void ServerCommandKey::updatePrompt()
 
 // return the right ban pattern 123.32.12.* for example depending on
 // the mode of the class. Returns an empty string on errors.
-std::string ServerCommandKey::makePattern(const InAddr& address)
-{
-  const char * c = inet_ntoa(address);
-  if (c == NULL) return "";
+std::string ServerCommandKey::makePattern(const InAddr& address) {
+  const char* c = inet_ntoa(address);
+  if (c == NULL) { return ""; }
   std::string dots = c;
   std::vector<std::string> dotChunks = TextUtils::tokenize(dots, ".");
-  if (dotChunks.size() != 4) return "";
+  if (dotChunks.size() != 4) { return ""; }
 
   switch (mode) {
     case BanIp: {
@@ -345,8 +347,7 @@ std::string ServerCommandKey::makePattern(const InAddr& address)
 }
 
 
-bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
-{
+bool ServerCommandKey::keyPress(const BzfKeyEvent& key) {
   bool sendIt;
   LocalPlayer* myTank = LocalPlayer::getMyTank();
 
@@ -361,24 +362,24 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
   if (myTank->getInputMethod() != LocalPlayer::Keyboard) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down)) {
+        (key.button == BzfKeyEvent::Down)) {
       return true;
     }
     if ((key.button == BzfKeyEvent::Left) ||
-	(key.button == BzfKeyEvent::Right)) {
+        (key.button == BzfKeyEvent::Right)) {
       return ((key.modifiers & BzfKeyEvent::AltKey) == 0);
     }
   }
 
   switch (key.unicode) {
-    case 3:	// ^C
-    case 27: {	// escape
+    case 3: // ^C
+    case 27: {  // escape
       // case 127:   // delete
-      sendIt = false;			// finished composing -- don't send
+      sendIt = false;     // finished composing -- don't send
       break;
     }
-    case 4:	// ^D
-    case 13: {	// return
+    case 4: // ^D
+    case 13: {  // return
       sendIt = true;
       break;
     }
@@ -391,15 +392,15 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
     std::string message = hud->getComposeString();
     std::string sendMsg, displayMsg, name;
 
-    const Player * troll = myTank->getRecipient();
-    if (troll) name = troll->getCallSign();
+    const Player* troll = myTank->getRecipient();
+    if (troll) { name = troll->getCallSign(); }
 
     switch (mode) {
       case Kick: {
         sendMsg = "/kick ";
         if (troll) {
           // escape the name
-          sendMsg += quote( escape(name) );
+          sendMsg += quote(escape(name));
           append_if(sendMsg, message);
         }
         break;
@@ -408,7 +409,7 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
         sendMsg = "/kill ";
         if (troll) {
           // escape the name
-          sendMsg += quote( escape(name) );
+          sendMsg += quote(escape(name));
           append_if(sendMsg, message);
         }
         break;
@@ -426,7 +427,7 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
           std::string banPattern = makePattern(troll->id.serverHost);
           sendMsg.append(" ").append(banPattern);
            */
-          sendMsg=""; break; // hack to keep this broken (why?)
+          sendMsg = ""; break; // hack to keep this broken (why?)
         }
         // Note that this seems broken, if a recipient was specified (?!)
         append_if(sendMsg, message);
@@ -436,20 +437,21 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
         sendMsg = "/showgroup ";
         if (troll) {
           sendMsg += quote(name);
-        } else {
+        }
+        else {
           append_if(sendMsg, message);
         }
         break;
       }
       case Setgroup: {
         sendMsg = "/setgroup ";
-        if (troll) sendMsg += quote(name);
+        if (troll) { sendMsg += quote(name); }
         append_if(sendMsg, message);
         break;
       }
       case Removegroup: {
         sendMsg = "/removegroup ";
-        if (troll) sendMsg += quote(name);
+        if (troll) { sendMsg += quote(name); }
         append_if(sendMsg, message);
         break;
       }
@@ -485,8 +487,9 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
     // send the message on its way if it isn't empty
     if (sendMsg != "") {
       displayMsg = "-> \"" + sendMsg + "\"";
-      if (sendMsg.find("/password", 0) == std::string::npos)
-	addMessage(NULL, displayMsg, ControlPanel::MessageServer);
+      if (sendMsg.find("/password", 0) == std::string::npos) {
+        addMessage(NULL, displayMsg, ControlPanel::MessageServer);
+      }
 
       char messageBuffer[MessageLen];
       memset(messageBuffer, 0, MessageLen);
@@ -503,8 +506,7 @@ bool ServerCommandKey::keyPress(const BzfKeyEvent& key)
 }
 
 
-bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
-{
+bool ServerCommandKey::keyRelease(const BzfKeyEvent& key) {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   if (KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
@@ -520,62 +522,68 @@ bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 
     if ((key.button == BzfKeyEvent::Up)   ||
         (key.button == BzfKeyEvent::Down) ||
-	(key.button == BzfKeyEvent::Left) ||
-	(key.button == BzfKeyEvent::Right)) {
+        (key.button == BzfKeyEvent::Left) ||
+        (key.button == BzfKeyEvent::Right)) {
       if ((key.button == BzfKeyEvent::Left) ||
           (key.button == BzfKeyEvent::Right)) {
-	// robot stay on the recipient list - to ban eventually ??
-	selectNextRecipient(key.button == BzfKeyEvent::Right, true);
+        // robot stay on the recipient list - to ban eventually ??
+        selectNextRecipient(key.button == BzfKeyEvent::Right, true);
       }
       const Player* recipient = myTank->getRecipient();
 
       // choose which mode we are in
       int maxModes;
       if (myTank->isAdmin()) {
-	maxModes = numModes;
-      } else {
-	maxModes = numNonAdminModes;
+        maxModes = numModes;
+      }
+      else {
+        maxModes = numNonAdminModes;
       }
 
       if (key.button == BzfKeyEvent::Down) {
-	if (!myTank->isAdmin()) {
-	  int newMode(nonAdminModes[0]);
-	  for (int i = 0; i < maxModes; i++) {
-	    if (mode == nonAdminModes[i]) {
-	      if (i == maxModes-1) newMode = nonAdminModes[0];
-	      else newMode = nonAdminModes[i+1];
-	      break;
-	    }
-	  }
-	  mode = static_cast<Mode>(newMode);
-	} else {
-	  int newMode = int(mode) + 1;
-	  if (newMode == maxModes) newMode = 0;
+        if (!myTank->isAdmin()) {
+          int newMode(nonAdminModes[0]);
+          for (int i = 0; i < maxModes; i++) {
+            if (mode == nonAdminModes[i]) {
+              if (i == maxModes - 1) { newMode = nonAdminModes[0]; }
+              else { newMode = nonAdminModes[i + 1]; }
+              break;
+            }
+          }
+          mode = static_cast<Mode>(newMode);
+        }
+        else {
+          int newMode = int(mode) + 1;
+          if (newMode == maxModes) { newMode = 0; }
 
-	  mode = static_cast<Mode>(newMode);
-	  // if no recipient skip Ban1,2,3 -- applies to admin mode
-	  if (!recipient && (mode >= Ban1 && mode <= Ban3))
-	    mode = Unban;	// skips Showgroup, Setgroup, Removegroup ????
-	}
-      } else if (key.button == BzfKeyEvent::Up) {
-	if (!myTank->isAdmin()) {
-	  int newMode(nonAdminModes[0]);
-	  for (int i = 0; i < maxModes; i++) {
-	    if (mode == nonAdminModes[i]) {
-	      if (i == 0) newMode = nonAdminModes[maxModes-1];
-	      else newMode = nonAdminModes[i-1];
-	    }
-	  }
-	  mode = static_cast<Mode>(newMode);
-	} else {
-	  int newMode = int(mode) - 1;
-	  if (newMode < 0) newMode = maxModes -1;
+          mode = static_cast<Mode>(newMode);
+          // if no recipient skip Ban1,2,3 -- applies to admin mode
+          if (!recipient && (mode >= Ban1 && mode <= Ban3)) {
+            mode = Unban;  // skips Showgroup, Setgroup, Removegroup ????
+          }
+        }
+      }
+      else if (key.button == BzfKeyEvent::Up) {
+        if (!myTank->isAdmin()) {
+          int newMode(nonAdminModes[0]);
+          for (int i = 0; i < maxModes; i++) {
+            if (mode == nonAdminModes[i]) {
+              if (i == 0) { newMode = nonAdminModes[maxModes - 1]; }
+              else { newMode = nonAdminModes[i - 1]; }
+            }
+          }
+          mode = static_cast<Mode>(newMode);
+        }
+        else {
+          int newMode = int(mode) - 1;
+          if (newMode < 0) { newMode = maxModes - 1; }
 
-	  mode = static_cast<Mode>(newMode);
-	  // if no recipient skip Ban1,2,3 -- applies to admin mode
-	  if (!recipient && (mode >= Ban1 && mode <= Ban3))
-	    mode = BanIp;
-	}
+          mode = static_cast<Mode>(newMode);
+          // if no recipient skip Ban1,2,3 -- applies to admin mode
+          if (!recipient && (mode >= Ban1 && mode <= Ban3)) {
+            mode = BanIp;
+          }
+        }
       }
 
       //update composing prompt
@@ -592,6 +600,6 @@ bool ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

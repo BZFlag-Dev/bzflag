@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__FLASHCLOCK_H__
-#define	__FLASHCLOCK_H__
+#ifndef __FLASHCLOCK_H__
+#define __FLASHCLOCK_H__
 
 /* common interface headers */
 #include "BzTime.h"
@@ -19,23 +19,23 @@
 
 /**
  * FlashClock
- *	keeps track of time for something that flashes
+ *  keeps track of time for something that flashes
  */
 class FlashClock {
   public:
-			FlashClock();
-			~FlashClock();
+    FlashClock();
+    ~FlashClock();
 
-    void		setClock(float time);
-    void		setClock(float time, float onTime, float offTime);
+    void    setClock(float time);
+    void    setClock(float time, float onTime, float offTime);
 
-    bool		isOn();
+    bool    isOn();
 
   private:
-    BzTime		startTime;
-    float		duration;
-    float		onDuration;
-    float		flashDuration;
+    BzTime    startTime;
+    float   duration;
+    float   onDuration;
+    float   flashDuration;
 };
 
 
@@ -45,6 +45,6 @@ class FlashClock {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

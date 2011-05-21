@@ -28,14 +28,13 @@
 #include "global.h"
 
 #ifdef _WIN32
-unsigned long __stdcall winInput(void *that)
-{
-  StdBothUI *input = (StdBothUI*)that;
+unsigned long __stdcall winInput(void* that) {
+  StdBothUI* input = (StdBothUI*)that;
   unsigned long numRead;
 
   while (WaitForSingleObject(input->processedEvent, INFINITE) == WAIT_OBJECT_0) {
     numRead = 0;
-    ReadFile(input->console, &input->buffer[input->pos], MessageLen-input->pos, &numRead, NULL);
+    ReadFile(input->console, &input->buffer[input->pos], MessageLen - input->pos, &numRead, NULL);
     if (numRead > 0) {
       input->pos += numRead;
       SetEvent(input->readEvent);
@@ -52,15 +51,15 @@ StdBothUI::StdBothUI(BZAdminClient& c) : BZAdminUI(c), atEOF(false) {
 #ifdef _WIN32
   unsigned long tid;
   console = GetStdHandle(STD_INPUT_HANDLE);
-  readEvent = CreateEvent(NULL,FALSE,FALSE,NULL);
-  processedEvent = CreateEvent(NULL,FALSE,TRUE,NULL);
-  thread = CreateThread(NULL,0,winInput,this,0,&tid);
+  readEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+  processedEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
+  thread = CreateThread(NULL, 0, winInput, this, 0, &tid);
   pos = 0;
 #endif
 }
 
 void StdBothUI::outputMessage(const std::string& msg, ColorCode) {
-  std::cout<<msg<<std::endl;
+  std::cout << msg << std::endl;
 }
 
 
@@ -69,12 +68,12 @@ void StdBothUI::outputMessage(const std::string& msg, ColorCode) {
 bool StdBothUI::checkCommand(std::string& str) {
   if (WaitForSingleObject(readEvent, 100) == WAIT_OBJECT_0) {
     if (pos > 2) {
-      if ((buffer[pos-1] == '\n') || (buffer[pos-1] == '\r') || (pos == MessageLen)) {
-	buffer[pos-2] = '\0';
-	str = buffer;
-	pos = 0;
-	SetEvent(processedEvent);
-	return true;
+      if ((buffer[pos - 1] == '\n') || (buffer[pos - 1] == '\r') || (pos == MessageLen)) {
+        buffer[pos - 2] = '\0';
+        str = buffer;
+        pos = 0;
+        SetEvent(processedEvent);
+        return true;
       }
     }
     SetEvent(processedEvent);
@@ -110,8 +109,8 @@ bool StdBothUI::checkCommand(std::string& str) {
       buffer[pos] = '\0';
       str = buffer;
       if (pos != 0) {
-	pos = 0;
-	return true;
+        pos = 0;
+        return true;
       }
       pos = 0;
     }
@@ -130,6 +129,6 @@ BZAdminUI* StdBothUI::creator(BZAdminClient& client) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

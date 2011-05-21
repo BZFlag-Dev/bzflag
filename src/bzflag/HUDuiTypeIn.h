@@ -12,11 +12,11 @@
 
 /*
  * HUDuiTypeIn:
- *	User interface class for the heads-up display's editable input control.
+ *  User interface class for the heads-up display's editable input control.
  */
 
-#ifndef	__HUDUITYPEIN_H__
-#define	__HUDUITYPEIN_H__
+#ifndef __HUDUITYPEIN_H__
+#define __HUDUITYPEIN_H__
 
 #include "common.h"
 
@@ -35,15 +35,13 @@ class CountUTF8StringItr : public UTF8StringItr {
   public:
     CountUTF8StringItr(const char* data) : UTF8StringItr(data), counter(0) {}
 
-    inline CountUTF8StringItr& operator++()
-    {
+    inline CountUTF8StringItr& operator++() {
       counter++;
       UTF8StringItr::operator++();
       return (*this);
     }
 
-    inline void operator=(const char* value)
-    {
+    inline void operator=(const char* value) {
       counter = 0;
       UTF8StringItr::operator=(value);
     }
@@ -60,30 +58,30 @@ class HUDuiTypeIn : public HUDuiControl {
     HUDuiTypeIn();
     ~HUDuiTypeIn();
 
-    void		setObfuscation(bool on);
-    size_t		getMaxLength() const;
-    std::string		getString() const;
+    void    setObfuscation(bool on);
+    size_t    getMaxLength() const;
+    std::string   getString() const;
 
-    void		setMaxLength(size_t);
-    void		setString(const std::string&);
-    void		setEditing(bool _allowEdit);
+    void    setMaxLength(size_t);
+    void    setString(const std::string&);
+    void    setEditing(bool _allowEdit);
 
-    void		pasteText(const std::string& text);
+    void    pasteText(const std::string& text);
 
   protected:
-    bool		doKeyPress(const BzfKeyEvent&);
-    bool		doKeyRelease(const BzfKeyEvent&);
-    void		doRender();
-    bool		decrementCursor();
-    bool		doInsert(unsigned int c);	
-    bool		doBackspace();
+    bool    doKeyPress(const BzfKeyEvent&);
+    bool    doKeyRelease(const BzfKeyEvent&);
+    void    doRender();
+    bool    decrementCursor();
+    bool    doInsert(unsigned int c);
+    bool    doBackspace();
 
   private:
-    size_t		maxLength;
-    std::string		data;
-    CountUTF8StringItr	cursorPos;
-    bool		allowEdit;
-    bool		obfuscate;
+    size_t    maxLength;
+    std::string   data;
+    CountUTF8StringItr  cursorPos;
+    bool    allowEdit;
+    bool    obfuscate;
 };
 
 
@@ -94,6 +92,6 @@ class HUDuiTypeIn : public HUDuiControl {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

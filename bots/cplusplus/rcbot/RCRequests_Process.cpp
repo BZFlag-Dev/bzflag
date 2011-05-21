@@ -29,35 +29,42 @@
 #include "BackendShot.h"
 
 
-bool ExecuteReq::process(RCRobotPlayer *rrp)
-{
-  if (!rrp->isSteadyState())
+bool ExecuteReq::process(RCRobotPlayer* rrp) {
+  if (!rrp->isSteadyState()) {
     return false;
+  }
 
   rrp->lastTickAt = BzTime::getCurrent().getSeconds();
 
-  if (rrp->pendingUpdates[RCRobotPlayer::speedUpdate])
+  if (rrp->pendingUpdates[RCRobotPlayer::speedUpdate]) {
     rrp->speed = rrp->nextSpeed;
-  if (rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate])
+  }
+  if (rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate]) {
     rrp->turnRate = rrp->nextTurnRate;
+  }
 
   if (rrp->pendingUpdates[RCRobotPlayer::distanceUpdate]) {
-    if (rrp->nextDistance < 0.0f)
+    if (rrp->nextDistance < 0.0f) {
       rrp->distanceForward = false;
-    else
+    }
+    else {
       rrp->distanceForward = true;
+    }
     rrp->distanceRemaining = (rrp->distanceForward ? 1 : -1) * rrp->nextDistance;
   }
   if (rrp->pendingUpdates[RCRobotPlayer::turnUpdate]) {
-    if (rrp->nextTurn < 0.0f)
+    if (rrp->nextTurn < 0.0f) {
       rrp->turnLeft = false;
-    else
+    }
+    else {
       rrp->turnLeft = true;
-    rrp->turnRemaining = (rrp->turnLeft ? 1 : -1) * rrp->nextTurn * M_PI/180.0f; /* We have to convert to radians! */
+    }
+    rrp->turnRemaining = (rrp->turnLeft ? 1 : -1) * rrp->nextTurn * M_PI / 180.0f; /* We have to convert to radians! */
   }
 
-  for (int i = 0; i < RCRobotPlayer::updateCount; ++i)
+  for (int i = 0; i < RCRobotPlayer::updateCount; ++i) {
     rrp->pendingUpdates[i] = false;
+  }
 
   if (rrp->shoot) {
     rrp->shoot = false;
@@ -67,44 +74,39 @@ bool ExecuteReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-bool SetSpeedReq::process(RCRobotPlayer *rrp)
-{
+bool SetSpeedReq::process(RCRobotPlayer* rrp) {
   rrp->nextSpeed = speed;
   rrp->pendingUpdates[RCRobotPlayer::speedUpdate] = true;
   return true;
 }
 
-bool SetTurnRateReq::process(RCRobotPlayer *rrp)
-{
+bool SetTurnRateReq::process(RCRobotPlayer* rrp) {
   rrp->nextTurnRate = rate;
   rrp->pendingUpdates[RCRobotPlayer::turnRateUpdate] = true;
   return true;
 }
 
-bool SetAheadReq::process(RCRobotPlayer *rrp)
-{
+bool SetAheadReq::process(RCRobotPlayer* rrp) {
   rrp->pendingUpdates[RCRobotPlayer::distanceUpdate] = true;
   rrp->nextDistance = distance;
   return true;
 }
 
-bool SetTurnLeftReq::process(RCRobotPlayer *rrp)
-{
+bool SetTurnLeftReq::process(RCRobotPlayer* rrp) {
   rrp->pendingUpdates[RCRobotPlayer::turnUpdate] = true;
   rrp->nextTurn = turn;
   return true;
 }
 
-bool SetFireReq::process(RCRobotPlayer *rrp)
-{
+bool SetFireReq::process(RCRobotPlayer* rrp) {
   rrp->shoot = true;
   return true;
 }
 
-bool SetResumeReq::process(RCRobotPlayer *rrp)
-{
-  if (!rrp->isSteadyState())
+bool SetResumeReq::process(RCRobotPlayer* rrp) {
+  if (!rrp->isSteadyState()) {
     return false;
+  }
 
   if (rrp->hasStopped) {
     rrp->hasStopped = false;
@@ -116,82 +118,77 @@ bool SetResumeReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-bool GetGunHeatReq::process(RCRobotPlayer *rrp)
-{
-  if (!rrp->isSteadyState())
+bool GetGunHeatReq::process(RCRobotPlayer* rrp) {
+  if (!rrp->isSteadyState()) {
     return false;
+  }
 
   link->sendm(GunHeatReply(rrp->getReloadTime()));
   return true;
 }
 
-bool GetDistanceRemainingReq::process(RCRobotPlayer *rrp)
-{
-  if (!rrp->isSteadyState())
+bool GetDistanceRemainingReq::process(RCRobotPlayer* rrp) {
+  if (!rrp->isSteadyState()) {
     return false;
+  }
 
   link->sendm(DistanceRemainingReply(rrp->distanceRemaining));
   return true;
 }
 
-bool GetTurnRemainingReq::process(RCRobotPlayer *rrp)
-{
-  if (!rrp->isSteadyState())
+bool GetTurnRemainingReq::process(RCRobotPlayer* rrp) {
+  if (!rrp->isSteadyState()) {
     return false;
+  }
 
-  link->sendm(TurnRemainingReply(rrp->turnRemaining * 180.0f/M_PI));
+  link->sendm(TurnRemainingReply(rrp->turnRemaining * 180.0f / M_PI));
   return true;
 }
 
-bool GetTickDurationReq::process(RCRobotPlayer *rrp)
-{
+bool GetTickDurationReq::process(RCRobotPlayer* rrp) {
   link->sendf("GetTickDuration %f\n", rrp->tickDuration);
   return true;
 }
 
-bool SetTickDurationReq::process(RCRobotPlayer *rrp)
-{
+bool SetTickDurationReq::process(RCRobotPlayer* rrp) {
   rrp->tickDuration = duration;
   return true;
 }
 
-bool GetTickRemainingReq::process(RCRobotPlayer *rrp)
-{
-  if (rrp->isSteadyState())
+bool GetTickRemainingReq::process(RCRobotPlayer* rrp) {
+  if (rrp->isSteadyState()) {
     link->sendf("GetTickRemaining %f\n", (rrp->lastTickAt + rrp->tickDuration) - BzTime::getCurrent().getSeconds());
-  else
+  }
+  else {
     link->sendf("GetTickRemaining 0.0\n");
+  }
 
   return true;
 }
 
-bool GetBattleFieldSizeReq::process(RCRobotPlayer *)
-{
+bool GetBattleFieldSizeReq::process(RCRobotPlayer*) {
   link->sendm(BattleFieldSizeReply(BZDBCache::worldSize));
   return true;
 }
 
-bool GetTeamsReq::process(RCRobotPlayer *)
-{
+bool GetTeamsReq::process(RCRobotPlayer*) {
   // TODO: Implement this. :p
   return true;
 }
-bool GetBasesReq::process(RCRobotPlayer *)
-{
+bool GetBasesReq::process(RCRobotPlayer*) {
   // TODO: Implement this. :p
   return true;
 }
-bool GetFlagsReq::process(RCRobotPlayer *)
-{
+bool GetFlagsReq::process(RCRobotPlayer*) {
   // TODO: Implement this. :p
   return true;
 }
-bool GetShotsReq::process(RCRobotPlayer *)
-{
+bool GetShotsReq::process(RCRobotPlayer*) {
   link->sendm(ShotsBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!remotePlayers[i])
+    if (!remotePlayers[i]) {
       continue;
+    }
 
     /*TeamColor team = remotePlayers[i]->getTeam();
     if (team == ObserverTeam)
@@ -200,11 +197,12 @@ bool GetShotsReq::process(RCRobotPlayer *)
       continue;*/
 
     for (int j = 0; j < remotePlayers[i]->getMaxShots(); j++) {
-      ShotPath *path = remotePlayers[i]->getShot(j);
-      if (!path || path->isExpired())
+      ShotPath* path = remotePlayers[i]->getShot(j);
+      if (!path || path->isExpired()) {
         continue;
+      }
 
-      const FiringInfo &info = path->getFiringInfo();
+      const FiringInfo& info = path->getFiringInfo();
 
       link->sendm(ShotReply(Shot(info.shot.player, info.shot.id)));
     }
@@ -212,63 +210,53 @@ bool GetShotsReq::process(RCRobotPlayer *)
 
   return true;
 }
-bool GetMyTanksReq::process(RCRobotPlayer *)
-{
+bool GetMyTanksReq::process(RCRobotPlayer*) {
   // TODO: Implement this. :p
   return true;
 }
-bool GetOtherTanksReq::process(RCRobotPlayer *)
-{
+bool GetOtherTanksReq::process(RCRobotPlayer*) {
   // TODO: Implement this. :p
   return true;
 }
-bool GetConstantsReq::process(RCRobotPlayer *)
-{
+bool GetConstantsReq::process(RCRobotPlayer*) {
   // TODO: Implement this. :p
   return true;
 }
 
-bool GetXReq::process(RCRobotPlayer *rrp)
-{
+bool GetXReq::process(RCRobotPlayer* rrp) {
   link->sendm(XReply(rrp->getPosition()[0]));
   return true;
 }
-bool GetYReq::process(RCRobotPlayer *rrp)
-{
+bool GetYReq::process(RCRobotPlayer* rrp) {
   link->sendm(YReply(rrp->getPosition()[1]));
   return true;
 }
-bool GetZReq::process(RCRobotPlayer *rrp)
-{
+bool GetZReq::process(RCRobotPlayer* rrp) {
   link->sendm(ZReply(rrp->getPosition()[2]));
   return true;
 }
 
-bool GetWidthReq::process(RCRobotPlayer *rrp)
-{
+bool GetWidthReq::process(RCRobotPlayer* rrp) {
   link->sendm(WidthReply(rrp->getDimensions()[0]));
   return true;
 }
-bool GetLengthReq::process(RCRobotPlayer *rrp)
-{
+bool GetLengthReq::process(RCRobotPlayer* rrp) {
   link->sendm(LengthReply(rrp->getDimensions()[1]));
   return true;
 }
-bool GetHeightReq::process(RCRobotPlayer *rrp)
-{
+bool GetHeightReq::process(RCRobotPlayer* rrp) {
   link->sendm(HeightReply(rrp->getDimensions()[2]));
   return true;
 }
-bool GetHeadingReq::process(RCRobotPlayer *rrp)
-{
-  link->sendm(HeadingReply(rrp->getAngle()*180.0f/M_PI));
+bool GetHeadingReq::process(RCRobotPlayer* rrp) {
+  link->sendm(HeadingReply(rrp->getAngle() * 180.0f / M_PI));
   return true;
 }
 
-bool SetStopReq::process(RCRobotPlayer *rrp)
-{
-  if (!rrp->isSteadyState())
+bool SetStopReq::process(RCRobotPlayer* rrp) {
+  if (!rrp->isSteadyState()) {
     return false;
+  }
 
   if (!rrp->hasStopped || overwrite) {
     rrp->hasStopped = true;
@@ -280,34 +268,37 @@ bool SetStopReq::process(RCRobotPlayer *rrp)
   return true;
 }
 
-bool GetPlayersReq::process(RCRobotPlayer *)
-{
+bool GetPlayersReq::process(RCRobotPlayer*) {
   link->sendm(PlayersBeginReply());
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!remotePlayers[i])
+    if (!remotePlayers[i]) {
       continue;
-    if (robots[0]->getId() == remotePlayers[i]->getId())
+    }
+    if (robots[0]->getId() == remotePlayers[i]->getId()) {
       continue;
+    }
 
     TeamColor team = remotePlayers[i]->getTeam();
-    if (team == ObserverTeam)
+    if (team == ObserverTeam) {
       continue;
-    if (team == startupInfo.team && startupInfo.team != AutomaticTeam)
+    }
+    if (team == startupInfo.team && startupInfo.team != AutomaticTeam) {
       continue;
+    }
 
-		Tank tank(
-			remotePlayers[i]->getCallSign(),
-			Team::getShortName(remotePlayers[i]->getTeam()),
-			remotePlayers[i]->getFlag()->flagName,
-			remotePlayers[i]->isPaused(),
-			remotePlayers[i]->isAlive(),
-			remotePlayers[i]->canMove(),
-			remotePlayers[i]->isFlagActive(),
-			remotePlayers[i]->getPosition(),
-			(remotePlayers[i]->getAngle()*180.0/M_PI),
-			remotePlayers[i]->getVelocity(),
-			remotePlayers[i]->getAngularVelocity()
-			);
+    Tank tank(
+      remotePlayers[i]->getCallSign(),
+      Team::getShortName(remotePlayers[i]->getTeam()),
+      remotePlayers[i]->getFlag()->flagName,
+      remotePlayers[i]->isPaused(),
+      remotePlayers[i]->isAlive(),
+      remotePlayers[i]->canMove(),
+      remotePlayers[i]->isFlagActive(),
+      remotePlayers[i]->getPosition(),
+      (remotePlayers[i]->getAngle() * 180.0 / M_PI),
+      remotePlayers[i]->getVelocity(),
+      remotePlayers[i]->getAngularVelocity()
+    );
 
     link->sendm(PlayersReply(tank));
   }
@@ -315,45 +306,43 @@ bool GetPlayersReq::process(RCRobotPlayer *)
   return true;
 }
 
-bool GetObstaclesReq::process(RCRobotPlayer *)
-{
+bool GetObstaclesReq::process(RCRobotPlayer*) {
   unsigned int i;
   link->sendm(ObstaclesBeginReply());
-  const ObstacleList &boxes = OBSTACLEMGR.getBoxes();
+  const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
   for (i = 0; i < boxes.size(); i++) {
-    Obstacle *obs = boxes[i];
+    Obstacle* obs = boxes[i];
     link->sendm(ObstacleReply(obs, boxType));
   }
 
-  const ObstacleList &pyrs = OBSTACLEMGR.getPyrs();
+  const ObstacleList& pyrs = OBSTACLEMGR.getPyrs();
   for (i = 0; i < pyrs.size(); i++) {
-    Obstacle *obs = pyrs[i];
+    Obstacle* obs = pyrs[i];
     link->sendm(ObstacleReply(obs, pyrType));
   }
 
-  const ObstacleList &bases = OBSTACLEMGR.getBases();
+  const ObstacleList& bases = OBSTACLEMGR.getBases();
   for (i = 0; i < bases.size(); i++) {
-    Obstacle *obs = bases[i];
+    Obstacle* obs = bases[i];
     link->sendm(ObstacleReply(obs, baseType));
   }
 
-  const ObstacleList &meshes = OBSTACLEMGR.getMeshes();
+  const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (i = 0; i < meshes.size(); i++) {
-    Obstacle *obs = meshes[i];
+    Obstacle* obs = meshes[i];
     link->sendm(ObstacleReply(obs, meshType));
   }
 
-  const ObstacleList &walls = OBSTACLEMGR.getWalls();
+  const ObstacleList& walls = OBSTACLEMGR.getWalls();
   for (i = 0; i < walls.size(); i++) {
-    Obstacle *obs = walls[i];
+    Obstacle* obs = walls[i];
     link->sendm(ObstacleReply(obs, wallType));
   }
   return true;
 }
 
-bool GetShotPositionReq::process(RCRobotPlayer *)
-{
-	Shot shot(id);
+bool GetShotPositionReq::process(RCRobotPlayer*) {
+  Shot shot(id);
   BackendShot bshot(shot);
   double x, y, z;
 
@@ -363,9 +352,8 @@ bool GetShotPositionReq::process(RCRobotPlayer *)
   return true;
 }
 
-bool GetShotVelocityReq::process(RCRobotPlayer *)
-{
-	Shot shot(id);
+bool GetShotVelocityReq::process(RCRobotPlayer*) {
+  Shot shot(id);
   BackendShot bshot(shot);
   double x, y, z;
 
@@ -379,6 +367,6 @@ bool GetShotVelocityReq::process(RCRobotPlayer *)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

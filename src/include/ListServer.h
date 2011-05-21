@@ -24,15 +24,15 @@
 
 const int       MaxListServers = 5;
 typedef struct _ListServer {
-    Address	address;
-    int		port;
-    int		socket;
-    int		phase;
-    std::string	hostname;
-    std::string	pathname;
-    int		failures;
-    int		bufferSize;
-    char	buffer[1024];
+  Address address;
+  int   port;
+  int   socket;
+  int   phase;
+  std::string hostname;
+  std::string pathname;
+  int   failures;
+  int   bufferSize;
+  char  buffer[1024];
 } ListServer;
 
 
@@ -42,6 +42,6 @@ typedef struct _ListServer {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

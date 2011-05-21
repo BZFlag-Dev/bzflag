@@ -50,10 +50,10 @@
 // World
 //
 
-World*			World::playingField = NULL;
-BundleMgr*		World::bundleMgr;
-std::string		World::locale("");
-int			World::flagTexture(-1);
+World*      World::playingField = NULL;
+BundleMgr*    World::bundleMgr;
+std::string   World::locale("");
+int     World::flagTexture(-1);
 
 
 World::World() :
@@ -67,8 +67,7 @@ World::World() :
   players(NULL),
   flags(NULL),
   flagNodes(NULL),
-  flagWarpNodes(NULL)
-{
+  flagWarpNodes(NULL) {
   worldWeapons = new WorldPlayer();
   waterLevel = -1.0f;
   waterMaterial = NULL;
@@ -77,8 +76,7 @@ World::World() :
 }
 
 
-World::~World()
-{
+World::~World() {
   int i;
   freeFlags();
   freeInsideNodes();
@@ -108,28 +106,24 @@ World::~World()
 }
 
 
-void World::init()
-{
-  TextureManager &tm = TextureManager::instance();
-  flagTexture = tm.getTextureID( "flag" );
+void World::init() {
+  TextureManager& tm = TextureManager::instance();
+  flagTexture = tm.getTextureID("flag");
 }
 
 
-void World::done()
-{
+void World::done() {
   flagTexture = 0;
 }
 
 
-void World::loadCollisionManager()
-{
+void World::loadCollisionManager() {
   COLLISIONMGR.load();
   return;
 }
 
 
-void World::checkCollisionManager()
-{
+void World::checkCollisionManager() {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
     COLLISIONMGR.load();
@@ -138,20 +132,17 @@ void World::checkCollisionManager()
 }
 
 
-void World::setFlagTexture(FlagSceneNode* flag)
-{
+void World::setFlagTexture(FlagSceneNode* flag) {
   flag->setTexture(flagTexture);
 }
 
 
-void World::setWorld(World* _playingField)
-{
+void World::setWorld(World* _playingField) {
   playingField = _playingField;
 }
 
 
-TeamColor World::whoseBase(const fvec3& testPos) const
-{
+TeamColor World::whoseBase(const fvec3& testPos) const {
   if (gameType != ClassicCTF) {
     return NoTeam;
   }
@@ -181,8 +172,7 @@ TeamColor World::whoseBase(const fvec3& testPos) const
 
 
 const Obstacle* World::inBuilding(const fvec3& pos,
-                                  float radius, float height) const
-{
+                                  float radius, float height) const {
   // check everything but walls
   const ObsList* oList = COLLISIONMGR.cylinderTest(pos, radius, height);
   for (int i = 0; i < oList->count; i++) {
@@ -197,8 +187,7 @@ const Obstacle* World::inBuilding(const fvec3& pos,
 
 
 const Obstacle* World::inBuilding(const fvec3& pos, float angle,
-                                  float dx, float dy, float dz) const
-{
+                                  float dx, float dy, float dz) const {
   // check everything but the walls
   const ObsList* oList = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
 
@@ -214,8 +203,7 @@ const Obstacle* World::inBuilding(const fvec3& pos, float angle,
 
 
 const Obstacle* World::hitBuilding(const fvec3& pos, float angle,
-                                   float dx, float dy, float dz) const
-{
+                                   float dx, float dy, float dz) const {
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   for (unsigned int w = 0; w < walls.size(); w++) {
@@ -243,18 +231,18 @@ const Obstacle* World::hitBuilding(const fvec3& pos, float angle,
 
 
 const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
-				   const fvec3& pos, float angle,
-				   float dx, float dy, float dz,
-				   bool directional) const
-{
+                                   const fvec3& pos, float angle,
+                                   float dx, float dy, float dz,
+                                   bool directional) const {
   ClientIntangibilityManager& CIMgr = ClientIntangibilityManager::instance();
 
   // check walls
   const ObstacleList& walls = OBSTACLEMGR.getWalls();
   for (unsigned int w = 0; w < walls.size(); w++) {
     const WallObstacle* wall = (const WallObstacle*) walls[w];
-    if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return wall;
+    }
   }
 
   // get the list of potential hits from the collision manager
@@ -309,19 +297,19 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
     if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       const float facePos2 = face->getPosition()[2];
       if (face->isUpPlane() && (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f)))) {
-	continue;
+        continue;
       }
       else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown)) {
-	continue;
+        continue;
       }
       else {
-	// add the face to the hitlist
-	oList->list[hitCount] = (Obstacle*) obs;
-	hitCount++;
-	// compute its dot product and stick it in the scratchPad
-	const fvec4& plane = face->getPlane();
-	const float dot = fvec3::dot(vel, plane.xyz());
-	face->scratchPad = dot;
+        // add the face to the hitlist
+        oList->list[hitCount] = (Obstacle*) obs;
+        hitCount++;
+        // compute its dot product and stick it in the scratchPad
+        const fvec4& plane = face->getPlane();
+        const float dot = fvec3::dot(vel, plane.xyz());
+        face->scratchPad = dot;
       }
     }
   }
@@ -351,8 +339,7 @@ const Obstacle* World::hitBuilding(const fvec3& oldPos, float oldAngle,
 
 
 const MeshFace* World::crossingTeleporter(const fvec3& pos, float angle,
-                                          float dx, float dy, float dz) const
-{
+                                          float dx, float dy, float dz) const {
   const ObsList* oList = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
 
   const int count = oList->count;
@@ -371,8 +358,7 @@ const MeshFace* World::crossingTeleporter(const fvec3& pos, float angle,
 
 
 const MeshFace* World::crossesTeleporter(const fvec3& oldPos,
-                                         const fvec3& newPos) const
-{
+                                         const fvec3& newPos) const {
   // check linkSrcs
   Extents exts;
   exts.expandToPoint(oldPos);
@@ -397,8 +383,7 @@ const MeshFace* World::crossesTeleporter(const fvec3& oldPos,
 }
 
 
-float World::getProximity(const fvec3& p, float radius) const
-{
+float World::getProximity(const fvec3& p, float radius) const {
   const float r = (radius * 1.2f);
 
   // get maximum over all teleporters
@@ -427,8 +412,7 @@ float World::getProximity(const fvec3& p, float radius) const
 }
 
 
-void World::freeFlags()
-{
+void World::freeFlags() {
   int i;
   if (flagNodes) {
     for (i = 0; i < maxFlags; i++) {
@@ -449,8 +433,7 @@ void World::freeFlags()
 }
 
 
-void World::makeMeshDrawMgrs()
-{
+void World::makeMeshDrawMgrs() {
   // make the display list managers for source meshes
   std::vector<MeshObstacle*> sourceMeshes;
   OBSTACLEMGR.getSourceMeshes(sourceMeshes);
@@ -470,8 +453,7 @@ void World::makeMeshDrawMgrs()
 }
 
 
-void World::freeMeshDrawMgrs()
-{
+void World::freeMeshDrawMgrs() {
   for (int i = 0; i < drawInfoCount; i++) {
     MeshDrawInfo* di = drawInfoArray[i];
     MeshDrawMgr* dm = di->getDrawMgr();
@@ -485,8 +467,7 @@ void World::freeMeshDrawMgrs()
 }
 
 
-void World::updateAnimations(float /*dt*/)
-{
+void World::updateAnimations(float /*dt*/) {
   const double gameTime = GameTime::getStepTime();
   for (int i = 0; i < drawInfoCount; i++) {
     MeshDrawInfo* di = drawInfoArray[i];
@@ -496,8 +477,7 @@ void World::updateAnimations(float /*dt*/)
 }
 
 
-void World::freeInsideNodes() const
-{
+void World::freeInsideNodes() const {
   unsigned int i;
   int j;
   const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
@@ -536,8 +516,7 @@ void World::freeInsideNodes() const
 }
 
 
-void World::initFlag(int index)
-{
+void World::initFlag(int index) {
   // set the color
   const fvec4& color = flags[index].type->getColor();
   flagNodes[index]->setColor(color[0], color[1], color[2], 1.0f);
@@ -546,7 +525,7 @@ void World::initFlag(int index)
   int texID = -1;
   const TeamColor flagTeam = flags[index].type->flagTeam;
   if (flagTeam != NoTeam) {
-    TextureManager &tm = TextureManager::instance();
+    TextureManager& tm = TextureManager::instance();
     const std::string flagTextureName =
       Team::getImagePrefix(flagTeam) + "flag";
     texID = tm.getTextureID(flagTextureName);
@@ -567,15 +546,14 @@ void World::initFlag(int index)
     pos[0] = flag.position[0];
     pos[1] = flag.position[1];
     pos[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-	0.25f * BZDBCache::gravity * flag.flightEnd) + flag.position[2];
+                                      0.25f * BZDBCache::gravity * flag.flightEnd) + flag.position[2];
     flagWarpNodes[index]->move(pos);
     flagWarpNodes[index]->setSizeFraction(0.0f);
   }
 }
 
 
-void World::updateWind(float /*dt*/)
-{
+void World::updateWind(float /*dt*/) {
   static BZDB_float maxWindSpeed("_maxWindSpeed");
   static BZDB_float minWindSpeed("_minWindSpeed");
 
@@ -585,11 +563,11 @@ void World::updateWind(float /*dt*/)
   const double oneMinuteFactor = (1.0 / (60.0 * (M_PI * 2.0)));
   const float wsf = (float)(0.5 + (0.5 * cos(gt * 15.0f * oneMinuteFactor)));
   const float windSpeed = ((1.0f - wsf) * minWindSpeed) +
-			  (wsf * maxWindSpeed);
+                          (wsf * maxWindSpeed);
 
   const float windAngle = (float)((M_PI * 2.0) *
-				  (cos(gt * 3.0f * oneMinuteFactor) +
-				   cos(gt * 10.0f * oneMinuteFactor)));
+                                  (cos(gt * 3.0f * oneMinuteFactor) +
+                                   cos(gt * 10.0f * oneMinuteFactor)));
 
   wind[0] = windSpeed * cosf(windAngle);
   wind[1] = windSpeed * sinf(windAngle);
@@ -597,8 +575,7 @@ void World::updateWind(float /*dt*/)
 }
 
 
-void World::updateFlag(int index, float dt)
-{
+void World::updateFlag(int index, float dt) {
   if (!flagNodes) {
     return;
   }
@@ -617,94 +594,96 @@ void World::updateFlag(int index, float dt)
     case FlagInAir: {
       flag.flightTime += dt;
       if (flag.flightTime >= flag.flightEnd) {
-	// touchdown
-	flag.status = FlagOnGround;
-	flag.position[0] = flag.landingPosition[0];
-	flag.position[1] = flag.landingPosition[1];
-	flag.position[2] = flag.landingPosition[2];
+        // touchdown
+        flag.status = FlagOnGround;
+        flag.position[0] = flag.landingPosition[0];
+        flag.position[1] = flag.landingPosition[1];
+        flag.position[2] = flag.landingPosition[2];
       }
       else {
-	// still flying
-	float t = flag.flightTime / flag.flightEnd;
-	flag.position = ((1.0f - t) * flag.launchPosition) +
-	                        (t  * flag.landingPosition);
+        // still flying
+        float t = flag.flightTime / flag.flightEnd;
+        flag.position = ((1.0f - t) * flag.launchPosition) +
+                        (t  * flag.landingPosition);
         flag.position.z += flag.flightTime *
-          (flag.initialVelocity + 0.5f * BZDBCache::gravity * flag.flightTime);
+                           (flag.initialVelocity + 0.5f * BZDBCache::gravity * flag.flightTime);
       }
       break;
     }
     case FlagComing: {
       flag.flightTime += dt;
       if (flag.flightTime >= flag.flightEnd) {
-	// touchdown
-	flag.status = FlagOnGround;
-	flag.position.z = 0.0f;
-	alpha = 1.0f;
+        // touchdown
+        flag.status = FlagOnGround;
+        flag.position.z = 0.0f;
+        alpha = 1.0f;
       }
       else if (flag.flightTime >= (0.5f * flag.flightEnd)) {
-	// falling
-	flag.position.z = flag.flightTime * (flag.initialVelocity +
-	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition.z;
-	alpha = 1.0f;
+        // falling
+        flag.position.z = flag.flightTime * (flag.initialVelocity +
+                                             0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition.z;
+        alpha = 1.0f;
       }
       else {
-	// hovering
-	flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
-	    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
+        // hovering
+        flag.position[2] = 0.5f * flag.flightEnd * (flag.initialVelocity +
+                                                    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
 
-	// flag is fades in during first half of hovering period
-	// and is opaque during the second half.  flag warp grows
-	// to full size during first half, and shrinks to nothing
-	// during second half.
-	if (flag.flightTime >= 0.25f * flag.flightEnd) {
-	  // second half
-	  float t = (flag.flightTime - 0.25f * flag.flightEnd) /
-						(0.25f * flag.flightEnd);
-	  alpha = 1.0f;
-	  flagWarpNodes[index]->setSizeFraction(1.0f - t);
-	} else {
-	  // first half
-	  float t = flag.flightTime / (0.25f * flag.flightEnd);
-	  alpha = t;
-	  flagWarpNodes[index]->setSizeFraction(t);
-	}
+        // flag is fades in during first half of hovering period
+        // and is opaque during the second half.  flag warp grows
+        // to full size during first half, and shrinks to nothing
+        // during second half.
+        if (flag.flightTime >= 0.25f * flag.flightEnd) {
+          // second half
+          float t = (flag.flightTime - 0.25f * flag.flightEnd) /
+                    (0.25f * flag.flightEnd);
+          alpha = 1.0f;
+          flagWarpNodes[index]->setSizeFraction(1.0f - t);
+        }
+        else {
+          // first half
+          float t = flag.flightTime / (0.25f * flag.flightEnd);
+          alpha = t;
+          flagWarpNodes[index]->setSizeFraction(t);
+        }
       }
       break;
     }
     case FlagGoing: {
       flag.flightTime += dt;
       if (flag.flightTime >= flag.flightEnd) {
-	// all gone
-	flag.status = FlagNoExist;
+        // all gone
+        flag.status = FlagNoExist;
       }
       else if (flag.flightTime < (0.5f * flag.flightEnd)) {
-	// rising
-	flag.position.z = flag.flightTime * (flag.initialVelocity +
-	    0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition[2];
-	alpha = 1.0f;
+        // rising
+        flag.position.z = flag.flightTime * (flag.initialVelocity +
+                                             0.5f * BZDBCache::gravity * flag.flightTime) + flag.landingPosition[2];
+        alpha = 1.0f;
       }
       else {
-	// hovering
-	flag.position.z = 0.5f * flag.flightEnd * (flag.initialVelocity +
-	    0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
+        // hovering
+        flag.position.z = 0.5f * flag.flightEnd * (flag.initialVelocity +
+                                                   0.25f * BZDBCache::gravity * flag.flightEnd) + flag.landingPosition[2];
 
-	// flag is opaque during first half of hovering period
-	// and fades out during the second half.  flag warp grows
-	// to full size during first half, and shrinks to nothing
-	// during second half.
-	if (flag.flightTime < 0.75f * flag.flightEnd) {
-	  // first half
-	  float t = (0.75f * flag.flightEnd - flag.flightTime) /
-						(0.25f * flag.flightEnd);
-	  alpha = 1.0f;
-	  flagWarpNodes[index]->setSizeFraction(1.0f - t);
-	} else {
-	  // second half
-	  float t = (flag.flightEnd - flag.flightTime) /
-						(0.25f * flag.flightEnd);
-	  alpha = t;
-	  flagWarpNodes[index]->setSizeFraction(t);
-	}
+        // flag is opaque during first half of hovering period
+        // and fades out during the second half.  flag warp grows
+        // to full size during first half, and shrinks to nothing
+        // during second half.
+        if (flag.flightTime < 0.75f * flag.flightEnd) {
+          // first half
+          float t = (0.75f * flag.flightEnd - flag.flightTime) /
+                    (0.25f * flag.flightEnd);
+          alpha = 1.0f;
+          flagWarpNodes[index]->setSizeFraction(1.0f - t);
+        }
+        else {
+          // second half
+          float t = (flag.flightEnd - flag.flightTime) /
+                    (0.25f * flag.flightEnd);
+          alpha = t;
+          flagWarpNodes[index]->setSizeFraction(t);
+        }
       }
       break;
     }
@@ -731,28 +710,27 @@ void World::updateFlag(int index, float dt)
     }
     else {
       if (flag.type == Flags::Narrow) {
-	flagNode->setAngle(flagPlayer->getAngle());
-	flagNode->setFlat(true);
+        flagNode->setAngle(flagPlayer->getAngle());
+        flagNode->setFlat(true);
       }
       else {
-	fvec3 myWind;
-	getWind(myWind, flagPlayer->getPosition());
-	const fvec3& vel = flagPlayer->getVelocity();
-	myWind.xy() -= vel.xy();
-	if (flagPlayer->isFalling()) {
-	  myWind.z -= vel.z;
-	}
-	flagNode->setWind(myWind, dt);
-	flagNode->setFlat(false);
+        fvec3 myWind;
+        getWind(myWind, flagPlayer->getPosition());
+        const fvec3& vel = flagPlayer->getVelocity();
+        myWind.xy() -= vel.xy();
+        if (flagPlayer->isFalling()) {
+          myWind.z -= vel.z;
+        }
+        flagNode->setWind(myWind, dt);
+        flagNode->setFlat(false);
       }
     }
   }
 }
 
 
-void World::addFlags(SceneDatabase* scene, bool seerView)
-{
-  if (!flagNodes) return;
+void World::addFlags(SceneDatabase* scene, bool seerView) {
+  if (!flagNodes) { return; }
   for (int i = 0; i < maxFlags; i++) {
     // if not showing flags, only allow FlagOnTank through
     if ((flags[i].status != FlagOnTank) && !BZDBCache::displayMainFlags) {
@@ -762,23 +740,23 @@ void World::addFlags(SceneDatabase* scene, bool seerView)
       continue;
     }
 
-    if (flags[i].status == FlagNoExist) continue;
+    if (flags[i].status == FlagNoExist) { continue; }
     // skip flag on a tank that isn't alive. also skip
     // Cloaking flag on a tank if we don't have a Seer flag.
     if (flags[i].status == FlagOnTank) {
       if ((flags[i].type == Flags::Cloaking) && !seerView) {
-	continue;
+        continue;
       }
       int j;
       for (j = 0; j < curMaxPlayers; j++) {
-	if (players[j] && players[j]->getId() == flags[i].owner) {
-	  break;
+        if (players[j] && players[j]->getId() == flags[i].owner) {
+          break;
         }
       }
 
       if ((j < curMaxPlayers) &&
           !(players[j]->getStatus() & PlayerState::Alive)) {
-	continue;
+        continue;
       }
     }
 
@@ -786,10 +764,11 @@ void World::addFlags(SceneDatabase* scene, bool seerView)
 
     // add warp if coming/going and hovering
     if ((flags[i].status == FlagComing &&
-	flags[i].flightTime < 0.5 * flags[i].flightEnd) ||
-	(flags[i].status == FlagGoing &&
-	flags[i].flightTime >= 0.5 * flags[i].flightEnd))
+         flags[i].flightTime < 0.5 * flags[i].flightEnd) ||
+        (flags[i].status == FlagGoing &&
+         flags[i].flightTime >= 0.5 * flags[i].flightEnd)) {
       scene->addDynamicNode(flagWarpNodes[i]);
+    }
   }
 }
 
@@ -797,8 +776,7 @@ void World::addFlags(SceneDatabase* scene, bool seerView)
 static std::string indent = "";
 
 
-static void writeDefaultOBJMaterials(std::ostream& out)
-{
+static void writeDefaultOBJMaterials(std::ostream& out) {
   typedef struct {
     const char* name;
     const char* texture;
@@ -834,8 +812,7 @@ static void writeDefaultOBJMaterials(std::ostream& out)
 }
 
 
-static void writeOBJGround(std::ostream& out)
-{
+static void writeOBJGround(std::ostream& out) {
   const float ws = BZDBCache::worldSize / 2.0f;
   const float ts = BZDBCache::worldSize / 100.0f;
   out << "o bzground" << std::endl;
@@ -855,8 +832,7 @@ static void writeOBJGround(std::ostream& out)
 }
 
 
-static void writeBZDBvar(const std::string& name, void *userData)
-{
+static void writeBZDBvar(const std::string& name, void* userData) {
   std::ofstream& out = *((std::ofstream*)userData);
   if ((BZDB.getPermission(name) == StateDatabase::Server)
       && (BZDB.get(name) != BZDB.getDefault(name))) {
@@ -869,18 +845,18 @@ static void writeBZDBvar(const std::string& name, void *userData)
       set = "  -setforced ";
     }
     out << indent << set << name << " "
-		  << qmark << BZDB.get(name) << qmark << std::endl;
+        << qmark << BZDB.get(name) << qmark << std::endl;
   }
   return;
 }
 
 
-bool World::writeWorld(const std::string& filename, std::string& fullname)
-{
+bool World::writeWorld(const std::string& filename, std::string& fullname) {
   const bool saveAsOBJ = BZDB.isTrue("saveAsOBJ");
   if (saveAsOBJ) {
     indent = "# ";
-  } else {
+  }
+  else {
     indent = "";
   }
 
@@ -890,13 +866,14 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     if (strstr(fullname.c_str(), ".obj") == NULL) {
       fullname += ".obj";
     }
-  } else {
+  }
+  else {
     if (strstr(fullname.c_str(), ".bzw") == NULL) {
       fullname += ".bzw";
     }
   }
 
-  std::ostream *stream = FILEMGR.createDataOutStream(fullname.c_str());
+  std::ostream* stream = FILEMGR.createDataOutStream(fullname.c_str());
   if (stream == NULL) {
     return false;
   }
@@ -915,7 +892,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     out << indent << "options" << std::endl;
 
     // FIXME - would be nice to get a few other thing
-    //	 -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
+    //   -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
     if (allowTeamFlags()) {
       out << indent << "  -c" << std::endl;
@@ -925,14 +902,18 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       }
       out << "2" << std::endl;
     }
-    if (allowRabbit())
+    if (allowRabbit()) {
       out << indent << "  -rabbit" << std::endl;
-    if (allowJumping())
+    }
+    if (allowJumping()) {
       out << indent << "  -j" << std::endl;
-    if (allShotsRicochet())
+    }
+    if (allShotsRicochet()) {
       out << indent << "  +r" << std::endl;
-    if (allowHandicap())
+    }
+    if (allowHandicap()) {
       out << indent << "  -handicap" << std::endl;
+    }
     if (allowAntidote()) {
       out << indent << "  -sa" << std::endl;
       out << indent << "  -st " << getFlagShakeTimeout() << std::endl;
@@ -954,13 +935,16 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     if ((worldSize != atof(BZDB.getDefault(BZDBNAMES.WORLDSIZE).c_str())) ||
         (flagHeight != atof(BZDB.getDefault(BZDBNAMES.FLAGHEIGHT).c_str()))) {
       out << indent << "world" << std::endl;
-      if (worldSize != atof(BZDB.getDefault(BZDBNAMES.WORLDSIZE).c_str()))
-	out << indent << "  size " << worldSize / 2.0f << std::endl;
-      if (flagHeight != atof(BZDB.getDefault(BZDBNAMES.FLAGHEIGHT).c_str()))
-	out << indent << "  flagHeight " << flagHeight << std::endl;
+      if (worldSize != atof(BZDB.getDefault(BZDBNAMES.WORLDSIZE).c_str())) {
+        out << indent << "  size " << worldSize / 2.0f << std::endl;
+      }
+      if (flagHeight != atof(BZDB.getDefault(BZDBNAMES.FLAGHEIGHT).c_str())) {
+        out << indent << "  flagHeight " << flagHeight << std::endl;
+      }
 
-      if (!OBSTACLEMGR.getWalls().size())
-	out << indent << "noWalls" << std::endl;
+      if (!OBSTACLEMGR.getWalls().size()) {
+        out << indent << "noWalls" << std::endl;
+      }
 
       out << indent << "end" << std::endl << std::endl;
     }
@@ -1022,14 +1006,14 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << indent << "  type " << weapon.type->flagAbbv << std::endl;
     }
     out << indent << "  position " << weapon.pos[0] << " " << weapon.pos[1] << " "
-	<< weapon.pos[2] << std::endl;
+        << weapon.pos[2] << std::endl;
     out << indent << "  rotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
     out << indent << "  initdelay " << weapon.initDelay << std::endl;
     if (weapon.delay.size() > 0) {
       out << indent << "  delay";
       for (std::vector<float>::iterator dit = weapon.delay.begin();
-	   dit != weapon.delay.end(); ++dit) {
-	out << " " << (float)*dit;
+           dit != weapon.delay.end(); ++dit) {
+        out << " " << (float)*dit;
       }
       out << std::endl;
     }
@@ -1042,15 +1026,15 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     EntryZone zone = *it;
     out << indent << "zone" << std::endl;
     out << indent << "  position " << zone.pos[0] << " " << zone.pos[1] << " "
-	<< zone.pos[2] << std::endl;
+        << zone.pos[2] << std::endl;
     out << indent << "  size " << zone.size[0] << " " << zone.size[1] << " "
-	<< zone.size[2] << std::endl;
+        << zone.size[2] << std::endl;
     out << indent << "  rotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
     if (zone.flags.size() > 0) {
       out << indent << "  flag";
       std::vector<FlagType*>::iterator fit;
       for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
-	out << " " << (*fit)->flagAbbv;
+        out << " " << (*fit)->flagAbbv;
       }
       out << std::endl;
     }
@@ -1058,7 +1042,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << indent << "  team";
       std::vector<TeamColor>::iterator tit;
       for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
-	out << " " << (*tit);
+        out << " " << (*tit);
       }
       out << std::endl;
     }
@@ -1066,7 +1050,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << indent << "  safety";
       std::vector<TeamColor>::iterator sit;
       for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
-	out << " " << (*sit);
+        out << " " << (*sit);
       }
       out << std::endl;
     }
@@ -1079,8 +1063,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 }
 
 
-static void drawLines(int count, const fvec3* vertices, int color)
-{
+static void drawLines(int count, const fvec3* vertices, int color) {
   const fvec4 colors[] = {
     fvec4(0.25f, 0.25f, 0.25f, 0.8f), // gray    (branch node)
     fvec4(0.25f, 0.25f, 0.0f,  0.8f), // yellow  (regular)
@@ -1091,7 +1074,8 @@ static void drawLines(int count, const fvec3* vertices, int color)
 
   if (color < 0) {
     color = 0;
-  } else if (color >= colorCount) {
+  }
+  else if (color >= colorCount) {
     color = colorCount - 1;
   }
   glColor4fv(colors[color]);
@@ -1106,8 +1090,7 @@ static void drawLines(int count, const fvec3* vertices, int color)
 }
 
 
-void World::drawCollisionGrid() const
-{
+void World::drawCollisionGrid() const {
   GLboolean usingTextures;
 
   glGetBooleanv(GL_TEXTURE_2D, &usingTextures);
@@ -1123,8 +1106,7 @@ void World::drawCollisionGrid() const
 }
 
 
-RemotePlayer* World::getCurrentRabbit() const
-{
+RemotePlayer* World::getCurrentRabbit() const {
   if (players == NULL) {
     return NULL;
   }
@@ -1138,8 +1120,7 @@ RemotePlayer* World::getCurrentRabbit() const
 }
 
 
-void World::setPlayersSize(int _playersSize)
-{
+void World::setPlayersSize(int _playersSize) {
   playersSize = _playersSize;
   players     = new RemotePlayer*[playersSize];
   for (int i = 0; i < maxPlayers; i++) {
@@ -1152,6 +1133,6 @@ void World::setPlayersSize(int _playersSize)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

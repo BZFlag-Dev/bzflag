@@ -17,8 +17,7 @@
 #include <string>
 
 
-namespace Callbacks
-{
+namespace Callbacks {
   void setFlagHelp(const std::string& name, void*);
   void setDebugLevel(const std::string& name, void*);
   void setDepthBuffer(const std::string& name, void*);
@@ -30,6 +29,6 @@ namespace Callbacks
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

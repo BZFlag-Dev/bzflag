@@ -11,14 +11,14 @@
  */
 
 /* BzfJoystick:
- *	Abstract, platform independent base for Joysticks.
+ *  Abstract, platform independent base for Joysticks.
  */
 
 #ifndef BZF_JOYSTICK_H
-#define	BZF_JOYSTICK_H
+#define BZF_JOYSTICK_H
 
 #if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
+#pragma warning(disable: 4786)
 #endif
 
 #include "common.h"
@@ -27,23 +27,23 @@
 
 class BzfJoystick {
   public:
-			BzfJoystick();
-    virtual		~BzfJoystick();
+    BzfJoystick();
+    virtual   ~BzfJoystick();
 
-    virtual void	initJoystick(const char* joystickName);
-    virtual bool	joystick() const;
-    virtual void	getJoy(int& x, int& y);
+    virtual void  initJoystick(const char* joystickName);
+    virtual bool  joystick() const;
+    virtual void  getJoy(int& x, int& y);
     virtual unsigned long getJoyButtons();
-    virtual void	getJoyDevices(std::vector<std::string> &list) const;
+    virtual void  getJoyDevices(std::vector<std::string> &list) const;
 
     /** Return a list of axes belonging to the joystick.  The first and second
      ** are assumed to be default X and Y axes, respectively.
      **/
-    virtual void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    virtual unsigned int	getJoyDeviceNumHats() const;
-    virtual unsigned int	getHatswitch(int switchno) const;
-    virtual void	setXAxis(const std::string axis);
-    virtual void	setYAxis(const std::string axis);
+    virtual void  getJoyDeviceAxes(std::vector<std::string> &list) const;
+    virtual unsigned int  getJoyDeviceNumHats() const;
+    virtual unsigned int  getHatswitch(int switchno) const;
+    virtual void  setXAxis(const std::string axis);
+    virtual void  setYAxis(const std::string axis);
 
     /* Rumble force feedback support - a motor in the controller vibrates it,
      * as tactile feedback for explosions, collisions, engines starting, death,
@@ -65,10 +65,10 @@ class BzfJoystick {
      * one effect is supported at a time, so using a count of zero will cancel
      * any rumble that may be in progress.
      */
-    virtual bool	ffHasRumble() const;
-    virtual void	ffRumble(int count,
-				 float delay, float duration,
-				 float strong_motor, float weak_motor=0.0f);
+    virtual bool  ffHasRumble() const;
+    virtual void  ffRumble(int count,
+                           float delay, float duration,
+                           float strong_motor, float weak_motor = 0.0f);
 
     /* Directional force feedback support - the controller pulls or pushes in
      * a certain direction with a certain amount of force.
@@ -89,18 +89,18 @@ class BzfJoystick {
       FF_Velocity,
       FF_Acceleration
     };
-    virtual bool	ffHasDirectional() const;
-    virtual void	ffDirectionalConstant(int count,
-					      float delay, float duration,
-					      float x_direction, float y_direction,
-					      float strength);
-    virtual void	ffDirectionalPeriodic(int count,
-					      float delay, float duration,
-					      float x_direction, float y_direction,
-					      float amplitude, float period,
-					      PeriodicType type);
-    virtual void	ffDirectionalResistance(float time, float coefficient,
-						float saturation, ResistanceType type);
+    virtual bool  ffHasDirectional() const;
+    virtual void  ffDirectionalConstant(int count,
+                                        float delay, float duration,
+                                        float x_direction, float y_direction,
+                                        float strength);
+    virtual void  ffDirectionalPeriodic(int count,
+                                        float delay, float duration,
+                                        float x_direction, float y_direction,
+                                        float amplitude, float period,
+                                        PeriodicType type);
+    virtual void  ffDirectionalResistance(float time, float coefficient,
+                                          float saturation, ResistanceType type);
 };
 
 #endif // BZF_JOYSTICK_H
@@ -109,6 +109,6 @@ class BzfJoystick {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

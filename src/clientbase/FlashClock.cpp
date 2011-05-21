@@ -21,44 +21,41 @@ FlashClock::FlashClock()
   : startTime(BzTime::getCurrent())
   , duration(0.0f)
   , onDuration(0.0f)
-  , flashDuration(0.0f)
-{
+  , flashDuration(0.0f) {
   // do nothing
 }
 
-FlashClock::~FlashClock()
-{
+FlashClock::~FlashClock() {
   // do nothing
 }
 
-void FlashClock::setClock(float _duration)
-{
+void FlashClock::setClock(float _duration) {
   setClock(_duration, 0.0f, 0.0f);
 }
 
-void FlashClock::setClock(float _duration, float onTime, float offTime)
-{
-  if (BzTime::getTick().getSeconds() > 0.0)
+void FlashClock::setClock(float _duration, float onTime, float offTime) {
+  if (BzTime::getTick().getSeconds() > 0.0) {
     startTime = BzTime::getTick();
+  }
   duration = _duration;
   if (onTime <= 0.0f || offTime <= 0.0f) {
     onDuration = 0.0f;
     flashDuration = 0.0f;
-  } else {
+  }
+  else {
     onDuration = onTime;
     flashDuration = onTime + offTime;
   }
 }
 
-bool FlashClock::isOn()
-{
-  if (duration == 0.0f) return false;
+bool FlashClock::isOn() {
+  if (duration == 0.0f) { return false; }
   const double dt = BzTime::getTick() - startTime;
   if (duration > 0.0f && dt >= (double)duration) {
     duration = 0.0f;
     return false;
   }
-  if (flashDuration == 0.0f) return true;
+  if (flashDuration == 0.0f) { return true; }
   return (fmod(dt, (double)flashDuration) < onDuration);
 }
 
@@ -67,6 +64,6 @@ bool FlashClock::isOn()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

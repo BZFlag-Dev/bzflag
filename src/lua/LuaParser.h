@@ -34,7 +34,7 @@ struct lua_State;
 
 class LuaTable {
 
-  friend class LuaParser;
+    friend class LuaParser;
 
   public:
     LuaTable();
@@ -50,8 +50,8 @@ class LuaTable {
 
     const string& GetPath() const { return path; }
 
-    int GetLength() const;		  // lua '#' operator
-    int GetLength(int key) const;	   // lua '#' operator
+    int GetLength() const;      // lua '#' operator
+    int GetLength(int key) const;    // lua '#' operator
     int GetLength(const string& key) const; // lua '#' operator
 
     bool GetKeys(vector<int>& data) const;
@@ -81,15 +81,15 @@ class LuaTable {
     string GetString(const string& key, const string& def) const;
 
     /* not having these makes for better code, imo
-    LuaTable operator[](int key)	   const { return SubTable(key); }
+    LuaTable operator[](int key)     const { return SubTable(key); }
     LuaTable operator[](const string& key) const { return SubTable(key); }
-    int    operator()(int key, int def)	   const { return GetInt(key, def);    }
-    bool   operator()(int key, bool def)	  const { return GetBool(key, def);   }
-    float  operator()(int key, float def)	 const { return GetFloat(key, def);  }
+    int    operator()(int key, int def)    const { return GetInt(key, def);    }
+    bool   operator()(int key, bool def)    const { return GetBool(key, def);   }
+    float  operator()(int key, float def)  const { return GetFloat(key, def);  }
     string operator()(int key, const string& def) const { return GetString(key, def); }
-    int    operator()(const string& key, int def)	   const { return GetInt(key, def);    }
-    bool   operator()(const string& key, bool def)	  const { return GetBool(key, def);   }
-    float  operator()(const string& key, float def)	 const { return GetFloat(key, def);  }
+    int    operator()(const string& key, int def)    const { return GetInt(key, def);    }
+    bool   operator()(const string& key, bool def)    const { return GetBool(key, def);   }
+    float  operator()(const string& key, float def)  const { return GetFloat(key, def);  }
     string operator()(const string& key, const string& def) const { return GetString(key, def); }
     */
 
@@ -113,12 +113,12 @@ class LuaTable {
 
 class LuaParser {
 
-  friend class LuaTable;
+    friend class LuaTable;
 
   public:
     LuaParser(const string& fileName);
     LuaParser(const string& textChunk,
-	      const string& codeLabel);
+              const string& codeLabel);
     ~LuaParser();
 
     bool Execute();
@@ -138,7 +138,7 @@ class LuaParser {
     void CallFunction(int (*func)(lua_State*));
 
     // for setting up the initial params table
-    void GetTable(int index,	  bool overwrite = false);
+    void GetTable(int index,    bool overwrite = false);
     void GetTable(const string& name, bool overwrite = false);
     void EndTable();
     void AddFunc(int key, int (*func)(lua_State*));
@@ -210,6 +210,6 @@ class LuaParser {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

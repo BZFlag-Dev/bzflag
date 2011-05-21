@@ -28,21 +28,19 @@
 
 BZ_GET_PLUGIN_VERSION
 
-class LastChatCommand:public bz_CustomSlashCommandHandler
-{
-public:
-  virtual ~LastChatCommand() {};
-  virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList * param);
+class LastChatCommand: public bz_CustomSlashCommandHandler {
+  public:
+    virtual ~LastChatCommand() {};
+    virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList* param);
 };
 
 LastChatCommand lastChatCommand;
 
 // event handler callback
-class ChatEvents:public bz_EventHandler
-{
-public:
-  virtual ~ChatEvents() {};
-  virtual void process(bz_EventData * eventData);
+class ChatEvents: public bz_EventHandler {
+  public:
+    virtual ~ChatEvents() {};
+    virtual void process(bz_EventData* eventData);
 };
 
 ChatEvents chatEvents;
@@ -53,8 +51,7 @@ std::map < std::string, tvChatHistory > chatHistories;
 
 unsigned int maxChatLines;
 
-BZF_PLUGIN_CALL int bz_Load(const char *commandLine)
-{
+BZF_PLUGIN_CALL int bz_Load(const char* commandLine) {
   bz_debugMessage(4, "ChatEvents plugin loaded");
 
   maxChatLines = 1000;
@@ -71,8 +68,7 @@ BZF_PLUGIN_CALL int bz_Load(const char *commandLine)
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   bz_removeCustomSlashCommand("last");
   bz_removeCustomSlashCommand("flushchat");
 
@@ -82,15 +78,15 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   return 0;
 }
 
-bool LastChatCommand::handle(int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
-{
+bool LastChatCommand::handle(int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList* /*_param*/) {
   std::string command = _command.c_str();
   std::string message = _message.c_str();
 
-  bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
+  bz_BasePlayerRecord* fromPlayer = bz_getPlayerByIndex(playerID);
 
-  if (!fromPlayer)
+  if (!fromPlayer) {
     return false;
+  }
 
   if (!fromPlayer->admin) {
     bz_sendTextMessage(BZ_SERVER, playerID, "You must be admin to use the ChatHistory plugin");
@@ -107,11 +103,12 @@ bool LastChatCommand::handle(int playerID, bz_ApiString _command, bz_ApiString _
     }
 
     unsigned int numLines = (unsigned int) atoi(params[0].c_str());
-    if (numLines == 0)
+    if (numLines == 0) {
       numLines = 5;
+    }
 
     std::string callsign;
-    tolower(params[1],callsign);
+    tolower(params[1], callsign);
     std::map < std::string, tvChatHistory >::iterator itr = chatHistories.find(callsign);
 
     if (itr == chatHistories.end() || !itr->second.size()) {
@@ -119,10 +116,11 @@ bool LastChatCommand::handle(int playerID, bz_ApiString _command, bz_ApiString _
       return true;
     }
 
-    tvChatHistory & history = itr->second;
+    tvChatHistory& history = itr->second;
 
-    if (history.size() < numLines)
+    if (history.size() < numLines) {
       numLines = (unsigned int) history.size();
+    }
 
     bz_sendTextMessage(BZ_SERVER, playerID, format("Last %d message for %s", numLines, callsign.c_str()).c_str());
 
@@ -143,37 +141,38 @@ bool LastChatCommand::handle(int playerID, bz_ApiString _command, bz_ApiString _
   return false;
 }
 
-void ChatEvents::process(bz_EventData * eventData)
-{
-  bz_ChatEventData_V1 *chatEventData = (bz_ChatEventData_V1 *) eventData;
+void ChatEvents::process(bz_EventData* eventData) {
+  bz_ChatEventData_V1* chatEventData = (bz_ChatEventData_V1*) eventData;
 
-  bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(chatEventData->from);
+  bz_BasePlayerRecord* fromPlayer = bz_getPlayerByIndex(chatEventData->from);
 
   std::string message = chatEventData->message.c_str();
 
   std::string callsign = "";
-  if (fromPlayer)
+  if (fromPlayer) {
     callsign = fromPlayer->callsign.c_str();
+  }
 
   makelower(callsign);
 
   switch (eventData->eventType) {
-  default:
-    break;
+    default:
+      break;
 
-  case bz_eRawChatMessageEvent:
-    std::map < std::string, tvChatHistory >::iterator itr = chatHistories.find(callsign);
-    if (itr == chatHistories.end()) {
-      tvChatHistory h;
-      chatHistories[callsign] = h;
-    }
+    case bz_eRawChatMessageEvent:
+      std::map < std::string, tvChatHistory >::iterator itr = chatHistories.find(callsign);
+      if (itr == chatHistories.end()) {
+        tvChatHistory h;
+        chatHistories[callsign] = h;
+      }
 
-    tvChatHistory & history = chatHistories[callsign];
+      tvChatHistory& history = chatHistories[callsign];
 
-    history.push_back(message);
-    if (history.size() > maxChatLines)
-      history.erase(history.begin());
-    break;
+      history.push_back(message);
+      if (history.size() > maxChatLines) {
+        history.erase(history.begin());
+      }
+      break;
 
   }
 
@@ -184,6 +183,6 @@ void ChatEvents::process(bz_EventData * eventData)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

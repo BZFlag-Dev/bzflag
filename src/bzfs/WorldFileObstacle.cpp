@@ -20,16 +20,14 @@
 
 #include "WorldFileObstacle.h"
 
-WorldFileObstacle::WorldFileObstacle()
-{
+WorldFileObstacle::WorldFileObstacle() {
   driveThrough = 0;
   shootThrough = 0;
   ricochet = false;
 }
 
 
-bool WorldFileObstacle::read(const char *cmd, std::istream& input)
-{
+bool WorldFileObstacle::read(const char* cmd, std::istream& input) {
   if (strcasecmp(cmd, "drivethrough") == 0) {
     driveThrough = 0xFF;
   }
@@ -52,6 +50,6 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

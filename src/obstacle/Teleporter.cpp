@@ -35,8 +35,7 @@ const char* Teleporter::typeName = "Teleporter";
 
 //============================================================================//
 
-Teleporter::Teleporter()
-{
+Teleporter::Teleporter() {
   return;
 }
 
@@ -45,12 +44,11 @@ Teleporter::Teleporter(const MeshTransform& xform,
                        const fvec3& p, float a,
                        float w, float b, float h,
                        float _border, float _texSize,
-		       unsigned char drive, unsigned char shoot, bool rico)
-: Obstacle(p, a, w, b, h, drive, shoot, rico)
-, border(_border)
-, texSize(_texSize)
-, transform(xform)
-{
+                       unsigned char drive, unsigned char shoot, bool rico)
+  : Obstacle(p, a, w, b, h, drive, shoot, rico)
+  , border(_border)
+  , texSize(_texSize)
+  , transform(xform) {
   border = fabsf(border);
   size.x = fabsf(size.x);
   size.y = fabsf(size.y);
@@ -64,14 +62,12 @@ Teleporter::Teleporter(const MeshTransform& xform,
 }
 
 
-Teleporter::~Teleporter()
-{
+Teleporter::~Teleporter() {
   return;
 }
 
 
-Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
-{
+Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const {
   MeshTransform tmpXform = transform;
   tmpXform.append(xform);
 
@@ -85,34 +81,29 @@ Obstacle* Teleporter::copyWithTransform(const MeshTransform& xform) const
 }
 
 
-void Teleporter::finalize()
-{
+void Teleporter::finalize() {
   return;
 }
 
 
-const char* Teleporter::getType() const
-{
+const char* Teleporter::getType() const {
   return typeName;
 }
 
 
-const char* Teleporter::getClassName() // const
-{
+const char* Teleporter::getClassName() { // const
   return typeName;
 }
 
 
-bool Teleporter::isValid() const
-{
+bool Teleporter::isValid() const {
   return true;
 }
 
 
 //============================================================================//
 
-MeshObstacle* Teleporter::makeMesh()
-{
+MeshObstacle* Teleporter::makeMesh() {
   MeshObstacle* mesh;
 
   const bool wantBorder = (border >= 0.001f);
@@ -346,15 +337,15 @@ MeshObstacle* Teleporter::makeMesh()
 
   if (mesh->isValid()) {
     return mesh;
-  } else {
+  }
+  else {
     delete mesh;
     return NULL;
   }
 }
 
 
-const BzMaterial* Teleporter::getLinkMaterial()
-{
+const BzMaterial* Teleporter::getLinkMaterial() {
   const std::string matName = "LinkMaterial";
 
   const BzMaterial* matPtr = MATERIALMGR.findMaterial(matName);
@@ -394,8 +385,7 @@ const BzMaterial* Teleporter::getLinkMaterial()
 }
 
 
-const BzMaterial* Teleporter::getTeleMaterial()
-{
+const BzMaterial* Teleporter::getTeleMaterial() {
   const std::string matName = "TeleMaterial";
 
   const BzMaterial* matPtr = MATERIALMGR.findMaterial(matName);
@@ -414,8 +404,7 @@ const BzMaterial* Teleporter::getTeleMaterial()
 }
 
 
-const BzMaterial* Teleporter::getVoidMaterial()
-{
+const BzMaterial* Teleporter::getVoidMaterial() {
   BzMaterial mat;
   mat.setDiffuse(fvec4(0.0f, 0.0f, 0.0f, 0.0f));
   mat.setNoRadar(true);
@@ -431,37 +420,32 @@ const BzMaterial* Teleporter::getVoidMaterial()
 
 //============================================================================//
 
-float Teleporter::intersect(const Ray&) const
-{
+float Teleporter::intersect(const Ray&) const {
   assert(false);
   return -1.0f;
 }
 
 
-void Teleporter::getNormal(const fvec3&, fvec3&) const
-{
+void Teleporter::getNormal(const fvec3&, fvec3&) const {
   assert(false);
   return;
 }
 
 
-void Teleporter::get3DNormal(const fvec3&, fvec3&) const
-{
+void Teleporter::get3DNormal(const fvec3&, fvec3&) const {
   assert(false);
   return;
 }
 
 
 bool Teleporter::getHitNormal(const fvec3&, float, const fvec3&, float,
-                              float, float, float, fvec3&) const
-{
+                              float, float, float, fvec3&) const {
   assert(false);
   return false;
 }
 
 
-bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const
-{
+bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const {
   // used by bzfs/WorldGenerators.cpp via bzfs/WorldInfo::inCylinderNoOctree()
   // (note that the bzfs code does not use the MeshTransform capabilities)
 
@@ -479,16 +463,14 @@ bool Teleporter::inCylinder(const fvec3& p, float radius, float height) const
 }
 
 
-bool Teleporter::inBox(const fvec3&, float, float, float, float) const
-{
+bool Teleporter::inBox(const fvec3&, float, float, float, float) const {
   assert(false);
   return false;
 }
 
 
 bool Teleporter::inMovingBox(const fvec3&, float, const fvec3&, float,
-                             float, float, float) const
-{
+                             float, float, float) const {
   assert(false);
   return false;
 }
@@ -496,8 +478,7 @@ bool Teleporter::inMovingBox(const fvec3&, float, const fvec3&, float,
 
 bool Teleporter::isCrossing(const fvec3& /*p*/, float /*angle*/,
                             float /*dx*/, float /*dy*/, float /*height*/,
-                            fvec4* /*_plane*/) const
-{
+                            fvec4* /*_plane*/) const {
   assert(false);
   return false;
 }
@@ -505,8 +486,7 @@ bool Teleporter::isCrossing(const fvec3& /*p*/, float /*angle*/,
 
 //============================================================================//
 
-void* Teleporter::pack(void* buf) const
-{
+void* Teleporter::pack(void* buf) const {
   buf = nboPackStdString(buf, name);
 
   buf = nboPackFVec3(buf, pos);
@@ -526,8 +506,7 @@ void* Teleporter::pack(void* buf) const
 }
 
 
-void* Teleporter::unpack(void* buf)
-{
+void* Teleporter::unpack(void* buf) {
   buf = nboUnpackStdString(buf, name);
 
   buf = nboUnpackFVec3(buf, pos);
@@ -548,8 +527,7 @@ void* Teleporter::unpack(void* buf)
 }
 
 
-int Teleporter::packSize() const
-{
+int Teleporter::packSize() const {
   int fullSize = 0;
   fullSize += nboStdStringPackSize(name);
   fullSize += sizeof(fvec3);   // pos
@@ -563,17 +541,16 @@ int Teleporter::packSize() const
 }
 
 
-void Teleporter::print(std::ostream& out, const std::string& indent) const
-{
+void Teleporter::print(std::ostream& out, const std::string& indent) const {
   out << indent << "teleporter";
   if (!name.empty() && (name[0] != '$')) {
     out << " " << name;
   }
   out << std::endl;
   out << indent << "  position " << pos.x << " " << pos.y << " "
-				 << pos.z << std::endl;
+      << pos.z << std::endl;
   out << indent << "  size " << size.x << " " << size.y << " "
-			     << size.z << std::endl;
+      << size.z << std::endl;
   out << indent << "  rotation " << (angle * RAD2DEGf) << std::endl;
   out << indent << "  border " << border << std::endl;
 
@@ -599,6 +576,6 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

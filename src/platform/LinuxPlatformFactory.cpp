@@ -16,30 +16,26 @@
 #include "XWindow.h"
 #include "LinuxMedia.h"
 #if defined(USBJOYSTICK)
-  #include "USBJoystick.h"
+#include "USBJoystick.h"
 #else
-  #include "EvdevJoystick.h"
+#include "EvdevJoystick.h"
 #endif
 
-PlatformFactory*	PlatformFactory::getInstance()
-{
-  if (!instance) instance = new LinuxPlatformFactory;
+PlatformFactory*  PlatformFactory::getInstance() {
+  if (!instance) { instance = new LinuxPlatformFactory; }
   return instance;
 }
 
-LinuxPlatformFactory::LinuxPlatformFactory()
-{
+LinuxPlatformFactory::LinuxPlatformFactory() {
   // do nothing
 }
 
-LinuxPlatformFactory::~LinuxPlatformFactory()
-{
+LinuxPlatformFactory::~LinuxPlatformFactory() {
   // do nothing
 }
 
-BzfDisplay*		LinuxPlatformFactory::createDisplay(
-				const char* name, const char*)
-{
+BzfDisplay*   LinuxPlatformFactory::createDisplay(
+  const char* name, const char*) {
   XDisplay* display = new XDisplay(name, new LinuxDisplayMode);
   if (!display || !display->isValid()) {
     delete display;
@@ -48,20 +44,17 @@ BzfDisplay*		LinuxPlatformFactory::createDisplay(
   return display;
 }
 
-BzfVisual*		LinuxPlatformFactory::createVisual(
-				const BzfDisplay* display)
-{
+BzfVisual*    LinuxPlatformFactory::createVisual(
+  const BzfDisplay* display) {
   return new XVisual((const XDisplay*)display);
 }
 
-BzfWindow*		LinuxPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
+BzfWindow*    LinuxPlatformFactory::createWindow(
+  const BzfDisplay* display, BzfVisual* visual) {
   return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-BzfJoystick*		LinuxPlatformFactory::createJoystick()
-{
+BzfJoystick*    LinuxPlatformFactory::createJoystick() {
 #if defined(USBJOYSTICK)
   // only works for USB joysticks under *BSD
   return new USBJoystick;
@@ -73,8 +66,7 @@ BzfJoystick*		LinuxPlatformFactory::createJoystick()
 #endif
 }
 
-BzfMedia*		LinuxPlatformFactory::createMedia()
-{
+BzfMedia*   LinuxPlatformFactory::createMedia() {
   return new LinuxMedia;
 }
 
@@ -82,6 +74,6 @@ BzfMedia*		LinuxPlatformFactory::createMedia()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

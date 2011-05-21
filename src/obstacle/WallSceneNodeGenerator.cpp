@@ -22,20 +22,17 @@
 //
 
 WallSceneNodeGenerator::WallSceneNodeGenerator(const WallObstacle* _wall) :
-				wall(_wall)
-{
+  wall(_wall) {
   // do nothing
 }
 
-WallSceneNodeGenerator::~WallSceneNodeGenerator()
-{
+WallSceneNodeGenerator::~WallSceneNodeGenerator() {
   // do nothing
 }
 
-WallSceneNode*		WallSceneNodeGenerator::getNextNode(
-				float uRepeats, float vRepeats, bool lod)
-{
-  if (getNodeNumber() == 1) return NULL;
+WallSceneNode*    WallSceneNodeGenerator::getNextNode(
+  float uRepeats, float vRepeats, bool lod) {
+  if (getNodeNumber() == 1) { return NULL; }
 
   fvec3 base;
   fvec3 sEdge;
@@ -64,6 +61,6 @@ WallSceneNode*		WallSceneNodeGenerator::getNextNode(
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

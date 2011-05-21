@@ -28,8 +28,8 @@
 class CustomMeshFace {
   public:
     CustomMeshFace(const BzMaterial& material, int phydrv, bool noclusters,
-		   bool smoothBounce, unsigned char driveThrough, unsigned char shootThrough);
-    bool read(const char *cmd, std::istream& input);
+                   bool smoothBounce, unsigned char driveThrough, unsigned char shootThrough);
+    bool read(const char* cmd, std::istream& input);
     void write(MeshObstacle* mesh) const;
 
   private:
@@ -56,6 +56,6 @@ class CustomMeshFace {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

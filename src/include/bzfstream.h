@@ -28,21 +28,19 @@
 #include <TextUtils.h>
 #endif
 
-inline std::ifstream* createIFStream(const std::string& filename)
-{
+inline std::ifstream* createIFStream(const std::string& filename) {
 #ifdef IOSTREAM_WIDE_NAME_HACK
-    return new std::ifstream(TextUtils::convert_to_wide(filename).c_str(), std::ios::in);
+  return new std::ifstream(TextUtils::convert_to_wide(filename).c_str(), std::ios::in);
 #else
-    return new std::ifstream(filename.c_str(), std::ios::in);
+  return new std::ifstream(filename.c_str(), std::ios::in);
 #endif // _WIN32
 }
 
-inline std::ofstream* createOFStream(const std::string& filename)
-{
+inline std::ofstream* createOFStream(const std::string& filename) {
 #ifdef IOSTREAM_WIDE_NAME_HACK
-    return new std::ofstream(TextUtils::convert_to_wide(filename).c_str(), std::ios::out);
+  return new std::ofstream(TextUtils::convert_to_wide(filename).c_str(), std::ios::out);
 #else
-    return new std::ofstream(filename.c_str(), std::ios::out);
+  return new std::ofstream(filename.c_str(), std::ios::out);
 #endif // _WIN32
 }
 
@@ -52,6 +50,6 @@ inline std::ofstream* createOFStream(const std::string& filename)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

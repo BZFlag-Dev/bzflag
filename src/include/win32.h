@@ -15,7 +15,7 @@
  */
 
 #ifndef __WIN32_H__
-#define	__WIN32_H__
+#define __WIN32_H__
 
 #define _WINSOCKAPI_
 
@@ -24,48 +24,48 @@
 
 // missing constants
 #ifndef MAXFLOAT
-#define	MAXFLOAT	FLT_MAX
+#define MAXFLOAT  FLT_MAX
 #endif
 
 #if (_MSC_VER > 1200) // VC7 or higher
-	#define _USE_MATH_DEFINES
-#else	// vc6 and lower needs em
-	#ifndef M_PI
-	#define	M_PI		3.14159265358979323846f
-	#endif
-	#ifndef M_SQRT1_2
-	#define	M_SQRT1_2	0.70710678118654752440f
-	#endif
-	#ifndef  M_SQRT2
-	#define	 M_SQRT2	 1.41421356237309504880f
-	#endif
+#define _USE_MATH_DEFINES
+#else // vc6 and lower needs em
+#ifndef M_PI
+#define M_PI    3.14159265358979323846f
+#endif
+#ifndef M_SQRT1_2
+#define M_SQRT1_2 0.70710678118654752440f
+#endif
+#ifndef  M_SQRT2
+#define  M_SQRT2   1.41421356237309504880f
+#endif
 #endif
 
 
 // missing types
 
 #ifndef int16_t
-typedef signed short	int16_t;
+typedef signed short  int16_t;
 #endif
 
 #ifndef uint16_t
-typedef unsigned short	uint16_t;
+typedef unsigned short  uint16_t;
 #endif
 
 #ifndef int32_t
-typedef signed int	int32_t;
+typedef signed int  int32_t;
 #endif
 
 #ifndef uint32_t
-typedef unsigned int	uint32_t;
+typedef unsigned int  uint32_t;
 #endif
 
 #ifndef int64_t
-typedef LONGLONG	int64_t;
+typedef LONGLONG  int64_t;
 #endif
 
 #ifndef uint64_t
-typedef ULONGLONG	uint64_t;
+typedef ULONGLONG uint64_t;
 #endif
 
 /* stuff specific to visual studio */
@@ -81,16 +81,16 @@ typedef ULONGLONG	uint64_t;
 #  pragma warning(disable: 4355)
 
 // missing functions
-#  define popen		_popen
-#  define pclose	_pclose
-#  define snprintf	_snprintf
+#  define popen   _popen
+#  define pclose  _pclose
+#  define snprintf  _snprintf
 
-#  define PATH_MAX	MAX_PATH
+#  define PATH_MAX  MAX_PATH
 
-  namespace std {
-    template<typename _Tp>
-    int isnan(_Tp __f) { return _isnan((double)__f); }
-  }
+namespace std {
+  template<typename _Tp>
+  int isnan(_Tp __f) { return _isnan((double)__f); }
+}
 
 #endif // _MSC_VER
 #endif // __WIN32_H__
@@ -99,6 +99,6 @@ typedef ULONGLONG	uint64_t;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

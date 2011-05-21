@@ -19,31 +19,27 @@
 #include "playing.h"
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
-				 const char* name,
-				 const PlayerType _type)
-: Player(_id, RogueTeam, name, _type)
-, lastTime(BzTime::getTick())
-, lastPosition(0.0f, 0.0f, 0.0f)
-, salt(0)
-{
+                                 const char* name,
+                                 const PlayerType _type)
+  : Player(_id, RogueTeam, name, _type)
+  , lastTime(BzTime::getTick())
+  , lastPosition(0.0f, 0.0f, 0.0f)
+  , salt(0) {
 }
 
 
-BaseLocalPlayer::~BaseLocalPlayer()
-{
+BaseLocalPlayer::~BaseLocalPlayer() {
   // do nothing
 }
 
 
-int BaseLocalPlayer::getSalt()
-{
+int BaseLocalPlayer::getSalt() {
   salt = (salt + 1) & 127;
   return salt << 8;
 }
 
 
-void BaseLocalPlayer::update(float inputDT)
-{
+void BaseLocalPlayer::update(float inputDT) {
   // save last position
   const fvec3 oldPosition = getPosition();
   lastPosition = oldPosition;
@@ -52,11 +48,13 @@ void BaseLocalPlayer::update(float inputDT)
   float dt = float(BzTime::getTick() - lastTime);
   lastTime = BzTime::getTick();
 
-  if (inputDT > 0)
+  if (inputDT > 0) {
     dt = inputDT;
+  }
 
-  if (dt < MIN_DT_LIMIT)
+  if (dt < MIN_DT_LIMIT) {
     dt = MIN_DT_LIMIT;
+  }
 
   float dtLimit = MAX_DT_LIMIT;
   float doneDT = dt;
@@ -77,12 +75,15 @@ void BaseLocalPlayer::update(float inputDT)
 
     // expand bounding box to include entire tank
     float size = BZDBCache::tankRadius;
-    if (getFlagType() == Flags::Obesity)
+    if (getFlagType() == Flags::Obesity) {
       size *= BZDB.eval(BZDBNAMES.OBESEFACTOR);
-    else if (getFlagType() == Flags::Tiny)
+    }
+    else if (getFlagType() == Flags::Tiny) {
       size *= BZDB.eval(BZDBNAMES.TINYFACTOR);
-    else if (getFlagType() == Flags::Thief)
+    }
+    else if (getFlagType() == Flags::Thief) {
       size *= BZDB.eval(BZDBNAMES.THIEFTINYFACTOR);
+    }
 
     bbox.mins.x -= size;
     bbox.maxs.x += size;
@@ -97,20 +98,19 @@ void BaseLocalPlayer::update(float inputDT)
     doneDT -= dtLimit;
 
     // if we only have a nubby left, don't do a full dt.
-    if (doneDT < dtLimit)
+    if (doneDT < dtLimit) {
       dt = doneDT;
+    }
   }
 }
 
 
-Ray BaseLocalPlayer::getLastMotion() const
-{
+Ray BaseLocalPlayer::getLastMotion() const {
   return Ray(lastPosition, getVelocity());
 }
 
 
-const Extents& BaseLocalPlayer::getLastMotionBBox() const
-{
+const Extents& BaseLocalPlayer::getLastMotionBBox() const {
   return bbox;
 }
 
@@ -119,6 +119,6 @@ const Extents& BaseLocalPlayer::getLastMotionBBox() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

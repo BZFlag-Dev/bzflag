@@ -40,18 +40,17 @@
 // SGIMedia
 //
 
-static const int	NumChunks = 3;
+static const int  NumChunks = 3;
 
-void			(*SGIMedia::threadProc)(void*);
-void*			SGIMedia::threadData;
+void (*SGIMedia::threadProc)(void*);
+void*     SGIMedia::threadData;
 
 SGIMedia::SGIMedia() : BzfMedia(), audioReady(false),
-				audioPort(NULL),
-				queueIn(-1), queueOut(-1),
-				outputBuffer(NULL),
-				childProcID(0),
-				iotimer_addr(NULL)
-{
+  audioPort(NULL),
+  queueIn(-1), queueOut(-1),
+  outputBuffer(NULL),
+  childProcID(0),
+  iotimer_addr(NULL) {
   // prepare high resolution timer
   unsigned int cycleval;
   const ptrdiff_t addr = syssgi(SGI_QUERY_CYCLECNTR, &cycleval);
@@ -60,25 +59,23 @@ SGIMedia::SGIMedia() : BzfMedia(), audioReady(false),
     const __psunsigned_t phys_addr = (__psunsigned_t)addr;
     const __psunsigned_t raddr = phys_addr & ~poffmask;
     int fd = open("/dev/mmem", O_RDONLY);
-    iotimer_addr = (volatile unsigned int *)mmap(0, poffmask, PROT_READ,
-				MAP_PRIVATE, fd, (off_t)raddr);
-    iotimer_addr = (unsigned int *)((__psunsigned_t)iotimer_addr +
-						(phys_addr & poffmask));
+    iotimer_addr = (volatile unsigned int*)mmap(0, poffmask, PROT_READ,
+                                                MAP_PRIVATE, fd, (off_t)raddr);
+    iotimer_addr = (unsigned int*)((__psunsigned_t)iotimer_addr +
+                                   (phys_addr & poffmask));
 #ifdef SGI_CYCLECNTR_SIZE
-    if ((int)syssgi(SGI_CYCLECNTR_SIZE) > 32) iotimer_addr++;
+    if ((int)syssgi(SGI_CYCLECNTR_SIZE) > 32) { iotimer_addr++; }
 #endif
     secondsPerTick = 1.0e-12 * (double)cycleval;
   }
 }
 
-SGIMedia::~SGIMedia()
-{
+SGIMedia::~SGIMedia() {
   // do nothing
 }
 
-double			SGIMedia::stopwatch(bool start)
-{
-  if (!iotimer_addr) return 0.0;
+double      SGIMedia::stopwatch(bool start) {
+  if (!iotimer_addr) { return 0.0; }
   if (start) {
     stopwatchTime = *iotimer_addr;
     return 0.0;
@@ -88,13 +85,12 @@ double			SGIMedia::stopwatch(bool start)
   }
 }
 
-bool			SGIMedia::openAudio()
-{
+bool      SGIMedia::openAudio() {
   // don't re-initialize
-  if (audioReady) return false;
+  if (audioReady) { return false; }
 
   // check for and open audio hardware
-  if (!checkForAudioHardware() || !openAudioHardware()) return false;
+  if (!checkForAudioHardware() || !openAudioHardware()) { return false; }
 
   // open communication channel (FIFO pipe)
   int fd[2];
@@ -108,7 +104,7 @@ bool			SGIMedia::openAudio()
 
   // compute maxFd for use in select() call
   maxFd = queueOut;
-  if (maxFd < audioPortFd) maxFd = audioPortFd;
+  if (maxFd < audioPortFd) { maxFd = audioPortFd; }
   maxFd++;
 
   // make an output buffer
@@ -119,22 +115,20 @@ bool			SGIMedia::openAudio()
   return true;
 }
 
-bool			SGIMedia::checkForAudioHardware()
-{
+bool      SGIMedia::checkForAudioHardware() {
   inventory_t* scan;
   setinvent();
-  if (!(scan = getinvent())) return 0;
+  if (!(scan = getinvent())) { return 0; }
   while (scan) {
-    if (scan->inv_class == INV_AUDIO) break;
+    if (scan->inv_class == INV_AUDIO) { break; }
     scan = getinvent();
   }
   endinvent();
   return scan != NULL;
 }
 
-bool			SGIMedia::openAudioHardware()
-{
-  ALconfig	config;
+bool      SGIMedia::openAudioHardware() {
+  ALconfig  config;
 
   // get current configuration
   originalAudioParams[0] = AL_OUTPUT_RATE;
@@ -142,8 +136,9 @@ bool			SGIMedia::openAudioHardware()
   originalAudioParams[4] = AL_RIGHT_SPEAKER_GAIN;
   originalAudioParams[6] = AL_INPUT_RATE;
   ALgetparams(AL_DEFAULT_DEVICE, originalAudioParams, 8);
-  if (originalAudioParams[1] == 0)
+  if (originalAudioParams[1] == 0) {
     originalAudioParams[1] = originalAudioParams[7];
+  }
 
   // compute my desired configuration
   // NOTE: should be able to set this to originalAudioParams[1]
@@ -172,7 +167,7 @@ bool			SGIMedia::openAudioHardware()
   ALfreeconfig(config);
 
   // if no audio ports available then don't change configuration
-  if (audioPort == 0) return false;
+  if (audioPort == 0) { return false; }
 
   // set my configuration
   audioParams[0] = AL_OUTPUT_RATE;
@@ -186,8 +181,7 @@ bool			SGIMedia::openAudioHardware()
   return true;
 }
 
-void			SGIMedia::closeAudio()
-{
+void      SGIMedia::closeAudio() {
   // release memory
   delete[] outputBuffer;
 
@@ -200,8 +194,8 @@ void			SGIMedia::closeAudio()
   }
 
   // close audio command queue
-  if (queueIn != -1) close(queueIn);
-  if (queueOut != -1) close(queueOut);
+  if (queueIn != -1) { close(queueIn); }
+  if (queueOut != -1) { close(queueOut); }
 
   audioReady = false;
   audioPort = NULL;
@@ -210,36 +204,31 @@ void			SGIMedia::closeAudio()
   outputBuffer = NULL;
 }
 
-bool			SGIMedia::startAudioThread(
-				void (*proc)(void*), void* data)
-{
-  if (childProcID > 0 || !proc) return false;
+bool      SGIMedia::startAudioThread(
+  void (*proc)(void*), void* data) {
+  if (childProcID > 0 || !proc) { return false; }
   threadProc = proc;
   threadData = data;
   childProcID = sproc(&audioThreadInit, PR_SADDR);
   return (childProcID != -1);
 }
 
-void			SGIMedia::stopAudioThread()
-{
+void      SGIMedia::stopAudioThread() {
   // kill child proc and wait for it
   kill(childProcID, SIGTERM);
   wait(NULL);
   childProcID = 0;
 }
 
-bool			SGIMedia::hasAudioThread() const
-{
+bool      SGIMedia::hasAudioThread() const {
   return true;
 }
 
-static void		die(int)
-{
+static void   die(int) {
   exit(0);
 }
 
-void			SGIMedia::audioThreadInit(void*)
-{
+void      SGIMedia::audioThreadInit(void*) {
   // make sure I die when the parent does
   prctl(PR_TERMCHILD, 0);
 
@@ -260,46 +249,39 @@ void			SGIMedia::audioThreadInit(void*)
   (*threadProc)(threadData);
 }
 
-void			SGIMedia::writeSoundCommand(const void* cmd, int len)
-{
-  if (!audioReady) return;
+void      SGIMedia::writeSoundCommand(const void* cmd, int len) {
+  if (!audioReady) { return; }
   write(queueIn, cmd, len);
 }
 
-bool			SGIMedia::readSoundCommand(void* cmd, int len)
-{
+bool      SGIMedia::readSoundCommand(void* cmd, int len) {
   return (read(queueOut, cmd, len) == len);
 }
 
-int			SGIMedia::getAudioOutputRate() const
-{
+int     SGIMedia::getAudioOutputRate() const {
   return audioParams[1];
 }
 
-int			SGIMedia::getAudioBufferSize() const
-{
+int     SGIMedia::getAudioBufferSize() const {
   return NumChunks * (audioBufferSize >> 1);
 }
 
-int			SGIMedia::getAudioBufferChunkSize() const
-{
+int     SGIMedia::getAudioBufferChunkSize() const {
   return audioBufferSize >> 1;
 }
 
-bool			SGIMedia::isAudioTooEmpty() const
-{
+bool      SGIMedia::isAudioTooEmpty() const {
   return ALgetfillable(audioPort) >= audioLowWaterMark;
 }
 
-void			SGIMedia::writeAudioFrames(
-				const float* samples, int numFrames)
-{
+void      SGIMedia::writeAudioFrames(
+  const float* samples, int numFrames) {
   int numSamples = 2 * numFrames;
   while (numSamples > audioBufferSize) {
     for (int j = 0; j < audioBufferSize; j++)
-      if (samples[j] < -32767.0f) outputBuffer[j] = -32767;
-      else if (samples[j] > 32767.0f) outputBuffer[j] = 32767;
-      else outputBuffer[j] = short(samples[j]);
+      if (samples[j] < -32767.0f) { outputBuffer[j] = -32767; }
+      else if (samples[j] > 32767.0f) { outputBuffer[j] = 32767; }
+      else { outputBuffer[j] = short(samples[j]); }
     ALwritesamps(audioPort, outputBuffer, audioBufferSize);
     samples += audioBufferSize;
     numSamples -= audioBufferSize;
@@ -307,16 +289,15 @@ void			SGIMedia::writeAudioFrames(
 
   if (numSamples > 0) {
     for (int j = 0; j < numSamples; j++)
-      if (samples[j] < -32767.0f) outputBuffer[j] = -32767;
-      else if (samples[j] > 32767.0f) outputBuffer[j] = 32767;
-      else outputBuffer[j] = short(samples[j]);
+      if (samples[j] < -32767.0f) { outputBuffer[j] = -32767; }
+      else if (samples[j] > 32767.0f) { outputBuffer[j] = 32767; }
+      else { outputBuffer[j] = short(samples[j]); }
     ALwritesamps(audioPort, outputBuffer, numSamples);
   }
 }
 
-void			SGIMedia::audioSleep(
-				bool checkLowWater, double endTime)
-{
+void      SGIMedia::audioSleep(
+  bool checkLowWater, double endTime) {
   // prepare fd bit vectors
   fd_set audioSelectSet;
   fd_set commandSelectSet;
@@ -336,13 +317,13 @@ void			SGIMedia::audioSleep(
 
   // wait
   select(maxFd, &commandSelectSet, checkLowWater ? &audioSelectSet : NULL,
-			NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
+         NULL, (struct timeval*)(endTime >= 0.0 ? &tv : NULL));
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

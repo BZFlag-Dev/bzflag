@@ -21,7 +21,7 @@
 #include <string>
 
 
-static int match_multi (const char **pattern, const char **string);
+static int match_multi(const char** pattern, const char** string);
 
 static const char MATCH_MULTI  = '*'; // matches any number of characters
 static const char MATCH_SINGLE = '?'; // matches a single character
@@ -29,15 +29,13 @@ static const char MATCH_SINGLE = '?'; // matches a single character
 
 //============================================================================//
 
-bool glob_match (const std::string& pattern, const std::string& string)
-{
-  return glob_match (pattern.c_str(), string.c_str());
+bool glob_match(const std::string& pattern, const std::string& string) {
+  return glob_match(pattern.c_str(), string.c_str());
 }
 
 //============================================================================//
 
-bool glob_match (const char *pattern, const char *string)
-{
+bool glob_match(const char* pattern, const char* string) {
   if (pattern == NULL) {
     return false;
   }
@@ -52,13 +50,13 @@ bool glob_match (const char *pattern, const char *string)
   while (*pattern != '\0') {
     if (*pattern == MATCH_MULTI) {
       pattern++;
-      switch (match_multi (&pattern, &string)) {
-	case +1: {
-	  return true;
-	}
-	case -1: {
-	  return false;
-	}
+      switch (match_multi(&pattern, &string)) {
+        case +1: {
+          return true;
+        }
+        case -1: {
+          return false;
+        }
       }
     }
     else if (*string == '\0') {
@@ -75,17 +73,17 @@ bool glob_match (const char *pattern, const char *string)
 
   if (*string == '\0') {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
 
 //============================================================================//
 
-static int match_multi (const char **pattern, const char **string)
-{
-  const char *str = *pattern;
-  const char *obj = *string;
+static int match_multi(const char** pattern, const char** string) {
+  const char* str = *pattern;
+  const char* obj = *string;
 
   while ((*str != '\0') && (*str == MATCH_MULTI)) {
     str++; // get rid of multiple '*'s
@@ -95,8 +93,8 @@ static int match_multi (const char **pattern, const char **string)
     return +1;
   }
 
-  const char *strtop = str;
-  const char *objtop = obj;
+  const char* strtop = str;
+  const char* objtop = obj;
 
   while (*str != '\0') {
     if (*str == MATCH_MULTI) {
@@ -109,20 +107,20 @@ static int match_multi (const char **pattern, const char **string)
     }
     else {
       if ((*str == MATCH_SINGLE) || (*str == *obj)) {
-	str++;
-	obj++;
-	if ((*str == '\0') && (*obj != '\0')) { // advanced check
-	  obj++;
-	  objtop++;
-	  obj = objtop;
-	  str = strtop;
-	}
+        str++;
+        obj++;
+        if ((*str == '\0') && (*obj != '\0')) { // advanced check
+          obj++;
+          objtop++;
+          obj = objtop;
+          str = strtop;
+        }
       }
       else {
-	obj++;
-	objtop++;
-	obj = objtop;
-	str = strtop;
+        obj++;
+        objtop++;
+        obj = objtop;
+        str = strtop;
       }
     }
   }
@@ -138,6 +136,6 @@ static int match_multi (const char **pattern, const char **string)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

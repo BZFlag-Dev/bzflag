@@ -36,17 +36,16 @@ int           HUDuiControl::totalCount = 0;
 
 
 HUDuiControl::HUDuiControl()
-: showingFocus(true)
-, navList(NULL)
-, cb(NULL)
-, userData(NULL)
-, nested(false)
-, parent(NULL)
-{
+  : showingFocus(true)
+  , navList(NULL)
+  , cb(NULL)
+  , userData(NULL)
+  , nested(false)
+  , parent(NULL) {
   if (totalCount == 0) {
     // load arrow texture
-    TextureManager &tm = TextureManager::instance();
-    arrow = tm.getTextureID( "menu_arrow" );
+    TextureManager& tm = TextureManager::instance();
+    arrow = tm.getTextureID("menu_arrow");
 
     // make gstate for focus arrow
     gstate = new OpenGLGState;
@@ -63,8 +62,7 @@ HUDuiControl::HUDuiControl()
 }
 
 
-HUDuiControl::~HUDuiControl()
-{
+HUDuiControl::~HUDuiControl() {
   if (--totalCount == 0) {
     delete gstate;
     arrow = -1;
@@ -73,68 +71,58 @@ HUDuiControl::~HUDuiControl()
 }
 
 
-HUDuiCallback HUDuiControl::getCallback() const
-{
+HUDuiCallback HUDuiControl::getCallback() const {
   return cb;
 }
 
 
-void* HUDuiControl::getUserData() const
-{
+void* HUDuiControl::getUserData() const {
   return userData;
 }
 
 
-void HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
-{
+void HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud) {
   cb = _cb;
   userData = _ud;
 }
 
 
-bool HUDuiControl::hasFocus() const
-{
+bool HUDuiControl::hasFocus() const {
   return this == HUDui::getFocus();
 }
 
 
-void HUDuiControl::showFocus(bool _showingFocus)
-{
+void HUDuiControl::showFocus(bool _showingFocus) {
   showingFocus = _showingFocus;
 }
 
 
-void HUDuiControl::isNested(bool _nested)
-{
+void HUDuiControl::isNested(bool _nested) {
   nested = _nested;
 }
 
 
-void HUDuiControl::setParent(HUDuiControl* parentControl)
-{
+void HUDuiControl::setParent(HUDuiControl* parentControl) {
   parent = parentControl;
 }
 
 
-bool HUDuiControl::isAtNavQueueIndex(size_t index)
-{
-  if (!navList) return false;
+bool HUDuiControl::isAtNavQueueIndex(size_t index) {
+  if (!navList) { return false; }
   return navList->at(index) == this;
 }
 
 
-void HUDuiControl::doCallback()
-{
-  if (cb) (*cb)(this, userData);
+void HUDuiControl::doCallback() {
+  if (cb) { (*cb)(this, userData); }
 }
 
 
-void HUDuiControl::renderFocus()
-{
+void HUDuiControl::renderFocus() {
   float fh2;
 
-  TextureManager &tm = TextureManager::instance();
-  const ImageInfo &info = tm.getInfo(arrow);
+  TextureManager& tm = TextureManager::instance();
+  const ImageInfo& info = tm.getInfo(arrow);
 
   const float x = getX();
   const float y = getY();
@@ -144,8 +132,9 @@ void HUDuiControl::renderFocus()
   float imageSize = (float)info.y;
   // assumes there are w/h frames of animation h x h in each image
   int uFrames = 1;
-  if (imageSize != 0)
-    uFrames = int(info.x/imageSize); // 4;
+  if (imageSize != 0) {
+    uFrames = int(info.x / imageSize);  // 4;
+  }
   int vFrames = 1; // 4;
   float du = 1.0f / (float)uFrames;
   float dv = 1.0f / (float)vFrames;
@@ -154,7 +143,7 @@ void HUDuiControl::renderFocus()
   float v = (float)(arrowFrame / uFrames) / (float)vFrames;
   fh2 = floorf(1.5f * fontHeight) - 1.0f; // this really should not scale the image based on the font,
   tm.clearLastBoundID();
-  gstate->setState();			    // best would be to load an image for each size
+  gstate->setState();         // best would be to load an image for each size
   glColor3f(1.0f, 1.0f, 1.0f);
   float imageXShift = 0.55f;
   float imageYShift = -fh2 * 0.29f;
@@ -175,38 +164,35 @@ void HUDuiControl::renderFocus()
   BzTime nowTime = BzTime::getCurrent();
   if (nowTime - lastTime > 0.07f) {
     lastTime = nowTime;
-    if (++arrowFrame == uFrames * vFrames) arrowFrame = 0;
+    if (++arrowFrame == uFrames * vFrames) { arrowFrame = 0; }
   }
 }
 
 
-void HUDuiControl::render()
-{
+void HUDuiControl::render() {
   if (hasFocus() && showingFocus) { renderFocus(); }
   glColor3fv(hasFocus() ? textColor : dimTextColor);
   HUDuiElement::render();
 }
 
 
-void HUDuiControl::setNavQueue(HUDNavigationQueue* _navList)
-{
+void HUDuiControl::setNavQueue(HUDNavigationQueue* _navList) {
   navList = _navList;
 }
 
 
-bool HUDuiControl::doKeyPress(const BzfKeyEvent& key)
-{
+bool HUDuiControl::doKeyPress(const BzfKeyEvent& key) {
   if (!navList) { return false; }
 
   if (key.unicode == 0) {
     switch (key.button) {
       case BzfKeyEvent::Up: {
-	navList->prev();
-	return true;
+        navList->prev();
+        return true;
       }
       case BzfKeyEvent::Down: {
-	navList->next();
-	return true;
+        navList->next();
+        return true;
       }
     }
   }
@@ -220,8 +206,7 @@ bool HUDuiControl::doKeyPress(const BzfKeyEvent& key)
 }
 
 
-bool HUDuiControl::doKeyRelease(const BzfKeyEvent&)
-{
+bool HUDuiControl::doKeyRelease(const BzfKeyEvent&) {
   return false;
 }
 
@@ -230,6 +215,6 @@ bool HUDuiControl::doKeyRelease(const BzfKeyEvent&)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

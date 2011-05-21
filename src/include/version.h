@@ -17,24 +17,24 @@
 
 #ifndef BZ_BUILD_DATE
 extern int getBuildDate();
-#define BZ_BUILD_DATE		getBuildDate()
+#define BZ_BUILD_DATE   getBuildDate()
 #endif
 
 #ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION	"3.0"
+#define BZ_CONFIG_DIR_VERSION "3.0"
 #endif
 
 #ifndef BZ_CONFIG_FILE_NAME
-#define BZ_CONFIG_FILE_NAME	"config.cfg"
+#define BZ_CONFIG_FILE_NAME "config.cfg"
 #endif
 
 #ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION	3
+#define BZ_CONFIG_FILE_VERSION  3
 #endif
 
-#define BZ_CONNECT_HEADER	"BZFLAG\r\n\r\n"
+#define BZ_CONNECT_HEADER "BZFLAG\r\n\r\n"
 
-extern const char *bzfcopyright;
+extern const char* bzfcopyright;
 
 // various version functions in buildDate.cpp
 extern const char* getProtocolVersion();
@@ -51,6 +51,6 @@ extern std::string getOSString();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

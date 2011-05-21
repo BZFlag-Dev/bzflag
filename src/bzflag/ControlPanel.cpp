@@ -81,8 +81,7 @@ static CRITICAL_SECTION screenshot_critical;
 #endif
 
 
-void ControlPanel::addMutexMessage(const char* msg)
-{
+void ControlPanel::addMutexMessage(const char* msg) {
   static bool inited = false;
   if (!inited) {
 #if defined(HAVE_PTHREADS)
@@ -108,20 +107,18 @@ float ControlPanelMessage::prevXoffset = 0.0f;
 
 
 ControlPanelMessage::ControlPanelMessage(const std::string& _data)
-: data(_data)
-, xoffset(0.0f)
-, xoffsetFirst(0.0f)
-, numlines(0)
-{
+  : data(_data)
+  , xoffset(0.0f)
+  , xoffsetFirst(0.0f)
+  , numlines(0) {
 }
 
 
-void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
-{
+void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize) {
   lines.clear();
   numlines = 0;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   if (maxLength <= 0.0f) {
     return;
@@ -183,46 +180,47 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
       n = 0;
 
       while ((n < lineLen) &&
-	     (fm.getStringWidth(fontFace, fontSize,
-				std::string(msg, ((++UTF8StringItr(msg + n)).getBufferFromHere() - msg)))
-	      < maxLength)) {
-	if (msg[n] != ESC_CHAR) {
-	  n = static_cast<int>((++UTF8StringItr(msg+n)).getBufferFromHere() - msg);
+             (fm.getStringWidth(fontFace, fontSize,
+                                std::string(msg, ((++UTF8StringItr(msg + n)).getBufferFromHere() - msg)))
+              < maxLength)) {
+        if (msg[n] != ESC_CHAR) {
+          n = static_cast<int>((++UTF8StringItr(msg + n)).getBufferFromHere() - msg);
         }
         else {
-	  // clear the cumulative codes when we hit a reset
-	  // the reset itself will start the new cumulative string.
-	  if ((strncmp(msg + n, ANSI_STR_RESET, strlen(ANSI_STR_RESET)) == 0)
-	      || (strncmp(msg + n, ANSI_STR_RESET_FINAL, strlen(ANSI_STR_RESET_FINAL)) == 0))
-	    cumulativeANSICodes = "";
-	  // add this code to our cumulative string
-	  cumulativeANSICodes += msg[n];
-	  n++;
-	  if ((n < lineLen) && (msg[n] == '[')) {
-	    cumulativeANSICodes += msg[n];
-	    n++;
-	    while ((n < lineLen) &&
-		   ((msg[n] == ';') ||
-		    ((msg[n] >= '0') && (msg[n] <= '9')))) {
-	      cumulativeANSICodes += msg[n];
-	      n++;
-	    }
-	    // ditch the terminating character too
-	    if (n < lineLen) {
-	      cumulativeANSICodes += msg[n];
-	      n++;
-	    }
-	  }
-	}
-
-	if (TextUtils::isWhitespace(msg[n])) {
-	  lastWhitespace = n;
-	  // Tabs break out into their own message.  These get dealt with
-	  // in ControlPanel::render, which will increment x instead of y.
-	  if (msg[n] == '\t') {
-	    break;
+          // clear the cumulative codes when we hit a reset
+          // the reset itself will start the new cumulative string.
+          if ((strncmp(msg + n, ANSI_STR_RESET, strlen(ANSI_STR_RESET)) == 0)
+              || (strncmp(msg + n, ANSI_STR_RESET_FINAL, strlen(ANSI_STR_RESET_FINAL)) == 0)) {
+            cumulativeANSICodes = "";
           }
-	}
+          // add this code to our cumulative string
+          cumulativeANSICodes += msg[n];
+          n++;
+          if ((n < lineLen) && (msg[n] == '[')) {
+            cumulativeANSICodes += msg[n];
+            n++;
+            while ((n < lineLen) &&
+                   ((msg[n] == ';') ||
+                    ((msg[n] >= '0') && (msg[n] <= '9')))) {
+              cumulativeANSICodes += msg[n];
+              n++;
+            }
+            // ditch the terminating character too
+            if (n < lineLen) {
+              cumulativeANSICodes += msg[n];
+              n++;
+            }
+          }
+        }
+
+        if (TextUtils::isWhitespace(msg[n])) {
+          lastWhitespace = n;
+          // Tabs break out into their own message.  These get dealt with
+          // in ControlPanel::render, which will increment x instead of y.
+          if (msg[n] == '\t') {
+            break;
+          }
+        }
       }
     }
 
@@ -260,8 +258,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
 }
 
 
-const ControlPanel::MessageQueue* ControlPanel::getTabMessages(int tabID)
-{
+const ControlPanel::MessageQueue* ControlPanel::getTabMessages(int tabID) {
   if (!validTab(tabID)) {
     return NULL;
   }
@@ -270,8 +267,7 @@ const ControlPanel::MessageQueue* ControlPanel::getTabMessages(int tabID)
 
 
 const ControlPanel::MessageQueue*
-  ControlPanel::getTabMessages(const std::string& tabLabel)
-{
+ControlPanel::getTabMessages(const std::string& tabLabel) {
   const int tabID = getTabID(tabLabel);
   if (!validTab(tabID)) {
     return NULL;
@@ -280,8 +276,7 @@ const ControlPanel::MessageQueue*
 }
 
 
-int ControlPanel::getTabMessageCount(int tabID)
-{
+int ControlPanel::getTabMessageCount(int tabID) {
   if (!validTab(tabID)) {
     return -1;
   }
@@ -295,26 +290,25 @@ int ControlPanel::getTabMessageCount(int tabID)
 //
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
-: activeTab(MessageAll)
-, window(_mainWindow)
-, resized(false)
-, numBuffers(2)
-, changedMessage(0)
-, radarRenderer(NULL)
-, renderer(&_renderer)
-, fontFace(NULL)
-, dimming(1.0f)
-, du(0)
-, dv(0)
-, teamColor(0.0f, 0.0f, 0.0f, 1.0f)
-, showTabs(true)
-, tabsOnRight(true)
-, totalTabWidth(0)
-, tabHeight(0)
-, tabYOffset(0)
-, textHeight(0)
-, topicHeight(0)
-{
+  : activeTab(MessageAll)
+  , window(_mainWindow)
+  , resized(false)
+  , numBuffers(2)
+  , changedMessage(0)
+  , radarRenderer(NULL)
+  , renderer(&_renderer)
+  , fontFace(NULL)
+  , dimming(1.0f)
+  , du(0)
+  , dv(0)
+  , teamColor(0.0f, 0.0f, 0.0f, 1.0f)
+  , showTabs(true)
+  , tabsOnRight(true)
+  , totalTabWidth(0)
+  , tabHeight(0)
+  , tabYOffset(0)
+  , textHeight(0)
+  , topicHeight(0) {
   setControlColor();
 
   // make sure we're notified when MainWindow resizes or is exposed
@@ -341,8 +335,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer)
 }
 
 
-ControlPanel::~ControlPanel()
-{
+ControlPanel::~ControlPanel() {
   for (int t = 0; t < (int)tabs.size(); t++) {
     delete tabs[t];
   }
@@ -369,8 +362,7 @@ ControlPanel::~ControlPanel()
 
 
 void ControlPanel::loggingCallback(int level,
-                                   const std::string& rawMsg, void* data)
-{
+                                   const std::string& rawMsg, void* data) {
 // -- always store the debug messages
 //  if (level > debugLevel) {
 //    return;
@@ -398,14 +390,12 @@ void ControlPanel::loggingCallback(int level,
 }
 
 
-void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
-{
+void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data) {
   ((ControlPanel*)data)->resize();
 }
 
 
-void ControlPanel::setupTabMap()
-{
+void ControlPanel::setupTabMap() {
   tabMap.clear();
 
   for (int t = 0; t < (int)tabs.size(); t++) {
@@ -419,18 +409,17 @@ void ControlPanel::setupTabMap()
 }
 
 
-void ControlPanel::setControlColor(const fvec4* color)
-{
+void ControlPanel::setControlColor(const fvec4* color) {
   if (color != NULL) {
     teamColor = *color;
-  } else {
+  }
+  else {
     teamColor = fvec4(0.0f, 0.0f, 0.0f, 1.0f);
   }
 }
 
 
-void ControlPanel::render(SceneRenderer& _renderer)
-{
+void ControlPanel::render(SceneRenderer& _renderer) {
   while (!mutexMsgs.empty()) {
     addMessage(mutexMsgs.front());
     mutexMsgs.pop_front();
@@ -465,7 +454,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
   glTranslatef((float)messageRect.xpos, (float)messageRect.ypos, 0);
   OpenGLGState::resetState();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   fm.setOpacity(dimming);
 
   if (changedMessage > 0) {
@@ -487,7 +476,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
     else {
       if (!showTabs) {
         tabYOffset = messageRect.ysize;
-      } else {
+      }
+      else {
         tabYOffset = messageRect.ysize - tabHeight;
         textHeight -= tabHeight;
       }
@@ -501,9 +491,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
   }
 
   glScissor(winX + messageRect.xpos - 1,
-	    winY + messageRect.ypos,
-	    messageRect.xsize + 1,
-	    messageRect.ysize + tabHeight);
+            winY + messageRect.ypos,
+            messageRect.xsize + 1,
+            messageRect.ysize + tabHeight);
 
   OpenGLGState::resetState();
 
@@ -517,7 +507,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     // clear the background
     glColor4f(0.0f, 0.0f, 0.0f, opacity);
     glRecti(-1, -1, // clear an extra pixel column
-	    messageRect.xsize + 2, messageRect.ysize + 2);
+            messageRect.xsize + 2, messageRect.ysize + 2);
 
     // display tabs for chat sections
     if (showTabs) {
@@ -558,8 +548,8 @@ void ControlPanel::render(SceneRenderer& _renderer)
   }
 
   glScissor(winX + messageRect.xpos,
-	    winY + messageRect.ypos,
-	    messageRect.xsize, textHeight);
+            winY + messageRect.ypos,
+            messageRect.xsize, textHeight);
 
   int i, j;
 
@@ -598,11 +588,11 @@ void ControlPanel::render(SceneRenderer& _renderer)
     bool highlight = false;
     if (useHighlight) {
       for (int l = 0; l < numStrings; l++)  {
-	const std::string &msg = cpMsg.lines[l];
-	std::string raw = stripAnsiCodes(msg);
-	if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
-	  highlight = true;
-	}
+        const std::string& msg = cpMsg.lines[l];
+        std::string raw = stripAnsiCodes(msg);
+        if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0) {
+          highlight = true;
+        }
       }
     }
 
@@ -612,7 +602,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
     bool isTab = false;
 
     for (int l = 0; l < numStrings; l++)  {
-      const std::string &msg = cpMsg.lines[l];
+      const std::string& msg = cpMsg.lines[l];
 
       // Tab chars move horizontally instead of vertically
       // It doesn't matter where in the string the tab char is
@@ -620,10 +610,11 @@ void ControlPanel::render(SceneRenderer& _renderer)
       // We use 1 tabstop spaced 1/3 of the way across the controlpanel
       isTab = (msg.find('\t') != std::string::npos);
       if (isTab) {
-	msgx += messageRect.xsize / 3;
-	msgy++;
-      } else {
-	msgx = 0;
+        msgx += messageRect.xsize / 3;
+        msgy++;
+      }
+      else {
+        msgx = 0;
       }
 
       assert(msgy >= 0);
@@ -631,18 +622,18 @@ void ControlPanel::render(SceneRenderer& _renderer)
       // only draw message if inside message area
       if ((j + msgy) < maxLines) {
         const float xoff = (l == 0) ? cpMsg.xoffsetFirst : cpMsg.xoffset;
-	if (!highlight) {
-	  fm.drawString((float)(fx + msgx + xoff), (float)(fy + msgy * lineHeight), 0,
-	                fontFace->getFMFace(), fontSize, msg);
-	}
-	else {
-	  // highlight this line
-	  std::string newMsg;
-	  newMsg += ANSI_STR_PULSATING ANSI_STR_UNDERLINE ANSI_STR_FG_CYAN;
-	  newMsg += stripAnsiCodes(msg);
-	  fm.drawString((float)(fx + msgx + xoff), (float)(fy + msgy * lineHeight), 0,
-	                fontFace->getFMFace(), fontSize, newMsg);
-	}
+        if (!highlight) {
+          fm.drawString((float)(fx + msgx + xoff), (float)(fy + msgy * lineHeight), 0,
+                        fontFace->getFMFace(), fontSize, msg);
+        }
+        else {
+          // highlight this line
+          std::string newMsg;
+          newMsg += ANSI_STR_PULSATING ANSI_STR_UNDERLINE ANSI_STR_FG_CYAN;
+          newMsg += stripAnsiCodes(msg);
+          fm.drawString((float)(fx + msgx + xoff), (float)(fy + msgy * lineHeight), 0,
+                        fontFace->getFMFace(), fontSize, newMsg);
+        }
       }
 
       // next line
@@ -687,9 +678,9 @@ void ControlPanel::render(SceneRenderer& _renderer)
   }
 
   glScissor(winX + messageRect.xpos - 2,
-	    winY + messageRect.ypos - 2,
-	    messageRect.xsize + 4,
-	    tabYOffset + tabHeight + 4);
+            winY + messageRect.ypos - 2,
+            messageRect.xsize + 4,
+            tabYOffset + tabHeight + 4);
 
   OpenGLGState::resetState();
 
@@ -704,8 +695,7 @@ void ControlPanel::render(SceneRenderer& _renderer)
 }
 
 
-void ControlPanel::drawScrollBar()
-{
+void ControlPanel::drawScrollBar() {
   if (activeTab < 0) {
     return;
   }
@@ -728,8 +718,7 @@ void ControlPanel::drawScrollBar()
 }
 
 
-void ControlPanel::drawTabBoxes()
-{
+void ControlPanel::drawTabBoxes() {
   const IntRect& rect = messageRect;
   const float opacity = RENDERER.getPanelOpacity();
 
@@ -746,7 +735,8 @@ void ControlPanel::drawTabBoxes()
     // current mode is given a dark background to match the control panel
     if (activeTab == t) {
       glColor4f(0.0f, 0.0f, 0.0f, opacity);
-    } else {
+    }
+    else {
       glColor4f(0.10f, 0.10f, 0.10f, opacity);
     }
     const int x1 = tabXOffset + drawnTabWidth;
@@ -769,7 +759,8 @@ void ControlPanel::drawTabBoxes()
   if (needTriangle) {
     if (redTriangle) {
       glColor4f(1.0f, 0.0f, 0.0f, opacity);
-    } else {
+    }
+    else {
       glColor4f(0.8f, 0.8f, 0.8f, opacity);
     }
     const float x0 = rect.xsize + 1.0f;
@@ -788,9 +779,8 @@ void ControlPanel::drawTabBoxes()
 }
 
 
-void ControlPanel::drawTabLabels()
-{
-  FontManager &fm = FontManager::instance();
+void ControlPanel::drawTabLabels() {
+  FontManager& fm = FontManager::instance();
   const int faceID = fontFace->getFMFace();
 
   int drawnTabWidth = 0;
@@ -803,15 +793,17 @@ void ControlPanel::drawTabLabels()
     // current mode is bright, others are not so bright
     if (activeTab == t) {
       glColor4f(1.0f, 1.0f, 1.0f, dimming);
-    } else if (tab->unread) {
+    }
+    else if (tab->unread) {
       glColor4f(0.5f, 0.0f, 0.0f, dimming);
-    } else {
+    }
+    else {
       glColor4f(0.5f, 0.5f, 0.5f, dimming);
     }
 
     const float halfWidth = ((float)tab->width * 0.5f);
 
-      // draw the tabs on the right side (with one letter padding)
+    // draw the tabs on the right side (with one letter padding)
     fm.drawString(tabXOffset + drawnTabWidth + halfWidth,
                   (float)(tabYOffset + margin + (lineHeight / 5)),
                   0.0f, faceID, (float)fontSize, tab->label, NULL, AlignCenter);
@@ -821,8 +813,7 @@ void ControlPanel::drawTabLabels()
 }
 
 
-void ControlPanel::drawOutline()
-{
+void ControlPanel::drawOutline() {
   const fvec2 halfPixel(0.5f, 0.5f);
 
   if (BZDBCache::blend) {
@@ -870,17 +861,17 @@ void ControlPanel::drawOutline()
         continue;
       }
       if (activeTab == t) {
-	ypos += float(tabHeight);
+        ypos += float(tabHeight);
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
-	xpos -= float(tab->width + 1);
+        xpos -= float(tab->width + 1);
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
 
-	ypos -= float(tabHeight);
+        ypos -= float(tabHeight);
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
       }
       else {
-	xpos -= float(tab->width);
+        xpos -= float(tab->width);
         glVertex2fv(fvec2(xpos, ypos) + halfPixel);
       }
       drawnTabWidth += tab->width;
@@ -898,8 +889,7 @@ void ControlPanel::drawOutline()
 }
 
 
-void ControlPanel::resize()
-{
+void ControlPanel::resize() {
   tabs[MessageDebug]->visible = (debugLevel > 0);
 
   const int tabStyle = BZDB.evalInt("showtabs");
@@ -916,7 +906,8 @@ void ControlPanel::resize()
   if (opacity >= 1.0f) {
     radarSize = float(window.getHeight() - window.getViewHeight());
     radarSpace = 0.0f;
-  } else {
+  }
+  else {
     radarSize = h * (14 + RENDERER.getRadarSize()) / 60.0f;
     radarSpace = 3.0f * w / MinY;
   }
@@ -941,7 +932,7 @@ void ControlPanel::resize()
                             radarRect.xsize, radarRect.ysize);
   }
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   if (!fontFace) {
     fontFace = LocalFontFace::create("consoleFont");
   }
@@ -991,36 +982,32 @@ void ControlPanel::resize()
 }
 
 
-void ControlPanel::resizeCallback(void* self)
-{
+void ControlPanel::resizeCallback(void* self) {
   ((ControlPanel*)self)->resize();
 }
 
 
-void ControlPanel::setNumberOfFrameBuffers(int n)
-{
+void ControlPanel::setNumberOfFrameBuffers(int n) {
   numBuffers = n;
 }
 
 
-void ControlPanel::invalidate()
-{
+void ControlPanel::invalidate() {
   if (numBuffers) {
     changedMessage = numBuffers;
-  } else {
+  }
+  else {
     changedMessage++;
   }
 }
 
 
-void ControlPanel::exposeCallback(void* self)
-{
+void ControlPanel::exposeCallback(void* self) {
   ((ControlPanel*)self)->invalidate();
 }
 
 
-void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
-{
+void ControlPanel::setMessagesOffset(int offset, int whence, bool paged) {
   if (activeTab < 0) {
     return;
   }
@@ -1028,7 +1015,8 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
   if (paged) {
     if (abs(offset) <= 1) {
       offset = offset * (maxLines - 1);
-    } else {
+    }
+    else {
       offset = offset * maxLines;
     }
   }
@@ -1040,7 +1028,8 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
     case 0: {
       if (offset < (int)tabs[activeTab]->messages.size()) {
         tabs[activeTab]->offset = offset;
-      } else {
+      }
+      else {
         tabs[activeTab]->offset = (int)tabs[activeTab]->messages.size() - 1;
       }
       break;
@@ -1049,13 +1038,16 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
       if (offset > 0) {
         if (tabs[activeTab]->offset + offset < (int)tabs[activeTab]->messages.size()) {
           tabs[activeTab]->offset += offset;
-        } else {
+        }
+        else {
           tabs[activeTab]->offset = (int)tabs[activeTab]->messages.size() - 1;
         }
-      } else if (offset < 0) {
+      }
+      else if (offset < 0) {
         if (tabs[activeTab]->offset + offset >= 0) {
           tabs[activeTab]->offset += offset;
-        } else {
+        }
+        else {
           tabs[activeTab]->offset = 0;
         }
       }
@@ -1065,7 +1057,8 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
       if (offset < 0) {
         if ((int)tabs[activeTab]->messages.size() >= offset) {
           tabs[activeTab]->offset += offset;
-        } else {
+        }
+        else {
           tabs[activeTab]->offset = 0;
         }
       }
@@ -1077,8 +1070,7 @@ void ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
 }
 
 
-bool ControlPanel::setActiveTab(int tabID)
-{
+bool ControlPanel::setActiveTab(int tabID) {
   if (!validTab(tabID)) {
     return false;
   }
@@ -1110,8 +1102,7 @@ bool ControlPanel::setActiveTab(int tabID)
 }
 
 
-bool ControlPanel::isTabLocked(int tabID) const
-{
+bool ControlPanel::isTabLocked(int tabID) const {
   if (!validTab(tabID)) {
     return false;
   }
@@ -1119,8 +1110,7 @@ bool ControlPanel::isTabLocked(int tabID) const
 }
 
 
-bool ControlPanel::isTabVisible(int tabID) const
-{
+bool ControlPanel::isTabVisible(int tabID) const {
   if (!validTab(tabID)) {
     return false;
   }
@@ -1128,8 +1118,7 @@ bool ControlPanel::isTabVisible(int tabID) const
 }
 
 
-void ControlPanel::addMessage(const std::string& line, int realmode)
-{
+void ControlPanel::addMessage(const std::string& line, int realmode) {
   ControlPanelMessage item(line);
   item.breakLines((float)(messageRect.xsize - 2 * margin), fontFace->getFMFace(), fontSize);
 
@@ -1148,31 +1137,32 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
   for (int t = MessageAll; t < (int)tabs.size(); t++) {
     Tab* tab = tabs[t];
     if ((t == tabmode) // add to its own mode
-	// add to the All tab, unless not a source for All, or Current mode
-	|| ((t == MessageAll) && allSrc && (realmode != MessageCurrent))
-	// add to all tabs unless the tab is not a destination for MessageAllTabs
-	|| ((realmode == MessageAllTabs) && tab->allDst)) {
+        // add to the All tab, unless not a source for All, or Current mode
+        || ((t == MessageAll) && allSrc && (realmode != MessageCurrent))
+        // add to all tabs unless the tab is not a destination for MessageAllTabs
+        || ((realmode == MessageAllTabs) && tab->allDst)) {
 
       // insert the message into the tab
       if ((int)tab->messages.size() < (maxLines * _maxScrollPages)) {
-	// not full yet so just append it
-	tab->messages.push_back(item);
-      } else {
-	// rotate list and replace oldest (in newest position after rotate)
-	tab->messages.pop_front();
-	tab->messages.push_back(item);
+        // not full yet so just append it
+        tab->messages.push_back(item);
+      }
+      else {
+        // rotate list and replace oldest (in newest position after rotate)
+        tab->messages.pop_front();
+        tab->messages.push_back(item);
       }
       tab->msgCount++;
 
       // visible changes, force a console refresh
       if (activeTab == t) {
-	invalidate();
+        invalidate();
       }
 
       // mark the tab as unread
       if ((activeTab != t) && (activeTab >= 0) &&
           ((activeTab != MessageAll) || !tab->allSrc)) {
-	tab->unread = true;
+        tab->unread = true;
       }
     }
   }
@@ -1181,7 +1171,8 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
     std::string echoOut = TextUtils::remove_char(line, '\v');
     if (echoAnsi) {
       echoOut += ColorStrings[ResetColor];
-    } else {
+    }
+    else {
       echoOut = stripAnsiCodes(line);
     }
 #ifndef _WIN32
@@ -1189,9 +1180,9 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
     fflush(stdout);
 #else
     // this is cheap but it will work on windows
-    FILE *fp = fopen("stdout.txt", "a+");
+    FILE* fp = fopen("stdout.txt", "a+");
     if (fp) {
-      fprintf(fp,"%s\n", echoOut.c_str());
+      fprintf(fp, "%s\n", echoOut.c_str());
       fclose(fp);
     }
 #endif
@@ -1200,8 +1191,7 @@ void ControlPanel::addMessage(const std::string& line, int realmode)
 
 
 void ControlPanel::addMessage(const std::string& line,
-                              const std::string& tabLabel)
-{
+                              const std::string& tabLabel) {
   const int tabID = getTabID(tabLabel);
   if (tabID < 0) {
     return;
@@ -1210,8 +1200,7 @@ void ControlPanel::addMessage(const std::string& line,
 }
 
 
-bool ControlPanel::addTab(const std::string& label, bool allSrc, bool allDst)
-{
+bool ControlPanel::addTab(const std::string& label, bool allSrc, bool allDst) {
   if (label.empty()) {
     return false;
   }
@@ -1231,8 +1220,7 @@ bool ControlPanel::addTab(const std::string& label, bool allSrc, bool allDst)
 }
 
 
-bool ControlPanel::removeTab(const std::string& label)
-{
+bool ControlPanel::removeTab(const std::string& label) {
   for (int t = 0; t < (int)tabs.size(); t++) {
     Tab* tab = tabs[t];
     if (tab->label == label) { // an exact test, not using getTabID()
@@ -1257,8 +1245,7 @@ bool ControlPanel::removeTab(const std::string& label)
 
 
 bool ControlPanel::renameTab(const std::string& oldLabel,
-                             const std::string& newLabel)
-{
+                             const std::string& newLabel) {
   if (newLabel.empty()) {
     return false;
   }
@@ -1282,8 +1269,7 @@ bool ControlPanel::renameTab(const std::string& oldLabel,
 }
 
 
-int ControlPanel::getTabID(const std::string& label) const
-{
+int ControlPanel::getTabID(const std::string& label) const {
   TabMap::const_iterator it = tabMap.find(label);
   if (it == tabMap.end()) {
     return -1;
@@ -1292,8 +1278,7 @@ int ControlPanel::getTabID(const std::string& label) const
 }
 
 
-bool ControlPanel::swapTabs(int tabID1, int tabID2)
-{
+bool ControlPanel::swapTabs(int tabID1, int tabID2) {
   if (!validTab(tabID1) || tabs[tabID1]->locked ||
       !validTab(tabID2) || tabs[tabID2]->locked) {
     return false;
@@ -1317,8 +1302,7 @@ bool ControlPanel::swapTabs(int tabID1, int tabID2)
 }
 
 
-bool ControlPanel::clearTab(int tabID)
-{
+bool ControlPanel::clearTab(int tabID) {
   if (!validTab(tabID) || tabs[tabID]->locked) {
     return false;
   }
@@ -1327,8 +1311,7 @@ bool ControlPanel::clearTab(int tabID)
 }
 
 
-const std::string& ControlPanel::getTabLabel(int tabID) const
-{
+const std::string& ControlPanel::getTabLabel(int tabID) const {
   static const std::string empty = "";
   if (!validTab(tabID)) {
     return empty;
@@ -1337,8 +1320,7 @@ const std::string& ControlPanel::getTabLabel(int tabID) const
 }
 
 
-const std::string& ControlPanel::getTabTopic(int tabID) const
-{
+const std::string& ControlPanel::getTabTopic(int tabID) const {
   static const std::string empty = "";
   if (!validTab(tabID)) {
     return empty;
@@ -1347,8 +1329,7 @@ const std::string& ControlPanel::getTabTopic(int tabID) const
 }
 
 
-bool ControlPanel::setTabTopic(int tabID, const std::string& topic)
-{
+bool ControlPanel::setTabTopic(int tabID, const std::string& topic) {
   if (!validTab(tabID)) {
     return false;
   }
@@ -1356,15 +1337,14 @@ bool ControlPanel::setTabTopic(int tabID, const std::string& topic)
   clean = TextUtils::remove_char(clean, '\t');
   clean = TextUtils::remove_char(clean, '\v');
   tabs[tabID]->topic.data = clean;
-  tabs[tabID]->topic.breakLines((float)(messageRect.xsize - 2* margin),
+  tabs[tabID]->topic.breakLines((float)(messageRect.xsize - 2 * margin),
                                 fontFace->getFMFace(), fontSize);
   return true;
 }
 
 
 bool ControlPanel::saveMessages(const std::string& filename, bool stripAnsi,
-                                const std::string& tabLabel) const
-{
+                                const std::string& tabLabel) const {
   // pick the tab to save
   const MessageQueue* msgs = &(tabs[MessageAll]->messages);
   if (!tabLabel.empty()) {
@@ -1390,7 +1370,8 @@ bool ControlPanel::saveMessages(const std::string& filename, bool stripAnsi,
     const std::string& line = msg->data;
     if (stripAnsi) {
       fprintf(file, "%s\n", stripAnsiCodes(line));
-    } else {
+    }
+    else {
       fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor]);
     }
   }
@@ -1401,8 +1382,7 @@ bool ControlPanel::saveMessages(const std::string& filename, bool stripAnsi,
 }
 
 
-void ControlPanel::setRadarRenderer(RadarRenderer* rr)
-{
+void ControlPanel::setRadarRenderer(RadarRenderer* rr) {
   radarRenderer = rr;
 }
 
@@ -1411,6 +1391,6 @@ void ControlPanel::setRadarRenderer(RadarRenderer* rr)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

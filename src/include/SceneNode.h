@@ -11,11 +11,11 @@
  */
 
 /* SceneNode:
- *	Encapsulates information for rendering an object in the scene.
+ *  Encapsulates information for rendering an object in the scene.
  */
 
-#ifndef	BZF_SCENE_NODE_H
-#define	BZF_SCENE_NODE_H
+#ifndef BZF_SCENE_NODE_H
+#define BZF_SCENE_NODE_H
 
 #include "common.h"
 #include "bzfio.h"
@@ -33,11 +33,11 @@
 #  define __stdcall
 #endif
 
-#define	myColor3f(r, g, b)	SceneNode::glColor3f(r, g, b)
-#define	myColor4f(r, g, b, a)	SceneNode::glColor4f(r, g, b, a)
-#define	myColor3fv(rgb)		SceneNode::glColor3fv(rgb)
-#define	myColor4fv(rgba)	SceneNode::glColor4fv(rgba)
-#define	myStipple(alpha)	SceneNode::setStipple(alpha)
+#define myColor3f(r, g, b)  SceneNode::glColor3f(r, g, b)
+#define myColor4f(r, g, b, a) SceneNode::glColor4f(r, g, b, a)
+#define myColor3fv(rgb)   SceneNode::glColor3fv(rgb)
+#define myColor4fv(rgba)  SceneNode::glColor4fv(rgba)
+#define myStipple(alpha)  SceneNode::setStipple(alpha)
 
 
 class ViewFrustum;
@@ -49,33 +49,33 @@ class SceneNode {
     SceneNode();
     virtual ~SceneNode();
 
-    virtual void	notifyStyleChange();
+    virtual void  notifyStyleChange();
 
-    const fvec3&	getCenter() const;
-    const fvec4&	getSphere() const;
-    const Extents&	getExtents() const;
-    virtual int		getVertexCount () const;
-    virtual const fvec3& getVertex (int vertex) const;
-    const fvec4*	getPlane() const;
-    const fvec4&	getPlaneRaw() const;
-    virtual float	getDistanceSq(const fvec3& eye) const; // for BSP
+    const fvec3&  getCenter() const;
+    const fvec4&  getSphere() const;
+    const Extents&  getExtents() const;
+    virtual int   getVertexCount() const;
+    virtual const fvec3& getVertex(int vertex) const;
+    const fvec4*  getPlane() const;
+    const fvec4&  getPlaneRaw() const;
+    virtual float getDistanceSq(const fvec3& eye) const; // for BSP
 
-    virtual bool	inAxisBox (const Extents& exts) const;
+    virtual bool  inAxisBox(const Extents& exts) const;
 
-    virtual bool	cull(const ViewFrustum&) const;
-    virtual bool	cullShadow(int pCount, const fvec4* planes) const;
+    virtual bool  cull(const ViewFrustum&) const;
+    virtual bool  cullShadow(int pCount, const fvec4* planes) const;
 
-    virtual void	addLight(SceneRenderer&);
-    virtual int		split(const fvec4& plane,
-			      SceneNode*& front, SceneNode*& back) const;
-    virtual void	addShadowNodes(SceneRenderer&);
-    virtual void	addRenderNodes(SceneRenderer&);
-    virtual void	renderRadar();
+    virtual void  addLight(SceneRenderer&);
+    virtual int   split(const fvec4& plane,
+                        SceneNode*& front, SceneNode*& back) const;
+    virtual void  addShadowNodes(SceneRenderer&);
+    virtual void  addRenderNodes(SceneRenderer&);
+    virtual void  renderRadar();
 
-    bool		isOccluder() const;
-    void		setOccluder(bool value);
+    bool    isOccluder() const;
+    void    setOccluder(bool value);
 
-    bool 		isAnimated() const;
+    bool    isAnimated() const;
 
     struct RenderSet {
       RenderNode* node;
@@ -99,7 +99,7 @@ class SceneNode {
     };
 
     /** This boolean is used by the Octree code.
-	Someone else can 'friend'ify it later.
+    Someone else can 'friend'ify it later.
     */
     CullState octreeState;
 
@@ -128,8 +128,7 @@ class SceneNode {
 };
 
 
-inline const fvec4* SceneNode::getPlane() const
-{
+inline const fvec4* SceneNode::getPlane() const {
   if (noPlane) {
     return NULL;
   }
@@ -162,7 +161,7 @@ class fvec2Array {
     fvec2Array(const fvec2Array&);
     fvec2Array& operator=(const fvec2Array&);
 
-          fvec2& operator[](int i)       { return data[i]; }
+    fvec2& operator[](int i)       { return data[i]; }
     const fvec2& operator[](int i) const { return data[i]; }
 
     int           getSize() const { return size; }
@@ -185,7 +184,7 @@ class fvec3Array {
     fvec3Array(const fvec3Array&);
     fvec3Array& operator=(const fvec3Array&);
 
-          fvec3& operator[](int i)       { return data[i]; }
+    fvec3& operator[](int i)       { return data[i]; }
     const fvec3& operator[](int i) const { return data[i]; }
 
     int          getSize()  const { return size; }
@@ -203,6 +202,6 @@ class fvec3Array {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -33,16 +33,15 @@
 
 
 GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path)
-: PointShotStrategy(_path, true)
-, renderTimes(0)
-, needUpdate(true)
-{
+  : PointShotStrategy(_path, true)
+  , renderTimes(0)
+  , needUpdate(true) {
   ptSceneNode = new BoltSceneNode(_path->getPosition(), _path->getVelocity());
 
   static BZDB_float shotVisualScale("shotVisualScale");
   ptSceneNode->setSize(shotVisualScale * BZDBCache::shotRadius);
 
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   int texture = tm.getTextureID("missile");
 
   if (texture >= 0) {
@@ -94,19 +93,17 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path)
 }
 
 
-GuidedMissileStrategy::~GuidedMissileStrategy()
-{
+GuidedMissileStrategy::~GuidedMissileStrategy() {
   delete ptSceneNode;
 }
 
 
 // NOTE -- ray is base of shot segment and normalized direction of flight.
-//	distance traveled is ShotSpeed * dt.
+//  distance traveled is ShotSpeed * dt.
 
-void GuidedMissileStrategy::update(float dt)
-{
+void GuidedMissileStrategy::update(float dt) {
   const bool isRemote = (getPath().getPlayer() !=
-			 LocalPlayer::getMyTank()->getId());
+                         LocalPlayer::getMyTank()->getId());
 
   // ignore packets that arrive out of order
   if (isRemote && (dt < 0.0f)) {
@@ -141,13 +138,14 @@ void GuidedMissileStrategy::update(float dt)
     // see if the target changed
     if (target) {
       if (lastTarget != target->getId()) {
-	needUpdate = true;
-	lastTarget = target->getId();
+        needUpdate = true;
+        lastTarget = target->getId();
       }
-    } else {
+    }
+    else {
       if (lastTarget != NoPlayer) {
-	needUpdate = true;
-	lastTarget = NoPlayer;
+        needUpdate = true;
+        lastTarget = NoPlayer;
       }
     }
   }
@@ -190,7 +188,7 @@ void GuidedMissileStrategy::update(float dt)
   renderTimes++;
 
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
-  if (currentTime - lastPuff > puffTime ) {
+  if (currentTime - lastPuff > puffTime) {
     lastPuff = currentTime;
     addShotPuff(nextPos, nextVel);
   }
@@ -209,7 +207,8 @@ void GuidedMissileStrategy::update(float dt)
     segmentEndTime += t * (currentTime - prevTime);
     nextPos = ray.getPoint(t);
     addShotExplosion(nextPos);
-  } else {
+  }
+  else {
     // see if we hit a building
     const float t = checkBuildings(ray);
     if (t >= 0.0f) {
@@ -229,23 +228,20 @@ void GuidedMissileStrategy::update(float dt)
 }
 
 
-bool GuidedMissileStrategy::predictPosition(float dt, fvec3& p) const
-{
+bool GuidedMissileStrategy::predictPosition(float dt, fvec3& p) const {
   fvec3 v;
   return _predict(dt, p, v);
 }
 
 
-bool GuidedMissileStrategy::predictVelocity(float dt, fvec3& v) const
-{
+bool GuidedMissileStrategy::predictVelocity(float dt, fvec3& v) const {
   fvec3 p;
   return _predict(dt, p, v);
 }
 
 
-bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
-{
-  World *world = World::getWorld();
+bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const {
+  World* world = World::getWorld();
   if (!world) {
     return false;
   }
@@ -259,18 +255,22 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
   /*
    * If it expires there we'll return false.
    */
-  if (ctime - getPath().getStartTime() >= getPath().getLifetime())
+  if (ctime - getPath().getStartTime() >= getPath().getLifetime()) {
     return false;
+  }
 
   // get target
   const Player* target = NULL;
   if (isRemote) {
-    if (lastTarget != NoPlayer)
+    if (lastTarget != NoPlayer) {
       target = lookupPlayer(lastTarget);
-  } else {
+    }
+  }
+  else {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
-    if (myTank)
+    if (myTank) {
       target = myTank->getTarget();
+    }
   }
 
   if ((target != NULL) &&
@@ -354,8 +354,7 @@ bool GuidedMissileStrategy::_predict(float dt, fvec3& p, fvec3& v) const
 }
 
 
-float GuidedMissileStrategy::checkBuildings(const Ray& ray)
-{
+float GuidedMissileStrategy::checkBuildings(const Ray& ray) {
   World* world = World::getWorld();
   if (!world) {
     return -1.0f;
@@ -394,7 +393,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     // entered teleporter -- teleport it
     fvec3 vel = getPath().getVelocity();
     linkSrc->teleportShot(*linkDst, *physics, nextPos, nextPos,
-                                              nextVel, nextVel);
+                          nextVel, nextVel);
     if (!physics->shotPassText.empty()) {
       addMessage(NULL, TextUtils::unescape_colors(physics->shotPassText));
     }
@@ -411,8 +410,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 }
 
 
-float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position) const
-{
+float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position) const {
   // GM is not active until activation time passes (for any tank)
   static BZDB_float activationTime(BZDBNAMES.GMACTIVATIONTIME);
   if ((getPath().getCurrentTime() - getPath().getStartTime()) < activationTime) {
@@ -422,8 +420,7 @@ float GuidedMissileStrategy::checkHit(const ShotCollider& tank, fvec3& position)
 }
 
 
-void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
-{
+void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const {
   // only send an update when needed
   if (!needUpdate) {
     return;
@@ -432,7 +429,7 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
 
   // construct and send packet
   char packet[MaxPacketLen];
-  void *buf = (void*)packet;
+  void* buf = (void*)packet;
   buf = firingInfo.shot.pack(buf);
   buf = nboPackUInt8(buf, lastTarget);
   const size_t len = (char*)buf - packet;
@@ -440,8 +437,7 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
 }
 
 
-void GuidedMissileStrategy::readUpdate(void* msg)
-{
+void GuidedMissileStrategy::readUpdate(void* msg) {
   // position and velocity have been replaced by the remote system's
   // concept of the position and velocity.  this may cause a discontinuity
   // in the shot's position but it's probably better to have the shot in
@@ -459,15 +455,13 @@ void GuidedMissileStrategy::readUpdate(void* msg)
 }
 
 
-void GuidedMissileStrategy::addShot(SceneDatabase* scene, bool)
-{
+void GuidedMissileStrategy::addShot(SceneDatabase* scene, bool) {
   ptSceneNode->move(getPath().getPosition(), getPath().getVelocity());
   scene->addDynamicNode(ptSceneNode);
 }
 
 
-void GuidedMissileStrategy::expire()
-{
+void GuidedMissileStrategy::expire() {
   if (getPath().getPlayer() == LocalPlayer::getMyTank()->getId()) {
     const ShotPath& shot = getPath();
     /* NOTE -- change 0 to 1 to not explode when shot expires (I think) */
@@ -476,8 +470,7 @@ void GuidedMissileStrategy::expire()
 }
 
 
-void GuidedMissileStrategy::radarRender() const
-{
+void GuidedMissileStrategy::radarRender() const {
   const fvec3& orig = getPath().getPosition();
   const int length = BZDBCache::linedRadarShots;
   const int size   = BZDBCache::sizedRadarShots;
@@ -490,9 +483,10 @@ void GuidedMissileStrategy::radarRender() const
     glBegin(GL_LINES); {
       glVertex2fv(orig);
       if (BZDBCache::leadingShotLine) {
-	glVertex2fv(orig.xy() + dir.xy());
-      } else {
-	glVertex2fv(orig.xy() - dir.xy());
+        glVertex2fv(orig.xy() + dir.xy());
+      }
+      else {
+        glVertex2fv(orig.xy() - dir.xy());
       }
     } glEnd();
 
@@ -501,22 +495,24 @@ void GuidedMissileStrategy::radarRender() const
       glColor3f(1.0f, 0.75f, 0.75f);
       glPointSize((float)size);
       glBegin(GL_POINTS); {
-	glVertex2fv(orig);
+        glVertex2fv(orig);
       } glEnd();
       glPointSize(1.0f);
     }
-  } else {
+  }
+  else {
     if (size > 0) {
       // draw a sized missle
       glPointSize((float)size);
       glBegin(GL_POINTS); {
-	glVertex2fv(orig);
+        glVertex2fv(orig);
       } glEnd();
       glPointSize(1.0f);
-    } else {
+    }
+    else {
       // draw the tiny missle
       glBegin(GL_POINTS); {
-	glVertex2fv(orig);
+        glVertex2fv(orig);
       } glEnd();
     }
   }
@@ -527,6 +523,6 @@ void GuidedMissileStrategy::radarRender() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

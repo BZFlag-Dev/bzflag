@@ -22,23 +22,22 @@ int SDLWindow::my = 0;
 
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), width(-1), height(-1), hasGamma(true), iconified(false)
-{
+  : BzfWindow(_display), width(-1), height(-1), hasGamma(true), iconified(false) {
 }
 
 
-void SDLWindow::setTitle(const char * title) {
+void SDLWindow::setTitle(const char* title) {
   SDL_WM_SetCaption(title, title);
 }
 
 
 void SDLWindow::setFullscreen(bool on) {
-  ((SDLDisplay *)getDisplay())->setFullscreen(on);
+  ((SDLDisplay*)getDisplay())->setFullscreen(on);
 }
 
 
 bool SDLWindow::getFullscreen() const {
-  return ((SDLDisplay *)getDisplay())->getFullscreen();
+  return ((SDLDisplay*)getDisplay())->getFullscreen();
 }
 
 
@@ -149,12 +148,12 @@ void SDLWindow::getPosition(int& x, int& y) {
 
 
 void SDLWindow::setSize(int _width, int _height) {
-  ((SDLDisplay *)getDisplay())->setWindowSize(_width, _height);
+  ((SDLDisplay*)getDisplay())->setWindowSize(_width, _height);
 }
 
 
 void SDLWindow::getSize(int& _width, int& _height) const {
-  ((SDLDisplay *)getDisplay())->getWindowSize(_width, _height);
+  ((SDLDisplay*)getDisplay())->getWindowSize(_width, _height);
 }
 
 
@@ -190,11 +189,11 @@ static float CalculateGammaFromRamp(Uint16 ramp[256]) {
     if ((ramp[i] != 0) && (ramp[i] != 65535)) {
       double B = (double)i / 256.0;
       double A = ramp[i] / 65535.0;
-      sum += (float) (log(A) / log(B));
+      sum += (float)(log(A) / log(B));
       count++;
     }
   }
-  if ( count && sum ) {
+  if (count && sum) {
     gamma = 1.0f / (sum / count);
   }
   return gamma;
@@ -209,7 +208,8 @@ float SDLWindow::getGamma() const {
   int result = SDL_GetGammaRamp(redRamp, greenRamp, blueRamp);
   if (result == -1) {
     printf("Could not get Gamma: %s.\n", SDL_GetError());
-  } else {
+  }
+  else {
     float red   = CalculateGammaFromRamp(redRamp);
     float green = CalculateGammaFromRamp(greenRamp);
     float blue  = CalculateGammaFromRamp(blueRamp);
@@ -230,7 +230,7 @@ void SDLWindow::swapBuffers() {
 
 
 bool SDLWindow::create(void) {
-  if (!((SDLDisplay *)getDisplay())->createWindow()) {
+  if (!((SDLDisplay*)getDisplay())->createWindow()) {
     return false;
   }
   return true;
@@ -238,7 +238,7 @@ bool SDLWindow::create(void) {
 
 
 void SDLWindow::enableGrabMouse(bool on) {
-  ((SDLDisplay *)getDisplay())->enableGrabMouse(on);
+  ((SDLDisplay*)getDisplay())->enableGrabMouse(on);
 }
 
 
@@ -246,6 +246,6 @@ void SDLWindow::enableGrabMouse(bool on) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -12,13 +12,13 @@
 
 /*
  * HUDuiScrollList:
- *	User interface class for controls in a vertical scrollable list.
- *	Child controls can grab key presses and releases in order to
- *	maintain their functionality.
+ *  User interface class for controls in a vertical scrollable list.
+ *  Child controls can grab key presses and releases in order to
+ *  maintain their functionality.
  */
 
-#ifndef	__HUDUISCROLLLIST_H__
-#define	__HUDUISCROLLLIST_H__
+#ifndef __HUDUISCROLLLIST_H__
+#define __HUDUISCROLLLIST_H__
 
 // ancestor class
 #include "HUDuiNestedContainer.h"
@@ -32,9 +32,9 @@
 
 class HUDuiScrollList : public HUDuiNestedContainer {
   public:
-      HUDuiScrollList();
-      HUDuiScrollList(bool paged);
-      ~HUDuiScrollList();
+    HUDuiScrollList();
+    HUDuiScrollList(bool paged);
+    ~HUDuiScrollList();
 
     size_t getSelected() const;
     void setSelected(size_t _index);
@@ -83,6 +83,6 @@ class HUDuiScrollList : public HUDuiNestedContainer {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

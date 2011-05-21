@@ -30,8 +30,7 @@
 //
 
 HUDuiFrame::HUDuiFrame() : lineWidth(1.0f),
-			   style(RectangleStyle)
-{
+  style(RectangleStyle) {
   color[0] = 1.0f;
   color[1] = 1.0f;
   color[2] = 1.0f;
@@ -39,16 +38,15 @@ HUDuiFrame::HUDuiFrame() : lineWidth(1.0f),
   skipRenderLabel = true;
 }
 
-HUDuiFrame::~HUDuiFrame()
-{
+HUDuiFrame::~HUDuiFrame() {
 }
 
 void HUDuiFrame::drawArc(float x, float y, float r, int sides,
-			 float atAngle, float arcAngle)
-{
+                         float atAngle, float arcAngle) {
   // sanity
-  if (sides <= 0)
-     sides = 1;
+  if (sides <= 0) {
+    sides = 1;
+  }
 
   float i = arcAngle / sides;
 
@@ -59,16 +57,15 @@ void HUDuiFrame::drawArc(float x, float y, float r, int sides,
 
   // draw
   glBegin(GL_LINE_STRIP);
-    for (float a = atAngle; a - (atAngle + arcAngle) < 0.001f; a += i) {
-      glVertex2f(r * cos(a), r * sin(a));
-    }
+  for (float a = atAngle; a - (atAngle + arcAngle) < 0.001f; a += i) {
+    glVertex2f(r * cos(a), r * sin(a));
+  }
   glEnd();
 
   glPopMatrix();
- }
+}
 
-void			HUDuiFrame::doRender()
-{
+void      HUDuiFrame::doRender() {
   const float height = getHeight();
   const float width = getWidth();
   const int fontFace = getFontFace()->getFMFace();
@@ -76,9 +73,9 @@ void			HUDuiFrame::doRender()
   const float x = getX();
   const float y = getY();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const float labelWidth = std::max(getLabelWidth(),
-    fm.getStringWidth(fontFace, fontSize, getLabel()));
+                                    fm.getStringWidth(fontFace, fontSize, getLabel()));
   const float labelGap = fm.getStringWidth(fontFace, fontSize, "9");
 
   const float frameY = y;
@@ -98,57 +95,55 @@ void			HUDuiFrame::doRender()
 
   // render frame
   switch (style) {
-    case RectangleStyle:
-      {
-	glBegin(GL_LINES);
-	  glVertex2f(frameX, frameY);
-	  glVertex2f(frameX, frameY - height);
+    case RectangleStyle: {
+      glBegin(GL_LINES);
+      glVertex2f(frameX, frameY);
+      glVertex2f(frameX, frameY - height);
 
-	  glVertex2f(frameX, frameY - height);
-	  glVertex2f(frameX + frameWidth, frameY - height);
+      glVertex2f(frameX, frameY - height);
+      glVertex2f(frameX + frameWidth, frameY - height);
 
-	  glVertex2f(frameX + frameWidth, frameY - height);
-	  glVertex2f(frameX + frameWidth, frameY);
+      glVertex2f(frameX + frameWidth, frameY - height);
+      glVertex2f(frameX + frameWidth, frameY);
 
-	  if (width > labelWidth + labelGap) {
-	    glVertex2f(frameX + frameWidth, frameY);
-	    glVertex2f(frameX + labelWidth + labelGap, frameY);
+      if (width > labelWidth + labelGap) {
+        glVertex2f(frameX + frameWidth, frameY);
+        glVertex2f(frameX + labelWidth + labelGap, frameY);
 
-	    glVertex2f(frameX, frameY);
-	    glVertex2f(frameX + labelGap, frameY);
-	  }
-	glEnd();
+        glVertex2f(frameX, frameY);
+        glVertex2f(frameX + labelGap, frameY);
       }
-      break;
-    case RoundedRectStyle:
-      {
-	glBegin(GL_LINES);
-	  glVertex2f(frameX, frameY - labelGap);
-	  glVertex2f(frameX, frameY - height + labelGap);
+      glEnd();
+    }
+    break;
+    case RoundedRectStyle: {
+      glBegin(GL_LINES);
+      glVertex2f(frameX, frameY - labelGap);
+      glVertex2f(frameX, frameY - height + labelGap);
 
-	  glVertex2f(frameX + labelGap, frameY - height);
-	  glVertex2f(frameX + frameWidth - labelGap, frameY - height);
+      glVertex2f(frameX + labelGap, frameY - height);
+      glVertex2f(frameX + frameWidth - labelGap, frameY - height);
 
-	  glVertex2f(frameX + frameWidth, frameY - height + labelGap);
-	  glVertex2f(frameX + frameWidth, frameY - labelGap);
+      glVertex2f(frameX + frameWidth, frameY - height + labelGap);
+      glVertex2f(frameX + frameWidth, frameY - labelGap);
 
-	  if (width > labelWidth + labelGap) {
-	    glVertex2f(frameX + frameWidth - labelGap, frameY);
-	    glVertex2f(frameX + labelWidth + labelGap, frameY);
-	  }
-	glEnd();
-
-	const float ninety = (float) M_PI / 2.0f;
-	drawArc(frameX + frameWidth - labelGap, frameY - labelGap, labelGap, 20,
-		0, ninety);
-	drawArc(frameX + labelGap, frameY - labelGap, labelGap, 20,
-		ninety, ninety);
-	drawArc(frameX + labelGap, frameY - height + labelGap, labelGap, 20,
-		2*ninety, ninety);
-	drawArc(frameX + frameWidth - labelGap, frameY - height + labelGap, labelGap, 20,
-		3*ninety, ninety);
+      if (width > labelWidth + labelGap) {
+        glVertex2f(frameX + frameWidth - labelGap, frameY);
+        glVertex2f(frameX + labelWidth + labelGap, frameY);
       }
-      break;
+      glEnd();
+
+      const float ninety = (float) M_PI / 2.0f;
+      drawArc(frameX + frameWidth - labelGap, frameY - labelGap, labelGap, 20,
+              0, ninety);
+      drawArc(frameX + labelGap, frameY - labelGap, labelGap, 20,
+              ninety, ninety);
+      drawArc(frameX + labelGap, frameY - height + labelGap, labelGap, 20,
+              2 * ninety, ninety);
+      drawArc(frameX + frameWidth - labelGap, frameY - height + labelGap, labelGap, 20,
+              3 * ninety, ninety);
+    }
+    break;
   }
 
   if (antialias) {
@@ -165,6 +160,6 @@ void			HUDuiFrame::doRender()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -41,26 +41,23 @@ const char* LuaDListMgr::metaName = "DList";
 //
 
 LuaDList::LuaDList(GLuint id)
-: listID(id)
-, maxAttribDepth(0)
-, minAttribDepth(0)
-, exitAttribDepth(0)
-{
+  : listID(id)
+  , maxAttribDepth(0)
+  , minAttribDepth(0)
+  , exitAttribDepth(0) {
   OpenGLGState::registerContextInitializer(StaticFreeContext,
-					   StaticInitContext, this);
+                                           StaticInitContext, this);
 }
 
 
-LuaDList::~LuaDList()
-{
+LuaDList::~LuaDList() {
   FreeContext();
   OpenGLGState::unregisterContextInitializer(StaticFreeContext,
-					     StaticInitContext, this);
+                                             StaticInitContext, this);
 }
 
 
-bool LuaDList::Call() const
-{
+bool LuaDList::Call() const {
   if (listID == INVALID_GL_LIST_ID) {
     return false;
   }
@@ -69,14 +66,12 @@ bool LuaDList::Call() const
 }
 
 
-bool LuaDList::IsValid() const
-{
+bool LuaDList::IsValid() const {
   return (listID != INVALID_GL_LIST_ID);
 }
 
 
-bool LuaDList::Delete()
-{
+bool LuaDList::Delete() {
   if (listID == INVALID_GL_LIST_ID) {
     return false;
   }
@@ -85,13 +80,11 @@ bool LuaDList::Delete()
 }
 
 
-void LuaDList::InitContext()
-{
+void LuaDList::InitContext() {
 }
 
 
-void LuaDList::FreeContext()
-{
+void LuaDList::FreeContext() {
   if (listID == INVALID_GL_LIST_ID) {
     return;
   }
@@ -100,14 +93,12 @@ void LuaDList::FreeContext()
 }
 
 
-void LuaDList::StaticInitContext(void* data)
-{
+void LuaDList::StaticInitContext(void* data) {
   ((LuaDList*)data)->InitContext();
 }
 
 
-void LuaDList::StaticFreeContext(void* data)
-{
+void LuaDList::StaticFreeContext(void* data) {
   ((LuaDList*)data)->FreeContext();
 }
 
@@ -118,8 +109,7 @@ void LuaDList::StaticFreeContext(void* data)
 //  LuaDListMgr
 //
 
-bool LuaDListMgr::PushEntries(lua_State* L)
-{
+bool LuaDListMgr::PushEntries(lua_State* L) {
   CreateMetatable(L);
 
   PUSH_LUA_CFUNC(L, CreateList);
@@ -133,8 +123,7 @@ bool LuaDListMgr::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-const LuaDList* LuaDListMgr::TestLuaDList(lua_State* L, int index)
-{
+const LuaDList* LuaDListMgr::TestLuaDList(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     return NULL;
   }
@@ -142,8 +131,7 @@ const LuaDList* LuaDListMgr::TestLuaDList(lua_State* L, int index)
 }
 
 
-const LuaDList* LuaDListMgr::CheckLuaDList(lua_State* L, int index)
-{
+const LuaDList* LuaDListMgr::CheckLuaDList(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected DList");
   }
@@ -151,8 +139,7 @@ const LuaDList* LuaDListMgr::CheckLuaDList(lua_State* L, int index)
 }
 
 
-LuaDList* LuaDListMgr::GetLuaDList(lua_State* L, int index)
-{
+LuaDList* LuaDListMgr::GetLuaDList(lua_State* L, int index) {
   if (lua_getuserdataextra(L, index) != metaName) {
     luaL_argerror(L, index, "expected DList");
   }
@@ -163,8 +150,7 @@ LuaDList* LuaDListMgr::GetLuaDList(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-bool LuaDListMgr::CreateMetatable(lua_State* L)
-{
+bool LuaDListMgr::CreateMetatable(lua_State* L) {
   luaL_newmetatable(L, metaName);
   luaset_strfunc(L,  "__gc",    MetaGC);
   luaset_strfunc(L,  "__index", MetaIndex);
@@ -174,16 +160,14 @@ bool LuaDListMgr::CreateMetatable(lua_State* L)
 }
 
 
-int LuaDListMgr::MetaGC(lua_State* L)
-{
+int LuaDListMgr::MetaGC(lua_State* L) {
   LuaDList* list = GetLuaDList(L, 1);
   list->~LuaDList();
   return 0;
 }
 
 
-int LuaDListMgr::MetaIndex(lua_State* L)
-{
+int LuaDListMgr::MetaIndex(lua_State* L) {
   const LuaDList* list = CheckLuaDList(L, 1);
   if (list == NULL) {
     return luaL_pushnil(L);
@@ -206,8 +190,7 @@ int LuaDListMgr::MetaIndex(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaDListMgr::CreateList(lua_State* L)
-{
+int LuaDListMgr::CreateList(lua_State* L) {
   luaL_checktype(L, 1, LUA_TFUNCTION);
 
   // notify and check with OpenGLPassState
@@ -250,8 +233,7 @@ int LuaDListMgr::CreateList(lua_State* L)
 }
 
 
-int LuaDListMgr::CallList(lua_State* L)
-{
+int LuaDListMgr::CallList(lua_State* L) {
   const LuaDList* list = CheckLuaDList(L, 1);
   if (list == NULL) {
     return luaL_pushnil(L);
@@ -262,8 +244,7 @@ int LuaDListMgr::CallList(lua_State* L)
 }
 
 
-int LuaDListMgr::DeleteList(lua_State* L)
-{
+int LuaDListMgr::DeleteList(lua_State* L) {
   if (OpenGLGState::isExecutingInitFuncs()) {
     luaL_error(L, "gl.DeleteList can not be used in GLReload");
   }
@@ -284,6 +265,6 @@ int LuaDListMgr::DeleteList(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

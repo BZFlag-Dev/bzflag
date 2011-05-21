@@ -27,8 +27,7 @@ class FlagType;
 struct FiringInfo;
 
 
-class EventHandler
-{
+class EventHandler {
   public:
     enum LoopType {
       Basic,
@@ -169,29 +168,29 @@ class EventHandler
   public:
     class EventInfo {
 
-      friend class EventHandler;
+        friend class EventHandler;
 
       public:
         EventInfo()
-        : reqFullRead (false)
-        , reqGameCtrl (false)
-        , reqInputCtrl(false)
-        , reversed    (false)
-        , reentrant   (false)
-        , ecList      (NULL)
+          : reqFullRead(false)
+          , reqGameCtrl(false)
+          , reqInputCtrl(false)
+          , reversed(false)
+          , reentrant(false)
+          , ecList(NULL)
         {}
 
         EventInfo(const std::string& _name, EventClientList* _ecList,
                   bool _reqFullRead, bool _reqGameCtrl, bool _reqInputCtrl,
                   bool _reversed, bool _reentrant, LoopType _loopType)
-        : name        (_name)
-        , reqFullRead (_reqFullRead)
-        , reqGameCtrl (_reqGameCtrl)
-        , reqInputCtrl(_reqInputCtrl)
-        , reversed    (_reversed)
-        , reentrant   (_reentrant)
-        , loopType    (_loopType)
-        , ecList      (_ecList)
+          : name(_name)
+          , reqFullRead(_reqFullRead)
+          , reqGameCtrl(_reqGameCtrl)
+          , reqInputCtrl(_reqInputCtrl)
+          , reversed(_reversed)
+          , reentrant(_reentrant)
+          , loopType(_loopType)
+          , ecList(_ecList)
         {}
 
         ~EventInfo() {}

@@ -11,11 +11,11 @@
  */
 
 /* WinJoystick:
- *	Encapsulates a Windows MultiMedia (non-DirectInput) joystick
+ *  Encapsulates a Windows MultiMedia (non-DirectInput) joystick
  */
 
 #ifndef BZF_WINJOY_H
-#define	BZF_WINJOY_H
+#define BZF_WINJOY_H
 
 #include "BzfJoystick.h"
 #include <vector>
@@ -23,21 +23,21 @@
 
 class WinJoystick : public BzfJoystick {
   public:
-		WinJoystick();
-		~WinJoystick();
+    WinJoystick();
+    ~WinJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
+    void  initJoystick(const char* joystickName);
+    bool  joystick() const;
+    void  getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string axis);
-    void	setYAxis(const std::string axis);
+    void  getJoyDevices(std::vector<std::string> &list) const;
+    void  getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void  setXAxis(const std::string axis);
+    void  setYAxis(const std::string axis);
 
   private:
     unsigned int JoystickID;
-    bool	inited;
+    bool  inited;
 
     struct AxisInfo {
       std::string name;
@@ -60,6 +60,6 @@ class WinJoystick : public BzfJoystick {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

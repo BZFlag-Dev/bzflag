@@ -44,8 +44,7 @@ static bool PushPermissions(lua_State* L);
 //============================================================================//
 //============================================================================//
 
-bool Constants::PushEntries(lua_State* L)
-{
+bool Constants::PushEntries(lua_State* L) {
   PushGameTypes(L);
   PushGameOptionBits(L);
   PushTeams(L);
@@ -64,8 +63,7 @@ bool Constants::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool PushGameTypes(lua_State* L)
-{
+static bool PushGameTypes(lua_State* L) {
   lua_pushliteral(L, "GAMETYPE");
   lua_newtable(L);
 
@@ -80,12 +78,11 @@ static bool PushGameTypes(lua_State* L)
 }
 
 
-static bool PushGameOptionBits(lua_State* L)
-{
+static bool PushGameOptionBits(lua_State* L) {
   lua_pushliteral(L, "GAMEBITS");
   lua_newtable(L);
 
-  LuaSetDualPair(L, "REPLAY",	ReplayServer);
+  LuaSetDualPair(L, "REPLAY", ReplayServer);
   LuaSetDualPair(L, "SUPER_FLAGS",   SuperFlagGameStyle);
   LuaSetDualPair(L, "NO_TEAM_KILLS", NoTeamKills);
   LuaSetDualPair(L, "JUMPING",       JumpingGameStyle);
@@ -103,8 +100,7 @@ static bool PushGameOptionBits(lua_State* L)
 }
 
 
-static bool PushTeams(lua_State* L)
-{
+static bool PushTeams(lua_State* L) {
   lua_pushliteral(L, "TEAM");
   lua_newtable(L);
 
@@ -126,8 +122,7 @@ static bool PushTeams(lua_State* L)
 }
 
 
-static bool PushShots(lua_State* L)
-{
+static bool PushShots(lua_State* L) {
   lua_pushliteral(L, "SHOT");
   lua_newtable(L);
 
@@ -151,8 +146,7 @@ static bool PushShots(lua_State* L)
 }
 
 
-static bool PushObstacles(lua_State* L)
-{
+static bool PushObstacles(lua_State* L) {
   lua_pushliteral(L, "OBSTACLE");
   lua_newtable(L);
 
@@ -173,8 +167,7 @@ static bool PushObstacles(lua_State* L)
 }
 
 
-static bool PushFlagQualities(lua_State* L)
-{
+static bool PushFlagQualities(lua_State* L) {
   lua_pushliteral(L, "FLAGQUAL");
   lua_newtable(L);
 
@@ -187,8 +180,7 @@ static bool PushFlagQualities(lua_State* L)
 }
 
 
-static bool PushPlayers(lua_State* L)
-{
+static bool PushPlayers(lua_State* L) {
   lua_pushliteral(L, "PLAYER");
   lua_newtable(L);
 
@@ -202,12 +194,11 @@ static bool PushPlayers(lua_State* L)
 }
 
 
-static bool PushPlayerStates(lua_State* L)
-{
+static bool PushPlayerStates(lua_State* L) {
   lua_pushliteral(L, "STATUS");
   lua_newtable(L);
 
-  LuaSetDualPair(L, "DEAD",	eDead);
+  LuaSetDualPair(L, "DEAD", eDead);
   LuaSetDualPair(L, "ALIVE",       eAlive);
   LuaSetDualPair(L, "PAUSED",      ePaused);
   LuaSetDualPair(L, "EXPLODING",   eExploding);
@@ -222,17 +213,16 @@ static bool PushPlayerStates(lua_State* L)
 
 //============================================================================//
 
-static bool PushCapabilities(lua_State* L)
-{
+static bool PushCapabilities(lua_State* L) {
   lua_pushliteral(L, "CAPABILITY");
   lua_newtable(L);
 
-  LuaSetDualPair(L, "JUMP",	  AllowJump);
-  LuaSetDualPair(L, "FIRE",	  AllowShoot);
-  LuaSetDualPair(L, "TURN",	  AllowTurnLeft | AllowTurnRight);
+  LuaSetDualPair(L, "JUMP",   AllowJump);
+  LuaSetDualPair(L, "FIRE",   AllowShoot);
+  LuaSetDualPair(L, "TURN",   AllowTurnLeft | AllowTurnRight);
   LuaSetDualPair(L, "TURN_LEFT",     AllowTurnLeft);
   LuaSetDualPair(L, "TURN_RIGHT",    AllowTurnRight);
-  LuaSetDualPair(L, "MOVE",	  AllowMoveForward | AllowMoveBackward);
+  LuaSetDualPair(L, "MOVE",   AllowMoveForward | AllowMoveBackward);
   LuaSetDualPair(L, "MOVE_FORWARD",  AllowMoveForward);
   LuaSetDualPair(L, "MOVE_BACKWARD", AllowMoveBackward);
   LuaSetDualPair(L, "ALL",   0xFF);
@@ -244,13 +234,12 @@ static bool PushCapabilities(lua_State* L)
 
 
 //============================================================================//
-static bool PushPermissions(lua_State* L)
-{
+static bool PushPermissions(lua_State* L) {
   lua_pushliteral(L, "PERM");
   lua_newtable(L);
 
-#define ADD_PERM(x)		  \
-  lua_pushliteral(L, #x);	    \
+#define ADD_PERM(x)     \
+  lua_pushliteral(L, #x);     \
   lua_pushliteral(L, bz_perm_ ## x); \
   lua_rawset(L, -3);
 
@@ -325,6 +314,6 @@ static bool PushPermissions(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

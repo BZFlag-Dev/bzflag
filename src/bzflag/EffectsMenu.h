@@ -26,19 +26,18 @@
 /** this class provides options for setting the gui
  */
 class EffectsMenu : public HUDDialog {
-public:
-  EffectsMenu();
-  ~EffectsMenu();
+  public:
+    EffectsMenu();
+    ~EffectsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, void* data);
+    HUDuiDefaultKey* getDefaultKey() {
+      return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, void* data);
 
-private:
+  private:
 };
 
 
@@ -48,6 +47,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

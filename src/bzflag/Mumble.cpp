@@ -77,8 +77,7 @@ static LinkedMem* linkedMem = NULL;
 static int shmfd = -1;
 
 
-bool Mumble::init()
-{
+bool Mumble::init() {
   if (!BZDB.isTrue("mumblePosition")) {
     return false;
   }
@@ -110,8 +109,7 @@ bool Mumble::init()
 }
 
 
-void Mumble::kill()
-{
+void Mumble::kill() {
   if (linkedMem == NULL) {
     return;
   }
@@ -137,8 +135,7 @@ void Mumble::kill()
 static HANDLE hMapObject = NULL;
 
 
-bool Mumble::init()
-{
+bool Mumble::init() {
   if (!BZDB.isTrue("mumblePosition")) {
     return false;
   }
@@ -150,7 +147,7 @@ bool Mumble::init()
   }
 
   linkedMem = (LinkedMem*)
-    MapViewOfFile(hMapObject, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(LinkedMem));
+              MapViewOfFile(hMapObject, FILE_MAP_ALL_ACCESS, 0, 0, sizeof(LinkedMem));
   if (linkedMem == NULL) {
     CloseHandle(hMapObject);
     hMapObject = NULL;
@@ -166,8 +163,7 @@ bool Mumble::init()
 }
 
 
-void Mumble::kill()
-{
+void Mumble::kill() {
   if (linkedMem == NULL) {
     return;
   }
@@ -194,8 +190,7 @@ void Mumble::kill()
 //  active()
 //
 
-bool Mumble::active()
-{
+bool Mumble::active() {
   return (linkedMem != NULL);
 }
 
@@ -206,8 +201,7 @@ bool Mumble::active()
 //
 
 #ifndef WIN32
-static uint32_t GetTickCount()
-{
+static uint32_t GetTickCount() {
   struct timeval tv;
   gettimeofday(&tv, NULL);
 
@@ -216,8 +210,7 @@ static uint32_t GetTickCount()
 #endif
 
 
-bool Mumble::update(const fvec3& pos, const fvec3& front, const fvec3& top)
-{
+bool Mumble::update(const fvec3& pos, const fvec3& front, const fvec3& top) {
   if (linkedMem == NULL) {
     return false;
   }
@@ -257,6 +250,6 @@ bool Mumble::update(const fvec3& pos, const fvec3& front, const fvec3& top)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,11 +11,11 @@
  */
 
 /* FlagSceneNode:
- *	Encapsulates information for rendering a flag.
+ *  Encapsulates information for rendering a flag.
  */
 
-#ifndef	BZF_FLAG_SCENE_NODE_H
-#define	BZF_FLAG_SCENE_NODE_H
+#ifndef BZF_FLAG_SCENE_NODE_H
+#define BZF_FLAG_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -30,7 +30,7 @@ class FlagPhase;
 
 class FlagSceneNode : public SceneNode {
 
-  friend class FlagRenderNode;
+    friend class FlagRenderNode;
 
   public:
     FlagSceneNode(const fvec3& pos);
@@ -61,20 +61,20 @@ class FlagSceneNode : public SceneNode {
   protected:
     class FlagRenderNode : public RenderNode {
       public:
-	FlagRenderNode(const FlagSceneNode*);
-	~FlagRenderNode();
+        FlagRenderNode(const FlagSceneNode*);
+        ~FlagRenderNode();
 
-	void render();
-	void renderShadow();
+        void render();
+        void renderShadow();
 
-	const fvec3& getPosition() const { return sceneNode->getCenter(); }
-
-      private:
-	void renderFancyPole();
+        const fvec3& getPosition() const { return sceneNode->getCenter(); }
 
       private:
-	const FlagSceneNode* sceneNode;
-	bool isShadow;
+        void renderFancyPole();
+
+      private:
+        const FlagSceneNode* sceneNode;
+        bool isShadow;
     };
 
 
@@ -83,30 +83,30 @@ class FlagSceneNode : public SceneNode {
     int calcShadowLOD(const SceneRenderer&);
 
   private:
-    FlagPhase*		phase;
+    FlagPhase*    phase;
 
-    int			lod;
-    int			shadowLOD;
+    int     lod;
+    int     shadowLOD;
 
-    bool		flat;
-    bool		translucent;
-    bool		texturing;
+    bool    flat;
+    bool    translucent;
+    bool    texturing;
 
-    float		angle;
-    float		tilt;
-    float		hscl;
+    float   angle;
+    float   tilt;
+    float   hscl;
 
-    fvec4*		color;
-    fvec4		realColor;
-    fvec4		whiteColor;
-    bool		useColor;
+    fvec4*    color;
+    fvec4   realColor;
+    fvec4   whiteColor;
+    bool    useColor;
 
-    OpenGLGState	gstate;
+    OpenGLGState  gstate;
 
-    FlagRenderNode	renderNode;
+    FlagRenderNode  renderNode;
 
-    static const int	minPoleLOD;
-    static const float	lodLengths[maxFlagLODs];
+    static const int  minPoleLOD;
+    static const float  lodLengths[maxFlagLODs];
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H
@@ -115,6 +115,6 @@ class FlagSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

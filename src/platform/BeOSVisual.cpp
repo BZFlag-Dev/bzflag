@@ -13,77 +13,65 @@
 #include "BeOSVisual.h"
 
 BeOSVisual::BeOSVisual(const BeOSDisplay* _display) :
-								display(_display),
-								color(0),
-								depth(0),
-								stencil(0),
-								accum(0),
-								flags(0),
-								doubleBuffer(false)
-{
+  display(_display),
+  color(0),
+  depth(0),
+  stencil(0),
+  accum(0),
+  flags(0),
+  doubleBuffer(false) {
 }
 
-BeOSVisual::~BeOSVisual()
-{
+BeOSVisual::~BeOSVisual() {
 }
 
-void					BeOSVisual::setLevel(int level)
-{
-/*
-  if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
-  else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
-  else pfd.iLayerType = PFD_MAIN_PLANE;
-*/
+void          BeOSVisual::setLevel(int level) {
+  /*
+    if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
+    else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
+    else pfd.iLayerType = PFD_MAIN_PLANE;
+  */
 }
 
-void					BeOSVisual::setDoubleBuffer(bool on)
-{
+void          BeOSVisual::setDoubleBuffer(bool on) {
   doubleBuffer = on;
 }
 
-void					BeOSVisual::setIndex(int minDepth)
-{
+void          BeOSVisual::setIndex(int minDepth) {
 // ?
 //  pfd.iPixelType = PFD_TYPE_COLORINDEX;
 //  pfd.cColorBits = minDepth;
 }
 
-void					BeOSVisual::setRGBA(int minRed, int minGreen,
-								int minBlue, int minAlpha)
-{
+void          BeOSVisual::setRGBA(int minRed, int minGreen,
+                                  int minBlue, int minAlpha) {
 // ?
 //  pfd.iPixelType = PFD_TYPE_RGBA;
 //  pfd.cColorBits = minRed + minGreen + minBlue + minAlpha;
 }
 
-void					BeOSVisual::setDepth(int minDepth)
-{
+void          BeOSVisual::setDepth(int minDepth) {
   depth = minDepth;
 }
 
-void					BeOSVisual::setStencil(int minDepth)
-{
+void          BeOSVisual::setStencil(int minDepth) {
   stencil = minDepth;
 }
 
-void					BeOSVisual::setAccum(int minRed, int minGreen,
-								int minBlue, int minAlpha)
-{
+void          BeOSVisual::setAccum(int minRed, int minGreen,
+                                   int minBlue, int minAlpha) {
   accum = minRed + minGreen + minBlue + minAlpha;
 }
 
-void					BeOSVisual::setStereo(bool on)
-{
+void          BeOSVisual::setStereo(bool on) {
   // do nothing
 }
 
-void					BeOSVisual::setMultisample(int)
-{
+void          BeOSVisual::setMultisample(int) {
   // do nothing
 }
 
-bool					BeOSVisual::build()
-{
+bool          BeOSVisual::build() {
   return true;
 }
 
@@ -92,6 +80,6 @@ bool					BeOSVisual::build()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

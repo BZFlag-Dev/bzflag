@@ -26,8 +26,7 @@
 #include "playing.h"
 #include "guiplaying.h"
 
-InputMenu::InputMenu() : keyboardMapMenu(NULL)
-{
+InputMenu::InputMenu() : keyboardMapMenu(NULL) {
   std::string currentJoystickDevice = BZDB.get("joystickname");
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
@@ -90,8 +89,9 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options->push_back(std::string("Directional"));
   for (i = 0; i < (int)options->size(); i++) {
     std::string currentOption = (*options)[i];
-    if (BZDB.get("forceFeedback") == currentOption)
+    if (BZDB.get("forceFeedback") == currentOption) {
       option->setIndex(i);
+    }
   }
   option->update();
   addControl(option);
@@ -122,9 +122,11 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   options->push_back(std::string("MotionBox"));
   if (getMainWindow()->isGrabEnabled()) {
     option->setIndex(1);
-  } else if (BZDB.isTrue("mouseClamp")) {
+  }
+  else if (BZDB.isTrue("mouseClamp")) {
     option->setIndex(2);
-  } else {
+  }
+  else {
     option->setIndex(0);
   }
   option->update();
@@ -157,19 +159,18 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   initNavigation();
 }
 
-InputMenu::~InputMenu()
-{
+InputMenu::~InputMenu() {
   delete keyboardMapMenu;
 }
 
-void InputMenu::fillJSOptions()
-{
+void InputMenu::fillJSOptions() {
   std::vector<std::string>* xoptions = &jsx->getList();
   std::vector<std::string>* yoptions = &jsy->getList();
   std::vector<std::string> joystickAxes;
   getMainWindow()->getJoyDeviceAxes(joystickAxes);
-  if (joystickAxes.size() == 0)
+  if (joystickAxes.size() == 0) {
     joystickAxes.push_back("N/A");
+  }
   int i;
   for (i = 0; i < (int)joystickAxes.size(); i++) {
     xoptions->push_back(joystickAxes[i]);
@@ -183,8 +184,9 @@ void InputMenu::fillJSOptions()
       found = true;
     }
   }
-  if (!found)
+  if (!found) {
     jsx->setIndex(0);
+  }
   jsx->update();
   found = false;
   for (i = 0; i < (int)yoptions->size(); i++) {
@@ -195,30 +197,31 @@ void InputMenu::fillJSOptions()
     }
   }
   if (!found) {
-    if (yoptions->size() > 1)
+    if (yoptions->size() > 1) {
       jsy->setIndex(1);
-    else
+    }
+    else {
       jsy->setIndex(0);
+    }
   }
   jsy->update();
 }
 
-void			InputMenu::execute()
-{
+void      InputMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == keyMapping) {
-    if (!keyboardMapMenu) keyboardMapMenu = new KeyboardMapMenu;
+    if (!keyboardMapMenu) { keyboardMapMenu = new KeyboardMapMenu; }
     HUDDialogStack::get()->push(keyboardMapMenu);
   }
 }
 
-void			InputMenu::callback(HUDuiControl* w, void* data) {
+void      InputMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* listHUD = (HUDuiList*)w;
   std::vector<std::string> *options = &listHUD->getList();
   std::string selectedOption = (*options)[listHUD->getIndex()];
   switch (((const char*)data)[0]) {
 
-    /* Joystick name */
+      /* Joystick name */
     case 'J':
       BZDB.set("joystickname", selectedOption);
       getMainWindow()->initJoystick(selectedOption);
@@ -226,63 +229,60 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
       // fillJSOptions();
       break;
 
-    /* Joystick x-axis */
+      /* Joystick x-axis */
     case 'X':
       BZDB.set("jsXAxis", selectedOption);
       getMainWindow()->setJoyXAxis(selectedOption);
       break;
 
-    /* Joystick y-axis */
+      /* Joystick y-axis */
     case 'Y':
       BZDB.set("jsYAxis", selectedOption);
       getMainWindow()->setJoyYAxis(selectedOption);
       break;
 
-    /* Active input device */
-    case 'A':
-      {
-	LocalPlayer*   myTank = LocalPlayer::getMyTank();
-	// Are we forced to use one input device, or do we allow it to change automatically?
-	if (selectedOption == "Auto") {
-	  BZDB.set("allowInputChange", "1");
-	} else {
-	  BZDB.set("allowInputChange", "0");
-	  BZDB.set("activeInputDevice", selectedOption);
-	  // Set the current input device to whatever we're forced to
-	  if (myTank) {
-	    myTank->setInputMethod(BZDB.get("activeInputDevice"));
-	  }
-	}
+      /* Active input device */
+    case 'A': {
+      LocalPlayer*   myTank = LocalPlayer::getMyTank();
+      // Are we forced to use one input device, or do we allow it to change automatically?
+      if (selectedOption == "Auto") {
+        BZDB.set("allowInputChange", "1");
       }
-      break;
+      else {
+        BZDB.set("allowInputChange", "0");
+        BZDB.set("activeInputDevice", selectedOption);
+        // Set the current input device to whatever we're forced to
+        if (myTank) {
+          myTank->setInputMethod(BZDB.get("activeInputDevice"));
+        }
+      }
+    }
+    break;
 
     /* Grab mouse */
-    case 'G':
-      {
-	const bool grabbing = (selectedOption == "Window");
-	BZDB.setBool("mousegrab", grabbing);
-	getMainWindow()->enableGrabMouse(grabbing);
+    case 'G': {
+      const bool grabbing = (selectedOption == "Window");
+      BZDB.setBool("mousegrab", grabbing);
+      getMainWindow()->enableGrabMouse(grabbing);
 
-	const bool clamped = (selectedOption == "MotionBox");
-        BZDB.setBool("mouseClamp", clamped);
-      }
-      break;
+      const bool clamped = (selectedOption == "MotionBox");
+      BZDB.setBool("mouseClamp", clamped);
+    }
+    break;
 
     /* Jump while typing */
-    case 'H':
-      {
-	bool jump = (selectedOption == "Yes");
-	BZDB.setBool("jumpTyping", jump ? true : false);
-      }
-      break;
+    case 'H': {
+      bool jump = (selectedOption == "Yes");
+      BZDB.setBool("jumpTyping", jump ? true : false);
+    }
+    break;
 
     /* Reduce turning rate with FOV */
-    case 'B':
-      {
-	bool fov = (selectedOption == "Yes");
-	BZDB.setBool("slowBinoculars", fov ? true : false);
-      }
-      break;
+    case 'B': {
+      bool fov = (selectedOption == "Yes");
+      BZDB.setBool("slowBinoculars", fov ? true : false);
+    }
+    break;
 
     /* Force feedback */
     case 'F':
@@ -292,14 +292,13 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
   }
 }
 
-void			InputMenu::resize(int _width, int _height)
-{
+void      InputMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
   int i;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -334,20 +333,24 @@ void			InputMenu::resize(int _width, int _height)
   std::vector<std::string> *options = &activeInput->getList();
   for (i = 0; i < (int)options->size(); i++) {
     std::string currentOption = (*options)[i];
-    if (BZDB.get("activeInputDevice") == currentOption)
+    if (BZDB.get("activeInputDevice") == currentOption) {
       activeInput->setIndex(i);
+    }
   }
-  if (BZDB.isTrue("allowInputChange"))
+  if (BZDB.isTrue("allowInputChange")) {
     activeInput->setIndex(0);
+  }
 
   for (i = 1; i < count; i++) {
     if (listHUD[i]->getLabel() == "Confine mouse:") {
       HUDuiList* list = reinterpret_cast<HUDuiList*>(listHUD[i]);
       if (BZDB.isTrue("mousegrab")) {
         list->setIndex(1);
-      } else if (BZDB.isTrue("mouseClamp")) {
+      }
+      else if (BZDB.isTrue("mouseClamp")) {
         list->setIndex(2);
-      } else {
+      }
+      else {
         list->setIndex(0);
       }
       break;
@@ -360,6 +363,6 @@ void			InputMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -27,20 +27,20 @@
 #include "WorldInfo.h"
 
 class CustomTetra : public WorldFileObstacle {
-public:
-  CustomTetra();
-  virtual bool read(const char *cmd, std::istream& input);
-  virtual void writeToGroupDef(GroupDefinition*) const;
+  public:
+    CustomTetra();
+    virtual bool read(const char* cmd, std::istream& input);
+    virtual void writeToGroupDef(GroupDefinition*) const;
 
-private:
-  int vertexCount;
+  private:
+    int vertexCount;
 
-  fvec3 vertices[4];
-  fvec3 normals[4];
-  fvec2 texcoords[4];
-  bool useNormals[4];
-  bool useTexcoords[4];
-  BzMaterial materials[4];
+    fvec3 vertices[4];
+    fvec3 normals[4];
+    fvec2 texcoords[4];
+    bool useNormals[4];
+    bool useTexcoords[4];
+    BzMaterial materials[4];
 };
 
 #endif  /* __CUSTOMTETRA_H__ */
@@ -49,6 +49,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

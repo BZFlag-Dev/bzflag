@@ -40,8 +40,7 @@ const char* CustomCone::sideNames[MaterialCount] = {
 };
 
 
-CustomCone::CustomCone()
-{
+CustomCone::CustomCone() {
   // default to a (radius=10, height=10) cylinder
   divisions = 16;
   size = fvec3(10.0f, 10.0f, 10.0f);
@@ -61,14 +60,12 @@ CustomCone::CustomCone()
 }
 
 
-CustomCone::~CustomCone()
-{
+CustomCone::~CustomCone() {
   return;
 }
 
 
-bool CustomCone::read(const char *cmd, std::istream& input)
-{
+bool CustomCone::read(const char* cmd, std::istream& input) {
   bool materror;
 
   if (strcasecmp(cmd, "divisions") == 0) {
@@ -109,7 +106,7 @@ bool CustomCone::read(const char *cmd, std::istream& input)
     }
   }
   else if (parseMaterialsByName(cmd, input, materials, sideNames,
-				MaterialCount, materror)) {
+                                MaterialCount, materror)) {
     if (materror) {
       return false;
     }
@@ -122,8 +119,7 @@ bool CustomCone::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomCone::writeToGroupDef(GroupDefinition* groupdef) const {
   int i;
   const BzMaterial* mats[MaterialCount];
   for (i = 0; i < MaterialCount; i++) {
@@ -137,7 +133,8 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 
   if (cone->isValid()) {
     groupdef->addObstacle(cone);
-  } else {
+  }
+  else {
     delete cone;
   }
 
@@ -149,6 +146,6 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

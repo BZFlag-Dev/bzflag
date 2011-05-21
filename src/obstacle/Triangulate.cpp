@@ -33,8 +33,7 @@ static int Count = 0;
 static int* WorkSet = NULL;
 
 
-static inline bool makeNormal()
-{
+static inline bool makeNormal() {
   // Newell method
   Normal[0] = Normal[1] = Normal[2] = 0.0f;
   for (int i = 0; i < Count; i++) {
@@ -50,8 +49,7 @@ static inline bool makeNormal()
 }
 
 
-static inline bool isConvex(int w0, int w1, int w2)
-{
+static inline bool isConvex(int w0, int w1, int w2) {
   // caution: faces can fold around the normal
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
@@ -66,8 +64,7 @@ static inline bool isConvex(int w0, int w1, int w2)
 }
 
 
-static inline bool isFaceClear(int w0, int w1, int w2)
-{
+static inline bool isFaceClear(int w0, int w1, int w2) {
   int i;
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
@@ -99,7 +96,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
     for (i = 0; i < 3; i++) {
       const float dist = planes[i].planeDist(*Verts[v]);
       if (dist > 0.0f) {
-	break; // this point is clear
+        break; // this point is clear
       }
     }
     if (i == 3) {
@@ -110,8 +107,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
 }
 
 
-static inline float getDot(int w0, int w1, int w2)
-{
+static inline float getDot(int w0, int w1, int w2) {
   const int v0 = WorkSet[w0];
   const int v1 = WorkSet[w1];
   const int v2 = WorkSet[w2];
@@ -122,8 +118,7 @@ static inline float getDot(int w0, int w1, int w2)
 
 
 void triangulateFace(int count, const fvec3** verts,
-		     std::vector<TriIndices>& tris)
-{
+                     std::vector<TriIndices>& tris) {
   tris.clear();
 
   Verts = verts;
@@ -146,7 +141,8 @@ void triangulateFace(int count, const fvec3** verts,
     int offset;
     if (best == Count) {
       offset = Count - 1;
-    } else {
+    }
+    else {
       offset = (best % Count);
     }
 
@@ -164,27 +160,28 @@ void triangulateFace(int count, const fvec3** verts,
 
       const bool convex2 = isConvex(w0, w1, w2);
       if (convex && !convex2) {
-	continue;
+        continue;
       }
 
       const bool faceClear2 = isFaceClear(w0, w1, w2);
       if ((faceClear && !faceClear2) && (convex || !convex2)) {
-	continue;
+        continue;
       }
 
       if (first) {
-	const float score2 = 2.0f - getDot(w0, w1, w2);
-	if ((score2 < score) &&
-	    (convex || !convex2) && (faceClear || !faceClear2)) {
-	  continue;
-	} else {
-	  score = score2;
-	}
+        const float score2 = 2.0f - getDot(w0, w1, w2);
+        if ((score2 < score) &&
+            (convex || !convex2) && (faceClear || !faceClear2)) {
+          continue;
+        }
+        else {
+          score = score2;
+        }
       }
 
       best = w0;
       if (convex && faceClear) {
-	break;
+        break;
       }
       convex = convex2;
       faceClear = faceClear2;
@@ -215,6 +212,6 @@ void triangulateFace(int count, const fvec3** verts,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

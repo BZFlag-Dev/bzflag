@@ -11,11 +11,11 @@
  */
 
 /* SceneDatabase:
- *	Interface for database of geometry to render
+ *  Interface for database of geometry to render
  */
 
-#ifndef	BZF_SCENE_DATABASE_H
-#define	BZF_SCENE_DATABASE_H
+#ifndef BZF_SCENE_DATABASE_H
+#define BZF_SCENE_DATABASE_H
 
 #include "common.h"
 
@@ -30,12 +30,12 @@ class Extents;
 
 
 // NOTE -- SceneDatabase owns all static nodes added to it,
-//	dynamic nodes are the responsibility of the client.
+//  dynamic nodes are the responsibility of the client.
 
 class SceneDatabase {
   public:
     SceneDatabase();
-   virtual  ~SceneDatabase();
+    virtual  ~SceneDatabase();
 
     // returns true if the node would have been deleted
     virtual bool addStaticNode(SceneNode*, bool dontFree) = 0;
@@ -48,7 +48,7 @@ class SceneDatabase {
 
     virtual void updateNodeStyles() = 0;
     virtual void addLights(SceneRenderer& renderer) = 0;
-    virtual void addShadowNodes(SceneRenderer &renderer,
+    virtual void addShadowNodes(SceneRenderer& renderer,
                                 bool staticNodes,
                                 bool dynamicNodes) = 0;
     virtual void addRenderNodes(SceneRenderer& renderer,
@@ -74,6 +74,6 @@ class SceneDatabase {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

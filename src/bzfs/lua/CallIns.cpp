@@ -47,8 +47,8 @@ static const bz_eEventType bz_eRecvCommand = (bz_eEventType)(bz_eLastEvent + 2);
 class RecvCommandData : public bz_EventData {
   public:
     RecvCommandData(const std::string& _cmdLine, int player)
-    : cmdLine(_cmdLine)
-    , playerID(player)
+      : cmdLine(_cmdLine)
+      , playerID(player)
     {}
     std::string cmdLine;
     int playerID;
@@ -56,14 +56,13 @@ class RecvCommandData : public bz_EventData {
 
 
 static char* worldBlob = NULL; // FIXME -- free() in WorldFinalize? ...
-			       // (would require that it always be registered)
+// (would require that it always be registered)
 
 
 //============================================================================//
 //============================================================================//
 
-static int MapEventToCallIn(int eventCode)
-{
+static int MapEventToCallIn(int eventCode) {
   // LUA_REFNIL is -1
   // LUA_NOREF  is -2
   return -(eventCode + 1000);
@@ -79,19 +78,17 @@ class CallIn : public bz_EventHandler {
 
   public:
     CallIn(int _bzCode, const std::string& _name, const std::string& _loopType)
-    : name(_name)
-    , bzCode(_bzCode)
-    , ciCode(MapEventToCallIn(bzCode))
-    , customEvent(bzCode > bz_eLastEvent)
-    , loopType(_loopType)
-    , bzRegistered(false)
-    {
+      : name(_name)
+      , bzCode(_bzCode)
+      , ciCode(MapEventToCallIn(bzCode))
+      , customEvent(bzCode > bz_eLastEvent)
+      , loopType(_loopType)
+      , bzRegistered(false) {
       bzCodeMap[bzCode] = this;
       nameMap[name]   = this;
     }
 
-    virtual ~CallIn()
-    {
+    virtual ~CallIn() {
       Unregister();
     }
 
@@ -104,55 +101,51 @@ class CallIn : public bz_EventHandler {
     inline const std::string& GetName()     const { return name; }
     inline const std::string& GetLoopType() const { return loopType; }
 
-    bool PushCallIn(int argCount)
-    {
+    bool PushCallIn(int argCount) {
       if (L == NULL) {
-	return false;
+        return false;
       }
       if (!lua_checkstack(L, argCount + 2)) {
-	return false; // FIXME -- add a message for lua_checkstack()?
+        return false; // FIXME -- add a message for lua_checkstack()?
       }
       lua_rawgeti(L, LUA_REGISTRYINDEX, ciCode);
       if (!lua_isfunction(L, -1)) {
-	lua_pop(L, 1);
-	return false;
+        lua_pop(L, 1);
+        return false;
       }
       return true;
     }
 
-    bool RunCallIn(int inArgs, int outArgs)
-    {
+    bool RunCallIn(int inArgs, int outArgs) {
       if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
-	bz_debugMessagef(0, "lua call-in error (%s): %s\n",
-			 name.c_str(), lua_tostring(L, -1));
-	lua_pop(L, 1);
-	return false;
+        bz_debugMessagef(0, "lua call-in error (%s): %s\n",
+                         name.c_str(), lua_tostring(L, -1));
+        lua_pop(L, 1);
+        return false;
       }
       return true;
     }
 
-    bool Register()
-    {
+    bool Register() {
       if (customEvent) {
-	return true; // no need to register
+        return true; // no need to register
       }
       if (!bzRegistered) {
-	bz_registerEvent((bz_eEventType)bzCode, this);
-	bzRegistered = true;
-	return true;
+        bz_registerEvent((bz_eEventType)bzCode, this);
+        bzRegistered = true;
+        return true;
       }
       return false;
     }
 
-    bool Unregister()
-    {
+    bool Unregister() {
       if (customEvent) {
-	return true; // no need to remove
+        return true; // no need to remove
       }
       if (bzRegistered) {
-	bz_removeEvent((bz_eEventType)bzCode, this);
-	bzRegistered = false;
-	return true;
+        bz_removeEvent((bz_eEventType)bzCode, this);
+        bzRegistered = false;
+        return true;
       }
       return false;
     }
@@ -161,9 +154,9 @@ class CallIn : public bz_EventHandler {
 
   protected:
     const std::string name;
-    const int	 bzCode; // bzfsAPI event code
-    const int	 ciCode; // lua call-in registry index
-    const bool	customEvent;
+    const int  bzCode; // bzfsAPI event code
+    const int  ciCode; // lua call-in registry index
+    const bool  customEvent;
     const std::string loopType;
 
     bool bzRegistered;
@@ -192,7 +185,7 @@ class CallIn : public bz_EventHandler {
 lua_State* CallIn::L = NULL;
 
 std::map<std::string, CallIn*> CallIn::nameMap;
-std::map<int, CallIn*>	 CallIn::bzCodeMap;
+std::map<int, CallIn*>   CallIn::bzCodeMap;
 
 
 //============================================================================//
@@ -201,29 +194,25 @@ std::map<int, CallIn*>	 CallIn::bzCodeMap;
 //  'script' call-outs
 //
 
-static int GetName(lua_State* L)
-{
+static int GetName(lua_State* L) {
   lua_pushliteral(L, "LuaServer");
   return 1;
 }
 
 
-static int Disable(lua_State* /*L*/)
-{
+static int Disable(lua_State* /*L*/) {
   LuaServer::queueDisable();
   return 0;
 }
 
 
-static int Reload(lua_State* /*L*/)
-{
+static int Reload(lua_State* /*L*/) {
   LuaServer::queueReload();
   return 0;
 }
 
 
-static int SetCallIn(lua_State* L)
-{
+static int SetCallIn(lua_State* L) {
   const std::string name = luaL_checkstring(L, 1);
 
   CallIn* ci = CallIn::Find(name);
@@ -261,8 +250,7 @@ static int SetCallIn(lua_State* L)
 }
 
 
-static int GetCallInInfo(lua_State* L)
-{
+static int GetCallInInfo(lua_State* L) {
   const std::map<std::string, CallIn*>& nameMap = CallIn::GetNameMap();
 
   lua_newtable(L);
@@ -274,8 +262,8 @@ static int GetCallInInfo(lua_State* L)
       lua_pushliteral(L, "func");
       lua_rawgeti(L, LUA_REGISTRYINDEX, ci->GetCICode());
       if (!lua_isfunction(L, -1)) {
-	lua_pop(L, 1);
-	lua_pushboolean(L, false);
+        lua_pop(L, 1);
+        lua_pushboolean(L, false);
       }
       lua_rawset(L, -3);
 
@@ -292,8 +280,7 @@ static int GetCallInInfo(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-bool CallIns::PushEntries(lua_State* L)
-{
+bool CallIns::PushEntries(lua_State* L) {
   CallIn::SetL(L);
 
   PUSH_LUA_CFUNC(L, GetName);
@@ -306,8 +293,7 @@ bool CallIns::PushEntries(lua_State* L)
 }
 
 
-bool CallIns::CleanUp(lua_State* /*L*/)
-{
+bool CallIns::CleanUp(lua_State* /*L*/) {
   const std::map<int, CallIn*>& bzCodeMap = CallIn::GetBzCodeMap();
   std::map<int, CallIn*>::const_iterator it;
   for (it = bzCodeMap.begin(); it != bzCodeMap.end(); ++it) {
@@ -328,7 +314,7 @@ bool CallIns::CleanUp(lua_State* /*L*/)
 //============================================================================//
 
 // typo avoidance  (loop types)
-static const char* BASIC	= "BASIC";
+static const char* BASIC  = "BASIC";
 static const char* SPECIAL      = "SPECIAL";
 static const char* FIRST_TRUE   = "FIRST_TRUE";
 static const char* FIRST_FALSE  = "FIRST_FALSE";
@@ -336,20 +322,20 @@ static const char* FIRST_NUMBER = "FIRST_NUMBER";
 static const char* FIRST_STRING = "FIRST_STRING";
 
 
-#define CALLIN(cpp, lua, loopType)	   \
-  class CI_ ## lua : public CallIn {	 \
-    public:				  \
-      CI_ ## lua()			   \
+#define CALLIN(cpp, lua, loopType)     \
+  class CI_ ## lua : public CallIn {   \
+    public:         \
+      CI_ ## lua()         \
       : CallIn(bz_e ## cpp, #lua, loopType)  \
-      {}				     \
-      ~CI_ ## lua() {}		       \
+      {}             \
+      ~CI_ ## lua() {}           \
       bool execute(bz_EventData* eventData); \
-  };					 \
+  };           \
   static CI_ ## lua  ci ## lua
 
 
-//     bz_e <C++ enum name>	lua call-in name	 loop type      difference
-//     --------------------	----------------	 ---------      ----------
+//     bz_e <C++ enum name> lua call-in name   loop type      difference
+//     -------------------- ----------------   ---------      ----------
 CALLIN(AllowAutoPilotChangeEvent,  AllowAutoPilotChange,    FIRST_FALSE);  // -Event
 CALLIN(AllowCTFCaptureEvent,       AllowCTFCapture,         SPECIAL);      // -Event
 CALLIN(AllowFlagGrabEvent,         AllowFlagGrab,           FIRST_FALSE);  // -Event
@@ -423,8 +409,7 @@ CALLIN(ZoneExitEvent,              ZoneExit,                BASIC);        // -E
 //============================================================================//
 //============================================================================//
 
-bool CI_AllowAutoPilotChange::execute(bz_EventData* eventData)
-{
+bool CI_AllowAutoPilotChange::execute(bz_EventData* eventData) {
   bz_AutoPilotChangeData_V1* ed = (bz_AutoPilotChangeData_V1*)eventData;
 
   if (!ed->allow) {
@@ -452,8 +437,7 @@ bool CI_AllowAutoPilotChange::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AllowCTFCapture::execute(bz_EventData* eventData)
-{
+bool CI_AllowCTFCapture::execute(bz_EventData* eventData) {
   bz_AllowCTFCaptureEventData_V1* ed = (bz_AllowCTFCaptureEventData_V1*)eventData;
 
   if (!ed->allow) {
@@ -490,8 +474,7 @@ bool CI_AllowCTFCapture::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AllowFlagGrab::execute(bz_EventData* eventData)
-{
+bool CI_AllowFlagGrab::execute(bz_EventData* eventData) {
   bz_AllowFlagGrabEventData_V1* ed = (bz_AllowFlagGrabEventData_V1*)eventData;
 
   if (!ed->allow) {
@@ -524,8 +507,7 @@ bool CI_AllowFlagGrab::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AllowKillCommand::execute(bz_EventData* eventData)
-{
+bool CI_AllowKillCommand::execute(bz_EventData* eventData) {
   bz_AllowKillCommandEventData_V1* ed = (bz_AllowKillCommandEventData_V1*)eventData;
 
   if (!ed->allow) {
@@ -553,8 +535,7 @@ bool CI_AllowKillCommand::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AllowPlayer::execute(bz_EventData* eventData)
-{
+bool CI_AllowPlayer::execute(bz_EventData* eventData) {
   bz_AllowPlayerEventData_V1* ed = (bz_AllowPlayerEventData_V1*)eventData;
 
   if (!ed->allow) {
@@ -587,8 +568,7 @@ bool CI_AllowPlayer::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AllowSpawn::execute(bz_EventData* eventData)
-{
+bool CI_AllowSpawn::execute(bz_EventData* eventData) {
   bz_AllowSpawnData_V1* ed = (bz_AllowSpawnData_V1*)eventData;
 
   if (!ed->allow) {
@@ -618,8 +598,7 @@ bool CI_AllowSpawn::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AnointRabbit::execute(bz_EventData* eventData)
-{
+bool CI_AnointRabbit::execute(bz_EventData* eventData) {
   bz_AnointRabbitEventData_V1* ed = (bz_AnointRabbitEventData_V1*)eventData;
 
   if (!PushCallIn(1)) {
@@ -643,8 +622,7 @@ bool CI_AnointRabbit::execute(bz_EventData* eventData)
 }
 
 
-bool CI_AutoPilotChange::execute(bz_EventData* eventData)
-{
+bool CI_AutoPilotChange::execute(bz_EventData* eventData) {
   bz_AutoPilotChangeData_V1* ed = (bz_AutoPilotChangeData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -658,8 +636,7 @@ bool CI_AutoPilotChange::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Ban::execute(bz_EventData* eventData)
-{
+bool CI_Ban::execute(bz_EventData* eventData) {
   bz_BanEventData_V1* ed = (bz_BanEventData_V1*)eventData;
 
   if (!PushCallIn(5)) {
@@ -676,8 +653,7 @@ bool CI_Ban::execute(bz_EventData* eventData)
 }
 
 
-bool CI_BZDBChange::execute(bz_EventData* eventData)
-{
+bool CI_BZDBChange::execute(bz_EventData* eventData) {
   bz_BZDBChangeData_V1* ed = (bz_BZDBChangeData_V1*)eventData;
 
   if (!PushCallIn(1)) {
@@ -690,8 +666,7 @@ bool CI_BZDBChange::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Capture::execute(bz_EventData* eventData)
-{
+bool CI_Capture::execute(bz_EventData* eventData) {
   bz_CTFCaptureEventData_V1* ed = (bz_CTFCaptureEventData_V1*)eventData;
 
   if (!PushCallIn(7)) {
@@ -710,8 +685,7 @@ bool CI_Capture::execute(bz_EventData* eventData)
 }
 
 
-bool CI_FilteredChatMessage::execute(bz_EventData* eventData)
-{
+bool CI_FilteredChatMessage::execute(bz_EventData* eventData) {
   bz_ChatEventData_V1* ed = (bz_ChatEventData_V1*)eventData;
 
   if (!PushCallIn(4)) {
@@ -736,8 +710,7 @@ bool CI_FilteredChatMessage::execute(bz_EventData* eventData)
 }
 
 
-bool CI_FlagDropped::execute(bz_EventData* eventData)
-{
+bool CI_FlagDropped::execute(bz_EventData* eventData) {
   bz_FlagDroppedEventData_V1* ed = (bz_FlagDroppedEventData_V1*)eventData;
 
   if (!PushCallIn(6)) {
@@ -755,8 +728,7 @@ bool CI_FlagDropped::execute(bz_EventData* eventData)
 }
 
 
-bool CI_FlagGrabbed::execute(bz_EventData* eventData)
-{
+bool CI_FlagGrabbed::execute(bz_EventData* eventData) {
   bz_FlagGrabbedEventData_V1* ed = (bz_FlagGrabbedEventData_V1*)eventData;
 
   if (!PushCallIn(7)) {
@@ -775,8 +747,7 @@ bool CI_FlagGrabbed::execute(bz_EventData* eventData)
 }
 
 
-bool CI_FlagReset::execute(bz_EventData* eventData)
-{
+bool CI_FlagReset::execute(bz_EventData* eventData) {
   bz_FlagResetEventData_V1* ed = (bz_FlagResetEventData_V1*)eventData;
 
   if (!PushCallIn(6)) {
@@ -795,8 +766,7 @@ bool CI_FlagReset::execute(bz_EventData* eventData)
 }
 
 
-bool CI_FlagTransfer::execute(bz_EventData* eventData)
-{
+bool CI_FlagTransfer::execute(bz_EventData* eventData) {
   bz_FlagTransferredEventData_V1* ed = (bz_FlagTransferredEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -817,15 +787,17 @@ bool CI_FlagTransfer::execute(bz_EventData* eventData)
   else if (lua_isboolean(L, -1)) {
     const bool value = lua_tobool(L, -1);
     ed->action = value ? bz_FlagTransferredEventData_V1::ContinueSteal
-		       : bz_FlagTransferredEventData_V1::CancelSteal;
+                 : bz_FlagTransferredEventData_V1::CancelSteal;
   }
   else if (lua_israwstring(L, -1)) {
     const std::string cmd = lua_tostring(L, -1);
     if (cmd == "transfer") {
       ed->action = bz_FlagTransferredEventData_V1::ContinueSteal;
-    } else if (cmd == "cancel") {
+    }
+    else if (cmd == "cancel") {
       ed->action = bz_FlagTransferredEventData_V1::CancelSteal;
-    } else if (cmd == "drop") {
+    }
+    else if (cmd == "drop") {
       ed->action = bz_FlagTransferredEventData_V1::DropThief;
     }
   }
@@ -836,8 +808,7 @@ bool CI_FlagTransfer::execute(bz_EventData* eventData)
 }
 
 
-bool CI_GameEnd::execute(bz_EventData* eventData)
-{
+bool CI_GameEnd::execute(bz_EventData* eventData) {
   bz_GameStartEndEventData_V1* ed = (bz_GameStartEndEventData_V1*)eventData;
 
   if (!PushCallIn(1)) {
@@ -850,8 +821,7 @@ bool CI_GameEnd::execute(bz_EventData* eventData)
 }
 
 
-bool CI_GameStart::execute(bz_EventData* eventData)
-{
+bool CI_GameStart::execute(bz_EventData* eventData) {
   bz_GameStartEndEventData_V1* ed = (bz_GameStartEndEventData_V1*)eventData;
 
   if (!PushCallIn(1)) {
@@ -864,8 +834,7 @@ bool CI_GameStart::execute(bz_EventData* eventData)
 }
 
 
-bool CI_GetAutoTeam::execute(bz_EventData* eventData)
-{
+bool CI_GetAutoTeam::execute(bz_EventData* eventData) {
   bz_GetAutoTeamEventData_V1* ed = (bz_GetAutoTeamEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -892,8 +861,7 @@ bool CI_GetAutoTeam::execute(bz_EventData* eventData)
 }
 
 
-bool CI_GetPlayerInfo::execute(bz_EventData* eventData)
-{
+bool CI_GetPlayerInfo::execute(bz_EventData* eventData) {
   bz_GetPlayerInfoEventData_V1* ed = (bz_GetPlayerInfoEventData_V1*)eventData;
 
   if (!PushCallIn(7)) {
@@ -922,8 +890,7 @@ bool CI_GetPlayerInfo::execute(bz_EventData* eventData)
 }
 
 
-bool CI_GetPlayerSpawnPos::execute(bz_EventData* eventData)
-{
+bool CI_GetPlayerSpawnPos::execute(bz_EventData* eventData) {
   bz_GetPlayerSpawnPosEventData_V1* ed = (bz_GetPlayerSpawnPosEventData_V1*)eventData;
 
   if (!PushCallIn(6)) {
@@ -962,8 +929,7 @@ bool CI_GetPlayerSpawnPos::execute(bz_EventData* eventData)
 }
 
 
-bool CI_GetWorld::execute(bz_EventData* eventData)
-{
+bool CI_GetWorld::execute(bz_EventData* eventData) {
   bz_GetWorldEventData_V1* ed = (bz_GetWorldEventData_V1*)eventData;
 
   if (!PushCallIn(4)) {
@@ -971,13 +937,13 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
   }
 
   bz_eGameType gameMode = eTeamFFAGame;
-  if      (ed->ctf)     { gameMode = eClassicCTFGame; }
+  if (ed->ctf)     { gameMode = eClassicCTFGame; }
   else if (ed->rabbit)  { gameMode = eRabbitGame;     }
   else if (ed->openFFA) { gameMode = eOpenFFAGame;    }
 
   lua_pushinteger(L, gameMode);
-  lua_pushstring( L, ed->worldFile.c_str());
-  lua_pushstring( L, ed->worldBlob);
+  lua_pushstring(L, ed->worldFile.c_str());
+  lua_pushstring(L, ed->worldBlob);
   lua_pushboolean(L, ed->generated);
 
   if (!RunCallIn(4, 1)) {
@@ -988,40 +954,40 @@ bool CI_GetWorld::execute(bz_EventData* eventData)
     const int table = lua_gettop(L);
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (!lua_israwstring(L, -2)) {
-	continue;
+        continue;
       }
       const std::string key = lua_tostring(L, -2);
       if (key == "file") {
-	if (lua_israwstring(L, -1)) {
-	  ed->worldFile = lua_tostring(L, -1);
-	}
+        if (lua_israwstring(L, -1)) {
+          ed->worldFile = lua_tostring(L, -1);
+        }
       }
       else if (key == "data") {
-	if (lua_israwstring(L, -1)) {
-	  free(worldBlob);
-	  worldBlob = strdup(lua_tostring(L, -1));
-	  ed->worldBlob = worldBlob;
-	}
+        if (lua_israwstring(L, -1)) {
+          free(worldBlob);
+          worldBlob = strdup(lua_tostring(L, -1));
+          ed->worldBlob = worldBlob;
+        }
       }
       else if (key == "mode") {
-	if (lua_israwnumber(L, -1)) {
-	  ed->openFFA = false;
-	  ed->rabbit  = false;
-	  ed->ctf     = false;
-	  switch ((bz_eGameType)lua_toint(L, -1)) {
-	    case eOpenFFAGame:    { ed->openFFA = true; break; }
-	    case eRabbitGame:     { ed->rabbit  = true; break; }
-	    case eClassicCTFGame: { ed->ctf     = true; break; }
-	    default: {
-	      break;
-	    }
-	  }
-	}
+        if (lua_israwnumber(L, -1)) {
+          ed->openFFA = false;
+          ed->rabbit  = false;
+          ed->ctf     = false;
+          switch ((bz_eGameType)lua_toint(L, -1)) {
+            case eOpenFFAGame:    { ed->openFFA = true; break; }
+            case eRabbitGame:     { ed->rabbit  = true; break; }
+            case eClassicCTFGame: { ed->ctf     = true; break; }
+            default: {
+              break;
+            }
+          }
+        }
       }
       else if (key == "generated") {
-	if (lua_isboolean(L, -1)) {
-	  ed->generated = ed->generated || lua_tobool(L, -1);
-	}
+        if (lua_isboolean(L, -1)) {
+          ed->generated = ed->generated || lua_tobool(L, -1);
+        }
       }
     } // end for
   } // end if lua_istable()
@@ -1051,8 +1017,7 @@ bool CI_HostBanModify::execute(bz_EventData* eventData)
 */
 
 
-bool CI_HostBan::execute(bz_EventData* eventData)
-{
+bool CI_HostBan::execute(bz_EventData* eventData) {
   bz_HostBanEventData_V1* ed = (bz_HostBanEventData_V1*)eventData;
 
   if (!PushCallIn(4)) {
@@ -1068,8 +1033,7 @@ bool CI_HostBan::execute(bz_EventData* eventData)
 }
 
 
-bool CI_IdBan::execute(bz_EventData* eventData)
-{
+bool CI_IdBan::execute(bz_EventData* eventData) {
   bz_IdBanEventData_V1* ed = (bz_IdBanEventData_V1*)eventData;
 
   if (!PushCallIn(5)) {
@@ -1086,8 +1050,7 @@ bool CI_IdBan::execute(bz_EventData* eventData)
 }
 
 
-bool CI_IdleNonPlayerConnection::execute(bz_EventData* eventData)
-{
+bool CI_IdleNonPlayerConnection::execute(bz_EventData* eventData) {
   bz_NewNonPlayerConnectionEventData_V1* ed =
     (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 
@@ -1102,8 +1065,7 @@ bool CI_IdleNonPlayerConnection::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Kick::execute(bz_EventData* eventData)
-{
+bool CI_Kick::execute(bz_EventData* eventData) {
   bz_KickEventData_V1* ed = (bz_KickEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1118,8 +1080,7 @@ bool CI_Kick::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Kill::execute(bz_EventData* eventData)
-{
+bool CI_Kill::execute(bz_EventData* eventData) {
   bz_KillEventData_V1* ed = (bz_KillEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1134,8 +1095,7 @@ bool CI_Kill::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ListServerUpdate::execute(bz_EventData* eventData)
-{
+bool CI_ListServerUpdate::execute(bz_EventData* eventData) {
   bz_ListServerUpdateEvent_V1* ed = (bz_ListServerUpdateEvent_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1152,8 +1112,7 @@ bool CI_ListServerUpdate::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Logging::execute(bz_EventData* eventData)
-{
+bool CI_Logging::execute(bz_EventData* eventData) {
   bz_LoggingEventData_V1* ed = (bz_LoggingEventData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1167,8 +1126,7 @@ bool CI_Logging::execute(bz_EventData* eventData)
 }
 
 
-bool CI_RecvLuaData::execute(bz_EventData* eventData)
-{
+bool CI_RecvLuaData::execute(bz_EventData* eventData) {
   bz_LuaDataEventData_V1* ed = (bz_LuaDataEventData_V1*)eventData;
 
   if (!PushCallIn(6)) {
@@ -1196,8 +1154,7 @@ bool CI_RecvLuaData::execute(bz_EventData* eventData)
 }
 
 
-bool CI_MessageFiltered::execute(bz_EventData* eventData)
-{
+bool CI_MessageFiltered::execute(bz_EventData* eventData) {
   bz_MessageFilteredEventData_V1* ed = (bz_MessageFilteredEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1212,8 +1169,7 @@ bool CI_MessageFiltered::execute(bz_EventData* eventData)
 }
 
 
-bool CI_NetDataReceive::execute(bz_EventData* eventData)
-{
+bool CI_NetDataReceive::execute(bz_EventData* eventData) {
   bz_NetTransferEventData_V1* ed = (bz_NetTransferEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1229,8 +1185,7 @@ bool CI_NetDataReceive::execute(bz_EventData* eventData)
 }
 
 
-bool CI_NetDataSend::execute(bz_EventData* eventData)
-{
+bool CI_NetDataSend::execute(bz_EventData* eventData) {
   bz_NetTransferEventData_V1* ed = (bz_NetTransferEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1246,8 +1201,7 @@ bool CI_NetDataSend::execute(bz_EventData* eventData)
 }
 
 
-bool CI_RawLink::execute(bz_EventData* eventData)
-{
+bool CI_RawLink::execute(bz_EventData* eventData) {
   bz_NewNonPlayerConnectionEventData_V1* ed = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1261,8 +1215,7 @@ bool CI_RawLink::execute(bz_EventData* eventData)
 }
 
 
-bool CI_NewRabbit::execute(bz_EventData* eventData)
-{
+bool CI_NewRabbit::execute(bz_EventData* eventData) {
   bz_NewRabbitEventData_V1* ed = (bz_NewRabbitEventData_V1*)eventData;
 
   if (!PushCallIn(1)) {
@@ -1275,8 +1228,7 @@ bool CI_NewRabbit::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerAuth::execute(bz_EventData* eventData)
-{
+bool CI_PlayerAuth::execute(bz_EventData* eventData) {
   bz_PlayerAuthEventData_V1* ed = (bz_PlayerAuthEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1292,8 +1244,7 @@ bool CI_PlayerAuth::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerCollision::execute(bz_EventData* eventData)
-{
+bool CI_PlayerCollision::execute(bz_EventData* eventData) {
   bz_PlayerCollisionEventData_V1* ed = (bz_PlayerCollisionEventData_V1*)eventData;
 
   if (ed->handled) {
@@ -1324,8 +1275,7 @@ bool CI_PlayerCollision::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerCustomDataChanged::execute(bz_EventData* eventData)
-{
+bool CI_PlayerCustomDataChanged::execute(bz_EventData* eventData) {
   bz_PlayerCustomData_V1* ed = (bz_PlayerCustomData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1340,8 +1290,7 @@ bool CI_PlayerCustomDataChanged::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerDied::execute(bz_EventData* eventData)
-{
+bool CI_PlayerDied::execute(bz_EventData* eventData) {
   bz_PlayerDieEventData_V1* ed = (bz_PlayerDieEventData_V1*)eventData;
 
   if (!PushCallIn(10)) {
@@ -1364,8 +1313,7 @@ bool CI_PlayerDied::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerJoined::execute(bz_EventData* eventData)
-{
+bool CI_PlayerJoined::execute(bz_EventData* eventData) {
   bz_PlayerJoinPartEventData_V1* ed = (bz_PlayerJoinPartEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1382,8 +1330,7 @@ bool CI_PlayerJoined::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerParted::execute(bz_EventData* eventData)
-{
+bool CI_PlayerParted::execute(bz_EventData* eventData) {
   bz_PlayerJoinPartEventData_V1* ed = (bz_PlayerJoinPartEventData_V1*)eventData;
 
   if (!PushCallIn(4)) {
@@ -1400,8 +1347,7 @@ bool CI_PlayerParted::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerPaused::execute(bz_EventData* eventData)
-{
+bool CI_PlayerPaused::execute(bz_EventData* eventData) {
   bz_PlayerPausedEventData_V1* ed = (bz_PlayerPausedEventData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1415,8 +1361,7 @@ bool CI_PlayerPaused::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerPauseRequest::execute(bz_EventData* eventData)
-{
+bool CI_PlayerPauseRequest::execute(bz_EventData* eventData) {
   bz_PlayerPauseRequestData_V1* ed =
     (bz_PlayerPauseRequestData_V1*)eventData;
 
@@ -1449,8 +1394,7 @@ bool CI_PlayerPauseRequest::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
-{
+bool CI_PlayerSentCustomData::execute(bz_EventData* eventData) {
   bz_PlayerCustomData_V1* ed = (bz_PlayerCustomData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1475,8 +1419,7 @@ bool CI_PlayerSentCustomData::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerSpawned::execute(bz_EventData* eventData)
-{
+bool CI_PlayerSpawned::execute(bz_EventData* eventData) {
   bz_PlayerSpawnEventData_V1* ed = (bz_PlayerSpawnEventData_V1*)eventData;
 
   if (!PushCallIn(6)) {
@@ -1498,8 +1441,7 @@ bool CI_PlayerSpawned::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerTeamChange::execute(bz_EventData* eventData)
-{
+bool CI_PlayerTeamChange::execute(bz_EventData* eventData) {
   bz_PlayerTeamChangeData_V1* ed = (bz_PlayerTeamChangeData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1514,8 +1456,7 @@ bool CI_PlayerTeamChange::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerUpdate::execute(bz_EventData* eventData)
-{
+bool CI_PlayerUpdate::execute(bz_EventData* eventData) {
   bz_PlayerUpdateEventData_V1* ed = (bz_PlayerUpdateEventData_V1*)eventData;
 
   if (!PushCallIn(15)) {
@@ -1529,7 +1470,8 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
   lua_pushinteger(L, state.status);
   if (state.phydrv < 0) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushinteger(L, state.phydrv);
   }
   lua_pushboolean(L, state.falling);
@@ -1552,8 +1494,7 @@ bool CI_PlayerUpdate::execute(bz_EventData* eventData)
 }
 
 
-bool CI_PlayerUpdateDone::execute(bz_EventData* eventData)
-{
+bool CI_PlayerUpdateDone::execute(bz_EventData* eventData) {
   bz_PlayerUpdateDoneEventData_V1* ed =
     (bz_PlayerUpdateDoneEventData_V1*)eventData;
 
@@ -1568,8 +1509,7 @@ bool CI_PlayerUpdateDone::execute(bz_EventData* eventData)
 }
 
 
-bool CI_RawChatMessage::execute(bz_EventData* eventData)
-{
+bool CI_RawChatMessage::execute(bz_EventData* eventData) {
   bz_ChatEventData_V1* ed = (bz_ChatEventData_V1*)eventData;
 
   if (!PushCallIn(4)) {
@@ -1594,8 +1534,7 @@ bool CI_RawChatMessage::execute(bz_EventData* eventData)
 }
 
 
-bool CI_RecvCommand::execute(bz_EventData* eventData)
-{
+bool CI_RecvCommand::execute(bz_EventData* eventData) {
   const RecvCommandData* recvCmdData = (RecvCommandData*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1609,8 +1548,7 @@ bool CI_RecvCommand::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Reload::execute(bz_EventData* eventData)
-{
+bool CI_Reload::execute(bz_EventData* eventData) {
   bz_ReloadEventData_V1* ed = (bz_ReloadEventData_V1*)eventData;
 
   if (!PushCallIn(1)) {
@@ -1623,8 +1561,7 @@ bool CI_Reload::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ReportFiled::execute(bz_EventData* eventData)
-{
+bool CI_ReportFiled::execute(bz_EventData* eventData) {
   bz_ReportFiledEventData_V1* ed = (bz_ReportFiledEventData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1638,8 +1575,7 @@ bool CI_ReportFiled::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ServerMsg::execute(bz_EventData* eventData)
-{
+bool CI_ServerMsg::execute(bz_EventData* eventData) {
   bz_ServerMsgEventData_V1* ed = (bz_ServerMsgEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1654,8 +1590,7 @@ bool CI_ServerMsg::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ShotEnded::execute(bz_EventData* eventData)
-{
+bool CI_ShotEnded::execute(bz_EventData* eventData) {
   bz_ShotEndedEventData_V1* ed = (bz_ShotEndedEventData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1670,8 +1605,7 @@ bool CI_ShotEnded::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ShotFired::execute(bz_EventData* eventData)
-{
+bool CI_ShotFired::execute(bz_EventData* eventData) {
   bz_ShotFiredEventData_V1* ed = (bz_ShotFiredEventData_V1*)eventData;
 
   if (!PushCallIn(9)) {
@@ -1694,8 +1628,7 @@ bool CI_ShotFired::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ShotExpired::execute(bz_EventData* eventData)
-{
+bool CI_ShotExpired::execute(bz_EventData* eventData) {
   bz_ShotExpiredEventData_V1* ed = (bz_ShotExpiredEventData_V1*)eventData;
 
   if (!PushCallIn(6)) {
@@ -1713,8 +1646,7 @@ bool CI_ShotExpired::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ShotStopped::execute(bz_EventData* eventData)
-{
+bool CI_ShotStopped::execute(bz_EventData* eventData) {
   bz_ShotStoppedEventData_V1* ed = (bz_ShotStoppedEventData_V1*)eventData;
 
   if (!PushCallIn(7)) {
@@ -1728,9 +1660,10 @@ bool CI_ShotStopped::execute(bz_EventData* eventData)
   lua_pushfloat(L,   ed->pos[1]);
   lua_pushfloat(L,   ed->pos[2]);
 
-  if (ed->obstacleGUID == (uint32_t)-1) {
+  if (ed->obstacleGUID == (uint32_t) - 1) {
     lua_pushnil(L);
-  } else {
+  }
+  else {
     lua_pushinteger(L, ed->obstacleGUID);
   }
 
@@ -1738,8 +1671,7 @@ bool CI_ShotStopped::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ShotRicochet::execute(bz_EventData* eventData)
-{
+bool CI_ShotRicochet::execute(bz_EventData* eventData) {
   bz_ShotRicochetEventData_V1* ed = (bz_ShotRicochetEventData_V1*)eventData;
 
   if (!PushCallIn(7)) {
@@ -1753,9 +1685,10 @@ bool CI_ShotRicochet::execute(bz_EventData* eventData)
   lua_pushfloat(L,   ed->pos[1]);
   lua_pushfloat(L,   ed->pos[2]);
 
-  if (ed->obstacleGUID == (uint32_t)-1) {
+  if (ed->obstacleGUID == (uint32_t) - 1) {
     lua_pushnil(L);
-  } else {
+  }
+  else {
     lua_pushinteger(L, ed->obstacleGUID);
   }
 
@@ -1763,8 +1696,7 @@ bool CI_ShotRicochet::execute(bz_EventData* eventData)
 }
 
 
-bool CI_ShotTeleport::execute(bz_EventData* eventData)
-{
+bool CI_ShotTeleport::execute(bz_EventData* eventData) {
   bz_ShotTeleportEventData_V1* ed = (bz_ShotTeleportEventData_V1*)eventData;
 
   if (!PushCallIn(8)) {
@@ -1784,8 +1716,7 @@ bool CI_ShotTeleport::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Shutdown::execute(bz_EventData* /*eventData*/)
-{
+bool CI_Shutdown::execute(bz_EventData* /*eventData*/) {
   if (!PushCallIn(0)) {
     return false;
   }
@@ -1793,8 +1724,7 @@ bool CI_Shutdown::execute(bz_EventData* /*eventData*/)
 }
 
 
-bool CI_SlashCommand::execute(bz_EventData* eventData)
-{
+bool CI_SlashCommand::execute(bz_EventData* eventData) {
   bz_SlashCommandEventData_V1* ed = (bz_SlashCommandEventData_V1*)eventData;
 
   if (!PushCallIn(2)) {
@@ -1808,8 +1738,7 @@ bool CI_SlashCommand::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Teleport::execute(bz_EventData* eventData)
-{
+bool CI_Teleport::execute(bz_EventData* eventData) {
   bz_TeleportEventData_V1* ed = (bz_TeleportEventData_V1*)eventData;
 
   if (!PushCallIn(3)) {
@@ -1824,8 +1753,7 @@ bool CI_Teleport::execute(bz_EventData* eventData)
 }
 
 
-bool CI_Update::execute(bz_EventData* /*eventData*/)
-{
+bool CI_Update::execute(bz_EventData* /*eventData*/) {
   if (!PushCallIn(0)) {
     return false;
   }
@@ -1834,8 +1762,7 @@ bool CI_Update::execute(bz_EventData* /*eventData*/)
 }
 
 
-bool CI_UnknownSlashCommand::execute(bz_EventData* eventData)
-{
+bool CI_UnknownSlashCommand::execute(bz_EventData* eventData) {
   bz_UnknownSlashCommandEventData_V1* ed = (bz_UnknownSlashCommandEventData_V1*)eventData;
 
   if (ed->handled) {
@@ -1862,8 +1789,7 @@ bool CI_UnknownSlashCommand::execute(bz_EventData* eventData)
 }
 
 
-bool CI_WorldFinalized::execute(bz_EventData* /*eventData*/)
-{
+bool CI_WorldFinalized::execute(bz_EventData* /*eventData*/) {
   // NOTE: plain bz_EventData type, no extra data
   if (!PushCallIn(0)) {
     return false;
@@ -1875,8 +1801,7 @@ bool CI_WorldFinalized::execute(bz_EventData* /*eventData*/)
 }
 
 
-bool CI_ZoneEntry::execute(bz_EventData* /*eventData*/)
-{
+bool CI_ZoneEntry::execute(bz_EventData* /*eventData*/) {
   // FIXME -- not implemented ?
   if (!PushCallIn(0)) {
     return false;
@@ -1885,8 +1810,7 @@ bool CI_ZoneEntry::execute(bz_EventData* /*eventData*/)
 }
 
 
-bool CI_ZoneExit::execute(bz_EventData* /*eventData*/)
-{
+bool CI_ZoneExit::execute(bz_EventData* /*eventData*/) {
   // FIXME -- not implemented ?
   if (!PushCallIn(0)) {
     return false;
@@ -1898,15 +1822,13 @@ bool CI_ZoneExit::execute(bz_EventData* /*eventData*/)
 //============================================================================//
 //============================================================================//
 
-bool CallIns::Shutdown()
-{
+bool CallIns::Shutdown() {
   bz_EventData eventData(bz_eShutdown);
   return ciShutdown.execute(&eventData);
 }
 
 
-bool CallIns::RecvCommand(const std::string& cmdLine, int playerIndex)
-{
+bool CallIns::RecvCommand(const std::string& cmdLine, int playerIndex) {
   const std::string prefix = "/luaserver ";
   if ((cmdLine.size() < prefix.size()) ||
       (cmdLine.substr(0, prefix.size()) != prefix)) {
@@ -1925,6 +1847,6 @@ bool CallIns::RecvCommand(const std::string& cmdLine, int playerIndex)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

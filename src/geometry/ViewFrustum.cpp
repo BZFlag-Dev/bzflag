@@ -20,42 +20,35 @@
 // common headers
 #include "bzfgl.h"
 
-ViewFrustum::ViewFrustum()
-{
+ViewFrustum::ViewFrustum() {
 }
 
-ViewFrustum::~ViewFrustum()
-{
+ViewFrustum::~ViewFrustum() {
   // do nothing
 }
 
-void			ViewFrustum::executeProjection() const
-{
+void      ViewFrustum::executeProjection() const {
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(projectionMatrix);
   glMatrixMode(GL_MODELVIEW);
 }
 
-void			ViewFrustum::executeDeepProjection() const
-{
+void      ViewFrustum::executeDeepProjection() const {
   glMatrixMode(GL_PROJECTION);
   glLoadMatrixf(deepProjectionMatrix);
   glMatrixMode(GL_MODELVIEW);
 }
 
-void			ViewFrustum::executeView() const
-{
+void      ViewFrustum::executeView() const {
   glMultMatrixf(viewMatrix);
 }
 
-void			ViewFrustum::executeOrientation() const
-{
+void      ViewFrustum::executeOrientation() const {
   glMultMatrixf(viewMatrix);
   glTranslatef(eye.x, eye.y, eye.z);
 }
 
-void			ViewFrustum::executeBillboard() const
-{
+void      ViewFrustum::executeBillboard() const {
   glMultMatrixf(billboardMatrix);
 }
 
@@ -63,6 +56,6 @@ void			ViewFrustum::executeBillboard() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

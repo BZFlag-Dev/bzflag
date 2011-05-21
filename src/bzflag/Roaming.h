@@ -29,69 +29,69 @@
 #define ROAM (Roaming::instance())
 
 class Roaming : public Singleton<Roaming> {
-public:
-  Roaming(); // c'tor
+  public:
+    Roaming(); // c'tor
 
-  enum RoamingView {
-    roamViewDisabled = 0,
-    roamViewFree,
-    roamViewTrack,
-    roamViewFollow,
-    roamViewFP,
-    roamViewFlag,
-    roamViewCount
-  };
-  bool isRoaming(void) const;
-  RoamingView getMode(void) const;
-  void setMode(RoamingView newView);
+    enum RoamingView {
+      roamViewDisabled = 0,
+      roamViewFree,
+      roamViewTrack,
+      roamViewFollow,
+      roamViewFP,
+      roamViewFlag,
+      roamViewCount
+    };
+    bool isRoaming(void) const;
+    RoamingView getMode(void) const;
+    void setMode(RoamingView newView);
 
-  RoamingView parseView(const std::string& view) const;
-  const char* getViewName(RoamingView) const;
+    RoamingView parseView(const std::string& view) const;
+    const char* getViewName(RoamingView) const;
 
-  enum RoamingTarget {
-    next = 0,
-    previous,
-    explicitSet
-  };
-  void changeTarget(RoamingTarget target, int explicitIndex = 0);
-  /* if view is in any mode in which they are not valid,
-     getTargetTank and getTargetFlag will return NULL.  Otherwise
-     they return the index of the object that you're
-     tracking/following/driving with */
-  Player* getTargetTank(void) const;
-  Flag*   getTargetFlag(void) const;
+    enum RoamingTarget {
+      next = 0,
+      previous,
+      explicitSet
+    };
+    void changeTarget(RoamingTarget target, int explicitIndex = 0);
+    /* if view is in any mode in which they are not valid,
+       getTargetTank and getTargetFlag will return NULL.  Otherwise
+       they return the index of the object that you're
+       tracking/following/driving with */
+    Player* getTargetTank(void) const;
+    Flag*   getTargetFlag(void) const;
 
-  void buildRoamingLabel(void);
-  std::string getRoamingLabel(void) const;
+    void buildRoamingLabel(void);
+    std::string getRoamingLabel(void) const;
 
-  struct RoamingCamera {
-    fvec3 pos;
-    float theta;
-    float phi;
-    float zoom;
-  };
-  void setCamera(const RoamingCamera* newCam);
-  void resetCamera(void);
-  /* note that dc is a camera structure of *changes* (thus dc)
-     not new values */
-  void updatePosition(RoamingCamera* dc, float dt);
-  const RoamingCamera* getCamera(void) const;
-  void setZoom(float newZoom);
-  float getZoom(void) const;
+    struct RoamingCamera {
+      fvec3 pos;
+      float theta;
+      float phi;
+      float zoom;
+    };
+    void setCamera(const RoamingCamera* newCam);
+    void resetCamera(void);
+    /* note that dc is a camera structure of *changes* (thus dc)
+       not new values */
+    void updatePosition(RoamingCamera* dc, float dt);
+    const RoamingCamera* getCamera(void) const;
+    void setZoom(float newZoom);
+    float getZoom(void) const;
 
-protected:
-  friend class Singleton<Roaming>;
+  protected:
+    friend class Singleton<Roaming>;
 
-private:
-  bool changePlayer(RoamingTarget targetType); // used by changeTarget()
+  private:
+    bool changePlayer(RoamingTarget targetType); // used by changeTarget()
 
-private:
-  RoamingView view;
-  RoamingCamera camera;
-  int targetManual;
-  int targetWinner;
-  int targetFlag;
-  std::string roamingLabel;
+  private:
+    RoamingView view;
+    RoamingCamera camera;
+    int targetManual;
+    int targetWinner;
+    int targetFlag;
+    std::string roamingLabel;
 };
 
 inline bool Roaming::isRoaming(void) const {
@@ -116,21 +116,26 @@ inline std::string Roaming::getRoamingLabel(void) const {
 
 inline Player* Roaming::getTargetTank() const {
   if ((getMode() == roamViewFollow)
-    || (getMode() == roamViewFP)
-    || (getMode() == roamViewTrack))
+      || (getMode() == roamViewFP)
+      || (getMode() == roamViewTrack)) {
     return getPlayerByIndex(targetWinner);
-  else
+  }
+  else {
     return NULL;
+  }
 }
 
 inline Flag* Roaming::getTargetFlag() const {
-  if (!(getMode() == roamViewFlag))
+  if (!(getMode() == roamViewFlag)) {
     return NULL;
+  }
   World* world = World::getWorld();
-  if (!world)
+  if (!world) {
     return NULL;
-  else
+  }
+  else {
     return &(world->getFlag(targetFlag));
+  }
 }
 
 inline const Roaming::RoamingCamera* Roaming::getCamera() const {
@@ -142,6 +147,6 @@ inline const Roaming::RoamingCamera* Roaming::getCamera() const {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

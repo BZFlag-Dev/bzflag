@@ -13,10 +13,9 @@
 // bzflag global header
 #include "bzfsChatVerify.h"
 
-bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t)
-{
-  PlayerInfo &player = playerData->player;
-  const std::string &oldMsg = player.getLastMsg();
+bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t) {
+  PlayerInfo& player = playerData->player;
+  const std::string& oldMsg = player.getLastMsg();
   float dt = (float)(BzTime::getCurrent() - player.getLastMsgTime());
 
   // don't consider whitespace
@@ -29,19 +28,19 @@ bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t)
     // does it match the last message? (disregarding whitespace and case)
     if ((TextUtils::compare_nocase(newMsg, oldMsg) == 0) && (newMsg.length() > 0)) {
       if (newMsg[0] != '/') {
-	player.incSpamWarns();
-	sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
+        player.incSpamWarns();
+        sendMessage(ServerPlayer, t, "***Server Warning: Please do not spam.");
 
-	// has this player already had his share of warnings?
-	if (player.getSpamWarns() > clOptions->spamWarnMax
-	    || clOptions->spamWarnMax == 0) {
-	  sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
-	  logDebugMessage(2,"Kicking player %s [%d] for spamming too much: "
-			  "2 messages sent within %fs after %d warnings\n",
-			  player.getCallSign(), t, dt, player.getSpamWarns());
-	  removePlayer(t, "spam", true);
-	  return true;
-	}
+        // has this player already had his share of warnings?
+        if (player.getSpamWarns() > clOptions->spamWarnMax
+            || clOptions->spamWarnMax == 0) {
+          sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
+          logDebugMessage(2, "Kicking player %s [%d] for spamming too much: "
+                          "2 messages sent within %fs after %d warnings\n",
+                          player.getCallSign(), t, dt, player.getSpamWarns());
+          removePlayer(t, "spam", true);
+          return true;
+        }
       }
     }
   }
@@ -62,9 +61,8 @@ bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t)
  *  compatibility client-side message processing (as was used for the
  *  /me command at one point).
  */
-bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t)
-{
-  PlayerInfo &player = playerData->player;
+bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t) {
+  PlayerInfo& player = playerData->player;
   static const int tooLong = MaxPacketLen / 2;
   const int totalChars = strlen(message);
 
@@ -76,9 +74,9 @@ bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t)
     int i;
 
     /* tally up the junk */
-    for (i=0; i < totalChars; i++) {
+    for (i = 0; i < totalChars; i++) {
       if (!TextUtils::isPrintable(message[i])) {
-	badChars++;
+        badChars++;
       }
     }
 
@@ -87,8 +85,8 @@ bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t)
      */
     if (badChars > 5) {
       sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars\n",
-		      player.getCallSign(), t, badChars, totalChars);
+      logDebugMessage(2, "Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars\n",
+                      player.getCallSign(), t, badChars, totalChars);
       removePlayer(t, "garbage");
 
       // they're only happy when it rains
@@ -105,6 +103,6 @@ bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

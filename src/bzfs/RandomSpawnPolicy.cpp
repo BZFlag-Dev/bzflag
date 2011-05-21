@@ -25,26 +25,24 @@
 #include "DropGeometry.h"
 
 
-RandomSpawnPolicy::RandomSpawnPolicy()
-{
+RandomSpawnPolicy::RandomSpawnPolicy() {
 }
 
-RandomSpawnPolicy::~RandomSpawnPolicy()
-{
+RandomSpawnPolicy::~RandomSpawnPolicy() {
 }
 
 void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
-                                    bool onGroundOnly, bool /*notNearEdges*/)
-{
+                                    bool onGroundOnly, bool /*notNearEdges*/) {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
    * spawn.
    */
 
-  GameKeeper::Player *playerData
+  GameKeeper::Player* playerData
     = GameKeeper::Player::getPlayerByIndex(playerId);
-  if (!playerData)
+  if (!playerData) {
     return;
+  }
 
   const PlayerInfo& pi = playerData->player;
   TeamColor t = pi.getTeam();
@@ -58,12 +56,13 @@ void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
      * position on one of their team's available bases.
      */
 
-    TeamBases &teamBases = bases[t];
-    const TeamBase &base = teamBases.getRandomBase();
+    TeamBases& teamBases = bases[t];
+    const TeamBase& base = teamBases.getRandomBase();
     base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
 
-  } else {
+  }
+  else {
     /* *** "random" spawn position selection occurs below here. ***
      *
      * Basic idea is to just pick a purely random valid point and just
@@ -80,41 +79,40 @@ void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getPlayerSpawnPoint(&pi, pos)) {
-	pos.x = ((float)bzfrand() - 0.5f) * size;
-	pos.y = ((float)bzfrand() - 0.5f) * size;
-	pos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
+        pos.x = ((float)bzfrand() - 0.5f) * size;
+        pos.y = ((float)bzfrand() - 0.5f) * size;
+        pos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 
       const float waterLevel = world->getWaterLevel();
       float minZ = 0.0f;
       if (waterLevel > minZ) {
-	minZ = waterLevel;
+        minZ = waterLevel;
       }
       float maxZ = maxHeight;
       if (onGroundOnly) {
-	maxZ = 0.0f;
+        maxZ = 0.0f;
       }
 
       if (DropGeometry::dropPlayer(pos, minZ, maxZ)) {
-	foundspot = true;
+        foundspot = true;
       }
 
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
-	tries = 0;
-	if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
-	  //Just drop the sucka in, and pray
-	  logDebugMessage(1,"Warning: RandomSpawnPolicy ran out of time, just dropping the sucker in\n");
-	  break;
-	}
+        tries = 0;
+        if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
+          //Just drop the sucka in, and pray
+          logDebugMessage(1, "Warning: RandomSpawnPolicy ran out of time, just dropping the sucker in\n");
+          break;
+        }
       }
     }
   }
 }
 
-void RandomSpawnPolicy::getAzimuth(float &azimuth)
-{
+void RandomSpawnPolicy::getAzimuth(float& azimuth) {
   azimuth = (float)(bzfrand() * 2.0 * M_PI);
 }
 
@@ -123,6 +121,6 @@ void RandomSpawnPolicy::getAzimuth(float &azimuth)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

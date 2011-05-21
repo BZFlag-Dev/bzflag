@@ -32,8 +32,7 @@ BzTime CustomWeapon::sync = BzTime::getCurrent();
 
 const float CustomWeapon::minWeaponDelay = 0.1f;
 
-CustomWeapon::CustomWeapon(const MeshObstacle* _mesh)
-{
+CustomWeapon::CustomWeapon(const MeshObstacle* _mesh) {
   pos = fvec3(0.0f, 0.0f, 0.0f);
   size = fvec3(1.0f, 1.0f, 1.0f);
   rotation = 0.0f;
@@ -52,8 +51,7 @@ CustomWeapon::CustomWeapon(const MeshObstacle* _mesh)
 }
 
 
-bool CustomWeapon::read(const char *cmd, std::istream& input)
-{
+bool CustomWeapon::read(const char* cmd, std::istream& input) {
   const std::string lower = TextUtils::tolower(cmd);
 
   if ((lower == "type")      ||
@@ -78,8 +76,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
 }
 
 
-bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
-{
+bool CustomWeapon::readLine(const std::string& cmd, const std::string& line) {
   const std::string lower = TextUtils::tolower(cmd);
 
   std::istringstream parms(line);
@@ -95,10 +92,11 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
 
     while (parms >> d) {
       if (d < minWeaponDelay) {
-	std::cout << "skipping weapon delay of " << d << " seconds" << std::endl;
-	continue;
-      } else {
-	delay.push_back(d);
+        std::cout << "skipping weapon delay of " << d << " seconds" << std::endl;
+        continue;
+      }
+      else {
+        delay.push_back(d);
       }
     }
     if (delay.empty()) {
@@ -109,14 +107,16 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
     std::string abbv;
     parms >> abbv;
     type = Flag::getDescFromAbbreviation(abbv.c_str());
-    if (type == NULL)
+    if (type == NULL) {
       return false;
+    }
   }
   else if (lower == "color") {
     int team;
     if (!(parms >> team)) {
       std::cout << "weapon color requires a team number" << std::endl;
-    } else {
+    }
+    else {
       teamColor = (TeamColor)team;
     }
   }
@@ -136,17 +136,21 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
     TextUtils::tolower(triggerName);
     if (triggerName == "oncap") {
       triggerType = bz_eCaptureEvent;
-    } else if (triggerName == "onspawn") {
+    }
+    else if (triggerName == "onspawn") {
       triggerType = bz_ePlayerSpawnEvent;
-    } else if (triggerName == "ondie") {
+    }
+    else if (triggerName == "ondie") {
       triggerType = bz_ePlayerDieEvent;
-    } else if (triggerName == "none") {
+    }
+    else if (triggerName == "none") {
       triggerType = bz_eNullEvent;
-    } else {
+    }
+    else {
       std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
       return true;
     }
-    logDebugMessage(4,"Adding world weapon triggered '%s'\n", triggerName.c_str());
+    logDebugMessage(4, "Adding world weapon triggered '%s'\n", triggerName.c_str());
   }
   else if (lower == "eventteam") {
     parms >> eventTeam;
@@ -164,8 +168,7 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line)
   return true;
 }
 
-void CustomWeapon::writeToWorld(WorldInfo* world) const
-{
+void CustomWeapon::writeToWorld(WorldInfo* world) const {
   fvec3 p = pos;
   float r = rotation;
   float t = tilt;
@@ -197,6 +200,6 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

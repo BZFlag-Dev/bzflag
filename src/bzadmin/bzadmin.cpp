@@ -54,9 +54,9 @@ int main(int argc, char** argv) {
       return 1;
     }
     if (LOBYTE(wsaData.wVersion) != major ||
-	HIBYTE(wsaData.wVersion) != minor) {
+    HIBYTE(wsaData.wVersion) != minor) {
       std::cerr << "Invalid WinSock version (got " << (int) LOBYTE(wsaData.wVersion) <<
-	'.' << (int) HIBYTE(wsaData.wVersion) << ", expected" << major << '.' << minor << ')';
+      '.' << (int) HIBYTE(wsaData.wVersion) << ", expected" << major << '.' << minor << ')';
       WSACleanup();
       return 1;
     }
@@ -70,34 +70,37 @@ int main(int argc, char** argv) {
 
   // no curses, use stdboth as default instead
   const UIMap& interfaces = UIMap::instance();
-  if (interfaces.find("curses") == interfaces.end())
+  if (interfaces.find("curses") == interfaces.end()) {
     uiName = "stdboth";
+  }
 
   // build a usage string with all interfaces
   UIMap::const_iterator uiIter;
   std::string uiUsage;
-  for (uiIter = interfaces.begin(); uiIter != interfaces.end(); ++uiIter)
+  for (uiIter = interfaces.begin(); uiIter != interfaces.end(); ++uiIter) {
     uiUsage += uiIter->first + '|';
+  }
   uiUsage = std::string("[-ui ") + uiUsage.substr(0, uiUsage.size() - 1) + ']';
 
   // register and parse command line arguments
   OptionParser op(std::string("bzadmin ") + getAppVersion(),
-		  "CALLSIGN[:password]@HOST[:PORT] [COMMAND] [COMMAND] ...");
+                  "CALLSIGN[:password]@HOST[:PORT] [COMMAND] [COMMAND] ...");
   const std::string uiOption("ui");
   const std::string uiMsg = "choose a user interface";
   op.registerVariable(uiOption, uiName, uiUsage, uiMsg);
   op.registerVariable("list", startupInfo.listServerURL, "[-list <list-server-url>]", "specify a list server to use");
   op.registerVector("show", visibleMsgs, "[-show msgtype{,msgtype}*]",
-		    "tell bzadmin to show these message types");
+                    "tell bzadmin to show these message types");
   op.registerVector("hide", invisibleMsgs, "[-hide msgtype{,msgtype}*]",
-		    "tell bzadmin not to show these message types");
-  if (!op.parse(argc, argv))
+                    "tell bzadmin not to show these message types");
+  if (!op.parse(argc, argv)) {
     return 1;
+  }
 
   // check that the ui is valid
   uiIter = UIMap::instance().find(uiName);
   if (uiIter == UIMap::instance().end()) {
-    std::cerr<<"There is no interface called \""<<uiName<<"\"."<<std::endl;
+    std::cerr << "There is no interface called \"" << uiName << "\"." << std::endl;
     return 1;
   }
 
@@ -106,32 +109,33 @@ int main(int argc, char** argv) {
     int atPos;
     std::string callsign = "", password = "", serverName = "";
     if (!(op.getParameters().size() > 0 &&
-	  (atPos = op.getParameters()[0].find('@')) > 0)) {
+          (atPos = op.getParameters()[0].find('@')) > 0)) {
       // input callsign and host interactively
       std::cout << "No callsign@host specified.  Please input them" << std::endl;
       std::cout << "Callsign: ";
       std::getline(std::cin, callsign);
       if (callsign.size() <= 1) {
-	std::cerr << "You must specify a callsign.  Exiting." << std::endl;
-	return 1;
+        std::cerr << "You must specify a callsign.  Exiting." << std::endl;
+        return 1;
       }
       std::cout << "Password (optional): ";
       std::getline(std::cin, password);
       if (password.size() <= 1) {
-	std::cerr << "Not using central login" << std::endl;
+        std::cerr << "Not using central login" << std::endl;
       }
       std::cout << "Server[:port] to connect to: ";
       std::getline(std::cin, serverName);
       if (serverName.size() <= 1) {
-	std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
-	return 1;
+        std::cerr << "You must specify a host name to connect to.  Exiting." << std::endl;
+        return 1;
       }
-    } else { // callsign:password@host:port on command line
+    }
+    else {   // callsign:password@host:port on command line
       callsign = op.getParameters()[0].substr(0, atPos);
       int pPos = callsign.find(':');
       if (pPos != -1) {
-	password = callsign.substr(pPos + 1).c_str();
-	callsign = callsign.substr(0, pPos);
+        password = callsign.substr(pPos + 1).c_str();
+        callsign = callsign.substr(0, pPos);
       }
       serverName = op.getParameters()[0].substr(atPos + 1);
     }
@@ -146,9 +150,9 @@ int main(int argc, char** argv) {
     strncpy(startupInfo.serverName, serverName.c_str(), sizeof(startupInfo.serverName) - 1);
   }
   std::cerr << "Connecting to " <<
-    startupInfo.callsign << "@" <<
-    startupInfo.serverName << ":" <<
-    startupInfo.serverPort;
+            startupInfo.callsign << "@" <<
+            startupInfo.serverName << ":" <<
+            startupInfo.serverPort;
   if (strlen(startupInfo.password)) {
     std::cerr << " using central login";
   }
@@ -156,37 +160,41 @@ int main(int argc, char** argv) {
 
   // try to connect
   BZAdminClient client;
-  if (!client.isValid())
+  if (!client.isValid()) {
     return 1;
+  }
 
   unsigned int i;
-  for (i = 0; i < visibleMsgs.size(); ++i)
+  for (i = 0; i < visibleMsgs.size(); ++i) {
     client.showMessageType(visibleMsgs[i]);
-  for (i = 0; i < invisibleMsgs.size(); ++i)
+  }
+  for (i = 0; i < invisibleMsgs.size(); ++i) {
     client.ignoreMessageType(invisibleMsgs[i]);
+  }
 
   // if we got commands as arguments, send them
   if (op.getParameters().size() > 1) {
     // if we have a token wait a bit for global login
     // FIXME: should "know" when we are logged in (or fail) and only wait that long.
-    if (startupInfo.token[0] != 0)
+    if (startupInfo.token[0] != 0) {
       BzTime::sleep(5.0);
+    }
     for (unsigned int j = 1; j < op.getParameters().size(); ++j) {
       const std::string& cmd = op.getParameters()[j];
       if (cmd == "/quit") {
-	client.waitForServer();
-	return 0;
+        client.waitForServer();
+        return 0;
       }
       else if (strncasecmp(cmd.c_str(), "/sleep", 6) == 0) {
-	const char* start = cmd.c_str() + 6;
-	char* endptr;
-	double sleepTime = strtod(start, &endptr);
-	if (endptr != start) {
-	  BzTime::sleep(sleepTime);
-	}
+        const char* start = cmd.c_str() + 6;
+        char* endptr;
+        double sleepTime = strtod(start, &endptr);
+        if (endptr != start) {
+          BzTime::sleep(sleepTime);
+        }
       }
       else {
-	client.sendMessage(cmd, AllPlayers);
+        client.sendMessage(cmd, AllPlayers);
       }
     }
   }
@@ -209,6 +217,6 @@ int main(int argc, char** argv) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

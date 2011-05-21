@@ -24,13 +24,12 @@
 #define _MAX_WORLD_SHOTS 30
 
 
-class AutoAllowTimerTickHandler : public bz_EventHandler
-{
-public:
-  AutoAllowTimerTickHandler();
-  virtual ~AutoAllowTimerTickHandler();
+class AutoAllowTimerTickHandler : public bz_EventHandler {
+  public:
+    AutoAllowTimerTickHandler();
+    virtual ~AutoAllowTimerTickHandler();
 
-  virtual void process(bz_EventData *eventData);
+    virtual void process(bz_EventData* eventData);
 
 };
 
@@ -40,6 +39,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

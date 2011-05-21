@@ -11,11 +11,11 @@
  */
 
 /* PlatformFactory:
- *	Abstract builder for platform dependent stuff.
+ *  Abstract builder for platform dependent stuff.
  */
 
 #ifndef BZF_PLATFORM_FACTORY_H
-#define	BZF_PLATFORM_FACTORY_H
+#define BZF_PLATFORM_FACTORY_H
 
 #include "common.h"
 
@@ -27,27 +27,27 @@ class BzfJoystick;
 
 class PlatformFactory {
   public:
-			PlatformFactory();
-    virtual		~PlatformFactory();
+    PlatformFactory();
+    virtual   ~PlatformFactory();
 
-    virtual BzfDisplay*	 createDisplay(const char* name,
-				const char* videoFormat) = 0;
-    virtual BzfVisual*	 createVisual(const BzfDisplay*) = 0;
-    virtual BzfWindow*	 createWindow(const BzfDisplay*, BzfVisual*) = 0;
+    virtual BzfDisplay*  createDisplay(const char* name,
+                                       const char* videoFormat) = 0;
+    virtual BzfVisual*   createVisual(const BzfDisplay*) = 0;
+    virtual BzfWindow*   createWindow(const BzfDisplay*, BzfVisual*) = 0;
     virtual BzfJoystick* createJoystick();
 
-    static PlatformFactory*	getInstance();
-    static BzfMedia*		getMedia();
+    static PlatformFactory* getInstance();
+    static BzfMedia*    getMedia();
 
   private:
-			PlatformFactory(const PlatformFactory&);
-    PlatformFactory&	operator=(const PlatformFactory&);
+    PlatformFactory(const PlatformFactory&);
+    PlatformFactory&  operator=(const PlatformFactory&);
 
-    virtual BzfMedia*	createMedia() = 0;
+    virtual BzfMedia* createMedia() = 0;
 
   private:
-    static PlatformFactory*	instance;
-    static BzfMedia*		media;
+    static PlatformFactory* instance;
+    static BzfMedia*    media;
 };
 
 #endif // BZF_PLATFORM_FACTORY_H
@@ -56,6 +56,6 @@ class PlatformFactory {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

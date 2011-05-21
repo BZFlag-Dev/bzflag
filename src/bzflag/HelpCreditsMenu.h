@@ -16,12 +16,12 @@
 #include "HelpMenu.h"
 
 class HelpCreditsMenu : public HelpMenu {
-public:
-  HelpCreditsMenu();
-  ~HelpCreditsMenu() { }
+  public:
+    HelpCreditsMenu();
+    ~HelpCreditsMenu() { }
 
-protected:
-  float getLeftSide(int width, int height);
+  protected:
+    float getLeftSide(int width, int height);
 };
 
 
@@ -31,6 +31,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

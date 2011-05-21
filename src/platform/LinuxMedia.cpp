@@ -30,9 +30,9 @@
 #include <string.h>
 
 #ifdef HALF_RATE_AUDIO
-static const int defaultAudioRate=11025;
+static const int defaultAudioRate = 11025;
 #else
-static const int defaultAudioRate=22050;
+static const int defaultAudioRate = 22050;
 #endif
 
 //
@@ -40,31 +40,27 @@ static const int defaultAudioRate=22050;
 //
 
 LinuxMedia::LinuxMedia() : BzfMedia(), audioReady(false),
-				audioBufferSize(defaultAudioRate),
-				audioPortFd(-1),
-				queueIn(-1), queueOut(-1),
-				outputBuffer(NULL),
-				childProcID(0),
-				audio8Bit(false),
-				getospaceBroken(false)
-{
+  audioBufferSize(defaultAudioRate),
+  audioPortFd(-1),
+  queueIn(-1), queueOut(-1),
+  outputBuffer(NULL),
+  childProcID(0),
+  audio8Bit(false),
+  getospaceBroken(false) {
   // do nothing
 }
 
-LinuxMedia::~LinuxMedia()
-{
+LinuxMedia::~LinuxMedia() {
   // do nothing
 }
 
-double			LinuxMedia::getTime()
-{
+double      LinuxMedia::getTime() {
   struct timeval tv;
   gettimeofday(&tv, 0);
   return (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec;
 }
 
-double			LinuxMedia::stopwatch(bool start)
-{
+double      LinuxMedia::stopwatch(bool start) {
   if (start) {
     stopwatchTime = getTime();
     return 0.0;
@@ -72,17 +68,16 @@ double			LinuxMedia::stopwatch(bool start)
   return getTime() - stopwatchTime;
 }
 
-bool			LinuxMedia::openAudio()
-{
+bool      LinuxMedia::openAudio() {
   // don't re-initialize
-  if (audioReady) return false;
+  if (audioReady) { return false; }
 
   // check for and open audio hardware
-  if (!checkForAudioHardware() || !openAudioHardware()) return false;
+  if (!checkForAudioHardware() || !openAudioHardware()) { return false; }
 
   // open communication channel (FIFO pipe).  close on exec.
   int fd[2];
-  if (pipe(fd)<0) {
+  if (pipe(fd) < 0) {
     closeAudio();
     return false;
   }
@@ -95,33 +90,32 @@ bool			LinuxMedia::openAudio()
 
   // compute maxFd for use in select() call
   maxFd = queueOut;
-  if (maxFd<audioPortFd) maxFd = audioPortFd;
+  if (maxFd < audioPortFd) { maxFd = audioPortFd; }
   maxFd++;
 
   // make an output buffer
   outputBuffer = new short[audioBufferSize];
 
   // Set default no thread
-  childProcID=0;
+  childProcID = 0;
 
   // ready to go
   audioReady = true;
   return true;
 }
 
-bool			LinuxMedia::checkForAudioHardware()
-{
-  bool flag=false;
-  if (!access("/dev/dsp", W_OK)) flag=true;
-  if (!access("/dev/sound/dsp", W_OK)) flag=true;
+bool      LinuxMedia::checkForAudioHardware() {
+  bool flag = false;
+  if (!access("/dev/dsp", W_OK)) { flag = true; }
+  if (!access("/dev/sound/dsp", W_OK)) { flag = true; }
   return flag;
 }
 
-bool			LinuxMedia::openIoctl(
-				int cmd, void* value, bool req)
-{
-  if (audioPortFd == -1)
-      return false;
+bool      LinuxMedia::openIoctl(
+  int cmd, void* value, bool req) {
+  if (audioPortFd == -1) {
+    return false;
+  }
 
   if (ioctl(audioPortFd, cmd, value) < 0) {
     fprintf(stderr, "audio ioctl failed (cmd %x, err %d)... ", cmd, errno);
@@ -138,10 +132,9 @@ bool			LinuxMedia::openIoctl(
   return true;
 }
 
-static const int	NumChunks = 4;
+static const int  NumChunks = 4;
 
-bool			LinuxMedia::openAudioHardware()
-{
+bool      LinuxMedia::openAudioHardware() {
   int format, n;
 
   // what's the audio format?
@@ -158,8 +151,9 @@ bool			LinuxMedia::openAudioHardware()
   // a second.
   int fragmentSize = (int)(0.08f * (float)audioOutputRate);
   n = 0;
-  while ((1 << n) < fragmentSize)
+  while ((1 << n) < fragmentSize) {
     ++n;
+  }
 
   // samples are two bytes each and we're in stereo so quadruple the size
   fragmentSize = n + 2;
@@ -175,7 +169,7 @@ bool			LinuxMedia::openAudioHardware()
     if (audioPortFd == -1) {
       fprintf(stderr, "Failed to open audio device /dev/dsp or /dev/sound/dsp (%d)\n", errno);
       return false;
-	}
+    }
   }
 
   // back to blocking I/O
@@ -195,8 +189,9 @@ bool			LinuxMedia::openAudioHardware()
     // options here:  accept the latency or try to force the
     // driver to play partial fragments.  we'll try the later
     // unless BZF_AUDIO_NOPOST is in the environment
-    if (!getenv("BZF_AUDIO_NOPOST"))
+    if (!getenv("BZF_AUDIO_NOPOST")) {
       noSetFragment = true;
+    }
   }
   n = format;
   openIoctl(SNDCTL_DSP_SETFMT, &n, false);
@@ -217,13 +212,14 @@ bool			LinuxMedia::openAudioHardware()
   // the size we would've asked for.  we'll force the buffer to be
   // flushed after we write that much data to keep latency low.
   if (noSetFragment ||
-	!openIoctl(SNDCTL_DSP_GETBLKSIZE, &audioBufferSize, false) ||
-	audioBufferSize > (1 << fragmentSize)) {
+      !openIoctl(SNDCTL_DSP_GETBLKSIZE, &audioBufferSize, false) ||
+      audioBufferSize > (1 << fragmentSize)) {
     audioBufferSize = 1 << fragmentSize;
     noSetFragment = true;
   }
-  if (!audio8Bit)
+  if (!audio8Bit) {
     audioBufferSize >>= 1;
+  }
 
   // SNDCTL_DSP_GETOSPACE not supported on all platforms.  check if
   // it fails here and, if so, do a workaround by using the wall
@@ -234,29 +230,27 @@ bool			LinuxMedia::openAudioHardware()
       getospaceBroken = true;
       chunksPending = 0;
       chunksPerSecond = (double)getAudioOutputRate() /
-				(double)getAudioBufferChunkSize();
+                        (double)getAudioBufferChunkSize();
     }
   }
 
   return (audioPortFd != -1);
 }
 
-void			LinuxMedia::closeAudio()
-{
+void      LinuxMedia::closeAudio() {
   delete [] outputBuffer;
-  if (audioPortFd>=0) close(audioPortFd);
-  if (queueIn!=-1) close(queueIn);
-  if (queueOut!=-1) close(queueOut);
-  audioReady=false;
-  audioPortFd=-1;
-  queueIn=-1;
-  queueOut=-1;
-  outputBuffer=0;
+  if (audioPortFd >= 0) { close(audioPortFd); }
+  if (queueIn != -1) { close(queueIn); }
+  if (queueOut != -1) { close(queueOut); }
+  audioReady = false;
+  audioPortFd = -1;
+  queueIn = -1;
+  queueOut = -1;
+  outputBuffer = 0;
 }
 
-bool			LinuxMedia::startAudioThread(
-				void (*proc)(void*), void* data)
-{
+bool      LinuxMedia::startAudioThread(
+  void (*proc)(void*), void* data) {
   // if no audio thread then just call proc and return
   if (!hasAudioThread()) {
     proc(data);
@@ -264,8 +258,8 @@ bool			LinuxMedia::startAudioThread(
   }
 
   // has an audio thread so fork and call proc
-  if (childProcID) return true;
-  if ((childProcID=fork()) > 0) {
+  if (childProcID) { return true; }
+  if ((childProcID = fork()) > 0) {
     close(queueOut);
     close(audioPortFd);
     return true;
@@ -278,14 +272,12 @@ bool			LinuxMedia::startAudioThread(
   exit(0);
 }
 
-void			LinuxMedia::stopAudioThread()
-{
-  if (childProcID != 0) kill(childProcID, SIGTERM);
-  childProcID=0;
+void      LinuxMedia::stopAudioThread() {
+  if (childProcID != 0) { kill(childProcID, SIGTERM); }
+  childProcID = 0;
 }
 
-bool			LinuxMedia::hasAudioThread() const
-{
+bool      LinuxMedia::hasAudioThread() const {
 #if defined(NO_AUDIO_THREAD)
   return false;
 #else
@@ -293,38 +285,31 @@ bool			LinuxMedia::hasAudioThread() const
 #endif
 }
 
-void			LinuxMedia::audioThreadInit(void*)
-{
+void      LinuxMedia::audioThreadInit(void*) {
 }
 
-void			LinuxMedia::writeSoundCommand(const void* cmd, int len)
-{
-  if (!audioReady) return;
+void      LinuxMedia::writeSoundCommand(const void* cmd, int len) {
+  if (!audioReady) { return; }
   write(queueIn, cmd, len);
 }
 
-bool			LinuxMedia::readSoundCommand(void* cmd, int len)
-{
-  return (read(queueOut, cmd, len)==len);
+bool      LinuxMedia::readSoundCommand(void* cmd, int len) {
+  return (read(queueOut, cmd, len) == len);
 }
 
-int			LinuxMedia::getAudioOutputRate() const
-{
+int     LinuxMedia::getAudioOutputRate() const {
   return audioOutputRate;
 }
 
-int			LinuxMedia::getAudioBufferSize() const
-{
-  return NumChunks*(audioBufferSize>>1);
+int     LinuxMedia::getAudioBufferSize() const {
+  return NumChunks * (audioBufferSize >> 1);
 }
 
-int			LinuxMedia::getAudioBufferChunkSize() const
-{
-  return audioBufferSize>>1;
+int     LinuxMedia::getAudioBufferChunkSize() const {
+  return audioBufferSize >> 1;
 }
 
-bool			LinuxMedia::isAudioTooEmpty() const
-{
+bool      LinuxMedia::isAudioTooEmpty() const {
   if (getospaceBroken) {
     if (chunksPending > 0) {
       // get time elapsed since chunkTime
@@ -336,42 +321,45 @@ bool			LinuxMedia::isAudioTooEmpty() const
       // remove pending chunks
       LinuxMedia* self = (LinuxMedia*)this;
       self->chunksPending -= numChunks;
-      if (chunksPending < 0)
-	self->chunksPending = 0;
-      else
-	self->chunkTime += (double)numChunks / chunksPerSecond;
+      if (chunksPending < 0) {
+        self->chunksPending = 0;
+      }
+      else {
+        self->chunkTime += (double)numChunks / chunksPerSecond;
+      }
     }
     return chunksPending < audioLowWaterMark;
   }
   else {
     audio_buf_info info;
-    if (ioctl(audioPortFd, SNDCTL_DSP_GETOSPACE, &info) < 0)
+    if (ioctl(audioPortFd, SNDCTL_DSP_GETOSPACE, &info) < 0) {
       return false;
+    }
     return info.fragments > info.fragstotal - audioLowWaterMark;
   }
 }
 
-void			LinuxMedia::writeAudioFrames8Bit(
-				const float* samples, int numFrames)
-{
+void      LinuxMedia::writeAudioFrames8Bit(
+  const float* samples, int numFrames) {
   int numSamples = 2 * numFrames;
   int limit;
-  char *smOutputBuffer;
+  char* smOutputBuffer;
 
-  smOutputBuffer=(char*)outputBuffer;
+  smOutputBuffer = (char*)outputBuffer;
   while (numSamples > 0) {
-    if (numSamples>audioBufferSize) limit=audioBufferSize;
-    else limit=numSamples;
+    if (numSamples > audioBufferSize) { limit = audioBufferSize; }
+    else { limit = numSamples; }
     for (int j = 0; j < limit; j++) {
-      if (samples[j] <= -32767.0) smOutputBuffer[j] = 0;
-      else if (samples[j] >= 32767.0) smOutputBuffer[j] = 255;
-      else smOutputBuffer[j] = char((samples[j]+32767)/257);
+      if (samples[j] <= -32767.0) { smOutputBuffer[j] = 0; }
+      else if (samples[j] >= 32767.0) { smOutputBuffer[j] = 255; }
+      else { smOutputBuffer[j] = char((samples[j] + 32767) / 257); }
     }
 
     // fill out the chunk (we never write a partial chunk)
     if (limit < audioBufferSize) {
-      for (int j = limit; j < audioBufferSize; ++j)
-	smOutputBuffer[j] = 127;
+      for (int j = limit; j < audioBufferSize; ++j) {
+        smOutputBuffer[j] = 127;
+      }
       limit = audioBufferSize;
     }
 
@@ -381,39 +369,38 @@ void			LinuxMedia::writeAudioFrames8Bit(
   }
 }
 
-void			LinuxMedia::writeAudioFrames16Bit(
-				const float* samples, int numFrames)
-{
+void      LinuxMedia::writeAudioFrames16Bit(
+  const float* samples, int numFrames) {
   int numSamples = 2 * numFrames;
   int limit = 0;
 
   while (numSamples > 0) {
-    if (numSamples>audioBufferSize) limit=audioBufferSize;
-    else limit=numSamples;
+    if (numSamples > audioBufferSize) { limit = audioBufferSize; }
+    else { limit = numSamples; }
     for (int j = 0; j < limit; j++) {
-      if (samples[j] < -32767.0) outputBuffer[j] = -32767;
-      else if (samples[j] > 32767.0) outputBuffer[j] = 32767;
-      else outputBuffer[j] = short(samples[j]);
+      if (samples[j] < -32767.0) { outputBuffer[j] = -32767; }
+      else if (samples[j] > 32767.0) { outputBuffer[j] = 32767; }
+      else { outputBuffer[j] = short(samples[j]); }
     }
 
     // fill out the chunk (we never write a partial chunk)
     if (limit < audioBufferSize) {
-      for (int j = limit; j < audioBufferSize; ++j)
-	outputBuffer[j] = 0;
+      for (int j = limit; j < audioBufferSize; ++j) {
+        outputBuffer[j] = 0;
+      }
       limit = audioBufferSize;
     }
 
-    write(audioPortFd, outputBuffer, 2*limit);
+    write(audioPortFd, outputBuffer, 2 * limit);
     samples += limit;
     numSamples -= limit;
   }
 }
 
-void			LinuxMedia::writeAudioFrames(
-				const float* samples, int numFrames)
-{
-  if (audio8Bit) writeAudioFrames8Bit(samples, numFrames);
-  else writeAudioFrames16Bit(samples, numFrames);
+void      LinuxMedia::writeAudioFrames(
+  const float* samples, int numFrames) {
+  if (audio8Bit) { writeAudioFrames8Bit(samples, numFrames); }
+  else { writeAudioFrames16Bit(samples, numFrames); }
 
   // if we couldn't set the fragment size then force the driver
   // to play the short buffer.
@@ -423,16 +410,16 @@ void			LinuxMedia::writeAudioFrames(
   }
 
   if (getospaceBroken) {
-    if (chunksPending == 0)
+    if (chunksPending == 0) {
       chunkTime = getTime();
+    }
     chunksPending += (numFrames + getAudioBufferChunkSize() - 1) /
-						getAudioBufferChunkSize();
+                     getAudioBufferChunkSize();
   }
 }
 
-void			LinuxMedia::audioSleep(
-				bool checkLowWater, double endTime)
-{
+void      LinuxMedia::audioSleep(
+  bool checkLowWater, double endTime) {
   fd_set commandSelectSet;
   struct timeval tv;
 
@@ -442,21 +429,23 @@ void			LinuxMedia::audioSleep(
     BzTime start = BzTime::getCurrent();
     do {
       // break if buffer has drained enough
-      if (isAudioTooEmpty()) break;
+      if (isAudioTooEmpty()) { break; }
       FD_ZERO(&commandSelectSet);
       FD_SET((unsigned int)queueOut, &commandSelectSet);
-      tv.tv_sec=0;
-      tv.tv_usec=50000;
-      if (select(maxFd, &commandSelectSet, 0, 0, &tv)) break;
+      tv.tv_sec = 0;
+      tv.tv_usec = 50000;
+      if (select(maxFd, &commandSelectSet, 0, 0, &tv)) { break; }
 
-    } while (endTime<0.0 || (BzTime::getCurrent()-start)<endTime);
-  } else {
+    }
+    while (endTime < 0.0 || (BzTime::getCurrent() - start) < endTime);
+  }
+  else {
     FD_ZERO(&commandSelectSet);
     FD_SET((unsigned int)queueOut, &commandSelectSet);
-    tv.tv_sec=int(endTime);
-    tv.tv_usec=int(1.0e6*(endTime-floor(endTime)));
+    tv.tv_sec = int(endTime);
+    tv.tv_usec = int(1.0e6 * (endTime - floor(endTime)));
 
-    select(maxFd, &commandSelectSet, 0, 0, (endTime>=0.0)?&tv : 0);
+    select(maxFd, &commandSelectSet, 0, 0, (endTime >= 0.0) ? &tv : 0);
   }
 }
 
@@ -464,6 +453,6 @@ void			LinuxMedia::audioSleep(
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

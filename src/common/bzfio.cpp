@@ -50,8 +50,8 @@ static int callProcDepth = 0;
 
 struct LoggingProcPair {
   LoggingProcPair(LoggingProc p, void* d)
-  : proc(p)
-  , data(d)
+    : proc(p)
+    , data(d)
   {}
   bool operator==(const LoggingProcPair& lpp) const {
     return (proc == lpp.proc) && (data == lpp.data);
@@ -63,8 +63,7 @@ typedef std::vector<LoggingProcPair> LoggingProcVec;
 static LoggingProcVec loggingProcs;
 
 
-bool registerLoggingProc(LoggingProc proc, void* data)
-{
+bool registerLoggingProc(LoggingProc proc, void* data) {
   if (proc == NULL) {
     return false;
   }
@@ -79,8 +78,7 @@ bool registerLoggingProc(LoggingProc proc, void* data)
 }
 
 
-bool unregisterLoggingProc(LoggingProc proc, void* data)
-{
+bool unregisterLoggingProc(LoggingProc proc, void* data) {
   if (callProcDepth != 0) {
     logDebugMessage(0, "error: unregisterLoggingProc() used in a LoggingProc");
     return false;
@@ -96,8 +94,7 @@ bool unregisterLoggingProc(LoggingProc proc, void* data)
 }
 
 
-static void callProcs(int level, const std::string& msg)
-{
+static void callProcs(int level, const std::string& msg) {
   callProcDepth++;
   for (size_t i = 0; i < loggingProcs.size(); i++) {
     const LoggingProcPair& lpp = loggingProcs[i];
@@ -110,8 +107,7 @@ static void callProcs(int level, const std::string& msg)
 //============================================================================//
 //============================================================================//
 
-void setDebugTimestamp(bool enable, bool micros, bool utc)
-{
+void setDebugTimestamp(bool enable, bool micros, bool utc) {
 #ifdef _WIN32
   micros = false;
 #endif
@@ -123,30 +119,34 @@ void setDebugTimestamp(bool enable, bool micros, bool utc)
 
 static const int tsBufferSize = 29;
 
-static char *timestamp(char *buf, bool micros, bool utc)
-{
-  struct tm *tm;
+static char* timestamp(char* buf, bool micros, bool utc) {
+  struct tm* tm;
   if (micros) {
 #if !defined(_WIN32)
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    if (utc)
-      tm = gmtime((const time_t *)&tv.tv_sec);
-    else
-      tm = localtime((const time_t *)&tv.tv_sec);
+    if (utc) {
+      tm = gmtime((const time_t*)&tv.tv_sec);
+    }
+    else {
+      tm = localtime((const time_t*)&tv.tv_sec);
+    }
     snprintf(buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ",
-             tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+             tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
              tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec);
 #endif
-  } else {
+  }
+  else {
     time_t tt;
     time(&tt);
-    if (utc)
+    if (utc) {
       tm = gmtime(&tt);
-    else
+    }
+    else {
       tm = localtime(&tt);
+    }
     snprintf(buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02d: ",
-             tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday,
+             tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
              tm->tm_hour, tm->tm_min, tm->tm_sec);
   }
   return buf;
@@ -156,8 +156,7 @@ static char *timestamp(char *buf, bool micros, bool utc)
 //============================================================================//
 //============================================================================//
 
-static void realLogDebugMessage(int level, const char* text)
-{
+static void realLogDebugMessage(int level, const char* text) {
   if ((debugLevel >= level) || (level == 0)) {
 #if defined(_MSC_VER)
     if (doTimestamp) {
@@ -179,8 +178,7 @@ static void realLogDebugMessage(int level, const char* text)
 }
 
 
-void logDebugMessageArgs(int level, const char* fmt, va_list ap)
-{
+void logDebugMessageArgs(int level, const char* fmt, va_list ap) {
   char buffer[8192] = { 0 };
 
   if (!fmt) {
@@ -193,8 +191,7 @@ void logDebugMessageArgs(int level, const char* fmt, va_list ap)
 }
 
 
-void logDebugMessage(int level, const char* fmt, ...)
-{
+void logDebugMessage(int level, const char* fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
   logDebugMessageArgs(level, fmt, ap);
@@ -202,8 +199,7 @@ void logDebugMessage(int level, const char* fmt, ...)
 }
 
 
-void logDebugMessage(int level, const std::string &text)
-{
+void logDebugMessage(int level, const std::string& text) {
   if (text.empty()) {
     return;
   }
@@ -218,6 +214,6 @@ void logDebugMessage(int level, const std::string &text)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

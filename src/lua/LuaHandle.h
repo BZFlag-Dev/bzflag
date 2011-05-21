@@ -33,15 +33,14 @@ class  ShotPath;
 
 //============================================================================//
 
-class LuaHandle : public EventClient
-{
+class LuaHandle : public EventClient {
   public:
     void CheckStack();
     void SetupValidCallIns();
 
   public:
-    bool	       RequestReload()  const { return requestReload;  }
-    bool	       RequestDisable() const { return requestDisable; }
+    bool         RequestReload()  const { return requestReload;  }
+    bool         RequestDisable() const { return requestDisable; }
     const std::string& RequestMessage() const { return requestMessage; }
 
   public: // call-ins
@@ -59,10 +58,10 @@ class LuaHandle : public EventClient
 
     virtual bool RecvCommand(const std::string& msg); // custom to LuaHandle
     virtual void RecvChatMsg(const std::string& msg,
-			     int srcID, int dstID, bool action);
+                             int srcID, int dstID, bool action);
     virtual void RecvLuaData(int srcPlayerID, int srcScriptID,
-			     int dstPlayerID, int dstScriptID,
-			     int status, const std::string& data);
+                             int dstPlayerID, int dstScriptID,
+                             int status, const std::string& data);
 
     virtual void ServerJoined();
     virtual void ServerParted();
@@ -71,7 +70,7 @@ class LuaHandle : public EventClient
     virtual void PlayerRemoved(const Player&);
     virtual void PlayerSpawned(const Player&);
     virtual void PlayerKilled(const Player& victim, const Player* killer,
-			      int reason, const FlagType* flagType, int phyDrv);
+                              int reason, const FlagType* flagType, int phyDrv);
     virtual void PlayerJumped(const Player&);
     virtual void PlayerLanded(const Player&, float vel);
     virtual void PlayerTeleported(const Player&, int srcLink, int dstLink);
@@ -118,7 +117,7 @@ class LuaHandle : public EventClient
     virtual std::string GetTooltip(int /*x*/, int /*y*/);
 
     virtual void WordComplete(const std::string& /*line*/,
-			      std::set<std::string>& /*partials*/);
+                              std::set<std::string>& /*partials*/);
 
     virtual bool ForbidSpawn();
     virtual bool ForbidJump();
@@ -129,8 +128,8 @@ class LuaHandle : public EventClient
 
   protected:
     LuaHandle(const std::string& name, int16_t scriptID,
-	      int gameStateOrder, int drawWorldOrder, int drawScreenOrder,
-	      bool fullRead, bool gameCtrl, bool inputCtrl);
+              int gameStateOrder, int drawWorldOrder, int drawScreenOrder,
+              bool fullRead, bool gameCtrl, bool inputCtrl);
     virtual ~LuaHandle();
 
     void KillLua();
@@ -138,9 +137,9 @@ class LuaHandle : public EventClient
     bool SetupEnvironment();
 
     virtual std::string LoadSourceCode(const std::string& sourceFile,
-				       const std::string& sourceModes);
+                                       const std::string& sourceModes);
     virtual bool ExecSourceCode(const std::string& sourceCode,
-				const std::string& sourceLabel);
+                                const std::string& sourceLabel);
 
     bool AddBasicCalls();
     bool PushLib(const char* name, bool (*entriesFunc)(lua_State*));
@@ -201,6 +200,6 @@ class LuaHandle : public EventClient
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

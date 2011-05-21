@@ -25,32 +25,29 @@ BZ_GET_PLUGIN_VERSION
 
 // event handler callback
 
-class PlayHistoryTracker : public bz_EventHandler
-{
-public:
-  PlayHistoryTracker();
-  virtual ~PlayHistoryTracker();
+class PlayHistoryTracker : public bz_EventHandler {
+  public:
+    PlayHistoryTracker();
+    virtual ~PlayHistoryTracker();
 
-  virtual void process(bz_EventData *eventData);
+    virtual void process(bz_EventData* eventData);
 
-protected:
+  protected:
 
-  typedef struct
-  {
-    int playerID;
-    std::string callsign;
-    double	startTime;
-    double	lastUpdateTime;
-    int		spreeTotal;
-  } trPlayerHistoryRecord;
+    typedef struct {
+      int playerID;
+      std::string callsign;
+      double  startTime;
+      double  lastUpdateTime;
+      int   spreeTotal;
+    } trPlayerHistoryRecord;
 
-  std::map<int, trPlayerHistoryRecord > playerList;
+    std::map<int, trPlayerHistoryRecord > playerList;
 };
 
-PlayHistoryTracker	historyTracker;
+PlayHistoryTracker  historyTracker;
 
-BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/)
-{
+BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/) {
   bz_debugMessage(4, "PlayHistoryTracker plugin loaded");
 
   bz_registerEvent(bz_ePlayerDieEvent, &historyTracker);
@@ -61,8 +58,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* /*commandLine*/)
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   bz_removeEvent(bz_ePlayerDieEvent, &historyTracker);
   bz_removeEvent(bz_ePlayerPartEvent, &historyTracker);
   bz_removeEvent(bz_ePlayerSpawnEvent, &historyTracker);
@@ -77,118 +73,124 @@ BZF_PLUGIN_CALL int bz_Unload(void)
 /*typedef struct
   {
   int playerID;
-  std::string	callsign;
-  double	startTime;
-  double	lastUpdateTime;
-  int		spreeTotal;
+  std::string callsign;
+  double  startTime;
+  double  lastUpdateTime;
+  int   spreeTotal;
   } trPlayerHistoryRecord;
 
   std::map<int, trPlayerHistoryRecord > playerList; */
 
-PlayHistoryTracker::PlayHistoryTracker()
-{
+PlayHistoryTracker::PlayHistoryTracker() {
 }
 
-PlayHistoryTracker::~PlayHistoryTracker()
-{
+PlayHistoryTracker::~PlayHistoryTracker() {
 }
 
-void PlayHistoryTracker::process(bz_EventData *eventData)
-{
+void PlayHistoryTracker::process(bz_EventData* eventData) {
   switch (eventData->eventType) {
     default:
       // really WTF!!!!
       break;
 
     case bz_ePlayerDieEvent: {
-      bz_PlayerDieEventData_V1	*deathRecord = (bz_PlayerDieEventData_V1*)eventData;
+      bz_PlayerDieEventData_V1*  deathRecord = (bz_PlayerDieEventData_V1*)eventData;
 
       std::string killerCallSign = "UNKNOWN";
 
-      bz_BasePlayerRecord	*killerData;
+      bz_BasePlayerRecord* killerData;
 
       killerData = bz_getPlayerByIndex(deathRecord->killerID);
 
-      if (killerData)
-	killerCallSign = killerData->callsign.c_str();
+      if (killerData) {
+        killerCallSign = killerData->callsign.c_str();
+      }
 
       std::string soundToPlay;
 
       // clear out the dude who got shot, since he won't be having any SPREEs
       if (playerList.find(deathRecord->playerID) != playerList.end()) {
-	trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
-	std::string message;
-	if (record.spreeTotal >= 5 && record.spreeTotal < 10) {
-	  if (record.callsign == killerCallSign) {
-	    message = record.callsign + std::string(" stopped their rampage all by themself");
-	  } else {
-	    message = record.callsign + std::string("'s rampage was stopped by ") + killerCallSign;
-	  }
-	}
-	if (record.spreeTotal >= 10 && record.spreeTotal < 20) {
-	  if (record.callsign == killerCallSign) {
-	    message = record.callsign + std::string(" stopped their own killing spree");
-	  } else {
-	    message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
-	  }
-	}
-	if (record.spreeTotal >= 20) {
-	  if (record.callsign == killerCallSign) {
-	    message = record.callsign + std::string(" dethroned themselves from an otherwise seemingly unstoppable reign");
-	  } else {
-	    message = std::string("The unstoppable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
-	  }
-	}
-	if (message.size()) {
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
-	  soundToPlay = "spree4";
-	}
+        trPlayerHistoryRecord& record = playerList.find(deathRecord->playerID)->second;
+        std::string message;
+        if (record.spreeTotal >= 5 && record.spreeTotal < 10) {
+          if (record.callsign == killerCallSign) {
+            message = record.callsign + std::string(" stopped their rampage all by themself");
+          }
+          else {
+            message = record.callsign + std::string("'s rampage was stopped by ") + killerCallSign;
+          }
+        }
+        if (record.spreeTotal >= 10 && record.spreeTotal < 20) {
+          if (record.callsign == killerCallSign) {
+            message = record.callsign + std::string(" stopped their own killing spree");
+          }
+          else {
+            message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
+          }
+        }
+        if (record.spreeTotal >= 20) {
+          if (record.callsign == killerCallSign) {
+            message = record.callsign + std::string(" dethroned themselves from an otherwise seemingly unstoppable reign");
+          }
+          else {
+            message = std::string("The unstoppable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
+          }
+        }
+        if (message.size()) {
+          bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
+          soundToPlay = "spree4";
+        }
 
-	record.spreeTotal = 0;
-	record.startTime = deathRecord->eventTime;
-	record.lastUpdateTime = deathRecord->eventTime;
+        record.spreeTotal = 0;
+        record.startTime = deathRecord->eventTime;
+        record.lastUpdateTime = deathRecord->eventTime;
 
       }
 
       // chock up another win for our killer
       // if they weren't the same as the killer (suicide).
       if ((deathRecord->playerID != deathRecord->killerID) && playerList.find(deathRecord->killerID) != playerList.end()) {
-	trPlayerHistoryRecord	&record = playerList.find(deathRecord->killerID)->second;
-	record.spreeTotal++;
-	record.lastUpdateTime = deathRecord->eventTime;
+        trPlayerHistoryRecord& record = playerList.find(deathRecord->killerID)->second;
+        record.spreeTotal++;
+        record.lastUpdateTime = deathRecord->eventTime;
 
-	std::string message;
+        std::string message;
 
-	if (record.spreeTotal == 5) {
-	  message = record.callsign + std::string(" is on a Rampage!");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree1";
-	}
-	if (record.spreeTotal == 10) {
-	  message = record.callsign + std::string(" is on a Killing Spree!");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree2";
-	}
-	if (record.spreeTotal == 20) {
-	  message = record.callsign + std::string(" is Unstoppable!!");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree3";
-	}
-	if (record.spreeTotal > 20 && record.spreeTotal%5 == 0) {
-	  message = record.callsign + std::string(" continues to rage on");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree4";
-	}
+        if (record.spreeTotal == 5) {
+          message = record.callsign + std::string(" is on a Rampage!");
+          if (!soundToPlay.size()) {
+            soundToPlay = "spree1";
+          }
+        }
+        if (record.spreeTotal == 10) {
+          message = record.callsign + std::string(" is on a Killing Spree!");
+          if (!soundToPlay.size()) {
+            soundToPlay = "spree2";
+          }
+        }
+        if (record.spreeTotal == 20) {
+          message = record.callsign + std::string(" is Unstoppable!!");
+          if (!soundToPlay.size()) {
+            soundToPlay = "spree3";
+          }
+        }
+        if (record.spreeTotal > 20 && record.spreeTotal % 5 == 0) {
+          message = record.callsign + std::string(" continues to rage on");
+          if (!soundToPlay.size()) {
+            soundToPlay = "spree4";
+          }
+        }
 
-	if (message.size())
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
+        if (message.size()) {
+          bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
+        }
 
       }
 
       bz_freePlayerRecord(killerData);
 
       //if (soundToPlay.size())
-      //	bz_sendPlayCustomLocalSound(BZ_ALLUSERS, soundToPlay.c_str());
+      //  bz_sendPlayCustomLocalSound(BZ_ALLUSERS, soundToPlay.c_str());
 
       break;
     }
@@ -212,9 +214,10 @@ void PlayHistoryTracker::process(bz_EventData *eventData)
     }
 
     case  bz_ePlayerPartEvent: {
-      std::map<int, trPlayerHistoryRecord >::iterator	itr = playerList.find(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
-      if (itr != playerList.end())
-	playerList.erase(itr);
+      std::map<int, trPlayerHistoryRecord >::iterator itr = playerList.find(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
+      if (itr != playerList.end()) {
+        playerList.erase(itr);
+      }
 
       break;
     }
@@ -225,6 +228,6 @@ void PlayHistoryTracker::process(bz_EventData *eventData)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

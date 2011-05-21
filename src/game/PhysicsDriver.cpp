@@ -35,21 +35,18 @@
 PhysicsDriverManager PHYDRVMGR;
 
 
-PhysicsDriverManager::PhysicsDriverManager()
-{
+PhysicsDriverManager::PhysicsDriverManager() {
   return;
 }
 
 
-PhysicsDriverManager::~PhysicsDriverManager()
-{
+PhysicsDriverManager::~PhysicsDriverManager() {
   clear();
   return;
 }
 
 
-void PhysicsDriverManager::clear()
-{
+void PhysicsDriverManager::clear() {
   DriverVec::iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     delete *it;
@@ -61,8 +58,7 @@ void PhysicsDriverManager::clear()
 }
 
 
-void PhysicsDriverManager::update()
-{
+void PhysicsDriverManager::update() {
   float t = (float)(BzTime::getCurrent() - BzTime::getStartTime());
   DriverVec::iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
@@ -73,8 +69,7 @@ void PhysicsDriverManager::update()
 }
 
 
-int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
-{
+int PhysicsDriverManager::addDriver(PhysicsDriver* driver) {
   const std::string name = driver->getName();
 
   if (name == "-1") {
@@ -107,9 +102,8 @@ int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
 
 
 const PhysicsDriver* PhysicsDriverManager::relativeDriver(
-                       const PhysicsDriver* phydrv,
-                       const MeshTransform::Tool& tool)
-{
+  const PhysicsDriver* phydrv,
+  const MeshTransform::Tool& tool) {
   PhysicsDriver withXForm(*phydrv);
   withXForm.xformTool = const_cast<MeshTransform::Tool*>(&tool);
   withXForm.transformLinearVel();
@@ -145,8 +139,7 @@ const PhysicsDriver* PhysicsDriverManager::relativeDriver(
 }
 
 
-int PhysicsDriverManager::findDriver(const std::string& phydrv) const
-{
+int PhysicsDriverManager::findDriver(const std::string& phydrv) const {
   if (phydrv.empty()) {
     return -1;
   }
@@ -154,10 +147,11 @@ int PhysicsDriverManager::findDriver(const std::string& phydrv) const
     return -1;
   }
   else if ((phydrv[0] >= '0') && (phydrv[0] <= '9')) {
-    int index = atoi (phydrv.c_str());
+    int index = atoi(phydrv.c_str());
     if ((index < 0) || (index >= (int)drivers.size())) {
       return -1;
-    } else {
+    }
+    else {
       return index;
     }
   }
@@ -171,8 +165,7 @@ int PhysicsDriverManager::findDriver(const std::string& phydrv) const
 }
 
 
-void PhysicsDriverManager::getVariables(std::set<std::string>& vars) const
-{
+void PhysicsDriverManager::getVariables(std::set<std::string>& vars) const {
   DriverVec::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
@@ -185,9 +178,8 @@ void PhysicsDriverManager::getVariables(std::set<std::string>& vars) const
 }
 
 
-int PhysicsDriverManager::packSize() const
-{
-  int fullSize = sizeof (uint32_t);
+int PhysicsDriverManager::packSize() const {
+  int fullSize = sizeof(uint32_t);
   DriverVec::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     PhysicsDriver* driver = *it;
@@ -199,8 +191,7 @@ int PhysicsDriverManager::packSize() const
 }
 
 
-void* PhysicsDriverManager::pack(void *buf) const
-{
+void* PhysicsDriverManager::pack(void* buf) const {
   uint32_t count = 0;
   DriverVec::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
@@ -221,11 +212,10 @@ void* PhysicsDriverManager::pack(void *buf) const
 }
 
 
-void* PhysicsDriverManager::unpack(void *buf)
-{
+void* PhysicsDriverManager::unpack(void* buf) {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt32 (buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     PhysicsDriver* driver = new PhysicsDriver;
     buf = driver->unpack(buf);
@@ -236,8 +226,7 @@ void* PhysicsDriverManager::unpack(void *buf)
 
 
 void PhysicsDriverManager::print(std::ostream& out,
-				 const std::string& indent) const
-{
+                                 const std::string& indent) const {
   DriverVec::const_iterator it;
   for (it = drivers.begin(); it != drivers.end(); it++) {
     const PhysicsDriver* driver = *it;
@@ -256,51 +245,48 @@ void PhysicsDriverManager::print(std::ostream& out,
 //
 
 PhysicsDriver::PhysicsDriver()
-: name("")
-, id(-1)
-, relative   (false)
-, linearVel  (0.0f, 0.0f, 0.0f)
-, angularVel (0.0f)
-, angularPos (0.0f, 0.0f)
-, radialVel  (0.0f)
-, radialPos  (0.0f, 0.0f)
-, slideTime  (0.0f)
-, deathMsg   ("")
-, linearVar  ("")
-, angularVar ("")
-, radialVar  ("")
-, slideVar   ("")
-, deathVar   ("")
-, xformTool  (NULL)
-{
+  : name("")
+  , id(-1)
+  , relative(false)
+  , linearVel(0.0f, 0.0f, 0.0f)
+  , angularVel(0.0f)
+  , angularPos(0.0f, 0.0f)
+  , radialVel(0.0f)
+  , radialPos(0.0f, 0.0f)
+  , slideTime(0.0f)
+  , deathMsg("")
+  , linearVar("")
+  , angularVar("")
+  , radialVar("")
+  , slideVar("")
+  , deathVar("")
+  , xformTool(NULL) {
   // do nothing
 }
 
 
 PhysicsDriver::PhysicsDriver(const PhysicsDriver& pd)
-: name("")
-, id(-1)
-, relative   (pd.relative)
-, linearVel  (pd.linearVel)
-, angularVel (pd.angularVel)
-, angularPos (pd.angularPos)
-, radialVel  (pd.radialVel)
-, radialPos  (pd.radialPos)
-, slideTime  (pd.slideTime)
-, deathMsg   (pd.deathMsg)
-, linearVar  (pd.linearVar)
-, angularVar (pd.angularVar)
-, radialVar  (pd.radialVar)
-, slideVar   (pd.slideVar)
-, deathVar   (pd.deathVar)
-, xformTool  (NULL)
-{
+  : name("")
+  , id(-1)
+  , relative(pd.relative)
+  , linearVel(pd.linearVel)
+  , angularVel(pd.angularVel)
+  , angularPos(pd.angularPos)
+  , radialVel(pd.radialVel)
+  , radialPos(pd.radialPos)
+  , slideTime(pd.slideTime)
+  , deathMsg(pd.deathMsg)
+  , linearVar(pd.linearVar)
+  , angularVar(pd.angularVar)
+  , radialVar(pd.radialVar)
+  , slideVar(pd.slideVar)
+  , deathVar(pd.deathVar)
+  , xformTool(NULL) {
   // do nothing
 }
 
 
-PhysicsDriver::~PhysicsDriver()
-{
+PhysicsDriver::~PhysicsDriver() {
   delete xformTool;
 
   if (!linearVar.empty()) {
@@ -321,8 +307,7 @@ PhysicsDriver::~PhysicsDriver()
 }
 
 
-bool PhysicsDriver::operator<(const PhysicsDriver& pd) const
-{
+bool PhysicsDriver::operator<(const PhysicsDriver& pd) const {
   if (name < pd.name) { return true;  }
   if (pd.name < name) { return false; }
 
@@ -372,30 +357,24 @@ bool PhysicsDriver::operator<(const PhysicsDriver& pd) const
 
 //============================================================================//
 
-void PhysicsDriver::staticLinearCallback(const std::string& name, void* data)
-{
+void PhysicsDriver::staticLinearCallback(const std::string& name, void* data) {
   ((PhysicsDriver*)data)->linearCallback(name);
 }
-void PhysicsDriver::staticAngularCallback(const std::string& name, void* data)
-{
+void PhysicsDriver::staticAngularCallback(const std::string& name, void* data) {
   ((PhysicsDriver*)data)->angularCallback(name);
 }
-void PhysicsDriver::staticRadialCallback(const std::string& name, void* data)
-{
+void PhysicsDriver::staticRadialCallback(const std::string& name, void* data) {
   ((PhysicsDriver*)data)->radialCallback(name);
 }
-void PhysicsDriver::staticSlideCallback(const std::string& name, void* data)
-{
+void PhysicsDriver::staticSlideCallback(const std::string& name, void* data) {
   ((PhysicsDriver*)data)->slideCallback(name);
 }
-void PhysicsDriver::staticDeathCallback(const std::string& name, void* data)
-{
+void PhysicsDriver::staticDeathCallback(const std::string& name, void* data) {
   ((PhysicsDriver*)data)->deathCallback(name);
 }
 
 
-void PhysicsDriver::linearCallback(const std::string& /*varName*/)
-{
+void PhysicsDriver::linearCallback(const std::string& /*varName*/) {
   const fvec3 values = BZDB.evalFVec3(linearVar);
   if (!isnan(values.x)) {
     linearVel = values;
@@ -404,14 +383,13 @@ void PhysicsDriver::linearCallback(const std::string& /*varName*/)
 }
 
 
-void PhysicsDriver::angularCallback(const std::string& /*varName*/)
-{
+void PhysicsDriver::angularCallback(const std::string& /*varName*/) {
   const fvec3 values = BZDB.evalFVec3(angularVar);
   if (!isnan(values.x)) {
     angularVel = values.x * float(M_PI * 2.0);
     angularPos = values.yz();
     transformAngularPos();
-    }
+  }
   else {
     const float value = BZDB.eval(angularVar);
     if (!isnan(value)) {
@@ -421,8 +399,7 @@ void PhysicsDriver::angularCallback(const std::string& /*varName*/)
 }
 
 
-void PhysicsDriver::radialCallback(const std::string& /*varName*/)
-{
+void PhysicsDriver::radialCallback(const std::string& /*varName*/) {
   const fvec3 values = BZDB.evalFVec3(radialVar);
   if (!isnan(values.x)) {
     radialVel = values.x;
@@ -438,8 +415,7 @@ void PhysicsDriver::radialCallback(const std::string& /*varName*/)
 }
 
 
-void PhysicsDriver::slideCallback(const std::string& /*varName*/)
-{
+void PhysicsDriver::slideCallback(const std::string& /*varName*/) {
   const float value = BZDB.eval(slideVar);
   if (!isnan(value)) {
     slideTime = value;
@@ -447,14 +423,12 @@ void PhysicsDriver::slideCallback(const std::string& /*varName*/)
 }
 
 
-void PhysicsDriver::deathCallback(const std::string& /*varName*/)
-{
+void PhysicsDriver::deathCallback(const std::string& /*varName*/) {
   deathMsg = BZDB.get(deathVar);
 }
 
 
-void PhysicsDriver::addCallbacks()
-{
+void PhysicsDriver::addCallbacks() {
   const std::string tmpLinearVar  = linearVar;
   const std::string tmpAngularVar = angularVar;
   const std::string tmpRadialVar  = radialVar;
@@ -475,45 +449,42 @@ void PhysicsDriver::addCallbacks()
 
 //============================================================================//
 
-void PhysicsDriver::finalize()
-{
+void PhysicsDriver::finalize() {
   return;
 }
 
 
 //============================================================================//
 
-bool PhysicsDriver::setName(const std::string& drvname)
-{
+bool PhysicsDriver::setName(const std::string& drvname) {
   if (drvname.size() <= 0) {
     name = "";
     return false;
-  } else if ((drvname[0] >= '0') && (drvname[0] <= '9')) {
+  }
+  else if ((drvname[0] >= '0') && (drvname[0] <= '9')) {
     name = "";
     return false;
-  } else {
+  }
+  else {
     name = drvname;
   }
   return true;
 }
 
 
-void PhysicsDriver::setRelative(bool value)
-{
+void PhysicsDriver::setRelative(bool value) {
   relative = value;
   return;
 }
 
 
-void PhysicsDriver::setLinear(const fvec3& vel)
-{
+void PhysicsDriver::setLinear(const fvec3& vel) {
   linearVel = vel;
   return;
 }
 
 
-void PhysicsDriver::setAngular(float vel, const fvec2& pos)
-{
+void PhysicsDriver::setAngular(float vel, const fvec2& pos) {
   // convert from (rotations/second) to (radians/second)
   angularVel = (float)(vel * (2.0 * M_PI));
   angularPos = pos;
@@ -521,26 +492,23 @@ void PhysicsDriver::setAngular(float vel, const fvec2& pos)
 }
 
 
-void PhysicsDriver::setRadial(float vel, const fvec2& pos)
-{
+void PhysicsDriver::setRadial(float vel, const fvec2& pos) {
   radialVel = vel;
   radialPos = pos;
   return;
 }
 
 
-void PhysicsDriver::setSlideTime(float _slideTime)
-{
+void PhysicsDriver::setSlideTime(float _slideTime) {
   slideTime = _slideTime;
   return;
 }
 
 
-void PhysicsDriver::setDeathMessage(const std::string& msg)
-{
+void PhysicsDriver::setDeathMessage(const std::string& msg) {
   // strip any leading whitespace
   int first = TextUtils::firstVisible(msg);
-  if (first < 0) first = 0;
+  if (first < 0) { first = 0; }
   const char* c = msg.c_str();
   c = TextUtils::skipWhitespace(c);
   std::string str = msg.substr(first);
@@ -558,8 +526,7 @@ void PhysicsDriver::setDeathMessage(const std::string& msg)
 
 //============================================================================//
 
-void PhysicsDriver::setLinearVar(const std::string& var)
-{
+void PhysicsDriver::setLinearVar(const std::string& var) {
   if (!linearVar.empty()) {
     BZDB.removeCallback(linearVar, staticLinearCallback, this);
   }
@@ -571,8 +538,7 @@ void PhysicsDriver::setLinearVar(const std::string& var)
 }
 
 
-void PhysicsDriver::setAngularVar(const std::string& var)
-{
+void PhysicsDriver::setAngularVar(const std::string& var) {
   if (!angularVar.empty()) {
     BZDB.removeCallback(angularVar, staticAngularCallback, this);
   }
@@ -584,8 +550,7 @@ void PhysicsDriver::setAngularVar(const std::string& var)
 }
 
 
-void PhysicsDriver::setRadialVar(const std::string& var)
-{
+void PhysicsDriver::setRadialVar(const std::string& var) {
   if (!radialVar.empty()) {
     BZDB.removeCallback(radialVar, staticRadialCallback, this);
   }
@@ -597,8 +562,7 @@ void PhysicsDriver::setRadialVar(const std::string& var)
 }
 
 
-void PhysicsDriver::setSlideVar(const std::string& var)
-{
+void PhysicsDriver::setSlideVar(const std::string& var) {
   if (!slideVar.empty()) {
     BZDB.removeCallback(slideVar, staticSlideCallback, this);
   }
@@ -610,8 +574,7 @@ void PhysicsDriver::setSlideVar(const std::string& var)
 }
 
 
-void PhysicsDriver::setDeathVar(const std::string& var)
-{
+void PhysicsDriver::setDeathVar(const std::string& var) {
   if (!deathVar.empty()) {
     BZDB.removeCallback(deathVar, staticDeathCallback, this);
   }
@@ -625,14 +588,12 @@ void PhysicsDriver::setDeathVar(const std::string& var)
 
 //============================================================================//
 
-void PhysicsDriver::update (float /*t*/)
-{
+void PhysicsDriver::update(float /*t*/) {
   return;
 }
 
 
-void PhysicsDriver::transformLinearVel()
-{
+void PhysicsDriver::transformLinearVel() {
   if (xformTool == NULL) {
     return;
   }
@@ -642,8 +603,7 @@ void PhysicsDriver::transformLinearVel()
 }
 
 
-void PhysicsDriver::transformAngularPos()
-{
+void PhysicsDriver::transformAngularPos() {
   if (xformTool == NULL) {
     return;
   }
@@ -653,8 +613,7 @@ void PhysicsDriver::transformAngularPos()
 }
 
 
-void PhysicsDriver::transformRadialPos()
-{
+void PhysicsDriver::transformRadialPos() {
   if (xformTool == NULL) {
     return;
   }
@@ -666,8 +625,7 @@ void PhysicsDriver::transformRadialPos()
 
 //============================================================================//
 
-int PhysicsDriver::packSize() const
-{
+int PhysicsDriver::packSize() const {
   int fullSize = 0;
 
   fullSize += nboStdStringPackSize(name);
@@ -691,8 +649,7 @@ int PhysicsDriver::packSize() const
 }
 
 
-void* PhysicsDriver::pack(void *buf) const
-{
+void* PhysicsDriver::pack(void* buf) const {
   buf = nboPackStdString(buf, name);
 
   int8_t bits = 0;
@@ -701,18 +658,18 @@ void* PhysicsDriver::pack(void *buf) const
 
   std::string varName;
 
-  buf = nboPackFVec3    (buf, linearVel);
+  buf = nboPackFVec3(buf, linearVel);
   buf = nboPackStdString(buf, linearVar);
 
-  buf = nboPackFloat    (buf, angularVel);
-  buf = nboPackFVec2    (buf, angularPos);
+  buf = nboPackFloat(buf, angularVel);
+  buf = nboPackFVec2(buf, angularPos);
   buf = nboPackStdString(buf, angularVar);
 
-  buf = nboPackFloat    (buf, radialVel);
-  buf = nboPackFVec2    (buf, radialPos);
+  buf = nboPackFloat(buf, radialVel);
+  buf = nboPackFVec2(buf, radialPos);
   buf = nboPackStdString(buf, radialVar);
 
-  buf = nboPackFloat    (buf, slideTime);
+  buf = nboPackFloat(buf, slideTime);
   buf = nboPackStdString(buf, slideVar);
 
   buf = nboPackStdString(buf, deathMsg);
@@ -722,8 +679,7 @@ void* PhysicsDriver::pack(void *buf) const
 }
 
 
-void* PhysicsDriver::unpack(void *buf)
-{
+void* PhysicsDriver::unpack(void* buf) {
   buf = nboUnpackStdString(buf, name);
 
   int8_t bits;
@@ -732,21 +688,21 @@ void* PhysicsDriver::unpack(void *buf)
 
   std::string varName;
 
-  buf = nboUnpackFVec3    (buf, linearVel);
+  buf = nboUnpackFVec3(buf, linearVel);
   buf = nboUnpackStdString(buf, varName);
   setLinearVar(varName);
 
-  buf = nboUnpackFloat    (buf, angularVel);
-  buf = nboUnpackFVec2    (buf, angularPos);
+  buf = nboUnpackFloat(buf, angularVel);
+  buf = nboUnpackFVec2(buf, angularPos);
   buf = nboUnpackStdString(buf, varName);
   setAngularVar(varName);
 
-  buf = nboUnpackFloat    (buf, radialVel);
-  buf = nboUnpackFVec2    (buf, radialPos);
+  buf = nboUnpackFloat(buf, radialVel);
+  buf = nboUnpackFVec2(buf, radialPos);
   buf = nboUnpackStdString(buf, varName);
   setRadialVar(varName);
 
-  buf = nboUnpackFloat    (buf, slideTime);
+  buf = nboUnpackFloat(buf, slideTime);
   buf = nboUnpackStdString(buf, varName);
   setSlideVar(varName);
 
@@ -760,8 +716,7 @@ void* PhysicsDriver::unpack(void *buf)
 }
 
 
-void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
-{
+void PhysicsDriver::print(std::ostream& out, const std::string& indent) const {
   out << indent << "physics" << std::endl;
 
   if (name.size() > 0) {
@@ -781,8 +736,8 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
 
   if (angularVel != 0.0f) {
     out << indent << "  angular "
-                  << (angularVel / (M_PI * 2.0f)) << " "
-                  << angularPos << std::endl;
+        << (angularVel / (M_PI * 2.0f)) << " "
+        << angularPos << std::endl;
   }
   if (!angularVar.empty()) {
     out << indent << "  angularVar " << angularVar << std::endl;
@@ -791,7 +746,7 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
   if (radialVel != 0.0f) {
     const fvec2& rp = radialPos;
     out << indent << "  radial "
-	<< radialVel << " " << rp.x << " " << rp.y << std::endl;
+        << radialVel << " " << rp.x << " " << rp.y << std::endl;
   }
   if (!radialVar.empty()) {
     out << indent << "  radialVar " << radialVar << std::endl;
@@ -821,6 +776,6 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

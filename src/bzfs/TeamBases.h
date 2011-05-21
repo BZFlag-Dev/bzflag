@@ -27,8 +27,8 @@
 class Obstacle;
 
 
-class TeamBase
-{ // This class represents one base
+class TeamBase {
+    // This class represents one base
   public:
     TeamBase() : obstacle(NULL) {}
     TeamBase(const Obstacle* obs) { obstacle = obs; }
@@ -40,8 +40,8 @@ class TeamBase
 };
 
 
-class TeamBases
-{ // This class represents all the bases for one team
+class TeamBases {
+    // This class represents all the bases for one team
   public:
 
     TeamBases();
@@ -70,6 +70,6 @@ typedef std::map<int, TeamBases> BasesList;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,11 +11,11 @@
  */
 
 /* Teleporter:
- *	Encapsulates a box in the game environment.
+ *  Encapsulates a box in the game environment.
  */
 
-#ifndef	BZF_TELEPORTER_H
-#define	BZF_TELEPORTER_H
+#ifndef BZF_TELEPORTER_H
+#define BZF_TELEPORTER_H
 
 #include "common.h"
 #include <string>
@@ -68,8 +68,8 @@ class Teleporter : public Obstacle {
                     fvec4* plane) const;
 
     int packSize() const;
-    void *pack(void*) const;
-    void *unpack(void*);
+    void* pack(void*) const;
+    void* unpack(void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 
@@ -94,6 +94,6 @@ class Teleporter : public Obstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

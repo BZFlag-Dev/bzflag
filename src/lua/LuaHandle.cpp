@@ -72,14 +72,13 @@ bool LuaHandle::devMode = false;
 //============================================================================//
 
 LuaHandle::LuaHandle(const string& _name, int16_t _scriptID,
-		     int gameState, int drawWorld, int drawScreen,
-		     bool _fullRead, bool _gameCtrl, bool _inputCtrl)
-: EventClient(_name, _scriptID,
-	      gameState, drawWorld, drawScreen,
-	      _fullRead, _gameCtrl, _inputCtrl)
-, requestReload  (false)
-, requestDisable (false)
-{
+                     int gameState, int drawWorld, int drawScreen,
+                     bool _fullRead, bool _gameCtrl, bool _inputCtrl)
+  : EventClient(_name, _scriptID,
+                gameState, drawWorld, drawScreen,
+                _fullRead, _gameCtrl, _inputCtrl)
+  , requestReload(false)
+  , requestDisable(false) {
   assert(LUAI_EXTRASPACE >= sizeof(LuaExtraSpace));
 
   L = lua_open();
@@ -104,25 +103,23 @@ LuaHandle::LuaHandle(const string& _name, int16_t _scriptID,
 }
 
 
-LuaHandle::~LuaHandle()
-{
+LuaHandle::~LuaHandle() {
   eventHandler.RemoveClient(this);
 
   // free the lua state
   KillLua();
 
-/*
-  string msg = GetName();
-  if (!requestMessage.empty()) {
-    msg += ": " + requestMessage;
-  }
-  LuaLog(1, "Disabled %s", msg.c_str());
-*/
+  /*
+    string msg = GetName();
+    if (!requestMessage.empty()) {
+      msg += ": " + requestMessage;
+    }
+    LuaLog(1, "Disabled %s", msg.c_str());
+  */
 }
 
 
-void LuaHandle::KillLua()
-{
+void LuaHandle::KillLua() {
   if (L != NULL) {
     lua_close(L);
   }
@@ -130,8 +127,7 @@ void LuaHandle::KillLua()
 }
 
 
-void LuaHandle::SetupValidCallIns()
-{
+void LuaHandle::SetupValidCallIns() {
   validCallIns.clear();
 
   // setup the validCallIns set
@@ -140,12 +136,12 @@ void LuaHandle::SetupValidCallIns()
   for (it = ciInfoMap.begin(); it != ciInfoMap.end(); ++it) {
     const LuaCallInDB::CallInInfo& ciInfo = it->second;
     if (!ciInfo.singleScript.empty() &&
-	(ciInfo.singleScript != GetName())) {
+        (ciInfo.singleScript != GetName())) {
       continue;
     }
     if ((ciInfo.reqFullRead  && !HasFullRead()) ||
-	(ciInfo.reqGameCtrl  && !HasGameCtrl()) ||
-	(ciInfo.reqInputCtrl && !HasInputCtrl())) {
+        (ciInfo.reqGameCtrl  && !HasGameCtrl()) ||
+        (ciInfo.reqInputCtrl && !HasInputCtrl())) {
       continue;
     }
     validCallIns.insert(luaCallInDB.GetCode(ciInfo.name));
@@ -157,8 +153,7 @@ void LuaHandle::SetupValidCallIns()
 //============================================================================//
 
 static void CheckEqualStack(const LuaHandle* lh, lua_State* L, int top,
-			    const char* tableName)
-{
+                            const char* tableName) {
   if (top != lua_gettop(L)) {
     string msg = __FUNCTION__;
     msg += " : " + lh->GetName() + " : ";
@@ -168,8 +163,7 @@ static void CheckEqualStack(const LuaHandle* lh, lua_State* L, int top,
 }
 
 
-bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*))
-{
+bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*)) {
   const int top = lua_gettop(L);
   lua_pushstring(L, name);
   lua_rawget(L, -2);
@@ -197,8 +191,7 @@ bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*))
 
 
 string LuaHandle::LoadSourceCode(const string& sourceFile,
-				 const string& sourceModes)
-{
+                                 const string& sourceModes) {
   string modes = sourceModes;
   if (devMode) {
     modes = string(BZVFS_LUA_USER) + modes;
@@ -206,20 +199,19 @@ string LuaHandle::LoadSourceCode(const string& sourceFile,
   string code;
   if (!bzVFS.readFile(sourceFile, modes, code)) {
     LuaLog(0, "FAILED to load  '%s'  with  '%s'\n",
-	   sourceFile.c_str(), modes.c_str());
+           sourceFile.c_str(), modes.c_str());
     return "";
   }
   return code;
 }
 
 
-bool LuaHandle::ExecSourceCode(const string& code, const string& label)
-{
+bool LuaHandle::ExecSourceCode(const string& code, const string& label) {
   int error = luaL_loadbuffer(L, code.c_str(), code.size(), label.c_str());
 
   if (error != 0) {
     LuaLog(0, "Lua LoadCode loadbuffer error = %i, %s, %s\n",
-	   error, GetName().c_str(), lua_tostring(L, -1));
+           error, GetName().c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
@@ -228,7 +220,7 @@ bool LuaHandle::ExecSourceCode(const string& code, const string& label)
 
   if (error != 0) {
     LuaLog(0, "Lua LoadCode pcall error(%i), %s, %s\n",
-	   error, GetName().c_str(), lua_tostring(L, -1));
+           error, GetName().c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
@@ -240,8 +232,7 @@ bool LuaHandle::ExecSourceCode(const string& code, const string& label)
 //============================================================================//
 //============================================================================//
 
-void LuaHandle::CheckStack()
-{
+void LuaHandle::CheckStack() {
   const int top = lua_gettop(L);
   if (top != 0) {
     LuaLog(0, "WARNING: %s stack check: top = %i\n", GetName().c_str(), top);
@@ -253,14 +244,12 @@ void LuaHandle::CheckStack()
 //============================================================================//
 //============================================================================//
 
-bool LuaHandle::CanUseCallIn(int code) const
-{
+bool LuaHandle::CanUseCallIn(int code) const {
   return (validCallIns.find(code) != validCallIns.end());
 }
 
 
-bool LuaHandle::CanUseCallIn(const string& ciName) const
-{
+bool LuaHandle::CanUseCallIn(const string& ciName) const {
   const int code = luaCallInDB.GetCode(luaCallInDB.GetCallInName(ciName));
   if (code == 0)  {
     return false;
@@ -269,12 +258,12 @@ bool LuaHandle::CanUseCallIn(const string& ciName) const
 }
 
 
-bool LuaHandle::UpdateCallIn(const string& ciName, bool state)
-{
+bool LuaHandle::UpdateCallIn(const string& ciName, bool state) {
   const string& eventName = luaCallInDB.GetEventName(ciName);
   if (state) {
     return eventHandler.InsertEvent(this, eventName);
-  } else {
+  }
+  else {
     return eventHandler.RemoveEvent(this, eventName);
   }
 }
@@ -283,8 +272,7 @@ bool LuaHandle::UpdateCallIn(const string& ciName, bool state)
 //============================================================================//
 //============================================================================//
 
-static void AddCallInError(lua_State* L, const string& funcName)
-{
+static void AddCallInError(lua_State* L, const string& funcName) {
   // error string is on the top of the stack
   lua_checkstack(L, 4);
 
@@ -318,8 +306,7 @@ static void AddCallInError(lua_State* L, const string& funcName)
 }
 
 
-bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
-{
+bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs) {
   int error;
 
   error = lua_pcall(L, inArgs, outArgs, 0);
@@ -329,7 +316,7 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
     const string* ciName = luaCallInDB.GetName(ciCode);
     const char* ciNameStr = ciName ? ciName->c_str() : "UNKNOWN";
     LuaLog(0, "%s::RunCallIn: error = %i, %s, %s\n",
-	   GetName().c_str(), error, ciNameStr, lua_tostring(L, -1));
+           GetName().c_str(), error, ciNameStr, lua_tostring(L, -1));
     // move the error string into CALLIN_ERRORS
     AddCallInError(L, ciNameStr);
     return false;
@@ -341,8 +328,7 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs)
 
 //============================================================================//
 
-bool LuaHandle::PushCallIn(int ciCode)
-{
+bool LuaHandle::PushCallIn(int ciCode) {
   lua_rawgeti(L, LUA_CALLINSINDEX, ciCode);
   if (lua_isfunction(L, -1)) {
     return true;
@@ -363,13 +349,12 @@ bool LuaHandle::PushCallIn(int ciCode)
 //============================================================================//
 //============================================================================//
 
-bool LuaHandle::AddBasicCalls()
-{
+bool LuaHandle::AddBasicCalls() {
   lua_newtable(L); {
-    luaset_strfunc(L, "Reload",	ScriptReload);
+    luaset_strfunc(L, "Reload", ScriptReload);
     luaset_strfunc(L, "Disable",       ScriptDisable);
 
-    luaset_strfunc(L, "GetID",	 ScriptGetID);
+    luaset_strfunc(L, "GetID",   ScriptGetID);
     luaset_strfunc(L, "GetName",       ScriptGetName);
 
     luaset_strfunc(L, "HasFullRead",   ScriptHasFullRead);
@@ -405,8 +390,7 @@ bool LuaHandle::AddBasicCalls()
 
 //============================================================================//
 
-int LuaHandle::ScriptDisable(lua_State* L)
-{
+int LuaHandle::ScriptDisable(lua_State* L) {
   const int args = lua_gettop(L);
   if ((args >= 1) && lua_israwstring(L, 1)) {
     L2H(L)->requestMessage = lua_tostring(L, 1);
@@ -416,8 +400,7 @@ int LuaHandle::ScriptDisable(lua_State* L)
 }
 
 
-int LuaHandle::ScriptReload(lua_State* L)
-{
+int LuaHandle::ScriptReload(lua_State* L) {
   const int args = lua_gettop(L);
   if ((args >= 1) && lua_israwstring(L, 1)) {
     L2H(L)->requestMessage = lua_tostring(L, 1);
@@ -429,16 +412,14 @@ int LuaHandle::ScriptReload(lua_State* L)
 
 //============================================================================//
 
-int LuaHandle::ScriptPrintPointer(lua_State* L)
-{
+int LuaHandle::ScriptPrintPointer(lua_State* L) {
   const string prefix = luaL_optstring(L, 2, "PrintPointer: ");
   LuaLog(0, "%s%p\n", prefix.c_str(), lua_topointer(L, 1));
   return 0;
 }
 
 
-int LuaHandle::ScriptPrintGCInfo(lua_State* L)
-{
+int LuaHandle::ScriptPrintGCInfo(lua_State* L) {
   LuaLog(0, "GCInfo: %.3f MBytes\n", (float)lua_getgccount(L) / 1024.0f);
   return 0;
 }
@@ -446,8 +427,7 @@ int LuaHandle::ScriptPrintGCInfo(lua_State* L)
 
 //============================================================================//
 
-int LuaHandle::ScriptGetID(lua_State* L)
-{
+int LuaHandle::ScriptGetID(lua_State* L) {
   if (lua_gettop(L) == 0) {
     lua_pushinteger(L, L2H(L)->GetScriptID());
   }
@@ -476,43 +456,37 @@ int LuaHandle::ScriptGetID(lua_State* L)
 }
 
 
-int LuaHandle::ScriptGetName(lua_State* L)
-{
+int LuaHandle::ScriptGetName(lua_State* L) {
   lua_pushstring(L, L2H(L)->GetName().c_str());
   return 1;
 }
 
 
-int LuaHandle::ScriptHasFullRead(lua_State* L)
-{
+int LuaHandle::ScriptHasFullRead(lua_State* L) {
   lua_pushboolean(L, L2H(L)->HasFullRead());
   return 1;
 }
 
 
-int LuaHandle::ScriptHasGameCtrl(lua_State* L)
-{
+int LuaHandle::ScriptHasGameCtrl(lua_State* L) {
   lua_pushboolean(L, L2H(L)->HasGameCtrl());
   return 1;
 }
 
 
-int LuaHandle::ScriptHasInputCtrl(lua_State* L)
-{
+int LuaHandle::ScriptHasInputCtrl(lua_State* L) {
   lua_pushboolean(L, L2H(L)->HasInputCtrl());
   return 1;
 }
 
 
-int LuaHandle::ScriptGetDevMode(lua_State* L)
-{
+int LuaHandle::ScriptGetDevMode(lua_State* L) {
   lua_pushboolean(L, devMode);
   return 1;
 }
 
 
-int LuaHandle::ScriptGetGLOBALS(lua_State* L)
-{
+int LuaHandle::ScriptGetGLOBALS(lua_State* L) {
   if (!devMode) {
     return luaL_pushnil(L);
   }
@@ -521,8 +495,7 @@ int LuaHandle::ScriptGetGLOBALS(lua_State* L)
 }
 
 
-int LuaHandle::ScriptGetCALLINS(lua_State* L)
-{
+int LuaHandle::ScriptGetCALLINS(lua_State* L) {
   if (!devMode) {
     return luaL_pushnil(L);
   }
@@ -531,8 +504,7 @@ int LuaHandle::ScriptGetCALLINS(lua_State* L)
 }
 
 
-int LuaHandle::ScriptGetREGISTRY(lua_State* L)
-{
+int LuaHandle::ScriptGetREGISTRY(lua_State* L) {
   if (!devMode) {
     return luaL_pushnil(L);
   }
@@ -543,14 +515,13 @@ int LuaHandle::ScriptGetREGISTRY(lua_State* L)
 
 //============================================================================//
 
-static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo)
-{
+static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo) {
   lua_newtable(L);
-  luaset_strint   (L, "code",	 ciInfo.code);
-  luaset_strbool  (L, "reqFullRead",  ciInfo.reqFullRead);
-  luaset_strbool  (L, "reqInputCtrl", ciInfo.reqInputCtrl);
-  luaset_strbool  (L, "reversed",     ciInfo.reversed);
-  luaset_strbool  (L, "reentrant",    ciInfo.reentrant);
+  luaset_strint(L, "code",  ciInfo.code);
+  luaset_strbool(L, "reqFullRead",  ciInfo.reqFullRead);
+  luaset_strbool(L, "reqInputCtrl", ciInfo.reqInputCtrl);
+  luaset_strbool(L, "reversed",     ciInfo.reversed);
+  luaset_strbool(L, "reentrant",    ciInfo.reentrant);
   luaset_strstr(L, "loopType",     ciInfo.loopType);
   if (LuaHandle::GetDevMode()) {
     lua_pushliteral(L, "func");
@@ -564,8 +535,7 @@ static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo)
 }
 
 
-int LuaHandle::ScriptGetCallInInfo(lua_State* L)
-{
+int LuaHandle::ScriptGetCallInInfo(lua_State* L) {
   vector<string> list;
   eventHandler.GetEventList(list);
 
@@ -578,9 +548,10 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
     if (wantAll || L2H(L)->CanUseCallIn(ciName)) {
       it = ciInfoMap.find(ciName);
       if (it != ciInfoMap.end()) {
-	PushCallInInfo(L, it->second);
+        PushCallInInfo(L, it->second);
       }
-    } else {
+    }
+    else {
       return luaL_pushnil(L);
     }
   }
@@ -590,9 +561,9 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
     for (it = ciInfoMap.begin(); it != ciInfoMap.end(); ++it) {
       const LuaCallInDB::CallInInfo& ciInfo = it->second;
       if (wantAll || L2H(L)->CanUseCallIn(ciInfo.name)) {
-	lua_pushstring(L, ciInfo.name.c_str());
-	PushCallInInfo(L, ciInfo);
-	lua_rawset(L, -3);
+        lua_pushstring(L, ciInfo.name.c_str());
+        PushCallInInfo(L, ciInfo);
+        lua_rawset(L, -3);
       }
     }
   }
@@ -601,16 +572,14 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L)
 }
 
 
-int LuaHandle::ScriptCanUseCallIn(lua_State* L)
-{
+int LuaHandle::ScriptCanUseCallIn(lua_State* L) {
   const string ciName = lua_tostring(L, 1);
   lua_pushboolean(L, L2H(L)->CanUseCallIn(ciName));
   return 1;
 }
 
 
-int LuaHandle::ScriptSetCallIn(lua_State* L)
-{
+int LuaHandle::ScriptSetCallIn(lua_State* L) {
   const string ciName = luaL_checkstring(L, 1);
 
   const int ciCode = luaCallInDB.GetCode(ciName);
@@ -640,7 +609,8 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
   const string& eventName = luaCallInDB.GetEventName(ciName);
   if (eventHandler.IsManaged(eventName)) {
     lua_pushboolean(L, L2H(L)->UpdateCallIn(ciName, haveFunc));
-  } else {
+  }
+  else {
     lua_pushboolean(L, true);
   }
 
@@ -656,8 +626,7 @@ int LuaHandle::ScriptSetCallIn(lua_State* L)
   lua_pcall((L), 0, 0, 0);
 
 
-bool LuaHandle::SetupEnvironment()
-{
+bool LuaHandle::SetupEnvironment() {
   // load the standard libraries
   LUA_OPEN_LIB(L, luaopen_base);
   LUA_OPEN_LIB(L, luaopen_math);
@@ -670,7 +639,7 @@ bool LuaHandle::SetupEnvironment()
   //
   // disabled libraries  {io}, {os}, and {package}
   // NOTE: if {io} is added, disable io.popen()
-  //				 ^^^^^^^^^^
+  //         ^^^^^^^^^^
   //LUA_OPEN_LIB(L, luaopen_io);
   //LUA_OPEN_LIB(L, luaopen_os);
   //LUA_OPEN_LIB(L, luaopen_package);
@@ -684,48 +653,48 @@ bool LuaHandle::SetupEnvironment()
   lua_pushvalue(L, LUA_GLOBALSINDEX); {
     // into the global table
     if (!LuaExtras::PushEntries(L) ||
-	!LuaDouble::PushEntries(L)) {
+        !LuaDouble::PushEntries(L)) {
       lua_pop(L, 1);
       return false;
     }
     // into sub-tables (using PushLib())
     if (!PushLib("math",   LuaBitOps::PushEntries)       ||
-	!PushLib("math",   LuaVector::PushEntries)       ||
-	!PushLib("http",   LuaHTTPMgr::PushEntries)      ||
-	!PushLib("vfs",    LuaVFS::PushEntries)          ||
-	!PushLib("bzdb",   LuaBZDB::PushEntries)         ||
-	!PushLib("script", LuaScream::PushEntries)       ||
-	!PushLib("gl",     LuaOpenGL::PushEntries)       ||
-	!PushLib("GL",     LuaGLConst::PushEntries)      ||
-	!PushLib("bz",     LuaZip::PushEntries)          ||
-	!PushLib("bz",     LuaPack::PushEntries)         ||
-	!PushLib("bz",     LuaCallOuts::PushEntries)     ||
-	!PushLib("bz",     LuaConsole::PushEntries)      ||
-	!PushLib("bz",     LuaSceneNodeMgr::PushEntries) ||
-	!PushLib("BZ",     LuaKeySyms::PushEntries)      ||
-	!PushLib("BZ",     LuaGameConst::PushEntries))    {
+        !PushLib("math",   LuaVector::PushEntries)       ||
+        !PushLib("http",   LuaHTTPMgr::PushEntries)      ||
+        !PushLib("vfs",    LuaVFS::PushEntries)          ||
+        !PushLib("bzdb",   LuaBZDB::PushEntries)         ||
+        !PushLib("script", LuaScream::PushEntries)       ||
+        !PushLib("gl",     LuaOpenGL::PushEntries)       ||
+        !PushLib("GL",     LuaGLConst::PushEntries)      ||
+        !PushLib("bz",     LuaZip::PushEntries)          ||
+        !PushLib("bz",     LuaPack::PushEntries)         ||
+        !PushLib("bz",     LuaCallOuts::PushEntries)     ||
+        !PushLib("bz",     LuaConsole::PushEntries)      ||
+        !PushLib("bz",     LuaSceneNodeMgr::PushEntries) ||
+        !PushLib("BZ",     LuaKeySyms::PushEntries)      ||
+        !PushLib("BZ",     LuaGameConst::PushEntries))    {
       lua_pop(L, 1);
       return false;
     }
     if (HasFullRead()) {
       if (!PushLib("bz", LuaBzMaterial::PushEntries) ||
-	  !PushLib("bz", LuaDynCol::PushEntries)     ||
-	  !PushLib("bz", LuaTexMat::PushEntries)     ||
-	  !PushLib("bz", LuaPhyDrv::PushEntries)     ||
-	  !PushLib("bz", LuaSpatial::PushEntries)    ||
-	  !PushLib("bz", LuaObstacle::PushEntries)) {
-	lua_pop(L, 1);
-	return false;
+          !PushLib("bz", LuaDynCol::PushEntries)     ||
+          !PushLib("bz", LuaTexMat::PushEntries)     ||
+          !PushLib("bz", LuaPhyDrv::PushEntries)     ||
+          !PushLib("bz", LuaSpatial::PushEntries)    ||
+          !PushLib("bz", LuaObstacle::PushEntries)) {
+        lua_pop(L, 1);
+        return false;
       }
     }
     if (HasInputCtrl()) {
       if (!PushLib("control", LuaControl::PushEntries)) {
-	return false;
+        return false;
       }
     }
     if (GetName() == "LuaBzOrg") {
       if (!PushLib("bz", LuaServerPingMgr::PushEntries)) {
-	return false;
+        return false;
       }
     }
   }
@@ -748,6 +717,6 @@ bool LuaHandle::SetupEnvironment()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_MODIFIER_H
-#define	BZF_OBSTACLE_MODIFIER_H
+#ifndef BZF_OBSTACLE_MODIFIER_H
+#define BZF_OBSTACLE_MODIFIER_H
 
 // the common header
 #include "common.h"
@@ -34,7 +34,7 @@ class ObstacleModifier {
   public:
     ObstacleModifier();
     ObstacleModifier(const ObstacleModifier& obsMod,
-		     const GroupInstance& grpinst);
+                     const GroupInstance& grpinst);
     ~ObstacleModifier();
     void init();
 
@@ -71,6 +71,6 @@ class ObstacleModifier {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -21,36 +21,36 @@
 #endif
 
 
-bool SharedObjectLoader::load(std::string filename)
-{
+bool SharedObjectLoader::load(std::string filename) {
 #ifdef _WIN32
 
   soHandle = LoadLibrary(filename.c_str());
-  if(soHandle == NULL) {
+  if (soHandle == NULL) {
     return false;
   }
 
-  createFunction = (createHandle) ( GetProcAddress( soHandle, "create" ) );
-  if(createFunction == NULL) {
+  createFunction = (createHandle)(GetProcAddress(soHandle, "create"));
+  if (createFunction == NULL) {
     return false;
   }
 
-  destroyFunction = (destroyHandle) ( GetProcAddress( soHandle, "destroy" ) );
-  if(destroyFunction == NULL) {
+  destroyFunction = (destroyHandle)(GetProcAddress(soHandle, "destroy"));
+  if (destroyFunction == NULL) {
     return false;
   }
 
 #else
 
-  char *err;
-  void *createSymbol;
-  void *destroySymbol;
+  char* err;
+  void* createSymbol;
+  void* destroySymbol;
 
   int32_t createAddr32, destroyAddr32;
   int64_t createAddr64, destroyAddr64;
 
-  if (filename.find('/') == std::string::npos)
+  if (filename.find('/') == std::string::npos) {
     filename = "./" + filename;
+  }
 
   soHandle = dlopen(filename.c_str(), RTLD_LAZY);
   if (soHandle == NULL) {
@@ -112,8 +112,7 @@ bool SharedObjectLoader::load(std::string filename)
 }
 
 
-SharedObjectLoader::~SharedObjectLoader()
-{
+SharedObjectLoader::~SharedObjectLoader() {
 #ifdef _WIN32
   FreeLibrary(soHandle);
 #else
@@ -122,14 +121,12 @@ SharedObjectLoader::~SharedObjectLoader()
 }
 
 
-BZRobots::Robot *SharedObjectLoader::create(void)
-{
+BZRobots::Robot* SharedObjectLoader::create(void) {
   return (*createFunction)();
 }
 
 
-void SharedObjectLoader::destroy(BZRobots::Robot *instance)
-{
+void SharedObjectLoader::destroy(BZRobots::Robot* instance) {
   (*destroyFunction)(instance);
 }
 
@@ -137,6 +134,6 @@ void SharedObjectLoader::destroy(BZRobots::Robot *instance)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -26,32 +26,33 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 
-static ErrorCallback	errorCallback = NULL;
+static ErrorCallback  errorCallback = NULL;
 
-ErrorCallback		setErrorCallback(ErrorCallback cb)
-{
+ErrorCallback   setErrorCallback(ErrorCallback cb) {
   ErrorCallback oldErrorCallback = errorCallback;
   errorCallback = cb;
   return oldErrorCallback;
 }
 
-void			printError(const std::string &fmt, const std::vector<std::string> *parms)
-{
+void      printError(const std::string& fmt, const std::vector<std::string> *parms) {
   std::string msg;
-  Bundle *pBdl = BundleMgr::getCurrentBundle();
-  if (!pBdl)
+  Bundle* pBdl = BundleMgr::getCurrentBundle();
+  if (!pBdl) {
     return;
+  }
 
-  if ((parms != NULL) && (parms->size() > 0))
+  if ((parms != NULL) && (parms->size() > 0)) {
     msg = pBdl->formatMessage(fmt, parms);
-  else
+  }
+  else {
     msg = pBdl->getLocalString(fmt);
+  }
 
-  if (errorCallback) (*errorCallback)(msg.c_str());
+  if (errorCallback) { (*errorCallback)(msg.c_str()); }
 #if defined(_WIN32)
   else { OutputDebugString(msg.c_str()); OutputDebugString("\n"); }
 #else
-  else std::cerr << msg << std::endl;
+  else { std::cerr << msg << std::endl; }
 #endif
 }
 
@@ -59,12 +60,12 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 // special error handler.  shows a message box on Windows.
 //
 
-void			printFatalError(const char* fmt, ...)
-{
+void      printFatalError(const char* fmt, ...) {
   char buffer[1024];
 
-  if (!fmt)
+  if (!fmt) {
     return;
+  }
 
   va_list args;
   va_start(args, fmt);
@@ -82,6 +83,6 @@ void			printFatalError(const char* fmt, ...)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

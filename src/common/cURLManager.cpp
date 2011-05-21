@@ -19,19 +19,18 @@
 // common implementation headers
 #include "bzfio.h"
 
-bool		    cURLManager::inited      = false;
-bool		    cURLManager::justCalled;
-CURLM		  *cURLManager::multiHandle = NULL;
-std::map<CURL*,
-	 cURLManager*>  *cURLManager::pcURLMap = NULL;
-char		    cURLManager::errorBuffer[CURL_ERROR_SIZE];
-int		    cURLManager::refs = 0;
+bool        cURLManager::inited      = false;
+bool        cURLManager::justCalled;
+CURLM*     cURLManager::multiHandle = NULL;
+std::map < CURL*,
+    cURLManager* >  *cURLManager::pcURLMap = NULL;
+char        cURLManager::errorBuffer[CURL_ERROR_SIZE];
+int       cURLManager::refs = 0;
 
 #define cURLMap (*pcURLMap)
 
 
-cURLManager::cURLManager()
-{
+cURLManager::cURLManager() {
   CURLcode result;
 
   theData    = NULL;
@@ -43,11 +42,13 @@ cURLManager::cURLManager()
 
   deleteOnDone = false;
 
-  if (refs == 0)
+  if (refs == 0) {
     pcURLMap = new std::map<CURL*, cURLManager*>;
+  }
 
-  if (!inited)
+  if (!inited) {
     setup();
+  }
 
   refs++;
 
@@ -86,22 +87,24 @@ cURLManager::cURLManager()
   }
 
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION,
-			    cURLManager::writeFunction);
-  if (result != CURLE_OK)
+                            cURLManager::writeFunction);
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_WRITEFUNCTION error %d : %s\n", result, errorBuffer);
+  }
 
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEDATA, this);
-  if (result != CURLE_OK)
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_WRITEDATA error %d : %s\n", result, errorBuffer);
+  }
 
   cURLMap[easyHandle] = this;
 }
 
 
-cURLManager::~cURLManager()
-{
-  if (added)
+cURLManager::~cURLManager() {
+  if (added) {
     removeHandle();
+  }
   cURLMap.erase(easyHandle);
   curl_easy_cleanup(easyHandle);
   refs--;
@@ -110,8 +113,9 @@ cURLManager::~cURLManager()
     multiHandle = NULL;
     inited = false;
   }
-  if (refs == 0)
+  if (refs == 0) {
     delete pcURLMap;
+  }
   free(theData);
   if (httpHeader) {
     curl_slist_free_all(httpHeader);
@@ -120,25 +124,26 @@ cURLManager::~cURLManager()
 }
 
 
-void cURLManager::setup()
-{
+void cURLManager::setup() {
   CURLcode result;
 
   logDebugMessage(1, "LIBCURL version:  %s\n", curl_version());
-  if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
+  if ((result = curl_global_init(CURL_GLOBAL_NOTHING))) {
     logDebugMessage(1, "cURL Global init Error: %d\n", result);
+  }
   /* might need to call removeHandle() still if added */
-  if (!multiHandle)
+  if (!multiHandle) {
     multiHandle = curl_multi_init();
-  if (!multiHandle)
+  }
+  if (!multiHandle) {
     logDebugMessage(1, "Unexpected error creating multi handle from libcurl \n");
+  }
   inited = true;
 }
 
 
-size_t cURLManager::writeFunction(void *ptr, size_t size, size_t nmemb,
-				  void *stream)
-{
+size_t cURLManager::writeFunction(void* ptr, size_t size, size_t nmemb,
+                                  void* stream) {
   int len = size * nmemb;
   ((cURLManager*)stream)->collectData((char*)ptr, len);
   justCalled = true;
@@ -146,8 +151,7 @@ size_t cURLManager::writeFunction(void *ptr, size_t size, size_t nmemb,
 }
 
 
-void cURLManager::setTimeout(long timeout)
-{
+void cURLManager::setTimeout(long timeout) {
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle, CURLOPT_CONNECTTIMEOUT, timeout);
@@ -166,8 +170,7 @@ void cURLManager::setTimeout(long timeout)
 }
 
 
-void cURLManager::setNoBody()
-{
+void cURLManager::setNoBody() {
   CURLcode result;
   long     nobody = 1;
   result = curl_easy_setopt(easyHandle, CURLOPT_NOBODY, nobody);
@@ -177,8 +180,7 @@ void cURLManager::setNoBody()
 }
 
 
-void cURLManager::setIncludeHeader()
-{
+void cURLManager::setIncludeHeader() {
   CURLcode result;
   long     includeHeader = 1;
   result = curl_easy_setopt(easyHandle, CURLOPT_HEADER, includeHeader);
@@ -188,8 +190,7 @@ void cURLManager::setIncludeHeader()
 }
 
 
-void cURLManager::setFailOnError()
-{
+void cURLManager::setFailOnError() {
   CURLcode result;
   long fail = 1;
   result = curl_easy_setopt(easyHandle, CURLOPT_FAILONERROR, fail);
@@ -199,8 +200,7 @@ void cURLManager::setFailOnError()
 }
 
 
-void cURLManager::setGetMode()
-{
+void cURLManager::setGetMode() {
   CURLcode result;
   long     get = 1;
 
@@ -211,8 +211,7 @@ void cURLManager::setGetMode()
 }
 
 
-void cURLManager::setHttpHeader(const std::vector<std::string>& lines)
-{
+void cURLManager::setHttpHeader(const std::vector<std::string>& lines) {
   if (httpHeader) {
     curl_slist_free_all(httpHeader);
     httpHeader = NULL;
@@ -232,43 +231,45 @@ void cURLManager::setHttpHeader(const std::vector<std::string>& lines)
 }
 
 
-void cURLManager::setPostMode(const std::string& _postData)
-{
+void cURLManager::setPostMode(const std::string& _postData) {
   CURLcode result;
 
   postData = _postData;
 
   result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDS, postData.c_str());
-  if (result != CURLE_OK)
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
+  }
   result = curl_easy_setopt(easyHandle, CURLOPT_POSTFIELDSIZE, postData.size());
-  if (result != CURLE_OK)
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_POSTFIELD error %d : %s\n", result, errorBuffer);
+  }
   result = curl_easy_setopt(easyHandle, CURLOPT_POST, 1);
-  if (result != CURLE_OK)
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_POST error %d : %s\n", result, errorBuffer);
+  }
 }
 
 
-void cURLManager::setHTTPPostMode()
-{
+void cURLManager::setHTTPPostMode() {
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle, CURLOPT_HTTPPOST, formPost);
-  if (result != CURLE_OK)
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_HTTPPOST error %d : %s\n", result, errorBuffer);
+  }
 }
 
 
-void cURLManager::setURL(const std::string& url)
-{
+void cURLManager::setURL(const std::string& url) {
   CURLcode result;
 
   logDebugMessage(4, "Tried to fetch URL: %s\n", url.c_str());
 
   if (url == "") {
     result = curl_easy_setopt(easyHandle, CURLOPT_URL, NULL);
-  } else {
+  }
+  else {
     usedUrl = url;
     result = curl_easy_setopt(easyHandle, CURLOPT_URL, usedUrl.c_str());
     logDebugMessage(2, "CURLOPT_URL is : %s\n", usedUrl.c_str());
@@ -279,16 +280,18 @@ void cURLManager::setURL(const std::string& url)
 }
 
 
-void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
-{
+void cURLManager::setProgressFunction(curl_progress_callback func, void* data) {
   CURLcode result;
   if (func != NULL) {
     result = curl_easy_setopt(easyHandle, CURLOPT_PROGRESSFUNCTION, func);
-    if (result == CURLE_OK)
+    if (result == CURLE_OK) {
       result = curl_easy_setopt(easyHandle, CURLOPT_PROGRESSDATA, data);
-    if (result == CURLE_OK)
+    }
+    if (result == CURLE_OK) {
       result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 0);
-  } else {
+    }
+  }
+  else {
     result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 1);
   }
   if (result != CURLE_OK) {
@@ -297,8 +300,7 @@ void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
 }
 
 
-void cURLManager::setRequestFileTime(bool request)
-{
+void cURLManager::setRequestFileTime(bool request) {
   CURLcode result;
   long     requestFileTime = request ? 1 : 0;
   result = curl_easy_setopt(easyHandle, CURLOPT_FILETIME, requestFileTime);
@@ -308,34 +310,33 @@ void cURLManager::setRequestFileTime(bool request)
 }
 
 
-void cURLManager::addHandle()
-{
+void cURLManager::addHandle() {
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
   if (result > CURLM_OK)
     logDebugMessage(1, "Error while adding easy handle from libcurl %d : %s\n",
-		    result, errorBuffer);
+                    result, errorBuffer);
   added = true;
 }
 
 
-void cURLManager::removeHandle()
-{
-  if (!added)
+void cURLManager::removeHandle() {
+  if (!added) {
     return;
+  }
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
     logDebugMessage(1, "Error while removing easy handle from libcurl %d : %s\n",
-		    result, errorBuffer);
+                    result, errorBuffer);
   added = false;
 }
 
 
-void cURLManager::collectData(char* ptr, int len)
-{
-  unsigned char *newData = (unsigned char *)realloc(theData, theLen + len);
+void cURLManager::collectData(char* ptr, int len) {
+  unsigned char* newData = (unsigned char*)realloc(theData, theLen + len);
   if (!newData) {
     logDebugMessage(1, "memory exhausted\n");
-  } else {
+  }
+  else {
     memcpy(newData + theLen, ptr, len);
     theLen += len;
     theData = newData;
@@ -343,8 +344,7 @@ void cURLManager::collectData(char* ptr, int len)
 }
 
 
-void cURLManager::performWait()
-{
+void cURLManager::performWait() {
   CURLcode result;
   result = curl_easy_perform(easyHandle);
   infoComplete(result);
@@ -354,8 +354,7 @@ void cURLManager::performWait()
 }
 
 
-int cURLManager::fdset(fd_set &read, fd_set &write)
-{
+int cURLManager::fdset(fd_set& read, fd_set& write) {
   if (multiHandle == NULL) {
     return -1;
   }
@@ -374,49 +373,52 @@ int cURLManager::fdset(fd_set &read, fd_set &write)
 }
 
 
-bool cURLManager::perform()
-{
+bool cURLManager::perform() {
   if (multiHandle == NULL) {
     return false;
   }
 
-  if (!inited)
+  if (!inited) {
     setup();
+  }
 
   int activeTransfers = 0;
   CURLMcode result;
   justCalled = false;
   while (true) {
     result = curl_multi_perform(multiHandle, &activeTransfers);
-    if (result != CURLM_CALL_MULTI_PERFORM)
+    if (result != CURLM_CALL_MULTI_PERFORM) {
       break;
+    }
   }
   if (result != CURLM_OK)
     logDebugMessage(1, "Error while doing multi_perform from libcurl %d : %s\n",
                     result, errorBuffer);
 
   int      msgs_in_queue;
-  CURLMsg *pendingMsg;
-  CURL    *easy;
+  CURLMsg* pendingMsg;
+  CURL*    easy;
 
   std::vector<cURLManager*> toBeDeleted;
 
   while (true) {
     pendingMsg = curl_multi_info_read(multiHandle, &msgs_in_queue);
-    if (!pendingMsg)
+    if (!pendingMsg) {
       break;
+    }
 
     easy = pendingMsg->easy_handle;
 
     if (cURLMap.count(easy)) {
       cURLMap[easy]->infoComplete(pendingMsg->data.result);
       if (cURLMap[easy]->deleteOnDone) {
-      	toBeDeleted.push_back(cURLMap[easy]);
+        toBeDeleted.push_back(cURLMap[easy]);
       }
     }
 
-    if (msgs_in_queue <= 0)
+    if (msgs_in_queue <= 0) {
       break;
+    }
   }
 
   for (size_t i = 0; i < toBeDeleted.size(); i++) {
@@ -428,11 +430,10 @@ bool cURLManager::perform()
 }
 
 
-void cURLManager::infoComplete(CURLcode result)
-{
+void cURLManager::infoComplete(CURLcode result) {
   if (result != CURLE_OK)
     logDebugMessage(1, "File transfer terminated with error from libcurl %d : %s\n",
-		    result, errorBuffer);
+                    result, errorBuffer);
   if (httpHeader) {
     curl_slist_free_all(httpHeader);
     httpHeader = NULL;
@@ -443,7 +444,7 @@ void cURLManager::infoComplete(CURLcode result)
     formLast = NULL;
   }
   removeHandle();
-  finalization((char *)theData, theLen, result == CURLE_OK);
+  finalization((char*)theData, theLen, result == CURLE_OK);
   justCalled = true;
   free(theData);
   theData = NULL;
@@ -451,8 +452,7 @@ void cURLManager::infoComplete(CURLcode result)
 }
 
 
-bool cURLManager::getFileTime(time_t &t)
-{
+bool cURLManager::getFileTime(time_t& t) {
   long filetime;
   CURLcode result;
   result = curl_easy_getinfo(easyHandle, CURLINFO_FILETIME, &filetime);
@@ -465,8 +465,7 @@ bool cURLManager::getFileTime(time_t &t)
 }
 
 
-bool cURLManager::getFileSize(double &size)
-{
+bool cURLManager::getFileSize(double& size) {
   CURLcode result;
   result = curl_easy_getinfo(easyHandle, CURLINFO_SIZE_DOWNLOAD, &size);
   if (result) {
@@ -477,8 +476,7 @@ bool cURLManager::getFileSize(double &size)
 }
 
 
-bool cURLManager::getFileRemoteSize(double &size)
-{
+bool cURLManager::getFileRemoteSize(double& size) {
   CURLcode result;
   result = curl_easy_getinfo(easyHandle, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &size);
   if (result) {
@@ -489,8 +487,7 @@ bool cURLManager::getFileRemoteSize(double &size)
 }
 
 
-bool cURLManager::getHttpCode(long &code)
-{
+bool cURLManager::getHttpCode(long& code) {
   CURLcode result;
   result = curl_easy_getinfo(easyHandle, CURLINFO_RESPONSE_CODE, &code);
   if (result) {
@@ -501,31 +498,30 @@ bool cURLManager::getHttpCode(long &code)
 }
 
 
-void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
-{
+void cURLManager::setTimeCondition(timeCondition condition, time_t& t) {
   CURLcode result;
 
   switch (condition) {
     case None:
       result = curl_easy_setopt(easyHandle,
-				CURLOPT_TIMECONDITION,
-				CURL_TIMECOND_NONE);
+                                CURLOPT_TIMECONDITION,
+                                CURL_TIMECOND_NONE);
       if (result != CURLE_OK) {
-	logDebugMessage(1, "CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1, "CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
       }
       break;
     case ModifiedSince:
       result = curl_easy_setopt(easyHandle,
-				CURLOPT_TIMECONDITION,
-				CURL_TIMECOND_IFMODSINCE);
+                                CURLOPT_TIMECONDITION,
+                                CURL_TIMECOND_IFMODSINCE);
       if (result != CURLE_OK) {
-	logDebugMessage(1, "CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1, "CURLOPT_TIMECONDITION error %d : %s\n", result, errorBuffer);
       }
       result = curl_easy_setopt(easyHandle,
-				CURLOPT_TIMEVALUE,
-				(long)t);
+                                CURLOPT_TIMEVALUE,
+                                (long)t);
       if (result != CURLE_OK) {
-	logDebugMessage(1, "CURLOPT_TIMEVALUE error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1, "CURLOPT_TIMEVALUE error %d : %s\n", result, errorBuffer);
       }
       break;
     default:
@@ -534,62 +530,60 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
 }
 
 
-void cURLManager::setInterface(const std::string& _interfaceIP)
-{
+void cURLManager::setInterface(const std::string& _interfaceIP) {
   interfaceIP = _interfaceIP;
 
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle,
-			    CURLOPT_INTERFACE,
-			    interfaceIP.c_str());
-  if (result != CURLE_OK)
+                            CURLOPT_INTERFACE,
+                            interfaceIP.c_str());
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_SET_INTERFACE error %d : %s\n", result, errorBuffer);
+  }
 }
 
 
-void cURLManager::setUserAgent(const std::string& _userAgent)
-{
+void cURLManager::setUserAgent(const std::string& _userAgent) {
   userAgent = _userAgent;
 
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle,
-			    CURLOPT_USERAGENT,
-			    userAgent.c_str());
-  if (result != CURLE_OK)
+                            CURLOPT_USERAGENT,
+                            userAgent.c_str());
+  if (result != CURLE_OK) {
     logDebugMessage(1, "CURLOPT_SET_USERAGENT error %d : %s\n", result, errorBuffer);
+  }
 }
 
 
-void cURLManager::addFormData(const char *key, const char *value)
-{
+void cURLManager::addFormData(const char* key, const char* value) {
   CURLFORMcode result;
   result = curl_formadd(&formPost, &formLast,
-			CURLFORM_COPYNAME, key,
-			CURLFORM_COPYCONTENTS, value,
-			CURLFORM_CONTENTSLENGTH, strlen(value),
-			CURLFORM_END);
-  if (result != CURL_FORMADD_OK)
+                        CURLFORM_COPYNAME, key,
+                        CURLFORM_COPYCONTENTS, value,
+                        CURLFORM_CONTENTSLENGTH, strlen(value),
+                        CURLFORM_END);
+  if (result != CURL_FORMADD_OK) {
     logDebugMessage(1, "addFormData error %d : %s\n", result, errorBuffer);
+  }
 }
 
 
-void cURLManager::setDNSCachingTime(long time)
-{
+void cURLManager::setDNSCachingTime(long time) {
   CURLcode result;
 
   result = curl_easy_setopt(easyHandle,
-			    CURLOPT_DNS_CACHE_TIMEOUT,
-			    (long)time);
+                            CURLOPT_DNS_CACHE_TIMEOUT,
+                            (long)time);
   if (result != CURLE_OK)
     logDebugMessage(1, "CURLOPT_SET_DNS_CACHE_TIMEOUT error %d : %s\n",
-		    result, errorBuffer);
+                    result, errorBuffer);
 }
 
 
-void cURLManager::setDeleteOnDone()
-{
+void cURLManager::setDeleteOnDone() {
   deleteOnDone = true;
 }
 
@@ -599,19 +593,16 @@ void cURLManager::setDeleteOnDone()
 //  ResourceGetter
 //
 
-ResourceGetter::ResourceGetter() : cURLManager()
-{
+ResourceGetter::ResourceGetter() : cURLManager() {
   doingStuff = false;
 }
 
 
-ResourceGetter::~ResourceGetter()
-{
+ResourceGetter::~ResourceGetter() {
 }
 
 
-void ResourceGetter::addResource(trResourceItem &item)
-{
+void ResourceGetter::addResource(trResourceItem& item) {
   resources.push_back(item);
 
   if (!doingStuff) {
@@ -620,15 +611,13 @@ void ResourceGetter::addResource(trResourceItem &item)
 }
 
 
-void ResourceGetter::flush(void)
-{
+void ResourceGetter::flush(void) {
   resources.clear();
   doingStuff = false;
 }
 
 
-void ResourceGetter::finalization(char *data, unsigned int length, bool good)
-{
+void ResourceGetter::finalization(char* data, unsigned int length, bool good) {
   printf("FIXME -- ResourceGetter::finalization, %i\n", good ? 1 : 0);
 
   if (!resources.size() || !doingStuff) {
@@ -640,7 +629,7 @@ void ResourceGetter::finalization(char *data, unsigned int length, bool good)
   resources.erase(resources.begin());
   if (good) {
     // save the thing
-    FILE *fp = fopen(item.filePath.c_str(), "wb");
+    FILE* fp = fopen(item.filePath.c_str(), "wb");
     if (fp) {
       fwrite(data, length, 1, fp);
       fclose(fp);
@@ -657,10 +646,9 @@ void ResourceGetter::finalization(char *data, unsigned int length, bool good)
 }
 
 
-bool ResourceGetter::itemExists(trResourceItem &item)
-{
+bool ResourceGetter::itemExists(trResourceItem& item) {
   // save the thing
-  FILE *fp = fopen(item.filePath.c_str(), "rb");
+  FILE* fp = fopen(item.filePath.c_str(), "rb");
   if (fp) {
     fclose(fp);
     return true;
@@ -669,8 +657,7 @@ bool ResourceGetter::itemExists(trResourceItem &item)
 }
 
 
-void ResourceGetter::getResource(void)
-{
+void ResourceGetter::getResource(void) {
   while (resources.size() && itemExists(resources[0])) {
     resources.erase(resources.begin());
   }
@@ -692,6 +679,6 @@ void ResourceGetter::getResource(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

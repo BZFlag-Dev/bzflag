@@ -32,22 +32,22 @@
 
 LocalFontFace* MainMenu::fontFace = NULL;
 
-MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
-{
-  if (!fontFace)
+MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL) {
+  if (!fontFace) {
     fontFace = LocalFontFace::create("sansSerifFont");
+  }
 }
 
-void	  MainMenu::createControls()
-{
-  TextureManager &tm = TextureManager::instance();
+void    MainMenu::createControls() {
+  TextureManager& tm = TextureManager::instance();
   HUDuiControl* label;
   HUDuiImage* textureLabel;
 
   // clear controls
   std::vector<HUDuiElement*>& listHUD = getElements();
-  for (unsigned int i = 0; i < listHUD.size(); i++)
+  for (unsigned int i = 0; i < listHUD.size(); i++) {
     delete listHUD[i];
+  }
   listHUD.clear();
   getNav().clear();
 
@@ -75,7 +75,8 @@ void	  MainMenu::createControls()
   if (!(myTank == NULL)) {
     leave = createLabel("Leave Game");
     addControl(leave);
-  } else {
+  }
+  else {
     leave = NULL;
   }
 
@@ -85,16 +86,14 @@ void	  MainMenu::createControls()
   initNavigation();
 }
 
-HUDuiControl* MainMenu::createLabel(const char* label)
-{
+HUDuiControl* MainMenu::createLabel(const char* label) {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFontFace(getFontFace());
   control->setString(label);
   return control;
 }
 
-MainMenu::~MainMenu()
-{
+MainMenu::~MainMenu() {
   // destroy submenus
   delete joinMenu;
   delete optionsMenu;
@@ -106,46 +105,46 @@ MainMenu::~MainMenu()
   LocalFontFace::release(fontFace);
 }
 
-const LocalFontFace*	MainMenu::getFontFace()
-{
+const LocalFontFace*  MainMenu::getFontFace() {
   return fontFace;
 }
 
-HUDuiDefaultKey*	MainMenu::getDefaultKey()
-{
+HUDuiDefaultKey*  MainMenu::getDefaultKey() {
   return MenuDefaultKey::getInstance();
 }
 
-void			MainMenu::execute()
-{
+void      MainMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == join) {
-    if (!joinMenu) joinMenu = new JoinMenu;
+    if (!joinMenu) { joinMenu = new JoinMenu; }
     HUDDialogStack::get()->push(joinMenu);
-  } else if (_focus == options) {
-    if (!optionsMenu) optionsMenu = new OptionsMenu;
+  }
+  else if (_focus == options) {
+    if (!optionsMenu) { optionsMenu = new OptionsMenu; }
     HUDDialogStack::get()->push(optionsMenu);
-  } else if (_focus == help) {
+  }
+  else if (_focus == help) {
     HUDDialogStack::get()->push(HelpMenu::getHelpMenu());
-  } else if (_focus == leave) {
+  }
+  else if (_focus == leave) {
     leaveGame();
     // myTank should be NULL now, recreate menu
     createControls();
     resize(width, height);
-  } else if (_focus == quit) {
-    if (!quitMenu) quitMenu = new QuitMenu;
+  }
+  else if (_focus == quit) {
+    if (!quitMenu) { quitMenu = new QuitMenu; }
     HUDDialogStack::get()->push(quitMenu);
   }
 }
 
-void			MainMenu::resize(int _width, int _height)
-{
+void      MainMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
   std::vector<HUDuiElement*>& listHUD = getElements();
   HUDuiLabel* hint = (HUDuiLabel*)listHUD[1];
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // main menu title, use a big font
   fs.setMin(0, 5);
@@ -163,7 +162,7 @@ void			MainMenu::resize(int _width, int _height)
   HUDuiImage* title = (HUDuiImage*)listHUD[0];
   title->setSize((float)_width, titleSize);
   // scale appropriately to center properly
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   float texHeight = (float)tm.getInfo(title->getTexture()).y;
   float texWidth = (float)tm.getInfo(title->getTexture()).x;
   float titleWidth = (texWidth / texHeight) * titleSize;
@@ -182,7 +181,7 @@ void			MainMenu::resize(int _width, int _height)
   // reposition menu items ("Options" is centered, rest aligned to it)
   const float firstWidth
     = fm.getStringWidth(fontFace->getFMFace(), fontSize,
-		      ((HUDuiLabel*)listHUD[3])->getString());
+                        ((HUDuiLabel*)listHUD[3])->getString());
   x = 0.5f * ((float)_width - firstWidth);
   const int count = (const int)listHUD.size();
   for (int i = 2; i < count; i++) {
@@ -197,6 +196,6 @@ void			MainMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

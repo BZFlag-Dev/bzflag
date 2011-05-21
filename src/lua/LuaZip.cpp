@@ -43,8 +43,7 @@ enum CompressMode {
 //============================================================================//
 //============================================================================//
 
-bool LuaZip::PushEntries(lua_State* L)
-{
+bool LuaZip::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, Zip);
   PUSH_LUA_CFUNC(L, Unzip);
 
@@ -55,8 +54,7 @@ bool LuaZip::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static void PushZlibErrorString(lua_State* L, int zCode)
-{
+static void PushZlibErrorString(lua_State* L, int zCode) {
   switch (zCode) {
     case Z_BUF_ERROR:     { lua_pushliteral(L, "buffer error");  break; }
     case Z_DATA_ERROR:    { lua_pushliteral(L, "data error");    break; }
@@ -75,8 +73,7 @@ static void PushZlibErrorString(lua_State* L, int zCode)
 }
 
 
-static char* ConcatVector(const vector<string>& vs, size_t total)
-{
+static char* ConcatVector(const vector<string>& vs, size_t total) {
   char* data = new char[total];
   char* pos = data;
   for (size_t i = 0; i < vs.size(); i++) {
@@ -88,20 +85,18 @@ static char* ConcatVector(const vector<string>& vs, size_t total)
 }
 
 
-static void SetupZStream(z_stream& zs, const char* inData, size_t inLen)
-{
+static void SetupZStream(z_stream& zs, const char* inData, size_t inLen) {
   zs.next_in = (Bytef*)inData;
   zs.avail_in = inLen;
   zs.total_in = inLen;
   zs.total_out = 0;
   zs.zalloc = (alloc_func)Z_NULL;
-  zs.zfree  =  (free_func)Z_NULL;
-  zs.opaque =     (voidpf)Z_NULL;
+  zs.zfree  = (free_func)Z_NULL;
+  zs.opaque = (voidpf)Z_NULL;
 }
 
 
-CompressMode ParseCompressMode(lua_State* L, int index, const char* def)
-{
+CompressMode ParseCompressMode(lua_State* L, int index, const char* def) {
   const string modeStr = luaL_optstring(L, index, def);
   if (modeStr == "raw")  { return CompressRaw;  }
   if (modeStr == "gzip") { return CompressGzip; }
@@ -115,9 +110,8 @@ CompressMode ParseCompressMode(lua_State* L, int index, const char* def)
 //============================================================================//
 
 static int CompressString(const char* inData, size_t inLen,
-			  char*& outData, size_t& outLen,
-			  CompressMode mode)
-{
+                          char*& outData, size_t& outLen,
+                          CompressMode mode) {
   int windowBits;
   switch (mode) {
     case CompressRaw:  { windowBits = -MAX_WBITS;      break; }
@@ -132,7 +126,7 @@ static int CompressString(const char* inData, size_t inLen,
   SetupZStream(zs, inData, inLen);
 
   const int initCode = deflateInit2(&zs, 9, Z_DEFLATED, windowBits,
-				    MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
+                                    MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY);
   if (initCode != Z_OK) {
     return initCode;
   }
@@ -173,9 +167,8 @@ static int CompressString(const char* inData, size_t inLen,
 
 
 static int DecompressString(const char* inData, size_t inLen,
-			    char*& outData, size_t& outLen,
-			    CompressMode mode)
-{
+                            char*& outData, size_t& outLen,
+                            CompressMode mode) {
   int windowBits;
   switch (mode) {
     case CompressRaw:  { windowBits = -MAX_WBITS;      break; }
@@ -230,8 +223,7 @@ static int DecompressString(const char* inData, size_t inLen,
 //============================================================================//
 //============================================================================//
 
-int LuaZip::Zip(lua_State* L)
-{
+int LuaZip::Zip(lua_State* L) {
   size_t inLen;
   const char* inData = luaL_checklstring(L, 1, &inLen);
 
@@ -253,8 +245,7 @@ int LuaZip::Zip(lua_State* L)
 }
 
 
-int LuaZip::Unzip(lua_State* L)
-{
+int LuaZip::Unzip(lua_State* L) {
   size_t inLen;
   const char* inData = luaL_checklstring(L, 1, &inLen);
 
@@ -284,6 +275,6 @@ int LuaZip::Unzip(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

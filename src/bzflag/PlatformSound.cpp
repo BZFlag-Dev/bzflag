@@ -26,8 +26,8 @@
 #include "Mumble.h"
 
 
-static const float SpeedOfSound = 343.0f;		// meters/sec
-static const float InterAuralDistance = 0.1f;		// meters
+static const float SpeedOfSound = 343.0f;   // meters/sec
+static const float InterAuralDistance = 0.1f;   // meters
 
 
 // sound queue commands
@@ -46,8 +46,7 @@ enum SoundQueueCode {
 };
 
 
-PlatformSound::AudioSamples::AudioSamples()
-{
+PlatformSound::AudioSamples::AudioSamples() {
   length = 0;
   mlength = 0;
   rmlength = 0;
@@ -59,51 +58,52 @@ PlatformSound::AudioSamples::AudioSamples()
 }
 
 
-PlatformSound::AudioSamples::~AudioSamples()
-{
-  if (data)
+PlatformSound::AudioSamples::~AudioSamples() {
+  if (data) {
     delete[] data;
+  }
 
-  if (monoRaw)
+  if (monoRaw) {
     delete[] monoRaw;
+  }
 }
 
 
-PlatformSound::AudioSamples& PlatformSound::AudioSamples::operator = ( const AudioSamples& r)
-{
-  if (data)
+PlatformSound::AudioSamples& PlatformSound::AudioSamples::operator = (const AudioSamples& r) {
+  if (data) {
     delete[] data;
+  }
 
-  if (monoRaw)
+  if (monoRaw) {
     delete[] monoRaw;
+  }
 
   length = r.length;
   mlength = r.mlength;
   dmlength = r.dmlength;
   rmlength = r.rmlength;
   data = new float[length];
-  memcpy(data,r.data,sizeof(float)*length);
+  memcpy(data, r.data, sizeof(float)*length);
   monoRaw = new float[rmlength];
-  memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
+  memcpy(monoRaw, r.monoRaw, sizeof(float)*rmlength);
   duration = r.duration;
 
-  mono = monoRaw + (r.mono-r.monoRaw);
+  mono = monoRaw + (r.mono - r.monoRaw);
   return *this;
 }
 
 
-PlatformSound::AudioSamples::AudioSamples ( const AudioSamples& r)
-{
+PlatformSound::AudioSamples::AudioSamples(const AudioSamples& r) {
   length = r.length;
   mlength = r.mlength;
   dmlength = r.dmlength;
   rmlength = r.rmlength;
   data = new float[length];
-  memcpy(data,r.data,sizeof(float)*length);
+  memcpy(data, r.data, sizeof(float)*length);
   mono = new float[mlength];
-  memcpy(mono,r.mono,sizeof(float)*mlength);
+  memcpy(mono, r.mono, sizeof(float)*mlength);
   monoRaw = new float[rmlength];
-  memcpy(monoRaw,r.monoRaw,sizeof(float)*rmlength);
+  memcpy(monoRaw, r.monoRaw, sizeof(float)*rmlength);
   duration = r.duration;
 }
 
@@ -116,16 +116,15 @@ static void audioLoop(void*);
 PlatformSound* platformSound = NULL;
 
 
-static bool audioClassInnerLoop()
-{
-  if (platformSound)
+static bool audioClassInnerLoop() {
+  if (platformSound) {
     return platformSound->audioInnerLoop();
+  }
   return false;
 }
 
 
-PlatformSound::PlatformSound()
-{
+PlatformSound::PlatformSound() {
   soundStarted = false;
   usingSameThread = false;
 
@@ -138,32 +137,31 @@ PlatformSound::PlatformSound()
 }
 
 
-PlatformSound::~PlatformSound()
-{
+PlatformSound::~PlatformSound() {
   Mumble::kill();
 
   shutdown();
 }
 
 
-bool PlatformSound::startup ( void )
-{
+bool PlatformSound::startup(void) {
   platformSound = this;
 
   unsigned int i;
 
-  if (active())
-    return true; // already opened
+  if (active()) {
+    return true;  // already opened
+  }
 
   media = PlatformFactory::getMedia();
-  if (!media->openAudio())
+  if (!media->openAudio()) {
     return false;
+  }
 
   soundStarted = true;
 
   // open audio data files
-  if (!setStandardSoundIDs())
-  {
+  if (!setStandardSoundIDs()) {
     media->closeAudio();
 #ifndef DEBUG
     std::cout << "WARNING: Unable to open audio data files" << std::endl;
@@ -176,17 +174,15 @@ bool PlatformSound::startup ( void )
   // initialize
   float worldSize = BZDBCache::worldSize;
   timeSizeOfWorld = 1.414f * worldSize / SpeedOfSound;
-  for (i = 0; i < (int)MaxEvents; i++)
-  {
+  for (i = 0; i < (int)MaxEvents; i++) {
     events[i].samples = NULL;
     events[i].busy = false;
   }
   portUseCount = 0;
-  for (i = 0; i < (int)FadeDuration; i += 2)
-  {
-    fadeIn[i] = fadeIn[i+1] =
-      sinf((float)(M_PI / 2.0 * (double)i / (double)(FadeDuration-2)));
-    fadeOut[i] = fadeOut[i+1] = 1.0f - fadeIn[i];
+  for (i = 0; i < (int)FadeDuration; i += 2) {
+    fadeIn[i] = fadeIn[i + 1] =
+                  sinf((float)(M_PI / 2.0 * (double)i / (double)(FadeDuration - 2)));
+    fadeOut[i] = fadeOut[i + 1] = 1.0f - fadeIn[i];
   }
   scratch = new float[audioBufferSize];
 
@@ -196,10 +192,10 @@ bool PlatformSound::startup ( void )
 
   usingSameThread = !media->hasAudioThread();
 
-  if (media->hasAudioCallback())
+  if (media->hasAudioCallback()) {
     media->startAudioCallback(audioClassInnerLoop);
-  else
-  {
+  }
+  else {
     // start audio thread
     if (!usingSameThread && !media->startAudioThread(audioLoop, NULL)) {
       media->closeAudio();
@@ -217,11 +213,9 @@ bool PlatformSound::startup ( void )
 }
 
 
-void PlatformSound::shutdown ( void )
-{
+void PlatformSound::shutdown(void) {
   platformSound = NULL;
-  if (active())
-  {
+  if (active()) {
     // send stop command to audio thread
     SoundCommand s;
     s.cmd = SQC_QUIT;
@@ -248,14 +242,12 @@ void PlatformSound::shutdown ( void )
 }
 
 
-bool PlatformSound::active ( void )
-{
+bool PlatformSound::active(void) {
   return soundStarted;
 }
 
 
-int PlatformSound::loadAudioSample( const std::string& fileName )
-{
+int PlatformSound::loadAudioSample(const std::string& fileName) {
   int soundCode = -1;
   int numFrames, rate;
 
@@ -278,8 +270,7 @@ int PlatformSound::loadAudioSample( const std::string& fileName )
 }
 
 
-void PlatformSound::freeAudioSamples( void )
-{
+void PlatformSound::freeAudioSamples(void) {
   for (unsigned int i = 0; i < soundSamples.size(); i++) {
     delete(soundSamples[i]);
   }
@@ -287,16 +278,15 @@ void PlatformSound::freeAudioSamples( void )
 }
 
 
-void PlatformSound::sendSound(SoundCommand* s)
-{
-  if (!active())
+void PlatformSound::sendSound(SoundCommand* s) {
+  if (!active()) {
     return;
+  }
   PlatformFactory::getMedia()->writeSoundCommand(s, sizeof(SoundCommand));
 }
 
 
-void PlatformSound::setReceiver(float x, float y, float z, float t, int discontinuity)
-{
+void PlatformSound::setReceiver(float x, float y, float z, float t, int discontinuity) {
   if (soundLevel <= 0) {
     return;
   }
@@ -320,8 +310,7 @@ void PlatformSound::setReceiver(float x, float y, float z, float t, int disconti
 }
 
 
-void PlatformSound::setReceiverVec(float vx, float vy, float vz)
-{
+void PlatformSound::setReceiverVec(float vx, float vy, float vz) {
   SoundCommand s;
   s.cmd = SQC_SET_VEL;
   s.code = 0;
@@ -333,26 +322,30 @@ void PlatformSound::setReceiverVec(float vx, float vy, float vz)
 }
 
 
-int PlatformSound::play(int soundID, const float *pos,
+int PlatformSound::play(int soundID, const float* pos,
                         bool important, bool localSound,
-                        bool repeat, bool ignoreMute)
-{
+                        bool repeat, bool ignoreMute) {
   if (soundLevel <= 0) {
     return 0;
   }
 
   SoundCommand s;
-  if (soundID < 0 ||( int)soundSamples.size() <= soundID)
+  if (soundID < 0 || (int)soundSamples.size() <= soundID) {
     return 0;
-  if (soundSamples[soundID]->length == 0)
+  }
+  if (soundSamples[soundID]->length == 0) {
     return 0;
+  }
 
-  if (repeat)
+  if (repeat) {
     s.cmd = SQC_FIXED_SFX;
-  else if (localSound || !pos)
+  }
+  else if (localSound || !pos) {
     s.cmd = SQC_LOCAL_SFX;
-  else
+  }
+  else {
     s.cmd = important ? SQC_IWORLD_SFX : SQC_WORLD_SFX;
+  }
 
   s.code = soundID;
   if (pos) {
@@ -367,8 +360,7 @@ int PlatformSound::play(int soundID, const float *pos,
 }
 
 
-void PlatformSound::setMute(bool value)
-{
+void PlatformSound::setMute(bool value) {
   muting = value;
 
   SoundCommand s;
@@ -382,11 +374,10 @@ void PlatformSound::setMute(bool value)
 }
 
 
-void PlatformSound::setVolume(float volume)
-{
-  soundLevel = (int)(volume*10.0f);
-  if (soundLevel < 0) soundLevel = 0;
-  else if (soundLevel > 10) soundLevel = 10;
+void PlatformSound::setVolume(float volume) {
+  soundLevel = (int)(volume * 10.0f);
+  if (soundLevel < 0) { soundLevel = 0; }
+  else if (soundLevel > 10) { soundLevel = 10; }
 
   SoundCommand s;
   s.cmd = SQC_SET_VOLUME;
@@ -399,16 +390,15 @@ void PlatformSound::setVolume(float volume)
 }
 
 
-float PlatformSound::getVolume()
-{
+float PlatformSound::getVolume() {
   return soundLevel / 10.0f;
 }
 
 
-bool PlatformSound::update(double /*time*/)
-{
-  if (!active() || !usingSameThread)
+bool PlatformSound::update(double /*time*/) {
+  if (!active() || !usingSameThread) {
     return false;
+  }
 
   // sleep until audio buffers hit low water mark or new command available
   media->audioSleep(true, 0.0);
@@ -417,8 +407,7 @@ bool PlatformSound::update(double /*time*/)
 }
 
 
-int PlatformSound::getID(const char* _name)
-{
+int PlatformSound::getID(const char* _name) {
   if (_name == NULL) {
     return -1;
   }
@@ -435,8 +424,7 @@ int PlatformSound::getID(const char* _name)
 
 
 int PlatformSound::resampleAudio(const float* in, int frames, int rate,
-                                 PlatformSound::AudioSamples* out)
-{
+                                 PlatformSound::AudioSamples* out) {
   // attenuation on all sounds
   static const float GlobalAtten = 0.5f;
 
@@ -455,14 +443,14 @@ int PlatformSound::resampleAudio(const float* in, int frames, int rate,
   // in inner loops, we'll just put some silent samples before and after
   // the sound effect.  here we compute how many samples can be needed.
   const int safetyMargin = (int)(1.5f + InterAuralDistance / SpeedOfSound *
-    (float)PlatformFactory::getMedia()->getAudioOutputRate());
+                                 (float)PlatformFactory::getMedia()->getAudioOutputRate());
 
   // fill in samples structure
   out->length = 2 * frames;
   out->mlength = out->length >> 1;
   out->dmlength = double(out->mlength - 1);
   out->duration = (float)out->mlength /
-    (float)PlatformFactory::getMedia()->getAudioOutputRate();
+                  (float)PlatformFactory::getMedia()->getAudioOutputRate();
   out->data = new float[out->length];
   out->monoRaw = new float[out->mlength + 2 * safetyMargin];
   out->mono = out->monoRaw + safetyMargin;
@@ -475,13 +463,14 @@ int PlatformSound::resampleAudio(const float* in, int frames, int rate,
   // filter samples
   for (long dst = 0; dst < out->length; dst += 2) {
     out->data[dst] = GlobalAtten * in[dst];
-    out->data[dst+1] = GlobalAtten * in[dst+1];
-    out->mono[dst>>1] = 0.5f * (out->data[dst] + out->data[dst+1]);
+    out->data[dst + 1] = GlobalAtten * in[dst + 1];
+    out->mono[dst >> 1] = 0.5f * (out->data[dst] + out->data[dst + 1]);
   }
 
   // silence in safety margins
-  for (int i = 0; i < safetyMargin; ++i)
+  for (int i = 0; i < safetyMargin; ++i) {
     out->monoRaw[i] = out->monoRaw[out->mlength + safetyMargin + i] = 0.0f;
+  }
 
   return 1;
 }
@@ -493,14 +482,13 @@ int PlatformSound::resampleAudio(const float* in, int frames, int rate,
 //
 //============================================================================//
 
-#define	SEF_WORLD	(1 << 0)
-#define	SEF_FIXED	(1 << 1)
-#define	SEF_IGNORING	(1 << 2)
-#define	SEF_IMPORTANT	(1 << 3)
+#define SEF_WORLD (1 << 0)
+#define SEF_FIXED (1 << 1)
+#define SEF_IGNORING  (1 << 2)
+#define SEF_IMPORTANT (1 << 3)
 
 
-void PlatformSound::recalcEventDistance(SoundEvent* e)
-{
+void PlatformSound::recalcEventDistance(SoundEvent* e) {
   e->dx = e->x - lastX;
   e->dy = e->y - lastY;
   e->dz = e->z - lastZ;
@@ -533,9 +521,8 @@ void PlatformSound::recalcEventDistance(SoundEvent* e)
 }
 
 
-int PlatformSound::recalcEventIgnoring(SoundEvent* e)
-{
-  if ((e->flags & SEF_FIXED) || !(e->flags & SEF_WORLD)) return 0;
+int PlatformSound::recalcEventIgnoring(SoundEvent* e) {
+  if ((e->flags & SEF_FIXED) || !(e->flags & SEF_WORLD)) { return 0; }
 
   float travelTime = (float)(curTime - e->time);
   if (travelTime > e->samples->duration + timeSizeOfWorld) {
@@ -563,25 +550,25 @@ int PlatformSound::recalcEventIgnoring(SoundEvent* e)
     if (e->flags & SEF_IGNORING) {
       // compute time from sound front
       timeFromFront = travelTime - e->dLeft / SpeedOfSound;
-      if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
+      if (!positionDiscontinuity && timeFromFront < 0.0f) { timeFromFront = 0.0f; }
 
       // recompute sample pointers
       e->ptrFracLeft = timeFromFront *
-	(float)PlatformFactory::getMedia()->getAudioOutputRate();
+                       (float)PlatformFactory::getMedia()->getAudioOutputRate();
       if (e->ptrFracLeft >= 0.0 && e->ptrFracLeft < e->samples->dmlength) {
-	// not ignoring anymore
-	e->flags &= ~SEF_IGNORING;
-	useChange = 1;
+        // not ignoring anymore
+        e->flags &= ~SEF_IGNORING;
+        useChange = 1;
       }
 
       // now do it again for right ear
       timeFromFront = travelTime - e->dRight / SpeedOfSound;
-      if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
+      if (!positionDiscontinuity && timeFromFront < 0.0f) { timeFromFront = 0.0f; }
       e->ptrFracRight = timeFromFront *
-	(float)PlatformFactory::getMedia()->getAudioOutputRate();
+                        (float)PlatformFactory::getMedia()->getAudioOutputRate();
       if (e->ptrFracRight >= 0.0 && e->ptrFracRight < e->samples->dmlength) {
-	e->flags &= ~SEF_IGNORING;
-	useChange = 1;
+        e->flags &= ~SEF_IGNORING;
+        useChange = 1;
       }
     }
     else {
@@ -592,8 +579,7 @@ int PlatformSound::recalcEventIgnoring(SoundEvent* e)
 }
 
 
-void PlatformSound::receiverMoved(float* data)
-{
+void PlatformSound::receiverMoved(float* data) {
   // save data
   lastX = data[0];
   lastY = data[1];
@@ -620,8 +606,7 @@ void PlatformSound::receiverMoved(float* data)
 }
 
 
-void PlatformSound::receiverVelocity(float* data)
-{
+void PlatformSound::receiverVelocity(float* data) {
   static const float s = 1.0f / SpeedOfSound;
 
   velX = s * data[0];
@@ -630,8 +615,7 @@ void PlatformSound::receiverVelocity(float* data)
 }
 
 
-int PlatformSound::addLocalContribution(SoundEvent* e, long* len)
-{
+int PlatformSound::addLocalContribution(SoundEvent* e, long* len) {
   long   n, numSamples;
   float* src;
 
@@ -644,7 +628,7 @@ int PlatformSound::addLocalContribution(SoundEvent* e, long* len)
     // initialize new areas of scratch space and adjust output sample count
     if (numSamples > *len) {
       for (n = *len; n < numSamples; n += 2) {
-	scratch[n] = scratch[n+1] = 0.0f;
+        scratch[n] = scratch[n + 1] = 0.0f;
       }
       *len = numSamples;
     }
@@ -657,27 +641,27 @@ int PlatformSound::addLocalContribution(SoundEvent* e, long* len)
           int fs = int(FadeDuration * float(n) / float(numSamples)) & ~1;
           scratch[n] += src[n] * (fadeIn[fs] * volumeAtten +
                                   fadeOut[fs] * e->lastLeftAtten);
-          scratch[n+1] += src[n+1] * (fadeIn[fs] * volumeAtten +
-                                      fadeOut[fs] * e->lastRightAtten);
+          scratch[n + 1] += src[n + 1] * (fadeIn[fs] * volumeAtten +
+                                          fadeOut[fs] * e->lastRightAtten);
         }
       }
       else {
         for (n = 0; n < FadeDuration; n += 2) {
           scratch[n] += src[n] * (fadeIn[n] * volumeAtten +
                                   fadeOut[n] * e->lastLeftAtten);
-          scratch[n+1] += src[n+1] * (fadeIn[n] * volumeAtten +
-                                      fadeOut[n] * e->lastRightAtten);
+          scratch[n + 1] += src[n + 1] * (fadeIn[n] * volumeAtten +
+                                          fadeOut[n] * e->lastRightAtten);
         }
         if (volumeAtten == 1.0f) {
           for (; n < numSamples; n += 2) {
             scratch[n]   += src[n];
-            scratch[n+1] += src[n+1];
+            scratch[n + 1] += src[n + 1];
           }
         }
         else {
           for (; n < numSamples; n += 2) {
             scratch[n]   += src[n]   * volumeAtten;
-            scratch[n+1] += src[n+1] * volumeAtten;
+            scratch[n + 1] += src[n + 1] * volumeAtten;
           }
         }
       }
@@ -696,9 +680,8 @@ int PlatformSound::addLocalContribution(SoundEvent* e, long* len)
 }
 
 
-void PlatformSound::getWorldStuff(SoundEvent *e, float* la, float* ra,
-                                  double* sampleStep)
-{
+void PlatformSound::getWorldStuff(SoundEvent* e, float* la, float* ra,
+                                  double* sampleStep) {
   float leftAtten, rightAtten;
 
   // compute left and right attenuation factors
@@ -711,7 +694,7 @@ void PlatformSound::getWorldStuff(SoundEvent *e, float* la, float* ra,
     const float ff = (2.0f + forwardX * e->dx + forwardY * e->dy) / 3.0f;
     const float fl = (2.0f + leftX * e->dx + leftY * e->dy) / 3.0f;
     leftAtten = ff * fl * e->amplitude;
-    rightAtten = ff * (4.0f/3.0f - fl) * e->amplitude;
+    rightAtten = ff * (4.0f / 3.0f - fl) * e->amplitude;
   }
 
   if (e->ptrFracLeft == 0.0f || e->ptrFracRight == 0.0f) {
@@ -728,8 +711,7 @@ void PlatformSound::getWorldStuff(SoundEvent *e, float* la, float* ra,
 }
 
 
-int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
-{
+int PlatformSound::addWorldContribution(SoundEvent* e, long* len) {
   int    fini = 0;
   long   n, nmL, nmR;
   float* src = e->samples->mono;
@@ -748,7 +730,7 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
   // initialize new areas of scratch space and adjust output sample count
   if (audioBufferSize > *len) {
     for (n = *len; n < audioBufferSize; n += 2) {
-      scratch[n] = scratch[n+1] = 0.0f;
+      scratch[n] = scratch[n + 1] = 0.0f;
     }
     *len = audioBufferSize;
   }
@@ -762,15 +744,15 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
     fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
-    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL + 1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR + 1];
 
     // filter and accumulate
     if (!e->muted) {
       scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
                                 fadeOut[n] * e->lastLeftAtten);
-      scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
-                                  fadeOut[n] * e->lastRightAtten);
+      scratch[n + 1] += fsampleR * (fadeIn[n] * rightAtten +
+                                    fadeOut[n] * e->lastRightAtten);
     }
 
     // next sample
@@ -791,13 +773,13 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
     fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
-    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL + 1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR + 1];
 
     // filter and accumulate
     if (!e->muted) {
       scratch[n]   += fsampleL * leftAtten;
-      scratch[n+1] += fsampleR * rightAtten;
+      scratch[n + 1] += fsampleR * rightAtten;
     }
 
     // next sample
@@ -813,13 +795,13 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
   e->lastRightAtten = rightAtten;
 
   // NOTE: running out of samples just means the world sound front
-  //	has passed our location.  if we teleport it may pass us again.
-  //	so we can't free the event until the front passes out of the
-  //	world.  compute time remaining until that happens and set
-  //	endTime if smaller than current endTime.
+  //  has passed our location.  if we teleport it may pass us again.
+  //  so we can't free the event until the front passes out of the
+  //  world.  compute time remaining until that happens and set
+  //  endTime if smaller than current endTime.
   if (fini) {
     double et = e->samples->duration + timeSizeOfWorld - (prevTime - e->time);
-    if (endTime == -1.0 || et < endTime) endTime = et;
+    if (endTime == -1.0 || et < endTime) { endTime = et; }
     e->flags |= SEF_IGNORING;
     return -1;
   }
@@ -828,8 +810,7 @@ int PlatformSound::addWorldContribution(SoundEvent* e, long* len)
 }
 
 
-int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
-{
+int PlatformSound::addFixedContribution(SoundEvent* e, long* len) {
   long   n, nmL, nmR;
   float* src = e->samples->mono;
   float  leftAtten, rightAtten, fracL, fracR, fsampleL, fsampleR;
@@ -840,7 +821,7 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
   // initialize new areas of scratch space and adjust output sample count
   if (audioBufferSize > *len) {
     for (n = *len; n < audioBufferSize; n += 2) {
-      scratch[n] = scratch[n+1] = 0.0f;
+      scratch[n] = scratch[n + 1] = 0.0f;
     }
     *len = audioBufferSize;
   }
@@ -854,15 +835,15 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
     fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
-    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL + 1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR + 1];
 
     // filter and accumulate
     if (!e->muted) {
       scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
                                 fadeOut[n] * e->lastLeftAtten);
-      scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
-                                  fadeOut[n] * e->lastRightAtten);
+      scratch[n + 1] += fsampleR * (fadeIn[n] * rightAtten +
+                                    fadeOut[n] * e->lastRightAtten);
     }
 
     // next sample
@@ -883,13 +864,13 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
     fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
 
     // get sample (lerp closest two samples)
-    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
-    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
+    fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL + 1];
+    fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR + 1];
 
     // filter and accumulate
     if (!e->muted) {
       scratch[n]   += fsampleL * leftAtten;
-      scratch[n+1] += fsampleR * rightAtten;
+      scratch[n + 1] += fsampleR * rightAtten;
     }
 
     // next sample
@@ -907,8 +888,7 @@ int PlatformSound::addFixedContribution(SoundEvent* e, long* len)
 }
 
 
-int PlatformSound::findBestWorldSlot()
-{
+int PlatformSound::findBestWorldSlot() {
   int i;
 
   // the best slot is an empty one
@@ -936,8 +916,8 @@ int PlatformSound::findBestWorldSlot()
   // completely passed us.
   const int first = i;
   for (i = first; i < MaxEvents; i++) {
-    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) continue;
-    if (!(events[i].flags & SEF_IGNORING)) continue;
+    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) { continue; }
+    if (!(events[i].flags & SEF_IGNORING)) { continue; }
     const float travelTime = (float)(curTime - events[i].time);
     const float eventDistance = events[i].d / SpeedOfSound;
     if (travelTime > eventDistance) {
@@ -951,9 +931,9 @@ int PlatformSound::findBestWorldSlot()
   int farthestEvent = -1;
   float farthestDistance = 0.0f;
   for (i = first; i < MaxEvents; i++) {
-    if (events[i].flags & SEF_IMPORTANT) continue;
-    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) continue;
-    if (!(events[i].flags & SEF_IGNORING)) continue;
+    if (events[i].flags & SEF_IMPORTANT) { continue; }
+    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) { continue; }
+    if (!(events[i].flags & SEF_IGNORING)) { continue; }
     const float eventDistance = events[i].d / SpeedOfSound;
     if (eventDistance > farthestDistance) {
       farthestEvent = i;
@@ -967,9 +947,9 @@ int PlatformSound::findBestWorldSlot()
 
   // same thing but look at important sounds
   for (i = first; i < MaxEvents; i++) {
-    if (!(events[i].flags & SEF_IMPORTANT)) continue;
-    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) continue;
-    if (!(events[i].flags & SEF_IGNORING)) continue;
+    if (!(events[i].flags & SEF_IMPORTANT)) { continue; }
+    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) { continue; }
+    if (!(events[i].flags & SEF_IGNORING)) { continue; }
     const float eventDistance = events[i].d / SpeedOfSound;
     if (eventDistance > farthestDistance) {
       farthestEvent = i;
@@ -986,7 +966,7 @@ int PlatformSound::findBestWorldSlot()
   farthestEvent = first;
   farthestDistance = events[farthestEvent].d / SpeedOfSound;
   for (i = first + 1; i < MaxEvents; i++) {
-    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) continue;
+    if ((events[i].flags & (SEF_WORLD | SEF_FIXED)) != SEF_WORLD) { continue; }
     const float eventDistance = events[i].d / SpeedOfSound;
     if (eventDistance > farthestDistance) {
       farthestEvent = i;
@@ -1000,11 +980,10 @@ int PlatformSound::findBestWorldSlot()
 }
 
 
-int PlatformSound::findBestLocalSlot()
-{
+int PlatformSound::findBestLocalSlot() {
   // better to lose a world sound
   int slot = findBestWorldSlot();
-  if (slot != MaxEvents) return slot;
+  if (slot != MaxEvents) { return slot; }
 
   // find the first local event
   int i;
@@ -1015,7 +994,7 @@ int PlatformSound::findBestLocalSlot()
   }
 
   // no available slot if only fixed sounds are playing (highly unlikely)
-  if (i == MaxEvents) return MaxEvents;
+  if (i == MaxEvents) { return MaxEvents; }
 
   // find the local sound closest to completion.
   int minEvent = i;
@@ -1039,8 +1018,7 @@ int PlatformSound::findBestLocalSlot()
 //
 // audioLoop() simply generates samples and keeps the audio hw fed
 //
-bool PlatformSound::audioInnerLoop()
-{
+bool PlatformSound::audioInnerLoop() {
   // if our object is already being deleted, act like we were told to quit (even if we weren't yet)
   if (!this) {
     return true;
@@ -1103,7 +1081,7 @@ bool PlatformSound::audioInnerLoop()
       }
       case SQC_LOCAL_SFX: {
         i = findBestLocalSlot();
-        if (i == MaxEvents) break;
+        if (i == MaxEvents) { break; }
         event = events + i;
 
         event->samples = soundSamples[cmd.code];
@@ -1128,7 +1106,7 @@ bool PlatformSound::audioInnerLoop()
             }
           }
         }
-        if (i == MaxEvents) break;
+        if (i == MaxEvents) { break; }
         event = events + i;
 
         event->samples = soundSamples[cmd.code];
@@ -1148,9 +1126,10 @@ bool PlatformSound::audioInnerLoop()
       }
       case SQC_FIXED_SFX: {
         for (i = 0; i < MaxEvents; i++)
-          if (!events[i].busy)
+          if (!events[i].busy) {
             break;
-        if (i == MaxEvents) break;
+          }
+        if (i == MaxEvents) { break; }
         event = events + i;
 
         event->samples = soundSamples[cmd.code];
@@ -1190,7 +1169,8 @@ bool PlatformSound::audioInnerLoop()
         if (sndEvent->flags & SEF_WORLD) {
           if (sndEvent->flags & SEF_FIXED) {
             deltaCount = addFixedContribution(sndEvent, &numSamples);
-          } else {
+          }
+          else {
             deltaCount = addWorldContribution(sndEvent, &numSamples);
           }
         }
@@ -1219,8 +1199,7 @@ bool PlatformSound::audioInnerLoop()
 }
 
 
-static void audioLoop(void*)
-{
+static void audioLoop(void*) {
   // loop until requested to stop
   while (true) {
     // sleep until audio buffers hit low water mark or new command available
@@ -1238,6 +1217,6 @@ static void audioLoop(void*)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

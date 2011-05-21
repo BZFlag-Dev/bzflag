@@ -27,8 +27,8 @@ class MeshDrawMgr;
 class MeshRenderNode : public RenderNode {
   public:
     MeshRenderNode(MeshDrawMgr* drawMgr,
-		   GLuint* xformList, bool normalize,
-		   const fvec4* color, int lod, int set, int triangles);
+                   GLuint* xformList, bool normalize,
+                   const fvec4* color, int lod, int set, int triangles);
     void render();
     void renderRadar();
     void renderShadow();
@@ -63,6 +63,6 @@ class MeshRenderNode : public RenderNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

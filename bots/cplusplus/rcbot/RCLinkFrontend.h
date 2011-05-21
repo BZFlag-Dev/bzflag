@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__RCLINKFRONTEND_H__
-#define	__RCLINKFRONTEND_H__
+#ifndef __RCLINKFRONTEND_H__
+#define __RCLINKFRONTEND_H__
 
 #include "common.h"
 
@@ -30,21 +30,20 @@
  * Remote Control Link, Frontend: Encapsulates communication between
  * backend and frontend, from the frontends point of view.
  */
-class RCLinkFrontend : public RCLink
-{
-private:
-  RCReply *replies;
-  bool hasReply(const std::string command) const;
+class RCLinkFrontend : public RCLink {
+  private:
+    RCReply* replies;
+    bool hasReply(const std::string command) const;
 
-public:
-  RCLinkFrontend() : RCLink(FrontendLogger::pInstance()), replies(NULL) { isFrontEnd = true; }
-  bool update();
-  bool parseCommand(char *cmdline);
-  RCReply* popReply();
-  RCReply* peekReply();
-  State getDisconnectedState();
-  bool waitForReply(const std::string command);
-  bool sendAndProcess(const RCRequest &request, const BZAdvancedRobot *bot);
+  public:
+    RCLinkFrontend() : RCLink(FrontendLogger::pInstance()), replies(NULL) { isFrontEnd = true; }
+    bool update();
+    bool parseCommand(char* cmdline);
+    RCReply* popReply();
+    RCReply* peekReply();
+    State getDisconnectedState();
+    bool waitForReply(const std::string command);
+    bool sendAndProcess(const RCRequest& request, const BZAdvancedRobot* bot);
 };
 
 #else
@@ -55,6 +54,6 @@ class RCLinkFrontend;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

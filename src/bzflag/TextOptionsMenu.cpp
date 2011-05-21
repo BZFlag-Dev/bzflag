@@ -38,8 +38,7 @@ static const int fontStep = 3;
 
 
 TextOptionsMenu::TextOptionsMenu()
-: fontMenu(NULL)
-{
+  : fontMenu(NULL) {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -65,7 +64,8 @@ TextOptionsMenu::TextOptionsMenu()
       options->push_back(locales[i]);
     }
     locales.erase(locales.begin(), locales.end());
-  } else {
+  }
+  else {
     // Something failed when trying to compile a list
     // of all the locales.
     options->push_back(std::string("English"));
@@ -177,14 +177,12 @@ TextOptionsMenu::TextOptionsMenu()
 }
 
 
-TextOptionsMenu::~TextOptionsMenu()
-{
+TextOptionsMenu::~TextOptionsMenu() {
   delete fontMenu;
 }
 
 
-void TextOptionsMenu::execute()
-{
+void TextOptionsMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == fontOptions) {
     if (fontMenu == NULL) {
@@ -195,12 +193,11 @@ void TextOptionsMenu::execute()
 }
 
 
-void TextOptionsMenu::resize(int _width, int _height)
-{
+void TextOptionsMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -245,7 +242,7 @@ void TextOptionsMenu::resize(int _width, int _height)
   const std::vector<std::string> &opts = ((HUDuiList*)listHUD[i])->getList();
   std::string uColor = BZDB.get("underlineColor");
   ((HUDuiList*)listHUD[i++])->setIndex((int)(std::find(opts.begin(), opts.end(), uColor) -
-					 opts.begin()));
+                                             opts.begin()));
 
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("killerhighlight"));
   ((HUDuiList*)listHUD[i++])->setIndex(int(BZDB.eval("pulseRate") * 5.0f) - 1);
@@ -253,8 +250,7 @@ void TextOptionsMenu::resize(int _width, int _height)
 }
 
 
-void TextOptionsMenu::callback(HUDuiControl* w, void* data)
-{
+void TextOptionsMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
@@ -266,7 +262,7 @@ void TextOptionsMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("locale", locale);
       World::getBundleMgr()->getBundle(locale, true);
 
-      TextOptionsMenu *menu = (TextOptionsMenu *) HUDDialogStack::get()->top();
+      TextOptionsMenu* menu = (TextOptionsMenu*) HUDDialogStack::get()->top();
       if (menu) {
         menu->resize(menu->getWidth(), menu->getHeight());
       }
@@ -279,7 +275,8 @@ void TextOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'S': {
       if (list->getIndex() > 0) {
         BZDB.setInt("scoreFontSize", list->getIndex() * fontStep);
-      } else {
+      }
+      else {
         BZDB.set("scoreFontSize", BZDB.getDefault("scoreFontSize"));
       }
       getMainWindow()->getWindow()->callResizeCallbacks();
@@ -288,7 +285,8 @@ void TextOptionsMenu::callback(HUDuiControl* w, void* data)
     case 'C': {
       if (list->getIndex() > 0) {
         BZDB.setInt("consoleFontSize", list->getIndex() * fontStep);
-      } else {
+      }
+      else {
         BZDB.set("consoleFontSize", BZDB.getDefault("consoleFontSize"));
       }
       getMainWindow()->getWindow()->callResizeCallbacks();
@@ -326,6 +324,6 @@ void TextOptionsMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

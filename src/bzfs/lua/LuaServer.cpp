@@ -91,7 +91,7 @@ class UpdateTick : public bz_EventHandler {
 
     void queueReload() {
       if (command != DisableCmd) {
-	command = ReloadCmd;
+        command = ReloadCmd;
       }
     }
 
@@ -101,8 +101,8 @@ class UpdateTick : public bz_EventHandler {
 
     void activate() {
       if (!active) {
-	bz_registerEvent(bz_eTickEvent, this);
-	active = true;
+        bz_registerEvent(bz_eTickEvent, this);
+        active = true;
       }
     }
 
@@ -116,18 +116,18 @@ class UpdateTick : public bz_EventHandler {
   private:
     void process(bz_EventData*) {
       switch (command) {
-	case NoCmd: {
-	  break; // do nothing
-	}
-	case DisableCmd: {
-	  LuaServer::kill();
-	  break;
-	}
-	case ReloadCmd: {
-	  LuaServer::kill();
-	  LuaServer::init(clOptions->luaServerDir);
-	  break;
-	}
+        case NoCmd: {
+          break; // do nothing
+        }
+        case DisableCmd: {
+          LuaServer::kill();
+          break;
+        }
+        case ReloadCmd: {
+          LuaServer::kill();
+          LuaServer::init(clOptions->luaServerDir);
+          break;
+        }
       }
       command = NoCmd;
     }
@@ -143,8 +143,7 @@ static UpdateTick updateTick;
 //============================================================================//
 //============================================================================//
 
-static bool fileExists(const std::string& file)
-{
+static bool fileExists(const std::string& file) {
   FILE* f = fopen(file.c_str(), "r");
   if (f == NULL) {
     return false;
@@ -157,8 +156,7 @@ static bool fileExists(const std::string& file)
 //============================================================================//
 //============================================================================//
 
-const std::string& LuaServer::getLuaDir()
-{
+const std::string& LuaServer::getLuaDir() {
   return directory;
 }
 
@@ -166,8 +164,7 @@ const std::string& LuaServer::getLuaDir()
 //============================================================================//
 //============================================================================//
 
-static void setupVFS()
-{
+static void setupVFS() {
   // add the -luaserver directory as readable
   bzVFS.removeFS(BZVFS_LUA_SERVER);
   bzVFS.addFS(BZVFS_LUA_SERVER, directory);
@@ -204,8 +201,7 @@ static void setupVFS()
 //============================================================================//
 //============================================================================//
 
-bool LuaServer::init(const std::string& cmdLine)
-{
+bool LuaServer::init(const std::string& cmdLine) {
   if (cmdLine.empty()) {
     return false;
   }
@@ -241,7 +237,7 @@ bool LuaServer::init(const std::string& cmdLine)
   const std::string scriptFile = scriptDir + sourceFile;
   if (!fileExists(scriptFile)) {
     logDebugMessage(1, "LuaServer: could not find %s in %s\n",
-		       sourceFile, scriptDir.c_str());
+                    sourceFile, scriptDir.c_str());
     if (dieHard) {
       exit(2);
     }
@@ -268,8 +264,7 @@ bool LuaServer::init(const std::string& cmdLine)
 //============================================================================//
 //============================================================================//
 
-bool LuaServer::kill()
-{
+bool LuaServer::kill() {
   updateTick.deactivate();
 
   if (L == NULL) {
@@ -293,8 +288,7 @@ bool LuaServer::kill()
 //============================================================================//
 //============================================================================//
 
-bool LuaServer::isActive()
-{
+bool LuaServer::isActive() {
   return (L != NULL);
 }
 
@@ -302,8 +296,7 @@ bool LuaServer::isActive()
 //============================================================================//
 //============================================================================//
 
-lua_State* LuaServer::GetL()
-{
+lua_State* LuaServer::GetL() {
   return L;
 }
 
@@ -311,14 +304,12 @@ lua_State* LuaServer::GetL()
 //============================================================================//
 //============================================================================//
 
-void LuaServer::queueReload()
-{
+void LuaServer::queueReload() {
   updateTick.queueReload();
 }
 
 
-void LuaServer::queueDisable()
-{
+void LuaServer::queueDisable() {
   updateTick.queueDisable();
 }
 
@@ -326,8 +317,7 @@ void LuaServer::queueDisable()
 //============================================================================//
 //============================================================================//
 
-void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
-{
+void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex) {
   std::vector<std::string> args = TextUtils::tokenize(cmdLine, " \t", 3);
 
   GameKeeper::Player* p = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -341,14 +331,15 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
 
   if (args.size() < 2) {
     sendMessage(ServerPlayer, playerIndex,
-		"/luaserver < status | disable | reload >");
+                "/luaserver < status | disable | reload >");
     return;
   }
 
   if (args[1] == "status") {
     if (isActive()) {
       sendMessage(ServerPlayer, playerIndex, "LuaServer is enabled");
-    } else {
+    }
+    else {
       sendMessage(ServerPlayer, playerIndex, "LuaServer is disabled");
     }
     return;
@@ -357,13 +348,14 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
   if (args[1] == "disable") {
     if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaServer)) {
       sendMessage(ServerPlayer, playerIndex,
-		  "You do not have permission to control LuaServer");
+                  "You do not have permission to control LuaServer");
       return;
     }
     if (isActive()) {
       kill();
       sendMessage(ServerPlayer, playerIndex, "LuaServer has been disabled");
-    } else {
+    }
+    else {
       sendMessage(ServerPlayer, playerIndex, "LuaServer is not loaded");
     }
     return;
@@ -372,7 +364,7 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
   if (args[1] == "reload") {
     if (!p->accessInfo.hasPerm(PlayerAccessInfo::luaServer)) {
       sendMessage(ServerPlayer, playerIndex,
-		  "You do not have permission to control LuaServer");
+                  "You do not have permission to control LuaServer");
       return;
     }
     const std::string srcDir =
@@ -380,7 +372,8 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
     kill();
     if (init(srcDir)) {
       sendMessage(ServerPlayer, playerIndex, "LuaServer reload succeeded");
-    } else {
+    }
+    else {
       sendMessage(ServerPlayer, playerIndex, "LuaServer reload failed");
     }
     return;
@@ -397,8 +390,7 @@ void LuaServer::recvCommand(const std::string& cmdLine, int playerIndex)
 //============================================================================//
 //============================================================================//
 
-static bool CreateLuaState(const std::string& script)
-{
+static bool CreateLuaState(const std::string& script) {
   static LuaVfsModes vfsModes;
   vfsModes.readDefault  = BZVFS_LUA_SERVER;
   vfsModes.readAllowed  = BZVFS_ALL;
@@ -505,8 +497,7 @@ static bool CreateLuaState(const std::string& script)
 //============================================================================//
 //============================================================================//
 
-static std::string EnvExpand(const std::string& path)
-{
+static std::string EnvExpand(const std::string& path) {
   std::string::size_type pos = path.find('$');
   if (pos == std::string::npos) {
     return path;
@@ -518,7 +509,7 @@ static std::string EnvExpand(const std::string& path)
 
   const char* b = path.c_str(); // beginning of string
   const char* s = b + pos + 1;  // start of the key name
-  const char* e = s;	    // end   of the key Name
+  const char* e = s;      // end   of the key Name
   while ((*e != 0) && (isalnum(*e) || (*e == '_'))) {
     e++;
   }
@@ -542,6 +533,6 @@ static std::string EnvExpand(const std::string& path)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

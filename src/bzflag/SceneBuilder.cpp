@@ -60,28 +60,26 @@ struct MatInfo {
     // normal materials
     MatInfo(const std::string& _name, const std::string _texVar,
             float r, float g, float b)
-            : name(_name), texVar(_texVar), color(r, g, b, 1.0f)
-            , teamColor((TeamColor)-1)
-    {
+      : name(_name), texVar(_texVar), color(r, g, b, 1.0f)
+      , teamColor((TeamColor) - 1) {
     }
     // base materials
     MatInfo(const std::string& _name, TeamColor _teamColor,
             const std::string _texVar, float r, float g, float b)
-            : name(_name), texVar(_texVar), color(r, g, b, 1.0f)
-            , teamColor(_teamColor)
-    {
+      : name(_name), texVar(_texVar), color(r, g, b, 1.0f)
+      , teamColor(_teamColor) {
     }
   public:
     std::string name;
     std::string texVar;
-    fvec4	color;
-    TeamColor	teamColor;
+    fvec4 color;
+    TeamColor teamColor;
 };
 
 
-static const MatInfo wallMat   ("WallMaterial",    "wallTexture",    0.4f, 0.2f, 0.2f);
-static const MatInfo pyrMat    ("PyramidMaterial", "pyrWallTexture", 0.2f, 0.6f, 0.8f);
-static const MatInfo boxTopMat ("BoxTopMaterial",  "boxTopTexture",  0.4f, 0.3f, 0.2f);
+static const MatInfo wallMat("WallMaterial",    "wallTexture",    0.4f, 0.2f, 0.2f);
+static const MatInfo pyrMat("PyramidMaterial", "pyrWallTexture", 0.2f, 0.6f, 0.8f);
+static const MatInfo boxTopMat("BoxTopMaterial",  "boxTopTexture",  0.4f, 0.3f, 0.2f);
 static const MatInfo boxWallMat("BoxWallMaterial", "boxWallTexture", 0.4f, 0.2f, 0.1f);
 
 static const MatInfo baseTopMats[5] = {
@@ -100,8 +98,7 @@ static const MatInfo baseWallMats[5] = {
 };
 
 
-static const BzMaterial* getBzMat(const MatInfo& mi)
-{
+static const BzMaterial* getBzMat(const MatInfo& mi) {
   const BzMaterial* ptr = MATERIALMGR.findMaterial(mi.name);
   if (ptr) {
     return ptr;
@@ -134,40 +131,40 @@ static const BzMaterial* getBzMat(const MatInfo& mi)
 // SceneDatabaseBuilder
 //
 
-SceneDatabaseBuilder::SceneDatabaseBuilder()
-{
+SceneDatabaseBuilder::SceneDatabaseBuilder() {
   // FIXME -- should get texture heights from resources
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
 
 
   // make styles -- first the outer wall
-  int wallTexture = tm.getTextureID( "wall" );
+  int wallTexture = tm.getTextureID("wall");
   wallTexWidth = wallTexHeight = 10.0f;
-  if (wallTexture>=0)
+  if (wallTexture >= 0) {
     wallTexWidth = tm.GetAspectRatio(wallTexture) * wallTexHeight;
+  }
 
 
   // make box styles
-  int boxTexture = tm.getTextureID( "boxwall" );
+  int boxTexture = tm.getTextureID("boxwall");
   boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(BZDBNAMES.BOXHEIGHT);
-  if (boxTexture>=0)
+  if (boxTexture >= 0) {
     boxTexWidth = tm.GetAspectRatio(boxTexture) * boxTexHeight;
+  }
 
 
   // lower maximum tank lod if lowdetail is true
-  if (RENDERER.useQuality() == _LOW_QUALITY)
+  if (RENDERER.useQuality() == _LOW_QUALITY) {
     TankSceneNode::setMaxLOD(2);
+  }
 }
 
 
-SceneDatabaseBuilder::~SceneDatabaseBuilder()
-{
+SceneDatabaseBuilder::~SceneDatabaseBuilder() {
   // do nothing
 }
 
 
-SceneDatabase* SceneDatabaseBuilder::make(const World* world)
-{
+SceneDatabase* SceneDatabaseBuilder::make(const World* world) {
   // set LOD flags
   const bool doLODs = BZDBCache::lighting && BZDBCache::zbuffer;
   wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = doLODs;
@@ -176,7 +173,8 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
   SceneDatabase* db;
   if (BZDBCache::zbuffer) {
     db = new ZSceneDatabase;
-  } else {
+  }
+  else {
     db = new BSPSceneDatabase;
   }
   // FIXME -- when making BSP tree, try several shuffles for best tree
@@ -228,14 +226,14 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 }
 
 
-void SceneDatabaseBuilder::addWorldTexts(SceneDatabase* db)
-{
+void SceneDatabaseBuilder::addWorldTexts(SceneDatabase* db) {
   const std::vector<WorldText*>& texts = OBSTACLEMGR.getTexts();
   for (size_t i = 0; i < texts.size(); i++) {
     const WorldText* text = texts[i];
     if (text->useBZDB) {
       DYNAMICWORLDTEXT.addText(text);
-    } else {
+    }
+    else {
       TextSceneNode* node = new TextSceneNode(text);
       db->addStaticNode(node, false);
     }
@@ -244,8 +242,7 @@ void SceneDatabaseBuilder::addWorldTexts(SceneDatabase* db)
 
 
 void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
-					 const World* world)
-{
+                                         const World* world) {
   fvec4 plane(0.0f, 0.0f, 1.0f, 0.0f);
   const float level = world->getWaterLevel();
   plane.w = -level;
@@ -282,20 +279,19 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 }
 
 
-void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
-{
+void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o) {
   if (o.getHeight() <= 0.0f) {
     return;
   }
 
   int part = 0;
   WallSceneNode* node;
-  ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator (&o);
+  ObstacleSceneNodeGenerator* nodeGen = new WallSceneNodeGenerator(&o);
 
   const BzMaterial* wallBzMat = getBzMat(wallMat);
 
   while ((node = nodeGen->getNextNode(o.getBreadth() / wallTexWidth,
-				      o.getHeight() / wallTexHeight, wallLOD))) {
+                                      o.getHeight() / wallTexHeight, wallLOD))) {
     node->setBzMaterial(wallBzMat);
     db->addStaticNode(node, false);
     part = (part + 1) % 5;
@@ -304,8 +300,7 @@ void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 }
 
 
-void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
-{
+void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh) {
   WallSceneNode* node;
   MeshSceneNodeGenerator* nodeGen = new MeshSceneNodeGenerator(mesh);
 
@@ -323,8 +318,7 @@ void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
 }
 
 
-void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
-{
+void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o) {
   // this assumes boxes have six parts:  four sides, a roof, and a bottom.
   int part = 0;
   WallSceneNode* node;
@@ -339,15 +333,16 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   const BzMaterial* wallBzMat = getBzMat(boxWallMat);
 
   while ((node = ((part < 4) ?
-		  nodeGen->getNextNode(-textureFactor*boxTexWidth,
-				       -textureFactor*boxTexWidth, boxLOD) :
-		  // I'm using boxTexHeight for roof since textures are same
-		  // size and this number is available
-		  nodeGen->getNextNode(-boxTexHeight,
-				       -boxTexHeight, boxLOD)))) {
-    if (part < 4){
+                  nodeGen->getNextNode(-textureFactor * boxTexWidth,
+                                       -textureFactor * boxTexWidth, boxLOD) :
+                  // I'm using boxTexHeight for roof since textures are same
+                  // size and this number is available
+                  nodeGen->getNextNode(-boxTexHeight,
+                                       -boxTexHeight, boxLOD)))) {
+    if (part < 4) {
       node->setBzMaterial(wallBzMat);
-    } else{
+    }
+    else {
       node->setBzMaterial(topBzMat);
     }
 
@@ -373,8 +368,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 }
 
 
-void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
-{
+void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o) {
   // this assumes pyramids have four parts:  four sides
   int part = 0;
   WallSceneNode* node;
@@ -389,8 +383,8 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
   const BzMaterial* pyrBzMat  = getBzMat(pyrMat);
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
-				      -textureFactor * boxTexHeight,
-				      pyramidLOD))) {
+                                      -textureFactor * boxTexHeight,
+                                      pyramidLOD))) {
     node->setBzMaterial(pyrBzMat);
 
 #ifdef SHELL_INSIDE_NODES
@@ -415,8 +409,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 }
 
 
-void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
-{
+void SceneDatabaseBuilder::addBase(SceneDatabase* db, BaseBuilding& o) {
   WallSceneNode* node;
   ObstacleSceneNodeGenerator* nodeGen = new BaseSceneNodeGenerator(&o);
 
@@ -425,7 +418,8 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   if ((o.getBaseTeam() >= 0) && (o.getBaseTeam() <= 5)) {
     topBzMat  = getBzMat(baseTopMats[o.getBaseTeam()]);
     wallBzMat = getBzMat(baseWallMats[o.getBaseTeam()]);
-  } else {
+  }
+  else {
     topBzMat  = getBzMat(boxTopMat);
     wallBzMat = getBzMat(boxWallMat);
   }
@@ -437,13 +431,14 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
   // 1. getNextNode() only returns the top texture
   // 2. getNextNode() returns the top texture(0), and the 4 sides(1-4)
   // 3. getNextNode() returns the top texture(0), and the 4 sides(1-4), and the bottom(5)
-  while ((node = ( ((part % 5) == 0) ? nodeGen->getNextNode(1,1, boxLOD) :
-		   nodeGen->getNextNode(o.getBreadth(),
-					o.getHeight(),
-					boxLOD)))) {
+  while ((node = (((part % 5) == 0) ? nodeGen->getNextNode(1, 1, boxLOD) :
+                  nodeGen->getNextNode(o.getBreadth(),
+                                       o.getHeight(),
+                                       boxLOD)))) {
     if ((part % 5) != 0) {
       node->setBzMaterial(wallBzMat);
-    } else {
+    }
+    else {
       node->setBzMaterial(topBzMat);
     }
     part++;
@@ -460,7 +455,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 #ifndef SHELL_INSIDE_NODES
   // add the inside node
   SceneNode* inode = new
-    EighthDBaseSceneNode(o.getPosition(), o.getSize(), o.getRotation());
+  EighthDBaseSceneNode(o.getPosition(), o.getSize(), o.getRotation());
   o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 
@@ -472,6 +467,6 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -30,26 +30,23 @@
 #include <string.h>
 
 
-CustomWorldText::CustomWorldText()
-{
+CustomWorldText::CustomWorldText() {
   text = new WorldText;
   upright = false;
   return;
 }
 
 
-CustomWorldText::~CustomWorldText()
-{
+CustomWorldText::~CustomWorldText() {
   delete text;
   return;
 }
 
 
-bool CustomWorldText::read(const char *cmd, std::istream& input)
-{
+bool CustomWorldText::read(const char* cmd, std::istream& input) {
   bool materror;
 
-  if (strcasecmp ("string", cmd) == 0) {
+  if (strcasecmp("string", cmd) == 0) {
     std::string line;
     std::getline(input, line);
     if (line[0] == ' ') {
@@ -62,7 +59,7 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
       std::cout << "World Text: missing data" << std::endl;
     }
   }
-  else if (strcasecmp ("varName", cmd) == 0) {
+  else if (strcasecmp("varName", cmd) == 0) {
     std::string varName;
     if (!(input >> varName)) {
       std::cout << "missing variable name" << std::endl;
@@ -71,43 +68,44 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
     text->data = varName;
     text->useBZDB = true;
   }
-  else if (strcasecmp ("font", cmd) == 0) {
+  else if (strcasecmp("font", cmd) == 0) {
     std::string font;
     if (input >> font) {
       text->font = font;
       return true;
-    } else {
+    }
+    else {
       std::cout << "missing text font" << std::endl;
       return false;
     }
   }
-  else if (strcasecmp ("fontSize", cmd) == 0) {
+  else if (strcasecmp("fontSize", cmd) == 0) {
     if (!(input >> text->fontSize)) {
       return false;
     }
   }
-  else if (strcasecmp ("justify", cmd) == 0) {
+  else if (strcasecmp("justify", cmd) == 0) {
     if (!(input >> text->justify)) {
       return false;
     }
   }
-  else if (strcasecmp ("lineSpace", cmd) == 0) {
+  else if (strcasecmp("lineSpace", cmd) == 0) {
     if (!(input >> text->lineSpace)) {
       return false;
     }
   }
-  else if (strcasecmp ("fixedWidth", cmd) == 0) {
+  else if (strcasecmp("fixedWidth", cmd) == 0) {
     if (!(input >> text->fixedWidth)) {
       return false;
     }
   }
-  else if ((strcasecmp ("length", cmd) == 0) ||
-           (strcasecmp ("lengthPerPixel", cmd) == 0)) {
+  else if ((strcasecmp("length", cmd) == 0) ||
+           (strcasecmp("lengthPerPixel", cmd) == 0)) {
     if (!(input >> text->lengthPerPixel)) {
       return false;
     }
   }
-  else if (strcasecmp ("minDist", cmd) == 0) {
+  else if (strcasecmp("minDist", cmd) == 0) {
     float minDist;
     if (!(input >> minDist)) {
       return false;
@@ -118,10 +116,10 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
     text->lengthPerPixel =
       minDist * tan(fov * 0.5f * ((float)M_PI / 180.0f)) / (pixels * 0.5f);
   }
-  else if (strcasecmp ("billboard", cmd) == 0) {
+  else if (strcasecmp("billboard", cmd) == 0) {
     text->billboard = true;
   }
-  else if (strcasecmp ("upright", cmd) == 0) {
+  else if (strcasecmp("upright", cmd) == 0) {
     upright = true;
   }
   else if (parseMaterials(cmd, input, &material, 1, materror)) {
@@ -137,8 +135,7 @@ bool CustomWorldText::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWorldText::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomWorldText::writeToGroupDef(GroupDefinition* groupdef) const {
   MeshTransform xform;
 
   if ((size.x != 1.0f) || (size.y != 1.0f) || (size.z != 1.0f)) {
@@ -165,7 +162,8 @@ void CustomWorldText::writeToGroupDef(GroupDefinition *groupdef) const
 
   if (text->isValid()) {
     groupdef->addText(text);
-  } else {
+  }
+  else {
     delete text;
   }
   text = NULL;
@@ -178,6 +176,6 @@ void CustomWorldText::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -28,45 +28,45 @@
 
 
 class CacheManager : public Singleton<CacheManager> {
- public:
+  public:
 
-  struct CacheRecord {
-    std::string url;
-    time_t usedDate;
-    std::string name;
-    int size;
-    time_t date;
-    std::string key;
-  };
+    struct CacheRecord {
+      std::string url;
+      time_t usedDate;
+      std::string name;
+      int size;
+      time_t date;
+      std::string key;
+    };
 
-  static bool isCacheFileType(const std::string name);
+    static bool isCacheFileType(const std::string name);
 
-  void setCacheDirectory(const std::string dir);
-  std::string getLocalName(const std::string url) const;
-  std::string getPathURL(const std::string path) const;
+    void setCacheDirectory(const std::string dir);
+    std::string getLocalName(const std::string url) const;
+    std::string getPathURL(const std::string path) const;
 
-  bool loadIndex();
-  bool saveIndex();
+    bool loadIndex();
+    bool saveIndex();
 
-  bool findURL(const std::string& url, CacheRecord& record);
-  bool addFile(CacheRecord& rec, const void* data);
+    bool findURL(const std::string& url, CacheRecord& record);
+    bool addFile(CacheRecord& rec, const void* data);
 
-  std::vector<CacheRecord> getCacheList() const;
+    std::vector<CacheRecord> getCacheList() const;
 
-  void limitCacheSize();
+    void limitCacheSize();
 
- protected:
-  friend class Singleton<CacheManager>;
+  protected:
+    friend class Singleton<CacheManager>;
 
- private:
-  CacheManager();
-  ~CacheManager();
+  private:
+    CacheManager();
+    ~CacheManager();
 
-  int findRecord(const std::string& url);
+    int findRecord(const std::string& url);
 
-  std::string cacheDir;
-  std::string indexName;
-  std::vector<CacheRecord> records;
+    std::string cacheDir;
+    std::string indexName;
+    std::vector<CacheRecord> records;
 };
 
 #endif  /* __CACHEMANAGER_H__ */
@@ -75,6 +75,6 @@ class CacheManager : public Singleton<CacheManager> {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

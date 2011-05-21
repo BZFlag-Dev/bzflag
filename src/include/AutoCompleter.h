@@ -58,13 +58,13 @@ class AutoCompleter {
   protected:
     class WordRecord {
       public:
-	WordRecord(const std::string& str, bool quoteString);
-	bool operator<(const WordRecord&) const;
-	bool operator==(const WordRecord&) const;
-	bool operator!=(const WordRecord&) const;
+        WordRecord(const std::string& str, bool quoteString);
+        bool operator<(const WordRecord&) const;
+        bool operator==(const WordRecord&) const;
+        bool operator!=(const WordRecord&) const;
       public:
-	std::string word;
-	bool quoteString;
+        std::string word;
+        bool quoteString;
     };
     std::vector<WordRecord> words;
 };
@@ -76,6 +76,6 @@ class AutoCompleter {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

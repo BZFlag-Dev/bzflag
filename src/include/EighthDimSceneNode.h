@@ -11,11 +11,11 @@
  */
 
 /* EighthDimSceneNode:
- *	Encapsulates information for rendering the eighth dimension
+ *  Encapsulates information for rendering the eighth dimension
  */
 
-#ifndef	BZF_EIGHTH_DIM_SCENE_NODE_H
-#define	BZF_EIGHTH_DIM_SCENE_NODE_H
+#ifndef BZF_EIGHTH_DIM_SCENE_NODE_H
+#define BZF_EIGHTH_DIM_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -39,21 +39,21 @@ class EighthDimSceneNode : public SceneNode {
       public:
         EighthDimRenderNode(const EighthDimSceneNode*, int numPolygons);
         ~EighthDimRenderNode();
-	void render();
-	void setPolygon(int index, const fvec3[3]);
-	const fvec3& getPosition() const { return sceneNode->getCenter(); }
+        void render();
+        void setPolygon(int index, const fvec3[3]);
+        const fvec3& getPosition() const { return sceneNode->getCenter(); }
       private:
-	const EighthDimSceneNode* sceneNode;
+        const EighthDimSceneNode* sceneNode;
 
-	typedef fvec3 Vert3[3];	 // 3 verts per polygon
-	int    numPolygons;
-	Vert3* polys;
-	fvec4* color;
+        typedef fvec3 Vert3[3];  // 3 verts per polygon
+        int    numPolygons;
+        Vert3* polys;
+        fvec4* color;
     };
 
   private:
-    OpenGLGState	gstate;
-    EighthDimRenderNode	renderNode;
+    OpenGLGState  gstate;
+    EighthDimRenderNode renderNode;
 };
 
 #endif // BZF_EIGHTH_DIM_SCENE_NODE_H
@@ -62,6 +62,6 @@ class EighthDimSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -17,58 +17,53 @@
 BZ_GET_PLUGIN_VERSION
 
 // event handler callback
-class TFR
-{
-public:
-  TFR()
-  {
-    idleTime = 300;
-    redLastTouched = bz_getCurrentTime();
-    greenLastTouched = bz_getCurrentTime();
-    blueLastTouched = bz_getCurrentTime();
-    purpleLastTouched = bz_getCurrentTime();
-    redFlagWasHeld = false;
-    greenFlagWasHeld = false;
-    blueFlagWasHeld = false;
-    purpleFlagWasHeld = false;
-    OKToReset = false;
-    timerOff = false;
-    flagTouched = "";
-  }
-  double idleTime;
-  double redLastTouched;
-  double greenLastTouched;
-  double blueLastTouched;
-  double purpleLastTouched;
-  bool redFlagWasHeld;
-  bool greenFlagWasHeld;
-  bool blueFlagWasHeld;
-  bool purpleFlagWasHeld;
-  bool OKToReset;
-  bool timerOff;
-  const char *flagTouched;
+class TFR {
+  public:
+    TFR() {
+      idleTime = 300;
+      redLastTouched = bz_getCurrentTime();
+      greenLastTouched = bz_getCurrentTime();
+      blueLastTouched = bz_getCurrentTime();
+      purpleLastTouched = bz_getCurrentTime();
+      redFlagWasHeld = false;
+      greenFlagWasHeld = false;
+      blueFlagWasHeld = false;
+      purpleFlagWasHeld = false;
+      OKToReset = false;
+      timerOff = false;
+      flagTouched = "";
+    }
+    double idleTime;
+    double redLastTouched;
+    double greenLastTouched;
+    double blueLastTouched;
+    double purpleLastTouched;
+    bool redFlagWasHeld;
+    bool greenFlagWasHeld;
+    bool blueFlagWasHeld;
+    bool purpleFlagWasHeld;
+    bool OKToReset;
+    bool timerOff;
+    const char* flagTouched;
 };
 
 TFR tfr;
 
-class TeamFlagResetHandler:public bz_EventHandler
-{
-public:
-  virtual void process(bz_EventData * eventData);
+class TeamFlagResetHandler: public bz_EventHandler {
+  public:
+    virtual void process(bz_EventData* eventData);
 };
 
-class TeamFlagResetIOHandler:public bz_CustomSlashCommandHandler
-{
-public:
-  virtual ~TeamFlagResetIOHandler() {};
-  virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList * param);
+class TeamFlagResetIOHandler: public bz_CustomSlashCommandHandler {
+  public:
+    virtual ~TeamFlagResetIOHandler() {};
+    virtual bool handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList* param);
 };
 
 TeamFlagResetHandler teamflagresethandler;
 TeamFlagResetIOHandler teamflagresetiohandler;
 
-double ConvertToInteger(std::string msg)
-{
+double ConvertToInteger(std::string msg) {
   int msglength = (int) msg.length();
 
   if (msglength > 0 && msglength < 4) {
@@ -76,27 +71,29 @@ double ConvertToInteger(std::string msg)
     double tens = 1;
 
     for (int i = (msglength - 1); i >= 0; i--) {
-      if (msg[i] < '0' || msg[i] > '9')	// got something other than a number
-	return 0;
+      if (msg[i] < '0' || msg[i] > '9') { // got something other than a number
+        return 0;
+      }
 
       tens *= 10;
       msgvalue += (((double) msg[i] - '0') / 10) * tens;
     }
 
     // we're ok so far, check limits:
-    if (msgvalue >= 1 && msgvalue <= 120)
+    if (msgvalue >= 1 && msgvalue <= 120) {
       return msgvalue;
+    }
   }
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Load(const char *commandLineParameter)
-{
+BZF_PLUGIN_CALL int bz_Load(const char* commandLineParameter) {
   std::string param = commandLineParameter;
   double timelimitparam = ConvertToInteger(param);
 
-  if (timelimitparam > 0)
+  if (timelimitparam > 0) {
     tfr.idleTime = timelimitparam * 60;
+  }
 
   bz_debugMessage(4, "teamflagreset plugin loaded");
   bz_registerEvent(bz_eTickEvent, &teamflagresethandler);
@@ -107,8 +104,7 @@ BZF_PLUGIN_CALL int bz_Load(const char *commandLineParameter)
   return 0;
 }
 
-BZF_PLUGIN_CALL int bz_Unload(void)
-{
+BZF_PLUGIN_CALL int bz_Unload(void) {
   bz_debugMessage(4, "teamflagreset plugin unloaded");
   bz_removeEvent(bz_eTickEvent, &teamflagresethandler);
   bz_removeCustomSlashCommand("tfrtime");
@@ -118,8 +114,7 @@ BZF_PLUGIN_CALL int bz_Unload(void)
   return 0;
 }
 
-void ResetFlagData()
-{
+void ResetFlagData() {
   tfr.redLastTouched = bz_getCurrentTime();
   tfr.greenLastTouched = bz_getCurrentTime();
   tfr.blueLastTouched = bz_getCurrentTime();
@@ -130,29 +125,30 @@ void ResetFlagData()
   tfr.purpleFlagWasHeld = false;
 }
 
-void resetTeamFlag(bz_ApiString flagSent)
-{
+void resetTeamFlag(bz_ApiString flagSent) {
   for (unsigned int i = 0; i < bz_getNumFlags(); i++) {
-    if (flagSent == bz_getFlagName(i))
+    if (flagSent == bz_getFlagName(i)) {
       bz_resetFlag(i);
+    }
   }
 }
 
-void TeamFlagResetHandler::process(bz_EventData * eventData)
-{
-  if (eventData->eventType != bz_eTickEvent)
+void TeamFlagResetHandler::process(bz_EventData* eventData) {
+  if (eventData->eventType != bz_eTickEvent) {
     return;
+  }
 
-  if (tfr.timerOff == true)
+  if (tfr.timerOff == true) {
     return;
+  }
 
-  bz_APIIntList *playerList = bz_newIntList();
+  bz_APIIntList* playerList = bz_newIntList();
   bz_getPlayerIndexList(playerList);
 
   // check to see if anyone has picked up a team flag & count players per team
 
   for (unsigned int i = 0; i < playerList->size(); i++) {
-    bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
+    bz_BasePlayerRecord* player = bz_getPlayerByIndex(playerList->operator[](i));
 
     if (player) {
 
@@ -160,22 +156,22 @@ void TeamFlagResetHandler::process(bz_EventData * eventData)
 
       if (tfr.flagTouched) {
 
-	if (strcmp(tfr.flagTouched, "R*") == 0) {
-	  tfr.redLastTouched = bz_getCurrentTime();
-	  tfr.redFlagWasHeld = true;
-	}
-	if (strcmp(tfr.flagTouched, "G*") == 0) {
-	  tfr.greenLastTouched = bz_getCurrentTime();
-	  tfr.greenFlagWasHeld = true;
-	}
-	if (strcmp(tfr.flagTouched, "B*") == 0) {
-	  tfr.blueLastTouched = bz_getCurrentTime();
-	  tfr.blueFlagWasHeld = true;
-	}
-	if (strcmp(tfr.flagTouched, "P*") == 0) {
-	  tfr.purpleLastTouched = bz_getCurrentTime();
-	  tfr.purpleFlagWasHeld = true;
-	}
+        if (strcmp(tfr.flagTouched, "R*") == 0) {
+          tfr.redLastTouched = bz_getCurrentTime();
+          tfr.redFlagWasHeld = true;
+        }
+        if (strcmp(tfr.flagTouched, "G*") == 0) {
+          tfr.greenLastTouched = bz_getCurrentTime();
+          tfr.greenFlagWasHeld = true;
+        }
+        if (strcmp(tfr.flagTouched, "B*") == 0) {
+          tfr.blueLastTouched = bz_getCurrentTime();
+          tfr.blueFlagWasHeld = true;
+        }
+        if (strcmp(tfr.flagTouched, "P*") == 0) {
+          tfr.purpleLastTouched = bz_getCurrentTime();
+          tfr.purpleFlagWasHeld = true;
+        }
       }
 
       bz_freePlayerRecord(player);
@@ -188,18 +184,24 @@ void TeamFlagResetHandler::process(bz_EventData * eventData)
 
   tfr.OKToReset = false;
 
-  if (bz_getTeamCount(eRedTeam) * bz_getTeamCount(eGreenTeam) > 0)
+  if (bz_getTeamCount(eRedTeam) * bz_getTeamCount(eGreenTeam) > 0) {
     tfr.OKToReset = true;
-  if (bz_getTeamCount(eRedTeam) * bz_getTeamCount(eBlueTeam) > 0)
+  }
+  if (bz_getTeamCount(eRedTeam) * bz_getTeamCount(eBlueTeam) > 0) {
     tfr.OKToReset = true;
-  if (bz_getTeamCount(eRedTeam) * bz_getTeamCount(ePurpleTeam) > 0)
+  }
+  if (bz_getTeamCount(eRedTeam) * bz_getTeamCount(ePurpleTeam) > 0) {
     tfr.OKToReset = true;
-  if (bz_getTeamCount(eGreenTeam) * bz_getTeamCount(eBlueTeam) > 0)
+  }
+  if (bz_getTeamCount(eGreenTeam) * bz_getTeamCount(eBlueTeam) > 0) {
     tfr.OKToReset = true;
-  if (bz_getTeamCount(eGreenTeam) * bz_getTeamCount(ePurpleTeam) > 0)
+  }
+  if (bz_getTeamCount(eGreenTeam) * bz_getTeamCount(ePurpleTeam) > 0) {
     tfr.OKToReset = true;
-  if (bz_getTeamCount(eBlueTeam) * bz_getTeamCount(ePurpleTeam) > 0)
+  }
+  if (bz_getTeamCount(eBlueTeam) * bz_getTeamCount(ePurpleTeam) > 0) {
     tfr.OKToReset = true;
+  }
 
   if (tfr.OKToReset == false) {
     ResetFlagData();
@@ -245,12 +247,11 @@ void TeamFlagResetHandler::process(bz_EventData * eventData)
   return;
 }
 
-bool TeamFlagResetIOHandler::handle(int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList * /*_param*/ )
-{
+bool TeamFlagResetIOHandler::handle(int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList* /*_param*/) {
   std::string command = _command.c_str();
   std::string message = _message.c_str();
 
-  bz_BasePlayerRecord *fromPlayer = bz_getPlayerByIndex(playerID);
+  bz_BasePlayerRecord* fromPlayer = bz_getPlayerByIndex(playerID);
 
   if (fromPlayer) {
     if (!fromPlayer->admin) {
@@ -270,12 +271,13 @@ bool TeamFlagResetIOHandler::handle(int playerID, bz_ApiString _command, bz_ApiS
       tfr.timerOff = false;
       tfr.idleTime = invalue * 60;
 
-      int AdjTime = (int) (tfr.idleTime / 60 + 0.5);
+      int AdjTime = (int)(tfr.idleTime / 60 + 0.5);
       bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Team flag idle time has been set to %i minutes.", AdjTime);
 
       ResetFlagData();
       return true;
-    } else {
+    }
+    else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Team flag idle time invalid: must be between 1 and 120 minutes.");
       return true;
     }
@@ -299,12 +301,14 @@ bool TeamFlagResetIOHandler::handle(int playerID, bz_ApiString _command, bz_ApiS
 
   if (command == "tfrstatus") {
 
-    if (tfr.timerOff)
+    if (tfr.timerOff) {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Team flag reset is disabled.");
-    else
+    }
+    else {
       bz_sendTextMessagef(BZ_SERVER, playerID, "Team flag reset is enabled.");
+    }
 
-    int AdjTime = (int) (tfr.idleTime / 60 + 0.5);
+    int AdjTime = (int)(tfr.idleTime / 60 + 0.5);
     bz_sendTextMessagef(BZ_SERVER, playerID, "Team flag idle time is: %i minutes.", AdjTime);
 
     return true;
@@ -317,6 +321,6 @@ bool TeamFlagResetIOHandler::handle(int playerID, bz_ApiString _command, bz_ApiS
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

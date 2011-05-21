@@ -26,21 +26,18 @@
 #include "BzMaterial.h"
 
 
-CustomMaterial::CustomMaterial(const char* matName)
-{
+CustomMaterial::CustomMaterial(const char* matName) {
   name = matName;
   return;
 }
 
 
-CustomMaterial::~CustomMaterial()
-{
+CustomMaterial::~CustomMaterial() {
   return;
 }
 
 
-bool CustomMaterial::read(const char *cmd, std::istream& input)
-{
+bool CustomMaterial::read(const char* cmd, std::istream& input) {
   bool materror;
 
   if (parseMaterials(cmd, input, &material, 1, materror)) {
@@ -56,13 +53,12 @@ bool CustomMaterial::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomMaterial::writeToManager() const
-{
+void CustomMaterial::writeToManager() const {
   material.setName(name);
 
   if ((name.size() > 0) && (MATERIALMGR.findMaterial(name) != NULL)) {
     std::cout << "WARNING: duplicate material name"
-	      << " (" << name << ")" << std::endl;
+              << " (" << name << ")" << std::endl;
     std::cout << "  the first material will be used" << std::endl;
   }
 
@@ -80,6 +76,6 @@ void CustomMaterial::writeToManager() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

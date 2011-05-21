@@ -36,18 +36,17 @@
 
 const int ListServerLink::NotConnected = -1;
 
-extern bz_eTeamType convertTeam ( TeamColor team );
-extern TeamColor convertTeam( bz_eTeamType team );
+extern bz_eTeamType convertTeam(TeamColor team);
+extern TeamColor convertTeam(bz_eTeamType team);
 
 ListServerLink::ListServerLink(std::string listServerURL,
-			       std::string publicizedAddress,
-			       std::string publicizedTitle,
-			       std::string _advertiseGroups,
-			       float dnsCache)
-{
+                               std::string publicizedAddress,
+                               std::string publicizedTitle,
+                               std::string _advertiseGroups,
+                               float dnsCache) {
 
   std::string bzfsUserAgent = "bzfs ";
-  bzfsUserAgent	    += getAppVersion();
+  bzfsUserAgent     += getAppVersion();
 
   setURL(listServerURL);
   setUserAgent(bzfsUserAgent);
@@ -56,8 +55,9 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   publiclyDisconnected = false;
 
-  if (clOptions->pingInterface != "")
+  if (clOptions->pingInterface != "") {
     setInterface(clOptions->pingInterface);
+  }
 
   publicizeAddress     = publicizedAddress;
   publicizeDescription = publicizedTitle;
@@ -65,21 +65,19 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   //if this c'tor is called, it's safe to publicize
   publicizeServer      = true;
-  queuedRequest	= false;
+  queuedRequest = false;
   // schedule initial ADD message
   queueMessage(ListServerLink::ADD);
 }
 
-ListServerLink::ListServerLink()
-{
+ListServerLink::ListServerLink() {
   // does not create a usable link, so checks should be placed
   // in  all public member functions to ensure that nothing tries
   // to happen if publicizeServer is false
   publicizeServer = false;
 }
 
-ListServerLink::~ListServerLink()
-{
+ListServerLink::~ListServerLink() {
   // now tell the list server that we're going away.  this can
   // take some time but we don't want to wait too long.  we do
   // our own multiplexing loop and wait for a maximum of 3 seconds
@@ -87,20 +85,21 @@ ListServerLink::~ListServerLink()
 
   // if we aren't supposed to be publicizing, skip the whole thing
   // and don't waste 3 seconds.
-  if (!publicizeServer)
+  if (!publicizeServer) {
     return;
+  }
 
   queueMessage(ListServerLink::REMOVE);
   for (int i = 0; i < 12; i++) {
     cURLManager::perform();
-    if (!queuedRequest)
+    if (!queuedRequest) {
       break;
+    }
     BzTime::sleep(0.25f);
   }
 }
 
-void ListServerLink::finalization(char *data, unsigned int length, bool good)
-{
+void ListServerLink::finalization(char* data, unsigned int length, bool good) {
   publiclyDisconnected = !good;
 
   queuedRequest = false;
@@ -108,22 +107,22 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     char buf[2048];
     memcpy(buf, data, length);
     int bytes = length;
-    buf[bytes]=0;
+    buf[bytes] = 0;
     char* base = buf;
-    const char *tokGoodIdentifier = "TOKGOOD: ";
-    const char *tokBadIdentifier = "TOKBAD: ";
-    const char *unknownPlayer = "UNK: ";
-    const char *bzIdentifier = "BZID: ";
-    const char *ownerIdentifier = "OWNER: ";
+    const char* tokGoodIdentifier = "TOKGOOD: ";
+    const char* tokBadIdentifier = "TOKBAD: ";
+    const char* unknownPlayer = "UNK: ";
+    const char* bzIdentifier = "BZID: ";
+    const char* ownerIdentifier = "OWNER: ";
     // walks entire reply including HTTP headers
     while (*base) {
       // find next newline
       char* scan = base;
-      while (*scan && *scan != '\r' && *scan != '\n') scan++;
+      while (*scan && *scan != '\r' && *scan != '\n') { scan++; }
       // if no newline then no more complete replies
-      if (*scan != '\r' && *scan != '\n') break;
-      while (*scan && (*scan == '\r' || *scan == '\n')) *scan++ = '\0';
-      logDebugMessage(4,"Got line: \"%s\"\n", base);
+      if (*scan != '\r' && *scan != '\n') { break; }
+      while (*scan && (*scan == '\r' || *scan == '\n')) { *scan++ = '\0'; }
+      logDebugMessage(4, "Got line: \"%s\"\n", base);
       // TODO don't do this if we don't want central logins
 
       // is player globally registered ?
@@ -133,106 +132,116 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       // this is a reply to an authentication request ?
       bool  authReply  = false;
 
-      char *callsign = (char *)NULL;
+      char* callsign = (char*)NULL;
       if (strncmp(base, tokGoodIdentifier, strlen(tokGoodIdentifier)) == 0) {
-	callsign = base + strlen(tokGoodIdentifier);
-	registered = true;
-	verified   = true;
-	authReply  = true;
-      } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))){
+        callsign = base + strlen(tokGoodIdentifier);
+        registered = true;
+        verified   = true;
+        authReply  = true;
+      }
+      else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))) {
         setPublicOwner(base + strlen(ownerIdentifier));
-      } else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
-	callsign = base + strlen(tokBadIdentifier);
-	registered = true;
-	authReply  = true;
-      } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
-	callsign = base + strlen(unknownPlayer);
-	authReply  = true;
-      } else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
-	std::string line = base;
-	std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
-	if (args.size() < 3) {
-	  logDebugMessage(3,"Bad BZID string: %s\n", line.c_str());
-	} else {
-	  const std::string& bzId = args[1];
-	  const std::string& nick = args[2];
-	  logDebugMessage(4,"Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
-	  for (int i = 0; i < curMaxPlayers; i++) {
-	    GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
-	    if ((gkp != NULL) &&
-		(TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) &&
-		(gkp->_LSAState == GameKeeper::Player::verified)) {
-	      gkp->setBzIdentifier(bzId);
-	      logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n",
-		     nick.c_str(), i, bzId.c_str());
-	      break;
-	    }
-	  }
-	}
+      }
+      else if (!strncmp(base, tokBadIdentifier, strlen(tokBadIdentifier))) {
+        callsign = base + strlen(tokBadIdentifier);
+        registered = true;
+        authReply  = true;
+      }
+      else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
+        callsign = base + strlen(unknownPlayer);
+        authReply  = true;
+      }
+      else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
+        std::string line = base;
+        std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
+        if (args.size() < 3) {
+          logDebugMessage(3, "Bad BZID string: %s\n", line.c_str());
+        }
+        else {
+          const std::string& bzId = args[1];
+          const std::string& nick = args[2];
+          logDebugMessage(4, "Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
+          for (int i = 0; i < curMaxPlayers; i++) {
+            GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
+            if ((gkp != NULL) &&
+                (TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) &&
+                (gkp->_LSAState == GameKeeper::Player::verified)) {
+              gkp->setBzIdentifier(bzId);
+              logDebugMessage(3, "Set player (%s [%i]) bzId to (%s)\n",
+                              nick.c_str(), i, bzId.c_str());
+              break;
+            }
+          }
+        }
       }
 
       if (authReply) {
-	logDebugMessage(3,"Got: %s\n", base);
-	char *group = (char *)NULL;
+        logDebugMessage(3, "Got: %s\n", base);
+        char* group = (char*)NULL;
 
-	// Isolate callsign from groups
-	if (verified) {
-	  group = callsign;
-	  if (group) {
-	    while (*group && (*group != ':')) group++;
-	    while (*group && (*group == ':')) *group++ = 0;
-	  }
-	}
-	GameKeeper::Player *playerData = NULL;
-	int playerIndex;
-	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
-	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-	  if (!playerData)
-	    continue;
-	  if (playerData->_LSAState != GameKeeper::Player::checking)
-	    continue;
-	  if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
-					 callsign))
-	    break;
-	}
-	logDebugMessage(3,"[%d]\n", playerIndex);
+        // Isolate callsign from groups
+        if (verified) {
+          group = callsign;
+          if (group) {
+            while (*group && (*group != ':')) { group++; }
+            while (*group && (*group == ':')) { *group++ = 0; }
+          }
+        }
+        GameKeeper::Player* playerData = NULL;
+        int playerIndex;
+        for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
+          playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+          if (!playerData) {
+            continue;
+          }
+          if (playerData->_LSAState != GameKeeper::Player::checking) {
+            continue;
+          }
+          if (!TextUtils::compare_nocase(playerData->player.getCallSign(),
+                                         callsign)) {
+            break;
+          }
+        }
+        logDebugMessage(3, "[%d]\n", playerIndex);
 
-	if (playerIndex < curMaxPlayers) {
-	  if (registered) {
+        if (playerIndex < curMaxPlayers) {
+          if (registered) {
 
-	    bz_PlayerAuthEventData_V1 commandData;
-	    commandData.playerID = playerIndex;
-	    commandData.globalAuth = verified;
-	    worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
+            bz_PlayerAuthEventData_V1 commandData;
+            commandData.playerID = playerIndex;
+            commandData.globalAuth = verified;
+            worldEventManager.callEvents(bz_ePlayerAuthEvent, &commandData);
 
-	    if (!playerData->accessInfo.isRegistered()) playerData->accessInfo.storeInfo();
-	    if (verified) {
-	      playerData->_LSAState = GameKeeper::Player::verified;
-	      playerData->accessInfo.setPermissionRights();
-	      while (group && *group) {
-		char *nextgroup = group;
-		if (nextgroup) {
-		  while (*nextgroup && (*nextgroup != ':')) nextgroup++;
-		  while (*nextgroup && (*nextgroup == ':')) *nextgroup++ = 0;
-		}
-		playerData->accessInfo.addGroup(group);
-		group = nextgroup;
-	      }
-	      playerData->authentication.global(true);
-	      sendMessage(ServerPlayer, playerIndex, "Global login approved!");
-	    } else {
-	      playerData->_LSAState = GameKeeper::Player::failed;
-	      sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
-	    }
-	  } else {
-	    playerData->_LSAState = GameKeeper::Player::notRequired;
-	    if (!playerData->player.isBot()) {
-	      sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
-	      sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
-	    }
-	  }
-	  playerData->player.clearToken();
-	}
+            if (!playerData->accessInfo.isRegistered()) { playerData->accessInfo.storeInfo(); }
+            if (verified) {
+              playerData->_LSAState = GameKeeper::Player::verified;
+              playerData->accessInfo.setPermissionRights();
+              while (group && *group) {
+                char* nextgroup = group;
+                if (nextgroup) {
+                  while (*nextgroup && (*nextgroup != ':')) { nextgroup++; }
+                  while (*nextgroup && (*nextgroup == ':')) { *nextgroup++ = 0; }
+                }
+                playerData->accessInfo.addGroup(group);
+                group = nextgroup;
+              }
+              playerData->authentication.global(true);
+              sendMessage(ServerPlayer, playerIndex, "Global login approved!");
+            }
+            else {
+              playerData->_LSAState = GameKeeper::Player::failed;
+              sendMessage(ServerPlayer, playerIndex, "Global login rejected, bad token.");
+            }
+          }
+          else {
+            playerData->_LSAState = GameKeeper::Player::notRequired;
+            if (!playerData->player.isBot()) {
+              sendMessage(ServerPlayer, playerIndex, "This callsign is not registered.");
+              sendMessage(ServerPlayer, playerIndex, "You can register it at http://my.bzflag.org/bb/");
+            }
+          }
+          playerData->player.clearToken();
+        }
       }
 
       // next reply
@@ -240,11 +249,13 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     }
   }
   for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
+    GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData) {
       continue;
-    if (playerData->_LSAState != GameKeeper::Player::checking)
+    }
+    if (playerData->_LSAState != GameKeeper::Player::checking) {
       continue;
+    }
     playerData->_LSAState = GameKeeper::Player::timedOut;
   }
   if (nextMessageType != ListServerLink::NONE) {
@@ -254,50 +265,51 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
   }
 }
 
-void ListServerLink::queueMessage(MessageType type)
-{
+void ListServerLink::queueMessage(MessageType type) {
   // ignore if the server is not public
-  if (!publicizeServer) return;
+  if (!publicizeServer) { return; }
 
   // record next message to send.
   nextMessageType = type;
 
-  if (!queuedRequest)
+  if (!queuedRequest) {
     sendQueuedMessages();
-  else
-    logDebugMessage(3,"There is a message already queued to the list server: not sending this one yet.\n");
+  }
+  else {
+    logDebugMessage(3, "There is a message already queued to the list server: not sending this one yet.\n");
+  }
 }
 
-void ListServerLink::sendQueuedMessages()
-{
+void ListServerLink::sendQueuedMessages() {
   queuedRequest = true;
   if (nextMessageType == ListServerLink::ADD) {
-    logDebugMessage(3,"Queuing ADD message to list server\n");
+    logDebugMessage(3, "Queuing ADD message to list server\n");
 
-    bz_ListServerUpdateEvent_V1	updateEvent;
+    bz_ListServerUpdateEvent_V1 updateEvent;
     updateEvent.address = publicizeAddress;
     updateEvent.description = publicizeDescription;
     updateEvent.groups = verifyGroupPermissions(advertiseGroups);
 
-    worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
+    worldEventManager.callEvents(bz_eListServerUpdateEvent, &updateEvent);
 
     addMe(getTeamCounts(),
           std::string(updateEvent.address.c_str()),
           std::string(updateEvent.description.c_str()),
           std::string(updateEvent.groups.c_str()));
     lastAddTime = BzTime::getCurrent();
-  } else if (nextMessageType == ListServerLink::REMOVE) {
-    logDebugMessage(3,"Queuing REMOVE message to list server\n");
+  }
+  else if (nextMessageType == ListServerLink::REMOVE) {
+    logDebugMessage(3, "Queuing REMOVE message to list server\n");
     removeMe(publicizeAddress);
   }
   nextMessageType = ListServerLink::NONE;
 }
 
-std::string ListServerLink::verifyGroupPermissions(const std::string& groups)
-{
+std::string ListServerLink::verifyGroupPermissions(const std::string& groups) {
   // replay servers can have any crazy permissions they want
-  if (Replay::enabled())
+  if (Replay::enabled()) {
     return groups;
+  }
 
   // check to make sure these groups are actually good
   std::vector<std::string> vgroups = TextUtils::tokenize(groups, ",");
@@ -311,8 +323,9 @@ std::string ListServerLink::verifyGroupPermissions(const std::string& groups)
   delitr = std::find(vgroups.begin(), vgroups.end(), "EVERYONE");
   if (delitr != vgroups.end()) {
     if (!groupHasPermission("EVERYONE", PlayerAccessInfo::spawn) &&
-	!groupHasPermission("EVERYONE", PlayerAccessInfo::talk))
+        !groupHasPermission("EVERYONE", PlayerAccessInfo::talk)) {
       vgroups.erase(delitr);
+    }
   }
 
   // if nothing is left, add VERIFIED
@@ -324,18 +337,20 @@ std::string ListServerLink::verifyGroupPermissions(const std::string& groups)
   delitr = std::find(vgroups.begin(), vgroups.end(), "VERIFIED");
   if (delitr != vgroups.end()) {
     if (!groupHasPermission("VERIFIED", PlayerAccessInfo::spawn) &&
-	!groupHasPermission("VERIFIED", PlayerAccessInfo::talk))
+        !groupHasPermission("VERIFIED", PlayerAccessInfo::talk)) {
       vgroups.erase(delitr);
+    }
   }
 
   // if there's nothing left, add any non-local groups who CAN either spawn or talk
   if (vgroups.size() < 1) {
     for (PlayerAccessMap::iterator itr = groupAccess.begin(); itr != groupAccess.end(); ++itr) {
-      if ((*itr).first.compare(0, 6, "LOCAL.") == 0)
-	continue;
+      if ((*itr).first.compare(0, 6, "LOCAL.") == 0) {
+        continue;
+      }
       if ((*itr).second.hasPerm(PlayerAccessInfo::spawn) ||
-	  (*itr).second.hasPerm(PlayerAccessInfo::talk)) {
-	vgroups.push_back((*itr).first);
+          (*itr).second.hasPerm(PlayerAccessInfo::talk)) {
+        vgroups.push_back((*itr).first);
       }
     }
   }
@@ -357,10 +372,9 @@ std::string ListServerLink::verifyGroupPermissions(const std::string& groups)
 }
 
 void ListServerLink::addMe(PingPacket pingInfo,
-			   std::string publicizedAddress,
-			   std::string publicizedTitle,
-			   std::string _advertiseGroups)
-{
+                           std::string publicizedAddress,
+                           std::string publicizedTitle,
+                           std::string _advertiseGroups) {
   std::string msg;
   std::string hdr;
 
@@ -386,22 +400,25 @@ void ListServerLink::addMe(PingPacket pingInfo,
   std::set<std::string> callSigns;
   // callsign1@ip1=token1%0D%0Acallsign2@ip2=token2%0D%0A
   for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
+    GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(i);
+    if (!playerData) {
       continue;
+    }
     if ((playerData->_LSAState != GameKeeper::Player::required)
-	&& (playerData->_LSAState != GameKeeper::Player::requesting))
+        && (playerData->_LSAState != GameKeeper::Player::requesting)) {
       continue;
-    if (callSigns.count(playerData->player.getCallSign()))
+    }
+    if (callSigns.count(playerData->player.getCallSign())) {
       continue;
+    }
     callSigns.insert(playerData->player.getCallSign());
     playerData->_LSAState = GameKeeper::Player::checking;
-    NetHandler *handler = playerData->netHandler;
+    NetHandler* handler = playerData->netHandler;
     msg += TextUtils::url_encode(playerData->player.getCallSign());
     Address addr = handler->getIPAddress();
     if (!addr.isPrivate()) {
-	msg += "@";
-	msg += handler->getTargetIP();
+      msg += "@";
+      msg += handler->getTargetIP();
     }
     msg += "=";
     msg += playerData->player.getToken();
@@ -411,7 +428,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
   PlayerAccessMap::iterator itr = groupAccess.begin();
-  for ( ; itr != groupAccess.end(); itr++) {
+  for (; itr != groupAccess.end(); itr++) {
     if (itr->first.substr(0, 6) != "LOCAL.") {
       msg += itr->first.c_str();
       msg += "%0D%0A";
@@ -429,8 +446,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   addHandle();
 }
 
-void ListServerLink::removeMe(std::string publicizedAddress)
-{
+void ListServerLink::removeMe(std::string publicizedAddress) {
   std::string msg;
 
   msg  = "action=REMOVE&nameport=";
@@ -444,6 +460,6 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

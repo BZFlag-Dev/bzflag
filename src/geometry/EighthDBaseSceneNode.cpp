@@ -31,9 +31,8 @@ const int BasePolygons = 60;
 
 EighthDBaseSceneNode::EighthDBaseSceneNode(const fvec3& pos,
                                            const fvec3& size, float rotation)
-: EighthDimSceneNode(BasePolygons)
-, renderNode(this, pos, size, rotation)
-{
+  : EighthDimSceneNode(BasePolygons)
+  , renderNode(this, pos, size, rotation) {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
@@ -71,38 +70,35 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const fvec3& pos,
   setRadius(0.25f * size.lengthSq());
 }
 
-EighthDBaseSceneNode::~EighthDBaseSceneNode()
-{
+EighthDBaseSceneNode::~EighthDBaseSceneNode() {
   // do nothing
 }
 
-void EighthDBaseSceneNode::notifyStyleChange()
-{
+void EighthDBaseSceneNode::notifyStyleChange() {
   EighthDimSceneNode::notifyStyleChange();
 
   OpenGLGStateBuilder builder(gstate);
   if (BZDB.isTrue("smooth")) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     builder.setSmoothing();
-  } else {
+  }
+  else {
     builder.resetBlending();
     builder.resetSmoothing();
   }
   gstate = builder.getState();
 }
 
-void EighthDBaseSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void EighthDBaseSceneNode::addRenderNodes(SceneRenderer& renderer) {
   EighthDimSceneNode::addRenderNodes(renderer);
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
 EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
-			const EighthDBaseSceneNode * _sceneNode,
-			const fvec3& pos,
-			const fvec3& size, float rotation) :
-			sceneNode(_sceneNode)
-{
+  const EighthDBaseSceneNode* _sceneNode,
+  const fvec3& pos,
+  const fvec3& size, float rotation) :
+  sceneNode(_sceneNode) {
   // get rotation stuff
   const float c = cosf(rotation);
   const float s = sinf(rotation);
@@ -120,13 +116,11 @@ EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
   corner[4].z = corner[5].z = corner[6].z = corner[7].z = pos.z + size.z;
 }
 
-EighthDBaseSceneNode::EighthDBaseRenderNode::~EighthDBaseRenderNode()
-{
+EighthDBaseSceneNode::EighthDBaseRenderNode::~EighthDBaseRenderNode() {
   // do nothing
 }
 
-void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
-{
+void EighthDBaseSceneNode::EighthDBaseRenderNode::render() {
   myColor3f(1.0f, 1.0f, 1.0f);
   glBegin(GL_LINE_LOOP);
   glVertex3fv(corner[0]);
@@ -152,6 +146,6 @@ void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

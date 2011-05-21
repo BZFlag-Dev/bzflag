@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_BZFLAG_H
-#define	BZF_BZFLAG_H
+#ifndef BZF_BZFLAG_H
+#define BZF_BZFLAG_H
 
 #include "common.h"
 
@@ -23,7 +23,7 @@ extern void dumpResources();
 extern bool echoToConsole;
 extern bool echoAnsi;
 extern std::string alternateConfig;
-extern const char *argv0;
+extern const char* argv0;
 extern struct tm   userTime;
 
 extern void setupVFS();
@@ -38,6 +38,6 @@ extern int numRobotTanks;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

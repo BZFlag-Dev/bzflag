@@ -49,20 +49,17 @@ template <>
 CacheManager* Singleton<CacheManager>::_instance = (CacheManager*)0;
 
 
-CacheManager::CacheManager()
-{
+CacheManager::CacheManager() {
   indexName = "CacheIndex.txt";
   cacheDir = "./";
 }
 
 
-CacheManager::~CacheManager()
-{
+CacheManager::~CacheManager() {
 }
 
 
-bool CacheManager::isCacheFileType(const std::string name)
-{
+bool CacheManager::isCacheFileType(const std::string name) {
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
     return true;
   }
@@ -73,14 +70,12 @@ bool CacheManager::isCacheFileType(const std::string name)
 }
 
 
-void CacheManager::setCacheDirectory(const std::string dir)
-{
+void CacheManager::setCacheDirectory(const std::string dir) {
   cacheDir = dir;
 }
 
 
-std::string CacheManager::getLocalName(const std::string name) const
-{
+std::string CacheManager::getLocalName(const std::string name) const {
   std::string local = "";
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
     local = cacheDir + "http/";
@@ -99,8 +94,7 @@ std::string CacheManager::getLocalName(const std::string name) const
 }
 
 
-std::string CacheManager::getPathURL(const std::string path) const
-{
+std::string CacheManager::getPathURL(const std::string path) const {
   if (path.find(cacheDir) != 0) {
     return std::string("");
   }
@@ -115,8 +109,7 @@ std::string CacheManager::getPathURL(const std::string path) const
 }
 
 
-bool CacheManager::findURL(const std::string& url, CacheRecord& record)
-{
+bool CacheManager::findURL(const std::string& url, CacheRecord& record) {
   int pos = findRecord(url);
   if (pos >= 0) {
     CacheRecord* rec = &records[pos];
@@ -128,8 +121,7 @@ bool CacheManager::findURL(const std::string& url, CacheRecord& record)
 }
 
 
-bool CacheManager::addFile(CacheRecord& record, const void* data)
-{
+bool CacheManager::addFile(CacheRecord& record, const void* data) {
   if (((data == NULL) && (record.size != 0)) || (record.url.size() <= 0)) {
     return false;
   }
@@ -155,7 +147,7 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
   rec->usedDate = time(NULL); // update the timestamp
 
   MD5 md5;
-  md5.update((unsigned char *)data, rec->size);
+  md5.update((unsigned char*)data, rec->size);
   md5.finalize();
   rec->key = md5.hexdigest();
 
@@ -168,8 +160,7 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
 }
 
 
-int CacheManager::findRecord(const std::string& url)
-{
+int CacheManager::findRecord(const std::string& url) {
   for (unsigned int i = 0; i < records.size(); i++) {
     CacheRecord* rec = &(records[i]);
     if (url == rec->url) {
@@ -180,8 +171,7 @@ int CacheManager::findRecord(const std::string& url)
 }
 
 
-bool CacheManager::loadIndex()
-{
+bool CacheManager::loadIndex() {
   records.clear();
 
   std::string indexFile = cacheDir + indexName;
@@ -204,13 +194,14 @@ bool CacheManager::loadIndex()
 
     if (fgets(buffer, 1024, file) == NULL) {
       break;
-    } else {
+    }
+    else {
       removeNewlines(buffer);
     }
     std::string line = buffer;
     std::vector<std::string> tokens = TextUtils::tokenize(line, " ");
     if (tokens.size() != 4) {
-      logDebugMessage(1,"loadCacheIndex (bad line): %s\n", buffer);
+      logDebugMessage(1, "loadCacheIndex (bad line): %s\n", buffer);
       continue;
     }
     rec.size = strtoul(tokens[0].c_str(), NULL, 10);
@@ -227,8 +218,7 @@ bool CacheManager::loadIndex()
 }
 
 
-bool CacheManager::saveIndex()
-{
+bool CacheManager::saveIndex() {
   std::sort(records.begin(), records.end(), compareUsedDate);
 
   std::string indexFile = cacheDir + indexName;
@@ -264,8 +254,7 @@ bool CacheManager::saveIndex()
 }
 
 
-void CacheManager::limitCacheSize()
-{
+void CacheManager::limitCacheSize() {
   int maxSize = BZDB.evalInt("maxCacheMB") * 1024 * 1024;
   if (maxSize < 0) {
     maxSize = 0;
@@ -290,14 +279,12 @@ void CacheManager::limitCacheSize()
 }
 
 
-std::vector<CacheManager::CacheRecord> CacheManager::getCacheList() const
-{
+std::vector<CacheManager::CacheRecord> CacheManager::getCacheList() const {
   return records;
 }
 
 
-static bool fileExists (const std::string& name)
-{
+static bool fileExists(const std::string& name) {
   struct stat buf;
 #ifndef _WIN32
   return (stat(name.c_str(), &buf) == 0);
@@ -308,13 +295,12 @@ static bool fileExists (const std::string& name)
   while (dirname.find_last_of(BZ_DIRECTORY_SEPARATOR) == (dirname.size() - 1)) {
     dirname.resize(dirname.size() - 1);
   }
-  return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
+  return (_stat(dirname.c_str(), (struct _stat*) &buf) == 0);
 #endif
 }
 
 
-static void removeDirs(unsigned int minLen, const std::string& path)
-{
+static void removeDirs(unsigned int minLen, const std::string& path) {
   std::string tmp = path;
   while (tmp.size() > minLen) {
     unsigned int i = (unsigned int)tmp.find_last_of(BZ_DIRECTORY_SEPARATOR);
@@ -327,8 +313,7 @@ static void removeDirs(unsigned int minLen, const std::string& path)
 }
 
 
-static void removeNewlines(char* c)
-{
+static void removeNewlines(char* c) {
   while (*c != '\0') {
     if ((*c == '\n') || (*c == '\r')) {
       *c = '\0';
@@ -339,8 +324,7 @@ static void removeNewlines(char* c)
 }
 
 
-static std::string partialEncoding(const std::string& string)
-{
+static std::string partialEncoding(const std::string& string) {
   // URL encoding removes the '/' and '.', which is
   // not acceptable. It is nice to have the directory
   // structure, and to be able to point and click your
@@ -353,7 +337,7 @@ static std::string partialEncoding(const std::string& string)
       tmp += "%20";
     }
     else if ((c == '%') || (c == '*') || (c == '?') ||
-	     (c == ':') || (c == '"') || (c == '\\')) {
+             (c == ':') || (c == '"') || (c == '\\')) {
       tmp += '%';
       sprintf(hex, "%-2.2X", c);
       tmp += hex;
@@ -406,8 +390,7 @@ static std::string partialDecoding(const std::string& path)
 
 
 static bool compareUsedDate(const CacheManager::CacheRecord& a,
-                            const CacheManager::CacheRecord& b)
-{
+                            const CacheManager::CacheRecord& b) {
   // oldest last
   return (a.usedDate > b.usedDate);
 }
@@ -417,6 +400,6 @@ static bool compareUsedDate(const CacheManager::CacheRecord& a,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

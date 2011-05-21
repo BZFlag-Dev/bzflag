@@ -33,8 +33,7 @@
 JoinMenu* JoinMenu::instance = NULL;
 
 
-JoinMenu::JoinMenu() : serverMenu(NULL)
-{
+JoinMenu::JoinMenu() : serverMenu(NULL) {
   instance = this;
 
   // cache font face ID
@@ -64,7 +63,8 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   callsign->setMaxLength(CallSignLen - 1);
   if (!LuaClientScripts::GetDevMode()) {
     callsign->setString(info->callsign);
-  } else {
+  }
+  else {
     callsign->setString(ANSI_STR_FG_BLACK "devmode");
     callsign->setEditing(false);
   }
@@ -108,7 +108,8 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   server->setMaxLength(64);
   if (!LuaClientScripts::GetDevMode()) {
     server->setString(info->serverName);
-  } else {
+  }
+  else {
     server->setString(ANSI_STR_FG_BLACK "127.0.0.1 (devmode)");
     server->setEditing(false);
   }
@@ -140,25 +141,23 @@ JoinMenu::JoinMenu() : serverMenu(NULL)
   initNavigation();
 }
 
-JoinMenu::~JoinMenu()
-{
+JoinMenu::~JoinMenu() {
   instance = NULL;
   delete serverMenu;
 }
 
-HUDuiDefaultKey* JoinMenu::getDefaultKey()
-{
+HUDuiDefaultKey* JoinMenu::getDefaultKey() {
   return MenuDefaultKey::getInstance();
 }
 
-void JoinMenu::show()
-{
+void JoinMenu::show() {
   StartupInfo* info = getStartupInfo();
 
   // set fields
   if (!LuaClientScripts::GetDevMode()) {
     callsign->setString(info->callsign);
-  } else {
+  }
+  else {
     callsign->setString(ANSI_STR_FG_BLACK "devmode");
   }
 
@@ -167,7 +166,8 @@ void JoinMenu::show()
 
   if (!LuaClientScripts::GetDevMode()) {
     server->setString(info->serverName);
-  } else {
+  }
+  else {
     server->setString(ANSI_STR_FG_BLACK "127.0.0.1 (devmode)");
   }
   char buffer[10];
@@ -179,47 +179,47 @@ void JoinMenu::show()
   setFailedMessage("");
 }
 
-void JoinMenu::dismiss()
-{
+void JoinMenu::dismiss() {
   loadInfo();
 }
 
-void JoinMenu::loadInfo()
-{
+void JoinMenu::loadInfo() {
   // load startup info with current settings
   StartupInfo* info = getStartupInfo();
   if (!LuaClientScripts::GetDevMode()) {
     if (strcmp(info->callsign, callsign->getString().c_str())) {
-      strncpy(info->callsign, callsign->getString().c_str(), CallSignLen-1);
+      strncpy(info->callsign, callsign->getString().c_str(), CallSignLen - 1);
       info->token[0] = '\0';
     }
   }
   if (strcmp(info->password, password->getString().c_str())) {
-    strncpy(info->password, password->getString().c_str(), PasswordLen-1);
+    strncpy(info->password, password->getString().c_str(), PasswordLen - 1);
     info->token[0] = '\0';
   }
 
-  if (info->motto != motto->getString())
+  if (info->motto != motto->getString()) {
     info->motto = motto->getString();
+  }
 
   info->team = getTeam();
   if (!LuaClientScripts::GetDevMode()) {
-    strncpy(info->serverName, server->getString().c_str(), ServerNameLen-1);
-  } else {
+    strncpy(info->serverName, server->getString().c_str(), ServerNameLen - 1);
+  }
+  else {
     strcpy(info->serverName, "127.0.0.1");
   }
   info->serverPort = atoi(port->getString().c_str());
 }
 
-void JoinMenu::execute()
-{
+void JoinMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == findServer) {
 
-    if (!serverMenu) serverMenu = new ServerMenu;
+    if (!serverMenu) { serverMenu = new ServerMenu; }
     HUDDialogStack::get()->push(serverMenu);
 
-  } else if (_focus == connectLabel) {
+  }
+  else if (_focus == connectLabel) {
 
     // load startup info
     loadInfo();
@@ -243,58 +243,54 @@ void JoinMenu::execute()
 
     // let user know we're trying
     setStatus("Trying...");
-		HUDDialogStack::get()->setFailedMessage("");
+    HUDDialogStack::get()->setFailedMessage("");
 
     // schedule attempt to join game
     joinGame();
   }
 }
 
-void JoinMenu::setFailedMessage(const char* msg)
-{
+void JoinMenu::setFailedMessage(const char* msg) {
   failedMessage->setString(msg);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const float _width = fm.getStringWidth(MainMenu::getFontFace()->getFMFace(),
-	failedMessage->getFontSize(), failedMessage->getString());
+                                         failedMessage->getFontSize(), failedMessage->getString());
   failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
 }
 
-TeamColor JoinMenu::getTeam() const
-{
+TeamColor JoinMenu::getTeam() const {
   return team->getIndex() == 0 ? AutomaticTeam : TeamColor(team->getIndex() - 1);
 }
 
-void JoinMenu::setTeam(TeamColor teamcol)
-{
+void JoinMenu::setTeam(TeamColor teamcol) {
   team->setIndex(teamcol == AutomaticTeam ? 0 : int(teamcol) + 1);
 }
 
-void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
-{
+void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *) {
   status->setString(msg);
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const float _width = fm.getStringWidth(status->getFontFace()->getFMFace(),
-		status->getFontSize(), status->getString());
+                                         status->getFontSize(), status->getString());
   status->setPosition(center - 0.5f * _width, status->getY());
 }
 
-void JoinMenu::teamCallback(HUDuiControl*, void* source)
-{
+void JoinMenu::teamCallback(HUDuiControl*, void* source) {
   ((JoinMenu*)source)->updateTeamTexture();
 }
 
-void JoinMenu::updateTeamTexture()
-{
-  TextureManager &tm = TextureManager::instance();
-  FontManager &fm = FontManager::instance();
+void JoinMenu::updateTeamTexture() {
+  TextureManager& tm = TextureManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // load the appropriate texture
   std::string texture;
-  if (getTeam() == AutomaticTeam)
+  if (getTeam() == AutomaticTeam) {
     texture = "automatic_";
-  else
+  }
+  else {
     texture = Team::getImagePrefix(getTeam());
+  }
   texture += "icon";
   int id = tm.getTextureID(texture);
   teamIcon->setTexture(id);
@@ -304,15 +300,14 @@ void JoinMenu::updateTeamTexture()
   teamIcon->setSize(iconSize, iconSize);
 
   // put it at the end of the text
-  Bundle *bdl = BundleMgr::getCurrentBundle();
+  Bundle* bdl = BundleMgr::getCurrentBundle();
   const float x = team->getX() + fm.getStringWidth(team->getFontFace()->getFMFace(),
-	  team->getFontSize(),
-	  std::string(bdl->getLocalString(team->getList()[team->getIndex()]) + "x"));
+                                                   team->getFontSize(),
+                                                   std::string(bdl->getLocalString(team->getList()[team->getIndex()]) + "x"));
   teamIcon->setPosition(x, team->getY());
 }
 
-void JoinMenu::resize(int _width, int _height)
-{
+void JoinMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
@@ -325,7 +320,7 @@ void JoinMenu::resize(int _width, int _height)
 
   center = 0.5f * (float)_width;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // reposition title
   std::vector<HUDuiElement*>& listHUD = getElements();
@@ -347,7 +342,7 @@ void JoinMenu::resize(int _width, int _height)
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
-    if (i <= 2 || i == 8) y -= 0.5f * h;
+    if (i <= 2 || i == 8) { y -= 0.5f * h; }
   }
 
   updateTeamTexture();
@@ -357,6 +352,6 @@ void JoinMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

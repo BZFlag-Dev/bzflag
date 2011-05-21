@@ -22,8 +22,7 @@
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 
-HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
-{
+HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls") {
   // add controls
   addControl(createLabel("Mouse Position", "Controls Tank Position:"), false);
   addControl(createLabel(NULL, "Fires Shot:"), false);
@@ -108,39 +107,38 @@ HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls")
 }
 
 void HelpKeymapMenu::onScan(const std::string& name, bool press,
-		       const std::string& cmd)
-{
-  if (!press)
+                            const std::string& cmd) {
+  if (!press) {
     return;
+  }
   KeyKeyMap::iterator it = mappable.find(cmd);
-  if (it == mappable.end())
+  if (it == mappable.end()) {
     return;
-  if (it->second.key1.empty())
+  }
+  if (it->second.key1.empty()) {
     it->second.key1 = name;
-  else if (it->second.key2.empty())
+  }
+  else if (it->second.key2.empty()) {
     it->second.key2 = name;
+  }
 }
 
 void HelpKeymapMenu::onScanCB(const std::string& name, bool press,
-			 const std::string& cmd, void* userData)
-{
+                              const std::string& cmd, void* userData) {
   static_cast<HelpKeymapMenu*>(userData)->onScan(name, press, cmd);
 }
 
-void HelpKeymapMenu::initKeymap(const std::string& name, int index)
-{
+void HelpKeymapMenu::initKeymap(const std::string& name, int index) {
   mappable[name].key1 = "";
   mappable[name].key2 = "";
   mappable[name].index = index;
 }
 
-float HelpKeymapMenu::getLeftSide(int _width, int _height)
-{
+float HelpKeymapMenu::getLeftSide(int _width, int _height) {
   return 0.5f * _width - _height / 20.0f;
 }
 
-void HelpKeymapMenu::resize(int _width, int _height)
-{
+void HelpKeymapMenu::resize(int _width, int _height) {
   // get current key mapping and set strings appropriately
   KeyKeyMap::iterator it;
   // clear
@@ -155,10 +153,12 @@ void HelpKeymapMenu::resize(int _width, int _height)
     std::string value = "";
     if (it->second.key1.empty()) {
       value = "<not mapped>";
-    } else {
+    }
+    else {
       value += it->second.key1;
-      if (!it->second.key2.empty())
-	value += " or " + it->second.key2;
+      if (!it->second.key2.empty()) {
+        value += " or " + it->second.key2;
+      }
     }
     ((HUDuiLabel*)listHUD[it->second.index])->setString(value);
   }
@@ -172,6 +172,6 @@ void HelpKeymapMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

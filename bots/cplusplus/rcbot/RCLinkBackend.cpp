@@ -35,44 +35,40 @@
 #include "Roster.h"
 
 
-RCLinkBackend::RCLinkBackend() : RCLink(BackendLogger::pInstance()), requests(NULL), events(NULL)
-{
+RCLinkBackend::RCLinkBackend() : RCLink(BackendLogger::pInstance()), requests(NULL), events(NULL) {
 }
 
-RCLinkBackend::~RCLinkBackend()
-{
+RCLinkBackend::~RCLinkBackend() {
 }
 
 RCLink::State
-RCLinkBackend::getDisconnectedState()
-{
+RCLinkBackend::getDisconnectedState() {
   return RCLink::Listening;
 }
 
 void
-RCLinkBackend::pushEvent(RCEvent *event)
-{
-  if (events == NULL)
+RCLinkBackend::pushEvent(RCEvent* event) {
+  if (events == NULL) {
     events = event;
-  else
-  {
+  }
+  else {
     /* TODO: Prevent duplicate items better? */
-    for (RCEvent *ev = events; ev != NULL; ev = (RCEvent *)ev->getNext())
-    {
-      if (ev->asString() == event->asString())
+    for (RCEvent* ev = events; ev != NULL; ev = (RCEvent*)ev->getNext()) {
+      if (ev->asString() == event->asString()) {
         return;
+      }
     }
 
     events->append(event);
   }
 }
 
-RCEvent *
-RCLinkBackend::popEvent()
-{
-  RCEvent *event = events;
-  if (event != NULL)
-    events = (RCEvent *)event->getNext();
+RCEvent*
+RCLinkBackend::popEvent() {
+  RCEvent* event = events;
+  if (event != NULL) {
+    events = (RCEvent*)event->getNext();
+  }
   return event;
 }
 
@@ -82,23 +78,23 @@ RCLinkBackend::popEvent()
  */
 
 void
-RCLinkBackend::sendPacket( const char *data, unsigned int size, bool killit )
-{
+RCLinkBackend::sendPacket(const char* data, unsigned int size, bool killit) {
 #ifdef _USE_FAKE_NET
-	fakeNetSendToFrontEnd(size,data);
-	if (killit)
-		fakenetDisconect();
+  fakeNetSendToFrontEnd(size, data);
+  if (killit) {
+    fakenetDisconect();
+  }
 #else
-	send(connfd, data, size,0);
-	if (killit)
-		close(connfd);
+  send(connfd, data, size, 0);
+  if (killit) {
+    close(connfd);
+  }
 #endif
 }
 
 
 void
-RCLinkBackend::update()
-{
+RCLinkBackend::update() {
   if (status != Connected && status != Connecting) {
     return;
   }
@@ -113,15 +109,17 @@ RCLinkBackend::update()
 
   if (status == Connected) {
     updateParse();
-  } else if (status == Connecting) {
+  }
+  else if (status == Connecting) {
     int ncommands = updateParse(1);
     if (ncommands) {
-      RCRequest *req = popRequest();
+      RCRequest* req = popRequest();
       if (req && req->getType() == "IdentifyFrontend") {
         status = Connected;
-      } else {
+      }
+      else {
         BACKENDLOGGER << "RCLink: Expected an 'IdentifyFrontend'." << std::endl;
-        sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
+        sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG), true);
         status = Listening;
       }
     }
@@ -134,20 +132,20 @@ RCLinkBackend::update()
  * return false.
  */
 bool
-RCLinkBackend::parseCommand(char *cmdline)
-{
-  RCRequest *req;
+RCLinkBackend::parseCommand(char* cmdline) {
+  RCRequest* req;
   int argc;
-  char *argv[RC_LINK_MAXARGS];
-  char *s, *tkn;
+  char* argv[RC_LINK_MAXARGS];
+  char* s, *tkn;
 
   s = cmdline;
   for (argc = 0; argc < RC_LINK_MAXARGS; argc++) {
     tkn = strtok(s, " \r\t");
     s = NULL;
     argv[argc] = tkn;
-    if (tkn == NULL || *tkn == '\0')
+    if (tkn == NULL || *tkn == '\0') {
       break;
+    }
   }
 
   req = RCREQUEST.Message(argv[0]);
@@ -155,18 +153,20 @@ RCLinkBackend::parseCommand(char *cmdline)
     BACKENDLOGGER << "RCLink: Invalid request: '" << argv[0] << "'" << std::endl;
     sendf("error Invalid request %s\n", argv[0]);
     return false;
-  } else {
-    switch (req->parse(argv + 1, argc - 1))
-    {
+  }
+  else {
+    switch (req->parse(argv + 1, argc - 1)) {
       case ParseOk:
-        if (requests == NULL)
+        if (requests == NULL) {
           requests = req;
-        else
+        }
+        else {
           requests->append(req);
+        }
         return true;
       case InvalidArgumentCount:
         BACKENDLOGGER << "RCLink: Invalid number of arguments (" << argc - 1
-          << ") for request '" << argv[0] << "'." << std::endl;
+                      << ") for request '" << argv[0] << "'." << std::endl;
         sendf("error Invalid number of arguments (%d) for request: '%s'\n", argc - 1, argv[0]);
         return false;
       case InvalidArguments:
@@ -181,9 +181,8 @@ RCLinkBackend::parseCommand(char *cmdline)
 }
 
 RCRequest*
-RCLinkBackend::popRequest()
-{
-  RCRequest *req = requests;
+RCLinkBackend::popRequest() {
+  RCRequest* req = requests;
   if (req != NULL) {
     requests = req->getNext();
   }
@@ -191,26 +190,24 @@ RCLinkBackend::popRequest()
 }
 
 RCRequest*
-RCLinkBackend::peekRequest()
-{
+RCLinkBackend::peekRequest() {
   return requests;
 }
 
 bool
-RCLinkBackend::tryAccept()
-{
-  if (!RCLink::tryAccept())
+RCLinkBackend::tryAccept() {
+  if (!RCLink::tryAccept()) {
     return false;
+  }
 
   sendPacket(RC_LINK_IDENTIFY_STR, (unsigned int)strlen(RC_LINK_IDENTIFY_STR));
-  sendPacket(getRobotsProtocolVersion(),(unsigned int)strlen(getRobotsProtocolVersion()));
+  sendPacket(getRobotsProtocolVersion(), (unsigned int)strlen(getRobotsProtocolVersion()));
   sendPacket("\n", 1);
   return true;
 }
 
 void
-RCLinkBackend::sendAck(RCRequest *req)
-{
+RCLinkBackend::sendAck(RCRequest* req) {
   RCLink::sendm(CommandDoneReply(req->getType()));
 }
 
@@ -221,26 +218,22 @@ RCLinkBackend::sendAck(RCRequest *req)
  * pending events.
  */
 void
-RCLinkBackend::sendEvent()
-{
-  RCEvent *event = popEvent();
-  if (event != NULL)
-  {
+RCLinkBackend::sendEvent() {
+  RCEvent* event = popEvent();
+  if (event != NULL) {
     RCLink::sendm(EventReply(event));
     delete event;
   }
 }
 
 bool
-RCLinkBackend::ssend(const char *message)
-{
+RCLinkBackend::ssend(const char* message) {
   sendEvent();
   return RCLink::ssend(message);
 }
 
 bool
-RCLinkBackend::sendf(const char *format, ...)
-{
+RCLinkBackend::sendf(const char* format, ...) {
   va_list ap;
   bool ret;
 
@@ -257,6 +250,6 @@ RCLinkBackend::sendf(const char *format, ...)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

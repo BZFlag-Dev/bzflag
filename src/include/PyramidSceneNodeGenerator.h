@@ -10,24 +10,24 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
- #ifndef __PYRAMIDSCENENODEGENERATOR_H__
- #define __PYRAMIDSCENENODEGENERATOR_H__
+#ifndef __PYRAMIDSCENENODEGENERATOR_H__
+#define __PYRAMIDSCENENODEGENERATOR_H__
 
- #include "ObstacleSceneNodeGenerator.h"
- #include "PyramidBuilding.h"
+#include "ObstacleSceneNodeGenerator.h"
+#include "PyramidBuilding.h"
 
- class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
+class PyramidSceneNodeGenerator : public ObstacleSceneNodeGenerator {
+    friend class SceneDatabaseBuilder;
   public:
-			~PyramidSceneNodeGenerator();
+    ~PyramidSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool);
 
   protected:
-			PyramidSceneNodeGenerator(const PyramidBuilding*);
+    PyramidSceneNodeGenerator(const PyramidBuilding*);
 
   private:
-    const PyramidBuilding*	pyramid;
+    const PyramidBuilding*  pyramid;
 };
 
 #endif
@@ -36,6 +36,6 @@
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -25,8 +25,7 @@ class FlagType;
 struct FiringInfo;
 
 
-class EventClient
-{
+class EventClient {
   public:
     enum OrderType {
       ScriptIDOrder   = 0,
@@ -90,14 +89,14 @@ class EventClient
     virtual void ServerJoined() { return; }
     virtual void ServerParted() { return; }
 
-    virtual void PlayerAdded  (const Player&) { return; }
+    virtual void PlayerAdded(const Player&) { return; }
     virtual void PlayerRemoved(const Player&) { return; }
     virtual void PlayerSpawned(const Player&) { return; }
     virtual void PlayerKilled(const Player& /*victim*/, const Player* /*killer*/,
                               int /*reason*/, const FlagType* /*flagType*/,
                               int /*phyDrv*/) { return; }
-    virtual void PlayerJumped (const Player&) { return; }
-    virtual void PlayerLanded (const Player&, float /*vel*/) { return; }
+    virtual void PlayerJumped(const Player&) { return; }
+    virtual void PlayerLanded(const Player&, float /*vel*/) { return; }
     virtual void PlayerTeleported(const Player&, int /*srcLink*/, int /*dstLink*/) { return; }
     virtual void PlayerTeamChange(const Player&, int /*oldTeam*/) { return; }
     virtual void PlayerScoreChange(const Player&) { return; }

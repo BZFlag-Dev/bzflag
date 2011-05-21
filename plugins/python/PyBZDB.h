@@ -16,15 +16,13 @@
 #ifndef __PYTHON_BZDB_H__
 #define __PYTHON_BZDB_H__
 
-namespace Python
-{
+namespace Python {
 
-typedef struct
-{
-  PyObject_HEAD
-} BZDB;
+  typedef struct {
+    PyObject_HEAD
+  } BZDB;
 
-PyObject *CreateBZDB ();
+  PyObject* CreateBZDB();
 
 };
 
@@ -34,6 +32,6 @@ PyObject *CreateBZDB ();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -32,21 +32,18 @@
 #include "zlib.h"
 
 
-WorldBuilder::WorldBuilder()
-{
+WorldBuilder::WorldBuilder() {
   world = new World;
   owned = true;
 }
 
 
-WorldBuilder::~WorldBuilder()
-{
-  if (owned) delete world;
+WorldBuilder::~WorldBuilder() {
+  if (owned) { delete world; }
 }
 
 
-void* WorldBuilder::unpack(void* buf)
-{
+void* WorldBuilder::unpack(void* buf) {
   BzTime start = BzTime::getCurrent();
 
   // unpack world database from network transfer
@@ -54,28 +51,28 @@ void* WorldBuilder::unpack(void* buf)
   uint16_t code, len;
   buf = nboUnpackUInt16(buf, len);
   buf = nboUnpackUInt16(buf, code);
-  if (code != WorldCodeHeader) return NULL;
+  if (code != WorldCodeHeader) { return NULL; }
 
   // read style
   uint16_t serverMapVersion;
   buf = nboUnpackUInt16(buf, serverMapVersion);
   if (serverMapVersion != mapVersion) {
-    logDebugMessage(1,"WorldBuilder::unpack() bad map version\n");
+    logDebugMessage(1, "WorldBuilder::unpack() bad map version\n");
     return NULL;
   }
 
   // decompress
   uint32_t compressedSize, uncompressedSize;
-  buf = nboUnpackUInt32 (buf, uncompressedSize);
-  buf = nboUnpackUInt32 (buf, compressedSize);
+  buf = nboUnpackUInt32(buf, uncompressedSize);
+  buf = nboUnpackUInt32(buf, compressedSize);
   uLongf destLen = uncompressedSize;
-  char *uncompressedWorld = new char[destLen];
-  char *compressedWorld = (char*) buf;
+  char* uncompressedWorld = new char[destLen];
+  char* compressedWorld = (char*) buf;
 
-  if (uncompress ((Bytef*)uncompressedWorld, &destLen,
-		  (Bytef*)compressedWorld, compressedSize) != Z_OK) {
+  if (uncompress((Bytef*)uncompressedWorld, &destLen,
+                 (Bytef*)compressedWorld, compressedSize) != Z_OK) {
     delete[] uncompressedWorld;
-    logDebugMessage(1,"WorldBuilder::unpack() could not decompress\n");
+    logDebugMessage(1, "WorldBuilder::unpack() could not decompress\n");
     return NULL;
   }
   char* uncompressedEnd = uncompressedWorld + uncompressedSize;
@@ -157,13 +154,13 @@ void* WorldBuilder::unpack(void* buf)
   nboUseErrorChecking(false);
   if (nboGetBufferError()) {
     delete[] uncompressedWorld;
-    logDebugMessage(1,"WorldBuilder::unpack() overrun\n");
+    logDebugMessage(1, "WorldBuilder::unpack() overrun\n");
     return NULL;
   }
   if ((char*)buf != uncompressedEnd) {
     delete[] uncompressedWorld;
-    logDebugMessage(1,"WorldBuilder::unpack() ending mismatch (%i)\n",
-	    (char*)buf - uncompressedEnd);
+    logDebugMessage(1, "WorldBuilder::unpack() ending mismatch (%i)\n",
+                    (char*)buf - uncompressedEnd);
     return NULL;
   }
 
@@ -173,7 +170,7 @@ void* WorldBuilder::unpack(void* buf)
   buf = nboUnpackUInt16(buf, code);
   if ((code != WorldCodeEnd) || (len != WorldCodeEndSize)) {
     delete[] uncompressedWorld;
-    logDebugMessage(1,"WorldBuilder::unpack() bad ending\n");
+    logDebugMessage(1, "WorldBuilder::unpack() bad ending\n");
     return NULL;
   }
 
@@ -218,15 +215,14 @@ void* WorldBuilder::unpack(void* buf)
   if (debugLevel >= 3) {
     BzTime end = BzTime::getCurrent();
     const float elapsed = (float)(end - start);
-    logDebugMessage(0,"WorldBuilder::unpack() processed in %f seconds.\n", elapsed);
+    logDebugMessage(0, "WorldBuilder::unpack() processed in %f seconds.\n", elapsed);
   }
 
   return buf;
 }
 
 
-void* WorldBuilder::unpackGameSettings(void* buf)
-{
+void* WorldBuilder::unpackGameSettings(void* buf) {
   // read style
   uint16_t gameType, gameOptions, maxPlayers, maxShots, botsPerIP, maxFlags;
 
@@ -254,8 +250,7 @@ void* WorldBuilder::unpackGameSettings(void* buf)
   return buf;
 }
 
-void WorldBuilder::preGetWorld()
-{
+void WorldBuilder::preGetWorld() {
   // prepare players array
   if (world->players) {
     delete[] world->players;
@@ -294,63 +289,52 @@ void WorldBuilder::preGetWorld()
 }
 
 
-World* WorldBuilder::getWorld()
-{
+World* WorldBuilder::getWorld() {
   owned = false;
   preGetWorld();
   return world;
 }
 
 
-World* WorldBuilder::peekWorld()
-{
+World* WorldBuilder::peekWorld() {
   preGetWorld();
   return world;
 }
 
 
-void WorldBuilder::setGameType(short gameType)
-{
+void WorldBuilder::setGameType(short gameType) {
   world->gameType = (GameType)gameType;
 }
 
-void WorldBuilder::setGameOptions(short gameOptions)
-{
+void WorldBuilder::setGameOptions(short gameOptions) {
   world->gameOptions = gameOptions;
 }
 
-void WorldBuilder::setMaxPlayers(int maxPlayers)
-{
+void WorldBuilder::setMaxPlayers(int maxPlayers) {
   world->maxPlayers = maxPlayers;
 }
 
-void WorldBuilder::setMaxShots(int maxShots)
-{
+void WorldBuilder::setMaxShots(int maxShots) {
   world->maxShots = maxShots;
 }
 
-void WorldBuilder::setMaxFlags(int maxFlags)
-{
+void WorldBuilder::setMaxFlags(int maxFlags) {
   world->maxFlags = maxFlags;
 }
 
-void WorldBuilder::setBotsPerIP(int botsPerIP)
-{
-    world->botsPerIP = botsPerIP;
+void WorldBuilder::setBotsPerIP(int botsPerIP) {
+  world->botsPerIP = botsPerIP;
 }
 
-void WorldBuilder::setShakeTimeout(float timeout) const
-{
+void WorldBuilder::setShakeTimeout(float timeout) const {
   world->shakeTimeout = timeout;
 }
 
-void WorldBuilder::setShakeWins(int wins) const
-{
+void WorldBuilder::setShakeWins(int wins) const {
   world->shakeWins = wins;
 }
 
-void WorldBuilder::setBase(const Obstacle* base)
-{
+void WorldBuilder::setBase(const Obstacle* base) {
   world->bases[base->getBaseTeam()].push_back(base);
 }
 
@@ -359,6 +343,6 @@ void WorldBuilder::setBase(const Obstacle* base)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -34,8 +34,7 @@ extern void dumpResources();
 extern std::string alternateConfig;
 
 
-bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key) {
   // TODO: not localizable
   if (key.unicode == 'Y' || key.unicode == 'y') {
     CommandsStandard::quit();
@@ -44,16 +43,15 @@ bool QuitMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   return MenuDefaultKey::keyPress(key);
 }
 
-bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
-  if (key.unicode == 'Y' || key.unicode == 'y')
+bool QuitMenuDefaultKey::keyRelease(const BzfKeyEvent& key) {
+  if (key.unicode == 'Y' || key.unicode == 'y') {
     return true;
+  }
   return MenuDefaultKey::keyRelease(key);
 }
 
 
-QuitMenu::QuitMenu()
-{
+QuitMenu::QuitMenu() {
   // add controls
   HUDuiLabel* label;
 
@@ -88,23 +86,21 @@ QuitMenu::QuitMenu()
   addControl(frame);
 }
 
-QuitMenu::~QuitMenu()
-{
+QuitMenu::~QuitMenu() {
 }
 
-void QuitMenu::resize(int _width, int _height)
-{
+void QuitMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font
   fs.setMin(0, 10);
   float fontSize = fs.getFontSize(fontFace->getFMFace(), "headerFontSize");
 
-  fs.setMin(0,20);
+  fs.setMin(0, 20);
   float smallFontSize = fs.getFontSize(fontFace->getFMFace(), "menuFontSize");
 
   // heights
@@ -144,8 +140,7 @@ void QuitMenu::resize(int _width, int _height)
   frame->setSize(0.5f * getWidth() + 2.0f * gapSize, fontHeight * 4.0f);
 }
 
-void QuitMenu::execute()
-{
+void QuitMenu::execute() {
   HUDuiElement* _focus = getNav().get();
   std::vector<HUDuiElement*>& listHUD = getElements();
   if (_focus == listHUD[0]) { // yes
@@ -155,16 +150,19 @@ void QuitMenu::execute()
       // save this time, but not usually
       dumpResources();
       if (alternateConfig == "") {
-	CFGMGR.write(getCurrentConfigFileName());
-      } else {
-	CFGMGR.write(alternateConfig);
+        CFGMGR.write(getCurrentConfigFileName());
       }
-    } else if (permanentSave && !tempSave) {
+      else {
+        CFGMGR.write(alternateConfig);
+      }
+    }
+    else if (permanentSave && !tempSave) {
       // save usually, but not this time
       BZDB.setBool("saveSettings", false);
     }
     CommandsStandard::quit();
-  } else if (_focus == listHUD[1]) { //no
+  }
+  else if (_focus == listHUD[1]) {   //no
     HUDDialogStack::get()->pop();
   }
 }
@@ -174,6 +172,6 @@ void QuitMenu::execute()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

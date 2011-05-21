@@ -11,11 +11,11 @@
  */
 
 /* SDLWindow:
- *	Encapsulates an SDL window
+ *  Encapsulates an SDL window
  */
 
 #ifndef __SDLWINDOW_H__
-#define	__SDLWINDOW_H__
+#define __SDLWINDOW_H__
 
 /* interface headers */
 #include "BzfWindow.h"
@@ -23,43 +23,43 @@
 #include "SDLVisual.h"
 
 class SDLWindow : public BzfWindow {
- public:
-  SDLWindow(const SDLDisplay* _display, SDLVisual*);
-  bool  isValid() const {return true;};
-  void  showWindow(bool) {;};
-  void  getPosition(int& x, int& y);
-  void  getSize(int& _width, int& _height) const;
-  void  setSize(int _width, int _height);
-  void  setTitle(const char * title);
-  void  setPosition(int, int) {;};
-  void  setMinSize(int, int) {;};
-  void  setFullscreen(bool);
-  bool  getFullscreen() const;
-  void  deiconify();
-  void  iconify();
-  void  warpMouse(int x, int y);
-  void  getMouse(int& x, int& y) const;
-  void  grabMouse() {;};
-  void  ungrabMouse() {;};
-  void  enableGrabMouse(bool);
-  void  showMouse();
-  void  hideMouse();
-  void  setGamma(float newGamma);
-  float getGamma() const;
-  bool  hasGammaControl() const;
-  void  makeCurrent() {;};
-  void  swapBuffers();
-  void  makeContext() {;};
-  void  freeContext() {;};
-  bool  create(void);
+  public:
+    SDLWindow(const SDLDisplay* _display, SDLVisual*);
+    bool  isValid() const {return true;};
+    void  showWindow(bool) {;};
+    void  getPosition(int& x, int& y);
+    void  getSize(int& _width, int& _height) const;
+    void  setSize(int _width, int _height);
+    void  setTitle(const char* title);
+    void  setPosition(int, int) {;};
+    void  setMinSize(int, int) {;};
+    void  setFullscreen(bool);
+    bool  getFullscreen() const;
+    void  deiconify();
+    void  iconify();
+    void  warpMouse(int x, int y);
+    void  getMouse(int& x, int& y) const;
+    void  grabMouse() {;};
+    void  ungrabMouse() {;};
+    void  enableGrabMouse(bool);
+    void  showMouse();
+    void  hideMouse();
+    void  setGamma(float newGamma);
+    float getGamma() const;
+    bool  hasGammaControl() const;
+    void  makeCurrent() {;};
+    void  swapBuffers();
+    void  makeContext() {;};
+    void  freeContext() {;};
+    bool  create(void);
 
-  static int mx;
-  static int my;
- private:
-  int  width;
-  int  height;
-  bool hasGamma;
-  bool iconified;
+    static int mx;
+    static int my;
+  private:
+    int  width;
+    int  height;
+    bool hasGamma;
+    bool iconified;
 };
 
 #endif // __SDLWINDOW_H__
@@ -68,6 +68,6 @@ class SDLWindow : public BzfWindow {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

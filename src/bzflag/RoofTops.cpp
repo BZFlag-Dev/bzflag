@@ -27,24 +27,21 @@
 // FIXME - this should use a pregenerated list of 3D polygons
 //       - use something like a split quadtree  (16 divs top layer, etc...)
 //       - splitting polygons is only helpful if they break into diff cells
-//	 - return the isFlatTop() state?  (for making puddles)
-//	 - return the plane normal?  (also for making puddles)
+//   - return the isFlatTop() state?  (for making puddles)
+//   - return the plane normal?  (also for making puddles)
 //       - check the hit position for under-the-wall leaks?
 
-void RoofTops::load()
-{
+void RoofTops::load() {
   return;
 }
 
 
-void RoofTops::clear()
-{
+void RoofTops::clear() {
   return;
 }
 
 
-float RoofTops::getTopHeight(float x, float y, float maxHeight)
-{
+float RoofTops::getTopHeight(float x, float y, float maxHeight) {
   const float zSpeed = -1.0f;
 
   // setup the test ray
@@ -53,7 +50,7 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
   Ray ray(org, dir);
 
   // get the obstacle list
-  const ObsList* olist = COLLISIONMGR.rayTest (&ray, MAXFLOAT);
+  const ObsList* olist = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
 
   float minTime = MAXFLOAT;
 
@@ -79,6 +76,6 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

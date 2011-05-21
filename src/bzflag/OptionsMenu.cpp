@@ -28,18 +28,17 @@
 
 
 OptionsMenu::OptionsMenu()
-: guiOptionsMenu(NULL)
-, textOptionsMenu(NULL)
-, radarOptionsMenu(NULL)
-, effectsMenu(NULL)
-, cacheMenu(NULL)
-, hubMenu(NULL)
-, saveWorldMenu(NULL)
-, inputMenu(NULL)
-, audioMenu(NULL)
-, displayMenu(NULL)
-, saveMenu(NULL)
-{
+  : guiOptionsMenu(NULL)
+  , textOptionsMenu(NULL)
+  , radarOptionsMenu(NULL)
+  , effectsMenu(NULL)
+  , cacheMenu(NULL)
+  , hubMenu(NULL)
+  , saveWorldMenu(NULL)
+  , inputMenu(NULL)
+  , audioMenu(NULL)
+  , displayMenu(NULL)
+  , saveMenu(NULL) {
   // cache font face ID
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
@@ -132,8 +131,7 @@ OptionsMenu::OptionsMenu()
 }
 
 
-OptionsMenu::~OptionsMenu()
-{
+OptionsMenu::~OptionsMenu() {
   delete guiOptionsMenu;
   delete textOptionsMenu;
   delete radarOptionsMenu;
@@ -148,73 +146,72 @@ OptionsMenu::~OptionsMenu()
 }
 
 
-void OptionsMenu::execute()
-{
+void OptionsMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == guiOptions) {
-    if (!guiOptionsMenu) guiOptionsMenu = new GUIOptionsMenu;
+    if (!guiOptionsMenu) { guiOptionsMenu = new GUIOptionsMenu; }
     HUDDialogStack::get()->push(guiOptionsMenu);
   }
   else if (_focus == textOptions) {
-    if (!textOptionsMenu) textOptionsMenu = new TextOptionsMenu;
+    if (!textOptionsMenu) { textOptionsMenu = new TextOptionsMenu; }
     HUDDialogStack::get()->push(textOptionsMenu);
   }
   else if (_focus == radarOptions) {
-    if (!radarOptionsMenu) radarOptionsMenu = new RadarOptionsMenu;
+    if (!radarOptionsMenu) { radarOptionsMenu = new RadarOptionsMenu; }
     HUDDialogStack::get()->push(radarOptionsMenu);
   }
   else if (_focus == effectsOptions) {
-    if (!effectsMenu) effectsMenu = new EffectsMenu;
+    if (!effectsMenu) { effectsMenu = new EffectsMenu; }
     HUDDialogStack::get()->push(effectsMenu);
   }
   else if (_focus == cacheOptions) {
-    if (!cacheMenu) cacheMenu = new CacheMenu;
+    if (!cacheMenu) { cacheMenu = new CacheMenu; }
     HUDDialogStack::get()->push(cacheMenu);
   }
   else if (_focus == hubOptions) {
-    if (!hubMenu) hubMenu = new HubMenu;
+    if (!hubMenu) { hubMenu = new HubMenu; }
     HUDDialogStack::get()->push(hubMenu);
   }
   else if (_focus == saveWorld) {
-    if (!saveWorldMenu) saveWorldMenu = new SaveWorldMenu;
+    if (!saveWorldMenu) { saveWorldMenu = new SaveWorldMenu; }
     HUDDialogStack::get()->push(saveWorldMenu);
   }
   else if (_focus == saveSettings) {
     // save resources
     dumpResources();
-    if (!saveMenu) saveMenu = new SaveMenu;
+    if (!saveMenu) { saveMenu = new SaveMenu; }
     if (alternateConfig == "") {
       std::string fname = getCurrentConfigFileName();
       CFGMGR.write(fname);
       saveMenu->setFileName(fname);
-    } else {
+    }
+    else {
       CFGMGR.write(alternateConfig);
       saveMenu->setFileName(alternateConfig);
     }
     HUDDialogStack::get()->push(saveMenu);
   }
   else if (_focus == inputSetting) {
-    if (!inputMenu) inputMenu = new InputMenu;
+    if (!inputMenu) { inputMenu = new InputMenu; }
     HUDDialogStack::get()->push(inputMenu);
   }
   else if (_focus == audioSetting) {
-    if (!audioMenu) audioMenu = new AudioMenu;
+    if (!audioMenu) { audioMenu = new AudioMenu; }
     HUDDialogStack::get()->push(audioMenu);
   }
   else if (_focus == displaySetting) {
-    if (!displayMenu) displayMenu = new DisplayMenu;
+    if (!displayMenu) { displayMenu = new DisplayMenu; }
     HUDDialogStack::get()->push(displayMenu);
   }
 }
 
 
-void OptionsMenu::resize(int _width, int _height)
-{
+void OptionsMenu::resize(int _width, int _height) {
   int i;
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -244,7 +241,8 @@ void OptionsMenu::resize(int _width, int _height)
     listHUD[i]->setPosition(x, y);
     if ((i == 9) || (i == 11)) {
       y -= 1.75f * h;
-    } else {
+    }
+    else {
       y -= 1.0f * h;
     }
   }
@@ -256,8 +254,7 @@ void OptionsMenu::resize(int _width, int _height)
 }
 
 
-void OptionsMenu::callback(HUDuiControl* w, void* data)
-{
+void OptionsMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* listHUD = (HUDuiList*)w;
 
   switch (((const char*)data)[0]) {
@@ -276,6 +273,6 @@ void OptionsMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

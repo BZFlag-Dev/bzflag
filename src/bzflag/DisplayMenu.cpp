@@ -36,9 +36,8 @@
 
 
 DisplayMenu::DisplayMenu()
-: formatMenu(NULL)
-, gridOptions(debugLevel > 0)
-{
+  : formatMenu(NULL)
+  , gridOptions(debugLevel > 0) {
   // add controls
   std::vector<std::string>* options;
   HUDuiList* option;
@@ -106,14 +105,16 @@ DisplayMenu::DisplayMenu()
     if (maxAnisotropy > 1) {
       options->push_back(std::string("Off"));
       for (int i = 1; i < maxAnisotropy; i++) {
-	char buffer[16];
-	snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
-	options->push_back(std::string(buffer));
+        char buffer[16];
+        snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
+        options->push_back(std::string(buffer));
       }
-    } else {
+    }
+    else {
       options->push_back(unavailable);
     }
-  } else {
+  }
+  else {
     options->push_back(unavailable);
   }
   option->update();
@@ -186,7 +187,8 @@ DisplayMenu::DisplayMenu()
   option->setCallback(callback, (void*)"b");
   if (window->hasGammaControl()) {
     option->createSlider(15);
-  } else {
+  }
+  else {
     options = &option->getList();
     options->push_back(unavailable);
   }
@@ -201,7 +203,8 @@ DisplayMenu::DisplayMenu()
   options = &option->getList();
   if (!verticalSyncAvailable()) {
     options->push_back(unavailable);
-  } else {
+  }
+  else {
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
   }
@@ -260,7 +263,8 @@ DisplayMenu::DisplayMenu()
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {
     videoFormat = NULL;
-  } else {
+  }
+  else {
     videoFormat = label = new HUDuiLabel;
     label->setFontFace(fontFace);
     label->setLabel("Change Video Format");
@@ -271,30 +275,28 @@ DisplayMenu::DisplayMenu()
 }
 
 
-DisplayMenu::~DisplayMenu()
-{
+DisplayMenu::~DisplayMenu() {
   delete formatMenu;
 }
 
 
-void DisplayMenu::execute()
-{
+void DisplayMenu::execute() {
   HUDuiControl* _focus = getNav().get();
   if (_focus == videoFormat) {
-    if (!formatMenu)
+    if (!formatMenu) {
       formatMenu = new FormatMenu;
+    }
     HUDDialogStack::get()->push(formatMenu);
   }
 }
 
 
-void DisplayMenu::resize(int _width, int _height)
-{
+void DisplayMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
   int i;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -438,31 +440,28 @@ void DisplayMenu::resize(int _width, int _height)
 }
 
 
-int DisplayMenu::gammaToIndex(float gamma)
-{
+int DisplayMenu::gammaToIndex(float gamma) {
   return (int)(0.5f + 5.0f * (1.0f + logf(gamma) / logf(2.0)));
 }
 
 
-float DisplayMenu::indexToGamma(int index)
-{
+float DisplayMenu::indexToGamma(int index) {
   // map index 5 to gamma 1.0 and index 0 to gamma 0.5
   return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
 
 
-void DisplayMenu::callback(HUDuiControl* w, void* data)
-{
+void DisplayMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
   switch (((const char*)data)[0]) {
     case 'Q': {
       RENDERER.setQuality(list->getIndex());
       if (list->getIndex() > 3) {
-        BZDB.set("zbuffer","1");
+        BZDB.set("zbuffer", "1");
         setSceneDatabase();
       }
       BZDB.set("texturereplace", (!BZDBCache::lighting &&
-                                   RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+                                  RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
       BZDB.setPersistent("texturereplace", false);
       RENDERER.notifyStyleChange();
       break;
@@ -493,7 +492,7 @@ void DisplayMenu::callback(HUDuiControl* w, void* data)
       BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
       if (oldLighting != BZDBCache::lighting) {
         BZDB.set("texturereplace", (!BZDBCache::lighting &&
-                                     RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
+                                    RENDERER.useQuality() < _MEDIUM_QUALITY) ? "1" : "0");
         BZDB.setPersistent("texturereplace", false);
         RENDERER.notifyStyleChange();
       }
@@ -557,6 +556,6 @@ void DisplayMenu::callback(HUDuiControl* w, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -12,12 +12,12 @@
 
 /*
  * HUDuiServerListCustomTab:
- *	User interface class for displaying detailed information from
- *	a ServerItem.
+ *  User interface class for displaying detailed information from
+ *  a ServerItem.
  */
 
-#ifndef	__HUDUISERVERLISTCUSTOMTAB_H__
-#define	__HUDUISERVERLISTCUSTOMTAB_H__
+#ifndef __HUDUISERVERLISTCUSTOMTAB_H__
+#define __HUDUISERVERLISTCUSTOMTAB_H__
 
 // ancestor class
 #include "HUDuiNestedContainer.h"
@@ -31,8 +31,8 @@
 
 class HUDuiServerListCustomTab : public HUDuiNestedContainer {
   public:
-      HUDuiServerListCustomTab();
-      ~HUDuiServerListCustomTab();
+    HUDuiServerListCustomTab();
+    ~HUDuiServerListCustomTab();
 
     void setSize(float width, float height);
     void setFontSize(float size);
@@ -78,6 +78,6 @@ class HUDuiServerListCustomTab : public HUDuiNestedContainer {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

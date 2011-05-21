@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_CONTROL_PANEL_H
-#define	BZF_CONTROL_PANEL_H
+#ifndef BZF_CONTROL_PANEL_H
+#define BZF_CONTROL_PANEL_H
 
 #if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
+#pragma warning(disable: 4786)
 #endif
 
 // common - 1st
@@ -136,10 +136,10 @@ class ControlPanel {
     const MessageQueue* getTabMessages(int tabID);
     const MessageQueue* getTabMessages(const std::string& tabLabel);
 
-    LocalFontFace*	getFontFace() const { return fontFace; }
-    float		getFontSize() const { return fontSize; }
+    LocalFontFace*  getFontFace() const { return fontFace; }
+    float   getFontSize() const { return fontSize; }
 
-    const IntRect&	getMessageRect() const { return messageRect; }
+    const IntRect&  getMessageRect() const { return messageRect; }
 
   private:
     // no copying!
@@ -162,16 +162,16 @@ class ControlPanel {
   private:
     struct Tab {
       Tab(const std::string& l, bool lk, bool _allSrc, bool _allDst)
-      : label(l)
-      , locked(lk)
-      , visible(true)
-      , width(0)
-      , allSrc(_allSrc)
-      , allDst(_allDst)
-      , unread(false)
-      , offset(0)
-      , msgCount(0)
-      , topic("")
+        : label(l)
+        , locked(lk)
+        , visible(true)
+        , width(0)
+        , allSrc(_allSrc)
+        , allDst(_allDst)
+        , unread(false)
+        , offset(0)
+        , msgCount(0)
+        , topic("")
       {}
       std::string label;
       bool  locked;   // can not be removed
@@ -190,45 +190,44 @@ class ControlPanel {
 
     TabMap tabMap;
 
-    int	activeTab;
+    int activeTab;
 
-    MainWindow&		window;
-    bool		resized;
-    int			numBuffers;
-    int			exposed;
-    int			changedMessage;
-    RadarRenderer*	radarRenderer;
-    SceneRenderer*	renderer;
+    MainWindow&   window;
+    bool    resized;
+    int     numBuffers;
+    int     exposed;
+    int     changedMessage;
+    RadarRenderer*  radarRenderer;
+    SceneRenderer*  renderer;
 
-    LocalFontFace*	fontFace;
-    float		fontSize;
+    LocalFontFace*  fontFace;
+    float   fontSize;
 
-    float		dimming;
-    float		du, dv;
-    IntRect		radarRect;
-    IntRect		messageRect;
-    fvec4		teamColor;
+    float   dimming;
+    float   du, dv;
+    IntRect   radarRect;
+    IntRect   messageRect;
+    fvec4   teamColor;
 
-    int			maxLines;
-    int			margin;
-    int			lineHeight;
+    int     maxLines;
+    int     margin;
+    int     lineHeight;
 
-    bool		showTabs;
-    bool		tabsOnRight;
-    int			totalTabWidth;
+    bool    showTabs;
+    bool    tabsOnRight;
+    int     totalTabWidth;
 
-    int			tabHeight;
-    int			tabXOffset;
-    int			tabYOffset;
-    int			textHeight;
-    int			topicHeight;
+    int     tabHeight;
+    int     tabXOffset;
+    int     tabYOffset;
+    int     textHeight;
+    int     topicHeight;
 
-    static const int	maxScrollPages;
+    static const int  maxScrollPages;
 };
 
 
-inline void ControlPanel::setDimming(float newDimming)
-{
+inline void ControlPanel::setDimming(float newDimming) {
   const float newDim = 1.0f - newDimming;
   dimming = (newDim > 1.0f) ? 1.0f : (newDim < 0.0f) ? 0.0f : newDim;
 }
@@ -240,6 +239,6 @@ inline void ControlPanel::setDimming(float newDimming)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

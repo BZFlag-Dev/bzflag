@@ -19,8 +19,7 @@
 
 #include "PlatformFactory.h"
 
-class MacPlatformFactory : public PlatformFactory
-{
+class MacPlatformFactory : public PlatformFactory {
   public:
     MacPlatformFactory();
     ~MacPlatformFactory();
@@ -40,10 +39,10 @@ class MacPlatformFactory : public PlatformFactory
     BzfMedia* createMedia();
 
   private:
-    BzfWindow *window;
-    BzfDisplay *display;
-    BzfVisual *visual;
-    BzfMedia *media;
+    BzfWindow* window;
+    BzfDisplay* display;
+    BzfVisual* visual;
+    BzfMedia* media;
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H
@@ -52,6 +51,6 @@ class MacPlatformFactory : public PlatformFactory
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

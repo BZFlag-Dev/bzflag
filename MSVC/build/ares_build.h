@@ -86,17 +86,17 @@
 
 #ifdef CARES_SIZEOF_LONG
 #  error "CARES_SIZEOF_LONG shall not be defined except in ares_build.h"
-   Error Compilation_aborted_CARES_SIZEOF_LONG_already_defined
+Error Compilation_aborted_CARES_SIZEOF_LONG_already_defined
 #endif
 
 #ifdef CARES_TYPEOF_ARES_SOCKLEN_T
 #  error "CARES_TYPEOF_ARES_SOCKLEN_T shall not be defined except in ares_build.h"
-   Error Compilation_aborted_CARES_TYPEOF_ARES_SOCKLEN_T_already_defined
+Error Compilation_aborted_CARES_TYPEOF_ARES_SOCKLEN_T_already_defined
 #endif
 
 #ifdef CARES_SIZEOF_ARES_SOCKLEN_T
 #  error "CARES_SIZEOF_ARES_SOCKLEN_T shall not be defined except in ares_build.h"
-   Error Compilation_aborted_CARES_SIZEOF_ARES_SOCKLEN_T_already_defined
+Error Compilation_aborted_CARES_SIZEOF_ARES_SOCKLEN_T_already_defined
 #endif
 
 /* ================================================================ */
@@ -229,7 +229,7 @@
 
 #else
 #  error "Unknown non-configure build target!"
-   Error Compilation_aborted_Unknown_non_configure_build_target
+Error Compilation_aborted_Unknown_non_configure_build_target
 #endif
 
 /* CARES_PULL_SYS_TYPES_H is defined above when inclusion of header file  */
@@ -247,7 +247,7 @@
 /* Data type definition of ares_socklen_t. */
 
 #ifdef CARES_TYPEOF_ARES_SOCKLEN_T
-  typedef CARES_TYPEOF_ARES_SOCKLEN_T ares_socklen_t;
+typedef CARES_TYPEOF_ARES_SOCKLEN_T ares_socklen_t;
 #endif
 
 #endif /* __CARES_BUILD_H */

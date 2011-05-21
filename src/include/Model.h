@@ -19,45 +19,42 @@
 #include <string>
 #include <fstream>
 
-class OBJVert
-{
-public:
-  float x,y,z;
+class OBJVert {
+  public:
+    float x, y, z;
 
-  OBJVert( float _x = 0, float _y = 0, float _z = 0 );
+    OBJVert(float _x = 0, float _y = 0, float _z = 0);
 
-  OBJVert ( const OBJVert& vert );
+    OBJVert(const OBJVert& vert);
 
-  OBJVert operator + ( const OBJVert& vert );
-  OBJVert& operator += ( const OBJVert& vert );
+    OBJVert operator + (const OBJVert& vert);
+    OBJVert& operator += (const OBJVert& vert);
 
-  void glVertex ( void ) const;
-  void glNormal ( void ) const;
-  void glTexCoord ( void ) const;
+    void glVertex(void) const;
+    void glNormal(void) const;
+    void glTexCoord(void) const;
 
-  void read3 ( const char* t );
-  void read2 ( const char* t );
+    void read3(const char* t);
+    void read2(const char* t);
 };
 
-class OBJFace
-{
-public:
-  std::vector<size_t> verts;
-  std::vector<size_t> norms;
-  std::vector<size_t> uvs;
+class OBJFace {
+  public:
+    std::vector<size_t> verts;
+    std::vector<size_t> norms;
+    std::vector<size_t> uvs;
 
-  void draw ( const std::vector<OBJVert> &vertList, const std::vector<OBJVert> &normList, const std::vector<OBJVert> &uvList );
+    void draw(const std::vector<OBJVert> &vertList, const std::vector<OBJVert> &normList, const std::vector<OBJVert> &uvList);
 };
 
-class OBJModel
-{
-public:
-  std::vector<OBJFace> faces;
-  std::vector<OBJVert>	vertList,normList,uvList;
+class OBJModel {
+  public:
+    std::vector<OBJFace> faces;
+    std::vector<OBJVert>  vertList, normList, uvList;
 
-  int draw ( void );
-  bool read ( const std::string &fileName );
-  bool read ( const  char* fileName ) {return read(std::string(fileName));}
+    int draw(void);
+    bool read(const std::string& fileName);
+    bool read(const  char* fileName) {return read(std::string(fileName));}
 
 };
 
@@ -67,6 +64,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

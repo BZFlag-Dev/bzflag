@@ -53,33 +53,32 @@ std::string HUDRenderer::customLimboMessage("");
 
 
 HUDRenderer::HUDRenderer(const BzfDisplay* _display,
-			 const SceneRenderer& renderer)
-: display(_display)
-, window(renderer.getWindow())
-, firstRender(true)
-, hudColor(1.0f, 0.625f, 0.125f, 1.0f)
-, messageColor(1.0f, 1.0f, 1.0f, 1.0f)
-, warningColor(1.0f, 0.0f, 0.0f, 1.0f)
-, playing(false)
-, roaming(false)
-, dim(false)
-, numPlayers(0)
-, timeLeft(~0u)
-, playerHasHighScore(false)
-, teamHasHighScore(false)
-, heading(0.0)
-, altitude(0.0)
-, altitudeTape(false)
-, fps(-1.0)
-, drawTime(-1.0)
-, restartLabel(restartLabelFormat)
-, showCompose(false)
-, showCracks(true)
-, dater(false)
-, lastTimeChange(time(NULL))
-, triangleCount(0)
-, radarTriangleCount(0)
-{
+                         const SceneRenderer& renderer)
+  : display(_display)
+  , window(renderer.getWindow())
+  , firstRender(true)
+  , hudColor(1.0f, 0.625f, 0.125f, 1.0f)
+  , messageColor(1.0f, 1.0f, 1.0f, 1.0f)
+  , warningColor(1.0f, 0.0f, 0.0f, 1.0f)
+  , playing(false)
+  , roaming(false)
+  , dim(false)
+  , numPlayers(0)
+  , timeLeft(~0u)
+  , playerHasHighScore(false)
+  , teamHasHighScore(false)
+  , heading(0.0)
+  , altitude(0.0)
+  , altitudeTape(false)
+  , fps(-1.0)
+  , drawTime(-1.0)
+  , restartLabel(restartLabelFormat)
+  , showCompose(false)
+  , showCracks(true)
+  , dater(false)
+  , lastTimeChange(time(NULL))
+  , triangleCount(0)
+  , radarTriangleCount(0) {
   switch (BZDB.evalInt("timedate")) {
     case 0: { dater = false; break; }
     case 1: { dater = true;  break; }
@@ -126,8 +125,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 }
 
 
-HUDRenderer::~HUDRenderer()
-{
+HUDRenderer::~HUDRenderer() {
   // don't notify me anymore (cos you can't wake the dead!)
   window.getWindow()->removeResizeCallback(resizeCallback, this);
 
@@ -145,20 +143,17 @@ HUDRenderer::~HUDRenderer()
 }
 
 
-ScoreboardRenderer *HUDRenderer::getScoreboard ()
-{
+ScoreboardRenderer* HUDRenderer::getScoreboard() {
   return scoreboard;
 }
 
 
-void HUDRenderer::resizeCallback(void* self)
-{
+void HUDRenderer::resizeCallback(void* self) {
   ((HUDRenderer*)self)->resize(false);
 }
 
 
-void HUDRenderer::resize(bool firstTime)
-{
+void HUDRenderer::resize(bool firstTime) {
   // get important metrics
   const int w = firstTime ? MinX : window.getWidth();
   const int vh = firstTime ? MinY : window.getViewHeight();
@@ -168,7 +163,7 @@ void HUDRenderer::resize(bool firstTime)
     const float xScale = (float)w  / (float) MinX;
     const float yScale = (float)vh / (float) MinY;
     const float scale = (xScale < yScale) ? xScale : yScale;
-    const float effScale =  scale * ( 0.7f + RENDERER.getMaxMotionFactor() / 16.667f);
+    const float effScale =  scale * (0.7f + RENDERER.getMaxMotionFactor() / 16.667f);
     maxMotionSize = (int)((float)MaxMotionSize * effScale);
     noMotionSize = (int)((float)NoMotionSize * effScale / 2.0f);
     headingOffset = 22.0f * (effScale > 1.0f ? 1.0f : effScale);
@@ -188,26 +183,23 @@ void HUDRenderer::resize(bool firstTime)
 
   // set scoreboard window size & location
   const float sby = window.getViewHeight() - majorFontHeight - alertFontHeight * 2.0f;
-  scoreboard->setWindowSize (0.01f * window.getWidth(), sby,
-			     0.98f * window.getWidth(), sby);
+  scoreboard->setWindowSize(0.01f * window.getWidth(), sby,
+                            0.98f * window.getWidth(), sby);
 }
 
 
-int HUDRenderer::getNoMotionSize() const
-{
+int HUDRenderer::getNoMotionSize() const {
   return noMotionSize;
 }
 
 
-int HUDRenderer::getMaxMotionSize() const
-{
+int HUDRenderer::getMaxMotionSize() const {
   return maxMotionSize;
 }
 
 
-void HUDRenderer::setBigFontSize(int width, int height)
-{
-  FontManager &fm = FontManager::instance();
+void HUDRenderer::setBigFontSize(int width, int height) {
+  FontManager& fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
   fs.setMin(0, (int)(1.0 / BZDB.eval("headerFontSize") / 2.0));
   bigFontSize = fs.getFontSize(bigFontFace->getFMFace(), "headerFontSize");
@@ -222,9 +214,8 @@ void HUDRenderer::setBigFontSize(int width, int height)
 }
 
 
-void HUDRenderer::setAlertFontSize(int width, int height)
-{
-  FontManager &fm = FontManager::instance();
+void HUDRenderer::setAlertFontSize(int width, int height) {
+  FontManager& fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
   alertFontSize = fs.getFontSize(alertFontFace->getFMFace(), "alertFontSize");
   alertFontHeight = fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
@@ -238,25 +229,22 @@ void HUDRenderer::setAlertFontSize(int width, int height)
 }
 
 
-void HUDRenderer::setMajorFontSize(int width, int height)
-{
-  FontManager &fm = FontManager::instance();
+void HUDRenderer::setMajorFontSize(int width, int height) {
+  FontManager& fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
   majorFontSize = fs.getFontSize(majorFontFace->getFMFace(), "hudFontSize");
   majorFontHeight = fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize);
 }
 
 
-void HUDRenderer::setMinorFontSize(int width, int height)
-{
+void HUDRenderer::setMinorFontSize(int width, int height) {
   FontSizer fs = FontSizer(width, height);
   minorFontSize = fs.getFontSize(minorFontFace->getFMFace(), "scoreFontSize");
 }
 
 
-void HUDRenderer::setHeadingFontSize(int width, int height)
-{
-  FontManager &fm = FontManager::instance();
+void HUDRenderer::setHeadingFontSize(int width, int height) {
+  FontManager& fm = FontManager::instance();
   FontSizer fs = FontSizer(width, height);
   headingFontSize = fs.getFontSize(headingFontFace->getFMFace(), "hudFontSize");
 
@@ -264,8 +252,8 @@ void HUDRenderer::setHeadingFontSize(int width, int height)
   int i;
   for (i = 0; i < 36; i++) {
     headingLabelWidth[i] = 0.5f *
-      0.5f * fm.getStringWidth(headingFontFace->getFMFace(),
-                               headingFontSize, headingLabel[i]);
+                           0.5f * fm.getStringWidth(headingFontFace->getFMFace(),
+                                                    headingFontSize, headingLabel[i]);
   }
 
   // compute maximum width over all altitude labels
@@ -274,107 +262,91 @@ void HUDRenderer::setHeadingFontSize(int width, int height)
 }
 
 
-void HUDRenderer::setComposeFontSize(int width, int height)
-{
+void HUDRenderer::setComposeFontSize(int width, int height) {
   composeTypeIn->setFontFace(composeFontFace);
   FontSizer fs = FontSizer(width, height);
   composeTypeIn->setFontSize(fs.getFontSize(composeFontFace->getFMFace(), "consoleFontSize"));
 }
 
 
-void HUDRenderer::setLabelsFontSize(int width, int height)
-{
+void HUDRenderer::setLabelsFontSize(int width, int height) {
   FontSizer fs = FontSizer(width, height);
   labelsFontSize = fs.getFontSize(labelsFontFace->getFMFace(), "consoleFontSize");
 }
 
 
-void HUDRenderer::setColor(float r, float g, float b)
-{
+void HUDRenderer::setColor(float r, float g, float b) {
   hudColor[0] = r;
   hudColor[1] = g;
   hudColor[2] = b;
 }
 
 
-void HUDRenderer::setPlaying(bool _playing)
-{
+void HUDRenderer::setPlaying(bool _playing) {
   playing = _playing;
 }
 
 
-void HUDRenderer::setRoaming(bool _roaming)
-{
+void HUDRenderer::setRoaming(bool _roaming) {
   roaming = _roaming;
 }
 
 
-void HUDRenderer::setDim(bool _dim)
-{
+void HUDRenderer::setDim(bool _dim) {
   dim = _dim;
-  scoreboard->setDim (_dim);
+  scoreboard->setDim(_dim);
 }
 
 
-void HUDRenderer::setPlayerHasHighScore(bool hasHigh)
-{
+void HUDRenderer::setPlayerHasHighScore(bool hasHigh) {
   playerHasHighScore = hasHigh;
 }
 
 
-void HUDRenderer::setTeamHasHighScore(bool hasHigh)
-{
+void HUDRenderer::setTeamHasHighScore(bool hasHigh) {
   teamHasHighScore = hasHigh;
 }
 
 
-void HUDRenderer::setHeading(float angle)
-{
+void HUDRenderer::setHeading(float angle) {
   heading = (float)(90.0 - 180.0 * angle / M_PI);
-  while (heading < 0.0f) heading += 360.0f;
-  while (heading >= 360.0f) heading -= 360.0f;
+  while (heading < 0.0f) { heading += 360.0f; }
+  while (heading >= 360.0f) { heading -= 360.0f; }
 }
 
 
-void HUDRenderer::setAltitude(float _altitude)
-{
+void HUDRenderer::setAltitude(float _altitude) {
   altitude = _altitude;
 }
 
 
-void HUDRenderer::setAltitudeTape(bool on)
-{
+void HUDRenderer::setAltitudeTape(bool on) {
   altitudeTape = on;
 }
 
 
-void HUDRenderer::setFPS(float _fps)
-{
+void HUDRenderer::setFPS(float _fps) {
   fps = _fps;
 }
 
 
-void HUDRenderer::setDrawTime(float drawTimeInseconds)
-{
+void HUDRenderer::setDrawTime(float drawTimeInseconds) {
   drawTime = drawTimeInseconds;
 }
 
 
-void HUDRenderer::setFrameTriangleCount(int tpf)
-{
+void HUDRenderer::setFrameTriangleCount(int tpf) {
   triangleCount = tpf;
 }
 
 
-void HUDRenderer::setFrameRadarTriangleCount(int rtpf)
-{
+void HUDRenderer::setFrameRadarTriangleCount(int rtpf) {
   radarTriangleCount = rtpf;
 }
 
 
 void HUDRenderer::setAlert(int index, const char* msg,
-                           float duration, bool warning)
-{
+                           float duration, bool warning) {
   if (index < 0) {
     index = 0;
   }
@@ -387,7 +359,7 @@ void HUDRenderer::setAlert(int index, const char* msg,
   }
   else {
     const std::string text = TextUtils::remove_char(msg, '\v');
-    FontManager &fm = FontManager::instance();
+    FontManager& fm = FontManager::instance();
     alertLabel[index] = BundleMgr::getCurrentBundle()->getLocalString(text.c_str());
     alertLabelWidth[index] = fm.getStringWidth(alertFontFace->getFMFace(),
                                                alertFontSize,
@@ -398,26 +370,23 @@ void HUDRenderer::setAlert(int index, const char* msg,
 }
 
 
-bool HUDRenderer::getComposing() const
-{
+bool HUDRenderer::getComposing() const {
   return showCompose;
 }
 
 
-std::string HUDRenderer::getComposePrompt() const
-{
+std::string HUDRenderer::getComposePrompt() const {
   return composeTypeIn->getLabel();
 }
 
 
-void HUDRenderer::setComposePrompt(const std::string& prompt) const
-{
+void HUDRenderer::setComposePrompt(const std::string& prompt) const {
   composeTypeIn->setLabel(prompt);
 
   // setup the geometry
   const LocalFontFace* cFontFace = composeTypeIn->getFontFace();
   if (cFontFace) {
-    FontManager &fm = FontManager::instance();
+    FontManager& fm = FontManager::instance();
     const int   faceID = cFontFace->getFMFace();
     const float cFontSize = composeTypeIn->getFontSize();
     const float fontHeight = fm.getStringHeight(faceID, cFontSize);
@@ -433,38 +402,34 @@ void HUDRenderer::setComposePrompt(const std::string& prompt) const
 }
 
 
-std::string HUDRenderer::getComposeString() const
-{
+std::string HUDRenderer::getComposeString() const {
   return composeTypeIn->getString();
 }
 
 
 // Sets the string and allows editing by default
-void HUDRenderer::setComposeString(const std::string &message) const
-{
+void HUDRenderer::setComposeString(const std::string& message) const {
   composeTypeIn->setEditing(true);
   composeTypeIn->setString(message);
 }
 
 
 // Sets the string and allows you to edit if _allowEdit is true
-void HUDRenderer::setComposeString(const std::string &message,
-						      bool _allowEdit) const
-{
+void HUDRenderer::setComposeString(const std::string& message,
+                                   bool _allowEdit) const {
   composeTypeIn->setEditing(_allowEdit);
   composeTypeIn->setString(message);
 }
 
 
 // Set the prompt and allow editing by default
-void HUDRenderer::setComposing(const std::string &prompt) {
+void HUDRenderer::setComposing(const std::string& prompt) {
   this->setComposing(prompt, true);
 }
 
 
 // Set the prompt and allow editing or not depending on _allowEdit
-void HUDRenderer::setComposing(const std::string &prompt, bool _allowEdit)
-{
+void HUDRenderer::setComposing(const std::string& prompt, bool _allowEdit) {
   showCompose = !prompt.empty();
   if (!showCompose) {
     HUDui::setFocus(NULL);
@@ -478,8 +443,7 @@ void HUDRenderer::setComposing(const std::string &prompt, bool _allowEdit)
 }
 
 
-void HUDRenderer::setFlagHelp(FlagType* desc, float duration)
-{
+void HUDRenderer::setFlagHelp(FlagType* desc, float duration) {
   flagHelpClock.setClock(duration);
 
   // Generate the formatted help for this flag
@@ -487,20 +451,18 @@ void HUDRenderer::setFlagHelp(FlagType* desc, float duration)
 }
 
 
-void HUDRenderer::setLimboMessage(const std::string &message) const
-{
+void HUDRenderer::setLimboMessage(const std::string& message) const {
   customLimboMessage = message;
 }
 
 
-void HUDRenderer::addMarker(float _heading, const float *_color )
-{
+void HUDRenderer::addMarker(float _heading, const float* _color) {
   markers.resize(markers.size() + 1);
-  HUDMarker &m = markers[markers.size() - 1];
+  HUDMarker& m = markers[markers.size() - 1];
 
   _heading = (float)(90.0 - 180.0 * _heading / M_PI);
-  while (_heading < 0.0f) _heading += 360.0f;
-  while (_heading >= 360.0f) _heading -= 360.0f;
+  while (_heading < 0.0f) { _heading += 360.0f; }
+  while (_heading >= 360.0f) { _heading -= 360.0f; }
   m.heading = _heading;
   memcpy(m.color, _color, sizeof(m.color));
 }
@@ -508,8 +470,7 @@ void HUDRenderer::addMarker(float _heading, const float *_color )
 
 void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
                                          std::string name, bool friendly,
-                                         float zShift)
-{
+                                         float zShift) {
   EnhancedHUDMarker newMarker(pos, color);
   newMarker.pos.z += zShift;
   newMarker.name = name;
@@ -519,8 +480,7 @@ void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
 
 
 void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
-                                    bool friendly, float zShift )
-{
+                                    bool friendly, float zShift) {
   EnhancedHUDMarker newMarker(pos, color);
   newMarker.pos.z += zShift;
   newMarker.friendly = friendly;
@@ -529,8 +489,7 @@ void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
 
 
 void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
-                                  bool friendly, float zShift )
-{
+                                  bool friendly, float zShift) {
   const fvec4 color(0.75f, 0.125f, 0.125f, 1.0f);
   EnhancedHUDMarker newMarker(pos, color);
   newMarker.pos.z += zShift;
@@ -540,29 +499,26 @@ void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
 }
 
 
-void HUDRenderer::setRestartKeyLabel(const std::string& label)
-{
+void HUDRenderer::setRestartKeyLabel(const std::string& label) {
   char buffer[250];
   snprintf(buffer, 250, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
   restartLabel = buffer;
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   restartLabelWidth = fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, restartLabel);
 }
 
 
-void HUDRenderer::setTimeLeft(uint32_t _timeLeft)
-{
+void HUDRenderer::setTimeLeft(uint32_t _timeLeft) {
   timeLeft = _timeLeft;
   timeSet = BzTime::getTick();
 }
 
 
-std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
-{
+std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const {
   std::vector<std::string> listOfWords;
-  if (!help) return listOfWords;
+  if (!help) { return listOfWords; }
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   static const float spaceWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, " ");
 
   // find sections of string not more than maxWidth pixels wide
@@ -573,24 +529,27 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
   float wordWidth;
   std::string word = "";
   float currentLineWidth = 0.0f;
-  std::string::size_type position = text.find(" ",0);
+  std::string::size_type position = text.find(" ", 0);
   while (position < text.size()) {
-    word = text.substr(0,position+1);
-    text = text.substr(position+1,text.size());
-    position = text.find(" ",0);
+    word = text.substr(0, position + 1);
+    text = text.substr(position + 1, text.size());
+    position = text.find(" ", 0);
     // Here we split based on the space character into words and store them into a vector
-    if (word.size() == 0)
+    if (word.size() == 0) {
       continue;
+    }
 
     wordWidth = fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, word.c_str());
     if (wordWidth + currentLineWidth + spaceWidth < maxWidth) {
       currentLineWidth += wordWidth;
-    } else {
+    }
+    else {
       listOfWords.push_back("");
       currentLineWidth = 0.0f;
     }
-    if (listOfWords.empty())
+    if (listOfWords.empty()) {
       listOfWords.push_back("");
+    }
     listOfWords.back() += word;
   }
 
@@ -600,8 +559,9 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
     if (wordWidth + currentLineWidth + spaceWidth >= maxWidth) {
       listOfWords.push_back("");
     }
-    if (listOfWords.empty())
+    if (listOfWords.empty()) {
       listOfWords.push_back("");
+    }
     listOfWords.back() += word;
   }
 
@@ -612,93 +572,97 @@ std::vector<std::string> HUDRenderer::makeHelpString(const char* help) const
 static const float dimFactor = 0.2f;
 
 
-void HUDRenderer::hudColor3f(float r, float g, float b)
-{
-  if (dim)
+void HUDRenderer::hudColor3f(float r, float g, float b) {
+  if (dim) {
     glColor3f(dimFactor * r, dimFactor * g, dimFactor * b);
-  else
+  }
+  else {
     glColor3f(r, g, b);
+  }
 }
 
 
-void HUDRenderer::hudColor3Afv(const float * c, const float a)
-{
-  if( dim )
-    glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
-  else
-    glColor4f( c[0],c[1],c[2],a );
+void HUDRenderer::hudColor3Afv(const float* c, const float a) {
+  if (dim) {
+    glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], a);
+  }
+  else {
+    glColor4f(c[0], c[1], c[2], a);
+  }
 }
 
 
-void HUDRenderer::hudColor4f(float r, float g, float b, float a)
-{
-  if (dim)
+void HUDRenderer::hudColor4f(float r, float g, float b, float a) {
+  if (dim) {
     glColor4f(dimFactor * r, dimFactor * g, dimFactor * b, a);
-  else
+  }
+  else {
     glColor4f(r, g, b, a);
+  }
 }
 
 
-void HUDRenderer::hudColor3fv(const float* c)
-{
-  if (dim)
+void HUDRenderer::hudColor3fv(const float* c) {
+  if (dim) {
     glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
-  else
+  }
+  else {
     glColor3fv(c);
+  }
 }
 
 
-void HUDRenderer::hudSColor3fv(const float* c)
-{
-  if (dim)
+void HUDRenderer::hudSColor3fv(const float* c) {
+  if (dim) {
     glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
-  else
+  }
+  else {
     glColor3fv(c);
+  }
 }
 
 
-void HUDRenderer::hudColor4fv(const float* c)
-{
-  if (dim)
+void HUDRenderer::hudColor4fv(const float* c) {
+  if (dim) {
     glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
-  else
+  }
+  else {
     glColor4fv(c);
+  }
 }
 
 
-void HUDRenderer::saveMatrixes(const float *mm, const float *pm )
-{
+void HUDRenderer::saveMatrixes(const float* mm, const float* pm) {
   // ssave off the stuff before we reset it
-  for(int i = 0; i < 16; i++) {
+  for (int i = 0; i < 16; i++) {
     modelMatrix[i] = mm[i];
     projMatrix[i] = pm[i];
   }
-  glGetIntegerv(GL_VIEWPORT,(GLint*)viewport);
+  glGetIntegerv(GL_VIEWPORT, (GLint*)viewport);
 }
 
 
 void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
                                      const float* viewPos, std::string name,
-                                     bool friendly)
-{
+                                     bool friendly) {
   if (GfxBlockMgr::markers.blocked()) {
     return;
   }
 
-  double map[3] = {0,0,0};
+  double map[3] = {0, 0, 0};
   double o[3];
   o[0] = object[0];
   o[1] = object[1];
   o[2] = object[2];
 
-  hudColor3Afv( color, alpha );
+  hudColor3Afv(color, alpha);
 
   glPushMatrix();
   gluProject(o[0], o[1], o[2], modelMatrix, projMatrix,
              (GLint*)viewport, &map[0], &map[1], &map[2]);
   glPopMatrix();
 
-  float halfWidth = window.getWidth( )* 0.5f;
+  float halfWidth = window.getWidth() * 0.5f;
   float halfHeight = window.getHeight() * 0.5f;
 
   // comp us back to the view
@@ -715,74 +679,89 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
     if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
       map[0] = -halfWidth;
       map[1] = 0;
-    } else {
-      map[0] = -halfWidth * (fabs(map[0])/map[0]);
+    }
+    else {
+      map[0] = -halfWidth * (fabs(map[0]) / map[0]);
       map[1] = 0;
     }
-  } else {
-    if (map[0] < -halfWidth)
+  }
+  else {
+    if (map[0] < -halfWidth) {
       map[0] = -halfWidth;
-    if (map[0] > halfWidth)
+    }
+    if (map[0] > halfWidth) {
       map[0] = halfWidth;
+    }
 
-    if (map[1] < -halfHeight)
+    if (map[1] < -halfHeight) {
       map[1] = -halfHeight;
-    if (map[1] > halfHeight)
+    }
+    if (map[1] > halfHeight) {
       map[1] = halfHeight;
+    }
   }
 
   glPushMatrix();
-  glTranslatef((float)map[0],(float)map[1],0);
+  glTranslatef((float)map[0], (float)map[1], 0);
   glPushMatrix();
   float triangleSize = BZDB.eval("hudWayPMarkerSize");
-  if (name.size())
+  if (name.size()) {
     triangleSize *= 0.75f;
+  }
 
-  if (map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// right side
-    glRotatef(90,0,0,1);
+  if (map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight) { // right side
+    glRotatef(90, 0, 0, 1);
+  }
 
-  if (map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// Left side
-    glRotatef(-90,0,0,1);
+  if (map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight) { // Left side
+    glRotatef(-90, 0, 0, 1);
+  }
 
-  if (map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)	// Top side
-    glRotatef(180,0,0,1);
+  if (map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth) { // Top side
+    glRotatef(180, 0, 0, 1);
+  }
 
-  if (map[0] == halfWidth && map[1] == -halfHeight)	// Lower right
-    glRotatef(45,0,0,1);
+  if (map[0] == halfWidth && map[1] == -halfHeight) { // Lower right
+    glRotatef(45, 0, 0, 1);
+  }
 
-  if (map[0] == -halfWidth && map[1] == -halfHeight)	// Lower left
-    glRotatef(-45,0,0,1);
+  if (map[0] == -halfWidth && map[1] == -halfHeight) { // Lower left
+    glRotatef(-45, 0, 0, 1);
+  }
 
-  if (map[0] == halfWidth && map[1] == halfHeight)	// upper right
-    glRotatef(180-45,0,0,1);
+  if (map[0] == halfWidth && map[1] == halfHeight) { // upper right
+    glRotatef(180 - 45, 0, 0, 1);
+  }
 
-  if (map[0] == -halfWidth && map[1] == halfHeight)	// upper left
-    glRotatef(180+45,0,0,1);
+  if (map[0] == -halfWidth && map[1] == halfHeight) { // upper left
+    glRotatef(180 + 45, 0, 0, 1);
+  }
 
   glBegin(GL_TRIANGLES);
-  glVertex2f(0,0);
-  glVertex2f(triangleSize,triangleSize);
-  glVertex2f(-triangleSize,triangleSize);
+  glVertex2f(0, 0);
+  glVertex2f(triangleSize, triangleSize);
+  glVertex2f(-triangleSize, triangleSize);
   glEnd();
 
   glBegin(GL_LINE_STRIP);
-  glVertex3f(0,0,0.01f);
-  glVertex3f(triangleSize,triangleSize,0.01f);
-  glVertex3f(-triangleSize,triangleSize,0.01f);
+  glVertex3f(0, 0, 0.01f);
+  glVertex3f(triangleSize, triangleSize, 0.01f);
+  glVertex3f(-triangleSize, triangleSize, 0.01f);
   glEnd();
 
-  if (friendly)
+  if (friendly) {
     DisplayListSystem::Instance().callList(friendlyMarkerList);
+  }
 
   glPopMatrix();
 
   if (name.size()) {
-    hudColor3Afv( color, alpha );
+    hudColor3Afv(color, alpha);
     float textOffset = 5.0f;
     float width = FontManager::instance().getStringWidth(headingFontFace->getFMFace(), headingFontSize, name);
     glEnable(GL_TEXTURE_2D);
     FontManager::instance().drawString(-width * 0.5f , textOffset + triangleSize,
-	  0, headingFontFace->getFMFace(), headingFontSize, name);
+                                       0, headingFontFace->getFMFace(), headingFontSize, name);
     glDisable(GL_TEXTURE_2D);
   }
 
@@ -794,24 +773,23 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
-                                   const float *viewPos, std::string name,
-                                   bool friendly )
-{
-  double map[3] = {0,0,0};
+void HUDRenderer::drawLockonMarker(float* color , float alpha, float* object,
+                                   const float* viewPos, std::string name,
+                                   bool friendly) {
+  double map[3] = {0, 0, 0};
   double o[3];
   o[0] = object[0];
   o[1] = object[1];
   o[2] = object[2];
 
-  hudColor3Afv( color, alpha );
+  hudColor3Afv(color, alpha);
 
   glPushMatrix();
-  gluProject(o[0], o[1], o[2], modelMatrix,projMatrix,
+  gluProject(o[0], o[1], o[2], modelMatrix, projMatrix,
              (GLint*)viewport, &map[0], &map[1], &map[2]);
   glPopMatrix();
 
-  float halfWidth = window.getWidth( )* 0.5f;
+  float halfWidth = window.getWidth() * 0.5f;
   float halfHeight = window.getHeight() * 0.5f;
 
   // comp us back to the view
@@ -828,24 +806,30 @@ void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
     if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
       map[0] = -halfWidth;
       map[1] = 0;
-    } else {
-      map[0] = -halfWidth * (fabs(map[0])/map[0]);
+    }
+    else {
+      map[0] = -halfWidth * (fabs(map[0]) / map[0]);
       map[1] = 0;
     }
-  } else {
-    if ( map[0] < -halfWidth )
+  }
+  else {
+    if (map[0] < -halfWidth) {
       map[0] = -halfWidth;
-    if ( map[0] > halfWidth )
+    }
+    if (map[0] > halfWidth) {
       map[0] = halfWidth;
+    }
 
-    if ( map[1] < -halfHeight )
+    if (map[1] < -halfHeight) {
       map[1] = -halfHeight;
-    if ( map[1] > halfHeight )
+    }
+    if (map[1] > halfHeight) {
       map[1] = halfHeight;
+    }
   }
 
   glPushMatrix();
-  glTranslatef((float)map[0],(float)map[1],0);
+  glTranslatef((float)map[0], (float)map[1], 0);
   glPushMatrix();
 
   float lockonSize = 40;
@@ -855,33 +839,34 @@ void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
   glLineWidth(3.0f);
 
   glBegin(GL_LINE_STRIP);
-  glVertex2f(-lockonInset,lockonSize-lockonDeclination);
-  glVertex2f(-lockonSize,lockonSize);
-  glVertex2f(-lockonSize,-lockonSize);
-  glVertex2f(-lockonInset,-lockonSize+lockonDeclination);
+  glVertex2f(-lockonInset, lockonSize - lockonDeclination);
+  glVertex2f(-lockonSize, lockonSize);
+  glVertex2f(-lockonSize, -lockonSize);
+  glVertex2f(-lockonInset, -lockonSize + lockonDeclination);
   glEnd();
 
   glBegin(GL_LINE_STRIP);
-  glVertex2f(lockonInset,lockonSize-lockonDeclination);
-  glVertex2f(lockonSize,lockonSize);
-  glVertex2f(lockonSize,-lockonSize);
-  glVertex2f(lockonInset,-lockonSize+lockonDeclination);
+  glVertex2f(lockonInset, lockonSize - lockonDeclination);
+  glVertex2f(lockonSize, lockonSize);
+  glVertex2f(lockonSize, -lockonSize);
+  glVertex2f(lockonInset, -lockonSize + lockonDeclination);
   glEnd();
 
-  if (friendly)
+  if (friendly) {
     DisplayListSystem::Instance().callList(friendlyMarkerList);
+  }
 
   glLineWidth(1.0f);
 
   glPopMatrix();
 
   if (name.size()) {
-    hudColor3Afv( color, alpha );
+    hudColor3Afv(color, alpha);
     float textOffset = 5.0f;
     float width = FontManager::instance().getStringWidth(headingFontFace->getFMFace(), headingFontSize, name);
     glEnable(GL_TEXTURE_2D);
     FontManager::instance().drawString(-width * 0.5f, textOffset + lockonSize,
-	  0, headingFontFace->getFMFace(), headingFontSize, name);
+                                       0, headingFontFace->getFMFace(), headingFontSize, name);
     glDisable(GL_TEXTURE_2D);
   }
 
@@ -889,20 +874,19 @@ void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
 }
 
 
-void HUDRenderer::buildGeometry ( GLDisplayList displayList )
-{
+void HUDRenderer::buildGeometry(GLDisplayList displayList) {
   if (displayList == friendlyMarkerList) {
     float lockonSize = 40;
 
-    float segmentation = 32.0f/360.0f;
+    float segmentation = 32.0f / 360.0f;
     float rad = lockonSize * 0.125f;
 
     // white outline
-    hudColor4f( 1,1,1, 0.85f );
+    hudColor4f(1, 1, 1, 0.85f);
     glLineWidth(4.0f);
     glBegin(GL_LINES);
-    glVertex3f(-rad,rad+rad,0.03f);
-    glVertex3f(rad,-rad+rad,0.02f);
+    glVertex3f(-rad, rad + rad, 0.03f);
+    glVertex3f(rad, -rad + rad, 0.02f);
     // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
     // glVertex3f(lockonSize*xFactor,0,0.02f);
     glEnd();
@@ -910,21 +894,21 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     glBegin(GL_LINE_LOOP);
     for (float t = 0; t < 360; t += segmentation) {
       if (t != 0) {
-	const float s = (t - segmentation);
-	const float tRads = t * DEG2RADf;
-	const float sRads = s * DEG2RADf;
-	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
-	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
+        const float s = (t - segmentation);
+        const float tRads = t * DEG2RADf;
+        const float sRads = s * DEG2RADf;
+        glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
+        glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }
     }
     glEnd();
 
     // red X
-    hudColor4f( 1,0,0, 0.85f );
+    hudColor4f(1, 0, 0, 0.85f);
     glLineWidth(2.0f);
     glBegin(GL_LINES);
-    glVertex3f(-rad,rad+rad,0.03f);
-    glVertex3f(rad,-rad+rad,0.02f);
+    glVertex3f(-rad, rad + rad, 0.03f);
+    glVertex3f(rad, -rad + rad, 0.02f);
     // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
     //  glVertex3f(lockonSize*xFactor,0,0.02f);
     glEnd();
@@ -932,11 +916,11 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
     glBegin(GL_LINE_LOOP);
     for (float t = 0; t < 360; t += segmentation) {
       if (t != 0) {
-	const float s = (t - segmentation);
-	const float tRads = t * DEG2RADf;
-	const float sRads = s * DEG2RADf;
-	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
-	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
+        const float s = (t - segmentation);
+        const float tRads = t * DEG2RADf;
+        const float sRads = s * DEG2RADf;
+        glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
+        glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
       }
     }
     glEnd();
@@ -947,8 +931,7 @@ void HUDRenderer::buildGeometry ( GLDisplayList displayList )
 }
 
 
-void HUDRenderer::render(void)
-{
+void HUDRenderer::render(void) {
   if (firstRender) {
     firstRender = false;
     resize(false);
@@ -958,12 +941,15 @@ void HUDRenderer::render(void)
   if (!BZDB.isTrue("noGUI")) {
     if (playing) {
       renderPlaying(RENDERER);
-    } else if (roaming) {
+    }
+    else if (roaming) {
       renderRoaming(RENDERER);
-    } else {
+    }
+    else {
       renderNotPlaying(RENDERER);
     }
-  } else {
+  }
+  else {
     const bool showTimes = GfxBlockMgr::times.notBlocked() &&
                            ((fps > 0.0f)        ||
                             (drawTime > 0.0f)   ||
@@ -992,13 +978,13 @@ void HUDRenderer::render(void)
       glLoadIdentity();
 
       if (showCompose2) {
-	renderCompose(RENDERER);
+        renderCompose(RENDERER);
       }
       if (showTimes) {
-	renderTimes();
+        renderTimes();
       }
       if (showTankLabels) {
-	renderTankLabels(RENDERER);
+        renderTankLabels(RENDERER);
       }
       glPopMatrix();
     }
@@ -1006,19 +992,18 @@ void HUDRenderer::render(void)
 }
 
 
-void HUDRenderer::renderAlerts(void)
-{
+void HUDRenderer::renderAlerts(void) {
   if (GfxBlockMgr::alerts.blocked()) {
     return;
   }
 
   const float centerx = 0.5f * (float)window.getWidth();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   float y = (float)window.getViewHeight() +
-    -fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize) +
-    -fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
+            -fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize) +
+            -fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
 
   for (int i = 0; i < MaxAlerts; i++) {
     if (alertClock[i].isOn()) {
@@ -1026,30 +1011,29 @@ void HUDRenderer::renderAlerts(void)
       std::string newAlertLabel = (dim ? ColorStrings[DimColor] : "") + alertLabel[i];
       // FIXME: this assumes that there's not more than one reset in the string.
       if (dim) {
-	newAlertLabel.insert(newAlertLabel.find(ColorStrings[ResetColor], 0) - 1
-			     + strlen(ColorStrings[ResetColor]), ColorStrings[DimColor]);
+        newAlertLabel.insert(newAlertLabel.find(ColorStrings[ResetColor], 0) - 1
+                             + strlen(ColorStrings[ResetColor]), ColorStrings[DimColor]);
       }
       fm.drawString(centerx - 0.5f * alertLabelWidth[i], y, 0,
-		    alertFontFace->getFMFace(), alertFontSize, newAlertLabel);
+                    alertFontFace->getFMFace(), alertFontSize, newAlertLabel);
       y -= fm.getStringHeight(alertFontFace->getFMFace(), alertFontSize);
     }
   }
 }
 
 
-void HUDRenderer::renderStatus(void)
-{
+void HUDRenderer::renderStatus(void) {
   if (GfxBlockMgr::status.blocked()) {
     return;
   }
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
-  World *world = World::getWorld();
-  if (!myTank || !world) return;
+  World* world = World::getWorld();
+  if (!myTank || !world) { return; }
 
-  Bundle *bdl = BundleMgr::getCurrentBundle();
+  Bundle* bdl = BundleMgr::getCurrentBundle();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   char buffer[80];
   const float h = fm.getStringHeight(majorFontFace->getFMFace(), majorFontSize);
@@ -1069,12 +1053,15 @@ void HUDRenderer::renderStatus(void)
   if (flag != Flags::Null) {
     snprintf(buffer, 80, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
     x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer);
-    if (flag->endurance == FlagSticky)
+    if (flag->endurance == FlagSticky) {
       hudColor3fv(warningColor);
-    else
+    }
+    else {
       hudColor3fv(messageColor);
+    }
     fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
-  } else {
+  }
+  else {
     time_t timeNow;
     struct tm userTime;
     time(&timeNow);
@@ -1094,10 +1081,12 @@ void HUDRenderer::renderStatus(void)
     }
 
     // print time or date
-    if (dater)
+    if (dater) {
       sprintf(buffer, "%4d.%02d.%02d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
-    else
+    }
+    else {
       sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
+    }
     x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer);
     hudColor3fv(messageColor);
     fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
@@ -1105,59 +1094,62 @@ void HUDRenderer::renderStatus(void)
 
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
-    y -= float(1.5*h);
+    y -= float(1.5 * h);
     sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
-	    (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
+            (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
     x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(majorFontFace->getFMFace(), majorFontSize, buffer);
     fm.drawString(x, y, 0, majorFontFace->getFMFace(), majorFontSize, buffer);
-    y += float(1.5*h);
+    y += float(1.5 * h);
   }
 
   if (roaming && BZDB.isTrue("showVelocities")) {
-    Player *target = ROAM.getTargetTank();
+    Player* target = ROAM.getTargetTank();
     if (target) {
       const fvec3& vel = target->getVelocity();
 
       const fvec3& apparentVel = target->getApparentVelocity();
 
-      float linSpeed = sqrt(vel[0]*vel[0]+vel[1]*vel[1]);
+      float linSpeed = sqrt(vel[0] * vel[0] + vel[1] * vel[1]);
       float vertSpeed = vel[2];
       float rotSpeed = fabs(target->getAngularVelocity());
-      float apparentLinSpeed = sqrt(apparentVel[0]*apparentVel[0]+apparentVel[1]*apparentVel[1]);
+      float apparentLinSpeed = sqrt(apparentVel[0] * apparentVel[0] + apparentVel[1] * apparentVel[1]);
 
-      float smallZHeight = fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize)*1.125f;
-      float drawY = y-smallZHeight;
+      float smallZHeight = fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize) * 1.125f;
+      float drawY = y - smallZHeight;
       // draw header
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, "Target Info");
       fm.drawString(x, drawY, 0, minorFontFace->getFMFace(), minorFontSize, "Target Info");
 
-      sprintf(buffer,"Linear Speed:%5.2f",linSpeed);
-      if (BZDB.evalInt("showVelocities") > 1)
-        sprintf(buffer,"Linear Speed:%5.2f(%5.2f)",linSpeed,apparentLinSpeed);
+      sprintf(buffer, "Linear Speed:%5.2f", linSpeed);
+      if (BZDB.evalInt("showVelocities") > 1) {
+        sprintf(buffer, "Linear Speed:%5.2f(%5.2f)", linSpeed, apparentLinSpeed);
+      }
 
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
-      fm.drawString(x,drawY-smallZHeight, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x, drawY - smallZHeight, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
 
-      sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
-      if (BZDB.evalInt("showVelocities") > 1)
-        sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
+      sprintf(buffer, "Vertical Speed:%5.2f", vertSpeed);
+      if (BZDB.evalInt("showVelocities") > 1) {
+        sprintf(buffer, "Vertical Speed:%5.2f(%5.2f)", vertSpeed, apparentVel[2]);
+      }
 
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
-      fm.drawString(x, drawY-smallZHeight*2.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x, drawY - smallZHeight * 2.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
 
-      sprintf(buffer,"Angular Speed:%5.2f",rotSpeed);
+      sprintf(buffer, "Angular Speed:%5.2f", rotSpeed);
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
-      fm.drawString(x,drawY-smallZHeight*3.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x, drawY - smallZHeight * 3.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
 
       float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
       float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
 
-      sprintf(buffer,"Last Shot Info Time:%6.4f  Deviation:%6.3f ",shotTime,shotDeviation);
+      sprintf(buffer, "Last Shot Info Time:%6.4f  Deviation:%6.3f ", shotTime, shotDeviation);
       x = (float)window.getWidth() - 0.25f * h - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, buffer);
-      fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
+      fm.drawString(x, drawY - smallZHeight * 4.0f, 0, minorFontFace->getFMFace(), minorFontSize, buffer);
 
-      scoreboard->setTeamScoreY(drawY-smallZHeight*5.5f);
-    } else {
+      scoreboard->setTeamScoreY(drawY - smallZHeight * 5.5f);
+    }
+    else {
       scoreboard->setTeamScoreY(0);
     }
   }
@@ -1171,55 +1163,60 @@ void HUDRenderer::renderStatus(void)
   // are reserved for future use as timer flags (e.g. paused)
   if ((timeLeft == 0) || (timeLeft >= (~0u - 3))) {
     strcpy(buffer, "");
-  } else {
+  }
+  else {
     int t = timeLeft - (int)(BzTime::getTick() - timeSet);
-    if (t < 0) t = 0;
-    if (t >= 3600)
+    if (t < 0) { t = 0; }
+    if (t >= 3600) {
       sprintf(buffer, "%d:%02d:%02d   ", t / 3600, (t / 60) % 60, t % 60);
-    else if (t >= 60)
+    }
+    else if (t >= 60) {
       sprintf(buffer, "%d:%02d   ", t / 60, t % 60);
-    else
+    }
+    else {
       sprintf(buffer, "0:%02d   ", t);
+    }
   }
   if (!roaming) {
     switch (myTank->getFiringStatus()) {
       case LocalPlayer::Deceased:
-	strncat(buffer, bdl->getLocalString("Dead").c_str(), 79);
-	break;
+        strncat(buffer, bdl->getLocalString("Dead").c_str(), 79);
+        break;
 
       case LocalPlayer::Ready:
-	if (flag != Flags::Null && flag->endurance == FlagSticky &&
-	    world->allowShakeTimeout()) {
-	  /* have a bad flag -- show time left 'til we shake it */
-	  statusColor = yellowColor;
-	  sprintf(buffer, "%.1f", myTank->getFlagShakingTime());
-	} else {
-	  statusColor = greenColor;
-	  strncat(buffer, bdl->getLocalString("Ready").c_str(), 79);
-	}
-	break;
+        if (flag != Flags::Null && flag->endurance == FlagSticky &&
+            world->allowShakeTimeout()) {
+          /* have a bad flag -- show time left 'til we shake it */
+          statusColor = yellowColor;
+          sprintf(buffer, "%.1f", myTank->getFlagShakingTime());
+        }
+        else {
+          statusColor = greenColor;
+          strncat(buffer, bdl->getLocalString("Ready").c_str(), 79);
+        }
+        break;
 
       case LocalPlayer::Loading:
 
-	if (world->getMaxShots() != 0) {
-	  statusColor = redColor;
-	  snprintf(buffer, 80, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
-	}
-	break;
+        if (world->getMaxShots() != 0) {
+          statusColor = redColor;
+          snprintf(buffer, 80, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
+        }
+        break;
 
       case LocalPlayer::Sealed:
-	strncat(buffer, bdl->getLocalString("Sealed").c_str(), 79);
-	break;
+        strncat(buffer, bdl->getLocalString("Sealed").c_str(), 79);
+        break;
 
       case LocalPlayer::Zoned:
-	strncat(buffer, bdl->getLocalString("Zoned").c_str(), 79);
-	break;
+        strncat(buffer, bdl->getLocalString("Zoned").c_str(), 79);
+        break;
     }
   }
 
   if (roaming) {
     statusColor = messageColor;
-    if (dim) strncat(buffer, ColorStrings[DimColor], 79);
+    if (dim) { strncat(buffer, ColorStrings[DimColor], 79); }
     strncat(buffer, ROAM.getRoamingLabel().c_str(), 79);
   }
 
@@ -1229,41 +1226,40 @@ void HUDRenderer::renderStatus(void)
 }
 
 
-float HUDRenderer::tankScoreCompare(const void* _a, const void* _b)
-{
-  World *world = World::getWorld();
+float HUDRenderer::tankScoreCompare(const void* _a, const void* _b) {
+  World* world = World::getWorld();
   if (!world) {
     return 0;
   }
   RemotePlayer* a = world->getPlayer(*(int*)_a);
   RemotePlayer* b = world->getPlayer(*(int*)_b);
-  if (world->allowRabbit())
+  if (world->allowRabbit()) {
     return b->getRabbitScore() - a->getRabbitScore();
-  else
+  }
+  else {
     return float(b->getScore() - a->getScore());
+  }
 }
 
 
-int HUDRenderer::teamScoreCompare(const void* _c, const void* _d)
-{
-  World *world = World::getWorld();
+int HUDRenderer::teamScoreCompare(const void* _c, const void* _d) {
+  World* world = World::getWorld();
   if (!world) {
     return 0;
   }
-  Team* c = world->getTeams()+*(int*)_c;
-  Team* d = world->getTeams()+*(int*)_d;
+  Team* c = world->getTeams() + *(int*)_c;
+  Team* d = world->getTeams() + *(int*)_d;
 
-  return (d->won-d->lost) - (c->won-c->lost);
+  return (d->won - d->lost) - (c->won - c->lost);
 }
 
 
-void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
-{
+void HUDRenderer::renderTankLabels(SceneRenderer& renderer) {
   if (GfxBlockMgr::labels.blocked()) {
     return;
   }
 
-  World *world = World::getWorld();
+  World* world = World::getWorld();
   if (!world) {
     return;
   }
@@ -1271,9 +1267,10 @@ void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   int offset = window.getViewHeight() - window.getHeight();
 
   GLint view[] = {window.getOriginX(), window.getOriginY(),
-		  window.getWidth(), window.getHeight()};
-  const float *projf = renderer.getViewFrustum().getProjectionMatrix();
-  const float *modelf = renderer.getViewFrustum().getViewMatrix();
+                  window.getWidth(), window.getHeight()
+                 };
+  const float* projf = renderer.getViewFrustum().getProjectionMatrix();
+  const float* modelf = renderer.getViewFrustum().getViewMatrix();
 
   // convert to doubles
   GLdouble proj[16], model[16];
@@ -1283,45 +1280,44 @@ void HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   }
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    RemotePlayer *pl = world->getPlayer(i);
+    RemotePlayer* pl = world->getPlayer(i);
     if (pl && pl->isAlive()) {
-      const char *name = pl->getCallSign();
+      const char* name = pl->getCallSign();
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
-		 pl->getPosition()[2]/*+BZDB.eval(BZDBNAMES.MUZZLEHEIGHT)*3*/, model, proj, view, &x, &y, &z);
+                 pl->getPosition()[2]/*+BZDB.eval(BZDBNAMES.MUZZLEHEIGHT)*3*/, model, proj, view, &x, &y, &z);
       if (z >= 0.0 && z <= 1.0) {
-	FontManager &fm = FontManager::instance();
-	fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, name) / 2.0f,
-		      float(y) + offset - fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize),
-		      0, labelsFontFace->getFMFace(), labelsFontSize, name);
-	FlagType* flag = pl->getFlagType();
-	if (flag != Flags::Null) {
-	  std::string flagStr = "(";
-	  flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
-	  flagStr += ")";
-	  const char *fname = flagStr.c_str();
-	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, fname) / 2.0f,
-			float(y) + offset -
-			(2.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize)),
-			0, labelsFontFace->getFMFace(), labelsFontSize, fname);
-	}
-	if (roaming && BZDB.isTrue("showVelocities")) {
-	  const fvec3& vel = pl->getVelocity();
-	  std::string speedStr = TextUtils::format("[%5.2f]",sqrt(vel[0]*vel[0]+vel[1]*vel[1]));
-	  fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, speedStr) / 2.0f,
-			float(y) + offset -
-			(3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize)),
-			0, labelsFontFace->getFMFace(), labelsFontSize, speedStr);
-	}
+        FontManager& fm = FontManager::instance();
+        fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, name) / 2.0f,
+                      float(y) + offset - fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize),
+                      0, labelsFontFace->getFMFace(), labelsFontSize, name);
+        FlagType* flag = pl->getFlagType();
+        if (flag != Flags::Null) {
+          std::string flagStr = "(";
+          flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
+          flagStr += ")";
+          const char* fname = flagStr.c_str();
+          fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, fname) / 2.0f,
+                        float(y) + offset -
+                        (2.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize)),
+                        0, labelsFontFace->getFMFace(), labelsFontSize, fname);
+        }
+        if (roaming && BZDB.isTrue("showVelocities")) {
+          const fvec3& vel = pl->getVelocity();
+          std::string speedStr = TextUtils::format("[%5.2f]", sqrt(vel[0] * vel[0] + vel[1] * vel[1]));
+          fm.drawString(float(x) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, speedStr) / 2.0f,
+                        float(y) + offset -
+                        (3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize)),
+                        0, labelsFontFace->getFMFace(), labelsFontSize, speedStr);
+        }
       }
     }
   }
 }
 
 
-void HUDRenderer::renderCompose(SceneRenderer&)
-{
+void HUDRenderer::renderCompose(SceneRenderer&) {
   if (GfxBlockMgr::compose.blocked()) {
     return;
   }
@@ -1330,15 +1326,14 @@ void HUDRenderer::renderCompose(SceneRenderer&)
 }
 
 
-void HUDRenderer::renderTimes(void)
-{
+void HUDRenderer::renderTimes(void) {
   if (GfxBlockMgr::times.blocked()) {
     return;
   }
 
   const int centerx = window.getWidth() >> 1;
   const int centery = window.getViewHeight() >> 1;
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // draw frames per second
   if (fps > 0.0f) {
@@ -1350,20 +1345,23 @@ void HUDRenderer::renderTimes(void)
     if (fps > 50.0f) {
       /* white */
       hudColor3f(1.0f, 1.0f, 1.0f);
-    } else if (fps > 30.0f) {
+    }
+    else if (fps > 30.0f) {
       /* green */
       hudColor3f(0.0f, 1.0f, 0.0f);
-    } else if (fps > 10.0f) {
+    }
+    else if (fps > 10.0f) {
       /* yellow */
       hudColor3f(1.0f, 1.0f, 0.0f);
-    } else {
+    }
+    else {
       /* red */
       hudColor3f(1.0f, 0.0f, 0.0f);
     }
 
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
-		  labelsFontFace->getFMFace(), labelsFontSize, buf);
+                  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+                  labelsFontFace->getFMFace(), labelsFontSize, buf);
 
     if ((int)(BzTime::getTick() - last) > 1) {
       logDebugMessage(2, "%s\n", buf);
@@ -1376,8 +1374,8 @@ void HUDRenderer::renderTimes(void)
     sprintf(buf, "rtris: %i", radarTriangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
-		  labelsFontFace->getFMFace(), labelsFontSize, buf);
+                  triCountYOffset * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+                  labelsFontFace->getFMFace(), labelsFontSize, buf);
     triCountYOffset += 1.5f;
   }
   if (triangleCount > 0) {
@@ -1385,23 +1383,22 @@ void HUDRenderer::renderTimes(void)
     sprintf(buf, "tris: %i", triangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
-		  triCountYOffset * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
-		  labelsFontFace->getFMFace(), labelsFontSize, buf);
+                  triCountYOffset * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+                  labelsFontFace->getFMFace(), labelsFontSize, buf);
   }
   if (drawTime > 0.0f) {
     char buf[20];
     sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx + maxMotionSize) - fm.getStringWidth(labelsFontFace->getFMFace(), labelsFontSize, buf),
-		  (float)centery + (float)maxMotionSize +
-		  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
-		  labelsFontFace->getFMFace(), labelsFontSize, buf);
+                  (float)centery + (float)maxMotionSize +
+                  3.0f * fm.getStringHeight(labelsFontFace->getFMFace(), labelsFontSize), 0,
+                  labelsFontFace->getFMFace(), labelsFontSize, buf);
   }
 }
 
 
-void HUDRenderer::renderBox(SceneRenderer&)
-{
+void HUDRenderer::renderBox(SceneRenderer&) {
   if (GfxBlockMgr::targetBox.blocked()) {
     return;
   }
@@ -1417,7 +1414,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
   int i;
   float x, y;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   OpenGLGState::resetState();
   const bool smooth = BZDBCache::smooth;
@@ -1425,14 +1422,14 @@ void HUDRenderer::renderBox(SceneRenderer&)
   // draw targeting box
   hudColor3fv(hudColor);
 
-  glOutlineBoxCP(1.0f,centerx,centery,noMotionSize,noMotionSize);
-  glOutlineBoxCP(1.0f,centerx,centery,maxMotionSize,maxMotionSize);
+  glOutlineBoxCP(1.0f, centerx, centery, noMotionSize, noMotionSize);
+  glOutlineBoxCP(1.0f, centerx, centery, maxMotionSize, maxMotionSize);
 
   // draw heading strip
   if (true) { // always draw heading strip
     // first clip to area
     glScissor(ox + centerx - maxMotionSize, oy + height - viewHeight + centery + maxMotionSize - 5,
-	      2 * maxMotionSize, 25 + (int)(labelsFontSize + 0.5f));
+              2 * maxMotionSize, 25 + (int)(labelsFontSize + 0.5f));
 
     // draw heading mark
     glBegin(GL_LINES);
@@ -1454,7 +1451,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
       glEnable(GL_BLEND);
     }
     float basex = maxMotionSize * (heading - 10.0f * float(minMark)) / headingOffset;
-    if (!smooth) basex = floorf(basex);
+    if (!smooth) { basex = floorf(basex); }
     glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
     x = smooth ? 0.0f : -0.5f;
     glBegin(GL_LINES);
@@ -1484,7 +1481,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
     }
     for (i = minMark; i <= maxMark; i++) {
       fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace->getFMFace(),
-		    labelsFontSize, headingLabel[(i + 36) % 36]);
+                    labelsFontSize, headingLabel[(i + 36) % 36]);
       x += 2.0f * headingMarkSpacing;
     }
     if (smoothLabel) {
@@ -1492,46 +1489,48 @@ void HUDRenderer::renderBox(SceneRenderer&)
       basex -= floorf(basex);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basex);
       for (i = minMark; i <= maxMark; i++) {
-	fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace->getFMFace(),
-		      labelsFontSize, headingLabel[(i + 36) % 36]);
-	x += 2.0f * headingMarkSpacing;
+        fm.drawString(x - (headingLabelWidth[(i + 36) % 36] / 2.0f), y, 0, headingFontFace->getFMFace(),
+                      labelsFontSize, headingLabel[(i + 36) % 36]);
+        x += 2.0f * headingMarkSpacing;
       }
     }
     OpenGLGState::resetState();
 
     // draw markers (give 'em a little more space on the sides)
     glScissor(ox + centerx - maxMotionSize - 8, oy + height - viewHeight + centery + maxMotionSize,
-	      2 * maxMotionSize + 16, 10);
+              2 * maxMotionSize + 16, 10);
     glPushMatrix();
     glTranslatef((float)centerx, (float)(centery + maxMotionSize), 0.0f);
     for (MarkerList::const_iterator it = markers.begin(); it != markers.end(); ++it) {
-      const HUDMarker &m = *it;
+      const HUDMarker& m = *it;
       const float relAngle = fmodf(360.0f + m.heading - heading, 360.0f);
       hudColor3fv(m.color);
       if (relAngle <= headingOffset || relAngle >= 360.0f - headingOffset) {
-	// on the visible part of tape
-	float mx = maxMotionSize / headingOffset *
-	  ((relAngle < 180.0f) ? relAngle : relAngle - 360.0f);
-	glBegin(GL_QUADS);
-	glVertex2f(mx, 0.0f);
-	glVertex2f(mx + 4.0f, 4.0f);
-	glVertex2f(mx, 8.0f);
-	glVertex2f(mx - 4.0f, 4.0f);
-	glEnd();
-      } else if (relAngle <= 180.0) {
-	// off to the right
-	glBegin(GL_TRIANGLES);
-	glVertex2f((float)maxMotionSize, 0.0f);
-	glVertex2f((float)maxMotionSize + 4.0f, 4.0f);
-	glVertex2f((float)maxMotionSize, 8.0f);
-	glEnd();
-      } else {
-	// off to the left
-	glBegin(GL_TRIANGLES);
-	glVertex2f(-(float)maxMotionSize, 0.0f);
-	glVertex2f(-(float)maxMotionSize, 8.0f);
-	glVertex2f(-(float)maxMotionSize - 4.0f, 4.0f);
-	glEnd();
+        // on the visible part of tape
+        float mx = maxMotionSize / headingOffset *
+                   ((relAngle < 180.0f) ? relAngle : relAngle - 360.0f);
+        glBegin(GL_QUADS);
+        glVertex2f(mx, 0.0f);
+        glVertex2f(mx + 4.0f, 4.0f);
+        glVertex2f(mx, 8.0f);
+        glVertex2f(mx - 4.0f, 4.0f);
+        glEnd();
+      }
+      else if (relAngle <= 180.0) {
+        // off to the right
+        glBegin(GL_TRIANGLES);
+        glVertex2f((float)maxMotionSize, 0.0f);
+        glVertex2f((float)maxMotionSize + 4.0f, 4.0f);
+        glVertex2f((float)maxMotionSize, 8.0f);
+        glEnd();
+      }
+      else {
+        // off to the left
+        glBegin(GL_TRIANGLES);
+        glVertex2f(-(float)maxMotionSize, 0.0f);
+        glVertex2f(-(float)maxMotionSize, 8.0f);
+        glVertex2f(-(float)maxMotionSize - 4.0f, 4.0f);
+        glEnd();
       }
     }
     markers.clear();
@@ -1542,7 +1541,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
   if (altitudeTape) {
     // clip to area
     glScissor(ox + centerx + maxMotionSize - 5, oy + height - viewHeight + centery - maxMotionSize,
-	      (int)altitudeLabelMaxWidth + 15, 2 * maxMotionSize);
+              (int)altitudeLabelMaxWidth + 15, 2 * maxMotionSize);
 
     // draw altitude mark
     hudColor3fv(hudColor);
@@ -1556,7 +1555,7 @@ void HUDRenderer::renderBox(SceneRenderer&)
 
     // get minimum and maximum visible marks (leave some leeway)
     int minMark = baseMark - int(altitudeOffset / 5.0f) - 1;
-    if (minMark < 0) minMark = 0;
+    if (minMark < 0) { minMark = 0; }
 
     int maxMark = baseMark + int(altitudeOffset / 5.0f) + 1;
 
@@ -1569,10 +1568,10 @@ void HUDRenderer::renderBox(SceneRenderer&)
     // NOTE: before I (Steve Krenzel) made changes, minMark was always 0, which appears
     // to have made basey always equal 0, maybe I overlooked something
     float basey = maxMotionSize * (altitude - 5.0f * float(minMark)) /
-      altitudeOffset;
-    if (!smooth) basey = floorf(basey);
+                  altitudeOffset;
+    if (!smooth) { basey = floorf(basey); }
     glTranslatef((float)(centerx + maxMotionSize),
-		 (float)centery - basey, 0.0f);
+                 (float)centery - basey, 0.0f);
     y = smooth ? 0.0f : -0.5f;
     glBegin(GL_LINES);
     for (i = minMark; i <= maxMark; i++) {
@@ -1610,17 +1609,16 @@ void HUDRenderer::renderBox(SceneRenderer&)
       basey -= floorf(basey);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
-	sprintf(buf, "%d", i * 5);
-	fm.drawString(x, y, 0, headingFontFace->getFMFace(), labelsFontSize, buf);
-	y += altitudeMarkSpacing;
+        sprintf(buf, "%d", i * 5);
+        fm.drawString(x, y, 0, headingFontFace->getFMFace(), labelsFontSize, buf);
+        y += altitudeMarkSpacing;
       }
     }
   }
 }
 
 
-void HUDRenderer::setCracks(bool _showCracks)
-{
+void HUDRenderer::setCracks(bool _showCracks) {
   if ((showCracks != _showCracks) && _showCracks) {
     CrackedGlass::InitCracks(maxMotionSize);
   }
@@ -1628,8 +1626,7 @@ void HUDRenderer::setCracks(bool _showCracks)
 }
 
 
-void HUDRenderer::renderUpdate(SceneRenderer& renderer)
-{
+void HUDRenderer::renderUpdate(SceneRenderer& renderer) {
   // draw cracks
   if (showCracks && GfxBlockMgr::cracks.notBlocked()) {
     CrackedGlass::Render(renderer);
@@ -1657,15 +1654,14 @@ void HUDRenderer::renderUpdate(SceneRenderer& renderer)
 }
 
 
-void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
-{
+void HUDRenderer::drawMarkersInView(int centerx, int centery, const LocalPlayer* myTank) {
 
   if (myTank) {
     glPushMatrix();
 
-    hudColor3Afv( hudColor, 0.5f );
+    hudColor3Afv(hudColor, 0.5f);
 
-    glTranslatef((float)centerx,(float)centery,0);
+    glTranslatef((float)centerx, (float)centery, 0);
     glLineWidth(2.0f);
 
     // draw any waypoint markers
@@ -1680,7 +1676,7 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
     // draw any lockon markers
     for (int i = 0; i < (int)lockOnMarkers.size(); i++) {
       drawLockonMarker(lockOnMarkers[i].color, 0.45f,
-                       lockOnMarkers[i]. pos,myTank->getPosition(),
+                       lockOnMarkers[i]. pos, myTank->getPosition(),
                        lockOnMarkers[i].name, lockOnMarkers[i].friendly);
     }
 
@@ -1690,13 +1686,12 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
 
     glPopMatrix();
 
-    hudColor3Afv( hudColor, 0.5f );
+    hudColor3Afv(hudColor, 0.5f);
   }
 }
 
 
-void HUDRenderer::renderPlaying(SceneRenderer& renderer)
-{
+void HUDRenderer::renderPlaying(SceneRenderer& renderer) {
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();
@@ -1707,7 +1702,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const int centery = viewHeight >> 1;
   float y;
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // use one-to-one pixel projection
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
@@ -1720,10 +1715,10 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   glPushMatrix();
   // cover the lower portion of the screen when burrowed
-  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+  const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(BZDBNAMES.BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+    glRectf(0, 0, (float)width, (myTank->getPosition()[2] / (BZDB.eval(BZDBNAMES.BURROWDEPTH) - 0.1f)) * ((float)viewHeight / 2.0f));
   }
 
   // draw shot reload status
@@ -1741,7 +1736,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
     bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
     glDisable(GL_TEXTURE_2D);
 
-    drawMarkersInView(centerx,centery,myTank);
+    drawMarkersInView(centerx, centery, myTank);
 
     if (enableTex) {
       glEnable(GL_TEXTURE_2D);
@@ -1751,22 +1746,22 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw flag help
   if (flagHelpClock.isOn() && GfxBlockMgr::flagHelp.notBlocked()) {
     hudColor3fv(messageColor);
-    flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
+    flagHelpY = (float)((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY;
     for (std::string::size_type i = 0; i < flagHelpText.size(); i++) {
       y -= fm.getStringHeight(minorFontFace->getFMFace(), minorFontSize);
-      fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str())/2.0),
-		    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str());
+      fm.drawString((float)(centerx - fm.getStringWidth(minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str()) / 2.0),
+                    y, 0, minorFontFace->getFMFace(), minorFontSize, flagHelpText[i].c_str());
     }
   }
 
   if (myTank && globalClock.isOn()) {
     float yy = 0.5f * (float)height
-      + fm.getStringHeight(bigFontFace->getFMFace(), bigFontSize);
+               + fm.getStringHeight(bigFontFace->getFMFace(), bigFontSize);
     if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - autoPilotWidth), yy, 0, bigFontFace->getFMFace(),
-		    bigFontSize, autoPilotLabel);
+                    bigFontSize, autoPilotLabel);
     }
   }
 
@@ -1780,8 +1775,7 @@ void HUDRenderer::renderPlaying(SceneRenderer& renderer)
 }
 
 
-void HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
-{
+void HUDRenderer::renderNotPlaying(SceneRenderer& renderer) {
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();
@@ -1789,7 +1783,7 @@ void HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
   const int ox = window.getOriginX();
   const int oy = window.getOriginY();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // use one-to-one pixel projection
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
@@ -1810,32 +1804,32 @@ void HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace->getFMFace(), bigFontSize, gameOverLabel);
+                    bigFontFace->getFMFace(), bigFontSize, gameOverLabel);
     }
     else if (!myTank->isAlive() && !myTank->isExploding()) {
       if (canSpawn) {
-	hudColor3fv(messageColor);
-	fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
-		      bigFontFace->getFMFace(), bigFontSize, restartLabel);
+        hudColor3fv(messageColor);
+        fm.drawString(0.5f * ((float)width - restartLabelWidth), y, 0,
+                      bigFontFace->getFMFace(), bigFontSize, restartLabel);
       }
       else {
-	if (customLimboMessage.size()) {
-	  hudColor3fv(messageColor);
-	  fm.drawString(0.5f * ((float)width -
-			fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, customLimboMessage)), y, 0,
-			bigFontFace->getFMFace(), bigFontSize, customLimboMessage);
-	}
+        if (customLimboMessage.size()) {
+          hudColor3fv(messageColor);
+          fm.drawString(0.5f * ((float)width -
+                                fm.getStringWidth(bigFontFace->getFMFace(), bigFontSize, customLimboMessage)), y, 0,
+                        bigFontFace->getFMFace(), bigFontSize, customLimboMessage);
+        }
       }
     }
     else if (myTank->isPaused()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - resumeLabelWidth), y, 0,
-		    bigFontFace->getFMFace(), bigFontSize, resumeLabel);
+                    bigFontFace->getFMFace(), bigFontSize, resumeLabel);
     }
     else if (myTank->isAutoPilot()) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - autoPilotWidth), y, 0,
-		    bigFontFace->getFMFace(), bigFontSize, autoPilotLabel);
+                    bigFontFace->getFMFace(), bigFontSize, autoPilotLabel);
     }
   }
 
@@ -1844,8 +1838,7 @@ void HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 }
 
 
-void HUDRenderer::renderRoaming(SceneRenderer& renderer)
-{
+void HUDRenderer::renderRoaming(SceneRenderer& renderer) {
   // get view metrics
   const int width = window.getWidth();
   const int height = window.getHeight();
@@ -1853,7 +1846,7 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
   const int ox = window.getOriginX();
   const int oy = window.getOriginY();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // use one-to-one pixel projection
   glScissor(ox, oy + height - viewHeight, width, viewHeight);
@@ -1865,16 +1858,16 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
   glLoadIdentity();
 
   // black out the underground if we're driving with a tank with BU
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && myTank->getPosition()[2] < 0.0f) {
     glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-    glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(BZDBNAMES.BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+    glRectf(0, 0, (float)width, (myTank->getPosition()[2] / (BZDB.eval(BZDBNAMES.BURROWDEPTH) - 0.1f)) * ((float)viewHeight / 2.0f));
   }
 
   // draw shot reload status
   if ((ROAM.getMode() == Roaming::roamViewFP) &&
-       BZDB.isTrue("displayReloadTimer") &&
-       GfxBlockMgr::shotStatus.notBlocked()) {
+      BZDB.isTrue("displayReloadTimer") &&
+      GfxBlockMgr::shotStatus.notBlocked()) {
     renderShots(ROAM.getTargetTank());
   }
 
@@ -1893,35 +1886,35 @@ void HUDRenderer::renderRoaming(SceneRenderer& renderer)
     if (gameOver) {
       hudColor3fv(messageColor);
       fm.drawString(0.5f * ((float)width - gameOverLabelWidth), y, 0,
-		    bigFontFace->getFMFace(), bigFontSize, gameOverLabel);
+                    bigFontFace->getFMFace(), bigFontSize, gameOverLabel);
     }
   }
 
   // draw targeting box
-  if (altitude != -1.0f)
+  if (altitude != -1.0f) {
     renderBox(renderer);
+  }
 
   // restore graphics state
   glPopMatrix();
 }
 
 
-static int compare_float (const void* a, const void* b)
-{
+static int compare_float(const void* a, const void* b) {
   const float fa = *((const float*)a);
   const float fb = *((const float*)b);
   if (fa > fb) {
     return 1;
-  } else {
+  }
+  else {
     return -1;
   }
 }
 
 
-void HUDRenderer::renderShots(const Player* target)
-{
+void HUDRenderer::renderShots(const Player* target) {
   // get the target tank
-  if (!target) return;
+  if (!target) { return; }
 
   // get view metrics
   const int width = window.getWidth();
@@ -1949,7 +1942,7 @@ void HUDRenderer::renderShots(const Player* target)
       const BzTime startTime = shot->getStartTime();
       const float reloadTime = shot->getReloadTime();
       factors[i] = float(1 - ((reloadTime - (currentTime - startTime)) / reloadTime));
-      if (factors[i] > 1.0f) factors[i] = 1.0f;
+      if (factors[i] > 1.0f) { factors[i] = 1.0f; }
     }
   }
 
@@ -1966,8 +1959,9 @@ void HUDRenderer::renderShots(const Player* target)
       glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
       hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
       glRecti(indicatorLeft + myWidth + 1, myTop, indicatorLeft + indicatorWidth,
-	      myTop + indicatorHeight);
-    } else {
+              myTop + indicatorHeight);
+    }
+    else {
       hudColor4f(1.0f, 1.0f, 1.0f, 0.5f); // white
       glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
     }
@@ -1982,6 +1976,6 @@ void HUDRenderer::renderShots(const Player* target)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

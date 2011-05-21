@@ -32,11 +32,11 @@ class CustomArc : public WorldFileObstacle {
 
   private:
     void makePie(bool isCircle, float angle, float rot, float height,
-		 float radius, float squish, float texsz[4],
-		 WorldInfo* world) const;
+                 float radius, float squish, float texsz[4],
+                 WorldInfo* world) const;
     void makeRing(bool isCircle, float angle, float rot, float height,
-		  float inrad, float outrad, float squish, float texsz[4],
-		  WorldInfo* world) const;
+                  float inrad, float outrad, float squish, float texsz[4],
+                  WorldInfo* world) const;
     enum {
       Top,
       Bottom,
@@ -65,6 +65,6 @@ class CustomArc : public WorldFileObstacle {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -25,14 +25,12 @@
 int RenderNode::triangleCount = 0;
 
 
-int RenderNode::getTriangleCount()
-{
+int RenderNode::getTriangleCount() {
   return triangleCount;
 }
 
 
-void RenderNode::resetTriangleCount()
-{
+void RenderNode::resetTriangleCount() {
   triangleCount = 0;
   return;
 }
@@ -44,37 +42,32 @@ void RenderNode::resetTriangleCount()
 
 static const int initialSize = 31;
 
-RenderNodeList::RenderNodeList() : count(0), size(0), list(NULL)
-{
+RenderNodeList::RenderNodeList() : count(0), size(0), list(NULL) {
   // do nothing
 }
 
 
-RenderNodeList::~RenderNodeList()
-{
+RenderNodeList::~RenderNodeList() {
   delete[] list;
 }
 
 
-void RenderNodeList::clear()
-{
+void RenderNodeList::clear() {
   count = 0;
 }
 
 
-void RenderNodeList::render() const
-{
+void RenderNodeList::render() const {
   for (int i = 0; i < count; i++) {
     list[i]->renderShadow();
   }
 }
 
 
-void RenderNodeList::grow()
-{
+void RenderNodeList::grow() {
   const int newSize = (size == 0) ? initialSize : (size << 1) + 1;
   RenderNode** newList = new RenderNode*[newSize];
-  if (list) memcpy(newList, list, count * sizeof(RenderNode*));
+  if (list) { memcpy(newList, list, count * sizeof(RenderNode*)); }
   delete[] list;
   list = newList;
   size = newSize;
@@ -86,26 +79,22 @@ void RenderNodeList::grow()
 //
 
 RenderNodeGStateList::RenderNodeGStateList() :
-				count(0), size(0), list(NULL)
-{
+  count(0), size(0), list(NULL) {
   // do nothing
 }
 
 
-RenderNodeGStateList::~RenderNodeGStateList()
-{
+RenderNodeGStateList::~RenderNodeGStateList() {
   delete[] list;
 }
 
 
-void RenderNodeGStateList::clear()
-{
+void RenderNodeGStateList::clear() {
   count = 0;
 }
 
 
-void RenderNodeGStateList::render() const
-{
+void RenderNodeGStateList::render() const {
   for (int i = 0; i < count; i++) {
     list[i].gstate->setState();
     list[i].node->render();
@@ -113,19 +102,17 @@ void RenderNodeGStateList::render() const
 }
 
 
-void RenderNodeGStateList::grow()
-{
+void RenderNodeGStateList::grow() {
   const int newSize = (size == 0) ? initialSize : (size << 1) + 1;
   Item* newList = new Item[newSize];
-  if (list) memcpy(newList, list, count * sizeof(Item));
+  if (list) { memcpy(newList, list, count * sizeof(Item)); }
   delete[] list;
   list = newList;
   size = newSize;
 }
 
 
-static int nodeCompare(const void *a, const void* b)
-{
+static int nodeCompare(const void* a, const void* b) {
   const RenderNodeGStateList::Item* itemA =
     (const RenderNodeGStateList::Item*) a;
   const RenderNodeGStateList::Item* itemB =
@@ -146,14 +133,14 @@ static int nodeCompare(const void *a, const void* b)
     const OpenGLGState* bState = itemB->gstate;
     if (aState->getOrder() < bState->getOrder()) {
       return -1; // a order is smaller, render it first
-    } else {
+    }
+    else {
       return +1; // b order is smaller, render it first
     }
   }
 }
 
-void RenderNodeGStateList::sort(const fvec3& eye)
-{
+void RenderNodeGStateList::sort(const fvec3& eye) {
   // calculate distances from the eye (squared)
   for (int i = 0; i < count; i++) {
     const fvec3& pos = list[i].node->getPosition();
@@ -171,6 +158,6 @@ void RenderNodeGStateList::sort(const fvec3& eye)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -40,49 +40,47 @@ const int MaxShots = 20;
 
 // rabbit selection algorithms
 enum RabbitSelection {
-  ScoreRabbitSelection,		// default method based on score
-  KillerRabbitSelection,	// anoint whoever manages to kill the rabbit
-  RandomRabbitSelection		// pick the new rabbit out of a hat
+  ScoreRabbitSelection,   // default method based on score
+  KillerRabbitSelection,  // anoint whoever manages to kill the rabbit
+  RandomRabbitSelection   // pick the new rabbit out of a hat
 };
 
 typedef std::map<FlagType*, int> FlagNumberMap;
-typedef std::map<FlagType*,bool> FlagOptionMap;
+typedef std::map<FlagType*, bool> FlagOptionMap;
 
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
  */
-struct CmdLineOptions
-{
+struct CmdLineOptions {
   CmdLineOptions(const std::string& _execName)
-  : execName(_execName),
-    wksPort(ServerPort), gameType(TeamFFA), gameOptions(0),
-    rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
-    servermsg(""), advertisemsg(""), worldFile(""),
-    pingInterface(""), password(""),
-    listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
-    publicizedKey(""),
-    advertiseGroups("EVERYONE"),
-    suppressMasterBanList(false), masterBanListOverridden(false),
-    maxShots(1), maxTeamScore(0), maxPlayerScore(0),
-    numExtraFlags(0), teamKillerKickRatio(0),
-    numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
-    teamFlagTimeout(30), maxlagwarn(10000), maxjitterwarn(10000), maxpacketlosswarn(10000),
-    processorAffinity(0),
-    lagwarnthresh(-1.0f), jitterwarnthresh(-1.0f), packetlosswarnthresh(-1.0f),
-    idlekickthresh(-1.0f), timeLimit(0.0f), timeElapsed(0.0f), addedTime(0.0f),
-    useGivenPort(false),
-    useFallbackPort(false), randomBoxes(false),
-    randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
-    oneGameOnly(false), timeManualStart(false), randomHeights(false),
-    useTeleporters(false), teamKillerDies(true), printScore(false),
-    publicizeServer(false), replayServer(false), startRecording(false),
-    timestampLog(false), timestampMicros(false), timestampUTC(false), tkAnnounce(false),
-    filterFilename(""), filterAnnounce(false), filterCallsigns(false), filterChat(false), filterSimple(false),
-    banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
-    votePercentage(50.1f), voteRepeatTime(300),
-    autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(1),
-    luaWorldDir(""), luaRulesDir(""), luaServerDir(""), gndTexture("")
-  {
+    : execName(_execName),
+      wksPort(ServerPort), gameType(TeamFFA), gameOptions(0),
+      rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
+      servermsg(""), advertisemsg(""), worldFile(""),
+      pingInterface(""), password(""),
+      listServerOverridden(false), publicizedTitle(""), publicizedAddress(""),
+      publicizedKey(""),
+      advertiseGroups("EVERYONE"),
+      suppressMasterBanList(false), masterBanListOverridden(false),
+      maxShots(1), maxTeamScore(0), maxPlayerScore(0),
+      numExtraFlags(0), teamKillerKickRatio(0),
+      numAllowedFlags(0), shakeWins(0), shakeTimeout(0),
+      teamFlagTimeout(30), maxlagwarn(10000), maxjitterwarn(10000), maxpacketlosswarn(10000),
+      processorAffinity(0),
+      lagwarnthresh(-1.0f), jitterwarnthresh(-1.0f), packetlosswarnthresh(-1.0f),
+      idlekickthresh(-1.0f), timeLimit(0.0f), timeElapsed(0.0f), addedTime(0.0f),
+      useGivenPort(false),
+      useFallbackPort(false), randomBoxes(false),
+      randomCTF(false), flagsOnBuildings(false), respawnOnBuildings(false),
+      oneGameOnly(false), timeManualStart(false), randomHeights(false),
+      useTeleporters(false), teamKillerDies(true), printScore(false),
+      publicizeServer(false), replayServer(false), startRecording(false),
+      timestampLog(false), timestampMicros(false), timestampUTC(false), tkAnnounce(false),
+      filterFilename(""), filterAnnounce(false), filterCallsigns(false), filterChat(false), filterSimple(false),
+      banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
+      votePercentage(50.1f), voteRepeatTime(300),
+      autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), botsPerIP(1),
+      luaWorldDir(""), luaRulesDir(""), luaServerDir(""), gndTexture("") {
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
          it != FlagType::getFlagMap().end(); ++it) {
@@ -101,7 +99,7 @@ struct CmdLineOptions
   }
 
   // member functions
-  void parseArgOptions(int argc, char **argv);
+  void parseArgOptions(int argc, char** argv);
   void parseFileOptions(const std::string& filePath);
   void parseWorldOptions(const std::vector<std::string>& lines);
 
@@ -111,16 +109,16 @@ struct CmdLineOptions
   bool checkCommaList(const std::string& list, int maxLen);
   bool parsePlayerCount(const std::string& list);
   void tokenizeLines(const std::vector<std::string>& lines,
-                           std::vector<std::string>& tokens);
+                     std::vector<std::string>& tokens);
 
   const std::string execName; // AKA: argv[0]
 
-  int			wksPort;
-  GameType		gameType;
-  int			gameOptions;
-  int			rabbitSelection;
-  int			msgTimer;
-  int			spamWarnMax;
+  int     wksPort;
+  GameType    gameType;
+  int     gameOptions;
+  int     rabbitSelection;
+  int     msgTimer;
+  int     spamWarnMax;
 
   std::string   servermsg;
   std::string   advertisemsg;
@@ -131,76 +129,76 @@ struct CmdLineOptions
   bool listServerOverridden;
   std::vector<std::string>   listServerURL;
 
-  std::string	publicizedTitle;
-  std::string	publicizedAddress;
-  std::string	publicizedKey;
-  std::string	advertiseGroups;
+  std::string publicizedTitle;
+  std::string publicizedAddress;
+  std::string publicizedKey;
+  std::string advertiseGroups;
 
-  bool			suppressMasterBanList;
-  bool			masterBanListOverridden;
-  std::vector<std::string>		masterBanListURL;
+  bool      suppressMasterBanList;
+  bool      masterBanListOverridden;
+  std::vector<std::string>    masterBanListURL;
 
-  uint16_t		maxShots;
-  int			maxTeamScore;
-  int			maxPlayerScore;
-  int			numExtraFlags;
-  int			teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
-  int			numAllowedFlags;
-  uint16_t		shakeWins;
-  uint16_t		shakeTimeout;
-  int			teamFlagTimeout;
-  int			maxlagwarn;
-  int			maxjitterwarn;
-  int			maxpacketlosswarn;
-  int			processorAffinity;
+  uint16_t    maxShots;
+  int     maxTeamScore;
+  int     maxPlayerScore;
+  int     numExtraFlags;
+  int     teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
+  int     numAllowedFlags;
+  uint16_t    shakeWins;
+  uint16_t    shakeTimeout;
+  int     teamFlagTimeout;
+  int     maxlagwarn;
+  int     maxjitterwarn;
+  int     maxpacketlosswarn;
+  int     processorAffinity;
 
 
-  float			lagwarnthresh;
-  float			jitterwarnthresh;
-  float			packetlosswarnthresh;
-  float			idlekickthresh;
-  float			timeLimit;
-  float			timeElapsed;
-  float			addedTime;
+  float     lagwarnthresh;
+  float     jitterwarnthresh;
+  float     packetlosswarnthresh;
+  float     idlekickthresh;
+  float     timeLimit;
+  float     timeElapsed;
+  float     addedTime;
 
-  bool			useGivenPort;
-  bool			useFallbackPort;
-  bool			randomBoxes;
-  bool			randomCTF;
-  bool			flagsOnBuildings;
-  bool			respawnOnBuildings;
-  bool			oneGameOnly;
-  bool			timeManualStart;
-  bool			randomHeights;
-  bool			useTeleporters;
-  bool			teamKillerDies;
-  bool			printScore;
-  bool			publicizeServer;
-  bool			replayServer;
-  bool			startRecording;
-  bool			timestampLog;
-  bool			timestampMicros;
-  bool			timestampUTC;
-  bool			countdownPaused;
-  bool			tkAnnounce;
+  bool      useGivenPort;
+  bool      useFallbackPort;
+  bool      randomBoxes;
+  bool      randomCTF;
+  bool      flagsOnBuildings;
+  bool      respawnOnBuildings;
+  bool      oneGameOnly;
+  bool      timeManualStart;
+  bool      randomHeights;
+  bool      useTeleporters;
+  bool      teamKillerDies;
+  bool      printScore;
+  bool      publicizeServer;
+  bool      replayServer;
+  bool      startRecording;
+  bool      timestampLog;
+  bool      timestampMicros;
+  bool      timestampUTC;
+  bool      countdownPaused;
+  bool      tkAnnounce;
 
-  uint16_t		maxTeam[NumTeams];
-  FlagNumberMap		flagCount;
-  FlagNumberMap		flagLimit; // # shots allowed / flag
-  FlagOptionMap		flagDisallowed;
+  uint16_t    maxTeam[NumTeams];
+  FlagNumberMap   flagCount;
+  FlagNumberMap   flagLimit; // # shots allowed / flag
+  FlagOptionMap   flagDisallowed;
 
-  AccessControlList	acl;
-  TextChunkManager	textChunker;
+  AccessControlList acl;
+  TextChunkManager  textChunker;
 
   std::list<OSDir> helpDirs;
 
   /* inappropriate language filter */
-  std::string		filterFilename;
-  bool			filterAnnounce;
-  bool			filterCallsigns;
-  bool			filterChat;
-  bool			filterSimple;
-  WordFilter		filter;
+  std::string   filterFilename;
+  bool      filterAnnounce;
+  bool      filterCallsigns;
+  bool      filterChat;
+  bool      filterSimple;
+  WordFilter    filter;
 
   /* vote poll options */
   unsigned short int banTime;
@@ -210,38 +208,37 @@ struct CmdLineOptions
   float votePercentage;
   unsigned short int voteRepeatTime;
 
-  std::string		reportFile;
-  std::string		reportPipe;
+  std::string   reportFile;
+  std::string   reportPipe;
 
-  std::string		bzdbVars;
+  std::string   bzdbVars;
 
   /* team balancing options */
-  bool			autoTeam;
+  bool      autoTeam;
 
   /* city options */
-  int			citySize;
-  int			numTeamFlags[NumTeams];
+  int     citySize;
+  int     numTeamFlags[NumTeams];
 
-  std::string		cacheURL;
-  std::string		cacheOut;
+  std::string   cacheURL;
+  std::string   cacheOut;
 
   /** how many client-side bots are allowed per IP address */
-  int			botsPerIP;
+  int     botsPerIP;
 
-  std::string		luaWorldDir;
-  std::string		luaRulesDir;
-  std::string		luaServerDir;
+  std::string   luaWorldDir;
+  std::string   luaRulesDir;
+  std::string   luaServerDir;
 
-  std::string		gndTexture;
+  std::string   gndTexture;
 
   // plugins
-  typedef struct
-  {
+  typedef struct {
     std::string plugin;
     std::string command;
   } pluginDef;
 
-  std::vector<pluginDef>	pluginList;
+  std::vector<pluginDef>  pluginList;
 };
 
 
@@ -254,6 +251,6 @@ struct CmdLineOptions;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

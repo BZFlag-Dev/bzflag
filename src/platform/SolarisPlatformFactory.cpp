@@ -16,25 +16,21 @@
 #include "XWindow.h"
 #include "SolarisMedia.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
-{
-  if (!instance) instance = new SolarisPlatformFactory;
+PlatformFactory*  PlatformFactory::getInstance() {
+  if (!instance) { instance = new SolarisPlatformFactory; }
   return instance;
 }
 
-SolarisPlatformFactory::SolarisPlatformFactory()
-{
+SolarisPlatformFactory::SolarisPlatformFactory() {
   // do nothing
 }
 
-SolarisPlatformFactory::~SolarisPlatformFactory()
-{
+SolarisPlatformFactory::~SolarisPlatformFactory() {
   // do nothing
 }
 
-BzfDisplay*		SolarisPlatformFactory::createDisplay(
-				const char* name, const char*)
-{
+BzfDisplay*   SolarisPlatformFactory::createDisplay(
+  const char* name, const char*) {
   XDisplay* display = new XDisplay(name);
   if (!display || !display->isValid()) {
     delete display;
@@ -43,20 +39,17 @@ BzfDisplay*		SolarisPlatformFactory::createDisplay(
   return display;
 }
 
-BzfVisual*		SolarisPlatformFactory::createVisual(
-				const BzfDisplay* display)
-{
+BzfVisual*    SolarisPlatformFactory::createVisual(
+  const BzfDisplay* display) {
   return new XVisual((const XDisplay*)display);
 }
 
-BzfWindow*		SolarisPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
+BzfWindow*    SolarisPlatformFactory::createWindow(
+  const BzfDisplay* display, BzfVisual* visual) {
   return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-BzfMedia*		SolarisPlatformFactory::createMedia()
-{
+BzfMedia*   SolarisPlatformFactory::createMedia() {
   return new SolarisMedia;
 }
 
@@ -64,6 +57,6 @@ BzfMedia*		SolarisPlatformFactory::createMedia()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

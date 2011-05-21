@@ -56,11 +56,11 @@ static DWORD             timeLastCalibration;
 //============================================================================//
 
 #if defined(HAVE_PTHREADS)
-  static pthread_mutex_t    timer_mutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t    timer_mutex = PTHREAD_MUTEX_INITIALIZER;
 # define LOCK_TIMER_MUTEX   pthread_mutex_lock(&timer_mutex);
 # define UNLOCK_TIMER_MUTEX pthread_mutex_unlock(&timer_mutex);
 #elif defined(_WIN32)
-  static CRITICAL_SECTION   timer_critical;
+static CRITICAL_SECTION   timer_critical;
 # define LOCK_TIMER_MUTEX   EnterCriticalSection(&timer_critical);
 # define UNLOCK_TIMER_MUTEX LeaveCriticalSection(&timer_critical);
 #else
@@ -82,18 +82,16 @@ static BzTime startTime = BzTime::getCurrent();
 //============================================================================//
 
 #if !defined(_WIN32)
-static inline int64_t getEpochMicroseconds()
-{
+static inline int64_t getEpochMicroseconds() {
   struct timeval nowTime;
   gettimeofday(&nowTime, NULL);
   return (int64_t(nowTime.tv_sec) * int64_t(1000000))
-        + int64_t(nowTime.tv_usec);
+         + int64_t(nowTime.tv_usec);
 }
 #endif
 
 
-const BzTime& BzTime::getCurrent(void)
-{
+const BzTime& BzTime::getCurrent(void) {
   // a mutex lock is used because this routine
   // is called from the client's sound thread
 
@@ -146,16 +144,16 @@ const BzTime& BzTime::getCurrent(void)
 
     if (clkSpent > qpcFrequency) {
       // Recalibrate Frequency
-      DWORD tgt	   = timeGetTime();
+      DWORD tgt    = timeGetTime();
       DWORD deltaTgt      = tgt - timeLastCalibration;
       timeLastCalibration = tgt;
       qpcLastCalibration  = now.QuadPart;
       if (deltaTgt > 0) {
-	LONGLONG oldqpcfreq = qpcFrequency;
-	qpcFrequency	= (clkSpent * 1000) / deltaTgt;
-	if (qpcFrequency != oldqpcfreq)
-	  logDebugMessage(4, "Recalibrated QPC frequency.  Old: %f ; New: %f\n",
-			  (double)oldqpcfreq, (double)qpcFrequency);
+        LONGLONG oldqpcfreq = qpcFrequency;
+        qpcFrequency  = (clkSpent * 1000) / deltaTgt;
+        if (qpcFrequency != oldqpcfreq)
+          logDebugMessage(4, "Recalibrated QPC frequency.  Old: %f ; New: %f\n",
+                          (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
 
@@ -167,7 +165,8 @@ const BzTime& BzTime::getCurrent(void)
     if (now < lastTime) {
       // eh, how'd we go back in time?
       diff = 0;
-    } else {
+    }
+    else {
       diff = now - lastTime;
     }
     currentTime += 1.0e-3 * (double)diff;
@@ -178,7 +177,7 @@ const BzTime& BzTime::getCurrent(void)
 
     // should only get into here once on app start
     if (!sane) {
-      logDebugMessage(1,"Sanity check failure in BzTime::getCurrent()\n");
+      logDebugMessage(1, "Sanity check failure in BzTime::getCurrent()\n");
     }
     sane = false;
 
@@ -188,14 +187,14 @@ const BzTime& BzTime::getCurrent(void)
     LARGE_INTEGER freq;
     if (QueryPerformanceFrequency(&freq)) {
       QueryPerformanceCounter(&qpcLastTime);
-      qpcFrequency	= freq.QuadPart;
-      logDebugMessage(4,"Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
+      qpcFrequency  = freq.QuadPart;
+      logDebugMessage(4, "Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
       currentTime += 1.0e-3 * (double)timeLastCalibration; // sync with system clock
     }
     else {
-      logDebugMessage(1,"QueryPerformanceFrequency failed with error %d\n", GetLastError());
+      logDebugMessage(1, "QueryPerformanceFrequency failed with error %d\n", GetLastError());
 
       lastTime = (unsigned long int)timeGetTime();
       currentTime += 1.0e-3 * (double)lastTime; // sync with system clock
@@ -210,56 +209,49 @@ const BzTime& BzTime::getCurrent(void)
 }
 
 
-const BzTime& BzTime::getStartTime(void) // const
-{
+const BzTime& BzTime::getStartTime(void) { // const
   return startTime;
 }
 
 
-const BzTime& BzTime::getTick(void) // const
-{
+const BzTime& BzTime::getTick(void) { // const
   return tickTime;
 }
 
 
-void BzTime::setTick(void)
-{
+void BzTime::setTick(void) {
   tickTime = getCurrent();
 }
 
 
-const BzTime& BzTime::getSunExplodeTime(void)
-{
+const BzTime& BzTime::getSunExplodeTime(void) {
   sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
   return sunExplodeTime;
 }
 
 
-const BzTime& BzTime::getSunGenesisTime(void)
-{
+const BzTime& BzTime::getSunGenesisTime(void) {
   sunGenesisTime.seconds = -10000.0 * 365 * 24 * 60 * 60;
   return sunGenesisTime;
 }
 
 
-const BzTime& BzTime::getNullTime(void)
-{
+const BzTime& BzTime::getNullTime(void) {
   nullTime.seconds = 0;
   return nullTime;
 }
 
 
-const char *BzTime::timestamp(void) // const
-{
+const char* BzTime::timestamp(void) { // const
   static char buffer[256]; // static, so that it doesn't vanish
   time_t tnow = time(0);
-  struct tm *now = localtime(&tnow);
+  struct tm* now = localtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
-  strncpy (buffer, TextUtils::format("%04d-%02d-%02d %02d:%02d:%02d",
-				     now->tm_year, now->tm_mon, now->tm_mday,
-				     now->tm_hour, now->tm_min, now->tm_sec).c_str(), 256);
+  strncpy(buffer, TextUtils::format("%04d-%02d-%02d %02d:%02d:%02d",
+                                    now->tm_year, now->tm_mon, now->tm_mday,
+                                    now->tm_hour, now->tm_min, now->tm_sec).c_str(), 256);
   buffer[255] = '\0'; // safety
 
   return buffer;
@@ -270,18 +262,17 @@ const char *BzTime::timestamp(void) // const
 //static
 std::string BzTime::shortTimeStamp(void) {
   time_t tnow = time(0);
-  struct tm *now = localtime(&tnow);
+  struct tm* now = localtime(&tnow);
 
-  std::string result( TextUtils::format("%02d:%02d", now->tm_hour, now->tm_min) );
+  std::string result(TextUtils::format("%02d:%02d", now->tm_hour, now->tm_min));
   return result;
 }
 
 
-void BzTime::localTime(int *year, int *month, int* day,
-                           int* hour, int* min, int* sec, bool* dst) // const
-{
+void BzTime::localTime(int* year, int* month, int* day,
+                       int* hour, int* min, int* sec, bool* dst) { // const
   time_t tnow = time(0);
-  struct tm *now = localtime(&tnow);
+  struct tm* now = localtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
@@ -295,11 +286,10 @@ void BzTime::localTime(int *year, int *month, int* day,
 }
 
 
-void BzTime::localTimeDOW(int *year, int *month, int* day, int* wday,
-                              int* hour, int* min, int* sec, bool* dst) // const
-{
+void BzTime::localTimeDOW(int* year, int* month, int* day, int* wday,
+                          int* hour, int* min, int* sec, bool* dst) { // const
   time_t tnow = time(0);
-  struct tm *now = localtime(&tnow);
+  struct tm* now = localtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
@@ -314,11 +304,10 @@ void BzTime::localTimeDOW(int *year, int *month, int* day, int* wday,
 }
 
 
-void BzTime::UTCTime(int *year, int *month, int* day, int* wday,
-                         int* hour, int* min, int* sec, bool* dst) // const
-{
+void BzTime::UTCTime(int* year, int* month, int* day, int* wday,
+                     int* hour, int* min, int* sec, bool* dst) { // const
   time_t tnow = time(0);
-  struct tm *now = gmtime(&tnow);
+  struct tm* now = gmtime(&tnow);
   now->tm_year += 1900;
   ++now->tm_mon;
 
@@ -335,8 +324,7 @@ void BzTime::UTCTime(int *year, int *month, int* day, int* wday,
 
 // function for converting a float time (e.g. difference of two BzTimes)
 // into an array of ints
-void BzTime::convertTime(double raw, long int convertedTimes[]) // const
-{
+void BzTime::convertTime(double raw, long int convertedTimes[]) { // const
   long int day, hour, min, sec, remainder;
   static const int secondsInDay = 86400;
 
@@ -360,8 +348,7 @@ void BzTime::convertTime(double raw, long int convertedTimes[]) // const
 
 // function for printing an array of ints representing a time
 // as a human-readable string
-const std::string BzTime::printTime(long int timeValue[])
-{
+const std::string BzTime::printTime(long int timeValue[]) {
   std::string valueNames;
   char temp[20];
 
@@ -396,16 +383,14 @@ const std::string BzTime::printTime(long int timeValue[])
 
 
 // function for printing a float time difference as a human-readable string
-const std::string BzTime::printTime(double diff)
-{
+const std::string BzTime::printTime(double diff) {
   long int temp[4];
   convertTime(diff, temp);
   return printTime(temp);
 }
 
 
-void BzTime::sleep(double seconds)
-{
+void BzTime::sleep(double seconds) {
   if (seconds <= 0.0) {
     return;
   }
@@ -445,8 +430,7 @@ void BzTime::sleep(double seconds)
   return;
 }
 
-void BzTime::setProcessorAffinity(int processor)
-{
+void BzTime::setProcessorAffinity(int processor) {
 #ifdef HAVE_SCHED_SETAFFINITY
   /* linuxy fix for time travel */
   cpu_set_t mask;
@@ -474,6 +458,6 @@ void BzTime::setProcessorAffinity(int processor)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

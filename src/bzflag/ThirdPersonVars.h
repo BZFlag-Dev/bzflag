@@ -10,14 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_THIRDPERSONVARS_H
-#define	BZF_THIRDPERSONVARS_H
+#ifndef BZF_THIRDPERSONVARS_H
+#define BZF_THIRDPERSONVARS_H
 
 /* system interface headers */
 #include <string>
 
-struct ThirdPersonVars
-{
+struct ThirdPersonVars {
   ThirdPersonVars();
   ~ThirdPersonVars();
 
@@ -43,6 +42,6 @@ struct ThirdPersonVars
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

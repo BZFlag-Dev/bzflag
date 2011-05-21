@@ -26,10 +26,9 @@
 #include <io.h>
 #include <direct.h>
 
-bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
-			 bool bRecursive,std::vector<std::string> &list,
-			 bool justDirs = false)
-{
+bool WindowsAddFileStack(const char* szPathName, const char* fileMask,
+                         bool bRecursive, std::vector<std::string> &list,
+                         bool justDirs = false) {
   struct _finddata_t fileInfo;
 
   long hFile;
@@ -41,52 +40,61 @@ bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
 
   searchstr = szPathName;
   searchstr += "\\";
-  if (bRecursive)
+  if (bRecursive) {
     searchstr += "*.*";
-  else if (fileMask)
+  }
+  else if (fileMask) {
     searchstr += fileMask;
-  else
+  }
+  else {
     searchstr += "*.*";
+  }
 
   std::string extenstionSearch;
 
-  if (fileMask && strchr(fileMask,'.'))
-    extenstionSearch = strchr(fileMask,'.')+1;
+  if (fileMask && strchr(fileMask, '.')) {
+    extenstionSearch = strchr(fileMask, '.') + 1;
+  }
 
-  hFile = (long)_findfirst(searchstr.c_str(),&fileInfo);
+  hFile = (long)_findfirst(searchstr.c_str(), &fileInfo);
 
   if (hFile != -1) {
     while (!bDone) {
-      if ((strlen(fileInfo.name) >0) && (strcmp(fileInfo.name,".") != 0) &&
-	  (strcmp(fileInfo.name,"..") != 0)) {
-	FilePath = szPathName;
-	//if (!(fileInfo.attrib & _A_SUBDIR))
-	FilePath += "\\";
-	FilePath += fileInfo.name;
+      if ((strlen(fileInfo.name) > 0) && (strcmp(fileInfo.name, ".") != 0) &&
+          (strcmp(fileInfo.name, "..") != 0)) {
+        FilePath = szPathName;
+        //if (!(fileInfo.attrib & _A_SUBDIR))
+        FilePath += "\\";
+        FilePath += fileInfo.name;
 
-	if (justDirs && (fileInfo.attrib & _A_SUBDIR)) {
-	  // we neever do just dirs recrusively
-	  list.push_back(FilePath);
-	} else if (!justDirs) {
-	  if ((fileInfo.attrib & _A_SUBDIR) && bRecursive) {
-	    WindowsAddFileStack(FilePath.c_str(),fileMask,bRecursive,list);
-	  } else if (!(fileInfo.attrib & _A_SUBDIR))  {
-	    if (bRecursive && fileMask) {
-	      // if we are recusive we need to check extension manualy,
-	      // so we get dirs and stuff
-	      if (strrchr(FilePath.c_str(),'.'))      {
-		if (compare_nocase(std::string(strrchr(FilePath.c_str(),'.')+1),
-				   extenstionSearch) == 0)
-		  list.push_back(FilePath);
-	      }
-	    } else {
-	      list.push_back(FilePath);
-	    }
-	  }
-	}
+        if (justDirs && (fileInfo.attrib & _A_SUBDIR)) {
+          // we neever do just dirs recrusively
+          list.push_back(FilePath);
+        }
+        else if (!justDirs) {
+          if ((fileInfo.attrib & _A_SUBDIR) && bRecursive) {
+            WindowsAddFileStack(FilePath.c_str(), fileMask, bRecursive, list);
+          }
+          else if (!(fileInfo.attrib & _A_SUBDIR))  {
+            if (bRecursive && fileMask) {
+              // if we are recusive we need to check extension manualy,
+              // so we get dirs and stuff
+              if (strrchr(FilePath.c_str(), '.'))      {
+                if (compare_nocase(std::string(strrchr(FilePath.c_str(), '.') + 1),
+                                   extenstionSearch) == 0) {
+                  list.push_back(FilePath);
+                }
+              }
+            }
+            else {
+              list.push_back(FilePath);
+            }
+          }
+        }
       }
-      if (_findnext(hFile,&fileInfo) == -1)
-	bDone = true;
+      if (_findnext(hFile, &fileInfo) == -1) {
+        bDone = true;
+      }
     }
   }
   return true;
@@ -99,21 +107,22 @@ bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
 #include <ctype.h>
 
 #define _DirDelim '/'
-static int match_multi(const char **mask, const char **string)
-{
-  const char *msk;
-  const char *str;
-  const char *msktop;
-  const char *strtop;
+static int match_multi(const char** mask, const char** string) {
+  const char* msk;
+  const char* str;
+  const char* msktop;
+  const char* strtop;
 
   msk = *mask;
   str = *string;
 
-  while ((*msk != '\0') && (*msk == '*'))
+  while ((*msk != '\0') && (*msk == '*')) {
     msk++;  /* get rid of multiple '*'s */
+  }
 
-  if (*msk == '\0') /* '*' was last, auto-match */
+  if (*msk == '\0') { /* '*' was last, auto-match */
     return +1;
+  }
 
   msktop = msk;
   strtop = str;
@@ -123,23 +132,26 @@ static int match_multi(const char **mask, const char **string)
       *mask = msk;
       *string = str;
       return 0; /* matched this segment */
-    } else if (*str == '\0') {
+    }
+    else if (*str == '\0') {
       return -1; /* can't match */
-    } else {
+    }
+    else {
       if ((*msk == '?') || (*msk == *str)) {
-	msk++;
-	str++;
-	if ((*msk == '\0') && (*str != '\0')) { /* advanced check */
-	  str++;
-	  strtop++;
-	  str = strtop;
-	  msk = msktop;
-	}
-      } else {
-	str++;
-	strtop++;
-	str = strtop;
-	msk = msktop;
+        msk++;
+        str++;
+        if ((*msk == '\0') && (*str != '\0')) { /* advanced check */
+          str++;
+          strtop++;
+          str = strtop;
+          msk = msktop;
+        }
+      }
+      else {
+        str++;
+        strtop++;
+        str = strtop;
+        msk = msktop;
       }
     }
   }
@@ -149,63 +161,71 @@ static int match_multi(const char **mask, const char **string)
   return +1; /* full match */
 }
 
-static int match_mask(const char *mask, const char *string)
-{
-  if (mask == NULL)
+static int match_mask(const char* mask, const char* string) {
+  if (mask == NULL) {
     return 0;
+  }
 
-  if (string == NULL)
+  if (string == NULL) {
     return 0;
+  }
 
-  if ((mask[0] == '*') && (mask[1] == '\0'))
-    return 1; /* instant match */
+  if ((mask[0] == '*') && (mask[1] == '\0')) {
+    return 1;  /* instant match */
+  }
 
   while (*mask != '\0') {
     if (*mask == '*') {
       mask++;
       switch (match_multi(&mask, &string)) {
-      case +1:
-	return 1;
-      case -1:
-	return 0;
+        case +1:
+          return 1;
+        case -1:
+          return 0;
       }
-    } else if (*string == '\0') {
+    }
+    else if (*string == '\0') {
       return 0;
-    } else if ((*mask == '?') || (*mask == *string)) {
+    }
+    else if ((*mask == '?') || (*mask == *string)) {
       mask++;
       string++;
-    } else {
+    }
+    else {
       return 0;
     }
   }
 
-  if (*string == '\0')
+  if (*string == '\0') {
     return 1;
-  else
+  }
+  else {
     return 0;
+  }
 }
 
-bool LinuxAddFileStack(const char *szPathName, const char* fileMask,
-		       bool bRecursive, std::vector<std::string> &list,
-		       bool justDirs = false)
-{
-  DIR *directory;
-  dirent *fileInfo;
+bool LinuxAddFileStack(const char* szPathName, const char* fileMask,
+                       bool bRecursive, std::vector<std::string> &list,
+                       bool justDirs = false) {
+  DIR* directory;
+  dirent* fileInfo;
   struct stat statbuf;
   char searchstr[1024];
   std::string FilePath;
 
   strcpy(searchstr, szPathName);
-  if (searchstr[strlen(searchstr) - 1] != '/')
+  if (searchstr[strlen(searchstr) - 1] != '/') {
     strcat(searchstr, "/");
+  }
   directory = opendir(searchstr);
-  if (!directory)
+  if (!directory) {
     return false;
+  }
 
   // TODO: make it use the filemask
   while ((fileInfo = readdir(directory))) {
     if (!((strcmp(fileInfo->d_name, ".") == 0) ||
-	  (strcmp(fileInfo->d_name, "..") == 0))) {
+          (strcmp(fileInfo->d_name, "..") == 0))) {
       FilePath = searchstr;
       FilePath += fileInfo->d_name;
 
@@ -213,13 +233,16 @@ bool LinuxAddFileStack(const char *szPathName, const char* fileMask,
       stat(FilePath.c_str(), &statbuf);
 
       if (justDirs && S_ISDIR(statbuf.st_mode)) {
-	// we never do just dirs recrusively
-	list.push_back(FilePath);
-      } else if (!justDirs) {
-	if (S_ISDIR(statbuf.st_mode) && bRecursive)
-	  LinuxAddFileStack(FilePath.c_str(),fileMask,bRecursive, list);
-	else if (match_mask (fileMask, fileInfo->d_name))
-	  list.push_back(FilePath);
+        // we never do just dirs recrusively
+        list.push_back(FilePath);
+      }
+      else if (!justDirs) {
+        if (S_ISDIR(statbuf.st_mode) && bRecursive) {
+          LinuxAddFileStack(FilePath.c_str(), fileMask, bRecursive, list);
+        }
+        else if (match_mask(fileMask, fileInfo->d_name)) {
+          list.push_back(FilePath);
+        }
       }
     }
   }
@@ -229,166 +252,172 @@ bool LinuxAddFileStack(const char *szPathName, const char* fileMask,
 #endif
 
 // ensures all the delims are constant
-std::string convertPathToDelims(const char* file)
-{
-  if (!file)
+std::string convertPathToDelims(const char* file) {
+  if (!file) {
     return std::string();
+  }
 
   std::string delim;
   delim += _DirDelim;
-  return replace_all(replace_all(file,"/",delim),"\\",delim);
+  return replace_all(replace_all(file, "/", delim), "\\", delim);
 }
 
 std::vector<std::string> getFilesInDir(const char* dir, const char* filter,
-				       bool recrusive)
-{
+                                       bool recrusive) {
   std::vector<std::string> list;
-  if (!dir)
+  if (!dir) {
     return list;
+  }
 
   std::string realFilter = "*.*";
-  if (filter)
+  if (filter) {
     realFilter = filter;
+  }
 
   std::string directory  = convertPathToDelims(dir);
 
-  if (directory.size() && *(directory.end()-1) == _DirDelim)
-    directory.erase(directory.end()-1);
+  if (directory.size() && *(directory.end() - 1) == _DirDelim) {
+    directory.erase(directory.end() - 1);
+  }
 
 #ifdef _WIN32
-  WindowsAddFileStack(directory.c_str(), realFilter.c_str(),recrusive,list);
+  WindowsAddFileStack(directory.c_str(), realFilter.c_str(), recrusive, list);
 #else
-  LinuxAddFileStack(directory.c_str(), realFilter.c_str(),recrusive,list);
+  LinuxAddFileStack(directory.c_str(), realFilter.c_str(), recrusive, list);
 #endif
   return list;
 }
 
-std::vector<std::string> getDirsInDir(const char* dir)
-{
+std::vector<std::string> getDirsInDir(const char* dir) {
   std::vector<std::string> list;
-  if (!dir)
+  if (!dir) {
     return list;
+  }
 
   std::string directory  = convertPathToDelims(dir);
 
 #ifdef _WIN32
-  WindowsAddFileStack(directory.c_str(), "*.*",false,list,true);
+  WindowsAddFileStack(directory.c_str(), "*.*", false, list, true);
 #else
-  LinuxAddFileStack(directory.c_str(), "*.*",false,list,true);
+  LinuxAddFileStack(directory.c_str(), "*.*", false, list, true);
 #endif
   return list;
 }
 
-std::string getPathForOS(const char* file)
-{
+std::string getPathForOS(const char* file) {
   return convertPathToDelims(file);
 }
 
-std::string concatPaths ( const char* path1, const char* path2 )
-{
+std::string concatPaths(const char* path1, const char* path2) {
   std::string ret = getPathForOS(path1);
   ret += getPathForOS(path2);
 
   return ret;
 }
 
-std::string getFileDir(const char* file)
-{
+std::string getFileDir(const char* file) {
   std::string f = convertPathToDelims(file);
 
-  char *p = (char*)strrchr(f.c_str(),_DirDelim);
+  char* p = (char*)strrchr(f.c_str(), _DirDelim);
   if (p)
     // it's ok to go one past, cus even if it's the end, that's the
     // NUL char so we can set it to NUL again with out worry
-    *(p+1) = 0;
+  {
+    *(p + 1) = 0;
+  }
 
   return std::string(f.c_str());
 }
 
-std::string getFileExtension(const char* file)
-{
+std::string getFileExtension(const char* file) {
   std::string f = convertPathToDelims(file);
 
-  char *p = (char*)strrchr(f.c_str(),'.');
+  char* p = (char*)strrchr(f.c_str(), '.');
   if (!p)
     // it's ok to go one past, cus even if it's the end, that's the
     // NUL char so we can set it to NUL again with out worry
+  {
     return std::string();
+  }
 
-  return std::string(p+1);
+  return std::string(p + 1);
 }
 
-std::string getFileTitle(const char* file)
-{
+std::string getFileTitle(const char* file) {
   std::string f = convertPathToDelims(file);
   std::string temp = f;
 
-  const char *p = strrchr(f.c_str(),_DirDelim);
+  const char* p = strrchr(f.c_str(), _DirDelim);
   if (p)
     // it's ok to go one past, cus even if it's the end, that's the
     // NUL char so we can set it to NUL again with out worry
-    temp = p+1;
+  {
+    temp = p + 1;
+  }
 
-  char *p2 = (char*)strrchr(temp.c_str(),'.');
-  if (p2)
-    *(p2) = 0; // kill the . too
+  char* p2 = (char*)strrchr(temp.c_str(), '.');
+  if (p2) {
+    *(p2) = 0;  // kill the . too
+  }
 
   return std::string(temp.c_str());
 }
 
-std::string getFileText(const char* file)
-{
+std::string getFileText(const char* file) {
   std::string text;
-  if (!file)
+  if (!file) {
     return text;
+  }
 
-  FILE *fp = fopen(convertPathToDelims(file).c_str(),"rb");
-  if (!fp)
+  FILE* fp = fopen(convertPathToDelims(file).c_str(), "rb");
+  if (!fp) {
     return text;
+  }
 
-  fseek(fp,0,SEEK_END);
+  fseek(fp, 0, SEEK_END);
   unsigned int i  = (unsigned int)ftell(fp);
-  fseek(fp,0,SEEK_SET);
+  fseek(fp, 0, SEEK_SET);
 
-  char *temp = (char*)malloc(i+1);
-  fread(temp,i,1,fp);
+  char* temp = (char*)malloc(i + 1);
+  fread(temp, i, 1, fp);
   temp[i] = 0;
   text = temp;
   free(temp);
   fclose(fp);
 
-  return replace_all(text,"\r",std::string());
+  return replace_all(text, "\r", std::string());
 }
 
-std::vector<std::string> getFileTextLines(const char* file)
-{
-  return tokenize(getFileText(file),"\n",0,false);
+std::vector<std::string> getFileTextLines(const char* file) {
+  return tokenize(getFileText(file), "\n", 0, false);
 }
 
-unsigned int getFileLen(const char* file)
-{
-  if (!file)
+unsigned int getFileLen(const char* file) {
+  if (!file) {
     return 0;
+  }
 
-  FILE *fp = fopen(convertPathToDelims(file).c_str(),"rb");
-  if (!fp)
+  FILE* fp = fopen(convertPathToDelims(file).c_str(), "rb");
+  if (!fp) {
     return 0;
+  }
 
-  fseek(fp,0,SEEK_END);
+  fseek(fp, 0, SEEK_END);
   unsigned int i = (unsigned int)ftell(fp);
   fclose(fp);
 
   return i;
 }
 
-bool fileExists ( const char *path )
-{
-  if (!path)
+bool fileExists(const char* path) {
+  if (!path) {
     return false;
+  }
 
-  FILE *fp = fopen(convertPathToDelims(path).c_str(),"rb");
-  if (!fp)
+  FILE* fp = fopen(convertPathToDelims(path).c_str(), "rb");
+  if (!fp) {
     return false;
+  }
   fclose(fp);
 
   return true;
@@ -398,6 +427,6 @@ bool fileExists ( const char *path )
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

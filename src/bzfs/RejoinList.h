@@ -20,16 +20,16 @@
 #include <list>
 
 class RejoinList {
-public:
-  RejoinList ();
-  ~RejoinList ();
+  public:
+    RejoinList();
+    ~RejoinList();
 
-  bool add (int playerIndex);
-  void remove(int playerIndex);
-  float waitTime (int playerIndex);
+    bool add(int playerIndex);
+    void remove(int playerIndex);
+    float waitTime(int playerIndex);
 
-private:
-  std::list<struct RejoinNode*> queue;
+  private:
+    std::list<struct RejoinNode*> queue;
 };
 
 
@@ -39,6 +39,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -29,31 +29,30 @@
 #include "bz_md5.h"
 
 #ifdef WORDS_BIGENDIAN
-void byteSwap(uint32_t *swbuf, unsigned words)
-{
-  uint8_t *p = (uint8_t *)swbuf;
+void byteSwap(uint32_t* swbuf, unsigned words) {
+  uint8_t* p = (uint8_t*)swbuf;
 
   do {
     *swbuf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 |
-                         ((unsigned)p[1] << 8 | p[0]);
+               ((unsigned)p[1] << 8 | p[0]);
     p += 4;
-  } while (--words);
+  }
+  while (--words);
 }
 #else
 #define byteSwap(swbuf,words)
 #endif
 
 // return hex representation of digest as string
-std::string MD5::hexdigest() const
-{
+std::string MD5::hexdigest() const {
   if (!finalized) {
     return "";
   }
   char txbuf[33];
-  for (int i=0; i<16; i++) {
-    sprintf(txbuf+i*2, "%02x", digest[i]);
+  for (int i = 0; i < 16; i++) {
+    sprintf(txbuf + i * 2, "%02x", digest[i]);
   }
-  txbuf[32]=0;
+  txbuf[32] = 0;
   return std::string(txbuf);
 }
 
@@ -61,8 +60,7 @@ std::string MD5::hexdigest() const
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
  * initialization constants.
  */
-void MD5::reset()
-{
+void MD5::reset() {
   finalized = false;
 
   buf[0] = 0x67452301;
@@ -78,23 +76,23 @@ void MD5::reset()
  * Update context to reflect the concatenation of another buffer full
  * of bytes.
  */
-void MD5::update(uint8_t const *inbuf, unsigned len)
-{
+void MD5::update(uint8_t const* inbuf, unsigned len) {
   uint32_t t;
 
   /* Update byte count */
 
   t = bytes[0];
-  if ((bytes[0] = t + len) < t)
+  if ((bytes[0] = t + len) < t) {
     bytes[1]++;  /* Carry from low to high */
+  }
 
   t = 64 - (t & 0x3f);  /* Space available in in (at least 1) */
   if (t > len) {
-    memcpy((uint8_t *)in + 64 - t, inbuf, len);
+    memcpy((uint8_t*)in + 64 - t, inbuf, len);
     return;
   }
   /* First chunk is an odd size */
-  memcpy((uint8_t *)in + 64 - t, inbuf, t);
+  memcpy((uint8_t*)in + 64 - t, inbuf, t);
   byteSwap(in, 16);
   transform();
   inbuf += t;
@@ -117,11 +115,10 @@ void MD5::update(uint8_t const *inbuf, unsigned len)
  * Final wrapup - pad to 64-byte boundary with the bit pattern
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
-void MD5::finalize()
-{
+void MD5::finalize() {
   /* Number of bytes in in */
   int count = bytes[0] & 0x3f;
-  uint8_t *p = (uint8_t *)in + count;
+  uint8_t* p = (uint8_t*)in + count;
 
   /* Set the first char of padding to 0x80.  There is always room. */
   *p++ = 0x80;
@@ -134,7 +131,7 @@ void MD5::finalize()
     memset(p, 0, count + 8);
     byteSwap(in, 16);
     transform();
-    p = (uint8_t *)in;
+    p = (uint8_t*)in;
     count = 56;
   }
   memset(p, 0, count);
@@ -147,22 +144,20 @@ void MD5::finalize()
 
   byteSwap(buf, 4);
   memcpy(digest, buf, 16);
-  finalized=true;
+  finalized = true;
 }
 
 // default ctor, just initailize
-MD5::MD5()
-{
+MD5::MD5() {
   reset();
 }
 
 //////////////////////////////////////////////
 
 // nifty shortcut ctor, compute MD5 for string and finalize it right away
-MD5::MD5(const std::string &text)
-{
+MD5::MD5(const std::string& text) {
   reset();
-  update((uint8_t const *)text.c_str(), (unsigned int)text.length());
+  update((uint8_t const*)text.c_str(), (unsigned int)text.length());
   finalize();
 }
 
@@ -185,8 +180,7 @@ MD5::MD5(const std::string &text)
  * reflect the addition of 16 longwords of new data.  MD5::update blocks
  * the data and converts bytes into longwords for this routine.
  */
-void MD5::transform(void)
-{
+void MD5::transform(void) {
   register uint32_t a, b, c, d;
 
   a = buf[0];
@@ -274,6 +268,6 @@ void MD5::transform(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

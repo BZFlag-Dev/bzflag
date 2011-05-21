@@ -39,8 +39,7 @@ static std::vector<std::string> GetReadoutsIText();
 static std::vector<std::string> GetReadoutsIIText();
 
 
-bool HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key) {
   if (key.button == BzfKeyEvent::PageUp) {
     HUDDialog* oldMenu = HUDDialogStack::get()->top();
     HUDDialogStack::get()->pop();
@@ -57,53 +56,48 @@ bool HelpMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 }
 
 
-bool HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
+bool HelpMenuDefaultKey::keyRelease(const BzfKeyEvent& key) {
   if (key.button == BzfKeyEvent::PageUp ||
-      key.button == BzfKeyEvent::PageDown || key.unicode == 13)
+      key.button == BzfKeyEvent::PageDown || key.unicode == 13) {
     return true;
+  }
   return MenuDefaultKey::keyRelease(key);
 }
 
 
-HelpMenu::HelpMenu(const char* title) : HUDDialog()
-{
+HelpMenu::HelpMenu(const char* title) : HUDDialog() {
   // add controls
   addControl(createLabel(title), false);
   addControl(createLabel("Page Down for next page",
-			 "Page Up for previous page"));
+                         "Page Up for previous page"));
 }
 
 
 HUDuiControl* HelpMenu::createLabel(const char* string,
-				    const char* label)
-{
+                                    const char* label) {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFontFace(MainMenu::getFontFace());
-  if (string) control->setString(string);
-  if (label) control->setLabel(label);
+  if (string) { control->setString(string); }
+  if (label) { control->setLabel(label); }
   return control;
 }
 
 
-float HelpMenu::getLeftSide(int, int _height)
-{
+float HelpMenu::getLeftSide(int, int _height) {
   return (float)_height / 6.0f;
 }
 
 
-void HelpMenu::show()
-{
+void HelpMenu::show() {
   initNavigation();
 }
 
 
-void HelpMenu::resize(int _width, int _height)
-{
+void HelpMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -149,8 +143,7 @@ static const int numHelpMenus = 9;
 HelpMenu** HelpMenu::helpMenus = NULL;
 
 
-HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
-{
+HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next) {
   if (!helpMenus) {
     helpMenus = new HelpMenu*[numHelpMenus];
     helpMenus[0] = new HelpKeymapMenu;
@@ -166,9 +159,10 @@ HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
   for (int i = 0; i < numHelpMenus; i++) {
     if (dialog == helpMenus[i]) {
       if (next) {
-	return helpMenus[(i + 1) % numHelpMenus];
-      } else {
-	return helpMenus[(i - 1 + numHelpMenus) % numHelpMenus];
+        return helpMenus[(i + 1) % numHelpMenus];
+      }
+      else {
+        return helpMenus[(i - 1 + numHelpMenus) % numHelpMenus];
       }
     }
   }
@@ -176,8 +170,7 @@ HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
 }
 
 
-void HelpMenu::done()
-{
+void HelpMenu::done() {
   if (helpMenus) {
     for (int i = 0; i < numHelpMenus; i++) {
       delete helpMenus[i];
@@ -191,8 +184,7 @@ void HelpMenu::done()
 /*
  * Instructional Help Text
  */
-static std::vector<std::string> GetGeneralText()
-{
+static std::vector<std::string> GetGeneralText() {
   std::vector<std::string> retval;
   retval.push_back("BZFlag is a multi-player networked tank battle game.  There are five teams:");
   retval.push_back("red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a");
@@ -218,8 +210,7 @@ static std::vector<std::string> GetGeneralText()
 }
 
 
-static std::vector<std::string> GetEnvironmentText()
-{
+static std::vector<std::string> GetEnvironmentText() {
   std::vector<std::string> retval;
   retval.push_back("The world environment contains an outer wall and several buildings.");
   retval.push_back("You cannot go outside the outer wall (you can't even jump over it).");
@@ -242,8 +233,7 @@ static std::vector<std::string> GetEnvironmentText()
 }
 
 
-static std::vector<std::string> GetFlagsText()
-{
+static std::vector<std::string> GetFlagsText() {
   std::vector<std::string> retval;
   retval.push_back("Flags come in two varieties:  team flags and super flags.  Team flags");
   retval.push_back("are used only in the capture-the-flag style.  The server may also be");
@@ -267,8 +257,7 @@ static std::vector<std::string> GetFlagsText()
 }
 
 
-static std::vector<std::string> GetReadoutsIText()
-{
+static std::vector<std::string> GetReadoutsIText() {
   std::vector<std::string> retval;
   retval.push_back("The radar is on the left side of the control panel.  It shows an overhead");
   retval.push_back("x-ray view of the game.  Buildings and the outer wall are shown in light");
@@ -292,8 +281,7 @@ static std::vector<std::string> GetReadoutsIText()
 }
 
 
-static std::vector<std::string> GetReadoutsIIText()
-{
+static std::vector<std::string> GetReadoutsIIText() {
   std::vector<std::string> retval;
   retval.push_back("Above the larger box is a tape showing your current heading.  North is");
   retval.push_back("0, east is 90, etc.  If jumping is allowed or you have the jumping flag,");
@@ -321,6 +309,6 @@ static std::vector<std::string> GetReadoutsIIText()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

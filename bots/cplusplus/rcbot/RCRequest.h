@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__RCREQUEST_H__
-#define	__RCREQUEST_H__
+#ifndef __RCREQUEST_H__
+#define __RCREQUEST_H__
 
 #include "common.h"
 
@@ -27,15 +27,14 @@
 /**
  * Remote Control Request: Encapsulates requests between backend and frontend
  */
-class RCRequest : public RCMessage<RCRequest>
-{
-public:
-  virtual bool process(RCRobotPlayer *) { return true; }
-  virtual messageParseStatus parse(char **arguments, int count) = 0;
-  virtual std::string getType() const = 0;
-  virtual void getParameters(std::ostream &stream) const = 0;
+class RCRequest : public RCMessage<RCRequest> {
+  public:
+    virtual bool process(RCRobotPlayer*) { return true; }
+    virtual messageParseStatus parse(char** arguments, int count) = 0;
+    virtual std::string getType() const = 0;
+    virtual void getParameters(std::ostream& stream) const = 0;
 
-  static void initializeLookup(void);
+    static void initializeLookup(void);
 };
 
 
@@ -47,6 +46,6 @@ class RCRequest;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

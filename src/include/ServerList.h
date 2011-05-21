@@ -37,72 +37,72 @@ typedef std::map<std::string, std::vector<std::pair<ServerListCallback, void*> >
  */
 class ServerList : private cURLManager, public Singleton<ServerList> {
 
-public:
-  ServerList();
-  virtual ~ServerList();
+  public:
+    ServerList();
+    virtual ~ServerList();
 
-  void checkEchos(StartupInfo *_info);
-  void startServerPings(StartupInfo *_info);
-  bool searchActive() const;
-  bool serverFound() const;
-  const std::map<std::string, ServerItem>& getServers();
-  std::map<std::string, ServerItem>::size_type size();
-  ServerItem* lookupServer(std::string key);
-  int updateFromCache();
-  void collectData(char *ptr, int len);
-  void finalization(char *data, unsigned int length, bool good);
+    void checkEchos(StartupInfo* _info);
+    void startServerPings(StartupInfo* _info);
+    bool searchActive() const;
+    bool serverFound() const;
+    const std::map<std::string, ServerItem>& getServers();
+    std::map<std::string, ServerItem>::size_type size();
+    ServerItem* lookupServer(std::string key);
+    int updateFromCache();
+    void collectData(char* ptr, int len);
+    void finalization(char* data, unsigned int length, bool good);
 
-  ServerItem* getServerAt(size_t index);
+    ServerItem* getServerAt(size_t index);
 
-  void addServerCallback(ServerListCallback cb, void* data);
-  void removeServerCallback(ServerListCallback cb, void* data);
+    void addServerCallback(ServerListCallback cb, void* data);
+    void removeServerCallback(ServerListCallback cb, void* data);
 
-  void addServerKeyCallback(std::string key, ServerListCallback cb, void* data);
-  void removeServerKeyCallback(std::string key, ServerListCallback cb, void* data);
+    void addServerKeyCallback(std::string key, ServerListCallback cb, void* data);
+    void removeServerKeyCallback(std::string key, ServerListCallback cb, void* data);
 
-  void addFavoriteServerCallback(ServerListCallback cb, void* data);
-  void removeFavoriteServerCallback(ServerListCallback cb, void* data);
+    void addFavoriteServerCallback(ServerListCallback cb, void* data);
+    void removeFavoriteServerCallback(ServerListCallback cb, void* data);
 
-  void addRecentServerCallback(ServerListCallback cb, void* data);
-  void removeRecentServerCallback(ServerListCallback cb, void* data);
+    void addRecentServerCallback(ServerListCallback cb, void* data);
+    void removeRecentServerCallback(ServerListCallback cb, void* data);
 
-  void addClearedListCallback(ServerListCallback cb, void* data);
-  void removeClearedListCallback(ServerListCallback cb, void* data);
+    void addClearedListCallback(ServerListCallback cb, void* data);
+    void removeClearedListCallback(ServerListCallback cb, void* data);
 
-public:
-  void markAsFavorite(ServerItem* item);
-  void markAsRecent(ServerItem* item);
-  void unmarkAsFavorite(ServerItem* item);
-  void unmarkAsRecent(ServerItem* item);
+  public:
+    void markAsFavorite(ServerItem* item);
+    void markAsRecent(ServerItem* item);
+    void unmarkAsFavorite(ServerItem* item);
+    void unmarkAsRecent(ServerItem* item);
 
-  void addToList(ServerItem, bool doCache=false);
-  //void markFav(const std::string &, bool);
-  void clear();
-  void sort();
+    void addToList(ServerItem, bool doCache = false);
+    //void markFav(const std::string &, bool);
+    void clear();
+    void sort();
 
-protected:
-  friend class Singleton<ServerList>;
+  protected:
+    friend class Singleton<ServerList>;
 
-private:
-  void readServerList();
-  void addToListWithLookup(ServerItem&);
-  void addCacheToList();
-  void _shutDown();
+  private:
+    void readServerList();
+    void addToListWithLookup(ServerItem&);
+    void addCacheToList();
+    void _shutDown();
 
-private:
-  bool addedCacheToList;
-  int phase;
-  std::map<std::string, ServerItem> servers;
-  ServerListCache* serverCache;
-  int pingBcastSocket;
-  struct sockaddr_in pingBcastAddr;
-  StartupInfo *startupInfo;
+  private:
+    bool addedCacheToList;
+    int phase;
+    std::map<std::string, ServerItem> servers;
+    ServerListCache* serverCache;
+    int pingBcastSocket;
+    struct sockaddr_in pingBcastAddr;
+    StartupInfo* startupInfo;
 
-  ServerCallbackList serverCallbackList;
-  ServerKeyCallbackList serverKeyCallbackList;
-  ServerCallbackList favoritesCallbackList;
-  ServerCallbackList recentCallbackList;
-  ServerCallbackList clearedCallbacklist;
+    ServerCallbackList serverCallbackList;
+    ServerKeyCallbackList serverKeyCallbackList;
+    ServerCallbackList favoritesCallbackList;
+    ServerCallbackList recentCallbackList;
+    ServerCallbackList clearedCallbacklist;
 };
 
 #endif  /* __SERVERLIST_H__ */
@@ -111,6 +111,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

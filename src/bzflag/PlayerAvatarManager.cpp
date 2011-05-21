@@ -18,14 +18,12 @@
 
 // new avatar stuff, just return a standard tank for now;
 PlayerAvatar* getPlayerAvatar(int playerID, const fvec3& pos,
-                                            const fvec3& forward)
-{
+                              const fvec3& forward) {
   return new StandardTankAvatar(playerID, pos, forward);
 }
 
 
-void freePlayerAvatar(PlayerAvatar* avatar)
-{
+void freePlayerAvatar(PlayerAvatar* avatar) {
   delete(avatar);
 }
 
@@ -34,6 +32,6 @@ void freePlayerAvatar(PlayerAvatar* avatar)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

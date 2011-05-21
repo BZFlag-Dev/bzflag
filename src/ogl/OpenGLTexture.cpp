@@ -68,10 +68,9 @@ OpenGLTexture::Filter OpenGLTexture::maxFilter = Default;
 
 
 OpenGLTexture::OpenGLTexture(int _width, int _height, const void* pixels,
-			     Filter _filter, bool _repeat, int _internalFormat)
-: width(_width)
-, height(_height)
-{
+                             Filter _filter, bool _repeat, int _internalFormat)
+  : width(_width)
+  , height(_height) {
   alpha = false;
   repeat = _repeat;
   internalFormat = _internalFormat;
@@ -79,8 +78,9 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const void* pixels,
   list = INVALID_GL_TEXTURE_ID;
 
   // get internal format if not provided
-  if (internalFormat == 0)
+  if (internalFormat == 0) {
     internalFormat = getBestFormat(width, height, pixels);
+  }
 
   // copy/scale the original texture image
   setupImage(pixels);
@@ -90,14 +90,13 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const void* pixels,
 
   // watch for context recreation
   OpenGLGState::registerContextInitializer(static_freeContext,
-					   static_initContext, (void*)this);
+                                           static_initContext, (void*)this);
 }
 
 
-OpenGLTexture::~OpenGLTexture()
-{
+OpenGLTexture::~OpenGLTexture() {
   OpenGLGState::unregisterContextInitializer(static_freeContext,
-					     static_initContext, (void*)this);
+                                             static_initContext, (void*)this);
   delete[] imageMemory;
 
   freeContext();
@@ -105,20 +104,17 @@ OpenGLTexture::~OpenGLTexture()
 }
 
 
-void OpenGLTexture::static_freeContext(void *that)
-{
+void OpenGLTexture::static_freeContext(void* that) {
   ((OpenGLTexture*) that)->freeContext();
 }
 
 
-void OpenGLTexture::static_initContext(void *that)
-{
+void OpenGLTexture::static_initContext(void* that) {
   ((OpenGLTexture*) that)->initContext();
 }
 
 
-void OpenGLTexture::freeContext()
-{
+void OpenGLTexture::freeContext() {
   // glDeleteTextures should set binding to 0 by itself when the texture
   //  is in use, but some stacks (Linux/glx/matrox) are broken, so play it safe
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -131,8 +127,7 @@ void OpenGLTexture::freeContext()
 }
 
 
-void OpenGLTexture::initContext()
-{
+void OpenGLTexture::initContext() {
   // make texture map object/list
   glGenTextures(1, &list);
 
@@ -141,23 +136,21 @@ void OpenGLTexture::initContext()
   setFilter(filter);
   glBindTexture(GL_TEXTURE_2D, list);
   gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-		    scaledWidth, scaledHeight,
-		    GL_RGBA, GL_UNSIGNED_BYTE, image);
+                    scaledWidth, scaledHeight,
+                    GL_RGBA, GL_UNSIGNED_BYTE, image);
   glBindTexture(GL_TEXTURE_2D, 0);
 
   return;
 }
 
-void OpenGLTexture::replateImageData(const void* pixels)
-{
+void OpenGLTexture::replateImageData(const void* pixels) {
   freeContext();
   memcpy(image, pixels, internalFormat * scaledWidth * scaledHeight);
   initContext();
 }
 
 
-bool OpenGLTexture::setupImage(const void* pixels)
-{
+bool OpenGLTexture::setupImage(const void* pixels) {
   // align to a 2^N value
   scaledWidth = 1;
   scaledHeight = 1;
@@ -172,8 +165,7 @@ bool OpenGLTexture::setupImage(const void* pixels)
   GLint maxTextureSize = 1024;
   glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
-  if (BZDB.isSet("forceMaxTextureSize")) // gk knows it's max size, but if they REALY want to force it, do it
-  {
+  if (BZDB.isSet("forceMaxTextureSize")) { // gk knows it's max size, but if they REALY want to force it, do it
     // hard limit, some drivers have problems with sizes greater
     // then this (espeically if you are using glTexSubImage2D)
     const GLint dbMaxTexSize = BZDB.evalInt("forceMaxTextureSize");
@@ -181,9 +173,10 @@ bool OpenGLTexture::setupImage(const void* pixels)
     if (dbMaxTexSize > 0) {
       // align the max size to a power of two  (wasteful)
       while (bzMaxTexSize < dbMaxTexSize) {
-	bzMaxTexSize <<= 1;
+        bzMaxTexSize <<= 1;
       }
-    } else {
+    }
+    else {
       bzMaxTexSize = scaledHeight > scaledWidth ? scaledHeight : scaledWidth;
     }
 
@@ -213,14 +206,14 @@ bool OpenGLTexture::setupImage(const void* pixels)
     GLubyte* alignedScaled = (GLubyte*)(((unsigned long)unalignedScaled & ~3) + 4);
 
     // FIXME: 0 is success, return false otherwise...
-    gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, aligned,
-		   scaledWidth, scaledHeight, GL_UNSIGNED_BYTE, alignedScaled);
+    gluScaleImage(GL_RGBA, width, height, GL_UNSIGNED_BYTE, aligned,
+                  scaledWidth, scaledHeight, GL_UNSIGNED_BYTE, alignedScaled);
 
     delete[] unaligned;
     unaligned = unalignedScaled;
     aligned = alignedScaled;
-    logDebugMessage(1,"Scaling texture from %ix%i to %ix%i\n",
-	   width, height, scaledWidth, scaledHeight);
+    logDebugMessage(1, "Scaling texture from %ix%i to %ix%i\n",
+                    width, height, scaledWidth, scaledHeight);
   }
 
   // set the image
@@ -252,33 +245,34 @@ bool OpenGLTexture::setupImage(const void* pixels)
 }
 
 
-void OpenGLTexture::setFilter(Filter _filter)
-{
+void OpenGLTexture::setFilter(Filter _filter) {
   filter = _filter;
 
   int filterIndex = (int) filter;
   // limit filter.  try to keep nearest... filters as nearest and
   // linear... as linear.
   if (filterIndex > maxFilter) {
-    if ((filterIndex & 1) == 1)	{ // nearest...
+    if ((filterIndex & 1) == 1) { // nearest...
       if ((maxFilter & 1) == 1) {
-	filterIndex = maxFilter;
-      } else {
-	filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
+        filterIndex = maxFilter;
+      }
+      else {
+        filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
       }
     }
     else { // linear...
       if ((maxFilter & 1) == 1) {
-	filterIndex = maxFilter - 1;
-      } else {
-	filterIndex = maxFilter;
+        filterIndex = maxFilter - 1;
+      }
+      else {
+        filterIndex = maxFilter;
       }
     }
   }
   realFilter = (Filter)filterIndex;
 
   GLint binding;
-  glGetIntegerv (GL_TEXTURE_BINDING_2D, &binding);
+  glGetIntegerv(GL_TEXTURE_BINDING_2D, &binding);
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
@@ -290,84 +284,74 @@ void OpenGLTexture::setFilter(Filter _filter)
 }
 
 
-OpenGLTexture::Filter OpenGLTexture::getFilter()
-{
+OpenGLTexture::Filter OpenGLTexture::getFilter() {
   return filter;
 }
 
 
-unsigned int OpenGLTexture::getMinFilter()
-{
+unsigned int OpenGLTexture::getMinFilter() {
   return minifyFilter[realFilter];
 }
 
 
-unsigned int OpenGLTexture::getMagFilter()
-{
+unsigned int OpenGLTexture::getMagFilter() {
   return magnifyFilter[realFilter];
 }
 
 
-OpenGLTexture::Filter OpenGLTexture::getMaxFilter()
-{
+OpenGLTexture::Filter OpenGLTexture::getMaxFilter() {
   return maxFilter;
 }
 
 
-void OpenGLTexture::setMaxFilter(Filter _filter)
-{
+void OpenGLTexture::setMaxFilter(Filter _filter) {
   maxFilter = _filter;
 }
 
 
-bool OpenGLTexture::execute()
-{
+bool OpenGLTexture::execute() {
   return bind();
 }
 
 
-const char* OpenGLTexture::getFilterName(OpenGLTexture::Filter filter)
-{
+const char* OpenGLTexture::getFilterName(OpenGLTexture::Filter filter) {
   if ((filter < 0) || (filter > Max)) {
     return configFilterNames[Max];
-  } else {
+  }
+  else {
     return configFilterNames[filter];
   }
 }
 
 
-int OpenGLTexture::getFilterCount()
-{
+int OpenGLTexture::getFilterCount() {
   return filterCount;
 }
 
 
-const char** OpenGLTexture::getFilterNames()
-{
+const char** OpenGLTexture::getFilterNames() {
   return configFilterNames;
 }
 
 
-float OpenGLTexture::getAspectRatio() const
-{
+float OpenGLTexture::getAspectRatio() const {
   return ((float) height) / ((float) width);
 }
 
 
-bool OpenGLTexture::bind()
-{
+bool OpenGLTexture::bind() {
   if (list != INVALID_GL_TEXTURE_ID) {
     glBindTexture(GL_TEXTURE_2D, list);
     return true;
-  } else {
+  }
+  else {
     glBindTexture(GL_TEXTURE_2D, 0);
     return false;
   }
 }
 
 
-int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels)
-{
+int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels) {
   // see if all pixels are achromatic
   const GLubyte* scan = (const GLubyte*)pixels;
   const int size = _width * _height;
@@ -398,8 +382,8 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels)
     if (useLuminance) {
       scan = (const GLubyte*)pixels;
       for (i = 0; i < size; scan += 4, i++) {
-	if (scan[3] != scan[0]) {
-	  break;
+        if (scan[3] != scan[0]) {
+          break;
         }
       }
       useIntensity = (i == size);
@@ -411,13 +395,12 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const void* pixels)
 
   // pick internal format
   return (useLuminance ?
-		(useAlpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE) :
-		(useAlpha ? GL_RGBA : GL_RGB));
+          (useAlpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE) :
+            (useAlpha ? GL_RGBA : GL_RGB));
 }
 
 
-bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
-{
+bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const {
   if ((image == NULL) || (scaledWidth <= 0) || (scaledHeight <= 0)) {
     return false;
   }
@@ -430,17 +413,19 @@ bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
   for (int x = 0; x < scaledWidth; x++) {
     for (int y = 0; y < scaledHeight; y++) {
       for (int c = 0; c < channelCount; c++) {
-	const int pixelBase = 4 * (x + (y * scaledWidth));
-	if (factorAlpha) {
-	  const GLubyte alphaVal = image[pixelBase + 3];
-	  if (c == 3) {
-	    rgbaTally[3] += alphaVal;
-	  } else {
-	    rgbaTally[c] += image[pixelBase + c] * alphaVal;
-	  }
-	} else {
-	  rgbaTally[c] += image[pixelBase + c];
-	}
+        const int pixelBase = 4 * (x + (y * scaledWidth));
+        if (factorAlpha) {
+          const GLubyte alphaVal = image[pixelBase + 3];
+          if (c == 3) {
+            rgbaTally[3] += alphaVal;
+          }
+          else {
+            rgbaTally[c] += image[pixelBase + c] * alphaVal;
+          }
+        }
+        else {
+          rgbaTally[c] += image[pixelBase + c];
+        }
       }
     }
   }
@@ -449,7 +434,8 @@ bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
   float maxTally = 255.0f * (scaledWidth * scaledHeight);
   if (channelCount == 3) {
     rgba.a = 1.0f;
-  } else {
+  }
+  else {
     rgba.a = (float)rgbaTally[3] / maxTally;
   }
 
@@ -471,6 +457,6 @@ bool OpenGLTexture::getColorAverages(fvec4& rgba, bool factorAlpha) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

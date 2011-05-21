@@ -21,8 +21,7 @@
 
 #if defined(_WIN32)
 
-std::string getClipboard()
-{
+std::string getClipboard() {
   std::string data;
   OpenClipboard(NULL);
   const void* p = GetClipboardData(CF_TEXT);
@@ -35,16 +34,14 @@ std::string getClipboard()
 
 #elif defined(__APPLE__)
 
-std::string getClipboard()
-{
+std::string getClipboard() {
   return ""; // FIXME -- not implemented
 }
 
 #elif defined(HAVE_SDL)
 
 #include "bzfSDL.h"
-std::string getClipboard()
-{
+std::string getClipboard() {
   std::string data;
   // only works with the cut-buffer method (xterm)
   // (and not with the more recent selections method)
@@ -66,8 +63,7 @@ std::string getClipboard()
 
 #else
 
-std::string getClipboard()
-{
+std::string getClipboard() {
   return ""; // FIXME -- not implemented
 }
 
@@ -78,6 +74,6 @@ std::string getClipboard()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

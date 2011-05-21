@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__RCLINK_H__
-#define	__RCLINK_H__
+#ifndef __RCLINK_H__
+#define __RCLINK_H__
 
 #include "common.h"
 
@@ -42,126 +42,122 @@
  * frontend.  (This is the generic base-functionality)
  */
 class RCLink {
-public:
-  typedef enum {
-    Disconnected,
-    SocketError,
-    Listening,
-    Connecting,
-    Connected
-  } State;
+  public:
+    typedef enum {
+      Disconnected,
+      SocketError,
+      Listening,
+      Connecting,
+      Connected
+    } State;
 
-  RCLink(std::ostream *logger);
-  virtual ~RCLink();
+    RCLink(std::ostream* logger);
+    virtual ~RCLink();
 
-  bool connect(const char *host, int port);
-  void startListening(int port);
-  virtual bool tryAccept();
-  virtual State getDisconnectedState() = 0;
+    bool connect(const char* host, int port);
+    void startListening(int port);
+    virtual bool tryAccept();
+    virtual State getDisconnectedState() = 0;
 
-  virtual bool parseCommand(char *cmdline) = 0;
-  int updateParse(int maxlines = 0);
-  int updateWrite();
-  int updateRead();
-  void detachAgents();
-  bool waitForData();
+    virtual bool parseCommand(char* cmdline) = 0;
+    int updateParse(int maxlines = 0);
+    int updateWrite();
+    int updateRead();
+    void detachAgents();
+    bool waitForData();
 
-	State getStatus() const { return status; }
+    State getStatus() const { return status; }
 
-  const std::string &getError() const { return error; }
+    const std::string& getError() const { return error; }
 
-  virtual bool ssend(const char *message);
-  virtual bool sendf(const char *format, ...) BZ_ATTR_23;
+    virtual bool ssend(const char* message);
+    virtual bool sendf(const char* format, ...) BZ_ATTR_23;
 
-  template<class C>
-  bool sendm(const RCMessage<C> *message)
-  {
-    return sendf("%s\n", message->asString().c_str());
-  }
-  template<class C>
-  bool sendm(const RCMessage<C> &message)
-  {
-    return sendm(&message);
-  }
+    template<class C>
+    bool sendm(const RCMessage<C> *message) {
+      return sendf("%s\n", message->asString().c_str());
+    }
+    template<class C>
+    bool sendm(const RCMessage<C> &message) {
+      return sendm(&message);
+    }
 
-protected:
-  bool isFrontEnd;
+  protected:
+    bool isFrontEnd;
 
-  State status;
-  int listenfd, connfd;
-  char recvbuf[RC_LINK_RECVBUFLEN];
-  char sendbuf[RC_LINK_SENDBUFLEN];
-  int recv_amount, send_amount;
-  bool input_toolong, output_overflow;
-  std::string error;
-  bool vsendf(const char *format, va_list ap);
+    State status;
+    int listenfd, connfd;
+    char recvbuf[RC_LINK_RECVBUFLEN];
+    char sendbuf[RC_LINK_SENDBUFLEN];
+    int recv_amount, send_amount;
+    bool input_toolong, output_overflow;
+    std::string error;
+    bool vsendf(const char* format, va_list ap);
 
-private:
-  std::ostream *specificLogger;
+  private:
+    std::ostream* specificLogger;
 };
 
 // Cheap ass packet system for local only transfers
 
-class CLocalTransferPacket
-{
-public:
-  unsigned int size;
-  char *data;
+class CLocalTransferPacket {
+  public:
+    unsigned int size;
+    char* data;
 
-  CLocalTransferPacket(unsigned int _size = 0, const char* _data = NULL)
-  {
-    size = _size;
-    if (_data) {
-      data = (char*)malloc(size);
-      memcpy(data,_data,size);
-    } else {
-			data = NULL;
+    CLocalTransferPacket(unsigned int _size = 0, const char* _data = NULL) {
+      size = _size;
+      if (_data) {
+        data = (char*)malloc(size);
+        memcpy(data, _data, size);
+      }
+      else {
+        data = NULL;
+      }
     }
-  }
 
-  ~CLocalTransferPacket()
-  {
-		if (data) {
-      free(data);
-			data = NULL;
-		}
-  }
-
-  CLocalTransferPacket(const CLocalTransferPacket& r)
-  {
-    size = r.size;
-    if (r.data) {
-      data = (char*)malloc(size);
-      memcpy(data,r.data,size);
-    } else {
-      data = NULL;
+    ~CLocalTransferPacket() {
+      if (data) {
+        free(data);
+        data = NULL;
+      }
     }
-  }
+
+    CLocalTransferPacket(const CLocalTransferPacket& r) {
+      size = r.size;
+      if (r.data) {
+        data = (char*)malloc(size);
+        memcpy(data, r.data, size);
+      }
+      else {
+        data = NULL;
+      }
+    }
 };
 
-extern std::vector<CLocalTransferPacket> messagesToFront,messagesToBack;
+extern std::vector<CLocalTransferPacket> messagesToFront, messagesToBack;
 extern bool fakeNetConnect;
 
-void fakenetConnectFrontToBack ( void );
-void fakenetDisconect ( void );
+void fakenetConnectFrontToBack(void);
+void fakenetDisconect(void);
 
-void fakeNetResetFrontEnd ( void );
-void fakeNetResetBackEnd ( void );
+void fakeNetResetFrontEnd(void);
+void fakeNetResetBackEnd(void);
 
-void fakeNetSendToFrontEnd( unsigned int s, const char *d );
-void fakeNetSendToBackEnd( unsigned int s, const char *d );
+void fakeNetSendToFrontEnd(unsigned int s, const char* d);
+void fakeNetSendToBackEnd(unsigned int s, const char* d);
 
-unsigned int fakeNetPendingFrontEnd( void );
-unsigned int fakeNetPendingBackEnd( void );
+unsigned int fakeNetPendingFrontEnd(void);
+unsigned int fakeNetPendingBackEnd(void);
 
-unsigned int fakeNetNextPacketSizeFrontEnd( void );
-unsigned int fakeNetNextPacketSizeBackEnd( void );
+unsigned int fakeNetNextPacketSizeFrontEnd(void);
+unsigned int fakeNetNextPacketSizeBackEnd(void);
 
-char* fakeNetNextPacketDataFrontEnd( void );
-char* fakeNetNextPacketDataBackEnd( void );
+char* fakeNetNextPacketDataFrontEnd(void);
+char* fakeNetNextPacketDataBackEnd(void);
 
-void fakeNetPopPendingPacketFrontEnd( void );
-void fakeNetPopPendingPacketBackEnd( void );
+void fakeNetPopPendingPacketFrontEnd(void);
+void fakeNetPopPendingPacketBackEnd(void);
 
 
 #else
@@ -173,6 +169,6 @@ class CLocalTransferPacket;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -17,8 +17,8 @@
 #include "GameKeeper.h"
 #include "bzfs.h"
 
-bool validatePlayerState (GameKeeper::Player *playerData, PlayerState &state);
-bool checkFlagCheats (GameKeeper::Player *playerData, int teamIndex);
+bool validatePlayerState(GameKeeper::Player* playerData, PlayerState& state);
+bool checkFlagCheats(GameKeeper::Player* playerData, int teamIndex);
 
 #endif //_BZFS_STATE_VERIFY_H_
 
@@ -26,6 +26,6 @@ bool checkFlagCheats (GameKeeper::Player *playerData, int teamIndex);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

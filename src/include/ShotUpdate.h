@@ -12,16 +12,16 @@
 
 /*
  * ShotUpdate:
- *	Encapsulates info needed to update a shot on remote
- *	hosts. Can be packed for transmission on the net.
+ *  Encapsulates info needed to update a shot on remote
+ *  hosts. Can be packed for transmission on the net.
  *
  * FiringInfo:
- *	Encapsulates info needed to create RemoteShotPath.
- *	Can be packed for transmission on the net.
+ *  Encapsulates info needed to create RemoteShotPath.
+ *  Can be packed for transmission on the net.
  */
 
-#ifndef	BZF_SHOT_UPDATE_H
-#define	BZF_SHOT_UPDATE_H
+#ifndef BZF_SHOT_UPDATE_H
+#define BZF_SHOT_UPDATE_H
 
 #include "common.h"
 
@@ -40,18 +40,18 @@ class BaseLocalPlayer;
 
 struct ShotUpdate {
   public:
-    int			packSize() const;
-    void*		pack(void*) const;
-    void		pack(NetMessage& netMsg) const;
-    void*		unpack(void*);
+    int     packSize() const;
+    void*   pack(void*) const;
+    void    pack(NetMessage& netMsg) const;
+    void*   unpack(void*);
 
   public:
-    PlayerId		player;			// who's shot
-    uint16_t		id;			// shot id unique to player
-    fvec3		pos;			// shot position
-    fvec3		vel;			// shot velocity
-    float		dt;			// time shot has existed
-    TeamColor		team;
+    PlayerId    player;     // who's shot
+    uint16_t    id;     // shot id unique to player
+    fvec3   pos;      // shot position
+    fvec3   vel;      // shot velocity
+    float   dt;     // time shot has existed
+    TeamColor   team;
 };
 
 
@@ -59,17 +59,17 @@ struct FiringInfo {
   public:
     FiringInfo();
 
-    int			packSize() const;
-    void*		pack(void*) const;
-    void		pack(NetMessage& netMsg) const;
-    void*		unpack(void*);
+    int     packSize() const;
+    void*   pack(void*) const;
+    void    pack(NetMessage& netMsg) const;
+    void*   unpack(void*);
 
   public:
-    double		timeSent;
-    ShotUpdate		shot;
-    ShotType		shotType;
-    FlagType*		flagType;			// flag when fired
-    float		lifetime;		// lifetime of shot (s)
+    double    timeSent;
+    ShotUpdate    shot;
+    ShotType    shotType;
+    FlagType*   flagType;     // flag when fired
+    float   lifetime;   // lifetime of shot (s)
 };
 
 
@@ -80,6 +80,6 @@ struct FiringInfo {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -14,13 +14,11 @@
 #include "CommandCompleter.h"
 
 
-CommandCompleter::CommandCompleter()
-{
+CommandCompleter::CommandCompleter() {
   reset();
 }
 
-void CommandCompleter::reset()
-{
+void CommandCompleter::reset() {
   words.clear();
   registerWord("/ban ");
   registerWord("/banlist");
@@ -130,6 +128,6 @@ void CommandCompleter::reset()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

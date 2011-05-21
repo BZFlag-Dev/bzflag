@@ -17,17 +17,17 @@
 #include "BoxBuilding.h"
 
 class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
+    friend class SceneDatabaseBuilder;
   public:
-			~BoxSceneNodeGenerator();
+    ~BoxSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool);
 
   protected:
-			BoxSceneNodeGenerator(const BoxBuilding*);
+    BoxSceneNodeGenerator(const BoxBuilding*);
 
   private:
-    const BoxBuilding*	box;
+    const BoxBuilding*  box;
 };
 
 #endif
@@ -36,6 +36,6 @@ class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -85,8 +85,7 @@ using std::map;
 //============================================================================//
 //============================================================================//
 
-bool LuaCallOuts::PushEntries(lua_State* L)
-{
+bool LuaCallOuts::PushEntries(lua_State* L) {
   const bool fullRead  = L2H(L)->HasFullRead();
   const bool gameCtrl  = L2H(L)->HasGameCtrl();
   const bool inputCtrl = L2H(L)->HasInputCtrl();
@@ -305,8 +304,7 @@ bool LuaCallOuts::PushEntries(lua_State* L)
 typedef map<int, Player*> PlayerMap;
 
 
-static void MakePlayerMap(PlayerMap& playerMap)
-{
+static void MakePlayerMap(PlayerMap& playerMap) {
   playerMap.clear();
 
   LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -336,15 +334,13 @@ static void MakePlayerMap(PlayerMap& playerMap)
 //  Parsing utilities
 //
 
-static inline const Player* ParsePlayer(lua_State* L, int index)
-{
+static inline const Player* ParsePlayer(lua_State* L, int index) {
   const int playerID = luaL_checkint(L, index);
   return lookupPlayer((PlayerId)playerID);
 }
 
 
-static inline const ClientFlag* ParseFlag(lua_State* L, int index)
-{
+static inline const ClientFlag* ParseFlag(lua_State* L, int index) {
   World* world = World::getWorld();
   if (world == NULL) {
     return NULL;
@@ -353,12 +349,11 @@ static inline const ClientFlag* ParseFlag(lua_State* L, int index)
   if ((flagID < 0) || (flagID >= world->getMaxFlags())) {
     return NULL;
   }
-  return (const ClientFlag*)&(world->getFlag(flagID));
+  return (const ClientFlag*) & (world->getFlag(flagID));
 }
 
 
-static inline const ShotPath* ParseShot(lua_State* L, int index)
-{
+static inline const ShotPath* ParseShot(lua_State* L, int index) {
   const uint32_t fullID   = luaL_checkint(L, index);
   const PlayerId playerID = (fullID >> 16);
   const uint16_t shotID   = fullID & 0xffff;
@@ -377,8 +372,7 @@ static inline const ShotPath* ParseShot(lua_State* L, int index)
 }
 
 
-static const map<string, TeamColor>& GetTeamNameMap()
-{
+static const map<string, TeamColor>& GetTeamNameMap() {
   static map<string, TeamColor> teamNames;
   if (teamNames.empty()) {
     teamNames["automatic"] = AutomaticTeam;
@@ -395,8 +389,7 @@ static const map<string, TeamColor>& GetTeamNameMap()
 }
 
 
-static inline TeamColor ParseTeam(lua_State* L, int index)
-{
+static inline TeamColor ParseTeam(lua_State* L, int index) {
   if (lua_israwstring(L, index)) {
     const string teamName = lua_tostring(L, index);
     const map<string, TeamColor>& teamNames = GetTeamNameMap();
@@ -419,8 +412,7 @@ static inline TeamColor ParseTeam(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-static inline int PushShot(lua_State* L, const ShotPath* shot, int count)
-{
+static inline int PushShot(lua_State* L, const ShotPath* shot, int count) {
   count++;
   lua_pushinteger(L, count);
   const uint32_t shotID = (shot->getPlayer() << 16) | shot->getShotId();
@@ -436,22 +428,19 @@ static inline int PushShot(lua_State* L, const ShotPath* shot, int count)
 //  Versions
 //
 
-int LuaCallOuts::GetBzLuaVersion(lua_State* L)
-{
+int LuaCallOuts::GetBzLuaVersion(lua_State* L) {
   lua_pushliteral(L, "0.1");
   return 1;
 }
 
 
-int LuaCallOuts::GetClientVersion(lua_State* L)
-{
+int LuaCallOuts::GetClientVersion(lua_State* L) {
   lua_pushstring(L, getAppVersion());
   return 1;
 }
 
 
-int LuaCallOuts::GetProtocolVersion(lua_State* L)
-{
+int LuaCallOuts::GetProtocolVersion(lua_State* L) {
   lua_pushstring(L, getProtocolVersion());
   return 1;
 }
@@ -462,8 +451,7 @@ int LuaCallOuts::GetProtocolVersion(lua_State* L)
 //  Game control
 //
 
-int LuaCallOuts::JoinGame(lua_State* L)
-{
+int LuaCallOuts::JoinGame(lua_State* L) {
   const int table = 1;
   luaL_checktype(L, table, LUA_TTABLE);
 
@@ -481,15 +469,20 @@ int LuaCallOuts::JoinGame(lua_State* L)
     const std::string key = lua_tostring(L, -2);
     if (key == "address") {
       address = luaL_checkstring(L, -1);
-    } else if (key == "callsign") {
+    }
+    else if (key == "callsign") {
       callsign = luaL_checkstring(L, -1);
-    } else if (key == "password") {
+    }
+    else if (key == "password") {
       password = luaL_checkstring(L, -1);
-    } else if (key == "motto") {
+    }
+    else if (key == "motto") {
       motto = luaL_checkstring(L, -1);
-    } else if (key == "port") {
+    }
+    else if (key == "port") {
       port = luaL_checkint(L, -1);
-    } else if (key == "team") {
+    }
+    else if (key == "team") {
       team = luaL_checkint(L, -1);
     }
   }
@@ -529,8 +522,7 @@ int LuaCallOuts::JoinGame(lua_State* L)
 }
 
 
-int LuaCallOuts::LeaveGame(lua_State* /*L*/)
-{
+int LuaCallOuts::LeaveGame(lua_State* /*L*/) {
   leaveGame();
   return 1;
 }
@@ -541,15 +533,14 @@ int LuaCallOuts::LeaveGame(lua_State* /*L*/)
 //  Printing
 //
 
-static std::string ArgsToString(lua_State* L, int start, int end)
-{
+static std::string ArgsToString(lua_State* L, int start, int end) {
   std::string msg;
 
   // copied from lua/src/lib/lbaselib.c
   lua_getglobal(L, "tostring");
 
   for (int i = start; i <= end; i++) {
-    const char *s;
+    const char* s;
     lua_pushvalue(L, -1); // copy the tostring() function
     lua_pushvalue(L, i);  // copy the value
     lua_call(L, 1, 1);
@@ -570,8 +561,7 @@ static std::string ArgsToString(lua_State* L, int start, int end)
 }
 
 
-int LuaCallOuts::Print(lua_State* L)
-{
+int LuaCallOuts::Print(lua_State* L) {
   if (controlPanel == NULL) {
     return 0;
   }
@@ -587,8 +577,7 @@ int LuaCallOuts::Print(lua_State* L)
 }
 
 
-int LuaCallOuts::Debug(lua_State* L)
-{
+int LuaCallOuts::Debug(lua_State* L) {
   int level = 0;
   int end = lua_gettop(L);
   int start = 1;
@@ -601,15 +590,13 @@ int LuaCallOuts::Debug(lua_State* L)
 }
 
 
-int LuaCallOuts::GetDebugLevel(lua_State* L)
-{
+int LuaCallOuts::GetDebugLevel(lua_State* L) {
   lua_pushinteger(L, debugLevel);
   return 1;
 }
 
 
-int LuaCallOuts::LocalizeString(lua_State* L)
-{
+int LuaCallOuts::LocalizeString(lua_State* L) {
   const char* text = luaL_checkstring(L, 1);
   Bundle* bundle = BundleMgr::getCurrentBundle();
   if (bundle == NULL) {
@@ -628,8 +615,7 @@ int LuaCallOuts::LocalizeString(lua_State* L)
 //  Text manipulation
 //
 
-int LuaCallOuts::CalcMD5(lua_State* L)
-{
+int LuaCallOuts::CalcMD5(lua_State* L) {
   MD5 md5;
   for (int arg = 1; lua_israwstring(L, arg); arg++) {
     size_t len;
@@ -642,8 +628,7 @@ int LuaCallOuts::CalcMD5(lua_State* L)
 }
 
 
-int LuaCallOuts::StripAnsiCodes(lua_State* L)
-{
+int LuaCallOuts::StripAnsiCodes(lua_State* L) {
   size_t len;
   const char* text = luaL_checklstring(L, 1, &len);
   lua_pushstring(L, stripAnsiCodes(text));
@@ -651,8 +636,7 @@ int LuaCallOuts::StripAnsiCodes(lua_State* L)
 }
 
 
-int LuaCallOuts::ExpandColorString(lua_State* L)
-{
+int LuaCallOuts::ExpandColorString(lua_State* L) {
   size_t len;
   const char* text = luaL_checklstring(L, 1, &len);
   lua_pushstdstring(L, TextUtils::unescape_colors(text));
@@ -660,8 +644,7 @@ int LuaCallOuts::ExpandColorString(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCacheFilePath(lua_State* L)
-{
+int LuaCallOuts::GetCacheFilePath(lua_State* L) {
   const char* text = luaL_checkstring(L, 1);
   lua_pushstdstring(L, CACHEMGR.getLocalName(text));
   return 1;
@@ -673,15 +656,13 @@ int LuaCallOuts::GetCacheFilePath(lua_State* L)
 //  Game / server information
 //
 
-int LuaCallOuts::InGame(lua_State* L)
-{
+int LuaCallOuts::InGame(lua_State* L) {
   lua_pushboolean(L, entered && serverLink && LocalPlayer::getMyTank());
   return 1;
 }
 
 
-int LuaCallOuts::GetGameInfo(lua_State* L)
-{
+int LuaCallOuts::GetGameInfo(lua_State* L) {
   lua_newtable(L);
 
   World* world = World::getWorld();
@@ -690,7 +671,7 @@ int LuaCallOuts::GetGameInfo(lua_State* L)
   }
 
   luaset_strint(L,  "gameOptions", world->getGameOptions());
-  luaset_strint(L,  "type",	world->getGameType());
+  luaset_strint(L,  "type", world->getGameType());
   luaset_strbool(L, "teams",       world->allowTeams());
   luaset_strbool(L, "teamKills",   world->allowTeamKills());
   luaset_strbool(L, "teamFlags",   world->allowTeamFlags());
@@ -713,8 +694,7 @@ int LuaCallOuts::GetGameInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::GetWorldInfo(lua_State* L)
-{
+int LuaCallOuts::GetWorldInfo(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     return luaL_pushnil(L);
@@ -747,8 +727,7 @@ int LuaCallOuts::GetWorldInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerAddress(lua_State* L)
-{
+int LuaCallOuts::GetServerAddress(lua_State* L) {
   if (!serverLink) {
     return luaL_pushnil(L);
   }
@@ -757,8 +736,7 @@ int LuaCallOuts::GetServerAddress(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerPort(lua_State* L)
-{
+int LuaCallOuts::GetServerPort(lua_State* L) {
   if (!serverLink) {
     return luaL_pushnil(L);
   }
@@ -767,8 +745,7 @@ int LuaCallOuts::GetServerPort(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerCallsign(lua_State* L)
-{
+int LuaCallOuts::GetServerCallsign(lua_State* L) {
   if (!serverLink) {
     return luaL_pushnil(L);
   }
@@ -777,8 +754,7 @@ int LuaCallOuts::GetServerCallsign(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerIP(lua_State* L)
-{
+int LuaCallOuts::GetServerIP(lua_State* L) {
   if (!serverLink) {
     return luaL_pushnil(L);
   }
@@ -787,8 +763,7 @@ int LuaCallOuts::GetServerIP(lua_State* L)
 }
 
 
-int LuaCallOuts::GetServerDescription(lua_State* L) // FIXME
-{
+int LuaCallOuts::GetServerDescription(lua_State* L) { // FIXME
   if (!serverLink) {
     return luaL_pushnil(L);
   }
@@ -801,8 +776,7 @@ int LuaCallOuts::GetServerDescription(lua_State* L) // FIXME
 //  More world information
 //
 
-int LuaCallOuts::GetWind(lua_State* L)
-{
+int LuaCallOuts::GetWind(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     return luaL_pushnil(L);
@@ -818,8 +792,7 @@ int LuaCallOuts::GetWind(lua_State* L)
 }
 
 
-int LuaCallOuts::GetLights(lua_State* L)
-{
+int LuaCallOuts::GetLights(lua_State* L) {
   lua_newtable(L);
 
   const int numAllLights = RENDERER.getNumAllLights();
@@ -835,29 +808,29 @@ int LuaCallOuts::GetLights(lua_State* L)
       const fvec4& pos = light.getPosition();
       lua_pushliteral(L, "pos");
       lua_createtable(L, 4, 0); {
-	lua_pushfloat(L, pos.x); lua_rawseti(L, -2, 1);
-	lua_pushfloat(L, pos.y); lua_rawseti(L, -2, 2);
-	lua_pushfloat(L, pos.z); lua_rawseti(L, -2, 3);
-	lua_pushfloat(L, pos.w); lua_rawseti(L, -2, 4);
+        lua_pushfloat(L, pos.x); lua_rawseti(L, -2, 1);
+        lua_pushfloat(L, pos.y); lua_rawseti(L, -2, 2);
+        lua_pushfloat(L, pos.z); lua_rawseti(L, -2, 3);
+        lua_pushfloat(L, pos.w); lua_rawseti(L, -2, 4);
       }
       lua_rawset(L, -3);
 
       const fvec4& color = light.getColor();
       lua_pushliteral(L, "color");
       lua_createtable(L, 4, 0); {
-	lua_pushfloat(L, color.r); lua_rawseti(L, -2, 1);
-	lua_pushfloat(L, color.g); lua_rawseti(L, -2, 2);
-	lua_pushfloat(L, color.b); lua_rawseti(L, -2, 3);
-	lua_pushfloat(L, color.a); lua_rawseti(L, -2, 4);
+        lua_pushfloat(L, color.r); lua_rawseti(L, -2, 1);
+        lua_pushfloat(L, color.g); lua_rawseti(L, -2, 2);
+        lua_pushfloat(L, color.b); lua_rawseti(L, -2, 3);
+        lua_pushfloat(L, color.a); lua_rawseti(L, -2, 4);
       }
       lua_rawset(L, -3);
 
       const fvec3& atten = light.getAttenuation();
       lua_pushliteral(L, "atten");
       lua_createtable(L, 3, 0); {
-	lua_pushfloat(L, atten[0]); lua_rawseti(L, -2, 1);
-	lua_pushfloat(L, atten[1]); lua_rawseti(L, -2, 2);
-	lua_pushfloat(L, atten[2]); lua_rawseti(L, -2, 3);
+        lua_pushfloat(L, atten[0]); lua_rawseti(L, -2, 1);
+        lua_pushfloat(L, atten[1]); lua_rawseti(L, -2, 2);
+        lua_pushfloat(L, atten[2]); lua_rawseti(L, -2, 3);
       }
       lua_rawset(L, -3);
     }
@@ -868,8 +841,7 @@ int LuaCallOuts::GetLights(lua_State* L)
 }
 
 
-int LuaCallOuts::GetWorldHash(lua_State* L)
-{
+int LuaCallOuts::GetWorldHash(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     return luaL_pushnil(L);
@@ -881,8 +853,7 @@ int LuaCallOuts::GetWorldHash(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::SendLuaData(lua_State* L)
-{
+int LuaCallOuts::SendLuaData(lua_State* L) {
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank == NULL) {
     return luaL_pushnil(L);
@@ -896,38 +867,36 @@ int LuaCallOuts::SendLuaData(lua_State* L)
   const string data(ptr, len);
 
   const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
-  const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
-  const uint8_t  statusBits  =  (uint8_t)luaL_optint(L, 4, 0);
+  const int16_t  dstScriptID = (int16_t)luaL_optint(L, 3, 0);
+  const uint8_t  statusBits  = (uint8_t)luaL_optint(L, 4, 0);
 
   lua_pushboolean(L, serverLink->sendLuaData(myTank->getId(),
-					     L2H(L)->GetScriptID(),
-					     dstPlayerID, dstScriptID,
-					     statusBits, data));
+                                             L2H(L)->GetScriptID(),
+                                             dstPlayerID, dstScriptID,
+                                             statusBits, data));
   return 1;
 }
 
 
-int LuaCallOuts::SendCommand(lua_State* L) // FIXME -- removed for safety
-{
+int LuaCallOuts::SendCommand(lua_State* L) { // FIXME -- removed for safety
   L = L;
-/*
-  const char* command = luaL_checkstring(L, 1);
-  const bool local = lua_tobool(L, 2);
-  if (local) {
-    lua_pushboolean(L, LocalCommand::execute(command));
-  } else {
-    lua_pushstdstring(L, CMDMGR.run(command));
-  }
-  return 1;
-*/
+  /*
+    const char* command = luaL_checkstring(L, 1);
+    const bool local = lua_tobool(L, 2);
+    if (local) {
+      lua_pushboolean(L, LocalCommand::execute(command));
+    } else {
+      lua_pushstdstring(L, CMDMGR.run(command));
+    }
+    return 1;
+  */
   return 0;
 }
 
 
 //============================================================================//
 
-int LuaCallOuts::BlockControls(lua_State* /*L*/)
-{
+int LuaCallOuts::BlockControls(lua_State* /*L*/) {
   forceControls(true, 0.0f, 0.0f);
   return 0;
 }
@@ -935,8 +904,7 @@ int LuaCallOuts::BlockControls(lua_State* /*L*/)
 
 //============================================================================//
 
-int LuaCallOuts::OpenMenu(lua_State* L)
-{
+int LuaCallOuts::OpenMenu(lua_State* L) {
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive()) {
     stack->pop();
@@ -946,8 +914,7 @@ int LuaCallOuts::OpenMenu(lua_State* L)
 }
 
 
-int LuaCallOuts::CloseMenu(lua_State* L)
-{
+int LuaCallOuts::CloseMenu(lua_State* L) {
   HUDDialogStack* stack = HUDDialogStack::get();
   while (stack->isActive()) {
     stack->pop();
@@ -959,8 +926,7 @@ int LuaCallOuts::CloseMenu(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::PlaySound(lua_State* L)
-{
+int LuaCallOuts::PlaySound(lua_State* L) {
   int soundID = -1;
   if (lua_israwnumber(L, 1)) {
     soundID = lua_toint(L, 1);
@@ -998,15 +964,15 @@ int LuaCallOuts::PlaySound(lua_State* L)
     for (int a = 0; a < 3; a++) {
       lua_getfield(L, 2, posNames[a]);
       if (lua_israwnumber(L, -1)) {
-	pos[a] = lua_tonumber(L, -1);
-	local = false;
+        pos[a] = lua_tonumber(L, -1);
+        local = false;
       }
       lua_pop(L, 1);
     }
   }
 
   SOUNDSYSTEM.play(soundID, local ? NULL : (const float*)pos,
-		   important, local, repeated);
+                   important, local, repeated);
 
   return 0;
 }
@@ -1017,8 +983,7 @@ int LuaCallOuts::PlaySound(lua_State* L)
 //  Image manipulation
 //
 
-static int PushImageInfo(lua_State* L, PNGImageFile& image)
-{
+static int PushImageInfo(lua_State* L, PNGImageFile& image) {
   if (!image.isOpen()) {
     return luaL_pushnil(L);
   }
@@ -1031,8 +996,7 @@ static int PushImageInfo(lua_State* L, PNGImageFile& image)
 }
 
 
-static int PushImageData(lua_State* L, PNGImageFile& image)
-{
+static int PushImageData(lua_State* L, PNGImageFile& image) {
   if (!image.isOpen()) {
     return luaL_pushnil(L);
   }
@@ -1059,8 +1023,7 @@ static int PushImageData(lua_State* L, PNGImageFile& image)
 }
 
 
-int LuaCallOuts::ReadImageData(lua_State* L)
-{
+int LuaCallOuts::ReadImageData(lua_State* L) {
   size_t inLen;
   const char* inData = luaL_checklstring(L, 1, &inLen);
   const bool infoOnly = lua_isboolean(L, 2) && lua_tobool(L, 2);
@@ -1075,8 +1038,7 @@ int LuaCallOuts::ReadImageData(lua_State* L)
 }
 
 
-int LuaCallOuts::ReadImageFile(lua_State* L)
-{
+int LuaCallOuts::ReadImageFile(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
 
   string modes = L2ES(L)->vfsModes->readDefault;
@@ -1107,8 +1069,7 @@ int LuaCallOuts::ReadImageFile(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::GetViewType(lua_State* L)
-{
+int LuaCallOuts::GetViewType(lua_State* L) {
   switch (RENDERER.getViewType()) {
     case SceneRenderer::Normal:       { lua_pushliteral(L, "normal");       break; }
     case SceneRenderer::Stereo:       { lua_pushliteral(L, "stereo");       break; }
@@ -1124,8 +1085,7 @@ int LuaCallOuts::GetViewType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetKeyToCmds(lua_State* L)
-{
+int LuaCallOuts::GetKeyToCmds(lua_State* L) {
   const string keyString = luaL_checkstring(L, 1);
   BzfKeyEvent keyEvent;
   if (!KEYMGR.stringToKeyEvent(keyString, keyEvent)) {
@@ -1138,8 +1098,7 @@ int LuaCallOuts::GetKeyToCmds(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCmdToKeys(lua_State* L)
-{
+int LuaCallOuts::GetCmdToKeys(lua_State* L) {
   const string command = luaL_checkstring(L, 1);
   const bool press = !lua_isboolean(L, 2) || lua_tobool(L, 2);
   const vector<string> keys = KEYMGR.getKeysFromCommand(command, press);
@@ -1152,8 +1111,7 @@ int LuaCallOuts::GetCmdToKeys(lua_State* L)
 }
 
 
-int LuaCallOuts::GetRoamInfo(lua_State* L)
-{
+int LuaCallOuts::GetRoamInfo(lua_State* L) {
   if (!ROAM.isRoaming()) {
     return luaL_pushnil(L);
   }
@@ -1172,14 +1130,14 @@ int LuaCallOuts::GetRoamInfo(lua_State* L)
     case Roaming::roamViewFP: {
       const Player* player = ROAM.getTargetTank();
       if (player != NULL) {
-	lua_pushinteger(L, player->getId());
+        lua_pushinteger(L, player->getId());
       }
       break;
     }
     case Roaming::roamViewFlag: {
       const ClientFlag* flag = (const ClientFlag*)ROAM.getTargetFlag();
       if (flag != NULL) {
-	lua_pushinteger(L, flag->id);
+        lua_pushinteger(L, flag->id);
       }
       break;
     }
@@ -1193,8 +1151,7 @@ int LuaCallOuts::GetRoamInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::SetRoamInfo(lua_State* L)
-{
+int LuaCallOuts::SetRoamInfo(lua_State* L) {
   if (!ROAM.isRoaming()) {
     return 0;
   }
@@ -1212,20 +1169,20 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
     case Roaming::roamViewFP: {
       const int type = lua_type(L, 2);
       if ((type == LUA_TNUMBER) || (type == LUA_TBOOLEAN)) {
-	const Player* player = ParsePlayer(L, 2);
-	if (player == NULL) {
-	  lua_pushboolean(L, false);
-	  return 1;
-	}
+        const Player* player = ParsePlayer(L, 2);
+        if (player == NULL) {
+          lua_pushboolean(L, false);
+          return 1;
+        }
 
-	if (type == LUA_TNUMBER) {
-	  ROAM.changeTarget(Roaming::explicitSet, player->getId());
-	}
-	else {
-	  const Roaming::RoamingTarget target =
-	    lua_tobool(L, 2) ? Roaming::next : Roaming::previous;
-	  ROAM.changeTarget(target, 0);
-	}
+        if (type == LUA_TNUMBER) {
+          ROAM.changeTarget(Roaming::explicitSet, player->getId());
+        }
+        else {
+          const Roaming::RoamingTarget target =
+            lua_tobool(L, 2) ? Roaming::next : Roaming::previous;
+          ROAM.changeTarget(target, 0);
+        }
       }
       lua_pushboolean(L, true);
       return 1;
@@ -1233,20 +1190,20 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
     case Roaming::roamViewFlag: {
       const int type = lua_type(L, 2);
       if ((type == LUA_TNUMBER) || (type == LUA_TBOOLEAN)) {
-	const ClientFlag* flag = ParseFlag(L, 2);
-	if (flag == NULL) {
-	  lua_pushboolean(L, false);
-	  return 1;
-	}
+        const ClientFlag* flag = ParseFlag(L, 2);
+        if (flag == NULL) {
+          lua_pushboolean(L, false);
+          return 1;
+        }
 
-	if (type == LUA_TNUMBER) {
-	  ROAM.changeTarget(Roaming::explicitSet, flag->id);
-	}
-	else {
-	  const Roaming::RoamingTarget target =
-	    lua_tobool(L, 2) ? Roaming::next : Roaming::previous;
-	  ROAM.changeTarget(target, 0);
-	}
+        if (type == LUA_TNUMBER) {
+          ROAM.changeTarget(Roaming::explicitSet, flag->id);
+        }
+        else {
+          const Roaming::RoamingTarget target =
+            lua_tobool(L, 2) ? Roaming::next : Roaming::previous;
+          ROAM.changeTarget(target, 0);
+        }
       }
       lua_pushboolean(L, true);
       return 1;
@@ -1272,8 +1229,7 @@ int LuaCallOuts::SetRoamInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::GetDrawingMirror(lua_State* L)
-{
+int LuaCallOuts::GetDrawingMirror(lua_State* L) {
   lua_pushboolean(L, RENDERER.getDrawingMirror());
   return 1;
 }
@@ -1281,8 +1237,7 @@ int LuaCallOuts::GetDrawingMirror(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::GetScreenGeometry(lua_State* L)
-{
+int LuaCallOuts::GetScreenGeometry(lua_State* L) {
   BzfDisplay* dpy = getDisplay();
   if (dpy == NULL) {
     return luaL_pushnil(L);
@@ -1295,8 +1250,7 @@ int LuaCallOuts::GetScreenGeometry(lua_State* L)
 }
 
 
-int LuaCallOuts::GetWindowGeometry(lua_State* L)
-{
+int LuaCallOuts::GetWindowGeometry(lua_State* L) {
   MainWindow* window = getMainWindow();
   if (window == NULL) {
     return luaL_pushnil(L);
@@ -1322,8 +1276,7 @@ int LuaCallOuts::GetWindowGeometry(lua_State* L)
 }
 
 
-int LuaCallOuts::GetViewGeometry(lua_State* L)
-{
+int LuaCallOuts::GetViewGeometry(lua_State* L) {
   MainWindow* window = getMainWindow();
   if (window == NULL) {
     return luaL_pushnil(L);
@@ -1340,8 +1293,7 @@ int LuaCallOuts::GetViewGeometry(lua_State* L)
 }
 
 
-int LuaCallOuts::GetRadarGeometry(lua_State* L)
-{
+int LuaCallOuts::GetRadarGeometry(lua_State* L) {
   const RadarRenderer* radar = getRadarRenderer();
   if (radar == NULL) {
     return luaL_pushnil(L);
@@ -1354,8 +1306,7 @@ int LuaCallOuts::GetRadarGeometry(lua_State* L)
 }
 
 
-int LuaCallOuts::GetRadarRange(lua_State* L)
-{
+int LuaCallOuts::GetRadarRange(lua_State* L) {
   World* world = World::getWorld();
   const RadarRenderer* radar = getRadarRenderer();
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -1369,8 +1320,7 @@ int LuaCallOuts::GetRadarRange(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::GetWorldExtents(lua_State* L)
-{
+int LuaCallOuts::GetWorldExtents(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     return luaL_pushnil(L);
@@ -1382,8 +1332,7 @@ int LuaCallOuts::GetWorldExtents(lua_State* L)
 }
 
 
-int LuaCallOuts::GetVisualExtents(lua_State* L)
-{
+int LuaCallOuts::GetVisualExtents(lua_State* L) {
   const Extents* exts = RENDERER.getVisualExtents();
   if (exts == NULL) {
     return luaL_pushnil(L);
@@ -1394,8 +1343,7 @@ int LuaCallOuts::GetVisualExtents(lua_State* L)
 }
 
 
-int LuaCallOuts::GetLengthPerPixel(lua_State* L)
-{
+int LuaCallOuts::GetLengthPerPixel(lua_State* L) {
   lua_pushfloat(L, RENDERER.getLengthPerPixel());
   return 1;
 }
@@ -1403,8 +1351,7 @@ int LuaCallOuts::GetLengthPerPixel(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::SetCameraView(lua_State* L)
-{
+int LuaCallOuts::SetCameraView(lua_State* L) {
   if (!L2H(L)->HasFullRead()) {
     return 0;
   }
@@ -1425,14 +1372,14 @@ int LuaCallOuts::SetCameraView(lua_State* L)
   else {
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2) && // key
-	  lua_israwnumber(L, -1)) { // value
-	const string key = lua_tostring(L, -2);
-	     if (key == "px") { pos.x = lua_tofloat(L, -1); }
-	else if (key == "py") { pos.y = lua_tofloat(L, -1); }
-	else if (key == "pz") { pos.z = lua_tofloat(L, -1); }
-	else if (key == "dx") { dir.x = lua_tofloat(L, -1); }
-	else if (key == "dy") { dir.y = lua_tofloat(L, -1); }
-	else if (key == "dz") { dir.z = lua_tofloat(L, -1); }
+          lua_israwnumber(L, -1)) { // value
+        const string key = lua_tostring(L, -2);
+        if (key == "px") { pos.x = lua_tofloat(L, -1); }
+        else if (key == "py") { pos.y = lua_tofloat(L, -1); }
+        else if (key == "pz") { pos.z = lua_tofloat(L, -1); }
+        else if (key == "dx") { dir.x = lua_tofloat(L, -1); }
+        else if (key == "dy") { dir.y = lua_tofloat(L, -1); }
+        else if (key == "dz") { dir.z = lua_tofloat(L, -1); }
       }
     }
   }
@@ -1445,8 +1392,7 @@ int LuaCallOuts::SetCameraView(lua_State* L)
 }
 
 
-int LuaCallOuts::SetCameraProjection(lua_State* L)
-{
+int LuaCallOuts::SetCameraProjection(lua_State* L) {
   if (!L2H(L)->HasFullRead()) {
     return 0;
   }
@@ -1479,15 +1425,15 @@ int LuaCallOuts::SetCameraProjection(lua_State* L)
   else {
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2) && // key
-	  lua_israwnumber(L, -1)) { // value
-	const string key = lua_tostring(L, -2);
-	     if (key == "fov")	{ fov      = lua_tofloat(L, -1); }
-	else if (key == "nearZ")      { nearZ    = lua_tofloat(L, -1); }
-	else if (key == "farZ")       { farZ     = lua_tofloat(L, -1); }
-	else if (key == "deepFarZ")   { deepFarZ = lua_tofloat(L, -1); }
-	else if (key == "width")      { ww  = lua_toint(L, -1); }
-	else if (key == "height")     { wh  = lua_toint(L, -1); }
-	else if (key == "viewHeight") { wvh = lua_toint(L, -1); }
+          lua_israwnumber(L, -1)) { // value
+        const string key = lua_tostring(L, -2);
+        if (key == "fov")  { fov      = lua_tofloat(L, -1); }
+        else if (key == "nearZ")      { nearZ    = lua_tofloat(L, -1); }
+        else if (key == "farZ")       { farZ     = lua_tofloat(L, -1); }
+        else if (key == "deepFarZ")   { deepFarZ = lua_tofloat(L, -1); }
+        else if (key == "width")      { ww  = lua_toint(L, -1); }
+        else if (key == "height")     { wh  = lua_toint(L, -1); }
+        else if (key == "viewHeight") { wvh = lua_toint(L, -1); }
       }
     }
   }
@@ -1498,8 +1444,7 @@ int LuaCallOuts::SetCameraProjection(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCameraPosition(lua_State* L)
-{
+int LuaCallOuts::GetCameraPosition(lua_State* L) {
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   const fvec3& pos = vf.getEye();
   lua_pushfvec3(L, pos);
@@ -1507,8 +1452,7 @@ int LuaCallOuts::GetCameraPosition(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCameraDirection(lua_State* L)
-{
+int LuaCallOuts::GetCameraDirection(lua_State* L) {
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   const fvec3& dir = vf.getDirection();
   lua_pushfvec3(L, dir);
@@ -1516,8 +1460,7 @@ int LuaCallOuts::GetCameraDirection(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCameraUp(lua_State* L)
-{
+int LuaCallOuts::GetCameraUp(lua_State* L) {
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   const fvec3& up = vf.getUp();
   lua_pushfvec3(L, up);
@@ -1525,8 +1468,7 @@ int LuaCallOuts::GetCameraUp(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCameraRight(lua_State* L)
-{
+int LuaCallOuts::GetCameraRight(lua_State* L) {
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   const fvec3& right = vf.getRight();
   lua_pushfvec3(L, right);
@@ -1534,14 +1476,14 @@ int LuaCallOuts::GetCameraRight(lua_State* L)
 }
 
 
-int LuaCallOuts::GetCameraMatrix(lua_State* L)
-{
+int LuaCallOuts::GetCameraMatrix(lua_State* L) {
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   const float* m;
   if (!lua_tobool(L, 1)) {
-     m = vf.getViewMatrix();
-  } else {
-     m = vf.getProjectionMatrix();
+    m = vf.getViewMatrix();
+  }
+  else {
+    m = vf.getProjectionMatrix();
   }
   for (int i = 0; i < 16; i++) {
     lua_pushfloat(L, m[i]);
@@ -1550,8 +1492,7 @@ int LuaCallOuts::GetCameraMatrix(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFrustumPlane(lua_State* L)
-{
+int LuaCallOuts::GetFrustumPlane(lua_State* L) {
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   int plane = -1;
   if (lua_israwnumber(L, 1)) {
@@ -1581,8 +1522,7 @@ int LuaCallOuts::GetFrustumPlane(lua_State* L)
 
 //============================================================================//
 
-int LuaCallOuts::NotifyStyleChange(lua_State* /*L*/)
-{
+int LuaCallOuts::NotifyStyleChange(lua_State* /*L*/) {
   RENDERER.notifyStyleChange();
   return 0;
 }
@@ -1590,8 +1530,7 @@ int LuaCallOuts::NotifyStyleChange(lua_State* /*L*/)
 
 //============================================================================//
 
-int LuaCallOuts::GetSun(lua_State* L)
-{
+int LuaCallOuts::GetSun(lua_State* L) {
   const string param = luaL_checkstring(L, 1);
 
   if (param == "brightness") {
@@ -1627,24 +1566,21 @@ int LuaCallOuts::GetSun(lua_State* L)
 //  Time calls
 //
 
-int LuaCallOuts::GetTime(lua_State* L)
-{
+int LuaCallOuts::GetTime(lua_State* L) {
   const double nowTime = BzTime::getCurrent().getSeconds();
   LuaDouble::PushDouble(L, nowTime);
   return 1;
 }
 
 
-int LuaCallOuts::GetGameTime(lua_State* L)
-{
+int LuaCallOuts::GetGameTime(lua_State* L) {
   const double gameTime = GameTime::getStepTime();
   LuaDouble::PushDouble(L, gameTime);
   return 1;
 }
 
 
-int LuaCallOuts::GetTimer(lua_State* L)
-{
+int LuaCallOuts::GetTimer(lua_State* L) {
   const double nowTime = BzTime::getCurrent().getSeconds();
   const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
   lua_pushlightuserdata(L, (void*)millisecs);
@@ -1652,8 +1588,7 @@ int LuaCallOuts::GetTimer(lua_State* L)
 }
 
 
-int LuaCallOuts::DiffTimers(lua_State* L)
-{
+int LuaCallOuts::DiffTimers(lua_State* L) {
   const int args = lua_gettop(L); // number of arguments
   if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
     luaL_error(L, "Incorrect arguments to DiffTimers()");
@@ -1674,8 +1609,7 @@ int LuaCallOuts::DiffTimers(lua_State* L)
 //  Mouse and keyboard
 //
 
-int LuaCallOuts::GetMousePosition(lua_State* L)
-{
+int LuaCallOuts::GetMousePosition(lua_State* L) {
   MainWindow* wnd = getMainWindow();
   if (wnd == NULL) {
     return luaL_pushnil(L);
@@ -1689,8 +1623,7 @@ int LuaCallOuts::GetMousePosition(lua_State* L)
 }
 
 
-int LuaCallOuts::GetMouseButtons(lua_State* L)
-{
+int LuaCallOuts::GetMouseButtons(lua_State* L) {
   MainWindow* wnd = getMainWindow();
   if (wnd == NULL) {
     return luaL_pushnil(L);
@@ -1702,8 +1635,7 @@ int LuaCallOuts::GetMouseButtons(lua_State* L)
 }
 
 
-int LuaCallOuts::GetJoyPosition(lua_State* L)
-{
+int LuaCallOuts::GetJoyPosition(lua_State* L) {
   MainWindow* wnd = getMainWindow();
   if (wnd == NULL) {
     return luaL_pushnil(L);
@@ -1716,8 +1648,7 @@ int LuaCallOuts::GetJoyPosition(lua_State* L)
 }
 
 
-int LuaCallOuts::GetKeyModifiers(lua_State* L)
-{
+int LuaCallOuts::GetKeyModifiers(lua_State* L) {
   BzfDisplay* dpy = getDisplay();
   if (dpy == NULL) {
     return luaL_pushnil(L);
@@ -1734,8 +1665,7 @@ int LuaCallOuts::GetKeyModifiers(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaCallOuts::WarpMouse(lua_State* L)
-{
+int LuaCallOuts::WarpMouse(lua_State* L) {
   const int mx = luaL_checkint(L, 1);
   const int my = luaL_checkint(L, 2);
 
@@ -1751,8 +1681,7 @@ int LuaCallOuts::WarpMouse(lua_State* L)
 }
 
 
-int LuaCallOuts::SetMouseBox(lua_State* L)
-{
+int LuaCallOuts::SetMouseBox(lua_State* L) {
   const int size = luaL_checkint(L, 1);
   RENDERER.setMaxMotionFactor(size);
   return 0;
@@ -1765,8 +1694,7 @@ int LuaCallOuts::SetMouseBox(lua_State* L)
 //  Team info
 //
 
-int LuaCallOuts::GetTeamList(lua_State* L)
-{
+int LuaCallOuts::GetTeamList(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     lua_newtable(L);
@@ -1787,8 +1715,7 @@ int LuaCallOuts::GetTeamList(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamPlayers(lua_State* L)
-{
+int LuaCallOuts::GetTeamPlayers(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     lua_newtable(L);
@@ -1825,8 +1752,7 @@ int LuaCallOuts::GetTeamPlayers(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamName(lua_State* L)
-{
+int LuaCallOuts::GetTeamName(lua_State* L) {
   const TeamColor teamID = ParseTeam(L, 1);
   if (teamID == NoTeam) {
     return luaL_pushnil(L);
@@ -1840,8 +1766,7 @@ int LuaCallOuts::GetTeamName(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamLongName(lua_State* L)
-{
+int LuaCallOuts::GetTeamLongName(lua_State* L) {
   const TeamColor teamID = ParseTeam(L, 1);
   if (teamID == NoTeam) {
     return luaL_pushnil(L);
@@ -1855,8 +1780,7 @@ int LuaCallOuts::GetTeamLongName(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamCount(lua_State* L)
-{
+int LuaCallOuts::GetTeamCount(lua_State* L) {
   const TeamColor teamID = ParseTeam(L, 1);
   if (teamID == NoTeam) {
     return luaL_pushnil(L);
@@ -1874,8 +1798,7 @@ int LuaCallOuts::GetTeamCount(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamScore(lua_State* L)
-{
+int LuaCallOuts::GetTeamScore(lua_State* L) {
   const TeamColor teamID = ParseTeam(L, 1);
   if (teamID == NoTeam) {
     return luaL_pushnil(L);
@@ -1894,8 +1817,7 @@ int LuaCallOuts::GetTeamScore(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamColor(lua_State* L)
-{
+int LuaCallOuts::GetTeamColor(lua_State* L) {
   const TeamColor teamID = ParseTeam(L, 1);
   if (teamID == NoTeam) {
     return luaL_pushnil(L);
@@ -1909,8 +1831,7 @@ int LuaCallOuts::GetTeamColor(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamRadarColor(lua_State* L)
-{
+int LuaCallOuts::GetTeamRadarColor(lua_State* L) {
   const TeamColor teamID = ParseTeam(L, 1);
   if (teamID == NoTeam) {
     return luaL_pushnil(L);
@@ -1924,8 +1845,7 @@ int LuaCallOuts::GetTeamRadarColor(lua_State* L)
 }
 
 
-int LuaCallOuts::GetTeamsAreEnemies(lua_State* L)
-{
+int LuaCallOuts::GetTeamsAreEnemies(lua_State* L) {
   const TeamColor t1 = ParseTeam(L, 1);
   const TeamColor t2 = ParseTeam(L, 2);
   if ((t1 == NoTeam) || (t2 == NoTeam)) {
@@ -1940,8 +1860,7 @@ int LuaCallOuts::GetTeamsAreEnemies(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayersAreEnemies(lua_State* L)
-{
+int LuaCallOuts::GetPlayersAreEnemies(lua_State* L) {
   const Player* p1 = ParsePlayer(L, 1);
   if (p1 == NULL) {
     return luaL_pushnil(L);
@@ -1955,7 +1874,7 @@ int LuaCallOuts::GetPlayersAreEnemies(lua_State* L)
     return luaL_pushnil(L);
   }
   lua_pushboolean(L, Team::areFoes(p1->getTeam(), p2->getTeam(),
-				   world->getGameType()));
+                                   world->getGameType()));
   return 1;
 }
 
@@ -1963,8 +1882,7 @@ int LuaCallOuts::GetPlayersAreEnemies(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaCallOuts::GetLocalPlayer(lua_State* L)
-{
+int LuaCallOuts::GetLocalPlayer(lua_State* L) {
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank == NULL) {
     return luaL_pushnil(L);
@@ -1974,8 +1892,7 @@ int LuaCallOuts::GetLocalPlayer(lua_State* L)
 }
 
 
-int LuaCallOuts::GetLocalPlayerTarget(lua_State* L)
-{
+int LuaCallOuts::GetLocalPlayerTarget(lua_State* L) {
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank == NULL) {
     return luaL_pushnil(L);
@@ -1989,8 +1906,7 @@ int LuaCallOuts::GetLocalPlayerTarget(lua_State* L)
 }
 
 
-int LuaCallOuts::GetLocalTeam(lua_State* L)
-{
+int LuaCallOuts::GetLocalTeam(lua_State* L) {
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank == NULL) {
     return luaL_pushnil(L);
@@ -2000,8 +1916,7 @@ int LuaCallOuts::GetLocalTeam(lua_State* L)
 }
 
 
-int LuaCallOuts::GetRabbitPlayer(lua_State* L)
-{
+int LuaCallOuts::GetRabbitPlayer(lua_State* L) {
   // FIXME -- is this valid?
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank != NULL) {
@@ -2024,8 +1939,7 @@ int LuaCallOuts::GetRabbitPlayer(lua_State* L)
 }
 
 
-int LuaCallOuts::GetAntidotePosition(lua_State* L)
-{
+int LuaCallOuts::GetAntidotePosition(lua_State* L) {
   const LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank == NULL) {
     return luaL_pushnil(L);
@@ -2045,13 +1959,13 @@ int LuaCallOuts::GetAntidotePosition(lua_State* L)
 //  GfxBlock routines
 //
 
-static GfxBlock* ParseGfxBlock(lua_State* L, int index)
-{
+static GfxBlock* ParseGfxBlock(lua_State* L, int index) {
   int id = -1;
 
   if (lua_israwnumber(L, index)) {
     id = luaL_checkint(L, index);
-  } else {
+  }
+  else {
     id = GfxBlockMgr::getStringID(luaL_checkstring(L, index));
   }
 
@@ -2068,8 +1982,7 @@ static GfxBlock* ParseGfxBlock(lua_State* L, int index)
 }
 
 
-static int Get_GfxBlock(lua_State* L, const GfxBlock& gfxBlock)
-{
+static int Get_GfxBlock(lua_State* L, const GfxBlock& gfxBlock) {
   EventClient* ec = L2H(L);
   lua_pushboolean(L, gfxBlock.blocked());
   lua_pushboolean(L, gfxBlock.test(ec));
@@ -2077,8 +1990,7 @@ static int Get_GfxBlock(lua_State* L, const GfxBlock& gfxBlock)
 }
 
 
-static int Set_GfxBlock(lua_State* L, GfxBlock& gfxBlock)
-{
+static int Set_GfxBlock(lua_State* L, GfxBlock& gfxBlock) {
   EventClient* ec = L2H(L);
   if ((ec == luaUser) && gfxBlock.worldBlock()) {
     return luaL_pushnil(L);
@@ -2095,8 +2007,7 @@ static int Set_GfxBlock(lua_State* L, GfxBlock& gfxBlock)
 }
 
 
-int LuaCallOuts::SetGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetGfxBlock(lua_State* L) {
   GfxBlock* gfxBlock = ParseGfxBlock(L, 1);
   if (gfxBlock == NULL) {
     return luaL_pushnil(L);
@@ -2105,8 +2016,7 @@ int LuaCallOuts::SetGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetGfxBlock(lua_State* L) {
   const GfxBlock* gfxBlock = ParseGfxBlock(L, 1);
   if (gfxBlock == NULL) {
     return luaL_pushnil(L);
@@ -2115,8 +2025,7 @@ int LuaCallOuts::GetGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::SetPlayerGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetPlayerGfxBlock(lua_State* L) {
   // FIXME - remove these 3 const_cast<>s for now const Parse routines ?
   Player* player = const_cast<Player*>(ParsePlayer(L, 1));
   if (player == NULL) {
@@ -2126,8 +2035,7 @@ int LuaCallOuts::SetPlayerGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetPlayerGfxBlock(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2136,8 +2044,7 @@ int LuaCallOuts::GetPlayerGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::SetPlayerRadarGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetPlayerRadarGfxBlock(lua_State* L) {
   // FIXME - remove these 3 const_cast<>s for now const Parse routines ?
   Player* player = const_cast<Player*>(ParsePlayer(L, 1));
   if (player == NULL) {
@@ -2147,8 +2054,7 @@ int LuaCallOuts::SetPlayerRadarGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerRadarGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetPlayerRadarGfxBlock(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2157,8 +2063,7 @@ int LuaCallOuts::GetPlayerRadarGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::SetFlagGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetFlagGfxBlock(lua_State* L) {
   // FIXME - remove these 3 const_cast<>s for now const Parse routines ?
   ClientFlag* flag = const_cast<ClientFlag*>(ParseFlag(L, 1));
   if (flag == NULL) {
@@ -2168,8 +2073,7 @@ int LuaCallOuts::SetFlagGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetFlagGfxBlock(lua_State* L) {
   const ClientFlag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2178,8 +2082,7 @@ int LuaCallOuts::GetFlagGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::SetFlagRadarGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetFlagRadarGfxBlock(lua_State* L) {
   ClientFlag* flag = const_cast<ClientFlag*>(ParseFlag(L, 1));
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2188,8 +2091,7 @@ int LuaCallOuts::SetFlagRadarGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagRadarGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetFlagRadarGfxBlock(lua_State* L) {
   const ClientFlag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2198,8 +2100,7 @@ int LuaCallOuts::GetFlagRadarGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::SetShotGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetShotGfxBlock(lua_State* L) {
   ShotPath* shot = const_cast<ShotPath*>(ParseShot(L, 1));
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2208,8 +2109,7 @@ int LuaCallOuts::SetShotGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetShotGfxBlock(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2218,8 +2118,7 @@ int LuaCallOuts::GetShotGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::SetShotRadarGfxBlock(lua_State* L)
-{
+int LuaCallOuts::SetShotRadarGfxBlock(lua_State* L) {
   ShotPath* shot = const_cast<ShotPath*>(ParseShot(L, 1));
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2228,8 +2127,7 @@ int LuaCallOuts::SetShotRadarGfxBlock(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotRadarGfxBlock(lua_State* L)
-{
+int LuaCallOuts::GetShotRadarGfxBlock(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2244,8 +2142,7 @@ int LuaCallOuts::GetShotRadarGfxBlock(lua_State* L)
 //  Player routines
 //
 
-int LuaCallOuts::GetPlayerList(lua_State* L)
-{
+int LuaCallOuts::GetPlayerList(lua_State* L) {
   lua_newtable(L);
   int count = 0;
 
@@ -2278,8 +2175,7 @@ int LuaCallOuts::GetPlayerList(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerName(lua_State* L)
-{
+int LuaCallOuts::GetPlayerName(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2289,8 +2185,7 @@ int LuaCallOuts::GetPlayerName(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerType(lua_State* L)
-{
+int LuaCallOuts::GetPlayerType(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2300,8 +2195,7 @@ int LuaCallOuts::GetPlayerType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerTeam(lua_State* L)
-{
+int LuaCallOuts::GetPlayerTeam(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2311,8 +2205,7 @@ int LuaCallOuts::GetPlayerTeam(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerFlag(lua_State* L)
-{
+int LuaCallOuts::GetPlayerFlag(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2326,8 +2219,7 @@ int LuaCallOuts::GetPlayerFlag(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerFlagType(lua_State* L)
-{
+int LuaCallOuts::GetPlayerFlagType(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2341,8 +2233,7 @@ int LuaCallOuts::GetPlayerFlagType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerScore(lua_State* L)
-{
+int LuaCallOuts::GetPlayerScore(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2354,8 +2245,7 @@ int LuaCallOuts::GetPlayerScore(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerMotto(lua_State* L)
-{
+int LuaCallOuts::GetPlayerMotto(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2369,8 +2259,7 @@ int LuaCallOuts::GetPlayerMotto(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerAutoPilot(lua_State* L)
-{
+int LuaCallOuts::GetPlayerAutoPilot(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2380,8 +2269,7 @@ int LuaCallOuts::GetPlayerAutoPilot(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerLagInfo(lua_State* L)
-{
+int LuaCallOuts::GetPlayerLagInfo(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2393,8 +2281,7 @@ int LuaCallOuts::GetPlayerLagInfo(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerCustomData(lua_State* L)
-{
+int LuaCallOuts::GetPlayerCustomData(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2409,8 +2296,7 @@ int LuaCallOuts::GetPlayerCustomData(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerShots(lua_State* L)
-{
+int LuaCallOuts::GetPlayerShots(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2427,7 +2313,8 @@ int LuaCallOuts::GetPlayerShots(lua_State* L)
   const WorldPlayer* worldWeapons = world->getWorldWeapons();
   if (player != (const Player*)worldWeapons) {
     maxShots = world->getMaxShots();
-  } else {
+  }
+  else {
     maxShots = worldWeapons->getMaxShots();
   }
 
@@ -2443,18 +2330,17 @@ int LuaCallOuts::GetPlayerShots(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerState(lua_State* L)
-{
+int LuaCallOuts::GetPlayerState(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
   }
 
   lua_newtable(L);
-  if (player->isAlive())	{ luaset_strbool(L, "alive",	true); }
+  if (player->isAlive())  { luaset_strbool(L, "alive",  true); }
   if (player->isPaused())       { luaset_strbool(L, "paused",       true); }
   if (player->isFalling())      { luaset_strbool(L, "falling",      true); }
-  if (player->isPhantomZoned()) { luaset_strbool(L, "zoned",	true); }
+  if (player->isPhantomZoned()) { luaset_strbool(L, "zoned",  true); }
   if (player->isTeleporting())  { luaset_strbool(L, "teleporting",  true); }
   if (player->isCrossingWall()) { luaset_strbool(L, "crossingWall", true); }
   if (player->isExploding())    { luaset_strbool(L, "exploding",    true); }
@@ -2463,8 +2349,7 @@ int LuaCallOuts::GetPlayerState(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerStateBits(lua_State* L)
-{
+int LuaCallOuts::GetPlayerStateBits(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2474,8 +2359,7 @@ int LuaCallOuts::GetPlayerStateBits(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerPosition(lua_State* L)
-{
+int LuaCallOuts::GetPlayerPosition(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2485,8 +2369,7 @@ int LuaCallOuts::GetPlayerPosition(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerRotation(lua_State* L)
-{
+int LuaCallOuts::GetPlayerRotation(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2496,8 +2379,7 @@ int LuaCallOuts::GetPlayerRotation(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerDirection(lua_State* L)
-{
+int LuaCallOuts::GetPlayerDirection(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2507,8 +2389,7 @@ int LuaCallOuts::GetPlayerDirection(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerVelocity(lua_State* L)
-{
+int LuaCallOuts::GetPlayerVelocity(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2518,8 +2399,7 @@ int LuaCallOuts::GetPlayerVelocity(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerAngVel(lua_State* L)
-{
+int LuaCallOuts::GetPlayerAngVel(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2529,8 +2409,7 @@ int LuaCallOuts::GetPlayerAngVel(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerDimensions(lua_State* L)
-{
+int LuaCallOuts::GetPlayerDimensions(lua_State* L) {
 
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
@@ -2541,8 +2420,7 @@ int LuaCallOuts::GetPlayerDimensions(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerPhysicsDriver(lua_State* L)
-{
+int LuaCallOuts::GetPlayerPhysicsDriver(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2551,15 +2429,15 @@ int LuaCallOuts::GetPlayerPhysicsDriver(lua_State* L)
   const int phydrv = player->getPhysicsDriver();
   if (phydrv < 0) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushinteger(L, phydrv);
   }
   return 1;
 }
 
 
-int LuaCallOuts::GetPlayerDesiredSpeed(lua_State* L)
-{
+int LuaCallOuts::GetPlayerDesiredSpeed(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2569,8 +2447,7 @@ int LuaCallOuts::GetPlayerDesiredSpeed(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerDesiredAngVel(lua_State* L)
-{
+int LuaCallOuts::GetPlayerDesiredAngVel(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2580,8 +2457,7 @@ int LuaCallOuts::GetPlayerDesiredAngVel(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerExplodeTime(lua_State* L)
-{
+int LuaCallOuts::GetPlayerExplodeTime(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2600,8 +2476,7 @@ int LuaCallOuts::GetPlayerExplodeTime(lua_State* L)
 }
 
 
-int LuaCallOuts::GetPlayerOpacity(lua_State* L)
-{
+int LuaCallOuts::GetPlayerOpacity(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2611,8 +2486,7 @@ int LuaCallOuts::GetPlayerOpacity(lua_State* L)
 }
 
 
-int LuaCallOuts::IsPlayerAdmin(lua_State* L)
-{
+int LuaCallOuts::IsPlayerAdmin(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2622,8 +2496,7 @@ int LuaCallOuts::IsPlayerAdmin(lua_State* L)
 }
 
 
-int LuaCallOuts::IsPlayerVerified(lua_State* L)
-{
+int LuaCallOuts::IsPlayerVerified(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2633,8 +2506,7 @@ int LuaCallOuts::IsPlayerVerified(lua_State* L)
 }
 
 
-int LuaCallOuts::IsPlayerRegistered(lua_State* L)
-{
+int LuaCallOuts::IsPlayerRegistered(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2644,8 +2516,7 @@ int LuaCallOuts::IsPlayerRegistered(lua_State* L)
 }
 
 
-int LuaCallOuts::IsPlayerHunted(lua_State* L)
-{
+int LuaCallOuts::IsPlayerHunted(lua_State* L) {
   const Player* player = ParsePlayer(L, 1);
   if (player == NULL) {
     return luaL_pushnil(L);
@@ -2655,8 +2526,7 @@ int LuaCallOuts::IsPlayerHunted(lua_State* L)
 }
 
 
-int LuaCallOuts::SetPlayerCustomData(lua_State* L)
-{
+int LuaCallOuts::SetPlayerCustomData(lua_State* L) {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (!myTank || !serverLink || !entered) {
     return luaL_pushnil(L);
@@ -2680,8 +2550,7 @@ int LuaCallOuts::SetPlayerCustomData(lua_State* L)
 //  Flag routines
 //
 
-int LuaCallOuts::GetFlagList(lua_State* L)
-{
+int LuaCallOuts::GetFlagList(lua_State* L) {
   World* world = World::getWorld();
   if (world == NULL) {
     lua_newtable(L);
@@ -2705,8 +2574,7 @@ int LuaCallOuts::GetFlagList(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagName(lua_State* L)
-{
+int LuaCallOuts::GetFlagName(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2716,8 +2584,7 @@ int LuaCallOuts::GetFlagName(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagType(lua_State* L)
-{
+int LuaCallOuts::GetFlagType(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2727,8 +2594,7 @@ int LuaCallOuts::GetFlagType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagShotType(lua_State* L)
-{
+int LuaCallOuts::GetFlagShotType(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2738,8 +2604,7 @@ int LuaCallOuts::GetFlagShotType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagQuality(lua_State* L)
-{
+int LuaCallOuts::GetFlagQuality(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2749,8 +2614,7 @@ int LuaCallOuts::GetFlagQuality(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagEndurance(lua_State* L)
-{
+int LuaCallOuts::GetFlagEndurance(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2760,8 +2624,7 @@ int LuaCallOuts::GetFlagEndurance(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagTeam(lua_State* L)
-{
+int LuaCallOuts::GetFlagTeam(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2771,13 +2634,12 @@ int LuaCallOuts::GetFlagTeam(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagOwner(lua_State* L)
-{
+int LuaCallOuts::GetFlagOwner(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
   }
-  if (flag->owner == (PlayerId) -1) {
+  if (flag->owner == (PlayerId) - 1) {
     return luaL_pushnil(L);
   }
   lua_pushinteger(L, flag->owner);
@@ -2785,8 +2647,7 @@ int LuaCallOuts::GetFlagOwner(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagState(lua_State* L)
-{
+int LuaCallOuts::GetFlagState(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2796,8 +2657,7 @@ int LuaCallOuts::GetFlagState(lua_State* L)
 }
 
 
-int LuaCallOuts::GetFlagPosition(lua_State* L)
-{
+int LuaCallOuts::GetFlagPosition(lua_State* L) {
   const Flag* flag = ParseFlag(L, 1);
   if (flag == NULL) {
     return luaL_pushnil(L);
@@ -2813,8 +2673,7 @@ int LuaCallOuts::GetFlagPosition(lua_State* L)
 //  Shot routines
 //
 
-int LuaCallOuts::GetShotList(lua_State* L)
-{
+int LuaCallOuts::GetShotList(lua_State* L) {
   lua_newtable(L);
   int count = 0;
 
@@ -2831,7 +2690,7 @@ int LuaCallOuts::GetShotList(lua_State* L)
     for (int i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
       if ((shot != NULL) && !shot->isExpired()) {
-	count = PushShot(L, shot, count);
+        count = PushShot(L, shot, count);
       }
     }
   }
@@ -2842,10 +2701,10 @@ int LuaCallOuts::GetShotList(lua_State* L)
     const RobotPlayer* player = robots[i];
     if (player != NULL) {
       for (int j = 0; j < maxShots; j++) {
-	const ShotPath* shot = player->getShot(i);
-	if ((shot != NULL) && !shot->isExpired()) {
-	  count = PushShot(L, shot, count);
-	}
+        const ShotPath* shot = player->getShot(i);
+        if ((shot != NULL) && !shot->isExpired()) {
+          count = PushShot(L, shot, count);
+        }
       }
     }
   }
@@ -2856,10 +2715,10 @@ int LuaCallOuts::GetShotList(lua_State* L)
     const RemotePlayer* player = world->getPlayer(i);
     if (player != NULL) {
       for (int j = 0; j < maxShots; j++) {
-	const ShotPath* shot = player->getShot(i);
-	if ((shot != NULL) && !shot->isExpired()) {
-	  count = PushShot(L, shot, count);
-	}
+        const ShotPath* shot = player->getShot(i);
+        if ((shot != NULL) && !shot->isExpired()) {
+          count = PushShot(L, shot, count);
+        }
       }
     }
   }
@@ -2871,7 +2730,7 @@ int LuaCallOuts::GetShotList(lua_State* L)
     for (int i = 0; i < wwMaxShots; i++) {
       const ShotPath* shot = worldWeapons->getShot(i);
       if ((shot != NULL) && !shot->isExpired()) {
-	count = PushShot(L, shot, count);
+        count = PushShot(L, shot, count);
       }
     }
   }
@@ -2880,8 +2739,7 @@ int LuaCallOuts::GetShotList(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotType(lua_State* L)
-{
+int LuaCallOuts::GetShotType(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2891,8 +2749,7 @@ int LuaCallOuts::GetShotType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotFlagType(lua_State* L)
-{
+int LuaCallOuts::GetShotFlagType(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2902,8 +2759,7 @@ int LuaCallOuts::GetShotFlagType(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotPlayer(lua_State* L)
-{
+int LuaCallOuts::GetShotPlayer(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2913,8 +2769,7 @@ int LuaCallOuts::GetShotPlayer(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotTeam(lua_State* L)
-{
+int LuaCallOuts::GetShotTeam(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2924,8 +2779,7 @@ int LuaCallOuts::GetShotTeam(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotPosition(lua_State* L)
-{
+int LuaCallOuts::GetShotPosition(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2935,8 +2789,7 @@ int LuaCallOuts::GetShotPosition(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotVelocity(lua_State* L)
-{
+int LuaCallOuts::GetShotVelocity(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2946,8 +2799,7 @@ int LuaCallOuts::GetShotVelocity(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotLifeTime(lua_State* L)
-{
+int LuaCallOuts::GetShotLifeTime(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2957,8 +2809,7 @@ int LuaCallOuts::GetShotLifeTime(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotLeftTime(lua_State* L)
-{
+int LuaCallOuts::GetShotLeftTime(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2969,8 +2820,7 @@ int LuaCallOuts::GetShotLeftTime(lua_State* L)
 }
 
 
-int LuaCallOuts::GetShotReloadTime(lua_State* L)
-{
+int LuaCallOuts::GetShotReloadTime(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -2980,8 +2830,7 @@ int LuaCallOuts::GetShotReloadTime(lua_State* L)
 }
 
 
-int LuaCallOuts::RemoveShot(lua_State* L)
-{
+int LuaCallOuts::RemoveShot(lua_State* L) {
   const ShotPath* shot = ParseShot(L, 1);
   if (shot == NULL) {
     return luaL_pushnil(L);
@@ -3005,24 +2854,23 @@ int LuaCallOuts::RemoveShot(lua_State* L)
 
 // whacky bit of dev'ing fun
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
-  #include <unistd.h>
-  #include <fcntl.h>
-  int LuaCallOuts::ReadStdin(lua_State* L)
-  {
-    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
-    if (bits == -1) {
-      return luaL_pushnil(L);
-    }
-    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
-    char buf[4096];
-    const int r = read(STDIN_FILENO, buf, sizeof(buf));
-    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
-    if (r <= 0) {
-      return luaL_pushnil(L);
-    }
-    lua_pushlstring(L, buf, r);
-    return 1;
+#include <unistd.h>
+#include <fcntl.h>
+int LuaCallOuts::ReadStdin(lua_State* L) {
+  int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+  if (bits == -1) {
+    return luaL_pushnil(L);
   }
+  fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
+  char buf[4096];
+  const int r = read(STDIN_FILENO, buf, sizeof(buf));
+  fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
+  if (r <= 0) {
+    return luaL_pushnil(L);
+  }
+  lua_pushlstring(L, buf, r);
+  return 1;
+}
 #endif
 
 
@@ -3034,6 +2882,6 @@ int LuaCallOuts::RemoveShot(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

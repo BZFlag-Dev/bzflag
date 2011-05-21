@@ -17,28 +17,27 @@
 template <>
 ClientIntangibilityManager* Singleton<ClientIntangibilityManager>::_instance = (ClientIntangibilityManager*)0;
 
-void ClientIntangibilityManager::setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible)
-{
+void ClientIntangibilityManager::setWorldObjectTangibility(uint32_t objectGUID, unsigned char tangible) {
   tangibilityMap[objectGUID] = tangible;
 }
 
-unsigned char ClientIntangibilityManager::getWorldObjectTangibility(const Obstacle *obs)
-{
-  if (!obs)
-    return 0; // we don't know what it is, so it's not setable (like a teleporter or custom object) assume it's solid as a rock
+unsigned char ClientIntangibilityManager::getWorldObjectTangibility(const Obstacle* obs) {
+  if (!obs) {
+    return 0;  // we don't know what it is, so it's not setable (like a teleporter or custom object) assume it's solid as a rock
+  }
 
   if (false) {
     // FIXME -- obstacle GUID's are broken, meshFaces are not accounted for
     TangibilityMap::iterator itr = tangibilityMap.find(obs->getGUID());
-    if (itr != tangibilityMap.end())
+    if (itr != tangibilityMap.end()) {
       return itr->second;
+    }
   }
 
   return obs->isDriveThrough() ? _INVALID_TANGIBILITY : 0;
 }
 
-void ClientIntangibilityManager::resetTangibility(void)
-{
+void ClientIntangibilityManager::resetTangibility(void) {
   tangibilityMap.clear();
 }
 
@@ -46,6 +45,6 @@ void ClientIntangibilityManager::resetTangibility(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

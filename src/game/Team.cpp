@@ -39,16 +39,14 @@ fvec4 Team::radarColor[NumTeams] = {
 };
 
 
-Team::Team()
-{
+Team::Team() {
   size = 0;
   won  = 0;
   lost = 0;
 }
 
 
-void* Team::pack(void* buf) const
-{
+void* Team::pack(void* buf) const {
   buf = nboPackUInt16(buf, uint16_t(size));
   buf = nboPackUInt16(buf, uint16_t(won));
   buf = nboPackUInt16(buf, uint16_t(lost));
@@ -56,16 +54,14 @@ void* Team::pack(void* buf) const
 }
 
 
-void Team::pack(NetMessage& netMsg) const
-{
+void Team::pack(NetMessage& netMsg) const {
   netMsg.packUInt16(uint16_t(size));
   netMsg.packUInt16(uint16_t(won));
   netMsg.packUInt16(uint16_t(lost));
 }
 
 
-void* Team::unpack(void* buf)
-{
+void* Team::unpack(void* buf) {
   uint16_t inSize, inWon, inLost;
   buf = nboUnpackUInt16(buf, inSize);
   buf = nboUnpackUInt16(buf, inWon);
@@ -77,8 +73,7 @@ void* Team::unpack(void* buf)
 }
 
 
-const std::string Team::getImagePrefix(TeamColor team)
-{
+const std::string Team::getImagePrefix(TeamColor team) {
   switch (team) {
     case RedTeam:      { return BZDB.get("redTeamPrefix");      }
     case GreenTeam:    { return BZDB.get("greenTeamPrefix");    }
@@ -92,8 +87,7 @@ const std::string Team::getImagePrefix(TeamColor team)
 }
 
 
-const char* Team::getName(TeamColor team) // const
-{
+const char* Team::getName(TeamColor team) { // const
   switch (team) {
     case AutomaticTeam: { return "Automatic";    }
     case RogueTeam:     { return "Rogue";        }
@@ -110,8 +104,7 @@ const char* Team::getName(TeamColor team) // const
 }
 
 
-const char* Team::getShortName(TeamColor team)
-{
+const char* Team::getShortName(TeamColor team) {
   switch (team) {
     case RogueTeam:    { return "rogue";    }
     case RedTeam:      { return "red";      }
@@ -126,8 +119,7 @@ const char* Team::getShortName(TeamColor team)
 }
 
 
-TeamColor Team::getTeam(const std::string name) // const
-{
+TeamColor Team::getTeam(const std::string name) { // const
   if (name == Team::getName(AutomaticTeam)) {
     return AutomaticTeam;
   }
@@ -140,8 +132,7 @@ TeamColor Team::getTeam(const std::string name) // const
 }
 
 
-const fvec4& Team::getTankColor(TeamColor team) // const
-{
+const fvec4& Team::getTankColor(TeamColor team) { // const
   if (int(team) < 0) {
     return tankColor[0];
   }
@@ -149,8 +140,7 @@ const fvec4& Team::getTankColor(TeamColor team) // const
 }
 
 
-const fvec4& Team::getRadarColor(TeamColor team) // const
-{
+const fvec4& Team::getRadarColor(TeamColor team) { // const
   if (int(team) < 0) {
     return radarColor[0];
   }
@@ -158,18 +148,17 @@ const fvec4& Team::getRadarColor(TeamColor team) // const
 }
 
 
-bool Team::isColorTeam(TeamColor team) // const
-{
+bool Team::isColorTeam(TeamColor team) { // const
   return team >= RedTeam  && team <= PurpleTeam;
 }
 
 
-void Team::setColors(TeamColor team, const fvec4& tank, const fvec4& radar)
-{
+void Team::setColors(TeamColor team, const fvec4& tank, const fvec4& radar) {
   const int teamIndex = int(team);
   // ignore bogus team color
-  if (teamIndex < 0)
+  if (teamIndex < 0) {
     return;
+  }
 
   // leave alpha at 1.0f
   tankColor[teamIndex].rgb()  = tank.rgb();
@@ -178,8 +167,7 @@ void Team::setColors(TeamColor team, const fvec4& tank, const fvec4& radar)
 
 
 // are the two teams foes with the current game style?
-bool Team::areFoes(TeamColor team1, TeamColor team2, GameType style)
-{
+bool Team::areFoes(TeamColor team1, TeamColor team2, GameType style) {
   if (style == OpenFFA) {
     return true;
   }
@@ -191,6 +179,6 @@ bool Team::areFoes(TeamColor team1, TeamColor team2, GameType style)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

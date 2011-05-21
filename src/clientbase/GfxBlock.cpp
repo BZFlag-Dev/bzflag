@@ -40,8 +40,7 @@ static std::map<std::string, int> name2idMap;
 static std::map<int, std::string> id2nameMap;
 
 
-static void pushEntry(int id, const std::string& name)
-{
+static void pushEntry(int id, const std::string& name) {
   name2idMap[name] = id;
   id2nameMap[id] = name;
 }
@@ -51,8 +50,7 @@ static void pushEntry(int id, const std::string& name)
 //============================================================================//
 
 
-static bool isBetterClient(EventClient* a, EventClient* b, int orderType)
-{
+static bool isBetterClient(EventClient* a, EventClient* b, int orderType) {
   const int aOrder = a->GetOrder(orderType);
   const int bOrder = b->GetOrder(orderType);
   if (aOrder < bOrder) { return true;  }
@@ -74,39 +72,34 @@ static bool isBetterClient(EventClient* a, EventClient* b, int orderType)
 //
 
 GfxBlock::GfxBlock()
-: type(-1)
-, id(-1)
-, world(false)
-{
+  : type(-1)
+  , id(-1)
+  , world(false) {
 }
 
 
 GfxBlock::GfxBlock(int _type, int _id, bool _world)
-: type(_type)
-, id(_id)
-, world(_world)
-{
+  : type(_type)
+  , id(_id)
+  , world(_world) {
 }
 
 
 GfxBlock::GfxBlock(int _id, const char* name, bool _world)
-: type(Global)
-, id(_id)
-, world(_world)
-{
+  : type(Global)
+  , id(_id)
+  , world(_world) {
   pushEntry(id, name);
   GfxBlockMgr::blocks[id] = this;
 }
 
 
-GfxBlock::~GfxBlock()
-{
+GfxBlock::~GfxBlock() {
   clear();
 }
 
 
-void GfxBlock::init(int _type, int _id, bool _world)
-{
+void GfxBlock::init(int _type, int _id, bool _world) {
   id    = _id;
   type  = _type;
   world = _world;
@@ -115,8 +108,7 @@ void GfxBlock::init(int _type, int _id, bool _world)
 
 //============================================================================//
 
-void GfxBlock::clear()
-{
+void GfxBlock::clear() {
   if (!clients.empty()) {
     clients[0]->LostGfxBlock(type, id); // notify the old owner
   }
@@ -124,8 +116,7 @@ void GfxBlock::clear()
 }
 
 
-bool GfxBlock::set(EventClient* ec, bool queue)
-{
+bool GfxBlock::set(EventClient* ec, bool queue) {
   if (ec == NULL) {
     return false;
   }
@@ -141,7 +132,7 @@ bool GfxBlock::set(EventClient* ec, bool queue)
       return false;
     }
     const int orderType = world ? EventClient::DrawWorldOrder
-                                : EventClient::DrawScreenOrder;
+                          : EventClient::DrawScreenOrder;
     if (isBetterClient(ec, clients[i], orderType)) {
       clients.insert(clients.begin() + i, ec);
       if (i == 0) {
@@ -158,8 +149,7 @@ bool GfxBlock::set(EventClient* ec, bool queue)
 }
 
 
-bool GfxBlock::remove(EventClient* ec)
-{
+bool GfxBlock::remove(EventClient* ec) {
   if (clients.empty()) {
     return false;
   }
@@ -181,8 +171,7 @@ bool GfxBlock::remove(EventClient* ec)
 
 //============================================================================//
 
-const char* GfxBlock::getTypeString(int type)
-{
+const char* GfxBlock::getTypeString(int type) {
   switch ((BlockType)type) {
     case Global:    { return "global";      }
     case Tank:      { return "tank";        }
@@ -198,10 +187,9 @@ const char* GfxBlock::getTypeString(int type)
 }
 
 
-int GfxBlock::getStringType(const char* name)
-{
+int GfxBlock::getStringType(const char* name) {
   const std::string key = name;
-       if (key == "global")    { return Global;    }
+  if (key == "global")    { return Global;    }
   else if (key == "tank")      { return Tank;      }
   else if (key == "shot")      { return Shot;      }
   else if (key == "flag")      { return Flag;      }
@@ -266,8 +254,7 @@ GLOBAL_GFX_BLOCK(Alerts,       alerts,       false);
 
 //============================================================================//
 
-static bool clearPlayerBlocks(Player* player, void* data)
-{
+static bool clearPlayerBlocks(Player* player, void* data) {
   EventClient* ec = (EventClient*)data;
 
   // clear the player block
@@ -288,8 +275,7 @@ static bool clearPlayerBlocks(Player* player, void* data)
 }
 
 
-void GfxBlockMgr::removeClient(EventClient* ec)
-{
+void GfxBlockMgr::removeClient(EventClient* ec) {
   for (int i = 0; i < (int)BlockIDCount; i++) {
     blocks[i]->remove(ec);
   }
@@ -310,8 +296,7 @@ void GfxBlockMgr::removeClient(EventClient* ec)
 
 //============================================================================//
 
-const char* GfxBlockMgr::getIDString(int id)
-{
+const char* GfxBlockMgr::getIDString(int id) {
   std::map<int, std::string>::const_iterator it = id2nameMap.find(id);
   if (it == id2nameMap.end()) {
     return "unknown";
@@ -320,8 +305,7 @@ const char* GfxBlockMgr::getIDString(int id)
 }
 
 
-int GfxBlockMgr::getStringID(const char* name)
-{
+int GfxBlockMgr::getStringID(const char* name) {
   std::map<std::string, int>::const_iterator it = name2idMap.find(name);
   if (it == name2idMap.end()) {
     return -1;
@@ -332,8 +316,7 @@ int GfxBlockMgr::getStringID(const char* name)
 
 //============================================================================//
 
-void GfxBlockMgr::check()
-{
+void GfxBlockMgr::check() {
   assert(name2idMap.size() == BlockIDCount);
   assert(id2nameMap.size() == BlockIDCount);
 }
@@ -350,6 +333,6 @@ struct InitCheck { InitCheck() { GfxBlockMgr::check(); } } initCheck;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,13 +11,13 @@
  */
 
 /* MeshSceneNode:
- *	Encapsulates information for rendering a mesh fragment
+ *  Encapsulates information for rendering a mesh fragment
  *      (a collection of faces with the same material properties).
- *	Does not support level of detail.
+ *  Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_SCENE_NODE_H
-#define	BZF_MESH_SCENE_NODE_H
+#ifndef BZF_MESH_SCENE_NODE_H
+#define BZF_MESH_SCENE_NODE_H
 
 #include "common.h"
 #include "vectors.h"
@@ -67,7 +67,7 @@ class MeshSceneNode : public SceneNode {
     static void freeContext(void* data);
 
     static void setLodScale(int pixelsX, float fovx,
-			    int pixelsY, float fovy);
+                            int pixelsY, float fovy);
     static void setRadarLodScale(float lengthPerPixel);
 
   private:
@@ -125,7 +125,7 @@ class MeshSceneNode : public SceneNode {
     int calcShadowLod(const ViewFrustum&);
     int calcRadarLod();
 
-  friend class MeshSceneNodeMgr;
+    friend class MeshSceneNodeMgr;
 };
 
 
@@ -135,6 +135,6 @@ class MeshSceneNode : public SceneNode {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

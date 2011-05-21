@@ -40,8 +40,8 @@ static int minElements = 0; // the minimum element count of all enabled pointers
 static map<GLenum, int> maxElements; // max element counts for enabled pointers
 
 static map<GLenum, int> luaRefs; // refs to strings to avoid garbage collection
-				 // (could also use lua_gc(LUA_GCSTOP) if this
-				 // was being implemented as a wrapped function)
+// (could also use lua_gc(LUA_GCSTOP) if this
+// was being implemented as a wrapped function)
 
 static lua_State* activeLua = NULL;
 
@@ -49,8 +49,7 @@ static lua_State* activeLua = NULL;
 //============================================================================//
 //============================================================================//
 
-bool LuaGLPointers::PushEntries(lua_State* L)
-{
+bool LuaGLPointers::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, VertexPointer);
   PUSH_LUA_CFUNC(L, NormalPointer);
   PUSH_LUA_CFUNC(L, TexCoordPointer);
@@ -82,8 +81,7 @@ bool LuaGLPointers::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-void LuaGLPointers::CheckActiveState(lua_State* L, const char* funcName)
-{
+void LuaGLPointers::CheckActiveState(lua_State* L, const char* funcName) {
   LuaOpenGL::CheckDrawingEnabled(L, funcName);
   if (L != activeLua) {
     luaL_error(L, "invalid lua state");
@@ -94,8 +92,7 @@ void LuaGLPointers::CheckActiveState(lua_State* L, const char* funcName)
 //============================================================================//
 //============================================================================//
 
-bool LuaGLPointers::Enable(lua_State* L)
-{
+bool LuaGLPointers::Enable(lua_State* L) {
   if (activeLua != NULL) {
     return false;
   }
@@ -115,8 +112,7 @@ bool LuaGLPointers::Enable(lua_State* L)
 }
 
 
-bool LuaGLPointers::Reset(lua_State* L)
-{
+bool LuaGLPointers::Reset(lua_State* L) {
   if (L != activeLua) {
     return false;
   }
@@ -141,8 +137,7 @@ bool LuaGLPointers::Reset(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static void UpdateMinElement(int maxElem)
-{
+static void UpdateMinElement(int maxElem) {
   if (maxElements.empty()) {
     minElements = 0;
     return;
@@ -164,8 +159,7 @@ static void UpdateMinElement(int maxElem)
 //============================================================================//
 //============================================================================//
 
-static bool FreeLuaRef(lua_State* L, GLenum type)
-{
+static bool FreeLuaRef(lua_State* L, GLenum type) {
   map<GLenum, int>::iterator it = luaRefs.find(type);
   if (it != luaRefs.end()) {
     luaL_unref(L, LUA_REGISTRYINDEX, it->second);
@@ -176,8 +170,7 @@ static bool FreeLuaRef(lua_State* L, GLenum type)
 }
 
 
-static bool CreateLuaRef(lua_State* L, int index, GLenum type)
-{
+static bool CreateLuaRef(lua_State* L, int index, GLenum type) {
   FreeLuaRef(L, type);
   lua_checkstack(L, 1);
   lua_pushvalue(L, index);
@@ -191,9 +184,8 @@ static bool CreateLuaRef(lua_State* L, int index, GLenum type)
 //============================================================================//
 
 static const void* ParsePointer(lua_State* L, int index, GLsizei count,
-				GLenum* dataType, int& maxElem, bool& useVBO,
-				GLenum arrayType)
-{
+                                GLenum* dataType, int& maxElem, bool& useVBO,
+                                GLenum arrayType) {
   const char* data = NULL;
   size_t size;
   size_t offset = 0;
@@ -241,7 +233,8 @@ static const void* ParsePointer(lua_State* L, int index, GLsizei count,
 
   if (bufID == 0) {
     useVBO = false;
-  } else {
+  }
+  else {
     useVBO = true;
     glBindBuffer(GL_ARRAY_BUFFER, bufID);
   }
@@ -257,8 +250,7 @@ static const void* ParsePointer(lua_State* L, int index, GLsizei count,
 //============================================================================//
 //============================================================================//
 
-int LuaGLPointers::VertexPointer(lua_State* L)
-{
+int LuaGLPointers::VertexPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
@@ -278,7 +270,7 @@ int LuaGLPointers::VertexPointer(lua_State* L)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, 3, width, &type, maxElem, useVBO,
-				   GL_VERTEX_ARRAY);
+                                   GL_VERTEX_ARRAY);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -294,8 +286,7 @@ int LuaGLPointers::VertexPointer(lua_State* L)
 }
 
 
-int LuaGLPointers::NormalPointer(lua_State* L)
-{
+int LuaGLPointers::NormalPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
@@ -311,7 +302,7 @@ int LuaGLPointers::NormalPointer(lua_State* L)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, 2, 3, &type, maxElem, useVBO,
-				   GL_NORMAL_ARRAY);
+                                   GL_NORMAL_ARRAY);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -327,8 +318,7 @@ int LuaGLPointers::NormalPointer(lua_State* L)
 }
 
 
-static int HandleTexCoordPointer(lua_State* L, int index, GLenum texUnit)
-{
+static int HandleTexCoordPointer(lua_State* L, int index, GLenum texUnit) {
   if (lua_isboolean(L, index) && !lua_tobool(L, index)) {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     maxElements.erase(texUnit);
@@ -346,7 +336,7 @@ static int HandleTexCoordPointer(lua_State* L, int index, GLenum texUnit)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, index + 2, width, &type, maxElem, useVBO,
-				   texUnit);
+                                   texUnit);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -362,8 +352,7 @@ static int HandleTexCoordPointer(lua_State* L, int index, GLenum texUnit)
 }
 
 
-int LuaGLPointers::TexCoordPointer(lua_State* L)
-{
+int LuaGLPointers::TexCoordPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLenum texUnit = LuaTextureMgr::GetActiveTexture();
@@ -371,8 +360,7 @@ int LuaGLPointers::TexCoordPointer(lua_State* L)
 }
 
 
-int LuaGLPointers::MultiTexCoordPointer(lua_State* L)
-{
+int LuaGLPointers::MultiTexCoordPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const int texNum = luaL_checkint(L, 1);
@@ -389,8 +377,7 @@ int LuaGLPointers::MultiTexCoordPointer(lua_State* L)
 }
 
 
-int LuaGLPointers::ColorPointer(lua_State* L)
-{
+int LuaGLPointers::ColorPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
@@ -410,7 +397,7 @@ int LuaGLPointers::ColorPointer(lua_State* L)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, 4, width, &type, maxElem, useVBO,
-				   GL_COLOR_ARRAY);
+                                   GL_COLOR_ARRAY);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -426,8 +413,7 @@ int LuaGLPointers::ColorPointer(lua_State* L)
 }
 
 
-int LuaGLPointers::EdgeFlagPointer(lua_State* L)
-{
+int LuaGLPointers::EdgeFlagPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   if (lua_isboolean(L, 1) && !lua_tobool(L, 1)) {
@@ -442,7 +428,7 @@ int LuaGLPointers::EdgeFlagPointer(lua_State* L)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, 2, 1, NULL, maxElem, useVBO,
-				   GL_EDGE_FLAG_ARRAY);
+                                   GL_EDGE_FLAG_ARRAY);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -458,8 +444,7 @@ int LuaGLPointers::EdgeFlagPointer(lua_State* L)
 }
 
 
-int LuaGLPointers::VertexAttribPointer(lua_State* L)
-{
+int LuaGLPointers::VertexAttribPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLint attribIndex = luaL_checkint(L, 1);
@@ -486,7 +471,7 @@ int LuaGLPointers::VertexAttribPointer(lua_State* L)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, 5, width, &type, maxElem, useVBO,
-				   attribIndex);
+                                   attribIndex);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -502,8 +487,7 @@ int LuaGLPointers::VertexAttribPointer(lua_State* L)
 }
 
 
-int LuaGLPointers::VertexAttribIPointer(lua_State* L)
-{
+int LuaGLPointers::VertexAttribIPointer(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLint attribIndex = luaL_checkint(L, 1);
@@ -529,7 +513,7 @@ int LuaGLPointers::VertexAttribIPointer(lua_State* L)
   int maxElem;
   bool useVBO;
   const GLvoid* ptr = ParsePointer(L, 4, width, &type, maxElem, useVBO,
-				   attribIndex);
+                                   attribIndex);
   if (maxElem <= 0) {
     return luaL_pushnil(L);
   }
@@ -549,22 +533,21 @@ int LuaGLPointers::VertexAttribIPointer(lua_State* L)
 //============================================================================//
 
 static const void* ParseIndices(lua_State* L, int index, size_t count,
-				GLenum& type, bool& useVBO, int& maxElem)
-{
+                                GLenum& type, bool& useVBO, int& maxElem) {
   // GLBuffer index data
   const LuaGLBuffer* buf = LuaGLBufferMgr::TestLuaGLBuffer(L, index);
   if (buf != NULL) {
     if ((buf->target != GL_ELEMENT_ARRAY_BUFFER) ||
-	(buf->indexMax == 0)  ||
-	(buf->indexType == 0) ||
-	(buf->indexTypeSize == 0)) {
+        (buf->indexMax == 0)  ||
+        (buf->indexType == 0) ||
+        (buf->indexTypeSize == 0)) {
       luaL_error(L, "invalid GLBuffer target for indices");
     }
 
     const int offset = luaL_optint(L, index + 1, 0);
     if ((offset % buf->indexTypeSize) != 0) {
       luaL_error(L, "invalid GLBuffer index offset: %i vs %i",
-		 offset, buf->indexTypeSize);
+                 offset, buf->indexTypeSize);
     }
     if (offset > buf->size) {
       luaL_error(L, "indices offset is larger than the buffer data");
@@ -597,14 +580,14 @@ static const void* ParseIndices(lua_State* L, int index, size_t count,
 
   if (offset > size) {
     luaL_error(L, "indices offset is larger than the data: %i vs %i",
-	       offset, size);
+               offset, size);
   }
   data += offset;
   size -= offset;
 
   if ((size / typeSize) < count) {
     luaL_error(L, "index data size is too small for the element count: %i vs %i",
-	       (size / typeSize), count);
+               (size / typeSize), count);
   }
 
   maxElem = LuaGLBufferMgr::CalcMaxElement(type, size, data);
@@ -616,11 +599,10 @@ static const void* ParseIndices(lua_State* L, int index, size_t count,
 }
 
 
-static inline void CheckMaxElement(lua_State* L, int maxElem)
-{
+static inline void CheckMaxElement(lua_State* L, int maxElem) {
   if ((maxElem < 0) || (maxElem >= minElements)) {
     luaL_error(L, "max index vs. data buffers mismatch: %i vs %i",
-	       maxElem, minElements);
+               maxElem, minElements);
   }
 }
 
@@ -628,8 +610,7 @@ static inline void CheckMaxElement(lua_State* L, int maxElem)
 //============================================================================//
 //============================================================================//
 
-int LuaGLPointers::ArrayElement(lua_State* L)
-{
+int LuaGLPointers::ArrayElement(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLint element = (GLint)luaL_checkint(L, 1);
@@ -642,8 +623,7 @@ int LuaGLPointers::ArrayElement(lua_State* L)
 }
 
 
-int LuaGLPointers::DrawArrays(lua_State* L)
-{
+int LuaGLPointers::DrawArrays(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLenum  mode  = (GLenum) luaL_checkint(L, 1);
@@ -662,8 +642,7 @@ int LuaGLPointers::DrawArrays(lua_State* L)
 }
 
 
-int LuaGLPointers::DrawElements(lua_State* L)
-{
+int LuaGLPointers::DrawElements(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLenum  mode  = (GLenum) luaL_checkint(L, 1);
@@ -689,8 +668,7 @@ int LuaGLPointers::DrawElements(lua_State* L)
 }
 
 
-int LuaGLPointers::DrawRangeElements(lua_State* L)
-{
+int LuaGLPointers::DrawRangeElements(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   const GLenum  mode  = (GLenum) luaL_checkint(L, 1);
@@ -718,8 +696,7 @@ int LuaGLPointers::DrawRangeElements(lua_State* L)
 }
 
 
-int LuaGLPointers::DrawArraysInstanced(lua_State* L)
-{
+int LuaGLPointers::DrawArraysInstanced(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
   if (OpenGLPassState::CreatingList()) {
     luaL_error(L, "can not be used in a display list");
@@ -737,8 +714,7 @@ int LuaGLPointers::DrawArraysInstanced(lua_State* L)
 }
 
 
-int LuaGLPointers::DrawElementsInstanced(lua_State* L)
-{
+int LuaGLPointers::DrawElementsInstanced(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
   if (OpenGLPassState::CreatingList()) {
     luaL_error(L, "can not be used in a display list");
@@ -770,8 +746,7 @@ int LuaGLPointers::DrawElementsInstanced(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaGLPointers::GetPointerState(lua_State* L)
-{
+int LuaGLPointers::GetPointerState(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   lua_createtable(L, 0, maxElements.size());
@@ -787,9 +762,10 @@ int LuaGLPointers::GetPointerState(lua_State* L)
       lua_pushliteral(L, "data");
       map<GLenum, int>::const_iterator rit = luaRefs.find(type);
       if (rit != luaRefs.end()) {
-	lua_rawgeti(L, LUA_REGISTRYINDEX, rit->second);
-      } else {
-	lua_pushboolean(L, false);
+        lua_rawgeti(L, LUA_REGISTRYINDEX, rit->second);
+      }
+      else {
+        lua_pushboolean(L, false);
       }
       lua_rawset(L, -3);
     }
@@ -809,6 +785,6 @@ int LuaGLPointers::GetPointerState(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

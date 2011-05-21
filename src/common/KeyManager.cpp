@@ -39,7 +39,7 @@ template <>
 KeyManager* Singleton<KeyManager>::_instance = (KeyManager*)0;
 
 
-const char*		KeyManager::buttonNames[] = {
+const char*   KeyManager::buttonNames[] = {
   "???",
   "Pause",
   "Home",
@@ -142,15 +142,14 @@ const char*		KeyManager::buttonNames[] = {
   "Hatswitch 2 left",
   "LastButton"  // should always be last item listed
 };
-const char*		KeyManager::asciiNames[][2] = {
-  { "Tab",		"\t" },
-  { "Backspace",	"\b" },
-  { "Enter",		"\r" },
-  { "Space",		" "  }
+const char*   KeyManager::asciiNames[][2] = {
+  { "Tab",    "\t" },
+  { "Backspace",  "\b" },
+  { "Enter",    "\r" },
+  { "Space",    " "  }
 };
 
-KeyManager::KeyManager()
-{
+KeyManager::KeyManager() {
   unsigned int i;
 
   // prep string to key map
@@ -168,35 +167,34 @@ KeyManager::KeyManager()
   }
 }
 
-KeyManager::~KeyManager()
-{
+KeyManager::~KeyManager() {
 }
 
-void			KeyManager::bind(const BzfKeyEvent& key,
-					 bool press, const std::string& cmd)
-{
+void      KeyManager::bind(const BzfKeyEvent& key,
+                           bool press, const std::string& cmd) {
   if (press) {
     pressEventToCommand.erase(key);
     pressEventToCommand.insert(std::make_pair(key, cmd));
-  } else {
+  }
+  else {
     releaseEventToCommand.erase(key);
     releaseEventToCommand.insert(std::make_pair(key, cmd));
   }
   notify(key, press, cmd);
 }
 
-void			KeyManager::unbind(const BzfKeyEvent& key,
-					   bool press)
-{
-  if (press)
+void      KeyManager::unbind(const BzfKeyEvent& key,
+                             bool press) {
+  if (press) {
     pressEventToCommand.erase(key);
-  else
+  }
+  else {
     releaseEventToCommand.erase(key);
+  }
   notify(key, press, "");
 }
 
-void			KeyManager::unbindCommand(const char* command)
-{
+void      KeyManager::unbindCommand(const char* command) {
   EventToCommandMap::iterator index;
   EventToCommandMap::iterator deleteme;
 
@@ -206,7 +204,8 @@ void			KeyManager::unbindCommand(const char* command)
       deleteme = index;
       index++;
       unbind(deleteme->first, true);
-    } else {
+    }
+    else {
       index++;
     }
   }
@@ -217,39 +216,41 @@ void			KeyManager::unbindCommand(const char* command)
       deleteme = index;
       index++;
       unbind(deleteme->first, false);
-    } else {
+    }
+    else {
       index++;
     }
   }
 }
 
-std::string		KeyManager::get(const BzfKeyEvent& key,
-					bool press) const
-{
+std::string   KeyManager::get(const BzfKeyEvent& key,
+                              bool press) const {
   const EventToCommandMap* map = press ? &pressEventToCommand :
-    &releaseEventToCommand;
+                                 &releaseEventToCommand;
   EventToCommandMap::const_iterator index = map->find(key);
-  if (index == map->end())
+  if (index == map->end()) {
     return "";
-  else
+  }
+  else {
     return index->second;
+  }
 }
 
 
-std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const
-{
+std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, bool press) const {
   std::vector<std::string> keys;
   EventToCommandMap::const_iterator index;
   if (press) {
     for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index) {
       if (index->second == command) {
-	keys.push_back(this->keyEventToString(index->first));
+        keys.push_back(this->keyEventToString(index->first));
       }
     }
-  } else {
+  }
+  else {
     for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index) {
       if (index->second == command) {
-	keys.push_back(this->keyEventToString(index->first));
+        keys.push_back(this->keyEventToString(index->first));
       }
     }
   }
@@ -257,16 +258,18 @@ std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, boo
 }
 
 
-std::string		KeyManager::keyEventToString(
-					const BzfKeyEvent& key) const
-{
+std::string   KeyManager::keyEventToString(
+  const BzfKeyEvent& key) const {
   std::string name;
-  if (key.modifiers & BzfKeyEvent::ShiftKey)
+  if (key.modifiers & BzfKeyEvent::ShiftKey) {
     name += "Shift+";
-  if (key.modifiers & BzfKeyEvent::ControlKey)
+  }
+  if (key.modifiers & BzfKeyEvent::ControlKey) {
     name += "Ctrl+";
-  if (key.modifiers & BzfKeyEvent::AltKey)
+  }
+  if (key.modifiers & BzfKeyEvent::AltKey) {
     name += "Alt+";
+  }
   switch (key.unicode) {
     case 0:
       return name + buttonNames[key.button];
@@ -279,20 +282,18 @@ std::string		KeyManager::keyEventToString(
     case ' ':
       return name + "Space";
     default:
-      if (!iswspace(key.unicode))
-      {
+      if (!iswspace(key.unicode)) {
         bzUTF8Char chr(key.unicode);
-	return name + chr.str();
+        return name + chr.str();
       }
       return name + "???";
   }
 }
 
-bool			KeyManager::stringToKeyEvent(
-				const std::string& name, BzfKeyEvent& key) const
-{
+bool      KeyManager::stringToKeyEvent(
+  const std::string& name, BzfKeyEvent& key) const {
   // no empties
-  if (name.length() == 0) return false;
+  if (name.length() == 0) { return false; }
 
   // find last + in name
   const char* shiftDelimiter = strrchr(name.c_str(), '+');
@@ -301,7 +302,8 @@ bool			KeyManager::stringToKeyEvent(
   std::string shiftPart, keyPart;
   if (shiftDelimiter == NULL) {
     keyPart = name;
-  } else {
+  }
+  else {
     shiftPart  = "+";
     shiftPart += name.substr(0, shiftDelimiter - name.c_str() + 1);
     keyPart    = shiftDelimiter + 1;
@@ -314,8 +316,9 @@ bool			KeyManager::stringToKeyEvent(
     UTF8StringItr itr(keyPart.c_str());
     unsigned int chr = (*itr);
     if (chr > 0x21 && iswprint(chr)) {
-      if (*(++itr)) // more than one unicode code point...no can do
-	return false;
+      if (*(++itr)) { // more than one unicode code point...no can do
+        return false;
+      }
       key.unicode = chr;
       key.modifiers = 0;
       stringToEvent.insert(std::make_pair(keyPart, key));
@@ -323,7 +326,7 @@ bool			KeyManager::stringToKeyEvent(
     // try finding it again
     index = stringToEvent.find(keyPart);
     // if you can't find it now, it's no good
-    if (index == stringToEvent.end()) return false;
+    if (index == stringToEvent.end()) { return false; }
   }
 
   // get key event sans shift state
@@ -331,47 +334,48 @@ bool			KeyManager::stringToKeyEvent(
 
   // apply shift state
   if (strstr(shiftPart.c_str(), "+Shift+") != NULL ||
-      strstr(shiftPart.c_str(), "+shift+") != NULL)
+      strstr(shiftPart.c_str(), "+shift+") != NULL) {
     key.modifiers |= BzfKeyEvent::ShiftKey;
+  }
   if (strstr(shiftPart.c_str(), "+Ctrl+") != NULL ||
-      strstr(shiftPart.c_str(), "+ctrl+") != NULL)
+      strstr(shiftPart.c_str(), "+ctrl+") != NULL) {
     key.modifiers |= BzfKeyEvent::ControlKey;
+  }
   if (strstr(shiftPart.c_str(), "+Alt+") != NULL ||
-      strstr(shiftPart.c_str(), "+alt+") != NULL)
+      strstr(shiftPart.c_str(), "+alt+") != NULL) {
     key.modifiers |= BzfKeyEvent::AltKey;
+  }
 
   // success
   return true;
 }
 
-void			KeyManager::iterate(
-				IterateCallback callback, void* userData)
-{
+void      KeyManager::iterate(
+  IterateCallback callback, void* userData) {
   assert(callback != NULL);
 
   EventToCommandMap::const_iterator index;
-  for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index)
+  for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index) {
     (*callback)(keyEventToString(index->first), true, index->second, userData);
-  for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index)
+  }
+  for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index) {
     (*callback)(keyEventToString(index->first), false, index->second, userData);
+  }
 }
 
-void			KeyManager::addCallback(
-				ChangeCallback callback, void* userData)
-{
+void      KeyManager::addCallback(
+  ChangeCallback callback, void* userData) {
   callbacks.add(callback, userData);
 }
 
-void			KeyManager::removeCallback(
-				ChangeCallback callback, void* userData)
-{
+void      KeyManager::removeCallback(
+  ChangeCallback callback, void* userData) {
   callbacks.remove(callback, userData);
 }
 
-void			KeyManager::notify(
-				const BzfKeyEvent& key,
-				bool press, const std::string& cmd)
-{
+void      KeyManager::notify(
+  const BzfKeyEvent& key,
+  bool press, const std::string& cmd) {
   CallbackInfo info;
   info.name  = keyEventToString(key);
   info.press = press;
@@ -379,42 +383,49 @@ void			KeyManager::notify(
   callbacks.iterate(&onCallback, &info);
 }
 
-bool			KeyManager::onCallback(
-				ChangeCallback callback,
-				void* userData,
-				void* vinfo)
-{
+bool      KeyManager::onCallback(
+  ChangeCallback callback,
+  void* userData,
+  void* vinfo) {
   CallbackInfo* info = static_cast<CallbackInfo*>(vinfo);
   callback(info->name, info->press, info->cmd, userData);
   return true;
 }
 
-bool			KeyManager::KeyEventLessThan::operator()(
-				const BzfKeyEvent& a,
-				const BzfKeyEvent& b) const
-{
+bool      KeyManager::KeyEventLessThan::operator()(
+  const BzfKeyEvent& a,
+  const BzfKeyEvent& b) const {
   if (a.unicode == 0 && b.unicode == 0) {
-    if (a.button < b.button)
+    if (a.button < b.button) {
       return true;
-    if (a.button > b.button)
+    }
+    if (a.button > b.button) {
       return false;
+    }
 
     // check shift
-    if (a.modifiers < b.modifiers)
+    if (a.modifiers < b.modifiers) {
       return true;
-  } else if (a.unicode == 0 && b.unicode != 0) {
+    }
+  }
+  else if (a.unicode == 0 && b.unicode != 0) {
     return true;
-  } else if (a.unicode != 0 && b.unicode == 0) {
+  }
+  else if (a.unicode != 0 && b.unicode == 0) {
     return false;
-  } else {
-    if (towupper(a.unicode) < towupper(b.unicode))
+  }
+  else {
+    if (towupper(a.unicode) < towupper(b.unicode)) {
       return true;
-    if (towupper(a.unicode) > towupper(b.unicode))
+    }
+    if (towupper(a.unicode) > towupper(b.unicode)) {
       return false;
+    }
 
     // check shift state without shift key
-    if ((a.modifiers & ~BzfKeyEvent::ShiftKey) < (b.modifiers & ~BzfKeyEvent::ShiftKey))
+    if ((a.modifiers & ~BzfKeyEvent::ShiftKey) < (b.modifiers & ~BzfKeyEvent::ShiftKey)) {
       return true;
+    }
   }
 
   return false;
@@ -424,6 +435,6 @@ bool			KeyManager::KeyEventLessThan::operator()(
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

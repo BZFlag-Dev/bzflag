@@ -17,18 +17,18 @@
 #include "WallObstacle.h"
 
 class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
+    friend class SceneDatabaseBuilder;
 
   public:
-			~WallSceneNodeGenerator();
+    ~WallSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool);
 
   protected:
-			WallSceneNodeGenerator(const WallObstacle*);
+    WallSceneNodeGenerator(const WallObstacle*);
 
   private:
-    const WallObstacle*	wall;
+    const WallObstacle* wall;
 };
 
 #endif
@@ -37,6 +37,6 @@ class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

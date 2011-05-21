@@ -77,8 +77,9 @@ CursesUI::~CursesUI() {
 
 void CursesUI::outputMessage(const std::string& msg, ColorCode color) {
   // add message to the message buffer, remove the oldest message if it's full
-  if (msgBuffer.size() == maxBufferSize)
+  if (msgBuffer.size() == maxBufferSize) {
     msgBuffer.erase(msgBuffer.begin());
+  }
   std::pair<std::string, ColorCode> p(msg, color);
   msgBuffer.push_back(p);
 
@@ -105,176 +106,191 @@ bool CursesUI::checkCommand(std::string& str) {
   // get a character and do checks that are always needed
   int c = wgetch(cmdWin);
   switch (c) {
-  case KEY_RESIZE:
-    handleResize(LINES, COLS);
-    return false;
-  case KEY_F(2):
-    toggleMenu();
-    return false;
-  case ERR:
-    return false;
+    case KEY_RESIZE:
+      handleResize(LINES, COLS);
+      return false;
+    case KEY_F(2):
+      toggleMenu();
+      return false;
+    case ERR:
+      return false;
   }
 
   // if the menu is active, use the keystrokes for that
-  if (menuState == 1)
+  if (menuState == 1) {
     return menu.handleKey(c, str);
+  }
 
   // if not, go ahead and parse commands
   switch (c) {
 
-    // clear command (21 is Ctrl-U)
-  case 21:
-    cmd = "";
-    updateCmdWin();
-    currentHistory = history.size();
-    return false;
-
-    // delete last character
-  case KEY_BACKSPACE:
-  case KEY_DC:
-  case 8:
-  case 127:
-    cmd = cmd.substr(0, cmd.size() - 1);
-    updateCmdWin();
-    return false;
-
-    // redraw command (12 is ctrl-l)
-  case 12:
-    wclear(cmdWin);
-    wclear(targetWin);
-    updateCmdWin();
-    updateTargetWin();
-    return false;
-
-    // send command
-  case '\n': // works with PDCurses
-  case 13:   // works with ncurses
-    if (history.size() == maxHistory)
-      history.erase(history.begin());
-    history.push_back(cmd);
-    str = cmd;
-    cmd = "";
-    currentHistory = history.size();
-    updateCmdWin();
-    return true;
-
-    // scroll main window
-  case KEY_NPAGE:
-    scrollOffset = (scrollOffset < unsigned(LINES - 2) / 2 ?
-		    0 : scrollOffset - (LINES - 2) / 2);
-    updateMainWinFromBuffer(LINES - 2);
-    return false;
-  case KEY_PPAGE:
-    if (msgBuffer.size() < unsigned(LINES - 2))
-      scrollOffset = 0;
-    else if (scrollOffset > msgBuffer.size() - (LINES - 2) - (LINES - 2) / 2)
-      scrollOffset = msgBuffer.size() - (LINES - 2);
-    else
-      scrollOffset += (LINES - 2) / 2;
-    updateMainWinFromBuffer(LINES - 2);
-    return false;
-
-    // change target - we have two maps to iterate over, so if we get to
-    // the end/beginning of the first one we go to the beginning/end of the
-    // second one and vice versa, also the maps should never be empty
-  case KEY_LEFT:
-    if (targetIter == additionalTargets.begin()) {
-      targetIter = players.begin();
-      for (unsigned int j = 0; j < players.size() - 1; j++)
-	++targetIter;
-    }
-    else if (targetIter == players.begin()) {
-      targetIter = additionalTargets.begin();
-      for (unsigned int j = 0; j < additionalTargets.size() - 1; j++)
-	++targetIter;
-    }
-    else
-      targetIter--;
-    updateTargetWin();
-    return false;
-  case KEY_RIGHT:
-    targetIter++;
-    if (targetIter == players.end())
-      targetIter = additionalTargets.begin();
-    else if (targetIter == additionalTargets.end())
-      targetIter = players.begin();
-    updateTargetWin();
-    return false;
-
-    // command history
-  case KEY_UP:
-    if (currentHistory == 0 || history.size() == 0)
-      return false;
-    --currentHistory;
-    cmd = history[currentHistory];
-    updateCmdWin();
-    return false;
-  case KEY_DOWN:
-    if (currentHistory < history.size())
-      ++currentHistory;
-    if (currentHistory == history.size())
+      // clear command (21 is Ctrl-U)
+    case 21:
       cmd = "";
-    else
-      cmd = history[currentHistory];
-    updateCmdWin();
-    return false;
+      updateCmdWin();
+      currentHistory = history.size();
+      return false;
 
-    // kick target
-  case KEY_F(5):
-    if (targetIter != players.end() && targetIter->first != me &&
-	targetIter->first <= LastRealPlayer) {
-      if (targetIter->second.isAdmin) {
-	outputMessage("Warning: Kicking Administrator ("
-	  + targetIter->second.name + ")!", Red);
-      }
-      cmd = "/kick \"";
-      cmd += targetIter->second.name;
-      cmd += "\"";
-      targetIter = players.find(me);
+      // delete last character
+    case KEY_BACKSPACE:
+    case KEY_DC:
+    case 8:
+    case 127:
+      cmd = cmd.substr(0, cmd.size() - 1);
+      updateCmdWin();
+      return false;
+
+      // redraw command (12 is ctrl-l)
+    case 12:
+      wclear(cmdWin);
+      wclear(targetWin);
       updateCmdWin();
       updateTargetWin();
-    }
-    return false;
+      return false;
 
-    // ban target
-  case KEY_F(6):
-    if (targetIter != players.end() && targetIter->first != me &&
-	targetIter->first <= LastRealPlayer) {
-      if (targetIter->second.ip != "") {
-	if (targetIter->second.isAdmin) {
-	  outputMessage("Warning: Banning Administrator ("
-	    + targetIter->second.name + ")!", Red);
-	}
-	cmd = "/ban ";
-	cmd += targetIter->second.ip;
-	targetIter = players.find(me);
-	updateCmdWin();
-	updateTargetWin();
+      // send command
+    case '\n': // works with PDCurses
+    case 13:   // works with ncurses
+      if (history.size() == maxHistory) {
+        history.erase(history.begin());
+      }
+      history.push_back(cmd);
+      str = cmd;
+      cmd = "";
+      currentHistory = history.size();
+      updateCmdWin();
+      return true;
+
+      // scroll main window
+    case KEY_NPAGE:
+      scrollOffset = (scrollOffset < unsigned(LINES - 2) / 2 ?
+                      0 : scrollOffset - (LINES - 2) / 2);
+      updateMainWinFromBuffer(LINES - 2);
+      return false;
+    case KEY_PPAGE:
+      if (msgBuffer.size() < unsigned(LINES - 2)) {
+        scrollOffset = 0;
+      }
+      else if (scrollOffset > msgBuffer.size() - (LINES - 2) - (LINES - 2) / 2) {
+        scrollOffset = msgBuffer.size() - (LINES - 2);
       }
       else {
-	std::string msg = "--- Can't ban ";
-	msg += targetIter->second.name + ", you don't have the IP address";
+        scrollOffset += (LINES - 2) / 2;
       }
-    }
-    return false;
-
-    // tab - autocomplete
-  case '\t': {
-    std::string matches;
-    cmd = comp.complete(cmd, &matches);
-    updateCmdWin();
-    if (matches.size() > 0) {
-      outputMessage(matches, White);
-      updateTargetWin();
-    }
-    return false;
-  }
-  default:
-    if (c < 32 || c > 127 || cmd.size() >= CMDLENGTH)
+      updateMainWinFromBuffer(LINES - 2);
       return false;
-    cmd += char(c);
-    updateCmdWin();
-    return false;
+
+      // change target - we have two maps to iterate over, so if we get to
+      // the end/beginning of the first one we go to the beginning/end of the
+      // second one and vice versa, also the maps should never be empty
+    case KEY_LEFT:
+      if (targetIter == additionalTargets.begin()) {
+        targetIter = players.begin();
+        for (unsigned int j = 0; j < players.size() - 1; j++) {
+          ++targetIter;
+        }
+      }
+      else if (targetIter == players.begin()) {
+        targetIter = additionalTargets.begin();
+        for (unsigned int j = 0; j < additionalTargets.size() - 1; j++) {
+          ++targetIter;
+        }
+      }
+      else {
+        targetIter--;
+      }
+      updateTargetWin();
+      return false;
+    case KEY_RIGHT:
+      targetIter++;
+      if (targetIter == players.end()) {
+        targetIter = additionalTargets.begin();
+      }
+      else if (targetIter == additionalTargets.end()) {
+        targetIter = players.begin();
+      }
+      updateTargetWin();
+      return false;
+
+      // command history
+    case KEY_UP:
+      if (currentHistory == 0 || history.size() == 0) {
+        return false;
+      }
+      --currentHistory;
+      cmd = history[currentHistory];
+      updateCmdWin();
+      return false;
+    case KEY_DOWN:
+      if (currentHistory < history.size()) {
+        ++currentHistory;
+      }
+      if (currentHistory == history.size()) {
+        cmd = "";
+      }
+      else {
+        cmd = history[currentHistory];
+      }
+      updateCmdWin();
+      return false;
+
+      // kick target
+    case KEY_F(5):
+      if (targetIter != players.end() && targetIter->first != me &&
+          targetIter->first <= LastRealPlayer) {
+        if (targetIter->second.isAdmin) {
+          outputMessage("Warning: Kicking Administrator ("
+                        + targetIter->second.name + ")!", Red);
+        }
+        cmd = "/kick \"";
+        cmd += targetIter->second.name;
+        cmd += "\"";
+        targetIter = players.find(me);
+        updateCmdWin();
+        updateTargetWin();
+      }
+      return false;
+
+      // ban target
+    case KEY_F(6):
+      if (targetIter != players.end() && targetIter->first != me &&
+          targetIter->first <= LastRealPlayer) {
+        if (targetIter->second.ip != "") {
+          if (targetIter->second.isAdmin) {
+            outputMessage("Warning: Banning Administrator ("
+                          + targetIter->second.name + ")!", Red);
+          }
+          cmd = "/ban ";
+          cmd += targetIter->second.ip;
+          targetIter = players.find(me);
+          updateCmdWin();
+          updateTargetWin();
+        }
+        else {
+          std::string msg = "--- Can't ban ";
+          msg += targetIter->second.name + ", you don't have the IP address";
+        }
+      }
+      return false;
+
+      // tab - autocomplete
+    case '\t': {
+      std::string matches;
+      cmd = comp.complete(cmd, &matches);
+      updateCmdWin();
+      if (matches.size() > 0) {
+        outputMessage(matches, White);
+        updateTargetWin();
+      }
+      return false;
+    }
+    default:
+      if (c < 32 || c > 127 || cmd.size() >= CMDLENGTH) {
+        return false;
+      }
+      cmd += char(c);
+      updateCmdWin();
+      return false;
   }
 }
 
@@ -282,8 +298,9 @@ bool CursesUI::checkCommand(std::string& str) {
 void CursesUI::addedPlayer(PlayerId p) {
   PlayerIdMap::const_iterator iter = players.find(p);
   comp.registerWord(iter->second.name, true /* quote spaces */);
-  if (p == me)
+  if (p == me) {
     targetIter = iter;
+  }
 }
 
 
@@ -297,8 +314,9 @@ void CursesUI::removingPlayer(PlayerId p) {
 
 
 PlayerId CursesUI::getTarget() const {
-  if (targetIter->first == me)
+  if (targetIter->first == me) {
     return AllPlayers;
+  }
   return targetIter->first;
 }
 
@@ -338,7 +356,7 @@ void CursesUI::updateTargetWin() {
   wmove(targetWin, 1, 1);
   std::string tmp = "Send to ";
   tmp = tmp + (targetIter == players.end() || targetIter->first == me ?
-	       "all" : targetIter->second.name) + ":";
+               "all" : targetIter->second.name) + ":";
   waddstr(targetWin, tmp.c_str());
   wrefresh(targetWin);
 }
@@ -386,13 +404,13 @@ void CursesUI::initMainMenu(CursesMenu& menu) {
   menu.setHeader("MAIN MENU");
   menu.clear();
   menu.addItem(new SubmenuCMItem("Show players",
-				  &CursesUI::initPlayerMenu));
+                                 &CursesUI::initPlayerMenu));
   //menu.addItem(new SubmenuCMItem("Edit banlist",
-  //				  &CursesUI::initBanMenu));
+  //          &CursesUI::initBanMenu));
   menu.addItem(new SubmenuCMItem("Edit server variables",
-				  &CursesUI::initServerVarMenu));
+                                 &CursesUI::initServerVarMenu));
   menu.addItem(new SubmenuCMItem("Edit message filter",
-				 &CursesUI::initFilterMenu));
+                                 &CursesUI::initFilterMenu));
 }
 
 
@@ -400,10 +418,11 @@ void CursesUI::initPlayerMenu(CursesMenu& menu) {
   menu.setHeader("PLAYERLIST");
   menu.clear();
   PlayerIdMap::const_iterator it;
-  for (it = menu.players.begin(); it != menu.players.end(); ++it)
+  for (it = menu.players.begin(); it != menu.players.end(); ++it) {
     menu.addItem(new PlayerCMItem(menu.players, it->first));
+  }
   menu.addItem(new SubmenuCMItem("Back to main menu",
-				 &CursesUI::initMainMenu));
+                                 &CursesUI::initMainMenu));
   std::map<uint16_t, bool>& updateTypes(menu.getUpdateTypes());
   updateTypes.clear();
   updateTypes[MsgAddPlayer] = true;
@@ -418,7 +437,7 @@ void CursesUI::initBanMenu(CursesMenu& menu) {
   menu.setHeader("BANLIST");
   menu.clear();
   menu.addItem(new SubmenuCMItem("Not implemented - go back",
-				  &CursesUI::initMainMenu));
+                                 &CursesUI::initMainMenu));
   menu.getUpdateTypes().clear();
 }
 
@@ -428,7 +447,7 @@ void CursesUI::initServerVarMenu(CursesMenu& menu) {
   menu.clear();
   BZDB.iterate(&CursesUI::addBZDBCMItem, &menu);
   menu.addItem(new SubmenuCMItem("Back to main menu",
-				 &CursesUI::initMainMenu));
+                                 &CursesUI::initMainMenu));
   std::map<uint16_t, bool>& updateTypes(menu.getUpdateTypes());
   updateTypes.clear();
   updateTypes[MsgSetVar] = false;
@@ -445,10 +464,11 @@ void CursesUI::initFilterMenu(CursesMenu& menu) {
   menu.clear();
   std::map<std::string, uint16_t>::const_iterator iter;
   for (iter = menu.client.getMessageTypeMap().begin();
-       iter != menu.client.getMessageTypeMap().end(); ++iter)
+       iter != menu.client.getMessageTypeMap().end(); ++iter) {
     menu.addItem(new FilterCMItem(iter->first, menu.client));
+  }
   menu.addItem(new SubmenuCMItem("Back to main menu",
-				 &CursesUI::initMainMenu));
+                                 &CursesUI::initMainMenu));
   menu.getUpdateTypes().clear();
 }
 
@@ -461,6 +481,6 @@ BZAdminUI* CursesUI::creator(BZAdminClient& client) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

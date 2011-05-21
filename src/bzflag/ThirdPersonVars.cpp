@@ -18,8 +18,7 @@
 
 
 ThirdPersonVars::ThirdPersonVars()
-: b3rdPerson(false)
-{
+  : b3rdPerson(false) {
   BZDB.addCallback("_forbid3rdPersonCam",         bzdbCallback, this);
   BZDB.addCallback("3rdPersonCam",                bzdbCallback, this);
   BZDB.addCallback("3rdPersonCamXYOffset",        bzdbCallback, this);
@@ -32,8 +31,7 @@ ThirdPersonVars::ThirdPersonVars()
 }
 
 
-ThirdPersonVars::~ThirdPersonVars()
-{
+ThirdPersonVars::~ThirdPersonVars() {
   BZDB.removeCallback("_forbid3rdPersonCam",         bzdbCallback, this);
   BZDB.removeCallback("3rdPersonCam",                bzdbCallback, this);
   BZDB.removeCallback("3rdPersonCamXYOffset",        bzdbCallback, this);
@@ -45,10 +43,9 @@ ThirdPersonVars::~ThirdPersonVars()
   BZDB.removeCallback("3rdPersonFarTargetSize",      bzdbCallback, this);
 }
 
-void ThirdPersonVars::load(void)
-{
+void ThirdPersonVars::load(void) {
   b3rdPerson = !BZDB.isTrue(std::string("_forbid3rdPersonCam")) &&
-                BZDB.isTrue(std::string("3rdPersonCam"));
+               BZDB.isTrue(std::string("3rdPersonCam"));
 
   if (b3rdPerson) {
     cameraOffsetXY   = BZDB.eval(std::string("3rdPersonCamXYOffset"));
@@ -62,13 +59,11 @@ void ThirdPersonVars::load(void)
   }
 }
 
-void ThirdPersonVars::clear(void)
-{
+void ThirdPersonVars::clear(void) {
   b3rdPerson = false;
 }
 
-void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data)
-{
+void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data) {
   ((ThirdPersonVars*)data)->load();
 }
 
@@ -77,6 +72,6 @@ void ThirdPersonVars::bzdbCallback(const std::string& /*name*/, void* data)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -29,8 +29,7 @@ LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;
 
 //============================================================================//
 
-static bool fallbackCommand(const char* cmd)
-{
+static bool fallbackCommand(const char* cmd) {
   return eventHandler.CommandFallback(cmd);
 }
 
@@ -41,24 +40,23 @@ bool (*LocalCommand::fallback)(const char*) = fallbackCommand;
 //============================================================================//
 
 LocalCommand::LocalCommand(std::string _commandName)
-  : commandName(_commandName)
-{
-  if (!mapOfCommands)
+  : commandName(_commandName) {
+  if (!mapOfCommands) {
     mapOfCommands = new MapOfCommands;
+  }
   (*mapOfCommands)[commandName] = this;
 }
 
 
-LocalCommand::~LocalCommand()
-{
+LocalCommand::~LocalCommand() {
   (*mapOfCommands).erase(commandName);
 }
 
 
-bool LocalCommand::execute(const char *commandLine)
-{
-  if (!mapOfCommands)
+bool LocalCommand::execute(const char* commandLine) {
+  if (!mapOfCommands) {
     return false;
+  }
 
   UTF8StringItr ustr(commandLine);
   while ((*ustr) && !iswspace(*ustr)) {
@@ -67,7 +65,7 @@ bool LocalCommand::execute(const char *commandLine)
 
   std::string commandToken(commandLine, ustr.getBufferFromHere());
 
-  std::map<std::string, LocalCommand *>::iterator it;
+  std::map<std::string, LocalCommand*>::iterator it;
   it = (*mapOfCommands).find(commandToken);
   if (it == (*mapOfCommands).end()) {
     if (fallback && fallback(commandLine)) {
@@ -79,8 +77,7 @@ bool LocalCommand::execute(const char *commandLine)
 }
 
 
-bool LocalCommand::operator() (const char *)
-{
+bool LocalCommand::operator()(const char*) {
   return true;
 }
 
@@ -92,6 +89,6 @@ bool LocalCommand::operator() (const char *)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

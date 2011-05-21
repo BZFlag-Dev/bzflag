@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__RCMESSAGE_H__
-#define	__RCMESSAGE_H__
+#ifndef __RCMESSAGE_H__
+#define __RCMESSAGE_H__
 
 #include "common.h"
 
@@ -38,42 +38,43 @@ typedef enum {
  * frontends and backends.
  */
 template <class C>
-class RCMessage
-{
-public:
+class RCMessage {
+  public:
 
-  RCMessage() : next(NULL), link(NULL) { }
-  virtual ~RCMessage() {}
+    RCMessage() : next(NULL), link(NULL) { }
+    virtual ~RCMessage() {}
 
-  void setLink(RCLink *_link) { link = _link; }
+    void setLink(RCLink* _link) { link = _link; }
 
-  /* This is for the linked-list aspect of RCMessage. */
-  C *getNext() { return next; }
-  void append(C *newreq) {
-    if (next == NULL)
-      next = newreq;
-    else
-      next->append(newreq);
-  }
+    /* This is for the linked-list aspect of RCMessage. */
+    C* getNext() { return next; }
+    void append(C* newreq) {
+      if (next == NULL) {
+        next = newreq;
+      }
+      else {
+        next->append(newreq);
+      }
+    }
 
-  /* These three are dependent on the specific packet-type, so they are
-   * left for the complete implementations. :-) */
-  virtual messageParseStatus parse(char **arguments, int count) = 0;
-  virtual std::string getType() const = 0;
-  virtual void getParameters(std::ostream &stream) const = 0;
+    /* These three are dependent on the specific packet-type, so they are
+     * left for the complete implementations. :-) */
+    virtual messageParseStatus parse(char** arguments, int count) = 0;
+    virtual std::string getType() const = 0;
+    virtual void getParameters(std::ostream& stream) const = 0;
 
-  virtual std::string asString() const {
-    std::stringstream ss;
-    ss << getType() << " ";
-    getParameters(ss);
-    return ss.str();
-  }
+    virtual std::string asString() const {
+      std::stringstream ss;
+      ss << getType() << " ";
+      getParameters(ss);
+      return ss.str();
+    }
 
-private:
-  C *next;
+  private:
+    C* next;
 
-protected:
-  RCLink *link;
+  protected:
+    RCLink* link;
 };
 
 #else
@@ -85,6 +86,6 @@ class RCMessage;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -20,59 +20,59 @@
 #include "Address.h"
 
 class ServerCommandKey : public HUDuiDefaultKey {
-public:
-  ServerCommandKey();
+  public:
+    ServerCommandKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
-  void init();
-  void adminInit();
-  void nonAdminInit();
+    void init();
+    void adminInit();
+    void nonAdminInit();
 
-  enum Mode {
-    Kick,
-    Kill,
-    BanIp,
-    Ban1,
-    Ban2,
-    Ban3,
-    Showgroup,
-    Setgroup,
-    Removegroup,
-    Unban,
-    Banlist,
-    Playerlist,
-    FlagReset,
-    FlagUnusedReset,
-    FlagUp,
-    FlagShow,
-    FlagHistory,
-    IdleStats,
-    ClientQuery,
-    LagStats,
-    Report,
-    LagWarn,
-    LagDrop,
-    GameOver,
-    CountDown,
-    SuperKill,
-    Shutdown,
-    Grouplist,
-    Groupperms,
-    Vote,
-    Poll,
-    Veto,
-    Password  // leave this as the last item
-  };
+    enum Mode {
+      Kick,
+      Kill,
+      BanIp,
+      Ban1,
+      Ban2,
+      Ban3,
+      Showgroup,
+      Setgroup,
+      Removegroup,
+      Unban,
+      Banlist,
+      Playerlist,
+      FlagReset,
+      FlagUnusedReset,
+      FlagUp,
+      FlagShow,
+      FlagHistory,
+      IdleStats,
+      ClientQuery,
+      LagStats,
+      Report,
+      LagWarn,
+      LagDrop,
+      GameOver,
+      CountDown,
+      SuperKill,
+      Shutdown,
+      Grouplist,
+      Groupperms,
+      Vote,
+      Poll,
+      Veto,
+      Password  // leave this as the last item
+    };
 
-private:
-  std::string makePattern(const InAddr& address);
-  void updatePrompt();
+  private:
+    std::string makePattern(const InAddr& address);
+    void updatePrompt();
 
-private:
-  Mode mode;
-  const int numModes;
+  private:
+    Mode mode;
+    const int numModes;
 };
 
 #endif
@@ -81,6 +81,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

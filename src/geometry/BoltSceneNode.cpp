@@ -42,8 +42,7 @@ BoltSceneNode::BoltSceneNode(const fvec3& pos, const fvec3& vel)
   , renderNode(this)
   , azimuth(0)
   , elevation(0)
-  , length(1.0f)
-{
+  , length(1.0f) {
   OpenGLGStateBuilder builder(gstate);
   builder.setBlending();
   builder.setAlphaFunc();
@@ -62,88 +61,75 @@ BoltSceneNode::BoltSceneNode(const fvec3& pos, const fvec3& vel)
 }
 
 
-BoltSceneNode::~BoltSceneNode()
-{
+BoltSceneNode::~BoltSceneNode() {
   // do nothing
 }
 
 
-void BoltSceneNode::setFlares(bool on)
-{
+void BoltSceneNode::setFlares(bool on) {
   drawFlares = on;
 }
 
 
-void BoltSceneNode::setSize(float radius)
-{
+void BoltSceneNode::setSize(float radius) {
   size = radius;
   setRadius(size * size);
 }
 
 
-void BoltSceneNode::setTextureColor(float r, float g, float b, float a)
-{
+void BoltSceneNode::setTextureColor(float r, float g, float b, float a) {
   color = fvec4(r, g, b, a);
   light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
   renderNode.setTextureColor(color);
 }
 
 
-void BoltSceneNode::setColor(float r, float g, float b, float a)
-{
+void BoltSceneNode::setColor(float r, float g, float b, float a) {
   color = fvec4(r, g, b, a);
   light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
   renderNode.setColor(color);
 }
 
 
-void BoltSceneNode::setColor(const fvec4& rgba)
-{
+void BoltSceneNode::setColor(const fvec4& rgba) {
   setColor(rgba.r, rgba.g, rgba.b, rgba.a);
 }
 
 
-bool BoltSceneNode::getColorblind() const
-{
+bool BoltSceneNode::getColorblind() const {
   return colorblind;
 }
 
 
-void BoltSceneNode::setColorblind(bool _colorblind)
-{
+void BoltSceneNode::setColorblind(bool _colorblind) {
   colorblind = _colorblind;
 }
 
 
-bool BoltSceneNode::getInvisible() const
-{
+bool BoltSceneNode::getInvisible() const {
   return invisible;
 }
 
 
-void BoltSceneNode::setInvisible(bool _invisible)
-{
+void BoltSceneNode::setInvisible(bool _invisible) {
   invisible = _invisible;
 }
 
 
-void BoltSceneNode::setTexture(const int texture)
-{
+void BoltSceneNode::setTexture(const int texture) {
   OpenGLGStateBuilder builder(gstate);
   builder.setTexture(texture);
-  builder.enableTexture(texture>=0);
+  builder.enableTexture(texture >= 0);
   gstate = builder.getState();
 }
 
 
-void BoltSceneNode::setTextureAnimation(int cu, int cv)
-{
+void BoltSceneNode::setTextureAnimation(int cu, int cv) {
   renderNode.setAnimation(cu, cv);
 }
 
 
-void BoltSceneNode::move(const fvec3& pos, const fvec3& vel)
-{
+void BoltSceneNode::move(const fvec3& pos, const fvec3& vel) {
   setCenter(pos);
   light.setPosition(pos);
 
@@ -155,16 +141,14 @@ void BoltSceneNode::move(const fvec3& pos, const fvec3& vel)
 }
 
 
-void BoltSceneNode::addLight(SceneRenderer& renderer)
-{
+void BoltSceneNode::addLight(SceneRenderer& renderer) {
   if (!invisible) {
     renderer.addLight(light);
   }
 }
 
 
-void BoltSceneNode::notifyStyleChange()
-{
+void BoltSceneNode::notifyStyleChange() {
   texturing = BZDBCache::texture && BZDBCache::blend;
   OpenGLGStateBuilder builder(gstate);
   builder.enableTexture(texturing);
@@ -172,7 +156,8 @@ void BoltSceneNode::notifyStyleChange()
     const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
     if ((shotLength > 0) || (RENDERER.useQuality() >= _EXPERIMENTAL_QUALITY)) {
       builder.setBlending(GL_SRC_ALPHA, GL_ONE);
-    } else {
+    }
+    else {
       builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     builder.setStipple(1.0f);
@@ -189,8 +174,7 @@ void BoltSceneNode::notifyStyleChange()
 }
 
 
-void BoltSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void BoltSceneNode::addRenderNodes(SceneRenderer& renderer) {
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
@@ -205,17 +189,16 @@ const float BoltSceneNode::BoltRenderNode::FlareSpread  = 0.08f;
 float       BoltSceneNode::BoltRenderNode::core[9][2];
 float       BoltSceneNode::BoltRenderNode::corona[8][2];
 const float BoltSceneNode::BoltRenderNode::ring[8][2] = {
-  {  1.0f,  0.0f }, { (float)+M_SQRT1_2, (float)+M_SQRT1_2 },
-  {  0.0f,  1.0f }, { (float)-M_SQRT1_2, (float)+M_SQRT1_2 },
-  { -1.0f,  0.0f }, { (float)-M_SQRT1_2, (float)-M_SQRT1_2 },
-  {  0.0f, -1.0f }, { (float)+M_SQRT1_2, (float)-M_SQRT1_2 }
+  {  1.0f,  0.0f }, { (float) + M_SQRT1_2, (float) + M_SQRT1_2 },
+  {  0.0f,  1.0f }, { (float) - M_SQRT1_2, (float) + M_SQRT1_2 },
+  { -1.0f,  0.0f }, { (float) - M_SQRT1_2, (float) - M_SQRT1_2 },
+  {  0.0f, -1.0f }, { (float) + M_SQRT1_2, (float) - M_SQRT1_2 }
 };
 
 
 BoltSceneNode::BoltRenderNode::BoltRenderNode(const BoltSceneNode* _sceneNode)
-: sceneNode(_sceneNode)
-, numFlares(0)
-{
+  : sceneNode(_sceneNode)
+  , numFlares(0) {
   // initialize core and corona if not already done
   static bool init = false;
   if (!init) {
@@ -223,8 +206,8 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(const BoltSceneNode* _sceneNode)
     core[0][0] = 0.0f;
     core[0][1] = 0.0f;
     for (int i = 0; i < 8; i++) {
-      core[i+1][0] = CoreFraction * ring[i][0];
-      core[i+1][1] = CoreFraction * ring[i][1];
+      core[i + 1][0] = CoreFraction * ring[i][0];
+      core[i + 1][1] = CoreFraction * ring[i][1];
       corona[i][0] = ring[i][0];
       corona[i][1] = ring[i][1];
     }
@@ -236,14 +219,12 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(const BoltSceneNode* _sceneNode)
 }
 
 
-BoltSceneNode::BoltRenderNode::~BoltRenderNode()
-{
+BoltSceneNode::BoltRenderNode::~BoltRenderNode() {
   // do nothing
 }
 
 
-void BoltSceneNode::BoltRenderNode::setAnimation(int _cu, int _cv)
-{
+void BoltSceneNode::BoltRenderNode::setAnimation(int _cu, int _cv) {
   cu = _cu;
   cv = _cv;
   du = 1.0f / (float)cu;
@@ -253,18 +234,16 @@ void BoltSceneNode::BoltRenderNode::setAnimation(int _cu, int _cv)
   const int index = (int)((float)cu * (float)cv * bzfrand());
   u = index % cu;
   v = index / cu;
-  if (v >= cv) v = 0;
+  if (v >= cv) { v = 0; }
 }
 
 
-void BoltSceneNode::BoltRenderNode::setTextureColor(const fvec4& rgba)
-{
+void BoltSceneNode::BoltRenderNode::setTextureColor(const fvec4& rgba) {
   textureColor = rgba;
 }
 
 
-void BoltSceneNode::BoltRenderNode::setColor(const fvec4& rgba)
-{
+void BoltSceneNode::BoltRenderNode::setColor(const fvec4& rgba) {
   mainColor = rgba;
 
   innerColor.rgb() = 0.5f * (rgba.rgb() + 1.0f);
@@ -275,69 +254,66 @@ void BoltSceneNode::BoltRenderNode::setColor(const fvec4& rgba)
   coronaColor.rgb() = rgba.rgb();
 
   outerColor.a  = (rgba.a == 1.0f)  ? 0.1f   : rgba.a;
-  flareColor.a  = (rgba.a == 1.0f ) ? 0.667f : rgba.a;
-  coronaColor.a = (rgba.a == 1.0f ) ? 0.5f   : rgba.a;
+  flareColor.a  = (rgba.a == 1.0f) ? 0.667f : rgba.a;
+  coronaColor.a = (rgba.a == 1.0f) ? 0.5f   : rgba.a;
 }
 
 
 void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float length,
-                                                  int segments, float endRad)
-{
+                                                  int segments, float endRad) {
   glPushMatrix();
 
   float assRadius = radius;
-  if (endRad >= 0)
+  if (endRad >= 0) {
     assRadius = endRad;
+  }
 
-  float lenMinusRads = length - (radius+assRadius);
+  float lenMinusRads = length - (radius + assRadius);
 
-  GLUquadric *q = gluNewQuadric();
-  if (assRadius > 0)
-  {
+  GLUquadric* q = gluNewQuadric();
+  if (assRadius > 0) {
     // 4 parts of the first hemisphere
-    gluCylinder(q,0,assRadius*0.43589,assRadius*0.1f,segments,1);
+    gluCylinder(q, 0, assRadius * 0.43589, assRadius * 0.1f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,assRadius*0.1f);
+    glTranslatef(0, 0, assRadius * 0.1f);
 
-    gluCylinder(q,assRadius*0.43589,assRadius*0.66144,assRadius*0.15f,segments,1);
+    gluCylinder(q, assRadius * 0.43589, assRadius * 0.66144, assRadius * 0.15f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,assRadius*0.15f);
+    glTranslatef(0, 0, assRadius * 0.15f);
 
-    gluCylinder(q,assRadius*0.66144f,assRadius*0.86603f,assRadius*0.25f,segments,1);
+    gluCylinder(q, assRadius * 0.66144f, assRadius * 0.86603f, assRadius * 0.25f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,assRadius*0.25f);
+    glTranslatef(0, 0, assRadius * 0.25f);
 
-    gluCylinder(q,assRadius*0.86603,assRadius,assRadius*0.5f,segments,1);
+    gluCylinder(q, assRadius * 0.86603, assRadius, assRadius * 0.5f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,assRadius*0.5f);
+    glTranslatef(0, 0, assRadius * 0.5f);
   }
 
   // the "shaft"
-  if (lenMinusRads > 0)
-  {
-    gluCylinder(q,assRadius,radius,lenMinusRads,segments,1);
+  if (lenMinusRads > 0) {
+    gluCylinder(q, assRadius, radius, lenMinusRads, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,lenMinusRads);
+    glTranslatef(0, 0, lenMinusRads);
   }
 
-  if (radius > 0)
-  {
+  if (radius > 0) {
     // 4 parts of the last hemisphere
-    gluCylinder(q,radius,radius*0.86603,radius*0.5f,segments,1);
+    gluCylinder(q, radius, radius * 0.86603, radius * 0.5f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,radius*0.5f);
+    glTranslatef(0, 0, radius * 0.5f);
 
-    gluCylinder(q,radius*0.86603f,radius*0.66144f,radius*0.25f,segments,1);
+    gluCylinder(q, radius * 0.86603f, radius * 0.66144f, radius * 0.25f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,radius*0.25f);
+    glTranslatef(0, 0, radius * 0.25f);
 
-    gluCylinder(q,radius*0.66144,radius*0.43589,radius*0.15f,segments,1);
+    gluCylinder(q, radius * 0.66144, radius * 0.43589, radius * 0.15f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,radius*0.15f);
+    glTranslatef(0, 0, radius * 0.15f);
 
-    gluCylinder(q,radius*0.43589,0,radius*0.1f,segments,1);
+    gluCylinder(q, radius * 0.43589, 0, radius * 0.1f, segments, 1);
     addTriangleCount(segments);
-    glTranslatef(0,0,radius*0.1f);
+    glTranslatef(0, 0, radius * 0.1f);
   }
 
   gluDeleteQuadric(q);
@@ -345,8 +321,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float length,
 }
 
 
-void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
-{
+void BoltSceneNode::BoltRenderNode::renderGeoGMBolt() {
   // bzdb these 2? they control the shot size
   float lenMod = 0.025f;
   float baseRadius = 0.2f;
@@ -358,8 +333,9 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
   glRotatef(90, 0.0f, 1.0f, 0.0f);
 
   float alphaMod = 1.0f;
-  if (sceneNode->phasingShot)
+  if (sceneNode->phasingShot) {
     alphaMod = 0.85f;
+  }
 
   glDisable(GL_TEXTURE_2D);
 
@@ -391,7 +367,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 
   glPushMatrix();
   myColor4f(1, 1, 1, 0.125f);
-  glTranslatef(0, 0, len*0.125f);
+  glTranslatef(0, 0, len * 0.125f);
   gluCylinder(q, 3.0f * baseRadius, 1.75f * baseRadius, len * 0.35f, 16, 1);
   addTriangleCount(16);
 
@@ -409,8 +385,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 }
 
 
-void BoltSceneNode::BoltRenderNode::renderGeoBolt()
-{
+void BoltSceneNode::BoltRenderNode::renderGeoBolt() {
   // bzdb these 2? they control the shot size
   float lenMod = 0.025f;
   float baseRadius = 0.225f;
@@ -422,8 +397,9 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
   glRotatef(90, 0.0f, 1.0f, 0.0f);
 
   float alphaMod = 1.0f;
-  if (sceneNode->phasingShot)
+  if (sceneNode->phasingShot) {
     alphaMod = 0.85f;
+  }
 
   glDisable(GL_TEXTURE_2D);
 
@@ -436,7 +412,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
   if (coreColor.b < minimumChannelVal) { coreColor.b = minimumChannelVal; }
 
   myColor4fv(fvec4(coreColor, 0.85f * alphaMod));
-  renderGeoPill(baseRadius,len,16);
+  renderGeoPill(baseRadius, len, 16);
 
   float radInc = 1.5f * baseRadius - baseRadius;
   glPushMatrix();
@@ -447,14 +423,14 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 
   radInc = 2.7f * baseRadius - baseRadius;
   glPushMatrix();
-  glTranslatef(0, 0, -radInc*0.5f);
+  glTranslatef(0, 0, -radInc * 0.5f);
   myColor4fv(fvec4(sceneNode->color.rgb(), 0.25f));
   renderGeoPill(2.7f * baseRadius, len + radInc, 32);
   glPopMatrix();
 
   radInc = 3.8f * baseRadius - baseRadius;
   glPushMatrix();
-  glTranslatef(0, 0,-radInc*0.5f);
+  glTranslatef(0, 0, -radInc * 0.5f);
   myColor4fv(fvec4(sceneNode->color.rgb(), 0.125f));
   renderGeoPill(3.8f * baseRadius, len + radInc, 48);
   glPopMatrix();
@@ -465,8 +441,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 }
 
 
-void BoltSceneNode::BoltRenderNode::render()
-{
+void BoltSceneNode::BoltRenderNode::render() {
   if (sceneNode->invisible) {
     return;
   }
@@ -488,7 +463,8 @@ void BoltSceneNode::BoltRenderNode::render()
   if ((shotLength <= 0) && experimental) {
     if (!sceneNode->drawFlares) {
       renderGeoBolt();
-    } else {
+    }
+    else {
       renderGeoGMBolt();
     }
   }
@@ -498,36 +474,36 @@ void BoltSceneNode::BoltRenderNode::render()
     // draw some flares
     if (sceneNode->drawFlares) {
       if (!RENDERER.isSameFrame()) {
-	numFlares = 3 + int(3.0f * (float)bzfrand());
-	for (int i = 0; i < numFlares; i++) {
-	  theta[i] = (float)(2.0 * M_PI * bzfrand());
-	  phi[i] = (float)bzfrand() - 0.5f;
-	  phi[i] *= (float)(2.0 * M_PI * fabsf(phi[i]));
-	}
+        numFlares = 3 + int(3.0f * (float)bzfrand());
+        for (int i = 0; i < numFlares; i++) {
+          theta[i] = (float)(2.0 * M_PI * bzfrand());
+          phi[i] = (float)bzfrand() - 0.5f;
+          phi[i] *= (float)(2.0 * M_PI * fabsf(phi[i]));
+        }
       }
 
-      if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
+      if (sceneNode->texturing) { glDisable(GL_TEXTURE_2D); }
       myColor4fv(flareColor);
-      if (!BZDBCache::blend) myStipple(flareColor.a);
+      if (!BZDBCache::blend) { myStipple(flareColor.a); }
       glBegin(GL_QUADS);
       for (int i = 0; i < numFlares; i++) {
-	// pick random direction in 3-space.  picking a random theta with
-	// a uniform distribution is fine, but doing so with phi biases
-	// the directions toward the poles.  my correction doesn't remove
-	// the bias completely, but moves it towards the equator, which is
-	// really where i want it anyway cos the flares are more noticeable
-	// there.
-	const float c = FlareSize * cosf(phi[i]);
-	const float s = FlareSize * sinf(phi[i]);
-	const float ti = theta[i];
-	const float fs = FlareSpread;
-	glVertex3fv(core[0]);
-	glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
-	glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
-	glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
+        // pick random direction in 3-space.  picking a random theta with
+        // a uniform distribution is fine, but doing so with phi biases
+        // the directions toward the poles.  my correction doesn't remove
+        // the bias completely, but moves it towards the equator, which is
+        // really where i want it anyway cos the flares are more noticeable
+        // there.
+        const float c = FlareSize * cosf(phi[i]);
+        const float s = FlareSize * sinf(phi[i]);
+        const float ti = theta[i];
+        const float fs = FlareSpread;
+        glVertex3fv(core[0]);
+        glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
+        glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
+        glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
       }
       glEnd();
-      if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
+      if (sceneNode->texturing) { glEnable(GL_TEXTURE_2D); }
 
       addTriangleCount(numFlares * 2);
     }
@@ -553,7 +529,7 @@ void BoltSceneNode::BoltRenderNode::render()
         const float startAlpha = 0.8f;
 
         glPushAttrib(GL_TEXTURE_BIT);
-        TextureManager &tm = TextureManager::instance();
+        TextureManager& tm = TextureManager::instance();
         const int texID = tm.getTextureID("missile");
         const ImageInfo& texInfo = tm.getInfo(texID);
         if (texInfo.id >= 0) {
@@ -585,8 +561,8 @@ void BoltSceneNode::BoltRenderNode::render()
           }
 
           uvCell = (uvCell + 1) % 16;
-          const float U0 = (uvCell % 4 ) * 0.25f;
-          const float V0 = (uvCell / 4 ) * 0.25f;
+          const float U0 = (uvCell % 4) * 0.25f;
+          const float V0 = (uvCell / 4) * 0.25f;
           const float U1 = U0 + 0.25f;
           const float V1 = V0 + 0.25f;
 
@@ -723,6 +699,6 @@ void BoltSceneNode::BoltRenderNode::render()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -27,27 +27,26 @@
  *  taken into account are the proximity to other players, bullets,
  *  flags, etc.
  */
-class DefaultSpawnPolicy : public SpawnPolicy
-{
-public:
-  DefaultSpawnPolicy();
-  virtual ~DefaultSpawnPolicy();
+class DefaultSpawnPolicy : public SpawnPolicy {
+  public:
+    DefaultSpawnPolicy();
+    virtual ~DefaultSpawnPolicy();
 
-  virtual const char *Name() const {
-    static const char *name = "Default";
-    return name;
-  }
+    virtual const char* Name() const {
+      static const char* name = "Default";
+      return name;
+    }
 
-  virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
-  virtual void getAzimuth(float &azimuth);
+    virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
+    virtual void getAzimuth(float& azimuth);
 
-protected:
-  float enemyProximityCheck(float &enemyAngle) const;
+  protected:
+    float enemyProximityCheck(float& enemyAngle) const;
 
-private:
-  /* temp, internal use */
-  TeamColor   team;
-  fvec3       testPos;
+  private:
+    /* temp, internal use */
+    TeamColor   team;
+    fvec3       testPos;
 };
 
 #endif  /*__DEFAULTSPAWNPOLICY_H__ */
@@ -56,6 +55,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

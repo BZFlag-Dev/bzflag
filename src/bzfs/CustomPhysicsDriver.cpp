@@ -24,27 +24,24 @@
 #include "PhysicsDriver.h"
 
 
-CustomPhysicsDriver::CustomPhysicsDriver(const char* phydrvName)
-{
+CustomPhysicsDriver::CustomPhysicsDriver(const char* phydrvName) {
   name = phydrvName;
   driver = new PhysicsDriver;
   return;
 }
 
 
-CustomPhysicsDriver::~CustomPhysicsDriver()
-{
+CustomPhysicsDriver::~CustomPhysicsDriver() {
   delete driver;
   return;
 }
 
 
-bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
-{
-  if (strcasecmp ("relative", cmd) == 0) {
+bool CustomPhysicsDriver::read(const char* cmd, std::istream& input) {
+  if (strcasecmp("relative", cmd) == 0) {
     driver->setRelative(true);
   }
-  else if (strcasecmp ("linear", cmd) == 0) {
+  else if (strcasecmp("linear", cmd) == 0) {
     fvec3 vel;
     if (!(input >> vel.x >> vel.y >> vel.z)) {
       std::cout << "parameters errors " << std::endl;
@@ -52,7 +49,7 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
     }
     driver->setLinear(vel);
   }
-  else if (strcasecmp ("angular", cmd) == 0) {
+  else if (strcasecmp("angular", cmd) == 0) {
     float vel;
     fvec2 pos;
     if (!(input >> vel >> pos.x >> pos.y)) {
@@ -61,7 +58,7 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
     }
     driver->setAngular(vel, pos);
   }
-  else if (strcasecmp ("radial", cmd) == 0) {
+  else if (strcasecmp("radial", cmd) == 0) {
     float vel;
     fvec2 pos;
     if (!(input >> vel >> pos.x >> pos.y)) {
@@ -70,7 +67,7 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
     }
     driver->setRadial(vel, pos);
   }
-  else if (strcasecmp ("slide", cmd) == 0) {
+  else if (strcasecmp("slide", cmd) == 0) {
     float slideTime;
     if (!(input >> slideTime)) {
       std::cout << "parameters errors " << std::endl;
@@ -78,7 +75,7 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
     }
     driver->setSlideTime(slideTime);
   }
-  else if (strcasecmp ("death", cmd) == 0) {
+  else if (strcasecmp("death", cmd) == 0) {
     std::string line;
     std::getline(input, line);
     driver->setDeathMessage(line);
@@ -87,31 +84,31 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
       std::cout << "Physics Driver: empty death message, pacifying" << std::endl;
     }
   }
-  else if (strcasecmp ("linearVar", cmd) == 0) {
+  else if (strcasecmp("linearVar", cmd) == 0) {
     std::string var;
     if (input >> var) {
       driver->setLinearVar(var);
     }
   }
-  else if (strcasecmp ("angularVar", cmd) == 0) {
+  else if (strcasecmp("angularVar", cmd) == 0) {
     std::string var;
     if (input >> var) {
       driver->setAngularVar(var);
     }
   }
-  else if (strcasecmp ("radialVar", cmd) == 0) {
+  else if (strcasecmp("radialVar", cmd) == 0) {
     std::string var;
     if (input >> var) {
       driver->setRadialVar(var);
     }
   }
-  else if (strcasecmp ("slideVar", cmd) == 0) {
+  else if (strcasecmp("slideVar", cmd) == 0) {
     std::string var;
     if (input >> var) {
       driver->setSlideVar(var);
     }
   }
-  else if (strcasecmp ("deathVar", cmd) == 0) {
+  else if (strcasecmp("deathVar", cmd) == 0) {
     std::string var;
     if (input >> var) {
       driver->setDeathVar(var);
@@ -126,12 +123,11 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomPhysicsDriver::writeToManager() const
-{
+void CustomPhysicsDriver::writeToManager() const {
   driver->setName(name);
   if ((name.size() > 0) && (PHYDRVMGR.findDriver(name) >= 0)) {
     std::cout << "WARNING: duplicate physics driver"
-	      << " (" << name << ")" << std::endl;
+              << " (" << name << ")" << std::endl;
   }
   driver->finalize();
   PHYDRVMGR.addDriver(driver);
@@ -144,6 +140,6 @@ void CustomPhysicsDriver::writeToManager() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

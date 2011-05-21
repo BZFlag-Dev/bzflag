@@ -39,7 +39,7 @@ typedef std::vector<std::string> NameList;
 extern int curMaxPlayers;
 //extern RemotePlayer** player;
 extern RemotePlayer** remotePlayers;
-extern int	    playerSize;
+extern int      playerSize;
 #ifdef ROBOT
 extern RobotPlayer* robots[MAX_ROBOTS];
 extern int numRobots;
@@ -48,20 +48,20 @@ extern int numRobots;
 extern NameList silencePlayers;
 
 
-Player*			lookupPlayer(PlayerId id);
+Player*     lookupPlayer(PlayerId id);
 #ifdef ROBOT
-RobotPlayer*		lookupRobotPlayer(PlayerId id);
+RobotPlayer*    lookupRobotPlayer(PlayerId id);
 #endif
-int			lookupPlayerIndex(PlayerId id);
-Player*			getPlayerByIndex(int index);
-Player*			getPlayerByName(const char* name);
-BaseLocalPlayer*	getLocalPlayer(PlayerId id);
-TeamColor		PlayerIdToTeam(PlayerId id);
-PlayerId		TeamToPlayerId(TeamColor team);
+int     lookupPlayerIndex(PlayerId id);
+Player*     getPlayerByIndex(int index);
+Player*     getPlayerByName(const char* name);
+BaseLocalPlayer*  getLocalPlayer(PlayerId id);
+TeamColor   PlayerIdToTeam(PlayerId id);
+PlayerId    TeamToPlayerId(TeamColor team);
 
 // if the callback returns true, stop iterating and return the Player*
 typedef bool (*RosterCallback)(Player* p, void* data);
-Player*	iteratePlayers(RosterCallback, void* data, bool includeWeapons);
+Player* iteratePlayers(RosterCallback, void* data, bool includeWeapons);
 
 
 #endif /* __ROSTER_H__ */
@@ -71,6 +71,6 @@ Player*	iteratePlayers(RosterCallback, void* data, bool includeWeapons);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

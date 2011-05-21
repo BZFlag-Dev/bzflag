@@ -26,8 +26,7 @@
 #include "BZDBCache.h"
 
 
-EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
-{
+EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode) {
   sceneNode = node;
   ownTheNode = _ownTheNode;
 
@@ -37,8 +36,7 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 }
 
 
-EighthDimShellNode::~EighthDimShellNode()
-{
+EighthDimShellNode::~EighthDimShellNode() {
   if (ownTheNode) {
     delete sceneNode;
   }
@@ -46,8 +44,7 @@ EighthDimShellNode::~EighthDimShellNode()
   return;
 }
 
-void EighthDimShellNode::makeNodes()
-{
+void EighthDimShellNode::makeNodes() {
   std::vector<RenderSet> rnodes;
   sceneNode->getRenderNodes(rnodes);
 
@@ -67,8 +64,7 @@ void EighthDimShellNode::makeNodes()
 }
 
 
-void EighthDimShellNode::killNodes()
-{
+void EighthDimShellNode::killNodes() {
   for (int i = 0; i < shellNodeCount; i++) {
     delete shellNodes[i];
   }
@@ -79,23 +75,20 @@ void EighthDimShellNode::killNodes()
 }
 
 
-void EighthDimShellNode::notifyStyleChange()
-{
+void EighthDimShellNode::notifyStyleChange() {
   killNodes();
   makeNodes();
   return;
 }
 
 
-bool EighthDimShellNode::cull(const ViewFrustum&) const
-{
+bool EighthDimShellNode::cull(const ViewFrustum&) const {
   // no culling
   return false;
 }
 
 
-void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
-{
+void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer) {
   for (int i = 0; i < shellNodeCount; i++) {
     renderer.addRenderNode(shellNodes[i], shellNodes[i]->getGState());
   }
@@ -107,8 +100,8 @@ void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 // EighthDimShellNode::ShellRenderNode
 //
 
-EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
-						     const OpenGLGState* gs)
+EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode* node,
+                                                     const OpenGLGState* gs)
 
 {
   renderNode = node;
@@ -116,7 +109,8 @@ EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
   OpenGLGStateBuilder gb = *gs;
   if (BZDBCache::blend && (RENDERER.useQuality() >= _HIGH_QUALITY)) {
     gb.setBlending(GL_ONE, GL_ONE);
-  } else {
+  }
+  else {
     gb.resetBlending();
   }
   gb.setCulling(GL_FRONT); // invert the culling
@@ -126,20 +120,17 @@ EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
 }
 
 
-EighthDimShellNode::ShellRenderNode::~ShellRenderNode()
-{
+EighthDimShellNode::ShellRenderNode::~ShellRenderNode() {
   return;
 }
 
 
-const OpenGLGState* EighthDimShellNode::ShellRenderNode::getGState() const
-{
+const OpenGLGState* EighthDimShellNode::ShellRenderNode::getGState() const {
   return &gstate;
 }
 
 
-void EighthDimShellNode::ShellRenderNode::render()
-{
+void EighthDimShellNode::ShellRenderNode::render() {
 //  glLogicOp(GL_XOR);
 //  glEnable(GL_COLOR_LOGIC_OP);
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
@@ -167,6 +158,6 @@ void EighthDimShellNode::ShellRenderNode::render()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

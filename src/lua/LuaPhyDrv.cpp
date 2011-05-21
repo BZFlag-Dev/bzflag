@@ -30,8 +30,7 @@ using std::string;
 //============================================================================//
 //============================================================================//
 
-bool LuaPhyDrv::PushEntries(lua_State* L)
-{
+bool LuaPhyDrv::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, GetPhyDrvID);
   PUSH_LUA_CFUNC(L, GetPhyDrvName);
   PUSH_LUA_CFUNC(L, GetPhyDrvDeath);
@@ -49,8 +48,7 @@ bool LuaPhyDrv::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline const PhysicsDriver* ParsePhyDrv(lua_State*L, int index)
-{
+static inline const PhysicsDriver* ParsePhyDrv(lua_State* L, int index) {
   const int phydrvIndex = luaL_checkint(L, index);
   return PHYDRVMGR.getDriver(phydrvIndex);
 }
@@ -59,21 +57,20 @@ static inline const PhysicsDriver* ParsePhyDrv(lua_State*L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaPhyDrv::GetPhyDrvID(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvID(lua_State* L) {
   const std::string name = luaL_checkstring(L, 1);
   const int phydrvID = PHYDRVMGR.findDriver(name);
   if (phydrvID < 0) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushint(L, phydrvID);
   }
   return 1;
 }
 
 
-int LuaPhyDrv::GetPhyDrvName(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvName(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -83,8 +80,7 @@ int LuaPhyDrv::GetPhyDrvName(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvDeath(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvDeath(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -97,8 +93,7 @@ int LuaPhyDrv::GetPhyDrvDeath(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvSlideTime(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvSlideTime(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -111,8 +106,7 @@ int LuaPhyDrv::GetPhyDrvSlideTime(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvVelocity(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvVelocity(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -122,8 +116,7 @@ int LuaPhyDrv::GetPhyDrvVelocity(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvRadialPos(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvRadialPos(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -133,8 +126,7 @@ int LuaPhyDrv::GetPhyDrvRadialPos(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvRadialVel(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvRadialVel(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -144,8 +136,7 @@ int LuaPhyDrv::GetPhyDrvRadialVel(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvAngularPos(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvAngularPos(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -155,8 +146,7 @@ int LuaPhyDrv::GetPhyDrvAngularPos(lua_State* L)
 }
 
 
-int LuaPhyDrv::GetPhyDrvAngularVel(lua_State* L)
-{
+int LuaPhyDrv::GetPhyDrvAngularVel(lua_State* L) {
   const PhysicsDriver* phydrv = ParsePhyDrv(L, 1);
   if (phydrv == NULL) {
     return luaL_pushnil(L);
@@ -175,6 +165,6 @@ int LuaPhyDrv::GetPhyDrvAngularVel(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

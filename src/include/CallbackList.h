@@ -23,32 +23,32 @@
 
 template <class F>
 class CallbackList {
-public:
-  typedef bool (*Callback)(F, void* userData, void* iterateUserData);
+  public:
+    typedef bool (*Callback)(F, void* userData, void* iterateUserData);
 
-  CallbackList();
-  ~CallbackList();
+    CallbackList();
+    ~CallbackList();
 
-  // add/remove callback.  adding an existing callback has no effect.
-  void				add(F func, void* userData);
-  void				remove(F func, void* userData);
+    // add/remove callback.  adding an existing callback has no effect.
+    void        add(F func, void* userData);
+    void        remove(F func, void* userData);
 
-  // iterate over callbacks.  this is done by invoking the given
-  // callback function for each stored callback.  it is safe to
-  // add and remove callbacks during iteration.  stops iterating
-  // if the callback returns false.
-  void				iterate(Callback, void* userData) const;
+    // iterate over callbacks.  this is done by invoking the given
+    // callback function for each stored callback.  it is safe to
+    // add and remove callbacks during iteration.  stops iterating
+    // if the callback returns false.
+    void        iterate(Callback, void* userData) const;
 
-private:
-  void				doIterate(Callback, void* userData);
+  private:
+    void        doIterate(Callback, void* userData);
 
-private:
-  typedef std::pair<F, void*> Item;
-  typedef std::list<Item> ItemList;
-  typedef std::map<Item, typename ItemList::iterator> ItemMap;
+  private:
+    typedef std::pair<F, void*> Item;
+    typedef std::list<Item> ItemList;
+    typedef std::map<Item, typename ItemList::iterator> ItemMap;
 
-  ItemList			items;
-  ItemMap			itemMap;
+    ItemList      items;
+    ItemMap     itemMap;
 };
 
 //
@@ -56,20 +56,17 @@ private:
 //
 
 template <class F>
-CallbackList<F>::CallbackList()
-{
+CallbackList<F>::CallbackList() {
   // do nothing
 }
 
 template <class F>
-CallbackList<F>::~CallbackList()
-{
+CallbackList<F>::~CallbackList() {
   // do nothing
 }
 
 template <class F>
-void			CallbackList<F>::add(F callback, void* userData)
-{
+void      CallbackList<F>::add(F callback, void* userData) {
   Item item = std::make_pair(callback, userData);
   if (itemMap.find(item) == itemMap.end()) {
     typename ItemList::iterator index = items.insert(items.end(), item);
@@ -78,8 +75,7 @@ void			CallbackList<F>::add(F callback, void* userData)
 }
 
 template <class F>
-void			CallbackList<F>::remove(F callback, void* userData)
-{
+void      CallbackList<F>::remove(F callback, void* userData) {
   Item item = std::make_pair(callback, userData);
   typename ItemMap::iterator index = itemMap.find(item);
   if (index != itemMap.end()) {
@@ -89,16 +85,14 @@ void			CallbackList<F>::remove(F callback, void* userData)
 }
 
 template <class F>
-void			CallbackList<F>::iterate(Callback callback,
-						 void* userData) const
-{
+void      CallbackList<F>::iterate(Callback callback,
+                                   void* userData) const {
   const_cast<CallbackList<F>*>(this)->doIterate(callback, userData);
 }
 
 template <class F>
-void			CallbackList<F>::doIterate(Callback callback,
-						   void* userData)
-{
+void      CallbackList<F>::doIterate(Callback callback,
+                                     void* userData) {
   // insert a dummy item into the list.  this is our safe harbor
   // in case the list is modified while we're iterating over it.
   // the dummy item will remain no matter what other changes
@@ -116,8 +110,9 @@ void			CallbackList<F>::doIterate(Callback callback,
     // invoke callback.  skip dummy items (any item with a NULL function).
     // stop if a callback returns false.
     if (index->first != NULL)
-      if (!callback(index->first, index->second, userData))
-	break;
+      if (!callback(index->first, index->second, userData)) {
+        break;
+      }
   }
 
   // now remove the dummy item
@@ -130,6 +125,6 @@ void			CallbackList<F>::doIterate(Callback callback,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

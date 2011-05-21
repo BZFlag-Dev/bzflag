@@ -32,48 +32,46 @@
 // PingPacket
 //
 
-const int		PingPacket::PacketSize = ServerIdPLen + 52;
+const int   PingPacket::PacketSize = ServerIdPLen + 52;
 
 PingPacket::PingPacket() : gameType(TeamFFA), gameOptions(0),
-				maxShots(1),
-				shakeWins(0),
-				shakeTimeout(0),
-				maxPlayerScore(0),
-				maxTeamScore(0),
-				maxTime(0),
-				maxPlayers(1),
-				rogueCount(0),
-				rogueMax(1),
-				redCount(0),
-				redMax(1),
-				greenCount(0),
-				greenMax(1),
-				blueCount(0),
-				blueMax(1),
-				purpleCount(0),
-				purpleMax(1),
-				observerCount(0),
-				observerMax(1),
-                                pingTime(0),
-				pinging(false)
-{
+  maxShots(1),
+  shakeWins(0),
+  shakeTimeout(0),
+  maxPlayerScore(0),
+  maxTeamScore(0),
+  maxTime(0),
+  maxPlayers(1),
+  rogueCount(0),
+  rogueMax(1),
+  redCount(0),
+  redMax(1),
+  greenCount(0),
+  greenMax(1),
+  blueCount(0),
+  blueMax(1),
+  purpleCount(0),
+  purpleMax(1),
+  observerCount(0),
+  observerMax(1),
+  pingTime(0),
+  pinging(false) {
   // do nothing
 }
 
-PingPacket::~PingPacket()
-{
+PingPacket::~PingPacket() {
   // do nothing
 }
 
-bool			PingPacket::read(int fd, struct sockaddr_in* addr)
-{
+bool      PingPacket::read(int fd, struct sockaddr_in* addr) {
   char buffer[PacketSize], serverVersion[9];
   uint16_t len, code;
 
   // get packet
   int n = recvBroadcast(fd, buffer, sizeof(buffer), addr);
-  if (n < 4)
+  if (n < 4) {
     return false;
+  }
 
   // decode header
   void* buf = buffer;
@@ -81,12 +79,14 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   buf = nboUnpackUInt16(buf, code);
 
   // make sure we got the rest of the message
-  if (len != n - 4)
+  if (len != n - 4) {
     return false;
+  }
 
   // check that it's a reply
-  if (code != MsgPingCodeReply)
+  if (code != MsgPingCodeReply) {
     return false;
+  }
 
   // unpack body of reply
   buf = unpack(buf, serverVersion);
@@ -95,10 +95,9 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
   return (strncmp(serverVersion, getServerVersion(), 8) == 0);
 }
 
-bool			PingPacket::waitForReply(int fd,
-				const Address& from,
-				int millisecondsToBlock)
-{
+bool      PingPacket::waitForReply(int fd,
+                                   const Address& from,
+                                   int millisecondsToBlock) {
   // block waiting on input.  if the incoming message is not from the
   // indicated source then ignore it and go back to waiting.  if the
   // incoming message is not a ping then ignore it and go back to waiting.
@@ -116,24 +115,26 @@ bool			PingPacket::waitForReply(int fd,
     fd_set read_set;
     FD_ZERO(&read_set);
     FD_SET((unsigned int)fd, &read_set);
-    int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, &timeout);
+    int nfound = select(fd + 1, (fd_set*)&read_set, NULL, NULL, &timeout);
 
     // if got a message read it.  if a ping packet and from right
     // sender then return success.
-    if (nfound < 0)
+    if (nfound < 0) {
       return false;
+    }
     if (nfound > 0 && read(fd, NULL))
-      if (sourceAddr == from)
-	return true;
+      if (sourceAddr == from) {
+        return true;
+      }
 
     currentTime = BzTime::getCurrent();
-  } while (currentTime - startTime < blockTime);
+  }
+  while (currentTime - startTime < blockTime);
   return false;
 }
 
-bool			PingPacket::write(int fd,
-					const struct sockaddr_in* addr) const
-{
+bool      PingPacket::write(int fd,
+                            const struct sockaddr_in* addr) const {
   char buffer[PacketSize] = {0};
   void* buf = buffer;
   buf = nboPackUInt16(buf, PacketSize - 4);
@@ -142,34 +143,31 @@ bool			PingPacket::write(int fd,
   return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-bool			PingPacket::isRequest(int fd,
-				struct sockaddr_in* addr)
-{
-  if (fd < 0) return false;
+bool      PingPacket::isRequest(int fd,
+                                struct sockaddr_in* addr) {
+  if (fd < 0) { return false; }
   char buffer[6];
-  void *msg = buffer;
+  void* msg = buffer;
   uint16_t len, code;
   int size = recvBroadcast(fd, buffer, sizeof(buffer), addr);
-  if (size < 2) return false;
+  if (size < 2) { return false; }
   msg = nboUnpackUInt16(msg, len);
   msg = nboUnpackUInt16(msg, code);
   return code == MsgPingCodeRequest;
 }
 
-bool			PingPacket::sendRequest(int fd,
-					const struct sockaddr_in* addr)
-{
-  if (fd < 0 || !addr) return false;
+bool      PingPacket::sendRequest(int fd,
+                                  const struct sockaddr_in* addr) {
+  if (fd < 0 || !addr) { return false; }
   char buffer[6];
-  void *msg = buffer;
+  void* msg = buffer;
   msg = nboPackUInt16(msg, 2);
   msg = nboPackUInt16(msg, MsgPingCodeRequest);
   msg = nboPackUInt16(msg, (uint16_t) 0);
   return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-void*			PingPacket::unpack(void* buf, char* version)
-{
+void*     PingPacket::unpack(void* buf, char* version) {
   buf = nboUnpackString(buf, version, 8);
   buf = serverId.unpack(buf);
   buf = sourceAddr.unpack(buf);
@@ -197,8 +195,7 @@ void*			PingPacket::unpack(void* buf, char* version)
   return buf;
 }
 
-void*			PingPacket::pack(void* buf, const char* version) const
-{
+void*     PingPacket::pack(void* buf, const char* version) const {
   buf = nboPackString(buf, version, 8);
   buf = serverId.pack(buf);
   buf = sourceAddr.pack(buf);
@@ -206,7 +203,7 @@ void*			PingPacket::pack(void* buf, const char* version) const
   buf = nboPackUInt16(buf, gameOptions);
   buf = nboPackUInt16(buf, maxShots);
   buf = nboPackUInt16(buf, shakeWins);
-  buf = nboPackUInt16(buf, shakeTimeout);	// 1/10ths of second
+  buf = nboPackUInt16(buf, shakeTimeout); // 1/10ths of second
   buf = nboPackUInt16(buf, maxPlayerScore);
   buf = nboPackUInt16(buf, maxTeamScore);
   buf = nboPackUInt16(buf, maxTime);
@@ -226,8 +223,7 @@ void*			PingPacket::pack(void* buf, const char* version) const
   return buf;
 }
 
-void			PingPacket::packHex(char* buf) const
-{
+void      PingPacket::packHex(char* buf) const {
   buf = packHex16(buf, gameType);
   buf = packHex16(buf, gameOptions);
   buf = packHex16(buf, maxShots);
@@ -252,8 +248,7 @@ void			PingPacket::packHex(char* buf) const
   *buf = 0;
 }
 
-void			PingPacket::unpackHex(char* buf)
-{
+void      PingPacket::unpackHex(char* buf) {
   buf = unpackHex16(buf, gameType);
   buf = unpackHex16(buf, gameOptions);
   buf = unpackHex16(buf, maxShots);
@@ -277,8 +272,7 @@ void			PingPacket::unpackHex(char* buf)
   buf = unpackHex8(buf, observerMax);
 }
 
-int			PingPacket::hex2bin(char d)
-{
+int     PingPacket::hex2bin(char d) {
   switch (d) {
     case '0': return 0;
     case '1': return 1;
@@ -306,23 +300,20 @@ int			PingPacket::hex2bin(char d)
   return 0;
 }
 
-char			PingPacket::bin2hex(int d)
-{
+char      PingPacket::bin2hex(int d) {
   static const char* digit = "0123456789abcdef";
   return digit[d];
 }
 
-char*			PingPacket::packHex16(char* buf, uint16_t v)
-{
+char*     PingPacket::packHex16(char* buf, uint16_t v) {
   *buf++ = bin2hex((v >> 12) & 0xf);
   *buf++ = bin2hex((v >>  8) & 0xf);
   *buf++ = bin2hex((v >>  4) & 0xf);
-  *buf++ = bin2hex( v	& 0xf);
+  *buf++ = bin2hex(v  & 0xf);
   return buf;
 }
 
-char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
-{
+char*     PingPacket::unpackHex16(char* buf, uint16_t& v) {
   uint16_t d = 0;
   d = (d << 4) | hex2bin(*buf++);
   d = (d << 4) | hex2bin(*buf++);
@@ -332,15 +323,13 @@ char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
   return buf;
 }
 
-char*			PingPacket::packHex8(char* buf, uint8_t v)
-{
+char*     PingPacket::packHex8(char* buf, uint8_t v) {
   *buf++ = bin2hex((v >>  4) & 0xf);
-  *buf++ = bin2hex( v	& 0xf);
+  *buf++ = bin2hex(v  & 0xf);
   return buf;
 }
 
-char*			PingPacket::unpackHex8(char* buf, uint8_t& v)
-{
+char*     PingPacket::unpackHex8(char* buf, uint8_t& v) {
   uint16_t d = 0;
   d = (d << 4) | hex2bin(*buf++);
   d = (d << 4) | hex2bin(*buf++);
@@ -348,8 +337,7 @@ char*			PingPacket::unpackHex8(char* buf, uint8_t& v)
   return buf;
 }
 
-void			 PingPacket::zeroPlayerCounts()
-{
+void       PingPacket::zeroPlayerCounts() {
   rogueCount = 0;
   redCount = 0;
   greenCount = 0;
@@ -360,30 +348,28 @@ void			 PingPacket::zeroPlayerCounts()
 
 // serialize packet to file -- note lack of error checking
 // must write to a binary file if we use plain "pack"
-void			 PingPacket::writeToFile (std::ostream& out) const
-{
-  if (!out) return;
+void       PingPacket::writeToFile(std::ostream& out) const {
+  if (!out) { return; }
 
   char buffer[PingPacket::PacketSize];
   void* buf = buffer;
   buf = nboPackUInt16(buf, PingPacket::PacketSize - 4);
   buf = nboPackUInt16(buf, MsgPingCodeReply);
   buf = pack(buf, getServerVersion());
-  out.write(buffer,sizeof(buffer));
+  out.write(buffer, sizeof(buffer));
 }
 
 // de serialize packet from file
 // must read from a binary file if we use plain "unpack"
-bool			 PingPacket::readFromFile(std::istream& in)
-{
-  if (!in) return false;
+bool       PingPacket::readFromFile(std::istream& in) {
+  if (!in) { return false; }
 
   char buffer[PingPacket::PacketSize], serverVersion[9];
   uint16_t len, code;
 
   // get packet
   in.read(buffer, sizeof(buffer));
-  if ((size_t)in.gcount() < sizeof(buffer)){
+  if ((size_t)in.gcount() < sizeof(buffer)) {
     return false;
   }
 
@@ -393,7 +379,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
   buf = nboUnpackUInt16(buf, code);
 
   // make sure we got the rest of the message
-  if (len != in.gcount() - 4){
+  if (len != in.gcount() - 4) {
     return false;
   }
 
@@ -408,6 +394,6 @@ bool			 PingPacket::readFromFile(std::istream& in)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

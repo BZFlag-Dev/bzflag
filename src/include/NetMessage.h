@@ -26,8 +26,8 @@ class NetHandler;
 
 class NetMessage {
   public:
-    typedef void (*SendFunc)      (NetHandler*, const void* data, size_t size);
-    typedef void (*BroadcastFunc) (const void* data, size_t size, bool textClients);
+    typedef void (*SendFunc)(NetHandler*, const void* data, size_t size);
+    typedef void (*BroadcastFunc)(const void* data, size_t size, bool textClients);
 
   public:
     static void setSendFunc(SendFunc func)           { sendFunc = func; }
@@ -121,7 +121,7 @@ class NetMessage {
 class NetRecvMsg : public NetMessage {
   public:
     NetRecvMsg(uint16_t len, uint16_t code, const void* msgData)
-    : NetMessage(len, code, msgData)
+      : NetMessage(len, code, msgData)
     {}
 
     uint16_t getCode() const;
@@ -134,6 +134,6 @@ class NetRecvMsg : public NetMessage {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

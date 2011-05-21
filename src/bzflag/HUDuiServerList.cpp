@@ -1,4 +1,4 @@
-//							   -*- coding: utf-8 -*-
+//                 -*- coding: utf-8 -*-
 /* bzflag
  * Copyright (c) 1993-2010 Tim Riker
  *
@@ -44,8 +44,7 @@ HUDuiServerList::HUDuiServerList()
   , filterOptions(0)
   , filterPatterns(std::pair<std::string, std::string>("*", "*"))
   , activeColumn(DomainName)
-  , devInfo(false)
-{
+  , devInfo(false) {
   columns[Modes] = std::pair<std::string, float*>("", &MODES_PERCENTAGE);
   columns[DomainName] = std::pair<std::string, float*>("Address", &DOMAIN_PERCENTAGE);
   columns[ServerName] = std::pair<std::string, float*>("Server Name", &SERVER_PERCENTAGE);
@@ -55,132 +54,123 @@ HUDuiServerList::HUDuiServerList()
 }
 
 
-bool HUDuiServerList::comp(HUDuiControl* first, HUDuiControl* second)
-{
+bool HUDuiServerList::comp(HUDuiControl* first, HUDuiControl* second) {
   return (((HUDuiServerListItem*)first)->getServerKey() < ((HUDuiServerListItem*)second)->getServerKey());
 }
 
 
-bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second)
-{
+bool HUDuiServerList::equal(HUDuiControl* first, HUDuiControl* second) {
   HUDuiServerListItem* f1 = dynamic_cast<HUDuiServerListItem*>(first);
   HUDuiServerListItem* f2 = dynamic_cast<HUDuiServerListItem*>(second);
   return f1->getServerKey() == f2->getServerKey();
 }
 
 
-struct HUDuiServerList::search : public std::binary_function<HUDuiControl*, std::pair<std::string, std::string>, bool>
-{
-public:
-  result_type operator()(first_argument_type control, second_argument_type patterns) const
-    {
+struct HUDuiServerList::search : public std::binary_function<HUDuiControl*, std::pair<std::string, std::string>, bool> {
+  public:
+    result_type operator()(first_argument_type control, second_argument_type patterns) const {
       HUDuiServerListItem* item = (HUDuiServerListItem*) control;
 
       bool serverName = !(glob_match(TextUtils::tolower(patterns.first), TextUtils::tolower(item->getServerName())));
       bool domainName = !(glob_match(TextUtils::tolower(patterns.second), TextUtils::tolower(item->getDomainName())));
-      return ((serverName)||(domainName));
+      return ((serverName) || (domainName));
     }
 };
 
 
-template<int sortType> struct HUDuiServerList::compare : public std::binary_function<HUDuiControl*, HUDuiControl*, bool>
-{
-public:
-  bool operator()(HUDuiControl* first, HUDuiControl* second) const
-  {
-    HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
-    HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
+template<int sortType> struct HUDuiServerList::compare : public std::binary_function<HUDuiControl*, HUDuiControl*, bool> {
+  public:
+    bool operator()(HUDuiControl* first, HUDuiControl* second) const {
+      HUDuiServerListItem* _first = (HUDuiServerListItem*) first;
+      HUDuiServerListItem* _second = (HUDuiServerListItem*) second;
 
-    switch (sortType) {
-    case DomainName:
-      return (_first->getDomainName().compare(_second->getDomainName()) < 0);
-      break;
+      switch (sortType) {
+        case DomainName:
+          return (_first->getDomainName().compare(_second->getDomainName()) < 0);
+          break;
 
-    case ServerName:
-      return (_first->getServerName().compare(_second->getServerName()) < 0);
-      break;
+        case ServerName:
+          return (_first->getServerName().compare(_second->getServerName()) < 0);
+          break;
 
-    case PlayerCount:
-      return (_first->getServer()->getSortFactor() < _second->getServer()->getSortFactor());
-      break;
+        case PlayerCount:
+          return (_first->getServer()->getSortFactor() < _second->getServer()->getSortFactor());
+          break;
 
-    case Ping:
-      return (_first->getServer()->ping.pingTime < _second->getServer()->ping.pingTime);
-      break;
+        case Ping:
+          return (_first->getServer()->ping.pingTime < _second->getServer()->ping.pingTime);
+          break;
 
-    default:
-      printError("Unrecognized sort mode.");
-      break;
+        default:
+          printError("Unrecognized sort mode.");
+          break;
+      }
+      return false;
     }
-    return false;
-  }
 };
 
 
-struct HUDuiServerList::filter : public std::binary_function<HUDuiControl*, uint32_t, bool>
-{
-public:
-  result_type operator()(first_argument_type control, second_argument_type _filter) const
-  {
-    ServerList &serverList = ServerList::instance();
-    HUDuiServerListItem* item = (HUDuiServerListItem*) control;
-    ServerItem* server = serverList.lookupServer(item->getServerKey());
+struct HUDuiServerList::filter : public std::binary_function<HUDuiControl*, uint32_t, bool> {
+  public:
+    result_type operator()(first_argument_type control, second_argument_type _filter) const {
+      ServerList& serverList = ServerList::instance();
+      HUDuiServerListItem* item = (HUDuiServerListItem*) control;
+      ServerItem* server = serverList.lookupServer(item->getServerKey());
 
-    if (server == NULL) {
-      return true;
-    }
-
-    bool retVal = false;
-
-    const uint16_t gameOpts = server->ping.gameOptions;
-    const uint16_t gameType = server->ping.gameType;
-
-    for (uint32_t i = 1; i < EndOfFilterConstants; i <<= 1) {
-      if ((_filter & i) == i) {
-	switch (i) {
-          case EmptyServer: {
-            retVal = (server->getPlayerCount() == 0);
-            break;
-          }
-          case FullServer: {
-            retVal = (server->getPlayerCount() == server->ping.maxPlayers);
-            break;
-          }
-          case JumpingOn:       { retVal = ((gameOpts & JumpingGameStyle)   != 0); break; }
-          case JumpingOff:      { retVal = ((gameOpts & JumpingGameStyle)   == 0); break; }
-          case RicochetOn:      { retVal = ((gameOpts & RicochetGameStyle)  != 0); break; }
-          case RicochetOff:     { retVal = ((gameOpts & RicochetGameStyle)  == 0); break; }
-          case AntidoteFlagOn:  { retVal = ((gameOpts & AntidoteGameStyle)  != 0); break; }
-          case AntidoteFlagOff: { retVal = ((gameOpts & AntidoteGameStyle)  == 0); break; }
-          case SuperFlagsOn:    { retVal = ((gameOpts & SuperFlagGameStyle) != 0); break; }
-          case SuperFlagsOff:   { retVal = ((gameOpts & SuperFlagGameStyle) == 0); break; }
-          case HandicapOn:      { retVal = ((gameOpts & HandicapGameStyle)  != 0); break; }
-          case HandicapOff:     { retVal = ((gameOpts & HandicapGameStyle)  == 0); break; }
-          case LuaWorldOn:      { retVal = ((gameOpts & LuaWorldScript)     != 0); break; }
-          case LuaWorldOff:     { retVal = ((gameOpts & LuaWorldScript)     == 0); break; }
-          case LuaRulesOn:      { retVal = ((gameOpts & LuaRulesScript)     != 0); break; }
-          case LuaRulesOff:     { retVal = ((gameOpts & LuaRulesScript)     == 0); break; }
-          case ClassicCTFGameMode:  { retVal = (gameType == ClassicCTF);  break; }
-          case RabbitChaseGameMode: { retVal = (gameType == RabbitChase); break; }
-          case OpenFFAGameMode:     { retVal = (gameType == OpenFFA);     break; }
-          case TeamFFAGameMode:     { retVal = (gameType == TeamFFA);     break; }
-          default: {
-            break;
-          }
-	}
+      if (server == NULL) {
+        return true;
       }
-      if (retVal == true) {
-	return true;
+
+      bool retVal = false;
+
+      const uint16_t gameOpts = server->ping.gameOptions;
+      const uint16_t gameType = server->ping.gameType;
+
+      for (uint32_t i = 1; i < EndOfFilterConstants; i <<= 1) {
+        if ((_filter & i) == i) {
+          switch (i) {
+            case EmptyServer: {
+              retVal = (server->getPlayerCount() == 0);
+              break;
+            }
+            case FullServer: {
+              retVal = (server->getPlayerCount() == server->ping.maxPlayers);
+              break;
+            }
+            case JumpingOn:       { retVal = ((gameOpts & JumpingGameStyle)   != 0); break; }
+            case JumpingOff:      { retVal = ((gameOpts & JumpingGameStyle)   == 0); break; }
+            case RicochetOn:      { retVal = ((gameOpts & RicochetGameStyle)  != 0); break; }
+            case RicochetOff:     { retVal = ((gameOpts & RicochetGameStyle)  == 0); break; }
+            case AntidoteFlagOn:  { retVal = ((gameOpts & AntidoteGameStyle)  != 0); break; }
+            case AntidoteFlagOff: { retVal = ((gameOpts & AntidoteGameStyle)  == 0); break; }
+            case SuperFlagsOn:    { retVal = ((gameOpts & SuperFlagGameStyle) != 0); break; }
+            case SuperFlagsOff:   { retVal = ((gameOpts & SuperFlagGameStyle) == 0); break; }
+            case HandicapOn:      { retVal = ((gameOpts & HandicapGameStyle)  != 0); break; }
+            case HandicapOff:     { retVal = ((gameOpts & HandicapGameStyle)  == 0); break; }
+            case LuaWorldOn:      { retVal = ((gameOpts & LuaWorldScript)     != 0); break; }
+            case LuaWorldOff:     { retVal = ((gameOpts & LuaWorldScript)     == 0); break; }
+            case LuaRulesOn:      { retVal = ((gameOpts & LuaRulesScript)     != 0); break; }
+            case LuaRulesOff:     { retVal = ((gameOpts & LuaRulesScript)     == 0); break; }
+            case ClassicCTFGameMode:  { retVal = (gameType == ClassicCTF);  break; }
+            case RabbitChaseGameMode: { retVal = (gameType == RabbitChase); break; }
+            case OpenFFAGameMode:     { retVal = (gameType == OpenFFA);     break; }
+            case TeamFFAGameMode:     { retVal = (gameType == TeamFFA);     break; }
+            default: {
+              break;
+            }
+          }
+        }
+        if (retVal == true) {
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
 };
 
 
 // Add a new item to our scrollable list
-void HUDuiServerList::addItem(ServerItem* item)
-{
+void HUDuiServerList::addItem(ServerItem* item) {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(item);
   newItem->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
@@ -207,8 +197,7 @@ void HUDuiServerList::addItem(ServerItem* item)
   applyFilters();
 }
 
-void HUDuiServerList::addItem(std::string key)
-{
+void HUDuiServerList::addItem(std::string key) {
   HUDuiServerListItem* newItem = new HUDuiServerListItem(key);
   newItem->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   newItem->setFontFace(getFontFace());
@@ -244,30 +233,31 @@ void HUDuiServerList::addItem(std::string key)
   applyFilters();
 }
 
-void HUDuiServerList::clearList()
-{
+void HUDuiServerList::clearList() {
   items.clear();
   originalItems.clear();
   getNav().clear();
   getNav().push_front(this);
-  if (!getParent()->hasFocus())
+  if (!getParent()->hasFocus()) {
     getNav().set((size_t) 0);
+  }
 }
 
-void HUDuiServerList::removeItem(ServerItem* item)
-{
+void HUDuiServerList::removeItem(ServerItem* item) {
   HUDuiServerListItem* oldItem = new HUDuiServerListItem(item);
   std::list<HUDuiControl*>::iterator it = std::search_n(originalItems.begin(), originalItems.end(), 1, oldItem, equal);
   std::list<HUDuiControl*>::iterator sec_it = std::search_n(items.begin(), items.end(), 1, oldItem, equal);
 
   HUDuiControl* oneBeforeItem;
-  if ((sec_it == --items.end())&&(items.size() > (size_t) 1)) {
+  if ((sec_it == --items.end()) && (items.size() > (size_t) 1)) {
     --sec_it;
     oneBeforeItem = *sec_it;
-  } else if ((sec_it != items.end())&&(items.size() > (size_t) 1)) {
+  }
+  else if ((sec_it != items.end()) && (items.size() > (size_t) 1)) {
     ++sec_it;
     oneBeforeItem = *sec_it;
-  } else {
+  }
+  else {
     oneBeforeItem = NULL;
   }
   HUDuiControl* itemToRemove = *it;
@@ -284,63 +274,58 @@ void HUDuiServerList::removeItem(ServerItem* item)
     return;
   }
 
-  if (inFocus)
+  if (inFocus) {
     getNav().set(*newFocus);
-  else
+  }
+  else {
     getNav().setWithoutFocus(*newFocus);
+  }
 }
 
 // Over-ride the generic HUDuiControl version of addItem
-void HUDuiServerList::addItem(HUDuiControl* /*item*/)
-{
+void HUDuiServerList::addItem(HUDuiControl* /*item*/) {
   return; // Do nothing
 }
 
-void HUDuiServerList::setFontSize(float size)
-{
+void HUDuiServerList::setFontSize(float size) {
   HUDuiScrollList::setFontSize(size);
 }
 
-void HUDuiServerList::setFontFace(const LocalFontFace* face)
-{
+void HUDuiServerList::setFontFace(const LocalFontFace* face) {
   HUDuiScrollList::setFontFace(face);
 }
 
-void HUDuiServerList::setSize(float width, float height)
-{
-  FontManager &fm = FontManager::instance();
+void HUDuiServerList::setSize(float width, float height) {
+  FontManager& fm = FontManager::instance();
 
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
-  HUDuiScrollList::setSize(width, height - columnsHeight - columnsHeight/2);
+  HUDuiScrollList::setSize(width, height - columnsHeight - columnsHeight / 2);
 }
 
-void HUDuiServerList::update()
-{
+void HUDuiServerList::update() {
   HUDuiScrollList::update();
 
   std::list<HUDuiControl*>::iterator it;
 
-  for (it=items.begin(); it != items.end(); it++) {
+  for (it = items.begin(); it != items.end(); it++) {
     ((HUDuiServerListItem*)(*it))->setColumnSizes(MODES_PERCENTAGE, DOMAIN_PERCENTAGE, SERVER_PERCENTAGE, PLAYER_PERCENTAGE, PING_PERCENTAGE);
   }
 }
 
-float HUDuiServerList::getHeight() const
-{
-  FontManager &fm = FontManager::instance();
+float HUDuiServerList::getHeight() const {
+  FontManager& fm = FontManager::instance();
 
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
-  return HUDuiScrollList::getHeight() + columnsHeight + columnsHeight/2;
+  return HUDuiScrollList::getHeight() + columnsHeight + columnsHeight / 2;
 }
 
-void HUDuiServerList::doRender()
-{
+void HUDuiServerList::doRender() {
   HUDuiScrollList::doRender();
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
-  const fvec4 color      (1.0f, 1.0f, 1.0f, 1.0f);
+  const fvec4 color(1.0f, 1.0f, 1.0f, 1.0f);
   const fvec4 activeColor(0.0f, 1.0f, 0.0f, 1.0f);
 
   glColor4fv(color);
@@ -348,18 +333,18 @@ void HUDuiServerList::doRender()
   float columnsHeight = fm.getStringHeight(getFontFace()->getFMFace(), getFontSize());
 
   glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() + 1, -0.5f);
-  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - columnsHeight - columnsHeight/2 + 1, -0.5f);
+  glOutlineBoxHV(1.0f, getX(), getY(), getX() + getWidth(), getY() + getHeight() - columnsHeight - columnsHeight / 2 + 1, -0.5f);
 
   float y = getY() + getHeight() - columnsHeight;
   float x = getX();
 
-  for (int i=Modes; i != NoSort; i++) {
+  for (int i = Modes; i != NoSort; i++) {
     const std::string columnTitle = " " + columns[i].first;
 
     if (sortMode == i) {
       TextureManager& tm = TextureManager::instance();
       const int texID = tm.getTextureID(reverseSort ? "arrow_up.png"
-                                                    : "arrow_down.png");
+                                        : "arrow_down.png");
       if (texID) {
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         tm.clearLastBoundID();
@@ -388,7 +373,8 @@ void HUDuiServerList::doRender()
 
     if ((activeColumn == i) && hasFocus()) {
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &activeColor);
-    } else {
+    }
+    else {
       fm.drawString(x, y, 0, getFontFace()->getFMFace(), getFontSize(), columnTitle, &color);
     }
 
@@ -399,14 +385,14 @@ void HUDuiServerList::doRender()
   if (devInfo) {
     char temp[50];
     sprintf(temp, "COLUMN SIZES: %f %f %f %f", HUDuiServerList::DOMAIN_PERCENTAGE, HUDuiServerList::SERVER_PERCENTAGE, HUDuiServerList::PLAYER_PERCENTAGE, HUDuiServerList::PING_PERCENTAGE);
-    fm.drawString(getX(), getY() + getHeight() + 7*columnsHeight, 0, getFontFace()->getFMFace(), getFontSize(), temp);
+    fm.drawString(getX(), getY() + getHeight() + 7 * columnsHeight, 0, getFontFace()->getFMFace(), getFontSize(), temp);
   }
 }
 
-ServerItem* HUDuiServerList::getSelectedServer()
-{
-  if (items.size() <= 0)
+ServerItem* HUDuiServerList::getSelectedServer() {
+  if (items.size() <= 0) {
     return NULL;
+  }
 
   std::list<HUDuiControl*>::iterator it;
   it = items.begin();
@@ -416,35 +402,31 @@ ServerItem* HUDuiServerList::getSelectedServer()
   return dataList.lookupServer(selected->getServerKey());
 }
 
-HUDuiServerListItem* HUDuiServerList::get(size_t _index)
-{
-  if (_index >= getSize())
+HUDuiServerListItem* HUDuiServerList::get(size_t _index) {
+  if (_index >= getSize()) {
     _index = getSize() - 1;
+  }
 
   std::list<HUDuiControl*>::iterator it = items.begin();
   std::advance(it, _index);
   return (HUDuiServerListItem*)(*it);
 }
 
-void HUDuiServerList::serverNameFilter(std::string pattern)
-{
+void HUDuiServerList::serverNameFilter(std::string pattern) {
   filterPatterns.first = pattern;
   applyFilters();
 }
 
-void HUDuiServerList::domainNameFilter(std::string pattern)
-{
+void HUDuiServerList::domainNameFilter(std::string pattern) {
   filterPatterns.second = pattern;
   applyFilters();
 }
 
-void HUDuiServerList::applyFilters(uint32_t filters)
-{
+void HUDuiServerList::applyFilters(uint32_t filters) {
   filterOptions = filters;
 }
 
-void HUDuiServerList::applyFilters()
-{
+void HUDuiServerList::applyFilters() {
   items = originalItems;
 
   items.remove_if(std::bind2nd(filter(), filterOptions));
@@ -454,14 +436,12 @@ void HUDuiServerList::applyFilters()
   setSelected(0);
 }
 
-void HUDuiServerList::toggleFilter(FilterConstants _filter)
-{
+void HUDuiServerList::toggleFilter(FilterConstants _filter) {
   filterOptions ^= _filter;
   applyFilters();
 }
 
-void HUDuiServerList::sortBy(SortConstants sortType)
-{
+void HUDuiServerList::sortBy(SortConstants sortType) {
   //if (sortMode == sortType)
   //  reverseSort = !reverseSort;
   //else
@@ -478,53 +458,52 @@ void HUDuiServerList::sortBy(SortConstants sortType)
     }
   }
 
-  if (reverseSort)
+  if (reverseSort) {
     items.reverse();
+  }
 
   refreshNavQueue();
   setSelected(getNav().getIndex());
 }
 
-void HUDuiServerList::setActiveColumn(int column)
-{
-  if (column < DomainName)
+void HUDuiServerList::setActiveColumn(int column) {
+  if (column < DomainName) {
     column = DomainName;
-  else if (column >= Ping)
+  }
+  else if (column >= Ping) {
     column = Ping;
+  }
 
   activeColumn = column;
 }
 
-int HUDuiServerList::getActiveColumn()
-{
+int HUDuiServerList::getActiveColumn() {
   return activeColumn;
 }
 
-void HUDuiServerList::setReverseSort(bool reverse)
-{
+void HUDuiServerList::setReverseSort(bool reverse) {
   reverseSort = reverse;
 }
 
-size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod)
-{
+size_t HUDuiServerList::callbackHandler(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod) {
   // Don't scroll up any further once you've hit the top of the list
-  if ((oldFocus == 0)&&(changeMethod == hnPrev)) proposedFocus = oldFocus;
+  if ((oldFocus == 0) && (changeMethod == hnPrev)) { proposedFocus = oldFocus; }
 
   // Don't scroll past the bottom of the list
-  if ((oldFocus == getNav().size() - 1)&&(changeMethod == hnNext)) proposedFocus = oldFocus;
+  if ((oldFocus == getNav().size() - 1) && (changeMethod == hnNext)) { proposedFocus = oldFocus; }
 
   // no move at the beginning of the list
   if (proposedFocus == 0) {
     setSelected(0);
     return getSelected();
-  } else {
+  }
+  else {
     setSelected(proposedFocus - 1);
     return getSelected() + 1;
   }
 }
 
-void HUDuiServerList::refreshNavQueue()
-{
+void HUDuiServerList::refreshNavQueue() {
   HUDuiControl* currentFocus = getNav().get();
 
   bool inFocus = currentFocus->hasFocus();
@@ -546,34 +525,39 @@ void HUDuiServerList::refreshNavQueue()
     }
   }
 
-  if (inFocus)
+  if (inFocus) {
     getNav().set(currentFocus);
-  else if (currentFocus != NULL)
+  }
+  else if (currentFocus != NULL) {
     getNav().setWithoutFocus(currentFocus);
+  }
 }
 
-bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
-{
+bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key) {
   if (key.unicode == 0) {
     switch (key.button) {
       case BzfKeyEvent::Down: {
-        if (hasFocus())
+        if (hasFocus()) {
           getNav().next();
+        }
         break;
       }
       case BzfKeyEvent::Up: {
-        if (hasFocus())
+        if (hasFocus()) {
           getNavList()->prev();
+        }
         break;
       }
       case BzfKeyEvent::Left: {
-        if (hasFocus())
+        if (hasFocus()) {
           setActiveColumn(getActiveColumn() - 1);
+        }
         break;
       }
       case BzfKeyEvent::Right: {
-        if (hasFocus())
+        if (hasFocus()) {
           setActiveColumn(getActiveColumn() + 1);
+        }
         break;
       }
       default: {
@@ -584,7 +568,7 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
   else if ((key.unicode == 's') || (key.unicode == ' ')) {
     if (hasFocus()) {
       if (getActiveColumn() == sortMode) {
-	reverseSort = !reverseSort;
+        reverseSort = !reverseSort;
       }
       switch (getActiveColumn()) {
         case DomainName:  { sortBy(DomainName);  break; }
@@ -679,6 +663,6 @@ bool HUDuiServerList::doKeyPress(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

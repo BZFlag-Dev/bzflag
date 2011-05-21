@@ -23,25 +23,24 @@
 #include "Robot.h"
 
 
-class SharedObjectLoader : public RobotScript
-{
-  typedef BZRobots::Robot *(*createHandle)(void);
-  typedef void (*destroyHandle)(BZRobots::Robot *);
+class SharedObjectLoader : public RobotScript {
+    typedef BZRobots::Robot* (*createHandle)(void);
+    typedef void (*destroyHandle)(BZRobots::Robot*);
 
-  createHandle createFunction;
-  destroyHandle destroyFunction;
+    createHandle createFunction;
+    destroyHandle destroyFunction;
 
 #ifdef _WIN32
-	HINSTANCE soHandle;
+    HINSTANCE soHandle;
 #else
-	void *soHandle;
+    void* soHandle;
 #endif /* _WIN32 */
 
   public:
     ~SharedObjectLoader();
     bool load(std::string filename);
-    BZRobots::Robot *create(void);
-    void destroy(BZRobots::Robot *instance);
+    BZRobots::Robot* create(void);
+    void destroy(BZRobots::Robot* instance);
 };
 
 #endif /* __SHAREDOBJECTLOADER_H__ */
@@ -50,6 +49,6 @@ class SharedObjectLoader : public RobotScript
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

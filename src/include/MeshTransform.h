@@ -75,45 +75,42 @@ class MeshTransform {
   public:
     class Tool {
       public:
-	Tool(const MeshTransform& transform);
-	Tool(const Tool&);
-	~Tool();
+        Tool(const MeshTransform& transform);
+        Tool(const Tool&);
+        ~Tool();
 
-	bool isInverted() const;
-	bool isSkewed() const; // scaled or sheared
-	void modifyVertex(fvec3& vertex) const;
-	void modifyNormal(fvec3& normal) const;
-	void modifyOldStyle(fvec3& pos, fvec3& size,
-			    float& angle, bool& flipz) const;
-	const float* getMatrix() const;
+        bool isInverted() const;
+        bool isSkewed() const; // scaled or sheared
+        void modifyVertex(fvec3& vertex) const;
+        void modifyNormal(fvec3& normal) const;
+        void modifyOldStyle(fvec3& pos, fvec3& size,
+                            float& angle, bool& flipz) const;
+        const float* getMatrix() const;
 
-	bool operator<(const Tool&) const;
+        bool operator<(const Tool&) const;
 
       private:
-	void processTransforms(const std::vector<TransformData>& transforms);
+        void processTransforms(const std::vector<TransformData>& transforms);
 
-	bool empty;
-	bool inverted;
-	bool skewed;
-	fvec4 vertexMatrix[4];
-	fvec3 normalMatrix[3];
+        bool empty;
+        bool inverted;
+        bool skewed;
+        fvec4 vertexMatrix[4];
+        fvec3 normalMatrix[3];
     };
 
-  friend class MeshTransform::Tool;
+    friend class MeshTransform::Tool;
 };
 
-inline bool MeshTransform::Tool::isInverted() const
-{
+inline bool MeshTransform::Tool::isInverted() const {
   return inverted;
 }
 
-inline bool MeshTransform::Tool::isSkewed() const
-{
+inline bool MeshTransform::Tool::isSkewed() const {
   return skewed;
 }
 
-inline const float* MeshTransform::Tool::getMatrix() const
-{
+inline const float* MeshTransform::Tool::getMatrix() const {
   return (const float*)vertexMatrix;
 }
 
@@ -138,11 +135,11 @@ class MeshTransformManager {
     std::vector<MeshTransform*> transforms;
 };
 
-inline const MeshTransform* MeshTransformManager::getTransform(int id) const
-{
+inline const MeshTransform* MeshTransformManager::getTransform(int id) const {
   if ((id >= 0) && (id < (int)transforms.size())) {
     return transforms[id];
-  } else {
+  }
+  else {
     return NULL;
   }
 }
@@ -157,6 +154,6 @@ extern MeshTransformManager TRANSFORMMGR;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

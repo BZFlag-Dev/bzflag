@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZDBCACHE_H
-#define	BZDBCACHE_H
+#ifndef BZDBCACHE_H
+#define BZDBCACHE_H
 
 // implementation headers
 #include "StateDatabase.h"
@@ -31,8 +31,7 @@ namespace BZDB_Eval {
 }
 
 
-class BZDBCache
-{
+class BZDBCache {
   public:
     static void init();
 
@@ -46,9 +45,9 @@ class BZDBCache
     // prohibit external write access
     template <class T>
     class ReadOnly {
-      friend class BZDBCache;
+        friend class BZDBCache;
       public:
-        inline operator const T&() const { return data; }
+        inline operator const T& () const { return data; }
       private:
         ReadOnly() {}
         ReadOnly& operator=(const T& value) { data = value; return *this; }
@@ -125,8 +124,8 @@ class BZDBCache
     static Bool  useGameSPF;
 
   private:
-    static void clientCallback(const std::string &name, void *);
-    static void serverCallback(const std::string &name, void *);
+    static void clientCallback(const std::string& name, void*);
+    static void serverCallback(const std::string& name, void*);
 
   public:
     template <typename T>
@@ -141,7 +140,7 @@ class BZDBCache
           BZDB.removeCallback(name, callback, this);
         }
 
-        inline operator const T&() const { return data; }
+        inline operator const T& () const { return data; }
         inline const T& getData()  const { return data; }
 
         inline const std::string& getName() const { return name; }
@@ -187,6 +186,6 @@ typedef BZDBCache::static_hook<std::string> BZDB_string;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

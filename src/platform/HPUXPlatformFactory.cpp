@@ -16,25 +16,21 @@
 #include "XWindow.h"
 #include "HPUXMedia.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
-{
-  if (!instance) instance = new HPUXPlatformFactory;
+PlatformFactory*  PlatformFactory::getInstance() {
+  if (!instance) { instance = new HPUXPlatformFactory; }
   return instance;
 }
 
-HPUXPlatformFactory::HPUXPlatformFactory()
-{
+HPUXPlatformFactory::HPUXPlatformFactory() {
   // do nothing
 }
 
-HPUXPlatformFactory::~HPUXPlatformFactory()
-{
+HPUXPlatformFactory::~HPUXPlatformFactory() {
   // do nothing
 }
 
-BzfDisplay*		HPUXPlatformFactory::createDisplay(
-				const char* name, const char*)
-{
+BzfDisplay*   HPUXPlatformFactory::createDisplay(
+  const char* name, const char*) {
   XDisplay* display = new XDisplay(name);
   if (!display || !display->isValid()) {
     delete display;
@@ -43,20 +39,17 @@ BzfDisplay*		HPUXPlatformFactory::createDisplay(
   return display;
 }
 
-BzfVisual*		HPUXPlatformFactory::createVisual(
-				const BzfDisplay* display)
-{
+BzfVisual*    HPUXPlatformFactory::createVisual(
+  const BzfDisplay* display) {
   return new XVisual((const XDisplay*)display);
 }
 
-BzfWindow*		HPUXPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
+BzfWindow*    HPUXPlatformFactory::createWindow(
+  const BzfDisplay* display, BzfVisual* visual) {
   return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-BzfMedia*		HPUXPlatformFactory::createMedia()
-{
+BzfMedia*   HPUXPlatformFactory::createMedia() {
   return new HPUXMedia;
 }
 
@@ -64,6 +57,6 @@ BzfMedia*		HPUXPlatformFactory::createMedia()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

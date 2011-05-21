@@ -15,8 +15,7 @@
 #include "bzrobot_python_runtime.h"
 
 
-PythonLoader::PythonLoader() :module(NULL), ctor(NULL), pyrobot(NULL), initialized(false)
-{
+PythonLoader::PythonLoader() : module(NULL), ctor(NULL), pyrobot(NULL), initialized(false) {
   // Py_SetProgramName() takes a non-const argument in Python 2.5, so
   // suppress a warning about conversion from string constant to char*
   // by putting the program name into a variable.
@@ -25,8 +24,7 @@ PythonLoader::PythonLoader() :module(NULL), ctor(NULL), pyrobot(NULL), initializ
   Py_Initialize();
 }
 
-PythonLoader::~PythonLoader()
-{
+PythonLoader::~PythonLoader() {
   /* Is this neccessary when we're calling Py_Finalize()? Can't hurt. :-) */
   Py_XDECREF(module);
   Py_XDECREF(ctor);
@@ -35,8 +33,7 @@ PythonLoader::~PythonLoader()
   Py_Finalize();
 }
 
-bool PythonLoader::initialize()
-{
+bool PythonLoader::initialize() {
   addSysPath(".");
 
   /* TODO:
@@ -48,12 +45,11 @@ bool PythonLoader::initialize()
   return true;
 }
 
-bool PythonLoader::addSysPath(std::string new_path)
-{
+bool PythonLoader::addSysPath(std::string new_path) {
   /* We basically do: import sys; sys.path.append(path);
    * This is so it'll look in . for scripts to load. */
-  PyObject *sys, *path;
-  PyObject *sysString, *dotString;
+  PyObject* sys, *path;
+  PyObject* sysString, *dotString;
 
   sysString = PyString_FromString("sys");
   sys = PyImport_Import(sysString);
@@ -80,11 +76,11 @@ bool PythonLoader::addSysPath(std::string new_path)
   return true;
 }
 
-bool PythonLoader::load(std::string filepath)
-{
+bool PythonLoader::load(std::string filepath) {
   if (!initialized) {
-    if (!initialize())
+    if (!initialize()) {
       return false;
+    }
   }
 
 
@@ -97,7 +93,8 @@ bool PythonLoader::load(std::string filepath)
   if (separator_pos != std::string::npos && separator_pos <= filepath.length()) {
     addSysPath(filepath.substr(0, separator_pos));
     filename = filepath.substr(separator_pos + 1);
-  } else {
+  }
+  else {
     filename = filepath;
   }
 
@@ -112,7 +109,7 @@ bool PythonLoader::load(std::string filepath)
   }
   std::string modulename = filename.substr(0, extension_pos);
 
-  PyObject *file = PyString_FromString(modulename.c_str());
+  PyObject* file = PyString_FromString(modulename.c_str());
 
   Py_XDECREF(module);
   module = PyImport_Import(file);
@@ -145,8 +142,7 @@ bool PythonLoader::load(std::string filepath)
   return true;
 }
 
-BZRobots::Robot *PythonLoader::create(void)
-{
+BZRobots::Robot* PythonLoader::create(void) {
   Py_XDECREF(pyrobot);
 
   pyrobot = PyObject_CallObject(ctor, NULL);
@@ -155,12 +151,11 @@ BZRobots::Robot *PythonLoader::create(void)
     return NULL;
   }
 
-  SwigPyObject *holder = SWIG_Python_GetSwigThis(pyrobot);
-  return static_cast<BZRobots::Robot *>(holder ? holder->ptr : 0);
+  SwigPyObject* holder = SWIG_Python_GetSwigThis(pyrobot);
+  return static_cast<BZRobots::Robot*>(holder ? holder->ptr : 0);
 }
 
-void PythonLoader::destroy(BZRobots::Robot * /*instance*/)
-{
+void PythonLoader::destroy(BZRobots::Robot* /*instance*/) {
   Py_XDECREF(pyrobot);
   pyrobot = NULL;
 }
@@ -169,6 +164,6 @@ void PythonLoader::destroy(BZRobots::Robot * /*instance*/)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

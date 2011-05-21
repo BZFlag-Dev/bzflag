@@ -48,11 +48,11 @@ enum NetworkUpdates {
   NoUpdates       = 0, // receive no player data and no chats
   PlayerUpdates   = 1, // receive only player updates
   ChatUpdates     = 2, // receive only chats
-  AllUpdates      = 3	 // receive player data and chats
+  AllUpdates      = 3  // receive player data and chats
 };
 
 // player info
-typedef uint8_t	PlayerId;
+typedef uint8_t PlayerId;
 const int       PlayerIdPLen = sizeof(PlayerId);
 
 // FIXME - enum maybe? put into namespace or class cage?
@@ -116,8 +116,7 @@ const int MinY = 192;
 const int NoMotionSize  = 10; // no motion zone size
 const int MaxMotionSize = 37; // motion zone size
 
-enum GameType
-{
+enum GameType {
   TeamFFA,    // normal teamed FFA
   ClassicCTF, // your normal CTF
   OpenFFA,    // teamless FFA
@@ -136,7 +135,7 @@ enum GameOptions {
   HandicapGameStyle  = (1 << 8),  // handicap players based on score (eek! was TimeSyncGameStyle)
   LuaWorldScript     = (1 << 9),  // the server offers a LuaWorld script
   LuaRulesScript     = (1 << 10)  // the server requires a LuaRules script
-  // add here before reusing old ones above
+                       // add here before reusing old ones above
 };
 
 // map object flags
@@ -148,11 +147,11 @@ enum GameOptions {
 const int mapVersion = 1;
 
 struct GlobalDBItem {
-public:
-  const char*               name;
-  const char*               value;
-  bool                      persistent;
-  StateDatabase::Permission permission;
+  public:
+    const char*               name;
+    const char*               value;
+    bool                      persistent;
+    StateDatabase::Permission permission;
 };
 extern const unsigned int numGlobalDBItems;
 extern const struct GlobalDBItem globalDBItems[];
@@ -166,6 +165,6 @@ TeamColor convertTeam(bz_eTeamType team);
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

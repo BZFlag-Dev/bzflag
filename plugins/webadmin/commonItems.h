@@ -20,83 +20,79 @@
 #include "plugin_utils.h"
 #include "plugin_HTTP.h"
 
-void initCommonItems ( Templateiser &ts );
-void freeCommonItems ( void );
+void initCommonItems(Templateiser& ts);
+void freeCommonItems(void);
 
-class UserInfo : public TemplateCallbackClass
-{
-public:
+class UserInfo : public TemplateCallbackClass {
+  public:
 
-  UserInfo(Templateiser &ts);
-  virtual void keyCallback (std::string &data, const std::string &key);
-  virtual bool ifCallback (const std::string &key);
+    UserInfo(Templateiser& ts);
+    virtual void keyCallback(std::string& data, const std::string& key);
+    virtual bool ifCallback(const std::string& key);
 
-  bool hasPerm ( const char* perm )
-  {
-    if (!sessionAuth)
-      return false;
+    bool hasPerm(const char* perm) {
+      if (!sessionAuth) {
+        return false;
+      }
 
-    return sessionAuth->getSessionPermision(sessionID,perm);
-  }
+      return sessionAuth->getSessionPermision(sessionID, perm);
+    }
 
-  bool hasPerm ( const std::string &perm )
-  {
-    if (!sessionAuth)
-      return false;
+    bool hasPerm(const std::string& perm) {
+      if (!sessionAuth) {
+        return false;
+      }
 
-    return sessionAuth->getSessionPermision(sessionID,perm);
-  }
+      return sessionAuth->getSessionPermision(sessionID, perm);
+    }
 
-  BZFSHTTPAuth *sessionAuth;
-  int		sessionID;
-  std::string	userName;
+    BZFSHTTPAuth* sessionAuth;
+    int   sessionID;
+    std::string userName;
 };
 
-class ServerError : public TemplateCallbackClass
-{
-public:
+class ServerError : public TemplateCallbackClass {
+  public:
 
-  ServerError(Templateiser &ts);
-  virtual void keyCallback (std::string &data, const std::string &key);
-  virtual bool ifCallback (const std::string &key);
+    ServerError(Templateiser& ts);
+    virtual void keyCallback(std::string& data, const std::string& key);
+    virtual bool ifCallback(const std::string& key);
 
-  std::string errorMessage;
+    std::string errorMessage;
 };
 
-class GameInfo : public TemplateCallbackClass, bz_EventHandler
-{
-public:
+class GameInfo : public TemplateCallbackClass, bz_EventHandler {
+  public:
 
-  GameInfo(Templateiser &ts);
-  virtual ~GameInfo(void);
-  virtual void keyCallback (std::string &data, const std::string &key);
+    GameInfo(Templateiser& ts);
+    virtual ~GameInfo(void);
+    virtual void keyCallback(std::string& data, const std::string& key);
 
-  virtual void process(bz_EventData *eventData);
+    virtual void process(bz_EventData* eventData);
 
-protected:
-  std::string mapFile;
+  protected:
+    std::string mapFile;
 
-  double startTime;
-  size_t bytesIn;
-  size_t bytesOut;
+    double startTime;
+    size_t bytesIn;
+    size_t bytesOut;
 };
 
 // cheap singletons
-extern ServerError *serverError;
-extern UserInfo *userInfo;
+extern ServerError* serverError;
+extern UserInfo* userInfo;
 
 // newpage callbacks
 
-class NewPageCallback
-{
-public:
-  virtual ~NewPageCallback(){};
-  virtual void newPage ( const std::string &pagename, const HTTPRequest &request ) =0;
+class NewPageCallback {
+  public:
+    virtual ~NewPageCallback() {};
+    virtual void newPage(const std::string& pagename, const HTTPRequest& request) = 0;
 };
 
-void addNewPageCallback ( NewPageCallback *callback );
-void removeNewPageCallback ( NewPageCallback *callback );
-void callNewPageCallbacks ( const std::string &pagename, const HTTPRequest &request );
+void addNewPageCallback(NewPageCallback* callback);
+void removeNewPageCallback(NewPageCallback* callback);
+void callNewPageCallbacks(const std::string& pagename, const HTTPRequest& request);
 
 
 #endif //_COMMON_ITEMS_H_
@@ -105,6 +101,6 @@ void callNewPageCallbacks ( const std::string &pagename, const HTTPRequest &requ
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

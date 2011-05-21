@@ -11,28 +11,28 @@
  */
 
 /* ViewFrustum
- *	Encapsulates a camera.
+ *  Encapsulates a camera.
  */
 
-#ifndef	BZF_VIEW_FRUSTUM_H
-#define	BZF_VIEW_FRUSTUM_H
+#ifndef BZF_VIEW_FRUSTUM_H
+#define BZF_VIEW_FRUSTUM_H
 
 #include "common.h"
 #include "Frustum.h"
 
 // FIXME -- will need a means for off center projections for
-//	looking through teleporters
+//  looking through teleporters
 
 class ViewFrustum : public Frustum {
   public:
     ViewFrustum();
     ~ViewFrustum();
-    void		executeProjection() const;
-    void		executeDeepProjection() const;
-    void		executeView() const;
-    void		executeOrientation() const;
-    void		executePosition() const;
-    void		executeBillboard() const;
+    void    executeProjection() const;
+    void    executeDeepProjection() const;
+    void    executeView() const;
+    void    executeOrientation() const;
+    void    executePosition() const;
+    void    executeBillboard() const;
 };
 
 #endif // BZF_VIEW_FRUSTUM_H
@@ -41,6 +41,6 @@ class ViewFrustum : public Frustum {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

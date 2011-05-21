@@ -113,6 +113,6 @@ fi
 # mode: m4
 # tab-width: 8
 # standard-indent: 4
-# indent-tabs-mode: t
+# indent-tabs-mode: nil
 # End:
 # ex: shiftwidth=4 tabstop=8

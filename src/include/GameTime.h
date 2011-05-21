@@ -12,12 +12,12 @@
 
 /**
  * GameTime:
- *	Manages the network time.
+ *  Manages the network time.
  *      Time is stored as microseconds since the epoch.
  */
 
-#ifndef	BZF_GAME_TIME_H
-#define	BZF_GAME_TIME_H
+#ifndef BZF_GAME_TIME_H
+#define BZF_GAME_TIME_H
 
 #include "common.h"
 #include "BZDBCache.h"
@@ -36,9 +36,9 @@ namespace GameTime {
   void   serverStepTime();
 
   int   packSize();
-  void* pack(void *, float lag);
+  void* pack(void*, float lag);
   void  pack(NetMessage& netMsg, float lag);
-  void* unpack(void *);
+  void* unpack(void*);
 
   const float startRate = 1.0f;
   const float finalRate = 10.0f;
@@ -52,6 +52,6 @@ namespace GameTime {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -130,34 +130,29 @@ class LuaRobot : public AdvancedRobot {
 //  LuaScript
 //
 
-LuaScript::LuaScript()
-{
+LuaScript::LuaScript() {
   _running = true;
   error = "";
 }
 
 
-LuaScript::~LuaScript()
-{
+LuaScript::~LuaScript() {
 }
 
 
-bool LuaScript::load(std::string filename)
-{
+bool LuaScript::load(std::string filename) {
   scriptFile = filename;
   _loaded = true;
   return true;
 }
 
 
-Robot* LuaScript::create()
-{
+Robot* LuaScript::create() {
   return new LuaRobot(scriptFile);
 }
 
 
-void LuaScript::destroy(Robot* instance)
-{
+void LuaScript::destroy(Robot* instance) {
   delete instance;
 }
 
@@ -168,8 +163,7 @@ void LuaScript::destroy(Robot* instance)
 //  LuaRobot
 //
 
-LuaRobot::LuaRobot(const std::string& filename)
-{
+LuaRobot::LuaRobot(const std::string& filename) {
   L = luaL_newstate();
 
   luaL_openlibs(L);
@@ -202,8 +196,7 @@ LuaRobot::LuaRobot(const std::string& filename)
 }
 
 
-LuaRobot::~LuaRobot()
-{
+LuaRobot::~LuaRobot() {
   if (L != NULL) {
     lua_close(L);
   }
@@ -216,8 +209,7 @@ LuaRobot::~LuaRobot()
 //  Call-ins
 //
 
-bool LuaRobot::PushCallIn(const char* funcName, int inArgs)
-{
+bool LuaRobot::PushCallIn(const char* funcName, int inArgs) {
   if (L == NULL) {
     return false;
   }
@@ -233,8 +225,7 @@ bool LuaRobot::PushCallIn(const char* funcName, int inArgs)
 }
 
 
-bool LuaRobot::RunCallIn(int inArgs, int outArgs)
-{
+bool LuaRobot::RunCallIn(int inArgs, int outArgs) {
   if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
     printf("LuaRobot: error, %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
@@ -244,8 +235,7 @@ bool LuaRobot::RunCallIn(int inArgs, int outArgs)
 }
 
 
-static void PushBullet(lua_State* L, const Bullet* bullet)
-{
+static void PushBullet(lua_State* L, const Bullet* bullet) {
   lua_createtable(L, 0, 8);
   if (bullet == NULL) {
     return;
@@ -263,8 +253,7 @@ static void PushBullet(lua_State* L, const Bullet* bullet)
 
 //============================================================================//
 
-void LuaRobot::run()
-{
+void LuaRobot::run() {
   if (!PushCallIn("Run", 0)) {
     printf("LuaRobot: missing Run() function\n");
     return;
@@ -273,8 +262,7 @@ void LuaRobot::run()
 }
 
 
-void LuaRobot::onBattleEnded(const BattleEndedEvent& event)
-{
+void LuaRobot::onBattleEnded(const BattleEndedEvent& event) {
   if (!PushCallIn("BattleEnded", 1)) {
     return;
   }
@@ -286,8 +274,7 @@ void LuaRobot::onBattleEnded(const BattleEndedEvent& event)
 }
 
 
-void LuaRobot::onBulletFired(const BulletFiredEvent& event)
-{
+void LuaRobot::onBulletFired(const BulletFiredEvent& event) {
   if (!PushCallIn("BulletFired", 1)) {
     return;
   }
@@ -299,8 +286,7 @@ void LuaRobot::onBulletFired(const BulletFiredEvent& event)
 }
 
 
-void LuaRobot::onBulletHit(const BulletHitEvent& event)
-{
+void LuaRobot::onBulletHit(const BulletHitEvent& event) {
   if (!PushCallIn("BulletHit", 2)) {
     return;
   }
@@ -313,8 +299,7 @@ void LuaRobot::onBulletHit(const BulletHitEvent& event)
 }
 
 
-void LuaRobot::onBulletHitBullet(const BulletHitBulletEvent& event)
-{
+void LuaRobot::onBulletHitBullet(const BulletHitBulletEvent& event) {
   if (!PushCallIn("BulletHitBullet", 2)) {
     return;
   }
@@ -327,8 +312,7 @@ void LuaRobot::onBulletHitBullet(const BulletHitBulletEvent& event)
 }
 
 
-void LuaRobot::onBulletMissed(const BulletMissedEvent& event)
-{
+void LuaRobot::onBulletMissed(const BulletMissedEvent& event) {
   if (!PushCallIn("BulletMissed", 1)) {
     return;
   }
@@ -340,8 +324,7 @@ void LuaRobot::onBulletMissed(const BulletMissedEvent& event)
 }
 
 
-void LuaRobot::onDeath(const DeathEvent& event)
-{
+void LuaRobot::onDeath(const DeathEvent& event) {
   if (!PushCallIn("Death", 0)) {
     return;
   }
@@ -351,8 +334,7 @@ void LuaRobot::onDeath(const DeathEvent& event)
 }
 
 
-void LuaRobot::onHitByBullet(const HitByBulletEvent& event)
-{
+void LuaRobot::onHitByBullet(const HitByBulletEvent& event) {
   if (!PushCallIn("HitByBullet", 2)) {
     return;
   }
@@ -365,8 +347,7 @@ void LuaRobot::onHitByBullet(const HitByBulletEvent& event)
 }
 
 
-void LuaRobot::onHitRobot(const HitRobotEvent& event)
-{
+void LuaRobot::onHitRobot(const HitRobotEvent& event) {
   if (!PushCallIn("HitRobot", 4)) {
     return;
   }
@@ -381,8 +362,7 @@ void LuaRobot::onHitRobot(const HitRobotEvent& event)
 }
 
 
-void LuaRobot::onHitWall(const HitWallEvent& event)
-{
+void LuaRobot::onHitWall(const HitWallEvent& event) {
   if (!PushCallIn("HitWall", 1)) {
     return;
   }
@@ -394,8 +374,7 @@ void LuaRobot::onHitWall(const HitWallEvent& event)
 }
 
 
-void LuaRobot::onRobotDeath(const RobotDeathEvent& event)
-{
+void LuaRobot::onRobotDeath(const RobotDeathEvent& event) {
   if (!PushCallIn("RobotDeath", 1)) {
     return;
   }
@@ -407,8 +386,7 @@ void LuaRobot::onRobotDeath(const RobotDeathEvent& event)
 }
 
 
-void LuaRobot::onScannedRobot(const ScannedRobotEvent& event)
-{
+void LuaRobot::onScannedRobot(const ScannedRobotEvent& event) {
   if (!PushCallIn("ScannedRobot", 1)) {
     return;
   }
@@ -428,8 +406,7 @@ void LuaRobot::onScannedRobot(const ScannedRobotEvent& event)
 }
 
 
-void LuaRobot::onSpawn(const SpawnEvent& event)
-{
+void LuaRobot::onSpawn(const SpawnEvent& event) {
   if (!PushCallIn("Spawn", 0)) {
     return;
   }
@@ -439,8 +416,7 @@ void LuaRobot::onSpawn(const SpawnEvent& event)
 }
 
 
-void LuaRobot::onStatus(const StatusEvent& event)
-{
+void LuaRobot::onStatus(const StatusEvent& event) {
   if (!PushCallIn("Status", 2)) {
     return;
   }
@@ -453,8 +429,7 @@ void LuaRobot::onStatus(const StatusEvent& event)
 }
 
 
-void LuaRobot::onWin(const WinEvent& event)
-{
+void LuaRobot::onWin(const WinEvent& event) {
   if (!PushCallIn("Win", 0)) {
     return;
   }
@@ -470,8 +445,7 @@ void LuaRobot::onWin(const WinEvent& event)
 //  Call-outs
 //
 
-static bool PushCallOuts(lua_State* L)
-{
+static bool PushCallOuts(lua_State* L) {
   lua_newtable(L);
 
   PUSH_LUA_CFUNC(L, Execute);
@@ -531,8 +505,7 @@ static bool PushCallOuts(lua_State* L)
 
 //============================================================================//
 
-static inline LuaRobot* GetRobot(lua_State* L)
-{
+static inline LuaRobot* GetRobot(lua_State* L) {
   lua_getfield(L, LUA_REGISTRYINDEX, ThisLabel);
   if (!lua_isuserdata(L, -1)) {
     luaL_error(L, "Internal error -- missing '%s'", ThisLabel);
@@ -743,8 +716,7 @@ static int GetEventPriority(lua_State* L) {
 
 //============================================================================//
 
-static int Sleep(lua_State* L)
-{
+static int Sleep(lua_State* L) {
   BzTime::sleep(luaL_checkdouble(L, 1));
   return 0;
 }
@@ -752,24 +724,23 @@ static int Sleep(lua_State* L)
 
 // whacky bit of dev'ing fun
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
-  #include <unistd.h>
-  #include <fcntl.h>
-  static int ReadStdin(lua_State* L)
-  {
-    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
-    if (bits == -1) {
-      return 0;
-    }
-    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
-    char buf[4096];
-    const int r = read(STDIN_FILENO, buf, sizeof(buf));
-    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
-    if (r <= 0) {
-      return 0;
-    }
-    lua_pushlstring(L, buf, r);
-    return 1;
+#include <unistd.h>
+#include <fcntl.h>
+static int ReadStdin(lua_State* L) {
+  int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+  if (bits == -1) {
+    return 0;
   }
+  fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
+  char buf[4096];
+  const int r = read(STDIN_FILENO, buf, sizeof(buf));
+  fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
+  if (r <= 0) {
+    return 0;
+  }
+  lua_pushlstring(L, buf, r);
+  return 1;
+}
 #endif
 
 
@@ -780,6 +751,6 @@ static int Sleep(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

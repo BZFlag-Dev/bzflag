@@ -39,9 +39,9 @@ class AccessList {
 
     enum AccessType {
       invalid,
-      allow,		// simple globbing
+      allow,    // simple globbing
       deny,
-      allow_regex,	// regular expressions
+      allow_regex,  // regular expressions
       deny_regex
     };
     typedef struct {
@@ -52,8 +52,7 @@ class AccessList {
     std::vector<AccessPattern> patterns;
 };
 
-inline bool AccessList::alwaysAuthorized() const
-{
+inline bool AccessList::alwaysAuthorized() const {
   return alwaysAuth;
 }
 
@@ -64,6 +63,6 @@ inline bool AccessList::alwaysAuthorized() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

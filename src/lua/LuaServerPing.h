@@ -25,7 +25,7 @@ class ServerPing;
 class LuaServerPing {
   public:
     LuaServerPing(lua_State* L, int selfRef, int _funcRef,
-		  double address, int port);
+                  double address, int port);
     ~LuaServerPing();
 
     void Update();
@@ -42,18 +42,18 @@ class LuaServerPing {
   private:
     ServerPing* serverPing;
     lua_State*  pingL;
-    int	 funcRef;
-    int	 selfRef;
-    bool	done;
-    int	 lag;
+    int  funcRef;
+    int  selfRef;
+    bool  done;
+    int  lag;
     double      addr;
-    int	 port;
+    int  port;
 };
 
 
 class LuaServerPingMgr {
 
-  friend class LuaServerPing;
+    friend class LuaServerPing;
 
   public:
     static bool PushEntries(lua_State* L);
@@ -92,6 +92,6 @@ class LuaServerPingMgr {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

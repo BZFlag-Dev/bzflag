@@ -22,8 +22,7 @@
 #include "TextUtils.h"
 
 
-CustomWorld::CustomWorld()
-{
+CustomWorld::CustomWorld() {
   createWalls = true;
   // initialize with database defaults
   _size = BZDBCache::worldSize;
@@ -31,21 +30,24 @@ CustomWorld::CustomWorld()
 }
 
 
-bool CustomWorld::read(const char *cmd, std::istream& input)
-{
+bool CustomWorld::read(const char* cmd, std::istream& input) {
   BZDB.setSaveDefault(true);
   if (strcasecmp(cmd, "size") == 0) {
     input >> _size;
     _size *= 2.0;
     BZDB.set(BZDBNAMES.WORLDSIZE, TextUtils::format("%f", _size));
-  } else if (strcasecmp(cmd, "flagHeight") == 0) {
+  }
+  else if (strcasecmp(cmd, "flagHeight") == 0) {
     input >> _fHeight;
     BZDB.set(BZDBNAMES.FLAGHEIGHT, TextUtils::format("%f", _fHeight));
-  } else if (strcasecmp(cmd, "noWalls") == 0) {
+  }
+  else if (strcasecmp(cmd, "noWalls") == 0) {
     createWalls = false;
-  } else if (strcasecmp(cmd, "freeCtfSpawns") == 0) {
+  }
+  else if (strcasecmp(cmd, "freeCtfSpawns") == 0) {
     BZDB.setBool("freeCtfSpawns", true);
-  } else {
+  }
+  else {
     return WorldFileObject::read(cmd, input);
   }
   BZDB.setSaveDefault(false);
@@ -53,13 +55,12 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWorld::writeToWorld(WorldInfo* world) const
-{
+void CustomWorld::writeToWorld(WorldInfo* world) const {
   if (createWalls) {
     float wallHeight = BZDB.eval(BZDBNAMES.WALLHEIGHT);
     float ws = BZDBCache::worldSize * 0.5f;
     world->addWall(0.0f, +ws,  0.0f, 1.5f * (float)M_PI, ws, wallHeight);
-    world->addWall(+ws,  0.0f, 0.0f,        (float)M_PI, ws, wallHeight);
+    world->addWall(+ws,  0.0f, 0.0f, (float)M_PI, ws, wallHeight);
     world->addWall(0.0f, -ws,  0.0f, 0.5f * (float)M_PI, ws, wallHeight);
     world->addWall(-ws,  0.0f, 0.0f, 0.0f,               ws, wallHeight);
   }
@@ -72,8 +73,7 @@ std::map<std::string, CustomObjectMapData> customObjectMap;
 
 
 bool registerCustomMapObject(const char* object, const char* end,
-                             bz_CustomMapObjectHandler* handler)
-{
+                             bz_CustomMapObjectHandler* handler) {
   const std::string objectName = TextUtils::toupper(object);
   std::string endToken = "END";
   if (end != NULL) {
@@ -90,15 +90,15 @@ bool registerCustomMapObject(const char* object, const char* end,
 }
 
 
-bool removeCustomMapObject(const char* object)
-{
+bool removeCustomMapObject(const char* object) {
   std::string objectName = TextUtils::toupper(object);
 
   CustomObjectMap::iterator itr =  customObjectMap.find(objectName);
 
   if (itr != customObjectMap.end()) {
     customObjectMap.erase(itr);
-  } else {
+  }
+  else {
     return false;
   }
 
@@ -113,6 +113,6 @@ bool removeCustomMapObject(const char* object)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

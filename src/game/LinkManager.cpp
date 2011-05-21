@@ -45,8 +45,7 @@ LinkManager linkManager;
 
 //============================================================================//
 
-bool LinkManager::DstData::operator<(const DstData& dd) const
-{
+bool LinkManager::DstData::operator<(const DstData& dd) const {
   const unsigned short myMeshID = face->getMesh()->getListID();
   const unsigned short ddMeshID = dd.face->getMesh()->getListID();
   if (myMeshID < ddMeshID) { return true;  }
@@ -66,22 +65,19 @@ bool LinkManager::DstData::operator<(const DstData& dd) const
 
 //============================================================================//
 
-LinkManager::LinkManager()
-{
+LinkManager::LinkManager() {
   // do nothing
   return;
 }
 
 
-LinkManager::~LinkManager()
-{
+LinkManager::~LinkManager() {
   clear();
   return;
 }
 
 
-void LinkManager::clear()
-{
+void LinkManager::clear() {
   linkDefs.clear();
 
   linkMap.clear();
@@ -103,8 +99,7 @@ void LinkManager::clear()
 
 //============================================================================//
 
-void LinkManager::addLinkDef(const LinkDef& linkDef)
-{
+void LinkManager::addLinkDef(const LinkDef& linkDef) {
   if (!linkDef.getSrcs().empty() &&
       !linkDef.getDsts().empty()) {
     linkDefs.push_back(linkDef);
@@ -113,8 +108,7 @@ void LinkManager::addLinkDef(const LinkDef& linkDef)
 }
 
 
-int LinkManager::getLinkSrcID(const MeshFace* face) const
-{
+int LinkManager::getLinkSrcID(const MeshFace* face) const {
   FaceIntMap::const_iterator it = linkSrcMap.find(face);
   if (it == linkSrcMap.end()) {
     return -1;
@@ -124,8 +118,7 @@ int LinkManager::getLinkSrcID(const MeshFace* face) const
 
 
 int LinkManager::getLinkDstID(const MeshFace* face,
-                              const LinkPhysics& lp) const
-{
+                              const LinkPhysics& lp) const {
   const DstData data(face, lp);
   DstDataIntMap::const_iterator it = linkDstMap.find(data);
   if (it == linkDstMap.end()) {
@@ -135,8 +128,7 @@ int LinkManager::getLinkDstID(const MeshFace* face,
 }
 
 
-const MeshFace* LinkManager::getLinkSrcFace(int linkSrcID) const
-{
+const MeshFace* LinkManager::getLinkSrcFace(int linkSrcID) const {
   if ((linkSrcID < 0) || (linkSrcID >= (int)linkSrcs.size())) {
     return NULL;
   }
@@ -144,8 +136,7 @@ const MeshFace* LinkManager::getLinkSrcFace(int linkSrcID) const
 }
 
 
-const MeshFace* LinkManager::getLinkDstFace(int linkDstID) const
-{
+const MeshFace* LinkManager::getLinkDstFace(int linkDstID) const {
   if ((linkDstID < 0) || (linkDstID >= (int)linkDsts.size())) {
     return NULL;
   }
@@ -153,8 +144,7 @@ const MeshFace* LinkManager::getLinkDstFace(int linkDstID) const
 }
 
 
-const LinkManager::DstData* LinkManager::getLinkDstData(int linkDstID) const
-{
+const LinkManager::DstData* LinkManager::getLinkDstData(int linkDstID) const {
   if ((linkDstID < 0) || (linkDstID >= (int)linkDsts.size())) {
     return NULL;
   }
@@ -170,8 +160,7 @@ const MeshFace* LinkManager::getShotLinkDst(const MeshFace* srcLink,
                                             const LinkPhysics*& physics,
                                             const fvec3& pos,
                                             const fvec3& vel, int team,
-                                            const FlagType* flagType) const
-{
+                                            const FlagType* flagType) const {
   LinkMap::const_iterator it = linkMap.find(srcLink);
   if (it == linkMap.end()) {
     return NULL;
@@ -228,8 +217,7 @@ const MeshFace* LinkManager::getTankLinkDst(const MeshFace* srcLink,
                                             const LinkPhysics*& physics,
                                             const fvec3& pos,
                                             const fvec3& vel, int team,
-                                            const FlagType* flagType) const
-{
+                                            const FlagType* flagType) const {
   LinkMap::const_iterator it = linkMap.find(srcLink);
   if (it == linkMap.end()) {
     return NULL;
@@ -282,8 +270,7 @@ const MeshFace* LinkManager::getTankLinkDst(const MeshFace* srcLink,
 
 //============================================================================//
 
-void LinkManager::doLinking()
-{
+void LinkManager::doLinking() {
   // get the potential named faces
   buildNameMap();
 
@@ -356,8 +343,7 @@ void LinkManager::doLinking()
 }
 
 
-void LinkManager::buildNameMap()
-{
+void LinkManager::buildNameMap() {
   // get the potential named faces
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (unsigned int m = 0; m < meshes.size(); m++) {
@@ -384,8 +370,7 @@ void LinkManager::buildNameMap()
 
 //============================================================================//
 
-static std::string numberLinkName(int number)
-{
+static std::string numberLinkName(int number) {
   std::string name = "$mt";
   char buffer[8];
   snprintf(buffer, sizeof(buffer), "%i", (number / 2));
@@ -396,8 +381,7 @@ static std::string numberLinkName(int number)
 }
 
 
-static bool allDigits(const std::string& s)
-{
+static bool allDigits(const std::string& s) {
   for (size_t i = 0; i < s.size(); i++) {
     if ((s[i] < '0') || (s[i] > '9')) {
       return false;
@@ -408,8 +392,7 @@ static bool allDigits(const std::string& s)
 
 
 
-bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const
-{
+bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const {
   faces.clear();
 
   // no chars, no service
@@ -444,7 +427,7 @@ bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const
     for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
       if (debugLinks >= 4) {
         logDebugMessage(0, "link glob_match:  %s  vs.  %s\n",
-                           glob.c_str(), it->name.c_str());
+                        glob.c_str(), it->name.c_str());
       }
       if (glob_match(glob, it->name)) {
         faces.insert(it->face);
@@ -458,8 +441,7 @@ bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const
 
 //============================================================================//
 
-void LinkManager::crossLink()
-{
+void LinkManager::crossLink() {
   NameFaceVec::const_iterator it;
   for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
     const std::string&   srcName = it->name;
@@ -509,8 +491,7 @@ void LinkManager::crossLink()
 
 void LinkManager::createLink(const MeshFace* linkSrc,
                              const MeshFace* linkDst,
-                             const LinkPhysics& physics)
-{
+                             const LinkPhysics& physics) {
   FaceIntMap::const_iterator srcIt = linkSrcMap.find(linkSrc);
   if (srcIt == linkSrcMap.end()) {
     linkSrcMap[linkSrc] = (int)linkSrcs.size();
@@ -535,8 +516,7 @@ void LinkManager::createLink(const MeshFace* linkSrc,
 
 //============================================================================//
 
-void LinkManager::getVariables(std::set<std::string>& vars) const
-{
+void LinkManager::getVariables(std::set<std::string>& vars) const {
   for (size_t i = 0; i < linkDefs.size(); i++) {
     const LinkDef& linkDef = linkDefs[i];
     if (!linkDef.physics.shotBlockVar.empty()) {
@@ -551,8 +531,7 @@ void LinkManager::getVariables(std::set<std::string>& vars) const
 
 //============================================================================//
 
-void LinkManager::printDebug()
-{
+void LinkManager::printDebug() {
   if (debugLinks >= 2) {
     logDebugMessage(0, "\n");
     for (size_t i = 0; i < linkDefs.size(); i++) {
@@ -608,6 +587,6 @@ void LinkManager::printDebug()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

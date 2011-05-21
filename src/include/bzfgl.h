@@ -78,36 +78,36 @@ extern int __beginendCount;
 #  undef glDeleteFramebuffersEXT
 #  undef glGenRenderbuffersEXT
 #  undef glDeleteRenderbuffersEXT
-#  define glDeleteLists(base, count)		bzDeleteLists((base), (count))
-#  define glDeleteTextures(count, textures)	bzDeleteTextures((count), (textures))
-#  define glGenFramebuffersEXT(n, fbos)		bzGenFramebuffersEXT((n), (fbos))
-#  define glDeleteFramebuffersEXT(n, fbos)	bzDeleteFramebuffersEXT((n), (fbos))
-#  define glGenRenderbuffersEXT(n, rbos)	bzGenRenderbuffersEXT((n), (rbos))
-#  define glDeleteRenderbuffersEXT(n, rbos)	bzDeleteRenderbuffersEXT((n), (rbos))
-#  define glCreateShader(type)			bzCreateShader(type)
-#  define glDeleteShader(id)			bzDeleteShader(id)
-#  define glCreateProgram()			bzCreateProgram()
-#  define glDeleteProgram(id)			bzDeleteProgram(id)
-#  define glGenQueries(n, queries)		bzGenQueries((n), (queries))
-#  define glDeleteQueries(n, queries)		bzDeleteQueries((n), (queries))
+#  define glDeleteLists(base, count)    bzDeleteLists((base), (count))
+#  define glDeleteTextures(count, textures) bzDeleteTextures((count), (textures))
+#  define glGenFramebuffersEXT(n, fbos)   bzGenFramebuffersEXT((n), (fbos))
+#  define glDeleteFramebuffersEXT(n, fbos)  bzDeleteFramebuffersEXT((n), (fbos))
+#  define glGenRenderbuffersEXT(n, rbos)  bzGenRenderbuffersEXT((n), (rbos))
+#  define glDeleteRenderbuffersEXT(n, rbos) bzDeleteRenderbuffersEXT((n), (rbos))
+#  define glCreateShader(type)      bzCreateShader(type)
+#  define glDeleteShader(id)      bzDeleteShader(id)
+#  define glCreateProgram()     bzCreateProgram()
+#  define glDeleteProgram(id)     bzDeleteProgram(id)
+#  define glGenQueries(n, queries)    bzGenQueries((n), (queries))
+#  define glDeleteQueries(n, queries)   bzDeleteQueries((n), (queries))
 //#define DEBUG_GL_MATRIX_STACKS
 #  ifdef DEBUG
-#    define glNewList(list,mode)		bzNewList((list), (mode))
-#    define glGenLists(count)			bzGenLists((count))
-#    define glGenTextures(count, textures)	bzGenTextures((count), (textures))
+#    define glNewList(list,mode)    bzNewList((list), (mode))
+#    define glGenLists(count)     bzGenLists((count))
+#    define glGenTextures(count, textures)  bzGenTextures((count), (textures))
 #    ifdef DEBUG_GL_MATRIX_STACKS
-#      define glPushMatrix()			bzPushMatrix()
-#      define glPopMatrix()			bzPopMatrix()
-#      define glMatrixMode(mode)			bzMatrixMode(mode)
+#      define glPushMatrix()      bzPushMatrix()
+#      define glPopMatrix()     bzPopMatrix()
+#      define glMatrixMode(mode)      bzMatrixMode(mode)
 #    endif // DEBUG_GL_MATRIX_STACKS
 #  endif
 
 // these are housed in OpenGLContext.cpp
 extern void   bzNewList(GLuint list, GLenum mode);
 extern GLuint bzGenLists(GLsizei count);
-extern void   bzGenTextures(GLsizei count, GLuint *textures);
+extern void   bzGenTextures(GLsizei count, GLuint* textures);
 extern void   bzDeleteLists(GLuint base, GLsizei count);
-extern void   bzDeleteTextures(GLsizei count, const GLuint *textures);
+extern void   bzDeleteTextures(GLsizei count, const GLuint* textures);
 extern void   bzGenFramebuffersEXT(GLsizei n, GLuint* fbos);
 extern void   bzDeleteFramebuffersEXT(GLsizei n, const GLuint* fbos);
 extern void   bzGenRenderbuffersEXT(GLsizei n, GLuint* rbos);
@@ -130,6 +130,6 @@ extern void   bzPopMatrix();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

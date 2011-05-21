@@ -58,8 +58,8 @@ template <typename T> class vec4;
 template <typename T>
 class vec2 {
 
-  friend class vec3<T>;
-  friend class vec4<T>;
+    friend class vec3<T>;
+    friend class vec4<T>;
 
   public:
     union { T x; T r; T s; };
@@ -78,8 +78,8 @@ class vec2 {
     inline T*       data()       { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator       T*()       { return &x; }
-    inline operator const T*() const { return &x; }
+    inline operator       T* ()       { return &x; }
+    inline operator const T* () const { return &x; }
 
     inline       T& operator[](int index)       { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
@@ -169,7 +169,7 @@ template <typename T> std::ostream& operator<<(std::ostream& out, const vec2<T>&
 template <typename T>
 class vec3 {
 
-  friend class vec4<T>;
+    friend class vec4<T>;
 
   public:
     union { T x; T r; T s; };
@@ -190,8 +190,8 @@ class vec3 {
     inline       T* data()       { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator       T*()       { return &x; }
-    inline operator const T*() const { return &x; }
+    inline operator       T* ()       { return &x; }
+    inline operator const T* () const { return &x; }
 
     inline       T& operator[](int index)       { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
@@ -239,10 +239,10 @@ class vec3 {
 
     static vec3 cross(const vec3& a, const vec3& b) {
       return vec3(
-        ((a.y * b.z) - (a.z * b.y)),
-        ((a.z * b.x) - (a.x * b.z)),
-        ((a.x * b.y) - (a.y * b.x))
-      );
+               ((a.y * b.z) - (a.z * b.y)),
+               ((a.z * b.x) - (a.x * b.z)),
+               ((a.x * b.y) - (a.y * b.x))
+             );
     }
     vec3 cross(const vec3& v) const {
       return cross(*this, v);
@@ -352,8 +352,8 @@ class vec4 {
     inline T*       data()       { return &x; }
     inline const T* data() const { return &x; }
 
-    inline operator       T*()       { return &x; }
-    inline operator const T*() const { return &x; }
+    inline operator       T* ()       { return &x; }
+    inline operator const T* () const { return &x; }
 
     inline       T& operator[](int index)       { return ((T*)&x)[index]; }
     inline const T& operator[](int index) const { return ((T*)&x)[index]; }
@@ -478,6 +478,6 @@ VECTORS_STATIC_ASSERT(sizeof(dvec4) == (4 * sizeof(double)));
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

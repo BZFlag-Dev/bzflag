@@ -24,8 +24,7 @@
 // ShotUpdate
 //
 
-void* ShotUpdate::pack(void* buf) const
-{
+void* ShotUpdate::pack(void* buf) const {
   buf = nboPackUInt8(buf, player);
   buf = nboPackUInt16(buf, id);
   buf = nboPackFVec3(buf, pos);
@@ -36,8 +35,7 @@ void* ShotUpdate::pack(void* buf) const
 }
 
 
-void ShotUpdate::pack(NetMessage& netMsg) const
-{
+void ShotUpdate::pack(NetMessage& netMsg) const {
   netMsg.packUInt8(player);
   netMsg.packUInt16(id);
   netMsg.packFVec3(pos);
@@ -47,8 +45,7 @@ void ShotUpdate::pack(NetMessage& netMsg) const
 }
 
 
-void* ShotUpdate::unpack(void* buf)
-{
+void* ShotUpdate::unpack(void* buf) {
   buf = nboUnpackUInt8(buf, player);
   buf = nboUnpackUInt16(buf, id);
   buf = nboUnpackFVec3(buf, pos);
@@ -65,14 +62,12 @@ void* ShotUpdate::unpack(void* buf)
 // FiringInfo
 //
 
-FiringInfo::FiringInfo()
-{
+FiringInfo::FiringInfo() {
   // do nothing -- must be prepared before use by unpack() or assignment
 }
 
 
-void* FiringInfo::pack(void* buf) const
-{
+void* FiringInfo::pack(void* buf) const {
   buf = nboPackDouble(buf, timeSent);
   buf = shot.pack(buf);
   buf = flagType->pack(buf);
@@ -82,8 +77,7 @@ void* FiringInfo::pack(void* buf) const
 }
 
 
-void FiringInfo::pack(NetMessage& netMsg) const
-{
+void FiringInfo::pack(NetMessage& netMsg) const {
   netMsg.packDouble(timeSent);
   shot.pack(netMsg);
   flagType->pack(netMsg);
@@ -92,8 +86,7 @@ void FiringInfo::pack(NetMessage& netMsg) const
 }
 
 
-void* FiringInfo::unpack(void* buf)
-{
+void* FiringInfo::unpack(void* buf) {
   buf = nboUnpackDouble(buf, timeSent);
   buf = shot.unpack(buf);
   buf = FlagType::unpack(buf, flagType);
@@ -109,6 +102,6 @@ void* FiringInfo::unpack(void* buf)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

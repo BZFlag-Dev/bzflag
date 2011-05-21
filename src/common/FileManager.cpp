@@ -36,18 +36,15 @@ template <>
 FileManager* Singleton<FileManager>::_instance = (FileManager*)NULL;
 
 
-FileManager::FileManager()
-{
+FileManager::FileManager() {
   // do nothing
 }
 
-FileManager::~FileManager()
-{
+FileManager::~FileManager() {
 }
 
 
-static bool isDirectory(const std::string& path)
-{
+static bool isDirectory(const std::string& path) {
 #ifndef WIN32
   struct stat statbuf;
   if (stat(path.c_str(), &statbuf) == -1) {
@@ -69,8 +66,7 @@ static bool isDirectory(const std::string& path)
 
 
 static std::ifstream* getInStream(const std::string& path,
-                                 std::ios::openmode mode)
-{
+                                  std::ios::openmode mode) {
   if (isDirectory(path)) {
     return NULL;
   }
@@ -84,8 +80,7 @@ static std::ifstream* getInStream(const std::string& path,
 
 
 std::istream* FileManager::createDataInStream(const std::string& filename,
-                                              bool binary) const
-{
+                                              bool binary) const {
   // choose open mode
   std::ios::openmode mode = std::ios::in;
   if (binary) {
@@ -133,8 +128,7 @@ std::istream* FileManager::createDataInStream(const std::string& filename,
 
 
 std::ostream* FileManager::createDataOutStream(const std::string& filename,
-					       bool binary, bool truncate) const
-{
+                                               bool binary, bool truncate) const {
   // choose open mode
   std::ios::openmode mode = std::ios::out;
   if (binary)   { mode |= std::ios::binary; }
@@ -147,7 +141,7 @@ std::ostream* FileManager::createDataOutStream(const std::string& filename,
       const std::string path = catPath(BZDB.get("directory"), filename);
       std::ofstream* stream = new std::ofstream(path.c_str(), mode);
       if (stream && *stream) {
-	return stream;
+        return stream;
       }
       delete stream;
     }
@@ -157,7 +151,7 @@ std::ostream* FileManager::createDataOutStream(const std::string& filename,
       const std::string path = catPath("data", filename);
       std::ofstream* stream = new std::ofstream(path.c_str(), mode);
       if (stream && *stream) {
-	return stream;
+        return stream;
       }
       delete stream;
     }
@@ -168,14 +162,14 @@ std::ostream* FileManager::createDataOutStream(const std::string& filename,
     int i = 0;
 #ifndef _WIN32
     // create all directories above the file
-    while ((i = filename.find('/', i+1)) != -1) {
+    while ((i = filename.find('/', i + 1)) != -1) {
       const std::string subDir = filename.substr(0, i);
       if (!isDirectory(subDir)) {
-	successMkdir = mkdir(subDir.c_str(), 0755);
-	if (successMkdir != 0) {
-	  perror("Unable to make directory");
-	  return NULL;
-	}
+        successMkdir = mkdir(subDir.c_str(), 0755);
+        if (successMkdir != 0) {
+          perror("Unable to make directory");
+          return NULL;
+        }
       }
     }
 #else
@@ -184,12 +178,12 @@ std::ostream* FileManager::createDataOutStream(const std::string& filename,
     while ((i = filename.find('\\', i + 1)) != -1) {
       const std::string subDir = filename.substr(0, i);
       if (!isDirectory(subDir)) {
-	successMkdir = _mkdir(subDir.c_str());
-	/*if (successMkdir != 0)
-	{
-	  perror("Unable to make directory");
-	  return NULL;
-	} */
+        successMkdir = _mkdir(subDir.c_str());
+        /*if (successMkdir != 0)
+        {
+          perror("Unable to make directory");
+          return NULL;
+        } */
       }
     }
 #endif
@@ -206,21 +200,24 @@ std::ostream* FileManager::createDataOutStream(const std::string& filename,
 }
 
 
-bool FileManager::isAbsolute(const std::string& path) const
-{
-  if (path.empty())
+bool FileManager::isAbsolute(const std::string& path) const {
+  if (path.empty()) {
     return false;
+  }
 
 #if defined(_WIN32)
   const char* cpath = path.c_str();
-  if (cpath[0] == '\\' || cpath[0] == '/')
+  if (cpath[0] == '\\' || cpath[0] == '/') {
     return true;
+  }
   if (path.size() >= 3 && isalpha(cpath[0]) && cpath[1] == ':' &&
-      (cpath[2] == '\\' || cpath[2] == '/'))
+      (cpath[2] == '\\' || cpath[2] == '/')) {
     return true;
+  }
 #else
-  if (path.c_str()[0] == '/')
+  if (path.c_str()[0] == '/') {
     return true;
+  }
 #endif
 
   return false;
@@ -228,13 +225,14 @@ bool FileManager::isAbsolute(const std::string& path) const
 
 
 std::string FileManager::catPath(const std::string& a,
-                                 const std::string& b) const
-{
+                                 const std::string& b) const {
   // handle trivial cases
-  if (a.empty())
+  if (a.empty()) {
     return b;
-  if (b.empty())
+  }
+  if (b.empty()) {
     return a;
+  }
 
   std::string c = a;
 #if defined(_WIN32)
@@ -251,6 +249,6 @@ std::string FileManager::catPath(const std::string& a,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

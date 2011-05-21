@@ -42,69 +42,65 @@ using namespace BZRobots;
 /**
  * RCLinkBot: RCLink Emulator for backwards compatability with the BYU project
  */
-class RCLinkBot : public AdvancedRobot
-{
-public:
+class RCLinkBot : public AdvancedRobot {
+  public:
 
-  typedef enum {
-    Disconnected,
-    SocketError,
-    Listening,
-    Connecting,
-    Connected
-  } State;
+    typedef enum {
+      Disconnected,
+      SocketError,
+      Listening,
+      Connecting,
+      Connected
+    } State;
 
-  RCLinkBot() {}
-  ~RCLinkBot() {}
+    RCLinkBot() {}
+    ~RCLinkBot() {}
 
-private:
-  State status;
-  int listenfd, connfd;
-  char recvbuf[RC_LINK_RECVBUFLEN];
-  char sendbuf[RC_LINK_SENDBUFLEN];
-  int recv_amount, send_amount;
-  bool input_toolong, output_overflow;
-  std::string error;
+  private:
+    State status;
+    int listenfd, connfd;
+    char recvbuf[RC_LINK_RECVBUFLEN];
+    char sendbuf[RC_LINK_SENDBUFLEN];
+    int recv_amount, send_amount;
+    bool input_toolong, output_overflow;
+    std::string error;
 
-  void startListening(int port);
-  bool tryAccept();
-  int updateWrite();
-  int updateRead();
-  //int updateParse(int maxlines = 0);
-  bool waitForData();
-  bool sendBuffer(const char* message);
-  void sendPacket( const char *data, unsigned int size, bool killit = false );
-  void update();
+    void startListening(int port);
+    bool tryAccept();
+    int updateWrite();
+    int updateRead();
+    //int updateParse(int maxlines = 0);
+    bool waitForData();
+    bool sendBuffer(const char* message);
+    void sendPacket(const char* data, unsigned int size, bool killit = false);
+    void update();
 
-public:
-  void run();
+  public:
+    void run();
 
-  void onBattleEnded(const BattleEndedEvent &e);
-  void onBulletHit(const BulletHitEvent &e);
-  void onBulletMissed(const BulletMissedEvent &e);
-  void onDeath(const DeathEvent &e);
-  void onHitByBullet(const HitByBulletEvent &e);
-  void onHitWall(const HitWallEvent &e);
-  void onRobotDeath(const RobotDeathEvent &e);
-  void onScannedRobot(const ScannedRobotEvent &e);
-  void onSpawn(const SpawnEvent &e);
-  void onStatus(const StatusEvent &e);
-  void onWin(const WinEvent &e);
+    void onBattleEnded(const BattleEndedEvent& e);
+    void onBulletHit(const BulletHitEvent& e);
+    void onBulletMissed(const BulletMissedEvent& e);
+    void onDeath(const DeathEvent& e);
+    void onHitByBullet(const HitByBulletEvent& e);
+    void onHitWall(const HitWallEvent& e);
+    void onRobotDeath(const RobotDeathEvent& e);
+    void onScannedRobot(const ScannedRobotEvent& e);
+    void onSpawn(const SpawnEvent& e);
+    void onStatus(const StatusEvent& e);
+    void onWin(const WinEvent& e);
 };
 
 extern "C" {
-  AdvancedRobot *create()
-  {
+  AdvancedRobot* create() {
     return new RCLinkBot();
   }
-  void destroy(AdvancedRobot *robot)
-  {
+  void destroy(AdvancedRobot* robot) {
     delete robot;
   }
 }
 
-void RCLinkBot::startListening(int port)
-{
+void RCLinkBot::startListening(int port) {
   struct sockaddr_in sa;
 
   if (status != Disconnected) {
@@ -117,12 +113,13 @@ void RCLinkBot::startListening(int port)
   sa.sin_addr.s_addr = htonl(INADDR_ANY);
 
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
-  if (listenfd == -1)
+  if (listenfd == -1) {
     return;
+  }
 
- /* Used so we can re-bind to our port while a previous connection is
-  * still in TIME_WAIT state.
-  */
+  /* Used so we can re-bind to our port while a previous connection is
+   * still in TIME_WAIT state.
+   */
   const char reuse_addr = 1;
 
   setsockopt(connfd, SOL_SOCKET, SO_REUSEADDR, &reuse_addr, sizeof(reuse_addr));
@@ -146,8 +143,7 @@ void RCLinkBot::startListening(int port)
 }
 
 
-bool RCLinkBot::tryAccept()
-{
+bool RCLinkBot::tryAccept() {
   if (status != Listening) {
     error = "Cannot accept when not listening!";
     return false;
@@ -172,7 +168,7 @@ bool RCLinkBot::tryAccept()
   std::cout << "RCLinkBot: Accepted a new connection." << std::endl;
 
   sendPacket(RC_LINK_IDENTIFY_STR, (unsigned int)strlen(RC_LINK_IDENTIFY_STR));
-  sendPacket(BZROBOTS_PROTO_VERSION,(unsigned int)strlen(BZROBOTS_PROTO_VERSION));
+  sendPacket(BZROBOTS_PROTO_VERSION, (unsigned int)strlen(BZROBOTS_PROTO_VERSION));
   sendPacket("\n", 1);
   return true;
 }
@@ -180,13 +176,13 @@ bool RCLinkBot::tryAccept()
 /*
  * Send as much data as possible from our outgoing buffer.
  */
-int RCLinkBot::updateWrite()
-{
-  char *bufptr = sendbuf;
+int RCLinkBot::updateWrite() {
+  char* bufptr = sendbuf;
   int prev_send_amount = send_amount;
 
-  if (status != Connected && status != Connecting)
+  if (status != Connected && status != Connecting) {
     return -1;
+  }
 
   if (output_overflow) {
     int errorlen = strlen(RC_LINK_OVERFLOW_MSG);
@@ -195,10 +191,11 @@ int RCLinkBot::updateWrite()
       memcpy(sendbuf + send_amount, RC_LINK_OVERFLOW_MSG, errorlen);
       send_amount += errorlen;
       output_overflow = false;
-	  std::cout << "RCLink: Clearing output_overflow." << std::endl;
-    } else {
+      std::cout << "RCLink: Clearing output_overflow." << std::endl;
+    }
+    else {
       std::cout << "RCLink: Couldn't fix overflow. errorlen = " << errorlen
-		     << ", send_amount = " << send_amount << std::endl;
+                << ", send_amount = " << send_amount << std::endl;
     }
   }
 
@@ -210,11 +207,13 @@ int RCLinkBot::updateWrite()
     int nwritten = send(connfd, bufptr, send_amount, 0);
     if (nwritten == -1 && errno == EAGAIN) {
       break;
-    } else if (nwritten == -1) {
+    }
+    else if (nwritten == -1) {
       std::cout << "RCLink: Write failed. Disconnecting. Error: " << strerror(errno) << std::endl;
       status = SocketError;
       return -1;
-    } else {
+    }
+    else {
       bufptr += nwritten;
       send_amount -= nwritten;
     }
@@ -231,8 +230,7 @@ int RCLinkBot::updateWrite()
  * Fill up the receive buffer with any available incoming data.  Return the
  * number of bytes of data read or -1 if the connection has died.
  */
-int RCLinkBot::updateRead()
-{
+int RCLinkBot::updateRead() {
   int prev_recv_amount = recv_amount;
 
   if (status != Connected && status != Connecting) {
@@ -241,22 +239,26 @@ int RCLinkBot::updateRead()
 
   // read in as much data as possible
   while (true) {
-    if (recv_amount == RC_LINK_RECVBUFLEN)
+    if (recv_amount == RC_LINK_RECVBUFLEN) {
       break;
+    }
 
-    int nread = recv(connfd, recvbuf+recv_amount, RC_LINK_RECVBUFLEN-recv_amount, 0);
+    int nread = recv(connfd, recvbuf + recv_amount, RC_LINK_RECVBUFLEN - recv_amount, 0);
     if (nread == 0) {
-	  std::cout << "RCLink: Remote host closed connection." << std::endl;
+      std::cout << "RCLink: Remote host closed connection." << std::endl;
       status = Listening;
       return -1;
-    } else if (nread == -1 && errno != EAGAIN) {
-	  std::cout << "RCLink: Read failed. Error: " << strerror(errno) << std::endl;
+    }
+    else if (nread == -1 && errno != EAGAIN) {
+      std::cout << "RCLink: Read failed. Error: " << strerror(errno) << std::endl;
       status = SocketError;
       return -1;
-    } else if (nread == -1) {
+    }
+    else if (nread == -1) {
       // got no data (remember, read is set to be nonblocking)
       break;
-    } else {
+    }
+    else {
       recv_amount += nread;
     }
   }
@@ -331,7 +333,7 @@ int RCLinkBot::updateParse(int maxlines)
 
   if (recv_amount == RC_LINK_RECVBUFLEN) {
     input_toolong = true;
-	std::cout << "RCLink: Input line too long. Discarding." << std::endl;
+  std::cout << "RCLink: Input line too long. Discarding." << std::endl;
     recv_amount = 0;
   }
 
@@ -339,8 +341,7 @@ int RCLinkBot::updateParse(int maxlines)
 }
 */
 
-bool RCLinkBot::sendBuffer(const char* message)
-{
+bool RCLinkBot::sendBuffer(const char* message) {
   unsigned int messagelen = (unsigned int)strlen(message);
 
   if (output_overflow) {
@@ -365,15 +366,14 @@ bool RCLinkBot::sendBuffer(const char* message)
   return true;
 }
 
-void RCLinkBot::sendPacket( const char *data, unsigned int size, bool killit )
-{
+void RCLinkBot::sendPacket(const char* data, unsigned int size, bool killit) {
   send(connfd, data, size, 0);
-  if (killit)
+  if (killit) {
     close(connfd);
+  }
 }
 
-void RCLinkBot::update()
-{
+void RCLinkBot::update() {
   if (status != Connected && status != Connecting) {
     return;
   }
@@ -388,81 +388,70 @@ void RCLinkBot::update()
 
   if (status == Connected) {
     //updateParse();
-  } else if (status == Connecting) {
+  }
+  else if (status == Connecting) {
     int ncommands = 0;//updateParse(1);
     if (ncommands) {
-	  /*
-      RCRequest *req = popRequest();
-      if (req && req->getType() == "IdentifyFrontend") {
-        status = Connected;
-      } else {
-		std::cout << "RCLink: Expected an 'IdentifyFrontend'." << std::endl;
-		sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
-        status = Listening;
-      }
-	  */
+      /*
+        RCRequest *req = popRequest();
+        if (req && req->getType() == "IdentifyFrontend") {
+          status = Connected;
+        } else {
+      std::cout << "RCLink: Expected an 'IdentifyFrontend'." << std::endl;
+      sendPacket(RC_LINK_NOIDENTIFY_MSG, (unsigned int)strlen(RC_LINK_NOIDENTIFY_MSG),true);
+          status = Listening;
+        }
+      */
     }
   }
 }
 
 
-void RCLinkBot::run()
-{
+void RCLinkBot::run() {
   startListening(1234);
-  while(true){
+  while (true) {
     update();
     doNothing();
   }
 }
 
-void RCLinkBot::onBattleEnded(const BattleEndedEvent &/*e*/)
-{
+void RCLinkBot::onBattleEnded(const BattleEndedEvent& /*e*/) {
 }
 
-void RCLinkBot::onBulletHit(const BulletHitEvent &/*e*/)
-{
+void RCLinkBot::onBulletHit(const BulletHitEvent& /*e*/) {
 }
 
-void RCLinkBot::onBulletMissed(const BulletMissedEvent &/*e*/)
-{
+void RCLinkBot::onBulletMissed(const BulletMissedEvent& /*e*/) {
 }
 
-void RCLinkBot::onDeath(const DeathEvent &/*e*/)
-{
+void RCLinkBot::onDeath(const DeathEvent& /*e*/) {
 }
 
-void RCLinkBot::onHitByBullet(const HitByBulletEvent &/*e*/)
-{
+void RCLinkBot::onHitByBullet(const HitByBulletEvent& /*e*/) {
 }
 
-void RCLinkBot::onHitWall(const HitWallEvent &/*e*/)
-{
+void RCLinkBot::onHitWall(const HitWallEvent& /*e*/) {
 }
 
-void RCLinkBot::onRobotDeath(const RobotDeathEvent &/*e*/)
-{
+void RCLinkBot::onRobotDeath(const RobotDeathEvent& /*e*/) {
 }
 
-void RCLinkBot::onScannedRobot(const ScannedRobotEvent &/*e*/)
-{
+void RCLinkBot::onScannedRobot(const ScannedRobotEvent& /*e*/) {
 }
 
-void RCLinkBot::onSpawn(const SpawnEvent &/*e*/)
-{
+void RCLinkBot::onSpawn(const SpawnEvent& /*e*/) {
 }
 
-void RCLinkBot::onStatus(const StatusEvent &/*e*/)
-{
+void RCLinkBot::onStatus(const StatusEvent& /*e*/) {
 }
 
-void RCLinkBot::onWin(const WinEvent &/*e*/)
-{
+void RCLinkBot::onWin(const WinEvent& /*e*/) {
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

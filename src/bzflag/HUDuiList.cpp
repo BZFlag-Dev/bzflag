@@ -25,43 +25,39 @@
 // HUDuiList
 //
 
-HUDuiList::HUDuiList() : HUDuiControl(), index(-1)
-{
+HUDuiList::HUDuiList() : HUDuiControl(), index(-1) {
   // do nothing
 }
 
-HUDuiList::~HUDuiList()
-{
+HUDuiList::~HUDuiList() {
   // do nothing
 }
 
-int			HUDuiList::getIndex() const
-{
+int     HUDuiList::getIndex() const {
   return index;
 }
 
-void			HUDuiList::setIndex(int _index)
-{
-  if (_index < 0)
+void      HUDuiList::setIndex(int _index) {
+  if (_index < 0) {
     index = 0;
-  else if (_index >= (int)list.size())
+  }
+  else if (_index >= (int)list.size()) {
     index = (int)list.size() - 1;
-  else
+  }
+  else {
     index = _index;
+  }
 }
 
-std::vector<std::string>&		HUDuiList::getList()
-{
+std::vector<std::string>&   HUDuiList::getList() {
   return list;
 }
 
-void			HUDuiList::update()
-{
+void      HUDuiList::update() {
   setIndex(index);
 }
 
-void			HUDuiList::createSlider(const int numValues)
-{
+void      HUDuiList::createSlider(const int numValues) {
   // create a slider with numValues options
   /* createSlider(4) does the equivalent of
      options->push_back(std::string("[O---]"));
@@ -76,49 +72,49 @@ void			HUDuiList::createSlider(const int numValues)
   line[numValues + 1] = ']';
 
   for (int i = 0; i < numValues; i++) {
-    if (i > 0) line[i] = '-';
+    if (i > 0) { line[i] = '-'; }
     line[i + 1] = 'O';
     options.push_back(line);
   }
 }
 
-bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
-{
-  if (HUDuiControl::doKeyPress(key))
+bool      HUDuiList::doKeyPress(const BzfKeyEvent& key) {
+  if (HUDuiControl::doKeyPress(key)) {
     return true;
+  }
 
   if (key.unicode == 0)
     switch (key.button) {
       case BzfKeyEvent::Left: {
-	if (index != -1) {
-	  if (--index < 0) index = (int)list.size() - 1;
-	  doCallback();
-	}
-	break;
+        if (index != -1) {
+          if (--index < 0) { index = (int)list.size() - 1; }
+          doCallback();
+        }
+        break;
       }
       case BzfKeyEvent::Right: {
-	if (index != -1) {
-	  if (++index >= (int)list.size()) index = 0;
-	  doCallback();
-	}
-	break;
+        if (index != -1) {
+          if (++index >= (int)list.size()) { index = 0; }
+          doCallback();
+        }
+        break;
       }
       case BzfKeyEvent::Home: {
-	if (index != -1) {
-	  index = 0;
-	  doCallback();
-	}
-	break;
+        if (index != -1) {
+          index = 0;
+          doCallback();
+        }
+        break;
       }
       case BzfKeyEvent::End: {
-	if (index != -1) {
-	  index = (int)list.size() - 1;
-	  doCallback();
-	}
-	break;
+        if (index != -1) {
+          index = (int)list.size() - 1;
+          doCallback();
+        }
+        break;
       }
       default: {
-	return false;
+        return false;
       }
     }
 
@@ -131,20 +127,18 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool			HUDuiList::doKeyRelease(const BzfKeyEvent&)
-{
+bool      HUDuiList::doKeyRelease(const BzfKeyEvent&) {
   // ignore key releases
   return false;
 }
 
-void			HUDuiList::doRender()
-{
-  Bundle *bdl = BundleMgr::getCurrentBundle();
+void      HUDuiList::doRender() {
+  Bundle* bdl = BundleMgr::getCurrentBundle();
   if (index != -1 && getFontFace() >= 0) {
     glColor3fv(hasFocus() ? textColor : dimTextColor);
-    FontManager &fm = FontManager::instance();
+    FontManager& fm = FontManager::instance();
     fm.drawString(getX(), getY(), 0, getFontFace()->getFMFace(),
-      getFontSize(), bdl->getLocalString(list[index]));
+                  getFontSize(), bdl->getLocalString(list[index]));
   }
 }
 
@@ -152,6 +146,6 @@ void			HUDuiList::doRender()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

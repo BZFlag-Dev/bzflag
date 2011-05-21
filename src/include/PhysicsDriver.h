@@ -29,7 +29,7 @@
 
 class PhysicsDriver {
 
-  friend class PhysicsDriverManager;
+    friend class PhysicsDriverManager;
 
   public:
     PhysicsDriver();
@@ -167,8 +167,7 @@ class PhysicsDriverManager {
 };
 
 
-inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
-{
+inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const {
   return ((id >= 0) && (id < (int)drivers.size())) ? drivers[id] : NULL;
 }
 
@@ -182,6 +181,6 @@ extern PhysicsDriverManager PHYDRVMGR;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

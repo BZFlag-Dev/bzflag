@@ -43,7 +43,7 @@ class MapHandler : public bz_CustomMapObjectHandler {
     MapHandler(const std::string& objName);
     ~MapHandler();
 
-    bool handle(bz_ApiString object, bz_CustomMapObjectInfo *data);
+    bool handle(bz_ApiString object, bz_CustomMapObjectInfo* data);
 
   private:
     std::string objName;
@@ -52,9 +52,8 @@ class MapHandler : public bz_CustomMapObjectHandler {
 
 
 MapHandler::MapHandler(const std::string& name)
-: objName(name)
-, luaRef(LUA_NOREF)
-{
+  : objName(name)
+  , luaRef(LUA_NOREF) {
   mapHandlers[objName] = this;
 
   lua_State* L = LuaServer::GetL();
@@ -68,8 +67,7 @@ MapHandler::MapHandler(const std::string& name)
 }
 
 
-MapHandler::~MapHandler()
-{
+MapHandler::~MapHandler() {
   mapHandlers.erase(objName);
 
   lua_State* L = LuaServer::GetL();
@@ -80,8 +78,7 @@ MapHandler::~MapHandler()
 }
 
 
-bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
-{
+bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo* info) {
   lua_State* L = LuaServer::GetL();
   if (L == NULL) {
     return false;
@@ -113,7 +110,7 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 
   if (lua_pcall(L, 5, 1, 0) != 0) {
     bz_debugMessagef(0, "LuaMapObject callback error (%s): %s\n",
-		     objToken.c_str(), lua_tostring(L, -1));
+                     objToken.c_str(), lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }
@@ -127,8 +124,8 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
     const int table = lua_gettop(L);
     for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
       if (lua_israwstring(L, -1)) {
-	newData += lua_tostring(L, -1);
-	newData += "\n";
+        newData += lua_tostring(L, -1);
+        newData += "\n";
       }
     }
   }
@@ -144,8 +141,7 @@ bool MapHandler::handle(bz_ApiString objToken, bz_CustomMapObjectInfo *info)
 //============================================================================//
 //============================================================================//
 
-bool MapObject::PushEntries(lua_State* L)
-{
+bool MapObject::PushEntries(lua_State* L) {
   lua_pushliteral(L, "AttachMapObject");
   lua_pushcfunction(L, AttachMapObject);
   lua_rawset(L, -3);
@@ -158,8 +154,7 @@ bool MapObject::PushEntries(lua_State* L)
 }
 
 
-bool MapObject::CleanUp(lua_State* /*L*/)
-{
+bool MapObject::CleanUp(lua_State* /*L*/) {
   std::map<std::string, MapHandler*>::const_iterator it, nextIT;
 
   for (it = mapHandlers.begin(); it != mapHandlers.end(); /* noop */) {
@@ -178,8 +173,7 @@ bool MapObject::CleanUp(lua_State* /*L*/)
 //============================================================================//
 //============================================================================//
 
-static int AttachMapObject(lua_State* L)
-{
+static int AttachMapObject(lua_State* L) {
   int funcIndex = 2;
   const std::string objName  = TextUtils::tolower(luaL_checkstring(L, 1));
   const char* endToken = NULL;
@@ -200,7 +194,8 @@ static int AttachMapObject(lua_State* L)
   MapHandler* handler = new MapHandler(objName);
   if (bz_registerCustomMapObject2(objName.c_str(), endToken, handler)) {
     lua_pushboolean(L, true);
-  } else {
+  }
+  else {
     lua_pushboolean(L, false);
     delete handler;
   }
@@ -209,8 +204,7 @@ static int AttachMapObject(lua_State* L)
 }
 
 
-static int DetachMapObject(lua_State* L)
-{
+static int DetachMapObject(lua_State* L) {
   const std::string objName = TextUtils::tolower(luaL_checkstring(L, 1));
 
   std::map<std::string, MapHandler*>::iterator it = mapHandlers.find(objName);
@@ -223,7 +217,8 @@ static int DetachMapObject(lua_State* L)
 
   if (bz_removeCustomMapObject(objName.c_str())) {
     lua_pushboolean(L, true);
-  } else {
+  }
+  else {
     lua_pushboolean(L, false);
   }
 
@@ -238,6 +233,6 @@ static int DetachMapObject(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

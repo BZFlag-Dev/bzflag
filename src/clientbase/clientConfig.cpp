@@ -37,8 +37,7 @@
 std::vector<std::string> configQualityValues;
 std::vector<std::string> configViewValues;
 
-void initConfigData ( void )
-{
+void initConfigData(void) {
   configQualityValues.push_back(std::string("low"));
   configQualityValues.push_back(std::string("medium"));
   configQualityValues.push_back(std::string("high"));
@@ -52,8 +51,7 @@ void initConfigData ( void )
   configViewValues.push_back(std::string("interlaced"));
 }
 
-std::string	getOldConfigFileName(void)
-{
+std::string getOldConfigFileName(void) {
 #if !defined(_WIN32)
 
   std::string name = getConfigDirName();
@@ -81,8 +79,7 @@ std::string	getOldConfigFileName(void)
 #endif /* !defined(_WIN32) */
 }
 
-std::string getCurrentConfigFileName(void)
-{
+std::string getCurrentConfigFileName(void) {
   std::string configFile = BZ_CONFIG_FILE_NAME;
 
   std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
@@ -102,11 +99,10 @@ std::string getCurrentConfigFileName(void)
 // it will TRY and find an old one and copy it
 // so that the update function can upgrade it to the current version
 // the assumption is that there is a unique config per version
-void findConfigFile(void)
-{
+void findConfigFile(void) {
   // look for the current file
   std::string configName = getCurrentConfigFileName();
-  FILE *fp = fopen(configName.c_str(), "rb");
+  FILE* fp = fopen(configName.c_str(), "rb");
   if (fp) {
     // we found the current file, nothing to do, just return
     fclose(fp);
@@ -124,12 +120,12 @@ void findConfigFile(void)
     std::string configDir = getConfigDirName(BZ_CONFIG_DIR_VERSION);
     mkdir(configDir.c_str());
     // copy the old config to the new dir location with the new name
-    CopyFile(oldConfigName.c_str(), configName.c_str(),true);
+    CopyFile(oldConfigName.c_str(), configName.c_str(), true);
 
-#else	// the other OSs should do what they need to do
+#else // the other OSs should do what they need to do
     mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
 
-    FILE *newFile = fopen(configName.c_str(),"wb");
+    FILE* newFile = fopen(configName.c_str(), "wb");
     if (newFile) {
       fseek(fp, 0, SEEK_END);
       int len = ftell(fp);
@@ -149,30 +145,30 @@ void findConfigFile(void)
   }
 }
 
-void updateConfigFile(void)
-{
+void updateConfigFile(void) {
   int configVersion = BZ_CONFIG_FILE_VERSION;
-  if (BZDB.isSet("config_vers"))
+  if (BZDB.isSet("config_vers")) {
     configVersion = BZDB.evalInt("config_vers");
+  }
 
   switch (configVersion) {
-  case 0: // 2.1.0
-  case 1:// 2.1.6
-    BZDB.unset("maxTextureSize");
-    break;
+    case 0: // 2.1.0
+    case 1:// 2.1.6
+      BZDB.unset("maxTextureSize");
+      break;
 
-  case 2: // 2.1.13
-    BZDB.set("stencilShadows", "1");
-    break;
+    case 2: // 2.1.13
+      BZDB.set("stencilShadows", "1");
+      break;
 
-  case 3: // 2.99.1 current
-    break;
+    case 3: // 2.99.1 current
+      break;
 
-  default: // hm, we don't know about this one...
-    printError(TextUtils::format("Config file is tagged version \"%d\", "
-				 "which was not expected (too new perhaps). "
-				 "Trying to load anyhow.", configVersion));
-    break;
+    default: // hm, we don't know about this one...
+      printError(TextUtils::format("Config file is tagged version \"%d\", "
+                                   "which was not expected (too new perhaps). "
+                                   "Trying to load anyhow.", configVersion));
+      break;
   }
 
   // set us as the updated version
@@ -185,6 +181,6 @@ void updateConfigFile(void)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

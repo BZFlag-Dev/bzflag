@@ -41,7 +41,7 @@ enum TrackType {
 };
 
 enum TrackSides {
-  LeftTread =  (1 << 0),
+  LeftTread = (1 << 0),
   RightTread = (1 << 1),
   BothTreads = (LeftTread | RightTread)
 };
@@ -68,11 +68,10 @@ class TrackEntry {
     float lifeTime;
     class TrackSceneNode* sceneNode;
 
-  friend class TrackList;
+    friend class TrackList;
 };
 
-inline TrackEntry* TrackEntry::getNext()
-{
+inline TrackEntry* TrackEntry::getNext() {
   return next;
 }
 
@@ -95,15 +94,15 @@ class TrackList {
     TrackEntry* end;
 };
 
-inline void TrackList::addNode(TrackEntry& te)
-{
+inline void TrackList::addNode(TrackEntry& te) {
   TrackEntry* copy = new TrackEntry;
   *copy = te;
   copy->next = NULL;
   if (end == NULL) {
     copy->prev = NULL;
     start = end = copy;
-  } else {
+  }
+  else {
     copy->prev = end;
     end->next = copy;
     end = copy;
@@ -111,18 +110,19 @@ inline void TrackList::addNode(TrackEntry& te)
   return;
 }
 
-inline TrackEntry* TrackList::removeNode(TrackEntry* te)
-{
+inline TrackEntry* TrackList::removeNode(TrackEntry* te) {
   TrackEntry* const next = te->next;
   TrackEntry* const prev = te->prev;
   if (next != NULL) {
     next->prev = prev;
-  } else {
+  }
+  else {
     end = prev;
   }
   if (prev != NULL) {
     prev->next = next;
-  } else {
+  }
+  else {
     start = next;
   }
   delete te; // delete it (and its sceneNode, in ~TrackEntry())
@@ -201,7 +201,7 @@ static void drawTreads(const TrackEntry& te);
 static bool onBuilding(const fvec3& pos);
 static void updateList(TrackList& list, float dt);
 static void addEntryToList(TrackList& list,
-			   TrackEntry& te, TrackType type);
+                           TrackEntry& te, TrackType type);
 
 
 //============================================================================//
@@ -209,8 +209,7 @@ static void addEntryToList(TrackList& list,
 // TrackMarks
 //
 
-void TrackMarks::init()
-{
+void TrackMarks::init() {
   clear();
   setup();
   setUserFade(BZDB.eval("userTrackFade"));
@@ -219,15 +218,13 @@ void TrackMarks::init()
 }
 
 
-void TrackMarks::kill()
-{
+void TrackMarks::kill() {
   clear();
   return;
 }
 
 
-void TrackMarks::clear()
-{
+void TrackMarks::clear() {
   SmokeList.clear();
   PuddleList.clear();
   TreadsGroundList.clear();
@@ -236,8 +233,7 @@ void TrackMarks::clear()
 }
 
 
-void TrackMarks::setUserFade(float value)
-{
+void TrackMarks::setUserFade(float value) {
   if (value < 0.0f) {
     value = 0.0f;
   }
@@ -252,14 +248,12 @@ void TrackMarks::setUserFade(float value)
 }
 
 
-float TrackMarks::getUserFade()
-{
+float TrackMarks::getUserFade() {
   return BZDB.eval("userTrackFade");
 }
 
 
-void TrackMarks::setAirCulling(AirCullStyle style)
-{
+void TrackMarks::setAirCulling(AirCullStyle style) {
   if ((style < NoAirCull) || (style > FullAirCull)) {
     style = NoAirCull;
   }
@@ -271,15 +265,13 @@ void TrackMarks::setAirCulling(AirCullStyle style)
 }
 
 
-AirCullStyle TrackMarks::getAirCulling()
-{
+AirCullStyle TrackMarks::getAirCulling() {
   return (AirCullStyle)BZDB.evalInt("trackMarkCulling");
 }
 
 
 static void addEntryToList(TrackList& list,
-			   TrackEntry& te, TrackType type)
-{
+                           TrackEntry& te, TrackType type) {
   // push the entry
   list.addNode(te);
 
@@ -288,11 +280,14 @@ static void addEntryToList(TrackList& list,
     const OpenGLGState* gstate = NULL;
     if (type == TreadsTrack) {
       gstate = &treadsGState;
-    } else if (type == PuddleTrack) {
+    }
+    else if (type == PuddleTrack) {
       gstate = &puddleGState;
-    } else if (type == SmokeTrack) {
+    }
+    else if (type == SmokeTrack) {
       gstate = &smokeGState;
-    } else {
+    }
+    else {
       return;
     }
     TrackEntry* copy = list.getEnd();
@@ -303,8 +298,7 @@ static void addEntryToList(TrackList& list,
 
 
 bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
-			 int phydrv)
-{
+                         int phydrv) {
   TrackEntry te;
   TrackType type;
   te.lifeTime = 0.0f;
@@ -316,7 +310,8 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
     if (pos.z < 0.0f) {
       scale = 0.0f; // single puddle, like Narrow tanks
     }
-  } else {
+  }
+  else {
     type = TreadsTrack;
     if (scale < 0.01f) {
       return false; // Narrow tanks don't draw tread marks
@@ -331,7 +326,8 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   te.pos.y = pos.y;
   if (pos.z < 0.0f) {
     te.pos.z = TextureHeightOffset;
-  } else {
+  }
+  else {
     te.pos.z = pos.z + TextureHeightOffset;
   }
   te.scale = scale;
@@ -341,13 +337,15 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
   if (driver == NULL) {
     te.phydrv = -1;
-  } else {
+  }
+  else {
     const fvec3& v = driver->getLinearVel();
     const float av = driver->getAngularVel();
     const float rv = driver->getRadialVel();
     if ((v.x == 0.0f) && (v.y == 0.0f) && (av == 0.0f) && (rv == 0.0f)) {
       te.phydrv = -1;
-    } else {
+    }
+    else {
       te.phydrv = phydrv;
     }
   }
@@ -379,19 +377,20 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
       markPos.x = pos.x + dx;
       markPos.y = pos.y + dy;
       if (onBuilding(markPos)) {
-	te.sides |= LeftTread;
+        te.sides |= LeftTread;
       }
       // right tread
       markPos.x = pos.x - dx;
       markPos.y = pos.y - dy;
       if (onBuilding(markPos)) {
-	te.sides |= RightTread;
+        te.sides |= RightTread;
       }
       // add if required
       if (te.sides != 0) {
-	addEntryToList(TreadsObstacleList, te, type);
-      } else {
-	return false;
+        addEntryToList(TreadsObstacleList, te, type);
+      }
+      else {
+        return false;
       }
     }
   }
@@ -400,21 +399,20 @@ bool TrackMarks::addMark(const fvec3& pos, float scale, float angle,
 }
 
 
-static bool onBuilding(const fvec3& pos)
-{
+static bool onBuilding(const fvec3& pos) {
   const fvec3 dir(0.0f, 0.0f, -1.0f);
   const fvec3 org(pos.x, pos.y, pos.z + 0.1f);
   Ray ray(org, dir);
-  const ObsList* olist = COLLISIONMGR.rayTest (&ray, 0.5f);
+  const ObsList* olist = COLLISIONMGR.rayTest(&ray, 0.5f);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->isFlatTop()) {
       const float top = obs->getExtents().maxs.z;
       if ((pos.z >= (top - 0.1f)) && (pos.z <= (top + 0.1f))) {
-	const float hitTime = obs->intersect(ray);
-	if (hitTime >= 0.0f) {
-	  return true;
-	}
+        const float hitTime = obs->intersect(ray);
+        if (hitTime >= 0.0f) {
+          return true;
+        }
       }
     }
   }
@@ -422,8 +420,7 @@ static bool onBuilding(const fvec3& pos)
 }
 
 
-static void updateList(TrackList& list, float dt)
-{
+static void updateList(TrackList& list, float dt) {
   TrackEntry* ptr = list.getStart();
   while (ptr != NULL) {
     TrackEntry& te = *ptr;
@@ -446,55 +443,55 @@ static void updateList(TrackList& list, float dt)
 
       const float av = phydrv->getAngularVel();
       if (av != 0.0f) {
-	const fvec2& ap = phydrv->getAngularPos();
-	const float da = (av * dt);
-	const float cos_val = cosf(da);
-	const float sin_val = sinf(da);
-	const float dx = te.pos.x - ap.x;
-	const float dy = te.pos.y - ap.y;
-	te.pos.x = ap.x + ((cos_val * dx) - (sin_val * dy));
-	te.pos.y = ap.y + ((cos_val * dy) + (sin_val * dx));
-	te.angle += (float)(da * (180.0 / M_PI));
+        const fvec2& ap = phydrv->getAngularPos();
+        const float da = (av * dt);
+        const float cos_val = cosf(da);
+        const float sin_val = sinf(da);
+        const float dx = te.pos.x - ap.x;
+        const float dy = te.pos.y - ap.y;
+        te.pos.x = ap.x + ((cos_val * dx) - (sin_val * dy));
+        te.pos.y = ap.y + ((cos_val * dy) + (sin_val * dx));
+        te.angle += (float)(da * (180.0 / M_PI));
       }
 
       const float rv = phydrv->getRadialVel();
       if (rv != 0.0f) {
-	const fvec2& rp = phydrv->getRadialPos();
-	te.pos.xy() += dt * rv * (te.pos.xy() - rp).normalize();
+        const fvec2& rp = phydrv->getRadialPos();
+        te.pos.xy() += dt * rv * (te.pos.xy() - rp).normalize();
       }
 
       if ((AirCull & PhyDrvAirCull) != 0) {
-	// no need to cull ground marks
-	if (te.pos.z == 0.0f) {
-	  continue;
-	}
-	// cull the track marks if they aren't supported
-	fvec3 markPos;
-	markPos.z = te.pos.z - TextureHeightOffset;
-	const float radians = (float)(te.angle * (M_PI / 180.0));
-	const float dx = -sinf(radians) * TreadMiddle;
-	const float dy = +cosf(radians) * TreadMiddle;
-	// left tread
-	if ((te.sides & LeftTread) != 0) {
-	  markPos.x = te.pos.x + dx;
-	  markPos.y = te.pos.y + dy;
-	  if (!onBuilding(markPos)) {
-	    te.sides &= ~LeftTread;
-	  }
-	}
-	// right tread
-	if ((te.sides & RightTread) != 0) {
-	  markPos.x = te.pos.x - dx;
-	  markPos.y = te.pos.y - dy;
-	  if (!onBuilding(markPos)) {
-	    te.sides &= ~RightTread;
-	  }
-	}
-	// cull this node
-	if (te.sides == 0) {
-	  ptr = list.removeNode(ptr);
-	  continue;
-	}
+        // no need to cull ground marks
+        if (te.pos.z == 0.0f) {
+          continue;
+        }
+        // cull the track marks if they aren't supported
+        fvec3 markPos;
+        markPos.z = te.pos.z - TextureHeightOffset;
+        const float radians = (float)(te.angle * (M_PI / 180.0));
+        const float dx = -sinf(radians) * TreadMiddle;
+        const float dy = +cosf(radians) * TreadMiddle;
+        // left tread
+        if ((te.sides & LeftTread) != 0) {
+          markPos.x = te.pos.x + dx;
+          markPos.y = te.pos.y + dy;
+          if (!onBuilding(markPos)) {
+            te.sides &= ~LeftTread;
+          }
+        }
+        // right tread
+        if ((te.sides & RightTread) != 0) {
+          markPos.x = te.pos.x - dx;
+          markPos.y = te.pos.y - dy;
+          if (!onBuilding(markPos)) {
+            te.sides &= ~RightTread;
+          }
+        }
+        // cull this node
+        if (te.sides == 0) {
+          ptr = list.removeNode(ptr);
+          continue;
+        }
       }
     }
 
@@ -505,8 +502,7 @@ static void updateList(TrackList& list, float dt)
 }
 
 
-void TrackMarks::update(float dt)
-{
+void TrackMarks::update(float dt) {
   // update the tread inside/outside/middle distances
   const std::string defString = BZDB.getDefault(BZDBNAMES.TANKWIDTH);
   const float defWidth = (float)atof(defString.c_str());
@@ -533,13 +529,12 @@ void TrackMarks::update(float dt)
 }
 
 
-static void setup()
-{
+static void setup() {
   OpenGLGStateBuilder gb;
 
   int puddleTexId = -1;
   if (BZDBCache::texture) {
-    TextureManager &tm = TextureManager::instance();
+    TextureManager& tm = TextureManager::instance();
     puddleTexId = tm.getTextureID(puddleTexture, false);
   }
   gb.reset();
@@ -554,7 +549,7 @@ static void setup()
 
   int smokeTexId = -1;
   if (BZDBCache::texture) {
-    TextureManager &tm = TextureManager::instance();
+    TextureManager& tm = TextureManager::instance();
     smokeTexId = tm.getTextureID(smokeTexture, false);
   }
   gb.reset();
@@ -576,15 +571,13 @@ static void setup()
 }
 
 
-void TrackMarks::notifyStyleChange()
-{
+void TrackMarks::notifyStyleChange() {
   setup();
   return;
 }
 
 
-void TrackMarks::renderGroundTracks()
-{
+void TrackMarks::renderGroundTracks() {
   TrackEntry* ptr;
 
   // disable the zbuffer for drawing on the ground
@@ -615,8 +608,7 @@ void TrackMarks::renderGroundTracks()
 }
 
 
-void TrackMarks::renderObstacleTracks()
-{
+void TrackMarks::renderObstacleTracks() {
   if (!BZDBCache::zbuffer) {
     return; // this is not for the BSP rendering
   }
@@ -655,8 +647,7 @@ void TrackMarks::renderObstacleTracks()
 }
 
 
-static void drawPuddle(const TrackEntry& te)
-{
+static void drawPuddle(const TrackEntry& te) {
   const float ratio = (te.lifeTime / TrackFadeTime);
   const float scale = 2.0f * ratio;
   const float offset = te.scale * TreadMiddle;
@@ -695,14 +686,14 @@ static void drawPuddle(const TrackEntry& te)
 
       glBegin(GL_QUADS);
       {
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex3f(-1.0f, -1.0f, 0.0f);
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex3f(+1.0f, -1.0f, 0.0f);
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex3f(+1.0f, +1.0f, 0.0f);
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex3f(-1.0f, +1.0f, 0.0f);
+        glTexCoord2f(0.0f, 0.0f);
+        glVertex3f(-1.0f, -1.0f, 0.0f);
+        glTexCoord2f(1.0f, 0.0f);
+        glVertex3f(+1.0f, -1.0f, 0.0f);
+        glTexCoord2f(1.0f, 1.0f);
+        glVertex3f(+1.0f, +1.0f, 0.0f);
+        glTexCoord2f(0.0f, 1.0f);
+        glVertex3f(-1.0f, +1.0f, 0.0f);
       }
       glEnd();
     }
@@ -713,8 +704,7 @@ static void drawPuddle(const TrackEntry& te)
 }
 
 
-static void drawTreads(const TrackEntry& te)
-{
+static void drawTreads(const TrackEntry& te) {
   const float ratio = (te.lifeTime / TrackFadeTime);
 
   glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
@@ -740,8 +730,7 @@ static void drawTreads(const TrackEntry& te)
 }
 
 
-static void drawSmoke(const TrackEntry& te)
-{
+static void drawSmoke(const TrackEntry& te) {
   const float ratio = (te.lifeTime / TrackFadeTime);
 
   glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
@@ -767,8 +756,7 @@ static void drawSmoke(const TrackEntry& te)
 }
 
 
-void TrackMarks::addSceneNodes(SceneDatabase* scene)
-{
+void TrackMarks::addSceneNodes(SceneDatabase* scene) {
   // Depth Buffer does not need to use SceneNodes
   if (BZDBCache::zbuffer) {
     return;
@@ -802,8 +790,7 @@ void TrackMarks::addSceneNodes(SceneDatabase* scene)
 // TrackEntry
 //
 
-TrackEntry::~TrackEntry()
-{
+TrackEntry::~TrackEntry() {
   delete sceneNode;
   return;
 }
@@ -813,8 +800,7 @@ TrackEntry::~TrackEntry()
 // TrackList
 //
 
-void TrackList::clear()
-{
+void TrackList::clear() {
   TrackEntry* te = start;
   while (te != NULL) {
     TrackEntry* next = te->next;
@@ -830,27 +816,26 @@ void TrackList::clear()
 // TrackRenderNode
 //
 
-TrackRenderNode::TrackRenderNode(const TrackEntry* _te, TrackType _type)
-{
+TrackRenderNode::TrackRenderNode(const TrackEntry* _te, TrackType _type) {
   te = _te;
   type = _type;
   return;
 }
 
 
-TrackRenderNode::~TrackRenderNode()
-{
+TrackRenderNode::~TrackRenderNode() {
   return;
 }
 
 
-void TrackRenderNode::render()
-{
+void TrackRenderNode::render() {
   if (type == TreadsTrack) {
     drawTreads(*te);
-  } else if (type == PuddleTrack) {
+  }
+  else if (type == PuddleTrack) {
     drawPuddle(*te);
-  } else if (type == SmokeTrack) {
+  }
+  else if (type == SmokeTrack) {
     drawSmoke(*te);
   }
   return;
@@ -862,28 +847,24 @@ void TrackRenderNode::render()
 //
 
 TrackSceneNode::TrackSceneNode(const TrackEntry* _te, TrackType _type,
-			       const OpenGLGState* _gstate) :
-				 renderNode(_te, _type)
-{
+                               const OpenGLGState* _gstate) :
+  renderNode(_te, _type) {
   te = _te;
   type = _type;
   gstate = _gstate;
   return;
 }
 
-TrackSceneNode::~TrackSceneNode()
-{
+TrackSceneNode::~TrackSceneNode() {
   return;
 }
 
-void TrackSceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void TrackSceneNode::addRenderNodes(SceneRenderer& renderer) {
   renderer.addRenderNode(&renderNode, gstate);
   return;
 }
 
-void TrackSceneNode::update()
-{
+void TrackSceneNode::update() {
   // update the position
   setCenter(te->pos);
 
@@ -891,9 +872,11 @@ void TrackSceneNode::update()
   float radius = 0;
   if (type == TreadsTrack) {
     radius = (te->scale * TreadOutside);
-  } else if (type == PuddleTrack) {
+  }
+  else if (type == PuddleTrack) {
     radius = (te->scale * (TreadMiddle + 1.0f));
-  } else if (type == SmokeTrack) {
+  }
+  else if (type == SmokeTrack) {
     radius = (te->scale * TreadOutside);
   }
   setRadius(radius * radius);
@@ -906,6 +889,6 @@ void TrackSceneNode::update()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

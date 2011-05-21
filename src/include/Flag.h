@@ -41,8 +41,8 @@
  * random.
  */
 
-#ifndef	BZF_FLAG_H
-#define	BZF_FLAG_H
+#ifndef BZF_FLAG_H
+#define BZF_FLAG_H
 
 #include "common.h"
 
@@ -97,23 +97,23 @@ enum FlagQuality {
 /** This enum says if the flag type gives the carrier a special shooting
     ability. */
 enum ShotType {
-	NoShot = 0,
-	StandardShot,
-	GMShot,
-	LaserShot,
-	ThiefShot,
-	SuperShot,
-	PhantomShot,
-	ShockWaveShot,
-	RicoShot,
-	MachineGunShot,
-	InvisibleShot,
-	CloakedShot,
-	RapidFireShot
+  NoShot = 0,
+  StandardShot,
+  GMShot,
+  LaserShot,
+  ThiefShot,
+  SuperShot,
+  PhantomShot,
+  ShockWaveShot,
+  RicoShot,
+  MachineGunShot,
+  InvisibleShot,
+  CloakedShot,
+  RapidFireShot
 };
 
 
-const int		FlagPLen = 6 + PlayerIdPLen + 48;
+const int   FlagPLen = 6 + PlayerIdPLen + 48;
 
 class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
@@ -123,76 +123,76 @@ typedef std::set<FlagType*> FlagSet;
 
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType {
-public:
-  FlagType( const std::string& name, const std::string& abbv, FlagEndurance _endurance,
-	    ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
-	    bool _custom = false ) :
-    flagName(name),
-    flagAbbv(abbv),
-    flagHelp(help)
-  {
-    endurance = _endurance;
-    flagShot = sType;
-    flagQuality = quality;
-    flagTeam = team;
-    custom = _custom;
+  public:
+    FlagType(const std::string& name, const std::string& abbv, FlagEndurance _endurance,
+             ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
+             bool _custom = false) :
+      flagName(name),
+      flagAbbv(abbv),
+      flagHelp(help) {
+      endurance = _endurance;
+      flagShot = sType;
+      flagQuality = quality;
+      flagTeam = team;
+      custom = _custom;
 
-    /* allocate flagset array on first use to work around mipspro
-     * std::set compiler bug of making flagSets a fixed array.
-     */
-    if (flagSets == NULL) {
-      flagSets = new FlagSet[NumQualities];
+      /* allocate flagset array on first use to work around mipspro
+       * std::set compiler bug of making flagSets a fixed array.
+       */
+      if (flagSets == NULL) {
+        flagSets = new FlagSet[NumQualities];
+      }
+
+      if (custom) {
+        customFlags.insert(this);
+      }
+
+      flagSets[flagQuality].insert(this);
+      getFlagMap()[flagAbbv] = this;
     }
 
-    if (custom)
-      customFlags.insert(this);
+    /** returns a label of flag name and abbreviation with the flag name
+     * accentuating the abbreviation if relevant.
+     */
+    const std::string label() const;
 
-    flagSets[flagQuality].insert(this);
-    getFlagMap()[flagAbbv] = this;
-  }
+    /** returns information about a flag including the name, abbreviation, and
+     * description.  format is "name ([+|-]abbrev): description" where +|-
+     * indicates whether the flag is inherently good or bad by default.
+     */
+    const std::string information() const;
 
-  /** returns a label of flag name and abbreviation with the flag name
-   * accentuating the abbreviation if relevant.
-   */
-  const std::string label() const;
+    /** returns the color of the flag */
+    const fvec4& getColor() const;
 
-  /** returns information about a flag including the name, abbreviation, and
-   * description.  format is "name ([+|-]abbrev): description" where +|-
-   * indicates whether the flag is inherently good or bad by default.
-   */
-  const std::string information() const;
+    /** network serialization */
+    void* pack(void* buf) const;
+    void* fakePack(void* buf) const;
+    size_t pack(NetMessage& netMsg) const;
+    size_t fakePack(NetMessage& netMsg) const;
+    size_t packCustom(NetMessage& netMsg) const;
 
-  /** returns the color of the flag */
-  const fvec4& getColor() const;
+    /** network deserialization */
+    static void* unpack(void* buf, FlagType* &desc);
+    static void* unpackCustom(void* buf, FlagType* &desc);
 
-  /** network serialization */
-  void* pack(void* buf) const;
-  void* fakePack(void* buf) const;
-  size_t pack(NetMessage& netMsg) const;
-  size_t fakePack(NetMessage& netMsg) const;
-  size_t packCustom(NetMessage& netMsg) const;
+    /** Static wrapper function that makes sure that the flag map is
+     * initialized before it's used.
+     */
+    static FlagTypeMap& getFlagMap();
 
-  /** network deserialization */
-  static void* unpack(void* buf, FlagType* &desc);
-  static void* unpackCustom(void* buf, FlagType* &desc);
+    const std::string flagName;
+    const std::string flagAbbv;
+    const std::string flagHelp;
+    FlagEndurance endurance;
+    FlagQuality flagQuality;
+    ShotType flagShot;
+    TeamColor flagTeam;
+    bool custom;
 
-  /** Static wrapper function that makes sure that the flag map is
-   * initialized before it's used.
-   */
-  static FlagTypeMap& getFlagMap();
-
-  const std::string flagName;
-  const std::string flagAbbv;
-  const std::string flagHelp;
-  FlagEndurance	endurance;
-  FlagQuality flagQuality;
-  ShotType flagShot;
-  TeamColor flagTeam;
-  bool custom;
-
-  static FlagSet *flagSets;
-  static FlagSet customFlags;
-  static const int packSize;
+    static FlagSet* flagSets;
+    static FlagSet customFlags;
+    static const int packSize;
 };
 
 
@@ -200,43 +200,43 @@ public:
     and deserialization as well as static functions that returns sets of
     all good or bad flags, and maps flag abbreviations to FlagType objects. */
 class Flag {
-public:
-  void*  pack(void*) const;
-  size_t pack(NetMessage& netMsg) const;
-  void*  fakePack(void*) const;
-  size_t fakePack(NetMessage& netMsg) const;
-  void* unpack(void*);
+  public:
+    void*  pack(void*) const;
+    size_t pack(NetMessage& netMsg) const;
+    void*  fakePack(void*) const;
+    size_t fakePack(NetMessage& netMsg) const;
+    void* unpack(void*);
 
-  /** This function returns a set of all good flagtypes that are available in
-      the game.
-      @see FlagType
-      @see FlagQuality
-  */
-  static FlagSet& getGoodFlags();
+    /** This function returns a set of all good flagtypes that are available in
+        the game.
+        @see FlagType
+        @see FlagQuality
+    */
+    static FlagSet& getGoodFlags();
 
-  /** This function returns a set of all bad flagtypes that are available in
-      the game.
-      @see FlagType
-      @see FlagQuality
-  */
-  static FlagSet& getBadFlags();
+    /** This function returns a set of all bad flagtypes that are available in
+        the game.
+        @see FlagType
+        @see FlagQuality
+    */
+    static FlagSet& getBadFlags();
 
-  /** This function returns a pointer to the FlagType object that is associated
-      with the given abbreviation. If there is no such FlagType object, NULL
-      is returned. */
-  static FlagType* getDescFromAbbreviation(const char* abbreviation);
+    /** This function returns a pointer to the FlagType object that is associated
+        with the given abbreviation. If there is no such FlagType object, NULL
+        is returned. */
+    static FlagType* getDescFromAbbreviation(const char* abbreviation);
 
-  FlagType* type;
-  FlagStatus status;
-  FlagEndurance	endurance;
-  PlayerId owner;		// who has flag
-  fvec3 position;		// position on ground
-  fvec3 launchPosition;		// position flag launched from
-  fvec3 landingPosition;	// position flag will land
-  float flightTime;		// flight time so far
-  float flightEnd;		// total duration of flight
-  float initialVelocity;	// initial launch velocity
-  int id;
+    FlagType* type;
+    FlagStatus status;
+    FlagEndurance endurance;
+    PlayerId owner;   // who has flag
+    fvec3 position;   // position on ground
+    fvec3 launchPosition;   // position flag launched from
+    fvec3 landingPosition;  // position flag will land
+    float flightTime;   // flight time so far
+    float flightEnd;    // total duration of flight
+    float initialVelocity;  // initial launch velocity
+    int id;
 };
 
 /** Flags no longer use enumerated IDs. Over the wire, flags are all
@@ -248,56 +248,56 @@ public:
 */
 namespace Flags {
   extern FlagType
-    /* alphabetical order */
-    *Agility,
-    *Blindness,
-    *BlueTeam,
-    *Bouncy,
-    *Burrow,
-    *CloakedBullet,
-    *Cloaking,
-    *Colorblindness,
-    *ForwardOnly,
-    *Genocide,
-    *GreenTeam,
-    *GuidedMissile,
-    *Identify,
-    *InvisibleBullet,
-    *Jamming,
-    *Jumping,
-    *Laser,
-    *LeftTurnOnly,
-    *LowGravity,
-    *MachineGun,
-    *Masquerade,
-    *Momentum,
-    *Narrow,
-    *NoJumping,
-    *Obesity,
-    *OscillationOverthruster,
-    *PhantomZone,
-    *PurpleTeam,
-    *QuickTurn,
-    *RapidFire,
-    *RedTeam,
-    *ReverseControls,
-    *ReverseOnly,
-    *Ricochet,
-    *RightTurnOnly,
-    *Seer,
-    *Shield,
-    *ShockWave,
-    *Stealth,
-    *Steamroller,
-    *SuperBullet,
-    *Thief,
-    *Tiny,
-    *TriggerHappy,
-    *Useless,
-    *Velocity,
-    *WideAngle,
-    *Wings,
-    *Null; // leave Null at end
+  /* alphabetical order */
+  *Agility,
+  *Blindness,
+  *BlueTeam,
+  *Bouncy,
+  *Burrow,
+  *CloakedBullet,
+  *Cloaking,
+  *Colorblindness,
+  *ForwardOnly,
+  *Genocide,
+  *GreenTeam,
+  *GuidedMissile,
+  *Identify,
+  *InvisibleBullet,
+  *Jamming,
+  *Jumping,
+  *Laser,
+  *LeftTurnOnly,
+  *LowGravity,
+  *MachineGun,
+  *Masquerade,
+  *Momentum,
+  *Narrow,
+  *NoJumping,
+  *Obesity,
+  *OscillationOverthruster,
+  *PhantomZone,
+  *PurpleTeam,
+  *QuickTurn,
+  *RapidFire,
+  *RedTeam,
+  *ReverseControls,
+  *ReverseOnly,
+  *Ricochet,
+  *RightTurnOnly,
+  *Seer,
+  *Shield,
+  *ShockWave,
+  *Stealth,
+  *Steamroller,
+  *SuperBullet,
+  *Thief,
+  *Tiny,
+  *TriggerHappy,
+  *Useless,
+  *Velocity,
+  *WideAngle,
+  *Wings,
+  *Null; // leave Null at end
 
   /** This function initializes all the FlagType objects in the Flags
       namespace. */
@@ -314,6 +314,6 @@ namespace Flags {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

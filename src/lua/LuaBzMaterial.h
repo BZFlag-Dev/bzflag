@@ -22,7 +22,7 @@ struct lua_State;
 class LuaBzMaterial {
   public:
     typedef bool (*BlendParser)(const std::string&,
-				unsigned int&, unsigned int&);
+                                unsigned int&, unsigned int&);
   public:
     static bool PushEntries(lua_State* L);
 
@@ -75,6 +75,6 @@ class LuaBzMaterial {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

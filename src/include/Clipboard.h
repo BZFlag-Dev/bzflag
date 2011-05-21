@@ -11,11 +11,11 @@
  */
 
 /* BzMaterial:
- *	Encapsulates a material in the game environment.
+ *  Encapsulates a material in the game environment.
  */
 
-#ifndef	BZ_CLIPBOARD_H
-#define	BZ_CLIPBOARD_H
+#ifndef BZ_CLIPBOARD_H
+#define BZ_CLIPBOARD_H
 
 #include "common.h"
 #include <string>
@@ -30,6 +30,6 @@ extern std::string getClipboard();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -27,52 +27,49 @@ static const LinkPhysics defLinkPhysics;
 //============================================================================//
 
 LinkPhysics::LinkPhysics()
-: testBits(0)
-, shotSrcPosScale (1.0f, 1.0f, 1.0f)
-, shotSrcVelScale (1.0f, 1.0f, 1.0f)
-, shotDstVelOffset(0.0f, 0.0f, 0.0f)
-, shotSameSpeed(false)
-, tankSrcPosScale (1.0f, 1.0f, 1.0f)
-, tankSrcVelScale (1.0f, 1.0f, 1.0f)
-, tankDstVelOffset(0.0f, 0.0f, 0.0f)
-, tankSameSpeed(false)
-, tankForceAngle(false)
-, tankForceAngVel(false)
-, tankAngle(0.0f)
-, tankAngleOffset(0.0f)
-, tankAngleScale(1.0f)
-, tankAngVel(0.0f)
-, tankAngVelOffset(0.0f)
-, tankAngVelScale(1.0f)
-, shotMinSpeed(0.0f)
-, shotMaxSpeed(0.0f)
-, tankMinSpeed(0.0f)
-, tankMaxSpeed(0.0f)
-, shotMinAngle(0.0f)
-, shotMaxAngle(0.0f)
-, tankMinAngle(0.0f)
-, tankMaxAngle(0.0f)
-, shotBlockTeams(0)
-, tankBlockTeams(0)
-, shotBlockVar("")
-, tankBlockVar("")
-, shotPassText("")
-, tankPassText("")
-, tankPassSound("")
-{
+  : testBits(0)
+  , shotSrcPosScale(1.0f, 1.0f, 1.0f)
+  , shotSrcVelScale(1.0f, 1.0f, 1.0f)
+  , shotDstVelOffset(0.0f, 0.0f, 0.0f)
+  , shotSameSpeed(false)
+  , tankSrcPosScale(1.0f, 1.0f, 1.0f)
+  , tankSrcVelScale(1.0f, 1.0f, 1.0f)
+  , tankDstVelOffset(0.0f, 0.0f, 0.0f)
+  , tankSameSpeed(false)
+  , tankForceAngle(false)
+  , tankForceAngVel(false)
+  , tankAngle(0.0f)
+  , tankAngleOffset(0.0f)
+  , tankAngleScale(1.0f)
+  , tankAngVel(0.0f)
+  , tankAngVelOffset(0.0f)
+  , tankAngVelScale(1.0f)
+  , shotMinSpeed(0.0f)
+  , shotMaxSpeed(0.0f)
+  , tankMinSpeed(0.0f)
+  , tankMaxSpeed(0.0f)
+  , shotMinAngle(0.0f)
+  , shotMaxAngle(0.0f)
+  , tankMinAngle(0.0f)
+  , tankMaxAngle(0.0f)
+  , shotBlockTeams(0)
+  , tankBlockTeams(0)
+  , shotBlockVar("")
+  , tankBlockVar("")
+  , shotPassText("")
+  , tankPassText("")
+  , tankPassSound("") {
   // do nothing
 }
 
 
-LinkPhysics::~LinkPhysics()
-{
+LinkPhysics::~LinkPhysics() {
 }
 
 
 //============================================================================//
 
-void LinkPhysics::finalize()
-{
+void LinkPhysics::finalize() {
   testBits = 0;
 
   if ((shotMinSpeed != 0.0f) || (shotMaxSpeed != 0.0f)) {
@@ -99,8 +96,7 @@ void LinkPhysics::finalize()
 
 //============================================================================//
 
-bool LinkPhysics::operator==(const LinkPhysics& lp) const
-{
+bool LinkPhysics::operator==(const LinkPhysics& lp) const {
   if (shotSrcPosScale  != lp.shotSrcPosScale)  { return false; }
   if (shotSrcVelScale  != lp.shotSrcVelScale)  { return false; }
   if (shotDstVelOffset != lp.shotDstVelOffset) { return false; }
@@ -137,8 +133,7 @@ bool LinkPhysics::operator==(const LinkPhysics& lp) const
 }
 
 
-bool LinkPhysics::operator<(const LinkPhysics& lp) const
-{
+bool LinkPhysics::operator<(const LinkPhysics& lp) const {
   if (shotSrcPosScale < lp.shotSrcPosScale)  { return true;  }
   if (lp.shotSrcPosScale < shotSrcPosScale)  { return false; }
 
@@ -244,8 +239,7 @@ bool LinkPhysics::operator<(const LinkPhysics& lp) const
 
 //============================================================================//
 
-int LinkPhysics::packSize() const
-{
+int LinkPhysics::packSize() const {
   int fullSize = 0;
 
   fullSize += sizeof(uint8_t); // state bits
@@ -305,8 +299,7 @@ int LinkPhysics::packSize() const
 }
 
 
-void* LinkPhysics::pack(void* buf) const
-{
+void* LinkPhysics::pack(void* buf) const {
   uint8_t bits = 0;
   if (*this == defLinkPhysics) {
     buf = nboPackUInt8(buf, bits);
@@ -374,8 +367,7 @@ void* LinkPhysics::pack(void* buf) const
 }
 
 
-void* LinkPhysics::unpack(void* buf)
-{
+void* LinkPhysics::unpack(void* buf) {
   uint8_t bits;
   buf = nboUnpackUInt8(buf, bits);
   if (bits == 0) {
@@ -442,8 +434,7 @@ void* LinkPhysics::unpack(void* buf)
 
 //============================================================================//
 
-static void outputBits(std::ostream& out, uint8_t bits)
-{
+static void outputBits(std::ostream& out, uint8_t bits) {
   for (int i = 0; i < 8; i++) {
     if ((bits & (1 << i)) != 0) {
       out << " " << i;
@@ -453,8 +444,7 @@ static void outputBits(std::ostream& out, uint8_t bits)
 
 
 static void outputStringSet(std::ostream& out,
-                            const std::set<std::string>& strings)
-{
+                            const std::set<std::string>& strings) {
   std::set<std::string>::const_iterator it;
   for (it = strings.begin(); it != strings.end(); ++it) {
     out << " " << *it;
@@ -462,20 +452,19 @@ static void outputStringSet(std::ostream& out,
 }
 
 
-void LinkPhysics::print(std::ostream& out, const std::string& indent) const
-{
+void LinkPhysics::print(std::ostream& out, const std::string& indent) const {
   // shot data
   if (shotSrcPosScale != fvec3(1.0f, 1.0f, 1.0f)) {
     out << indent << "  shotSrcPosScale "
-                  << shotSrcPosScale.tostring() << std::endl;
+        << shotSrcPosScale.tostring() << std::endl;
   }
   if (shotSrcVelScale != fvec3(1.0f, 1.0f, 1.0f)) {
     out << indent << "  shotSrcVelScale "
-                  << shotSrcVelScale.tostring() << std::endl;
+        << shotSrcVelScale.tostring() << std::endl;
   }
   if (shotDstVelOffset != fvec3(0.0f, 0.0f, 0.0f)) {
     out << indent << "  shotDstVelOffset "
-                  << shotDstVelOffset.tostring() << std::endl;
+        << shotDstVelOffset.tostring() << std::endl;
   }
   if (shotSameSpeed) {
     out << indent << "  shotSameSpeed" << std::endl;
@@ -484,15 +473,15 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
   // tank data
   if (tankSrcPosScale != fvec3(1.0f, 1.0f, 1.0f)) {
     out << indent << "  tankSrcPosScale "
-                  << tankSrcPosScale.tostring() << std::endl;
+        << tankSrcPosScale.tostring() << std::endl;
   }
   if (tankSrcVelScale != fvec3(1.0f, 1.0f, 1.0f)) {
     out << indent << "  tankSrcVelScale "
-                  << tankSrcVelScale.tostring() << std::endl;
+        << tankSrcVelScale.tostring() << std::endl;
   }
   if (tankDstVelOffset != fvec3(0.0f, 0.0f, 0.0f)) {
     out << indent << "  tankDstVelOffset "
-                  << tankDstVelOffset.tostring() << std::endl;
+        << tankDstVelOffset.tostring() << std::endl;
   }
   if (tankSameSpeed) {
     out << indent << "  tankSameSpeed" << std::endl;
@@ -501,20 +490,20 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
   // tank angular data
   if (tankForceAngle)  {
     out << indent << "  tankAngle "
-                  << (tankAngle * RAD2DEGf)  << std::endl;
+        << (tankAngle * RAD2DEGf)  << std::endl;
   }
   if (tankForceAngVel) {
     out << indent << "  tankAngVel "
-                  << (tankAngVel * RAD2DEGf) << std::endl;
+        << (tankAngVel * RAD2DEGf) << std::endl;
   }
 
   if (tankAngleOffset != 0.0f) {
     out << indent << "  tankAngleOffset "
-                  << (tankAngleOffset * RAD2DEGf) << std::endl;
+        << (tankAngleOffset * RAD2DEGf) << std::endl;
   }
   if (tankAngVelOffset != 0.0f) {
     out << indent << "  tankAngVelOffset "
-                  << (tankAngleOffset * RAD2DEGf) << std::endl;
+        << (tankAngleOffset * RAD2DEGf) << std::endl;
   }
 
   if (tankAngleScale != 1.0f) {
@@ -543,19 +532,19 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
 
   // angle blocks
   if (shotMinAngle != 0.0f) {
-    out << indent << "  shotMinAngle " << shotMinAngle * RAD2DEGf << std::endl;
+    out << indent << "  shotMinAngle " << shotMinAngle* RAD2DEGf << std::endl;
   }
 
   if (shotMaxAngle != 0.0f) {
-    out << indent << "  shotMaxAngle " << shotMaxAngle * RAD2DEGf << std::endl;
+    out << indent << "  shotMaxAngle " << shotMaxAngle* RAD2DEGf << std::endl;
   }
 
   if (tankMinAngle != 0.0f) {
-    out << indent << "  tankMinAngle " << tankMinAngle * RAD2DEGf << std::endl;
+    out << indent << "  tankMinAngle " << tankMinAngle* RAD2DEGf << std::endl;
   }
 
   if (tankMaxAngle != 0.0f) {
-    out << indent << "  tankMaxAngle " << tankMaxAngle * RAD2DEGf << std::endl;
+    out << indent << "  tankMaxAngle " << tankMaxAngle* RAD2DEGf << std::endl;
   }
 
   // team blocks
@@ -617,6 +606,6 @@ void LinkPhysics::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

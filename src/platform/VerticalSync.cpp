@@ -22,17 +22,17 @@
 
 
 #if defined(__APPLE__)
-	#  if defined(HAVE_CGLGETCURRENTCONTEXT)
-	bool verticalSyncAvailable() { return true; }
-	#  else
-	bool verticalSyncAvailable() { return false; }
-	#  endif
+#  if defined(HAVE_CGLGETCURRENTCONTEXT)
+bool verticalSyncAvailable() { return true; }
+#  else
+bool verticalSyncAvailable() { return false; }
+#  endif
 #elif defined(_WIN32) // WIN32
-	#  include <GL/wglew.h>
-	bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
+#  include <GL/wglew.h>
+bool verticalSyncAvailable() { return (wglSwapIntervalEXT != NULL); }
 #else // GLX
-	#  include <GL/glxew.h>
-	bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
+#  include <GL/glxew.h>
+bool verticalSyncAvailable() { return (glXSwapIntervalSGI != NULL); }
 #endif
 
 
@@ -57,9 +57,9 @@ void verticalSync() {
   CGLContextObj cglContext = CGLGetCurrentContext();
 
 #ifdef CGL_VERSION_1_2
-  GLint newSwapInterval( BZDBCache::vsync );
+  GLint newSwapInterval(BZDBCache::vsync);
 #else
-  long int newSwapInterval( BZDBCache::vsync );
+  long int newSwapInterval(BZDBCache::vsync);
 #endif
 
   if (newSwapInterval < 0) {
@@ -122,6 +122,6 @@ void verticalSync() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -34,16 +34,16 @@ namespace Record {
   extern bool init();
   extern bool kill();
 
-  extern bool setDirectory(const char *dirname);
+  extern bool setDirectory(const char* dirname);
   extern const char* getDirectory();
 
-  extern bool start     (int playerIndex);
-  extern bool stop      (int playerIndex);
-  extern bool setSize   (int playerIndex, int Mbytes);  // set max size, in Mbytes
-  extern bool setRate   (int playerIndex, int seconds); // set state update rate
-  extern bool saveFile  (int playerIndex, const char* filename); // unbuffered save
+  extern bool start(int playerIndex);
+  extern bool stop(int playerIndex);
+  extern bool setSize(int playerIndex, int Mbytes);     // set max size, in Mbytes
+  extern bool setRate(int playerIndex, int seconds);    // set state update rate
+  extern bool saveFile(int playerIndex, const char* filename);   // unbuffered save
   extern bool saveBuffer(int playerIndex, const char* filename, int seconds);
-  extern bool sendStats (int playerIndex);
+  extern bool sendStats(int playerIndex);
 
   extern bool enabled();
 
@@ -51,10 +51,10 @@ namespace Record {
   extern void setAllowFileRecs(bool value);
 
   extern bool addPacket(uint16_t code, int len, const void* data,
-			uint16_t mode = RealPacket);
+                        uint16_t mode = RealPacket);
 
   extern bool addPacket(uint16_t code, const NetMessage& netMsg,
-			uint16_t mode = RealPacket);
+                        uint16_t mode = RealPacket);
 
   extern void sendHelp(int playerIndex);
 }
@@ -64,12 +64,12 @@ namespace Replay {
   extern bool kill();
 
   extern bool sendFileList(int playerIndex, const char* options);
-  extern bool loadFile    (int playerIndex, const char* filename);
-  extern bool play        (int playerIndex);
-  extern bool loop        (int playerIndex);
-  extern bool sendStats   (int playerIndex);
-  extern bool skip        (int playerIndex, int seconds); // 0 secs jumps to next packet
-  extern bool pause       (int playerIndex);
+  extern bool loadFile(int playerIndex, const char* filename);
+  extern bool play(int playerIndex);
+  extern bool loop(int playerIndex);
+  extern bool sendStats(int playerIndex);
+  extern bool skip(int playerIndex, int seconds);         // 0 secs jumps to next packet
+  extern bool pause(int playerIndex);
 
   extern bool enabled();
   extern bool playing();
@@ -119,6 +119,6 @@ namespace Replay {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

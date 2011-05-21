@@ -35,8 +35,7 @@ const char* MeshFace::typeName = "MeshFace";
 static BZDB_bool debugTele("debugTele");
 
 
-MeshFace::MeshFace(MeshObstacle* _mesh)
-{
+MeshFace::MeshFace(MeshObstacle* _mesh) {
   mesh = _mesh;
   faceID = -1;
   vertexCount = 0;
@@ -64,8 +63,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
                    const BzMaterial* _bzMaterial, int physics,
                    bool _noclusters, bool bounce,
                    unsigned char drive, unsigned char shoot, bool rico,
-                   const SpecialData* special)
-{
+                   const SpecialData* special) {
   mesh = _mesh;
   faceID = -1;
   vertexCount = _vertexCount;
@@ -81,7 +79,8 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
   ricochet     = rico;
   if (special == NULL) {
     specialData = NULL;
-  } else {
+  }
+  else {
     specialData = new SpecialData(*special);
   }
   edges = NULL;
@@ -94,8 +93,7 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 }
 
 
-void MeshFace::finalize()
-{
+void MeshFace::finalize() {
   float maxCrossSqr = 0.0f;
   fvec3 bestCross(0.0f, 0.0f, 0.0f);
   int bestSet[3] = { -1, -1, -1 };
@@ -105,38 +103,38 @@ void MeshFace::finalize()
   for (i = 0; i < (vertexCount - 2); i++) {
     for (j = i; j < (vertexCount - 1); j++) {
       for (k = j; k < (vertexCount - 0); k++) {
-	const fvec3 edge1 = *vertices[k] - *vertices[j];
-	const fvec3 edge2 = *vertices[i] - *vertices[j];
-	const fvec3 cross = fvec3::cross(edge1, edge2);
-	const float lengthSq = cross.lengthSq();
-	if (lengthSq > maxCrossSqr) {
-	  maxCrossSqr = lengthSq;
-	  bestSet[0] = i;
-	  bestSet[1] = j;
-	  bestSet[2] = k;
-	  bestCross = cross;
-	}
+        const fvec3 edge1 = *vertices[k] - *vertices[j];
+        const fvec3 edge2 = *vertices[i] - *vertices[j];
+        const fvec3 cross = fvec3::cross(edge1, edge2);
+        const float lengthSq = cross.lengthSq();
+        if (lengthSq > maxCrossSqr) {
+          maxCrossSqr = lengthSq;
+          bestSet[0] = i;
+          bestSet[1] = j;
+          bestSet[2] = k;
+          bestCross = cross;
+        }
       }
     }
   }
 
   if (maxCrossSqr < +1.0e-20f) {
-    logDebugMessage(1,"invalid mesh face (%f)", maxCrossSqr);
+    logDebugMessage(1, "invalid mesh face (%f)", maxCrossSqr);
     if ((debugLevel >= 3) && (mesh != NULL)) {
-      logDebugMessage(0,":");
+      logDebugMessage(0, ":");
       for (i = 0; i < vertexCount; i++) {
-	logDebugMessage(0," %i", (int)(vertices[i] - mesh->getVertices()));
+        logDebugMessage(0, " %i", (int)(vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
-    logDebugMessage(1,"\n");
+    logDebugMessage(1, "\n");
 
     vertexCount = 0;
     return;
   }
 
   // make the plane
-  float scale = 1.0f / sqrtf (maxCrossSqr);
+  float scale = 1.0f / sqrtf(maxCrossSqr);
   const fvec3* vert = vertices[bestSet[1]];
   plane.xyz() = bestCross * scale;
   plane.w = -fvec3::dot(plane.xyz(), *vert);
@@ -150,15 +148,15 @@ void MeshFace::finalize()
     c = fvec3::cross(a, b);
     const float d = fvec3::dot(c, plane.xyz());
     if (d <= 0.0f) {
-      logDebugMessage(1,"non-convex mesh face (%f)", d);
+      logDebugMessage(1, "non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-	logDebugMessage(0,":");
-	for (i = 0; i < vertexCount; i++) {
-	  logDebugMessage(0," %i", (int)(vertices[i] - mesh->getVertices()));
-	}
-	print(std::cerr, "");
+        logDebugMessage(0, ":");
+        for (i = 0; i < vertexCount; i++) {
+          logDebugMessage(0, " %i", (int)(vertices[i] - mesh->getVertices()));
+        }
+        print(std::cerr, "");
       }
-      logDebugMessage(1,"\n");
+      logDebugMessage(1, "\n");
 
       vertexCount = 0;
       return;
@@ -169,15 +167,15 @@ void MeshFace::finalize()
   for (v = 0; v < vertexCount; v++) {
     const float cross = fvec3::dot(*vertices[v], plane.xyz());
     if (fabsf(cross + plane.w) > 1.0e-3) {
-      logDebugMessage(1,"non-planar mesh face (%f)", cross + plane.w);
+      logDebugMessage(1, "non-planar mesh face (%f)", cross + plane.w);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-	logDebugMessage(0,":");
-	for (i = 0; i < vertexCount; i++) {
-	  logDebugMessage(0," %i", (int)(vertices[i] - mesh->getVertices()));
-	}
-	print(std::cerr, "");
+        logDebugMessage(0, ":");
+        for (i = 0; i < vertexCount; i++) {
+          logDebugMessage(0, " %i", (int)(vertices[i] - mesh->getVertices()));
+        }
+        print(std::cerr, "");
       }
-      logDebugMessage(1,"\n");
+      logDebugMessage(1, "\n");
 
       vertexCount = 0;
       return;
@@ -219,7 +217,8 @@ void MeshFace::finalize()
       planeBits |= UpPlane;
       plane.z = 1.0f;
       plane.w = -pos.z;
-    } else {
+    }
+    else {
       planeBits |= DownPlane;
       plane.z = -1.0f;
       plane.w = +pos.z;
@@ -245,8 +244,7 @@ void MeshFace::finalize()
 }
 
 
-void MeshFace::setupSpecialData()
-{
+void MeshFace::setupSpecialData() {
   if (!isSpecial()) {
     return;
   }
@@ -269,8 +267,7 @@ void MeshFace::setupSpecialData()
 }
 
 
-void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
-{
+void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc) {
   const float zFudge = 1.0e-6f;
 
   const fvec3 zPos(0.0f, 0.0f, 1.0f);
@@ -278,14 +275,16 @@ void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
   // center
   if (mesh && mesh->isValidVertex(geo.centerIndex)) {
     geo.center = mesh->getVertices()[geo.centerIndex];
-  } else {
+  }
+  else {
     geo.center = calcCenter();
   }
 
   // pDir
   if (mesh && mesh->isValidNormal(geo.pDirIndex)) {
     geo.pDir = mesh->getNormals()[geo.pDirIndex];
-  } else {
+  }
+  else {
     geo.pDir = isSrc ? -plane.xyz() : plane.xyz();
   }
   fvec3::normalize(geo.pDir);
@@ -301,7 +300,8 @@ void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
   else {
     if (!pZplane) {
       geo.sDir = fvec3::cross(zPos, geo.pDir);
-    } else {
+    }
+    else {
       const fvec3 edge0 = *vertices[1] - *vertices[0];
       geo.sDir = isSrc ? -edge0 : edge0;
     }
@@ -314,7 +314,8 @@ void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
   // tDir
   if (mesh && mesh->isValidNormal(geo.tDirIndex)) {
     geo.tDir = mesh->getNormals()[geo.tDirIndex];
-  } else {
+  }
+  else {
     geo.tDir = fvec3::cross(geo.pDir, geo.sDir);
   }
   fvec3::normalize(geo.tDir);
@@ -350,14 +351,14 @@ void MeshFace::setupSpecialGeometry(LinkGeometry& geo, bool isSrc)
   // angle
   if (!pZplane) {
     geo.angle = atan2f(geo.pDir.y, geo.pDir.x);
-  } else {
+  }
+  else {
     geo.angle = atan2f(geo.sDir.y, geo.sDir.x);
   }
 }
 
 
-float MeshFace::calcArea() const
-{
+float MeshFace::calcArea() const {
   float area = 0.0f;
   const fvec3& v0 = *vertices[0];
   for (int v = 0; v < (vertexCount - 2); v++) {
@@ -371,8 +372,7 @@ float MeshFace::calcArea() const
 }
 
 
-fvec3 MeshFace::calcCenter() const
-{
+fvec3 MeshFace::calcCenter() const {
   fvec3 center(0.0f, 0.0f, 0.0f);
   for (int v = 0; v < vertexCount; v++) {
     center += *vertices[v];
@@ -382,8 +382,7 @@ fvec3 MeshFace::calcCenter() const
 
 
 void MeshFace::calcAxisSpan(const fvec3& point, const fvec3& dir,
-                            float& minDist, float& maxDist) const
-{
+                            float& minDist, float& maxDist) const {
   maxDist = 0.0f;
   minDist = 0.0f;
   for (int v = 0; v < vertexCount; v++) {
@@ -394,8 +393,7 @@ void MeshFace::calcAxisSpan(const fvec3& point, const fvec3& dir,
 }
 
 
-MeshFace::~MeshFace()
-{
+MeshFace::~MeshFace() {
   delete[] vertices;
   delete[] normals;
   delete[] texcoords;
@@ -404,31 +402,28 @@ MeshFace::~MeshFace()
   delete specialData;
   return;
 }
-const char* MeshFace::getType() const
-{
+const char* MeshFace::getType() const {
   return typeName;
 }
 
 
-const char* MeshFace::getClassName() // const
-{
+const char* MeshFace::getClassName() { // const
   return typeName;
 }
 
 
-bool MeshFace::isValid() const
-{
+bool MeshFace::isValid() const {
   // this is used as a tag in finalize()
   if (vertexCount == 0) {
     return false;
-  } else {
+  }
+  else {
     return true;
   }
 }
 
 
-bool MeshFace::isFlatTop() const
-{
+bool MeshFace::isFlatTop() const {
   return isUpPlane();
 }
 
@@ -438,12 +433,12 @@ bool MeshFace::isFlatTop() const
 //  SpecialData configuration routines
 //
 
-void MeshFace::setSpecialData(const SpecialData* sd)
-{
+void MeshFace::setSpecialData(const SpecialData* sd) {
   delete specialData;
   if (sd) {
     specialData = new SpecialData(*sd);
-  } else {
+  }
+  else {
     specialData = NULL;
   }
 }
@@ -454,8 +449,7 @@ void MeshFace::setSpecialData(const SpecialData* sd)
 //  Collision routines
 //
 
-float MeshFace::intersect(const Ray& ray) const
-{
+float MeshFace::intersect(const Ray& ray) const {
   // NOTE: i'd use a quick test here first, but the
   //       plan is to use an octree for the collision
   //       manager which should get us close enough
@@ -466,12 +460,12 @@ float MeshFace::intersect(const Ray& ray) const
   // to see if the intersection point is contained within
   // the face.
   //
-  //  L - line unit vector	    Lo - line origin
+  //  L - line unit vector      Lo - line origin
   //  N - plane normal unit vector  d  - plane offset
-  //  P - point in question	    t  - time
+  //  P - point in question     t  - time
   //
-  //  (N dot P) + d = 0		       { plane equation }
-  //  P = (t * L) + Lo		       { line  equation }
+  //  (N dot P) + d = 0          { plane equation }
+  //  P = (t * L) + Lo           { line  equation }
   //  t (N dot L) + (N dot Lo) + d = 0
   //
   //  t = - (d + (N dot Lo)) / (N dot L)     { time of impact }
@@ -508,8 +502,7 @@ float MeshFace::intersect(const Ray& ray) const
 }
 
 
-void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
-{
+void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const {
   if (!smoothBounce || !useNormals()) {
     // just use the plain normal
     n = plane.xyz();
@@ -560,32 +553,28 @@ void MeshFace::get3DNormal(const fvec3& p, fvec3& n) const
 }
 
 
-void MeshFace::getNormal(const fvec3& /*p*/, fvec3& n) const
-{
+void MeshFace::getNormal(const fvec3& /*p*/, fvec3& n) const {
   n = plane.xyz();
   return;
 }
 
 
 bool MeshFace::getHitNormal(const fvec3& /*oldPos*/, float /*oldAngle*/,
-			    const fvec3& /*newPos*/, float /*newAngle*/,
-			    float /*dx*/, float /*dy*/, float /*height*/,
-			    fvec3& normal) const
-{
+                            const fvec3& /*newPos*/, float /*newAngle*/,
+                            float /*dx*/, float /*dy*/, float /*height*/,
+                            fvec3& normal) const {
   normal = plane.xyz();
   return true;
 }
 
 
-bool MeshFace::inCylinder(const fvec3& p,float radius, float height) const
-{
+bool MeshFace::inCylinder(const fvec3& p, float radius, float height) const {
   return inBox(p, 0.0f, radius, radius, height);
 }
 
 
 bool MeshFace::inBox(const fvec3& p, float _angle,
-		     float dx, float dy, float height) const
-{
+                     float dx, float dy, float height) const {
   int i;
 
   // Z axis separation test
@@ -667,16 +656,16 @@ bool MeshFace::inBox(const fvec3& p, float _angle,
 
 
 bool MeshFace::inMovingBox(const fvec3& oldPos, float /*oldAngle*/,
-			   const fvec3& newPos, float newAngle,
-			   float dx, float dy, float height) const
-{
+                           const fvec3& newPos, float newAngle,
+                           float dx, float dy, float height) const {
   // expand the box with respect to Z axis motion
   fvec3 _pos;
   _pos.x = newPos.x;
   _pos.y = newPos.y;
   if (oldPos.z < newPos.z) {
     _pos.z = oldPos.z;
-  } else {
+  }
+  else {
     _pos.z = newPos.z;
   }
   height = height + fabsf(oldPos.z - newPos.z);
@@ -686,9 +675,8 @@ bool MeshFace::inMovingBox(const fvec3& oldPos, float /*oldAngle*/,
 
 
 bool MeshFace::isCrossing(const fvec3& p, float _angle,
-			  float dx, float dy, float height,
-			  fvec4* planePtr) const
-{
+                          float dx, float dy, float height,
+                          fvec4* planePtr) const {
   // the position must be on the front side of the plane
   if (plane.planeDist(p) < 0.0f) {
     return false;
@@ -713,8 +701,7 @@ bool MeshFace::isCrossing(const fvec3& p, float _angle,
 //  Team base routines
 //
 
-fvec3 MeshFace::getRandomPoint() const
-{
+fvec3 MeshFace::getRandomPoint() const {
   // using barycentric vectors
   const fvec3 center = calcCenter();
   while (true) {
@@ -737,23 +724,20 @@ fvec3 MeshFace::getRandomPoint() const
 //  Teleportation routines
 //
 
-float MeshFace::isTeleported(const Ray& ray) const
-{
+float MeshFace::isTeleported(const Ray& ray) const {
   const float t = intersect(ray);
   return (t >= 0.0f) && (t <= 1.0f);
 }
 
 
-bool MeshFace::hasCrossed(const fvec3& oldPos, const fvec3& newPos) const
-{
+bool MeshFace::hasCrossed(const fvec3& oldPos, const fvec3& newPos) const {
   Ray ray(oldPos, newPos - oldPos);
   const float t = intersect(ray);
   return (t >= 0.0f) && (t <= 1.0f);
 }
 
 
-float MeshFace::getProximity(const fvec3& pIn, float radius) const
-{
+float MeshFace::getProximity(const fvec3& pIn, float radius) const {
   float maxDist;
 
   // plane distance check
@@ -786,9 +770,8 @@ float MeshFace::getProximity(const fvec3& pIn, float radius) const
 
 
 bool MeshFace::shotCanCross(const LinkPhysics& physics,
-                             const fvec3& /*pos*/, const fvec3& vel,
-                             int team, const FlagType* flagType) const
-{
+                            const fvec3& /*pos*/, const fvec3& vel,
+                            int team, const FlagType* flagType) const {
   if (!isSpecial()) {
     return false;
   }
@@ -872,9 +855,8 @@ bool MeshFace::shotCanCross(const LinkPhysics& physics,
 
 
 bool MeshFace::tankCanCross(const LinkPhysics& physics,
-                             const fvec3& /*pos*/, const fvec3& vel,
-                             int team, const FlagType* flagType) const
-{
+                            const fvec3& /*pos*/, const fvec3& vel,
+                            int team, const FlagType* flagType) const {
   if (!isSpecial()) {
     return false;
   }
@@ -960,8 +942,7 @@ bool MeshFace::tankCanCross(const LinkPhysics& physics,
 bool MeshFace::teleportShot(const MeshFace& dstFace,
                             const LinkPhysics& linkPhysics,
                             const fvec3& srcPos, fvec3& dstPos,
-                            const fvec3& srcVel, fvec3& dstVel) const
-{
+                            const fvec3& srcVel, fvec3& dstVel) const {
   const MeshFace& srcFace = *this;
 
   if (!srcFace.isLinkSrc()) {
@@ -980,8 +961,8 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
 
   if (debugTele && !BZDBCache::forbidDebug) {
     logDebugMessage(0, "teleportShot  %s -> %s\n",
-                       srcFace.getLinkName().c_str(),
-                       dstFace.getLinkName().c_str());
+                    srcFace.getLinkName().c_str(),
+                    dstFace.getLinkName().c_str());
     linkPhysics.print(std::cout, "  linkPhysics:");
     logDebugMessage(0, "  srcPos = %s\n", srcPos.tostring().c_str());
     logDebugMessage(0, "  srcVel = %s\n", srcVel.tostring().c_str());
@@ -1006,8 +987,8 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
   const float tLen = tScale * fvec3::dot(relPos, srcGeo.tDir);
   const float pLen = pScale * fvec3::dot(relPos, srcGeo.pDir);
   fvec3 p = dstGeo.center + (sLen * dstGeo.sScale * dstGeo.sDir)
-                          + (tLen * dstGeo.tScale * dstGeo.tDir)
-                          + (pLen * dstGeo.pScale * dstGeo.tDir);
+            + (tLen * dstGeo.tScale * dstGeo.tDir)
+            + (pLen * dstGeo.pScale * dstGeo.tDir);
   p += dstGeo.pDir * 0.001f; // move forwards 1mm
   dstPos = p;
 
@@ -1020,8 +1001,8 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
     (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)) + linkDstVel.z
   );
   fvec3 vel = (velScales.x * dstGeo.sDir)
-            + (velScales.y * dstGeo.tDir)
-            + (velScales.z * dstGeo.pDir);
+              + (velScales.y * dstGeo.tDir)
+              + (velScales.z * dstGeo.pDir);
   if (linkPhysics.shotSameSpeed) {
     const float srcSpeed = srcVel.length();
     const float dstSpeed =    vel.length();
@@ -1049,8 +1030,7 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
 }
 
 
-static float clampRadians(float rads)
-{
+static float clampRadians(float rads) {
   const float m_pi   = (float)(M_PI);
   const float m_pi_2 = (float)(M_PI * 2.0);
   rads = fmodf(rads, m_pi_2);
@@ -1069,8 +1049,7 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
                             const fvec3& srcPos,    fvec3& dstPos,
                             const fvec3& srcVel,    fvec3& dstVel,
                             const float& srcAngle,  float& dstAngle,
-                            const float& srcAngVel, float& dstAngVel) const
-{
+                            const float& srcAngVel, float& dstAngVel) const {
   const MeshFace& srcFace = *this;
 
   if (!srcFace.isLinkSrc()) {
@@ -1089,8 +1068,8 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
 
   if (debugTele) {
     logDebugMessage(0, "teleportTank  %s -> %s\n",
-                       srcFace.getLinkName().c_str(),
-                       dstFace.getLinkName().c_str());
+                    srcFace.getLinkName().c_str(),
+                    dstFace.getLinkName().c_str());
     linkPhysics.print(std::cout, "  linkPhysics:");
     logDebugMessage(0, "  srcPos = %s\n", srcPos.tostring().c_str());
     logDebugMessage(0, "  srcVel = %s\n", srcVel.tostring().c_str());
@@ -1115,8 +1094,8 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   const float tLen = tScale * fvec3::dot(relPos, srcGeo.tDir);
   const float pLen = pScale * fvec3::dot(relPos, srcGeo.pDir);
   fvec3 p = dstGeo.center + (sLen * dstGeo.sScale * dstGeo.sDir)
-                          + (tLen * dstGeo.tScale * dstGeo.tDir)
-                          + (pLen * dstGeo.pScale * dstGeo.tDir);
+            + (tLen * dstGeo.tScale * dstGeo.tDir)
+            + (pLen * dstGeo.pScale * dstGeo.tDir);
   p += dstGeo.pDir * 0.001f; // move forwards 1mm
   dstPos = p;
 
@@ -1129,8 +1108,8 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
     (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)) + linkDstVel.z
   );
   fvec3 vel = (velScales.x * dstGeo.sDir)
-            + (velScales.y * dstGeo.tDir)
-            + (velScales.z * dstGeo.pDir);
+              + (velScales.y * dstGeo.tDir)
+              + (velScales.z * dstGeo.pDir);
   if (linkPhysics.tankSameSpeed) {
     const float srcSpeed = srcVel.length();
     const float dstSpeed =    vel.length();
@@ -1143,7 +1122,8 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   // angle
   if (linkPhysics.tankForceAngle) {
     dstAngle = linkPhysics.tankAngle;
-  } else {
+  }
+  else {
     const float angleDiff = clampRadians(srcAngle - srcGeo.angle);
     dstAngle = dstGeo.angle + (angleDiff * linkPhysics.tankAngleScale);
     dstAngle += linkPhysics.tankAngleOffset;
@@ -1153,7 +1133,8 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   // angular velocity
   if (linkPhysics.tankForceAngVel) {
     dstAngVel = linkPhysics.tankAngVel;
-  } else {
+  }
+  else {
     dstAngVel = srcAngVel *  linkPhysics.tankAngVelScale;
     dstAngVel += linkPhysics.tankAngVelOffset;
   }
@@ -1181,8 +1162,7 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
 //  Pack/Unpack routines
 //
 
-int MeshFace::packSize() const
-{
+int MeshFace::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(uint16_t); // stateBytes
 
@@ -1209,8 +1189,7 @@ int MeshFace::packSize() const
 }
 
 
-void* MeshFace::pack(void *buf) const
-{
+void* MeshFace::pack(void* buf) const {
   // state byte
   uint16_t stateBytes = 0;
   stateBytes |= useNormals()     ? (1 << 0) : 0;
@@ -1264,21 +1243,20 @@ void* MeshFace::pack(void *buf) const
 }
 
 
-void* MeshFace::unpack(void *buf)
-{
+void* MeshFace::unpack(void* buf) {
   int32_t inTmp;
   // state byte
   bool tmpNormals, tmpTexcoords, hasSpecial;
   uint16_t stateBytes = 0;
   buf = nboUnpackUInt16(buf, stateBytes);
-  tmpNormals   =  (stateBytes & (1 << 0)) != 0;
-  tmpTexcoords =  (stateBytes & (1 << 1)) != 0;
+  tmpNormals   = (stateBytes & (1 << 0)) != 0;
+  tmpTexcoords = (stateBytes & (1 << 1)) != 0;
   driveThrough = ((stateBytes & (1 << 2)) != 0) ? 0xFF : 0;
   shootThrough = ((stateBytes & (1 << 3)) != 0) ? 0xFF : 0;
-  ricochet     =  (stateBytes & (1 << 4)) != 0;
-  smoothBounce =  (stateBytes & (1 << 5)) != 0;
-  noclusters   =  (stateBytes & (1 << 6)) != 0;
-  hasSpecial   =  (stateBytes & (1 << 7)) != 0;
+  ricochet     = (stateBytes & (1 << 4)) != 0;
+  smoothBounce = (stateBytes & (1 << 5)) != 0;
+  noclusters   = (stateBytes & (1 << 6)) != 0;
+  hasSpecial   = (stateBytes & (1 << 7)) != 0;
 
   buf = nboUnpackStdString(buf, name);
 
@@ -1333,8 +1311,7 @@ void* MeshFace::unpack(void *buf)
 }
 
 
-int MeshFace::SpecialData::packSize() const
-{
+int MeshFace::SpecialData::packSize() const {
   int fullSize = 0;
   fullSize += sizeof(uint16_t); // state
   fullSize += sizeof(int32_t);  // teamNum
@@ -1371,8 +1348,7 @@ int MeshFace::SpecialData::packSize() const
 }
 
 
-void* MeshFace::SpecialData::pack(void* buf) const
-{
+void* MeshFace::SpecialData::pack(void* buf) const {
   buf = nboPackUInt16(buf, stateBits);
 
   int32_t tmpTeam = baseTeam;
@@ -1412,8 +1388,7 @@ void* MeshFace::SpecialData::pack(void* buf) const
 }
 
 
-void* MeshFace::SpecialData::unpack(void* buf)
-{
+void* MeshFace::SpecialData::unpack(void* buf) {
   buf = nboUnpackUInt16(buf, stateBits);
 
   int32_t tmpTeam;
@@ -1466,8 +1441,7 @@ void* MeshFace::SpecialData::unpack(void* buf)
 //  Printing
 //
 
-void MeshFace::print(std::ostream& out, const std::string& indent) const
-{
+void MeshFace::print(std::ostream& out, const std::string& indent) const {
   if (mesh == NULL) {
     return;
   }
@@ -1482,8 +1456,8 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   // plane info
   if (debugLevel >= 3) {
     out << indent << "  # plane normal = "
-                  << plane.x << " " << plane.y << " "
-		  << plane.z << " " << plane.w << std::endl;
+        << plane.x << " " << plane.y << " "
+        << plane.z << " " << plane.w << std::endl;
   }
 
   // vertices
@@ -1496,8 +1470,8 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << indent << " #";
     for (i = 0; i < vertexCount; i++) {
       out << " " << vertices[i]->x << " "
-                 << vertices[i]->y << " "
-                 << vertices[i]->z;
+          << vertices[i]->y << " "
+          << vertices[i]->z;
     }
   }
   out << std::endl;
@@ -1512,9 +1486,9 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     if (debugLevel >= 3) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
-	out << " " << normals[i]->x << " "
-	           << normals[i]->y << " "
-	           << normals[i]->z;
+        out << " " << normals[i]->x << " "
+            << normals[i]->y << " "
+            << normals[i]->z;
       }
     }
     out << std::endl;
@@ -1530,7 +1504,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     if (debugLevel >= 3) {
       out << " #";
       for (i = 0; i < vertexCount; i++) {
-	out << " " << texcoords[i]->x <<  " " << texcoords[i]->y;
+        out << " " << texcoords[i]->x <<  " " << texcoords[i]->y;
       }
     }
     out << std::endl;
@@ -1547,7 +1521,8 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     out << indent << "    phydrv ";
     if (driver->getName().size() > 0) {
       out << driver->getName();
-    } else {
+    }
+    else {
       out << phydrv;
     }
     out << std::endl;
@@ -1563,7 +1538,8 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
   if ((driveThrough && shootThrough) &&
       !(mesh->isDriveThrough() && mesh->isShootThrough())) {
     out << indent << "    passable" << std::endl;
-  } else {
+  }
+  else {
     if (driveThrough && !mesh->isDriveThrough()) {
       out << indent << "    driveThrough" << std::endl;
     }
@@ -1587,8 +1563,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
 
 
 void MeshFace::SpecialData::print(std::ostream& out,
-                                  const std::string& indent) const
-{
+                                  const std::string& indent) const {
   const std::string prefix = indent + "    ";
 
   if (baseTeam >= 0) {
@@ -1687,6 +1662,6 @@ void MeshFace::SpecialData::print(std::ostream& out,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

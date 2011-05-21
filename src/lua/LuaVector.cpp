@@ -27,8 +27,7 @@ using std::vector;
 //============================================================================//
 //============================================================================//
 
-bool LuaVector::PushEntries(lua_State* L)
-{
+bool LuaVector::PushEntries(lua_State* L) {
   lua_pushliteral(L, "vector");
   lua_newtable(L);
 
@@ -49,8 +48,7 @@ bool LuaVector::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-int LuaVector::dot(lua_State* L)
-{
+int LuaVector::dot(lua_State* L) {
   const int pairs = (lua_gettop(L) / 2);
   if (pairs < 1) {
     return luaL_pushnil(L);
@@ -67,8 +65,7 @@ int LuaVector::dot(lua_State* L)
 }
 
 
-int LuaVector::cross(lua_State* L)
-{
+int LuaVector::cross(lua_State* L) {
   if (lua_gettop(L) != 6) {
     return luaL_pushnil(L);
   }
@@ -79,8 +76,7 @@ int LuaVector::cross(lua_State* L)
 }
 
 
-static inline bool NormalizedDot(lua_State* L, float& cosval)
-{
+static inline bool NormalizedDot(lua_State* L, float& cosval) {
   const int pairs = (lua_gettop(L) / 2);
   if (pairs < 1) {
     return false;
@@ -98,15 +94,15 @@ static inline bool NormalizedDot(lua_State* L, float& cosval)
   const float sqrtAB = sqrtf(sumA) * sqrtf(sumB);
   if (sqrtAB == 0.0f) {
     cosval = 0.0f;
-  } else {
+  }
+  else {
     cosval = sum / (sqrtAB);
   }
   return true;
 }
 
 
-int LuaVector::normdot(lua_State* L)
-{
+int LuaVector::normdot(lua_State* L) {
   float cosval;
   if (!NormalizedDot(L, cosval)) {
     return luaL_pushnil(L);
@@ -117,8 +113,7 @@ int LuaVector::normdot(lua_State* L)
 }
 
 
-int LuaVector::normdotdegs(lua_State* L)
-{
+int LuaVector::normdotdegs(lua_State* L) {
   float cosval;
   if (!NormalizedDot(L, cosval)) {
     return luaL_pushnil(L);
@@ -129,8 +124,7 @@ int LuaVector::normdotdegs(lua_State* L)
 }
 
 
-int LuaVector::normdotrads(lua_State* L)
-{
+int LuaVector::normdotrads(lua_State* L) {
   float cosval;
   if (!NormalizedDot(L, cosval)) {
     return luaL_pushnil(L);
@@ -141,8 +135,7 @@ int LuaVector::normdotrads(lua_State* L)
 }
 
 
-int LuaVector::length(lua_State* L)
-{
+int LuaVector::length(lua_State* L) {
   const int count = lua_gettop(L);
   float sum = 0.0f;
   for (int i = 1; i <= count; i++) {
@@ -155,8 +148,7 @@ int LuaVector::length(lua_State* L)
 }
 
 
-int LuaVector::normalize(lua_State* L)
-{
+int LuaVector::normalize(lua_State* L) {
   static vector<float> data;
   const int count = lua_gettop(L);
   data.resize(count + 1); // not using data[0]
@@ -188,6 +180,6 @@ int LuaVector::normalize(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

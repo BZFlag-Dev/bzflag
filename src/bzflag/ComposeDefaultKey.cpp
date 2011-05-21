@@ -37,20 +37,19 @@
 MessageQueue messageHistory;
 unsigned int messageHistoryIndex = 0;
 
-static bool isWordCompletion(const BzfKeyEvent& key)
-{
+static bool isWordCompletion(const BzfKeyEvent& key) {
   if ((key.unicode == 6) || // ^F
       (key.unicode == 9) || // <TAB>
       ((key.modifiers == 0) && (key.button == BzfKeyEvent::F2))) {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
 
 
-static void localVarIterator(const std::string& name, void* data)
-{
+static void localVarIterator(const std::string& name, void* data) {
   if (BZDB.getPermission(name) != StateDatabase::Server) {
     AutoCompleter* ac = (AutoCompleter*) data;
     ac->registerWord(name);
@@ -58,10 +57,9 @@ static void localVarIterator(const std::string& name, void* data)
 }
 
 
-bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key) {
   bool sendIt;
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
+  LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
     // jump while typing
     myTank->setJump();
@@ -72,7 +70,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       ((myTank->getInputMethod() != LocalPlayer::Keyboard) ||
        myTank->isObserver())) {
     if ((key.button == BzfKeyEvent::Up) ||
-	(key.button == BzfKeyEvent::Down)) {
+        (key.button == BzfKeyEvent::Down)) {
       return true;
     }
   }
@@ -167,17 +165,17 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
       const size_t mhLen = messageHistory.size();
       size_t i;
       for (i = 0; i < mhLen; i++) {
-	if (messageHistory[i] == message) {
-	  messageHistory.erase(messageHistory.begin() + i);
-	  messageHistory.push_front(message);
-	  break;
-	}
+        if (messageHistory[i] == message) {
+          messageHistory.erase(messageHistory.begin() + i);
+          messageHistory.push_front(message);
+          break;
+        }
       }
       if (i == mhLen) {
-	if (mhLen >= MAX_MESSAGE_HISTORY) {
-	  messageHistory.pop_back();
-	}
-	messageHistory.push_front(message);
+        if (mhLen >= MAX_MESSAGE_HISTORY) {
+          messageHistory.pop_back();
+        }
+        messageHistory.push_front(message);
       }
     }
   }
@@ -189,8 +187,7 @@ bool ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 }
 
 
-bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
-{
+bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key) {
   LocalPlayer* myTank = LocalPlayer::getMyTank();
 
   if (myTank && KEYMGR.get(key, true) == "jump" && BZDB.isTrue("jumpTyping")) {
@@ -204,35 +201,38 @@ bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       myTank->isObserver()) {
     if (key.button == BzfKeyEvent::Up) {
       if (messageHistoryIndex < messageHistory.size()) {
-	hud->setComposeString(messageHistory[messageHistoryIndex]);
-	messageHistoryIndex++;
-      } else {
-	hud->setComposeString(std::string());
+        hud->setComposeString(messageHistory[messageHistoryIndex]);
+        messageHistoryIndex++;
+      }
+      else {
+        hud->setComposeString(std::string());
       }
       return true;
-    } else if (key.button == BzfKeyEvent::Down) {
+    }
+    else if (key.button == BzfKeyEvent::Down) {
       if (messageHistoryIndex > 0) {
-	messageHistoryIndex--;
-	hud->setComposeString(messageHistory[messageHistoryIndex]);
-      } else {
-	hud->setComposeString(std::string());
+        messageHistoryIndex--;
+        hud->setComposeString(messageHistory[messageHistoryIndex]);
+      }
+      else {
+        hud->setComposeString(std::string());
       }
       return true;
     }
     else if (myTank && (((key.modifiers == BzfKeyEvent::ShiftKey) ||
-			 (hud->getComposeString().length() == 0)) &&
-			((key.button == BzfKeyEvent::Left) ||
-			 (key.button == BzfKeyEvent::Right)))) {
+                         (hud->getComposeString().length() == 0)) &&
+                        ((key.button == BzfKeyEvent::Left) ||
+                         (key.button == BzfKeyEvent::Right)))) {
       // exclude robot from private message recipient.
       // No point sending messages to robot (now)
       selectNextRecipient(key.button != BzfKeyEvent::Left, false);
-      const Player *recipient = myTank->getRecipient();
+      const Player* recipient = myTank->getRecipient();
       if (recipient) {
-	msgDestination = recipient->getId();
-	std::string composePrompt = "Send to ";
-	composePrompt += recipient->getCallSign();
-	composePrompt += ": ";
-	hud->setComposing(composePrompt);
+        msgDestination = recipient->getId();
+        std::string composePrompt = "Send to ";
+        composePrompt += recipient->getCallSign();
+        composePrompt += ": ";
+        hud->setComposing(composePrompt);
       }
       return false;
     }
@@ -252,6 +252,6 @@ bool ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

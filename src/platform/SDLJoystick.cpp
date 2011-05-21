@@ -29,8 +29,7 @@
 #include "TextUtils.h"
 #include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick() : joystickID(NULL)
-{
+SDLJoystick::SDLJoystick() : joystickID(NULL) {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
     std::vector<std::string> args;
     args.push_back(SDL_GetError());
@@ -40,13 +39,11 @@ SDLJoystick::SDLJoystick() : joystickID(NULL)
   yAxis = 1;
 }
 
-SDLJoystick::~SDLJoystick()
-{
+SDLJoystick::~SDLJoystick() {
   SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-void			SDLJoystick::initJoystick(const char* joystickName)
-{
+void      SDLJoystick::initJoystick(const char* joystickName) {
   if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, "")) {
     if (joystickID != NULL) {
       SDL_JoystickClose(joystickID);
@@ -62,8 +59,9 @@ void			SDLJoystick::initJoystick(const char* joystickName)
     return;
   }
   joystickID = SDL_JoystickOpen(i);
-  if (joystickID == NULL)
+  if (joystickID == NULL) {
     return;
+  }
   if (SDL_JoystickNumAxes(joystickID) < 2) {
     SDL_JoystickClose(joystickID);
     printError("Joystick has less then 2 axes:\n");
@@ -73,17 +71,16 @@ void			SDLJoystick::initJoystick(const char* joystickName)
   joystickButtons = SDL_JoystickNumButtons(joystickID);
 }
 
-bool			SDLJoystick::joystick() const
-{
+bool      SDLJoystick::joystick() const {
   return joystickID != NULL;
 }
 
-void			SDLJoystick::getJoy(int& x, int& y)
-{
+void      SDLJoystick::getJoy(int& x, int& y) {
   x = y = 0;
 
-  if (!joystickID)
+  if (!joystickID) {
     return;
+  }
 
   SDL_JoystickUpdate();
   x = SDL_JoystickGetAxis(joystickID, xAxis);
@@ -98,26 +95,27 @@ void			SDLJoystick::getJoy(int& x, int& y)
 
 }
 
-unsigned long		SDLJoystick::getJoyButtons()
-{
+unsigned long   SDLJoystick::getJoyButtons() {
   unsigned long buttons = 0;
 
-  if (!joystickID)
+  if (!joystickID) {
     return 0;
+  }
 
   SDL_JoystickUpdate();
-  for (int i = 0; i < joystickButtons; i++)
+  for (int i = 0; i < joystickButtons; i++) {
     buttons |= SDL_JoystickGetButton(joystickID, i) << i;
+  }
 
   return buttons;
 }
 
-void		    SDLJoystick::getJoyDevices(std::vector<std::string>
-						 &list) const
-{
+void        SDLJoystick::getJoyDevices(std::vector<std::string>
+                                       &list) const {
   int numJoystick = SDL_NumJoysticks();
-  if (numJoystick > 9) //user would have to be insane to have this many anyway
+  if (numJoystick > 9) { //user would have to be insane to have this many anyway
     numJoystick = 9;
+  }
   int i;
   for (i = 0; i < numJoystick; i++) {
     char joystickName[50]; //only room for so much on the menu
@@ -126,9 +124,8 @@ void		    SDLJoystick::getJoyDevices(std::vector<std::string>
   }
 }
 
-void		    SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
-{
-  if (!joystickID) return;
+void        SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const {
+  if (!joystickID) { return; }
   list.clear();
   // number all the axes and send them off
   for (int i = 0; i < SDL_JoystickNumAxes(joystickID); ++i) {
@@ -136,29 +133,25 @@ void		    SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
   }
 }
 
-void		    SDLJoystick::setXAxis(const std::string axis)
-{
+void        SDLJoystick::setXAxis(const std::string axis) {
   // unset
-  if (axis == "") return;
+  if (axis == "") { return; }
   xAxis = atoi(axis.c_str());
 }
 
-void		    SDLJoystick::setYAxis(const std::string axis)
-{
+void        SDLJoystick::setYAxis(const std::string axis) {
   // unset
-  if (axis == "") return;
+  if (axis == "") { return; }
   yAxis = atoi(axis.c_str());
 }
 
-unsigned int	SDLJoystick::getHatswitch(int switchno) const
-{
-  if (!joystickID) return 0;
+unsigned int  SDLJoystick::getHatswitch(int switchno) const {
+  if (!joystickID) { return 0; }
   return SDL_JoystickGetHat(joystickID, switchno);
 }
 
-unsigned int	SDLJoystick::getJoyDeviceNumHats() const
-{
-  if (!joystickID) return 0;
+unsigned int  SDLJoystick::getJoyDeviceNumHats() const {
+  if (!joystickID) { return 0; }
   return SDL_JoystickNumHats(joystickID);
 }
 
@@ -168,6 +161,6 @@ unsigned int	SDLJoystick::getJoyDeviceNumHats() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

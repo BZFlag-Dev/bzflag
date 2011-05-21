@@ -26,19 +26,18 @@
 /** this class provides options for setting the gui
  */
 class GUIOptionsMenu : public HUDDialog {
-public:
-  GUIOptionsMenu();
-  ~GUIOptionsMenu();
+  public:
+    GUIOptionsMenu();
+    ~GUIOptionsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, void* data);
+    HUDuiDefaultKey* getDefaultKey() {
+      return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, void* data);
 
-  static const int maxRadarSize = 30;
+    static const int maxRadarSize = 30;
 };
 
 
@@ -48,6 +47,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

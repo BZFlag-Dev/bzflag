@@ -36,21 +36,18 @@
 MeshTransformManager TRANSFORMMGR;
 
 
-MeshTransformManager::MeshTransformManager()
-{
+MeshTransformManager::MeshTransformManager() {
   return;
 }
 
 
-MeshTransformManager::~MeshTransformManager()
-{
+MeshTransformManager::~MeshTransformManager() {
   clear();
   return;
 }
 
 
-void MeshTransformManager::clear()
-{
+void MeshTransformManager::clear() {
   std::vector<MeshTransform*>::iterator it;
   for (it = transforms.begin(); it != transforms.end(); it++) {
     delete *it;
@@ -60,34 +57,34 @@ void MeshTransformManager::clear()
 }
 
 
-void MeshTransformManager::update()
-{
+void MeshTransformManager::update() {
   return;
 }
 
 
-int MeshTransformManager::addTransform(MeshTransform* transform)
-{
+int MeshTransformManager::addTransform(MeshTransform* transform) {
   transforms.push_back(transform);
   return ((int)transforms.size() - 1);
 }
 
 
-int MeshTransformManager::findTransform(const std::string& transform) const
-{
+int MeshTransformManager::findTransform(const std::string& transform) const {
   if (transform.size() <= 0) {
     return -1;
-  } else if ((transform[0] >= '0') && (transform[0] <= '9')) {
+  }
+  else if ((transform[0] >= '0') && (transform[0] <= '9')) {
     int index = atoi(transform.c_str());
     if ((index < 0) || (index >= (int)transforms.size())) {
       return -1;
-    } else {
+    }
+    else {
       return index;
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < (int)transforms.size(); i++) {
       if (transforms[i]->getName() == transform) {
-	return i;
+        return i;
       }
     }
     return -1;
@@ -95,8 +92,7 @@ int MeshTransformManager::findTransform(const std::string& transform) const
 }
 
 
-void * MeshTransformManager::pack(void *buf) const
-{
+void* MeshTransformManager::pack(void* buf) const {
   std::vector<MeshTransform*>::const_iterator it;
   buf = nboPackUInt32(buf, (int)transforms.size());
   for (it = transforms.begin(); it != transforms.end(); it++) {
@@ -107,8 +103,7 @@ void * MeshTransformManager::pack(void *buf) const
 }
 
 
-void * MeshTransformManager::unpack(void *buf)
-{
+void* MeshTransformManager::unpack(void* buf) {
   unsigned int i;
   uint32_t count;
   buf = nboUnpackUInt32(buf, count);
@@ -121,8 +116,7 @@ void * MeshTransformManager::unpack(void *buf)
 }
 
 
-int MeshTransformManager::packSize() const
-{
+int MeshTransformManager::packSize() const {
   int fullSize = sizeof(uint32_t);
   std::vector<MeshTransform*>::const_iterator it;
   for (it = transforms.begin(); it != transforms.end(); it++) {
@@ -134,8 +128,7 @@ int MeshTransformManager::packSize() const
 
 
 void MeshTransformManager::print(std::ostream& out,
-                                 const std::string& indent) const
-{
+                                 const std::string& indent) const {
   std::vector<MeshTransform*>::const_iterator it;
   for (it = transforms.begin(); it != transforms.end(); it++) {
     MeshTransform* transform = *it;
@@ -150,8 +143,7 @@ void MeshTransformManager::print(std::ostream& out,
 // Mesh Transform Tool
 //
 
-static void multiply(fvec4 m[4], const fvec4 n[4])
-{
+static void multiply(fvec4 m[4], const fvec4 n[4]) {
   fvec4 t[4];
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -166,8 +158,7 @@ static void multiply(fvec4 m[4], const fvec4 n[4])
 }
 
 
-static void shift(fvec4 m[4], const fvec3& p)
-{
+static void shift(fvec4 m[4], const fvec3& p) {
   const fvec4 t[4] = {
     fvec4(1.0f, 0.0f, 0.0f, p.x),
     fvec4(0.0f, 1.0f, 0.0f, p.y),
@@ -179,8 +170,7 @@ static void shift(fvec4 m[4], const fvec3& p)
 }
 
 
-static void scale(fvec4 m[4], const fvec3& p)
-{
+static void scale(fvec4 m[4], const fvec3& p) {
   const fvec4 t[4] = {
     fvec4(p.x, 0.0f, 0.0f, 0.0f),
     fvec4(0.0f, p.y, 0.0f, 0.0f),
@@ -192,8 +182,7 @@ static void scale(fvec4 m[4], const fvec3& p)
 }
 
 
-static void shear(fvec4 m[4], const fvec3& p)
-{
+static void shear(fvec4 m[4], const fvec3& p) {
   const fvec4 t[4] = {
     fvec4(1.0f, 0.0f, p.x, 0.0f),
     fvec4(0.0f, 1.0f, p.y, 0.0f),
@@ -205,8 +194,7 @@ static void shear(fvec4 m[4], const fvec3& p)
 }
 
 
-static void spin(fvec4 m[4], const float radians, const fvec3& normal)
-{
+static void spin(fvec4 m[4], const float radians, const fvec3& normal) {
   // normalize
   fvec3 n = normal;
   if (!fvec3::normalize(n)) {
@@ -238,25 +226,26 @@ static void spin(fvec4 m[4], const float radians, const fvec3& normal)
 }
 
 
-MeshTransform::Tool::Tool(const MeshTransform& xform)
-{
+MeshTransform::Tool::Tool(const MeshTransform& xform) {
   // load the identity matrices
   int i, j;
   for (i = 0; i < 4; i++) {
     for (j = 0; j < 4; j++) {
       if (i == j) {
-	vertexMatrix[i][j] = 1.0f;
-      } else {
-	vertexMatrix[i][j] = 0.0f;
+        vertexMatrix[i][j] = 1.0f;
+      }
+      else {
+        vertexMatrix[i][j] = 0.0f;
       }
     }
   }
   for (i = 0; i < 3; i++) {
     for (j = 0; j < 3; j++) {
       if (i == j) {
-	normalMatrix[i][j] = 1.0f;
-      } else {
-	normalMatrix[i][j] = 0.0f;
+        normalMatrix[i][j] = 1.0f;
+      }
+      else {
+        normalMatrix[i][j] = 0.0f;
       }
     }
   }
@@ -264,7 +253,8 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
   skewed = false;
   if (xform.transforms.size() > 0) {
     empty = false;
-  } else {
+  }
+  else {
     empty = true;
     inverted = false;
     return;
@@ -293,57 +283,54 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
 
 
 MeshTransform::Tool::Tool(const Tool& tool)
-: empty(tool.empty)
-, inverted(tool.inverted)
-, skewed(tool.skewed)
-{
+  : empty(tool.empty)
+  , inverted(tool.inverted)
+  , skewed(tool.skewed) {
   memcpy(vertexMatrix, tool.vertexMatrix, sizeof(vertexMatrix));
   memcpy(normalMatrix, tool.normalMatrix, sizeof(normalMatrix));
 }
 
 
-MeshTransform::Tool::~Tool()
-{
+MeshTransform::Tool::~Tool() {
   return;
 }
 
 
 void MeshTransform::Tool::processTransforms(
-                            const std::vector<TransformData>& transforms)
-{
+  const std::vector<TransformData>& transforms) {
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
     switch (transform.type) {
       case ShiftTransform: {
-	shift(vertexMatrix, transform.data.xyz());
-	break;
+        shift(vertexMatrix, transform.data.xyz());
+        break;
       }
       case ScaleTransform: {
-	skewed = true;
-	scale(vertexMatrix, transform.data.xyz());
-	break;
+        skewed = true;
+        scale(vertexMatrix, transform.data.xyz());
+        break;
       }
       case ShearTransform: {
-	skewed = true;
-	shear(vertexMatrix, transform.data.xyz());
-	break;
+        skewed = true;
+        shear(vertexMatrix, transform.data.xyz());
+        break;
       }
       case SpinTransform: {
-	spin(vertexMatrix, transform.data.w, transform.data.xyz());
-	break;
+        spin(vertexMatrix, transform.data.w, transform.data.xyz());
+        break;
       }
       case IndexTransform: {
-	const MeshTransform* xform =
-	  TRANSFORMMGR.getTransform(transform.index);
-	if (xform != NULL) {
-	  processTransforms(xform->transforms);
-	}
-	break;
+        const MeshTransform* xform =
+          TRANSFORMMGR.getTransform(transform.index);
+        if (xform != NULL) {
+          processTransforms(xform->transforms);
+        }
+        break;
       }
       default: {
-	printf("MeshTransform::Tool(): unknown type: %i\n",
-	       transform.type);
-	break;
+        printf("MeshTransform::Tool(): unknown type: %i\n",
+               transform.type);
+        break;
       }
     }
   }
@@ -352,8 +339,7 @@ void MeshTransform::Tool::processTransforms(
 }
 
 
-void MeshTransform::Tool::modifyVertex(fvec3& v) const
-{
+void MeshTransform::Tool::modifyVertex(fvec3& v) const {
   if (empty) {
     return;
   }
@@ -367,8 +353,7 @@ void MeshTransform::Tool::modifyVertex(fvec3& v) const
 }
 
 
-void MeshTransform::Tool::modifyNormal(fvec3& n) const
-{
+void MeshTransform::Tool::modifyNormal(fvec3& n) const {
   if (empty) {
     return;
   }
@@ -394,8 +379,7 @@ void MeshTransform::Tool::modifyNormal(fvec3& n) const
 
 
 void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
-					 float& angle, bool& flipz) const
-{
+                                         float& angle, bool& flipz) const {
   if (empty) {
     flipz = false;
     return;
@@ -440,7 +424,8 @@ void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
   if (z.z < 0.0f) {
     flipz = true;
     pos.z = pos.z - size.z;
-  } else {
+  }
+  else {
     flipz = false;
   }
 
@@ -448,8 +433,7 @@ void MeshTransform::Tool::modifyOldStyle(fvec3& pos, fvec3& size,
 }
 
 
-bool MeshTransform::Tool::operator<(const Tool& t) const
-{
+bool MeshTransform::Tool::operator<(const Tool& t) const {
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       if (vertexMatrix[i][j] < t.vertexMatrix[i][j]) { return true;  }
@@ -465,8 +449,7 @@ bool MeshTransform::Tool::operator<(const Tool& t) const
 // Mesh Transform
 //
 
-MeshTransform::MeshTransform()
-{
+MeshTransform::MeshTransform() {
   name = "";
   transforms.clear();
 
@@ -474,14 +457,12 @@ MeshTransform::MeshTransform()
 }
 
 
-MeshTransform::~MeshTransform()
-{
+MeshTransform::~MeshTransform() {
   return;
 }
 
 
-MeshTransform& MeshTransform::operator=(const MeshTransform& old)
-{
+MeshTransform& MeshTransform::operator=(const MeshTransform& old) {
   name = ""; // not copied
   transforms.clear();
   for (unsigned int i = 0; i < old.transforms.size(); i++) {
@@ -491,8 +472,7 @@ MeshTransform& MeshTransform::operator=(const MeshTransform& old)
 }
 
 
-void MeshTransform::append(const MeshTransform& xform)
-{
+void MeshTransform::append(const MeshTransform& xform) {
   for (unsigned int i = 0; i < xform.transforms.size(); i++) {
     transforms.push_back(xform.transforms[i]);
   }
@@ -500,8 +480,7 @@ void MeshTransform::append(const MeshTransform& xform)
 }
 
 
-void MeshTransform::prepend(const MeshTransform& xform)
-{
+void MeshTransform::prepend(const MeshTransform& xform) {
   if (xform.transforms.size() <= 0) {
     return;
   }
@@ -518,35 +497,33 @@ void MeshTransform::prepend(const MeshTransform& xform)
 }
 
 
-void MeshTransform::finalize()
-{
+void MeshTransform::finalize() {
   return;
 }
 
 
-bool MeshTransform::setName(const std::string& xformname)
-{
+bool MeshTransform::setName(const std::string& xformname) {
   if (xformname.size() <= 0) {
     name = "";
     return false;
-  } else if ((xformname[0] >= '0') && (xformname[0] <= '9')) {
+  }
+  else if ((xformname[0] >= '0') && (xformname[0] <= '9')) {
     name = "";
     return false;
-  } else {
+  }
+  else {
     name = xformname;
   }
   return true;
 }
 
 
-const std::string& MeshTransform::getName() const
-{
+const std::string& MeshTransform::getName() const {
   return name;
 }
 
 
-void MeshTransform::addShift(const fvec3& shift)
-{
+void MeshTransform::addShift(const fvec3& shift) {
   TransformData transform;
   transform.data.xyz() = shift;
   transform.data.w = 0.0f;
@@ -557,8 +534,7 @@ void MeshTransform::addShift(const fvec3& shift)
 }
 
 
-void MeshTransform::addScale(const fvec3& scale)
-{
+void MeshTransform::addScale(const fvec3& scale) {
   TransformData transform;
   transform.data.xyz() = scale;
   transform.data.w = 0.0f;
@@ -569,8 +545,7 @@ void MeshTransform::addScale(const fvec3& scale)
 }
 
 
-void MeshTransform::addShear(const fvec3& shear)
-{
+void MeshTransform::addShear(const fvec3& shear) {
   TransformData transform;
   transform.data.xyz() = shear;
   transform.data.w = 0.0f;
@@ -581,8 +556,7 @@ void MeshTransform::addShear(const fvec3& shear)
 }
 
 
-void MeshTransform::addSpin(const float degrees, const fvec3& normal)
-{
+void MeshTransform::addSpin(const float degrees, const fvec3& normal) {
   const float radians = (float)(degrees * (M_PI / 180.0));
   TransformData transform;
   transform.data.xyz() = normal;
@@ -594,8 +568,7 @@ void MeshTransform::addSpin(const float degrees, const fvec3& normal)
 }
 
 
-void MeshTransform::addReference(int index)
-{
+void MeshTransform::addReference(int index) {
   TransformData transform;
   transform.type = IndexTransform;
   transform.index = index;
@@ -604,8 +577,7 @@ void MeshTransform::addReference(int index)
 }
 
 
-void * MeshTransform::pack(void *buf) const
-{
+void* MeshTransform::pack(void* buf) const {
   buf = nboPackStdString(buf, name);
 
   buf = nboPackUInt32(buf, (uint32_t)transforms.size());
@@ -615,10 +587,12 @@ void * MeshTransform::pack(void *buf) const
     buf = nboPackUInt8(buf, (uint8_t) transform.type);
     if (transform.type == IndexTransform) {
       buf = nboPackInt32(buf, transform.index);
-    } else {
+    }
+    else {
       if (transform.type == SpinTransform) {
         buf = nboPackFVec4(buf, transform.data);
-      } else {
+      }
+      else {
         buf = nboPackFVec3(buf, transform.data.xyz());
       }
     }
@@ -628,8 +602,7 @@ void * MeshTransform::pack(void *buf) const
 }
 
 
-void * MeshTransform::unpack(void *buf)
-{
+void* MeshTransform::unpack(void* buf) {
   buf = nboUnpackStdString(buf, name);
 
   uint32_t count;
@@ -649,10 +622,11 @@ void * MeshTransform::unpack(void *buf)
     else {
       transform.index = -1;
       if (transform.type == SpinTransform) {
-	buf = nboUnpackFVec4(buf, transform.data);
-      } else {
-	buf = nboUnpackFVec3(buf, transform.data.xyz());
-	transform.data[3] = 0.0f;
+        buf = nboUnpackFVec4(buf, transform.data);
+      }
+      else {
+        buf = nboUnpackFVec3(buf, transform.data.xyz());
+        transform.data[3] = 0.0f;
       }
     }
     transforms.push_back(transform);
@@ -664,8 +638,7 @@ void * MeshTransform::unpack(void *buf)
 }
 
 
-int MeshTransform::packSize() const
-{
+int MeshTransform::packSize() const {
   int fullSize = nboStdStringPackSize(name);
   fullSize += sizeof(uint32_t);
 
@@ -674,11 +647,13 @@ int MeshTransform::packSize() const
     fullSize += sizeof(uint8_t);
     if (transform.type == IndexTransform) {
       fullSize += sizeof(int32_t);
-    } else {
+    }
+    else {
       if (transform.type == SpinTransform) {
         fullSize += sizeof(fvec4);
-      } else {
-	fullSize += sizeof(fvec3);
+      }
+      else {
+        fullSize += sizeof(fvec3);
       }
     }
   }
@@ -687,8 +662,7 @@ int MeshTransform::packSize() const
 }
 
 
-void MeshTransform::print(std::ostream& out, const std::string& indent) const
-{
+void MeshTransform::print(std::ostream& out, const std::string& indent) const {
   out << indent << "transform" << std::endl;
 
   if (name.size() > 0) {
@@ -704,48 +678,48 @@ void MeshTransform::print(std::ostream& out, const std::string& indent) const
 
 
 void MeshTransform::printTransforms(std::ostream& out,
-				    const std::string& indent) const
-{
+                                    const std::string& indent) const {
   for (unsigned int i = 0; i < transforms.size(); i++) {
     const TransformData& transform = transforms[i];
     const fvec4& d = transform.data;
     switch (transform.type) {
       case ShiftTransform: {
-	out << indent << "  shift "
-	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
-	break;
+        out << indent << "  shift "
+            << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        break;
       }
       case ScaleTransform: {
-	out << indent << "  scale "
-	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
-	break;
+        out << indent << "  scale "
+            << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        break;
       }
       case ShearTransform: {
-	out << indent << "  shear "
-	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
-	break;
+        out << indent << "  shear "
+            << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        break;
       }
       case SpinTransform: {
-	const float degrees = (float)(d[3] * (180.0 / M_PI));
-	out << indent << "  spin " << degrees << " "
-	    << d[0] << " " << d[1] << " " << d[2] << std::endl;
-	break;
+        const float degrees = (float)(d[3] * (180.0 / M_PI));
+        out << indent << "  spin " << degrees << " "
+            << d[0] << " " << d[1] << " " << d[2] << std::endl;
+        break;
       }
       case IndexTransform: {
-	const MeshTransform* xform = TRANSFORMMGR.getTransform(transform.index);
-	if (xform != NULL) {
-	  out << indent << "  xform ";
-	  if (xform->getName().size() > 0) {
-	    out << xform->getName();
-	  } else {
-	    out << transform.index;
-	  }
-	  out << std::endl;
-	}
-	break;
+        const MeshTransform* xform = TRANSFORMMGR.getTransform(transform.index);
+        if (xform != NULL) {
+          out << indent << "  xform ";
+          if (xform->getName().size() > 0) {
+            out << xform->getName();
+          }
+          else {
+            out << transform.index;
+          }
+          out << std::endl;
+        }
+        break;
       }
       default: {
-	break;
+        break;
       }
     }
   }
@@ -757,6 +731,6 @@ void MeshTransform::printTransforms(std::ostream& out,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

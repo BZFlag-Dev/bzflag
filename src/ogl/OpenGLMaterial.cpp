@@ -26,10 +26,9 @@
 OpenGLMaterial::Rep* OpenGLMaterial::Rep::head = NULL;
 
 OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
-				const fvec4& specular,
-				const fvec4& emissive,
-				float shininess)
-{
+  const fvec4& specular,
+  const fvec4& emissive,
+  float shininess) {
   // see if we've already got an identical material
   for (Rep* scan = head; scan; scan = scan->next) {
     if (shininess != scan->shininess) {
@@ -50,17 +49,16 @@ OpenGLMaterial::Rep* OpenGLMaterial::Rep::getRep(
 }
 
 OpenGLMaterial::Rep::Rep(const fvec4& _specular,
-			 const fvec4& _emissive,
-			 float _shininess)
-: refCount(1)
-, shininess(_shininess)
-{
+                         const fvec4& _emissive,
+                         float _shininess)
+  : refCount(1)
+  , shininess(_shininess) {
   list = INVALID_GL_LIST_ID;
 
   prev = NULL;
   next = head;
   head = this;
-  if (next) next->prev = this;
+  if (next) { next->prev = this; }
 
   specular.rgb() = _specular.rgb();
   specular.a = 1.0f;
@@ -68,13 +66,12 @@ OpenGLMaterial::Rep::Rep(const fvec4& _specular,
   emissive.a = 1.0f;
 
   OpenGLGState::registerContextInitializer(freeContext,
-					   initContext, (void*)this);
+                                           initContext, (void*)this);
 }
 
-OpenGLMaterial::Rep::~Rep()
-{
+OpenGLMaterial::Rep::~Rep() {
   OpenGLGState::unregisterContextInitializer(freeContext,
-					     initContext, (void*)this);
+                                             initContext, (void*)this);
 
   // free OpenGL display list
   if (list != INVALID_GL_LIST_ID) {
@@ -83,23 +80,20 @@ OpenGLMaterial::Rep::~Rep()
   }
 
   // remove me from material list
-  if (next != NULL) next->prev = prev;
-  if (prev != NULL) prev->next = next;
-  else head = next;
+  if (next != NULL) { next->prev = prev; }
+  if (prev != NULL) { prev->next = next; }
+  else { head = next; }
 }
 
-void			OpenGLMaterial::Rep::ref()
-{
+void      OpenGLMaterial::Rep::ref() {
   refCount++;
 }
 
-void			OpenGLMaterial::Rep::unref()
-{
-  if (--refCount == 0) delete this;
+void      OpenGLMaterial::Rep::unref() {
+  if (--refCount == 0) { delete this; }
 }
 
-void			OpenGLMaterial::Rep::execute()
-{
+void      OpenGLMaterial::Rep::execute() {
   if (list != INVALID_GL_LIST_ID) {
     glCallList(list);
   }
@@ -111,15 +105,16 @@ void			OpenGLMaterial::Rep::execute()
       glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
       glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
       if (highQuality) {
-	if  ((specular.r > 0.0f) ||
-	     (specular.g > 0.0f) ||
-	     (specular.b > 0.0f)) {
-	  // accurate specular highlighting  (more GPU intensive)
-	  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-	} else {
-	  // speed up the lighting calcs by simplifying
-	  glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
-	}
+        if ((specular.r > 0.0f) ||
+            (specular.g > 0.0f) ||
+            (specular.b > 0.0f)) {
+          // accurate specular highlighting  (more GPU intensive)
+          glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+        }
+        else {
+          // speed up the lighting calcs by simplifying
+          glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+        }
       }
     }
     glEndList();
@@ -128,8 +123,7 @@ void			OpenGLMaterial::Rep::execute()
 }
 
 
-void OpenGLMaterial::Rep::freeContext(void* self)
-{
+void OpenGLMaterial::Rep::freeContext(void* self) {
   unsigned int& list = ((Rep*)self)->list;
   if (list != INVALID_GL_LIST_ID) {
     glDeleteLists(list, 1);
@@ -139,8 +133,7 @@ void OpenGLMaterial::Rep::freeContext(void* self)
 }
 
 
-void OpenGLMaterial::Rep::initContext(void* /*self*/)
-{
+void OpenGLMaterial::Rep::initContext(void* /*self*/) {
   // the next execute() call will rebuild the list
   return;
 }
@@ -150,20 +143,17 @@ void OpenGLMaterial::Rep::initContext(void* /*self*/)
 // OpenGLMaterial
 //
 
-OpenGLMaterial::OpenGLMaterial()
-{
+OpenGLMaterial::OpenGLMaterial() {
   rep = NULL;
 }
 
 OpenGLMaterial::OpenGLMaterial(const fvec4& specular,
                                const fvec4& emissive,
-                               float shininess)
-{
+                               float shininess) {
   rep = Rep::getRep(specular, emissive, shininess);
 }
 
-OpenGLMaterial::OpenGLMaterial(const OpenGLMaterial& m)
-{
+OpenGLMaterial::OpenGLMaterial(const OpenGLMaterial& m) {
   rep = m.rep;
   if (rep) {
     rep->highQuality = false;
@@ -172,53 +162,46 @@ OpenGLMaterial::OpenGLMaterial(const OpenGLMaterial& m)
 
 }
 
-OpenGLMaterial::~OpenGLMaterial()
-{
-  if (rep) rep->unref();
+OpenGLMaterial::~OpenGLMaterial() {
+  if (rep) { rep->unref(); }
 }
 
-OpenGLMaterial&		OpenGLMaterial::operator=(const OpenGLMaterial& m)
-{
+OpenGLMaterial&   OpenGLMaterial::operator=(const OpenGLMaterial& m) {
   if (rep != m.rep) {
-    if (rep) rep->unref();
+    if (rep) { rep->unref(); }
     rep = m.rep;
-    if (rep) rep->ref();
+    if (rep) { rep->ref(); }
   }
   return *this;
 }
 
-bool			OpenGLMaterial::operator==(const OpenGLMaterial& m) const
-{
+bool      OpenGLMaterial::operator==(const OpenGLMaterial& m) const {
   return rep == m.rep;
 }
 
-bool			OpenGLMaterial::operator!=(const OpenGLMaterial& m) const
-{
+bool      OpenGLMaterial::operator!=(const OpenGLMaterial& m) const {
   return rep != m.rep;
 }
 
-bool			OpenGLMaterial::operator<(const OpenGLMaterial& m) const
-{
-  if (rep == m.rep) return false;
-  if (!m.rep) return false;
-  if (!rep) return true;
+bool      OpenGLMaterial::operator<(const OpenGLMaterial& m) const {
+  if (rep == m.rep) { return false; }
+  if (!m.rep) { return false; }
+  if (!rep) { return true; }
   return (rep->list < m.rep->list);
 }
 
-bool			OpenGLMaterial::isValid() const
-{
+bool      OpenGLMaterial::isValid() const {
   return (rep != NULL);
 }
 
-void			OpenGLMaterial::execute() const
-{
-  if (rep) rep->execute();
+void      OpenGLMaterial::execute() const {
+  if (rep) { rep->execute(); }
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

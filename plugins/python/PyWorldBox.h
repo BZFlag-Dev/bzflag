@@ -16,25 +16,22 @@
 #ifndef __PYTHON_WORLD_BOX_H__
 #define __PYTHON_WORLD_BOX_H__
 
-namespace Python
-{
-namespace World
-{
+namespace Python {
+  namespace World {
 
-typedef struct
-{
-  PyObject_HEAD
+    typedef struct {
+      PyObject_HEAD
 
-  float pos[3];
-  float rot;
-  float scale[3];
-  bool drive_through;
-  bool shoot_through;
-} Box;
+      float pos[3];
+      float rot;
+      float scale[3];
+      bool drive_through;
+      bool shoot_through;
+    } Box;
 
-PyObject *CreateBox ();
+    PyObject* CreateBox();
 
-};
+  };
 };
 
 #endif
@@ -43,6 +40,6 @@ PyObject *CreateBox ();
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

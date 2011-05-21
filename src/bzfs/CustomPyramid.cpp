@@ -43,8 +43,7 @@ const char* CustomPyramid::faceNames[FaceCount] = {
 
 
 CustomPyramid::CustomPyramid(bool meshed)
-: isOldPyramid(!meshed)
-{
+  : isOldPyramid(!meshed) {
   flipz = false;
 
   size[0] = size[1] = BZDB.eval(BZDBNAMES.PYRBASE);
@@ -79,14 +78,12 @@ CustomPyramid::CustomPyramid(bool meshed)
 }
 
 
-CustomPyramid::~CustomPyramid()
-{
+CustomPyramid::~CustomPyramid() {
   return;
 }
 
 
-bool CustomPyramid::read(const char *cmd, std::istream& input)
-{
+bool CustomPyramid::read(const char* cmd, std::istream& input) {
   bool materror;
 
   std::string line;
@@ -110,7 +107,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
       faceList.push_back(ZN);
     }
     else if ((strcasecmp(cmd, "edge") == 0) || // meshpyr keyword
-	     (strcasecmp(cmd, "sides") == 0)) {
+             (strcasecmp(cmd, "sides") == 0)) {
       faceList.push_back(XP);
       faceList.push_back(XN);
       faceList.push_back(YP);
@@ -123,7 +120,8 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     if (parms >> tmpCmd) {
       // set the cmd string by eating the first parameter
       cmd = tmpCmd.c_str();
-    } else {
+    }
+    else {
       return false; // missing param
     }
   }
@@ -171,11 +169,12 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     float tmp[2];
     if (!(parms >> tmp[0] >> tmp[1])) {
       return false;
-    } else {
+    }
+    else {
       for (int i = 0; i < (int)faceList.size(); i++) {
-	const int f = faceList[i];
-	texSizes[f][0] = tmp[0];
-	texSizes[f][1] = tmp[1];
+        const int f = faceList[i];
+        texSizes[f][0] = tmp[0];
+        texSizes[f][1] = tmp[1];
       }
     }
     return true;
@@ -185,11 +184,12 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     float tmp[2];
     if (!(parms >> tmp[0] >> tmp[1])) {
       return false;
-    } else {
+    }
+    else {
       for (int i = 0; i < (int)faceList.size(); i++) {
-	const int f = faceList[i];
-	texOffsets[f][0] = tmp[0];
-	texOffsets[f][1] = tmp[1];
+        const int f = faceList[i];
+        texOffsets[f][0] = tmp[0];
+        texOffsets[f][1] = tmp[1];
       }
     }
     return true;
@@ -205,10 +205,11 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     if ((pd == -1) && (drvname != "-1")) {
       std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
       return false;
-    } else {
+    }
+    else {
       for (int i = 0; i < (int)faceList.size(); i++) {
-	const int f = faceList[i];
-	phyDrvs[f] = pd;
+        const int f = faceList[i];
+        phyDrvs[f] = pd;
       }
       return true;
     }
@@ -230,7 +231,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     else {
       gotMaterial = true;
       if (materror) {
-	gotMatError = true;
+        gotMatError = true;
       }
     }
   }
@@ -248,8 +249,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 }
 
 
-static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
-{
+static void getEdgeLengths(const MeshTransform& xform, float lengths[6]) {
   MeshTransform::Tool xformTool(xform);
 
   fvec3 vo(-1.0f, -1.0f, 0.0f);
@@ -280,13 +280,12 @@ static void getEdgeLengths(const MeshTransform& xform, float lengths[6])
 }
 
 
-void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomPyramid::writeToGroupDef(GroupDefinition* groupdef) const {
   if (isOldPyramid && transform.isEmpty()) {
     PyramidBuilding* pyr =
       new PyramidBuilding(pos, rotation,
-			  fabsf(size.x), fabsf(size.y), fabsf(size.z),
-			  driveThrough, shootThrough, ricochet);
+                          fabsf(size.x), fabsf(size.y), fabsf(size.z),
+                          driveThrough, shootThrough, ricochet);
     if (flipz || (size.z < 0.0f)) {
       pyr->setZFlip();
     }
@@ -363,22 +362,24 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
       if (face < 4) {
         cornerCount = 3;
         cornerOffset = 0;
-      } else {
+      }
+      else {
         cornerCount = 4;
         cornerOffset = 3;
       }
       for (int corner = 0; corner < cornerCount; corner++) {
         fvec2 txcd;
         for (int a = 0; a < 2; a++) {
-    float scale;
-    if (texSizes[face][a] >= 0.0f) {
-      scale = texSizes[face][a];
-    } else {
-      const int axis = txcdAxis[face][a];
-      scale = (edgeLengths[axis] / -texSizes[face][a]);
-    }
-    const int realCorner = corner + cornerOffset;
-    txcd[a] = (txcdData[realCorner][a] - texOffsets[face][a]) * scale;
+          float scale;
+          if (texSizes[face][a] >= 0.0f) {
+            scale = texSizes[face][a];
+          }
+          else {
+            const int axis = txcdAxis[face][a];
+            scale = (edgeLengths[axis] / -texSizes[face][a]);
+          }
+          const int realCorner = corner + cornerOffset;
+          txcd[a] = (txcdData[realCorner][a] - texOffsets[face][a]) * scale;
         }
         txcds.push_back(txcd);
       }
@@ -386,8 +387,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   }
 
   MeshObstacle* mesh = new MeshObstacle(xform, checkTypes, checkPoints,
-					verts, norms, txcds, FaceCount,
-					false, false, 0, 0, false);
+                                        verts, norms, txcds, FaceCount,
+                                        false, false, 0, 0, false);
 
   mesh->setDriveThrough(driveThrough);
   mesh->setShootThrough(shootThrough);
@@ -410,8 +411,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     it.push_back(0); it.push_back(1); it.push_back(2);
   }
   mesh->addFace(iv, in, it, mats[XP], phyDrvs[XP], false, false,
-		driveThroughs[XP], shootThroughs[XP], ricochets[XP],
-		false, NULL);
+                driveThroughs[XP], shootThroughs[XP], ricochets[XP],
+                false, NULL);
 
   // XN
   iv.clear(); it.clear();
@@ -420,8 +421,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     it.push_back(3); it.push_back(4); it.push_back(5);
   }
   mesh->addFace(iv, in, it, mats[XN], phyDrvs[XN], false, false,
-		driveThroughs[XN], shootThroughs[XN], ricochets[XN],
-		false, NULL);
+                driveThroughs[XN], shootThroughs[XN], ricochets[XN],
+                false, NULL);
 
   // YP
   iv.clear(); it.clear();
@@ -430,8 +431,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     it.push_back(6); it.push_back(7); it.push_back(8);
   }
   mesh->addFace(iv, in, it, mats[YP], phyDrvs[YP], false, false,
-		driveThroughs[YP], shootThroughs[YP], ricochets[YP],
-		false, NULL);
+                driveThroughs[YP], shootThroughs[YP], ricochets[YP],
+                false, NULL);
 
   // YN
   iv.clear(); it.clear();
@@ -440,8 +441,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     it.push_back(9); it.push_back(10); it.push_back(11);
   }
   mesh->addFace(iv, in, it, mats[YN], phyDrvs[YN], false, false,
-		driveThroughs[YN], shootThroughs[YN], ricochets[YN],
-		false, NULL);
+                driveThroughs[YN], shootThroughs[YN], ricochets[YN],
+                false, NULL);
 
   // ZN
   iv.clear(); it.clear();
@@ -450,8 +451,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     it.push_back(12); it.push_back(13); it.push_back(14); it.push_back(15);
   }
   mesh->addFace(iv, in, it, mats[ZN], phyDrvs[ZN], false, false,
-		driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
-		false, NULL);
+                driveThroughs[ZN], shootThroughs[ZN], ricochets[ZN],
+                false, NULL);
 
   mesh->setName(name.c_str());
 
@@ -460,7 +461,8 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
   // to be or not to be...
   if (mesh->isValid()) {
     groupdef->addObstacle(mesh);
-  } else {
+  }
+  else {
     delete mesh;
   }
 
@@ -472,6 +474,6 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

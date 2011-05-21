@@ -67,8 +67,7 @@
 
 WorldInfo::WorldInfo() :
   maxHeight(0.0f),
-  database(NULL)
-{
+  database(NULL) {
   size[0] = 400.0f;
   size[1] = 400.0f;
   gravity = -9.81f;
@@ -85,8 +84,7 @@ WorldInfo::WorldInfo() :
 }
 
 
-WorldInfo::~WorldInfo()
-{
+WorldInfo::~WorldInfo() {
   delete[] database;
   database = NULL;
   databaseSize = 0;
@@ -107,38 +105,33 @@ WorldInfo::~WorldInfo()
 
 
 void WorldInfo::addWall(float x, float y, float z,
-                        float r, float w, float h)
-{
+                        float r, float w, float h) {
   const fvec3 pos(x, y, z);
   WallObstacle* wall = new WallObstacle(pos, r, w, h, false);
   OBSTACLEMGR.addWorldObstacle(wall);
 }
 
 
-void WorldInfo::addZone(const CustomZone *zone)
-{
-  entryZones.addZone( zone );
+void WorldInfo::addZone(const CustomZone* zone) {
+  entryZones.addZone(zone);
 }
 
-void WorldInfo::addWeapon(const FlagType *type, const fvec3& origin,
-			  float direction, float tilt, TeamColor teamColor,
-			  float initdelay, const std::vector<float> &delay,
-			  BzTime &sync, bool fromMesh)
-{
+void WorldInfo::addWeapon(const FlagType* type, const fvec3& origin,
+                          float direction, float tilt, TeamColor teamColor,
+                          float initdelay, const std::vector<float> &delay,
+                          BzTime& sync, bool fromMesh) {
   worldWeapons.add(type, origin, direction, tilt,
-		   teamColor, initdelay, delay, sync, fromMesh);
+                   teamColor, initdelay, delay, sync, fromMesh);
 }
 
-void WorldInfo::addWaterLevel (float level, const BzMaterial* matref)
-{
+void WorldInfo::addWaterLevel(float level, const BzMaterial* matref) {
   waterLevel = level;
   waterMatRef = matref;
 }
 
 void WorldInfo::addBox(float x, float y, float z, float r,
-		       float w, float d, float h,
-		       bool drive, bool shoot, bool rico)
-{
+                       float w, float d, float h,
+                       bool drive, bool shoot, bool rico) {
   const fvec3 pos(x, y, z);
   BoxBuilding* box = new BoxBuilding(pos, r, w, d, h,
                                      drive, shoot, rico, false);
@@ -146,9 +139,8 @@ void WorldInfo::addBox(float x, float y, float z, float r,
 }
 
 void WorldInfo::addPyramid(float x, float y, float z, float r,
-			   float w, float d, float h, bool flipZ,
-			   bool drive, bool shoot, bool rico)
-{
+                           float w, float d, float h, bool flipZ,
+                           bool drive, bool shoot, bool rico) {
   const fvec3 pos(x, y, z);
   PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h,
                                              drive, shoot, rico);
@@ -159,9 +151,8 @@ void WorldInfo::addPyramid(float x, float y, float z, float r,
 }
 
 void WorldInfo::addTeleporter(float x, float y, float z, float r,
-			      float w, float d, float h, float b,
-			      bool drive, bool shoot, bool rico)
-{
+                              float w, float d, float h, float b,
+                              bool drive, bool shoot, bool rico) {
   const fvec3 pos(x, y, z);
   MeshTransform transform;
   Teleporter* tele = new Teleporter(transform, pos, r, w, d, h, b, 0.0f,
@@ -171,16 +162,14 @@ void WorldInfo::addTeleporter(float x, float y, float z, float r,
 
 
 void WorldInfo::addBase(const fvec3& pos, float r,
-			const fvec3& _size, int color,
-			bool /* drive */, bool /* shoot */, bool rico)
-{
+                        const fvec3& _size, int color,
+                        bool /* drive */, bool /* shoot */, bool rico) {
   BaseBuilding* base = new BaseBuilding(pos, r, _size, color, rico);
   OBSTACLEMGR.addWorldObstacle(base);
 }
 
 
-void WorldInfo::addLink(int src, int dst)
-{
+void WorldInfo::addLink(int src, int dst) {
   LinkDef linkDef;
   linkDef.addSrc(TextUtils::itoa(src));
   linkDef.addDst(TextUtils::itoa(dst));
@@ -189,14 +178,12 @@ void WorldInfo::addLink(int src, int dst)
 }
 
 
-void WorldInfo::setMapInfo(const std::vector<std::string>& lines)
-{
+void WorldInfo::setMapInfo(const std::vector<std::string>& lines) {
   mapInfo.setLines(lines);
 }
 
 
-void WorldInfo::makeWaterMaterial()
-{
+void WorldInfo::makeWaterMaterial() {
   // the texture matrix
   TextureMatrix* texmat = new TextureMatrix;
   texmat->setName("WaterMaterial");
@@ -223,39 +210,33 @@ void WorldInfo::makeWaterMaterial()
 }
 
 
-float WorldInfo::getWaterLevel() const
-{
+float WorldInfo::getWaterLevel() const {
   return waterLevel;
 }
 
 
-float WorldInfo::getMaxWorldHeight() const
-{
+float WorldInfo::getMaxWorldHeight() const {
   return maxHeight;
 }
 
 
-WorldWeapons& WorldInfo::getWorldWeapons()
-{
+WorldWeapons& WorldInfo::getWorldWeapons() {
   return worldWeapons;
 }
 
 
-EntryZones& WorldInfo::getEntryZones()
-{
+EntryZones& WorldInfo::getEntryZones() {
   return entryZones;
 }
 
 
-void WorldInfo::loadCollisionManager()
-{
+void WorldInfo::loadCollisionManager() {
   COLLISIONMGR.load();
   return;
 }
 
 
-void WorldInfo::checkCollisionManager()
-{
+void WorldInfo::checkCollisionManager() {
   if (COLLISIONMGR.needReload()) {
     // reload the collision grid
     COLLISIONMGR.load();
@@ -265,9 +246,8 @@ void WorldInfo::checkCollisionManager()
 
 
 InBuildingType WorldInfo::inCylinderNoOctree(Obstacle** location,
-					     float x, float y, float z,
-					     float radius, float height) const
-{
+                                             float x, float y, float z,
+                                             float radius, float height) const {
   if (height < Epsilon) {
     height = Epsilon;
   }
@@ -279,16 +259,16 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle** location,
     for (unsigned int i = 0; i < list.size(); i++) {
       Obstacle* obs = list[i];
       if (obs->inCylinder(pos, radius, height)) {
-	if (location != NULL) {
-	  *location = obs;
-	}
-	return classifyHit(obs);
+        if (location != NULL) {
+          *location = obs;
+        }
+        return classifyHit(obs);
       }
     }
   }
 
   if (location != NULL) {
-    *location = (Obstacle *)NULL;
+    *location = (Obstacle*)NULL;
   }
 
   return NOT_IN_BUILDING;
@@ -296,9 +276,8 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle** location,
 
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle** location,
-					     const fvec3& pos, float radius,
-					     float height) const
-{
+                                             const fvec3& pos, float radius,
+                                             float height) const {
   if (height < Epsilon) {
     height = Epsilon;
   }
@@ -306,7 +285,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle** location,
   *location = NULL;
 
   // check everything but walls
-  const ObsList* olist = COLLISIONMGR.cylinderTest (pos, radius, height);
+  const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inCylinder(pos, radius, height)) {
@@ -320,18 +299,16 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle** location,
 
 
 InBuildingType WorldInfo::cylinderInBuilding(const Obstacle** location,
-					     float x, float y, float z, float radius,
-					     float height) const
-{
+                                             float x, float y, float z, float radius,
+                                             float height) const {
   const fvec3 pos(x, y, z);
-  return cylinderInBuilding (location, pos, radius, height);
+  return cylinderInBuilding(location, pos, radius, height);
 }
 
 
 InBuildingType WorldInfo::boxInBuilding(const Obstacle** location,
-					const fvec3& pos, float angle,
-					float width, float breadth, float height) const
-{
+                                        const fvec3& pos, float angle,
+                                        float width, float breadth, float height) const {
   if (height < Epsilon) {
     height = Epsilon;
   }
@@ -340,7 +317,7 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle** location,
 
   // check everything but walls
   const ObsList* olist =
-    COLLISIONMGR.boxTest (pos, angle, width, breadth, height);
+    COLLISIONMGR.boxTest(pos, angle, width, breadth, height);
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
     if (obs->inBox(pos, angle, width, breadth, height)) {
@@ -353,8 +330,7 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle** location,
 }
 
 
-InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
-{
+InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const {
   if (obstacle == NULL) {
     return NOT_IN_BUILDING;
   }
@@ -362,7 +338,8 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
     case boxType: {
       if (ServerIntangibilityManager::instance().getWorldObjectTangibility(obstacle) != 0) {
         return IN_BOX_DRIVETHROUGH;
-      } else {
+      }
+      else {
         return IN_BOX_NOTDRIVETHROUGH;
       }
     }
@@ -381,8 +358,8 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
     default: {
       // FIXME - choke here?
       logDebugMessage(0,
-        "*** Unknown obstacle type in WorldInfo::classifyHit(): %i\n",
-        obstacle->getTypeID());
+                      "*** Unknown obstacle type in WorldInfo::classifyHit(): %i\n",
+                      obstacle->getTypeID());
       return IN_BASE;
     }
   }
@@ -391,8 +368,7 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const
 
 
 bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const fvec3& pos,
-				fvec3& pt) const
-{
+                                 fvec3& pt) const {
   FlagType* flagType = fi->flag.type;
   const int flagTeam = (int)flagType->flagTeam;
   const bool isTeamFlag = (flagTeam != NoTeam);
@@ -403,7 +379,8 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const fvec3& pos,
     if (entryZones.getClosePoint(safetyQual, pos, pt)) {
       return true;
     }
-  } else {
+  }
+  else {
     const std::string& idQual =
       CustomZone::getFlagIdQualifier(fi->getIndex());
     if (entryZones.getClosePoint(idQual, pos, pt)) {
@@ -419,8 +396,7 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const fvec3& pos,
 }
 
 
-bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, fvec3& pt) const
-{
+bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, fvec3& pt) const {
   FlagType* flagType = fi->flag.type;
   const int flagTeam = (int)flagType->flagTeam;
   const bool isTeamFlag = (flagTeam != NoTeam);
@@ -442,8 +418,7 @@ bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, fvec3& pt) const
 }
 
 
-bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, fvec3& pt) const
-{
+bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, fvec3& pt) const {
   const std::string& teamQual =
     CustomZone::getPlayerTeamQualifier((int)pi->getTeam());
   if (entryZones.getRandomPoint(teamQual, pt)) {
@@ -454,8 +429,7 @@ bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, fvec3& pt) const
 
 
 static bool parseLine(const std::string& line,
-                      std::string& cmd, std::string& args)
-{
+                      std::string& cmd, std::string& args) {
   const char* s = TextUtils::skipWhitespace(line.c_str());
   const char* e = TextUtils::skipNonWhitespace(s);
   if (e == s) {
@@ -467,8 +441,7 @@ static bool parseLine(const std::string& line,
 }
 
 
-void WorldInfo::createFaceZones()
-{
+void WorldInfo::createFaceZones() {
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (size_t m = 0; m < meshes.size(); m++) {
     const MeshObstacle* mesh = (const MeshObstacle*) meshes[m];
@@ -491,8 +464,8 @@ void WorldInfo::createFaceZones()
                   if (!parseLine(line, cmd, args) ||
                       !zone.readLine(cmd, args)) {
                     logDebugMessage(0,
-                      "WARNING: invalid face zone parameter: %s\n",
-                      sd->zoneParams[i].c_str());
+                                    "WARNING: invalid face zone parameter: %s\n",
+                                    sd->zoneParams[i].c_str());
                   }
                 }
               }
@@ -506,8 +479,7 @@ void WorldInfo::createFaceZones()
 }
 
 
-void WorldInfo::createMeshWeapons()
-{
+void WorldInfo::createMeshWeapons() {
   const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
   for (size_t m = 0; m < meshes.size(); m++) {
     const MeshObstacle* mesh = (const MeshObstacle*) meshes[m];
@@ -520,7 +492,7 @@ void WorldInfo::createMeshWeapons()
         if (!parseLine(lines[i], cmd, args) ||
             !weapon->readLine(cmd, args)) {
           logDebugMessage(0, "WARNING: invalid mesh weapon parameter: %s\n",
-                             lines[i].c_str());
+                          lines[i].c_str());
         }
       }
       weapon->writeToWorld(this);
@@ -530,8 +502,7 @@ void WorldInfo::createMeshWeapons()
 
 
 static void variableWarning(const std::string& type,
-                            std::set<std::string>& vars)
-{
+                            std::set<std::string>& vars) {
   std::set<std::string>::const_iterator it;
   for (it = vars.begin(); it != vars.end(); ++it) {
     const std::string& name = *it;
@@ -544,8 +515,7 @@ static void variableWarning(const std::string& type,
 }
 
 
-void WorldInfo::finishWorld()
-{
+void WorldInfo::finishWorld() {
   createFaceZones();
   createMeshWeapons();
 
@@ -583,8 +553,7 @@ void WorldInfo::finishWorld()
 }
 
 
-int WorldInfo::packDatabase()
-{
+int WorldInfo::packDatabase() {
   // deallocate any prior database
   if (database) {
     delete[] database;
@@ -596,7 +565,8 @@ int WorldInfo::packDatabase()
   luaWorld.addDir(clOptions->luaWorldDir, "");
   if (luaWorld.hasData("bzWorld.lua")) {
     clOptions->gameOptions |= LuaWorldScript;
-  } else {
+  }
+  else {
     clOptions->gameOptions &= ~LuaWorldScript;
   }
 
@@ -604,7 +574,8 @@ int WorldInfo::packDatabase()
   luaRules.addDir(clOptions->luaRulesDir, "");
   if (luaRules.hasData("bzRules.lua")) {
     clOptions->gameOptions |= LuaRulesScript;
-  } else {
+  }
+  else {
     clOptions->gameOptions &= ~LuaRulesScript;
   }
 
@@ -617,17 +588,17 @@ int WorldInfo::packDatabase()
 
   // compute the database size
   databaseSize = 0
-    + mapInfo.packSize()
-    + DYNCOLORMGR.packSize()
-    + TEXMATRIXMGR.packSize()
-    + MATERIALMGR.packSize()
-    + PHYDRVMGR.packSize()
-    + TRANSFORMMGR.packSize()
-    + OBSTACLEMGR.packSize()
-    + worldWeapons.packSize()
-    + entryZones.packSize()
-    + luaWorld.packSize()
-    + luaRules.packSize();
+                 + mapInfo.packSize()
+                 + DYNCOLORMGR.packSize()
+                 + TEXMATRIXMGR.packSize()
+                 + MATERIALMGR.packSize()
+                 + PHYDRVMGR.packSize()
+                 + TRANSFORMMGR.packSize()
+                 + OBSTACLEMGR.packSize()
+                 + worldWeapons.packSize()
+                 + entryZones.packSize()
+                 + luaWorld.packSize()
+                 + luaRules.packSize();
 
   // add water level size
   databaseSize += sizeof(float);
@@ -637,7 +608,7 @@ int WorldInfo::packDatabase()
 
   // allocate the buffer
   database = new char[databaseSize];
-  void *databasePtr = database;
+  void* databasePtr = database;
 
   // pack map information
   databasePtr = mapInfo.pack(databasePtr);
@@ -686,13 +657,13 @@ int WorldInfo::packDatabase()
   {
     gzDBlen = compressBound(databaseSize);
     gzDB    = new char[gzDBlen];
-    const int code = compress2 ((Bytef*)gzDB, &gzDBlen,
-                                (Bytef*)database, databaseSize, 9);
+    const int code = compress2((Bytef*)gzDB, &gzDBlen,
+                               (Bytef*)database, databaseSize, 9);
     if (code != Z_OK) {
-      printf ("Could not create compressed world database: %i\n", code);
+      printf("Could not create compressed world database: %i\n", code);
       delete[] gzDB;
       delete[] database;
-      exit (1);
+      exit(1);
     }
   }
   const BzTime endTime = BzTime::getCurrent();
@@ -703,29 +674,26 @@ int WorldInfo::packDatabase()
   delete[] database;
   database = gzDB;
 
-  logDebugMessage(1,"Map size: uncompressed = %i, compressed = %i\n",
-	   uncompressedSize, databaseSize);
+  logDebugMessage(1, "Map size: uncompressed = %i, compressed = %i\n",
+                  uncompressedSize, databaseSize);
 
-  logDebugMessage(3,"Compression: %.3f seconds\n", endTime - startTime);
+  logDebugMessage(3, "Compression: %.3f seconds\n", endTime - startTime);
 
   return 1;
 }
 
 
-void *WorldInfo::getDatabase() const
-{
+void* WorldInfo::getDatabase() const {
   return database;
 }
 
 
-int WorldInfo::getDatabaseSize() const
-{
+int WorldInfo::getDatabaseSize() const {
   return databaseSize;
 }
 
 
-int WorldInfo::getUncompressedSize() const
-{
+int WorldInfo::getUncompressedSize() const {
   return uncompressedSize;
 }
 
@@ -733,24 +701,23 @@ int WorldInfo::getUncompressedSize() const
 const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
                                        const fvec3& pos, float angle,
                                        float dx, float dy, float dz,
-                                       bool directional, bool checkWalls) const
-{
+                                       bool directional, bool checkWalls) const {
   // check walls
-  if(checkWalls)
-  {
+  if (checkWalls) {
     const ObstacleList& walls = OBSTACLEMGR.getWalls();
     for (unsigned int w = 0; w < walls.size(); w++) {
       const WallObstacle* wall = (const WallObstacle*) walls[w];
-      if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
-	return wall;
+      if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+        return wall;
+      }
     }
   }
 
   // get the list of potential hits from the collision manager
-  const ObsList* olist = COLLISIONMGR.movingBoxTest (oldPos, oldAngle, pos, angle, dx, dy, dz);
+  const ObsList* olist = COLLISIONMGR.movingBoxTest(oldPos, oldAngle, pos, angle, dx, dy, dz);
 
   // sort the list by type and height
-  qsort (olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
+  qsort(olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
 
   int i;
 
@@ -762,7 +729,7 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
       break;
     }
 
-    bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+    bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs) != 0;
 
     if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
@@ -790,44 +757,50 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
     // first check the face
     // if the face is drive thru, then we don't care about the tangibility of the mesh
     bool driveThru = obs->isDriveThrough() != 0;
-    if (!driveThru)
-      driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+    if (!driveThru) {
+      driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs) != 0;
+    }
 
-    if ( !driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       const float facePos2 = face->getPosition().z;
-      if (face->isUpPlane() && (!goingDown || (oldPos.z < (facePos2 - 1.0e-3f))))
-	continue;
-      else if (face->isDownPlane() && ((oldPos.z >= facePos2) || goingDown))
-	continue;
+      if (face->isUpPlane() && (!goingDown || (oldPos.z < (facePos2 - 1.0e-3f)))) {
+        continue;
+      }
+      else if (face->isDownPlane() && ((oldPos.z >= facePos2) || goingDown)) {
+        continue;
+      }
       else {
-	// add the face to the hitlist
-	olist->list[hitCount] = (Obstacle*) obs;
-	hitCount++;
-	// compute its dot product and stick it in the scratchPad
-	const float dot = fvec3::dot(vel, face->getPlane().xyz());
-	face->scratchPad = dot;
+        // add the face to the hitlist
+        olist->list[hitCount] = (Obstacle*) obs;
+        hitCount++;
+        // compute its dot product and stick it in the scratchPad
+        const float dot = fvec3::dot(vel, face->getPlane().xyz());
+        face->scratchPad = dot;
       }
     }
   }
   // sort the list by dot product (this sort will be replaced with a running tab
-  qsort (olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
+  qsort(olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
 
   // see if there as a valid meshface hit
   if (hitCount > 0) {
     const MeshFace* face = (const MeshFace*) olist->list[0];
-    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
+    if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional) {
       return face;
+    }
   }
-  if (i == olist->count)
-    return NULL; // no more obstacles, we are done
+  if (i == olist->count) {
+    return NULL;  // no more obstacles, we are done
+  }
 
   // check mesh obstacles
   for (; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];
-    bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs)!=0;
+    bool driveThru = ServerIntangibilityManager::instance().getWorldObjectTangibility(obs) != 0;
 
-    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+    if (!driveThru && obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz)) {
       return obs;
+    }
   }
 
   return NULL; // no more obstacles, we are done
@@ -838,6 +811,6 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

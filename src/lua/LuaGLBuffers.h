@@ -26,13 +26,13 @@ struct lua_State;
 class LuaGLBufferData {
   public:
     LuaGLBufferData()
-    : id(0)
-    , target(GL_ARRAY_BUFFER)
-    , usage(GL_STATIC_READ)
-    , size(0)
-    , indexMax(0)
-    , indexType(0)
-    , indexTypeSize(0)
+      : id(0)
+      , target(GL_ARRAY_BUFFER)
+      , usage(GL_STATIC_READ)
+      , size(0)
+      , indexMax(0)
+      , indexType(0)
+      , indexTypeSize(0)
     {}
     virtual ~LuaGLBufferData() {};
 
@@ -94,11 +94,11 @@ class LuaGLBufferMgr {
     static LuaGLBuffer* GetLuaGLBuffer(lua_State* L, int index);
 
     static const void* ParseArgs(lua_State* L, int index,
-				 LuaGLBufferData& bufData);
+                                 LuaGLBufferData& bufData);
     static const void* ParseTable(lua_State* L, int index,
-				  LuaGLBufferData& bufData);
+                                  LuaGLBufferData& bufData);
     static void IndexCheck(lua_State* L,
-			   LuaGLBufferData& bufData, const void* data);
+                           LuaGLBufferData& bufData, const void* data);
     static void SetBufferData(const LuaGLBufferData& buffer, const void* data);
 
   private: // call-outs
@@ -124,6 +124,6 @@ extern LuaGLBufferMgr luaGLBufferMgr;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

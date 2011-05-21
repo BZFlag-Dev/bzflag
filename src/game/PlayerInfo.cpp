@@ -30,7 +30,7 @@ WordFilter PlayerInfo::serverSpoofingFilter;
 BzTime PlayerInfo::now = BzTime::getCurrent();
 
 bool PlayerInfo::callSignFiltering = false;
-WordFilter *PlayerInfo::filterData = NULL;
+WordFilter* PlayerInfo::filterData = NULL;
 bool PlayerInfo::simpleFiltering = true;
 
 
@@ -38,8 +38,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   state(PlayerInLimbo), playerIndex(_playerIndex), enterProcessed(false), completelyAdded(false),
   type(TankPlayer), updates(AllUpdates), team(NoTeam), flag(-1), spamWarns(0), lastMsgTime(now),
   paused(false), pausedSince(BzTime::getNullTime()), autopilot(false),
-  tracker(0)
-{
+  tracker(0) {
   notResponding = false;
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
@@ -51,18 +50,16 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
 }
 
 
-void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
-				     WordFilter &_filterData,
-				     bool	_simpleFiltering)
-{
+void PlayerInfo::setFilterParameters(bool _callSignFiltering,
+                                     WordFilter& _filterData,
+                                     bool _simpleFiltering) {
   callSignFiltering = _callSignFiltering;
-  filterData	= &_filterData;
+  filterData  = &_filterData;
   simpleFiltering   = _simpleFiltering;
 }
 
 
-void PlayerInfo::resetPlayer(bool ctf)
-{
+void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
 
   lastupdate = now;
@@ -76,110 +73,98 @@ void PlayerInfo::resetPlayer(bool ctf)
 }
 
 
-void PlayerInfo::setRestartOnBase(bool on)
-{
+void PlayerInfo::setRestartOnBase(bool on) {
   restartOnBase = on;
 }
 
 
-bool PlayerInfo::shouldRestartAtBase()
-{
+bool PlayerInfo::shouldRestartAtBase() {
   return restartOnBase;
 }
 
 
-void PlayerInfo::signingOn()
-{
+void PlayerInfo::signingOn() {
   state = PlayerDead;
 }
 
 
-void PlayerInfo::setAlive()
-{
+void PlayerInfo::setAlive() {
   state = PlayerAlive;
   paused = false;
   flag = -1;
 }
 
 
-void PlayerInfo::setDead()
-{
+void PlayerInfo::setDead() {
   state = PlayerDead;
 }
 
 
-void *PlayerInfo::packUpdate(void *buf)
-{
+void* PlayerInfo::packUpdate(void* buf) {
   buf = nboPackUInt16(buf, uint16_t(type));
   buf = nboPackInt16(buf, int16_t(team));
   return buf;
 }
 
 
-void PlayerInfo::packUpdate(NetMessage& netMsg)
-{
+void PlayerInfo::packUpdate(NetMessage& netMsg) {
   netMsg.packUInt16(uint16_t(type));
   netMsg.packInt16(int16_t(team));
 }
 
 
-void *PlayerInfo::packId(void *buf)
-{
+void* PlayerInfo::packId(void* buf) {
   buf = nboPackString(buf, callSign, CallSignLen);
   return buf;
 }
 
 
-void PlayerInfo::packId(NetMessage& netMsg)
-{
+void PlayerInfo::packId(NetMessage& netMsg) {
   netMsg.packString(callSign, CallSignLen);
 }
 
 
-void PlayerInfo::setCallsign(const char *text)
-{
-  if (!text)
+void PlayerInfo::setCallsign(const char* text) {
+  if (!text) {
     return;
+  }
 
   memset(callSign, 0, CallSignLen);
   strncpy(callSign, text, CallSignLen - 1);
 }
 
 
-void PlayerInfo::setToken(const char *text)
-{
-  if (!text)
+void PlayerInfo::setToken(const char* text) {
+  if (!text) {
     return;
+  }
 
   memset(token, 0, TokenLen);
   strncpy(token, text, TokenLen - 1);
 }
 
 
-void PlayerInfo::setClientVersion(const char *text)
-{
-  if (!text)
+void PlayerInfo::setClientVersion(const char* text) {
+  if (!text) {
     return;
+  }
 
   memset(clientVersion, 0, VersionLen);
   strncpy(clientVersion, text, VersionLen - 1);
 }
 
 
-void PlayerInfo::setType (PlayerType playerType)
-{
+void PlayerInfo::setType(PlayerType playerType) {
   type = playerType;
 }
 
 
-void PlayerInfo::setUpdates (NetworkUpdates whichUpdates)
-{
+void PlayerInfo::setUpdates(NetworkUpdates whichUpdates) {
   updates = whichUpdates;
 }
 
 
-bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
-{
+bool PlayerInfo::processEnter(uint16_t& rejectCode, char* rejectMsg) {
   // terminate the strings
   callSign[CallSignLen - 1] = '\0';
   token[TokenLen - 1] = '\0';
@@ -187,7 +172,7 @@ bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
   referrer[ReferrerLen - 1] = '\0';
 
   logDebugMessage(2, "Player %s [%d] sent version string: %s\n",
-		  callSign, playerIndex, clientVersion);
+                  callSign, playerIndex, clientVersion);
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
@@ -216,7 +201,7 @@ bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
     if (filterData->filter(cs, simpleFiltering)) {
       rejectCode = RejectBadCallsign;
       strncpy(rejectMsg,
-	      "The callsign was rejected. Try a different callsign.", MessageLen);
+              "The callsign was rejected. Try a different callsign.", MessageLen);
       return false;
     }
   }
@@ -231,8 +216,7 @@ bool PlayerInfo::processEnter (uint16_t &rejectCode, char *rejectMsg)
 }
 
 
-bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
-{
+bool PlayerInfo::unpackEnter(void* buf, uint16_t& rejectCode, char* rejectMsg) {
   // data: type, team, name,
   uint16_t _type;
   uint16_t _updates;
@@ -252,14 +236,12 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 }
 
 
-const char *PlayerInfo::getCallSign() const
-{
+const char* PlayerInfo::getCallSign() const {
   return callSign;
 }
 
 
-bool PlayerInfo::isCallSignReadable()
-{
+bool PlayerInfo::isCallSignReadable() {
   // callsign readability filter, make sure there are more alphanum than non
   // keep a count of alpha-numerics
 
@@ -279,7 +261,7 @@ bool PlayerInfo::isCallSignReadable()
   // prevent spoofing global login indicators + and @ in the scoreboard,
   // reserve > for /msg >admin and /msg >team,
   // and reserve # for /kick or /ban #slot
-  if (*callSign=='+' || *callSign=='@' || *callSign=='>' || *callSign=='#') {
+  if (*callSign == '+' || *callSign == '@' || *callSign == '>' || *callSign == '#') {
     errorString = "Callsigns are not allowed to start with +, @, > or #.";
     return false;
   }
@@ -287,7 +269,7 @@ bool PlayerInfo::isCallSignReadable()
   // start with true to reject leading space
   bool lastWasSpace = true;
   int alnumCount = 0;
-  const char *sp = callSign;
+  const char* sp = callSign;
   do {
     // reject sequential spaces
     if (lastWasSpace && isspace(*sp)) {
@@ -303,124 +285,112 @@ bool PlayerInfo::isCallSignReadable()
     if (isspace(*sp)) {
       // only space is valid, not tab etc.
       if (*sp != ' ') {
-	errorString = "Invalid whitespace in callsign.";
-	return false;
+        errorString = "Invalid whitespace in callsign.";
+        return false;
       }
       lastWasSpace = true;
-    } else {
-      lastWasSpace = false;
-      if (isalnum(*sp))
-	alnumCount++;
     }
-  } while (*++sp);
+    else {
+      lastWasSpace = false;
+      if (isalnum(*sp)) {
+        alnumCount++;
+      }
+    }
+  }
+  while (*++sp);
 
   bool readable = ((float)alnumCount / (float)callsignlen) > 0.5f;
-  if (!readable)
+  if (!readable) {
     errorString = "Callsign rejected. Please use mostly letters and numbers.";
+  }
   return readable;
 }
 
 
-const char *PlayerInfo::getToken() const
-{
+const char* PlayerInfo::getToken() const {
   return token;
 }
 
 
-const char *PlayerInfo::getReferrer() const
-{
+const char* PlayerInfo::getReferrer() const {
   return referrer;
 }
 
 
-void PlayerInfo::clearToken()
-{
+void PlayerInfo::clearToken() {
   token[0] = '\0';
 }
 
 
-void PlayerInfo::clearReferrer()
-{
+void PlayerInfo::clearReferrer() {
   referrer[0] = '\0';
 }
 
 
-void *PlayerInfo::packVirtualFlagCapture(void *buf)
-{
+void* PlayerInfo::packVirtualFlagCapture(void* buf) {
   buf = nboPackInt16(buf, int16_t(int(team) - 1));
   buf = nboPackInt16(buf, int16_t(1 + (int(team) % 4)));
   return buf;
 }
 
 
-bool PlayerInfo::isTeam(TeamColor _team) const
-{
+bool PlayerInfo::isTeam(TeamColor _team) const {
   return team == _team;
 }
 
 
-bool PlayerInfo::isObserver() const
-{
+bool PlayerInfo::isObserver() const {
   return team == ObserverTeam;
 }
 
 
-TeamColor PlayerInfo::getTeam() const
-{
+TeamColor PlayerInfo::getTeam() const {
   return team;
 }
 
 
-void PlayerInfo::setTeam(TeamColor _team)
-{
+void PlayerInfo::setTeam(TeamColor _team) {
   team = _team;
 }
 
 
-void PlayerInfo::wasARabbit()
-{
+void PlayerInfo::wasARabbit() {
   team = HunterTeam;
   wasRabbit = true;
 }
 
 
-void PlayerInfo::wasNotARabbit()
-{
+void PlayerInfo::wasNotARabbit() {
   wasRabbit = false;
 }
 
 
-void PlayerInfo::resetFlag()
-{
+void PlayerInfo::resetFlag() {
   flag = -1;
   lastFlagDropTime = now;
 }
 
 
-void PlayerInfo::setFlag(int _flag)
-{
+void PlayerInfo::setFlag(int _flag) {
   flag = _flag;
 }
 
 
-bool PlayerInfo::isFlagTransitSafe()
-{
+bool PlayerInfo::isFlagTransitSafe() {
   return now - lastFlagDropTime >= 2.0f;
 }
 
 
-const char *PlayerInfo::getClientVersion()
-{
+const char* PlayerInfo::getClientVersion() {
   return clientVersion;
 }
 
 
-std::string PlayerInfo::getIdleStat()
-{
+std::string PlayerInfo::getIdleStat() {
   std::string reply;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     reply = TextUtils::format("%s\t: %4ds", callSign,
-			      int(now - lastupdate));
+                              int(now - lastupdate));
     if (paused) {
       reply += TextUtils::format("  paused %4ds", int(now - pausedSince));
     }
@@ -429,29 +399,26 @@ std::string PlayerInfo::getIdleStat()
 }
 
 
-bool PlayerInfo::canBeRabbit(bool relaxing)
-{
-  if (paused || notResponding || (team == ObserverTeam))
+bool PlayerInfo::canBeRabbit(bool relaxing) {
+  if (paused || notResponding || (team == ObserverTeam)) {
     return false;
+  }
   return relaxing ? (state > PlayerInLimbo) : (state == PlayerAlive);
 }
 
 
-void PlayerInfo::setPaused(bool _paused)
-{
+void PlayerInfo::setPaused(bool _paused) {
   paused = _paused;
   pausedSince = now;
 }
 
 
-void PlayerInfo::setAutoPilot(bool _autopilot)
-{
+void PlayerInfo::setAutoPilot(bool _autopilot) {
   autopilot = _autopilot;
 }
 
 
-bool PlayerInfo::isTooMuchIdling(float kickThresh)
-{
+bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   bool idling = false;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     const float idletime = (float)(now - lastupdate);
@@ -463,8 +430,7 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh)
 }
 
 
-bool PlayerInfo::hasStartedToNotRespond()
-{
+bool PlayerInfo::hasStartedToNotRespond() {
   const float notRespondingTime =
     BZDB.eval(BZDBNAMES.NOTRESPONDINGTIME);
   bool startingToNotRespond = false;
@@ -479,62 +445,53 @@ bool PlayerInfo::hasStartedToNotRespond()
 }
 
 
-void PlayerInfo::hasSent()
-{
+void PlayerInfo::hasSent() {
   lastmsg = now;
 }
 
 
-bool PlayerInfo::hasPlayedEarly()
-{
+bool PlayerInfo::hasPlayedEarly() {
   bool returnValue = playedEarly;
   playedEarly      = false;
   return returnValue;
 }
 
 
-void PlayerInfo::setPlayedEarly(bool early)
-{
+void PlayerInfo::setPlayedEarly(bool early) {
   playedEarly = early;
 }
 
 
-void PlayerInfo::updateIdleTime()
-{
+void PlayerInfo::updateIdleTime() {
   if (!paused && (state != PlayerDead)) {
     lastupdate = now;
   }
 }
 
 
-void	PlayerInfo::setReplayState(PlayerReplayState _state)
-{
+void  PlayerInfo::setReplayState(PlayerReplayState _state) {
   replayState = _state;
 }
 
 
-PlayerReplayState PlayerInfo::getReplayState()
-{
+PlayerReplayState PlayerInfo::getReplayState() {
   return replayState;
 }
 
 
 
-void PlayerInfo::setTrackerID(unsigned short int t)
-{
+void PlayerInfo::setTrackerID(unsigned short int t) {
   tracker = t;
 }
 
 
 
-unsigned short int PlayerInfo::trackerID()
-{
+unsigned short int PlayerInfo::trackerID() {
   return tracker;
 }
 
 
-void PlayerInfo::setCurrentTime(BzTime tm)
-{
+void PlayerInfo::setCurrentTime(BzTime tm) {
   now = tm;
 }
 
@@ -543,6 +500,6 @@ void PlayerInfo::setCurrentTime(BzTime tm)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -11,7 +11,7 @@
  */
 
 /* OpenGLTexture:
- *	Encapsulates an OpenGL texture.
+ *  Encapsulates an OpenGL texture.
  *
  * Data must be in GL_RGBA format with type GL_UNSIGNED_BYTE.
  * If, for all pixels, the RGB components are equal, then
@@ -38,8 +38,8 @@
  * <, <=, >, >= define an arbitrary ordering of textures.
  */
 
-#ifndef	BZF_OPENGL_TEXTURE_H
-#define	BZF_OPENGL_TEXTURE_H
+#ifndef BZF_OPENGL_TEXTURE_H
+#define BZF_OPENGL_TEXTURE_H
 
 #include "common.h"
 #include <string>
@@ -64,78 +64,78 @@ class OpenGLTexture {
                   int internalFormat = 0);
     ~OpenGLTexture();
 
-    bool		hasAlpha() const;
+    bool    hasAlpha() const;
 
-    bool		execute();
+    bool    execute();
 
-    float		getAspectRatio() const;
-    int			getWidth() const;
-    int			getHeight() const;
+    float   getAspectRatio() const;
+    int     getWidth() const;
+    int     getHeight() const;
 
-    void		setFilter(Filter);
-    Filter		getFilter();
-    unsigned int	getMinFilter();
-    unsigned int	getMagFilter();
-    unsigned int	getInternalFormat() const { return internalFormat; }
-    bool		getRepeat() const { return repeat; }
+    void    setFilter(Filter);
+    Filter    getFilter();
+    unsigned int  getMinFilter();
+    unsigned int  getMagFilter();
+    unsigned int  getInternalFormat() const { return internalFormat; }
+    bool    getRepeat() const { return repeat; }
 
-    bool		getColorAverages(fvec4& rgbaRaw,
-					 bool factorAlpha) const;
+    bool    getColorAverages(fvec4& rgbaRaw,
+                             bool factorAlpha) const;
 
-    void		freeContext();
-    void		initContext();
+    void    freeContext();
+    void    initContext();
 
     // MUST be in the final scaled format
-    void		replateImageData(const void* pixels);
+    void    replateImageData(const void* pixels);
 
-    static int		getFilterCount();
-    static const char*	getFilterName(Filter id);
-    static const char**	getFilterNames();
+    static int    getFilterCount();
+    static const char*  getFilterName(Filter id);
+    static const char** getFilterNames();
 
-    static Filter	getMaxFilter();
-    static void		setMaxFilter(Filter);
+    static Filter getMaxFilter();
+    static void   setMaxFilter(Filter);
 
-    int			getScaledHeight ( void ) { return scaledHeight;}
-    int			getScaledWidth ( void ) { return scaledHeight;}
+    int     getScaledHeight(void) { return scaledHeight;}
+    int     getScaledWidth(void) { return scaledHeight;}
 
   private:
     OpenGLTexture(const OpenGLTexture&);
-    OpenGLTexture&	operator=(const OpenGLTexture&);
+    OpenGLTexture&  operator=(const OpenGLTexture&);
 
-    bool		operator==(const OpenGLTexture&) const;
-    bool		operator!=(const OpenGLTexture&) const;
-    bool		operator<(const OpenGLTexture&) const;
-    int			getBestFormat(int width, int height,
-                                      const void* pixels);
-    bool		bind();
-    bool		setupImage(const void* pixels);
+    bool    operator==(const OpenGLTexture&) const;
+    bool    operator!=(const OpenGLTexture&) const;
+    bool    operator<(const OpenGLTexture&) const;
+    int     getBestFormat(int width, int height,
+                          const void* pixels);
+    bool    bind();
+    bool    setupImage(const void* pixels);
 
     void* operator new(size_t s) { return ::operator new(s);}
-    void  operator delete(void *p) {::operator delete(p);}
+    void  operator delete(void* p) {::operator delete(p);}
 
-    bool		alpha;
-    const int		width;
-    const int		height;
-    int			scaledWidth;
-    int			scaledHeight;
-    unsigned char*	image;
-    unsigned char*	imageMemory;
-    bool		repeat;
-    unsigned int	list;
-    Filter		filter;
-    Filter		realFilter;
-    unsigned int	internalFormat;
+    bool    alpha;
+    const int   width;
+    const int   height;
+    int     scaledWidth;
+    int     scaledHeight;
+    unsigned char*  image;
+    unsigned char*  imageMemory;
+    bool    repeat;
+    unsigned int  list;
+    Filter    filter;
+    Filter    realFilter;
+    unsigned int  internalFormat;
 
-    static Filter	maxFilter;
+    static Filter maxFilter;
 
-    static const int	filterCount;
-    static const char*	configFilterNames[];
+    static const int  filterCount;
+    static const char*  configFilterNames[];
 
-    static const unsigned int	minifyFilter[];
-    static const unsigned int	magnifyFilter[];
+    static const unsigned int minifyFilter[];
+    static const unsigned int magnifyFilter[];
 
-    static void		static_freeContext(void *that);
-    static void		static_initContext(void *that);
+    static void   static_freeContext(void* that);
+    static void   static_initContext(void* that);
 
     friend class TextureManager;
 };
@@ -144,17 +144,14 @@ class OpenGLTexture {
 // OpenGLTexture
 //
 
-inline bool		OpenGLTexture::hasAlpha() const
-{
+inline bool   OpenGLTexture::hasAlpha() const {
   return alpha;
 }
 
-inline int		OpenGLTexture::getWidth() const
-{
+inline int    OpenGLTexture::getWidth() const {
   return width;
 }
-inline int		OpenGLTexture::getHeight() const
-{
+inline int    OpenGLTexture::getHeight() const {
   return height;
 }
 
@@ -164,6 +161,6 @@ inline int		OpenGLTexture::getHeight() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

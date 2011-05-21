@@ -20,91 +20,87 @@
 #include "vectors.h"
 
 
-struct FileTextureInit
-{
-  std::string		name;
-  OpenGLTexture::Filter	filter;
+struct FileTextureInit {
+  std::string   name;
+  OpenGLTexture::Filter filter;
 };
 
 
-struct ImageInfo
-{
+struct ImageInfo {
   ImageInfo() {}
   ImageInfo(int i, OpenGLTexture* t) : id(i), texture(t) {}
   int   id;
   int   x;
   int   y;
   bool  alpha;
-  OpenGLTexture *texture;
+  OpenGLTexture* texture;
   std::string   name;
 };
 
 class TextureManager;
 
-struct ProcTextureInit
-{
-  std::string		name;
-  TextureManager	*manager;
-  OpenGLTexture::Filter	filter;
-  int			(*proc)(ProcTextureInit &init);
+struct ProcTextureInit {
+  std::string   name;
+  TextureManager*  manager;
+  OpenGLTexture::Filter filter;
+  int (*proc)(ProcTextureInit& init);
 };
 
 
-class TextureManager : public Singleton<TextureManager>
-{
-public:
-  int getTextureID( const char* name, bool reportFail = true );
-  int getTextureID( const std::string& name, bool reportFail = true ) {
-    return getTextureID(name.c_str(), reportFail);
-  }
+class TextureManager : public Singleton<TextureManager> {
+  public:
+    int getTextureID(const char* name, bool reportFail = true);
+    int getTextureID(const std::string& name, bool reportFail = true) {
+      return getTextureID(name.c_str(), reportFail);
+    }
 
-  bool isLoaded(const std::string& name);
-  bool removeTexture(const std::string& name);
-  bool reloadTextures();
-  bool reloadTextureImage(const std::string& name);
+    bool isLoaded(const std::string& name);
+    bool removeTexture(const std::string& name);
+    bool reloadTextures();
+    bool reloadTextureImage(const std::string& name);
 
-  void updateTextureFilters();
-  void setTextureFilter(int texId, OpenGLTexture::Filter filter);
-  OpenGLTexture::Filter getTextureFilter(int texId);
+    void updateTextureFilters();
+    void setTextureFilter(int texId, OpenGLTexture::Filter filter);
+    OpenGLTexture::Filter getTextureFilter(int texId);
 
-  bool bind ( int id );
-  bool bind ( const char* name );
+    bool bind(int id);
+    bool bind(const char* name);
 
-  const ImageInfo& getInfo ( int id );
-  const ImageInfo& getInfo ( const char* name );
+    const ImageInfo& getInfo(int id);
+    const ImageInfo& getInfo(const char* name);
 
-  bool getColorAverages(int texId, fvec4& rgba, bool factorAlpha) const;
+    bool getColorAverages(int texId, fvec4& rgba, bool factorAlpha) const;
 
-  OpenGLTexture::Filter getMaxFilter ( void );
-  std::string getMaxFilterName ( void );
-  void setMaxFilter ( OpenGLTexture::Filter filter );
-  void setMaxFilter ( std::string filter );
+    OpenGLTexture::Filter getMaxFilter(void);
+    std::string getMaxFilterName(void);
+    void setMaxFilter(OpenGLTexture::Filter filter);
+    void setMaxFilter(std::string filter);
 
-  float GetAspectRatio ( int id );
+    float GetAspectRatio(int id);
 
-  void clearLastBoundID() { lastBoundID = -1; }
+    void clearLastBoundID() { lastBoundID = -1; }
 
-  int newTexture (const char* name, int x, int y, unsigned char* data,
-		  OpenGLTexture::Filter filter, bool repeat = true, int format = 0);
-protected:
-  friend class Singleton<TextureManager>;
+    int newTexture(const char* name, int x, int y, unsigned char* data,
+                   OpenGLTexture::Filter filter, bool repeat = true, int format = 0);
+  protected:
+    friend class Singleton<TextureManager>;
 
-private:
-  TextureManager();
-  TextureManager(const TextureManager &tm);
-  TextureManager& operator=(const TextureManager &tm);
-  ~TextureManager();
+  private:
+    TextureManager();
+    TextureManager(const TextureManager& tm);
+    TextureManager& operator=(const TextureManager& tm);
+    ~TextureManager();
 
-  int addTexture( const char*, OpenGLTexture *texture  );
-  OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true  );
+    int addTexture(const char*, OpenGLTexture* texture);
+    OpenGLTexture* loadTexture(FileTextureInit& init, bool reportFail = true);
 
-  typedef std::map<std::string, ImageInfo> TextureNameMap;
-  typedef std::map<int, ImageInfo*> TextureIDMap;
+    typedef std::map<std::string, ImageInfo> TextureNameMap;
+    typedef std::map<int, ImageInfo*> TextureIDMap;
 
-  int	    lastImageID;
-  int	    lastBoundID;
-  TextureIDMap   textureIDs;
-  TextureNameMap textureNames;
+    int     lastImageID;
+    int     lastBoundID;
+    TextureIDMap   textureIDs;
+    TextureNameMap textureNames;
 };
 
 
@@ -114,6 +110,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

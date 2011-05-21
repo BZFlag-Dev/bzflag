@@ -23,19 +23,18 @@
 /** a RandomSpawnPolicy is a SpawnPolicy that just generates a purely
  *  random (yet hopefully still valid) position and drops you there.
  */
-class RandomSpawnPolicy : public SpawnPolicy
-{
-public:
-  RandomSpawnPolicy();
-  virtual ~RandomSpawnPolicy();
+class RandomSpawnPolicy : public SpawnPolicy {
+  public:
+    RandomSpawnPolicy();
+    virtual ~RandomSpawnPolicy();
 
-  virtual const char *Name() const {
-    static const char *name = "Random";
-    return name;
-  }
+    virtual const char* Name() const {
+      static const char* name = "Random";
+      return name;
+    }
 
-  virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
-  virtual void getAzimuth(float &azimuth);
+    virtual void getPosition(fvec3& pos, int playerId, bool onGroundOnly, bool notNearEdges);
+    virtual void getAzimuth(float& azimuth);
 };
 
 #endif  /*__RANDOMSPAWNPOLICY_H__ */
@@ -44,6 +43,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

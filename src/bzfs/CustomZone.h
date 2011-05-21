@@ -30,21 +30,20 @@ typedef std::vector<std::string> QualifierList;
 typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
 
 
-class CustomZone : public WorldFileLocation
-{
+class CustomZone : public WorldFileLocation {
   public:
     CustomZone(const MeshFace* face = NULL);
 
     bool readLine(const std::string& cmd, const std::string& line);
 
-    virtual bool read(const char *cmd, std::istream&);
+    virtual bool read(const char* cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
     virtual bool usesGroupDef() { return false; }
 
     // make a safety zone for all team flags (on the ground)
     void addFlagSafety(float x, float y, WorldInfo* worldInfo);
 
-    const QualifierList &getQualifiers() const;
+    const QualifierList& getQualifiers() const;
     const ZoneFlagMap& getZoneFlagMap() const;
 
     float getWeight() const;
@@ -81,14 +80,12 @@ class CustomZone : public WorldFileLocation
 };
 
 
-inline const QualifierList& CustomZone::getQualifiers() const
-{
+inline const QualifierList& CustomZone::getQualifiers() const {
   return qualifiers;
 }
 
 
-inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
-{
+inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const {
   return zoneFlagMap;
 }
 
@@ -99,6 +96,6 @@ inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

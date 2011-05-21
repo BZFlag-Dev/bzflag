@@ -48,11 +48,11 @@ using namespace TankGeometryUtils;
 
 // the display lists
 static GLuint displayLists[LastTankShadow][LastTankLOD]
-			  [LastTankSize][LastTankPart];
+[LastTankSize][LastTankPart];
 
 // triangle counds
 static int partTriangles[LastTankShadow][LastTankLOD]
-			[LastTankSize][LastTankPart];
+[LastTankSize][LastTankPart];
 
 // the scaling factors
 static fvec3 scaleFactors[LastTankSize] = {
@@ -71,19 +71,22 @@ TankShadow TankGeometryUtils::shadowMode = ShadowOn;
 // arrays of functions to avoid large switch statements
 typedef int (*partFunction)(void);
 static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
-  { buildLowBody,
+  {
+    buildLowBody,
     buildLowBarrel,
     buildLowTurret,
     buildLowLCasing,
     buildLowRCasing
   },
-  { buildMedBody,
+  {
+    buildMedBody,
     buildMedBarrel,
     buildMedTurret,
     buildMedLCasing,
     buildMedRCasing
   },
-  { buildHighBody,
+  {
+    buildHighBody,
     buildHighBarrel,
     buildHighTurret,
     buildHighLCasing,
@@ -96,9 +99,9 @@ static const partFunction partFunctions[LastTankLOD][BasicTankParts] = {
 // -------------------------
 
 static void setupScales();
-static void freeContext(void *data);
-static void initContext(void *data);
-static void bzdbCallback(const std::string& str, void *data);
+static void freeContext(void* data);
+static void initContext(void* data);
+static void bzdbCallback(const std::string& str, void* data);
 
 
 //============================================================================//
@@ -107,33 +110,32 @@ static void bzdbCallback(const std::string& str, void *data);
 // -------------------------
 
 
-void TankGeometryMgr::init()
-{
+void TankGeometryMgr::init() {
   // initialize the lists to invalid
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
-	for (int part = 0; part < LastTankPart; part++) {
-	  displayLists[shadow][lod][size][part] = INVALID_GL_LIST_ID;
-	  partTriangles[shadow][lod][size][part] = 0;
-	}
+        for (int part = 0; part < LastTankPart; part++) {
+          displayLists[shadow][lod][size][part] = INVALID_GL_LIST_ID;
+          partTriangles[shadow][lod][size][part] = 0;
+        }
       }
     }
   }
 
   // install the BZDB callbacks
   // This MUST be done after BZDB has been initialized in main()
-  BZDB.addCallback (BZDBNAMES.TANKWIDTH,       bzdbCallback, NULL);
-  BZDB.addCallback (BZDBNAMES.TANKHEIGHT,      bzdbCallback, NULL);
-  BZDB.addCallback (BZDBNAMES.TANKLENGTH,      bzdbCallback, NULL);
-  BZDB.addCallback (BZDBNAMES.OBESEFACTOR,     bzdbCallback, NULL);
-  BZDB.addCallback (BZDBNAMES.TINYFACTOR,      bzdbCallback, NULL);
-  BZDB.addCallback (BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
-  BZDB.addCallback ("animatedTreads",          bzdbCallback, NULL);
-  BZDB.addCallback ("treadStyle",              bzdbCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKWIDTH,       bzdbCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKHEIGHT,      bzdbCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TANKLENGTH,      bzdbCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.OBESEFACTOR,     bzdbCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.TINYFACTOR,      bzdbCallback, NULL);
+  BZDB.addCallback(BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
+  BZDB.addCallback("animatedTreads",          bzdbCallback, NULL);
+  BZDB.addCallback("treadStyle",              bzdbCallback, NULL);
 
   // install the context initializer
-  OpenGLGState::registerContextInitializer (freeContext, initContext, NULL);
+  OpenGLGState::registerContextInitializer(freeContext, initContext, NULL);
 
   // setup the scaleFactors
   setupScales();
@@ -142,17 +144,16 @@ void TankGeometryMgr::init()
 }
 
 
-void TankGeometryMgr::kill()
-{
+void TankGeometryMgr::kill() {
   // remove the BZDB callbacks
-  BZDB.removeCallback (BZDBNAMES.TANKWIDTH,       bzdbCallback, NULL);
-  BZDB.removeCallback (BZDBNAMES.TANKHEIGHT,      bzdbCallback, NULL);
-  BZDB.removeCallback (BZDBNAMES.TANKLENGTH,      bzdbCallback, NULL);
-  BZDB.removeCallback (BZDBNAMES.OBESEFACTOR,     bzdbCallback, NULL);
-  BZDB.removeCallback (BZDBNAMES.TINYFACTOR,      bzdbCallback, NULL);
-  BZDB.removeCallback (BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
-  BZDB.removeCallback ("animatedTreads",          bzdbCallback, NULL);
-  BZDB.removeCallback ("treadStyle",              bzdbCallback, NULL);
+  BZDB.removeCallback(BZDBNAMES.TANKWIDTH,       bzdbCallback, NULL);
+  BZDB.removeCallback(BZDBNAMES.TANKHEIGHT,      bzdbCallback, NULL);
+  BZDB.removeCallback(BZDBNAMES.TANKLENGTH,      bzdbCallback, NULL);
+  BZDB.removeCallback(BZDBNAMES.OBESEFACTOR,     bzdbCallback, NULL);
+  BZDB.removeCallback(BZDBNAMES.TINYFACTOR,      bzdbCallback, NULL);
+  BZDB.removeCallback(BZDBNAMES.THIEFTINYFACTOR, bzdbCallback, NULL);
+  BZDB.removeCallback("animatedTreads",          bzdbCallback, NULL);
+  BZDB.removeCallback("treadStyle",              bzdbCallback, NULL);
 
   // remove the context initializer callback
   OpenGLGState::unregisterContextInitializer(freeContext, initContext, NULL);
@@ -161,19 +162,18 @@ void TankGeometryMgr::kill()
 }
 
 
-void TankGeometryMgr::deleteLists()
-{
+void TankGeometryMgr::deleteLists() {
   // delete the lists that have been aquired
   for (int shadow = 0; shadow < LastTankShadow; shadow++) {
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
-	for (int part = 0; part < LastTankPart; part++) {
-	  GLuint& list = displayLists[shadow][lod][size][part];
-	  if (list != INVALID_GL_LIST_ID) {
-	    glDeleteLists(list, 1);
-	    list = INVALID_GL_LIST_ID;
-	  }
-	}
+        for (int part = 0; part < LastTankPart; part++) {
+          GLuint& list = displayLists[shadow][lod][size][part];
+          if (list != INVALID_GL_LIST_ID) {
+            glDeleteLists(list, 1);
+            list = INVALID_GL_LIST_ID;
+          }
+        }
       }
     }
   }
@@ -181,8 +181,7 @@ void TankGeometryMgr::deleteLists()
 }
 
 
-void TankGeometryMgr::buildLists()
-{
+void TankGeometryMgr::buildLists() {
   // setup the tread style
   setTreadStyle(BZDB.evalInt("treadStyle"));
 
@@ -201,7 +200,8 @@ void TankGeometryMgr::buildLists()
   int quality = RENDERER.useQuality();
   if (quality < _LOW_QUALITY) {
     quality = _LOW_QUALITY;
-  } else if (quality > _EXPERIMENTAL_QUALITY) {
+  }
+  else if (quality > _EXPERIMENTAL_QUALITY) {
     quality = _EXPERIMENTAL_QUALITY;
   }
 
@@ -212,61 +212,61 @@ void TankGeometryMgr::buildLists()
     for (int lod = 0; lod < LastTankLOD; lod++) {
       for (int size = 0; size < LastTankSize; size++) {
 
-	// only do the basics, unless we're making an animated tank
-	int lastPart = BasicTankParts;
-	if (animated) {
-	  lastPart = HighTankParts;
-	}
+        // only do the basics, unless we're making an animated tank
+        int lastPart = BasicTankParts;
+        if (animated) {
+          lastPart = HighTankParts;
+        }
 
-	// set the shadow mode for the doNormal3f() and doTexcoord2f() calls
-	shadowMode = (TankShadow) shadow;
+        // set the shadow mode for the doNormal3f() and doTexcoord2f() calls
+        shadowMode = (TankShadow) shadow;
 
-	for (int part = 0; part < lastPart; part++) {
+        for (int part = 0; part < lastPart; part++) {
 
-	  GLuint& list = displayLists[shadow][lod][size][part];
-	  int& count = partTriangles[shadow][lod][size][part];
+          GLuint& list = displayLists[shadow][lod][size][part];
+          int& count = partTriangles[shadow][lod][size][part];
 
-	  // get a new OpenGL display list
-	  list = glGenLists(1);
-	  glNewList(list, GL_COMPILE);
+          // get a new OpenGL display list
+          list = glGenLists(1);
+          glNewList(list, GL_COMPILE);
 
-	  // setup the scale factor
-	  currentScaleFactor = &scaleFactors[size];
+          // setup the scale factor
+          currentScaleFactor = &scaleFactors[size];
 
-	  if ((part <= Turret)  || (!animated)) {
-	    // the basic parts
-	    count = partFunctions[lod][part]();
-	  }
-	  else if (lod == HighTankLOD){
-	    // the animated parts
-	    if (part == LeftCasing) {
-	      count = buildHighLCasingAnim();
-	    }
-	    else if (part == RightCasing) {
-	      count = buildHighRCasingAnim();
-	    }
-	    else if (part == LeftTread) {
-	      count = buildHighLTread(treadDivs);
-	    }
-	    else if (part == RightTread) {
-	      count = buildHighRTread(treadDivs);
-	    }
-	    else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
-	      int wheel = part - LeftWheel0;
-	      count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
-				      wheelDivs);
-	    }
-	    else if ((part >= RightWheel0) && (part <= RightWheel3)) {
-	      int wheel = part - RightWheel0;
-	      count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
-				      wheelDivs);
-	    }
-	  }
+          if ((part <= Turret)  || (!animated)) {
+            // the basic parts
+            count = partFunctions[lod][part]();
+          }
+          else if (lod == HighTankLOD) {
+            // the animated parts
+            if (part == LeftCasing) {
+              count = buildHighLCasingAnim();
+            }
+            else if (part == RightCasing) {
+              count = buildHighRCasingAnim();
+            }
+            else if (part == LeftTread) {
+              count = buildHighLTread(treadDivs);
+            }
+            else if (part == RightTread) {
+              count = buildHighRTread(treadDivs);
+            }
+            else if ((part >= LeftWheel0) && (part <= LeftWheel3)) {
+              int wheel = part - LeftWheel0;
+              count = buildHighLWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
+                                      wheelDivs);
+            }
+            else if ((part >= RightWheel0) && (part <= RightWheel3)) {
+              int wheel = part - RightWheel0;
+              count = buildHighRWheel(wheel, (float)wheel * (float)(M_PI / 2.0),
+                                      wheelDivs);
+            }
+          }
 
-	  // end of the list
-	  glEndList();
+          // end of the list
+          glEndList();
 
-	} // part
+        } // part
       } // size
     } // lod
   } // shadow
@@ -278,44 +278,38 @@ void TankGeometryMgr::buildLists()
 unsigned int TankGeometryMgr::getPartList(TankGeometryEnums::TankShadow shadow,
                                           TankGeometryEnums::TankPart part,
                                           TankGeometryEnums::TankSize size,
-                                          TankGeometryEnums::TankLOD lod)
-{
+                                          TankGeometryEnums::TankLOD lod) {
   return displayLists[shadow][lod][size][part];
 }
 
 
 int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
-					  TankGeometryEnums::TankPart part,
-					  TankGeometryEnums::TankSize size,
-					  TankGeometryEnums::TankLOD lod)
-{
+                                          TankGeometryEnums::TankPart part,
+                                          TankGeometryEnums::TankSize size,
+                                          TankGeometryEnums::TankLOD lod) {
   return partTriangles[sh][lod][size][part];
 }
 
 
-const fvec3& TankGeometryMgr::getScaleFactor(TankSize size)
-{
+const fvec3& TankGeometryMgr::getScaleFactor(TankSize size) {
   return scaleFactors[size];
 }
 
-std::map<std::string,OBJModel> modelMap;
+std::map<std::string, OBJModel> modelMap;
 
-bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
-{
+bool TankGeometryUtils::buildGeoFromObj(const char* path, int& count) {
   std::string mediaPath = PlatformFactory::getMedia()->getMediaDirectory();
   mediaPath += "/models/";
   mediaPath += BZDB.get("playerModel") + path;
-      count = 0;
+  count = 0;
 
-  if (modelMap.find(mediaPath) != modelMap.end())
-  {
+  if (modelMap.find(mediaPath) != modelMap.end()) {
     count = modelMap[mediaPath].draw();
     return count > 0;
   }
 
   OBJModel model;
-  if (model.read(mediaPath))
-  {
+  if (model.read(mediaPath)) {
     modelMap[mediaPath] = model;
     count = model.draw();
   }
@@ -327,8 +321,7 @@ bool TankGeometryUtils::buildGeoFromObj ( const char* path, int &count  )
 //  Utility functions
 //
 
-void TankGeometryUtils::doVertex3f(float x, float y, float z)
-{
+void TankGeometryUtils::doVertex3f(float x, float y, float z) {
   const fvec3* scale = currentScaleFactor;
   const fvec3 pos(x * scale->x, y * scale->y, z * scale->z);
   glVertex3fv(pos);
@@ -336,8 +329,7 @@ void TankGeometryUtils::doVertex3f(float x, float y, float z)
 }
 
 
-void TankGeometryUtils::doNormal3f(float x, float y, float z)
-{
+void TankGeometryUtils::doNormal3f(float x, float y, float z) {
   if (shadowMode == TankGeometryEnums::ShadowOn) {
     return;
   }
@@ -349,8 +341,7 @@ void TankGeometryUtils::doNormal3f(float x, float y, float z)
 }
 
 
-void TankGeometryUtils::doTexCoord2f(float x, float y)
-{
+void TankGeometryUtils::doTexCoord2f(float x, float y) {
   if (shadowMode == TankGeometryEnums::ShadowOn) {
     return;
   }
@@ -359,20 +350,17 @@ void TankGeometryUtils::doTexCoord2f(float x, float y)
 }
 
 
-void TankGeometryUtils::doVertex(const fvec3& v)
-{
+void TankGeometryUtils::doVertex(const fvec3& v) {
   doVertex3f(v.x, v.y, v.z);
 }
 
 
-void TankGeometryUtils::doNormal(const fvec3& n)
-{
+void TankGeometryUtils::doNormal(const fvec3& n) {
   doNormal3f(n.x, n.y, n.z);
 }
 
 
-void TankGeometryUtils::doTexCoord(const fvec2& t)
-{
+void TankGeometryUtils::doTexCoord(const fvec2& t) {
   doTexCoord2f(t.x, t.y);
 }
 
@@ -383,31 +371,27 @@ void TankGeometryUtils::doTexCoord(const fvec2& t)
 //
 
 
-static void bzdbCallback(const std::string& /*name*/, void * /*data*/)
-{
+static void bzdbCallback(const std::string& /*name*/, void* /*data*/) {
   deleteLists();
   buildLists();
   return;
 }
 
 
-static void freeContext(void * /*data*/)
-{
+static void freeContext(void* /*data*/) {
   // delete all of the lists
   deleteLists();
   return;
 }
 
 
-static void initContext(void * /*data*/)
-{
+static void initContext(void* /*data*/) {
   buildLists();
   return;
 }
 
 
-static void setupScales()
-{
+static void setupScales() {
   float scale;
 
   scaleFactors[Normal].x = BZDBCache::tankLength;
@@ -449,6 +433,6 @@ static void setupScales()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

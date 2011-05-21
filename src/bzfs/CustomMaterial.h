@@ -23,7 +23,7 @@ class CustomMaterial : public WorldFileObject {
   public:
     CustomMaterial(const char* matName);
     ~CustomMaterial();
-    virtual bool read(const char *cmd, std::istream& input);
+    virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToManager() const;
     bool usesManager() { return true; }
 
@@ -37,6 +37,6 @@ class CustomMaterial : public WorldFileObject {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

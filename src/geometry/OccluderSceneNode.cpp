@@ -27,8 +27,7 @@
 #include "ViewFrustum.h"
 
 
-OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
-{
+OccluderSceneNode::OccluderSceneNode(const MeshFace* face) {
   int i;
 
   noPlane = false;
@@ -66,15 +65,13 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
 }
 
 
-OccluderSceneNode::~OccluderSceneNode()
-{
+OccluderSceneNode::~OccluderSceneNode() {
   delete[] vertices;
   return;
 }
 
 
-bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
-{
+bool OccluderSceneNode::cull(const ViewFrustum& frustum) const {
   // cull if eye is behind (or on) plane
   const fvec3& eye = frustum.getEye();
   if (plane.planeDist(eye) <= 0.0f) {
@@ -87,7 +84,7 @@ bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
     return false;
   }
 
-  const Frustum* f = (const Frustum *) &frustum;
+  const Frustum* f = (const Frustum*) &frustum;
   if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
@@ -97,8 +94,7 @@ bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-bool OccluderSceneNode::inAxisBox (const Extents& exts) const
-{
+bool OccluderSceneNode::inAxisBox(const Extents& exts) const {
   if (!extents.touches(exts)) {
     return false;
   }
@@ -112,6 +108,6 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

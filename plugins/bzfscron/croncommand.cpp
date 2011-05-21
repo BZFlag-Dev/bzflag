@@ -19,7 +19,7 @@
 
 CronCommand cronCommand;
 
-bool CronCommand::handle(int playerID, bz_ApiString /* command */, bz_ApiString /* message */, bz_APIStringList *params) {
+bool CronCommand::handle(int playerID, bz_ApiString /* command */, bz_ApiString /* message */, bz_APIStringList* params) {
   if (!bz_hasPerm(playerID, "BZFSCRON")) {
     bz_sendTextMessage(BZ_SERVER, playerID, "bzfscron: you do not have permission to run the /cron command.");
     return true;
@@ -28,10 +28,12 @@ bool CronCommand::handle(int playerID, bz_ApiString /* command */, bz_ApiString 
     bz_sendTextMessage(BZ_SERVER, playerID, "usage: /cron [list|reload]");
   }
   else if (strcasecmp((*params)[0].c_str(), "reload") == 0) {
-    if (cron.reload())
+    if (cron.reload()) {
       bz_sendTextMessage(BZ_SERVER, playerID, "bzfscron: reload succeeded.");
-    else
+    }
+    else {
       bz_sendTextMessage(BZ_SERVER, playerID, "bzfscron: reload failed.");
+    }
   }
   else if (strcasecmp((*params)[0].c_str(), "list") == 0) {
     cron.list(playerID);
@@ -48,6 +50,6 @@ int registerCronCommand(void) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

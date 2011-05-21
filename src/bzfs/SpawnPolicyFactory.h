@@ -35,22 +35,21 @@
  * registered and is used to create instances of the policies.
  */
 class SpawnPolicyFactory : public Singleton<SpawnPolicyFactory>,
-			   public Factory<SpawnPolicy, std::string>
-{
+  public Factory<SpawnPolicy, std::string> {
 
-public:
-  SpawnPolicy *Policy(std::string s = std::string(""));
+  public:
+    SpawnPolicy* Policy(std::string s = std::string(""));
 
-  void setDefault(std::string);
+    void setDefault(std::string);
 
-protected:
-  friend class Singleton<SpawnPolicyFactory>;
+  protected:
+    friend class Singleton<SpawnPolicyFactory>;
 
-private:
-  SpawnPolicyFactory();
-  ~SpawnPolicyFactory();
+  private:
+    SpawnPolicyFactory();
+    ~SpawnPolicyFactory();
 
-  std::string _defaultPolicy;
+    std::string _defaultPolicy;
 };
 
 
@@ -60,6 +59,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

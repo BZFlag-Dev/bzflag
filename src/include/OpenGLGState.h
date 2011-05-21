@@ -11,11 +11,11 @@
  */
 
 /* OpenGLGState:
- *	Encapsulates OpenGL rendering state information.
+ *  Encapsulates OpenGL rendering state information.
  */
 
-#ifndef	BZF_OPENGL_GSTATE_H
-#define	BZF_OPENGL_GSTATE_H
+#ifndef BZF_OPENGL_GSTATE_H
+#define BZF_OPENGL_GSTATE_H
 
 #include "common.h"
 
@@ -38,15 +38,15 @@ typedef void (*OpenGLContextFunction)(void* userData);
 
 
 class OpenGLGState {
-  friend class OpenGLGStateBuilder;
-  friend class ContextInitializer;
+    friend class OpenGLGStateBuilder;
+    friend class ContextInitializer;
 
   public:
     OpenGLGState();
     OpenGLGState(const OpenGLGState&);
     OpenGLGState(const OpenGLGStateState&);
     ~OpenGLGState();
-    OpenGLGState&	operator=(const OpenGLGState& state);
+    OpenGLGState& operator=(const OpenGLGState& state);
 
     void setState() const;
     int  getOrder() const;
@@ -113,29 +113,29 @@ class OpenGLGState {
 
     class ContextInitializer {
       public:
-	friend class OpenGLGState;
-	ContextInitializer(OpenGLContextFunction freeFunc,
-			   OpenGLContextFunction initFunc,
-			   void* data);
-	~ContextInitializer();
+        friend class OpenGLGState;
+        ContextInitializer(OpenGLContextFunction freeFunc,
+                           OpenGLContextFunction initFunc,
+                           void* data);
+        ~ContextInitializer();
 
       public:
-	OpenGLContextFunction freeCallback;
-	OpenGLContextFunction initCallback;
-	void* userData;
+        OpenGLContextFunction freeCallback;
+        OpenGLContextFunction initCallback;
+        void* userData;
 
-	ContextInitializer* prev;
-	ContextInitializer* next;
+        ContextInitializer* prev;
+        ContextInitializer* next;
 
       public:
-	static void executeFreeFuncs();
-	static void executeInitFuncs();
+        static void executeFreeFuncs();
+        static void executeInitFuncs();
 
-	static ContextInitializer* find(OpenGLContextFunction freeFunc,
-					OpenGLContextFunction initFunc,
-					void* data);
-	static ContextInitializer* head;
-	static ContextInitializer* tail;
+        static ContextInitializer* find(OpenGLContextFunction freeFunc,
+                                        OpenGLContextFunction initFunc,
+                                        void* data);
+        static ContextInitializer* head;
+        static ContextInitializer* tail;
     };
 
   private:
@@ -147,12 +147,10 @@ class OpenGLGState {
     static bool executingInitFuncs;
 };
 
-inline bool OpenGLGState::isExecutingFreeFuncs()
-{
+inline bool OpenGLGState::isExecutingFreeFuncs() {
   return executingFreeFuncs;
 }
-inline bool OpenGLGState::isExecutingInitFuncs()
-{
+inline bool OpenGLGState::isExecutingInitFuncs() {
   return executingInitFuncs;
 }
 
@@ -163,7 +161,7 @@ class OpenGLGStateBuilder {
     OpenGLGStateBuilder(const OpenGLGState&);
     ~OpenGLGStateBuilder();
 
-    OpenGLGStateBuilder &operator=(const OpenGLGState&);
+    OpenGLGStateBuilder& operator=(const OpenGLGState&);
 
     void reset();
     void setOrder(int);
@@ -205,6 +203,6 @@ class OpenGLGStateBuilder {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

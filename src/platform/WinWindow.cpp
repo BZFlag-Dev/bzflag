@@ -19,43 +19,42 @@
 #include "StateDatabase.h"
 #include "DirectoryNames.h"
 
-WinWindow*		WinWindow::first = NULL;
-HPALETTE		WinWindow::colormap = NULL;
+WinWindow*    WinWindow::first = NULL;
+HPALETTE    WinWindow::colormap = NULL;
 
 HWND WinWindow::hwnd = NULL;
 
 WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
-				BzfWindow(_display),
-				display(_display),
-				visual(*_visual),
-				inDestroy(false),
-				hwndChild(NULL),
-				hRC(NULL),
-				hDC(NULL),
-				hDCChild(NULL),
-				inactiveDueToDeactivate(false),
-				inactiveDueToDeactivateAll(false),
-				useColormap(false),
-				hasGamma(false),
-				gammaVal(1.0f),
-				prev(NULL),
-				next(NULL),
-				mouseGrab(false),
-				fullscreen(false)
-{
+  BzfWindow(_display),
+  display(_display),
+  visual(*_visual),
+  inDestroy(false),
+  hwndChild(NULL),
+  hRC(NULL),
+  hDC(NULL),
+  hDCChild(NULL),
+  inactiveDueToDeactivate(false),
+  inactiveDueToDeactivateAll(false),
+  useColormap(false),
+  hasGamma(false),
+  gammaVal(1.0f),
+  prev(NULL),
+  next(NULL),
+  mouseGrab(false),
+  fullscreen(false) {
   activating = false;
 
   // make window
   hwnd = CreateWindow("BZFLAG", "bzflag",
-			WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP |
-			WS_BORDER | WS_CAPTION,
-			0, 0, 640, 480, NULL, NULL,
-			display->getRep()->hInstance, NULL);
-  if (hwnd == NULL) return;
+                      WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_POPUP |
+                      WS_BORDER | WS_CAPTION,
+                      0, 0, 640, 480, NULL, NULL,
+                      display->getRep()->hInstance, NULL);
+  if (hwnd == NULL) { return; }
 
   // create child window.  OpenGL will bind only to the child window.
   createChild();
-  if (hwndChild == NULL) return;
+  if (hwndChild == NULL) { return; }
 
   // get DC
   hDC = GetDC(hwnd);
@@ -73,23 +72,24 @@ WinWindow::WinWindow(const WinDisplay* _display, WinVisual* _visual) :
   display->getRep()->ref();
   prev = NULL;
   next = first;
-  if (prev) prev->next = this;
-  if (next) next->prev = this;
+  if (prev) { prev->next = this; }
+  if (next) { next->prev = this; }
   first = this;
 }
 
-WinWindow::~WinWindow()
-{
+WinWindow::~WinWindow() {
   destroyChild();
 
-  if (hDC != NULL)
+  if (hDC != NULL) {
     ReleaseDC(hwnd, hDC);
-  if (hwnd != NULL)
+  }
+  if (hwnd != NULL) {
     DestroyWindow(hwnd);
+  }
 
-  if (prev) prev->next = next;
-  if (next) next->prev = prev;
-  if (first == this) first = next;
+  if (prev) { prev->next = next; }
+  if (next) { next->prev = prev; }
+  if (first == this) { first = next; }
 
   if (first == NULL && colormap != NULL) {
     DeleteObject(colormap);
@@ -99,46 +99,39 @@ WinWindow::~WinWindow()
   display->getRep()->unref();
 }
 
-bool			WinWindow::isValid() const
-{
+bool      WinWindow::isValid() const {
   return hwnd != NULL;
 }
 
-void			WinWindow::showWindow(bool on)
-{
+void      WinWindow::showWindow(bool on) {
   ShowWindow(hwnd, on ? SW_SHOW : SW_HIDE);
 }
 
-void			WinWindow::getPosition(int& x, int& y)
-{
+void      WinWindow::getPosition(int& x, int& y) {
   RECT rect;
   GetWindowRect(hwnd, &rect);
   x = (int)rect.left;
   y = (int)rect.top;
 }
 
-void			WinWindow::getSize(int& width, int& height) const
-{
+void      WinWindow::getSize(int& width, int& height) const {
   RECT rect;
   GetClientRect(hwnd, &rect);
   width = (int)rect.right - (int)rect.left;
   height = (int)rect.bottom - (int)rect.top;
 }
 
-void			WinWindow::setTitle(const char* title)
-{
+void      WinWindow::setTitle(const char* title) {
   SetWindowText(hwnd, title);
 }
 
-void			WinWindow::setPosition(int x, int y)
-{
+void      WinWindow::setPosition(int x, int y) {
   RECT rect;
   GetWindowRect(hwnd, &rect);
   MoveWindow(hwnd, x, y, rect.right - rect.left, rect.bottom - rect.top, FALSE);
 }
 
-void			WinWindow::setSize(int width, int height)
-{
+void      WinWindow::setSize(int width, int height) {
   RECT rect;
   GetWindowRect(hwnd, &rect);
   int dx = rect.right - rect.left;
@@ -151,13 +144,11 @@ void			WinWindow::setSize(int width, int height)
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 }
 
-void			WinWindow::setMinSize(int, int)
-{
+void      WinWindow::setMinSize(int, int) {
   // FIXME
 }
 
-void			WinWindow::setFullscreen(bool on)
-{
+void      WinWindow::setFullscreen(bool on) {
   if (on) {
     // no window decorations
     DWORD style = GetWindowLong(hwnd, GWL_STYLE);
@@ -166,9 +157,10 @@ void			WinWindow::setFullscreen(bool on)
 
     // take up the whole screen
     MoveWindow(hwnd, 0, 0,
-	       GetDeviceCaps(hDC, HORZRES),
-	       GetDeviceCaps(hDC, VERTRES), FALSE);
-  } else {
+               GetDeviceCaps(hDC, HORZRES),
+               GetDeviceCaps(hDC, VERTRES), FALSE);
+  }
+  else {
     // reset the resolution if we changed it before
     display->setDefaultResolution();
 
@@ -182,19 +174,20 @@ void			WinWindow::setFullscreen(bool on)
       int w, h, x, y, count;
       char xs, ys;
       count = sscanf(BZDB.get("geometry").c_str(),
-    		 "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
-      if (w < 256) w = 256;
-      if (h < 192) h = 192;
+                     "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y);
+      if (w < 256) { w = 256; }
+      if (h < 192) { h = 192; }
       if (count == 6) {
-        if (xs == '-') x = display->getWidth() - x - w;
-        if (ys == '-') y = display->getHeight() - y - h;
+        if (xs == '-') { x = display->getWidth() - x - w; }
+        if (ys == '-') { y = display->getHeight() - y - h; }
         setPosition(x, y);
       }
       setSize(w, h);
-    } else {
+    }
+    else {
       // uh.... right
-      setPosition(0,0);
-      setSize(640,480);
+      setPosition(0, 0);
+      setSize(640, 480);
     }
 
     // force windows to repaint the whole desktop
@@ -217,26 +210,23 @@ void			WinWindow::setFullscreen(bool on)
   fullscreen = on;
 }
 
-bool			WinWindow::getFullscreen() const
-{
+bool      WinWindow::getFullscreen() const {
   return fullscreen;
 }
 
 
-void			WinWindow::iconify()
-{
+void      WinWindow::iconify() {
   ShowWindow(hwnd, SW_MINIMIZE);
-  if (mouseGrab)
+  if (mouseGrab) {
     ungrabMouse();
+  }
 }
 
-void			WinWindow::warpMouse(int x, int y)
-{
+void      WinWindow::warpMouse(int x, int y) {
   SetCursorPos(x, y);
 }
 
-void			WinWindow::getMouse(int& x, int& y) const
-{
+void      WinWindow::getMouse(int& x, int& y) const {
   POINT point;
   GetCursorPos(&point);
   ScreenToClient(hwnd, &point);
@@ -244,8 +234,7 @@ void			WinWindow::getMouse(int& x, int& y) const
   y = (int)point.y;
 }
 
-void			WinWindow::grabMouse()
-{
+void      WinWindow::grabMouse() {
   RECT wrect;
   GetWindowRect(hwnd, &wrect);
 
@@ -256,8 +245,9 @@ void			WinWindow::grabMouse()
   DWORD style = GetWindowLong(hwnd, GWL_STYLE);
   // don't compensate for window trimmings if they're turned off
   if (!((style & (WS_BORDER | WS_CAPTION | WS_DLGFRAME))
-        == (WS_BORDER | WS_CAPTION | WS_DLGFRAME)))
+        == (WS_BORDER | WS_CAPTION | WS_DLGFRAME))) {
     xborder = yborder = titlebar = 0;
+  }
 
   RECT rect;
   rect.top = wrect.top + titlebar + yborder;
@@ -267,36 +257,33 @@ void			WinWindow::grabMouse()
   ClipCursor(&rect);
 }
 
-void			WinWindow::ungrabMouse()
-{
+void      WinWindow::ungrabMouse() {
   ClipCursor(NULL);
 }
 
-void			WinWindow::enableGrabMouse(bool on)
-{
+void      WinWindow::enableGrabMouse(bool on) {
   if (on) {
     mouseGrab = true;
     grabMouse();
-  } else {
+  }
+  else {
     mouseGrab = false;
     ungrabMouse();
   }
 }
 
-void			WinWindow::showMouse()
-{
+void      WinWindow::showMouse() {
   ShowCursor(TRUE);
 }
 
-void			WinWindow::hideMouse()
-{
+void      WinWindow::hideMouse() {
   ShowCursor(FALSE);
 }
 
-void			WinWindow::setGamma(float newGamma)
-{
-  if (!useColormap && !hasGamma)
+void      WinWindow::setGamma(float newGamma) {
+  if (!useColormap && !hasGamma) {
     return;
+  }
 
   // save gamma
   gammaVal = newGamma;
@@ -311,95 +298,91 @@ void			WinWindow::setGamma(float newGamma)
     for (int i = 0; i < 256; i++) {
       BYTE v = getIntensityValue((float)i / 255.0f);
       map[0][i] = map[1][i] = map[2][i] =
-	map[3][i] = map[4][i] = map[5][i] = (WORD)v + ((WORD)v << 8);
+                                map[3][i] = map[4][i] = map[5][i] = (WORD)v + ((WORD)v << 8);
     }
     setGammaRamps((const WORD*)map);
   }
 }
 
-float			WinWindow::getGamma() const
-{
+float     WinWindow::getGamma() const {
   return gammaVal;
 }
 
-bool			WinWindow::hasGammaControl() const
-{
+bool      WinWindow::hasGammaControl() const {
   return useColormap || hasGamma;
 }
 
-void			WinWindow::makeCurrent()
-{
-  if (hDCChild != NULL)
+void      WinWindow::makeCurrent() {
+  if (hDCChild != NULL) {
     wglMakeCurrent(hDCChild, hRC);
+  }
 }
 
-void			WinWindow::swapBuffers()
-{
-  if (hDCChild != NULL)
+void      WinWindow::swapBuffers() {
+  if (hDCChild != NULL) {
     SwapBuffers(hDCChild);
+  }
 }
 
-void			WinWindow::makeContext()
-{
+void      WinWindow::makeContext() {
   if (!inactiveDueToDeactivate && !inactiveDueToDeactivateAll)
-    if (hDCChild == NULL)
+    if (hDCChild == NULL) {
       createChild();
+    }
   makeCurrent();
 }
 
-void			WinWindow::freeContext()
-{
-  if (hDCChild != NULL)
+void      WinWindow::freeContext() {
+  if (hDCChild != NULL) {
     destroyChild();
+  }
 }
 
-bool checkGammaRampsFile( WORD ramps[6*256] )
-{
+bool checkGammaRampsFile(WORD ramps[6 * 256]) {
   std::string gammaFile = getConfigDirName() + "bzflag.gamma";
 
-  FILE *fp = fopen(gammaFile.c_str(),"rb");
-  if (!fp)
-    return false; // no crash
+  FILE* fp = fopen(gammaFile.c_str(), "rb");
+  if (!fp) {
+    return false;  // no crash
+  }
 
-  fread(ramps,sizeof(WORD)*6*256,1,fp);
+  fread(ramps, sizeof(WORD) * 6 * 256, 1, fp);
   fclose(fp);
 
   return true;
 }
 
-bool saveGammaRampsFile( WORD ramps[6*256] )
-{
+bool saveGammaRampsFile(WORD ramps[6 * 256]) {
   std::string gammaFile = getConfigDirName() + "bzflag.gamma";
 
-  FILE *fp = fopen(gammaFile.c_str(),"wb");
-  if (!fp)
-    return false; // BAD
+  FILE* fp = fopen(gammaFile.c_str(), "wb");
+  if (!fp) {
+    return false;  // BAD
+  }
 
-  fwrite(ramps,sizeof(WORD)*6*256,1,fp);
+  fwrite(ramps, sizeof(WORD) * 6 * 256, 1, fp);
   fclose(fp);
 
   return true;
 }
 
-void deleteGammaRampsFile ( void )
-{
+void deleteGammaRampsFile(void) {
   std::string gammaFile = getConfigDirName() + "bzflag.gamma";
   DeleteFile(gammaFile.c_str());
 }
 
-void			WinWindow::createChild()
-{
+void      WinWindow::createChild() {
   // get parent size
   int width, height;
   getSize(width, height);
 
   // make window
   hwndChild = CreateWindow("BZFLAG", "opengl",
-			WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
-			WS_CHILD | WS_VISIBLE,
-			0, 0, width, height, hwnd, NULL,
-			display->getRep()->hInstance, NULL);
-  if (hwndChild == NULL) return;
+                           WS_CLIPSIBLINGS | WS_CLIPCHILDREN |
+                           WS_CHILD | WS_VISIBLE,
+                           0, 0, width, height, hwnd, NULL,
+                           display->getRep()->hInstance, NULL);
+  if (hwndChild == NULL) { return; }
 
   // get DC
   hDCChild = GetDC(hwndChild);
@@ -423,15 +406,18 @@ void			WinWindow::createChild()
 
   // make colormap
   useColormap = ((pfd.dwFlags & PFD_NEED_PALETTE) != 0);
-  if (colormap == NULL && useColormap)
+  if (colormap == NULL && useColormap) {
     makeColormap(pfd);
-  if (colormap)
+  }
+  if (colormap) {
     ::SelectPalette(hDCChild, colormap, FALSE);
+  }
 
   // if no colormap then adjust gamma ramps
   if (!useColormap) {
-    if (!checkGammaRampsFile(origGammaRamps))
+    if (!checkGammaRampsFile(origGammaRamps)) {
       getGammaRamps(origGammaRamps);
+    }
 
     saveGammaRampsFile(origGammaRamps);
     setGamma(gammaVal);
@@ -447,20 +433,21 @@ void			WinWindow::createChild()
     return;
   }
 
-  if (colormap)
+  if (colormap) {
     ::RealizePalette(hDCChild);
+  }
 
   // other initialization
   SetMapMode(hDCChild, MM_TEXT);
 }
 
-void			WinWindow::destroyChild()
-{
+void      WinWindow::destroyChild() {
   setGammaRamps(origGammaRamps);
   deleteGammaRampsFile();
   if (hRC != NULL) {
-    if (wglGetCurrentContext() == hRC)
+    if (wglGetCurrentContext() == hRC) {
       wglMakeCurrent(NULL, NULL);
+    }
     wglDeleteContext(hRC);
     hRC = NULL;
   }
@@ -474,45 +461,45 @@ void			WinWindow::destroyChild()
   }
 }
 
-void			WinWindow::getGammaRamps(WORD* ramps)
-{
-  if (hDCChild == NULL)
+void      WinWindow::getGammaRamps(WORD* ramps) {
+  if (hDCChild == NULL) {
     return;
+  }
 
   // get device gamma ramps
   hasGamma = GetDeviceGammaRamp(hDCChild, ramps) != FALSE;
 }
 
-void			WinWindow::setGammaRamps(const WORD* ramps)
-{
-  if (hDCChild == NULL)
+void      WinWindow::setGammaRamps(const WORD* ramps) {
+  if (hDCChild == NULL) {
     return;
+  }
 
-  if (hasGamma)
+  if (hasGamma) {
     SetDeviceGammaRamp(hDCChild, (LPVOID)ramps);
+  }
 }
 
-WinWindow*		WinWindow::lookupWindow(HWND hwnd)
-{
-  if (hwnd == NULL)
+WinWindow*    WinWindow::lookupWindow(HWND hwnd) {
+  if (hwnd == NULL) {
     return NULL;
+  }
 
   WinWindow* scan = first;
-  while (scan && scan->hwnd != hwnd && scan->hwndChild != hwnd)
+  while (scan && scan->hwnd != hwnd && scan->hwndChild != hwnd) {
     scan = scan->next;
+  }
   return scan;
 }
 
-void			WinWindow::deactivateAll()
-{
+void      WinWindow::deactivateAll() {
   for (WinWindow* scan = first; scan; scan = scan->next) {
     scan->freeContext();
     scan->inactiveDueToDeactivateAll = true;
   }
 }
 
-void			WinWindow::reactivateAll()
-{
+void      WinWindow::reactivateAll() {
   for (WinWindow* scan = first; scan; scan = scan->next) {
     const bool hadChild = (scan->hDCChild != NULL);
     scan->inactiveDueToDeactivateAll = false;
@@ -521,14 +508,12 @@ void			WinWindow::reactivateAll()
   }
 }
 
-HWND			WinWindow::getHandle()
-{
+HWND      WinWindow::getHandle() {
   return hwnd;
 }
 
-LONG			WinWindow::queryNewPalette()
-{
-  if (colormap == NULL) return FALSE;
+LONG      WinWindow::queryNewPalette() {
+  if (colormap == NULL) { return FALSE; }
 
   HPALETTE oldPalette = ::SelectPalette(hDC, colormap, FALSE);
   ::RealizePalette(hDC);
@@ -543,9 +528,8 @@ LONG			WinWindow::queryNewPalette()
   return TRUE;
 }
 
-void			WinWindow::paletteChanged()
-{
-  if (colormap == NULL) return;
+void      WinWindow::paletteChanged() {
+  if (colormap == NULL) { return; }
 
   HPALETTE oldPalette = ::SelectPalette(hDC, colormap, FALSE);
   ::RealizePalette(hDC);
@@ -558,17 +542,16 @@ void			WinWindow::paletteChanged()
   }
 }
 
-bool			WinWindow::activate()
-{
+bool      WinWindow::activate() {
   inactiveDueToDeactivate = false;
   activating = true;
 
   // don't do unwindowing stuff if we don't need to
-  if (BZDB.isTrue("Win32NoMin"))
-  {
+  if (BZDB.isTrue("Win32NoMin")) {
     // still have the window, just regrab the mouse
-    if (mouseGrab)
+    if (mouseGrab) {
       grabMouse();
+    }
 
     activating = false;
     return true;
@@ -579,21 +562,22 @@ bool			WinWindow::activate()
   // restore window
   ShowWindow(hwnd, SW_RESTORE);
   SetWindowPos(hwnd, HWND_TOP, 0, 0, 0, 0,
-				SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
+               SWP_NOACTIVATE | SWP_NOMOVE | SWP_NOSIZE);
 
   // regrab the mouse with the new window size
-  if (mouseGrab)
+  if (mouseGrab) {
     grabMouse();
+  }
 
   // recreate OpenGL context
   const bool hadChild = (hDCChild != NULL);
   makeContext();
 
-  if (mouseGrab)
+  if (mouseGrab) {
     grabMouse();
+  }
 
-  if (hDCChild != NULL)
-  {
+  if (hDCChild != NULL) {
     // force a redraw
     callExposeCallbacks();
 
@@ -605,32 +589,33 @@ bool			WinWindow::activate()
   return false;
 }
 
-bool			WinWindow::deactivate()
-{
+bool      WinWindow::deactivate() {
   activating = true;
 
   // ungrab the mouse when we lose focus
-  if (mouseGrab)
+  if (mouseGrab) {
     ungrabMouse();
+  }
 
   // don't do unwindowing stuff if we don't need to
-  if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window"))
-  {
+  if (BZDB.isTrue("Win32NoMin") || BZDB.isTrue("_window")) {
     activating = false;
 
     return true;
   }
 
   // minimize window while not active.  skip if being destroyed.
-  if (!inDestroy)
+  if (!inDestroy) {
     ShowWindow(hwnd, SW_MINIMIZE);
+  }
 
   // destroy OpenGL context
   const bool hadChild = (hDCChild != NULL);
   freeContext();
 
-  if (mouseGrab)
+  if (mouseGrab) {
     ungrabMouse();
+  }
 
   inactiveDueToDeactivate = true;
   activating = false;
@@ -638,35 +623,31 @@ bool			WinWindow::deactivate()
   return hadChild;
 }
 
-void			WinWindow::onDestroy()
-{
+void      WinWindow::onDestroy() {
   inDestroy = true;
 }
 
-BYTE			WinWindow::getIntensityValue(float i) const
-{
-  if (i <= 0.0f) return 0;
-  if (i >= 1.0f) return 255;
+BYTE      WinWindow::getIntensityValue(float i) const {
+  if (i <= 0.0f) { return 0; }
+  if (i >= 1.0f) { return 255; }
   i = powf(i, 1.0f / gammaVal);
   return (BYTE)(0.5f + 255.0f * i);
 }
 
-float			WinWindow::getComponentFromIndex(
-				int i, UINT nbits, UINT shift)
-{
+float     WinWindow::getComponentFromIndex(
+  int i, UINT nbits, UINT shift) {
   const int mask = (1 << nbits) - 1;
   return (float)((i >> shift) & mask) / (float)mask;
 }
 
-void			WinWindow::makeColormap(
-				const PIXELFORMATDESCRIPTOR& pfd)
-{
+void      WinWindow::makeColormap(
+  const PIXELFORMATDESCRIPTOR& pfd) {
   // compute number of colors
   const int n = 1 << pfd.cColorBits;
 
   // make and initialize a logical palette with room for all colors
   LOGPALETTE* logicalPalette = (LOGPALETTE*)(void*)new char[
-			sizeof(LOGPALETTE) + n * sizeof(PALETTEENTRY)];
+                                 sizeof(LOGPALETTE) + n * sizeof(PALETTEENTRY)];
   logicalPalette->palVersion = 0x300;
   logicalPalette->palNumEntries = (WORD)n;
 
@@ -674,11 +655,11 @@ void			WinWindow::makeColormap(
   int i, j;
   for (i = 0; i < n; i++) {
     logicalPalette->palPalEntry[i].peRed = getIntensityValue(
-		getComponentFromIndex(i, pfd.cRedBits, pfd.cRedShift));
+                                             getComponentFromIndex(i, pfd.cRedBits, pfd.cRedShift));
     logicalPalette->palPalEntry[i].peGreen = getIntensityValue(
-		getComponentFromIndex(i, pfd.cGreenBits, pfd.cGreenShift));
+                                               getComponentFromIndex(i, pfd.cGreenBits, pfd.cGreenShift));
     logicalPalette->palPalEntry[i].peBlue = getIntensityValue(
-		getComponentFromIndex(i, pfd.cBlueBits, pfd.cBlueShift));
+                                              getComponentFromIndex(i, pfd.cBlueBits, pfd.cBlueShift));
     logicalPalette->palPalEntry[i].peFlags = 0;
   }
 
@@ -688,83 +669,87 @@ void			WinWindow::makeColormap(
     static const int NUM_GDI_COLORS = 20;
     static const PALETTEENTRY gdi[NUM_GDI_COLORS] = {
       { 0,   0,   0,    0 },
-      { 0x80,0,   0,    0 },
-      { 0,   0x80,0,    0 },
-      { 0x80,0x80,0,    0 },
+      { 0x80, 0,   0,    0 },
+      { 0,   0x80, 0,    0 },
+      { 0x80, 0x80, 0,    0 },
       { 0,   0,   0x80, 0 },
-      { 0x80,0,   0x80, 0 },
-      { 0,   0x80,0x80, 0 },
-      { 0xC0,0xC0,0xC0, 0 },
+      { 0x80, 0,   0x80, 0 },
+      { 0,   0x80, 0x80, 0 },
+      { 0xC0, 0xC0, 0xC0, 0 },
       { 192, 220, 192,  0 },
       { 166, 202, 240,  0 },
       { 255, 251, 240,  0 },
       { 160, 160, 164,  0 },
-      { 0x80,0x80,0x80, 0 },
-      { 0xFF,0,   0,    0 },
-      { 0,   0xFF,0,    0 },
-      { 0xFF,0xFF,0,    0 },
+      { 0x80, 0x80, 0x80, 0 },
+      { 0xFF, 0,   0,    0 },
+      { 0,   0xFF, 0,    0 },
+      { 0xFF, 0xFF, 0,    0 },
       { 0,   0,   0xFF, 0 },
-      { 0xFF,0,   0xFF, 0 },
-      { 0,   0xFF,0xFF, 0 },
-      { 0xFF,0xFF,0xFF, 0 }
+      { 0xFF, 0,   0xFF, 0 },
+      { 0,   0xFF, 0xFF, 0 },
+      { 0xFF, 0xFF, 0xFF, 0 }
     };
 
     // check for exact matches to GDI palette.
     BOOL exactMatch[NUM_GDI_COLORS];
-    for (j = 0; j < NUM_GDI_COLORS; j++)
+    for (j = 0; j < NUM_GDI_COLORS; j++) {
       exactMatch[j] = FALSE;
+    }
     for (i = 0; i < n; i++) {
       PALETTEENTRY* p = logicalPalette->palPalEntry + i;
       for (j = 0; j < NUM_GDI_COLORS; j++)
-	if (p->peRed   == gdi[j].peRed &&
-	    p->peGreen == gdi[j].peGreen &&
-	    p->peBlue  == gdi[j].peBlue) {
-	  exactMatch[j] = TRUE;
-	  p->peFlags = 1;
-	  break;
-	}
+        if (p->peRed   == gdi[j].peRed &&
+            p->peGreen == gdi[j].peGreen &&
+            p->peBlue  == gdi[j].peBlue) {
+          exactMatch[j] = TRUE;
+          p->peFlags = 1;
+          break;
+        }
     }
 
     // match default GDI palette by least-squares.  we'll use the peFlags
     // member of the palette entries temporarily to track which entries
     // have been matched.
     for (j = 0; j < NUM_GDI_COLORS; j++) {
-      if (exactMatch[j]) continue;
+      if (exactMatch[j]) { continue; }
 
-      int minError = 4 * 256 * 256;		// bigger than largest error
+      int minError = 4 * 256 * 256;   // bigger than largest error
       int bestMatch = -1;
 
       for (i = 0; i < n; i++) {
-	const PALETTEENTRY* p = logicalPalette->palPalEntry + i;
-	if (p->peFlags != 0) continue;
+        const PALETTEENTRY* p = logicalPalette->palPalEntry + i;
+        if (p->peFlags != 0) { continue; }
 
-	int error = 0;
-	error += (p->peRed   - gdi[j].peRed)   * (p->peRed   - gdi[j].peRed);
-	error += (p->peGreen - gdi[j].peGreen) * (p->peGreen - gdi[j].peGreen);
-	error += (p->peBlue  - gdi[j].peBlue)  * (p->peBlue  - gdi[j].peBlue);
-	if (error < minError) {
-	  bestMatch = i;
-	  minError = error;
-	}
+        int error = 0;
+        error += (p->peRed   - gdi[j].peRed)   * (p->peRed   - gdi[j].peRed);
+        error += (p->peGreen - gdi[j].peGreen) * (p->peGreen - gdi[j].peGreen);
+        error += (p->peBlue  - gdi[j].peBlue)  * (p->peBlue  - gdi[j].peBlue);
+        if (error < minError) {
+          bestMatch = i;
+          minError = error;
+        }
       }
 
       // adjust my palette to match GDI palette and note the change
       if (bestMatch != -1) {
-	logicalPalette->palPalEntry[bestMatch] = gdi[j];
-	logicalPalette->palPalEntry[bestMatch].peFlags = 1;
+        logicalPalette->palPalEntry[bestMatch] = gdi[j];
+        logicalPalette->palPalEntry[bestMatch].peFlags = 1;
       }
     }
 
     // set the peFlags the way we want
-    for (i = 0; i < n; i++)
+    for (i = 0; i < n; i++) {
       logicalPalette->palPalEntry[i].peFlags = 0;
+    }
   }
 
   // create the palette
-  if (colormap == NULL)
+  if (colormap == NULL) {
     colormap = ::CreatePalette(logicalPalette);
-  else
+  }
+  else {
     ::SetPaletteEntries(colormap, 0, n, logicalPalette->palPalEntry + 0);
+  }
 
   // free the cruft
   delete [] logicalPalette;
@@ -774,6 +759,6 @@ void			WinWindow::makeColormap(
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -12,18 +12,18 @@
 
 /*
  * ShotPath:
- *	Encapsulates the path a shot follows.  Most paths can
- *	be computed at the instant of firing (though they may
- *	terminate early because of a hit).  Some paths need
- *	to be updated continuously during flight.
+ *  Encapsulates the path a shot follows.  Most paths can
+ *  be computed at the instant of firing (though they may
+ *  terminate early because of a hit).  Some paths need
+ *  to be updated continuously during flight.
  *
  * RemoteShotPath:
- *	A ShotPath acting as a proxy for a remote ShotPath.
- *	Created by a LocalPlayer on behalf of a RemotePlayer.
+ *  A ShotPath acting as a proxy for a remote ShotPath.
+ *  Created by a LocalPlayer on behalf of a RemotePlayer.
  */
 
-#ifndef	__SHOTMANGER_H__
-#define	__SHOTMANGER_H__
+#ifndef __SHOTMANGER_H__
+#define __SHOTMANGER_H__
 
 #include "common.h"
 
@@ -36,66 +36,62 @@
 #include "ShotUpdate.h"
 #include "vectors.h"
 
-class ShotEventCallbacks
-{
-public:
-  virtual ~ShotEventCallbacks(){}
+class ShotEventCallbacks {
+  public:
+    virtual ~ShotEventCallbacks() {}
 
-  virtual void shotEnded(int id) = 0;
-  virtual void shotStarted(int id) = 0;
-  virtual void shotUpdated(int id) = 0;
+    virtual void shotEnded(int id) = 0;
+    virtual void shotStarted(int id) = 0;
+    virtual void shotUpdated(int id) = 0;
 };
 
-class ShotManager  : public Singleton<ShotManager>
-{
-public:
-  int newShot(FiringInfo *info, int param);
-  void update(double dt);
-
-  void addEventHandler(ShotEventCallbacks *cb);
-  void removeEventHandler(ShotEventCallbacks *cb);
-
-  class Shot
-  {
+class ShotManager  : public Singleton<ShotManager> {
   public:
-    Shot(FiringInfo* info, int GUID, int p = 0);
+    int newShot(FiringInfo* info, int param);
+    void update(double dt);
 
-    enum ObstacleMode
-    {
-      Stop,
-      Ignore,
-      Reflect
+    void addEventHandler(ShotEventCallbacks* cb);
+    void removeEventHandler(ShotEventCallbacks* cb);
+
+    class Shot {
+      public:
+        Shot(FiringInfo* info, int GUID, int p = 0);
+
+        enum ObstacleMode {
+          Stop,
+          Ignore,
+          Reflect
+        };
+
+      protected:
+        int param;
+        int id;
+
+        // TeamColor team;
+        // FlagType flag;
+        // ShotType type;
+        ObstacleMode mode;
+
+        double startTime;
+        double lastUpdateTime;
+
+        double lifetime;
+        double range;
+
+        fvec3 pos;
+        fvec3 vec;
     };
 
   protected:
-    int param;
-    int id;
+    friend class Singleton<ShotManager>;
 
-    // TeamColor team;
-    // FlagType flag;
-    // ShotType type;
-    ObstacleMode mode;
+  private:
+    ShotManager();
+    ~ShotManager();
 
-    double startTime;
-    double lastUpdateTime;
+    std::map<int, Shot> shots;
 
-    double lifetime;
-    double range;
-
-    fvec3 pos;
-    fvec3 vec;
-  };
-
-protected:
-  friend class Singleton<ShotManager>;
-
-private:
-  ShotManager();
-  ~ShotManager();
-
-  std::map<int, Shot> shots;
-
-  std::vector<ShotEventCallbacks*> callbacks;
+    std::vector<ShotEventCallbacks*> callbacks;
 };
 
 #endif /* __SHOTMANAGERH__ */
@@ -104,6 +100,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

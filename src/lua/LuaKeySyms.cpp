@@ -28,8 +28,7 @@
 //============================================================================//
 //============================================================================//
 
-bool LuaKeySyms::PushEntries(lua_State* L)
-{
+bool LuaKeySyms::PushEntries(lua_State* L) {
   lua_pushliteral(L, "KEYMODS");
   lua_newtable(L); {
     LuaSetDualPair(L, "ALT",    EventHandler::AltKeyModBit);
@@ -158,6 +157,6 @@ bool LuaKeySyms::PushEntries(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

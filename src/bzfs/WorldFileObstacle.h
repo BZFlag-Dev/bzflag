@@ -20,14 +20,14 @@
 
 
 class WorldFileObstacle : public WorldFileLocation {
-public:
-  WorldFileObstacle();
-  virtual bool read(const char *cmd, std::istream&);
+  public:
+    WorldFileObstacle();
+    virtual bool read(const char* cmd, std::istream&);
 
-protected:
-  unsigned char driveThrough;
-  unsigned char shootThrough;
-  bool          ricochet;
+  protected:
+    unsigned char driveThrough;
+    unsigned char shootThrough;
+    bool          ricochet;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */
@@ -36,6 +36,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

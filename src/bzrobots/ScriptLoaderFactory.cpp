@@ -29,15 +29,13 @@ ScriptLoaderFactory* Singleton<ScriptLoaderFactory>::_instance = NULL;
 
 /* public */
 
-RobotScript *
-ScriptLoaderFactory::scriptTool(std::string extension)
-{
+RobotScript*
+ScriptLoaderFactory::scriptTool(std::string extension) {
   std::string lcExtension = TextUtils::tolower(extension);
   return SCRIPTTOOLFACTORY.Create(lcExtension.c_str());
 }
 
-void ScriptLoaderFactory::initialize()
-{
+void ScriptLoaderFactory::initialize() {
 #if defined(_WIN32)
   SCRIPTTOOLFACTORY.Register<SharedObjectLoader>("dll");
 #else
@@ -53,13 +51,11 @@ void ScriptLoaderFactory::initialize()
 
 
 /* private */
-ScriptLoaderFactory::ScriptLoaderFactory()
-{
+ScriptLoaderFactory::ScriptLoaderFactory() {
 }
 
 
-ScriptLoaderFactory::~ScriptLoaderFactory()
-{
+ScriptLoaderFactory::~ScriptLoaderFactory() {
 }
 
 
@@ -67,6 +63,6 @@ ScriptLoaderFactory::~ScriptLoaderFactory()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

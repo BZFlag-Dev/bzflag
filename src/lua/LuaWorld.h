@@ -16,8 +16,7 @@
 #include "LuaHandle.h"
 
 
-class LuaWorld : public LuaHandle
-{
+class LuaWorld : public LuaHandle {
   public:
     static void LoadHandler();
     static void FreeHandler();
@@ -38,6 +37,6 @@ extern LuaWorld* luaWorld;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

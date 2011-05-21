@@ -24,28 +24,28 @@
 #include "GameKeeper.h"
 
 class Filter {
- public:
-  enum Action {ACCEPT, DROP, STOP};
+  public:
+    enum Action {ACCEPT, DROP, STOP};
 
-  Filter();
+    Filter();
 
-  /** This function loads a ban filter from a file, if it has been set. */
-  void load();
-  /** This function clear the filter list */
-  void clear();
-  /** This function check if a player has to be accepted or dropped.
-      player is the Player to match,
-      index is the rule index, starting from 0
-      Return the action to be performed on match, or end */
-  Action check(GameKeeper::Player &player, int &index);
-private:
-  struct FilterItem {
-    int	 hostId;
-    int	 netMask;
-    std::string principal;
-    Action      action;
-  };
-  std::vector<FilterItem> filterList;
+    /** This function loads a ban filter from a file, if it has been set. */
+    void load();
+    /** This function clear the filter list */
+    void clear();
+    /** This function check if a player has to be accepted or dropped.
+        player is the Player to match,
+        index is the rule index, starting from 0
+        Return the action to be performed on match, or end */
+    Action check(GameKeeper::Player& player, int& index);
+  private:
+    struct FilterItem {
+      int  hostId;
+      int  netMask;
+      std::string principal;
+      Action      action;
+    };
+    std::vector<FilterItem> filterList;
 };
 
 #endif /* __FILTER_H__ */
@@ -54,6 +54,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

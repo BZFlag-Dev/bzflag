@@ -17,12 +17,12 @@
 #include "cURLManager.h"
 
 class MasterBanList : private cURLManager {
-public:
-  const std::string& get(const std::string URL);
-protected:
-  std::string data;
-private:
-  void finalization(char *cURLdata, unsigned int length, bool good);
+  public:
+    const std::string& get(const std::string URL);
+  protected:
+    std::string data;
+  private:
+    void finalization(char* cURLdata, unsigned int length, bool good);
 };
 #endif //__MASTER_BAN_LIST_H__
 
@@ -30,6 +30,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

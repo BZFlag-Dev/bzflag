@@ -19,20 +19,17 @@
 
 
 BZWError::BZWError(const std::string& _location)
-: hadError(false)
-, hadWarning(false)
-, location(_location)
-{
+  : hadError(false)
+  , hadWarning(false)
+  , location(_location) {
 }
 
 
-BZWError::~BZWError()
-{
+BZWError::~BZWError() {
 }
 
 
-bool BZWError::fatalError(const std::string& msg, int line)
-{
+bool BZWError::fatalError(const std::string& msg, int line) {
   // set flag
   hadError = true;
 
@@ -55,8 +52,7 @@ bool BZWError::fatalError(const std::string& msg, int line)
 }
 
 
-bool BZWError::warning(const std::string& msg, int line)
-{
+bool BZWError::warning(const std::string& msg, int line) {
   // set flag
   hadWarning = true;
 
@@ -84,6 +80,6 @@ bool BZWError::warning(const std::string& msg, int line)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

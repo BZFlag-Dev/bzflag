@@ -27,48 +27,48 @@
 class FormatMenu;
 
 class FormatMenuDefaultKey : public MenuDefaultKey {
-public:
-  FormatMenuDefaultKey(FormatMenu* _menu) :
-    menu(_menu) { }
-  ~FormatMenuDefaultKey() { }
+  public:
+    FormatMenuDefaultKey(FormatMenu* _menu) :
+      menu(_menu) { }
+    ~FormatMenuDefaultKey() { }
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
-private:
-  FormatMenu* menu;
+  private:
+    FormatMenu* menu;
 };
 
 class FormatMenu : public HUDDialog {
-  friend class FormatMenuDefaultKey;
-public:
-  FormatMenu();
-  ~FormatMenu();
+    friend class FormatMenuDefaultKey;
+  public:
+    FormatMenu();
+    ~FormatMenu();
 
-  HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
-  void			show();
-  void			execute();
-  void			resize(int width, int height);
+    HUDuiDefaultKey*  getDefaultKey() { return &defaultKey; }
+    void      show();
+    void      execute();
+    void      resize(int width, int height);
 
-private:
-  void			addLabel(const char* msg, const char* _label, bool navigable = false);
-  void			setPage(int page);
-  void			setFormat(bool test);
+  private:
+    void      addLabel(const char* msg, const char* _label, bool navigable = false);
+    void      setPage(int page);
+    void      setFormat(bool test);
 
-private:
-  static const int	NumItems;
-  FormatMenuDefaultKey	defaultKey;
-  int			numFormats;
-  float			center;
+  private:
+    static const int  NumItems;
+    FormatMenuDefaultKey  defaultKey;
+    int     numFormats;
+    float     center;
 
-  HUDuiLabel*		currentLabel;
-  HUDuiLabel*		pageLabel;
-  int			page;
-  bool*			badFormats;
-  static size_t		navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void*);
+    HUDuiLabel*   currentLabel;
+    HUDuiLabel*   pageLabel;
+    int     page;
+    bool*     badFormats;
+    static size_t   navCallback(size_t oldFocus, size_t proposedFocus, HUDNavChangeMethod changeMethod, void*);
 
-  static const int	NumColumns;
-  static const int	NumReadouts;
+    static const int  NumColumns;
+    static const int  NumReadouts;
 };
 
 
@@ -78,6 +78,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

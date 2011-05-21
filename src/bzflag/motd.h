@@ -23,10 +23,10 @@
 #include "cURLManager.h"
 
 class MessageOfTheDay : private cURLManager {
-public:
+  public:
 
-  virtual void finalization(char *data, unsigned int length, bool good);
-  void	 getURL(const std::string URL);
+    virtual void finalization(char* data, unsigned int length, bool good);
+    void   getURL(const std::string URL);
 };
 
 #endif //__MOTD_H__
@@ -35,6 +35,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

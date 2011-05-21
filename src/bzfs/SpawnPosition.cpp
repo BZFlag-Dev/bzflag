@@ -20,11 +20,10 @@
 
 
 /* no policy by default, constructor will set if unset */
-SpawnPolicy *SpawnPosition::policy = (SpawnPolicy*)0;
+SpawnPolicy* SpawnPosition::policy = (SpawnPolicy*)0;
 
 
-SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
-{
+SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges) {
   /* if a spawn policy hasn't been set yet, just go with a default policy */
   if (!SpawnPosition::policy) {
     SetSpawnPolicy(SPAWNPOLICY.Policy());
@@ -34,12 +33,10 @@ SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
   SpawnPosition::policy->getAzimuth(azimuth);
 }
 
-SpawnPosition::~SpawnPosition()
-{
+SpawnPosition::~SpawnPosition() {
 }
 
-void SpawnPosition::SetSpawnPolicy(SpawnPolicy *_policy)
-{
+void SpawnPosition::SetSpawnPolicy(SpawnPolicy* _policy) {
   if (SpawnPosition::policy) {
     delete SpawnPosition::policy;
   }
@@ -51,6 +48,6 @@ void SpawnPosition::SetSpawnPolicy(SpawnPolicy *_policy)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

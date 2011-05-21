@@ -25,27 +25,25 @@
 #include "DropGeometry.h"
 
 
-DefaultSpawnPolicy::DefaultSpawnPolicy()
-{
+DefaultSpawnPolicy::DefaultSpawnPolicy() {
   testPos = fvec3(0.0f, 0.0f, 0.0f);
 }
 
-DefaultSpawnPolicy::~DefaultSpawnPolicy()
-{
+DefaultSpawnPolicy::~DefaultSpawnPolicy() {
 }
 
 void DefaultSpawnPolicy::getPosition(fvec3& pos, int playerId,
-                                     bool onGroundOnly, bool notNearEdges)
-{
+                                     bool onGroundOnly, bool notNearEdges) {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
    * spawn.
    */
 
-  GameKeeper::Player *playerData
+  GameKeeper::Player* playerData
     = GameKeeper::Player::getPlayerByIndex(playerId);
-  if (!playerData)
+  if (!playerData) {
     return;
+  }
 
   const PlayerInfo& pi = playerData->player;
   team = pi.getTeam();
@@ -59,8 +57,8 @@ void DefaultSpawnPolicy::getPosition(fvec3& pos, int playerId,
      * position on one of their team's available bases.
      */
 
-    TeamBases &teamBases = bases[team];
-    const TeamBase &base = teamBases.getRandomBase();
+    TeamBases& teamBases = bases[team];
+    const TeamBase& base = teamBases.getRandomBase();
     base.getRandomPosition(pos);
     playerData->player.setRestartOnBase(false);
   }
@@ -92,100 +90,102 @@ void DefaultSpawnPolicy::getPosition(fvec3& pos, int playerId,
     bool foundspot = false;
     while (!foundspot) {
       if (!world->getPlayerSpawnPoint(&pi, testPos)) {
-	if (notNearEdges) {
-	  // don't spawn close to map edges in CTF mode
-	  testPos.x = ((float)bzfrand() - 0.5f) * size * 0.6f;
-	  testPos.y = ((float)bzfrand() - 0.5f) * size * 0.6f;
-	} else {
-	  testPos.x = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-	  testPos.y = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
-	}
-	testPos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
+        if (notNearEdges) {
+          // don't spawn close to map edges in CTF mode
+          testPos.x = ((float)bzfrand() - 0.5f) * size * 0.6f;
+          testPos.y = ((float)bzfrand() - 0.5f) * size * 0.6f;
+        }
+        else {
+          testPos.x = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+          testPos.y = ((float)bzfrand() - 0.5f) * (size - 2.0f * tankRadius);
+        }
+        testPos.z = onGroundOnly ? 0.0f : ((float)bzfrand() * maxHeight);
       }
       tries++;
 
       const float waterLevel = world->getWaterLevel();
       float minZ = 0.0f;
       if (waterLevel > minZ) {
-	minZ = waterLevel;
+        minZ = waterLevel;
       }
       float maxZ = maxHeight;
       if (onGroundOnly) {
-	maxZ = 0.0f;
+        maxZ = 0.0f;
       }
 
       if (DropGeometry::dropPlayer(testPos, minZ, maxZ)) {
-	foundspot = true;
+        foundspot = true;
       }
 
       // check every now and then if we have already used up 10ms of time
       if (tries >= 50) {
-	tries = 0;
-	if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
-	  if (bestDist < 0.0f) { // haven't found a single spot
-	    //Just drop the sucka in, and pray
-	    pos.x = testPos.x;
-	    pos.y = testPos.y;
-	    pos.z = maxHeight;
-	    logDebugMessage(1,"Warning: DefaultSpawnPolicy ran out of time, just dropping the sucker in\n");
-	  }
-	  break;
-	}
+        tries = 0;
+        if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
+          if (bestDist < 0.0f) { // haven't found a single spot
+            //Just drop the sucka in, and pray
+            pos.x = testPos.x;
+            pos.y = testPos.y;
+            pos.z = maxHeight;
+            logDebugMessage(1, "Warning: DefaultSpawnPolicy ran out of time, just dropping the sucker in\n");
+          }
+          break;
+        }
       }
 
       // check if spot is safe enough
       bool dangerous = isImminentlyDangerous(testPos);
       if (foundspot && !dangerous) {
-	float enemyAngle;
-	float dist = enemyProximityCheck(enemyAngle);
-	if (dist > bestDist) { // best so far
-	  bestDist = dist;
-	  pos = testPos;
-	}
-	if (bestDist < minProximity) { // not good enough, keep looking
-	  foundspot = false;
-	  minProximity *= 0.99f; // relax requirements a little
-	}
-      } else if (dangerous) {
-	foundspot = false;
+        float enemyAngle;
+        float dist = enemyProximityCheck(enemyAngle);
+        if (dist > bestDist) { // best so far
+          bestDist = dist;
+          pos = testPos;
+        }
+        if (bestDist < minProximity) { // not good enough, keep looking
+          foundspot = false;
+          minProximity *= 0.99f; // relax requirements a little
+        }
+      }
+      else if (dangerous) {
+        foundspot = false;
       }
     }
   }
 }
 
-void DefaultSpawnPolicy::getAzimuth(float &azimuth)
-{
+void DefaultSpawnPolicy::getAzimuth(float& azimuth) {
   bool dangerous = isImminentlyDangerous(testPos);
   if (dangerous) {
     float enemyAngle;
     (void)enemyProximityCheck(enemyAngle);
     azimuth = fmod((float)(enemyAngle + M_PI), (float)(2.0 * M_PI));
-  } else {
+  }
+  else {
     azimuth = (float)(bzfrand() * 2.0 * M_PI);
   }
 }
 
 
-float DefaultSpawnPolicy::enemyProximityCheck(float &enemyAngle) const
-{
-  GameKeeper::Player *playerData;
+float DefaultSpawnPolicy::enemyProximityCheck(float& enemyAngle) const {
+  GameKeeper::Player* playerData;
   float worstDist = 1.0e12f; // huge number
   bool noEnemy    = true;
   const int curmax = getCurMaxPlayers();
   for (int i = 0; i < curmax; i++) {
     playerData = GameKeeper::Player::getPlayerByIndex(i);
-    if (!playerData)
+    if (!playerData) {
       continue;
+    }
     if (playerData->player.isAlive()
-	&& Team::areFoes(playerData->player.getTeam(), team, clOptions->gameType)) {
+        && Team::areFoes(playerData->player.getTeam(), team, clOptions->gameType)) {
       const fvec3& enemyPos = playerData->currentPos;
       if (fabs(enemyPos.z - testPos.z) < 1.0f) {
-	const float distSq = (enemyPos.xy() - testPos.xy()).lengthSq();
-	if (distSq < worstDist) {
-	  worstDist  = distSq;
-	  enemyAngle = playerData->currentRot;
-	  noEnemy    = false;
-	}
+        const float distSq = (enemyPos.xy() - testPos.xy()).lengthSq();
+        if (distSq < worstDist) {
+          worstDist  = distSq;
+          enemyAngle = playerData->currentRot;
+          noEnemy    = false;
+        }
       }
     }
   }
@@ -200,6 +200,6 @@ float DefaultSpawnPolicy::enemyProximityCheck(float &enemyAngle) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

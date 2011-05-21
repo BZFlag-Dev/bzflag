@@ -31,7 +31,7 @@ StdOutUI::StdOutUI(BZAdminClient& c) : BZAdminUI(c) {
 
 
 void StdOutUI::outputMessage(const std::string& msg, ColorCode) {
-  std::cout<<msg<<std::endl;
+  std::cout << msg << std::endl;
 }
 
 
@@ -43,6 +43,6 @@ BZAdminUI* StdOutUI::creator(BZAdminClient& client) {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -56,8 +56,7 @@ using std::vector;
 //============================================================================//
 //============================================================================//
 
-bool LuaSpatial::PushEntries(lua_State* L)
-{
+bool LuaSpatial::PushEntries(lua_State* L) {
   const bool fullRead = L2H(L)->HasFullRead();
 
   PUSH_LUA_CFUNC(L, RayTrace);
@@ -114,7 +113,7 @@ bool LuaSpatial::PushEntries(lua_State* L)
 
 struct QueryData {
   QueryData()
-  : seer(false)
+    : seer(false)
   {}
   bool seer;
 };
@@ -146,8 +145,7 @@ struct BoxData : public QueryData {
 //============================================================================//
 //============================================================================//
 
-static bool GetViewPlanes(PlanesData& planes)
-{
+static bool GetViewPlanes(PlanesData& planes) {
   planes.planes.clear();
   const ViewFrustum& vf = RENDERER.getViewFrustum();
   for (int p = 0; p < vf.getPlaneCount(); p++) {
@@ -157,8 +155,7 @@ static bool GetViewPlanes(PlanesData& planes)
 }
 
 
-static bool GetRadarBox(BoxData& box)
-{
+static bool GetRadarBox(BoxData& box) {
   const RadarRenderer* radar = getRadarRenderer();
   if (radar == NULL) {
     return false;
@@ -187,8 +184,7 @@ static bool GetRadarBox(BoxData& box)
 //============================================================================//
 //============================================================================//
 
-static inline int ParsePlanes(lua_State* L, PlanesData& planes)
-{
+static inline int ParsePlanes(lua_State* L, PlanesData& planes) {
   const int table = 1;
   for (int i = 1; lua_checkgeti(L, table, i); lua_pop(L, 1), i++) {
     if (lua_istable(L, -1)) {
@@ -196,16 +192,16 @@ static inline int ParsePlanes(lua_State* L, PlanesData& planes)
       const int planeIndex = lua_gettop(L);
       int p;
       for (p = 0; p < 4; p++) {
-	lua_rawgeti(L, planeIndex, p + 1);
-	if (!lua_israwnumber(L, -1)) {
-	  lua_pop(L, 1);
-	  break;
-	}
-	plane[p] = lua_tofloat(L, -1);
-	lua_pop(L, 1);
+        lua_rawgeti(L, planeIndex, p + 1);
+        if (!lua_israwnumber(L, -1)) {
+          lua_pop(L, 1);
+          break;
+        }
+        plane[p] = lua_tofloat(L, -1);
+        lua_pop(L, 1);
       }
       if (p == 4) {
-	planes.planes.push_back(plane);
+        planes.planes.push_back(plane);
       }
     }
   }
@@ -213,8 +209,7 @@ static inline int ParsePlanes(lua_State* L, PlanesData& planes)
 }
 
 
-static inline int ParseSphere(lua_State* L, SphereData& sphere)
-{
+static inline int ParseSphere(lua_State* L, SphereData& sphere) {
   sphere.pos = luaL_checkfvec3(L, 1);
   sphere.r   = luaL_checkfloat(L, 4);
   sphere.r2 = sphere.r * sphere.r;
@@ -222,8 +217,7 @@ static inline int ParseSphere(lua_State* L, SphereData& sphere)
 }
 
 
-static inline int ParseCylinder(lua_State* L, CylinderData& cyl)
-{
+static inline int ParseCylinder(lua_State* L, CylinderData& cyl) {
   cyl.pos = luaL_checkfvec2(L, 1);
   cyl.r   = luaL_checkfloat(L, 3);
   cyl.r2 = cyl.r * cyl.r;
@@ -231,8 +225,7 @@ static inline int ParseCylinder(lua_State* L, CylinderData& cyl)
 }
 
 
-static inline int ParseBox(lua_State* L, BoxData& box)
-{
+static inline int ParseBox(lua_State* L, BoxData& box) {
   const fvec3 mins = luaL_checkfvec3(L, 1);
   const fvec3 maxs = luaL_checkfvec3(L, 4);
   box.extents.set(mins, maxs);
@@ -245,8 +238,7 @@ static inline int ParseBox(lua_State* L, BoxData& box)
 //============================================================================//
 
 static int PushReflect(lua_State* L, const Obstacle* obs,
-		       const fvec3& pos, const fvec3& vel)
-{
+                       const fvec3& pos, const fvec3& vel) {
   fvec3 normal;
   if (obs != NULL) {
     obs->get3DNormal(pos, normal);
@@ -268,8 +260,7 @@ static int PushReflect(lua_State* L, const Obstacle* obs,
 }
 
 
-int LuaSpatial::RayTrace(lua_State* L)
-{
+int LuaSpatial::RayTrace(lua_State* L) {
   // FIXME -- use custom routines that do not use shootThrough checks ?
   //       -- what options might be useful here?
   fvec3 pos, vel;
@@ -299,7 +290,8 @@ int LuaSpatial::RayTrace(lua_State* L)
     const MeshObstacle* mesh = linkSrc->getMesh();
     if (mesh != NULL) {
       lua_pushinteger(L, mesh->getGUID());
-    } else {
+    }
+    else {
       lua_pushboolean(L, false); // should not happen
     }
     lua_pushinteger(L, linkSrc->getFaceID() + 1);
@@ -313,7 +305,7 @@ int LuaSpatial::RayTrace(lua_State* L)
       ray.getPoint(hitTime, point);
       lua_pushfvec3(L, point);
       if (reflect) {
-	args += PushReflect(L, obs, point, vel);
+        args += PushReflect(L, obs, point, vel);
       }
       lua_pushinteger(L, obs->getGUID());
       return args;
@@ -328,12 +320,13 @@ int LuaSpatial::RayTrace(lua_State* L)
       ray.getPoint(hitTime, point);
       lua_pushfvec3(L, point);
       if (reflect) {
-	args += PushReflect(L, obs, point, vel);
+        args += PushReflect(L, obs, point, vel);
       }
       if (mesh != NULL) {
-	lua_pushinteger(L, mesh->getGUID());
-      } else {
-	lua_pushboolean(L, false); // should not happen
+        lua_pushinteger(L, mesh->getGUID());
+      }
+      else {
+        lua_pushboolean(L, false); // should not happen
       }
       lua_pushinteger(L, face->getFaceID() + 1);
       return args;
@@ -355,52 +348,50 @@ int LuaSpatial::RayTrace(lua_State* L)
 }
 
 
-int LuaSpatial::RayTeleport(lua_State* L) // FIXME
-{
+int LuaSpatial::RayTeleport(lua_State* L) { // FIXME
   return 0; L = L;
-/* FIXME -- LuaSpatial::RayTeleport
-  const int meshID = luaL_checkint(L, 1);
-  const int faceID = luaL_checkint(L, 2) - 1;
+  /* FIXME -- LuaSpatial::RayTeleport
+    const int meshID = luaL_checkint(L, 1);
+    const int faceID = luaL_checkint(L, 2) - 1;
 
-  const ObstacleList& meshList = OBSTACLEMGR.getMeshes();
-  if ((meshID < 0) || (meshID >= (int)meshList.size()) {
-    return luaL_pushnil(L);
-  }
-  const MeshObstacle* mesh = (MeshObstacle*)meshList[meshID];
-  if (faceID < 0) || (faceID >= mesh->getFaceCount())) {
-    return luaL_pushnil(L);
-  }
-  const MeshFace* linkSrc = mesh->getFace(faceID);
+    const ObstacleList& meshList = OBSTACLEMGR.getMeshes();
+    if ((meshID < 0) || (meshID >= (int)meshList.size()) {
+      return luaL_pushnil(L);
+    }
+    const MeshObstacle* mesh = (MeshObstacle*)meshList[meshID];
+    if (faceID < 0) || (faceID >= mesh->getFaceCount())) {
+      return luaL_pushnil(L);
+    }
+    const MeshFace* linkSrc = mesh->getFace(faceID);
 
-  fvec3 inPos = luaL_checkfvec3(L, 3);
-  fvec3 inVel = luaL_checkfvec3(L, 6);
-  const int seed = luaL_optint(L, 9, 0);
+    fvec3 inPos = luaL_checkfvec3(L, 3);
+    fvec3 inVel = luaL_checkfvec3(L, 6);
+    const int seed = luaL_optint(L, 9, 0);
 
-  fvec3 outPos;
-  fvec3 outVel;
-  const
-  linkSrc->getPointWRT(*outTele, faceID, outFace,
-		      inPos,  &inVel,  0.0f,
-		      outPos, &outVel, NULL);
+    fvec3 outPos;
+    fvec3 outVel;
+    const
+    linkSrc->getPointWRT(*outTele, faceID, outFace,
+            inPos,  &inVel,  0.0f,
+            outPos, &outVel, NULL);
 
-  lua_pushinteger(L, outTele->getGUID());
-  lua_pushinteger(L, outFace);
-  lua_pushfloat(L, outPos[0]);
-  lua_pushfloat(L, outPos[1]);
-  lua_pushfloat(L, outPos[2]);
-  lua_pushfloat(L, outVel[0]);
-  lua_pushfloat(L, outVel[1]);
-  lua_pushfloat(L, outVel[2]);
-  return 8;
-*/
+    lua_pushinteger(L, outTele->getGUID());
+    lua_pushinteger(L, outFace);
+    lua_pushfloat(L, outPos[0]);
+    lua_pushfloat(L, outPos[1]);
+    lua_pushfloat(L, outPos[2]);
+    lua_pushfloat(L, outVel[0]);
+    lua_pushfloat(L, outVel[1]);
+    lua_pushfloat(L, outVel[2]);
+    return 8;
+  */
 }
 
 
 //============================================================================//
 //============================================================================//
 
-int LuaSpatial::IsPointInView(lua_State* L)
-{
+int LuaSpatial::IsPointInView(lua_State* L) {
   const fvec3 point = luaL_checkfvec3(L, 1);
 
   const ViewFrustum& vf = RENDERER.getViewFrustum();
@@ -418,8 +409,7 @@ int LuaSpatial::IsPointInView(lua_State* L)
 }
 
 
-int LuaSpatial::IsSphereInView(lua_State* L)
-{
+int LuaSpatial::IsSphereInView(lua_State* L) {
   const fvec3 center = luaL_checkfvec3(L, 1);
   const float radius = luaL_checkfloat(L, 4);
 
@@ -438,20 +428,17 @@ int LuaSpatial::IsSphereInView(lua_State* L)
 }
 
 
-int LuaSpatial::IsAABBInView(lua_State* L) // FIXME
-{
+int LuaSpatial::IsAABBInView(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::IsOBBInView(lua_State* L) // FIXME
-{
+int LuaSpatial::IsOBBInView(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::IsLSSInView(lua_State* L) // FIXME
-{
+int LuaSpatial::IsLSSInView(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
@@ -459,32 +446,27 @@ int LuaSpatial::IsLSSInView(lua_State* L) // FIXME
 //============================================================================//
 //============================================================================//
 
-int LuaSpatial::IsPointInRadar(lua_State* L) // FIXME
-{
+int LuaSpatial::IsPointInRadar(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::IsSphereInRadar(lua_State* L) // FIXME
-{
+int LuaSpatial::IsSphereInRadar(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::IsAABBInRadar(lua_State* L) // FIXME
-{
+int LuaSpatial::IsAABBInRadar(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::IsOBBInRadar(lua_State* L) // FIXME
-{
+int LuaSpatial::IsOBBInRadar(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::IsLSSInRadar(lua_State* L) // FIXME
-{
+int LuaSpatial::IsLSSInRadar(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
@@ -498,8 +480,7 @@ int LuaSpatial::IsLSSInRadar(lua_State* L) // FIXME
 typedef bool (*PlayerCheckFunc)(const Player*, const QueryData& data);
 
 
-static bool PlayerInPlanes(const Player* player, const QueryData& data)
-{
+static bool PlayerInPlanes(const Player* player, const QueryData& data) {
   const PlanesData& planes = (const PlanesData&)data;
   for (size_t i = 0; i < planes.planes.size(); i++) {
     const fvec4& plane = planes.planes[i];
@@ -513,8 +494,7 @@ static bool PlayerInPlanes(const Player* player, const QueryData& data)
 }
 
 
-static bool PlayerInSphere(const Player* player, const QueryData& data)
-{
+static bool PlayerInSphere(const Player* player, const QueryData& data) {
   const SphereData& sphere = (const SphereData&)data;
   const fvec3& pos = player->getPosition();
   const float distSqr = (sphere.pos - pos).lengthSq();
@@ -522,8 +502,7 @@ static bool PlayerInSphere(const Player* player, const QueryData& data)
 }
 
 
-static bool PlayerInCylinder(const Player* player, const QueryData& data)
-{
+static bool PlayerInCylinder(const Player* player, const QueryData& data) {
   const CylinderData& cyl = (const CylinderData&)data;
   const fvec3& pos = player->getPosition();
   const float distSqr = (cyl.pos - pos.xy()).lengthSq();
@@ -531,8 +510,7 @@ static bool PlayerInCylinder(const Player* player, const QueryData& data)
 }
 
 
-static bool PlayerInBox(const Player* player, const QueryData& data)
-{
+static bool PlayerInBox(const Player* player, const QueryData& data) {
   const BoxData& box = (const BoxData&)data;
   const fvec3& pos = player->getPosition();
   return box.extents.contains(pos);
@@ -540,8 +518,7 @@ static bool PlayerInBox(const Player* player, const QueryData& data)
 
 
 static void CheckPlayers(PlayerCheckFunc checkFunc, const QueryData& data,
-		       vector<const Player*> hits)
-{
+                         vector<const Player*> hits) {
   // FIXME - check state
 
   const Player* player = NULL;
@@ -569,8 +546,7 @@ static void CheckPlayers(PlayerCheckFunc checkFunc, const QueryData& data,
 }
 
 
-static void PushPlayers(lua_State* L, vector<const Player*> players)
-{
+static void PushPlayers(lua_State* L, vector<const Player*> players) {
   lua_createtable(L, players.size(), 0);
   for (size_t i = 0; i < players.size(); i++) {
     const Player* player = players[i];
@@ -582,8 +558,7 @@ static void PushPlayers(lua_State* L, vector<const Player*> players)
 
 //============================================================================//
 
-int LuaSpatial::GetPlayersInPlanes(lua_State* L)
-{
+int LuaSpatial::GetPlayersInPlanes(lua_State* L) {
   PlanesData planes;
   ParsePlanes(L, planes);
   vector<const Player*> hits;
@@ -593,8 +568,7 @@ int LuaSpatial::GetPlayersInPlanes(lua_State* L)
 }
 
 
-int LuaSpatial::GetPlayersInSphere(lua_State* L)
-{
+int LuaSpatial::GetPlayersInSphere(lua_State* L) {
   SphereData sphere;
   ParseSphere(L, sphere);
   vector<const Player*> hits;
@@ -604,8 +578,7 @@ int LuaSpatial::GetPlayersInSphere(lua_State* L)
 }
 
 
-int LuaSpatial::GetPlayersInCylinder(lua_State* L)
-{
+int LuaSpatial::GetPlayersInCylinder(lua_State* L) {
   CylinderData cyl;
   ParseCylinder(L, cyl);
   vector<const Player*> hits;
@@ -615,8 +588,7 @@ int LuaSpatial::GetPlayersInCylinder(lua_State* L)
 }
 
 
-int LuaSpatial::GetPlayersInBox(lua_State* L)
-{
+int LuaSpatial::GetPlayersInBox(lua_State* L) {
   BoxData box;
   ParseBox(L, box);
   vector<const Player*> hits;
@@ -626,8 +598,7 @@ int LuaSpatial::GetPlayersInBox(lua_State* L)
 }
 
 
-int LuaSpatial::GetVisiblePlayers(lua_State* L)
-{
+int LuaSpatial::GetVisiblePlayers(lua_State* L) {
   PlanesData planes;
   if (!GetViewPlanes(planes)) {
     lua_newtable(L);
@@ -640,8 +611,7 @@ int LuaSpatial::GetVisiblePlayers(lua_State* L)
 }
 
 
-int LuaSpatial::GetRadarPlayers(lua_State* L)
-{
+int LuaSpatial::GetRadarPlayers(lua_State* L) {
   BoxData box;
   if (!GetRadarBox(box)) {
     lua_newtable(L);
@@ -663,8 +633,7 @@ int LuaSpatial::GetRadarPlayers(lua_State* L)
 typedef bool (*FlagCheckFunc)(const Flag*, const QueryData& data);
 
 
-static bool FlagInPlanes(const Flag* flag, const QueryData& data)
-{
+static bool FlagInPlanes(const Flag* flag, const QueryData& data) {
   const PlanesData& planes = (const PlanesData&)data;
   for (size_t i = 0; i < planes.planes.size(); i++) {
     const fvec4& plane = planes.planes[i];
@@ -678,8 +647,7 @@ static bool FlagInPlanes(const Flag* flag, const QueryData& data)
 }
 
 
-static bool FlagInSphere(const Flag* flag, const QueryData& data)
-{
+static bool FlagInSphere(const Flag* flag, const QueryData& data) {
   const SphereData& sphere = (const SphereData&)data;
   const fvec3& pos = flag->position;
   const float distSqr = (sphere.pos - pos).lengthSq();
@@ -687,8 +655,7 @@ static bool FlagInSphere(const Flag* flag, const QueryData& data)
 }
 
 
-static bool FlagInCylinder(const Flag* flag, const QueryData& data)
-{
+static bool FlagInCylinder(const Flag* flag, const QueryData& data) {
   const CylinderData& cyl = (const CylinderData&)data;
   const fvec3& pos = flag->position;
   const float distSqr = (cyl.pos - pos.xy()).lengthSq();
@@ -696,16 +663,14 @@ static bool FlagInCylinder(const Flag* flag, const QueryData& data)
 }
 
 
-static bool FlagInBox(const Flag* flag, const QueryData& data)
-{
+static bool FlagInBox(const Flag* flag, const QueryData& data) {
   const BoxData& box = (const BoxData&)data;
   return box.extents.contains(flag->position);
 }
 
 
 static void CheckFlags(FlagCheckFunc checkFunc, const QueryData& data,
-		       vector<const Flag*> hits)
-{
+                       vector<const Flag*> hits) {
   const World* world = World::getWorld();
   if (world == NULL) {
     return;
@@ -715,15 +680,14 @@ static void CheckFlags(FlagCheckFunc checkFunc, const QueryData& data,
     const Flag* flag = &(world->getFlag(i));
     if (flag->status != FlagNoExist) {
       if (checkFunc(flag, data)) {
-	hits.push_back(flag);
+        hits.push_back(flag);
       }
     }
   }
 }
 
 
-static void PushFlags(lua_State* L, vector<const Flag*> flags)
-{
+static void PushFlags(lua_State* L, vector<const Flag*> flags) {
   lua_createtable(L, flags.size(), 0);
   for (size_t i = 0; i < flags.size(); i++) {
     lua_pushinteger(L, flags[i]->id);
@@ -734,8 +698,7 @@ static void PushFlags(lua_State* L, vector<const Flag*> flags)
 
 //============================================================================//
 
-int LuaSpatial::GetFlagsInPlanes(lua_State* L)
-{
+int LuaSpatial::GetFlagsInPlanes(lua_State* L) {
   PlanesData planes;
   ParsePlanes(L, planes);
   vector<const Flag*> hits;
@@ -745,8 +708,7 @@ int LuaSpatial::GetFlagsInPlanes(lua_State* L)
 }
 
 
-int LuaSpatial::GetFlagsInSphere(lua_State* L)
-{
+int LuaSpatial::GetFlagsInSphere(lua_State* L) {
   SphereData sphere;
   ParseSphere(L, sphere);
   vector<const Flag*> hits;
@@ -756,8 +718,7 @@ int LuaSpatial::GetFlagsInSphere(lua_State* L)
 }
 
 
-int LuaSpatial::GetFlagsInCylinder(lua_State* L)
-{
+int LuaSpatial::GetFlagsInCylinder(lua_State* L) {
   CylinderData cyl;
   ParseCylinder(L, cyl);
   vector<const Flag*> hits;
@@ -767,8 +728,7 @@ int LuaSpatial::GetFlagsInCylinder(lua_State* L)
 }
 
 
-int LuaSpatial::GetFlagsInBox(lua_State* L)
-{
+int LuaSpatial::GetFlagsInBox(lua_State* L) {
   BoxData box;
   ParseBox(L, box);
   vector<const Flag*> hits;
@@ -778,8 +738,7 @@ int LuaSpatial::GetFlagsInBox(lua_State* L)
 }
 
 
-int LuaSpatial::GetVisibleFlags(lua_State* L)
-{
+int LuaSpatial::GetVisibleFlags(lua_State* L) {
   PlanesData planes;
   if (!GetViewPlanes(planes)) {
     lua_newtable(L);
@@ -792,8 +751,7 @@ int LuaSpatial::GetVisibleFlags(lua_State* L)
 }
 
 
-int LuaSpatial::GetRadarFlags(lua_State* L)
-{
+int LuaSpatial::GetRadarFlags(lua_State* L) {
   BoxData box;
   if (!GetRadarBox(box)) {
     lua_newtable(L);
@@ -815,8 +773,7 @@ int LuaSpatial::GetRadarFlags(lua_State* L)
 typedef bool (*ShotCheckFunc)(const ShotPath*, const QueryData& data);
 
 
-static bool ShotInPlanes(const ShotPath* shot, const QueryData& data)
-{
+static bool ShotInPlanes(const ShotPath* shot, const QueryData& data) {
   const PlanesData& planes = (const PlanesData&)data;
   for (size_t i = 0; i < planes.planes.size(); i++) {
     const fvec4& plane = planes.planes[i];
@@ -830,8 +787,7 @@ static bool ShotInPlanes(const ShotPath* shot, const QueryData& data)
 }
 
 
-static bool ShotInSphere(const ShotPath* shot, const QueryData& data)
-{
+static bool ShotInSphere(const ShotPath* shot, const QueryData& data) {
   const SphereData& sphere = (const SphereData&)data;
   const fvec3& pos = shot->getPosition();
   const float distSqr = (sphere.pos - pos).lengthSq();
@@ -839,8 +795,7 @@ static bool ShotInSphere(const ShotPath* shot, const QueryData& data)
 }
 
 
-static bool ShotInCylinder(const ShotPath* shot, const QueryData& data)
-{
+static bool ShotInCylinder(const ShotPath* shot, const QueryData& data) {
   const CylinderData& cyl = (const CylinderData&)data;
   const fvec3& pos = shot->getPosition();
   const float distSqr = (cyl.pos - pos.xy()).lengthSq();
@@ -848,8 +803,7 @@ static bool ShotInCylinder(const ShotPath* shot, const QueryData& data)
 }
 
 
-static bool ShotInBox(const ShotPath* shot, const QueryData& data)
-{
+static bool ShotInBox(const ShotPath* shot, const QueryData& data) {
   const BoxData& box = (const BoxData&)data;
   const fvec3& pos = shot->getPosition();
   return box.extents.contains(pos);
@@ -857,8 +811,7 @@ static bool ShotInBox(const ShotPath* shot, const QueryData& data)
 
 
 static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
-		       vector<const ShotPath*> hits)
-{
+                       vector<const ShotPath*> hits) {
   const World* world = World::getWorld();
   if (world == NULL) {
     return;
@@ -871,9 +824,9 @@ static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
     for (int i = 0; i < maxShots; i++) {
       const ShotPath* shot = myTank->getShot(i);
       if (shot && !shot->isExpired()) {
-	if (checkFunc(shot, data)) {
-	  hits.push_back(shot);
-	}
+        if (checkFunc(shot, data)) {
+          hits.push_back(shot);
+        }
       }
     }
   }
@@ -884,12 +837,12 @@ static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
     const RobotPlayer* player = robots[i];
     if (player != NULL) {
       for (int j = 0; j < maxShots; j++) {
-	const ShotPath* shot = player->getShot(j);
-	if (shot && !shot->isExpired()) {
-	  if (checkFunc(shot, data)) {
-	    hits.push_back(shot);
-	  }
-	}
+        const ShotPath* shot = player->getShot(j);
+        if (shot && !shot->isExpired()) {
+          if (checkFunc(shot, data)) {
+            hits.push_back(shot);
+          }
+        }
       }
     }
   }
@@ -900,12 +853,12 @@ static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
     const RemotePlayer* player = world->getPlayer(i);
     if (player != NULL) {
       for (int j = 0; j < maxShots; j++) {
-	const ShotPath* shot = player->getShot(j);
-	if (shot && !shot->isExpired()) {
-	  if (checkFunc(shot, data)) {
-	    hits.push_back(shot);
-	  }
-	}
+        const ShotPath* shot = player->getShot(j);
+        if (shot && !shot->isExpired()) {
+          if (checkFunc(shot, data)) {
+            hits.push_back(shot);
+          }
+        }
       }
     }
   }
@@ -917,17 +870,16 @@ static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
     for (int i = 0; i < wwMaxShots; i++) {
       const ShotPath* shot = worldWeapons->getShot(i);
       if (shot && !shot->isExpired()) {
-	if (checkFunc(shot, data)) {
-	  hits.push_back(shot);
-	}
+        if (checkFunc(shot, data)) {
+          hits.push_back(shot);
+        }
       }
     }
   }
 }
 
 
-static void PushShots(lua_State* L, vector<const ShotPath*> shots)
-{
+static void PushShots(lua_State* L, vector<const ShotPath*> shots) {
   lua_createtable(L, shots.size(), 0);
   for (size_t i = 0; i < shots.size(); i++) {
     const ShotPath* shot = shots[i];
@@ -940,8 +892,7 @@ static void PushShots(lua_State* L, vector<const ShotPath*> shots)
 
 //============================================================================//
 
-int LuaSpatial::GetShotsInPlanes(lua_State* L)
-{
+int LuaSpatial::GetShotsInPlanes(lua_State* L) {
   PlanesData planes;
   ParsePlanes(L, planes);
   vector<const ShotPath*> hits;
@@ -951,8 +902,7 @@ int LuaSpatial::GetShotsInPlanes(lua_State* L)
 }
 
 
-int LuaSpatial::GetShotsInSphere(lua_State* L)
-{
+int LuaSpatial::GetShotsInSphere(lua_State* L) {
   SphereData sphere;
   ParseSphere(L, sphere);
   vector<const ShotPath*> hits;
@@ -962,8 +912,7 @@ int LuaSpatial::GetShotsInSphere(lua_State* L)
 }
 
 
-int LuaSpatial::GetShotsInCylinder(lua_State* L)
-{
+int LuaSpatial::GetShotsInCylinder(lua_State* L) {
   CylinderData cyl;
   ParseCylinder(L, cyl);
   vector<const ShotPath*> hits;
@@ -973,8 +922,7 @@ int LuaSpatial::GetShotsInCylinder(lua_State* L)
 }
 
 
-int LuaSpatial::GetShotsInBox(lua_State* L)
-{
+int LuaSpatial::GetShotsInBox(lua_State* L) {
   BoxData box;
   ParseBox(L, box);
   vector<const ShotPath*> hits;
@@ -984,8 +932,7 @@ int LuaSpatial::GetShotsInBox(lua_State* L)
 }
 
 
-int LuaSpatial::GetVisibleShots(lua_State* L)
-{
+int LuaSpatial::GetVisibleShots(lua_State* L) {
   PlanesData planes;
   if (!GetViewPlanes(planes)) {
     lua_newtable(L);
@@ -998,8 +945,7 @@ int LuaSpatial::GetVisibleShots(lua_State* L)
 }
 
 
-int LuaSpatial::GetRadarShots(lua_State* L)
-{
+int LuaSpatial::GetRadarShots(lua_State* L) {
   BoxData box;
   if (!GetRadarBox(box)) {
     lua_newtable(L);
@@ -1018,38 +964,32 @@ int LuaSpatial::GetRadarShots(lua_State* L)
 //  Obstacles
 //
 
-int LuaSpatial::GetObstaclesInPlanes(lua_State* L) // FIXME
-{
+int LuaSpatial::GetObstaclesInPlanes(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::GetObstaclesInSphere(lua_State* L) // FIXME
-{
+int LuaSpatial::GetObstaclesInSphere(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::GetObstaclesInCylinder(lua_State* L) // FIXME
-{
+int LuaSpatial::GetObstaclesInCylinder(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::GetObstaclesInBox(lua_State* L) // FIXME
-{
+int LuaSpatial::GetObstaclesInBox(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::GetVisibleObstacles(lua_State* L) // FIXME
-{
+int LuaSpatial::GetVisibleObstacles(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
 
-int LuaSpatial::GetRadarObstacles(lua_State* L) // FIXME
-{
+int LuaSpatial::GetRadarObstacles(lua_State* L) { // FIXME
   return luaL_pushnil(L);
 }
 
@@ -1062,6 +1002,6 @@ int LuaSpatial::GetRadarObstacles(lua_State* L) // FIXME
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

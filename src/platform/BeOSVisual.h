@@ -11,7 +11,7 @@
  */
 
 /* BeOSVisual:
- *	Builders for BeOS visuals suitable for OpenGL contexts and windows.
+ *  Builders for BeOS visuals suitable for OpenGL contexts and windows.
  */
 
 #ifndef BZF_BEOSVISUAL_H
@@ -21,36 +21,36 @@
 #include "BeOSDisplay.h"
 
 class BeOSVisual : public BzfVisual {
-public:
-  BeOSVisual(const BeOSDisplay*);
+  public:
+    BeOSVisual(const BeOSDisplay*);
 //  BeOSVisual(const BeOSVisual&);
-  ~BeOSVisual();
+    ~BeOSVisual();
 
-  void				setLevel(int level);
-  void				setDoubleBuffer(bool);
-  void				setIndex(int minDepth);
-  void				setRGBA(int minRed, int minGreen,
-							int minBlue, int minAlpha);
-  void				setDepth(int minDepth);
-  void				setStencil(int minDepth);
-  void				setAccum(int minRed, int minGreen,
-							int minBlue, int minAlpha);
-  void				setStereo(bool);
-  void				setMultisample(int minSamples);
+    void        setLevel(int level);
+    void        setDoubleBuffer(bool);
+    void        setIndex(int minDepth);
+    void        setRGBA(int minRed, int minGreen,
+                        int minBlue, int minAlpha);
+    void        setDepth(int minDepth);
+    void        setStencil(int minDepth);
+    void        setAccum(int minRed, int minGreen,
+                         int minBlue, int minAlpha);
+    void        setStereo(bool);
+    void        setMultisample(int minSamples);
 
-  bool				build();
+    bool        build();
 
-  // for other BeOS stuff
+    // for other BeOS stuff
 
-private:
-  const BeOSDisplay*		display;
-friend class BeOSWindow;
-  uint32			color;
-  uint32			depth;
-  uint32			stencil;
-  uint32			accum;
-  uint32			flags;
-  bool				doubleBuffer;
+  private:
+    const BeOSDisplay*    display;
+    friend class BeOSWindow;
+    uint32      color;
+    uint32      depth;
+    uint32      stencil;
+    uint32      accum;
+    uint32      flags;
+    bool        doubleBuffer;
 };
 
 #endif // BZF_BEOSVISUAL_H
@@ -59,6 +59,6 @@ friend class BeOSWindow;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

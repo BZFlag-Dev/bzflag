@@ -29,18 +29,16 @@
 // BSPSceneDatabase::Node
 //
 
-void BSPSceneDatabase::renderRadarNodes(const ViewFrustum&)
-{
+void BSPSceneDatabase::renderRadarNodes(const ViewFrustum&) {
 }
 
 
 BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
-				dynamic(_dynamic),
-				count(0),
-				node(_node),
-				front(NULL),
-				back(NULL)
-{
+  dynamic(_dynamic),
+  count(0),
+  node(_node),
+  front(NULL),
+  back(NULL) {
   // do nothing
 }
 
@@ -50,22 +48,19 @@ BSPSceneDatabase::Node::Node(bool _dynamic, SceneNode* _node):
 //
 
 BSPSceneDatabase::BSPSceneDatabase() :
-				root(NULL),
-				depth(0)
-{
+  root(NULL),
+  depth(0) {
   needNoPlaneNodes = true;
   memset(eye, 0, sizeof(float) * 3);
 }
 
 
-BSPSceneDatabase::~BSPSceneDatabase()
-{
+BSPSceneDatabase::~BSPSceneDatabase() {
   free(root);
 }
 
 
-void BSPSceneDatabase::finalizeStatics()
-{
+void BSPSceneDatabase::finalizeStatics() {
   if (needNoPlaneNodes) {
     insertNoPlaneNodes();
   }
@@ -73,8 +68,7 @@ void BSPSceneDatabase::finalizeStatics()
 }
 
 
-bool BSPSceneDatabase::addStaticNode(SceneNode* node, bool dontFree)
-{
+bool BSPSceneDatabase::addStaticNode(SceneNode* node, bool dontFree) {
   // store for later insertion if the node has no plane
   if (node->getPlane() == NULL) {
     noPlaneNodes.push_back(node);
@@ -86,54 +80,55 @@ bool BSPSceneDatabase::addStaticNode(SceneNode* node, bool dontFree)
     root = new Node(false, node);
     setDepth(1);
     return false; // node would not be freed
-  } else {
+  }
+  else {
     return insertStatic(1, root, node, dontFree);
   }
 }
 
 
-void BSPSceneDatabase::addDynamicNode(SceneNode* node)
-{
+void BSPSceneDatabase::addDynamicNode(SceneNode* node) {
   node->notifyStyleChange();
   // insert dynamic node
   if (!root) {
     root = new Node(true, node);
     setDepth(1);
-  } else {
+  }
+  else {
     insertDynamic(1, root, node);
   }
 }
 
 
-void BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n)
-{
+void BSPSceneDatabase::addDynamicSphere(SphereSceneNode* n) {
   // add each part of sphere separately
   int numParts;
   SceneNode** parts = n->getParts(numParts);
   if (!parts) {
     // wouldn't split itself up -- add whole thing
     addDynamicNode(n);
-  } else {
-    for (int i = 0; i < numParts; i++)
+  }
+  else {
+    for (int i = 0; i < numParts; i++) {
       addDynamicNode(parts[i]);
+    }
   }
 }
 
 
-void BSPSceneDatabase::removeDynamicNodes()
-{
+void BSPSceneDatabase::removeDynamicNodes() {
   // scan tree removing dynamic nodes
   if (root && root->dynamic) {
     release(root);
     root = NULL;
-  } else {
+  }
+  else {
     removeDynamic(root);
   }
 }
 
 
-void BSPSceneDatabase::removeAllNodes()
-{
+void BSPSceneDatabase::removeAllNodes() {
   free(root);
   root = NULL;
   depth = 0;
@@ -142,15 +137,13 @@ void BSPSceneDatabase::removeAllNodes()
 }
 
 
-bool BSPSceneDatabase::isOrdered()
-{
+bool BSPSceneDatabase::isOrdered() {
   return true;
 }
 
 
-void BSPSceneDatabase::free(Node* node)
-{
-  if (!node) return;
+void BSPSceneDatabase::free(Node* node) {
+  if (!node) { return; }
   delete node->node;
   free(node->front);
   free(node->back);
@@ -158,9 +151,8 @@ void BSPSceneDatabase::free(Node* node)
 }
 
 
-void BSPSceneDatabase::release(Node* node)
-{
-  if (!node) return;
+void BSPSceneDatabase::release(Node* node) {
+  if (!node) { return; }
   release(node->front);
   release(node->back);
   delete node;
@@ -168,8 +160,7 @@ void BSPSceneDatabase::release(Node* node)
 
 
 bool BSPSceneDatabase::insertStatic(int level, Node* _root,
-				    SceneNode* node, bool dontFree)
-{
+                                    SceneNode* node, bool dontFree) {
   // dynamic nodes should only be inserted after all static nodes
   assert(_root->dynamic == false);
 
@@ -187,9 +178,10 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
 
       // done with split node so get rid of it
       if (dontFree) {
-	wouldFree = true;
-      } else {
-	delete node;
+        wouldFree = true;
+      }
+      else {
+        delete node;
       }
       break;
     case 1:
@@ -208,7 +200,8 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
   if (front) {
     if (_root->front) {
       wouldFree = insertStatic(level + 1, _root->front, front, dontFreeNext);
-    } else {
+    }
+    else {
       _root->front = new Node(false, front);
       setDepth(level + 1);
     }
@@ -217,7 +210,8 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
   if (back) {
     if (_root->back) {
       wouldFree = insertStatic(level + 1, _root->back, back, dontFreeNext);
-    } else {
+    }
+    else {
       _root->back = new Node(false, back);
       setDepth(level + 1);
     }
@@ -229,28 +223,31 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
 
 
 void BSPSceneDatabase::insertDynamic(int level, Node* _root,
-				     SceneNode* node)
-{
+                                     SceneNode* node) {
   float d;
   if (!_root->dynamic && _root->node->getPlane()) {
     const fvec4* plane = _root->node->getPlane();
     const fvec3& pos = node->getSphere().xyz();
     d = plane->planeDist(pos);
-  } else {
+  }
+  else {
     d = _root->node->getDistanceSq(eye) - node->getDistanceSq(eye);
   }
 
   if (d >= 0.0f) {
     if (_root->front) {
       insertDynamic(level + 1, _root->front, node);
-    } else {
+    }
+    else {
       _root->front = new Node(true, node);
       setDepth(level + 1);
     }
-  } else {
+  }
+  else {
     if (_root->back) {
       insertDynamic(level + 1, _root->back, node);
-    } else {
+    }
+    else {
       _root->back = new Node(true, node);
       setDepth(level + 1);
     }
@@ -259,8 +256,7 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
 
 
 void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
-				     SceneNode* node)
-{
+                                     SceneNode* node) {
   // dynamic nodes should only be inserted after all static nodes
   assert(_root->dynamic == false);
 
@@ -269,7 +265,8 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
     const fvec4* plane = _root->node->getPlane();
     const fvec3& pos = node->getSphere().xyz();
     d = plane->planeDist(pos);
-  } else {
+  }
+  else {
     // it's a crap shoot  (draw smaller items first)
     d = node->getSphere()[3] - _root->node->getSphere()[3];
   }
@@ -277,14 +274,17 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
   if (d >= 0.0f) {
     if (_root->front) {
       insertNoPlane(level + 1, _root->front, node);
-    } else {
+    }
+    else {
       _root->front = new Node(false, node);
       setDepth(level + 1);
     }
-  } else {
+  }
+  else {
     if (_root->back) {
       insertNoPlane(level + 1, _root->back, node);
-    } else {
+    }
+    else {
       _root->back = new Node(false, node);
       setDepth(level + 1);
     }
@@ -292,8 +292,7 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
 }
 
 
-void BSPSceneDatabase::insertNoPlaneNodes()
-{
+void BSPSceneDatabase::insertNoPlaneNodes() {
   int i = 0;
 
   needNoPlaneNodes = false;
@@ -304,7 +303,8 @@ void BSPSceneDatabase::insertNoPlaneNodes()
       root = new Node(false, noPlaneNodes[0]);
       setDepth(1);
       i++;
-    } else {
+    }
+    else {
       return;
     }
   }
@@ -321,26 +321,26 @@ void BSPSceneDatabase::insertNoPlaneNodes()
 }
 
 
-void BSPSceneDatabase::removeDynamic(Node* node)
-{
-  if (!node) return;
+void BSPSceneDatabase::removeDynamic(Node* node) {
+  if (!node) { return; }
   if (node->front && node->front->dynamic) {
     release(node->front);
     node->front = NULL;
-  } else {
+  }
+  else {
     removeDynamic(node->front);
   }
   if (node->back && node->back->dynamic) {
     release(node->back);
     node->back = NULL;
-  } else {
+  }
+  else {
     removeDynamic(node->back);
   }
 }
 
 
-void BSPSceneDatabase::setDepth(int newDepth)
-{
+void BSPSceneDatabase::setDepth(int newDepth) {
   if (newDepth <= depth) {
     return;
   }
@@ -348,8 +348,7 @@ void BSPSceneDatabase::setDepth(int newDepth)
 }
 
 
-void BSPSceneDatabase::updateNodeStyles()
-{
+void BSPSceneDatabase::updateNodeStyles() {
   if (root) {
     setNodeStyle(root);
   }
@@ -357,8 +356,7 @@ void BSPSceneDatabase::updateNodeStyles()
 }
 
 
-void BSPSceneDatabase::addLights(SceneRenderer& _renderer)
-{
+void BSPSceneDatabase::addLights(SceneRenderer& _renderer) {
   if (root) {
     renderer = &_renderer;
     nodeAddLights(root);
@@ -369,8 +367,7 @@ void BSPSceneDatabase::addLights(SceneRenderer& _renderer)
 
 void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer,
                                       bool /*staticNodes*/,
-                                      bool /*dynamicNodes*/)
-{
+                                      bool /*dynamicNodes*/) {
   if (root) {
     renderer = &_renderer;
     nodeAddShadowNodes(root);
@@ -381,8 +378,7 @@ void BSPSceneDatabase::addShadowNodes(SceneRenderer& _renderer,
 
 void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer,
                                       bool /*staticNodes*/,
-                                      bool /*dynamicNodes*/)
-{
+                                      bool /*dynamicNodes*/) {
   if (root) {
     renderer = &_renderer;
     frustum = &renderer->getViewFrustum();
@@ -393,8 +389,7 @@ void BSPSceneDatabase::addRenderNodes(SceneRenderer& _renderer,
 }
 
 
-void BSPSceneDatabase::setNodeStyle(Node *node)
-{
+void BSPSceneDatabase::setNodeStyle(Node* node) {
   Node* back = node->back;
   Node* front = node->front;
   // dive into the child BSP nodes
@@ -411,8 +406,7 @@ void BSPSceneDatabase::setNodeStyle(Node *node)
 }
 
 
-void BSPSceneDatabase::nodeAddLights(Node* node)
-{
+void BSPSceneDatabase::nodeAddLights(Node* node) {
   Node* back = node->back;
   Node* front = node->front;
   // dive into the child BSP nodes
@@ -430,8 +424,7 @@ void BSPSceneDatabase::nodeAddLights(Node* node)
 }
 
 
-void BSPSceneDatabase::nodeAddShadowNodes(Node* node)
-{
+void BSPSceneDatabase::nodeAddShadowNodes(Node* node) {
   Node* back = node->back;
   Node* front = node->front;
   // dive into the child BSP nodes
@@ -447,8 +440,7 @@ void BSPSceneDatabase::nodeAddShadowNodes(Node* node)
 }
 
 
-void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
-{
+void BSPSceneDatabase::nodeAddRenderNodes(Node* node) {
   Node* back = node->back;
   Node* front = node->front;
   SceneNode* snode = node->node;
@@ -458,25 +450,25 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
     if (plane->planeDist(eye) >= 0.0f) {
       // eye is in front so render:  back, node, front
       if (back) {
-	nodeAddRenderNodes(back);
+        nodeAddRenderNodes(back);
       }
       if (!snode->cull(*frustum)) {
-	snode->addRenderNodes(*renderer);
+        snode->addRenderNodes(*renderer);
       }
       if (front) {
-	nodeAddRenderNodes(front);
+        nodeAddRenderNodes(front);
       }
     }
     else {
       // eye is in back so render:  front, node, back
       if (front) {
-	nodeAddRenderNodes(front);
+        nodeAddRenderNodes(front);
       }
       if (!snode->cull(*frustum)) {
-	snode->addRenderNodes(*renderer);
+        snode->addRenderNodes(*renderer);
       }
       if (back) {
-	nodeAddRenderNodes(back);
+        nodeAddRenderNodes(back);
       }
     }
   }
@@ -497,8 +489,7 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
 }
 
 
-void BSPSceneDatabase::drawCuller()
-{
+void BSPSceneDatabase::drawCuller() {
   return;
 }
 
@@ -507,6 +498,6 @@ void BSPSceneDatabase::drawCuller()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

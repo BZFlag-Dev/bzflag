@@ -22,12 +22,11 @@
 #include "Pack.h"
 
 
-float Score::tkKickRatio( 3.0 );
-int   Score::score( 999 );
-bool  Score::randomRanking( false );
+float Score::tkKickRatio(3.0);
+int   Score::score(999);
+bool  Score::randomRanking(false);
 
-Score::Score(): wins(0), losses(0), tks(0)
-{
+Score::Score(): wins(0), losses(0), tks(0) {
 }
 
 
@@ -37,14 +36,16 @@ void Score::dump() const {
 
 
 float Score::ranking() const {
-  if (randomRanking)
+  if (randomRanking) {
     return (float)bzfrand();
+  }
 
   // otherwise do score-based ranking
   int sum = wins + losses;
-  if (sum == 0)
+  if (sum == 0) {
     return BZDB.eval(BZDBNAMES.STARTINGRANK);
-  float average = (float)wins/(float)sum;
+  }
+  float average = (float)wins / (float)sum;
   // IIRC that is how wide is the gaussian
   float penalty = (1.0f - 0.5f / sqrt((float)sum));
   return average * penalty;
@@ -54,7 +55,7 @@ float Score::ranking() const {
 bool Score::isTK() const {
   // arbitrary 3
   return (tks >= 3) && (tkKickRatio > 0)
-    && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
+         && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
 }
 
 
@@ -83,7 +84,7 @@ void* Score::pack(void* buf) const {
 
 
 void Score::pack(NetMessage& netMsg) const {
-  netMsg.packFloat( ranking() );
+  netMsg.packFloat(ranking());
   netMsg.packUInt16(wins);
   netMsg.packUInt16(losses);
   netMsg.packUInt16(tks);
@@ -109,6 +110,6 @@ void Score::setRandomRanking() {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

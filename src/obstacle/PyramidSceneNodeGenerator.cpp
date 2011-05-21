@@ -21,95 +21,94 @@
 //
 
 PyramidSceneNodeGenerator::PyramidSceneNodeGenerator(
-				const PyramidBuilding* _pyramid) :
-				pyramid(_pyramid)
-{
+  const PyramidBuilding* _pyramid) :
+  pyramid(_pyramid) {
   // do nothing
 }
 
-PyramidSceneNodeGenerator::~PyramidSceneNodeGenerator()
-{
+PyramidSceneNodeGenerator::~PyramidSceneNodeGenerator() {
   // do nothing
 }
 
-WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
-				float uRepeats, float vRepeats, bool lod)
-{
+WallSceneNode*    PyramidSceneNodeGenerator::getNextNode(
+  float uRepeats, float vRepeats, bool lod) {
 
   bool isQuad = false;
 
-  if (getNodeNumber() == 5) return NULL;
+  if (getNodeNumber() == 5) { return NULL; }
 
   fvec3 base, sCorner, tCorner;
   if (pyramid->getZFlip()) {
     switch (incNodeNumber()) {
       case 1:
-	pyramid->getCorner(4, base);
-	pyramid->getCorner(1, sCorner);
-	pyramid->getCorner(0, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(4, base);
+        pyramid->getCorner(1, sCorner);
+        pyramid->getCorner(0, tCorner);
+        isQuad = false;
+        break;
       case 2:
-	pyramid->getCorner(4, base);
-	pyramid->getCorner(2, sCorner);
-	pyramid->getCorner(1, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(4, base);
+        pyramid->getCorner(2, sCorner);
+        pyramid->getCorner(1, tCorner);
+        isQuad = false;
+        break;
       case 3:
-	pyramid->getCorner(4, base);
-	pyramid->getCorner(3, sCorner);
-	pyramid->getCorner(2, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(4, base);
+        pyramid->getCorner(3, sCorner);
+        pyramid->getCorner(2, tCorner);
+        isQuad = false;
+        break;
       case 4:
-	pyramid->getCorner(4, base);
-	pyramid->getCorner(0, sCorner);
-	pyramid->getCorner(3, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(4, base);
+        pyramid->getCorner(0, sCorner);
+        pyramid->getCorner(3, tCorner);
+        isQuad = false;
+        break;
       case 5:
-	pyramid->getCorner(0, base);
-	pyramid->getCorner(1, sCorner);
-	pyramid->getCorner(3, tCorner);
-	isQuad = true;
-	break;
+        pyramid->getCorner(0, base);
+        pyramid->getCorner(1, sCorner);
+        pyramid->getCorner(3, tCorner);
+        isQuad = true;
+        break;
     }
-  } else {
+  }
+  else {
     switch (incNodeNumber()) {
       case 1:
-	pyramid->getCorner(0, base);
-	pyramid->getCorner(1, sCorner);
-	pyramid->getCorner(4, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(0, base);
+        pyramid->getCorner(1, sCorner);
+        pyramid->getCorner(4, tCorner);
+        isQuad = false;
+        break;
       case 2:
-	pyramid->getCorner(1, base);
-	pyramid->getCorner(2, sCorner);
-	pyramid->getCorner(4, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(1, base);
+        pyramid->getCorner(2, sCorner);
+        pyramid->getCorner(4, tCorner);
+        isQuad = false;
+        break;
       case 3:
-	pyramid->getCorner(2, base);
-	pyramid->getCorner(3, sCorner);
-	pyramid->getCorner(4, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(2, base);
+        pyramid->getCorner(3, sCorner);
+        pyramid->getCorner(4, tCorner);
+        isQuad = false;
+        break;
       case 4:
-	pyramid->getCorner(3, base);
-	pyramid->getCorner(0, sCorner);
-	pyramid->getCorner(4, tCorner);
-	isQuad = false;
-	break;
+        pyramid->getCorner(3, base);
+        pyramid->getCorner(0, sCorner);
+        pyramid->getCorner(4, tCorner);
+        isQuad = false;
+        break;
       case 5:
-	if ((pyramid->getPosition()[2] > 0.0f) || pyramid->getZFlip()) {
-	  pyramid->getCorner(0, base);
-	  pyramid->getCorner(3, sCorner);
-	  pyramid->getCorner(1, tCorner);
-	  isQuad = true;
-	} else {
-	  return NULL;
-	}
-	break;
+        if ((pyramid->getPosition()[2] > 0.0f) || pyramid->getZFlip()) {
+          pyramid->getCorner(0, base);
+          pyramid->getCorner(3, sCorner);
+          pyramid->getCorner(1, tCorner);
+          isQuad = true;
+        }
+        else {
+          return NULL;
+        }
+        break;
     }
   }
 
@@ -118,7 +117,8 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 
   if (isQuad == false) {
     return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
-  } else {
+  }
+  else {
     return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
   }
 }
@@ -127,6 +127,6 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

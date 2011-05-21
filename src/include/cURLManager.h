@@ -26,84 +26,84 @@
 
 
 class cURLManager {
-public:
-  cURLManager();
-  virtual ~cURLManager();
+  public:
+    cURLManager();
+    virtual ~cURLManager();
 
-  enum timeCondition {
-    None,
-    ModifiedSince
-  };
+    enum timeCondition {
+      None,
+      ModifiedSince
+    };
 
-  void addHandle();
-  void removeHandle();
+    void addHandle();
+    void removeHandle();
 
-  void setTimeout(long timeout);
-  void setNoBody();
-  void setFailOnError();
-  void setGetMode();
-  void setHTTPPostMode();
-  void setHttpHeader(const std::vector<std::string>& lines);
-  void setPostMode(const std::string& postData);
-  void setIncludeHeader();
-  void setRequestFileTime(bool request);
-  void setURL(const std::string& url);
-  void setProgressFunction(curl_progress_callback func, void* data);
-  void setTimeCondition(timeCondition condition, time_t &t);
-  void setInterface(const std::string& interfaceIP);
-  void setUserAgent(const std::string& userAgent);
-  void setDNSCachingTime(long time);
-  void setDeleteOnDone();
+    void setTimeout(long timeout);
+    void setNoBody();
+    void setFailOnError();
+    void setGetMode();
+    void setHTTPPostMode();
+    void setHttpHeader(const std::vector<std::string>& lines);
+    void setPostMode(const std::string& postData);
+    void setIncludeHeader();
+    void setRequestFileTime(bool request);
+    void setURL(const std::string& url);
+    void setProgressFunction(curl_progress_callback func, void* data);
+    void setTimeCondition(timeCondition condition, time_t& t);
+    void setInterface(const std::string& interfaceIP);
+    void setUserAgent(const std::string& userAgent);
+    void setDNSCachingTime(long time);
+    void setDeleteOnDone();
 
-  void addFormData(const char *key, const char *value);
+    void addFormData(const char* key, const char* value);
 
-  bool getFileTime(time_t &t);
-  bool getFileSize(double &size);
-  bool getFileRemoteSize(double &size);
-  bool getHttpCode(long   &code);
+    bool getFileTime(time_t& t);
+    bool getFileSize(double& size);
+    bool getFileRemoteSize(double& size);
+    bool getHttpCode(long&   code);
 
-  virtual void collectData(char *ptr, int len);
-  virtual void finalization(char *data, unsigned int length, bool good) = 0;
+    virtual void collectData(char* ptr, int len);
+    virtual void finalization(char* data, unsigned int length, bool good) = 0;
 
-  void performWait();
+    void performWait();
 
-  static bool	perform();
-  static int	fdset(fd_set &read, fd_set &write);
+    static bool perform();
+    static int  fdset(fd_set& read, fd_set& write);
 
-protected:
-  void	       *theData;
-  unsigned int  theLen;
+  protected:
+    void*         theData;
+    unsigned int  theLen;
 
-private:
-  void		infoComplete(CURLcode result);
+  private:
+    void    infoComplete(CURLcode result);
 
-private:
-  CURL	       *easyHandle;
-  bool		added;
-  bool          deleteOnDone;
-  std::string   usedUrl;
-  std::string   interfaceIP;
-  std::string   userAgent;
-  std::string   postData;
+  private:
+    CURL*         easyHandle;
+    bool    added;
+    bool          deleteOnDone;
+    std::string   usedUrl;
+    std::string   interfaceIP;
+    std::string   userAgent;
+    std::string   postData;
 
-  struct curl_slist* httpHeader;
+    struct curl_slist* httpHeader;
 
-  struct curl_httppost* formPost;
-  struct curl_httppost* formLast;
+    struct curl_httppost* formPost;
+    struct curl_httppost* formLast;
 
-private:
-  static void   setup();
+  private:
+    static void   setup();
 
-  static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
-			      void *stream);
+    static size_t writeFunction(void* ptr, size_t size, size_t nmemb,
+                                void* stream);
 
-  static bool   inited;
-  static bool   justCalled;
-  static int	refs;
-  static CURLM *multiHandle;
-  static char   errorBuffer[CURL_ERROR_SIZE];
+    static bool   inited;
+    static bool   justCalled;
+    static int  refs;
+    static CURLM* multiHandle;
+    static char   errorBuffer[CURL_ERROR_SIZE];
 
-  static std::map<CURL*, cURLManager*> *pcURLMap;
+    static std::map<CURL*, cURLManager*> *pcURLMap;
 };
 
 
@@ -127,23 +127,22 @@ struct trResourceItem {
 };
 
 
-class ResourceGetter :  private cURLManager
-{
-public:
-  ResourceGetter();
-  virtual ~ResourceGetter();
+class ResourceGetter :  private cURLManager {
+  public:
+    ResourceGetter();
+    virtual ~ResourceGetter();
 
-  void addResource ( trResourceItem &item );
-  void flush ( void );
+    void addResource(trResourceItem& item);
+    void flush(void);
 
-  virtual void finalization(char *data, unsigned int length, bool good);
+    virtual void finalization(char* data, unsigned int length, bool good);
 
-protected:
-  bool itemExists ( trResourceItem &item );
-  void getResource ( void );
+  protected:
+    bool itemExists(trResourceItem& item);
+    void getResource(void);
 
-  std::vector<trResourceItem> resources;
-  bool doingStuff;
+    std::vector<trResourceItem> resources;
+    bool doingStuff;
 };
 
 
@@ -154,6 +153,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

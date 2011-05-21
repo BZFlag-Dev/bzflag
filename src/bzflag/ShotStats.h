@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATS_H__
-#define	__SHOTSTATS_H__
+#ifndef __SHOTSTATS_H__
+#define __SHOTSTATS_H__
 
 #include "common.h"
 
@@ -25,23 +25,23 @@ class LocalFontFace;
 /** ShotStats displays a set of statistics on player's shots and accuracies
  */
 class ShotStats : public HUDDialog {
-public:
-  ShotStats();
-  ~ShotStats();
+  public:
+    ShotStats();
+    ~ShotStats();
 
-  HUDuiDefaultKey* getDefaultKey();
-  void resize(int width, int height);
-  void execute(void);
-  void addStats(Player* player);
+    HUDuiDefaultKey* getDefaultKey();
+    void resize(int width, int height);
+    void execute(void);
+    void addStats(Player* player);
 
-private:
+  private:
 
-  void createLabel(const std::string &str, bool navigable = false);
+    void createLabel(const std::string& str, bool navigable = false);
 
-  int rows;
-  int columns;
+    int rows;
+    int columns;
 
-  LocalFontFace* fontFace;
+    LocalFontFace* fontFace;
 
 };
 
@@ -51,6 +51,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -25,22 +25,21 @@
  *  taken into account are the proximity to other players, bullets,
  *  flags, etc.
  */
-class SpawnPolicy
-{
-public:
-  SpawnPolicy();
-  virtual ~SpawnPolicy();
+class SpawnPolicy {
+  public:
+    SpawnPolicy();
+    virtual ~SpawnPolicy();
 
-  virtual const char *Name() const = 0;
+    virtual const char* Name() const = 0;
 
-  virtual void getPosition(fvec3& pos, int playerId,
-                           bool onGroundOnly, bool notNearEdges) = 0;
-  virtual void getAzimuth(float &azimuth) = 0;
+    virtual void getPosition(fvec3& pos, int playerId,
+                             bool onGroundOnly, bool notNearEdges) = 0;
+    virtual void getAzimuth(float& azimuth) = 0;
 
-protected:
-  virtual bool isFacing(const fvec3& selfPos, const fvec3& enemyPos,
-                        const float enemyAzimuth, const float deviation) const;
-  virtual bool isImminentlyDangerous(const fvec3& selfPos) const;
+  protected:
+    virtual bool isFacing(const fvec3& selfPos, const fvec3& enemyPos,
+                          const float enemyAzimuth, const float deviation) const;
+    virtual bool isImminentlyDangerous(const fvec3& selfPos) const;
 };
 
 #endif  /*__SPAWNPOLICY_H__ */
@@ -49,6 +48,6 @@ protected:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

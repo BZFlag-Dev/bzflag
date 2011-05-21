@@ -26,48 +26,46 @@
 /**
  * Singleton report generator.  used for logging matches to a file.
  */
-class Reports : public Singleton<Reports>
-{
-public:
-
-  bool file(const std::string &user, const std::string message);
-  size_t getLines(std::vector<std::string> &lines, const char* pattern = NULL
-);
-
-  size_t count(void);
-  bool clear(void);
-  bool clear(size_t index);
-
-  class Report
-  {
+class Reports : public Singleton<Reports> {
   public:
-    Report() {};
-    Report(const std::string &line) {
-      fill(line);
-    }
-    Report(const char* t, const std::string &f, const std::string & m);
 
-    std::string from;
-    std::string time;
-    std::string message;
+    bool file(const std::string& user, const std::string message);
+    size_t getLines(std::vector<std::string> &lines, const char* pattern = NULL
+                   );
 
-    bool matchName(const std::string pattern);
-    bool matchMessage(const std::string pattern);
-    bool match(const std::string pattern);
+    size_t count(void);
+    bool clear(void);
+    bool clear(size_t index);
 
-    bool fill(const std::string &line);
+    class Report {
+      public:
+        Report() {};
+        Report(const std::string& line) {
+          fill(line);
+        }
+        Report(const char* t, const std::string& f, const std::string& m);
 
-    std::string fileLine(void);
- };
+        std::string from;
+        std::string time;
+        std::string message;
 
-  Report get(size_t index);
+        bool matchName(const std::string pattern);
+        bool matchMessage(const std::string pattern);
+        bool match(const std::string pattern);
 
-protected:
-  friend class Singleton<Reports>;
+        bool fill(const std::string& line);
 
-private:
-  Reports();
-  ~Reports();
+        std::string fileLine(void);
+    };
+
+    Report get(size_t index);
+
+  protected:
+    friend class Singleton<Reports>;
+
+  private:
+    Reports();
+    ~Reports();
 };
 
 
@@ -77,6 +75,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

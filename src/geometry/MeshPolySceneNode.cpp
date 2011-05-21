@@ -40,25 +40,22 @@ MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* node,
                                       const fvec3Array& _normals,
                                       const fvec2Array& _texcoords,
                                       const fvec3& _normal)
-: normal(_normal)
-, vertices(_vertices)
-, normals(_normals)
-, texcoords(_texcoords)
-{
+  : normal(_normal)
+  , vertices(_vertices)
+  , normals(_normals)
+  , texcoords(_texcoords) {
   sceneNode = node;
   style = 0;
   return;
 }
 
 
-MeshPolySceneNode::Geometry::~Geometry()
-{
+MeshPolySceneNode::Geometry::~Geometry() {
   // do nothing
   return;
 }
 
-inline void MeshPolySceneNode::Geometry::drawV() const
-{
+inline void MeshPolySceneNode::Geometry::drawV() const {
   const int count = vertices.getSize();
   glBegin(GL_TRIANGLE_FAN);
   for (int i = 0; i < count; i++) {
@@ -69,8 +66,7 @@ inline void MeshPolySceneNode::Geometry::drawV() const
 }
 
 
-inline void MeshPolySceneNode::Geometry::drawVT() const
-{
+inline void MeshPolySceneNode::Geometry::drawVT() const {
   const int count = vertices.getSize();
   glBegin(GL_TRIANGLE_FAN);
   for (int i = 0; i < count; i++) {
@@ -82,8 +78,7 @@ inline void MeshPolySceneNode::Geometry::drawVT() const
 }
 
 
-inline void MeshPolySceneNode::Geometry::drawVN() const
-{
+inline void MeshPolySceneNode::Geometry::drawVN() const {
   const int count = vertices.getSize();
   glBegin(GL_TRIANGLE_FAN);
   for (int i = 0; i < count; i++) {
@@ -95,8 +90,7 @@ inline void MeshPolySceneNode::Geometry::drawVN() const
 }
 
 
-inline void MeshPolySceneNode::Geometry::drawVTN() const
-{
+inline void MeshPolySceneNode::Geometry::drawVTN() const {
   const int count = vertices.getSize();
   glBegin(GL_TRIANGLE_FAN);
   for (int i = 0; i < count; i++) {
@@ -109,21 +103,23 @@ inline void MeshPolySceneNode::Geometry::drawVTN() const
 }
 
 
-void MeshPolySceneNode::Geometry::render()
-{
+void MeshPolySceneNode::Geometry::render() {
   sceneNode->applyColor();
 
   if (normals.getSize() != 0) {
     if (style >= 2) {
       drawVTN();
-    } else {
+    }
+    else {
       drawVN();
     }
-  } else {
+  }
+  else {
     glNormal3fv(normal);
     if (style >= 2) {
       drawVT();
-    } else {
+    }
+    else {
       drawV();
     }
   }
@@ -133,16 +129,14 @@ void MeshPolySceneNode::Geometry::render()
 }
 
 
-void MeshPolySceneNode::Geometry::renderRadar()
-{
+void MeshPolySceneNode::Geometry::renderRadar() {
   drawV();
   addTriangleCount(vertices.getSize() - 2);
   return;
 }
 
 
-void MeshPolySceneNode::Geometry::renderShadow()
-{
+void MeshPolySceneNode::Geometry::renderShadow() {
   drawV();
   addTriangleCount(vertices.getSize() - 2);
   return;
@@ -155,13 +149,12 @@ void MeshPolySceneNode::Geometry::renderShadow()
 //
 
 MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
-				     bool _noRadar, bool _noShadow,
-				     const fvec3Array& vertices,
-				     const fvec3Array& normals,
-				     const fvec2Array& texcoords)
-: node(this, vertices, normals, texcoords, plane.xyz())
-, radarSpecial(false)
-{
+                                     bool _noRadar, bool _noShadow,
+                                     const fvec3Array& vertices,
+                                     const fvec3Array& normals,
+                                     const fvec2Array& texcoords)
+  : node(this, vertices, normals, texcoords, plane.xyz())
+  , radarSpecial(false) {
   int i, j;
   const int count = vertices.getSize();
   assert(texcoords.getSize() == count);
@@ -178,13 +171,16 @@ MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
   if (fabsf(normal[0]) > fabsf(normal[1])) {
     if (fabsf(normal[0]) > fabsf(normal[2])) {
       ignoreAxis = 0;
-    } else {
+    }
+    else {
       ignoreAxis = 2;
     }
-  } else {
+  }
+  else {
     if (fabsf(normal[1]) > fabsf(normal[2])) {
       ignoreAxis = 1;
-    } else {
+    }
+    else {
       ignoreAxis = 2;
     }
   }
@@ -194,20 +190,20 @@ MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
   switch (ignoreAxis) {
     case 0:
       for (i = 0; i < count; i++) {
-	flat[i].x = vertices[i].y;
-	flat[i].y = vertices[i].z;
+        flat[i].x = vertices[i].y;
+        flat[i].y = vertices[i].z;
       }
       break;
     case 1:
       for (i = 0; i < count; i++) {
-	flat[i].x = vertices[i].z;
-	flat[i].y = vertices[i].x;
+        flat[i].x = vertices[i].z;
+        flat[i].y = vertices[i].x;
       }
       break;
     case 2:
       for (i = 0; i < count; i++) {
-	flat[i].x = vertices[i].x;
-	flat[i].y = vertices[i].y;
+        flat[i].x = vertices[i].x;
+        flat[i].y = vertices[i].y;
       }
       break;
   }
@@ -247,14 +243,12 @@ MeshPolySceneNode::MeshPolySceneNode(const fvec4& _plane,
 }
 
 
-MeshPolySceneNode::~MeshPolySceneNode()
-{
+MeshPolySceneNode::~MeshPolySceneNode() {
   return;
 }
 
 
-bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
-{
+bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const {
   // cull if eye is behind (or on) plane
   const fvec3& eye = frustum.getEye();
   if (plane.planeDist(eye) <= 0.0f) {
@@ -267,7 +261,7 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
     return false;
   }
 
-  const Frustum* f = (const Frustum *) &frustum;
+  const Frustum* f = (const Frustum*) &frustum;
   if (Intersect::testAxisBoxInFrustum(extents, f) == Intersect::Outside) {
     return true;
   }
@@ -277,8 +271,7 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
-{
+bool MeshPolySceneNode::inAxisBox(const Extents& exts) const {
   if (!extents.touches(exts)) {
     return false;
   }
@@ -290,11 +283,10 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
 
 
 int MeshPolySceneNode::split(const fvec4& splitPlane,
-			     SceneNode*& front, SceneNode*& back) const
-{
+                             SceneNode*& front, SceneNode*& back) const {
   if (node.normals.getSize() > 0) {
     return splitWallVTN(splitPlane, node.vertices, node.normals, node.texcoords,
-			front, back);
+                        front, back);
   }
   else {
     return splitWallVT(splitPlane, node.vertices, node.texcoords, front, back);
@@ -302,8 +294,7 @@ int MeshPolySceneNode::split(const fvec4& splitPlane,
 }
 
 
-void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
-{
+void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer) {
   node.setStyle(getStyle());
   if (getColorPtr()->a > 0.0f) {
     renderer.addRenderNode(&node, getWallGState());
@@ -312,8 +303,7 @@ void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 }
 
 
-void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
-{
+void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer) {
   if (!noShadow) {
     if (getColorPtr()->a > 0.0f) {
       renderer.addShadowNode(&node);
@@ -323,8 +313,7 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void MeshPolySceneNode::renderRadar()
-{
+void MeshPolySceneNode::renderRadar() {
   if (noRadar) {
     return;
   }
@@ -355,11 +344,10 @@ void MeshPolySceneNode::renderRadar()
 
 
 int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
-				    const fvec3Array& vertices,
-				    const fvec3Array& normals,
-				    const fvec2Array& texcoords,
-				    SceneNode*& front, SceneNode*& back) const
-{
+                                    const fvec3Array& vertices,
+                                    const fvec3Array& normals,
+                                    const fvec2Array& texcoords,
+                                    SceneNode*& front, SceneNode*& back) const {
   int i;
   const int count = vertices.getSize();
   const float fudgeFactor = 0.001f;
@@ -378,7 +366,8 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
   if (count > staticSize) {
     array = new unsigned char[count];
     dists = new float[count];
-  } else {
+  }
+  else {
     array = staticArray;
     dists = staticDists;
   }
@@ -429,12 +418,12 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
     const int next = (i + 1) % count; // the next index
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
-	firstFront = next;
+        firstFront = next;
       }
     }
     if (array[next] & BACK_SIDE) {
       if (!(array[i] & BACK_SIDE)) {
-	firstBack = next;
+        firstBack = next;
       }
     }
   }
@@ -468,10 +457,10 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
     fvec3 splitVertex, splitNormal;
     fvec2 splitUV;
     splitEdgeVTN(dists[firstFront],     dists[lastBack],
-		 vertices[firstFront],  vertices[lastBack],
-		 normals[firstFront],   normals[lastBack],
-		 texcoords[firstFront], texcoords[lastBack],
-		 splitVertex, splitNormal, splitUV);
+                 vertices[firstFront],  vertices[lastBack],
+                 normals[firstFront],   normals[lastBack],
+                 texcoords[firstFront], texcoords[lastBack],
+                 splitVertex, splitNormal, splitUV);
     vertexFront[0] = splitVertex;
     normalFront[0] = splitNormal;
     uvFront[0] = splitUV;
@@ -485,10 +474,10 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
     fvec3 splitVertex, splitNormal;
     fvec2 splitUV;
     splitEdgeVTN(dists[firstBack],     dists[lastFront],
-		 vertices[firstBack],  vertices[lastFront],
-		 normals[firstBack],   normals[lastFront],
-		 texcoords[firstBack], texcoords[lastFront],
-		 splitVertex, splitNormal, splitUV);
+                 vertices[firstBack],  vertices[lastFront],
+                 normals[firstBack],   normals[lastFront],
+                 texcoords[firstBack], texcoords[lastFront],
+                 splitVertex, splitNormal, splitUV);
     vertexBack[0] = splitVertex;
     normalBack[0] = splitNormal;
     uvBack[0] = splitUV;
@@ -519,9 +508,9 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
 
   // make new nodes
   front = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
-				vertexFront, normalFront, uvFront);
+                                vertexFront, normalFront, uvFront);
   back = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
-			       vertexBack, normalBack, uvBack);
+                               vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
   if (count > staticSize) {
@@ -534,11 +523,10 @@ int MeshPolySceneNode::splitWallVTN(const fvec4& splitPlane,
 
 
 void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
-				     const fvec3& p1,  const fvec3& p2,
-				     const fvec3& n1,  const fvec3& n2,
-				     const fvec2& uv1, const fvec2& uv2,
-				     fvec3& p, fvec3& n, fvec2& uv) const
-{
+                                     const fvec3& p1,  const fvec3& p2,
+                                     const fvec3& n1,  const fvec3& n2,
+                                     const fvec2& uv1, const fvec2& uv2,
+                                     fvec3& p, fvec3& n, fvec2& uv) const {
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);
   if (t1 != 0.0f) { // shouldn't happen
@@ -561,10 +549,9 @@ void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
 
 
 int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
-				   const fvec3Array& vertices,
-				   const fvec2Array& texcoords,
-				   SceneNode*& front, SceneNode*& back) const
-{
+                                   const fvec3Array& vertices,
+                                   const fvec2Array& texcoords,
+                                   SceneNode*& front, SceneNode*& back) const {
   int i;
   const int count = vertices.getSize();
   const float fudgeFactor = 0.001f;
@@ -583,7 +570,8 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
   if (count > staticSize) {
     array = new unsigned char[count];
     dists = new float[count];
-  } else {
+  }
+  else {
     array = staticArray;
     dists = staticDists;
   }
@@ -634,12 +622,12 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
     const int next = (i + 1) % count; // the next index
     if (array[next] & FRONT_SIDE) {
       if (!(array[i] & FRONT_SIDE)) {
-	firstFront = next;
+        firstFront = next;
       }
     }
     if (array[next] & BACK_SIDE) {
       if (!(array[i] & BACK_SIDE)) {
-	firstBack = next;
+        firstBack = next;
       }
     }
   }
@@ -673,9 +661,9 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
     fvec3 splitVertex;
     fvec2 splitUV;
     splitEdgeVT(dists[firstFront],     dists[lastBack],
-		vertices[firstFront],  vertices[lastBack],
-		texcoords[firstFront], texcoords[lastBack],
-		splitVertex, splitUV);
+                vertices[firstFront],  vertices[lastBack],
+                texcoords[firstFront], texcoords[lastBack],
+                splitVertex, splitUV);
     vertexFront[0] = splitVertex;
     uvFront[0] = splitUV;
     frontIndex++; // bump up the head
@@ -687,9 +675,9 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
     fvec3 splitVertex;
     fvec2 splitUV;
     splitEdgeVT(dists[firstBack],     dists[lastFront],
-		vertices[firstBack],  vertices[lastFront],
-		texcoords[firstBack], texcoords[lastFront],
-		splitVertex, splitUV);
+                vertices[firstBack],  vertices[lastFront],
+                texcoords[firstBack], texcoords[lastFront],
+                splitVertex, splitUV);
     vertexBack[0] = splitVertex;
     uvBack[0] = splitUV;
     backIndex++; // bump up the head
@@ -716,9 +704,9 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
 
   // make new nodes
   front = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
-				vertexFront, normalFront, uvFront);
+                                vertexFront, normalFront, uvFront);
   back = new MeshPolySceneNode(getPlaneRaw(), noRadar, noShadow,
-			       vertexBack, normalBack, uvBack);
+                               vertexBack, normalBack, uvBack);
 
   // free the arrays, if required
   if (count > staticSize) {
@@ -731,10 +719,9 @@ int MeshPolySceneNode::splitWallVT(const fvec4& splitPlane,
 
 
 void MeshPolySceneNode::splitEdgeVT(float d1, float d2,
-				    const fvec3& p1, const fvec3& p2,
-				    const fvec2& uv1, const fvec2& uv2,
-				    fvec3& p, fvec2& uv) const
-{
+                                    const fvec3& p1, const fvec3& p2,
+                                    const fvec2& uv1, const fvec2& uv2,
+                                    fvec3& p, fvec2& uv) const {
   // compute fraction along edge where split occurs
   float t1 = (d2 - d1);
   if (t1 != 0.0f) { // shouldn't happen
@@ -751,8 +738,7 @@ void MeshPolySceneNode::splitEdgeVT(float d1, float d2,
 }
 
 
-void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
-{
+void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes) {
   RenderSet rs = { &node, getWallGState() };
   rnodes.push_back(rs);
   return;
@@ -763,6 +749,6 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

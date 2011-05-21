@@ -28,33 +28,32 @@
 #include "TextureMatrix.h"
 
 
-CustomWaterLevel::CustomWaterLevel()
-{
+CustomWaterLevel::CustomWaterLevel() {
   modedMaterial = false;
   return;
 }
 
 
-CustomWaterLevel::~CustomWaterLevel()
-{
+CustomWaterLevel::~CustomWaterLevel() {
   return;
 }
 
 
-bool CustomWaterLevel::read(const char *cmd, std::istream& input)
-{
+bool CustomWaterLevel::read(const char* cmd, std::istream& input) {
   bool materror;
 
-  if (strcasecmp ("height", cmd) == 0) {
+  if (strcasecmp("height", cmd) == 0) {
     if (!(input >> height)) {
       return false;
     }
-  } else if (parseMaterials(cmd, input, &material, 1, materror)) {
+  }
+  else if (parseMaterials(cmd, input, &material, 1, materror)) {
     if (materror) {
       return false;
     }
     modedMaterial = true;
-  } else {
+  }
+  else {
     // NOTE: we don't use a WorldFileObstacle
     return WorldFileObject::read(cmd, input);
   }
@@ -63,12 +62,12 @@ bool CustomWaterLevel::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomWaterLevel::writeToWorld(WorldInfo* world) const
-{
+void CustomWaterLevel::writeToWorld(WorldInfo* world) const {
   if (modedMaterial) {
     const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
     world->addWaterLevel(height, matref);
-  } else {
+  }
+  else {
     world->addWaterLevel(height, NULL); // build the material later
   }
 
@@ -80,6 +79,6 @@ void CustomWaterLevel::writeToWorld(WorldInfo* world) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

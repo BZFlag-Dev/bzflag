@@ -33,8 +33,7 @@
 // MeshSceneNodeGenerator
 //
 
-MeshSceneNodeGenerator::MeshSceneNodeGenerator(const MeshObstacle* _mesh)
-{
+MeshSceneNodeGenerator::MeshSceneNodeGenerator(const MeshObstacle* _mesh) {
   mesh = _mesh;
   currentNode = 0;
   returnOccluders = false;
@@ -48,15 +47,13 @@ MeshSceneNodeGenerator::MeshSceneNodeGenerator(const MeshObstacle* _mesh)
 }
 
 
-MeshSceneNodeGenerator::~MeshSceneNodeGenerator()
-{
+MeshSceneNodeGenerator::~MeshSceneNodeGenerator() {
   // do nothing
   return;
 }
 
 
-void MeshSceneNodeGenerator::setupOccluders()
-{
+void MeshSceneNodeGenerator::setupOccluders() {
   // This is wasteful, only need separate
   // occluders if the face is invisible or
   // has been grouped into a mesh fragment.
@@ -75,20 +72,19 @@ void MeshSceneNodeGenerator::setupOccluders()
 }
 
 
-static bool translucentMaterial(const BzMaterial* mat)
-{
+static bool translucentMaterial(const BzMaterial* mat) {
   // translucent texture?
-  TextureManager &tm = TextureManager::instance();
+  TextureManager& tm = TextureManager::instance();
   int faceTexture = -1;
   if (mat->getTextureCount() > 0) {
     const std::string& texname = mat->getTextureLocal(0);
     if (texname.size() > 0) {
       faceTexture = tm.getTextureID(texname);
       if (faceTexture >= 0) {
-	const ImageInfo& imageInfo = tm.getInfo(faceTexture);
-	if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
-	  return true;
-	}
+        const ImageInfo& imageInfo = tm.getInfo(faceTexture);
+        if (imageInfo.alpha && mat->getUseTextureAlpha(0)) {
+          return true;
+        }
       }
     }
   }
@@ -100,14 +96,15 @@ static bool translucentMaterial(const BzMaterial* mat)
     if (mat->getDiffuse()[3] != 1.0f) {
       translucentColor = true;
     }
-  } else if (dyncol->canHaveAlpha()) {
+  }
+  else if (dyncol->canHaveAlpha()) {
     translucentColor = true;
   }
 
   // is the color used?
   if (translucentColor) {
     if (((faceTexture >= 0) && mat->getUseColorOnTexture(0)) ||
-	(faceTexture < 0)) {
+        (faceTexture < 0)) {
       // modulate with the color if asked to, or
       // if the specified texture was not available
       return true;
@@ -118,8 +115,7 @@ static bool translucentMaterial(const BzMaterial* mat)
 }
 
 
-static bool groundClippedFace(const MeshFace* face)
-{
+static bool groundClippedFace(const MeshFace* face) {
   const fvec4& plane = face->getPlane();
   if (plane.z < -0.9f) {
     // plane is facing downwards
@@ -133,8 +129,7 @@ static bool groundClippedFace(const MeshFace* face)
 }
 
 
-static int sortByMaterial(const void* a, const void *b)
-{
+static int sortByMaterial(const void* a, const void* b) {
   const MeshFace* faceA = *((const MeshFace**)a);
   const MeshFace* faceB = *((const MeshFace**)b);
   const bool noClusterA = faceA->noClusters();
@@ -149,13 +144,13 @@ static int sortByMaterial(const void* a, const void *b)
 
   if (faceA->getMaterial() > faceB->getMaterial()) {
     return +1;
-  } else {
+  }
+  else {
     return -1;
   }
 }
 
-void MeshSceneNodeGenerator::setupFacesAndFrags()
-{
+void MeshSceneNodeGenerator::setupFacesAndFrags() {
   const int faceCount = mesh->getFaceCount();
 
   // NOTE: this is where MeshClusters start being called
@@ -198,8 +193,8 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 
     // see if this face needs to be drawn individually
     if (firstFace->noClusters() ||
-	(translucentMaterial(firstMat) &&
-	 !firstMat->getNoSorting() && !firstMat->getGroupAlpha())) {
+        (translucentMaterial(firstMat) &&
+         !firstMat->getNoSorting() && !firstMat->getGroupAlpha())) {
       MeshNode mn;
       mn.isFace = true;
       mn.faces.push_back(firstFace);
@@ -214,7 +209,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
       const MeshFace* lastFace = sortList[last];
       const BzMaterial* lastMat = lastFace->getMaterial();
       if (lastMat != firstMat) {
-	break;
+        break;
       }
       last++;
     }
@@ -225,11 +220,12 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
       mn.isFace = true;
       mn.faces.push_back(firstFace);
       nodes.push_back(mn);
-    } else {
+    }
+    else {
       MeshNode mn;
       mn.isFace = false;
       for (int i = first; i < last; i++) {
-	mn.faces.push_back(sortList[i]);
+        mn.faces.push_back(sortList[i]);
       }
       nodes.push_back(mn);
     }
@@ -243,8 +239,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 }
 
 
-WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
-{
+WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/) {
   const MeshNode* mn;
   const MeshFace* face;
   const BzMaterial* mat;
@@ -254,7 +249,8 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
     if (currentNode < (int)occluders.size()) {
       currentNode++;
       return (WallSceneNode*)occluders[currentNode - 1];
-    } else {
+    }
+    else {
       return NULL;
     }
   }
@@ -264,13 +260,15 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
   if (useDrawInfo) {
     if (drawInfo->isInvisible()) {
       if (occluders.size() <= 0) {
-	return NULL;
-      } else {
-	currentNode = 1;
-	returnOccluders = true;
-	return (WallSceneNode*)occluders[0];
+        return NULL;
       }
-    } else {
+      else {
+        currentNode = 1;
+        returnOccluders = true;
+        return (WallSceneNode*)occluders[0];
+      }
+    }
+    else {
       currentNode = 0;
       returnOccluders = true;
       return (WallSceneNode*)(new MeshSceneNode(mesh));
@@ -285,10 +283,11 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
       // start sending out the occluders
       returnOccluders = true;
       if (occluders.size() > 0) {
-	currentNode = 1;
-	return (WallSceneNode*)occluders[0];
-      } else {
-	return NULL;
+        currentNode = 1;
+        return (WallSceneNode*)occluders[0];
+      }
+      else {
+        return NULL;
       }
     }
 
@@ -296,7 +295,8 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
     if (mn->isFace) {
       face = mn->faces[0];
       mat = face->getMaterial();
-    } else {
+    }
+    else {
       face = NULL;
       mat = mn->faces[0]->getMaterial();
     }
@@ -335,8 +335,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
 }
 
 
-MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* face)
-{
+MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* face) {
   int i;
 
   // vertices
@@ -362,7 +361,8 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
     for (i = 0; i < vertexCount; i++) {
       texcoords[i] = face->getTexcoord(i);
     }
-  } else {
+  }
+  else {
     const fvec2& autoScale = face->getMaterial()->getTextureAutoScale(0);
     makeTexcoords(autoScale, face->getPlane(), vertices, texcoords);
   }
@@ -376,15 +376,14 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
   }
   MeshPolySceneNode* node =
     new MeshPolySceneNode(face->getPlane(), noRadar, noShadow,
-			  vertices, normals, texcoords);
+                          vertices, normals, texcoords);
 
   return node;
 }
 
 
 void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
-					       const BzMaterial* mat)
-{
+                                               const BzMaterial* mat) {
   // cheat a little
   ((BzMaterial*)mat)->setReference();
 
@@ -397,8 +396,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 bool MeshSceneNodeGenerator::makeTexcoords(const fvec2& autoScale,
                                            const fvec4& plane,
                                            const fvec3Array& vertices,
-                                           fvec2Array& texcoords)
-{
+                                           fvec2Array& texcoords) {
   const float defScale = 1.0f / 8.0f;
   const float sScale = (autoScale.s == 0.0f) ? defScale : 1.0f / autoScale.s;
   const float tScale = (autoScale.t == 0.0f) ? defScale : 1.0f / autoScale.t;
@@ -426,7 +424,8 @@ bool MeshSceneNodeGenerator::makeTexcoords(const fvec2& autoScale,
     else {
       if (horizontal) {
         texcoords[i].s = sScale * v.x;
-      } else {
+      }
+      else {
         texcoords[i].s = sScale * ((nh.x * v.y) - (nh.y * v.x));
       }
     }
@@ -437,7 +436,8 @@ bool MeshSceneNodeGenerator::makeTexcoords(const fvec2& autoScale,
     else {
       if (horizontal) {
         texcoords[i].t = tScale * v.y;
-      } else {
+      }
+      else {
         texcoords[i].t = tScale * (v.z * vs);
       }
     }
@@ -451,6 +451,6 @@ bool MeshSceneNodeGenerator::makeTexcoords(const fvec2& autoScale,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -24,36 +24,35 @@
 #include "ShotPath.h"
 #include "ShotUpdate.h"
 
-class ShotList : public Singleton<ShotList>
-{
-public:
-  ShotPath* getShot(int GUID);
-  std::vector<ShotPath*> getShotList();
-  std::vector<ShotPath*> getLocalShotList();
-  std::vector<int> getExpiredShotList();
+class ShotList : public Singleton<ShotList> {
+  public:
+    ShotPath* getShot(int GUID);
+    std::vector<ShotPath*> getShotList();
+    std::vector<ShotPath*> getLocalShotList();
+    std::vector<int> getExpiredShotList();
 
-  int addLocalShot(FiringInfo * info);
-  int addShot(int GUID, FiringInfo * info);
-  int updateShot(int GUID, int param, FiringInfo * info);
+    int addLocalShot(FiringInfo* info);
+    int addShot(int GUID, FiringInfo* info);
+    int updateShot(int GUID, int param, FiringInfo* info);
 
-  bool removeShot(int GUID);
+    bool removeShot(int GUID);
 
-  void updateAllShots(float dt);
-  void flushExpiredShots();
+    void updateAllShots(float dt);
+    void flushExpiredShots();
 
-  void clear();
+    void clear();
 
-protected:
-  friend class Singleton<ShotList>;
+  protected:
+    friend class Singleton<ShotList>;
 
-  std::map<int,ShotPath*> shots;
+    std::map<int, ShotPath*> shots;
 
-  int lastLocalShot;
+    int lastLocalShot;
 
-private:
-  // default constructor/destructor protected because of singleton
-  ShotList();
-  ~ShotList();
+  private:
+    // default constructor/destructor protected because of singleton
+    ShotList();
+    ~ShotList();
 
 };
 
@@ -63,6 +62,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

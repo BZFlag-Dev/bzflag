@@ -37,25 +37,22 @@ ExportInformation* Singleton<ExportInformation>::_instance = (ExportInformation*
 
 
 // Initialization for export recipients may be done here
-ExportInformation::ExportInformation()
-{
+ExportInformation::ExportInformation() {
   // Nothing needed here yet
 }
 
 // Cleanup for export recipients may be done here
-ExportInformation::~ExportInformation()
-{
+ExportInformation::~ExportInformation() {
   // Nothing needed here yet
 }
 
 // BZFlag will call this function when necessary to keep the
 // information contained in our private map up to date
-void ExportInformation::setInformation(const std::string key, const std::string value, const eiType type, const eiPrivacy privacy)
-{
-  if (value == "")
+void ExportInformation::setInformation(const std::string key, const std::string value, const eiType type, const eiPrivacy privacy) {
+  if (value == "") {
     dataMap.erase(key);
-  else
-  {
+  }
+  else {
     eiData newData;
     newData.privacy = privacy;
     newData.type = type;
@@ -73,8 +70,7 @@ void ExportInformation::setInformation(const std::string key, const std::string 
 
 // This function will be called by BZFlag every frame.  It should simply call
 // whatever additional member functions for export exist.
-void ExportInformation::sendPulse()
-{
+void ExportInformation::sendPulse() {
 #ifdef USE_XFIRE
   sendXfirePulse();
 #endif
@@ -83,29 +79,33 @@ void ExportInformation::sendPulse()
 
 // Xfire output function
 #ifdef USE_XFIRE
-void ExportInformation::sendXfirePulse()
-{
+void ExportInformation::sendXfirePulse() {
   // maximum of once per minute
   static BzTime xftk = BzTime::getCurrent();
-  if ((BzTime::getCurrent() - xftk) < 60)
+  if ((BzTime::getCurrent() - xftk) < 60) {
     return;
-  else
+  }
+  else {
     xftk = BzTime::getCurrent();
+  }
 
   // make sure we're enabled
   if ((BZDB.evalInt("xfireCommunicationLevel") <= 0)
-      || !XfireIsLoaded())
+      || !XfireIsLoaded()) {
     return;
+  }
 
   const char* keys[100] = { NULL };
   const char* values[100] = { NULL };
 
   // privacy
   eiPrivacy reqPrivacy;
-  if (BZDB.evalInt("xfireCommunicationLevel") >= 2)
+  if (BZDB.evalInt("xfireCommunicationLevel") >= 2) {
     reqPrivacy = eipPrivate;
-  else
+  }
+  else {
     reqPrivacy = eipStandard;
+  }
 
   // load the key/value arrays for xfire
   std::map<std::string, eiData>::const_iterator itr;
@@ -121,26 +121,28 @@ void ExportInformation::sendXfirePulse()
 }
 #endif
 
-void ExportInformation::sendTextOutputPulse()
-{
+void ExportInformation::sendTextOutputPulse() {
   int pulseTime = BZDB.evalInt("statsOutputFrequency");
-  if (pulseTime < 1) return;
+  if (pulseTime < 1) { return; }
 
   // no more frequently than specified
   static BzTime xftk = BzTime::getCurrent();
-  if ((BzTime::getCurrent() - xftk) < pulseTime)
+  if ((BzTime::getCurrent() - xftk) < pulseTime) {
     return;
-  else
+  }
+  else {
     xftk = BzTime::getCurrent();
+  }
 
   // must be connected
-  if (dataMap.find("Server") == dataMap.end())
+  if (dataMap.find("Server") == dataMap.end()) {
     return;
+  }
 
   // dump output
   std::map<std::string, eiData>::const_iterator itr;
   std::ofstream out(BZDB.get("statsOutputFilename").c_str(), std::ios::app | std::ios::out);
-  if (!out.good()) return;
+  if (!out.good()) { return; }
   out << "*****" << std::endl;
   time_t now = time(NULL);
   char* timeStr = ctime(&now);
@@ -148,8 +150,9 @@ void ExportInformation::sendTextOutputPulse()
   out << "Time: " << timeStr << std::endl;
   out << "Server: " << dataMap["Server"].value << std::endl;
   for (itr = dataMap.begin(); (itr != dataMap.end()); ++itr) {
-    if (itr->second.type == eitPlayerStatistics)
+    if (itr->second.type == eitPlayerStatistics) {
       out << itr->first << ": " << itr->second.value << std::endl;
+    }
   }
 }
 
@@ -158,6 +161,6 @@ void ExportInformation::sendTextOutputPulse()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

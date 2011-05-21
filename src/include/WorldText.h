@@ -30,7 +30,7 @@ class BzMaterial;
 
 class WorldText {
 
-  friend class ObstacleModifier;
+    friend class ObstacleModifier;
 
   public:
     WorldText();
@@ -45,8 +45,8 @@ class WorldText {
     inline const std::string& getData() const { return data; }
 
     int packSize() const;
-    void *pack(void* buf) const;
-    void *unpack(void* buf);
+    void* pack(void* buf) const;
+    void* unpack(void* buf);
 
     void print(std::ostream& out, const std::string& indent) const;
 
@@ -81,6 +81,6 @@ class WorldText {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

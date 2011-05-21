@@ -30,8 +30,7 @@ using std::string;
 //============================================================================//
 //============================================================================//
 
-bool LuaTexMat::PushEntries(lua_State* L)
-{
+bool LuaTexMat::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, GetTexMatID);
   PUSH_LUA_CFUNC(L, GetTexMatName);
   PUSH_LUA_CFUNC(L, GetTexMat);
@@ -44,8 +43,7 @@ bool LuaTexMat::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static inline const TextureMatrix* ParseTexMat(lua_State* L, int index)
-{
+static inline const TextureMatrix* ParseTexMat(lua_State* L, int index) {
   const int texmatIndex = luaL_checkint(L, index);
   return TEXMATRIXMGR.getMatrix(texmatIndex);
 }
@@ -54,21 +52,20 @@ static inline const TextureMatrix* ParseTexMat(lua_State* L, int index)
 //============================================================================//
 //============================================================================//
 
-int LuaTexMat::GetTexMatID(lua_State* L)
-{
+int LuaTexMat::GetTexMatID(lua_State* L) {
   const std::string name = luaL_checkstring(L, 1);
   const int texmatID = TEXMATRIXMGR.findMatrix(name);
   if (texmatID < 0) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushint(L, texmatID);
   }
   return 1;
 }
 
 
-int LuaTexMat::GetTexMatName(lua_State* L)
-{
+int LuaTexMat::GetTexMatName(lua_State* L) {
   const TextureMatrix* texmat = ParseTexMat(L, 1);
   if (texmat == NULL) {
     return luaL_pushnil(L);
@@ -78,8 +75,7 @@ int LuaTexMat::GetTexMatName(lua_State* L)
 }
 
 
-int LuaTexMat::GetTexMat(lua_State* L)
-{
+int LuaTexMat::GetTexMat(lua_State* L) {
   const TextureMatrix* texmat = ParseTexMat(L, 1);
   if (texmat == NULL) {
     return luaL_pushnil(L);
@@ -92,8 +88,7 @@ int LuaTexMat::GetTexMat(lua_State* L)
 }
 
 
-int LuaTexMat::SetTexMat(lua_State* L)
-{
+int LuaTexMat::SetTexMat(lua_State* L) {
   TextureMatrix* texmat = const_cast<TextureMatrix*>(ParseTexMat(L, 1));
   if (texmat == NULL) {
     return luaL_pushnil(L);
@@ -120,6 +115,6 @@ int LuaTexMat::SetTexMat(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -22,29 +22,32 @@
 /* local implementation headers */
 #include "Flag.h"
 
-HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality)
-{
+HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality) {
   std::string qString;
-  if (quality == FlagGood)
+  if (quality == FlagGood) {
     qString = "Good Flags";
-  else if (quality == FlagBad)
+  }
+  else if (quality == FlagBad) {
     qString = "Bad Flags";
+  }
   HelpMenu(qString.c_str());
 
   qString.append(":");
   addControl(createLabel("", qString.c_str()), false);
 
   FlagSet fs;
-  if (quality == FlagGood)
+  if (quality == FlagGood) {
     fs = Flag::getGoodFlags();
-  else if (quality == FlagBad)
+  }
+  else if (quality == FlagBad) {
     fs = Flag::getBadFlags();
+  }
 
   for (FlagSet::iterator it = fs.begin(); it != fs.end(); it++) {
 
     if (((*it)->flagQuality != quality) ||
-	((*it)->flagTeam != NoTeam) ||
-	((*it)->flagName.size() <= 0)) {
+        ((*it)->flagTeam != NoTeam) ||
+        ((*it)->flagName.size() <= 0)) {
       continue;
     }
 
@@ -52,8 +55,7 @@ HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality)
   }
 }
 
-float HelpFlagsMenu::getLeftSide(int _width, int)
-{
+float HelpFlagsMenu::getLeftSide(int _width, int) {
   return 0.35f * _width;
 }
 
@@ -61,6 +63,6 @@ float HelpFlagsMenu::getLeftSide(int _width, int)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

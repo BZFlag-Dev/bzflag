@@ -14,8 +14,7 @@
 #include <fstream>
 #include "OggAudioFile.h"
 
-OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
-{
+OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in) {
   stream = -1;
 
   ov_callbacks cb;
@@ -29,27 +28,25 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
   bundle->input = in; bundle->length = std::streamoff(in->tellg());
   in->seekg(0, std::ios::beg);
 
-  if(ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
+  if (ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
     std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
-  } else {
+  }
+  else {
     info = ov_info(&file, -1);
     int samples = ov_pcm_total(&file, -1);
     init(info->rate, info->channels, samples, 2);
   }
 }
 
-OggAudioFile::~OggAudioFile()
-{
+OggAudioFile::~OggAudioFile() {
   ov_clear(&file);
 }
 
-std::string	OggAudioFile::getExtension()
-{
+std::string OggAudioFile::getExtension() {
   return ".ogg";
 }
 
-bool		OggAudioFile::read(void* buffer, int frameCount)
-{
+bool    OggAudioFile::read(void* buffer, int frameCount) {
   int result;
   long bytestotal = frameCount * info->channels * 2;
   long filelength = bytestotal;
@@ -67,17 +64,18 @@ bool		OggAudioFile::read(void* buffer, int frameCount)
 #endif
     long newoff = ov_pcm_tell(&file) * info->channels * 2;
     long bytesread = newoff - oldoff;
-    if (result == OV_EBADLINK)
+    if (result == OV_EBADLINK) {
       return false;
-    else if (result == 0)
+    }
+    else if (result == 0) {
       return false;
+    }
     bytestotal -= bytesread;
   }
   return true;
 }
 
-size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
-{
+size_t  OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource) {
   OAFInputBundle* bundle = (OAFInputBundle*) datasource;
   std::streamoff pos1 = std::streamoff(bundle->input->tellg());
   std::streamsize read = size * nmemb;
@@ -87,14 +85,15 @@ size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
   }
   if (pos1 == bundle->length)
     // EOF
+  {
     return 0;
+  }
   bundle->input->read((char*) ptr, read);
 
   return read;
 }
 
-int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
-{
+int   OAFSeek(void* datasource, ogg_int64_t offset, int whence) {
   OAFInputBundle* bundle = (OAFInputBundle*) datasource;
   switch (whence) {
     case SEEK_SET:
@@ -110,16 +109,14 @@ int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
   return 0;
 }
 
-int		OAFClose(void* datasource)
-{
+int   OAFClose(void* datasource) {
   // technically we should close here, but this is handled outside
   OAFInputBundle* bundle = (OAFInputBundle*) datasource;
   delete bundle;
   return 0;
 }
 
-long		OAFTell(void* datasource)
-{
+long    OAFTell(void* datasource) {
   OAFInputBundle* bundle = (OAFInputBundle*) datasource;
   return bundle->input->tellg();
 }
@@ -128,6 +125,6 @@ long		OAFTell(void* datasource)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

@@ -22,12 +22,12 @@
 #include "BzMaterial.h"
 
 extern bool parseMaterials(const char* cmd, std::istream& input,
-			   BzMaterial* materials, int materialCount,
-			   bool& error);
+                           BzMaterial* materials, int materialCount,
+                           bool& error);
 
 extern bool parseMaterialsByName(const char* cmd, std::istream& input,
-				 BzMaterial* materials, const char** names,
-				 int materialCount, bool& error);
+                                 BzMaterial* materials, const char** names,
+                                 int materialCount, bool& error);
 
 #endif  /* __PARSE_MATERIAL_H__ */
 
@@ -36,6 +36,6 @@ extern bool parseMaterialsByName(const char* cmd, std::istream& input,
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

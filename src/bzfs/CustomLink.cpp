@@ -28,15 +28,13 @@
 //============================================================================//
 
 CustomLink::CustomLink(bool _linkSet)
-: linkSet(_linkSet)
-{
+  : linkSet(_linkSet) {
 }
 
 
 //============================================================================//
 
-static void stripComments(std::string& s)
-{
+static void stripComments(std::string& s) {
   const std::string::size_type pos = s.find_first_of('#');
   if (pos != std::string::npos) {
     s = s.substr(0, pos); // discard the comments
@@ -44,8 +42,7 @@ static void stripComments(std::string& s)
 }
 
 
-static void getIntList(std::istream& input, std::vector<int>& list)
-{
+static void getIntList(std::istream& input, std::vector<int>& list) {
   std::string args;
   int value;
 
@@ -62,8 +59,7 @@ static void getIntList(std::istream& input, std::vector<int>& list)
 }
 
 
-static void getStringSet(std::istream& input, std::set<std::string>& stringSet)
-{
+static void getStringSet(std::istream& input, std::set<std::string>& stringSet) {
   std::string args;
   std::string value;
 
@@ -80,8 +76,7 @@ static void getStringSet(std::istream& input, std::set<std::string>& stringSet)
 }
 
 
-static void convertNoFlag(std::set<std::string>& flagSet)
-{
+static void convertNoFlag(std::set<std::string>& flagSet) {
   std::vector<std::string> removals;
   std::set<std::string>::iterator it;
   for (it = flagSet.begin(); it != flagSet.end(); ++it) {
@@ -96,15 +91,13 @@ static void convertNoFlag(std::set<std::string>& flagSet)
 }
 
 
-static void getBlockFlags(std::istream& input, std::set<std::string>& blocked)
-{
+static void getBlockFlags(std::istream& input, std::set<std::string>& blocked) {
   getStringSet(input, blocked);
   convertNoFlag(blocked);
 }
 
 
-static void getAllowFlags(std::istream& input, std::set<std::string>& blocked)
-{
+static void getAllowFlags(std::istream& input, std::set<std::string>& blocked) {
   std::set<std::string> allowed;
   getStringSet(input, allowed);
 
@@ -132,8 +125,7 @@ static void getAllowFlags(std::istream& input, std::set<std::string>& blocked)
 }
 
 
-static uint8_t parseTeamBits(std::istream& input)
-{
+static uint8_t parseTeamBits(std::istream& input) {
   uint8_t teamBits = 0;
   std::vector<int> teams;
   getIntList(input, teams);
@@ -149,8 +141,7 @@ static uint8_t parseTeamBits(std::istream& input)
 
 //============================================================================//
 
-bool CustomLink::read(const char *cmd, std::istream& input)
-{
+bool CustomLink::read(const char* cmd, std::istream& input) {
   if ((strcasecmp(cmd, "src")  == 0) ||
       (strcasecmp(cmd, "from") == 0)) {
     std::string line;
@@ -587,8 +578,7 @@ bool CustomLink::read(const char *cmd, std::istream& input)
 
 //============================================================================//
 
-void CustomLink::writeToGroupDef(GroupDefinition *groupDef) const
-{
+void CustomLink::writeToGroupDef(GroupDefinition* groupDef) const {
   if (!linkSet) {
     groupDef->addLinkDef(new LinkDef(linkDef));
   }
@@ -607,6 +597,6 @@ void CustomLink::writeToGroupDef(GroupDefinition *groupDef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

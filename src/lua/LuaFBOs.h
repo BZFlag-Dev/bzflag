@@ -32,11 +32,11 @@ struct lua_State;
 class LuaFBOData {
   public:
     LuaFBOData()
-    : id(0)
-    , target(GL_FRAMEBUFFER)
-    , luaRef(LUA_NOREF)
-    , xsize(0)
-    , ysize(0)
+      : id(0)
+      , target(GL_FRAMEBUFFER)
+      , luaRef(LUA_NOREF)
+      , xsize(0)
+      , ysize(0)
     {}
     virtual ~LuaFBOData() {};
 
@@ -84,11 +84,11 @@ class LuaFBOMgr {
   private: // helpers
     static bool CreateMetatable(lua_State* L);
     static bool AttachObject(lua_State* L, int index,
-			     LuaFBO* fbo, GLenum attachID,
-			     GLenum attachTarget = 0,
-			     GLenum attachLevel  = 0);
+                             LuaFBO* fbo, GLenum attachID,
+                             GLenum attachTarget = 0,
+                             GLenum attachLevel  = 0);
     static bool ApplyAttachment(lua_State* L, int index,
-				LuaFBO* fbo, GLenum attachID);
+                                LuaFBO* fbo, GLenum attachID);
     static bool ApplyDrawBuffers(lua_State* L, int index);
 
     static LuaFBO* GetLuaFBO(lua_State* L, int index);
@@ -118,6 +118,6 @@ extern LuaFBOMgr luaFBOMgr;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

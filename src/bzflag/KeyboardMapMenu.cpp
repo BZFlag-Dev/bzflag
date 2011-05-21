@@ -31,25 +31,26 @@
 
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :
-  menu(_menu)
-{
+  menu(_menu) {
   // do nothing
 }
 
-bool KeyboardMapMenuDefaultKey::keyPress(const BzfKeyEvent& key)
-{
+bool KeyboardMapMenuDefaultKey::keyPress(const BzfKeyEvent& key) {
   // escape key has usual effect
-  if (key.unicode == 27)
+  if (key.unicode == 27) {
     return MenuDefaultKey::keyPress(key);
+  }
 
   // keys have normal effect if not editing
-  if (!menu->isEditing())
+  if (!menu->isEditing()) {
     return MenuDefaultKey::keyPress(key);
+  }
 
   // ignore keys we don't know
   if (key.unicode != 0 && iswspace(key.unicode)) {
-    if (key.unicode != ' ' && key.unicode != '\t' && key.unicode != '\r')
+    if (key.unicode != ' ' && key.unicode != '\t' && key.unicode != '\r') {
       return true;
+    }
   }
 
   // all other keys modify mapping
@@ -57,14 +58,12 @@ bool KeyboardMapMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool KeyboardMapMenuDefaultKey::keyRelease(const BzfKeyEvent&)
-{
+bool KeyboardMapMenuDefaultKey::keyRelease(const BzfKeyEvent&) {
   // ignore key releases
   return true;
 }
 
-KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMenu(NULL)
-{
+KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMenu(NULL) {
   // add controls
   addControl(createLabel("Key Mapping"), false);
   addControl(createLabel("Use up/down arrows to navigate, enter key to enter edit mode"), false);
@@ -180,71 +179,70 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("fullscreen", ++i);
 }
 
-void KeyboardMapMenu::initkeymap(const std::string& name, int index)
-{
+void KeyboardMapMenu::initkeymap(const std::string& name, int index) {
   mappable[name].key1 = "";
   mappable[name].key2 = "";
   mappable[name].index = index;
 }
 
-bool KeyboardMapMenu::isEditing() const
-{
+bool KeyboardMapMenu::isEditing() const {
   return editing != -1;
 }
 
-void KeyboardMapMenu::setKey(const BzfKeyEvent& event)
-{
-  if (editing == -1)
+void KeyboardMapMenu::setKey(const BzfKeyEvent& event) {
+  if (editing == -1) {
     return;
+  }
   KeyKeyMap::iterator it;
   for (it = mappable.begin(); it != mappable.end(); it++)
-    if (it->second.index == editing)
+    if (it->second.index == editing) {
       break;
+    }
   if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty())
-      || (KEYMGR.keyEventToString(event) == it->second.key2))
+      || (KEYMGR.keyEventToString(event) == it->second.key2)) {
     return;
+  }
   ActionBinding::instance().associate(KEYMGR.keyEventToString(event),
-				      it->first);
+                                      it->first);
   editing = -1;
   update();
 }
 
-void KeyboardMapMenu::execute()
-{
+void KeyboardMapMenu::execute() {
   const HUDuiControl* const _focus = getNav().get();
   if (_focus == reset) {
     ActionBinding::instance().resetBindings();
-  } else if (_focus == quickKeys) {
-    if (!quickKeysMenu) quickKeysMenu = new QuickKeysMenu;
+  }
+  else if (_focus == quickKeys) {
+    if (!quickKeysMenu) { quickKeysMenu = new QuickKeysMenu; }
     HUDDialogStack::get()->push(quickKeysMenu);
-  } else {
+  }
+  else {
     // start editing
     std::vector<HUDuiElement*>& listHUD = getElements();
     KeyKeyMap::iterator it;
     for (it = mappable.begin(); it != mappable.end(); it++) {
       if (listHUD[it->second.index] == _focus) {
-	editing = it->second.index;
-	if (!it->second.key1.empty() && !it->second.key2.empty()) {
-	  ActionBinding::instance().deassociate(it->first);
-	}
+        editing = it->second.index;
+        if (!it->second.key1.empty() && !it->second.key2.empty()) {
+          ActionBinding::instance().deassociate(it->first);
+        }
       }
     }
   }
   update();
 }
 
-void KeyboardMapMenu::dismiss()
-{
+void KeyboardMapMenu::dismiss() {
   editing = -1;
   notifyBzfKeyMapChanged();
 }
 
-void KeyboardMapMenu::resize(int _width, int _height)
-{
+void KeyboardMapMenu::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
   const LocalFontFace* fontFace = MainMenu::getFontFace();
 
   // use a big font for title, smaller font for the rest
@@ -282,7 +280,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   const int mid = (count / 2);
 
   int i;
-  for (i = 2; i <= mid+1; i++) {
+  for (i = 2; i <= mid + 1; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
@@ -290,7 +288,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
 
   x = 0.80f * (float)_width;
   y = topY;
-  for (i = mid+2; i < count+2; i++) {
+  for (i = mid + 2; i < count + 2; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
     y -= 1.0f * h;
@@ -299,8 +297,7 @@ void KeyboardMapMenu::resize(int _width, int _height)
   update();
 }
 
-void KeyboardMapMenu::update()
-{
+void KeyboardMapMenu::update() {
   KeyKeyMap::iterator it;
   // clear
   for (it = mappable.begin(); it != mappable.end(); it++) {
@@ -313,16 +310,20 @@ void KeyboardMapMenu::update()
   for (it = mappable.begin(); it != mappable.end(); it++) {
     std::string value = "";
     if (it->second.key1.empty()) {
-      if (isEditing() && (it->second.index == editing))
-	value = "???";
-      else
-	value = "<not mapped>";
-    } else {
+      if (isEditing() && (it->second.index == editing)) {
+        value = "???";
+      }
+      else {
+        value = "<not mapped>";
+      }
+    }
+    else {
       value += it->second.key1;
       if (!it->second.key2.empty()) {
-	value += " or " + it->second.key2;
-      } else if (isEditing() && (it->second.index == editing)) {
-	value += " or ???";
+        value += " or " + it->second.key2;
+      }
+      else if (isEditing() && (it->second.index == editing)) {
+        value += " or ???";
       }
     }
     ((HUDuiLabel*)listHUD[it->second.index])->setString(value);
@@ -330,31 +331,32 @@ void KeyboardMapMenu::update()
 }
 
 void KeyboardMapMenu::onScan(const std::string& name, bool press,
-			     const std::string& cmd)
-{
-  if (!press && cmd == "fire")
+                             const std::string& cmd) {
+  if (!press && cmd == "fire") {
     return;
+  }
   KeyKeyMap::iterator it = mappable.find(cmd);
-  if (it == mappable.end())
+  if (it == mappable.end()) {
     return;
-  if (it->second.key1.empty())
+  }
+  if (it->second.key1.empty()) {
     it->second.key1 = name;
-  else if (it->second.key2.empty() && it->second.key1 != name)
+  }
+  else if (it->second.key2.empty() && it->second.key1 != name) {
     it->second.key2 = name;
+  }
 }
 
 void KeyboardMapMenu::onScanCB(const std::string& name, bool press,
-			       const std::string& cmd, void* userData)
-{
+                               const std::string& cmd, void* userData) {
   static_cast<KeyboardMapMenu*>(userData)->onScan(name, press, cmd);
 }
 
-HUDuiLabel* KeyboardMapMenu::createLabel(const char* str, const char* _label)
-{
+HUDuiLabel* KeyboardMapMenu::createLabel(const char* str, const char* _label) {
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
-  if (str) label->setString(str);
-  if (_label) label->setLabel(_label);
+  if (str) { label->setString(str); }
+  if (_label) { label->setLabel(_label); }
   return label;
 }
 
@@ -362,6 +364,6 @@ HUDuiLabel* KeyboardMapMenu::createLabel(const char* str, const char* _label)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

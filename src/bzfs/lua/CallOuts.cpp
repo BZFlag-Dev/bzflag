@@ -61,8 +61,7 @@
 //============================================================================//
 //============================================================================//
 
-static inline GameKeeper::Player* getPlayerByIndex(int playerID)
-{
+static inline GameKeeper::Player* getPlayerByIndex(int playerID) {
   return GameKeeper::Player::getPlayerByIndex(playerID);
 }
 
@@ -72,8 +71,7 @@ static inline GameKeeper::Player* getPlayerByIndex(int playerID)
 
 
 // FIXME -- move into "utils.cpp"
-static bz_eTeamType ParseTeam(lua_State* L, int index)
-{
+static bz_eTeamType ParseTeam(lua_State* L, int index) {
   static std::map<std::string, bz_eTeamType> nameMap;
   if (nameMap.empty()) {
     nameMap["auto"]     = eAutomaticTeam;
@@ -323,8 +321,7 @@ static int ReadStdin(lua_State* L);
 //============================================================================//
 //============================================================================//
 
-bool CallOuts::PushEntries(lua_State* L)
-{
+bool CallOuts::PushEntries(lua_State* L) {
   assert(sizeof(void*) >= sizeof(uint32_t));
 
   PUSH_LUA_CFUNC(L, GetLuaDirectory);
@@ -544,40 +541,36 @@ bool CallOuts::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetLuaDirectory(lua_State* L)
-{
+static int GetLuaDirectory(lua_State* L) {
   lua_pushstdstring(L, LuaServer::getLuaDir());
   return 1;
 }
 
 
-static int GetProtocolVersion(lua_State* L)
-{
+static int GetProtocolVersion(lua_State* L) {
   lua_pushstring(L, getProtocolVersion());
   return 1;
 }
 
 
-static int GetServerVersion(lua_State* L)
-{
+static int GetServerVersion(lua_State* L) {
   lua_pushstring(L, getAppVersion());
   return 1;
 }
 
 
-static int GetServerPort(lua_State* L)
-{
+static int GetServerPort(lua_State* L) {
   if (!clOptions->useGivenPort) {
     lua_pushinteger(L, ServerPort);
-  } else {
+  }
+  else {
     lua_pushinteger(L, clOptions->wksPort);
   }
   return 1;
 }
 
 
-static int GetServerAddress(lua_State* L)
-{
+static int GetServerAddress(lua_State* L) {
   if (!clOptions->publicizeServer) {
     return 0;
   }
@@ -586,8 +579,7 @@ static int GetServerAddress(lua_State* L)
 }
 
 
-static int GetServerDescription(lua_State* L)
-{
+static int GetServerDescription(lua_State* L) {
   if (!clOptions->publicizeServer) {
     return 0;
   }
@@ -596,8 +588,7 @@ static int GetServerDescription(lua_State* L)
 }
 
 
-static int GetServerOwner(lua_State* L)
-{
+static int GetServerOwner(lua_State* L) {
   if (!clOptions->publicizeServer) {
     return 0;
   }
@@ -609,36 +600,31 @@ static int GetServerOwner(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int UpdateListServer(lua_State* /*L*/)
-{
+static int UpdateListServer(lua_State* /*L*/) {
   publicize();
   return 0;
 }
 
 
-static int AdminShutdown(lua_State* /*L*/)
-{
+static int AdminShutdown(lua_State* /*L*/) {
   shutdownCommand(NULL, NULL);
   return 0;
 }
 
 
-static int AdminRestart(lua_State* L)
-{
+static int AdminRestart(lua_State* L) {
   lua_pushboolean(L, bz_restart());
   return 1;
 }
 
 
-static int AdminSuperKill(lua_State* /*L*/)
-{
+static int AdminSuperKill(lua_State* /*L*/) {
   superkillCommand(NULL, NULL);
   return 0;
 }
 
 
-static int AdminGameOver(lua_State* L)
-{
+static int AdminGameOver(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   bz_eTeamType teamID = eNoTeam;
   if (!lua_isnone(L, 2)) {
@@ -652,18 +638,17 @@ static int AdminGameOver(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int AddCustomFlag(lua_State* L)
-{
+static int AddCustomFlag(lua_State* L) {
   const char* abbr = luaL_checkstring(L, 1);
   const char* name = luaL_checkstring(L, 2);
   const char* desc = luaL_checkstring(L, 3);
   const int   type = luaL_optint(L, 4, eStandardShot);
   const int   qual = luaL_optint(L, 5, eGoodFlag);
   lua_pushboolean(L,
-    bz_RegisterCustomFlag(abbr, name, desc,
-                          (bz_eShotType) type,
-                          (bz_eFlagQuality) qual)
-  );
+                  bz_RegisterCustomFlag(abbr, name, desc,
+                                        (bz_eShotType) type,
+                                        (bz_eFlagQuality) qual)
+                 );
   return 1;
 }
 
@@ -671,22 +656,19 @@ static int AddCustomFlag(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetGameType(lua_State* L)
-{
+static int GetGameType(lua_State* L) {
   lua_pushinteger(L, bz_getGameType());
   return 1;
 }
 
 
-static int GetGameOptions(lua_State* L)
-{
+static int GetGameOptions(lua_State* L) {
   lua_pushinteger(L, clOptions->gameOptions);
   return 1;
 }
 
 
-static int GetJumpingAllowed(lua_State* L)
-{
+static int GetJumpingAllowed(lua_State* L) {
   lua_pushboolean(L, bz_allowJumping());
   return 1;
 }
@@ -695,8 +677,7 @@ static int GetJumpingAllowed(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetWallHeight(lua_State* L)
-{
+static int GetWallHeight(lua_State* L) {
   float size, height;
   bz_getWorldSize(&size, &height);
   lua_pushfloat(L, height);
@@ -704,8 +685,7 @@ static int GetWallHeight(lua_State* L)
 }
 
 
-static int GetWorldSize(lua_State* L)
-{
+static int GetWorldSize(lua_State* L) {
   float size, height;
   bz_getWorldSize(&size, &height);
   lua_pushfloat(L, size);
@@ -713,8 +693,7 @@ static int GetWorldSize(lua_State* L)
 }
 
 
-static int GetWorldCache(lua_State* L)
-{
+static int GetWorldCache(lua_State* L) {
   unsigned int   size = bz_getWorldCacheSize();
   unsigned char* data = new unsigned char[size];
   bz_getWorldCacheData(data);
@@ -724,16 +703,14 @@ static int GetWorldCache(lua_State* L)
 }
 
 
-static int GetWorldURL(lua_State* L)
-{
+static int GetWorldURL(lua_State* L) {
   const bz_ApiString url = bz_getClientWorldDownloadURL();
   lua_pushstring(L, url.c_str());
   return 1;
 }
 
 
-static int SetWallHeight(lua_State* L)
-{
+static int SetWallHeight(lua_State* L) {
   const float value = luaL_checkfloat(L, 1);
   float size, height;
   bz_getWorldSize(&size, &height);
@@ -743,8 +720,7 @@ static int SetWallHeight(lua_State* L)
 }
 
 
-static int SetWorldSize(lua_State* L)
-{
+static int SetWorldSize(lua_State* L) {
   const float value = luaL_checkfloat(L, 1);
   float size, height;
   bz_getWorldSize(&size, &height);
@@ -754,8 +730,7 @@ static int SetWorldSize(lua_State* L)
 }
 
 
-static int SetWorldURL(lua_State* L)
-{
+static int SetWorldURL(lua_State* L) {
   clOptions->cacheURL = luaL_checkstring(L, 1);
   return 0;
 }
@@ -764,8 +739,7 @@ static int SetWorldURL(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int DebugMessage(lua_State* L)
-{
+static int DebugMessage(lua_State* L) {
   const int level = luaL_checkint(L, 1);
   const char* msg = luaL_checkstring(L, 2);
   bz_debugMessage(level, msg);
@@ -773,15 +747,13 @@ static int DebugMessage(lua_State* L)
 }
 
 
-static int GetDebugLevel(lua_State* L)
-{
+static int GetDebugLevel(lua_State* L) {
   lua_pushinteger(L, bz_getDebugLevel());
   return 1;
 }
 
 
-static int SetDebugLevel(lua_State* L)
-{
+static int SetDebugLevel(lua_State* L) {
   debugLevel = luaL_checkint(L, 1);
   return 0;
 }
@@ -790,8 +762,7 @@ static int SetDebugLevel(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int SendMessage(lua_State* L)
-{
+static int SendMessage(lua_State* L) {
   const int   src = luaL_checkint(L, 1);
   const int   dst = luaL_checkint(L, 2);
   const char* msg = luaL_checkstring(L, 3);
@@ -800,18 +771,16 @@ static int SendMessage(lua_State* L)
 }
 
 
-static int SendTeamMessage(lua_State* L)
-{
-  const int	  src = luaL_checkint(L, 1);
+static int SendTeamMessage(lua_State* L) {
+  const int   src = luaL_checkint(L, 1);
   const bz_eTeamType dst = ParseTeam(L, 2);
-  const char*	msg = luaL_checkstring(L, 3);
+  const char* msg = luaL_checkstring(L, 3);
   lua_pushboolean(L, bz_sendTextMessage(src, dst, msg));
   return 1;
 }
 
 
-static int SendLuaData(lua_State* L)
-{
+static int SendLuaData(lua_State* L) {
   const int myOrder = 0; // the server
 
   size_t len;
@@ -819,18 +788,17 @@ static int SendLuaData(lua_State* L)
   const std::string data(ptr, len);
 
   const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
-  const int16_t  dstScriptID =  (int16_t)luaL_optint(L, 3, 0);
-  const uint8_t  statusBits  =  (uint8_t)luaL_optint(L, 4, 0);
+  const int16_t  dstScriptID = (int16_t)luaL_optint(L, 3, 0);
+  const uint8_t  statusBits  = (uint8_t)luaL_optint(L, 4, 0);
 
   lua_pushboolean(L, sendMsgLuaData(ServerPlayer, myOrder,
-				    dstPlayerID, dstScriptID,
-				    statusBits, data));
+                                    dstPlayerID, dstScriptID,
+                                    statusBits, data));
   return 1;
 }
 
 
-static int SendFetchResource(lua_State* L)
-{
+static int SendFetchResource(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const char* url    = luaL_checkstring(L, 2);
   lua_pushboolean(L, bz_sendFetchResMessage(playerID, url));
@@ -838,8 +806,7 @@ static int SendFetchResource(lua_State* L)
 }
 
 
-static int SendJoinServer(lua_State* L)
-{
+static int SendJoinServer(lua_State* L) {
   const int   playerID = luaL_checkint(L, 1);
   const char* addr     = luaL_checkstring(L, 2);
   const int   port     = luaL_checkint(L, 3);
@@ -847,13 +814,12 @@ static int SendJoinServer(lua_State* L)
   const char* referrer = luaL_optstring(L, 5, bz_getPublicAddr().c_str());
   const char* message  = luaL_optstring(L, 6, NULL);
   lua_pushboolean(L, bz_sendJoinServer(playerID, addr, port,
-				       teamID, referrer, message));
+                                       teamID, referrer, message));
   return 1;
 }
 
 
-static int PlaySound(lua_State* L)
-{
+static int PlaySound(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const char* sound  = luaL_checkstring(L, 2);
   fvec3 pos;
@@ -869,8 +835,7 @@ static int PlaySound(lua_State* L)
 }
 
 
-static int SendPlayerVariables(lua_State* L)
-{
+static int SendPlayerVariables(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playerID);
   if ((gkPlayer == NULL) || (gkPlayer->netHandler == NULL)) {
@@ -886,7 +851,7 @@ static int SendPlayerVariables(lua_State* L)
     if (lua_israwstring(L, -2) && lua_isstring(L, -1)) {
       const std::string key = lua_tostring(L, -2);
       if (!key.empty()) {
-	varMap[key] = lua_tostring(L, -1);
+        varMap[key] = lua_tostring(L, -1);
       }
     }
   }
@@ -913,8 +878,7 @@ static int SendPlayerVariables(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetStandardSpawn(lua_State* L)
-{
+static int GetStandardSpawn(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   fvec3 pos;
   float rot;
@@ -929,8 +893,7 @@ static int GetStandardSpawn(lua_State* L)
 }
 
 
-static int GetBaseAtPosition(lua_State* L)
-{
+static int GetBaseAtPosition(lua_State* L) {
   fvec3 pos;
   pos.x = luaL_checkfloat(L, 1);
   pos.y = luaL_checkfloat(L, 2);
@@ -944,15 +907,13 @@ static int GetBaseAtPosition(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetPlayerCount(lua_State* L)
-{
+static int GetPlayerCount(lua_State* L) {
   lua_pushinteger(L, bz_getPlayerCount());
   return 1;
 }
 
 
-static int GetPlayerIDs(lua_State* L)
-{
+static int GetPlayerIDs(lua_State* L) {
   bz_APIIntList* playerList = bz_newIntList();
   if (!bz_getPlayerIndexList(playerList)) {
     lua_createtable(L, 0, 0);
@@ -969,8 +930,7 @@ static int GetPlayerIDs(lua_State* L)
 }
 
 
-static int GetPlayerName(lua_State* L)
-{
+static int GetPlayerName(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   const char* name = bz_getPlayerCallsign(pid);
   if (name == NULL) {
@@ -981,16 +941,14 @@ static int GetPlayerName(lua_State* L)
 }
 
 
-static int GetPlayerTeam(lua_State* L)
-{
+static int GetPlayerTeam(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getPlayerTeam(pid));
   return 1;
 }
 
 
-static int GetPlayerIPAddress(lua_State* L)
-{
+static int GetPlayerIPAddress(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   const char* addr = bz_getPlayerIPAddress(pid);
   if (addr == NULL) {
@@ -1001,8 +959,7 @@ static int GetPlayerIPAddress(lua_State* L)
 }
 
 
-static int GetPlayerReferrer(lua_State* L)
-{
+static int GetPlayerReferrer(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   const char* referrer = bz_getPlayerReferrer(pid);
   if (referrer == NULL) {
@@ -1013,8 +970,7 @@ static int GetPlayerReferrer(lua_State* L)
 }
 
 
-static int GetPlayerFlagID(lua_State* L)
-{
+static int GetPlayerFlagID(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1027,15 +983,15 @@ static int GetPlayerFlagID(lua_State* L)
   lua_pushinteger(L, flagID);
   if (flagInfo && flagInfo->flag.type) {
     lua_pushstdstring(L, flagInfo->flag.type->label());
-  } else {
+  }
+  else {
     lua_pushliteral(L, "");
   }
   return 2;
 }
 
 
-static int GetPlayerClientVersion(lua_State* L)
-{
+static int GetPlayerClientVersion(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1047,8 +1003,7 @@ static int GetPlayerClientVersion(lua_State* L)
 }
 
 
-static int GetPlayerBZID(lua_State* L)
-{
+static int GetPlayerBZID(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1063,8 +1018,7 @@ static int GetPlayerBZID(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetPlayerStatus(lua_State* L)
-{
+static int GetPlayerStatus(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1075,7 +1029,8 @@ static int GetPlayerStatus(lua_State* L)
   short status;
   if (useLastState) {
     status = player->lastState.status;
-  } else {
+  }
+  else {
     status = player->getCurrentStateAsState().status;
   }
 
@@ -1084,16 +1039,14 @@ static int GetPlayerStatus(lua_State* L)
 }
 
 
-static int GetPlayerPaused(lua_State* L)
-{
+static int GetPlayerPaused(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushboolean(L, bz_isPlayerPaused(pid));
   return 1;
 }
 
 
-static int GetPlayerPosition(lua_State* L)
-{
+static int GetPlayerPosition(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1104,7 +1057,8 @@ static int GetPlayerPosition(lua_State* L)
   fvec3 pos;
   if (useLastState) {
     pos = player->lastState.pos;
-  } else {
+  }
+  else {
     float rotation;
     player->getPlayerCurrentPosRot(pos, rotation);
   }
@@ -1116,8 +1070,7 @@ static int GetPlayerPosition(lua_State* L)
 }
 
 
-static int GetPlayerVelocity(lua_State* L)
-{
+static int GetPlayerVelocity(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1129,7 +1082,8 @@ static int GetPlayerVelocity(lua_State* L)
   const PlayerState* statePtr = &state;
   if (useLastState) {
     statePtr = &player->lastState;
-  } else {
+  }
+  else {
     state = player->getCurrentStateAsState();
   }
 
@@ -1141,8 +1095,7 @@ static int GetPlayerVelocity(lua_State* L)
 }
 
 
-static int GetPlayerAngle(lua_State* L)
-{
+static int GetPlayerAngle(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1153,7 +1106,8 @@ static int GetPlayerAngle(lua_State* L)
   float rotation = 0.0f;
   if (useLastState) {
     rotation = player->lastState.azimuth;
-  } else {
+  }
+  else {
     fvec3 pos;
     player->getPlayerCurrentPosRot(pos, rotation);
   }
@@ -1163,8 +1117,7 @@ static int GetPlayerAngle(lua_State* L)
 }
 
 
-static int GetPlayerAngVel(lua_State* L)
-{
+static int GetPlayerAngVel(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1176,7 +1129,8 @@ static int GetPlayerAngVel(lua_State* L)
   const PlayerState* statePtr = &state;
   if (useLastState) {
     statePtr = &player->lastState;
-  } else {
+  }
+  else {
     state = player->getCurrentStateAsState();
   }
 
@@ -1185,8 +1139,7 @@ static int GetPlayerAngVel(lua_State* L)
 }
 
 
-static int GetPlayerFalling(lua_State* L)
-{
+static int GetPlayerFalling(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1197,7 +1150,8 @@ static int GetPlayerFalling(lua_State* L)
   short status;
   if (useLastState) {
     status = player->lastState.status;
-  } else {
+  }
+  else {
     status = player->getCurrentStateAsState().status;
   }
 
@@ -1206,8 +1160,7 @@ static int GetPlayerFalling(lua_State* L)
 }
 
 
-static int GetPlayerCrossingWall(lua_State* L)
-{
+static int GetPlayerCrossingWall(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1218,7 +1171,8 @@ static int GetPlayerCrossingWall(lua_State* L)
   short status;
   if (useLastState) {
     status = player->lastState.status;
-  } else {
+  }
+  else {
     status = player->getCurrentStateAsState().status;
   }
 
@@ -1227,8 +1181,7 @@ static int GetPlayerCrossingWall(lua_State* L)
 }
 
 
-static int GetPlayerZoned(lua_State* L)
-{
+static int GetPlayerZoned(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1239,7 +1192,8 @@ static int GetPlayerZoned(lua_State* L)
   short status;
   if (useLastState) {
     status = player->lastState.status;
-  } else {
+  }
+  else {
     status = player->getCurrentStateAsState().status;
   }
 
@@ -1248,8 +1202,7 @@ static int GetPlayerZoned(lua_State* L)
 }
 
 
-static int GetPlayerPhysicsDriver(lua_State* L)
-{
+static int GetPlayerPhysicsDriver(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1261,21 +1214,22 @@ static int GetPlayerPhysicsDriver(lua_State* L)
   const PlayerState* statePtr = &state;
   if (useLastState) {
     statePtr = &player->lastState;
-  } else {
+  }
+  else {
     state = player->getCurrentStateAsState();
   }
 
   if (statePtr->phydrv < 0) {
     lua_pushboolean(L, false);
-  } else {
+  }
+  else {
     lua_pushinteger(L, statePtr->phydrv);
   }
   return 1;
 }
 
 
-static int GetPlayerSpawned(lua_State* L)
-{
+static int GetPlayerSpawned(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1286,24 +1240,21 @@ static int GetPlayerSpawned(lua_State* L)
 }
 
 
-static int GetPlayerCanSpawn(lua_State* L)
-{
+static int GetPlayerCanSpawn(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushboolean(L, bz_canPlayerSpawn(pid));
   return 1;
 }
 
 
-static int GetPlayerAdmin(lua_State* L)
-{
+static int GetPlayerAdmin(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushboolean(L, bz_getAdmin(pid));
   return 1;
 }
 
 
-static int GetPlayerOperator(lua_State* L)
-{
+static int GetPlayerOperator(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1314,8 +1265,7 @@ static int GetPlayerOperator(lua_State* L)
 }
 
 
-static int GetPlayerGroups(lua_State* L)
-{
+static int GetPlayerGroups(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1331,8 +1281,7 @@ static int GetPlayerGroups(lua_State* L)
 }
 
 
-static int GetPlayerRank(lua_State* L)
-{
+static int GetPlayerRank(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1343,8 +1292,7 @@ static int GetPlayerRank(lua_State* L)
 }
 
 
-static int GetPlayerVerified(lua_State* L)
-{
+static int GetPlayerVerified(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1355,8 +1303,7 @@ static int GetPlayerVerified(lua_State* L)
 }
 
 
-static int GetPlayerGlobalUser(lua_State* L)
-{
+static int GetPlayerGlobalUser(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1367,8 +1314,7 @@ static int GetPlayerGlobalUser(lua_State* L)
 }
 
 
-static int GetPlayerFlagHistory(lua_State* L)
-{
+static int GetPlayerFlagHistory(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1387,24 +1333,21 @@ static int GetPlayerFlagHistory(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetPlayerLag(lua_State* L)
-{
+static int GetPlayerLag(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getPlayerLag(playerID));
   return 1;
 }
 
 
-static int GetPlayerJitter(lua_State* L)
-{
+static int GetPlayerJitter(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getPlayerJitter(playerID));
   return 1;
 }
 
 
-static int GetPlayerPacketLoss(lua_State* L)
-{
+static int GetPlayerPacketLoss(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   lua_pushfloat(L, bz_getPlayerPacketLoss(playerID));
   return 1;
@@ -1414,32 +1357,28 @@ static int GetPlayerPacketLoss(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetPlayerWins(lua_State* L)
-{
+static int GetPlayerWins(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getPlayerWins(pid));
   return 1;
 }
 
 
-static int GetPlayerLosses(lua_State* L)
-{
+static int GetPlayerLosses(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getPlayerLosses(pid));
   return 1;
 }
 
 
-static int GetPlayerTKs(lua_State* L)
-{
+static int GetPlayerTKs(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_getPlayerTKs(pid));
   return 1;
 }
 
 
-static int SetPlayerWins(lua_State* L)
-{
+static int SetPlayerWins(lua_State* L) {
   const int pid   = luaL_checkint(L, 1);
   const int value = luaL_checkint(L, 2);
   bz_setPlayerWins(pid, value);
@@ -1447,8 +1386,7 @@ static int SetPlayerWins(lua_State* L)
 }
 
 
-static int SetPlayerLosses(lua_State* L)
-{
+static int SetPlayerLosses(lua_State* L) {
   const int pid   = luaL_checkint(L, 1);
   const int value = luaL_checkint(L, 2);
   bz_setPlayerLosses(pid, value);
@@ -1456,8 +1394,7 @@ static int SetPlayerLosses(lua_State* L)
 }
 
 
-static int SetPlayerTKs(lua_State* L)
-{
+static int SetPlayerTKs(lua_State* L) {
   const int pid   = luaL_checkint(L, 1);
   const int value = luaL_checkint(L, 2);
   bz_setPlayerTKs(pid, value);
@@ -1468,8 +1405,7 @@ static int SetPlayerTKs(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetPlayerCustomData(lua_State* L)
-{
+static int GetPlayerCustomData(lua_State* L) {
   const int   pid  =    luaL_checkint(L, 1);
   const char* key  = luaL_checkstring(L, 2);
   const char* data = bz_getPlayerCustomData(pid, key);
@@ -1481,8 +1417,7 @@ static int GetPlayerCustomData(lua_State* L)
 }
 
 
-static int SetPlayerCustomData(lua_State* L)
-{
+static int SetPlayerCustomData(lua_State* L) {
   const int   pid  =    luaL_checkint(L, 1);
   const char* key  = luaL_checkstring(L, 2);
   const char* data = luaL_checkstring(L, 3);
@@ -1494,8 +1429,7 @@ static int SetPlayerCustomData(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetPlayerAutoPilot(lua_State* L)
-{
+static int GetPlayerAutoPilot(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1506,8 +1440,7 @@ static int GetPlayerAutoPilot(lua_State* L)
 }
 
 
-static int SetPlayerAutoPilot(lua_State* L)
-{
+static int SetPlayerAutoPilot(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   luaL_checktype(L, 2, LUA_TBOOLEAN);
   GameKeeper::Player* player = getPlayerByIndex(pid);
@@ -1520,9 +1453,8 @@ static int SetPlayerAutoPilot(lua_State* L)
 //============================================================================//
 
 static bool sendForceState(GameKeeper::Player* gkPlayer,
-			   const fvec3* pos,   const fvec3* vel,
-			   const float* angle, const float* angvel)
-{
+                           const fvec3* pos,   const fvec3* vel,
+                           const float* angle, const float* angvel) {
   if (!gkPlayer->netHandler) {
     return false;
   }
@@ -1547,8 +1479,7 @@ static bool sendForceState(GameKeeper::Player* gkPlayer,
 }
 
 
-static fvec3 checkFVec3Table(lua_State* L, int index)
-{
+static fvec3 checkFVec3Table(lua_State* L, int index) {
   index = (index > 0) ? index : (lua_gettop(L) + index + 1);
 
   luaL_checktype(L, index, LUA_TTABLE);
@@ -1557,7 +1488,7 @@ static fvec3 checkFVec3Table(lua_State* L, int index)
 
   lua_getfield(L, index, "x");
   if (lua_israwnumber(L, -1)) {
-				 v.x = luaL_checkfloat(L, -1); lua_pop(L, 1);
+    v.x = luaL_checkfloat(L, -1); lua_pop(L, 1);
     lua_getfield(L, index, "y"); v.y = luaL_checkfloat(L, -1); lua_pop(L, 1);
     lua_getfield(L, index, "z"); v.z = luaL_checkfloat(L, -1); lua_pop(L, 1);
 
@@ -1572,8 +1503,7 @@ static fvec3 checkFVec3Table(lua_State* L, int index)
 }
 
 
-static int GetPlayerCapabilities(lua_State* L)
-{
+static int GetPlayerCapabilities(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1586,8 +1516,7 @@ static int GetPlayerCapabilities(lua_State* L)
 }
 
 
-static int SetPlayerCapabilities(lua_State* L)
-{
+static int SetPlayerCapabilities(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1619,8 +1548,7 @@ static int SetPlayerCapabilities(lua_State* L)
 }
 
 
-static int SetPlayerState(lua_State* L)
-{
+static int SetPlayerState(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1670,16 +1598,15 @@ static int SetPlayerState(lua_State* L)
   lua_pop(L, 1);
 
   lua_pushboolean(L, sendForceState(player, havePos    ? &pos    : NULL,
-					    haveVel    ? &vel    : NULL,
-					    haveAngle  ? &angle  : NULL,
-					    haveAngVel ? &angvel : NULL));
+                                    haveVel    ? &vel    : NULL,
+                                    haveAngle  ? &angle  : NULL,
+                                    haveAngVel ? &angvel : NULL));
 
   return 1;
 }
 
 
-static int SetPlayerPosition(lua_State* L)
-{
+static int SetPlayerPosition(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1697,8 +1624,7 @@ static int SetPlayerPosition(lua_State* L)
 }
 
 
-static int SetPlayerVelocity(lua_State* L)
-{
+static int SetPlayerVelocity(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1716,8 +1642,7 @@ static int SetPlayerVelocity(lua_State* L)
 }
 
 
-static int SetPlayerAngle(lua_State* L)
-{
+static int SetPlayerAngle(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1732,8 +1657,7 @@ static int SetPlayerAngle(lua_State* L)
 }
 
 
-static int SetPlayerAngVel(lua_State* L)
-{
+static int SetPlayerAngVel(lua_State* L) {
   const int pid = luaL_checkint(L, 1);
   GameKeeper::Player* player = getPlayerByIndex(pid);
   if (player == NULL) {
@@ -1751,8 +1675,7 @@ static int SetPlayerAngVel(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int ChangePlayerTeam(lua_State* L)
-{
+static int ChangePlayerTeam(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const bz_eTeamType newTeamID = ParseTeam(L, 2);
   bz_changeTeam(playerID, newTeamID);
@@ -1760,16 +1683,14 @@ static int ChangePlayerTeam(lua_State* L)
 }
 
 
-static int ZapPlayer(lua_State* L)
-{
+static int ZapPlayer(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   bz_zapPlayer(playerID);
   return 0;
 }
 
 
-static int KillPlayer(lua_State* L)
-{
+static int KillPlayer(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const bool spawnOnBase = !lua_isboolean(L, 2) || lua_tobool(L, 2);
   const int killerID = luaL_optint(L, 3, -1);
@@ -1779,8 +1700,7 @@ static int KillPlayer(lua_State* L)
 }
 
 
-static int SetRabbit(lua_State* L) // FIXME ?
-{
+static int SetRabbit(lua_State* L) { // FIXME ?
   const int playerID = luaL_checkint(L, 1);
   if (lua_isnil(L, 2)) {
     bz_removeRabbit(playerID);
@@ -1794,8 +1714,7 @@ static int SetRabbit(lua_State* L) // FIXME ?
 //============================================================================//
 //============================================================================//
 
-static int SetPlayerShotType(lua_State* L)
-{
+static int SetPlayerShotType(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const int shotType = luaL_checkint(L, 2);
   lua_pushboolean(L, bz_setPlayerShotType(playerID, (bz_eShotType)shotType));
@@ -1803,16 +1722,14 @@ static int SetPlayerShotType(lua_State* L)
 }
 
 
-static int SetPlayerOperator(lua_State* L)
-{
+static int SetPlayerOperator(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   lua_pushboolean(L, bz_setPlayerOperator(playerID));
   return 1;
 }
 
 
-static int SetPlayerSpawnable(lua_State* L)
-{
+static int SetPlayerSpawnable(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const bool spawn = !lua_isboolean(L, 2) || lua_tobool(L, 2);
   lua_pushboolean(L, bz_setPlayerSpawnable(playerID, spawn));
@@ -1820,8 +1737,7 @@ static int SetPlayerSpawnable(lua_State* L)
 }
 
 
-static int SetPlayerLimboMessage(lua_State* L)
-{
+static int SetPlayerLimboMessage(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const char* text   = luaL_checkstring(L, 2);
   lua_pushboolean(L, bz_setPlayerLimboMessage(playerID, text));
@@ -1832,8 +1748,7 @@ static int SetPlayerLimboMessage(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GivePlayerFlag(lua_State* L)
-{
+static int GivePlayerFlag(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
 
   if (lua_isnil(L, 2)) {
@@ -1852,23 +1767,20 @@ static int GivePlayerFlag(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetFlagCount(lua_State* L)
-{
+static int GetFlagCount(lua_State* L) {
   lua_pushinteger(L, bz_getNumFlags());
   return 1;
 }
 
 
-static int GetFlagName(lua_State* L)
-{
+static int GetFlagName(lua_State* L) {
   const int flagID = luaL_checkint(L, 1);
   lua_pushstring(L, bz_getFlagName(flagID).c_str());
   return 1;
 }
 
 
-static int GetFlagPosition(lua_State* L)
-{
+static int GetFlagPosition(lua_State* L) {
   const int flagID = luaL_checkint(L, 1);
   fvec3 pos;
   if (!bz_getFlagPosition(flagID, pos)) {
@@ -1881,16 +1793,14 @@ static int GetFlagPosition(lua_State* L)
 }
 
 
-static int GetFlagPlayer(lua_State* L)
-{
+static int GetFlagPlayer(lua_State* L) {
   const int flagID = luaL_checkint(L, 1);
   lua_pushinteger(L, bz_flagPlayer(flagID));
   return 1;
 }
 
 
-static int ZapFlag(lua_State* L)
-{
+static int ZapFlag(lua_State* L) {
   const int flagID = luaL_checkint(L, 1);
   FlagInfo* flag = FlagInfo::get(flagID);
   if (flag == NULL) {
@@ -1902,8 +1812,7 @@ static int ZapFlag(lua_State* L)
 }
 
 
-static int MoveFlag(lua_State* L)
-{
+static int MoveFlag(lua_State* L) {
   const int flagID = luaL_checkint(L, 1);
   fvec3 pos;
   pos.x = luaL_checkfloat(L, 2);
@@ -1915,16 +1824,14 @@ static int MoveFlag(lua_State* L)
 }
 
 
-static int ResetFlag(lua_State* L)
-{
+static int ResetFlag(lua_State* L) {
   const int flagID = luaL_checkint(L, 1);
   bz_resetFlag(flagID);
   return 0;
 }
 
 
-static int ResetFlags(lua_State* L)
-{
+static int ResetFlags(lua_State* L) {
   const bool onlyUnused = !lua_isboolean(L, 1) || lua_tobool(L, 1);
   bz_resetFlags(onlyUnused);
   return 0;
@@ -1934,48 +1841,42 @@ static int ResetFlags(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetTeamLimit(lua_State* L)
-{
+static int GetTeamLimit(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   lua_pushinteger(L, bz_getTeamPlayerLimit(teamID));
   return 1;
 }
 
 
-static int GetTeamCount(lua_State* L)
-{
+static int GetTeamCount(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   lua_pushinteger(L, bz_getTeamCount(teamID));
   return 1;
 }
 
 
-static int GetTeamScore(lua_State* L)
-{
+static int GetTeamScore(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   lua_pushinteger(L, bz_getTeamScore(teamID));
   return 1;
 }
 
 
-static int GetTeamWins(lua_State* L)
-{
+static int GetTeamWins(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   lua_pushinteger(L, bz_getTeamWins(teamID));
   return 1;
 }
 
 
-static int GetTeamLosses(lua_State* L)
-{
+static int GetTeamLosses(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   lua_pushinteger(L, bz_getTeamLosses(teamID));
   return 1;
 }
 
 
-static int SetTeamWins(lua_State* L)
-{
+static int SetTeamWins(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   const int value = luaL_checkint(L, 2);
   bz_setTeamWins(teamID, value);
@@ -1983,8 +1884,7 @@ static int SetTeamWins(lua_State* L)
 }
 
 
-static int SetTeamLosses(lua_State* L)
-{
+static int SetTeamLosses(lua_State* L) {
   bz_eTeamType teamID = ParseTeam(L, 1);
   const int value = luaL_checkint(L, 2);
   bz_setTeamLosses(teamID, value);
@@ -1995,13 +1895,12 @@ static int SetTeamLosses(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int FireWeapon(lua_State* L)
-{
+static int FireWeapon(lua_State* L) {
   fvec3 pos;
   const char* flagType = luaL_checkstring(L, 1);
-  pos.x		       = luaL_checkfloat(L, 2);
-  pos.y		       = luaL_checkfloat(L, 3);
-  pos.z		       = luaL_checkfloat(L, 4);
+  pos.x          = luaL_checkfloat(L, 2);
+  pos.y          = luaL_checkfloat(L, 3);
+  pos.z          = luaL_checkfloat(L, 4);
   const float rot      = luaL_optfloat(L, 5,  0.0f);
   const float tilt     = luaL_optfloat(L, 6,  0.0f);
   const float lifeTime = luaL_optfloat(L, 7, -1.0f);
@@ -2009,18 +1908,17 @@ static int FireWeapon(lua_State* L)
   const int   shotID   = luaL_optint(L, 9, -1);
 
   lua_pushboolean(L, bz_fireWorldWep(flagType, lifeTime,
-				     pos, tilt, rot, shotID , dt));
+                                     pos, tilt, rot, shotID , dt));
   return 1;
 }
 
 
-static int FireMissile(lua_State* L)
-{
+static int FireMissile(lua_State* L) {
   fvec3 pos;
   int targetID   = luaL_checkint(L, 1);
-  pos.x		 = luaL_checkfloat(L, 2);
-  pos.y		 = luaL_checkfloat(L, 3);
-  pos.z		 = luaL_checkfloat(L, 4);
+  pos.x    = luaL_checkfloat(L, 2);
+  pos.y    = luaL_checkfloat(L, 3);
+  pos.z    = luaL_checkfloat(L, 4);
   float rot      = luaL_checkfloat(L, 5);
   float tilt     = luaL_optfloat(L, 6,  0.0f);
   float lifeTime = luaL_optfloat(L, 7, -1.0f);
@@ -2041,8 +1939,7 @@ static int FireMissile(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int SaveRecording(lua_State* L)
-{
+static int SaveRecording(lua_State* L) {
   if (!Record::enabled()) {
     lua_pushboolean(L, false);
     return 1;
@@ -2055,8 +1952,7 @@ static int SaveRecording(lua_State* L)
 }
 
 
-static int StartRecording(lua_State* L)
-{
+static int StartRecording(lua_State* L) {
   if (!Record::enabled()) {
     lua_pushboolean(L, false);
     return 1;
@@ -2067,8 +1963,7 @@ static int StartRecording(lua_State* L)
 }
 
 
-static int StopRecording(lua_State* L)
-{
+static int StopRecording(lua_State* L) {
   if (!Record::enabled()) {
     lua_pushboolean(L, false);
     return 1;
@@ -2082,22 +1977,19 @@ static int StopRecording(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetCountdownActive(lua_State* L)
-{
+static int GetCountdownActive(lua_State* L) {
   lua_pushboolean(L, bz_isCountDownActive());
   return 1;
 }
 
 
-static int GetCountdownInProgress(lua_State* L)
-{
+static int GetCountdownInProgress(lua_State* L) {
   lua_pushboolean(L, bz_isCountDownInProgress());
   return 1;
 }
 
 
-static int StartCountdown(lua_State* L)
-{
+static int StartCountdown(lua_State* L) {
   const char* playerName = luaL_checkstring(L, 1);
   const int   delay = luaL_checkint(L, 2);
   const float limit = luaL_checkfloat(L, 3);
@@ -2106,16 +1998,14 @@ static int StartCountdown(lua_State* L)
 }
 
 
-static int PauseCountdown(lua_State* L)
-{
+static int PauseCountdown(lua_State* L) {
   const char* playerName = luaL_checkstring(L, 1);
   bz_pauseCountdown(playerName);
   return 0;
 }
 
 
-static int ResumeCountdown(lua_State* L)
-{
+static int ResumeCountdown(lua_State* L) {
   const char* playerName = luaL_checkstring(L, 1);
   bz_resumeCountdown(playerName);
   return 0;
@@ -2125,36 +2015,31 @@ static int ResumeCountdown(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int ReloadLocalBans(lua_State* /*L*/)
-{
+static int ReloadLocalBans(lua_State* /*L*/) {
   bz_reloadLocalBans();
   return 0;
 }
 
 
-static int ReloadMasterBans(lua_State* /*L*/)
-{
+static int ReloadMasterBans(lua_State* /*L*/) {
   bz_reloadMasterBans();
   return 0;
 }
 
 
-static int ReloadUsers(lua_State* /*L*/)
-{
+static int ReloadUsers(lua_State* /*L*/) {
   bz_reloadUsers();
   return 0;
 }
 
 
-static int ReloadGroups(lua_State* /*L*/)
-{
+static int ReloadGroups(lua_State* /*L*/) {
   bz_reloadGroups();
   return 0;
 }
 
 
-static int ReloadHelp(lua_State* /*L*/)
-{
+static int ReloadHelp(lua_State* /*L*/) {
   bz_reloadHelp();
   return 0;
 }
@@ -2163,8 +2048,7 @@ static int ReloadHelp(lua_State* /*L*/)
 //============================================================================//
 //============================================================================//
 
-static int GetGroups(lua_State* L)
-{
+static int GetGroups(lua_State* L) {
   bz_APIStringList* list = bz_getGroupList();
   if (list == NULL) {
     lua_createtable(L, 0, 0);
@@ -2180,8 +2064,7 @@ static int GetGroups(lua_State* L)
 }
 
 
-static int GetGroupPerms(lua_State* L)
-{
+static int GetGroupPerms(lua_State* L) {
   const char* group = luaL_checkstring(L, 1);
   bz_APIStringList* list = bz_getGroupPerms(group);
   if (list == NULL) {
@@ -2198,8 +2081,7 @@ static int GetGroupPerms(lua_State* L)
 }
 
 
-static int GetGroupHasPerm(lua_State* L)
-{
+static int GetGroupHasPerm(lua_State* L) {
   const char* group = luaL_checkstring(L, 1);
   const char* perm  = luaL_checkstring(L, 2);
   lua_pushboolean(L, bz_groupAllowPerm(group, perm));
@@ -2207,8 +2089,7 @@ static int GetGroupHasPerm(lua_State* L)
 }
 
 
-static int GetStandardPerms(lua_State* L)
-{
+static int GetStandardPerms(lua_State* L) {
   bz_APIStringList* list = bz_getStandardPermList();
   if (list == NULL) {
     lua_createtable(L, 0, 0);
@@ -2227,15 +2108,13 @@ static int GetStandardPerms(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetReportCount(lua_State* L)
-{
+static int GetReportCount(lua_State* L) {
   lua_pushinteger(L, bz_getReportCount());
   return 1;
 }
 
 
-static int GetReportInfo(lua_State* L)
-{
+static int GetReportInfo(lua_State* L) {
   const unsigned int reportID = (unsigned int)luaL_checkint(L, 1);
   lua_pushstring(L, bz_getReportSource(reportID));
   lua_pushstring(L, bz_getReportBody(reportID));
@@ -2244,8 +2123,7 @@ static int GetReportInfo(lua_State* L)
 }
 
 
-static int GetReports(lua_State* L)
-{
+static int GetReports(lua_State* L) {
   bz_APIStringList* list = bz_getReports();
   if (list == NULL) {
     lua_createtable(L, 0, 0);
@@ -2261,8 +2139,7 @@ static int GetReports(lua_State* L)
 }
 
 
-static int FileReport(lua_State* L)
-{
+static int FileReport(lua_State* L) {
   const char* msg  = luaL_checkstring(L, 1);
   const char* from = luaL_checkstring(L, 2);
   lua_pushboolean(L, bz_fileReport(msg, from));
@@ -2270,16 +2147,14 @@ static int FileReport(lua_State* L)
 }
 
 
-static int ClearReport(lua_State* L)
-{
+static int ClearReport(lua_State* L) {
   const unsigned int reportID = luaL_checkint(L, 1);
   lua_pushboolean(L, bz_clearReport(reportID));
   return 1;
 }
 
 
-static int ClearReports(lua_State* L)
-{
+static int ClearReports(lua_State* L) {
   lua_pushboolean(L, bz_clearAllReports());
   return 1;
 }
@@ -2288,15 +2163,13 @@ static int ClearReports(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetLagWarn(lua_State* L)
-{
+static int GetLagWarn(lua_State* L) {
   lua_pushinteger(L, bz_getLagWarn());
   return 1;
 }
 
 
-static int SetLagWarn(lua_State* L)
-{
+static int SetLagWarn(lua_State* L) {
   const int lagWarn = luaL_checkint(L, 1);
   lua_pushboolean(L, bz_setLagWarn(lagWarn));
   return 1;
@@ -2306,22 +2179,19 @@ static int SetLagWarn(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int ManualTimeLimit(lua_State* L)
-{
+static int ManualTimeLimit(lua_State* L) {
   lua_pushboolean(L, bz_isTimeManualStart());
   return 1;
 }
 
 
-static int GetTimeLimit(lua_State* L)
-{
+static int GetTimeLimit(lua_State* L) {
   lua_pushfloat(L, bz_getTimeLimit());
   return 1;
 }
 
 
-static int SetTimeLimit(lua_State* L)
-{
+static int SetTimeLimit(lua_State* L) {
   const float timeLimit = luaL_checkfloat(L, 1);
   lua_pushboolean(L, bz_setTimeLimit(timeLimit));
   return 1;
@@ -2331,8 +2201,7 @@ static int SetTimeLimit(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int KickPlayer(lua_State* L)
-{
+static int KickPlayer(lua_State* L) {
   const int playerID = luaL_checkint(L, 1);
   const char* reason = luaL_checkstring(L, 2);
   const bool  notify = lua_isboolean(L, 3) && lua_tobool(L, 3);
@@ -2341,8 +2210,7 @@ static int KickPlayer(lua_State* L)
 }
 
 
-static int BanByIP(lua_State* L)
-{
+static int BanByIP(lua_State* L) {
   const char* ip     = luaL_checkstring(L, 1);
   const char* source = luaL_checkstring(L, 2);
   const int duration = luaL_checkint(L, 3);
@@ -2352,8 +2220,7 @@ static int BanByIP(lua_State* L)
 }
 
 
-static int BanByBZID(lua_State* L)
-{
+static int BanByBZID(lua_State* L) {
   const char* bzID   = luaL_checkstring(L, 1);
   const char* source = luaL_checkstring(L, 2);
   const int duration = luaL_checkint(L, 3);
@@ -2363,8 +2230,7 @@ static int BanByBZID(lua_State* L)
 }
 
 
-static int BanByHost(lua_State* L)
-{
+static int BanByHost(lua_State* L) {
   const char* host   = luaL_checkstring(L, 1);
   const char* source = luaL_checkstring(L, 2);
   const int duration = luaL_checkint(L, 3);
@@ -2374,24 +2240,21 @@ static int BanByHost(lua_State* L)
 }
 
 
-static int UnbanByIP(lua_State* L)
-{
+static int UnbanByIP(lua_State* L) {
   const char* ip = luaL_checkstring(L, 1);
   lua_pushboolean(L, bz_IPUnbanUser(ip));
   return 1;
 }
 
 
-static int UnbanByBZID(lua_State* L)
-{
+static int UnbanByBZID(lua_State* L) {
   const char* bzID = luaL_checkstring(L, 1);
   lua_pushboolean(L, bz_IDUnbanUser(bzID));
   return 1;
 }
 
 
-static int UnbanByHost(lua_State* L)
-{
+static int UnbanByHost(lua_State* L) {
   const char* host = luaL_checkstring(L, 1);
   lua_pushboolean(L, bz_HostUnbanUser(host));
   return 1;
@@ -2400,15 +2263,13 @@ static int UnbanByHost(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetBanCount(lua_State* L, bz_eBanListType listType)
-{
+static int GetBanCount(lua_State* L, bz_eBanListType listType) {
   lua_pushinteger(L, bz_getBanListSize(listType));
   return 1;
 }
 
 
-static int GetBanEntry(lua_State* L, bz_eBanListType listType)
-{
+static int GetBanEntry(lua_State* L, bz_eBanListType listType) {
   const unsigned int entry = luaL_checkint(L, 1);
   if (entry >= bz_getBanListSize(listType)) {
     return 0;
@@ -2446,16 +2307,14 @@ static int GetHostBanEntry(lua_State* L) { return GetBanEntry(L, eHostList); }
 //============================================================================//
 //============================================================================//
 
-static int GetMaxWaitTime(lua_State* L)
-{
+static int GetMaxWaitTime(lua_State* L) {
   const char* name = luaL_checkstring(L, 1);
   lua_pushfloat(L, bz_getMaxWaitTime(name));
   return 1;
 }
 
 
-static int SetMaxWaitTime(lua_State* L)
-{
+static int SetMaxWaitTime(lua_State* L) {
   const char* name = luaL_checkstring(L, 1);
   const float maxTime = luaL_checkfloat(L, 2);
   bz_setMaxWaitTime(maxTime, name);
@@ -2463,8 +2322,7 @@ static int SetMaxWaitTime(lua_State* L)
 }
 
 
-static int ClearMaxWaitTime(lua_State* L)
-{
+static int ClearMaxWaitTime(lua_State* L) {
   const char* name = luaL_checkstring(L, 1);
   bz_clearMaxWaitTime(name);
   return 0;
@@ -2474,8 +2332,7 @@ static int ClearMaxWaitTime(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int PlayerQueryGL(lua_State* L)
-{
+static int PlayerQueryGL(lua_State* L) {
   const int playerID      = luaL_checkint(L, 1);
   const std::string query = luaL_checkstring(L, 2);
 
@@ -2496,23 +2353,20 @@ static int PlayerQueryGL(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static int GetTime(lua_State* L)
-{
+static int GetTime(lua_State* L) {
   LuaDouble::PushDouble(L, bz_getCurrentTime());
   return 1;
 }
 
 
-static int GetGameTime(lua_State* L)
-{
+static int GetGameTime(lua_State* L) {
   const double gameTime = GameTime::getStepTime();
   LuaDouble::PushDouble(L, gameTime);
   return 1;
 }
 
 
-static int GetTimer(lua_State* L)
-{
+static int GetTimer(lua_State* L) {
   const double nowTime = BzTime::getCurrent().getSeconds();
   const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
   lua_pushlightuserdata(L, (void*)millisecs);
@@ -2520,8 +2374,7 @@ static int GetTimer(lua_State* L)
 }
 
 
-static int DiffTimers(lua_State* L)
-{
+static int DiffTimers(lua_State* L) {
   const int args = lua_gettop(L); // number of arguments
   if ((args != 2) || !lua_isuserdata(L, 1) || !lua_isuserdata(L, 2)) {
     luaL_error(L, "Incorrect arguments to DiffTimers()");
@@ -2540,16 +2393,14 @@ static int DiffTimers(lua_State* L)
 //============================================================================//
 
 
-static std::string backSlashToFrontSlash(const std::string& path)
-{
+static std::string backSlashToFrontSlash(const std::string& path) {
   std::string p = path;
   std::replace(p.begin(), p.end(), '\\', '/');
   return p;
 }
 
 
-static std::string cleanDirPath(const std::string& path)
-{
+static std::string cleanDirPath(const std::string& path) {
   if (path.empty()) {
     return path;
   }
@@ -2563,10 +2414,9 @@ static std::string cleanDirPath(const std::string& path)
 
 
 static bool rawDirList(const std::string& root, const std::string& path,
-		       bool recursive,
-		       std::vector<std::string>& dirs,
-		       std::vector<std::string>& files)
-{
+                       bool recursive,
+                       std::vector<std::string>& dirs,
+                       std::vector<std::string>& files) {
 #ifndef WIN32
 
   const std::string fullPath = root + path;
@@ -2583,14 +2433,14 @@ static bool rawDirList(const std::string& root, const std::string& path,
     if (stat((fullPath + name).c_str(), &stbuf) == 0) {
       const std::string filePath = path + name;
       if (!S_ISDIR(stbuf.st_mode)) {
-	files.push_back(filePath);
+        files.push_back(filePath);
       }
       else {
-	const std::string dirPath = filePath + "/";
-	dirs.push_back(dirPath);
-	if (recursive) {
-	  rawDirList(root, dirPath, recursive, dirs, files);
-	}
+        const std::string dirPath = filePath + "/";
+        dirs.push_back(dirPath);
+        if (recursive) {
+          rawDirList(root, dirPath, recursive, dirs, files);
+        }
       }
     }
   }
@@ -2623,7 +2473,7 @@ static bool rawDirList(const std::string& root, const std::string& path,
       const std::string dirPath = filePath + "/";
       dirs.push_back(dirPath);
       if (recursive) {
-	rawDirList(root, dirPath, recursive, dirs, files);
+        rawDirList(root, dirPath, recursive, dirs, files);
       }
     }
   }
@@ -2642,8 +2492,7 @@ static bool rawDirList(const std::string& root, const std::string& path,
 
 //============================================================================//
 
-static int DirList(lua_State* L)
-{
+static int DirList(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
   const bool recursive = lua_tobool(L, 2);
 
@@ -2697,8 +2546,7 @@ static int DirList(lua_State* L)
 }
 
 
-static int CalcMD5(lua_State* L)
-{
+static int CalcMD5(lua_State* L) {
   size_t size;
   const char* data = luaL_checklstring(L, 1, &size);
   lua_pushstring(L, bz_MD5(data, size));
@@ -2708,24 +2556,23 @@ static int CalcMD5(lua_State* L)
 
 // whacky bit of dev'ing fun
 #if defined(HAVE_UNISTD_H) && defined(HAVE_FCNTL_H)
-  #include <unistd.h>
-  #include <fcntl.h>
-  static int ReadStdin(lua_State* L)
-  {
-    int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
-    if (bits == -1) {
-      return 0;
-    }
-    fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
-    char buf[4096];
-    const int r = read(STDIN_FILENO, buf, sizeof(buf));
-    fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
-    if (r <= 0) {
-      return 0;
-    }
-    lua_pushlstring(L, buf, r);
-    return 1;
+#include <unistd.h>
+#include <fcntl.h>
+static int ReadStdin(lua_State* L) {
+  int bits = fcntl(STDIN_FILENO, F_GETFL, 0);
+  if (bits == -1) {
+    return 0;
   }
+  fcntl(STDIN_FILENO, F_SETFL, bits | O_NONBLOCK);
+  char buf[4096];
+  const int r = read(STDIN_FILENO, buf, sizeof(buf));
+  fcntl(STDIN_FILENO, F_SETFL, bits & ~O_NONBLOCK);
+  if (r <= 0) {
+    return 0;
+  }
+  lua_pushlstring(L, buf, r);
+  return 1;
+}
 #endif
 
 
@@ -2736,6 +2583,6 @@ static int CalcMD5(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

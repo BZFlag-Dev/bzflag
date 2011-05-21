@@ -11,11 +11,11 @@
  */
 
 /* XWindow:
- *	OpenGL X window.
+ *  OpenGL X window.
  */
 
 #ifndef BZF_XWINDOW_H
-#define	BZF_XWINDOW_H
+#define BZF_XWINDOW_H
 
 #include "BzfWindow.h"
 #include "XDisplay.h"
@@ -26,65 +26,65 @@ class XVisual;
 
 class XWindow : public BzfWindow {
   public:
-			XWindow(const XDisplay*, XVisual*);
-			~XWindow();
+    XWindow(const XDisplay*, XVisual*);
+    ~XWindow();
 
-    bool		isValid() const;
+    bool    isValid() const;
 
-    void		showWindow(bool);
+    void    showWindow(bool);
 
-    void		getPosition(int& x, int& y);
-    void		getSize(int& width, int& height) const;
+    void    getPosition(int& x, int& y);
+    void    getSize(int& width, int& height) const;
 
-    void		setTitle(const char*);
-    void		setPosition(int x, int y);
-    void		setSize(int width, int height);
-    void		setMinSize(int width, int height);
-    void		setFullscreen(bool on);
-    bool		getFullscreen() const;
+    void    setTitle(const char*);
+    void    setPosition(int x, int y);
+    void    setSize(int width, int height);
+    void    setMinSize(int width, int height);
+    void    setFullscreen(bool on);
+    bool    getFullscreen() const;
 
-    void		warpMouse(int x, int y);
-    void		getMouse(int& x, int& y) const;
-    void		grabMouse();
-    void		ungrabMouse();
-    void		showMouse();
-    void		hideMouse();
+    void    warpMouse(int x, int y);
+    void    getMouse(int& x, int& y) const;
+    void    grabMouse();
+    void    ungrabMouse();
+    void    showMouse();
+    void    hideMouse();
 
-    void		setGamma(float);
-    float		getGamma() const;
-    bool		hasGammaControl() const;
+    void    setGamma(float);
+    float   getGamma() const;
+    bool    hasGammaControl() const;
 
-    void		makeCurrent();
-    void		swapBuffers();
-    void		makeContext();
-    void		freeContext();
+    void    makeCurrent();
+    void    swapBuffers();
+    void    makeContext();
+    void    freeContext();
 
     // other X stuff
-    static XWindow*	lookupWindow(Window);
+    static XWindow* lookupWindow(Window);
 
-    static void		reactivateAll();
-    static void		deactivateAll();
-
-  private:
-    void		loadColormap();
-    unsigned short	getIntensityValue(float i) const;
-    static float	pixelField(int i, int bits, int offset);
-    static void		countBits(unsigned long mask, int& num, int& offset);
+    static void   reactivateAll();
+    static void   deactivateAll();
 
   private:
-    XDisplay::Rep*	display;
-    Window		window;
-    Colormap		colormap;
-    GLXContext		context;
-    bool		noWM;
-    bool		defaultColormap;
-    XWindow*		prev;
-    XWindow*		next;
-    XVisualInfo		visual;
-    unsigned long*	colormapPixels;
-    XSizeHints*	 xsh;
-    float		gammaVal;
-    static XWindow*	first;
+    void    loadColormap();
+    unsigned short  getIntensityValue(float i) const;
+    static float  pixelField(int i, int bits, int offset);
+    static void   countBits(unsigned long mask, int& num, int& offset);
+
+  private:
+    XDisplay::Rep*  display;
+    Window    window;
+    Colormap    colormap;
+    GLXContext    context;
+    bool    noWM;
+    bool    defaultColormap;
+    XWindow*    prev;
+    XWindow*    next;
+    XVisualInfo   visual;
+    unsigned long*  colormapPixels;
+    XSizeHints*  xsh;
+    float   gammaVal;
+    static XWindow* first;
 };
 
 #endif // BZF_XWINDOW_H
@@ -93,6 +93,6 @@ class XWindow : public BzfWindow {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

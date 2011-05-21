@@ -27,8 +27,7 @@
 #include "ParseMaterial.h"
 
 
-CustomTetra::CustomTetra()
-{
+CustomTetra::CustomTetra() {
   vertexCount = 0; // no vertices have yet been defined
 
   // reset the secondary coordinate states
@@ -41,8 +40,7 @@ CustomTetra::CustomTetra()
 }
 
 
-bool CustomTetra::read(const char *cmd, std::istream& input)
-{
+bool CustomTetra::read(const char* cmd, std::istream& input) {
   if (vertexCount > 4) {
     std::cout << "Extra tetrahedron vertex" << std::endl;
     // keep on chugging
@@ -55,7 +53,8 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     if (parseMaterials(cmd, input, materials, 4, materror)) {
       return !materror;
     }
-  } else {
+  }
+  else {
     // try to parse the specific vertex's material
     int vc = vertexCount - 1;
     if (vc > 3) {
@@ -70,36 +69,44 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     if (vertexCount >= 4) {
       std::cout << "Extra tetrahedron vertex" << std::endl;
       // keep on chugging
-    } else {
+    }
+    else {
       fvec3& vertex = vertices[vertexCount];
       input >> vertex.x >> vertex.y >> vertex.z;
       vertexCount++;
     }
-  } else if (strcasecmp(cmd, "normals") == 0) {
+  }
+  else if (strcasecmp(cmd, "normals") == 0) {
     if (vertexCount < 1) {
       std::cout << "Normals defined before any vertex" << std::endl;
       // keep on chugging
-    } else if (vertexCount > 4) {
+    }
+    else if (vertexCount > 4) {
       std::cout << "Extra tetrahedron normals" << std::endl;
       // keep on chugging
-    } else {
+    }
+    else {
       useNormals[vertexCount - 1] = true;
       fvec3& normal = normals[vertexCount - 1];
       input >> normal.x >> normal.y >> normal.z;
     }
-  } else if (strcasecmp(cmd, "texcoords") == 0) {
+  }
+  else if (strcasecmp(cmd, "texcoords") == 0) {
     if (vertexCount < 1) {
       std::cout << "Texcoords defined before any vertex" << std::endl;
       // keep on chugging
-    } else if (vertexCount > 4) {
+    }
+    else if (vertexCount > 4) {
       std::cout << "Extra tetrahedron texcoords" << std::endl;
       // keep on chugging
-    } else {
+    }
+    else {
       useTexcoords[vertexCount - 1] = true;
       fvec2& texcoord = texcoords[vertexCount - 1];
       input >> texcoord.x >> texcoord.y;
     }
-  } else {
+  }
+  else {
     return WorldFileObstacle::read(cmd, input);
   }
 
@@ -107,11 +114,10 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
 }
 
 
-void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
-{
+void CustomTetra::writeToGroupDef(GroupDefinition* groupdef) const {
   if (vertexCount < 4) {
     std::cout << "Not creating tetrahedron, not enough vertices ("
-	      << vertexCount << ")" << std::endl;
+              << vertexCount << ")" << std::endl;
     return;
   }
 
@@ -173,8 +179,8 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
 
   MeshObstacle* mesh = new MeshObstacle(transform,
                                         checkTypes, checkPoints,
-					verts, norms, txcds, 4,
-					false, false, 0, 0, false);
+                                        verts, norms, txcds, 4,
+                                        false, false, 0, 0, false);
   mesh->setName(name.c_str());
 
   // get the material refs
@@ -207,7 +213,8 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
   // to be or not to be...
   if (mesh->isValid()) {
     groupdef->addObstacle(mesh);
-  } else {
+  }
+  else {
     std::cout << "Error generating tetra obstacle." << std::endl;
     delete mesh;
   }
@@ -222,6 +229,6 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

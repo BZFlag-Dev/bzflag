@@ -11,11 +11,11 @@
  */
 
 /* TankGeometryMgr:
- *	Generates the display lists for TankSceneNodes
+ *  Generates the display lists for TankSceneNodes
  */
 
-#ifndef	BZF_TANK_GEOMETRY_MGR_H
-#define	BZF_TANK_GEOMETRY_MGR_H
+#ifndef BZF_TANK_GEOMETRY_MGR_H
+#define BZF_TANK_GEOMETRY_MGR_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -81,14 +81,14 @@ namespace TankGeometryMgr {
   void deleteLists();
 
   unsigned int getPartList(TankGeometryEnums::TankShadow shadow,
-		           TankGeometryEnums::TankPart part,
-		           TankGeometryEnums::TankSize size,
-		           TankGeometryEnums::TankLOD lod);
+                           TankGeometryEnums::TankPart part,
+                           TankGeometryEnums::TankSize size,
+                           TankGeometryEnums::TankLOD lod);
 
   int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
-			   TankGeometryEnums::TankPart part,
-			   TankGeometryEnums::TankSize size,
-			   TankGeometryEnums::TankLOD lod);
+                           TankGeometryEnums::TankPart part,
+                           TankGeometryEnums::TankSize size,
+                           TankGeometryEnums::TankLOD lod);
 
   const fvec3& getScaleFactor(TankGeometryEnums::TankSize size);
 }
@@ -156,7 +156,7 @@ namespace TankGeometryUtils {
   extern const fvec3* currentScaleFactor;
   extern TankGeometryEnums::TankShadow shadowMode;
 
-  bool buildGeoFromObj(const char* path, int &count);
+  bool buildGeoFromObj(const char* path, int& count);
 
 }
 
@@ -168,6 +168,6 @@ namespace TankGeometryUtils {
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

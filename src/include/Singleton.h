@@ -15,12 +15,12 @@
 
 /* system headers */
 #ifdef HAVE_ATEXIT
-#	ifdef HAVE_CSTDLIB
+# ifdef HAVE_CSTDLIB
 #include <cstdlib>
 using std::atexit;
-#	else
+# else
 #include <stdlib.h>
-#	endif
+# endif
 #endif
 
 /* Singleton template class
@@ -56,56 +56,56 @@ using std::atexit;
 template < typename T >
 class Singleton {
 
-private:
+  private:
 
-  static T* _instance;
+    static T* _instance;
 
-protected:
+  protected:
 
-  // protection from instantiating a non-singleton Singleton
-  Singleton() { }
-  Singleton(T* instancePointer) { _instance = instancePointer; }
-  Singleton(const Singleton &) { } // do not use
-  Singleton& operator=(const Singleton&) { return *this; } // do not use
-  ~Singleton() { _instance = 0; } // do not delete
+    // protection from instantiating a non-singleton Singleton
+    Singleton() { }
+    Singleton(T* instancePointer) { _instance = instancePointer; }
+    Singleton(const Singleton&) { }  // do not use
+    Singleton& operator=(const Singleton&) { return *this; } // do not use
+    ~Singleton() { _instance = 0; } // do not delete
 
-  static void destroy() {
-    if ( _instance != 0 ) {
-      delete(_instance);
-      _instance = 0;
+    static void destroy() {
+      if (_instance != 0) {
+        delete(_instance);
+        _instance = 0;
+      }
     }
-  }
 
-public:
+  public:
 
-  /** returns a singleton
-   */
-  inline static T& instance() {
-    if ( _instance == 0 ) {
-      _instance = new T;
-      // destroy the singleton when the application terminates
+    /** returns a singleton
+     */
+    inline static T& instance() {
+      if (_instance == 0) {
+        _instance = new T;
+        // destroy the singleton when the application terminates
 #ifdef HAVE_ATEXIT
-      atexit(Singleton::destroy);
+        atexit(Singleton::destroy);
 #endif
+      }
+      return *Singleton::_instance;
     }
-    return *Singleton::_instance;
-  }
 
-  /** returns a singleton pointer
-   */
-  inline static T* pInstance() {
-    if (_instance == 0) {
-      _instance = new T;
+    /** returns a singleton pointer
+     */
+    inline static T* pInstance() {
+      if (_instance == 0) {
+        _instance = new T;
 #ifdef HAVE_ATEXIT
-      atexit(Singleton::destroy);
+        atexit(Singleton::destroy);
 #endif
+      }
+      return Singleton::_instance;
     }
-    return Singleton::_instance;
-  }
 
-  /** returns a const singleton reference
-   */
-  inline static const T& constInstance() { return *instance(); }
+    /** returns a const singleton reference
+     */
+    inline static const T& constInstance() { return *instance(); }
 };
 
 #endif /* __SINGLETON_H__ */
@@ -115,6 +115,6 @@ public:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

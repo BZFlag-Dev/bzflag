@@ -27,8 +27,7 @@
 #include "LocalFontFace.h"
 
 
-ShotStats::ShotStats() : HUDDialog()
-{
+ShotStats::ShotStats() : HUDDialog() {
   // create font
   fontFace = LocalFontFace::create("sansSerifFont");
 
@@ -86,71 +85,67 @@ ShotStats::ShotStats() : HUDDialog()
   initNavigation();
 }
 
-ShotStats::~ShotStats()
-{
+ShotStats::~ShotStats() {
   LocalFontFace::release(fontFace);
 }
 
-void ShotStats::createLabel(const std::string &str, bool navigable)
-{
+void ShotStats::createLabel(const std::string& str, bool navigable) {
   HUDuiLabel* control = new HUDuiLabel;
   control->setFontFace(fontFace);
   control->setString(str);
   addControl(control, navigable);
 }
 
-void ShotStats::addStats(Player *_player)
-{
+void ShotStats::addStats(Player* _player) {
   const ShotStatistics* stats = _player->getShotStatistics();
   createLabel(_player->getCallSign());
 
   createLabel(TextUtils::format("%2d%%", stats->getTotalPerc()));
   createLabel(TextUtils::format("%d/%d", stats->getTotalHit(),
-				stats->getTotalFired()));
+                                stats->getTotalFired()));
   createLabel(TextUtils::format("%d/%d", stats->getNormalHit(),
-				stats->getNormalFired()));
+                                stats->getNormalFired()));
   createLabel(TextUtils::format("%d/%d", stats->getGMHit(),
-				stats->getGMFired()));
+                                stats->getGMFired()));
   createLabel(TextUtils::format("%d/%d", stats->getLHit(),
-				stats->getLFired()));
+                                stats->getLFired()));
   createLabel(TextUtils::format("%d/%d", stats->getSBHit(),
-				stats->getSBFired()));
+                                stats->getSBFired()));
   createLabel(TextUtils::format("%d/%d", stats->getSWHit(),
-				stats->getSWFired()));
+                                stats->getSWFired()));
   createLabel(TextUtils::format("%d/%d", stats->getTHHit(),
-				stats->getTHFired()));
+                                stats->getTHFired()));
 
   std::string flagName = stats->getFavoriteFlag()->flagAbbv;
-  if (flagName.empty())
+  if (flagName.empty()) {
     flagName = "None";
+  }
   createLabel(flagName);
 
   flagName = stats->getBestFlag()->flagAbbv;
-  if (flagName.empty())
+  if (flagName.empty()) {
     flagName = "None";
+  }
   createLabel(flagName);
 
   ++rows;
 }
 
-HUDuiDefaultKey*	ShotStats::getDefaultKey()
-{
+HUDuiDefaultKey*  ShotStats::getDefaultKey() {
   return ShotStatsDefaultKey::getInstance();
 }
 
-void			ShotStats::execute()
-{
+void      ShotStats::execute() {
   HUDDialogStack::get()->pop();
 }
 
-void			ShotStats::resize(int _width, int _height)
-{
+void      ShotStats::resize(int _width, int _height) {
   HUDDialog::resize(_width, _height);
   FontSizer fs = FontSizer(_width, _height);
 
   // Reposition everything -- that's gonna be a challenge!
 
-  FontManager &fm = FontManager::instance();
+  FontManager& fm = FontManager::instance();
 
   // set up table
   // total width / (number of columns + 3 columns extra for player name + 2 columns margin)
@@ -188,8 +183,9 @@ void			ShotStats::resize(int _width, int _height)
     int row = (i - 2) / columns;
     int column = (i - 2) - (columns * row) + 1;
     // account for 3 extra columns in player name
-    if (column > 1)
+    if (column > 1) {
       column = column + 3;
+    }
 
     // find coordinates corresponding to this row & column
     x = column * columnWidth;
@@ -206,6 +202,6 @@ void			ShotStats::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

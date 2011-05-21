@@ -45,33 +45,28 @@ const fvec4 FlagWarpSceneNode::color[7] = {
 
 
 FlagWarpSceneNode::FlagWarpSceneNode(const fvec3& pos)
-: renderNode(this)
-{
+  : renderNode(this) {
   move(pos);
   setRadius(1.25f * FlagWarpSize * FlagWarpSize);
   size = 1.0f;
 }
 
-FlagWarpSceneNode::~FlagWarpSceneNode()
-{
+FlagWarpSceneNode::~FlagWarpSceneNode() {
   // do nothing
 }
 
 
-void FlagWarpSceneNode::setSizeFraction(float _size)
-{
+void FlagWarpSceneNode::setSizeFraction(float _size) {
   size = _size;
 }
 
 
-void FlagWarpSceneNode::move(const fvec3& pos)
-{
+void FlagWarpSceneNode::move(const fvec3& pos) {
   setCenter(pos);
 }
 
 
-float FlagWarpSceneNode::getDistanceSq(const fvec3& eye) const
-{
+float FlagWarpSceneNode::getDistanceSq(const fvec3& eye) const {
   // shift position of warp down a little because a flag and it's warp
   // are at the same position but we want the warp to appear below the
   // flag.
@@ -81,8 +76,7 @@ float FlagWarpSceneNode::getDistanceSq(const fvec3& eye) const
 }
 
 
-void FlagWarpSceneNode::notifyStyleChange()
-{
+void FlagWarpSceneNode::notifyStyleChange() {
   OpenGLGStateBuilder builder(gstate);
   if (BZDBCache::blend) {
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -97,8 +91,7 @@ void FlagWarpSceneNode::notifyStyleChange()
 
 
 void FlagWarpSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
-{
+  SceneRenderer& renderer) {
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
@@ -108,21 +101,18 @@ void FlagWarpSceneNode::addRenderNodes(
 //
 
 FlagWarpSceneNode::FlagWarpRenderNode::FlagWarpRenderNode(
-				const FlagWarpSceneNode* _sceneNode) :
-				sceneNode(_sceneNode)
-{
+  const FlagWarpSceneNode* _sceneNode) :
+  sceneNode(_sceneNode) {
   // do nothing
 }
 
 
-FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
-{
+FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode() {
   // do nothing
 }
 
 
-void FlagWarpSceneNode::FlagWarpRenderNode::render()
-{
+void FlagWarpSceneNode::FlagWarpRenderNode::render() {
   // make a perturbed ring
   fvec2 geom[12];
   for (int i = 0; i < 12; i++) {
@@ -133,62 +123,62 @@ void FlagWarpSceneNode::FlagWarpRenderNode::render()
 
   const fvec4& sphere = sceneNode->getSphere();
   glPushMatrix();
-    glTranslatef(sphere.x, sphere.y, sphere.z);
+  glTranslatef(sphere.x, sphere.y, sphere.z);
 
-    if (sphere.z > RENDERER.getViewFrustum().getEye().z){
-      for (int i = 0; i < 7; i++) {
-	const float s = sceneNode->size - 0.05f * float(i);
-	if (s < 0.0f) {
-	  break;
-        }
-	myColor4fv(fvec4(color[i].rgb(), FlagWarpAlpha));
-	glBegin(GL_TRIANGLE_FAN);
-	glVertex2f(0.0f, 0.0f);
-	glVertex2fv(s * geom[0]);
-	glVertex2fv(s * geom[11]);
-	glVertex2fv(s * geom[10]);
-	glVertex2fv(s * geom[9]);
-	glVertex2fv(s * geom[8]);
-	glVertex2fv(s * geom[7]);
-	glVertex2fv(s * geom[6]);
-	glVertex2fv(s * geom[5]);
-	glVertex2fv(s * geom[4]);
-	glVertex2fv(s * geom[3]);
-	glVertex2fv(s * geom[2]);
-	glVertex2fv(s * geom[1]);
-	glVertex2fv(s * geom[0]);
-	glEnd(); // 14 verts -> 12 tris
-	addTriangleCount(12);
-	glTranslatef(0.0f, 0.0f, -0.01f);
+  if (sphere.z > RENDERER.getViewFrustum().getEye().z) {
+    for (int i = 0; i < 7; i++) {
+      const float s = sceneNode->size - 0.05f * float(i);
+      if (s < 0.0f) {
+        break;
       }
+      myColor4fv(fvec4(color[i].rgb(), FlagWarpAlpha));
+      glBegin(GL_TRIANGLE_FAN);
+      glVertex2f(0.0f, 0.0f);
+      glVertex2fv(s * geom[0]);
+      glVertex2fv(s * geom[11]);
+      glVertex2fv(s * geom[10]);
+      glVertex2fv(s * geom[9]);
+      glVertex2fv(s * geom[8]);
+      glVertex2fv(s * geom[7]);
+      glVertex2fv(s * geom[6]);
+      glVertex2fv(s * geom[5]);
+      glVertex2fv(s * geom[4]);
+      glVertex2fv(s * geom[3]);
+      glVertex2fv(s * geom[2]);
+      glVertex2fv(s * geom[1]);
+      glVertex2fv(s * geom[0]);
+      glEnd(); // 14 verts -> 12 tris
+      addTriangleCount(12);
+      glTranslatef(0.0f, 0.0f, -0.01f);
     }
-    else {
-      for (int i = 0; i < 7; i++) {
-	const float s = sceneNode->size - 0.05f * float(i);
-	if (s < 0.0f) {
-	  break;
-        }
-	myColor4fv(fvec4(color[i].rgb(), FlagWarpAlpha));
-	glBegin(GL_TRIANGLE_FAN);
-	glVertex2f(0.0f, 0.0f);
-	glVertex2fv(s * geom[0]);
-	glVertex2fv(s * geom[1]);
-	glVertex2fv(s * geom[2]);
-	glVertex2fv(s * geom[3]);
-	glVertex2fv(s * geom[4]);
-	glVertex2fv(s * geom[5]);
-	glVertex2fv(s * geom[6]);
-	glVertex2fv(s * geom[7]);
-	glVertex2fv(s * geom[8]);
-	glVertex2fv(s * geom[9]);
-	glVertex2fv(s * geom[10]);
-	glVertex2fv(s * geom[11]);
-	glVertex2fv(s * geom[0]);
-	glEnd(); // 14 verts -> 12 tris
-	addTriangleCount(12);
-	glTranslatef(0.0f, 0.0f, 0.01f);
+  }
+  else {
+    for (int i = 0; i < 7; i++) {
+      const float s = sceneNode->size - 0.05f * float(i);
+      if (s < 0.0f) {
+        break;
       }
+      myColor4fv(fvec4(color[i].rgb(), FlagWarpAlpha));
+      glBegin(GL_TRIANGLE_FAN);
+      glVertex2f(0.0f, 0.0f);
+      glVertex2fv(s * geom[0]);
+      glVertex2fv(s * geom[1]);
+      glVertex2fv(s * geom[2]);
+      glVertex2fv(s * geom[3]);
+      glVertex2fv(s * geom[4]);
+      glVertex2fv(s * geom[5]);
+      glVertex2fv(s * geom[6]);
+      glVertex2fv(s * geom[7]);
+      glVertex2fv(s * geom[8]);
+      glVertex2fv(s * geom[9]);
+      glVertex2fv(s * geom[10]);
+      glVertex2fv(s * geom[11]);
+      glVertex2fv(s * geom[0]);
+      glEnd(); // 14 verts -> 12 tris
+      addTriangleCount(12);
+      glTranslatef(0.0f, 0.0f, 0.01f);
     }
+  }
 
   glPopMatrix();
 }
@@ -198,6 +188,6 @@ void FlagWarpSceneNode::FlagWarpRenderNode::render()
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

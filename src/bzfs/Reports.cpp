@@ -24,17 +24,14 @@ Reports* Singleton<Reports>::_instance = (Reports*)0;
 /**
 * default constructor, protected because of singleton
 */
-Reports::Reports() : Singleton<Reports>()
-{
+Reports::Reports() : Singleton<Reports>() {
 }
 
-Reports::~Reports()
-{
+Reports::~Reports() {
 
 }
 
-bool Reports::file(const std::string &user, const std::string message)
-{
+bool Reports::file(const std::string& user, const std::string message) {
   time_t now = time(NULL);
 
   Report report(ctime(&now), user, message);
@@ -46,10 +43,12 @@ bool Reports::file(const std::string &user, const std::string message)
 
   if (clOptions->reportPipe.size() > 0) {
     FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
-    if (pipeWrite != NULL)
+    if (pipeWrite != NULL) {
       fprintf(pipeWrite, "%s\n\n", report.fileLine().c_str());
-    else
+    }
+    else {
       logDebugMessage(1, "Couldn't write report to the pipe\n");
+    }
     pclose(pipeWrite);
   }
 
@@ -61,9 +60,9 @@ bool Reports::file(const std::string &user, const std::string message)
 
   while (cur != wordsize) {
     temp2.clear();
-    while (cur != wordsize &&(temp2.size() + words[cur].size() + 1) <(unsigned) MessageLen) {
-	temp2 += words[cur] + " ";
-	++cur;
+    while (cur != wordsize && (temp2.size() + words[cur].size() + 1) < (unsigned) MessageLen) {
+      temp2 += words[cur] + " ";
+      ++cur;
     }
     sendMessage(ServerPlayer, AdminPlayers, temp2.c_str());
   }
@@ -79,19 +78,21 @@ bool Reports::file(const std::string &user, const std::string message)
   return true;
 }
 
-size_t Reports::getLines(std::vector<std::string> &lines, const char* p)
-{
+size_t Reports::getLines(std::vector<std::string> &lines, const char* p) {
   lines.clear();
-  if (clOptions->reportFile.size() > 0)
+  if (clOptions->reportFile.size() > 0) {
     return 0;
+  }
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if (ifs.fail())
+  if (ifs.fail()) {
     return 0;
+  }
 
   std::string pattern = "*";
-  if (p)
+  if (p) {
     pattern = p;
+  }
 
   // assumes that empty lines separate the reports
 
@@ -102,18 +103,19 @@ size_t Reports::getLines(std::vector<std::string> &lines, const char* p)
     if (line.size()) {
       Report report(line);
 
-      if (report.match(pattern))
-	lines.push_back(report.fileLine());
+      if (report.match(pattern)) {
+        lines.push_back(report.fileLine());
+      }
     }
   }
   return lines.size();
 }
 
-size_t Reports::count(void)
-{
+size_t Reports::count(void) {
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if (ifs.fail())
+  if (ifs.fail()) {
     return 0;
+  }
 
   size_t s = 0;
 
@@ -121,14 +123,14 @@ size_t Reports::count(void)
   while (!done) {
     std::string line;
     done = std::getline(ifs, line) == NULL;
-    if (line.size())
+    if (line.size()) {
       s++;
+    }
   }
   return s;
 }
 
-bool Reports::clear(void)
-{
+bool Reports::clear(void) {
   // just blast out the file with a single newline
   if (!clOptions->reportFile.size()) {
     std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out);
@@ -139,52 +141,57 @@ bool Reports::clear(void)
   return false;
 }
 
-bool Reports::clear(size_t index)
-{
-  if (!clOptions->reportFile.size())
+bool Reports::clear(size_t index) {
+  if (!clOptions->reportFile.size()) {
     return false;
+  }
 
   std::vector<Report> reports;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if (ifs.fail())
+  if (ifs.fail()) {
     return false;
+  }
 
   // read em all in
   bool done = false;
   while (!done) {
     std::string line;
     done = std::getline(ifs, line) == NULL;
-    if (line.size())
+    if (line.size()) {
       reports.push_back(Report(line));
+    }
   }
   ifs.close();
 
-  if (index >= reports.size())
+  if (index >= reports.size()) {
     return false;
+  }
 
-  reports.erase(reports.begin()+index);
+  reports.erase(reports.begin() + index);
 
   std::ofstream ofs(clOptions->reportFile.c_str(), std::ios::out);
 
   std::vector<Report>::iterator itr = reports.begin();
   while (itr != reports.end())
-  for (size_t r = 0; r < reports.size(); r++)
-    ofs <<(itr++)->fileLine() << std::endl;
+    for (size_t r = 0; r < reports.size(); r++) {
+      ofs << (itr++)->fileLine() << std::endl;
+    }
 
   return true;
 }
 
-Reports::Report Reports::get(size_t index)
-{
-  if (!clOptions->reportFile.size())
+Reports::Report Reports::get(size_t index) {
+  if (!clOptions->reportFile.size()) {
     return Report();
+  }
 
   std::list<Report> reports;
 
   std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
-  if (ifs.fail())
+  if (ifs.fail()) {
     return Report();
+  }
 
   size_t s = 0;
   // read em all in
@@ -193,8 +200,9 @@ Reports::Report Reports::get(size_t index)
     std::string line;
     done = std::getline(ifs, line) == NULL;
     if (line.size()) {
-      if (s == index)
-	return Report(line);
+      if (s == index) {
+        return Report(line);
+      }
       s++;
     }
   }
@@ -203,46 +211,42 @@ Reports::Report Reports::get(size_t index)
   return Report();
 }
 
-Reports::Report::Report(const char* t, const std::string &f, const std::string & m)
-{
-  if (t)
+Reports::Report::Report(const char* t, const std::string& f, const std::string& m) {
+  if (t) {
     time = t;
+  }
 
   from = f;
   message = m;
 }
 
-bool Reports::Report::fill(const std::string &line)
-{
+bool Reports::Report::fill(const std::string& line) {
   std::vector<std::string> parts = TextUtils::tokenize(line, std::string(":"), 3, false);
   if (parts.size() >= 4) {
     time = parts[0];
     from = parts[2];
     message = parts[3];
-  } else {
+  }
+  else {
     from = time = message = "";
   }
   return time.size() > 0;
 }
 
-std::string Reports::Report::fileLine(void)
-{
+std::string Reports::Report::fileLine(void) {
   return time + ":Reported by :" + from + ":" + message;
 }
 
-bool Reports::Report::matchName(const std::string pattern)
-{
+bool Reports::Report::matchName(const std::string pattern) {
   return glob_match(pattern, TextUtils::toupper(from));
 }
 
-bool Reports::Report::matchMessage(const std::string pattern)
-{
+bool Reports::Report::matchMessage(const std::string pattern) {
   return glob_match(pattern, TextUtils::toupper(message));
 }
 
-bool Reports::Report::match(const std::string pattern)
-{
-  return matchMessage(pattern)|| matchName(pattern);
+bool Reports::Report::match(const std::string pattern) {
+  return matchMessage(pattern) || matchName(pattern);
 }
 
 
@@ -253,6 +257,6 @@ bool Reports::Report::match(const std::string pattern)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

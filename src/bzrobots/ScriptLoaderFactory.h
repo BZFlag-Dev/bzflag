@@ -31,20 +31,19 @@
 #define SCRIPTTOOLFACTORY (ScriptLoaderFactory::instance())
 
 class ScriptLoaderFactory : public Singleton<ScriptLoaderFactory>,
-			    public Factory<RobotScript, std::string>
-{
+  public Factory<RobotScript, std::string> {
 
-public:
-  RobotScript *scriptTool(std::string extension);
-  static void initialize();
+  public:
+    RobotScript* scriptTool(std::string extension);
+    static void initialize();
 
 
-protected:
-  friend class Singleton<ScriptLoaderFactory>;
+  protected:
+    friend class Singleton<ScriptLoaderFactory>;
 
-private:
-  ScriptLoaderFactory();
-  ~ScriptLoaderFactory();
+  private:
+    ScriptLoaderFactory();
+    ~ScriptLoaderFactory();
 };
 
 
@@ -54,6 +53,6 @@ private:
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

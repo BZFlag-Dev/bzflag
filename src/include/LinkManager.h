@@ -11,11 +11,11 @@
  */
 
 /* OpenGLLight:
- *	Encapsulates an OpenGL (point or directional) light source.
+ *  Encapsulates an OpenGL (point or directional) light source.
  */
 
-#ifndef	BZF_LINK_MANAGER_H
-#define	BZF_LINK_MANAGER_H
+#ifndef BZF_LINK_MANAGER_H
+#define BZF_LINK_MANAGER_H
 
 #include "common.h"
 
@@ -43,8 +43,8 @@ class LinkManager {
     struct DstData {
       DstData() : face(NULL) {}
       DstData(const MeshFace* f, const LinkPhysics& lp)
-      : face(f)
-      , physics(lp)
+        : face(f)
+        , physics(lp)
       {}
       bool operator<(const DstData& dd) const;
 
@@ -122,7 +122,7 @@ class LinkManager {
                     const MeshFace* linkDst, const LinkPhysics& physics);
 
     void crossLink(); // make sure that all 'teleporter' sourced
-                      // links are valid (using passthrough links)
+    // links are valid (using passthrough links)
 
     void printDebug();
 
@@ -154,6 +154,6 @@ extern LinkManager linkManager;
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

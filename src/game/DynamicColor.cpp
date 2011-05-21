@@ -44,20 +44,17 @@ DynamicColorManager DYNCOLORMGR;
 
 
 DynamicColorManager::DynamicColorManager()
-: teamMask(0)
-, oldTeamMask(0)
-{
+  : teamMask(0)
+  , oldTeamMask(0) {
 }
 
 
-DynamicColorManager::~DynamicColorManager()
-{
+DynamicColorManager::~DynamicColorManager() {
   clear();
 }
 
 
-void DynamicColorManager::clear()
-{
+void DynamicColorManager::clear() {
   std::vector<DynamicColor*>::iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     delete *it;
@@ -70,8 +67,7 @@ void DynamicColorManager::clear()
 }
 
 
-void DynamicColorManager::update()
-{
+void DynamicColorManager::update() {
   const double gameTime = GameTime::getStepTime();
   if (teamMask != oldTeamMask) { // update them all
     for (size_t i = 0; i < colors.size(); i++) {
@@ -90,8 +86,7 @@ void DynamicColorManager::update()
 }
 
 
-void DynamicColorManager::setActive(DynamicColor* color)
-{
+void DynamicColorManager::setActive(DynamicColor* color) {
   std::set<DynamicColor*>::iterator it = inactive.find(color);
   if (it != inactive.end()) {
     inactive.erase(it);
@@ -100,8 +95,7 @@ void DynamicColorManager::setActive(DynamicColor* color)
 }
 
 
-void DynamicColorManager::setInactive(DynamicColor* color)
-{
+void DynamicColorManager::setInactive(DynamicColor* color) {
   std::set<DynamicColor*>::iterator it = active.find(color);
   if (it != active.end()) {
     active.erase(it);
@@ -110,16 +104,14 @@ void DynamicColorManager::setInactive(DynamicColor* color)
 }
 
 
-int DynamicColorManager::addColor(DynamicColor* color)
-{
+int DynamicColorManager::addColor(DynamicColor* color) {
   active.insert(color);
   colors.push_back(color);
   return ((int)colors.size() - 1);
 }
 
 
-int DynamicColorManager::findColor(const std::string& name) const
-{
+int DynamicColorManager::findColor(const std::string& name) const {
   if (name.empty()) {
     return -1;
   }
@@ -127,13 +119,15 @@ int DynamicColorManager::findColor(const std::string& name) const
     int index = atoi(name.c_str());
     if ((index < 0) || (index >= (int)colors.size())) {
       return -1;
-    } else {
+    }
+    else {
       return index;
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < (int)colors.size(); i++) {
       if (colors[i]->getName() == name) {
-	return i;
+        return i;
       }
     }
     return -1;
@@ -141,18 +135,17 @@ int DynamicColorManager::findColor(const std::string& name) const
 }
 
 
-const DynamicColor* DynamicColorManager::getColor(int id) const
-{
+const DynamicColor* DynamicColorManager::getColor(int id) const {
   if ((id >= 0) && (id < (int)colors.size())) {
     return colors[id];
-  } else {
+  }
+  else {
     return NULL;
   }
 }
 
 
-void DynamicColorManager::getVariables(std::set<std::string>& vars) const
-{
+void DynamicColorManager::getVariables(std::set<std::string>& vars) const {
   std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
@@ -163,9 +156,8 @@ void DynamicColorManager::getVariables(std::set<std::string>& vars) const
 }
 
 
-int DynamicColorManager::packSize() const
-{
-  int fullSize = sizeof (uint32_t);
+int DynamicColorManager::packSize() const {
+  int fullSize = sizeof(uint32_t);
   std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
@@ -175,8 +167,7 @@ int DynamicColorManager::packSize() const
 }
 
 
-void* DynamicColorManager::pack(void *buf) const
-{
+void* DynamicColorManager::pack(void* buf) const {
   std::vector<DynamicColor*>::const_iterator it;
   buf = nboPackUInt32(buf, (int)colors.size());
   for (it = colors.begin(); it != colors.end(); it++) {
@@ -187,11 +178,10 @@ void* DynamicColorManager::pack(void *buf) const
 }
 
 
-void* DynamicColorManager::unpack(void *buf)
-{
+void* DynamicColorManager::unpack(void* buf) {
   unsigned int i;
   uint32_t count;
-  buf = nboUnpackUInt32 (buf, count);
+  buf = nboUnpackUInt32(buf, count);
   for (i = 0; i < count; i++) {
     DynamicColor* color = new DynamicColor;
     buf = color->unpack(buf);
@@ -201,8 +191,7 @@ void* DynamicColorManager::unpack(void *buf)
 }
 
 
-void DynamicColorManager::print(std::ostream& out, const std::string& indent) const
-{
+void DynamicColorManager::print(std::ostream& out, const std::string& indent) const {
   std::vector<DynamicColor*>::const_iterator it;
   for (it = colors.begin(); it != colors.end(); it++) {
     DynamicColor* color = *it;
@@ -211,8 +200,7 @@ void DynamicColorManager::print(std::ostream& out, const std::string& indent) co
 }
 
 
-void DynamicColorManager::setVisualTeam(int team)
-{
+void DynamicColorManager::setVisualTeam(int team) {
   oldTeamMask = teamMask;
   teamMask = (1 << team);
 }
@@ -223,8 +211,7 @@ void DynamicColorManager::setVisualTeam(int team)
 // Dynamic Color
 //
 
-DynamicColor::DynamicColor()
-{
+DynamicColor::DynamicColor() {
   const fvec4 white(1.0f, 1.0f, 1.0f, 1.0f);
 
   name = "";
@@ -252,16 +239,14 @@ DynamicColor::DynamicColor()
 }
 
 
-DynamicColor::~DynamicColor()
-{
+DynamicColor::~DynamicColor() {
   if (varInit) {
     BZDB.removeCallback(varName, bzdbCallback, this);
   }
 }
 
 
-void DynamicColor::finalize()
-{
+void DynamicColor::finalize() {
   possibleAlpha = false;
 
   // variables take priority
@@ -291,53 +276,48 @@ void DynamicColor::finalize()
 }
 
 
-bool DynamicColor::setName(const std::string& newName)
-{
+bool DynamicColor::setName(const std::string& newName) {
   if (newName.empty()) {
     name = "";
     return false;
-  } else if ((newName[0] >= '0') && (newName[0] <= '9')) {
+  }
+  else if ((newName[0] >= '0') && (newName[0] <= '9')) {
     name = "";
     return false;
-  } else {
+  }
+  else {
     name = newName;
   }
   return true;
 }
 
 
-const std::string& DynamicColor::getName() const
-{
+const std::string& DynamicColor::getName() const {
   return name;
 }
 
 
-void DynamicColor::setVariableName(const std::string& vName)
-{
+void DynamicColor::setVariableName(const std::string& vName) {
   varName = vName;
 }
 
 
-void DynamicColor::setVariableTiming(float seconds)
-{
+void DynamicColor::setVariableTiming(float seconds) {
   varTime = seconds;
 }
 
 
-void DynamicColor::setVariableNoAlpha(bool value)
-{
+void DynamicColor::setVariableNoAlpha(bool value) {
   varNoAlpha = value;
 }
 
 
-void DynamicColor::setDelay(float delay)
-{
+void DynamicColor::setDelay(float delay) {
   statesDelay = delay;
 }
 
 
-void DynamicColor::addState(float duration, const fvec4& _color)
-{
+void DynamicColor::addState(float duration, const fvec4& _color) {
   if (duration < 0.0f) {
     duration = 0.0f;
   }
@@ -345,20 +325,17 @@ void DynamicColor::addState(float duration, const fvec4& _color)
 }
 
 
-void DynamicColor::clearStates()
-{
+void DynamicColor::clearStates() {
   colorStates.clear();
 }
 
 
-void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data)
-{
+void DynamicColor::bzdbCallback(const std::string& /*varName*/, void* data) {
   ((DynamicColor*)data)->updateVariable();
 }
 
 
-void DynamicColor::updateVariable()
-{
+void DynamicColor::updateVariable() {
   // setup the basics
   varTransition = true;
   varLastChange = BzTime::getTick();
@@ -386,7 +363,8 @@ void DynamicColor::updateVariable()
   if (expr != "*") {
     parseColorString(expr, varNewColor);
     varNewStates = false;
-  } else {
+  }
+  else {
     varNewStates = true;
   }
 
@@ -394,8 +372,7 @@ void DynamicColor::updateVariable()
 }
 
 
-void DynamicColor::update(double t)
-{
+void DynamicColor::update(double t) {
   // teamMask
   if ((DYNCOLORMGR.getTeamMask() & teamMask) != 0) {
     color.a = 0.0f;
@@ -416,14 +393,12 @@ void DynamicColor::update(double t)
 }
 
 
-void DynamicColor::setColor(const fvec4& value)
-{
+void DynamicColor::setColor(const fvec4& value) {
   color = value;
 }
 
 
-void DynamicColor::colorByVariable(double t)
-{
+void DynamicColor::colorByVariable(double t) {
   // process the variable value
   if (!varInit) {
     varInit = true;
@@ -442,7 +417,8 @@ void DynamicColor::colorByVariable(double t)
       varOldColor = color;
       varNewColor = color;
       varOldStates = varNewStates = false;
-    } else {
+    }
+    else {
       varOldStates = varNewStates = true;
     }
   }
@@ -487,8 +463,7 @@ void DynamicColor::colorByVariable(double t)
 }
 
 
-void DynamicColor::colorByStates(double t)
-{
+void DynamicColor::colorByStates(double t) {
   if ((colorStates.size() <= 1) ||
       (statesLength <= 0.0f)) {
     color = colorStates[0].color;
@@ -528,8 +503,7 @@ void DynamicColor::colorByStates(double t)
 }
 
 
-void* DynamicColor::pack(void *buf) const
-{
+void* DynamicColor::pack(void* buf) const {
   buf = nboPackStdString(buf, name);
 
   buf = nboPackInt32(buf, teamMask);
@@ -550,8 +524,7 @@ void* DynamicColor::pack(void *buf) const
 }
 
 
-void* DynamicColor::unpack(void *buf)
-{
+void* DynamicColor::unpack(void* buf) {
   buf = nboUnpackStdString(buf, name);
 
   int32_t mask;
@@ -580,8 +553,7 @@ void* DynamicColor::unpack(void *buf)
 }
 
 
-int DynamicColor::packSize() const
-{
+int DynamicColor::packSize() const {
   int fullSize = 0;
 
   fullSize += nboStdStringPackSize(name);
@@ -603,8 +575,7 @@ int DynamicColor::packSize() const
 }
 
 
-bool DynamicColor::setTeamMask(const std::string& maskStr)
-{
+bool DynamicColor::setTeamMask(const std::string& maskStr) {
   if (maskStr.empty()) {
     return false;
   }
@@ -623,7 +594,7 @@ bool DynamicColor::setTeamMask(const std::string& maskStr)
     }
 
     int bits = 0;
-         if (arg == "all")      { bits = ~0; } // all bits
+    if (arg == "all")      { bits = ~0; } // all bits
     else if (arg == "rogue")    { bits = (1 << RogueTeam);    } // 1
     else if (arg == "red")      { bits = (1 << RedTeam);      } // 2
     else if (arg == "green")    { bits = (1 << GreenTeam);    } // 4
@@ -638,7 +609,8 @@ bool DynamicColor::setTeamMask(const std::string& maskStr)
 
     if (!invert) {
       mask |= bits;
-    } else {
+    }
+    else {
       mask &= ~bits;
     }
   }
@@ -649,8 +621,7 @@ bool DynamicColor::setTeamMask(const std::string& maskStr)
 }
 
 
-std::string DynamicColor::teamMaskString() const
-{
+std::string DynamicColor::teamMaskString() const {
   std::string s;
   if (teamMask & (1 << RogueTeam))    { s += " rogue";    }
   if (teamMask & (1 << RedTeam))      { s += " red";      }
@@ -664,8 +635,7 @@ std::string DynamicColor::teamMaskString() const
 }
 
 
-void DynamicColor::print(std::ostream& out, const std::string& indent) const
-{
+void DynamicColor::print(std::ostream& out, const std::string& indent) const {
   out << indent << "dynamicColor" << std::endl;
 
   if (!name.empty()) {
@@ -706,8 +676,8 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
         }
       }
       out << indent << keyword
-                    << state.duration << " "
-                    << state.color<< std::endl;
+          << state.duration << " "
+          << state.color << std::endl;
     }
   }
 
@@ -719,6 +689,6 @@ void DynamicColor::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

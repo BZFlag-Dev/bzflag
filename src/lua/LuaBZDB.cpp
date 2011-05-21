@@ -38,8 +38,7 @@ using std::set;
 //============================================================================//
 //============================================================================//
 
-bool LuaBZDB::PushEntries(lua_State* L)
-{
+bool LuaBZDB::PushEntries(lua_State* L) {
   PUSH_LUA_CFUNC(L, GetMap);
   PUSH_LUA_CFUNC(L, GetList);
 
@@ -74,22 +73,19 @@ bool LuaBZDB::PushEntries(lua_State* L)
 //============================================================================//
 //============================================================================//
 
-static bool ValidWriteString(const string& str)
-{
+static bool ValidWriteString(const string& str) {
   return (str.size() <= 256) &&
          (str.find_first_of("\r\n") == string::npos);
 }
 
 
-static inline bool ReadCheck(lua_State* L, const string& varName)
-{
+static inline bool ReadCheck(lua_State* L, const string& varName) {
   LuaBzdbCheckFunc func = L2ES(L)->bzdbReadCheck;
   return (!func || func(varName));
 }
 
 
-static inline bool WriteCheck(lua_State* L, const string& varName)
-{
+static inline bool WriteCheck(lua_State* L, const string& varName) {
   if (!ValidWriteString(varName)) {
     return false;
   }
@@ -120,15 +116,13 @@ static inline bool WriteCheck(lua_State* L, const string& varName)
 //  GetMap
 //
 
-static void mapCallback(const string& name, void* data)
-{
+static void mapCallback(const string& name, void* data) {
   map<string, string>& bzdbMap = *((map<string, string>*)data);
   bzdbMap[name] = BZDB.get(name);
 }
 
 
-int LuaBZDB::GetMap(lua_State* L)
-{
+int LuaBZDB::GetMap(lua_State* L) {
   map<string, string> bzdbMap;
 
   BZDB.iterate(mapCallback, &bzdbMap);
@@ -150,15 +144,13 @@ int LuaBZDB::GetMap(lua_State* L)
 //  GetList
 //
 
-static void vectorCallback(const string& name, void* data)
-{
+static void vectorCallback(const string& name, void* data) {
   vector<string>& bzdbVec = *((vector<string>*)data);
   bzdbVec.push_back(name);
 }
 
 
-int LuaBZDB::GetList(lua_State* L)
-{
+int LuaBZDB::GetList(lua_State* L) {
   vector<string> bzdbVec;
 
   BZDB.iterate(vectorCallback, &bzdbVec);
@@ -179,8 +171,7 @@ int LuaBZDB::GetList(lua_State* L)
 //  INFO call-outs
 //
 
-int LuaBZDB::Exists(lua_State* L)
-{
+int LuaBZDB::Exists(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushboolean(L, BZDB.isSet(key));
@@ -188,8 +179,7 @@ int LuaBZDB::Exists(lua_State* L)
 }
 
 
-int LuaBZDB::IsPersistent(lua_State* L)
-{
+int LuaBZDB::IsPersistent(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   if (!BZDB.isSet(key)) {
@@ -201,8 +191,7 @@ int LuaBZDB::IsPersistent(lua_State* L)
 }
 
 
-int LuaBZDB::GetDefault(lua_State* L)
-{
+int LuaBZDB::GetDefault(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   if (!BZDB.isSet(key)) {
@@ -214,8 +203,7 @@ int LuaBZDB::GetDefault(lua_State* L)
 }
 
 
-int LuaBZDB::GetPermission(lua_State* L)
-{
+int LuaBZDB::GetPermission(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   if (!BZDB.isSet(key)) {
@@ -233,8 +221,7 @@ int LuaBZDB::GetPermission(lua_State* L)
 //  GET call-outs
 //
 
-int LuaBZDB::GetInt(lua_State* L)
-{
+int LuaBZDB::GetInt(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushinteger(L, BZDB.evalInt(key));
@@ -242,8 +229,7 @@ int LuaBZDB::GetInt(lua_State* L)
 }
 
 
-int LuaBZDB::GetBool(lua_State* L)
-{
+int LuaBZDB::GetBool(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushboolean(L, BZDB.isTrue(key));
@@ -251,8 +237,7 @@ int LuaBZDB::GetBool(lua_State* L)
 }
 
 
-int LuaBZDB::GetFloat(lua_State* L)
-{
+int LuaBZDB::GetFloat(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushfloat(L, BZDB.eval(key));
@@ -260,8 +245,7 @@ int LuaBZDB::GetFloat(lua_State* L)
 }
 
 
-int LuaBZDB::GetString(lua_State* L)
-{
+int LuaBZDB::GetString(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushstdstring(L, BZDB.get(key));
@@ -275,8 +259,7 @@ int LuaBZDB::GetString(lua_State* L)
 //  SET call-outs
 //
 
-int LuaBZDB::SetInt(lua_State* L)
-{
+int LuaBZDB::SetInt(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   const int value  = luaL_checkint(L, 2);
 
@@ -289,8 +272,7 @@ int LuaBZDB::SetInt(lua_State* L)
 }
 
 
-int LuaBZDB::SetBool(lua_State* L)
-{
+int LuaBZDB::SetBool(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
   if (!lua_isboolean(L, 2)) {
     luaL_error(L, "expected boolean argument for arg 2");
@@ -306,8 +288,7 @@ int LuaBZDB::SetBool(lua_State* L)
 }
 
 
-int LuaBZDB::SetFloat(lua_State* L)
-{
+int LuaBZDB::SetFloat(lua_State* L) {
   const string key  = luaL_checkstring(L, 1);
   const float value = luaL_checkfloat(L, 2);
 
@@ -320,8 +301,7 @@ int LuaBZDB::SetFloat(lua_State* L)
 }
 
 
-int LuaBZDB::SetString(lua_State* L)
-{
+int LuaBZDB::SetString(lua_State* L) {
   const string key   = luaL_checkstring(L, 1);
   const string value = luaL_checkstring(L, 2);
 
@@ -339,8 +319,7 @@ int LuaBZDB::SetString(lua_State* L)
 }
 
 
-int LuaBZDB::Unset(lua_State* L)
-{
+int LuaBZDB::Unset(lua_State* L) {
   const string key = luaL_checkstring(L, 1);
 
   BZDB_WRITE_CHECK(L, key)
@@ -360,6 +339,6 @@ int LuaBZDB::Unset(lua_State* L)
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
