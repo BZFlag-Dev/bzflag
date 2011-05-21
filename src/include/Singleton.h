@@ -39,7 +39,7 @@ using std::atexit;
  *   friend class Singleton<Whatever>;
  *
  * The class will also need to initialize it's own instance in a single
- * compilation unit (a .cxx file):
+ * compilation unit (a .cpp file):
  *
  *   // statically initialize the instance to nothing
  *   template <>

@@ -148,127 +148,127 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\other_src\lua\src\lapi.cxx"
+				RelativePath="..\..\other_src\lua\src\lapi.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lauxlib.cxx"
+				RelativePath="..\..\other_src\lua\src\lauxlib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lbaselib.cxx"
+				RelativePath="..\..\other_src\lua\src\lbaselib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lcode.cxx"
+				RelativePath="..\..\other_src\lua\src\lcode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ldblib.cxx"
+				RelativePath="..\..\other_src\lua\src\ldblib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ldebug.cxx"
+				RelativePath="..\..\other_src\lua\src\ldebug.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ldo.cxx"
+				RelativePath="..\..\other_src\lua\src\ldo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ldump.cxx"
+				RelativePath="..\..\other_src\lua\src\ldump.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lfunc.cxx"
+				RelativePath="..\..\other_src\lua\src\lfunc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lgc.cxx"
+				RelativePath="..\..\other_src\lua\src\lgc.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\linit.cxx"
+				RelativePath="..\..\other_src\lua\src\linit.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\liolib.cxx"
+				RelativePath="..\..\other_src\lua\src\liolib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\llex.cxx"
+				RelativePath="..\..\other_src\lua\src\llex.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lmathlib.cxx"
+				RelativePath="..\..\other_src\lua\src\lmathlib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lmem.cxx"
+				RelativePath="..\..\other_src\lua\src\lmem.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\loadlib.cxx"
+				RelativePath="..\..\other_src\lua\src\loadlib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lobject.cxx"
+				RelativePath="..\..\other_src\lua\src\lobject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lopcodes.cxx"
+				RelativePath="..\..\other_src\lua\src\lopcodes.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\loslib.cxx"
+				RelativePath="..\..\other_src\lua\src\loslib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lparser.cxx"
+				RelativePath="..\..\other_src\lua\src\lparser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lpeg.cxx"
+				RelativePath="..\..\other_src\lua\src\lpeg.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lstate.cxx"
+				RelativePath="..\..\other_src\lua\src\lstate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lstring.cxx"
+				RelativePath="..\..\other_src\lua\src\lstring.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lstrlib.cxx"
+				RelativePath="..\..\other_src\lua\src\lstrlib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ltable.cxx"
+				RelativePath="..\..\other_src\lua\src\ltable.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ltablib.cxx"
+				RelativePath="..\..\other_src\lua\src\ltablib.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\ltm.cxx"
+				RelativePath="..\..\other_src\lua\src\ltm.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lundump.cxx"
+				RelativePath="..\..\other_src\lua\src\lundump.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lvm.cxx"
+				RelativePath="..\..\other_src\lua\src\lvm.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\lzio.cxx"
+				RelativePath="..\..\other_src\lua\src\lzio.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\other_src\lua\src\print.cxx"
+				RelativePath="..\..\other_src\lua\src\print.cpp"
 				>
 			</File>
 		</Filter>

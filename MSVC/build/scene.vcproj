@@ -174,23 +174,23 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\scene\BSPSceneDatabase.cxx"
+				RelativePath="..\..\src\scene\BSPSceneDatabase.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\scene\Occluder.cxx"
+				RelativePath="..\..\src\scene\Occluder.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\scene\Octree.cxx"
+				RelativePath="..\..\src\scene\Octree.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\scene\SceneDatabase.cxx"
+				RelativePath="..\..\src\scene\SceneDatabase.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\scene\ZSceneDatabase.cxx"
+				RelativePath="..\..\src\scene\ZSceneDatabase.cpp"
 				>
 			</File>
 		</Filter>

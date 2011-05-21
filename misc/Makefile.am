@@ -18,7 +18,7 @@ EXTRA_DIST =				\
 	shtool				\
 	stats				\
 	tar				\
-	Template.cxx			\
+	Template.cpp			\
 	Template.h			\
 	touchcopyright			\
 	touchversion			\

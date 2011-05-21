@@ -15,13 +15,13 @@ MAINTAINERCLEANFILES = \
 
 libNet_la_LDFLAGS = -static
 libNet_la_SOURCES =			\
-	Address.cxx			\
-	AresHandler.cxx			\
-	Pack.cxx			\
-	Ping.cxx			\
-	htond.cxx			\
-	multicast.cxx			\
-	network.cxx
+	Address.cpp			\
+	AresHandler.cpp			\
+	Pack.cpp			\
+	Ping.cpp			\
+	htond.cpp			\
+	multicast.cpp			\
+	network.cpp
 
 EXTRA_DIST = \
 	README

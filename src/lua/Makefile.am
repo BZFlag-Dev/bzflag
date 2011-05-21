@@ -21,24 +21,24 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libLuaGame_la_LDFLAGS = -static
 libLuaGame_la_SOURCES =				\
-	LuaBitOps.cxx		LuaBitOps.h	\
-	LuaBZDB.cxx		LuaBZDB.h	\
-	LuaBzMaterial.cxx	LuaBzMaterial.h	\
-	LuaDouble.cxx		LuaDouble.h	\
-	LuaDynCol.cxx		LuaDynCol.h	\
-	LuaExtras.cxx		LuaExtras.h	\
-	LuaHTTP.cxx		LuaHTTP.h	\
-	LuaObstacle.cxx		LuaObstacle.h	\
-	LuaPack.cxx		LuaPack.h	\
-	LuaParser.cxx		LuaParser.h	\
-	LuaPhyDrv.cxx		LuaPhyDrv.h	\
-	LuaScream.cxx		LuaScream.h	\
-	LuaServerPing.cxx	LuaServerPing.h	\
-	LuaTexMat.cxx		LuaTexMat.h	\
-	LuaUtils.cxx		LuaUtils.h	\
-	LuaVector.cxx		LuaVector.h	\
-	LuaVFS.cxx		LuaVFS.h	\
-	LuaZip.cxx		LuaZip.h
+	LuaBitOps.cpp		LuaBitOps.h	\
+	LuaBZDB.cpp		LuaBZDB.h	\
+	LuaBzMaterial.cpp	LuaBzMaterial.h	\
+	LuaDouble.cpp		LuaDouble.h	\
+	LuaDynCol.cpp		LuaDynCol.h	\
+	LuaExtras.cpp		LuaExtras.h	\
+	LuaHTTP.cpp		LuaHTTP.h	\
+	LuaObstacle.cpp		LuaObstacle.h	\
+	LuaPack.cpp		LuaPack.h	\
+	LuaParser.cpp		LuaParser.h	\
+	LuaPhyDrv.cpp		LuaPhyDrv.h	\
+	LuaScream.cpp		LuaScream.h	\
+	LuaServerPing.cpp	LuaServerPing.h	\
+	LuaTexMat.cpp		LuaTexMat.h	\
+	LuaUtils.cpp		LuaUtils.h	\
+	LuaVector.cpp		LuaVector.h	\
+	LuaVFS.cpp		LuaVFS.h	\
+	LuaZip.cpp		LuaZip.h
 
 
 if CLIENT_INCLUDED
@@ -46,36 +46,36 @@ if CLIENT_INCLUDED
 libLuaClient_la_LDFLAGS = -static
 libLuaClient_la_SOURCES =			\
 	LuaClientOrder.h			\
-	LuaClientScripts.cxx			\
-	LuaHandleCallIns.cxx			\
-	LuaBzOrg.cxx		LuaBzOrg.h	\
-	LuaCallInCheck.cxx	LuaCallInCheck.h \
-	LuaCallInDB.cxx		LuaCallInDB.h	\
-	LuaCallOuts.cxx		LuaCallOuts.h	\
-	LuaConsole.cxx		LuaConsole.h	\
-	LuaGameConst.cxx	LuaGameConst.h	\
-	LuaControl.cxx		LuaControl.h	\
-	LuaHandle.cxx		LuaHandle.h	\
-	LuaKeySyms.cxx		LuaKeySyms.h	\
-	LuaSpatial.cxx		LuaSpatial.h	\
-	LuaUser.cxx		LuaUser.h	\
-	LuaRules.cxx		LuaRules.h	\
-	LuaWorld.cxx		LuaWorld.h
+	LuaClientScripts.cpp			\
+	LuaHandleCallIns.cpp			\
+	LuaBzOrg.cpp		LuaBzOrg.h	\
+	LuaCallInCheck.cpp	LuaCallInCheck.h \
+	LuaCallInDB.cpp		LuaCallInDB.h	\
+	LuaCallOuts.cpp		LuaCallOuts.h	\
+	LuaConsole.cpp		LuaConsole.h	\
+	LuaGameConst.cpp	LuaGameConst.h	\
+	LuaControl.cpp		LuaControl.h	\
+	LuaHandle.cpp		LuaHandle.h	\
+	LuaKeySyms.cpp		LuaKeySyms.h	\
+	LuaSpatial.cpp		LuaSpatial.h	\
+	LuaUser.cpp		LuaUser.h	\
+	LuaRules.cpp		LuaRules.h	\
+	LuaWorld.cpp		LuaWorld.h
 
 
 libLuaClientGL_la_LDFLAGS = -static
 libLuaClientGL_la_SOURCES =			\
-	LuaGLConst.cxx		LuaGLConst.h	\
-	LuaDLists.cxx		LuaDLists.h	\
-	LuaFBOs.cxx		LuaFBOs.h	\
-	LuaGLBuffers.cxx	LuaGLBuffers.h	\
-	LuaGLPointers.cxx	LuaGLPointers.h	\
-	LuaGLQueries.cxx	LuaGLQueries.h	\
-	LuaOpenGL.cxx		LuaOpenGL.h	\
-	LuaRBOs.cxx		LuaRBOs.h	\
-	LuaSceneNode.cxx	LuaSceneNode.h	\
-	LuaShaders.cxx		LuaShaders.h	\
-	LuaTextures.cxx		LuaTextures.h
+	LuaGLConst.cpp		LuaGLConst.h	\
+	LuaDLists.cpp		LuaDLists.h	\
+	LuaFBOs.cpp		LuaFBOs.h	\
+	LuaGLBuffers.cpp	LuaGLBuffers.h	\
+	LuaGLPointers.cpp	LuaGLPointers.h	\
+	LuaGLQueries.cpp	LuaGLQueries.h	\
+	LuaOpenGL.cpp		LuaOpenGL.h	\
+	LuaRBOs.cpp		LuaRBOs.h	\
+	LuaSceneNode.cpp	LuaSceneNode.h	\
+	LuaShaders.cpp		LuaShaders.h	\
+	LuaTextures.cpp		LuaTextures.h
 endif
 
 

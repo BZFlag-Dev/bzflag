@@ -52,7 +52,7 @@
 # grep them first to not touch the file date/time
 
 #temp=$$.tmp
-files=`find . -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am | sort`
+files=`find . -name \*.cpp -o -name \*.h -o -name \*.cxx -o -name \*.c -o -name Makefile.am | sort`
 # convert 8 spaces to tab
 for file in $files ; do
  # don't actually include 8 spaces or they might get replaced. ;-)
@@ -65,7 +65,7 @@ for file in $files ; do
  fi
 done
 
-files=`find . -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am -o -name README\* -o -name \*.dsp -o -name \*.fmt | sort`
+files=`find . -name \*.cpp -o -name \*.h -o -name \*.cxx -o -name \*.c -o -name Makefile.am -o -name README\* -o -name \*.dsp -o -name \*.fmt | sort`
 # remove trailing whitespace and convert spacetab to tab
 for file in $files ; do
  # that's a tab in the []

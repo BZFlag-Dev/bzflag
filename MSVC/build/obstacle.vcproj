@@ -174,98 +174,98 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\obstacle\ArcObstacle.cxx"
+				RelativePath="..\..\src\obstacle\ArcObstacle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\BaseBuilding.cxx"
+				RelativePath="..\..\src\obstacle\BaseBuilding.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\BoxBuilding.cxx"
+				RelativePath="..\..\src\obstacle\BoxBuilding.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\ConeObstacle.cxx"
+				RelativePath="..\..\src\obstacle\ConeObstacle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\MeshDrawInfo.cxx"
+				RelativePath="..\..\src\obstacle\MeshDrawInfo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\MeshFace.cxx"
+				RelativePath="..\..\src\obstacle\MeshFace.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\MeshObstacle.cxx"
+				RelativePath="..\..\src\obstacle\MeshObstacle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\Obstacle.cxx"
+				RelativePath="..\..\src\obstacle\Obstacle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\ObstacleList.cxx"
+				RelativePath="..\..\src\obstacle\ObstacleList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\ObstacleMgr.cxx"
+				RelativePath="..\..\src\obstacle\ObstacleMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\ObstacleModifier.cxx"
+				RelativePath="..\..\src\obstacle\ObstacleModifier.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\PyramidBuilding.cxx"
+				RelativePath="..\..\src\obstacle\PyramidBuilding.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\SphereObstacle.cxx"
+				RelativePath="..\..\src\obstacle\SphereObstacle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\Teleporter.cxx"
+				RelativePath="..\..\src\obstacle\Teleporter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\Triangulate.cxx"
+				RelativePath="..\..\src\obstacle\Triangulate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\obstacle\WallObstacle.cxx"
+				RelativePath="..\..\src\obstacle\WallObstacle.cpp"
 				>
 			</File>
 			<Filter
 				Name="Generators"
 				>
 				<File
-					RelativePath="..\..\src\obstacle\BaseSceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\BaseSceneNodeGenerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\obstacle\BoxSceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\BoxSceneNodeGenerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\EmptySceneNodeGenerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\obstacle\MeshSceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\MeshSceneNodeGenerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\obstacle\ObstacleSceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\ObstacleSceneNodeGenerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\obstacle\PyramidSceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\PyramidSceneNodeGenerator.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\obstacle\WallSceneNodeGenerator.cxx"
+					RelativePath="..\..\src\obstacle\WallSceneNodeGenerator.cpp"
 					>
 				</File>
 			</Filter>

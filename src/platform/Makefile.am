@@ -10,15 +10,15 @@ libPlatform_la_SOURCES = \
 	$(MACOSX_SDL_SOURCES)			\
 	$(SOLARIS_SOURCES)			\
 	$(WIN32_SOURCES)			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfMedia.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	Clipboard.cxx				\
-	PlatformFactory.cxx			\
-	VerticalSync.cxx			\
-	wave.cxx
+	BzfDisplay.cpp				\
+	BzfJoystick.cpp				\
+	BzfMedia.cpp				\
+	BzfVisual.cpp				\
+	BzfWindow.cpp				\
+	Clipboard.cpp				\
+	PlatformFactory.cpp			\
+	VerticalSync.cpp			\
+	wave.cpp
 
 noinst_HEADERS = \
 	BeOSDisplay.h				\
@@ -58,65 +58,65 @@ noinst_HEADERS = \
 	wave.h
 
 SDL_FILES = \
-	SDLDisplay.cxx				\
-	SDLJoystick.cxx				\
-	SDLMedia.cxx				\
-	SDLVisual.cxx				\
-	SDLWindow.cxx
+	SDLDisplay.cpp				\
+	SDLJoystick.cpp				\
+	SDLMedia.cpp				\
+	SDLVisual.cpp				\
+	SDLWindow.cpp
 
 X11_FILES = \
-	XDisplay.cxx				\
-	XVisual.cxx				\
-	XWindow.cxx
+	XDisplay.cpp				\
+	XVisual.cpp				\
+	XWindow.cpp
 
 LINUX_SDL_FILES = \
 	$(SDL_FILES) 				\
-	SDLPlatformFactory.cxx			\
-	EvdevJoystick.cxx
+	SDLPlatformFactory.cpp			\
+	EvdevJoystick.cpp
 
 LINUX_NATIVE_FILES =				\
 	$(X11_FILES)				\
-	EvdevJoystick.cxx			\
-	LinuxDisplay.cxx			\
-	LinuxMedia.cxx				\
-	LinuxPlatformFactory.cxx		\
-	USBJoystick.cxx
+	EvdevJoystick.cpp			\
+	LinuxDisplay.cpp			\
+	LinuxMedia.cpp				\
+	LinuxPlatformFactory.cpp		\
+	USBJoystick.cpp
 
 SOLARIS_FILES =					\
 	$(X11_FILES)				\
-	SolarisMedia.cxx			\
-	SolarisPlatformFactory.cxx
+	SolarisMedia.cpp			\
+	SolarisPlatformFactory.cpp
 
 IRIX_FILES =					\
 	$(X11_FILES)				\
-	SGIDisplay.cxx				\
-	SGIMedia.cxx				\
-	SGIPlatformFactory.cxx
+	SGIDisplay.cpp				\
+	SGIMedia.cpp				\
+	SGIPlatformFactory.cpp
 
 MACOSX_SDL_FILES =				\
 	$(SDL_FILES)				\
-	SDLPlatformFactory.cxx
+	SDLPlatformFactory.cpp
 
 BEOS_FILES =					\
-	BeOSDisplay.cxx				\
-	BeOSMedia.cxx				\
-	BeOSPlatformFactory.cxx			\
-	BeOSVisual.cxx				\
-	BeOSWindow.cxx
+	BeOSDisplay.cpp				\
+	BeOSMedia.cpp				\
+	BeOSPlatformFactory.cpp			\
+	BeOSVisual.cpp				\
+	BeOSWindow.cpp
 
 WIN32_FILES =					\
 	$(SDL_FILES)				\
-	DXJoystick.cxx				\
-	WinDisplay.cxx				\
-	WinJoystick.cxx				\
-	WinMedia.cxx				\
-	WinPlatformFactory.cxx			\
-	WinVisual.cxx				\
-	WinWindow.cxx
+	DXJoystick.cpp				\
+	WinDisplay.cpp				\
+	WinJoystick.cpp				\
+	WinMedia.cpp				\
+	WinPlatformFactory.cpp			\
+	WinVisual.cpp				\
+	WinWindow.cpp
 
 HPUX_FILES =					\
-	HPUXMedia.cxx				\
-	HPUXPlatformFactory.cxx
+	HPUXMedia.cpp				\
+	HPUXPlatformFactory.cpp
 
 if HAVE_SDL
 if LINUX
@@ -165,7 +165,7 @@ EXTRA_DIST = \
 	$(MACOSX_SDL_FILES) \
 	$(SOLARIS_FILES) \
 	$(WIN32_FILES) \
-	NewMedia.cxx \
+	NewMedia.cpp \
 	README
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/include $(SDL_CFLAGS) @CONF_CPPFLAGS@

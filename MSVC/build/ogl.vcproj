@@ -174,35 +174,35 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLContext.cxx"
+				RelativePath="..\..\src\ogl\OpenGLContext.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLGState.cxx"
+				RelativePath="..\..\src\ogl\OpenGLGState.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLLight.cxx"
+				RelativePath="..\..\src\ogl\OpenGLLight.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLMaterial.cxx"
+				RelativePath="..\..\src\ogl\OpenGLMaterial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLPassState.cxx"
+				RelativePath="..\..\src\ogl\OpenGLPassState.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLTexture.cxx"
+				RelativePath="..\..\src\ogl\OpenGLTexture.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\OpenGLUtils.cxx"
+				RelativePath="..\..\src\ogl\OpenGLUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\ogl\RenderNode.cxx"
+				RelativePath="..\..\src\ogl\RenderNode.cpp"
 				>
 			</File>
 			<Filter

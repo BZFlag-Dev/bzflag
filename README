@@ -443,7 +443,7 @@ over unmodified clients and are generally discouraged for widespread
 use.  As such, we ask that anyone wishing to host or otherwise
 participate in a game that involves a modified client or server to
 register under a different network protocol than the current public
-release by modifying BZ_PROTO_VERSION in the src/date/buildDate.cxx
+release by modifying BZ_PROTO_VERSION in the src/date/buildDate.cpp
 file.  This will let modified games be played and prevent modified
 clients from being used on public unmodified servers.
 

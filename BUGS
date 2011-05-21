@@ -31,7 +31,7 @@ Crashes
 
 * Creating a new tab in the server list: appending to the end of an existing
   field, instead of deleting it causes a crash. There's an extremely sketchy
-  calculation in HUDuiTypeIn.cxx line 175 that results in a std::out_of_range
+  calculation in HUDuiTypeIn.cpp line 175 that results in a std::out_of_range
   exception on line 181
 
 * The WebAdmin plugin segfaults the server on shutdown.
@@ -188,7 +188,7 @@ bzfs
 * bzfs sometimes gets into a mode where CTF team flags spawn at random places,
   not on bases.  Also, players spawn at random spots after flag cap.
 
-* maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
+* maxPlayers is a lie.  See WorldBuilder.cpp:237 and bzfsClientMessages.cpp:39.
 
 Gameplay
 --------
@@ -226,7 +226,7 @@ Solo Bots
 --------------
 
 * if there is a network connection (e.g. a lan) yet no external access, the
-  client hangs hard in cURLManager.cxx:291 and later in some odd corrupted stack
+  client hangs hard in cURLManager.cpp:291 and later in some odd corrupted stack
   space elsewhere.  this was with CURL 7.13.1 (default Mac libcurl).  simple
   workaround is to invoke client with -list e://localhost (even if no local
   server is running) to avoid the hang on resolving.

@@ -18,9 +18,9 @@ gcc 3.2.3
    * in configure, s/<OpenGl/<GL/g
 
 3) source code changes:
-    * src/net/multicast.cxx:223: recvfrom takes an int* instead of socklen_t*.  Removed the cast to socklen_t*
-    * src/net/network.cxx:31: added  || defined(__hpux) for the hstrerror define
-    * src/bzflag/ServerLink.cxx
+    * src/net/multicast.cpp:223: recvfrom takes an int* instead of socklen_t*.  Removed the cast to socklen_t*
+    * src/net/network.cpp:31: added  || defined(__hpux) for the hstrerror define
+    * src/bzflag/ServerLink.cpp
        - line 162: change socklen_t to int
        - lines 419 and 740: remove (socklen_t*)
 

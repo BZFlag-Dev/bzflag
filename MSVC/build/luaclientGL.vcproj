@@ -150,47 +150,47 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\lua\LuaDLists.cxx"
+				RelativePath="..\..\src\lua\LuaDLists.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaFBOs.cxx"
+				RelativePath="..\..\src\lua\LuaFBOs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaGLBuffers.cxx"
+				RelativePath="..\..\src\lua\LuaGLBuffers.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaGLConst.cxx"
+				RelativePath="..\..\src\lua\LuaGLConst.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaGLPointers.cxx"
+				RelativePath="..\..\src\lua\LuaGLPointers.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaGLQueries.cxx"
+				RelativePath="..\..\src\lua\LuaGLQueries.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaOpenGL.cxx"
+				RelativePath="..\..\src\lua\LuaOpenGL.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaRBOs.cxx"
+				RelativePath="..\..\src\lua\LuaRBOs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaSceneNode.cxx"
+				RelativePath="..\..\src\lua\LuaSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaShaders.cxx"
+				RelativePath="..\..\src\lua\LuaShaders.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaTextures.cxx"
+				RelativePath="..\..\src\lua\LuaTextures.cpp"
 				>
 			</File>
 		</Filter>

@@ -47,7 +47,7 @@ dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
 AC_INIT(BZFlag, 2.99.60, [http://BZFlag.org], bzflag)
-AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
+AC_CONFIG_SRCDIR(src/bzflag/bzflag.cpp)
 AC_REVISION($Revision$)
 
 # When --libdir has not been used put plugins in bzflag's own directory.
@@ -57,10 +57,10 @@ fi
 
 AC_CONFIG_AUX_DIR(misc)
 
-# sed magic to get version numbers from src/date/buildDate.cxx
-MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
+# sed magic to get version numbers from src/date/buildDate.cpp
+MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cpp`
+MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cpp`
+REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cpp`
 
 CONF_DATE=`date -u +%Y%m%d`
 BZFLAG_DATE=`date -u +%Y-%m-%d`

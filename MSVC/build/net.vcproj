@@ -148,31 +148,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\net\Address.cxx"
+				RelativePath="..\..\src\net\Address.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\AresHandler.cxx"
+				RelativePath="..\..\src\net\AresHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\htond.cxx"
+				RelativePath="..\..\src\net\htond.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\multicast.cxx"
+				RelativePath="..\..\src\net\multicast.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\network.cxx"
+				RelativePath="..\..\src\net\network.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\Pack.cxx"
+				RelativePath="..\..\src\net\Pack.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\net\Ping.cxx"
+				RelativePath="..\..\src\net\Ping.cpp"
 				>
 			</File>
 		</Filter>

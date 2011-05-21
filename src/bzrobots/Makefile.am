@@ -19,7 +19,7 @@ AM_CPPFLAGS = \
 	@CONF_CPPFLAGS@
 
 PYTHON_LOADER = \
-	PythonScript.cxx	\
+	PythonScript.cpp	\
 	PythonScript.h
 
 if BZROBOTS_PYTHON_ENABLED
@@ -35,19 +35,19 @@ endif
 
 if CLIENT_INCLUDED
 clientfiles = \
-	../obstacle/ObstacleMgr.cxx
+	../obstacle/ObstacleMgr.cpp
 else
 clientfiles = \
-	OpenGLUtils.cxx	\
-	../obstacle/ObstacleMgr.cxx
+	OpenGLUtils.cpp	\
+	../obstacle/ObstacleMgr.cpp
 endif
 
 apisources = \
-	AdvancedRobot.cxx		\
-	Bullet.cxx			\
-	Events.cxx			\
-	Robot.cxx			\
-	RobotStatus.cxx
+	AdvancedRobot.cpp		\
+	Bullet.cpp			\
+	Events.cpp			\
+	Robot.cpp			\
+	RobotStatus.cpp
 
 apiheaders = \
 	AdvancedRobot.h			\
@@ -61,21 +61,21 @@ bzrobots_SOURCES =			\
 	$(clientfiles)			\
 	$(apisources)			\
 	$(apiheaders)			\
-	bzrobots.cxx			\
-	botplaying.cxx			\
+	bzrobots.cpp			\
+	botplaying.cpp			\
 	botplaying.h			\
 	RobotCallbacks.h		\
-	RobotControl.cxx		\
+	RobotControl.cpp		\
 	RobotControl.h			\
-	BZRobotPlayer.cxx		\
+	BZRobotPlayer.cpp		\
 	BZRobotPlayer.h			\
-	RobotScript.cxx			\
+	RobotScript.cpp			\
 	RobotScript.h			\
-	LuaScript.cxx			\
+	LuaScript.cpp			\
 	LuaScript.h			\
-	ScriptLoaderFactory.cxx		\
+	ScriptLoaderFactory.cpp		\
 	ScriptLoaderFactory.h		\
-	SharedObjectScript.cxx		\
+	SharedObjectScript.cpp		\
 	SharedObjectScript.h
 
 if WIN32
@@ -120,19 +120,19 @@ bzrobots_LDADD =	\
 	../date/libDate.la
 
 TestRobot_la_LDFLAGS = -module -avoid-version
-TestRobot_la_SOURCES = ../../bots/cplusplus/TestRobot.cxx
+TestRobot_la_SOURCES = ../../bots/cplusplus/TestRobot.cpp
 
 python_wrap_files = \
-	bzrobot_python_wrap.cxx \
+	bzrobot_python_wrap.cpp \
 	bzrobot_python_wrap.h \
 	bzrobot_python_runtime.h
 
 if BZROBOTS_PYTHON_ENABLED
 libbzrobot = bzrobot_pyext.la
 
-bzrobot_python_wrap.h: bzrobot_python_wrap.cxx
+bzrobot_python_wrap.h: bzrobot_python_wrap.cpp
 
-bzrobot_python_wrap.cxx: bzrobot.i $(apiheaders)
+bzrobot_python_wrap.cpp: bzrobot.i $(apiheaders)
 	$(SWIG) -Wall -c++ -python -o $@ -interface bzrobot_pyext $< # Consider using -O for 'optimized mode'
 
 bzrobot_python_runtime.h:
@@ -159,8 +159,8 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 EXTRA_DIST = \
 	$(BUILT_SOURCES) \
 	$(PYTHON_LOADER) \
-	OpenGLUtils.cxx	\
-	PrintError.cxx \
+	OpenGLUtils.cpp	\
+	PrintError.cpp \
 	PrintError.h \
 	bzrobot.i
 

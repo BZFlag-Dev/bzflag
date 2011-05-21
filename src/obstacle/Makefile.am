@@ -10,51 +10,51 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 libObstacle_la_LDFLAGS = -static
 
 gl_files = \
-	BaseSceneNodeGenerator.cxx	\
-	BoxSceneNodeGenerator.cxx	\
-	EmptySceneNodeGenerator.cxx	\
-	ObstacleSceneNodeGenerator.cxx	\
-	PyramidSceneNodeGenerator.cxx	\
-	WallSceneNodeGenerator.cxx	\
-	MeshSceneNodeGenerator.cxx	\
-	ArcObstacle.cxx			\
-	ConeObstacle.cxx		\
-	SphereObstacle.cxx		\
-	BaseBuilding.cxx		\
-	BoxBuilding.cxx			\
-	MeshFace.cxx			\
-	MeshObstacle.cxx		\
+	BaseSceneNodeGenerator.cpp	\
+	BoxSceneNodeGenerator.cpp	\
+	EmptySceneNodeGenerator.cpp	\
+	ObstacleSceneNodeGenerator.cpp	\
+	PyramidSceneNodeGenerator.cpp	\
+	WallSceneNodeGenerator.cpp	\
+	MeshSceneNodeGenerator.cpp	\
+	ArcObstacle.cpp			\
+	ConeObstacle.cpp		\
+	SphereObstacle.cpp		\
+	BaseBuilding.cpp		\
+	BoxBuilding.cpp			\
+	MeshFace.cpp			\
+	MeshObstacle.cpp		\
 	MeshUtils.h			\
 	Triangulate.h			\
-	Triangulate.cxx			\
-	MeshDrawInfo.cxx		\
-	PyramidBuilding.cxx		\
-	Teleporter.cxx			\
-	WallObstacle.cxx		\
-	Obstacle.cxx			\
-	ObstacleModifier.cxx		\
-	ObstacleList.cxx		\
-	ObstacleMgr.cxx
+	Triangulate.cpp			\
+	MeshDrawInfo.cpp		\
+	PyramidBuilding.cpp		\
+	Teleporter.cpp			\
+	WallObstacle.cpp		\
+	Obstacle.cpp			\
+	ObstacleModifier.cpp		\
+	ObstacleList.cpp		\
+	ObstacleMgr.cpp
 
 nogl_files = \
-	ArcObstacle.cxx			\
-	ConeObstacle.cxx		\
-	SphereObstacle.cxx		\
-	BaseBuilding.cxx		\
-	BoxBuilding.cxx			\
-	MeshFace.cxx			\
-	MeshObstacle.cxx		\
+	ArcObstacle.cpp			\
+	ConeObstacle.cpp		\
+	SphereObstacle.cpp		\
+	BaseBuilding.cpp		\
+	BoxBuilding.cpp			\
+	MeshFace.cpp			\
+	MeshObstacle.cpp		\
 	MeshUtils.h			\
 	Triangulate.h			\
-	Triangulate.cxx			\
-	MeshDrawInfo.cxx		\
-	PyramidBuilding.cxx		\
-	Teleporter.cxx			\
-	WallObstacle.cxx		\
-	Obstacle.cxx			\
-	ObstacleModifier.cxx		\
-	ObstacleList.cxx		\
-	ObstacleMgr.cxx
+	Triangulate.cpp			\
+	MeshDrawInfo.cpp		\
+	PyramidBuilding.cpp		\
+	Teleporter.cpp			\
+	WallObstacle.cpp		\
+	Obstacle.cpp			\
+	ObstacleModifier.cpp		\
+	ObstacleList.cpp		\
+	ObstacleMgr.cpp
 
 if CLIENT_INCLUDED
 libObstacle_la_SOURCES = $(gl_files)

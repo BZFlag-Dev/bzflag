@@ -102,7 +102,7 @@ directory off the top-level.  Header files for classes introduced in
 an application directory should never go into a #include outside of
 that application directory.
 
-C files use the .c extension.  C++ files use the .cxx extension for
+C files use the .c extension.  C++ files use the .cpp extension for
 everything except plugins which use the .cpp extension.  Header files
 for both C and C++ use the .h extension.
 
@@ -309,7 +309,7 @@ svn diff -u > my_patch_name.diff
 If your patch results in the deletion of existing files, you can
 annotate that deletion by adding it to the patch like this:
 
-diff -u src/bzfs/somefile.cxx /dev/null >> my_patch_name.diff
+diff -u src/bzfs/somefile.cpp /dev/null >> my_patch_name.diff
 
 If your patch requires the addition of new files, simply include these
 new files individually or in a tarball as part of the patch submission.
@@ -493,10 +493,10 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, ChangeLog, configure.ac,
-  buildDate.cxx, and the title.png image.  Version numbers in all
+  buildDate.cpp, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
-- BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
+- BZ_BUILD_TYPE is changed to MAINT in buildDate.cpp.
 
 - Update package/win32/nsis/*.nsi (for windows) with appropriate
   version numbers.
@@ -528,7 +528,7 @@ cannot proceed.  A checklist of items to be completed follows:
 - Increment and commit the version number in configure.ac and other
   files (see above) to the source repository so that later builds are
   immediately distinguished.  Also, change BZ_BUILD_TYPE back to DEVEL
-  in buildDate.cxx.
+  in buildDate.cpp.
 
 - Notify the following (at least):
 

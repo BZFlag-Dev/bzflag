@@ -155,147 +155,147 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\game\BZDBCache.cxx"
+				RelativePath="..\..\src\game\BZDBCache.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\BZDBNames.cxx"
+				RelativePath="..\..\src\game\BZDBNames.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\BzMaterial.cxx"
+				RelativePath="..\..\src\game\BzMaterial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\CollisionManager.cxx"
+				RelativePath="..\..\src\game\CollisionManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\CommandCompleter.cxx"
+				RelativePath="..\..\src\game\CommandCompleter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\DirectoryNames.cxx"
+				RelativePath="..\..\src\game\DirectoryNames.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\DynamicColor.cxx"
+				RelativePath="..\..\src\game\DynamicColor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\Flag.cxx"
+				RelativePath="..\..\src\game\Flag.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\Frustum.cxx"
+				RelativePath="..\..\src\game\Frustum.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\GameTime.cxx"
+				RelativePath="..\..\src\game\GameTime.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\global.cxx"
+				RelativePath="..\..\src\game\global.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\Intersect.cxx"
+				RelativePath="..\..\src\game\Intersect.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\LagInfo.cxx"
+				RelativePath="..\..\src\game\LagInfo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\LinkDef.cxx"
+				RelativePath="..\..\src\game\LinkDef.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\LinkManager.cxx"
+				RelativePath="..\..\src\game\LinkManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\LinkPhysics.cxx"
+				RelativePath="..\..\src\game\LinkPhysics.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\MapInfo.cxx"
+				RelativePath="..\..\src\game\MapInfo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\MeshTransform.cxx"
+				RelativePath="..\..\src\game\MeshTransform.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\MotionUtils.cxx"
+				RelativePath="..\..\src\game\MotionUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\MsgStrings.cxx"
+				RelativePath="..\..\src\game\MsgStrings.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\NetHandler.cxx"
+				RelativePath="..\..\src\game\NetHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\NetMessage.cxx"
+				RelativePath="..\..\src\game\NetMessage.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\PhysicsDriver.cxx"
+				RelativePath="..\..\src\game\PhysicsDriver.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\PlayerInfo.cxx"
+				RelativePath="..\..\src\game\PlayerInfo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\PlayerState.cxx"
+				RelativePath="..\..\src\game\PlayerState.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\ServerItem.cxx"
+				RelativePath="..\..\src\game\ServerItem.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\ServerList.cxx"
+				RelativePath="..\..\src\game\ServerList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\ServerListCache.cxx"
+				RelativePath="..\..\src\game\ServerListCache.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\ServerPing.cxx"
+				RelativePath="..\..\src\game\ServerPing.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\ShotManager.cxx"
+				RelativePath="..\..\src\game\ShotManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\ShotUpdate.cxx"
+				RelativePath="..\..\src\game\ShotUpdate.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\StartupInfo.cxx"
+				RelativePath="..\..\src\game\StartupInfo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\Team.cxx"
+				RelativePath="..\..\src\game\Team.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\TextureMatrix.cxx"
+				RelativePath="..\..\src\game\TextureMatrix.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\VotingArbiter.cxx"
+				RelativePath="..\..\src\game\VotingArbiter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\WorldText.cxx"
+				RelativePath="..\..\src\game\WorldText.cpp"
 				>
 			</File>
 		</Filter>

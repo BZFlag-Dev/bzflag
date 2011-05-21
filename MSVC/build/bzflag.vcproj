@@ -226,15 +226,15 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\bzflag\AutoHunt.cxx"
+				RelativePath="..\..\src\bzflag\AutoHunt.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\AutoPilot.cxx"
+				RelativePath="..\..\src\bzflag\AutoPilot.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\bzflag.cxx"
+				RelativePath="..\..\src\bzflag\bzflag.cpp"
 				>
 			</File>
 			<File
@@ -242,210 +242,210 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\CommandsImplementation.cxx"
+				RelativePath="..\..\src\bzflag\CommandsImplementation.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Downloads.cxx"
+				RelativePath="..\..\src\bzflag\Downloads.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\DynamicWorldText.cxx"
+				RelativePath="..\..\src\bzflag\DynamicWorldText.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ExportInformation.cxx"
+				RelativePath="..\..\src\bzflag\ExportInformation.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\FontSizer.cxx"
+				RelativePath="..\..\src\bzflag\FontSizer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ForceFeedback.cxx"
+				RelativePath="..\..\src\bzflag\ForceFeedback.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\LocalCommand.cxx"
+				RelativePath="..\..\src\bzflag\LocalCommand.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\MainWindow.cxx"
+				RelativePath="..\..\src\bzflag\MainWindow.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\motd.cxx"
+				RelativePath="..\..\src\bzflag\motd.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Mumble.cxx"
+				RelativePath="..\..\src\bzflag\Mumble.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Plan.cxx"
+				RelativePath="..\..\src\bzflag\Plan.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\playerAvatarManager.cxx"
+				RelativePath="..\..\src\bzflag\playerAvatarManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\Roaming.cxx"
+				RelativePath="..\..\src\bzflag\Roaming.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\RoofTops.cxx"
+				RelativePath="..\..\src\bzflag\RoofTops.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ShotStats.cxx"
+				RelativePath="..\..\src\bzflag\ShotStats.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\ShotStatsDefaultKey.cxx"
+				RelativePath="..\..\src\bzflag\ShotStatsDefaultKey.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\StandardTankAvatar.cxx"
+				RelativePath="..\..\src\bzflag\StandardTankAvatar.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\TrackMarks.cxx"
+				RelativePath="..\..\src\bzflag\TrackMarks.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\WorldDownLoader.cxx"
+				RelativePath="..\..\src\clientbase\WorldDownLoader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzflag\XfireGameClient.cxx"
+				RelativePath="..\..\src\bzflag\XfireGameClient.cpp"
 				>
 			</File>
 			<Filter
 				Name="drawing"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\BackgroundRenderer.cxx"
+					RelativePath="..\..\src\bzflag\BackgroundRenderer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\ControlPanel.cxx"
+					RelativePath="..\..\src\bzflag\ControlPanel.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\CrackedGlass.cxx"
+					RelativePath="..\..\src\bzflag\CrackedGlass.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\daylight.cxx"
+					RelativePath="..\..\src\bzflag\daylight.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\DebugDrawing.cxx"
+					RelativePath="..\..\src\bzflag\DebugDrawing.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\effectsRenderer.cxx"
+					RelativePath="..\..\src\bzflag\effectsRenderer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDRenderer.cxx"
+					RelativePath="..\..\src\bzflag\HUDRenderer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDui.cxx"
+					RelativePath="..\..\src\bzflag\HUDui.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiControl.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiControl.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiDefaultKey.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiDefaultKey.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiElement.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiElement.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiFrame.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiFrame.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiImage.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiImage.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiLabel.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiLabel.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiList.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiList.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiNestedContainer.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiNestedContainer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiScrollList.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiScrollList.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiServerInfo.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiServerInfo.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiServerList.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiServerList.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiServerListCache.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiServerListCache.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiServerListCustomTab.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiServerListCustomTab.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiServerListItem.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiServerListItem.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiTabbedControl.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiTabbedControl.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDuiTypeIn.cxx"
+					RelativePath="..\..\src\bzflag\HUDuiTypeIn.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\LocalFontFace.cxx"
+					RelativePath="..\..\src\bzflag\LocalFontFace.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\RadarRenderer.cxx"
+					RelativePath="..\..\src\bzflag\RadarRenderer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\SceneBuilder.cxx"
+					RelativePath="..\..\src\bzflag\SceneBuilder.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\SceneRenderer.cxx"
+					RelativePath="..\..\src\bzflag\SceneRenderer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\ScoreboardRenderer.cxx"
+					RelativePath="..\..\src\bzflag\ScoreboardRenderer.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\stars.cxx"
+					RelativePath="..\..\src\bzflag\stars.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\WeatherRenderer.cxx"
+					RelativePath="..\..\src\bzflag\WeatherRenderer.cpp"
 					>
 				</File>
 			</Filter>
@@ -453,46 +453,46 @@
 				Name="game"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\ComposeDefaultKey.cxx"
+					RelativePath="..\..\src\bzflag\ComposeDefaultKey.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\guiplaying.cxx"
+					RelativePath="..\..\src\bzflag\guiplaying.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\ServerCommandKey.cxx"
+					RelativePath="..\..\src\bzflag\ServerCommandKey.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\SilenceDefaultKey.cxx"
+					RelativePath="..\..\src\bzflag\SilenceDefaultKey.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\ThirdPersonVars.cxx"
+					RelativePath="..\..\src\bzflag\ThirdPersonVars.cpp"
 					>
 				</File>
 				<Filter
 					Name="shots"
 					>
 					<File
-						RelativePath="..\..\src\clientbase\GuidedMissileStrategy.cxx"
+						RelativePath="..\..\src\clientbase\GuidedMissileStrategy.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\clientbase\PointShotStrategy.cxx"
+						RelativePath="..\..\src\clientbase\PointShotStrategy.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\clientbase\SegmentedShotStrategy.cxx"
+						RelativePath="..\..\src\clientbase\SegmentedShotStrategy.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\clientbase\ShockWaveStrategy.cxx"
+						RelativePath="..\..\src\clientbase\ShockWaveStrategy.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\bzflag\ShotList.cxx"
+						RelativePath="..\..\src\bzflag\ShotList.cpp"
 						>
 					</File>
 					<File
@@ -500,15 +500,15 @@
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\clientbase\ShotPath.cxx"
+						RelativePath="..\..\src\clientbase\ShotPath.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\clientbase\ShotPathSegment.cxx"
+						RelativePath="..\..\src\clientbase\ShotPathSegment.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\src\clientbase\ShotStrategy.cxx"
+						RelativePath="..\..\src\clientbase\ShotStrategy.cpp"
 						>
 					</File>
 				</Filter>
@@ -517,23 +517,23 @@
 				Name="menus"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\AudioMenu.cxx"
+					RelativePath="..\..\src\bzflag\AudioMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\CacheMenu.cxx"
+					RelativePath="..\..\src\bzflag\CacheMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\DisplayMenu.cxx"
+					RelativePath="..\..\src\bzflag\DisplayMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\EffectsMenu.cxx"
+					RelativePath="..\..\src\bzflag\EffectsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\FontOptionsMenu.cxx"
+					RelativePath="..\..\src\bzflag\FontOptionsMenu.cpp"
 					>
 				</File>
 				<File
@@ -541,87 +541,87 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\FormatMenu.cxx"
+					RelativePath="..\..\src\bzflag\FormatMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\GUIOptionsMenu.cxx"
+					RelativePath="..\..\src\bzflag\GUIOptionsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HelpCreditsMenu.cxx"
+					RelativePath="..\..\src\bzflag\HelpCreditsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HelpFlagsMenu.cxx"
+					RelativePath="..\..\src\bzflag\HelpFlagsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HelpInstructionsMenu.cxx"
+					RelativePath="..\..\src\bzflag\HelpInstructionsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HelpKeymapMenu.cxx"
+					RelativePath="..\..\src\bzflag\HelpKeymapMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HelpMenu.cxx"
+					RelativePath="..\..\src\bzflag\HelpMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDDialog.cxx"
+					RelativePath="..\..\src\bzflag\HUDDialog.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDDialogStack.cxx"
+					RelativePath="..\..\src\bzflag\HUDDialogStack.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HUDNavigationQueue.cxx"
+					RelativePath="..\..\src\bzflag\HUDNavigationQueue.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\InputMenu.cxx"
+					RelativePath="..\..\src\bzflag\InputMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\JoinMenu.cxx"
+					RelativePath="..\..\src\bzflag\JoinMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\KeyboardMapMenu.cxx"
+					RelativePath="..\..\src\bzflag\KeyboardMapMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\MainMenu.cxx"
+					RelativePath="..\..\src\bzflag\MainMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\MenuDefaultKey.cxx"
+					RelativePath="..\..\src\bzflag\MenuDefaultKey.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\NewVersionMenu.cxx"
+					RelativePath="..\..\src\bzflag\NewVersionMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\OptionsMenu.cxx"
+					RelativePath="..\..\src\bzflag\OptionsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\QuickKeysMenu.cxx"
+					RelativePath="..\..\src\bzflag\QuickKeysMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\QuitMenu.cxx"
+					RelativePath="..\..\src\bzflag\QuitMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\RadarOptionsMenu.cxx"
+					RelativePath="..\..\src\bzflag\RadarOptionsMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\SaveMenu.cxx"
+					RelativePath="..\..\src\bzflag\SaveMenu.cpp"
 					>
 				</File>
 				<File
@@ -629,15 +629,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\SaveWorldMenu.cxx"
+					RelativePath="..\..\src\bzflag\SaveWorldMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\ServerMenu.cxx"
+					RelativePath="..\..\src\bzflag\ServerMenu.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\TextOptionsMenu.cxx"
+					RelativePath="..\..\src\bzflag\TextOptionsMenu.cpp"
 					>
 				</File>
 			</Filter>
@@ -645,7 +645,7 @@
 				Name="Config"
 				>
 				<File
-					RelativePath="..\..\src\clientbase\clientConfig.cxx"
+					RelativePath="..\..\src\clientbase\clientConfig.cpp"
 					>
 				</File>
 				<File
@@ -657,7 +657,7 @@
 				Name="Sound"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\PlatformSound.cxx"
+					RelativePath="..\..\src\bzflag\PlatformSound.cpp"
 					>
 				</File>
 				<File
@@ -665,7 +665,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\sound.cxx"
+					RelativePath="..\..\src\bzflag\sound.cpp"
 					>
 				</File>
 			</Filter>
@@ -673,7 +673,7 @@
 				Name="Hub"
 				>
 				<File
-					RelativePath="..\..\src\bzflag\HubComposeKey.cxx"
+					RelativePath="..\..\src\bzflag\HubComposeKey.cpp"
 					>
 				</File>
 				<File
@@ -681,7 +681,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HubLink.cxx"
+					RelativePath="..\..\src\bzflag\HubLink.cpp"
 					>
 				</File>
 				<File
@@ -689,7 +689,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HubLua.cxx"
+					RelativePath="..\..\src\bzflag\HubLua.cpp"
 					>
 				</File>
 				<File
@@ -697,7 +697,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzflag\HubMenu.cxx"
+					RelativePath="..\..\src\bzflag\HubMenu.cpp"
 					>
 				</File>
 				<File

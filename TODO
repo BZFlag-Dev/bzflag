@@ -232,7 +232,7 @@ so that no work is duplicated.
 * /identify reply should list groups you are in, perhaps global identify too
 
 * Fix the Windows version of bzadmin so that EOF quits the program, like
-  the UNIX version (see checkCommand() in StdBothUI.cxx).
+  the UNIX version (see checkCommand() in StdBothUI.cpp).
 
 * provide the ability to publish a single server to multiple list servers.
   (i.e. multiple -publiclist options)  this is useful for a variety of
@@ -336,7 +336,7 @@ so that no work is duplicated.
 
 * encapsulate stuff requiring platform #ifdef's:
    networking API into libNet.a.
-   fork/exec (used in menus.cxx) into libPlatform.a
+   fork/exec (used in menus.cpp) into libPlatform.a
    file system stuff (dir delimiter, etc.)
    user name stuff
 

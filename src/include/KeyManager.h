@@ -102,7 +102,7 @@ private:
 };
 
 // this is to be implemented within the requisite source file for the application using it.
-// in BZFlag's case, it happens to be in bzflag.cxx
+// in BZFlag's case, it happens to be in bzflag.cpp
 extern const unsigned int	numDefaultBindings;
 extern const char*		defaultBindings[];
 

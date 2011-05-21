@@ -173,178 +173,178 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\geometry\AnimatedTreads.cxx"
+				RelativePath="..\..\src\geometry\AnimatedTreads.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\BillboardSceneNode.cxx"
+				RelativePath="..\..\src\geometry\BillboardSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\BoltSceneNode.cxx"
+				RelativePath="..\..\src\geometry\BoltSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\EighthDBaseSceneNode.cxx"
+				RelativePath="..\..\src\geometry\EighthDBaseSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\EighthDBoxSceneNode.cxx"
+				RelativePath="..\..\src\geometry\EighthDBoxSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\EighthDimSceneNode.cxx"
+				RelativePath="..\..\src\geometry\EighthDimSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\EighthDimShellNode.cxx"
+				RelativePath="..\..\src\geometry\EighthDimShellNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\EighthDPyrSceneNode.cxx"
+				RelativePath="..\..\src\geometry\EighthDPyrSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\FlagSceneNode.cxx"
+				RelativePath="..\..\src\geometry\FlagSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\FlagWarpSceneNode.cxx"
+				RelativePath="..\..\src\geometry\FlagWarpSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\LaserSceneNode.cxx"
+				RelativePath="..\..\src\geometry\LaserSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\MeshDrawMgr.cxx"
+				RelativePath="..\..\src\geometry\MeshDrawMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\MeshFragSceneNode.cxx"
+				RelativePath="..\..\src\geometry\MeshFragSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\MeshPolySceneNode.cxx"
+				RelativePath="..\..\src\geometry\MeshPolySceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\MeshRenderNode.cxx"
+				RelativePath="..\..\src\geometry\MeshRenderNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\MeshSceneNode.cxx"
+				RelativePath="..\..\src\geometry\MeshSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\OccluderSceneNode.cxx"
+				RelativePath="..\..\src\geometry\OccluderSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\PolyWallSceneNode.cxx"
+				RelativePath="..\..\src\geometry\PolyWallSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\QuadWallSceneNode.cxx"
+				RelativePath="..\..\src\geometry\QuadWallSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\SceneNode.cxx"
+				RelativePath="..\..\src\geometry\SceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\ShellSceneNode.cxx"
+				RelativePath="..\..\src\geometry\ShellSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\SphereSceneNode.cxx"
+				RelativePath="..\..\src\geometry\SphereSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\TankGeometryMgr.cxx"
+				RelativePath="..\..\src\geometry\TankGeometryMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\TankSceneNode.cxx"
+				RelativePath="..\..\src\geometry\TankSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\TextSceneNode.cxx"
+				RelativePath="..\..\src\geometry\TextSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\TriWallSceneNode.cxx"
+				RelativePath="..\..\src\geometry\TriWallSceneNode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\ViewFrustum.cxx"
+				RelativePath="..\..\src\geometry\ViewFrustum.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\geometry\WallSceneNode.cxx"
+				RelativePath="..\..\src\geometry\WallSceneNode.cpp"
 				>
 			</File>
 			<Filter
 				Name="Tank"
 				>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\high_barrel.cxx"
+					RelativePath="..\..\src\geometry\models\tank\high_barrel.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\high_body.cxx"
+					RelativePath="..\..\src\geometry\models\tank\high_body.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\high_ltread.cxx"
+					RelativePath="..\..\src\geometry\models\tank\high_ltread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\high_rtread.cxx"
+					RelativePath="..\..\src\geometry\models\tank\high_rtread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\high_turret.cxx"
+					RelativePath="..\..\src\geometry\models\tank\high_turret.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\low_barrel.cxx"
+					RelativePath="..\..\src\geometry\models\tank\low_barrel.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\low_body.cxx"
+					RelativePath="..\..\src\geometry\models\tank\low_body.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\low_ltread.cxx"
+					RelativePath="..\..\src\geometry\models\tank\low_ltread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\low_rtread.cxx"
+					RelativePath="..\..\src\geometry\models\tank\low_rtread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\low_turret.cxx"
+					RelativePath="..\..\src\geometry\models\tank\low_turret.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\medium_barrel.cxx"
+					RelativePath="..\..\src\geometry\models\tank\medium_barrel.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\medium_body.cxx"
+					RelativePath="..\..\src\geometry\models\tank\medium_body.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\medium_ltread.cxx"
+					RelativePath="..\..\src\geometry\models\tank\medium_ltread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\medium_rtread.cxx"
+					RelativePath="..\..\src\geometry\models\tank\medium_rtread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\geometry\models\tank\medium_turret.cxx"
+					RelativePath="..\..\src\geometry\models\tank\medium_turret.cpp"
 					>
 				</File>
 			</Filter>

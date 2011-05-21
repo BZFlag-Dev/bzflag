@@ -150,75 +150,75 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\lua\LuaBitOps.cxx"
+				RelativePath="..\..\src\lua\LuaBitOps.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaBZDB.cxx"
+				RelativePath="..\..\src\lua\LuaBZDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaBzMaterial.cxx"
+				RelativePath="..\..\src\lua\LuaBzMaterial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaDouble.cxx"
+				RelativePath="..\..\src\lua\LuaDouble.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaDynCol.cxx"
+				RelativePath="..\..\src\lua\LuaDynCol.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaExtras.cxx"
+				RelativePath="..\..\src\lua\LuaExtras.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaHTTP.cxx"
+				RelativePath="..\..\src\lua\LuaHTTP.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaObstacle.cxx"
+				RelativePath="..\..\src\lua\LuaObstacle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaPack.cxx"
+				RelativePath="..\..\src\lua\LuaPack.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaParser.cxx"
+				RelativePath="..\..\src\lua\LuaParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaPhyDrv.cxx"
+				RelativePath="..\..\src\lua\LuaPhyDrv.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaScream.cxx"
+				RelativePath="..\..\src\lua\LuaScream.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaServerPing.cxx"
+				RelativePath="..\..\src\lua\LuaServerPing.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaTexMat.cxx"
+				RelativePath="..\..\src\lua\LuaTexMat.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaUtils.cxx"
+				RelativePath="..\..\src\lua\LuaUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaVector.cxx"
+				RelativePath="..\..\src\lua\LuaVector.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaVFS.cxx"
+				RelativePath="..\..\src\lua\LuaVFS.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaZip.cxx"
+				RelativePath="..\..\src\lua\LuaZip.cpp"
 				>
 			</File>
 		</Filter>

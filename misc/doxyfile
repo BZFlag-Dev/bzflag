@@ -322,10 +322,10 @@ INPUT                  =
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp
 # and *.h) to filter out the source-files in the directories. If left
 # blank the following patterns are tested:
-# *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp
+# *.c *.cc *.cpp *.cxx *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx *.hpp
 # *.h++ *.idl *.odl
 
-FILE_PATTERNS          = *.h *.c *.cxx
+FILE_PATTERNS          = *.h *.c *.cpp
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories
 # should be searched for input files as well. Possible values are YES and NO.

@@ -175,59 +175,35 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\platform\BzfDisplay.cxx"
+				RelativePath="..\..\src\platform\BzfDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\BzfJoystick.cxx"
+				RelativePath="..\..\src\platform\BzfJoystick.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\BzfMedia.cxx"
+				RelativePath="..\..\src\platform\BzfMedia.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\BzfVisual.cxx"
+				RelativePath="..\..\src\platform\BzfVisual.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\BzfWindow.cxx"
+				RelativePath="..\..\src\platform\BzfWindow.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\Clipboard.cxx"
+				RelativePath="..\..\src\platform\Clipboard.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\DXJoystick.cxx"
+				RelativePath="..\..\src\platform\DXJoystick.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\EvdevJoystick.cxx"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Distribution|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\platform\PlatformFactory.cxx"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\platform\SDLJoystick.cxx"
+				RelativePath="..\..\src\platform\EvdevJoystick.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -247,35 +223,59 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\VerticalSync.cxx"
+				RelativePath="..\..\src\platform\PlatformFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\wave.cxx"
+				RelativePath="..\..\src\platform\SDLJoystick.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Distribution|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\platform\VerticalSync.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\WinDisplay.cxx"
+				RelativePath="..\..\src\platform\wave.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\WinJoystick.cxx"
+				RelativePath="..\..\src\platform\WinDisplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\WinMedia.cxx"
+				RelativePath="..\..\src\platform\WinJoystick.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\WinPlatformFactory.cxx"
+				RelativePath="..\..\src\platform\WinMedia.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\WinVisual.cxx"
+				RelativePath="..\..\src\platform\WinPlatformFactory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\platform\WinWindow.cxx"
+				RelativePath="..\..\src\platform\WinVisual.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\platform\WinWindow.cpp"
 				>
 			</File>
 		</Filter>

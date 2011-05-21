@@ -1350,7 +1350,7 @@ alpha := <float>
 rgbaColor := rgbColor alpha? | <color_name> alpha?
 
 .TP
-.B (BZWReader.cxx/parseNormalObject)
+.B (BZWReader.cpp/parseNormalObject)
 .TP
 allObjects :=
 .br
@@ -1397,7 +1397,7 @@ allObjects :=
 	| "transform"
 .br
 .TP
-.B (BZWReader.cxx/BZWReader::readWorldStream)
+.B (BZWReader.cpp/BZWReader::readWorldStream)
 .br
 Note: Blank lines and lines starting with # are discarded.
 .br
@@ -1425,7 +1425,7 @@ worldStream :=
 	| "world"
 .br
 .TP
-.B (ParseMaterial.cxx/parseMaterials)
+.B (ParseMaterial.cpp/parseMaterials)
 .br
 .TP
 material :=
@@ -1493,13 +1493,13 @@ material :=
 	| "noshaders"  # NOT IMPLEMENTED
 .br
 .TP
-.B (WorldFileObject:.cxx/WorldFileObject::read)
+.B (WorldFileObject:.cpp/WorldFileObject::read)
 .br
 .TP
 object := "name" <name>
 .br
 .TP
-.B (WorldFileLocation.cxx/readWorldFileLocation::read)
+.B (WorldFileLocation.cpp/readWorldFileLocation::read)
 .br
 .TP
 location :=
@@ -1523,7 +1523,7 @@ location :=
 	| object
 .br
 .TP
-.B (WorldFileObstacle.cxx/WorldFileObstacle::read)
+.B (WorldFileObstacle.cpp/WorldFileObstacle::read)
 .br
 .TP
 obstacle :=
@@ -1539,7 +1539,7 @@ obstacle :=
 	| location
 .br
 .TP
-.B (CustomArc.cxx/CustomArc::read)
+.B (CustomArc.cpp/CustomArc::read)
 .br
 .TP
 meshbox :=
@@ -1588,7 +1588,7 @@ arc :=
 	| obstacle
 .br
 .TP
-.B (CustomBase.cxx/CustomBase::read)
+.B (CustomBase.cpp/CustomBase::read)
 .br
 .TP
 base :=
@@ -1598,13 +1598,13 @@ base :=
 	| obstacle
 .br
 .TP
-.B (CustomBox.cxx)
+.B (CustomBox.cpp)
 .br
 .TP
 box := obstacle
 .br
 .TP
-.B (CustomCone.cxx/CustomCone::read)
+.B (CustomCone.cpp/CustomCone::read)
 .br
 .TP
 meshpyr :=
@@ -1651,7 +1651,7 @@ cone :=
 	| obstacle
 .br
 .TP
-.B (CustomDynamicColor.cxx/CustomDynamicColor::read)
+.B (CustomDynamicColor.cpp/CustomDynamicColor::read)
 .br
 .TP
 dynamicColor :=
@@ -1671,7 +1671,7 @@ dynamicColor :=
 	| "varNoAlpha"
 .br
 .TP
-.B (CustomGate.cxx/CustomGate::read)
+.B (CustomGate.cpp/CustomGate::read)
 .br
 .TP
 teleporter :=
@@ -1683,7 +1683,7 @@ teleporter :=
 	| obstacle
 .br
 .TP
-.B (CustomGroup.cxx/CustomGroup::read)
+.B (CustomGroup.cpp/CustomGroup::read)
 .br
 .TP
 group :=
@@ -1699,7 +1699,7 @@ group :=
 	| obstacle
 .br
 .TP
-.B (CustomLink.cxx/CustomLink::read)
+.B (CustomLink.cpp/CustomLink::read)
 .br
 .TP
 link_spec :=
@@ -1806,7 +1806,7 @@ link :=
 	| object
 .br
 .TP
-.B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawCmd)
+.B (MeshDrawInfo.cpp/MeshDrawInfo::parseDrawCmd)
 .br
 .TP
 drawInfoCmd :=
@@ -1832,7 +1832,7 @@ drawInfoCmd :=
 	| "polygon"   <integer> <integer> <integer> <integer>{3}*
 .br
 .TP
-.B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawSet)
+.B (MeshDrawInfo.cpp/MeshDrawInfo::parseDrawSet)
 .br
 .TP
 drawInfoSet :=
@@ -1846,7 +1846,7 @@ drawInfoSet :=
 	| drawInfoCmd
 .br
 .TP
-.B (MeshDrawInfo.cxx/MeshDrawInfo::parseDrawLod)
+.B (MeshDrawInfo.cpp/MeshDrawInfo::parseDrawLod)
 .br
 .TP
 drawInfoLod :=
@@ -1858,7 +1858,7 @@ drawInfoLod :=
 	| drawInfoSet
 .br
 .TP
-.B (MeshDrawInfo.cxx/MeshDrawInfo::parse)
+.B (MeshDrawInfo.cpp/MeshDrawInfo::parse)
 .br
 .TP
 drawInfo :=
@@ -1886,7 +1886,7 @@ drawInfo :=
 	| drawInfoLod
 .br
 .TP
-.B (CustomMesh.cxx/CustomMesh::read)
+.B (CustomMesh.cpp/CustomMesh::read)
 .br
 .TP
 mesh :=
@@ -1926,7 +1926,7 @@ mesh :=
 	| obstacle
 .br
 .TP
-.B (CustomMeshFace.cxx/CustomMeshFace::read)
+.B (CustomMeshFace.cpp/CustomMeshFace::read)
 .br
 .TP
 face :=
@@ -2004,7 +2004,7 @@ face :=
 	| material
 .br
 .TP
-.B (CustomWeapon.cxx/CustomWeapon::read)
+.B (CustomWeapon.cpp/CustomWeapon::read)
 .br
 .TP
 meshWeapon :=
@@ -2016,7 +2016,7 @@ meshWeapon :=
 	| "dirNormal" <integer>
 .br
 .TP
-.B (CustomMeshTransform.cxx/CustomMeshTransform::read)
+.B (CustomMeshTransform.cpp/CustomMeshTransform::read)
 .br
 .TP
 transform :=
@@ -2034,7 +2034,7 @@ transform :=
 	| object
 .br
 .TP
-.B (CustomPhysicsDriver.cxx/CustomPhysicsDriver::read)
+.B (CustomPhysicsDriver.cpp/CustomPhysicsDriver::read)
 .br
 .TP
 physics :=
@@ -2062,7 +2062,7 @@ physics :=
 	| object
 .br
 .TP
-.B (CustomPyramid.cxx/CustomPyramid::read)
+.B (CustomPyramid.cpp/CustomPyramid::read)
 .br
 .TP
 pyramid :=
@@ -2072,7 +2072,7 @@ pyramid :=
 	| obstacle
 .br
 .TP
-.B (CustomSphere.cxx/CustomSphere::read)
+.B (CustomSphere.cpp/CustomSphere::read)
 .br
 .TP
 sphere :=
@@ -2098,7 +2098,7 @@ sphere :=
 	| obstacle
 .br
 .TP
-.B (CustomTetra.cxx/CustomTetra::read)
+.B (CustomTetra.cpp/CustomTetra::read)
 .br
 Note: At most 4 vertices can be specified.
 .br
@@ -2119,7 +2119,7 @@ tetra :=
 	| obstacle
 .br
 .TP
-.B (CustomTextureMatrix.cxx/CustomTextureMatrix::read)
+.B (CustomTextureMatrix.cpp/CustomTextureMatrix::read)
 .br
 .TP
 textureMatrix :=
@@ -2149,7 +2149,7 @@ textureMatrix :=
 	| object
 .br
 .TP
-.B (CustomWaterLevel.cxx/CustomWaterLevel::read)
+.B (CustomWaterLevel.cpp/CustomWaterLevel::read)
 .br
 .TP
 waterLevel :=
@@ -2161,7 +2161,7 @@ waterLevel :=
 	| object
 .br
 .TP
-.B (CustomWeapon.cxx/CustomWeapon::read)
+.B (CustomWeapon.cpp/CustomWeapon::read)
 .br
 .TP
 weapon :=
@@ -2175,7 +2175,7 @@ weapon :=
 	| location
 .br
 .TP
-.B (CustomWorld.cxx/CustomWorld::read)
+.B (CustomWorld.cpp/CustomWorld::read)
 .br
 .TP
 world :=
@@ -2187,7 +2187,7 @@ world :=
 	| object
 .br
 .TP
-.B (CustomWorldText.cxx/CustomWorldText::read)
+.B (CustomWorldText.cpp/CustomWorldText::read)
 .br
 .TP
 text :=
@@ -2215,7 +2215,7 @@ text :=
 	| location
 .br
 .TP
-.B (CustomZone.cxx/CustomZone::read)
+.B (CustomZone.cpp/CustomZone::read)
 .br
 .TP
 zone :=

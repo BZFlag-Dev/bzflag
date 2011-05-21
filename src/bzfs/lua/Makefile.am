@@ -23,13 +23,13 @@ noinst_HEADERS =      \
 	SlashCmd.h
 
 libLuaServer_la_SOURCES = \
-	CallIns.cxx    \
-	CallOuts.cxx   \
-	Constants.cxx  \
-	LuaServer.cxx  \
-	MapObject.cxx  \
-	RawLink.cxx    \
-	SlashCmd.cxx
+	CallIns.cpp    \
+	CallOuts.cpp   \
+	Constants.cpp  \
+	LuaServer.cpp  \
+	MapObject.cpp  \
+	RawLink.cpp    \
+	SlashCmd.cpp
 
 EXTRA_DIST =       \
 	README.txt

@@ -59,7 +59,7 @@ Note that we cannot redistribute these files separate of the entire SDK.
 Make sure that your BZFlag sources have correct line endings.  Use the source
 tarballs rather than zipfiles if you're building from a release.  If you are
 using subversion, the line endings should be correct automatically except for
-src/date/buildDate.cxx, which you will need to convert with dos2unix or a
+src/date/buildDate.cpp, which you will need to convert with dos2unix or a
 similar tool before attempting to run ./configure.
 
 It's easiest to check out BZFlag into a subdirectory of wherever you installed

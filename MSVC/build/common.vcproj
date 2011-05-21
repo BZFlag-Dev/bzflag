@@ -172,127 +172,127 @@
 			Filter="c;cxx"
 			>
 			<File
-				RelativePath="..\..\src\common\AccessList.cxx"
+				RelativePath="..\..\src\common\AccessList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\AutoCompleter.cxx"
+				RelativePath="..\..\src\common\AutoCompleter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\Bundle.cxx"
+				RelativePath="..\..\src\common\Bundle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BundleMgr.cxx"
+				RelativePath="..\..\src\common\BundleMgr.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\bz_Locale.cxx"
+				RelativePath="..\..\src\common\bz_Locale.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\bz_md5.cxx"
+				RelativePath="..\..\src\common\bz_md5.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BzDocket.cxx"
+				RelativePath="..\..\src\common\BzDocket.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\bzfio.cxx"
+				RelativePath="..\..\src\common\bzfio.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\bzglob.cxx"
+				RelativePath="..\..\src\common\bzglob.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BzPNG.cxx"
+				RelativePath="..\..\src\common\BzPNG.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\bzsignal.cxx"
+				RelativePath="..\..\src\common\bzsignal.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BzTime.cxx"
+				RelativePath="..\..\src\common\BzTime.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\bzUnicode.cxx"
+				RelativePath="..\..\src\common\bzUnicode.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\BzVFS.cxx"
+				RelativePath="..\..\src\common\BzVFS.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\CacheManager.cxx"
+				RelativePath="..\..\src\common\CacheManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\CommandManager.cxx"
+				RelativePath="..\..\src\common\CommandManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\ConfigFileManager.cxx"
+				RelativePath="..\..\src\common\ConfigFileManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\Country.cxx"
+				RelativePath="..\..\src\common\Country.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\cURLManager.cxx"
+				RelativePath="..\..\src\common\cURLManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\ErrorHandler.cxx"
+				RelativePath="..\..\src\common\ErrorHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\FileManager.cxx"
+				RelativePath="..\..\src\common\FileManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\KeyManager.cxx"
+				RelativePath="..\..\src\common\KeyManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\Language.cxx"
+				RelativePath="..\..\src\common\Language.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\OSFile.cxx"
+				RelativePath="..\..\src\common\OSFile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\ParseColor.cxx"
+				RelativePath="..\..\src\common\ParseColor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\StateDatabase.cxx"
+				RelativePath="..\..\src\common\StateDatabase.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\TextChunkManager.cxx"
+				RelativePath="..\..\src\common\TextChunkManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\TextUtils.cxx"
+				RelativePath="..\..\src\common\TextUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\TimeBomb.cxx"
+				RelativePath="..\..\src\common\TimeBomb.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\VotingBooth.cxx"
+				RelativePath="..\..\src\common\VotingBooth.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\WordFilter.cxx"
+				RelativePath="..\..\src\common\WordFilter.cpp"
 				>
 			</File>
 		</Filter>

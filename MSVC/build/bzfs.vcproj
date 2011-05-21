@@ -212,226 +212,226 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\AccessControlList.cxx"
+				RelativePath="..\..\src\bzfs\AccessControlList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\Authentication.cxx"
+				RelativePath="..\..\src\bzfs\Authentication.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\AutoAllowTimer.cxx"
+				RelativePath="..\..\src\bzfs\AutoAllowTimer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\BanCommands.cxx"
+				RelativePath="..\..\src\bzfs\BanCommands.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfs.cxx"
+				RelativePath="..\..\src\bzfs\bzfs.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\CmdLineOptions.cxx"
+				RelativePath="..\..\src\bzfs\CmdLineOptions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\commands.cxx"
+				RelativePath="..\..\src\bzfs\commands.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\DropGeometry.cxx"
+				RelativePath="..\..\src\bzfs\DropGeometry.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\EntryZones.cxx"
+				RelativePath="..\..\src\bzfs\EntryZones.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\Filter.cxx"
+				RelativePath="..\..\src\bzfs\Filter.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\FlagHistory.cxx"
+				RelativePath="..\..\src\bzfs\FlagHistory.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\FlagInfo.cxx"
+				RelativePath="..\..\src\bzfs\FlagInfo.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\GameKeeper.cxx"
+				RelativePath="..\..\src\bzfs\GameKeeper.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\ListServerConnection.cxx"
+				RelativePath="..\..\src\bzfs\ListServerConnection.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\MasterBanList.cxx"
+				RelativePath="..\..\src\bzfs\MasterBanList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\ParseMaterial.cxx"
+				RelativePath="..\..\src\bzfs\ParseMaterial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\Permissions.cxx"
+				RelativePath="..\..\src\bzfs\Permissions.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\RecordReplay.cxx"
+				RelativePath="..\..\src\bzfs\RecordReplay.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\RejoinList.cxx"
+				RelativePath="..\..\src\bzfs\RejoinList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\Score.cxx"
+				RelativePath="..\..\src\bzfs\Score.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\SendLagState.cxx"
+				RelativePath="..\..\src\bzfs\SendLagState.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\ServerCommand.cxx"
+				RelativePath="..\..\src\bzfs\ServerCommand.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\TeamBases.cxx"
+				RelativePath="..\..\src\bzfs\TeamBases.cpp"
 				>
 			</File>
 			<Filter
 				Name="world"
 				>
 				<File
-					RelativePath="..\..\src\bzfs\BZWError.cxx"
+					RelativePath="..\..\src\bzfs\BZWError.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\BZWReader.cxx"
+					RelativePath="..\..\src\bzfs\BZWReader.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomArc.cxx"
+					RelativePath="..\..\src\bzfs\CustomArc.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomBase.cxx"
+					RelativePath="..\..\src\bzfs\CustomBase.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomBox.cxx"
+					RelativePath="..\..\src\bzfs\CustomBox.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomCone.cxx"
+					RelativePath="..\..\src\bzfs\CustomCone.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomDynamicColor.cxx"
+					RelativePath="..\..\src\bzfs\CustomDynamicColor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomGroup.cxx"
+					RelativePath="..\..\src\bzfs\CustomGroup.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomLink.cxx"
+					RelativePath="..\..\src\bzfs\CustomLink.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomMaterial.cxx"
+					RelativePath="..\..\src\bzfs\CustomMaterial.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomMesh.cxx"
+					RelativePath="..\..\src\bzfs\CustomMesh.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomMeshFace.cxx"
+					RelativePath="..\..\src\bzfs\CustomMeshFace.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomMeshTransform.cxx"
+					RelativePath="..\..\src\bzfs\CustomMeshTransform.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomPhysicsDriver.cxx"
+					RelativePath="..\..\src\bzfs\CustomPhysicsDriver.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomPyramid.cxx"
+					RelativePath="..\..\src\bzfs\CustomPyramid.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomSphere.cxx"
+					RelativePath="..\..\src\bzfs\CustomSphere.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomTeleporter.cxx"
+					RelativePath="..\..\src\bzfs\CustomTeleporter.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomTetra.cxx"
+					RelativePath="..\..\src\bzfs\CustomTetra.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomTextureMatrix.cxx"
+					RelativePath="..\..\src\bzfs\CustomTextureMatrix.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomWaterLevel.cxx"
+					RelativePath="..\..\src\bzfs\CustomWaterLevel.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomWeapon.cxx"
+					RelativePath="..\..\src\bzfs\CustomWeapon.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomWorld.cxx"
+					RelativePath="..\..\src\bzfs\CustomWorld.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomWorldText.cxx"
+					RelativePath="..\..\src\bzfs\CustomWorldText.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\CustomZone.cxx"
+					RelativePath="..\..\src\bzfs\CustomZone.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\ServerIntangibilityManager.cxx"
+					RelativePath="..\..\src\bzfs\ServerIntangibilityManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldEventManager.cxx"
+					RelativePath="..\..\src\bzfs\WorldEventManager.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldFileLocation.cxx"
+					RelativePath="..\..\src\bzfs\WorldFileLocation.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldFileObject.cxx"
+					RelativePath="..\..\src\bzfs\WorldFileObject.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldFileObstacle.cxx"
+					RelativePath="..\..\src\bzfs\WorldFileObstacle.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldGenerators.cxx"
+					RelativePath="..\..\src\bzfs\WorldGenerators.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldInfo.cxx"
+					RelativePath="..\..\src\bzfs\WorldInfo.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\WorldWeapons.cxx"
+					RelativePath="..\..\src\bzfs\WorldWeapons.cpp"
 					>
 				</File>
 			</Filter>
@@ -439,27 +439,27 @@
 				Name="spawn"
 				>
 				<File
-					RelativePath="..\..\src\bzfs\DangerousSpawnPolicy.cxx"
+					RelativePath="..\..\src\bzfs\DangerousSpawnPolicy.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\DefaultSpawnPolicy.cxx"
+					RelativePath="..\..\src\bzfs\DefaultSpawnPolicy.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\RandomSpawnPolicy.cxx"
+					RelativePath="..\..\src\bzfs\RandomSpawnPolicy.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\SpawnPolicy.cxx"
+					RelativePath="..\..\src\bzfs\SpawnPolicy.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\SpawnPolicyFactory.cxx"
+					RelativePath="..\..\src\bzfs\SpawnPolicyFactory.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\bzfs\SpawnPosition.cxx"
+					RelativePath="..\..\src\bzfs\SpawnPosition.cpp"
 					>
 				</File>
 			</Filter>
@@ -717,7 +717,7 @@
 			Name="API"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsAPI.cxx"
+				RelativePath="..\..\src\bzfs\bzfsAPI.cpp"
 				>
 			</File>
 			<File
@@ -725,7 +725,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsPlugins.cxx"
+				RelativePath="..\..\src\bzfs\bzfsPlugins.cpp"
 				>
 			</File>
 			<File
@@ -737,7 +737,7 @@
 			Name="NetMessages"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsClientMessages.cxx"
+				RelativePath="..\..\src\bzfs\bzfsClientMessages.cpp"
 				>
 			</File>
 			<File
@@ -745,7 +745,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsMessages.cxx"
+				RelativePath="..\..\src\bzfs\bzfsMessages.cpp"
 				>
 			</File>
 			<File
@@ -757,7 +757,7 @@
 			Name="StateVerification"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.cxx"
+				RelativePath="..\..\src\bzfs\bzfsPlayerStateVerify.cpp"
 				>
 			</File>
 			<File
@@ -769,7 +769,7 @@
 			Name="ChatVerification"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\bzfsChatVerify.cxx"
+				RelativePath="..\..\src\bzfs\bzfsChatVerify.cpp"
 				>
 			</File>
 			<File
@@ -781,7 +781,7 @@
 			Name="Matches"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\MatchManager.cxx"
+				RelativePath="..\..\src\bzfs\MatchManager.cpp"
 				>
 			</File>
 			<File
@@ -793,7 +793,7 @@
 			Name="Tasks"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\BackgroundTask.cxx"
+				RelativePath="..\..\src\bzfs\BackgroundTask.cpp"
 				>
 			</File>
 			<File
@@ -805,7 +805,7 @@
 			Name="reports"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\reports.cxx"
+				RelativePath="..\..\src\bzfs\reports.cpp"
 				>
 			</File>
 			<File
@@ -817,7 +817,7 @@
 			Name="Stats"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\Stats.cxx"
+				RelativePath="..\..\src\bzfs\Stats.cpp"
 				>
 			</File>
 			<File
@@ -829,7 +829,7 @@
 			Name="lua"
 			>
 			<File
-				RelativePath="..\..\src\bzfs\lua\CallIns.cxx"
+				RelativePath="..\..\src\bzfs\lua\CallIns.cpp"
 				>
 			</File>
 			<File
@@ -837,7 +837,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\CallOuts.cxx"
+				RelativePath="..\..\src\bzfs\lua\CallOuts.cpp"
 				>
 			</File>
 			<File
@@ -845,7 +845,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\Constants.cxx"
+				RelativePath="..\..\src\bzfs\lua\Constants.cpp"
 				>
 			</File>
 			<File
@@ -853,7 +853,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\LuaServer.cxx"
+				RelativePath="..\..\src\bzfs\lua\LuaServer.cpp"
 				>
 			</File>
 			<File
@@ -861,7 +861,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\MapObject.cxx"
+				RelativePath="..\..\src\bzfs\lua\MapObject.cpp"
 				>
 			</File>
 			<File
@@ -869,7 +869,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\RawLink.cxx"
+				RelativePath="..\..\src\bzfs\lua\RawLink.cpp"
 				>
 			</File>
 			<File
@@ -877,7 +877,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzfs\lua\SlashCmd.cxx"
+				RelativePath="..\..\src\bzfs\lua\SlashCmd.cpp"
 				>
 			</File>
 			<File

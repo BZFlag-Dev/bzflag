@@ -13,7 +13,7 @@ AM_CPPFLAGS = \
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if BUILD_PLUGINS
-plugin_files = bzfsPlugins.h bzfsPlugins.cxx
+plugin_files = bzfsPlugins.h bzfsPlugins.cpp
 bzfs_LDADD = $(LDADD) $(LIBDL)
 else
 plugin_files =
@@ -24,142 +24,142 @@ SUBDIRS = lua
 bzfs_LDFLAGS = -export-dynamic -static
 bzfs_SOURCES = \
 	${plugin_files}	\
-	AccessControlList.cxx \
+	AccessControlList.cpp \
 	AccessControlList.h \
-	Authentication.cxx \
+	Authentication.cpp \
 	Authentication.h \
-	AutoAllowTimer.cxx \
+	AutoAllowTimer.cpp \
 	AutoAllowTimer.h \
-	BackgroundTask.cxx \
+	BackgroundTask.cpp \
 	BackgroundTask.h \
-	BanCommands.cxx \
-	bzfsAPI.cxx \
+	BanCommands.cpp \
+	bzfsAPI.cpp \
 	bzfsChatVerify.h \
-	bzfsChatVerify.cxx \
+	bzfsChatVerify.cpp \
 	bzfsClientMessages.h \
-	bzfsClientMessages.cxx \
+	bzfsClientMessages.cpp \
 	bzfsMessages.h \
-	bzfsMessages.cxx \
+	bzfsMessages.cpp \
 	bzfsPlayerStateVerify.h \
-	bzfsPlayerStateVerify.cxx \
-	BZWError.cxx \
+	bzfsPlayerStateVerify.cpp \
+	BZWError.cpp \
 	BZWError.h \
-	BZWReader.cxx \
+	BZWReader.cpp \
 	BZWReader.h \
-	CmdLineOptions.cxx \
+	CmdLineOptions.cpp \
 	CmdLineOptions.h \
-	CustomArc.cxx \
+	CustomArc.cpp \
 	CustomArc.h \
-	CustomBase.cxx \
+	CustomBase.cpp \
 	CustomBase.h \
-	CustomBox.cxx \
+	CustomBox.cpp \
 	CustomBox.h \
-	CustomCone.cxx \
+	CustomCone.cpp \
 	CustomCone.h \
-	CustomDynamicColor.cxx \
+	CustomDynamicColor.cpp \
 	CustomDynamicColor.h \
-	CustomTeleporter.cxx \
+	CustomTeleporter.cpp \
 	CustomTeleporter.h \
-	CustomGroup.cxx \
+	CustomGroup.cpp \
 	CustomGroup.h \
-	CustomLink.cxx \
+	CustomLink.cpp \
 	CustomLink.h \
 	CustomMaterial.h \
-	CustomMaterial.cxx \
-	CustomMesh.cxx \
+	CustomMaterial.cpp \
+	CustomMesh.cpp \
 	CustomMesh.h \
-	CustomMeshFace.cxx \
+	CustomMeshFace.cpp \
 	CustomMeshFace.h \
-	CustomMeshTransform.cxx \
+	CustomMeshTransform.cpp \
 	CustomMeshTransform.h \
-	CustomPhysicsDriver.cxx \
+	CustomPhysicsDriver.cpp \
 	CustomPhysicsDriver.h \
-	CustomSphere.cxx \
+	CustomSphere.cpp \
 	CustomSphere.h \
-	CustomTextureMatrix.cxx \
+	CustomTextureMatrix.cpp \
 	CustomTextureMatrix.h \
-	CustomPyramid.cxx \
+	CustomPyramid.cpp \
 	CustomPyramid.h \
-	CustomTetra.cxx \
+	CustomTetra.cpp \
 	CustomTetra.h \
-	CustomWaterLevel.cxx \
+	CustomWaterLevel.cpp \
 	CustomWaterLevel.h \
-	CustomWeapon.cxx \
+	CustomWeapon.cpp \
 	CustomWeapon.h \
-	CustomWorld.cxx \
+	CustomWorld.cpp \
 	CustomWorld.h \
-	CustomWorldText.cxx \
+	CustomWorldText.cpp \
 	CustomWorldText.h \
-	CustomZone.cxx \
+	CustomZone.cpp \
 	CustomZone.h \
-	DangerousSpawnPolicy.cxx \
+	DangerousSpawnPolicy.cpp \
 	DangerousSpawnPolicy.h \
-	DefaultSpawnPolicy.cxx \
+	DefaultSpawnPolicy.cpp \
 	DefaultSpawnPolicy.h \
-	DropGeometry.cxx \
+	DropGeometry.cpp \
 	DropGeometry.h \
-	EntryZones.cxx \
+	EntryZones.cpp \
 	EntryZones.h \
-	Filter.cxx \
+	Filter.cpp \
 	Filter.h \
-	FlagHistory.cxx \
+	FlagHistory.cpp \
 	FlagHistory.h \
-	FlagInfo.cxx \
+	FlagInfo.cpp \
 	FlagInfo.h \
-	GameKeeper.cxx \
+	GameKeeper.cpp \
 	GameKeeper.h \
-	ListServerConnection.cxx \
+	ListServerConnection.cpp \
 	ListServerConnection.h \
-	MasterBanList.cxx \
+	MasterBanList.cpp \
 	MasterBanList.h \
-	MatchManager.cxx \
+	MatchManager.cpp \
 	MatchManager.h \
-	ParseMaterial.cxx \
+	ParseMaterial.cpp \
 	ParseMaterial.h \
 	Permissions.h \
-	Permissions.cxx \
+	Permissions.cpp \
 	RandomSpawnPolicy.h \
-	RandomSpawnPolicy.cxx \
-	RecordReplay.cxx \
+	RandomSpawnPolicy.cpp \
+	RecordReplay.cpp \
 	RecordReplay.h \
-	RejoinList.cxx \
+	RejoinList.cpp \
 	RejoinList.h \
-	Reports.cxx \
+	Reports.cpp \
 	Reports.h \
 	Score.h \
-	Score.cxx \
-	SendLagState.cxx \
+	Score.cpp \
+	SendLagState.cpp \
 	SendLagState.h \
-	ServerCommand.cxx \
+	ServerCommand.cpp \
 	ServerCommand.h \
 	ServerIntangibilityManager.h \
-	ServerIntangibilityManager.cxx \
-	SpawnPolicy.cxx \
+	ServerIntangibilityManager.cpp \
+	SpawnPolicy.cpp \
 	SpawnPolicy.h \
-	SpawnPolicyFactory.cxx \
+	SpawnPolicyFactory.cpp \
 	SpawnPolicyFactory.h \
-	SpawnPosition.cxx \
+	SpawnPosition.cpp \
 	SpawnPosition.h \
 	Stats.h \
-	Stats.cxx \
-	TeamBases.cxx \
+	Stats.cpp \
+	TeamBases.cpp \
 	TeamBases.h \
-	WorldFileLocation.cxx \
+	WorldFileLocation.cpp \
 	WorldFileLocation.h \
-	WorldFileObject.cxx \
+	WorldFileObject.cpp \
 	WorldFileObject.h \
-	WorldFileObstacle.cxx \
+	WorldFileObstacle.cpp \
 	WorldFileObstacle.h \
-	WorldGenerators.cxx \
+	WorldGenerators.cpp \
 	WorldGenerators.h \
-	WorldInfo.cxx \
+	WorldInfo.cpp \
 	WorldInfo.h \
-	WorldWeapons.cxx \
+	WorldWeapons.cpp \
 	WorldWeapons.h \
-	WorldEventManager.cxx \
-	commands.cxx \
+	WorldEventManager.cpp \
+	commands.cpp \
 	commands.h \
-	bzfs.cxx \
+	bzfs.cpp \
 	bzfs.h
 
 LDADD = \

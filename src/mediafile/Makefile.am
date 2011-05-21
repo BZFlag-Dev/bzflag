@@ -8,19 +8,19 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libMediaFile_la_LDFLAGS = -static
 libMediaFile_la_SOURCES =	\
-	AudioFile.cxx		\
+	AudioFile.cpp		\
 	AudioFile.h		\
-	ImageFile.cxx		\
+	ImageFile.cpp		\
 	ImageFile.h		\
-	MediaFile.cxx		\
-	PNGImageFile.cxx	\
+	MediaFile.cpp		\
+	PNGImageFile.cpp	\
 	PNGImageFile.h		\
-	SGIImageFile.cxx	\
+	SGIImageFile.cpp	\
 	SGIImageFile.h		\
-	WaveAudioFile.cxx	\
+	WaveAudioFile.cpp	\
 	WaveAudioFile.h
 
 EXTRA_DIST = \
-	OggAudioFile.cxx	\
+	OggAudioFile.cpp	\
 	OggAudioFile.h		\
 	README

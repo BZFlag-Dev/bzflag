@@ -400,39 +400,19 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\bzadmin\bzadmin.cxx"
+				RelativePath="..\..\src\bzadmin\bzadmin.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\BZAdminClient.cxx"
+				RelativePath="..\..\src\bzadmin\BZAdminClient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\BZAdminUI.cxx"
+				RelativePath="..\..\src\bzadmin\BZAdminUI.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\CursesMenu.cxx"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\..\src\bzadmin\CursesUI.cxx"
+				RelativePath="..\..\src\bzadmin\CursesMenu.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -452,27 +432,47 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\OptionParser.cxx"
+				RelativePath="..\..\src\bzadmin\CursesUI.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bzadmin\OptionParser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ServerLink.cxx"
+				RelativePath="..\..\src\clientbase\ServerLink.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\StdBothUI.cxx"
+				RelativePath="..\..\src\bzadmin\StdBothUI.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\StdInUI.cxx"
+				RelativePath="..\..\src\bzadmin\StdInUI.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\StdOutUI.cxx"
+				RelativePath="..\..\src\bzadmin\StdOutUI.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzadmin\UIMap.cxx"
+				RelativePath="..\..\src\bzadmin\UIMap.cpp"
 				>
 			</File>
 		</Filter>

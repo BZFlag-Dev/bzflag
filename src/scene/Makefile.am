@@ -8,13 +8,13 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libSceneDB_la_LDFLAGS = -static
 libSceneDB_la_SOURCES =			\
-	Occluder.cxx			\
+	Occluder.cpp			\
 	Occluder.h			\
-	Octree.cxx			\
+	Octree.cpp			\
 	Octree.h			\
-	SceneDatabase.cxx		\
-	ZSceneDatabase.cxx		\
-	BSPSceneDatabase.cxx
+	SceneDatabase.cpp		\
+	ZSceneDatabase.cpp		\
+	BSPSceneDatabase.cpp
 
 EXTRA_DIST = \
 	README

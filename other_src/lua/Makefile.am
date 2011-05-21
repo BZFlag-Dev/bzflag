@@ -7,8 +7,8 @@ bzlua_DEPENDENCIES  = liblua.la
 bzluac_DEPENDENCIES = liblua.la
 bzlua_LDFLAGS  = -static
 bzluac_LDFLAGS = -static
-bzlua_SOURCES  = src/lua.cxx
-bzluac_SOURCES = src/luac.cxx
+bzlua_SOURCES  = src/lua.cpp
+bzluac_SOURCES = src/luac.cpp
 bzlua_LDADD  = $(LIBLUA) -lreadline -ldl
 bzluac_LDADD = $(LIBLUA) -lreadline -ldl
 endif
@@ -19,37 +19,37 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@ -fexceptions -DLUA_USE_LINUX
 liblua_la_LDFLAGS = -static
 
 liblua_la_SOURCES =      \
-	src/lapi.cxx     \
-	src/lauxlib.cxx  \
-	src/lbaselib.cxx \
-	src/lcode.cxx    \
-	src/ldblib.cxx   \
-	src/ldebug.cxx   \
-	src/ldo.cxx      \
-	src/ldump.cxx    \
-	src/lfunc.cxx    \
-	src/lgc.cxx      \
-	src/linit.cxx    \
-	src/liolib.cxx   \
-	src/llex.cxx     \
-	src/lpeg.cxx     \
-	src/lmathlib.cxx \
-	src/lmem.cxx     \
-	src/loadlib.cxx  \
-	src/lobject.cxx  \
-	src/lopcodes.cxx \
-	src/loslib.cxx   \
-	src/lparser.cxx  \
-	src/lstate.cxx   \
-	src/lstring.cxx  \
-	src/lstrlib.cxx  \
-	src/ltable.cxx   \
-	src/ltablib.cxx  \
-	src/ltm.cxx      \
-	src/lundump.cxx  \
-	src/lvm.cxx      \
-	src/lzio.cxx     \
-	src/print.cxx
+	src/lapi.cpp     \
+	src/lauxlib.cpp  \
+	src/lbaselib.cpp \
+	src/lcode.cpp    \
+	src/ldblib.cpp   \
+	src/ldebug.cpp   \
+	src/ldo.cpp      \
+	src/ldump.cpp    \
+	src/lfunc.cpp    \
+	src/lgc.cpp      \
+	src/linit.cpp    \
+	src/liolib.cpp   \
+	src/llex.cpp     \
+	src/lpeg.cpp     \
+	src/lmathlib.cpp \
+	src/lmem.cpp     \
+	src/loadlib.cpp  \
+	src/lobject.cpp  \
+	src/lopcodes.cpp \
+	src/loslib.cpp   \
+	src/lparser.cpp  \
+	src/lstate.cpp   \
+	src/lstring.cpp  \
+	src/lstrlib.cpp  \
+	src/ltable.cpp   \
+	src/ltablib.cpp  \
+	src/ltm.cpp      \
+	src/lundump.cpp  \
+	src/lvm.cpp      \
+	src/lzio.cpp     \
+	src/print.cpp
 
 noinst_HEADERS =       \
 	src/lapi.h     \
@@ -84,8 +84,8 @@ EXTRA_DIST =               \
 	etc                \
 	test               \
 	src/Makefile.orig  \
-	src/lua.cxx        \
-	src/luac.cxx       \
+	src/lua.cpp        \
+	src/luac.cpp       \
 	README_BZFLAG
 
 MAINTAINERCLEANFILES = Makefile.in

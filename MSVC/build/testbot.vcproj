@@ -191,7 +191,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\bots\cplusplus\TestRobot.cxx"
+				RelativePath="..\..\bots\cplusplus\TestRobot.cpp"
 				>
 			</File>
 		</Filter>
@@ -204,7 +204,7 @@
 			Name="API"
 			>
 			<File
-				RelativePath="..\..\src\bzrobots\AdvancedRobot.cxx"
+				RelativePath="..\..\src\bzrobots\AdvancedRobot.cpp"
 				>
 			</File>
 			<File
@@ -212,7 +212,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Bullet.cxx"
+				RelativePath="..\..\src\bzrobots\Bullet.cpp"
 				>
 			</File>
 			<File
@@ -220,7 +220,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Events.cxx"
+				RelativePath="..\..\src\bzrobots\Events.cpp"
 				>
 			</File>
 			<File
@@ -228,7 +228,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\Robot.cxx"
+				RelativePath="..\..\src\bzrobots\Robot.cpp"
 				>
 			</File>
 			<File
@@ -236,7 +236,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\bzrobots\RobotStatus.cxx"
+				RelativePath="..\..\src\bzrobots\RobotStatus.cpp"
 				>
 			</File>
 			<File

@@ -15,195 +15,195 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 bzflag_LDFLAGS = -static
 bzflag_SOURCES =			\
-	AudioMenu.cxx			\
+	AudioMenu.cpp			\
 	AudioMenu.h			\
-	AutoHunt.cxx			\
+	AutoHunt.cpp			\
 	AutoHunt.h			\
-	AutoPilot.cxx			\
+	AutoPilot.cpp			\
 	AutoPilot.h			\
-	BackgroundRenderer.cxx		\
+	BackgroundRenderer.cpp		\
 	BackgroundRenderer.h		\
-	CacheMenu.cxx			\
+	CacheMenu.cpp			\
 	CacheMenu.h			\
-	CommandsImplementation.cxx	\
-	ComposeDefaultKey.cxx		\
+	CommandsImplementation.cpp	\
+	ComposeDefaultKey.cpp		\
 	ComposeDefaultKey.h		\
-	ControlPanel.cxx		\
+	ControlPanel.cpp		\
 	ControlPanel.h			\
-	CrackedGlass.cxx		\
+	CrackedGlass.cpp		\
 	CrackedGlass.h			\
-	Daylight.cxx			\
+	Daylight.cpp			\
 	Daylight.h			\
-	DebugDrawing.cxx		\
+	DebugDrawing.cpp		\
 	DebugDrawing.h			\
-	DisplayMenu.cxx			\
+	DisplayMenu.cpp			\
 	DisplayMenu.h			\
-	Downloads.cxx			\
+	Downloads.cpp			\
 	Downloads.h			\
-	DynamicWorldText.cxx		\
+	DynamicWorldText.cpp		\
 	DynamicWorldText.h		\
-	EffectsMenu.cxx			\
+	EffectsMenu.cpp			\
 	EffectsMenu.h			\
-	EffectsRenderer.cxx		\
+	EffectsRenderer.cpp		\
 	EffectsRenderer.h		\
-	ExportInformation.cxx		\
+	ExportInformation.cpp		\
 	ExportInformation.h		\
-	FontOptionsMenu.cxx		\
+	FontOptionsMenu.cpp		\
 	FontOptionsMenu.h		\
-	FontSizer.cxx			\
+	FontSizer.cpp			\
 	FontSizer.h			\
-	ForceFeedback.cxx		\
+	ForceFeedback.cpp		\
 	ForceFeedback.h			\
-	FormatMenu.cxx			\
+	FormatMenu.cpp			\
 	FormatMenu.h			\
-	GUIOptionsMenu.cxx		\
+	GUIOptionsMenu.cpp		\
 	GUIOptionsMenu.h		\
-	HUDDialog.cxx			\
+	HUDDialog.cpp			\
 	HUDDialog.h			\
-	HUDDialogStack.cxx		\
+	HUDDialogStack.cpp		\
 	HUDDialogStack.h		\
-	HUDNavigationQueue.cxx		\
+	HUDNavigationQueue.cpp		\
 	HUDNavigationQueue.h		\
-	HUDRenderer.cxx			\
+	HUDRenderer.cpp			\
 	HUDRenderer.h			\
-	HUDui.cxx			\
+	HUDui.cpp			\
 	HUDui.h				\
-	HUDuiControl.cxx		\
+	HUDuiControl.cpp		\
 	HUDuiControl.h			\
-	HUDuiDefaultKey.cxx		\
+	HUDuiDefaultKey.cpp		\
 	HUDuiDefaultKey.h		\
-	HUDuiElement.cxx		\
+	HUDuiElement.cpp		\
 	HUDuiElement.h			\
-	HUDuiFrame.cxx			\
+	HUDuiFrame.cpp			\
 	HUDuiFrame.h			\
-	HUDuiImage.cxx			\
+	HUDuiImage.cpp			\
 	HUDuiImage.h			\
-	HUDuiLabel.cxx			\
+	HUDuiLabel.cpp			\
 	HUDuiLabel.h			\
-	HUDuiList.cxx			\
+	HUDuiList.cpp			\
 	HUDuiList.h			\
-	HUDuiNestedContainer.cxx	\
+	HUDuiNestedContainer.cpp	\
 	HUDuiNestedContainer.h		\
-	HUDuiScrollList.cxx		\
+	HUDuiScrollList.cpp		\
 	HUDuiScrollList.h		\
-	HUDuiServerInfo.cxx		\
+	HUDuiServerInfo.cpp		\
 	HUDuiServerInfo.h		\
-	HUDuiServerList.cxx		\
+	HUDuiServerList.cpp		\
 	HUDuiServerList.h		\
-	HUDuiServerListCache.cxx	\
+	HUDuiServerListCache.cpp	\
 	HUDuiServerListCache.h		\
-	HUDuiServerListItem.cxx		\
+	HUDuiServerListItem.cpp		\
 	HUDuiServerListItem.h		\
-	HUDuiServerListCustomTab.cxx	\
+	HUDuiServerListCustomTab.cpp	\
 	HUDuiServerListCustomTab.h	\
-	HUDuiTabbedControl.cxx		\
+	HUDuiTabbedControl.cpp		\
 	HUDuiTabbedControl.h		\
-	HUDuiTypeIn.cxx			\
+	HUDuiTypeIn.cpp			\
 	HUDuiTypeIn.h			\
-	HelpCreditsMenu.cxx		\
+	HelpCreditsMenu.cpp		\
 	HelpCreditsMenu.h		\
-	HelpFlagsMenu.cxx		\
+	HelpFlagsMenu.cpp		\
 	HelpFlagsMenu.h			\
-	HelpInstructionsMenu.cxx	\
+	HelpInstructionsMenu.cpp	\
 	HelpInstructionsMenu.h		\
-	HelpKeymapMenu.cxx		\
+	HelpKeymapMenu.cpp		\
 	HelpKeymapMenu.h		\
-	HelpMenu.cxx			\
+	HelpMenu.cpp			\
 	HelpMenu.h			\
 	HubComposeKey.h			\
-	HubComposeKey.cxx		\
+	HubComposeKey.cpp		\
 	HubLink.h			\
-	HubLink.cxx			\
+	HubLink.cpp			\
 	HubLua.h			\
-	HubLua.cxx			\
+	HubLua.cpp			\
 	HubMenu.h			\
-	HubMenu.cxx			\
-	InputMenu.cxx			\
+	HubMenu.cpp			\
+	InputMenu.cpp			\
 	InputMenu.h			\
-	JoinMenu.cxx			\
+	JoinMenu.cpp			\
 	JoinMenu.h			\
-	KeyboardMapMenu.cxx		\
+	KeyboardMapMenu.cpp		\
 	KeyboardMapMenu.h		\
-	LocalCommand.cxx		\
+	LocalCommand.cpp		\
 	LocalCommand.h			\
-	LocalFontFace.cxx		\
+	LocalFontFace.cpp		\
 	LocalFontFace.h			\
-	MainMenu.cxx			\
+	MainMenu.cpp			\
 	MainMenu.h			\
-	MainWindow.cxx			\
+	MainWindow.cpp			\
 	MainWindow.h			\
-	MenuDefaultKey.cxx		\
+	MenuDefaultKey.cpp		\
 	MenuDefaultKey.h		\
-	Mumble.cxx			\
+	Mumble.cpp			\
 	Mumble.h			\
-	NewVersionMenu.cxx		\
+	NewVersionMenu.cpp		\
 	NewVersionMenu.h		\
-	OptionsMenu.cxx			\
+	OptionsMenu.cpp			\
 	OptionsMenu.h			\
-	Plan.cxx			\
+	Plan.cpp			\
 	Plan.h				\
-	PlatformSound.cxx		\
+	PlatformSound.cpp		\
 	PlatformSound.h			\
-	PlayerAvatarManager.cxx		\
+	PlayerAvatarManager.cpp		\
 	PlayerAvatarManager.h		\
-	QuickKeysMenu.cxx		\
+	QuickKeysMenu.cpp		\
 	QuickKeysMenu.h			\
-	SaveMenu.cxx			\
+	SaveMenu.cpp			\
 	SaveMenu.h			\
-	QuitMenu.cxx			\
+	QuitMenu.cpp			\
 	QuitMenu.h			\
-	RadarOptionsMenu.cxx		\
+	RadarOptionsMenu.cpp		\
 	RadarOptionsMenu.h		\
-	RadarRenderer.cxx		\
+	RadarRenderer.cpp		\
 	RadarRenderer.h			\
-	Roaming.cxx			\
+	Roaming.cpp			\
 	Roaming.h			\
-	RoofTops.cxx			\
+	RoofTops.cpp			\
 	RoofTops.h			\
-	SaveWorldMenu.cxx		\
+	SaveWorldMenu.cpp		\
 	SaveWorldMenu.h			\
-	SceneBuilder.cxx		\
+	SceneBuilder.cpp		\
 	SceneBuilder.h			\
-	SceneRenderer.cxx		\
-	ScoreboardRenderer.cxx		\
+	SceneRenderer.cpp		\
+	ScoreboardRenderer.cpp		\
 	ScoreboardRenderer.h		\
-	ServerCommandKey.cxx		\
+	ServerCommandKey.cpp		\
 	ServerCommandKey.h		\
-	ServerMenu.cxx			\
+	ServerMenu.cpp			\
 	ServerMenu.h			\
-	ShotList.cxx			\
+	ShotList.cpp			\
 	ShotList.h			\
-	ShotStats.cxx			\
+	ShotStats.cpp			\
 	ShotStats.h			\
-	ShotStatsDefaultKey.cxx		\
+	ShotStatsDefaultKey.cpp		\
 	ShotStatsDefaultKey.h		\
-	SilenceDefaultKey.cxx		\
+	SilenceDefaultKey.cpp		\
 	SilenceDefaultKey.h		\
-	StandardTankAvatar.cxx		\
+	StandardTankAvatar.cpp		\
 	StandardTankAvatar.h		\
-	TextOptionsMenu.cxx		\
+	TextOptionsMenu.cpp		\
 	TextOptionsMenu.h		\
-	ThirdPersonVars.cxx		\
+	ThirdPersonVars.cpp		\
 	ThirdPersonVars.h		\
-	TrackMarks.cxx			\
+	TrackMarks.cpp			\
 	TrackMarks.h			\
-	WeatherRenderer.cxx		\
+	WeatherRenderer.cpp		\
 	WeatherRenderer.h		\
-	XfireGameClient.cxx		\
+	XfireGameClient.cpp		\
 	XfireGameClient.h		\
-	bzflag.cxx			\
+	bzflag.cpp			\
 	bzflag.h			\
 	commands.h			\
-	guiplaying.cxx			\
+	guiplaying.cpp			\
 	guiplaying.h			\
-	motd.cxx			\
+	motd.cpp			\
 	motd.h				\
-	sound.cxx			\
+	sound.cpp			\
 	sound.h				\
-	stars.cxx			\
+	stars.cpp			\
 	stars.h
 
-#	ServerListFilter.cxx		\
+#	ServerListFilter.cpp		\
 #	ServerListFilter.h		
 
 if WIN32

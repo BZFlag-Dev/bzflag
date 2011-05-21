@@ -243,7 +243,7 @@ public:
     represented by their abbreviation, null-padded to two bytes. Internally,
     flags are now represented by pointers to singleton FlagType classes.
 
-    For more information about these flags, see Flag.cxx where these FlagType
+    For more information about these flags, see Flag.cpp where these FlagType
     instances are created.
 */
 namespace Flags {

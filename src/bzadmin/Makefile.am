@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 if HAVE_CURSES
-CURSES_SRC = CursesUI.h CursesUI.cxx CursesMenu.h CursesMenu.cxx
+CURSES_SRC = CursesUI.h CursesUI.cpp CursesMenu.h CursesMenu.cpp
 else
 CURSES_SRC =
 endif
@@ -22,34 +22,34 @@ endif
 bzadmin_LDFLAGS = -static
 bzadmin_SOURCES = \
 	BZAdminClient.h \
-	BZAdminClient.cxx \
+	BZAdminClient.cpp \
 	BZAdminUI.h \
-	BZAdminUI.cxx \
+	BZAdminUI.cpp \
 	colors.h \
 	$(CURSES_SRC) \
 	OptionParser.h \
-	OptionParser.cxx \
+	OptionParser.cpp \
 	PlayerInfo.h \
-	ServerLink.cxx \
+	ServerLink.cpp \
 	StdBothUI.h \
-	StdBothUI.cxx \
+	StdBothUI.cpp \
 	StdInUI.h \
-	StdInUI.cxx \
+	StdInUI.cpp \
 	StdOutUI.h \
-	StdOutUI.cxx \
+	StdOutUI.cpp \
 	UIMap.h \
-	UIMap.cxx \
-	bzadmin.cxx \
+	UIMap.cpp \
+	bzadmin.cpp \
 	curses_wrapper.h
 
 EXTRA_bzadmin_SOURCES = \
 	CursesMenu.h \
-	CursesMenu.cxx \
+	CursesMenu.cpp \
 	CursesUI.h \
-	CursesUI.cxx
+	CursesUI.cpp
 
-ServerLink.cxx: @top_srcdir@/src/clientbase/ServerLink.cxx
-	cp -pR @top_srcdir@/src/clientbase/ServerLink.cxx .
+ServerLink.cpp: @top_srcdir@/src/clientbase/ServerLink.cpp
+	cp -pR @top_srcdir@/src/clientbase/ServerLink.cpp .
 
 LDADD = \
 	../date/libDate.la	\
@@ -62,5 +62,5 @@ LDADD = \
 	$(LIBREGEX)
 
 MAINTAINERCLEANFILES = \
-	ServerLink.cxx \
+	ServerLink.cpp \
 	Makefile.in

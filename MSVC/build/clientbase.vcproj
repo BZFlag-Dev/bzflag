@@ -151,151 +151,151 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\clientbase\ActionBinding.cxx"
+				RelativePath="..\..\src\clientbase\ActionBinding.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\BaseLocalPlayer.cxx"
+				RelativePath="..\..\src\clientbase\BaseLocalPlayer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\callbacks.cxx"
+				RelativePath="..\..\src\clientbase\callbacks.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\clientCommands.cxx"
+				RelativePath="..\..\src\clientbase\clientCommands.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\clientConfig.cxx"
+				RelativePath="..\..\src\clientbase\clientConfig.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ClientIntangibilityManager.cxx"
+				RelativePath="..\..\src\clientbase\ClientIntangibilityManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\CommandsStandard.cxx"
+				RelativePath="..\..\src\clientbase\CommandsStandard.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\defaultBZDB.cxx"
+				RelativePath="..\..\src\clientbase\defaultBZDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\EntryZone.cxx"
+				RelativePath="..\..\src\clientbase\EntryZone.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\EventClient.cxx"
+				RelativePath="..\..\src\clientbase\EventClient.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\EventClientList.cxx"
+				RelativePath="..\..\src\clientbase\EventClientList.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\EventHandler.cxx"
+				RelativePath="..\..\src\clientbase\EventHandler.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\FlashClock.cxx"
+				RelativePath="..\..\src\clientbase\FlashClock.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\GfxBlock.cxx"
+				RelativePath="..\..\src\clientbase\GfxBlock.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\GuidedMissileStrategy.cxx"
+				RelativePath="..\..\src\clientbase\GuidedMissileStrategy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\LocalPlayer.cxx"
+				RelativePath="..\..\src\clientbase\LocalPlayer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\Player.cxx"
+				RelativePath="..\..\src\clientbase\Player.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\playing.cxx"
+				RelativePath="..\..\src\clientbase\playing.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\PointShotStrategy.cxx"
+				RelativePath="..\..\src\clientbase\PointShotStrategy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\Region.cxx"
+				RelativePath="..\..\src\clientbase\Region.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\RegionPriorityQueue.cxx"
+				RelativePath="..\..\src\clientbase\RegionPriorityQueue.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\RemotePlayer.cxx"
+				RelativePath="..\..\src\clientbase\RemotePlayer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\RobotPlayer.cxx"
+				RelativePath="..\..\src\clientbase\RobotPlayer.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\Roster.cxx"
+				RelativePath="..\..\src\clientbase\Roster.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\SegmentedShotStrategy.cxx"
+				RelativePath="..\..\src\clientbase\SegmentedShotStrategy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ServerLink.cxx"
+				RelativePath="..\..\src\clientbase\ServerLink.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ShockWaveStrategy.cxx"
+				RelativePath="..\..\src\clientbase\ShockWaveStrategy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ShotPath.cxx"
+				RelativePath="..\..\src\clientbase\ShotPath.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ShotPathSegment.cxx"
+				RelativePath="..\..\src\clientbase\ShotPathSegment.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ShotStatistics.cxx"
+				RelativePath="..\..\src\clientbase\ShotStatistics.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\ShotStrategy.cxx"
+				RelativePath="..\..\src\clientbase\ShotStrategy.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\TargetingUtils.cxx"
+				RelativePath="..\..\src\clientbase\TargetingUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\Weapon.cxx"
+				RelativePath="..\..\src\clientbase\Weapon.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\World.cxx"
+				RelativePath="..\..\src\clientbase\World.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\WorldBuilder.cxx"
+				RelativePath="..\..\src\clientbase\WorldBuilder.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\WorldDownLoader.cxx"
+				RelativePath="..\..\src\clientbase\WorldDownLoader.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\clientbase\WorldPlayer.cxx"
+				RelativePath="..\..\src\clientbase\WorldPlayer.cpp"
 				>
 			</File>
 		</Filter>

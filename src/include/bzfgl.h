@@ -102,7 +102,7 @@ extern int __beginendCount;
 #    endif // DEBUG_GL_MATRIX_STACKS
 #  endif
 
-// these are housed in OpenGLContext.cxx
+// these are housed in OpenGLContext.cpp
 extern void   bzNewList(GLuint list, GLenum mode);
 extern GLuint bzGenLists(GLsizei count);
 extern void   bzGenTextures(GLsizei count, GLuint *textures);

@@ -36,7 +36,7 @@ extern int getBuildDate();
 
 extern const char *bzfcopyright;
 
-// various version functions in buildDate.cxx
+// various version functions in buildDate.cpp
 extern const char* getProtocolVersion();
 extern const char* getRobotsProtocolVersion();
 extern const char* getServerVersion();

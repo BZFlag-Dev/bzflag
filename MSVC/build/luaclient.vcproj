@@ -150,63 +150,63 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\lua\LuaBzOrg.cxx"
+				RelativePath="..\..\src\lua\LuaBzOrg.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaCallInCheck.cxx"
+				RelativePath="..\..\src\lua\LuaCallInCheck.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaCallInDB.cxx"
+				RelativePath="..\..\src\lua\LuaCallInDB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaCallOuts.cxx"
+				RelativePath="..\..\src\lua\LuaCallOuts.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaClientScripts.cxx"
+				RelativePath="..\..\src\lua\LuaClientScripts.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaConsole.cxx"
+				RelativePath="..\..\src\lua\LuaConsole.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaControl.cxx"
+				RelativePath="..\..\src\lua\LuaControl.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaGameConst.cxx"
+				RelativePath="..\..\src\lua\LuaGameConst.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaHandle.cxx"
+				RelativePath="..\..\src\lua\LuaHandle.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaHandleCallIns.cxx"
+				RelativePath="..\..\src\lua\LuaHandleCallIns.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaKeySyms.cxx"
+				RelativePath="..\..\src\lua\LuaKeySyms.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaRules.cxx"
+				RelativePath="..\..\src\lua\LuaRules.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaSpatial.cxx"
+				RelativePath="..\..\src\lua\LuaSpatial.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaUser.cxx"
+				RelativePath="..\..\src\lua\LuaUser.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaWorld.cxx"
+				RelativePath="..\..\src\lua\LuaWorld.cpp"
 				>
 			</File>
 		</Filter>

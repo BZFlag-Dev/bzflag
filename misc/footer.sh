@@ -39,7 +39,7 @@
 # the requested indentation settings.
 #
 # The script assumes one file as the argument, so example use might be:
-#   find . -type f -and \( -name \*.cxx -or -or -name \*.h \) -not -regex '.*other_src.*' -exec sh/footer.sh {} \;
+#   find . -type f -and \( -name \*.cpp -or -or -name \*.h \) -not -regex '.*other_src.*' -exec sh/footer.sh {} \;
 #
 # bash arrays are actually used for convenience, hence why bash and
 # not sh.
@@ -117,14 +117,14 @@ case $FILE in
 	wrap=0
 	commentchar="//"
 	;;
-    *.cc | *.cp | *.cxx | *.cpp | *.CPP | *.c++ | *.C )
+    *.cc | *.cp | *.cpp | *.cxx | *.CPP | *.c++ | *.C )
 	echo "$FILE is a C++ source file"
 	mode="C++"
 	mode_vars="c-basic-offset"
 	wrap=0
 	commentchar="//"
 	;;
-    *.hh | *.hp | *.hxx | *.hpp | *.HPP | *.h++ | *.H )
+    *.hh | *.hp | *.hpp | *.hxx | *.HPP | *.h++ | *.H )
 	echo "$FILE is a C++ header"
 	mode="C++"
 	mode_vars="c-basic-offset"

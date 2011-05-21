@@ -33,7 +33,7 @@ tank.
 *dependencies
 
 all the cpp and h files in /tools/tankview/
-/src/3d/Model.cxx
+/src/3d/Model.cpp
 /include/Model.h
 /src/common/TextUtils.h
 /include/TextUtils.h

@@ -14,14 +14,14 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libGLKit_la_LDFLAGS = -static
 libGLKit_la_SOURCES =		\
-	OpenGLContext.cxx	\
-	OpenGLGState.cxx	\
-	OpenGLLight.cxx		\
-	OpenGLMaterial.cxx	\
-	OpenGLPassState.cxx	\
-	OpenGLTexture.cxx	\
-	OpenGLUtils.cxx		\
-	RenderNode.cxx
+	OpenGLContext.cpp	\
+	OpenGLGState.cpp	\
+	OpenGLLight.cpp		\
+	OpenGLMaterial.cpp	\
+	OpenGLPassState.cpp	\
+	OpenGLTexture.cpp	\
+	OpenGLUtils.cpp		\
+	RenderNode.cpp
 
 EXTRA_DIST = 		\
 	README

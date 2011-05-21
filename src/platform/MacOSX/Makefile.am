@@ -5,22 +5,22 @@ endif
 libMac_la_LDFLAGS = -static
 
 MAC_FILES =				\
-	MacDataPath.cxx			\
-	MacDisplay.cxx			\
+	MacDataPath.cpp			\
+	MacDisplay.cpp			\
 	MacDisplay.h			\
-	MacMedia.cxx			\
+	MacMedia.cpp			\
 	MacMedia.h			\
-	MacPlatformFactory.cxx		\
+	MacPlatformFactory.cpp		\
 	MacPlatformFactory.h		\
-	MacVisual.cxx			\
+	MacVisual.cpp			\
 	MacVisual.h			\
-	MacWindow.cxx			\
+	MacWindow.cpp			\
 	MacWindow.h
 
 if HAVE_SDL
 
 libMac_la_SOURCES =			\
-	MacDataPath.cxx			\
+	MacDataPath.cpp			\
 	SDLMain.h
 libMac_la_LIBADD = SDLMain.lo
 all: SDLMain.lo
@@ -46,4 +46,4 @@ EXTRA_DIST =				\
 	BZFlag-Info.plist		\
 	MacBZFlag.icns			\
 	SDLMain.m			\
-	mkplist.cxx
+	mkplist.cpp

@@ -17,9 +17,9 @@ endif
 lib3D_la_LDFLAGS = -static
 lib3D_la_SOURCES = \
 	${GLEW_SRCS} \
-	FontManager.cxx \
-	Model.cxx \
-	TextureManager.cxx
+	FontManager.cpp \
+	Model.cpp \
+	TextureManager.cpp
 
 EXTRA_DIST = \
 	README

@@ -7,35 +7,35 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 libGeometry_la_LDFLAGS = -static
 libGeometry_la_SOURCES  =		\
-	AnimatedTreads.cxx		\
-	BillboardSceneNode.cxx		\
-	BoltSceneNode.cxx		\
-	EighthDBaseSceneNode.cxx	\
-	EighthDBoxSceneNode.cxx		\
-	EighthDimSceneNode.cxx		\
-	EighthDimShellNode.cxx		\
-	EighthDPyrSceneNode.cxx		\
-	FlagSceneNode.cxx		\
-	FlagWarpSceneNode.cxx		\
-	LaserSceneNode.cxx		\
-	MeshDrawMgr.cxx			\
-	MeshFragSceneNode.cxx		\
-	MeshPolySceneNode.cxx		\
-	MeshRenderNode.cxx		\
+	AnimatedTreads.cpp		\
+	BillboardSceneNode.cpp		\
+	BoltSceneNode.cpp		\
+	EighthDBaseSceneNode.cpp	\
+	EighthDBoxSceneNode.cpp		\
+	EighthDimSceneNode.cpp		\
+	EighthDimShellNode.cpp		\
+	EighthDPyrSceneNode.cpp		\
+	FlagSceneNode.cpp		\
+	FlagWarpSceneNode.cpp		\
+	LaserSceneNode.cpp		\
+	MeshDrawMgr.cpp			\
+	MeshFragSceneNode.cpp		\
+	MeshPolySceneNode.cpp		\
+	MeshRenderNode.cpp		\
 	MeshRenderNode.h		\
-	MeshSceneNode.cxx		\
-	OccluderSceneNode.cxx		\
-	PolyWallSceneNode.cxx		\
-	QuadWallSceneNode.cxx		\
-	SceneNode.cxx			\
-	ShellSceneNode.cxx		\
-	SphereSceneNode.cxx		\
-	TankGeometryMgr.cxx		\
-	TankSceneNode.cxx		\
-	TextSceneNode.cxx		\
-	TriWallSceneNode.cxx		\
-	ViewFrustum.cxx			\
-	WallSceneNode.cxx
+	MeshSceneNode.cpp		\
+	OccluderSceneNode.cpp		\
+	PolyWallSceneNode.cpp		\
+	QuadWallSceneNode.cpp		\
+	SceneNode.cpp			\
+	ShellSceneNode.cpp		\
+	SphereSceneNode.cpp		\
+	TankGeometryMgr.cpp		\
+	TankSceneNode.cpp		\
+	TextSceneNode.cpp		\
+	TriWallSceneNode.cpp		\
+	ViewFrustum.cpp			\
+	WallSceneNode.cpp
 
 libGeometry_la_LIBADD =	\
 	models/tank/high_barrel.lo	\

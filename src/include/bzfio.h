@@ -19,7 +19,7 @@
 
 //============================================================================//
 
-/** global debug level used by libraries and applications, provided in bzfio.cxx */
+/** global debug level used by libraries and applications, provided in bzfio.cpp */
 extern int debugLevel;
 
 void logDebugMessage(int level, const char* fmt, ...);

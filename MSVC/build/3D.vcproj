@@ -155,15 +155,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\src\3d\FontManager.cxx"
+				RelativePath="..\..\src\3d\FontManager.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\3D\Model.cxx"
+				RelativePath="..\..\src\3D\Model.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\3d\TextureManager.cxx"
+				RelativePath="..\..\src\3d\TextureManager.cpp"
 				>
 			</File>
 		</Filter>

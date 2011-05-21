@@ -88,7 +88,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Touching buildDate.cxx..."
+				Description="Touching buildDate.cpp..."
 			/>
 		</Configuration>
 		<Configuration
@@ -163,8 +163,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				Description="Touching buildDate.cxx..."
-				CommandLine="type ..\..\src\date\buildDate.cxx &gt; __bd.cxx&#x0D;&#x0A;type __bd.cxx &gt; ..\..\src\date\buildDate.cxx&#x0D;&#x0A;del __bd.cxx&#x0D;&#x0A;"
+				Description="Touching buildDate.cpp..."
+				CommandLine="type ..\..\src\date\buildDate.cpp &gt; __bd.cpp&#x0D;&#x0A;type __bd.cpp &gt; ..\..\src\date\buildDate.cpp&#x0D;&#x0A;del __bd.cpp&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>
@@ -176,7 +176,7 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\date\buildDate.cxx"
+				RelativePath="..\..\src\date\buildDate.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"

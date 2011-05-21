@@ -340,19 +340,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\modeltool.cxx"
+				RelativePath="..\modeltool.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\Q3BSP.cxx"
+				RelativePath="..\Q3BSP.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\src\common\TextUtils.cxx"
+				RelativePath="..\..\..\src\common\TextUtils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\wavefrontOBJ.cxx"
+				RelativePath="..\wavefrontOBJ.cpp"
 				>
 			</File>
 		</Filter>

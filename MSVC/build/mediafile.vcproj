@@ -176,19 +176,19 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\src\mediafile\ImageFile.cxx"
+				RelativePath="..\..\src\mediafile\ImageFile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\mediafile\MediaFile.cxx"
+				RelativePath="..\..\src\mediafile\MediaFile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\mediafile\PNGImageFile.cxx"
+				RelativePath="..\..\src\mediafile\PNGImageFile.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\mediafile\SGIImageFile.cxx"
+				RelativePath="..\..\src\mediafile\SGIImageFile.cpp"
 				>
 			</File>
 		</Filter>

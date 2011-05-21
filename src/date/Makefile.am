@@ -10,4 +10,4 @@ EXTRA_DIST = README
 
 libDate_la_LDFLAGS = -static
 libDate_la_SOURCES = \
-	buildDate.cxx
+	buildDate.cpp

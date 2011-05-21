@@ -16,10 +16,10 @@ AM_CXXFLAGS = @CONF_CXXFLAGS@
 
 modeltool_SOURCES =	\
 	model.h		\
-	modeltool.cxx	\
-	Q3BSP.cxx	\
+	modeltool.cpp	\
+	Q3BSP.cpp	\
 	Q3BSP.h		\
-	wavefrontOBJ.cxx\
+	wavefrontOBJ.cpp\
 	wavefrontOBJ.h
 
 modeltool_CPPFLAGS = -I$(top_srcdir)/src/include
