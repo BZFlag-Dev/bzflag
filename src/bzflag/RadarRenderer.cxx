@@ -676,6 +676,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       // don't draw normal flags if we aren't supposed to
       if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
 	continue;
+      if (BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR)) {
+        if (flag.type->flagTeam != ::NoTeam) {
+	  continue;
+	}
+      }
+      if (BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR)) {
+        if (flag.type) {
+	  continue;
+	}
+      }
       // Flags change color by height
       const float cs = colorScale(flag.position[2], muzzleHeight);
       const float *flagcolor = flag.type->getColor();

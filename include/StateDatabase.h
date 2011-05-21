@@ -248,6 +248,8 @@ public:
   static const std::string	BZDB_HANDICAPVELAD;
   static const std::string	BZDB_HANDICAPANGAD;
   static const std::string	BZDB_HANDICAPSHOTAD;
+  static const std::string      BZDB_HIDEFLAGSONRADAR;
+  static const std::string      BZDB_HIDETEAMFLAGSONRADAR;
   static const std::string	BZDB_IDENTIFYRANGE;
   static const std::string	BZDB_JUMPVELOCITY;
   static const std::string	BZDB_LASERADVEL;
