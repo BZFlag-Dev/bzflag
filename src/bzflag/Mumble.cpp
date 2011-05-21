@@ -252,4 +252,4 @@ bool Mumble::update(const fvec3& pos, const fvec3& front, const fvec3& top) {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

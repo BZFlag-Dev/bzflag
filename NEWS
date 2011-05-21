@@ -1077,4 +1077,4 @@ or one line.
 // tab-width: 8
 // fill-column: 80
 // End:
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

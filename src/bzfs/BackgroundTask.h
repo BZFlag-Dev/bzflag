@@ -65,4 +65,4 @@ class BackgroundTaskManager: public Singleton<BackgroundTaskManager> , bz_EventH
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

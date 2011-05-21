@@ -813,4 +813,4 @@ const Obstacle* WorldInfo::hitBuilding(const fvec3& oldPos, float oldAngle,
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

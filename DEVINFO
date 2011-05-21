@@ -193,7 +193,7 @@ source code serves for examples of the following rules.
 	// c-basic-offset: 2 ***
 	// indent-tabs-mode: nil ***
 	// End: ***
-	// ex: shiftwidth=2 tabstop=8
+	// ex: shiftwidth=2 tabstop=8 expandtab
 
       In emacs the the indent-region command (bound to C-M-\ by
       default) does a good job of making the needed changes to conform

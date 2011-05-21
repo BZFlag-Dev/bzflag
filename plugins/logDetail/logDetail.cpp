@@ -347,4 +347,4 @@ void LogDetail::listPlayers(action act, bz_PlayerJoinPartEventData_V1* data) {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

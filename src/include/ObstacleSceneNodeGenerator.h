@@ -54,4 +54,4 @@ inline int    ObstacleSceneNodeGenerator::incNodeNumber() {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

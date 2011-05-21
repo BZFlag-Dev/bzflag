@@ -235,4 +235,4 @@ fvec3Array& fvec3Array::operator=(const fvec3Array& a) {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

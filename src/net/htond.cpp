@@ -174,4 +174,4 @@ ntohd(register unsigned char* out, register const unsigned char* in, int count) 
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

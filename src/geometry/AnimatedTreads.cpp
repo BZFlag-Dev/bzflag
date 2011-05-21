@@ -910,4 +910,4 @@ int TankGeometryUtils::buildHighRWheel(int number, float angle, int divs) {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

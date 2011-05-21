@@ -1711,4 +1711,4 @@ const fvec3* BackgroundRenderer::getSunDirection() const {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

@@ -914,4 +914,4 @@ void ReportsLoop::getKey(size_t item, std::string& data, const std::string& key)
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

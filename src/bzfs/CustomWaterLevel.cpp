@@ -81,4 +81,4 @@ void CustomWaterLevel::writeToWorld(WorldInfo* world) const {
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab

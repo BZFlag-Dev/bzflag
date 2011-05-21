@@ -1213,4 +1213,4 @@ bool KeepAwayCommands::handle(int playerID, bz_ApiString _command, bz_ApiString 
 // c-basic-offset: 2 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=2 tabstop=8 expandtab
