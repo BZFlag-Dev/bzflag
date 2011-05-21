@@ -247,7 +247,6 @@ void SceneRenderer::setQuality(int value)
   // 0 = Low
   // 1 = Medium
   // 2 = High
-  // 3 = Experimental
 
   if (value < 0) {
     value = 0;
@@ -261,7 +260,7 @@ void SceneRenderer::setQuality(int value)
 
   notifyStyleChange();
 
-  if (useQualityValue >= 2) {
+  if (useQualityValue == 2) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     // GL_NICEST for polygon smoothing seems to make some drivers
@@ -273,26 +272,23 @@ void SceneRenderer::setQuality(int value)
     glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
   }
 
-  if (useQualityValue >= 3)
-    TankSceneNode::setMaxLOD(-1);
-  else if (useQualityValue >= 1)
-    TankSceneNode::setMaxLOD(3);
-  else
-    TankSceneNode::setMaxLOD(2);
-
-  if (useQualityValue >= 3)
-    BZDB.set("flagChunks","32");
-  else if (useQualityValue >= 2)
-    BZDB.set("flagChunks","12");
-  else
-    BZDB.set("flagChunks","8");
-
-  if (useQualityValue >= 3)
-    BZDB.set("moonSegments","64");
-  else if (useQualityValue >= 2)
-    BZDB.set("moonSegments","24");
-  else
-    BZDB.set("moonSegments","12");
+  switch (useQualityValue) {
+    case 2:
+      BZDB.set("flagChunks","32");
+      BZDB.set("moonSegments","64");
+      TankSceneNode::setMaxLOD(-1);
+      break;
+    case 1:
+      BZDB.set("flagChunks","12");
+      BZDB.set("moonSegments","24");
+      TankSceneNode::setMaxLOD(3);
+      break;
+    case 0:
+      BZDB.set("flagChunks","8");
+      BZDB.set("moonSegments","12");
+      TankSceneNode::setMaxLOD(2);
+      break;
+  }
 
   if (useQualityValue > 0) {
     // this can be modified by OpenGLMaterial

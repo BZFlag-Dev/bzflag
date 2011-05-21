@@ -275,7 +275,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 
 void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
-  // use HighTankLOD shadows in experimental mode
+  // use HighTankLOD shadows in highest quality mode 
   if (TankSceneNode::maxLevel == -1) {
     shadowRenderNode.setTankLOD (HighTankLOD);
   } else {
