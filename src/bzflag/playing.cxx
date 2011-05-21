@@ -288,6 +288,9 @@ static void		setGrabMouse(bool grab)
 
 bool		shouldGrabMouse()
 {
+#if defined(_WIN32) && defined(DEBUG)
+  return false;
+#endif
   return grabMouseAlways && !unmapped &&
     (myTank == NULL || !myTank->isPaused() || myTank->isAutoPilot());
 }
@@ -6555,16 +6558,51 @@ static void		timeConfigurations()
   TextureManager& tm = TextureManager::instance();
 
   // ignore results of first test.  OpenGL could be doing lazy setup.
-  BZDB.set("blend", "0");
-  BZDB.set("smooth", "0");
-  BZDB.set("lighting", "0");
-  BZDB.set("texture", "0");
-  sceneRenderer->setQuality(0);
-  BZDB.set("dither", "1");
-  BZDB.set("shadows", "0");
+  BZDB.set("blend", "1");
+  BZDB.set("smooth", "1");
+  BZDB.set("lighting", "2");
+  BZDB.set("texture", "1");
+  sceneRenderer->setQuality(3);
+  BZDB.set("dither", "0");
+  BZDB.set("shadows", "1");
   BZDB.set("radarStyle", "0");
-  tm.setMaxFilter(OpenGLTexture::Off);
+  tm.setMaxFilter(OpenGLTexture::Max);
   timeConfiguration(true);
+
+  // try the best looking thing, most modern hardware can do it
+  printError("  full quality");
+  BZDB.set("blend", "1");
+  BZDB.set("smooth", "1");
+  BZDB.set("lighting", "1");
+  tm.setMaxFilter(OpenGLTexture::Max);
+  BZDB.set("texture", tm.getMaxFilterName());
+  sceneRenderer->setQuality(4);
+  BZDB.set("dither", "0");
+  BZDB.set("shadows", "1");
+  BZDB.set("stencilShadows", "1");
+  BZDB.set("radarStyle", "3");
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
+
+
+  // turn stencil shadows  off
+  printError("  Stipple Shadows");
+  BZDB.set("stencilShadows", "0");
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
+
+  // turn blending off
+  printError("  no Blend");
+  BZDB.set("blend", "0");
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
+
+  // turn blending on and texturing off
+  printError("  no Blend");
+  BZDB.set("blend", "1");
+  BZDB.set("texture", "0");
+  if (timeConfiguration(true) < MaxFrameTime) return;
+  if (timeConfiguration(false) < MaxFrameTime) return;
 
   // time lowest quality with and without blending.  some systems
   // stipple very slowly even though everything else is fast.  we
@@ -6602,92 +6640,6 @@ static void		timeConfigurations()
     BZDB.set("blend", "1");
     return;
   }
-
-  // leave blending on if blending clearly faster than stippling
-  if ((timeBlendNoZ > timeNoBlendNoZ || timeBlendNoZ > timeNoBlendZ) &&
-      (timeBlendZ   > timeNoBlendNoZ || timeBlendZ   > timeNoBlendZ)) {
-    BZDB.set("blend", "0");
-  }
-
-  // try texturing.  if it's too slow then fall back to
-  // lowest quality and return.
-  tm.setMaxFilter(OpenGLTexture::Nearest);
-  BZDB.set("texture", tm.getMaxFilterName());
-  sceneRenderer->setQuality(1);
-  printError("  lowest quality with texture");
-  if (timeConfiguration(false) > MaxFrameTime ||
-      timeConfiguration(true) > MaxFrameTime) {
-    BZDB.set("texture", "0");
-    tm.setMaxFilter(OpenGLTexture::Off);
-    sceneRenderer->setQuality(0);
-    return;
-  }
-
-  // everything
-  printError("  full quality");
-  BZDB.set("blend", "1");
-  BZDB.set("smooth", "1");
-  BZDB.set("lighting", "1");
-  tm.setMaxFilter(OpenGLTexture::LinearMipmapLinear);
-  BZDB.set("texture", tm.getMaxFilterName());
-  sceneRenderer->setQuality(2);
-  BZDB.set("dither", "1");
-  BZDB.set("shadows", "1");
-  BZDB.set("radarStyle", "3");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // try it without shadows -- some platforms stipple very slowly
-  BZDB.set("shadows", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // no high quality
-  printError("  medium quality");
-  sceneRenderer->setQuality(1);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-  printError("  low quality");
-  sceneRenderer->setQuality(0);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // lower quality texturing
-  printError("  nearest texturing");
-  tm.setMaxFilter(OpenGLTexture::Nearest);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // no texturing
-  printError("  no texturing");
-  BZDB.set("texture", "0");
-  tm.setMaxFilter(OpenGLTexture::Off);
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // no blending
-  printError("  no blending");
-  BZDB.set("blend", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // no smoothing.  shouldn't really affect fill rate too much.
-  printError("  no smoothing");
-  BZDB.set("smooth", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // no lighting.  shouldn't really affect fill rate, either.
-  printError("  no lighting");
-  BZDB.set("lighting", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
-
-  // no dithering
-  printError("  no dithering");
-  BZDB.set("dither", "0");
-  if (timeConfiguration(true) < MaxFrameTime) return;
-  if (timeConfiguration(false) < MaxFrameTime) return;
 }
 
 static void		findFastConfiguration()
@@ -6819,24 +6771,27 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->setNumberOfFrameBuffers(n);
   }
 
-  // if no configuration, turn off fancy rendering so startup is fast,
-  // even on a slow machine.
+  // if no configuration go into a decent setup for a modern machine
   if (!startupInfo.hasConfiguration) {
-    BZDB.set("blend", "0");
-    BZDB.set("smooth", "0");
-    BZDB.set("lighting", "0");
+    BZDB.set("blend", "1");
+    BZDB.set("smooth", "1");
+    BZDB.set("lighting", "2");
     BZDB.set("tesselation", "1");  // lighting set to 0 overrides
-    BZDB.set("texture", "0");
-    sceneRenderer->setQuality(0);
+    BZDB.set("texture", "1");
+    sceneRenderer->setQuality(3);
     BZDB.set("dither", "0");
-    BZDB.set("shadows", "0");
-    BZDB.set("radarStyle", "0");
-    TextureManager::instance().setMaxFilter(OpenGLTexture::Off);
+    BZDB.set("shadows", "2");
+    BZDB.set("radarStyle", "1");
+    TextureManager::instance().setMaxFilter(OpenGLTexture::Max);
   }
 
   // should we grab the mouse?  yes if fullscreen.
   if (!BZDB.isSet("_window"))
+  {
+#if !defined(DEBUG)
     setGrabMouse(true);
+#endif
+  }
 #if defined(__linux__) && !defined(DEBUG)
   // linux usually has a virtual root window so grab mouse always
   setGrabMouse(true);
