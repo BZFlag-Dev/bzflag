@@ -265,7 +265,10 @@ be broken up into smaller coherent chunks.  This way if a bug or other
 issue with a particular commit is later encountered, the change can be
 more easily isolated and undone or fixed.
 
-Note that there is a SVL hook script that requires new and renamed files
+Test before you commit. That means that you should compile the code at
+done some level of functional testing before every commit.
+
+Note that there is a SVN hook script that requires new and renamed files
 to provide the correct  svn:mime-type  and  svn:eol-style  settings.
 
 
