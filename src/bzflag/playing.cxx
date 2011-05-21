@@ -6785,16 +6785,16 @@ void			startPlaying(BzfDisplay* _display,
     TextureManager::instance().setMaxFilter(OpenGLTexture::Max);
   }
 
-  // should we grab the mouse?  yes if fullscreen.
-  if (!BZDB.isSet("_window"))
-  {
-#if !defined(DEBUG)
-    setGrabMouse(true);
-#endif
-  }
-#if defined(__linux__) && !defined(DEBUG)
-  // linux usually has a virtual root window so grab mouse always
+// should we grab the mouse?
+#if defined(DEBUG)            // don't grab for debug builds
+  setGrabMouse(false);
+#elif defined(__linux__)      // linux usually has a virtual root window so grab mouse always
   setGrabMouse(true);
+#else
+  if (!BZDB.isSet("_window")) // otherwise, grab if fullscreen.
+  {
+    setGrabMouse(true);
+  }
 #endif
 
   // show window and clear it immediately
