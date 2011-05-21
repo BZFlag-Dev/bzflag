@@ -144,7 +144,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Low"));
   options->push_back(std::string("Medium"));
   options->push_back(std::string("High"));
-  options->push_back(std::string("Experimental"));
   option->update();
   listHUD.push_back(option);
 
