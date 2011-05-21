@@ -1379,8 +1379,12 @@ void			LocalPlayer::doJump()
   if (flag == Flags::Wings) {
     newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
     // if you're falling, wings will just slow you down
-    if (oldVelocity[2] < 0)
+    if (oldVelocity[2] < 0) {
       newVelocity[2] += oldVelocity[2];
+    // if you're already going up faster, just keep doing that
+    } else if (oldVelocity[2] > newVelocity[2]) {
+      newVelocity[2] = oldVelocity[2];
+    }
   } else if (flag == Flags::Bouncy) {
     const float factor = 0.25f + ((float)bzfrand() * 0.75f);
     newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);

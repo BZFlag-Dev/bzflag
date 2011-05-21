@@ -11,7 +11,7 @@ dnl IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 dnl WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 dnl
 
-AC_INIT([BZFlag], [2.3.8], [http://BZFlag.org/], [bzflag])
+AC_INIT([BZFlag], [2.3.9], [http://BZFlag.org/], [bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision $)
 
