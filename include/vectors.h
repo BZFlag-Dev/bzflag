@@ -188,7 +188,10 @@ class vec3 {
     vec3(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
     vec3(const vec2<T>& v, T _z) : x(v.x), y(v.y), z(_z) {}
 
+    vec3(T _v[3]) : x(_v[0]), y(_v[1]), z(_v[2]) {}
+
     inline vec3& operator=(const vec3& v) { x = v.x; y = v.y; z = v.z; return *this; }
+    inline vec3& operator=(const T v[3]) { x = v[0]; y = v[1]; z = v[2]; return *this; }
 
     inline       T* data()       { return &x; }
     inline const T* data() const { return &x; }
@@ -350,7 +353,10 @@ class vec4 {
     vec4(T _x, T _y, T _z, T _w) : x(_x), y(_y), z(_z), w(_w) {}
     vec4(const vec3<T>& v, T _w) : x(v.x), y(v.y), z(v.z), w(_w) {}
 
+    vec4(T v[4]) : x(v[0]), y(v[1]), z(v[2]), w(v[3]) {}
+
     inline vec4& operator=(const vec4& v) { x = v.x; y = v.y; z = v.z; w = v.w; return *this; }
+    inline vec4& operator=(const T v[4]) { x = v[0]; y = v[1]; z = v[2]; w = v[3]; return *this; }
 
     inline T*       data()       { return &x; }
     inline const T* data() const { return &x; }

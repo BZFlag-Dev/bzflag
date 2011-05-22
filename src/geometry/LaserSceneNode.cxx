@@ -26,6 +26,8 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
+#include "vectors.h"
+
 const GLfloat		LaserRadius = 0.1f;
 
 LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
@@ -44,6 +46,21 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
   OpenGLGStateBuilder builder(gstate);
   builder.setCulling(GL_NONE);
   gstate = builder.getState();
+
+  first = false;
+  setColor(1,1,1);
+  setCenterColor(1,1,1);
+}
+
+void LaserSceneNode::setColor(float r, float g, float b)
+{
+	color = fvec4(r, g, b, 1.0f);
+}
+
+
+void LaserSceneNode::setCenterColor(float r, float g, float b)
+{
+	centerColor = fvec4(r, g, b, 1.0f);
 }
 
 LaserSceneNode::~LaserSceneNode()
@@ -114,87 +131,154 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
   // do nothing
 }
 
-void			LaserSceneNode::LaserRenderNode::render()
+void LaserSceneNode::LaserRenderNode::render()
 {
-  const GLfloat length = sceneNode->length;
-  const GLfloat* sphere = sceneNode->getSphere();
-  glPushMatrix();
-    glTranslatef(sphere[0], sphere[1], sphere[2]);
-    glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
-    glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+	const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();
+	if (blackFog) {
+		glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+	}
 
-    if (sceneNode->texturing) {
-      myColor3f(1.0f, 1.0f, 1.0f);
-      glBegin(GL_TRIANGLE_FAN);
-	glTexCoord2f(0.5f,  0.5f);
-	glVertex3f(  0.0f,  0.0f,  0.0f);
-	glTexCoord2f(0.0f,  0.0f);
-	glVertex3f(  0.0f,  0.0f,  1.0f);
-	glVertex3f(  0.0f,  1.0f,  0.0f);
-	glVertex3f(  0.0f,  0.0f, -1.0f);
-	glVertex3f(  0.0f, -1.0f,  0.0f);
-	glVertex3f(  0.0f,  0.0f,  1.0f);
-      glEnd(); // 6 verts -> 4 tris
+	if (RENDERER.useQuality() >= 3) {
+		renderGeoLaser();
+	} else {
+		renderFlatLaser();
+	}
 
-      glBegin(GL_QUADS);
-	glTexCoord2f(0.0f,  0.0f);
-	glVertex3f(  0.0f,  0.0f,  1.0f);
-	glTexCoord2f(0.0f,  1.0f);
-	glVertex3f(length,  0.0f,  1.0f);
-	glTexCoord2f(1.0f,  1.0f);
-	glVertex3f(length,  0.0f, -1.0f);
-	glTexCoord2f(1.0f,  0.0f);
-	glVertex3f(  0.0f,  0.0f, -1.0f);
+	if (blackFog) {
+		glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+	}
+}
 
-	glTexCoord2f(0.0f,  0.0f);
-	glVertex3f(  0.0f,  1.0f,  0.0f);
-	glTexCoord2f(0.0f,  1.0f);
-	glVertex3f(length,  1.0f,  0.0f);
-	glTexCoord2f(1.0f,  1.0f);
-	glVertex3f(length, -1.0f,  0.0f);
-	glTexCoord2f(1.0f,  0.0f);
-	glVertex3f(  0.0f, -1.0f,  0.0f);
-      glEnd(); // 8 verts -> 4 tris
+void LaserSceneNode::LaserRenderNode::renderGeoLaser()
+{
+	const float length = sceneNode->length;
+	const GLfloat* sphere = sceneNode->getSphere();
+	glPushMatrix();
+	glTranslatef(sphere[0], sphere[1], sphere[2]);
+	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+	glRotatef(90, 0.0f, 1.0f, 0.0f);
 
-      addTriangleCount(8);
-    }
+	glDisable(GL_TEXTURE_2D);
 
-    else {
-      // draw beam
-      myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
-      glBegin(GL_QUAD_STRIP);
-      {
-	glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-	glVertex3f(length, geom[0][0], geom[0][1]);
-	glVertex3f(  0.0f, geom[1][0], geom[1][1]);
-	glVertex3f(length, geom[1][0], geom[1][1]);
-	glVertex3f(  0.0f, geom[2][0], geom[2][1]);
-	glVertex3f(length, geom[2][0], geom[2][1]);
-	glVertex3f(  0.0f, geom[3][0], geom[3][1]);
-	glVertex3f(length, geom[3][0], geom[3][1]);
-	glVertex3f(  0.0f, geom[4][0], geom[4][1]);
-	glVertex3f(length, geom[4][0], geom[4][1]);
-	glVertex3f(  0.0f, geom[5][0], geom[5][1]);
-	glVertex3f(length, geom[5][0], geom[5][1]);
-	glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-	glVertex3f(length, geom[0][0], geom[0][1]);
-      }
-      glEnd(); // 14 verts -> 12 tris
+	GLUquadric *q = gluNewQuadric();
 
-      // also draw a line down the middle (so the beam is visible even
-      // if very far away).  this will also give the beam an extra bright
-      // center.
-      glBegin(GL_LINES);
-      {
-	glVertex3f(  0.0f, 0.0f, 0.0f);
-	glVertex3f(length, 0.0f, 0.0f);
-      }
-      glEnd(); // count 1 line as 1 tri
+	const fvec4& centerColor = sceneNode->centerColor;
+	const fvec4& color       = sceneNode->color;
 
-      addTriangleCount(13);
-    }
+	myColor4fv(fvec4(centerColor.rgb(), 0.85f));
+	gluCylinder(q, 0.0625f, 0.0625f, length, 10, 1);
+	addTriangleCount(20);
 
-  glPopMatrix();
+	myColor4fv(fvec4(color.rgb(), 0.125f));
+	gluCylinder(q, 0.1f, 0.1f, length, 16, 1);
+	addTriangleCount(32);
+
+	myColor4fv(fvec4(color.rgb(), 0.125f));
+	gluCylinder(q, 0.2f, 0.2f, length, 24, 1);
+	addTriangleCount(48);
+
+	myColor4fv(fvec4(color.rgb(), 0.125f));
+	gluCylinder(q, 0.4f, 0.4f, length, 32, 1);
+	addTriangleCount(64);
+
+	myColor4fv(fvec4(color.rgb(), 0.125f));
+	if (sceneNode->first) {
+		gluSphere(q, 0.5f, 32, 32);
+		addTriangleCount(32 * 32 * 2);
+	} else {
+		gluSphere(q, 0.5f, 12, 12);
+		addTriangleCount(12 * 12 * 2);
+	}
+
+	gluDeleteQuadric(q);
+
+	glEnable(GL_TEXTURE_2D);
+	glPopMatrix();
+}
+
+
+void LaserSceneNode::LaserRenderNode::renderFlatLaser()
+{
+	const float length = sceneNode->length;
+	const GLfloat *sphere = sceneNode->getSphere();
+	glPushMatrix();
+	glTranslatef(sphere[0], sphere[1], sphere[2]);
+	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+
+	if (sceneNode->texturing) {
+		myColor3f(1.0f, 1.0f, 1.0f);
+		glBegin(GL_TRIANGLE_FAN);
+		glTexCoord2f(0.5f,  0.5f);
+		glVertex3f(  0.0f,  0.0f,  0.0f);
+		glTexCoord2f(0.0f,  0.0f);
+		glVertex3f(  0.0f,  0.0f,  1.0f);
+		glVertex3f(  0.0f,  1.0f,  0.0f);
+		glVertex3f(  0.0f,  0.0f, -1.0f);
+		glVertex3f(  0.0f, -1.0f,  0.0f);
+		glVertex3f(  0.0f,  0.0f,  1.0f);
+		glEnd(); // 6 verts -> 4 tris
+
+		glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,  0.0f);
+		glVertex3f(  0.0f,  0.0f,  1.0f);
+		glTexCoord2f(0.0f,  1.0f);
+		glVertex3f(length,  0.0f,  1.0f);
+		glTexCoord2f(1.0f,  1.0f);
+		glVertex3f(length,  0.0f, -1.0f);
+		glTexCoord2f(1.0f,  0.0f);
+		glVertex3f(  0.0f,  0.0f, -1.0f);
+
+		glTexCoord2f(0.0f,  0.0f);
+		glVertex3f(  0.0f,  1.0f,  0.0f);
+		glTexCoord2f(0.0f,  1.0f);
+		glVertex3f(length,  1.0f,  0.0f);
+		glTexCoord2f(1.0f,  1.0f);
+		glVertex3f(length, -1.0f,  0.0f);
+		glTexCoord2f(1.0f,  0.0f);
+		glVertex3f(  0.0f, -1.0f,  0.0f);
+		glEnd(); // 8 verts -> 4 tris
+
+		addTriangleCount(8);
+	}
+
+	else {
+		// draw beam
+		myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
+		glBegin(GL_QUAD_STRIP);
+		{
+			glVertex3f(  0.0f, geom[0][0], geom[0][1]);
+			glVertex3f(length, geom[0][0], geom[0][1]);
+			glVertex3f(  0.0f, geom[1][0], geom[1][1]);
+			glVertex3f(length, geom[1][0], geom[1][1]);
+			glVertex3f(  0.0f, geom[2][0], geom[2][1]);
+			glVertex3f(length, geom[2][0], geom[2][1]);
+			glVertex3f(  0.0f, geom[3][0], geom[3][1]);
+			glVertex3f(length, geom[3][0], geom[3][1]);
+			glVertex3f(  0.0f, geom[4][0], geom[4][1]);
+			glVertex3f(length, geom[4][0], geom[4][1]);
+			glVertex3f(  0.0f, geom[5][0], geom[5][1]);
+			glVertex3f(length, geom[5][0], geom[5][1]);
+			glVertex3f(  0.0f, geom[0][0], geom[0][1]);
+			glVertex3f(length, geom[0][0], geom[0][1]);
+		}
+		glEnd(); // 14 verts -> 12 tris
+
+		// also draw a line down the middle (so the beam is visible even
+		// if very far away).  this will also give the beam an extra bright
+		// center.
+		glBegin(GL_LINES);
+		{
+			glVertex3f(  0.0f, 0.0f, 0.0f);
+			glVertex3f(length, 0.0f, 0.0f);
+		}
+		glEnd(); // count 1 line as 1 tri
+
+		addTriangleCount(13);
+	}
+
+	glPopMatrix();
 }
 
 // Local Variables: ***

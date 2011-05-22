@@ -33,6 +33,7 @@
 #include "OpenGLGState.h"
 #include "RenderNode.h"
 #include "Extents.h"
+#include "vectors.h"
 #include <vector>
 
 #if !defined(_WIN32)

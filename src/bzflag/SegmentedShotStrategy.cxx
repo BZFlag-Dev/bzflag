@@ -50,7 +50,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   }
 
   // initialize scene nodes
-  boltSceneNode = new BoltSceneNode(_path->getPosition());
+  boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity(),useSuperTexture);
 
   const float* c = Team::getRadarColor(team);
   if (faint) {
@@ -643,6 +643,13 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
     thiefNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
     if (texture >= 0)
       thiefNodes[i]->setTexture(texture);
+
+    if (i == 0) {
+      thiefNodes[i]->setFirst();
+    }
+
+    thiefNodes[i]->setColor(0,1,1);
+    thiefNodes[i]->setCenterColor(0,0,0);
   }
   setCurrentSegment(numSegments - 1);
 }
@@ -808,6 +815,13 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
     laserNodes[i] = new LaserSceneNode(ray.getOrigin(), dir);
     if (texture >= 0)
       laserNodes[i]->setTexture(texture);
+
+    const float* color = Team::getRadarColor(tmpTeam);
+    laserNodes[i]->setColor(color[0], color[1], color[2]);
+
+    if (i == 0) {
+      laserNodes[i]->setFirst();
+    }
   }
   setCurrentSegment(numSegments - 1);
 }

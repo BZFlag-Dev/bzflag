@@ -23,7 +23,7 @@
 
 class BoltSceneNode : public ShotSceneNode {
   public:
-			BoltSceneNode(const GLfloat pos[3]);
+			BoltSceneNode(const GLfloat pos[3], const GLfloat vel[3], bool super);
 			~BoltSceneNode();
 
     void		setFlares(bool);
@@ -37,6 +37,9 @@ class BoltSceneNode : public ShotSceneNode {
     bool		getColorblind() const;
     void		setColorblind(bool);
 
+	bool		getInvisible() const {return invisible;}
+	void		setInvisible(bool _invisible) {invisible = _invisible;}
+	
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
     void		addLight(SceneRenderer&);
 
@@ -44,50 +47,58 @@ class BoltSceneNode : public ShotSceneNode {
     void		addRenderNodes(SceneRenderer&);
 
   protected:
+	bool isSuper;
+
     class BoltRenderNode : public RenderNode {
       public:
 			BoltRenderNode(const BoltSceneNode*);
 			~BoltRenderNode();
-	void		setColor(const GLfloat* rgba);
-  void    setTextureColor(const GLfloat* rgba);
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-	void		setAnimation(int cu, int cv);
-      private:
-	const BoltSceneNode* sceneNode;
-	int		u, v, cu, cv;
-	GLfloat		du, dv;
-	GLfloat		mainColor[4];
-	GLfloat		innerColor[4];
-	GLfloat		outerColor[4];
-	GLfloat		coronaColor[4];
-	GLfloat		flareColor[4];
-  GLfloat		textureColor[4];
-	int		numFlares;
-	float		theta[6];
-	float		phi[6];
+			void		setColor(const GLfloat* rgba);
+			void    setTextureColor(const GLfloat* rgba);
+			void		render();
+			const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
+			void		setAnimation(int cu, int cv);
 
-	static GLfloat	core[9][2];
-	static GLfloat	corona[8][2];
-	static const GLfloat ring[8][2];
-	static const GLfloat CoreFraction;
-	static const GLfloat FlareSize;
-	static const GLfloat FlareSpread;
-    };
+			void		renderGeoBolt();
+			void		renderGeoGMBolt();
+			void		renderGeoPill( float radius, float length, int segments, float endRad = -1);
+
+		private:
+			const BoltSceneNode* sceneNode;
+			int		u, v, cu, cv;
+			GLfloat		du, dv;
+			GLfloat		mainColor[4];
+			GLfloat		innerColor[4];
+			GLfloat		outerColor[4];
+			GLfloat		coronaColor[4];
+			GLfloat		flareColor[4];
+			GLfloat		textureColor[4];
+			int		numFlares;
+			float		theta[6];
+			float		phi[6];
+
+			static GLfloat	core[9][2];
+			static GLfloat	corona[8][2];
+			static const GLfloat ring[8][2];
+			static const GLfloat CoreFraction;
+			static const GLfloat FlareSize;
+			static const GLfloat FlareSpread;
+		};
     friend class BoltRenderNode;
 
   private:
+	bool		invisible;
     bool		drawFlares;
     bool		texturing;
     bool		colorblind;
     float		size;
-    float		length;
     float		velocity[3];
     GLfloat		color[4];
     OpenGLLight		light;
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;
     BoltRenderNode	renderNode;
+	float		azimuth, elevation, length;
 };
 
 #endif // BZF_BOLT_SCENE_NODE_H

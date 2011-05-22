@@ -34,6 +34,7 @@
 #include "OpenGLLight.h"
 #include "ViewFrustum.h"
 #include "RenderNode.h"
+#include "vectors.h"
 
 #define RENDERER (SceneRenderer::instance())
 
@@ -149,6 +150,13 @@ public:
 
   const RenderNodeList& getShadowList() const;
 
+  inline bool		isFogActive() const { return fogActive; }
+  inline void		setFogActive(bool b) { fogActive = b; }
+  
+  inline const fvec4&	getFogColor() const { return fogColor; }
+  inline const void	setFogColor( float *color) { fogColor = color; }
+
+
   void		render(bool lastFrame = true,
 		       bool sameFrame = false,
 		       bool fullWindow = false);
@@ -233,6 +241,8 @@ private:
   bool		sameFrame;
   bool		needStyleUpdate;
   bool		rebuildTanks;
+  bool		fogActive;
+  fvec4		fogColor;
 
   std::vector<FlareLight>	flareLightList;
   RenderNodeList		shadowList;

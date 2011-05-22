@@ -114,7 +114,8 @@ SceneRenderer::SceneRenderer() :
 				lastFrame(true),
 				sameFrame(false),
 				needStyleUpdate(true),
-				rebuildTanks(true)
+				rebuildTanks(true),
+				fogActive(false)
 {
   lightsSize = 4;
   lights = new OpenGLLight*[lightsSize];
@@ -1114,6 +1115,7 @@ void SceneRenderer::renderPreDimming()
 
 static bool setupMapFog()
 {
+  RENDERER.setFogActive(false);
   std::string fogModeStr;
   if (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")
   {
@@ -1121,7 +1123,7 @@ static bool setupMapFog()
     glHint(GL_FOG_HINT, GL_FASTEST);
     return false;
   }
-
+  RENDERER.setFogActive(true);
   GLenum fogMode = GL_EXP;
   GLfloat fogDensity = 0.001f;
   GLfloat fogStart = 0.5f * BZDBCache::worldSize;
@@ -1160,6 +1162,7 @@ static bool setupMapFog()
   glFogfv(GL_FOG_COLOR, fogColor);
   glEnable(GL_FOG);
 
+  RENDERER.setFogColor(fogColor);
   return true;
 }
 
