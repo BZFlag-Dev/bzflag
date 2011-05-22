@@ -50,6 +50,15 @@ extern int debugLevel;
 */
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
+#define ZERO_TOLERANCE 0.00005f
+
+/* (radians <--> degrees) conversion values */
+#define DEG2RAD 0.0174532925199432957692369076848861271344287189
+#define RAD2DEG 57.29577951308232087679815481410517033240547247
+#define DEG2RADf ((float)DEG2RAD)
+#define RAD2DEGf ((float)RAD2DEG)
+
+
 /* seven places of precision is pretty safe, so something less precise */
 #ifdef FLT_EPSILON
 #  define ZERO_TOLERANCE FLT_EPSILON
