@@ -261,7 +261,7 @@ void SceneRenderer::setQuality(int value)
 
   notifyStyleChange();
 
-  if (useQualityValue >= 2) {
+  if (useQualityValue >= 1) {
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     // GL_NICEST for polygon smoothing seems to make some drivers
@@ -273,23 +273,23 @@ void SceneRenderer::setQuality(int value)
     glHint(GL_POLYGON_SMOOTH_HINT, GL_FASTEST);
   }
 
-  if (useQualityValue >= 3)
+  if (useQualityValue >= 2)
     TankSceneNode::setMaxLOD(-1);
   else if (useQualityValue >= 1)
     TankSceneNode::setMaxLOD(3);
   else
     TankSceneNode::setMaxLOD(2);
 
-  if (useQualityValue >= 3)
+  if (useQualityValue >= 2)
     BZDB.set("flagChunks","32");
-  else if (useQualityValue >= 2)
+  else if (useQualityValue >= 1)
     BZDB.set("flagChunks","12");
   else
     BZDB.set("flagChunks","8");
 
-  if (useQualityValue >= 3)
+  if (useQualityValue >= 2)
     BZDB.set("moonSegments","64");
-  else if (useQualityValue >= 2)
+  else if (useQualityValue >= 1)
     BZDB.set("moonSegments","24");
   else
     BZDB.set("moonSegments","12");
@@ -307,13 +307,13 @@ void SceneRenderer::setQuality(int value)
   // It was mainlined in OpenGL Version 1.2
   // (there's also the GL_EXT_separate_specular_color extension)
 #ifdef GL_LIGHT_MODEL_COLOR_CONTROL
-  if (useQualityValue >= 2)
+  if (useQualityValue >= 1)
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
   else
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
 #  else // in case someone includes <GL/glext.h> at some point
 #  ifdef GL_LIGHT_MODEL_COLOR_CONTROL_EXT
-  if (useQualityValue >= 2)
+  if (useQualityValue >= 1)
     glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
 		  GL_SEPARATE_SPECULAR_COLOR_EXT);
   else
@@ -796,7 +796,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
       // if low quality then use stipple -- it's probably much faster
-      if (BZDBCache::blend && (useQualityValue >= 2)) {
+      if (BZDBCache::blend && (useQualityValue >= 1)) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glColor4fv(mirrorColor);
@@ -816,7 +816,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
       frustum.executeView();
       frustum.executeProjection();
       const float extent = BZDBCache::worldSize * 10.0f;
-      if (BZDBCache::blend && (useQualityValue >= 2)) {
+      if (BZDBCache::blend && (useQualityValue >= 1)) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glColor4fv(mirrorColor);
@@ -1184,7 +1184,7 @@ void SceneRenderer::renderPostDimming()
     glColor4f(color[0], color[1], color[2], density);
 
     // if low quality then use stipple -- it's probably much faster
-    if (BZDBCache::blend && (useQualityValue >= 2)) {
+    if (BZDBCache::blend && (useQualityValue >= 1)) {
       glEnable(GL_BLEND);
       glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
       glDisable(GL_BLEND);

@@ -385,7 +385,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
   useColorTexture[1] = boxTopTexture >= 0;
 
   float texutureFactor = BZDB.eval("boxWallTexRepeat");
-  if (renderer->useQuality() >= 3)
+  if (renderer->useQuality() >= 2)
     texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
   while ((node = ((part < 4) ? nodeGen->getNextNode(
@@ -457,7 +457,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
   // Using boxTexHeight since it's (currently) the same and it's already available
   float textureFactor = BZDB.eval("pyrWallTexRepeat");
-  if (renderer->useQuality() >= 3)
+  if (renderer->useQuality() >= 2)
     textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
   while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,

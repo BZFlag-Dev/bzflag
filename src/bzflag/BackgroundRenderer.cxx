@@ -1052,7 +1052,7 @@ void BackgroundRenderer::drawGround()
       groundGState[styleIndex].setState();
     }
 
-    if (RENDERER.useQuality() >= 3) {
+    if (RENDERER.useQuality() >= 2) {
       drawGroundCentered();
     } else {
       glCallList(simpleGroundList[styleIndex]);

@@ -3148,8 +3148,8 @@ bool			addExplosion(const float* _pos,
   // ignore if no prototypes available;
   if (prototypeExplosions.size() == 0) return false;
 
-  // don't show explosions if quality isn't high
-  if (sceneRenderer->useQuality() < 2) return false;
+  // don't show explosions if quality is low
+  if (sceneRenderer->useQuality() < 1) return false;
 
   // don't add explosion if blending or texture mapping are off
   if (!BZDBCache::blend || !BZDBCache::texture)
@@ -6486,8 +6486,9 @@ static void		playingLoop()
     // limit the fps to save battery life by minimizing cpu usage
     if (BZDB.isTrue("saveEnergy")) {
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
-      const float fpsLimit = BZDB.eval("fpsLimit");
-      if ((fpsLimit >= 1.0f) && !isnan(fpsLimit)) {
+      float fpsLimit = BZDB.eval("fpsLimit");
+      if (fpsLimit < 15 || isnan(fpsLimit))
+	fpsLimit = 15;
 	const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
 	if (elapsed > 0.0f) {
 	  const float period = (1.0f / fpsLimit);
@@ -6496,7 +6497,6 @@ static void		playingLoop()
 	    TimeKeeper::sleep(remaining);
 	  }
 	}
-      }
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
 
@@ -6569,7 +6569,7 @@ static void		timeConfigurations()
   BZDB.set("lighting", "1");
   tm.setMaxFilter(OpenGLTexture::Max);
   BZDB.set("texture", tm.getMaxFilterName());
-  sceneRenderer->setQuality(4);
+  sceneRenderer->setQuality(3);
   BZDB.set("dither", "0");
   BZDB.set("shadows", "1");
   BZDB.set("stencilShadows", "1");
