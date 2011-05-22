@@ -226,7 +226,7 @@ void* GameTime::unpack(void* buf) {
   float halfLag;
   buf = nboUnpackDouble(buf, msgTime);
   buf = nboUnpackFloat(buf, halfLag);
-  const double netTime = msgTime + halfLag;
+  const double netTime = msgTime; // NOTE: + halfLag;
 
   // store the value
   const double localTime = getRawTime();

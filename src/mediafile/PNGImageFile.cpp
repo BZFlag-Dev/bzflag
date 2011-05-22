@@ -30,7 +30,7 @@
 // PNGImageFile
 //
 
-unsigned char   PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
+unsigned char PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
 const unsigned char PNGImageFile::MAX_COMPONENTS = 8;
 
@@ -164,7 +164,7 @@ bool PNGImageFile::read(void* buffer)
   in 1, 2, 3, or 4 channels
 */
 
-bool          PNGImageFile::read(void* buffer) {
+bool PNGImageFile::read(void* buffer) {
   PNGChunk* c;
   int bufferPos = getWidth() * getNumChannels() * (getHeight() - 1);
 
@@ -310,9 +310,8 @@ bool PNGImageFile::expand(unsigned char* destination) {
           *(destination + i * 3 + 2) = rgb.blue;
         }
       }
+      break;
     }
-    break;
-
     case 2: {
       for (int i = myWidth - 1; i >= 0; i--) {
         int byteOffset = i / 4 + 1;
@@ -327,9 +326,8 @@ bool PNGImageFile::expand(unsigned char* destination) {
           *(destination + i * 3 + 2) = rgb.blue;
         }
       }
+      break;
     }
-    break;
-
     case 4: {
       for (int i = myWidth - 1; i >= 0; i--) {
         int byteOffset = i / 2 + 1;
@@ -344,9 +342,8 @@ bool PNGImageFile::expand(unsigned char* destination) {
           *(destination + i * 3 + 2) = rgb.blue;
         }
       }
+      break;
     }
-    break;
-
     case 8: {
       if (colorDepth == 3) {
         // colormapped
@@ -361,18 +358,17 @@ bool PNGImageFile::expand(unsigned char* destination) {
         // already in native color
         memcpy(destination, pData + 1, realBufferSize - 1);
       }
+      break;
     }
-    break;
-
     case 16: {
       for (int i = 0; i < myWidth * channels; i++) {
         *(destination + i) = (*(pData + 2 * i + 1));
       }
+      break;
     }
-    break;
-
-    default:
+    default: {
       return false;
+    }
   }
 
   return true;
@@ -407,9 +403,9 @@ bool PNGImageFile::filter() {
   }
 
   switch (filterType) {
-    case FILTER_NONE:
+    case FILTER_NONE: {
       return true;
-
+    }
     case FILTER_SUB: {
       for (int i = 1; i < lineBufferSize; i++, pData++) {
         *pData += *(pData - filterUnitsPerPixel);
@@ -417,7 +413,6 @@ bool PNGImageFile::filter() {
       return true;
       break;
     }
-
     case FILTER_UP: {
       unsigned char* pUp = getLineBuffer(false) + 1;
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
@@ -426,7 +421,6 @@ bool PNGImageFile::filter() {
       return true;
       break;
     }
-
     case FILTER_AVERAGE: {
       unsigned char* pUp = getLineBuffer(false) + 1;
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
@@ -438,7 +432,6 @@ bool PNGImageFile::filter() {
       return true;
       break;
     }
-
     case FILTER_PAETH: {
       unsigned char* pUp = getLineBuffer(false) + 1;
       for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
@@ -457,7 +450,6 @@ bool PNGImageFile::filter() {
       return true;
       break;
     }
-
     default: {
       logDebugMessage(3, "PNGImageFile: unknown filter type (%s)\n", filterType);
       return false;
