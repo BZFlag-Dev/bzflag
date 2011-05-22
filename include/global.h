@@ -40,6 +40,12 @@ enum PlayerType {
 			ComputerPlayer
 };
 
+// types of text messages
+enum MessageType {
+  ChatMessage,
+  ActionMessage
+};
+
 // team info
 const int		NumTeams = 8;
 const int		CtfTeams = 5;

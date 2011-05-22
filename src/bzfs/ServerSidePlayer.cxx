@@ -195,7 +195,7 @@ void bz_ServerSidePlayerHandler::dropFlag(void)
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::sendChatMessage(const char *text, int targetPlayer)
+void bz_ServerSidePlayerHandler::sendChatMessage(const char *text, int targetPlayer, bz_eMessageType type)
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 	if (!player || !text)
@@ -206,12 +206,17 @@ void bz_ServerSidePlayerHandler::sendChatMessage(const char *text, int targetPla
 
 	PlayerId dstPlayer = targetPlayer==BZ_ALLUSERS ? AllPlayers : targetPlayer;
 
-	::sendChatMessage(player->getIndex(),dstPlayer,text);
+	MessageType msgtype = ChatMessage;
+
+	if (type == eActionMessage)
+	  msgtype = ActionMessage;
+
+	::sendChatMessage(player->getIndex(),dstPlayer,text,msgtype);
 }
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamType targetTeam)
+void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamType targetTeam, bz_eMessageType type)
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 	if (!player || !text)
@@ -237,7 +242,12 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 		break;
 	}
 
-	::sendChatMessage(player->getIndex(),dstPlayer,text);
+	MessageType msgtype = ChatMessage;
+
+	if (type == eActionMessage)
+	  msgtype = ActionMessage;
+
+	::sendChatMessage(player->getIndex(),dstPlayer,text,msgtype);
 }
 
 //-------------------------------------------------------------------------
@@ -576,3 +586,12 @@ BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler 
 	removePlayer(playerIndex, NULL, true);
 	return true;
 }
+
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

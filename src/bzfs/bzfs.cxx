@@ -157,7 +157,7 @@ static bool       playerHadWorld   = false;
 bool		  publiclyDisconected = false;
 
 
-void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message);
+void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message, MessageType type = ChatMessage);
 static void dropAssignedFlag(int playerIndex);
 static std::string evaluateString(const std::string&);
 
@@ -1284,7 +1284,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 		       const char *message)
 {
   const PlayerId srcPlayer = playerData->getIndex();
-  std::string actionMsg = "";
+  MessageType type = ChatMessage;
 
   // Check for spoofed /me messages
   if ((strlen(message) >= 3) && (message[0] == '*') && (message[strlen(message)-2] == '\t') && (message[strlen(message)-1] == '*'))
@@ -1317,10 +1317,11 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
       return;
     }
 
-    // format and send it
-    actionMsg = TextUtils::format("* %s %s\t*",
-				playerData->player.getCallSign(), message + 4);
-    message = actionMsg.c_str();
+    // Trim off the command to leave the player's message
+    message = message + 4;
+
+    // Set the message type to an action messsage
+    type = ActionMessage;
   }
 
   // check for a server command
@@ -1330,6 +1331,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
       void *buf, *bufStart = getDirectMessageBuffer();
       buf = nboPackUByte(bufStart, srcPlayer);
       buf = nboPackUByte(buf, dstPlayer);
+      buf = nboPackUByte(buf, type);
       buf = nboPackString(buf, message, strlen(message) + 1);
       Record::addPacket(MsgMessage, (char*)buf - (char*)bufStart, bufStart,
 			 HiddenPacket);
@@ -1353,11 +1355,11 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     return; // bail out
   }
 
-  sendChatMessage(srcPlayer, dstPlayer, message);
+  sendChatMessage(srcPlayer, dstPlayer, message, type);
   return;
 }
 
-void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message)
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, MessageType type)
 {
   bz_ChatEventData_V1 chatData;
   chatData.from = BZ_SERVER;
@@ -1382,10 +1384,10 @@ void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message
     worldEventManager.callEvents(bz_eRawChatMessageEvent,&chatData);
 
   if (chatData.message.size())
-    sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str());
+    sendFilteredMessage(srcPlayer, dstPlayer, chatData.message.c_str(), type);
 }
 
-void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message)
+void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message, MessageType type)
 {
   const char* msg = message;
 
@@ -1424,10 +1426,10 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 
     // don't care if they're real, just care if they're an admin
     if (recipientData && recipientData->accessInfo.isOperator()) {
-      sendMessage(sendingPlayer, recipientPlayer, msg);
+      sendMessage(sendingPlayer, recipientPlayer, msg, type);
       return;
     } else if (recipientPlayer == AdminPlayers) {
-      sendMessage(sendingPlayer, recipientPlayer, msg);
+      sendMessage(sendingPlayer, recipientPlayer, msg, type);
       return;
     }
 
@@ -1435,10 +1437,10 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     return; //bail out
   }
 
-  sendMessage(sendingPlayer, recipientPlayer, msg);
+  sendMessage(sendingPlayer, recipientPlayer, msg, type);
 }
 
-void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
+void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, MessageType type)
 {
   long int msglen = strlen(message) + 1; // include null terminator
   const char *msg = message;
@@ -1458,11 +1460,12 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message)
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
   buf = nboPackUByte(buf, dstPlayer);
+  buf = nboPackUByte(buf, type);
   buf = nboPackString(buf, msg, msglen);
 
   ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
 
-  int len = 2 + msglen;
+  int len = 3 + msglen;
   bool broadcast = false;
 
   if (dstPlayer <= LastRealPlayer) {
@@ -6169,7 +6172,7 @@ int main(int argc, char **argv)
     std::list<PendingChatMessages>::iterator itr = pendingChatMessages.begin();
     while ( itr != pendingChatMessages.end() )
     {
-      sendMessage(itr->from, itr->to, itr->text.c_str());
+      sendMessage(itr->from, itr->to, itr->text.c_str(), itr->type);
       itr++;
     }
     pendingChatMessages.clear();

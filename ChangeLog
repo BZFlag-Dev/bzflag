@@ -3,6 +3,7 @@
 
 BZFlag 2.3.0  "Born Again"
 ----------------------------------------
+* Added message type for properly handling /me actions - Scott Wichser
 * Added BZDB option to hide flags on radar server side - David Anderson
 * Removed /setpass /register /identify - David Anderson
 * Handicap is computed on the server - Alfredo Tupone, Bernt Hansen

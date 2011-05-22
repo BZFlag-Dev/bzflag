@@ -2709,8 +2709,10 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgMessage: {
       PlayerId src;
       PlayerId dst;
+      uint8_t type;
       msg = nboUnpackUByte(msg, src);
       msg = nboUnpackUByte(msg, dst);
+      msg = nboUnpackUByte(msg, type);
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
       TeamColor dstTeam = PlayerIdToTeam(dst);
@@ -2783,15 +2785,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	fullMsg += colorStr;
 
-	// display action messages differently
-	bool isAction = false;
-	if ((text[0] == '*') && (text[1] == ' ') &&
-	    (text[text.size() - 1] == '*') &&
-	    (text[text.size() - 2] == '\t')) {
-	  isAction = true;
-	  text = text.substr(2, text.size() - 4);
-	}
-
 	// direct message to or from me
 	if (dstPlayer) {
 	  //if (fromServer && (origText == "You are now an administrator!"
@@ -2808,16 +2801,16 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      fullMsg += ColorStrings[UnderlineColor];
 
 	    if (srcPlayer == myTank) {
-	      if (isAction) {
-		fullMsg += "[->" + text + "]";
+	      if (MessageType(type) == ActionMessage) {
+		fullMsg += "[->" + dstName + " " + text + "]";
 	      } else {
 		fullMsg += "[->" + dstName + "]";
 		fullMsg += ColorStrings[ResetColor] + " ";
 		fullMsg += ColorStrings[CyanColor] + text;
 	      }
 	    } else {
-	      if (isAction) {
-		fullMsg += "[" + text + "->]";
+	      if (MessageType(type) == ActionMessage) {
+		fullMsg += "[" + srcName + " " + text + "->]";
 	      } else {
 		fullMsg += "[" + srcName + "->]";
 		fullMsg += ColorStrings[ResetColor] + " ";
@@ -2875,8 +2868,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  }
 
 	  // display action messages differently
-	  if (isAction) {
-	    fullMsg += text;
+	  if (MessageType(type) == ActionMessage) {
+	    fullMsg += srcName + " " + text;
 	  } else {
 	    fullMsg += srcName + colorStr + ": " + ColorStrings[CyanColor] + text;
 	  }

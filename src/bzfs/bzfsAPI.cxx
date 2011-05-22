@@ -1260,7 +1260,7 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
   else
     playerIndex = from;
 
-  pendingChatMessages.push_back(PendingChatMessages(dstPlayer,playerIndex,message));
+  pendingChatMessages.push_back(PendingChatMessages(dstPlayer,playerIndex,message,ChatMessage));
 
   if (0)
     sendMessage(playerIndex, dstPlayer, message);

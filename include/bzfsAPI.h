@@ -340,6 +340,12 @@ typedef enum
 #define bz_perm_viewReports  "viewReports"
 #define bz_perm_vote  "vote"
 
+// types of text messages
+typedef enum  {
+  eChatMessage,
+  eActionMessage
+} bz_eMessageType;
+
 typedef enum
 {
   eNoTeam = -1,
@@ -1599,8 +1605,8 @@ public:
   void respawn(void);
   void getCurrentState(bz_PlayerUpdateState *state);
 
-  void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS);
-  void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam);
+  void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS, bz_eMessageType type = eChatMessage);
+  void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam, bz_eMessageType type = eChatMessage);
 
   void dropFlag( void );
   void setMovement(float forward, float turn);

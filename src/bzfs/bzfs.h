@@ -52,20 +52,23 @@ public:
 	int to;
 	int from;
 	std::string text;
+	MessageType type;
 
-	PendingChatMessages ( int t, int f, const std::string &m )
+	PendingChatMessages ( int t, int f, const std::string &m, MessageType y )
 	{
 		to = t;
 		from = f;
 		text = m;
+		type = y;
 	}
 
-	PendingChatMessages ( int t, int f, const char* m )
+	PendingChatMessages ( int t, int f, const char* m, MessageType y )
 	{
 		to = t;
 		from = f;
 		if (m)
 			text = m;
+		type = y;
 	}
 
 	PendingChatMessages ( const PendingChatMessages &m )
@@ -73,6 +76,7 @@ public:
 		to = m.to;
 		from = m.from;
 		text = m.text;
+		type = m.type;
 	}
 };
 
@@ -80,7 +84,8 @@ extern std::list<PendingChatMessages> pendingChatMessages;
 
 extern void sendMessage(int	 playerIndex,
 			PlayerId    dstPlayer,
-			const char *message);
+			const char *message,
+			MessageType	   type = ChatMessage);
 extern void removePlayer(int	 playerIndex,
 			 const char *reason,
 			 bool	notify = true);
@@ -163,7 +168,7 @@ void startCountdown ( int delay, float limit, const char *buyWho );
 
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 void playerAlive(int playerIndex);
-void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message);
+void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, MessageType type);
 
 void makeWalls ( void );
 
