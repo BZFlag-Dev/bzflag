@@ -87,7 +87,7 @@ class BoltSceneNode : public ShotSceneNode {
     friend class BoltRenderNode;
 
   private:
-	bool		invisible;
+    bool		invisible;
     bool		drawFlares;
     bool		texturing;
     bool		colorblind;
@@ -98,7 +98,7 @@ class BoltSceneNode : public ShotSceneNode {
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;
     BoltRenderNode	renderNode;
-	float		azimuth, elevation, length;
+    float		azimuth, elevation, length;
 };
 
 #endif // BZF_BOLT_SCENE_NODE_H

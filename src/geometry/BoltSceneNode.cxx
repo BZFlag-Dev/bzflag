@@ -32,13 +32,13 @@
 #include "SceneRenderer.h"
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool super) :
+				isSuper(super),
+				invisible(false),
 				drawFlares(false),
 				texturing(false),
 				colorblind(false),
 				size(1.0f),
 				renderNode(this),
-				isSuper(super),
-				invisible(false),
 				azimuth(0),
 				elevation(0),
 				length(1.0f)
