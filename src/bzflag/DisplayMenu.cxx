@@ -144,6 +144,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options->push_back(std::string("Low"));
   options->push_back(std::string("Medium"));
   options->push_back(std::string("High"));
+  options->push_back(std::string("Experimental"));
   option->update();
   listHUD.push_back(option);
 
@@ -416,7 +417,7 @@ void			DisplayMenu::callback(HUDuiControl* w, void* data) {
   }
   case '6':
     sceneRenderer->setQuality(list->getIndex());
-    if (list->getIndex() > 2) {
+    if (list->getIndex() > 3) {
       BZDB.set("zbuffer","1");
       setSceneDatabase();
     }

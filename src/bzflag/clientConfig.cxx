@@ -42,6 +42,7 @@ void initConfigData ( void )
 	configQualityValues.push_back(std::string("low"));
 	configQualityValues.push_back(std::string("medium"));
 	configQualityValues.push_back(std::string("high"));
+	configQualityValues.push_back(std::string("experimental"));
 
 	configViewValues.push_back(std::string("normal"));
 	configViewValues.push_back(std::string("stereo"));

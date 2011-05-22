@@ -176,16 +176,17 @@ void TankGeometryMgr::buildLists()
   const bool animated = BZDBCache::animatedTreads;
 
   // setup the quality level
-  const int divisionLevels[3][2] = { // wheel divs, tread divs
-    {8, 16},  // low
-    {12, 24}, // med
-    {16, 32}  // high
+  const int divisionLevels[4][2] = { // wheel divs, tread divs
+    {4, 4},   // low
+    {8, 16},  // med
+    {12, 24}, // high
+    {16, 32}  // experimental
   };
   int quality = RENDERER.useQuality();
   if (quality < 0) {
     quality = 0;
-  } else if (quality > 2) {
-    quality = 2;
+  } else if (quality > 3) {
+    quality = 3;
   }
   int wheelDivs = divisionLevels[quality][0];
   int treadDivs = divisionLevels[quality][1];

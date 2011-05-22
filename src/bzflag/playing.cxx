@@ -6576,7 +6576,7 @@ static void		timeConfigurations()
   BZDB.set("lighting", "1");
   tm.setMaxFilter(OpenGLTexture::Max);
   BZDB.set("texture", tm.getMaxFilterName());
-  sceneRenderer->setQuality(3);
+  sceneRenderer->setQuality(4);
   BZDB.set("dither", "0");
   BZDB.set("shadows", "1");
   BZDB.set("stencilShadows", "1");
