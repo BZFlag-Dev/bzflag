@@ -116,7 +116,7 @@ extern float	    clockAdjust;
 extern float	    roamDZoom;
 extern bool	     roamButton;
 
-#define MAX_DT_LIMIT 0.05f
+#define MAX_DT_LIMIT 0.1f
 #define MIN_DT_LIMIT 0.001f
 
 #endif // BZF_PLAYING_H
