@@ -4970,11 +4970,15 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
      bool retry = false;
 
      RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
-     if (retry) // go untill we don't get a retry
+     if (retry) // go until we don't get a retry
      {
        bool r = retry;
-       while (r)
+       int i = 0; // TODO, don' use a cheap count, assume those that don't have data are players and just send them the stuff.
+       while (r || i != 5)
+       {
 	 e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&r);
+	 i++;
+       }
      }
 
      if ((e != ReadAll) && (e != ReadPart)) 
