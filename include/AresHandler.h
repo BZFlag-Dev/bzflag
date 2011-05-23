@@ -18,8 +18,14 @@
 
 /* common implementation headers */
 #include "network.h"
-#if defined(BUILD_ARES)
+#if defined(_WIN32) && defined(BUILD_ARES)
 #include "../src/other/ares/ares.h"
+#elif !defined(_WIN32) && defined(LOCAL_CARES)
+extern "C" {
+#include "bzares.h"	 
+#include "../src/other/ares/ares.h"
+#include "bzares_version.h"
+}
 #else
 #include <ares.h>
 #endif
