@@ -4980,6 +4980,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
        // it's a player
        if (!MakePlayer(netHandler))
 	 peer.deleteMe = true;
+       else
+	 peer.player = netHandler->getPlayerID();
 
        return;
      }
