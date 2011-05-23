@@ -451,7 +451,7 @@ static const char *match (lua_State *L,
   for (;;) {
 #if defined(DEBUG)
       printf("s: |%s| stck: %d c: %d  ",
-             s, stack - getstackbase(L, ptop), captop);
+             s, (int)(stack - getstackbase(L, ptop)), captop);
       printinst(op, p);
 #endif
     switch ((Opcode)p->i.code) {
