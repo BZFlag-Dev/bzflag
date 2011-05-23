@@ -150,11 +150,11 @@ public:
 
   const RenderNodeList& getShadowList() const;
 
-  bool		isFogActive() const { return fogActive; }
-  void		setFogActive(bool b) { fogActive = b; }
+  const bool		isFogActive() const { return fogActive; }
+  void			setFogActive(bool b) { fogActive = b; }
   
   const fvec4&	getFogColor() const { return fogColor; }
-  const void	setFogColor( float *color) { fogColor = color; }
+  void	setFogColor( float *color) { fogColor = color; }
 
 
   void		render(bool lastFrame = true,
