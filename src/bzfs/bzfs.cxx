@@ -4971,18 +4971,24 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 
      RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
      if (retry) // try one more time, just in case it was blocked
+     {
+       int retries = 2;
+       if (BZDB.isSet("_maxConnectionRetries"))
+	retries = (int) BZDB.eval("_maxConnectionRetries");
+
+       retry = false;
+       for ( int t = 0; t < retries; t++)
+       {
 	 e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
+	 if (!retry)
+	   break;
+       }
+     }
 
      if ((e != ReadAll) && (e != ReadPart)) 
      {
-       // assume they are a player and haven't had the chance to send data yet, HTTP would have sent data by now (maybe)
        netHandler->flushData();
-       // it's a player
-       if (!MakePlayer(netHandler))
-	 peer.deleteMe = true;
-       else
-	 peer.player = netHandler->getPlayerID();
-
+       peer.deleteMe = true;
        return;
      }
      else
