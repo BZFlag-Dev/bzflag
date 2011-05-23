@@ -234,11 +234,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{57FFDC0F-E8B8-478D-8E12-474EDD2B381C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "customflagsample", "..\..\plugins\customflagsample\customflagsample.vcproj", "{1F43077E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
+	EndProjectSection
 EndProject
 Global
-	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
-		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
@@ -658,5 +658,8 @@ Global
 		{453C1FF9-45D3-4C3A-8A51-5E1FBE65EF7E} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 		{1F43075E-8AF6-486F-AEDF-6B350A6CE141} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 		{1F43077E-8AF6-486F-AEDF-6B350A6CE141} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
 	EndGlobalSection
 EndGlobal
