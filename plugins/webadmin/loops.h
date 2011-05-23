@@ -46,8 +46,16 @@ class LoopHandler : public TemplateCallbackClass {
     virtual void terminate(void) {return;}
 
     // versions that ensure that the item is valid
-    virtual void getKey(size_t item, std::string& data, const std::string& key) {};
-    virtual bool getIF(size_t item, const std::string& key) {return false;}
+    virtual void getKey(size_t item, std::string& data, const std::string& key) {
+      UNUSED(item);
+      UNUSED(data);
+      UNUSED(key);
+    }
+    virtual bool getIF(size_t item, const std::string& key) {
+      UNUSED(item);
+      UNUSED(key);
+      return false;
+    }
 
     virtual void setSize(void) {return;}   // called by the loop callback for each new loop
 

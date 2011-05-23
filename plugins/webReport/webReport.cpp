@@ -163,7 +163,6 @@ bool WebReport::handleAuthedRequest(int level, const HTTPRequest& request, HTTPR
 
   reply.returnCode = HTTPReply::e200OK;
   std::string& page = reply.body;
-  int sessionID = request.sessionID;
 
   std::string action;
   request.getParam("action", action);

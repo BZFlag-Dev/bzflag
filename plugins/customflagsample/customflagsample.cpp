@@ -15,6 +15,8 @@
 
 #include "bzfsAPI.h"
 
+#include <string.h>
+
 BZ_GET_PLUGIN_VERSION
 
 
@@ -31,7 +33,7 @@ class CustomFlagSampleHandler : public bz_EventHandler {
 
         case bz_eFlagTransferredEvent: {
           bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;
-          if (fte->flagType == "CF") {
+          if (strcmp(fte->flagType, "CF") == 0) {
             bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag transferred!");
           }
           break;
@@ -39,7 +41,7 @@ class CustomFlagSampleHandler : public bz_EventHandler {
 
         case bz_eFlagGrabbedEvent: {
           bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;
-          if (fge->flagType == "CF") {
+          if (strcmp(fge->flagType, "CF") == 0) {
             bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag grabbed!");
           }
           break;
@@ -47,7 +49,7 @@ class CustomFlagSampleHandler : public bz_EventHandler {
 
         case bz_eFlagDroppedEvent: {
           bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;
-          if (fde->flagType == "CF") {
+          if (strcmp(fde->flagType, "CF") == 0) {
             bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Custom Flag dropped!");
           }
           break;

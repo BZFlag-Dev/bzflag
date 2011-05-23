@@ -79,13 +79,15 @@ int generateSessionID(void) {
 
 class HTTPConnection {
   public:
-    HTTPConnection() : connectionID(-1),
-      requestComplete(false),
-      headerComplete(false),
-      contentSize(0),
-      bodyEnd(0),
-      request(eUnknown),
-      sessionID(0) {};
+    HTTPConnection()
+    : connectionID(-1)
+    , contentSize(0)
+    , bodyEnd(0)
+    , headerComplete(false)
+    , requestComplete(false)
+    , sessionID(0)
+    , request(eUnknown)
+    {};
 
     void flush(void) {
       body = "";
@@ -226,8 +228,8 @@ class HTTPConnection {
               }
               return *this;
             }
-            const size_t size(void)const {return bufferSize;}
-            const char* getData(void) const { return data;}
+            size_t         size() const { return bufferSize; }
+            const char* getData() const { return data; }
 
           protected:
             size_t bufferSize;
@@ -483,8 +485,6 @@ void HTTPServer::pending(int connectionID, void* d, unsigned int s) {
     size_t headerEnd = find_first_substr(connection.currentData, "\r\n\r\n");
 
     if (!connection.headerComplete && headerEnd != std::string::npos) {
-      bool done = false;  // ok we have the header and we don't haven't processed it yet
-
       // read past the command
       size_t p = find_first_substr(connection.currentData, "\r\n");
       p += 2;
@@ -680,14 +680,15 @@ bool HTTPServer::processRequest(HTTPRequest& request, int connectionID) {
   }
 
   switch (request.request) {
-    case ePut:
+    case ePut: {
       if (!vdir || !vdir->supportPut()) {
         send403Error(connectionID);
         break;
       }
+    }
     case eHead:
     case eGet:
-    case ePost:
+    case ePost: {
       if (!vdir) {
         generateIndex(connectionID, request);
       }
@@ -695,15 +696,21 @@ bool HTTPServer::processRequest(HTTPRequest& request, int connectionID) {
         return generatePage(vdir, connectionID, request);
       }
       break;
-
-    case eOptions:
+    }
+    case eOptions: {
       sendOptions(connectionID, vdir ? vdir->supportPut() : false);
       break;
-
+    }
     case eDelete:
-    case eConnect:
+    case eConnect: {
       send501Error(connectionID);
       break;
+    }
+    case eUnknown:
+    case eTrace:
+    case eOther: {
+      break;
+    }
   }
 
   return false;
@@ -1021,7 +1028,7 @@ void HTTPConnection::HTTPTask::generateBody(HTTPReply& r, bool noBody) {
   }
 
   if (r.getBodySize()) {
-    pageBuffer += format("Content-Length: %d\n", r.getBodySize());
+    pageBuffer += format("Content-Length: %d\n", (int)r.getBodySize());
 
     pageBuffer += "Content-Type: ";
     if (r.docType == HTTPReply::eOther && r.otherMimeType.size()) {

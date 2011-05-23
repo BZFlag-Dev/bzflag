@@ -118,7 +118,7 @@ BZF_PLUGIN_CALL int bz_Load(const char* commandLine) {
 }
 
 BZF_PLUGIN_CALL int bz_Unload(void) {
-  bz_debugMessagef(2, "removing %d simple bot", bots.size());
+  bz_debugMessagef(2, "removing %d simple bot", (int)bots.size());
   for (size_t i = 0; i < bots.size(); i++) {
     bz_removeServerSidePlayer(bots[i]->getPlayerID(), bots[i]);
   }
@@ -136,6 +136,7 @@ SimpleBotHandler::SimpleBotHandler() {
 }
 
 void SimpleBotHandler::added(int playerIndex) {
+  UNUSED(playerIndex);
   bz_debugMessage(3, "SimpleBotHandler::added");
   std::string name = "dante_";
   name += bz_format("%d", playerID);

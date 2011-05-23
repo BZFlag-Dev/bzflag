@@ -67,6 +67,10 @@ class PhoenixEvents : public bz_EventHandler {
           }
         }
         break;
+
+        default: {
+          break;
+        }
       }
     }
 };

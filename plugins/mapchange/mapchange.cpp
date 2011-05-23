@@ -443,10 +443,16 @@ void MapChangeEventHandler::process(bz_EventData* eventData) {
       update->handled = true;
     }
     break;
+
+    default: {
+      break;
+    }
   }
 }
 
 bool MapChangeCommandHandler::handle(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList* params) {
+  UNUSED(message);
+
   std::string cmd;
   tolower(command.c_str(), cmd);
 

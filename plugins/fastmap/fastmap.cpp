@@ -36,6 +36,7 @@ class Fastmap : public BZFSHTTP, public bz_EventHandler {
     virtual bool hide(void) { return true; }
 
     virtual bool handleRequest(const HTTPRequest& request, HTTPReply& reply) {
+      (void)request;
       reply.returnCode = HTTPReply::e200OK;
       reply.docType = HTTPReply::eOctetStream;
 

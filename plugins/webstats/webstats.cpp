@@ -390,7 +390,7 @@ void WebStats::keyCallback(std::string& data, const std::string& key) {
   }
   else if (key == "totalplayers") {
     size_t count = registeredPlayerMap.size() + nonRegedPlayerMap.size();
-    data = format("%d", count);
+    data = format("%d", (int)count);
   }
   else if (key == "joins") {
     data = format("%d", joins);
@@ -402,16 +402,16 @@ void WebStats::keyCallback(std::string& data, const std::string& key) {
     data = format("%d", deaths);
   }
   else if (key == "uniquereged") {
-    data = format("%d", registeredPlayerMap.size());
+    data = format("%d", (int)registeredPlayerMap.size());
   }
   else if (key == "uniqueunreged") {
-    data = format("%d", nonRegedPlayerMap.size());
+    data = format("%d", (int)nonRegedPlayerMap.size());
   }
   else if (key == "datainb") {
-    data = format("%d", dataIn);
+    data = format("%d", (int)dataIn);
   }
   else if (key == "dataoutb") {
-    data = format("%d", dataOut);
+    data = format("%d", (int)dataOut);
   }
   else if (key == "datainkb") {
     data = format("%f", dataIn / 1024.0);
@@ -432,7 +432,7 @@ void WebStats::keyCallback(std::string& data, const std::string& key) {
     data = format("%f", dataOut / 1024.0 / 1024.0 / 1024.0);
   }
   else if (key == "totaltransferb") {
-    data = format("%f", (dataOut + dataIn));
+    data = format("%f", (float)(dataOut + dataIn));
   }
   else if (key == "totaltransferkb") {
     data = format("%f", (dataOut + dataIn) / 1024.0);
@@ -874,7 +874,6 @@ void WebStats::doFlagReport(std::string& page, int flagID) {
 
 //void WebStats::getURLData(const char* url, int requestID, const URLParams &paramaters, bool get)
 bool WebStats::handleRequest(const HTTPRequest& request, HTTPReply& reply) {
-  bool evenLine = false;
   groupLoop = 0;
   flagHistoryLoop = 0;
   playeRecord = NULL;

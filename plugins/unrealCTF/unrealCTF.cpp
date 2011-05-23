@@ -234,10 +234,15 @@ void UnrealCTFEventHandler::process(bz_EventData* eventData) {
     }
     break;
 
-    case bz_eWorldFinalized:
+    case bz_eWorldFinalized: {
       gotFlags = false;
       checkFlags();
       break;
+    }
+
+    default: {
+      break;
+    }
   }
 }
 

@@ -72,6 +72,12 @@
 #define _ATTRIBUTE23 __attribute__ ((__format__ (__printf__, 2, 3)))
 #define _ATTRIBUTE12 __attribute__ ((__format__ (__printf__, 1, 2)))
 
+/** for marking unused variables and return values */
+#ifndef UNUSED
+#  define UNUSED(x) ((void)(x))
+#endif
+
+
 #ifdef __cplusplus
 #  ifndef DEFINED_FORCE_CAST
 #    define DEFINED_FORCE_CAST

@@ -35,6 +35,12 @@
 #endif
 
 
+/** for declaring unused variables (to avoid warnings) */
+#ifndef UNUSED
+#  define UNUSED(x) ((void)(x))
+#endif
+
+
 /**
  * common declaration wrapping
  */
