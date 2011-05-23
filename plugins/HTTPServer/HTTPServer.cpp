@@ -864,11 +864,11 @@ bool HTTPConnection::update(void) {
     }
   }
 
-  std::vector<size_t>::reverse_iterator itr = killList.rbegin();
-  while (itr != killList.rend()) {
-    size_t offset = *itr;
+  std::vector<size_t>::reverse_iterator ritr = killList.rbegin();
+  while (ritr != killList.rend()) {
+    size_t offset = *ritr;
     processingTasks.erase(processingTasks.begin() + offset);
-    itr++;
+    ritr++;
   }
 
   // check the pending to see if they should be restarted
@@ -876,23 +876,23 @@ bool HTTPConnection::update(void) {
   while (pendingTasks.size() && pendingItr != pendingTasks.end()) {
     PendingHTTPTask& pendingTask = *pendingItr;
 
-    BZFSHTTP* vdir = NULL;
+    BZFSHTTP* httpvdir = NULL;
 
     VirtualDirs::iterator itr = virtualDirs.find(pendingTask.request.vdir);
 
     if (itr != virtualDirs.end()) {
-      vdir = itr->second;
+      httpvdir = itr->second;
     }
 
-    if (!vdir) {
+    if (!httpvdir) {
       std::vector<PendingHTTPTask>::iterator t = pendingItr;
       t++;
       pendingTasks.erase(pendingItr);
       pendingItr = t;
     }
     else {
-      if (vdir->resumeTask(pendingTask.request.requestID)) {
-        if (vdir->handleRequest(pendingTask.request, pendingTask.reply)) {
+      if (httpvdir->resumeTask(pendingTask.request.requestID)) {
+        if (httpvdir->handleRequest(pendingTask.request, pendingTask.reply)) {
           // if it is done and fire if off
           pendingTask.reply.cookies["SessionID"] = format("%d", pendingTask.request.sessionID);
           pendingTask.generateBody(pendingTask.reply, pendingTask.request.request == eHead);

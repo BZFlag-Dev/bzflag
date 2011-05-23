@@ -803,8 +803,8 @@ void WebStats::initReport(void) {
   bz_APIIntList* players = bz_getPlayerIndexList();
 
   for (int i = 0; i < (int)players->size(); i++) {
-    int player = players->get(i);
-    bz_BasePlayerRecord* rec = bz_getPlayerByIndex(player);
+    int playerID = players->get(i);
+    bz_BasePlayerRecord* rec = bz_getPlayerByIndex(playerID);
 
     if (rec) {
       if (teamSort.find(rec->team) == teamSort.end()) {

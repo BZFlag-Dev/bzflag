@@ -173,9 +173,9 @@ void WebAdmin::fillPageList(std::vector<std::string> &pages) {
 void WebAdmin::buildAuthPermsFromPages(void) {
   std::vector<std::string> pages;
   fillPageList(pages);
-  for (size_t i = 0; i < pages.size(); i++) {
+  for (size_t p = 0; p < pages.size(); p++) {
     TemplateMetaData meta;
-    templateSystem.getTemplateFileMetaData(meta, pages[i].c_str());
+    templateSystem.getTemplateFileMetaData(meta, pages[p].c_str());
     if (meta.exists("RequirePerm")) {
       std::vector<std::string> items = meta.get("RequirePerm");
       for (size_t i = 0; i < items.size(); i++) {
