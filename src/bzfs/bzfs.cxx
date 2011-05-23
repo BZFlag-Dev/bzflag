@@ -4970,29 +4970,18 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
      bool retry = false;
 
      RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
-     if (retry) // go until we don't get a retry
-     {
-       bool r = retry;
-       int i = 0; // TODO, don' use a cheap count, assume those that don't have data are players and just send them the stuff.
-       while (r || i != 5)
-       {
-	 e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&r);
-	 i++;
-       }
-     }
+     if (retry) // try one more time, just in case it was blocked
+	 e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
 
      if ((e != ReadAll) && (e != ReadPart)) 
      {
-       // there was an error and they arn't a player, kill them
-       if (e == ReadError)
-	 nerror("error on read");
-       else
-       {
-	 if (e == ReadHuge)
-	   logDebugMessage(1,"socket [%d] sent huge packet length, possible attack\n", sockFD);
+       // assume they are a player and haven't had the chance to send data yet, HTTP would have sent data by now (maybe)
+       netHandler->flushData();
+       // it's a player
+       if (!MakePlayer(netHandler))
 	 peer.deleteMe = true;
-	 return;
-       }
+
+       return;
      }
      else
      {
