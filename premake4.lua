@@ -111,45 +111,17 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-configuration 'release'
+configuration 'release*'
   defines { 'NDEBUG' }
   flags   { 'ExtraWarnings', 'OptimizeSpeed' }
 
-configuration 'debug'
+configuration 'debug*'
   defines { 'DEBUG', '_DEBUG', 'DEBUG_RENDERING' }
   flags   { 'ExtraWarnings', 'FatalWarnings', 'Symbols' }
+  targetsuffix '-debug'
 
 configuration 'linux'
   buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
---CONFIG.ares.need_build = true -- FIXME -- testing
-
--- CONFIG.glew.need_build = true -- FIXME -- testing
-
---[[
-
-if (not os.is('windows')) then -- FIXME -- check for vs* ?
-  solution 'bz'
-  local function setup_lib_build(name)
-    if (CONFIG[name].need_build) then
-      prebuildcommands(
-        'cd '..TOPDIR..'/other_src/; sh build_'..name..'.sh'
-      )
-    end
-  end
-  setup_lib_build('ares')
-  setup_lib_build('curl')
-  setup_lib_build('ftgl')
-  setup_lib_build('freetype')
-  setup_lib_build('glew')
-  setup_lib_build('regex')
-  setup_lib_build('zlib')
-end
---]]
-
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

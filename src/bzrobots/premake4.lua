@@ -63,9 +63,6 @@ project 'bzrobots'
 configuration 'not windows'
   linkoptions { '-export-dynamic' } -- -static' }
 
-configuration 'debug'
-  targetsuffix '-debug'
-
 configuration 'not gmake'
   targetdir(BINDIR)
 

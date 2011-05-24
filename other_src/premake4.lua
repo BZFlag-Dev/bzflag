@@ -27,7 +27,7 @@ if (CONFIG.glew.need_build) then
     prebuildcommands([[@(cd glew; \
       make lib \
     )]])
-    postbuildcommonds('postbuild glew')
-    prelinkcommonds('postbuild glew')
+    postbuildcommonds('echo postbuild glew')
+    prelinkcommonds('echo prelink glew')
 end
   

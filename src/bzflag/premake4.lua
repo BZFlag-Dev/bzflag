@@ -122,9 +122,6 @@ project 'bzflag'
     'stars.cpp',                    'stars.h',
   }
 
-configuration 'debug'
-  targetsuffix '-debug'
-
 configuration 'not gmake'
   targetdir(BINDIR)
 

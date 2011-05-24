@@ -28,8 +28,5 @@ project 'bzadmin'
     'UIMap.cpp',         'UIMap.h',
   }
 
-configuration 'debug'
-  targetsuffix '-debug'
-
 configuration 'not gmake'
   targetdir(BINDIR)
