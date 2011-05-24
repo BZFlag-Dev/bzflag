@@ -197,6 +197,7 @@ void ServerControl::Event( bz_EventData *eventData )
       case bz_eTickEvent:
 	now = bz_getCurrentTime();
 	if ((now - lastTime) < 3.0f) return;
+	bz_debugMessagef(3, "serverControl: tick event, check for shutdown request");
 	lastTime = now;
 	checkShutdown();
 	if (banFilename != "" )
