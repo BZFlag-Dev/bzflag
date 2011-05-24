@@ -971,7 +971,10 @@ StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 6.5f;
+
 	radius = 0.125f;
+	if (RENDERER.useQuality() >= 3)
+		radius = 0.001f;
 
 
 	OpenGLGStateBuilder gstate;

@@ -63,6 +63,8 @@ BZDBCache::Float BZDBCache::flagPoleSize;
 BZDBCache::Float BZDBCache::flagPoleWidth;
 BZDBCache::Float BZDBCache::maxLOD;
 
+BZDBCache::Float BZDBCache::gmSize;
+
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
 
@@ -134,6 +136,7 @@ void BZDBCache::init()
   BZDB.addCallback(StateDatabase::BZDB_FLAGRADIUS, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGPOLESIZE, serverCallback, NULL);
   BZDB.addCallback(StateDatabase::BZDB_FLAGPOLEWIDTH, serverCallback, NULL);
+  BZDB.addCallback(StateDatabase::BZDB_GMSIZE, serverCallback, NULL);
 
   drawCelestial = BZDB.isTrue(StateDatabase::BZDB_DRAWCELESTIAL);
   drawClouds = BZDB.isTrue(StateDatabase::BZDB_DRAWCLOUDS);
@@ -154,6 +157,8 @@ void BZDBCache::init()
   flagRadius = getGoodPosValue(flagRadius,StateDatabase::BZDB_FLAGRADIUS);
   flagPoleSize = getGoodPosValue(flagPoleSize,StateDatabase::BZDB_FLAGPOLESIZE);
   flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
+
+  gmSize = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_GMSIZE);
 
   update();
 }
@@ -261,6 +266,9 @@ void BZDBCache::serverCallback(const std::string& name, void *)
   }
   else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH) {
     flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
+  }
+  else if (name == StateDatabase::BZDB_GMSIZE) {
+    gmSize = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_GMSIZE);
   }
 }
 

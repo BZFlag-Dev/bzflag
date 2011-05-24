@@ -123,6 +123,7 @@ const std::string StateDatabase::BZDB_FOGCOLOR		   = std::string("_fogColor");
 const std::string StateDatabase::BZDB_FRICTION		   = std::string("_friction");
 const std::string StateDatabase::BZDB_GMACTIVATIONTIME	   = std::string("_gmActivationTime");
 const std::string StateDatabase::BZDB_GMADLIFE		   = std::string("_gmAdLife");
+const std::string StateDatabase::BZDB_GMSIZE		   = std::string("_gmSize");
 const std::string StateDatabase::BZDB_GMTURNANGLE	   = std::string("_gmTurnAngle");
 const std::string StateDatabase::BZDB_GRAVITY		   = std::string("_gravity");
 const std::string StateDatabase::BZDB_HANDICAPSCOREDIFF    = std::string("_handicapScoreDiff");

@@ -97,7 +97,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   lastPuff = currentTime;
   puffTime = BZDB.eval("gmPuffTime");
   if (RENDERER.useQuality() >= 3)
-    puffTime /= 10.0f;
+    puffTime /= (20.0f + ((float)bzfrand()* 10.0f));
 }
 
 GuidedMissileStrategy::~GuidedMissileStrategy()

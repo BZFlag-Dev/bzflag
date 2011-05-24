@@ -86,6 +86,8 @@ class BZDBCache
     static Float flagPoleSize;
     static Float flagPoleWidth;
 
+    static Float gmSize;
+
     static Float hudGUIBorderOpacityFactor;
 
   public:

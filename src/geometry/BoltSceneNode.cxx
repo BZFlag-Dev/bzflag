@@ -317,9 +317,7 @@ void drawFin ( float maxRad, float finRadius, float boosterLen, float finForeDel
 void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 {
 	// bzdb these 2? they control the shot size
-	float gmMissleSize = 1.5f;
-	if (BZDB.isSet("_gmSize"))
-		gmMissleSize = BZDB.eval("_gmSize");
+	float gmMissleSize = BZDBCache::gmSize;
 
 	float len = sceneNode->length;
 

@@ -6574,6 +6574,7 @@ static void		timeConfigurations()
   BZDB.set("shadows", "1");
   BZDB.set("stencilShadows", "1");
   BZDB.set("radarStyle", "3");
+  BZDB.set("shotLength", "6");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
@@ -6594,6 +6595,7 @@ static void		timeConfigurations()
   printError("  no Blend");
   BZDB.set("blend", "1");
   BZDB.set("texture", "0");
+  BZDB.set("shotLength", "0");
   if (timeConfiguration(true) < MaxFrameTime) return;
   if (timeConfiguration(false) < MaxFrameTime) return;
 
