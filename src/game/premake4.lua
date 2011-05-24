@@ -2,7 +2,7 @@
 project   'libGame'
   targetname 'Game'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'BZDBCache.cpp',
     'BZDBNames.cpp',

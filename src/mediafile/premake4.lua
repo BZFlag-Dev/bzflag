@@ -2,7 +2,7 @@
 project   'libMediaFile'
   targetname 'MediaFile'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'AudioFile.cpp',     'AudioFile.h',
     'ImageFile.cpp',     'ImageFile.h',

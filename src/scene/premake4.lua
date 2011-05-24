@@ -2,7 +2,7 @@
 project   'libScene'
   targetname 'Scene'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'BSPSceneDatabase.cpp',
     'Occluder.cpp',         'Occluder.h',

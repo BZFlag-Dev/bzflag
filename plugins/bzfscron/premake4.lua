@@ -2,7 +2,7 @@
 project 'bzfscron'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'bzfscron.cpp'
   }

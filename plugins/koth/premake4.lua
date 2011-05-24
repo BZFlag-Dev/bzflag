@@ -2,7 +2,7 @@
 project 'koth'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'koth.cpp'
   }

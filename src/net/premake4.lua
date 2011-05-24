@@ -2,7 +2,7 @@
 project   'libNet'
   targetname 'Net'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'Address.cpp',
     'AresHandler.cpp',

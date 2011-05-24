@@ -12,7 +12,7 @@ end
 
 project 'bzrobots'
   kind 'WindowedApp'
-  objdir '.obj'
+  objdir '.objs'
   includedirs { '.', '../bzflag', '../clientbase' }
 --  buildoptions '`python-config --cflags`'
 --  linkoptions  '`python-config --ldflags`'

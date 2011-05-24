@@ -2,7 +2,7 @@
 project 'playHistoryTracker'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'playHistoryTracker.cpp'
   }

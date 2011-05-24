@@ -2,7 +2,7 @@
 project 'killall'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'killall.cpp'
   }

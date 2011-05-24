@@ -2,7 +2,7 @@
 project 'teamflagreset'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'teamflagreset.cpp'
   }

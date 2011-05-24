@@ -2,5 +2,5 @@
 project   'libDate'
   targetname 'Date'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files { 'buildDate.cpp' }

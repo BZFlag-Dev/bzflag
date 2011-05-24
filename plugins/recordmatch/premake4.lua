@@ -2,7 +2,7 @@
 project 'recordmatch'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'recordmatch.cpp'
   }

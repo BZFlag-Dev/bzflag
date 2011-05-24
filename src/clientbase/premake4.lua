@@ -2,7 +2,7 @@
 project   'libClientBase'
   targetname 'ClientBase'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'ActionBinding.cpp',              'ActionBinding.h',
     'BaseLocalPlayer.cpp',            'BaseLocalPlayer.h',

@@ -2,7 +2,7 @@
 project 'hiddenAdmin'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'hiddenAdmin.cpp'
   }

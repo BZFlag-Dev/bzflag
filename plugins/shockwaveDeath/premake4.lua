@@ -2,7 +2,7 @@
 project 'shockwaveDeath'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'shockwaveDeath.cpp'
   }

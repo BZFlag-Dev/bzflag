@@ -2,7 +2,7 @@
 project 'webstats'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'webstats.cpp'
   }

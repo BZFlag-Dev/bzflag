@@ -2,7 +2,7 @@
 project 'webadmin'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'webadmin.cpp'
   }

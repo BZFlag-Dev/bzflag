@@ -3,7 +3,7 @@ include 'lua'
 
 project 'bzfs'
   kind 'ConsoleApp'
-  objdir '.obj'
+  objdir '.objs'
   links {
     'libGame',
     'libObstacle',

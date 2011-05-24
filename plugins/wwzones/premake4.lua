@@ -2,7 +2,7 @@
 project 'wwzones'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'wwzones.cpp'
   }

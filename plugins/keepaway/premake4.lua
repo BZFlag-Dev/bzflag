@@ -2,7 +2,7 @@
 project 'keepaway'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'keepaway.cpp'
   }

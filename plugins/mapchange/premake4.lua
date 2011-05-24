@@ -2,7 +2,7 @@
 project 'mapchange'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'mapchange.cpp'
   }

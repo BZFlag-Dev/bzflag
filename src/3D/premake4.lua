@@ -2,7 +2,7 @@
 project   'lib3D'
   targetname '3D'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'Model.cpp',
     'FontManager.cpp',

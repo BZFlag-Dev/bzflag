@@ -2,7 +2,7 @@
 project 'RogueGenocide'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'RogueGenocide.cpp'
   }

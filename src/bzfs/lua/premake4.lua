@@ -2,6 +2,7 @@
 project 'libLuaServer'
   targetname 'LuaServer'
   kind 'StaticLib'
+  objdir '.objs'
   files {
     'CallIns.cpp',   'CallIns.h',
     'CallOuts.cpp',  'CallOuts.h',
@@ -12,6 +13,5 @@ project 'libLuaServer'
     'SlashCmd.cpp',  'SlashCmd.h',
   }
   includedirs { '../..', '../../lua' }
-  objdir('.obj')
 
 

@@ -1,7 +1,7 @@
 
 project 'bzadmin'
   kind 'ConsoleApp'
-  objdir '.obj'
+  objdir '.objs'
   defines { 'BUILDING_BZADMIN' }
   includedirs { '.', '../bzflag', '../clientbase' }
   links {

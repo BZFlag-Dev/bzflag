@@ -2,7 +2,7 @@
 project 'unrealCTF'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'unrealCTF.cpp'
   }

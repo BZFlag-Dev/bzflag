@@ -2,7 +2,7 @@
 project 'customflagsample'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'customflagsample.cpp'
   }

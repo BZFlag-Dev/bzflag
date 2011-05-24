@@ -2,7 +2,7 @@
 project 'soundTest'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'soundTest.cpp'
   }

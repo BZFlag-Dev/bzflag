@@ -2,7 +2,7 @@
 project 'Phoenix'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'Phoenix.cpp'
   }

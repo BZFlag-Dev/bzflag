@@ -34,6 +34,11 @@ include 'premake4_config'
 --------------------------------------------------------------------------------
 
 solution 'bz'
+
+if (os.is('windows')) then
+  platforms { 'x32', 'x64' }
+end
+
 if (_OPTIONS['enable-debug']) then
   configurations { 'debug', 'release' }
 else

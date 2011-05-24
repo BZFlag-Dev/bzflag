@@ -2,7 +2,7 @@
 project 'httpTest'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'httpTest.cpp'
   }

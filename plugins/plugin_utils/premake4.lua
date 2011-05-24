@@ -2,7 +2,7 @@
 project 'plugin_utils'
   kind 'StaticLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'base64.cpp',        'base64.h',
     'plugin_groups.cpp', 'plugin_groups.h',

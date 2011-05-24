@@ -2,7 +2,7 @@
 project 'python'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'python.cpp'
   }

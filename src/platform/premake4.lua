@@ -87,7 +87,7 @@ local hpux_files = {
 project   'libPlatform'
   targetname 'Platform'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files(common_files)
 
 

@@ -4,7 +4,7 @@ project   'libz'
 --  language 'C'
   targetname 'z'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files { '*.h', '*.c' }
 
 

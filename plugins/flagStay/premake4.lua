@@ -2,7 +2,7 @@
 project 'flagStay'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'flagStay.cpp'
   }

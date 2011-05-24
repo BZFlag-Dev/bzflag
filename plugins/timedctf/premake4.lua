@@ -2,7 +2,7 @@
 project 'timedctf'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'timedctf.cpp'
   }

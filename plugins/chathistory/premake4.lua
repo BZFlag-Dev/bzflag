@@ -2,7 +2,7 @@
 project 'chathistory'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'chathistory.cpp'
   }

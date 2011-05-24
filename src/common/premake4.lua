@@ -2,7 +2,7 @@
 project   'libCommon'
   targetname 'Common'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'AccessList.cpp',
     'AutoCompleter.cpp',

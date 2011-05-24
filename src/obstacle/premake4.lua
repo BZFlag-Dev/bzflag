@@ -2,7 +2,7 @@
 project   'libObstacle'
   targetname 'Obstacle'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'ArcObstacle.cpp',
     'BaseBuilding.cpp',

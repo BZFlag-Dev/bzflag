@@ -2,7 +2,7 @@
 project 'fastmap'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'fastmap.cpp'
   }

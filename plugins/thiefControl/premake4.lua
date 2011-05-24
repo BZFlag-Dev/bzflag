@@ -2,7 +2,7 @@
 project 'thiefControl'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'thiefControl.cpp'
   }

@@ -2,7 +2,7 @@
 project 'nagware'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'nagware.cpp'
   }

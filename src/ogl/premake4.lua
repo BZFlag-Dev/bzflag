@@ -2,7 +2,7 @@
 project   'libOGL'
   targetname 'OGL'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'OpenGLContext.cpp',
     'OpenGLGState.cpp',

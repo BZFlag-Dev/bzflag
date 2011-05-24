@@ -2,7 +2,7 @@
 project 'webReport'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'webReport.cpp'
   }

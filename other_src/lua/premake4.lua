@@ -2,7 +2,7 @@
 project   'liblua'
   targetname 'lua'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'src/lapi.cpp',     'src/lapi.h',
     'src/lauxlib.cpp',  'src/lauxlib.h',

@@ -2,7 +2,7 @@
 project 'logDetail'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'logDetail.cpp'
   }

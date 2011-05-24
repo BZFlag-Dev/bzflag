@@ -2,7 +2,7 @@
 project 'HoldTheFlag'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'HoldTheFlag.cpp'
   }

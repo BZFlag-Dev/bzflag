@@ -2,7 +2,7 @@
 project   'libGeometry'
   targetname 'Geometry'
   kind  'StaticLib'
-  objdir '.obj'
+  objdir '.objs'
   files {
     'AnimatedTreads.cpp',
     'BillboardSceneNode.cpp',

@@ -1,7 +1,7 @@
 
 project 'bzflag'
   kind 'WindowedApp'
-  objdir '.obj'
+  objdir '.objs'
   includedirs { '.', '../clientbase' }
   links {
     'libObstacle',

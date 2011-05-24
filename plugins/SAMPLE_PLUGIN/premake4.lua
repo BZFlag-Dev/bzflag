@@ -2,7 +2,7 @@
 project 'SAMPLE_PLUGIN'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'SAMPLE_PLUGIN.cpp'
   }

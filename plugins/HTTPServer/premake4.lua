@@ -2,7 +2,7 @@
 project 'HTTPServer'
   kind 'SharedLib'
   targetprefix ''
-  objdir '.obj'
+  objdir '.objs'
   files {
     'HTTPServer.cpp'
   }
