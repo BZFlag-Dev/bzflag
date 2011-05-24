@@ -3,7 +3,7 @@ include 'lua'
 
 include 'zlib'
 
-if (os.is('windows')) then
+if ((-1 > 0) and os.is('windows')) then
   include 'ares'
   include 'curl'
   include 'glew'

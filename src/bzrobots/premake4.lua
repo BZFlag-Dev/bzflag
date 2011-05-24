@@ -66,4 +66,7 @@ configuration 'not windows'
 configuration 'debug'
   targetsuffix '-debug'
 
+configuration 'not gmake'
+  targetdir(BINDIR)
+
 

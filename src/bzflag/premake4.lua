@@ -125,5 +125,6 @@ project 'bzflag'
 configuration 'debug'
   targetsuffix '-debug'
 
-
+configuration 'not gmake'
+  targetdir(BINDIR)
 

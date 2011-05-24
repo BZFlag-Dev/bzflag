@@ -30,3 +30,6 @@ project 'bzadmin'
 
 configuration 'debug'
   targetsuffix '-debug'
+
+configuration 'not gmake'
+  targetdir(BINDIR)
