@@ -80,13 +80,13 @@ int generateSessionID(void) {
 class HTTPConnection {
   public:
     HTTPConnection()
-    : connectionID(-1)
-    , contentSize(0)
-    , bodyEnd(0)
-    , headerComplete(false)
-    , requestComplete(false)
-    , sessionID(0)
-    , request(eUnknown)
+      : connectionID(-1)
+      , contentSize(0)
+      , bodyEnd(0)
+      , headerComplete(false)
+      , requestComplete(false)
+      , sessionID(0)
+      , request(eUnknown)
     {};
 
     void flush(void) {
