@@ -3,10 +3,16 @@ project   'lib3D'
   targetname '3D'
   kind  'StaticLib'
   objdir '.obj'
-  files { '*.h', '*.cpp' }
+  files {
+    'Model.cpp',
+    'FontManager.cpp',
+    'TextureManager.cpp',
+  }
 
-configuration 'not windows'
+if (not os.is('windows')) then
   includedirs { os.outputof('freetype-config --cflags'):match('%-I(.*)$') }
+end
+
 --  includedirs { os.outputof('pkg-config freetype2 --cflags'):match('%-I(.*)$')  }
 
 

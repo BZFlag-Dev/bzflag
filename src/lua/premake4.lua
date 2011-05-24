@@ -4,7 +4,6 @@ project   'libLuaGame'
   targetname 'LuaGame'
   kind  'StaticLib'
   objdir '.obj'
-  files { '*.h', '*.cpp' }
   includedirs { '..', '../bzflag', '../clientbase' }
   files {
     'LuaBitOps.cpp',     'LuaBitOps.h',
@@ -42,13 +41,13 @@ project   'libLuaClient'
     'LuaCallInDB.cpp',    'LuaCallInDB.h',
     'LuaCallOuts.cpp',    'LuaCallOuts.h',
     'LuaConsole.cpp',     'LuaConsole.h',
-    'LuaGameConst.cpp',   'LuaGameConst.h',
     'LuaControl.cpp',     'LuaControl.h',
+    'LuaGameConst.cpp',   'LuaGameConst.h',
     'LuaHandle.cpp',      'LuaHandle.h',
     'LuaKeySyms.cpp',     'LuaKeySyms.h',
+    'LuaRules.cpp',       'LuaRules.h',
     'LuaSpatial.cpp',     'LuaSpatial.h',
     'LuaUser.cpp',        'LuaUser.h',
-    'LuaRules.cpp',       'LuaRules.h',
     'LuaWorld.cpp',       'LuaWorld.h',
   }
 

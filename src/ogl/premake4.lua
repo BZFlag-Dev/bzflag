@@ -1,9 +1,19 @@
 
-project   'libogl'
-  targetname 'ogl'
+project   'libOGL'
+  targetname 'OGL'
   kind  'StaticLib'
   objdir '.obj'
-  files { '*.h', '*.cpp' }
+  files {
+    'OpenGLContext.cpp',
+    'OpenGLGState.cpp',
+    'OpenGLLight.cpp',
+    'OpenGLMaterial.cpp',
+    'OpenGLPassState.cpp',
+    'OpenGLTexture.cpp',
+    'OpenGLUtils.cpp',
+    'RenderNode.cpp',
+  }
   includedirs { '..', '../bzflag', '../clientbase' }
+
 
 

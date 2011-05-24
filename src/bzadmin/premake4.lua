@@ -2,15 +2,30 @@
 project 'bzadmin'
   kind 'ConsoleApp'
   objdir '.obj'
-  files { '*.h', '*.cpp', '../clientbase/ServerLink.cpp' }
-  includedirs { '.', '../bzflag', '../clientbase' }
   defines { 'BUILDING_BZADMIN' }
+  includedirs { '.', '../bzflag', '../clientbase' }
   links {
-    'libdate',
-    'libgame',
-    'libnet',
-    'libcommon',
+    'libGame',
+    'libNet',
+    'libCommon',
+    'libDate',
     'curses', 'cares', 'curl', 'z', 'dl', 'rt',
+  }
+  files {
+    '../clientbase/ServerLink.cpp',
+    'BZAdminClient.cpp', 'BZAdminClient.h',
+    'bzadmin.cpp',
+    'BZAdminUI.cpp',     'BZAdminUI.h',
+    'colors.h',
+    'CursesMenu.cpp',    'CursesMenu.h',
+    'CursesUI.cpp',      'CursesUI.h',
+    'curses_wrapper.h',
+    'OptionParser.cpp',  'OptionParser.h',
+    'PlayerInfo.h',
+    'StdBothUI.cpp',     'StdBothUI.h',
+    'StdInUI.cpp',       'StdInUI.h',
+    'StdOutUI.cpp',      'StdOutUI.h',
+    'UIMap.cpp',         'UIMap.h',
   }
 
 configuration 'debug'

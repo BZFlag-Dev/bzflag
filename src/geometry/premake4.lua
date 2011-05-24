@@ -1,8 +1,52 @@
 
-project   'libgeometry'
-  targetname 'geometry'
+project   'libGeometry'
+  targetname 'Geometry'
   kind  'StaticLib'
   objdir '.obj'
-  files { '**.h', '**.cpp' }
+  files {
+    'AnimatedTreads.cpp',
+    'BillboardSceneNode.cpp',
+    'BoltSceneNode.cpp',
+    'EighthDBaseSceneNode.cpp',
+    'EighthDBoxSceneNode.cpp',
+    'EighthDPyrSceneNode.cpp',
+    'EighthDimSceneNode.cpp',
+    'EighthDimShellNode.cpp',
+    'FlagSceneNode.cpp',
+    'FlagWarpSceneNode.cpp',
+    'LaserSceneNode.cpp',
+    'MeshDrawMgr.cpp',
+    'MeshFragSceneNode.cpp',
+    'MeshPolySceneNode.cpp',
+    'MeshRenderNode.cpp',       'MeshRenderNode.h',
+    'MeshSceneNode.cpp',
+    'OccluderSceneNode.cpp',
+    'PolyWallSceneNode.cpp',
+    'QuadWallSceneNode.cpp',
+    'SceneNode.cpp',
+    'ShellSceneNode.cpp',
+    'SphereSceneNode.cpp',
+    'TankGeometryMgr.cpp',
+    'TankSceneNode.cpp',
+    'TextSceneNode.cpp',
+    'TriWallSceneNode.cpp',
+    'ViewFrustum.cpp',
+    'WallSceneNode.cpp',
+    'models/tank/high_barrel.cpp',
+    'models/tank/high_body.cpp',
+    'models/tank/high_ltread.cpp',
+    'models/tank/high_rtread.cpp',
+    'models/tank/high_turret.cpp',
+    'models/tank/low_barrel.cpp',
+    'models/tank/low_body.cpp',
+    'models/tank/low_ltread.cpp',
+    'models/tank/low_rtread.cpp',
+    'models/tank/low_turret.cpp',
+    'models/tank/medium_barrel.cpp',
+    'models/tank/medium_body.cpp',
+    'models/tank/medium_ltread.cpp',
+    'models/tank/medium_rtread.cpp',
+    'models/tank/medium_turret.cpp',
+  }
 
 

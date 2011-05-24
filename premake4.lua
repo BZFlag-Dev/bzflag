@@ -23,31 +23,6 @@ PROJECT = {
   config = {}
 }
 
-print('os.get()', os.get())
-
-print('premake.gcc.cxx', premake.gcc.cxx)
-premake.gcc.cxx = 'ccache g++'
-print('premake.gcc.cxx', premake.gcc.cxx)
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-if (1 > 0) then
-  print()
-  print(('-'):rep(80))
-  for k, v in pairs(_G) do print('_G', k, tostring(v)) end
-  for k, v in pairs(_MAKE) do print('_MAKE', k, tostring(v)) end
-  for k, v in pairs(_OPTIONS) do print('_OPTIONS', k, tostring(v)) end
-  for k, v in pairs(_VS) do print('_VS', k, tostring(v)) end
-  for k, v in pairs(_ARGS) do print('_ARGS', k, tostring(v)) end
-  print()
-  print(('-'):rep(80))
-  print()
-end
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
@@ -55,26 +30,10 @@ include 'premake4_config'
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
---[[FIXME
-solution 'shit'
-  configurations { 'shit2', 'shit1' }
-
-configuration 'shit2'
-  defines '_DEBUG'
-  flags 'symbols'
-
-project 'shit'
-  kind 'ConsoleApp'
-  language 'c++'
-  files 'crap.c'
---]]
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
 
 solution 'bz'
 if (_OPTIONS['enable-debug']) then
-  configurations { 'debug' }
+  configurations { 'debug', 'release' }
 else
   configurations { 'release', 'debug' }
 end
@@ -94,9 +53,8 @@ configuration 'debug'
   defines { 'DEBUG', '_DEBUG', 'DEBUG_RENDERING' }
   flags   { 'ExtraWarnings', 'FatalWarnings', 'Symbols' }
 
-configuration { 'debug', 'gmake', 'not windows'}
+configuration 'linux'
   buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
-
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -137,12 +95,13 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
 --[[
 newaction {
   trigger = 'install',
-  description = 'install the shit',
+  description = 'install stuff',
   execute = function()
-    os.execute('echo installing some shit')
+    os.execute('echo installing some stuff')
   end
 }
 --]]
@@ -150,30 +109,36 @@ newaction {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
---[[
-bots/
-data/
-debian/
-doc/
-m4/
-man/
-misc/
-MSVC/
-other_src/
-package/
-plugins/
-src/
-tools/
-autom4te.cache/
-BZFlag.xcodeproj/
---]]
+if (-1 > 0) then
+  print('os.get()', os.get())
+  print('premake.gcc.cxx', premake.gcc.cxx)
+  premake.gcc.cxx = 'ccache g++'
+  print('premake.gcc.cxx', premake.gcc.cxx)
+end
 
+if (-1 > 0) then
+  print()
+  print(('-'):rep(80))
+  for k, v in pairs(_G) do print('_G', k, tostring(v)) end
+  for k, v in pairs(_MAKE) do print('_MAKE', k, tostring(v)) end
+  for k, v in pairs(_OPTIONS) do print('_OPTIONS', k, tostring(v)) end
+  for k, v in pairs(_VS) do print('_VS', k, tostring(v)) end
+  for k, v in pairs(_ARGS) do print('_ARGS', k, tostring(v)) end
+  print()
+  print(('-'):rep(80))
+  print()
+end
 
-print('22premake.gcc.cxx', premake.gcc.cxx)
-premake.gcc.cxx = 'ccache g++'
-print('22premake.gcc.cxx', premake.gcc.cxx)
+if (-1 > 0) then
+  print('22premake.gcc.cxx', premake.gcc.cxx)
+  premake.gcc.cxx = 'ccache g++'
+  print('22premake.gcc.cxx', premake.gcc.cxx)
+end
 
 print()
 print(('-'):rep(80))
 print(('-'):rep(80))
 print()
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------

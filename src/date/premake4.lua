@@ -1,8 +1,6 @@
 
-project   'libdate'
-  targetname 'date'
+project   'libDate'
+  targetname 'Date'
   kind  'StaticLib'
   objdir '.obj'
-  files { '*.h', '*.cpp' }
-
-
+  files { 'buildDate.cpp' }
