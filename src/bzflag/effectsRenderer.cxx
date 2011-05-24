@@ -261,7 +261,7 @@ void EffectsRenderer::addDeathEffect ( const float* rgb, const float* pos, float
 	switch(effectType)
 	{
 		case 1:
-			effect = new StdDeathEffect;
+			effect = new RingsDeathEffect;
 			break;
 	}
 
@@ -278,7 +278,7 @@ std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("Off"));
-	ret.push_back(std::string("We Got Death Star"));
+	ret.push_back(std::string("Ring Explosion"));
 
 	return ret;
 }
@@ -827,7 +827,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 }
 
 //******************StdDeathEffect****************
-StdDeathEffect::StdDeathEffect() : BasicEffect()
+RingsDeathEffect::RingsDeathEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 1.5f;
@@ -846,11 +846,11 @@ StdDeathEffect::StdDeathEffect() : BasicEffect()
 	ringState = gstate.getState();
 }
 
-StdDeathEffect::~StdDeathEffect()
+RingsDeathEffect::~RingsDeathEffect()
 {
 }
 
-bool StdDeathEffect::update ( float time )
+bool RingsDeathEffect::update ( float time )
 {
 	// see if it's time to die
 	// if not update all those fun times
@@ -865,7 +865,7 @@ bool StdDeathEffect::update ( float time )
 	return false;
 }
 
-void StdDeathEffect::draw(const SceneRenderer &)
+void RingsDeathEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
 

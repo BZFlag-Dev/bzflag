@@ -134,11 +134,11 @@ private:
 	float	     length;
 };
 
-class StdDeathEffect : public BasicEffect
+class RingsDeathEffect : public BasicEffect
 {
 public:
-	StdDeathEffect();
-	virtual ~StdDeathEffect();
+	RingsDeathEffect();
+	virtual ~RingsDeathEffect();
 
 	virtual bool update ( float time );
 	virtual void draw ( const SceneRenderer& sr );
