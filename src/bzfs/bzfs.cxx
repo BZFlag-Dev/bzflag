@@ -4972,7 +4972,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
      RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
      if (retry) // try one more time, just in case it was blocked
      {
-       int retries = 2;
+       int retries = 1;
        if (BZDB.isSet("_maxConnectionRetries"))
 	retries = (int) BZDB.eval("_maxConnectionRetries");
 
@@ -4985,20 +4985,14 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
        }
      }
 
-     if ((e != ReadAll) && (e != ReadPart)) 
+     if ((e == ReadAll) || (e == ReadPart)) 
      {
-       netHandler->flushData();
-       peer.deleteMe = true;
-       return;
-     }
-     else
-     {
-	// the dude has sent SOME data
-	peer.sent = true;
-
 	unsigned int readSize = netHandler->getTcpReadSize();
 
 	if (readSize == 0) return;
+
+	// the dude has sent SOME data
+	peer.sent = true;
 
 	void *buf = netHandler->getTcpBuffer();
 
@@ -5057,14 +5051,19 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
        }
      }
   }
-  
-  if (peer.apiHandler != NULL) // if we have a handler then send out what we got
-    sendBufferedNetDataForPeer(peer);
-  else if (peer.apiHandler == NULL && peer.player == -1)
+
+  if (peer.apiHandler == NULL && peer.player == -1)
   {
     if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
+    {
+      static char discoBuffer[4] = {13,10,13,10};
+      peer.sendChunks.push_back(std::string((char*)discoBuffer, 4));
       peer.deleteMe = true; // nobody loves him
+    }
   }
+  
+  if (peer.player < 0) // only send data if he's not a player, there may be disco data
+    sendBufferedNetDataForPeer(peer);
 }
 
 
@@ -5530,6 +5529,9 @@ int main(int argc, char **argv)
     if (waitTime > pluginMaxWait)
       waitTime = pluginMaxWait;
 #endif
+
+    if (netConnectedPeers.size() > 0 && waitTime > 0.1f)
+      waitTime = 0.1f;
 
     // don't wait (used by CURL and MsgEnter)
     if (dontWait) {
@@ -6097,47 +6099,6 @@ int main(int argc, char **argv)
 	}
       }
 
-      // see if we have any thing from people won arn't players yet
-      std::map<int,NetConnectedPeer>::iterator peerItr;
-
-      // get a list of connections to purge, then purge them
-      std::vector<int> toKill;
-      for (peerItr  = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
-      {
-	  if (peerItr->second.deleteMe)
-	    toKill.push_back(peerItr->first);
-      }
-
-      for (unsigned int j = 0; j < toKill.size(); j++) 
-      {
-	if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
-	{
-	  NetConnectedPeer &peer = netConnectedPeers[toKill[j]];
-	  if (peer.netHandler)
-	    delete(peer.netHandler);
-	  peer.netHandler = NULL;
-	  netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
-	}
-      }
-
-      // process the connections
-      for (peerItr  = netConnectedPeers.begin(); peerItr != netConnectedPeers.end(); ++peerItr)
-	processConnectedPeer(peerItr->second, peerItr->first, read_set, write_set);
-
-      // remove anyone that became a player since they will be handled by the rest of the code
-      // there net handler was transfered to the player class
-      toKill.clear();
-      for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
-      {
-	if (peerItr->second.player != -1)
-	  toKill.push_back(peerItr->first);
-      }
-      for (unsigned int j = 0; j < toKill.size(); j++) 
-      {
-	if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
-	  netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
-      }
-
       // process eventual resolver requests
       NetHandler::checkDNS(&read_set, &write_set);
 
@@ -6164,6 +6125,49 @@ int main(int argc, char **argv)
     } else {
       if (NetHandler::anyUDPPending())
 	NetHandler::flushAllUDP();
+    }
+
+
+    // check net connected peers
+    // see if we have any thing from people won arn't players yet
+    std::map<int,NetConnectedPeer>::iterator peerItr;
+
+    // get a list of connections to purge, then purge them
+    std::vector<int> toKill;
+    for (peerItr  = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
+    {
+      if (peerItr->second.deleteMe)
+	toKill.push_back(peerItr->first);
+    }
+
+    for (unsigned int j = 0; j < toKill.size(); j++) 
+    {
+      if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
+      {
+	NetConnectedPeer &peer = netConnectedPeers[toKill[j]];
+	if (peer.netHandler)
+	  delete(peer.netHandler);
+	peer.netHandler = NULL;
+	netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
+      }
+    }
+
+    // process the connections
+    for (peerItr = netConnectedPeers.begin(); peerItr != netConnectedPeers.end(); ++peerItr)
+      processConnectedPeer(peerItr->second, peerItr->first, read_set, write_set);
+
+    // remove anyone that became a player since they will be handled by the rest of the code
+    // there net handler was transfered to the player class
+    toKill.clear();
+    for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
+    {
+      if (peerItr->second.player != -1)
+	toKill.push_back(peerItr->first);
+    }
+    for (unsigned int j = 0; j < toKill.size(); j++) 
+    {
+      if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
+	netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
     }
 
     // Fire world weapons
