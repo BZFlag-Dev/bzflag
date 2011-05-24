@@ -181,6 +181,25 @@ protected:
 	float			radius;
 };
 
+class SmokeGMPuffEffect : public BasicEffect
+{
+public:
+	SmokeGMPuffEffect();
+	virtual ~SmokeGMPuffEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+	fvec3			jitter;
+
+	float			u,v,du,dv;
+};
+
 class StdRicoEffect : public BasicEffect
 {
 public:
@@ -210,7 +229,6 @@ protected:
 
 	float			radius;
 };
-
 
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {

@@ -166,7 +166,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "deathEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "useVelOnShotEffects",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "landEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "gmPuffEffect",		"2",			true,	StateDatabase::ReadWrite,	NULL },
+  { "gmPuffEffect",		"3",			true,	StateDatabase::ReadWrite,	NULL },
   { "gmPuffTime",		"1/8",			true,	StateDatabase::ReadWrite,	NULL },
   { "ricoEffect",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "tpEffect",			"1",			true,	StateDatabase::ReadWrite,	NULL },

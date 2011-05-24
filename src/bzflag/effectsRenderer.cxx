@@ -216,6 +216,10 @@ void EffectsRenderer::addGMPuffEffect ( const float* pos, float rot[2], const fl
 	case 2:
 		effect = new StdGMPuffEffect;
 		break;
+
+	case 3:
+		effect = new SmokeGMPuffEffect;
+		break;
 	}
 
 	if (effect)
@@ -234,6 +238,7 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
 	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Classic Puff"));
 	ret.push_back(std::string("Shock Cone"));
+	ret.push_back(std::string("Smoke"));
 
 	return ret;
 }
@@ -897,6 +902,7 @@ void StdDeathEffect::draw(const SceneRenderer &)
 	drawRingXY(radius*0.75f,1.5f + (ageParam/1.0f * 10),0.5f*age,0.5f);
 	drawRingXY(radius,-0.5f,0.5f+ age,0.5f);
 
+	glTranslatef(-1.5,0,0);
 	glRotatef(90,0,0,1);
 	drawRingYZ(radius,3,0,0,position[2]+0.5f);
 	glPopMatrix();
@@ -1036,6 +1042,115 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 	drawRingYZ(radius,-0.25f -(age * 0.125f),0.5f+age*0.75f,0.50f,pos[2]);
 
 	glColor4f(1,1,1,1);
+	glDepthMask(1);
+	glPopMatrix();
+}
+
+
+//******************StdGMPuffEffect****************
+SmokeGMPuffEffect::SmokeGMPuffEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("puffs",false);
+	lifetime = 3.5f;
+
+	radius = 0.125f;
+	if (RENDERER.useQuality() >= 3)
+		radius = 0.001f;
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	ringState = gstate.getState();
+
+	float randMod = 0.5f;
+
+	jitter.x = (bzfrand() * (randMod*2)) - randMod;
+	jitter.y = (bzfrand() * (randMod*2)) - randMod;
+	jitter.z = (bzfrand() * (randMod*2)) - randMod;
+	
+	du = dv = 0.5f;
+
+	if (bzfrand() < 0.5)
+		u = 0;
+	else
+		u = 0.5f;
+
+	if (bzfrand() < 0.5)
+		v = 0;
+	else
+		v = 0.5f;
+
+}
+
+SmokeGMPuffEffect::~SmokeGMPuffEffect()
+{
+}
+
+bool SmokeGMPuffEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+
+	radius += deltaTime*0.5f;
+	return false;
+}
+
+void SmokeGMPuffEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	float pos[3];
+
+	float vertDrift = 1.5f * age;
+
+	pos[0] = position[0] + velocity[0] * age;
+	pos[1] = position[1] + velocity[1] * age;
+	pos[2] = position[2] + velocity[2] * age;
+
+	glTranslatef(pos[0]+jitter.x,pos[1]+jitter.y,pos[2]+jitter.z+vertDrift);
+	
+	glPushMatrix();
+	RENDERER.getViewFrustum().executeBillboard();
+	glRotatef(age*180,0,0,1);
+
+	ringState.setState();
+	glColor4f(1,1,1,1);
+
+	color[0] = color[1] = color[2] = 1;
+
+	float alpha = 0.5f-(age/lifetime);
+	if (alpha < 0.000001f)
+		alpha = 0.000001f;
+
+	glColor4f(1,1,1,alpha);
+	glDepthMask(0);
+
+	float size = 0.5f + (age * 1.25f);
+
+	const float u0 = (float)u;
+	const float v0 = (float)v;
+	const float u1 = u0 + du;
+	const float v1 = v0 + dv;
+	glBegin(GL_QUADS);
+	glTexCoord2f(u0, v0); glVertex2f(-size, -size);
+	glTexCoord2f(u1, v0); glVertex2f(+size, -size);
+	glTexCoord2f(u1, v1); glVertex2f(+size, +size);
+	glTexCoord2f(u0, v1); glVertex2f(-size, +size);
+	glEnd();
+
+	glPopMatrix();
 	glDepthMask(1);
 	glPopMatrix();
 }

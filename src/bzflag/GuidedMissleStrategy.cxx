@@ -95,9 +95,10 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
   lastTarget = NoPlayer;
 
   lastPuff = currentTime;
-  puffTime = BZDB.eval("gmPuffTime");
+  rootPuff = BZDB.eval("gmPuffTime");
+  puffTime = -1;
   if (RENDERER.useQuality() >= 3)
-    puffTime /= (20.0f + ((float)bzfrand()* 10.0f));
+    rootPuff /= (20.0f + ((float)bzfrand()* 10.0f));
 }
 
 GuidedMissileStrategy::~GuidedMissileStrategy()
@@ -203,10 +204,16 @@ void GuidedMissileStrategy::update(float dt)
   Ray ray = Ray(nextPos, newDirection);
 
   renderTimes++;
+  if (puffTime < 0 )
+    puffTime =  bzfrand()*rootPuff;
+
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
   if (currentTime.getSeconds() - lastPuff.getSeconds() > puffTime ) {
     lastPuff = currentTime;
     addShotPuff(nextPos,azimuth,elevation);
+
+    // pick a new time for the next puff so it's not so orderd.
+    puffTime = bzfrand()*rootPuff;
   }
 
   // get next position
