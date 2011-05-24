@@ -30,6 +30,8 @@
 // local implementation headers
 #include "ViewFrustum.h"
 
+#include "TextureManager.h"
+
 using namespace TankGeometryEnums;
 
 static const float MuzzleMaxX = 4.94f;
@@ -47,7 +49,7 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
 				useDimensions(false), useOverride(false),
 				onlyShadows(false), clip(false),
-				inTheCockpit(false), tankRenderNode(this),
+				inTheCockpit(false), tankRenderNode(this), treadsRenderNode(this),
 				shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
 {
@@ -193,6 +195,9 @@ void TankSceneNode::notifyStyleChange()
   }
   gstate = builder.getState();
 
+  builder.setTexture(TextureManager::instance().getTextureID("treads"));
+  treadState = builder.getState();
+
   OpenGLGStateBuilder builder2(lightsGState);
   if (BZDBCache::smooth) {
     builder2.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -202,6 +207,7 @@ void TankSceneNode::notifyStyleChange()
     builder2.setSmoothing(false);
   }
   lightsGState = builder2.getState();
+
 
   OpenGLGStateBuilder builder3(jumpJetsGState);
   builder3.setCulling(GL_NONE);
@@ -237,9 +243,11 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     mode = LowTankLOD;
   }
   tankRenderNode.setTankLOD(mode);
+  treadsRenderNode.setTankLOD(mode);
 
   // set the tank's scaling size
   tankRenderNode.setTankSize(tankSize);
+  treadsRenderNode.setTankSize(tankSize);
 
   bool narrow = false;
   if ((tankSize == Narrow) &&
@@ -248,6 +256,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     narrow = true;
   }
   tankRenderNode.setNarrowWithDepth(narrow);
+  treadsRenderNode.setNarrowWithDepth(narrow);
 
   // if drawing in sorted order then decide which order
   if (sort || transparent || narrow) {
@@ -269,7 +278,10 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     tankRenderNode.sortOrder(above, towards, left);
   }
 
+  treadsRenderNode.setTreads(true);
   renderer.addRenderNode(&tankRenderNode, &gstate);
+  renderer.addRenderNode(&treadsRenderNode, &treadState);
+
 }
 
 
@@ -494,12 +506,20 @@ void TankSceneNode::renderRadar()
   setCenter(tankPos);
   azimuth = 0.0f;
 
-  gstate.setState();
-
   float oldAlpha = color[3];
   if (color[3] < 0.15f) {
-    color[3] = 0.15f;
+	  color[3] = 0.15f;
   }
+
+  if (BZDBCache::animatedTreads) {
+	  treadState.setState();
+	  treadsRenderNode.setRadar(true);
+	  treadsRenderNode.sortOrder(true /* above */, false, false);
+	  treadsRenderNode.render();
+	  treadsRenderNode.setRadar(false);
+  }
+
+  gstate.setState();
 
   tankRenderNode.setRadar(true);
   tankRenderNode.sortOrder(true /* above */, false, false);
@@ -819,6 +839,7 @@ TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
   drawLOD = LowTankLOD;
   drawSize = Normal;
   isRadar = false;
+  isTreads = false;
   return;
 }
 
@@ -842,6 +863,10 @@ void TankSceneNode::TankRenderNode::setShadow()
   return;
 }
 
+void TankSceneNode::TankRenderNode::setTreads(bool treads )
+{
+	isTreads = treads;
+}
 
 void TankSceneNode::TankRenderNode::sortOrder(
 				bool _above, bool _towards, bool _left)
@@ -1154,6 +1179,17 @@ void TankSceneNode::TankRenderNode::renderParts()
 
 void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 {
+	if (isTreads)
+	{
+		if ( part != RightTread && part != LeftTread )
+		return;
+	}
+	else
+	{
+		if ( part == RightTread || part == LeftTread )
+		return;
+	}
+
   // apply explosion transform
   if (isExploding) {
     glPushMatrix();
