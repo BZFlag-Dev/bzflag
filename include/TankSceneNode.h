@@ -118,6 +118,7 @@ class TankSceneNode : public SceneNode {
 			~TankRenderNode();
 	void		setShadow();
 	void		setRadar(bool);
+	void		setTreads(bool);
 	void		setTankLOD(TankGeometryEnums::TankLOD);
 	void		setTankSize(TankGeometryEnums::TankSize);
 	void		sortOrder(bool above, bool towards, bool left);
@@ -143,6 +144,7 @@ class TankSceneNode : public SceneNode {
 	const GLfloat*	color;
 	GLfloat		alpha;
 	bool		isRadar;
+	bool		isTreads;
 	bool		isShadow;
 	bool		left;
 	bool		above;
@@ -174,9 +176,11 @@ class TankSceneNode : public SceneNode {
     GLfloat		color[4];
     GLdouble		clipPlane[4];
     OpenGLGState	gstate;
+	OpenGLGState	treadState;
     OpenGLGState	lightsGState;
     TankRenderNode	tankRenderNode;
-    TankRenderNode	shadowRenderNode;
+	TankRenderNode	treadsRenderNode;
+	TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
     GLfloat vel[TankGeometryEnums::LastTankPart][3];
     GLfloat spin[TankGeometryEnums::LastTankPart][4];
