@@ -1,10 +1,17 @@
 #!/bin/sh
+#
+#  Run this script from the top level of the BZFlag source tree.
+#  (ex: ./misc/indent.sh). Excluded directories ar listed in the
+#  misc/astyle.conf file.
+#
 
 
 MIN_MAJOR=2
 
 MIN_MINOR=2
 
+
+# Get the version
 
 VERSION=`astyle --version 2>&1`
 
@@ -16,6 +23,8 @@ fi
 echo $VERSION
 
 
+# Parse the version
+
 MAJOR=`echo $VERSION | sed 's/^Artistic Style Version \([0-9]*\)\.[0-9]*$/\1/'`
 MINOR=`echo $VERSION | sed 's/^Artistic Style Version [0-9]*\.\([0-9]*\)$/\1/'`
 
@@ -24,16 +33,21 @@ if [ "$MAJOR" = "$VERSION"  -o  "$MINOR" = "$VERSION" ]; then
   exit
 fi
 
+
+# Check the version
+
 if [ $MAJOR -lt $MIN_MAJOR ]; then
   echo Need astyle 2.02 or better.
   exit
-elif [ $MAJOR -eq $MIN_MAJOR   -a  $MINOR -lt $MIN_MINOR ]; then
+elif [ $MAJOR -eq $MIN_MAJOR  -a  $MINOR -lt $MIN_MINOR ]; then
   echo Need astyle 2.02 or better.
   exit
 fi
 
 
+# It's go time!
+
 astyle --options=misc/astyle.conf -r '*.h' '*.c' '*.cpp'
 
 
-
+################################################################################
