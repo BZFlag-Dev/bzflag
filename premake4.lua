@@ -27,12 +27,6 @@ defaultaction('macosx',  'xcode3')
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-
-
-
-
-
-
 TOPDIR = os.getcwd()
 print(TOPDIR)
 
@@ -41,21 +35,54 @@ BINDIR = os.getcwd() .. '/bin' -- used for binaries (except for gmake)
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-PROJECT = {
+CONFIG = {
+
+  package_name  = 'BZFlag',
+
   major_version = 2,
   minor_version = 99,
   revision      = 60,
 
   protocol      = '0118',
 
-  build_type    = 'DEV',
+  build_type    = 'DEVEL', -- or 'STABLE' or 'MAINT'
 
   copyright     = 'Copyright (c) 1993-2010 Tim Riker',
 
+  package_url   = 'http://BZFlag.org',
+  bugreport_url = 'http://BZFlag.org',
+
   config_date   = os.date(),
 
-  config = {}
+  build_os = nil,
+
+  curses = { buildoptions = nil, linkoptions = nil  },
+  opengl = { buildoptions = nil, linkoptions = nil  },
+  sdl    = { buildoptions = nil, linkoptions = nil  },
+
+  ares     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  curl     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  glew     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  freetype = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  ftgl     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  glew     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  regex    = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+  zlib     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
+
+  -- other CONFIG[] values can be found in premake4_config/config_h.lua
 }
+
+
+CONFIG.package_version =
+  CONFIG.major_version .. '.' ..
+  CONFIG.minor_version .. '.' ..
+  CONFIG.revision
+
+CONFIG.package_string =
+  CONFIG.package_name .. ' ' .. CONFIG.package_version
+
+
+print(CONFIG.package_string)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -94,6 +121,35 @@ configuration 'debug'
 
 configuration 'linux'
   buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+--CONFIG.ares.need_build = true -- FIXME -- testing
+
+-- CONFIG.glew.need_build = true -- FIXME -- testing
+
+--[[
+
+if (not os.is('windows')) then -- FIXME -- check for vs* ?
+  solution 'bz'
+  local function setup_lib_build(name)
+    if (CONFIG[name].need_build) then
+      prebuildcommands(
+        'cd '..TOPDIR..'/other_src/; sh build_'..name..'.sh'
+      )
+    end
+  end
+  setup_lib_build('ares')
+  setup_lib_build('curl')
+  setup_lib_build('ftgl')
+  setup_lib_build('freetype')
+  setup_lib_build('glew')
+  setup_lib_build('regex')
+  setup_lib_build('zlib')
+end
+--]]
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
