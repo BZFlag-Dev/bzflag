@@ -43,6 +43,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
     ptSceneNode->setTexture(texture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
+    ptSceneNode->setTeamColor(Team::getRadarColor(_path->getTeam()));
     ptSceneNode->setFlares(true);
   }
 
@@ -95,6 +96,8 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
 
   lastPuff = currentTime;
   puffTime = BZDB.eval("gmPuffTime");
+  if (RENDERER.useQuality() >= 3)
+    puffTime /= 10.0f;
 }
 
 GuidedMissileStrategy::~GuidedMissileStrategy()

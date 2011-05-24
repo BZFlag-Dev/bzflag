@@ -31,6 +31,7 @@ class BoltSceneNode : public ShotSceneNode {
     void		setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void		setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgb);
+	void		setTeamColor(const GLfloat* rgb);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
@@ -94,6 +95,7 @@ class BoltSceneNode : public ShotSceneNode {
     float		size;
     float		velocity[3];
     GLfloat		color[4];
+	fvec4		teamColor;
     OpenGLLight		light;
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;

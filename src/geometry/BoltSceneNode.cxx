@@ -31,6 +31,8 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
+#include "TimeKeeper.h"
+
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool super) :
 				isSuper(super),
 				invisible(false),
@@ -59,6 +61,7 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool sup
   move(pos, vel);
   setSize(size);
   setColor(1.0f, 1.0f, 1.0f);
+  teamColor = fvec4(1,1,1,1);
 }
 
 BoltSceneNode::~BoltSceneNode()
@@ -94,6 +97,14 @@ void			BoltSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
   color[3] = a;
   light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
   renderNode.setColor(color);
+}
+
+void			BoltSceneNode::setTeamColor(const GLfloat *c)
+{
+	teamColor.r = c[0];
+	teamColor.g = c[1];
+	teamColor.b = c[2];
+	teamColor.w = 1.0f;
 }
 
 void			BoltSceneNode::setColor(const GLfloat* rgb)
@@ -153,14 +164,18 @@ void			BoltSceneNode::notifyStyleChange()
   builder.enableTexture(texturing);
   if (BZDBCache::blend) {
     const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
-    if (shotLength > 0) {
+    if (shotLength > 0 && !drawFlares) {
       builder.setBlending(GL_SRC_ALPHA, GL_ONE);
     } else {
       builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
     builder.setStipple(1.0f);
     builder.setAlphaFunc();
-    builder.setShading(texturing ? GL_FLAT : GL_SMOOTH);
+	if ((RENDERER.useQuality() >= 3) && drawFlares){
+		builder.setShading(GL_SMOOTH);
+		builder.enableMaterial(false);
+	}else
+		builder.setShading(texturing ? GL_FLAT : GL_SMOOTH);
   }
   else {
     builder.resetBlending();
@@ -281,78 +296,138 @@ void			BoltSceneNode::BoltRenderNode::setColor(
   flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
 }
 
+void drawFin ( float maxRad, float finRadius, float boosterLen, float finForeDelta, float finCapSize)
+{
+	glBegin(GL_QUADS);
+
+	glNormal3f(1,0,0);
+	glVertex3f(0,maxRad,0);
+	glVertex3f(0,maxRad,boosterLen);
+	glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
+	glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
+
+	glNormal3f(-1,0,0);
+	glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
+	glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
+	glVertex3f(0,maxRad,boosterLen);
+	glVertex3f(0,maxRad,0);
+	glEnd();
+}
 
 void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 {
 	// bzdb these 2? they control the shot size
-	float lenMod = 0.025f;
-	float baseRadius = 0.2f;
+	float gmMissleSize = 1.5f;
+	if (BZDB.isSet("_gmSize"))
+		gmMissleSize = BZDB.eval("_gmSize");
 
-	float len = sceneNode->length * lenMod;
+	float len = sceneNode->length;
+
+	// parametrics
+	float maxRad = gmMissleSize * 0.16f;
+	float noseRad = gmMissleSize * 0.086f;
+	float waistRad = gmMissleSize * 0.125f;
+	float engineRad = gmMissleSize * 0.1f;
+
+	float noseLen = gmMissleSize * 0.1f;
+	float bodyLen = gmMissleSize * 0.44f;
+	float bevelLen = gmMissleSize * 0.02f;
+	float waistLen = gmMissleSize * 0.16f;
+	float boosterLen = gmMissleSize * 0.2f;
+	float engineLen = gmMissleSize * 0.08f;
+
+	float finRadius = gmMissleSize * 0.16f;
+	float finCapSize = gmMissleSize * 0.15f;
+	float finForeDelta = gmMissleSize * 0.02f;
+
+	int slices = 8;
+
+	float rotSpeed = 90.0f;
+
+	glDepthMask(GL_TRUE);
 	glPushMatrix();
 	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
 	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 	glRotatef(90, 0.0f, 1.0f, 0.0f);
 
-	float alphaMod = 1.0f;
-	//if (sceneNode->isSuper)
-	//	alphaMod = 0.85f;
-
 	glDisable(GL_TEXTURE_2D);
+	//glEnable(GL_LIGHTING);
 
-	float coreBleed = 4.5f;
-	float minimumChannelVal = 0.45f;
-	fvec3 coreColor;
-	coreColor.r = sceneNode->color[0] * coreBleed;
-	coreColor.g = sceneNode->color[1] * coreBleed;
-	coreColor.b = sceneNode->color[2] * coreBleed;
-
-	if (coreColor.r < minimumChannelVal) { coreColor.r = minimumChannelVal; }
-	if (coreColor.g < minimumChannelVal) { coreColor.g = minimumChannelVal; }
-	if (coreColor.b < minimumChannelVal) { coreColor.b = minimumChannelVal; }
+	fvec4 noseColor = sceneNode->teamColor;
+	fvec4 finColor(noseColor.r*0.5f,noseColor.g*0.5f,noseColor.b*0.5f,1);
+	fvec4 coneColor(0.125f,0.125f,0.125f,1);
+	fvec4 bodyColor(1,1,1,1);
 
 	glPushMatrix();
-	myColor4f(1, 1, 1, 0.85f * alphaMod);
-	glTranslatef(0, 0, len - baseRadius);
 
-	GLUquadric* q = gluNewQuadric();
-	gluSphere(q, baseRadius * 0.75f, 6, 6);
-	addTriangleCount(6 * 6);
-	glPopMatrix();
+	GLUquadric *q = gluNewQuadric();
 
-	myColor4fv(fvec4(coreColor,  0.85f * alphaMod));
-	renderGeoPill(baseRadius, len, 16, baseRadius * 0.25f);
+	glColor4f(noseColor.r,noseColor.g,noseColor.b,1.0f);
+	glTranslatef(0, 0, gmMissleSize);
+	glRotatef((float)TimeKeeper::getCurrent().getSeconds() * rotSpeed,0,0,1);
 
-	float radInc = 1.5f * baseRadius - baseRadius;
-	glPushMatrix();
-	glTranslatef(0, 0, -radInc * 0.5f);
-	fvec4 c;
-	c.x = sceneNode->color[0];
-	c.y = sceneNode->color[1];
-	c.z = sceneNode->color[2];
-	c.w = 0.5f;
+	// nosecone
+	gluDisk(q,0,noseRad,slices,1);
+	glTranslatef(0, 0, -noseLen);
+	gluCylinder(q,maxRad,noseRad,noseLen,slices,1);
+	addTriangleCount(slices * 2);
 
-	myColor4fv(c);
-	renderGeoPill(1.5f * baseRadius, len + radInc, 25, 1.5f * baseRadius * 0.25f);
-	glPopMatrix();
+	// body
+	myColor4fv(bodyColor);
+	glTranslatef(0, 0, -bodyLen);
+	gluCylinder(q,maxRad,maxRad,bodyLen,slices,1);
+	addTriangleCount(slices);
 
-	glPushMatrix();
-	myColor4f(1, 1, 1, 0.125f);
-	glTranslatef(0, 0, len*0.125f);
-	gluCylinder(q, 3.0f * baseRadius, 1.75f * baseRadius, len * 0.35f, 16, 1);
-	addTriangleCount(16);
+	glTranslatef(0, 0, -bevelLen);
+	gluCylinder(q,waistRad,maxRad,bevelLen,slices,1);
+	addTriangleCount(slices);
 
-	glTranslatef(0, 0, len * 0.5f);
-	gluCylinder(q, 2.5f * baseRadius, 1.5f * baseRadius, len * 0.25f, 16, 1);
-	addTriangleCount(16);
+	// waist
+	myColor4fv(coneColor);
+	glTranslatef(0, 0, -waistLen);
+	gluCylinder(q,waistRad,waistRad,waistLen,slices,1);
+	addTriangleCount(slices);
+
+	// booster
+	myColor3fv(bodyColor);
+	glTranslatef(0, 0, -bevelLen);
+	gluCylinder(q,maxRad,waistRad,bevelLen,slices,1);
+	addTriangleCount(slices);
+
+	glTranslatef(0, 0, -boosterLen);
+	gluCylinder(q,maxRad,maxRad,boosterLen,slices,1);
+	addTriangleCount(slices);
+
+	glTranslatef(0, 0, -bevelLen);
+	gluCylinder(q,waistRad,maxRad,bevelLen,slices,1);
+	addTriangleCount(slices);
+
+	// engine
+	myColor3fv(coneColor);
+	glTranslatef(0, 0, -engineLen);
+	gluCylinder(q,engineRad,waistRad,engineLen,slices,1);
+	addTriangleCount(slices);
+
+	// fins
+	myColor3fv(finColor);
+	glTranslatef(0, 0, engineLen + bevelLen);
+
+	for ( int i = 0; i < 4; i++)
+	{
+		glRotatef(i*90.0f,0,0,1);
+		drawFin ( maxRad, finRadius, boosterLen, finForeDelta, finCapSize);
+	}
 
 	glPopMatrix();
 
 	gluDeleteQuadric(q);
 
 	glEnable(GL_TEXTURE_2D);
+	//glDisable(GL_LIGHTING);
 
 	glPopMatrix();
+
+	glDepthMask(GL_FALSE);
 }
 
 
@@ -506,10 +581,24 @@ void			BoltSceneNode::BoltRenderNode::render()
 	glPushMatrix();
 	glTranslatef(sphere[0], sphere[1], sphere[2]);
 
-	if (experimental && sceneNode->isSuper) {
-		renderGeoBolt();
+	bool drawBillboardShot = false;
+	if (experimental){
+		if (sceneNode->isSuper)
+			renderGeoBolt();
+		else{
+			if (sceneNode->drawFlares){
+				if (BZDBCache::shotLength > 5)
+					renderGeoGMBolt();
+				drawBillboardShot = true;
+			}
+			else
+				drawBillboardShot = true;
+		}
 	}
-	else {
+	else
+		drawBillboardShot = true;
+	
+	if (drawBillboardShot){
 		RENDERER.getViewFrustum().executeBillboard();
 		glScalef(radius, radius, radius);
 		// draw some flares
