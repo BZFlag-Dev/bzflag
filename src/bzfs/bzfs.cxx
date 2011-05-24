@@ -5056,8 +5056,10 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
   {
     if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
     {
-      static char discoBuffer[4] = {13,10,13,10};
-      peer.sendChunks.push_back(std::string((char*)discoBuffer, 4));
+      logDebugMessage(2,"Timeout for connected peer with data %s",peer.bufferedInput.c_str());
+      std::string discoBuffer =getServerVersion();
+      discoBuffer += "\r\n\r\n";
+      peer.sendChunks.push_back(discoBuffer);
       peer.deleteMe = true; // nobody loves him
     }
   }
