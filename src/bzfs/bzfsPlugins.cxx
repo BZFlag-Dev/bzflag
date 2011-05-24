@@ -27,6 +27,8 @@
 
 #include "WorldEventManager.h"
 
+#include "TextUtils.h"
+
 #ifdef _WIN32
 std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
@@ -428,7 +430,11 @@ public:
 				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
 
 				for ( unsigned int i = 0; i < plugins.size(); i++)
-					bz_sendTextMessage(BZ_SERVER,playerID,plugins[i].c_str());
+				{
+				  char tmp[256];
+				  sprintf(tmp,"%d %s", i+1, plugins[i].c_str());
+				  bz_sendTextMessage(BZ_SERVER,playerID,tmp);
+				}
 			}
 			return true;
 		}
@@ -468,8 +474,25 @@ public:
 				return true;
 			}
 
-			if ( unloadPlugin(std::string(params->get(0).c_str())) )
-				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in unloaded.");
+			std::string name;
+			for(size_t i = 0; i < params->size(); i++)
+			{
+			  name += params->get(i).c_str();
+			  if (i != params->size()-1)
+			    name += " ";
+			}
+			if (TextUtils::isNumeric(name[0]))
+			{
+			  int index = atoi(name.c_str())-1;
+			  std::vector<std::string>	plugins = getPluginList();
+			  if (index > 0 && index < (int)plugins.size())
+			    name = plugins[index];
+			}
+			if ( unloadPlugin(name) )
+			{
+			  std::string msg = "Plug-In " + name + " unloaded.";
+			  bz_sendTextMessage(BZ_SERVER,playerID,msg.c_str());
+			}
 
 			return true;
 		}
