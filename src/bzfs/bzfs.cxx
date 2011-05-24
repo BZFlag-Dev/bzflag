@@ -4956,7 +4956,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 
 static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*read_set*/, fd_set& /*write_set*/)
 {
-  double connectionTimeout = 30.0; // timeout in seconds
+  double connectionTimeout = 2.5; // timeout in seconds
 
   if (peer.deleteMe)
     return; // skip it, it's dead to us, we'll close and purge it later
@@ -4989,66 +4989,67 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
      {
 	unsigned int readSize = netHandler->getTcpReadSize();
 
-	if (readSize == 0) return;
+	if (readSize > 0)
+	{
+	   // the dude has sent SOME data
+	   peer.sent = true;
 
-	// the dude has sent SOME data
-	peer.sent = true;
+	   void *buf = netHandler->getTcpBuffer();
 
-	void *buf = netHandler->getTcpBuffer();
+	   const char*  header = BZ_CONNECT_HEADER;
+	   const size_t headerLen = strlen(header);
 
-	const char*  header = BZ_CONNECT_HEADER;
-	const size_t headerLen = strlen(header);
+	   char* tmp = (char*)malloc(readSize+1);
+	   strncpy(tmp,(char*)buf,readSize);
+	   tmp[readSize] = '\0';
 
-	char* tmp = (char*)malloc(readSize+1);
-	strncpy(tmp,(char*)buf,readSize);
-	tmp[readSize] = '\0';
+	   peer.bufferedInput += tmp;
+	   free(tmp);
 
-	peer.bufferedInput += tmp;
-	free(tmp);
-
-       if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
-       {
-	 netHandler->flushData();
-	 // it's a player
-	 if (!MakePlayer(netHandler))
-	   peer.deleteMe = true;
-	 else
-	   peer.player = netHandler->getPlayerID();
-
-	 return;
-       }
-       else
-       {
-	  // it isn't a player yet, see if anyone else wants it.
-	 // build up a buffer of all the data that is pending
-	 while (e == ReadAll)
-	 {
+          if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
+          {
 	    netHandler->flushData();
-	    e = netHandler->receive(256);
+	    // it's a player
+	    if (!MakePlayer(netHandler))
+	      peer.deleteMe = true;
+	    else
+	      peer.player = netHandler->getPlayerID();
 
-	    readSize = netHandler->getTcpReadSize();
-	    buf = netHandler->getTcpBuffer();
+	    return;
+          }
+          else
+          {
+	    // it isn't a player yet, see if anyone else wants it.
+	    // build up a buffer of all the data that is pending
+	    while (e == ReadAll)
+	    {
+	       netHandler->flushData();
+	       e = netHandler->receive(256);
 
-	    tmp = (char*)malloc(readSize+1);
-	    strncpy(tmp,(char*)buf,readSize);
-	    tmp[readSize] = '\0';
+	       readSize = netHandler->getTcpReadSize();
+	       buf = netHandler->getTcpBuffer();
 
-	    peer.bufferedInput += tmp;
-	    free(tmp);
-	 }
-	 netHandler->flushData();
+	       tmp = (char*)malloc(readSize+1);
+	       strncpy(tmp,(char*)buf,readSize);
+	       tmp[readSize] = '\0';
 
-	 // call an event to let people know we got a new connect
-	 bz_NewNonPlayerConnectionEventData_V1 eventData;
+	       peer.bufferedInput += tmp;
+	       free(tmp);
+	    }
+	    netHandler->flushData();
 
-	 eventData.data = (void*)peer.bufferedInput.c_str();
-	 eventData.size =  peer.bufferedInput.size();
-	 eventData.connectionID = sockFD;
+	    // call an event to let people know we got a new connect
+	    bz_NewNonPlayerConnectionEventData_V1 eventData;
 
-	 worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
+	    eventData.data = (void*)peer.bufferedInput.c_str();
+	    eventData.size =  peer.bufferedInput.size();
+	    eventData.connectionID = sockFD;
 
-	 // if someone wanted him they'd have set his handler and he'll never get here again
-       }
+	    worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
+
+	    // if someone wanted him they'd have set his handler and he'll never get here again
+          }
+	}
      }
   }
 
