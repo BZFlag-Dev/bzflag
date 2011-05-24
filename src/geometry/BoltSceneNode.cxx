@@ -319,8 +319,6 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 	// bzdb these 2? they control the shot size
 	float gmMissleSize = BZDBCache::gmSize;
 
-	float len = sceneNode->length;
-
 	// parametrics
 	float maxRad = gmMissleSize * 0.16f;
 	float noseRad = gmMissleSize * 0.086f;
