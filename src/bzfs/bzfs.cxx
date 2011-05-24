@@ -5056,7 +5056,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
   {
     if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
     {
-      logDebugMessage(2,"Timeout for connected peer with data %s\n", peer.bufferedInput.c_str());
+      logDebugMessage(2,"Timeout for connected peer with data %s",peer.bufferedInput.c_str());
       std::string discoBuffer =getServerVersion();
       discoBuffer += "\r\n\r\n";
       peer.sendChunks.push_back(discoBuffer);
