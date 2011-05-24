@@ -1,5 +1,37 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  Useful for MSVC users?
+--
+--    http://industriousone.com/topic/running-premake-visual-studio
+--
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+function defaultaction(osName, actionName)
+  if (_ACTION == nil) then
+    if os.is(osName) then
+      _ACTION = actionName
+    end
+    print('Default action for ' .. osName .. ' is ' .. actionName)
+  end
+end
+
+defaultaction('bsd',     'gmake')
+defaultaction('linux',   'gmake')
+defaultaction('solaris', 'gmake')
+defaultaction('windows', 'vs2010')
+defaultaction('macosx',  'xcode3')
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+
+
+
+
+
 
 TOPDIR = os.getcwd()
 print(TOPDIR)
