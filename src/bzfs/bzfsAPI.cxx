@@ -681,6 +681,7 @@ void bz_deleteMaterial ( bz_MaterialInfo *material )
 bz_Plugin::bz_Plugin()
 {
   MaxWaitTime = -1;
+  Unloadable = true;
 }
 
 bz_Plugin::~bz_Plugin()

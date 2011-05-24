@@ -337,41 +337,36 @@ bool loadPlugin ( std::string plugin, std::string config )
 
   tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
-  if (itr != customPluginMap.end() && itr->second)
-  {
+  if (itr != customPluginMap.end() && itr->second){
     bz_APIPluginHandler *handler = itr->second;
     return handler->APIPlugin(plugin,config);
   }
   else
-  {
     return load1Plugin(plugin,config);
-  }
 }
 
 bool unloadPlugin ( std::string plugin )
 {
-	// unload the first one of the name we find
-	for (unsigned int i = 0; i < vPluginList.size();i++)
-	{
-		if ( vPluginList[i].name == plugin || vPluginList[i].filename == plugin )
-		{
-			unload1Plugin(i);
-			vPluginList.erase(vPluginList.begin()+i);
-			return true;
-		}
-	}
-	return false;
+  // unload the first one of the name we find
+  for (unsigned int i = 0; i < vPluginList.size();i++){
+    if ( (vPluginList[i].name == plugin || vPluginList[i].filename == plugin) && vPluginList[i].plugin->Unloadable ){
+      unload1Plugin(i);
+      vPluginList.erase(vPluginList.begin()+i);
+      return true;
+    }
+  }
+  return false;
 }
 
 void unloadPlugins ( void )
 {
-	for (unsigned int i = 0; i < vPluginList.size();i++)
-		unload1Plugin(i);
-	vPluginList.clear();
+  for (unsigned int i = 0; i < vPluginList.size();i++)
+    unload1Plugin(i);
+  vPluginList.clear();
 
-	removeCustomSlashCommand("loadplugin");
-	removeCustomSlashCommand("unloadplugin");
-	removeCustomSlashCommand("listplugins");
+  removeCustomSlashCommand("loadplugin");
+  removeCustomSlashCommand("unloadplugin");
+  removeCustomSlashCommand("listplugins");
 }
 
 std::vector<std::string> getPluginList ( void )

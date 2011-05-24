@@ -1036,6 +1036,7 @@ public:
   virtual void GeneralCallback( const char* /*name*/, void* /*data*/) { return; }
 
   float MaxWaitTime;
+  bool Unloadable;
 
 protected:
   bool Register (bz_eEventType eventType);
