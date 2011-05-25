@@ -24,6 +24,13 @@
 
 class TankSceneNode;
 
+class TankDeathOverride
+{
+public:
+	virtual ~TankDeathOverride(){};
+	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot) = 0;
+};
+
 class TankIDLSceneNode : public SceneNode {
   public:
 			TankIDLSceneNode(const TankSceneNode*);
@@ -110,7 +117,10 @@ class TankSceneNode : public SceneNode {
 
     static void		setMaxLOD(int maxLevel);
 
+	void		setDeathOverride( TankDeathOverride* o) {deathOverride = o;}
+
   protected:
+	TankDeathOverride *deathOverride;
 
     class TankRenderNode : public RenderNode {
       public:

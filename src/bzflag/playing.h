@@ -32,6 +32,8 @@
 #include "ControlPanel.h"
 #include "HUDRenderer.h"
 
+#include "Protocol.h"
+
 #define MAX_MESSAGE_HISTORY (20)
 
 typedef void		(*JoinGameCallback)(bool success, void* data);
@@ -118,6 +120,18 @@ extern bool	     roamButton;
 
 #define MAX_DT_LIMIT 0.1f
 #define MIN_DT_LIMIT 0.001f
+
+enum BlowedUpReason {
+	GotKilledMsg,
+	GotShot,
+	GotRunOver,
+	GotCaptured,
+	GenocideEffect,
+	SelfDestruct,
+	WaterDeath,
+	LastReason,
+	DeathTouch = PhysicsDriverDeath
+};
 
 #endif // BZF_PLAYING_H
 

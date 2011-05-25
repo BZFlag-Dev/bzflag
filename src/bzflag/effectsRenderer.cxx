@@ -18,6 +18,7 @@
 #include "StateDatabase.h"
 #include "TimeKeeper.h"
 #include "Flag.h"
+#include "playing.h"
 
 template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
@@ -243,46 +244,42 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
 	return ret;
 }
 
-void EffectsRenderer::addDeathEffect ( const float* rgb, const float* pos, float rot )
+DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player* player, FlagType* flag )
 {
 	if (!BZDB.isTrue("useFancyEffects"))
-		return;
+		return NULL;
 
 	int effectType = static_cast<int>(BZDB.eval("deathEffect"));
 
-	if (effectType == 0)
-		return;
+	if (effectType == 0 || reason != GotShot)
+		return NULL;
 
-	BasicEffect	*effect = NULL;
+	DeathEffect	*effect = NULL;
 
 	float rots[3] = {0};
 	rots[2] = rot;
 
-	switch(effectType)
-	{
-		case 1:
-			effect = new RingsDeathEffect;
-			break;
-		case 2:
-			effect = new SpikesDeathEffect;
-			break;
-	}
+	if (flag == Flags::GuidedMissile)
+		effect = new SpikesDeathEffect;
+	else
+		effect = new RingsDeathEffect;
 
 	if (effect)
 	{
+		effect->setPlayer(player);
 		effect->setPos(pos,rots);
 		effect->setStartTime((float)TimeKeeper::getCurrent().getSeconds());
 		effect->setColor(rgb);
 		effectsList.push_back(effect);
 	}
+	return effect;
 }
 
 std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 {
 	std::vector<std::string> ret;
 	ret.push_back(std::string("Off"));
-	ret.push_back(std::string("Ring Explosion"));
-	ret.push_back(std::string("Spike Explosion"));
+	ret.push_back(std::string("Fancy Deaths"));
 
 	return ret;
 }
@@ -831,7 +828,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 }
 
 //******************RingsDeathEffect****************
-RingsDeathEffect::RingsDeathEffect() : BasicEffect()
+RingsDeathEffect::RingsDeathEffect() : DeathEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 1.5f;
@@ -918,7 +915,7 @@ void RingsDeathEffect::draw(const SceneRenderer &)
 
 
 //******************SpikesDeathEffect****************
-SpikesDeathEffect::SpikesDeathEffect() : BasicEffect()
+SpikesDeathEffect::SpikesDeathEffect() : DeathEffect()
 {
 	texture = TextureManager::instance().getTextureID("puff",false);
 	lifetime = 4.5f;
@@ -1173,9 +1170,9 @@ SmokeGMPuffEffect::SmokeGMPuffEffect() : BasicEffect()
 
 	float randMod = 0.5f;
 
-	jitter.x = (bzfrand() * (randMod*2)) - randMod;
-	jitter.y = (bzfrand() * (randMod*2)) - randMod;
-	jitter.z = (bzfrand() * (randMod*2)) - randMod;
+	jitter.x = ((float)bzfrand() * (randMod*2)) - randMod;
+	jitter.y = ((float)bzfrand() * (randMod*2)) - randMod;
+	jitter.z = ((float)bzfrand() * (randMod*2)) - randMod;
 	
 	du = dv = 0.5f;
 

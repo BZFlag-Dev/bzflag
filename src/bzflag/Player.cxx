@@ -390,6 +390,13 @@ void Player::setExplode(const TimeKeeper& t)
   updateFlagEffect(Flags::Null);
 }
 
+void Player::setDeathEffect ( TankDeathOverride *e )
+{
+  if (tankNode)
+    tankNode->setDeathOverride(e);
+}
+
+
 
 void Player::setTeleport(const TimeKeeper& t, short from, short to)
 {

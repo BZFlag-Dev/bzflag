@@ -31,9 +31,12 @@
 
 #include "Singleton.h"
 
+#include "TankSceneNode.h"
+#include "Flag.h"
+#include "Player.h"
+
 
 #define EFFECTS (EffectsRenderer::instance())
-
 
 class BasicEffect
 {
@@ -134,7 +137,19 @@ private:
 	float	     length;
 };
 
-class RingsDeathEffect : public BasicEffect
+class DeathEffect : public BasicEffect, public TankDeathOverride
+{
+public:
+	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
+	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
+	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot){return false;}
+
+	void setPlayer ( Player* p){player=p;}
+protected:
+	Player *player;
+};
+
+class RingsDeathEffect : public DeathEffect
 {
 public:
 	RingsDeathEffect();
@@ -150,7 +165,7 @@ protected:
 	float			radius;
 };
 
-class SpikesDeathEffect : public BasicEffect
+class SpikesDeathEffect : public DeathEffect
 {
 public:
 	SpikesDeathEffect();
@@ -290,7 +305,7 @@ public:
 	std::vector<std::string> getGMPuffEffectTypes ( void );
 
 	// death effects
-	void addDeathEffect ( const float* rgb, const float* pos, float rot );
+	DeathEffect* addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player *player, FlagType* flag = NULL );
 	std::vector<std::string> getDeathEffectTypes ( void );
 
 	// landing effects

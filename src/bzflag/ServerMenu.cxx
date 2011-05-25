@@ -89,7 +89,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   }
   else if (key.ascii == '/') {
     if (HUDui::getFocus() && !menu->getFind()) {
-      menu->setFind(true, key.shift & BzfKeyEvent::AltKey);
+      menu->setFind(true, (key.shift & BzfKeyEvent::AltKey) != 0);
       return true;
     }
   }

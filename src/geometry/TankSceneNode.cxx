@@ -54,8 +54,9 @@ TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				tankSize(TankGeometryEnums::Normal)
 {
   // setup style factors (BZDB isn't set up at global init time
-
 			// prepare geometry
+  deathOverride = NULL;
+
   move(pos, forward);
   float length = BZDBCache::tankLength;
   length = 0.5f * (length + MuzzleMaxX);
@@ -1193,14 +1194,28 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // apply explosion transform
   if (isExploding) {
     glPushMatrix();
-    const float* vel = sceneNode->vel[part];
-    const float* spin = sceneNode->spin[part];
-    const float* cog = centerOfGravity[part];
-    glTranslatef(cog[0] + (explodeFraction * vel[0]),
-		 cog[1] + (explodeFraction * vel[1]),
-		 cog[2] + (explodeFraction * vel[2]));
-    glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
-    glTranslatef(-cog[0], -cog[1], -cog[2]);
+	const float* cog = centerOfGravity[part];
+	fvec3 splodePos,splodeRot;
+	if (!sceneNode->deathOverride || !sceneNode->deathOverride->PartDeathLocation(part,splodePos,splodeRot))
+	{
+		const float* vel = sceneNode->vel[part];
+		const float* spin = sceneNode->spin[part];
+		glTranslatef(cog[0] + (explodeFraction * vel[0]),
+			 cog[1] + (explodeFraction * vel[1]),
+			 cog[2] + (explodeFraction * vel[2]));
+		glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
+		glTranslatef(-cog[0], -cog[1], -cog[2]);
+	}
+	else
+	{
+		glTranslatef(cog[0] + splodePos.x,
+			cog[1] + splodePos.y,
+			cog[2] + splodePos.z);
+		glRotatef(splodeRot.x, 1, 0,0);
+		glRotatef(splodeRot.y, 0, 1,0);
+		glRotatef(splodeRot.z, 0, 0,1);
+		glTranslatef(-cog[0], -cog[1], -cog[2]);
+	}
   }
 
   // setup the animation texture matrix

@@ -205,7 +205,7 @@ void GuidedMissileStrategy::update(float dt)
 
   renderTimes++;
   if (puffTime < 0 )
-    puffTime =  bzfrand()*rootPuff;
+    puffTime =  (float)bzfrand()*rootPuff;
 
   // Changed: GM smoke trail, leave it every seconds, none of this per frame crap
   if (currentTime.getSeconds() - lastPuff.getSeconds() > puffTime ) {
@@ -213,7 +213,7 @@ void GuidedMissileStrategy::update(float dt)
     addShotPuff(nextPos,azimuth,elevation);
 
     // pick a new time for the next puff so it's not so orderd.
-    puffTime = bzfrand()*rootPuff;
+    puffTime = (float)bzfrand()*rootPuff;
   }
 
   // get next position

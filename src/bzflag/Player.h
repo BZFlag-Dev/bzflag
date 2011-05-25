@@ -29,6 +29,7 @@
 #include "PlayerState.h"
 #include "ShotStatistics.h"
 
+
 /* local interface headers */
 class ShotPath;
 class SceneDatabase;
@@ -36,6 +37,7 @@ class TankSceneNode;
 class TankIDLSceneNode;
 class SphereSceneNode;
 class Obstacle;
+class TankDeathOverride;
 
 // 54 bytes
 const int PlayerUpdatePLenMax =
@@ -195,6 +197,8 @@ public:
 
   void forceReload(float time);
 
+  void setDeathEffect ( TankDeathOverride *e );
+
   int reportedHits;
   int computedHits;
   std::map<int,bool>	hitMap;
@@ -231,7 +235,6 @@ private:
   void updateJumpJets(float dt);
   void updateTrackMarks();
   bool hitObstacleResizing();
-
 
 private:
   // data not communicated with other players

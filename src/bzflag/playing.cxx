@@ -177,19 +177,6 @@ static bool leftMouseButton   = false;
 static bool rightMouseButton  = false;
 static bool middleMouseButton = false;
 
-
-enum BlowedUpReason {
-  GotKilledMsg,
-  GotShot,
-  GotRunOver,
-  GotCaptured,
-  GenocideEffect,
-  SelfDestruct,
-  WaterDeath,
-  LastReason,
-  DeathTouch = PhysicsDriverDeath
-};
-
 static const char*	blowedUpMessage[] = {
   NULL,
   "Got shot by ",
@@ -2070,6 +2057,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 #endif
 	}
 
+	tank->setDeathEffect(NULL);
 	if (SceneRenderer::instance().useQuality() >= 2) {
 	  if (((tank != myTank)
 	       && ((ROAM.getMode() != Roaming::roamViewFP)
@@ -2176,8 +2164,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 	addTankExplosion(explodePos);
 
-	EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,
-			       victimPlayer->getAngle());
+	victimPlayer->setDeathEffect(EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,
+			       victimPlayer->getAngle(),reason,victimPlayer,flagType));
       }
 
       if (killerLocal) {
@@ -2474,7 +2462,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
 	  addTankExplosion(explodePos);
 
-	  EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle());
+	  player[i]->setDeathEffect(EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle(),GotCaptured,player[i],NULL));
 	}
       }
 
@@ -3428,7 +3416,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
     tank->explodeTank();
-    EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle());
+    tank->setDeathEffect(EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle(),reason,tank, flagType));
 
     if (isViewTank(tank)) {
       if (reason == GotRunOver) {
