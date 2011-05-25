@@ -1,5 +1,5 @@
-LIBRARY	playHistoryTracker
-DESCRIPTION  'playHistoryTracker Windows Dynamic Link Library'
+LIBRARY	hiddenAdmin
+DESCRIPTION  'hiddenAdmin Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here

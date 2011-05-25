@@ -16,6 +16,28 @@ function plugin_project(name, source_files)
     files(source_files)
     links 'plugin_utils'
     includedirs '../plugin_utils'
+
+    -- create missing .def files for windows plugins
+    if (true or os.is('windows')) then -- FIXME
+      local defName = name .. '.def'
+      if (not os.isfile(defName)) then
+        print('Generating ' .. os.getcwd() .. '/' .. defName)
+        local defFile = assert(io.open(defName, 'wb'))
+        defFile:write(''
+          .. "LIBRARY\t"..name.."\r\n"
+          .. "DESCRIPTION  '"..name.." Windows Dynamic Link Library'\r\n"
+          .. "\r\n"
+          .. "EXPORTS\r\n"
+          .. "    ; Explicit exports can go here\r\n"
+          .. "\r\n"
+          .. "bz_GetVersion\r\n"
+          .. "bz_Load\r\n"
+          .. "bz_Unload\r\n"
+        )
+        defFile:close()
+      end
+    end
+
 --[[
     -- create soft links to the plugin .so's in plugins/links/
     configuration 'not windows'
