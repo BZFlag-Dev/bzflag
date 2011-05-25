@@ -155,6 +155,7 @@ bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
 	return false;
       itr++;
     }
+    list.push_back(handler);
   }
   return true;
 }
