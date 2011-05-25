@@ -263,6 +263,9 @@ void EffectsRenderer::addDeathEffect ( const float* rgb, const float* pos, float
 		case 1:
 			effect = new RingsDeathEffect;
 			break;
+		case 2:
+			effect = new SpikesDeathEffect;
+			break;
 	}
 
 	if (effect)
@@ -279,6 +282,7 @@ std::vector<std::string> EffectsRenderer::getDeathEffectTypes ( void )
 	std::vector<std::string> ret;
 	ret.push_back(std::string("Off"));
 	ret.push_back(std::string("Ring Explosion"));
+	ret.push_back(std::string("Spike Explosion"));
 
 	return ret;
 }
@@ -826,7 +830,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	glPopMatrix();
 }
 
-//******************StdDeathEffect****************
+//******************RingsDeathEffect****************
 RingsDeathEffect::RingsDeathEffect() : BasicEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
@@ -909,6 +913,105 @@ void RingsDeathEffect::draw(const SceneRenderer &)
 
 	glColor4f(1,1,1,1);
 	glDepthMask(1);
+	glPopMatrix();
+}
+
+
+//******************SpikesDeathEffect****************
+SpikesDeathEffect::SpikesDeathEffect() : BasicEffect()
+{
+	texture = TextureManager::instance().getTextureID("puff",false);
+	lifetime = 4.5f;
+	explodeFraction = 0.5f;
+
+	OpenGLGStateBuilder gstate;
+	gstate.reset();
+	gstate.setShading();
+	gstate.setBlending((GLenum) GL_SRC_ALPHA,(GLenum) GL_ONE_MINUS_SRC_ALPHA);
+	gstate.setAlphaFunc();
+
+	spikeState = gstate.getState();
+
+	if (texture >-1)
+		gstate.setTexture(texture);
+
+	smokeState = gstate.getState();
+
+	int spikes = (int)((bzfrand() * 25)) + 10;
+
+	for ( int i = 0; i < spikes; i++)
+	{
+		Spike s;
+		s.alphaMod = ((float)bzfrand() * 0.5f) + 0.5f;
+		s.size = ((float)bzfrand() * 1.5f) + 0.5f;
+		s.rots = fvec2((float)bzfrand()* 360.0f,(float)bzfrand() * 180.0f);
+		Spikes.push_back(s);
+	}
+
+	int puffs = (int)((bzfrand() * 25)) + 10;
+	for ( int i = 0; i < puffs; i++)
+		Puffs.push_back(fvec3((float)bzfrand()*4-2,(float)bzfrand()*4-2,(float)bzfrand()*2));
+}
+
+SpikesDeathEffect::~SpikesDeathEffect()
+{
+}
+
+bool SpikesDeathEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	// nope it's not.
+	// we live another day
+	// do stuff that maybe need to be done every time to animage
+	return false;
+}
+
+void SpikesDeathEffect::draw(const SceneRenderer &)
+{
+	glPushMatrix();
+
+	glTranslatef(position[0],position[1],position[2]);
+	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
+
+	color[0] = 108.0f/256.0f;
+	color[1] = 16.0f/256.0f;
+	color[2] = 16.0f/256.0f;
+
+	/*float deltas[3];
+
+	deltas[0] = 1.0f - color[0];
+	deltas[1] = 1.0f - color[1];
+	deltas[2] = 1.0f - color[2];
+
+	float ageParam = age/lifetime;
+
+	float alpha = 1.0f-(ageParam*0.5f);
+	if (alpha < 0.005f)
+		alpha = 0.005f;
+
+	color[0] += deltas[0] *ageParam;
+	color[1] += deltas[1] *ageParam;
+	color[2] += deltas[2] *ageParam;
+
+	glColor4f(color[0],color[1],color[2],alpha);
+	glDepthMask(0);
+
+	glPushMatrix();
+	glTranslatef(0,0,0.5f);
+	drawRingXY(radius*0.75f,1.5f + (ageParam/1.0f * 10),0.5f*age,0.5f);
+	drawRingXY(radius,-0.5f,0.5f+ age,0.5f);
+
+	glTranslatef(-1.5,0,0);
+	glRotatef(90,0,0,1);
+	drawRingYZ(radius,3,0,0,position[2]+0.5f);
+	glPopMatrix();
+
+	glColor4f(1,1,1,1);
+	glDepthMask(1);*/
 	glPopMatrix();
 }
 
@@ -1107,6 +1210,21 @@ bool SmokeGMPuffEffect::update ( float time )
 	return false;
 }
 
+void QuadGuts ( float u0, float v0, float u1, float v1, float h, float v)
+{
+	glTexCoord2f(u0, v0); glVertex2f(-h, -v);
+	glTexCoord2f(u1, v0); glVertex2f(+h, -v);
+	glTexCoord2f(u1, v1); glVertex2f(+h, +v);
+	glTexCoord2f(u0, v1); glVertex2f(-h, +v);
+}
+
+void DrawTextureQuad ( float u0, float v0, float u1, float v1, float h, float v)
+{
+	glBegin(GL_QUADS);
+	QuadGuts(u0,v0,u1,v1,h,v);
+	glEnd();
+}
+
 void SmokeGMPuffEffect::draw(const SceneRenderer &)
 {
 	glPushMatrix();
@@ -1139,16 +1257,7 @@ void SmokeGMPuffEffect::draw(const SceneRenderer &)
 
 	float size = 0.5f + (age * 1.25f);
 
-	const float u0 = (float)u;
-	const float v0 = (float)v;
-	const float u1 = u0 + du;
-	const float v1 = v0 + dv;
-	glBegin(GL_QUADS);
-	glTexCoord2f(u0, v0); glVertex2f(-size, -size);
-	glTexCoord2f(u1, v0); glVertex2f(+size, -size);
-	glTexCoord2f(u1, v1); glVertex2f(+size, +size);
-	glTexCoord2f(u0, v1); glVertex2f(-size, +size);
-	glEnd();
+	DrawTextureQuad ( (float)u, (float)v, (float)u + du, (float)v + dv, size, size);
 
 	glPopMatrix();
 	glDepthMask(1);

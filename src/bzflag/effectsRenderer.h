@@ -150,6 +150,35 @@ protected:
 	float			radius;
 };
 
+class SpikesDeathEffect : public BasicEffect
+{
+public:
+	SpikesDeathEffect();
+	virtual ~SpikesDeathEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+
+	OpenGLGState	spikeState;
+	OpenGLGState	smokeState;
+
+	class Spike
+	{
+	public:
+		float size;
+		fvec2 rots;
+		float alphaMod;
+	};
+	std::vector<Spike> Spikes;
+	std::vector<fvec3> Puffs;
+
+	float explodeFraction;
+};
+
+
 class StdLandEffect : public BasicEffect
 {
 public:
