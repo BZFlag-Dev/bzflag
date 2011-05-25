@@ -61,7 +61,7 @@ BZ_PLUGIN(ServerControl)
 void ServerControl::Init ( const char* cmdLine )
 {
   if (loadConfig(cmdLine) < 0)
-	  return;
+    return;
 
   Register(bz_ePlayerJoinEvent);
   Register(bz_ePlayerPartEvent);
@@ -77,6 +77,8 @@ int ServerControl::loadConfig(const char *cmdLine)
 
   serverActive = false;
   countPlayers( join , NULL );
+
+  lastTime = 0.0f;
 
   /*
    * Set up options from the configuration file
