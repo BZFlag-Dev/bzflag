@@ -1195,8 +1195,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   if (isExploding) {
     glPushMatrix();
 	const float* cog = centerOfGravity[part];
-	fvec3 splodePos,splodeRot;
-	if (!sceneNode->deathOverride || !sceneNode->deathOverride->PartDeathLocation(part,splodePos,splodeRot))
+	fvec3 splodePos,splodeRot, splodeScale(1,1,1);
+	if (!sceneNode->deathOverride || !sceneNode->deathOverride->PartDeathLocation(part,splodePos,splodeRot,splodeScale))
 	{
 		const float* vel = sceneNode->vel[part];
 		const float* spin = sceneNode->spin[part];
@@ -1215,6 +1215,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 		glRotatef(splodeRot.y, 0, 1,0);
 		glRotatef(splodeRot.z, 0, 0,1);
 		glTranslatef(-cog[0], -cog[1], -cog[2]);
+		glScalef(splodeScale.x,splodeScale.y,splodeScale.z);
 	}
   }
 

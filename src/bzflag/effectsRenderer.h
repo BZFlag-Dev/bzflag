@@ -142,7 +142,7 @@ class DeathEffect : public BasicEffect, public TankDeathOverride
 public:
 	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
 	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
-	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot){return false;}
+	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot, fvec3 &scale){return false;}
 
 	void setPlayer ( Player* p){player=p;}
 protected:

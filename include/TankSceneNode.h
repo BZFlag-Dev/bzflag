@@ -28,7 +28,7 @@ class TankDeathOverride
 {
 public:
 	virtual ~TankDeathOverride(){};
-	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot) = 0;
+	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot, fvec3 &scale) = 0;
 };
 
 class TankIDLSceneNode : public SceneNode {
