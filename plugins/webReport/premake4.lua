@@ -1,11 +1,1 @@
-
-project 'webReport'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'webReport.cpp'
-  }
-
-
-
+setup_plugin('webReport', 'webReport.cpp')

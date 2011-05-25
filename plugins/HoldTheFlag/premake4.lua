@@ -1,11 +1,1 @@
-
-project 'HoldTheFlag'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'HoldTheFlag.cpp'
-  }
-
-
-
+setup_plugin('HoldTheFlag', 'HoldTheFlag.cpp')

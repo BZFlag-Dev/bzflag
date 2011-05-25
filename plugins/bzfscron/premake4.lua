@@ -1,11 +1,5 @@
-
-project 'bzfscron'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'bzfscron.cpp'
-  }
-
-
-
+setup_plugin('bzfscron', {
+  'bzfscron.cpp',    'bzfscron.h',
+  'croncommand.cpp', 'croncommand.h',
+  'CronJob.cpp',     'CronJob.h',
+})

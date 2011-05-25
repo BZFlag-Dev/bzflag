@@ -1,11 +1,1 @@
-
-project 'webstats'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'webstats.cpp'
-  }
-
-
-
+setup_plugin('webstats', 'webstats.cpp')

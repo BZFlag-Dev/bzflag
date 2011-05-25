@@ -1,11 +1,1 @@
-
-project 'rabidRabbit'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'rabidRabbit.cpp'
-  }
-
-
-
+setup_plugin('rabidRabbit', 'rabidRabbit.cpp')

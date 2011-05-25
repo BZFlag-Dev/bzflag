@@ -1,11 +1,1 @@
-
-project 'logDetail'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'logDetail.cpp'
-  }
-
-
-
+setup_plugin('logDetail', 'logDetail.cpp')

@@ -1,11 +1,1 @@
-
-project 'mapchange'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'mapchange.cpp'
-  }
-
-
-
+setup_plugin('mapchange', 'mapchange.cpp')

@@ -1,11 +1,1 @@
-
-project 'flagStay'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'flagStay.cpp'
-  }
-
-
-
+setup_plugin('flagStay', 'flagStay.cpp')

@@ -46,7 +46,9 @@ bz_BasePlayerRecord* getPlayerFromGUID(const std::string GUID) {
   return NULL;
 }
 
-bool UpdateBZDBVars::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool UpdateBZDBVars::process(std::string& inputPage,
+                             const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(reply);
   std::map<std::string, std::vector<std::string> >::const_iterator itr = request.parameters.begin();
 
   if (!userInfo->hasPerm("setVar")) {
@@ -83,7 +85,11 @@ bool UpdateBZDBVars::varChanged(const char* key , const char* val) {
   return bz_getBZDBString(key) != val;
 }
 
-bool SendChatMessage::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool SendChatMessage::process(std::string& inputPage,
+                              const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(reply);
+
   if (!userInfo->hasPerm("say")) {
     serverError->errorMessage = "Send Chat Message: Invalid Permission";
     return false;
@@ -97,7 +103,11 @@ bool SendChatMessage::process(std::string& inputPage, const HTTPRequest& request
   return false;
 }
 
-bool SaveLogFile::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool SaveLogFile::process(std::string& inputPage,
+                          const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(request);
+
   if (!logLoop) {
     return false;
   }
@@ -119,7 +129,12 @@ bool SaveLogFile::process(std::string& inputPage, const HTTPRequest& request, HT
   return true;
 }
 
-bool ClearLogFile::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool ClearLogFile::process(std::string& inputPage,
+                           const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(request);
+  UNUSED(reply);
+
   if (!logLoop) {
     return false;
   }
@@ -137,7 +152,11 @@ bool ClearLogFile::process(std::string& inputPage, const HTTPRequest& request, H
   return false;
 }
 
-bool KickUser::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool KickUser::process(std::string& inputPage,
+                       const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(reply);
+
   if (!userInfo->hasPerm("kick")) {
     serverError->errorMessage = "Kick: Invalid Permission";
     return false;
@@ -166,7 +185,11 @@ bool KickUser::process(std::string& inputPage, const HTTPRequest& request, HTTPR
   return false;
 }
 
-bool RemoveBan::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool RemoveBan::process(std::string& inputPage,
+                        const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(reply);
+
   if (!userInfo->hasPerm("unban")) {
     serverError->errorMessage = "RemoveBan: Invalid Permission";
     return false;
@@ -217,7 +240,11 @@ bool RemoveBan::process(std::string& inputPage, const HTTPRequest& request, HTTP
   return false;
 }
 
-bool AddBan::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool AddBan::process(std::string& inputPage,
+                     const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(reply);
+
   if (!userInfo->hasPerm("ban")) {
     serverError->errorMessage = "AddBan: Invalid Permission";
     return false;
@@ -274,7 +301,11 @@ bool AddBan::process(std::string& inputPage, const HTTPRequest& request, HTTPRep
   return false;
 }
 
-bool RemoveReport::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool RemoveReport::process(std::string& inputPage,
+                           const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(reply);
+
   if (!userInfo->hasPerm("viewreports")) {
     serverError->errorMessage = "RemoveReport: Invalid Permission";
     return false;
@@ -288,7 +319,11 @@ bool RemoveReport::process(std::string& inputPage, const HTTPRequest& request, H
   return false;
 }
 
-bool AddReport::process(std::string& inputPage, const HTTPRequest& request, HTTPReply& reply) {
+bool AddReport::process(std::string& inputPage,
+                        const HTTPRequest& request, HTTPReply& reply) {
+  UNUSED(inputPage);
+  UNUSED(reply);
+
   if (!userInfo->hasPerm("talk")) {
     serverError->errorMessage = "RemoveReport: Invalid Permission";
     return false;

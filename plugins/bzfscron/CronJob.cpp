@@ -66,9 +66,8 @@ void CronJob::setJob(std::string job) {
   if (isInVector(weekdays, 0) && !isInVector(weekdays, 7)) { weekdays.push_back(7); }
   else if (isInVector(weekdays, 7) && !isInVector(weekdays, 0)) { weekdays.push_back(0); }
 
-  int debugLevel = bz_getDebugLevel();
   // dump the list if we're debuggering
-  if (debugLevel >= 4) {
+  if (bz_getDebugLevel() >= 4) {
     std::cout << "bzfscron: read job: " << inputJob << std::endl;
     std::cout << "bzfscron: job minutes: " << vector_dump(minutes) << std::endl;
     std::cout << "bzfscron: job hours: " << vector_dump(hours) << std::endl;

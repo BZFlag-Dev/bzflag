@@ -1,11 +1,1 @@
-
-project 'playHistoryTracker'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'playHistoryTracker.cpp'
-  }
-
-
-
+setup_plugin('playHistoryTracker', 'playHistoryTracker.cpp')

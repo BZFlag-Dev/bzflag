@@ -1,11 +1,1 @@
-
-project 'teamflagreset'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'teamflagreset.cpp'
-  }
-
-
-
+setup_plugin('teamflagreset', 'teamflagreset.cpp')

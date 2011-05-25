@@ -1,11 +1,1 @@
-
-project 'hiddenAdmin'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'hiddenAdmin.cpp'
-  }
-
-
-
+setup_plugin('hiddenAdmin', 'hiddenAdmin.cpp')

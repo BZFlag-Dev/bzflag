@@ -126,6 +126,8 @@ bool LoopHandler::ifCallback(const std::string& key) {
 }
 
 bool LoopHandler::loopCallback(const std::string& key) {
+  UNUSED(key);
+
   if (atStart()) {
     setSize(); // let the derived class set it's size
     return !done();
@@ -178,6 +180,8 @@ PlayerLoop::~PlayerLoop() {
 }
 
 void PlayerLoop::newPage(const std::string& pagename, const HTTPRequest& request) {
+  UNUSED(pagename);
+
   playerID = -1;
   std::string pID;
   if (request.getParam("playerID", pID) && pID.size()) {
@@ -447,6 +451,7 @@ PermsLoop::PermsLoop(Templateiser& ts) {
 }
 
 void PermsLoop::getKey(size_t item, std::string& data, const std::string& key) {
+  UNUSED(key);
   data += perms[item];
 }
 
@@ -494,6 +499,8 @@ ChatLoop::~ChatLoop() {
 
 // check for any filter params
 void ChatLoop::newPage(const std::string& pagename, const HTTPRequest& request) {
+  UNUSED(pagename);
+
   formChatLimit = 20;
 
   std::string val;
@@ -524,7 +531,7 @@ void ChatLoop::keyCallback(std::string& data, const std::string& key) {
 
 bool ChatLoop::ifCallback(const std::string& key) {
   if (key == "chatlimit" && templateParam.size()) {
-    return chatLimit == atoi(templateParam.c_str());
+    return (int)chatLimit == atoi(templateParam.c_str());
   }
 
   return LoopHandler::ifCallback(key);
@@ -632,6 +639,8 @@ IPBanLoop::~IPBanLoop() {
 }
 
 void IPBanLoop::newPage(const std::string& pagename, const HTTPRequest& request) {
+  UNUSED(pagename);
+
   filterMasterBans = false;
 
   std::string val;

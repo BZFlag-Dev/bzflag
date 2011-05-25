@@ -1,11 +1,1 @@
-
-project 'keepaway'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'keepaway.cpp'
-  }
-
-
-
+setup_plugin('keepaway', 'keepaway.cpp')

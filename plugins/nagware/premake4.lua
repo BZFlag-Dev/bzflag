@@ -1,11 +1,1 @@
-
-project 'nagware'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'nagware.cpp'
-  }
-
-
-
+setup_plugin('nagware', 'nagware.cpp')

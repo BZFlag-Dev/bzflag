@@ -1,11 +1,1 @@
-
-project 'httpTest'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'httpTest.cpp'
-  }
-
-
-
+setup_plugin('httpTest', 'httpTest.cpp')

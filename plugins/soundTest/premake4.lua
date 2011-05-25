@@ -1,11 +1,1 @@
-
-project 'soundTest'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'soundTest.cpp'
-  }
-
-
-
+setup_plugin('soundTest', 'soundTest.cpp')

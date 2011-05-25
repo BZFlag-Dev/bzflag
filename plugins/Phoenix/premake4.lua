@@ -1,11 +1,1 @@
-
-project 'Phoenix'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'Phoenix.cpp'
-  }
-
-
-
+setup_plugin('Phoenix', 'Phoenix.cpp')

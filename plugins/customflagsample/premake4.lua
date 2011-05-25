@@ -1,11 +1,1 @@
-
-project 'customflagsample'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'customflagsample.cpp'
-  }
-
-
-
+setup_plugin('customflagsample', 'customflagsample.cpp')

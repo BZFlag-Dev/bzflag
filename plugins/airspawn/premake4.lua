@@ -1,11 +1,1 @@
-
-project 'airspawn'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'airspawn.cpp'
-  }
-
-
-
+setup_plugin('airspawn', 'airspawn.cpp')

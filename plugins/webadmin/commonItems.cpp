@@ -141,8 +141,6 @@ GameInfo::~GameInfo(void) {
 
 
 void GameInfo::keyCallback(std::string& data, const std::string& key) {
-  double now = bz_getCurrentTime();
-
   if (key == "mapfile") {
     data += mapFile;
   }
@@ -205,14 +203,17 @@ void GameInfo::process(bz_EventData* eventData) {
       }
       break;
     }
-
-    case bz_eNetDataReceiveEvent:
+    case bz_eNetDataReceiveEvent: {
       bytesIn += ((bz_NetTransferEventData_V1*)eventData)->iSize;
       break;
-
-    case bz_eNetDataSendEvent:
+    }
+    case bz_eNetDataSendEvent: {
       bytesOut += ((bz_NetTransferEventData_V1*)eventData)->iSize;
       break;
+    }
+    default: {
+      break;
+    }
   }
 }
 

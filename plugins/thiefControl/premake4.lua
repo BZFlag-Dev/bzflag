@@ -1,11 +1,1 @@
-
-project 'thiefControl'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'thiefControl.cpp'
-  }
-
-
-
+setup_plugin('thiefControl', 'thiefControl.cpp')

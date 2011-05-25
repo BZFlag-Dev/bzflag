@@ -1,11 +1,1 @@
-
-project 'RogueGenocide'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'RogueGenocide.cpp'
-  }
-
-
-
+setup_plugin('RogueGenocide', 'RogueGenocide.cpp')

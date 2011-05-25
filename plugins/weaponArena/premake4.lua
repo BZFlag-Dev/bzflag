@@ -1,11 +1,1 @@
-
-project 'weaponArena'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'weaponArena.cpp'
-  }
-
-
-
+setup_plugin('weaponArena', 'weaponArena.cpp')

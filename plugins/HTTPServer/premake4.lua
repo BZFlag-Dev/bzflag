@@ -1,14 +1,1 @@
-
-project 'HTTPServer'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  links {
-    'plugin_utils',
-  }
-  files {
-    'HTTPServer.cpp'
-  }
-
-
-
+setup_plugin('HTTPServer', 'HTTPServer.cpp')

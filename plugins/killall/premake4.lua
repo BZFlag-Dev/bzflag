@@ -1,11 +1,1 @@
-
-project 'killall'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'killall.cpp'
-  }
-
-
-
+setup_plugin('killall', 'killall.cpp')

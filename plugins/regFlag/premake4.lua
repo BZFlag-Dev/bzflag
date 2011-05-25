@@ -1,11 +1,1 @@
-
-project 'regFlag'
-  kind 'SharedLib'
-  targetprefix ''
-  objdir '.objs'
-  files {
-    'regFlag.cpp'
-  }
-
-
-
+setup_plugin('regFlag', 'regFlag.cpp')
