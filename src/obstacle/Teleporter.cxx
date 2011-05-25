@@ -441,71 +441,75 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 			     const float* pIn, const float* dIn, float aIn,
 			     float* pOut, float* dOut, float* aOut) const
 {
-  const float x1 = pIn[0] - getPosition()[0];
-  const float y1 = pIn[1] - getPosition()[1];
-  const float a = t2.getRotation() - getRotation() +
-			(face1 == face2 ? (float)M_PI : 0.0f);
-  const float c = cosf(a), s = sinf(a);
-  const float x2 = c * x1 - s * y1;
-  const float y2 = c * y1 + s * x1;
+  // transforming pIn to pOut, going from tele1(this) to tele2
+  const Teleporter& tele1 = *this;
+  const Teleporter& tele2 = t2;
 
-  /*
-	Here's what the next statements do:
+  const float  bord1 = tele1.getBorder();
+  const float  bord2 = tele2.getBorder();
 
-  In order to account for different-size teleporters, each of the dimensions
-  is expressed a a ratio of the length of the transporter in the dimension
-  divided by position of the tank relative to the transporter in that dimension, and
-  is proportional to the width of the target teleporter in that dimension.
-  Here is the formula, with example lengths:
+  fvec3 pos1;
+  pos1.x = tele1.getPosition()[0];
+  pos1.y = tele1.getPosition()[1];
+  pos1.z = tele1.getPosition()[2];;
 
-  W1/W2 = T1/T2
+  
+  fvec3 pos2;
+  pos2.x = tele2.getPosition()[0];
+  pos2.y = tele2.getPosition()[1];
+  pos2.z = tele2.getPosition()[2];;
+  
+  fvec3 size1;
+  size1.x = tele1.getSize()[0];
+  size1.y = tele1.getSize()[1];
+  size1.z = tele1.getSize()[2];
+  
+  fvec3 size2;
+  size2.x = tele2.getSize()[0];
+  size2.y = tele2.getSize()[1];
+  size2.z = tele2.getSize()[2];
+  
+  // y & z axis scaling factors  (relative active areas)
+  const fvec2 dims1(size1.y - bord1, size1.z - bord1);
+  const fvec2 dims2(size2.y - bord2, size2.z - bord2);
+  const fvec2 dimsScale = (dims2 / dims1);
 
+  fvec3 p;
+  p.x = pIn[0];
+  p.y = pIn[1];
+  p.z = pIn[2];  
 
-  |--------|	Tank Pos (T1)
-  |----------------------------------------------------------|	Transport width (W1)
+  // translate to origin, and revert rotation
+  p -= pos1;
+  p = p.rotateZ(-tele1.getRotation());
 
+  // fixed x offset, and scale y & z coordinates
+  p.x = (face2 == 0) ? size2.x : -size2.x;
+  p.yz() *= dimsScale; // note the .yz() 
 
-  |-|	New tank Pos (T2)
-  |---------|	New Transport width (W2)
+  // apply rotation, translate to new position
+  p = p.rotateZ(+tele2.getRotation());
+  p += pos2;
 
-  We are looking for T2, and simple algebra tells us that T2 = (W2 * T1) / W1
+  // final output position
+  pOut[0] = p.x;
+  pOut[1] = p.y;
+  pOut[2] = p.z;
 
-  Now, we can correctly position the tank.
-
-  Note that this is only the position relative to the transporter, to get the real position,
-  it is added to the rest.  Since I'm not 100% sure of my work, I am leaving the old code
-  commented above.
-  */
-
-  //T1 = x2 and y2
-  //W2 = t2.getWidth()
-  //W1 = getWidth()
-
-  //pOut[0] = x2 + t2.getPosition()[0];
-  //pOut[1] = y2 + t2.getPosition()[1];
-  pOut[0] = t2.getPosition()[0] + (x2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
-  pOut[1] = t2.getPosition()[1] + (y2 * (t2.getBreadth() - t2.getBorder())) / getBreadth();
-  //T1 = pIn[2] - getPosition()[2]
-  //W2 = t2.getHeight()
-  //W1 = getHeight
-
-  //(t2.getPosition()[2] - getPosition()[2]) adds the height differences between the
-  //teleporters so that teleporters can be off of the ground at different heights.
-
-  //pOut[2] = pIn[2] + t2.getPosition()[2] - getPosition()[2];
-  pOut[2] = t2.getPosition()[2]
-	  + ((pIn[2] - getPosition()[2]) * (t2.getHeight() - t2.getBorder()))/getHeight();
-
-  if (dOut && dIn) {
-    const float dx = dIn[0];
-    const float dy = dIn[1];
-    dOut[0] = c * dx - s * dy;
-    dOut[1] = c * dy + s * dx;
-    dOut[2] = dIn[2];
-  }
-
+  // fill in output angle and direction variables, if requested
+  const float a = tele2.getRotation() - tele1.getRotation() +
+                  ((face1 == face2) ? (float)M_PI : 0.0f);
   if (aOut) {
     *aOut = aIn + a;
+  }
+  if (dOut && dIn) {
+    const float c = cosf(a);
+    const float s = sinf(a);
+    const float dx = dIn[0];
+    const float dy = dIn[1];
+    dOut[0] = (c * dx) - (s * dy);
+    dOut[1] = (c * dy) + (s * dx);
+    dOut[2] = dIn[2];
   }
 }
 
