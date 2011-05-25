@@ -191,6 +191,8 @@ public:
 
   void		renderRadar() const;
 
+  void		setExplodePos( const float * p);
+
   void setZpos (float z);
 
   float getMaxSpeed ( void ) const;

@@ -142,7 +142,7 @@ class DeathEffect : public BasicEffect, public TankDeathOverride
 public:
 	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
 	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
-	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot, fvec3 &scale){return false;}
+	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart /*part*/, fvec3 &/*pos*/, fvec3 &/*rot*/, fvec3 &/*scale*/, float /*explodeScale*/){return false;}
 
 	void setPlayer ( Player* p){player=p;}
 protected:
@@ -163,6 +163,17 @@ protected:
 	OpenGLGState	ringState;
 
 	float			radius;
+};
+
+class SquishDeathEffect : public DeathEffect
+{
+public:
+	SquishDeathEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot, fvec3 &scale, float explodeScale);
+protected:
 };
 
 class SpikesDeathEffect : public DeathEffect

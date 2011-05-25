@@ -1433,6 +1433,7 @@ void			LocalPlayer::explodeTank()
   if (location == Dead || location == Exploding) return;
   float gravity      = BZDBCache::gravity;
   float explodeTim   = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+  setExplodePos(getPosition());
   // Limiting max height increment to this value (the old default value)
   const float zMax  = 49.0f;
   setExplode(TimeKeeper::getTick());

@@ -251,7 +251,7 @@ DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* po
 
 	int effectType = static_cast<int>(BZDB.eval("deathEffect"));
 
-	if (effectType == 0 || reason != GotShot)
+	if (effectType == 0 || (reason != GotShot && reason != GotRunOver))
 		return NULL;
 
 	DeathEffect	*effect = NULL;
@@ -259,7 +259,9 @@ DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* po
 	float rots[3] = {0};
 	rots[2] = rot;
 
-	if (flag == Flags::GuidedMissile)
+	if (reason == GotRunOver || flag == Flags::Steamroller)
+		effect = new SquishDeathEffect;
+	else if (flag == Flags::GuidedMissile)
 		effect = new SpikesDeathEffect;
 	else
 		effect = new RingsDeathEffect;
@@ -827,13 +829,37 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	glPopMatrix();
 }
 
+//******************RingSpawnEffect****************
+SquishDeathEffect::SquishDeathEffect() : DeathEffect()
+{
+	lifetime = 10.0f;
+}
+
+bool SquishDeathEffect::update ( float time )
+{
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	return false;
+}
+ void SquishDeathEffect::draw ( const SceneRenderer& /*sr*/ )
+ {}
+
+bool SquishDeathEffect::PartDeathLocation ( TankGeometryEnums::TankPart /*part*/, fvec3 &pos, fvec3 &/*rot*/, fvec3 &scale, float /*explodeTime*/)
+{
+	scale = fvec3(1,1,0);
+	pos = fvec3(0,0,0.1f);
+	return true;
+}
+
 //******************RingsDeathEffect****************
 RingsDeathEffect::RingsDeathEffect() : DeathEffect()
 {
 	texture = TextureManager::instance().getTextureID("blend_flash",false);
 	lifetime = 1.5f;
 	radius = 2.0f;
-
 
 	OpenGLGStateBuilder gstate;
 	gstate.reset();

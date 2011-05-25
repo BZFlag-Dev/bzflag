@@ -1382,6 +1382,12 @@ void Player::setDeadReckoning()
   return;
 }
 
+void Player::setExplodePos( const float * p)
+{
+  if (tankNode)
+    tankNode->explodePos = fvec3(p[0],p[1],p[2]);
+}
+
 
 void Player::renderRadar() const
 {

@@ -1196,7 +1196,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     glPushMatrix();
 	const float* cog = centerOfGravity[part];
 	fvec3 splodePos,splodeRot, splodeScale(1,1,1);
-	if (!sceneNode->deathOverride || !sceneNode->deathOverride->PartDeathLocation(part,splodePos,splodeRot,splodeScale))
+	if (!sceneNode->deathOverride || !sceneNode->deathOverride->PartDeathLocation(part,splodePos,splodeRot,splodeScale,explodeFraction))
 	{
 		const float* vel = sceneNode->vel[part];
 		const float* spin = sceneNode->spin[part];
@@ -1208,6 +1208,13 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 	}
 	else
 	{
+		//const GLfloat *sphere = sceneNode->getSphere();
+		//glTranslatef(-(sphere[0]-sceneNode->explodePos.x),-(sphere[1]-sceneNode->explodePos.y), -(sphere[3]-sceneNode->explodePos.z)); // the death thingy will take care of any bounce
+		//glLoadIdentity();
+		//glTranslatef(sceneNode->explodePos.x,sceneNode->explodePos.y,sceneNode->explodePos.z);
+		//glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+		//glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+
 		glTranslatef(cog[0] + splodePos.x,
 			cog[1] + splodePos.y,
 			cog[2] + splodePos.z);
