@@ -1,1 +1,1 @@
-setup_plugin('RogueGenocide', 'RogueGenocide.cpp')
+plugin_project('RogueGenocide', 'RogueGenocide.cpp')

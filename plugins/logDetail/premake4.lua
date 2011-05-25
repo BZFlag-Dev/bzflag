@@ -1,1 +1,1 @@
-setup_plugin('logDetail', 'logDetail.cpp')
+plugin_project('logDetail', 'logDetail.cpp')

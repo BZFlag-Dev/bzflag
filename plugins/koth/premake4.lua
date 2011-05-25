@@ -1,1 +1,1 @@
-setup_plugin('koth', 'koth.cpp')
+plugin_project('koth', 'koth.cpp')

@@ -1,1 +1,1 @@
-setup_plugin('regFlag', 'regFlag.cpp')
+plugin_project('regFlag', 'regFlag.cpp')

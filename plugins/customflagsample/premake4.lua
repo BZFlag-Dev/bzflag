@@ -1,1 +1,1 @@
-setup_plugin('customflagsample', 'customflagsample.cpp')
+plugin_project('customflagsample', 'customflagsample.cpp')

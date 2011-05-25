@@ -1,1 +1,1 @@
-setup_plugin('httpTest', 'httpTest.cpp')
+plugin_project('httpTest', 'httpTest.cpp')

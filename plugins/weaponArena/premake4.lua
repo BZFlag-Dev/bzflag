@@ -1,1 +1,1 @@
-setup_plugin('weaponArena', 'weaponArena.cpp')
+plugin_project('weaponArena', 'weaponArena.cpp')

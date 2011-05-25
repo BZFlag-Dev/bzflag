@@ -1,1 +1,1 @@
-setup_plugin('serverSideBotSample', 'serverSideBotSample.cpp')
+plugin_project('serverSideBotSample', 'serverSideBotSample.cpp')

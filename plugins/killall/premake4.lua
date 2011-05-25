@@ -1,1 +1,1 @@
-setup_plugin('killall', 'killall.cpp')
+plugin_project('killall', 'killall.cpp')

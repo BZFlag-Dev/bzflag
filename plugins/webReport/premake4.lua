@@ -1,1 +1,1 @@
-setup_plugin('webReport', 'webReport.cpp')
+plugin_project('webReport', 'webReport.cpp')

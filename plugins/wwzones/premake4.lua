@@ -1,1 +1,1 @@
-setup_plugin('wwzones', 'wwzones.cpp')
+plugin_project('wwzones', 'wwzones.cpp')

@@ -1,1 +1,1 @@
-setup_plugin('webstats', 'webstats.cpp')
+plugin_project('webstats', 'webstats.cpp')

@@ -1,1 +1,1 @@
-setup_plugin('teamflagreset', 'teamflagreset.cpp')
+plugin_project('teamflagreset', 'teamflagreset.cpp')

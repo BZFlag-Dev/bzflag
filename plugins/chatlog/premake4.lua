@@ -1,1 +1,1 @@
-setup_plugin('chatlog', 'chatlog.cpp')
+plugin_project('chatlog', 'chatlog.cpp')

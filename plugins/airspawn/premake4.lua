@@ -1,1 +1,1 @@
-setup_plugin('airspawn', 'airspawn.cpp')
+plugin_project('airspawn', 'airspawn.cpp')

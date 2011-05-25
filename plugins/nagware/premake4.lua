@@ -1,1 +1,1 @@
-setup_plugin('nagware', 'nagware.cpp')
+plugin_project('nagware', 'nagware.cpp')

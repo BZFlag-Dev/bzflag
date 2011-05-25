@@ -1,1 +1,1 @@
-setup_plugin('mapchange', 'mapchange.cpp')
+plugin_project('mapchange', 'mapchange.cpp')

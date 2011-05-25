@@ -1,1 +1,1 @@
-setup_plugin('soundTest', 'soundTest.cpp')
+plugin_project('soundTest', 'soundTest.cpp')

@@ -1,1 +1,1 @@
-setup_plugin('flagStay', 'flagStay.cpp')
+plugin_project('flagStay', 'flagStay.cpp')

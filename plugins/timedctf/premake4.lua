@@ -1,1 +1,1 @@
-setup_plugin('timedctf', 'timedctf.cpp')
+plugin_project('timedctf', 'timedctf.cpp')

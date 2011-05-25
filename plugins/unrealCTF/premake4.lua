@@ -1,1 +1,1 @@
-setup_plugin('unrealCTF', 'unrealCTF.cpp')
+plugin_project('unrealCTF', 'unrealCTF.cpp')

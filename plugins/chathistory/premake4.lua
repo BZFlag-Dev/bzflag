@@ -1,1 +1,1 @@
-setup_plugin('chathistory', 'chathistory.cpp')
+plugin_project('chathistory', 'chathistory.cpp')

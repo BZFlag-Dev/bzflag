@@ -1,1 +1,1 @@
-setup_plugin('Phoenix', 'Phoenix.cpp')
+plugin_project('Phoenix', 'Phoenix.cpp')

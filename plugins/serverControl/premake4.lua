@@ -1,1 +1,1 @@
-setup_plugin('serverControl', 'serverControl.cpp')
+plugin_project('serverControl', 'serverControl.cpp')

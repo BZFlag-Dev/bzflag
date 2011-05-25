@@ -1,1 +1,1 @@
-setup_plugin('thiefControl', 'thiefControl.cpp')
+plugin_project('thiefControl', 'thiefControl.cpp')

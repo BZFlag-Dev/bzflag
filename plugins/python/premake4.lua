@@ -1,4 +1,4 @@
-setup_plugin('python', {
+plugin_project('python', {
   'python.cpp',
   'PyBZDB.cpp',     'PyBZDB.h',
   'PyBZFlag.cpp',   'PyBZFlag.h',

@@ -1,1 +1,1 @@
-setup_plugin('rabidRabbit', 'rabidRabbit.cpp')
+plugin_project('rabidRabbit', 'rabidRabbit.cpp')

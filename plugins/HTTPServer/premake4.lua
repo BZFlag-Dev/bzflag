@@ -1,1 +1,1 @@
-setup_plugin('HTTPServer', 'HTTPServer.cpp')
+plugin_project('HTTPServer', 'HTTPServer.cpp')

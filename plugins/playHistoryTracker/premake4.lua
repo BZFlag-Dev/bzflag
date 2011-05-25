@@ -1,1 +1,1 @@
-setup_plugin('playHistoryTracker', 'playHistoryTracker.cpp')
+plugin_project('playHistoryTracker', 'playHistoryTracker.cpp')

@@ -1,1 +1,1 @@
-setup_plugin('hiddenAdmin', 'hiddenAdmin.cpp')
+plugin_project('hiddenAdmin', 'hiddenAdmin.cpp')

@@ -7,7 +7,7 @@ include 'plugin_utils'
 local PLUGINS_DIR      = os.getcwd()
 local PLUGIN_LINKS_DIR = PLUGINS_DIR .. '/links'
 
-function setup_plugin(name, source_files)
+function plugin_project(name, source_files)
   project('plugin_' .. name)
     kind 'SharedLib'
     targetname(name)
@@ -71,6 +71,6 @@ include 'wwzones'
 
 --------------------------------------------------------------------------------
 
-setup_plugin = nil
+plugin_project = nil
 
 --------------------------------------------------------------------------------

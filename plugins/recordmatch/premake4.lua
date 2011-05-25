@@ -1,1 +1,1 @@
-setup_plugin('recordmatch', 'recordmatch.cpp')
+plugin_project('recordmatch', 'recordmatch.cpp')

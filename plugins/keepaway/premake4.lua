@@ -1,1 +1,1 @@
-setup_plugin('keepaway', 'keepaway.cpp')
+plugin_project('keepaway', 'keepaway.cpp')

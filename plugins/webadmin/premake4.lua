@@ -1,4 +1,4 @@
-setup_plugin('webadmin', {
+plugin_project('webadmin', {
   'webadmin.cpp',
   'actions.cpp',     'actions.h',
   'commonItems.cpp', 'commonItems.h',

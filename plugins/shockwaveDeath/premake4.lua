@@ -1,1 +1,1 @@
-setup_plugin('shockwaveDeath', 'shockwaveDeath.cpp')
+plugin_project('shockwaveDeath', 'shockwaveDeath.cpp')

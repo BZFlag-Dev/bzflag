@@ -1,1 +1,1 @@
-setup_plugin('HoldTheFlag', 'HoldTheFlag.cpp')
+plugin_project('HoldTheFlag', 'HoldTheFlag.cpp')
