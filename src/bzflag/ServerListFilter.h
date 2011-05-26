@@ -78,7 +78,7 @@ class ServerListFilter {
       PatternType type;
       bool        noCase;
       std::string pattern;
-      struct regex_t* re;
+      regex_t* re;
       private: // no copying
         PatternFilter(const PatternFilter&);
         PatternFilter& operator=(const PatternFilter&);

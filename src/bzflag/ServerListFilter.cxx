@@ -24,7 +24,6 @@
 #include "ServerItem.h"
 #include "TextUtils.h"
 #include "bzglob.h"
-#include "bzregex.h"
 #include "global.h"
 
 // local headers
