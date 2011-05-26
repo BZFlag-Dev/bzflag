@@ -26,22 +26,36 @@ function os.outputof(cmd)
 end
 
 --------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 function os.testcode(t)
   if (isstring(t)) then
     t = { code = t }
   end
 
-  assert(isstring(t.code), 'missing  parameter')
+  assert(isstring(t.code), 'missing "code" parameter')
 
   local source = ''
 
   local includes = t.includes or ''
+  if (istable(includes)) then
+    local incs = ''
+    for _, inc in ipairs(includes) do
+      incs = incs .. '#include '..inc..'\n'
+    end
+    includes = incs
+  elseif (not includes:match('\n$')) then
+    includes = includes .. '\n'
+  end
+
+  assert(isstring(includes), 'invalid "includes" parameter')
+
   local code = t.code
   code = code:match('\n$') and code or (code .. '\n')
 
   source = source .. includes
   source = source .. 'int main(int argc, char** argv) {\n'
+  source = source .. '  (void)argc; (void)argv;\n'
   source = source .. code
   source = source .. '}\n'
 
@@ -53,34 +67,25 @@ function os.testcode(t)
   f:write(source)
   f:close()
 
+  local cmd = premake.gcc.cxx
+  cmd = cmd .. ' ' .. 'lasttest.cpp'
+  cmd = cmd .. ' ' .. '-o junk'
+  cmd = cmd .. ' ' .. (t.buildoptions or '')
 
-  local result = os.execute(premake.gcc.cxx
-                            .. ' ' .. 'lasttest.cpp'
-                            .. ' ' .. '-o junk'
-                            .. ' ' .. (t.incflags or '')
-                            .. ' ' .. (t.linkflags or ''))
+--  cmd = cmd .. ' &> /dev/null'
+
+  local result = os.execute(cmd)
+
   os.remove('junk')
   os.remove('lasttest.cpp')
-  return result
-end
 
---------------------------------------------------------------------------------
-
-function os.testtypesize(typeName)
-  assert(isstring(typeName), 'missing code parameter')
-
-end
-
---------------------------------------------------------------------------------
-
-if (-1 > 0) then
-  for _,code in ipairs {
-    'int b = 1;',
-    'void v = 12;',
-  } do
-    print('code = ' .. code)
-    print('result = ' .. os.testcode(code))
+  if (false and result ~= 0) then
+    print(result)
+    print(source)
+    print(cmd)
   end
+  return (result == 0)
 end
 
+--------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

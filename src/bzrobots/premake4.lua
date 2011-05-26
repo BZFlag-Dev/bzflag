@@ -14,10 +14,9 @@ project 'bzrobots'
   kind 'WindowedApp'
   objdir '.objs'
   includedirs { '.', '../bzflag', '../clientbase' }
+  flags 'Symbols'
 --  buildoptions '`python-config --cflags`'
 --  linkoptions  '`python-config --ldflags`'
---  excludes { 'PythonScript.cpp' }
-  linkoptions { '-export-dynamic' } -- -static' }
   links {
     'libObstacle',
     'libClientBase',
@@ -35,9 +34,10 @@ project 'bzrobots'
     'libCommon',
     'libDate',
     'liblua',
-    'SDL', 'GLEW', 'GLU', 'GL', 'X11',
-    'cares', 'freetype', 'ftgl',
-    'curl', 'z', 'dl', 'rt',
+    'ftgl', 'freetype',
+    'curl', 'cares', 'dl',
+    'z', 'SDL', 'GLU','GL', 'X11', 'GLEW',
+    'rt'
   }
   files {
     '../obstacle/ObstacleMgr.cpp',
@@ -46,9 +46,6 @@ project 'bzrobots'
     'Bullet.cpp',              'Bullet.h',
     'Events.cpp',              'Events.h',
     'LuaScript.cpp',           'LuaScript.h',
-    'OpenGLUtils.cpp',
-    'PrintError.cpp',          'PrintError.h',
---    'PythonScript.cpp',        'PythonScript.h',
     'Robot.cpp',               'Robot.h',
     'RobotCallbacks.h',
     'RobotControl.cpp',        'RobotControl.h',
@@ -58,10 +55,13 @@ project 'bzrobots'
     'SharedObjectScript.cpp',  'SharedObjectScript.h',
     'botplaying.cpp',          'botplaying.h',
     'bzrobots.cpp',
+--    'OpenGLUtils.cpp',
+--    'PrintError.cpp',          'PrintError.h',
+--    'PythonScript.cpp',        'PythonScript.h',
   }
 
 configuration 'not windows'
-  linkoptions { '-export-dynamic' } -- -static' }
+  linkoptions { '-export-dynamic -static' }
 
 configuration 'not gmake'
   targetdir(BINDIR)

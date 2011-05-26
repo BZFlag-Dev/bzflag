@@ -18,7 +18,7 @@ function plugin_project(name, source_files)
     includedirs '../plugin_utils'
 
     -- create missing .def files for windows plugins
-    if (os.is('windows')) then 
+    if (os.is('windows')) then
       local defName = name .. '.def'
       if (not os.isfile(defName)) then
         print('Generating ' .. os.getcwd() .. '/' .. defName)

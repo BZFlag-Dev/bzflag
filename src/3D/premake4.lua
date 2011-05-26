@@ -12,7 +12,6 @@ project   'lib3D'
 if (not os.is('windows')) then
   includedirs { os.outputof('freetype-config --cflags'):match('%-I(.*)$') }
 end
-
 --  includedirs { os.outputof('pkg-config freetype2 --cflags'):match('%-I(.*)$')  }
 
 

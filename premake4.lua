@@ -8,6 +8,18 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+assert(_PREMAKE_BZFLAG and (_PREMAKE_BZFLAG >= 1),
+  '\n  A customized premake is required to configure the bzflag build.'..
+  '\n  The customized premake sources can be found in:  ./other_src/premake/.')
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+_PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
+
+ACTION  = _ACTION
+OPTIONS = _OPTIONS
+
 function defaultaction(osName, actionName)
   if (_ACTION == nil) then
     if os.is(osName) then
@@ -22,6 +34,17 @@ defaultaction('linux',   'gmake')
 defaultaction('solaris', 'gmake')
 defaultaction('windows', 'vs2010')
 defaultaction('macosx',  'xcode3')
+
+
+if (_OPTIONS['help']) then
+  _ACTION = 'help'
+end
+
+if (_ACTION == 'help') then
+  _OPTIONS['help'] = ''
+  print('HELPING')
+end
+
 
 
 --------------------------------------------------------------------------------
@@ -84,10 +107,20 @@ CONFIG.package_string =
 
 print(CONFIG.package_string)
 
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
+if (_OPTIONS['build-luaexecs']) then
+  CONFIG.build_luaexecs = true
+end
 
-include 'premake4_config'
+
+--FIXME: one of these is causing a Make Bomb
+--CONFIG.ares.need_build     = true -- FIXME
+--CONFIG.curl.need_build     = true -- FIXME
+--CONFIG.freetype.need_build = true -- FIXME
+--CONFIG.type.need_build     = true -- FIXME
+--CONFIG.zlib.need_build     = true -- FIXME
+--CONFIG.glew.need_build     = true -- FIXME
+--CONFIG.regex.need_build    = true -- FIXME
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -98,7 +131,7 @@ if (os.is('windows')) then
   platforms { 'x32', 'x64' }
 end
 
-if (_OPTIONS['enable-debug']) then
+if (_OPTIONS['debugging']) then
   configurations { 'debug', 'release' }
 else
   configurations { 'release', 'debug' }
@@ -130,12 +163,40 @@ local function newopt(trigger, description)
   newoption { trigger = trigger, description = description }
 end
 
+newopt('debugging',        'default to the "debug" configuration')
 newopt('disable-bzfs',     'disable the bzfs build')
 newopt('disable-bzflag',   'disable the bzflag build')
 newopt('disable-bzadmin',  'disable the bzadmin build')
 newopt('disable-bzrobots', 'disable the bzrobots build')
 newopt('disable-plugins',  'disable the bzfs plugins')
-newopt('enable-debug',     'enable debugging')
+newopt('build-all',        'build all the included libraries')
+newopt('build-ares',       'build the ares library')
+newopt('build-curl',       'build the curl library')
+newopt('build-freetype',   'build the freetype library')
+newopt('build-ftgl',       'build the ftgl library')
+newopt('build-glew',       'build the glew library')
+newopt('build-regex',      'build the regex library')
+newopt('build-zlib',       'build the zlib library')
+newopt('build-luaexecs',   'build the bzlua and bzluac executables')
+
+if (_OPTIONS['build-luaexecs']) then CONFIG.build_luaexecs      = true end
+if (_OPTIONS['build-ares'])     then CONFIG.ares.need_build     = true end
+if (_OPTIONS['build-curl'])     then CONFIG.curl.need_build     = true end
+if (_OPTIONS['build-freetype']) then CONFIG.freetype.need_build = true end
+if (_OPTIONS['build-ftgl'])     then CONFIG.ftgl.need_build     = true end
+if (_OPTIONS['build-glew'])     then CONFIG.glew.need_build     = true end
+if (_OPTIONS['build-regex'])    then CONFIG.regex.need_build    = true end
+if (_OPTIONS['build-zlib'])     then CONFIG.zlib.need_build     = true end
+if (_OPTIONS['build-all']) then
+  CONFIG.build_luaexecs      = true
+  CONFIG.ares.need_build     = true
+  CONFIG.curl.need_build     = true
+  CONFIG.freetype.need_build = true
+  CONFIG.ftgl.need_build     = true
+  CONFIG.glew.need_build     = true
+  CONFIG.regex.need_build    = true
+  CONFIG.zlib.need_build     = true
+end
 
 
 --[[
@@ -152,12 +213,18 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-include 'other_src'
-include 'src'
-include 'man'
 
-if (not _OPTIONS['disable-plugins']) then
-  include 'plugins'
+if (not _OPTIONS['help']) then
+  include 'premake4_config'
+
+  include 'other_src'
+  include 'src'
+
+  if (not _OPTIONS['disable-plugins']) then
+    include 'plugins'
+  end
+
+  include 'man'
 end
 
 --------------------------------------------------------------------------------

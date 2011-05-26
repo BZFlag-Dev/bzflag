@@ -370,8 +370,10 @@ typedef uLong FAR uLongf;
  * both "#undef _LARGEFILE64_SOURCE" and "#define _LARGEFILE64_SOURCE 0" as
  * equivalently requesting no 64-bit operations
  */
-#if -_LARGEFILE64_SOURCE - -1 == 1
-#  undef _LARGEFILE64_SOURCE
+#ifdef _LARGEFILE64_SOURCE
+#  if -_LARGEFILE64_SOURCE - -1 == 1
+#    undef _LARGEFILE64_SOURCE
+#  endif
 #endif
 
 #if defined(Z_HAVE_UNISTD_H) || defined(_LARGEFILE64_SOURCE)
