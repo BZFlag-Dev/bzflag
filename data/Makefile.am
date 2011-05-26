@@ -64,10 +64,13 @@ dist_pkgdata_DATA =		\
 	mountain1.png		\
 	mountain2.png		\
 	mountain3.png		\
+	mountain4.png		\
+	mountain5.png		\
 	observer_icon.png	\
 	phantom.wav		\
 	pop.wav			\
 	puddle.png		\
+	puffs.png		\
 	purple_basetop.png	\
 	purple_basewall.png	\
 	purple_bolt.png		\
@@ -111,6 +114,7 @@ dist_pkgdata_DATA =		\
 	thief.png		\
 	thief.wav		\
 	title.png		\
+	treads.png		\
 	wall.png		\
 	water.png		\
 	zone_ground.png
