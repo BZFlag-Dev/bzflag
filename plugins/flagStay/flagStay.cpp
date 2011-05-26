@@ -154,7 +154,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 	return true;
 }
 
-std::map<int,int>	playeIDToZoneMap;
+std::map<int,int>	playerIDToZoneMap;
 
 void EventHandler::Event ( bz_EventData *eventData )
 {
@@ -202,7 +202,7 @@ void EventHandler::Event ( bz_EventData *eventData )
 		if ( validZones[i]->pointIn(pos) )
 		{
 			insideOne = true;
-			playeIDToZoneMap[playerID] = i;
+			playerIDToZoneMap[playerID] = i;
 		}
 	}
 
@@ -210,8 +210,8 @@ void EventHandler::Event ( bz_EventData *eventData )
 	if (!insideOne && validZones.size() > 0)
 	{
 		int lastZone = -1;
-		if ( playeIDToZoneMap.find(playerID) != playeIDToZoneMap.end() )
-			lastZone = playeIDToZoneMap[playerID];
+		if ( playerIDToZoneMap.find(playerID) != playerIDToZoneMap.end() )
+			lastZone = playerIDToZoneMap[playerID];
 		bz_removePlayerFlag(playerID);
 		if (lastZone != -1 && zoneList[lastZone].message.size())
 			bz_sendTextMessage(BZ_SERVER,playerID,zoneList[lastZone].message.c_str());

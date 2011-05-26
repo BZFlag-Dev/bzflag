@@ -1761,14 +1761,14 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command )
   return true;
 }
 
-BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
+BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot )
 {
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player)
     return false;
 
   // get the spawn position
-  SpawnPosition* spawnPosition = new SpawnPosition(playeID,
+  SpawnPosition* spawnPosition = new SpawnPosition(playerID,
     (!clOptions->respawnOnBuildings) || (player->player.isBot()),
     clOptions->gameType == ClassicCTF);
 
@@ -1781,9 +1781,9 @@ BZF_API bool bz_getStandardSpawn ( int playeID, float pos[3], float *rot )
   return true;
 }
 
-BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const char* flagType  )
+BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID, const char* flagType  )
 {
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player)
     return false;
 
@@ -1803,15 +1803,15 @@ BZF_API bool bz_killPlayer ( int playeID, bool spawnOnBase, int killerID, const 
     flag = flagMap.find(std::string(flagType))->second;
   }
 
-  playerKilled(playeID, killerID, 0, -1, flag ? flag : Flags::Null, -1,spawnOnBase);
+  playerKilled(playerID, killerID, 0, -1, flag ? flag : Flags::Null, -1,spawnOnBase);
 
   return true;
 }
 
-BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
+BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force )
 {
   FlagInfo* fi = NULL;
-  GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playeID);
+  GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playerID);
 
   if (gkPlayer != NULL)
   {
@@ -1893,16 +1893,16 @@ BZF_API bool bz_givePlayerFlag ( int playeID, const char* flagType, bool force )
   return false;
 }
 
-BZF_API bool bz_removePlayerFlag ( int playeID )
+BZF_API bool bz_removePlayerFlag ( int playerID )
 {
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playeID);
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
   if (!player)
     return false;
 
   if (!player->player.isAlive())
     return false;
 
-  zapFlagByPlayer(playeID);
+  zapFlagByPlayer(playerID);
 
   return true;
 }
