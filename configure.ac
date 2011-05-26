@@ -869,6 +869,7 @@ AC_CONFIG_FILES(bzflag.info
 	plugins/teamflagreset/Makefile
 	plugins/timedctf/Makefile
 	plugins/wwzones/Makefile
+	plugins/customflagsample/Makefile
 	src/3D/Makefile
 	src/Makefile
 	src/bzadmin/Makefile
