@@ -59,7 +59,7 @@
 #include "Teleporter.h"
 
 // only include this if we are going to use plugins and export the API
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
 #include "bzfsPlugins.h"
 #endif
 
@@ -5183,7 +5183,7 @@ int main(int argc, char **argv)
       "\n");
   }
 
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   // see if we are going to load any plugins
   initPlugins();
   // check for python by default
@@ -5527,7 +5527,7 @@ int main(int argc, char **argv)
     }
 
     // see if we are within the plug requested max wait time
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
     const float pluginMaxWait = getPluginMinWaitTime();
     if (waitTime > pluginMaxWait)
       waitTime = pluginMaxWait;
@@ -6206,7 +6206,7 @@ int main(int argc, char **argv)
     dontWait = dontWait || cURLManager::perform();
   }
 
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   unloadPlugins();
 #endif
 

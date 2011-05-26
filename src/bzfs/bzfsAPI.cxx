@@ -705,7 +705,7 @@ void bz_Plugin::Flush ()
 
 BZF_API bool bz_pluginExists(const char* name)
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   return getPlugin(name) != NULL;
 #else
   (void)name;
@@ -715,7 +715,7 @@ BZF_API bool bz_pluginExists(const char* name)
 
 BZF_API bz_Plugin* bz_getPlugin(const char* name)
 {
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   return getPlugin(name);
 #else
   (void)name;
@@ -2183,7 +2183,7 @@ BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPlugi
 
   std::string ext = extension;
 
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   return registerCustomPluginHandler( ext,handler);
 #else
   std::cerr << "This BZFlag server does not support plugins." << std::endl;
@@ -2198,7 +2198,7 @@ BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginH
 
   std::string ext = extension;
 
-#ifdef _USE_BZ_API
+#ifdef BZ_PLUGINS
   return removeCustomPluginHandler( ext,handler);
 #else
   std::cerr << "This BZFlag server does not support plugins." << std::endl;
