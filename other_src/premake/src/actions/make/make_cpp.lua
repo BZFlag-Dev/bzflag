@@ -112,7 +112,7 @@
 		for _, file in ipairs(prj.files) do
 			if path.iscppfile(file) then
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo $(notdir $<)')
+				_p('\t@echo Compiling $(notdir $<)')
 				if (path.iscfile(file)) then
 					_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
 				else
@@ -120,7 +120,7 @@
 				end
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo $(notdir $<)')
+				_p('\t@echo Processing $(notdir $<)')
 				_p('\t$(SILENT) windres $< -O coff -o "$@" $(RESFLAGS)')
 			end
 		end
@@ -128,6 +128,19 @@
 
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
+
+		-- trepan was here
+		local myname = _MAKE.getmakefilename(prj, true)
+		local premake_exec = _MAKE.esc(_PREMAKE_EXEC or 'premake4')
+		_p('\n')
+		_p('# targets depend on the build system\n')
+		_p('*.o: '  .. myname)
+		_p('*.a: '  .. myname)
+		_p('*.so: ' .. myname)
+		_p(myname .. ': premake4.lua')
+		local topdir = _MAKE.esc(path.getrelative(prj.basedir, prj.solution.basedir))
+		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
+		_p('\t@$(MAKE)')
 	end
 
 

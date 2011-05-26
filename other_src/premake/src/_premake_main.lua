@@ -4,11 +4,13 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
+  -- trepan was here
+	_PREMAKE_BZFLAG = 1
+
 
 	local scriptfile    = "premake4.lua"
 	local shorthelp     = "Type 'premake4 --help' for help"
 	local versionhelp   = "premake4 (Premake Build Script Generator) %s"
-
 
 
 --
