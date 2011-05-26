@@ -9,9 +9,10 @@ PREMAKE_DIR="other_src/premake"
 PREMAKE_EXEC="$PREMAKE_DIR/bin/release/premake4"
 
 
-(cd "$PREMAKE_DIR/build/gmake.unix/" && make)
+(cd "$PREMAKE_DIR/build/gmake.unix/" && gmake)
 
-$PREMAKE_EXEC gmake
 
-make
+$PREMAKE_EXEC
+
+gmake
 
