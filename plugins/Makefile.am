@@ -7,6 +7,7 @@ SUBDIRS = \
 	TimeLimit \
 	airspawn \
 	chathistory \
+	customflagsample \
 	flagStay \
 	hiddenAdmin \
 	keepaway \
