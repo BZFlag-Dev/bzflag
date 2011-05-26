@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,8 +16,8 @@
 #include <string.h>
 #include "Pack.h"
 #include "bzfio.h"
-#include "../zlib/zconf.h"
-#include "../zlib/zlib.h"
+#include <zconf.h>
+#include <zlib.h>
 
 #ifndef _WIN32
 #include <netinet/in.h>

@@ -1,5 +1,3 @@
-include $(top_srcdir)/Makefile.common
-
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libPlatform.la
 endif
@@ -256,8 +254,7 @@ EXTRA_libPlatform_la_SOURCES =		\
 	wave.cxx			\
 	wave.h
 
-AM_CPPFLAGS += $(SDL_CFLAGS)
-
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(SDL_CFLAGS)
 
 EXTRA_DIST = \
 	NewMedia.cxx \

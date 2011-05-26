@@ -1,5 +1,3 @@
-include $(top_srcdir)/Makefile.common
-
 noinst_LTLIBRARIES = libDate.la
 
 MAINTAINERCLEANFILES = \

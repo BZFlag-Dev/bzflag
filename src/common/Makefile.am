@@ -1,4 +1,4 @@
-include $(top_srcdir)/Makefile.common
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\"
 
 noinst_LTLIBRARIES = libCommon.la
 

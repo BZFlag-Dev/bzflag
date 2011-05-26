@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,7 @@
 #include "BaseBuilding.h"
 
 /* compression library header */
-#include "../zlib/zlib.h"
+#include <zlib.h>
 
 
 WorldBuilder::WorldBuilder()
@@ -342,4 +342,3 @@ void WorldBuilder::setBase(TeamColor team,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -1,5 +1,3 @@
-include $(top_srcdir)/Makefile.common
-
 MAINTAINERCLEANFILES = \
 	ServerLink.cxx \
 	Makefile.in
@@ -18,12 +16,10 @@ EXTRA_bzadmin_SOURCES = \
 	CursesUI.cxx
 endif
 
-if BUILD_REGEX
-REGEX = \
-	../regex/libregex.la
-endif
-
-AM_CPPFLAGS += -DBUILDING_BZADMIN -I$(top_srcdir)/src/bzflag
+AM_CPPFLAGS = \
+	-DBUILDING_BZADMIN \
+	-I$(top_srcdir)/src/bzflag \
+	$(LIBCURL_CPPFLAGS)
 
 bzadmin_SOURCES = \
 	BZAdminClient.h \
@@ -57,4 +53,5 @@ LDADD = \
 	../net/libNet.la	\
 	../common/libCommon.la	\
 	$(LIBCURL)		\
-	$(REGEX)
+	$(LIBCARES)		\
+	$(LIBREGEX)

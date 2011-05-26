@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,8 +17,8 @@
 #include "TextTool.h"
 
 // for png compression
-#include "../../src/zlib/zconf.h"
-#include "../../src/zlib/zlib.h"
+#include "../../src/other/zlib/zconf.h"
+#include "../../src/other/zlib/zlib.h"
 
 #include <fstream>
 #include <string>
@@ -607,4 +607,3 @@ void CTextToolView::OnInitialUpdate()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

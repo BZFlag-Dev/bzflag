@@ -1,5 +1,3 @@
-include $(top_srcdir)/Makefile.common
-
 noinst_LTLIBRARIES = libNet.la
 
 if BUGGY_MIPSPRO

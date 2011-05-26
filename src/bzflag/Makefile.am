@@ -1,4 +1,4 @@
-include $(top_srcdir)/Makefile.common
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\"
 
 bin_PROGRAMS = bzflag
 
@@ -18,7 +18,7 @@ bzflag_SOURCES =			\
 	BaseLocalPlayer.h		\
 	CacheMenu.cxx			\
 	CacheMenu.h			\
-	clientConfig.cxx			\
+	clientConfig.cxx		\
 	clientConfig.h			\
 	CommandsImplementation.cxx	\
 	ComposeDefaultKey.cxx		\
@@ -33,8 +33,8 @@ bzflag_SOURCES =			\
 	Downloads.h			\
 	EffectsMenu.cxx			\
 	EffectsMenu.h			\
-	effectsRenderer.cxx			\
-	effectsRenderer.h			\
+	effectsRenderer.cxx		\
+	effectsRenderer.h		\
 	EntryZone.cxx			\
 	EntryZone.h			\
 	FlashClock.cxx			\
@@ -94,7 +94,7 @@ bzflag_SOURCES =			\
 	Player.cxx			\
 	Player.h			\
 	Plan.cxx			\
-	Plan.h			\
+	Plan.h				\
 	QuickKeysMenu.cxx		\
 	QuickKeysMenu.h			\
 	QuitMenu.cxx			\
@@ -186,26 +186,9 @@ else
 RESOURCE =
 endif
 
-if BUILDZLIB
-ZLIB = ../zlib/libz.la
-else
-ZLIB = -lz
-endif
-
-if BUILDCARES
-CARESLIB = ../c-ares/libcares.la
-else
-CARESLIB = -lcares
-endif
-
 if MACOS
 NACLIB = \
 	../platform/MacOSX/libMac.la
-endif
-
-if BUILD_REGEX
-REGEX = \
-	../regex/libregex.la
 endif
 
 LDADD =	\
@@ -220,9 +203,9 @@ LDADD =	\
 	../geometry/libGeometry.la	\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
-	$(CARESLIB)			\
-	$(REGEX)			\
-	$(ZLIB)				\
+	$(LIBCARES)			\
+	$(LIBREGEX)			\
+	$(LIBZ)				\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
 	$(SDL_IMAGE_LIBS)		\

@@ -1,25 +1,13 @@
-if BUILDZLIB
-ZLIB_DIR = zlib
-else
-ZLIB_DIR =
-endif
-
-if BUILDCARES
-CARES_DIR = c-ares
-else
-CARES_DIR =
-endif
-
-if BUILD_REGEX
-REGEX_DIR = regex
-else
-REGEX_DIR =
-endif
-
 if CLIENT_INCLUDED
 BZFLAG_DIR = bzflag
 else
 BZFLAG_DIR =
+endif
+
+if SERVER_INCLUDED
+BZFS_DIR = bzfs
+else
+BZFS_DIR =
 endif
 
 if BZADMIN_INCLUDED
@@ -28,25 +16,23 @@ else
 BZADMIN_DIR =
 endif
 
+# "other" must be near the top, if not first, for maintainer-clean to work
 SUBDIRS = \
-	${CARES_DIR}	\
+	other \
 	3D \
-	${REGEX_DIR} \
 	common \
 	net \
 	game \
 	geometry \
 	obstacle \
-	${ZLIB_DIR} \
 	ogl \
 	scene \
 	platform \
 	mediafile \
 	date \
-	bzfs \
-	${BZFLAG_DIR}	\
+	${BZFS_DIR} \
+	${BZFLAG_DIR} \
 	${BZADMIN_DIR}
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-

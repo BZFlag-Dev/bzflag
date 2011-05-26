@@ -1,5 +1,3 @@
-include $(top_srcdir)/Makefile.common
-
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGLKit.la
 endif
