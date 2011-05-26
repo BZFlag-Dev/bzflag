@@ -1,5 +1,6 @@
 EXTRA_DIST =				\
 	3ds2bzw.c			\
+	art				\
 	bzbz.pl				\
 	bzflag.desktop.in		\
 	bzfquery.php			\
@@ -30,6 +31,7 @@ EXTRA_DIST =				\
 	rrlog.cxx			\
 	ServerListFilter.txt		\
 	serverstats.sh			\
+	shtool				\
 	simpleSwearList.txt		\
 	snap.sh				\
 	stats/Changes			\
