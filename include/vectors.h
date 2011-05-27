@@ -474,6 +474,13 @@ VECTORS_STATIC_ASSERT(sizeof(dvec4) == (4 * sizeof(double)));
 
 #undef VECTORS_STATIC_ASSERT
 
+
+// utils
+
+inline fvec3 Float3ToVec3 ( const float * f) { return fvec3(f[0],f[1],f[2]); }
+inline fvec4 Float3ToVec4 ( const float * f) { return fvec4(f[0],f[1],f[2],1.0f); }
+inline fvec4 Float4ToVec4 ( const float * f) { return fvec4(f[0],f[1],f[2],f[3]); }
+
 //============================================================================//
 
 

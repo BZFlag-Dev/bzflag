@@ -475,6 +475,38 @@ void			HUDRenderer::addMarker(float _heading, const float *_color )
   memcpy(m.color, _color, sizeof(m.color));
 }
 
+
+void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
+					 std::string name, bool friendly,
+					 float zShift)
+{
+  EnhancedHUDMarker newMarker(pos, color);
+  newMarker.pos.z += zShift;
+  newMarker.name = name;
+  newMarker.friendly = friendly;
+  enhancedMarkers.push_back(newMarker);
+}
+
+void HUDRenderer::AddEnhancedMarker(const fvec3& pos, const fvec4& color,
+				    bool friendly, float zShift )
+{
+  EnhancedHUDMarker newMarker(pos, color);
+  newMarker.pos.z += zShift;
+  newMarker.friendly = friendly;
+  enhancedMarkers.push_back(newMarker);
+}
+
+void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
+				  bool friendly, float zShift )
+{
+  const fvec4 color(0.75f, 0.125f, 0.125f, 1.0f);
+  EnhancedHUDMarker newMarker(pos, color);
+  newMarker.pos.z += zShift;
+  newMarker.name = name;
+  newMarker.friendly = friendly;
+  lockOnMarkers.push_back(newMarker);
+}
+
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
   char buffer[250];
@@ -1064,6 +1096,15 @@ void			HUDRenderer::renderTimes(void)
   }
 }
 
+void HUDRenderer::saveMatrixes(const float *mm, const float *pm )
+{
+  // ssave off the stuff before we reset it
+  for(int i = 0; i < 16; i++) {
+    modelMatrix[i] = mm[i];
+    projMatrix[i] = pm[i];
+  }
+  glGetIntegerv(GL_VIEWPORT,(GLint*)viewport);
+}
 
 
 void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,

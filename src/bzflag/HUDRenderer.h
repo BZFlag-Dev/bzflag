@@ -100,6 +100,14 @@ public:
   void		setRestartKeyLabel(const std::string&);
   void		setTimeLeft(uint32_t timeLeftInSeconds);
 
+  void		AddEnhancedMarker(const fvec3& pos, const fvec4& color,
+				  bool friendly = false, float zShift = 0.0f);
+  void		AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color, std::string name,
+				  bool friendly = false, float zShift = 0.0f);
+  void		AddLockOnMarker(const fvec3& pos, std::string name,
+				  bool friendly = false, float zShift = 0.0f);
+
+  void		saveMatrixes(const float* mm, const float* pm);
   void		setDim(bool);
 
   bool		getComposing() const;

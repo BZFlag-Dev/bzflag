@@ -258,6 +258,7 @@ public:
   static const std::string	BZDB_LASERADLIFE;
   static const std::string	BZDB_LATITUDE;
   static const std::string	BZDB_LOCKONANGLE;
+  static const std::string	BZDB_TARGETINGANGLE;
   static const std::string	BZDB_LONGITUDE;
   static const std::string	BZDB_LRADRATE;
   static const std::string	BZDB_MAXBUMPHEIGHT;
@@ -309,7 +310,6 @@ public:
   static const std::string	BZDB_TANKHEIGHT;
   static const std::string	BZDB_TANKSPEED;
   static const std::string	BZDB_TANKRADIUS;
-  static const std::string	BZDB_TARGETINGANGLE;
   static const std::string	BZDB_TELEBREADTH;
   static const std::string	BZDB_TELEHEIGHT;
   static const std::string	BZDB_TELEPORTTIME;

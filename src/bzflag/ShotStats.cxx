@@ -73,8 +73,8 @@ ShotStats::ShotStats() : HUDDialog()
 
   // add statistics for each player
   for (int i = 0; i < curMaxPlayers; ++i) {
-    if (player[i] && (player[i]->getTeam() != ObserverTeam)) {
-      addStats((Player*)player[i], listHUD);
+    if (remotePlayers[i] && (remotePlayers[i]->getTeam() != ObserverTeam)) {
+      addStats((Player*)remotePlayers[i], listHUD);
     }
   }
 

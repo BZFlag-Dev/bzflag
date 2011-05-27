@@ -84,19 +84,19 @@ static ShotPath *findWorstBullet(float &minDistance)
 
   minDistance = Infinity;
   for (int t = 0; t < curMaxPlayers; t++) {
-    if (t == myTank->getId() || !player[t])
+    if (t == myTank->getId() || !remotePlayers[t])
       continue;
 
-    const int maxShots = player[t]->getMaxShots();
+    const int maxShots = remotePlayers[t]->getMaxShots();
     for (int s = 0; s < maxShots; s++) {
-      ShotPath* shot = player[t]->getShot(s);
+      ShotPath* shot = remotePlayers[t]->getShot(s);
       if (!shot || shot->isExpired())
 	continue;
 
       if ((shot->getFlag() == Flags::InvisibleBullet) &&
 	  (myTank->getFlag() != Flags::Seer))
 	continue; //Theoretically Roger could triangulate the sound
-      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned())
+      if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned())
 	continue;
       if ((shot->getFlag() == Flags::Laser) &&
 	  (myTank->getFlag() == Flags::Cloaking))
@@ -307,42 +307,42 @@ static RemotePlayer *findBestTarget()
 
   for (int t = 0; t < curMaxPlayers; t++) {
     if ((t != myTank->getId())
-    &&  (player[t])
-    &&  (player[t]->isAlive())
-    &&  (!player[t]->isPaused())
-    &&  (!player[t]->isNotResponding())
-    &&  (myTank->validTeamTarget(player[t]))) {
+    &&  (remotePlayers[t])
+    &&  (remotePlayers[t]->isAlive())
+    &&  (!remotePlayers[t]->isPaused())
+    &&  (!remotePlayers[t]->isNotResponding())
+    &&  (myTank->validTeamTarget(remotePlayers[t]))) {
 
-      if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+      if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
 	  && (myTank->getFlag() != Flags::ShockWave)
 	  && (myTank->getFlag() != Flags::SuperBullet))
 	continue;
 
-      if ((player[t]->getFlag() == Flags::Cloaking) &&
+      if ((remotePlayers[t]->getFlag() == Flags::Cloaking) &&
 	  (myTank->getFlag() == Flags::Laser))
 	continue;
 
       //perform a draft that has us chase the proposed opponent if they have our flag
       if (World::getWorld()->allowTeamFlags() &&
-	  (((myTank->getTeam() == RedTeam) && (player[t]->getFlag() == Flags::RedTeam)) ||
-	  ((myTank->getTeam() == GreenTeam) && (player[t]->getFlag() == Flags::GreenTeam)) ||
-	  ((myTank->getTeam() == BlueTeam) && (player[t]->getFlag() == Flags::BlueTeam)) ||
-	  ((myTank->getTeam() == PurpleTeam) && (player[t]->getFlag() == Flags::PurpleTeam)))) {
-	target = player[t];
+	  (((myTank->getTeam() == RedTeam) && (remotePlayers[t]->getFlag() == Flags::RedTeam)) ||
+	  ((myTank->getTeam() == GreenTeam) && (remotePlayers[t]->getFlag() == Flags::GreenTeam)) ||
+	  ((myTank->getTeam() == BlueTeam) && (remotePlayers[t]->getFlag() == Flags::BlueTeam)) ||
+	  ((myTank->getTeam() == PurpleTeam) && (remotePlayers[t]->getFlag() == Flags::PurpleTeam)))) {
+	target = remotePlayers[t];
 	break;
       }
 
-      float d = TargetingUtils::getTargetDistance(pos, player[t]->getPosition());
-      bool isObscured = TargetingUtils::isLocationObscured( pos, player[t]->getPosition());
+      float d = TargetingUtils::getTargetDistance(pos, remotePlayers[t]->getPosition());
+      bool isObscured = TargetingUtils::isLocationObscured( pos, remotePlayers[t]->getPosition());
       if (isObscured) //demote the priority of obscured enemies
 	d *= 1.25f;
 
       if (d < distance) {
-	if ((player[t]->getFlag() != Flags::Stealth)
+	if ((remotePlayers[t]->getFlag() != Flags::Stealth)
 	||  (myTank->getFlag() == Flags::Seer)
 	||  ((!isObscured) &&
-	     (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, player[t]->getPosition()) <= 30.0f))) {
-	  target = player[t];
+	     (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, remotePlayers[t]->getPosition()) <= 30.0f))) {
+	  target = remotePlayers[t];
 	  distance = d;
 	}
       }
@@ -596,15 +596,15 @@ static bool fireAtTank()
     if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots())) {
       bool hasSWTarget = false;
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding()) {
+	if (t != myTank->getId() && remotePlayers[t] &&
+	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+	    !remotePlayers[t]->isNotResponding()) {
 
-	  const float *tp = player[t]->getPosition();
+	  const float *tp = remotePlayers[t]->getPosition();
 	  float enemyPos[3];
 	  //toss in some lag adjustment/future prediction - 300 millis
 	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
+	  const float *tv = remotePlayers[t]->getVelocity();
 	  enemyPos[0] += 0.3f * tv[0];
 	  enemyPos[1] += 0.3f * tv[1];
 	  enemyPos[2] += 0.3f * tv[2];
@@ -612,7 +612,7 @@ static bool fireAtTank()
 	    enemyPos[2] = 0.0f;
 	  float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
 	  if (dist <= BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS)) {
-	    if (!myTank->validTeamTarget(player[t])) {
+	    if (!myTank->validTeamTarget(remotePlayers[t])) {
 	      hasSWTarget = false;
 	      t = curMaxPlayers;
 	    } else {
@@ -635,21 +635,21 @@ static bool fireAtTank()
       float closeErrorLimit = errorLimit * 2.0f;
 
       for (int t = 0; t < curMaxPlayers; t++) {
-	if (t != myTank->getId() && player[t] &&
-	    player[t]->isAlive() && !player[t]->isPaused() &&
-	    !player[t]->isNotResponding() &&
-	    myTank->validTeamTarget(player[t])) {
+	if (t != myTank->getId() && remotePlayers[t] &&
+	    remotePlayers[t]->isAlive() && !remotePlayers[t]->isPaused() &&
+	    !remotePlayers[t]->isNotResponding() &&
+	    myTank->validTeamTarget(remotePlayers[t])) {
 
-	  if (player[t]->isPhantomZoned() && !myTank->isPhantomZoned()
+	  if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
 	      && (myTank->getFlag() != Flags::SuperBullet)
 	&& (myTank->getFlag() != Flags::ShockWave))
 	    continue;
 
-	  const float *tp = player[t]->getPosition();
+	  const float *tp = remotePlayers[t]->getPosition();
 	  float enemyPos[3];
 	  //toss in some lag adjustment/future prediction - 300 millis
 	  memcpy(enemyPos,tp,sizeof(enemyPos));
-	  const float *tv = player[t]->getVelocity();
+	  const float *tv = remotePlayers[t]->getVelocity();
 	  enemyPos[0] += 0.3f * tv[0];
 	  enemyPos[1] += 0.3f * tv[1];
 	  enemyPos[2] += 0.3f * tv[2];

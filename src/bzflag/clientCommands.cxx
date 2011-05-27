@@ -642,8 +642,8 @@ static std::string cmdSend(const std::string&,
     const Player* recipient = myTank->getRecipient();
     if (!recipient) {
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i]) {
-	  myTank->setRecipient(player[i]);
+	if (remotePlayers[i]) {
+	  myTank->setRecipient(remotePlayers[i]);
 	  break;
 	}
       }

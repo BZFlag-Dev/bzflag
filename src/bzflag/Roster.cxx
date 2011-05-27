@@ -19,7 +19,7 @@
 
 NameList silencePlayers;
 int curMaxPlayers = 0;
-RemotePlayer** player = NULL;
+RemotePlayer** remotePlayers = NULL;
 RobotPlayer* robots[MAX_ROBOTS];
 int numRobots = 0;
 
@@ -40,8 +40,8 @@ Player* lookupPlayer(PlayerId id)
       return NULL;
   }
 
-  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
-    return player[id];
+  if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
+    return remotePlayers[id];
 
   // it's nobody we know about
   return NULL;
@@ -57,7 +57,7 @@ int lookupPlayerIndex(PlayerId id)
   if (id == ServerPlayer)
     return ServerPlayer;
 
-  if (id < curMaxPlayers && player[id] && player[id]->getId() == id)
+  if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
     return id;
 
   // it's nobody we know about
@@ -72,14 +72,14 @@ Player* getPlayerByIndex(int index)
     return World::getWorld()->getWorldWeapons();
   if (index == -1 || index >= curMaxPlayers)
     return NULL;
-  return player[index];
+  return remotePlayers[index];
 }
 
 Player* getPlayerByName(const char* name)
 {
   for (int i = 0; i < curMaxPlayers; i++)
-    if (player[i] && strcmp( player[i]->getCallSign(), name ) == 0)
-      return player[i];
+    if (remotePlayers[i] && strcmp( remotePlayers[i]->getCallSign(), name ) == 0)
+      return remotePlayers[i];
   World *world = World::getWorld();
   if (!world)
     return NULL;

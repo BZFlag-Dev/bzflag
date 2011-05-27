@@ -88,6 +88,9 @@
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
+
+#include "CollisionManager.h"
+
 #include <sstream>
 
 //#include "messages.h"
@@ -257,8 +260,8 @@ void selectNextRecipient (bool forward, bool robotIn)
     }
     if (i == rindex)
       break;
-    if (player[i] && (robotIn || player[i]->getPlayerType() == TankPlayer)) {
-      my->setRecipient(player[i]);
+    if (remotePlayers[i] && (robotIn || remotePlayers[i]->getPlayerType() == TankPlayer)) {
+      my->setRecipient(remotePlayers[i]);
       break;
     }
   }
@@ -1153,8 +1156,8 @@ static void		updateNumPlayers()
   for (i = 0; i < NumTeams; i++)
     numPlayers[i] = 0;
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i])
-      numPlayers[player[i]->getTeam()]++;
+    if (remotePlayers[i])
+      numPlayers[remotePlayers[i]->getTeam()]++;
   if (myTank)
     numPlayers[myTank->getTeam()]++;
 }
@@ -1167,7 +1170,7 @@ static void		updateHighScores()
   bool anyPlayers = false;
   int i;
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i]) {
+    if (remotePlayers[i]) {
       anyPlayers = true;
       break;
     }
@@ -1189,7 +1192,7 @@ static void		updateHighScores()
   bool haveBest = true;
   int bestScore = myTank ? myTank->getScore() : 0;
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i] && player[i]->getScore() >= bestScore) {
+    if (remotePlayers[i] && remotePlayers[i]->getScore() >= bestScore) {
       haveBest = false;
       break;
     }
@@ -1319,7 +1322,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
     return NULL;
   }
 
-  if (player[i]) {
+  if (remotePlayers[i]) {
     // we're not in synch with server -> help! not a good sign, but not fatal.
     printError ("Server error when adding player, player already added");
     std::cerr << "WARNING: player already exists at location with id "
@@ -1334,9 +1337,9 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 
   // add player
   if (PlayerType (type) == TankPlayer || PlayerType (type) == ComputerPlayer) {
-    player[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
+    remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
 				  PlayerType (type));
-    player[i]->changeScore (short (wins), short (losses), short (tks));
+    remotePlayers[i]->changeScore (short (wins), short (losses), short (tks));
   }
 
 #ifdef ROBOT
@@ -1369,16 +1372,16 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 	  break;
       }
     }
-    if (!player[i]) {
+    if (!remotePlayers[i]) {
       std::string name (callsign);
       name += ": " + message;
       message = name;
     }
-    addMessage (player[i], message);
+    addMessage (remotePlayers[i], message);
   }
   completer.registerWord(callsign, true /* quote spaces */);
 
-  return player[i];
+  return remotePlayers[i];
 }
 
 
@@ -1430,7 +1433,7 @@ static bool removePlayer (PlayerId id)
     return false;
   }
 
-  Player* p = player[playerIndex];
+  Player* p = remotePlayers[playerIndex];
 
   Address addr;
   std::string msg = "signing off";
@@ -1453,12 +1456,12 @@ static bool removePlayer (PlayerId id)
 
   completer.unregisterWord(p->getCallSign());
 
-  delete player[playerIndex];
-  player[playerIndex] = NULL;
+  delete remotePlayers[playerIndex];
+  remotePlayers[playerIndex] = NULL;
 
   while ((playerIndex >= 0)
 	 &&     (playerIndex+1 == curMaxPlayers)
-	 &&     (player[playerIndex] == NULL))
+	 &&     (remotePlayers[playerIndex] == NULL))
     {
       playerIndex--;
       curMaxPlayers--;
@@ -1941,7 +1944,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       std::string msg2;
       if (team == (uint16_t)NoTeam) {
 	// a player won
-	if (player) {
+	if (_player) {
 	  msg2 = _player->getCallSign();
 	  msg2 += " (";
 	  msg2 += Team::getName(_player->getTeam());
@@ -2454,19 +2457,19 @@ static void		handleServerMessage(bool human, uint16_t code,
       // each of them, so add an explosion for each now.  don't
       // include me, though;  I already blew myself up.
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i] &&
-	    player[i]->isAlive() &&
-	    player[i]->getTeam() == capturedTeam) {
-	  const float* pos = player[i]->getPosition();
+	if (remotePlayers[i] &&
+	    remotePlayers[i]->isAlive() &&
+	    remotePlayers[i]->getTeam() == capturedTeam) {
+	  const float* pos = remotePlayers[i]->getPosition();
 	  playWorldSound(SFX_EXPLOSION, pos, false);
 	  float explodePos[3];
 	  explodePos[0] = pos[0];
 	  explodePos[1] = pos[1];
-	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
+	  explodePos[2] = pos[2] + remotePlayers[i]->getMuzzleHeight();
 
-	  TankDeathOverride *death = EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle(),GotCaptured,player[i],NULL);
+	  TankDeathOverride *death = EFFECTS.addDeathEffect(remotePlayers[i]->getColor(), pos, remotePlayers[i]->getAngle(),GotCaptured,remotePlayers[i],NULL);
 
-	  player[i]->setDeathEffect(death);
+	  remotePlayers[i]->setDeathEffect(death);
 
 	  if (!death || death->ShowExplosion())
 	    addTankExplosion(explodePos);
@@ -2483,11 +2486,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       Player *rabbit = lookupPlayer(id);
 
       for (int i = 0; i < curMaxPlayers; i++) {
-	if (player[i])
-	  player[i]->setHunted(false);
-	if (i != id && player[i] && player[i]->getTeam() != RogueTeam
-	    && player[i]->getTeam() != ObserverTeam) {
-	  player[i]->changeTeam(HunterTeam);
+	if (remotePlayers[i])
+	  remotePlayers[i]->setHunted(false);
+	if (i != id && remotePlayers[i] && remotePlayers[i]->getTeam() != RogueTeam
+	    && remotePlayers[i]->getTeam() != ObserverTeam) {
+	  remotePlayers[i]->changeTeam(HunterTeam);
 	}
       }
 
@@ -2530,10 +2533,10 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = firingInfo.unpack(msg);
 
       const int shooterid = firingInfo.shot.player;
-      RemotePlayer* shooter = player[shooterid];
+      RemotePlayer* shooter = remotePlayers[shooterid];
 
       if (shooterid != ServerPlayer) {
-	if (shooter && player[shooterid]->getId() == shooterid) {
+	if (shooter && remotePlayers[shooterid]->getId() == shooterid) {
 	  shooter->addShot(firingInfo);
 
 	  if (SceneRenderer::instance().useQuality() >= 2) {
@@ -2611,7 +2614,7 @@ static void		handleServerMessage(bool human, uint16_t code,
         } else {
           int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    sPlayer = player[i];
+	    sPlayer = remotePlayers[i];
 	  else
 	    logDebugMessage(1, "Received handicap update for unknown player!\n");
         }
@@ -2652,7 +2655,7 @@ static void		handleServerMessage(bool human, uint16_t code,
         } else {
           int i = lookupPlayerIndex(id);
 	  if (i >= 0)
-	    sPlayer = player[i];
+	    sPlayer = remotePlayers[i];
 	  else
             logDebugMessage(1,"Received score update for unknown player!\n");
         }
@@ -3549,8 +3552,8 @@ static void		checkEnvironment()
 			// Don't bother trying to figure this out with a narrow or tiny flag yet.
 		myTank->checkHit(myTank, hit, minTime);
 		for (i = 0; i < curMaxPlayers; i++)
-		if (player[i])
-			myTank->checkHit(player[i], hit, minTime);
+		if (remotePlayers[i])
+			myTank->checkHit(remotePlayers[i], hit, minTime);
 		if (hit){
 		Player* hitter = lookupPlayer(hit->getPlayer());
 		std::ostringstream smsg;
@@ -3640,8 +3643,8 @@ static void		checkEnvironment()
   myTank->checkHit(myTank, hit, minTime);
   int i;
   for (i = 0; i < curMaxPlayers; i++)
-    if (player[i])
-      myTank->checkHit(player[i], hit, minTime);
+    if (remotePlayers[i])
+      myTank->checkHit(remotePlayers[i], hit, minTime);
 
   // Check Server Shots
   myTank->checkHit( World::getWorld()->getWorldWeapons(), hit, minTime);
@@ -3689,20 +3692,20 @@ static void		checkEnvironment()
     const float* myPos = myTank->getPosition();
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) ||
-	   ((myPos[2] < 0.0f) && player[i]->isAlive() &&
-	    !player[i]->isPhantomZoned()))) {
-	const float* pos = player[i]->getPosition();
+      if (remotePlayers[i] && !remotePlayers[i]->isPaused() &&
+	  ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
+	   ((myPos[2] < 0.0f) && remotePlayers[i]->isAlive() &&
+	    !remotePlayers[i]->isPhantomZoned()))) {
+	const float* pos = remotePlayers[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	if (!myTank->isPhantomZoned()) {
 	  const float radius = myRadius +
-	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius();
+	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius();
 	  const float distSquared =
 	    hypotf(hypotf(myPos[0] - pos[0],
 			  myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	  if (distSquared < radius) {
-	    gotBlowedUp(myTank, GotRunOver, player[i]->getId());
+	    gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
 	  }
 	}
       }
@@ -3710,6 +3713,125 @@ static void		checkEnvironment()
   }
 }
 
+
+
+bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *player)
+{
+  if (player->isPaused() || player->isNotResponding() ||
+    player->getFlag() == Flags::Stealth)
+    return false; // can't lock to paused, NR, or stealth
+
+  if (angle >=  BZDB.eval(StateDatabase::BZDB_LOCKONANGLE))
+    return false;
+
+  if (distance >= bestDistance)
+    return false;
+
+  return true;
+}
+
+
+bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *player)
+{
+  // usually about 17 degrees
+  if (angle >= BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE))
+    return false;
+
+  if (distance > bestDistance)
+    return false;
+
+  if (player->getFlag() == Flags::Stealth ||
+    player->getFlag() == Flags::Cloaking)
+    return myTank->getFlag() == Flags::Seer;
+
+  return true;
+}
+
+
+static bool isKillable(const Player *target)
+{
+  if (target == myTank)
+    return false;
+  if (target->getTeam() == RogueTeam)
+    return true;
+  if (World::getWorld()->allowTeamKills() && target->getTeam() != myTank->getTeam())
+    return true;
+
+  return false;
+}
+
+
+void setLookAtMarker(void)
+{
+  // get info about my tank
+  const float c = cosf(- myTank->getAngle());
+  const float s = sinf(- myTank->getAngle());
+  const float *p = myTank->getPosition();
+  const fvec3 myPos(p[0],p[1],p[2]);
+
+  // initialize best target
+  Player *bestTarget = NULL;
+  float bestDistance = Infinity;
+
+  // figure out which tank is centered in my sights
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (!remotePlayers[i] || !remotePlayers[i]->isAlive())
+      continue;
+
+    // compute position in my local coordinate system
+    const fvec3 rPos(remotePlayers[i]->getPosition()[0],remotePlayers[i]->getPosition()[1],remotePlayers[i]->getPosition()[2]);
+    const float x = (c * (rPos.x - myPos.x)) - (s * (rPos.y - myPos.y));
+    const float y = (s * (rPos.x - myPos.x)) + (c * (rPos.y - myPos.y));
+
+    // ignore things behind me
+    if (x < 0.0f)
+      continue;
+
+    // get distance and sin(angle) from directly forward
+    const float d = hypotf(x, y);
+    const float a = fabsf(y / d);
+
+
+    if (inLookRange(a, d, bestDistance, remotePlayers[i])) {
+      // check and see if we can cast a ray from our point to the object
+      fvec3 vec = rPos - myPos;
+
+      Ray ray = Ray(myPos, vec);
+
+      // get the list of objects that fall in this ray
+      const ObsList *olist = COLLISIONMGR.rayTest (&ray, d);
+
+      bool blocked = false;
+      if (olist && olist->count > 0) {
+	for (int o = 0; o < olist->count; o++) {
+	  const Obstacle *obs = olist->list[o];
+	  const float timet = obs->intersect(ray);
+	  if (timet > 1.0f) {
+	    blocked = true;
+	    break;
+	  }
+	}
+      }
+
+      // if there is nothing between us then go and add it to the list
+      if (!blocked) {
+	// is it better?
+	bestTarget = remotePlayers[i];
+	bestDistance = d;
+      }
+    }
+  }
+
+  if (!bestTarget)
+    return;
+
+  std::string label = bestTarget->getCallSign();
+  if (bestTarget->getFlag() != Flags::Null) {
+    std::string flagName = bestTarget->getFlag()->flagAbbv;
+    label += std::string("(") + flagName + std::string(")");
+  }
+  hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()), Float3ToVec4(Team::getRadarColor(bestTarget->getTeam())), label, !isKillable(bestTarget), 2.0f);
+}
 
 static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
 {
@@ -3738,10 +3860,10 @@ void setTarget()
 
   // figure out which tank is centered in my sights
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!player[i] || !player[i]->isAlive()) continue;
+    if (!remotePlayers[i] || !remotePlayers[i]->isAlive()) continue;
 
     // compute position in my local coordinate system
-    const float* pos = player[i]->getPosition();
+    const float* pos = remotePlayers[i]->getPosition();
     const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
     const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
 
@@ -3756,18 +3878,18 @@ void setTarget()
     if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&	// about 8.5 degrees
 	((myTank->getFlag() == Flags::GuidedMissile) ||		// am i locking on?
 	 tankHasShotType(myTank, Flags::GuidedMissile)) &&
-	player[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
-	!player[i]->isPaused() &&				// can't lock on paused
-	!player[i]->isNotResponding() &&			// can't lock on not responding
+	remotePlayers[i]->getFlag() != Flags::Stealth &&		// can't lock on stealth
+	!remotePlayers[i]->isPaused() &&				// can't lock on paused
+	!remotePlayers[i]->isNotResponding() &&			// can't lock on not responding
 	d < bestDistance) {					// is it better?
-      bestTarget = player[i];
+      bestTarget = remotePlayers[i];
       bestDistance = d;
       lockedOn = true;
     }
     else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
-	     ((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
+	     ((remotePlayers[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	     d < bestDistance && !lockedOn) {		// is it better?
-      bestTarget = player[i];
+      bestTarget = remotePlayers[i];
       bestDistance = d;
     }
   }
@@ -3842,10 +3964,10 @@ static void setHuntTarget()
 
   // figure out which tank is centered in my sights
   for (int i = 0; i < curMaxPlayers; i++) {
-    if (!player[i] || !player[i]->isAlive()) continue;
+    if (!remotePlayers[i] || !remotePlayers[i]->isAlive()) continue;
 
     // compute position in my local coordinate system
-    const float* pos = player[i]->getPosition();
+    const float* pos = remotePlayers[i]->getPosition();
     const float x = c * (pos[0] - x0) - s * (pos[1] - y0);
     const float y = s * (pos[0] - x0) + c * (pos[1] - y0);
 
@@ -3859,18 +3981,18 @@ static void setHuntTarget()
     // see if it's inside lock-on angle (if we're trying to lock-on)
     if (a < BZDB.eval(StateDatabase::BZDB_LOCKONANGLE) &&					// about 8.5 degrees
 	myTank->getFlag() == Flags::GuidedMissile &&	// am i locking on?
-	player[i]->getFlag() != Flags::Stealth &&	// can't lock on stealth
-	!player[i]->isPaused() &&			// can't lock on paused
-	!player[i]->isNotResponding() &&		// can't lock on not responding
+	remotePlayers[i]->getFlag() != Flags::Stealth &&	// can't lock on stealth
+	!remotePlayers[i]->isPaused() &&			// can't lock on paused
+	!remotePlayers[i]->isNotResponding() &&		// can't lock on not responding
 	d < bestDistance) {				// is it better?
-      bestTarget = player[i];
+      bestTarget = remotePlayers[i];
       bestDistance = d;
       lockedOn = true;
     }
     else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) &&				// about 17 degrees
-	     ((player[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
+	     ((remotePlayers[i]->getFlag() != Flags::Stealth) || (myTank->getFlag() == Flags::Seer)) &&	// can't "see" stealth unless have seer
 	     d < bestDistance && !lockedOn) {		// is it better?
-      bestTarget = player[i];
+      bestTarget = remotePlayers[i];
       bestDistance = d;
     }
   }
@@ -4033,24 +4155,24 @@ static void		setRobotTarget(RobotPlayer* robot)
   Player* bestTarget = NULL;
   float bestPriority = 0.0f;
   for (int j = 0; j < curMaxPlayers; j++)
-    if (player[j] && player[j]->getId() != robot->getId() &&
-	player[j]->isAlive() && robot->validTeamTarget(player[j])) {
+    if (remotePlayers[j] && remotePlayers[j]->getId() != robot->getId() &&
+	remotePlayers[j]->isAlive() && robot->validTeamTarget(remotePlayers[j])) {
 
-      if (player[j]->isPhantomZoned() && !robot->isPhantomZoned())
+      if (remotePlayers[j]->isPhantomZoned() && !robot->isPhantomZoned())
 	continue;
 
       if (World::getWorld()->allowTeamFlags() &&
-	  ((robot->getTeam() == RedTeam && player[j]->getFlag() == Flags::RedTeam) ||
-	  (robot->getTeam() == GreenTeam && player[j]->getFlag() == Flags::GreenTeam) ||
-	  (robot->getTeam() == BlueTeam && player[j]->getFlag() == Flags::BlueTeam) ||
-	  (robot->getTeam() == PurpleTeam && player[j]->getFlag() == Flags::PurpleTeam))) {
-	bestTarget = player[j];
+	  ((robot->getTeam() == RedTeam && remotePlayers[j]->getFlag() == Flags::RedTeam) ||
+	  (robot->getTeam() == GreenTeam && remotePlayers[j]->getFlag() == Flags::GreenTeam) ||
+	  (robot->getTeam() == BlueTeam && remotePlayers[j]->getFlag() == Flags::BlueTeam) ||
+	  (robot->getTeam() == PurpleTeam && remotePlayers[j]->getFlag() == Flags::PurpleTeam))) {
+	bestTarget = remotePlayers[j];
 	break;
       }
 
-      const float priority = robot->getTargetPriority(player[j]);
+      const float priority = robot->getTargetPriority(remotePlayers[j]);
       if (priority > bestPriority) {
-	bestTarget = player[j];
+	bestTarget = remotePlayers[j];
 	bestPriority = priority;
       }
     }
@@ -4117,8 +4239,8 @@ static void		checkEnvironment(RobotPlayer* tank)
   tank->checkHit(myTank, hit, minTime);
   int i;
   for (i = 0; i < curMaxPlayers; i++) {
-    if (player[i] && player[i]->getId() != tank->getId()) {
-      tank->checkHit(player[i], hit, minTime);
+    if (remotePlayers[i] && remotePlayers[i]->getId() != tank->getId()) {
+      tank->checkHit(remotePlayers[i], hit, minTime);
     }
   }
 
@@ -4186,19 +4308,19 @@ static void		checkEnvironment(RobotPlayer* tank)
       }
     }
     for (i = 0; !dead && i < curMaxPlayers; i++) {
-      if (player[i] && !player[i]->isPaused() &&
-	  ((player[i]->getFlag() == Flags::Steamroller) ||
-	   ((tank->getFlag() == Flags::Burrow) && player[i]->isAlive() &&
-	    !player[i]->isPhantomZoned()))) {
-	const float* pos = player[i]->getPosition();
+      if (remotePlayers[i] && !remotePlayers[i]->isPaused() &&
+	  ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
+	   ((tank->getFlag() == Flags::Burrow) && remotePlayers[i]->isAlive() &&
+	    !remotePlayers[i]->isPhantomZoned()))) {
+	const float* pos = remotePlayers[i]->getPosition();
 	if (pos[2] < 0.0f) continue;
 	const float radius = myRadius +
-	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * player[i]->getRadius());
+	  (BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius());
 	const float distSquared =
 	  hypotf(hypotf(myPos[0] - pos[0],
 			myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
 	if (distSquared < radius) {
-	  gotBlowedUp(tank, GotRunOver, player[i]->getId());
+	  gotBlowedUp(tank, GotRunOver, remotePlayers[i]->getId());
 	  dead = true;
 	}
       }
@@ -4277,8 +4399,8 @@ static void setTankFlags()
     const Flag& flag = world->getFlag(i);
     if (flag.status == FlagOnTank) {
       for (int j = 0; j < curMaxPlayers; j++) {
-	if (player[j] && player[j]->getId() == flag.owner) {
-	  player[j]->setFlag(flag.type);
+	if (remotePlayers[j] && remotePlayers[j]->getId() == flag.owner) {
+	  remotePlayers[j]->setFlag(flag.type);
 	  break;
 	}
       }
@@ -4651,7 +4773,7 @@ void		leaveGame()
   teams = NULL;
   curMaxPlayers = 0;
   numFlags = 0;
-  player = NULL;
+  remotePlayers = NULL;
 
   // update UI
   hud->setPlaying(false);
@@ -4856,7 +4978,7 @@ static void joinInternetGame2()
 
   // prep players
   curMaxPlayers = 0;
-  player = world->getPlayers();
+  remotePlayers = world->getPlayers();
 
   // reset the autocompleter
   completer.setDefaults();
@@ -5386,19 +5508,19 @@ void drawFrame(const float dt)
 
       // add other tanks and shells
       for (i = 0; i < curMaxPlayers; i++) {
-	if (player[i]) {
+	if (remotePlayers[i]) {
 	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-	  player[i]->addShots(scene, colorblind);
+	  remotePlayers[i]->addShots(scene, colorblind);
 
 	  TeamColor effectiveTeam = RogueTeam;
 	  if (!colorblind){
-	    if ((player[i]->getFlag() == Flags::Masquerade)
+	    if ((remotePlayers[i]->getFlag() == Flags::Masquerade)
 		&& (myTank->getFlag() != Flags::Seer)
 		&& (myTank->getTeam() != ObserverTeam)) {
 	      effectiveTeam = myTank->getTeam();
 	    }
 	    else {
-	      effectiveTeam = player[i]->getTeam();
+	      effectiveTeam = remotePlayers[i]->getTeam();
 	    }
 	  }
 
@@ -5409,7 +5531,7 @@ void drawFrame(const float dt)
 	  const bool showPlayer = !inCockpt || showTreads;
 
 	  // add player tank if required
-	  player[i]->addToScene(scene, effectiveTeam,
+	  remotePlayers[i]->addToScene(scene, effectiveTeam,
 				inCockpt, seerView,
 				showPlayer, showPlayer /*showIDL*/);
 	}
@@ -5496,6 +5618,12 @@ void drawFrame(const float dt)
 	myTank->setZpos(ROAM.getTargetTank()->getPosition()[2]);
       else
 	myTank->setZpos(ROAM.getCamera()->pos[2]);
+    }
+
+    // let the hud save off the view matrix so it can do view projections
+    if (hud) {
+      hud->saveMatrixes(viewFrustum.getViewMatrix(),
+	viewFrustum.getProjectionMatrix());
     }
 
     // draw frame
@@ -6018,6 +6146,8 @@ static void		prepareTheHUD()
 	  const float* flagPos = flag.position;
 	  float heading = atan2f(flagPos[1] - myPos[1],flagPos[0] - myPos[0]);
 	  hud->addMarker(heading, myTeamColor);
+	  hud->AddEnhancedMarker(Float3ToVec3(flagPos), Float3ToVec4(myTeamColor),
+	    false, BZDBCache::flagPoleSize * 2.0f);
 	}
       }
     }
@@ -6026,8 +6156,10 @@ static void		prepareTheHUD()
       const GLfloat* antidotePos = myTank->getAntidoteLocation();
       float heading = atan2f(antidotePos[1] - myPos[1],
 			     antidotePos[0] - myPos[0]);
-      const float antidoteColor[] = {1.0f, 1.0f, 0.0f};
+      const float antidoteColor[] = {1.0f, 1.0f, 0.0f,1.0f};
       hud->addMarker(heading, antidoteColor);
+      hud->AddEnhancedMarker(Float3ToVec3(antidotePos), Float4ToVec4(antidoteColor), false,
+	BZDBCache::flagPoleSize * 2.0f);
     }
   }
   return;
@@ -6343,8 +6475,8 @@ static void		playingLoop()
 
     // update other tank's shots
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	player[i]->updateShots(dt);
+      if (remotePlayers[i]) {
+	remotePlayers[i]->updateShots(dt);
       }
     }
 
@@ -6359,14 +6491,14 @@ static void		playingLoop()
 
     // do dead reckoning on remote players
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	const bool wasNotResponding = player[i]->isNotResponding();
-	player[i]->doDeadReckoning();
-	const bool isNotResponding = player[i]->isNotResponding();
+      if (remotePlayers[i]) {
+	const bool wasNotResponding = remotePlayers[i]->isNotResponding();
+	remotePlayers[i]->doDeadReckoning();
+	const bool isNotResponding = remotePlayers[i]->isNotResponding();
 	if (!wasNotResponding && isNotResponding) {
-	  addMessage(player[i], "not responding");
+	  addMessage(remotePlayers[i], "not responding");
 	} else if (wasNotResponding && !isNotResponding) {
-	  addMessage(player[i], "okay");
+	  addMessage(remotePlayers[i], "okay");
 	}
       }
     }
@@ -6383,6 +6515,15 @@ static void		playingLoop()
 	     (myTank->getFlag() == Flags::TriggerHappy))) {
 	  myTank->fireShot();
 	}
+
+	setLookAtMarker();
+
+	// see if we have a target, if so lock on to the bastage
+	if (myTank->getTarget())
+	  hud->AddLockOnMarker(Float3ToVec3(myTank->getTarget()->getPosition()),
+	  myTank->getTarget()->getCallSign(),
+	  !isKillable(myTank->getTarget()));
+
       } else {
 	int mx, my;
 	mainWindow->getMousePosition(mx, my);
@@ -6410,8 +6551,8 @@ static void		playingLoop()
       myTank->updateTank(dt, true);
     }
     for (i = 0; i < curMaxPlayers; i++) {
-      if (player[i]) {
-	player[i]->updateTank(dt, false);
+      if (remotePlayers[i]) {
+	remotePlayers[i]->updateTank(dt, false);
       }
     }
 
