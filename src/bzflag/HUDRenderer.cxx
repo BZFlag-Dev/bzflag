@@ -596,6 +596,14 @@ void			HUDRenderer::hudColor3fv(const GLfloat* c)
     glColor3fv(c);
 }
 
+void HUDRenderer::hudColor3Afv(const float * c, const float a)
+{
+  if( dim )
+    glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
+  else
+    glColor4f( c[0],c[1],c[2],a );
+}
+
 void			HUDRenderer::hudSColor3fv(const GLfloat* c)
 {
   if (dim)
@@ -1054,6 +1062,215 @@ void			HUDRenderer::renderTimes(void)
 		  (float)centery + (float)maxMotionSize +
 		  3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0, headingFontFace, headingFontSize, buf);
   }
+}
+
+
+
+void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
+				     const float* viewPos, std::string name,
+				     bool friendly)
+{
+  double map[3] = {0,0,0};
+  double o[3];
+  o[0] = object[0];
+  o[1] = object[1];
+  o[2] = object[2];
+
+  hudColor3Afv( color, alpha );
+
+  glPushMatrix();
+  gluProject(o[0], o[1], o[2], modelMatrix, projMatrix,
+    (GLint*)viewport, &map[0], &map[1], &map[2]);
+  glPopMatrix();
+
+  float halfWidth = window.getWidth( )* 0.5f;
+  float halfHeight = window.getHeight() * 0.5f;
+
+  // comp us back to the view
+  map[0] -= halfWidth;
+  map[1] -= halfHeight;
+
+  const fvec2 headingVec(sinf(heading * DEG2RADf),
+    cosf(heading * DEG2RADf));
+
+  const fvec2 toPosVec((float)object[0] - viewPos[0],
+    (float)object[1] - viewPos[1]);
+
+  if (fvec2::dot(toPosVec, headingVec) <= 1.0f /*0.866f*/) {
+    if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
+      map[0] = -halfWidth;
+      map[1] = 0;
+    } else {
+      map[0] = -halfWidth * (fabs(map[0])/map[0]);
+      map[1] = 0;
+    }
+  } else {
+    if (map[0] < -halfWidth)
+      map[0] = -halfWidth;
+    if (map[0] > halfWidth)
+      map[0] = halfWidth;
+
+    if (map[1] < -halfHeight)
+      map[1] = -halfHeight;
+    if (map[1] > halfHeight)
+      map[1] = halfHeight;
+  }
+
+  glPushMatrix();
+  glTranslatef((float)map[0],(float)map[1],0);
+  glPushMatrix();
+  float triangleSize = BZDB.eval("hudWayPMarkerSize");
+  if (name.size())
+    triangleSize *= 0.75f;
+
+  if (map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// right side
+    glRotatef(90,0,0,1);
+
+  if (map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// Left side
+    glRotatef(-90,0,0,1);
+
+  if (map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)	// Top side
+    glRotatef(180,0,0,1);
+
+  if (map[0] == halfWidth && map[1] == -halfHeight)	// Lower right
+    glRotatef(45,0,0,1);
+
+  if (map[0] == -halfWidth && map[1] == -halfHeight)	// Lower left
+    glRotatef(-45,0,0,1);
+
+  if (map[0] == halfWidth && map[1] == halfHeight)	// upper right
+    glRotatef(180-45,0,0,1);
+
+  if (map[0] == -halfWidth && map[1] == halfHeight)	// upper left
+    glRotatef(180+45,0,0,1);
+
+  glBegin(GL_TRIANGLES);
+  glVertex2f(0,0);
+  glVertex2f(triangleSize,triangleSize);
+  glVertex2f(-triangleSize,triangleSize);
+  glEnd();
+
+  glBegin(GL_LINE_STRIP);
+  glVertex3f(0,0,0.01f);
+  glVertex3f(triangleSize,triangleSize,0.01f);
+  glVertex3f(-triangleSize,triangleSize,0.01f);
+  glEnd();
+
+  if (friendly)
+    DisplayListSystem::Instance().callList(friendlyMarkerList);
+
+  glPopMatrix();
+
+  if (name.size()) {
+    hudColor3Afv( color, alpha );
+    float textOffset = 5.0f;
+    float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, name);
+    glEnable(GL_TEXTURE_2D);
+    FontManager::instance().drawString(-width * 0.5f , textOffset + triangleSize,
+      0, headingFontFace, headingFontSize, name);
+    glDisable(GL_TEXTURE_2D);
+  }
+
+  glPopMatrix();
+}
+
+
+//-------------------------------------------------------------------------
+// HUDRenderer::drawLockonMarker
+//-------------------------------------------------------------------------
+
+void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
+				   const float *viewPos, std::string name,
+				   bool friendly )
+{
+  double map[3] = {0,0,0};
+  double o[3];
+  o[0] = object[0];
+  o[1] = object[1];
+  o[2] = object[2];
+
+  hudColor3Afv( color, alpha );
+
+  glPushMatrix();
+  gluProject(o[0], o[1], o[2], modelMatrix,projMatrix,
+    (GLint*)viewport, &map[0], &map[1], &map[2]);
+  glPopMatrix();
+
+  float halfWidth = window.getWidth( )* 0.5f;
+  float halfHeight = window.getHeight() * 0.5f;
+
+  // comp us back to the view
+  map[0] -= halfWidth;
+  map[1] -= halfHeight;
+
+  const fvec2 headingVec(sinf(heading * DEG2RADf),
+    cosf(heading * DEG2RADf));
+
+  const fvec2 toPosVec((float)object[0] - viewPos[0],
+    (float)object[1] - viewPos[1]);
+
+  if (fvec2::dot(toPosVec, headingVec) <= 1.0f) {
+    if (NEAR_ZERO(map[0], ZERO_TOLERANCE)) {
+      map[0] = -halfWidth;
+      map[1] = 0;
+    } else {
+      map[0] = -halfWidth * (fabs(map[0])/map[0]);
+      map[1] = 0;
+    }
+  } else {
+    if ( map[0] < -halfWidth )
+      map[0] = -halfWidth;
+    if ( map[0] > halfWidth )
+      map[0] = halfWidth;
+
+    if ( map[1] < -halfHeight )
+      map[1] = -halfHeight;
+    if ( map[1] > halfHeight )
+      map[1] = halfHeight;
+  }
+
+  glPushMatrix();
+  glTranslatef((float)map[0],(float)map[1],0);
+  glPushMatrix();
+
+  float lockonSize = 40;
+  float lockonInset = 15;
+  float lockonDeclination = 15;
+
+  glLineWidth(3.0f);
+
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(-lockonInset,lockonSize-lockonDeclination);
+  glVertex2f(-lockonSize,lockonSize);
+  glVertex2f(-lockonSize,-lockonSize);
+  glVertex2f(-lockonInset,-lockonSize+lockonDeclination);
+  glEnd();
+
+  glBegin(GL_LINE_STRIP);
+  glVertex2f(lockonInset,lockonSize-lockonDeclination);
+  glVertex2f(lockonSize,lockonSize);
+  glVertex2f(lockonSize,-lockonSize);
+  glVertex2f(lockonInset,-lockonSize+lockonDeclination);
+  glEnd();
+
+  if (friendly)
+    DisplayListSystem::Instance().callList(friendlyMarkerList);
+
+  glLineWidth(1.0f);
+
+  glPopMatrix();
+
+  if (name.size()) {
+    hudColor3Afv( color, alpha );
+    float textOffset = 5.0f;
+    float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, name);
+    glEnable(GL_TEXTURE_2D);
+    FontManager::instance().drawString(-width * 0.5f, textOffset + lockonSize,
+      0, headingFontFace, headingFontSize, name);
+    glDisable(GL_TEXTURE_2D);
+  }
+
+  glPopMatrix();
 }
 
 void			HUDRenderer::renderBox(SceneRenderer&)

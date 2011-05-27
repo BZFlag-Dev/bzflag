@@ -659,7 +659,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
   }
 
   if (!blank) {
-    if (doShadows && shadowsVisible && !drawingMirror) {
+	  if (doShadows && shadowsVisible && !drawingMirror) {
       drawGroundShadows(renderer);
     }
 
@@ -668,7 +668,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // performed only at a vertex, and the ground's vertices are a few
     // kilometers away.
     if (BZDBCache::blend && BZDBCache::lighting &&
-	!drawingMirror && BZDBCache::drawGroundLights) {
+		!drawingMirror && BZDBCache::drawGroundLights) {
       if (BZDBCache::tesselation && (renderer.useQuality() >= 3)) {
 //	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
 	// not really tesselation, but it is tied to the "Best" lighting,
@@ -684,12 +684,12 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
       // light the mountains (so that they get dark when the sun goes down).
       // don't do zbuffer test since they occlude all drawn before them and
       // are occluded by all drawn after.
-      if (mountainsVisible && BZDBCache::drawMountains) {
+		if (mountainsVisible && BZDBCache::drawMountains) {
 	drawMountains();
       }
 
       // draw clouds
-      if (cloudsVisible && BZDBCache::drawClouds) {
+		if (cloudsVisible && BZDBCache::drawClouds) {
 	cloudsGState.setState();
 	glMatrixMode(GL_TEXTURE);
 	glPushMatrix();
@@ -706,14 +706,19 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 
 void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 {
-  if (!blank) {
-    if (update) {
-      weather.update();
-      EFFECTS.update();
-    }
-    EFFECTS.draw(renderer);
-    weather.draw(renderer);
-  }
+	if (blank) {
+		return;
+	}
+
+	if (update) {
+		weather.update();
+	}
+	weather.draw(renderer);
+
+	if (update) {
+		EFFECTS.update();
+	}
+	EFFECTS.draw(renderer);
 }
 
 
@@ -1035,7 +1040,10 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 
 void BackgroundRenderer::drawGround()
 {
-  if (BZDBCache::drawGround) {
+  if (!BZDBCache::drawGround)
+  return;
+
+  {
     // draw ground
     glNormal3f(0.0f, 0.0f, 1.0f);
     if (invert) {

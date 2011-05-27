@@ -31,7 +31,9 @@
 #include "SceneRenderer.h"
 #include "Player.h"
 #include "ScoreboardRenderer.h"
+#include "LocalPlayer.h"
 
+#include "OpenGLUtils.h"
 
 const int		MaxAlerts = 3;
 const int		HUDNumCracks = 8;
@@ -44,6 +46,25 @@ public:
   GLfloat		color[3];
 };
 typedef std::vector<HUDMarker> MarkerList;
+
+
+class EnhancedHUDMarker
+{
+public:
+  EnhancedHUDMarker()
+    : pos(0.0f, 0.0f, 0.0f)
+    , color(0.0f, 0.0f, 0.0f, 1.0f)
+  {}
+  EnhancedHUDMarker(const fvec3& p, const fvec4& c)
+    : pos(p)
+    , color(c)
+  {}
+  fvec3 pos;
+  fvec4 color;
+  std::string name;
+  bool friendly;
+};
+typedef std::vector<EnhancedHUDMarker> EnhancedMarkerList;
 
 
 /**
@@ -97,6 +118,7 @@ protected:
   void		hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
   void		hudColor3fv(const GLfloat*);
   void		hudColor4fv(const GLfloat*);
+  void		hudColor3Afv(const float*, const float);
   void		hudSColor3fv(const GLfloat*);
   void		renderAlerts(void);
   void		renderStatus(void);
@@ -110,6 +132,10 @@ protected:
   void		renderRoaming(SceneRenderer&);
   void		renderTimes(void);
   void		renderShots(const Player*);
+
+  void		drawLockonMarker(float* color, float alpha, float* object, const float* viewPos, std::string name, bool friendly);
+  void		drawWaypointMarker(float* color, float alpha, float* object, const float* viewPos, std::string name, bool friendly);
+  void		drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
 
   void		makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
   std::string	makeHelpString(const char* help) const;
@@ -126,6 +152,7 @@ private:
   void		resize(bool firstTime);
   static void	resizeCallback(void*);
 
+  GLDisplayList	friendlyMarkerList;
 private:
   const BzfDisplay*	display;
   ScoreboardRenderer* scoreboard;
@@ -202,9 +229,15 @@ private:
   TimeKeeper		crackStartTime;
   bool		showCracks;
 
-  MarkerList		markers;
-
   HUDuiTypeIn*	composeTypeIn;
+
+  double	modelMatrix[16];
+  double	projMatrix[16];
+  int		viewport[4];
+
+  MarkerList		markers;
+  EnhancedMarkerList	enhancedMarkers;
+  EnhancedMarkerList	lockOnMarkers;
 
   static const float	altitudeOffset;
   static const GLfloat black[3];

@@ -84,6 +84,7 @@ noinst_HEADERS =			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\
 	OpenGLTexture.h			\
+	OpenGLUtils.h			\
 	OSFile.h			\
 	PTSceneNode.h			\
 	Pack.h				\
