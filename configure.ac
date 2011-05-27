@@ -114,8 +114,8 @@ if test x$with_SDL != xno; then
 fi
 
 # check whether plugins are desired
-AC_ARG_ENABLE(plugins,  [  --enable-plugins          turn on compilation of plugins])
-if test x$enable_plugins != xno ; then
+AC_ARG_ENABLE(plugins, AC_HELP_STRING([--disable-plugins],[do not compile plugins]))
+if test "x$enable_plugins" != xno ; then
     AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
@@ -1277,7 +1277,7 @@ else
     fi
 fi
 
-if test x$enable_plugins != xno ; then
+if test "x$enable_plugins" != xno ; then
     build_bzfs="yes (with plugins)"
 else
     build_bzfs="yes (without plugins)"
