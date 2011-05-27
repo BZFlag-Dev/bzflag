@@ -20,6 +20,224 @@
 #include "Flag.h"
 #include "playing.h"
 
+
+
+class StdSpawnEffect : public BasicEffect
+{
+public:
+	StdSpawnEffect();
+	virtual ~StdSpawnEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+class ConeSpawnEffect : public StdSpawnEffect
+{
+public:
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+};
+
+class RingSpawnEffect : public StdSpawnEffect
+{
+public:
+	RingSpawnEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+private:
+	void drawRing(int n, float coreAlpha);
+
+	float maxZ;
+	float ringRange;
+	float numRings;
+};
+
+class StdShotEffect : public BasicEffect
+{
+public:
+	StdShotEffect();
+	virtual ~StdShotEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+class FlashShotEffect : public StdShotEffect
+{
+public:
+	FlashShotEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+private:
+	float	     length;
+};
+
+class RingsDeathEffect : public DeathEffect
+{
+public:
+	RingsDeathEffect();
+	virtual ~RingsDeathEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+class SquishDeathEffect : public DeathEffect
+{
+public:
+	SquishDeathEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
+	virtual bool GetDeathVector( fvec3 & v );
+protected:
+};
+
+class FadeToHeaven : public DeathEffect
+{
+public:
+	FadeToHeaven();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
+	virtual bool GetDeathVector( fvec3 & v );
+protected:
+};
+
+class SpikesDeathEffect : public DeathEffect
+{
+public:
+	SpikesDeathEffect();
+	virtual ~SpikesDeathEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+
+	OpenGLGState	spikeState;
+	OpenGLGState	smokeState;
+
+	class Spike
+	{
+	public:
+		float size;
+		fvec2 rots;
+		float alphaMod;
+	};
+	std::vector<Spike> Spikes;
+	std::vector<fvec3> Puffs;
+
+	float explodeFraction;
+};
+
+
+class StdLandEffect : public BasicEffect
+{
+public:
+	StdLandEffect();
+	virtual ~StdLandEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+class StdGMPuffEffect : public BasicEffect
+{
+public:
+	StdGMPuffEffect();
+	virtual ~StdGMPuffEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+class SmokeGMPuffEffect : public BasicEffect
+{
+public:
+	SmokeGMPuffEffect();
+	virtual ~SmokeGMPuffEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+	fvec3			jitter;
+
+	float			u,v,du,dv;
+};
+
+class StdRicoEffect : public BasicEffect
+{
+public:
+	StdRicoEffect();
+	virtual ~StdRicoEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
+class StdShotTeleportEffect : public BasicEffect
+{
+public:
+	StdShotTeleportEffect();
+	virtual ~StdShotTeleportEffect();
+
+	virtual bool update ( float time );
+	virtual void draw ( const SceneRenderer& sr );
+protected:
+	int				texture;
+	OpenGLGState	ringState;
+
+	float			radius;
+};
+
 template <>
 EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
 
@@ -859,7 +1077,8 @@ bool SquishDeathEffect::GetDeathVector( fvec3 & vel )
 	if (!player)
 		return false;
 
-	vel = fvec3(player->getVelocity());
+	const float *v = player->getVelocity();
+	vel = fvec3(v[0],v[1],v[2]);
 	return true;
 }
 

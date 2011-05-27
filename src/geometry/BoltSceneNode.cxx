@@ -662,8 +662,7 @@ void			BoltSceneNode::BoltRenderNode::render()
 					texInfo.texture->execute();
 				}
 
-				fvec3 vel;
-				vel = sceneNode->velocity;
+				fvec3 vel(sceneNode->velocity[0],sceneNode->velocity[1],sceneNode->velocity[2]);
 				const fvec3  dir = vel * (-1.0f / sceneNode->length);
 
 				const float invLenPlusOne = 1.0f / (float)(shotLength + 1);
