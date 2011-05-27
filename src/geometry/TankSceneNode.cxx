@@ -1192,11 +1192,15 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 	}
 
   // apply explosion transform
+	bool overide = false;
+	TankDeathOverride::DeathParams params(explodeFraction,fvec4(color[0],color[1],color[2],color[3]));
+
   if (isExploding) {
     glPushMatrix();
 	const float* cog = centerOfGravity[part];
-	fvec3 splodePos,splodeRot, splodeScale(1,1,1);
-	if (!sceneNode->deathOverride || !sceneNode->deathOverride->PartDeathLocation(part,splodePos,splodeRot,splodeScale,explodeFraction))
+	if (sceneNode->deathOverride)
+		sceneNode->deathOverride->SetDeathRenderParams(params);
+	if (!overide)
 	{
 		const float* vel = sceneNode->vel[part];
 		const float* spin = sceneNode->spin[part];
@@ -1215,14 +1219,14 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 		//glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
 		//glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
-		glTranslatef(cog[0] + splodePos.x,
-			cog[1] + splodePos.y,
-			cog[2] + splodePos.z);
-		glRotatef(splodeRot.x, 1, 0,0);
-		glRotatef(splodeRot.y, 0, 1,0);
-		glRotatef(splodeRot.z, 0, 0,1);
+		glTranslatef(cog[0] + params.pos.x,
+			cog[1] +  params.pos.y,
+			cog[2] +  params.pos.z);
+		glRotatef( params.rot.x, 1, 0,0);
+		glRotatef(params.rot.y, 0, 1,0);
+		glRotatef(params.rot.z, 0, 0,1);
 		glTranslatef(-cog[0], -cog[1], -cog[2]);
-		glScalef(splodeScale.x,splodeScale.y,splodeScale.z);
+		glScalef(params.scale.x,params.scale.y,params.scale.z);
 	}
   }
 
@@ -1235,6 +1239,8 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   // set color
   if (!isShadow) {
     setupPartColor(part);
+	if (overide)
+		myColor4fv(params.color);
   }
 
   // get the list
@@ -1242,12 +1248,15 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
   TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
   list = TankGeometryMgr::getPartList(shadow, part, drawSize, drawLOD);
 
-  // draw the part
-  glCallList(list);
+  if (!overide || params.draw)
+  {
+		// draw the part
+	  glCallList(list);
 
-  // add to the triangle count
-  addTriangleCount(TankGeometryMgr::getPartTriangleCount(
-				      shadow, part, drawSize, drawLOD));
+	  // add to the triangle count
+	  addTriangleCount(TankGeometryMgr::getPartTriangleCount(
+						  shadow, part, drawSize, drawLOD));
+  }
 
   // draw the lights on the turret
   if ((part == Turret) && !isExploding && !isShadow) {

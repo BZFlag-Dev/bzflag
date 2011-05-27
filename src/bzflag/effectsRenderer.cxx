@@ -847,10 +847,10 @@ bool SquishDeathEffect::update ( float time )
  void SquishDeathEffect::draw ( const SceneRenderer& /*sr*/ )
  {}
 
-bool SquishDeathEffect::PartDeathLocation ( TankGeometryEnums::TankPart /*part*/, fvec3 &pos, fvec3 &/*rot*/, fvec3 &scale, float /*explodeTime*/)
+ bool SquishDeathEffect::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
 {
-	scale = fvec3(1,1,0);
-	pos = fvec3(0,0,0.1f);
+	params.scale = fvec3(1,1,0);
+	params.pos = fvec3(0,0,0.1f);
 	return true;
 }
 

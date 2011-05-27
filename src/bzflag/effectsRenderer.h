@@ -142,7 +142,10 @@ class DeathEffect : public BasicEffect, public TankDeathOverride
 public:
 	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
 	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
-	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart /*part*/, fvec3 &/*pos*/, fvec3 &/*rot*/, fvec3 &/*scale*/, float /*explodeScale*/){return false;}
+
+	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &/*params*/ ){return false;}
+	virtual bool ShowExplosion ( void ){return false;}
+	virtual bool GetDeathVector ( fvec3 &/*vel*/ ){return false;}
 
 	void setPlayer ( Player* p){player=p;}
 protected:
@@ -172,7 +175,7 @@ public:
 
 	virtual bool update ( float time );
 	virtual void draw ( const SceneRenderer& sr );
-	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot, fvec3 &scale, float explodeScale);
+	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
 protected:
 };
 

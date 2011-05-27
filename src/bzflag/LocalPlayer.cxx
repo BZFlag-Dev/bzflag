@@ -1454,6 +1454,17 @@ void			LocalPlayer::explodeTank()
   } else {
     newVelocity[2] = oldVelocity[2];
   }
+  TankDeathOverride* death = getDeathEffect();
+  if (death)
+  {
+	  fvec3 v(newVelocity[0],newVelocity[1],newVelocity[2]);
+	  if(death->GetDeathVector(v))
+	  {
+		  newVelocity[0] = v.x;
+		  newVelocity[1] = v.y;
+		  newVelocity[2] = v.z;
+	  }
+  }
   setVelocity(newVelocity);
   location = Exploding;
   target = NULL;		// lose lock when dead

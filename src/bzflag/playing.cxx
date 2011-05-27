@@ -2162,11 +2162,14 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[0] = pos[0];
 	explodePos[1] = pos[1];
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
-	addTankExplosion(explodePos);
 
-	victimPlayer->setDeathEffect(EFFECTS.addDeathEffect(victimPlayer->getColor(), pos,
-			       victimPlayer->getAngle(),reason,victimPlayer,flagType));
-      }
+	TankDeathOverride* death = EFFECTS.addDeathEffect(victimPlayer->getColor(), pos, victimPlayer->getAngle(),reason,victimPlayer,flagType);
+  
+	victimPlayer->setDeathEffect(death);
+
+	if (!death || death->ShowExplosion())
+	  addTankExplosion(explodePos);
+     }
 
       if (killerLocal) {
 	// local player did it
@@ -2460,9 +2463,13 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[0] = pos[0];
 	  explodePos[1] = pos[1];
 	  explodePos[2] = pos[2] + player[i]->getMuzzleHeight();
-	  addTankExplosion(explodePos);
 
-	  player[i]->setDeathEffect(EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle(),GotCaptured,player[i],NULL));
+	  TankDeathOverride *death = EFFECTS.addDeathEffect(player[i]->getColor(), pos, player[i]->getAngle(),GotCaptured,player[i],NULL);
+
+	  player[i]->setDeathEffect(death);
+
+	  if (!death || death->ShowExplosion())
+	    addTankExplosion(explodePos);
 	}
       }
 
@@ -3415,8 +3422,10 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   // don't die if we had the shield flag and we've been shot.
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
+
+    TankDeathOverride* death = EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle(),reason,tank, flagType);
+    tank->setDeathEffect(death);
     tank->explodeTank();
-    tank->setDeathEffect(EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle(),reason,tank, flagType));
 
     if (isViewTank(tank)) {
       if (reason == GotRunOver) {
@@ -3436,7 +3445,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
       }
     }
 
-    if (tank != myTank) {
+    if (tank != myTank &&(!death || death->ShowExplosion())) {
       const float* pos = tank->getPosition();
       float explodePos[3];
       explodePos[0] = pos[0];

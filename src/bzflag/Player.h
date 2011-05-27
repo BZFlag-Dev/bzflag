@@ -200,6 +200,7 @@ public:
   void forceReload(float time);
 
   void setDeathEffect ( TankDeathOverride *e );
+  TankDeathOverride* getDeathEffect ( void );
 
   int reportedHits;
   int computedHits;

@@ -28,7 +28,30 @@ class TankDeathOverride
 {
 public:
 	virtual ~TankDeathOverride(){};
-	virtual bool PartDeathLocation ( TankGeometryEnums::TankPart part, fvec3 &pos, fvec3 &rot, fvec3 &scale, float explodeScale) = 0;
+
+	class DeathParams
+	{
+	public:
+		DeathParams( float param, fvec4 c)
+		{
+			scale = fvec3(1,1,1);
+			explodeParam = param;
+			color = c;
+			draw = true;
+		}
+
+		TankGeometryEnums::TankPart part;
+		fvec3 pos;
+		fvec3 rot;
+		fvec3 scale;
+		float explodeParam;
+		fvec4 color;
+		bool  draw;
+	};
+
+	virtual bool SetDeathRenderParams ( DeathParams &/*params*/ ) = 0;
+	virtual bool ShowExplosion ( void ) = 0;
+	virtual bool GetDeathVector ( fvec3 &/*vel*/ ) = 0;
 };
 
 class TankIDLSceneNode : public SceneNode {
@@ -118,6 +141,7 @@ class TankSceneNode : public SceneNode {
     static void		setMaxLOD(int maxLevel);
 
 	void		setDeathOverride( TankDeathOverride* o) {deathOverride = o;}
+	TankDeathOverride		*getDeathOverride( void ) {return deathOverride;}
 
 	fvec3		explodePos;
   protected:
