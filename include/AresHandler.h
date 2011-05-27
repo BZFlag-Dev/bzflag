@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2010 Tim Riker
+ * Copyright (c) 1993-2011 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,14 +18,8 @@
 
 /* common implementation headers */
 #include "network.h"
-#if defined(_WIN32) && defined(BUILD_ARES)
+#if defined(BUILD_ARES)
 #include "../src/other/ares/ares.h"
-#elif !defined(_WIN32) && defined(LOCAL_CARES)
-extern "C" {
-#include "bzares.h"	 
-#include "../src/other/ares/ares.h"
-#include "bzares_version.h"
-}
 #else
 #include <ares.h>
 #endif
