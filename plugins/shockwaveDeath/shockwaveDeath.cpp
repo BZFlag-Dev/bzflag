@@ -24,7 +24,7 @@ void SWDeathHandler::Init( const char* commandLine )
   std::string param = commandLine;
 
   if (param == "usevictim")
-	  bz_debugMessage(0,"shockwaveDeath plugin no longer takes any paramaters");
+	  bz_debugMessage(0,"shockwaveDeath plugin no longer takes any parameters");
 }
 
 void SWDeathHandler::Event ( bz_EventData *eventData )

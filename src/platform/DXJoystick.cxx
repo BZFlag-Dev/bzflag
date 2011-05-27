@@ -360,7 +360,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
   HRESULT success = DI_OK;
 
   // Generate a string to identify a specific rumble effect,
-  // based on the paramaters of the rumble
+  // based on the parameters of the rumble
   std::string effectType = TextUtils::format("R%d|%d|%d|%d|%d", count, delay, duration, strong_motor, weak_motor);
 
   // Check if we need to create the effect
@@ -440,7 +440,7 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
   HRESULT success = DI_OK;
 
   // Generate a string to identify a specific constant effect,
-  // based on the paramaters of the effect
+  // based on the parameters of the effect
   std::string effectType = TextUtils::format("C%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction, strength);
 
   // Check if we need to create the effect
@@ -524,7 +524,7 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
   HRESULT success = DI_OK;
 
   // Generate a string to identify a specific periodic effect,
-  // based on the paramaters of the effect
+  // based on the parameters of the effect
   std::string effectType = TextUtils::format("P%d|%d|%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction, amplitude, period, type);
 
   // Check if we need to create the effect
