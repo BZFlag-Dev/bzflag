@@ -188,7 +188,7 @@ class vec3 {
     vec3(T _x, T _y, T _z) : x(_x), y(_y), z(_z) {}
     vec3(const vec2<T>& v, T _z) : x(v.x), y(v.y), z(_z) {}
 
-    vec3(T _v[3]) : x(_v[0]), y(_v[1]), z(_v[2]) {}
+    vec3(const T _v[3]) : x(_v[0]), y(_v[1]), z(_v[2]) {}
 
     inline vec3& operator=(const vec3& v) { x = v.x; y = v.y; z = v.z; return *this; }
     inline vec3& operator=(const T v[3]) { x = v[0]; y = v[1]; z = v[2]; return *this; }

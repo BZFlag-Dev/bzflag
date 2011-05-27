@@ -854,6 +854,16 @@ bool SquishDeathEffect::update ( float time )
 	return true;
 }
 
+bool SquishDeathEffect::GetDeathVector( fvec3 & vel )
+{
+	if (!player)
+		return false;
+
+	vel = fvec3(player->getVelocity());
+	return true;
+}
+
+
 //******************RingsDeathEffect****************
 RingsDeathEffect::RingsDeathEffect() : DeathEffect()
 {

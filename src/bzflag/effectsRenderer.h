@@ -176,6 +176,7 @@ public:
 	virtual bool update ( float time );
 	virtual void draw ( const SceneRenderer& sr );
 	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
+	virtual bool GetDeathVector( fvec3 & v );
 protected:
 };
 
