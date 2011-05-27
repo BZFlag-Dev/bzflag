@@ -114,6 +114,7 @@ public:
 	virtual void draw ( const SceneRenderer& sr );
 	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
 	virtual bool GetDeathVector( fvec3 & v );
+	virtual bool ShowExplosion ( void ){return false;}
 protected:
 };
 
@@ -126,7 +127,10 @@ public:
 	virtual void draw ( const SceneRenderer& sr );
 	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
 	virtual bool GetDeathVector( fvec3 & v );
+	virtual bool ShowExplosion ( void ){return false;}
 protected:
+	float vertDist;
+	bool done;
 };
 
 class SpikesDeathEffect : public DeathEffect
@@ -469,7 +473,7 @@ DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* po
 
 	int effectType = static_cast<int>(BZDB.eval("deathEffect"));
 
-	if (effectType == 0 || (reason != GotShot && reason != GotRunOver))
+	if (effectType == 0)
 		return NULL;
 
 	DeathEffect	*effect = NULL;
@@ -477,7 +481,9 @@ DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* po
 	float rots[3] = {0};
 	rots[2] = rot;
 
-	if (reason == GotRunOver || flag == Flags::Steamroller)
+	if (reason == GotKilledMsg)
+		effect == new FadeToHeaven();
+	else if (reason == GotRunOver || flag == Flags::Steamroller)
 		effect = new SquishDeathEffect;
 	else if (flag == Flags::GuidedMissile)
 		effect = new SpikesDeathEffect;
@@ -644,6 +650,7 @@ BasicEffect::BasicEffect()
 	lifetime = 0;
 	lastTime = startTime;
 	deltaTime = 0;
+	lifeParam = 1.0;
 }
 
 void BasicEffect::setPos ( const float *pos, const float *rot )
@@ -696,6 +703,10 @@ bool BasicEffect::update( float time )
 
 	deltaTime = time - lastTime;
 	lastTime = time;
+
+	if (lifetime != 0 && age != 0)
+		lifeParam = age/lifetime;
+
 	return false;
 }
 
@@ -1047,7 +1058,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	glPopMatrix();
 }
 
-//******************RingSpawnEffect****************
+//******************SquishDeathEffect****************
 SquishDeathEffect::SquishDeathEffect() : DeathEffect()
 {
 	lifetime = 10.0f;
@@ -1079,6 +1090,49 @@ bool SquishDeathEffect::GetDeathVector( fvec3 & vel )
 
 	const float *v = player->getVelocity();
 	vel = fvec3(v[0],v[1],v[2]);
+	return true;
+}
+
+
+//******************FadeToHeaven****************
+FadeToHeaven::FadeToHeaven() : DeathEffect()
+{
+	lifetime = BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+	vertDist = 5.0;
+	done = false;
+}
+
+bool FadeToHeaven::update ( float time )
+{
+	if (!done)
+		return true;
+
+	// see if it's time to die
+	// if not update all those fun times
+	if ( BasicEffect::update(time))
+		return true;
+
+	return false;
+}
+ void FadeToHeaven::draw ( const SceneRenderer& /*sr*/ )
+ {
+ }
+
+ bool FadeToHeaven::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
+{
+	done = params.explodeParam  < 0.0001f;
+
+	params.color[3] = params.explodeParam;
+	params.pos = fvec3(0,0,vertDist*params.explodeParam);
+
+	return true;
+}
+
+bool FadeToHeaven::GetDeathVector( fvec3 & vel )
+{
+	if (!player)
+		return false;
+	vel = fvec3(0,0,0);
 	return true;
 }
 

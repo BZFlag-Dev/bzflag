@@ -66,6 +66,7 @@ protected:
 	float	lastTime;
 	float	deltaTime;
 	float	age;
+	float	lifeParam;
 };
 
 class DeathEffect : public BasicEffect, public TankDeathOverride
@@ -75,14 +76,13 @@ public:
 	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
 
 	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &/*params*/ ){return false;}
-	virtual bool ShowExplosion ( void ){return false;}
+	virtual bool ShowExplosion ( void ){return true;}
 	virtual bool GetDeathVector ( fvec3 &/*vel*/ ){return false;}
 
 	void setPlayer ( Player* p){player=p;}
 protected:
 	Player *player;
 };
-
 
 typedef std::vector<BasicEffect*>	tvEffectsList;
 
