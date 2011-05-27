@@ -140,7 +140,6 @@
 		_p(myname .. ': premake4.lua')
 		local topdir = _MAKE.esc(path.getrelative(prj.basedir, prj.solution.basedir))
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
-		_p('\t@$(MAKE)')
 	end
 
 

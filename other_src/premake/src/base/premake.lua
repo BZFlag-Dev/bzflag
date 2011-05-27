@@ -23,12 +23,48 @@
 		filename = premake.project.getfilename(obj, filename)
 		printf("Generating %s...", filename)
 
-		local f, err = io.open(filename, "wb")
+		local olddata = nil
+		do
+			oldfile = io.open(filename, "rb")
+			if (oldfile) then
+				olddata = oldfile:read("*a")
+				oldfile:close()
+			end
+		end
+
+		local f, err
+		if (olddata) then
+			f, err = io.tmpfile()
+		else
+			f, err = io.open(filename, "wb")
+		end
 		if (not f) then
 			error(err, 0)
 		end
 
+		-- set the default output stream
 		io.output(f)
+
+		-- run the callback
 		callback(obj)
-		f:close()
+
+		if (not olddata) then
+			f:close()
+		else
+			-- read the tmpfile
+			f:seek("set")
+			local newdata = f:read("*a")
+			f:close()
+
+			if (newdata == olddata) then
+				print("           " .. filename .. " is unchanged")
+			else
+				local wf, err = io.open(filename, "wb")
+				if (not wf) then
+					error(err, 0)
+				end
+				wf:write(newdata)
+				wf:close()
+			end
+		end
 	end
