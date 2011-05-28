@@ -1170,6 +1170,7 @@ AC_CONFIG_FILES([
 	plugins/customflagsample/Makefile
 	plugins/flagStay/Makefile
 	plugins/hiddenAdmin/Makefile
+	plugins/HTTPServer/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/koth/Makefile
