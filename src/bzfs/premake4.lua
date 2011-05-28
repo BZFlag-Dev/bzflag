@@ -90,7 +90,7 @@ project 'bzfs'
     'commands.cpp',                   'commands.h',
   }
 
-configuration 'not windows'
+configuration 'not vs*'
   linkoptions { '-export-dynamic' } -- -static' }
 
 configuration 'not gmake'

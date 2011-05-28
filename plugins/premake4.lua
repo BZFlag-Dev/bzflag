@@ -18,7 +18,7 @@ function plugin_project(name, source_files)
     includedirs '../plugin_utils'
 
     -- create missing .def files for windows plugins
-    if (os.is('windows')) then
+    if (os.is('vs*')) then
       local defName = name .. '.def'
       if (not os.isfile(defName)) then
         print('Generating ' .. os.getcwd() .. '/' .. defName)
@@ -40,7 +40,7 @@ function plugin_project(name, source_files)
 
 --[[
     -- create soft links to the plugin .so's in plugins/links/
-    configuration 'not windows'
+    configuration 'not vs*'
       prelinkcommands {
         ('@if [ ! -d %q ]; then mkdir %q; fi')
         :format(PLUGIN_LINKS_DIR, PLUGIN_LINKS_DIR),

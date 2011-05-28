@@ -29,7 +29,7 @@ if (not _OPTIONS['disable-bzrobots']) then include 'bzrobots' end
 
 
 --[[
-configuration 'not windows'
+configuration 'not vs*'
   prebuildcommands {
     'ln -sf bzfs    Server',
     'ln -sf bzflag  Client',

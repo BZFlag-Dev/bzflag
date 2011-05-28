@@ -3,6 +3,7 @@ project   'libClientBase'
   targetname 'ClientBase'
   kind  'StaticLib'
   objdir '.objs'
+  includedirs { '.', '../bzflag' }
   files {
     'ActionBinding.cpp',              'ActionBinding.h',
     'BaseLocalPlayer.cpp',            'BaseLocalPlayer.h',
@@ -44,7 +45,61 @@ project   'libClientBase'
     'defaultBZDB.cpp',                'defaultBZDB.h',
     'playing.cpp',                    'playing.h',
   }
-  includedirs { '.', '../bzflag' }
+  if (not _OPTIONS['disable-bzrobots']) then
+    files {
+      '../bzflag/AutoHunt.cpp',               '../bzflag/AutoHunt.h',
+      '../bzflag/AutoPilot.cpp',              '../bzflag/AutoPilot.h',
+      '../bzflag/BackgroundRenderer.cpp',     '../bzflag/BackgroundRenderer.h',
+      '../bzflag/CommandsImplementation.cpp',
+      '../bzflag/ComposeDefaultKey.cpp',      '../bzflag/ComposeDefaultKey.h',
+      '../bzflag/ControlPanel.cpp',           '../bzflag/ControlPanel.h',
+      '../bzflag/CrackedGlass.cpp',           '../bzflag/CrackedGlass.h',
+      '../bzflag/Daylight.cpp',               '../bzflag/Daylight.h',
+      '../bzflag/DebugDrawing.cpp',           '../bzflag/DebugDrawing.h',
+      '../bzflag/Downloads.cpp',              '../bzflag/Downloads.h',
+      '../bzflag/DynamicWorldText.cpp',       '../bzflag/DynamicWorldText.h',
+      '../bzflag/EffectsRenderer.cpp',        '../bzflag/EffectsRenderer.h',
+      '../bzflag/FontSizer.cpp',              '../bzflag/FontSizer.h',
+      '../bzflag/ForceFeedback.cpp',          '../bzflag/ForceFeedback.h',
+      '../bzflag/HUDDialog.cpp',              '../bzflag/HUDDialog.h',
+      '../bzflag/HUDDialogStack.cpp',         '../bzflag/HUDDialogStack.h',
+      '../bzflag/HUDNavigationQueue.cpp',     '../bzflag/HUDNavigationQueue.h',
+      '../bzflag/HUDRenderer.cpp',            '../bzflag/HUDRenderer.h',
+      '../bzflag/HUDui.cpp',                  '../bzflag/HUDui.h',
+      '../bzflag/HUDuiControl.cpp',           '../bzflag/HUDuiControl.h',
+      '../bzflag/HUDuiDefaultKey.cpp',        '../bzflag/HUDuiDefaultKey.h',
+      '../bzflag/HUDuiElement.cpp',           '../bzflag/HUDuiElement.h',
+      '../bzflag/HUDuiFrame.cpp',             '../bzflag/HUDuiFrame.h',
+      '../bzflag/HUDuiImage.cpp',             '../bzflag/HUDuiImage.h',
+      '../bzflag/HUDuiLabel.cpp',             '../bzflag/HUDuiLabel.h',
+      '../bzflag/HUDuiList.cpp',              '../bzflag/HUDuiList.h',
+      '../bzflag/HUDuiTypeIn.cpp',            '../bzflag/HUDuiTypeIn.h',
+      '../bzflag/HubComposeKey.cpp',          '../bzflag/HubComposeKey.h',
+      '../bzflag/LocalCommand.cpp',           '../bzflag/LocalCommand.h',
+      '../bzflag/LocalFontFace.cpp',          '../bzflag/LocalFontFace.h',
+      '../bzflag/MainWindow.cpp',             '../bzflag/MainWindow.h',
+      '../bzflag/Mumble.cpp',                 '../bzflag/Mumble.h',
+      '../bzflag/Plan.cpp',                   '../bzflag/Plan.h',
+      '../bzflag/PlatformSound.cpp',          '../bzflag/PlatformSound.h',
+      '../bzflag/PlayerAvatarManager.cpp',    '../bzflag/PlayerAvatarManager.h',
+      '../bzflag/RadarRenderer.cpp',          '../bzflag/RadarRenderer.h',
+      '../bzflag/Roaming.cpp',                '../bzflag/Roaming.h',
+      '../bzflag/RoofTops.cpp',               '../bzflag/RoofTops.h',
+      '../bzflag/SceneRenderer.cpp',
+      '../bzflag/ScoreboardRenderer.cpp',     '../bzflag/ScoreboardRenderer.h',
+      '../bzflag/ServerCommandKey.cpp',       '../bzflag/ServerCommandKey.h',
+      '../bzflag/ShotStats.cpp',              '../bzflag/ShotStats.h',
+      '../bzflag/ShotStatsDefaultKey.cpp',    '../bzflag/ShotStatsDefaultKey.h',
+      '../bzflag/SilenceDefaultKey.cpp',      '../bzflag/SilenceDefaultKey.h',
+      '../bzflag/StandardTankAvatar.cpp',     '../bzflag/StandardTankAvatar.h',
+      '../bzflag/ThirdPersonVars.cpp',        '../bzflag/ThirdPersonVars.h',
+      '../bzflag/TrackMarks.cpp',             '../bzflag/TrackMarks.h',
+      '../bzflag/WeatherRenderer.cpp',        '../bzflag/WeatherRenderer.h',
+      '../bzflag/commands.h',
+      '../bzflag/sound.cpp',                  '../bzflag/sound.h',
+      '../bzflag/stars.cpp',                  '../bzflag/stars.h',
+    }
+  end
 
 
 

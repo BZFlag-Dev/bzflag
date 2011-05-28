@@ -14,5 +14,3 @@ if (not os.is('windows')) then
 end
 --  includedirs { os.outputof('pkg-config freetype2 --cflags'):match('%-I(.*)$')  }
 
-
-

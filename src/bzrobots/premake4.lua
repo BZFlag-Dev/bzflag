@@ -2,7 +2,7 @@
 --local python_cflags = os.outputof('python-config --cflags')
 --local python_include = python_cflags:match('%-I(%S*)')
 
-if (1 > 0) then
+if (-1 > 0) then -- FIXME
   print()
   print('>>>  SKIPPING BZROBOTS <<<')
   print()
@@ -15,8 +15,10 @@ project 'bzrobots'
   objdir '.objs'
   includedirs { '.', '../bzflag', '../clientbase' }
   flags 'Symbols'
+
 --  buildoptions '`python-config --cflags`'
 --  linkoptions  '`python-config --ldflags`'
+
   links {
     'libObstacle',
     'libClientBase',
@@ -39,6 +41,7 @@ project 'bzrobots'
     'z', 'SDL', 'GLU','GL', 'X11', 'GLEW',
     'rt'
   }
+
   files {
     '../obstacle/ObstacleMgr.cpp',
     'AdvancedRobot.cpp',       'AdvancedRobot.h',
@@ -60,10 +63,9 @@ project 'bzrobots'
 --    'PythonScript.cpp',        'PythonScript.h',
   }
 
-configuration 'not windows'
-  linkoptions { '-export-dynamic -static' }
+  configuration 'not vs*'
+    linkoptions { '-export-dynamic ' } --, '-static' }
 
-configuration 'not gmake'
-  targetdir(BINDIR)
-
+  configuration 'not gmake'
+    targetdir(BINDIR)
 

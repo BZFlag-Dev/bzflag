@@ -8,7 +8,15 @@
 	local _ = premake.make.cpp
 
 
+	local function get_project_tag(prj)
+		return ('%-16s  '):format('<' .. prj.name .. '>')
+	end
+
+
 	function premake.make_cpp(prj)
+		-- prefix each command with prj_tag for multi-job builds
+		local prj_tag = get_project_tag(prj)
+
 		-- create a shortcut to the compiler interface
 		local cc = premake.gettool(prj)
 
@@ -19,7 +27,7 @@
 
 		for _, platform in ipairs(platforms) do
 			for cfg in premake.eachconfig(prj, platform) do
-				premake.gmake_cpp_config(cfg, cc)
+				premake.gmake_cpp_config(cfg, cc, prj)
 			end
 		end
 
@@ -64,7 +72,7 @@
 
 		-- target build rule
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
-		_p('\t@echo Linking %s', prj.name)
+		_p('\t@echo "%s" Linking', prj_tag)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
@@ -86,7 +94,7 @@
 
 		-- clean target
 		_p('clean:')
-		_p('\t@echo Cleaning %s', prj.name)
+		_p('\t@echo "%s" Cleaning', prj_tag)
 		_p('ifeq (posix,$(SHELLTYPE))')
 		_p('\t$(SILENT) rm -f  $(TARGET)')
 		_p('\t$(SILENT) rm -rf $(OBJDIR)')
@@ -112,7 +120,7 @@
 		for _, file in ipairs(prj.files) do
 			if path.iscppfile(file) then
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo Compiling $(notdir $<)')
+				_p('\t@echo "%s" Compiling $(notdir $<)', prj_tag)
 				if (path.iscfile(file)) then
 					_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
 				else
@@ -120,7 +128,7 @@
 				end
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo Processing $(notdir $<)')
+				_p('\t@echo "%s" Processing $(notdir $<)', prj_tag)
 				_p('\t$(SILENT) windres $< -O coff -o "$@" $(RESFLAGS)')
 			end
 		end
@@ -129,7 +137,7 @@
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
 
-		-- trepan was here
+		-- BZFlag customization
 		local myname = _MAKE.getmakefilename(prj, true)
 		local premake_exec = _MAKE.esc(_PREMAKE_EXEC or 'premake4')
 		_p('\n')
@@ -183,7 +191,9 @@
 -- Write a block of configuration settings.
 --
 
-	function premake.gmake_cpp_config(cfg, cc)
+	function premake.gmake_cpp_config(cfg, cc, prj)
+		-- prefix each command with prj_tag for multi-job builds
+		local prj_tag = get_project_tag(prj)
 
 		_p('ifeq ($(config),%s)', _MAKE.esc(cfg.shortname))
 
@@ -230,24 +240,26 @@
 
 		_p('  define PREBUILDCMDS')
 		if #cfg.prebuildcommands > 0 then
-			_p('\t@echo Running pre-build commands')
+			_p('\t@echo "%s" Running pre-build commands', prj_tag)
 			_p('\t%s', table.implode(cfg.prebuildcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
 
 		_p('  define PRELINKCMDS')
 		if #cfg.prelinkcommands > 0 then
-			_p('\t@echo Running pre-link commands')
+			_p('\t@echo "%s" Running pre-link commands', prj_tag)
 			_p('\t%s', table.implode(cfg.prelinkcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
 
 		_p('  define POSTBUILDCMDS')
 		if #cfg.postbuildcommands > 0 then
-			_p('\t@echo Running post-build commands')
+			_p('\t@echo "%s" Running post-build commands', prj_tag)
 			_p('\t%s', table.implode(cfg.postbuildcommands, "", "", "\n\t"))
 		end
 		_p('  endef')
+
+--		error('shit')
 
 		_p('endif')
 		_p('')
@@ -267,9 +279,10 @@
 	end
 
 	function _.pchrules(prj)
+		local prj_tag = get_project_tag(prj)
 		_p('ifneq (,$(PCH))')
 		_p('$(GCH): $(PCH)')
-		_p('\t@echo $(notdir $<)')
+		_p('\t@echo "%s $(notdir $<)"', prj_tag)
 		_p('\t-$(SILENT) cp $< $(OBJDIR)')
 		if prj.language == "C" then
 			_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')

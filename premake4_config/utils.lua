@@ -15,6 +15,40 @@ function isfunction(x) return type(x) == 'function' end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+function io.readfile(name, mode)
+  mode = mode or 'rt'
+  local file, err = io.open(name, mode)
+  if (not file) then
+    return nil, err
+  end
+  local data, err = file:read('*a')
+  file:close()
+  if (not data) then
+    return nil, err
+  end
+  return data
+end
+
+
+function io.writefile(name, data, mode)
+  data = data or ''
+  mode = mode or 'wt'
+  local file, err = io.open(name, mode)
+  if (not file) then
+    return nil, err
+  end
+  if (not file:write(data)) then
+    file:close()
+    return nil, name .. ': write error'
+  end
+  file:close()
+  return true
+end
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 function os.outputof(cmd)
   local p, err = io.popen(cmd, 'r')
   if (not p) then
@@ -48,6 +82,10 @@ function os.testcode(t)
     includes = includes .. '\n'
   end
 
+  local incdirs = ''
+  local libdirs = ''
+  local libs = 
+
   assert(isstring(includes), 'invalid "includes" parameter')
 
   local code = t.code
@@ -59,7 +97,10 @@ function os.testcode(t)
   source = source .. code
   source = source .. '}\n'
 
-  local f, err = io.open('lasttest.cpp', 'w')
+  local tmpCpp = os.tmpname()
+  local tmpOut = os.tmpname()
+
+  local f, err = io.open(tmpCpp, 'w')
   if (not f) then
     print(err)
     return false
@@ -68,16 +109,20 @@ function os.testcode(t)
   f:close()
 
   local cmd = premake.gcc.cxx
-  cmd = cmd .. ' ' .. 'lasttest.cpp'
-  cmd = cmd .. ' ' .. '-o junk'
+  cmd = cmd .. ' ' .. tmpCpp
+  cmd = cmd .. ' ' .. '-o ' .. tmpOut
   cmd = cmd .. ' ' .. (t.buildoptions or '')
 
---  cmd = cmd .. ' &> /dev/null'
+  if (not os.is('windows')) then
+    cmd = cmd .. ' &> /dev/null'
+  else
+    cmd = cmd .. ' > NUL 2>&1' -- FIXME - OS/2 & NT?
+  end
 
   local result = os.execute(cmd)
 
-  os.remove('junk')
-  os.remove('lasttest.cpp')
+  os.remove(tmpOut)
+  os.remove(tmpCpp)
 
   if (false and result ~= 0) then
     print(result)

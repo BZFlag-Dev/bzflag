@@ -4,7 +4,7 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
-  -- trepan was here
+  -- BZFlag customization
 	_PREMAKE_BZFLAG = 1
 
 

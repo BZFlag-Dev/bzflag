@@ -19,6 +19,7 @@
 --    or project as a parameters.
 --
 
+  -- BZFlag customization
 	function premake.generate(obj, filename, callback)
 		filename = premake.project.getfilename(obj, filename)
 		printf("Generating %s...", filename)

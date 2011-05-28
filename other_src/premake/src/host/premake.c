@@ -98,6 +98,55 @@ int main(int argc, const char** argv)
 	return z;
 }
 
+/**
+ * A wrapper for lua_pcall() that uses the debug.traceback() function.
+ * It stores the traceback() function in the LUA_REGISTRYINDEX using
+ * "traceback" as the key.
+ */
+int lua_pcall_traceback(lua_State* L, int nargs, int nresults)
+{
+	int retval;
+	const int top = lua_gettop(L);
+	const int traceIndex = top - nargs;
+
+	lua_getfield(L, LUA_REGISTRYINDEX, "traceback");
+	if (!lua_isfunction(L, -1))
+	{
+		lua_pop(L, 1);
+
+		retval = luaL_loadstring(L,
+		           "local dbg = require('debug')\n"
+		           "package.loaded.debug = nil\n"
+		           "return dbg.traceback\n"
+		         );
+		if (retval != OKAY)
+		{
+			lua_replace(L, traceIndex); /* place the error string */
+			lua_pop(L, nargs);
+			return retval;
+		}
+
+		retval = lua_pcall(L, 0, 1, 0);
+		if (retval != OKAY)
+		{
+			lua_replace(L, traceIndex); /* place the error string */
+			lua_pop(L, nargs + 1);
+			return retval;
+		}
+
+		lua_pushvalue(L, 1); /* make a copy of traceback() */
+		lua_setfield(L, LUA_REGISTRYINDEX, "traceback");
+	}
+
+	/* traceback() is on the top of the stack, insert it just before the function */
+	lua_insert(L, traceIndex);
+
+	retval = lua_pcall(L, nargs, nresults, traceIndex);
+
+	lua_remove(L, traceIndex);
+
+	return retval;
+}
 
 
 /**
@@ -228,7 +277,7 @@ int load_builtin_scripts(lua_State* L)
 	/* hand off control to the scripts */
 	lua_getglobal(L, "_premake_main");
 	lua_pushstring(L, scripts_path);
-	if (lua_pcall(L, 1, 1, 0) != OKAY)
+	if (lua_pcall_traceback(L, 1, 1) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L, -1));
 		return !OKAY;
@@ -261,7 +310,7 @@ int load_builtin_scripts(lua_State* L)
 
 	/* hand off control to the scripts */
 	lua_getglobal(L, "_premake_main");
-	if (lua_pcall(L, 0, 1, 0) != OKAY)
+	if (lua_pcall_traceback(L, 0, 1) != OKAY)
 	{
 		printf(ERROR_MESSAGE, lua_tostring(L,-1));
 		return !OKAY;
