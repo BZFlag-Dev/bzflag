@@ -2166,6 +2166,14 @@ BZF_API bz_ApiString bz_getPublicDescription( void )
   return bz_ApiString(clOptions->publicizedTitle);
 }
 
+BZF_API int bz_getPublicPort( void )
+{
+  if (clOptions->useGivenPort)
+    return clOptions->wksPort;
+
+  return ServerPort;
+}
+
 
 BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
 {

@@ -1363,6 +1363,7 @@ BZF_API bool bz_removeCustomMapObject ( const char* object );
 BZF_API bool bz_getPublic( void );
 BZF_API bz_ApiString bz_getPublicAddr( void );
 BZF_API bz_ApiString bz_getPublicDescription( void );
+BZF_API int bz_getPublicPort(void);
 
 // plug-in management
 BZF_API int bz_getLoadedPlugins(bz_APIStringList *list);
