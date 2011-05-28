@@ -1407,16 +1407,20 @@ BZF_API void bz_resetTeamScores ( void );
 BZF_API void bz_updateListServer ( void );
 
 // url API
-class bz_URLHandler
+class bz_BaseURLHandler
 {
 public:
-  virtual ~bz_URLHandler(){};
+  bz_BaseURLHandler() { version = 1; }
+  virtual ~bz_BaseURLHandler(){};
   virtual void done ( const char* URL, void * data, unsigned int size, bool complete ) = 0;
   virtual void timeout ( const char* /*URL*/, int /*errorCode*/ ){};
   virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
+
+protected:
+  int version;
 };
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler = NULL, const char* postData = NULL );
+BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL );
 BZF_API bool bz_removeURLJob ( const char* URL );
 BZF_API bool bz_stopAllURLJobs ( void );
 
@@ -1702,6 +1706,14 @@ typedef int bz_eShotType;
 BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
 				   const char* helpString, bz_eShotType shotType, 
 				   bz_eFlagQuality quality);
+
+
+// utility
+BZF_API const char* bz_MD5(const char * str);
+BZF_API const char* bz_MD5(const void * data, size_t size);
+
+BZF_API const char* bz_getServerVersion(void);
+BZF_API const char* bz_getProtocolVersion(void);
 
 #endif //_BZFS_API_H_
 

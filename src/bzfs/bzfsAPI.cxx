@@ -22,21 +22,17 @@
 #include "GameKeeper.h"
 #include "FlagInfo.h"
 #include "VotingArbiter.h"
-
 #include "commands.h"
 #include "SpawnPosition.h"
 #include "WorldInfo.h"
-
 #include "BzMaterial.h"
 #include "cURLManager.h"
-
 #include "bzfsPlugins.h"
-
 #include "CustomWorld.h"
-
 #include "Permissions.h"
-
 #include "CommandManager.h"
+#include "md5.h"
+#include "version.h"
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 std::list<PendingChatMessages> pendingChatMessages;
@@ -45,7 +41,7 @@ std::map<std::string, std::vector<bz_ClipFieldNotifier*> > clipFieldMap;
 
 void callClipFiledCallbacks ( const char* field );
 
-class MasterBanURLHandler : public bz_URLHandler
+class MasterBanURLHandler : public bz_BaseURLHandler
 {
 public:
   bool busy;
@@ -2413,7 +2409,7 @@ BZF_API void bz_updateListServer ( void )
 typedef struct
 {
   std::string url;
-  bz_URLHandler	*handler;
+  bz_BaseURLHandler	*handler;
   std::string postData;
 }trURLJob;
 
@@ -2430,7 +2426,7 @@ public:
     flush();
   }
 
-  void addJob ( const char* URL, bz_URLHandler *handler, const char* _postData )
+  void addJob ( const char* URL, bz_BaseURLHandler *handler, const char* _postData )
   {
     if (!URL)
       return;
@@ -2524,7 +2520,7 @@ protected:
 
 BZ_APIURLManager	*bz_apiURLManager = NULL;
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_URLHandler* handler, const char* postData )
+BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler, const char* postData )
 {
   if (!URL)
     return false;
@@ -2944,6 +2940,35 @@ BZF_API	bz_eGameType bz_getGameType ( void  )
     return eRabbitGame;
 
   return eFFAGame;
+}
+
+
+// utility
+BZF_API const char* bz_MD5 ( const char * str )
+{
+  if (!str)
+    return NULL;
+  return bz_MD5(str,strlen(str));
+}
+
+BZF_API const char* bz_MD5 ( const void * data, size_t size )
+{
+  static std::string hex;
+  MD5 md5;
+  md5.update((const unsigned char*)data, size);
+  md5.finalize();
+  hex = md5.hexdigest();
+  return hex.c_str();
+}
+
+BZF_API const char* bz_getServerVersion ( void )
+{
+  return getAppVersion();
+}
+
+BZF_API const char* bz_getProtocolVersion ( void )
+{
+  return getProtocolVersion();
 }
 
 BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 

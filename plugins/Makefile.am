@@ -10,6 +10,7 @@ SUBDIRS = \
 	customflagsample \
 	flagStay \
 	hiddenAdmin \
+	HTTPServer \
 	keepaway \
 	killall \
 	koth \
