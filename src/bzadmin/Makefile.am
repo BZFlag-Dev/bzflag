@@ -21,6 +21,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/bzflag \
 	$(LIBCURL_CPPFLAGS)
 
+bzadmin_LDFLAGS = -static
 bzadmin_SOURCES = \
 	BZAdminClient.h \
 	BZAdminClient.cxx \
