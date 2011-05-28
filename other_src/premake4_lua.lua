@@ -2,6 +2,7 @@
 project   'liblua'
   targetname 'lua'
   kind  'StaticLib'
+  language 'C++'
   objdir '.objs_lua'
   files {
     'lua/src/lapi.cpp',     'lua/src/lapi.h',

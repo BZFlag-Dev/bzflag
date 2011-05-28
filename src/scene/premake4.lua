@@ -1,8 +1,6 @@
 
-project   'libScene'
-  targetname 'Scene'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libScene'
+
   files {
     'BSPSceneDatabase.cpp',
     'Occluder.cpp',         'Occluder.h',

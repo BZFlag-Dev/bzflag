@@ -1,16 +1,6 @@
 
-project 'bzadmin'
-  kind 'ConsoleApp'
-  objdir '.objs'
-  defines { 'BUILDING_BZADMIN' }
-  includedirs { '.', '../bzflag', '../clientbase' }
-  links {
-    'libGame',
-    'libNet',
-    'libCommon',
-    'libDate',
-    'curses', 'cares', 'curl', 'z', 'dl', 'rt',
-  }
+bzexec_project 'bzadmin'
+
   files {
     '../clientbase/ServerLink.cpp',
     'BZAdminClient.cpp', 'BZAdminClient.h',
@@ -28,5 +18,15 @@ project 'bzadmin'
     'UIMap.cpp',         'UIMap.h',
   }
 
-configuration 'not gmake'
-  targetdir(BINDIR)
+  defines { 'BUILDING_BZADMIN' }
+
+  includedirs { '.', '../bzflag', '../clientbase' }
+
+  links {
+    'libGame',
+    'libNet',
+    'libCommon',
+    'libDate',
+    'curses', 'cares', 'curl', 'z', 'dl', 'rt',
+  }
+

@@ -1,8 +1,6 @@
 
-project   'libNet'
-  targetname 'Net'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libNet'
+
   files {
     'Address.cpp',
     'AresHandler.cpp',

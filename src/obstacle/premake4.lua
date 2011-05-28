@@ -1,8 +1,6 @@
 
-project   'libObstacle'
-  targetname 'Obstacle'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libObstacle'
+
   files {
     'ArcObstacle.cpp',
     'BaseBuilding.cpp',

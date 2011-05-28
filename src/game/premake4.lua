@@ -1,8 +1,6 @@
 
-project   'libGame'
-  targetname 'Game'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libGame'
+
   files {
     'BZDBCache.cpp',
     'BZDBNames.cpp',

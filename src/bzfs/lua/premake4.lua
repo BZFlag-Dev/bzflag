@@ -1,8 +1,6 @@
 
-project 'libLuaServer'
-  targetname 'LuaServer'
-  kind 'StaticLib'
-  objdir '.objs'
+bzlib_project 'libLuaServer'
+
   files {
     'CallIns.cpp',   'CallIns.h',
     'CallOuts.cpp',  'CallOuts.h',
@@ -12,6 +10,7 @@ project 'libLuaServer'
     'RawLink.cpp',   'RawLink.h',
     'SlashCmd.cpp',  'SlashCmd.h',
   }
+
   includedirs { '../..', '../../lua' }
 
 

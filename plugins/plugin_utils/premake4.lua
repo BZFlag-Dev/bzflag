@@ -1,8 +1,9 @@
 
 project 'plugin_utils'
   kind 'StaticLib'
+  language 'C++'
   objdir '.objs'
-  buildoptions '-fPIC' -- FIXME
+  buildoptions '-fPIC'
   files {
     'base64.cpp',        'base64.h',
     'plugin_groups.cpp', 'plugin_groups.h',

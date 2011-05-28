@@ -1,10 +1,10 @@
 
+bzlib_project 'libLuaGame'
 
-project   'libLuaGame'
   targetname 'LuaGame'
-  kind  'StaticLib'
-  objdir '.objs'
+
   includedirs { '..', '../bzflag', '../clientbase' }
+
   files {
     'LuaBitOps.cpp',     'LuaBitOps.h',
     'LuaBZDB.cpp',       'LuaBZDB.h',
@@ -27,11 +27,10 @@ project   'libLuaGame'
   }
 
 
-project   'libLuaClient'
-  targetname 'LuaClient'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libLuaClient'
+
   includedirs { '..', '../bzflag', '../clientbase' }
+
   files {
     'LuaClientOrder.h',
     'LuaClientScripts.cpp',
@@ -52,11 +51,10 @@ project   'libLuaClient'
   }
 
 
-project   'libLuaClientGL'
-  targetname 'LuaClientGL'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libLuaClientGL'
+
   includedirs { '..', '../bzflag', '../clientbase' }
+
   files {
     'LuaGLConst.cpp',    'LuaGLConst.h',
     'LuaDLists.cpp',     'LuaDLists.h',

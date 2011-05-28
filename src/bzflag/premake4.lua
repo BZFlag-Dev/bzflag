@@ -1,8 +1,10 @@
 
-project 'bzflag'
+bzexec_project 'bzflag'
+
   kind 'WindowedApp'
-  objdir '.objs'
+
   includedirs { '.', '../clientbase' }
+
   links {
     'libObstacle',
     'libLuaClient',
@@ -24,6 +26,7 @@ project 'bzflag'
     'cares', 'freetype', 'ftgl',
     'curl', 'z', 'dl', 'rt',
   }
+
   files {
     'AudioMenu.cpp',                'AudioMenu.h',
     'AutoHunt.cpp',                 'AutoHunt.h',
@@ -121,7 +124,3 @@ project 'bzflag'
     'sound.cpp',                    'sound.h',
     'stars.cpp',                    'stars.h',
   }
-
-configuration 'not gmake'
-  targetdir(BINDIR)
-

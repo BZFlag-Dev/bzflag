@@ -1,8 +1,6 @@
 
-project   'libMediaFile'
-  targetname 'MediaFile'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libMediaFile'
+
   files {
     'AudioFile.cpp',     'AudioFile.h',
     'ImageFile.cpp',     'ImageFile.h',

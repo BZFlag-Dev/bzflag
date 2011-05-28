@@ -1,8 +1,6 @@
 
-project   'libGeometry'
-  targetname 'Geometry'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libGeometry'
+
   files {
     'AnimatedTreads.cpp',
     'BillboardSceneNode.cpp',

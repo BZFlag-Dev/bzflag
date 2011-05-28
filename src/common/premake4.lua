@@ -1,8 +1,6 @@
 
-project   'libCommon'
-  targetname 'Common'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libCommon'
+
   files {
     'AccessList.cpp',
     'AutoCompleter.cpp',

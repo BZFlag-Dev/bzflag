@@ -1,8 +1,6 @@
 
-project   'libOGL'
-  targetname 'OGL'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libOGL'
+
   files {
     'OpenGLContext.cpp',
     'OpenGLGState.cpp',
@@ -13,6 +11,7 @@ project   'libOGL'
     'OpenGLUtils.cpp',
     'RenderNode.cpp',
   }
+
   includedirs { '..', '../bzflag', '../clientbase' }
 
 

@@ -10,14 +10,11 @@ if (-1 > 0) then -- FIXME
 end
 
 
-project 'bzrobots'
-  kind 'WindowedApp'
-  objdir '.objs'
-  includedirs { '.', '../bzflag', '../clientbase' }
-  flags 'Symbols'
+bzexec_project 'bzrobots'
 
---  buildoptions '`python-config --cflags`'
---  linkoptions  '`python-config --ldflags`'
+  includedirs { '.', '../bzflag', '../clientbase' }
+
+  flags 'Symbols'
 
   links {
     'libObstacle',
@@ -66,6 +63,6 @@ project 'bzrobots'
   configuration 'not vs*'
     linkoptions { '-export-dynamic ' } --, '-static' }
 
-  configuration 'not gmake'
-    targetdir(BINDIR)
+--  buildoptions '`python-config --cflags`'
+--  linkoptions  '`python-config --ldflags`'
 

@@ -1,9 +1,8 @@
 
-project   'libClientBase'
-  targetname 'ClientBase'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libClientBase'
+
   includedirs { '.', '../bzflag' }
+
   files {
     'ActionBinding.cpp',              'ActionBinding.h',
     'BaseLocalPlayer.cpp',            'BaseLocalPlayer.h',

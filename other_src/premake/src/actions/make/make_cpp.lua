@@ -140,13 +140,16 @@
 		-- BZFlag customization
 		local myname = _MAKE.getmakefilename(prj, true)
 		local premake_exec = _MAKE.esc(_PREMAKE_EXEC or 'premake4')
-		_p('\n')
-		_p('# targets depend on the build system\n')
+		_p('')
+		_p('# targets depend on the build system')
 		_p('*.o: '  .. myname)
 		_p('*.a: '  .. myname)
 		_p('*.so: ' .. myname)
 		_p(myname .. ': premake4.lua')
 		local topdir = _MAKE.esc(path.getrelative(prj.basedir, prj.solution.basedir))
+		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
+		_p('.PHONY: reconfig')
+		_p('reconfig:')
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
 	end
 

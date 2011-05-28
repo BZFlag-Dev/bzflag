@@ -1,6 +1,4 @@
 
-project   'libDate'
-  targetname 'Date'
-  kind  'StaticLib'
-  objdir '.objs'
+bzlib_project 'libDate'
+
   files { 'buildDate.cpp' }

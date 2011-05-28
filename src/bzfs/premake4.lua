@@ -1,9 +1,8 @@
 
 include 'lua'
 
-project 'bzfs'
-  kind 'ConsoleApp'
-  objdir '.objs'
+bzexec_project 'bzfs'
+
   links {
     'libGame',
     'libObstacle',
@@ -15,6 +14,7 @@ project 'bzfs'
     'liblua',
     'cares', 'curl', 'z', 'dl',
   }
+
   files {
     'AccessControlList.cpp',          'AccessControlList.h',
     'Authentication.cpp',             'Authentication.h',
@@ -92,7 +92,3 @@ project 'bzfs'
 
 configuration 'not vs*'
   linkoptions { '-export-dynamic' } -- -static' }
-
-configuration 'not gmake'
-  targetdir(BINDIR)
-

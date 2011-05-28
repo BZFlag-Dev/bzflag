@@ -8,6 +8,46 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+if (not _PREMAKE_BZFLAG) then
+  print('\n'
+  .. 'A customized premake is required to configure the bzflag build.\n\n'
+  .. 'The customized premake sources can be found in: ./other_src/premake/.\n'
+  )
+  os.exit(1)
+  return
+end
+
+local MIN_BZFLAG_PREMAKE = 1
+
+if (_PREMAKE_BZFLAG < MIN_BZFLAG_PREMAKE) then
+  print()
+  printf('  Your BZFlag version of premake is too old  (%g vs. %g)',
+         _PREMAKE_BZFLAG, MIN_BZFLAG_PREMAKE)
+  print()
+  os.exit(1)
+  return
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  Used to reconfigure the build system  (defaults to 'premake4')
+--
+
+_PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+TOPDIR = os.getcwd()
+
+--FIXME print(TOPDIR)
+
+BINDIR = os.getcwd() .. '/bin' -- used for binaries (except for gmake)
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 -- hook the 'files' call
 ALL_FILES = {}
 EXTRA_FILES = {}
@@ -28,21 +68,8 @@ do
   end
 end
 
-
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
-assert(_PREMAKE_BZFLAG and (_PREMAKE_BZFLAG >= 1),
-  '\n  A customized premake is required to configure the bzflag build.'..
-  '\n  The customized premake sources can be found in:  ./other_src/premake/.')
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-_PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
-
-ACTION  = _ACTION
-OPTIONS = _OPTIONS
 
 function defaultaction(osName, actionName)
   if (_ACTION == nil) then
@@ -67,32 +94,6 @@ end
 if (_ACTION == 'help') then
   _OPTIONS['help'] = ''
 end
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-do
-  _BUILD_ACTION = false
-  local buildActions = {
-    'codeblocks', 'codelite', 'gmake', 'xcode3',
-    'vs2002', 'vs2003', 'vs2005', 'vs2008', 'vs2010',
-  }
-  for _, buildAction in pairs(buildActions) do
-    if (_ACTION == buildAction) then
-      _BUILD_ACTION = true
-      break
-    end
-  end
-end
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
-TOPDIR = os.getcwd()
-
---FIXME print(TOPDIR)
-
-BINDIR = os.getcwd() .. '/bin' -- used for binaries (except for gmake)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -197,8 +198,8 @@ configuration { 'debug*', 'not vs*' }
   defines { 'DEBUG', 'DEBUG_RENDERING' } -- FIXME -- stick these in config.h ?
   flags   { 'FatalWarnings' }
 
-configuration 'linux'
-  buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
+configuration '^vs*'
+  defines { 'WIN32' }
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -280,8 +281,10 @@ newaction {
   description = 'make your directories squeaky clean',
   execute = function()
     print('SuperCleaning!')
-    os.rmdir(BINBIR)
+    print('rmdir', BINDIR)
+    os.rmdir(BINDIR)
     for _, dir in ipairs(os.matchdirs('**/.objs')) do
+      print('rmdir', dir)
       os.rmdir(dir)
     end
     -- FIXME -- remove all Makefiles  (including <name>.make)

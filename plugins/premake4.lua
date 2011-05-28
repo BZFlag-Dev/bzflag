@@ -10,12 +10,13 @@ local PLUGIN_LINKS_DIR = PLUGINS_DIR .. '/links'
 function plugin_project(name, source_files)
   project('plugin_' .. name)
     kind 'SharedLib'
+    language 'C++'
     targetname(name)
     targetprefix ''
     objdir '.objs'
     files(source_files)
     links 'plugin_utils'
-    includedirs '../plugin_utils'
+    includedirs { '../src/include', '../plugin_utils' }
 
     -- create missing .def files for windows plugins
     if (os.is('vs*')) then
