@@ -1393,12 +1393,20 @@ BZF_API double bz_getCurrentTime ( void )
   return TimeKeeper::getCurrent().getSeconds();
 }
 
-BZF_API void bz_getLocaltime ( bz_localTime	*ts )
+BZF_API void bz_getLocaltime ( bz_Time	*ts )
 {
   if (!ts)
     return;
 
   TimeKeeper::localTime(&ts->year,&ts->month,&ts->day,&ts->hour,&ts->minute,&ts->second,&ts->daylightSavings);
+}
+
+BZF_API void bz_getUTCtime ( bz_Time	*ts )
+{
+  if (!ts)
+    return;
+
+  TimeKeeper::UTCTime(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
 }
 
 // info

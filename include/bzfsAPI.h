@@ -1176,18 +1176,19 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt );
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt);
 
-typedef struct
-{
+typedef struct {
   int year;
   int month;
   int day;
   int hour;
   int minute;
   int second;
+  int dayofweek;
   bool daylightSavings;
-}bz_localTime;
+} bz_Time;
 
-BZF_API void bz_getLocaltime ( bz_localTime	*ts );
+BZF_API void bz_getLocaltime(bz_Time *ts);
+BZF_API void bz_getUTCtime(bz_Time *ts);
 
 // BZDB API
 BZF_API double bz_getBZDBDouble ( const char* variable );
