@@ -1033,7 +1033,7 @@ public:
   virtual void Event(bz_EventData* /*eventData*/) { return; }
 
   // used for inter plugin communication
-  virtual void GeneralCallback( const char* /*name*/, void* /*data*/) { return; }
+  virtual int GeneralCallback( const char* /*name*/, void* /*data*/) { return 0; }
 
   float MaxWaitTime;
   bool Unloadable;
