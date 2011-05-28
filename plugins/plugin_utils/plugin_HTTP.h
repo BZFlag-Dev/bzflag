@@ -367,6 +367,7 @@ private:
 };
 
 #define HTTP_SERVICE_NAME "HTTPService"
+#define HTTP_VDIR_NAME "RegisterVDIR"
 
 #endif //_PLUGIN_HTTP_H_
 

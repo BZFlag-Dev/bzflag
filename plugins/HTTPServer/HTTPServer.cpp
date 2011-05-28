@@ -260,9 +260,12 @@ public:
   virtual const char* Name ( void ){ return HTTP_SERVICE_NAME;}
   virtual void Init ( const char *c );
   // BZFS callback methods
+
   virtual void Event(bz_EventData *eventData);
   virtual void pending(int connectionID, void *d, unsigned int s);
   virtual void disconnect(int connectionID);
+
+  virtual int GeneralCallback(const char* name, void *param);
 
 protected:
   void update(void);
@@ -312,17 +315,43 @@ void HTTPServer::Init ( const char * /*commandLine*/ )
   srand((unsigned int)bz_getCurrentTime());
 
   Register(bz_eTickEvent);
-  Register (bz_eNewNonPlayerConnection);
+  Register(bz_eNewNonPlayerConnection);
+  Register(bz_ePluginUnloaded);
 
   serverVersion = bz_getServerVersion();
 
   registered = true;
 }
 
+int HTTPServer::GeneralCallback(const char* n, void *param)
+{
+  std::string name = n;
+
+  if (name == HTTP_VDIR_NAME && param != NULL)
+  {
+    BZFSHTTP *handler = (BZFSHTTP*)param;
+
+    std::string name = handler->getVDir();
+    if (!name.size())
+      return -1;
+
+    if (virtualDirs.find(name) != virtualDirs.end())
+      return -1;
+
+    virtualDirs[name] = handler;
+
+    return 0;
+  }
+
+  return -1;
+}
+
 void HTTPServer::Event(bz_EventData *eventData)
 {
   if (eventData->eventType == bz_eTickEvent) {
     update();
+  } else if (eventData->eventType == bz_ePluginUnloaded) {
+    
   } else {
     bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 

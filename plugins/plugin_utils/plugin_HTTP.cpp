@@ -41,14 +41,14 @@ BZFSHTTP::BZFSHTTP()
 
 bool BZFSHTTP::registerVDir ( void )
 {
-  bz_Plugin* p = bz_getPlugin("HTTPService");
+  bz_Plugin* p = bz_getPlugin(HTTP_SERVICE_NAME);
   if (!p)
   {
     bz_debugMessage(0,format("HTTP Plugin %s failed to load due to callback failure, make sure the HTTPServer plugin is in the same path",getVDir()).c_str());
     return false;
   }
 
-  p->GeneralCallback("RegisterVDIR", this);
+  p->GeneralCallback(HTTP_VDIR_NAME, this);
   return true;
 }
 
