@@ -40,6 +40,8 @@ std::string globalPluginDir = INSTALL_LIB_DIR;
 typedef std::map<std::string, bz_APIPluginHandler*> tmCustomPluginMap;
 tmCustomPluginMap customPluginMap;
 
+std::string lastPluginDir;
+
 typedef struct
 {
 	std::string name;
@@ -90,6 +92,27 @@ std::string findPlugin ( std::string pluginName )
   }
 
   return std::string("");
+}
+
+std::string getPluginPath ( const std::string & path )
+{
+  if ( path.find('/') == std::string::npos && path.find('\\') == std::string::npos )
+  {
+    return std::string ("./");
+  }
+
+  std::string newPath = path;
+  size_t lastSlash = newPath.find_last_of('/');
+  if (lastSlash != std::string::npos)
+    newPath.erase(newPath.begin()+lastSlash+1,newPath.end());
+  else
+  {
+    lastSlash = newPath.find_last_of('\\');
+    if (lastSlash != std::string::npos)
+      newPath.erase(newPath.begin()+lastSlash+1,newPath.end());
+  }
+
+  return newPath;
 }
 
 std::vector<trPluginRecord>	vPluginList;
@@ -156,6 +179,8 @@ bool load1Plugin ( std::string plugin, std::string config )
 			lpProc = (bz_Plugin* (__cdecl *)(void))GetProcAddress(hLib, "bz_GetPlugin");
 			if (lpProc)
 			{
+			    lastPluginDir = getPluginPath(realPluginName);
+
 				bz_Plugin* p = lpProc();
 				if (!p)
 				  return false;
@@ -264,7 +289,8 @@ bool load1Plugin ( std::string plugin, std::string config )
 		{
 			*(void**) &lpProc = dlsym(hLib,"bz_GetPlugin");
 			if (lpProc)
-			{
+			{	
+				lastPluginDir = getPluginPath(realPluginName);
 				bz_Plugin * p = (*lpProc)();
 				if (!p)
 				  return false;
@@ -337,12 +363,17 @@ bool loadPlugin ( std::string plugin, std::string config )
 
   tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
+  bool ret = false;
+
   if (itr != customPluginMap.end() && itr->second){
     bz_APIPluginHandler *handler = itr->second;
-    return handler->APIPlugin(plugin,config);
+    ret =  handler->APIPlugin(plugin,config);
   }
   else
-    return load1Plugin(plugin,config);
+    ret =  load1Plugin(plugin,config);
+
+  lastPluginDir = "";
+  return ret;
 }
 
 bool unloadPlugin ( std::string plugin )

@@ -2166,6 +2166,63 @@ BZF_API bz_ApiString bz_getPublicDescription( void )
   return bz_ApiString(clOptions->publicizedTitle);
 }
 
+
+BZF_API int bz_getLoadedPlugins( bz_APIStringList * list )
+{
+#ifdef BZ_PLUGINS
+  std::vector<std::string>  pList = getPluginList();
+  for (unsigned int i = 0; i < pList.size(); i++ )
+    list->push_back(pList[i]);
+
+  return (int)pList.size();
+#else
+  return -1;
+  list = list; // quell unused var warning
+#endif
+}
+
+BZF_API bool bz_loadPlugin( const char* path, const char *params )
+{
+#ifdef BZ_PLUGINS
+  if (!path)
+    return false;
+  std::string config;
+  if (params)
+    config = params;
+
+  logDebugMessage(2,"bz_loadPlugin: %s \n",path);
+
+  return loadPlugin(std::string(path),config);
+#else
+  return false;
+  path = path; // quell unused var warning
+  params = params; // quell unused var warning
+#endif
+}
+
+BZF_API bool bz_unloadPlugin( const char* path )
+{
+#ifdef BZ_PLUGINS
+  if (!path)
+    return false;
+
+  return unloadPlugin(std::string(path));
+#else
+  return false;
+  path = path; // quell unused var warning
+#endif
+}
+
+BZF_API const char* bz_pluginBinPath(void)
+{
+#ifdef BZ_PLUGINS
+  return lastPluginDir.c_str();
+#else
+  return "";
+#endif
+}
+
+
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 {
   if (playerID == BZ_SERVER || !soundName)

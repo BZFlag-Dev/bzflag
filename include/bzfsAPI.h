@@ -1364,6 +1364,15 @@ BZF_API bool bz_getPublic( void );
 BZF_API bz_ApiString bz_getPublicAddr( void );
 BZF_API bz_ApiString bz_getPublicDescription( void );
 
+// plug-in management
+BZF_API int bz_getLoadedPlugins(bz_APIStringList *list);
+BZF_API bool bz_loadPlugin(const char* path, const char* params);
+BZF_API bool bz_unloadPlugin(const char* path);
+
+// bz_load path functions
+// only valid inside the load function for a plugin
+BZF_API const char* bz_pluginBinPath(void);
+
 // custom client sounds
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName );
 

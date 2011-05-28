@@ -31,6 +31,9 @@ float getPluginMinWaitTime ( void );
 
 bz_Plugin* getPlugin( const char* name );
 
+extern std::string lastPluginDir;
+
+
 #endif //_BZFS_PLUGINS_H_
 
 // Local Variables: ***
