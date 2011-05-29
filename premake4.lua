@@ -7,6 +7,9 @@
 --
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  Make sure that we're using a valid premake executable
+--
 
 if (not _PREMAKE_BZFLAG) then
   print('\n'
@@ -14,7 +17,6 @@ if (not _PREMAKE_BZFLAG) then
   .. 'The customized premake sources can be found in: ./other_src/premake/.\n'
   )
   os.exit(1)
-  return
 end
 
 local MIN_BZFLAG_PREMAKE = 1
@@ -25,7 +27,6 @@ if (_PREMAKE_BZFLAG < MIN_BZFLAG_PREMAKE) then
          _PREMAKE_BZFLAG, MIN_BZFLAG_PREMAKE)
   print()
   os.exit(1)
-  return
 end
 
 --------------------------------------------------------------------------------
@@ -38,17 +39,19 @@ _PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  Store a couple of useful directories in global variables
+--
 
 TOPDIR = os.getcwd()
-
---FIXME print(TOPDIR)
 
 BINDIR = os.getcwd() .. '/bin' -- used for binaries (except for gmake)
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-
--- hook the 'files' call
+--
+--  FIXME --  hook the 'files()' call, might be used for installations
+--
 ALL_FILES = {}
 EXTRA_FILES = {}
 do
@@ -70,6 +73,9 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  Setup the default premake action
+--
 
 function defaultaction(osName, actionName)
   if (_ACTION == nil) then
@@ -97,74 +103,63 @@ end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  Load config.lua
+--
 
-CONFIG = {
+CONFIG = {}
 
-  package_name  = 'BZFlag',
+local configChunk = assert(loadfile('config.lua'))
+setfenv(configChunk, CONFIG) -- global variable accesses use the CONFIG table
+--setmetatable(CONFIG, { __index = _G }) -- but fallback to the main environment
+configChunk()
 
-  major_version = 2,
-  minor_version = 99,
-  revision      = 60,
+if ((CONFIG.BUILD_TYPE ~= 'DEVEL')  and
+    (CONFIG.BUILD_TYPE ~= 'STABLE') and
+    (CONFIG.BUILD_TYPE ~= 'MAINT')) then
+  printf('Bad build type from config.lua:  "%s"', CONFIG.BUILD_TYPE)
+  os.exit(1)
+end
 
-  protocol      = '0118',
+--------------------------------------------------------------------------------
 
-  build_type    = 'DEVEL', -- ('DEVEL' or 'STABLE' or 'MAINT')
+CONFIG.BUILD_OS = 'FIXME2.1'
 
-  copyright     = 'Copyright (c) 1993-2010 Tim Riker',
+CONFIG.CONFIG_DATE = os.date('%Y%m%d')
 
-  package_url   = 'http://BZFlag.org',
-  bugreport_url = 'http://BZFlag.org',
+CONFIG.build_luaexecs = false
+CONFIG.BUILD_ARES     = false
+CONFIG.BUILD_CURL     = false
+CONFIG.BUILD_FREETYPE = false
+CONFIG.BUILD_FTGL     = false
+CONFIG.BUILD_GLEW     = false
+CONFIG.BUILD_REGEX    = false
+CONFIG.BUILD_ZLIB     = false
 
-  config_date   = os.date(),
+--------------------------------------------------------------------------------
 
-  build_os = nil,
+CONFIG.PACKAGE_VERSION =
+  CONFIG.MAJOR_VERSION .. '.' .. CONFIG.MINOR_VERSION .. '.' .. CONFIG.REVISION
 
-  curses = { buildoptions = nil, linkoptions = nil  },
-  opengl = { buildoptions = nil, linkoptions = nil  },
-  sdl    = { buildoptions = nil, linkoptions = nil  },
-
-  ares     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  curl     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  glew     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  freetype = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  ftgl     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  glew     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  regex    = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-  zlib     = { need_build = nil, buildoptions = nil, linkoptions = nil  },
-
-  -- other CONFIG[] values can be found in premake4_config/config_h.lua
-}
-
-
-CONFIG.package_version =
-  CONFIG.major_version .. '.' ..
-  CONFIG.minor_version .. '.' ..
-  CONFIG.revision
-
-CONFIG.package_string =
-  CONFIG.package_name .. ' ' .. CONFIG.package_version
-
-
-print()
-print(CONFIG.package_string)
+CONFIG.PACKAGE_STRING =
+  CONFIG.PACKAGE_NAME .. ' ' .. CONFIG.PACKAGE_VERSION
 
 if (_OPTIONS['build-luaexecs']) then
   CONFIG.build_luaexecs = true
 end
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
---FIXME: one of these is causing a Make Bomb
---CONFIG.ares.need_build     = true -- FIXME
---CONFIG.curl.need_build     = true -- FIXME
---CONFIG.freetype.need_build = true -- FIXME
---CONFIG.type.need_build     = true -- FIXME
---CONFIG.zlib.need_build     = true -- FIXME
---CONFIG.glew.need_build     = true -- FIXME
---CONFIG.regex.need_build    = true -- FIXME
-
+print()
+printf('%s  (%s)', CONFIG.PACKAGE_STRING, CONFIG.CONFIG_DATE)
+print()
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  Start the premake configuration
+--
 
 solution 'bz'
 
@@ -195,7 +190,7 @@ configuration 'debug*'
   targetsuffix '-debug'
 
 configuration { 'debug*', 'not vs*' }
-  defines { 'DEBUG', 'DEBUG_RENDERING' } -- FIXME -- stick these in config.h ?
+  defines { 'DEBUG', 'DEBUG_RENDERING' } -- FIXME -- stick these in config.h
   flags   { 'FatalWarnings' }
 
 configuration '^vs*'
@@ -224,36 +219,86 @@ newopt('build-regex',      'build the regex library')
 newopt('build-zlib',       'build the zlib library')
 newopt('build-luaexecs',   'build the bzlua and bzluac executables')
 
-if (_OPTIONS['build-luaexecs']) then CONFIG.build_luaexecs      = true end
-if (_OPTIONS['build-ares'])     then CONFIG.ares.need_build     = true end
-if (_OPTIONS['build-curl'])     then CONFIG.curl.need_build     = true end
-if (_OPTIONS['build-freetype']) then CONFIG.freetype.need_build = true end
-if (_OPTIONS['build-ftgl'])     then CONFIG.ftgl.need_build     = true end
-if (_OPTIONS['build-glew'])     then CONFIG.glew.need_build     = true end
-if (_OPTIONS['build-regex'])    then CONFIG.regex.need_build    = true end
-if (_OPTIONS['build-zlib'])     then CONFIG.zlib.need_build     = true end
+if (_OPTIONS['build-luaexecs']) then CONFIG.build_luaexecs = true end
+if (_OPTIONS['build-ares'])     then CONFIG.BUILD_ARES     = true end
+if (_OPTIONS['build-curl'])     then CONFIG.BUILD_CURL     = true end
+if (_OPTIONS['build-freetype']) then CONFIG.BUILD_FREETYPE = true end
+if (_OPTIONS['build-ftgl'])     then CONFIG.BUILD_FTGL     = true end
+if (_OPTIONS['build-glew'])     then CONFIG.BUILD_GLEW     = true end
+if (_OPTIONS['build-regex'])    then CONFIG.BUILD_REGEX    = true end
+if (_OPTIONS['build-zlib'])     then CONFIG.BUILD_ZLIB     = true end
 if (_OPTIONS['build-all'] or _ACTION:match('^vs*')) then
-  CONFIG.build_luaexecs      = true
-  CONFIG.ares.need_build     = true
-  CONFIG.curl.need_build     = true
-  CONFIG.freetype.need_build = true
-  CONFIG.ftgl.need_build     = true
-  CONFIG.glew.need_build     = true
-  CONFIG.regex.need_build    = true
-  CONFIG.zlib.need_build     = true
+  CONFIG.BUILD_ARES     = true
+  CONFIG.BUILD_CURL     = true
+  CONFIG.BUILD_FREETYPE = true
+  CONFIG.BUILD_FTGL     = true
+  CONFIG.BUILD_GLEW     = true
+  CONFIG.BUILD_REGEX    = true
+  CONFIG.BUILD_ZLIB     = true
 end
 
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
---[[
-if (_OPTIONS['disable-bzfs']) then
-  _OPTIONS['disable-plugins'] = {
-    value = 'true',
-    trigger = 'trigger',
-    description = 'desc',
+local empty = {}
+
+local function makepkg(name)
+  return {
+    links = name,
+    libdirs      = false,
+    linkoptions  = false,
+    defines      = false,
+    includedirs  = false,
+    buildoptions = false,
   }
 end
---]]
 
+PKGS = {
+  ares     = makepkg('ares'),
+  curl     = makepkg('curl'),
+  freetype = makepkg('freetype'),
+  ftgl     = makepkg('ftgl'),
+  SDL      = makepkg('SDL'),
+  GLEW     = makepkg('GLEW'),
+  GL       = makepkg('GL'),
+  GLU      = makepkg('GLU'),
+  X11      = makepkg('X11'),
+  z        = makepkg('z'),
+  dl       = makepkg('dl'),
+  rt       = makepkg('rt'),
+}
+
+function linkpkg(name)
+  local pkg = PKGS[name]
+  if (not pkg) then
+    error('Unknown package name: ' .. name)
+  end
+  if (pkg.libdirs) then
+    libdirs(pkg.libdirs)
+  end
+  if (pkg.links) then
+    links(pkg.links)
+  end
+  if (pkg.linkoptions) then
+    linkoptions(pkg.linkoptions)
+  end
+end
+
+function includepkg(name)
+  local pkg = PKGS[name]
+  if (not pkg) then
+    error('Unknown package name: ' .. name)
+  end
+  if (pkg.defines) then
+    defines(pkg.defines)
+  end
+  if (pkg.includedirs) then
+    includedirs(pkg.includedirs)
+  end
+  if (pkg.buildoptions) then
+    buildoptions(pkg.buildoptions)
+  end
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -265,7 +310,8 @@ if (not _OPTIONS['help']) then
   include 'other_src'
   include 'src'
 
-  if (not _OPTIONS['disable-plugins']) then
+  if (not _OPTIONS['disable-plugins'] and
+      not _OPTIONS['disable-bzfs']) then
     include 'plugins'
   end
 
@@ -347,6 +393,18 @@ newaction {
   execute = tools and tools.svn_add_files or nil,
 }
 
+if (not os.is('windows')) then
+  newaction {
+    trigger = 'easy_links',
+    description = 'add a few soft links in src/ for console jockeys',
+    execute = function()
+      os.execute('ln -sf bzfs     src/Server')
+      os.execute('ln -sf bzflag   src/Client')
+      os.execute('ln -sf bzadmin  src/Admin')
+      os.execute('ln -sf bzrobots src/Robots')
+    end
+  }
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

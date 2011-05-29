@@ -55,6 +55,7 @@ configuration 'macosx'
 if (CONFIG.build_luaexecs) then
   project 'bzlua'
     kind 'ConsoleApp'
+    language 'C++'
     objdir '.objs_lua'
     links 'liblua'
     files 'lua/src/lua.cpp'
@@ -62,6 +63,7 @@ if (CONFIG.build_luaexecs) then
       targetdir(BINDIR)
   project 'bzluac'
     kind 'ConsoleApp'
+    language 'C++'
     objdir '.objs_lua'
     links 'liblua'
     files 'lua/src/luac.cpp'

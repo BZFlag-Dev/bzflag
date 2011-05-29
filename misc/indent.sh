@@ -6,6 +6,10 @@
 #
 
 
+cd `dirname "$0"`/..
+
+
+
 MIN_MAJOR=2
 
 MIN_MINOR=2
