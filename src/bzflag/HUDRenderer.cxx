@@ -1340,24 +1340,28 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glVertex2i(centerx + noMotionSize, centery + noMotionSize);
     glVertex2i(centerx - noMotionSize, centery + noMotionSize);
   } glEnd();
-  glBegin(GL_POINTS); {
-    glVertex2i(centerx - noMotionSize, centery - noMotionSize);
-    glVertex2i(centerx + noMotionSize, centery - noMotionSize);
-    glVertex2i(centerx + noMotionSize, centery + noMotionSize);
-    glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-  } glEnd();
+  if (0){
+      glBegin(GL_POINTS); {
+      glVertex2i(centerx - noMotionSize, centery - noMotionSize);
+      glVertex2i(centerx + noMotionSize, centery - noMotionSize);
+      glVertex2i(centerx + noMotionSize, centery + noMotionSize);
+      glVertex2i(centerx - noMotionSize, centery + noMotionSize);
+    } glEnd();
+  }
   glBegin(GL_LINE_LOOP); {
     glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
     glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
     glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
     glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
   } glEnd();
-  glBegin(GL_POINTS); {
-    glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
-    glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
-    glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
-    glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-  } glEnd();
+  if (0){
+      glBegin(GL_POINTS); {
+      glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
+      glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
+      glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
+      glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
+    } glEnd();
+  }
 
   // draw heading strip
   if (true /* always draw heading strip */) {
@@ -1548,6 +1552,44 @@ void			HUDRenderer::renderBox(SceneRenderer&)
   }
 }
 
+void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
+{
+
+  if (myTank) {
+    glPushMatrix();
+
+    hudColor3Afv( hudColor, 0.5f );
+
+    glTranslatef((float)centerx,(float)centery,0);
+    glLineWidth(2.0f);
+
+    // draw any waypoint markers
+    for (int i = 0; i < (int)enhancedMarkers.size(); i++) {
+      drawWaypointMarker(enhancedMarkers[i].color, 0.45f,
+	enhancedMarkers[i].pos, myTank->getPosition(),
+	enhancedMarkers[i].name, enhancedMarkers[i].friendly);
+    }
+
+    enhancedMarkers.clear();
+
+    // draw any lockon markers
+    for (int i = 0; i < (int)lockOnMarkers.size(); i++) {
+      drawLockonMarker(lockOnMarkers[i].color, 0.45f,
+	lockOnMarkers[i]. pos,myTank->getPosition(),
+	lockOnMarkers[i].name, lockOnMarkers[i].friendly);
+    }
+
+    lockOnMarkers.clear();
+
+    glLineWidth(1.0f);
+
+    glPopMatrix();
+
+    hudColor3Afv( hudColor, 0.5f );
+  }
+}
+
+
 void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
   // get view metrics
@@ -1557,6 +1599,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const int ox = window.getOriginX();
   const int oy = window.getOriginY();
   const int centerx = width >> 1;
+  const int centery = viewHeight >> 1;
   int i;
   float y;
 
@@ -1586,6 +1629,17 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   // draw cracks
   if (showCracks)
     renderCracks();
+
+  // draw the markers, if we should
+  if (!BZDB.isTrue("_forbidMarkers")) {
+      bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
+      glDisable(GL_TEXTURE_2D);
+
+      drawMarkersInView(centerx,centery,myTank);
+
+      glEnable(GL_TEXTURE_2D);
+  }
+
 
   // draw status line
   renderStatus();

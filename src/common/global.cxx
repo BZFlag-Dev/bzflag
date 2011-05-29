@@ -57,6 +57,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_flagPoleSize",		"0.8",				false, StateDatabase::Locked},
   { "_flagRadius",		"2.5",				false, StateDatabase::Locked},
   { "_friction",		"0",				false, StateDatabase::Locked},
+  { "_forbidMarkers",		"0",				false, StateDatabase::Locked},
   { "_fogMode",			"none",				false, StateDatabase::Locked},
   { "_fogDensity",		"0.001",			false, StateDatabase::Locked},
   { "_fogStart",		"0.5*_worldSize",		false, StateDatabase::Locked},

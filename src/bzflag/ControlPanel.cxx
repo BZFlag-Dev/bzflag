@@ -587,39 +587,41 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
   } glEnd();
 
-  // some engines miss the corners
-  glBegin(GL_POINTS); {
-    glVertex2f((float) (x + messageAreaPixels[0] - 1),
-	       (float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2]),
-	       (float) (y + messageAreaPixels[1] - 1));
-    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2]),
-	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
-    glVertex2f((float) (x + messageAreaPixels[0] - 1),
-	       (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
-    long int tabPosition = 0;
-    for (int tab = 0; tab < (int)tabs->size(); tab++) {
-      if (messageMode == MessageModes(tab)) {
-	if (tabsOnRight) {
-	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	  glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + long(tabTextWidth[tab])),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	} else {
-	  glVertex2f((float) (x + messageAreaPixels[0] + tabPosition),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-	  glVertex2f((float) (x + messageAreaPixels[0] + tabPosition + long(tabTextWidth[tab])),
-		     (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
+  if (0){
+    // some engines miss the corners
+    glBegin(GL_POINTS); {
+      glVertex2f((float) (x + messageAreaPixels[0] - 1),
+		 (float) (y + messageAreaPixels[1] - 1));
+      glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2]),
+		 (float) (y + messageAreaPixels[1] - 1));
+      glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2]),
+		 (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
+      glVertex2f((float) (x + messageAreaPixels[0] - 1),
+		 (float) (y + messageAreaPixels[1] + messageAreaPixels[3]));
+      long int tabPosition = 0;
+      for (int tab = 0; tab < (int)tabs->size(); tab++) {
+	if (messageMode == MessageModes(tab)) {
+	  if (tabsOnRight) {
+	    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition),
+		       (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
+	    glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + long(tabTextWidth[tab])),
+		       (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
+	  } else {
+	    glVertex2f((float) (x + messageAreaPixels[0] + tabPosition),
+		       (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
+	    glVertex2f((float) (x + messageAreaPixels[0] + tabPosition + long(tabTextWidth[tab])),
+		       (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
+	  }
 	}
+	tabPosition += long(tabTextWidth[tab]);
       }
-      tabPosition += long(tabTextWidth[tab]);
-    }
-  } glEnd();
+    } glEnd();
+  }
 
   if (BZDBCache::blend)
 	  glDisable(GL_BLEND);
 
-  glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f );
+glColor4f(teamColor[0], teamColor[1], teamColor[2],1.0f );
 
   glPopMatrix();
 
