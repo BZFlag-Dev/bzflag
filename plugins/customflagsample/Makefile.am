@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = customflagsample.la
+lib_LTLIBRARIES = customflagsample.la
 
 customflagsample_la_SOURCES = customflagsample.cpp
 customflagsample_la_LDFLAGS = -module -avoid-version

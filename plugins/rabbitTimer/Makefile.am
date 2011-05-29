@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = rabbitTimer.la
+lib_LTLIBRARIES = rabbitTimer.la
 
 rabbitTimer_la_SOURCES = rabbitTimer.cpp
 rabbitTimer_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils

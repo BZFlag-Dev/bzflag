@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = timedctf.la
+lib_LTLIBRARIES = timedctf.la
 
 timedctf_la_SOURCES = timedctf.cpp
 timedctf_la_CPPFLAGS = -I$(top_srcdir)/include

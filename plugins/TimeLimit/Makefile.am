@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = TimeLimit.la
+lib_LTLIBRARIES = TimeLimit.la
 
 TimeLimit_la_SOURCES = TimeLimit.cpp
 TimeLimit_la_CPPFLAGS = -I$(top_srcdir)/include

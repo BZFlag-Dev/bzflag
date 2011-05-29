@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = flagStay.la
+lib_LTLIBRARIES = flagStay.la
 
 flagStay_la_SOURCES = flagStay.cpp
 flagStay_la_CPPFLAGS = -I$(top_srcdir)/include

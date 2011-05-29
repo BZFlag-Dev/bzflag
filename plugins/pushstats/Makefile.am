@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = pushstats.la
+lib_LTLIBRARIES = pushstats.la
 
 pushstats_la_SOURCES = pushstats.cpp
 pushstats_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils

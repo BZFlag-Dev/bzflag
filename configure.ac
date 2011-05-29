@@ -48,6 +48,11 @@ AC_INIT(BZFlag, 2.3.11, [http://BZFlag.org/], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 
+# When --libdir has not been used put plugins in bzflag's own directory.
+if test "x$libdir" = 'x${exec_prefix}/lib' ; then
+    libdir="$libdir/bzflag"
+fi
+
 AC_CONFIG_AUX_DIR(misc)
 
 # sed magic to get version numbers from src/date/buildDate.cxx

@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = Phoenix.la
+lib_LTLIBRARIES = Phoenix.la
 
 Phoenix_la_SOURCES = Phoenix.cpp
 Phoenix_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils

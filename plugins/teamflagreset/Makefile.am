@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = teamflagreset.la
+lib_LTLIBRARIES = teamflagreset.la
 
 teamflagreset_la_SOURCES = teamflagreset.cpp
 teamflagreset_la_CPPFLAGS = -I$(top_srcdir)/include

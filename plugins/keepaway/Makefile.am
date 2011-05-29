@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = keepaway.la
+lib_LTLIBRARIES = keepaway.la
 
 keepaway_la_SOURCES = keepaway.cpp
 keepaway_la_CPPFLAGS = -I$(top_srcdir)/include

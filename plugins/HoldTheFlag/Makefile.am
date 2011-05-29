@@ -1,4 +1,4 @@
-pkglib_LTLIBRARIES = HoldTheFlag.la
+lib_LTLIBRARIES = HoldTheFlag.la
 
 HoldTheFlag_la_SOURCES = HoldTheFlag.cpp
 HoldTheFlag_la_CPPFLAGS = -I$(top_srcdir)/include
