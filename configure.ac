@@ -11,7 +11,7 @@ dnl IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 dnl WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 dnl
 dnl ******************************************************************
-dnl ***                  BZFlag's configure.ac                    ***
+dnl ***                  BZFlag's configure.ac                     ***
 dnl ******************************************************************
 dnl
 dnl Herein lies the venerable GNU build system configure template for
@@ -449,7 +449,7 @@ fi
 
 case $host_os in
     solaris*)
-	if [ -d /usr/demo/SOUND/lib ] ; then
+	if test -d /usr/demo/SOUND/lib ; then
 		GLIBS="-laudio $GLIBS"
 		LDFLAGS="$LDFLAGS -L/usr/demo/SOUND/lib"
 	fi
