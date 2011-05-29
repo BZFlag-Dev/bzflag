@@ -79,7 +79,8 @@
 
 		-- target build rule
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
-		_p('\t@%s "%s""%s" Linking"%s"', echo_cmd, link_color, prj_tag, reset_color)
+		_p('\t@%s "%s""%s" Linking $(notdir $@)"%s"',
+		   echo_cmd, link_color, prj_tag, reset_color)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
