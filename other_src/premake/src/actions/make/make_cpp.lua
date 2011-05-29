@@ -4,6 +4,13 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
+	local echo_cmd = 'echo -e'
+	local reset_color   = '\\033[0m'
+	local build_color   = '\\033[0;1m'
+	local compile_color = '\\033[0;32m'
+	local link_color    = '\\033[0;36m'
+
+
 	premake.make.cpp = { }
 	local _ = premake.make.cpp
 
@@ -72,7 +79,7 @@
 
 		-- target build rule
 		_p('$(TARGET): $(GCH) $(OBJECTS) $(LDDEPS) $(RESOURCES)')
-		_p('\t@echo "%s" Linking', prj_tag)
+		_p('\t@%s "%s""%s" Linking"%s"', echo_cmd, link_color, prj_tag, reset_color)
 		_p('\t$(SILENT) $(LINKCMD)')
 		_p('\t$(POSTBUILDCMDS)')
 		_p('')
@@ -120,7 +127,9 @@
 		for _, file in ipairs(prj.files) do
 			if path.iscppfile(file) then
 				_p('$(OBJDIR)/%s.o: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo "%s" Compiling $(notdir $<)', prj_tag)
+    		_p('\t@%s "%s""%s" Compiling $(notdir $<)"%s"',
+    		   echo_cmd, compile_color, prj_tag, reset_color)
+--				_p('\t@echo "%s" Compiling $(notdir $<)', prj_tag)
 				if (path.iscfile(file)) then
 					_p('\t$(SILENT) $(CC) $(CFLAGS) -o "$@" -c "$<"')
 				else
@@ -128,7 +137,9 @@
 				end
 			elseif (path.getextension(file) == ".rc") then
 				_p('$(OBJDIR)/%s.res: %s', _MAKE.esc(path.getbasename(file)), _MAKE.esc(file))
-				_p('\t@echo "%s" Processing $(notdir $<)', prj_tag)
+    		_p('\t@%s "%s""%s" Processing $(notdir $<)"%s"',
+    		   echo_cmd, compile_color, prj_tag, reset_color)
+--				_p('\t@echo "%s" Processing $(notdir $<)', prj_tag)
 				_p('\t$(SILENT) windres $< -O coff -o "$@" $(RESFLAGS)')
 			end
 		end

@@ -227,7 +227,11 @@ if (1 > 0) then -- print CONFIG
     return tostring(a) < tostring(b)
   end)
   for _, key in ipairs(keys) do
-    printf('CONFIG:  %-'..maxlen..'s  %s', key, tostring(CONFIG[key]))
+    local value = CONFIG[key]
+    if (isboolean(value)) then
+      value = value and '1  /* true */' or '0  /* false */'
+    end
+    printf('CONFIG:  %-'..maxlen..'s  %s', key, tostring(value))
   end
 end
 

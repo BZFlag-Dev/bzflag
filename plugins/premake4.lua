@@ -16,7 +16,7 @@ function plugin_project(name, source_files)
     objdir '.objs'
     files(source_files)
     links 'plugin_utils'
-    includedirs { '../src/include', '../plugin_utils' }
+    includedirs { '../../src/include', '../plugin_utils' }
 
     -- create missing .def files for windows plugins
     if (os.is('vs*')) then
