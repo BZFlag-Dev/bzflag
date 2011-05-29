@@ -51,7 +51,7 @@ end
 
 print(('-'):rep(80))
 
-if (sourceFile == 'config_msvc.h') then
+if (_ACTION:match('^vs')) then
   return
 end
 
@@ -143,13 +143,13 @@ CONFIG.HAVE_TANF   = test_math_func('tanf')
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.have_std__isnan = os.testcode {
+CONFIG.HAVE_STD__ISNAN = os.testcode {
   code = 'const int dummy = std::isnan(1.0f); (void)dummy;',
   includes = { '<cmath>' },
   buildoptions = '-lm',
 }
 
-CONFIG.have_isnan = os.testcode {
+CONFIG.HAVE_ISNAN = os.testcode {
   code = 'const int dummy = isnan(1.0f); (void)dummy;',
   includes = { '<math.h>' },
   buildoptions = '-lm',

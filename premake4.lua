@@ -219,6 +219,8 @@ newopt('build-regex',      'build the regex library')
 newopt('build-zlib',       'build the zlib library')
 newopt('build-luaexecs',   'build the bzlua and bzluac executables')
 
+--------------------------------------------------------------------------------
+
 if (_OPTIONS['build-luaexecs']) then CONFIG.build_luaexecs = true end
 if (_OPTIONS['build-ares'])     then CONFIG.BUILD_ARES     = true end
 if (_OPTIONS['build-curl'])     then CONFIG.BUILD_CURL     = true end

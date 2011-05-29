@@ -15,6 +15,17 @@ function isfunction(x) return type(x) == 'function' end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+function table.makemap(t)
+  local s = {}
+  for i, v in ipairs(t) do
+    s[v] = i
+  end
+  return s
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 function io.readfile(name, mode)
   mode = mode or 'rt'
   local file, err = io.open(name, mode)
@@ -84,7 +95,7 @@ function os.testcode(t)
 
   local incdirs = ''
   local libdirs = ''
-  local libs = 
+  local libs =''
 
   assert(isstring(includes), 'invalid "includes" parameter')
 
@@ -109,14 +120,17 @@ function os.testcode(t)
   f:close()
 
   local cmd = premake.gcc.cxx
-  cmd = cmd .. ' ' .. tmpCpp
   cmd = cmd .. ' ' .. '-o ' .. tmpOut
+  cmd = cmd .. ' ' .. '-x c++'
+  cmd = cmd .. ' ' .. tmpCpp
   cmd = cmd .. ' ' .. (t.buildoptions or '')
 
-  if (not os.is('windows')) then
-    cmd = cmd .. ' &> /dev/null'
-  else
-    cmd = cmd .. ' > NUL 2>&1' -- FIXME - OS/2 & NT?
+  if (true) then
+    if (not os.is('windows')) then
+      cmd = cmd .. ' &> /dev/null'
+    else
+      cmd = cmd .. ' > NUL 2>&1' -- FIXME - OS/2 & NT?
+    end
   end
 
   local result = os.execute(cmd)
