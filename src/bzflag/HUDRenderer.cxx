@@ -113,6 +113,8 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   // create scoreboard renderer
   scoreboard = new ScoreboardRenderer();
 
+  friendlyMarkerList = DisplayListSystem::Instance().newList(this);
+
   // initialize fonts
   resize(true);
 }
@@ -650,6 +652,64 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
     glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
   else
     glColor4fv(c);
+}
+
+
+void HUDRenderer::buildGeometry ( GLDisplayList displayList )
+{
+  if (displayList == friendlyMarkerList) {
+    float lockonSize = 40;
+
+    float segmentation = 32.0f/360.0f;
+    float rad = lockonSize * 0.125f;
+
+    // white outline
+    hudColor4f( 1,1,1, 0.85f );
+    glLineWidth(4.0f);
+    glBegin(GL_LINES);
+    glVertex3f(-rad,rad+rad,0.03f);
+    glVertex3f(rad,-rad+rad,0.02f);
+    // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
+    // glVertex3f(lockonSize*xFactor,0,0.02f);
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+    for (float t = 0; t < 360; t += segmentation) {
+      if (t != 0) {
+	const float s = (t - segmentation);
+	const float tRads = t * DEG2RADf;
+	const float sRads = s * DEG2RADf;
+	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
+	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
+      }
+    }
+    glEnd();
+
+    // red X
+    hudColor4f( 1,0,0, 0.85f );
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glVertex3f(-rad,rad+rad,0.03f);
+    glVertex3f(rad,-rad+rad,0.02f);
+    // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
+    //  glVertex3f(lockonSize*xFactor,0,0.02f);
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+    for (float t = 0; t < 360; t += segmentation) {
+      if (t != 0) {
+	const float s = (t - segmentation);
+	const float tRads = t * DEG2RADf;
+	const float sRads = s * DEG2RADf;
+	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
+	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
+      }
+    }
+    glEnd();
+
+    glLineWidth(2.0f);
+  }
+
 }
 
 void			HUDRenderer::render(SceneRenderer& renderer)

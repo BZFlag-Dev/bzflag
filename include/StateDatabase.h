@@ -259,6 +259,7 @@ public:
   static const std::string	BZDB_LATITUDE;
   static const std::string	BZDB_LOCKONANGLE;
   static const std::string	BZDB_TARGETINGANGLE;
+  static const std::string	BZDB_TARGETINGDISTANCE;
   static const std::string	BZDB_LONGITUDE;
   static const std::string	BZDB_LRADRATE;
   static const std::string	BZDB_MAXBUMPHEIGHT;

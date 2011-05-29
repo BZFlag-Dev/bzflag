@@ -3737,7 +3737,8 @@ bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *
   if (angle >= BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE))
     return false;
 
-  if (distance > bestDistance)
+
+  if (distance > BZDB.eval(StateDatabase::BZDB_TARGETINGDISTANCE) || distance > bestDistance)
     return false;
 
   if (player->getFlag() == Flags::Stealth ||

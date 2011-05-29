@@ -191,6 +191,7 @@ const std::string StateDatabase::BZDB_TANKRADIUS	   = std::string("_tankRadius")
 const std::string StateDatabase::BZDB_TANKSPEED	   	   = std::string("_tankSpeed");
 const std::string StateDatabase::BZDB_TANKWIDTH		   = std::string("_tankWidth");
 const std::string StateDatabase::BZDB_TARGETINGANGLE	   = std::string("_targetingAngle");
+const std::string StateDatabase::BZDB_TARGETINGDISTANCE	   = std::string("_targetingDistance");
 const std::string StateDatabase::BZDB_TELEBREADTH          = std::string("_teleportBreadth");
 const std::string StateDatabase::BZDB_TELEHEIGHT	   = std::string("_teleportHeight");
 const std::string StateDatabase::BZDB_TELEPORTTIME         = std::string("_teleportTime");

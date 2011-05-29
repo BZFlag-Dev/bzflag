@@ -400,6 +400,8 @@ TankDeathOverride* Player::getDeathEffect ( void )
 {
   if (tankNode)
     return tankNode->getDeathOverride();
+
+  return NULL;
 }
 
 void Player::setTeleport(const TimeKeeper& t, short from, short to)

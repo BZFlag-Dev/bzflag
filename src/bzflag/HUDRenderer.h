@@ -71,10 +71,12 @@ typedef std::vector<EnhancedHUDMarker> EnhancedMarkerList;
  * HUDRenderer:
  *	Encapsulates information about rendering the heads-up display.
  */
-class HUDRenderer {
+class HUDRenderer : public GLDisplayListCreator {
 public:
   HUDRenderer(const BzfDisplay*, const SceneRenderer&);
   ~HUDRenderer();
+
+  virtual void buildGeometry(GLDisplayList displayList);
 
   int			getNoMotionSize() const;
   int			getMaxMotionSize() const;
