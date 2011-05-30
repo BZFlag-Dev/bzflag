@@ -154,10 +154,10 @@
 		local premake_exec = _MAKE.esc(_PREMAKE_EXEC or 'premake4')
 		_p('')
 		_p('# targets depend on the build system')
-		_p('*.o: '  .. myname)
-		_p('*.a: '  .. myname)
+		_p('*.o:  ' .. myname)
+		_p('*.a:  ' .. myname)
 		_p('*.so: ' .. myname)
-		_p(myname .. ': premake4.lua')
+		_p(myname .. ': premake4.lua') -- FIXME -- might be another name
 		local topdir = _MAKE.esc(path.getrelative(prj.basedir, prj.solution.basedir))
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
 		_p('.PHONY: reconfig')

@@ -150,6 +150,12 @@
 		premake.action.call(action.trigger)
 
 		print("Done.")
+
+		-- BZFlag customization
+		if (_LASTCALL) then
+		  _LASTCALL()
+    end
+
 		return 0
 
 	end

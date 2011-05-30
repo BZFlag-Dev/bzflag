@@ -1,8 +1,8 @@
 
 project   'libz'
   targetname 'z'
-  language 'C'
   kind  'StaticLib'
+  language 'C'
   objdir '.objs_zlib'
   includedirs { 'zlib' }
   files {

@@ -93,8 +93,10 @@ function os.testcode(t)
     includes = includes .. '\n'
   end
 
-  local incdirs = ''
-  local libdirs = ''
+  local incdirs = t.includedirs or {}
+  local libdirs = t.libdirs or {}
+  if (isstring(incdirs)) then incdirs = { incdirs } end
+  if (isstring(libdirs)) then libdirs = { libdirs } end
   local libs =''
 
   assert(isstring(includes), 'invalid "includes" parameter')
@@ -123,9 +125,11 @@ function os.testcode(t)
   cmd = cmd .. ' ' .. '-o ' .. tmpOut
   cmd = cmd .. ' ' .. '-x c++'
   cmd = cmd .. ' ' .. tmpCpp
+  for _, dir in ipairs(incdirs) do cmd = cmd .. ' ' .. '-I' .. dir end
+  for _, dir in ipairs(libdirs) do cmd = cmd .. ' ' .. '-L' .. dir end
   cmd = cmd .. ' ' .. (t.buildoptions or '')
 
-  if (true) then
+  if (-1 > 0) then
     if (not os.is('windows')) then
       cmd = cmd .. ' &> /dev/null'
     else

@@ -1,0 +1,23 @@
+
+Clean Premake 4.3 sources were added in r21643.
+
+
+Chonges:
+
+  1. Added the _PREMAKE_BZFLAG global variable.
+
+  2. gmake: added dependency rules for *.o, *.a, and *.so to the Makefile.
+
+  3. gmake: added dependency rule for the Makefile to premake4.lua.
+
+  4. gmake: added the _LASTCALL hook  (to report the configuration)
+
+
+TODO
+  - allow for hidden targets
+  - allow for raw makefile additions?:
+      gmake_add {
+        '.PHONY: plugins',
+        'plugins: plugin_wwzones',
+        etc...
+      }

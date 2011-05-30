@@ -14,5 +14,9 @@ project 'plugin_utils'
     'plugin_utils.cpp',  'plugin_utils.h',
   }
 
+  if (not _ACTION:match('^vs')) then
+    buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
+  end
+
 
 

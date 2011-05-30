@@ -124,3 +124,6 @@ bzexec_project 'bzflag'
     'sound.cpp',                    'sound.h',
     'stars.cpp',                    'stars.h',
   }
+
+  configuration 'vs*'
+    defines { '_WINDOWS' }

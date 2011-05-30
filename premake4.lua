@@ -11,6 +11,8 @@
 --  Make sure that we're using a valid premake executable
 --
 
+local MIN_BZFLAG_PREMAKE = 1
+
 if (not _PREMAKE_BZFLAG) then
   print('\n'
   .. 'A customized premake is required to configure the bzflag build.\n\n'
@@ -18,8 +20,6 @@ if (not _PREMAKE_BZFLAG) then
   )
   os.exit(1)
 end
-
-local MIN_BZFLAG_PREMAKE = 1
 
 if (_PREMAKE_BZFLAG < MIN_BZFLAG_PREMAKE) then
   print()
@@ -44,6 +44,8 @@ _PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
 --
 
 TOPDIR = os.getcwd()
+
+print(TOPDIR)
 
 BINDIR = os.getcwd() .. '/bin' -- used for binaries (except for gmake)
 
@@ -193,7 +195,7 @@ configuration { 'debug*', 'not vs*' }
   defines { 'DEBUG', 'DEBUG_RENDERING' } -- FIXME -- stick these in config.h
   flags   { 'FatalWarnings' }
 
-configuration '^vs*'
+configuration 'vs*'
   defines { 'WIN32' }
 
 --------------------------------------------------------------------------------
@@ -244,9 +246,11 @@ end
 
 local empty = {}
 
-local function makepkg(name)
+
+local function makepackage(name)
   return {
-    links = name,
+    name         = name,
+    links        = name,
     libdirs      = false,
     linkoptions  = false,
     defines      = false,
@@ -255,50 +259,58 @@ local function makepkg(name)
   }
 end
 
-PKGS = {
-  ares     = makepkg('ares'),
-  curl     = makepkg('curl'),
-  freetype = makepkg('freetype'),
-  ftgl     = makepkg('ftgl'),
-  SDL      = makepkg('SDL'),
-  GLEW     = makepkg('GLEW'),
-  GL       = makepkg('GL'),
-  GLU      = makepkg('GLU'),
-  X11      = makepkg('X11'),
-  z        = makepkg('z'),
-  dl       = makepkg('dl'),
-  rt       = makepkg('rt'),
+
+PACKAGES = {
+  ares     = makepackage('ares'),
+  curl     = makepackage('curl'),
+  freetype = makepackage('freetype'),
+  ftgl     = makepackage('ftgl'),
+  SDL      = makepackage('SDL'),
+  GLEW     = makepackage('GLEW'),
+  GL       = makepackage('GL'),
+  GLU      = makepackage('GLU'),
+  X11      = makepackage('X11'),
+  z        = makepackage('z'),
+  dl       = makepackage('dl'),
+  rt       = makepackage('rt'),
 }
 
-function linkpkg(name)
-  local pkg = PKGS[name]
-  if (not pkg) then
+
+function getpackage(name)
+  return assert(PACKAGES[name], 'unknown package: ' .. name)
+end
+
+
+function linkpackage(name)
+  local package = PACKAGES[name]
+  if (not package) then
     error('Unknown package name: ' .. name)
   end
-  if (pkg.libdirs) then
-    libdirs(pkg.libdirs)
+  if (package.links) then
+    links(package.links)
   end
-  if (pkg.links) then
-    links(pkg.links)
+  if (package.libdirs) then
+    libdirs(package.libdirs)
   end
-  if (pkg.linkoptions) then
-    linkoptions(pkg.linkoptions)
+  if (package.linkoptions) then
+    linkoptions(package.linkoptions)
   end
 end
 
-function includepkg(name)
-  local pkg = PKGS[name]
-  if (not pkg) then
+
+function includepackage(name)
+  local package = PACKAGES[name]
+  if (not package) then
     error('Unknown package name: ' .. name)
   end
-  if (pkg.defines) then
-    defines(pkg.defines)
+  if (package.defines) then
+    defines(package.defines)
   end
-  if (pkg.includedirs) then
-    includedirs(pkg.includedirs)
+  if (package.includedirs) then
+    includedirs(package.includedirs)
   end
-  if (pkg.buildoptions) then
-    buildoptions(pkg.buildoptions)
+  if (package.buildoptions) then
+    buildoptions(package.buildoptions)
   end
 end
 
@@ -307,7 +319,12 @@ end
 
 
 if (not _OPTIONS['help']) then
+
   include 'premake4_config'
+
+  PACKAGES.freetype.includedirs = -- FIXME
+    os.outputof('freetype-config --cflags'):match('%-I(.*)$') -- FIXME
+
 
   include 'other_src'
   include 'src'
@@ -400,10 +417,11 @@ if (not os.is('windows')) then
     trigger = 'easy_links',
     description = 'add a few soft links in src/ for console jockeys',
     execute = function()
-      os.execute('ln -sf bzfs     src/Server')
-      os.execute('ln -sf bzflag   src/Client')
-      os.execute('ln -sf bzadmin  src/Admin')
-      os.execute('ln -sf bzrobots src/Robots')
+      os.execute('ln -sf bzfs       src/Server')
+      os.execute('ln -sf bzflag     src/BZFlag')
+      os.execute('ln -sf clientbase src/Clientbase')
+      os.execute('ln -sf bzadmin    src/Admin')
+      os.execute('ln -sf bzrobots   src/Robots')
     end
   }
 end
@@ -450,6 +468,49 @@ print()
 print(('-'):rep(80))
 print(('-'):rep(80))
 print()
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  Report the configuration
+--
+
+if ((not _OPTIONS['help']) and (_ACTION ~= 'clean')) then -- FIXME -- setup isbuildaction()
+  _LASTCALL = function ()
+    print()
+    print(('-'):rep(80))
+    print(('-'):rep(80))
+    print()
+
+    printf('%s-%s.%s',
+           CONFIG.PACKAGE_NAME, CONFIG.PACKAGE_VERSION, CONFIG.CONFIG_DATE)
+    print()
+
+    local function libbuildstate(x)
+      return x and 'yes' or 'no   (using system)'
+    end
+    print('  libraries:')
+    print()
+    print('    build ares ....... ' .. libbuildstate(CONFIG.BUILD_ARES))
+    print('    build curl ....... ' .. libbuildstate(CONFIG.BUILD_CURL))
+    print('    build freetype ... ' .. libbuildstate(CONFIG.BUILD_FREETYPE))
+    print('    build ftgl ....... ' .. libbuildstate(CONFIG.BUILD_FTGL))
+    print('    build glew ....... ' .. libbuildstate(CONFIG.BUILD_GLEW))
+    print('    build regex ...... ' .. libbuildstate(CONFIG.BUILD_REGEX))
+    print('    build zlib ....... ' .. libbuildstate(CONFIG.BUILD_ZLIB))
+    print()
+    print('  executables:')
+    print()
+    print('    BZFlag client .... ' .. (_OPTIONS['disable-bzflag']   and 'no' or 'yes'))
+    print('    BZFlag server .... ' .. (_OPTIONS['disable-bzfs']     and 'no' or 'yes'))
+    print('    BZAdmin client ... ' .. (_OPTIONS['disable-bzadmin']  and 'no' or 'yes'))
+    print('    BZRobots client .. ' .. (_OPTIONS['disable-bzrobots'] and 'no' or 'yes'))
+
+    print()
+    print(('-'):rep(80))
+    print(('-'):rep(80))
+  end
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

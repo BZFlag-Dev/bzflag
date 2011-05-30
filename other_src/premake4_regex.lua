@@ -4,7 +4,7 @@ project   'libregex'
   language 'C'
   kind  'StaticLib'
   objdir '.objs_regex'
-  includedirs { 'regex' }
+  includedirs { 'regex', '../src/include' }
   files {
     'regex/cclass.h',
     'regex/cname.h',

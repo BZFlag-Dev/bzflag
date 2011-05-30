@@ -1,7 +1,6 @@
+--------------------------------------------------------------------------------
 
 bzlib_project 'libLuaGame'
-
-  targetname 'LuaGame'
 
   includedirs { '..', '../bzflag', '../clientbase' }
 
@@ -26,6 +25,7 @@ bzlib_project 'libLuaGame'
     'LuaZip.cpp',        'LuaZip.h',
   }
 
+--------------------------------------------------------------------------------
 
 bzlib_project 'libLuaClient'
 
@@ -50,6 +50,7 @@ bzlib_project 'libLuaClient'
     'LuaWorld.cpp',       'LuaWorld.h',
   }
 
+--------------------------------------------------------------------------------
 
 bzlib_project 'libLuaClientGL'
 
@@ -69,4 +70,4 @@ bzlib_project 'libLuaClientGL'
     'LuaTextures.cpp',   'LuaTextures.h',
   }
 
-
+--------------------------------------------------------------------------------

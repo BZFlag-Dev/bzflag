@@ -213,6 +213,83 @@ CONFIG.HAVE_LIBWS2_32 = test_library('ws3_32')
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+--
+--  FREETYPE
+--
+
+if (not CONFIG.BUILD_FREETYPE) then
+  local cflags
+  cflags = os.outputof('freetype-config --cflags')
+  if (not cflags) then
+    cflags = os.outputof('pkg-config freetype2 --cflags')
+  else
+    cflags = '-I/usr/include/freetype2'
+  end
+
+  local incdir = cflags:match('-I(.*)')
+  local success = os.testcode {
+    code = [[
+      FT_Library ftliby
+      (void)FT_Init_FreeType(&ftlib);
+    ]],
+    includes = {
+      '<ft2build.h>',
+      'FT_FREETYPE_H',
+    },
+    buildoptions = '`freetype-config --cflags` -lftgl'
+  }
+  if (not success) then
+    CONFIG.BUILD_FTGL = true
+  end
+end
+
+if (CONFIG.BUILD_FREETYPE) then
+  local freetype = getpackage('freetype')
+  freetype.includedirs = {
+    TOPDIR .. '/other_src/freetype/include'
+  }
+  freetype.links = 'libfreetype' -- the project name
+end
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  FTGL
+--
+
+-- FTGL 2.1.3 and earlier does not have FTCleanup, which BZFlags needs
+-- to prevent a crash on exit.  FTCleanup is not public even in 2.2.0,
+-- but ftglCreateBitmapFontFromMem() is (and it is new in 2.2.0), so
+-- this test relies upon the assumption that the presence of
+-- ftglCreateBitmapFontFromMem() implies the presence of FTCleanup.
+
+if (not CONFIG.BUILD_FTGL) then
+  local success = os.testcode {
+    code = [[
+      const unsigned char fake[] = "invalid bitmap font";
+      (void)ftglCreateBitmapFont("FIXME");
+      //(void)ftglCreateBitmapFontFromMem(fake, sizeof(fake));
+    ]],
+    includes = { '<FTGL/ftgl.h>' },
+    buildoptions = '`freetype-config --cflags` -lftgl'
+  }
+
+  if (not success) then
+    CONFIG.BUILD_FTGL = true
+  end
+end
+
+if (CONFIG.BUILD_FTGL) then
+  local ftgl = getpackage('ftgl')
+  ftgl.links = 'libftgl'
+  ftgl.includedirs = {
+    TOPDIR .. '/other_src/ftgl/src/FTGL',
+  }
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 if (1 > 0) then -- print CONFIG
   local keys = {}

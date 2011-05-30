@@ -18,6 +18,10 @@ function plugin_project(name, source_files)
     links 'plugin_utils'
     includedirs { '../../src/include', '../plugin_utils' }
 
+    if (not _ACTION:match('^vs')) then
+      buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
+    end
+
     -- create missing .def files for windows plugins
     if (os.is('vs*')) then
       local defName = name .. '.def'
