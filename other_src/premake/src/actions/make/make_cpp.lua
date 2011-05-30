@@ -5,10 +5,11 @@
 --
 
 	local echo_cmd = 'echo -e'
-	local reset_color   = '\\033[0m'
-	local build_color   = '\\033[0;1m'
-	local compile_color = '\\033[0;32m'
-	local link_color    = '\\033[0;36m'
+	local reset_color     = '\\033[0m'
+	local build_color     = '\\033[0;1m'
+	local compile_color   = '\\033[0;32m'
+	local link_color      = '\\033[0;36m'
+	local reconfig_color  = '\\033[0;33m'
 
 
 	premake.make.cpp = { }
@@ -154,12 +155,13 @@
 		local premake_exec = _MAKE.esc(_PREMAKE_EXEC or 'premake4')
 		_p('')
 		_p('# targets depend on the build system')
-		_p('*.o:  ' .. myname)
-		_p('*.a:  ' .. myname)
-		_p('*.so: ' .. myname)
+		_p('$(OBJECTS): ' .. myname)
 		_p(myname .. ': premake4.lua') -- FIXME -- might be another name
 		local topdir = _MAKE.esc(path.getrelative(prj.basedir, prj.solution.basedir))
+		_p('\t@%s "%s""%s" Forced a reconfiguration"%s"',
+		   echo_cmd, reconfig_color, prj_tag, reset_color)
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
+		_p('')
 		_p('.PHONY: reconfig')
 		_p('reconfig:')
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
