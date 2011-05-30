@@ -12,7 +12,14 @@ bzexec_project 'bzfs'
     'libCommon',
     'libDate',
     'liblua',
-    'cares', 'curl', 'z', 'dl',
+  }
+
+  linkpackage('curl')
+  linkpackage('cares')
+  linkpackage('z')
+
+  links {
+    'dl',
   }
 
   files {

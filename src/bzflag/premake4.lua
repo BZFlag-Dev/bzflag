@@ -22,9 +22,23 @@ bzexec_project 'bzflag'
     'libCommon',
     'libDate',
     'liblua',
-    'SDL', 'GLEW', 'GLU', 'GL', 'X11',
-    'cares', 'freetype', 'ftgl',
-    'curl', 'z', 'dl', 'rt',
+  }
+
+  linkpackage('SDL')
+  linkpackage('ftgl')
+  linkpackage('freetype')
+  linkpackage('GLEW')
+  linkpackage('GLU')
+  linkpackage('GL')
+  linkpackage('X11')
+  linkpackage('ftgl')
+  linkpackage('curl')
+  linkpackage('cares')
+  linkpackage('z')
+
+  links {
+    'dl',
+    'rt',
   }
 
   files {

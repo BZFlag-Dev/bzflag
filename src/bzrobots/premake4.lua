@@ -33,10 +33,22 @@ bzexec_project 'bzrobots'
     'libCommon',
     'libDate',
     'liblua',
-    'ftgl', 'freetype',
-    'curl', 'cares', 'dl',
-    'z', 'SDL', 'GLU','GL', 'X11', 'GLEW',
-    'rt'
+  }
+
+  linkpackage('SDL')
+  linkpackage('ftgl')
+  linkpackage('freetype')
+  linkpackage('GLEW')
+  linkpackage('GLU')
+  linkpackage('GL')
+  linkpackage('X11')
+  linkpackage('curl')
+  linkpackage('cares')
+  linkpackage('z')
+
+  links {
+    'dl',
+    'rt',
   }
 
   files {

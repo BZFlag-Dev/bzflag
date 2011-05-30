@@ -244,73 +244,76 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local empty = {}
 
+do
+  local PACKAGES = {}
 
-local function makepackage(name)
-  return {
-    name         = name,
-    links        = name,
-    libdirs      = false,
-    linkoptions  = false,
-    defines      = false,
-    includedirs  = false,
-    buildoptions = false,
-  }
-end
-
-
-PACKAGES = {
-  ares     = makepackage('ares'),
-  curl     = makepackage('curl'),
-  freetype = makepackage('freetype'),
-  ftgl     = makepackage('ftgl'),
-  SDL      = makepackage('SDL'),
-  GLEW     = makepackage('GLEW'),
-  GL       = makepackage('GL'),
-  GLU      = makepackage('GLU'),
-  X11      = makepackage('X11'),
-  z        = makepackage('z'),
-  dl       = makepackage('dl'),
-  rt       = makepackage('rt'),
-}
-
-
-function getpackage(name)
-  return assert(PACKAGES[name], 'unknown package: ' .. name)
-end
-
-
-function linkpackage(name)
-  local package = PACKAGES[name]
-  if (not package) then
-    error('Unknown package name: ' .. name)
+  local function makepackage(name)
+    PACKAGES[name] = {
+      name         = name,
+      links        = name,
+      libdirs      = false,
+      linkoptions  = false,
+      defines      = false,
+      includedirs  = false,
+      buildoptions = false,
+    }
   end
-  if (package.links) then
-    links(package.links)
-  end
-  if (package.libdirs) then
-    libdirs(package.libdirs)
-  end
-  if (package.linkoptions) then
-    linkoptions(package.linkoptions)
-  end
-end
+  makepackage('cares')
+  makepackage('curl')
+  makepackage('curses')
+  makepackage('freetype')
+  makepackage('ftgl')
+  makepackage('regex')
+  makepackage('SDL')
+  makepackage('GLEW')
+  makepackage('GL')
+  makepackage('GLU')
+  makepackage('X11')
+  makepackage('z')
+  makepackage('dl')
+  makepackage('rt')
 
 
-function includepackage(name)
-  local package = PACKAGES[name]
-  if (not package) then
-    error('Unknown package name: ' .. name)
+  PACKAGES.regex.links = '' -- built into libc
+
+
+  function getpackage(name)
+    return assert(PACKAGES[name], 'unknown package: ' .. name)
   end
-  if (package.defines) then
-    defines(package.defines)
+
+
+  function linkpackage(name)
+    local package = PACKAGES[name]
+    if (not package) then
+      error('Unknown package name: ' .. name)
+    end
+    if (package.links) then
+      links(package.links)
+    end
+    if (package.libdirs) then
+      libdirs(package.libdirs)
+    end
+    if (package.linkoptions) then
+      linkoptions(package.linkoptions)
+    end
   end
-  if (package.includedirs) then
-    includedirs(package.includedirs)
-  end
-  if (package.buildoptions) then
-    buildoptions(package.buildoptions)
+
+
+  function includepackage(name)
+    local package = PACKAGES[name]
+    if (not package) then
+      error('Unknown package name: ' .. name)
+    end
+    if (package.defines) then
+      defines(package.defines)
+    end
+    if (package.includedirs) then
+      includedirs(package.includedirs)
+    end
+    if (package.buildoptions) then
+      buildoptions(package.buildoptions)
+    end
   end
 end
 
@@ -322,9 +325,8 @@ if (not _OPTIONS['help']) then
 
   include 'premake4_config'
 
-  PACKAGES.freetype.includedirs = -- FIXME
+  getpackage('freetype').includedirs = -- FIXME
     os.outputof('freetype-config --cflags'):match('%-I(.*)$') -- FIXME
-
 
   include 'other_src'
   include 'src'

@@ -27,6 +27,15 @@ bzexec_project 'bzadmin'
     'libNet',
     'libCommon',
     'libDate',
-    'curses', 'cares', 'curl', 'z', 'dl', 'rt',
+  }
+
+  linkpackage('curses')
+  linkpackage('curl')
+  linkpackage('cares')
+  linkpackage('z')
+
+  links {
+    'dl',
+    'rt',
   }
 
