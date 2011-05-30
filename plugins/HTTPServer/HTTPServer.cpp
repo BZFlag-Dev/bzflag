@@ -70,11 +70,13 @@ bool RemoveVDir(void* param) {
 }
 
 int generateSessionID(void) {
-  short s[2];
-  s[0] = rand();
-  s[1] = rand();
-
-  return *((int*)s);
+  union {
+    int   intval;
+    short shortvals[2];
+  } intshorts;
+  intshorts.shortvals[0] = rand();
+  intshorts.shortvals[1] = rand();
+  return intshorts.intval;
 }
 
 class HTTPConnection {
