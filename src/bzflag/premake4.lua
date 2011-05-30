@@ -30,7 +30,6 @@ bzexec_project 'bzflag'
   linkpackage('GLU')
   linkpackage('GL')
   linkpackage('X11')
-  linkpackage('ftgl')
   linkpackage('curl')
   linkpackage('cares')
   linkpackage('z')
