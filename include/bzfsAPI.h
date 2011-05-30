@@ -278,6 +278,9 @@ typedef enum
   bz_ePluginUnloaded,
   bz_ePlayerScoreChanged,
   bz_eTeamScoreChanged,
+  bz_eWorldFinalized,
+  bz_eReportFiledEvent,
+  bz_eBZDBChange,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1013,6 +1016,25 @@ public:
   int lastValue;
 };
 
+class BZF_API bz_ReportFiledEventData_V1 : public bz_EventData
+{
+public:
+  bz_ReportFiledEventData_V1() : bz_EventData(bz_eReportFiledEvent){}
+
+  bz_ApiString from;
+  bz_ApiString message;
+};
+
+class BZF_API bz_BZDBChangeData_V1 : public bz_EventData
+{
+public:
+  bz_BZDBChangeData_V1(const std::string& _key, const std::string& _value)
+    : bz_EventData(bz_eBZDBChange), key(_key), value(_value) {}
+
+  bz_ApiString key;
+  bz_ApiString value;
+};
+
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
 BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
@@ -1069,6 +1091,8 @@ BZF_API const char* bz_getNonPlayerConnectionHost(int connectionID);
 
 class bz_BasePlayerRecord;
 
+// player listing
+BZF_API bz_APIIntList* bz_getPlayerIndexList(void);
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
@@ -1076,9 +1100,17 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );
 
+BZF_API bool bz_getAdmin(int playerID);
+
+BZF_API bool bz_validAdminPassword(const char* passwd);
+
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
 BZF_API bool bz_isPlayerPaused( int playerID );
+
+BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
+BZF_API const char* bz_getPlayerCallsign(int playerID);
+BZF_API const char* bz_getPlayerIPAddress(int playerID);
 
 // player lag info
 BZF_API int bz_getPlayerLag( int playerId );
@@ -1158,6 +1190,11 @@ BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
 BZF_API bool bz_setPlayerTKs (int playerId, int tks);
 
+BZF_API float bz_getPlayerRank(int playerId);
+BZF_API int bz_getPlayerWins(int playerId);
+BZF_API int bz_getPlayerLosses(int playerId);
+BZF_API int bz_getPlayerTKs(int playerId);
+
 BZF_API bool bz_resetPlayerScore(int playerId);
 
 // groups API
@@ -1205,15 +1242,42 @@ BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms 
 BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool persistent = false  );
 BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false  );
 
+BZF_API bool bz_updateBZDBDouble(const char* variable, double val);
+BZF_API bool bz_updateBZDBString(const char* variable, const char *val);
+BZF_API bool bz_updateBZDBBool(const char* variable, bool val);
+BZF_API bool bz_updateBZDBInt(const char* variable, int val);
+
 BZF_API int bz_getBZDBVarList( bz_APIStringList	*varList );
 
 BZF_API void bz_resetBZDBVar( const char* variable );
 BZF_API void bz_resetALLBZDBVars( void );
 
+
 // admin
 BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason );
 BZF_API bool bz_IPUnbanUser ( const char* ip );
+BZF_API bool bz_HostBanUser(const char* hostmask, const char* source, int duration, const char* reason);
+BZF_API bool bz_IPUnbanUser(const char* ip);
+BZF_API bool bz_IDUnbanUser(const char* bzID);
+BZF_API bool bz_HostUnbanUser(const char* hostmask);
+
+
+// ban lists
+typedef enum
+{
+  eIPList,
+  eIDList,
+  eHostList
+}bz_eBanListType;
+
+BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType );
+BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item );
+BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int item );
+BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int item );
+BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int item );
+BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int item );
+
 BZF_API  bz_APIStringList *bz_getReports( void );
 
 // lagwarn
@@ -1265,6 +1329,7 @@ BZF_API bool bz_resetFlag ( int flag );
 BZF_API bool bz_moveFlag ( int flag, float pos[3] );
 BZF_API int bz_flagPlayer ( int flag );
 BZF_API bool bz_getFlagPosition ( int flag, float* pos );
+
 
 // world
 typedef struct
@@ -1337,6 +1402,10 @@ BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 BZF_API void bz_setClientWorldDownloadURL( const char* URL );
 BZF_API const bz_ApiString bz_getClientWorldDownloadURL( void );
 BZF_API bool bz_saveWorldCacheFile( const char* file );
+
+// world
+BZF_API unsigned int bz_getWorldCacheSize(void);
+BZF_API unsigned int bz_getWorldCacheData(unsigned char *data);
 
 
 // custom map objects

@@ -976,6 +976,17 @@ BZF_API bool bz_revokePerm ( int playerID, const char* perm  )
   return true;
 }
 
+BZF_API bz_APIIntList *bz_getPlayerIndexList(void)
+{
+  bz_APIIntList *playerList = new bz_APIIntList;
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (GameKeeper::Player::getPlayerByIndex(i))
+      playerList->push_back(i);
+  }
+  return playerList;
+}
+
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
 {
   playerList->clear();
@@ -1023,6 +1034,25 @@ BZF_API  bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
 
   return true;
 }
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_getAdmin ( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+  if (!player)
+    return false;
+  return player->accessInfo.isAdmin();
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_validAdminPassword ( const char* passwd )
+{
+  if (!passwd || !clOptions->password.size())
+    return false;
+
+  return clOptions->password == passwd;
+}
 
 BZF_API const char* bz_getPlayerFlag( int playerID )
 {
@@ -1046,6 +1076,38 @@ BZF_API bool bz_isPlayerPaused( int playerID )
     return false;
 
   return player->player.isPaused();
+}
+
+
+
+BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return eNoTeam;
+
+  return convertTeam(player->player.getTeam());
+}
+
+BZF_API const char* bz_getPlayerCallsign( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return NULL;
+
+  return player->player.getCallSign();
+}
+
+BZF_API const char* bz_getPlayerIPAddress( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return NULL;
+
+  return player->netHandler->getTargetIP();
 }
 
 BZF_API int bz_getPlayerLag( int playerId )
@@ -1154,6 +1216,51 @@ BZF_API bool bz_setPlayerTKs(int playerId, int tks)
 
   broadcastPlayerScoreUpdate(playerId);
   return true;
+}
+
+
+//-------------------------------------------------------------------------
+BZF_API float bz_getPlayerRank (int playerId)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return -1;
+
+  return player->score.ranking();
+}
+
+//-------------------------------------------------------------------------
+BZF_API int bz_getPlayerWins (int playerId)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return -1;
+
+  return player->score.getWins();
+}
+
+//-------------------------------------------------------------------------
+BZF_API int bz_getPlayerLosses (int playerId)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return -1;
+
+  return player->score.getLosses();
+}
+
+//-------------------------------------------------------------------------
+BZF_API int bz_getPlayerTKs (int playerId)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return -1;
+
+  return player->score.getTKs();
 }
 
 BZF_API bool bz_resetPlayerScore(int playerId)
@@ -1543,6 +1650,68 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persi
   return !exists;
 }
 
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBDouble(const char *variable, double val)
+{
+  if (!variable)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), TextUtils::format("%f", val));
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBString(const char *variable, const char *val)
+{
+  if (!variable || !val)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), std::string(val));
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBBool(const char *variable, bool val)
+{
+  if (!variable)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), TextUtils::format("%d", val));
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_updateBZDBInt(const char *variable, int val)
+{
+  if (!variable)
+    return false;
+
+  if (!BZDB.isSet(std::string(variable)))
+    return false;
+
+  BZDB.set(std::string(variable), TextUtils::format("%d", val));
+
+  return true;
+}
+
+
 void bzdbIterator (const std::string& name, void* userData)
 {
   bz_APIStringList	* varList = static_cast<bz_APIStringList*>(userData);
@@ -1658,6 +1827,191 @@ BZF_API bool bz_IPUnbanUser ( const char* ip )
   return true;
 }
 
+
+BZF_API bool bz_HostBanUser(const char* hostmask, const char* source, int duration, const char* reason)
+{
+  if (!reason || !hostmask)
+    return false;
+
+  std::string banner = "server";
+  if (source)
+    banner = source;
+
+  // reload the banlist in case anyone else has added
+  clOptions->acl.load();
+  clOptions->acl.hostBan(hostmask, banner.c_str(), duration, reason);
+  clOptions->acl.save();
+
+  return true;
+
+}
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_IDUnbanUser ( const char* bzID )
+{
+  if (!bzID)
+    return false;
+
+  clOptions->acl.load();
+
+  if (clOptions->acl.idUnban(bzID))
+    clOptions->acl.save();
+  else
+    return false;
+
+  return true;
+}
+
+BZF_API bool bz_HostUnbanUser(const char* hostmask)
+{
+  if (!hostmask)
+    return false;
+
+  clOptions->acl.load();
+
+  if (clOptions->acl.hostUnban(hostmask))
+    clOptions->acl.save();
+  else
+    return false;
+
+  return true;
+}
+
+BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType )
+{
+  switch(listType) {
+    default:
+    case eIPList:
+      return (unsigned int)clOptions->acl.banList.size();
+
+    case eHostList:
+      return (unsigned int)clOptions->acl.hostBanList.size();
+
+    case eIDList:
+      return (unsigned int)clOptions->acl.idBanList.size();
+  }
+
+  return 0;
+}
+
+BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return NULL;
+
+  static std::string API_BAN_ITEM;
+
+  API_BAN_ITEM = "";
+  switch(listType) {
+    default:
+    case eIPList:
+      API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr).c_str();
+      break;
+
+    case eHostList:
+      API_BAN_ITEM = clOptions->acl.hostBanList[item].hostpat.c_str();
+      break;
+
+    case eIDList:
+      API_BAN_ITEM = clOptions->acl.idBanList[item].idpat.c_str();
+      break;
+  }
+
+  if (API_BAN_ITEM.size())
+    return API_BAN_ITEM.c_str();
+  return NULL;
+}
+
+BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return NULL;
+
+  switch(listType) {
+  default:
+  case eIPList:
+    return clOptions->acl.banList[item].reason.c_str();
+
+  case eHostList:
+    return clOptions->acl.hostBanList[item].reason.c_str();
+
+  case eIDList:
+    return clOptions->acl.idBanList[item].reason.c_str();
+  }
+
+  return NULL;
+}
+
+BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return NULL;
+
+  switch(listType) {
+  default:
+  case eIPList:
+    return clOptions->acl.banList[item].bannedBy.c_str();
+
+  case eHostList:
+    return clOptions->acl.hostBanList[item].bannedBy.c_str();
+
+  case eIDList:
+    return clOptions->acl.idBanList[item].bannedBy.c_str();
+  }
+
+  return NULL;
+}
+
+BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return 0.0;
+
+  TimeKeeper end = TimeKeeper::getCurrent();
+
+  switch(listType) {
+  default:
+  case eIPList:
+    end = clOptions->acl.banList[item].banEnd;
+    break;
+
+  case eHostList:
+    end = clOptions->acl.hostBanList[item].banEnd;
+    break;
+
+  case eIDList:
+    end = clOptions->acl.idBanList[item].banEnd;
+    break;
+  }
+
+  if (end.getSeconds() > 30000000.0) // it's basicly forever
+    return -1.0;
+
+  return end.getSeconds() - TimeKeeper::getCurrent().getSeconds();
+}
+
+
+BZF_API bool bz_getBanItemIsFromMaster ( bz_eBanListType listType, unsigned int item )
+{
+  if (item > bz_getBanListSize(listType))
+    return false;
+
+  switch(listType) {
+  default:
+  case eIPList:
+    return clOptions->acl.banList[item].fromMaster;
+
+  case eHostList:
+    return clOptions->acl.hostBanList[item].fromMaster;
+
+  case eIDList:
+    return clOptions->acl.idBanList[item].fromMaster;
+  }
+
+  return false;
+}
+
+
 BZF_API  bz_APIStringList *bz_getReports( void )
 {
   bz_APIStringList *buffer = new bz_APIStringList;
@@ -1679,6 +2033,7 @@ BZF_API  bz_APIStringList *bz_getReports( void )
 
   return buffer;
 }
+
 
 BZF_API int bz_getLagWarn( void ) {
   return int(clOptions->lagwarnthresh * 1000 + 0.5);
@@ -2009,6 +2364,60 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
   return true;
 }
 
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setWorldSize(float size, float wallHeight)
+{
+  pluginWorldHeight = wallHeight;
+  pluginWorldSize = size;
+
+  return true;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API void bz_setClientWorldDownloadURL(const char *URL)
+{
+  clOptions->cacheURL.clear();
+  if (URL)
+    clOptions->cacheURL = URL;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API const bz_ApiString bz_getClientWorldDownloadURL(void)
+{
+  bz_ApiString URL;
+  if (clOptions->cacheURL.size())
+    URL = clOptions->cacheURL;
+  return URL;
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_saveWorldCacheFile(const char *file)
+{
+  if (!file)
+    return false;
+  return saveWorldCache(file);
+}
+
+BZF_API unsigned int bz_getWorldCacheSize ( void )
+{
+  return worldDatabaseSize;
+}
+
+BZF_API unsigned int bz_getWorldCacheData ( unsigned char *data )
+{
+  if (!data)
+    return 0;
+
+  memcpy(data,worldDatabase,worldDatabaseSize);
+  return worldDatabaseSize;
+}
+
+
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )
 {
   if (!world || world->isFinisihed() || !pos || !scale)
@@ -2091,36 +2500,6 @@ BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, fl
 
   world->addWeapon(flag, pos, rot, tilt, RogueTeam, initDelay, realDelays, synct);
   return true;
-}
-
-BZF_API bool bz_setWorldSize( float size, float wallHeight )
-{
-  pluginWorldHeight = wallHeight;
-  pluginWorldSize = size;
-
-  return true;
-}
-
-BZF_API void bz_setClientWorldDownloadURL( const char* URL )
-{
-  clOptions->cacheURL.clear();
-  if(URL)
-    clOptions->cacheURL = URL;
-}
-
-BZF_API const bz_ApiString bz_getClientWorldDownloadURL( void )
-{
-  bz_ApiString URL;
-  if (clOptions->cacheURL.size())
-    URL = clOptions->cacheURL;
-  return URL;
-}
-
-BZF_API bool bz_saveWorldCacheFile( const char* file )
-{
-  if (!file)
-    return false;
-  return saveWorldCache(file);
 }
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
@@ -2531,6 +2910,7 @@ BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler, const c
   bz_apiURLManager->addJob(URL,handler,postData);
   return true;
 }
+
 
 BZF_API bool bz_removeURLJob ( const char* URL )
 {

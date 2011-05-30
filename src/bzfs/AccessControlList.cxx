@@ -254,7 +254,7 @@ static std::string makeGlobPattern(const char* str)
 }
 
 
-static std::string getBanMaskString(in_addr mask)
+std::string AccessControlList::getBanMaskString(in_addr mask)
 {
   std::ostringstream os;
   os << (ntohl(mask.s_addr) >> 24) << '.';

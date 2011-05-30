@@ -1954,6 +1954,12 @@ bool ReportCommand::operator() (const char	 *message,
 	     playerData->player.getCallSign(), t, timeStr);
 
       sendMessage(ServerPlayer, t, "Your report has been filed. Thank you.");
+
+      // Notify plugins of the report filed
+      bz_ReportFiledEventData_V1 reportData;
+      reportData.from = playerData->player.getCallSign();
+      reportData.message = message;
+      worldEventManager.callEvents(bz_eReportFiledEvent, &reportData);
     }
   }
 

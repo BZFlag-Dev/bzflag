@@ -1083,6 +1083,8 @@ bool defineWorld ( void )
     resetFlag(*FlagInfo::get(i));
   }
 
+  bz_EventData eventData = bz_EventData(bz_eWorldFinalized);
+  worldEventManager.callEvents(eventData);
   return true;
 }
 
@@ -5069,6 +5071,18 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
     sendBufferedNetDataForPeer(peer);
 }
 
+//
+// global variable callbacks
+//
+
+static void bzdbGlobalCallback(const std::string& name, void* /*data*/)
+{
+  const std::string value = BZDB.get(name);
+  bz_BZDBChangeData_V1 eventData(name, value);
+  worldEventManager.callEvents(eventData);
+}
+
+
 
 /** main parses command line options and then enters an event and activity
  * dependant main loop.  once inside the main loop, the server is up and
@@ -5146,6 +5160,10 @@ int main(int argc, char **argv)
     BZDB.setPermission(globalDBItems[gi].name, globalDBItems[gi].permission);
     BZDB.addCallback(std::string(globalDBItems[gi].name), onGlobalChanged, (void*) NULL);
   }
+
+  // add the global callback for worldEventManager
+  BZDB.addGlobalCallback(bzdbGlobalCallback, NULL);
+
   CMDMGR.add("set", cmdSet, "set <name> [<value>]");
   CMDMGR.add("reset", cmdReset, "reset <name>");
 

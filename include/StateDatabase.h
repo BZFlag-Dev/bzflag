@@ -134,6 +134,14 @@ public:
   void				removeCallback(const std::string& name,
 					       Callback, void* userData);
 
+  /** add/remove a global callback for all values. invoked when any value
+  * changes (either by being set or unset). each function/userData pair can
+  * only be registered once (i.e. multiple adds have the same effect as a
+  * single add).
+  */
+  void addGlobalCallback(Callback, void* userData);
+  void removeGlobalCallback(Callback, void* userData);
+
   /** test if a name is set or not
    */
   bool				isSet(const std::string& name) const;
@@ -411,6 +419,7 @@ private:
   EvalMap			evalCache;
   bool			  debug;
   bool			  saveDefault;
+  CallbackList<Callback>	globalCallbacks;
 };
 
 inline bool StateDatabase::getDebug() const

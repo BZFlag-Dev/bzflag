@@ -255,7 +255,20 @@ public:
       presumably so it can be remerged */
   void purgeMasters(void);
 
+  std::string getBanMaskString(in_addr mask);
+
   std::vector<std::pair<std::string, std::string> > listMasterBans(void) const;
+
+  typedef std::vector<BanInfo> banList_t;
+  banList_t banList;
+
+  typedef std::vector<HostBanInfo> hostBanList_t;
+  hostBanList_t hostBanList;
+
+  typedef std::vector<IdBanInfo> idBanList_t;
+  idBanList_t idBanList;
+
+  std::string banFile;
 
 private:
   /** This function converts a <code>char*</code> containing an IP mask to an
@@ -273,17 +286,6 @@ private:
   /** This function purges all local bans
       so the local banfile can be reloaded **/
   void purgeLocals(void);
-
-  typedef std::vector<BanInfo> banList_t;
-  banList_t banList;
-
-  typedef std::vector<HostBanInfo> hostBanList_t;
-  hostBanList_t hostBanList;
-
-  typedef std::vector<IdBanInfo> idBanList_t;
-  idBanList_t idBanList;
-
-  std::string banFile;
 };
 
 inline void AccessControlList::setBanFile(const std::string& filename) {
