@@ -1,5 +1,6 @@
 
 project 'plugin_utils'
+  hidetarget('true')
   kind 'StaticLib'
   language 'C++'
   objdir '.objs'
@@ -17,6 +18,3 @@ project 'plugin_utils'
   if (not _ACTION:match('^vs')) then
     buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
   end
-
-
-

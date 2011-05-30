@@ -60,6 +60,20 @@
 			scope = "config",
 		},
 
+		extratarget =
+		{
+			kind  = "object",
+			scope = "container",
+			required = {
+			  target = 'string'
+			},
+			allow = {
+			  target  = 'string',
+			  command = 'string',
+			  depends = 'string'
+			}
+		},
+
 		files =
 		{
 			kind  = "filelist",
@@ -114,6 +128,16 @@
 				"3.0",
 				"3.5",
 				"4.0"
+			}
+		},
+
+		hidetarget =
+		{
+			kind = "string",
+			scope = "container",
+			allowed = {
+				"true",
+				"false",
 			}
 		},
 
@@ -489,6 +513,48 @@
 		return domatchedarray(ctype, fieldname, value, os.matchfiles)
 	end
 
+	function premake.setobject(ctype, fieldname, value, allowed, required)
+
+		local container, err = premake.getobject(ctype)
+		if (not container) then
+			error(err, 4)
+		end
+
+		-- lower case keys
+		local tmp = {}
+		for k, v in pairs(value) do
+			if (type(k) == 'string') then
+				tmp[k:lower()] = v
+			else
+				tmp[k] = v
+			end
+		end
+		value = tmp
+
+		if (required) then
+			for key, kind in ipairs(required) do
+				if (not value[key]) then
+					error('missing ' .. key, 0)
+				end
+			end
+		end
+
+		if (allowed) then
+			for key, kind in pairs(value) do
+				local v, err = premake.checkvalue(key, allowed)
+				if (not v) then
+					error(err, 0)
+				end
+			end
+		end
+
+		local t = container[fieldname] or {}
+		container[fieldname] = t
+		t[#t + 1] = value
+
+		return t
+	end
+
 
 
 --
@@ -523,9 +589,10 @@
 --
 
 	local function accessor(name, value)
-		local kind    = premake.fields[name].kind
-		local scope   = premake.fields[name].scope
-		local allowed = premake.fields[name].allowed
+		local kind     = premake.fields[name].kind
+		local scope    = premake.fields[name].scope
+		local allowed  = premake.fields[name].allowed
+		local required = premake.fields[name].required
 
 		if ((kind == "string" or kind == "path") and value) then
 			if type(value) ~= "string" then
@@ -544,6 +611,8 @@
 			return premake.setdirarray(scope, name, value)
 		elseif (kind == "filelist") then
 			return premake.setfilearray(scope, name, value)
+		elseif (kind == "object") then
+			return premake.setobject(scope, name, value, allowed, required)
 		end
 	end
 

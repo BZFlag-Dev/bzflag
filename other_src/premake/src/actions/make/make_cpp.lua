@@ -165,6 +165,16 @@
 		_p('.PHONY: reconfig')
 		_p('reconfig:')
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
+
+		if (prj.extratarget) then
+			_p('')
+			for _, item in ipairs(prj.extratarget) do
+				_p('%s: %s', item.target, (item.depends or ''))
+				if (item.command) then
+					_p('\t' .. item.command)
+				end
+			end
+		end
 	end
 
 

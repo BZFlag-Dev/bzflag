@@ -1,6 +1,7 @@
 
 project   'libares'
   targetname 'ares'
+  hidetarget('true')
   language 'C'
   kind  'StaticLib'
   objdir '.objs_ares'

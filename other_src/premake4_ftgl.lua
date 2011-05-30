@@ -1,6 +1,7 @@
 
 project   'libftgl'
   targetname 'ftgl'
+  hidetarget('true')
   kind 'StaticLib'
   language 'C++'
   objdir '.objs_ftgl'

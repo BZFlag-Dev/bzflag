@@ -9,6 +9,7 @@ local PLUGIN_LINKS_DIR = PLUGINS_DIR .. '/links'
 
 function plugin_project(name, source_files)
   project('plugin_' .. name)
+    hidetarget('true')
     kind 'SharedLib'
     language 'C++'
     targetname(name)

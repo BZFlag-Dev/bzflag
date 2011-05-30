@@ -64,11 +64,32 @@
 		_p(1,'@echo "   all (default)"')
 		_p(1,'@echo "   clean"')
 
+		-- extra targets
+		if (sln.extratarget) then
+			for _, item in ipairs(sln.extratarget) do
+				if (item.target:match('^%a')) then
+					_p(1, '@echo "   %s"', item.target)
+				end
+			end
+		end
+
+		-- project targets
 		for _, prj in ipairs(sln.projects) do
-			_p(1,'@echo "   %s"', prj.name)
+			if (prj.hidetarget ~= 'true') then
+				_p(1,'@echo "   %s"', prj.name)
+			end
 		end
 
 		_p(1,'@echo ""')
 		_p(1,'@echo "For more information, see http://industriousone.com/premake/quick-start"')
 
+		if (sln.extratarget) then
+			_p('')
+			for _, item in ipairs(sln.extratarget) do
+				_p('%s: %s', item.target, (item.depends or ''))
+				if (item.command) then
+					_p('\t' .. item.command)
+				end
+			end
+		end
 	end

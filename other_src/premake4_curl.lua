@@ -3,6 +3,7 @@ print('>>> premake4_curl.lua is empty <<<')
 
 project   'libcurl'
   targetname 'curl'
+  hidetarget('true')
   kind 'StaticLib'
   language 'C'
   objdir '.objs_curl'

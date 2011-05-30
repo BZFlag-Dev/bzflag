@@ -1,6 +1,7 @@
 
 project   'libglew'
   targetname 'glew'
+  hidetarget('true')
   language 'C'
   kind  'StaticLib'
   objdir '.objs_glew'

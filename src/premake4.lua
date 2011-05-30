@@ -26,6 +26,7 @@ function bzlib_project(name, options)
   assert(name:match('^lib'), 'poorly named library project: ' .. name)
 
   project(name)
+    hidetarget('true')
     kind('StaticLib')
     targetname(name:sub(4)) -- strip the 'lib' part
     language 'C++'
@@ -36,8 +37,8 @@ function bzlib_project(name, options)
     buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'
   end
 
-  configuration 'vs*'
-    defines { '_LIB' }
+    configuration 'vs*'
+      defines { '_LIB' }
 
   project(name) -- clear the configuration state
 end

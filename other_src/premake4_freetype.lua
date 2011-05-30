@@ -3,6 +3,7 @@ print('>>> premake4_freetype.lua is empty <<<')
 
 project   'libfreetype'
   targetname 'freetype'
+  hidetarget('true')
   kind 'StaticLib'
   language 'C'
   objdir '.objs_freetype'

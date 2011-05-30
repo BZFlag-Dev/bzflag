@@ -1,6 +1,7 @@
 
 project   'liblua'
   targetname 'lua'
+  hidetarget('true')
   kind  'StaticLib'
   language 'C++'
   objdir '.objs_lua'

@@ -12,12 +12,6 @@ Chonges:
 
   4. gmake: added the _LASTCALL hook  (to report the configuration)
 
+  5. gmake: added hidetarget()
 
-TODO
-  - allow for hidden targets
-  - allow for raw makefile additions?:
-      gmake_add {
-        '.PHONY: plugins',
-        'plugins: plugin_wwzones',
-        etc...
-      }
+  6. gmake: added extratarget({ target='' [, depends='' [, command='' ]] })

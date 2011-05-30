@@ -1,6 +1,7 @@
 
 project   'libz'
   targetname 'z'
+  hidetarget('true')
   kind  'StaticLib'
   language 'C'
   objdir '.objs_zlib'

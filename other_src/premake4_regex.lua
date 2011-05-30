@@ -1,6 +1,7 @@
 
 project   'libregex'
   targetname 'regex'
+  hidetarget('true')
   language 'C'
   kind  'StaticLib'
   objdir '.objs_regex'
