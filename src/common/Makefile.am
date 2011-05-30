@@ -1,4 +1,6 @@
-AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(LIBCURL_CPPFLAGS)
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" \
+	$(LIBCURL_CPPFLAGS) \
+	$(CONF_CPPFLAGS)
 
 noinst_LTLIBRARIES = libCommon.la
 

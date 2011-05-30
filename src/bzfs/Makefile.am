@@ -3,7 +3,10 @@ bin_PROGRAMS = bzfs
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = -DINSIDE_BZ -DINSTALL_LIB_DIR=\"$(libdir)/\" $(LIBCURL_CPPFLAGS)
+AM_CPPFLAGS = -DINSIDE_BZ \
+	-DINSTALL_LIB_DIR=\"$(libdir)/\" \
+	$(LIBCURL_CPPFLAGS) \
+	$(CONF_CPPFLAGS)
 
 if BUILD_PLUGINS
 plugin_files = bzfsPlugins.h bzfsPlugins.cxx
