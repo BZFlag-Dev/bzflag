@@ -13,14 +13,11 @@ bzexec_project 'bzfs'
     'libDate',
     'liblua',
   }
-
   linkpackage('curl')
   linkpackage('cares')
   linkpackage('z')
-
-  links {
-    'dl',
-  }
+  linkpackage('dl')
+  linkpackage('rt')
 
   files {
     'AccessControlList.cpp',          'AccessControlList.h',

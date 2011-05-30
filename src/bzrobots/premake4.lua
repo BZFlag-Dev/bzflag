@@ -34,7 +34,6 @@ bzexec_project 'bzrobots'
     'libDate',
     'liblua',
   }
-
   linkpackage('SDL')
   linkpackage('ftgl')
   linkpackage('freetype')
@@ -45,11 +44,8 @@ bzexec_project 'bzrobots'
   linkpackage('curl')
   linkpackage('cares')
   linkpackage('z')
-
-  links {
-    'dl',
-    'rt',
-  }
+  linkpackage('dl')
+  linkpackage('rt')
 
   files {
     '../obstacle/ObstacleMgr.cpp',

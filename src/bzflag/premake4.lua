@@ -23,7 +23,6 @@ bzexec_project 'bzflag'
     'libDate',
     'liblua',
   }
-
   linkpackage('SDL')
   linkpackage('ftgl')
   linkpackage('freetype')
@@ -35,11 +34,8 @@ bzexec_project 'bzflag'
   linkpackage('curl')
   linkpackage('cares')
   linkpackage('z')
-
-  links {
-    'dl',
-    'rt',
-  }
+  linkpackage('dl')
+  linkpackage('rt')
 
   files {
     'AudioMenu.cpp',                'AudioMenu.h',

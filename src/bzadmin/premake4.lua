@@ -28,14 +28,10 @@ bzexec_project 'bzadmin'
     'libCommon',
     'libDate',
   }
-
   linkpackage('curses')
   linkpackage('curl')
   linkpackage('cares')
   linkpackage('z')
-
-  links {
-    'dl',
-    'rt',
-  }
+  linkpackage('dl')
+  linkpackage('rt')
 
