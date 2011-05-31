@@ -97,7 +97,7 @@ bool dontWait = true;
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
-static const float ListServerReAddTime = 10.0f * 60.0f;
+static const float ListServerReAddTime = 15.0f * 60.0f;
 
 static const float FlagHalfLife = 10.0f;
 
