@@ -260,6 +260,19 @@ namespace TextUtils
     return destination;
   }
 
+  std::string escape_nonprintable(const std::string &text, const char quotechar)
+  {
+    std::string destination;
+    for (int i=0;  i < (int) text.size(); i++) {
+      const unsigned char c = text[i];
+      if (c != '\\' && c != quotechar && (c == ' ' || isVisible(c))) {
+	destination += c;
+      } else {
+	destination += format("\\%-3.3o", c);
+      }
+    }
+    return destination;
+  }
 
   std::string escape(const std::string &text, char escaper)
   {
