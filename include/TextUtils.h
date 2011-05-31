@@ -358,6 +358,10 @@ namespace TextUtils {
    */
   std::string url_encode(const std::string &text);
 
+  /** url-decodes a string
+  */
+  std::string url_decode(const std::string &text);
+
   /** octal-encode nonprintable characters in a string
    *  the quotechar parameter will always be encoded; '"' is a sensible value
    */
