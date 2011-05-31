@@ -188,6 +188,8 @@ struct NetConnectedPeer {
 	std::string bufferedInput;
 
 	TimeKeeper startTime;
+	TimeKeeper lastActivity;
+
 	bool   sent;
 	bool   deleteMe;
 };

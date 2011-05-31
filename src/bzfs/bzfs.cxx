@@ -4950,6 +4950,8 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
     return;
   }
 
+  peer.lastActivity = TimeKeeper::getCurrent();
+
   const std::string& chunk = peer.sendChunks.front();
   peer.netHandler->bufferedSend(chunk.data(), chunk.size());
 
@@ -4989,6 +4991,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 
      if ((e == ReadAll) || (e == ReadPart)) 
      {
+	peer.lastActivity = TimeKeeper::getCurrent();
+
 	unsigned int readSize = netHandler->getTcpReadSize();
 
 	if (readSize > 0)
@@ -5064,6 +5068,41 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
       discoBuffer += "\r\n\r\n";
       peer.sendChunks.push_back(discoBuffer);
       peer.deleteMe = true; // nobody loves him
+    }
+  }
+
+  // we like them see if they have gotten new data
+  if (peer.apiHandler && peer.player < 0)
+  {
+    bool retry = false;
+
+    RxStatus e = netHandler->receive(1024,&retry);
+    if (retry) // try one more time, just in case it was blocked
+    {
+      int retries = 1;
+      if (BZDB.isSet("_maxConnectionRetries"))
+	retries = (int) BZDB.eval("_maxConnectionRetries");
+
+      retry = false;
+      for ( int t = 0; t < retries; t++)
+      {
+	e = netHandler->receive(1024,&retry);
+	if (!retry)
+	  break;
+      }
+    }
+
+    if (e == ReadPart || e == ReadAll)
+    {
+      peer.lastActivity = TimeKeeper::getCurrent();
+      peer.apiHandler->pending(peer.socket,netHandler->getTcpBuffer(),netHandler->getTcpReadSize());
+      netHandler->flushData();
+    }
+    else
+    {
+      // they done disconnected
+      peer.apiHandler->disconnect(peer.socket);
+      peer.deleteMe = true;
     }
   }
   
@@ -6190,6 +6229,24 @@ int main(int argc, char **argv)
       if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
 	netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
     }
+
+    // remove anyone that hasn't done anything in a long time
+    double idleTimeout = 30;
+
+    toKill.clear();
+    double timeoutNow = TimeKeeper::getCurrent().getSeconds();
+
+    for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
+    {
+      if (timeoutNow > (peerItr->second.lastActivity.getSeconds() + idleTimeout))
+	toKill.push_back(peerItr->first);
+    }
+    for (unsigned int j = 0; j < toKill.size(); j++) 
+    {
+      if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
+	netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
+    }
+
 
     // Fire world weapons
     world->getWorldWeapons().fire();
