@@ -1,9 +1,18 @@
 #!/bin/sh
 # BZFlag
-# Copyright (c) 1993-2010 Tim Riker
-OLDCOPYRIGHTTEXT='Copyright (c) 1993 - 2008'
-# NOTE: update just this line and then run the script
-NEWCOPYRIGHTTEXT='Copyright (c) 1993 - 2008'
+# Copyright (c) 1993-2011 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named COPYING that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# NOTE: update just the next two lines and then run this script
+OLDCOPYRIGHTTEXT='Copyright (c) 1993-2010'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993-2011'
 #
 # update copyright in all files
 #
@@ -14,15 +23,16 @@ for root in . .. ; do
   fi
 done
 
-if [ -r $root/include/config.h ] ; then
-  echo "$0 should be run only after a make maintainer-clean!"
-  exit 1
-fi
+#if [ -r $root/include/config.h ] ; then
+#  echo "$0 should be run only after a make maintainer-clean!"
+#  exit 1
+#fi
 myname=touchcopyright
 tmpfile=$root/$myname.tmp
 rm -f $tmpfile
+# FIXME: only touch files that have the Subversion svn:eol-style property set.
 # touch myself last
-files="`find $root -type f | grep -v 'png$' | grep -v .svn | grep -v misc/$myname` misc/$myname"
+files="`find $root -type f -not -regex '.*\.svn.*' -not -name \*.png -not -name \*.wav -not -name \*.icns -not -regex '.*src/other/.*' | grep -v misc/$myname` misc/$myname"
 
 # do replacement
 for file in $files; do
