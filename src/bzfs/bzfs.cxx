@@ -6197,7 +6197,12 @@ int main(int argc, char **argv)
     for (peerItr  = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
     {
       if (peerItr->second.deleteMe)
+      {
+	if (peerItr->second.netHandler)
+	  peerItr->second.netHandler->closing();
+
 	toKill.push_back(peerItr->first);
+      }
     }
 
     for (unsigned int j = 0; j < toKill.size(); j++) 
@@ -6239,12 +6244,18 @@ int main(int argc, char **argv)
     for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
     {
       if (timeoutNow > (peerItr->second.lastActivity.getSeconds() + idleTimeout))
+      {	
+	peerItr->second.netHandler->closing();
 	toKill.push_back(peerItr->first);
+      }
     }
     for (unsigned int j = 0; j < toKill.size(); j++) 
     {
-      if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
-	netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
+      NetConnectedPeer &peer = netConnectedPeers[toKill[j]];
+      if (peer.netHandler)
+	delete(peer.netHandler);
+      peer.netHandler = NULL;
+      netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
     }
 
 
