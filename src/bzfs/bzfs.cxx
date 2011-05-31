@@ -4967,13 +4967,19 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 
   NetHandler* netHandler = peer.netHandler;
 
+  size_t headerLen = strlen(BZ_CONNECT_HEADER);
+  size_t readLen = headerLen;
+
   if (peer.apiHandler == NULL && peer.player == -1)
   {
     // they arn't anything yet, see if they have any data
 
+    if (peer.bufferedInput.size() >= headerLen )
+      readLen = 1024;
+
      bool retry = false;
 
-     RxStatus e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
+     RxStatus e = netHandler->receive(readLen,&retry);
      if (retry) // try one more time, just in case it was blocked
      {
        int retries = 1;
@@ -4983,7 +4989,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
        retry = false;
        for ( int t = 0; t < retries; t++)
        {
-	 e = netHandler->receive(strlen(BZ_CONNECT_HEADER),&retry);
+	 e = netHandler->receive(readLen,&retry);
 	 if (!retry)
 	   break;
        }

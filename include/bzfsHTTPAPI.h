@@ -32,19 +32,37 @@ typedef enum
 class BZF_API bzhttp_Request
 {
 public:
+  bzhttp_Request();
+  ~bzhttp_Request();
+
+  bzhttp_eRequestType RequestType;
+  bz_ApiString	URL;
+  bz_ApiString	Resource;
+
+  bz_ApiString	Body;
+
+  void AddHeader ( const char* name, const char* value);
+  const char* GetHeader ( const char* name);
+  const char* GetHeader ( size_t index );
+  size_t GetHeaderCount ();
+
+  void AddParamater ( const char* name, const char* value);
+  const char* GetParamater ( const char* name);
+  const char* GetParamater ( size_t index );
+  size_t GetParamaterCount ();
 
 protected:
-  class Data;
-  Data  *data;
+  void  *pimple;
 };
 
 class BZF_API bzhttp_Responce
 {
 public:
+  bzhttp_Responce();
+  ~bzhttp_Responce();
 
 protected:
-  class Data;
-  Data  *data;
+  void  *pimple;
 };
 
 class BZF_API bzhttp_VDir
@@ -52,6 +70,9 @@ class BZF_API bzhttp_VDir
 public:
   virtual ~bzhttp_VDir(){};
   virtual const char* Name() = 0;
+
+  virtual bool GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce ) = 0;
+  virtual bool SupportPut ( void ){ return false;}
 };
 
 BZF_API bool bzhttp_RegisterVDir (bz_Plugin* plugin, bzhttp_VDir *vdir );
