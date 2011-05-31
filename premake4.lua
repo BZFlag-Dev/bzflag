@@ -180,7 +180,6 @@ if (_ACTION and (_ACTION ~= 'gmake')) then
 end
 
 --------------------------------------------------------------------------------
---------------------------------------------------------------------------------
 
 configuration 'release*'
   defines { 'NDEBUG' }
@@ -248,10 +247,10 @@ end
 do
   local PACKAGES = {}
 
-  local function makepackage(name)
+  local function makepackage(name, libname)
     PACKAGES[name] = {
       name         = name,
-      links        = name,
+      links        = libname,
       libdirs      = false,
       linkoptions  = false,
       defines      = false,
@@ -259,23 +258,26 @@ do
       buildoptions = false,
     }
   end
-  makepackage('cares')
-  makepackage('curl')
-  makepackage('curses')
-  makepackage('freetype')
-  makepackage('ftgl')
-  makepackage('regex')
-  makepackage('SDL')
-  makepackage('GLEW')
-  makepackage('GL')
-  makepackage('GLU')
-  makepackage('X11')
-  makepackage('z')
-  makepackage('dl')
-  makepackage('rt')
+  makepackage('ares',     'cares')
+  makepackage('curl',     'curl')
+  makepackage('curses',   'curses')
+  makepackage('freetype', 'freetype')
+  makepackage('ftgl',     'ftgl')
+  makepackage('regex',    nil)  -- often in libc
+  makepackage('sdl',      'SDL')
+  makepackage('glew',     'GLEW')
+  makepackage('gl',       'GL')
+  makepackage('glu',      'GLU')
+  makepackage('x11',      'X11')
+  makepackage('zlib',     'z')
+  makepackage('dl',       'dl')
+  makepackage('rt',       'rt')
 
 
-  PACKAGES.regex.links = '' -- built into libc
+  if (_ACTION:match('^vs')) then
+    PACKAGES.dl.links = nil
+    PACKAGES.rt.links = nil
+  end
 
 
   function getpackage(name)

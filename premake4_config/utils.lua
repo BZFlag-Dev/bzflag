@@ -94,10 +94,11 @@ function os.testcode(t)
   end
 
   local incdirs = t.includedirs or {}
-  local libdirs = t.libdirs or {}
+  local libdirs = t.libdirs     or {}
+  local libs    = t.libs        or {}
   if (isstring(incdirs)) then incdirs = { incdirs } end
   if (isstring(libdirs)) then libdirs = { libdirs } end
-  local libs =''
+  if (isstring(libs))    then libs    = { libs }    end
 
   assert(isstring(includes), 'invalid "includes" parameter')
 
@@ -127,6 +128,7 @@ function os.testcode(t)
   cmd = cmd .. ' ' .. tmpCpp
   for _, dir in ipairs(incdirs) do cmd = cmd .. ' ' .. '-I' .. dir end
   for _, dir in ipairs(libdirs) do cmd = cmd .. ' ' .. '-L' .. dir end
+  for _, lib in ipairs(libs)    do cmd = cmd .. ' ' .. '-l' .. lib end
   cmd = cmd .. ' ' .. (t.buildoptions or '')
 
   if (-1 > 0) then

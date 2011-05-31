@@ -14,8 +14,8 @@ bzexec_project 'bzfs'
     'liblua',
   }
   linkpackage('curl')
-  linkpackage('cares')
-  linkpackage('z')
+  linkpackage('ares')
+  linkpackage('zlib')
   linkpackage('dl')
   linkpackage('rt')
 

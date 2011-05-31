@@ -226,21 +226,21 @@ if (not CONFIG.BUILD_FREETYPE) then
     cflags = '-I/usr/include/freetype2'
   end
 
-  local incdir = cflags:match('-I(.*)')
+  local incdir = cflags:match('-I(%S+)')
   local success = os.testcode {
     code = [[
-      FT_Library ftliby
+      FT_Library ftlib;
       (void)FT_Init_FreeType(&ftlib);
     ]],
     includes = {
       '<ft2build.h>',
       'FT_FREETYPE_H',
     },
-    buildoptions = '`freetype-config --cflags` -lftgl'
+    libs = 'freetype',
+    buildoptions = '`freetype-config --cflags`' -- FIXME
   }
-  if (not success) then
-    CONFIG.BUILD_FTGL = true
-  end
+
+  CONFIG.BUILD_FREETYPE = not success
 end
 
 if (CONFIG.BUILD_FREETYPE) then
@@ -272,12 +272,10 @@ if (not CONFIG.BUILD_FTGL) then
       //(void)ftglCreateBitmapFontFromMem(fake, sizeof(fake));
     ]],
     includes = { '<FTGL/ftgl.h>' },
-    buildoptions = '`freetype-config --cflags` -lftgl'
+    buildoptions = '`freetype-config --cflags` -lftgl' -- FIXME
   }
 
-  if (not success) then
-    CONFIG.BUILD_FTGL = true
-  end
+  CONFIG.BUILD_FTGL = not success
 end
 
 if (CONFIG.BUILD_FTGL) then
@@ -285,6 +283,111 @@ if (CONFIG.BUILD_FTGL) then
   ftgl.links = 'libftgl'
   ftgl.includedirs = {
     TOPDIR .. '/other_src/ftgl/src/FTGL',
+  }
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  ARES
+--
+
+if (not CONFIG.BUILD_ARES) then
+  local success = os.testcode {
+    code = [[
+      ares_channel ac;
+      (void)ares_init(&ac);
+    ]],
+    includes = { '<ares.h>' },
+    libs = 'cares',
+  }
+
+  CONFIG.BUILD_ARES = not success
+end
+
+if (CONFIG.BUILD_ARES) then
+  local ares = getpackage('ares')
+  ares.links = 'libares'
+  ares.includedirs = {
+    TOPDIR .. '/other_src/ares/',
+  }
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  CURL
+--
+
+if (not CONFIG.BUILD_CURL) then
+  local success = os.testcode {
+    code = [[
+      (void)curl_global_init(0);
+    ]],
+    includes = { '<curl/curl.h>' },
+    libs = 'curl',
+  }
+
+  CONFIG.BUILD_CURL = not success
+end
+
+if (CONFIG.BUILD_CURL) then
+  local curl = getpackage('curl')
+  curl.links = 'libcurl'
+  curl.includedirs = {
+    TOPDIR .. '/other_src/curl/include',
+  }
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  ZLIB
+--
+
+if (not CONFIG.BUILD_ZLIB) then
+  local success = os.testcode {
+    code = [[
+      (void)compressBound(1);
+    ]],
+    includes = { '<zlib.h>' },
+    libs = 'z',
+  }
+
+  CONFIG.BUILD_ZLIB = not success
+end
+
+if (CONFIG.BUILD_ZLIB) then
+  local zlib = getpackage('zlib')
+  zlib.links = 'libz'
+  zlib.includedirs = {
+    TOPDIR .. '/other_src/zlib/',
+  }
+end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--
+--  REGEX
+--
+
+if (not CONFIG.BUILD_ZLIB) then
+  local success = os.testcode {
+    code = [[
+      (void)compressBound(1);
+    ]],
+    includes = { '<zlib.h>' },
+    libs = 'z',
+  }
+
+  CONFIG.BUILD_ZLIB = not success
+end
+
+if (CONFIG.BUILD_ZLIB) then
+  local regex = getpackage('cregex')
+  regex.links = 'libregex'
+  regex.includedirs = {
+    TOPDIR .. '/other_src/regex/',
   }
 end
 

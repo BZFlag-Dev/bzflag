@@ -30,8 +30,8 @@ bzexec_project 'bzadmin'
   }
   linkpackage('curses')
   linkpackage('curl')
-  linkpackage('cares')
-  linkpackage('z')
+  linkpackage('ares')
+  linkpackage('zlib')
   linkpackage('dl')
   linkpackage('rt')
 

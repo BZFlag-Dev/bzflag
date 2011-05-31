@@ -34,16 +34,16 @@ bzexec_project 'bzrobots'
     'libDate',
     'liblua',
   }
-  linkpackage('SDL')
+  linkpackage('sdl')
   linkpackage('ftgl')
   linkpackage('freetype')
-  linkpackage('GLEW')
-  linkpackage('GLU')
-  linkpackage('GL')
-  linkpackage('X11')
+  linkpackage('glew')
+  linkpackage('glu')
+  linkpackage('gl')
+  linkpackage('x11')
   linkpackage('curl')
-  linkpackage('cares')
-  linkpackage('z')
+  linkpackage('ares')
+  linkpackage('zlib')
   linkpackage('dl')
   linkpackage('rt')
 
