@@ -379,6 +379,10 @@ namespace TextUtils {
    *  make last char a '~' if truncation took place
    */
   std::string str_trunc_continued (const std::string &text, int len);
+
+  /** find the first instance of a substring,
+  */
+  size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset = 0);
 }
 
 

@@ -328,6 +328,28 @@ namespace TextUtils
     return retstr;
   }
 
+  size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset)
+  {
+    if (findwhat.size()) {
+      for (size_t f = offset; f < findin.size(); f++) {
+	if (findin[f] == findwhat[0]) {
+	  size_t start = f;
+	  for (size_t w = 1; w < findwhat.size(); w++) {
+	    if (f+w > findin.size())
+	      return std::string::npos;
+	    if (findin[f+w] != findwhat[w]) {
+	      f+=w;
+	      w = findwhat.size();
+	    }
+	  }
+	  if (start == f)
+	    return f;
+	}
+      }
+    }
+    return std::string::npos;
+  }
+
 }
 
 // Local Variables: ***
