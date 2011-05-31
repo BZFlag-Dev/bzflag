@@ -1,6 +1,29 @@
 
 print('>>> premake4_freetype.lua is empty <<<')
 
+
+if ((_ACTION == 'gmake') and
+    (os.outputof('whoami'):gsub('\n', '') == 'trepan')) then -- FIXME
+  project 'libfreetype'
+    kind 'StaticLib'
+    language 'C' -- FIXME - should not be required
+    configuration 'vs*'
+      foreignproject 'freetype/msvc/vc8/freetype_static.vcproj'
+      foreigntarget  'freetype/build/freetype_static.lib'
+    configuration 'not vs*'
+      foreignproject    'freetype'
+      foreigntarget     '.libs/libfreetype.a'
+      foreignconfig {
+        'if [ ! -f ./configure ]; then ./autogen.sh; fi;',
+        'if [ ! -f ./Makefile ];  then ./configure;  fi;',
+      }
+      foreignbuild      '$(MAKE) libfreetype.la'
+      foreignclean      '$(MAKE) clean'
+      foreignsuperclean '$(MAKE) distclean'
+  return
+end
+
+
 project   'libfreetype'
   targetname 'freetype'
   hidetarget('true')

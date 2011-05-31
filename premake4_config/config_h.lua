@@ -371,20 +371,21 @@ end
 --  REGEX
 --
 
-if (not CONFIG.BUILD_ZLIB) then
+if (not CONFIG.BUILD_REGEX) then
   local success = os.testcode {
     code = [[
-      (void)compressBound(1);
+      regex_t re;
+      (void)regcomp(&re, ".*", 0);
     ]],
-    includes = { '<zlib.h>' },
-    libs = 'z',
+    includes = { '<regex.h>' },
+    libs = 'c',
   }
 
-  CONFIG.BUILD_ZLIB = not success
+  CONFIG.BUILD_REGEX = not success
 end
 
-if (CONFIG.BUILD_ZLIB) then
-  local regex = getpackage('cregex')
+if (CONFIG.BUILD_REGEX) then
+  local regex = getpackage('regex')
   regex.links = 'libregex'
   regex.includedirs = {
     TOPDIR .. '/other_src/regex/',

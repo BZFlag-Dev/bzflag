@@ -20,8 +20,61 @@
 		return ('%-16s  '):format('<' .. prj.name .. '>')
 	end
 
+	local function makeconcat(x)
+	  if (x) then
+	    return table.concat(x, " \\\n\t")
+    end
+    return nil
+  end
+
+	function premake.make_foreign(prj)
+		if (not prj.foreigntarget) then error("missing foreigntarget parameter") end
+		if (not prj.foreignbuild)  then error("missing foreignbuild parameter")  end
+		if (not prj.foreignclean)  then error("missing foreignclean parameter")  end
+
+		local sln        = prj.solution
+		local dir        = prj.foreignproject
+		local target     = prj.foreigntarget
+		local build      = makeconcat(prj.foreignbuild)
+		local config     = makeconcat(prj.foreignconfig)
+		local clean      = makeconcat(prj.foreignclean)
+		local superclean = makeconcat(prj.foreignsuperclean)
+
+		if (-1 > 0) then -- FIXME - print's
+      print("slnbasedir",  sln.basedir)
+      print("prjlocation", prj.location)
+      print("foreignproject",    dir)
+      print("foreigntarget",     target)
+      print("foreignconfig",     config)
+      print("foreignbuild",      build)
+      print("foreignclean",      clean)
+      print("foreignsuperclean", superclean)
+    end
+
+		if (config) then
+  		local dirfromtop = path.getrelative(sln.basedir, path.join(prj.location, prj.foreignproject))
+		  print(("-"):rep(80))
+			print("Configuring " .. prj.name)
+			os.executef("cd '%s' ; %s", dirfromtop, config)
+		  print(("-"):rep(80))
+		end
+
+		_p(".PHONY: clean superclean")
+		_p("%s:", path.join(dir, target))
+		_p("\tcd '%s' ; \\\n\t%s", dir, build)
+		if (clean) then
+			_p("clean:")
+			_p("\tcd '%s' ; \\\n\t%s", dir, clean)
+		end
+	end
+
 
 	function premake.make_cpp(prj)
+		if (prj.foreignproject) then
+			premake.make_foreign(prj)
+			return
+		end
+
 		-- prefix each command with prj_tag for multi-job builds
 		local prj_tag = get_project_tag(prj)
 

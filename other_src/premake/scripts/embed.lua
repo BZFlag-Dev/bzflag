@@ -16,17 +16,17 @@
 		-- strip any CRs
 		s = s:gsub("[\r]", "")
 
-		-- strip out comments
-		s = s:gsub("\n%-%-[^\n]*", "")
+		-- strip out comments  (BZFlag customization, keep all \n's)
+		s = s:gsub("\n%-%-[^\n]*", "\n")
 
 		-- escape backslashes
 		s = s:gsub("\\", "\\\\")
 
-		-- strip duplicate line feeds
-		s = s:gsub("\n+", "\n")
+		-- strip duplicate line feeds  (BZFlag customization, keep all \n's)
+--		s = s:gsub("\n+", "\n")
 
-		-- strip out leading comments
-		s = s:gsub("^%-%-\n", "")
+		-- strip out leading comments  (BZFlag customization, kept all \n's)
+		s = s:gsub("^%-%-\n", "\n")
 
 		-- escape line feeds
 		s = s:gsub("\n", "\\n")

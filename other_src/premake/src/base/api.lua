@@ -117,6 +117,42 @@
 			}
 		},
 
+		foreignbuild =
+		{
+			kind = "list",
+			scope = "container",
+		},
+
+		foreignclean =
+		{
+			kind = "list",
+			scope = "container",
+		},
+
+		foreignconfig =
+		{
+			kind = "list",
+			scope = "container",
+		},
+
+		foreignsuperclean =
+		{
+			kind = "list",
+			scope = "container",
+		},
+
+		foreignproject =
+		{
+			kind = "path",
+			scope = "container",
+		},
+
+		foreigntarget =
+		{
+			kind = "path",
+			scope = "container",
+		},
+
 		framework =
 		{
 			kind = "string",
