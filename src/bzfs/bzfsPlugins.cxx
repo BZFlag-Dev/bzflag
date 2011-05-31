@@ -29,6 +29,10 @@
 
 #include "TextUtils.h"
 
+// for HTTP
+void InitHTTP();
+void KillHTTP();
+
 #ifdef _WIN32
 std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
@@ -391,6 +395,8 @@ bool unloadPlugin ( std::string plugin )
 
 void unloadPlugins ( void )
 {
+  KillHTTP();
+
   for (unsigned int i = 0; i < vPluginList.size();i++)
     unload1Plugin(i);
   vPluginList.clear();
@@ -530,29 +536,31 @@ DynamicPluginCommands	command;
 
 void initPlugins ( void )
 {
-	customPluginMap.clear();
+  customPluginMap.clear();
 
-	registerCustomSlashCommand("loadplugin",&command);
-	registerCustomSlashCommand("unloadplugin",&command);
-	registerCustomSlashCommand("listplugins",&command);
+  registerCustomSlashCommand("loadplugin",&command);
+  registerCustomSlashCommand("unloadplugin",&command);
+  registerCustomSlashCommand("listplugins",&command);
+
+  InitHTTP();
 }
 
 bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )
 {
-	std::string ext = TextUtils::tolower(exte);
-	customPluginMap[ext] = handler;
-	return true;
+  std::string ext = TextUtils::tolower(exte);
+  customPluginMap[ext] = handler;
+  return true;
 }
 
 bool removeCustomPluginHandler ( std::string ext, bz_APIPluginHandler *handler )
 {
-	tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
+  tmCustomPluginMap::iterator itr = customPluginMap.find(TextUtils::tolower(ext));
 
-	if (itr == customPluginMap.end() || itr->second != handler)
-		return false;
+  if (itr == customPluginMap.end() || itr->second != handler)
+    return false;
 
-	customPluginMap.erase(itr);
-	return true;
+  customPluginMap.erase(itr);
+  return true;
 }
 
 

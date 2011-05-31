@@ -2519,6 +2519,18 @@
 				RelativePath="..\..\src\bzfs\ServerSidePlayer.cxx"
 				>
 			</File>
+			<Filter
+				Name="HTTP"
+				>
+				<File
+					RelativePath="..\..\src\bzfs\bzfsHTTPAPI.cxx"
+					>
+				</File>
+				<File
+					RelativePath="..\..\include\bzfsHTTPAPI.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>
