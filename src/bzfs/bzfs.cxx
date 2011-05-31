@@ -5063,7 +5063,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
   {
     if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
     {
-      logDebugMessage(2,"Peer %s connection timeout with data \"%s\"\n",peer.netHandler->getTargetIP(),peer.bufferedInput.c_str());
+      logDebugMessage(2,"Peer %s connection timeout with data \"%s\"\n",peer.netHandler->getTargetIP(),TextUtils::escape_nonprintable(peer.bufferedInput,'"').c_str());	// FIXME: sanitize data
       std::string discoBuffer = getServerVersion();
       discoBuffer += "\r\n\r\n";
       peer.sendChunks.push_back(discoBuffer);
