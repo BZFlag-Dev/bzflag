@@ -49,7 +49,7 @@ public:
   void setTimeCondition(timeCondition condition, time_t &t);
   void setInterface(const std::string interfaceIP);
   void setUserAgent(const std::string userAgent);
-  void setDNSCachingTime(int time);
+  void setDNSCachingTime(long time);
 
   void addFormData(const char *key, const char *value);
 

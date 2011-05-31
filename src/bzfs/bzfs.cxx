@@ -74,7 +74,7 @@ static bool dontWait = true;
 // every ListServerReAddTime server add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
-static const float ListServerReAddTime = 30.0f * 60.0f;
+static const float ListServerReAddTime = 15.0f * 60.0f;
 
 static const float FlagHalfLife = 10.0f;
 
@@ -772,7 +772,7 @@ void publicize()
     // list server initialization
     for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); i++) {
       listServerLink = new ListServerLink(i->c_str(),
-	    clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups);
+	    clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups, ListServerReAddTime*2.0f); /* recheck dns every other re-add */
       listServerLinksCount++;
     }
   } else {

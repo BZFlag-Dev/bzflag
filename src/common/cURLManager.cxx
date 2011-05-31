@@ -434,7 +434,7 @@ void cURLManager::addFormData(const char *key, const char *value)
     logDebugMessage(1,"addFormData error %d : %s\n", result, errorBuffer);
 }
 
-void cURLManager::setDNSCachingTime(int time)
+void cURLManager::setDNSCachingTime(long time)
 {
   CURLcode result;
 
