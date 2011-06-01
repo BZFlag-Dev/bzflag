@@ -554,7 +554,7 @@ void bz_APIStringList::push_back ( const std::string &value )
   data->list.push_back(bz_ApiString(value));
 }
 
-bz_ApiString bz_APIStringList::get ( unsigned int i )
+bz_ApiString bz_APIStringList::get ( unsigned int i ) const
 {
   if (i >= data->list.size())
     return bz_ApiString("");
@@ -583,7 +583,7 @@ bz_APIStringList& bz_APIStringList::operator = ( const std::vector<std::string>&
   return *this;
 }
 
-unsigned int bz_APIStringList::size ( void )
+unsigned int bz_APIStringList::size ( void ) const
 {
   return data->list.size();
 }

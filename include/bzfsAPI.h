@@ -203,13 +203,13 @@ public:
 
   void push_back ( const bz_ApiString &value );
   void push_back ( const std::string &value );
-  bz_ApiString get ( unsigned int i );
+  bz_ApiString get ( unsigned int i ) const;
 
   const bz_ApiString& operator[] (unsigned int i) const;
   bz_APIStringList& operator = ( const bz_APIStringList& r );
   bz_APIStringList& operator = ( const std::vector<std::string>& r );
 
-  unsigned int size ( void );
+  unsigned int size ( void ) const;
   void clear ( void );
 
   void tokenize ( const char* in, const char* delims, int maxTokens = 0, bool useQuotes = false);
