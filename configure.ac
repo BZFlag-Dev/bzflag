@@ -145,12 +145,6 @@ AC_ARG_ENABLE(bzrobots, [  --disable-bzrobots       build bzrobots client])
 # do we want bzrobots python support?
 AC_ARG_ENABLE(bzrobots_python, [  --enable-bzrobots-python       build bzrobots client w/ python support])
 
-# build a binary set to stop functioning after some date
-AC_ARG_ENABLE(timebomb, [  --enable-timebomb       build exp Date])
-if test x$enable_timebomb = xyes; then
-    AC_DEFINE(TIME_BOMB, "3/13/1998", [Time Bomb expiration])
-fi
-
 AC_ARG_ENABLE(robots, [  --disable-robots        disable robots])
 if test x$enable_robots != xno; then
     AC_DEFINE(ROBOT, 1, [Enabling Robots])
