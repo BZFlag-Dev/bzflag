@@ -114,8 +114,8 @@ class BZF_API bzhttp_VDir
 public:
   bzhttp_VDir();
   virtual ~bzhttp_VDir();
-  virtual const char* Name() = 0;
-  virtual const char* Description(){return NULL;}
+  virtual const char* VDirName() = 0;
+  virtual const char* VDirDescription(){return NULL;}
 
   virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce ) = 0;
   virtual bool SupportPut ( void ){ return false;}

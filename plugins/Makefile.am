@@ -9,6 +9,7 @@ SUBDIRS = \
 	chathistory \
 	customflagsample \
 	flagStay \
+	fastmap \
 	hiddenAdmin \
 	HTTPServer \
 	keepaway \

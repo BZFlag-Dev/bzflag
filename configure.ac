@@ -1174,6 +1174,7 @@ AC_CONFIG_FILES([
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
 	plugins/flagStay/Makefile
+	plugins/fastmap/Makefile
 	plugins/hiddenAdmin/Makefile
 	plugins/HTTPServer/Makefile
 	plugins/keepaway/Makefile

@@ -156,7 +156,7 @@ BZF_API bool bzhttp_RegisterVDir (bz_Plugin* plugin, bzhttp_VDir *vdir )
     return false;
   VDir dir;
 
-  dir.name =  TextUtils::toupper(vdir->Name());
+  dir.name =  TextUtils::toupper(vdir->VDirName());
   if (VDirs.find(dir.name) != VDirs.end())
     return false;
 
@@ -175,7 +175,7 @@ BZF_API bool bzhttp_RemoveVDir (bz_Plugin* plugin, bzhttp_VDir *vdir )
     return false;
   VDir dir;
 
-  std::string name =  TextUtils::toupper(vdir->Name());
+  std::string name =  TextUtils::toupper(vdir->VDirName());
 
   std::map<std::string,VDir>::iterator itr = VDirs.find(dir.name);
   if (itr == VDirs.end())
@@ -733,10 +733,16 @@ public:
       pageBuffer += TextUtils::format("Content-Length: %d\n", data->Body.size());
 
       pageBuffer += "Content-Type: ";
-      if (responce.DocumentType == eOther && responce.MimeType.size())
-	pageBuffer += responce.MimeType.c_str();
+      if (responce.ReturnCode == e200OK)
+      {
+	if (responce.DocumentType == eOther && responce.MimeType.size())
+	  pageBuffer += responce.MimeType.c_str();
+	else
+	  pageBuffer += getMimeType(responce.DocumentType);
+      }
       else
-	pageBuffer += getMimeType(responce.DocumentType);
+	pageBuffer += getMimeType(eHTML);
+
       pageBuffer += "\n";
     }
 
@@ -919,7 +925,7 @@ public:
     AddStandardTypes();
   }
 
-  virtual const char* Name(){return "INDEX";}
+  virtual const char* VDirName(){return "INDEX";}
 
   virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
   {
@@ -934,8 +940,8 @@ public:
     {
       std::map<std::string,VDir>::iterator itr = VDirs.begin();
       {
-	std::string vdirName = itr->second.vdir->Name();
-	std::string vDirDescription = itr->second.vdir->Description();
+	std::string vdirName = itr->second.vdir->VDirName();
+	std::string vDirDescription = itr->second.vdir->VDirDescription();
 	std::string line =  "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br/>";
 	responce.AddBodyData(line.c_str());
       }
