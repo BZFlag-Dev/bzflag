@@ -1,5 +1,32 @@
 
-print('>>> premake4_curl.lua is empty <<<')
+
+if ((_ACTION == 'gmake') and
+    (os.outputof('whoami'):gsub('\n', '') == 'trepan')) then -- FIXME
+  project 'libcurl'
+    kind 'StaticLib'
+--    language 'C' -- FIXME - should not be required
+--    configuration 'vs*'
+--      foreignproject 'curl/msvc/vc8/curl_static.vcproj'
+--      foreigntarget  'curl/build/curl_static.lib'
+    configuration 'not vs*'
+      foreignproject 'curl'
+      foreigntarget  'lib/.libs/libcurl.a'
+      foreignconfig {
+        'if [ ! -f ./configure ]; then ./buildconf; fi;',
+        'if [ ! -f ./Makefile ];  then ./configure; fi;',
+      }
+      foreignbuild      'cd lib/ ; $(MAKE) libcurl.la'
+      foreignclean      '$(MAKE) clean'
+      foreignsuperclean '$(MAKE) distclean'
+
+      targetname      'lib/.libs/libcurl.a' -- FIXME - should not be required
+      targetprefix    ''                    -- FIXME - should not be required
+      targetsuffix    ''                    -- FIXME - should not be required
+      targetextension ''                    -- FIXME - should not be required
+  return
+end
+
+
 
 project   'libcurl'
   targetname 'curl'

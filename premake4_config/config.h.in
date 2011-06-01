@@ -1,0 +1,442 @@
+/* src/include/config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define if building universal (internal helper macro) */
+#undef AC_APPLE_UNIVERSAL_BUILD
+
+/* Use new GL Kit for BeOS */
+#undef BEOS_USE_GL2
+
+/* Define to 1 if your DirectInput headers and libraries are broken or
+   mismatched. */
+#undef BROKEN_DINPUT
+
+/* Build the included ares lookup library */
+#undef BUILD_ARES
+
+/* Build the included curl library */
+#undef BUILD_CURL
+
+/* Build the included freetype2 library */
+#undef BUILD_FREETYPE
+
+/* Build the included ftgl library */
+#undef BUILD_FTGL
+
+/* Build the included regular expression library */
+#undef BUILD_REGEX
+
+/* Build the included zlib compression library */
+#undef BUILD_ZLIB
+
+/* Data file directory */
+#undef BZFLAG_DATA
+
+/* BZFlag System Environment */
+#undef BZ_BUILD_OS
+
+/* Enable plugins */
+#undef BZ_PLUGINS
+
+/* Debugging enabled */
+/* #undef DEBUG -- use 'premake4 config=debug gmake' */
+
+/* Debug Rendering */
+/* #undef DEBUG_RENDERING -- use 'premake4 config=debug gmake' */
+
+/* hosts is in /etc/inet/ */
+#undef ETC_INET
+
+/* Half rate Audio */
+#undef HALF_RATE_AUDIO
+
+/* libm includes acosf */
+#undef HAVE_ACOSF
+
+/* Define if libcares includes ares_library_init. */
+#undef HAVE_ARES_LIBRARY_INIT
+
+/* libm includes asinf */
+#undef HAVE_ASINF
+
+/* libm includes atan2f */
+#undef HAVE_ATAN2F
+
+/* libm includes atanf */
+#undef HAVE_ATANF
+
+/* Define to 1 if you have the `atexit' function. */
+#undef HAVE_ATEXIT
+
+/* Define to 1 if you have the <bstring.h> header file. */
+#undef HAVE_BSTRING_H
+
+/* libm includes ceilf */
+#undef HAVE_CEILF
+
+/* Define to 1 if you have the `CGLGetCurrentContext' function. */
+#undef HAVE_CGLGETCURRENTCONTEXT
+
+/* Define to 1 if you have the <cmath> header file. */
+#undef HAVE_CMATH
+
+/* libm includes cosf */
+#undef HAVE_COSF
+
+/* Define to 1 if you have the <cstdio> header file. */
+#undef HAVE_CSTDIO
+
+/* Define to 1 if you have the <cstdlib> header file. */
+#undef HAVE_CSTDLIB
+
+/* Define to 1 if you have the <cstring> header file. */
+#undef HAVE_CSTRING
+
+/* Use the header file curses.h */
+#undef HAVE_CURSES_H
+
+/* tolower and toupper are not functions */
+#undef HAVE_DEFINED_TOLOWER
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if you have the <dsound.h> header file. */
+#undef HAVE_DSOUND_H
+
+/* libm includes expf */
+#undef HAVE_EXPF
+
+/* libm includes fabsf */
+#undef HAVE_FABSF
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
+/* we appear to have working support for directional force feedback effects */
+#undef HAVE_FF_EFFECT_DIRECTIONAL
+
+/* we appear to have working support for rumble force feedback effects */
+#undef HAVE_FF_EFFECT_RUMBLE
+
+/* libm includes floorf */
+#undef HAVE_FLOORF
+
+/* libm includes fmodf */
+#undef HAVE_FMODF
+
+/* Define to 1 if you have the `hstrerror' function. */
+#undef HAVE_HSTRERROR
+
+/* libm includes hypotf */
+#undef HAVE_HYPOTF
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if `isnan' is available */
+#undef HAVE_ISNAN
+
+/* Define to 1 if you have the `bind' library (-lbind). */
+#undef HAVE_LIBBIND
+
+/* Define to 1 if you have a functional curl library. */
+#undef HAVE_LIBCURL
+
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
+/* Define to 1 if you have the `socket' library (-lsocket). */
+#undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the `winmm' library (-lwinmm). */
+#undef HAVE_LIBWINMM
+
+/* Define to 1 if you have the `ws2_32' library (-lws2_32). */
+#undef HAVE_LIBWS2_32
+
+/* Define to 1 if you have the <linux/input.h> header file. */
+#undef HAVE_LINUX_INPUT_H
+
+/* libm includes log10f */
+#undef HAVE_LOG10F
+
+/* libm includes logf */
+#undef HAVE_LOGF
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Use the header file ncurses.h */
+#undef HAVE_NCURSES_H
+
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
+/* libm includes powf */
+#undef HAVE_POWF
+
+/* Define to 1 if you have the <process.h> header file. */
+#undef HAVE_PROCESS_H
+
+/* posix-compliant threading is available */
+#undef HAVE_PTHREADS
+
+/* Define to 1 if you have the '<regex.h>' header file */
+#undef HAVE_REGEX_H
+
+/* Define to 1 if you have the <sched.h> header file. */
+#undef HAVE_SCHED_H
+
+/* Define to 1 if you have the `sched_setaffinity' function. */
+#undef HAVE_SCHED_SETAFFINITY
+
+/* Using SDL */
+#undef HAVE_SDL
+
+/* Using SDL 1.3 API */
+#undef HAVE_SDL_1_3
+
+/* Define to 1 if you have the <SDL/SDL.h> header file. */
+#undef HAVE_SDL_SDL_H
+
+/* Define to 1 if you have the `select' function. */
+#undef HAVE_SELECT
+
+/* libm includes sinf */
+#undef HAVE_SINF
+
+/* Define to 1 if you have the `Sleep' function. */
+#undef HAVE_SLEEP
+
+/* Define to 1 if you have the `snooze' function. */
+#undef HAVE_SNOOZE
+
+/* if socklen_t is defined, make note of it */
+#undef HAVE_SOCKLEN_T
+
+/* libm includes sqrtf */
+#undef HAVE_SQRTF
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have a conforming std::count, otherwise old version of
+   count template is assumed */
+#undef HAVE_STD__COUNT
+
+/* Define to 1 if `std::isnan' is available */
+#undef HAVE_STD__ISNAN
+
+/* Define to 1 if you have a conforming std::max */
+#undef HAVE_STD__MAX
+
+/* Define to 1 if you have a conforming std::min */
+#undef HAVE_STD__MIN
+
+/* Define to 1 if the system has the type `std::wstring'. */
+#undef HAVE_STD__WSTRING
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/param.h> header file. */
+#undef HAVE_SYS_PARAM_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* libm includes tanf */
+#undef HAVE_TANF
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `usleep' function. */
+#undef HAVE_USLEEP
+
+/* Define to 1 if you have the <values.h> header file. */
+#undef HAVE_VALUES_H
+
+/* Define to 1 if you have the `vsnprintf' function. */
+#undef HAVE_VSNPRINTF
+
+/* Define to 1 if you have the `WaitForSingleObject' function. */
+#undef HAVE_WAITFORSINGLEOBJECT
+
+/* Define to 1 if you have the `wglGetCurrentContext' function. */
+#undef HAVE_WGLGETCURRENTCONTEXT
+
+/* Define to 1 if you have the <X11/extensions/xf86vmode.h> header file. */
+#undef HAVE_X11_EXTENSIONS_XF86VMODE_H
+
+/* Use the header file xcurses.h */
+#undef HAVE_XCURSES_H
+
+/* Define to 1 if you have the `_stricmp' function. */
+#undef HAVE__STRICMP
+
+/* Define to 1 if you have the `_strnicmp' function. */
+#undef HAVE__STRNICMP
+
+/* Define to 1 if you have the `_vsnprintf' function. */
+#undef HAVE__VSNPRINTF
+
+/* Defined if libcurl supports AsynchDNS */
+/* #undef LIBCURL_FEATURE_ASYNCHDNS -- unused */
+
+/* Defined if libcurl supports IDN */
+/* #undef LIBCURL_FEATURE_IDN -- unused */
+
+/* Defined if libcurl supports IPv6 */
+/* #undef LIBCURL_FEATURE_IPV6 -- unused */
+
+/* Defined if libcurl supports KRB4 */
+/* #undef LIBCURL_FEATURE_KRB4 -- unused */
+
+/* Defined if libcurl supports libz */
+/* #undef LIBCURL_FEATURE_LIBZ -- unused */
+
+/* Defined if libcurl supports NTLM */
+/* #undef LIBCURL_FEATURE_NTLM -- unused */
+
+/* Defined if libcurl supports SSL */
+/* #undef LIBCURL_FEATURE_SSL -- unused */
+
+/* Defined if libcurl supports SSPI */
+/* #undef LIBCURL_FEATURE_SSPI -- unused */
+
+/* Defined if libcurl supports DICT */
+/* #undef LIBCURL_PROTOCOL_DICT -- unused */
+
+/* Defined if libcurl supports FILE */
+/* #undef LIBCURL_PROTOCOL_FILE -- unused */
+
+/* Defined if libcurl supports FTP */
+/* #undef LIBCURL_PROTOCOL_FTP -- unused */
+
+/* Defined if libcurl supports FTPS */
+/* #undef LIBCURL_PROTOCOL_FTPS -- unused */
+
+/* Defined if libcurl supports HTTP */
+/* #undef LIBCURL_PROTOCOL_HTTP -- unused */
+
+/* Defined if libcurl supports HTTPS */
+/* #undef LIBCURL_PROTOCOL_HTTPS -- unused */
+
+/* Defined if libcurl supports LDAP */
+/* #undef LIBCURL_PROTOCOL_LDAP -- unused */
+
+/* Defined if libcurl supports TELNET */
+/* #undef LIBCURL_PROTOCOL_TELNET -- unused */
+
+/* Defined if libcurl supports TFTP */
+/* #undef LIBCURL_PROTOCOL_TFTP -- unused */
+
+/* Define to the sub-directory in which libtool stores uninstalled libraries.
+   */
+#undef LT_OBJDIR
+
+/* Debugging disabled */
+/* #undef NDEBUG -- use 'premake4 config=release gmake' */
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Enabling Robots */
+#undef ROBOT
+
+/* sizeof double */
+#undef SIZEOF_DOUBLE
+
+/* sizeof float */
+#undef SIZEOF_FLOAT
+
+/* sizeof int */
+#undef SIZEOF_INT
+
+/* sizeof long double */
+#undef SIZEOF_LONG_DOUBLE
+
+/* sizeof long int */
+#undef SIZEOF_LONG_INT
+
+/* sizeof long long int */
+#undef SIZEOF_LONG_LONG_INT
+
+/* sizeof short int */
+#undef SIZEOF_SHORT_INT
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Sun OpenGL No Macro Vertex */
+#undef SUN_OGL_NO_VERTEX_MACROS
+
+/* SWIG version in BCD form */
+#undef SWIG_VERSION_BCD
+
+/* SWIG version string */
+#undef SWIG_VERSION_STR
+
+/* Time Bomb expiration */
+#undef TIME_BOMB
+
+/* Version number of package */
+#undef VERSION
+
+/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
+   significant byte first (like Motorola and SPARC, unlike Intel). */
+#if defined AC_APPLE_UNIVERSAL_BUILD
+# if defined __BIG_ENDIAN__
+#  define WORDS_BIGENDIAN 1
+# endif
+#else
+# ifndef WORDS_BIGENDIAN
+#  undef WORDS_BIGENDIAN
+# endif
+#endif
+
+/* XFree86 Video Mode Extension */
+#undef XF86VIDMODE_EXT
+
+/* Define to 1 if the X Window System is missing or not being used. */
+#undef X_DISPLAY_MISSING
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* Define curl_free() as free() if our version of curl lacks curl_free. */
+#undef curl_free
+
+/* type to use in place of socklen_t if not defined */
+#undef socklen_t

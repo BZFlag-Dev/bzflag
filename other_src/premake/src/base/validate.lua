@@ -27,15 +27,19 @@
 
 			for prj in premake.solution.eachproject(sln) do
 
-				-- every project must have a language
-				if (not prj.language) then
-					return nil, "project '" ..prj.name .. "' needs a language"
-				end
+				if (prj.foreignproject) then
+					prj.target = prg.foreign.target
+				else
+					-- every (non-foreign) project must have a language
+					if (not prj.language) then
+						return nil, "project '" ..prj.name .. "' needs a language"
+					end
 
-				-- and the action must support it
-				if (action.valid_languages) then
-					if (not table.contains(action.valid_languages, prj.language)) then
-						return nil, "the " .. action.shortname .. " action does not support " .. prj.language .. " projects"
+					-- and the action must support it
+					if (action.valid_languages) then
+						if (not table.contains(action.valid_languages, prj.language)) then
+							return nil, "the " .. action.shortname .. " action does not support " .. prj.language .. " projects"
+						end
 					end
 				end
 

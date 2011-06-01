@@ -58,58 +58,7 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local config_h = {
-  etc_inet_hosts = nil, -- used by ares
-
-  half_rate_audio = nil, -- linux, cygwin, mingw32
-
-  is_bigendian   = nil,
-  is_ansi_const  = nil,
-  socklen_t_type = nil,
---[[
-AC_APPLE_UNIVERSAL_BUILD -- macosx
-BEOS_USE_GL2
-BROKEN_DINPUT
-
-HAVE_FF_EFFECT_DIRECTIONAL
-HAVE_FF_EFFECT_RUMBLE
-
-HAVE_PTHREADS
-
-HAVE_STD__COUNT
-HAVE_STD__MAX
-HAVE_STD__MIN
-HAVE_STD__WSTRING
-
-HAVE_DEFINED_TOLOWER -- beos
-
-HAVE_SLEEP
-
-HAVE_WGLGETCURRENTCONTEXT
-HAVE_WAITFORSINGLEOBJECT
-HAVE__STRICMP
-HAVE__STRNICMP
-HAVE__VSNPRINTF
-HAVE_ATEXIT
-HAVE_HSTRERROR
-HAVE_SCHED_SETAFFINITY
-HAVE_SELECT
-HAVE_SNOOZE
-HAVE_USLEEP
-HAVE_VSNPRINTF
-
-HAVE_X11_EXTENSIONS_XF86VMODE_H
-
-LIBCURL_FEATURE_ASYNCHDNS
-LIBCURL_FEATURE_IDN
-LIBCURL_FEATURE_IPV6
-LIBCURL_FEATURE_KRB4
-LIBCURL_FEATURE_LIBZ
-...
-
-
---]]
-}
+CONFIG.BZ_BUILD_OS = os.outputof('uname -s'):lower()
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -145,15 +94,102 @@ CONFIG.HAVE_TANF   = test_math_func('tanf')
 
 CONFIG.HAVE_STD__ISNAN = os.testcode {
   code = 'const int dummy = std::isnan(1.0f); (void)dummy;',
-  includes = { '<cmath>' },
+  includes = '<cmath>',
   buildoptions = '-lm',
 }
 
 CONFIG.HAVE_ISNAN = os.testcode {
   code = 'const int dummy = isnan(1.0f); (void)dummy;',
-  includes = { '<math.h>' },
+  includes = '<math.h>',
   buildoptions = '-lm',
 }
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+CONFIG.HAVE_STD__MAX = os.testcode {
+  code = '(void)std::max(0, 1);',
+  includes = '<algorithm>',
+}
+
+CONFIG.HAVE_STD__MIN = os.testcode {
+  code = '(void)std::min(0, 1);',
+  includes = '<algorithm>',
+}
+
+CONFIG.HAVE_STD__COUNT = os.testcode {
+  code = 'const char a[] = "test"; (void)std::count(a, a+4, \'t\');',
+  includes = '<algorithm>',
+}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+CONFIG.HAVE_SELECT = os.testcode {
+  code = '(void)&select;',
+  includes = {
+    '<sys/select.h>',
+    '<sys/time.h>',
+    '<sys/types.h>',
+    '<unistd.h>',
+  },
+}
+
+CONFIG.HAVE_ATEXIT = os.testcode {
+  code = '(void)&atexit;',
+  includes = '<stdlib.h>',
+}
+
+CONFIG.HAVE_SLEEP = os.testcode {
+  code = '(void)&sleep;',
+  includes = '<unistd.h>',
+}
+
+CONFIG.HAVE_USLEEP = os.testcode {
+  code = '(void)&usleep;',
+  includes = '<unistd.h>',
+}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+CONFIG.HAVE__STRICMP = os.testcode {
+  code = '(void)&stricmp;',
+}
+
+CONFIG.HAVE__STRNICMP = os.testcode {
+  code = '(void)&strnicmp;',
+}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+CONFIG.HAVE_VSNPRINTF = os.testcode {
+  code = '(void)&vsnprintf;',
+  includes = '<stdio.h>',
+}
+
+CONFIG.HAVE__VSNPRINTF = os.testcode {
+  code = '(void)&_vsnprintf;',
+  includes = '<stdio.h>',
+}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+CONFIG.HAVE_SCHED_SETAFFINITY = os.testcode {
+  code = '(void)&sched_setaffinity;',
+  includes = '<sched.h>',
+}
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+CONFIG.HAVE_STD__WSTRING = os.testcode {
+  code = '(void)std::wstring();',
+  includes = '<iostream>',
+}
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -161,7 +197,7 @@ CONFIG.HAVE_ISNAN = os.testcode {
 local function test_header(name)
   return os.testcode {
     code = '',
-    includes = { name },
+    includes = name,
     buildoptions = '-E'  -- this is faster, don't need the full build
   }
 end
@@ -186,13 +222,16 @@ CONFIG.HAVE_REGEX_H       = test_header('<regex.h>')
 CONFIG.HAVE_SCHED_H       = test_header('<sched.h>')
 CONFIG.HAVE_SDL_SDL_H     = test_header('<SDL/SDL.h>')
 CONFIG.HAVE_STDINT_H      = test_header('<stdint.h>')
+CONFIG.HAVE_STRING_H      = test_header('<string.h>')
+CONFIG.HAVE_STRINGS_H     = test_header('<strings.h>')
+CONFIG.HAVE_STDLIB_H      = test_header('<stdlib.h>')
 CONFIG.HAVE_SYS_PARAM_H   = test_header('<sys/param.h>')
 CONFIG.HAVE_SYS_SOCKET_H  = test_header('<sys/socket.h>')
 CONFIG.HAVE_SYS_STAT_H    = test_header('<sys/stat.h>')
 CONFIG.HAVE_SYS_TYPES_H   = test_header('<sys/types.h>')
 CONFIG.HAVE_UNISTD_H      = test_header('<unistd.h>')
 CONFIG.HAVE_VALUES_H      = test_header('<values.h>')
-CONFIG.HAVE_VALUES_H      = test_header('<xcurses.h>')
+CONFIG.HAVE_XCURSES_H     = test_header('<xcurses.h>')
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -200,7 +239,7 @@ CONFIG.HAVE_VALUES_H      = test_header('<xcurses.h>')
 local function test_library(lib)
   return os.testcode {
     code = '',
-    includes = { name },
+    includes = name,
     buildoptions = '-l'..lib
   }
 end
@@ -395,10 +434,10 @@ end
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-if (1 > 0) then -- print CONFIG
+if (-1 > 0) then -- print CONFIG  -- FIXME
   local keys = {}
   local maxlen = 0
-  for k, v in pairs(CONFIG) do -- FIXME
+  for k, v in pairs(CONFIG) do
     keys[#keys + 1] = k
     if (maxlen < #k) then
       maxlen = #k
@@ -415,6 +454,46 @@ if (1 > 0) then -- print CONFIG
     printf('CONFIG:  %-'..maxlen..'s  %s', key, tostring(value))
   end
 end
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+do
+  local fi = assert(io.open('config.h.in', 'rt'))
+  local lines = {}
+  local linenum = 0
+  for line in fi:lines() do
+    linenum = linenum + 1
+    local s, e, macro, comment = line:find('^%#undef%s+(%S+)(.*)$')
+    if (macro) then
+      local value = CONFIG[macro]
+      local valtype = type(value)
+      if (valtype == 'nil') then
+        print('WARNING:  unhandled config.h.in macro:  ' .. macro)
+        line = ('%-48s/* UNHANDLED MACRO */'):format(line, macro)
+      elseif (valtype == 'boolean') then
+        if (value) then
+          line = ('#define %s 1%s'):format(macro, comment)
+        else
+          line = ('#undef %s%s'):format(macro, comment)
+        end
+      elseif (valtype == 'string') then
+        line = ('#define %s %q%s'):format(macro, value, comment)
+      elseif (valtype == 'number') then
+        line = ('#define %s (%g)%s'):format(macro, value, comment)
+      else
+        line = ('#define %s %s%s'):format(macro, value, comment)
+      end
+    end
+    lines[linenum] = line
+  end
+  fi:close()
+
+  local text = table.concat(lines, '\n')
+
+  io.writefile('config.h', text, 'wt')
+end
+
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

@@ -1,4 +1,33 @@
 
+
+if ((_ACTION == 'gmake') and
+    (os.outputof('whoami'):gsub('\n', '') == 'trepan')) then -- FIXME
+  project 'libares'
+    kind 'StaticLib'
+--    language 'C' -- FIXME - should not be required
+--    configuration 'vs*'
+--      foreignproject 'freetype/msvc/vc8/freetype_static.vcproj'
+--      foreigntarget  'freetype/build/freetype_static.lib'
+    configuration 'not vs*'
+      foreignproject 'ares'
+      foreigntarget  '.libs/libcares.a'
+      foreignconfig {
+        'if [ ! -f ./configure ]; then ./buildconf; fi;',
+        'if [ ! -f ./Makefile ];  then ./configure; fi;',
+      }
+      foreignbuild      '$(MAKE) libcares.la'
+      foreignclean      '$(MAKE) clean'
+      foreignsuperclean '$(MAKE) distclean'
+
+      targetname      '.libs/libares.a' -- FIXME - should not be required
+      targetprefix    ''                             -- FIXME - should not be required
+      targetsuffix    ''                             -- FIXME - should not be required
+      targetextension ''                             -- FIXME - should not be required
+  return
+end
+
+
+
 project   'libares'
   targetname 'ares'
   hidetarget('true')

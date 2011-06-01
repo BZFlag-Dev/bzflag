@@ -45,8 +45,6 @@ _PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
 
 TOPDIR = os.getcwd()
 
-print(TOPDIR)
-
 BINDIR = os.getcwd() .. '/bin' -- used for binaries (except for gmake)
 
 --------------------------------------------------------------------------------
@@ -154,7 +152,12 @@ end
 --------------------------------------------------------------------------------
 
 print()
-printf('%s  (%s)', CONFIG.PACKAGE_STRING, CONFIG.CONFIG_DATE)
+print(('-'):rep(80))
+print(('-'):rep(80))
+print()
+
+printf('Configuring %s-%s.%s',
+       CONFIG.PACKAGE_NAME, CONFIG.PACKAGE_VERSION, CONFIG.CONFIG_DATE)
 print()
 
 --------------------------------------------------------------------------------
@@ -239,6 +242,11 @@ if (_OPTIONS['build-all'] or _ACTION:match('^vs*')) then
   CONFIG.BUILD_REGEX    = true
   CONFIG.BUILD_ZLIB     = true
 end
+
+CONFIG.BZ_PLUGINS = not _OPTIONS['disable-bzfs'] and
+                    not _OPTIONS['disable-plugins']
+
+CONFIG.ROBOT = not _OPTIONS['disable-bzrobots']
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------

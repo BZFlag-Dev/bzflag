@@ -82,15 +82,15 @@ function os.testcode(t)
 
   local source = ''
 
-  local includes = t.includes or ''
+  local includes = t.includes or {}
   if (istable(includes)) then
     local incs = ''
     for _, inc in ipairs(includes) do
       incs = incs .. '#include '..inc..'\n'
     end
     includes = incs
-  elseif (not includes:match('\n$')) then
-    includes = includes .. '\n'
+  else
+    includes = '#include ' .. includes .. '\n'
   end
 
   local incdirs = t.includedirs or {}
@@ -110,6 +110,8 @@ function os.testcode(t)
   source = source .. '  (void)argc; (void)argv;\n'
   source = source .. code
   source = source .. '}\n'
+
+  --FIXME  print(source)
 
   local tmpCpp = os.tmpname()
   local tmpOut = os.tmpname()
@@ -131,7 +133,7 @@ function os.testcode(t)
   for _, lib in ipairs(libs)    do cmd = cmd .. ' ' .. '-l' .. lib end
   cmd = cmd .. ' ' .. (t.buildoptions or '')
 
-  if (-1 > 0) then
+  if (1 > 0) then -- FIXME
     if (not os.is('windows')) then
       cmd = cmd .. ' &> /dev/null'
     else

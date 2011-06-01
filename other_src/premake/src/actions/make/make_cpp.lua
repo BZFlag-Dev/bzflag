@@ -59,6 +59,7 @@
 		  print(("-"):rep(80))
 		end
 
+		_p("# target = " .. target)
 		_p(".PHONY: clean superclean")
 		_p("%s:", path.join(dir, target))
 		_p("\tcd '%s' ; \\\n\t%s", dir, build)

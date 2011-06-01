@@ -1,7 +1,7 @@
 
-
-PACKAGE_NAME  = 'BZFlag'
-
+PACKAGE         = 'bzflag'
+PACKAGE_NAME    = 'BZFlag'
+PACKAGE_TARNAME = 'bzflag'
 
 MAJOR_VERSION = 2
 MINOR_VERSION = 99
@@ -18,7 +18,7 @@ BUILD_TYPE = 'DEVEL'  -- ('DEVEL' or 'STABLE' or 'MAINT')
 
 COPYRIGHT = 'Copyright (c) 1993-2011 Tim Riker'
 
-PACKAGE_URL   = 'http://BZFlag.org'
+PACKAGE_URL = 'http://BZFlag.org'
 
-BUGREPORT_URL = 'http://BZFlag.org'
+PACKAGE_BUGREPORT = 'http://BZFlag.org'
 
