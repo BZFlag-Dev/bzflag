@@ -112,7 +112,7 @@ typedef struct {
   u32 worldSize;		// size of world database
   char callSign[CallSignLen];   // player's callsign
   char email[EmailLen];	 // player's email
-  char serverVersion[8];	// BZFS protocol version
+  char ServerVersion[8];	// BZFS protocol version
   char appVersion[MessageLen];  // BZFS application version
   char realHash[64];	    // hash of worldDatabase
   char worldSettings[4 + WorldSettingsSize]; // the game settings
@@ -843,7 +843,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
   snprintf(buffer, MessageLen, "  author:     %s (%s)",
 	    header.callSign, header.email);
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  protocol:   %.8s", header.serverVersion);
+  snprintf(buffer, MessageLen, "  protocol:   %.8s", header.ServerVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
   snprintf(buffer, MessageLen, "  server:     %s", header.appVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
@@ -2039,7 +2039,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
   memset(&hdr, 0, sizeof(hdr));
   strncpy(hdr.callSign, callsign, sizeof(hdr.callSign));
   strncpy(hdr.email, email, sizeof(hdr.email));
-  strncpy(hdr.serverVersion, getServerVersion(), sizeof(hdr.serverVersion));
+  strncpy(hdr.ServerVersion, getServerVersion(), sizeof(hdr.ServerVersion));
   strncpy(hdr.appVersion, getAppVersion(), sizeof(hdr.appVersion));
   strncpy(hdr.realHash, hexDigest, sizeof(hdr.realHash));
   packFlagTypes(flagsBuf, &hdr.flagsSize);
@@ -2057,7 +2057,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
   buf = nboPackUInt(buf, worldDatabaseSize);
   buf = nboPackString(buf, hdr.callSign, sizeof(hdr.callSign));
   buf = nboPackString(buf, hdr.email, sizeof(hdr.email));
-  buf = nboPackString(buf, hdr.serverVersion, sizeof(hdr.serverVersion));
+  buf = nboPackString(buf, hdr.ServerVersion, sizeof(hdr.ServerVersion));
   buf = nboPackString(buf, hdr.appVersion, sizeof(hdr.appVersion));
   buf = nboPackString(buf, hdr.realHash, sizeof(hdr.realHash));
   buf = nboPackString(buf, worldSettings, sizeof(worldSettings));
@@ -2099,7 +2099,7 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   buf = nboUnpackUInt(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
   buf = nboUnpackString(buf, h->email, sizeof(h->email));
-  buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
+  buf = nboUnpackString(buf, h->ServerVersion, sizeof(h->ServerVersion));
   buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
   buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));
   buf = nboUnpackString(buf, h->worldSettings, sizeof(h->worldSettings));

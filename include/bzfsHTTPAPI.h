@@ -55,24 +55,70 @@ protected:
   void  *pimple;
 };
 
+typedef enum {
+  e200OK,
+  e301Redirect,
+  e302Found,
+  e401Unauthorized,
+  e403Forbiden,
+  e404NotFound,
+  e418IAmATeapot,
+  e500ServerError
+} bzhttp_eReturnCode;
+
+typedef enum {
+  eText,
+  eOctetStream,
+  eBinary,
+  eHTML,
+  eCSS,
+  eXML,
+  eJSON,
+  eOther
+} bzhttp_eDocumentType;
+
 class BZF_API bzhttp_Responce
 {
 public:
   bzhttp_Responce();
   ~bzhttp_Responce();
 
-protected:
+  bzhttp_eReturnCode ReturnCode;
+  bzhttp_eDocumentType DocumentType;
+
+  bool ForceNoCache;
+
+  bz_ApiString	RedirectLocation;
+  bz_ApiString	MimeType;
+
+  bz_ApiString	MD5Hash;
+
+  void AddHeader ( const char* name, const char* value);
+  void AddCookies ( const char* name, const char* value);
+
+  void AddBodyData ( const char* value);
+
   void  *pimple;
 };
+
+typedef enum
+{
+  eNoPage = 0,
+  eWaitForIt,
+  ePageDone
+}bzhttp_ePageGenStatus;
 
 class BZF_API bzhttp_VDir
 {
 public:
   virtual ~bzhttp_VDir(){};
   virtual const char* Name() = 0;
+  virtual const char* Description(){return NULL;}
 
-  virtual bool GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce ) = 0;
+  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce ) = 0;
   virtual bool SupportPut ( void ){ return false;}
+
+  bz_ApiString BaseURL;
 };
 
 BZF_API bool bzhttp_RegisterVDir (bz_Plugin* plugin, bzhttp_VDir *vdir );

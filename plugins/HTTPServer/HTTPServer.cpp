@@ -302,9 +302,7 @@ void HTTPServer::Init ( const char * /*commandLine*/ )
   Unloadable = false;
 
   baseURL = "http://";
-  serverHostname = "localhost";
-  if (bz_getPublicAddr().size())
-    serverHostname = bz_getPublicAddr().c_str();
+  responce.RedirectLocation
 
   // make sure it has the port
   if (strrchr(serverHostname.c_str(),':') == NULL)
