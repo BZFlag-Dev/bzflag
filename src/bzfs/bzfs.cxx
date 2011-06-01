@@ -5596,8 +5596,22 @@ int main(int argc, char **argv)
       waitTime = pluginMaxWait;
 #endif
 
-    if (netConnectedPeers.size() > 0 && waitTime > 0.1f)
-      waitTime = 0.1f;
+    if (netConnectedPeers.size())
+    {
+      std::map<int,NetConnectedPeer>::iterator itr = netConnectedPeers.begin();
+      while (itr != netConnectedPeers.end())
+      {
+	// don't wait if we have data to send out
+	if (itr->second.sendChunks.size())
+	{
+	  waitTime = 0;
+	  break;
+	}
+	itr++;
+      }
+      if (waitTime > 0.1f)
+	waitTime = 0.1f;
+    }
 
     // don't wait (used by CURL and MsgEnter)
     if (dontWait) {
