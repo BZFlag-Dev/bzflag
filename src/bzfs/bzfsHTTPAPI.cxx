@@ -29,6 +29,48 @@ std::string ServerVersion;
 std::string ServerHostname;
 std::string BaseURL;
 
+#ifdef _WIN32
+#define _DirDelim '\\'
+#else
+#define _DirDelim '/'
+#endif
+
+// ensures all the delims are constant
+std::string convertPathToDelims(const char* file)
+{
+  if (!file)
+    return std::string();
+
+  std::string delim;
+  delim += _DirDelim;
+  return TextUtils::replace_all(TextUtils::replace_all(file,"/",delim),"\\",delim);
+}
+
+std::string getPathForOS(const char* file)
+{
+  return convertPathToDelims(file);
+}
+
+std::string concatPaths ( const char* path1, const char* path2 )
+{
+  std::string ret = getPathForOS(path1);
+  ret += getPathForOS(path2);
+
+  return ret;
+}
+
+bool fileExits ( const char* c)
+{
+  if (!c)
+    return false;
+
+  FILE* fp = fopen(c,"rb");
+  if (!fp)
+    return false;
+  fclose(fp);
+  return true;
+}
+
 bzhttp_eRequestType LineIsHTTPRequest ( const std::string & str )
 {
   if (str == "GET")
@@ -51,6 +93,53 @@ bzhttp_eRequestType LineIsHTTPRequest ( const std::string & str )
   return eHTTPUnknown;
 }
 
+//----bzhttp_VDir
+
+class bzhttp_VDir_Data
+{
+public:
+  std::map<std::string,std::string> MimeTypes;
+};
+
+#define VDIR_DATA_PTR ((bzhttp_VDir_Data*)pimple)
+#define VDIR_DATA(n) bzhttp_VDir_Data *n = ((bzhttp_VDir_Data*)pimple)
+#define VDIR_DATA_CLASS(c,n) bzhttp_VDir_Data *n = ((bzhttp_VDir_Data*)(c))
+
+bzhttp_VDir::bzhttp_VDir()
+{
+  pimple = new bzhttp_VDir_Data;
+}
+
+bzhttp_VDir::~bzhttp_VDir()
+{
+  delete(pimple);
+}
+
+void bzhttp_VDir::AddMimeType(const char* e, const char* m )
+{
+  VDIR_DATA(data);
+
+  std::string ext = TextUtils::toupper(e);
+
+  if (data->MimeTypes.find(ext) == data->MimeTypes.end())
+    data->MimeTypes[ext] = std::string(m);
+}
+
+void bzhttp_VDir::AddStandardTypes ()
+{
+  AddMimeType("htm","text/html");
+  AddMimeType("html","text/html");
+  AddMimeType("txt","text/plain");
+  AddMimeType("png","image/png");
+  AddMimeType("ico","image/vnd.microsoft.icon");
+  AddMimeType("jpg","image/jpeg");
+  AddMimeType("jpeg","image/jpeg");
+  AddMimeType("gif","image/gif");
+  AddMimeType("js","application/javascript");
+  AddMimeType("json","application/json");
+}
+
+//----VDir
 class VDir
 {
 public:
@@ -193,6 +282,14 @@ void bzhttp_Responce::AddBodyData ( const char* v)
     data->Body += v;
 }
 
+void bzhttp_Responce::AddBodyData ( const void* v, size_t size)
+{
+  RESPONCE_DATA(data);
+
+  if (v && size)
+    data->Body += std::string((char*)v,size);
+}
+
 //---- Request----
 class bzhttp_Request_Data
 {
@@ -331,9 +428,6 @@ public:
 
   virtual void pending(int connectionID, void *data, unsigned int size)
   {
-    if (!vDir)
-      return;
-
     char *d = (char*)malloc(size+1);
     memcpy(d,data,size);
     d[size] = 0;
@@ -351,7 +445,7 @@ public:
     }
 
     // easy outs
-    if (Request.RequestType == eHTTPDelete || Request.RequestType == eHTTPConnect || (Request.RequestType == eHTTPPut && !vDir->SupportPut()))
+    if (Request.RequestType == eHTTPDelete || Request.RequestType == eHTTPConnect || (Request.RequestType == eHTTPPut && (vDir && !vDir->SupportPut())))
     {
       send501Error(connectionID);
       return;
@@ -359,7 +453,7 @@ public:
 
     if (Request.RequestType == eHTTPOptions)
     {
-      sendOptions(connectionID,vDir->SupportPut());
+      sendOptions(connectionID,vDir ? vDir->SupportPut() : false);
       return;
     }
 
@@ -451,11 +545,19 @@ public:
     }
   }
 
+  virtual bzhttp_ePageGenStatus GetPage () 
+  {
+    if(!vDir)
+      return eNoPage;
+
+    return vDir->GeneratePage(Request,Responce);
+  }
+
   void Think ( int connectionID )
   {
     if (RequestComplete && !Killme)
     {
-      bzhttp_ePageGenStatus status = vDir->GeneratePage(Request,Responce);
+      bzhttp_ePageGenStatus status = GetPage();
 
       if (status == eNoPage)
 	send404Error(connectionID);
@@ -754,12 +856,69 @@ protected:
   std::string RequestData;
 };
 
+class ResourcePeer : public HTTPConnectedPeer
+{
+public:
+  std::string File;
+  std::string Mime;
+
+  ResourcePeer() : HTTPConnectedPeer()
+  {
+    Mime = "application/octet-stream";
+  }
+
+  virtual bzhttp_ePageGenStatus GetPage () 
+  {
+    if (!File.size())
+      return eNoPage;
+
+    FILE* fp = fopen(File.c_str(),"rb");
+    if (!fp)
+      return eNoPage;
+
+    size_t size = 0;
+    fseek(fp,0,SEEK_END);
+    size = ftell(fp);
+    fseek(fp,0,SEEK_SET);
+    void *p = malloc(size);
+    fread(p,size,1,fp);
+    fclose(fp);
+
+    Responce.AddBodyData(p,size);
+    free(p);
+    Responce.ReturnCode = e200OK;
+    Responce.DocumentType = eOther;
+    Responce.MimeType = Mime.c_str();
+
+    return ePageDone;
+  }
+
+  static std::string FindResourcePath ( const std::string &file, const bz_APIStringList &dirs )
+  {
+    for ( size_t i = 0; i < dirs.size(); i++)
+    {
+      std::string path = concatPaths(dirs.get(i).c_str(),file.c_str());
+      if (fileExits(path.c_str()))
+	return path;
+    }
+    return std::string();
+  }
+};
+
 std::map<int,HTTPConnectedPeer*> HTTPPeers;
 
 // index handler
 class HTTPIndexHandler: public bzhttp_VDir
 {
 public:
+  HTTPIndexHandler() : bzhttp_VDir()
+  {
+    if (bz_BZDBItemExists("_HTTPIndexResourceDir") && bz_getBZDBString("_HTTPIndexResourceDir").size())
+      ResourceDirs.push_back(bz_getBZDBString("_HTTPIndexResourceDir"));
+
+    AddStandardTypes();
+  }
+
   virtual const char* Name(){return "INDEX";}
 
   virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
@@ -785,6 +944,11 @@ public:
     responce.AddBodyData("</body></html>");
 
     return ePageDone;
+  }
+
+  virtual bool AllowResourceDownloads ( void )
+  {
+    return ResourceDirs.size() > 0;
   }
 };
 
@@ -832,8 +996,8 @@ void KillHTTP()
 
 void NewHTTPConnection ( bz_EventData *eventData )
 {
-  if (VDirs.size() == 0)
-    return;
+  //if (VDirs.size() == 0)
+ //   return;
 
   bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 
@@ -864,28 +1028,26 @@ void NewHTTPConnection ( bz_EventData *eventData )
   // otherwise it's an index request
   bzhttp_VDir * dir = NULL;
 
-
   if (resource.size() > 0)
   {
     // trim it at the ? if it has one
-    std::string subResource = resource;
-    size_t question = subResource.find_first_of('?');
+    size_t question = resource.find_first_of('?');
     if (question != std::string::npos)
-      subResource = resource.substr(0,question);
+      resource = resource.substr(0,question);
 
     // find the first / ( really this should be at 0 )
-    size_t firstSlash = subResource.find_first_of('/');
+    size_t firstSlash = resource.find_first_of('/');
     if (firstSlash != std::string::npos && firstSlash == 0)
     {
       std::string dirName;
 
-      size_t secondSlash = subResource.find_first_of('/',firstSlash+1);
+      size_t secondSlash = resource.find_first_of('/',firstSlash+1);
       if (secondSlash != std::string::npos)
-	dirName = subResource.substr(firstSlash+1,secondSlash-firstSlash-1);
+	dirName = resource.substr(firstSlash+1,secondSlash-firstSlash-1);
       else
       {
-	 if (firstSlash+1 < subResource.size())
-	   dirName = subResource.substr(firstSlash+1,subResource.size()-firstSlash);
+	 if (firstSlash+1 < resource.size())
+	   dirName = resource.substr(firstSlash+1,resource.size()-firstSlash);
       }
 
       if (dirName.size())
@@ -903,6 +1065,33 @@ void NewHTTPConnection ( bz_EventData *eventData )
       peer->vDir = indexHandler;
     else
       peer->vDir = dir;
+
+    // check and see if it's a resource 
+
+    if (peer->vDir->AllowResourceDownloads())
+    {
+      if (resource.size())
+      {
+	size_t dot = resource.find_last_of('.');
+	if (dot != std::string::npos)
+	{
+	  std::string path = resource.substr(0,dot);
+	  if (TextUtils::find_first_substr(path,"..") == std::string::npos) // don't do paths that have .. ANYWHERE
+	  {
+	    std::string ext = TextUtils::toupper(resource.substr(dot+1,resource.size()-dot-1));
+	    VDIR_DATA_CLASS(peer->vDir->pimple,vdata);
+	    if (vdata->MimeTypes.find(ext) != vdata->MimeTypes.end())
+	    {
+	      ResourcePeer *p = new ResourcePeer();
+	      p->File = ResourcePeer::FindResourcePath(resource,peer->vDir->ResourceDirs);
+	      p->Mime = vdata->MimeTypes[ext];
+	      delete(peer);
+	      peer = p;
+	    }
+	  }
+	}
+      }
+    }
 
     bz_registerNonPlayerConnectionHandler(connData->connectionID,peer);
     

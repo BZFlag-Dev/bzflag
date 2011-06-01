@@ -97,6 +97,7 @@ public:
   void AddCookies ( const char* name, const char* value);
 
   void AddBodyData ( const char* value);
+  void AddBodyData ( const void* value, size_t size);
 
   void  *pimple;
 };
@@ -111,14 +112,22 @@ typedef enum
 class BZF_API bzhttp_VDir
 {
 public:
-  virtual ~bzhttp_VDir(){};
+  bzhttp_VDir();
+  virtual ~bzhttp_VDir();
   virtual const char* Name() = 0;
   virtual const char* Description(){return NULL;}
 
   virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce ) = 0;
   virtual bool SupportPut ( void ){ return false;}
+  virtual bool AllowResourceDownloads ( void ){ return false; }
 
   bz_ApiString BaseURL;
+  bz_APIStringList ResourceDirs;
+
+  void AddMimeType(const char* extension, const char* mime );
+  void AddStandardTypes ();
+
+  void* pimple;
 };
 
 BZF_API bool bzhttp_RegisterVDir (bz_Plugin* plugin, bzhttp_VDir *vdir );

@@ -77,6 +77,7 @@ const struct GlobalDBItem globalDBItems[] = {
   { "_handicapShotAd",		"1.75",				false, StateDatabase::Locked},
   { "_hideFlagsOnRadar",        "0",                            false, StateDatabase::Locked},
   { "_hideTeamFlagsOnRadar",    "0",                            false, StateDatabase::Locked},
+  { "_HTTPIndexResourceDir",    "",				false, StateDatabase::Locked},
   { "_identifyRange",		"50.0",				false, StateDatabase::Locked},
   { "_jumpVelocity",		"19.0",				false, StateDatabase::Locked},
   { "_laserAdLife",		"0.1",				false, StateDatabase::Locked},
