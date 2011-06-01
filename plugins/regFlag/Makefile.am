@@ -3,7 +3,7 @@ lib_LTLIBRARIES = regFlag.la
 regFlag_la_SOURCES = regFlag.cpp
 regFlag_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
 regFlag_la_LDFLAGS = -module -avoid-version
-regFlag_la_LIBADD = $(top_srcdir)/plugins/plugin_utils/libplugin_utils.la
+regFlag_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
 
 
 EXTRA_DIST = \
