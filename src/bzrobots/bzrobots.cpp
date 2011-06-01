@@ -55,7 +55,6 @@
 #include "Team.h"
 #include "TextUtils.h"
 #include "TextureManager.h"
-#include "TimeBomb.h"
 #include "BzTime.h"
 #include "WordFilter.h"
 #include "World.h"
@@ -390,18 +389,6 @@ static void createCacheSignature() {
   return;
 }
 
-bool checkTimeBomb(void) {
-  // check time bomb
-  if (timeBombBoom()) {
-    printFatalError("This release expired on %s. \n"
-                    "Please upgrade to the latest release. \n"
-                    "Exiting.", timeBombString());
-    bail(0);
-    return true;
-  }
-  return false;
-}
-
 void setupBZDB(void) {
   // set default DB entries
   for (unsigned int gi = 0; gi < numGlobalDBItems; ++gi) {
@@ -545,10 +532,6 @@ int main(int argc, char** argv) {
   // init libs
 
   //init_packetcompression();
-
-  if (checkTimeBomb()) {
-    return 0;
-  }
 
   createCacheSignature();
 

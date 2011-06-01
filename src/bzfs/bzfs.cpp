@@ -43,7 +43,6 @@
 #include "ObstacleMgr.h"
 #include "PhysicsDriver.h"
 #include "ShotUpdate.h"
-#include "TimeBomb.h"
 #include "version.h"
 #include "VotingArbiter.h"
 #include "CollisionManager.h"
@@ -4150,19 +4149,6 @@ static bool initServer(int argc, char** argv) {
   setvbuf(stderr, (char*)NULL, _IOLBF, BUFSIZE);
 
   Record::init();
-
-  // check time bomb
-  if (timeBombBoom()) {
-    std::cerr << "This release expired on " << timeBombString() << "." << std::endl;
-    std::cerr << "Please upgrade to the latest release." << std::endl;
-    exit(0);
-  }
-
-  // print expiration date
-  if (timeBombString()) {
-    std::cerr << "This release will expire on " << timeBombString() << "." << std::endl;
-    std::cerr << "Version " << getAppVersion() << std::endl;
-  }
 
   if (!initNet()) {
     return false;

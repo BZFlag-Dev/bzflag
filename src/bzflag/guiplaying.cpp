@@ -59,7 +59,6 @@
 #include "PlatformFactory.h"
 #include "ServerList.h"
 #include "TextUtils.h"
-#include "TimeBomb.h"
 #include "BzTime.h"
 #include "WordFilter.h"
 
@@ -6549,14 +6548,6 @@ void startPlaying() {
                     info.szCSDVersion);
   }
 #endif
-
-  // print expiration
-  if (timeBombString()) {
-    // add message about date of expiration
-    char bombMessage[80];
-    snprintf(bombMessage, 80, "This release will expire on %s", timeBombString());
-    showMessage(bombMessage);
-  }
 
   // send informative header to the console
   std::string tmpString;

@@ -409,9 +409,6 @@
 /* SWIG version string */
 /* #undef SWIG_VERSION_STR */
 
-/* Time Bomb expiration */
-/* #undef TIME_BOMB */
-
 /* Version number of package */
 #define VERSION "2.99.60"
 

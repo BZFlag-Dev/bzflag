@@ -284,10 +284,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\common\TimeBomb.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\common\VotingBooth.cpp"
 				>
 			</File>
@@ -438,10 +434,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\include\TextUtils.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\include\TimeBomb.h"
 				>
 			</File>
 			<File

@@ -33,9 +33,6 @@
 /* Building FTGL */
 #define BUILD_FTGL 1
 
-/* Time Bomb expiration */
-/* #undef TIME_BOMB */
-
 /* Debug Rendering */
 /* #undef DEBUG_RENDERING */
 

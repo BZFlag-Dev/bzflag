@@ -32,7 +32,6 @@ libCommon_la_SOURCES  =			\
 	StateDatabase.cpp		\
 	TextChunkManager.cpp		\
 	TextUtils.cpp			\
-	TimeBomb.cpp			\
 	VotingBooth.cpp			\
 	WordFilter.cpp			\
 	bz_Locale.cpp			\

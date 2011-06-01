@@ -23,7 +23,6 @@ bzlib_project 'libCommon'
     'StateDatabase.cpp',
     'TextChunkManager.cpp',
     'TextUtils.cpp',
-    'TimeBomb.cpp',
     'VotingBooth.cpp',
     'WordFilter.cpp',
     'bzUnicode.cpp',
