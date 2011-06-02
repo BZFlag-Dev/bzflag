@@ -64,6 +64,8 @@ public:
   bz_ApiString	BZIDCallsign;
   bz_APIStringList BZIDGroups;
 
+  bool UserHasPerm ( const char* perm );
+
   bz_ApiString	Body;
 
   void AddHeader ( const char* name, const char* value);
