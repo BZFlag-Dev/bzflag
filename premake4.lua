@@ -268,13 +268,17 @@ do
       includedirs  = false,
       buildoptions = false,
     }
+    -- aliases to the real library names
+    if (libname and (libname ~= name)) then
+      PACKAGES[libname] = PACKAGES[name]
+    end
   end
   makepackage('ares',     'cares')
   makepackage('curl',     'curl')
   makepackage('curses',   'curses')
   makepackage('freetype', 'freetype')
   makepackage('ftgl',     'ftgl')
-  makepackage('regex',    nil)  -- often in libc
+  makepackage('regex',    'regex')
   makepackage('sdl',      'SDL')
   makepackage('glew',     'GLEW')
   makepackage('gl',       'GL')

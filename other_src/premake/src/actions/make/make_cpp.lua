@@ -41,15 +41,15 @@
 		local superclean = makeconcat(prj.foreignsuperclean)
 
 		if (-1 > 0) then -- FIXME - print's
-      print("slnbasedir",  sln.basedir)
-      print("prjlocation", prj.location)
-      print("foreignproject",    dir)
-      print("foreigntarget",     target)
-      print("foreignconfig",     config)
-      print("foreignbuild",      build)
-      print("foreignclean",      clean)
-      print("foreignsuperclean", superclean)
-    end
+			print("slnbasedir",  sln.basedir)
+			print("prjlocation", prj.location)
+			print("foreignproject",    dir)
+			print("foreigntarget",     target)
+			print("foreignconfig",     config)
+			print("foreignbuild",      build)
+			print("foreignclean",      clean)
+			print("foreignsuperclean", superclean)
+		end
 
 		if (config) then
   		local dirfromtop = path.getrelative(sln.basedir, path.join(prj.location, prj.foreignproject))

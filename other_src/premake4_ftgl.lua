@@ -1,4 +1,32 @@
 
+
+if (_ACTION == 'gmake') then
+  project 'libftgl'
+    kind 'StaticLib'
+    language 'C'
+    hidetarget('true')
+    configuration 'vs*'
+      foreignproject 'ftgl/msvc/vc8/ftgl_static.vcproj'
+      foreigntarget  'ftgl/build/ftgl_static.lib'
+      uuid           '1D758EEA-59C3-46E4-BEF5-16DCCA8C0B21'
+    configuration 'not vs*'
+      foreignproject 'ftgl'
+      foreigntarget  'src/.libs/libftgl.a'
+      foreignconfig {
+        'if [ ! -f ./configure ]; then ./autogen.sh; fi;',
+        'if [ ! -f ./Makefile ];  then ./configure --enable-shared=no;  fi;',
+      }
+      foreignbuild      'cd src ; $(MAKE)'
+      foreignclean      '$(MAKE) clean'
+      foreignsuperclean '$(MAKE) distclean'
+
+      targetname   'ftgl'            -- FIXME - should not be required
+      targetdir    'ftgl/src/.libs'
+  return
+end
+
+
+
 project   'libftgl'
   targetname 'ftgl'
   hidetarget('true')

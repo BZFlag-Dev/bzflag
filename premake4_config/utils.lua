@@ -57,7 +57,7 @@ function io.writefile(name, data, mode)
 end
 
 
-function echof(fmt, ...)
+function stdoutf(fmt, ...)
   io.stdout:write(fmt:format(...))
 end
 

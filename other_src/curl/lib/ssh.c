@@ -118,7 +118,7 @@
 static const char *sftp_libssh2_strerror(unsigned long err);
 static LIBSSH2_ALLOC_FUNC(libssh2_malloc);
 static LIBSSH2_REALLOC_FUNC(libssh2_realloc);
-static LIBSSH2_FREE_FUNC(libssh2_free);
+/* FIXME static LIBSSH2_FREE_FUNC(libssh2_free); */
 
 static CURLcode get_pathname(const char **cpp, char **path);
 
@@ -313,11 +313,13 @@ static LIBSSH2_REALLOC_FUNC(libssh2_realloc)
   return realloc(ptr, count);
 }
 
+/*
 static LIBSSH2_FREE_FUNC(libssh2_free)
 {
-  (void)abstract; /* arg not used */
+  (void)abstract; / * arg not used * /
   free(ptr);
 }
+*/
 
 /*
  * SSH State machine related code

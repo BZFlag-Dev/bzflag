@@ -65,7 +65,7 @@ CONFIG.BZ_BUILD_OS = os.outputof('uname -s'):lower():gsub('\n', '')
 
 local function test_report(testdesc, testcode)
   local dots = ('.'):rep(20 - #testdesc)
-  echof('checking for %s %s ', testdesc, dots)
+  stdoutf('checking for %s %s ', testdesc, dots)
   local success = os.testcode(testcode)
   printf('%s', success and 'ok' or 'fail')
   return success
@@ -390,7 +390,16 @@ end
 
 if (CONFIG.BUILD_CURL) then
   local curl = getpackage('curl')
-  curl.links = 'libcurl'
+  curl.links = {
+    'libcurl',
+    'idn',
+    'gcrypt',
+    'lber',
+    'ldap',
+    'gssapi_krb5',
+    'gnutls',
+    'rtmp',
+  }
   curl.includedirs = {
     TOPDIR .. '/other_src/curl/include',
   }
@@ -429,14 +438,25 @@ end
 --
 
 if (not CONFIG.BUILD_REGEX) then
+  local code = [[
+    regex_t re;
+    (void)regcomp(&re, ".*", 0);
+  ]]
+
   local success = os.testcode {
-    code = [[
-      regex_t re;
-      (void)regcomp(&re, ".*", 0);
-    ]],
-    includes = { '<regex.h>' },
-    libs = 'c',
+    code = code,
+    includes = '<regex.h>',
   }
+
+  if (success) then
+    getpackage('regex').links = false -- no need for an extra library
+  else
+    success = os.testcode {
+      code = code,
+      includes = '<regex.h>',
+      libs = 'regex',
+    }
+  end
 
   CONFIG.BUILD_REGEX = not success
 end
