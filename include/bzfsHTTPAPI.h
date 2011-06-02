@@ -201,6 +201,22 @@ BZF_API bool bzhttp_RegisterVDir (bz_Plugin* plugin, bzhttp_VDir *vdir );
 BZF_API bool bzhttp_RemoveVDir (bz_Plugin* plugin, bzhttp_VDir *vdir );
 BZF_API bool bzhttp_RemoveAllVdirs (bz_Plugin* plugin );
 
+// templates
+class BZF_API bzhttp_TemplateMetaData
+{
+public:
+  bzhttp_TemplateMetaData();
+  virtual ~bzhttp_TemplateMetaData();
+
+  const char * Get ( const char* key, unsigned int index = 0 );
+  unsigned int Count ( const char* key );
+
+  void Add ( const char* key, const char* val );
+
+protected:
+  void *pimple;
+};
+
 #endif //_BZFS_HTTP_H_
 
 // Local Variables: ***

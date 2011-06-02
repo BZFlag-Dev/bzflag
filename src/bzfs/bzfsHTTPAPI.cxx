@@ -779,13 +779,13 @@ public:
     free(d);
 
     // know our limits
-    int maxContentSize = 1024*1536;
-    int maxBufferSize = 1024*2048;
+    size_t maxContentSize = 1024*1536;
+    size_t maxBufferSize = 1024*2048;
 
     if (bz_BZDBItemHasValue("_MaxHTTPContentSize"))
       maxBufferSize = bz_getBZDBInt("_MaxHTTPContentSize");
 
-    if (vDir && vDir->MaxRequestBody > maxContentSize)
+    if (vDir && vDir->MaxRequestBody > (int)maxContentSize)
       maxContentSize = vDir->MaxRequestBody;
 
     if (bz_BZDBItemHasValue("_MaxHTTPRequestSize"))
@@ -794,7 +794,7 @@ public:
     if (maxBufferSize < maxContentSize)
       maxBufferSize = maxContentSize;
 
-    if (vDir && vDir->MaxRequestSize > maxBufferSize)
+    if (vDir && vDir->MaxRequestSize > (int)maxBufferSize)
       maxBufferSize = vDir->MaxRequestSize;
 
     // check to see if we have too much data
@@ -1780,6 +1780,65 @@ void CheckForZombies ( void )
 
   for (size_t i = 0; i < toKill.size(); i++)
     Sessions.erase(Sessions.find(toKill[i]));
+}
+
+// templates
+
+class bzhttp_TMD_Data
+{
+public:
+  std::map< std::string, std::vector<std::string> > Items;
+};
+
+#define TMD_DATA_PTR ((bzhttp_TMD_Data*)pimple)
+#define TMD_DATA(n) bzhttp_TMD_Data *n = ((bzhttp_TMD_Data*)pimple)
+
+bzhttp_TemplateMetaData::bzhttp_TemplateMetaData()
+{
+  pimple = new bzhttp_TMD_Data();
+}
+bzhttp_TemplateMetaData::~bzhttp_TemplateMetaData()
+{
+  delete(pimple);
+}
+
+const char * bzhttp_TemplateMetaData::Get ( const char* key, unsigned int index )
+{
+  if (!key)
+    return NULL;
+
+  TMD_DATA(data);
+  std::map< std::string, std::vector<std::string> >::iterator itr = data->Items.find(key);
+  if (itr == data->Items.end())
+    return NULL;
+  if (index >= itr->second.size())
+    return NULL;
+  return itr->second[index].c_str();
+}
+
+unsigned int bzhttp_TemplateMetaData::Count ( const char* key )
+{
+  if (!key)
+    return 0;
+
+  TMD_DATA(data);
+  std::map< std::string, std::vector<std::string> >::iterator itr = data->Items.find(key);
+  if (itr == data->Items.end())
+    return 0;
+  return itr->second.size();
+}
+
+void bzhttp_TemplateMetaData::Add ( const char* key, const char* val )
+{
+  if (!key || !val)
+    return;
+
+  TMD_DATA(data);
+  std::map< std::string, std::vector<std::string> >::iterator itr = data->Items.find(key);
+  if (itr == data->Items.end())
+    data->Items[key] = std::vector<std::string>();
+
+   data->Items[key].push_back(val);
 }
 
 
