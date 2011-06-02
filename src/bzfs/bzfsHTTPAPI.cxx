@@ -475,6 +475,35 @@ bzhttp_Request::~bzhttp_Request()
   delete(pimple);
 }
 
+bool bzhttp_Request::UserHasPerm ( const char* perm )
+{
+  if (!BZID.size() || !BZIDCallsign.size() || !BZIDGroups.size() || !perm)
+    return false;
+
+  std::string permName = TextUtils::toupper(perm);
+  PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+
+  for( size_t i = 0; i < BZIDGroups.size(); i++ )
+  {
+    std::string groupName = BZIDGroups.get(i).c_str();
+    groupName = TextUtils::toupper(groupName);
+    PlayerAccessMap::iterator itr = groupAccess.find(groupName);
+    if (itr == groupAccess.end())
+      continue;
+
+    if (itr->second.explicitAllows.test(realPerm) && !itr->second.explicitDenys.test(realPerm) )
+      return true;
+
+    for(unsigned int c = 0; c < itr->second.customPerms.size(); c++)
+    {
+      if (permName == TextUtils::toupper(itr->second.customPerms[c]))
+	return true;
+    }
+  }
+
+  return false;
+}
+
 void bzhttp_Request::AddHeader ( const char* n, const char* v)
 {
   REQUEST_DATA(data);
