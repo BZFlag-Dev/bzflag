@@ -252,9 +252,9 @@ class PendingTokenTask : public bz_BaseURLHandler
 public:
   PendingTokenTask():requestID(-1){};
 
-  virtual void done ( const char* /*URL*/, void * data, unsigned int size, bool complete );
-  virtual void timeout ( const char* /*URL*/, int /*errorCode*/ );
-  virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ );
+  virtual void URLDone ( const char* /*URL*/, void * data, unsigned int size, bool complete );
+  virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ );
+  virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ );
 
   int requestID;
   std::string URL;
@@ -265,7 +265,7 @@ public:
 
 std::map<int,PendingTokenTask*> pendingTokenTasks;
 
-void PendingTokenTask::done ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
+void PendingTokenTask::URLDone ( const char* /*URL*/, void * inData, unsigned int size, bool complete )
 {
   char *t = (char*)malloc(size+1);
   memcpy(t,inData,size);
@@ -303,13 +303,13 @@ void PendingTokenTask::done ( const char* /*URL*/, void * inData, unsigned int s
   }
 }
 
-void PendingTokenTask::timeout ( const char* /*URL*/, int /*errorCode*/ )
+void PendingTokenTask::URLTimeout ( const char* /*URL*/, int /*errorCode*/ )
 {
   groups.clear();
   pendingTokenTasks[requestID] = this;
 }
 
-void PendingTokenTask::error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+void PendingTokenTask::URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
 {
   groups.clear();
   pendingTokenTasks[requestID] = this;
