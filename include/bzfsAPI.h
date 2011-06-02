@@ -1236,6 +1236,7 @@ BZF_API int bz_getBZDBInt( const char* variable );
 BZF_API int bz_getBZDBItemPerms( const char* variable );
 BZF_API bool bz_getBZDBItemPesistent( const char* variable );
 BZF_API bool bz_BZDBItemExists( const char* variable );
+BZF_API bool bz_BZDBItemHasValue( const char* variable );
 
 BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms = 0, bool persistent = false );
 BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms = 0, bool persistent = false  );

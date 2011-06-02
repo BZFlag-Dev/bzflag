@@ -1579,6 +1579,15 @@ BZF_API bool bz_BZDBItemExists( const char* variable )
   return BZDB.isSet(std::string(variable));
 }
 
+BZF_API bool bz_BZDBItemHasValue( const char* variable )
+{
+  if (!variable)
+    return false;
+
+  return BZDB.isSet(std::string(variable)) && BZDB.get(std::string(variable)).size() > 0;
+}
+
+
 void setVarPerms ( const char* variable, int perms, bool persistent)
 {
   if (perms != BZ_BZDBPERM_NA)
