@@ -81,6 +81,8 @@ function os.testcode(t)
     t = { code = t }
   end
 
+  local verbose = (os.getenv('PREMAKE_VERBOSE') ~= nil) -- FIXME -- cheezy
+
   assert(isstring(t.code), 'missing "code" parameter')
 
   local source = ''
@@ -114,7 +116,10 @@ function os.testcode(t)
   source = source .. code
   source = source .. '}\n'
 
-  --FIXME  print(source)
+  if (verbose) then
+    print()
+    print(source)
+  end
 
   local tmpCpp = os.tmpname()
   local tmpOut = os.tmpname()
@@ -136,7 +141,7 @@ function os.testcode(t)
   for _, lib in ipairs(libs)    do cmd = cmd .. ' ' .. '-l' .. lib end
   cmd = cmd .. ' ' .. (t.buildoptions or '')
 
-  if (1 > 0) then -- FIXME
+  if (not verbose) then
     if (not os.is('windows')) then
       cmd = cmd .. ' &> /dev/null'
     else

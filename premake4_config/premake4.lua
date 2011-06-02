@@ -5,4 +5,5 @@ end
 
 dofile('utils.lua')
 dofile('actions.lua')
+dofile('libs.lua')
 dofile('config_h.lua')
