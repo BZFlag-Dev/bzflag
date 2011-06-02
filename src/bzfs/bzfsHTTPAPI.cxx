@@ -24,6 +24,7 @@
 #include "bzfsHTTPAPI.h"
 #include "WorldEventManager.h"
 #include "TextUtils.h"
+#include "TimeKeeper.h"
 
 std::string ServerVersion;
 std::string ServerHostname;
@@ -34,6 +35,8 @@ std::string BaseURL;
 #else
 #define _DirDelim '/'
 #endif
+
+#define SESSION_COOKIE "BZFS_SESSION_ID"
 
 // ensures all the delims are constant
 std::string convertPathToDelims(const char* file)
@@ -91,6 +94,136 @@ bzhttp_eRequestType LineIsHTTPRequest ( const std::string & str )
     return eHTTPConnect;
 
   return eHTTPUnknown;
+}
+
+//-- session data
+
+class bzhttp_SessionData_Data
+{
+public:
+  std::map<std::string,std::string> GlobalData;
+  std::map<std::string,std::map<std::string,std::string> > PrivateData;
+  std::string CurrentVdir;
+  double LastUpdateTime;
+
+  bzhttp_SessionData_Data()
+  {
+    LastUpdateTime = 0;
+  }
+};
+
+#define VDIR_SESSION_PTR ((bzhttp_SessionData_Data*)pimple)
+#define VDIR_SESSION(n) bzhttp_SessionData_Data *n = ((bzhttp_SessionData_Data*)pimple)
+#define VDIR_SESSION_CLASS(c,n) bzhttp_SessionData_Data *n = ((bzhttp_SessionData_Data*)(c))
+
+bzhttp_SessionData::bzhttp_SessionData()
+{
+  pimple = new bzhttp_SessionData_Data();
+}
+
+bzhttp_SessionData::~bzhttp_SessionData()
+{
+  delete(pimple);
+}
+std::map<std::string,std::string> emptyMap;
+
+std::map<std::string,std::string> &GetPrivateData ( bzhttp_SessionData_Data * data )
+{
+  if (data->PrivateData.find(data->CurrentVdir) == data->PrivateData.end())
+    return emptyMap;
+
+  return data->PrivateData[data->CurrentVdir];
+}
+
+const char* bzhttp_SessionData::GetPrivateItem ( const char* name )
+{
+  std::map<std::string,std::string> &items = GetPrivateData((bzhttp_SessionData_Data *)pimple);
+
+  std::map<std::string,std::string>::iterator itr = items.find(TextUtils::toupper(name));
+  if (itr != items.end())
+    return itr->second.c_str();
+  return NULL;
+}
+
+void bzhttp_SessionData::SetPrivateItem ( const char * n, const char* value )
+{
+  std::map<std::string,std::string> &items = GetPrivateData((bzhttp_SessionData_Data *)pimple);
+  std::string name = TextUtils::toupper(n);
+
+  std::map<std::string,std::string>::iterator itr = items.find(name);
+  if (itr != items.end())
+    return;
+
+  items[name] = std::string(value);
+}
+
+void bzhttp_SessionData::ClearPrivateItem ( const char * name )
+{
+  std::map<std::string,std::string> &items = GetPrivateData((bzhttp_SessionData_Data *)pimple);
+  std::map<std::string,std::string>::iterator itr = items.find(TextUtils::toupper(name));
+  if (itr != items.end())
+    items.erase(itr);
+}
+
+void bzhttp_SessionData::FlushPrivateItems ( void )
+{
+  std::map<std::string,std::string> &items = GetPrivateData((bzhttp_SessionData_Data *)pimple);
+  items.clear();
+}
+
+const char* bzhttp_SessionData::GetGlobalItem ( const char* name )
+{
+  VDIR_SESSION(data);
+  std::map<std::string,std::string>::iterator itr = data->GlobalData.find(TextUtils::toupper(name));
+  if (itr != data->GlobalData.end())
+    return itr->second.c_str();
+  return NULL;
+}
+
+void bzhttp_SessionData::SetGlobalItem ( const char * n, const char* value )
+{
+  VDIR_SESSION(data);
+  std::string name = TextUtils::toupper(n);
+
+  std::map<std::string,std::string>::iterator itr = data->GlobalData.find(name);
+  if (itr != data->GlobalData.end())
+    return;
+
+  data->GlobalData[name] = std::string(value);
+}
+
+void bzhttp_SessionData::ClearGlobalItem ( const char * name )
+{
+  VDIR_SESSION(data);
+  std::map<std::string,std::string>::iterator itr = data->GlobalData.find(TextUtils::toupper(name));
+  if (itr != data->GlobalData.end())
+    data->GlobalData.erase(itr);
+}
+
+std::map<int,bzhttp_SessionData> Sessions;
+
+bzhttp_SessionData& GetSession ( unsigned int id )
+{
+  if (Sessions.find(id) == Sessions.end())
+  {
+    bzhttp_SessionData newSession;
+    unsigned int newID = rand();
+    while (Sessions.find(newID) != Sessions.end())
+      newID = rand();
+
+    newSession.SessionID = newID;
+    VDIR_SESSION_CLASS(newSession.pimple,data);
+    data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    Sessions[newID] = newSession;
+
+    return Sessions[newID];
+  }
+  else
+  {
+    VDIR_SESSION_CLASS(Sessions[id].pimple,data);
+    data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    return Sessions[id];
+  }
 }
 
 //----bzhttp_VDir
@@ -295,6 +428,7 @@ class bzhttp_Request_Data
 {
 public:
   std::map<std::string,std::string> Headers;
+  std::map<std::string,std::string> Cookies;
   std::map<std::string,std::string> Paramaters;
 };
 
@@ -302,7 +436,7 @@ public:
 
 #define REQUEST_DATA(n) bzhttp_Request_Data *n = ((bzhttp_Request_Data*)pimple)
 
-bzhttp_Request::bzhttp_Request()
+bzhttp_Request::bzhttp_Request(): Session(NULL)
 {
   pimple = new bzhttp_Request_Data;
 }
@@ -354,6 +488,50 @@ size_t bzhttp_Request::GetHeaderCount ()
 {
   REQUEST_DATA(data);
   return data->Headers.size();
+}
+
+void bzhttp_Request::AddCookie ( const char* n, const char* v)
+{
+  REQUEST_DATA(data);
+
+  std::string name = TextUtils::toupper(n); 
+  if (data->Headers.find(name) != data->Headers.end())
+    data->Headers[name] = std::string(v);
+}
+
+const char* bzhttp_Request::GetCookie ( const char* n)
+{
+  REQUEST_DATA(data);
+
+  std::string name = TextUtils::toupper(n); 
+  if (data->Cookies.find(name) == data->Cookies.end())
+    return NULL;
+
+  return data->Cookies[name].c_str();
+}
+
+const char* bzhttp_Request::GetCookie ( size_t index )
+{
+  REQUEST_DATA(data);
+  if (index >= data->Cookies.size())
+    return NULL;
+
+  size_t i =0;
+  std::map<std::string,std::string>::iterator itr = data->Cookies.begin();
+  while (itr != data->Cookies.end())
+  {
+    if (index == i)
+      return itr->second.c_str();
+    i++;
+    itr++;
+  }
+  return NULL;
+}
+
+size_t bzhttp_Request::GetCookieCount ()
+{
+  REQUEST_DATA(data);
+  return data->Cookies.size();
 }
 
 void bzhttp_Request::AddParamater ( const char* n, const char* v)
@@ -466,6 +644,8 @@ public:
 	HeaderSize = headerEnd + 4;
     }
 
+
+    unsigned int sessionID = 0;
     if (HeaderSize && !Request.GetHeaderCount())
     {
       std::string headerSubStir = RequestData.substr(0,HeaderSize);
@@ -490,6 +670,16 @@ public:
 	      ContentSize = (unsigned int)size;
 	    else
 	      ContentSize = 0;
+	  }
+	  if (name == "COOKIE")
+	  {
+	    std::vector<std::string> cookieParts = TextUtils::tokenize(headerParts[1],"=",2);
+	    if (cookieParts.size() > 1)
+	    {
+	      Request.AddCookie(cookieParts[0].c_str(),cookieParts[1].c_str());
+	      if (cookieParts[0] == SESSION_COOKIE)
+		sessionID = atoi(cookieParts[1].c_str());
+	    }
 	  }
 	}
       }
@@ -536,6 +726,8 @@ public:
 	Request.Body = RequestData.substr(HeaderSize,ContentSize);
       }
 
+      Request.Session = &GetSession(sessionID);
+
       Think(connectionID);
     }
     else
@@ -550,7 +742,14 @@ public:
     if(!vDir)
       return eNoPage;
 
-    return vDir->GeneratePage(Request,Responce);
+    VDIR_SESSION_CLASS(Request.Session->pimple,session);
+    session->CurrentVdir = vDir->VDirName();
+
+    bzhttp_ePageGenStatus status = vDir->GeneratePage(Request,Responce);
+
+    session->CurrentVdir = "";
+
+    return status;
   }
 
   void Think ( int connectionID )
@@ -562,7 +761,11 @@ public:
       if (status == eNoPage)
 	send404Error(connectionID);
       else if (status == ePageDone)
+      {
+	// set the session cookie
+	Responce.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
 	GenerateResponce(connectionID,Responce);
+      }
     }
   }
 
@@ -1081,7 +1284,7 @@ void NewHTTPConnection ( bz_EventData *eventData )
 	size_t dot = resource.find_last_of('.');
 	if (dot != std::string::npos)
 	{
-	  std::string path = resource.substr(0,dot);
+	  std::string path = TextUtils::url_decode(resource.substr(0,dot));
 	  if (TextUtils::find_first_substr(path,"..") == std::string::npos) // don't do paths that have .. ANYWHERE
 	  {
 	    std::string ext = TextUtils::toupper(resource.substr(dot+1,resource.size()-dot-1));
@@ -1129,6 +1332,22 @@ void CheckForZombies ( void )
 
   for (size_t i = 0; i < toKill.size(); i++)
     HTTPPeers.erase(HTTPPeers.find(toKill[i]));
+
+  toKill.clear();
+
+  double sessionTimeOut = 10*60;
+  double rightNow = TimeKeeper::getCurrent().getSeconds();
+  std::map<int,bzhttp_SessionData>::iterator sessionItr = Sessions.begin();
+  while(sessionItr != Sessions.end())
+  {
+    VDIR_SESSION_CLASS(sessionItr->second.pimple,data);
+    if (data->LastUpdateTime + sessionTimeOut < rightNow)
+      toKill.push_back(sessionItr->first);
+    sessionItr++;
+  }
+
+  for (size_t i = 0; i < toKill.size(); i++)
+    Sessions.erase(Sessions.find(toKill[i]));
 }
 
 

@@ -16,6 +16,27 @@
 
 #include "bzfsAPI.h"
 
+class BZF_API bzhttp_SessionData
+{
+public:
+public:
+  bzhttp_SessionData();
+  ~bzhttp_SessionData();
+
+  unsigned int SessionID;
+  
+  const char* GetPrivateItem ( const char* name );
+  void SetPrivateItem ( const char * name, const char* value );
+  void ClearPrivateItem ( const char * name );
+  void FlushPrivateItems ( void );
+
+  const char* GetGlobalItem ( const char* name );
+  void SetGlobalItem ( const char * name, const char* value );
+  void ClearGlobalItem ( const char * name );
+
+  void  *pimple;
+};
+
 typedef enum
 {
   eHTTPUnknown = 0,
@@ -46,10 +67,17 @@ public:
   const char* GetHeader ( size_t index );
   size_t GetHeaderCount ();
 
+  void AddCookie ( const char* name, const char* value);
+  const char* GetCookie ( const char* name);
+  const char* GetCookie ( size_t index );
+  size_t GetCookieCount ();
+
   void AddParamater ( const char* name, const char* value);
   const char* GetParamater ( const char* name);
   const char* GetParamater ( size_t index );
   size_t GetParamaterCount ();
+
+  bzhttp_SessionData *Session;
 
 protected:
   void  *pimple;
