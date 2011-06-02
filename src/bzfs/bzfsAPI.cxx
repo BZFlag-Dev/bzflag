@@ -69,7 +69,7 @@ public:
     doNext();
   }
 
-  virtual void done ( const char*, void * data, unsigned int size, bool complete )
+  virtual void URLDone ( const char*, void * data, unsigned int size, bool complete )
   {
     if (!busy)
       return;
@@ -90,12 +90,12 @@ public:
     }
   }
 
-  virtual void timeout ( const char* /*URL*/, int /*errorCode*/ )
+  virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ )
   {
     doNext();
   }
 
-  virtual void error ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+  virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
   {
     doNext();
   }
@@ -2859,9 +2859,9 @@ public:
     trURLJob job = jobs[0];
     jobs.erase(jobs.begin());
     if (good && job.handler)
-      job.handler->done(job.url.c_str(),data,length,good);
+      job.handler->URLDone(job.url.c_str(),data,length,good);
     else if (job.handler)
-      job.handler->error(job.url.c_str(),1,"badness");
+      job.handler->URLError(job.url.c_str(),1,"badness");
 
     // free it
     removeHandle();

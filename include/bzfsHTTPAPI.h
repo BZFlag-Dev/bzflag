@@ -61,6 +61,7 @@ public:
   bz_ApiString	Resource;
 
   bz_ApiString	BZID;
+  bz_ApiString	BZIDCallsign;
   bz_APIStringList BZIDGroups;
 
   bz_ApiString	Body;

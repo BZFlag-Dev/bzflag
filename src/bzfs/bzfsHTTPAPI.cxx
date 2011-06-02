@@ -26,6 +26,7 @@
 #include "TextUtils.h"
 #include "TimeKeeper.h"
 #include "base64.h"
+#include "Permissions.h"
 
 std::string ServerVersion;
 std::string ServerHostname;
@@ -605,7 +606,7 @@ size_t bzhttp_Request::GetParamaterCount ()
 }
 
 
-class HTTPConnectedPeer : public bz_NonPlayerConnectionHandler
+class HTTPConnectedPeer : public bz_NonPlayerConnectionHandler , public bz_BaseURLHandler
 {
 public:
   bool Killme;
@@ -623,8 +624,19 @@ public:
 
   bool Authenticated;
 
-  HTTPConnectedPeer() : bz_NonPlayerConnectionHandler()
+  std::string bzIDAuthURL;
+  std::string token;
+  std::string callsign;
+  std::string bzID;
+  std::vector<std::string> bzGroups;
+
+  std::string bzAuthReturnData;
+
+  bool bzIDAuthFailed;
+
+  HTTPConnectedPeer() : bz_NonPlayerConnectionHandler() ,bz_BaseURLHandler()
   {
+    bzIDAuthFailed = false;
     Authenticated = false;
     RequestComplete = false;
     Killme = false;
@@ -665,6 +677,66 @@ public:
     }
     else
       list[n] = std::string(d);
+  }
+
+  virtual void URLDone ( const char* URL, void * data, unsigned int size, bool complete )
+  {
+    if (data && size)
+      bzAuthReturnData += std::string((const char*)data,size);
+
+    if (complete)
+    {
+      bzIDAuthURL.clear();
+
+      bzAuthReturnData = TextUtils::replace_all(bzAuthReturnData,"\r","");
+
+      std::vector<std::string> lines = TextUtils::tokenize(bzAuthReturnData,"\n");
+
+      if (lines.size() < 2)
+	bzIDAuthFailed = true;
+      else
+      {
+	std::vector<std::string> toks = TextUtils::tokenize(lines[0],":",2);
+	if (toks.size() > 1 && toks[0] == "TOKGOOD")
+	{
+	  Authenticated = true;
+	  SetAuthSessionData("bzidauthstatus","complete");
+
+	  // walk the groups
+	  std::vector<std::string> groups = TextUtils::tokenize(trimLeadingWhitespace(toks[1].c_str()),":");
+	  for (size_t i = 0; i < groups.size(); i++)
+	  {
+	    if (groups[i] != callsign)
+	      bzGroups.push_back(groups[i]);
+	  }
+
+	  SetAuthSessionData("bzidauthgroups",trimLeadingWhitespace(toks[1].c_str()).c_str());
+
+	  bzID = "";
+	  // get the BZID
+	  std::vector<std::string> chunks = TextUtils::tokenize(lines[1]," ");
+	  if (chunks.size() > 1 && chunks[0] == "BZID:")
+	    bzID = chunks[1];
+	  else
+	    bzIDAuthFailed = true;
+
+	  SetAuthSessionData("bzid",bzID.c_str());
+	  SetAuthSessionData("bzidcallsign",callsign.c_str());
+	}
+	else
+	  bzIDAuthFailed = true;
+      }
+    }
+  }
+
+  virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ )
+  {
+    bzIDAuthFailed = true;
+  }
+
+  virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+  {
+    bzIDAuthFailed = true;
   }
 
   virtual void pending(int connectionID, void *data, unsigned int size)
@@ -803,7 +875,18 @@ public:
 	  {
 	    std::string id = GetAuthSessionData("bzid");
 	    if (id.size())
+	    {
 	      Authenticated = true;
+	      bzID = id;
+	      callsign = GetAuthSessionData("bzidcallsign");
+
+	      std::vector<std::string> groups = TextUtils::tokenize(GetAuthSessionData("bzidauthgroups"),":");
+	      for (size_t i = 0; i < groups.size(); i++)
+	      {
+		if (groups[i] != callsign)
+		  bzGroups.push_back(groups[i]);
+	      }
+	    }
 	  }
 	  else
 	  {
@@ -821,12 +904,66 @@ public:
 	    if (status == "redired")
 	    {
 	      // see if they've got the stuff
-	      
+	      const char *t = Request.GetParamater("bzauthtoken");
+	      const char *c = Request.GetParamater("bzauthcallsign");
+
+	      if (t && c)
+	      {
+		SetAuthSessionData("bzidauthstatus","requested");
+		token = t;
+		callsign = c;
+
+		bzIDAuthURL = "http://my.bzflag.org/db/";
+		if (bz_BZDBItemExists("_WebAuthCheckURL") && bz_getBZDBString("_WebAuthCheckURL").size())
+		  bzIDAuthURL = bz_getBZDBString("_WebAuthCheckURL").c_str();
+
+		bzIDAuthURL += "?action=CHECKTOKENS&checktokens=";
+		bzIDAuthURL += TextUtils::url_encode(callsign);
+		bzIDAuthURL += "%3D";
+		bzIDAuthURL += TextUtils::url_encode(token);
+		
+		std::string groups;
+		// get the groups list
+		PlayerAccessMap::iterator itr = groupAccess.begin();
+		while (itr != groupAccess.end()) 
+		{
+		  groups += TextUtils::url_encode(itr->first) + "%0D%0A";
+		  itr++;
+		}
+
+		for (size_t i = 0; i < vDir->BZIDAuthenicationGroups.size(); i++)
+		  groups += TextUtils::url_encode(vDir->BZIDAuthenicationGroups.get(i).c_str()) + "%0D%0A";
+
+		if (groups.size())
+		{
+		  groups.erase(groups.size()-6,6);
+		  bzIDAuthURL += "&groups=" + groups;
+		}
+
+		bzAuthReturnData = "";
+		bz_addURLJob(bzIDAuthURL.c_str(),this);
+
+		//bz_startu
+		authStatus = eNotAuthedYet;
+	      }
 	    }
 	    else
 	    {
+	     std::string authURL = "http://my.bzflag.org/weblogin";
+	     if (bz_BZDBItemExists("_WebAuthURL") && bz_getBZDBString("_WebAuthURL").size())
+	       authURL = bz_getBZDBString("_WebAuthURL").c_str();
+
+	     authURL += "?action=weblogin&url=";
+	     std::string redirURL = Resource;
+	     if (redirURL.find_last_of('?') == std::string::npos)
+	       redirURL += "?";
+
+	     redirURL += "bzauthtoken=%TOKEN%&bzauthcallsign=%USERNAME%";
+
+	     authURL += TextUtils::url_encode(redirURL);
+
 	     Responce.ReturnCode = e302Found;
-	     Responce.RedirectLocation = "http://my.bzflag.org/weblogin.php?";
+	     Responce.RedirectLocation = authURL.c_str();
 	     SetAuthSessionData("bzidauthstatus","redired");
 	    }
 
@@ -865,9 +1002,7 @@ public:
 		SetAuthSessionData("authstatus", "complete");
 	    }
 	    else
-	    {
 	      Responce.ReturnCode = e401Unauthorized;
-	    }
 	  }
 	}
 
@@ -897,6 +1032,13 @@ public:
 
     VDIR_SESSION_CLASS(Request.Session->pimple,session);
     session->CurrentVdir = vDir->VDirName();
+
+    // load up the auth data
+    Request.BZID = bzID.c_str();
+    Request.BZIDCallsign = callsign;
+
+    for (size_t i =0; i < bzGroups.size(); i++)
+      Request.BZIDGroups.push_back(bzGroups[i]);
 
     bzhttp_ePageGenStatus status = vDir->GeneratePage(Request,Responce);
 
@@ -933,6 +1075,13 @@ public:
 	else if (vDir->RequiredAuthentiction == eBZID)
 	{
 	  // check and see if that url job is done or not
+	  if (bzIDAuthFailed)
+	  {
+	    if (!vDir->GenerateNoAuthPage(Request,Responce))
+	      Responce.ReturnCode = e403Forbiden;
+	    GenerateResponce(connectionID);
+	    Killme = true;
+	  }
 	}
       }
 
@@ -1223,8 +1372,12 @@ public:
 
   virtual void disconnect(int connectionID)
   {
-    if (connectionID)
-      Killme = true;
+    if (!connectionID)
+      return;
+    if (bzIDAuthURL.size())
+      bz_removeURLJob(bzIDAuthURL.c_str());
+
+    Killme = true;
   }
 
   void send100Continue(int connectionID)
