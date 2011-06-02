@@ -4967,6 +4967,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 
   NetHandler* netHandler = peer.netHandler;
 
+  // see if the sucker is banned
+
   size_t headerLen = strlen(BZ_CONNECT_HEADER);
   size_t readLen = headerLen;
 
@@ -5080,35 +5082,47 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
   // we like them see if they have gotten new data
   if (peer.apiHandler && peer.player < 0)
   {
-    bool retry = false;
-
-    RxStatus e = netHandler->receive(1024,&retry);
-    if (retry) // try one more time, just in case it was blocked
+    in_addr IP = netHandler->getIPAddress();
+    BanInfo info(IP);
+    if (!clOptions->acl.validate(IP, &info))
     {
-      int retries = 1;
-      if (BZDB.isSet("_maxConnectionRetries"))
-	retries = (int) BZDB.eval("_maxConnectionRetries");
+      std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
+      peer.sendChunks.push_back(banMsg);
+      peer.deleteMe;
+    }
 
-      retry = false;
-      for ( int t = 0; t < retries; t++)
+    if (!peer.deleteMe)
+    {
+      bool retry = false;
+
+      RxStatus e = netHandler->receive(1024,&retry);
+      if (retry) // try one more time, just in case it was blocked
       {
-	e = netHandler->receive(1024,&retry);
-	if (!retry)
-	  break;
-      }
-    }
+	int retries = 1;
+	if (BZDB.isSet("_maxConnectionRetries"))
+	  retries = (int) BZDB.eval("_maxConnectionRetries");
 
-    if (e == ReadPart || e == ReadAll)
-    {
-      peer.lastActivity = TimeKeeper::getCurrent();
-      peer.apiHandler->pending(peer.socket,netHandler->getTcpBuffer(),netHandler->getTcpReadSize());
-      netHandler->flushData();
-    }
-    else
-    {
-      // they done disconnected
-      peer.apiHandler->disconnect(peer.socket);
-      peer.deleteMe = true;
+	retry = false;
+	for ( int t = 0; t < retries; t++)
+	{
+	  e = netHandler->receive(1024,&retry);
+	  if (!retry)
+	    break;
+	}
+      }
+
+      if (e == ReadPart || e == ReadAll)
+      {
+	peer.lastActivity = TimeKeeper::getCurrent();
+	peer.apiHandler->pending(peer.socket,netHandler->getTcpBuffer(),netHandler->getTcpReadSize());
+	netHandler->flushData();
+      }
+      else
+      {
+	// they done disconnected
+	peer.apiHandler->disconnect(peer.socket);
+	peer.deleteMe = true;
+      }
     }
   }
   
