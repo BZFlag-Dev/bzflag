@@ -43,6 +43,7 @@ bzexec_project 'bzrobots'
   linkpackage('x11')
   linkpackage('curl')
   linkpackage('ares')
+  linkpackage('regex')
   linkpackage('zlib')
   linkpackage('dl')
   linkpackage('rt')

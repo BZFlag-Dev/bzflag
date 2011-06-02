@@ -31,6 +31,7 @@ bzexec_project 'bzadmin'
   linkpackage('curses')
   linkpackage('curl')
   linkpackage('ares')
+  linkpackage('regex')
   linkpackage('zlib')
   linkpackage('dl')
   linkpackage('rt')

@@ -15,6 +15,7 @@ bzexec_project 'bzfs'
   }
   linkpackage('curl')
   linkpackage('ares')
+  linkpackage('regex')
   linkpackage('zlib')
   linkpackage('dl')
   linkpackage('rt')
