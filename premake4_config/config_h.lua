@@ -63,12 +63,25 @@ CONFIG.BZ_BUILD_OS = os.outputof('uname -s'):lower():gsub('\n', '')
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
+local function test_report(testdesc, testcode)
+  local dots = ('.'):rep(20 - #testdesc)
+  echof('checking for %s %s ', testdesc, dots)
+  local success = os.testcode(testcode)
+  printf('%s', success and 'ok' or 'fail')
+  return success
+end
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
 local function test_math_func(name)
-  return os.testcode {
-    code = 'void (*dummy)(void) = (void (*)(void))&'..name..'; (void)dummy;',
+  return test_report(name .. '()', {
+    code = [[void (*dummy)(void) = (void (*)(void))&]]
+           .. name .. [[; (void)dummy;]],
     includes = { '<math.h>' },
     buildoptions = '-lm',
-  }
+  })
 end
 
 CONFIG.HAVE_ACOSF  = test_math_func('acosf')
@@ -92,114 +105,114 @@ CONFIG.HAVE_TANF   = test_math_func('tanf')
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_STD__ISNAN = os.testcode {
-  code = 'const int dummy = std::isnan(1.0f); (void)dummy;',
+CONFIG.HAVE_STD__ISNAN = test_report('std::isnan()', {
+  code = [[const int dummy = std::isnan(1.0f); (void)dummy;]],
   includes = '<cmath>',
   buildoptions = '-lm',
-}
+})
 
-CONFIG.HAVE_ISNAN = os.testcode {
-  code = 'const int dummy = isnan(1.0f); (void)dummy;',
+CONFIG.HAVE_ISNAN = test_report('isnan()', {
+  code = [[const int dummy = isnan(1.0f); (void)dummy;]],
   includes = '<math.h>',
   buildoptions = '-lm',
-}
+})
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_STD__MAX = os.testcode {
-  code = '(void)std::max(0, 1);',
+CONFIG.HAVE_STD__MAX = test_report('std::max()', {
+  code = [[(void)std::max(0, 1);]],
   includes = '<algorithm>',
-}
+})
 
-CONFIG.HAVE_STD__MIN = os.testcode {
-  code = '(void)std::min(0, 1);',
+CONFIG.HAVE_STD__MIN = test_report('std::min()', {
+  code = [[(void)std::min(0, 1);]],
   includes = '<algorithm>',
-}
+})
 
-CONFIG.HAVE_STD__COUNT = os.testcode {
-  code = 'const char a[] = "test"; (void)std::count(a, a+4, \'t\');',
+CONFIG.HAVE_STD__COUNT = test_report('std::count()', {
+  code = [[const char a[] = "test"; (void)std::count(a, a+4, 't');]],
   includes = '<algorithm>',
-}
+})
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_SELECT = os.testcode {
-  code = '(void)&select;',
+CONFIG.HAVE_SELECT = test_report('select()', {
+  code = [[(void)&select;]],
   includes = {
     '<sys/select.h>',
     '<sys/time.h>',
     '<sys/types.h>',
     '<unistd.h>',
   },
-}
+})
 
-CONFIG.HAVE_ATEXIT = os.testcode {
-  code = '(void)&atexit;',
+CONFIG.HAVE_ATEXIT = test_report('atexit()', {
+  code = [[(void)&atexit;]],
   includes = '<stdlib.h>',
-}
+})
 
-CONFIG.HAVE_SLEEP = os.testcode {
-  code = '(void)&sleep;',
+CONFIG.HAVE_SLEEP = test_report('sleep()', {
+  code = [[(void)&sleep;]],
   includes = '<unistd.h>',
-}
+})
 
-CONFIG.HAVE_USLEEP = os.testcode {
-  code = '(void)&usleep;',
+CONFIG.HAVE_USLEEP = test_report('usleep()', {
+  code = [[(void)&usleep;]],
   includes = '<unistd.h>',
-}
+})
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE__STRICMP = os.testcode {
-  code = '(void)&stricmp;',
-}
+CONFIG.HAVE__STRICMP = test_report('stricmp()', {
+  code = [[(void)&stricmp;]],
+})
 
-CONFIG.HAVE__STRNICMP = os.testcode {
-  code = '(void)&strnicmp;',
-}
+CONFIG.HAVE__STRNICMP = test_report('strnicmp()', {
+  code = [[(void)&strnicmp;]],
+})
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_VSNPRINTF = os.testcode {
-  code = '(void)&vsnprintf;',
+CONFIG.HAVE_VSNPRINTF = test_report('vsnprintf()', {
+  code = [[(void)&vsnprintf;]],
   includes = '<stdio.h>',
-}
+})
 
-CONFIG.HAVE__VSNPRINTF = os.testcode {
-  code = '(void)&_vsnprintf;',
+CONFIG.HAVE__VSNPRINTF = test_report('_vsnprintf()', {
+  code = [[(void)&_vsnprintf;]],
   includes = '<stdio.h>',
-}
+})
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_SCHED_SETAFFINITY = os.testcode {
-  code = '(void)&sched_setaffinity;',
+CONFIG.HAVE_SCHED_SETAFFINITY = test_report('sched_affinity()', {
+  code = [[(void)&sched_setaffinity;]],
   includes = '<sched.h>',
-}
+})
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_STD__WSTRING = os.testcode {
-  code = '(void)std::wstring();',
+CONFIG.HAVE_STD__WSTRING = test_report('std::wstring', {
+  code = [[(void)std::wstring();]],
   includes = '<iostream>',
-}
+})
 
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
 local function test_header(name)
-  return os.testcode {
-    code = '',
+  return test_report(name, {
+    code = [[]],
     includes = name,
     buildoptions = '-E'  -- this is faster, don't need the full build
-  }
+  })
 end
 
 CONFIG.HAVE_CMATH   = test_header('<cmath>')
@@ -237,11 +250,11 @@ CONFIG.HAVE_XCURSES_H     = test_header('<xcurses.h>')
 --------------------------------------------------------------------------------
 
 local function test_library(lib)
-  return os.testcode {
-    code = '',
+  return test_report('lib' .. lib, {
+    code = [[]],
     includes = name,
     buildoptions = '-l'..lib
-  }
+  })
 end
 
 CONFIG.HAVE_LIBBIND   = test_library('bind')
@@ -256,7 +269,7 @@ CONFIG.HAVE_LIBWS2_32 = test_library('ws3_32')
 --  FREETYPE
 --
 
-if (not CONFIG.BUILD_FREETYPE) then
+do
   local cflags
   cflags = os.outputof('freetype-config --cflags')
   if (not cflags) then
@@ -265,18 +278,22 @@ if (not CONFIG.BUILD_FREETYPE) then
     cflags = '-I/usr/include/freetype2'
   end
 
-  local incdir = cflags:match('-I(%S+)')
+  getpackage('freetype').includedirs = cflags:match('-I(%S+)'):gsub('\n', '')
+end
+
+if (not CONFIG.BUILD_FREETYPE) then
+
   local success = os.testcode {
     code = [[
       FT_Library ftlib;
       (void)FT_Init_FreeType(&ftlib);
     ]],
+    includedirs = getpackage('freetype').includedirs,
     includes = {
       '<ft2build.h>',
       'FT_FREETYPE_H',
     },
     libs = 'freetype',
-    buildoptions = '`freetype-config --cflags`' -- FIXME
   }
 
   CONFIG.BUILD_FREETYPE = not success
@@ -310,8 +327,9 @@ if (not CONFIG.BUILD_FTGL) then
       (void)ftglCreateBitmapFont("FIXME");
       //(void)ftglCreateBitmapFontFromMem(fake, sizeof(fake));
     ]],
+    includedirs = getpackage('freetype').includedirs,
     includes = { '<FTGL/ftgl.h>' },
-    buildoptions = '`freetype-config --cflags` -lftgl' -- FIXME
+    libs = 'ftgl',
   }
 
   CONFIG.BUILD_FTGL = not success

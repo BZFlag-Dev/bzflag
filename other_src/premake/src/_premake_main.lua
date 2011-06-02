@@ -4,7 +4,7 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
-  -- BZFlag customization
+  -- BZFlag customization -- _PREMAKE_BZFLAG
 	_PREMAKE_BZFLAG = 1
 
 
@@ -151,8 +151,8 @@
 
 		print("Done.")
 
-		-- BZFlag customization
-		if (_LASTCALL) then
+		-- BZFlag customization -- _LASTCALL
+		if (type(_LASTCALL) == 'function') then
 		  _LASTCALL()
     end
 

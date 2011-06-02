@@ -346,7 +346,7 @@
 
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
-#undef LT_OBJDIR
+/* #undef LT_OBJDIR -- unused */
 
 /* Debugging disabled */
 /* #undef NDEBUG -- use 'premake4 config=release gmake' */

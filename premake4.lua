@@ -16,7 +16,8 @@ local MIN_BZFLAG_PREMAKE = 1
 if (not _PREMAKE_BZFLAG) then
   print('\n'
   .. 'A customized premake is required to configure the bzflag build.\n\n'
-  .. 'The customized premake sources can be found in: ./other_src/premake/.\n'
+  .. 'The customized premake sources can be found in: ./other_src/premake/.\n\n'
+  .. 'You can also try the  ./config.sh  or  .\\config.bat  scripts.\n'
   )
   os.exit(1)
 end
@@ -36,6 +37,8 @@ end
 --
 
 _PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
+
+_PREMAKE_QUIET = true
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -125,7 +128,7 @@ end
 
 CONFIG.BUILD_OS = 'FIXME2.1'
 
-CONFIG.CONFIG_DATE = os.date('%Y%m%d')
+CONFIG.CONFIG_DATE = os.date('%Y%m%d') -- FIXME -- put this somewhere (not config.h)
 
 CONFIG.build_luaexecs = false
 CONFIG.BUILD_ARES     = false
@@ -334,9 +337,6 @@ end
 if (not _OPTIONS['help']) then
 
   include 'premake4_config'
-
-  getpackage('freetype').includedirs = -- FIXME
-    os.outputof('freetype-config --cflags'):match('%-I(.*)$') -- FIXME
 
   include 'other_src'
   include 'src'

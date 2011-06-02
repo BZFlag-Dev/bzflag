@@ -204,7 +204,7 @@
 		-- include the dependencies, built by GCC (with the -MMD flag)
 		_p('-include $(OBJECTS:%%.o=%%.d)')
 
-		-- BZFlag customization
+		-- BZFlag customization -- objects depend on their makefiles, makefiles on premake's
 		local myname = _MAKE.getmakefilename(prj, true)
 		local premake_exec = _MAKE.esc(_PREMAKE_EXEC or 'premake4')
 		_p('')
@@ -220,6 +220,7 @@
 		_p('reconfig:')
 		_p('\t@(cd "' .. topdir .. '" ; "' .. premake_exec .. '" gmake)')
 
+		-- BZFlag customization -- extra targets for gmake
 		if (prj.extratarget) then
 			_p('')
 			for _, item in ipairs(prj.extratarget) do

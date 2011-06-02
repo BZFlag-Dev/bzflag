@@ -19,8 +19,15 @@
 --    or project as a parameters.
 --
 
-  -- BZFlag customization
+  -- BZFlag customization -- only output files if their contents have changed
 	function premake.generate(obj, filename, callback)
+
+		-- BZFlag customization -- quiet generation
+		local printf = printf
+		if (_PREMAKE_QUIET) then
+			printf = function() end
+		end
+
 		filename = premake.project.getfilename(obj, filename)
 		printf("Generating %s...", filename)
 
@@ -58,7 +65,7 @@
 			f:close()
 
 			if (newdata == olddata) then
-				print("           " .. filename .. " is unchanged")
+				printf("           %s is unchanged", filename)
 			else
 				local wf, err = io.open(filename, "wb")
 				if (not wf) then
