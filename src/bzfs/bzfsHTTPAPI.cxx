@@ -268,6 +268,8 @@ bzhttp_VDir::bzhttp_VDir()
   pimple = new bzhttp_VDir_Data;
   RequiredAuthentiction = eNoAuth;
   CacheAuthentication = false;
+  MaxRequestSize = -1;
+  MaxRequestBody = -1;
 }
 
 bzhttp_VDir::~bzhttp_VDir()
@@ -747,6 +749,32 @@ public:
     RequestData += d;
     free(d);
 
+    // know our limits
+    int maxContentSize = 1024*1536;
+    int maxBufferSize = 1024*2048;
+
+    if (bz_BZDBItemHasValue("_MaxHTTPContentSize"))
+      maxBufferSize = bz_getBZDBInt("_MaxHTTPContentSize");
+
+    if (vDir && vDir->MaxRequestBody > maxContentSize)
+      maxContentSize = vDir->MaxRequestBody;
+
+    if (bz_BZDBItemHasValue("_MaxHTTPRequestSize"))
+      maxBufferSize = bz_getBZDBInt("_MaxHTTPRequestSize");
+
+    if (maxBufferSize < maxContentSize)
+      maxBufferSize = maxContentSize;
+
+    if (vDir && vDir->MaxRequestSize > maxBufferSize)
+      maxBufferSize = vDir->MaxRequestSize;
+
+    // check to see if we have too much data
+    if (RequestData.size() > maxBufferSize)
+    {
+      send501Error(connectionID);
+      return;
+    }
+
     if (Request.RequestType == eHTTPUnknown)
     {
       std::stringstream stream(RequestData);
@@ -801,7 +829,15 @@ public:
 	  {
 	    int size = atoi(headerParts[1].c_str());
 	    if (size > 0)
+	    {
 	      ContentSize = (unsigned int)size;
+
+	      if (ContentSize > maxContentSize)
+	      {
+		send501Error(connectionID);
+		return;
+	      }
+	    }
 	    else
 	      ContentSize = 0;
 	  }
@@ -914,7 +950,7 @@ public:
 		callsign = c;
 
 		bzIDAuthURL = "http://my.bzflag.org/db/";
-		if (bz_BZDBItemExists("_WebAuthCheckURL") && bz_getBZDBString("_WebAuthCheckURL").size())
+		if (bz_BZDBItemHasValue("_WebAuthCheckURL"))
 		  bzIDAuthURL = bz_getBZDBString("_WebAuthCheckURL").c_str();
 
 		bzIDAuthURL += "?action=CHECKTOKENS&checktokens=";
@@ -950,7 +986,7 @@ public:
 	    else
 	    {
 	     std::string authURL = "http://my.bzflag.org/weblogin";
-	     if (bz_BZDBItemExists("_WebAuthURL") && bz_getBZDBString("_WebAuthURL").size())
+	     if (bz_BZDBItemHasValue("_WebAuthURL"))
 	       authURL = bz_getBZDBString("_WebAuthURL").c_str();
 
 	     authURL += "?action=weblogin&url=";
@@ -1479,7 +1515,7 @@ class HTTPIndexHandler: public bzhttp_VDir
 public:
   HTTPIndexHandler() : bzhttp_VDir()
   {
-    if (bz_BZDBItemExists("_HTTPIndexResourceDir") && bz_getBZDBString("_HTTPIndexResourceDir").size())
+    if (bz_BZDBItemHasValue("_HTTPIndexResourceDir"))
       ResourceDirs.push_back(bz_getBZDBString("_HTTPIndexResourceDir"));
 
     AddStandardTypes();

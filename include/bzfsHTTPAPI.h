@@ -184,6 +184,11 @@ public:
   virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return eAuthFail; }
   virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Responce &/*responce*/ ) {return false;}
 
+
+  // data sizes
+  int MaxRequestSize;
+  int MaxRequestBody;
+
   void AddMimeType(const char* extension, const char* mime );
   void AddStandardTypes ();
 
