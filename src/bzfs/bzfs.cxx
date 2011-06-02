@@ -5052,6 +5052,15 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 	    }
 	    netHandler->flushData();
 
+	    in_addr IP = netHandler->getIPAddress();
+	    BanInfo info(IP);
+	    if (!clOptions->acl.validate(IP, &info))
+	    {
+	      std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
+	      peer.sendChunks.push_back(banMsg);
+	      peer.deleteMe;
+	    }
+
 	    // call an event to let people know we got a new connect
 	    bz_NewNonPlayerConnectionEventData_V1 eventData;
 
