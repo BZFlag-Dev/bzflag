@@ -1375,17 +1375,24 @@ public:
 
     pageBuffer += "Server: " + ServerVersion + "\n";
 
-    bz_Time ts;
-    bz_getUTCtime (&ts);
-    pageBuffer += "Date: ";
-    pageBuffer += printTime(&ts,"UTC");
-    pageBuffer += "\n";
+    bool didDate = false;
 
     std::map<std::string,std::string>::iterator itr = data->Headers.begin();
     while (itr != data->Headers.end())
     {
       pageBuffer += itr->first + ":" + itr->second + "\n";
+      if (itr->first == "Date")
+	didDate = true;
       itr++;
+    }
+
+    if (!didDate)
+    {
+      bz_Time ts;
+      bz_getUTCtime (&ts);
+      pageBuffer += "Date: ";
+      pageBuffer += printTime(&ts,"UTC");
+      pageBuffer += "\n";
     }
 
     if (Responce.ReturnCode == e200OK)
@@ -1513,9 +1520,12 @@ public:
     fseek(fp,0,SEEK_SET);
     void *p = malloc(size);
     fread(p,size,1,fp);
+
+    Responce.MD5Hash = bz_MD5(p,size);
     fclose(fp);
 
-    Responce.AddBodyData(p,size);
+    if (Request.RequestType != eHTTPHead)
+      Responce.AddBodyData(p,size);
     free(p);
     Responce.ReturnCode = e200OK;
     Responce.DocumentType = eOther;
