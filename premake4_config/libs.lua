@@ -12,13 +12,13 @@ end
 --
 
 if (not CONFIG.BUILD_ZLIB) then
-  local success = os.testcode {
+  local success = os.testreport('libz', {
     code = [[
       (void)compressBound(1);
     ]],
     includes = { '<zlib.h>' },
     libs = 'z',
-  }
+  })
 
   CONFIG.BUILD_ZLIB = not success
 end
@@ -43,19 +43,19 @@ if (not CONFIG.BUILD_REGEX) then
     (void)regcomp(&re, ".*", 0);
   ]]
 
-  local success = os.testcode {
+  local success = os.testreport('libregex', {
     code = code,
     includes = '<regex.h>',
-  }
+  })
 
   if (success) then
     getpackage('regex').links = false -- no need for an extra library
   else
-    success = os.testcode {
+    success = os.testreport('libregex (-lregex)', {
       code = code,
       includes = '<regex.h>',
       libs = 'regex',
-    }
+    })
   end
 
   CONFIG.BUILD_REGEX = not success
@@ -76,14 +76,14 @@ end
 --
 
 if (not CONFIG.BUILD_ARES) then
-  local success = os.testcode {
+  local success = os.testreport('libares', {
     code = [[
       ares_channel ac;
       (void)ares_init(&ac);
     ]],
     includes = { '<ares.h>' },
     libs = 'cares',
-  }
+  })
 
   CONFIG.BUILD_ARES = not success
 end
@@ -103,13 +103,13 @@ end
 --
 
 if (not CONFIG.BUILD_CURL) then
-  local success = os.testcode {
+  local success = os.testreport('libcurl', {
     code = [[
       (void)curl_global_init(0);
     ]],
     includes = { '<curl/curl.h>' },
     libs = 'curl',
-  }
+  })
 
   CONFIG.BUILD_CURL = not success
 end
@@ -150,8 +150,7 @@ do
 end
 
 if (not CONFIG.BUILD_FREETYPE) then
-
-  local success = os.testcode {
+  local success = os.testreport('libfreetype', {
     code = [[
       FT_Library ftlib;
       (void)FT_Init_FreeType(&ftlib);
@@ -162,7 +161,7 @@ if (not CONFIG.BUILD_FREETYPE) then
       'FT_FREETYPE_H',
     },
     libs = 'freetype',
-  }
+  })
 
   CONFIG.BUILD_FREETYPE = not success
 end
@@ -189,16 +188,16 @@ end
 -- ftglCreateBitmapFontFromMem() implies the presence of FTCleanup.
 
 if (not CONFIG.BUILD_FTGL) then
-  local success = os.testcode {
+  local success = os.testreport('libftgl', {
     code = [[
       const unsigned char fake[] = "invalid bitmap font";
-      (void)ftglCreateBitmapFont("FIXME");
-      //(void)ftglCreateBitmapFontFromMem(fake, sizeof(fake));
+      (void)ftglCreateBitmapFontFromMem(fake, sizeof(fake));
     ]],
     includedirs = getpackage('freetype').includedirs,
     includes = { '<FTGL/ftgl.h>' },
+    language = 'c',
     libs = 'ftgl',
-  }
+  })
 
   CONFIG.BUILD_FTGL = not success
 end
@@ -218,11 +217,11 @@ end
 --
 
 if (not CONFIG.BUILD_GLEW) then
-  local success = os.testcode {
+  local success = os.testreport('libglew', {
     code = [[ (void)glewInit(); ]],
     includes = { '<GL/glew.h>' },
     libs = 'GLEW',
-  }
+  })
 
   CONFIG.BUILD_GLEW = not success
 end

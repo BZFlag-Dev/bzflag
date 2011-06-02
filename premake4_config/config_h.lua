@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-if (_OPTIONS['help']) then
+if (_OPTIONS['help'] or (_ACTION == 'clean')) then
   return
 end
 
@@ -63,20 +63,8 @@ CONFIG.BZ_BUILD_OS = os.outputof('uname -s'):lower():gsub('\n', '')
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-local function test_report(testdesc, testcode)
-  local dots = ('.'):rep(20 - #testdesc)
-  stdoutf('checking for %s %s ', testdesc, dots)
-  local success = os.testcode(testcode)
-  printf('%s', success and 'ok' or 'fail')
-  return success
-end
-
-
---------------------------------------------------------------------------------
---------------------------------------------------------------------------------
-
 local function test_math_func(name)
-  return test_report(name .. '()', {
+  return os.testreport(name .. '()', {
     code = [[void (*dummy)(void) = (void (*)(void))&]]
            .. name .. [[; (void)dummy;]],
     includes = { '<math.h>' },
@@ -105,13 +93,13 @@ CONFIG.HAVE_TANF   = test_math_func('tanf')
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_STD__ISNAN = test_report('std::isnan()', {
+CONFIG.HAVE_STD__ISNAN = os.testreport('std::isnan()', {
   code = [[const int dummy = std::isnan(1.0f); (void)dummy;]],
   includes = '<cmath>',
   buildoptions = '-lm',
 })
 
-CONFIG.HAVE_ISNAN = test_report('isnan()', {
+CONFIG.HAVE_ISNAN = os.testreport('isnan()', {
   code = [[const int dummy = isnan(1.0f); (void)dummy;]],
   includes = '<math.h>',
   buildoptions = '-lm',
@@ -120,17 +108,17 @@ CONFIG.HAVE_ISNAN = test_report('isnan()', {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_STD__MAX = test_report('std::max()', {
+CONFIG.HAVE_STD__MAX = os.testreport('std::max()', {
   code = [[(void)std::max(0, 1);]],
   includes = '<algorithm>',
 })
 
-CONFIG.HAVE_STD__MIN = test_report('std::min()', {
+CONFIG.HAVE_STD__MIN = os.testreport('std::min()', {
   code = [[(void)std::min(0, 1);]],
   includes = '<algorithm>',
 })
 
-CONFIG.HAVE_STD__COUNT = test_report('std::count()', {
+CONFIG.HAVE_STD__COUNT = os.testreport('std::count()', {
   code = [[const char a[] = "test"; (void)std::count(a, a+4, 't');]],
   includes = '<algorithm>',
 })
@@ -138,7 +126,7 @@ CONFIG.HAVE_STD__COUNT = test_report('std::count()', {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_SELECT = test_report('select()', {
+CONFIG.HAVE_SELECT = os.testreport('select()', {
   code = [[(void)&select;]],
   includes = {
     '<sys/select.h>',
@@ -148,17 +136,17 @@ CONFIG.HAVE_SELECT = test_report('select()', {
   },
 })
 
-CONFIG.HAVE_ATEXIT = test_report('atexit()', {
+CONFIG.HAVE_ATEXIT = os.testreport('atexit()', {
   code = [[(void)&atexit;]],
   includes = '<stdlib.h>',
 })
 
-CONFIG.HAVE_SLEEP = test_report('sleep()', {
+CONFIG.HAVE_SLEEP = os.testreport('sleep()', {
   code = [[(void)&sleep;]],
   includes = '<unistd.h>',
 })
 
-CONFIG.HAVE_USLEEP = test_report('usleep()', {
+CONFIG.HAVE_USLEEP = os.testreport('usleep()', {
   code = [[(void)&usleep;]],
   includes = '<unistd.h>',
 })
@@ -166,23 +154,23 @@ CONFIG.HAVE_USLEEP = test_report('usleep()', {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE__STRICMP = test_report('stricmp()', {
+CONFIG.HAVE__STRICMP = os.testreport('stricmp()', {
   code = [[(void)&stricmp;]],
 })
 
-CONFIG.HAVE__STRNICMP = test_report('strnicmp()', {
+CONFIG.HAVE__STRNICMP = os.testreport('strnicmp()', {
   code = [[(void)&strnicmp;]],
 })
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_VSNPRINTF = test_report('vsnprintf()', {
+CONFIG.HAVE_VSNPRINTF = os.testreport('vsnprintf()', {
   code = [[(void)&vsnprintf;]],
   includes = '<stdio.h>',
 })
 
-CONFIG.HAVE__VSNPRINTF = test_report('_vsnprintf()', {
+CONFIG.HAVE__VSNPRINTF = os.testreport('_vsnprintf()', {
   code = [[(void)&_vsnprintf;]],
   includes = '<stdio.h>',
 })
@@ -190,7 +178,7 @@ CONFIG.HAVE__VSNPRINTF = test_report('_vsnprintf()', {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_SCHED_SETAFFINITY = test_report('sched_affinity()', {
+CONFIG.HAVE_SCHED_SETAFFINITY = os.testreport('sched_affinity()', {
   code = [[(void)&sched_setaffinity;]],
   includes = '<sched.h>',
 })
@@ -198,7 +186,7 @@ CONFIG.HAVE_SCHED_SETAFFINITY = test_report('sched_affinity()', {
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
 
-CONFIG.HAVE_STD__WSTRING = test_report('std::wstring', {
+CONFIG.HAVE_STD__WSTRING = os.testreport('std::wstring', {
   code = [[(void)std::wstring();]],
   includes = '<iostream>',
 })
@@ -208,7 +196,7 @@ CONFIG.HAVE_STD__WSTRING = test_report('std::wstring', {
 --------------------------------------------------------------------------------
 
 local function test_header(name)
-  return test_report(name, {
+  return os.testreport(name, {
     code = [[]],
     includes = name,
     buildoptions = '-E'  -- this is faster, don't need the full build
@@ -250,7 +238,7 @@ CONFIG.HAVE_XCURSES_H     = test_header('<xcurses.h>')
 --------------------------------------------------------------------------------
 
 local function test_library(lib)
-  return test_report('lib' .. lib, {
+  return os.testreport('lib' .. lib, {
     code = [[]],
     includes = name,
     buildoptions = '-l'..lib
@@ -265,11 +253,27 @@ CONFIG.HAVE_LIBWS2_32 = test_library('ws3_32')
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
+
+CONFIG.HAVE_FF_EFFECT_RUMBLE = os.testreport('rumble', {
+	code = [[ struct ff_effect x; x.u.rumble.weak_magnitude = 42; return 0;]],
+  includes = '<linux/input.h>',
+})
+
+CONFIG.HAVE_FF_EFFECT_DIRECTIONAL = os.testreport('directional rumble', {
+	code = [[struct ff_effect x; x.direction = 0x4000; return 0;]],
+	includes = '<linux/input.h>',
+})
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 --  Output config.h
 --
 
 do
+  print(('-'):rep(80))
+  print('Creating premake4_config/config.h')
+
   local fi = assert(io.open('config.h.in', 'rt'))
   local lines = {}
   local linenum = 0
@@ -280,8 +284,10 @@ do
       local value = CONFIG[macro]
       local valtype = type(value)
       if (valtype == 'nil') then
-        print('WARNING:  unhandled config.h.in macro:  ' .. macro)
         line = ('%-48s/* UNHANDLED MACRO */'):format(line, macro)
+        if (_VERBOSITY >= 1) then
+          print('WARNING:  unhandled config.h.in macro:  ' .. macro)
+        end
       elseif (valtype == 'boolean') then
         if (value) then
           line = ('#define %s 1%s'):format(macro, comment)

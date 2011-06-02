@@ -2,14 +2,6 @@
 --local python_cflags = os.outputof('python-config --cflags')
 --local python_include = python_cflags:match('%-I(%S*)')
 
-if (-1 > 0) then -- FIXME
-  print()
-  print('>>>  SKIPPING BZROBOTS <<<')
-  print()
-  do return end
-end
-
-
 bzexec_project 'bzrobots'
 
   includedirs { '.', '../bzflag', '../clientbase' }

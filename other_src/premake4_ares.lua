@@ -9,9 +9,12 @@ if (_ACTION == 'gmake') then
     foreigntarget  '.libs/libcares.a'
     targetname 'cares'
     targetdir  'ares/.libs'
+
+    local confopts = '--enable-shared=no'
+
     foreignconfig {
       'if [ ! -f ./configure ]; then ./buildconf; fi;',
-      'if [ ! -f ./Makefile ];  then ./configure --enable-shared=no; fi;',
+      'if [ ! -f ./Makefile ];  then ./configure ' .. confopts .. '; fi;',
     }
     foreignbuild      '$(MAKE) libcares.la'
     foreignclean      '$(MAKE) clean'

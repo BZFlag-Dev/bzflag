@@ -38,7 +38,19 @@ end
 
 _PREMAKE_EXEC = 'other_src/premake/bin/release/premake4'
 
-_PREMAKE_QUIET = true
+do
+  local verbosity = _OPTIONS['verbose']
+  if (verbosity) then
+    _VERBOSITY = assert(tonumber(verbosity),
+                        'bad --verbose parameter: "' .. verbosity .. '"')
+  else
+    _VERBOSITY = 1
+  end
+end
+
+if (_VERBOSITY <= 1) then
+  _PREMAKE_QUIET = true
+end
 
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -210,21 +222,26 @@ local function newopt(trigger, description)
   newoption { trigger = trigger, description = description }
 end
 
-newopt('debugging',        'default to the "debug" configuration')
-newopt('disable-bzfs',     'disable the bzfs build')
-newopt('disable-bzflag',   'disable the bzflag build')
-newopt('disable-bzadmin',  'disable the bzadmin build')
-newopt('disable-bzrobots', 'disable the bzrobots build')
-newopt('disable-plugins',  'disable the bzfs plugins')
-newopt('build-all',        'build all the included libraries')
-newopt('build-ares',       'build the ares library')
-newopt('build-curl',       'build the curl library')
-newopt('build-freetype',   'build the freetype library')
-newopt('build-ftgl',       'build the ftgl library')
-newopt('build-glew',       'build the glew library')
-newopt('build-regex',      'build the regex library')
-newopt('build-zlib',       'build the zlib library')
-newopt('build-luaexecs',   'build the bzlua and bzluac executables')
+newopt('debugging',        'Default to the "debug" configuration')
+newopt('disable-bzfs',     'Disable the bzfs build')
+newopt('disable-bzflag',   'Disable the bzflag build')
+newopt('disable-bzadmin',  'Disable the bzadmin build')
+newopt('disable-bzrobots', 'Disable the bzrobots build')
+newopt('disable-plugins',  'Disable the bzfs plugins')
+newopt('build-all',        'Build all the included libraries')
+newopt('build-ares',       'Build the ares library')
+newopt('build-curl',       'Build the curl library')
+newopt('build-freetype',   'Build the freetype library')
+newopt('build-ftgl',       'Build the ftgl library')
+newopt('build-glew',       'Build the glew library')
+newopt('build-regex',      'Build the regex library')
+newopt('build-zlib',       'Build the zlib library')
+newopt('build-luaexecs',   'Build the bzlua and bzluac executables')
+newoption {
+  trigger = 'verbose',
+  description = 'Be noisy  (0 - 4)',
+  value = '1',
+}
 
 --------------------------------------------------------------------------------
 
@@ -297,6 +314,11 @@ do
 
   function getpackage(name)
     return assert(PACKAGES[name], 'unknown package: ' .. name)
+  end
+
+
+  function testpackage(name)
+    return PACKAGES[name] ~= nil
   end
 
 

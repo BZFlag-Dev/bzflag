@@ -12,16 +12,21 @@ if (_ACTION == 'gmake') then
     configuration 'not vs*'
       foreignproject 'ftgl'
       foreigntarget  'src/.libs/libftgl.a'
+      targetname   'ftgl'
+      targetdir    'ftgl/src/.libs'
+
+      local confopts = '--enable-shared=no'
+      if (CONFIG.BUILD_FREETYPE) then
+        confopts = confopts .. ' --with-ft-prefix=../freetype'
+      end
+
       foreignconfig {
         'if [ ! -f ./configure ]; then ./autogen.sh; fi;',
-        'if [ ! -f ./Makefile ];  then ./configure --enable-shared=no;  fi;',
+        'if [ ! -f ./Makefile ];  then ./configure ' .. confopts .. ';  fi;',
       }
       foreignbuild      'cd src ; $(MAKE)'
       foreignclean      '$(MAKE) clean'
       foreignsuperclean '$(MAKE) distclean'
-
-      targetname   'ftgl'            -- FIXME - should not be required
-      targetdir    'ftgl/src/.libs'
   return
 end
 

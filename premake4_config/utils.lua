@@ -81,11 +81,13 @@ function os.testcode(t)
     t = { code = t }
   end
 
-  local verbose = (os.getenv('PREMAKE_VERBOSE') ~= nil) -- FIXME -- cheezy
+  local verbose = (_VERBOSITY >= 2)
 
   assert(isstring(t.code), 'missing "code" parameter')
 
   local source = ''
+
+  local language = t.language or 'c++'
 
   local includes = t.includes or {}
   if (istable(includes)) then
@@ -116,25 +118,18 @@ function os.testcode(t)
   source = source .. code
   source = source .. '}\n'
 
-  if (verbose) then
-    print()
-    print(source)
-  end
-
   local tmpCpp = os.tmpname()
   local tmpOut = os.tmpname()
 
-  local f, err = io.open(tmpCpp, 'w')
-  if (not f) then
+  local written, err = io.writefile(tmpCpp, source, 'wt')
+  if (not written) then
     print(err)
     return false
   end
-  f:write(source)
-  f:close()
 
   local cmd = premake.gcc.cxx
   cmd = cmd .. ' ' .. '-o ' .. tmpOut
-  cmd = cmd .. ' ' .. '-x c++'
+  cmd = cmd .. ' ' .. '-x ' .. language
   cmd = cmd .. ' ' .. tmpCpp
   for _, dir in ipairs(incdirs) do cmd = cmd .. ' ' .. '-I' .. dir end
   for _, dir in ipairs(libdirs) do cmd = cmd .. ' ' .. '-L' .. dir end
@@ -147,6 +142,12 @@ function os.testcode(t)
     else
       cmd = cmd .. ' > NUL 2>&1' -- FIXME - OS/2 & NT?
     end
+  else
+    cmd = cmd .. ' 2>&1'
+    print()
+    print(cmd)
+    printf('=== START CODE ===\n%s=== END CODE ===', source)
+    io.stdout:flush()
   end
 
   local result = os.execute(cmd)
@@ -160,6 +161,23 @@ function os.testcode(t)
     print(cmd)
   end
   return (result == 0)
+end
+
+--------------------------------------------------------------------------------
+
+function os.testreport(testdesc, testcode)
+  if (_VERBOSITY >= 1) then
+    local dots = ('.'):rep(20 - #testdesc)
+    if (_OPTIONS['verbose']) then
+      print(('-'):rep(80))
+    end
+    stdoutf('checking for %s %s ', testdesc, dots)
+  end
+  local success = os.testcode(testcode)
+  if (_VERBOSITY >= 1) then
+    printf('%s', success and 'ok' or 'fail')
+  end
+  return success
 end
 
 --------------------------------------------------------------------------------

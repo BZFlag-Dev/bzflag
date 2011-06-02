@@ -10,13 +10,33 @@ if (_ACTION == 'gmake') then
     targetname 'curl'
     targetdir  'curl/lib/.libs'
 
+    local confopts = '--enable-shared=no'
+    if (CONFIG.BUILD_ARES) then
+      confopts = confopts .. ' --enable-ares=../ares'
+    end
+    if (CONFIG.BUILD_ZLIB) then
+      confopts = confopts .. ' --with-zlib=../zlib'
+    end
+
     foreignconfig {
       'if [ ! -f ./configure ]; then ./buildconf; fi;',
-      'if [ ! -f ./Makefile ];  then ./configure --enable-shared=no; fi;',
+      'if [ ! -f ./Makefile ];  then ./configure ' .. confopts .. '; fi;',
     }
     foreignbuild      'cd lib/ ; $(MAKE) libcurl.la'
     foreignclean      '$(MAKE) clean'
     foreignsuperclean '$(MAKE) distclean'
+
+  -- set the curl package libraries to those listed in libcurl.pc
+  local pc = assert(io.readfile('curl/libcurl.pc'),
+                    'missing libcurl.pc')
+  local libs = assert(pc:match('Libs%.private%: (.-)\n'),
+                      'missing libcurl.pc private libs')
+  local links = { 'libcurl' } -- this project
+  for lib in libs:gmatch('-l(%S+)') do
+    links[#links + 1] = lib
+  end
+  getpackage('curl').links = links
+
   return
 end
 

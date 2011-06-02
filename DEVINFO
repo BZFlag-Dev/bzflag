@@ -102,9 +102,8 @@ directory off the top-level.  Header files for classes introduced in
 an application directory should never go into a #include outside of
 that application directory.
 
-C files use the .c extension.  C++ files use the .cpp extension for
-everything except plugins which use the .cpp extension.  Header files
-for both C and C++ use the .h extension.
+C files use the .c extension.  C++ files use the .cpp extension.
+Header files for both C and C++ use the .h extension.
 
 Headers
 -------

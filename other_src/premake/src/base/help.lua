@@ -25,10 +25,10 @@
 			if (option.value) then trigger = trigger .. "=" .. option.value end
 			if (option.allowed) then description = description .. "; one of:" end
 
-			printf(" --%-15s %s", trigger, description)
+			printf("  --%-18s %s", trigger, description)
 			if (option.allowed) then
 				for _, value in ipairs(option.allowed) do
-					printf("     %-14s %s", value[1], value[2])
+					printf("      %-18s %s", value[1], value[2])
 				end
 			end
 			printf("")
@@ -38,7 +38,7 @@
 		printf("ACTIONS")
 		printf("")
 		for action in premake.action.each() do
-			printf(" %-17s %s", action.trigger, action.description)
+			printf("  %-18s %s", action.trigger, action.description)
 		end
 		printf("")
 

@@ -27,6 +27,9 @@ project   'libz'
     'zlib/zlib.h',
     'zlib/zutil.c',    'zlib/zutil.h',
   }
+  configuration { 'not vs*' }
+    defines { 'HAVE_CONFIG_H' }
+    includedirs { '../src/include' }
   configuration { 'vs*' }
     defines { 'WIN32', '_LIB', '_CRT_SECURE_NO_WARNINGS' }
   configuration { 'vs*', 'debug*' }
