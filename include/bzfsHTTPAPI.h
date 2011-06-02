@@ -77,6 +77,8 @@ public:
   const char* GetParamater ( size_t index );
   size_t GetParamaterCount ();
 
+  bool InBZIDGroup ( const char* name );
+
   bzhttp_SessionData *Session;
 
 protected:
@@ -137,6 +139,16 @@ typedef enum
   ePageDone
 }bzhttp_ePageGenStatus;
 
+typedef enum
+{
+  eNoAuth = 0,
+  eHTTPBasic,
+  eHTTPBasicCached,
+  eHTTPOther,
+  eHTTPOtherCached,
+  eBZIDCached
+}bzhttp_eAuthenticationMethod;
+
 class BZF_API bzhttp_VDir
 {
 public:
@@ -151,6 +163,15 @@ public:
 
   bz_ApiString BaseURL;
   bz_APIStringList ResourceDirs;
+
+  bzhttp_eAuthenticationMethod RequiredAuthentiction;
+  bz_ApiString OtherAuthenicationMethod;
+  bz_ApiString HTTPAuthenicationRelalm;
+
+  // server groups are automatically included
+  bz_APIStringList BZIDAuthenicationGroups;
+
+  virtual bool AuthenticateHTTPUser ( const char* user, const char* password ){ return false; }
 
   void AddMimeType(const char* extension, const char* mime );
   void AddStandardTypes ();

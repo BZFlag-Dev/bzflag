@@ -119,6 +119,9 @@ public:
 bzhttp_SessionData::bzhttp_SessionData()
 {
   pimple = new bzhttp_SessionData_Data();
+
+  VDIR_SESSION(d);
+  d->PrivateData[std::string("")] = std::map<std::string,std::string>();
 }
 
 bzhttp_SessionData::~bzhttp_SessionData()
@@ -129,10 +132,16 @@ std::map<std::string,std::string> emptyMap;
 
 std::map<std::string,std::string> &GetPrivateData ( bzhttp_SessionData_Data * data )
 {
-  if (data->PrivateData.find(data->CurrentVdir) == data->PrivateData.end())
+  if (!data || data->CurrentVdir == "" || data->PrivateData.find(data->CurrentVdir) == data->PrivateData.end())
     return emptyMap;
 
   return data->PrivateData[data->CurrentVdir];
+}
+
+std::map<std::string,std::string> & GetServerSessionData ( bzhttp_SessionData &d )
+{
+  VDIR_SESSION_CLASS(d.pimple,p);
+  return p->PrivateData[std::string("")];
 }
 
 const char* bzhttp_SessionData::GetPrivateItem ( const char* name )
@@ -204,11 +213,11 @@ std::map<int,bzhttp_SessionData> Sessions;
 
 bzhttp_SessionData& GetSession ( unsigned int id )
 {
-  if (Sessions.find(id) == Sessions.end())
+  if (id < 10 || Sessions.find(id) == Sessions.end())
   {
     bzhttp_SessionData newSession;
     unsigned int newID = rand();
-    while (Sessions.find(newID) != Sessions.end())
+    while (Sessions.find(newID) != Sessions.end() && newID < 10)
       newID = rand();
 
     newSession.SessionID = newID;
@@ -241,6 +250,7 @@ public:
 bzhttp_VDir::bzhttp_VDir()
 {
   pimple = new bzhttp_VDir_Data;
+  RequiredAuthentiction = eNoAuth;
 }
 
 bzhttp_VDir::~bzhttp_VDir()
@@ -644,7 +654,6 @@ public:
 	HeaderSize = headerEnd + 4;
     }
 
-
     unsigned int sessionID = 0;
     if (HeaderSize && !Request.GetHeaderCount())
     {
@@ -727,6 +736,13 @@ public:
       }
 
       Request.Session = &GetSession(sessionID);
+
+      // check and see if we have authentication to do
+
+      if (vDir->RequiredAuthentiction != eNoAuth)
+      {
+
+      }
 
       Think(connectionID);
     }
