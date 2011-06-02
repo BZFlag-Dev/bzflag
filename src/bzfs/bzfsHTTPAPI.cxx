@@ -25,6 +25,7 @@
 #include "WorldEventManager.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
+#include "base64.h"
 
 std::string ServerVersion;
 std::string ServerHostname;
@@ -37,6 +38,20 @@ std::string BaseURL;
 #endif
 
 #define SESSION_COOKIE "BZFS_SESSION_ID"
+
+std::string trimLeadingWhitespace(const char* t)
+{
+  std::string text;
+  while(*t) {
+    if (!TextUtils::isWhitespace(*t))
+    {
+     text = t;
+     break;
+    }
+    t++;
+  }
+  return text;
+}
 
 // ensures all the delims are constant
 std::string convertPathToDelims(const char* file)
@@ -251,6 +266,7 @@ bzhttp_VDir::bzhttp_VDir()
 {
   pimple = new bzhttp_VDir_Data;
   RequiredAuthentiction = eNoAuth;
+  CacheAuthentication = false;
 }
 
 bzhttp_VDir::~bzhttp_VDir()
@@ -588,6 +604,7 @@ size_t bzhttp_Request::GetParamaterCount ()
   return data->Paramaters.size();
 }
 
+
 class HTTPConnectedPeer : public bz_NonPlayerConnectionHandler
 {
 public:
@@ -612,6 +629,39 @@ public:
     Request.RequestType = eHTTPUnknown;
     ContentSize = 0;
     HeaderSize = 0;
+  }
+
+  std::string GetAuthSessionData( const char* name )
+  {
+    if (!vDir || !name || !Request.Session)
+      return std::string();
+
+    std::string n = TextUtils::format("%s_%s",vDir->VDirName(),name);
+
+    std::map<std::string,std::string> &list = GetServerSessionData(*Request.Session);
+    std::map<std::string,std::string>::iterator itr = list.find(n);
+    if (itr == list.end())
+      return std::string();
+
+    return itr->second;
+  }
+
+  void SetAuthSessionData( const char* name, const char* d )
+  {
+    if (!vDir || !name || !Request.Session)
+      return;
+
+    std::string n = TextUtils::format("%s_%s",vDir->VDirName(),name);
+
+    std::map<std::string,std::string> &list = GetServerSessionData(*Request.Session);
+    if (!d)
+    {
+      std::map<std::string,std::string>::iterator itr = list.find(n);
+      if (itr != list.end())
+	list.erase(itr);
+    }
+    else
+      list[n] = std::string(d);
   }
 
   virtual void pending(int connectionID, void *data, unsigned int size)
@@ -739,9 +789,82 @@ public:
 
       // check and see if we have authentication to do
 
-      if (vDir->RequiredAuthentiction != eNoAuth)
+      if (vDir && vDir->RequiredAuthentiction != eNoAuth)
       {
+	bool authed = false;
+	
+	// check and see if we are cached
+	if (vDir->CacheAuthentication)
+	{
+	  if (vDir->RequiredAuthentiction == eBZID)
+	  {
+	    std::string id = GetAuthSessionData("bzid");
+	    if (id.size())
+	      authed = true;
+	  }
+	  else
+	  {
+	    std::string status = GetAuthSessionData("authstatus");
+	    if (status == "complete")
+	      authed = true;
+	  }
+	}
 
+	if (!authed)
+	{
+	  if (vDir->RequiredAuthentiction != eBZID)
+	  {
+	    std::string status = GetAuthSessionData("bzidauthstatus");
+	    if (status == "redired")
+	    {
+	      // see if they've got the stuff
+	      
+	    }
+	    else
+	    {
+	     Responce.ReturnCode = e302Found;
+	     Responce.RedirectLocation = "http://my.bzflag.org/weblogin.php?";
+	    }
+
+	    if (authed && vDir->CacheAuthentication)
+	       SetAuthSessionData("bzid", Request.BZID.c_str());
+	  }
+	  else
+	  {
+	    const char* authHeader = Request.GetHeader("Authorization");
+	    if (authHeader || vDir->RequiredAuthentiction == eHTTPOther)
+	    {
+	      if (authHeader)
+	      {
+		std::vector<std::string> parts = TextUtils::tokenize(base64_decode(trimLeadingWhitespace(authHeader)),":",2);
+		if (parts.size() > 1 && vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),Request))
+		  authed = true;
+		else
+		  authed = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+	      }
+
+	      if (!authed)
+	      {
+		if (!vDir->GenerateNoAuthPage(Request,Responce))
+		  Responce.ReturnCode = e403Forbiden;
+	      }
+
+	      if (authed && vDir->CacheAuthentication)
+		SetAuthSessionData("authstatus", "complete");
+	    }
+	    else
+	    {
+	      Responce.ReturnCode = e401Unauthorized;
+	    }
+	  }
+	}
+
+	if (!authed)
+	{
+	  GenerateResponce(connectionID,Responce);
+	  Killme = true;
+	  return;
+	}
       }
 
       Think(connectionID);
@@ -778,8 +901,6 @@ public:
 	send404Error(connectionID);
       else if (status == ePageDone)
       {
-	// set the session cookie
-	Responce.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
 	GenerateResponce(connectionID,Responce);
       }
     }
@@ -894,9 +1015,12 @@ public:
     return time;
   }
 
-  void GenerateResponce (int connectionID, const bzhttp_Responce & responce )
+  void GenerateResponce (int connectionID, bzhttp_Responce & responce )
   {
     RESPONCE_DATA_CLASS(Responce.pimple,data);
+
+    // set the session cookie
+    responce.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
 
     std::string pageBuffer = "HTTP/1.1";
 
@@ -926,6 +1050,28 @@ public:
 	  pageBuffer += " 500 Server Error\n";
 
 	pageBuffer += "Host: " + ServerHostname + "\n";
+	break;
+
+      case e401Unauthorized:
+	if (!vDir || vDir->RequiredAuthentiction == eBZID)
+	  pageBuffer += " 403 Forbidden\n";
+	else
+	{
+	  pageBuffer += " 401 Unauthorized\n";
+	  pageBuffer += "WWW-Authenticate: ";
+
+	  if (vDir->RequiredAuthentiction == eHTTPOther && vDir->OtherAuthenicationMethod.size())
+	    pageBuffer += vDir->OtherAuthenicationMethod.c_str();
+	  else
+	    pageBuffer += "Basic";
+
+	  pageBuffer += " realm=\"";
+	  if (vDir->HTTPAuthenicationRelalm.size())
+	    pageBuffer += vDir->HTTPAuthenicationRelalm.c_str();
+	  else
+	    pageBuffer += ServerHostname;
+	  pageBuffer += "\"\n";
+	}
 	break;
 
       case e403Forbiden:

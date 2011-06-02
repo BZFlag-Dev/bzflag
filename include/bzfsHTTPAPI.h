@@ -60,6 +60,9 @@ public:
   bz_ApiString	URL;
   bz_ApiString	Resource;
 
+  bz_ApiString	BZID;
+  bz_APIStringList BZIDGroups;
+
   bz_ApiString	Body;
 
   void AddHeader ( const char* name, const char* value);
@@ -143,10 +146,8 @@ typedef enum
 {
   eNoAuth = 0,
   eHTTPBasic,
-  eHTTPBasicCached,
   eHTTPOther,
-  eHTTPOtherCached,
-  eBZIDCached
+  eBZID
 }bzhttp_eAuthenticationMethod;
 
 class BZF_API bzhttp_VDir
@@ -170,8 +171,10 @@ public:
 
   // server groups are automatically included
   bz_APIStringList BZIDAuthenicationGroups;
+  bool CacheAuthentication;
 
-  virtual bool AuthenticateHTTPUser ( const char* user, const char* password ){ return false; }
+  virtual bool AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return false; }
+  virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Responce &/*responce*/ ) {return false;}
 
   void AddMimeType(const char* extension, const char* mime );
   void AddStandardTypes ();

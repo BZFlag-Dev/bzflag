@@ -2500,6 +2500,14 @@
 			Name="API"
 			>
 			<File
+				RelativePath="..\..\src\bzfs\base64.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\bzfs\base64.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\src\bzfs\bzfsAPI.cxx"
 				>
 			</File>
