@@ -1176,7 +1176,6 @@ AC_CONFIG_FILES([
 	plugins/flagStay/Makefile
 	plugins/fastmap/Makefile
 	plugins/hiddenAdmin/Makefile
-	plugins/HTTPServer/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/koth/Makefile
