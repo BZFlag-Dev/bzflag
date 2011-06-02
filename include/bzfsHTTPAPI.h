@@ -150,6 +150,13 @@ typedef enum
   eBZID
 }bzhttp_eAuthenticationMethod;
 
+typedef enum
+{
+  eAuthFail = 0,
+  eAuthOK,
+  eNotAuthedYet
+}bzhttp_eAuthenticationStatus;
+
 class BZF_API bzhttp_VDir
 {
 public:
@@ -173,7 +180,7 @@ public:
   bz_APIStringList BZIDAuthenicationGroups;
   bool CacheAuthentication;
 
-  virtual bool AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return false; }
+  virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return eAuthFail; }
   virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Responce &/*responce*/ ) {return false;}
 
   void AddMimeType(const char* extension, const char* mime );

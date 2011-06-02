@@ -621,8 +621,11 @@ public:
   bzhttp_Request  Request;
   bzhttp_Responce Responce;
 
+  bool Authenticated;
+
   HTTPConnectedPeer() : bz_NonPlayerConnectionHandler()
   {
+    Authenticated = false;
     RequestComplete = false;
     Killme = false;
     vDir = NULL;
@@ -781,17 +784,17 @@ public:
 	parseParams(body);
       }
       else if (Request.RequestType == eHTTPPut)
-      {
 	Request.Body = RequestData.substr(HeaderSize,ContentSize);
-      }
 
       Request.Session = &GetSession(sessionID);
 
       // check and see if we have authentication to do
 
+      bzhttp_eAuthenticationStatus authStatus = eAuthFail;
+
       if (vDir && vDir->RequiredAuthentiction != eNoAuth)
       {
-	bool authed = false;
+	Authenticated = false;
 	
 	// check and see if we are cached
 	if (vDir->CacheAuthentication)
@@ -800,17 +803,17 @@ public:
 	  {
 	    std::string id = GetAuthSessionData("bzid");
 	    if (id.size())
-	      authed = true;
+	      Authenticated = true;
 	  }
 	  else
 	  {
 	    std::string status = GetAuthSessionData("authstatus");
 	    if (status == "complete")
-	      authed = true;
+	      Authenticated = true;
 	  }
 	}
 
-	if (!authed)
+	if (!Authenticated)
 	{
 	  if (vDir->RequiredAuthentiction != eBZID)
 	  {
@@ -824,9 +827,10 @@ public:
 	    {
 	     Responce.ReturnCode = e302Found;
 	     Responce.RedirectLocation = "http://my.bzflag.org/weblogin.php?";
+	     SetAuthSessionData("bzidauthstatus","redired");
 	    }
 
-	    if (authed && vDir->CacheAuthentication)
+	    if (Authenticated && vDir->CacheAuthentication)
 	       SetAuthSessionData("bzid", Request.BZID.c_str());
 	  }
 	  else
@@ -837,19 +841,27 @@ public:
 	      if (authHeader)
 	      {
 		std::vector<std::string> parts = TextUtils::tokenize(base64_decode(trimLeadingWhitespace(authHeader)),":",2);
-		if (parts.size() > 1 && vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),Request))
-		  authed = true;
+		if (parts.size() > 1)
+		{
+		  authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),Request);
+		  if (authStatus == eAuthOK)
+		    Authenticated = true;
+		}
 		else
-		  authed = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+		{
+		  authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+		  if (authStatus == eAuthOK)
+		    Authenticated = true;
+		}
 	      }
 
-	      if (!authed)
+	      if (!Authenticated)
 	      {
-		if (!vDir->GenerateNoAuthPage(Request,Responce))
+		if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
 		  Responce.ReturnCode = e403Forbiden;
 	      }
 
-	      if (authed && vDir->CacheAuthentication)
+	      if (Authenticated && vDir->CacheAuthentication)
 		SetAuthSessionData("authstatus", "complete");
 	    }
 	    else
@@ -859,13 +871,15 @@ public:
 	  }
 	}
 
-	if (!authed)
+	if (!Authenticated && authStatus == eAuthFail)
 	{
-	  GenerateResponce(connectionID,Responce);
+	  GenerateResponce(connectionID);
 	  Killme = true;
 	  return;
 	}
       }
+      else
+	Authenticated = true;
 
       Think(connectionID);
     }
@@ -895,13 +909,41 @@ public:
   {
     if (RequestComplete && !Killme)
     {
-      bzhttp_ePageGenStatus status = GetPage();
-
-      if (status == eNoPage)
-	send404Error(connectionID);
-      else if (status == ePageDone)
+      if (vDir && !Authenticated)
       {
-	GenerateResponce(connectionID,Responce);
+	if (vDir->RequiredAuthentiction == eHTTPOther)
+	{
+	  bzhttp_eAuthenticationStatus authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+	  if (authStatus == eAuthOK)
+	  {
+	    Authenticated = true;
+	    if (vDir->CacheAuthentication)
+	      SetAuthSessionData("authstatus", "complete");
+	  }
+	  else
+	  {
+	    if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
+	    {
+	      Responce.ReturnCode = e403Forbiden;
+	      GenerateResponce(connectionID);
+	      Killme = true;
+	    }
+	  }
+	}
+	else if (vDir->RequiredAuthentiction == eBZID)
+	{
+	  // check and see if that url job is done or not
+	}
+      }
+
+      if (!vDir || Authenticated)
+      {
+	bzhttp_ePageGenStatus status = GetPage();
+
+	if (status == eNoPage)
+	  send404Error(connectionID);
+	else if (status == ePageDone)
+	  GenerateResponce(connectionID);
       }
     }
   }
@@ -1015,25 +1057,25 @@ public:
     return time;
   }
 
-  void GenerateResponce (int connectionID, bzhttp_Responce & responce )
+  void GenerateResponce (int connectionID)
   {
     RESPONCE_DATA_CLASS(Responce.pimple,data);
 
     // set the session cookie
-    responce.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
+    Responce.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
 
     std::string pageBuffer = "HTTP/1.1";
 
-    switch (responce.ReturnCode)
+    switch (Responce.ReturnCode)
     {
       case e200OK:
 	pageBuffer += " 200 OK\n";
 	break;
       case e301Redirect:
-	if (responce.RedirectLocation.size())
+	if (Responce.RedirectLocation.size())
 	{
 	  pageBuffer += " 301 Moved Permanently\n";
-	  pageBuffer += "Location: " + std::string(responce.RedirectLocation.c_str()) + "\n";
+	  pageBuffer += "Location: " + std::string(Responce.RedirectLocation.c_str()) + "\n";
 	}
 	else
 	  pageBuffer += " 500 Server Error\n";
@@ -1041,10 +1083,10 @@ public:
 	break;
 
       case e302Found:
-	if (responce.RedirectLocation.size())
+	if (Responce.RedirectLocation.size())
 	{
 	  pageBuffer += " 302 Found\n";
-	  pageBuffer += "Location: " + std::string(responce.RedirectLocation.c_str()) + "\n";
+	  pageBuffer += "Location: " + std::string(Responce.RedirectLocation.c_str()) + "\n";
 	}
 	else
 	  pageBuffer += " 500 Server Error\n";
@@ -1098,12 +1140,12 @@ public:
       pageBuffer += TextUtils::format("Content-Length: %d\n", data->Body.size());
 
       pageBuffer += "Content-Type: ";
-      if (responce.ReturnCode == e200OK)
+      if (Responce.ReturnCode == e200OK)
       {
-	if (responce.DocumentType == eOther && responce.MimeType.size())
-	  pageBuffer += responce.MimeType.c_str();
+	if (Responce.DocumentType == eOther && Responce.MimeType.size())
+	  pageBuffer += Responce.MimeType.c_str();
 	else
-	  pageBuffer += getMimeType(responce.DocumentType);
+	  pageBuffer += getMimeType(Responce.DocumentType);
       }
       else
 	pageBuffer += getMimeType(eHTML);
@@ -1111,11 +1153,11 @@ public:
       pageBuffer += "\n";
     }
 
-    if (responce.ForceNoCache)
+    if (Responce.ForceNoCache)
       pageBuffer += "Cache-Control: no-cache\n";
 
-    if (responce.MD5Hash.size())
-      pageBuffer += "Content-MD5: " + std::string(responce.MD5Hash.c_str()) + "\n";
+    if (Responce.MD5Hash.size())
+      pageBuffer += "Content-MD5: " + std::string(Responce.MD5Hash.c_str()) + "\n";
 
     pageBuffer += "Server: " + ServerVersion + "\n";
 
@@ -1132,7 +1174,7 @@ public:
       itr++;
     }
 
-    if (responce.ReturnCode == e200OK)
+    if (Responce.ReturnCode == e200OK)
     {
       itr = data->Cookies.begin();
       while (itr != data->Cookies.end())
