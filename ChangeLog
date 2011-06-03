@@ -30,6 +30,7 @@ BZFlag 2.3.0  "Born Again"
 * Do not inform hunters of stealthy prey - Ian Agar
 * All scores are controlled completely by the server - Daniel Remenak
 * Relabel player "email" string as "motto" - Jeff Makey
+* Require TALK privilege for player motto to be broadcast - Jeff Makey
 
 
 BZFlag 2.0.16  "No Foolin'" (2010-04-01)
