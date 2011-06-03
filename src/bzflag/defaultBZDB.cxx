@@ -81,7 +81,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "userMirror",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "animatedTreads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "shotLenght",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "shotLength",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "treadStyle",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "userTrackFade",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "trackMarkCulling",		"3",			true,	StateDatabase::ReadWrite,	NULL },
