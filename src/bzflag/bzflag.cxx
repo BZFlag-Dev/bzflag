@@ -90,8 +90,6 @@
 int beginendCount = 0;
 
 const char*		argv0;
-static bool		anonymous = false;
-static std::string	anonymousName("anonymous");
 std::string		alternateConfig;
 static bool		noAudio = false;
 struct tm		userTime;
@@ -173,7 +171,6 @@ static void		setVisual(BzfVisual* visual)
 static void		usage()
 {
   printFatalError("usage: %s"
-	" [-anonymous]"
 	" [-badwords <filterfile>]"
 	" [-config <configfile>]"
 	" [-configdir <config dir name>]"
@@ -219,11 +216,7 @@ static void		parse(int argc, char** argv)
 {
 // = 9;
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "-a") == 0 ||
-		strcmp(argv[i], "-anonymous") == 0) {
-      anonymous = true;
-    }
-    else if (strcmp(argv[i], "-config") == 0) {
+    if (strcmp(argv[i], "-config") == 0) {
       checkArgc(i, argc, argv[i]);
       // the setting has already been done in parseConfigName()
     }
@@ -945,36 +938,8 @@ int			main(int argc, char** argv)
     }
   }
 
-  // get email address if not anonymous
-  std::string email = "default";
-  if (!anonymous) {
-    if (BZDB.isSet("email")) {
-      email = BZDB.get("email");
-    }
-
-    if (email == "default") {
-      email = anonymousName;
-      std::string hostname = Address::getHostName();
-#if defined(_WIN32)
-      char username[256];
-      DWORD usernameLen = sizeof(username);
-      GetUserName(username, &usernameLen);
-#else
-      struct passwd* pwent = getpwuid(getuid());
-      const char* username = pwent ? pwent->pw_name : NULL;
-#endif
-      if (hostname == "") {
-	hostname = "unknown";
-      }
-      if (username) {
-	email = username;
-	email += "@";
-	email += hostname;
-      }
-    }
-  }
-  email = email.substr(0, sizeof(startupInfo.email) - 1);
-  strcpy(startupInfo.email, email.c_str());
+  // email string is empty by default
+  startupInfo.email[0] = '\0';
 
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();

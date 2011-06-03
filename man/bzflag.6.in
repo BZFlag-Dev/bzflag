@@ -14,7 +14,6 @@
 BZFlag \- a tank battle game
 .SH "SYNOPSIS"
 .B bzflag
-[\fB\-anonymous\fR]
 [\fB\-config \fIfilename\fR]
 [\fB\-configdir \fIdirectoryname\fR]
 [\fB\-d | \-debug\fR]
@@ -85,9 +84,6 @@ manual page (bzfs.6) for details on starting a new server, public or
 private.
 .SS Options
 .TP 15
-\fB\-anonymous\fR
-Uses the email address \fIanonymous\fR instead of \fIusername@hostname\fR.
-.TP
 \fB\-d or \-debug\fR
 Adds some diagnostic output. Can be specified multiple times to increase
 verbosity.
