@@ -1997,6 +1997,13 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
+  // broadcast motto only if player has TALK permission
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)
+    && strlen(playerData->player.getMotto()) != 0) {
+    sendMessage(ServerPlayer, playerIndex, "\"talk\" permission is required to show your motto");
+    playerData->player.setMotto("");
+  }
+
   // send MsgAddPlayer to everybody -- this concludes MsgEnter response
   // to joining player
   sendPlayerUpdate(playerData, playerIndex);

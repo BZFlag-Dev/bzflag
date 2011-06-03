@@ -85,6 +85,7 @@ public:
   const char *getCallSign() const;
   void setCallSign(const char * c);
   const char *getMotto() const;
+  void  setMotto(const char* _motto);
   const char *getToken() const;
   void setToken(const char * c);
   void	clearToken();

@@ -69,6 +69,7 @@ public:
   void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
   const char*	getMotto() const;
+  void		setMotto(const char* _motto);
   PlayerType	getPlayerType() const;
   FlagType*	getFlag() const;
   long		getOrder() const;

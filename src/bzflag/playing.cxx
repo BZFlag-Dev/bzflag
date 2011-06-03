@@ -4414,9 +4414,16 @@ static void enteringServer(void *buf)
 {
   // the server sends back the team the player was joined to
   void *tmpbuf = buf;
-  uint16_t team, type;
+  uint16_t team, type, wins, losses, tks;
+  char callsign[CallSignLen];
+  char motto[MottoLen];
   tmpbuf = nboUnpackUShort(tmpbuf, type);
   tmpbuf = nboUnpackUShort(tmpbuf, team);
+  tmpbuf = nboUnpackUShort(tmpbuf, wins);			// not used
+  tmpbuf = nboUnpackUShort(tmpbuf, losses);			// not used
+  tmpbuf = nboUnpackUShort(tmpbuf, tks);			// not used
+  tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);	// not used
+  tmpbuf = nboUnpackString(tmpbuf, motto, MottoLen);
 
   // if server assigns us a different team, display a message
   std::string teamMsg;
@@ -4471,6 +4478,8 @@ static void enteringServer(void *buf)
   } else {
     ROAM.setMode(Roaming::roamViewDisabled);
   }
+
+  myTank->setMotto(motto);	// use motto provided by the server
 
   setTankFlags();
 

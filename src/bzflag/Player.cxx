@@ -95,9 +95,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';
 
-  // set motto
-  ::strncpy(motto, _motto, MottoLen);
-  motto[MottoLen-1] = '\0';
+  setMotto(_motto);	// will be superseded by the server
 
   if (id != ServerPlayer) {
     // make scene nodes
@@ -158,6 +156,12 @@ static float rabbitRank (int wins, int losses) {
   // IIRC that is how wide is the gaussian
   float penalty = (1.0f - 0.5f / sqrt((float)sum));
   return average * penalty;
+}
+
+void Player::setMotto(const char* _motto)
+{
+  strncpy(motto, _motto, MottoLen);
+  motto[MottoLen - 1] = '\0';	// ensure null termination
 }
 
 float Player::getTKRatio() const

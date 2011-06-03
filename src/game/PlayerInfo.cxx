@@ -307,6 +307,11 @@ bool PlayerInfo::isMottoReadable() {
   return (mottolen <= 4) || (((float)mottoAlnumCount / (float)mottolen) > 0.5);
 }
 
+void PlayerInfo::setMotto(const char* _motto) {
+  strncpy(motto, _motto, MottoLen);
+  motto[MottoLen - 1] = '\0';	// ensure null termination
+}
+
 const char *PlayerInfo::getToken() const {
   return token;
 }
