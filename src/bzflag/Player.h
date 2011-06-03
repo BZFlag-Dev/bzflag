@@ -59,7 +59,7 @@ const int PlayerUpdatePLenMax =
 class Player {
 public:
   Player(const PlayerId&, TeamColor,
-	 const char* callsign, const char* emailAddress,
+	 const char* callsign, const char* motto,
 	 const PlayerType);
   virtual	~Player();
 
@@ -68,7 +68,7 @@ public:
   void		setTeam(TeamColor);
   void		updateTank(float dt, bool local);
   const char*	getCallSign() const;
-  const char*	getEmailAddress() const;
+  const char*	getMotto() const;
   PlayerType	getPlayerType() const;
   FlagType*	getFlag() const;
   long		getOrder() const;
@@ -271,7 +271,7 @@ private:
   TeamColor		team;			// my team
 
   char			callSign[CallSignLen];	// my pseudonym
-  char			email[EmailLen];	// my email address
+  char			motto[MottoLen];	// my motto
   PlayerType		type;			// Human/Computer
 
   // relatively stable data
@@ -371,9 +371,9 @@ inline const char*	Player::getCallSign() const
   return callSign;
 }
 
-inline const char*	Player::getEmailAddress() const
+inline const char*	Player::getMotto() const
 {
-  return email;
+  return motto;
 }
 
 inline PlayerType	Player::getPlayerType() const

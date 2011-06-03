@@ -276,15 +276,15 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
   }
 
   //
-  // Display number of players, callsign, and email string in the following format:
+  // Display number of players, callsign, and motto string in the following format:
   //
-  // PLAYERS (nn) [G]cc:callsign(ee:emailstring)
+  // PLAYERS (nn) [G]cc:callsign(ee:mottostring)
   // nn - number of players
   // G	- global auth identifier (+|-| |@)
   // cc - count of characters in player callsign
   // callsign - player callsign
-  // ee - count of characters in email string
-  // emailstring - player email string
+  // ee - count of characters in motto string
+  // mottostring - player motto string
   //
   // eg.
   // PLAYERS (2) [@]7:Thumper(16:me@somewhere.net) [ ]3:xxx()

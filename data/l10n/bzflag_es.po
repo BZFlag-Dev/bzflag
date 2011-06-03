@@ -928,8 +928,8 @@ msgstr "ambos"
 msgid "Reload timer on HUD:"
 msgstr "Mostrar tiempo de recarga:"
 
-msgid "Email Display Length:"
-msgstr "Longitud al mostrar email:"
+msgid "Motto Display Length:"
+msgstr "Longitud al mostrar motto:"
 
 ###############
 ## HELP MENU ##
@@ -1445,8 +1445,8 @@ msgstr "Servidor:"
 msgid "Port:"
 msgstr "Puerto:"
 
-msgid "Email:"
-msgstr "Email:"
+msgid "Motto:"
+msgstr "Motto:"
 
 msgid "Start Server"
 msgstr "Iniciar servidor"

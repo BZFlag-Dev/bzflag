@@ -40,7 +40,7 @@ bool PlayerAddMessage::unpack ( void* buf )
 	unsigned char id;
 	uint16_t _team, _type, _wins, _losses, _tks;
 	char _callsign[_CallSignLen] = {0};
-	char _email[_EmailLen] = {0};
+	char _motto[_MottoLen] = {0};
 
 	buf = nboUnpackUByte(buf, id);
 	buf = nboUnpackUShort(buf, _type);
@@ -49,7 +49,7 @@ bool PlayerAddMessage::unpack ( void* buf )
 	buf = nboUnpackUShort(buf, _losses);
 	buf = nboUnpackUShort(buf, _tks);
 	buf = nboUnpackString(buf, _callsign, _CallSignLen);
-	buf = nboUnpackString(buf, _email, _EmailLen);
+	buf = nboUnpackString(buf, _motto, _MottoLen);
 
 	playerID = id;
 	team = _team;
@@ -59,7 +59,7 @@ bool PlayerAddMessage::unpack ( void* buf )
 	tks = _tks;
 
 	callsign = _callsign;
-	email = _email;
+	motto = _motto;
 
 	return true;
 }
@@ -68,7 +68,7 @@ void*  PlayerAddMessage::pack ( void* buf )
 {
 	uint16_t _team, _type, _wins, _losses, _tks;
 	char _callsign[_CallSignLen] = {0};
-	char _email[_EmailLen] = {0};
+	char _motto[_MottoLen] = {0};
 
 	unsigned char id;
 
@@ -80,7 +80,7 @@ void*  PlayerAddMessage::pack ( void* buf )
 	_tks = tks;
 
 	strncpy(_callsign,callsign.c_str(),callsign.size() > _CallSignLen-1 ? _CallSignLen-1 :  callsign.size());
-	strncpy(_email,email.c_str(),email.size() > _EmailLen-1 ? _EmailLen-1 :  email.size());
+	strncpy(_motto,motto.c_str(),motto.size() > _MottoLen-1 ? _MottoLen-1 :  motto.size());
 
 	buf = nboPackUByte(buf, id);
 	buf = nboPackUShort(buf, _type);
@@ -90,7 +90,7 @@ void*  PlayerAddMessage::pack ( void* buf )
 	buf = nboPackUShort(buf, _losses);
 	buf = nboPackUShort(buf, _tks);
 	buf = nboPackString(buf, _callsign, _CallSignLen);
-	buf = nboPackString(buf, _email, _EmailLen);
+	buf = nboPackString(buf, _motto, _MottoLen);
 
 	return buf;
 }

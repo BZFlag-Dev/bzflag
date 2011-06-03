@@ -150,13 +150,13 @@ for (1..$numPlayers) {
  }
  if ($bytesRead == undef || $bytesRead < 175){ die $!; }
 
- ($len,$code,$pID,$type,$team,$won,$lost,$tks,$sign,$email) =
+ ($len,$code,$pID,$type,$team,$won,$lost,$tks,$sign,$motto) =
 					unpack("n2Cn5A32A128", $buffer);
  die $! unless $code == 0x6170;
  $score = $won - $lost;
  print "player $sign ($teamName[$team] team) is a $playerType[$type]:\n";
  print "  score: $score ($won wins, $lost losses)\n";
- print "  $email\n";
+ print "  $motto\n";
 }
 
 # close socket

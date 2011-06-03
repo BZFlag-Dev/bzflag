@@ -35,7 +35,7 @@ class RobotPlayer : public LocalPlayer {
   public:
 			RobotPlayer(const PlayerId&,
 				const char* name, ServerLink*,
-				const char* _email);
+				const char* _motto);
 
     float		getTargetPriority(const Player*) const;
     const Player*	getTarget() const;

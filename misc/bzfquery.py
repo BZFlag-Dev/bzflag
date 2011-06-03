@@ -23,7 +23,7 @@
 #
 # ['flags', 'jumping', 'ricochet', 'shaking']
 # {'score': 0, 'won': 0, 'lost': 0, 'size': 1}
-# {'lost': 0, 'pId': 0, 'sign': 'FredCods', 'won': 0, 'tks': 0, 'team': 'observer', 'type': 0, 'email': ''}
+# {'lost': 0, 'pId': 0, 'sign': 'FredCods', 'won': 0, 'tks': 0, 'team': 'observer', 'type': 0, 'motto': ''}
 #
 #
 
@@ -237,7 +237,7 @@ class Server :
 		playersInfo = []
 		for i in range( numPlayers ) :
 			data = self.getResponse( 'ap'  )
-			pId , type , team , won , lost , tks , sign , email = \
+			pId , type , team , won , lost , tks , sign , motto = \
 				struct.unpack( '>b5H32s128s' , data )
 			playerInfo = {
 				'pId'   : pId ,
@@ -248,7 +248,7 @@ class Server :
 				'lost'  : lost ,
 				'tks'   : tks ,
 				'sign'  : sign.rstrip( '\x00' ) ,
-				'email' : email.rstrip( '\x00' )
+				'motto' : motto.rstrip( '\x00' )
 			}
 			playersInfo.append( playerInfo )
 		return teamsInfo , playersInfo
@@ -303,16 +303,16 @@ def getAndPrintStat( hostname , port ) :
 	print '-' * 60
 	players.sort( lambda a , b : cmp( b[ 'score' ] , a[ 'score' ] ) )
 	for player in players :
-		sign , team , score , won , lost , email = \
+		sign , team , score , won , lost , motto = \
 			player[ 'sign' ] , player[ 'team' ] , \
 			player[ 'score' ] , player[ 'won' ] , player[ 'lost' ] , \
-			player[ 'email' ]
+			player[ 'motto' ]
 		try :
 			type = playerType[ player[ 'type' ] ]
 		except :
 			type = 'Unknown player type %s' % player.get( 'tks' )
 		name = sign
-		if email : name = name + ' <%s>' % email
+		if motto : name = name + ' <%s>' % motto
 		print '%-8s %5d %5d %5d %-10s %s' % ( team , score , won , lost , type , name )
 
 def usage() :

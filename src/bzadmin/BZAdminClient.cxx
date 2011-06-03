@@ -215,7 +215,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
     case MsgAddPlayer:
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
-      char email[EmailLen];
+      char motto[MottoLen];
       vbuf = nboUnpackUByte(vbuf, p);
       vbuf = nboUnpackUShort(vbuf, type);
       vbuf = nboUnpackUShort(vbuf, team);
@@ -223,7 +223,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       vbuf = nboUnpackUShort(vbuf, losses);
       vbuf = nboUnpackUShort(vbuf, tks);
       vbuf = nboUnpackString(vbuf, callsign, CallSignLen);
-      vbuf = nboUnpackString(vbuf, email, EmailLen);
+      vbuf = nboUnpackString(vbuf, motto, MottoLen);
       players[p].name = callsign;
       players[p].team = TeamColor(team);
       players[p].wins = wins;

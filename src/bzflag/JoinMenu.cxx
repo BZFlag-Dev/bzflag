@@ -112,12 +112,12 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
   port->setString(buffer);
   listHUD.push_back(port);
 
-  email = new HUDuiTypeIn;
-  email->setFontFace(fontFace);
-  email->setLabel("Email:");
-  email->setMaxLength(EmailLen - 1);
-  email->setString(info->email);
-  listHUD.push_back(email);
+  motto = new HUDuiTypeIn;
+  motto->setFontFace(fontFace);
+  motto->setLabel("Motto:");
+  motto->setMaxLength(MottoLen - 1);
+  motto->setString(info->motto);
+  listHUD.push_back(motto);
 
   startServer = new HUDuiLabel;
   startServer->setFontFace(fontFace);
@@ -194,7 +194,7 @@ void JoinMenu::loadInfo()
   info->team = getTeam();
   strcpy(info->serverName, server->getString().c_str());
   info->serverPort = atoi(port->getString().c_str());
-  strcpy(info->email, email->getString().c_str());
+  strcpy(info->motto, motto->getString().c_str());
 }
 
 void JoinMenu::execute()

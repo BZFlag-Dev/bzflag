@@ -57,7 +57,7 @@ function bzfquery1910 ($server,$fp) {
       $buffer .= fread($fp, 175 - strlen($buffer));
       //echo strlen($buffer) . "\n";
     }
-    $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $buffer);
+    $server['player'][$player] = unpack("nlen/ncode/Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128motto", $buffer);
   }
   fclose($fp);
   return $server;
@@ -151,7 +151,7 @@ function bzfdump ($server) {
     echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
 	. " (" . $server['player'][$player]['won']
 	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
-    echo "  " . $server['player'][$player]['email'] . "\n";
+    echo "  " . $server['player'][$player]['motto'] . "\n";
   }
   //var_dump($server);
   return;

@@ -952,7 +952,7 @@ msgstr ""
 msgid "Reload timer on HUD:"
 msgstr ""
 
-msgid "Email Display Length:"
+msgid "Motto Display Length:"
 msgstr ""
 
 ###############
@@ -1469,7 +1469,7 @@ msgstr ""
 msgid "Port:"
 msgstr ""
 
-msgid "Email:"
+msgid "Motto:"
 msgstr ""
 
 msgid "Start Server"

@@ -63,7 +63,7 @@ class ServerLink {
 						int millisecondsToBlock = 0);
 
     void		sendEnter(PlayerType, TeamColor,
-				  const char* name, const char* email, const char* token);
+				  const char* name, const char* motto, const char* token);
     bool		readEnter(std::string& reason,
 				  uint16_t& code, uint16_t& rejcode);
 

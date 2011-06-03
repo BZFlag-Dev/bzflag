@@ -30,7 +30,7 @@ StartupInfo::StartupInfo() : hasConfiguration(false),
   strcpy(serverName, "");
   strcpy(callsign, "");
   strcpy(password, "");
-  strcpy(email, "default");
+  strcpy(motto, "default");
   joystickName = "joystick";
   joystick = false;
 }
@@ -46,7 +46,7 @@ StartupInfo::~StartupInfo()
   memset(callsign, 0, CallSignLen);
   memset(password, 0, PasswordLen);
   memset(token, 0, TokenLen);
-  memset(email, 0, EmailLen);
+  memset(motto, 0, MottoLen);
   listServerURL = "";
   listServerPort = 0;
   joystick = false;

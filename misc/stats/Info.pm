@@ -226,7 +226,7 @@ sub queryserver(%) {
   # get the players
   for (1..$numPlayers) {
     next if read(S, $buffer, 180) == 18;
-    my ($playerlen,$playercode,$pAddr,$pPort,$pNum,$type,$team,$wins,$losses,$sign,$email) =
+    my ($playerlen,$playercode,$pAddr,$pPort,$pNum,$type,$team,$wins,$losses,$sign,$motto) =
 	unpack("n2Nn2 n4A32A128", $buffer);
     unless ($playercode == 0x6170) {
       $self->{error} = 'errBadPlayerData';
@@ -236,7 +236,7 @@ sub queryserver(%) {
     my $score = $wins - $losses;
 
     $response->{players}->{$sign}->{team}   = $teamName[$team];
-    $response->{players}->{$sign}->{email}  = $email;
+    $response->{players}->{$sign}->{motto}  = $motto;
     $response->{players}->{$sign}->{score}  = $score;
     $response->{players}->{$sign}->{wins}   = $wins;
     $response->{players}->{$sign}->{losses} = $losses;
@@ -397,7 +397,7 @@ $VAR1 = {
     'xabner' => {
       'losses' => 8,
       'wins' => 0,
-      'email' => '',
+      'motto' => '',
       'ip' => '123.123.123.123',
       'score' => -8,
       'team' => 'R'
@@ -405,7 +405,7 @@ $VAR1 = {
     'mackattack' => {
       'losses' => 0,
       'wins' => 7,
-      'email' => 'user@hostname',
+      'motto' => 'attack at dawn',
       'ip' => '123.123.123.123',
       'score' => 7,
       'team' => 'P'

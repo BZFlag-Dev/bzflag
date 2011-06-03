@@ -216,8 +216,8 @@ give you exactly 40 good flags except genocide and 10 of each bad flag.
 Allow flags on box buildings.
 .TP
 .B \-filterCallsigns
-Turn on the filtering of callsigns and email addresses.  Callsigns and
-addresses are compared against bad words provided via \fB\-badwords\fR.
+Turn on the filtering of callsigns and mottos.  Callsigns and
+mottos are compared against bad words provided via \fB\-badwords\fR.
 .TP
 .B \-filterChat
 Turn on the filtering of chat messages.  Messages that contain words listed via

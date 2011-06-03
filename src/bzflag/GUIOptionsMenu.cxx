@@ -284,10 +284,10 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   listHUD.push_back(option);
 
-  // set email display length
+  // set motto display length
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Email Display Length:");
+  option->setLabel("Motto Display Length:");
   option->setCallback(callback, (void*)"E");
   option->createSlider(32+1);
   option->update();
@@ -379,10 +379,10 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 							  ("timedate")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
 					 : 0);
-    if (BZDB.isTrue("hideEmails"))
+    if (BZDB.isTrue("hideMottos"))
       ((HUDuiList*)listHUD[i++])->setIndex(0);
     else
-      ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("emailDispLen") / 4);
+      ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("mottoDispLen") / 4);
   }
 }
 
@@ -525,8 +525,8 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'E':
-      BZDB.set("emailDispLen",  TextUtils::format("%d", list->getIndex() * 4));
-      BZDB.set("hideEmails", list->getIndex() ? "0" : "1");
+      BZDB.set("mottoDispLen",  TextUtils::format("%d", list->getIndex() * 4));
+      BZDB.set("hideMottos", list->getIndex() ? "0" : "1");
       break;
 
   }

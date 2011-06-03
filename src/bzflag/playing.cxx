@@ -1297,14 +1297,14 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 {
   uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
-  char email[EmailLen];
+  char motto[MottoLen];
   msg = nboUnpackUShort (msg, type);
   msg = nboUnpackUShort (msg, team);
   msg = nboUnpackUShort (msg, wins);
   msg = nboUnpackUShort (msg, losses);
   msg = nboUnpackUShort (msg, tks);
   msg = nboUnpackString (msg, callsign, CallSignLen);
-  msg = nboUnpackString (msg, email, EmailLen);
+  msg = nboUnpackString (msg, motto, MottoLen);
 
   // Strip any ANSI color codes
   strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
@@ -1337,7 +1337,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 
   // add player
   if (PlayerType (type) == TankPlayer || PlayerType (type) == ComputerPlayer) {
-    remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, email,
+    remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, motto,
 				  PlayerType (type));
     remotePlayers[i]->changeScore (short (wins), short (losses), short (tks));
   }
@@ -4354,11 +4354,11 @@ static void		addRobots()
     if (robotServer[j]) {
       snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
       robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
-				  robotServer[j], myTank->getEmailAddress());
+				  robotServer[j], myTank->getMotto());
       robots[j]->setTeam(AutomaticTeam);
       robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 				robots[j]->getCallSign(),
-				robots[j]->getEmailAddress(), "");
+				robots[j]->getMotto(), "");
     }
   for (j = 0; j < numRobots; j++) {
     // wait for response
@@ -4663,14 +4663,14 @@ static void saveRobotInfo(Playerid id, void *msg)
       void *tmpbuf = msg;
       uint16_t team, type, wins, losses, tks;
       char callsign[CallSignLen];
-      char email[EmailLen];
+      char motto[MottoLen];
       tmpbuf = nboUnpackUShort(tmpbuf, type);
       tmpbuf = nboUnpackUShort(tmpbuf, team);
       tmpbuf = nboUnpackUShort(tmpbuf, wins);
       tmpbuf = nboUnpackUShort(tmpbuf, losses);
       tmpbuf = nboUnpackUShort(tmpbuf, tks);
       tmpbuf = nboUnpackString(tmpbuf, callsign, CallSignLen);
-      tmpbuf = nboUnpackString(tmpbuf, email, EmailLen);
+      tmpbuf = nboUnpackString(tmpbuf, motto, MottoLen);
       std::cerr << "id " << id.port << ':' <<
 	id.number << ':' <<
 	callsign << ' ' <<
@@ -5001,7 +5001,7 @@ static void joinInternetGame2()
 
   // make local player
   myTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,
-			   startupInfo.email);
+			   startupInfo.motto);
   myTank->setTeam(startupInfo.team);
   LocalPlayer::setMyTank(myTank);
 
@@ -5011,7 +5011,7 @@ static void joinInternetGame2()
   // tell server we want to join
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(),
-			myTank->getEmailAddress(),
+			myTank->getMotto(),
 			startupInfo.token);
   startupInfo.token[0] = '\0';
 

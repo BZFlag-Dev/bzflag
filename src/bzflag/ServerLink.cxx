@@ -600,19 +600,19 @@ if (packetStream) {
 void			ServerLink::sendEnter(PlayerType type,
 						TeamColor team,
 						const char* name,
-						const char* email,
+						const char* motto,
 						const char* token)
 {
   if (state != Okay) return;
-  char msg[PlayerIdPLen + 4 + CallSignLen + EmailLen + TokenLen + VersionLen];
+  char msg[PlayerIdPLen + 4 + CallSignLen + MottoLen + TokenLen + VersionLen];
   ::memset(msg, 0, sizeof(msg));
   void* buf = msg;
   buf = nboPackUShort(buf, uint16_t(type));
   buf = nboPackUShort(buf, uint16_t(team));
   ::memcpy(buf, name, ::strlen(name));
   buf = (void*)((char*)buf + CallSignLen);
-  ::memcpy(buf, email, ::strlen(email));
-  buf = (void*)((char*)buf + EmailLen);
+  ::memcpy(buf, motto, ::strlen(motto));
+  buf = (void*)((char*)buf + MottoLen);
   ::memcpy(buf, token, ::strlen(token));
   buf = (void*)((char*)buf + TokenLen);
   ::memcpy(buf, getAppVersion(), ::strlen(getAppVersion()) + 1);

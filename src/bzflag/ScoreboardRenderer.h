@@ -81,7 +81,7 @@ protected:
   void drawRoamTarget(float x0, float y0, float x1, float y1);
   void drawPlayerScore(const Player*,
 		                   float x1, float x2, float x3, float xs, float y,
-		                   int emailLen, bool huntInd);
+		                   int mottoLen, bool huntInd);
   static const char *sortLabels[SORT_MAXNUM+2];
   static int sortMode;
   static bool alwaysShowTeamScore;

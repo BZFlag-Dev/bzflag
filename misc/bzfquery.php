@@ -152,7 +152,7 @@ function bzfquery1910 ($server,&$fp) {
         $have['TeamUpdate'] = true;
         break;
       case MsgAddPlayer:
-        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $packet['data']);
+        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128motto", $packet['data']);
         $server['player'][ $player['id'] ] = $player;
         if (sizeof($server['player']) >= $server['numPlayers']) $have['AllAddPlayer'] = true;
         break;
@@ -207,7 +207,7 @@ function bzfquery0026 ($server,&$fp) {
         $have['TeamUpdate'] = true;
         break;
       case MsgAddPlayer:
-        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128email", $packet['data']);
+        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128motto", $packet['data']);
         $server['player'][ $player['id'] ] = $player;
         if (sizeof($server['player']) >= $server['numPlayers']) $have['AllAddPlayer'] = true;
         break;
@@ -266,7 +266,7 @@ function bzfdump ($server) {
         echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
     	. " (" . $server['player'][$player]['won']
     	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
-        echo "  " . $server['player'][$player]['email'] . "\n";
+        echo "  " . $server['player'][$player]['motto'] . "\n";
       }
       break;
 
@@ -316,7 +316,7 @@ function bzfdump ($server) {
         echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
     	. " (" . $server['player'][$player]['won']
     	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
-        echo "  " . $server['player'][$player]['email'] . "\n";
+        echo "  " . $server['player'][$player]['motto'] . "\n";
       }
       break;
   }

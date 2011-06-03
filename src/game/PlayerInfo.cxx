@@ -35,7 +35,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   pausedSince(TimeKeeper::getNullTime()), autopilot(false), tracker(0)
 {
   notResponding = false;
-  memset(email, 0, EmailLen);
+  memset(motto, 0, MottoLen);
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
@@ -100,13 +100,13 @@ void *PlayerInfo::packUpdate(void *buf) {
 
 void *PlayerInfo::packId(void *buf) {
   buf = nboPackString(buf, callSign, CallSignLen);
-  buf = nboPackString(buf, email, EmailLen);
+  buf = nboPackString(buf, motto, MottoLen);
   return buf;
 }
 
 bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
-  // data: type, team, name, email
+  // data: type, team, name, motto
   uint16_t _type;
   int16_t _team;
   buf = nboUnpackUShort(buf, _type);
@@ -114,7 +114,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   type = PlayerType(_type);
   team = TeamColor(_team);
   buf = nboUnpackString(buf, callSign, CallSignLen);
-  buf = nboUnpackString(buf, email, EmailLen);
+  buf = nboUnpackString(buf, motto, MottoLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
 
@@ -125,10 +125,10 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 {
   // terminate the strings
   callSign[CallSignLen - 1] = '\0';
-  email[EmailLen - 1] = '\0';
+  motto[MottoLen - 1] = '\0';
   token[TokenLen - 1] = '\0';
   clientVersion[VersionLen - 1] = '\0';
-  cleanEMail();
+  cleanMotto();
 
   logDebugMessage(2,"Player %s [%d] sent version string: %s\n",
     callSign, playerIndex, clientVersion);
@@ -158,10 +158,10 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;
   }
-  if (!isEMailReadable()) {
-    logDebugMessage(2,"rejecting unreadable player email: %s (%s)\n", callSign, email);
-    rejectCode   = RejectBadEmail;
-    strcpy(rejectMsg, "The e-mail was rejected.  Try a different e-mail.");
+  if (!isMottoReadable()) {
+    logDebugMessage(2,"rejecting unreadable player motto: %s (%s)\n", callSign, motto);
+    rejectCode   = RejectBadMotto;
+    strcpy(rejectMsg, "The motto was rejected.  Try a different motto.");
     return false;
   }
 
@@ -179,14 +179,14 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     }
   }
 
-  // make sure the email is not obscene/filtered
+  // make sure the motto is not obscene/filtered
   if (callSignFiltering) {
-    logDebugMessage(2,"checking email: %s\n", email);
-    char em[EmailLen];
-    memcpy(em, email, sizeof(char) * EmailLen);
+    logDebugMessage(2,"checking motto: %s\n", motto);
+    char em[MottoLen];
+    memcpy(em, motto, sizeof(char) * MottoLen);
     if (filterData->filter(em, simpleFiltering)) {
-      rejectCode = RejectBadEmail;
-      strcpy(rejectMsg, "The e-mail was rejected. Try a different e-mail.");
+      rejectCode = RejectBadMotto;
+      strcpy(rejectMsg, "The motto was rejected. Try a different motto.");
       return false;
     }
   }
@@ -268,18 +268,18 @@ bool PlayerInfo::isCallSignReadable() {
   return readable;
 }
 
-const char *PlayerInfo::getEMail() const {
-  return email;
+const char *PlayerInfo::getMotto() const {
+  return motto;
 }
 
-void PlayerInfo::cleanEMail() {
-  // strip leading whitespace from email
-  char *sp = email;
+void PlayerInfo::cleanMotto() {
+  // strip leading whitespace from motto
+  char *sp = motto;
   char *tp = sp;
   while (isspace(*sp))
     sp++;
 
-  // strip any non-printable characters and ' and " from email
+  // strip any non-printable characters and ' and " from motto
   do {
     if (isprint(*sp) && (*sp != '\'') && (*sp != '"')) {
       *tp++ = *sp;
@@ -287,24 +287,24 @@ void PlayerInfo::cleanEMail() {
   } while (*++sp);
   *tp = *sp;
 
-  // strip trailing whitespace from email
+  // strip trailing whitespace from motto
   while (isspace(*--tp)) {
     *tp=0;
   }
 }
 
-bool PlayerInfo::isEMailReadable() {
-  // email/"team" readability filter, make sure there are more
+bool PlayerInfo::isMottoReadable() {
+  // motto/"team" readability filter, make sure there are more
   // alphanum than non
-  int emailAlnumCount = 0;
-  char *sp = email;
+  int mottoAlnumCount = 0;
+  char *sp = motto;
   do {
     if (isalnum(*sp)) {
-      emailAlnumCount++;
+      mottoAlnumCount++;
     }
   } while (*++sp);
-  int emaillen = (int)strlen(email);
-  return (emaillen <= 4) || (((float)emailAlnumCount / (float)emaillen) > 0.5);
+  int mottolen = (int)strlen(motto);
+  return (mottolen <= 4) || (((float)mottoAlnumCount / (float)mottolen) > 0.5);
 }
 
 const char *PlayerInfo::getToken() const {

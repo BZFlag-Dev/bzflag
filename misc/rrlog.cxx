@@ -76,7 +76,7 @@ typedef struct {
   u32 flagsSize;		// size of the flags data
   u32 worldSize;		// size of world database
   char callSign[CallSignLen];	// player's callsign
-  char email[EmailLen];		// player's email
+  char motto[MottoLen];		// player's motto
   char serverVersion[8];	// BZFS protocol version
   char appVersion[MessageLen];	// BZFS application version
   char realHash[64];		// hash of worldDatabase
@@ -111,7 +111,7 @@ int main(int argc, char** argv)
   RRpacket *p;
   const char* execName = argv[0];
   bool useColor = true;
-  bool useEmail = true;
+  bool useMotto = true;
   bool onlyMessages = false;
 
   printf("\nRRLOG-%s\nProtocol BZFS%s:  %i known packet types\n\n",
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
       argv++;
     }
     else if (strcmp("-e", argv[1]) == 0) {
-      useEmail = false;
+      useMotto = false;
       argc--;
       argv++;
     }
@@ -204,7 +204,7 @@ int main(int argc, char** argv)
 	  days, hours, minutes, secs, usecs);
   printf("start:     %s", ctime(&startTime));
   printf("end:       %s", ctime(&endTime));
-  printf("author:    %s  (%s)\n", header.callSign, header.email);
+  printf("author:    %s  (%s)\n", header.callSign, header.motto);
   printf("bzfs:      bzfs-%s\n", header.appVersion);
   printf("protocol:  %.8s\n", header.serverVersion);
   printf("flagSize:  %i\n", header.flagsSize);
@@ -215,7 +215,7 @@ int main(int argc, char** argv)
 
   MsgStrings::init();
   MsgStrings::colorize(useColor);
-  MsgStrings::showEmail(useEmail);
+  MsgStrings::showMotto(useMotto);
 //  MsgStrings::colorize(false);
   bool needUpdate = true;
 
@@ -274,7 +274,7 @@ static void printHelp(const char* execName)
   printf("  -h	  : print help\n");
   printf("  -o <level>  : set output level\n");
   printf("  -c	  : disable printing ANSI colors\n");
-//  printf("  -e	  : disable printing emails\n");
+//  printf("  -e	  : disable printing mottos\n");
 //  printf("  -m	  : only print message packets\n");
   printf("\n");
   return;
@@ -299,7 +299,7 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   buf = nboUnpackUInt(buf, h->flagsSize);
   buf = nboUnpackUInt(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
-  buf = nboUnpackString(buf, h->email, sizeof(h->email));
+  buf = nboUnpackString(buf, h->motto, sizeof(h->motto));
   buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
   buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
   buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));

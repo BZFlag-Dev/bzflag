@@ -8,7 +8,7 @@ BZFlag 2.3.0  "Born Again"
 * Removed /setpass /register /identify - David Anderson
 * Handicap is computed on the server - Alfredo Tupone, Bernt Hansen
 * Allow plugins to register custom flag types - Daniel Remenak
-* Forced *image.bzflag.org for image downloads until user sets 
+* Forced *image.bzflag.org for image downloads until user sets
   otherwise - David Anderson
 * Accepted patch from McSpider, added OpenFFA - David Anderson
 * Removed -requireUDP, now it is always required - David Anderson
@@ -29,7 +29,7 @@ BZFlag 2.3.0  "Born Again"
 * Only allow a single end shot credit for holding the shield flag - Bernt Hansen
 * Do not inform hunters of stealthy prey - Ian Agar
 * All scores are controlled completely by the server - Daniel Remenak
-* "I think this is where we came in."
+* Relabel player "email" string as "motto" - Jeff Makey
 
 
 BZFlag 2.0.16  "No Foolin'" (2010-04-01)

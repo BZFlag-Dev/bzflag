@@ -164,8 +164,8 @@ msgstr "Servidor:"
 msgid "Port:"
 msgstr "Porta:"
 
-msgid "Email:"
-msgstr "Email:"
+msgid "Motto:"
+msgstr "Motto:"
 
 msgid "Start Server"
 msgstr "Iniciar servidor local"

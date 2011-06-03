@@ -416,7 +416,7 @@ void ScoreboardRenderer::renderScoreboard(void)
 {
   int i=0;
   int numPlayers;
-  int emailLen;
+  int mottoLen;
   Player** players;
   Player*  player;
   bool haveObs = false;
@@ -491,7 +491,7 @@ void ScoreboardRenderer::renderScoreboard(void)
     }
   }
 
-  emailLen = BZDB.getIntClamped ("emailDispLen", 0, 128);
+  mottoLen = BZDB.getIntClamped ("mottoDispLen", 0, 128);
   huntSelectEvent = false;
   huntPositionEvent = 0;
   numHunted = 0;
@@ -512,9 +512,9 @@ void ScoreboardRenderer::renderScoreboard(void)
         haveObs = true;
       }
       if (huntState==HUNT_SELECTING && i==huntPosition) {
-        drawPlayerScore(player, x1, x2, x3, xs, (float)y, emailLen, true);
+        drawPlayerScore(player, x1, x2, x3, xs, (float)y, mottoLen, true);
       } else {
-        drawPlayerScore(player, x1, x2, x3, xs, (float)y, emailLen, false);
+        drawPlayerScore(player, x1, x2, x3, xs, (float)y, mottoLen, false);
       }
       y -= dy;
     }
@@ -586,7 +586,7 @@ void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
 
 void ScoreboardRenderer::drawPlayerScore(const Player* player,
 			    float x1, float x2, float x3, float xs, float y,
-			    int emailLen, bool huntCursor)
+			    int mottoLen, bool huntCursor)
 {
   // score
   char score[40], kills[40];
@@ -683,10 +683,10 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   // callsign
   playerInfo += player->getCallSign();
 
-  // email in parenthesis
-  if (player->getEmailAddress()[0] != '\0' && emailLen>0) {
+  // motto in parentheses
+  if (player->getMotto()[0] != '\0' && mottoLen>0) {
     playerInfo += " (";
-    playerInfo += TextUtils::str_trunc_continued (player->getEmailAddress(), emailLen);
+    playerInfo += TextUtils::str_trunc_continued (player->getMotto(), mottoLen);
     playerInfo += ")";
   }
   // carried flag

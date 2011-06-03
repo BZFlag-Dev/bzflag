@@ -84,7 +84,7 @@ public:
   bool  processEnter ( uint16_t &rejectCode, char *rejectMsg );
   const char *getCallSign() const;
   void setCallSign(const char * c);
-  const char *getEMail() const;
+  const char *getMotto() const;
   const char *getToken() const;
   void setToken(const char * c);
   void	clearToken();
@@ -138,9 +138,9 @@ public:
 
 private:
 
-  void	cleanEMail();
+  void	cleanMotto();
   bool	isCallSignReadable();
-  bool	isEMailReadable();
+  bool	isMottoReadable();
 
   int	 playerIndex;
 
@@ -154,8 +154,8 @@ private:
   char callSign[CallSignLen];
   // token from db server
   char token[TokenLen];
-  // player's email address
-  char email[EmailLen];
+  // player's motto
+  char motto[MottoLen];
   // version information from client
   char clientVersion[VersionLen];
   int clientVersionMajor;

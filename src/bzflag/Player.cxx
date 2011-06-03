@@ -44,7 +44,7 @@ static const float	MaxUpdateTime = 1.0f;		// seconds
 int		Player::tankTexture = -1;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
-	       const char* name, const char* _email, const PlayerType _type) :
+	       const char* name, const char* _motto, const PlayerType _type) :
   lastObstacle(NULL),
   pauseMessageState(false),
   handicap(0.0f),
@@ -95,9 +95,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   ::strncpy(callSign, name, CallSignLen);
   callSign[CallSignLen-1] = '\0';
 
-  // set email address
-  ::strncpy(email, _email, EmailLen);
-  email[EmailLen-1] = '\0';
+  // set motto
+  ::strncpy(motto, _motto, MottoLen);
+  motto[MottoLen-1] = '\0';
 
   if (id != ServerPlayer) {
     // make scene nodes

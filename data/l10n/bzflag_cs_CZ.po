@@ -119,8 +119,8 @@ msgstr "Server:"
 msgid "Port:"
 msgstr "Port:"
 
-msgid "Email:"
-msgstr "Email:"
+msgid "Motto:"
+msgstr "Motto:"
 
 msgid "Start Server"
 msgstr "Start serveru"

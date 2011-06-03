@@ -224,7 +224,7 @@ void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage &msg )
 	msg.losses = score.getLosses();
 	msg.tks = score.getTKs();
 	msg.callsign =  player.getCallSign();
-	msg.email =  player.getEMail();
+	msg.motto =  player.getMotto();
 }
 
 

@@ -37,7 +37,7 @@ public:
   char callsign[CallSignLen];
   char password[PasswordLen];
   char token[TokenLen];
-  char email[EmailLen];
+  char motto[MottoLen];
   std::string listServerURL;
   int listServerPort;
   bool joystick;
