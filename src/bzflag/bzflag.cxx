@@ -938,8 +938,10 @@ int			main(int argc, char** argv)
     }
   }
 
-  // email string is empty by default
-  startupInfo.email[0] = '\0';
+  // use empty email string unless previously set
+  std::string email = BZDB.isSet("email") ? BZDB.get("email") : "";
+  email = email.substr(0, sizeof(startupInfo.email) - 1);
+  strcpy(startupInfo.email, email.c_str());
 
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();
