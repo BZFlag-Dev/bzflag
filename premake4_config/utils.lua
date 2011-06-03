@@ -168,15 +168,18 @@ end
 function os.testreport(testdesc, testcode)
   if (_VERBOSITY >= 1) then
     local dots = ('.'):rep(20 - #testdesc)
-    if (_OPTIONS['verbose']) then
+    if (_VERBOSITY >= 2) then
       print(('-'):rep(80))
     end
     stdoutf('checking for %s %s ', testdesc, dots)
   end
+
   local success = os.testcode(testcode)
+
   if (_VERBOSITY >= 1) then
     printf('%s', success and 'ok' or 'fail')
   end
+
   return success
 end
 

@@ -4,7 +4,7 @@
 -- Copyright (c) 2002-2009 Jason Perkins and the Premake project
 --
 
-	local echo_cmd = 'echo -e'
+	local echo_cmd = 'env echo -e'
 	local reset_color     = '\\033[0m'
 	local build_color     = '\\033[0;1m'
 	local compile_color   = '\\033[0;32m'
