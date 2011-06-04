@@ -225,29 +225,29 @@ void bzhttp_SessionData::ClearGlobalItem ( const char * name )
     data->GlobalData.erase(itr);
 }
 
-std::map<int,bzhttp_SessionData> Sessions;
+std::map<int,bzhttp_SessionData*> Sessions;
 
 bzhttp_SessionData& GetSession ( unsigned int id )
 {
   if (id < 10 || Sessions.find(id) == Sessions.end())
   {
-    bzhttp_SessionData newSession;
+    bzhttp_SessionData *newSession = new bzhttp_SessionData();
     unsigned int newID = rand();
     while (Sessions.find(newID) != Sessions.end() && newID < 10)
       newID = rand();
 
-    newSession.SessionID = newID;
-    VDIR_SESSION_CLASS(newSession.pimple,data);
+    newSession->SessionID = newID;
+    VDIR_SESSION_CLASS(newSession->pimple,data);
     data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
     Sessions[newID] = newSession;
 
-    return Sessions[newID];
+    return *Sessions[newID];
   }
   else
   {
-    VDIR_SESSION_CLASS(Sessions[id].pimple,data);
+    VDIR_SESSION_CLASS(Sessions[id]->pimple,data);
     data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
-    return Sessions[id];
+    return *Sessions[id];
   }
 }
 
@@ -1769,12 +1769,15 @@ void CheckForZombies ( void )
 
   double sessionTimeOut = 10*60;
   double rightNow = TimeKeeper::getCurrent().getSeconds();
-  std::map<int,bzhttp_SessionData>::iterator sessionItr = Sessions.begin();
+  std::map<int,bzhttp_SessionData*>::iterator sessionItr = Sessions.begin();
   while(sessionItr != Sessions.end())
   {
-    VDIR_SESSION_CLASS(sessionItr->second.pimple,data);
+    VDIR_SESSION_CLASS(sessionItr->second->pimple,data);
     if (data->LastUpdateTime + sessionTimeOut < rightNow)
+    {
+      delete (sessionItr->second);
       toKill.push_back(sessionItr->first);
+    }
     sessionItr++;
   }
 
