@@ -1637,8 +1637,8 @@ void KillHTTP()
 
 void NewHTTPConnection ( bz_EventData *eventData )
 {
-  //if (VDirs.size() == 0)
- //   return;
+  if (VDirs.size() == 0)
+    return;
 
   bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
 
