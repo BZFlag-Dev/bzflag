@@ -142,7 +142,7 @@ bzhttp_SessionData::bzhttp_SessionData()
 
 bzhttp_SessionData::~bzhttp_SessionData()
 {
-  delete(pimple);
+  delete(VDIR_SESSION_PTR);
 }
 std::map<std::string,std::string> emptyMap;
 
@@ -274,7 +274,7 @@ bzhttp_VDir::bzhttp_VDir()
 
 bzhttp_VDir::~bzhttp_VDir()
 {
-  delete(pimple);
+  delete(VDIR_DATA_PTR);
 }
 
 void bzhttp_VDir::AddMimeType(const char* e, const char* m )
@@ -400,9 +400,7 @@ public:
 };
 
 #define RESPONCE_DATA_PTR ((bzhttp_Responce_Data*)pimple)
-
 #define RESPONCE_DATA(n) bzhttp_Responce_Data *n = ((bzhttp_Responce_Data*)pimple)
-
 #define RESPONCE_DATA_CLASS(c,n) bzhttp_Responce_Data *n = ((bzhttp_Responce_Data*)(c))
 
 bzhttp_Responce::bzhttp_Responce()
@@ -415,7 +413,7 @@ bzhttp_Responce::bzhttp_Responce()
 
 bzhttp_Responce::~bzhttp_Responce()
 {
-  delete(pimple);
+  delete(RESPONCE_DATA_PTR);
 }
 
 void bzhttp_Responce::AddHeader ( const char* n, const char* v)
@@ -462,7 +460,6 @@ public:
 };
 
 #define REQUEST_DATA_PTR ((bzhttp_Request_Data*)pimple)
-
 #define REQUEST_DATA(n) bzhttp_Request_Data *n = ((bzhttp_Request_Data*)pimple)
 
 bzhttp_Request::bzhttp_Request(): Session(NULL)
@@ -472,7 +469,7 @@ bzhttp_Request::bzhttp_Request(): Session(NULL)
 
 bzhttp_Request::~bzhttp_Request()
 {
-  delete(pimple);
+  delete(REQUEST_DATA_PTR);
 }
 
 bool bzhttp_Request::UserHasPerm ( const char* perm )
@@ -1802,7 +1799,7 @@ bzhttp_TemplateMetaData::bzhttp_TemplateMetaData()
 }
 bzhttp_TemplateMetaData::~bzhttp_TemplateMetaData()
 {
-  delete(pimple);
+  delete(TMD_DATA_PTR);
 }
 
 const char * bzhttp_TemplateMetaData::Get ( const char* key, unsigned int index )
