@@ -2,10 +2,10 @@
 #ifndef TYPEOF_H
 #define TYPEOF_H
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
 #  define typeof(x) __typeof(x)
 
-#elif __clang__ /* clang also defines __GNUC__, so this is useless */
+#elif defined(__clang__) /* clang also defines __GNUC__, so this is useless */
 #  define typeof(x) __typeof(x)
 
 #elif defined(_MSC_VER) && _MSC_VER>=1400
