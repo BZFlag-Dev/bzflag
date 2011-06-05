@@ -637,6 +637,8 @@ size_t bzhttp_Request::GetParamaterCount ()
 class HTTPConnectedPeer : public bz_NonPlayerConnectionHandler , public bz_BaseURLHandler
 {
 public:
+  static HTTPConnectedPeer* Current;
+
   bool Killme;
   bzhttp_VDir *vDir;
 
@@ -1111,6 +1113,7 @@ public:
 
   void Think ( int connectionID )
   {
+    HTTPConnectedPeer::Current = this;
     if (RequestComplete && !Killme)
     {
       if (vDir && !Authenticated)
@@ -1157,6 +1160,8 @@ public:
 	  GenerateResponce(connectionID);
       }
     }
+    HTTPConnectedPeer::Current = NULL;
+
   }
 
   const char* getMimeType(bzhttp_eDocumentType docType)
@@ -1592,6 +1597,8 @@ public:
 
 HTTPIndexHandler *indexHandler;
 
+HTTPConnectedPeer* HTTPConnectedPeer::Current = NULL;
+
 void InitHTTP()
 {
   indexHandler = new HTTPIndexHandler();
@@ -1841,6 +1848,437 @@ void bzhttp_TemplateMetaData::Add ( const char* key, const char* val )
    data->Items[key].push_back(val);
 }
 
+std::string processTemplate ( const std::string &templateText, bzhttp_TemplateCallback* callback );
+
+std::string getStringRange ( const std::string &find, size_t start, size_t end )
+{
+  std::string ret;
+
+  if (end <= start || start > find.size() || end > find.size())
+    return ret;
+
+  for ( size_t p = start; p <= end; p++)
+    ret += find[p];
+
+  return ret;
+}
+
+std::string readFileText ( const char* file )
+{
+  FILE *fp = fopen(file,"rb");
+  if (!fp)
+    return std::string();
+
+  fseek(fp,0,SEEK_END);
+  size_t s = ftell(fp);
+  fseek(fp,0,SEEK_SET);
+
+  char* m = (char*)malloc(s+1);
+  fread(m,s,1,fp);
+  m[s] = 0;
+  fclose(fp);
+
+  std::string ret = m;
+  free(m);
+
+  if (ret.find_first_of('\n') != std::string::npos)
+    return ret;
+
+  // HTTP likes /r/n not just /r
+  return TextUtils::replace_all(ret,"\r","\r\n");
+}
+
+bzhttp_TemplateMetaData GetTemplateMetaData( const std::string &templateText )
+{
+  bzhttp_TemplateMetaData metaData;
+
+  size_t pos = 0;
+  while ( pos < templateText.size() && pos != std::string::npos)
+  {
+    pos = TextUtils::find_first_substr(templateText,std::string("[#"),pos);
+    if ( pos < templateText.size() && pos != std::string::npos )
+    {
+      size_t start = pos;
+
+      pos = TextUtils::find_first_substr(templateText,std::string("]"),pos);
+      if ( pos < templateText.size() && pos != std::string::npos )
+      {
+	std::string dataKey = getStringRange(templateText,start+2,pos-1);
+
+	std::vector<std::string> chunks = TextUtils::tokenize(dataKey,std::string(":"),0,true);
+	if (chunks.size() > 1)
+	  metaData.Add(chunks[0].c_str(),chunks[1].c_str());
+      }
+    }
+  }
+  return metaData;
+}
+
+BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback)
+{
+  return bzhttp_RenderTemplateFromText(readFileText(file).c_str(), callback);
+}
+
+void makelower ( std::string &str)
+{
+  str = TextUtils::tolower(str);
+}
+
+std::string::const_iterator readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str )
+{
+  std::string::const_iterator itr = inItr;
+
+  while ( itr != str.end() ) {
+    if (*itr != ']') {
+      key += *itr;
+      itr++;
+    } else {
+      // go past the code
+      itr++;
+      key = TextUtils::tolower(key);
+      return itr;
+    }
+  }
+  return itr;
+}
+
+
+std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str )
+{
+  if (!keys.size())
+    return inItr;
+
+  std::string::const_iterator itr = inItr;
+
+  while (1) {
+    itr = std::find(itr,str.end(),'[');
+    if (itr == str.end())
+      return itr;
+
+    // save off the itr in case this is the one, so we can copy to this point
+    std::string::const_iterator keyStartItr = itr;
+
+    itr++;
+    if (itr == str.end())
+      return itr;
+
+    std::string key;
+    itr = readKey(key,itr,str);
+
+    for ( size_t i = 0; i < keys.size(); i++ ) {
+      if ( key == keys[i]) {
+	endKey = key;
+	code.resize(keyStartItr - inItr);
+	std::copy(inItr,keyStartItr,code.begin());
+	return itr;
+      }
+    }
+  }
+  return itr;
+}
+
+double startTime;
+
+const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
+{
+  if (key == "date") {
+    bz_Time time;
+    bz_getLocaltime(&time);
+    return TextUtils::format("%d/%d/%d",time.month,time.day,time.year).c_str();
+  } else if (key == "time") {
+    bz_Time time;
+    bz_getLocaltime(&time);
+    TextUtils::format("%d:%d:%d",time.hour,time.minute,time.second);
+  } else if (key == "hostname") {
+    std::string data = bz_getPublicAddr().c_str();
+    if (!data.size())
+     return TextUtils::format("localhost:%d",bz_getPublicPort()).c_str();
+  } else if (key == "pagetime") {
+    return TextUtils::format("%.3f",bz_getCurrentTime()-startTime).c_str();
+  } else if (key == "baseurl") {
+    return HTTPConnectedPeer::Current->vDir->BaseURL.c_str();
+  } else if (key == "pluginname") {
+    return VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin ? VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin->Name() : "";
+  }
+  else if (callback)
+    return callback->GetTemplateKey(key.c_str());
+
+  return "";
+}
+
+void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str, bzhttp_TemplateCallback* callback )
+{
+  if (!callback)
+    return;
+
+  // find the end of the ]]
+  std::string key;
+
+  itr = readKey(key,itr,str);
+
+  if (itr != str.end()) {
+    std::string lowerKey;
+    std::string val;
+
+    lowerKey = TextUtils::tolower(key);
+
+    code += CallKey(lowerKey,callback);
+  }
+}
+
+void processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* callback )
+{
+  std::string key,loopSection,emptySection,param;
+
+  // read the rest of the key
+  std::string::const_iterator itr = readKey(key,inItr,str);
+
+  std::vector<std::string> commandParts = TextUtils::tokenize(key,std::string(" "),0,0);
+  if (commandParts.size() < 2)
+  {
+    inItr = itr;
+    return;
+  }
+
+  // check the params
+  makelower(commandParts[0]);
+  makelower(commandParts[1]);
+
+  if (commandParts.size() > 2)
+    param = commandParts[2];
+
+  if ( commandParts[0] != "start" )
+  {
+    inItr = itr;
+    return;
+  }
+
+  std::vector<std::string> checkKeys;
+  checkKeys.push_back(TextUtils::format("*end %s",commandParts[1].c_str()));
+
+  std::string keyFound;
+  itr = findNextTag(checkKeys,keyFound,loopSection,itr,str);
+
+  if (itr == str.end())
+  {
+    inItr = itr;
+    return;
+  }
+
+  // do the empty section
+  // loops have to have both
+  checkKeys.clear();
+  checkKeys.push_back(TextUtils::format("*empty %s",commandParts[1].c_str()));
+  itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
+
+  if (callback && callback->GetTemplateLoop(commandParts[1].c_str(),param.c_str()))
+  {
+    code += processTemplate(loopSection,callback);
+
+    while(callback && callback->GetTemplateLoop(commandParts[1].c_str(),param.c_str()))
+      code += processTemplate(loopSection,callback);
+  }
+  else
+    code += processTemplate(emptySection,callback);
+  inItr = itr;
+}
+
+
+bool CallIF ( const std::string &key, const std::string &param, bzhttp_TemplateCallback* callback )
+{
+  if (key == "public")
+    return bz_getPublic();
+
+  if (callback)
+    return callback->GetTemplateIF(key.c_str(),param.c_str());
+  return false;
+}
+
+void processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* callback )
+{
+  std::string key;
+
+  // read the rest of the key
+  std::string::const_iterator itr = readKey(key,inItr,str);
+
+  std::vector<std::string> commandParts = TextUtils::tokenize(key,std::string(" "),0,0);
+  if (commandParts.size() < 2) {
+    inItr = itr;
+    return;
+  }
+
+  // check the params
+  makelower(commandParts[0]);
+  makelower(commandParts[1]);
+
+  if ( commandParts[0] != "if" ) {
+    inItr = itr;
+    return;
+  }
+
+  std::string param;
+  if (commandParts.size() > 2)
+    param = commandParts[2];
+
+  // now get the code for the next section
+  std::string trueSection,elseSection;
+
+  std::vector<std::string> checkKeys;
+  checkKeys.push_back(TextUtils::format("?else %s",commandParts[1].c_str()));
+  checkKeys.push_back(TextUtils::format("?end %s",commandParts[1].c_str()));
+
+  std::string keyFound;
+  itr = findNextTag(checkKeys,keyFound,trueSection,itr,str);
+
+  if (keyFound == checkKeys[0]) { // we hit an else, so we need to check for it
+    // it was the else, so go and find the end too
+    if (itr == str.end()) {
+      inItr = itr;
+      return;
+    }
+
+    checkKeys.erase(checkKeys.begin());// kill the else, find the end
+    itr = findNextTag(checkKeys,keyFound,elseSection,itr,str);
+  }
+
+  // test the if, stuff that dosn't exist is false
+  if (CallIF(commandParts[1],param,callback)) 
+    code += processTemplate(trueSection,callback);
+  else
+    code += processTemplate(elseSection,callback);
+  
+  inItr = itr;
+}
+
+void processComment ( std::string & /* code */, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* /*callback*/ )
+{
+  std::string key;
+  inItr = readKey(key,inItr,str);
+}
+
+// void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* callback )
+// {
+//   std::string key;
+//   inItr = readKey(key,inItr,str);
+// 
+//   // check the search paths for the include file
+//   
+//   code += 
+//   if (!processTemplateFile(code,key.c_str()))
+//     code += "[!" + key + "]";
+// }
+
+std::string processTemplate ( const std::string &templateText, bzhttp_TemplateCallback* callback )
+{
+  std::string code;
+
+  std::string::const_iterator templateItr = templateText.begin();
+
+  while ( templateItr != templateText.end() ) {
+    if ( *templateItr != '[' ) {
+      code += *templateItr;
+      templateItr++;
+    } else {
+      templateItr++;
+
+      if (templateItr == templateText.end()) {
+	code += '[';
+      } else {
+	switch(*templateItr) {
+	default: // it's not a code, so just let the next loop hit it and output it
+	  break;
+
+	case '$':
+	  replaceVar(code,++templateItr,templateText,callback);
+	  break;
+
+	case '*':
+	  processLoop(code,++templateItr,templateText,callback);
+	  break;
+
+	case '?':
+	  processIF(code,++templateItr,templateText,callback);
+	  break;
+	case '-':
+	case '#': // treat metadata as comments when parsing
+	  processComment(code,++templateItr,templateText,callback);
+	  break;
+	case '!':
+	  //  processInclude(code,++templateItr,templateText,callback);
+	  break;
+	}
+      }
+    }
+  }
+  return code;
+}
+
+BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback )
+{
+  if (!text || !*text)
+    return bz_ApiString();
+
+  startTime = TimeKeeper::getCurrent().getSeconds();
+
+  std::string templateText = text;
+
+  bzhttp_TemplateMetaData meta = GetTemplateMetaData(templateText);
+  if (callback)
+    callback->MetaData = &meta;
+
+  std::string code = processTemplate(templateText,callback);
+
+  if (callback)
+    callback->MetaData = NULL;
+
+  return bz_ApiString(code);
+}
+
+BZF_API bzhttp_TemplateMetaData bzhttp_GetTemplateMetaData( const char* file )
+{
+  return GetTemplateMetaData(readFileText(file));
+}
+
+// path utils
+std::map<std::string,std::vector<std::string> > PathSets;
+
+BZF_API bool bzhttp_AddSearchPath ( const char* pathSet, const char* path )
+{
+  if (!pathSet || !path)
+    return false;
+
+  std::string name = std::string(pathSet);
+
+  if (PathSets.find(name) == PathSets.end())
+    PathSets[name] = std::vector<std::string>();
+
+  PathSets[name].push_back(std::string(path));
+  return true;
+}
+
+BZF_API const char* bzhttp_FindFile ( const char* pathSet, const char* filename )
+{
+  if (!pathSet || !filename)
+    return NULL;
+
+  std::string name = std::string(pathSet);
+
+  if (PathSets.find(name) == PathSets.end())
+    return NULL;
+
+  std::vector<std::string> &list = PathSets[name];
+  for ( size_t i = 0; i < list.size(); i++)
+  {
+    std::string path = concatPaths(list[i].c_str(),filename);
+    FILE *fp = fopen(path.c_str(),"rt");
+    if (fp)
+    {
+      fclose(fp);
+      return path.c_str();
+    }
+  }
+  return NULL;
+}
 
 // Local Variables: ***
 // mode:C++ ***

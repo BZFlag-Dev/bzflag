@@ -186,7 +186,6 @@ public:
   virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return eAuthFail; }
   virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Responce &/*responce*/ ) {return false;}
 
-
   // data sizes
   int MaxRequestSize;
   int MaxRequestBody;
@@ -216,6 +215,27 @@ public:
 protected:
   void *pimple;
 };
+
+class BZF_API bzhttp_TemplateCallback
+{
+public:
+  virtual ~bzhttp_TemplateCallback() {};
+  virtual const char* GetTemplateKey(const char* /* key */) {return "";}
+  virtual bool GetTemplateLoop(const char* /* key */, const char* /*param*/) { return false; }
+  virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/) { return false; }
+
+  bzhttp_TemplateMetaData* MetaData;
+};
+
+BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback );
+BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback );
+
+BZF_API bzhttp_TemplateMetaData bzhttp_GetTemplateMetaData( const char* file );
+
+// path utilities
+BZF_API bool bzhttp_AddSearchPath ( const char* pathSet, const char* path );
+BZF_API const char* bzhttp_FindFile ( const char* pathSet, const char* filename );
+
 
 #endif //_BZFS_HTTP_H_
 
