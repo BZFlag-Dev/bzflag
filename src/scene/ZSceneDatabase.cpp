@@ -204,7 +204,7 @@ void ZSceneDatabase::makeCuller() {
   octree->addNodes(staticList, staticCount, cullDepth, cullElements);
 
   float elapsed = (float)(BzTime::getCurrent() - startTime);
-  logDebugMessage(2, "SceneNode Octree processed in %.3f seconds.\n", elapsed);
+  debugf(2, "SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
   if (culledList != staticList) {
     delete culledList;

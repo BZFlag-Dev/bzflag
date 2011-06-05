@@ -387,22 +387,22 @@ void CollisionManager::load() {
   RayList.count = 0;
 
   // print some statistics
-  logDebugMessage(2, "ColDet Octree obstacles = %i\n", FullList.count);
+  debugf(2, "ColDet Octree obstacles = %i\n", FullList.count);
   for (i = 0; i < 3; i++) {
-    logDebugMessage(2, "  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
+    debugf(2, "  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
                     gridExtents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
-    logDebugMessage(2, "  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
+    debugf(2, "  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
                     worldExtents.maxs[i]);
   }
-  logDebugMessage(2, "ColDet Octree leaf nodes  = %i\n", leafNodes);
-  logDebugMessage(2, "ColDet Octree total nodes = %i\n", totalNodes);
-  logDebugMessage(2, "ColDet Octree total elements = %i\n", totalElements);
+  debugf(2, "ColDet Octree leaf nodes  = %i\n", leafNodes);
+  debugf(2, "ColDet Octree total nodes = %i\n", totalNodes);
+  debugf(2, "ColDet Octree total elements = %i\n", totalElements);
 
   // print the timing info
   float elapsed = (float)(BzTime::getCurrent() - startTime);
-  logDebugMessage(2, "Collision Octree processed in %.3f seconds.\n", elapsed);
+  debugf(2, "Collision Octree processed in %.3f seconds.\n", elapsed);
 
 
   // setup the split list
@@ -563,7 +563,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
   // return if this is a leaf node
   if (((int)depth >= maxDepth) || (fullList.count <= minElements)) {
     resizeCell();
-    //logDebugMessage(4,"COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
+    //debugf(4,"COLDET LEAF NODE: depth = %d, items = %i\n", depth, count);
     return;
   }
 
@@ -582,7 +582,7 @@ ColDetNode::ColDetNode(unsigned char _depth,
   free(fullList.list);
   fullList.list = NULL;
 
-  //logDebugMessage(4,"COLDET BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
+  //debugf(4,"COLDET BRANCH NODE: depth = %d, children = %i\n", depth, childCount);
 
   return;
 }

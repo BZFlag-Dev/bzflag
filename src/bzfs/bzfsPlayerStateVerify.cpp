@@ -91,10 +91,10 @@ bool doSpeedChecks(GameKeeper::Player* playerData, PlayerState& state) {
 
         if (curPlanarSpeedSqr > maxPlanarSpeedSqr) {
           if (logOnly) {
-            logDebugMessage(1, "Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+            debugf(1, "Logging Player %s [%d] tank too fast (tank: %f, allowed: %f){Dead or v[z] != 0}\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
           }
           else {
-            logDebugMessage(1, "Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
+            debugf(1, "Kicking Player %s [%d] tank too fast (tank: %f, allowed: %f)\n", playerData->player.getCallSign(), playerData->getIndex(), sqrt(curPlanarSpeedSqr), sqrt(maxPlanarSpeedSqr));
             sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player tank is moving too fast.");
             removePlayer(playerData->getIndex(), "too fast");
           }
@@ -137,7 +137,7 @@ bool doBoundsChecks(GameKeeper::Player* playerData, PlayerState& state) {
 
   // kick em cus they are most likely cheating or using a buggy client
   if (!InBounds) {
-    logDebugMessage(1, "Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
+    debugf(1, "Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
                     playerData->player.getCallSign(), playerData->getIndex(),
                     state.pos.x, state.pos.y, state.pos.z);
     sendMessage(ServerPlayer, playerData->getIndex(),
@@ -172,7 +172,7 @@ bool doPauseChecks(GameKeeper::Player* playerData, PlayerState& /*state*/) {
       if ((BzTime::getCurrent() - pauseDelay) < 5.0f
     && (playerData->player.pauseActiveTime - BzTime::getNullTime() != 0)) {
         // we have one of those players all love
-        logDebugMessage(1,"Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
+        debugf(1,"Kicking Player %s [%d] Paused too fast!\n", playerData->player.getCallSign(),
             playerData->getIndex());
         sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused too fast.");
         removePlayer(playerData->getIndex(), "Paused too fast");
@@ -187,7 +187,7 @@ bool doPauseChecks(GameKeeper::Player* playerData, PlayerState& /*state*/) {
           (state.status & PlayerState::Falling)      ||
           (state.status & PlayerState::Alive) == false) {
         // the player did pause while being a wall or in air
-        logDebugMessage(1,"Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
+        debugf(1,"Kicking Player %s [%d] Paused in unallowed state!\n", playerData->player.getCallSign(),
             playerData->getIndex());
         sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player paused in unallowed state.");
         removePlayer(playerData->getIndex(), "Paused in unallowed state");
@@ -335,11 +335,11 @@ bool doHeightChecks(GameKeeper::Player* playerData, PlayerState& state) {
 
   if (state.pos.z > maxHeight) {
     if (BZDB.isTrue("_heightChecksLogOnly")) {
-      logDebugMessage(1, "Logging Player %s [%d] jumped too high [max: %f height: %f]\n",
+      debugf(1, "Logging Player %s [%d] jumped too high [max: %f height: %f]\n",
                       playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
     }
     else {
-      logDebugMessage(1, "Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
+      debugf(1, "Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
                       playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
       sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was too high.");
       removePlayer(playerData->getIndex(), "too high", true);
@@ -389,7 +389,7 @@ bool doOOChecks(GameKeeper::Player* playerData, PlayerState& state) {
   // InBuilding state doesn't get set when tank is inside a drivethrough obstacle
   if (!(state.status & PlayerState::Falling) && !droveForward && !(playerData->lastState.status & PlayerState::Falling)
       && (state.status & PlayerState::InBuilding)) {
-    logDebugMessage(1, "%s drove backward in building\n", playerData->player.getCallSign());
+    debugf(1, "%s drove backward in building\n", playerData->player.getCallSign());
     char message[MessageLen];
     snprintf(message, MessageLen, "Cheat checks: %s drove backwards in building", playerData->player.getCallSign());
     sendMessage(ServerPlayer, AdminPlayers, message);
@@ -435,14 +435,14 @@ bool checkFlagCheats(GameKeeper::Player* playerData, int teamIndex) {
   const fvec3& currPos = playerData->currentPos;
   TeamColor base = whoseBase(currPos.x, currPos.y, currPos.z);
   if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam())) {
-    logDebugMessage(1, "Player %s [%d] might have sent MsgCaptureFlag for taking their own "
+    debugf(1, "Player %s [%d] might have sent MsgCaptureFlag for taking their own "
                     "flag onto their own base\n",
                     playerData->player.getCallSign(), playerData->getIndex());
     foundACheat = true;
   }
 
   if ((teamIndex != playerData->player.getTeam() && base != playerData->player.getTeam())) {
-    logDebugMessage(1, "Player %s [%d] (%s) might have tried to capture %s flag without "
+    debugf(1, "Player %s [%d] (%s) might have tried to capture %s flag without "
                     "reaching their own base. (Player position: %f %f %f)\n",
                     playerData->player.getCallSign(), playerData->getIndex(),
                     Team::getName(playerData->player.getTeam()),

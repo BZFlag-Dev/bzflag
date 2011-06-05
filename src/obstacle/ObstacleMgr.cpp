@@ -692,7 +692,7 @@ static void makeRelativePhyDrv(Obstacle* obs, const MeshTransform& xform) {
 void GroupDefinition::makeGroups(const MeshTransform& xform,
                                  const ObstacleModifier& obsMod) const {
   if (active) {
-    logDebugMessage(0, "WARNING: avoided recursion, groupDef \"%s\"\n",
+    debugf(0, "WARNING: avoided recursion, groupDef \"%s\"\n",
                     name.c_str());
     return; // avoid recursion
   }
@@ -808,7 +808,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
       depthName = tmpDepthName;
     }
     else {
-      logDebugMessage(1, "warning: group definition \"%s\" is missing\n",
+      debugf(1, "warning: group definition \"%s\" is missing\n",
                       group->getGroupDef().c_str());
     }
   }
@@ -902,7 +902,7 @@ void GroupDefinition::deleteInvalidObstacles() {
     for (unsigned int i = 0; i < oList.size(); i++) {
       Obstacle* obs = oList[i];
       if (!obs->isValid()) {
-        logDebugMessage(1, "Deleted invalid %s obstacle\n", obs->getType());
+        debugf(1, "Deleted invalid %s obstacle\n", obs->getType());
         delete obs;
         oList.remove(i);
         i--; // don't miss the substitute
@@ -1295,14 +1295,14 @@ void GroupDefinitionMgr::makeWorld() {
   // debug printing
   const int dbg = 4;
   if (debugLevel >= dbg) {
-    logDebugMessage(dbg, "\n");
-    logDebugMessage(dbg, "Named obstacles:\n");
+    debugf(dbg, "\n");
+    debugf(dbg, "Named obstacles:\n");
     for (int type = 0; type < ObstacleTypeCount; type++) {
       const ObstacleList& obsList = world.getList(type);
       for (unsigned int i = 0; i < obsList.size(); i++) {
         Obstacle* obs = obsList[i];
         if (!obs->getName().empty()) {
-          logDebugMessage(dbg, "  '/%-40s  <%s>\n",
+          debugf(dbg, "  '/%-40s  <%s>\n",
                           (obs->getName() + "'").c_str(), obs->getType());
           if (obs->getTypeID() == meshType) {
             const MeshObstacle* mesh = (const MeshObstacle*)obs;
@@ -1312,7 +1312,7 @@ void GroupDefinitionMgr::makeWorld() {
               if (face->isSpecial()) {
                 const MeshFace::SpecialData* sd = face->getSpecialData();
                 if (!sd->linkName.empty()) {
-                  logDebugMessage(dbg, "  '/%-40s  <MeshFace #%i>\n",
+                  debugf(dbg, "  '/%-40s  <MeshFace #%i>\n",
                                   (face->getLinkName() + "'").c_str(), f);
                 }
               }
@@ -1321,7 +1321,7 @@ void GroupDefinitionMgr::makeWorld() {
         }
       }
     }
-    logDebugMessage(dbg, "\n");
+    debugf(dbg, "\n");
   }
 
   return;

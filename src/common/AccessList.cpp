@@ -117,14 +117,14 @@ bool AccessList::reload() {
       c = c + 4;
     }
     else {
-      logDebugMessage(1, "%s: malformed line (%s)\n", filename.c_str(), buf);
+      debugf(1, "%s: malformed line (%s)\n", filename.c_str(), buf);
       continue; // ignore this line
     }
 
     c = eatWhite(c);
 
     if (*c == '\0') {
-      logDebugMessage(1, "%s: missing pattern (%s)\n", filename.c_str(), buf);
+      debugf(1, "%s: missing pattern (%s)\n", filename.c_str(), buf);
       continue; // ignore this line
     }
 
@@ -137,7 +137,7 @@ bool AccessList::reload() {
     pattern.pattern = c;
     patterns.push_back(pattern);
 
-    logDebugMessage(4, "AccessList(%s):  added  (%i: %s)\n", filename.c_str(), type, c);
+    debugf(4, "AccessList(%s):  added  (%i: %s)\n", filename.c_str(), type, c);
   }
 
   fclose(file);

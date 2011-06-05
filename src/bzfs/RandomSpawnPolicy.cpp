@@ -104,7 +104,7 @@ void RandomSpawnPolicy::getPosition(fvec3& pos, int playerId,
         tries = 0;
         if (BzTime::getCurrent() - start > BZDB.eval("_spawnMaxCompTime")) {
           //Just drop the sucka in, and pray
-          logDebugMessage(1, "Warning: RandomSpawnPolicy ran out of time, just dropping the sucker in\n");
+          debugf(1, "Warning: RandomSpawnPolicy ran out of time, just dropping the sucker in\n");
           break;
         }
       }

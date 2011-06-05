@@ -222,7 +222,7 @@ void WorldDownLoader::cleanCache() {
     }
 
     // remove the oldest file
-    logDebugMessage(1, "cleanWorldCache: removed %s\n", oldestFile);
+    debugf(1, "cleanWorldCache: removed %s\n", oldestFile);
     remove((worldPath + oldestFile).c_str());
     free(oldestFile);
     totalSize -= oldestSize;

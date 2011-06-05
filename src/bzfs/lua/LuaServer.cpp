@@ -208,10 +208,10 @@ bool LuaServer::init(const std::string& cmdLine) {
 
   bool dieHard = false;
 
-  logDebugMessage(1, "loading LuaServer\n");
+  debugf(1, "loading LuaServer\n");
 
   if (L != NULL) {
-    logDebugMessage(1, "LuaServer is already loaded\n");
+    debugf(1, "LuaServer is already loaded\n");
     return false;
   }
 
@@ -236,7 +236,7 @@ bool LuaServer::init(const std::string& cmdLine) {
 
   const std::string scriptFile = scriptDir + sourceFile;
   if (!fileExists(scriptFile)) {
-    logDebugMessage(1, "LuaServer: could not find %s in %s\n",
+    debugf(1, "LuaServer: could not find %s in %s\n",
                     sourceFile, scriptDir.c_str());
     if (dieHard) {
       exit(2);
@@ -485,7 +485,7 @@ static bool CreateLuaState(const std::string& script) {
   lua_rawset(L, LUA_GLOBALSINDEX);
 
   if (luaL_dofile(L, script.c_str()) != 0) {
-    logDebugMessage(0, "lua init error: %s\n", lua_tostring(L, -1));
+    debugf(0, "lua init error: %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }

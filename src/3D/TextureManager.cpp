@@ -75,7 +75,7 @@ TextureManager::~TextureManager() {
 
 int TextureManager::getTextureID(const char* name, bool reportFail) {
   if (!name) {
-    logDebugMessage(2, "Could not get texture ID; no provided name\n");
+    debugf(2, "Could not get texture ID; no provided name\n");
     return -1;
   }
 
@@ -95,7 +95,7 @@ int TextureManager::getTextureID(const char* name, bool reportFail) {
 
     OpenGLTexture* image = loadTexture(texInfo, reportFail);
     if (!image) {
-      logDebugMessage(2, "Image not found or unloadable: %s\n", name);
+      debugf(2, "Image not found or unloadable: %s\n", name);
       return -1;
     }
     return addTexture(name, image);
@@ -128,7 +128,7 @@ bool TextureManager::removeTexture(const std::string& name) {
   textureIDs.erase(info.id);
   textureNames.erase(name);
 
-  logDebugMessage(2, "TextureManager::removed: %s\n", name.c_str());
+  debugf(2, "TextureManager::removed: %s\n", name.c_str());
 
   return true;
 }
@@ -180,7 +180,7 @@ bool TextureManager::reloadTextureImage(const std::string& name) {
 bool TextureManager::bind(int id) {
   TextureIDMap::iterator it = textureIDs.find(id);
   if (it == textureIDs.end()) {
-    logDebugMessage(1, "Unable to bind texture (by id): %d\n", id);
+    debugf(1, "Unable to bind texture (by id): %d\n", id);
     return false;
   }
 
@@ -197,7 +197,7 @@ bool TextureManager::bind(const char* name) {
 
   TextureNameMap::iterator it = textureNames.find(nameStr);
   if (it == textureNames.end()) {
-    logDebugMessage(1, "Unable to bind texture (by name): %s\n", name);
+    debugf(1, "Unable to bind texture (by name): %s\n", name);
     return false;
   }
 
@@ -230,7 +230,7 @@ void TextureManager::setMaxFilter(std::string filter) {
       return;
     }
   }
-  logDebugMessage(1, "setMaxFilter(): bad filter = %s\n", filter.c_str());
+  debugf(1, "setMaxFilter(): bad filter = %s\n", filter.c_str());
 }
 
 
@@ -293,7 +293,7 @@ bool TextureManager::getColorAverages(int texId, fvec4& rgba,
                                       bool factorAlpha) const {
   TextureIDMap::const_iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
-    logDebugMessage(1, "getColorAverages: Unable to find texture (by id): %d\n", texId);
+    debugf(1, "getColorAverages: Unable to find texture (by id): %d\n", texId);
     return false;
   }
   return it->second->texture->getColorAverages(rgba, factorAlpha);
@@ -309,7 +309,7 @@ int TextureManager::addTexture(const char* name, OpenGLTexture* texture) {
   // this is why IDs are way better than objects for this stuff
   TextureNameMap::iterator it = textureNames.find(name);
   if (it != textureNames.end()) {
-    logDebugMessage(3, "Texture %s already exists, overwriting\n", name);
+    debugf(3, "Texture %s already exists, overwriting\n", name);
     textureIDs.erase(it->second.id);
     delete it->second.texture;
   }
@@ -324,7 +324,7 @@ int TextureManager::addTexture(const char* name, OpenGLTexture* texture) {
   textureNames[name] = info;
   textureIDs[info.id] = &textureNames[name];
 
-  logDebugMessage(4, "Added texture %s: id %d\n", name, info.id);
+  debugf(4, "Added texture %s: id %d\n", name, info.id);
 
   return info.id;
 }
@@ -360,7 +360,7 @@ int TextureManager::newTexture(const char* name, int x, int y, unsigned char* da
 void TextureManager::setTextureFilter(int texId, OpenGLTexture::Filter filter) {
   TextureIDMap::iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
-    logDebugMessage(1, "setTextureFilter() Couldn't find texid: %i\n", texId);
+    debugf(1, "setTextureFilter() Couldn't find texid: %i\n", texId);
     return;
   }
 
@@ -375,7 +375,7 @@ void TextureManager::setTextureFilter(int texId, OpenGLTexture::Filter filter) {
 OpenGLTexture::Filter TextureManager::getTextureFilter(int texId) {
   TextureIDMap::iterator it = textureIDs.find(texId);
   if (it == textureIDs.end()) {
-    logDebugMessage(1, "getTextureFilter() Couldn't find texid: %i\n", texId);
+    debugf(1, "getTextureFilter() Couldn't find texid: %i\n", texId);
     return OpenGLTexture::Max;
   }
   ImageInfo& image = *(it->second);

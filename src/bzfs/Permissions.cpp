@@ -61,7 +61,7 @@ void PlayerAccessInfo::setName(const char* callSign) {
 bool PlayerAccessInfo::gotAccessFailure() {
   bool accessFailure = loginAttempts >= 5;
   if (accessFailure) {
-    logDebugMessage(1, "Too Many Identifys %s\n", getName().c_str());
+    debugf(1, "Too Many Identifys %s\n", getName().c_str());
   }
   return accessFailure;
 }
@@ -77,7 +77,7 @@ void PlayerAccessInfo::setPermissionRights() {
   explicitAllows = _info.explicitAllows;
   explicitDenys = _info.explicitDenys;
   groups = _info.groups;
-  logDebugMessage(1, "Identify %s\n", regName.c_str());
+  debugf(1, "Identify %s\n", regName.c_str());
 }
 
 void PlayerAccessInfo::reloadInfo() {
@@ -142,7 +142,7 @@ void PlayerAccessInfo::storeInfo() {
   PlayerAccessInfo _info;
   _info.addGroup("VERIFIED");
   _info.addGroup("LOCAL.GLOBAL");
-  logDebugMessage(1, "Global Temp Register %s\n", regName.c_str());
+  debugf(1, "Global Temp Register %s\n", regName.c_str());
   userDatabase[regName] = _info;
   updateDatabases();
 }
@@ -457,7 +457,7 @@ void parsePermissionString(const std::string& permissionString, PlayerAccessInfo
 
     // Operators are not allowed for userdb
     if (!info.groupState.test(PlayerAccessInfo::isGroup) && (first != 0)) {
-      logDebugMessage(1, "userdb: illegal permission string, operators are not allowed in userdb\n");
+      debugf(1, "userdb: illegal permission string, operators are not allowed in userdb\n");
       return;
     }
 
@@ -476,7 +476,7 @@ void parsePermissionString(const std::string& permissionString, PlayerAccessInfo
             refgroup->second.groupState.set(PlayerAccessInfo::isReferenced);
           }
           else {
-            logDebugMessage(1, "groupdb: unknown group \"%s\" was referenced\n", word.c_str());
+            debugf(1, "groupdb: unknown group \"%s\" was referenced\n", word.c_str());
           }
 
           continue;
@@ -495,7 +495,7 @@ void parsePermissionString(const std::string& permissionString, PlayerAccessInfo
               info.hasALLPerm = false;
             }
             else {
-              logDebugMessage(1, "groupdb: Cannot forbid unknown permission %s\n", word.c_str());
+              debugf(1, "groupdb: Cannot forbid unknown permission %s\n", word.c_str());
             }
           }
 
@@ -514,7 +514,7 @@ void parsePermissionString(const std::string& permissionString, PlayerAccessInfo
               info.hasALLPerm = false;
             }
             else {
-              logDebugMessage(1, "groupdb: Cannot remove unknown permission %s\n", word.c_str());
+              debugf(1, "groupdb: Cannot remove unknown permission %s\n", word.c_str());
             }
           }
 
@@ -525,7 +525,7 @@ void parsePermissionString(const std::string& permissionString, PlayerAccessInfo
         case '+': break;
 
         default:
-          logDebugMessage(1, "groupdb: ignoring unknown operator type %c\n", first);
+          debugf(1, "groupdb: ignoring unknown operator type %c\n", first);
       }
     }
 
@@ -540,7 +540,7 @@ void parsePermissionString(const std::string& permissionString, PlayerAccessInfo
         info.hasALLPerm = true;
       }
       else {
-        //logDebugMessage(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());
+        //debugf(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());
         info.customPerms.push_back(word);
       }
     }
@@ -592,7 +592,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string& filename) {
       // don't allow changing permissions for a group
       // that was used as a reference before
       if (info.groupState.test(isReferenced)) {
-        logDebugMessage(1, "groupdb: skipping groupdb line (%i), group was used as reference before\n", linenum);
+        debugf(1, "groupdb: skipping groupdb line (%i), group was used as reference before\n", linenum);
         continue;
       }
       parsePermissionString(perm, info);
@@ -600,7 +600,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string& filename) {
       groupAccess[name] = info;
     }
     else {
-      logDebugMessage(1, "WARNING: bad groupdb line (%i)\n", linenum);
+      debugf(1, "WARNING: bad groupdb line (%i)\n", linenum);
     }
 
   }

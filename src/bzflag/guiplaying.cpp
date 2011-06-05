@@ -430,10 +430,10 @@ void setSceneDatabase() {
 
   // print debugging info
   if (BZDBCache::zbuffer) {
-    logDebugMessage(2, "ZSceneDatabase processed in %.3f seconds.\n", elapsed);
+    debugf(2, "ZSceneDatabase processed in %.3f seconds.\n", elapsed);
   }
   else {
-    logDebugMessage(2, "BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
+    debugf(2, "BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
   }
 
   // set the scene
@@ -2288,7 +2288,7 @@ void handleScore(void* msg) {
         sPlayer = getPlayerByIndex(i);
       }
       else {
-        logDebugMessage(1, "Received score update for unknown player!\n");
+        debugf(1, "Received score update for unknown player!\n");
       }
     }
     if (sPlayer) {
@@ -2627,7 +2627,7 @@ void handleNewPlayer(void* msg) {
       break;
     }
   if (i >= MAX_ROBOTS) {
-    logDebugMessage(1, "Too many bots requested\n");
+    debugf(1, "Too many bots requested\n");
     return;
   }
   robots[i] = new RobotPlayer(id,
@@ -6514,25 +6514,25 @@ void startPlaying() {
   // print debugging info
   {
     // Application version
-    logDebugMessage(1, "BZFlag version:   %s\n", getAppVersion());
+    debugf(1, "BZFlag version:   %s\n", getAppVersion());
 
     // Protocol version
-    logDebugMessage(1, "BZFlag protocol:  %s\n", getProtocolVersion());
+    debugf(1, "BZFlag protocol:  %s\n", getProtocolVersion());
 
     // OpenGL Driver Information
-    logDebugMessage(1, "OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
-    logDebugMessage(1, "OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
-    logDebugMessage(1, "OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
+    debugf(1, "OpenGL vendor:    %s\n", (const char*)glGetString(GL_VENDOR));
+    debugf(1, "OpenGL version:   %s\n", (const char*)glGetString(GL_VERSION));
+    debugf(1, "OpenGL renderer:  %s\n", (const char*)glGetString(GL_RENDERER));
 
     // Depth Buffer bitplanes
     GLint depthBits;
     glGetIntegerv(GL_DEPTH_BITS, &depthBits);
-    logDebugMessage(1, "Depth Buffer:     %i bitplanes\n", depthBits);
+    debugf(1, "Depth Buffer:     %i bitplanes\n", depthBits);
 
     // Stencil Buffer bitplanes
     GLint stencilBits;
     glGetIntegerv(GL_STENCIL_BITS, &stencilBits);
-    logDebugMessage(1, "Stencil Buffer:   %i bitplanes\n", stencilBits);
+    debugf(1, "Stencil Buffer:   %i bitplanes\n", stencilBits);
   }
 
   // windows version can be very helpful in debug logs
@@ -6542,7 +6542,7 @@ void startPlaying() {
     ZeroMemory(&info, sizeof(OSVERSIONINFO));
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
-    logDebugMessage(1, "Running on Windows %s%d.%d %s\n",
+    debugf(1, "Running on Windows %s%d.%d %s\n",
                     (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
                     info.dwMajorVersion, info.dwMinorVersion,
                     info.szCSDVersion);

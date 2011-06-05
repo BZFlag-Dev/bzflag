@@ -137,7 +137,7 @@ void ServerPing::sendPing(unsigned char tag) {
 void ServerPing::openSocket() {
   fd = (int)socket(AF_INET, SOCK_DGRAM, 0);
   if (fd < 0) {
-    logDebugMessage(1, "Failed to send server ping\n");
+    debugf(1, "Failed to send server ping\n");
   }
 }
 

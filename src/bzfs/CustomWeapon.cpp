@@ -150,7 +150,7 @@ bool CustomWeapon::readLine(const std::string& cmd, const std::string& line) {
       std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
       return true;
     }
-    logDebugMessage(4, "Adding world weapon triggered '%s'\n", triggerName.c_str());
+    debugf(4, "Adding world weapon triggered '%s'\n", triggerName.c_str());
   }
   else if (lower == "eventteam") {
     parms >> eventTeam;

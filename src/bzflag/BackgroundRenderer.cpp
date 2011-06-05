@@ -1591,7 +1591,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer) {
     const fvec3& atten = light.getAttenuation();
 
     if (isnan(pos.x) || isnan(pos.y) || isnan(pos.z)) {
-      logDebugMessage(0, "FIXME: NaN light pos: %s:%i\n", __FILE__, __LINE__);
+      debugf(0, "FIXME: NaN light pos: %s:%i\n", __FILE__, __LINE__);
       continue;
     }
 

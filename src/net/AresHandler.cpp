@@ -33,14 +33,14 @@ AresHandler::AresHandler() : hostname(NULL), status(None) {
     aresFailed = !globalInit();
     if (aresFailed) {
       status = Failed;
-      logDebugMessage(2, "Ares failed initializing library\n");
+      debugf(2, "Ares failed initializing library\n");
     }
   }
   int code = ares_init_options(&aresChannel, &opts, ARES_OPT_LOOKUPS);
   aresFailed = (code != ARES_SUCCESS);
   if (aresFailed) {
     status = Failed;
-    logDebugMessage(2, "Ares failed initializing options\n");
+    debugf(2, "Ares failed initializing options\n");
   }
 }
 
@@ -61,7 +61,7 @@ void AresHandler::queryHostname(struct sockaddr* clientAddr) {
   }
   memcpy(&requestedAddress, &((sockaddr_in*)clientAddr)->sin_addr,
          sizeof(requestedAddress));
-  logDebugMessage(2, "Submitted reverse resolve query for %s\n",
+  debugf(2, "Submitted reverse resolve query for %s\n",
                   inet_ntoa(requestedAddress));
   status = HbAPending;
   // launch the asynchronous query to look up this hostname
@@ -109,7 +109,7 @@ void AresHandler::callback(int callbackStatus, struct hostent* hostent) {
   }
   if (callbackStatus != ARES_SUCCESS) {
     if (status == HbAPending) {
-      logDebugMessage(1, "Address %s failed to resolve\n", inet_ntoa(requestedAddress));
+      debugf(1, "Address %s failed to resolve\n", inet_ntoa(requestedAddress));
     }
     status = Failed;
   }
@@ -119,7 +119,7 @@ void AresHandler::callback(int callbackStatus, struct hostent* hostent) {
     }
     hostname = strdup(hostent->h_name);
     status = HbASucceeded;
-    logDebugMessage(2, "Address %s resolved to %s\n", inet_ntoa(requestedAddress),
+    debugf(2, "Address %s resolved to %s\n", inet_ntoa(requestedAddress),
                     hostname);
   }
   else if (status == HbNPending) {

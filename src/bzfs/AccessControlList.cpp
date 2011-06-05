@@ -475,7 +475,7 @@ bool AccessControlList::load() {
     }
     is >> tmp;
     if (tmp != "end:") {
-      logDebugMessage(3, "Banfile: bad 'end:' line\n");
+      debugf(3, "Banfile: bad 'end:' line\n");
       return false;
     }
     is >> banEnd;
@@ -488,14 +488,14 @@ bool AccessControlList::load() {
     }
     is >> tmp;
     if (tmp != "banner:") {
-      logDebugMessage(3, "Banfile: bad 'banner:' line\n");
+      debugf(3, "Banfile: bad 'banner:' line\n");
       return false;
     }
     is.ignore(1);
     std::getline(is, bannedBy);
     is >> tmp;
     if (tmp != "reason:") {
-      logDebugMessage(3, "Banfile: bad 'reason:' line\n");
+      debugf(3, "Banfile: bad 'reason:' line\n");
       return false;
     }
     is.ignore(1);
@@ -517,7 +517,7 @@ bool AccessControlList::load() {
       }
       if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
                (reason.size() > 0 ? reason.c_str() : NULL))) {
-        logDebugMessage(3, "Banfile: bad ban\n");
+        debugf(3, "Banfile: bad ban\n");
         return false;
       }
     }
@@ -548,7 +548,7 @@ int AccessControlList::merge(const std::string& banData) {
     }
     is >> tmp;
     if (tmp != "end:") {
-      logDebugMessage(3, "Banfile: bad 'end:' line\n");
+      debugf(3, "Banfile: bad 'end:' line\n");
       return bansAdded;
     }
     is >> banEnd;
@@ -561,14 +561,14 @@ int AccessControlList::merge(const std::string& banData) {
     }
     is >> tmp;
     if (tmp != "banner:") {
-      logDebugMessage(3, "Banfile: bad 'banner:' line\n");
+      debugf(3, "Banfile: bad 'banner:' line\n");
       return bansAdded;
     }
     is.ignore(1);
     std::getline(is, bannedBy);
     is >> tmp;
     if (tmp != "reason:") {
-      logDebugMessage(3, "Banfile: bad 'reason:' line\n");
+      debugf(3, "Banfile: bad 'reason:' line\n");
       return bansAdded;
     }
     is.ignore(1);
@@ -593,7 +593,7 @@ int AccessControlList::merge(const std::string& banData) {
       }
       if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str() : NULL), banEnd,
                (reason.size() > 0 ? reason.c_str() : NULL), true)) {
-        logDebugMessage(3, "Banfile: bad ban\n");
+        debugf(3, "Banfile: bad ban\n");
         return bansAdded;
       }
       bansAdded++;

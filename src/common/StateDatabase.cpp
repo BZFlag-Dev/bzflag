@@ -69,7 +69,7 @@ void _debugLookups(const std::string& name) {
     if (-it2->first / interval < 1.0f) {
       break;
     }
-    logDebugMessage(1, "%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
+    debugf(1, "%-25s = %.2f acc/sec\n", it2->second.c_str(), -it2->first / interval);
   }
 
   last = now;

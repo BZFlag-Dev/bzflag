@@ -760,7 +760,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
           std::cerr << "WARNING: couldn't read helpmsg file [" << path << "]" << std::endl;
         }
         else {
-          logDebugMessage(3, "Loaded help message: %s", name.c_str());
+          debugf(3, "Loaded help message: %s", name.c_str());
         }
       }
       if (first) {
@@ -776,7 +776,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
         usage(execName);
       }
       else {
-        logDebugMessage(3, ("Loaded help message: %s\n"), chunkName.c_str());
+        debugf(3, ("Loaded help message: %s\n"), chunkName.c_str());
       }
     }
     else if (token == "-i") {
@@ -823,7 +823,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
           if (!loadPlugin(pDef.plugin, pDef.command)) {
             std::string text = "WARNING: unable to load the plugin; ";
             text += pDef.plugin + "\n";
-            logDebugMessage(0, text.c_str());
+            debugf(0, text.c_str());
           }
         }
 #endif // BZ_PLUGINS
@@ -1119,7 +1119,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
         exit(1);
       }
       BZDB.set(name, value);
-      logDebugMessage(1, "set variable: '%s' = '%s'\n",
+      debugf(1, "set variable: '%s' = '%s'\n",
                       name.c_str(), BZDB.get(name).c_str());
     }
     else if (token == "-setforced") {
@@ -1130,7 +1130,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
         std::cerr << "-setforced: " << name << " already exists" << std::endl;
       }
       BZDB.set(name, value);
-      logDebugMessage(1, "set variable: '%s' = '%s'\n",
+      debugf(1, "set variable: '%s' = '%s'\n",
                       name.c_str(), BZDB.get(name).c_str());
     }
     else if (token == "-sl") {
@@ -1728,41 +1728,41 @@ void CmdLineOptions::finalizeParsing(EntryZones& entryZones) {
 
   // processor affinity
   if (processorAffinity >= 0) {
-    logDebugMessage(2, "Setting process affinity to processor %d\n", processorAffinity);
+    debugf(2, "Setting process affinity to processor %d\n", processorAffinity);
     BzTime::setProcessorAffinity(processorAffinity);
   }
   else {
-    logDebugMessage(2, "Processor affinity is floating (managed by OS)\n");
+    debugf(2, "Processor affinity is floating (managed by OS)\n");
   }
 
 
   // debugging
-  logDebugMessage(1, "type: %d\n", gameType);
+  debugf(1, "type: %d\n", gameType);
   if (gameType == ClassicCTF) {
-    logDebugMessage(1, "  capture the flag\n");
+    debugf(1, "  capture the flag\n");
   }
   if (gameType == RabbitChase) {
-    logDebugMessage(1, "  rabbit chase\n");
+    debugf(1, "  rabbit chase\n");
   }
 
-  logDebugMessage(1, "options: %X\n", gameOptions);
+  debugf(1, "options: %X\n", gameOptions);
   if (gameOptions & int(SuperFlagGameStyle)) {
-    logDebugMessage(1, "  super flags allowed\n");
+    debugf(1, "  super flags allowed\n");
   }
   if (gameOptions & int(JumpingGameStyle)) {
-    logDebugMessage(1, "  jumping allowed\n");
+    debugf(1, "  jumping allowed\n");
   }
   if (gameOptions & int(RicochetGameStyle)) {
-    logDebugMessage(1, "  all shots ricochet\n");
+    debugf(1, "  all shots ricochet\n");
   }
   if (gameOptions & int(ShakableGameStyle))
-    logDebugMessage(1, "  shakable bad flags: timeout=%f, wins=%i\n",
+    debugf(1, "  shakable bad flags: timeout=%f, wins=%i\n",
                     0.1f * float(shakeTimeout), shakeWins);
   if (gameOptions & int(HandicapGameStyle)) {
-    logDebugMessage(1, "  handicap mode on\n");
+    debugf(1, "  handicap mode on\n");
   }
   if (gameOptions & int(AntidoteGameStyle)) {
-    logDebugMessage(1, "  antidote flags\n");
+    debugf(1, "  antidote flags\n");
   }
 
   return;

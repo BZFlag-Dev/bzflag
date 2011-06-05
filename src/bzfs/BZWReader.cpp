@@ -254,7 +254,7 @@ bool BZWReader::parseCustomObject(const char* token, bool& error, int& lineNum,
 
     // embedded objects
     if (data.newData.size() > 0) {
-      logDebugMessage(1, "%s: (line %i): embedding for \"%s\"\n",
+      debugf(1, "%s: (line %i): embedding for \"%s\"\n",
                       location.c_str(), lineNum, data.name.c_str());
       std::istringstream newData(data.newData.c_str());
       BZWReader incStream(newData);
@@ -297,7 +297,7 @@ bool BZWReader::readRawLines(std::string& args, std::vector<std::string>& lines,
     lineNum++;
 
     if (!line.empty()) {
-      logDebugMessage(4, "reading worldfile raw line: %s\n", line.c_str());
+      debugf(4, "reading worldfile raw line: %s\n", line.c_str());
     }
 
     const char* start = TextUtils::skipWhitespace(line.c_str());
@@ -344,7 +344,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     // read first token but do not skip newlines
     readToken(buffer, sizeof(buffer));
     if (buffer[0] != '\0') {
-      logDebugMessage(4, "reading worldfile token %s\n", buffer);
+      debugf(4, "reading worldfile token %s\n", buffer);
     }
 
     if (buffer[0] == '\0') {
@@ -483,7 +483,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
         // FIXME - check for recursion
         //       - better filename handling ("", spaces, and / vs. \\)
         //       - make relative names work from the base file location
-        logDebugMessage(1, "%s: (line %i): including \"%s\"\n",
+        debugf(1, "%s: (line %i): including \"%s\"\n",
                         location.c_str(), lineNum, incName.c_str());
         BZWReader incFile(incName);
         std::vector<WorldFileObject*> incWlist;

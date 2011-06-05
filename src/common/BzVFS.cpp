@@ -265,7 +265,7 @@ class UrlFS : public RawFS {
         prefix = prefix.substr(lastSlash);
       }
       if ((prefix != "http") && (prefix != "ftp")) {
-        logDebugMessage(0, "invalid UrlFS path: %s\n", path.c_str());
+        debugf(0, "invalid UrlFS path: %s\n", path.c_str());
       }
     }
 
@@ -803,19 +803,19 @@ bool BzVFS::dirList(const std::string& path,
     return false;
   }
 
-  logDebugMessage(4, "BzVFS::dirList: '%s' '%s'\n",
+  debugf(4, "BzVFS::dirList: '%s' '%s'\n",
                   cleanPath.c_str(), outModes.c_str());
 
   FSMap::const_iterator it;
   for (it = fsMap.begin(); it != fsMap.end(); ++it) {
-    logDebugMessage(4, "  BZVFS: %s = %p\n", it->first.c_str(), it->second);
+    debugf(4, "  BZVFS: %s = %p\n", it->first.c_str(), it->second);
   }
 
   std::vector<BzFS*> systems;
   getSystems(outModes, systems);
 
   for (size_t i = 0; i < systems.size(); i++) {
-    logDebugMessage(4, "    scanning: %p\n", systems[i]);
+    debugf(4, "    scanning: %p\n", systems[i]);
     systems[i]->dirList(cleanPath, recursive, dirs, files);
   }
   return true;

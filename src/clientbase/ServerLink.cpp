@@ -156,7 +156,7 @@ ServerLink::ServerLink(const std::string& serverName,
   // we are blocking at this point so we will wait till we connect, or error
   int connectReturn = connect(query, (CNCTType*)&addr, sizeof(addr));
 
-  logDebugMessage(2, "CONNECT:non windows inital connect returned %d\n", connectReturn);
+  debugf(2, "CONNECT:non windows inital connect returned %d\n", connectReturn);
 
   // check for a real error
   // in progress is a holdover from when we did this as non blocking.
@@ -167,7 +167,7 @@ ServerLink::ServerLink(const std::string& serverName,
     error = getErrno();
     if (error != EINPROGRESS) {
       // if it was a real error, log and bail
-      logDebugMessage(1, "CONNECT:error in connect, error returned %d\n", error);
+      debugf(1, "CONNECT:error in connect, error returned %d\n", error);
 
       close(query);
       return;
@@ -181,7 +181,7 @@ ServerLink::ServerLink(const std::string& serverName,
   timeout.tv_usec = 0;
   nfound = select(fdMax + 1, NULL, (fd_set*)&write_set, NULL, &timeout);
   error = getErrno();
-  logDebugMessage(2, "CONNECT:non windows inital select nfound = %d error = %d\n", nfound, error);
+  debugf(2, "CONNECT:non windows inital select nfound = %d error = %d\n", nfound, error);
 
   // if no sockets are active then we are done.
   if (nfound <= 0) {
@@ -197,7 +197,7 @@ ServerLink::ServerLink(const std::string& serverName,
     return;
   }
   if (connectError != 0) {
-    logDebugMessage(2, "CONNECT:non getsockopt connectError = %d\n", connectError);
+    debugf(2, "CONNECT:non getsockopt connectError = %d\n", connectError);
     close(query);
     return;
   }
@@ -235,7 +235,7 @@ ServerLink::ServerLink(const std::string& serverName,
   // after the server gets this it will send back a version for us to check
   int sendRepply = ::send(query, BZ_CONNECT_HEADER, (int)strlen(BZ_CONNECT_HEADER), 0);
 
-  logDebugMessage(2, "CONNECT:send in connect returned %d\n", sendRepply);
+  debugf(2, "CONNECT:send in connect returned %d\n", sendRepply);
 
   // wait to get data back. we are still blocking so these
   // calls should be sync.
@@ -266,7 +266,7 @@ ServerLink::ServerLink(const std::string& serverName,
 
     // there has to be at least one socket active, or we are screwed
     if (nfound <= 0) {
-      logDebugMessage(1, "CONNECT:select in connect failed, nfound = %d\n", nfound);
+      debugf(1, "CONNECT:select in connect failed, nfound = %d\n", nfound);
       close(query);
       return;
     }
@@ -276,15 +276,15 @@ ServerLink::ServerLink(const std::string& serverName,
 
     // if we got some, then we are done
     if (i > 0) {
-      logDebugMessage(2, "CONNECT:got net data in connect, bytes read = %d\n", i);
-      logDebugMessage(2, "CONNECT:Time To Connect = %f\n", (BzTime::getCurrent().getSeconds() - thisStartTime));
+      debugf(2, "CONNECT:got net data in connect, bytes read = %d\n", i);
+      debugf(2, "CONNECT:Time To Connect = %f\n", (BzTime::getCurrent().getSeconds() - thisStartTime));
       gotNetData = true;
     }
     else {
       // if we have waited too long, then bail
       if ((BzTime::getCurrent().getSeconds() - thisStartTime) > connectTimeout) {
-        logDebugMessage(1, "CONNECT:connect time out failed\n");
-        logDebugMessage(2, "CONNECT:connect loop count = %d\n", loopCount);
+        debugf(1, "CONNECT:connect time out failed\n");
+        debugf(2, "CONNECT:connect loop count = %d\n", loopCount);
         close(query);
         return;
       }
@@ -293,7 +293,7 @@ ServerLink::ServerLink(const std::string& serverName,
     }
   }
 
-  logDebugMessage(2, "CONNECT:connect loop count = %d\n", loopCount);
+  debugf(2, "CONNECT:connect loop count = %d\n", loopCount);
 
   // if we got back less then the expected connect responce (BZFSXXXX)
   // then something went bad, and we are done.
@@ -419,17 +419,17 @@ ServerLink::~ServerLink() {
 
 #if defined(NETWORK_STATS)
   const float dt = float(BzTime::getCurrent() - startTime);
-  logDebugMessage(1, "Server network statistics:\n");
-  logDebugMessage(1, "  elapsed time    : %f\n", dt);
-  logDebugMessage(1, "  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
-  logDebugMessage(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
+  debugf(1, "Server network statistics:\n");
+  debugf(1, "  elapsed time    : %f\n", dt);
+  debugf(1, "  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+  debugf(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
   if (packetsSent != 0) {
-    logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+    debugf(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
   }
-  logDebugMessage(1, "  bytes received  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
-  logDebugMessage(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
+  debugf(1, "  bytes received  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+  debugf(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
   if (packetsReceived != 0) {
-    logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
+    debugf(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
   }
 #endif
 }

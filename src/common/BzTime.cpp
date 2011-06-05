@@ -114,7 +114,7 @@ const BzTime& BzTime::getCurrent(void) {
     }
     else if (diff < 0) {
       // eh, how'd we go back in time?
-      logDebugMessage(5, "WARNING: went back in time %li microseconds\n",
+      debugf(5, "WARNING: went back in time %li microseconds\n",
                       (long int)diff);
     }
 
@@ -152,7 +152,7 @@ const BzTime& BzTime::getCurrent(void) {
         LONGLONG oldqpcfreq = qpcFrequency;
         qpcFrequency  = (clkSpent * 1000) / deltaTgt;
         if (qpcFrequency != oldqpcfreq)
-          logDebugMessage(4, "Recalibrated QPC frequency.  Old: %f ; New: %f\n",
+          debugf(4, "Recalibrated QPC frequency.  Old: %f ; New: %f\n",
                           (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
@@ -177,7 +177,7 @@ const BzTime& BzTime::getCurrent(void) {
 
     // should only get into here once on app start
     if (!sane) {
-      logDebugMessage(1, "Sanity check failure in BzTime::getCurrent()\n");
+      debugf(1, "Sanity check failure in BzTime::getCurrent()\n");
     }
     sane = false;
 
@@ -188,13 +188,13 @@ const BzTime& BzTime::getCurrent(void) {
     if (QueryPerformanceFrequency(&freq)) {
       QueryPerformanceCounter(&qpcLastTime);
       qpcFrequency  = freq.QuadPart;
-      logDebugMessage(4, "Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
+      debugf(4, "Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
       qpcLastCalibration  = qpcLastTime.QuadPart;
       timeLastCalibration = timeGetTime();
       currentTime += 1.0e-3 * (double)timeLastCalibration; // sync with system clock
     }
     else {
-      logDebugMessage(1, "QueryPerformanceFrequency failed with error %d\n", GetLastError());
+      debugf(1, "QueryPerformanceFrequency failed with error %d\n", GetLastError());
 
       lastTime = (unsigned long int)timeGetTime();
       currentTime += 1.0e-3 * (double)lastTime; // sync with system clock
@@ -444,12 +444,12 @@ void BzTime::setProcessorAffinity(int processor) {
   DWORD_PTR dwProcs = 0;
   GetProcessAffinityMask(NULL, NULL, &dwProcs);
   if (dwMask < dwProcs) {
-    logDebugMessage(1, "Unable to set process affinity mask (specified processor does not exist).\n");
+    debugf(1, "Unable to set process affinity mask (specified processor does not exist).\n");
     return;
   }
   SetThreadAffinityMask(hThread, dwMask);
 #else
-  logDebugMessage(1, "Unable to set processor affinity to %d - function not implemented on this platform.\n", processor);
+  debugf(1, "Unable to set processor affinity to %d - function not implemented on this platform.\n", processor);
 #endif
 }
 

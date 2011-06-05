@@ -448,7 +448,7 @@ bool SDLDisplay::getFullscreen() const {
 
 
 void SDLDisplay::setWindowSize(int _width, int _height) {
-  logDebugMessage(1, "setting size to %ix%i\n", _width, _height);
+  debugf(1, "setting size to %ix%i\n", _width, _height);
   base_width  = _width;
   base_height = _height;
 }
@@ -479,7 +479,7 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
     height = base_height;
   }
 
-  logDebugMessage(1, "returning window size %ix%i with fullscreen set to %c\n",
+  debugf(1, "returning window size %ix%i with fullscreen set to %c\n",
                   width, height, fullScreen ? '1' : '0');
 
   /* sanity checks */

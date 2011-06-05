@@ -239,17 +239,17 @@ void LocalPlayer::doUpdateMotion(float dt) {
 
   if (debugMotion >= 1) {
     const std::string locationString = getLocationString(location);
-    logDebugMessage(0, "doUpdateMotion: %+12.6f %s/fps=%.6f/spf=%.6f\n", dt,
+    debugf(0, "doUpdateMotion: %+12.6f %s/fps=%.6f/spf=%.6f\n", dt,
                     BZDBCache::useGameSPF ? "true" : "false",
                     (float)BZDBCache::gameFPS, (float)BZDBCache::gameSPF);
-    logDebugMessage(0, "  location = %s\n", locationString.c_str());
-    logDebugMessage(0, "  phydrv = %i\n", getPhysicsDriver());
-    logDebugMessage(0, "  lastObstacle = %s\n",
+    debugf(0, "  location = %s\n", locationString.c_str());
+    debugf(0, "  phydrv = %i\n", getPhysicsDriver());
+    debugf(0, "  lastObstacle = %s\n",
                     lastObstacle ? lastObstacle->getType() : "none");
-    logDebugMessage(0, "  pos = %s\n", oldPosition.tostring("%+12.6f").c_str());
-    logDebugMessage(0, "  vel = %s\n", oldVelocity.tostring("%+12.6f").c_str());
-    logDebugMessage(0, "  angle  = %+12.6f\n", oldAzimuth);
-    logDebugMessage(0, "  angvel = %+12.6f\n", oldAngVel);
+    debugf(0, "  pos = %s\n", oldPosition.tostring("%+12.6f").c_str());
+    debugf(0, "  vel = %s\n", oldVelocity.tostring("%+12.6f").c_str());
+    debugf(0, "  angle  = %+12.6f\n", oldAzimuth);
+    debugf(0, "  angvel = %+12.6f\n", oldAngVel);
   }
 
   // prepare new state
@@ -546,7 +546,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
       static BZDB_float bumpSpeedFactor("_bumpSpeedFactor");
       bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
       if (debugMotion >= 1)
-        logDebugMessage(0, "CHECK BUMP bumpPos = %f %f %f\n",
+        debugf(0, "CHECK BUMP bumpPos = %f %f %f\n",
                         bumpPos.x, bumpPos.y, bumpPos.z);
       const Obstacle* bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                                     bumpPos, newAzimuth,
@@ -556,7 +556,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
         newPos = bumpPos;
         move(newPos, getAngle());
         if (debugMotion >= 1)
-          logDebugMessage(0, "BUMPED newPos = %f %f %f; obstacleTop = %f\n",
+          debugf(0, "BUMPED newPos = %f %f %f; obstacleTop = %f\n",
                           newPos.x, newPos.y, newPos.z, obstacleTop);
         break;
       }
@@ -567,7 +567,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
         bumpPos.z = obstacleTop;
         bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1f;
         if (debugMotion >= 1)
-          logDebugMessage(0, "CHECK BUMP 2 bumpPos = %f %f %f\n",
+          debugf(0, "CHECK BUMP 2 bumpPos = %f %f %f\n",
                           bumpPos.x, bumpPos.y, bumpPos.z);
         bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                       bumpPos, newAzimuth,
@@ -577,7 +577,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
           newPos = bumpPos;
           move(newPos, getAngle());
           if (debugMotion >= 1)
-            logDebugMessage(0, "BUMPED 2 newPos = %f %f %f; obstacleTop = %f\n",
+            debugf(0, "BUMPED 2 newPos = %f %f %f; obstacleTop = %f\n",
                             newPos.x, newPos.y, newPos.z, obstacleTop);
           break;
         }
@@ -1018,11 +1018,11 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
   if ((teleBlocker != NULL) || teleGrounded) {
     if (debugTele >= 1) {
       if (teleBlocker) {
-        logDebugMessage(0, "teleport blocked by %s '%s'\n",
+        debugf(0, "teleport blocked by %s '%s'\n",
                         teleBlocker->getType(), teleBlocker->getName().c_str());
       }
       else {
-        logDebugMessage(0, "teleport blocked by the ground\n");
+        debugf(0, "teleport blocked by the ground\n");
       }
     }
 
@@ -1033,7 +1033,7 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
       newAngle  = oldAngle;
       newAngVel = oldAngVel;
       if (debugTele >= 1) {
-        logDebugMessage(0, "  reverted\n");
+        debugf(0, "  reverted\n");
       }
     }
     else {
@@ -1044,7 +1044,7 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
       const fvec3& plane = linkSrc->getPlane().xyz();
       newVel = oldVel - (2.0f * plane * fvec3::dot(plane, oldVel));
       if (debugTele >= 1) {
-        logDebugMessage(0, "  rebounded: vel = %s\n",
+        debugf(0, "  rebounded: vel = %s\n",
                         newVel.tostring().c_str());
       }
     }

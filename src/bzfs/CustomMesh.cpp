@@ -234,7 +234,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition* groupdef) const {
     if (decorative) {
       vert.x = vert.y = vert.z = (Obstacle::maxExtent * 2.0f);
       if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
-        logDebugMessage(0, "WARNING: mesh is supposed to be decorative, setting to passable\n");
+        debugf(0, "WARNING: mesh is supposed to be decorative, setting to passable\n");
         forcePassable = true;
       }
     }

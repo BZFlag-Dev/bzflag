@@ -121,12 +121,12 @@ MeshDrawInfo::MeshDrawInfo(const MeshDrawInfo* di,
 
 
 MeshDrawInfo::~MeshDrawInfo() {
-  logDebugMessage(4, "~MeshDrawInfo(): source = %p\n", source);
+  debugf(4, "~MeshDrawInfo(): source = %p\n", source);
   fflush(stdout); fflush(stderr);
 
   clear();
 
-  logDebugMessage(4, "~MeshDrawInfo(): done\n");
+  debugf(4, "~MeshDrawInfo(): done\n");
   fflush(stdout); fflush(stderr);
 }
 
@@ -203,7 +203,7 @@ void MeshDrawInfo::init() {
 
 bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
   if (mesh == NULL) {
-    logDebugMessage(0, "ERROR: drawInfo has no mesh\n");
+    debugf(0, "ERROR: drawInfo has no mesh\n");
     return false;
   }
 
@@ -227,7 +227,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
     if ((v < 0) || (v >= vCount) ||
         (n < 0) || (n >= nCount) ||
         (t < 0) || (t >= tCount)) {
-      logDebugMessage(0, "ERROR: Bad corner: %i %i %i\n", v, n, t);
+      debugf(0, "ERROR: Bad corner: %i %i %i\n", v, n, t);
       return false;
     }
   }
@@ -243,7 +243,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
           unsigned short* array = (unsigned short*)drawCmd.indices;
           for (int idx = 0; idx < drawCmd.count; idx++) {
             if ((int)array[idx] >= cornerCount) {
-              logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
+              debugf(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
                               array[idx], cornerCount);
               return false;
             }
@@ -253,14 +253,14 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
           unsigned int* array = (unsigned int*)drawCmd.indices;
           for (int idx = 0; idx < drawCmd.count; idx++) {
             if ((int)array[idx] >= cornerCount) {
-              logDebugMessage(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
+              debugf(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
                               array[idx], cornerCount);
               return false;
             }
           }
         }
         else {
-          logDebugMessage(0, "ERROR: Bad index type (%i)\n", drawCmd.indexType);
+          debugf(0, "ERROR: Bad index type (%i)\n", drawCmd.indexType);
           return false;
         }
       }
@@ -622,7 +622,7 @@ static bool parseCorner(std::istream& input, Corner& corner) {
       !(input >> corner.normal) ||
       !(input >> corner.texcoord)) {
     success = false;
-    logDebugMessage(0, "Bad corner\n");
+    debugf(0, "Bad corner\n");
   }
   return success;
 }
@@ -682,14 +682,14 @@ static bool parseDrawSet(std::istream& input, DrawSet& set) {
       if (!(parms >> set.sphere.x) || !(parms >> set.sphere.y) ||
           !(parms >> set.sphere.z)) {
         success = false;
-        logDebugMessage(0, "Bad center\n");
+        debugf(0, "Bad center\n");
       }
     }
     else if (strcasecmp(label.c_str(), "sphere") == 0) {
       if (!(parms >> set.sphere.x) || !(parms >> set.sphere.y) ||
           !(parms >> set.sphere.z) || !(parms >> set.sphere.w)) {
         success = false;
-        logDebugMessage(0, "Bad sphere\n");
+        debugf(0, "Bad sphere\n");
       }
     }
     else {
@@ -699,7 +699,7 @@ static bool parseDrawSet(std::istream& input, DrawSet& set) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad drawSet\n");
+        debugf(0, "Bad drawSet\n");
       }
     }
   }
@@ -741,7 +741,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad lengthPerPixel:\n");
+        debugf(0, "Bad lengthPerPixel:\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "matref") == 0) {
@@ -754,12 +754,12 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod) {
         }
         else {
           success = false;
-          logDebugMessage(0, "Bad material:\n");
+          debugf(0, "Bad material:\n");
         }
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad drawLod parameter:\n");
+        debugf(0, "Bad drawLod parameter:\n");
       }
     }
   }
@@ -818,7 +818,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
     else if (strcasecmp(cmd.c_str(), "angvel") == 0) {
       if (animInfo != NULL) {
         success = false;
-        logDebugMessage(0, "Double angvel\n");
+        debugf(0, "Double angvel\n");
       }
       float angvel;
       if (parms >> angvel) {
@@ -827,7 +827,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad angvel\n");
+        debugf(0, "Bad angvel\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "extents") == 0) {
@@ -835,21 +835,21 @@ bool MeshDrawInfo::parse(std::istream& input) {
           !(parms >> extents.mins.z) || !(parms >> extents.maxs.x) ||
           !(parms >> extents.maxs.y) || !(parms >> extents.maxs.z)) {
         success = false;
-        logDebugMessage(0, "Bad extents\n");
+        debugf(0, "Bad extents\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "center") == 0) {
       if (!(parms >> sphere.x) || !(parms >> sphere.y) ||
           !(parms >> sphere.z)) {
         success = false;
-        logDebugMessage(0, "Bad center\n");
+        debugf(0, "Bad center\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "sphere") == 0) {
       if (!(parms >> sphere.x) || !(parms >> sphere.y) ||
           !(parms >> sphere.z) || !(parms >> sphere.w)) {
         success = false;
-        logDebugMessage(0, "Bad sphere\n");
+        debugf(0, "Bad sphere\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "option") == 0) {
@@ -864,7 +864,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad corner\n");
+        debugf(0, "Bad corner\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "vertex") == 0) {
@@ -874,7 +874,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad Vertex\n");
+        debugf(0, "Bad Vertex\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "normal") == 0) {
@@ -884,7 +884,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad Normal\n");
+        debugf(0, "Bad Normal\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "texcoord") == 0) {
@@ -894,7 +894,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad Texcoord\n");
+        debugf(0, "Bad Texcoord\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "lod") == 0) {
@@ -903,7 +903,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad lod\n");
+        debugf(0, "Bad lod\n");
       }
     }
     else if (strcasecmp(cmd.c_str(), "radarlod") == 0) {
@@ -912,7 +912,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
       }
       else {
         success = false;
-        logDebugMessage(0, "Bad radarlod\n");
+        debugf(0, "Bad radarlod\n");
       }
     }
   }
@@ -986,7 +986,7 @@ bool MeshDrawInfo::parse(std::istream& input) {
   if (debugLevel >= 4) {
     BzTime end = BzTime::getCurrent();
     const float elapsed = float(end - start);
-    logDebugMessage(0, "MeshDrawInfo::parse() processed in %f seconds.\n", elapsed);
+    debugf(0, "MeshDrawInfo::parse() processed in %f seconds.\n", elapsed);
   }
 
   return success;

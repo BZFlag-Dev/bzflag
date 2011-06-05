@@ -47,7 +47,7 @@ bool Reports::file(const std::string& user, const std::string message) {
       fprintf(pipeWrite, "%s\n\n", report.fileLine().c_str());
     }
     else {
-      logDebugMessage(1, "Couldn't write report to the pipe\n");
+      debugf(1, "Couldn't write report to the pipe\n");
     }
     pclose(pipeWrite);
   }
@@ -67,7 +67,7 @@ bool Reports::file(const std::string& user, const std::string message) {
     sendMessage(ServerPlayer, AdminPlayers, temp2.c_str());
   }
 
-  logDebugMessage(1, "A report from %s has been filed(time: %s).\n", report.from.c_str(), report.time.c_str());
+  debugf(1, "A report from %s has been filed(time: %s).\n", report.from.c_str(), report.time.c_str());
 
   // Notify plugins of the report filed
   bz_ReportFiledEventData_V1 reportData;

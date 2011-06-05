@@ -227,7 +227,7 @@ class QueryPlayersHandler : public ClientNetworkMessageHandler {
 class UDPLinkEstablishedHandler : public ClientNetworkMessageHandler {
   public:
     virtual bool execute(NetHandler* handler, uint16_t& /*code*/, void* /*buf*/, int /*len*/) {
-      logDebugMessage(2, "Connection at %s outbound UDP up\n", handler->getTargetIP());
+      debugf(2, "Connection at %s outbound UDP up\n", handler->getTargetIP());
       return true;
     }
 };
@@ -328,7 +328,7 @@ class EnterHandler : public PlayerFirstHandler {
 
       // a previous MsgEnter will have set the name a few lines down from here
       if (!player->accessInfo.getName().empty()) {
-        logDebugMessage(1, "Player %s [%d] sent another MsgEnter\n",
+        debugf(1, "Player %s [%d] sent another MsgEnter\n",
                         player->player.getCallSign(), player->getIndex());
         rejectPlayer(player->getIndex(), RejectBadRequest, "invalid request");
         return true;
@@ -349,13 +349,13 @@ class EnterHandler : public PlayerFirstHandler {
         playerIP = player->netHandler->getTargetIP();
       }
 
-      logDebugMessage(1, "Player %s [%d] has joined from %s at %s with token \"%s\"\n",
+      debugf(1, "Player %s [%d] has joined from %s at %s with token \"%s\"\n",
                       player->player.getCallSign(),
                       player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
                       player->player.getToken());
       const char* referrer = player->player.getReferrer();
       if (referrer && referrer[0]) {
-        logDebugMessage(1, "  referred by \"%s\"\n", referrer);
+        debugf(1, "  referred by \"%s\"\n", referrer);
       }
 
       if (!clOptions->publicizeServer) {
@@ -490,7 +490,7 @@ class DropFlagHandler : public PlayerFirstHandler {
           (fabsf(pos.y) > halfSize)) {
         // client may be cheating
         const PlayerId id = player->getIndex();
-        logDebugMessage(1, "Player %s [%d] dropped flag out of bounds to %f %f %f\n",
+        debugf(1, "Player %s [%d] dropped flag out of bounds to %f %f %f\n",
                         player->player.getCallSign(), id, pos.x, pos.y, pos.z);
         sendMessage(ServerPlayer, id, "Autokick: Flag dropped out of bounds.");
       }
@@ -848,23 +848,23 @@ class MessageHandler : public PlayerFirstHandler {
 
       player->player.hasSent();
       if (dstPlayer == AllPlayers) {
-        logDebugMessage(1, "Player %s [%d] -> All: %s\n", player->player.getCallSign(), player->getIndex(), message);
+        debugf(1, "Player %s [%d] -> All: %s\n", player->player.getCallSign(), player->getIndex(), message);
       }
       else {
         if (dstPlayer == AdminPlayers) {
-          logDebugMessage(1, "Player %s [%d] -> Admin: %s\n", player->player.getCallSign(), player->getIndex(), message);
+          debugf(1, "Player %s [%d] -> Admin: %s\n", player->player.getCallSign(), player->getIndex(), message);
         }
         else {
           if (dstPlayer > LastRealPlayer) {
-            logDebugMessage(1, "Player %s [%d] -> Team: %s\n", player->player.getCallSign(),  player->getIndex(), message);
+            debugf(1, "Player %s [%d] -> Team: %s\n", player->player.getCallSign(),  player->getIndex(), message);
           }
           else {
             GameKeeper::Player* p = GameKeeper::Player::getPlayerByIndex(dstPlayer);
             if (p != NULL) {
-              logDebugMessage(1, "Player %s [%d] -> Player %s [%d]: %s\n", player->player.getCallSign(), player->getIndex(), p->player.getCallSign(), dstPlayer, message);
+              debugf(1, "Player %s [%d] -> Player %s [%d]: %s\n", player->player.getCallSign(), player->getIndex(), p->player.getCallSign(), dstPlayer, message);
             }
             else {
-              logDebugMessage(1, "Player %s [%d] -> Player Unknown [%d]: %s\n",  player->player.getCallSign(), player->getIndex(), dstPlayer, message);
+              debugf(1, "Player %s [%d] -> Player Unknown [%d]: %s\n",  player->player.getCallSign(), player->getIndex(), dstPlayer, message);
             }
           }
         }
@@ -982,7 +982,7 @@ class PauseHandler : public PlayerFirstHandler {
           break;
         }
         default: { // ignore unexpected pause codes
-          logDebugMessage(1, "unexpected pause code: %s sent %d\n",
+          debugf(1, "unexpected pause code: %s sent %d\n",
                           player->player.getCallSign(), (int)pauseCode);
           return true;
         }
@@ -1144,7 +1144,7 @@ class PlayerDataHandler : public PlayerFirstHandler {
       buf = nboUnpackStdString(buf, key);
       buf = nboUnpackStdString(buf, value);
 
-      logDebugMessage(4, "Player %s [%d] CustomData < '%s' = '%s' >\n",
+      debugf(4, "Player %s [%d] CustomData < '%s' = '%s' >\n",
                       player->player.getCallSign(), player->getIndex(),
                       key.c_str(), value.c_str());
 
@@ -1177,7 +1177,7 @@ class QueryOSHandler : public PlayerFirstHandler {
       buf = nboUnpackStdString(buf, vers);
 
       player->player.OSVersion = vers;
-      logDebugMessage(2, "Player %s [%d] OS version \"%s\"\n",
+      debugf(2, "Player %s [%d] OS version \"%s\"\n",
                       player->player.getCallSign(), player->getIndex(),
                       player->player.OSVersion.c_str());
 

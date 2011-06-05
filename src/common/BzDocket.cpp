@@ -87,7 +87,7 @@ void* BzDocket::pack(void* buf) const {
   DataMap::const_iterator it;
   uint32_t offset = 0;
   for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
-    logDebugMessage(3, "packing into %s:  %-*s  [%i]\n", docketName.c_str(),
+    debugf(3, "packing into %s:  %-*s  [%i]\n", docketName.c_str(),
                     (int)maxLen, it->first.c_str(), (int)it->second.size());
     const size_t dataSize = it->second.size();
     buf = nboPackStdString(buf, it->first);
@@ -140,7 +140,7 @@ void* BzDocket::unpack(void* buf) {
     std::string data;
     buf = nboUnpackStdString(buf, data);
     addData(data, names[i]);
-    logDebugMessage(3, "unpacked into %s:  %-*s  [%i]\n", docketName.c_str(),
+    debugf(3, "unpacked into %s:  %-*s  [%i]\n", docketName.c_str(),
                     (int)maxLen, names[i].c_str(), (int)data.size());
   }
   return buf;
@@ -197,13 +197,13 @@ bool BzDocket::addData(const std::string& data,
 
   if (mapPath.find_first_of(":") != std::string::npos) {
     errorMsg = "bad map path (" + mapPath + ")";
-    logDebugMessage(4, "BzDocket error: %s\n", errorMsg.c_str());
+    debugf(4, "BzDocket error: %s\n", errorMsg.c_str());
     return false;
   }
 
   if (!mapPath.empty() && (mapPath[mapPath.size() - 1] == '/')) {
     errorMsg = "bad map path (" + mapPath + ")";
-    logDebugMessage(4, "BzDocket error: %s\n", errorMsg.c_str());
+    debugf(4, "BzDocket error: %s\n", errorMsg.c_str());
     return false;
   }
 
@@ -219,7 +219,7 @@ bool BzDocket::addData(const std::string& data,
   if (pos != std::string::npos) {
     const std::string dirPath = mapPath.substr(0, pos + 1);
     if (dirSet.find(dirPath) == dirSet.end()) {
-      logDebugMessage(4, "DIRPATH = %s\n", dirPath.c_str());
+      debugf(4, "DIRPATH = %s\n", dirPath.c_str());
     }
     dirSet.insert(dirPath);
   }
@@ -263,7 +263,7 @@ bool BzDocket::addFile(const std::string& filePath,
   const std::string data(buf, len);
   delete[] buf;
 
-  logDebugMessage(3, "adding to %s: '%s' as '%s'  (%li)\n",
+  debugf(3, "adding to %s: '%s' as '%s'  (%li)\n",
                   docketName.c_str(), filePath.c_str(),
                   mapPath.c_str(), len);
 
@@ -344,7 +344,7 @@ void BzDocket::dirList(const std::string& path, bool recursive,
   if (!path.empty() && (path[path.size() - 1] != '/')) {
     realPath += '/';
   }
-  logDebugMessage(4, "BzDocket::dirList: '%s' %s\n",
+  debugf(4, "BzDocket::dirList: '%s' %s\n",
                   realPath.c_str(), recursive ? "(recursive)" : "");
 
   const int pathSlashes = countSlashes(realPath);
@@ -353,7 +353,7 @@ void BzDocket::dirList(const std::string& path, bool recursive,
   DataMap::const_iterator it;
   for (it = dataMap.begin(); it != dataMap.end(); ++it) {
     const std::string& file = it->first;
-    logDebugMessage(4, "  checking: '%s'\n", file.c_str());
+    debugf(4, "  checking: '%s'\n", file.c_str());
     if (file.compare(0, realPath.size(), realPath) == 0) {
       if (recursive) {
         files.push_back(file);

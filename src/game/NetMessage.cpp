@@ -138,7 +138,7 @@ void NetMessage::growCapacity(size_t s) {
 
   data = (char*) realloc(data, capacity);
   if (data == NULL) {
-    logDebugMessage(0,
+    debugf(0,
                     "ERROR: NetMessage::growCapacity(%i) out-of-memory\n", (int) s);
     exit(2);
   }
@@ -167,7 +167,7 @@ inline char* NetMessage::checkReadBuffer(size_t s) {
 
 void NetMessage::send(NetHandler* dst, uint16_t messageCode) {
   if (!sendFunc) {
-    logDebugMessage(0, "NetMessage::send()  sendFunc == NULL\n");
+    debugf(0, "NetMessage::send()  sendFunc == NULL\n");
   }
 
   if (!dst) {
@@ -184,7 +184,7 @@ void NetMessage::send(NetHandler* dst, uint16_t messageCode) {
 
 void NetMessage::broadcast(uint16_t messageCode, bool toTextClients) {
   if (!broadcastFunc) {
-    logDebugMessage(0, "NetMessage::broadcast()  broadcastFunc == NULL\n");
+    debugf(0, "NetMessage::broadcast()  broadcastFunc == NULL\n");
   }
 
   // setup the length & code

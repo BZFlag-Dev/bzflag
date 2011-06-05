@@ -780,7 +780,7 @@ void handleScore(void* msg) {
         sPlayer = getPlayerByIndex(i);
       }
       else {
-        logDebugMessage(1, "Received score update for unknown player!\n");
+        debugf(1, "Received score update for unknown player!\n");
       }
     }
     if (sPlayer) {
@@ -840,7 +840,7 @@ void handleNewPlayer(void* msg) {
       break;
     }
   if (i >= MAX_ROBOTS) {
-    logDebugMessage(1, "Too many bots requested\n");
+    debugf(1, "Too many bots requested\n");
     return;
   }
   robots[i] = new BZRobotPlayer(id,
@@ -1906,7 +1906,7 @@ void botStartPlaying() {
     ZeroMemory(&info, sizeof(OSVERSIONINFO));
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
-    logDebugMessage(1, "Running on Windows %s%d.%d %s\n",
+    debugf(1, "Running on Windows %s%d.%d %s\n",
                     (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
                     info.dwMajorVersion, info.dwMinorVersion,
                     info.szCSDVersion);

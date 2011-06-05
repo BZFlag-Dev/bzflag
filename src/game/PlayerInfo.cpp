@@ -171,7 +171,7 @@ bool PlayerInfo::processEnter(uint16_t& rejectCode, char* rejectMsg) {
   clientVersion[VersionLen - 1] = '\0';
   referrer[ReferrerLen - 1] = '\0';
 
-  logDebugMessage(2, "Player %s [%d] sent version string: %s\n",
+  debugf(2, "Player %s [%d] sent version string: %s\n",
                   callSign, playerIndex, clientVersion);
 
   // spoof filter holds "SERVER" for robust name comparisons
@@ -180,7 +180,7 @@ bool PlayerInfo::processEnter(uint16_t& rejectCode, char* rejectMsg) {
   }
 
   if (!isCallSignReadable()) {
-    logDebugMessage(2, "rejecting unreadable callsign: %s\n", callSign);
+    debugf(2, "rejecting unreadable callsign: %s\n", callSign);
     rejectCode   = RejectBadCallsign;
     strncpy(rejectMsg, errorString.c_str(), MessageLen);
     return false;
@@ -194,7 +194,7 @@ bool PlayerInfo::processEnter(uint16_t& rejectCode, char* rejectMsg) {
 
   // make sure the callsign is not obscene/filtered
   if (callSignFiltering) {
-    logDebugMessage(2, "checking callsign: %s\n", callSign);
+    debugf(2, "checking callsign: %s\n", callSign);
 
     char cs[CallSignLen];
     memcpy(cs, callSign, sizeof(char) * CallSignLen);

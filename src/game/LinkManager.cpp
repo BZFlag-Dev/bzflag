@@ -426,7 +426,7 @@ bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const {
     NameFaceVec::const_iterator it;
     for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
       if (debugLinks >= 4) {
-        logDebugMessage(0, "link glob_match:  %s  vs.  %s\n",
+        debugf(0, "link glob_match:  %s  vs.  %s\n",
                         glob.c_str(), it->name.c_str());
       }
       if (glob_match(glob, it->name)) {
@@ -533,50 +533,50 @@ void LinkManager::getVariables(std::set<std::string>& vars) const {
 
 void LinkManager::printDebug() {
   if (debugLinks >= 2) {
-    logDebugMessage(0, "\n");
+    debugf(0, "\n");
     for (size_t i = 0; i < linkDefs.size(); i++) {
       linkDefs[i].print(std::cout, "linkdefs: ");
     }
 
-    logDebugMessage(0, "LinkSrcIDs:\n");
+    debugf(0, "LinkSrcIDs:\n");
     for (size_t i = 0; i < linkSrcs.size(); i++) {
-      logDebugMessage(0, "  linkSrc %i: /%s\n", i,
+      debugf(0, "  linkSrc %i: /%s\n", i,
                       linkSrcs[i]->getLinkName().c_str());
     }
-    logDebugMessage(0, "\n");
+    debugf(0, "\n");
 
-    logDebugMessage(0, "LinkDstIDs:\n");
+    debugf(0, "LinkDstIDs:\n");
     for (size_t i = 0; i < linkDsts.size(); i++) {
-      logDebugMessage(0, "  linkDst %i: /%s\n", i,
+      debugf(0, "  linkDst %i: /%s\n", i,
                       linkDsts[i].face->getLinkName().c_str());
     }
   }
-  logDebugMessage(0, "\n");
+  debugf(0, "\n");
 
-  logDebugMessage(0, "Potential Links:\n");
+  debugf(0, "Potential Links:\n");
   NameFaceVec::const_iterator nameIt;
   for (nameIt = nameFaceVec.begin(); nameIt != nameFaceVec.end(); ++nameIt) {
-    logDebugMessage(0, "  /%s\n", nameIt->name.c_str());
+    debugf(0, "  /%s\n", nameIt->name.c_str());
   }
-  logDebugMessage(0, "\n");
+  debugf(0, "\n");
 
-  logDebugMessage(0, "LinkMap:\n");
+  debugf(0, "LinkMap:\n");
   LinkMap::const_iterator mapIt;
   for (mapIt = linkMap.begin(); mapIt != linkMap.end(); ++mapIt) {
     const MeshFace* linkSrc = mapIt->first;
-    logDebugMessage(0, "  src %s\n", linkSrc->getLinkName().c_str());
+    debugf(0, "  src %s\n", linkSrc->getLinkName().c_str());
     const IntVec& dstIDs = mapIt->second.dstIDs;
     for (size_t d = 0; d < dstIDs.size(); d++) {
       const int dstID = dstIDs[d];
       const DstData* dd = getLinkDstData(dstID);
       const MeshFace* linkDst = dd->face;
-      logDebugMessage(0, "    dst %s\n", linkDst->getLinkName().c_str());
+      debugf(0, "    dst %s\n", linkDst->getLinkName().c_str());
       if (debugLinks >= 3) {
         dd->physics.print(std::cout, "    ");
       }
     }
   }
-  logDebugMessage(0, "\n");
+  debugf(0, "\n");
 }
 
 

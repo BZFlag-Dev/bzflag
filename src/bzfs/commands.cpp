@@ -795,7 +795,7 @@ bool UpTimeCommand::operator()(const char*,
 bool ServerQueryCommand::operator()(const char*,
                                     GameKeeper::Player* playerData) {
   int t = playerData->getIndex();
-  logDebugMessage(2, "Server query requested by %s [%d]\n",
+  debugf(2, "Server query requested by %s [%d]\n",
                   playerData->player.getCallSign(), t);
 
   sendMessage(ServerPlayer, t,
@@ -829,7 +829,7 @@ bool PartCommand::operator()(const char* message,
       message2 = TextUtils::format("%s has left (\"%s\") ",
                                    playerData->player.getCallSign(),  byeStatement.c_str());
 
-      logDebugMessage(2, "%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
+      debugf(2, "%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
       sendMessage(ServerPlayer, AllPlayers, message2.c_str());
     }
   }
@@ -866,7 +866,7 @@ bool QuitCommand::operator()(const char* message,
       message2 = TextUtils::format("%s has quit (\"%s\") ",
                                    playerData->player.getCallSign(),  byeStatement.c_str());
 
-      logDebugMessage(2, "%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
+      debugf(2, "%s has quit with the message \"%s\"\n", playerData->player.getCallSign(), byeStatement.c_str());
       sendMessage(ServerPlayer, AllPlayers, message2.c_str());
     }
   }
@@ -997,7 +997,7 @@ bool PasswordCommand::operator()(const char* message,
                                  GameKeeper::Player* playerData) {
   int t = playerData->getIndex();
   if (playerData->accessInfo.passwordAttemptsMax()) {
-    logDebugMessage(1, "\"%s\" (%s) has attempted too many /password tries\n",
+    debugf(1, "\"%s\" (%s) has attempted too many /password tries\n",
                     playerData->player.getCallSign(),
                     playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
@@ -1034,14 +1034,14 @@ bool SetCommand::operator()(const char* message,
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setVar)
       && !playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the set command");
-    logDebugMessage(3, "set failed by %s, setvar=%d, setall=%d\n", playerData->player.getCallSign(), setvar, setall);
+    debugf(3, "set failed by %s, setvar=%d, setall=%d\n", playerData->player.getCallSign(), setvar, setall);
     return true;
   }
   if (Replay::enabled()) {
     sendMessage(ServerPlayer, t, "You can't /set variables in replay mode");
     return true;
   }
-  logDebugMessage(3, "set executed by %s, setvar=%d, setall=%d\n", playerData->player.getCallSign(), setvar, setall);
+  debugf(3, "set executed by %s, setvar=%d, setall=%d\n", playerData->player.getCallSign(), setvar, setall);
   std::string command = (message + 1);
   // we aren't case sensitive but CMDMGR is
   for (int i = 0; i < 3 /*"set"*/; ++i) {
@@ -2580,7 +2580,7 @@ bool PollCommand::operator()(const char* message,
   char reply[MessageLen] = {0};
   std::string callsign = std::string(playerData->player.getCallSign());
 
-  logDebugMessage(2, "\"%s\" has requested a poll: %s\n", callsign.c_str(), message);
+  debugf(2, "\"%s\" has requested a poll: %s\n", callsign.c_str(), message);
 
   /* make sure player has permission to request a poll */
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::poll)) {
@@ -2589,7 +2589,7 @@ bool PollCommand::operator()(const char* message,
     return true;
   }
 
-  logDebugMessage(3, "Player has permission to run /poll\n");
+  debugf(3, "Player has permission to run /poll\n");
 
   /* make sure that there is a poll arbiter */
   if (votingArbiter == NULL) {
@@ -2597,7 +2597,7 @@ bool PollCommand::operator()(const char* message,
     return true;
   }
 
-  logDebugMessage(3, "Arbiter was acquired with address 0x%p\n", votingArbiter);
+  debugf(3, "Arbiter was acquired with address 0x%p\n", votingArbiter);
 
   /* make sure that there is not a poll active already */
   if (votingArbiter->knowsPoll()) {
@@ -2607,7 +2607,7 @@ bool PollCommand::operator()(const char* message,
     return true;
   }
 
-  logDebugMessage(3, "The arbiter says there is not another poll active\n");
+  debugf(3, "The arbiter says there is not another poll active\n");
 
   // get available voter count
   unsigned short int available = 0;
@@ -2622,7 +2622,7 @@ bool PollCommand::operator()(const char* message,
     }
   }
 
-  logDebugMessage(3, "There are %d available players for %d votes required\n", available, clOptions->votesRequired);
+  debugf(3, "There are %d available players for %d votes required\n", available, clOptions->votesRequired);
 
   /* make sure there are enough players to even make a poll that has a chance
    * of succeeding (not counting the person being acted upon)
@@ -2641,7 +2641,7 @@ bool PollCommand::operator()(const char* message,
   std::string arguments = &message[5]; /* skip "/poll" */
   std::string cmd = "";
 
-  logDebugMessage(3, "The arguments string is [%s]\n", arguments.c_str());
+  debugf(3, "The arguments string is [%s]\n", arguments.c_str());
 
   /* find the start of the command */
   int startPosition = TextUtils::firstVisible(arguments);
@@ -2649,7 +2649,7 @@ bool PollCommand::operator()(const char* message,
     startPosition = 0;
   }
 
-  logDebugMessage(3, "Start position is %d\n", (int)startPosition);
+  debugf(3, "Start position is %d\n", (int)startPosition);
 
   /* find the end of the command */
   size_t endPosition = (size_t)startPosition + 1;
@@ -2658,7 +2658,7 @@ bool PollCommand::operator()(const char* message,
     endPosition++;
   }
 
-  logDebugMessage(3, "End position is %d\n", (int)endPosition);
+  debugf(3, "End position is %d\n", (int)endPosition);
 
   /* stash the command ('kick', etc) in lowercase to simplify comparison */
   if (((size_t)startPosition != arguments.size()) &&
@@ -2668,7 +2668,7 @@ bool PollCommand::operator()(const char* message,
     }
   }
 
-  logDebugMessage(3, "Command is %s\n", cmd.c_str());
+  debugf(3, "Command is %s\n", cmd.c_str());
 
   /* handle subcommands */
 
@@ -2680,11 +2680,11 @@ bool PollCommand::operator()(const char* message,
 
     if (arguments.size() == 0) {
       sendMessage(ServerPlayer, t, "/poll: incorrect syntax, argument required.");
-      logDebugMessage(3, "No command arguments, stopping poll.\n");
+      debugf(3, "No command arguments, stopping poll.\n");
       return true;
     }
 
-    logDebugMessage(3, "Command arguments are [%s]\n", arguments.c_str());
+    debugf(3, "Command arguments are [%s]\n", arguments.c_str());
 
     /* find the start of the target (e.g. player name) */
     startPosition = TextUtils::firstVisible(arguments);
@@ -2697,7 +2697,7 @@ bool PollCommand::operator()(const char* message,
       startPosition++;
     }
 
-    logDebugMessage(3, "Start position for target is %d\n", (int)startPosition);
+    debugf(3, "Start position for target is %d\n", (int)startPosition);
 
     /* find the end of the target */
     endPosition = arguments.size() - 1;
@@ -2710,11 +2710,11 @@ bool PollCommand::operator()(const char* message,
       endPosition--;
     }
 
-    logDebugMessage(3, "End position for target is %d\n", (int)endPosition);
+    debugf(3, "End position for target is %d\n", (int)endPosition);
 
     target = arguments.substr(startPosition, endPosition - startPosition + 1);
 
-    logDebugMessage(3, "Target specified to vote upon is [%s]\n", target.c_str());
+    debugf(3, "Target specified to vote upon is [%s]\n", target.c_str());
 
     if ((target.length() == 0) && (cmd != "flagreset")) {
       snprintf(reply, MessageLen, "%s, no target was specified for the [%s] vote", callsign.c_str(), cmd.c_str());
@@ -2728,32 +2728,32 @@ bool PollCommand::operator()(const char* message,
     if ((cmd == "set") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollSet))) {
       snprintf(reply, MessageLen, "%s, you may not /poll set on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
-      logDebugMessage(3, "Player %s is not allowed to /poll set\n", callsign.c_str());
+      debugf(3, "Player %s is not allowed to /poll set\n", callsign.c_str());
       return true;
     }
     if ((cmd == "flagreset") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))) {
       snprintf(reply, MessageLen, "%s, you may not /poll flagreset on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
-      logDebugMessage(3, "Player %s is not allowed to /poll flagreset\n", callsign.c_str());
+      debugf(3, "Player %s is not allowed to /poll flagreset\n", callsign.c_str());
       return true;
     }
     if ((cmd == "ban") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollBan))) {
       snprintf(reply, MessageLen, "%s, you may not /poll ban on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
-      logDebugMessage(3, "Player %s is not allowed to /poll ban\n", callsign.c_str());
+      debugf(3, "Player %s is not allowed to /poll ban\n", callsign.c_str());
       return true;
     }
     if ((cmd == "kick") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKick))) {
       snprintf(reply, MessageLen, "%s, you may not /poll kick on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
-      logDebugMessage(3, "Player %s is not allowed to /poll kick\n", callsign.c_str());
+      debugf(3, "Player %s is not allowed to /poll kick\n", callsign.c_str());
       return true;
     }
 
     if ((cmd == "kill") && (!playerData->accessInfo.hasPerm(PlayerAccessInfo::pollKill))) {
       snprintf(reply, MessageLen, "%s, you may not /poll kill on this server", callsign.c_str());
       sendMessage(ServerPlayer, t, reply);
-      logDebugMessage(3, "Player %s is not allowed to /poll kill\n", callsign.c_str());
+      debugf(3, "Player %s is not allowed to /poll kill\n", callsign.c_str());
       return true;
     }
 
@@ -2862,12 +2862,12 @@ bool PollCommand::operator()(const char* message,
     }
 
     // automatically place a vote for the player requesting the poll
-    logDebugMessage(3, "Attempting to automatically place a vote for [%s]\n", callsign.c_str());
+    debugf(3, "Attempting to automatically place a vote for [%s]\n", callsign.c_str());
 
     bool voted = votingArbiter->voteYes(callsign);
     if (!voted) {
       sendMessage(ServerPlayer, t, "Unable to automatically place your vote for some unknown reason");
-      logDebugMessage(3, "Unable to automatically place a vote for [%s]\n", callsign.c_str());
+      debugf(3, "Unable to automatically place a vote for [%s]\n", callsign.c_str());
     }
 
   }
@@ -2946,7 +2946,7 @@ bool ViewReportCommand::operator()(const char* message,
 bool ClientQueryCommand::operator()(const char* message,
                                     GameKeeper::Player* playerData) {
   int t = playerData->getIndex();
-  logDebugMessage(2, "Clientquery requested by %s [%d]\n",
+  debugf(2, "Clientquery requested by %s [%d]\n",
                   playerData->player.getCallSign(), t);
   if (message[12] != '\0') {
     std::string name = message + 13; // assumes there is a space
@@ -3352,7 +3352,7 @@ bool DebugCommand::operator()(const char* message,
   int t = playerData->getIndex();
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::setAll)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the debug command");
-    logDebugMessage(3, "debug failed by %s\n", playerData->player.getCallSign());
+    debugf(3, "debug failed by %s\n", playerData->player.getCallSign());
     return true;
   }
   std::string arguments = &message[12]; /* skip "/serverdebug" */

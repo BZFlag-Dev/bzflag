@@ -59,7 +59,7 @@ static inline void debugDR(const char* fmt, ...) {
   }
   va_list ap;
   va_start(ap, fmt);
-  logDebugMessageArgs(0, fmt, ap);
+  vdebugf(0, fmt, ap);
   va_end(ap);
 }
 

@@ -34,14 +34,14 @@ using std::set;
 //============================================================================//
 
 void LuaLog(int level, const std::string& msg) {
-  logDebugMessage(level, msg);
+  debugf(level, msg);
 }
 
 
 void LuaLog(int level, const char* fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-  logDebugMessageArgs(level, fmt, ap);
+  vdebugf(level, fmt, ap);
   va_end(ap);
 }
 

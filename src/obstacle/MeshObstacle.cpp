@@ -251,11 +251,11 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     }
     else {
       //
-      logDebugMessage(1,
+      debugf(1,
                       "WARNING: face triangulated into %u new faces\n", triSize);
       // warn if a zone with fixedFlag was split
       if (hasZoneFixedFlag(sd)) {
-        logDebugMessage(0, "WARNING: face zone with fixedFlags was split\n");
+        debugf(0, "WARNING: face zone with fixedFlags was split\n");
       }
       // prepare array for extra faces
       const int extra = (int)(triIndices.size() - 1);
@@ -520,7 +520,7 @@ void MeshObstacle::makeEdges() { // FIXME -- incomplete
           facePair.f0 = face;
         }
         else {
-          logDebugMessage(4, "non-manifold mesh -- f0 overlap\n");
+          debugf(4, "non-manifold mesh -- f0 overlap\n");
           return;
         }
       }
@@ -529,7 +529,7 @@ void MeshObstacle::makeEdges() { // FIXME -- incomplete
           facePair.f1 = face;
         }
         else {
-          logDebugMessage(4, "non-manifold mesh -- f1 overlap\n");
+          debugf(4, "non-manifold mesh -- f1 overlap\n");
           return;
         }
       }
@@ -540,11 +540,11 @@ void MeshObstacle::makeEdges() { // FIXME -- incomplete
   for (edgeIt = edgeMap.begin(); edgeIt != edgeMap.end(); ++edgeIt) {
     const FacePair& facePair = edgeIt->second;
     if (facePair.f0 == NULL) {
-      logDebugMessage(4, "non-manifold mesh -- missing f0\n");
+      debugf(4, "non-manifold mesh -- missing f0\n");
       return;
     }
     if (facePair.f1 == NULL) {
-      logDebugMessage(4, "non-manifold mesh -- missing f1\n");
+      debugf(4, "non-manifold mesh -- missing f1\n");
       return;
     }
   }
@@ -633,7 +633,7 @@ const char* MeshObstacle::getClassName() { // const
 
 void MeshObstacle::setDrawInfo(MeshDrawInfo* di) {
   if (drawInfo != NULL) {
-    logDebugMessage(0,
+    debugf(0,
                     "ERROR: MeshObstacle::setMeshDrawInfo() already exists\n");
     exit(1);
   }
@@ -724,7 +724,7 @@ bool MeshObstacle::containsPoint(const fvec3& point) const {
       }
     }
     else {
-      logDebugMessage(0, "checkType (%i) is not supported yet\n",
+      debugf(0, "checkType (%i) is not supported yet\n",
                       checkTypes[c]);
       exit(1);
     }
@@ -1193,7 +1193,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) co
       const fvec2& autoScale = bzmat->getTextureAutoScale(0);
       makeTexcoords(autoScale, face->getPlane(), vertArray, txcdArray);
       if ((int)txcdArray.size() != vertCount) {
-        logDebugMessage(0, "WARNING: messed up generated texcoords\n");
+        debugf(0, "WARNING: messed up generated texcoords\n");
       }
       for (size_t t = 0; t < txcdArray.size(); t++) {
         extraTexcoords.push_back(txcdArray[t]);

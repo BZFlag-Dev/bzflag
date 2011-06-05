@@ -814,7 +814,7 @@ static bool allBasesDefined() {
 
 
 bool defineWorld() {
-  logDebugMessage(1, "defining world\n");
+  debugf(1, "defining world\n");
 
   // clean up old data
   if (world) {
@@ -854,7 +854,7 @@ bool defineWorld() {
 
   // make world and add buildings
   if (worldData.worldBlob != NULL) {
-    logDebugMessage(1, "reading worldfile from memory\n");
+    debugf(1, "reading worldfile from memory\n");
     std::istringstream in(worldData.worldBlob);
     BZWReader reader(in);
     world = reader.defineWorldFromFile();
@@ -866,7 +866,7 @@ bool defineWorld() {
     }
   }
   else if (clOptions->worldFile.size()) {
-    logDebugMessage(1, "reading worldfile %s\n", clOptions->worldFile.c_str());
+    debugf(1, "reading worldfile %s\n", clOptions->worldFile.c_str());
     BZWReader reader(clOptions->worldFile);
     world = reader.defineWorldFromFile();
 
@@ -879,13 +879,13 @@ bool defineWorld() {
   else {
     // check and see if anyone wants to define the world from an event
     if (!worldData.generated) {
-      logDebugMessage(1, "building random map\n");
+      debugf(1, "building random map\n");
       delete world;
       world = (clOptions->gameType == ClassicCTF) ? defineTeamWorld()
               : defineRandomWorld();
     }
     else {
-      logDebugMessage(1, "loading plug-in map\n");
+      debugf(1, "loading plug-in map\n");
       float worldSize = BZDBCache::worldSize;
       if (pluginWorldSize > 0) {
         worldSize = pluginWorldSize;
@@ -919,7 +919,7 @@ bool defineWorld() {
 
   maxWorldHeight = world->getMaxWorldHeight();
 
-  logDebugMessage(1, "packing world database\n");
+  debugf(1, "packing world database\n");
   // package up world
   world->packDatabase();
 
@@ -967,14 +967,14 @@ bool defineWorld() {
     strncat(hexDigest, digest.c_str(), 49);
   }
   const BzTime endTime = BzTime::getCurrent();
-  logDebugMessage(3, "MD5 generation: %.3f seconds\n", endTime - startTime);
+  debugf(3, "MD5 generation: %.3f seconds\n", endTime - startTime);
 
   // water levels probably require flags on buildings
   const float waterLevel = world->getWaterLevel();
   if (!clOptions->flagsOnBuildings && (waterLevel > 0.0f)) {
     clOptions->flagsOnBuildings = true;
     clOptions->respawnOnBuildings = true;
-    logDebugMessage(1, "WARNING: enabling flag and tank spawns on buildings due to waterLevel\n");
+    debugf(1, "WARNING: enabling flag and tank spawns on buildings due to waterLevel\n");
   }
 
   // reset other stuff
@@ -1078,14 +1078,14 @@ static void handleCommand(const void* rawbuf, bool udp, NetHandler* handler) {
 
   // make sure it's not an attack
   if (udp && isUDPAttackMessage(code)) {
-    logDebugMessage(1,
+    debugf(1,
                     "Received packet type (%x) via udp, possible attack from %s\n",
                     code, handler->getTargetIP());
   }
 #ifdef DEBUG
   else if (code != MsgPlayerUpdateSmall) {
     const MsgStringList msgList = MsgStrings::msgFromClient(len, code, buf);
-    logDebugMessage(5, "%s from %s:%s at %f\n", msgList[0].text.c_str(),
+    debugf(5, "%s from %s:%s at %f\n", msgList[0].text.c_str(),
                     handler->getTargetIP(), (udp ? "udp" : "tcp"),
                     BzTime::getCurrent().getSeconds());
   }
@@ -1119,7 +1119,7 @@ static void handleCommand(const void* rawbuf, bool udp, NetHandler* handler) {
   }
 
   if (!handled) { // someone got it, don't need to do the old way
-    logDebugMessage(1,
+    debugf(1,
                     "Received an unknown packet type (%x), possible attack from %s\n",
                     code, handler->getTargetIP());
   }
@@ -1141,7 +1141,7 @@ static void handleTcp(NetHandler& netPlayer, int i, const RxStatus e) {
       dropHandler(&netPlayer, "Disconnected");
     }
     else if (e == ReadHuge) {
-      logDebugMessage(1, "Player [%d] sent huge packet length, possible attack\n", i);
+      debugf(1, "Player [%d] sent huge packet length, possible attack\n", i);
       dropHandler(&netPlayer, "large packet recvd");
     }
     return;
@@ -1522,7 +1522,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char* message, uint8
 
   // Should cut the message
   if (msglen > (size_t)MessageLen) {
-    logDebugMessage(1, "WARNING: Network message being sent is too long! "
+    debugf(1, "WARNING: Network message being sent is too long! "
                     "(message is %d, cutoff at %d)\n", msglen, MessageLen);
     msglen = MessageLen;
   }
@@ -1998,7 +1998,7 @@ void addPlayer(int playerIndex, GameKeeper::Player* playerData) {
       float waitTime = rejoinList.waitTime(playerIndex);
       if (waitTime > 0.0f) {
         char buffer[MessageLen] = {0};
-        logDebugMessage(2, "Player %s [%d] rejoin wait of %.1f seconds\n",
+        debugf(2, "Player %s [%d] rejoin wait of %.1f seconds\n",
                         playerData->player.getCallSign(), playerIndex, waitTime);
         snprintf(buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
         sendMessage(ServerPlayer, playerIndex, buffer);
@@ -2368,7 +2368,7 @@ void anointNewRabbit(int killerId) {
   worldEventManager.callEvents(bz_eAnointRabbitEvent, &anoitData);
 
   if (anoitData.newRabbit != oldRabbit) {
-    logDebugMessage(3, "rabbitIndex is set to %d\n", anoitData.newRabbit);
+    debugf(3, "rabbitIndex is set to %d\n", anoitData.newRabbit);
     if (oldRabbitData && anoitData.swap) {
       oldRabbitData->player.wasARabbit();
     }
@@ -2386,7 +2386,7 @@ void anointNewRabbit(int killerId) {
     worldEventManager.callEvents(bz_eNewRabbitEvent, &newRabbitData);
   }
   else {
-    logDebugMessage(3, "no other than old rabbit to choose from, rabbitIndex is %d\n", rabbitIndex);
+    debugf(3, "no other than old rabbit to choose from, rabbitIndex is %d\n", rabbitIndex);
   }
 }
 
@@ -2398,7 +2398,7 @@ void pausePlayer(int playerIndex, bool paused) {
     return;
   }
 
-  logDebugMessage(2, "pausePlayer %s %s\n", playerData->player.getCallSign(),
+  debugf(2, "pausePlayer %s %s\n", playerData->player.getCallSign(),
                   paused ? "true" : "false");
 
   // always reset these parameters
@@ -2543,7 +2543,7 @@ void removePlayer(int playerIndex, const char* reason, bool notify) {
 
   // status message
   std::string timeStamp = BzTime::timestamp();
-  logDebugMessage(1, "Player %s [%d] removed at %s: %s\n",
+  debugf(1, "Player %s [%d] removed at %s: %s\n",
                   playerData->player.getCallSign(),
                   playerIndex, timeStamp.c_str(), reason);
   bool wasPlaying = playerData->player.isPlaying();
@@ -3353,7 +3353,7 @@ bool updatePlayerState(GameKeeper::Player* playerData,
 
   // ignore out of order packet
   if (state.order <= playerData->lastState.order) {
-    logDebugMessage(5, "[%d] ignoring out of order update (%ld <= %ld)\n",
+    debugf(5, "[%d] ignoring out of order update (%ld <= %ld)\n",
                     playerData->player.getPlayerIndex(),
                     state.order, playerData->lastState.order);
     return true;
@@ -3393,14 +3393,14 @@ bool invalidPlayerAction(PlayerInfo& p, int t, const char* action) {
   if (p.isObserver() || p.isPaused()) {
     if (p.isPaused()) {
       char buffer[MessageLen];
-      logDebugMessage(1, "Player \"%s\" tried to %s while paused\n", p.getCallSign(), action);
+      debugf(1, "Player \"%s\" tried to %s while paused\n", p.getCallSign(), action);
       snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
       sendMessage(ServerPlayer, t, buffer);
       snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
       removePlayer(t, buffer, true);
     }
     else {
-      logDebugMessage(1, "Player %s tried to %s as an observer\n", p.getCallSign(), action);
+      debugf(1, "Player %s tried to %s as an observer\n", p.getCallSign(), action);
     }
     return true;
   }
@@ -3490,10 +3490,10 @@ static void adjustTolerances() {
 
   if (!cheatProtectionOptions.doSpeedChecks) {
     speedTolerance = MAXFLOAT;
-    logDebugMessage(1, "Warning: disabling speed checking due to physics drivers\n");
+    debugf(1, "Warning: disabling speed checking due to physics drivers\n");
   }
   if (!cheatProtectionOptions.doHeightChecks) {
-    logDebugMessage(1, "Warning: disabling height checking partly due to physics drivers\n");
+    debugf(1, "Warning: disabling height checking partly due to physics drivers\n");
   }
 
   return;
@@ -3829,11 +3829,11 @@ static bool initNet() {
   static const int major = 2, minor = 2;
   WSADATA wsaData;
   if (WSAStartup(MAKEWORD(major, minor), &wsaData)) {
-    logDebugMessage(2, "Failed to initialize Winsock.  Terminating.\n");
+    debugf(2, "Failed to initialize Winsock.  Terminating.\n");
     return false;
   }
   if (LOBYTE(wsaData.wVersion) != major || HIBYTE(wsaData.wVersion) != minor) {
-    logDebugMessage(2, "Version mismatch in Winsock; got %d.%d, expected %d.%d. Terminating.\n",
+    debugf(2, "Version mismatch in Winsock; got %d.%d, expected %d.%d. Terminating.\n",
                     (int)LOBYTE(wsaData.wVersion),
                     (int)HIBYTE(wsaData.wVersion),
                     major,
@@ -3884,18 +3884,18 @@ static void initStartupParameters(int argc, char** argv) {
 
 
   if (clOptions->bzdbVars.length() > 0) {
-    logDebugMessage(1, "Loading variables from %s\n", clOptions->bzdbVars.c_str());
+    debugf(1, "Loading variables from %s\n", clOptions->bzdbVars.c_str());
     bool success = CFGMGR.read(clOptions->bzdbVars);
     if (success) {
-      logDebugMessage(1, "Successfully loaded variable(s)\n");
+      debugf(1, "Successfully loaded variable(s)\n");
     }
     else {
-      logDebugMessage(1, "WARNING: unable to load the variable file\n");
+      debugf(1, "WARNING: unable to load the variable file\n");
     }
   }
 
   if (clOptions->publicizeServer && clOptions->publicizedKey.empty()) {
-    logDebugMessage(0,
+    debugf(0,
                     "\n"
                     "WARNING:\n"
                     "  Publicly listed bzfs servers must register using the '-publickey <key>'\n"
@@ -3921,7 +3921,7 @@ static void setupPlugins() {
     if (!loadPlugin(clOptions->pluginList[plugin].plugin, clOptions->pluginList[plugin].command)) {
       std::string text = "WARNING: unable to load the plugin; ";
       text += clOptions->pluginList[plugin].plugin + "\n";
-      logDebugMessage(0, text.c_str());
+      debugf(0, text.c_str());
     }
   }
 #endif
@@ -3986,16 +3986,16 @@ static void setupBadWordFilter() {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
       if (debugLevel >= 1) {
         unsigned int count;
-        logDebugMessage(1, "Loading %s\n", clOptions->filterFilename.c_str());
+        debugf(1, "Loading %s\n", clOptions->filterFilename.c_str());
         count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
-        logDebugMessage(1, "Loaded %u words\n", count);
+        debugf(1, "Loaded %u words\n", count);
       }
       else {
         clOptions->filter.loadFromFile(clOptions->filterFilename, false);
       }
     }
     else {
-      logDebugMessage(1, "Bad word filter specified without -filterChat or -filterCallsigns\n");
+      debugf(1, "Bad word filter specified without -filterChat or -filterCallsigns\n");
     }
   }
 }
@@ -4006,13 +4006,13 @@ static void setupVoteArbiter() {
   if (clOptions->voteTime > 0) {
     votingArbiter =
       new VotingArbiter(clOptions->voteTime, clOptions->vetoTime, clOptions->votesRequired, clOptions->votePercentage, clOptions->voteRepeatTime);
-    logDebugMessage(1, "There is a voting arbiter with the following settings:\n");
-    logDebugMessage(1, "\tvote time is %d seconds\n", clOptions->voteTime);
-    logDebugMessage(1, "\tveto time is %d seconds\n", clOptions->vetoTime);
-    logDebugMessage(1, "\tvotes required are %d\n", clOptions->votesRequired);
-    logDebugMessage(1, "\tvote percentage necessary is %f\n", clOptions->votePercentage);
-    logDebugMessage(1, "\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
-    logDebugMessage(1, "\tavailable voters is initially set to %d\n", maxPlayers);
+    debugf(1, "There is a voting arbiter with the following settings:\n");
+    debugf(1, "\tvote time is %d seconds\n", clOptions->voteTime);
+    debugf(1, "\tveto time is %d seconds\n", clOptions->vetoTime);
+    debugf(1, "\tvotes required are %d\n", clOptions->votesRequired);
+    debugf(1, "\tvote percentage necessary is %f\n", clOptions->votePercentage);
+    debugf(1, "\tvote repeat time is %d seconds\n", clOptions->voteRepeatTime);
+    debugf(1, "\tavailable voters is initially set to %d\n", maxPlayers);
 
     // override the default voter count to the max number of players possible
     votingArbiter->setAvailableVoters(maxPlayers);
@@ -4039,11 +4039,11 @@ static void setupPublicInterfaces() {
 
   /* print debug information about how the server is running */
   if (clOptions->publicizeServer) {
-    logDebugMessage(1, "Running a public server with the following settings:\n");
-    logDebugMessage(1, "\tpublic address is %s\n", clOptions->publicizedAddress.c_str());
+    debugf(1, "Running a public server with the following settings:\n");
+    debugf(1, "\tpublic address is %s\n", clOptions->publicizedAddress.c_str());
   }
   else {
-    logDebugMessage(1, "Running a private server with the following settings:\n");
+    debugf(1, "Running a private server with the following settings:\n");
   }
 }
 
@@ -4055,7 +4055,7 @@ static void setupMasterBanList() {
     std::vector<std::string>::const_iterator it;
     for (it = clOptions->masterBanListURL.begin(); it != clOptions->masterBanListURL.end(); it++) {
       clOptions->acl.merge(banList.get(it->c_str()));
-      logDebugMessage(1, "Loaded master ban list from %s\n", it->c_str());
+      debugf(1, "Loaded master ban list from %s\n", it->c_str());
     }
   }
 }
@@ -4206,8 +4206,8 @@ static bool initServer(int argc, char** argv) {
   setupScoringOptions();
 
   // print networking info
-  logDebugMessage(1, "\tlistening on %s:%i\n", serverAddress.getDotNotation().c_str(), clOptions->wksPort);
-  logDebugMessage(1, "\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
+  debugf(1, "\tlistening on %s:%i\n", serverAddress.getDotNotation().c_str(), clOptions->wksPort);
+  debugf(1, "\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
   setupPingReply();
 
@@ -4705,23 +4705,23 @@ static void doVoteArbiter(BzTime& tm) {
             else if (action == "set") {
               std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
               if (args.size() < 2) {
-                logDebugMessage(1, "Poll set taking action: no action taken, not enough parameters (%s).\n",
+                debugf(1, "Poll set taking action: no action taken, not enough parameters (%s).\n",
                                 (args.size() > 0 ? args[0].c_str() : "No parameters."));
               }
               else {
                 StateDatabase::Permission permission = BZDB.getPermission(args[0]);
                 if (!(BZDB.isSet(args[0]) &&
                       (permission == StateDatabase::ReadWrite || permission == StateDatabase::Locked))) {
-                  logDebugMessage(1, "Poll set taking action: no action taken, variable cannot be set\n");
+                  debugf(1, "Poll set taking action: no action taken, variable cannot be set\n");
                 }
                 else {
-                  logDebugMessage(1, "Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
+                  debugf(1, "Poll set taking action: setting %s to %s\n", args[0].c_str(), args[1].c_str());
                   BZDB.set(args[0], args[1], StateDatabase::Server);
                 }
               }
             }
             else if (action == "reset") {
-              logDebugMessage(1, "Poll flagreset taking action: resetting unused flags.\n");
+              debugf(1, "Poll flagreset taking action: resetting unused flags.\n");
               for (int f = 0; f < numFlags; f++) {
                 FlagInfo& flag = *FlagInfo::get(f);
                 if (flag.player == -1) {
@@ -4816,7 +4816,7 @@ static void doTeamFlagTimeouts(BzTime& tm) {
           for (int n = 0; n < clOptions->numTeamFlags[i]; n++) {
             FlagInfo& flag = *FlagInfo::get(flagid + n);
             if (flag.exist() && flag.player == -1) {
-              logDebugMessage(1, "Flag timeout for team %d\n", i);
+              debugf(1, "Flag timeout for team %d\n", i);
               zapFlag(flag);
             }
           }
@@ -4959,7 +4959,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
       }
       else {
         if (e == ReadHuge) {
-          logDebugMessage(1,
+          debugf(1,
                           "socket [%d] sent huge packet length, possible attack\n", sockFD);
         }
         peer.deleteMe = true;
@@ -4992,7 +4992,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
         peer.player = playerIndex;
 
         if (playerIndex < 0xff) {
-          logDebugMessage(1,
+          debugf(1,
                           "Player [%d] accept() from %s on %i\n",
                           playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
 
@@ -5001,7 +5001,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
         }
         else {
           // full? reject by closing socket
-          logDebugMessage(1,
+          debugf(1,
                           "all slots occupied, rejecting accept() from %s on %i\n",
                           inet_ntoa(netHandler->getIPAddress()), fd);
 
@@ -5072,7 +5072,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
       }
 
       if (e == ReadHuge) {
-        logDebugMessage(1,
+        debugf(1,
                         "socket [%d] sent huge packet length, possible attack\n", sockFD);
       }
     }
@@ -5174,7 +5174,7 @@ static void runMainLoop() {
     nfound = select(maxFileDescriptor + 1,
                     (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
     //if (nfound)
-    //  logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+    //  debugf(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
     GameTime::serverStepTime();
 
@@ -5209,7 +5209,7 @@ static void runMainLoop() {
 
     // check messages
     if (nfound > 0) {
-      //logDebugMessage(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+      //debugf(1,"chkmsg nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
       // first check initial contacts
       if (FD_ISSET(wksSocket, &read_set)) {
         acceptClient();
@@ -5273,11 +5273,11 @@ static void runMainLoop() {
                 // send client the message that we are ready for him
                 sendUDPupdate(netHandler);
 
-                logDebugMessage(2, "Inbound UDP up %s:%d\n",
+                debugf(2, "Inbound UDP up %s:%d\n",
                                 inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
               }
               else {
-                logDebugMessage(2,
+                debugf(2,
                                 "Inbound UDP rejected %s:%d different IP than original\n",
                                 inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
               }
@@ -5290,7 +5290,7 @@ static void runMainLoop() {
 
           // don't spend more than 250ms receiving udp
           if (BzTime::getCurrent() - receiveTime > 0.25f) {
-            logDebugMessage(2,
+            debugf(2,
                             "Too much UDP traffic, will hope to catch up later\n");
             break;
           }
@@ -5392,7 +5392,7 @@ static void cleanupServer() {
   LuaServer::kill();
 
   // print uptime
-  logDebugMessage(1, "Shutting down server: uptime %s\n", BzTime::printTime(BzTime::getCurrent() - BzTime::getStartTime()).c_str());
+  debugf(1, "Shutting down server: uptime %s\n", BzTime::printTime(BzTime::getCurrent() - BzTime::getStartTime()).c_str());
 
   GameKeeper::Player::freeTCPMutex();
   serverStop();

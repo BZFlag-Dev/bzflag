@@ -122,7 +122,7 @@ void ListServerLink::finalization(char* data, unsigned int length, bool good) {
       // if no newline then no more complete replies
       if (*scan != '\r' && *scan != '\n') { break; }
       while (*scan && (*scan == '\r' || *scan == '\n')) { *scan++ = '\0'; }
-      logDebugMessage(4, "Got line: \"%s\"\n", base);
+      debugf(4, "Got line: \"%s\"\n", base);
       // TODO don't do this if we don't want central logins
 
       // is player globally registered ?
@@ -155,19 +155,19 @@ void ListServerLink::finalization(char* data, unsigned int length, bool good) {
         std::string line = base;
         std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
         if (args.size() < 3) {
-          logDebugMessage(3, "Bad BZID string: %s\n", line.c_str());
+          debugf(3, "Bad BZID string: %s\n", line.c_str());
         }
         else {
           const std::string& bzId = args[1];
           const std::string& nick = args[2];
-          logDebugMessage(4, "Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
+          debugf(4, "Got BZID: \"%s\" || \"%s\"\n", bzId.c_str(), nick.c_str());
           for (int i = 0; i < curMaxPlayers; i++) {
             GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
             if ((gkp != NULL) &&
                 (TextUtils::compare_nocase(gkp->player.getCallSign(), nick.c_str()) == 0) &&
                 (gkp->_LSAState == GameKeeper::Player::verified)) {
               gkp->setBzIdentifier(bzId);
-              logDebugMessage(3, "Set player (%s [%i]) bzId to (%s)\n",
+              debugf(3, "Set player (%s [%i]) bzId to (%s)\n",
                               nick.c_str(), i, bzId.c_str());
               break;
             }
@@ -176,7 +176,7 @@ void ListServerLink::finalization(char* data, unsigned int length, bool good) {
       }
 
       if (authReply) {
-        logDebugMessage(3, "Got: %s\n", base);
+        debugf(3, "Got: %s\n", base);
         char* group = (char*)NULL;
 
         // Isolate callsign from groups
@@ -202,7 +202,7 @@ void ListServerLink::finalization(char* data, unsigned int length, bool good) {
             break;
           }
         }
-        logDebugMessage(3, "[%d]\n", playerIndex);
+        debugf(3, "[%d]\n", playerIndex);
 
         if (playerIndex < curMaxPlayers) {
           if (registered) {
@@ -276,14 +276,14 @@ void ListServerLink::queueMessage(MessageType type) {
     sendQueuedMessages();
   }
   else {
-    logDebugMessage(3, "There is a message already queued to the list server: not sending this one yet.\n");
+    debugf(3, "There is a message already queued to the list server: not sending this one yet.\n");
   }
 }
 
 void ListServerLink::sendQueuedMessages() {
   queuedRequest = true;
   if (nextMessageType == ListServerLink::ADD) {
-    logDebugMessage(3, "Queuing ADD message to list server\n");
+    debugf(3, "Queuing ADD message to list server\n");
 
     bz_ListServerUpdateEvent_V1 updateEvent;
     updateEvent.address = publicizeAddress;
@@ -299,7 +299,7 @@ void ListServerLink::sendQueuedMessages() {
     lastAddTime = BzTime::getCurrent();
   }
   else if (nextMessageType == ListServerLink::REMOVE) {
-    logDebugMessage(3, "Queuing REMOVE message to list server\n");
+    debugf(3, "Queuing REMOVE message to list server\n");
     removeMe(publicizeAddress);
   }
   nextMessageType = ListServerLink::NONE;
@@ -440,7 +440,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&title=";
   msg += TextUtils::url_encode(publicizedTitle);
 
-  logDebugMessage(4, "ADD postData: %s\n", msg.c_str());
+  debugf(4, "ADD postData: %s\n", msg.c_str());
 
   setPostMode(msg);
   addHandle();

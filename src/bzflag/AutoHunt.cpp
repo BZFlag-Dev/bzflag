@@ -196,12 +196,12 @@ static void parse(const std::string& cmd) {
   RatioHuntInfo.coords.clear();
   LeaderHuntInfo.coords.clear();
 
-  logDebugMessage(2, "AutoHunt: %s\n", cmd.c_str());
+  debugf(2, "AutoHunt: %s\n", cmd.c_str());
   std::vector<std::string> tokens = TextUtils::tokenize(cmd, ":");
 
   for (int i = 0; i < (int)tokens.size(); i++) {
     std::string token = TextUtils::toupper(tokens[i]);
-    logDebugMessage(2, "  Token: %-10s", token.c_str());
+    debugf(2, "  Token: %-10s", token.c_str());
 
     bool useRange = true;
 
@@ -218,7 +218,7 @@ static void parse(const std::string& cmd) {
         }
         else {
           errors.push_back(tokens[i]);
-          logDebugMessage(2, "Error parsing level\n");
+          debugf(2, "Error parsing level\n");
           continue;
         }
       }
@@ -240,7 +240,7 @@ static void parse(const std::string& cmd) {
       }
       else {
         errors.push_back(tokens[i]);
-        logDebugMessage(2, "Error parsing proximity\n");
+        debugf(2, "Error parsing proximity\n");
         continue;
       }
     }
@@ -249,81 +249,81 @@ static void parse(const std::string& cmd) {
     if (token == "COUNT") {
       if (useRange) {
         setupHuntInfoRange(ChevronCountHuntInfo, range);
-        logDebugMessage(2, "(count/range)\n");
+        debugf(2, "(count/range)\n");
       }
       else {
         ChevronCountHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(count/%i/%f)\n", level, proximity);
+        debugf(2, "(count/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "SPACE") {
       if (useRange) {
         setupHuntInfoRange(ChevronSpaceHuntInfo, range);
-        logDebugMessage(2, "(space/range)\n");
+        debugf(2, "(space/range)\n");
       }
       else {
         ChevronSpaceHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(space/%i/%f)\n", level, proximity);
+        debugf(2, "(space/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "DELTA") {
       if (useRange) {
         setupHuntInfoRange(ChevronDeltaHuntInfo, range);
-        logDebugMessage(2, "(delta/range)\n");
+        debugf(2, "(delta/range)\n");
       }
       else {
         ChevronDeltaHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(delta/%i/%f)\n", level, proximity);
+        debugf(2, "(delta/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "IALPHA") {
       if (useRange) {
         setupHuntInfoRange(ChevronInnerAlphaHuntInfo, range);
-        logDebugMessage(2, "(ialpha/range)\n");
+        debugf(2, "(ialpha/range)\n");
       }
       else {
         ChevronInnerAlphaHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(ialpha/%i/%f)\n", level, proximity);
+        debugf(2, "(ialpha/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "OALPHA") {
       if (useRange) {
         setupHuntInfoRange(ChevronOuterAlphaHuntInfo, range);
-        logDebugMessage(2, "(oalpha/range)\n");
+        debugf(2, "(oalpha/range)\n");
       }
       else {
         ChevronOuterAlphaHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(oalpha/%i/%f)\n", level, proximity);
+        debugf(2, "(oalpha/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "PERIOD") {
       if (useRange) {
         setupHuntInfoRange(BlinkPeriodHuntInfo, range);
-        logDebugMessage(2, "(period/range)\n");
+        debugf(2, "(period/range)\n");
       }
       else {
         BlinkPeriodHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(period/%i/%f)\n", level, proximity);
+        debugf(2, "(period/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "IBLINK") {
       if (useRange) {
         setupHuntInfoRange(InnerBlinkHuntInfo, range);
-        logDebugMessage(2, "(iblink/range)\n");
+        debugf(2, "(iblink/range)\n");
       }
       else {
         InnerBlinkHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(iblink/%i/%f)\n", level, proximity);
+        debugf(2, "(iblink/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "OBLINK") {
       if (useRange) {
         setupHuntInfoRange(OuterBlinkHuntInfo, range);
-        logDebugMessage(2, "(oblink/range)\n");
+        debugf(2, "(oblink/range)\n");
       }
       else {
         OuterBlinkHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(oblink/%i/%f)\n", level, proximity);
+        debugf(2, "(oblink/%i/%f)\n", level, proximity);
       }
     }
     // Range Control
@@ -332,51 +332,51 @@ static void parse(const std::string& cmd) {
       range.maxLevel = LevelCount - 1;
       range.minProximity = proximity;
       range.maxProximity = proximity;
-      logDebugMessage(2, "(range set/%f)\n", proximity);
+      debugf(2, "(range set/%f)\n", proximity);
     }
     else if (token == "RESET") {
       range.reset();
-      logDebugMessage(2, "(range reset)\n");
+      debugf(2, "(range reset)\n");
     }
     else if (token == "MIN") {
       range.minLevel = level;
       range.minProximity = proximity;
-      logDebugMessage(2, "(range min/%i/%f)\n", level, proximity);
+      debugf(2, "(range min/%i/%f)\n", level, proximity);
     }
     else if (token == "MAX") {
       range.maxLevel = level;
       range.maxProximity = proximity;
-      logDebugMessage(2, "(range max/%i/%f)\n", level, proximity);
+      debugf(2, "(range max/%i/%f)\n", level, proximity);
     }
     // Specific trigger types
     else if (token == "TKS") {
       if (useRange) {
         setupHuntInfoRange(TkHuntInfo, range);
-        logDebugMessage(2, "(TKs/range)\n");
+        debugf(2, "(TKs/range)\n");
       }
       else {
         TkHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(TKs/%i/%f)\n", level, proximity);
+        debugf(2, "(TKs/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "RATIO") {
       if (useRange) {
         setupHuntInfoRange(RatioHuntInfo, range);
-        logDebugMessage(2, "(ratio/range)\n");
+        debugf(2, "(ratio/range)\n");
       }
       else {
         RatioHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(ratio/%i/%f)\n", level, proximity);
+        debugf(2, "(ratio/%i/%f)\n", level, proximity);
       }
     }
     else if (token == "LEADER") {
       if (useRange) {
         setupHuntInfoRange(LeaderHuntInfo, range);
-        logDebugMessage(2, "(leader/range)\n");
+        debugf(2, "(leader/range)\n");
       }
       else {
         LeaderHuntInfo.coords[level] = proximity;
-        logDebugMessage(2, "(leader/%i/%f)\n", level, proximity);
+        debugf(2, "(leader/%i/%f)\n", level, proximity);
       }
     }
     // Flag trigger types
@@ -390,16 +390,16 @@ static void parse(const std::string& cmd) {
           HuntInfo& hi = fhi[ft];
           if (useRange) {
             setupHuntInfoRange(hi, range);
-            logDebugMessage(2, "(soloFlag/range)\n");
+            debugf(2, "(soloFlag/range)\n");
           }
           else {
             hi.coords[level] = proximity;
-            logDebugMessage(2, "(soloFlag/%i/%f)\n", level, proximity);
+            debugf(2, "(soloFlag/%i/%f)\n", level, proximity);
           }
         }
         else {
           errors.push_back(tokens[i]);
-          logDebugMessage(2, "Error parsing solo flag type\n");
+          debugf(2, "Error parsing solo flag type\n");
         }
       }
       else if (flags.size() == 2) {
@@ -411,21 +411,21 @@ static void parse(const std::string& cmd) {
           HuntInfo& hi = fhi[ft1];
           if (useRange) {
             setupHuntInfoRange(hi, range);
-            logDebugMessage(2, "(flagPair/range)\n");
+            debugf(2, "(flagPair/range)\n");
           }
           else {
             hi.coords[level] = proximity;
-            logDebugMessage(2, "(flagPair/%i/%f)\n", level, proximity);
+            debugf(2, "(flagPair/%i/%f)\n", level, proximity);
           }
         }
         else {
           errors.push_back(tokens[i]);
-          logDebugMessage(2, "Error parsing flag pair type\n");
+          debugf(2, "Error parsing flag pair type\n");
         }
       }
       else {
         errors.push_back(tokens[i]);
-        logDebugMessage(2, "Error parsing token type\n");
+        debugf(2, "Error parsing token type\n");
       }
     }
   }
@@ -511,43 +511,43 @@ static void printConfig() {
     return;
   }
 
-  logDebugMessage(2, "AutoHunt Config:\n");
-  logDebugMessage(2, "---------------:\n");
+  debugf(2, "AutoHunt Config:\n");
+  debugf(2, "---------------:\n");
   std::map<int, float>::const_iterator cit;
   FlagPairMap::const_iterator it;
   for (it = FlagPairs.begin(); it != FlagPairs.end(); it++) {
-    logDebugMessage(2, "  %s\n", (it->first == Flags::Null) ? "NULL" : it->first->flagAbbv.c_str());
+    debugf(2, "  %s\n", (it->first == Flags::Null) ? "NULL" : it->first->flagAbbv.c_str());
     const FlagHuntInfoMap& fhim = it->second;
     FlagHuntInfoMap::const_iterator fhim_it;
     for (fhim_it = fhim.begin(); fhim_it != fhim.end(); fhim_it++) {
-      logDebugMessage(2, "    %s\n", fhim_it->first->flagAbbv.c_str());
+      debugf(2, "    %s\n", fhim_it->first->flagAbbv.c_str());
       const HuntInfo& hi = fhim_it->second;
       for (cit = hi.coords.begin(); cit != hi.coords.end(); cit++) {
-        logDebugMessage(2, "      level: %i, dist: %f\n", cit->first, cit->second);
+        debugf(2, "      level: %i, dist: %f\n", cit->first, cit->second);
       }
     }
   }
 
-  logDebugMessage(2, "Tk:\n");
+  debugf(2, "Tk:\n");
   const HuntInfo& thi = TkHuntInfo;
   for (cit = thi.coords.begin(); cit != thi.coords.end(); cit++) {
-    logDebugMessage(2, "  level: %i, dist: %f\n", cit->first, cit->second);
+    debugf(2, "  level: %i, dist: %f\n", cit->first, cit->second);
   }
 
-  logDebugMessage(2, "Ratio:\n");
+  debugf(2, "Ratio:\n");
   const HuntInfo& rhi = RatioHuntInfo;
   for (cit = rhi.coords.begin(); cit != rhi.coords.end(); cit++) {
-    logDebugMessage(2, "  level: %i, dist: %f\n", cit->first, cit->second);
+    debugf(2, "  level: %i, dist: %f\n", cit->first, cit->second);
   }
 
-  logDebugMessage(2, "Leader:\n");
+  debugf(2, "Leader:\n");
   const HuntInfo& lhi = RatioHuntInfo;
   for (cit = lhi.coords.begin(); cit != lhi.coords.end(); cit++) {
-    logDebugMessage(2, "  level: %i, dist: %f\n", cit->first, cit->second);
+    debugf(2, "  level: %i, dist: %f\n", cit->first, cit->second);
   }
-  logDebugMessage(2, "Styles:    count space delta ialpha oalpha period iblink oblink\n");
+  debugf(2, "Styles:    count space delta ialpha oalpha period iblink oblink\n");
   for (int i = 1; i < LevelCount; i++) {
-    logDebugMessage(2, "  level %i:   %i  %5.2f %5.2f %5.2f %6.2f %6.2f %6.2f %6.2f\n", i,
+    debugf(2, "  level %i:   %i  %5.2f %5.2f %5.2f %6.2f %6.2f %6.2f %6.2f\n", i,
                     ChevronCounts[i],
                     ChevronSpaces[i],
                     ChevronDeltas[i],

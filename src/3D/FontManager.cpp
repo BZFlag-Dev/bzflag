@@ -196,7 +196,7 @@ FTFont* BZFontFace_impl::loadSize(size_t size) {
 
   if (!font || font->Error() != 0) {
     // TODO: what can we do to try to resolve this?
-    logDebugMessage(1, "Font creation failed: face:%s size:%d error:%d\n", name().c_str(), size, (font ? font->Error() : ~0));
+    debugf(1, "Font creation failed: face:%s size:%d error:%d\n", name().c_str(), size, (font ? font->Error() : ~0));
 
     delete font;
     return NULL;
@@ -315,7 +315,7 @@ int FontManager::loadAll(std::string directory) {
       count++;
     }
     else {
-      logDebugMessage(4, "Font Texture load failed: %s\n", file.getOSName().c_str());
+      debugf(4, "Font Texture load failed: %s\n", file.getOSName().c_str());
     }
   } // end while iteration over ttf files
 
@@ -372,13 +372,13 @@ int FontManager::getFaceID(std::string const& faceName, bool quietly) {
   // no luck finding the one requested, try anything
   if (fontFaces.size() > 0) {
     if (!quietly) {
-      logDebugMessage(3, "Requested font %s not found, using %s instead\n",
+      debugf(3, "Requested font %s not found, using %s instead\n",
                       faceName.c_str(), fontFaces[0].name().c_str());
     }
     return 0;
   }
 
-  logDebugMessage(2, "No fonts loaded\n");
+  debugf(2, "No fonts loaded\n");
   return -1;
 }
 
@@ -390,7 +390,7 @@ int FontManager::getNumFaces(void) {
 
 const char* FontManager::getFaceName(int faceID) {
   if ((faceID < 0) || (faceID > getNumFaces())) {
-    logDebugMessage(2, "Trying to fetch name for invalid Font Face ID %d\n", faceID);
+    debugf(2, "Trying to fetch name for invalid Font Face ID %d\n", faceID);
     return (char*)NULL;
   }
 
@@ -477,7 +477,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   int textlen = (int)strlen(text.c_str()); // use strlen, for FTGL
   if (textlen >= bufSize) {
-    logDebugMessage(1, "drawString text is too long: %i\n", textlen);
+    debugf(1, "drawString text is too long: %i\n", textlen);
     textlen = (bufSize - 1);
   }
   memcpy(buffer, text.c_str(), textlen + 1);
@@ -485,7 +485,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
   FTFont* theFont = getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
-    logDebugMessage(2, "Trying to draw with an invalid font face ID %d\n", faceID);
+    debugf(2, "Trying to draw with an invalid font face ID %d\n", faceID);
     return;
   }
 
@@ -641,7 +641,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       }
       startSend++;
       if (startSend == 0) {
-        logDebugMessage(1,
+        debugf(1,
                         "drawString found an ansi sequence that didn't terminate");
         break; // break out of the while loop
       }
@@ -736,16 +736,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
         }
         else {
           // print out the code nicely so that it matches the C string
-          logDebugMessage(2, "ANSI Code [");
+          debugf(2, "ANSI Code [");
           for (int i = 0; i < (int)strlen(tmpText); i++) {
             if (isprint(tmpText[i])) {
-              logDebugMessage(2, "%c", tmpText[i]);
+              debugf(2, "%c", tmpText[i]);
             }
             else {
-              logDebugMessage(2, "\\%03o", tmpText[i]);
+              debugf(2, "\\%03o", tmpText[i]);
             }
           }
-          logDebugMessage(2, "] not supported\n");
+          debugf(2, "] not supported\n");
         }
       }
 
@@ -781,7 +781,7 @@ float FontManager::getStringWidth(int faceID, float size, const std::string& tex
 
   FTFont* theFont = getGLFont(faceID, (int)size);
   if ((faceID < 0) || !theFont) {
-    logDebugMessage(2, "Trying to find length of string for an invalid font face ID %d\n", faceID);
+    debugf(2, "Trying to find length of string for an invalid font face ID %d\n", faceID);
     return 0.0f;
   }
 

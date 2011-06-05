@@ -357,7 +357,7 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const {
     }
     default: {
       // FIXME - choke here?
-      logDebugMessage(0,
+      debugf(0,
                       "*** Unknown obstacle type in WorldInfo::classifyHit(): %i\n",
                       obstacle->getTypeID());
       return IN_BASE;
@@ -452,7 +452,7 @@ void WorldInfo::createFaceZones() {
         if (sd) {
           if (!sd->zoneParams.empty()) {
             if (!face->isFlatTop()) {
-              logDebugMessage(0, "WARNING: face zones must be flat tops\n");
+              debugf(0, "WARNING: face zones must be flat tops\n");
             }
             else {
               CustomZone zone(face);
@@ -463,7 +463,7 @@ void WorldInfo::createFaceZones() {
                   std::string cmd, args;
                   if (!parseLine(line, cmd, args) ||
                       !zone.readLine(cmd, args)) {
-                    logDebugMessage(0,
+                    debugf(0,
                                     "WARNING: invalid face zone parameter: %s\n",
                                     sd->zoneParams[i].c_str());
                   }
@@ -491,7 +491,7 @@ void WorldInfo::createMeshWeapons() {
         std::string cmd, args;
         if (!parseLine(lines[i], cmd, args) ||
             !weapon->readLine(cmd, args)) {
-          logDebugMessage(0, "WARNING: invalid mesh weapon parameter: %s\n",
+          debugf(0, "WARNING: invalid mesh weapon parameter: %s\n",
                           lines[i].c_str());
         }
       }
@@ -674,10 +674,10 @@ int WorldInfo::packDatabase() {
   delete[] database;
   database = gzDB;
 
-  logDebugMessage(1, "Map size: uncompressed = %i, compressed = %i\n",
+  debugf(1, "Map size: uncompressed = %i, compressed = %i\n",
                   uncompressedSize, databaseSize);
 
-  logDebugMessage(3, "Compression: %.3f seconds\n", endTime - startTime);
+  debugf(3, "Compression: %.3f seconds\n", endTime - startTime);
 
   return 1;
 }

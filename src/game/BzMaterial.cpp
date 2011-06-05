@@ -269,11 +269,11 @@ std::string BzMaterial::convertTexture(const std::string& oldTex) {
         newName += ".png";
 
         convMap[oldName] = newName;
-        logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
+        debugf(6, "TEXTURE MAP:  %-23s  =>  %s\n",
                         oldName.c_str(), newName.c_str());
         oldName += ".png";
         convMap[oldName] = newName;
-        logDebugMessage(6, "TEXTURE MAP:  %-23s  =>  %s\n",
+        debugf(6, "TEXTURE MAP:  %-23s  =>  %s\n",
                         oldName.c_str(), newName.c_str());
       }
     }
@@ -281,7 +281,7 @@ std::string BzMaterial::convertTexture(const std::string& oldTex) {
 
   std::map<std::string, std::string>::const_iterator it = convMap.find(oldTex);
   if (it != convMap.end()) {
-    logDebugMessage(0, "WARNING: converted texture '%s' to '%s'\n",
+    debugf(0, "WARNING: converted texture '%s' to '%s'\n",
                     oldTex.c_str(), it->second.c_str());
     return it->second;
   }

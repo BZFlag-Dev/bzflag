@@ -121,7 +121,7 @@ void DangerousSpawnPolicy::getPosition(fvec3& pos, int playerId,
             pos.x = testPos.x;
             pos.y = testPos.y;
             pos.z = maxHeight;
-            logDebugMessage(1, "Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
+            debugf(1, "Warning: DangerousSpawnPolicy ran out of time, just dropping the sucker in\n");
           }
           break;
         }

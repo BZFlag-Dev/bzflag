@@ -305,7 +305,7 @@ bool operator<(const ServerItem& left, const ServerItem& right) {
     return false;
   }
 
-  logDebugMessage(0, "Error: operator<: equality detected.\n");
+  debugf(0, "Error: operator<: equality detected.\n");
   return false; // arbitrary
 }
 

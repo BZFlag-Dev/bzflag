@@ -178,7 +178,7 @@ void NewVersionMenu::finalization(char* data, unsigned int length, bool good) {
         else {
           ((HUDuiLabel*)status)->setString(TextUtils::format("Failed... unknown error (%d).", errno).c_str());
         }
-        logDebugMessage(1, "Failed to start upgrade installer (%s) - error %d.\n", tempfile, errno);
+        debugf(1, "Failed to start upgrade installer (%s) - error %d.\n", tempfile, errno);
       }
       else {
         ((HUDuiLabel*)status)->setString("Installer started.");

@@ -119,15 +119,15 @@ void MeshFace::finalize() {
   }
 
   if (maxCrossSqr < +1.0e-20f) {
-    logDebugMessage(1, "invalid mesh face (%f)", maxCrossSqr);
+    debugf(1, "invalid mesh face (%f)", maxCrossSqr);
     if ((debugLevel >= 3) && (mesh != NULL)) {
-      logDebugMessage(0, ":");
+      debugf(0, ":");
       for (i = 0; i < vertexCount; i++) {
-        logDebugMessage(0, " %i", (int)(vertices[i] - mesh->getVertices()));
+        debugf(0, " %i", (int)(vertices[i] - mesh->getVertices()));
       }
       print(std::cerr, "");
     }
-    logDebugMessage(1, "\n");
+    debugf(1, "\n");
 
     vertexCount = 0;
     return;
@@ -148,15 +148,15 @@ void MeshFace::finalize() {
     c = fvec3::cross(a, b);
     const float d = fvec3::dot(c, plane.xyz());
     if (d <= 0.0f) {
-      logDebugMessage(1, "non-convex mesh face (%f)", d);
+      debugf(1, "non-convex mesh face (%f)", d);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-        logDebugMessage(0, ":");
+        debugf(0, ":");
         for (i = 0; i < vertexCount; i++) {
-          logDebugMessage(0, " %i", (int)(vertices[i] - mesh->getVertices()));
+          debugf(0, " %i", (int)(vertices[i] - mesh->getVertices()));
         }
         print(std::cerr, "");
       }
-      logDebugMessage(1, "\n");
+      debugf(1, "\n");
 
       vertexCount = 0;
       return;
@@ -167,15 +167,15 @@ void MeshFace::finalize() {
   for (v = 0; v < vertexCount; v++) {
     const float cross = fvec3::dot(*vertices[v], plane.xyz());
     if (fabsf(cross + plane.w) > 1.0e-3) {
-      logDebugMessage(1, "non-planar mesh face (%f)", cross + plane.w);
+      debugf(1, "non-planar mesh face (%f)", cross + plane.w);
       if ((debugLevel >= 3) && (mesh != NULL)) {
-        logDebugMessage(0, ":");
+        debugf(0, ":");
         for (i = 0; i < vertexCount; i++) {
-          logDebugMessage(0, " %i", (int)(vertices[i] - mesh->getVertices()));
+          debugf(0, " %i", (int)(vertices[i] - mesh->getVertices()));
         }
         print(std::cerr, "");
       }
-      logDebugMessage(1, "\n");
+      debugf(1, "\n");
 
       vertexCount = 0;
       return;
@@ -253,7 +253,7 @@ void MeshFace::setupSpecialData() {
   // team bases must be flat tops
   if (sd.baseTeam >= 0) {
     if (!isFlatTop()) {
-      logDebugMessage(0, "baseTeam mesh faces must be flat tops (team %i)\n",
+      debugf(0, "baseTeam mesh faces must be flat tops (team %i)\n",
                       sd.baseTeam);
       sd.baseTeam = -1;
     }
@@ -946,11 +946,11 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
   const MeshFace& srcFace = *this;
 
   if (!srcFace.isLinkSrc()) {
-    logDebugMessage(0, "MeshFace::teleportShot() invalid src\n");
+    debugf(0, "MeshFace::teleportShot() invalid src\n");
     return false;
   }
   if (!dstFace.isLinkDst()) {
-    logDebugMessage(0, "MeshFace::teleportShot() invalid dst\n");
+    debugf(0, "MeshFace::teleportShot() invalid dst\n");
     return false;
   }
 
@@ -960,21 +960,21 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
   const LinkGeometry& dstGeo = dstSD.linkDstGeo;
 
   if (debugTele && !BZDBCache::forbidDebug) {
-    logDebugMessage(0, "teleportShot  %s -> %s\n",
+    debugf(0, "teleportShot  %s -> %s\n",
                     srcFace.getLinkName().c_str(),
                     dstFace.getLinkName().c_str());
     linkPhysics.print(std::cout, "  linkPhysics:");
-    logDebugMessage(0, "  srcPos = %s\n", srcPos.tostring().c_str());
-    logDebugMessage(0, "  srcVel = %s\n", srcVel.tostring().c_str());
+    debugf(0, "  srcPos = %s\n", srcPos.tostring().c_str());
+    debugf(0, "  srcVel = %s\n", srcVel.tostring().c_str());
     const LinkGeometry& sg = srcGeo;
-    logDebugMessage(0, "  srcGeo.center = %s\n", sg.center.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.sDir   = %s\n", sg.sDir.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.tDir   = %s\n", sg.tDir.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.pDir   = %s\n", sg.pDir.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.sScale = %f\n", sg.sScale);
-    logDebugMessage(0, "  srcGeo.tScale = %f\n", sg.tScale);
-    logDebugMessage(0, "  srcGeo.pScale = %f\n", sg.pScale);
-    logDebugMessage(0, "  srcGeo.angle  = %f\n", sg.angle);
+    debugf(0, "  srcGeo.center = %s\n", sg.center.tostring().c_str());
+    debugf(0, "  srcGeo.sDir   = %s\n", sg.sDir.tostring().c_str());
+    debugf(0, "  srcGeo.tDir   = %s\n", sg.tDir.tostring().c_str());
+    debugf(0, "  srcGeo.pDir   = %s\n", sg.pDir.tostring().c_str());
+    debugf(0, "  srcGeo.sScale = %f\n", sg.sScale);
+    debugf(0, "  srcGeo.tScale = %f\n", sg.tScale);
+    debugf(0, "  srcGeo.pScale = %f\n", sg.pScale);
+    debugf(0, "  srcGeo.angle  = %f\n", sg.angle);
   }
 
   // position
@@ -1013,17 +1013,17 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
   dstVel = vel;
 
   if (debugTele && !BZDBCache::forbidDebug) {
-    logDebugMessage(0, "  dstPos = %s\n", dstPos.tostring().c_str());
-    logDebugMessage(0, "  dstVel = %s\n", dstVel.tostring().c_str());
+    debugf(0, "  dstPos = %s\n", dstPos.tostring().c_str());
+    debugf(0, "  dstVel = %s\n", dstVel.tostring().c_str());
     const LinkGeometry& dg = dstGeo;
-    logDebugMessage(0, "  dstGeo.center = %s\n", dg.center.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.sDir   = %s\n", dg.sDir.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.tDir   = %s\n", dg.tDir.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.pDir   = %s\n", dg.pDir.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.sScale = %f\n", dg.sScale);
-    logDebugMessage(0, "  dstGeo.tScale = %f\n", dg.tScale);
-    logDebugMessage(0, "  dstGeo.pScale = %f\n", dg.pScale);
-    logDebugMessage(0, "  dstGeo.angle  = %f\n", dg.angle);
+    debugf(0, "  dstGeo.center = %s\n", dg.center.tostring().c_str());
+    debugf(0, "  dstGeo.sDir   = %s\n", dg.sDir.tostring().c_str());
+    debugf(0, "  dstGeo.tDir   = %s\n", dg.tDir.tostring().c_str());
+    debugf(0, "  dstGeo.pDir   = %s\n", dg.pDir.tostring().c_str());
+    debugf(0, "  dstGeo.sScale = %f\n", dg.sScale);
+    debugf(0, "  dstGeo.tScale = %f\n", dg.tScale);
+    debugf(0, "  dstGeo.pScale = %f\n", dg.pScale);
+    debugf(0, "  dstGeo.angle  = %f\n", dg.angle);
   }
 
   return true;
@@ -1053,11 +1053,11 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   const MeshFace& srcFace = *this;
 
   if (!srcFace.isLinkSrc()) {
-    logDebugMessage(0, "MeshFace::teleportTank() invalid src\n");
+    debugf(0, "MeshFace::teleportTank() invalid src\n");
     return false;
   }
   if (!dstFace.isLinkDst()) {
-    logDebugMessage(0, "MeshFace::teleportTank() invalid dst\n");
+    debugf(0, "MeshFace::teleportTank() invalid dst\n");
     return false;
   }
 
@@ -1067,21 +1067,21 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   const LinkGeometry& dstGeo = dstSD.linkDstGeo;
 
   if (debugTele) {
-    logDebugMessage(0, "teleportTank  %s -> %s\n",
+    debugf(0, "teleportTank  %s -> %s\n",
                     srcFace.getLinkName().c_str(),
                     dstFace.getLinkName().c_str());
     linkPhysics.print(std::cout, "  linkPhysics:");
-    logDebugMessage(0, "  srcPos = %s\n", srcPos.tostring().c_str());
-    logDebugMessage(0, "  srcVel = %s\n", srcVel.tostring().c_str());
+    debugf(0, "  srcPos = %s\n", srcPos.tostring().c_str());
+    debugf(0, "  srcVel = %s\n", srcVel.tostring().c_str());
     const LinkGeometry& sg = srcGeo;
-    logDebugMessage(0, "  srcGeo.center = %s\n", sg.center.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.sDir   = %s\n", sg.sDir.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.tDir   = %s\n", sg.tDir.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.pDir   = %s\n", sg.pDir.tostring().c_str());
-    logDebugMessage(0, "  srcGeo.sScale = %f\n", sg.sScale);
-    logDebugMessage(0, "  srcGeo.tScale = %f\n", sg.tScale);
-    logDebugMessage(0, "  srcGeo.pScale = %f\n", sg.pScale);
-    logDebugMessage(0, "  srcGeo.angle  = %f\n", sg.angle);
+    debugf(0, "  srcGeo.center = %s\n", sg.center.tostring().c_str());
+    debugf(0, "  srcGeo.sDir   = %s\n", sg.sDir.tostring().c_str());
+    debugf(0, "  srcGeo.tDir   = %s\n", sg.tDir.tostring().c_str());
+    debugf(0, "  srcGeo.pDir   = %s\n", sg.pDir.tostring().c_str());
+    debugf(0, "  srcGeo.sScale = %f\n", sg.sScale);
+    debugf(0, "  srcGeo.tScale = %f\n", sg.tScale);
+    debugf(0, "  srcGeo.pScale = %f\n", sg.pScale);
+    debugf(0, "  srcGeo.angle  = %f\n", sg.angle);
   }
 
   // position
@@ -1140,17 +1140,17 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   }
 
   if (debugTele) {
-    logDebugMessage(0, "  dstPos = %s\n", dstPos.tostring().c_str());
-    logDebugMessage(0, "  dstVel = %s\n", dstVel.tostring().c_str());
+    debugf(0, "  dstPos = %s\n", dstPos.tostring().c_str());
+    debugf(0, "  dstVel = %s\n", dstVel.tostring().c_str());
     const LinkGeometry& dg = dstGeo;
-    logDebugMessage(0, "  dstGeo.center = %s\n", dg.center.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.sDir   = %s\n", dg.sDir.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.tDir   = %s\n", dg.tDir.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.pDir   = %s\n", dg.pDir.tostring().c_str());
-    logDebugMessage(0, "  dstGeo.sScale = %f\n", dg.sScale);
-    logDebugMessage(0, "  dstGeo.tScale = %f\n", dg.tScale);
-    logDebugMessage(0, "  dstGeo.pScale = %f\n", dg.pScale);
-    logDebugMessage(0, "  dstGeo.angle  = %f\n", dg.angle);
+    debugf(0, "  dstGeo.center = %s\n", dg.center.tostring().c_str());
+    debugf(0, "  dstGeo.sDir   = %s\n", dg.sDir.tostring().c_str());
+    debugf(0, "  dstGeo.tDir   = %s\n", dg.tDir.tostring().c_str());
+    debugf(0, "  dstGeo.pDir   = %s\n", dg.pDir.tostring().c_str());
+    debugf(0, "  dstGeo.sScale = %f\n", dg.sScale);
+    debugf(0, "  dstGeo.tScale = %f\n", dg.tScale);
+    debugf(0, "  dstGeo.pScale = %f\n", dg.pScale);
+    debugf(0, "  dstGeo.angle  = %f\n", dg.angle);
   }
 
   return true;

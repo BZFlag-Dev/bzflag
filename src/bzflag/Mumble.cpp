@@ -87,7 +87,7 @@ bool Mumble::init() {
 
   shmfd = shm_open(memname, O_RDWR, S_IRUSR | S_IWUSR);
   if (shmfd < 0) {
-    logDebugMessage(0, "MUMBLE: failed to open %s\n", memname);
+    debugf(0, "MUMBLE: failed to open %s\n", memname);
     return false;
   }
 
@@ -97,13 +97,13 @@ bool Mumble::init() {
     linkedMem = NULL;
     close(shmfd);
     shmfd = -1;
-    logDebugMessage(0, "MUMBLE: failed to map %s\n", memname);
+    debugf(0, "MUMBLE: failed to map %s\n", memname);
     return false;
   }
 
   swprintf(linkedMem->name, linkNameLen, L"BZFlag(%d)", (int)getpid());
 
-  logDebugMessage(0, "MUMBLE: linked using %s\n", memname);
+  debugf(0, "MUMBLE: linked using %s\n", memname);
 
   return true;
 }
@@ -142,7 +142,7 @@ bool Mumble::init() {
 
   hMapObject = OpenFileMappingW(FILE_MAP_ALL_ACCESS, FALSE, L"MumbleLink");
   if (hMapObject == NULL) {
-    logDebugMessage(0, "MUMBLE: failed to open MumbleLink\n");
+    debugf(0, "MUMBLE: failed to open MumbleLink\n");
     return false;
   }
 
@@ -151,13 +151,13 @@ bool Mumble::init() {
   if (linkedMem == NULL) {
     CloseHandle(hMapObject);
     hMapObject = NULL;
-    logDebugMessage(0, "MUMBLE: failed to map MumbleLink\n");
+    debugf(0, "MUMBLE: failed to map MumbleLink\n");
     return false;
   }
 
   swprintf(linkedMem->name, linkNameLen, L"BZFlag(%d)", _getpid());
 
-  logDebugMessage(0, "MUMBLE: linked using MumbleLink\n");
+  debugf(0, "MUMBLE: linked using MumbleLink\n");
 
   return true;
 }

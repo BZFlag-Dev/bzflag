@@ -585,7 +585,7 @@ int LuaCallOuts::Debug(lua_State* L) {
     level = lua_toint(L, start);
     start++;
   }
-  logDebugMessage(level, ArgsToString(L, start, end));
+  debugf(level, ArgsToString(L, start, end));
   return 0;
 }
 

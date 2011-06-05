@@ -76,7 +76,7 @@ class HubLink {
     void startComposing();
 
   public:
-    static void debugf(int level, const char* fmt, ...);
+    static void hubDebugf(int level, const char* fmt, ...);
 
   protected:
     // internal call-ins

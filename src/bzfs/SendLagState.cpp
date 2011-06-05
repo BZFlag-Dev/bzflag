@@ -78,7 +78,7 @@ void SendLagState::update() {
 
   nboPackUInt8(netMsg.getData(), entryCount);
 
-  logDebugMessage(6, "MsgLagState sent with %i entries\n", (int) entryCount);
+  debugf(6, "MsgLagState sent with %i entries\n", (int) entryCount);
 
   netMsg.broadcast(MsgLagState);
 }

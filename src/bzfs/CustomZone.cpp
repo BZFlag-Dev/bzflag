@@ -133,11 +133,11 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line) {
       else {
         FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
         if (f == Flags::Null) {
-          logDebugMessage(0, "WARNING: bad flag type: %s\n", flag.c_str());
+          debugf(0, "WARNING: bad flag type: %s\n", flag.c_str());
           return false;
         }
         if (f->endurance == FlagNormal) {
-          logDebugMessage(0, "WARNING: you probably want a safety: %s\n", flag.c_str());
+          debugf(0, "WARNING: you probably want a safety: %s\n", flag.c_str());
           return false;
         }
         const std::string& qual = getFlagTypeQualifier(f);
@@ -186,7 +186,7 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line) {
         addZoneFlagCount(f, count);
       }
       else {
-        logDebugMessage(0, "WARNING: bad zoneflag type: %s\n", flag.c_str());
+        debugf(0, "WARNING: bad zoneflag type: %s\n", flag.c_str());
         return false;
       }
     }
@@ -197,7 +197,7 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line) {
 
     while (parms >> color) {
       if ((color < 0) || (color >= CtfTeams)) {
-        logDebugMessage(0, "WARNING: bad team number: %i\n", color);
+        debugf(0, "WARNING: bad team number: %i\n", color);
         return false;
       }
       std::string qual;
@@ -217,13 +217,13 @@ bool CustomZone::readLine(const std::string& cmd, const std::string& line) {
   }
   else if ((face != NULL) && (lower == "height")) {
     if (!(parms >> faceHeight)) {
-      logDebugMessage(0, "WARNING: invalid zone height\n");
+      debugf(0, "WARNING: invalid zone height\n");
       return false;
     }
   }
   else if ((face != NULL) && (lower == "weight")) {
     if (!(parms >> faceWeight)) {
-      logDebugMessage(0, "WARNING: invalid zone weight\n");
+      debugf(0, "WARNING: invalid zone weight\n");
       return false;
     }
   }

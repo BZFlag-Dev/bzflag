@@ -49,7 +49,7 @@ const std::string HubLink::codeFileName = "hub.lua";
 //============================================================================//
 //============================================================================//
 
-void HubLink::debugf(int level, const char* fmt, ...) {
+void HubLink::hubDebugf(int level, const char* fmt, ...) {
   static BZDB_int debugHub("debugHub");
   if (level > debugHub) {
     return;
@@ -57,7 +57,7 @@ void HubLink::debugf(int level, const char* fmt, ...) {
   const std::string fmt2 = std::string("Hub: ") + fmt;
   va_list ap;
   va_start(ap, fmt);
-  logDebugMessageArgs(0, fmt2.c_str(), ap);
+  vdebugf(0, fmt2.c_str(), ap);
   va_end(ap);
 }
 
@@ -127,7 +127,7 @@ void HubLink::clear() {
 
 void HubLink::fail(const std::string& msg) {
   state = StateFailed;
-  debugf(1, "entered StateFailed\n");
+  hubDebugf(1, "entered StateFailed\n");
   failMsg = msg;
   clear();
 }
@@ -239,7 +239,7 @@ bool HubLink::update() {
     if (controlPanel) {
       controlPanel->addMessage("Hub: " + failMsg);
     }
-    logDebugMessage(0, "Hub: %s\n", failMsg.c_str());
+    debugf(0, "Hub: %s\n", failMsg.c_str());
     return false;
   }
 
@@ -256,11 +256,11 @@ void HubLink::stateInit() {
     fail("bad server address/port");
     return;
   }
-  debugf(1, "stateInit() host='%s' port=%i\n", host.c_str(), port);
+  hubDebugf(1, "stateInit() host='%s' port=%i\n", host.c_str(), port);
   ares = new AresHandler();
   ares->queryHost(host.c_str());
   state = StateDNS;
-  debugf(1, "entered StateDNS\n");
+  hubDebugf(1, "entered StateDNS\n");
 }
 
 
@@ -323,7 +323,7 @@ void HubLink::stateDNS() {
   }
 
   state = StateConnect;
-  debugf(1, "entered StateConnect\n");
+  hubDebugf(1, "entered StateConnect\n");
 }
 
 
@@ -358,7 +358,7 @@ void HubLink::stateConnect() {
       return; // createLua() has its own fail() calls
     }
     state = StateReady;
-    debugf(1, "entered StateReady\n");
+    hubDebugf(1, "entered StateReady\n");
     return;
   }
 
@@ -373,7 +373,7 @@ void HubLink::stateConnect() {
       return; // createLua() has its own fail() calls
     }
     state = StateReady;
-    debugf(1, "entered StateReady\n");
+    hubDebugf(1, "entered StateReady\n");
     return;
   }
 
@@ -384,12 +384,12 @@ void HubLink::stateConnect() {
     msg += " " + TextUtils::itoa(luaCode.size());
     msg += " " + MD5(luaCode).hexdigest();
   }
-  debugf(1, "initial message = '%s'\n", msg.c_str());
+  hubDebugf(1, "initial message = '%s'\n", msg.c_str());
 
   sendData(msg + "\n");
 
   state = StateGetCode;
-  debugf(1, "entered StateGetCode\n");
+  hubDebugf(1, "entered StateGetCode\n");
 }
 
 
@@ -408,20 +408,20 @@ void HubLink::stateGetCode() {
   const std::string gzFilename = getLuaCodeFilename() + ".gz";
 
   if (gzCode.empty()) {
-    debugf(1, "lua code update is not required\n");
+    hubDebugf(1, "lua code update is not required\n");
   }
   else {
     if (!saveFile(gzFilename, gzCode)) {
       fail("could not save the lua gzipped code");
       return;
     }
-    debugf(1, "received %i bytes of compressed lua code\n", (int)gzCode.size());
+    hubDebugf(1, "received %i bytes of compressed lua code\n", (int)gzCode.size());
     std::string rawCode;
     if (!loadFile(gzFilename, rawCode)) {
       fail("could not load the lua gzipped code");
       return;
     }
-    debugf(1, "uncompressed code size is %i bytes\n", (int)rawCode.size());
+    hubDebugf(1, "uncompressed code size is %i bytes\n", (int)rawCode.size());
     luaCode = rawCode;
   }
 
@@ -437,7 +437,7 @@ void HubLink::stateGetCode() {
   if (!gzCode.empty()) {
     // save the new code (after it has been successfully used)
     if (!saveFile(getLuaCodeFilename(), luaCode)) {
-      debugf(1, "warning, could not save the uncompressed lua code\n");
+      hubDebugf(1, "warning, could not save the uncompressed lua code\n");
     }
     else {
       // remove the gzip file
@@ -446,7 +446,7 @@ void HubLink::stateGetCode() {
   }
 
   state = StateReady;
-  debugf(1, "entered StateReady\n");
+  hubDebugf(1, "entered StateReady\n");
 
   // send remaining received data to the script
   while (recvTotal > 0) {
@@ -506,7 +506,7 @@ bool HubLink::updateSend() {
       return false;
     }
     else {
-      debugf(1, "unknown send state\n");
+      hubDebugf(1, "unknown send state\n");
       return false;
     }
   }
@@ -519,7 +519,7 @@ bool HubLink::updateRecv(bool useBuffer) {
   while (true) {
     const int bytes = (int) recv(sock, buf, sizeof(buf), 0);
     if (bytes > 0) {
-      debugf(4, "received %i bytes\n", bytes);
+      hubDebugf(4, "received %i bytes\n", bytes);
       if (!useBuffer) {
         recvData(std::string(buf, bytes));
       }
@@ -541,7 +541,7 @@ bool HubLink::updateRecv(bool useBuffer) {
       return false;
     }
     else {
-      debugf(1, "unknown recv state\n");
+      hubDebugf(1, "unknown recv state\n");
       return false;
     }
   }

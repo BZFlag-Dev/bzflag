@@ -284,28 +284,28 @@ static bool CheckMatrixDepths(const char* name = "unknown") {
 
   glGetIntegerv(GL_MODELVIEW_STACK_DEPTH, &depth);
   if (depth != 1) {
-    logDebugMessage(1, "GL_MODELVIEW_STACK_DEPTH for %s at %i\n", name, depth);
+    debugf(1, "GL_MODELVIEW_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
   glGetIntegerv(GL_PROJECTION_STACK_DEPTH, &depth);
   if (depth != 1) {
-    logDebugMessage(1, "GL_PROJECTION_STACK_DEPTH for %s at %i\n", name, depth);
+    debugf(1, "GL_PROJECTION_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
   glGetIntegerv(GL_TEXTURE_STACK_DEPTH, &depth);
   if (depth != 1) {
-    logDebugMessage(1, "GL_TEXTURE_STACK_DEPTH for %s at %i\n", name, depth);
+    debugf(1, "GL_TEXTURE_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
 
   glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &depth);
   if (depth != 0) {
-    logDebugMessage(1, "GL_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
+    debugf(1, "GL_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
   glGetIntegerv(GL_CLIENT_ATTRIB_STACK_DEPTH, &depth);
   if (depth != 0) {
-    logDebugMessage(1, "GL_CLIENT_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
+    debugf(1, "GL_CLIENT_ATTRIB_STACK_DEPTH for %s at %i\n", name, depth);
     return false;
   }
 

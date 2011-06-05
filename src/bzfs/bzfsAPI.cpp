@@ -2255,7 +2255,7 @@ BZF_API void bz_debugMessage(int _level, const char* message) {
     return ;
   }
 
-  logDebugMessage(_level, "%s\n", message);
+  debugf(_level, "%s\n", message);
 }
 
 //-------------------------------------------------------------------------
@@ -3530,7 +3530,7 @@ BZF_API bool bz_loadPlugin(const char* path, const char* params) {
     config = params;
   }
 
-  logDebugMessage(2, "bz_loadPlugin: %s \n", path);
+  debugf(2, "bz_loadPlugin: %s \n", path);
 
   return loadPlugin(std::string(path), config);
 #else
@@ -4419,7 +4419,7 @@ BZF_API bool bz_restart(void) {
 
 BZF_API void bz_reloadLocalBans() {
   // reload the banlist
-  logDebugMessage(3, "Reloading bans\n");
+  debugf(3, "Reloading bans\n");
   clOptions->acl.load();
 
   rescanForBans();
@@ -4433,7 +4433,7 @@ BZF_API void bz_reloadMasterBans() {
   }
 
   // reload the banlist
-  logDebugMessage(3, "Reloading master bans\n");
+  debugf(3, "Reloading master bans\n");
   clOptions->acl.purgeMasters();
 
   masterBanHandler.start();
@@ -4442,7 +4442,7 @@ BZF_API void bz_reloadMasterBans() {
 //-------------------------------------------------------------------------
 
 BZF_API void bz_reloadGroups() {
-  logDebugMessage(3, "Reloading groups\n");
+  debugf(3, "Reloading groups\n");
   groupAccess.clear();
   initGroups();
 }
@@ -4450,7 +4450,7 @@ BZF_API void bz_reloadGroups() {
 //-------------------------------------------------------------------------
 
 BZF_API void bz_reloadUsers() {
-  logDebugMessage(3, "Reloading users and passwords\n");
+  debugf(3, "Reloading users and passwords\n");
   userDatabase.clear();
 
   if (userDatabaseFile.size()) {
@@ -4463,7 +4463,7 @@ BZF_API void bz_reloadUsers() {
 
 BZF_API void bz_reloadHelp() {
   // reload the text chunks
-  logDebugMessage(3, "Reloading helpfiles\n");
+  debugf(3, "Reloading helpfiles\n");
   clOptions->textChunker.reload();
 
   // check for new files in helpdirs
@@ -4473,7 +4473,7 @@ BZF_API void bz_reloadHelp() {
   for (i = clOptions->helpDirs.begin(); i != end; i++)
     while (i->getNextFile(f, "*.txt", false))
       if (clOptions->textChunker.parseFile(f.getFullOSPath(), f.getFileName(), 50, MessageLen)) {
-        logDebugMessage(3, "Loaded help message: %s", f.getFileName().c_str());
+        debugf(3, "Loaded help message: %s", f.getFileName().c_str());
       }
 }
 

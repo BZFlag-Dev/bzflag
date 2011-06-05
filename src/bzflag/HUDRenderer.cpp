@@ -1364,7 +1364,7 @@ void HUDRenderer::renderTimes(void) {
                   labelsFontFace->getFMFace(), labelsFontSize, buf);
 
     if ((int)(BzTime::getTick() - last) > 1) {
-      logDebugMessage(2, "%s\n", buf);
+      debugf(2, "%s\n", buf);
       last = BzTime::getTick();
     }
   }

@@ -70,7 +70,7 @@ void bzDeleteLists(GLuint base, GLsizei count) {
     glDeleteLists(base, count);
   }
   else {
-    logDebugMessage(4, "bzDeleteLists(), no context\n");
+    debugf(4, "bzDeleteLists(), no context\n");
   }
   return;
 }
@@ -99,7 +99,7 @@ void bzDeleteTextures(GLsizei count, const GLuint* textures) {
     glDeleteTextures(count, textures);
   }
   else {
-    logDebugMessage(4, "bzDeleteTextures(), no context\n");
+    debugf(4, "bzDeleteTextures(), no context\n");
   }
   return;
 }
@@ -127,7 +127,7 @@ void bzDeleteShader(GLuint shader) {
     glDeleteShader(shader);
   }
   else {
-    logDebugMessage(4, "bzDeleteShader(), no context\n");
+    debugf(4, "bzDeleteShader(), no context\n");
   }
 }
 
@@ -148,7 +148,7 @@ void bzDeleteProgram(GLuint program) {
     glDeleteProgram(program);
   }
   else {
-    logDebugMessage(4, "bzDeleteProgram(), no context\n");
+    debugf(4, "bzDeleteProgram(), no context\n");
   }
 }
 
@@ -175,7 +175,7 @@ void bzDeleteQueries(GLsizei n, const GLuint* queries) {
     glDeleteQueries(n, queries);
   }
   else {
-    logDebugMessage(4, "bzDeleteQueries(), no context\n");
+    debugf(4, "bzDeleteQueries(), no context\n");
   }
 }
 
@@ -202,7 +202,7 @@ void bzDeleteFramebuffersEXT(GLsizei n, const GLuint* fbos) {
     glDeleteFramebuffersEXT(n, fbos);
   }
   else {
-    logDebugMessage(4, "bzDeleteFramebuffersEXT(), no context\n");
+    debugf(4, "bzDeleteFramebuffersEXT(), no context\n");
   }
 }
 
@@ -229,7 +229,7 @@ void bzDeleteRenderbuffersEXT(GLsizei n, const GLuint* rbos) {
     glDeleteRenderbuffersEXT(n, rbos);
   }
   else {
-    logDebugMessage(4, "bzDeleteRenderbuffersEXT(), no context\n");
+    debugf(4, "bzDeleteRenderbuffersEXT(), no context\n");
   }
 }
 
@@ -305,7 +305,7 @@ void bzMatrixMode(GLenum mode) {
   }
   matrixMode = mode;
   glMatrixMode(mode);
-  logDebugMessage(3, "MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
+  debugf(3, "MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
 }
 
 

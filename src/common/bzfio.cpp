@@ -80,7 +80,7 @@ bool registerLoggingProc(LoggingProc proc, void* data) {
 
 bool unregisterLoggingProc(LoggingProc proc, void* data) {
   if (callProcDepth != 0) {
-    logDebugMessage(0, "error: unregisterLoggingProc() used in a LoggingProc");
+    debugf(0, "error: unregisterLoggingProc() used in a LoggingProc");
     return false;
   }
   LoggingProcPair lpp(proc, data);
@@ -178,7 +178,7 @@ static void realLogDebugMessage(int level, const char* text) {
 }
 
 
-void logDebugMessageArgs(int level, const char* fmt, va_list ap) {
+void vdebugf(int level, const char* fmt, va_list ap) {
   char buffer[8192] = { 0 };
 
   if (!fmt) {
@@ -191,15 +191,15 @@ void logDebugMessageArgs(int level, const char* fmt, va_list ap) {
 }
 
 
-void logDebugMessage(int level, const char* fmt, ...) {
+void debugf(int level, const char* fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-  logDebugMessageArgs(level, fmt, ap);
+  vdebugf(level, fmt, ap);
   va_end(ap);
 }
 
 
-void logDebugMessage(int level, const std::string& text) {
+void debugf(int level, const std::string& text) {
   if (text.empty()) {
     return;
   }

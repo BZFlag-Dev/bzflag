@@ -21,8 +21,8 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "bzfgl.h" // for logDebugMessage(3,)
-#include "bzfio.h" // for logDebugMessage(3,)
+#include "bzfgl.h" // for debugf(3,)
+#include "bzfio.h" // for debugf(3,)
 #include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
@@ -1246,7 +1246,7 @@ void OpenGLGState::init() {
 
   // setup the GLEW library
   if (glewInit() != GLEW_OK) {
-    logDebugMessage(0, "GLEW initialization failed");
+    debugf(0, "GLEW initialization failed");
   }
 
   // initialize GL state to what we expect
@@ -1265,17 +1265,17 @@ void OpenGLGState::registerContextInitializer(
   OpenGLContextFunction initCallback,
   void* userData) {
   if (executingFreeFuncs) {
-    logDebugMessage(0,
+    debugf(0,
                     "WARNING: registerContextInitializer() while executingFreeFuncs\n");
     return;
   }
   if (executingInitFuncs) {
-    logDebugMessage(0,
+    debugf(0,
                     "WARNING: registerContextInitializer() while executingInitFuncs\n");
     return;
   }
   if ((freeCallback == NULL) || (initCallback == NULL)) {
-    logDebugMessage(0, "WARNING: registerContextInitializer() error\n");
+    debugf(0, "WARNING: registerContextInitializer() error\n");
     return;
   }
   new ContextInitializer(freeCallback, initCallback, userData);
@@ -1287,12 +1287,12 @@ void OpenGLGState::unregisterContextInitializer(
   OpenGLContextFunction initCallback,
   void* userData) {
   if (executingFreeFuncs) {
-    logDebugMessage(0,
+    debugf(0,
                     "WARNING: unregisterContextInitializer() while executingFreeFuncs\n");
     return;
   }
   if (executingInitFuncs) {
-    logDebugMessage(0,
+    debugf(0,
                     "WARNING: unregisterContextInitializer() while executingInitFuncs\n");
     return;
   }
@@ -1301,7 +1301,7 @@ void OpenGLGState::unregisterContextInitializer(
                                                     initCallback, userData);
 
   if (ci == NULL) {
-    logDebugMessage(0, "WARNING: unregisterContextInitializer() error\n");
+    debugf(0, "WARNING: unregisterContextInitializer() error\n");
   }
 
   delete ci;
@@ -1310,20 +1310,20 @@ void OpenGLGState::unregisterContextInitializer(
 
 void OpenGLGState::initContext() {
   if (!haveGLContext()) {
-    logDebugMessage(3, "OpenGLGState::initContext(), no context\n");
+    debugf(3, "OpenGLGState::initContext(), no context\n");
     return;
   }
 
   // setup the GLEW library
   if (glewInit() != GLEW_OK) {
-    logDebugMessage(0, "GLEW initialization failed");
+    debugf(0, "GLEW initialization failed");
   }
 
   // call all of the freeing functions first
   eventHandler.GLContextFree(); // before default resources
-  logDebugMessage(3, "ContextInitializer::executeFreeFuncs() start\n");
+  debugf(3, "ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
-  logDebugMessage(3, "ContextInitializer::executeFreeFuncs() end\n");
+  debugf(3, "ContextInitializer::executeFreeFuncs() end\n");
 
   // initialize GL state
   initGLState();
@@ -1332,9 +1332,9 @@ void OpenGLGState::initContext() {
   resetState();
 
   // call all initializers
-  logDebugMessage(3, "ContextInitializer::executeInitFuncs() start\n");
+  debugf(3, "ContextInitializer::executeInitFuncs() start\n");
   ContextInitializer::executeInitFuncs();
-  logDebugMessage(3, "ContextInitializer::executeInitFuncs() end\n");
+  debugf(3, "ContextInitializer::executeInitFuncs() end\n");
   eventHandler.GLContextInit(); // after default resources
 
   // initialize the GL state again in case one of the initializers messed it up

@@ -809,7 +809,7 @@ bool WordFilter::filter(char* input, const bool simple) const {
   }
 #ifdef DEBUG
   BzTime after = BzTime::getCurrent();
-  logDebugMessage(1, "WordFilter: %f seconds\n", after - before);
+  debugf(1, "WordFilter: %f seconds\n", after - before);
 #endif
   return filtered;
 }

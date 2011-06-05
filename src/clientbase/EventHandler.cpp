@@ -147,7 +147,7 @@ EventHandler::~EventHandler() {
 
 void EventHandler::Purify() {
   if (!dirtyLists.empty()) {
-    logDebugMessage(3, "EventHandler::Purify() purifying %i list\n",
+    debugf(3, "EventHandler::Purify() purifying %i list\n",
                     (int)dirtyLists.size());
   }
   std::set<EventClientList*>::iterator it;
@@ -160,12 +160,12 @@ void EventHandler::Purify() {
 
 void EventHandler::AddClient(EventClient* ec) {
   if (ec->GetName().empty()) {
-    logDebugMessage(0, "EventClients must have valid names");
+    debugf(0, "EventClients must have valid names");
     return;
   }
 
   if (!clientList.insert(ec)) {
-    logDebugMessage(0, "Duplicate EventClient name: %s\n");
+    debugf(0, "Duplicate EventClient name: %s\n");
     return;
   }
   clientSet.insert(ec);

@@ -124,7 +124,7 @@ PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL
 
   init(channels, myWidth, myHeight);
 
-  logDebugMessage(4, "Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
+  debugf(4, "Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
                   "Interlace Method %d, Channels %d.\n",
                   myWidth, myHeight, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
 }
@@ -188,7 +188,7 @@ bool PNGImageFile::read(void* buffer) {
 
   err = inflateInit(&zStream);
   if (err != Z_OK) {
-    logDebugMessage(3, "PNGImageFile: inflateInit() error\n");
+    debugf(3, "PNGImageFile: inflateInit() error\n");
     delete c;
     return false;
   }
@@ -220,7 +220,7 @@ bool PNGImageFile::read(void* buffer) {
     }
 
     if ((err != Z_STREAM_END) && (err != Z_OK) && (zStream.avail_in != 0)) {
-      logDebugMessage(3, "PNGImageFile: Z_STREAM error: %d\n", err);
+      debugf(3, "PNGImageFile: Z_STREAM error: %d\n", err);
       delete c;
       return false;
     }
@@ -451,7 +451,7 @@ bool PNGImageFile::filter() {
       break;
     }
     default: {
-      logDebugMessage(3, "PNGImageFile: unknown filter type (%s)\n", filterType);
+      debugf(3, "PNGImageFile: unknown filter type (%s)\n", filterType);
       return false;
     }
   }

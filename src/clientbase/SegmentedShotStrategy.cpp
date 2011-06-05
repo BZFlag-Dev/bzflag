@@ -566,25 +566,25 @@ void SegmentedShotStrategy::makeSegments(ObstacleEffect e) {
   }
 
   if ((debugShotSegments >= 1) && !BZDBCache::forbidDebug) {
-    logDebugMessage(0, "\n");
-    logDebugMessage(0, "SegShotStrategy %i\n", (int)getPath().getFiringInfo().shot.id);
+    debugf(0, "\n");
+    debugf(0, "SegShotStrategy %i\n", (int)getPath().getFiringInfo().shot.id);
     for (size_t s = 0; s < segments.size(); s++) {
       const ShotPathSegment& sps = segments[s];
       const fvec3 endPos = sps.ray.getPoint((float)(sps.end - sps.start));
       const std::string reasonStr = ShotPathSegment::getReasonString(sps.reason).c_str();
-      logDebugMessage(0, "  segment   %i\n", (int)s);
-      logDebugMessage(0, "    start   %f\n", sps.start.getSeconds());
-      logDebugMessage(0, "    end     %f\n", sps.end.getSeconds());
-      logDebugMessage(0, "    orig    %s\n", sps.ray.getOrigin().tostring().c_str());
-      logDebugMessage(0, "    endPos  %s\n", endPos.tostring().c_str());
-      logDebugMessage(0, "    dir     %s\n", sps.ray.getDirection().tostring().c_str());
-      logDebugMessage(0, "    reason  %s\n", reasonStr.c_str());
-      logDebugMessage(0, "    hitObs  %p\n", sps.hitObstacle);
-      logDebugMessage(0, "    mins    %s\n", sps.bbox.mins.tostring().c_str());
-      logDebugMessage(0, "    maxs    %s\n", sps.bbox.maxs.tostring().c_str());
+      debugf(0, "  segment   %i\n", (int)s);
+      debugf(0, "    start   %f\n", sps.start.getSeconds());
+      debugf(0, "    end     %f\n", sps.end.getSeconds());
+      debugf(0, "    orig    %s\n", sps.ray.getOrigin().tostring().c_str());
+      debugf(0, "    endPos  %s\n", endPos.tostring().c_str());
+      debugf(0, "    dir     %s\n", sps.ray.getDirection().tostring().c_str());
+      debugf(0, "    reason  %s\n", reasonStr.c_str());
+      debugf(0, "    hitObs  %p\n", sps.hitObstacle);
+      debugf(0, "    mins    %s\n", sps.bbox.mins.tostring().c_str());
+      debugf(0, "    maxs    %s\n", sps.bbox.maxs.tostring().c_str());
     }
-    logDebugMessage(0, "  path mins:  %s\n", bbox.mins.tostring().c_str());
-    logDebugMessage(0, "  path maxs:  %s\n", bbox.maxs.tostring().c_str());
+    debugf(0, "  path mins:  %s\n", bbox.mins.tostring().c_str());
+    debugf(0, "  path maxs:  %s\n", bbox.maxs.tostring().c_str());
   }
 }
 

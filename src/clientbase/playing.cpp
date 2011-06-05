@@ -1141,7 +1141,7 @@ void handleJoinServer(void* msg) {
     info.team = (TeamColor)team;
   }
 
-  logDebugMessage(1, "AutoJoin: %s %u %i \"%s\" \"%s\"\n",
+  debugf(1, "AutoJoin: %s %u %i \"%s\" \"%s\"\n",
                   addr.c_str(), port, team, referrer.c_str(), message.c_str());
 
   joinGame();
@@ -1205,7 +1205,7 @@ void handleFlagNegotiation(void* msg, uint16_t len) {
 void handleFlagType(void* msg) {
   FlagType* typ = NULL;
   FlagType::unpackCustom(msg, typ);
-  logDebugMessage(1, "Got custom flag type from server: %s\n",
+  debugf(1, "Got custom flag type from server: %s\n",
                   typ->information().c_str());
 }
 
@@ -1377,13 +1377,13 @@ void handleAllow(void* msg) {
                                    AllowMoveBackward |
                                    AllowTurnLeft     |
                                    AllowTurnRight;
-    logDebugMessage(3, "%s: %s", tank->getCallSign(),
+    debugf(3, "%s: %s", tank->getCallSign(),
                     ((allow & moveBits) == moveBits) ? "Movement allowed"
                     : "Movement restricted");
-    logDebugMessage(3, "%s: %s", tank->getCallSign(),
+    debugf(3, "%s: %s", tank->getCallSign(),
                     (allow & AllowShoot) ? "Shooting allowed"
                     : "Shooting forbidden");
-    logDebugMessage(3, "%s: %s", tank->getCallSign(),
+    debugf(3, "%s: %s", tank->getCallSign(),
                     (allow & AllowJump) ? "Jumping allowed"
                     : "Jumping forbidden");
   }
@@ -1452,7 +1452,7 @@ void handleHandicap(void* msg) {
         sPlayer = getPlayerByIndex(i);
       }
       else {
-        logDebugMessage(1, "Received handicap update for unknown player!\n");
+        debugf(1, "Received handicap update for unknown player!\n");
       }
     }
     if (sPlayer) {
@@ -1511,7 +1511,7 @@ void handleMsgSetVars(void* msg) {
       BZDB.setPermission(name, StateDatabase::Locked);
     }
     else {
-      logDebugMessage(1, "Server BZDB change blocked: '%s' = '%s'\n",
+      debugf(1, "Server BZDB change blocked: '%s' = '%s'\n",
                       name.c_str(), value.c_str());
     }
   }

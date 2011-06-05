@@ -138,13 +138,13 @@ void GameTime::update() {
     const double diffTime = stepTime - tr.netTime;
     if ((diffTime < -maxTime) || (diffTime > +maxTime) ||
         (avgRate < minRate) || (avgRate > maxRate)) {
-      logDebugMessage(4, "GameTime: discontinuity: usecs = %f, rate = %f\n",
+      debugf(4, "GameTime: discontinuity: usecs = %f, rate = %f\n",
                       diffTime, avgRate);
       resetToRecord(tr);
     }
   }
 
-  logDebugMessage(4, "GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
+  debugf(4, "GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
 
   return;
 }
@@ -255,12 +255,12 @@ void* GameTime::unpack(void* buf) {
     int i = 0;
     std::list<TimeRecord>::const_iterator it;
     for (it = timeRecs.begin(); it != timeRecs.end(); ++it, i++) {
-      logDebugMessage(0, "GameTime record %i: netTime=%f, localTime=%f, diff=%f\n",
+      debugf(0, "GameTime record %i: netTime=%f, localTime=%f, diff=%f\n",
                       i, it->netTime, it->localTime, it->netTime - it->localTime);
     }
   }
   if (debugGameTime >= 1) {
-    logDebugMessage(0,
+    debugf(0,
                     "GameTime::unpack()"
                     " net:%.3f local:%.3f diff:%.3f step:%.3f halfLag:%.3f rate:%.6f\n",
                     netTime, localTime, netTime - localTime, stepTime, halfLag, avgRate);

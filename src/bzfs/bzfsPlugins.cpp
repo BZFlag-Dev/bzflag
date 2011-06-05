@@ -96,7 +96,7 @@ bool pluginExists(std::string plugin) {
 }
 
 bool tryFileLoad(std::string filename) {
-  logDebugMessage(4, "tryFileLoad checking: %s \n", filename.c_str());
+  debugf(4, "tryFileLoad checking: %s \n", filename.c_str());
   FILE*  fp = fopen(filename.c_str(), "rb");
   if (fp) {
     fclose(fp);
@@ -106,7 +106,7 @@ bool tryFileLoad(std::string filename) {
 }
 
 std::string findPlugin(std::string pluginName) {
-  logDebugMessage(4, "FindPlugin find returned: %s \n", pluginName.c_str());
+  debugf(4, "FindPlugin find returned: %s \n", pluginName.c_str());
 
   std::string name;
 
@@ -187,10 +187,10 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
   int (*lpProc)(const char*);
 
   std::string realPluginName = findPlugin(plugin);
-  logDebugMessage(3, "LoadPlugin find returned: %s \n", realPluginName.c_str());
+  debugf(3, "LoadPlugin find returned: %s \n", realPluginName.c_str());
 
   if (pluginExists(realPluginName)) {
-    logDebugMessage(1, "LoadPlugin failed: %s is already loaded\n", realPluginName.c_str());
+    debugf(1, "LoadPlugin failed: %s is already loaded\n", realPluginName.c_str());
     return eLoadFailedDupe;
   }
 
@@ -207,7 +207,7 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
     }
 
     if (!exists) {
-      logDebugMessage(4, "LoadPlugin storing valid dir: %s \n", path.c_str());
+      debugf(4, "LoadPlugin storing valid dir: %s \n", path.c_str());
       validDirs.push_back(path);
     }
   }
@@ -215,7 +215,7 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
   HINSTANCE hLib = LoadLibrary(realPluginName.c_str());
   if (hLib) {
     if (getPluginVersion(hLib) > BZ_API_VERSION) {
-      logDebugMessage(1, "Plugin:%s found but expects a newer API version (%d), upgrade your bzfs\n", plugin.c_str(), getPluginVersion(hLib));
+      debugf(1, "Plugin:%s found but expects a newer API version (%d), upgrade your bzfs\n", plugin.c_str(), getPluginVersion(hLib));
       FreeLibrary(hLib);
       return eLoadFailedError;
     }
@@ -224,11 +224,11 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
       if (lpProc) {
         lastPluginDir = getPluginPath(realPluginName);
         if (lpProc(config.c_str()) != 0) {
-          logDebugMessage(1, "Plugin:%s found but bz_Load returned an error\n", plugin.c_str());
+          debugf(1, "Plugin:%s found but bz_Load returned an error\n", plugin.c_str());
           FreeLibrary(hLib);
           return eLoadFailedRuntime;
         }
-        logDebugMessage(1, "Plugin:%s loaded\n", plugin.c_str());
+        debugf(1, "Plugin:%s loaded\n", plugin.c_str());
 
         trPluginRecord pluginRecord;
         pluginRecord.foundPath = realPluginName;
@@ -237,14 +237,14 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
         vPluginList.push_back(pluginRecord);
       }
       else {
-        logDebugMessage(1, "Plugin:%s found but does not contain bz_Load method\n", plugin.c_str());
+        debugf(1, "Plugin:%s found but does not contain bz_Load method\n", plugin.c_str());
         FreeLibrary(hLib);
         return eLoadFailedError;
       }
     }
   }
   else {
-    logDebugMessage(1, "Plugin:%s not found\n", plugin.c_str());
+    debugf(1, "Plugin:%s not found\n", plugin.c_str());
     return eLoadFailedError;
   }
 
@@ -264,7 +264,7 @@ void unload1Plugin(int iPluginID) {
     lpProc();
   }
   else {
-    logDebugMessage(1, "Plugin does not contain bz_UnLoad method\n");
+    debugf(1, "Plugin does not contain bz_UnLoad method\n");
   }
 
   FreeLibrary(plugin.handle);
@@ -291,10 +291,10 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
   int (*lpProc)(const char*) = NULL;
 
   std::string realPluginName = findPlugin(plugin);
-  logDebugMessage(3, "LoadPlugin find returned: %s \n", realPluginName.c_str());
+  debugf(3, "LoadPlugin find returned: %s \n", realPluginName.c_str());
 
   if (pluginExists(realPluginName)) {
-    logDebugMessage(1, "LoadPlugin failed: %s is already loaded\n", realPluginName.c_str());
+    debugf(1, "LoadPlugin failed: %s is already loaded\n", realPluginName.c_str());
     return eLoadFailedDupe;
   }
 
@@ -311,7 +311,7 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
     }
 
     if (!exists) {
-      logDebugMessage(4, "LoadPlugin storing valid dir: %s \n", path.c_str());
+      debugf(4, "LoadPlugin storing valid dir: %s \n", path.c_str());
       validDirs.push_back(path);
     }
   }
@@ -322,14 +322,14 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
   }
   if (hLib) {
     if (dlsym(hLib, "bz_Load") == NULL) {
-      logDebugMessage(1, "Plugin:%s found but does not contain bz_Load method, error %s\n", plugin.c_str(), dlerror());
+      debugf(1, "Plugin:%s found but does not contain bz_Load method, error %s\n", plugin.c_str(), dlerror());
       dlclose(hLib);
       return eLoadFailedError;
     }
 
     int version = getPluginVersion(hLib);
     if (version > BZ_API_VERSION) {
-      logDebugMessage(1, "Plugin:%s found but expects a newer API version (%d), upgrade your bzfs", plugin.c_str(), version);
+      debugf(1, "Plugin:%s found but expects a newer API version (%d), upgrade your bzfs", plugin.c_str(), version);
       dlclose(hLib);
       return eLoadFailedError;
     }
@@ -338,10 +338,10 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
       if (lpProc) {
         lastPluginDir = getPluginPath(realPluginName);
         if ((*lpProc)(config.c_str())) {
-          logDebugMessage(1, "Plugin:%s found but bz_Load returned an error\n", plugin.c_str());
+          debugf(1, "Plugin:%s found but bz_Load returned an error\n", plugin.c_str());
           return eLoadFailedRuntime;
         }
-        logDebugMessage(1, "Plugin:%s loaded\n", plugin.c_str());
+        debugf(1, "Plugin:%s loaded\n", plugin.c_str());
         trPluginRecord pluginRecord;
         pluginRecord.handle = hLib;
         pluginRecord.plugin = plugin;
@@ -351,11 +351,11 @@ PluginLoadReturn load1Plugin(std::string plugin, std::string config) {
     }
   }
   else {
-    logDebugMessage(1, "Plugin:%s not found, error %s\n", plugin.c_str(), dlerror());
+    debugf(1, "Plugin:%s not found, error %s\n", plugin.c_str(), dlerror());
     return eLoadFailedError;
   }
 
-  logDebugMessage(1, "If you see this, there is something terribly wrong.\n");
+  debugf(1, "If you see this, there is something terribly wrong.\n");
   return eLoadFailedError;
 }
 
@@ -372,7 +372,7 @@ void unload1Plugin(int iPluginID) {
     (*lpProc)();
   }
   else {
-    logDebugMessage(1, "Plugin does not contain bz_UnLoad method, error %s\n", dlerror());
+    debugf(1, "Plugin does not contain bz_UnLoad method, error %s\n", dlerror());
   }
 
   dlclose(plugin.handle);

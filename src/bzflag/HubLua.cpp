@@ -216,7 +216,7 @@ bool HubLink::createLua(const std::string& code) {
                  srvLink->getJoinCallsign());
   }
 
-  debugf(1, "createLua succeeded\n");
+  hubDebugf(1, "createLua succeeded\n");
 
   return true;
 }
@@ -291,7 +291,7 @@ bool HubLink::pushCallIn(int ciCode, int inArgs) {
 
 bool HubLink::runCallIn(int inArgs, int outArgs) {
   if (lua_pcall(L, inArgs, outArgs, 0) != 0) {
-    debugf(1, "error, %s\n", lua_tostring(L, -1));
+    hubDebugf(1, "error, %s\n", lua_tostring(L, -1));
     lua_pop(L, 1);
     return false;
   }

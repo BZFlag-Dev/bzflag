@@ -201,7 +201,7 @@ bool CacheManager::loadIndex() {
     std::string line = buffer;
     std::vector<std::string> tokens = TextUtils::tokenize(line, " ");
     if (tokens.size() != 4) {
-      logDebugMessage(1, "loadCacheIndex (bad line): %s\n", buffer);
+      debugf(1, "loadCacheIndex (bad line): %s\n", buffer);
       continue;
     }
     rec.size = strtoul(tokens[0].c_str(), NULL, 10);
