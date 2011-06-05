@@ -1074,7 +1074,7 @@ obstacle :=
 .br
 	| "passable"
 .br
-        | "ricochet"
+	| "ricochet"
 .br
 	| location
 .br
