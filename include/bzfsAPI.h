@@ -1203,10 +1203,18 @@ BZF_API bz_APIStringList* bz_getGroupPerms ( const char* group );
 BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm );
 
 // message API
+BZF_API bool bz_sendTextMessage (int from, int to, bz_eMessageType type, const char* message);
 BZF_API bool bz_sendTextMessage (int from, int to, const char* message);
+
+BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, bz_eMessageType type, const char* message);
 BZF_API bool bz_sendTextMessage (int from, bz_eTeamType to, const char* message);
+
+BZF_API bool bz_sendTextMessagef(int from, int to, bz_eMessageType type, const char* fmt, ...);
 BZF_API bool bz_sendTextMessagef(int from, int to, const char* fmt, ...);
+
+BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, bz_eMessageType type, const char* fmt, ...);
 BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...);
+
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons

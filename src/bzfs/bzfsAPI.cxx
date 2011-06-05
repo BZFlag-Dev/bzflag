@@ -1348,8 +1348,7 @@ BZF_API bool bz_groupAllowPerm ( const char* group, const char* perm )
 }
 
 
-
-BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
+BZF_API bool bz_sendTextMessage(int from, int to, bz_eMessageType type, const char* message)
 {
   if (!message)
     return false;
@@ -1364,14 +1363,24 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
   else
     playerIndex = from;
 
-  pendingChatMessages.push_back(PendingChatMessages(dstPlayer,playerIndex,message,ChatMessage));
+  MessageType msgType = ChatMessage;
+
+  if (type == eActionMessage)
+    msgType = ActionMessage;
+
+  pendingChatMessages.push_back(PendingChatMessages(dstPlayer,playerIndex,message,msgType));
 
   if (0)
     sendMessage(playerIndex, dstPlayer, message);
   return true;
 }
 
-BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
+BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
+{
+  return bz_sendTextMessage(from, to, eChatMessage, message);
+}
+
+BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, bz_eMessageType type, const char* message)
 {
   switch(to)
   {
@@ -1394,6 +1403,20 @@ BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
   }
 }
 
+BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, const char* message)
+{
+  return bz_sendTextMessage(from, to, eChatMessage, message);
+}
+
+BZF_API bool bz_sendTextMessagef (int from, bz_eTeamType to, bz_eMessageType type, const char* fmt, ...)
+{
+  char buffer[1024];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, 1024, fmt, args);
+  va_end(args);
+  return bz_sendTextMessage (from, to, type, buffer);
+}
 
 BZF_API bool bz_sendTextMessagef (int from, bz_eTeamType to, const char* fmt, ...)
 {
@@ -1405,8 +1428,17 @@ BZF_API bool bz_sendTextMessagef (int from, bz_eTeamType to, const char* fmt, ..
   return bz_sendTextMessage (from, to, buffer);
 }
 
-BZF_API bool bz_sendTextMessagef (int from, int to, const char* fmt, ...)
+BZF_API bool bz_sendTextMessagef (int from, int to, bz_eMessageType type, const char* fmt, ...)
 {
+  char buffer[1024];
+  va_list args;
+  va_start(args, fmt);
+  vsnprintf(buffer, 1024, fmt, args);
+  va_end(args);
+  return bz_sendTextMessage (from, to, type, buffer);
+}
+
+BZF_API bool bz_sendTextMessagef (int from, int to, const char* fmt, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, fmt);
