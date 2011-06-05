@@ -5507,6 +5507,9 @@ int main(int argc, char **argv)
 
   // start the server
   if (!serverStart()) {
+#ifdef BZ_PLUGINS
+    unloadPlugins();
+#endif
 #if defined(_WIN32)
     WSACleanup();
 #endif /* defined(_WIN32) */
