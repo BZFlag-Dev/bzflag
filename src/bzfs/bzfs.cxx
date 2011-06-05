@@ -1997,6 +1997,11 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (!GameKeeper::Player::getPlayerByIndex(playerIndex))
     return;
 
+  // see if the API wants to set the motto
+  bz_GetPlayerMottoData_V1 mottoEvent(playerData->player.getMotto());
+  worldEventManager.callEvents(mottoEvent);
+  playerData->player.setMotto(mottoEvent.motto.c_str());
+
   // broadcast motto only if player has TALK permission
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)
     && strlen(playerData->player.getMotto()) != 0) {

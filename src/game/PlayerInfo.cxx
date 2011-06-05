@@ -158,12 +158,8 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;
   }
-  if (!isMottoReadable()) {
-    logDebugMessage(2,"rejecting unreadable player motto: %s (%s)\n", callSign, motto);
-    rejectCode   = RejectBadMotto;
-    strcpy(rejectMsg, "The motto was rejected.  Try a different motto.");
-    return false;
-  }
+  if (!isMottoReadable()) 
+    setMotto("");
 
   // make sure the callsign is not obscene/filtered
   if (callSignFiltering) {

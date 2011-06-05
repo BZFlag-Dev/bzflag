@@ -281,6 +281,7 @@ typedef enum
   bz_eWorldFinalized,
   bz_eReportFiledEvent,
   bz_eBZDBChange,
+  bz_eGetPlayerMotto,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1032,6 +1033,19 @@ public:
 
   bz_ApiString key;
   bz_ApiString value;
+};
+
+class BZF_API bz_GetPlayerMottoData_V1 : public bz_EventData
+{
+public:
+  bz_GetPlayerMottoData_V1(const char* m)
+    : bz_EventData(bz_eGetPlayerMotto)
+  {
+    if (m)
+      motto = m;
+  }
+
+  bz_ApiString motto;
 };
 
 // logging
