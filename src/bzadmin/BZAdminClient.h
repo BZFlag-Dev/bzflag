@@ -52,7 +52,8 @@ public:
   BZAdminClient(BZAdminUI* bzInterface = NULL);
 
   /** Formats an incoming message. */
-  std::string formatMessage(const std::string& msg, PlayerId src, PlayerId dst,
+  std::string formatMessage(const std::string& msg, const MessageType type,
+		       PlayerId src, PlayerId dst,
 		       TeamColor dstTeam, PlayerId me);
 
   /** Return the PlayerId that this client has been assigned by the server. */

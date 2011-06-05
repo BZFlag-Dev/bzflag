@@ -391,15 +391,22 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       // unpack the message header
       PlayerId src;
       PlayerId dst;
+      uint8_t mtype;
       PlayerId me = sLink.getId();
       vbuf = nboUnpackUByte(vbuf, src);
       vbuf = nboUnpackUByte(vbuf, dst);
+      vbuf = nboUnpackUByte(vbuf, mtype);
+
+      // Only bother processing the message if we know how to handle it
+      if (MessageType(mtype) != ChatMessage && MessageType(mtype) != ActionMessage)
+	break;
 
       // format the message depending on src and dst
       TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
 			   TeamColor(250 - dst) : NoTeam);
       if (messageMask[MsgMessage]) {
-	lastMessage.first = formatMessage((char*)vbuf, src, dst,dstTeam, me);
+	lastMessage.first = formatMessage((char*)vbuf, MessageType(mtype),
+					  src, dst, dstTeam, me);
 	PlayerIdMap::const_iterator iterator = players.find(src);
 	lastMessage.second = (iterator == players.end() ?
 			      colorMap[NoTeam] :
@@ -554,7 +561,8 @@ void BZAdminClient::sendMessage(const std::string& msg,
 }
 
 
-std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
+std::string BZAdminClient::formatMessage(const std::string& msg,
+				    const MessageType type, PlayerId src,
 				    PlayerId dst, TeamColor dstTeam,
 				    PlayerId me) {
   std::string formatted = "    ";
@@ -566,35 +574,24 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
   const std::string dstName = (players.count(dst) ? players[dst].name :
 			       "(UNKNOWN)");
 
-  // display action messages differently
-  bool isAction = false;
-  std::string message;
-  if ((msg[0] == '*') && (msg[1] == ' ') &&
-      (msg[msg.size () - 1] == '*') && (msg[msg.size () - 2] == '\t')) {
-    isAction = true;
-    message = msg.substr(2, msg.size() - 4);
-  } else {
-    message = msg;
-  }
-
   // direct message to or from me
   if (dst == me || players.count(dst)) {
     if (!(src == me && dst == me)) {
       if (src == me) {
-	if (isAction) {
-	  formatted += "[->" + message + "]";
+	if (type == ActionMessage) {
+	  formatted += "[->" + msg + "]";
 	} else {
-	  formatted += "[->" + dstName + "] " + message;
+	  formatted += "[->" + dstName + "] " + msg;
 	}
       } else {
-	if (isAction) {
-	  formatted += "[" + message + "->]";
+	if (type == ActionMessage) {
+	  formatted += "[" + msg + "->]";
 	} else {
-	  formatted += "[" + srcName + "->] " + message;
+	  formatted += "[" + srcName + "->] " + msg;
 	}
       }
     } else {
-      formatted += message;
+      formatted += msg;
     }
   }
 
@@ -605,11 +602,11 @@ std::string BZAdminClient::formatMessage(const std::string& msg, PlayerId src,
     else if (dstTeam != NoTeam)
       formatted += "[Team] ";
 
-    if (!isAction) {
-      formatted += srcName;
-      formatted += ": ";
-    }
-    formatted += message;
+    formatted += srcName;
+    if (type != ActionMessage)
+      formatted += ":";
+    formatted += " ";
+    formatted += msg;
   }
 
   return formatted;
@@ -630,8 +627,8 @@ void BZAdminClient::waitForServer() {
   PlayerId me = sLink.getId();
   if (sLink.getState() == ServerLink::Okay) {
     sendMessage("bzadminping", me);
-    std::string expected = formatMessage("bzadminping", me, me, NoTeam, me);
-    std::string noTalk = formatMessage("We're sorry, you are not allowed to talk!", ServerPlayer, me, NoTeam, me);
+    std::string expected = formatMessage("bzadminping", ChatMessage, me, me, NoTeam, me);
+    std::string noTalk = formatMessage("We're sorry, you are not allowed to talk!", ChatMessage, ServerPlayer, me, NoTeam, me);
     std::string str;
     BZAdminUI* tmpUI = ui;
     ui = NULL;
