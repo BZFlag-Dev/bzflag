@@ -1142,7 +1142,7 @@ void handleJoinServer(void* msg) {
   }
 
   debugf(1, "AutoJoin: %s %u %i \"%s\" \"%s\"\n",
-                  addr.c_str(), port, team, referrer.c_str(), message.c_str());
+         addr.c_str(), port, team, referrer.c_str(), message.c_str());
 
   joinGame();
 }
@@ -1206,7 +1206,7 @@ void handleFlagType(void* msg) {
   FlagType* typ = NULL;
   FlagType::unpackCustom(msg, typ);
   debugf(1, "Got custom flag type from server: %s\n",
-                  typ->information().c_str());
+         typ->information().c_str());
 }
 
 
@@ -1378,14 +1378,14 @@ void handleAllow(void* msg) {
                                    AllowTurnLeft     |
                                    AllowTurnRight;
     debugf(3, "%s: %s", tank->getCallSign(),
-                    ((allow & moveBits) == moveBits) ? "Movement allowed"
-                    : "Movement restricted");
+           ((allow & moveBits) == moveBits) ? "Movement allowed"
+           : "Movement restricted");
     debugf(3, "%s: %s", tank->getCallSign(),
-                    (allow & AllowShoot) ? "Shooting allowed"
-                    : "Shooting forbidden");
+           (allow & AllowShoot) ? "Shooting allowed"
+           : "Shooting forbidden");
     debugf(3, "%s: %s", tank->getCallSign(),
-                    (allow & AllowJump) ? "Jumping allowed"
-                    : "Jumping forbidden");
+           (allow & AllowJump) ? "Jumping allowed"
+           : "Jumping forbidden");
   }
 }
 
@@ -1512,7 +1512,7 @@ void handleMsgSetVars(void* msg) {
     }
     else {
       debugf(1, "Server BZDB change blocked: '%s' = '%s'\n",
-                      name.c_str(), value.c_str());
+             name.c_str(), value.c_str());
     }
   }
 }

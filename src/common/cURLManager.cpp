@@ -314,7 +314,7 @@ void cURLManager::addHandle() {
   CURLMcode result = curl_multi_add_handle(multiHandle, easyHandle);
   if (result > CURLM_OK)
     debugf(1, "Error while adding easy handle from libcurl %d : %s\n",
-                    result, errorBuffer);
+           result, errorBuffer);
   added = true;
 }
 
@@ -326,7 +326,7 @@ void cURLManager::removeHandle() {
   CURLMcode result = curl_multi_remove_handle(multiHandle, easyHandle);
   if (result != CURLM_OK)
     debugf(1, "Error while removing easy handle from libcurl %d : %s\n",
-                    result, errorBuffer);
+           result, errorBuffer);
   added = false;
 }
 
@@ -368,7 +368,7 @@ int cURLManager::fdset(fd_set& read, fd_set& write) {
   result = curl_multi_fdset(multiHandle, &read, &write, &exc, &max_fd);
   if (result != CURLM_OK)
     debugf(1, "Error while doing multi_fdset from libcurl %d : %s\n",
-                    result, errorBuffer);
+           result, errorBuffer);
   return max_fd;
 }
 
@@ -393,7 +393,7 @@ bool cURLManager::perform() {
   }
   if (result != CURLM_OK)
     debugf(1, "Error while doing multi_perform from libcurl %d : %s\n",
-                    result, errorBuffer);
+           result, errorBuffer);
 
   int      msgs_in_queue;
   CURLMsg* pendingMsg;
@@ -433,7 +433,7 @@ bool cURLManager::perform() {
 void cURLManager::infoComplete(CURLcode result) {
   if (result != CURLE_OK)
     debugf(1, "File transfer terminated with error from libcurl %d : %s\n",
-                    result, errorBuffer);
+           result, errorBuffer);
   if (httpHeader) {
     curl_slist_free_all(httpHeader);
     httpHeader = NULL;
@@ -579,7 +579,7 @@ void cURLManager::setDNSCachingTime(long time) {
                             (long)time);
   if (result != CURLE_OK)
     debugf(1, "CURLOPT_SET_DNS_CACHE_TIMEOUT error %d : %s\n",
-                    result, errorBuffer);
+           result, errorBuffer);
 }
 
 

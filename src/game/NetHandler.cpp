@@ -174,10 +174,10 @@ int NetHandler::udpReceive(char* buffer, struct sockaddr_in* uaddr,
       return -1;
     }
     debugf(8, "uread() len %d from %s:%d on %i\n",
-                    udpLen,
-                    inet_ntoa(lastUDPRxaddr.sin_addr),
-                    ntohs(lastUDPRxaddr.sin_port),
-                    udpSocket);
+           udpLen,
+           inet_ntoa(lastUDPRxaddr.sin_addr),
+           ntohs(lastUDPRxaddr.sin_port),
+           udpSocket);
   }
   if ((udpLen - udpRead) < 4) {
     // No space for header :-(
@@ -226,13 +226,13 @@ int NetHandler::udpReceive(char* buffer, struct sockaddr_in* uaddr,
     }
     // no match, discard packet
     debugf(2, "uread() discard packet! %s:%d choices p(l) h:p",
-                    inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
+           inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
     for (it = netConnections.begin(); it != netConnections.end(); it++)
       if (!(*it)->closed) {
         debugf(3, "(%d-%d) %s:%d", (*it)->udpin,
-                        (*it)->udpout,
-                        inet_ntoa((*it)->uaddr.sin_addr),
-                        ntohs((*it)->uaddr.sin_port));
+               (*it)->udpout,
+               inet_ntoa((*it)->uaddr.sin_addr),
+               ntohs((*it)->uaddr.sin_port));
       }
     debugf(2, "\n");
     return -1;
@@ -694,14 +694,14 @@ void NetHandler::dumpMessageStats() {
     for (MessageCountMap::iterator i = msg[direction].begin();
          i != msg[direction].end(); i++) {
       debugf(1, " %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
-                      i->second.count, i->second.maxSize);
+             i->second.count, i->second.maxSize);
       total += i->second.count;
     }
 
     debugf(1, " total:%u(%u) ", total, msgBytes[direction]);
     debugf(1, "max msgs/bytes per second: %u/%u\n",
-                    perSecondMaxMsg[direction],
-                    perSecondMaxBytes[direction]);
+           perSecondMaxMsg[direction],
+           perSecondMaxBytes[direction]);
   }
   fflush(stdout);
 }

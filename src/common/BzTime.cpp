@@ -115,7 +115,7 @@ const BzTime& BzTime::getCurrent(void) {
     else if (diff < 0) {
       // eh, how'd we go back in time?
       debugf(5, "WARNING: went back in time %li microseconds\n",
-                      (long int)diff);
+             (long int)diff);
     }
 
     lastTime = nowTime;
@@ -153,7 +153,7 @@ const BzTime& BzTime::getCurrent(void) {
         qpcFrequency  = (clkSpent * 1000) / deltaTgt;
         if (qpcFrequency != oldqpcfreq)
           debugf(4, "Recalibrated QPC frequency.  Old: %f ; New: %f\n",
-                          (double)oldqpcfreq, (double)qpcFrequency);
+                 (double)oldqpcfreq, (double)qpcFrequency);
       }
     }
 

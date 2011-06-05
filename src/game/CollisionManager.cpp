@@ -390,11 +390,11 @@ void CollisionManager::load() {
   debugf(2, "ColDet Octree obstacles = %i\n", FullList.count);
   for (i = 0; i < 3; i++) {
     debugf(2, "  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
-                    gridExtents.maxs[i]);
+           gridExtents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
     debugf(2, "  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
-                    worldExtents.maxs[i]);
+           worldExtents.maxs[i]);
   }
   debugf(2, "ColDet Octree leaf nodes  = %i\n", leafNodes);
   debugf(2, "ColDet Octree total nodes = %i\n", totalNodes);

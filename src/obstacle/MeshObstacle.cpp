@@ -252,7 +252,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     else {
       //
       debugf(1,
-                      "WARNING: face triangulated into %u new faces\n", triSize);
+             "WARNING: face triangulated into %u new faces\n", triSize);
       // warn if a zone with fixedFlag was split
       if (hasZoneFixedFlag(sd)) {
         debugf(0, "WARNING: face zone with fixedFlags was split\n");
@@ -634,7 +634,7 @@ const char* MeshObstacle::getClassName() { // const
 void MeshObstacle::setDrawInfo(MeshDrawInfo* di) {
   if (drawInfo != NULL) {
     debugf(0,
-                    "ERROR: MeshObstacle::setMeshDrawInfo() already exists\n");
+           "ERROR: MeshObstacle::setMeshDrawInfo() already exists\n");
     exit(1);
   }
   else {
@@ -725,7 +725,7 @@ bool MeshObstacle::containsPoint(const fvec3& point) const {
     }
     else {
       debugf(0, "checkType (%i) is not supported yet\n",
-                      checkTypes[c]);
+             checkTypes[c]);
       exit(1);
     }
   }

@@ -6543,9 +6543,9 @@ void startPlaying() {
     info.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     GetVersionEx(&info);
     debugf(1, "Running on Windows %s%d.%d %s\n",
-                    (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
-                    info.dwMajorVersion, info.dwMinorVersion,
-                    info.szCSDVersion);
+           (info.dwPlatformId == VER_PLATFORM_WIN32_NT) ? "NT " : "",
+           info.dwMajorVersion, info.dwMinorVersion,
+           info.szCSDVersion);
   }
 #endif
 

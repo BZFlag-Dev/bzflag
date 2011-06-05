@@ -237,7 +237,7 @@ bool LuaServer::init(const std::string& cmdLine) {
   const std::string scriptFile = scriptDir + sourceFile;
   if (!fileExists(scriptFile)) {
     debugf(1, "LuaServer: could not find %s in %s\n",
-                    sourceFile, scriptDir.c_str());
+           sourceFile, scriptDir.c_str());
     if (dieHard) {
       exit(2);
     }

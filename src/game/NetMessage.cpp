@@ -139,7 +139,7 @@ void NetMessage::growCapacity(size_t s) {
   data = (char*) realloc(data, capacity);
   if (data == NULL) {
     debugf(0,
-                    "ERROR: NetMessage::growCapacity(%i) out-of-memory\n", (int) s);
+           "ERROR: NetMessage::growCapacity(%i) out-of-memory\n", (int) s);
     exit(2);
   }
 }

@@ -62,7 +62,7 @@ void AresHandler::queryHostname(struct sockaddr* clientAddr) {
   memcpy(&requestedAddress, &((sockaddr_in*)clientAddr)->sin_addr,
          sizeof(requestedAddress));
   debugf(2, "Submitted reverse resolve query for %s\n",
-                  inet_ntoa(requestedAddress));
+         inet_ntoa(requestedAddress));
   status = HbAPending;
   // launch the asynchronous query to look up this hostname
   ares_gethostbyaddr(aresChannel, &requestedAddress,
@@ -120,7 +120,7 @@ void AresHandler::callback(int callbackStatus, struct hostent* hostent) {
     hostname = strdup(hostent->h_name);
     status = HbASucceeded;
     debugf(2, "Address %s resolved to %s\n", inet_ntoa(requestedAddress),
-                    hostname);
+           hostname);
   }
   else if (status == HbNPending) {
     memcpy(&hostAddress, hostent->h_addr_list[0], sizeof(hostAddress));

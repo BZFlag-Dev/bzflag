@@ -172,7 +172,7 @@ bool PlayerInfo::processEnter(uint16_t& rejectCode, char* rejectMsg) {
   referrer[ReferrerLen - 1] = '\0';
 
   debugf(2, "Player %s [%d] sent version string: %s\n",
-                  callSign, playerIndex, clientVersion);
+         callSign, playerIndex, clientVersion);
 
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {

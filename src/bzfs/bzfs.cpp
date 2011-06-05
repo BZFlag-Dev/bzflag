@@ -1079,15 +1079,15 @@ static void handleCommand(const void* rawbuf, bool udp, NetHandler* handler) {
   // make sure it's not an attack
   if (udp && isUDPAttackMessage(code)) {
     debugf(1,
-                    "Received packet type (%x) via udp, possible attack from %s\n",
-                    code, handler->getTargetIP());
+           "Received packet type (%x) via udp, possible attack from %s\n",
+           code, handler->getTargetIP());
   }
 #ifdef DEBUG
   else if (code != MsgPlayerUpdateSmall) {
     const MsgStringList msgList = MsgStrings::msgFromClient(len, code, buf);
     debugf(5, "%s from %s:%s at %f\n", msgList[0].text.c_str(),
-                    handler->getTargetIP(), (udp ? "udp" : "tcp"),
-                    BzTime::getCurrent().getSeconds());
+           handler->getTargetIP(), (udp ? "udp" : "tcp"),
+           BzTime::getCurrent().getSeconds());
   }
 #endif
 
@@ -1120,8 +1120,8 @@ static void handleCommand(const void* rawbuf, bool udp, NetHandler* handler) {
 
   if (!handled) { // someone got it, don't need to do the old way
     debugf(1,
-                    "Received an unknown packet type (%x), possible attack from %s\n",
-                    code, handler->getTargetIP());
+           "Received an unknown packet type (%x), possible attack from %s\n",
+           code, handler->getTargetIP());
   }
 }
 
@@ -1523,7 +1523,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char* message, uint8
   // Should cut the message
   if (msglen > (size_t)MessageLen) {
     debugf(1, "WARNING: Network message being sent is too long! "
-                    "(message is %d, cutoff at %d)\n", msglen, MessageLen);
+           "(message is %d, cutoff at %d)\n", msglen, MessageLen);
     msglen = MessageLen;
   }
 
@@ -1999,7 +1999,7 @@ void addPlayer(int playerIndex, GameKeeper::Player* playerData) {
       if (waitTime > 0.0f) {
         char buffer[MessageLen] = {0};
         debugf(2, "Player %s [%d] rejoin wait of %.1f seconds\n",
-                        playerData->player.getCallSign(), playerIndex, waitTime);
+               playerData->player.getCallSign(), playerIndex, waitTime);
         snprintf(buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
         sendMessage(ServerPlayer, playerIndex, buffer);
       }
@@ -2399,7 +2399,7 @@ void pausePlayer(int playerIndex, bool paused) {
   }
 
   debugf(2, "pausePlayer %s %s\n", playerData->player.getCallSign(),
-                  paused ? "true" : "false");
+         paused ? "true" : "false");
 
   // always reset these parameters
   playerData->pauseRequested = false;
@@ -2544,8 +2544,8 @@ void removePlayer(int playerIndex, const char* reason, bool notify) {
   // status message
   std::string timeStamp = BzTime::timestamp();
   debugf(1, "Player %s [%d] removed at %s: %s\n",
-                  playerData->player.getCallSign(),
-                  playerIndex, timeStamp.c_str(), reason);
+         playerData->player.getCallSign(),
+         playerIndex, timeStamp.c_str(), reason);
   bool wasPlaying = playerData->player.isPlaying();
 
   zapFlagByPlayer(playerIndex);
@@ -3354,8 +3354,8 @@ bool updatePlayerState(GameKeeper::Player* playerData,
   // ignore out of order packet
   if (state.order <= playerData->lastState.order) {
     debugf(5, "[%d] ignoring out of order update (%ld <= %ld)\n",
-                    playerData->player.getPlayerIndex(),
-                    state.order, playerData->lastState.order);
+           playerData->player.getPlayerIndex(),
+           state.order, playerData->lastState.order);
     return true;
   }
 
@@ -3834,10 +3834,10 @@ static bool initNet() {
   }
   if (LOBYTE(wsaData.wVersion) != major || HIBYTE(wsaData.wVersion) != minor) {
     debugf(2, "Version mismatch in Winsock; got %d.%d, expected %d.%d. Terminating.\n",
-                    (int)LOBYTE(wsaData.wVersion),
-                    (int)HIBYTE(wsaData.wVersion),
-                    major,
-                    minor);
+           (int)LOBYTE(wsaData.wVersion),
+           (int)HIBYTE(wsaData.wVersion),
+           major,
+           minor);
     WSACleanup();
     return false;
   }
@@ -3896,14 +3896,14 @@ static void initStartupParameters(int argc, char** argv) {
 
   if (clOptions->publicizeServer && clOptions->publicizedKey.empty()) {
     debugf(0,
-                    "\n"
-                    "WARNING:\n"
-                    "  Publicly listed bzfs servers must register using the '-publickey <key>'\n"
-                    "  option. A web page describing list-server policies and procedures can\n"
-                    "  be found at the following location:\n"
-                    "\n"
-                    "    http://my.bzflag.org/w/ServerAuthentication\n"
-                    "\n");
+           "\n"
+           "WARNING:\n"
+           "  Publicly listed bzfs servers must register using the '-publickey <key>'\n"
+           "  option. A web page describing list-server policies and procedures can\n"
+           "  be found at the following location:\n"
+           "\n"
+           "    http://my.bzflag.org/w/ServerAuthentication\n"
+           "\n");
   }
 
   // no more defaults
@@ -4706,7 +4706,7 @@ static void doVoteArbiter(BzTime& tm) {
               std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
               if (args.size() < 2) {
                 debugf(1, "Poll set taking action: no action taken, not enough parameters (%s).\n",
-                                (args.size() > 0 ? args[0].c_str() : "No parameters."));
+                       (args.size() > 0 ? args[0].c_str() : "No parameters."));
               }
               else {
                 StateDatabase::Permission permission = BZDB.getPermission(args[0]);
@@ -4960,7 +4960,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
       else {
         if (e == ReadHuge) {
           debugf(1,
-                          "socket [%d] sent huge packet length, possible attack\n", sockFD);
+                 "socket [%d] sent huge packet length, possible attack\n", sockFD);
         }
         peer.deleteMe = true;
       }
@@ -4993,8 +4993,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
 
         if (playerIndex < 0xff) {
           debugf(1,
-                          "Player [%d] accept() from %s on %i\n",
-                          playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
+                 "Player [%d] accept() from %s on %i\n",
+                 playerIndex, inet_ntoa(netHandler->getIPAddress()), fd);
 
           buffer[8] = (uint8_t)playerIndex;
           send(fd, (const char*)buffer, sizeof(buffer), 0);
@@ -5002,8 +5002,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
         else {
           // full? reject by closing socket
           debugf(1,
-                          "all slots occupied, rejecting accept() from %s on %i\n",
-                          inet_ntoa(netHandler->getIPAddress()), fd);
+                 "all slots occupied, rejecting accept() from %s on %i\n",
+                 inet_ntoa(netHandler->getIPAddress()), fd);
 
           // send back 0xff before closing
           send(fd, (const char*)buffer, sizeof(buffer), 0);
@@ -5073,7 +5073,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD,
 
       if (e == ReadHuge) {
         debugf(1,
-                        "socket [%d] sent huge packet length, possible attack\n", sockFD);
+               "socket [%d] sent huge packet length, possible attack\n", sockFD);
       }
     }
     else {
@@ -5274,12 +5274,12 @@ static void runMainLoop() {
                 sendUDPupdate(netHandler);
 
                 debugf(2, "Inbound UDP up %s:%d\n",
-                                inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+                       inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
               }
               else {
                 debugf(2,
-                                "Inbound UDP rejected %s:%d different IP than original\n",
-                                inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
+                       "Inbound UDP rejected %s:%d different IP than original\n",
+                       inet_ntoa(uaddr.sin_addr), ntohs(uaddr.sin_port));
               }
               continue;
             }
@@ -5291,7 +5291,7 @@ static void runMainLoop() {
           // don't spend more than 250ms receiving udp
           if (BzTime::getCurrent() - receiveTime > 0.25f) {
             debugf(2,
-                            "Too much UDP traffic, will hope to catch up later\n");
+                   "Too much UDP traffic, will hope to catch up later\n");
             break;
           }
         }

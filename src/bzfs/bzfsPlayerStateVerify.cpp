@@ -138,8 +138,8 @@ bool doBoundsChecks(GameKeeper::Player* playerData, PlayerState& state) {
   // kick em cus they are most likely cheating or using a buggy client
   if (!InBounds) {
     debugf(1, "Kicking Player %s [%d] Out of map bounds at position (%.2f,%.2f,%.2f)\n",
-                    playerData->player.getCallSign(), playerData->getIndex(),
-                    state.pos.x, state.pos.y, state.pos.z);
+           playerData->player.getCallSign(), playerData->getIndex(),
+           state.pos.x, state.pos.y, state.pos.z);
     sendMessage(ServerPlayer, playerData->getIndex(),
                 "Autokick: Player location was outside the playing area.");
     removePlayer(playerData->getIndex(), "Out of map bounds", true);
@@ -336,11 +336,11 @@ bool doHeightChecks(GameKeeper::Player* playerData, PlayerState& state) {
   if (state.pos.z > maxHeight) {
     if (BZDB.isTrue("_heightChecksLogOnly")) {
       debugf(1, "Logging Player %s [%d] jumped too high [max: %f height: %f]\n",
-                      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
+             playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
     }
     else {
       debugf(1, "Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-                      playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
+             playerData->player.getCallSign(), playerData->getIndex(), maxHeight, state.pos.z);
       sendMessage(ServerPlayer, playerData->getIndex(), "Autokick: Player location was too high.");
       removePlayer(playerData->getIndex(), "too high", true);
     }
@@ -436,18 +436,18 @@ bool checkFlagCheats(GameKeeper::Player* playerData, int teamIndex) {
   TeamColor base = whoseBase(currPos.x, currPos.y, currPos.z);
   if ((teamIndex == playerData->player.getTeam() && base == playerData->player.getTeam())) {
     debugf(1, "Player %s [%d] might have sent MsgCaptureFlag for taking their own "
-                    "flag onto their own base\n",
-                    playerData->player.getCallSign(), playerData->getIndex());
+           "flag onto their own base\n",
+           playerData->player.getCallSign(), playerData->getIndex());
     foundACheat = true;
   }
 
   if ((teamIndex != playerData->player.getTeam() && base != playerData->player.getTeam())) {
     debugf(1, "Player %s [%d] (%s) might have tried to capture %s flag without "
-                    "reaching their own base. (Player position: %f %f %f)\n",
-                    playerData->player.getCallSign(), playerData->getIndex(),
-                    Team::getName(playerData->player.getTeam()),
-                    Team::getName((TeamColor)teamIndex),
-                    currPos.x, currPos.y, currPos.z);
+           "reaching their own base. (Player position: %f %f %f)\n",
+           playerData->player.getCallSign(), playerData->getIndex(),
+           Team::getName(playerData->player.getTeam()),
+           Team::getName((TeamColor)teamIndex),
+           currPos.x, currPos.y, currPos.z);
     foundACheat = true;
   }
 

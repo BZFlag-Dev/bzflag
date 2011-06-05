@@ -693,7 +693,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
                                  const ObstacleModifier& obsMod) const {
   if (active) {
     debugf(0, "WARNING: avoided recursion, groupDef \"%s\"\n",
-                    name.c_str());
+           name.c_str());
     return; // avoid recursion
   }
 
@@ -809,7 +809,7 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
     }
     else {
       debugf(1, "warning: group definition \"%s\" is missing\n",
-                      group->getGroupDef().c_str());
+             group->getGroupDef().c_str());
     }
   }
 
@@ -1303,7 +1303,7 @@ void GroupDefinitionMgr::makeWorld() {
         Obstacle* obs = obsList[i];
         if (!obs->getName().empty()) {
           debugf(dbg, "  '/%-40s  <%s>\n",
-                          (obs->getName() + "'").c_str(), obs->getType());
+                 (obs->getName() + "'").c_str(), obs->getType());
           if (obs->getTypeID() == meshType) {
             const MeshObstacle* mesh = (const MeshObstacle*)obs;
             const int faceCount = mesh->getFaceCount();
@@ -1313,7 +1313,7 @@ void GroupDefinitionMgr::makeWorld() {
                 const MeshFace::SpecialData* sd = face->getSpecialData();
                 if (!sd->linkName.empty()) {
                   debugf(dbg, "  '/%-40s  <MeshFace #%i>\n",
-                                  (face->getLinkName() + "'").c_str(), f);
+                         (face->getLinkName() + "'").c_str(), f);
                 }
               }
             }

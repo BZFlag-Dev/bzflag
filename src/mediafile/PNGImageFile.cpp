@@ -125,8 +125,8 @@ PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL
   init(channels, myWidth, myHeight);
 
   debugf(4, "Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
-                  "Interlace Method %d, Channels %d.\n",
-                  myWidth, myHeight, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
+         "Interlace Method %d, Channels %d.\n",
+         myWidth, myHeight, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
 }
 
 /*

@@ -88,7 +88,7 @@ void* BzDocket::pack(void* buf) const {
   uint32_t offset = 0;
   for (it = dataMap.begin(); it != dataMap.end(); ++ it) {
     debugf(3, "packing into %s:  %-*s  [%i]\n", docketName.c_str(),
-                    (int)maxLen, it->first.c_str(), (int)it->second.size());
+           (int)maxLen, it->first.c_str(), (int)it->second.size());
     const size_t dataSize = it->second.size();
     buf = nboPackStdString(buf, it->first);
     buf = nboPackUInt32(buf, 0); // extra
@@ -141,7 +141,7 @@ void* BzDocket::unpack(void* buf) {
     buf = nboUnpackStdString(buf, data);
     addData(data, names[i]);
     debugf(3, "unpacked into %s:  %-*s  [%i]\n", docketName.c_str(),
-                    (int)maxLen, names[i].c_str(), (int)data.size());
+           (int)maxLen, names[i].c_str(), (int)data.size());
   }
   return buf;
 }
@@ -264,8 +264,8 @@ bool BzDocket::addFile(const std::string& filePath,
   delete[] buf;
 
   debugf(3, "adding to %s: '%s' as '%s'  (%li)\n",
-                  docketName.c_str(), filePath.c_str(),
-                  mapPath.c_str(), len);
+         docketName.c_str(), filePath.c_str(),
+         mapPath.c_str(), len);
 
   return addData(data, mapPath);
 }
@@ -345,7 +345,7 @@ void BzDocket::dirList(const std::string& path, bool recursive,
     realPath += '/';
   }
   debugf(4, "BzDocket::dirList: '%s' %s\n",
-                  realPath.c_str(), recursive ? "(recursive)" : "");
+         realPath.c_str(), recursive ? "(recursive)" : "");
 
   const int pathSlashes = countSlashes(realPath);
 

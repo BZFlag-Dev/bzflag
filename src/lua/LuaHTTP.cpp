@@ -225,7 +225,7 @@ void LuaHTTP::finalization(char* data, unsigned int length, bool good) {
   // call the function
   if (lua_pcall(httpL, args, 0, 0) != 0) {
     debugf(0, "LuaHTTP callback error (%s): %s\n",
-                    url.c_str(), lua_tostring(httpL, -1));
+           url.c_str(), lua_tostring(httpL, -1));
     lua_pop(httpL, 1);
   }
 }

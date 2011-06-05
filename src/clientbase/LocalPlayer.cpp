@@ -240,12 +240,12 @@ void LocalPlayer::doUpdateMotion(float dt) {
   if (debugMotion >= 1) {
     const std::string locationString = getLocationString(location);
     debugf(0, "doUpdateMotion: %+12.6f %s/fps=%.6f/spf=%.6f\n", dt,
-                    BZDBCache::useGameSPF ? "true" : "false",
-                    (float)BZDBCache::gameFPS, (float)BZDBCache::gameSPF);
+           BZDBCache::useGameSPF ? "true" : "false",
+           (float)BZDBCache::gameFPS, (float)BZDBCache::gameSPF);
     debugf(0, "  location = %s\n", locationString.c_str());
     debugf(0, "  phydrv = %i\n", getPhysicsDriver());
     debugf(0, "  lastObstacle = %s\n",
-                    lastObstacle ? lastObstacle->getType() : "none");
+           lastObstacle ? lastObstacle->getType() : "none");
     debugf(0, "  pos = %s\n", oldPosition.tostring("%+12.6f").c_str());
     debugf(0, "  vel = %s\n", oldVelocity.tostring("%+12.6f").c_str());
     debugf(0, "  angle  = %+12.6f\n", oldAzimuth);
@@ -547,7 +547,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
       bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor);
       if (debugMotion >= 1)
         debugf(0, "CHECK BUMP bumpPos = %f %f %f\n",
-                        bumpPos.x, bumpPos.y, bumpPos.z);
+               bumpPos.x, bumpPos.y, bumpPos.z);
       const Obstacle* bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                                     bumpPos, newAzimuth,
                                                     phased, expel);
@@ -557,7 +557,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
         move(newPos, getAngle());
         if (debugMotion >= 1)
           debugf(0, "BUMPED newPos = %f %f %f; obstacleTop = %f\n",
-                          newPos.x, newPos.y, newPos.z, obstacleTop);
+                 newPos.x, newPos.y, newPos.z, obstacleTop);
         break;
       }
       else {
@@ -568,7 +568,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
         bumpPos.xy() += newVelocity.xy() * (dt * bumpSpeedFactor) * 0.1f;
         if (debugMotion >= 1)
           debugf(0, "CHECK BUMP 2 bumpPos = %f %f %f\n",
-                          bumpPos.x, bumpPos.y, bumpPos.z);
+                 bumpPos.x, bumpPos.y, bumpPos.z);
         bumpObstacle = getHitBuilding(bumpPos, tmpAzimuth,
                                       bumpPos, newAzimuth,
                                       phased, expel);
@@ -578,7 +578,7 @@ void LocalPlayer::doUpdateMotion(float dt) {
           move(newPos, getAngle());
           if (debugMotion >= 1)
             debugf(0, "BUMPED 2 newPos = %f %f %f; obstacleTop = %f\n",
-                            newPos.x, newPos.y, newPos.z, obstacleTop);
+                   newPos.x, newPos.y, newPos.z, obstacleTop);
           break;
         }
       }
@@ -1019,7 +1019,7 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
     if (debugTele >= 1) {
       if (teleBlocker) {
         debugf(0, "teleport blocked by %s '%s'\n",
-                        teleBlocker->getType(), teleBlocker->getName().c_str());
+               teleBlocker->getType(), teleBlocker->getName().c_str());
       }
       else {
         debugf(0, "teleport blocked by the ground\n");
@@ -1045,7 +1045,7 @@ bool LocalPlayer::tryTeleporting(const MeshFace* linkSrc,
       newVel = oldVel - (2.0f * plane * fvec3::dot(plane, oldVel));
       if (debugTele >= 1) {
         debugf(0, "  rebounded: vel = %s\n",
-                        newVel.tostring().c_str());
+               newVel.tostring().c_str());
       }
     }
     return false;

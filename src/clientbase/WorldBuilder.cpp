@@ -160,7 +160,7 @@ void* WorldBuilder::unpack(void* buf) {
   if ((char*)buf != uncompressedEnd) {
     delete[] uncompressedWorld;
     debugf(1, "WorldBuilder::unpack() ending mismatch (%i)\n",
-                    (char*)buf - uncompressedEnd);
+           (char*)buf - uncompressedEnd);
     return NULL;
   }
 

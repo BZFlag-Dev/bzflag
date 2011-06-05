@@ -373,7 +373,7 @@ int FontManager::getFaceID(std::string const& faceName, bool quietly) {
   if (fontFaces.size() > 0) {
     if (!quietly) {
       debugf(3, "Requested font %s not found, using %s instead\n",
-                      faceName.c_str(), fontFaces[0].name().c_str());
+             faceName.c_str(), fontFaces[0].name().c_str());
     }
     return 0;
   }
@@ -642,7 +642,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       startSend++;
       if (startSend == 0) {
         debugf(1,
-                        "drawString found an ansi sequence that didn't terminate");
+               "drawString found an ansi sequence that didn't terminate");
         break; // break out of the while loop
       }
     }

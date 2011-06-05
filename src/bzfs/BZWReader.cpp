@@ -255,7 +255,7 @@ bool BZWReader::parseCustomObject(const char* token, bool& error, int& lineNum,
     // embedded objects
     if (data.newData.size() > 0) {
       debugf(1, "%s: (line %i): embedding for \"%s\"\n",
-                      location.c_str(), lineNum, data.name.c_str());
+             location.c_str(), lineNum, data.name.c_str());
       std::istringstream newData(data.newData.c_str());
       BZWReader incStream(newData);
       std::vector<WorldFileObject*> incWlist;
@@ -484,7 +484,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
         //       - better filename handling ("", spaces, and / vs. \\)
         //       - make relative names work from the base file location
         debugf(1, "%s: (line %i): including \"%s\"\n",
-                        location.c_str(), lineNum, incName.c_str());
+               location.c_str(), lineNum, incName.c_str());
         BZWReader incFile(incName);
         std::vector<WorldFileObject*> incWlist;
         if (incFile.readWorldStream(incWlist, groupDef, gotWorld)) {

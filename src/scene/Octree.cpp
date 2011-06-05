@@ -166,11 +166,11 @@ void Octree::addNodes(SceneNode** list, int listSize, int depth, int elements) {
   debugf(2, "Octree scene nodes = %i\n", listSize);
   for (i = 0; i < 3; i++) {
     debugf(2, "  grid extent[%i] = %f, %f\n", i, extents.mins[i],
-                    extents.maxs[i]);
+           extents.maxs[i]);
   }
   for (i = 0; i < 3; i++) {
     debugf(2, "  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i],
-                    visualExtents.maxs[i]);
+           visualExtents.maxs[i]);
   }
   debugf(2, "Octree leaf nodes  = %i\n", leafNodes);
   debugf(2, "Octree total nodes = %i\n", totalNodes);

@@ -329,7 +329,7 @@ class EnterHandler : public PlayerFirstHandler {
       // a previous MsgEnter will have set the name a few lines down from here
       if (!player->accessInfo.getName().empty()) {
         debugf(1, "Player %s [%d] sent another MsgEnter\n",
-                        player->player.getCallSign(), player->getIndex());
+               player->player.getCallSign(), player->getIndex());
         rejectPlayer(player->getIndex(), RejectBadRequest, "invalid request");
         return true;
       }
@@ -350,9 +350,9 @@ class EnterHandler : public PlayerFirstHandler {
       }
 
       debugf(1, "Player %s [%d] has joined from %s at %s with token \"%s\"\n",
-                      player->player.getCallSign(),
-                      player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
-                      player->player.getToken());
+             player->player.getCallSign(),
+             player->getIndex(), playerIP.c_str(), timeStamp.c_str(),
+             player->player.getToken());
       const char* referrer = player->player.getReferrer();
       if (referrer && referrer[0]) {
         debugf(1, "  referred by \"%s\"\n", referrer);
@@ -491,7 +491,7 @@ class DropFlagHandler : public PlayerFirstHandler {
         // client may be cheating
         const PlayerId id = player->getIndex();
         debugf(1, "Player %s [%d] dropped flag out of bounds to %f %f %f\n",
-                        player->player.getCallSign(), id, pos.x, pos.y, pos.z);
+               player->player.getCallSign(), id, pos.x, pos.y, pos.z);
         sendMessage(ServerPlayer, id, "Autokick: Flag dropped out of bounds.");
       }
 
@@ -983,7 +983,7 @@ class PauseHandler : public PlayerFirstHandler {
         }
         default: { // ignore unexpected pause codes
           debugf(1, "unexpected pause code: %s sent %d\n",
-                          player->player.getCallSign(), (int)pauseCode);
+                 player->player.getCallSign(), (int)pauseCode);
           return true;
         }
       }
@@ -1145,8 +1145,8 @@ class PlayerDataHandler : public PlayerFirstHandler {
       buf = nboUnpackStdString(buf, value);
 
       debugf(4, "Player %s [%d] CustomData < '%s' = '%s' >\n",
-                      player->player.getCallSign(), player->getIndex(),
-                      key.c_str(), value.c_str());
+             player->player.getCallSign(), player->getIndex(),
+             key.c_str(), value.c_str());
 
       // let the API change the value
       bz_PlayerCustomData_V1 data(bz_ePlayerSentCustomData);
@@ -1178,8 +1178,8 @@ class QueryOSHandler : public PlayerFirstHandler {
 
       player->player.OSVersion = vers;
       debugf(2, "Player %s [%d] OS version \"%s\"\n",
-                      player->player.getCallSign(), player->getIndex(),
-                      player->player.OSVersion.c_str());
+             player->player.getCallSign(), player->getIndex(),
+             player->player.OSVersion.c_str());
 
       return true;
     }

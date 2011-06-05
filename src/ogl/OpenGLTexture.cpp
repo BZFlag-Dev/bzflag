@@ -213,7 +213,7 @@ bool OpenGLTexture::setupImage(const void* pixels) {
     unaligned = unalignedScaled;
     aligned = alignedScaled;
     debugf(1, "Scaling texture from %ix%i to %ix%i\n",
-                    width, height, scaledWidth, scaledHeight);
+           width, height, scaledWidth, scaledHeight);
   }
 
   // set the image

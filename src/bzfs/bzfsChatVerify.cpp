@@ -36,8 +36,8 @@ bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t) {
             || clOptions->spamWarnMax == 0) {
           sendMessage(ServerPlayer, t, "You were kicked because of spamming.");
           debugf(2, "Kicking player %s [%d] for spamming too much: "
-                          "2 messages sent within %fs after %d warnings\n",
-                          player.getCallSign(), t, dt, player.getSpamWarns());
+                 "2 messages sent within %fs after %d warnings\n",
+                 player.getCallSign(), t, dt, player.getSpamWarns());
           removePlayer(t, "spam", true);
           return true;
         }
@@ -86,7 +86,7 @@ bool checkChatGarbage(char* message, GameKeeper::Player* playerData, int t) {
     if (badChars > 5) {
       sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
       debugf(2, "Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars\n",
-                      player.getCallSign(), t, badChars, totalChars);
+             player.getCallSign(), t, badChars, totalChars);
       removePlayer(t, "garbage");
 
       // they're only happy when it rains

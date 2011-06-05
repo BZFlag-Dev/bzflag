@@ -168,7 +168,7 @@ void ListServerLink::finalization(char* data, unsigned int length, bool good) {
                 (gkp->_LSAState == GameKeeper::Player::verified)) {
               gkp->setBzIdentifier(bzId);
               debugf(3, "Set player (%s [%i]) bzId to (%s)\n",
-                              nick.c_str(), i, bzId.c_str());
+                     nick.c_str(), i, bzId.c_str());
               break;
             }
           }

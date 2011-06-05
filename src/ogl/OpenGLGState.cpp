@@ -1266,12 +1266,12 @@ void OpenGLGState::registerContextInitializer(
   void* userData) {
   if (executingFreeFuncs) {
     debugf(0,
-                    "WARNING: registerContextInitializer() while executingFreeFuncs\n");
+           "WARNING: registerContextInitializer() while executingFreeFuncs\n");
     return;
   }
   if (executingInitFuncs) {
     debugf(0,
-                    "WARNING: registerContextInitializer() while executingInitFuncs\n");
+           "WARNING: registerContextInitializer() while executingInitFuncs\n");
     return;
   }
   if ((freeCallback == NULL) || (initCallback == NULL)) {
@@ -1288,12 +1288,12 @@ void OpenGLGState::unregisterContextInitializer(
   void* userData) {
   if (executingFreeFuncs) {
     debugf(0,
-                    "WARNING: unregisterContextInitializer() while executingFreeFuncs\n");
+           "WARNING: unregisterContextInitializer() while executingFreeFuncs\n");
     return;
   }
   if (executingInitFuncs) {
     debugf(0,
-                    "WARNING: unregisterContextInitializer() while executingInitFuncs\n");
+           "WARNING: unregisterContextInitializer() while executingInitFuncs\n");
     return;
   }
 

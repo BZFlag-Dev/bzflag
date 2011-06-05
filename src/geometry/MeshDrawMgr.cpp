@@ -240,7 +240,7 @@ void MeshDrawMgr::makeLists() {
         error = glGetError();
         if (error != GL_NO_ERROR) {
           debugf(1, "MeshDrawMgr::makeLists() %i/%i glError: %i\n",
-                          lod, set, error);
+                 lod, set, error);
           lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
         }
         else {

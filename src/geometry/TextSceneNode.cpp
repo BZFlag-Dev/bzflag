@@ -468,7 +468,7 @@ void TextSceneNode::TextRenderNode::initXFormList() {
     errCount++; // avoid a possible spin-lock?
     if (errCount > 666) {
       debugf(0,
-                      "ERROR: TextSceneNode::initXFormList() glError: %i\n", error);
+             "ERROR: TextSceneNode::initXFormList() glError: %i\n", error);
       return; // don't make the list, something is borked
     }
   };
@@ -496,7 +496,7 @@ void TextSceneNode::TextRenderNode::initXFormList() {
   error = glGetError();
   if (error != GL_NO_ERROR) {
     debugf(0,
-                    "ERROR: TextSceneNode::initXFormList() failed: %i\n", error);
+           "ERROR: TextSceneNode::initXFormList() failed: %i\n", error);
     xformList = INVALID_GL_LIST_ID;
   }
 }

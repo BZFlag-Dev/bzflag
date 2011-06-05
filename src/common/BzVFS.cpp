@@ -804,7 +804,7 @@ bool BzVFS::dirList(const std::string& path,
   }
 
   debugf(4, "BzVFS::dirList: '%s' '%s'\n",
-                  cleanPath.c_str(), outModes.c_str());
+         cleanPath.c_str(), outModes.c_str());
 
   FSMap::const_iterator it;
   for (it = fsMap.begin(); it != fsMap.end(); ++it) {

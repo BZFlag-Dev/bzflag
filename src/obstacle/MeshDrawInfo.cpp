@@ -244,7 +244,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
           for (int idx = 0; idx < drawCmd.count; idx++) {
             if ((int)array[idx] >= cornerCount) {
               debugf(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
-                              array[idx], cornerCount);
+                     array[idx], cornerCount);
               return false;
             }
           }
@@ -254,7 +254,7 @@ bool MeshDrawInfo::validate(const MeshObstacle* mesh) const {
           for (int idx = 0; idx < drawCmd.count; idx++) {
             if ((int)array[idx] >= cornerCount) {
               debugf(0, "ERROR: Bad drawInfo corner index: %i vs %i\n",
-                              array[idx], cornerCount);
+                     array[idx], cornerCount);
               return false;
             }
           }

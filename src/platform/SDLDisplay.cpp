@@ -480,7 +480,7 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
   }
 
   debugf(1, "returning window size %ix%i with fullscreen set to %c\n",
-                  width, height, fullScreen ? '1' : '0');
+         width, height, fullScreen ? '1' : '0');
 
   /* sanity checks */
   if (width <= 0) {

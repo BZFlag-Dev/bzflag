@@ -427,7 +427,7 @@ bool LinkManager::matchLinks(const StringVec& patterns, FaceSet& faces) const {
     for (it = nameFaceVec.begin(); it != nameFaceVec.end(); ++it) {
       if (debugLinks >= 4) {
         debugf(0, "link glob_match:  %s  vs.  %s\n",
-                        glob.c_str(), it->name.c_str());
+               glob.c_str(), it->name.c_str());
       }
       if (glob_match(glob, it->name)) {
         faces.insert(it->face);
@@ -541,14 +541,14 @@ void LinkManager::printDebug() {
     debugf(0, "LinkSrcIDs:\n");
     for (size_t i = 0; i < linkSrcs.size(); i++) {
       debugf(0, "  linkSrc %i: /%s\n", i,
-                      linkSrcs[i]->getLinkName().c_str());
+             linkSrcs[i]->getLinkName().c_str());
     }
     debugf(0, "\n");
 
     debugf(0, "LinkDstIDs:\n");
     for (size_t i = 0; i < linkDsts.size(); i++) {
       debugf(0, "  linkDst %i: /%s\n", i,
-                      linkDsts[i].face->getLinkName().c_str());
+             linkDsts[i].face->getLinkName().c_str());
     }
   }
   debugf(0, "\n");

@@ -796,7 +796,7 @@ bool ServerQueryCommand::operator()(const char*,
                                     GameKeeper::Player* playerData) {
   int t = playerData->getIndex();
   debugf(2, "Server query requested by %s [%d]\n",
-                  playerData->player.getCallSign(), t);
+         playerData->player.getCallSign(), t);
 
   sendMessage(ServerPlayer, t,
               TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
@@ -998,8 +998,8 @@ bool PasswordCommand::operator()(const char* message,
   int t = playerData->getIndex();
   if (playerData->accessInfo.passwordAttemptsMax()) {
     debugf(1, "\"%s\" (%s) has attempted too many /password tries\n",
-                    playerData->player.getCallSign(),
-                    playerData->netHandler->getTargetIP());
+           playerData->player.getCallSign(),
+           playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   }
   else {
@@ -2947,7 +2947,7 @@ bool ClientQueryCommand::operator()(const char* message,
                                     GameKeeper::Player* playerData) {
   int t = playerData->getIndex();
   debugf(2, "Clientquery requested by %s [%d]\n",
-                  playerData->player.getCallSign(), t);
+         playerData->player.getCallSign(), t);
   if (message[12] != '\0') {
     std::string name = message + 13; // assumes there is a space
     while (isspace(name[0])) {

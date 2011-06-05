@@ -1120,7 +1120,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       }
       BZDB.set(name, value);
       debugf(1, "set variable: '%s' = '%s'\n",
-                      name.c_str(), BZDB.get(name).c_str());
+             name.c_str(), BZDB.get(name).c_str());
     }
     else if (token == "-setforced") {
       const std::string name = parseStringArg(i, tokens);
@@ -1131,7 +1131,7 @@ void CmdLineOptions::parse(const std::vector<std::string>& tokens, bool fromWorl
       }
       BZDB.set(name, value);
       debugf(1, "set variable: '%s' = '%s'\n",
-                      name.c_str(), BZDB.get(name).c_str());
+             name.c_str(), BZDB.get(name).c_str());
     }
     else if (token == "-sl") {
       // shot limits
@@ -1757,7 +1757,7 @@ void CmdLineOptions::finalizeParsing(EntryZones& entryZones) {
   }
   if (gameOptions & int(ShakableGameStyle))
     debugf(1, "  shakable bad flags: timeout=%f, wins=%i\n",
-                    0.1f * float(shakeTimeout), shakeWins);
+           0.1f * float(shakeTimeout), shakeWins);
   if (gameOptions & int(HandicapGameStyle)) {
     debugf(1, "  handicap mode on\n");
   }

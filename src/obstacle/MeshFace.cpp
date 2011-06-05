@@ -254,7 +254,7 @@ void MeshFace::setupSpecialData() {
   if (sd.baseTeam >= 0) {
     if (!isFlatTop()) {
       debugf(0, "baseTeam mesh faces must be flat tops (team %i)\n",
-                      sd.baseTeam);
+             sd.baseTeam);
       sd.baseTeam = -1;
     }
   }
@@ -961,8 +961,8 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
 
   if (debugTele && !BZDBCache::forbidDebug) {
     debugf(0, "teleportShot  %s -> %s\n",
-                    srcFace.getLinkName().c_str(),
-                    dstFace.getLinkName().c_str());
+           srcFace.getLinkName().c_str(),
+           dstFace.getLinkName().c_str());
     linkPhysics.print(std::cout, "  linkPhysics:");
     debugf(0, "  srcPos = %s\n", srcPos.tostring().c_str());
     debugf(0, "  srcVel = %s\n", srcVel.tostring().c_str());
@@ -1068,8 +1068,8 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
 
   if (debugTele) {
     debugf(0, "teleportTank  %s -> %s\n",
-                    srcFace.getLinkName().c_str(),
-                    dstFace.getLinkName().c_str());
+           srcFace.getLinkName().c_str(),
+           dstFace.getLinkName().c_str());
     linkPhysics.print(std::cout, "  linkPhysics:");
     debugf(0, "  srcPos = %s\n", srcPos.tostring().c_str());
     debugf(0, "  srcVel = %s\n", srcVel.tostring().c_str());

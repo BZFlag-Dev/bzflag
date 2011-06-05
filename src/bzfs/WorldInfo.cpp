@@ -358,8 +358,8 @@ InBuildingType WorldInfo::classifyHit(const Obstacle* obstacle) const {
     default: {
       // FIXME - choke here?
       debugf(0,
-                      "*** Unknown obstacle type in WorldInfo::classifyHit(): %i\n",
-                      obstacle->getTypeID());
+             "*** Unknown obstacle type in WorldInfo::classifyHit(): %i\n",
+             obstacle->getTypeID());
       return IN_BASE;
     }
   }
@@ -464,8 +464,8 @@ void WorldInfo::createFaceZones() {
                   if (!parseLine(line, cmd, args) ||
                       !zone.readLine(cmd, args)) {
                     debugf(0,
-                                    "WARNING: invalid face zone parameter: %s\n",
-                                    sd->zoneParams[i].c_str());
+                           "WARNING: invalid face zone parameter: %s\n",
+                           sd->zoneParams[i].c_str());
                   }
                 }
               }
@@ -492,7 +492,7 @@ void WorldInfo::createMeshWeapons() {
         if (!parseLine(lines[i], cmd, args) ||
             !weapon->readLine(cmd, args)) {
           debugf(0, "WARNING: invalid mesh weapon parameter: %s\n",
-                          lines[i].c_str());
+                 lines[i].c_str());
         }
       }
       weapon->writeToWorld(this);
@@ -675,7 +675,7 @@ int WorldInfo::packDatabase() {
   database = gzDB;
 
   debugf(1, "Map size: uncompressed = %i, compressed = %i\n",
-                  uncompressedSize, databaseSize);
+         uncompressedSize, databaseSize);
 
   debugf(3, "Compression: %.3f seconds\n", endTime - startTime);
 

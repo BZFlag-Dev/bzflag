@@ -148,7 +148,7 @@ EventHandler::~EventHandler() {
 void EventHandler::Purify() {
   if (!dirtyLists.empty()) {
     debugf(3, "EventHandler::Purify() purifying %i list\n",
-                    (int)dirtyLists.size());
+           (int)dirtyLists.size());
   }
   std::set<EventClientList*>::iterator it;
   for (it = dirtyLists.begin(); it != dirtyLists.end(); ++it) {

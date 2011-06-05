@@ -548,14 +548,14 @@ static void printConfig() {
   debugf(2, "Styles:    count space delta ialpha oalpha period iblink oblink\n");
   for (int i = 1; i < LevelCount; i++) {
     debugf(2, "  level %i:   %i  %5.2f %5.2f %5.2f %6.2f %6.2f %6.2f %6.2f\n", i,
-                    ChevronCounts[i],
-                    ChevronSpaces[i],
-                    ChevronDeltas[i],
-                    ChevronInnerAlphas[i],
-                    ChevronOuterAlphas[i],
-                    BlinkPeriods[i],
-                    InnerBlinkThresholds[i],
-                    OuterBlinkThresholds[i]);
+           ChevronCounts[i],
+           ChevronSpaces[i],
+           ChevronDeltas[i],
+           ChevronInnerAlphas[i],
+           ChevronOuterAlphas[i],
+           BlinkPeriods[i],
+           InnerBlinkThresholds[i],
+           OuterBlinkThresholds[i]);
   }
 
   return;

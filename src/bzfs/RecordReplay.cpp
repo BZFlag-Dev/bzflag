@@ -326,7 +326,7 @@ bool Record::setDirectory(const char* dirname) {
   if (!makeDirExist(RecordDir.c_str())) {
     // they've been warned, leave it at that
     debugf(1, "Could not open or create -recdir directory: %s\n",
-                    RecordDir.c_str());
+           RecordDir.c_str());
     return false;
   }
   return true;
@@ -587,7 +587,7 @@ static bool routePacket(u16 code, int len, const void* data, u16 mode) {
     p->timestamp = getRRtime();
     addHeadPacket(&RecordBuf, p);
     debugf(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-                    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
+           (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
     if (RecordBuf.byteCount > RecordMaxBytes) {
       debugf(4, "routePacket: deleting until State Update\n");
@@ -604,7 +604,7 @@ static bool routePacket(u16 code, int len, const void* data, u16 mode) {
     initPacket(mode, code, len, data, &p);
     savePacket(&p, RecordFile);
     debugf(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-                    (int)p.mode, p.len, MsgStrings::strMsgCode(p.code), p.data);
+           (int)p.mode, p.len, MsgStrings::strMsgCode(p.code), p.data);
   }
 
   return true;
@@ -1224,7 +1224,7 @@ bool Replay::sendPackets() {
     }
 
     debugf(4, "sendPackets(): mode = %i, len = %4i, code = %s, data = %p\n",
-                    (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
+           (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
     if (p->mode == HiddenPacket) {
       debugf(4, "  skipping hidden packet\n");
@@ -1838,7 +1838,7 @@ static RRpacket* loadPacket(FILE* f) {
   }
 
   debugf(4, "loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-                  (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
+         (int)p->mode, p->len, MsgStrings::strMsgCode(p->code), p->data);
 
   return p;
 }
