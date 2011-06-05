@@ -31,6 +31,8 @@ BZFlag 2.3.0  "Born Again"
 * All scores are controlled completely by the server - Daniel Remenak
 * Relabel player "email" string as "motto" - Jeff Makey
 * Require TALK privilege for player motto to be broadcast - Jeff Makey
+* Always require valid authentication for registered names
+    - Jeff Myers, Scott Wichser
 
 
 BZFlag 2.0.16  "No Foolin'" (2010-04-01)

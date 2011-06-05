@@ -2104,14 +2104,10 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
   if (GameKeeper::Player::getPlayerByIndex(playerIndex)
       && playerData->accessInfo.isRegistered()
       && playerData->_LSAState != GameKeeper::Player::verified) {
-    // nick is in the DB send him a message to identify.
-    if (playerData->accessInfo.isIdentifyRequired()) {
-      sendMessage(ServerPlayer, playerIndex,
-		  "This callsign is registered.  "
-		  "You must use global registration.");
-    } else {
-      sendMessage(ServerPlayer, playerIndex, "This callsign is registered.");
-    }
+    // If the name is registered but not authenticated, tell them to identify
+    sendMessage(ServerPlayer, playerIndex,
+		"This callsign is registered.  "
+		"You must use global authentication.");
   }
 
   dropAssignedFlag(playerIndex);

@@ -324,7 +324,6 @@ typedef enum
 #define bz_perm_rejoin  "rejoin"
 #define bz_perm_removePerms  "removePerms"
 #define bz_perm_replay  "replay"
-#define bz_perm_requireIdentify  "requireIdentify"
 #define bz_perm_say  "say"
 #define bz_perm_sendHelp  "sendHelp"
 #define bz_perm_setAll  "setAll"
