@@ -2711,6 +2711,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackUByte(msg, src);
       msg = nboUnpackUByte(msg, dst);
       msg = nboUnpackUByte(msg, type);
+
+      // Only bother processing the message if we know how to handle it
+      if (MessageType(type) != ChatMessage && MessageType(type) != ActionMessage)
+	break;
+
       Player* srcPlayer = lookupPlayer(src);
       Player* dstPlayer = lookupPlayer(dst);
       TeamColor dstTeam = PlayerIdToTeam(dst);
