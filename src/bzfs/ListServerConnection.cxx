@@ -50,7 +50,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
   setDNSCachingTime((long)ceilf(dnsCache));
   setTimeout(10);
 
-  publiclyDisconected = false;
+  publiclyDisconnected = false;
 
   if (clOptions->pingInterface != "")
     setInterface(clOptions->pingInterface);
@@ -97,7 +97,7 @@ ListServerLink::~ListServerLink()
 
 void ListServerLink::finalization(char *data, unsigned int length, bool good)
 {
-	publiclyDisconected = !good;
+	publiclyDisconnected = !good;
 
   queuedRequest = false;
   if (good && (length < 2048)) {

@@ -154,7 +154,7 @@ static TimeKeeper lastWorldParmChange;
 static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
-bool		  publiclyDisconected = false;
+bool		  publiclyDisconnected = false;
 
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message, MessageType type = ChatMessage);

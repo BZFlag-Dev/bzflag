@@ -157,7 +157,7 @@ extern uint16_t	maxRealPlayers;
 extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 
-extern bool		  publiclyDisconected;
+extern bool		  publiclyDisconnected;
 
 extern VotingArbiter *votingarbiter;
 
