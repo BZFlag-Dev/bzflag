@@ -64,26 +64,26 @@ public:
   bz_ApiString	BZIDCallsign;
   bz_APIStringList BZIDGroups;
 
-  bool UserHasPerm ( const char* perm );
+  bool UserHasPerm ( const char* perm ) const;
 
   bz_ApiString	Body;
 
   void AddHeader ( const char* name, const char* value);
-  const char* GetHeader ( const char* name);
-  const char* GetHeader ( size_t index );
-  size_t GetHeaderCount ();
+  const char* GetHeader ( const char* name) const;
+  const char* GetHeader ( size_t index ) const;
+  size_t GetHeaderCount ()const;
 
   void AddCookie ( const char* name, const char* value);
-  const char* GetCookie ( const char* name);
-  const char* GetCookie ( size_t index );
-  size_t GetCookieCount ();
+  const char* GetCookie ( const char* name) const;
+  const char* GetCookie ( size_t index ) const;
+  size_t GetCookieCount () const;
 
   void AddParamater ( const char* name, const char* value);
-  const char* GetParamater ( const char* name);
-  const char* GetParamater ( size_t index );
-  size_t GetParamaterCount ();
+  const char* GetParamater ( const char* name) const;
+  const char* GetParamater ( size_t index ) const;
+  size_t GetParamaterCount () const;
 
-  bool InBZIDGroup ( const char* name );
+  bool InBZIDGroup ( const char* name ) const;
 
   bzhttp_SessionData *Session;
 
@@ -128,6 +128,9 @@ public:
   bz_ApiString	MimeType;
 
   bz_ApiString	MD5Hash;
+
+  bz_ApiString CookieDomain;
+  bz_ApiString CookiePath;
 
   void AddHeader ( const char* name, const char* value);
   void AddCookies ( const char* name, const char* value);

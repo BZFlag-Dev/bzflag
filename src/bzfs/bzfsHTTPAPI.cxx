@@ -325,7 +325,10 @@ BZF_API bool bzhttp_RegisterVDir (bz_Plugin* plugin, bzhttp_VDir *vdir )
   dir.plugin = plugin;
   dir.vdir = vdir;
 
-  vdir->BaseURL = BaseURL + dir.name + "/";
+  std::string vdirURL = BaseURL + vdir->VDirName();
+  vdirURL += "/";
+
+  vdir->BaseURL = vdirURL;
 
   VDirs[dir.name] = dir;
   return true;
@@ -421,8 +424,7 @@ void bzhttp_Responce::AddHeader ( const char* n, const char* v)
   RESPONCE_DATA(data);
 
   std::string name = n; 
-  if (data->Headers.find(name) != data->Headers.end())
-    data->Headers[name] = std::string(v);
+  data->Headers[name] = std::string(v);
 }
 
 void bzhttp_Responce::AddCookies ( const char* n, const char* v)
@@ -430,8 +432,7 @@ void bzhttp_Responce::AddCookies ( const char* n, const char* v)
   RESPONCE_DATA(data);
 
   std::string name = n; 
-  if (data->Cookies.find(name) != data->Cookies.end())
-    data->Cookies[name] = std::string(v);
+   data->Cookies[name] = std::string(v);
 }
 
 void bzhttp_Responce::AddBodyData ( const char* v)
@@ -472,7 +473,7 @@ bzhttp_Request::~bzhttp_Request()
   delete(REQUEST_DATA_PTR);
 }
 
-bool bzhttp_Request::UserHasPerm ( const char* perm )
+bool bzhttp_Request::UserHasPerm ( const char* perm ) const
 {
   if (!BZID.size() || !BZIDCallsign.size() || !BZIDGroups.size() || !perm)
     return false;
@@ -510,7 +511,7 @@ void bzhttp_Request::AddHeader ( const char* n, const char* v)
     data->Headers[name] = std::string(v);
 }
 
-const char* bzhttp_Request::GetHeader ( const char* n)
+const char* bzhttp_Request::GetHeader ( const char* n) const
 {
   REQUEST_DATA(data);
 
@@ -521,7 +522,7 @@ const char* bzhttp_Request::GetHeader ( const char* n)
   return data->Headers[name].c_str();
 }
 
-const char* bzhttp_Request::GetHeader ( size_t index )
+const char* bzhttp_Request::GetHeader ( size_t index ) const
 {
   REQUEST_DATA(data);
   if (index >= data->Headers.size())
@@ -539,7 +540,7 @@ const char* bzhttp_Request::GetHeader ( size_t index )
   return NULL;
 }
 
-size_t bzhttp_Request::GetHeaderCount ()
+size_t bzhttp_Request::GetHeaderCount () const
 {
   REQUEST_DATA(data);
   return data->Headers.size();
@@ -554,7 +555,7 @@ void bzhttp_Request::AddCookie ( const char* n, const char* v)
     data->Headers[name] = std::string(v);
 }
 
-const char* bzhttp_Request::GetCookie ( const char* n)
+const char* bzhttp_Request::GetCookie ( const char* n) const
 {
   REQUEST_DATA(data);
 
@@ -565,7 +566,7 @@ const char* bzhttp_Request::GetCookie ( const char* n)
   return data->Cookies[name].c_str();
 }
 
-const char* bzhttp_Request::GetCookie ( size_t index )
+const char* bzhttp_Request::GetCookie ( size_t index ) const
 {
   REQUEST_DATA(data);
   if (index >= data->Cookies.size())
@@ -583,7 +584,7 @@ const char* bzhttp_Request::GetCookie ( size_t index )
   return NULL;
 }
 
-size_t bzhttp_Request::GetCookieCount ()
+size_t bzhttp_Request::GetCookieCount () const
 {
   REQUEST_DATA(data);
   return data->Cookies.size();
@@ -598,7 +599,7 @@ void bzhttp_Request::AddParamater ( const char* n, const char* v)
     data->Paramaters[name] = std::string(v);
 }
 
-const char* bzhttp_Request::GetParamater ( const char* n)
+const char* bzhttp_Request::GetParamater ( const char* n) const
 {
   REQUEST_DATA(data);
 
@@ -609,7 +610,7 @@ const char* bzhttp_Request::GetParamater ( const char* n)
   return data->Paramaters[name].c_str();
 }
 
-const char* bzhttp_Request::GetParamater ( size_t index )
+const char* bzhttp_Request::GetParamater ( size_t index ) const
 {
   REQUEST_DATA(data);
   if (index >= data->Paramaters.size())
@@ -627,7 +628,7 @@ const char* bzhttp_Request::GetParamater ( size_t index )
   return NULL;
 }
 
-size_t bzhttp_Request::GetParamaterCount ()
+size_t bzhttp_Request::GetParamaterCount () const
 {
   REQUEST_DATA(data);
   return data->Paramaters.size();
@@ -962,7 +963,7 @@ public:
 
 	if (!Authenticated)
 	{
-	  if (vDir->RequiredAuthentiction != eBZID)
+	  if (vDir->RequiredAuthentiction == eBZID)
 	  {
 	    std::string status = GetAuthSessionData("bzidauthstatus");
 	    if (status == "redired")
@@ -1013,12 +1014,20 @@ public:
 	    }
 	    else
 	    {
-	     std::string authURL = "http://my.bzflag.org/weblogin";
+	     std::string authURL = "http://my.bzflag.org/weblogin.php";
 	     if (bz_BZDBItemHasValue("_WebAuthURL"))
 	       authURL = bz_getBZDBString("_WebAuthURL").c_str();
 
 	     authURL += "?action=weblogin&url=";
-	     std::string redirURL = Resource;
+	     std::string redirURL = vDir->BaseURL.c_str();
+
+	     std::string vname = "/";
+	     vname += vDir->VDirName();
+	     vname += "/";
+
+	     if (Resource.size() > vname.size())
+	      redirURL = Resource.c_str()+vname.size();
+
 	     if (redirURL.find_last_of('?') == std::string::npos)
 	       redirURL += "?";
 
@@ -1397,12 +1406,45 @@ public:
       pageBuffer += "\n";
     }
 
-    if (Responce.ReturnCode == e200OK)
+    std::string cookieDomain;
+    std::string cookiePath;
+
+    if (Responce.CookieDomain.size())
+      cookieDomain = Responce.CookieDomain.c_str();
+    else
+      cookieDomain = ServerHostname;
+
+    if (Responce.CookiePath.size())
+      cookiePath = Responce.CookiePath.c_str();
+    else
+    {
+      if (vDir)
+	cookiePath = TextUtils::format("/%s",vDir->VDirName());
+      else
+	cookiePath = "/";
+    }
+
+
+  //  if (Responce.ReturnCode == e200OK)
     {
       itr = data->Cookies.begin();
       while (itr != data->Cookies.end())
       {
-	pageBuffer +=  "Set-Cookie: " + itr->first + ":" + itr->second + "\n";
+	std::string d,p;
+
+	if (itr->first == SESSION_COOKIE)
+	{
+
+	  d = ServerHostname;
+	  p = "/";
+	}
+	else
+	{
+	  d = cookieDomain;
+	  p = cookiePath;
+	}
+
+	pageBuffer +=  TextUtils::format("Set-Cookie: %s=%s; Domain=%s; Path=%s; Max-Age=3600; HttpOnly\n",itr->first.c_str(),itr->second.c_str(),d.c_str(),p.c_str());
 	itr++;
       }
     }
@@ -1566,6 +1608,8 @@ public:
 
   virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
   {
+    responce.ReturnCode = e200OK;
+    responce.DocumentType = eHTML;
     responce.AddBodyData("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head>");
     responce.AddBodyData("<title>Index page for ");
     responce.AddBodyData(ServerHostname.c_str());
