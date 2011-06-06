@@ -244,7 +244,7 @@ ControlPanel::~ControlPanel()
   }
 }
 
-void ControlPanel::bzdbCallback(const std::string& /*name*/, void* data)
+void ControlPanel::bzdbCallback(const std::string& UNUSED(name), void* data)
 {
   ((ControlPanel*)data)->resize();
   return;

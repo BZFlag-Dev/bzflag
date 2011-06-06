@@ -859,7 +859,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 }
 
 
-void SceneRenderer::renderScene(bool /*_lastFrame*/, bool /*_sameFrame*/,
+void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame),
 				bool fullWindow)
 {
   int i;

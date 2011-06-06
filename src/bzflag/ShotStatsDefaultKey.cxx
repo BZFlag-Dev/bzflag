@@ -60,7 +60,7 @@ bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
   return true;
 }
 
-bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& /* key */)
+bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& UNUSED(key))
 {
   return true;
 }

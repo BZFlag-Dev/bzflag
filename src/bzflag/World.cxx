@@ -564,7 +564,7 @@ void			World::freeMeshDrawMgrs()
 }
 
 
-void			World::updateAnimations(float /*dt*/)
+void			World::updateAnimations(float UNUSED(dt))
 {
   const double gameTime = GameTime::getStepTime();
   for (int i = 0; i < drawInfoCount; i++) {
@@ -686,7 +686,7 @@ void			World::initFlag(int index)
   }
 }
 
-void			World::updateWind(float /*dt*/)
+void			World::updateWind(float UNUSED(dt))
 {
   const float minWindSpeed = 0.0f; // FIXME - BZDB
   const float maxWindSpeed = 10.0f; // FIXME - BZDB

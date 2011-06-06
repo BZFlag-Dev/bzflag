@@ -552,7 +552,7 @@ void ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 
 
 void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
-                                        float _x1, float /*_y1*/)
+                                        float _x1, float UNUSED(_y1))
 {
   static const TimeKeeper startTime = TimeKeeper::getCurrent();
 

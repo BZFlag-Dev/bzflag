@@ -1073,8 +1073,8 @@ bool SquishDeathEffect::update ( float time )
 
 	return false;
 }
- void SquishDeathEffect::draw ( const SceneRenderer& /*sr*/ )
- {}
+void SquishDeathEffect::draw ( const SceneRenderer& UNUSED(sr) )
+{}
 
  bool SquishDeathEffect::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
 {
@@ -1114,11 +1114,12 @@ bool FadeToHeaven::update ( float time )
 
 	return false;
 }
- void FadeToHeaven::draw ( const SceneRenderer& /*sr*/ )
- {
- }
 
- bool FadeToHeaven::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
+void FadeToHeaven::draw ( const SceneRenderer& UNUSED(sr) )
+{
+}
+
+bool FadeToHeaven::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
 {
 	done = params.explodeParam  < 0.0001f;
 

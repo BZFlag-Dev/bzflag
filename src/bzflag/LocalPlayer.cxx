@@ -1516,9 +1516,9 @@ void			LocalPlayer::doFriction(float dt,
   }
 }
 
-void			LocalPlayer::doForces(float /*dt*/,
-					      float* /*velocity*/,
-					      float& /*angVel*/)
+void			LocalPlayer::doForces(float UNUSED(dt),
+					      float* UNUSED(velocity),
+					      float& UNUSED(angVel))
 {
   // apply external forces
   // do nothing -- no external forces right now

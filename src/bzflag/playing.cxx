@@ -1489,9 +1489,9 @@ static bool isCached(char *hexDigest)
 }
 
 
-int curlProgressFunc(void* /*clientp*/,
+int curlProgressFunc(void* UNUSED(clientp),
 		     double dltotal, double dlnow,
-		     double /*ultotal*/, double /*ulnow*/)
+		     double UNUSED(ultotal), double UNUSED(ulnow))
 {
   // FIXME: beaucoup cheeze here in the aborting style
   //	we should be using async dns and multi-curl
@@ -4968,7 +4968,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
 }
 
 
-static void addVarToAutoComplete(const std::string& name, void* /*userData*/)
+static void addVarToAutoComplete(const std::string& name, void* UNUSED(userData))
 {
   if ((name.size() <= 0) || (name[0] != '_')) {
     return; // we're skipping "poll"

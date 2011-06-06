@@ -75,9 +75,9 @@ public:
 	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
 	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
 
-	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &/*params*/ ){return false;}
+	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) ){return false;}
 	virtual bool ShowExplosion ( void ){return true;}
-	virtual bool GetDeathVector ( fvec3 &/*vel*/ ){return false;}
+	virtual bool GetDeathVector ( fvec3 &UNUSED(vel) ){return false;}
 
 	void setPlayer ( Player* p){player=p;}
 protected:

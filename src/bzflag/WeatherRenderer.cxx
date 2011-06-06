@@ -30,7 +30,7 @@
 #define _CULLING_RAIN false
 
 
-static void bzdbCallBack(const std::string& /* name */ , void *userData)
+static void bzdbCallBack(const std::string& UNUSED(name), void *userData)
 {
   static_cast<WeatherRenderer*>(userData)->set();
 }
