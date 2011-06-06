@@ -293,7 +293,7 @@ bool UnmuteCommand::operator() (const char	 *message,
   return true;
 }
 
-bool MuteListCommand::operator() (const char * /* message */,
+bool MuteListCommand::operator() (const char * UNUSED(message),
 				  GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();

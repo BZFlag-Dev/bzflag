@@ -759,12 +759,12 @@ public:
     }
   }
 
-  virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ )
+  virtual void URLTimeout ( const char* UNUSED(URL), int UNUSED(errorCode) )
   {
     bzIDAuthFailed = true;
   }
 
-  virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+  virtual void URLError ( const char* UNUSED(URL), int UNUSED(errorCode), const char * UNUSED(errorString) )
   {
     bzIDAuthFailed = true;
   }
@@ -2169,7 +2169,7 @@ void processIF ( std::string &code, std::string::const_iterator &inItr, const st
   inItr = itr;
 }
 
-void processComment ( std::string & /* code */, std::string::const_iterator &inItr, const std::string &str,  TemplateInfo& /*info*/ )
+void processComment ( std::string & UNUSED(code), std::string::const_iterator &inItr, const std::string &str,  TemplateInfo& UNUSED(info) )
 {
   std::string key;
   inItr = readKey(key,inItr,str);

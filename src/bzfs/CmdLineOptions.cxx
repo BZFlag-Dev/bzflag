@@ -1350,7 +1350,7 @@ static int addZoneTeamFlags(int startIndex,
 }
 
 
-void finalizeParsing(int /*argc*/, char **argv,
+void finalizeParsing(int UNUSED(argc), char **argv,
 		     CmdLineOptions &options, EntryZones& entryZones)
 {
   if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {

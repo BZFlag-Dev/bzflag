@@ -4674,7 +4674,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   handleCommand(t, netPlayer.getTcpBuffer(), false);
 }
 
-static void terminateServer(int /*sig*/)
+static void terminateServer(int UNUSED(sig))
 {
   bzSignal(SIGINT, SIG_PF(terminateServer));
   bzSignal(SIGTERM, SIG_PF(terminateServer));
@@ -4966,7 +4966,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   peer.sendChunks.pop_front();
 }
 
-static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*read_set*/, fd_set& /*write_set*/)
+static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& UNUSED(read_set), fd_set& UNUSED(write_set))
 {
   double connectionTimeout = 2.5; // timeout in seconds
 
@@ -5151,7 +5151,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& /*r
 // global variable callbacks
 //
 
-static void bzdbGlobalCallback(const std::string& name, void* /*data*/)
+static void bzdbGlobalCallback(const std::string& name, void* UNUSED(data))
 {
   const std::string value = BZDB.get(name);
   bz_BZDBChangeData_V1 eventData(name, value);

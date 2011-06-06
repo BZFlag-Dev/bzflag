@@ -90,12 +90,12 @@ public:
     }
   }
 
-  virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ )
+  virtual void URLTimeout ( const char* UNUSED(URL), int UNUSED(errorCode) )
   {
     doNext();
   }
 
-  virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ )
+  virtual void URLError ( const char* UNUSED(URL), int UNUSED(errorCode), const char * UNUSED(errorString) )
   {
     doNext();
   }

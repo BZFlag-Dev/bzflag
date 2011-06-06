@@ -33,7 +33,7 @@ RandomSpawnPolicy::~RandomSpawnPolicy()
 {
 }
 
-void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, bool /*notNearEdges*/)
+void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, bool UNUSED(notNearEdges))
 {
   /* the player is coming to life, depending on who they are an what
    * style map/configuration is being played determines how they will
