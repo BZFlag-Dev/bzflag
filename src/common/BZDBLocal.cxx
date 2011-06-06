@@ -60,7 +60,7 @@ void BZDBbool::callback()
 }
 
 
-void BZDBbool::staticCallback(const std::string& /*name*/, void* data)
+void BZDBbool::staticCallback(const std::string& UNUSED(name), void* data)
 {
   ((BZDBbool*)data)->callback();
   return;
@@ -139,7 +139,7 @@ void BZDBint::callback()
 }
 
 
-void BZDBint::staticCallback(const std::string& /*name*/, void* data)
+void BZDBint::staticCallback(const std::string& UNUSED(name), void* data)
 {
   ((BZDBint*)data)->callback();
   return;
@@ -219,7 +219,7 @@ void BZDBfloat::callback()
 }
 
 
-void BZDBfloat::staticCallback(const std::string& /*name*/, void* data)
+void BZDBfloat::staticCallback(const std::string& UNUSED(name), void* data)
 {
   ((BZDBfloat*)data)->callback();
   return;
@@ -301,7 +301,7 @@ void BZDBcolor::callback()
 }
 
 
-void BZDBcolor::staticCallback(const std::string& /*name*/, void* data)
+void BZDBcolor::staticCallback(const std::string& UNUSED(name), void* data)
 {
   ((BZDBcolor*)data)->callback();
   return;
@@ -372,7 +372,7 @@ void BZDBstring::callback()
 }
 
 
-void BZDBstring::staticCallback(const std::string& /*name*/, void* data)
+void BZDBstring::staticCallback(const std::string& UNUSED(name), void* data)
 {
   ((BZDBstring*)data)->callback();
   return;

@@ -331,7 +331,7 @@ void OpenGLLight::freeContext(void* self)
 }
 
 
-void OpenGLLight::initContext(void* /*self*/)
+void OpenGLLight::initContext(void* UNUSED(self))
 {
   // execute() will rebuild the lists
   return;

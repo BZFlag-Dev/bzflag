@@ -242,7 +242,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 }
 
 
-WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool /*lod*/)
+WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool UNUSED(lod))
 {
   const MeshNode* mn;
   const MeshFace* face;

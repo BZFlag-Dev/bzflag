@@ -503,7 +503,7 @@ static void outputFloat(std::ostream& out, float value)
   return;
 }
 
-void PyramidBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
+void PyramidBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) const
 {
   int i;
   float verts[5][3] = {

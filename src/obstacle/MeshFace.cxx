@@ -403,7 +403,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
 }
 
 
-void MeshFace::getNormal(const float* /*p*/, float* n) const
+void MeshFace::getNormal(const float* UNUSED(p), float* n) const
 {
   if (n) {
     memcpy (n, plane, sizeof(float[3]));
@@ -417,9 +417,9 @@ void MeshFace::getNormal(const float* /*p*/, float* n) const
 ///////////////////////////////////////////////////////////////
 
 
-bool MeshFace::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
-			    const float* /*newPos*/, float /*newAngle*/,
-			    float /*dx*/, float /*dy*/, float /*height*/,
+bool MeshFace::getHitNormal(const float* UNUSED(oldPos), float UNUSED(oldAngle),
+			    const float* UNUSED(newPos), float UNUSED(newAngle),
+			    float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
 			    float* normal) const
 {
   if (normal) {
@@ -524,7 +524,7 @@ bool MeshFace::inBox(const float* p, float _angle,
 }
 
 
-bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
+bool MeshFace::inMovingBox(const float* oldPos, float UNUSED(oldAngle),
 			   const float* newPos, float newAngle,
 			   float dx, float dy, float height) const
 {
@@ -543,8 +543,8 @@ bool MeshFace::inMovingBox(const float* oldPos, float /*oldAngle*/,
 }
 
 
-bool MeshFace::isCrossing(const float* /*p*/, float /*angle*/,
-			  float /*dx*/, float /*dy*/, float /*height*/,
+bool MeshFace::isCrossing(const float* UNUSED(p), float UNUSED(angle),
+			  float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
 			  float* _plane) const
 {
   if (_plane != NULL) {

@@ -142,7 +142,7 @@ void OpenGLMaterial::Rep::freeContext(void* self)
 }
 
 
-void OpenGLMaterial::Rep::initContext(void* /*self*/)
+void OpenGLMaterial::Rep::initContext(void* UNUSED(self))
 {
   // the next execute() call will rebuild the list
   return;

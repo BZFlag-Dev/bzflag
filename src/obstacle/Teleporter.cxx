@@ -290,7 +290,7 @@ bool Teleporter::inBox(const float* p, float a,
 }
 
 
-bool Teleporter::inMovingBox(const float* oldP, float /*oldAngle */,
+bool Teleporter::inMovingBox(const float* oldP, float UNUSED(oldAngle),
 			     const float* p, float a,
 			     float dx, float dy, float dz) const
 {
@@ -622,7 +622,7 @@ static void outputFloat(std::ostream& out, float value)
   return;
 }
 
-void Teleporter::printOBJ(std::ostream& out, const std::string& /*indent*/) const
+void Teleporter::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) const
 {
   int i;
   float verts[8][3] = {

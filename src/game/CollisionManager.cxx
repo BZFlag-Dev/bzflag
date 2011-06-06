@@ -299,7 +299,7 @@ const ObsList* CollisionManager::cylinderTest (const float *pos,
 }
 
 
-const ObsList* CollisionManager::boxTest (const float* pos, float /*angle*/,
+const ObsList* CollisionManager::boxTest (const float* pos, float UNUSED(angle),
 					  float dx, float dy, float dz) const
 {
   float radius = sqrtf (dx*dx + dy*dy);
@@ -307,10 +307,9 @@ const ObsList* CollisionManager::boxTest (const float* pos, float /*angle*/,
 }
 
 
-const ObsList* CollisionManager::movingBoxTest (
-				  const float* oldPos, float /*oldAngle*/,
-				  const float* pos, float /*angle*/,
-				  float dx, float dy, float dz) const
+const ObsList* CollisionManager::movingBoxTest (const float* oldPos, float UNUSED(oldAngle),
+                                                const float* pos, float UNUSED(angle),
+                                                float dx, float dy, float dz) const
 {
   float newpos[3];
 

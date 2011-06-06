@@ -287,7 +287,7 @@ const float* TankGeometryMgr::getScaleFactor(TankSize size)
 // ---------------
 
 
-static void bzdbCallback(const std::string& /*name*/, void * /*data*/)
+static void bzdbCallback(const std::string& UNUSED(name), void * UNUSED(data))
 {
   deleteLists();
   buildLists();
@@ -295,7 +295,7 @@ static void bzdbCallback(const std::string& /*name*/, void * /*data*/)
 }
 
 
-static void freeContext(void * /*data*/)
+static void freeContext(void * UNUSED(data))
 {
   // delete all of the lists
   deleteLists();
@@ -303,7 +303,7 @@ static void freeContext(void * /*data*/)
 }
 
 
-static void initContext(void * /*data*/)
+static void initContext(void * UNUSED(data))
 {
   buildLists();
   return;

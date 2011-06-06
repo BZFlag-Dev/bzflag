@@ -90,7 +90,7 @@ void ZSceneDatabase::finalizeStatics()
 }
 
 
-bool ZSceneDatabase::addStaticNode(SceneNode* object, bool /*dontFree*/)
+bool ZSceneDatabase::addStaticNode(SceneNode* object, bool UNUSED(dontFree))
 {
   if (staticCount == staticSize) {
     if (staticSize == 0) staticSize = 15;

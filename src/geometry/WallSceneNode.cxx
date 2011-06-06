@@ -607,7 +607,7 @@ void WallSceneNode::splitEdge(float d1, float d2,
 }
 
 
-bool WallSceneNode::inAxisBox (const Extents& /*exts*/) const
+bool WallSceneNode::inAxisBox (const Extents& UNUSED(exts)) const
 {
   // this should never happen, only the TriWallSceneNode
   // and QuadWallSceneNode version of this function will

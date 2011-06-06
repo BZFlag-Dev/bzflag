@@ -269,9 +269,9 @@ bool TetraBuilding::inMovingBox(const float*, float, const float*, float,
 }
 
 
-bool TetraBuilding::isCrossing(const float* /*p*/, float /*angle*/,
-			  float /*dx*/, float /*dy*/, float /*height*/,
-			  float* /*_plane*/) const
+bool TetraBuilding::isCrossing(const float* UNUSED(p), float UNUSED(angle),
+			  float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
+			  float* UNUSED(_plane)) const
 {
   assert(false);
   return false;

@@ -42,12 +42,12 @@ bool bz_ServerSidePlayerHandler::think(void)
 	return false;
 }
 
-void bz_ServerSidePlayerHandler::died ( int /*killer*/ )
+void bz_ServerSidePlayerHandler::died ( int UNUSED(killer) )
 {
 	alive = false;
 }
 
-void bz_ServerSidePlayerHandler::smote ( SmiteReason /*reason*/ )
+void bz_ServerSidePlayerHandler::smote ( SmiteReason UNUSED(reason) )
 {
 	alive = false;
 }

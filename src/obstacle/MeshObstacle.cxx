@@ -525,13 +525,13 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
 }
 
 
-float MeshObstacle::intersect(const Ray& /*ray*/) const
+float MeshObstacle::intersect(const Ray& UNUSED(ray)) const
 {
   return -1.0f; // rays only intersect with mesh faces
 }
 
 
-void MeshObstacle::get3DNormal(const float* /*p*/, float* /*n*/) const
+void MeshObstacle::get3DNormal(const float* UNUSED(p), float* UNUSED(n)) const
 {
   return; // this should never be called if intersect() is always < 0.0f
 }
@@ -561,9 +561,9 @@ void MeshObstacle::getNormal(const float* p, float* n) const
 }
 
 
-bool MeshObstacle::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
-				 const float* p, float /*angle*/,
-				 float, float, float /*height*/,
+bool MeshObstacle::getHitNormal(const float* UNUSED(oldPos), float UNUSED(oldAngle),
+				 const float* p, float UNUSED(angle),
+				 float, float, float UNUSED(height),
 				 float* n) const
 {
   if (n != NULL) {
@@ -574,15 +574,15 @@ bool MeshObstacle::getHitNormal(const float* /*oldPos*/, float /*oldAngle*/,
 
 
 bool MeshObstacle::inCylinder(const float* p,
-			       float /*radius*/, float height) const
+			       float UNUSED(radius), float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
   return containsPoint(mid);
 }
 
 
-bool MeshObstacle::inBox(const float* p, float /*angle*/,
-			 float /*dx*/, float /*dy*/, float height) const
+bool MeshObstacle::inBox(const float* p, float UNUSED(angle),
+			 float UNUSED(dx), float UNUSED(dy), float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
   return containsPoint(mid);
@@ -590,17 +590,17 @@ bool MeshObstacle::inBox(const float* p, float /*angle*/,
 
 
 bool MeshObstacle::inMovingBox(const float*, float,
-			       const float* p, float /*angle*/,
-			       float /*dx*/, float /*dy*/, float height) const
+			       const float* p, float UNUSED(angle),
+			       float UNUSED(dx), float UNUSED(dy), float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
   return containsPoint(mid);
 }
 
 
-bool MeshObstacle::isCrossing(const float* /*p*/, float /*angle*/,
-			       float /*dx*/, float /*dy*/, float /*height*/,
-			       float* /*plane*/) const
+bool MeshObstacle::isCrossing(const float* UNUSED(p), float UNUSED(angle),
+			       float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
+			       float* UNUSED(plane)) const
 {
   return false; // the MeshFaces should handle this case
 }
@@ -938,7 +938,7 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
 }
 
 
-void MeshObstacle::printOBJ(std::ostream& out, const std::string& /*indent*/) const
+void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) const
 {
   // save as OBJ
   int i;

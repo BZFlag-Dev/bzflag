@@ -33,7 +33,7 @@ TeleporterSceneNodeGenerator::~TeleporterSceneNodeGenerator()
 }
 
 WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
-				float /*uRepeats*/, float /*vRepeats*/,
+				float UNUSED(uRepeats), float UNUSED(vRepeats),
 				bool lod)
 {
   static const float texCoords[][4][2] = {

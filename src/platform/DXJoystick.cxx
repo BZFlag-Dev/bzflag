@@ -802,7 +802,7 @@ void DXJoystick::DXError(const char* situation, HRESULT problem)
 
 /* Nasty callbacks 'cause DirectX sucks */
 
-BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* /*pvRef*/)
+BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* UNUSED(pvRef))
 {
   if (!device)
     return DIENUM_STOP;

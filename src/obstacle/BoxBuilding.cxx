@@ -301,7 +301,7 @@ static void outputFloat(std::ostream& out, float value)
   return;
 }
 
-void BoxBuilding::printOBJ(std::ostream& out, const std::string& /*indent*/) const
+void BoxBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) const
 {
   int i;
   float verts[8][3] = {

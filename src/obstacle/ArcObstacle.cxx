@@ -616,9 +616,9 @@ bool ArcObstacle::inMovingBox(const float*, float, const float*, float,
 }
 
 
-bool ArcObstacle::isCrossing(const float* /*p*/, float /*angle*/,
-			  float /*dx*/, float /*dy*/, float /*height*/,
-			  float* /*_plane*/) const
+bool ArcObstacle::isCrossing(const float* UNUSED(p), float UNUSED(angle),
+			     float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
+			     float* UNUSED(_plane)) const
 {
   assert(false);
   return false;

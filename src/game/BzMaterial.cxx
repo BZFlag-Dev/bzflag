@@ -655,7 +655,7 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 }
 
 
-void BzMaterial::printMTL(std::ostream& out, const std::string& /*indent*/) const
+void BzMaterial::printMTL(std::ostream& out, const std::string& UNUSED(indent)) const
 {
   out << "newmtl ";
   if (name.size() > 0) {

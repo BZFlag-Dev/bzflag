@@ -76,14 +76,14 @@ void			WallObstacle::getNormal(const float*, float* n) const
   n[2] = plane[2];
 }
 
-bool			WallObstacle::inCylinder(const float* p, float r, float /* height */) const
+bool			WallObstacle::inCylinder(const float* p, float r, float UNUSED( height )) const
 {
   return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
 bool			WallObstacle::inBox(const float* p, float _angle,
 					    float halfWidth, float halfBreadth,
-					    float /* height */) const
+					    float UNUSED( height )) const
 {
   const float xWidth = cosf(_angle);
   const float yWidth = sinf(_angle);
@@ -109,7 +109,7 @@ bool			WallObstacle::inBox(const float* p, float _angle,
   return false;
 }
 
-bool			WallObstacle::inMovingBox(const float* /* oldP */, float /* oldAngle */,
+bool			WallObstacle::inMovingBox(const float* UNUSED( oldP ), float UNUSED( oldAngle ),
 				       const float* p, float _angle,
 				       float halfWidth, float halfBreadth, float height) const
 
@@ -173,8 +173,8 @@ int WallObstacle::packSize() const
 }
 
 
-void WallObstacle::print(std::ostream& /*out*/,
-			 const std::string& /*indent*/) const
+void WallObstacle::print(std::ostream& UNUSED(out),
+			 const std::string& UNUSED(indent)) const
 {
   return;
 }

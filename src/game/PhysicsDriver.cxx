@@ -270,7 +270,7 @@ void PhysicsDriver::setDeathMessage(const std::string& msg)
 }
 
 
-void PhysicsDriver::update (float /*t*/)
+void PhysicsDriver::update (float UNUSED(t))
 {
   return;
 }

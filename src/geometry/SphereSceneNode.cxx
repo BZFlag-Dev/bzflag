@@ -519,8 +519,7 @@ void			SphereBspSceneNode::addRenderNodes(
   renderer.addRenderNode(&renderNode, &gstate);
 }
 
-void			SphereBspSceneNode::addShadowNodes(
-				SceneRenderer& /*renderer*/)
+void			SphereBspSceneNode::addShadowNodes(SceneRenderer& UNUSED(renderer))
 {
   return;
 /*
@@ -741,7 +740,7 @@ void			SphereFragmentSceneNode::addRenderNodes
 }
 
 void			SphereFragmentSceneNode::addShadowNodes(
-				SceneRenderer& /*renderer*/)
+				SceneRenderer& UNUSED(renderer))
 {
   return;
 /*
