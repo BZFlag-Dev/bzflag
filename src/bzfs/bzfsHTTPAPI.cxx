@@ -1799,11 +1799,23 @@ public:
 
 #define TMD_DATA_PTR ((bzhttp_TMD_Data*)pimple)
 #define TMD_DATA(n) bzhttp_TMD_Data *n = ((bzhttp_TMD_Data*)pimple)
+#define TMD_DATA_CLASS(c,n) bzhttp_TMD_Data *n = ((bzhttp_TMD_Data*)(c))
 
 bzhttp_TemplateMetaData::bzhttp_TemplateMetaData()
 {
   pimple = new bzhttp_TMD_Data();
 }
+
+bzhttp_TemplateMetaData::bzhttp_TemplateMetaData( const bzhttp_TemplateMetaData& r)
+{
+  pimple = new bzhttp_TMD_Data();
+
+  TMD_DATA(data);
+
+  TMD_DATA_CLASS(r.pimple,otherData);
+  data->Items = otherData->Items;
+}
+
 bzhttp_TemplateMetaData::~bzhttp_TemplateMetaData()
 {
   delete(TMD_DATA_PTR);
@@ -1848,7 +1860,16 @@ void bzhttp_TemplateMetaData::Add ( const char* key, const char* val )
    data->Items[key].push_back(val);
 }
 
-std::string processTemplate ( const std::string &templateText, bzhttp_TemplateCallback* callback );
+
+class TemplateInfo
+{
+public:
+  bzhttp_TemplateCallback* Callback;
+  std::string PathSet;
+  std::string RootPath;
+};
+
+std::string processTemplate ( const std::string &templateText, TemplateInfo& info );
 
 std::string getStringRange ( const std::string &find, size_t start, size_t end )
 {
@@ -1888,10 +1909,8 @@ std::string readFileText ( const char* file )
   return TextUtils::replace_all(ret,"\r","\r\n");
 }
 
-bzhttp_TemplateMetaData GetTemplateMetaData( const std::string &templateText )
+void GetTemplateMetaData( const std::string &templateText, bzhttp_TemplateMetaData& metaData)
 {
-  bzhttp_TemplateMetaData metaData;
-
   size_t pos = 0;
   while ( pos < templateText.size() && pos != std::string::npos)
   {
@@ -1911,17 +1930,21 @@ bzhttp_TemplateMetaData GetTemplateMetaData( const std::string &templateText )
       }
     }
   }
-  return metaData;
-}
-
-BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback)
-{
-  return bzhttp_RenderTemplateFromText(readFileText(file).c_str(), callback);
 }
 
 void makelower ( std::string &str)
 {
   str = TextUtils::tolower(str);
+}
+
+std::string getDirName ( const std::string& file )
+{
+  std::string f = file;
+  size_t s = f.find_last_of(_DirDelim);
+  if (s != std::string::npos)
+    f.erase(s+1,f.size()-s-1);
+
+  return f;
 }
 
 std::string::const_iterator readKey ( std::string &key, std::string::const_iterator inItr, const std::string &str )
@@ -2006,11 +2029,8 @@ const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
   return "";
 }
 
-void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str, bzhttp_TemplateCallback* callback )
+void replaceVar ( std::string &code, std::string::const_iterator &itr, const std::string &str, TemplateInfo& info )
 {
-  if (!callback)
-    return;
-
   // find the end of the ]]
   std::string key;
 
@@ -2022,11 +2042,11 @@ void replaceVar ( std::string &code, std::string::const_iterator &itr, const std
 
     lowerKey = TextUtils::tolower(key);
 
-    code += CallKey(lowerKey,callback);
+    code += CallKey(lowerKey,info.Callback);
   }
 }
 
-void processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* callback )
+void processLoop ( std::string &code, std::string::const_iterator &inItr, const std::string &str, TemplateInfo& info )
 {
   std::string key,loopSection,emptySection,param;
 
@@ -2071,18 +2091,17 @@ void processLoop ( std::string &code, std::string::const_iterator &inItr, const 
   checkKeys.push_back(TextUtils::format("*empty %s",commandParts[1].c_str()));
   itr = findNextTag(checkKeys,keyFound,emptySection,itr,str);
 
-  if (callback && callback->GetTemplateLoop(commandParts[1].c_str(),param.c_str()))
+  if (info.Callback && info.Callback->GetTemplateLoop(commandParts[1].c_str(),param.c_str()))
   {
-    code += processTemplate(loopSection,callback);
+    code += processTemplate(loopSection,info);
 
-    while(callback && callback->GetTemplateLoop(commandParts[1].c_str(),param.c_str()))
-      code += processTemplate(loopSection,callback);
+    while(info.Callback && info.Callback->GetTemplateLoop(commandParts[1].c_str(),param.c_str()))
+      code += processTemplate(loopSection,info);
   }
   else
-    code += processTemplate(emptySection,callback);
+    code += processTemplate(emptySection,info);
   inItr = itr;
 }
-
 
 bool CallIF ( const std::string &key, const std::string &param, bzhttp_TemplateCallback* callback )
 {
@@ -2094,7 +2113,7 @@ bool CallIF ( const std::string &key, const std::string &param, bzhttp_TemplateC
   return false;
 }
 
-void processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* callback )
+void processIF ( std::string &code, std::string::const_iterator &inItr, const std::string &str, TemplateInfo& info )
 {
   std::string key;
 
@@ -2142,33 +2161,74 @@ void processIF ( std::string &code, std::string::const_iterator &inItr, const st
   }
 
   // test the if, stuff that dosn't exist is false
-  if (CallIF(commandParts[1],param,callback)) 
-    code += processTemplate(trueSection,callback);
+  if (CallIF(commandParts[1],param,info.Callback)) 
+    code += processTemplate(trueSection,info);
   else
-    code += processTemplate(elseSection,callback);
+    code += processTemplate(elseSection,info);
   
   inItr = itr;
 }
 
-void processComment ( std::string & /* code */, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* /*callback*/ )
+void processComment ( std::string & /* code */, std::string::const_iterator &inItr, const std::string &str,  TemplateInfo& /*info*/ )
 {
   std::string key;
   inItr = readKey(key,inItr,str);
 }
 
-// void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str, bzhttp_TemplateCallback* callback )
-// {
-//   std::string key;
-//   inItr = readKey(key,inItr,str);
-// 
-//   // check the search paths for the include file
-//   
-//   code += 
-//   if (!processTemplateFile(code,key.c_str()))
-//     code += "[!" + key + "]";
-// }
+void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str, TemplateInfo& info )
+{
+  std::string key;
+  inItr = readKey(key,inItr,str);
 
-std::string processTemplate ( const std::string &templateText, bzhttp_TemplateCallback* callback )
+  // check the search paths for the include file
+
+  std::string templatePath;
+
+  if (info.RootPath.size())
+  {
+    std::string temp = concatPaths(info.RootPath.c_str(),key.c_str());
+    if (fileExits(temp.c_str()))
+      templatePath = temp;
+  }
+  if (!templatePath.size() || info.PathSet.size())
+  {
+    const char* t = bzhttp_FindFile(info.PathSet.c_str(),key.c_str());
+    if (t)
+      templatePath = t;
+  }
+
+  if (!templatePath.size() || fileExits(key.c_str()))
+    templatePath = key;
+
+  if (!templatePath.size())
+    return;
+
+  bzhttp_TemplateMetaData *oldMeta = NULL;
+  bzhttp_TemplateMetaData *newMeta = NULL;
+
+  std::string templateContents = readFileText(templatePath.c_str());
+
+  if (info.Callback)
+  {
+    oldMeta = info.Callback->MetaData;
+    newMeta = new bzhttp_TemplateMetaData(*oldMeta);
+    GetTemplateMetaData(templateContents,*newMeta);
+    info.Callback->MetaData = newMeta;
+  }
+
+  TemplateInfo includeInfo = info;
+  includeInfo.RootPath = getDirName(templatePath);
+
+  code += processTemplate(templateContents,includeInfo);
+
+  if (info.Callback)
+  {
+    info.Callback->MetaData = oldMeta;
+    delete(newMeta);
+  }
+}
+
+std::string processTemplate ( const std::string &templateText, TemplateInfo& info )
 {
   std::string code;
 
@@ -2189,22 +2249,22 @@ std::string processTemplate ( const std::string &templateText, bzhttp_TemplateCa
 	  break;
 
 	case '$':
-	  replaceVar(code,++templateItr,templateText,callback);
+	  replaceVar(code,++templateItr,templateText,info);
 	  break;
 
 	case '*':
-	  processLoop(code,++templateItr,templateText,callback);
+	  processLoop(code,++templateItr,templateText,info);
 	  break;
 
 	case '?':
-	  processIF(code,++templateItr,templateText,callback);
+	  processIF(code,++templateItr,templateText,info);
 	  break;
 	case '-':
 	case '#': // treat metadata as comments when parsing
-	  processComment(code,++templateItr,templateText,callback);
+	  processComment(code,++templateItr,templateText,info);
 	  break;
 	case '!':
-	  //  processInclude(code,++templateItr,templateText,callback);
+	  processInclude(code,++templateItr,templateText,info);
 	  break;
 	}
       }
@@ -2213,20 +2273,54 @@ std::string processTemplate ( const std::string &templateText, bzhttp_TemplateCa
   return code;
 }
 
-BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback )
+BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback, const char *pathSet)
+{
+  if (!file)
+    return bz_ApiString();
+
+  std::string templateText = readFileText(file);
+
+  TemplateInfo info;
+  info.Callback = callback;
+  if (pathSet)
+    info.PathSet = pathSet;
+  info.RootPath = getDirName(std::string(file));
+
+  startTime = TimeKeeper::getCurrent().getSeconds();
+
+  bzhttp_TemplateMetaData meta;
+  GetTemplateMetaData(templateText,meta);
+  if (callback)
+    callback->MetaData = &meta;
+
+  std::string code = processTemplate(templateText,info);
+
+  if (callback)
+    callback->MetaData = NULL;
+
+  return bz_ApiString(code);
+}
+
+
+BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback, const char* pathSet )
 {
   if (!text || !*text)
     return bz_ApiString();
+
+  TemplateInfo info;
+  info.Callback = callback;
+  info.PathSet = pathSet;
 
   startTime = TimeKeeper::getCurrent().getSeconds();
 
   std::string templateText = text;
 
-  bzhttp_TemplateMetaData meta = GetTemplateMetaData(templateText);
+  bzhttp_TemplateMetaData meta;
+  GetTemplateMetaData(templateText,meta);
   if (callback)
     callback->MetaData = &meta;
 
-  std::string code = processTemplate(templateText,callback);
+  std::string code = processTemplate(templateText,info);
 
   if (callback)
     callback->MetaData = NULL;
@@ -2236,7 +2330,9 @@ BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_Te
 
 BZF_API bzhttp_TemplateMetaData bzhttp_GetTemplateMetaData( const char* file )
 {
-  return GetTemplateMetaData(readFileText(file));
+  bzhttp_TemplateMetaData data;
+  GetTemplateMetaData(readFileText(file),data);
+  return data;
 }
 
 // path utils
@@ -2270,12 +2366,8 @@ BZF_API const char* bzhttp_FindFile ( const char* pathSet, const char* filename 
   for ( size_t i = 0; i < list.size(); i++)
   {
     std::string path = concatPaths(list[i].c_str(),filename);
-    FILE *fp = fopen(path.c_str(),"rt");
-    if (fp)
-    {
-      fclose(fp);
+    if (fileExits(path.c_str()))
       return path.c_str();
-    }
   }
   return NULL;
 }

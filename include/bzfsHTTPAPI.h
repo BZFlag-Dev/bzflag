@@ -205,6 +205,7 @@ class BZF_API bzhttp_TemplateMetaData
 {
 public:
   bzhttp_TemplateMetaData();
+  bzhttp_TemplateMetaData( const bzhttp_TemplateMetaData& /*r*/);
   virtual ~bzhttp_TemplateMetaData();
 
   const char * Get ( const char* key, unsigned int index = 0 );
@@ -227,8 +228,8 @@ public:
   bzhttp_TemplateMetaData* MetaData;
 };
 
-BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback );
-BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback );
+BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback, const char* pathSet = NULL );
+BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback, const char* pathSet = NULL );
 
 BZF_API bzhttp_TemplateMetaData bzhttp_GetTemplateMetaData( const char* file );
 
