@@ -42,12 +42,68 @@
 extern int debugLevel;
 
 
-#define UNUSED(x) ((void)(x))  // to avoid warnings
+/* Provide a means to conveniently test the version of the GNU
+ * compiler.  Use it like this:
+ *
+ * #if GCC_PREREQ(2,8)
+ * ... code requiring gcc 2.8 or later ...
+ * #endif
+ *
+ * WARNING: THIS MACRO IS CONSIDERED PRIVATE AND SHOULD NOT BE USED
+ * OUTSIDE OF THIS HEADER FILE.  DO NOT RELY ON IT.
+ */
+#ifndef GCC_PREREQ
+#  if defined __GNUC__
+#    define GCC_PREREQ(major, minor) __GNUC__ > (major) || (__GNUC__ == (major) && __GNUC_MINOR__ >= (minor))
+#  else
+#    define GCC_PREREQ(major, minor) 0
+#  endif
+#else
+#  warning "GCC_PREREQ is already defined.  See the common.h header."
+#endif
+
+
+/**
+ * UNUSED provides a common mechanism for declaring unused parameters.
+ * Use it like this:
+ *
+ * int
+ * my_function(int argc, char **UNUSED(argv))
+ * {
+ *   ...
+ * }
+ *
+ */
+#ifndef UNUSED
+#  if GCC_PREREQ(2, 5)
+     /* GCC-style */
+#    define UNUSED(parameter) (parameter) __attribute__((unused))
+#  else
+     /* MSVC/C++ */
+#    ifdef __cplusplus
+#      if defined(NDEBUG)
+#        define UNUSED(parameter) /* parameter */
+#      else /* some of them are asserted */
+#         define UNUSED(parameter) (parameter)
+#      endif
+#    else
+#      if defined(_MSC_VER)
+         /* disable reporting an "unreferenced formal parameter" */
+#        pragma warning( disable : 4100 )
+#      endif
+#      define UNUSED(parameter) (parameter)
+#    endif
+#  endif
+#else
+#  undef UNUSED
+#  define UNUSED(parameter) (parameter)
+#  warning "UNUSED was previously defined.  Parameter declaration behavior is unknown, see common.h"
+#endif
 
 
 /* near zero by some epsilon convenience define since relying on
-* the floating point unit for proper equivalence is not safe
-*/
+ * the floating point unit for proper equivalence is not safe
+ */
 #define NEAR_ZERO(_value,_epsilon)  ( ((_value) > -_epsilon) && ((_value) < _epsilon) )
 
 /* (radians <--> degrees) conversion values */
