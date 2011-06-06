@@ -26,6 +26,7 @@ SUBDIRS = \
 	shockwaveDeath \
 	teamflagreset \
 	timedctf \
+	webReport \
 	wwzones
 
 DIST_SUBDIRS = \
