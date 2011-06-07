@@ -779,7 +779,7 @@ BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int siz
     return false;
   }
 
-  const bool sendOneNow = peer->sendChunks.empty();
+  const bool sendOneNow = FALSE; //peer->sendChunks.empty();
 
   unsigned int chunkSize = 0;
 
@@ -820,7 +820,11 @@ BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID )
   unsigned int address = (unsigned int)peer->netHandler->getIPAddress().s_addr;
   unsigned char* a = (unsigned char*)&address;
 
-  return TextUtils::format("%d.%d.%d.%d",a[0],a[1],a[2],a[3]).c_str();
+  static std::string strRet;
+
+  strRet = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
+
+  return strRet.c_str();
 }
 
 
@@ -2826,151 +2830,264 @@ BZF_API void bz_updateListServer ( void )
   publicize();
 }
 
-typedef struct
-{
-  std::string url;
-  bz_BaseURLHandler	*handler;
-  std::string postData;
-}trURLJob;
+//-------------------------------------------------------------------------
+//
+//  URLFetch
+//
 
-class BZ_APIURLManager :  cURLManager
+class URLFetchTask
 {
 public:
-  BZ_APIURLManager()
-  {
-    doingStuff = false;
-  }
-
-  virtual ~BZ_APIURLManager()
-  {
-    flush();
-  }
-
-  void addJob ( const char* URL, bz_BaseURLHandler *handler, const char* _postData )
-  {
-    if (!URL)
-      return;
-
-    trURLJob	job;
-    job.url = URL;
-    job.handler = handler;
-    if (_postData)
-      job.postData = _postData;
-
-    jobs.push_back(job);
-
-    if (!doingStuff)
-      doJob();
-  }
-
-  void removeJob ( const char* URL )
-  {
-    if (!URL)
-      return;
-
-    std::string url = URL;
-
-    for ( unsigned int i = 0; i < jobs.size(); i++ )
-    {
-      if ( jobs[i].url == url)
-      {
-	if ( i == 0 )
-	{
-	  removeHandle();
-	}
-	jobs.erase(jobs.begin()+i);
-	i = jobs.size() + 1;
-      }
-    }
-  }
-
-  void flush ( void )
-  {
-    removeHandle();
-    jobs.clear();
-    doingStuff = false;
-  }
-
-  virtual void finalization(char *data, unsigned int length, bool good)
-  {
-    if (!jobs.size() || !doingStuff)
-      return;	// we are suposed to be done
-
-    // this is who we are suposed to be geting
-    trURLJob job = jobs[0];
-    jobs.erase(jobs.begin());
-    if (good && job.handler)
-      job.handler->URLDone(job.url.c_str(),data,length,good);
-    else if (job.handler)
-      job.handler->URLError(job.url.c_str(),1,"badness");
-
-    // free it
-    removeHandle();
-
-    // do the next one if we must
-    doJob();
-  }
-
-protected:
-  void doJob ( void )
-  {
-    if ( !jobs.size() )
-      doingStuff = false;
-    else
-    {
-      trURLJob job = jobs[0];
-      doingStuff = true;
-      setURL(job.url);
-
-      if ( job.postData.size())
-      {
-	setHTTPPostMode();
-	setPostMode(job.postData);
-      }
-      else
-	setGetMode();
-
-      addHandle();
-    }
-  }
-
-  std::vector<trURLJob>	jobs;
-  bool doingStuff;
+  std::string url;
+  std::string postData;
+  size_t id;
+  bz_BaseURLHandler *handler;
+  double lastTime;
 };
 
-BZ_APIURLManager	*bz_apiURLManager = NULL;
+//-------------------------------------------------------------------------
+//
+//  URLFetchHandler
+//
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler, const char* postData )
+size_t urlWriteFunction(void *data, size_t size, size_t count, void *param)
 {
-  if (!URL)
-    return false;
+  std::string& jobData = *(std::string*)param;
 
-  if (!bz_apiURLManager)
-    bz_apiURLManager = new BZ_APIURLManager;
-
-  bz_apiURLManager->addJob(URL,handler,postData);
-  return true;
+  jobData += std::string((char*)data,size*count);
+  return size*count;
 }
 
-
-BZF_API bool bz_removeURLJob ( const char* URL )
+class URLFetchHandler : public bz_EventHandler
 {
-  if (!URL)
+private:
+  CURLM* curlHandle;
+  CURL *currentJob;
+  std::vector<URLFetchTask> Tasks;
+
+  std::string bufferedJobData;
+
+  size_t LastJob;
+
+  double HTTPTimeout;
+public:
+
+  URLFetchHandler()
+  {
+    curlHandle = NULL;
+    currentJob = NULL;
+    LastJob = 1;
+    HTTPTimeout = 60;
+  }
+
+  ~URLFetchHandler()
+  { 
+    removeAllJobs();
+    if (curlHandle)
+      curl_multi_cleanup(curlHandle);
+  }
+
+  virtual void process ( bz_EventData *eventData )
+  {
+    if (!Tasks.size())
+      return;
+
+    URLFetchTask &task = Tasks[0];
+
+      // check for jobs being done
+    if (currentJob)
+    {
+      int running;
+      curl_multi_perform(curlHandle, &running);
+      
+      if (running == 0)
+      {
+	int      msgs_in_queue;
+	CURLMsg *pendingMsg = curl_multi_info_read(curlHandle, &msgs_in_queue);
+	if (currentJob == pendingMsg->easy_handle)
+	{
+	  if (bufferedJobData.size())
+	    Tasks[0].handler->URLDone(Tasks[0].url.c_str(),(void*)bufferedJobData.c_str(),bufferedJobData.size(),true);
+	  else
+	    Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Error");
+
+	  bufferedJobData = "";
+	  curl_easy_cleanup(currentJob);
+	  currentJob = NULL;
+	  Tasks.erase(Tasks.begin());
+	}
+      }
+
+      if (Tasks.size() &&(TimeKeeper::getCurrent().getSeconds() > Tasks[0].lastTime +HTTPTimeout))
+      {
+	Tasks[0].handler->URLTimeout(Tasks[0].url.c_str(),1);
+	KillCurrentJob(false);
+      }
+    }
+
+    if (!currentJob && Tasks.size())
+    {
+      currentJob = curl_easy_init();
+      curl_easy_setopt(currentJob, CURLOPT_URL, task.url.c_str());
+      if (task.postData.size())
+	curl_easy_setopt(currentJob, CURLOPT_HTTPPOST, task.postData.c_str());
+
+      curl_easy_setopt(currentJob, CURLOPT_WRITEFUNCTION, urlWriteFunction);
+      curl_easy_setopt(currentJob, CURLOPT_WRITEDATA, &bufferedJobData);
+
+      curl_multi_add_handle(curlHandle, currentJob);
+      Tasks[0].lastTime = TimeKeeper::getCurrent().getSeconds();
+
+      int running;
+      curl_multi_perform(curlHandle, &running);
+    }
+  }
+
+  size_t addJob(const char *URL, bz_BaseURLHandler *handler,
+    const char *postData)
+  {
+    if (!curlHandle)
+    {
+      worldEventManager.addEvent(bz_eTickEvent,this);
+      curlHandle = curl_multi_init();
+    }
+
+    URLFetchTask newTask;
+    newTask.handler = handler;
+    newTask.url = URL;
+    if (postData)
+      newTask.postData = postData;
+    newTask.id = ++LastJob;
+    Tasks.push_back(newTask);
+
+    if (Tasks.size() == 1)
+      process(NULL);
+    return LastJob;
+  }
+
+  bool removeJob(size_t id)
+  {
+    if (!Tasks.size())
+      return false;
+
+    if (Tasks[0].id == id)
+    {
+      KillCurrentJob(true);
+      Tasks.erase(Tasks.begin());
+      return true;
+    }
+    else
+    {
+      for (size_t i = 0; i < Tasks.size(); i++)
+      {
+	if (Tasks[i].id == id)
+	{
+	  Tasks.erase(Tasks.begin()+i);
+	  return true;
+	}
+      }
+    }
     return false;
+  }
 
-  if (!bz_apiURLManager)
-    bz_apiURLManager = new BZ_APIURLManager;
+  bool removeJob(const char* url)
+  {
+    if (!Tasks.size())
+      return false;
 
-  bz_apiURLManager->removeJob(URL);
-  return true;
+    if (Tasks[0].url == url)
+    {
+      KillCurrentJob(true);
+      Tasks.erase(Tasks.begin());
+      return true;
+    }
+    else
+    {
+      for (size_t i = 0; i < Tasks.size(); i++)
+      {
+	if (Tasks[i].url == url)
+	{
+	  Tasks.erase(Tasks.begin()+i);
+	  return true;
+	}
+      }
+    }
+    return false;
+  }
+
+  bool removeAllJobs()
+  {
+    KillCurrentJob(true);
+    Tasks.clear();
+    return true;
+  }
+
+private:
+ 
+  void KillCurrentJob ( bool notify )
+  {
+    if (notify && Tasks.size())
+      Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Canceled");
+
+    curl_multi_remove_handle(curlHandle, currentJob);
+    curl_easy_cleanup(currentJob);
+    currentJob = NULL;
+    if (Tasks.size())
+      Tasks.erase(Tasks.begin());
+  }
+};
+
+static URLFetchHandler urlFetchHandler;
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const char *postData)
+{
+  if (!URL) {
+    return false;
+  }
+
+  return (urlFetchHandler.addJob(URL, handler, postData) != 0);
 }
 
-BZF_API bool bz_stopAllURLJobs ( void )
-{
-  if (!bz_apiURLManager)
-    bz_apiURLManager = new BZ_APIURLManager;
+//-------------------------------------------------------------------------
 
-  bz_apiURLManager->flush();
+BZF_API size_t bz_addURLJobForID(const char *URL,
+				 bz_BaseURLHandler *handler,
+				 const char *postData)
+{
+  if (!URL) {
+    return false;
+  }
+
+  return urlFetchHandler.addJob(URL, handler, postData);
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeURLJob(const char *URL)
+{
+  if (!URL) {
+    return false;
+  }
+  return urlFetchHandler.removeJob(URL);
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_removeURLJobByID(size_t id)
+{
+  if (id == 0) {
+    return false;
+  }
+  return urlFetchHandler.removeJob(id);
+}
+
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_stopAllURLJobs(void)
+{
+  urlFetchHandler.removeAllJobs();
   return true;
 }
 

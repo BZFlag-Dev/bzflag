@@ -4966,7 +4966,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   peer.sendChunks.pop_front();
 }
 
-static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& UNUSED(read_set), fd_set& UNUSED(write_set))
+static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& UNUSED(write_set))
 {
   double connectionTimeout = 2.5; // timeout in seconds
 
@@ -5097,7 +5097,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& UNU
   }
 
   // we like them see if they have gotten new data
-  if (peer.apiHandler && peer.player < 0)
+  if (peer.apiHandler && peer.player < 0 && netHandler->isFdSet(&read_set))
   {
     in_addr IP = netHandler->getIPAddress();
     BanInfo info(IP);
@@ -5128,13 +5128,13 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& UNU
 	}
       }
 
-      if (e == ReadPart || e == ReadAll)
+      if (e == ReadPart || e == ReadAll )
       {
 	peer.lastActivity = TimeKeeper::getCurrent();
 	peer.apiHandler->pending(peer.socket,netHandler->getTcpBuffer(),netHandler->getTcpReadSize());
 	netHandler->flushData();
       }
-      else
+      else 
       {
 	// they done disconnected
 	peer.apiHandler->disconnect(peer.socket);

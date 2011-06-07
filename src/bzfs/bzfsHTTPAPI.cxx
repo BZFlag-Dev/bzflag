@@ -122,6 +122,8 @@ public:
   std::string CurrentVdir;
   double LastUpdateTime;
 
+  std::string IP;
+
   bzhttp_SessionData_Data()
   {
     LastUpdateTime = 0;
@@ -227,7 +229,7 @@ void bzhttp_SessionData::ClearGlobalItem ( const char * name )
 
 std::map<int,bzhttp_SessionData*> Sessions;
 
-bzhttp_SessionData& GetSession ( unsigned int id )
+bzhttp_SessionData& GetSession ( unsigned int id, const char* ip )
 {
   if (id < 10 || Sessions.find(id) == Sessions.end())
   {
@@ -239,6 +241,7 @@ bzhttp_SessionData& GetSession ( unsigned int id )
     newSession->SessionID = newID;
     VDIR_SESSION_CLASS(newSession->pimple,data);
     data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    data->IP = ip;
     Sessions[newID] = newSession;
 
     return *Sessions[newID];
@@ -247,9 +250,31 @@ bzhttp_SessionData& GetSession ( unsigned int id )
   {
     VDIR_SESSION_CLASS(Sessions[id]->pimple,data);
     data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    data->IP = ip;
     return *Sessions[id];
   }
 }
+
+bzhttp_SessionData& GetSessionByID ( const char *_id, const char* ip )
+{
+  if (!_id || !ip)
+    return GetSession(0,ip);
+
+  unsigned int id = atoi(_id);
+
+  if (id < 10 || Sessions.find(id) == Sessions.end())
+    return GetSession(0,ip);
+
+  VDIR_SESSION_CLASS(Sessions[id]->pimple,data);
+  if (data->IP == ip)
+  {
+    data->LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    data->IP = ip;
+    return *Sessions[id];
+  }
+  return GetSession(0,ip);
+}
+
 
 //----bzhttp_VDir
 
@@ -507,7 +532,7 @@ void bzhttp_Request::AddHeader ( const char* n, const char* v)
   REQUEST_DATA(data);
 
   std::string name = TextUtils::toupper(n); 
-  if (data->Headers.find(name) != data->Headers.end())
+  if (data->Headers.find(name) == data->Headers.end())
     data->Headers[name] = std::string(v);
 }
 
@@ -551,7 +576,7 @@ void bzhttp_Request::AddCookie ( const char* n, const char* v)
   REQUEST_DATA(data);
 
   std::string name = TextUtils::toupper(n); 
-  if (data->Headers.find(name) != data->Headers.end())
+  if (data->Headers.find(name) == data->Headers.end())
     data->Headers[name] = std::string(v);
 }
 
@@ -595,7 +620,7 @@ void bzhttp_Request::AddParamater ( const char* n, const char* v)
   REQUEST_DATA(data);
 
   std::string name = TextUtils::toupper(n); 
-  if (data->Paramaters.find(name) != data->Paramaters.end())
+  if (data->Paramaters.find(name) == data->Paramaters.end())
     data->Paramaters[name] = std::string(v);
 }
 
@@ -633,7 +658,6 @@ size_t bzhttp_Request::GetParamaterCount () const
   REQUEST_DATA(data);
   return data->Paramaters.size();
 }
-
 
 class HTTPConnectedPeer : public bz_NonPlayerConnectionHandler , public bz_BaseURLHandler
 {
@@ -727,25 +751,29 @@ public:
 	bzIDAuthFailed = true;
       else
       {
-	std::vector<std::string> toks = TextUtils::tokenize(lines[0],":",2);
+	std::vector<std::string> toks = TextUtils::tokenize(lines[1],":",2);
 	if (toks.size() > 1 && toks[0] == "TOKGOOD")
 	{
 	  Authenticated = true;
 	  SetAuthSessionData("bzidauthstatus","complete");
 
-	  // walk the groups
-	  std::vector<std::string> groups = TextUtils::tokenize(trimLeadingWhitespace(toks[1].c_str()),":");
-	  for (size_t i = 0; i < groups.size(); i++)
+	  std::string groupList;
+	  std::vector<std::string> groupToks = TextUtils::tokenize(lines[0]," ");
+	  if ( groupToks.size() > 5)
 	  {
-	    if (groups[i] != callsign)
-	      bzGroups.push_back(groups[i]);
+	    for (size_t i = 5; i < groupToks.size(); i++)
+	    {
+	      std::vector<std::string> groups = TextUtils::tokenize(groupToks[i],"=");
+	      bzGroups.push_back(groups[1]);
+	      groupList += groups[1] + " ";
+
+	    }
+	    SetAuthSessionData("bzidauthgroups",groupList.c_str());
+
 	  }
-
-	  SetAuthSessionData("bzidauthgroups",trimLeadingWhitespace(toks[1].c_str()).c_str());
-
 	  bzID = "";
 	  // get the BZID
-	  std::vector<std::string> chunks = TextUtils::tokenize(lines[1]," ");
+	  std::vector<std::string> chunks = TextUtils::tokenize(lines[2]," ");
 	  if (chunks.size() > 1 && chunks[0] == "BZID:")
 	    bzID = chunks[1];
 	  else
@@ -923,7 +951,12 @@ public:
       else if (Request.RequestType == eHTTPPut)
 	Request.Body = RequestData.substr(HeaderSize,ContentSize);
 
-      Request.Session = &GetSession(sessionID);
+      std::string IP = bz_getNonPlayerConnectionIP(connectionID);
+
+      if (sessionID == 0 && Request.GetParamater("SSID") != NULL)
+	Request.Session = &GetSessionByID(Request.GetParamater("SSID"),IP.c_str());
+      else
+	Request.Session = &GetSession(sessionID,IP.c_str());
 
       // check and see if we have authentication to do
 
@@ -945,7 +978,7 @@ public:
 	      bzID = id;
 	      callsign = GetAuthSessionData("bzidcallsign");
 
-	      std::vector<std::string> groups = TextUtils::tokenize(GetAuthSessionData("bzidauthgroups"),":");
+	      std::vector<std::string> groups = TextUtils::tokenize(GetAuthSessionData("bzidauthgroups")," ");
 	      for (size_t i = 0; i < groups.size(); i++)
 	      {
 		if (groups[i] != callsign)
@@ -1026,12 +1059,12 @@ public:
 	     vname += "/";
 
 	     if (Resource.size() > vname.size())
-	      redirURL = Resource.c_str()+vname.size();
+	      redirURL += Resource.c_str()+vname.size();
 
 	     if (redirURL.find_last_of('?') == std::string::npos)
 	       redirURL += "?";
 
-	     redirURL += "bzauthtoken=%TOKEN%&bzauthcallsign=%USERNAME%";
+	     redirURL += TextUtils::format("bzauthtoken=%%TOKEN%%&bzauthcallsign=%%USERNAME%%&SSID=%d",Request.Session->SessionID);
 
 	     authURL += TextUtils::url_encode(redirURL);
 

@@ -1511,9 +1511,12 @@ protected:
   int version;
 };
 
-BZF_API bool bz_addURLJob ( const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL );
-BZF_API bool bz_removeURLJob ( const char* URL );
-BZF_API bool bz_stopAllURLJobs ( void );
+BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
+BZF_API bool bz_removeURLJob(const char* URL);
+BZF_API size_t bz_addURLJobForID(const char* URL,
+				 bz_BaseURLHandler* handler = NULL,
+				 const char* postData = NULL);
+BZF_API bool bz_removeURLJobByID(size_t id);
 
 // inter plugin communication
 BZF_API bool bz_clipFieldExists ( const char *name );
