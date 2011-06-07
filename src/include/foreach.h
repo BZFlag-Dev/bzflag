@@ -19,10 +19,10 @@ inline bool foreach_set_inc(T& next, T& iter) {
          (VAR##_ITER != (CON).END()) \
          && foreach_set_inc(VAR##_NEXT, VAR##_ITER); \
        VAR##_ITER = VAR##_NEXT) \
-  /* the following for loop is used to setup the VAR reference */ \
-  for (typeof(*((CON).BEGIN())) VAR = *(VAR##_ITER); \
-       VAR##_FOREACH_ONCE; \
-       VAR##_FOREACH_ONCE = false)
+    /* the following for loop is used to setup the VAR reference */ \
+    for (typeof(*((CON).BEGIN())) VAR = *(VAR##_ITER); \
+         VAR##_FOREACH_ONCE; \
+         VAR##_FOREACH_ONCE = false)
 
 #define foreach(VAR, CON)         FOREACH_BASIS(VAR, CON,  begin,  end)
 #define foreach_reverse(VAR, CON) FOREACH_BASIS(VAR, CON, rbegin, rend)
