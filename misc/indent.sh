@@ -9,6 +9,7 @@
 cd `dirname "$0"`/..
 
 
+ASTYLE_EXEC="./misc/astyle-bzflag"
 
 MIN_MAJOR=2
 
@@ -17,7 +18,7 @@ MIN_MINOR=2
 
 # Get the version
 
-VERSION=`astyle --version 2>&1`
+VERSION=`"$ASTYLE_EXEC" --version 2>&1`
 
 if [ $? -ne 0 ]; then
   echo Could not find astyle.
@@ -51,7 +52,7 @@ fi
 
 # It's go time!
 
-astyle --options=misc/astyle.conf -r '*.h' '*.c' '*.cpp'
+"$ASTYLE_EXEC" --options=misc/astyle.conf -r '*.h' '*.c' '*.cpp'
 
 
 ################################################################################
