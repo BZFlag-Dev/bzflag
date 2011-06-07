@@ -1,5 +1,6 @@
 
 #include <stdio.h>
+#include <ctype.h>
 #include <set>
 #include <string>
 
@@ -12,8 +13,12 @@ int main(int argc, char** argv) {
   s.insert("bar");
   s.insert("ann");
   s.insert("bob");
-  foreach (it, s) {
-    printf("%s\n", it->c_str());
+  foreach (v, s) {
+    printf("%s\n", v.c_str());
   }
+  foreach (c, std::string("testing")) {
+    putchar(toupper(c));
+  }
+  putchar('\n');
   return 0;
 }
