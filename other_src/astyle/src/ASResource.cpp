@@ -243,6 +243,7 @@ void ASResource::buildHeaders(vector<const string*>* headers, int fileType, bool
 
 	if (fileType == C_TYPE)
 	{
+    headers->push_back(&AS_FOREACH); // BZFlag customization
 		headers->push_back(&_AS_TRY);		// __try
 		headers->push_back(&_AS_FINALLY);	// __finally
 		headers->push_back(&_AS_EXCEPT);	// __except
