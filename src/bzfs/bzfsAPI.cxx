@@ -779,7 +779,7 @@ BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int siz
     return false;
   }
 
-  const bool sendOneNow = FALSE; //peer->sendChunks.empty();
+  const bool sendOneNow = false; //peer->sendChunks.empty();
 
   unsigned int chunkSize = 0;
 
