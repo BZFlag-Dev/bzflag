@@ -3296,6 +3296,34 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   }
 }
 
+static void shotUpdate(int playerIndex, void *buf, int len)
+{
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  if (!playerData)
+    return;
+
+  const PlayerInfo &shooter = playerData->player;
+  if (!shooter.isAlive() || shooter.isObserver())
+    return;
+
+  ShotUpdate shot;
+  shot.unpack(buf);
+
+  // verify playerId
+  if (shot.player != playerIndex) {
+    logDebugMessage(2,"Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
+          playerIndex);
+    return;
+  }
+
+  if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
+    return;
+
+  broadcastMessage(MsgGMUpdate, len, buf);
+
+}
+
 static void shotFired(int playerIndex, void *buf, int len)
 {
   GameKeeper::Player *playerData
@@ -3355,13 +3383,14 @@ static void shotFired(int playerIndex, void *buf, int len)
     return;
   }
 
-  // verify shot number
-  if ((shot.id & 0xff) > clOptions->maxShots - 1) {
-    logDebugMessage(2,"Player %s [%d] shot id out of range %d %d\n",
-	   shooter.getCallSign(),
-	   playerIndex,	shot.id & 0xff, clOptions->maxShots);
+  if (shooter.haveFlag())
+    firingInfo.flagType = fInfo.flag.type;
+  else
+    firingInfo.flagType = Flags::Null;
+
+ if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
     return;
-  }
+  
 
   const float maxTankSpeed  = BZDBCache::tankSpeed;
   const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -3502,6 +3531,13 @@ static void shotFired(int playerIndex, void *buf, int len)
 
 static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(id);
+  if (!playerData)
+    return;
+
+  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, id);
@@ -4575,22 +4611,25 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  (state.status & short(PlayerState::Alive))) {
 	break;
       }
-      
+            
       // observer shouldn't send bulk messages anymore, they used to
       // when it was a server-only hack; but the check does not hurt,
       // either
       if (playerData->player.isObserver())
         break;
-      
+       
       searchFlag(*playerData);
-      
+       
       relayPlayerPacket(t, len, rawbuf, code);
       break;
     }
 
     case MsgGMUpdate:
-      // observer shouldn't send bulk messages anymore, they used to when it was
-      // a server-only hack; but the check does not hurt, either
+
+      shotUpdate(t, buf, int(len));
+      
+      break;
+
       if (playerData->player.isObserver()) {
 	break;
       }
@@ -5353,6 +5392,8 @@ int main(int argc, char **argv)
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
 				  clOptions->filter,
 				  clOptions->filterSimple);
+  
+  GameKeeper::Player::setMaxShots(clOptions->maxShots);
 
   // enable replay server mode
   if (clOptions->replayServer) {

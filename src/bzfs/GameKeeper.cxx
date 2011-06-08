@@ -360,6 +360,100 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
 
 }
 
+int GameKeeper::Player::maxShots = 0;
+void GameKeeper::Player::setMaxShots(int _maxShots)
+{
+  maxShots = _maxShots;
+}
+
+bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
+{
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
+  if (id < (int)shotsInfo.size() && shotsInfo[id].present
+      && now < shotsInfo[id].expireTime) {
+    logDebugMessage(2,"Player %s [%d] shot id %d duplicated\n",
+          player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  // verify shot number
+  if (id > maxShots - 1) {
+    logDebugMessage(2,"Player %s [%d] shot id %d out of range %d\n",
+          player.getCallSign(), playerIndex, id, maxShots);
+    return false;
+  }
+
+  shotsInfo.resize(maxShots);
+
+  float lifeTime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  if (firingInfo.flagType == Flags::RapidFire)
+    lifeTime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
+  else if (firingInfo.flagType == Flags::MachineGun)
+    lifeTime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
+  else if (firingInfo.flagType == Flags::GuidedMissile)
+    lifeTime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE) + .01f;
+  else if (firingInfo.flagType == Flags::Laser)
+    lifeTime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+  else if (firingInfo.flagType == Flags::ShockWave)
+    lifeTime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
+  else if (firingInfo.flagType == Flags::Thief)
+    lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
+
+  ShotInfo myShot;
+  myShot.firingInfo  = firingInfo;
+  myShot.salt        = salt;
+  myShot.expireTime  = now + lifeTime;
+  myShot.present     = true;
+  myShot.running     = true;
+
+  shotsInfo[id] = myShot;
+  return true;
+}
+
+bool GameKeeper::Player::removeShot(int id, int salt)
+{
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
+  if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
+      || now >= shotsInfo[id].expireTime) {
+    logDebugMessage(2,"Player %s [%d] trying to stop the unexistent shot id %d\n",
+          player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  if (shotsInfo[id].salt != salt) {
+    logDebugMessage(2,"Player %s [%d] trying to stop a mismatched shot id %d\n",
+          player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  if (!shotsInfo[id].running)
+    return false;
+  shotsInfo[id].running = false;
+  return true;  
+}
+
+bool GameKeeper::Player::updateShot(int id, int salt)
+{
+  float now = (float)TimeKeeper::getCurrent().getSeconds();
+  if (id >= (int)shotsInfo.size() || !shotsInfo[id].present
+      || now >= shotsInfo[id].expireTime) {
+    logDebugMessage(2,"Player %s [%d] trying to update an unexistent shot id %d\n",
+          player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  if (shotsInfo[id].salt != salt) {
+    logDebugMessage(2,"Player %s [%d] trying to update a mismatched shot id %d\n",
+          player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  if (!shotsInfo[id].running)
+    return false;
+  // only GM can be updated
+  if (shotsInfo[id].firingInfo.flagType != Flags::GuidedMissile) {
+    logDebugMessage(2,"Player %s [%d] trying to update a non GM shot id %d\n",
+          player.getCallSign(), playerIndex, id);
+    return false;
+  }
+  return true;
+}
+
 void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
 {
   lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
