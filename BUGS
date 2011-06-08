@@ -52,9 +52,6 @@ Regressions
   the player was added, thus setting the motto failed because it didn't have a
   player to assign it to) @ r20696 (blast)
 
-* spin inversion bug, fix in MeshTransform.cxx (around line 300)
-  during the next protocol breakage
-
 * Too many flags caused "drop, unresponsive with 16687 bytes queued"
   (+f good{40} was the breaking point, linux, local bzfs server)
   admittedly, an unreasonable number of flags
