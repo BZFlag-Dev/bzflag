@@ -33,6 +33,7 @@ BZFlag 2.3.0  "Born Again"
 * Require TALK privilege for player motto to be broadcast - Jeff Makey
 * Always require valid authentication for registered names
     - Jeff Myers, Scott Wichser
+* Make grabbing flags and flag identification server side - Alfredo Tupone
 
 
 BZFlag 2.0.16  "No Foolin'" (2010-04-01)
