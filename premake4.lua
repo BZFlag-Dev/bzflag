@@ -362,7 +362,7 @@ end
 
 if (not _OPTIONS['help']) then
 
-  include 'premake4_config'
+  include 'premake4_tools'
 
   include 'other_src'
   include 'src'

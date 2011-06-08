@@ -152,6 +152,10 @@ function os.testcode(t)
 
   local result = os.execute(cmd)
 
+  if (result == 2) then
+    os.exit(2) -- SIGINT, bail
+  end
+
   os.remove(tmpOut)
   os.remove(tmpCpp)
 
