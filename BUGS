@@ -1,155 +1,269 @@
-recent bugs
-------------
+							   -*- coding: utf-8 -*-
+BZFlag Bugs
+===========
 
-- bzfs sometimes gets into a mode where CTF team flags spawn at random places,
-  not on bases.  Also, players spawn at random spots after flag cap.
+Users should report bugs to our bug tracker on the project website at
+http://sourceforge.net/tracker/?group_id=3248&atid=103248
 
-- Zbuffer flickering with Narrow and Covered animated treads
+The bugs and issues listed in this file may or may not be the same as or related
+to the bugs reported to the bug tracker.  In general, users should not look to
+this file for information regarding the status of bugs.  The BUGS file contains
+informal bug-related information that is intended only as notes for developers.
+This may include short term issues that are in active development as well as
+long term and on-going issues.  These notes are completely independent of any
+bugs formally reported on the bug tracker.
 
-- ANSI codes can be used in the server -public messages
-  The best solution is probably to strip the codes at the listserver
+Crashes
+-------
 
-- some ATI cards get font rendering to have variable alpha values
-  on each letter. The gl restate was removed from the font manager.
-  It should be put in and tied to a config option that defaults to
-  off.
+* Bug report from zaphod: (May24, 2010)
+    "if you carry the teamflag and get shot, it doesn't drop but "disappears"
+     until you respawn, and then reappears on the base (and not on the spot you
+     got killed)."
 
-- teleporting is blocking when going from a ground teleporter to
-  a teleporter sitting on a mesh object. fix during next protocol
-  breakage  (workaround by dropping the ground teleporter by a
-  small amount... causing the burrow sound)
+* Tanks only spawn at ground level. Complex maps that have tunnels or platforms
+  may not like this (spawn out of bounds happens)  -- huh?
 
-- the last shot fired with a shot-limited flag doesn't carry the flag
-  type (or is dropped by the server?)...e.g. if I have G, limited to
-  5 shots, and kill someone with the fifth shot, only that player dies
-  because the flag was dropped by the time the kill was scored...
-  even though the shot was fired while I still had the flag.
-
-- spin inversion bug, fix in MeshTransform.cxx (around line 300)
-  during the next protocol breakage
-
-- do all Riva128 systems require "noMeshClusers"? Is there a
-  workaround to make vertex array work on those cards?
-
-- Mac OS X client sometimes (50/50) seems to now start to a black
-  screen (only the console tab tabs render).  must be recent..
-
-- Too many flags caused "drop, unresponsive with 16687 bytes queued"
-  (+f good{40} was the breaking point, linux, local bzfs server)
-  admittedly, an unreasonable number of flags
-
-- Bad BZDB: some BZDB variables are not range checked:
-  "/set _syncTime -" goes boom on the client side.
-  (StateDatabase::ExpressionToken::operator=, StateDatabase.cxx:890)
-
-- Material properties for mesh containers are not adjusted by
-  ObstacleModifier, and will not save correctly if using saveFlatFile.
-
-- Observer movement controls seems to get locked-up in Hunt mode.
-
-- Burrowed tank shadows should be ground clipped
-  (the shadow perspective matrix messes with the clip plane?)
-
-- if you start the client windowed on a multidisplay system, and then
-  move the window to a secondary monitor, you cannot control the
-  brightness of the (SDL) window since it presently modifying the
-  gamma of the display that started it.
-
-- dropping a team flag, when the related team is empty, start a timeout.
-  The related code does not take into account that we can have now
-  multiple team flags.
-
-- if the display cannot initialize properly, it will start bzflag with a
-  black screen.  need to prevent this by either detecting if there is an
-  available mode that is possible, lowering memory usage, or reporting
-  an error and aborting.
-
-- XIJoystick does not compile
-
-- time limiter does not take jumping into consideration when holding Agility
-
-- shooting straight shots with the Agility flag while just having accelerated
-  forward (common tactic to shoot "fast shots") will miss targets that are
-  rather stationary and directly in the shot's path.
-
-- bullets now travel through the top of a block instead of reflecting off.
-  The bullets appear to be half(or more) submerged into the block.
-
-- world weapons seem to lag the server when there are many players joined.
-  might be related to a rapidly repeating world weapon as well (like once
-  a second, use _weapons BZDB var to test...)
-
-- reached assertion on either World::getTeleportTarget() or
-  World::getTeleporter() after getting killed while jumping towards a
-  teleporter (and landing in front of the teleporter, albeit dead).  i
-  didn't respawn, waited a couple sec (was chatting), then the assertion was
-  raised.
-
-- list server includes counts for players running on non-public/mis-configured
-  servers on the same machine on different ports.  if server runs on port 5156
-  with publicaddr set to machine:5156 and then also runs another on 59999 with
-  publicaddr set to machine:5156 (by accident or otherwise), then player joins
-  to the 59999 server mask the 5156 server.  it'd be easy to blow this off as
-  expected behavior, but I expect one can also trojan any server's counts
-  using this same technique..
-
-- client crashes upon receipt of a corrupted MsgFlagUpdate message.
-  (See http://bzflag.secretplace.us/packet.txt for an example)
-
-- doc/guide/NetworkProtocol.xml is not up to date
-
-- Shift+Tab seems to be bound to jump without being bound to jump
-  It doesn't happen on Linux. Shift+Tab action is untranslated by XLookupString
-  (xfree86 4.3), so need custom code to go into bzflag.
-
-- Flaghelp falls into the radar area when radar is 'bigger'
-
-- Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
+* Address Exception reported when unpacking a FlagType in MsgFlagUpdate on
   client in Rabbit game. The reported message buffer address was bad (ie
   0xbfffd7ed) Could we be running off the end of the packet (ie count is
   fubar'ed?) Perhaps add sanity check for not overruning end of buffer.
 
-- bzadmin seems to be less responsive over the network than bzflag - a
-  bzadmin client can get kicked from a very active game by the server
-  for causing it to queue too many packages (there's a limit at 20kB, when I
-  removed it the queue went up to at least 64kB)
+* Creating a new tab in the server list: appending to the end of an existing
+  field, instead of deleting it causes a crash. There's an extremely sketchy
+  calculation in HUDuiTypeIn.cxx line 175 that results in a std::out_of_range
+  exception on line 181
 
-- make maintainer-clean does not enter DIST_SUBDIRS
-  so all Makefile.in and Makefile files are not removed correctly
-  (this is probably a bug in automake 1.4, not in our files)
+* The WebAdmin plugin segfaults the server on shutdown.
+    - Cannot duplicate on either linux or Windows @ r20695 (blast)
 
-older bugs in BZFlag
----------------------
 
-* exploding tank parts sometimes move along the ground instead of
-   flying up into the air.
+Regressions
+-----------
 
-* not dropping a flag grabbed just before being destroyed
+* recently removed servers show up as blank rows in the server list
 
-* same stipple on teleporters and phantom zone, making phatom
-   tank behind teleporter virtually invisible when blending is off.
+* Some players hear clicks and pops with sound effects, others do not.
+  Sounds cause an observable reduction in frame rate.
 
-* not drawing back to front when depth buffer is on:
-   flag edges can't be antialiased right
-   teleporter blended on top of shots in front of them
+* Authentication status (-, +, @) and motto for other players does not show up
+  when you join a public server. When last checked, data was being processed
+  by bzfs in the incorrect order (example: motto was being processed before
+  the player was added, thus setting the motto failed because it didn't have a
+  player to assign it to) @ r20696 (blast)
 
-* line stipple doesn't (can't) match polygon stipple
-   messes up shadow of flag stem
+* spin inversion bug, fix in MeshTransform.cxx (around line 300)
+  during the next protocol breakage
 
-* can sometimes appear in front of bad guys
+* Too many flags caused "drop, unresponsive with 16687 bytes queued"
+  (+f good{40} was the breaking point, linux, local bzfs server)
+  admittedly, an unreasonable number of flags
 
-* some linux systems get XIO error on startup
-   no idea why but it's consistent on those systems
-   (probably XIJoystick code?)
 
-* not blanking screen during win32 startup
-   should black out screen before changing resolutions
-   should raise on top of task bar
-   also black out screen when quitting until resolution restored
+Probably Fixed
+--------------
 
-* error dialogs on win32 may appear off screen
+* GM does not seem to lock on reliably (try against a remote client, bots work
+  fine)
+
+* server communication error when someone logs off and people are still playing
+  (may be fixed as of 2.99.21)
+
+* reached assertion on either World::getTeleportTarget() or
+  World::getTeleporter() after getting killed while jumping towards a teleporter
+  (and landing in front of the teleporter, albeit dead).  i didn't respawn,
+  waited a couple sec (was chatting), then the assertion was raised.
+
+* After joining then leaving a server with at least one solo bot, the bzfs
+  will crash reasonably predictably at NetHandler:578 (toBeKickedReason is a
+  bad ptr) This happens at least on Windows
+
+
+Documentation
+-------------
+
+* doc/guide/NetworkProtocol.xml is not up to date
+
+Bans
+----
+
+- Ban notifications do not show up when joining, at least to a public server.
+  It just disconnects the user after "Global login approved". May be related
+  to the regression above dealing with authentication status and motto. (may
+  be data getting sent/received/processed out of order) @ r20696 (blast)
+  
+
+Controls
+--------
+
+* someone broke the key-driving rotational acceleration dampening, feels like
+  1.7 driving again.
+
+* Observer movement controls seems to get locked-up in Hunt mode.
+
+Rendering
+---------
+
+* turning off texturing screws up the menu icon
+
+* Tab rendering on the control panel is braindead.  Probably should use some
+  kind of begin/end tabular data markers across multiple messages and line up
+  the columns based on that.
+
+* At low screen resolutions, small text becomes very blurry.  Example:
+  http://static.bzexcess.com/bzfi1005.png
+
+* When using the Vera Mono Bold font at size 24 the following 5 characters are
+  invisible on the screen: $j{|}  A suitable replacement for
+  data/fonts/VeraMonoBold.ttf should solve this.
+
+* Zbuffer flickering with Narrow and Covered animated treads
+
+* some ATI cards get font rendering to have variable alpha values on each
+  letter. The gl restate was removed from the font manager.  It should be put in
+  and tied to a config option that defaults to off.
+
+* Burrowed tank shadows should be ground clipped (the shadow perspective matrix
+  messes with the clip plane?)
+
+* Material properties for mesh containers are not adjusted by ObstacleModifier,
+  and will not save correctly if using saveFlatFile.
+
+* same stipple on teleporters and phantom zone, making phatom tank behind
+   teleporter virtually invisible when blending is off.
+
+* line stipple doesn't (can't) match polygon stipple messes up shadow of flag
+  stem
+
+* if the display cannot initialize properly, it will start bzflag with a black
+  screen.  need to prevent this by either detecting if there is an available
+  mode that is possible, lowering memory usage, or reporting an error and
+  aborting.
+
+* Flaghelp falls into the radar area when radar is 'bigger'
+
+* When setting resolution to 1400x1050 ~ 1920x1080 the font listing the various
+  resolutions overlaps one another. @ r18096 -spldart-
+  -confirmed- @ r19553
+
+Replay
+------
+
+* Recorded bots seem to be 'stucked' in replay.
+
+Platform (multiple)
+-------------------
+
+* Shift+Tab seems to be bound to jump without being bound to jump It doesn't
+  happen on Linux. Shift+Tab action is untranslated by XLookupString (xfree86
+  4.3), so need custom code to go into bzflag.
+
+Platform (Windows)
+------------------
+
+* not blanking screen during win32 startup should black out screen before
+  changing resolutions should raise on top of task bar also black out screen
+  when quitting until resolution restored
+
+- error dialogs on win32 may appear off screen
    only when display resolution was changed
 
+* jitter on windows servers is reported as very high, but play is unaffected.
+
+* Two separate boxen, windows build with vc8 (VC9), nvidia vid cards. (ATI)
+
+  When jumping on box "name Box - position 250 250 118 - rotation 0 - size 15 15
+  0.1 - end" on my WarTowers map, the one with the transporter on it, tanks
+  stick to the box and lock coming through the transporter on the ground linked
+  to that transporter on that box. Screenshot available on request. Linux
+  clients on two boxen do not have this issue.
+
+  PS: This differs from the latter "teleporting is blocking" bug in misc
+  directory further down this list in that the sky teleport is on regular box,
+  not mesh, and it localized the bug to windows builds currently. But could
+  obviously be related.  @ r16889 -spldart- (r19553) ()<- recent retest.
+
+
+bzfs
+----
+
+* After about 28 minutes with 4 players on the map there was an unexplained
+  minute of everyone rapidly toggling between NR and okay.  Chat messages were
+  queued and delivered to the server after things returned to normal.  Lag
+  numbers were very high (up to 1.3 seconds) right after this.
+
+* bzfs sometimes gets into a mode where CTF team flags spawn at random places,
+  not on bases.  Also, players spawn at random spots after flag cap.
+
+* maxPlayers is a lie.  See WorldBuilder.cxx:237 and bzfsClientMessages.cxx:39.
+
+Gameplay
+--------
+
+* the last shot fired with a shot-limited flag doesn't carry the flag type (or
+  is dropped by the server?)...e.g. if I have G, limited to 5 shots, and kill
+  someone with the fifth shot, only that player dies because the flag was
+  dropped by the time the kill was scored...  even though the shot was fired
+  while I still had the flag (may be fixed: remove this item if you can
+  confirm).
+
+* dropping a team flag, when the related team is empty, start a timeout.  The
+  related code does not take into account that we can have now multiple team
+  flags.
+
+* teleporting is blocking when going from a ground teleporter to a teleporter
+  sitting on a mesh object. fix during next protocol breakage (workaround by
+  dropping the ground teleporter by a small amount... causing the burrow sound)
+
+* shooting straight shots with the Agility flag while just having accelerated
+  forward (common tactic to shoot "fast shots") will miss targets that are
+  rather stationary and directly in the shot's path.
+
+* world weapons seem to lag the server when there are many players joined.
+  might be related to a rapidly repeating world weapon as well (like once a
+  second, use _weapons BZDB var to test...)
+
+Solo Bots
+--------------
+
+* Under Windows, bots shots are currently exploding as soon as they are fired.
+  this is a pretty recent development, probably some time July '09
+
+3rd party libs
+--------------
+
+* if there is a network connection (e.g. a lan) yet no external access, the
+  client hangs hard in cURLManager.cxx:291 and later in some odd corrupted stack
+  space elsewhere.  this was with CURL 7.13.1 (default Mac libcurl).  simple
+  workaround is to invoke client with -list e://localhost (even if no local
+  server is running) to avoid the hang on resolving.
+
+Services
+--------
+
+* list server includes counts for players running on non-public/mis-configured
+  servers on the same machine on different ports.  if server runs on port 5156
+  with publicaddr set to machine:5156 and then also runs another on 59999 with
+  publicaddr set to machine:5156 (by accident or otherwise), then player joins
+  to the 59999 server mask the 5156 server.  it'd be easy to blow this off as
+  expected behavior, but I expect one can also trojan any server's counts using
+  this same technique..
+
+Tools
+-----
+
+* bzadmin seems to be less responsive over the network than bzflag - a bzadmin
+  client can get kicked from a very active game by the server for causing it to
+  queue too many packages (there's a limit at 20kB, when I removed it the queue
+  went up to at least 64kB)
+
 ---
-see the bug tracker on SourceForge for more
-http://SourceForge.net/tracker/?group_id=3248&atid=103248
+Users should report bugs to our bug tracker on the project website at
+http://sourceforge.net/tracker/?group_id=3248&atid=103248
+
+// Local Variables:
+// mode: Text
+// tab-width: 8
+// fill-column: 80
+// End:
+// ex: shiftwidth=2 tabstop=8
