@@ -97,6 +97,11 @@ public:
     const TimeKeeper&	getNextGameTime() const;
     void		updateNextGameTime();
 
+    // To handle Identify
+    void           setLastIdFlag(int _idFlag);
+    int            getLastIdFlag();
+    
+
     enum LSAState
       {
 	start,
@@ -147,6 +152,8 @@ public:
     bool	      needThisHostbanChecked;
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
+    
+    int               idFlag;
 
   };
 

@@ -35,7 +35,7 @@ GameKeeper::Player::Player(int _playerIndex,
 			   tcpCallback _clientCallback):
   player(_playerIndex), lagInfo(&player),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-  needThisHostbanChecked(false)
+  needThisHostbanChecked(false), idFlag(-1)
 {
   playerList[playerIndex] = this;
 
@@ -373,6 +373,14 @@ void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
 {
   memcpy(pos, lastState.pos, sizeof(float) * 3);
   azimuth = lastState.azimuth;
+}
+
+void GameKeeper::Player::setLastIdFlag(int _idFlag) {
+  idFlag = _idFlag;
+}
+
+int GameKeeper::Player::getLastIdFlag() {
+  return idFlag;
 }
 
 // Local Variables: ***
