@@ -1174,7 +1174,6 @@ AC_CONFIG_FILES([
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
 	plugins/flagStay/Makefile
-	plugins/fastmap/Makefile
 	plugins/hiddenAdmin/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
@@ -1192,7 +1191,6 @@ AC_CONFIG_FILES([
 	plugins/shockwaveDeath/Makefile
 	plugins/teamflagreset/Makefile
 	plugins/timedctf/Makefile
-	plugins/webReport/Makefile
 	plugins/wwzones/Makefile
 	src/3D/Makefile
 	src/Makefile
