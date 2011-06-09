@@ -151,7 +151,6 @@ uint8_t rabbitIndex = NoPlayer;
 static RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
-static bool       isIdentifyFlagIn = false;
 static bool       playerHadWorld   = false;
 
 bool		  publiclyDisconnected = false;
@@ -353,7 +352,6 @@ void sendFlagUpdate(FlagInfo &flag)
   buf = nboPackUShort(bufStart,1);
   bool hide
     = (flag.flag.type->flagTeam == ::NoTeam)
-    && !isIdentifyFlagIn
     && (flag.player == -1);
   buf = flag.pack(buf, hide);
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
@@ -445,7 +443,6 @@ static void sendFlagUpdate(int playerIndex)
 
       bool hide
 	= (flag.flag.type->flagTeam == ::NoTeam)
-	&& !isIdentifyFlagIn
 	&& (flag.player == -1);
       buf = flag.pack(buf, hide);
       length += sizeof(uint16_t)+FlagPLen;
@@ -5544,16 +5541,6 @@ int main(int argc, char **argv)
   initGroups();
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
-
-  // See if an ID flag is in the game.
-  // If not, we could hide type info for all flags
-  if (clOptions->flagCount[Flags::Identify] > 0) {
-    isIdentifyFlagIn = true;
-  }
-  if ((clOptions->numExtraFlags > 0)
-      && !clOptions->flagDisallowed[Flags::Identify]) {
-    isIdentifyFlagIn = true;
-  }
 
   if (clOptions->startRecording) {
     Record::start(ServerPlayer);
