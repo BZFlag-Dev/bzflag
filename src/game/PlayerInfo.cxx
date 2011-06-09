@@ -158,8 +158,13 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     strcpy(rejectMsg, "The callsign specified is already in use.");
     return false;
   }
-  if (!isMottoReadable()) 
+  if (!isMottoReadable()) {
+    logDebugMessage(2,"ignoring unreadable player motto: %s (%s)\n", callSign, motto);
+    // The sendMessage() function is not available in this scope.
+    // TODO: reorganize the code to send this courtesy notice to the player.
+    // sendMessage(ServerPlayer, playerIndex, "Ignoring your unreadable motto.");
     setMotto("");
+  }
 
   // make sure the callsign is not obscene/filtered
   if (callSignFiltering) {
@@ -199,8 +204,10 @@ const char *PlayerInfo::getCallSign() const {
 
 void PlayerInfo::setCallSign(const char * c)
 {
-  if (c != NULL)
-    strcpy(callSign,c);
+  if (c != NULL) {
+    strncpy(callSign, c, CallSignLen);
+    callSign[CallSignLen - 1] = '\0';	// ensure null termination
+  }
 }
 
 
@@ -314,8 +321,10 @@ const char *PlayerInfo::getToken() const {
 
 void PlayerInfo::setToken(const char * c)
 {
-  if (c != NULL)
-    strcpy(token,c);
+  if (c != NULL) {
+    strncpy(token, c, TokenLen);
+    token[TokenLen - 1] = '\0';	// ensure null termination
+  }
 }
 
 void PlayerInfo::clearToken() {
@@ -372,8 +381,10 @@ const char *PlayerInfo::getClientVersion() {
 
 void PlayerInfo::setClientVersion(const char * c)
 {
-  if (c != NULL)
-    strcpy(clientVersion,c);
+  if (c != NULL) {
+    strncpy(clientVersion, c, VersionLen);
+    clientVersion[VersionLen - 1] = '\0';	// ensure null termination
+  }
 }
 
 void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
