@@ -894,7 +894,7 @@ static void saveDocket(const std::string& mapname,
 
 bool SaveWorldCommand::operator()(const char* commandLine) {
   if (BZDB.isTrue("_forbidSaveWorld")) {
-    addMessage(NULL, "/saveworld has been disable on this server");
+    addMessage(NULL, "/saveworld has been disabled on this server");
     return true;
   }
 
