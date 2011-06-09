@@ -893,6 +893,11 @@ static void saveDocket(const std::string& mapname,
 
 
 bool SaveWorldCommand::operator()(const char* commandLine) {
+  if (BZDB.isTrue("_forbidSaveWorld")) {
+    addMessage(NULL, "/saveworld has been disable on this server");
+    return true;
+  }
+
   bool meshprims = false;
   bool ungrouped = false;
   bool wavefront = false;
