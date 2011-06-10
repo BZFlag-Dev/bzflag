@@ -30,9 +30,10 @@ WordFilter *PlayerInfo::filterData	= NULL;
 bool	PlayerInfo::simpleFiltering   = true;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
-  playerIndex(_playerIndex), state(PlayerInLimbo), team(NoTeam), flag(-1),
-  spamWarns(0), lastMsgTime(now), paused(false),
-  pausedSince(TimeKeeper::getNullTime()), autopilot(false), tracker(0)
+  playerIndex(_playerIndex), state(PlayerInLimbo), team(NoTeam),
+  hasDoneEntering(false), flag(-1), spamWarns(0), lastMsgTime(now),
+  paused(false), pausedSince(TimeKeeper::getNullTime()), autopilot(false),
+  tracker(0)
 {
   notResponding = false;
   memset(motto, 0, MottoLen);
@@ -195,6 +196,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
   if (token[0] == 0) {
     strcpy(token, "NONE");
   }
+  hasDoneEntering = true;
   return true;
 }
 
