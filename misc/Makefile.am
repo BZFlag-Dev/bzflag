@@ -15,7 +15,6 @@ EXTRA_DIST =				\
 	bzlist.php			\
 	bzwcvt.pl			\
 	checkam				\
-	checkToken.php			\
 	doxyfile			\
 	filter.txt			\
 	flagbuffet.bzw			\
