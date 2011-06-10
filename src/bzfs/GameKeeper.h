@@ -38,7 +38,6 @@
 #include "bzfsAPI.h"
 #include "ShotUpdate.h"
 
-class FiringInfo;
 class ShotInfo {
 public:
   ShotInfo() : present(false) {};
