@@ -613,18 +613,12 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
   while (std::getline(in, line)) {
     linenum++;
 
-    // check for a comment string
-    bool skip = true;
-    for (std::string::size_type pos = 0; pos < line.size(); pos++) {
-      const char c = line[pos];
-      if (!TextUtils::isWhitespace(c)) {
-	if (c != '#') {
-	  skip = false;
-	}
-	break;
-      }
-    }
-    if (skip) continue;
+    // strip leading whitespace
+    line.erase(0 , line.find_first_not_of(" \t"));
+    
+    // check for a comment string or empty line
+    if(line.empty() || line[0] == '#')
+      continue;
 
     makeupper(line);
 
