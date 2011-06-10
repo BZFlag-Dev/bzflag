@@ -135,7 +135,7 @@ public:
   int		pwrite(const void *b, int l);
   int		pflush(fd_set *set);
   std::string	reasonToKick();
-  void		getPlayerList(char *list);
+  const std::string	getPlayerHostInfo();
   const char*	getTargetIP();
   int		sizeOfIP();
   void*		packAdminInfo(void *buf);

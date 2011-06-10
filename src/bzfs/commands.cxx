@@ -1881,26 +1881,18 @@ bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
 bool PlayerListCommand::operator() (const char	 *,
 				    GameKeeper::Player *playerData)
 {
-  char reply[MessageLen]    = {0};
-  char hostInfo[MessageLen] = {0};
-
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
-    if (playerData->player.isPlaying()) {
-      playerData->netHandler->getPlayerList(hostInfo);
-      sprintf(reply, "[%d]%-16s: %s",
-	      t, playerData->player.getCallSign(), hostInfo);
-      sendMessage(ServerPlayer, t, reply);
-    }
-    return true;
-  }
-
   GameKeeper::Player *otherData;
+  char reply[MessageLen] = {0};
 
   for (int i = 0; i < curMaxPlayers; i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->player.isPlaying()) {
-      otherData->netHandler->getPlayerList(reply);
+    if (otherData && otherData->player.isPlaying() &&
+      // allow all players to see their own connection
+      (otherData->getIndex() == t || playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList))) {
+      snprintf(reply, MessageLen, "[%d]%-16s: %s", t,
+	playerData->player.getCallSign(),
+	otherData->netHandler->getPlayerHostInfo().c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   }

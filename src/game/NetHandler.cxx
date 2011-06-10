@@ -721,8 +721,8 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr) {
     (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0);
 }
 
-void NetHandler::getPlayerList(char *list) {
-  sprintf(list, "[%d]%-16s: %s%s%s%s%s%s", playerIndex, info->getCallSign(),
+const std::string NetHandler::getPlayerHostInfo() {
+  return TextUtils::format("%s%s%s%s%s%s",
 	  peer.getDotNotation().c_str(),
 	  getHostname() ? " (" : "",
 	  getHostname() ? getHostname() : "",
