@@ -8,15 +8,16 @@
   !define VER_MAJOR 2.3
   !define VER_MINOR .0.20110515
   
-  !define PLATFORM Win32
-; !define PLATFORM x64
-
-  !define RUNTIME_PLATFORM x86
-; !define RUNTIME_PLATFORM x64
-
-  !define BITNESS 32Bit
-; !define BITNESS 64Bit
-
+  !ifdef BUILD_64
+    !define PLATFORM x64
+	!define RUNTIME_PLATFORM x64
+	!define BITNESS 64Bit
+  !else
+    !define PLATFORM Win32
+	!define RUNTIME_PLATFORM x86
+	!define BITNESS 32Bit
+  !endif
+  
 ;--------------------------------
 ;Compression options
 
@@ -38,7 +39,11 @@
 
   ;General
   Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
-  OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+  !ifdef BUILD_64
+    OutFile "..\..\..\bin_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+  !else
+    OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+  !endif
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
