@@ -656,10 +656,11 @@ void			BoltSceneNode::BoltRenderNode::render()
 
 				glPushAttrib(GL_TEXTURE_BIT);
 				TextureManager &tm = TextureManager::instance();
-				const int texID = tm.getTextureID("missile");
+				const int texID = tm.getTextureID("shot_tail");
 				const ImageInfo& texInfo = tm.getInfo(texID);
 				if (texInfo.id >= 0) {
 					texInfo.texture->execute();
+					myColor4fv(outerColor);
 				}
 
 				fvec3 vel(sceneNode->velocity[0],sceneNode->velocity[1],sceneNode->velocity[2]);

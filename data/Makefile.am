@@ -100,6 +100,7 @@ dist_pkgdata_DATA =		\
 	rogue_super_bolt.png	\
 	rogue_tank.png		\
 	shock.wav		\
+	shot_tail.png		\
 	snowflake.png		\
 	spree1.wav		\
 	spree2.wav		\
