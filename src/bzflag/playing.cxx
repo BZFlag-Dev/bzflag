@@ -3340,6 +3340,10 @@ void handleFlagDropped(Player* tank)
     if (tank->getFlag() == Flags::Thief) {
       myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
     }
+    //drop lock if i had GM
+    if(myTank->getFlag() == Flags::GuidedMissile)
+      myTank->setTarget(NULL);
+    
     // update display and play sound effects
     playLocalSound(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
