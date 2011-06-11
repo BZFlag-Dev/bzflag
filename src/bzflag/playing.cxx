@@ -2165,7 +2165,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	explodePos[1] = pos[1];
 	explodePos[2] = pos[2] + victimPlayer->getMuzzleHeight();
 
-	TankDeathOverride* death = EFFECTS.addDeathEffect(victimPlayer->getColor(), pos, victimPlayer->getAngle(),reason,victimPlayer,flagType);
+	// TODO hook this back up for 2.4.4 or later
+	TankDeathOverride* death = NULL;
+	EFFECTS.addDeathEffect(victimPlayer->getColor(), pos, victimPlayer->getAngle(),reason,victimPlayer,flagType);
   
 	victimPlayer->setDeathEffect(death);
 
@@ -2466,7 +2468,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  explodePos[1] = pos[1];
 	  explodePos[2] = pos[2] + remotePlayers[i]->getMuzzleHeight();
 
-	  TankDeathOverride *death = EFFECTS.addDeathEffect(remotePlayers[i]->getColor(), pos, remotePlayers[i]->getAngle(),GotCaptured,remotePlayers[i],NULL);
+	  // todo hook this back up for 2.4.4. or later
+	  TankDeathOverride *death = NULL;
+	  EFFECTS.addDeathEffect(remotePlayers[i]->getColor(), pos, remotePlayers[i]->getAngle(),GotCaptured,remotePlayers[i],NULL);
 
 	  remotePlayers[i]->setDeathEffect(death);
 
@@ -3434,7 +3438,10 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
   if (reason != GotShot || flag != Flags::Shield) {
     // blow me up
 
-    TankDeathOverride* death = EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle(),reason,tank, flagType);
+    // todo hook this back up for 2.4.4. or later
+    TankDeathOverride *death = NULL;
+    EFFECTS.addDeathEffect(tank->getColor(), tank->getPosition(), tank->getAngle(),reason,tank, flagType);
+
     tank->setDeathEffect(death);
     tank->explodeTank();
 

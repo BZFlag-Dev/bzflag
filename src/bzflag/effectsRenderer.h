@@ -73,7 +73,7 @@ class DeathEffect : public BasicEffect, public TankDeathOverride
 {
 public:
 	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
-	virtual ~DeathEffect(){if(player)player->setDeathEffect(NULL);}
+	virtual ~DeathEffect(){/*if(player)player->setDeathEffect(NULL)*/;}
 
 	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) ){return false;}
 	virtual bool ShowExplosion ( void ){return true;}
