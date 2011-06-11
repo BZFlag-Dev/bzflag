@@ -1673,7 +1673,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
   if (options.gameType == TeamFFA)
     logDebugMessage(1,"  teamed free-for-all\n");
   
-  logDebugMessage(1,"options: %c\n", options.gameOptions);
+  logDebugMessage(1,"options: %X\n", options.gameOptions);
   if (options.gameOptions & int(SuperFlagGameStyle))
     logDebugMessage(1,"  super flags allowed\n");
   if (options.gameOptions & int(JumpingGameStyle))
