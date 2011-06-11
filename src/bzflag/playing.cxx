@@ -3723,7 +3723,10 @@ bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *
   if (distance > BZDB.eval(StateDatabase::BZDB_TARGETINGDISTANCE) || distance > bestDistance)
     return false;
 
-  if (player->getFlag() == Flags::Stealth ||
+  if (myTank->getFlag() == Flags::Blindness)
+    return false;
+
+  if (player->getFlag() == Flags::Stealth || 
     player->getFlag() == Flags::Cloaking)
     return myTank->getFlag() == Flags::Seer;
 
@@ -3737,7 +3740,10 @@ static bool isKillable(const Player *target)
     return false;
   if (target->getTeam() == RogueTeam)
     return true;
-  if (World::getWorld()->allowTeamKills() && target->getTeam() != myTank->getTeam())
+  if (myTank->getFlag() == Flags::Colorblindness)
+    return true;
+  if (World::getWorld()->allowTeamKills() &&
+    target->getTeam() != myTank->getTeam())
     return true;
 
   return false;
@@ -3808,12 +3814,29 @@ void setLookAtMarker(void)
   if (!bestTarget)
     return;
 
+  if (myTank->getFlag() == Flags::Blindness)
+    return;
+
   std::string label = bestTarget->getCallSign();
   if (bestTarget->getFlag() != Flags::Null) {
     std::string flagName = bestTarget->getFlag()->flagAbbv;
     label += std::string("(") + flagName + std::string(")");
   }
-  hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()), Float3ToVec4(Team::getRadarColor(bestTarget->getTeam())), label, !isKillable(bestTarget), 2.0f);
+
+  // Color enhanced marker depending on Local and RemotePlayer's Flag
+    
+  TeamColor markercolor = bestTarget->getTeam();
+
+  if (bestTarget->getFlag() == Flags::Masquerade &&
+    myTank->getFlag() != Flags::Seer)
+    markercolor = myTank->getTeam();
+
+  if (myTank->getFlag() == Flags::Colorblindness)
+    markercolor = RogueTeam;
+  
+  hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
+                              Float3ToVec4(Team::getRadarColor(markercolor)),
+                              label, !isKillable(bestTarget), 2.0f);
 }
 
 static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
