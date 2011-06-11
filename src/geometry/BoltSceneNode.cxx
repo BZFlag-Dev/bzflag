@@ -660,7 +660,6 @@ void			BoltSceneNode::BoltRenderNode::render()
 				const ImageInfo& texInfo = tm.getInfo(texID);
 				if (texInfo.id >= 0) {
 					texInfo.texture->execute();
-					myColor4fv(outerColor);
 				}
 
 				fvec3 vel(sceneNode->velocity[0],sceneNode->velocity[1],sceneNode->velocity[2]);
@@ -697,7 +696,7 @@ void			BoltSceneNode::BoltRenderNode::render()
 					const float V1 = V0 + 0.25f;
 
 					alpha -= alphaStep;
-					glColor4f(1.0f, 1.0f, 1.0f, alpha);
+					glColor4f(mainColor[0],mainColor[1],mainColor[2], alpha);
 					glPopMatrix();
 					glPushMatrix();
 
