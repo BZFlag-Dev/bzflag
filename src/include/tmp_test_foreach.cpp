@@ -16,7 +16,8 @@ int main(int argc, char** argv) {
   foreach (v, s) {
     printf("%s\n", v.c_str());
   }
-  foreach (c, std::string("testing")) {
+  std::string str = std::string("testing");
+  foreach (c, str) {
     putchar(toupper(c));
   }
   putchar('\n');
