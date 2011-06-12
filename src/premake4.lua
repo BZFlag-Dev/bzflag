@@ -33,7 +33,10 @@ function bzlib_project(name, options)
     kind('StaticLib')
     targetname(name:sub(4)) -- strip the 'lib' part
     language 'C++'
-    includedirs(TOPDIR .. '/src/include')
+    includedirs {
+      TOPDIR .. '/src',
+      TOPDIR .. '/src/include',
+    }
     objdir('.objs')
 
   if (not _ACTION:match('^vs')) then
