@@ -14,6 +14,7 @@ if (_ACTION == 'gmake') then
       foreigntarget  'src/.libs/libftgl.a'
       targetname   'ftgl'
       targetdir    'ftgl/src/.libs'
+      targetsuffix ''
 
       local confopts = '--enable-shared=no'
       if (CONFIG.BUILD_FREETYPE) then
