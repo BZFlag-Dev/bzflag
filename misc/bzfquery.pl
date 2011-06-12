@@ -56,6 +56,9 @@ $server = pack($sockaddr, AF_INET, $port, $serveraddr);
 die $! unless socket(S, AF_INET, SOCK_STREAM, $proto);
 die $! unless connect(S, $server);
 
+# Send header
+print S "BZFLAG\r\n\r\n";
+
 # don't buffer
 select(S); $| = 1; select(STDOUT);
 
@@ -67,7 +70,7 @@ die $! unless sysread(S, $buffer, 9) == 9;
 
 # quit if version isn't valid
 die "not a bzflag server" if ($magic ne "BZFS");
-die "incompatible version" if ($protocol ne "0026");
+die "incompatible version" if ($protocol ne "0212");
 
 # quit if rejected
 die "rejected by server" if ($id == 255);
@@ -84,24 +87,27 @@ if ($nbytes != 46) {
   die "Error: $nbytes bytes, expecting 46: $^E\n";
 }
 
-($len,$code,$style,$maxPlayers,$maxShots,
+($len,$code,$style,$options,$maxPlayers,$maxShots,
 	$rogueSize,$redSize,$greenSize,$blueSize,$purpleSize,$obsSize,
 	$rogueMax,$redMax,$greenMax,$blueMax,$purpleMax,$obsMax,
 	$shakeWins,$shakeTimeout,
-	$maxPlayerScore,$maxTeamScore,$maxTime,$timeElapsed) = unpack("n23", $buffer);
+	$maxPlayerScore,$maxTeamScore,$maxTime,$timeElapsed) = unpack("n24", $buffer);
 die $! unless $code == 0x7167;
 
 # print info
-print "style:";
-print " CTF" if $style & 0x0001;
-print " flags" if $style & 0x0002;
-print " jumping" if $style & 0x0008;
-print " inertia" if $style & 0x0010;
-print " ricochet" if $style & 0x0020;
-print " shaking" if $style & 0x0040;
-print " antidote" if $style & 0x0080;
-print " handicap" if $style & 0x0100;
-print " rabbit-hunt" if $style & 0x0200;
+print "style: ";
+@styles=("TeamFFA", "ClassicCTF", "OpenFFA", "RabbitChase");
+print $styles[$style - 1];
+print "\n";
+print "options:";
+print " flags" if $options & 0x0002;
+print " jumping" if $options & 0x0008;
+print " inertia" if $options & 0x0010;
+print " ricochet" if $options & 0x0020;
+print " shaking" if $options & 0x0040;
+print " antidote" if $options & 0x0080;
+print " handicap" if $options & 0x0100;
+print " no-team-kills" if $options & 0x0200;
 print "\n";
 print "maxPlayers: $maxPlayers\nmaxShots: $maxShots\n";
 print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize $obsSize" .
@@ -121,6 +127,7 @@ print "time elapsed: " . $timeElapsed / 10 . "\n\n";
 print S pack("n2", 0, 0x7170);
 
 # get number of teams and players we'll be receiving
+sysread(S, $buffer, 2);
 die $! unless sysread(S, $buffer, 8) == 8;
 ($len,$code,$numTotalTeams,$numPlayers) = unpack("n4", $buffer);
 die $! unless $code == 0x7170;
