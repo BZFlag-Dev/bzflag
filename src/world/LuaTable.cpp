@@ -365,7 +365,7 @@ luaget_state luaget_value(lua_State* L, int index, float& value) {
   return luaget_success;
 }
 
-template <> // stdstring -- FIXME
+template <> // std::string
 luaget_state luaget_value(lua_State* L, int index, std::string& value) {
   if (!lua_israwstring(L, index)) {
     return lua_isnil(L, index) ? luaget_missing : luaget_baddata;
@@ -432,11 +432,35 @@ luaget_state luaget_value(lua_State* L, int index, fvec4& value) {
 //============================================================================//
 //============================================================================//
 //
+//  partially specialized templates to reconcile
+//    std::vector<> and std::set<> behaviours
+//
+
+// add_element()
+template <typename C, typename T>
+inline void add_element(C, T);
+template <typename T>
+inline void add_element(std::set<T>& c, const T& t) { c.insert(t); }
+template <typename T>
+inline void add_element(std::vector<T>& c, const T& t) { c.push_back(t); }
+
+// sort_container()
+template <typename C, typename T>
+inline void sort_container(C);
+template <typename T>
+inline void sort_container(std::set<T>&) {} // std::set<>'s can not be sorted
+template <typename T>
+inline void sort_container(std::vector<T>& c) { std::sort(c.begin(), c.end()); }
+
+
+//============================================================================//
+//============================================================================//
+//
 //  Key list functions
 //
 
 template <typename C>
-bool LuaTable::GetKeys(C& data) const {
+bool LuaTable::GetKeysTemplate(C& data) const {
   if (!PushTable()) {
     return false;
   }
@@ -444,20 +468,20 @@ bool LuaTable::GetKeys(C& data) const {
   for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
     typename C::value_type value;
     if (luaget_value(L, -2, value) == luaget_success) {
-      data.push_back(value);
+      add_element(data, value);
     }
   }
   lua_pop(L, 1);
-  std::sort(data.begin(), data.end());
+  sort_container<typename C::value_type>(data);
   return true;
 }
 
-bool LuaTable::GetKeys(std::set<int>&             data) const { return GetKeys(data); }
-bool LuaTable::GetKeys(std::set<float>&           data) const { return GetKeys(data); }
-bool LuaTable::GetKeys(std::set<std::string>&     data) const { return GetKeys(data); }
-bool LuaTable::GetKeys(std::vector<int>&          data) const { return GetKeys(data); }
-bool LuaTable::GetKeys(std::vector<float>&        data) const { return GetKeys(data); }
-bool LuaTable::GetKeys(std::vector<std::string>&  data) const { return GetKeys(data); }
+bool LuaTable::GetKeys(std::set<int>&             data) const { return GetKeysTemplate(data); }
+bool LuaTable::GetKeys(std::set<float>&           data) const { return GetKeysTemplate(data); }
+bool LuaTable::GetKeys(std::set<std::string>&     data) const { return GetKeysTemplate(data); }
+bool LuaTable::GetKeys(std::vector<int>&          data) const { return GetKeysTemplate(data); }
+bool LuaTable::GetKeys(std::vector<float>&        data) const { return GetKeysTemplate(data); }
+bool LuaTable::GetKeys(std::vector<std::string>&  data) const { return GetKeysTemplate(data); }
 
 //============================================================================//
 //============================================================================//
@@ -467,15 +491,12 @@ bool LuaTable::GetKeys(std::vector<std::string>&  data) const { return GetKeys(d
 
 
 template <typename C>
-bool LuaTable::GetValues(C& data) const {
-  printf("GetValues(std::vector<T>& data)\n"); fflush(stdout); // FIXME
+bool LuaTable::GetValuesTemplate(C& data) const {
   if (!PushTable()) {
     return false;
   }
-  printf("GetValues(std::vector<T>& data)\n"); fflush(stdout); // FIXME
   const int table = lua_gettop(L);
   for (int i = 1; true; i++) {
-    printf("GetValues(std::vector<T>& data)  i = %i\n", i); fflush(stdout); // FIXME
     lua_pushint(L, i);
     lua_gettable(L, table);
     typename C::value_type value;
@@ -483,40 +504,18 @@ bool LuaTable::GetValues(C& data) const {
       break;
     }
     lua_pop(L, 1);
-    data.add(value);
+    add_element(data, value);
   }
   lua_pop(L, 2);
   return true;
 }
 
-bool LuaTable::GetValues(std::vector<int>& data) const {
-  printf("GetValues(std::vector<T>& data)\n"); fflush(stdout); // FIXME
-  if (!PushTable()) {
-    return false;
-  }
-  printf("GetValues(std::vector<T>& data)\n"); fflush(stdout); // FIXME
-  const int table = lua_gettop(L);
-  for (int i = 1; true; i++) {
-    printf("GetValues(std::vector<T>& data)  i = %i\n", i); fflush(stdout); // FIXME
-    lua_pushint(L, i);
-    lua_gettable(L, table);
-    std::vector<int>::value_type value;
-    if (luaget_value(L, -1, value) != luaget_success) {
-      break;
-    }
-    lua_pop(L, 1);
-    data.push_back(value);
-  }
-  lua_pop(L, 2);
-  return true;
-}
-
-bool LuaTable::GetValues(std::set<int>&             data) const { return GetValues(data); }
-bool LuaTable::GetValues(std::set<float>&           data) const { return GetValues(data); }
-bool LuaTable::GetValues(std::set<std::string>&     data) const { return GetValues(data); }
-//FIXMEbool LuaTable::GetValues(std::vector<int>&   data) const { return GetValues(data); }
-bool LuaTable::GetValues(std::vector<float>&        data) const { return GetValues(data); }
-bool LuaTable::GetValues(std::vector<std::string>&  data) const { return GetValues(data); }
+bool LuaTable::GetValues(std::set<int>&             data) const { return GetValuesTemplate(data); }
+bool LuaTable::GetValues(std::set<float>&           data) const { return GetValuesTemplate(data); }
+bool LuaTable::GetValues(std::set<std::string>&     data) const { return GetValuesTemplate(data); }
+bool LuaTable::GetValues(std::vector<int>&          data) const { return GetValuesTemplate(data); }
+bool LuaTable::GetValues(std::vector<float>&        data) const { return GetValuesTemplate(data); }
+bool LuaTable::GetValues(std::vector<std::string>&  data) const { return GetValuesTemplate(data); }
 
 //============================================================================//
 //============================================================================//
@@ -525,7 +524,7 @@ bool LuaTable::GetValues(std::vector<std::string>&  data) const { return GetValu
 //
 
 template <typename K, typename V>
-bool LuaTable::GetMap(std::map<K, V>& data) const {
+bool LuaTable::GetMapTemplate(std::map<K, V>& data) const {
   if (!PushTable()) {
     return false;
   }
@@ -542,15 +541,15 @@ bool LuaTable::GetMap(std::map<K, V>& data) const {
   return true;
 }
 
-bool LuaTable::GetMap(std::map<int,                 int>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<int,               float>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<int,         std::string>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<std::string,         int>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<std::string,       float>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<std::string, std::string>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<float,               int>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<float,             float>& data) const { return GetMap(data); }
-bool LuaTable::GetMap(std::map<float,       std::string>& data) const { return GetMap(data); }
+bool LuaTable::GetMap(std::map<int,                 int>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<int,               float>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<int,         std::string>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<std::string,         int>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<std::string,       float>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<std::string, std::string>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<float,               int>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<float,             float>& data) const { return GetMapTemplate(data); }
+bool LuaTable::GetMap(std::map<float,       std::string>& data) const { return GetMapTemplate(data); }
 
 //============================================================================//
 //============================================================================//
@@ -565,7 +564,7 @@ bool LuaTable::GetValue(K key, V& value) const {
   }
   luaget_state state = luaget_value(L, -1, value);
   lua_pop(L, 2);
-  return state == luaget_success;
+  return (state == luaget_success);
 }
 
 bool LuaTable::GetInt(int k, int&   v) const { return GetValue(k, v); }

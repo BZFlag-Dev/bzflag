@@ -345,12 +345,6 @@ int WorldScript::AddDynamicColor(lua_State* L) {
 
 int WorldScript::AddTextureMatrix(lua_State* L) {
   const std::string name = luaL_checkstring(L, 1);
-  std::string name;
-  int tableIndex = 1;
-  if (lua_israwstring(L, 1)) {
-    name = lua_tostdstring(L, 1);
-    tableIndex++;
-  }
   std::auto_ptr<TextureMatrix> texmat(new TextureMatrix);
   LuaTable table(L, 2);
   if (table.IsValid()) {

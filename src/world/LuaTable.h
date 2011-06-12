@@ -129,9 +129,9 @@ class LuaTable {
 
   private:
     template <typename K, typename V> bool GetValue(K key, V& value) const;
-    template <typename C> bool GetKeys(C&) const;
-    template <typename C> bool GetValues(C&) const;
-    template <typename K, typename V> bool GetMap(std::map<K, V>&) const;
+    template <typename C> bool GetKeysTemplate(C&) const;
+    template <typename C> bool GetValuesTemplate(C&) const;
+    template <typename K, typename V> bool GetMapTemplate(std::map<K, V>&) const;
 
   private:
     bool PushTable() const;

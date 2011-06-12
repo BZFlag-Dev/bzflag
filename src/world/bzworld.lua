@@ -103,7 +103,7 @@ bzworld.AddDynamicColor('required_name', {
     { time = 1.0, color = { 0.0, 1.0, 0.0, 0.5 } },
     -- etc...
   },
-  varName = '',
+  varName = '$dcVarName',
   varTime = 2.0,
   varNoAlpha = true,
   delay = 7.0,
@@ -118,12 +118,12 @@ bzworld.AddTextureMatrix('required_name', {
   staticScale  = { 0.0, 0.0 },
   staticCenter = { 0.0, 0.0 },
   spin   = 0.0,
-  shift  = { 0.0, 0.0 },
-  scale  = { 0.0, 0.0 },
-  center = { 0.0, 0.0 },
-  spinVar  = '',
-  shiftVar = '',
-  scaleVar = '',
+  shift  = { 0.0, 0.1 },
+  scale  = { 0.0, 0.2 },
+  center = { 0.0, 0.3 },
+  spinVar  = '$spinVar',
+  shiftVar = '$shiftVar',
+  scaleVar = '$scaleVar',
 })
 
 --------------------------------------------------------------------------------
@@ -131,11 +131,11 @@ bzworld.AddTextureMatrix('required_name', {
 bzworld.AddMaterial('required_name', {
   dynamicColor = '',
   ambient   = { 0.0, 0.0, 0.0, 1.0 },
-  diffuse   = { 1.0, 1.0, 1.0, 1.0 },
-  specular  = { 0.0, 0.0, 0.0, 1.0 },
-  emisssion = { 0.0, 0.0, 0.0, 1.0 },
+  diffuse   = { 1.0, 1.0, 0.8, 1.0 },
+  specular  = { 0.0, 0.0, 0.6, 1.0 },
+  emission  = { 0.0, 0.3, 0.0, 1.0 },
   shininess = 16.0,
-  blending = 'additive',
+  blending    = 'additive',
   occluder      = false,
   groupAlpha    = false,
   lighting      = true,
@@ -191,17 +191,7 @@ bzworld.AddText('optional_name', {
 
 --------------------------------------------------------------------------------
 
-bzworld.AddWall('optional_name', {
-  pos = { 400.0, 0.0, 0.0 },
-  size = 800,
-  rotation = 180.0,
-})
-
---------------------------------------------------------------------------------
-
-bzworld.AddLink('optional_name', {
-  src = '',
-  dst = '',
+bzworld.AddLink('srcFaceName', 'dstFaceName', {
   shotSameSpeed = false,
   tankSameSpeed = false,
   shotPosScale = { 1.0, 1.0, 1.0 },
@@ -242,26 +232,29 @@ bzworld.AddLink('optional_name', {
 --  AddMesh() wrapper can easily be made with lua code.
 --
 bzworld.CreateMesh('optional_name', function(mesh, ...)
-  mesh:AddVertex(x, y, z)      -- repeatable
-  mesh:AddVertex({ x, y, z })  -- repeatable
-  mesh:AddNormal(x, y, z)      -- repeatable
-  mesh:AddNormal({ x , y, z }) -- repeatable
-  mesh:AddTexCoord(u ,v)       -- repeatable
-  mesh:AddTexCoord({ u ,v })   -- repeatable
+  mesh:AddVertex(1, 2, 3)      -- repeatable
+  mesh:AddVertex({ 4, 5, 6 })  -- repeatable
+  mesh:AddNormal(0, 0, 1)      -- repeatable
+  mesh:AddNormal({ 1, 0, 0 }) -- repeatable
+  mesh:AddTexCoord(0 ,1)       -- repeatable
+  mesh:AddTexCoord({ 1 ,0 })   -- repeatable
 
   mesh:AddWeapon({ -- repeatable
-    shotType  = 'GM',
-    team      = 'red',
-    initdelay = 0.0,
-    delays    = { 1.0, 2.0, 1.0, 4.0 },
-    posVertex = 2,
-    dirNormal = 3,
+    'team red',
+    'shotType GM',
+    'delays 3',
+--    shotType  = 'GM',
+--    team      = 'red',
+--    initdelay = 0.0,
+--    delays    = { 1.0, 2.0, 1.0, 4.0 },
+--    posVertex = 2,
+--    dirNormal = 3,
   })
 
   mesh:AddFace({ -- repeatable
-    vertices  = { 1.0, 2.0, 4.0, 6.0 },
-    normals   = { 1.0, 2.0, 4.0, 6.0 },
-    texCoords = { 1.0, 2.0, 4.0, 6.0 },
+    vertices  = { 1, 2, 4, 6 },
+    normals   = { 1, 2, 4, 6 },
+    texCoords = { 1, 2, 4, 6 },
 
     driveThrough = false,
     shootThrough = false,
