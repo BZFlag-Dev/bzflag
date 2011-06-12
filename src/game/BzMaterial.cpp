@@ -643,10 +643,11 @@ int BzMaterial::packSize() const {
 }
 
 
-static void printColor(std::ostream& out, const char* name,
+static void printColor(std::ostream& out, const std::string& indent,
+                       const char* name,
                        const fvec4& color, const fvec4& reference) {
   if (color != reference) {
-    out << name << color.r << " " << color.g << " "
+    out << indent << name << color.r << " " << color.g << " "
         << color.b << " " << color.a << std::endl;
   }
   return;
@@ -682,10 +683,10 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const {
     }
     out << std::endl;
   }
-  printColor(out, "  ambient ",  ambient,  defaultMaterial.ambient);
-  printColor(out, "  diffuse ",  diffuse,  defaultMaterial.diffuse);
-  printColor(out, "  specular ", specular, defaultMaterial.specular);
-  printColor(out, "  emission ", emission, defaultMaterial.emission);
+  printColor(out, indent, "  ambient ",  ambient,  defaultMaterial.ambient);
+  printColor(out, indent, "  diffuse ",  diffuse,  defaultMaterial.diffuse);
+  printColor(out, indent, "  specular ", specular, defaultMaterial.specular);
+  printColor(out, indent, "  emission ", emission, defaultMaterial.emission);
   if (shininess != defaultMaterial.shininess) {
     out << indent << "  shininess " << shininess << std::endl;
   }
