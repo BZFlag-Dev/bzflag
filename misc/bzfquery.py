@@ -194,7 +194,7 @@ class Server :
 			maxTime , elapsedTime \
 			= data
 		print "Style is %d\n" % style
-		style = gameStyles[style - 1]
+		style = gameStyles[style]
 		options = decodeOptions( options )
 		teams = {
 			'rogue'    : ( rogueSize  , rogueMax ) ,

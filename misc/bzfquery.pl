@@ -97,7 +97,7 @@ die $! unless $code == 0x7167;
 # print info
 print "style: ";
 @styles=("TeamFFA", "ClassicCTF", "OpenFFA", "RabbitChase");
-print $styles[$style - 1];
+print $styles[$style];
 print "\n";
 print "options:";
 print " flags" if $options & 0x0002;
