@@ -417,8 +417,10 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
       // are the network is down or too unreliable to that player.
       // FIXME -- is 20kB too big?  too small?
       if (newCapacity >= 20 * 1024) {
-	logDebugMessage(2,"Player %s [%d] drop, unresponsive with %d bytes queued\n",
-	       info->getCallSign(), playerIndex, outmsgSize + length);
+	if (info != NULL && playerIndex >= 0) {
+	  logDebugMessage(2,"Player %s [%d] drop, unresponsive with %d bytes queued\n",
+		info->getCallSign(), playerIndex, outmsgSize + length);
+	}
 	toBeKicked = true;
 	toBeKickedReason = "send queue too big";
 	return 0;
