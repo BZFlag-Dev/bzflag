@@ -813,36 +813,6 @@ static bool allBasesDefined() {
 }
 
 
-
-
-#include "WorldScript.h"
-#include "CustomWorld.h"
-
-static std::string objectCallback(const std::string& tag, const std::string& data) {
-  UNUSED(tag);
-  UNUSED(data);
-  return "";
-}
-
-static std::string optionCallback(const std::string& option) {
-  UNUSED(option);
-  return "";
-}
-
-static bool FIXMEtestWorldScript(const std::string& filename) {
-  WorldScript ws(true);
-  std::map<std::string, std::string> customObjects;
-  CustomObjectMap::const_iterator it;
-  for (it = customObjectMap.begin(); it != customObjectMap.end(); ++it) {
-    customObjects[TextUtils::tolower(it->first)] =
-      TextUtils::tolower(it->second.endToken);
-  }
-  return ws.parseWorld(filename, customObjects, objectCallback, optionCallback);
-}
-
-
-
-
 bool defineWorld() {
   debugf(1, "defining world\n");
 
@@ -897,10 +867,7 @@ bool defineWorld() {
   }
   else if (clOptions->worldFile.size()) {
     debugf(1, "reading worldfile %s\n", clOptions->worldFile.c_str());
-    const std::string& file = clOptions->worldFile;
-    if ((file.size() > 4) && (file.find(".lua") == (file.size() - 4))) {
-      FIXMEtestWorldScript(file);
-    }
+
     BZWReader reader(clOptions->worldFile);
     world = reader.defineWorldFromFile();
 
