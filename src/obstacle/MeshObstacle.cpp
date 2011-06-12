@@ -142,8 +142,14 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
 }
 
 
+bool MeshObstacle::addWeapon(const WeaponData& weapon) {
+  weapons.push_back(weapon);
+  return true;
+}
+
+
 bool MeshObstacle::addWeapon(const std::vector<std::string>& lines) {
-  weapons.push_back(lines);
+  textWeapons.push_back(lines);
   return true;
 }
 
@@ -393,8 +399,8 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const {
     }
   }
 
-  for (size_t w = 0; w < weapons.size(); w++) {
-    copy->addWeapon(weapons[w]);
+  for (size_t w = 0; w < textWeapons.size(); w++) {
+    copy->addWeapon(textWeapons[w]);
   }
 
   copy->finalize();
@@ -835,10 +841,10 @@ int MeshObstacle::packSize() const {
   }
 
   fullSize += sizeof(uint32_t); // weaponCount
-  for (size_t w = 0; w < weapons.size(); w++) {
+  for (size_t w = 0; w < textWeapons.size(); w++) {
     fullSize += sizeof(uint32_t); // lineCount
-    for (size_t l = 0; l < weapons[w].size(); l++) {
-      fullSize += nboStdStringPackSize(weapons[w][l]);
+    for (size_t l = 0; l < textWeapons[w].size(); l++) {
+      fullSize += nboStdStringPackSize(textWeapons[w][l]);
     }
   }
 
@@ -894,11 +900,11 @@ void* MeshObstacle::pack(void* buf) const {
     buf = drawInfo->pack(buf);
   }
 
-  buf = nboPackUInt32(buf, weapons.size());
-  for (size_t w = 0; w < weapons.size(); w++) {
-    buf = nboPackUInt32(buf, weapons[w].size());
-    for (size_t l = 0; l < weapons[w].size(); l++) {
-      buf = nboPackStdString(buf, weapons[w][l]);
+  buf = nboPackUInt32(buf, textWeapons.size());
+  for (size_t w = 0; w < textWeapons.size(); w++) {
+    buf = nboPackUInt32(buf, textWeapons[w].size());
+    for (size_t l = 0; l < textWeapons[w].size(); l++) {
+      buf = nboPackStdString(buf, textWeapons[w][l]);
     }
   }
 
@@ -996,7 +1002,7 @@ void* MeshObstacle::unpack(void* buf) {
       buf = nboUnpackStdString(buf, line);
       lines.push_back(line);
     }
-    weapons.push_back(lines);
+    textWeapons.push_back(lines);
   }
 
   finalize();
@@ -1077,10 +1083,10 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const {
   }
 
   // weapons
-  for (size_t w = 0; w < weapons.size(); w++) {
+  for (size_t w = 0; w < textWeapons.size(); w++) {
     out << indent << "  weapon" << std::endl;
-    for (size_t l = 0; l < weapons[w].size(); l++) {
-      out << indent << "    " << weapons[w][l] << std::endl;
+    for (size_t l = 0; l < textWeapons[w].size(); l++) {
+      out << indent << "    " << textWeapons[w][l] << std::endl;
     }
     out << indent << "  endweapon" << std::endl;
   }

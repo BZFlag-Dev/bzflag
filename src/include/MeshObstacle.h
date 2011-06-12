@@ -41,6 +41,17 @@ class MeshObstacle : public Obstacle {
                               const std::vector<fvec3>& vertices,
                               std::vector<fvec2>& texcoords);
 
+    struct WeaponData {
+      std::vector<float> delays;
+      float initDelay;
+      int posVertexIndex;
+      int dirNormalIndex;
+      std::string shotType;
+      int         shotTeam;
+      int eventTeam;
+      int eventTrigger;
+    };
+
   public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
@@ -60,6 +71,7 @@ class MeshObstacle : public Obstacle {
                  unsigned char drive, unsigned char shoot, bool ricochet,
                  bool triangulate, const MeshFace::SpecialData* sd);
 
+    bool addWeapon(const WeaponData& weapon);
     bool addWeapon(const std::vector<std::string>& weaponLines);
 
     ~MeshObstacle();
@@ -137,7 +149,7 @@ class MeshObstacle : public Obstacle {
       return (isValidVertex(index) && (texcoords != NULL));
     }
     inline const std::vector<std::vector<std::string> >& getWeapons() const {
-      return weapons;
+      return textWeapons;
     }
 
     void setDrawInfo(MeshDrawInfo*);
@@ -184,7 +196,8 @@ class MeshObstacle : public Obstacle {
     // edge tables are setup with bi-directional
     // ray-vs-face tests and parity counts.
     bool hasSpecialFaces;
-    std::vector<std::vector<std::string> > weapons;
+    std::vector<WeaponData> weapons;
+    std::vector<std::vector<std::string> > textWeapons;
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
 };
 

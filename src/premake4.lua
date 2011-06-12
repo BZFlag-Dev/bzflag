@@ -6,7 +6,10 @@ function bzexec_project(name)
   project(name)
     kind('ConsoleApp')
     language 'C++'
-    includedirs(TOPDIR .. '/src/include')
+    includedirs {
+      TOPDIR .. '/src',
+      TOPDIR .. '/src/include',
+    }
     objdir('.objs')
 
   if (not _ACTION:match('^vs')) then
@@ -55,6 +58,7 @@ include 'game'
 include 'clientbase'
 include 'lua'
 include 'obstacle'
+include 'world'
 
 include 'mediafile'
 include '3D'

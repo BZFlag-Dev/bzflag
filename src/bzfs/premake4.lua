@@ -5,6 +5,7 @@ bzexec_project 'bzfs'
 
   links {
     'libGame',
+    'libWorld',
     'libObstacle',
     'libNet',
     'libLuaServer',

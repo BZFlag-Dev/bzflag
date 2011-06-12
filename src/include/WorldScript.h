@@ -107,6 +107,11 @@ class WorldScript {
     static int AddTexCoord(lua_State* L);
     static int AddFace(lua_State* L);
     static int AddWeapon(lua_State* L);
+    static int SetDrawInfo(lua_State* L);
+
+  private: // no copying
+    WorldScript(const WorldScript&);
+    WorldScript& operator=(const WorldScript&);
 };
 
 

@@ -27,6 +27,7 @@ class LuaTable {
     virtual ~LuaTable();
 
     LuaTable SubTable(int key) const;
+    LuaTable SubTable(float key) const;
     LuaTable SubTable(const std::string& key) const;
     LuaTable SubTableExpr(const std::string& expr) const;
 
@@ -110,6 +111,15 @@ class LuaTable {
     inline float DefFloat(int key, float def) const {
       float value; return GetFloat(key, value) ? value : def;
     }
+    inline fvec2 DefFVec2(int key, const fvec2& def) const {
+      fvec2 value; return GetFVec2(key, value) ? value : def;
+    }
+    inline fvec3 DefFVec3(int key, const fvec3& def) const {
+      fvec3 value; return GetFVec3(key, value) ? value : def;
+    }
+    inline fvec4 DefFVec4(int key, const fvec4& def) const {
+      fvec4 value; return GetFVec4(key, value) ? value : def;
+    }
     inline std::string  DefString(int key, const std::string& def) const {
       std::string  value; return GetString(key, value) ? value : def;
     }
@@ -122,6 +132,15 @@ class LuaTable {
     }
     inline float DefFloat(const std::string& key, float def) const {
       float value; return GetFloat(key, value) ? value : def;
+    }
+    inline fvec2 DefFVec2(const std::string& key, const fvec2& def) const {
+      fvec2 value; return GetFVec2(key, value) ? value : def;
+    }
+    inline fvec3 DefFVec3(const std::string& key, const fvec3& def) const {
+      fvec3 value; return GetFVec3(key, value) ? value : def;
+    }
+    inline fvec4 DefFVec4(const std::string& key, const fvec4& def) const {
+      fvec4 value; return GetFVec4(key, value) ? value : def;
     }
     inline std::string  DefString(const std::string& key, const std::string& def) const {
       std::string  value; return GetString(key, value) ? value : def;

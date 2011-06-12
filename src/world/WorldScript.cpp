@@ -17,6 +17,7 @@
 #include "DynamicColor.h"
 #include "LinkManager.h"
 #include "LuaHeader.h"
+//FIXME #include "MeshDrawInfo.h"
 #include "MeshFace.h"
 #include "MeshObstacle.h"
 #include "Pack.h"
@@ -600,12 +601,41 @@ struct LuaFace {
 };
 
 
+struct LuaDrawInfo {
+  LuaDrawInfo() : active(false) {}
+  bool active;
+  std::string name;
+  Extents extents;
+  fvec4 sphere;
+  float angVel;
+  struct Corner {
+    int v, n, t;
+  };
+  struct Lod {
+    float lengthPerPixel;
+    struct Set {
+      std::string material;
+      bool dlist;
+      fvec4 sphere;
+      struct Cmd {
+        std::string mode;
+        std::vector<int> indices;
+      };
+      std::vector<Cmd> cmds;
+    };
+    std::vector<Set> sets;
+  };
+  std::vector<Lod> lods;
+};
+
+
 struct LuaMesh {
   std::vector<fvec3>   verts;
   std::vector<fvec3>   norms;
   std::vector<fvec2>   txcds;
   std::vector<LuaFace> faces;
-  std::vector<std::vector<std::string> > weapons;
+  std::vector<MeshObstacle::WeaponData> weapons;
+  LuaDrawInfo drawInfo;
 };
 
 //============================================================================//
@@ -648,6 +678,7 @@ void WorldScript::setupMeshMetatable() {
     luaset_strfunc(L, "AddTexCoord", AddTexCoord);
     luaset_strfunc(L, "AddFace",     AddFace);
     luaset_strfunc(L, "AddWeapon",   AddWeapon);
+    luaset_strfunc(L, "SetDrawInfo", SetDrawInfo);
   }
   lua_rawset(L, -3);
 
@@ -724,14 +755,12 @@ int WorldScript::AddFace(lua_State* L) {
   }
   verts.GetValues(face.verts);
 
-  LuaTable norms = table.SubTable("normals");
-  norms.GetValues(face.norms);
+  table.SubTable("normals").GetValues(face.norms);
   if (!face.norms.empty() && (face.norms.size() != face.verts.size())) {
     luaL_error(L, "face normal count is not the same as its vertex count");
   }
 
-  LuaTable txcds = table.SubTable("texcoords");
-  txcds.GetValues(face.txcds);
+  table.SubTable("texcoords").GetValues(face.txcds);
   if (!face.txcds.empty() && (face.txcds.size() != face.verts.size())) {
     luaL_error(L, "face texcoord count is not the same as its vertex count");
   }
@@ -795,7 +824,16 @@ int WorldScript::AddFace(lua_State* L) {
   }
 
   LuaTable zone = table.SubTable("zone");
-  if (zone.IsValid()) { // FIXME -- no real parsing, just lines?
+  if (zone.IsValid()) {
+    MeshFace::ZoneData zd;
+    zone.GetBool("center",  zd.useCenter);
+    zone.GetFloat("height", zd.height);
+    zone.GetFloat("weight", zd.weight);
+    zone.SubTable("teams")     .GetValues(zd.teams);
+    zone.SubTable("safeties")  .GetValues(zd.safeties);
+    zone.SubTable("flags")     .GetValues(zd.flags);
+    zone.SubTable("zoneFlags") .GetMap(zd.zoneFlags);
+    sd.zones.push_back(zd);
   }
 
   mesh->faces.push_back(face);
@@ -808,17 +846,83 @@ int WorldScript::AddWeapon(lua_State* L) { // FIXME -- no real parsing
   LuaMesh* mesh = checkMesh(L, 1);
   LuaTable table(L, 2);
   if (!table.IsValid()) {
-    luaL_error(L, "missing weapons lines");
+    luaL_error(L, "expected weapon table");
   }
-  std::vector<std::string> lines;
-  std::string line;
-  for (int i = 1; table.GetString(i, line); i++) {
-    lines.push_back(line);
+  // FIXME -- incomplete, and WeaponData needs to be initialized
+  MeshObstacle::WeaponData wd;
+  table.SubTable("delays").GetValues(wd.delays);
+  table.GetFloat("initDelay",  wd.initDelay);
+  table.GetInt("posVertex",    wd.posVertexIndex);
+  table.GetInt("dirNormal",    wd.dirNormalIndex);
+  table.GetString("shotType",  wd.shotType);
+  table.GetInt("team",         wd.shotTeam);
+  table.GetInt("eventTeam",    wd.eventTeam);
+  table.GetInt("eventTrigger", wd.eventTeam);
+  mesh->weapons.push_back(wd);
+  return 0;
+}
+
+
+//============================================================================//
+
+int WorldScript::SetDrawInfo(lua_State* L) { // FIXME -- no real parsing
+  LuaMesh* mesh = checkMesh(L, 1);
+  LuaTable table(L, 2);
+  if (!table.IsValid()) {
+    luaL_error(L, "expected drawInfo table");
   }
-  if (lines.empty()) {
-    luaL_error(L, "missing weapons lines");
+  LuaDrawInfo di = mesh->drawInfo; // FIXME -- needs to be initialized
+
+  table.GetString("name",  di.name);
+  table.GetFloat("angVel", di.angVel);
+  table.GetFVec4("sphere", di.sphere);
+
+  LuaTable extents = table.SubTable("extents");
+  extents.GetFVec3("mins", di.extents.mins);
+  extents.GetFVec3("maxs", di.extents.maxs);
+
+  const char* modes[] = {
+    "points",
+    "lines", "lineLoops", "lineStrips",
+    "tris", "triStrips", "triFans",
+    "quads", "quadStrips",
+    "polygon"
+  };
+  const size_t modeCount = countof(modes);
+
+  LuaTable lods = table.SubTable("lods");
+  std::vector<float> lodDists;
+  lods.GetKeys(lodDists);
+
+  for (size_t lod = 0; lod < lodDists.size(); lod++) {
+    LuaTable lodTable = lods.SubTable(lodDists[lod]);
+    if (!lodTable.IsValid()) { continue; }
+    LuaDrawInfo::Lod drawLod;
+    std::vector<std::string> mats;
+    lodTable.GetKeys(mats);
+
+    for (size_t m = 0; m < mats.size(); m++) {
+      LuaTable setTable = lods.SubTable(mats[m]);
+      if (!setTable.IsValid()) { continue; }
+      LuaDrawInfo::Lod::Set drawSet;
+      drawSet.material = mats[m];
+      setTable.GetBool("dlist", drawSet.dlist);
+      setTable.GetFVec4("sphere", drawSet.sphere);
+
+      for (size_t mode = 0; mode < modeCount; mode++) {
+        for (;false;) { // cmdCount
+          LuaDrawInfo::Lod::Set::Cmd drawCmd;
+          drawCmd.mode = mode;
+          drawCmd.indices.push_back(1);
+          drawSet.cmds.push_back(drawCmd);
+        }
+      }
+
+      drawLod.sets.push_back(drawSet);
+    }
+    di.lods.push_back(drawLod);
   }
-  mesh->weapons.push_back(lines);
+  di.active = true;
   return 0;
 }
 

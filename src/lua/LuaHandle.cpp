@@ -189,7 +189,7 @@ bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*)) {
 
 
 std::string LuaHandle::LoadSourceCode(const std::string& sourceFile,
-                                 const std::string& sourceModes) {
+                                      const std::string& sourceModes) {
   std::string modes = sourceModes;
   if (devMode) {
     modes = std::string(BZVFS_LUA_USER) + modes;

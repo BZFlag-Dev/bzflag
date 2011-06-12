@@ -109,6 +109,16 @@ class MeshFace : public Obstacle {
       uint8_t bits; // uses LinkGeoBits enum
     };
 
+    struct ZoneData {
+      bool useCenter;
+      float height;
+      float weight;
+      std::set<int> teams;
+      std::set<int> safeties;
+      std::set<std::string> flags;
+      std::map<std::string, int> zoneFlags;
+    };
+
     struct SpecialData {
       SpecialData()
         : stateBits(0)
@@ -127,6 +137,8 @@ class MeshFace : public Obstacle {
       std::string  linkExtra;
 
       std::vector<std::string> zoneParams;
+
+      std::vector<ZoneData> zones;
 
       int   packSize() const;
       void* pack(void*) const;

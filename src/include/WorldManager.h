@@ -1,6 +1,6 @@
 
-#ifndef WORLD_OBJECTS_H
-#define WORLD_OBJECTS_H
+#ifndef WORLD_MANAGER_H
+#define WORLD_MANAGER_H
 
 
 #include "common.h"
@@ -47,4 +47,4 @@ class WorldManager {
 #define WORLDMGR (WorldManager::instance)
 
 
-#endif // WORLD_OBJECTS_H
+#endif // WORLD_MANAGER_H

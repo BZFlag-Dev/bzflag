@@ -99,6 +99,22 @@ LuaTable LuaTable::SubTable(int key) const {
 }
 
 
+LuaTable LuaTable::SubTable(float key) const {
+  if (!PushTable()) {
+    return LuaTable();
+  }
+  lua_pushfloat(L, key);
+  lua_gettable(L, -2);
+  if (!lua_istable(L, -1)) {
+    lua_pop(L, 2);
+    return LuaTable();
+  }
+  LuaTable subTable(L, -1);
+  lua_pop(L, 1);
+  return subTable;
+}
+
+
 LuaTable LuaTable::SubTable(const std::string& key) const {
   if (!PushTable()) {
     return LuaTable();

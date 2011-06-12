@@ -239,16 +239,47 @@ bzworld.CreateMesh('optional_name', function(mesh, ...)
   mesh:AddTexCoord(0 ,1)       -- repeatable
   mesh:AddTexCoord({ 1 ,0 })   -- repeatable
 
+  mesh:SetDrawInfo({
+    name = '',
+    angVel = 2,
+    sphere = { 5, 5, 5, 5 },
+    extents = {
+      mins = { 0, 0, 0 },
+      maxs = { 10, 10, 10 },
+    },
+    lods = { -- FIXME
+      [lod_length_per_pixel] = {
+        {
+          material = 'blue',
+          dlist    = true,
+          sphere   = { 2, 2, 2, 4 },
+          points      = { { 0 }, { 10, 11, 12 },
+          lines       =  { { 0, 1 }, { 10, 11, 13, 14 } },
+          lineloops   = { { 1, 2, 3 }, {4, 5, 6 } },
+          linestrips  = { { 1, 2, 3 }, {4, 5, 6 } },
+          tris        = { { 2, 3, 4 } },
+          tristrips   = { { 2, 3, 4 } },
+          trifans     = { { 2, 3, 4 } },
+          quads       = { { 0, 1, 2, 3 }, { 6, 7, 8, 9 } },
+          quadsstrips = { { 0, 1, 2, 3 }, { 6, 7, 8, 9 } },
+          polygons    = { { 0, 1, 2, 3, 5 }, { 6, 7, 8 } },
+        },
+        -- etc... multiple materials
+      },
+      -- etc... multiple lod levels
+    },
+  })
+
   mesh:AddWeapon({ -- repeatable
     'team red',
     'shotType GM',
     'delays 3',
+--    posVertex = 2,
+--    dirNormal = 3,
 --    shotType  = 'GM',
 --    team      = 'red',
 --    initdelay = 0.0,
 --    delays    = { 1.0, 2.0, 1.0, 4.0 },
---    posVertex = 2,
---    dirNormal = 3,
   })
 
   mesh:AddFace({ -- repeatable

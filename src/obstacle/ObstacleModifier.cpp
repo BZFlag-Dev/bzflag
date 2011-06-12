@@ -337,12 +337,12 @@ void ObstacleModifier::execute(Obstacle* obstacle) const {
   if (!weaponMap.empty()) {
     if (obstacle->getTypeID() == meshType) {
       MeshObstacle* mesh = (MeshObstacle*) obstacle;
-      std::vector<std::vector<std::string> >& weapons = mesh->weapons;
-      for (size_t w = 0; w < weapons.size(); w++) {
-        for (size_t l = 0; l < weapons[w].size(); l++) {
-          TextSwapMap::const_iterator it = weaponMap.find(weapons[w][l]);
+      std::vector<std::vector<std::string> >& textWeapons = mesh->textWeapons;
+      for (size_t w = 0; w < textWeapons.size(); w++) {
+        for (size_t l = 0; l < textWeapons[w].size(); l++) {
+          TextSwapMap::const_iterator it = weaponMap.find(textWeapons[w][l]);
           if (it != weaponMap.end()) {
-            weapons[w][l] = it->second;
+            textWeapons[w][l] = it->second;
           }
         }
       }
