@@ -70,16 +70,17 @@ def s2n( s ) :
 
 	return reduce( lambda a , b : 256 * a + ord( b ) , s , 0 )
 
-styles = [
-	( 'CTF'         , 0x0001 ) ,
-	( 'flags'       , 0x0002 ) ,
-	( 'jumping'     , 0x0008 ) ,
-	( 'inertia'     , 0x0010 ) ,
-	( 'ricochet'    , 0x0020 ) ,
-	( 'shaking'     , 0x0040 ) ,
-	( 'antidote'    , 0x0080 ) ,
-	( 'handicap'    , 0x0100 ) ,
-	( 'rabbit-hunt' , 0x0200 )
+gameStyles = ['TeamFFA', 'ClassicCTF', 'OpenFFA', 'RabbitChase']
+
+gameOptions = [
+	( 'flags'        , 0x0002 ) ,
+	( 'jumping'      , 0x0008 ) ,
+	( 'inertia'      , 0x0010 ) ,
+	( 'ricochet'     , 0x0020 ) ,
+	( 'shaking'      , 0x0040 ) ,
+	( 'antidote'     , 0x0080 ) ,
+	( 'handicap'     , 0x0100 ) ,
+	( 'no-team-kills', 0x0200 )
 ]
 
 teamsName = [
@@ -98,12 +99,12 @@ playerType = [
 	'robot tank'
 ]
 
-def decodeStyle( n ) :
+def decodeOptions( n ) :
 
 	flags = []
-	for style , bit in styles :
+	for option , bit in gameOptions :
 		if n & bit :
-			flags.append( style )
+			flags.append( option )
 	return flags
 
 def receive( sock , size , timeout = None ) :
@@ -136,12 +137,13 @@ class Server :
 
 		self.sock = socket.socket( socket.AF_INET , socket.SOCK_STREAM )
 		self.sock.connect( ( host , port ) )
+		self.sock.sendall( "BZFLAG\r\n\r\n" )
 		header = receive( self.sock , 9 , defaultTimeout )
 		magic , self.protocol , self.id = \
 			struct.unpack( '4s4sb' , header )
 		if magic != 'BZFS' :
 			raise Error( 'Not a bzflag server.' )
-		if self.protocol not in [ '0026' ] :
+		if self.protocol not in [ '0212' ] :
 			raise Error( 'Not compatible with server.' )
 
 	def cmd( self , command ) :
@@ -153,7 +155,8 @@ class Server :
 
 	def _getPacket( self ) :
 
-		size , code = struct.unpack( '>H2s' , receive( self.sock , 4 , defaultTimeout ) )
+		pktData = receive( self.sock , 4 , defaultTimeout )
+		size , code = struct.unpack( '>H2s' , pktData )
 		data = receive( self.sock , size , defaultTimeout )
 		return code , data
 
@@ -183,14 +186,16 @@ class Server :
 	def queryGame( self ) :
 
 		data = self.cmd( 'qg' )
-		data = struct.unpack( '>21H' , data )
-		style , maxPlayers , maxShots , rogueSize , \
+		data = struct.unpack( '>22H' , data )
+		style , options, maxPlayers , maxShots , rogueSize , \
 			redSize , greenSize , blueSize , purpleSize , obsSize, \
 			rogueMax , redMax , greenMax , blueMax , purpleMax , obsMax, \
 			shakeWins , shakeTimeout , maxPlayerScore , maxTeamScore , \
 			maxTime , elapsedTime \
 			= data
-		style = decodeStyle( style )
+		print "Style is %d\n" % style
+		style = gameStyles[style - 1]
+		options = decodeOptions( options )
 		teams = {
 			'rogue'    : ( rogueSize  , rogueMax ) ,
 			'red'      : ( redSize    , redMax ) ,
@@ -201,6 +206,7 @@ class Server :
 		}
 		infos = {
 			'style' : style ,
+			'options' : options ,
 			'teams' : teams ,
 			'maxPlayerScore' : maxPlayerScore ,
 			'maxTeamScore' : maxTeamScore ,
@@ -209,7 +215,7 @@ class Server :
 			'maxTime' : maxTime / 10 ,
 			'elapsedTime' : elapsedTime / 10 ,
 		}
-		if 'shaking' in style :
+		if 'shaking' in options :
 			infos[ 'shake' ] = { 'wins' : shakeWins , 'timeout' : shakeTimeout / 10. }
 		return infos
 
@@ -264,7 +270,8 @@ def getAndPrintStat( hostname , port ) :
 	print
 	print '--[ GAME ]' + '-' * 40
 	print
-	print 'Style:' , ' '.join( game[ 'style' ] )
+	print 'Type:' , game[ 'style' ]
+	print 'Options:' , ' '.join( game[ 'options' ] )
 	print
 	print 'Max players: %s   Max shots: %s' % ( game[ 'maxPlayers' ] , game[ 'maxShots' ] )
 	print
