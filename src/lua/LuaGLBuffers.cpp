@@ -18,9 +18,6 @@
 
 // system headers
 #include <string>
-#include <set>
-using std::string;
-using std::set;
 
 // common headers
 #include "bzfgl.h"
@@ -226,7 +223,7 @@ int LuaGLBufferMgr::MetaIndex(lua_State* L) {
   if (!lua_israwstring(L, 2)) {
     return luaL_pushnil(L);
   }
-  const string key = luaL_checkstring(L, 2);
+  const std::string key = luaL_checkstring(L, 2);
   if (key == "valid") {
     lua_pushboolean(L, glIsBuffer(buf->id));
   }
@@ -303,7 +300,7 @@ const void* LuaGLBufferMgr::ParseTable(lua_State* L, int index,
 
   for (lua_pushnil(L); lua_next(L, index) != 0; lua_pop(L, 1)) {
     if (lua_israwstring(L, -2)) {
-      const string key = lua_tostring(L, -2);
+      const std::string key = lua_tostring(L, -2);
       if (key == "data") {
         data = luaL_checklstring(L, -1, &size);
       }

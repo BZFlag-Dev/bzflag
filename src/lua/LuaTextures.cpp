@@ -21,7 +21,6 @@
 #include <string.h>
 #include <sstream>
 #include <string>
-using std::string;
 
 // common headers
 #include "bzfgl.h"
@@ -88,19 +87,19 @@ class TextureData {
         size_t inLen;
         const char* inData = lua_tolstring(L, -1, &inLen);
         lua_pop(L, 1);
-        const string imageData(inData, inLen);
+        const std::string imageData(inData, inLen);
 
         return ReadPNGData(imageData);
       }
 
       // fileName data source
       if (GetString(L, table, "file")) {
-        const string fileName = lua_tostring(L, -1);
+        const std::string fileName = lua_tostring(L, -1);
         lua_pop(L, 1);
 
-        const string modes = L2ES(L)->vfsModes->readDefault;
+        const std::string modes = L2ES(L)->vfsModes->readDefault;
 
-        string imageData;
+        std::string imageData;
         if (!bzVFS.readFile(fileName, modes, imageData)) {
           return false;
         }
@@ -163,7 +162,7 @@ class TextureData {
     }
 
   private:
-    bool ReadPNGData(const string& pngData) {
+    bool ReadPNGData(const std::string& pngData) {
       std::istringstream iss(pngData);
       PNGImageFile image(&iss);
       if (!image.isOpen()) {
@@ -769,7 +768,7 @@ LuaTexture* LuaTextureMgr::GetLuaTexture(lua_State* L, int index) {
 //============================================================================//
 
 int LuaTextureMgr::RefTexture(lua_State* L) {
-  const string name = luaL_checkstring(L, 1);
+  const std::string name = luaL_checkstring(L, 1);
 
   if (OpenGLPassState::CreatingList() && !TEXMGR.isLoaded(name)) {
     luaL_error(L, "textures can not be created while creating display lists");
@@ -809,7 +808,7 @@ int LuaTextureMgr::CreateTexture(lua_State* L) {
     const int table = 3;
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-        const string key = lua_tostring(L, -2);
+        const std::string key = lua_tostring(L, -2);
         if (lua_israwnumber(L, -1)) {
           if (key == "target") {
             target = (GLenum)lua_tointeger(L, -1);
@@ -893,7 +892,7 @@ int LuaTextureMgr::MetaIndex(lua_State* L) {
     return luaL_pushnil(L);
   }
 
-  const string key = lua_tostring(L, 2);
+  const std::string key = lua_tostring(L, 2);
   if (key == "valid") { lua_pushboolean(L, texture->IsValid()); }
   else if (key == "target") { lua_pushinteger(L, texture->GetTarget()); }
   else if (key == "format") { lua_pushinteger(L, texture->GetFormat()); }
@@ -944,7 +943,7 @@ bool LuaTextureMgr::ParseTexture(lua_State* L, int index) {
 
   // named engine textures
   if (lua_israwstring(L, index)) {
-    const string name = lua_tostring(L, index);
+    const std::string name = lua_tostring(L, index);
     if (OpenGLPassState::CreatingList() && !TEXMGR.isLoaded(name)) {
       luaL_error(L, "textures can not be created while creating display lists");
     }

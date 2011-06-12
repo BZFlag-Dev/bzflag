@@ -29,9 +29,6 @@
 #include <string>
 #include <vector>
 #include <set>
-using std::string;
-using std::vector;
-using std::set;
 
 // common headers
 #include "FontManager.h"
@@ -76,11 +73,11 @@ void LuaOpenGL::Free() {
 //============================================================================//
 //============================================================================//
 
-static set<string> forbidden;
+static std::set<std::string> forbidden;
 
 
 static void ParseForbidden() {
-  static set<string> knownExts;
+  static std::set<std::string> knownExts;
   if (knownExts.empty()) {
     knownExts.insert("FBO");
     knownExts.insert("Buffer");
@@ -94,15 +91,15 @@ static void ParseForbidden() {
 
   forbidden.clear();
 
-  const string extList = BZDB.get("forbidLuaGL");
+  const std::string extList = BZDB.get("forbidLuaGL");
 
   if (extList == "*") {
     forbidden = knownExts;
   }
   else {
-    const vector<string> args = TextUtils::tokenize(extList, ",");
+    const std::vector<std::string> args = TextUtils::tokenize(extList, ",");
     for (size_t i = 0; i < args.size(); i++) {
-      const string& ext = args[i];
+      const std::string& ext = args[i];
       if (knownExts.find(ext) != knownExts.end()) {
         forbidden.insert(ext);
       }
@@ -112,14 +109,14 @@ static void ParseForbidden() {
     }
   }
 
-  set<string>::const_iterator it;
+  std::set<std::string>::const_iterator it;
   for (it = forbidden.begin(); it != forbidden.end(); ++it) {
     LuaLog(1, "LuaGL: forbidding extension \"%s\"\n", (*it).c_str());
   }
 }
 
 
-static bool IsAllowed(const string& ext) {
+static bool IsAllowed(const std::string& ext) {
   return (forbidden.find(ext) == forbidden.end());
 }
 
@@ -405,7 +402,7 @@ int LuaOpenGL::Text(lua_State* L) {
   }
   else {
     // try the URL cache
-    const string localName = CACHEMGR.getLocalName(face);
+    const std::string localName = CACHEMGR.getLocalName(face);
     faceID = FM.lookupFileID(localName);
     if (faceID < 0) {
       faceID = FM.load(localName.c_str());
@@ -1285,7 +1282,7 @@ int LuaOpenGL::Material(lua_State* L) {
       LuaLog(1, "gl.Material: bad state type");
       return 0;
     }
-    const string key = lua_tostring(L, -2);
+    const std::string key = lua_tostring(L, -2);
 
     if (key == "shininess") {
       if (lua_israwnumber(L, -1)) {
@@ -1695,7 +1692,7 @@ int LuaOpenGL::Blending(lua_State* L) {
       }
     }
     else if (lua_israwstring(L, 1)) {
-      const string mode = lua_tostring(L, 1);
+      const std::string mode = lua_tostring(L, 1);
       if (mode == "add") {
         glBlendFunc(GL_ONE, GL_ONE);
         glEnable(GL_BLEND);
@@ -2387,7 +2384,7 @@ static bool CalculateInverse4x4(const float m[4][4], float inv[4][4]) {
 }
 
 
-static const float* GetNamedMatrix(const string& name) {
+static const float* GetNamedMatrix(const std::string& name) {
   if (name == "camera") {
     const ViewFrustum& vf = RENDERER.getViewFrustum();
     return vf.getViewMatrix();
@@ -2503,7 +2500,7 @@ int LuaOpenGL::PopMatrix(lua_State* L) {
 int LuaOpenGL::PushPopMatrix(lua_State* L) {
   CheckDrawingEnabled(L, __FUNCTION__);
 
-  vector<GLenum> matModes;
+  std::vector<GLenum> matModes;
   int funcIndex;
   for (funcIndex = 1; lua_israwnumber(L, funcIndex); funcIndex++) {
     const GLenum mode = (GLenum)lua_toint(L, funcIndex);

@@ -20,8 +20,6 @@
 #include <new>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "TextUtils.h"
@@ -41,7 +39,7 @@ const char* LuaShaderMgr::metaName = "Shader";
 
 LuaShaderMgr luaShaderMgr;
 
-string LuaShaderMgr::shaderLog;
+std::string LuaShaderMgr::shaderLog;
 
 int LuaShaderMgr::activeShaderDepth = 0;
 
@@ -52,7 +50,7 @@ int LuaShaderMgr::activeShaderDepth = 0;
 //  LuaShader
 //
 
-LuaShader::LuaShader(GLuint _progID, const vector<Object>& _objects)
+LuaShader::LuaShader(GLuint _progID, const std::vector<Object>& _objects)
   : progID(_progID)
   , objects(_objects) {
   OpenGLGState::registerContextInitializer(StaticFreeContext,
@@ -197,7 +195,7 @@ int LuaShaderMgr::MetaIndex(lua_State* L) {
     return luaL_pushnil(L);
   }
 
-  const string key = lua_tostring(L, 2);
+  const std::string key = lua_tostring(L, 2);
   if (key == "valid") {
     lua_pushboolean(L, shader->IsValid());
   }
@@ -264,7 +262,7 @@ static bool ParseUniformTable(lua_State* L, int index, GLuint progID) {
     const int table = lua_gettop(L);
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-        const string name = lua_tostring(L, -2);
+        const std::string name = lua_tostring(L, -2);
         const GLint loc = glGetUniformLocation(progID, name.c_str());
         if (loc >= 0) {
           if (lua_israwnumber(L, -1)) {
@@ -296,7 +294,7 @@ static bool ParseUniformIntTable(lua_State* L, int index, GLuint progID) {
     const int table = lua_gettop(L);
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-        const string name = lua_tostring(L, -2);
+        const std::string name = lua_tostring(L, -2);
         const GLint loc = glGetUniformLocation(progID, name.c_str());
         if (loc >= 0) {
           if (lua_israwnumber(L, -1)) {
@@ -328,7 +326,7 @@ static bool ParseUniformMatrixTable(lua_State* L, int index, GLuint progID) {
     const int table = lua_gettop(L);
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-        const string name = lua_tostring(L, -2);
+        const std::string name = lua_tostring(L, -2);
         const GLint loc = glGetUniformLocation(progID, name.c_str());
         if (loc >= 0) {
           if (lua_istable(L, -1)) {
@@ -355,7 +353,7 @@ static bool ParseAttribLocationTable(lua_State* L, int index, GLuint progID) {
     const int table = lua_gettop(L);
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2) && lua_israwnumber(L, -1)) {
-        const string name = lua_tostring(L, -2);
+        const std::string name = lua_tostring(L, -2);
         const GLuint loc = lua_tointeger(L, -1);
         glBindAttribLocation(progID, loc, name.c_str());
       }
@@ -386,7 +384,7 @@ static bool ParseSetupTables(lua_State* L, int index, GLuint progID) {
 //============================================================================//
 //============================================================================//
 
-GLuint LuaShaderMgr::CompileObject(const vector<string>& sources,
+GLuint LuaShaderMgr::CompileObject(const std::vector<std::string>& sources,
                                    GLenum type, bool& success) {
   if (sources.empty()) {
     success = true;
@@ -439,11 +437,11 @@ GLuint LuaShaderMgr::CompileObject(const vector<string>& sources,
 
 
 bool LuaShaderMgr::ParseSources(lua_State* L, int table,
-                                const char* type, vector<string>& srcs) {
+                                const char* type, std::vector<std::string>& srcs) {
   lua_getfield(L, table, type);
 
   if (lua_israwstring(L, -1)) {
-    const string src = lua_tostring(L, -1);
+    const std::string src = lua_tostring(L, -1);
     if (!src.empty()) {
       srcs.push_back(src);
     }
@@ -454,14 +452,14 @@ bool LuaShaderMgr::ParseSources(lua_State* L, int table,
       if (!lua_israwnumber(L, -2) || !lua_israwstring(L, -1)) {
         continue;
       }
-      const string src = lua_tostring(L, -1);
+      const std::string src = lua_tostring(L, -1);
       if (!src.empty()) {
         srcs.push_back(src);
       }
     }
   }
   else if (!lua_isnil(L, -1)) {
-    shaderLog = "Invalid " + string(type) + " shader source";
+    shaderLog = "Invalid " + std::string(type) + " shader source";
     lua_pop(L, 1);
     return false;
   }
@@ -505,9 +503,9 @@ int LuaShaderMgr::CreateShader(lua_State* L) {
 
   shaderLog.clear();
 
-  vector<string> vertSrcs;
-  vector<string> geomSrcs;
-  vector<string> fragSrcs;
+  std::vector<std::string> vertSrcs;
+  std::vector<std::string> geomSrcs;
+  std::vector<std::string> fragSrcs;
   if (!ParseSources(L, 1, "vertex",   vertSrcs) ||
       !ParseSources(L, 1, "geometry", geomSrcs) ||
       !ParseSources(L, 1, "fragment", fragSrcs)) {
@@ -545,7 +543,7 @@ int LuaShaderMgr::CreateShader(lua_State* L) {
     return luaL_pushnil(L);
   }
 
-  vector<LuaShader::Object> objects;
+  std::vector<LuaShader::Object> objects;
 
   if (vertObj != 0) {
     glAttachShader(progID, vertObj);
@@ -667,7 +665,7 @@ int LuaShaderMgr::ActiveShader(lua_State* L) {
 static const char* GLDataTypeString(GLenum type) {
 #define UNIFORM_STRING_CASE(x)      \
   case (GL_ ## x): {          \
-    static const string str = TextUtils::tolower(#x); \
+    static const std::string str = TextUtils::tolower(#x); \
     return str.c_str();            \
   }
 
@@ -738,7 +736,7 @@ int LuaShaderMgr::GetUniformLocation(lua_State* L) {
   if (!shader->IsValid()) {
     return 0;
   }
-  const string name = luaL_checkstring(L, 2);
+  const std::string name = luaL_checkstring(L, 2);
   const GLuint progID = shader->GetProgID();
   const GLint location = glGetUniformLocation(progID, name.c_str());
   lua_pushinteger(L, location);
@@ -845,7 +843,7 @@ int LuaShaderMgr::UniformMatrix(lua_State* L) {
       if (!lua_israwstring(L, 2)) {
         luaL_error(L, "Incorrect arguments to gl.UniformMatrix()");
       }
-      const string matName = lua_tostring(L, 2);
+      const std::string matName = lua_tostring(L, 2);
       if (matName == "shadow") {
 //??? if (shadowHandler) {
 //???
@@ -983,7 +981,7 @@ int LuaShaderMgr::GetAttribLocation(lua_State* L) {
   if (!shader->IsValid()) {
     return 0;
   }
-  const string name = luaL_checkstring(L, 2);
+  const std::string name = luaL_checkstring(L, 2);
   const GLuint progID = shader->GetProgID();
   const GLint location = glGetAttribLocation(progID, name.c_str());
   lua_pushinteger(L, location);

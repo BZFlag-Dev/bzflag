@@ -18,7 +18,6 @@
 
 // system headers
 #include <string>
-using std::string;
 
 // common headers
 
@@ -72,7 +71,7 @@ static inline int ParseTab(lua_State* L, int index) {
     tabID = lua_toint(L, index);
   }
   else if (lua_israwstring(L, index)) {
-    const string label = lua_tostring(L, index);
+    const std::string label = lua_tostring(L, index);
     tabID = controlPanel->getTabID(label);
   }
   else {

@@ -18,7 +18,6 @@
 
 // system headers
 #include <string>
-using std::string;
 
 // common headers
 #include "BzMaterial.h"
@@ -93,7 +92,7 @@ static const BzMaterial* ParseBzMat(lua_State* L, int index) {
       return MATERIALMGR.getMaterial(matIndex);
     }
     case LUA_TSTRING: {
-      const string matName = lua_tostring(L, index);
+      const std::string matName = lua_tostring(L, index);
       return MATERIALMGR.findMaterial(matName);
     }
     default: {
@@ -135,7 +134,7 @@ int LuaBzMaterial::GetMaterialID(lua_State* L) {
     }
   }
   else if (lua_israwstring(L, 1)) {
-    const string matName = lua_tostring(L, 1);
+    const std::string matName = lua_tostring(L, 1);
     mat = MATERIALMGR.findMaterial(matName);
   }
   else {

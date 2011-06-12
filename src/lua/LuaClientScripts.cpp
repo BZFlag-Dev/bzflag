@@ -19,7 +19,6 @@
 // system headers
 #include <string.h>
 #include <string>
-using std::string;
 
 // common headers
 #include "OpenGLUtils.h"
@@ -124,7 +123,7 @@ void LuaClientScripts::LuaUserUpdate() {
     return;
   }
   else if (luaUser->RequestReload()) {
-    string reason = luaUser->RequestMessage();
+    std::string reason = luaUser->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaUser::FreeHandler();
@@ -138,7 +137,7 @@ void LuaClientScripts::LuaUserUpdate() {
     }
   }
   else if (luaUser->RequestDisable()) {
-    string reason = luaUser->RequestMessage();
+    std::string reason = luaUser->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaUser::FreeHandler();
@@ -153,7 +152,7 @@ void LuaClientScripts::LuaBzOrgUpdate() {
     return;
   }
   else if (luaBzOrg->RequestReload()) {
-    string reason = luaBzOrg->RequestMessage();
+    std::string reason = luaBzOrg->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaBzOrg::FreeHandler();
@@ -167,7 +166,7 @@ void LuaClientScripts::LuaBzOrgUpdate() {
     }
   }
   else if (luaBzOrg->RequestDisable()) {
-    string reason = luaBzOrg->RequestMessage();
+    std::string reason = luaBzOrg->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaBzOrg::FreeHandler();
@@ -182,7 +181,7 @@ void LuaClientScripts::LuaWorldUpdate() {
     return;
   }
   else if (luaWorld->RequestReload()) {
-    string reason = luaWorld->RequestMessage();
+    std::string reason = luaWorld->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaWorld::FreeHandler();
@@ -196,7 +195,7 @@ void LuaClientScripts::LuaWorldUpdate() {
     }
   }
   else if (luaWorld->RequestDisable()) {
-    string reason = luaWorld->RequestMessage();
+    std::string reason = luaWorld->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaWorld::FreeHandler();
@@ -211,7 +210,7 @@ void LuaClientScripts::LuaRulesUpdate() {
     return;
   }
   else if (luaRules->RequestReload()) {
-    string reason = luaRules->RequestMessage();
+    std::string reason = luaRules->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaRules::FreeHandler();
@@ -225,7 +224,7 @@ void LuaClientScripts::LuaRulesUpdate() {
     }
   }
   else if (luaRules->RequestDisable()) {
-    string reason = luaRules->RequestMessage();
+    std::string reason = luaRules->RequestMessage();
     if (!reason.empty()) { reason = ": " + reason; }
 
     LuaRules::FreeHandler();
@@ -239,14 +238,14 @@ void LuaClientScripts::LuaRulesUpdate() {
 //============================================================================//
 
 bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine) {
-  const string prefix = "luauser";
+  const std::string prefix = "luauser";
   const char* c = cmdLine.c_str();
   if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
     return false;
   }
   c = TextUtils::skipWhitespace(c + prefix.size());
 
-  const string cmd = c;
+  const std::string cmd = c;
   if (cmd == "reload") {
     LuaUser::FreeHandler();
     if (BZDB.isTrue("_forbidLuaUser")) {
@@ -288,14 +287,14 @@ bool LuaClientScripts::LuaUserCommand(const std::string& cmdLine) {
 
 
 bool LuaClientScripts::LuaBzOrgCommand(const std::string& cmdLine) {
-  const string prefix = "luabzorg";
+  const std::string prefix = "luabzorg";
   const char* c = cmdLine.c_str();
   if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
     return false;
   }
   c = TextUtils::skipWhitespace(c + prefix.size());
 
-  const string cmd = c;
+  const std::string cmd = c;
   if (cmd == "reload") {
     LuaBzOrg::FreeHandler();
     if (BZDB.isTrue("_forbidLuaBzOrg")) {
@@ -345,14 +344,14 @@ bool LuaClientScripts::LuaWorldCommand(const std::string& cmdLine) {
     return false;
   }
 
-  const string prefix = "luaworld";
+  const std::string prefix = "luaworld";
   const char* c = cmdLine.c_str();
   if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
     return false;
   }
   c = TextUtils::skipWhitespace(c + prefix.size());
 
-  const string cmd = c;
+  const std::string cmd = c;
   if (cmd == "reload") {
     LuaWorld::FreeHandler();
     LuaWorld::LoadHandler();
@@ -393,14 +392,14 @@ bool LuaClientScripts::LuaRulesCommand(const std::string& cmdLine) {
     return false;
   }
 
-  const string prefix = "luarules";
+  const std::string prefix = "luarules";
   const char* c = cmdLine.c_str();
   if (strncmp(c, prefix.c_str(), prefix.size()) != 0) {
     return false;
   }
   c = TextUtils::skipWhitespace(c + prefix.size());
 
-  const string cmd = c;
+  const std::string cmd = c;
   if (cmd == "reload") {
     if (!GetDevMode()) {
       showMessage("LuaRules is a required script");

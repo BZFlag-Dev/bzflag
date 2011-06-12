@@ -19,8 +19,6 @@
 #include <string>
 #include <map>
 #include <stdexcept>
-using std::string;
-using std::map;
 
 // common headers
 #include "EventHandler.h"
@@ -36,8 +34,8 @@ LuaCallInDB luaCallInDB;
 //============================================================================//
 //============================================================================//
 
-const string& LuaCallInDB::GetEventName(const string& callInName) const {
-  static const string GLContextInitStr = "GLContextInit";
+const std::string& LuaCallInDB::GetEventName(const std::string& callInName) const {
+  static const std::string GLContextInitStr = "GLContextInit";
   if (callInName == "GLReload") {
     return GLContextInitStr;
   }
@@ -45,8 +43,8 @@ const string& LuaCallInDB::GetEventName(const string& callInName) const {
 }
 
 
-const string& LuaCallInDB::GetCallInName(const string& eventName) const {
-  static const string GLReloadStr = "GLReload";
+const std::string& LuaCallInDB::GetCallInName(const std::string& eventName) const {
+  static const std::string GLReloadStr = "GLReload";
   if (eventName == "GLContextInit") {
     return GLReloadStr;
   }
@@ -57,15 +55,15 @@ const string& LuaCallInDB::GetCallInName(const string& eventName) const {
 //============================================================================//
 //============================================================================//
 
-bool LuaCallInDB::SetupCallIn(int code, const string& name) {
-  map<int, string>::const_iterator codeIt = codeToName.find(code);
+bool LuaCallInDB::SetupCallIn(int code, const std::string& name) {
+  std::map<int, std::string>::const_iterator codeIt = codeToName.find(code);
   if (codeIt != codeToName.end()) {
     printf("call-in code: %i\n", codeIt->first);
     assert(false && "duplictated lua call-in code in LuaCallInDB.cpp");
     return false;
   }
 
-  map<string, int>::const_iterator nameIt = nameToCode.find(name);
+  std::map<std::string, int>::const_iterator nameIt = nameToCode.find(name);
   if (nameIt != nameToCode.end()) {
     printf("call-in name: %s\n", nameIt->first.c_str());
     assert(false && "duplictated lua call-in name in LuaCallInDB.cpp");

@@ -21,8 +21,6 @@
 #include <string.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "zlib.h"
@@ -73,11 +71,11 @@ static void PushZlibErrorString(lua_State* L, int zCode) {
 }
 
 
-static char* ConcatVector(const vector<string>& vs, size_t total) {
+static char* ConcatVector(const std::vector<std::string>& vs, size_t total) {
   char* data = new char[total];
   char* pos = data;
   for (size_t i = 0; i < vs.size(); i++) {
-    const string& str = vs[i];
+    const std::string& str = vs[i];
     memcpy(pos, str.data(), str.size());
     pos += str.size();
   }
@@ -97,7 +95,7 @@ static void SetupZStream(z_stream& zs, const char* inData, size_t inLen) {
 
 
 CompressMode ParseCompressMode(lua_State* L, int index, const char* def) {
-  const string modeStr = luaL_optstring(L, index, def);
+  const std::string modeStr = luaL_optstring(L, index, def);
   if (modeStr == "raw")  { return CompressRaw;  }
   if (modeStr == "gzip") { return CompressGzip; }
   if (modeStr == "zlib") { return CompressZlib; }
@@ -132,7 +130,7 @@ static int CompressString(const char* inData, size_t inLen,
   }
 
   outLen = 0;
-  vector<string> outVec;
+  std::vector<std::string> outVec;
   char bufData[bufSize];
 
   int flushMode = Z_NO_FLUSH;
@@ -143,14 +141,14 @@ static int CompressString(const char* inData, size_t inLen,
     if (retcode == Z_STREAM_END) {
       const size_t outSize = (bufSize - zs.avail_out);
       outLen += outSize;
-      outVec.push_back(string(bufData, outSize));
+      outVec.push_back(std::string(bufData, outSize));
       break;
     }
     else if (retcode == Z_OK) {
       flushMode = Z_FINISH;
       const size_t outSize = (bufSize - zs.avail_out);
       outLen += outSize;
-      outVec.push_back(string(bufData, outSize));
+      outVec.push_back(std::string(bufData, outSize));
     }
     else {
       deflateEnd(&zs);
@@ -188,7 +186,7 @@ static int DecompressString(const char* inData, size_t inLen,
   }
 
   outLen = 0;
-  vector<string> outVec;
+  std::vector<std::string> outVec;
   char bufData[bufSize];
 
   while (true) {
@@ -198,13 +196,13 @@ static int DecompressString(const char* inData, size_t inLen,
     if (retcode == Z_STREAM_END) {
       const size_t outSize = (bufSize - zs.avail_out);
       outLen += outSize;
-      outVec.push_back(string(bufData, outSize));
+      outVec.push_back(std::string(bufData, outSize));
       break;
     }
     else if (retcode == Z_OK) {
       const size_t outSize = (bufSize - zs.avail_out);
       outLen += outSize;
-      outVec.push_back(string(bufData, outSize));
+      outVec.push_back(std::string(bufData, outSize));
     }
     else {
       inflateEnd(&zs);

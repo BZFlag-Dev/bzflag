@@ -19,7 +19,6 @@
 // system headers
 #include <new>
 #include <string>
-using std::string;
 
 // common headers
 #include "bzfgl.h"
@@ -159,7 +158,7 @@ int LuaRBOMgr::MetaIndex(lua_State* L) {
   if (!lua_israwstring(L, 2)) {
     return luaL_pushnil(L);
   }
-  const string key = luaL_checkstring(L, 2);
+  const std::string key = luaL_checkstring(L, 2);
   if (key == "valid") {
     lua_pushboolean(L, glIsRenderbuffer(rbo->id));
   }

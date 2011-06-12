@@ -19,10 +19,7 @@
 // system headers
 #include <assert.h>
 #include <string>
-#include <set>
 #include <cctype>
-using std::string;
-using std::set;
 
 // common headers
 #include "bzfio.h"
@@ -221,8 +218,8 @@ static bool LowerKeysReal(lua_State* L, int depth) {
       LowerKeysReal(L, depth + 1);
     }
     if (lua_israwstring(L, -2)) {
-      const string rawKey = lua_tostring(L, -2);
-      const string lowerKey = TextUtils::tolower(rawKey);
+      const std::string rawKey = lua_tostring(L, -2);
+      const std::string lowerKey = TextUtils::tolower(rawKey);
       if (rawKey != lowerKey) {
         // removed the mixed case entry
         lua_pushvalue(L, -2); // the key
@@ -304,7 +301,7 @@ void LuaUtils::PrintStack(lua_State* L) {
 
 int LuaUtils::Print(lua_State* L) {
   // copied from lua/src/lib/lbaselib.c
-  string msg = "";
+  std::string msg = "";
   const int args = lua_gettop(L); // number of arguments
 
   lua_getglobal(L, "tostring");
@@ -361,7 +358,7 @@ int LuaUtils::Print(lua_State* L) {
 //============================================================================//
 //============================================================================//
 
-bool LuaUtils::ClientWriteCheck(const string& varName) {
+bool LuaUtils::ClientWriteCheck(const std::string& varName) {
   if (!BZDB.isSet(varName)) {
     return true;
   }

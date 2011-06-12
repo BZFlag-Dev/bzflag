@@ -18,7 +18,6 @@
 
 // system headers
 #include <string>
-using std::string;
 
 // local headers
 #include "LuaHeader.h"
@@ -84,7 +83,7 @@ int LuaScream::MetaGC(lua_State* L) {
 
 int LuaScream::MetaIndex(lua_State* L) {
   int* refPtr = GetScreamRef(L, 1);
-  const string key = luaL_checkstring(L, 2);
+  const std::string key = luaL_checkstring(L, 2);
   if (key == "func") {
     lua_rawgeti(L, LUA_REGISTRYINDEX, *refPtr);
     return 1;
@@ -95,7 +94,7 @@ int LuaScream::MetaIndex(lua_State* L) {
 
 int LuaScream::MetaNewindex(lua_State* L) {
   int* refPtr = GetScreamRef(L, 1);
-  const string key = luaL_checkstring(L, 2);
+  const std::string key = luaL_checkstring(L, 2);
   if (key == "func") {
     lua_pushvalue(L, 3);
     lua_rawseti(L, LUA_REGISTRYINDEX, *refPtr);

@@ -21,12 +21,7 @@
 #include <string.h>
 #include <string>
 #include <vector>
-#include <set>
 #include <map>
-using std::string;
-using std::vector;
-using std::set;
-using std::map;
 
 // common headers
 #include "AnsiCodes.h"
@@ -301,7 +296,7 @@ bool LuaCallOuts::PushEntries(lua_State* L) {
 //  PlayerMap utility
 //
 
-typedef map<int, Player*> PlayerMap;
+typedef std::map<int, Player*> PlayerMap;
 
 
 static void MakePlayerMap(PlayerMap& playerMap) {
@@ -372,8 +367,8 @@ static inline const ShotPath* ParseShot(lua_State* L, int index) {
 }
 
 
-static const map<string, TeamColor>& GetTeamNameMap() {
-  static map<string, TeamColor> teamNames;
+static const std::map<std::string, TeamColor>& GetTeamNameMap() {
+  static std::map<std::string, TeamColor> teamNames;
   if (teamNames.empty()) {
     teamNames["automatic"] = AutomaticTeam;
     teamNames["rogue"]     = RogueTeam;
@@ -391,9 +386,9 @@ static const map<string, TeamColor>& GetTeamNameMap() {
 
 static inline TeamColor ParseTeam(lua_State* L, int index) {
   if (lua_israwstring(L, index)) {
-    const string teamName = lua_tostring(L, index);
-    const map<string, TeamColor>& teamNames = GetTeamNameMap();
-    map<string, TeamColor>::const_iterator it = teamNames.find(teamName);
+    const std::string teamName = lua_tostring(L, index);
+    const std::map<std::string, TeamColor>& teamNames = GetTeamNameMap();
+    std::map<std::string, TeamColor>::const_iterator it = teamNames.find(teamName);
     if (it == teamNames.end()) {
       return NoTeam;
     }
@@ -699,7 +694,7 @@ int LuaCallOuts::GetWorldInfo(lua_State* L) {
   if (world == NULL) {
     return luaL_pushnil(L);
   }
-  const vector<string>* entries = NULL;
+  const std::vector<std::string>* entries = NULL;
 
   if (!lua_israwstring(L, 1)) {
     entries = &world->getMapInfo().getVec();
@@ -864,7 +859,7 @@ int LuaCallOuts::SendLuaData(lua_State* L) {
 
   size_t len;
   const char* ptr = luaL_checklstring(L, 1, &len);
-  const string data(ptr, len);
+  const std::string data(ptr, len);
 
   const PlayerId dstPlayerID = (PlayerId)luaL_optint(L, 2, AllPlayers);
   const int16_t  dstScriptID = (int16_t)luaL_optint(L, 3, 0);
@@ -1028,7 +1023,7 @@ int LuaCallOuts::ReadImageData(lua_State* L) {
   const char* inData = luaL_checklstring(L, 1, &inLen);
   const bool infoOnly = lua_isboolean(L, 2) && lua_tobool(L, 2);
 
-  std::istringstream iss(string(inData, inLen));
+  std::istringstream iss(std::string(inData, inLen));
   PNGImageFile image(&iss);
 
   if (infoOnly) {
@@ -1041,7 +1036,7 @@ int LuaCallOuts::ReadImageData(lua_State* L) {
 int LuaCallOuts::ReadImageFile(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
 
-  string modes = L2ES(L)->vfsModes->readDefault;
+  std::string modes = L2ES(L)->vfsModes->readDefault;
   bool infoOnly = false;
   if (!lua_israwstring(L, 2)) {
     infoOnly = lua_isboolean(L, 2) && lua_tobool(L, 2);
@@ -1052,7 +1047,7 @@ int LuaCallOuts::ReadImageFile(lua_State* L) {
     infoOnly = lua_isboolean(L, 3) && lua_tobool(L, 3);
   }
 
-  string data;
+  std::string data;
   if (!bzVFS.readFile(path, modes, data)) {
     return luaL_pushnil(L);
   }
@@ -1086,22 +1081,22 @@ int LuaCallOuts::GetViewType(lua_State* L) {
 
 
 int LuaCallOuts::GetKeyToCmds(lua_State* L) {
-  const string keyString = luaL_checkstring(L, 1);
+  const std::string keyString = luaL_checkstring(L, 1);
   BzfKeyEvent keyEvent;
   if (!KEYMGR.stringToKeyEvent(keyString, keyEvent)) {
     return luaL_pushnil(L);
   }
   const bool press = !lua_isboolean(L, 2) || lua_tobool(L, 2);
-  const string command = KEYMGR.get(keyEvent, press);
+  const std::string command = KEYMGR.get(keyEvent, press);
   lua_pushstdstring(L, command);
   return 1;
 }
 
 
 int LuaCallOuts::GetCmdToKeys(lua_State* L) {
-  const string command = luaL_checkstring(L, 1);
+  const std::string command = luaL_checkstring(L, 1);
   const bool press = !lua_isboolean(L, 2) || lua_tobool(L, 2);
-  const vector<string> keys = KEYMGR.getKeysFromCommand(command, press);
+  const std::vector<std::string> keys = KEYMGR.getKeysFromCommand(command, press);
   lua_createtable(L, keys.size(), 0);
   for (size_t i = 0; i < keys.size(); i++) {
     lua_pushstdstring(L, keys[i]);
@@ -1373,7 +1368,7 @@ int LuaCallOuts::SetCameraView(lua_State* L) {
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2) && // key
           lua_israwnumber(L, -1)) { // value
-        const string key = lua_tostring(L, -2);
+        const std::string key = lua_tostring(L, -2);
         if (key == "px") { pos.x = lua_tofloat(L, -1); }
         else if (key == "py") { pos.y = lua_tofloat(L, -1); }
         else if (key == "pz") { pos.z = lua_tofloat(L, -1); }
@@ -1426,7 +1421,7 @@ int LuaCallOuts::SetCameraProjection(lua_State* L) {
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2) && // key
           lua_israwnumber(L, -1)) { // value
-        const string key = lua_tostring(L, -2);
+        const std::string key = lua_tostring(L, -2);
         if (key == "fov")  { fov      = lua_tofloat(L, -1); }
         else if (key == "nearZ")      { nearZ    = lua_tofloat(L, -1); }
         else if (key == "farZ")       { farZ     = lua_tofloat(L, -1); }
@@ -1499,7 +1494,7 @@ int LuaCallOuts::GetFrustumPlane(lua_State* L) {
     plane = lua_toint(L, 1);
   }
   else if (lua_israwstring(L, 1)) {
-    const string key = lua_tostring(L, 1);
+    const std::string key = lua_tostring(L, 1);
     if (key == "near")   { plane = 0; }
     if (key == "left")   { plane = 1; }
     if (key == "right")  { plane = 2; }
@@ -1531,7 +1526,7 @@ int LuaCallOuts::NotifyStyleChange(lua_State* /*L*/) {
 //============================================================================//
 
 int LuaCallOuts::GetSun(lua_State* L) {
-  const string param = luaL_checkstring(L, 1);
+  const std::string param = luaL_checkstring(L, 1);
 
   if (param == "brightness") {
     lua_pushfloat(L, RENDERER.getSunBrightness());
@@ -1726,7 +1721,7 @@ int LuaCallOuts::GetTeamPlayers(lua_State* L) {
   MakePlayerMap(playerMap);
 
 
-  map<TeamColor, vector<int> > teamPlayers;
+  std::map<TeamColor, std::vector<int> > teamPlayers;
 
   PlayerMap::const_iterator it;
   for (it = playerMap.begin(); it != playerMap.end(); ++it) {
@@ -1736,9 +1731,9 @@ int LuaCallOuts::GetTeamPlayers(lua_State* L) {
 
   lua_newtable(L);
 
-  map<TeamColor, vector<int> >::const_iterator teamIt;
+  std::map<TeamColor, std::vector<int> >::const_iterator teamIt;
   for (teamIt = teamPlayers.begin(); teamIt != teamPlayers.end(); ++teamIt) {
-    const vector<int>& ids = teamIt->second;
+    const std::vector<int>& ids = teamIt->second;
     lua_pushint(L, int(teamIt->first));
     lua_createtable(L, teamIt->second.size(), 0);
     for (size_t i = 0; i < ids.size(); i++) {
@@ -2250,7 +2245,7 @@ int LuaCallOuts::GetPlayerMotto(lua_State* L) {
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  map<string, string>::const_iterator it = player->customData.find("motto");
+  std::map<std::string, std::string>::const_iterator it = player->customData.find("motto");
   if (it == player->customData.end()) {
     return luaL_pushnil(L);
   }
@@ -2286,8 +2281,8 @@ int LuaCallOuts::GetPlayerCustomData(lua_State* L) {
   if (player == NULL) {
     return luaL_pushnil(L);
   }
-  const string key = luaL_checkstring(L, 2);
-  map<string, string>::const_iterator it = player->customData.find(key);
+  const std::string key = luaL_checkstring(L, 2);
+  std::map<std::string, std::string>::const_iterator it = player->customData.find(key);
   if (it == player->customData.end()) {
     return luaL_pushnil(L);
   }

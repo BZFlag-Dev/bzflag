@@ -20,9 +20,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using std::string;
-using std::vector;
-using std::map;
 
 // common headers
 #include "bzfgl.h"
@@ -196,7 +193,7 @@ int LuaFBOMgr::MetaNewindex(lua_State* L) {
   }
 
   if (lua_israwstring(L, 2)) {
-    const string key = lua_tostring(L, 2);
+    const std::string key = lua_tostring(L, 2);
     const GLenum type = ParseAttachment(key);
     if (type != 0) {
       GLint currentFBO;
@@ -255,8 +252,8 @@ static GLenum GetBindingEnum(GLenum target) {
 //============================================================================//
 //============================================================================//
 
-GLenum LuaFBOMgr::ParseAttachment(const string& name) {
-  static map<string, GLenum> attachMap;
+GLenum LuaFBOMgr::ParseAttachment(const std::string& name) {
+  static std::map<std::string, GLenum> attachMap;
   if (attachMap.empty()) {
     attachMap["depth"]   = GL_DEPTH_ATTACHMENT;
     attachMap["stencil"] = GL_STENCIL_ATTACHMENT;
@@ -277,7 +274,7 @@ GLenum LuaFBOMgr::ParseAttachment(const string& name) {
     attachMap["color14"] = GL_COLOR_ATTACHMENT14;
     attachMap["color15"] = GL_COLOR_ATTACHMENT15;
   }
-  map<string, GLenum>::const_iterator it = attachMap.find(name);
+  std::map<std::string, GLenum>::const_iterator it = attachMap.find(name);
   if (it != attachMap.end()) {
     return it->second;
   }
@@ -368,7 +365,7 @@ bool LuaFBOMgr::ApplyDrawBuffers(lua_State* L, int index) {
   else if (lua_istable(L, index) && GLEW_ARB_draw_buffers) {
     const int table = (index > 0) ? index : (lua_gettop(L) + index + 1);
 
-    vector<GLenum> buffers;
+    std::vector<GLenum> buffers;
     for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
       const GLenum buffer = (GLenum)luaL_checkint(L, -1);
       buffers.push_back(buffer);
@@ -436,7 +433,7 @@ int LuaFBOMgr::CreateFBO(lua_State* L) {
   if (lua_istable(L, table)) {
     for (lua_pushnil(L); lua_next(L, table) != 0; lua_pop(L, 1)) {
       if (lua_israwstring(L, -2)) {
-        const string key = lua_tostring(L, -2);
+        const std::string key = lua_tostring(L, -2);
         const GLenum type = ParseAttachment(key);
         if (type != 0) {
           ApplyAttachment(L, -1, fbo, type);

@@ -20,11 +20,7 @@
 #include <string.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 #include <algorithm>
-using std::min;
-using std::max;
 
 // common headers
 #include "BzPNG.h"
@@ -77,7 +73,7 @@ bool LuaPack::PushEntries(lua_State* L) {
 
 template <typename T>
 int PackType(lua_State* L) {
-  vector<T> vals;
+  std::vector<T> vals;
 
   // collect the values
   if (lua_istable(L, 1)) {
@@ -194,7 +190,7 @@ int UnpackType(lua_State* L, bool defaultToDoubles = false) {
   if (tableCount < 0) {
     tableCount = maxCount;
   }
-  tableCount = min(maxCount, tableCount);
+  tableCount = std::min(maxCount, tableCount);
   lua_newtable(L);
   if (pushDoubles) {
     for (int i = 0; i < tableCount; i++) {

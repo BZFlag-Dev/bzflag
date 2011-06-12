@@ -20,8 +20,6 @@
 #include <cctype>
 #include <string>
 #include <set>
-using std::string;
-using std::set;
 
 // common headers
 #include "BzVFS.h"
@@ -59,7 +57,7 @@ class CodeFetch : private cURLManager {
         url = sourceFile;
       }
       else {
-        const string bzOrgURL = BZDB.get("luaBzOrgURL");
+        const std::string bzOrgURL = BZDB.get("luaBzOrgURL");
         url = !bzOrgURL.empty() ? bzOrgURL : sourceFile;
       }
       setURL(url);
@@ -82,14 +80,14 @@ class CodeFetch : private cURLManager {
         LuaLog(0, "LuaBzOrg code fetch failed: %s\n", url.c_str());
         return;
       }
-      luaBzOrg = new LuaBzOrg(string(data, length), url);
+      luaBzOrg = new LuaBzOrg(std::string(data, length), url);
       if (luaBzOrg->L == NULL) {
         delete luaBzOrg;
       }
     }
 
   private:
-    string url;
+    std::string url;
 };
 
 
@@ -123,7 +121,7 @@ bool LuaBzOrg::IsActive() {
 //============================================================================//
 //============================================================================//
 
-LuaBzOrg::LuaBzOrg(const string& sourceCode, const string& sourceURL)
+LuaBzOrg::LuaBzOrg(const std::string& sourceCode, const std::string& sourceURL)
   : LuaHandle("LuaBzOrg",
               LUA_BZORG_SCRIPT_ID,
               LUA_BZORG_GAME_ORDER,

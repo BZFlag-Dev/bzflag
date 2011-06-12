@@ -19,8 +19,6 @@
 // system headers
 #include <string>
 #include <set>
-using std::string;
-using std::set;
 
 // common headers
 #include "Flag.h"
@@ -83,7 +81,7 @@ void LuaHandle::Update() {
 }
 
 
-void LuaHandle::BZDBChange(const string& name) {
+void LuaHandle::BZDBChange(const std::string& name) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_BZDBChange)) {
     return; // the call is not defined
@@ -795,7 +793,7 @@ bool LuaHandle::IsAbove(int x, int y) {
 }
 
 
-string LuaHandle::GetTooltip(int x, int y) {
+std::string LuaHandle::GetTooltip(int x, int y) {
   LUA_CALL_IN_CHECK(L, 2)
   if (!PushCallIn(LUA_CI_GetTooltip)) {
     return ""; // the call is not defined
@@ -812,7 +810,7 @@ string LuaHandle::GetTooltip(int x, int y) {
     lua_pop(L, 1);
     return "";
   }
-  const string retval = lua_tostring(L, -1);
+  const std::string retval = lua_tostring(L, -1);
 
   lua_pop(L, 1);
 
@@ -820,8 +818,8 @@ string LuaHandle::GetTooltip(int x, int y) {
 }
 
 
-void LuaHandle::WordComplete(const string& line,
-                             set<string>& partials) {
+void LuaHandle::WordComplete(const std::string& line,
+                             std::set<std::string>& partials) {
   LUA_CALL_IN_CHECK(L, 1)
   if (!PushCallIn(LUA_CI_WordComplete)) {
     return;

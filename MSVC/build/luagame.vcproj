@@ -186,10 +186,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lua\LuaParser.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\lua\LuaPhyDrv.cpp"
 				>
 			</File>
@@ -261,10 +257,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lua\LuaPack.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\lua\LuaParser.h"
 				>
 			</File>
 			<File

@@ -20,8 +20,6 @@
 #include <time.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "bzfio.h"

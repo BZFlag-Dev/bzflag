@@ -18,7 +18,6 @@
 
 // system headers
 #include <string>
-using std::string;
 
 // common headers
 #include "bzfgl.h"
@@ -177,7 +176,7 @@ int LuaDListMgr::MetaIndex(lua_State* L) {
     return luaL_pushnil(L);
   }
 
-  const string key = lua_tostring(L, 2);
+  const std::string key = lua_tostring(L, 2);
   if (key == "valid") {
     lua_pushboolean(L, list->IsValid());
     return 1;

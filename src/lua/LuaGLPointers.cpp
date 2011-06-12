@@ -18,12 +18,7 @@
 
 // system headers
 #include <string.h>
-#include <string>
-#include <vector>
 #include <map>
-using std::string;
-using std::vector;
-using std::map;
 
 // common headers
 #include "bzfgl.h"
@@ -37,9 +32,9 @@ using std::map;
 
 
 static int minElements = 0; // the minimum element count of all enabled pointers
-static map<GLenum, int> maxElements; // max element counts for enabled pointers
+static std::map<GLenum, int> maxElements; // max element counts for enabled pointers
 
-static map<GLenum, int> luaRefs; // refs to strings to avoid garbage collection
+static std::map<GLenum, int> luaRefs; // refs to strings to avoid garbage collection
 // (could also use lua_gc(LUA_GCSTOP) if this
 // was being implemented as a wrapped function)
 
@@ -119,7 +114,7 @@ bool LuaGLPointers::Reset(lua_State* L) {
 
   glPopClientAttrib();
 
-  map<GLenum, int>::const_iterator it;
+  std::map<GLenum, int>::const_iterator it;
   for (it = luaRefs.begin(); it != luaRefs.end(); ++it) {
     luaL_unref(L, LUA_REGISTRYINDEX, it->second);
   }
@@ -147,7 +142,7 @@ static void UpdateMinElement(int maxElem) {
     return;
   }
   minElements = 1234567890;
-  map<GLenum, int>::const_iterator it;
+  std::map<GLenum, int>::const_iterator it;
   for (it = maxElements.begin(); it != maxElements.end(); ++it) {
     if (minElements > it->second) {
       minElements = it->second;
@@ -160,7 +155,7 @@ static void UpdateMinElement(int maxElem) {
 //============================================================================//
 
 static bool FreeLuaRef(lua_State* L, GLenum type) {
-  map<GLenum, int>::iterator it = luaRefs.find(type);
+  std::map<GLenum, int>::iterator it = luaRefs.find(type);
   if (it != luaRefs.end()) {
     luaL_unref(L, LUA_REGISTRYINDEX, it->second);
     luaRefs.erase(it);
@@ -750,7 +745,7 @@ int LuaGLPointers::GetPointerState(lua_State* L) {
   CheckActiveState(L, __FUNCTION__);
 
   lua_createtable(L, 0, maxElements.size());
-  map<GLenum, int>::const_iterator it;
+  std::map<GLenum, int>::const_iterator it;
   for (it = maxElements.begin(); it != maxElements.end(); ++it) {
     const GLenum type = it->first;
     lua_pushinteger(L, type);
@@ -760,7 +755,7 @@ int LuaGLPointers::GetPointerState(lua_State* L) {
       lua_rawset(L, -3);
 
       lua_pushliteral(L, "data");
-      map<GLenum, int>::const_iterator rit = luaRefs.find(type);
+      std::map<GLenum, int>::const_iterator rit = luaRefs.find(type);
       if (rit != luaRefs.end()) {
         lua_rawgeti(L, LUA_REGISTRYINDEX, rit->second);
       }

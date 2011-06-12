@@ -25,7 +25,6 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <time.h>
-using std::string;
 
 // local headers
 #include "LuaHeader.h"

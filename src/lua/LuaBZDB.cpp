@@ -22,10 +22,6 @@
 #include <vector>
 #include <set>
 #include <map>
-using std::string;
-using std::vector;
-using std::map;
-using std::set;
 
 // common headers
 #include "StateDatabase.h"
@@ -73,19 +69,19 @@ bool LuaBZDB::PushEntries(lua_State* L) {
 //============================================================================//
 //============================================================================//
 
-static bool ValidWriteString(const string& str) {
+static bool ValidWriteString(const std::string& str) {
   return (str.size() <= 256) &&
-         (str.find_first_of("\r\n") == string::npos);
+         (str.find_first_of("\r\n") == std::string::npos);
 }
 
 
-static inline bool ReadCheck(lua_State* L, const string& varName) {
+static inline bool ReadCheck(lua_State* L, const std::string& varName) {
   LuaBzdbCheckFunc func = L2ES(L)->bzdbReadCheck;
   return (!func || func(varName));
 }
 
 
-static inline bool WriteCheck(lua_State* L, const string& varName) {
+static inline bool WriteCheck(lua_State* L, const std::string& varName) {
   if (!ValidWriteString(varName)) {
     return false;
   }
@@ -116,18 +112,18 @@ static inline bool WriteCheck(lua_State* L, const string& varName) {
 //  GetMap
 //
 
-static void mapCallback(const string& name, void* data) {
-  map<string, string>& bzdbMap = *((map<string, string>*)data);
+static void mapCallback(const std::string& name, void* data) {
+  std::map<std::string, std::string>& bzdbMap = *((std::map<std::string, std::string>*)data);
   bzdbMap[name] = BZDB.get(name);
 }
 
 
 int LuaBZDB::GetMap(lua_State* L) {
-  map<string, string> bzdbMap;
+  std::map<std::string, std::string> bzdbMap;
 
   BZDB.iterate(mapCallback, &bzdbMap);
 
-  map<string, string>::const_iterator it;
+  std::map<std::string, std::string>::const_iterator it;
   lua_createtable(L, 0, bzdbMap.size());
   for (it = bzdbMap.begin(); it != bzdbMap.end(); ++it) {
     if (ReadCheck(L, it->first)) {
@@ -144,14 +140,14 @@ int LuaBZDB::GetMap(lua_State* L) {
 //  GetList
 //
 
-static void vectorCallback(const string& name, void* data) {
-  vector<string>& bzdbVec = *((vector<string>*)data);
+static void vectorCallback(const std::string& name, void* data) {
+  std::vector<std::string>& bzdbVec = *((std::vector<std::string>*)data);
   bzdbVec.push_back(name);
 }
 
 
 int LuaBZDB::GetList(lua_State* L) {
-  vector<string> bzdbVec;
+  std::vector<std::string> bzdbVec;
 
   BZDB.iterate(vectorCallback, &bzdbVec);
   std::sort(bzdbVec.begin(), bzdbVec.end());
@@ -172,7 +168,7 @@ int LuaBZDB::GetList(lua_State* L) {
 //
 
 int LuaBZDB::Exists(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushboolean(L, BZDB.isSet(key));
   return 1;
@@ -180,7 +176,7 @@ int LuaBZDB::Exists(lua_State* L) {
 
 
 int LuaBZDB::IsPersistent(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   if (!BZDB.isSet(key)) {
     lua_pushnil(L);
@@ -192,7 +188,7 @@ int LuaBZDB::IsPersistent(lua_State* L) {
 
 
 int LuaBZDB::GetDefault(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   if (!BZDB.isSet(key)) {
     lua_pushnil(L);
@@ -204,7 +200,7 @@ int LuaBZDB::GetDefault(lua_State* L) {
 
 
 int LuaBZDB::GetPermission(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   if (!BZDB.isSet(key)) {
     lua_pushnil(L);
@@ -222,7 +218,7 @@ int LuaBZDB::GetPermission(lua_State* L) {
 //
 
 int LuaBZDB::GetInt(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushinteger(L, BZDB.evalInt(key));
   return 1;
@@ -230,7 +226,7 @@ int LuaBZDB::GetInt(lua_State* L) {
 
 
 int LuaBZDB::GetBool(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushboolean(L, BZDB.isTrue(key));
   return 1;
@@ -238,7 +234,7 @@ int LuaBZDB::GetBool(lua_State* L) {
 
 
 int LuaBZDB::GetFloat(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushfloat(L, BZDB.eval(key));
   return 1;
@@ -246,7 +242,7 @@ int LuaBZDB::GetFloat(lua_State* L) {
 
 
 int LuaBZDB::GetString(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   BZDB_READ_CHECK(L, key)
   lua_pushstdstring(L, BZDB.get(key));
   return 1;
@@ -260,7 +256,7 @@ int LuaBZDB::GetString(lua_State* L) {
 //
 
 int LuaBZDB::SetInt(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   const int value  = luaL_checkint(L, 2);
 
   BZDB_WRITE_CHECK(L, key)
@@ -273,7 +269,7 @@ int LuaBZDB::SetInt(lua_State* L) {
 
 
 int LuaBZDB::SetBool(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
   if (!lua_isboolean(L, 2)) {
     luaL_error(L, "expected boolean argument for arg 2");
   }
@@ -289,7 +285,7 @@ int LuaBZDB::SetBool(lua_State* L) {
 
 
 int LuaBZDB::SetFloat(lua_State* L) {
-  const string key  = luaL_checkstring(L, 1);
+  const std::string key  = luaL_checkstring(L, 1);
   const float value = luaL_checkfloat(L, 2);
 
   BZDB_WRITE_CHECK(L, key)
@@ -302,8 +298,8 @@ int LuaBZDB::SetFloat(lua_State* L) {
 
 
 int LuaBZDB::SetString(lua_State* L) {
-  const string key   = luaL_checkstring(L, 1);
-  const string value = luaL_checkstring(L, 2);
+  const std::string key   = luaL_checkstring(L, 1);
+  const std::string value = luaL_checkstring(L, 2);
 
   BZDB_WRITE_CHECK(L, key)
 
@@ -320,7 +316,7 @@ int LuaBZDB::SetString(lua_State* L) {
 
 
 int LuaBZDB::Unset(lua_State* L) {
-  const string key = luaL_checkstring(L, 1);
+  const std::string key = luaL_checkstring(L, 1);
 
   BZDB_WRITE_CHECK(L, key)
 

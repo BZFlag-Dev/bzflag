@@ -18,7 +18,6 @@
 
 // system headers
 #include <string>
-using std::string;
 
 // common headers
 #include "PhysicsDriver.h"

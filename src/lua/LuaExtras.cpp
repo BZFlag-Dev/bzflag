@@ -18,7 +18,6 @@
 
 // system headers
 #include <string>
-using std::string;
 
 // local headers
 #include "LuaHeader.h"
@@ -142,7 +141,7 @@ int LuaExtras::flush(lua_State* L) {
     fflush(stdout);
   }
   else {
-    const string key = lua_tostring(L, 1);
+    const std::string key = lua_tostring(L, 1);
     if (key == "stdout") { fflush(stdout); }
     else if (key == "stderr") { fflush(stderr); }
     else if (key == "stdin")  { fflush(stdin);  }

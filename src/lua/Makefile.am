@@ -30,7 +30,6 @@ libLuaGame_la_SOURCES =				\
 	LuaHTTP.cpp		LuaHTTP.h	\
 	LuaObstacle.cpp		LuaObstacle.h	\
 	LuaPack.cpp		LuaPack.h	\
-	LuaParser.cpp		LuaParser.h	\
 	LuaPhyDrv.cpp		LuaPhyDrv.h	\
 	LuaScream.cpp		LuaScream.h	\
 	LuaServerPing.cpp	LuaServerPing.h	\

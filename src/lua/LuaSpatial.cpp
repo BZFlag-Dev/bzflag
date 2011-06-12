@@ -17,10 +17,7 @@
 #include "LuaSpatial.h"
 
 // system headers
-#include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "Ray.h"
@@ -120,7 +117,7 @@ struct QueryData {
 
 
 struct PlanesData : public QueryData {
-  vector<fvec4> planes;
+  std::vector<fvec4> planes;
 };
 
 
@@ -518,7 +515,7 @@ static bool PlayerInBox(const Player* player, const QueryData& data) {
 
 
 static void CheckPlayers(PlayerCheckFunc checkFunc, const QueryData& data,
-                         vector<const Player*> hits) {
+                         std::vector<const Player*> hits) {
   // FIXME - check state
 
   const Player* player = NULL;
@@ -546,7 +543,7 @@ static void CheckPlayers(PlayerCheckFunc checkFunc, const QueryData& data,
 }
 
 
-static void PushPlayers(lua_State* L, vector<const Player*> players) {
+static void PushPlayers(lua_State* L, std::vector<const Player*> players) {
   lua_createtable(L, players.size(), 0);
   for (size_t i = 0; i < players.size(); i++) {
     const Player* player = players[i];
@@ -561,7 +558,7 @@ static void PushPlayers(lua_State* L, vector<const Player*> players) {
 int LuaSpatial::GetPlayersInPlanes(lua_State* L) {
   PlanesData planes;
   ParsePlanes(L, planes);
-  vector<const Player*> hits;
+  std::vector<const Player*> hits;
   CheckPlayers(PlayerInPlanes, planes, hits);
   PushPlayers(L, hits);
   return 1;
@@ -571,7 +568,7 @@ int LuaSpatial::GetPlayersInPlanes(lua_State* L) {
 int LuaSpatial::GetPlayersInSphere(lua_State* L) {
   SphereData sphere;
   ParseSphere(L, sphere);
-  vector<const Player*> hits;
+  std::vector<const Player*> hits;
   CheckPlayers(PlayerInSphere, sphere, hits);
   PushPlayers(L, hits);
   return 1;
@@ -581,7 +578,7 @@ int LuaSpatial::GetPlayersInSphere(lua_State* L) {
 int LuaSpatial::GetPlayersInCylinder(lua_State* L) {
   CylinderData cyl;
   ParseCylinder(L, cyl);
-  vector<const Player*> hits;
+  std::vector<const Player*> hits;
   CheckPlayers(PlayerInCylinder, cyl, hits);
   PushPlayers(L, hits);
   return 1;
@@ -591,7 +588,7 @@ int LuaSpatial::GetPlayersInCylinder(lua_State* L) {
 int LuaSpatial::GetPlayersInBox(lua_State* L) {
   BoxData box;
   ParseBox(L, box);
-  vector<const Player*> hits;
+  std::vector<const Player*> hits;
   CheckPlayers(PlayerInBox, box, hits);
   PushPlayers(L, hits);
   return 1;
@@ -604,7 +601,7 @@ int LuaSpatial::GetVisiblePlayers(lua_State* L) {
     lua_newtable(L);
     return 1;
   }
-  vector<const Player*> hits;
+  std::vector<const Player*> hits;
   CheckPlayers(PlayerInPlanes, planes, hits);
   PushPlayers(L, hits);
   return 1;
@@ -617,7 +614,7 @@ int LuaSpatial::GetRadarPlayers(lua_State* L) {
     lua_newtable(L);
     return 1;
   }
-  vector<const Player*> hits;
+  std::vector<const Player*> hits;
   CheckPlayers(PlayerInBox, box, hits);
   PushPlayers(L, hits);
   return 1;
@@ -670,7 +667,7 @@ static bool FlagInBox(const Flag* flag, const QueryData& data) {
 
 
 static void CheckFlags(FlagCheckFunc checkFunc, const QueryData& data,
-                       vector<const Flag*> hits) {
+                       std::vector<const Flag*> hits) {
   const World* world = World::getWorld();
   if (world == NULL) {
     return;
@@ -687,7 +684,7 @@ static void CheckFlags(FlagCheckFunc checkFunc, const QueryData& data,
 }
 
 
-static void PushFlags(lua_State* L, vector<const Flag*> flags) {
+static void PushFlags(lua_State* L, std::vector<const Flag*> flags) {
   lua_createtable(L, flags.size(), 0);
   for (size_t i = 0; i < flags.size(); i++) {
     lua_pushinteger(L, flags[i]->id);
@@ -701,7 +698,7 @@ static void PushFlags(lua_State* L, vector<const Flag*> flags) {
 int LuaSpatial::GetFlagsInPlanes(lua_State* L) {
   PlanesData planes;
   ParsePlanes(L, planes);
-  vector<const Flag*> hits;
+  std::vector<const Flag*> hits;
   CheckFlags(FlagInPlanes, planes, hits);
   PushFlags(L, hits);
   return 1;
@@ -711,7 +708,7 @@ int LuaSpatial::GetFlagsInPlanes(lua_State* L) {
 int LuaSpatial::GetFlagsInSphere(lua_State* L) {
   SphereData sphere;
   ParseSphere(L, sphere);
-  vector<const Flag*> hits;
+  std::vector<const Flag*> hits;
   CheckFlags(FlagInSphere, sphere, hits);
   PushFlags(L, hits);
   return 1;
@@ -721,7 +718,7 @@ int LuaSpatial::GetFlagsInSphere(lua_State* L) {
 int LuaSpatial::GetFlagsInCylinder(lua_State* L) {
   CylinderData cyl;
   ParseCylinder(L, cyl);
-  vector<const Flag*> hits;
+  std::vector<const Flag*> hits;
   CheckFlags(FlagInCylinder, cyl, hits);
   PushFlags(L, hits);
   return 1;
@@ -731,7 +728,7 @@ int LuaSpatial::GetFlagsInCylinder(lua_State* L) {
 int LuaSpatial::GetFlagsInBox(lua_State* L) {
   BoxData box;
   ParseBox(L, box);
-  vector<const Flag*> hits;
+  std::vector<const Flag*> hits;
   CheckFlags(FlagInBox, box, hits);
   PushFlags(L, hits);
   return 1;
@@ -744,7 +741,7 @@ int LuaSpatial::GetVisibleFlags(lua_State* L) {
     lua_newtable(L);
     return 1;
   }
-  vector<const Flag*> hits;
+  std::vector<const Flag*> hits;
   CheckFlags(FlagInPlanes, planes, hits);
   PushFlags(L, hits);
   return 1;
@@ -757,7 +754,7 @@ int LuaSpatial::GetRadarFlags(lua_State* L) {
     lua_newtable(L);
     return 1;
   }
-  vector<const Flag*> hits;
+  std::vector<const Flag*> hits;
   CheckFlags(FlagInBox, box, hits);
   PushFlags(L, hits);
   return 1;
@@ -811,7 +808,7 @@ static bool ShotInBox(const ShotPath* shot, const QueryData& data) {
 
 
 static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
-                       vector<const ShotPath*> hits) {
+                       std::vector<const ShotPath*> hits) {
   const World* world = World::getWorld();
   if (world == NULL) {
     return;
@@ -879,7 +876,7 @@ static void CheckShots(ShotCheckFunc checkFunc, const QueryData& data,
 }
 
 
-static void PushShots(lua_State* L, vector<const ShotPath*> shots) {
+static void PushShots(lua_State* L, std::vector<const ShotPath*> shots) {
   lua_createtable(L, shots.size(), 0);
   for (size_t i = 0; i < shots.size(); i++) {
     const ShotPath* shot = shots[i];
@@ -895,7 +892,7 @@ static void PushShots(lua_State* L, vector<const ShotPath*> shots) {
 int LuaSpatial::GetShotsInPlanes(lua_State* L) {
   PlanesData planes;
   ParsePlanes(L, planes);
-  vector<const ShotPath*> hits;
+  std::vector<const ShotPath*> hits;
   CheckShots(ShotInPlanes, planes, hits);
   PushShots(L, hits);
   return 1;
@@ -905,7 +902,7 @@ int LuaSpatial::GetShotsInPlanes(lua_State* L) {
 int LuaSpatial::GetShotsInSphere(lua_State* L) {
   SphereData sphere;
   ParseSphere(L, sphere);
-  vector<const ShotPath*> hits;
+  std::vector<const ShotPath*> hits;
   CheckShots(ShotInSphere, sphere, hits);
   PushShots(L, hits);
   return 1;
@@ -915,7 +912,7 @@ int LuaSpatial::GetShotsInSphere(lua_State* L) {
 int LuaSpatial::GetShotsInCylinder(lua_State* L) {
   CylinderData cyl;
   ParseCylinder(L, cyl);
-  vector<const ShotPath*> hits;
+  std::vector<const ShotPath*> hits;
   CheckShots(ShotInCylinder, cyl, hits);
   PushShots(L, hits);
   return 1;
@@ -925,7 +922,7 @@ int LuaSpatial::GetShotsInCylinder(lua_State* L) {
 int LuaSpatial::GetShotsInBox(lua_State* L) {
   BoxData box;
   ParseBox(L, box);
-  vector<const ShotPath*> hits;
+  std::vector<const ShotPath*> hits;
   CheckShots(ShotInBox, box, hits);
   PushShots(L, hits);
   return 1;
@@ -938,7 +935,7 @@ int LuaSpatial::GetVisibleShots(lua_State* L) {
     lua_newtable(L);
     return 1;
   }
-  vector<const ShotPath*> hits;
+  std::vector<const ShotPath*> hits;
   CheckShots(ShotInPlanes, planes, hits);
   PushShots(L, hits);
   return 1;
@@ -951,7 +948,7 @@ int LuaSpatial::GetRadarShots(lua_State* L) {
     lua_newtable(L);
     return 1;
   }
-  vector<const ShotPath*> hits;
+  std::vector<const ShotPath*> hits;
   CheckShots(ShotInBox, box, hits);
   PushShots(L, hits);
   return 1;

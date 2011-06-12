@@ -20,8 +20,6 @@
 #include <assert.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "bzfio.h"
@@ -71,7 +69,7 @@ bool LuaHandle::devMode = false;
 //============================================================================//
 //============================================================================//
 
-LuaHandle::LuaHandle(const string& _name, int16_t _scriptID,
+LuaHandle::LuaHandle(const std::string& _name, int16_t _scriptID,
                      int gameState, int drawWorld, int drawScreen,
                      bool _fullRead, bool _gameCtrl, bool _inputCtrl)
   : EventClient(_name, _scriptID,
@@ -110,7 +108,7 @@ LuaHandle::~LuaHandle() {
   KillLua();
 
   /*
-    string msg = GetName();
+    std::string msg = GetName();
     if (!requestMessage.empty()) {
       msg += ": " + requestMessage;
     }
@@ -155,7 +153,7 @@ void LuaHandle::SetupValidCallIns() {
 static void CheckEqualStack(const LuaHandle* lh, lua_State* L, int top,
                             const char* tableName) {
   if (top != lua_gettop(L)) {
-    string msg = __FUNCTION__;
+    std::string msg = __FUNCTION__;
     msg += " : " + lh->GetName() + " : ";
     msg += tableName;
     LuaLog(0, "ERROR: %s has an unequal stack\n", msg.c_str());
@@ -190,13 +188,13 @@ bool LuaHandle::PushLib(const char* name, bool (*entriesFunc)(lua_State*)) {
 }
 
 
-string LuaHandle::LoadSourceCode(const string& sourceFile,
-                                 const string& sourceModes) {
-  string modes = sourceModes;
+std::string LuaHandle::LoadSourceCode(const std::string& sourceFile,
+                                 const std::string& sourceModes) {
+  std::string modes = sourceModes;
   if (devMode) {
-    modes = string(BZVFS_LUA_USER) + modes;
+    modes = std::string(BZVFS_LUA_USER) + modes;
   }
-  string code;
+  std::string code;
   if (!bzVFS.readFile(sourceFile, modes, code)) {
     LuaLog(0, "FAILED to load  '%s'  with  '%s'\n",
            sourceFile.c_str(), modes.c_str());
@@ -206,7 +204,7 @@ string LuaHandle::LoadSourceCode(const string& sourceFile,
 }
 
 
-bool LuaHandle::ExecSourceCode(const string& code, const string& label) {
+bool LuaHandle::ExecSourceCode(const std::string& code, const std::string& label) {
   int error = luaL_loadbuffer(L, code.c_str(), code.size(), label.c_str());
 
   if (error != 0) {
@@ -249,7 +247,7 @@ bool LuaHandle::CanUseCallIn(int code) const {
 }
 
 
-bool LuaHandle::CanUseCallIn(const string& ciName) const {
+bool LuaHandle::CanUseCallIn(const std::string& ciName) const {
   const int code = luaCallInDB.GetCode(luaCallInDB.GetCallInName(ciName));
   if (code == 0)  {
     return false;
@@ -258,8 +256,8 @@ bool LuaHandle::CanUseCallIn(const string& ciName) const {
 }
 
 
-bool LuaHandle::UpdateCallIn(const string& ciName, bool state) {
-  const string& eventName = luaCallInDB.GetEventName(ciName);
+bool LuaHandle::UpdateCallIn(const std::string& ciName, bool state) {
+  const std::string& eventName = luaCallInDB.GetEventName(ciName);
   if (state) {
     return eventHandler.InsertEvent(this, eventName);
   }
@@ -272,7 +270,7 @@ bool LuaHandle::UpdateCallIn(const string& ciName, bool state) {
 //============================================================================//
 //============================================================================//
 
-static void AddCallInError(lua_State* L, const string& funcName) {
+static void AddCallInError(lua_State* L, const std::string& funcName) {
   // error string is on the top of the stack
   lua_checkstack(L, 4);
 
@@ -313,7 +311,7 @@ bool LuaHandle::RunCallIn(int ciCode, int inArgs, int outArgs) {
 
   if (error != 0) {
     // log the error
-    const string* ciName = luaCallInDB.GetName(ciCode);
+    const std::string* ciName = luaCallInDB.GetName(ciCode);
     const char* ciNameStr = ciName ? ciName->c_str() : "UNKNOWN";
     LuaLog(0, "%s::RunCallIn: error = %i, %s, %s\n",
            GetName().c_str(), error, ciNameStr, lua_tostring(L, -1));
@@ -333,7 +331,7 @@ bool LuaHandle::PushCallIn(int ciCode) {
   if (lua_isfunction(L, -1)) {
     return true;
   }
-  const string* name = luaCallInDB.GetName(ciCode);
+  const std::string* name = luaCallInDB.GetName(ciCode);
   printf("Failed to get: %i %s\n", ciCode, name ? name->c_str() : "UNKNOWN");
   lua_pop(L, 1);
   return false;
@@ -413,7 +411,7 @@ int LuaHandle::ScriptReload(lua_State* L) {
 //============================================================================//
 
 int LuaHandle::ScriptPrintPointer(lua_State* L) {
-  const string prefix = luaL_optstring(L, 2, "PrintPointer: ");
+  const std::string prefix = luaL_optstring(L, 2, "PrintPointer: ");
   LuaLog(0, "%s%p\n", prefix.c_str(), lua_topointer(L, 1));
   return 0;
 }
@@ -432,7 +430,7 @@ int LuaHandle::ScriptGetID(lua_State* L) {
     lua_pushinteger(L, L2H(L)->GetScriptID());
   }
   else if (lua_israwstring(L, 1)) {
-    const string key = lua_tostring(L, 1);
+    const std::string key = lua_tostring(L, 1);
     if (key == "LuaUser") {
       lua_pushinteger(L, LUA_USER_SCRIPT_ID);
     }
@@ -536,14 +534,14 @@ static void PushCallInInfo(lua_State* L, const LuaCallInDB::CallInInfo& ciInfo) 
 
 
 int LuaHandle::ScriptGetCallInInfo(lua_State* L) {
-  vector<string> list;
+  std::vector<std::string> list;
   eventHandler.GetEventList(list);
 
   const LuaCallInDB::InfoMap& ciInfoMap = luaCallInDB.GetInfoMap();
   LuaCallInDB::InfoMap::const_iterator it;
 
   if (lua_israwstring(L, 1)) {
-    const string ciName = lua_tostring(L, 1);
+    const std::string ciName = lua_tostring(L, 1);
     const bool wantAll = lua_isboolean(L, 2) && lua_tobool(L, 2);
     if (wantAll || L2H(L)->CanUseCallIn(ciName)) {
       it = ciInfoMap.find(ciName);
@@ -573,14 +571,14 @@ int LuaHandle::ScriptGetCallInInfo(lua_State* L) {
 
 
 int LuaHandle::ScriptCanUseCallIn(lua_State* L) {
-  const string ciName = lua_tostring(L, 1);
+  const std::string ciName = lua_tostring(L, 1);
   lua_pushboolean(L, L2H(L)->CanUseCallIn(ciName));
   return 1;
 }
 
 
 int LuaHandle::ScriptSetCallIn(lua_State* L) {
-  const string ciName = luaL_checkstring(L, 1);
+  const std::string ciName = luaL_checkstring(L, 1);
 
   const int ciCode = luaCallInDB.GetCode(ciName);
   if (ciCode == 0) {
@@ -606,7 +604,7 @@ int LuaHandle::ScriptSetCallIn(lua_State* L) {
   lua_pushvalue(L, 2); // make a copy
   lua_rawset(L, LUA_CALLINSINDEX);
 
-  const string& eventName = luaCallInDB.GetEventName(ciName);
+  const std::string& eventName = luaCallInDB.GetEventName(ciName);
   if (eventHandler.IsManaged(eventName)) {
     lua_pushboolean(L, L2H(L)->UpdateCallIn(ciName, haveFunc));
   }

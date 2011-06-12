@@ -109,8 +109,8 @@ class LuaCallInDB {
 
     bool Init();
 
-    const string& GetEventName(const string& callIn) const;
-    const string& GetCallInName(const string& event) const;
+    const std::string& GetEventName(const std::string& callIn) const;
+    const std::string& GetCallInName(const std::string& event) const;
 
   public:
     struct CallInInfo {

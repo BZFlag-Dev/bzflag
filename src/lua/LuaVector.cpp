@@ -18,7 +18,6 @@
 
 // system headers
 #include <vector>
-using std::vector;
 
 // local headers
 #include "LuaHeader.h"
@@ -149,7 +148,7 @@ int LuaVector::length(lua_State* L) {
 
 
 int LuaVector::normalize(lua_State* L) {
-  static vector<float> data;
+  static std::vector<float> data;
   const int count = lua_gettop(L);
   data.resize(count + 1); // not using data[0]
 

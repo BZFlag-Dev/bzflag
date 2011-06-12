@@ -18,10 +18,7 @@
 
 // system headers
 #include <string>
-#include <set>
 #include <cctype>
-using std::string;
-using std::set;
 
 // common headers
 #include "BzVFS.h"
@@ -127,7 +124,7 @@ LuaRules::LuaRules()
     return;
   }
 
-  const string sourceCode = LoadSourceCode(sourceFile, BZVFS_LUA_RULES);
+  const std::string sourceCode = LoadSourceCode(sourceFile, BZVFS_LUA_RULES);
   if (sourceCode.empty()) {
     KillLua();
     return;

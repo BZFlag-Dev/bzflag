@@ -20,8 +20,6 @@
 #include <assert.h>
 #include <string>
 #include <vector>
-using std::string;
-using std::vector;
 
 // common headers
 #include "ArcObstacle.h"
@@ -132,8 +130,8 @@ bool LuaObstacle::PushEntries(lua_State* L) {
 
 static bool makeTexcoords(const fvec2& autoScale,
                           const fvec4& plane,
-                          const vector<fvec3>& vertices,
-                          vector<fvec2>& texcoords) {
+                          const std::vector<fvec3>& vertices,
+                          std::vector<fvec2>& texcoords) {
   const float defScale = 1.0f / 8.0f;
   const float sScale = (autoScale.s == 0.0f) ? defScale : 1.0f / autoScale.s;
   const float tScale = (autoScale.t == 0.0f) ? defScale : 1.0f / autoScale.t;
@@ -186,7 +184,7 @@ static bool makeTexcoords(const fvec2& autoScale,
 //============================================================================//
 //============================================================================//
 
-static int GetTypeFromName(const string& name) {
+static int GetTypeFromName(const std::string& name) {
   if (name == "wall")   { return wallType;   }
   else if (name == "box")    { return boxType;    }
   else if (name == "pyr")    { return pyrType;    }
@@ -627,12 +625,12 @@ int LuaObstacle::GetFaceTxcds(lua_State* L) {
 
   // generate texcoords
   const int elements = face->getVertexCount();
-  vector<fvec3> vertArray;
+  std::vector<fvec3> vertArray;
   for (int i = 0; i < elements; i++) {
     vertArray.push_back(face->getVertex(i));
   }
   const fvec2& autoScale = face->getMaterial()->getTextureAutoScale(0);
-  vector<fvec2> txcdArray;
+  std::vector<fvec2> txcdArray;
   txcdArray.resize(elements);
   if (!makeTexcoords(autoScale, face->getPlane(), vertArray, txcdArray)) {
     return luaL_pushnil(L);
@@ -835,7 +833,7 @@ int LuaObstacle::GetFaceZoneParams(lua_State* L) {
   if (!face->isSpecial()) {
     return luaL_pushnil(L);
   }
-  const vector<string>& zoneParams = face->getSpecialData()->zoneParams;
+  const std::vector<std::string>& zoneParams = face->getSpecialData()->zoneParams;
   if (zoneParams.empty()) {
     lua_pushboolean(L, false);
     return 1;

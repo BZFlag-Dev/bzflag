@@ -19,9 +19,6 @@
 // system headers
 #include <cctype>
 #include <string>
-#include <set>
-using std::string;
-using std::set;
 
 // common headers
 #include "BzVFS.h"
@@ -54,7 +51,7 @@ void LuaUser::LoadHandler() {
     return;
   }
 
-  const string& dir = BZDB.get("luaUserDir");
+  const std::string& dir = BZDB.get("luaUserDir");
   if (dir.empty() || (dir[0] == '!')) {
     return;
   }
@@ -108,7 +105,7 @@ LuaUser::LuaUser()
     return;
   }
 
-  const string sourceCode = LoadSourceCode(sourceFile, BZVFS_LUA_USER);
+  const std::string sourceCode = LoadSourceCode(sourceFile, BZVFS_LUA_USER);
   if (sourceCode.empty()) {
     KillLua();
     return;

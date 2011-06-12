@@ -20,9 +20,6 @@
 #include <string>
 #include <vector>
 #include <map>
-using std::string;
-using std::vector;
-using std::map;
 
 // common headers
 #include "BzVFS.h"
@@ -98,7 +95,7 @@ const char* GetReadFilter(const std::string& path, lua_State* L) {
 
 int LuaVFS::FileExists(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
+  std::string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
   modes = BzVFS::allowModes(modes, L2ES(L)->vfsModes->readAllowed);
 
   lua_pushboolean(L, bzVFS.fileExists(path, modes));
@@ -112,7 +109,7 @@ int LuaVFS::FileExists(lua_State* L) {
 
 int LuaVFS::FileSize(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
+  std::string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
   modes = BzVFS::allowModes(modes, L2ES(L)->vfsModes->readAllowed);
 
   const int size = bzVFS.fileSize(path, modes);
@@ -131,10 +128,10 @@ int LuaVFS::FileSize(lua_State* L) {
 
 int LuaVFS::ReadFile(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
+  std::string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
   modes = BzVFS::allowModes(modes, L2ES(L)->vfsModes->readAllowed);
 
-  string data;
+  std::string data;
   if (bzVFS.readFile(path, modes, data)) {
     lua_pushstdstring(L, data);
   }
@@ -148,7 +145,7 @@ int LuaVFS::ReadFile(lua_State* L) {
 //============================================================================//
 //============================================================================//
 
-static bool ParseWriteData(lua_State* L, int index, string& data) {
+static bool ParseWriteData(lua_State* L, int index, std::string& data) {
   data.clear();
 
   if (lua_israwstring(L, index)) {
@@ -158,22 +155,22 @@ static bool ParseWriteData(lua_State* L, int index, string& data) {
     return true;
   }
   else if (lua_istable(L, index)) { // a table of strings
-    const string suffix = luaL_optstring(L, index + 1, ""); // optional suffix
+    const std::string suffix = luaL_optstring(L, index + 1, ""); // optional suffix
     const int table = (index > 0) ? index : (lua_gettop(L) + index + 1);
-    vector<string> dataVec;
+    std::vector<std::string> dataVec;
     size_t total = 0;
     for (int i = 1; lua_checkgeti(L, table, i) != 0; lua_pop(L, 1), i++) {
       if (lua_israwstring(L, -1)) {
         size_t len;
         const char* c = lua_tolstring(L, -1, &len);
-        dataVec.push_back(string(c, len) + suffix);
+        dataVec.push_back(std::string(c, len) + suffix);
         total += len;
       }
     }
     data.resize(total);
     size_t offset = 0;
     for (size_t s = 0; s < dataVec.size(); s++) {
-      const string& d = dataVec[s];
+      const std::string& d = dataVec[s];
       data.replace(offset, d.size(), d);
       offset += d.size();
     }
@@ -189,9 +186,9 @@ static bool ParseWriteData(lua_State* L, int index, string& data) {
 
 int LuaVFS::WriteFile(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  const string modes = L2ES(L)->vfsModes->writeAllowed;
+  const std::string modes = L2ES(L)->vfsModes->writeAllowed;
 
-  string data;
+  std::string data;
   if (!ParseWriteData(L, 2, data)) {
     luaL_error(L, "bad data");
   }
@@ -211,9 +208,9 @@ int LuaVFS::WriteFile(lua_State* L) {
 
 int LuaVFS::AppendFile(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  const string modes = L2ES(L)->vfsModes->writeAllowed;
+  const std::string modes = L2ES(L)->vfsModes->writeAllowed;
 
-  string data;
+  std::string data;
   if (!ParseWriteData(L, 2, data)) {
     luaL_error(L, "%s: bad data");
   }
@@ -233,7 +230,7 @@ int LuaVFS::AppendFile(lua_State* L) {
 
 int LuaVFS::RemoveFile(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  const string modes = L2ES(L)->vfsModes->writeAllowed;
+  const std::string modes = L2ES(L)->vfsModes->writeAllowed;
 
   if (bzVFS.removeFile(path, modes)) {
     lua_pushboolean(L, true);
@@ -251,7 +248,7 @@ int LuaVFS::RemoveFile(lua_State* L) {
 int LuaVFS::RenameFile(lua_State* L) {
   const char* oldPath = luaL_checkstring(L, 1);
   const char* newPath = luaL_checkstring(L, 2);
-  const string modes = L2ES(L)->vfsModes->writeAllowed;
+  const std::string modes = L2ES(L)->vfsModes->writeAllowed;
 
   if (bzVFS.renameFile(oldPath, modes, newPath)) {
     lua_pushboolean(L, true);
@@ -270,10 +267,10 @@ int LuaVFS::Include(lua_State* L) {
   lua_settop(L, 3);
 
   const char* path = luaL_checkstring(L, 1);
-  string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
+  std::string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
   modes = BzVFS::allowModes(modes, L2ES(L)->vfsModes->readAllowed);
 
-  string code;
+  std::string code;
   if (!bzVFS.readFile(path, modes, code)) {
     luaL_error(L, "file not found");
   }
@@ -315,7 +312,7 @@ int LuaVFS::Include(lua_State* L) {
 
 int LuaVFS::CreateDir(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  const string modes = L2ES(L)->vfsModes->writeAllowed;
+  const std::string modes = L2ES(L)->vfsModes->writeAllowed;
 
   if (bzVFS.createDir(path, modes)) {
     lua_pushboolean(L, true);
@@ -332,13 +329,13 @@ int LuaVFS::CreateDir(lua_State* L) {
 
 int LuaVFS::DirList(lua_State* L) {
   const char* path = luaL_checkstring(L, 1);
-  string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
+  std::string modes = luaL_optstring(L, 2, GetReadFilter(path, L));
   modes = BzVFS::allowModes(modes, L2ES(L)->vfsModes->readAllowed);
 
   const bool recursive = lua_isboolean(L, 3) && lua_tobool(L, 3);
 
-  vector<string> files;
-  vector<string> dirs;
+  std::vector<std::string> files;
+  std::vector<std::string> dirs;
   if (!bzVFS.dirList(path, modes, recursive, dirs, files)) {
     lua_pushnil(L);
     return 1;
@@ -346,7 +343,7 @@ int LuaVFS::DirList(lua_State* L) {
 
   lua_createtable(L, files.size(), 0);
   for (size_t i = 0; i < files.size(); i++) {
-    const string& fpath = files[i];
+    const std::string& fpath = files[i];
     lua_pushinteger(L, i + 1);
     lua_pushstdstring(L, fpath);
     lua_rawset(L, -3);
@@ -354,7 +351,7 @@ int LuaVFS::DirList(lua_State* L) {
 
   lua_createtable(L, dirs.size(), 0);
   for (size_t i = 0; i < dirs.size(); i++) {
-    const string& dpath = dirs[i];
+    const std::string& dpath = dirs[i];
     lua_pushinteger(L, i + 1);
     lua_pushstdstring(L, dpath);
     lua_rawset(L, -3);
