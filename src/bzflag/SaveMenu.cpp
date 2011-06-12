@@ -14,8 +14,8 @@
 #include "SaveMenu.h"
 
 /* common implementation headers */
-#include "FontManager.h"
-#include "StateDatabase.h"
+#include "3D/FontManager.h"
+#include "common/StateDatabase.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
@@ -25,7 +25,7 @@
 #include "HUDuiList.h"
 #include "HUDuiFrame.h"
 #include "HUDui.h"
-#include "ConfigFileManager.h"
+#include "common/ConfigFileManager.h"
 #include "clientConfig.h"
 #include "LocalFontFace.h"
 

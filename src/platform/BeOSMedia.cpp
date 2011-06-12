@@ -11,8 +11,8 @@
  */
 
 #include "BeOSMedia.h"
-#include "BzfMedia.h"
-#include "ErrorHandler.h"
+#include "platform/BzfMedia.h"
+#include "common/ErrorHandler.h"
 #include <MediaDefs.h>
 #include <math.h>
 #include <fcntl.h>

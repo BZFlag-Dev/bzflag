@@ -12,7 +12,7 @@
 
 /* interface header */
 #include "DirectoryNames.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 /* implementation system headers */
 #include <stdio.h>

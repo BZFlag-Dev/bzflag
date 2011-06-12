@@ -16,7 +16,7 @@
 /* common implementation headers */
 #include "GameKeeper.h"
 #include "FlagInfo.h"
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 
 
 extern int getCurMaxPlayers();

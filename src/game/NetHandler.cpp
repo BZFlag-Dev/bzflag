@@ -18,7 +18,7 @@
 // system headers
 #include <errno.h>
 
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 
 
 // Are these size/limits reasonable?

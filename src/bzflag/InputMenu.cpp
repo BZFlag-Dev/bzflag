@@ -14,8 +14,8 @@
 #include "InputMenu.h"
 
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "FontManager.h"
+#include "common/StateDatabase.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

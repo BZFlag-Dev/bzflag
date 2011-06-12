@@ -21,7 +21,7 @@
 /* common headers */
 #include "Singleton.h"
 
-#include "Obstacle.h"
+#include "obstacle/Obstacle.h"
 
 
 #define _INVALID_TANGIBILITY 255

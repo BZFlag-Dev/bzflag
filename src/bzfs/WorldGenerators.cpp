@@ -28,11 +28,11 @@
 
 // common headers
 #include "WorldInfo.h"
-#include "ObstacleMgr.h"
-#include "BaseBuilding.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "BzTime.h"
+#include "obstacle/ObstacleMgr.h"
+#include "obstacle/BaseBuilding.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "common/BzTime.h"
 #include "vectors.h"
 #include "version.h"
 

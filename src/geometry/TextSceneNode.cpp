@@ -26,25 +26,25 @@
 
 // common headers
 #include "bzfgl.h"
-#include "BZDBCache.h"
-#include "BzMaterial.h"
-#include "CacheManager.h"
-#include "DynamicColor.h"
-#include "FontManager.h"
-#include "Intersect.h"
-#include "MeshTransform.h"
-#include "OpenGLMaterial.h"
-#include "OpenGLUtils.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
-#include "StateDatabase.h"
-#include "TextureManager.h"
-#include "TextUtils.h"
-#include "BzTime.h"
-#include "WorldText.h"
-#include "bzfio.h" // for debugLevel
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
+#include "common/CacheManager.h"
+#include "game/DynamicColor.h"
+#include "3D/FontManager.h"
+#include "game/Intersect.h"
+#include "game/MeshTransform.h"
+#include "ogl/OpenGLMaterial.h"
+#include "ogl/OpenGLUtils.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "common/StateDatabase.h"
+#include "3D/TextureManager.h"
+#include "common/TextUtils.h"
+#include "common/BzTime.h"
+#include "game/WorldText.h"
+#include "common/bzfio.h" // for debugLevel
 
 // local headers
-#include "ViewFrustum.h"
+#include "geometry/ViewFrustum.h"
 
 
 static const GLbitfield FTGL_MISSING_ATTRIBS = GL_TEXTURE_BIT;

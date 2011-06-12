@@ -31,7 +31,7 @@
 #endif // _WIN32
 
 // common headers
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 
 // opaque version number increments on protocol incompatibility

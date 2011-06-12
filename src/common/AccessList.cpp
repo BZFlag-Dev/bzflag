@@ -22,11 +22,11 @@
 
 // common headers
 #include "bzregex.h"
-#include "bzfio.h"
-#include "bzglob.h"
-#include "TextUtils.h"
-#include "FileManager.h"
-#include "DirectoryNames.h"
+#include "common/bzfio.h"
+#include "common/bzglob.h"
+#include "common/TextUtils.h"
+#include "common/FileManager.h"
+#include "game/DirectoryNames.h"
 
 
 static inline char* eatWhite(char* c) {

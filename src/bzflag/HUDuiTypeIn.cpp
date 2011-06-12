@@ -17,10 +17,10 @@
 #include <ctype.h>
 
 // common headers
-#include "Clipboard.h"
-#include "FontManager.h"
-#include "KeyManager.h"
-#include "bzUnicode.h"
+#include "platform/Clipboard.h"
+#include "3D/FontManager.h"
+#include "common/KeyManager.h"
+#include "common/bzUnicode.h"
 
 // local headers
 #include "LocalFontFace.h"

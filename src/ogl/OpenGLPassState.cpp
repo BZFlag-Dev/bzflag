@@ -12,14 +12,14 @@
 #include <algorithm>
 
 // common headers
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "SceneRenderer.h"
-#include "BzfDisplay.h"
-#include "BzfWindow.h"
-#include "TextureManager.h"
-#include "OpenGLGState.h"
-#include "bzfio.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "bzflag/SceneRenderer.h"
+#include "platform/BzfDisplay.h"
+#include "platform/BzfWindow.h"
+#include "3D/TextureManager.h"
+#include "ogl/OpenGLGState.h"
+#include "common/bzfio.h"
 
 // bzflag headers - FIXME - breaks abstraction
 #include "bzflag/guiplaying.h"

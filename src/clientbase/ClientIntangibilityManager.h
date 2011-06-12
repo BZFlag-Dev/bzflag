@@ -17,7 +17,7 @@
 #include "Singleton.h"
 #include <map>
 
-#include "ObstacleMgr.h"
+#include "obstacle/ObstacleMgr.h"
 
 
 #define _INVALID_TANGIBILITY 255

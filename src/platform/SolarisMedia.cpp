@@ -11,7 +11,7 @@
  */
 
 #include "SolarisMedia.h"
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 #define DEBUG_SOLARIS     0 //(1 = debug, 0 = don't!)
 

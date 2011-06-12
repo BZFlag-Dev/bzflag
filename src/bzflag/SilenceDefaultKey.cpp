@@ -17,7 +17,7 @@
 #include <string>
 
 // common implementation headers
-#include "KeyManager.h"
+#include "common/KeyManager.h"
 
 // local implementation headers
 #include "LocalPlayer.h"

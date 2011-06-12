@@ -15,7 +15,7 @@
 #include <string.h>
 
 #include "Pack.h"
-#include "network.h"
+#include "net/network.h"
 
 #define ADV(_b, _t) ((void*)(((char*)(_b)) + sizeof(_t)))
 

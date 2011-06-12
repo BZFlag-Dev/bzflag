@@ -19,9 +19,9 @@
 
 // common headers
 #include "BzfEvent.h"
-#include "KeyManager.h"
-#include "EventHandler.h"
-#include "BZDBCache.h"
+#include "common/KeyManager.h"
+#include "clientbase/EventHandler.h"
+#include "game/BZDBCache.h"
 
 // local headers
 #include "LocalPlayer.h"

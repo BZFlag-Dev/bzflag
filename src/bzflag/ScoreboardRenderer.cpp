@@ -14,14 +14,14 @@
 #include "ScoreboardRenderer.h"
 
 // common headers
-#include "Bundle.h"
-#include "Team.h"
-#include "FontManager.h"
-#include "BZDBCache.h"
-#include "OpenGLGState.h"
-#include "TextUtils.h"
-#include "BzTime.h"
-#include "GfxBlock.h"
+#include "common/Bundle.h"
+#include "game/Team.h"
+#include "3D/FontManager.h"
+#include "game/BZDBCache.h"
+#include "ogl/OpenGLGState.h"
+#include "common/TextUtils.h"
+#include "common/BzTime.h"
+#include "clientbase/GfxBlock.h"
 
 // local headers
 #include "FontSizer.h"

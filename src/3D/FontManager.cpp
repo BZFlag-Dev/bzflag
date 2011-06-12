@@ -24,15 +24,15 @@
 
 // Global implementation headers
 #include "bzfgl.h"
-#include "bzfio.h"
+#include "common/bzfio.h"
 #include "AnsiCodes.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "OpenGLGState.h"
-#include "BzTime.h"
-#include "TextUtils.h"
-#include "OSFile.h"
-#include "SceneNode.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "ogl/OpenGLGState.h"
+#include "common/BzTime.h"
+#include "common/TextUtils.h"
+#include "common/OSFile.h"
+#include "geometry/SceneNode.h"
 
 // local implementation headers
 #include "FTGL/ftgl.h"

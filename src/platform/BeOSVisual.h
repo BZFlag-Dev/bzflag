@@ -17,7 +17,7 @@
 #ifndef BZF_BEOSVISUAL_H
 #define BZF_BEOSVISUAL_H
 
-#include "BzfVisual.h"
+#include "platform/BzfVisual.h"
 #include "BeOSDisplay.h"
 
 class BeOSVisual : public BzfVisual {

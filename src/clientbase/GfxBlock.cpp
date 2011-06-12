@@ -21,7 +21,7 @@
 #include <map>
 
 // common headers
-#include "EventClient.h"
+#include "clientbase/EventClient.h"
 
 // bzflag headers
 #include "World.h"

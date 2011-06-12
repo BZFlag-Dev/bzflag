@@ -14,7 +14,7 @@
 #include "BaseLocalPlayer.h"
 
 /* common implementation headers */
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 
 #include "playing.h"
 

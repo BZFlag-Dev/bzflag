@@ -20,9 +20,9 @@
 #include <string>
 
 // common headers
-#include "global.h"
-#include "bzfsAPI.h"
-#include "Obstacle.h"
+#include "game/global.h"
+#include "bzfs/bzfsAPI.h"
+#include "obstacle/Obstacle.h"
 
 // local headers
 #include "LuaHeader.h"

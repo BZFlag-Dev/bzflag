@@ -20,7 +20,7 @@
 #include <string>
 
 // common headers
-#include "PhysicsDriver.h"
+#include "game/PhysicsDriver.h"
 
 // local headers
 #include "LuaHeader.h"

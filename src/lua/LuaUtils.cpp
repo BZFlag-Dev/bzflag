@@ -22,9 +22,9 @@
 #include <cctype>
 
 // common headers
-#include "bzfio.h"
-#include "StateDatabase.h"
-#include "TextUtils.h"
+#include "common/bzfio.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 
 
 //============================================================================//

@@ -17,7 +17,7 @@
 #ifndef BZF_SOLARISPLATFORM_FACTORY_H
 #define BZF_SOLARISPLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "platform/PlatformFactory.h"
 
 class SolarisPlatformFactory : public PlatformFactory {
   public:

@@ -20,11 +20,11 @@
 #include <vector>
 
 /* common interface headers */
-#include "Flag.h"
-#include "BzTime.h"
+#include "game/Flag.h"
+#include "common/BzTime.h"
 #include "vectors.h"
 
-#include "WorldEventManager.h"
+#include "bzfs/WorldEventManager.h"
 
 #define _MAX_WORLD_SHOTS 30
 

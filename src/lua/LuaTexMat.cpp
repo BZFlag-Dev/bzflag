@@ -20,7 +20,7 @@
 #include <string>
 
 // common headers
-#include "TextureMatrix.h"
+#include "game/TextureMatrix.h"
 
 // local headers
 #include "LuaHeader.h"

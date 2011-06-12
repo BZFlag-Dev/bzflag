@@ -20,7 +20,7 @@
 #include "common.h"
 
 #ifdef USBJOYSTICK
-#include "BzfJoystick.h"
+#include "platform/BzfJoystick.h"
 #include <X11/Intrinsic.h>
 #include <fcntl.h>
 #include <unistd.h>

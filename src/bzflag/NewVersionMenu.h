@@ -15,7 +15,7 @@
 
 /* common interface headers */
 #include "HUDDialog.h"
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 /* local interface headers */
 #include "MenuDefaultKey.h"

@@ -17,9 +17,9 @@
 #include <limits.h>
 
 /* common implementation headers */
-#include "network.h"
-#include "bzfio.h"
-#include "Pack.h"
+#include "net/network.h"
+#include "common/bzfio.h"
+#include "net/Pack.h"
 #include "Protocol.h"
 
 

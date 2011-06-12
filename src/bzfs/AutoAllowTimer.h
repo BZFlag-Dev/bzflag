@@ -17,9 +17,9 @@
 #include "common.h"
 
 /* common interface headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 
-#include "WorldEventManager.h"
+#include "bzfs/WorldEventManager.h"
 
 #define _MAX_WORLD_SHOTS 30
 

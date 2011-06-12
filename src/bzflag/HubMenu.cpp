@@ -16,17 +16,17 @@
 #include "HubMenu.h"
 
 /* common implementation headers */
-#include "BZDBCache.h"
-#include "BzfDisplay.h"
-#include "FontManager.h"
-#include "SceneRenderer.h"
-#include "TextureManager.h"
+#include "game/BZDBCache.h"
+#include "platform/BzfDisplay.h"
+#include "3D/FontManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "3D/TextureManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
 #include "HubLink.h"
 #include "JoinMenu.h"
-#include "StartupInfo.h"
+#include "game/StartupInfo.h"
 #include "HUDDialogStack.h"
 #include "HUDuiList.h"
 #include "LocalFontFace.h"

@@ -13,7 +13,7 @@
 #ifndef _BZFS_CLIENT_MESSAGES_H_
 #define _BZFS_CLIENT_MESSAGES_H_
 
-#include "global.h"
+#include "game/global.h"
 #include "bzfs.h"
 
 void packWorldSettings(void);

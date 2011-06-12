@@ -12,7 +12,7 @@
 
 // Interface header
 #include "ShotStatistics.h"
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 ShotStatistics::ShotStatistics() :
   normalFired(0), normalHit(0),

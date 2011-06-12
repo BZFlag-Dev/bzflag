@@ -15,8 +15,8 @@
 #include <string.h>
 #include <iostream>
 #include "Obstacle.h"
-#include "Intersect.h"
-#include "StateDatabase.h"
+#include "game/Intersect.h"
+#include "common/StateDatabase.h"
 
 
 // limits the maximum extent of any obstacle

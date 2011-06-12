@@ -20,7 +20,7 @@
 #include <map>
 
 // common headers
-#include "global.h"
+#include "game/global.h"
 #include "vectors.h"
 
 

@@ -14,9 +14,9 @@
 #include "AutoAllowTimer.h"
 
 // common-interface headers
-#include "BzTime.h"
-#include "StateDatabase.h"
-#include "PlayerInfo.h"
+#include "common/BzTime.h"
+#include "common/StateDatabase.h"
+#include "game/PlayerInfo.h"
 #include "bzfsMessages.h"
 
 // bzfs specific headers

@@ -16,8 +16,8 @@
 #include "WinWindow.h"
 #include <stdio.h>
 #include <math.h>
-#include "StateDatabase.h"
-#include "DirectoryNames.h"
+#include "common/StateDatabase.h"
+#include "game/DirectoryNames.h"
 
 WinWindow*    WinWindow::first = NULL;
 HPALETTE    WinWindow::colormap = NULL;

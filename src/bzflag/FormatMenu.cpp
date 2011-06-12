@@ -14,9 +14,9 @@
 #include "FormatMenu.h"
 
 /* common implementation headers */
-#include "BzfDisplay.h"
-#include "ErrorHandler.h"
-#include "FontManager.h"
+#include "platform/BzfDisplay.h"
+#include "common/ErrorHandler.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

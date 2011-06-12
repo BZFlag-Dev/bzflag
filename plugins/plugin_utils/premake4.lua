@@ -5,7 +5,7 @@ project 'plugin_utils'
   language 'C++'
   objdir '.objs'
   buildoptions '-fPIC'
-  includedirs { '../../src/include' }
+  includedirs { '../../src/bzfs' }
   files {
     'base64.cpp',        'base64.h',
     'plugin_groups.cpp', 'plugin_groups.h',

@@ -20,9 +20,9 @@
 #include <string>
 
 // common headers
-#include "BzMaterial.h"
-#include "DynamicColor.h"
-#include "TextureMatrix.h"
+#include "game/BzMaterial.h"
+#include "game/DynamicColor.h"
+#include "game/TextureMatrix.h"
 
 // local headers
 #include "LuaHeader.h"

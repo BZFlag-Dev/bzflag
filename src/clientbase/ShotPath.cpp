@@ -19,7 +19,7 @@
 #include "ShockWaveStrategy.h"
 
 // common headers
-#include "EventHandler.h"
+#include "clientbase/EventHandler.h"
 
 
 //============================================================================//

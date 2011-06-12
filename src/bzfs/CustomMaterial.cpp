@@ -23,7 +23,7 @@
 #include "ParseMaterial.h"
 
 /* common implementation headers */
-#include "BzMaterial.h"
+#include "game/BzMaterial.h"
 
 
 CustomMaterial::CustomMaterial(const char* matName) {

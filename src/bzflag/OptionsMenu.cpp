@@ -14,15 +14,15 @@
 #include "OptionsMenu.h"
 
 /* common implementation headers */
-#include "FontManager.h"
-#include "StateDatabase.h"
+#include "3D/FontManager.h"
+#include "common/StateDatabase.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "clientConfig.h"
-#include "ConfigFileManager.h"
+#include "common/ConfigFileManager.h"
 #include "bzflag.h"
 #include "LocalFontFace.h"
 

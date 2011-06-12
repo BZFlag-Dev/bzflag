@@ -11,11 +11,11 @@
  */
 
 #include "Reports.h"
-#include "bzfsAPI.h"
-#include "WorldEventManager.h"
+#include "bzfs/bzfsAPI.h"
+#include "bzfs/WorldEventManager.h"
 #include "bzfs.h"
 #include "time.h"
-#include "bzglob.h"
+#include "common/bzglob.h"
 
 /** initialize the singleton */
 template <>

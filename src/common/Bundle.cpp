@@ -23,7 +23,7 @@
 #include <stdio.h>
 
 // local implementation headers
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 #include "AnsiCodes.h"
 
 

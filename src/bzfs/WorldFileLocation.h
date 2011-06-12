@@ -19,7 +19,7 @@
 #include <iostream>
 
 // bzfs-specific headers
-#include "MeshTransform.h"
+#include "game/MeshTransform.h"
 
 
 class WorldFileLocation : public WorldFileObject {

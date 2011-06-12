@@ -21,7 +21,7 @@
 #include <stdexcept>
 
 // common headers
-#include "EventHandler.h"
+#include "clientbase/EventHandler.h"
 
 // local headers
 #include "LuaCallInDB.h"

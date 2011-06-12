@@ -14,12 +14,12 @@
 #include "ShotStrategy.h"
 
 /* common implementation headers */
-#include "CollisionManager.h"
-#include "Obstacle.h"
-#include "ObstacleList.h"
-#include "WallObstacle.h"
-#include "MeshFace.h"
-#include "ObstacleMgr.h"
+#include "game/CollisionManager.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/ObstacleList.h"
+#include "obstacle/WallObstacle.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/ObstacleMgr.h"
 
 
 ShotStrategy::ShotStrategy(ShotPath* _path) :

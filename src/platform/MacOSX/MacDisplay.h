@@ -14,7 +14,7 @@
 #define BZF_MACDISPLAY_H
 
 #include "common.h"
-#include "BzfDisplay.h"
+#include "platform/BzfDisplay.h"
 #include "BzfEvent.h"
 #include "bzfgl.h"
 

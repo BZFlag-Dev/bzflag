@@ -17,7 +17,7 @@
 #include "LuaCallInCheck.h"
 
 // common headers
-#include "bzfio.h"
+#include "common/bzfio.h"
 
 // local headers
 #include "LuaHeader.h"

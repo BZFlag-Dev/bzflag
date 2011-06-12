@@ -19,9 +19,9 @@
 #include <string>
 
 /* common interface headers */
-#include "Address.h"
+#include "net/Address.h"
 #include "BZAdminUI.h"
-#include "global.h"
+#include "game/global.h"
 #include "UIMap.h"
 
 

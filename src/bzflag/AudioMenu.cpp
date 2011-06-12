@@ -18,12 +18,12 @@
 #include <vector>
 
 /* common implementation headers */
-#include "TextUtils.h"
-#include "FontManager.h"
+#include "common/TextUtils.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 #include "MainMenu.h"
 #include "sound.h"
 #include "HUDuiControl.h"

@@ -23,10 +23,10 @@
 
 /* bzflag common headers */
 #include "Protocol.h"
-#include "Flag.h"
-#include "WordFilter.h"
-#include "TextChunkManager.h"
-#include "OSFile.h"
+#include "game/Flag.h"
+#include "common/WordFilter.h"
+#include "common/TextChunkManager.h"
+#include "common/OSFile.h"
 
 /* bzfs-specific headers */
 #include "AccessControlList.h"

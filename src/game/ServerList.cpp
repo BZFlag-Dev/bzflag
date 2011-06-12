@@ -25,16 +25,16 @@
 
 /* common implementation headers */
 #include "version.h"
-#include "bzsignal.h"
-#include "Ping.h"
+#include "common/bzsignal.h"
+#include "net/Ping.h"
 #include "Protocol.h"
-#include "BzTime.h"
-#include "TextUtils.h"
-#include "ErrorHandler.h"
+#include "common/BzTime.h"
+#include "common/TextUtils.h"
+#include "common/ErrorHandler.h"
 
 /* local implementation headers */
-#include "ServerListCache.h"
-#include "StartupInfo.h"
+#include "game/ServerListCache.h"
+#include "game/StartupInfo.h"
 
 // initialize the singleton
 template <>

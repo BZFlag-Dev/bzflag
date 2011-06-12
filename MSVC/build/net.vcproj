@@ -182,27 +182,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\include\Address.h"
+				RelativePath="..\..\src\net\Address.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\AresHandler.h"
+				RelativePath="..\..\src\net\AresHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\multicast.h"
+				RelativePath="..\..\src\net\multicast.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\network.h"
+				RelativePath="..\..\src\net\network.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Pack.h"
+				RelativePath="..\..\src\net\Pack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Ping.h"
+				RelativePath="..\..\src\net\Ping.h"
 				>
 			</File>
 		</Filter>

@@ -14,7 +14,7 @@
 #define __FLASHCLOCK_H__
 
 /* common interface headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 
 /**

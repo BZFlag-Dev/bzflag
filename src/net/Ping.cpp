@@ -19,10 +19,10 @@
 #include <ctype.h>
 
 /* common implementation headers */
-#include "global.h"
+#include "game/global.h"
 #include "Protocol.h"
-#include "BzTime.h"
-#include "bzfio.h"
+#include "common/BzTime.h"
+#include "common/bzfio.h"
 
 // incessint rebuilding for current versioning
 #include "version.h"

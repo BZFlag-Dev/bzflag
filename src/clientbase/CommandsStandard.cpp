@@ -20,10 +20,10 @@
 #include <string>
 
 /* common implementation headers */
-#include "CommandManager.h"
-#include "StateDatabase.h"
-#include "KeyManager.h"
-#include "TextUtils.h"
+#include "common/CommandManager.h"
+#include "common/StateDatabase.h"
+#include "common/KeyManager.h"
+#include "common/TextUtils.h"
 
 // FIXME: Shouldn't need to depend on GUI elements
 #include "guiplaying.h"

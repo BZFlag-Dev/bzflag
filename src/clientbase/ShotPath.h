@@ -28,15 +28,15 @@
 #include "common.h"
 
 /* common interface headers */
-#include "BzTime.h"
-#include "Flag.h"
-#include "ShotUpdate.h"
-#include "GfxBlock.h"
+#include "common/BzTime.h"
+#include "game/Flag.h"
+#include "game/ShotUpdate.h"
+#include "clientbase/GfxBlock.h"
 #include "vectors.h"
 
 /* local interface headers */
 #include "ShotStrategy.h"
-#include "SceneDatabase.h"
+#include "scene/SceneDatabase.h"
 
 
 class ShotStrategy;

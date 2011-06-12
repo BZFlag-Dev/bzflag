@@ -15,7 +15,7 @@
 
 #include "common.h"
 
-#include "Flag.h"
+#include "game/Flag.h"
 
 /** ShotStatistics stores and calculates a set of statistics on player's shots
  *  and accuracy

@@ -24,7 +24,7 @@
 #include "WinVisual.h"
 #include "WinWindow.h"
 #include "WinJoystick.h"
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 PlatformFactory*  PlatformFactory::getInstance() {
   if (!instance) { instance = new WinPlatformFactory; }

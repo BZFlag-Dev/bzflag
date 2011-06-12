@@ -19,7 +19,7 @@
 
 // common headers
 #include "BzfEvent.h"
-#include "KeyManager.h"
+#include "common/KeyManager.h"
 
 // local headers
 #include "LocalPlayer.h"

@@ -20,8 +20,8 @@
 #include <iostream>
 
 // common headers
-#include "PhysicsDriver.h"
-#include "TextUtils.h"
+#include "game/PhysicsDriver.h"
+#include "common/TextUtils.h"
 
 // bzfs headers
 #include "ParseMaterial.h"

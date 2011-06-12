@@ -14,7 +14,7 @@
 #include "Weapon.h"
 
 // common headers
-#include "Pack.h"
+#include "net/Pack.h"
 
 
 Weapon::Weapon() {

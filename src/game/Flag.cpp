@@ -22,10 +22,10 @@
 #include <string.h>
 
 // common headers
-#include "NetMessage.h"
-#include "Pack.h"
-#include "Team.h"
-#include "TextUtils.h"
+#include "game/NetMessage.h"
+#include "net/Pack.h"
+#include "game/Team.h"
+#include "common/TextUtils.h"
 
 
 FlagSet* FlagType::flagSets = NULL;

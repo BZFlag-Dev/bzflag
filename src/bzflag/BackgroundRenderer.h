@@ -27,11 +27,11 @@
 
 /* common interface headers */
 #include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "SceneRenderer.h"
+#include "ogl/OpenGLGState.h"
+#include "bzflag/SceneRenderer.h"
 #include "WeatherRenderer.h"
 
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 class BackgroundRenderer : public GLDisplayListCreator {
   public:

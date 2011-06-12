@@ -22,9 +22,9 @@
 #include <string.h>
 
 // common headers
-#include "MeshFace.h"
-#include "Intersect.h"
-#include "ViewFrustum.h"
+#include "obstacle/MeshFace.h"
+#include "game/Intersect.h"
+#include "geometry/ViewFrustum.h"
 
 
 OccluderSceneNode::OccluderSceneNode(const MeshFace* face) {

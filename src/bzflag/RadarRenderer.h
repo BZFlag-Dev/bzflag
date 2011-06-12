@@ -23,13 +23,13 @@
 /* common interface headers */
 #include "bzfgl.h"
 #include "vectors.h"
-#include "Obstacle.h"
-#include "OpenGLUtils.h"
+#include "obstacle/Obstacle.h"
+#include "ogl/OpenGLUtils.h"
 
 /* local implementation headers */
-#include "MeshObstacle.h"
-#include "BoxBuilding.h"
-#include "PyramidBuilding.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/BoxBuilding.h"
+#include "obstacle/PyramidBuilding.h"
 
 
 class SceneRenderer;

@@ -18,7 +18,7 @@
 #define __SDLVISUAL_H__
 
 /* interface headers */
-#include "BzfVisual.h"
+#include "platform/BzfVisual.h"
 #include "SDLDisplay.h"
 
 

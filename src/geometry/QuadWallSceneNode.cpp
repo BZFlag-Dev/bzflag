@@ -21,12 +21,12 @@
 
 // common headers
 #include "bzfgl.h"
-#include "BZDBCache.h"
-#include "Intersect.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "game/BZDBCache.h"
+#include "game/Intersect.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 // local headers
-#include "ViewFrustum.h"
+#include "geometry/ViewFrustum.h"
 
 
 //

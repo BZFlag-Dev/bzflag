@@ -1,0 +1,170 @@
+/* bzflag
+ * Copyright (c) 1993-2010 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
+
+#ifndef BZF_GLOBAL_H
+#define BZF_GLOBAL_H
+
+/*
+ * Global constants
+ */
+
+#include "common.h"
+
+/* system headers */
+#include <math.h>
+
+/* common headers */
+#include "common/StateDatabase.h"
+
+#include "bzfs/bzfsAPI.h"
+
+// values affecting struct and class layout
+const int CallSignLen   = 32;  // including terminating NUL
+const int PasswordLen   = 32;  // including terminating NUL
+const int TokenLen      = 22;  // opaque string (now int(10)) and terminating NUL
+const int VersionLen    = 60;  // including terminating NUL
+const int MessageLen    = 128; // including terminating NUL
+const int ServerNameLen = 80;
+const int ReferrerLen   = 256; // including terminating NUL
+
+// types of things we can be
+enum PlayerType {
+  TankPlayer,
+  ComputerPlayer,
+  ChatPlayer
+};
+
+// types of updates we can receive
+enum NetworkUpdates {
+  NoUpdates       = 0, // receive no player data and no chats
+  PlayerUpdates   = 1, // receive only player updates
+  ChatUpdates     = 2, // receive only chats
+  AllUpdates      = 3  // receive player data and chats
+};
+
+// player info
+typedef uint8_t PlayerId;
+const int       PlayerIdPLen = sizeof(PlayerId);
+
+// FIXME - enum maybe? put into namespace or class cage?
+const PlayerId NoPlayer             = 255;
+const PlayerId AllPlayers           = 254;
+const PlayerId ServerPlayer         = 253;
+const PlayerId AdminPlayers         = 252;
+const PlayerId UnusedSpecialPlayer2 = 251; // This id is unused at present and vailable for special needs in the future
+const PlayerId LastRealPlayer       = 243;
+
+// team info
+const int NumTeams = 8;
+const int CtfTeams = 5;
+
+enum TeamColor {
+  AutomaticTeam = -2,
+  NoTeam        = -1,
+  RogueTeam     = 0,
+  RedTeam       = 1,
+  GreenTeam     = 2,
+  BlueTeam      = 3,
+  PurpleTeam    = 4,
+  ObserverTeam  = 5,
+  RabbitTeam    = 6,
+  HunterTeam    = 7
+};
+
+// Player allow attributes for MsgAllow
+enum PlayerAllow {
+  AllowNone = 0x00,
+  AllowShoot = 0x01,
+  AllowJump = 0x02,
+  AllowTurnLeft = 0x04,
+  AllowTurnRight = 0x08,
+  AllowMoveForward = 0x10,
+  AllowMoveBackward = 0x20,
+  AllowAll = 0xFF
+};
+
+// Types of chat messages
+enum MessageType {
+  ChatMessage,
+  ActionMessage
+};
+
+#ifdef ROBOT
+// robots
+#define MAX_ROBOTS 100
+#endif
+
+// epsilon and very far for ray intersections
+const float Epsilon   = ZERO_TOLERANCE; // arbitrary
+const float Infinity  = MAXFLOAT;       // arbitrary
+
+#define DEFAULT_WORLD 800
+
+// readout stuff
+const int MaxMessages = 20; // msg. history length
+const int MinX = 256;
+const int MinY = 192;
+const int NoMotionSize  = 10; // no motion zone size
+const int MaxMotionSize = 37; // motion zone size
+
+enum GameType {
+  TeamFFA,    // normal teamed FFA
+  ClassicCTF, // your normal CTF
+  OpenFFA,    // teamless FFA
+  RabbitChase // hunt the rabbit mode
+};
+// game styles
+enum GameOptions {
+  ReplayServer       = (1 << 0),  // replay server
+  SuperFlagGameStyle = (1 << 1),  // superflags allowed
+  NoTeamKills        = (1 << 2),  // teams can't kill each other
+  JumpingGameStyle   = (1 << 3),  // jumping allowed
+  InertiaGameStyle   = (1 << 4),  // momentum for all
+  RicochetGameStyle  = (1 << 5),  // all shots ricochet
+  ShakableGameStyle  = (1 << 6),  // can drop bad flags
+  AntidoteGameStyle  = (1 << 7),  // anti-bad flags
+  HandicapGameStyle  = (1 << 8),  // handicap players based on score (eek! was TimeSyncGameStyle)
+  LuaWorldScript     = (1 << 9),  // the server offers a LuaWorld script
+  LuaRulesScript     = (1 << 10)  // the server requires a LuaRules script
+                       // add here before reusing old ones above
+};
+
+// map object flags
+#define _DRIVE_THRU  (1 << 0)
+#define _SHOOT_THRU  (1 << 1)
+#define _FLIP_Z      (1 << 2)
+#define _RICOCHET    (1 << 3)
+
+const int mapVersion = 1;
+
+struct GlobalDBItem {
+  public:
+    const char*               name;
+    const char*               value;
+    bool                      persistent;
+    StateDatabase::Permission permission;
+};
+extern const unsigned int numGlobalDBItems;
+extern const struct GlobalDBItem globalDBItems[];
+
+bz_eTeamType convertTeam(TeamColor team);
+TeamColor convertTeam(bz_eTeamType team);
+
+#endif // BZF_GLOBAL_H
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8 expandtab expandtab expandtab

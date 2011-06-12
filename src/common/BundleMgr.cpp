@@ -21,7 +21,7 @@
 #include <string>
 
 // local implementation headers
-#include "Bundle.h"
+#include "common/Bundle.h"
 
 Bundle*    BundleMgr::currentBundle = NULL;
 

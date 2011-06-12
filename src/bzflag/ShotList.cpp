@@ -12,7 +12,7 @@
 
 // interface header
 #include "ShotList.h"
-#include "GameTime.h"
+#include "game/GameTime.h"
 
 //
 // ShotList

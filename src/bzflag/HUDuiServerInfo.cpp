@@ -14,14 +14,14 @@
 #include "HUDuiServerInfo.h"
 
 #include "playing.h"
-#include "ServerList.h"
+#include "game/ServerList.h"
 
-#include "FontManager.h"
+#include "3D/FontManager.h"
 #include "FontSizer.h"
 #include "LocalFontFace.h"
 
 #include "HUDuiLabel.h"
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 //
 // HUDuiServerInfo

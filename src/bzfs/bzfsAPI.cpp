@@ -11,7 +11,7 @@
  */
 
 // bzflag global header
-#include "global.h"
+#include "game/global.h"
 
 // implementation wrappers for all the bzf_ API functions
 #include "bzfsAPI.h"
@@ -20,34 +20,34 @@
 #  include <iostream>
 #endif
 
-#include "bz_md5.h"
+#include "common/bz_md5.h"
 #include "bzfs.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
 #include "bzfsPlugins.h"
 #include "vectors.h"
 #include "version.h"
-#include "BaseBuilding.h"
-#include "NetMessage.h"
-#include "BZDBCache.h"
-#include "BzMaterial.h"
-#include "CommandManager.h"
+#include "obstacle/BaseBuilding.h"
+#include "game/NetMessage.h"
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
+#include "common/CommandManager.h"
 #include "commands.h"
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 #include "CustomWorld.h"
 #include "FlagInfo.h"
 #include "GameKeeper.h"
-#include "LinkManager.h"
-#include "MeshFace.h"
-#include "MotionUtils.h"
-#include "ObstacleMgr.h"
+#include "game/LinkManager.h"
+#include "obstacle/MeshFace.h"
+#include "game/MotionUtils.h"
+#include "obstacle/ObstacleMgr.h"
 #include "Permissions.h"
-#include "PhysicsDriver.h"
+#include "game/PhysicsDriver.h"
 #include "Reports.h"
 #include "ServerIntangibilityManager.h"
 #include "SpawnPosition.h"
-#include "VotingArbiter.h"
-#include "WorldEventManager.h"
+#include "game/VotingArbiter.h"
+#include "bzfs/WorldEventManager.h"
 #include "WorldInfo.h"
 #include "WorldWeapons.h"
 

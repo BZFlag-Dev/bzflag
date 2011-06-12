@@ -16,15 +16,15 @@
 #define __LISTSERVERCONNECTION_H__
 
 /* inteface header */
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 /* system headers */
 #include <string>
 
 /* common interface headers */
-#include "Address.h"
-#include "Ping.h"
-#include "BzTime.h"
+#include "net/Address.h"
+#include "net/Ping.h"
+#include "common/BzTime.h"
 
 class ListServerLink : private cURLManager {
   public:

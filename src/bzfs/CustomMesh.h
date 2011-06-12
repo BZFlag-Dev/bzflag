@@ -21,8 +21,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "BzMaterial.h"
-#include "MeshObstacle.h"
+#include "game/BzMaterial.h"
+#include "obstacle/MeshObstacle.h"
 #include "vectors.h"
 
 /* local interface headers */

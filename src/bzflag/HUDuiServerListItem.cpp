@@ -13,13 +13,13 @@
 // interface headers
 #include "HUDuiServerListItem.h"
 #include "Protocol.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 // common implementation headers
-#include "BundleMgr.h"
-#include "Bundle.h"
+#include "common/BundleMgr.h"
+#include "common/Bundle.h"
 #include "LocalFontFace.h"
-#include "BZDBCache.h"
-#include "bzUnicode.h"
+#include "game/BZDBCache.h"
+#include "common/bzUnicode.h"
 
 //
 // HUDuiServerListItem

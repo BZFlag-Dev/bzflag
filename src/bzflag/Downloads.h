@@ -15,8 +15,8 @@
 
 #include "common.h"
 #include "Singleton.h"
-#include "BzMaterial.h"
-#include "AccessList.h"
+#include "game/BzMaterial.h"
+#include "common/AccessList.h"
 
 /* system interface headers */
 #include <string>

@@ -29,7 +29,7 @@
 #include "common.h"
 
 // common interface headers
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 class BaseTimerStrategy {
   public:

@@ -17,7 +17,7 @@
 #ifndef BZF_SGIPLATFORM_FACTORY_H
 #define BZF_SGIPLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "platform/PlatformFactory.h"
 
 class SGIPlatformFactory : public PlatformFactory {
   public:

@@ -17,9 +17,9 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "BZDBCache.h"
-#include "WallObstacle.h"
-#include "Intersect.h"
+#include "game/BZDBCache.h"
+#include "obstacle/WallObstacle.h"
+#include "game/Intersect.h"
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "playing.h"

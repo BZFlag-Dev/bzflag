@@ -21,7 +21,7 @@
 /* common interface headers */
 #include "Factory.h"
 #include "Singleton.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 /* bzfs-specific interface headers */
 #include "SpawnPolicy.h"

@@ -21,8 +21,8 @@
 #include <map>
 
 // common headers
-#include "bzfsAPI.h"
-#include "TextUtils.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/TextUtils.h"
 
 // local headers
 #include "LuaHeader.h"

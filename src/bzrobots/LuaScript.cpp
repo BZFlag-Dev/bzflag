@@ -20,7 +20,7 @@
 #include <stdlib.h>
 
 // common headers
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 // local headers
 #include "LuaHeader.h"

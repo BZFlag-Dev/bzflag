@@ -13,8 +13,8 @@
 #include "network.h"
 
 //Includes common to all platforms
-#include "ErrorHandler.h"
-#include "Address.h"
+#include "common/ErrorHandler.h"
+#include "net/Address.h"
 #include <stdio.h>
 #include <string.h>
 #include <vector>

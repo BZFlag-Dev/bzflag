@@ -21,11 +21,11 @@
 #include <list>
 
 /* common implementation headers */
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 #include "World.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
-#include "FontManager.h"
+#include "common/BundleMgr.h"
+#include "common/Bundle.h"
+#include "3D/FontManager.h"
 
 std::list<LocalFontFace*> LocalFontFace::localFontFaces;
 

@@ -17,8 +17,8 @@
 #include <ctype.h>
 
 /* common implementation headers */
-#include "KeyManager.h"
-#include "FontManager.h"
+#include "common/KeyManager.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

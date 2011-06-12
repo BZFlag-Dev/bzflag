@@ -17,7 +17,7 @@
 #ifndef BZF_WINMEDIA_H
 #define BZF_WINMEDIA_H
 
-#include "BzfMedia.h"
+#include "platform/BzfMedia.h"
 #ifdef HAVE_DSOUND_H
 #include <dsound.h>
 #endif

@@ -12,7 +12,7 @@
 
 // interface header
 #include "WorldPlayer.h"
-#include "GameTime.h"
+#include "game/GameTime.h"
 
 
 WorldPlayer::WorldPlayer() :

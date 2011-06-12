@@ -18,16 +18,16 @@
 
 // common headers
 #include "bzfgl.h"
-#include "bzfio.h"
+#include "common/bzfio.h"
 #include "vectors.h"
-#include "BZDBCache.h"
-#include "BzMaterial.h"
-#include "DynamicColor.h"
-#include "OpenGLGState.h"
-#include "OpenGLMaterial.h"
-#include "SceneRenderer.h"
-#include "TextureManager.h"
-#include "TextureMatrix.h"
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
+#include "game/DynamicColor.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLMaterial.h"
+#include "bzflag/SceneRenderer.h"
+#include "3D/TextureManager.h"
+#include "game/TextureMatrix.h"
 
 
 #define INVALID_GL_ID 0xffffffff

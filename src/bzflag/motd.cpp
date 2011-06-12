@@ -18,7 +18,7 @@
 
 // common implementation headers
 #include "bzregex.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 #include "AnsiCodes.h"
 #include "version.h"
 

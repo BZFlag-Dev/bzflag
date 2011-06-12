@@ -19,7 +19,7 @@
 #include <string>
 
 // common implementation headers
-#include "ErrorHandler.h"
+#include "common/ErrorHandler.h"
 
 BzfJoystick::BzfJoystick() {
 }

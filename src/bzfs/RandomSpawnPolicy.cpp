@@ -15,10 +15,10 @@
 
 /* common headers */
 #include "GameKeeper.h"
-#include "BzTime.h"
-#include "PlayerInfo.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
+#include "common/BzTime.h"
+#include "game/PlayerInfo.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
 
 /* server headers */
 #include "bzfs.h"

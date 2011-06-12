@@ -17,14 +17,14 @@
 #include <assert.h>
 
 // common headers
-#include "global.h"
-#include "Pack.h"
+#include "game/global.h"
+#include "net/Pack.h"
 #include "Teleporter.h"
-#include "Intersect.h"
-#include "MeshTransform.h"
-#include "BzMaterial.h"
-#include "DynamicColor.h"
-#include "TextureMatrix.h"
+#include "game/Intersect.h"
+#include "game/MeshTransform.h"
+#include "game/BzMaterial.h"
+#include "game/DynamicColor.h"
+#include "game/TextureMatrix.h"
 
 // local headers
 #include "MeshUtils.h"

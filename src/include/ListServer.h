@@ -19,7 +19,7 @@
 #include <string>
 
 /* common interface headers */
-#include "Address.h"
+#include "net/Address.h"
 
 
 const int       MaxListServers = 5;

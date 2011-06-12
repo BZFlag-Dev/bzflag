@@ -14,9 +14,9 @@
 #include "RejoinList.h"
 
 // common headers
-#include "BzTime.h"
-#include "PlayerInfo.h"
-#include "StateDatabase.h"  // for BZDBNAMES.REJOINTIME
+#include "common/BzTime.h"
+#include "game/PlayerInfo.h"
+#include "common/StateDatabase.h"  // for BZDBNAMES.REJOINTIME
 
 // bzfs specific headers
 #include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers

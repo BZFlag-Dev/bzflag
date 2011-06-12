@@ -34,21 +34,21 @@
 #endif
 
 // common implementation headers
-#include "ErrorHandler.h"
+#include "common/ErrorHandler.h"
 // invoke persistent rebuilding for current version dates
 #include "version.h"
 #if defined(NETWORK_STATS)
-#include "bzfio.h"
+#include "common/bzfio.h"
 #endif
-#include "BzTime.h"
+#include "common/BzTime.h"
 
-#include "GameTime.h"
-#include "bzUnicode.h"
+#include "game/GameTime.h"
+#include "common/bzUnicode.h"
 
 #ifndef BUILDING_BZADMIN
 // bzflag local implementation headers
 #include "playing.h"
-#include "MsgStrings.h"
+#include "game/MsgStrings.h"
 #endif
 
 #define UDEBUG if (UDEBUGMSG) printf

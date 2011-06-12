@@ -21,9 +21,9 @@
 #include <vector>
 
 /* common implementation headers */
-#include "SphereObstacle.h"
-#include "PhysicsDriver.h"
-#include "ObstacleMgr.h"
+#include "obstacle/SphereObstacle.h"
+#include "game/PhysicsDriver.h"
+#include "obstacle/ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"

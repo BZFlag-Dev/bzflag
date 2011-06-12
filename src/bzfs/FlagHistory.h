@@ -19,7 +19,7 @@
 #include <vector>
 
 // bzflag library headers
-#include "Flag.h"
+#include "game/Flag.h"
 
 class FlagHistory {
   public:

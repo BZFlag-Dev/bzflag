@@ -20,20 +20,20 @@
 #include <string>
 
 // common headers
-#include "BzTime.h"
+#include "common/BzTime.h"
 #include "HUDuiTypeIn.h"
-#include "Flag.h"
-#include "SceneRenderer.h"
+#include "game/Flag.h"
+#include "bzflag/SceneRenderer.h"
 #include "vectors.h"
 
 // local headers
 #include "FlashClock.h"
 #include "MainWindow.h"
-#include "BzfDisplay.h"
+#include "platform/BzfDisplay.h"
 #include "Player.h"
 #include "ScoreboardRenderer.h"
 #include "LocalPlayer.h"
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 class LocalFontFace;
 

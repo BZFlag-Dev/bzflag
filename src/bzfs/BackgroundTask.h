@@ -14,7 +14,7 @@
 
 #include "common.h"
 #include "Singleton.h"
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 
 #include <vector>
 

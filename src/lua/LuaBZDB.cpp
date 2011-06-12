@@ -24,7 +24,7 @@
 #include <map>
 
 // common headers
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 // local headers
 #include "LuaHeader.h"

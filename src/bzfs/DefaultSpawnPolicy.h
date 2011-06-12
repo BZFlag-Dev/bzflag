@@ -17,7 +17,7 @@
 #include "SpawnPolicy.h"
 
 // common headers
-#include "global.h"  /* for TeamColor */
+#include "game/global.h"  /* for TeamColor */
 #include "vectors.h"
 
 

@@ -16,8 +16,8 @@
 // Interface header
 #include "MatchManager.h"
 
-#include "StateDatabase.h"
-#include "TextUtils.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 
 
 /** Utility Countdown class */

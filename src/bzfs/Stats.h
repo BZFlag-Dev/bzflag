@@ -14,7 +14,7 @@
 #define __BZFS_STATS_H__
 
 #include "common.h"
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 #include <string>
 
 class StatsLink : public bz_EventHandler {

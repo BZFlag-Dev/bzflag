@@ -17,7 +17,7 @@
 #ifndef BZF_SGIMEDIA_H
 #define BZF_SGIMEDIA_H
 
-#include "BzfMedia.h"
+#include "platform/BzfMedia.h"
 #include <dmedia/audio.h>
 
 class SGIMedia : public BzfMedia {

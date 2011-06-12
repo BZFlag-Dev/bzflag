@@ -22,7 +22,7 @@
 #include <map>
 
 // common headers
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 
 // local headers
 #include "LuaHeader.h"

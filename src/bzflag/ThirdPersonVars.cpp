@@ -14,7 +14,7 @@
 #include "ThirdPersonVars.h"
 
 // common headers
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 
 ThirdPersonVars::ThirdPersonVars()

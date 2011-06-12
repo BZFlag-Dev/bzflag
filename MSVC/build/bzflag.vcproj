@@ -1071,7 +1071,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\SceneRenderer.h"
+				RelativePath="..\..\src\bzflag\SceneRenderer.h"
 				>
 			</File>
 			<File
@@ -1155,11 +1155,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\TextureManager.h"
+				RelativePath="..\..\src\3D\TextureManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\TextUtils.h"
+				RelativePath="..\..\src\common\TextUtils.h"
 				>
 			</File>
 			<File

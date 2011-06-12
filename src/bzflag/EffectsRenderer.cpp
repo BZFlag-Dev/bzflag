@@ -15,12 +15,12 @@
 
 // common headers
 #include "bzfgl.h"
-#include "TextureManager.h"
-#include "StateDatabase.h"
-#include "BzTime.h"
-#include "Flag.h"
-#include "OpenGLUtils.h"
-#include "BZDBCache.h"
+#include "3D/TextureManager.h"
+#include "common/StateDatabase.h"
+#include "common/BzTime.h"
+#include "game/Flag.h"
+#include "ogl/OpenGLUtils.h"
+#include "game/BZDBCache.h"
 
 
 static BZDB_bool useFancyEffects("useFancyEffects");

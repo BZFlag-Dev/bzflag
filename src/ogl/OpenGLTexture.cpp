@@ -17,11 +17,11 @@
 #include <string.h>
 
 // common headers
-#include "bzfio.h"
-#include "StateDatabase.h"
+#include "common/bzfio.h"
+#include "common/StateDatabase.h"
 #include "bzfgl.h"
 #include "OpenGLTexture.h"
-#include "OpenGLGState.h"
+#include "ogl/OpenGLGState.h"
 
 
 //

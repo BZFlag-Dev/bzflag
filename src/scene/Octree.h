@@ -13,8 +13,8 @@
 #ifndef __OCTREE_H__
 #define __OCTREE_H__
 
-#include "SceneNode.h"
-#include "Frustum.h"
+#include "geometry/SceneNode.h"
+#include "game/Frustum.h"
 #include "Extents.h"
 #include "vectors.h"
 

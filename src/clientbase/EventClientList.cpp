@@ -20,7 +20,7 @@
 #include <list>
 
 // common headers
-#include "EventClient.h"
+#include "clientbase/EventClient.h"
 
 
 //============================================================================//

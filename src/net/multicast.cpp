@@ -26,7 +26,7 @@
 #include <string>
 
 /* common implementation headers */
-#include "ErrorHandler.h"
+#include "common/ErrorHandler.h"
 
 
 int     openBroadcast(int port, const char* service,

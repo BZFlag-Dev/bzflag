@@ -26,16 +26,16 @@
 #include <map>
 
 // common headers
-#include "bzfio.h"
-#include "bzfsAPI.h"
+#include "common/bzfio.h"
+#include "bzfs/bzfsAPI.h"
 #include "vectors.h"
 #include "version.h"
-#include "GameTime.h"
-#include "LinkManager.h"
-#include "MeshFace.h"
-#include "NetMessage.h"
-#include "PlayerState.h"
-#include "TextUtils.h"
+#include "game/GameTime.h"
+#include "game/LinkManager.h"
+#include "obstacle/MeshFace.h"
+#include "game/NetMessage.h"
+#include "game/PlayerState.h"
+#include "common/TextUtils.h"
 
 // bzfs headers
 #include "bzfs/bzfs.h"

@@ -18,8 +18,8 @@
 #include <set>
 
 /* common implementation headers */
-#include "global.h"
-#include "bzfsAPI.h"
+#include "game/global.h"
+#include "bzfs/bzfsAPI.h"
 
 
 // initialize the singleton

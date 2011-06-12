@@ -13,7 +13,7 @@
 #ifndef BZF_IMAGE_FILE_H
 #define BZF_IMAGE_FILE_H
 
-#include "MediaFile.h"
+#include "mediafile/MediaFile.h"
 
 /** This ABC represents an image file. It has subclasses for different image
     formats. */

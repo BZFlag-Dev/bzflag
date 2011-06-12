@@ -59,11 +59,11 @@
 #include <stdlib.h>
 
 // common headers
-#include "global.h"
-#include "Flag.h"
+#include "game/global.h"
+#include "game/Flag.h"
 #include "AnsiCodes.h"
-#include "TextUtils.h"
-#include "StateDatabase.h"
+#include "common/TextUtils.h"
+#include "common/StateDatabase.h"
 
 // local headers
 #include "World.h"

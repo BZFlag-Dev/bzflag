@@ -16,7 +16,7 @@
 // bzflag common header
 #include "common.h"
 
-#include "network.h"
+#include "net/network.h"
 
 // system headers
 #include <iostream>
@@ -25,7 +25,7 @@
 
 /* bzflag common headers */
 #include "BZWError.h"
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 class WorldFileObject;
 class WorldInfo;

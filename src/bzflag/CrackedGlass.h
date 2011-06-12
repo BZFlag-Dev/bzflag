@@ -14,7 +14,7 @@
 #define __CRACKEDGLASS_H__
 
 /* local client interface headers */
-#include "SceneRenderer.h"
+#include "bzflag/SceneRenderer.h"
 
 /**
  * A CrackedGlass object encapsulates the rendering of cracked glass

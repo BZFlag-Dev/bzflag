@@ -20,13 +20,13 @@
 #include <stdio.h>
 
 /* common implementation headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 #ifndef HAVE_SDL
 #  include "wave.h"
 #endif
-#include "MediaFile.h"
+#include "mediafile/MediaFile.h"
 
-#include "DirectoryNames.h"
+#include "game/DirectoryNames.h"
 #include "version.h"
 
 

@@ -22,7 +22,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "bzsignal.h"
+#include "common/bzsignal.h"
 #include <sys/soundcard.h>
 #include <sys/ioctl.h>
 #include <BzTime.h>

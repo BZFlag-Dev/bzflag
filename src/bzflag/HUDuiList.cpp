@@ -14,9 +14,9 @@
 #include "HUDuiList.h"
 
 // common implementation headers
-#include "BundleMgr.h"
-#include "Bundle.h"
-#include "FontManager.h"
+#include "common/BundleMgr.h"
+#include "common/Bundle.h"
+#include "3D/FontManager.h"
 
 // local implementation headers
 #include "LocalFontFace.h"

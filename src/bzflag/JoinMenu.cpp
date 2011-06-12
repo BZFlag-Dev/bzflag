@@ -15,9 +15,9 @@
 
 /* common implementation headers */
 #include "AnsiCodes.h"
-#include "Bundle.h"
-#include "BundleMgr.h"
-#include "FontManager.h"
+#include "common/Bundle.h"
+#include "common/BundleMgr.h"
+#include "3D/FontManager.h"
 #include "Protocol.h"
 
 /* local implementation headers */
@@ -25,7 +25,7 @@
 #include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "ServerMenu.h"
-#include "TextureManager.h"
+#include "3D/TextureManager.h"
 #include "playing.h"
 #include "LocalFontFace.h"
 

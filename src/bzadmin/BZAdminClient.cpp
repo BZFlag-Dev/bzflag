@@ -24,13 +24,13 @@
 
 /* common implementation headers */
 #include "BZAdminUI.h"
-#include "StateDatabase.h"
-#include "TextUtils.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 #include "version.h"
-#include "Team.h"
-#include "ServerList.h"
-#include "ErrorHandler.h"
-#include "cURLManager.h"
+#include "game/Team.h"
+#include "game/ServerList.h"
+#include "common/ErrorHandler.h"
+#include "common/cURLManager.h"
 
 StartupInfo startupInfo;
 

@@ -14,15 +14,15 @@
 #include "WeatherRenderer.h"
 
 // common impl headers
-#include "TextureManager.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "BzTime.h"
-#include "TextUtils.h"
-#include "ParseColor.h"
-#include "Intersect.h"
+#include "3D/TextureManager.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "common/BzTime.h"
+#include "common/TextUtils.h"
+#include "common/ParseColor.h"
+#include "game/Intersect.h"
 #include "Extents.h"
-#include "BzMaterial.h"
+#include "game/BzMaterial.h"
 
 // local impl headers
 #include "RoofTops.h"

@@ -18,8 +18,8 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "BZDBCache.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
 
 
 bool doSpeedChecks(GameKeeper::Player* playerData, PlayerState& state) {

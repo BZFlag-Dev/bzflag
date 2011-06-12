@@ -15,10 +15,10 @@
 
 // common implementation headers
 #include "HUDNavigationQueue.h"
-#include "FontManager.h"
+#include "3D/FontManager.h"
 #include "LocalFontFace.h"
 
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 #include <algorithm>
 

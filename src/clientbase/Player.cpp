@@ -14,18 +14,18 @@
 #include "Player.h"
 
 // common interface headers
-#include "SceneRenderer.h"
-#include "BZDBCache.h"
-#include "CollisionManager.h"
-#include "ObstacleMgr.h"
-#include "PhysicsDriver.h"
-#include "ObstacleList.h"
-#include "WallObstacle.h"
-#include "MeshFace.h"
-#include "MeshObstacle.h"
+#include "bzflag/SceneRenderer.h"
+#include "game/BZDBCache.h"
+#include "game/CollisionManager.h"
+#include "obstacle/ObstacleMgr.h"
+#include "game/PhysicsDriver.h"
+#include "obstacle/ObstacleList.h"
+#include "obstacle/WallObstacle.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
 #include "ClientIntangibilityManager.h"
-#include "MotionUtils.h"
-#include "EventHandler.h"
+#include "game/MotionUtils.h"
+#include "clientbase/EventHandler.h"
 
 // local implementation headers
 #include "World.h"
@@ -33,7 +33,7 @@
 #include "sound.h"
 #include "EffectsRenderer.h"
 #include "Roaming.h"
-#include "GameTime.h"
+#include "game/GameTime.h"
 
 #include "playing.h"
 // FIXME: Shouldn't need to depend on GUI elements

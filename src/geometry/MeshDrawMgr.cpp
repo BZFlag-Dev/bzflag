@@ -17,9 +17,9 @@
 
 // common headers
 #include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "MeshDrawInfo.h"
-#include "bzfio.h" // for DEBUGx()
+#include "ogl/OpenGLGState.h"
+#include "obstacle/MeshDrawInfo.h"
+#include "common/bzfio.h" // for DEBUGx()
 
 
 unsigned int MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;

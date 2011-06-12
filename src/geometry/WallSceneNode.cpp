@@ -15,7 +15,7 @@
 
 // interface headers
 #include "WallSceneNode.h"
-#include "PolyWallSceneNode.h"
+#include "geometry/PolyWallSceneNode.h"
 
 // system headers
 #include <stdio.h>
@@ -26,14 +26,14 @@
 
 // common headers
 #include "bzfgl.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "BzMaterial.h"
-#include "OpenGLUtils.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
+#include "ogl/OpenGLUtils.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 // local headers
-#include "ViewFrustum.h"
+#include "geometry/ViewFrustum.h"
 
 
 //============================================================================//

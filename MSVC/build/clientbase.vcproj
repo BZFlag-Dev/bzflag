@@ -337,15 +337,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ErrorHandler.h"
+				RelativePath="..\..\src\common\ErrorHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\EventClient.h"
+				RelativePath="..\..\src\clientbase\EventClient.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\EventClientList.h"
+				RelativePath="..\..\src\clientbase\EventClientList.h"
 				>
 			</File>
 			<File
@@ -353,7 +353,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\GfxBlock.h"
+				RelativePath="..\..\src\clientbase\GfxBlock.h"
 				>
 			</File>
 			<File

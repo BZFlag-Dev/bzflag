@@ -14,8 +14,8 @@
 #include "PNGImageFile.h"
 #include <iostream>
 #include <string.h>
-#include "Pack.h"
-#include "bzfio.h"
+#include "net/Pack.h"
+#include "common/bzfio.h"
 //#include "zconf.h"
 #include "zlib.h"
 

@@ -19,8 +19,8 @@
 #include "Player.h"
 
 /* common interface headers */
-#include "global.h"
-#include "ShotUpdate.h"
+#include "game/global.h"
+#include "game/ShotUpdate.h"
 
 /* local interface headers */
 #include "ShotPath.h"

@@ -22,10 +22,10 @@
 #endif
 
 /* common implementation headers */
-#include "FontManager.h"
-#include "StateDatabase.h"
-#include "DirectoryNames.h"
-#include "TextUtils.h"
+#include "3D/FontManager.h"
+#include "common/StateDatabase.h"
+#include "game/DirectoryNames.h"
+#include "common/TextUtils.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

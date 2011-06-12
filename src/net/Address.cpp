@@ -26,11 +26,11 @@
 #endif
 
 // common implementation headers
-#include "bzsignal.h"
-#include "ErrorHandler.h"
+#include "common/bzsignal.h"
+#include "common/ErrorHandler.h"
 
 // local implementation headers
-#include "Pack.h"
+#include "net/Pack.h"
 
 #if defined(sun)
 // Solaris...

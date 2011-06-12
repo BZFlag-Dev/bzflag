@@ -17,9 +17,9 @@
 #include <cstring>
 
 // common headers
-#include "PlatformFactory.h"
-#include "BZDBCache.h"
-#include "TextUtils.h"
+#include "platform/PlatformFactory.h"
+#include "game/BZDBCache.h"
+#include "common/TextUtils.h"
 #include "vectors.h"
 
 // local headers

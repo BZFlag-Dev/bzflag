@@ -14,8 +14,8 @@
 #include "Daylight.h"
 
 // common headers
-#include "StateDatabase.h"
-#include "ParseColor.h"
+#include "common/StateDatabase.h"
+#include "common/ParseColor.h"
 #include "vectors.h"
 
 

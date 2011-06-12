@@ -21,12 +21,12 @@
 #include <string>
 #include <utility>
 
-#include "Address.h"
-#include "CommandCompleter.h"
+#include "net/Address.h"
+#include "game/CommandCompleter.h"
 #include "BZAdminUI.h"
 #include "curses_wrapper.h"
 #include "CursesMenu.h"
-#include "global.h"
+#include "game/global.h"
 #include "UIMap.h"
 
 #define CMDLENGTH (MessageLen - 3)

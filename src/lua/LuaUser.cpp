@@ -21,9 +21,9 @@
 #include <string>
 
 // common headers
-#include "BzVFS.h"
-#include "EventHandler.h"
-#include "StateDatabase.h"
+#include "common/BzVFS.h"
+#include "clientbase/EventHandler.h"
+#include "common/StateDatabase.h"
 
 // bzflag headers
 #include "bzflag/Downloads.h"

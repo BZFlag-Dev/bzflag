@@ -31,8 +31,8 @@
 #include <linux/input.h>
 
 /* implementation headers */
-#include "ErrorHandler.h"
-#include "bzfio.h"
+#include "common/ErrorHandler.h"
+#include "common/bzfio.h"
 
 static inline int test_bit(int nr, const volatile void* addr) {
   return 1 & (((const volatile __u32*) addr)[nr >> 5] >> (nr & 31));

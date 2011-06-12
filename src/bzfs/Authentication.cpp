@@ -21,7 +21,7 @@
 #  include <unistd.h>
 #endif
 
-#include "DirectoryNames.h"
+#include "game/DirectoryNames.h"
 
 
 bool     Authentication::authentication = false;

@@ -20,9 +20,9 @@
 #include <algorithm>
 
 // common headers
-#include "bzfio.h"
-#include "GfxBlock.h"
-#include "OpenGLPassState.h"
+#include "common/bzfio.h"
+#include "clientbase/GfxBlock.h"
+#include "ogl/OpenGLPassState.h"
 
 
 EventHandler eventHandler;

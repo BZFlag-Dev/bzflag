@@ -17,7 +17,7 @@
 #include <string.h>
 
 // common implementation headers
-#include "bzfio.h"
+#include "common/bzfio.h"
 
 bool        cURLManager::inited      = false;
 bool        cURLManager::justCalled;

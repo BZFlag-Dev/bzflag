@@ -21,8 +21,8 @@
 #include <string>
 
 /* common interface headers */
-#include "global.h"
-#include "Team.h"
+#include "game/global.h"
+#include "game/Team.h"
 
 /* local interface headers */
 #include "RobotPlayer.h"

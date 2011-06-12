@@ -284,7 +284,7 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\..\src\include\BzfDisplay.h"
+				RelativePath="..\..\src\platform\BzfDisplay.h"
 				>
 			</File>
 			<File
@@ -296,27 +296,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzfio.h"
+				RelativePath="..\..\src\common\bzfio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzfJoystick.h"
+				RelativePath="..\..\src\platform\BzfJoystick.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzfMedia.h"
+				RelativePath="..\..\src\platform\BzfMedia.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzfVisual.h"
+				RelativePath="..\..\src\platform\BzfVisual.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzfWindow.h"
+				RelativePath="..\..\src\platform\BzfWindow.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Clipboard.h"
+				RelativePath="..\..\src\platform\Clipboard.h"
 				>
 			</File>
 			<File
@@ -328,7 +328,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ErrorHandler.h"
+				RelativePath="..\..\src\common\ErrorHandler.h"
 				>
 			</File>
 			<File
@@ -336,15 +336,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLGState.h"
+				RelativePath="..\..\src\ogl\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Pack.h"
+				RelativePath="..\..\src\net\Pack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\PlatformFactory.h"
+				RelativePath="..\..\src\platform\PlatformFactory.h"
 				>
 			</File>
 			<File
@@ -356,11 +356,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzTime.h"
+				RelativePath="..\..\src\common\BzTime.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\VerticalSync.h"
+				RelativePath="..\..\src\platform\VerticalSync.h"
 				>
 			</File>
 			<File

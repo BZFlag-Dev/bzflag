@@ -15,8 +15,8 @@
 
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
-#include "TextUtils.h"
-#include "KeyManager.h"
+#include "common/TextUtils.h"
+#include "common/KeyManager.h"
 #include "playing.h"
 #include "guiplaying.h"
 #include "HUDui.h"

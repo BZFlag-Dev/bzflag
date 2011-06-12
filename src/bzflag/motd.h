@@ -20,7 +20,7 @@
 #include <string>
 
 // common interface headers
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 class MessageOfTheDay : private cURLManager {
   public:

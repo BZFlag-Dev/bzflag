@@ -21,15 +21,15 @@
 
 // common headers
 #include "vectors.h"
-#include "Intersect.h"
-#include "Obstacle.h"
-#include "MeshFace.h"
-#include "BaseBuilding.h"
-#include "ObstacleMgr.h"
-#include "CollisionManager.h"
-#include "PhysicsDriver.h"
+#include "game/Intersect.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/ObstacleMgr.h"
+#include "game/CollisionManager.h"
+#include "game/PhysicsDriver.h"
 #include "WorldInfo.h"
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 #include "ServerIntangibilityManager.h"
 
 //

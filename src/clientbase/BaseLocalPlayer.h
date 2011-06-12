@@ -19,7 +19,7 @@
 /* common interface headers */
 #include "Ray.h"
 #include "Extents.h"
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 /* local interface headers */
 #include "Player.h"

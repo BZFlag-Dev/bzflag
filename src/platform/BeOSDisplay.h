@@ -19,7 +19,7 @@
 
 #include <Screen.h>
 
-#include "BzfDisplay.h"
+#include "platform/BzfDisplay.h"
 
 class BzfKeyEvent;
 class Resolution;

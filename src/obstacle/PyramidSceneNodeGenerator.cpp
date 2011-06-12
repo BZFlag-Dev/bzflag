@@ -11,10 +11,10 @@
  */
 
 #include "PyramidSceneNodeGenerator.h"
-#include "PyramidBuilding.h"
+#include "obstacle/PyramidBuilding.h"
 #include "bzfgl.h"
-#include "TriWallSceneNode.h"
-#include "QuadWallSceneNode.h"
+#include "geometry/TriWallSceneNode.h"
+#include "geometry/QuadWallSceneNode.h"
 
 //
 // PyramidSceneNodeGenerator

@@ -17,7 +17,6 @@
 #include "CronJob.h"
 #include "plugin_utils.h"
 #include "bzfsAPI.h"
-#include "bzfio.h"
 
 
 // debug util func

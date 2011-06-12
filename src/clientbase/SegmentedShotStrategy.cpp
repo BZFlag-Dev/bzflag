@@ -17,15 +17,15 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "BZDBCache.h"
-#include "TextUtils.h"
-#include "TextureManager.h"
-#include "Intersect.h"
-#include "LinkManager.h"
-#include "EventHandler.h"
-#include "MeshFace.h"
+#include "game/BZDBCache.h"
+#include "common/TextUtils.h"
+#include "3D/TextureManager.h"
+#include "game/Intersect.h"
+#include "game/LinkManager.h"
+#include "clientbase/EventHandler.h"
+#include "obstacle/MeshFace.h"
 #include "Roster.h"
-#include "WallObstacle.h"
+#include "obstacle/WallObstacle.h"
 #include "Protocol.h"
 
 /* local implementation headers */

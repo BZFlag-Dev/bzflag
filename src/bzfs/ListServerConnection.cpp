@@ -23,12 +23,12 @@
 #include <set>
 
 /* common implementation headers */
-#include "bzfio.h"
+#include "common/bzfio.h"
 #include "version.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 #include "Protocol.h"
-#include "bzfsAPI.h"
-#include "WorldEventManager.h"
+#include "bzfs/bzfsAPI.h"
+#include "bzfs/WorldEventManager.h"
 
 /* local implementation headers */
 #include "bzfs.h"

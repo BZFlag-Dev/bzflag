@@ -26,9 +26,9 @@
 #include <vector>
 
 /* common interface headers */
-#include "OpenGLGState.h"
-#include "SceneRenderer.h"
-#include "BzTime.h"
+#include "ogl/OpenGLGState.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/BzTime.h"
 #include "vectors.h"
 
 #include "Singleton.h"

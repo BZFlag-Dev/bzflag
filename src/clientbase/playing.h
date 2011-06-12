@@ -24,12 +24,12 @@
 #include <vector>
 
 // common headers
-#include "DirectoryNames.h"
-#include "FileManager.h"
+#include "game/DirectoryNames.h"
+#include "common/FileManager.h"
 #include "ServerLink.h"
-#include "StartupInfo.h"
-#include "WordFilter.h"
-#include "bz_md5.h"
+#include "game/StartupInfo.h"
+#include "common/WordFilter.h"
+#include "common/bz_md5.h"
 
 // common client headers
 #include "FlashClock.h"
@@ -41,7 +41,7 @@
 
 // FIXME: The following should not be in the clientbase
 #include "ControlPanel.h"
-#include "CommandCompleter.h"
+#include "game/CommandCompleter.h"
 #include "ThirdPersonVars.h"
 
 

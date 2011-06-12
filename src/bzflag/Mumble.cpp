@@ -30,8 +30,8 @@
 
 // common headers
 #include "vectors.h"
-#include "bzfio.h"
-#include "StateDatabase.h"
+#include "common/bzfio.h"
+#include "common/StateDatabase.h"
 
 //
 // NOTE:  http://mumble.sourceforge.net/Link

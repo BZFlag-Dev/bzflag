@@ -25,8 +25,8 @@
 #endif
 
 // bzflag common headers
-#include "BzTime.h"
-#include "StateDatabase.h"
+#include "common/BzTime.h"
+#include "common/StateDatabase.h"
 
 // local headers
 #include "ExportInformation.h"

@@ -13,9 +13,9 @@
 /* interface header */
 
 #include "MotionUtils.h"
-#include "Flag.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
+#include "game/Flag.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
 
 
 float computeAngleVelocity(float old, float desired, float dt) {

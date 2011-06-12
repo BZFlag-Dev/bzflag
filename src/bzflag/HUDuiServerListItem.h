@@ -22,10 +22,10 @@
 // ancestor class
 #include "HUDuiControl.h"
 
-#include "FontManager.h"
+#include "3D/FontManager.h"
 
-#include "ServerItem.h"
-#include "ServerList.h"
+#include "game/ServerItem.h"
+#include "game/ServerList.h"
 #include <string>
 
 class HUDuiServerListItem : public HUDuiControl {

@@ -17,7 +17,7 @@
 #ifndef BZF_LINUX_PLATFORM_FACTORY_H
 #define BZF_LINUX_PLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "platform/PlatformFactory.h"
 
 class LinuxPlatformFactory : public PlatformFactory {
   public:

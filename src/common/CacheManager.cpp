@@ -28,12 +28,12 @@
 #endif
 
 // common headers
-#include "bz_md5.h"
-#include "bzfio.h"
-#include "TextUtils.h"
-#include "FileManager.h"
-#include "StateDatabase.h"
-#include "DirectoryNames.h"
+#include "common/bz_md5.h"
+#include "common/bzfio.h"
+#include "common/TextUtils.h"
+#include "common/FileManager.h"
+#include "common/StateDatabase.h"
+#include "game/DirectoryNames.h"
 
 // function prototypes
 static bool fileExists(const std::string& name);

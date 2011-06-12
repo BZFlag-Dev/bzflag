@@ -20,7 +20,7 @@
 #include <algorithm>
 
 // common headers
-#include "ParseColor.h"
+#include "common/ParseColor.h"
 
 // local headers
 #include "LuaHeader.h"

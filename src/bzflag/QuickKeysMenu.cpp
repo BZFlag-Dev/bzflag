@@ -14,9 +14,9 @@
 #include "QuickKeysMenu.h"
 
 /* common implementation headers */
-#include "TextUtils.h"
-#include "StateDatabase.h"
-#include "FontManager.h"
+#include "common/TextUtils.h"
+#include "common/StateDatabase.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

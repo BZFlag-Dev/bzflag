@@ -17,7 +17,7 @@
 #ifndef BZF_WINDISPLAY_H
 #define BZF_WINDISPLAY_H
 
-#include "BzfDisplay.h"
+#include "platform/BzfDisplay.h"
 #include <map>
 
 class BzfKeyEvent;

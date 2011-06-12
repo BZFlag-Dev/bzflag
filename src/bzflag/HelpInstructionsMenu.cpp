@@ -19,7 +19,7 @@
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "FontManager.h"
+#include "3D/FontManager.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "LocalFontFace.h"

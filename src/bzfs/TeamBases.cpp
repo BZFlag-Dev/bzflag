@@ -24,10 +24,10 @@
 
 // common headers
 #include "Protocol.h"
-#include "Pack.h"
-#include "BZDBCache.h"
-#include "Obstacle.h"
-#include "MeshFace.h"
+#include "net/Pack.h"
+#include "game/BZDBCache.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/MeshFace.h"
 #include "Ray.h"
 #include "vectors.h"
 

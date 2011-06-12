@@ -15,14 +15,14 @@
 
 #include "playing.h"
 
-#include "FontManager.h"
+#include "3D/FontManager.h"
 #include "FontSizer.h"
 #include "LocalFontFace.h"
 
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 #include "HUDuiList.h"
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 //
 // HUDuiServerListCustomTab

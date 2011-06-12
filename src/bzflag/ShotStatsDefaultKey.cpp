@@ -14,8 +14,8 @@
 #include "ShotStatsDefaultKey.h"
 
 /* common implementation headers */
-#include "KeyManager.h"
-#include "CommandManager.h"
+#include "common/KeyManager.h"
+#include "common/CommandManager.h"
 
 /* local implementation headers */
 #include "HUDDialogStack.h"

@@ -18,18 +18,18 @@
 #include <algorithm>
 
 /* common implementation headers */
-#include "BundleMgr.h"
-#include "Bundle.h"
-#include "FontManager.h"
-#include "BZDBCache.h"
-#include "GfxBlock.h"
+#include "common/BundleMgr.h"
+#include "common/Bundle.h"
+#include "3D/FontManager.h"
+#include "game/BZDBCache.h"
+#include "clientbase/GfxBlock.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
 #include "World.h"
 #include "HUDui.h"
 #include "Roaming.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 #include "CrackedGlass.h"
 #include "LocalFontFace.h"
 #include "guiplaying.h"

@@ -17,7 +17,7 @@
 #include "WorldFileObject.h"
 
 /* common headers */
-#include "MeshTransform.h"
+#include "game/MeshTransform.h"
 
 class CustomMeshTransform : public WorldFileObject {
   public:

@@ -16,12 +16,12 @@
 #include "DisplayMenu.h"
 
 /* common implementation headers */
-#include "BZDBCache.h"
-#include "BzfDisplay.h"
-#include "FontManager.h"
-#include "SceneRenderer.h"
-#include "TextureManager.h"
-#include "VerticalSync.h"
+#include "game/BZDBCache.h"
+#include "platform/BzfDisplay.h"
+#include "3D/FontManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "3D/TextureManager.h"
+#include "platform/VerticalSync.h"
 #include "bzfgl.h"
 
 /* local implementation headers */

@@ -22,11 +22,11 @@
 #include <math.h>
 
 // common headers
-#include "MeshObstacle.h"
+#include "obstacle/MeshObstacle.h"
 
 // local headers
 #include "WorldWeapons.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 BzTime CustomWeapon::sync = BzTime::getCurrent();
 

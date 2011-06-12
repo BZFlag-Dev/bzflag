@@ -27,8 +27,8 @@
 
 
 // common headers
-#include "bzUnicode.h"
-#include "TextUtils.h"
+#include "common/bzUnicode.h"
+#include "common/TextUtils.h"
 
 // local headers
 #include "BzfEvent.h"

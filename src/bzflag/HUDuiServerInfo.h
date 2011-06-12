@@ -22,7 +22,7 @@
 // ancestor class
 #include "HUDuiControl.h"
 
-#include "ServerItem.h"
+#include "game/ServerItem.h"
 #include "HUDuiLabel.h"
 #include <string>
 

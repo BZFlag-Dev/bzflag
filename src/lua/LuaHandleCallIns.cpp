@@ -21,9 +21,9 @@
 #include <set>
 
 // common headers
-#include "Flag.h"
-#include "ShotUpdate.h"
-#include "BzfDisplay.h"
+#include "game/Flag.h"
+#include "game/ShotUpdate.h"
+#include "platform/BzfDisplay.h"
 
 // local headers
 #include "LuaHeader.h"

@@ -17,8 +17,8 @@
 #include <string>
 
 #include "ActionBinding.h"
-#include "CommandManager.h"
-#include "KeyManager.h"
+#include "common/CommandManager.h"
+#include "common/KeyManager.h"
 
 // initialize the singleton
 template <>

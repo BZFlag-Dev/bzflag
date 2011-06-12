@@ -17,7 +17,7 @@
 #ifndef BZF_XWINDOW_H
 #define BZF_XWINDOW_H
 
-#include "BzfWindow.h"
+#include "platform/BzfWindow.h"
 #include "XDisplay.h"
 #include <X11/Xlib.h>
 #include <GL/glx.h>

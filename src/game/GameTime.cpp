@@ -26,11 +26,11 @@
 #include <list>
 
 // common headers
-#include "Pack.h"
-#include "BzTime.h"
-#include "BZDBCache.h"
-#include "NetMessage.h"
-#include "bzfio.h"
+#include "net/Pack.h"
+#include "common/BzTime.h"
+#include "game/BZDBCache.h"
+#include "game/NetMessage.h"
+#include "common/bzfio.h"
 
 
 // type definitions

@@ -16,7 +16,7 @@
 #include "common.h"
 
 /* common headers */
-#include "CommandManager.h"
+#include "common/CommandManager.h"
 
 // system headers
 #include <vector>

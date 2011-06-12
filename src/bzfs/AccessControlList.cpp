@@ -27,12 +27,12 @@
 #include <iomanip>
 
 /* common interface headers */
-#include "global.h"
-#include "bzglob.h"
-#include "network.h"
-#include "Address.h"
-#include "BzTime.h"
-#include "TextUtils.h"
+#include "game/global.h"
+#include "common/bzglob.h"
+#include "net/network.h"
+#include "net/Address.h"
+#include "common/BzTime.h"
+#include "common/TextUtils.h"
 
 // bzfs specific headers
 #include "bzfs.h"

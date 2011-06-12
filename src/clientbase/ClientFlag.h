@@ -16,8 +16,8 @@
 #include "common.h"
 
 // common headers
-#include "Flag.h"
-#include "GfxBlock.h"
+#include "game/Flag.h"
+#include "clientbase/GfxBlock.h"
 
 
 class ClientFlag : public Flag {

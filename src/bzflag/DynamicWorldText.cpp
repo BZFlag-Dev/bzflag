@@ -19,10 +19,10 @@
 #include <string>
 
 /* common headers */
-#include "WorldText.h"
-#include "TextSceneNode.h"
-#include "SceneRenderer.h"
-#include "CacheManager.h"
+#include "game/WorldText.h"
+#include "geometry/TextSceneNode.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/CacheManager.h"
 
 /* local headers */
 #include "World.h"

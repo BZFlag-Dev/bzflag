@@ -22,13 +22,13 @@
 #include <map>
 
 /* common implementation headers */
-#include "global.h"
-#include "GameTime.h"
-#include "Pack.h"
-#include "TextUtils.h"
-#include "BzTime.h"
-#include "ParseColor.h"
-#include "StateDatabase.h"
+#include "game/global.h"
+#include "game/GameTime.h"
+#include "net/Pack.h"
+#include "common/TextUtils.h"
+#include "common/BzTime.h"
+#include "common/ParseColor.h"
+#include "common/StateDatabase.h"
 
 
 // this applies to all function periods

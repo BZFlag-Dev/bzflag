@@ -22,8 +22,8 @@
 
 // common headers
 #include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "OpenGLPassState.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLPassState.h"
 
 // local headers
 #include "LuaHeader.h"

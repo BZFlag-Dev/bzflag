@@ -14,14 +14,14 @@
 #include "GuidedMissileStrategy.h"
 
 // common headers
-#include "BZDBCache.h"
-#include "EventHandler.h"
-#include "Intersect.h"
-#include "LinkManager.h"
-#include "MeshFace.h"
+#include "game/BZDBCache.h"
+#include "clientbase/EventHandler.h"
+#include "game/Intersect.h"
+#include "game/LinkManager.h"
+#include "obstacle/MeshFace.h"
 #include "Roster.h"
-#include "TextUtils.h"
-#include "TextureManager.h"
+#include "common/TextUtils.h"
+#include "3D/TextureManager.h"
 
 // local headers
 #include "LocalPlayer.h"

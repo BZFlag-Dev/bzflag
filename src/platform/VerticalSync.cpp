@@ -17,8 +17,8 @@
 
 // common headers
 #include "bzfgl.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
 
 
 #if defined(__APPLE__)

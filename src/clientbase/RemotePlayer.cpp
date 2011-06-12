@@ -15,7 +15,7 @@
 
 /* common implementation headers */
 #include "World.h"
-#include "GameTime.h"
+#include "game/GameTime.h"
 
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team,

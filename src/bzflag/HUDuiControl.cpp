@@ -14,7 +14,7 @@
 #include "HUDuiControl.h"
 
 // common implementation headers
-#include "TextureManager.h"
+#include "3D/TextureManager.h"
 
 // local implementation headers
 #include "HUDui.h"

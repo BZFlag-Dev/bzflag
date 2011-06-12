@@ -14,12 +14,12 @@
 #include "Downloads.h"
 
 /* common implementation headers */
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 #include "AnsiCodes.h"
-#include "CacheManager.h"
-#include "ObstacleMgr.h"
-#include "TextureManager.h"
-#include "WorldText.h"
+#include "common/CacheManager.h"
+#include "obstacle/ObstacleMgr.h"
+#include "3D/TextureManager.h"
+#include "game/WorldText.h"
 
 /* local implementation headers */
 #include "playing.h"

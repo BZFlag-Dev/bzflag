@@ -17,9 +17,9 @@
 #include <math.h>
 
 // common implementation headers
-#include "BZDBCache.h"
-#include "NetMessage.h"
-#include "Pack.h"
+#include "game/BZDBCache.h"
+#include "game/NetMessage.h"
+#include "net/Pack.h"
 #include "Protocol.h"
 
 

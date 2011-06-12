@@ -14,7 +14,7 @@
 #include "LagInfo.h"
 
 // common headers
-#include "Pack.h"
+#include "net/Pack.h"
 
 
 float LagInfo::threshold       = 0.0f;

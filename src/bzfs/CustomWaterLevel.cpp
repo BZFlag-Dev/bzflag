@@ -24,8 +24,8 @@
 #include "ParseMaterial.h"
 
 /* common implementation headers */
-#include "BzMaterial.h"
-#include "TextureMatrix.h"
+#include "game/BzMaterial.h"
+#include "game/TextureMatrix.h"
 
 
 CustomWaterLevel::CustomWaterLevel() {

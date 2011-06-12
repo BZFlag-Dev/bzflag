@@ -20,7 +20,7 @@
 #include <string>
 
 /* common interface header */
-#include "BzMaterial.h"
+#include "game/BzMaterial.h"
 #include "vectors.h"
 
 /* local interface header */

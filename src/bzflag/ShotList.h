@@ -22,7 +22,7 @@
 /* common interface headers */
 #include "Singleton.h"
 #include "ShotPath.h"
-#include "ShotUpdate.h"
+#include "game/ShotUpdate.h"
 
 class ShotList : public Singleton<ShotList> {
   public:

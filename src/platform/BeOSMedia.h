@@ -19,7 +19,7 @@
 
 #include <OS.h>
 #include <SoundPlayer.h>
-#include "BzfMedia.h"
+#include "platform/BzfMedia.h"
 
 
 class BeOSMedia : public BzfMedia {

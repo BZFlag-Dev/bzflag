@@ -19,8 +19,8 @@
 #include "defaultBZDB.h"
 #include "Protocol.h"
 #include "callbacks.h"
-#include "SceneRenderer.h"
-#include "TextUtils.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/TextUtils.h"
 
 
 // default client permission level

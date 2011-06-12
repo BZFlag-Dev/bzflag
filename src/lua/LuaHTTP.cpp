@@ -22,10 +22,10 @@
 #include <vector>
 
 // common headers
-#include "bzfio.h"
-#include "network.h"
-#include "AccessList.h"
-#include "CacheManager.h"
+#include "common/bzfio.h"
+#include "net/network.h"
+#include "common/AccessList.h"
+#include "common/CacheManager.h"
 
 // local headers
 #include "LuaHeader.h"

@@ -17,8 +17,8 @@
 #include "ShotUpdate.h"
 
 // common headers
-#include "NetMessage.h"
-#include "Pack.h"
+#include "game/NetMessage.h"
+#include "net/Pack.h"
 
 //
 // ShotUpdate

@@ -19,7 +19,7 @@
 /* common headers */
 #include "Singleton.h"
 #include "Player.h"
-#include "Flag.h"
+#include "game/Flag.h"
 #include "vectors.h"
 
 /* local headers */

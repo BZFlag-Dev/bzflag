@@ -21,12 +21,12 @@
 #include <vector>
 
 /* common interface headers */
-#include "Flag.h"
-#include "BzTime.h"
+#include "game/Flag.h"
+#include "common/BzTime.h"
 
 /* local interface headers */
 #include "WorldInfo.h"
-#include "WorldEventManager.h"
+#include "bzfs/WorldEventManager.h"
 
 
 class MeshObstacle;

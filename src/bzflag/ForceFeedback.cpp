@@ -14,7 +14,7 @@
 #include "ForceFeedback.h"
 
 /* common interface headers */
-#include "BzfJoystick.h"
+#include "platform/BzfJoystick.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"

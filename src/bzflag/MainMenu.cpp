@@ -14,8 +14,8 @@
 #include "MainMenu.h"
 
 /* common implementation headers */
-#include "TextureManager.h"
-#include "FontManager.h"
+#include "3D/TextureManager.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

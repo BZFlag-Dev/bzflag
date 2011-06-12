@@ -18,7 +18,7 @@
 #define BEOS_WINDOW_H
 
 #include "common.h"
-#include "BzfWindow.h"
+#include "platform/BzfWindow.h"
 
 class BeOSDisplay;
 class BeOSVisual;

@@ -18,8 +18,8 @@
 
 /* common implementation headers */
 #include "BZAdminClient.h"
-#include "StateDatabase.h"
-#include "TextUtils.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 
 
 CursesMenuItem::CursesMenuItem(const std::string& str) : text(str) {

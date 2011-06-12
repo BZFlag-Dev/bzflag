@@ -31,13 +31,13 @@
 #include <set>
 
 // common headers
-#include "FontManager.h"
-#include "OpenGLGState.h"
-#include "OpenGLPassState.h"
-#include "SceneRenderer.h"
-#include "StateDatabase.h"
-#include "CacheManager.h"
-#include "TextUtils.h"
+#include "3D/FontManager.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLPassState.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "common/CacheManager.h"
+#include "common/TextUtils.h"
 
 // local headers
 #include "LuaHeader.h"

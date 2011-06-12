@@ -25,7 +25,7 @@
 #ifndef BZF_EVDEV_JOY_H
 #define BZF_EVDEV_JOY_H
 
-#include "BzfJoystick.h"
+#include "platform/BzfJoystick.h"
 #include <map>
 #include <string>
 #include <vector>

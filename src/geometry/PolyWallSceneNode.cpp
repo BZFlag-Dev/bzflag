@@ -22,7 +22,7 @@
 
 // common headers
 #include "bzfgl.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 //
 // PolyWallSceneNode::Geometry

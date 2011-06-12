@@ -18,7 +18,7 @@
 #include <string.h>
 
 // common headers
-#include "Pack.h"
+#include "net/Pack.h"
 
 
 static const LinkPhysics defLinkPhysics;

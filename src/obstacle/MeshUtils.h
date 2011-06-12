@@ -18,8 +18,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "MeshObstacle.h"
-#include "BzMaterial.h"
+#include "obstacle/MeshObstacle.h"
+#include "game/BzMaterial.h"
 
 
 static inline void push2Ints(std::vector<int>& list, int i0, int i1) {

@@ -19,11 +19,11 @@
 #include <string.h>
 
 // common headers
-#include "BzTime.h"
-#include "Pack.h"
-#include "TextUtils.h"
-#include "StateDatabase.h"
-#include "MeshTransform.h"
+#include "common/BzTime.h"
+#include "net/Pack.h"
+#include "common/TextUtils.h"
+#include "common/StateDatabase.h"
+#include "game/MeshTransform.h"
 
 
 //============================================================================//

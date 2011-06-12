@@ -24,14 +24,14 @@
 #include <math.h>
 
 // common headers
-#include "MeshFace.h"
-#include "TextUtils.h"
+#include "obstacle/MeshFace.h"
+#include "common/TextUtils.h"
 
 // local headers
 //#include "EntryZones.h"
 #include "WorldInfo.h"
-#include "Flag.h"
-#include "Team.h"
+#include "game/Flag.h"
+#include "game/Team.h"
 
 
 CustomZone::CustomZone(const MeshFace* f) {

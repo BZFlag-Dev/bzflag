@@ -17,9 +17,9 @@
 #include <iostream>
 
 // common headers
-#include "NetMessage.h"
-#include "StateDatabase.h"
-#include "Pack.h"
+#include "game/NetMessage.h"
+#include "common/StateDatabase.h"
+#include "net/Pack.h"
 
 
 float Score::tkKickRatio(3.0);

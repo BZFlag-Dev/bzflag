@@ -13,22 +13,22 @@
 #include <memory> // for auto_ptr<>
 
 // common headers
-#include "BzMaterial.h"
-#include "DynamicColor.h"
-#include "LinkManager.h"
+#include "game/BzMaterial.h"
+#include "game/DynamicColor.h"
+#include "game/LinkManager.h"
 #include "LuaHeader.h"
 //FIXME #include "MeshDrawInfo.h"
-#include "MeshFace.h"
-#include "MeshObstacle.h"
-#include "Pack.h"
-#include "PhysicsDriver.h"
-#include "TextureMatrix.h"
-#include "WorldText.h"
-#include "cURLManager.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
+#include "net/Pack.h"
+#include "game/PhysicsDriver.h"
+#include "game/TextureMatrix.h"
+#include "game/WorldText.h"
+#include "common/cURLManager.h"
 
 // local headers
 #include "LuaTable.h"
-#include "WorldManager.h"
+#include "world/WorldManager.h"
 
 typedef int luaExtraSpace[(LUAI_EXTRASPACE >= sizeof(WorldScript*)) ? 1 : -1];
 

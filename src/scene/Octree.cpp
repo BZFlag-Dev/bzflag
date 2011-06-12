@@ -24,8 +24,8 @@
 // common headers
 #include "bzfgl.h"
 #include "Extents.h"
-#include "Intersect.h"
-#include "StateDatabase.h"
+#include "game/Intersect.h"
+#include "common/StateDatabase.h"
 
 
 using namespace Intersect;

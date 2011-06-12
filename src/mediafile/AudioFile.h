@@ -13,7 +13,7 @@
 #ifndef BZF_AUDIO_FILE_H
 #define BZF_AUDIO_FILE_H
 
-#include "MediaFile.h"
+#include "mediafile/MediaFile.h"
 
 
 /** This ABC represents an audio file. It has subclasses for different audio

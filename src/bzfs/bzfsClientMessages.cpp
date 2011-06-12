@@ -12,10 +12,10 @@
 
 // bzflag global header
 #include "bzfsClientMessages.h"
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 #include "bzfsMessages.h"
 #include "bzfsPlayerStateVerify.h"
-#include "NetMessage.h"
+#include "game/NetMessage.h"
 #include "bzfsChatVerify.h"
 #include "Protocol.h"
 

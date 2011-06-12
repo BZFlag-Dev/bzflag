@@ -223,7 +223,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzfio.h"
+				RelativePath="..\..\src\common\bzfio.h"
 				>
 			</File>
 			<File
@@ -231,31 +231,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLGState.h"
+				RelativePath="..\..\src\ogl\OpenGLGState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLLight.h"
+				RelativePath="..\..\src\ogl\OpenGLLight.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLMaterial.h"
+				RelativePath="..\..\src\ogl\OpenGLMaterial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLPassState.h"
+				RelativePath="..\..\src\ogl\OpenGLPassState.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLTexture.h"
+				RelativePath="..\..\src\ogl\OpenGLTexture.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OpenGLUtils.h"
+				RelativePath="..\..\src\ogl\OpenGLUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\RenderNode.h"
+				RelativePath="..\..\src\ogl\RenderNode.h"
 				>
 			</File>
 		</Filter>

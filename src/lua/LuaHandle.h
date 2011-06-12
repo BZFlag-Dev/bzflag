@@ -21,7 +21,7 @@
 #include <map>
 
 // common header files
-#include "EventClient.h"
+#include "clientbase/EventClient.h"
 
 
 struct lua_State;

@@ -17,17 +17,17 @@
 
 // common  headers
 #include "bzfgl.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "Obstacle.h"
-#include "TankGeometryMgr.h"
-#include "CollisionManager.h"
-#include "PhysicsDriver.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "obstacle/Obstacle.h"
+#include "geometry/TankGeometryMgr.h"
+#include "game/CollisionManager.h"
+#include "game/PhysicsDriver.h"
 #include "Ray.h"
-#include "TextureManager.h"
-#include "SceneDatabase.h"
-#include "SceneRenderer.h"
-#include "SceneNode.h"
+#include "3D/TextureManager.h"
+#include "scene/SceneDatabase.h"
+#include "bzflag/SceneRenderer.h"
+#include "geometry/SceneNode.h"
 
 
 using namespace TrackMarks;

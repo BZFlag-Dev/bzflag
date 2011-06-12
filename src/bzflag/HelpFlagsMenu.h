@@ -17,7 +17,7 @@
 #include "HelpMenu.h"
 
 /* local headers */
-#include "Flag.h"
+#include "game/Flag.h"
 
 class HelpFlagsMenu : public HelpMenu {
   public:

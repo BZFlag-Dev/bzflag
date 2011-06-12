@@ -12,7 +12,7 @@
  */
 
 /* interface header */
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 /* system headers */
 #include <math.h>

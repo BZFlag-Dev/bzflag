@@ -15,8 +15,8 @@
 
 #include "WinMedia.h"
 #include "WinWindow.h"
-#include "BzTime.h"
-#include "Pack.h"
+#include "common/BzTime.h"
+#include "net/Pack.h"
 #include <stdio.h>
 
 #ifdef HAVE_DSOUND_H

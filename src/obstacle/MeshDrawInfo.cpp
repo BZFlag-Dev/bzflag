@@ -29,13 +29,13 @@
 #include <assert.h>
 
 // common implementation headers
-#include "Pack.h"
+#include "net/Pack.h"
 #include "vectors.h"
-#include "BzMaterial.h"
-#include "MeshObstacle.h"
-#include "BzTime.h"
-#include "bzfio.h" // for debugging info
-#include "TextUtils.h"
+#include "game/BzMaterial.h"
+#include "obstacle/MeshObstacle.h"
+#include "common/BzTime.h"
+#include "common/bzfio.h" // for debugging info
+#include "common/TextUtils.h"
 
 
 // local types

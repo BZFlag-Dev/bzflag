@@ -20,7 +20,7 @@
 #include "BzfEvent.h"
 #include <stdio.h>
 #include <string.h>
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 class Resolution {
   public:

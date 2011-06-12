@@ -21,11 +21,11 @@
 #include "common.h"
 
 #include <string>
-#include "global.h"
-#include "network.h"
-#include "Address.h"
+#include "game/global.h"
+#include "net/network.h"
+#include "net/Address.h"
 #include "Protocol.h"
-#include "Flag.h"
+#include "game/Flag.h"
 #include "ShotPath.h"
 #include "vectors.h"
 

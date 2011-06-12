@@ -17,7 +17,7 @@ function plugin_project(name, source_files)
     objdir '.objs'
     files(source_files)
     links 'plugin_utils'
-    includedirs { '../../src/include', '../plugin_utils' }
+    includedirs { '../../src/bzfs', '../plugin_utils' }
 
     if (not _ACTION:match('^vs')) then
       buildoptions '-Wextra -Wundef -Wshadow -Wno-long-long -ansi -pedantic'

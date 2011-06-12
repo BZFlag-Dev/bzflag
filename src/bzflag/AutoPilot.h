@@ -16,7 +16,7 @@
 #include "common.h"
 
 // common headers
-#include "Flag.h"
+#include "game/Flag.h"
 
 void doAutoPilot(float& rotation, float& speed);
 void teachAutoPilot(FlagType*, int);

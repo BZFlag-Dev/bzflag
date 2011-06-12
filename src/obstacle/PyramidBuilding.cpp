@@ -12,11 +12,11 @@
 
 #include "common.h"
 #include <math.h>
-#include "global.h"
-#include "Pack.h"
+#include "game/global.h"
+#include "net/Pack.h"
 #include "PyramidBuilding.h"
-#include "Intersect.h"
-#include "MeshTransform.h"
+#include "game/Intersect.h"
+#include "game/MeshTransform.h"
 
 
 const char* PyramidBuilding::typeName = "PyramidBuilding";

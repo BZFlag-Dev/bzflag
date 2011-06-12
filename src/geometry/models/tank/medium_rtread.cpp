@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "TankGeometryMgr.h"
+#include "geometry/TankGeometryMgr.h"
 
 #include "bzfgl.h"
 

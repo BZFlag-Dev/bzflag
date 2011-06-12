@@ -19,7 +19,7 @@
 
 /* interface headers */
 #include "bzfSDL.h"
-#include "BzfDisplay.h"
+#include "platform/BzfDisplay.h"
 #include "BzfEvent.h"
 
 

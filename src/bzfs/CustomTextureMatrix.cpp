@@ -21,7 +21,7 @@
 #include <math.h>
 
 // common headers
-#include "TextureMatrix.h"
+#include "game/TextureMatrix.h"
 
 
 CustomTextureMatrix::CustomTextureMatrix(const char* texmatName) {

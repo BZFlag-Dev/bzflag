@@ -14,7 +14,7 @@
 #include "ShockWaveStrategy.h"
 
 /* common implementation headers */
-#include "SceneRenderer.h"
+#include "bzflag/SceneRenderer.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"

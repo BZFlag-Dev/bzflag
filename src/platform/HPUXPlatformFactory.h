@@ -17,7 +17,7 @@
 #ifndef BZF_HPUXPLATFORM_FACTORY_H
 #define BZF_HPUXPLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "platform/PlatformFactory.h"
 
 class HPUXPlatformFactory : public PlatformFactory {
   public:

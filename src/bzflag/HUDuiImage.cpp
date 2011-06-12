@@ -15,9 +15,9 @@
 
 // common implementation headers
 #include "bzfgl.h"
-#include "TextureManager.h"
-#include "OpenGLTexture.h"
-#include "OpenGLGState.h"
+#include "3D/TextureManager.h"
+#include "ogl/OpenGLTexture.h"
+#include "ogl/OpenGLGState.h"
 
 //
 // HUDuiImage

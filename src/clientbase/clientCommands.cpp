@@ -21,19 +21,19 @@
 #include <string>
 
 /* common implementation headers */
-#include "BZDBCache.h"
-#include "DirectoryNames.h"
-#include "EventHandler.h"
-#include "FileManager.h"
-#include "LuaClientScripts.h"
-#include "MotionUtils.h"
-#include "SceneRenderer.h"
-#include "TextUtils.h"
-#include "bzglob.h"
+#include "game/BZDBCache.h"
+#include "game/DirectoryNames.h"
+#include "clientbase/EventHandler.h"
+#include "common/FileManager.h"
+#include "lua/LuaClientScripts.h"
+#include "game/MotionUtils.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/TextUtils.h"
+#include "common/bzglob.h"
 #include "version.h"
 
 /* local implementation headers */
-#include "BzPNG.h"
+#include "common/BzPNG.h"
 #include "ComposeDefaultKey.h"
 #include "HUDRenderer.h"
 #include "HUDDialogStack.h"

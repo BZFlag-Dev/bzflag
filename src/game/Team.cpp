@@ -12,8 +12,8 @@
 
 #include "common.h"
 #include "Team.h"
-#include "Pack.h"
-#include "NetMessage.h"
+#include "net/Pack.h"
+#include "game/NetMessage.h"
 
 
 fvec4 Team::tankColor[NumTeams] = {

@@ -17,7 +17,7 @@
 #ifndef BZF_WINWINDOW_H
 #define BZF_WINWINDOW_H
 
-#include "BzfWindow.h"
+#include "platform/BzfWindow.h"
 #include "WinDisplay.h"
 #include "WinVisual.h"
 

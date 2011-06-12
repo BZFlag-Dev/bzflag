@@ -24,12 +24,12 @@
 #include <vector>
 
 // common headers
-#include "bzfsAPI.h"
-#include "bzfio.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/bzfio.h"
 #include "version.h"
-#include "BzVFS.h"
-#include "DirectoryNames.h"
-#include "TextUtils.h"
+#include "common/BzVFS.h"
+#include "game/DirectoryNames.h"
+#include "common/TextUtils.h"
 #include "LuaHeader.h"
 
 // bzfs headers

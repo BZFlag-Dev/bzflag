@@ -17,7 +17,7 @@
 #include "LuaControl.h"
 
 // common headers
-#include "CommandManager.h"
+#include "common/CommandManager.h"
 
 // bzflag headers
 #include "bzflag/guiplaying.h"

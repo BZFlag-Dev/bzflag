@@ -30,11 +30,11 @@
 #include "bzfgl.h"
 #include "Extents.h"
 #include "vectors.h"
-#include "OpenGLGState.h"
-#include "SceneRenderer.h"
-#include "BzTime.h"
+#include "ogl/OpenGLGState.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/BzTime.h"
 
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 class WeatherRenderer : public GLDisplayListCreator {
   public:

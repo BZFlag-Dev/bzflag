@@ -20,7 +20,7 @@
 #include <math.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include "bzsignal.h"
+#include "common/bzsignal.h"
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
@@ -29,7 +29,7 @@
 #include <sys/audioio.h>
 #include <sys/stropts.h>
 */
-#include "BzfMedia.h"
+#include "platform/BzfMedia.h"
 
 class HPUXMedia : public BzfMedia {
   public:

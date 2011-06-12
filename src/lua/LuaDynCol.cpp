@@ -20,7 +20,7 @@
 #include <string>
 
 // common headers
-#include "DynamicColor.h"
+#include "game/DynamicColor.h"
 
 // local headers
 #include "LuaHeader.h"

@@ -22,11 +22,11 @@
 #include <vector>
 
 // common headers
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 #include "bzfgl.h"
-#include "bzfio.h"
-#include "OpenGLGState.h"
-#include "SceneRenderer.h"
+#include "common/bzfio.h"
+#include "ogl/OpenGLGState.h"
+#include "bzflag/SceneRenderer.h"
 
 // local headers
 #include "LuaHeader.h"

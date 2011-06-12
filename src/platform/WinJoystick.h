@@ -17,7 +17,7 @@
 #ifndef BZF_WINJOY_H
 #define BZF_WINJOY_H
 
-#include "BzfJoystick.h"
+#include "platform/BzfJoystick.h"
 #include <vector>
 #include <string>
 

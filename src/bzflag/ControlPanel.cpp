@@ -27,20 +27,20 @@
 
 // common headers
 #include "bzregex.h"
-#include "BZDBCache.h"
-#include "FontManager.h"
-#include "TextUtils.h"
-#include "ErrorHandler.h"
-#include "global.h"
+#include "game/BZDBCache.h"
+#include "3D/FontManager.h"
+#include "common/TextUtils.h"
+#include "common/ErrorHandler.h"
+#include "game/global.h"
 
 // local headers
 #include "FontSizer.h"
 #include "HubLink.h"
-#include "SceneRenderer.h"
+#include "bzflag/SceneRenderer.h"
 #include "RadarRenderer.h"
 #include "bzflag.h"
 #include "LocalFontFace.h"
-#include "bzUnicode.h"
+#include "common/bzUnicode.h"
 
 
 #if defined(HAVE_PTHREADS)

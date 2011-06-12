@@ -20,8 +20,8 @@
 #include <string>
 
 /* common interface headers */
-#include "global.h"
-#include "LuaClientScripts.h"
+#include "game/global.h"
+#include "lua/LuaClientScripts.h"
 
 /* local interface headers */
 #include "HUDDialog.h"

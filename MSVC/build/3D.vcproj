@@ -173,15 +173,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\include\FontManager.h"
+				RelativePath="..\..\src\3D\FontManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Model.h"
+				RelativePath="..\..\src\3D\Model.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\TextureManager.h"
+				RelativePath="..\..\src\3D\TextureManager.h"
 				>
 			</File>
 		</Filter>

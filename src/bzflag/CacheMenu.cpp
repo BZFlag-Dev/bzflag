@@ -14,14 +14,14 @@
 #include "CacheMenu.h"
 
 /* common implementation headers */
-#include "FontManager.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
 #include "MainMenu.h"
 #include "Downloads.h"
-#include "CacheManager.h"
-#include "ServerListCache.h"
+#include "common/CacheManager.h"
+#include "game/ServerListCache.h"
 #include "HUDuiList.h"
 #include "guiplaying.h"
 #include "LocalFontFace.h"

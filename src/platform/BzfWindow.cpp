@@ -17,7 +17,7 @@
 #include <vector>
 
 // common implementation headers
-#include "ErrorHandler.h"
+#include "common/ErrorHandler.h"
 
 BzfWindow::BzfWindow(const BzfDisplay* _display) : display(_display) {
 }

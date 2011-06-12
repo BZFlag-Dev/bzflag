@@ -17,7 +17,7 @@
 #ifndef BZF_XDISPLAY_H
 #define BZF_XDISPLAY_H
 
-#include "BzfDisplay.h"
+#include "platform/BzfDisplay.h"
 #include <X11/Xlib.h>
 
 class BzfKeyEvent;

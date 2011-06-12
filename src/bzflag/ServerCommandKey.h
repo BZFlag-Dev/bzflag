@@ -17,7 +17,7 @@
 #include "HUDuiDefaultKey.h"
 
 #include <string>
-#include "Address.h"
+#include "net/Address.h"
 
 class ServerCommandKey : public HUDuiDefaultKey {
   public:

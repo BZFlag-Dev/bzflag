@@ -19,14 +19,14 @@
 #include <string>
 
 // common headers
-#include "global.h"
-#include "BzTime.h"
-#include "Address.h"
-#include "Flag.h"
-#include "PlayerState.h"
+#include "game/global.h"
+#include "common/BzTime.h"
+#include "net/Address.h"
+#include "game/Flag.h"
+#include "game/PlayerState.h"
 #include "ShotStatistics.h"
 #include "PlayerAvatarManager.h"
-#include "GfxBlock.h"
+#include "clientbase/GfxBlock.h"
 #include "vectors.h"
 
 // local headers

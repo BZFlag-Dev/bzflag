@@ -30,8 +30,8 @@
 
 /* local impl. headers */
 #include "WinWindow.h"
-#include "ErrorHandler.h"
-#include "TextUtils.h"
+#include "common/ErrorHandler.h"
+#include "common/TextUtils.h"
 
 std::vector<DIDEVICEINSTANCE> DXJoystick::devices;
 std::map<std::string, LPDIRECTINPUTEFFECT> DXJoystick::effectDatabase;

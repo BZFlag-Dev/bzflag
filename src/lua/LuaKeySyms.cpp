@@ -18,7 +18,7 @@
 
 // common headers
 #include "BzfEvent.h"
-#include "EventHandler.h"
+#include "clientbase/EventHandler.h"
 
 // local headers
 #include "LuaHeader.h"

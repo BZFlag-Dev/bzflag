@@ -27,7 +27,7 @@
 /* common interface headers */
 #include "BzfEvent.h"
 #include "HUDuiControl.h"
-#include "bzUnicode.h"
+#include "common/bzUnicode.h"
 
 
 // wrapper just for HUDuiTypeIn

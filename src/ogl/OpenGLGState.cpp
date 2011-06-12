@@ -22,15 +22,15 @@
 
 /* common implementation headers */
 #include "bzfgl.h" // for debugf(3,)
-#include "bzfio.h" // for debugf(3,)
+#include "common/bzfio.h" // for debugf(3,)
 #include "OpenGLGState.h"
-#include "TextureManager.h"
-#include "TextureMatrix.h"
-#include "OpenGLMaterial.h"
-#include "RenderNode.h"
-#include "EventHandler.h"
+#include "3D/TextureManager.h"
+#include "game/TextureMatrix.h"
+#include "ogl/OpenGLMaterial.h"
+#include "ogl/RenderNode.h"
+#include "clientbase/EventHandler.h"
 
-#include "OpenGLUtils.h"
+#include "ogl/OpenGLUtils.h"
 
 
 // for tracking glBegin/End pairs; see include/bzfgl.h

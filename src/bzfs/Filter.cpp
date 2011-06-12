@@ -14,8 +14,8 @@
 #include "Filter.h"
 
 // bzflag common header
-#include "TextUtils.h"
-#include "network.h"
+#include "common/TextUtils.h"
+#include "net/network.h"
 
 Filter::Filter() {
   load();

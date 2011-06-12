@@ -24,9 +24,9 @@
 #include <vector>
 
 /* common headers */
-#include "StartupInfo.h"
-#include "CommandCompleter.h"
-#include "Address.h"
+#include "game/StartupInfo.h"
+#include "game/CommandCompleter.h"
+#include "net/Address.h"
 #include "vectors.h"
 
 /* local headers */

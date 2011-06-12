@@ -11,7 +11,7 @@
  */
 
 #include "EmptySceneNodeGenerator.h"
-#include "WallSceneNode.h"
+#include "geometry/WallSceneNode.h"
 
 //
 // EmptySceneNodeGenerator

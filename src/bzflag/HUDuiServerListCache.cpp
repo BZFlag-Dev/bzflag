@@ -15,10 +15,10 @@
 
 #include "ServerMenu.h"
 
-#include "Pack.h"
+#include "net/Pack.h"
 #include "version.h"
-#include "DirectoryNames.h"
-#include "FileManager.h"
+#include "game/DirectoryNames.h"
+#include "common/FileManager.h"
 #include <algorithm>
 
 //

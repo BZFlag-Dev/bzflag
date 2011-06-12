@@ -20,15 +20,15 @@
 #include <vector>
 
 /* common interface headers */
-#include "SceneDatabase.h"
-#include "BzTime.h"
-#include "LaserSceneNode.h"
+#include "scene/SceneDatabase.h"
+#include "common/BzTime.h"
+#include "geometry/LaserSceneNode.h"
 #include "Extents.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"
 #include "ShotPathSegment.h"
-#include "BoltSceneNode.h"
+#include "geometry/BoltSceneNode.h"
 
 
 class Obstacle;

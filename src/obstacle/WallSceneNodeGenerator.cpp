@@ -12,9 +12,9 @@
 
 #include <math.h>
 #include "WallSceneNodeGenerator.h"
-#include "WallObstacle.h"
+#include "obstacle/WallObstacle.h"
 #include "bzfgl.h"
-#include "QuadWallSceneNode.h"
+#include "geometry/QuadWallSceneNode.h"
 
 
 //

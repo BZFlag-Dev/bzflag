@@ -25,7 +25,7 @@
 #include <string>
 
 /* common headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 /* local headers */
 #include "BZAdminClient.h"

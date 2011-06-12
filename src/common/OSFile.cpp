@@ -31,7 +31,7 @@
 #endif
 
 // local implementation headers
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 typedef std::vector<std::string> fileNameList;
 

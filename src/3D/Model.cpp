@@ -12,7 +12,7 @@
 
 #include "Model.h"
 #include "bzfgl.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 OBJVert::OBJVert(float _x, float _y, float _z) {
   x = _x;

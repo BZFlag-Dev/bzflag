@@ -20,7 +20,7 @@
 #define __HUDUIIMAGE_H__
 
 #include "HUDuiElement.h"
-#include "OpenGLGState.h"
+#include "ogl/OpenGLGState.h"
 
 class HUDuiImage : public HUDuiElement {
   public:

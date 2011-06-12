@@ -3,11 +3,11 @@
 
 // common headers
 #include "BzVFS.h"
-#include "BzDocket.h"
-#include "CacheManager.h"
+#include "common/BzDocket.h"
+#include "common/CacheManager.h"
 //#include "DirectoryNames.h"
-#include "StateDatabase.h"
-#include "bzfio.h"
+#include "common/StateDatabase.h"
+#include "common/bzfio.h"
 
 // system headers
 #ifndef WIN32

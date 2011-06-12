@@ -17,7 +17,7 @@
 #include <sys/stat.h>
 
 /* ugh, more mixing with libCommon */
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 
 static SndCallBackUPP gCarbonSndCallBackUPP = nil;

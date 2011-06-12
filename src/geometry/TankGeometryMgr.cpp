@@ -12,8 +12,8 @@
 
 // bzflag common headers
 #include "common.h"
-#include "global.h"
-#include "TextUtils.h"
+#include "game/global.h"
+#include "common/TextUtils.h"
 
 // interface header
 #include "TankGeometryMgr.h"
@@ -26,15 +26,15 @@
 
 // common headers
 #include "bzfgl.h"
-#include "SceneRenderer.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "OpenGLGState.h"
-#include "Model.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "ogl/OpenGLGState.h"
+#include "3D/Model.h"
 #include "vectors.h"
 
-#include "PlatformFactory.h"
-#include "BzfMedia.h"
+#include "platform/PlatformFactory.h"
+#include "platform/BzfMedia.h"
 
 
 // use the namespaces

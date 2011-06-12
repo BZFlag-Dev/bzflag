@@ -19,9 +19,9 @@
 #include <iostream>
 
 /* common implementation headers */
-#include "TextureMatrix.h"
-#include "MeshObstacle.h"
-#include "ObstacleMgr.h"
+#include "game/TextureMatrix.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"

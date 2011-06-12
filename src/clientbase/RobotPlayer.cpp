@@ -18,12 +18,12 @@
 #include "RobotPlayer.h"
 
 // common implementation headers
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 
 // local implementation headers
 #include "World.h"
 #include "RemotePlayer.h"
-#include "Intersect.h"
+#include "game/Intersect.h"
 #include "TargetingUtils.h"
 
 

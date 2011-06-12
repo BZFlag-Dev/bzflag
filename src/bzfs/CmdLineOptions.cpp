@@ -36,11 +36,11 @@
 
 /* common implementation headers */
 #include "version.h"
-#include "Team.h"
-#include "TextUtils.h"
-#include "BZDBCache.h"
-#include "BzMaterial.h"
-#include "BzVFS.h"
+#include "game/Team.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
+#include "common/BzVFS.h"
 
 /* local implementation headers */
 #include "bzfs.h"

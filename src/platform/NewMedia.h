@@ -17,7 +17,7 @@
 #ifndef BZF_NEWMEDIA_H
 #define BZF_NEWMEDIA_H
 
-#include "BzfMedia.h"
+#include "platform/BzfMedia.h"
 
 class NewMedia : public BzfMedia {
   public:

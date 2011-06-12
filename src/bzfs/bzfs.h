@@ -24,13 +24,13 @@
 #include <list>
 
 // must be before windows.h
-#include "network.h"
+#include "net/network.h"
 
 // common interface headers
-#include "Address.h"
-#include "BzTime.h"
-#include "Flag.h"
-#include "Ping.h"
+#include "net/Address.h"
+#include "common/BzTime.h"
+#include "game/Flag.h"
+#include "net/Ping.h"
 #include "vectors.h"
 
 // bzfs specific headers
@@ -40,9 +40,9 @@
 #include "FlagInfo.h"
 #include "WorldInfo.h"
 #include "RejoinList.h"
-#include "VotingArbiter.h"
+#include "game/VotingArbiter.h"
 
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 
 
 // to dump score info to stdout

@@ -23,7 +23,7 @@
 /* common interface headers */
 #include "Singleton.h"
 
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 
 class CountDown {
   public:

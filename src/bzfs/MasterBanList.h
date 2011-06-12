@@ -14,7 +14,7 @@
 #define __MASTER_BAN_LIST_H__
 
 // interace header
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 class MasterBanList : private cURLManager {
   public:

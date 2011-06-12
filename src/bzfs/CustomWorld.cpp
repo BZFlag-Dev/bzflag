@@ -17,9 +17,9 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "TextUtils.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "common/TextUtils.h"
 
 
 CustomWorld::CustomWorld() {

@@ -22,8 +22,8 @@
 #include <string>
 
 /* implementation headers */
-#include "ErrorHandler.h"
-#include "TextUtils.h"
+#include "common/ErrorHandler.h"
+#include "common/TextUtils.h"
 
 #ifdef _MSC_VER
 #pragma warning(4:4800)

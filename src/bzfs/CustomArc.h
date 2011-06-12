@@ -20,7 +20,7 @@
 #include "WorldInfo.h"
 
 /* common interface headers */
-#include "BzMaterial.h"
+#include "game/BzMaterial.h"
 
 
 class CustomArc : public WorldFileObstacle {

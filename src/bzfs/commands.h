@@ -21,9 +21,9 @@
 #include <map>
 
 /* common headers */
-#include "bzfsAPI.h"
+#include "bzfs/bzfsAPI.h"
 #include "GameKeeper.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 
 // command classes used by the API

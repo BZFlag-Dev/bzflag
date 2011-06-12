@@ -297,11 +297,11 @@
 			Filter="h"
 			>
 			<File
-				RelativePath="..\..\src\include\AccessList.h"
+				RelativePath="..\..\src\common\AccessList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Address.h"
+				RelativePath="..\..\src\net\Address.h"
 				>
 			</File>
 			<File
@@ -309,55 +309,55 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\AutoCompleter.h"
+				RelativePath="..\..\src\common\AutoCompleter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Bundle.h"
+				RelativePath="..\..\src\common\Bundle.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BundleMgr.h"
+				RelativePath="..\..\src\common\BundleMgr.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bz_Locale.h"
+				RelativePath="..\..\src\common\bz_Locale.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bz_md5.h"
+				RelativePath="..\..\src\common\bz_md5.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzDocket.h"
+				RelativePath="..\..\src\common\BzDocket.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzfio.h"
+				RelativePath="..\..\src\common\bzfio.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzglob.h"
+				RelativePath="..\..\src\common\bzglob.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzPNG.h"
+				RelativePath="..\..\src\common\BzPNG.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzsignal.h"
+				RelativePath="..\..\src\common\bzsignal.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzTime.h"
+				RelativePath="..\..\src\common\BzTime.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzUnicode.h"
+				RelativePath="..\..\src\common\bzUnicode.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzVFS.h"
+				RelativePath="..\..\src\common\BzVFS.h"
 				>
 			</File>
 			<File
@@ -365,7 +365,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\CommandManager.h"
+				RelativePath="..\..\src\common\CommandManager.h"
 				>
 			</File>
 			<File
@@ -377,63 +377,63 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ConfigFileManager.h"
+				RelativePath="..\..\src\common\ConfigFileManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Country.h"
+				RelativePath="..\..\src\common\Country.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\cURLManager.h"
+				RelativePath="..\..\src\common\cURLManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ErrorHandler.h"
+				RelativePath="..\..\src\common\ErrorHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\FileManager.h"
+				RelativePath="..\..\src\common\FileManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\global.h"
+				RelativePath="..\..\src\game\global.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\KeyManager.h"
+				RelativePath="..\..\src\common\KeyManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Language.h"
+				RelativePath="..\..\src\common\Language.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\OSFile.h"
+				RelativePath="..\..\src\common\OSFile.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Pack.h"
+				RelativePath="..\..\src\net\Pack.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ParseColor.h"
+				RelativePath="..\..\src\common\ParseColor.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\SceneDatabase.h"
+				RelativePath="..\..\src\scene\SceneDatabase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\StateDatabase.h"
+				RelativePath="..\..\src\common\StateDatabase.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\TextChunkManager.h"
+				RelativePath="..\..\src\common\TextChunkManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\TextUtils.h"
+				RelativePath="..\..\src\common\TextUtils.h"
 				>
 			</File>
 			<File
@@ -441,7 +441,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\VotingBooth.h"
+				RelativePath="..\..\src\common\VotingBooth.h"
 				>
 			</File>
 			<File
@@ -449,7 +449,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\WordFilter.h"
+				RelativePath="..\..\src\common\WordFilter.h"
 				>
 			</File>
 		</Filter>

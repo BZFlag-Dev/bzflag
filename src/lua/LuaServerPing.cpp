@@ -22,9 +22,9 @@
 #include <set>
 
 // common headers
-#include "network.h"
-#include "Address.h"
-#include "ServerPing.h"
+#include "net/network.h"
+#include "net/Address.h"
+#include "game/ServerPing.h"
 
 // local headers
 #include "LuaHeader.h"

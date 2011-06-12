@@ -17,7 +17,7 @@
 #ifndef BZF_LINUXMEDIA_H
 #define BZF_LINUXMEDIA_H
 
-#include "BzfMedia.h"
+#include "platform/BzfMedia.h"
 #include <stdio.h>
 #include <unistd.h>
 

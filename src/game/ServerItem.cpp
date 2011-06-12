@@ -20,13 +20,13 @@
 #include "ServerItem.h"
 
 /* common implementation headers */
-#include "bzfio.h"
+#include "common/bzfio.h"
 #include "AnsiCodes.h"
 #include "Protocol.h"
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 /* local implementation headers */
-#include "ServerListCache.h"
+#include "game/ServerListCache.h"
 
 
 ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false), recent(false), recentTime(0) {

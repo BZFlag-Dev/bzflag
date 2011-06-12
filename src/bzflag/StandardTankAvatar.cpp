@@ -12,11 +12,11 @@
 
 // interface header
 #include "StandardTankAvatar.h"
-#include "BZDBCache.h"
-#include "SceneRenderer.h"
-#include "TextureManager.h"
-#include "Team.h"
-#include "OpenGLMaterial.h"
+#include "game/BZDBCache.h"
+#include "bzflag/SceneRenderer.h"
+#include "3D/TextureManager.h"
+#include "game/Team.h"
+#include "ogl/OpenGLMaterial.h"
 
 
 StandardTankAvatar::StandardTankAvatar(int /* playerID */, const fvec3& pos, const fvec3& forward) {

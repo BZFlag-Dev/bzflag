@@ -20,11 +20,11 @@
 
 // implementation-specific headers
 #ifdef DEBUG
-#  include "BzTime.h"
+#  include "common/BzTime.h"
 #endif
 
 // common headers
-#include "bzfio.h"
+#include "common/bzfio.h"
 
 
 // TODO: wordfilter is no good for multibyte strings

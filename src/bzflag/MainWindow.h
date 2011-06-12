@@ -21,8 +21,8 @@
 #include <string>
 
 /* common interface headers */
-#include "BzfWindow.h"
-#include "BzfJoystick.h"
+#include "platform/BzfWindow.h"
+#include "platform/BzfJoystick.h"
 
 #define USE_GL_STEREO
 

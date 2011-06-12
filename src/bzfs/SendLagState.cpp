@@ -18,9 +18,9 @@
 #include <vector>
 
 // common headers
-#include "bzfio.h"
-#include "BzTime.h"
-#include "NetMessage.h"
+#include "common/bzfio.h"
+#include "common/BzTime.h"
+#include "game/NetMessage.h"
 
 // local headers
 #include "bzfs.h"

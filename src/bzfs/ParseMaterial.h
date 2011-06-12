@@ -19,7 +19,7 @@
 #include <iostream>
 
 /* common interface headers */
-#include "BzMaterial.h"
+#include "game/BzMaterial.h"
 
 extern bool parseMaterials(const char* cmd, std::istream& input,
                            BzMaterial* materials, int materialCount,

@@ -23,9 +23,9 @@
 #include "ParseMaterial.h"
 
 /* common implementation headers */
-#include "PhysicsDriver.h"
-#include "ObstacleMgr.h"
-#include "MeshDrawInfo.h"
+#include "game/PhysicsDriver.h"
+#include "obstacle/ObstacleMgr.h"
+#include "obstacle/MeshDrawInfo.h"
 
 
 CustomMesh::CustomMesh(const char* meshName) {

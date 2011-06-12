@@ -12,10 +12,10 @@
 
 #include "common.h"
 #include "ConfigFileManager.h"
-#include "FileManager.h"
-#include "CommandManager.h"
-#include "StateDatabase.h"
-#include "KeyManager.h"
+#include "common/FileManager.h"
+#include "common/CommandManager.h"
+#include "common/StateDatabase.h"
+#include "common/KeyManager.h"
 
 
 static const int  MaximumLineLength = 1024;

@@ -20,7 +20,7 @@
 #include <vector>
 
 /* common interface headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 #include "ShotPathSegment.h"
 #include "Extents.h"
 

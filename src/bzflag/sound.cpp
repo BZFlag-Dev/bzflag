@@ -22,7 +22,7 @@
 // common headers
 #include "PlatformSound.h"
 
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 template <>
 SoundManager* Singleton<SoundManager>::_instance = (SoundManager*)0;

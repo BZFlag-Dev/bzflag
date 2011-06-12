@@ -11,7 +11,7 @@
  */
 
 #include "Plan.h"
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 #include "playing.h"
 #include "LocalPlayer.h"
 #include "WorldPlayer.h"

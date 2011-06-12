@@ -20,11 +20,11 @@
 #include <string>
 
 // common headers
-#include "Team.h"
-#include "FlagWarpSceneNode.h"
-#include "BundleMgr.h"
-#include "MapInfo.h"
-#include "global.h"
+#include "game/Team.h"
+#include "geometry/FlagWarpSceneNode.h"
+#include "common/BundleMgr.h"
+#include "game/MapInfo.h"
+#include "game/global.h"
 #include "vectors.h"
 
 // local headers

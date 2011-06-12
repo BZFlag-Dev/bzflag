@@ -21,9 +21,9 @@
 #include "common.h"
 
 // common headers
-#include "global.h"
+#include "game/global.h"
 #include "vectors.h"
-#include "OpenGLMaterial.h"
+#include "ogl/OpenGLMaterial.h"
 
 
 class SceneRenderer;

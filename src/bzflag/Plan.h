@@ -21,7 +21,7 @@
 
 // common headers
 #include "vectors.h"
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 class ShotPath;
 

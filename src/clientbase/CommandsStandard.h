@@ -14,7 +14,7 @@
 #define __COMMANDSSTANDARD_H__
 
 /* common interface headers */
-#include "CommandManager.h"
+#include "common/CommandManager.h"
 
 
 struct CommandsItem {

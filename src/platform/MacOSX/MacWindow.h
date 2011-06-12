@@ -17,7 +17,7 @@
 
 #include "bzfgl.h"
 
-#include "BzfWindow.h"
+#include "platform/BzfWindow.h"
 #include "MacDisplay.h"
 #include "MacVisual.h"
 

@@ -12,7 +12,7 @@
 
 // interface header
 #include "ShotManager.h"
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 //
 // ShotManager

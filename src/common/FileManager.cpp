@@ -25,7 +25,7 @@
 #endif
 
 // local implementation headers
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 //
 // FileManager

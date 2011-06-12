@@ -18,15 +18,15 @@
 
 // common headers
 #include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "SceneRenderer.h"
-#include "BZDBCache.h"
+#include "ogl/OpenGLGState.h"
+#include "bzflag/SceneRenderer.h"
+#include "game/BZDBCache.h"
 #include "LocalPlayer.h"
-#include "LinkManager.h"
-#include "MeshFace.h"
-#include "Flag.h"
+#include "game/LinkManager.h"
+#include "obstacle/MeshFace.h"
+#include "game/Flag.h"
 #include "Roster.h"
-#include "GameTime.h"
+#include "game/GameTime.h"
 
 
 //============================================================================//

@@ -22,9 +22,9 @@
 
 // common headers
 #include "bzfgl.h"
-#include "Intersect.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
-#include "TextureManager.h"
+#include "game/Intersect.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "3D/TextureManager.h"
 
 
 // FIXME - no tesselation is done on for shot lighting

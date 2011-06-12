@@ -12,7 +12,7 @@
 
 // interface header
 #include "PlayerInfo.h"
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 // system headers
 #include <errno.h>
@@ -21,9 +21,9 @@
 #include <ctype.h>
 
 // common headers
-#include "NetMessage.h"
-#include "Pack.h"
-#include "TextUtils.h"
+#include "game/NetMessage.h"
+#include "net/Pack.h"
+#include "common/TextUtils.h"
 
 
 WordFilter PlayerInfo::serverSpoofingFilter;

@@ -23,13 +23,13 @@
 
 // common headers
 #include "bzfgl.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
-#include "TextureManager.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "3D/TextureManager.h"
 
 // local headers
-#include "ViewFrustum.h"
+#include "geometry/ViewFrustum.h"
 
 
 BoltSceneNode::BoltSceneNode(const fvec3& pos, const fvec3& vel)

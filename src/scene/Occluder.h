@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "SceneNode.h"
-#include "Frustum.h"
-#include "Intersect.h"
+#include "geometry/SceneNode.h"
+#include "game/Frustum.h"
+#include "game/Intersect.h"
 #include "Extents.h"
 #include "vectors.h"
 

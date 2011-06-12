@@ -15,9 +15,9 @@
 #include "RoofTops.h"
 
 // local interface headers
-#include "Obstacle.h"
+#include "obstacle/Obstacle.h"
 #include "Ray.h"
-#include "CollisionManager.h"
+#include "game/CollisionManager.h"
 
 
 //============================================================================//

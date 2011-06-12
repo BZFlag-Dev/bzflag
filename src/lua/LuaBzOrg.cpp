@@ -22,11 +22,11 @@
 #include <set>
 
 // common headers
-#include "BzVFS.h"
-#include "EventHandler.h"
-#include "StateDatabase.h"
-#include "bzfio.h"
-#include "cURLManager.h"
+#include "common/BzVFS.h"
+#include "clientbase/EventHandler.h"
+#include "common/StateDatabase.h"
+#include "common/bzfio.h"
+#include "common/cURLManager.h"
 
 // bzflag headers
 #include "bzflag/Downloads.h"

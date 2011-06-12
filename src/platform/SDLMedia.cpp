@@ -19,10 +19,10 @@
 #include <sys/stat.h>
 
 #include "SDLMedia.h"
-#include "ErrorHandler.h"
+#include "common/ErrorHandler.h"
 
 /* ugh, more mixing with libCommon */
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 
 static const int defaultAudioRate = 22050;

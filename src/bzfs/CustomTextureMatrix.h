@@ -17,7 +17,7 @@
 #include "WorldFileObject.h"
 
 /* common headers */
-#include "TextureMatrix.h"
+#include "game/TextureMatrix.h"
 
 class CustomTextureMatrix : public WorldFileObject {
   public:

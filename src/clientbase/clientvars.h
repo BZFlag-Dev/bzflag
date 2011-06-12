@@ -22,7 +22,7 @@
 // common client headers
 #include "FlashClock.h"
 #include "World.h"
-#include "Team.h"
+#include "game/Team.h"
 
 
 extern LocalPlayer* myTank;

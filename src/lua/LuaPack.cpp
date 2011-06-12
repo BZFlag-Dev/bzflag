@@ -23,7 +23,7 @@
 #include <algorithm>
 
 // common headers
-#include "BzPNG.h"
+#include "common/BzPNG.h"
 
 // local headers
 #include "LuaHeader.h"

@@ -14,8 +14,8 @@
 #include "HelpMenu.h"
 
 /* common implementation headers */
-#include "Flag.h"
-#include "FontManager.h"
+#include "game/Flag.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

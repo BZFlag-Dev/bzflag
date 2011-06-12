@@ -25,8 +25,8 @@
 /* common interface headers */
 #include "Ray.h"
 #include "Extents.h"
-#include "Obstacle.h"
-#include "SceneDatabase.h"
+#include "obstacle/Obstacle.h"
+#include "scene/SceneDatabase.h"
 #include "vectors.h"
 
 /* local interface headers */

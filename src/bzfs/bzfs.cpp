@@ -25,30 +25,30 @@
 #include <sstream>
 
 // common headers
-#include "bzfsAPI.h"
-#include "bz_md5.h"
-#include "bzsignal.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/bz_md5.h"
+#include "common/bzsignal.h"
 #include "AnsiCodes.h"
-#include "AresHandler.h"
-#include "BaseBuilding.h"
-#include "BZDBCache.h"
-#include "BzDocket.h"
-#include "BzVFS.h"
-#include "CommandManager.h"
-#include "ConfigFileManager.h"
-#include "GameTime.h"
-#include "NetHandler.h"
-#include "NetMessage.h"
-#include "Obstacle.h"
-#include "ObstacleMgr.h"
-#include "PhysicsDriver.h"
-#include "ShotUpdate.h"
+#include "net/AresHandler.h"
+#include "obstacle/BaseBuilding.h"
+#include "game/BZDBCache.h"
+#include "common/BzDocket.h"
+#include "common/BzVFS.h"
+#include "common/CommandManager.h"
+#include "common/ConfigFileManager.h"
+#include "game/GameTime.h"
+#include "game/NetHandler.h"
+#include "game/NetMessage.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/ObstacleMgr.h"
+#include "game/PhysicsDriver.h"
+#include "game/ShotUpdate.h"
 #include "version.h"
-#include "VotingArbiter.h"
-#include "CollisionManager.h"
+#include "game/VotingArbiter.h"
+#include "game/CollisionManager.h"
 #include "Ray.h"
 #ifdef DEBUG
-#  include "MsgStrings.h"
+#  include "game/MsgStrings.h"
 #endif
 
 
@@ -64,7 +64,7 @@
 #include "commands.h"
 #include "MasterBanList.h"
 #include "Filter.h"
-#include "WorldEventManager.h"
+#include "bzfs/WorldEventManager.h"
 #include "WorldGenerators.h"
 #include "bzfsMessages.h"
 #include "bzfsClientMessages.h"
@@ -73,7 +73,7 @@
 #include "ServerIntangibilityManager.h"
 #include "lua/LuaServer.h"
 
-#include "DirectoryNames.h"
+#include "game/DirectoryNames.h"
 
 #include "Stats.h"
 

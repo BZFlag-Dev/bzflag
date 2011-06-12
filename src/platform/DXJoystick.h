@@ -18,7 +18,7 @@
 #ifndef BZF_DXJOY_H
 #define BZF_DXJOY_H
 
-#include "BzfJoystick.h"
+#include "platform/BzfJoystick.h"
 
 #ifndef BROKEN_DINPUT
 

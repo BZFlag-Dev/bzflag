@@ -18,8 +18,8 @@
 #include <string.h>
 
 // common headers
-#include "bzfio.h"
-#include "Pack.h"
+#include "common/bzfio.h"
+#include "net/Pack.h"
 
 
 NetMessage::SendFunc      NetMessage::sendFunc      = NULL;

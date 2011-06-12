@@ -14,7 +14,7 @@
 #include "SaveWorldMenu.h"
 
 /* common implementation headers */
-#include "FontManager.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

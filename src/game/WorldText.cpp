@@ -21,10 +21,10 @@
 #include <string.h>
 
 /* common interface headers */
-#include "Pack.h"
-#include "BzMaterial.h"
-#include "MeshTransform.h"
-#include "CacheManager.h"
+#include "net/Pack.h"
+#include "game/BzMaterial.h"
+#include "game/MeshTransform.h"
+#include "common/CacheManager.h"
 
 
 static const float defFontSize = 18.0f;

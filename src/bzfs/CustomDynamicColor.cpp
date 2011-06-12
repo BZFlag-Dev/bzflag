@@ -22,10 +22,10 @@
 #include <string.h>
 
 // common headers
-#include "global.h"
-#include "DynamicColor.h"
-#include "ParseColor.h"
-#include "TextUtils.h"
+#include "game/global.h"
+#include "game/DynamicColor.h"
+#include "common/ParseColor.h"
+#include "common/TextUtils.h"
 
 
 //============================================================================//

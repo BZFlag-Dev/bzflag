@@ -21,7 +21,7 @@
 
 // implementation-specific bzflag headers
 #include "bzfstream.h"
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 
 // implementation-specific bzfs-specific headers
 #include "TeamBases.h"
@@ -49,12 +49,12 @@
 #include "CustomZone.h"
 
 // common headers
-#include "ObstacleMgr.h"
-#include "BaseBuilding.h"
-#include "MeshObstacle.h"
-#include "MeshFace.h"
-#include "TextUtils.h"
-#include "StateDatabase.h"
+#include "obstacle/ObstacleMgr.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/MeshFace.h"
+#include "common/TextUtils.h"
+#include "common/StateDatabase.h"
 
 // bzfs specific headers
 #include "bzfs.h"

@@ -19,8 +19,8 @@
 #include <assert.h>
 
 // common headers
-#include "NetMessage.h"
-#include "PlayerState.h"
+#include "game/NetMessage.h"
+#include "game/PlayerState.h"
 
 
 void flagToAPIFlag(FlagInfo& flag, bz_FlagUpdateRecord* flagRecord) {

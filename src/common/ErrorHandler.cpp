@@ -22,9 +22,9 @@
 #include <string>
 
 // local implementation headers
-#include "bzfio.h"
-#include "BundleMgr.h"
-#include "Bundle.h"
+#include "common/bzfio.h"
+#include "common/BundleMgr.h"
+#include "common/Bundle.h"
 
 static ErrorCallback  errorCallback = NULL;
 

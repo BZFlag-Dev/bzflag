@@ -14,8 +14,8 @@
 #include "ShotStats.h"
 
 /* common implementation headers */
-#include "FontManager.h"
-#include "TextUtils.h"
+#include "3D/FontManager.h"
+#include "common/TextUtils.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

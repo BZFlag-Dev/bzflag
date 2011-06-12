@@ -22,7 +22,7 @@
 
 #include "BZAdminClient.h"
 #include "curses_wrapper.h"
-#include "PlayerInfo.h"
+#include "bzadmin/PlayerInfo.h"
 
 
 class CursesMenu;

@@ -18,7 +18,7 @@
 #ifndef __DEFAULT_BZDB_H__
 #define __DEFAULT_BZDB_H__
 
-#include "StateDatabase.h"
+#include "common/StateDatabase.h"
 
 // default database entries
 struct DefaultDBItem {

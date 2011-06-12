@@ -17,7 +17,7 @@
 #ifndef BZF_BEOS_PLATFORM_FACTORY_H
 #define BZF_BEOS_PLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "platform/PlatformFactory.h"
 
 class BeOSPlatformFactory : public PlatformFactory {
   public:

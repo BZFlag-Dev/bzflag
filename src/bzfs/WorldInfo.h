@@ -20,7 +20,7 @@
 #include <string>
 
 // common headers
-#include "MapInfo.h"
+#include "game/MapInfo.h"
 #include "vectors.h"
 
 // bzfs headers

@@ -21,12 +21,12 @@
 #include <string.h>
 
 /* common headers */
-#include "global.h" // for CtfTeams
-#include "ObstacleMgr.h"
-#include "ParseColor.h"
-#include "PhysicsDriver.h"
-#include "TextUtils.h"
-#include "BzMaterial.h"
+#include "game/global.h" // for CtfTeams
+#include "obstacle/ObstacleMgr.h"
+#include "common/ParseColor.h"
+#include "game/PhysicsDriver.h"
+#include "common/TextUtils.h"
+#include "game/BzMaterial.h"
 
 
 CustomGroup::CustomGroup(const std::string& groupDef,

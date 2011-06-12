@@ -22,10 +22,10 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "Pack.h"
+#include "net/Pack.h"
 #include "WorldFileObject.h"
 #include "WorldFileLocation.h"
-#include "MeshTransform.h"
+#include "game/MeshTransform.h"
 
 
 WorldFileLocation::WorldFileLocation()

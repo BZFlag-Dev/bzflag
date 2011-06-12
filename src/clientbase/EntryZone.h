@@ -20,8 +20,8 @@
 #include <vector>
 
 // common headers
-#include "Flag.h"
-#include "global.h"
+#include "game/Flag.h"
+#include "game/global.h"
 #include "vectors.h"
 
 class EntryZone {

@@ -23,10 +23,10 @@
 #include <vector>
 
 /* common implementation headers */
-#include "ConeObstacle.h"
-#include "PhysicsDriver.h"
-#include "StateDatabase.h"
-#include "ObstacleMgr.h"
+#include "obstacle/ConeObstacle.h"
+#include "game/PhysicsDriver.h"
+#include "common/StateDatabase.h"
+#include "obstacle/ObstacleMgr.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"

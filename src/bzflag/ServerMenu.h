@@ -23,9 +23,9 @@
 
 #include "HUDuiServerList.h"
 #include "HUDuiServerListCache.h"
-#include "ServerList.h"
-#include "ServerItem.h"
-#include "ServerPing.h"
+#include "game/ServerList.h"
+#include "game/ServerItem.h"
+#include "game/ServerPing.h"
 #include "HUDuiTabbedControl.h"
 #include "HUDuiServerInfo.h"
 #include "HUDuiServerListCustomTab.h"

@@ -20,8 +20,8 @@
 
 // common headers
 #include "bzfgl.h"
-#include "OpenGLGState.h"
-#include "ViewFrustum.h"
+#include "ogl/OpenGLGState.h"
+#include "geometry/ViewFrustum.h"
 
 
 int OpenGLLight::maxLights = 0;

@@ -11,9 +11,9 @@
  */
 
 #include "BoxSceneNodeGenerator.h"
-#include "WallSceneNode.h"
-#include "BoxBuilding.h"
-#include "QuadWallSceneNode.h"
+#include "geometry/WallSceneNode.h"
+#include "obstacle/BoxBuilding.h"
+#include "geometry/QuadWallSceneNode.h"
 
 //
 // BoxSceneNodeGenerator

@@ -22,13 +22,13 @@
 
 // common headers
 #include "bzfgl.h"
-#include "BZDBCache.h"
-#include "TextureManager.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "game/BZDBCache.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 // local headers
-#include "ViewFrustum.h"
-#include "StateDatabase.h"
+#include "geometry/ViewFrustum.h"
+#include "common/StateDatabase.h"
 
 
 BillboardSceneNode::BillboardSceneNode(const fvec3& pos)

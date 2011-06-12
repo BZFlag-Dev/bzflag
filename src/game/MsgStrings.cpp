@@ -23,17 +23,17 @@
 #include <math.h>
 
 // common headers
-#include "global.h"
+#include "game/global.h"
 #include "Protocol.h"
-#include "Pack.h"
+#include "net/Pack.h"
 #include "AnsiCodes.h"
-#include "TextUtils.h"
-#include "Address.h"
-#include "StateDatabase.h"
-#include "PlayerState.h"
-#include "Team.h"
-#include "Flag.h"
-#include "ShotUpdate.h"
+#include "common/TextUtils.h"
+#include "net/Address.h"
+#include "common/StateDatabase.h"
+#include "game/PlayerState.h"
+#include "game/Team.h"
+#include "game/Flag.h"
+#include "game/ShotUpdate.h"
 
 
 // static bool UseDNS = true;

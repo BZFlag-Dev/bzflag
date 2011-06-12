@@ -17,7 +17,7 @@
 //#include <iostream>
 
 /* common implementation headers */
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 
 /* private */

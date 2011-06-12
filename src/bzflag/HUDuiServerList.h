@@ -22,8 +22,8 @@
 #include "HUDuiScrollList.h"
 
 #include "HUDuiServerListItem.h"
-#include "ServerItem.h"
-#include "ServerList.h"
+#include "game/ServerItem.h"
+#include "game/ServerList.h"
 
 #include "HUDuiFrame.h"
 

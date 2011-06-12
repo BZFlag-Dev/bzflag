@@ -33,7 +33,7 @@
 #endif
 
 /* common implementation headers */
-#include "bzsignal.h"
+#include "common/bzsignal.h"
 
 
 //

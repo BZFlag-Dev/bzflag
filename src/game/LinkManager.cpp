@@ -28,13 +28,13 @@
 #include <iostream>
 
 // common headers
-#include "bzglob.h"
-#include "BZDBCache.h"
-#include "Pack.h"
-#include "MeshObstacle.h"
-#include "MeshFace.h"
-#include "ObstacleMgr.h"
-#include "TextUtils.h"
+#include "common/bzglob.h"
+#include "game/BZDBCache.h"
+#include "net/Pack.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/ObstacleMgr.h"
+#include "common/TextUtils.h"
 
 
 static BZDB_int debugLinks("debugLinks");

@@ -28,14 +28,14 @@
 #include <string.h>
 
 // local implementation headers
-#include "ErrorHandler.h"
-#include "TextUtils.h"
+#include "common/ErrorHandler.h"
+#include "common/TextUtils.h"
 
 
 #if defined(DEBUG) || defined(_DEBUG)
 // headers needed only for _debugLookups()
 #include <map>
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 
 void _debugLookups(const std::string& name) {

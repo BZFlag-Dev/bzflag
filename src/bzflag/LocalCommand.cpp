@@ -18,10 +18,10 @@
 #include <wctype.h>
 
 // common headers
-#include "EventHandler.h"
+#include "clientbase/EventHandler.h"
 
 // local implementation headers
-#include "bzUnicode.h"
+#include "common/bzUnicode.h"
 
 
 LocalCommand::MapOfCommands* LocalCommand::mapOfCommands = NULL;

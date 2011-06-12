@@ -25,8 +25,8 @@
 #include <ctype.h>
 
 /* implementation headers */
-#include "ErrorHandler.h"
-#include "TextUtils.h"
+#include "common/ErrorHandler.h"
+#include "common/TextUtils.h"
 #include "bzfSDL.h"
 
 SDLJoystick::SDLJoystick() : joystickID(NULL) {

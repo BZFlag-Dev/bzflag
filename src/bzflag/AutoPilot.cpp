@@ -14,9 +14,9 @@
 #include "AutoPilot.h"
 
 /* common headers */
-#include "BZDBCache.h"
-#include "BoxBuilding.h"
-#include "MeshFace.h"
+#include "game/BZDBCache.h"
+#include "obstacle/BoxBuilding.h"
+#include "obstacle/MeshFace.h"
 
 /* local headers */
 #include "Roster.h"

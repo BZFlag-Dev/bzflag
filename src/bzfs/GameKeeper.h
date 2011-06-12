@@ -25,22 +25,22 @@
 #endif
 
 // common headers
-#include "PlayerInfo.h"
-#include "PlayerState.h"
-#include "BzTime.h"
-#include "bzfsAPI.h"
+#include "game/PlayerInfo.h"
+#include "game/PlayerState.h"
+#include "common/BzTime.h"
+#include "bzfs/bzfsAPI.h"
 #include "vectors.h"
 
 // bzfs headers
 #include "CmdLineOptions.h"
 #include "FlagHistory.h"
 #include "Permissions.h"
-#include "LagInfo.h"
+#include "game/LagInfo.h"
 #include "Score.h"
 #include "RecordReplay.h"
-#include "NetHandler.h"
+#include "game/NetHandler.h"
 #include "Authentication.h"
-#include "ShotUpdate.h"
+#include "game/ShotUpdate.h"
 
 
 class NetMessage;

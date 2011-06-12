@@ -305,83 +305,83 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\src\include\BZDBCache.h"
+				RelativePath="..\..\src\game\BZDBCache.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BZDBNames.h"
+				RelativePath="..\..\src\game\BZDBNames.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\BzMaterial.h"
+				RelativePath="..\..\src\game\BzMaterial.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\CollisionManager.h"
+				RelativePath="..\..\src\game\CollisionManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\CommandCompleter.h"
+				RelativePath="..\..\src\game\CommandCompleter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\DirectoryNames.h"
+				RelativePath="..\..\src\game\DirectoryNames.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Flag.h"
+				RelativePath="..\..\src\game\Flag.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Frustum.h"
+				RelativePath="..\..\src\game\Frustum.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\GameTime.h"
+				RelativePath="..\..\src\game\GameTime.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Intersect.h"
+				RelativePath="..\..\src\game\Intersect.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\LagInfo.h"
+				RelativePath="..\..\src\game\LagInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\LinkManager.h"
+				RelativePath="..\..\src\game\LinkManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\MapInfo.h"
+				RelativePath="..\..\src\game\MapInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\MotionUtils.h"
+				RelativePath="..\..\src\game\MotionUtils.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\MsgStrings.h"
+				RelativePath="..\..\src\game\MsgStrings.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\NetHandler.h"
+				RelativePath="..\..\src\game\NetHandler.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\NetMessage.h"
+				RelativePath="..\..\src\game\NetMessage.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\PhysicsDriver.h"
+				RelativePath="..\..\src\game\PhysicsDriver.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\PlayerInfo.h"
+				RelativePath="..\..\src\game\PlayerInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\PlayerState.h"
+				RelativePath="..\..\src\game\PlayerState.h"
 				>
 			</File>
 			<File
@@ -389,43 +389,43 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ServerItem.h"
+				RelativePath="..\..\src\game\ServerItem.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ServerList.h"
+				RelativePath="..\..\src\game\ServerList.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ServerListCache.h"
+				RelativePath="..\..\src\game\ServerListCache.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ServerPing.h"
+				RelativePath="..\..\src\game\ServerPing.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ShotManager.h"
+				RelativePath="..\..\src\game\ShotManager.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ShotUpdate.h"
+				RelativePath="..\..\src\game\ShotUpdate.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\StartupInfo.h"
+				RelativePath="..\..\src\game\StartupInfo.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\Team.h"
+				RelativePath="..\..\src\game\Team.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\VotingArbiter.h"
+				RelativePath="..\..\src\game\VotingArbiter.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\WorldText.h"
+				RelativePath="..\..\src\game\WorldText.h"
 				>
 			</File>
 		</Filter>

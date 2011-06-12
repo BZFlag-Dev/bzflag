@@ -20,7 +20,7 @@
 #include <iostream>
 
 /* common headers */
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 class WorldDownLoader : private cURLManager {
   public:

@@ -14,9 +14,9 @@
 #include "EffectsMenu.h"
 
 /* common implementation headers */
-#include "TextUtils.h"
-#include "FontManager.h"
-#include "StateDatabase.h"
+#include "common/TextUtils.h"
+#include "3D/FontManager.h"
+#include "common/StateDatabase.h"
 
 /* local implementation headers */
 #include "FontSizer.h"

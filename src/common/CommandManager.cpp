@@ -21,7 +21,7 @@
 #include <string>
 
 /* common implementation headers */
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 
 // initialize the singleton

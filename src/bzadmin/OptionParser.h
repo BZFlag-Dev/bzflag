@@ -24,7 +24,7 @@
 #include <vector>
 
 /* common interface headers */
-#include "TextUtils.h"
+#include "common/TextUtils.h"
 
 /** This is an abstract base class for all different option parsers.
     The idea is that you register a Parser object for each command line option,

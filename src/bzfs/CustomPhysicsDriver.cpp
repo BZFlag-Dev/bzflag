@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "PhysicsDriver.h"
+#include "game/PhysicsDriver.h"
 
 
 CustomPhysicsDriver::CustomPhysicsDriver(const char* phydrvName) {

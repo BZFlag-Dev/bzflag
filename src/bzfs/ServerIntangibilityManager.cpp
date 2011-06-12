@@ -13,7 +13,7 @@
 /* interface header */
 
 #include "ServerIntangibilityManager.h"
-#include "ObstacleMgr.h"
+#include "obstacle/ObstacleMgr.h"
 #include "bzfsMessages.h"
 
 template <>

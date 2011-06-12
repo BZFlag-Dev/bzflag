@@ -14,7 +14,7 @@
 #define __SHOTPATHSEGMENT_H__
 
 /* common interface headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 #include "Ray.h"
 #include "Extents.h"
 

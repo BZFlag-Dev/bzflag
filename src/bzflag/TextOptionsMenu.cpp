@@ -14,10 +14,10 @@
 #include "TextOptionsMenu.h"
 
 /* common implementation headers */
-#include "BundleMgr.h"
-#include "BZDBCache.h"
-#include "TextUtils.h"
-#include "FontManager.h"
+#include "common/BundleMgr.h"
+#include "game/BZDBCache.h"
+#include "common/TextUtils.h"
+#include "3D/FontManager.h"
 
 /* local implementation headers */
 #include "FontOptionsMenu.h"
@@ -28,7 +28,7 @@
 #include "HUDuiList.h"
 #include "HUDuiLabel.h"
 #include "ScoreboardRenderer.h"
-#include "SceneRenderer.h"
+#include "bzflag/SceneRenderer.h"
 #include "LocalFontFace.h"
 #include "playing.h"
 #include "guiplaying.h"

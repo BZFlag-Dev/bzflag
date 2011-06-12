@@ -18,8 +18,8 @@
 #include <string.h>
 
 // common implementation headers
-#include "TextUtils.h"
-#include "WorldEventManager.h"
+#include "common/TextUtils.h"
+#include "bzfs/WorldEventManager.h"
 
 // local implementation headers
 #include "ServerCommand.h"

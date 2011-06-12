@@ -14,12 +14,12 @@
 #include "BZRobotPlayer.h"
 
 // common implementation headers
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 
 // local implementation headers
 #include "Roster.h"
 #include "World.h"
-#include "Intersect.h"
+#include "game/Intersect.h"
 #include "TargetingUtils.h"
 
 

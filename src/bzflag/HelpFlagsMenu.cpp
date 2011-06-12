@@ -20,7 +20,7 @@
 #include <string.h>
 
 /* local implementation headers */
-#include "Flag.h"
+#include "game/Flag.h"
 
 HelpFlagsMenu::HelpFlagsMenu(FlagQuality quality) {
   std::string qString;

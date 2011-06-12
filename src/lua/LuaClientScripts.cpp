@@ -21,10 +21,10 @@
 #include <string>
 
 // common headers
-#include "OpenGLUtils.h"
-#include "TextUtils.h"
-#include "SceneDatabase.h"
-#include "StateDatabase.h"
+#include "ogl/OpenGLUtils.h"
+#include "common/TextUtils.h"
+#include "scene/SceneDatabase.h"
+#include "common/StateDatabase.h"
 
 // bzflag headers
 #include "bzflag/guiplaying.h"

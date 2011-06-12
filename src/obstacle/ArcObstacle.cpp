@@ -13,14 +13,14 @@
 #include "common.h"
 #include <math.h>
 #include <assert.h>
-#include "global.h"
-#include "Pack.h"
+#include "game/global.h"
+#include "net/Pack.h"
 #include "vectors.h"
 
 #include "ArcObstacle.h"
 #include "MeshUtils.h"
-#include "PhysicsDriver.h"
-#include "MeshTransform.h"
+#include "game/PhysicsDriver.h"
+#include "game/MeshTransform.h"
 
 
 const char* ArcObstacle::typeName = "ArcObstacle";

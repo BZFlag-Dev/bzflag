@@ -21,7 +21,7 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "MeshTransform.h"
+#include "game/MeshTransform.h"
 #include "vectors.h"
 
 

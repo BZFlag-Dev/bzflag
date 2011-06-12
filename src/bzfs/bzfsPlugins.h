@@ -13,8 +13,8 @@
 #ifndef _BZFS_PLUGINS_H_
 #define _BZFS_PLUGINS_H_
 
-#include "bzfsAPI.h"
-#include "PlayerState.h"
+#include "bzfs/bzfsAPI.h"
+#include "game/PlayerState.h"
 
 void initPlugins(void);
 

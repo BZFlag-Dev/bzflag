@@ -31,7 +31,7 @@
 #include <string>
 
 /* common interface headers */
-#include "BzTime.h"
+#include "common/BzTime.h"
 
 
 class PlayerAccessInfo {

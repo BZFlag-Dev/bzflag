@@ -19,17 +19,17 @@
 #include <stdlib.h>
 
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "BZDBCache.h"
-#include "Intersect.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "game/Intersect.h"
 #include "Ray.h"
-#include "ObstacleMgr.h"
-#include "Obstacle.h"
-#include "MeshObstacle.h"
-#include "BoxBuilding.h"
-#include "PyramidBuilding.h"
-#include "BaseBuilding.h"
-#include "BzTime.h"
+#include "obstacle/ObstacleMgr.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/BoxBuilding.h"
+#include "obstacle/PyramidBuilding.h"
+#include "obstacle/BaseBuilding.h"
+#include "common/BzTime.h"
 
 
 /* static variables */

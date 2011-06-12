@@ -21,8 +21,8 @@
 #include <math.h>
 
 /* common implementation headers */
-#include "StateDatabase.h"
-#include "bzfio.h"
+#include "common/StateDatabase.h"
+#include "common/bzfio.h"
 
 /* local implementation headers */
 #include "SDLVisual.h"

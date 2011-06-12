@@ -23,11 +23,11 @@
 #include <iostream>
 
 // common headers
-#include "NetMessage.h"
-#include "Pack.h"
+#include "game/NetMessage.h"
+#include "net/Pack.h"
 
 // bzflag headers
-#include "BZDBCache.h"
+#include "game/BZDBCache.h"
 
 /* private */
 

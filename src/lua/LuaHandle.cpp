@@ -22,9 +22,9 @@
 #include <vector>
 
 // common headers
-#include "bzfio.h"
-#include "BzVFS.h"
-#include "EventHandler.h"
+#include "common/bzfio.h"
+#include "common/BzVFS.h"
+#include "clientbase/EventHandler.h"
 
 // local headers
 #include "LuaHeader.h"

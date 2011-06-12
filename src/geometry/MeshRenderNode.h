@@ -16,7 +16,7 @@
 
 // common headers
 #include "bzfgl.h"
-#include "RenderNode.h"
+#include "ogl/RenderNode.h"
 #include "vectors.h"
 
 

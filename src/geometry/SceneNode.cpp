@@ -23,9 +23,9 @@
 // common headers
 #include "bzfgl.h"
 #include "Extents.h"
-#include "RenderNode.h"
-#include "StateDatabase.h"
-#include "SceneRenderer.h"
+#include "ogl/RenderNode.h"
+#include "common/StateDatabase.h"
+#include "bzflag/SceneRenderer.h"
 
 
 SceneNode::SceneNode() {

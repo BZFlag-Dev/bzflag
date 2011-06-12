@@ -637,7 +637,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\PlayerInfo.h"
+				RelativePath="..\..\src\game\PlayerInfo.h"
 				>
 			</File>
 			<File
@@ -685,7 +685,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\WorldEventManager.h"
+				RelativePath="..\..\src\bzfs\WorldEventManager.h"
 				>
 			</File>
 			<File
@@ -721,7 +721,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\bzfsAPI.h"
+				RelativePath="..\..\src\bzfs\bzfsAPI.h"
 				>
 			</File>
 			<File

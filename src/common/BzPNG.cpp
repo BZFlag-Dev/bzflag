@@ -23,7 +23,7 @@
 #include <string.h>
 
 // common headers
-#include "Pack.h"
+#include "net/Pack.h"
 #include "zlib.h"
 
 

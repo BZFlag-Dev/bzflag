@@ -18,15 +18,15 @@
 #include <math.h>
 
 // common headers
-#include "global.h"
-#include "Pack.h"
+#include "game/global.h"
+#include "net/Pack.h"
 #include "vectors.h"
-#include "Flag.h"
-#include "MeshObstacle.h"
-#include "PhysicsDriver.h"
-#include "LinkPhysics.h"
-#include "Intersect.h"
-#include "BZDBCache.h"
+#include "game/Flag.h"
+#include "obstacle/MeshObstacle.h"
+#include "game/PhysicsDriver.h"
+#include "game/LinkPhysics.h"
+#include "game/Intersect.h"
+#include "game/BZDBCache.h"
 
 
 const char* MeshFace::typeName = "MeshFace";

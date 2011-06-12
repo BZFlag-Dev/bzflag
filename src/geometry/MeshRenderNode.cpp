@@ -19,15 +19,15 @@
 #include <string.h>
 
 // common headers
-#include "RenderNode.h"
-#include "MeshDrawMgr.h"
-#include "OpenGLGState.h"
-#include "SceneNode.h"
-#include "SceneRenderer.h"
+#include "ogl/RenderNode.h"
+#include "geometry/MeshDrawMgr.h"
+#include "ogl/OpenGLGState.h"
+#include "geometry/SceneNode.h"
+#include "bzflag/SceneRenderer.h"
 
 #include "Extents.h"
-#include "StateDatabase.h"
-#include "BZDBCache.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
 
 
 //============================================================================//

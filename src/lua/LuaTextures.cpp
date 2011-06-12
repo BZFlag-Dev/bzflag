@@ -24,13 +24,13 @@
 
 // common headers
 #include "bzfgl.h"
-#include "bzfio.h"
-#include "BzVFS.h"
-#include "OpenGLGState.h"
-#include "OpenGLTexture.h"
-#include "OpenGLPassState.h"
-#include "TextureManager.h"
-#include "StateDatabase.h"
+#include "common/bzfio.h"
+#include "common/BzVFS.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLTexture.h"
+#include "ogl/OpenGLPassState.h"
+#include "3D/TextureManager.h"
+#include "common/StateDatabase.h"
 
 // mediafile headers
 #include "mediafile/PNGImageFile.h"

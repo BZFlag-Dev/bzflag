@@ -11,9 +11,9 @@
 */
 
 #include "Stats.h"
-#include "StateDatabase.h"
-#include "TextUtils.h"
-#include "global.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "game/global.h"
 #include "GameKeeper.h"
 
 StatsLink::StatsLink() {

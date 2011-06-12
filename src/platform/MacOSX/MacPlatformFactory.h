@@ -17,7 +17,7 @@
 #ifndef BZF_WINPLATFORM_FACTORY_H
 #define BZF_WINPLATFORM_FACTORY_H
 
-#include "PlatformFactory.h"
+#include "platform/PlatformFactory.h"
 
 class MacPlatformFactory : public PlatformFactory {
   public:

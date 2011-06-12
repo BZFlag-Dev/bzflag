@@ -19,7 +19,7 @@
 #include <string>
 
 // common headers
-#include "cURLManager.h"
+#include "common/cURLManager.h"
 
 
 struct lua_State;

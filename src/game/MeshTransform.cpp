@@ -25,7 +25,7 @@
 #include <vector>
 
 // common headers
-#include "Pack.h"
+#include "net/Pack.h"
 
 
 //============================================================================//

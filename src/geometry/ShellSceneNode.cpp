@@ -21,9 +21,9 @@
 
 // common headers
 #include "bzfgl.h"
-#include "OpenGLMaterial.h"
-#include "StateDatabase.h"
-#include "SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "ogl/OpenGLMaterial.h"
+#include "common/StateDatabase.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 #define ShellRadius1_2  ((float)(M_SQRT1_2 * ShellRadius))
 

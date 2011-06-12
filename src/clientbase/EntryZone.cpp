@@ -14,7 +14,7 @@
 #include "EntryZone.h"
 
 // common headers
-#include "Pack.h"
+#include "net/Pack.h"
 
 
 EntryZone::EntryZone() {

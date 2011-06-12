@@ -17,7 +17,7 @@
 #include "WorldFileObject.h"
 
 /* common headers */
-#include "PhysicsDriver.h"
+#include "game/PhysicsDriver.h"
 
 class CustomPhysicsDriver : public WorldFileObject {
   public:

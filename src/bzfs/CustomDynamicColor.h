@@ -17,7 +17,7 @@
 #include "WorldFileObject.h"
 
 /* common headers */
-#include "DynamicColor.h"
+#include "game/DynamicColor.h"
 
 class CustomDynamicColor : public WorldFileObject {
   public:

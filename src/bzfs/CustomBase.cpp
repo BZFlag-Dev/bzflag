@@ -17,9 +17,9 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "global.h" // for CtfTeams
-#include "BaseBuilding.h"
-#include "ObstacleMgr.h"
+#include "game/global.h" // for CtfTeams
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/ObstacleMgr.h"
 
 
 CustomBase::CustomBase() {

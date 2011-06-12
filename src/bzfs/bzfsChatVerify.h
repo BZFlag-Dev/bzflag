@@ -13,7 +13,7 @@
 #ifndef _BZFS_CHAT_VERIFY_H_
 #define _BZFS_CHAT_VERIFY_H_
 
-#include "global.h"
+#include "game/global.h"
 #include "bzfs.h"
 
 bool checkChatSpam(char* message, GameKeeper::Player* playerData, int t);

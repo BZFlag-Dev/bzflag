@@ -17,7 +17,7 @@
 #include "WorldFileObject.h"
 
 /* common headers */
-#include "BzMaterial.h"
+#include "game/BzMaterial.h"
 
 class CustomMaterial : public WorldFileObject {
   public:

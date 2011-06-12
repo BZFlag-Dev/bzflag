@@ -49,8 +49,8 @@ static DWORD             timeLastCalibration;
 #endif
 
 // common headers
-#include "TextUtils.h"
-#include "bzfio.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
 
 
 //============================================================================//

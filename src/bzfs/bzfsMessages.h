@@ -20,9 +20,9 @@
 #include <map>
 
 // common headers
-#include "global.h"
+#include "game/global.h"
 #include "vectors.h"
-#include "Address.h"
+#include "net/Address.h"
 
 // local headers
 #include "bzfs.h"
