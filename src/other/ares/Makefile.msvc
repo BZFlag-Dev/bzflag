@@ -1,4 +1,3 @@
-# $Id$
 
 # Copyright (C) 2009-2010 by Daniel Stenberg
 #
@@ -105,6 +104,8 @@ CC_VERS_NUM = 90
 !ELSEIF "$(_NMAKE_VER)" == "10.00.20506.01"
 CC_VERS_NUM = 100
 !ELSEIF "$(_NMAKE_VER)" == "10.00.21003.01"
+CC_VERS_NUM = 100
+!ELSEIF "$(_NMAKE_VER)" == "10.00.30319.01"
 CC_VERS_NUM = 100
 !ELSE
 !  MESSAGE Unknown value for _NMAKE_VER macro: "$(_NMAKE_VER)"

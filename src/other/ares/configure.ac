@@ -1,8 +1,8 @@
 AC_PREREQ(2.57)
 
 dnl Version not hardcoded here. Fetched later from ares_version.h
-AC_INIT([c-ares], [1.7.1],
-  [c-ares mailing list => http://cool.haxx.se/mailman/listinfo/c-ares])
+AC_INIT([c-ares], [1.7.4],
+  [c-ares mailing list: http://cool.haxx.se/mailman/listinfo/c-ares])
 
 CARES_OVERRIDE_AUTOCONF
 
@@ -13,6 +13,7 @@ AM_MAINTAINER_MODE
 CARES_CHECK_OPTION_DEBUG
 CARES_CHECK_OPTION_OPTIMIZE
 CARES_CHECK_OPTION_WARNINGS
+CARES_CHECK_OPTION_WERROR
 CARES_CHECK_OPTION_CURLDEBUG
 CARES_CHECK_OPTION_SYMBOL_HIDING
 
@@ -475,11 +476,17 @@ AC_CHECK_TYPE(long long,
 
 if test "xyes" = "x$longlong"; then
   AC_MSG_CHECKING([if numberLL works])
-  AC_COMPILE_IFELSE([long long val = 1000LL;],
-   [AC_DEFINE(HAVE_LL, 1, [if your compiler supports LL])]
-   AC_MSG_RESULT(yes),
-   AC_MSG_RESULT(no)
-  )
+  AC_COMPILE_IFELSE([
+    AC_LANG_PROGRAM([[
+    ]],[[
+      long long val = 1000LL;
+    ]])
+  ],[
+    AC_MSG_RESULT([yes])
+    AC_DEFINE(HAVE_LL, 1, [if your compiler supports LL])
+  ],[
+    AC_MSG_RESULT([no])
+  ])
 fi
 
 
@@ -861,6 +868,12 @@ CARES_CONFIGURE_SYMBOL_HIDING
 
 CARES_PRIVATE_LIBS="$LIBS"
 AC_SUBST(CARES_PRIVATE_LIBS)
+
+CARES_CFLAG_EXTRAS=""
+if test X"$want_werror" == Xyes; then
+  CARES_CFLAG_EXTRAS="-Werror"
+fi
+AC_SUBST(CARES_CFLAG_EXTRAS)
 
 dnl squeeze whitespace out of some variables
 

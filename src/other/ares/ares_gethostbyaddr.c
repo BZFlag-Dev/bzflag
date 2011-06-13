@@ -1,4 +1,3 @@
-/* $Id$ */
 
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
@@ -191,8 +190,8 @@ static int file_lookup(struct ares_addr *addr, struct hostent **host)
     char tmp[MAX_PATH];
     HKEY hkeyHosts;
 
-    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, WIN_NS_NT_KEY, 0, KEY_READ, &hkeyHosts)
-        == ERROR_SUCCESS)
+    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, WIN_NS_NT_KEY, 0, KEY_READ,
+                     &hkeyHosts) == ERROR_SUCCESS)
     {
       DWORD dwLength = MAX_PATH;
       RegQueryValueEx(hkeyHosts, DATABASEPATH, NULL, NULL, (LPBYTE)tmp,
@@ -241,12 +240,14 @@ static int file_lookup(struct ares_addr *addr, struct hostent **host)
         }
       if (addr->family == AF_INET)
         {
-          if (memcmp((*host)->h_addr, &addr->addrV4, sizeof(addr->addrV4)) == 0)
+          if (memcmp((*host)->h_addr, &addr->addrV4,
+                     sizeof(addr->addrV4)) == 0)
             break;
         }
       else if (addr->family == AF_INET6)
         {
-          if (memcmp((*host)->h_addr, &addr->addrV6, sizeof(addr->addrV6)) == 0)
+          if (memcmp((*host)->h_addr, &addr->addrV6,
+                     sizeof(addr->addrV6)) == 0)
             break;
         }
       ares_free_hostent(*host);
@@ -264,11 +265,11 @@ static void ptr_rr_name(char *name, const struct ares_addr *addr)
   if (addr->family == AF_INET)
     {
        unsigned long laddr = ntohl(addr->addrV4.s_addr);
-       int a1 = (int)((laddr >> 24) & 0xff);
-       int a2 = (int)((laddr >> 16) & 0xff);
-       int a3 = (int)((laddr >> 8) & 0xff);
-       int a4 = (int)(laddr & 0xff);
-       sprintf(name, "%d.%d.%d.%d.in-addr.arpa", a4, a3, a2, a1);
+       unsigned long a1 = (laddr >> 24UL) & 0xFFUL;
+       unsigned long a2 = (laddr >> 16UL) & 0xFFUL;
+       unsigned long a3 = (laddr >>  8UL) & 0xFFUL;
+       unsigned long a4 = laddr & 0xFFUL;
+       sprintf(name, "%lu.%lu.%lu.%lu.in-addr.arpa", a4, a3, a2, a1);
     }
   else
     {

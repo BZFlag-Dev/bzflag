@@ -1,7 +1,6 @@
 #ifndef __ARES_PRIVATE_H
 #define __ARES_PRIVATE_H
 
-/* $Id$ */
 
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  * Copyright (C) 2004-2010 by Daniel Stenberg
@@ -257,6 +256,13 @@ struct ares_channeldata {
   struct apattern *sortlist;
   int nsort;
   char *lookups;
+
+  /* For binding to local devices and/or IP addresses.  Leave
+   * them null/zero for no binding.
+   */
+  char local_dev_name[32];
+  unsigned int local_ip4;
+  unsigned char local_ip6[16];
 
   int optmask; /* the option bitfield passed in at init time */
 

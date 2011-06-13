@@ -1,4 +1,3 @@
-/* $Id$ */
 
 /* Copyright (C) 2009-2010 by Daniel Stenberg
  *
@@ -63,6 +62,14 @@ void ares_free_data(void *dataptr)
 
   switch (ptr->type)
     {
+      case ARES_DATATYPE_MX_REPLY:
+
+        if (ptr->data.mx_reply.next)
+          ares_free_data(ptr->data.mx_reply.next);
+        if (ptr->data.mx_reply.host)
+          free(ptr->data.mx_reply.host);
+        break;
+
       case ARES_DATATYPE_SRV_REPLY:
 
         if (ptr->data.srv_reply.next)
@@ -114,6 +121,12 @@ void *ares_malloc_data(ares_datatype type)
 
   switch (type)
     {
+      case ARES_DATATYPE_MX_REPLY:
+        ptr->data.mx_reply.next = NULL;
+        ptr->data.mx_reply.host = NULL;
+        ptr->data.mx_reply.priority = 0;
+        break;
+
       case ARES_DATATYPE_SRV_REPLY:
         ptr->data.srv_reply.next = NULL;
         ptr->data.srv_reply.host = NULL;
@@ -132,7 +145,8 @@ void *ares_malloc_data(ares_datatype type)
         ptr->data.addr_node.next = NULL;
         ptr->data.addr_node.family = 0;
         memset(&ptr->data.addr_node.addrV6, 0,
-          sizeof(ptr->data.addr_node.addrV6));
+               sizeof(ptr->data.addr_node.addrV6));
+        break;
 
       default:
         free(ptr);

@@ -1,6 +1,5 @@
 /* Copyright 1998 by the Massachusetts Institute of Technology.
  *
- * $Id$
  *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
@@ -229,7 +228,7 @@ int main(int argc, char **argv)
           break;
 
         case 's':
-          /* User specified name servers override default ones. */
+          /* User-specified name servers override default ones. */
           srvr = malloc(sizeof(struct ares_addr_node));
           if (!srvr)
             {
@@ -276,7 +275,7 @@ int main(int argc, char **argv)
            * When alternative name servers have been specified these are set
            * later calling ares_set_servers() overriding any existing server
            * configuration. To prevent initial configuration with default
-           * servers that will be discarded later ARES_OPT_SERVERS is set.
+           * servers that will be discarded later, ARES_OPT_SERVERS is set.
            * If this flag is not set here the result shall be the same but
            * ares_init_options() will do needless work. */
           optmask |= ARES_OPT_SERVERS;
@@ -745,7 +744,7 @@ static const unsigned char *display_rr(const unsigned char *aptr,
       ares_free_string(name.as_char);
       p += len;
 
-      status = ares_expand_string(p, abuf, alen, &name.as_uchar, &len);
+      status = ares_expand_name(p, abuf, alen, &name.as_char, &len);
       if (status != ARES_SUCCESS)
         return NULL;
       printf("\t\t\t\t\t\t%s", name.as_char);

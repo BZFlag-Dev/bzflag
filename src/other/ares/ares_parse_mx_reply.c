@@ -1,6 +1,6 @@
 
 /* Copyright 1998 by the Massachusetts Institute of Technology.
- * Copyright (C) 2009 by Jakub Hrozek <jhrozek@redhat.com>
+ * Copyright (C) 2010 Jeremy Lal <kapouer@melix.org>
  *
  * Permission to use, copy, modify, and distribute this
  * software and its documentation for any purpose and without
@@ -38,35 +38,28 @@
 #  include <arpa/nameser_compat.h>
 #endif
 
-#ifdef HAVE_STRINGS_H
-#  include <strings.h>
-#endif
-
 #include <stdlib.h>
 #include <string.h>
-
 #include "ares.h"
 #include "ares_dns.h"
 #include "ares_data.h"
 #include "ares_private.h"
 
 int
-ares_parse_txt_reply (const unsigned char *abuf, int alen,
-                      struct ares_txt_reply **txt_out)
+ares_parse_mx_reply (const unsigned char *abuf, int alen,
+                      struct ares_mx_reply **mx_out)
 {
-  size_t substr_len, str_len;
   unsigned int qdcount, ancount, i;
-  const unsigned char *aptr;
-  const unsigned char *strptr;
+  const unsigned char *aptr, *vptr;
   int status, rr_type, rr_class, rr_len;
   long len;
   char *hostname = NULL, *rr_name = NULL;
-  struct ares_txt_reply *txt_head = NULL;
-  struct ares_txt_reply *txt_last = NULL;
-  struct ares_txt_reply *txt_curr;
+  struct ares_mx_reply *mx_head = NULL;
+  struct ares_mx_reply *mx_last = NULL;
+  struct ares_mx_reply *mx_curr;
 
-  /* Set *txt_out to NULL for all failure cases. */
-  *txt_out = NULL;
+  /* Set *mx_out to NULL for all failure cases. */
+  *mx_out = NULL;
 
   /* Give up if abuf doesn't have room for a header. */
   if (alen < HFIXEDSZ)
@@ -113,64 +106,40 @@ ares_parse_txt_reply (const unsigned char *abuf, int alen,
       rr_len = DNS_RR_LEN (aptr);
       aptr += RRFIXEDSZ;
 
-      /* Check if we are really looking at a TXT record */
-      if (rr_class == C_IN && rr_type == T_TXT)
+      /* Check if we are really looking at a MX record */
+      if (rr_class == C_IN && rr_type == T_MX)
         {
-          /* Allocate storage for this TXT answer appending it to the list */
-          txt_curr = ares_malloc_data(ARES_DATATYPE_TXT_REPLY);
-          if (!txt_curr)
+          /* parse the MX record itself */
+          if (rr_len < 2)
+            {
+              status = ARES_EBADRESP;
+              break;
+            }
+
+          /* Allocate storage for this MX answer appending it to the list */
+          mx_curr = ares_malloc_data(ARES_DATATYPE_MX_REPLY);
+          if (!mx_curr)
             {
               status = ARES_ENOMEM;
               break;
             }
-          if (txt_last)
+          if (mx_last)
             {
-              txt_last->next = txt_curr;
+              mx_last->next = mx_curr;
             }
           else
             {
-              txt_head = txt_curr;
+              mx_head = mx_curr;
             }
-          txt_last = txt_curr;
+          mx_last = mx_curr;
 
-          /*
-           * There may be multiple substrings in a single TXT record. Each
-           * substring may be up to 255 characters in length, with a
-           * "length byte" indicating the size of the substring payload.
-           * RDATA contains both the length-bytes and payloads of all
-           * substrings contained therein.
-           */
+          vptr = aptr;
+          mx_curr->priority = ntohs (*((unsigned short *)vptr));
+          vptr += sizeof(unsigned short);
 
-          /* Compute total length to allow a single memory allocation */
-          strptr = aptr;
-          while (strptr < (aptr + rr_len))
-            {
-              substr_len = (unsigned char)*strptr;
-              txt_curr->length += substr_len;
-              strptr += substr_len + 1;
-            }
-
-          /* Including null byte */
-          txt_curr->txt = malloc (txt_curr->length + 1);
-          if (txt_curr->txt == NULL)
-            {
-              status = ARES_ENOMEM;
-              break;
-            }
-
-          /* Step through the list of substrings, concatenating them */
-          str_len = 0;
-          strptr = aptr;
-          while (strptr < (aptr + rr_len))
-            {
-              substr_len = (unsigned char)*strptr;
-              strptr++;
-              memcpy ((char *) txt_curr->txt + str_len, strptr, substr_len);
-              str_len += substr_len;
-              strptr += substr_len;
-            }
-          /* Make sure we NULL-terminate */
-          *((char *) txt_curr->txt + txt_curr->length) = '\0';
+          status = ares_expand_name (vptr, abuf, alen, &mx_curr->host, &len);
+          if (status != ARES_SUCCESS)
+            break;
         }
 
       /* Don't lose memory in the next iteration */
@@ -189,13 +158,13 @@ ares_parse_txt_reply (const unsigned char *abuf, int alen,
   /* clean up on error */
   if (status != ARES_SUCCESS)
     {
-      if (txt_head)
-        ares_free_data (txt_head);
+      if (mx_head)
+        ares_free_data (mx_head);
       return status;
     }
 
   /* everything looks fine, return the data */
-  *txt_out = txt_head;
+  *mx_out = mx_head;
 
   return ARES_SUCCESS;
 }
