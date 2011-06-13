@@ -77,9 +77,9 @@
  * Curl_ipvalid() checks what CURL_IPRESOLVE_* requirements that might've
  * been set and returns TRUE if they are OK.
  */
-bool Curl_ipvalid(struct SessionHandle *data)
+bool Curl_ipvalid(struct connectdata *conn)
 {
-  if(data->set.ip_version == CURL_IPRESOLVE_V6)
+  if(conn->ip_version == CURL_IPRESOLVE_V6)
     /* an ipv6 address was requested and we can't get/use one */
     return FALSE;
 
@@ -160,7 +160,7 @@ Curl_addrinfo *Curl_ipv4_resolve_r(const char *hostname,
       snprintf(sbuf, sizeof(sbuf), "%d", port);
       sbufptr = sbuf;
     }
-    hints.ai_flags = AI_CANONNAME;
+
     (void)Curl_getaddrinfo_ex(hostname, sbufptr, &hints, &ai);
 
 #elif defined(HAVE_GETHOSTBYNAME_R)

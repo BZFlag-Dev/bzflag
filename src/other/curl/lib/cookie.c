@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -266,10 +266,11 @@ Curl_cookie_add(struct SessionHandle *data,
             }
           }
           else if(Curl_raw_equal("domain", name)) {
-            /* note that this name may or may not have a preceeding dot, but
+            /* note that this name may or may not have a preceding dot, but
                we don't care about that, we treat the names the same anyway */
 
             const char *domptr=whatptr;
+            const char *nextptr;
             int dotcount=1;
 
             /* Count the dots, we need to make sure that there are enough
@@ -280,12 +281,13 @@ Curl_cookie_add(struct SessionHandle *data,
               domptr++;
 
             do {
-              domptr = strchr(domptr, '.');
-              if(domptr) {
-                domptr++;
-                dotcount++;
+              nextptr = strchr(domptr, '.');
+              if(nextptr) {
+                if(domptr != nextptr)
+                  dotcount++;
+                domptr = nextptr+1;
               }
-            } while(domptr);
+            } while(nextptr);
 
             /* The original Netscape cookie spec defined that this domain name
                MUST have three dots (or two if one of the seven holy TLDs),
@@ -305,7 +307,7 @@ Curl_cookie_add(struct SessionHandle *data,
                  or the given domain is not valid and thus cannot be set. */
 
               if('.' == whatptr[0])
-                whatptr++; /* ignore preceeding dot */
+                whatptr++; /* ignore preceding dot */
 
               if(!domain || tailmatch(whatptr, domain)) {
                 const char *tailptr=whatptr;
@@ -353,8 +355,8 @@ Curl_cookie_add(struct SessionHandle *data,
               break;
             }
             co->expires =
-              atoi((*co->maxage=='\"')?&co->maxage[1]:&co->maxage[0]) +
-              (long)now;
+              strtol((*co->maxage=='\"')?&co->maxage[1]:&co->maxage[0],NULL,10)
+                + (long)now;
           }
           else if(Curl_raw_equal("expires", name)) {
             strstore(&co->expirestr, whatptr);
@@ -477,7 +479,7 @@ Curl_cookie_add(struct SessionHandle *data,
        marked with httpOnly after the domain name are not accessible
        from javascripts, but since curl does not operate at javascript
        level, we include them anyway. In Firefox's cookie files, these
-       lines are preceeded with #HttpOnly_ and then everything is
+       lines are preceded with #HttpOnly_ and then everything is
        as usual, so we skip 10 characters of the line..
     */
     if (strncmp(lineptr, "#HttpOnly_", 10) == 0) {
@@ -512,7 +514,7 @@ Curl_cookie_add(struct SessionHandle *data,
         ptr=strtok_r(NULL, "\t", &tok_buf), fields++) {
       switch(fields) {
       case 0:
-        if(ptr[0]=='.') /* skip preceeding dots */
+        if(ptr[0]=='.') /* skip preceding dots */
           ptr++;
         co->domain = strdup(ptr);
         if(!co->domain)
@@ -1130,6 +1132,37 @@ struct curl_slist *Curl_cookie_list(struct SessionHandle *data)
   }
 
   return list;
+}
+
+void Curl_flush_cookies(struct SessionHandle *data, int cleanup)
+{
+  if(data->set.str[STRING_COOKIEJAR]) {
+    if(data->change.cookielist) {
+      /* If there is a list of cookie files to read, do it first so that
+         we have all the told files read before we write the new jar.
+         Curl_cookie_loadfiles() LOCKS and UNLOCKS the share itself! */
+      Curl_cookie_loadfiles(data);
+    }
+
+    Curl_share_lock(data, CURL_LOCK_DATA_COOKIE, CURL_LOCK_ACCESS_SINGLE);
+
+    /* if we have a destination file for all the cookies to get dumped to */
+    if(Curl_cookie_output(data->cookies, data->set.str[STRING_COOKIEJAR]))
+      infof(data, "WARNING: failed to save cookies in %s\n",
+            data->set.str[STRING_COOKIEJAR]);
+  }
+  else {
+    if(cleanup && data->change.cookielist)
+      /* since nothing is written, we can just free the list of cookie file
+         names */
+      curl_slist_free_all(data->change.cookielist); /* clean up list */
+    Curl_share_lock(data, CURL_LOCK_DATA_COOKIE, CURL_LOCK_ACCESS_SINGLE);
+  }
+
+  if(cleanup && (!data->share || (data->cookies != data->share->cookies))) {
+    Curl_cookie_cleanup(data->cookies);
+  }
+  Curl_share_unlock(data, CURL_LOCK_DATA_COOKIE);
 }
 
 #endif /* CURL_DISABLE_HTTP || CURL_DISABLE_COOKIES */

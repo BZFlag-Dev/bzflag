@@ -150,6 +150,10 @@ LIB32=link.exe -lib
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\axtls.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\base64.c
 # End Source File
 # Begin Source File
@@ -170,6 +174,14 @@ SOURCE=.\curl_addrinfo.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\curl_fnmatch.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_gethostname.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\curl_memrchr.c
 # End Source File
 # Begin Source File
@@ -178,11 +190,19 @@ SOURCE=.\curl_rand.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\curl_rtmp.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\curl_sspi.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\curl_threads.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\cyassl.c
 # End Source File
 # Begin Source File
 
@@ -202,11 +222,19 @@ SOURCE=.\file.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\fileinfo.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\formdata.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\ftp.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\ftplistparser.c
 # End Source File
 # Begin Source File
 
@@ -218,11 +246,19 @@ SOURCE=.\getinfo.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\gopher.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\gtls.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\hash.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\hmac.c
 # End Source File
 # Begin Source File
 
@@ -270,7 +306,19 @@ SOURCE=.\http_negotiate.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\http_negotiate_sspi.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\http_ntlm.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\http_proxy.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\idn_win32.c
 # End Source File
 # Begin Source File
 
@@ -306,6 +354,10 @@ SOURCE=.\llist.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\md4.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\md5.c
 # End Source File
 # Begin Source File
@@ -326,6 +378,10 @@ SOURCE=.\netrc.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\non-ascii.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\nonblock.c
 # End Source File
 # Begin Source File
@@ -334,11 +390,19 @@ SOURCE=.\nss.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\openldap.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\parsedate.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\pingpong.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\polarssl.c
 # End Source File
 # Begin Source File
 
@@ -464,6 +528,10 @@ SOURCE=.\version.c
 
 SOURCE=.\warnless.c
 # End Source File
+# Begin Source File
+
+SOURCE=.\wildcard.c
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -471,6 +539,10 @@ SOURCE=.\warnless.c
 # Begin Source File
 
 SOURCE=.\arpa_telnet.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\axtls.h
 # End Source File
 # Begin Source File
 
@@ -498,7 +570,23 @@ SOURCE=.\curl_base64.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\curl_fnmatch.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_gethostname.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_hmac.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\curl_ldap.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\curl_md4.h
 # End Source File
 # Begin Source File
 
@@ -518,6 +606,10 @@ SOURCE=.\curl_rand.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\curl_rtmp.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\curl_sspi.h
 # End Source File
 # Begin Source File
@@ -527,6 +619,10 @@ SOURCE=.\curl_threads.h
 # Begin Source File
 
 SOURCE=.\curlx.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\cyassl.h
 # End Source File
 # Begin Source File
 
@@ -546,6 +642,10 @@ SOURCE=.\file.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\fileinfo.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\formdata.h
 # End Source File
 # Begin Source File
@@ -554,7 +654,15 @@ SOURCE=.\ftp.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ftplistparser.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\getinfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gopher.h
 # End Source File
 # Begin Source File
 
@@ -587,6 +695,10 @@ SOURCE=.\http_negotiate.h
 # Begin Source File
 
 SOURCE=.\http_ntlm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\http_proxy.h
 # End Source File
 # Begin Source File
 
@@ -626,6 +738,10 @@ SOURCE=.\netrc.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\non-ascii.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\nonblock.h
 # End Source File
 # Begin Source File
@@ -639,6 +755,10 @@ SOURCE=.\parsedate.h
 # Begin Source File
 
 SOURCE=.\pingpong.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\polarssl.h
 # End Source File
 # Begin Source File
 
@@ -763,6 +883,10 @@ SOURCE=.\url.h
 # Begin Source File
 
 SOURCE=.\warnless.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\wildcard.h
 # End Source File
 # End Group
 

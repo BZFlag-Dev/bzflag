@@ -5,7 +5,7 @@
  *                | (__| |_| |  _ <| |___
  *                 \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -22,7 +22,19 @@
 
 #include "setup.h"
 
-#ifndef CURL_DISABLE_LDAP
+#if !defined(CURL_DISABLE_LDAP) && !defined(USE_OPENLDAP)
+
+/*
+ * Notice that USE_OPENLDAP is only a source code selection switch. When
+ * libcurl is built with USE_OPENLDAP defined the libcurl source code that
+ * gets compiled is the code from openldap.c, otherwise the code that gets
+ * compiled is the code from ldap.c.
+ *
+ * When USE_OPENLDAP is defined a recent version of the OpenLDAP library
+ * might be required for compilation and runtime. In order to use ancient
+ * OpenLDAP library versions, USE_OPENLDAP shall not be defined.
+ */
+
 /* -- WIN32 approved -- */
 #include <stdio.h>
 #include <string.h>
@@ -31,15 +43,7 @@
 #include <ctype.h>
 #include <errno.h>
 
-#ifdef CURL_LDAP_HYBRID         /* If W$ definitions are needed. */
-# include <windows.h>
-  /* Remember we are NOT in a W$ compiler! */
-# undef WIN32
-# undef _WIN32
-# undef __WIN32__
-#endif
-
-#ifdef CURL_LDAP_WIN            /* Use W$ LDAP implementation. */
+#ifdef CURL_LDAP_WIN            /* Use Windows LDAP implementation. */
 # include <winldap.h>
 # ifndef LDAP_VENDOR_NAME
 #  error Your Platform SDK is NOT sufficient for LDAP support! Update your Platform SDK, or disable LDAP support!
@@ -47,14 +51,14 @@
 #  include <winber.h>
 # endif
 #else
-#define LDAP_DEPRECATED 1       /* Be sure ldap_init() is defined. */
-#ifdef HAVE_LBER_H
-# include <lber.h>
-#endif
+# define LDAP_DEPRECATED 1      /* Be sure ldap_init() is defined. */
+# ifdef HAVE_LBER_H
+#  include <lber.h>
+# endif
 # include <ldap.h>
-#if (defined(HAVE_LDAP_SSL) && defined(HAVE_LDAP_SSL_H))
-# include <ldap_ssl.h>
-#endif /* HAVE_LDAP_SSL && HAVE_LDAP_SSL_H */
+# if (defined(HAVE_LDAP_SSL) && defined(HAVE_LDAP_SSL_H))
+#  include <ldap_ssl.h>
+# endif /* HAVE_LDAP_SSL && HAVE_LDAP_SSL_H */
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -136,7 +140,8 @@ const struct Curl_handler Curl_handler_ldap = {
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_LDAP,                            /* defport */
-  PROT_LDAP                             /* protocol */
+  CURLPROTO_LDAP,                       /* protocol */
+  PROTOPT_NONE                          /* flags */
 };
 
 #ifdef HAVE_LDAP_SSL
@@ -158,7 +163,8 @@ const struct Curl_handler Curl_handler_ldaps = {
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_LDAPS,                           /* defport */
-  PROT_LDAP | PROT_SSL                  /* protocol */
+  CURLPROTO_LDAP | CURLPROTO_LDAPS,     /* protocol */
+  PROTOPT_SSL                           /* flags */
 };
 #endif
 
@@ -199,7 +205,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   }
 
   /* Get the URL scheme ( either ldap or ldaps ) */
-  if(conn->protocol & PROT_SSL)
+  if(conn->given->protocol & CURLPROTO_LDAPS)
     ldap_ssl = 1;
   infof(data, "LDAP local: trying to establish %s connection\n",
           ldap_ssl ? "encrypted" : "cleartext");
@@ -212,7 +218,7 @@ static CURLcode Curl_ldap(struct connectdata *conn, bool *done)
   if(ldap_ssl) {
 #ifdef HAVE_LDAP_SSL
 #ifdef CURL_LDAP_WIN
-    /* Win32 LDAP SDK doesnt support insecure mode without CA! */
+    /* Win32 LDAP SDK doesn't support insecure mode without CA! */
     server = ldap_sslinit(conn->host.name, (int)conn->port, 1);
     ldap_set_option(server, LDAP_OPT_SSL, LDAP_OPT_ON);
 #else
@@ -469,7 +475,7 @@ static void _ldap_trace (const char *fmt, ...)
 
   if(do_trace == -1) {
     const char *env = getenv("CURL_TRACE");
-    do_trace = (env && atoi(env) > 0);
+    do_trace = (env && strtol(env, NULL, 10) > 0);
   }
   if(!do_trace)
     return;
@@ -715,4 +721,4 @@ static void _ldap_free_urldesc (LDAPURLDesc *ludp)
   free (ludp);
 }
 #endif  /* !HAVE_LDAP_URL_PARSE */
-#endif  /* CURL_DISABLE_LDAP */
+#endif  /* !CURL_DISABLE_LDAP && !USE_OPENLDAP */

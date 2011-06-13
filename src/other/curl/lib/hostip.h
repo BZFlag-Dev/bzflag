@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -70,6 +70,12 @@ struct hostent;
 struct SessionHandle;
 struct connectdata;
 
+#ifdef CURLRES_ASYNCH
+void Curl_async_cancel(struct connectdata *conn);
+#else
+#define Curl_async_cancel(x) do {} while(0)
+#endif
+
 /*
  * Curl_global_host_cache_init() initializes and sets up a global DNS cache.
  * Global DNS cache is general badness. Do not use. This will be removed in
@@ -107,11 +113,20 @@ int Curl_resolv_timeout(struct connectdata *conn, const char *hostname,
                         int port, struct Curl_dns_entry **dnsentry,
                         long timeoutms);
 
+#ifdef CURLRES_IPV6
+/*
+ * Curl_ipv6works() returns TRUE if ipv6 seems to work.
+ */
+bool Curl_ipv6works(void);
+#else
+#define Curl_ipv6works() FALSE
+#endif
+
 /*
  * Curl_ipvalid() checks what CURL_IPRESOLVE_* requirements that might've
  * been set and returns TRUE if they are OK.
  */
-bool Curl_ipvalid(struct SessionHandle *data);
+bool Curl_ipvalid(struct connectdata *conn);
 
 /*
  * Curl_getaddrinfo() is the generic low-level name resolve API within this
@@ -171,7 +186,7 @@ Curl_addrinfo *Curl_ipv4_resolve_r(const char * hostname, int port);
  * Curl_addrinfo_callback() is used when we build with any asynch specialty.
  * Handles end of async request processing. Inserts ai into hostcache when
  * status is CURL_ASYNC_SUCCESS. Twiddles fields in conn to indicate async
- * request completed wether successfull or failed.
+ * request completed wether successful or failed.
  */
 CURLcode Curl_addrinfo_callback(struct connectdata *conn,
                                 int status,

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -419,8 +419,6 @@ CURLcode Curl_is_resolved(struct connectdata *conn,
 
   if (done) {
     getaddrinfo_complete(conn);
-    if (td->poll_interval != 0)
-        Curl_expire(conn->data, 0);
     Curl_destroy_thread_data(&conn->async);
 
     if(!conn->async.dns) {
@@ -431,26 +429,21 @@ CURLcode Curl_is_resolved(struct connectdata *conn,
     *entry = conn->async.dns;
   } else {
     /* poll for name lookup done with exponential backoff up to 250ms */
-    int elapsed;
-
-    elapsed = Curl_tvdiff(Curl_tvnow(), data->progress.t_startsingle);
-    if (elapsed < 0) {
+    int elapsed = Curl_tvdiff(Curl_tvnow(), data->progress.t_startsingle);
+    if (elapsed < 0)
       elapsed = 0;
-    }
 
-    if (td->poll_interval == 0) {
+    if (td->poll_interval == 0)
       /* Start at 1ms poll interval */
       td->poll_interval = 1;
-    } else if (elapsed >= td->interval_end) {
+    else if (elapsed >= td->interval_end)
       /* Back-off exponentially if last interval expired  */
       td->poll_interval *= 2;
-    }
 
     if (td->poll_interval > 250)
       td->poll_interval = 250;
 
     td->interval_end = elapsed + td->poll_interval;
-
     Curl_expire(conn->data, td->poll_interval);
   }
 
@@ -484,8 +477,6 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
                                 int port,
                                 int *waitp)
 {
-  struct hostent *h = NULL;
-  struct SessionHandle *data = conn->data;
   struct in_addr in;
 
   *waitp = 0; /* default to synchronous response */
@@ -527,7 +518,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
   /*
    * Check if a limited name resolve has been requested.
    */
-  switch(data->set.ip_version) {
+  switch(conn->ip_version) {
   case CURL_IPRESOLVE_V4:
     pf = PF_INET;
     break;
@@ -539,31 +530,16 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
     break;
   }
 
-  if (pf != PF_INET) {
-    /* see if we have an IPv6 stack */
-    curl_socket_t s = socket(PF_INET6, SOCK_DGRAM, 0);
-    if(s == CURL_SOCKET_BAD) {
-      /* Some non-IPv6 stacks have been found to make very slow name resolves
-       * when PF_UNSPEC is used, so thus we switch to a mere PF_INET lookup if
-       * the stack seems to be a non-ipv6 one. */
+  if((pf != PF_INET) && !Curl_ipv6works())
+    /* the stack seems to be a non-ipv6 one */
+    pf = PF_INET;
 
-      pf = PF_INET;
-    }
-    else {
-      /* This seems to be an IPv6-capable stack, use PF_UNSPEC for the widest
-       * possible checks. And close the socket again.
-       */
-      sclose(s);
-    }
-  }
 #endif /* !CURLRES_IPV4 */
 
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = pf;
   hints.ai_socktype = conn->socktype;
-#if 0 /* removed nov 8 2005 before 7.15.1 */
-  hints.ai_flags = AI_CANONNAME;
-#endif
+
   snprintf(sbuf, sizeof(sbuf), "%d", port);
 
   /* fire up a new resolver thread! */

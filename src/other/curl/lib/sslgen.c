@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -31,6 +31,8 @@
    Curl_ossl_ - prefix for OpenSSL ones
    Curl_gtls_ - prefix for GnuTLS ones
    Curl_nss_ - prefix for NSS ones
+   Curl_polarssl_ - prefix for PolarSSL ones
+   Curl_cyassl_ - prefix for CyaSSL ones
 
    Note that this source code uses curlssl_* functions, and they are all
    defines/macros #defined by the lib-specific header files.
@@ -55,6 +57,9 @@
 #include "gtls.h"   /* GnuTLS versions */
 #include "nssg.h"   /* NSS versions */
 #include "qssl.h"   /* QSOSSL versions */
+#include "polarssl.h" /* PolarSSL versions */
+#include "axtls.h"  /* axTLS versions */
+#include "cyassl.h"  /* CyaSSL versions */
 #include "sendf.h"
 #include "rawstr.h"
 #include "url.h"
@@ -347,8 +352,11 @@ CURLcode Curl_ssl_addsessionid(struct connectdata *conn,
   store->name = clone_host;               /* clone host name */
   store->remote_port = conn->remote_port; /* port number */
 
-  if(!Curl_clone_ssl_config(&conn->ssl_config, &store->ssl_config))
+  if(!Curl_clone_ssl_config(&conn->ssl_config, &store->ssl_config)) {
+    store->sessionid = NULL; /* let caller free sessionid */
+    free(clone_host);
     return CURLE_OUT_OF_MEMORY;
+  }
 
   return CURLE_OK;
 }
@@ -385,6 +393,9 @@ CURLcode Curl_ssl_shutdown(struct connectdata *conn, int sockindex)
   conn->ssl[sockindex].use = FALSE; /* get back to ordinary socket usage */
   conn->ssl[sockindex].state = ssl_connection_none;
 
+  conn->recv[sockindex] = Curl_recv_plain;
+  conn->send[sockindex] = Curl_send_plain;
+
   return CURLE_OK;
 }
 
@@ -407,25 +418,6 @@ struct curl_slist *Curl_ssl_engines_list(struct SessionHandle *data)
 {
   return curlssl_engines_list(data);
 }
-
-ssize_t Curl_ssl_send(struct connectdata *conn,
-                      int sockindex,
-                      const void *mem,
-                      size_t len,
-                      int *curlcode)
-{
-  return curlssl_send(conn, sockindex, mem, len, curlcode);
-}
-
-ssize_t Curl_ssl_recv(struct connectdata *conn,
-                      int sockindex,
-                      char *mem,
-                      size_t len,
-                      int *curlcode)
-{
-  return curlssl_recv(conn, sockindex, mem, len, curlcode);
-}
-
 
 /*
  * This sets up a session ID cache to the specified size. Make sure this code

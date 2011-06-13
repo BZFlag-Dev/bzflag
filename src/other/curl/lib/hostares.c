@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -224,17 +224,12 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
   long timeout;
   struct timeval now = Curl_tvnow();
 
-  /* now, see if there's a connect timeout or a regular timeout to
-     use instead of the default one */
-  if(conn->data->set.connecttimeout)
-    timeout = conn->data->set.connecttimeout;
-  else if(conn->data->set.timeout)
-    timeout = conn->data->set.timeout;
-  else
+  timeout = Curl_timeleft(data, &now, TRUE);
+  if(!timeout)
     timeout = CURL_TIMEOUT_RESOLVE * 1000; /* default name resolve timeout */
 
   /* Wait for the name resolve query to complete. */
-  while(1) {
+  for(;;) {
     struct timeval *tvp, tv, store;
     long timediff;
     int itimeout;
@@ -251,7 +246,7 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
        second is left, otherwise just use 1000ms to make sure the progress
        callback gets called frequent enough */
     if(!tvp->tv_sec)
-      timeout_ms = tvp->tv_usec/1000;
+      timeout_ms = (int)(tvp->tv_usec/1000);
     else
       timeout_ms = 1000;
 
@@ -265,8 +260,10 @@ CURLcode Curl_wait_for_resolv(struct connectdata *conn,
       timeout = -1; /* trigger the cancel below */
     }
     else {
-      timediff = Curl_tvdiff(Curl_tvnow(), now); /* spent time */
+      struct timeval now2 = Curl_tvnow();
+      timediff = Curl_tvdiff(now2, now); /* spent time */
       timeout -= timediff?timediff:1; /* always deduct at least 1 */
+      now = now2; /* for next loop */
     }
     if(timeout < 0) {
       /* our timeout, so we cancel the ares operation */
@@ -335,8 +332,17 @@ static void ares_query_completed_cb(void *arg,  /* (struct connectdata *) */
   (void)timeouts; /* ignored */
 #endif
 
-  if (status == CURL_ASYNC_SUCCESS) {
+  switch(status) {
+  case CURL_ASYNC_SUCCESS:
     ai = Curl_he2ai(hostent, conn->async.port);
+    break;
+  case ARES_EDESTRUCTION:
+    /* this ares handle is getting destroyed, the 'arg' pointer may not be
+       valid! */
+    return;
+  default:
+    /* do nothing */
+    break;
   }
 
   (void)Curl_addrinfo_callback(arg, status, ai);
@@ -378,7 +384,7 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
     return Curl_ip2addr(AF_INET6, &in6, hostname, port);
   }
 
-  switch(data->set.ip_version) {
+  switch(conn->ip_version) {
   default:
 #if ARES_VERSION >= 0x010601
     family = PF_UNSPEC; /* supported by c-ares since 1.6.1, so for older
@@ -401,13 +407,30 @@ Curl_addrinfo *Curl_getaddrinfo(struct connectdata *conn,
     Curl_safefree(conn->async.hostname);
     conn->async.hostname = bufp;
     conn->async.port = port;
-    conn->async.done = FALSE; /* not done */
-    conn->async.status = 0;   /* clear */
-    conn->async.dns = NULL;   /* clear */
+    conn->async.done = FALSE;   /* not done */
+    conn->async.status = 0;     /* clear */
+    conn->async.dns = NULL;     /* clear */
+    conn->async.temp_ai = NULL; /* clear */
 
-    /* areschannel is already setup in the Curl_open() function */
-    ares_gethostbyname(data->state.areschannel, hostname, family,
-                       (ares_host_callback)ares_query_completed_cb, conn);
+#ifdef ENABLE_IPV6 /* CURLRES_IPV6 */
+    if(family == PF_UNSPEC) {
+      conn->async.num_pending = 2;
+
+      /* areschannel is already setup in the Curl_open() function */
+      ares_gethostbyname(data->state.areschannel, hostname, PF_INET,
+                         ares_query_completed_cb, conn);
+      ares_gethostbyname(data->state.areschannel, hostname, PF_INET6,
+                         ares_query_completed_cb, conn);
+    }
+    else
+#endif /* CURLRES_IPV6 */
+    {
+      conn->async.num_pending = 1;
+
+      /* areschannel is already setup in the Curl_open() function */
+      ares_gethostbyname(data->state.areschannel, hostname, family,
+                         ares_query_completed_cb, conn);
+    }
 
     *waitp = 1; /* expect asynchronous response */
   }

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2004 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 2004 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -64,6 +64,10 @@ curl_easy_strerror(CURLcode error)
 
   case CURLE_URL_MALFORMAT:
     return "URL using bad/illegal format or missing URL";
+
+  case CURLE_NOT_BUILT_IN:
+    return "A requested feature, protocol or option was not found built-in in"
+      " this libcurl due to a build-time decision.";
 
   case CURLE_COULDNT_RESOLVE_PROXY:
     return "Couldn't resolve proxy name";
@@ -167,8 +171,8 @@ curl_easy_strerror(CURLcode error)
   case CURLE_TOO_MANY_REDIRECTS :
     return "Number of redirects hit maximum amount";
 
-  case CURLE_UNKNOWN_TELNET_OPTION:
-    return "User specified an unknown telnet option";
+  case CURLE_UNKNOWN_OPTION:
+    return "An unknown option was passed in to libcurl";
 
   case CURLE_TELNET_OPTION_SYNTAX :
     return "Malformed telnet option";
@@ -207,7 +211,7 @@ curl_easy_strerror(CURLcode error)
     return "Problem with the SSL CA cert (path? access rights?)";
 
   case CURLE_BAD_CONTENT_ENCODING:
-    return "Unrecognized HTTP Content-Encoding";
+    return "Unrecognized or bad HTTP Content or Transfer-Encoding";
 
   case CURLE_LDAP_INVALID_URL:
     return "Invalid LDAP URL";
@@ -275,8 +279,13 @@ curl_easy_strerror(CURLcode error)
   case CURLE_RTSP_SESSION_ERROR:
     return "RTSP session error";
 
+  case CURLE_FTP_BAD_FILE_LIST:
+    return "Unable to parse FTP file list";
+
+  case CURLE_CHUNK_FAILED:
+    return "Chunk callback failed";
+
     /* error codes not used by current libcurl */
-  case CURLE_OBSOLETE4:
   case CURLE_OBSOLETE10:
   case CURLE_OBSOLETE12:
   case CURLE_OBSOLETE16:

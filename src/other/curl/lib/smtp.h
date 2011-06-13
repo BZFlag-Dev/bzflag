@@ -34,6 +34,12 @@ typedef enum {
   SMTP_EHLO,
   SMTP_HELO,
   SMTP_STARTTLS,
+  SMTP_UPGRADETLS, /* asynchronously upgrade the connection to SSL/TLS (multi mode only) */
+  SMTP_AUTHPLAIN,
+  SMTP_AUTHLOGIN,
+  SMTP_AUTHPASSWD,
+  SMTP_AUTHCRAM,
+  SMTP_AUTH,
   SMTP_MAIL, /* MAIL FROM */
   SMTP_RCPT, /* RCPT TO */
   SMTP_DATA,
@@ -49,9 +55,19 @@ struct smtp_conn {
   char *domain;    /* what to send in the EHLO */
   size_t eob;         /* number of bytes of the EOB (End Of Body) that has been
                          received thus far */
+  unsigned int authmechs;       /* Accepted authentication methods. */
   smtpstate state; /* always use smtp.c:state() to change state! */
   struct curl_slist *rcpt;
+  bool ssldone; /* is connect() over SSL done? only relevant in multi mode */
 };
+
+/* Authentication mechanism flags. */
+#define SMTP_AUTH_LOGIN         0x0001
+#define SMTP_AUTH_PLAIN         0x0002
+#define SMTP_AUTH_CRAM_MD5      0x0004
+#define SMTP_AUTH_DIGEST_MD5    0x0008
+#define SMTP_AUTH_GSSAPI        0x0010
+#define SMTP_AUTH_EXTERNAL      0x0020
 
 extern const struct Curl_handler Curl_handler_smtp;
 extern const struct Curl_handler Curl_handler_smtps;

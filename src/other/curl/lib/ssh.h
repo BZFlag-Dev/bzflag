@@ -7,7 +7,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2009, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -151,36 +151,20 @@ struct ssh_conn {
 #endif
 
 #if defined(LIBSSH2_VERSION_NUM) && (LIBSSH2_VERSION_NUM >= 0x010000)
-/* libssh2_sftp_seek64() has only ever been provided by libssh2 1.0 or
-   later */
 #  define HAVE_LIBSSH2_SFTP_SEEK64 1
 #else
 #  undef HAVE_LIBSSH2_SFTP_SEEK64
 #endif
 
+#if defined(LIBSSH2_VERSION_NUM) && (LIBSSH2_VERSION_NUM >= 0x010206)
+#  define HAVE_LIBSSH2_SCP_SEND64 1
+#else
+#  undef HAVE_LIBSSH2_SCP_SEND64
+#endif
+
 
 extern const struct Curl_handler Curl_handler_scp;
 extern const struct Curl_handler Curl_handler_sftp;
-
-ssize_t Curl_scp_send(struct connectdata *conn, int sockindex,
-                      const void *mem, size_t len);
-ssize_t Curl_scp_recv(struct connectdata *conn, int sockindex,
-                      char *mem, size_t len);
-
-ssize_t Curl_sftp_send(struct connectdata *conn, int sockindex,
-                       const void *mem, size_t len);
-ssize_t Curl_sftp_recv(struct connectdata *conn, int sockindex,
-                       char *mem, size_t len);
-
-#define Curl_ssh_enabled(conn,prot) (conn->protocol & prot)
-
-#else /* USE_LIBSSH2 */
-
-#define Curl_ssh_enabled(x,y) 0
-#define Curl_scp_send(a,b,c,d) 0
-#define Curl_sftp_send(a,b,c,d) 0
-#define Curl_scp_recv(a,b,c,d) 0
-#define Curl_sftp_recv(a,b,c,d) 0
 
 #endif /* USE_LIBSSH2 */
 

@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2009, Markus Moeller, <markus_moeller@compuserve.com>
+ * Copyright (C) 2009, 2011, Markus Moeller, <markus_moeller@compuserve.com>
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -97,10 +97,8 @@ static int check_gss_err(struct SessionHandle *data,
                                     GSS_C_NULL_OID,
                                     &msg_ctx, &status_string);
       if(maj_stat == GSS_S_COMPLETE) {
-        if(sizeof(buf) > len + status_string.length) {
+        if(sizeof(buf) > len + status_string.length)
           strcpy(buf+len, (char*) status_string.value);
-          len += status_string.length;
-        }
         gss_release_buffer(&min_stat, &status_string);
         break;
       }
@@ -133,13 +131,13 @@ CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
   gss_buffer_desc* gss_token = GSS_C_NO_BUFFER;
   gss_name_t       server = GSS_C_NO_NAME;
   gss_name_t       gss_client_name = GSS_C_NO_NAME;
-  u_short          us_length;
+  unsigned short   us_length;
   char             *user=NULL;
   unsigned char socksreq[4]; /* room for gssapi exchange header only */
   char *serviceptr = data->set.str[STRING_SOCKS5_GSSAPI_SERVICE];
 
   /* get timeout */
-  timeout = Curl_timeleft(conn, NULL, TRUE);
+  timeout = Curl_timeleft(data, NULL, TRUE);
 
   /*   GSSAPI request looks like
    * +----+------+-----+----------------+

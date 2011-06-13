@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 2009, Markus Moeller, <markus_moeller@compuserve.com>
+ * Copyright (C) 2009, 2011, Markus Moeller, <markus_moeller@compuserve.com>
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -180,13 +180,13 @@ CURLcode Curl_SOCKS5_gssapi_negotiate(int sockindex,
   SecPkgCredentials_Names names;
   TimeStamp expiry;
   char *service_name=NULL;
-  u_short us_length;
+  unsigned short us_length;
   ULONG qop;
   unsigned char socksreq[4]; /* room for gssapi exchange header only */
   char *service = data->set.str[STRING_SOCKS5_GSSAPI_SERVICE];
 
   /* get timeout */
-  timeout = Curl_timeleft(conn, NULL, TRUE);
+  timeout = Curl_timeleft(data, NULL, TRUE);
 
   /*   GSSAPI request looks like
    * +----+------+-----+----------------+

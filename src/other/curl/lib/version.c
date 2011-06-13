@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -42,6 +42,10 @@
 
 #if defined(HAVE_ICONV) && defined(CURL_DOES_CONVERSIONS)
 #include <iconv.h>
+#endif
+
+#ifdef USE_LIBRTMP
+#include <librtmp/rtmp.h>
 #endif
 
 #ifdef USE_LIBSSH2
@@ -95,6 +99,11 @@ char *curl_version(void)
     ptr += len;
   }
 #endif
+#ifdef USE_WIN32_IDN
+  len = snprintf(ptr, left, " IDN-Windows-native");
+  left -= len;
+  ptr += len;
+#endif
 #if defined(HAVE_ICONV) && defined(CURL_DOES_CONVERSIONS)
 #ifdef _LIBICONV_VERSION
   len = snprintf(ptr, left, " iconv/%d.%d",
@@ -110,6 +119,26 @@ char *curl_version(void)
   len = snprintf(ptr, left, " libssh2/%s", CURL_LIBSSH2_VERSION);
   left -= len;
   ptr += len;
+#endif
+#ifdef USE_LIBRTMP
+  {
+    char suff[2];
+    if (RTMP_LIB_VERSION & 0xff) {
+      suff[0] = (RTMP_LIB_VERSION & 0xff) + 'a' - 1;
+      suff[1] = '\0';
+    } else {
+      suff[0] = '\0';
+    }
+    len = snprintf(ptr, left, " librtmp/%d.%d%s",
+      RTMP_LIB_VERSION >> 16, (RTMP_LIB_VERSION >> 8) & 0xff, suff);
+/*
+  If another lib version is added below this one, this code would
+  also have to do:
+
+    left -= len;
+    ptr += len;
+*/
+  }
 #endif
 
   return version;
@@ -134,6 +163,9 @@ static const char * const protocols[] = {
 #if defined(USE_SSL) && !defined(CURL_DISABLE_FTP)
   "ftps",
 #endif
+#ifndef CURL_DISABLE_GOPHER
+  "gopher",
+#endif
 #ifndef CURL_DISABLE_HTTP
   "http",
 #endif
@@ -148,15 +180,20 @@ static const char * const protocols[] = {
 #endif
 #ifndef CURL_DISABLE_LDAP
   "ldap",
-#endif
-#if defined(HAVE_LDAP_SSL) && !defined(CURL_DISABLE_LDAP)
+#if !defined(CURL_DISABLE_LDAPS) && \
+    ((defined(USE_OPENLDAP) && defined(USE_SSL)) || \
+     (!defined(USE_OPENLDAP) && defined(HAVE_LDAP_SSL)))
   "ldaps",
+#endif
 #endif
 #ifndef CURL_DISABLE_POP3
   "pop3",
 #endif
 #if defined(USE_SSL) && !defined(CURL_DISABLE_POP3)
   "pop3s",
+#endif
+#ifdef USE_LIBRTMP
+  "rtmp",
 #endif
 #ifndef CURL_DISABLE_RTSP
   "rtsp",
@@ -207,7 +244,7 @@ static curl_version_info_data version_info = {
 #ifdef HAVE_LIBZ
   | CURL_VERSION_LIBZ
 #endif
-#ifdef HAVE_GSSAPI
+#ifdef USE_HTTP_NEGOTIATE
   | CURL_VERSION_GSSNEGOTIATE
 #endif
 #ifdef DEBUGBUILD
@@ -228,6 +265,9 @@ static curl_version_info_data version_info = {
 #endif
 #if defined(CURL_DOES_CONVERSIONS)
   | CURL_VERSION_CONV
+#endif
+#if defined(USE_TLS_SRP)
+  | CURL_VERSION_TLSAUTH_SRP
 #endif
   ,
   NULL, /* ssl_version */
@@ -270,6 +310,8 @@ curl_version_info_data *curl_version_info(CURLversion stamp)
   version_info.libidn = stringprep_check_version(LIBIDN_REQUIRED_VERSION);
   if(version_info.libidn)
     version_info.features |= CURL_VERSION_IDN;
+#elif defined(USE_WIN32_IDN)
+  version_info.features |= CURL_VERSION_IDN;
 #endif
 
 #if defined(HAVE_ICONV) && defined(CURL_DOES_CONVERSIONS)

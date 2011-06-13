@@ -1,12 +1,24 @@
-/*****************************************************************************
+/***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
  *                             / __| | | | |_) | |
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- */
-
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution. The terms
+ * are also available at http://curl.haxx.se/docs/copyright.html.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the COPYING file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ *
+ ***************************************************************************/
 #include <stdio.h>
 #include <string.h>
 
@@ -21,6 +33,8 @@
 
 static size_t throw_away(void *ptr, size_t size, size_t nmemb, void *data)
 {
+  (void)ptr;
+  (void)data;
   /* we are not interested in the headers itself,
      so we only return the size we would have saved ... */
   return (size_t)(size * nmemb);
@@ -28,8 +42,7 @@ static size_t throw_away(void *ptr, size_t size, size_t nmemb, void *data)
 
 int main(void)
 {
-  /* Check for binutils 2.19.1 from ftp.gnu.org's FTP site. */
-  char ftpurl[] = "ftp://ftp.gnu.org/gnu/binutils/binutils-2.19.1.tar.bz2";
+  char ftpurl[] = "ftp://ftp.example.com/gnu/binutils/binutils-2.19.1.tar.bz2";
   CURL *curl;
   CURLcode res;
   const time_t filetime;
@@ -59,7 +72,7 @@ int main(void)
       if((CURLE_OK == res) && filetime)
         printf("filetime %s: %s", filename, ctime(&filetime));
       res = curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &filesize);
-      if((CURLE_OK == res) && filesize)
+      if((CURLE_OK == res) && (filesize>0))
         printf("filesize %s: %0.0f bytes\n", filename, filesize);
     } else {
       /* we failed */

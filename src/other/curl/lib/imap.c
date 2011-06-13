@@ -5,7 +5,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -64,8 +64,6 @@
 #include <curl/curl.h>
 #include "urldata.h"
 #include "sendf.h"
-#include "easyif.h" /* for Curl_convert_... prototypes */
-
 #include "if2ip.h"
 #include "hostip.h"
 #include "progress.h"
@@ -85,6 +83,7 @@
 #include "url.h"
 #include "rawstr.h"
 #include "strtoofft.h"
+#include "http_proxy.h"
 
 #define _MPRINTF_REPLACE /* use our functions only */
 #include <curl/mprintf.h>
@@ -100,7 +99,7 @@ static CURLcode imap_do(struct connectdata *conn, bool *done);
 static CURLcode imap_done(struct connectdata *conn,
                           CURLcode, bool premature);
 static CURLcode imap_connect(struct connectdata *conn, bool *done);
-static CURLcode imap_disconnect(struct connectdata *conn);
+static CURLcode imap_disconnect(struct connectdata *conn, bool dead_connection);
 static CURLcode imap_multi_statemach(struct connectdata *conn, bool *done);
 static int imap_getsock(struct connectdata *conn,
                         curl_socket_t *socks,
@@ -108,6 +107,7 @@ static int imap_getsock(struct connectdata *conn,
 static CURLcode imap_doing(struct connectdata *conn,
                            bool *dophase_done);
 static CURLcode imap_setup_connection(struct connectdata * conn);
+static CURLcode imap_state_upgrade_tls(struct connectdata *conn);
 
 /*
  * IMAP protocol handler.
@@ -127,7 +127,8 @@ const struct Curl_handler Curl_handler_imap = {
   ZERO_NULL,                        /* perform_getsock */
   imap_disconnect,                  /* disconnect */
   PORT_IMAP,                        /* defport */
-  PROT_IMAP                         /* protocol */
+  CURLPROTO_IMAP,                   /* protocol */
+  PROTOPT_CLOSEACTION               /* flags */
 };
 
 
@@ -150,7 +151,8 @@ const struct Curl_handler Curl_handler_imaps = {
   ZERO_NULL,                        /* perform_getsock */
   imap_disconnect,                  /* disconnect */
   PORT_IMAPS,                       /* defport */
-  PROT_IMAP | PROT_IMAPS | PROT_SSL  /* protocol */
+  CURLPROTO_IMAP | CURLPROTO_IMAPS, /* protocol */
+  PROTOPT_CLOSEACTION | PROTOPT_SSL /* flags */
 };
 #endif
 
@@ -173,7 +175,8 @@ static const struct Curl_handler Curl_handler_imap_proxy = {
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_IMAP,                            /* defport */
-  PROT_HTTP                             /* protocol */
+  CURLPROTO_HTTP,                       /* protocol */
+  PROTOPT_NONE                          /* flags */
 };
 
 
@@ -196,7 +199,8 @@ static const struct Curl_handler Curl_handler_imaps_proxy = {
   ZERO_NULL,                            /* perform_getsock */
   ZERO_NULL,                            /* disconnect */
   PORT_IMAPS,                           /* defport */
-  PROT_HTTP                             /* protocol */
+  CURLPROTO_HTTP,                       /* protocol */
+  PROTOPT_NONE                          /* flags */
 };
 #endif
 #endif
@@ -256,7 +260,7 @@ static int imap_getsock(struct connectdata *conn,
   return Curl_pp_getsock(&conn->proto.imapc.pp, socks, numsocks);
 }
 
-/* fucntion that checks for an imap status code at the start of the
+/* function that checks for an imap status code at the start of the
    given string */
 static int imap_endofresp(struct pingpong *pp, int *resp)
 {
@@ -293,6 +297,7 @@ static void state(struct connectdata *conn,
     "SERVERGREET",
     "LOGIN",
     "STARTTLS",
+    "UPGRADETLS",
     "SELECT",
     "FETCH",
     "LOGOUT",
@@ -328,6 +333,15 @@ static CURLcode imap_state_login(struct connectdata *conn)
   return CURLE_OK;
 }
 
+#ifdef USE_SSL
+static void imap_to_imaps(struct connectdata *conn)
+{
+  conn->handler = &Curl_handler_imaps;
+}
+#else
+#define imap_to_imaps(x)
+#endif
+
 /* for STARTTLS responses */
 static CURLcode imap_state_starttls_resp(struct connectdata *conn,
                                          int imapcode,
@@ -342,14 +356,35 @@ static CURLcode imap_state_starttls_resp(struct connectdata *conn,
     result = CURLE_LOGIN_DENIED;
   }
   else {
-    /* Curl_ssl_connect is BLOCKING */
-    result = Curl_ssl_connect(conn, FIRSTSOCKET);
-    if(CURLE_OK == result) {
-      conn->protocol |= PROT_IMAPS;
-      result = imap_state_login(conn);
+    if(data->state.used_interface == Curl_if_multi) {
+      state(conn, IMAP_UPGRADETLS);
+      return imap_state_upgrade_tls(conn);
+    }
+    else {
+      result = Curl_ssl_connect(conn, FIRSTSOCKET);
+      if(CURLE_OK == result) {
+        imap_to_imaps(conn);
+        result = imap_state_login(conn);
+      }
     }
   }
   state(conn, IMAP_STOP);
+  return result;
+}
+
+static CURLcode imap_state_upgrade_tls(struct connectdata *conn)
+{
+  struct imap_conn *imapc = &conn->proto.imapc;
+  CURLcode result;
+
+  result = Curl_ssl_connect_nonblocking(conn, FIRSTSOCKET, &imapc->ssldone);
+
+  if(imapc->ssldone) {
+    imap_to_imaps(conn);
+    result = imap_state_login(conn);
+    state(conn, IMAP_STOP);
+  }
+
   return result;
 }
 
@@ -435,13 +470,12 @@ static CURLcode imap_state_fetch_resp(struct connectdata *conn,
     infof(data, "Filesize left: %" FORMAT_OFF_T "\n", filesize);
 
     if(!filesize)
-      /* the entire data is already transfered! */
-      result=Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
+      /* the entire data is already transferred! */
+      Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
     else
       /* IMAP download */
-      result=Curl_setup_transfer(conn, FIRSTSOCKET, filesize, FALSE,
-                                 imap->bytecountp,
-                                 -1, NULL); /* no upload here */
+      Curl_setup_transfer(conn, FIRSTSOCKET, filesize, FALSE,
+                          imap->bytecountp, -1, NULL); /* no upload here */
 
     data->req.maxdownload = filesize;
   }
@@ -525,6 +559,10 @@ static CURLcode imap_statemach_act(struct connectdata *conn)
   struct pingpong *pp = &imapc->pp;
   size_t nread = 0;
 
+  /* busy upgrading the connection; right now all I/O is SSL/TLS, not IMAP */
+  if(imapc->state == IMAP_UPGRADETLS)
+    return imap_state_upgrade_tls(conn);
+
   if(pp->sendleft)
     return Curl_pp_flushsend(pp);
 
@@ -589,7 +627,14 @@ static CURLcode imap_multi_statemach(struct connectdata *conn,
                                          bool *done)
 {
   struct imap_conn *imapc = &conn->proto.imapc;
-  CURLcode result = Curl_pp_multi_statemach(&imapc->pp);
+  CURLcode result;
+
+  if((conn->handler->protocol & CURLPROTO_IMAPS) && !imapc->ssldone) {
+    result = Curl_ssl_connect_nonblocking(conn, FIRSTSOCKET, &imapc->ssldone);
+  }
+  else {
+    result = Curl_pp_multi_statemach(&imapc->pp);
+  }
 
   *done = (bool)(imapc->state == IMAP_STOP);
 
@@ -664,7 +709,7 @@ static CURLcode imap_connect(struct connectdata *conn,
   if(CURLE_OK != result)
     return result;
 
-  /* We always support persistant connections on imap */
+  /* We always support persistent connections on imap */
   conn->bits.close = FALSE;
 
   pp->response_time = RESP_TIMEOUT; /* set default response time-out */
@@ -672,7 +717,6 @@ static CURLcode imap_connect(struct connectdata *conn,
   pp->endofresp = imap_endofresp;
   pp->conn = conn;
 
-#if !defined(CURL_DISABLE_HTTP) && !defined(CURL_DISABLE_PROXY)
   if(conn->bits.tunnel_proxy && conn->bits.httpproxy) {
     /* for IMAP over HTTP proxy */
     struct HTTP http_proxy;
@@ -699,9 +743,9 @@ static CURLcode imap_connect(struct connectdata *conn,
     if(CURLE_OK != result)
       return result;
   }
-#endif /* !CURL_DISABLE_HTTP && !CURL_DISABLE_PROXY */
 
-  if(conn->protocol & PROT_IMAPS) {
+  if((conn->handler->protocol & CURLPROTO_IMAPS) &&
+     data->state.used_interface != Curl_if_multi) {
     /* BLOCKING */
     /* IMAPS is simply imap with SSL for the control channel */
     /* now, perform the SSL initialization for this socket */
@@ -878,13 +922,13 @@ static CURLcode imap_logout(struct connectdata *conn)
  * Disconnect from an IMAP server. Cleanup protocol-specific per-connection
  * resources. BLOCKING.
  */
-static CURLcode imap_disconnect(struct connectdata *conn)
+static CURLcode imap_disconnect(struct connectdata *conn, bool dead_connection)
 {
   struct imap_conn *imapc= &conn->proto.imapc;
 
   /* The IMAP session may or may not have been allocated/setup at this
      point! */
-  if (imapc->pp.conn)
+  if(!dead_connection && imapc->pp.conn)
     (void)imap_logout(conn); /* ignore errors on the LOGOUT */
 
   Curl_pp_disconnect(&imapc->pp);
@@ -924,15 +968,14 @@ static CURLcode imap_parse_url_path(struct connectdata *conn)
 static CURLcode imap_dophase_done(struct connectdata *conn,
                                   bool connected)
 {
-  CURLcode result = CURLE_OK;
   struct FTP *imap = conn->data->state.proto.imap;
   (void)connected;
 
   if(imap->transfer != FTPTRANSFER_BODY)
     /* no data to transfer */
-    result=Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
+    Curl_setup_transfer(conn, -1, -1, FALSE, NULL, -1, NULL);
 
-  return result;
+  return CURLE_OK;
 }
 
 /* called from multi.c while DOing */

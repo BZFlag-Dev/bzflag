@@ -8,7 +8,7 @@
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
- * Copyright (C) 1998 - 2010, Daniel Stenberg, <daniel@haxx.se>, et al.
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
  * This software is licensed as described in the file COPYING, which
  * you should have received as part of this distribution. The terms
@@ -43,9 +43,14 @@ CURLcode Curl_rtsp_rtp_readwrite(struct SessionHandle *data,
 CURLcode Curl_rtsp(struct connectdata *conn, bool *done);
 CURLcode Curl_rtsp_done(struct connectdata *conn, CURLcode, bool premature);
 CURLcode Curl_rtsp_connect(struct connectdata *conn, bool *done);
-CURLcode Curl_rtsp_disconnect(struct connectdata *conn);
+CURLcode Curl_rtsp_disconnect(struct connectdata *conn, bool dead_connection);
 
 CURLcode Curl_rtsp_parseheader(struct connectdata *conn, char *header);
+bool Curl_rtsp_connisdead(struct connectdata *check);
+
+#else
+/* disabled */
+#define Curl_rtsp_connisdead(x) TRUE
 
 #endif /* CURL_DISABLE_RTSP */
 

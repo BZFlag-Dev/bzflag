@@ -1,5 +1,26 @@
 #ifndef __LIB_CONFIG_WIN32_H
 #define __LIB_CONFIG_WIN32_H
+/***************************************************************************
+ *                                  _   _ ____  _
+ *  Project                     ___| | | |  _ \| |
+ *                             / __| | | | |_) | |
+ *                            | (__| |_| |  _ <| |___
+ *                             \___|\___/|_| \_\_____|
+ *
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
+ *
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution. The terms
+ * are also available at http://curl.haxx.se/docs/copyright.html.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the COPYING file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ *
+ ***************************************************************************/
 
 /* ================================================================ */
 /*    lib/config-win32.h - Hand crafted config file for Windows     */
@@ -345,12 +366,19 @@
 /* The size of `short', as computed by sizeof. */
 #define SIZEOF_SHORT 2
 
+/* The size of `size_t', as computed by sizeof. */
+#if defined(_WIN64)
+#  define SIZEOF_SIZE_T 8
+#else
+#  define SIZEOF_SIZE_T 4
+#endif
+
 /* ---------------------------------------------------------------- */
 /*                          STRUCT RELATED                          */
 /* ---------------------------------------------------------------- */
 
 /* Define this if you have struct sockaddr_storage */
-#ifndef __SALFORDC__
+#if !defined(__SALFORDC__) && !defined(__BORLANDC__)
 #define HAVE_STRUCT_SOCKADDR_STORAGE 1
 #endif
 
@@ -504,6 +532,10 @@
 #  define USE_WIN32_LARGE_FILES
 #endif
 
+#if defined(__WATCOMC__) && !defined(USE_WIN32_LARGE_FILES)
+#  define USE_WIN32_LARGE_FILES
+#endif
+
 #if defined(__POCC__)
 #  undef USE_WIN32_LARGE_FILES
 #endif
@@ -535,18 +567,22 @@
 /* ---------------------------------------------------------------- */
 
 #if defined(CURL_HAS_NOVELL_LDAPSDK) || defined(CURL_HAS_MOZILLA_LDAPSDK)
-#undef CURL_LDAP_HYBRID
 #undef CURL_LDAP_WIN
 #define HAVE_LDAP_SSL_H 1
 #define HAVE_LDAP_URL_PARSE 1
 #elif defined(CURL_HAS_OPENLDAP_LDAPSDK)
-#undef CURL_LDAP_HYBRID
 #undef CURL_LDAP_WIN
 #define HAVE_LDAP_URL_PARSE 1
 #else
-#undef CURL_LDAP_HYBRID
 #undef HAVE_LDAP_URL_PARSE
 #define CURL_LDAP_WIN 1
+#endif
+
+#if defined(__WATCOMC__) && defined(CURL_LDAP_WIN)
+#if __WATCOMC__ < 1280
+#define WINBERAPI  __declspec(cdecl)
+#define WINLDAPAPI __declspec(cdecl)
+#endif
 #endif
 
 #if defined(__POCC__) && defined(CURL_LDAP_WIN)
@@ -572,7 +608,7 @@
 /* Name of package */
 #define PACKAGE "curl"
 
-#if defined(__POCC__)
+#if defined(__POCC__) || (USE_IPV6)
 #  define ENABLE_IPV6 1
 #endif
 

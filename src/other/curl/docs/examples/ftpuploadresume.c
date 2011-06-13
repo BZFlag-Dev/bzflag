@@ -1,12 +1,25 @@
-/*****************************************************************************
+/***************************************************************************
  *                                  _   _ ____  _
  *  Project                     ___| | | |  _ \| |
  *                             / __| | | | |_) | |
  *                            | (__| |_| |  _ <| |___
  *                             \___|\___/|_| \_\_____|
  *
+ * Copyright (C) 1998 - 2011, Daniel Stenberg, <daniel@haxx.se>, et al.
  *
- * Upload to FTP, resuming failed transfers
+ * This software is licensed as described in the file COPYING, which
+ * you should have received as part of this distribution. The terms
+ * are also available at http://curl.haxx.se/docs/copyright.html.
+ *
+ * You may opt to use, copy, modify, merge, publish, distribute and/or sell
+ * copies of the Software, and permit persons to whom the Software is
+ * furnished to do so, under the terms of the COPYING file.
+ *
+ * This software is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY
+ * KIND, either express or implied.
+ *
+ ***************************************************************************/
+/* Upload to FTP, resuming failed transfers
  *
  * Compile for MinGW like this:
  *  gcc -Wall -pedantic -std=c99 ftpuploadwithresume.c -o ftpuploadresume.exe
@@ -32,7 +45,8 @@ int __cdecl _snscanf(const char * input, size_t length, const char * format, ...
 
 
 /* parse headers for Content-Length */
-size_t getcontentlengthfunc(void *ptr, size_t size, size_t nmemb, void *stream) {
+size_t getcontentlengthfunc(void *ptr, size_t size, size_t nmemb, void *stream)
+{
   int r;
   long len = 0;
 
@@ -46,7 +60,8 @@ size_t getcontentlengthfunc(void *ptr, size_t size, size_t nmemb, void *stream) 
 }
 
 /* discard downloaded data */
-size_t discardfunc(void *ptr, size_t size, size_t nmemb, void *stream) {
+size_t discardfunc(void *ptr, size_t size, size_t nmemb, void *stream)
+{
   return size * nmemb;
 }
 
@@ -143,13 +158,14 @@ int upload(CURL *curlhandle, const char * remotepath, const char * localpath,
   }
 }
 
-int main(int c, char **argv) {
+int main(int c, char **argv)
+{
   CURL *curlhandle = NULL;
 
   curl_global_init(CURL_GLOBAL_ALL);
   curlhandle = curl_easy_init();
 
-  upload(curlhandle, "ftp://user:pass@host/path/file", "C:\\file", 0, 3);
+  upload(curlhandle, "ftp://user:pass@example.com/path/file", "C:\\file", 0, 3);
 
   curl_easy_cleanup(curlhandle);
   curl_global_cleanup();
