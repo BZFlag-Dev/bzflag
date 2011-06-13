@@ -492,6 +492,16 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
     directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
+void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
+{
+       if (!type)
+               return;
+       void *buf, *bufStart = getDirectMessageBuffer();
+       buf = nboPackVector(bufStart, pos);
+       buf = nboPackStdString(buf, std::string(type->flagName));
+       directMessage(playerIndex, MsgNearFlag,(char*)buf - (char*)bufStart, bufStart);
+}
+
 static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 {
 	if (!playerData->player.isPlaying())
@@ -3031,9 +3041,7 @@ static void searchFlag(GameKeeper::Player &playerData)
   FlagInfo &flag = *FlagInfo::get(closestFlag);
   if (id) {
     if (closestFlag != playerData.getLastIdFlag()) {
-      std::string message("Closest Flag: ");
-      message += flag.flag.type->flagName;
-      sendMessage(ServerPlayer, playerIndex, message.c_str());
+      sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
       playerData.setLastIdFlag(closestFlag);
     }
   } else {
