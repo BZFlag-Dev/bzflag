@@ -10,12 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
 #include "PNGImageFile.h"
+#include "common.h"
 #include <iostream>
 #include <string.h>
-#include "net/Pack.h"
 #include "common/bzfio.h"
+#include "net/Pack.h"
 //#include "zconf.h"
 #include "zlib.h"
 

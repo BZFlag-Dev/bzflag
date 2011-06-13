@@ -18,15 +18,15 @@
 #include <math.h>
 
 // common headers
-#include "game/global.h"
-#include "net/Pack.h"
+#include "global.h"
 #include "vectors.h"
-#include "game/Flag.h"
-#include "obstacle/MeshObstacle.h"
-#include "game/PhysicsDriver.h"
-#include "game/LinkPhysics.h"
-#include "game/Intersect.h"
 #include "game/BZDBCache.h"
+#include "game/Flag.h"
+#include "game/Intersect.h"
+#include "game/LinkPhysics.h"
+#include "game/PhysicsDriver.h"
+#include "net/Pack.h"
+#include "obstacle/MeshObstacle.h"
 
 
 const char* MeshFace::typeName = "MeshFace";
@@ -986,9 +986,10 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
   const float sLen = sScale * fvec3::dot(relPos, srcGeo.sDir);
   const float tLen = tScale * fvec3::dot(relPos, srcGeo.tDir);
   const float pLen = pScale * fvec3::dot(relPos, srcGeo.pDir);
-  fvec3 p = dstGeo.center + (sLen * dstGeo.sScale * dstGeo.sDir)
-            + (tLen * dstGeo.tScale * dstGeo.tDir)
-            + (pLen * dstGeo.pScale * dstGeo.tDir);
+  fvec3 p = dstGeo.center +
+            (sLen * dstGeo.sScale * dstGeo.sDir) +
+            (tLen * dstGeo.tScale * dstGeo.tDir) +
+            (pLen * dstGeo.pScale * dstGeo.tDir);
   p += dstGeo.pDir * 0.001f; // move forwards 1mm
   dstPos = p;
 
@@ -1000,9 +1001,9 @@ bool MeshFace::teleportShot(const MeshFace& dstFace,
     (srcVelScale.y * fvec3::dot(srcVel, srcGeo.tDir)) + linkDstVel.y,
     (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)) + linkDstVel.z
   );
-  fvec3 vel = (velScales.x * dstGeo.sDir)
-              + (velScales.y * dstGeo.tDir)
-              + (velScales.z * dstGeo.pDir);
+  fvec3 vel = (velScales.x * dstGeo.sDir) +
+              (velScales.y * dstGeo.tDir) +
+              (velScales.z * dstGeo.pDir);
   if (linkPhysics.shotSameSpeed) {
     const float srcSpeed = srcVel.length();
     const float dstSpeed =    vel.length();
@@ -1093,9 +1094,10 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
   const float sLen = sScale * fvec3::dot(relPos, srcGeo.sDir);
   const float tLen = tScale * fvec3::dot(relPos, srcGeo.tDir);
   const float pLen = pScale * fvec3::dot(relPos, srcGeo.pDir);
-  fvec3 p = dstGeo.center + (sLen * dstGeo.sScale * dstGeo.sDir)
-            + (tLen * dstGeo.tScale * dstGeo.tDir)
-            + (pLen * dstGeo.pScale * dstGeo.tDir);
+  fvec3 p = dstGeo.center +
+            (sLen * dstGeo.sScale * dstGeo.sDir) +
+            (tLen * dstGeo.tScale * dstGeo.tDir) +
+            (pLen * dstGeo.pScale * dstGeo.tDir);
   p += dstGeo.pDir * 0.001f; // move forwards 1mm
   dstPos = p;
 
@@ -1107,9 +1109,9 @@ bool MeshFace::teleportTank(const MeshFace& dstFace,
     (srcVelScale.y * fvec3::dot(srcVel, srcGeo.tDir)) + linkDstVel.y,
     (srcVelScale.z * fvec3::dot(srcVel, srcGeo.pDir)) + linkDstVel.z
   );
-  fvec3 vel = (velScales.x * dstGeo.sDir)
-              + (velScales.y * dstGeo.tDir)
-              + (velScales.z * dstGeo.pDir);
+  fvec3 vel = (velScales.x * dstGeo.sDir) +
+              (velScales.y * dstGeo.tDir) +
+              (velScales.z * dstGeo.pDir);
   if (linkPhysics.tankSameSpeed) {
     const float srcSpeed = srcVel.length();
     const float dstSpeed =    vel.length();

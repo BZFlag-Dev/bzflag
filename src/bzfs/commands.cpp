@@ -32,27 +32,27 @@
 #include <ctype.h>
 
 // common implementation headers
-#include "common/bzglob.h"
-#include "common/TextUtils.h"
+#include "bzfsMessages.h"
+#include "global.h"
+#include "version.h"
+#include "bzfs/WorldEventManager.h"
+#include "common/BzTime.h"
 #include "common/CommandManager.h"
+#include "common/TextUtils.h"
+#include "common/bzglob.h"
 #include "game/LagInfo.h"
 #include "game/NetHandler.h"
 #include "game/NetMessage.h"
 #include "game/PlayerInfo.h"
-#include "common/BzTime.h"
-#include "game/VotingArbiter.h"
-#include "game/global.h"
-#include "version.h"
-#include "bzfsMessages.h"
-#include "bzfs/WorldEventManager.h"
 #include "game/PlayerInfo.h"
+#include "game/VotingArbiter.h"
 
 // local implementation headers
 #include "FlagHistory.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
-#include "bzfs.h"
 #include "Reports.h"
+#include "bzfs.h"
 #include "lua/LuaServer.h"
 
 #include "BackgroundTask.h"

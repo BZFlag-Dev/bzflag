@@ -12,7 +12,7 @@
 
 // bzflag common headers
 #include "common.h"
-#include "game/global.h"
+#include "global.h"
 #include "common/TextUtils.h"
 
 // interface header
@@ -26,15 +26,15 @@
 
 // common headers
 #include "bzfgl.h"
+#include "vectors.h"
+#include "3D/Model.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
 #include "ogl/OpenGLGState.h"
-#include "3D/Model.h"
-#include "vectors.h"
 
-#include "platform/PlatformFactory.h"
 #include "platform/BzfMedia.h"
+#include "platform/PlatformFactory.h"
 
 
 // use the namespaces

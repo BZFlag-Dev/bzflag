@@ -14,8 +14,8 @@
 #include "callbacks.h"
 
 /* local headers */
-#include "LocalPlayer.h"
 #include "HUDRenderer.h"
+#include "LocalPlayer.h"
 #include "playing.h"
 // FIXME: Shouldn't need to depend on GUI elements
 #include "guiplaying.h"

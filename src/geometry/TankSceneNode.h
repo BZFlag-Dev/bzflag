@@ -18,10 +18,10 @@
 #define BZF_TANK_SCENE_NODE_H
 
 #include "common.h"
-#include "geometry/SceneNode.h"
-#include "ogl/OpenGLLight.h"
-#include "geometry/TankGeometryMgr.h"
 #include "vectors.h"
+#include "geometry/SceneNode.h"
+#include "geometry/TankGeometryMgr.h"
+#include "ogl/OpenGLLight.h"
 
 class TankSceneNode;
 

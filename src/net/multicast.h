@@ -23,8 +23,8 @@
 #include <sys/types.h>
 
 /* common headers */
-#include "net/network.h"
 #include "net/Address.h"
+#include "net/network.h"
 
 
 /** openBroadcast:

@@ -23,8 +23,8 @@
 #include <string.h>
 
 // common headers
-#include "net/Pack.h"
 #include "zlib.h"
+#include "net/Pack.h"
 
 
 using namespace BzPNG;

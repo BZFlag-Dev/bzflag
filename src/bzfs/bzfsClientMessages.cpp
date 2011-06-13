@@ -11,13 +11,13 @@
  */
 
 // bzflag global header
+#include "Protocol.h"
+#include "bzfsChatVerify.h"
 #include "bzfsClientMessages.h"
-#include "game/BZDBCache.h"
 #include "bzfsMessages.h"
 #include "bzfsPlayerStateVerify.h"
+#include "game/BZDBCache.h"
 #include "game/NetMessage.h"
-#include "bzfsChatVerify.h"
-#include "Protocol.h"
 
 std::map<uint16_t, ClientNetworkMessageHandler*> clientNetworkHandlers;
 std::map<uint16_t, PlayerNetworkMessageHandler*> playerNetworkHandlers;

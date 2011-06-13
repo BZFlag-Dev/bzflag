@@ -397,7 +397,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\game\global.h"
+				RelativePath="..\..\src\include\global.h"
 				>
 			</File>
 			<File

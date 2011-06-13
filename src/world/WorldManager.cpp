@@ -8,12 +8,12 @@
 #include "3D/TextureManager.h"
 #include "game/CollisionManager.h"
 #include "game/DynamicColor.h"
-#include "game/TextureMatrix.h"
-#include "game/PhysicsDriver.h"
-#include "game/WorldText.h"
 #include "game/LinkManager.h"
-#include "obstacle/WallObstacle.h"
+#include "game/PhysicsDriver.h"
+#include "game/TextureMatrix.h"
+#include "game/WorldText.h"
 #include "obstacle/MeshObstacle.h"
+#include "obstacle/WallObstacle.h"
 //#include "MeshTransform.h"
 
 

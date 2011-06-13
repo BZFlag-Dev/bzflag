@@ -17,8 +17,8 @@
 #include "WorldFileLocation.h"
 
 /* common headers */
-#include "game/WorldText.h"
 #include "game/BzMaterial.h"
+#include "game/WorldText.h"
 
 class CustomWorldText : public WorldFileLocation {
   public:

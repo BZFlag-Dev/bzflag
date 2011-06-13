@@ -16,8 +16,8 @@
 
 // common headers
 #include "bzfgl.h"
-#include "ogl/RenderNode.h"
 #include "vectors.h"
+#include "ogl/RenderNode.h"
 
 
 class Extents;

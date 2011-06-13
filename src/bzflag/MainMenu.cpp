@@ -14,21 +14,21 @@
 #include "MainMenu.h"
 
 /* common implementation headers */
-#include "3D/TextureManager.h"
 #include "3D/FontManager.h"
+#include "3D/TextureManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "HelpMenu.h"
 #include "HUDDialogStack.h"
-#include "LocalPlayer.h"
-#include "JoinMenu.h"
-#include "OptionsMenu.h"
-#include "QuitMenu.h"
 #include "HUDuiImage.h"
 #include "HUDuiLabel.h"
-#include "playing.h"
+#include "HelpMenu.h"
+#include "JoinMenu.h"
 #include "LocalFontFace.h"
+#include "LocalPlayer.h"
+#include "OptionsMenu.h"
+#include "QuitMenu.h"
+#include "playing.h"
 
 LocalFontFace* MainMenu::fontFace = NULL;
 

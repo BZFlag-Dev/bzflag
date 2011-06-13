@@ -27,19 +27,19 @@
 
 // common headers
 #include "bzregex.h"
-#include "game/BZDBCache.h"
+#include "global.h"
 #include "3D/FontManager.h"
-#include "common/TextUtils.h"
 #include "common/ErrorHandler.h"
-#include "game/global.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
 
 // local headers
 #include "FontSizer.h"
 #include "HubLink.h"
-#include "bzflag/SceneRenderer.h"
+#include "LocalFontFace.h"
 #include "RadarRenderer.h"
 #include "bzflag.h"
-#include "LocalFontFace.h"
+#include "bzflag/SceneRenderer.h"
 #include "common/bzUnicode.h"
 
 

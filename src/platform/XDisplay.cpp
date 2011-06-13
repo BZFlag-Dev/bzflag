@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "BzfEvent.h"
 #include "XDisplay.h"
 #include "XWindow.h"
-#include "BzfEvent.h"
 #include <string.h>
 #include <X11/keysym.h>
 

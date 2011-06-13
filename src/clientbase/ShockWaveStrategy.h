@@ -17,8 +17,8 @@
 #include "ShotStrategy.h"
 
 /* common interface headers */
-#include "scene/SceneDatabase.h"
 #include "geometry/SphereSceneNode.h"
+#include "scene/SceneDatabase.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"

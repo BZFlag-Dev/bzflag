@@ -20,34 +20,34 @@
 #include <vector>
 
 // common headers
-#include "Ray.h"
 #include "Extents.h"
+#include "Ray.h"
 #include "vectors.h"
-#include "obstacle/Obstacle.h"
-#include "obstacle/ObstacleMgr.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
 #include "game/CollisionManager.h"
+#include "geometry/ViewFrustum.h"
 #include "obstacle/MeshFace.h"
 #include "obstacle/MeshObstacle.h"
-#include "geometry/ViewFrustum.h"
-#include "bzflag/SceneRenderer.h"
-#include "game/BZDBCache.h"
-#include "common/StateDatabase.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/ObstacleMgr.h"
 
 // bzflag headers
-#include "bzflag/guiplaying.h"
 #include "bzflag/MainWindow.h"
 #include "bzflag/RadarRenderer.h"
-#include "clientbase/playing.h"
+#include "bzflag/guiplaying.h"
 #include "clientbase/LocalPlayer.h"
 #include "clientbase/Roster.h"
 #include "clientbase/ShotPath.h"
 #include "clientbase/ShotStrategy.h"
 #include "clientbase/World.h"
 #include "clientbase/WorldPlayer.h"
+#include "clientbase/playing.h"
 
 // local headers
-#include "LuaHeader.h"
 #include "LuaHandle.h"
+#include "LuaHeader.h"
 
 
 //============================================================================//

@@ -17,8 +17,8 @@
 #ifndef BZF_WINVISUAL_H
 #define BZF_WINVISUAL_H
 
-#include "platform/BzfVisual.h"
 #include "WinDisplay.h"
+#include "platform/BzfVisual.h"
 
 class WinVisual : public BzfVisual {
   public:

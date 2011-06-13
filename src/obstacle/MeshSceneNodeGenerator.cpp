@@ -11,22 +11,22 @@
  */
 
 #include <math.h>
-#include "vectors.h"
 #include "MeshSceneNodeGenerator.h"
-#include "obstacle/MeshObstacle.h"
-#include "obstacle/MeshFace.h"
 #include "bzfgl.h"
-#include "obstacle/MeshDrawInfo.h"
-#include "geometry/MeshSceneNode.h"
-#include "geometry/MeshPolySceneNode.h"
-#include "geometry/MeshFragSceneNode.h"
-#include "geometry/OccluderSceneNode.h"
-#include "game/DynamicColor.h"
-#include "game/TextureMatrix.h"
+#include "vectors.h"
 #include "3D/TextureManager.h"
-#include "ogl/OpenGLMaterial.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
+#include "game/DynamicColor.h"
+#include "game/TextureMatrix.h"
+#include "geometry/MeshFragSceneNode.h"
+#include "geometry/MeshPolySceneNode.h"
+#include "geometry/MeshSceneNode.h"
+#include "geometry/OccluderSceneNode.h"
+#include "obstacle/MeshDrawInfo.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
+#include "ogl/OpenGLMaterial.h"
 
 
 //

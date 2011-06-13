@@ -18,13 +18,13 @@
 #include <vector>
 
 // common headers
-#include "common/bzfio.h"
 #include "common/BzTime.h"
+#include "common/bzfio.h"
 #include "game/NetMessage.h"
 
 // local headers
-#include "bzfs.h"
 #include "GameKeeper.h"
+#include "bzfs.h"
 
 
 static float updateRate = 2.0f;

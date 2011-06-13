@@ -17,8 +17,8 @@
 #ifndef BZF_SOUND_H
 #define BZF_SOUND_H
 
-#include "common.h"
 #include "Singleton.h"
+#include "common.h"
 #include <string>
 #include <vector>
 #include <set>

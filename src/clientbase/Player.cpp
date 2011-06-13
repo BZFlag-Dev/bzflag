@@ -14,25 +14,25 @@
 #include "Player.h"
 
 // common interface headers
+#include "ClientIntangibilityManager.h"
 #include "bzflag/SceneRenderer.h"
+#include "clientbase/EventHandler.h"
 #include "game/BZDBCache.h"
 #include "game/CollisionManager.h"
-#include "obstacle/ObstacleMgr.h"
+#include "game/MotionUtils.h"
 #include "game/PhysicsDriver.h"
-#include "obstacle/ObstacleList.h"
-#include "obstacle/WallObstacle.h"
 #include "obstacle/MeshFace.h"
 #include "obstacle/MeshObstacle.h"
-#include "ClientIntangibilityManager.h"
-#include "game/MotionUtils.h"
-#include "clientbase/EventHandler.h"
+#include "obstacle/ObstacleList.h"
+#include "obstacle/ObstacleMgr.h"
+#include "obstacle/WallObstacle.h"
 
 // local implementation headers
-#include "World.h"
-#include "TrackMarks.h"
-#include "sound.h"
 #include "EffectsRenderer.h"
 #include "Roaming.h"
+#include "TrackMarks.h"
+#include "World.h"
+#include "sound.h"
 #include "game/GameTime.h"
 
 #include "playing.h"
@@ -1318,7 +1318,6 @@ void Player::doDeadReckoning() {
     notResponding = (dt > BZDB.eval(BZDBNAMES.NOTRESPONDINGTIME));
   }
 
-  bool hitWorld = false;
   bool ZHit = false;
 
   // if the tanks hits something in Z then update input state (we don't want to fall anymore)
@@ -1328,6 +1327,8 @@ void Player::doDeadReckoning() {
   }
 
 #ifdef DR_USES_HIT_CORRECTION // FIXME - this should probably be moved
+  bool hitWorld = false;
+
   // check for collisions and correct accordingly
   World* world = World::getWorld();
   if (world) {
@@ -1377,7 +1378,9 @@ void Player::doDeadReckoning() {
     predictedVel.z = 0.0f;
     inputStatus &= ~PlayerState::Falling;
     inputVel.z = 0.0f;
+#ifdef DR_USES_HIT_CORRECTION // FIXME - this should probably be moved
     hitWorld = true;
+#endif // DR_USES_HIT_CORRECTION
   }
 
   // setup remote players' landing sounds and graphics, and jumping sounds

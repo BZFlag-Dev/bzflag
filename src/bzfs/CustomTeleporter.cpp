@@ -17,9 +17,9 @@
 #include <math.h>
 
 /* common interface headers */
-#include "obstacle/Teleporter.h"
 #include "common/StateDatabase.h"
 #include "obstacle/ObstacleMgr.h"
+#include "obstacle/Teleporter.h"
 
 
 CustomTeleporter::CustomTeleporter(const char* _telename) {

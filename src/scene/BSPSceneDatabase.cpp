@@ -19,10 +19,10 @@
 #include <assert.h>
 #include <string.h>
 #include "BSPSceneDatabase.h"
-#include "geometry/ViewFrustum.h"
-#include "geometry/SphereSceneNode.h"
-#include "geometry/WallSceneNode.h"
 #include "bzflag/SceneRenderer.h"
+#include "geometry/SphereSceneNode.h"
+#include "geometry/ViewFrustum.h"
+#include "geometry/WallSceneNode.h"
 
 
 //

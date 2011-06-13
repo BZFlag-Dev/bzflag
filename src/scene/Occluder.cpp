@@ -21,10 +21,10 @@
 
 // common headers
 #include "bzfgl.h"
-#include "geometry/SceneNode.h"
+#include "common/StateDatabase.h"
 #include "game/Frustum.h"
 #include "game/Intersect.h"
-#include "common/StateDatabase.h"
+#include "geometry/SceneNode.h"
 
 using namespace Intersect;
 

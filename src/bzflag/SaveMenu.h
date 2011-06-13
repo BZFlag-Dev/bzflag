@@ -20,9 +20,9 @@
 #include "CommandsStandard.h"
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
 #include "HUDDialog.h"
 #include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
 
 
 class SaveMenuDefaultKey : public MenuDefaultKey {

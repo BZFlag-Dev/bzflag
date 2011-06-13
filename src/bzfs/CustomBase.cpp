@@ -17,7 +17,7 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "game/global.h" // for CtfTeams
+#include "global.h" // for CtfTeams
 #include "obstacle/BaseBuilding.h"
 #include "obstacle/ObstacleMgr.h"
 

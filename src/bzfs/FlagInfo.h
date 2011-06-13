@@ -20,9 +20,9 @@
 #include <stdlib.h>
 
 /* bzflag common headers */
-#include "game/Flag.h"
-#include "common/BzTime.h"
 #include "vectors.h"
+#include "common/BzTime.h"
+#include "game/Flag.h"
 
 
 class NetMessage;

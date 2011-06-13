@@ -14,10 +14,10 @@
 
 #include <math.h>
 
-#include "game/global.h"
-#include "net/Pack.h"
 #include "WallObstacle.h"
+#include "global.h"
 #include "game/Intersect.h"
+#include "net/Pack.h"
 
 const char*   WallObstacle::typeName = "WallObstacle";
 

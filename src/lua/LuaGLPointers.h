@@ -14,8 +14,8 @@
 #define LUA_GL_POINTERS_H
 
 
-#include "common.h"
 #include "bzfgl.h"
+#include "common.h"
 
 struct lua_State;
 

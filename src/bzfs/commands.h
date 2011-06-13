@@ -21,8 +21,8 @@
 #include <map>
 
 /* common headers */
-#include "bzfs/bzfsAPI.h"
 #include "GameKeeper.h"
+#include "bzfs/bzfsAPI.h"
 #include "common/TextUtils.h"
 
 

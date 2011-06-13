@@ -21,8 +21,8 @@
 #include <string.h>
 
 /* common implementation headers */
-#include "game/MeshTransform.h"
 #include "vectors.h"
+#include "game/MeshTransform.h"
 
 
 CustomMeshTransform::CustomMeshTransform() {

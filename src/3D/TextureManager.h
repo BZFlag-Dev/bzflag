@@ -15,9 +15,9 @@
 #include <string>
 #include <map>
 
-#include "ogl/OpenGLTexture.h"
 #include "Singleton.h"
 #include "vectors.h"
+#include "ogl/OpenGLTexture.h"
 
 
 struct FileTextureInit {

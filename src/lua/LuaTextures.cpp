@@ -24,22 +24,22 @@
 
 // common headers
 #include "bzfgl.h"
-#include "common/bzfio.h"
-#include "common/BzVFS.h"
-#include "ogl/OpenGLGState.h"
-#include "ogl/OpenGLTexture.h"
-#include "ogl/OpenGLPassState.h"
 #include "3D/TextureManager.h"
+#include "common/BzVFS.h"
 #include "common/StateDatabase.h"
+#include "common/bzfio.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLPassState.h"
+#include "ogl/OpenGLTexture.h"
 
 // mediafile headers
 #include "mediafile/PNGImageFile.h"
 
 // local headers
+#include "LuaGLBuffers.h"
+#include "LuaHandle.h"
 #include "LuaHeader.h"
 #include "LuaUtils.h"
-#include "LuaHandle.h"
-#include "LuaGLBuffers.h"
 
 
 LuaTextureMgr luaTextureMgr;

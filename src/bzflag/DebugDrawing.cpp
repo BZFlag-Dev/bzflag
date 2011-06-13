@@ -17,16 +17,16 @@
 #include "DebugDrawing.h"
 
 // common headers
+#include "LocalPlayer.h"
+#include "Roster.h"
 #include "bzfgl.h"
-#include "ogl/OpenGLGState.h"
 #include "bzflag/SceneRenderer.h"
 #include "game/BZDBCache.h"
-#include "LocalPlayer.h"
+#include "game/Flag.h"
+#include "game/GameTime.h"
 #include "game/LinkManager.h"
 #include "obstacle/MeshFace.h"
-#include "game/Flag.h"
-#include "Roster.h"
-#include "game/GameTime.h"
+#include "ogl/OpenGLGState.h"
 
 
 //============================================================================//

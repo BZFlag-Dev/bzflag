@@ -13,14 +13,14 @@
 #include "common.h"
 #include <math.h>
 #include <assert.h>
-#include "game/global.h"
-#include "net/Pack.h"
+#include "global.h"
 #include "vectors.h"
+#include "net/Pack.h"
 
-#include "SphereObstacle.h"
 #include "MeshUtils.h"
-#include "game/PhysicsDriver.h"
+#include "SphereObstacle.h"
 #include "game/MeshTransform.h"
+#include "game/PhysicsDriver.h"
 
 
 const char* SphereObstacle::typeName = "SphereObstacle";

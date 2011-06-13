@@ -17,8 +17,8 @@
 #include "common.h"
 
 /* common interface headers */
-#include "Ray.h"
 #include "Extents.h"
+#include "Ray.h"
 #include "common/BzTime.h"
 
 /* local interface headers */

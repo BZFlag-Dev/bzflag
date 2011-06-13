@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "HPUXMedia.h"
 #include "HPUXPlatformFactory.h"
 #include "XDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
-#include "HPUXMedia.h"
 
 PlatformFactory*  PlatformFactory::getInstance() {
   if (!instance) { instance = new HPUXPlatformFactory; }

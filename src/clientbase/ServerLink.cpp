@@ -42,8 +42,8 @@
 #endif
 #include "common/BzTime.h"
 
-#include "game/GameTime.h"
 #include "common/bzUnicode.h"
+#include "game/GameTime.h"
 
 #ifndef BUILDING_BZADMIN
 // bzflag local implementation headers

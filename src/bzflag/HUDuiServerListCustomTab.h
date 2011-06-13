@@ -22,11 +22,11 @@
 // ancestor class
 #include "HUDuiNestedContainer.h"
 
-#include "game/ServerItem.h"
 #include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
 #include "HUDuiList.h"
 #include "HUDuiServerList.h"
+#include "HUDuiTypeIn.h"
+#include "game/ServerItem.h"
 #include <string>
 
 class HUDuiServerListCustomTab : public HUDuiNestedContainer {

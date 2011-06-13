@@ -15,13 +15,13 @@
 
 // common headers
 #include "common/BzTime.h"
-#include "game/PlayerInfo.h"
 #include "common/StateDatabase.h"  // for BZDBNAMES.REJOINTIME
+#include "game/PlayerInfo.h"
 
 // bzfs specific headers
-#include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers
-#include "RecordReplay.h"
 #include "GameKeeper.h"
+#include "RecordReplay.h"
+#include "CmdLineOptions.h" // for MaxPlayers & ReplayObservers
 
 // it's loathsome to expose private structure in a header
 struct RejoinNode {

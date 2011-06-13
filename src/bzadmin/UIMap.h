@@ -21,8 +21,8 @@
 #include <string>
 
 #include "BZAdminUI.h"
-#include "bzadmin/PlayerInfo.h"
 #include "Singleton.h"
+#include "bzadmin/PlayerInfo.h"
 
 
 class BZAdminClient;

@@ -14,7 +14,7 @@
 #define __ARES_HANDLER_H__
 
 // bzflag global header
-#include "game/global.h"
+#include "global.h"
 
 /* common implementation headers */
 #include "net/network.h"

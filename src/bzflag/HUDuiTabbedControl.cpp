@@ -15,8 +15,8 @@
 
 // common implementation headers
 #include "HUDNavigationQueue.h"
-#include "3D/FontManager.h"
 #include "LocalFontFace.h"
+#include "3D/FontManager.h"
 
 #include "ogl/OpenGLUtils.h"
 

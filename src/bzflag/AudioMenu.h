@@ -17,9 +17,9 @@
 #include "HUDDialog.h"
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
 #include "HUDuiControl.h"
 #include "HUDuiTypeIn.h"
+#include "MenuDefaultKey.h"
 
 /** this class provides options for audio
  */

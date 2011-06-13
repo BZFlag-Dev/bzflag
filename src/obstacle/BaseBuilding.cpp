@@ -12,11 +12,11 @@
 
 #include "common.h"
 #include <math.h>
-#include "game/global.h"
-#include "net/Pack.h"
 #include "BaseBuilding.h"
+#include "global.h"
 #include "game/Intersect.h"
 #include "game/MeshTransform.h"
+#include "net/Pack.h"
 
 
 const char* BaseBuilding::typeName = "BaseBuilding";

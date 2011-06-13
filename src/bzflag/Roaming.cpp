@@ -14,8 +14,8 @@
 #include "Roaming.h"
 
 /* common headers */
-#include "game/BZDBCache.h"
 #include "AnsiCodes.h"
+#include "game/BZDBCache.h"
 
 /* local headers */
 #include "ScoreboardRenderer.h"

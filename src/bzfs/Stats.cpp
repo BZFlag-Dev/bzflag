@@ -10,11 +10,11 @@
 * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 */
 
+#include "GameKeeper.h"
 #include "Stats.h"
+#include "global.h"
 #include "common/StateDatabase.h"
 #include "common/TextUtils.h"
-#include "game/global.h"
-#include "GameKeeper.h"
 
 StatsLink::StatsLink() {
 }

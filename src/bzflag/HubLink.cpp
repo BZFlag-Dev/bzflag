@@ -23,18 +23,18 @@
 
 // common headers
 #include "AnsiCodes.h"
-#include "net/AresHandler.h"
-#include "game/BZDBCache.h"
-#include "game/DirectoryNames.h"
-#include "common/FileManager.h"
-#include "net/Pack.h"
 #include "Protocol.h"
-#include "common/TextUtils.h"
-#include "common/bzfio.h"
-#include "common/bz_md5.h"
-#include "net/network.h"
 #include "version.h"
 #include "zlib.h"
+#include "common/FileManager.h"
+#include "common/TextUtils.h"
+#include "common/bz_md5.h"
+#include "common/bzfio.h"
+#include "game/BZDBCache.h"
+#include "game/DirectoryNames.h"
+#include "net/AresHandler.h"
+#include "net/Pack.h"
+#include "net/network.h"
 
 // local headers
 #include "LuaHeader.h"

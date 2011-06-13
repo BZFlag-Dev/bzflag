@@ -21,13 +21,13 @@
 
 // bzflag headers
 #include "bzflag/guiplaying.h"
-#include "clientbase/playing.h"
 #include "clientbase/LocalPlayer.h"
+#include "clientbase/playing.h"
 
 // local headers
+#include "LuaBzOrg.h"
 #include "LuaHandle.h"
 #include "LuaHeader.h"
-#include "LuaBzOrg.h"
 #include "LuaRules.h"
 
 

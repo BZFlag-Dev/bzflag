@@ -14,8 +14,8 @@
  *
  */
 
-#include "common.h"
 #include "SceneDatabase.h"
+#include "common.h"
 
 //
 // SceneDatabase

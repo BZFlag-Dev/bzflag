@@ -17,9 +17,9 @@
 #include <string>
 
 #include "BZRobotPlayer.h"
-#include "RobotCallbacks.h"
 #include "Bullet.h"
 #include "Events.h"
+#include "RobotCallbacks.h"
 
 class RobotControl {
   public:

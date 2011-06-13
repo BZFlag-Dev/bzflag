@@ -19,10 +19,10 @@
 
 #include "common.h"
 #include <string>
-#include "obstacle/Obstacle.h"
-#include "obstacle/MeshObstacle.h"
-#include "game/MeshTransform.h"
 #include "game/BzMaterial.h"
+#include "game/MeshTransform.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/Obstacle.h"
 
 
 class ConeObstacle : public Obstacle {

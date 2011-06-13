@@ -17,8 +17,8 @@
 #include "SpawnPolicy.h"
 
 // common headers
-#include "game/global.h"  /* for TeamColor */
 #include "vectors.h"
+#include "global.h"  /* for TeamColor */
 
 
 /** a DefaultSpawnPolicy is used to determine a new SpawnPosition.  Policies

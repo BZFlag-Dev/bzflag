@@ -23,16 +23,16 @@
 #include <assert.h>
 
 // Global implementation headers
-#include "bzfgl.h"
-#include "common/bzfio.h"
 #include "AnsiCodes.h"
-#include "common/StateDatabase.h"
-#include "game/BZDBCache.h"
-#include "ogl/OpenGLGState.h"
+#include "bzfgl.h"
 #include "common/BzTime.h"
-#include "common/TextUtils.h"
 #include "common/OSFile.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
+#include "game/BZDBCache.h"
 #include "geometry/SceneNode.h"
+#include "ogl/OpenGLGState.h"
 
 // local implementation headers
 #include "FTGL/ftgl.h"

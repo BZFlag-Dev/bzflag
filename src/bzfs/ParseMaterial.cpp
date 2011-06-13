@@ -11,8 +11,8 @@
  */
 
 /* interface header */
-#include "game/BzMaterial.h"
 #include "ParseMaterial.h"
+#include "game/BzMaterial.h"
 
 /* system headers */
 #include <iostream>
@@ -21,8 +21,8 @@
 
 /* common implementation headers */
 #include "common/ParseColor.h"
-#include "game/TextureMatrix.h"
 #include "game/DynamicColor.h"
+#include "game/TextureMatrix.h"
 
 
 bool parseMaterials(const char* cmd, std::istream& input,

@@ -15,8 +15,8 @@
 
 #include <map>
 
+#include "global.h"
 #include "net/Address.h"
-#include "game/global.h"
 
 
 /** This struct stores information about a player that is relevant to

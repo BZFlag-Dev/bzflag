@@ -21,11 +21,11 @@
 #include <math.h>
 
 // common headers
-#include "bzfgl.h"
 #include "Extents.h"
-#include "ogl/RenderNode.h"
-#include "common/StateDatabase.h"
+#include "bzfgl.h"
 #include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "ogl/RenderNode.h"
 
 
 SceneNode::SceneNode() {

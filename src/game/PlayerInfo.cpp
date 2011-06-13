@@ -21,9 +21,9 @@
 #include <ctype.h>
 
 // common headers
+#include "common/TextUtils.h"
 #include "game/NetMessage.h"
 #include "net/Pack.h"
-#include "common/TextUtils.h"
 
 
 WordFilter PlayerInfo::serverSpoofingFilter;

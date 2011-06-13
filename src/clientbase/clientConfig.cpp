@@ -28,11 +28,11 @@
 #include "clientConfig.h"
 
 #include "version.h"
-#include "common/StateDatabase.h"
+#include "common/ErrorHandler.h"
 #include "common/KeyManager.h"
+#include "common/StateDatabase.h"
 #include "common/TextUtils.h"
 #include "game/DirectoryNames.h"
-#include "common/ErrorHandler.h"
 
 std::vector<std::string> configQualityValues;
 std::vector<std::string> configViewValues;

@@ -11,8 +11,8 @@
  */
 
 // interface header
-#include "playing.h"
 #include "guiplaying.h"
+#include "playing.h"
 
 // system includes
 #include <iostream>
@@ -29,38 +29,38 @@
 #endif
 
 // common headers
-#include "common/bz_md5.h"
-#include "common/bzsignal.h"
+#include "AutoHunt.h"
+#include "CommandsStandard.h"
 #include "vectors.h"
 #include "version.h"
+#include "clientbase/EventHandler.h"
 #include "common/AccessList.h"
-#include "AutoHunt.h"
-#include "obstacle/BaseBuilding.h"
-#include "game/BZDBCache.h"
-#include "platform/BzfMedia.h"
+#include "common/BzTime.h"
 #include "common/BzVFS.h"
 #include "common/CacheManager.h"
-#include "game/CollisionManager.h"
-#include "CommandsStandard.h"
-#include "game/DirectoryNames.h"
 #include "common/ErrorHandler.h"
-#include "clientbase/EventHandler.h"
 #include "common/FileManager.h"
-#include "game/GameTime.h"
 #include "common/KeyManager.h"
+#include "common/TextUtils.h"
+#include "common/WordFilter.h"
+#include "common/bz_md5.h"
+#include "common/bzsignal.h"
+#include "game/BZDBCache.h"
+#include "game/CollisionManager.h"
+#include "game/DirectoryNames.h"
+#include "game/GameTime.h"
 #include "game/LinkManager.h"
-#include "lua/LuaClientScripts.h"
 #include "game/MsgStrings.h"
+#include "game/PhysicsDriver.h"
+#include "game/ServerList.h"
+#include "lua/LuaClientScripts.h"
+#include "obstacle/BaseBuilding.h"
 #include "obstacle/ObstacleList.h"
 #include "obstacle/ObstacleMgr.h"
 #include "ogl/OpenGLGState.h"
 #include "ogl/OpenGLPassState.h"
-#include "game/PhysicsDriver.h"
+#include "platform/BzfMedia.h"
 #include "platform/PlatformFactory.h"
-#include "game/ServerList.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
-#include "common/WordFilter.h"
 
 // common client headers
 #include "ClientIntangibilityManager.h"
@@ -69,25 +69,24 @@
 #include "Roaming.h"
 #include "RobotPlayer.h"
 #include "Roster.h"
-#include "game/GameTime.h"
+#include "World.h"
 #include "WorldBuilder.h"
 #include "WorldPlayer.h"
-#include "World.h"
+#include "game/GameTime.h"
 
 // gui headers
 #include "BackgroundRenderer.h"
+#include "3D/TextureManager.h"
 #include "geometry/BillboardSceneNode.h"
 #include "geometry/FlagSceneNode.h"
 #include "geometry/QuadWallSceneNode.h"
 #include "geometry/SphereSceneNode.h"
 #include "geometry/TankGeometryMgr.h"
-#include "3D/TextureManager.h"
 #include "scene/ZSceneDatabase.h"
 
 // local implementation headers
-#include "AutoPilot.h"
 #include "AnsiCodes.h"
-#include "HubLink.h"
+#include "AutoPilot.h"
 #include "Daylight.h"
 #include "Downloads.h"
 #include "EffectsRenderer.h"
@@ -96,6 +95,7 @@
 #include "HUDDialogStack.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
+#include "HubLink.h"
 #include "MainMenu.h"
 #include "RadarRenderer.h"
 #include "SceneBuilder.h"
@@ -1454,10 +1454,12 @@ void handleCustomSound(void* msg) {
     posPtr = pos;
     msg = nboUnpackFVec3(msg, pos);
   }
+  UNUSED(posPtr);
   if ((bits & SoundVelocity) != 0) {
     velPtr = vel;
     msg = nboUnpackFVec3(msg, vel);
   }
+  UNUSED(velPtr);
   if ((bits & SoundDirection) != 0) {
     dirPtr = dir;
     msg = nboUnpackFVec3(msg, dir);
@@ -1465,6 +1467,7 @@ void handleCustomSound(void* msg) {
     msg = nboUnpackFloat(msg, outerCone);
     msg = nboUnpackFloat(msg, outerGain);
   }
+  UNUSED(dirPtr);
 
   std::string localName = soundName;
   if (CACHEMGR.isCacheFileType(soundName)) {

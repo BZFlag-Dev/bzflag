@@ -23,14 +23,14 @@
 
 // common headers
 #include "bzfgl.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
 #include "game/Intersect.h"
 #include "obstacle/MeshFace.h"
 #include "obstacle/MeshSceneNodeGenerator.h"
-#include "game/BzMaterial.h"
-#include "common/StateDatabase.h"
-#include "game/BZDBCache.h"
-#include "bzflag/SceneRenderer.h"
-#include "3D/TextureManager.h"
 
 
 // FIXME - no tesselation is done on for shot lighting

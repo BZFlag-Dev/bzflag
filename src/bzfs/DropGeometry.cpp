@@ -20,17 +20,17 @@
 #include <stdlib.h>
 
 // common headers
-#include "vectors.h"
-#include "game/Intersect.h"
-#include "obstacle/Obstacle.h"
-#include "obstacle/MeshFace.h"
-#include "obstacle/BaseBuilding.h"
-#include "obstacle/ObstacleMgr.h"
-#include "game/CollisionManager.h"
-#include "game/PhysicsDriver.h"
-#include "WorldInfo.h"
-#include "game/BZDBCache.h"
 #include "ServerIntangibilityManager.h"
+#include "WorldInfo.h"
+#include "vectors.h"
+#include "game/BZDBCache.h"
+#include "game/CollisionManager.h"
+#include "game/Intersect.h"
+#include "game/PhysicsDriver.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/ObstacleMgr.h"
 
 //
 // Datatype Definitions

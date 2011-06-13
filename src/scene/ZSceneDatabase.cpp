@@ -20,15 +20,15 @@
 #include "ZSceneDatabase.h"
 
 // common headers
-#include "geometry/SceneNode.h"
-#include "geometry/WallSceneNode.h"
-#include "geometry/SphereSceneNode.h"
+#include "Extents.h"
 #include "bzflag/SceneRenderer.h"
+#include "common/BzTime.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
-#include "common/BzTime.h"
 #include "game/Intersect.h"
-#include "Extents.h"
+#include "geometry/SceneNode.h"
+#include "geometry/SphereSceneNode.h"
+#include "geometry/WallSceneNode.h"
 
 // local headers
 #include "Octree.h"

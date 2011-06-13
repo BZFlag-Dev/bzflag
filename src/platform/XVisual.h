@@ -17,8 +17,8 @@
 #ifndef BZF_XVISUAL_H
 #define BZF_XVISUAL_H
 
-#include "platform/BzfVisual.h"
 #include "XDisplay.h"
+#include "platform/BzfVisual.h"
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 

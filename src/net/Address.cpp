@@ -26,8 +26,8 @@
 #endif
 
 // common implementation headers
-#include "common/bzsignal.h"
 #include "common/ErrorHandler.h"
+#include "common/bzsignal.h"
 
 // local implementation headers
 #include "net/Pack.h"

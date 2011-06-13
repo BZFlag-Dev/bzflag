@@ -13,9 +13,9 @@
 #ifndef BZF_WORLD_PLAYER_H
 #define BZF_WORLD_PLAYER_H
 
-#include "common.h"
 #include "Player.h"
 #include "ShotPath.h"
+#include "common.h"
 #include <vector>
 
 class WorldPlayer : public Player {

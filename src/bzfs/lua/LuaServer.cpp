@@ -24,17 +24,17 @@
 #include <vector>
 
 // common headers
-#include "bzfs/bzfsAPI.h"
-#include "common/bzfio.h"
-#include "version.h"
-#include "common/BzVFS.h"
-#include "game/DirectoryNames.h"
-#include "common/TextUtils.h"
 #include "LuaHeader.h"
+#include "version.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/BzVFS.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
+#include "game/DirectoryNames.h"
 
 // bzfs headers
-#include "bzfs/bzfs.h"
 #include "bzfs/CmdLineOptions.h"
+#include "bzfs/bzfs.h"
 
 //local headers
 #include "CallIns.h"
@@ -44,19 +44,19 @@
 #include "RawLink.h"
 #include "SlashCmd.h"
 // from libLuaGame
-#include "LuaDouble.h"
-#include "LuaExtras.h"
-#include "LuaBitOps.h"
 #include "LuaBZDB.h"
+#include "LuaBitOps.h"
 #include "LuaBzMaterial.h"
+#include "LuaDouble.h"
 #include "LuaDynCol.h"
+#include "LuaExtras.h"
 #include "LuaHTTP.h"
 #include "LuaObstacle.h"
 #include "LuaPack.h"
 #include "LuaPhyDrv.h"
 #include "LuaTexMat.h"
-#include "LuaVector.h"
 #include "LuaVFS.h"
+#include "LuaVector.h"
 #include "LuaZip.h"
 
 

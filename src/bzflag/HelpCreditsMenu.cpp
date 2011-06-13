@@ -11,8 +11,8 @@
  */
 
 /* interface headers */
-#include "HelpMenu.h"
 #include "HelpCreditsMenu.h"
+#include "HelpMenu.h"
 
 /* system headers */
 #include <vector>

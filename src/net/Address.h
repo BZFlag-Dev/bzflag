@@ -29,8 +29,8 @@
 #include <string>
 
 // local headers
-#include "net/network.h"
 #include "net/Pack.h"
+#include "net/network.h"
 
 typedef struct in_addr  InAddr;     // shorthand
 

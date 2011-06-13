@@ -23,10 +23,10 @@
 
 // common headers
 #include "bzfgl.h"
-#include "game/global.h"
-#include "common/StateDatabase.h"
-#include "bzflag/SceneRenderer.h"
+#include "global.h"
 #include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
 
 // local headers

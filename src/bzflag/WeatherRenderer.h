@@ -27,12 +27,12 @@
 #include <map>
 
 /* common interface headers */
-#include "bzfgl.h"
 #include "Extents.h"
+#include "bzfgl.h"
 #include "vectors.h"
-#include "ogl/OpenGLGState.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/BzTime.h"
+#include "ogl/OpenGLGState.h"
 
 #include "ogl/OpenGLUtils.h"
 

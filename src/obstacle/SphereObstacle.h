@@ -20,10 +20,10 @@
 #include <string>
 
 /* common interface headers */
-#include "obstacle/Obstacle.h"
-#include "obstacle/MeshObstacle.h"
-#include "game/MeshTransform.h"
 #include "game/BzMaterial.h"
+#include "game/MeshTransform.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/Obstacle.h"
 
 
 /** SphereObstacle:

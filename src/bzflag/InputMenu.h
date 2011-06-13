@@ -19,11 +19,11 @@
 #include "HUDDialog.h"
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
-#include "KeyboardMapMenu.h"
 #include "HUDuiControl.h"
-#include "HUDuiList.h"
 #include "HUDuiDefaultKey.h"
+#include "HUDuiList.h"
+#include "KeyboardMapMenu.h"
+#include "MenuDefaultKey.h"
 
 
 /** this class provides options for setting the gui

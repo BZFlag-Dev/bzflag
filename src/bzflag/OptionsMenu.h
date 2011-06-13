@@ -16,21 +16,21 @@
 #include "common.h"
 
 /* local interface headers */
-#include "HUDDialog.h"
-#include "MenuDefaultKey.h"
-#include "HUDuiDefaultKey.h"
-#include "HUDuiControl.h"
-#include "GUIOptionsMenu.h"
-#include "TextOptionsMenu.h"
-#include "RadarOptionsMenu.h"
-#include "EffectsMenu.h"
-#include "CacheMenu.h"
-#include "HubMenu.h"
-#include "SaveWorldMenu.h"
-#include "InputMenu.h"
 #include "AudioMenu.h"
+#include "CacheMenu.h"
 #include "DisplayMenu.h"
+#include "EffectsMenu.h"
+#include "GUIOptionsMenu.h"
+#include "HUDDialog.h"
+#include "HUDuiControl.h"
+#include "HUDuiDefaultKey.h"
+#include "HubMenu.h"
+#include "InputMenu.h"
+#include "MenuDefaultKey.h"
+#include "RadarOptionsMenu.h"
 #include "SaveMenu.h"
+#include "SaveWorldMenu.h"
+#include "TextOptionsMenu.h"
 
 class OptionsMenu : public HUDDialog {
   public:

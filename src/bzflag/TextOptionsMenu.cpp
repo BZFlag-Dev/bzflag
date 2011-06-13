@@ -14,24 +14,24 @@
 #include "TextOptionsMenu.h"
 
 /* common implementation headers */
-#include "common/BundleMgr.h"
-#include "game/BZDBCache.h"
-#include "common/TextUtils.h"
 #include "3D/FontManager.h"
+#include "common/BundleMgr.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
 
 /* local implementation headers */
 #include "FontOptionsMenu.h"
 #include "FontSizer.h"
-#include "MainMenu.h"
-#include "World.h"
 #include "HUDDialogStack.h"
-#include "HUDuiList.h"
 #include "HUDuiLabel.h"
-#include "ScoreboardRenderer.h"
-#include "bzflag/SceneRenderer.h"
+#include "HUDuiList.h"
 #include "LocalFontFace.h"
-#include "playing.h"
+#include "MainMenu.h"
+#include "ScoreboardRenderer.h"
+#include "World.h"
 #include "guiplaying.h"
+#include "playing.h"
+#include "bzflag/SceneRenderer.h"
 
 
 static const int fontStep = 3;

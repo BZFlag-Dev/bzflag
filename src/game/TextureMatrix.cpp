@@ -18,9 +18,9 @@
 #include <string.h>
 
 /* common implemnetation headers */
+#include "common/StateDatabase.h"
 #include "game/GameTime.h"
 #include "net/Pack.h"
-#include "common/StateDatabase.h"
 
 
 //============================================================================//

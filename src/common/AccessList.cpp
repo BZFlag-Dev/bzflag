@@ -22,10 +22,10 @@
 
 // common headers
 #include "bzregex.h"
+#include "common/FileManager.h"
+#include "common/TextUtils.h"
 #include "common/bzfio.h"
 #include "common/bzglob.h"
-#include "common/TextUtils.h"
-#include "common/FileManager.h"
 #include "game/DirectoryNames.h"
 
 

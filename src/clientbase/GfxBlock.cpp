@@ -24,13 +24,13 @@
 #include "clientbase/EventClient.h"
 
 // bzflag headers
-#include "World.h"
 #include "ClientFlag.h"
-#include "ShotPath.h"
-#include "Player.h"
 #include "LocalPlayer.h"
-#include "WorldPlayer.h"
+#include "Player.h"
 #include "Roster.h"
+#include "ShotPath.h"
+#include "World.h"
+#include "WorldPlayer.h"
 
 
 //============================================================================//

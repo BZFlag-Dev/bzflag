@@ -14,13 +14,13 @@
 #include "MenuDefaultKey.h"
 
 /* common implementation headers */
-#include "common/KeyManager.h"
 #include "CommandsStandard.h"
+#include "common/KeyManager.h"
 
 /* local implementation headers */
-#include "sound.h"
-#include "HUDDialogStack.h"
 #include "HUDDialog.h"
+#include "HUDDialogStack.h"
+#include "sound.h"
 
 
 MenuDefaultKey MenuDefaultKey::instance;

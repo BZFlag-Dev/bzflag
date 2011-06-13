@@ -16,18 +16,18 @@
 #include "TrackMarks.h"
 
 // common  headers
+#include "Ray.h"
 #include "bzfgl.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
-#include "obstacle/Obstacle.h"
-#include "geometry/TankGeometryMgr.h"
 #include "game/CollisionManager.h"
 #include "game/PhysicsDriver.h"
-#include "Ray.h"
-#include "3D/TextureManager.h"
-#include "scene/SceneDatabase.h"
-#include "bzflag/SceneRenderer.h"
 #include "geometry/SceneNode.h"
+#include "geometry/TankGeometryMgr.h"
+#include "obstacle/Obstacle.h"
+#include "scene/SceneDatabase.h"
 
 
 using namespace TrackMarks;

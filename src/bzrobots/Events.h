@@ -17,8 +17,8 @@
 #include <string>
 
 /* local interface headers */
-#include "Robot.h"
 #include "Bullet.h"
+#include "Robot.h"
 #include "RobotStatus.h"
 
 namespace BZRobots {

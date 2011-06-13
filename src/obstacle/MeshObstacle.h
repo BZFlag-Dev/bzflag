@@ -21,11 +21,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "vectors.h"
 #include "Ray.h"
-#include "obstacle/Obstacle.h"
-#include "obstacle/MeshFace.h"
+#include "vectors.h"
 #include "game/MeshTransform.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/Obstacle.h"
 
 
 class MeshDrawInfo;

@@ -18,9 +18,9 @@
 
 // common headers
 #include "bzfgl.h"
-#include "ogl/OpenGLGState.h"
 #include "3D/FontManager.h"
 #include "game/BZDBCache.h"
+#include "ogl/OpenGLGState.h"
 
 // local headers
 #include "LocalFontFace.h"

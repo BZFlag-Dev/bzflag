@@ -20,7 +20,7 @@
 #include <string>
 
 // common headers
-#include "game/global.h"
+#include "global.h"
 #include "bzfs/bzfsAPI.h"
 #include "obstacle/Obstacle.h"
 

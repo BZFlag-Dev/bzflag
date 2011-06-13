@@ -22,8 +22,8 @@
 // ancestor class
 #include "HUDuiControl.h"
 
-#include "game/ServerItem.h"
 #include "HUDuiLabel.h"
+#include "game/ServerItem.h"
 #include <string>
 
 class HUDuiServerInfo : public HUDuiControl {

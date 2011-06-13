@@ -27,11 +27,11 @@
 #include <vector>
 
 /* common headers */
-#include "ogl/OpenGLLight.h"
-#include "geometry/ViewFrustum.h"
-#include "ogl/RenderNode.h"
 #include "Extents.h"
 #include "vectors.h"
+#include "geometry/ViewFrustum.h"
+#include "ogl/OpenGLLight.h"
+#include "ogl/RenderNode.h"
 
 
 #define RENDERER (SceneRenderer::instance())

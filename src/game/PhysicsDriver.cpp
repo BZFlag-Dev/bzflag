@@ -20,10 +20,10 @@
 
 // common headers
 #include "common/BzTime.h"
-#include "net/Pack.h"
-#include "common/TextUtils.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 #include "game/MeshTransform.h"
+#include "net/Pack.h"
 
 
 //============================================================================//

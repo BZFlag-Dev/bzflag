@@ -14,15 +14,15 @@
 #include "QuickKeysMenu.h"
 
 /* common implementation headers */
-#include "common/TextUtils.h"
-#include "common/StateDatabase.h"
 #include "3D/FontManager.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "MenuDefaultKey.h"
-#include "MainMenu.h"
 #include "LocalFontFace.h"
+#include "MainMenu.h"
+#include "MenuDefaultKey.h"
 
 
 QuickKeysMenu::QuickKeysMenu() {

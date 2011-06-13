@@ -20,8 +20,8 @@
 #define BZF_MESH_FRAG_SCENE_NODE_H
 
 #include "common.h"
-#include "geometry/WallSceneNode.h"
 #include "game/BzMaterial.h"
+#include "geometry/WallSceneNode.h"
 
 //
 // NOTES:

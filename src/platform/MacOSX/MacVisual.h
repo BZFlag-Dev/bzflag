@@ -17,9 +17,9 @@
 #ifndef BZF_MACVISUAL_H
 #define BZF_MACVISUAL_H
 
+#include "MacDisplay.h"
 #include "bzfgl.h"
 #include "platform/BzfVisual.h"
-#include "MacDisplay.h"
 
 #include <vector>
 

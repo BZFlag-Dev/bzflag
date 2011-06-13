@@ -14,24 +14,24 @@
 #include "ScoreboardRenderer.h"
 
 // common headers
-#include "common/Bundle.h"
-#include "game/Team.h"
 #include "3D/FontManager.h"
-#include "game/BZDBCache.h"
-#include "ogl/OpenGLGState.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
 #include "clientbase/GfxBlock.h"
+#include "common/Bundle.h"
+#include "common/BzTime.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
+#include "game/Team.h"
+#include "ogl/OpenGLGState.h"
 
 // local headers
+#include "AutoHunt.h"
 #include "FontSizer.h"
+#include "LocalFontFace.h"
 #include "LocalPlayer.h"
 #include "RemotePlayer.h"
 #include "Roaming.h"
-#include "AutoHunt.h"
 #include "World.h"
 #include "sound.h"
-#include "LocalFontFace.h"
 
 
 #define DEBUG_SHOWRATIOS 1

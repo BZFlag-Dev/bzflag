@@ -19,7 +19,7 @@
 #include "Player.h"
 
 /* common interface headers */
-#include "game/global.h"
+#include "global.h"
 #include "game/ShotUpdate.h"
 
 /* local interface headers */

@@ -23,10 +23,10 @@
 
 // common headers
 #include "bzfgl.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
-#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
-#include "3D/TextureManager.h"
 
 // local headers
 #include "geometry/ViewFrustum.h"

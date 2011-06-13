@@ -15,19 +15,19 @@
 
 /* common implementation headers */
 #include "AnsiCodes.h"
+#include "Protocol.h"
+#include "3D/FontManager.h"
 #include "common/Bundle.h"
 #include "common/BundleMgr.h"
-#include "3D/FontManager.h"
-#include "Protocol.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
 #include "HUDDialogStack.h"
+#include "LocalFontFace.h"
 #include "MainMenu.h"
 #include "ServerMenu.h"
-#include "3D/TextureManager.h"
 #include "playing.h"
-#include "LocalFontFace.h"
+#include "3D/TextureManager.h"
 
 
 JoinMenu* JoinMenu::instance = NULL;

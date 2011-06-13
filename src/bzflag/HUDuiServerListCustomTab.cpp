@@ -15,13 +15,13 @@
 
 #include "playing.h"
 
-#include "3D/FontManager.h"
 #include "FontSizer.h"
 #include "LocalFontFace.h"
+#include "3D/FontManager.h"
 
 #include "HUDuiLabel.h"
-#include "HUDuiTypeIn.h"
 #include "HUDuiList.h"
+#include "HUDuiTypeIn.h"
 #include "ogl/OpenGLUtils.h"
 
 //

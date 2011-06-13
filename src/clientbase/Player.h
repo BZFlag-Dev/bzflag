@@ -19,15 +19,15 @@
 #include <string>
 
 // common headers
-#include "game/global.h"
+#include "PlayerAvatarManager.h"
+#include "ShotStatistics.h"
+#include "global.h"
+#include "vectors.h"
+#include "clientbase/GfxBlock.h"
 #include "common/BzTime.h"
-#include "net/Address.h"
 #include "game/Flag.h"
 #include "game/PlayerState.h"
-#include "ShotStatistics.h"
-#include "PlayerAvatarManager.h"
-#include "clientbase/GfxBlock.h"
-#include "vectors.h"
+#include "net/Address.h"
 
 // local headers
 class ShotPath;

@@ -22,27 +22,27 @@
 
 // common implementation headers
 #include "AnsiCodes.h"
-#include "game/BZDBCache.h"
+#include "CommandsStandard.h"
+#include "3D/TextureManager.h"
 #include "common/BzDocket.h"
 #include "common/BzVFS.h"
-#include "CommandsStandard.h"
-#include "game/DirectoryNames.h"
 #include "common/KeyManager.h"
-#include "lua/LuaClientScripts.h"
-#include "game/MapInfo.h"
-#include "3D/TextureManager.h"
 #include "common/TextUtils.h"
+#include "game/BZDBCache.h"
+#include "game/DirectoryNames.h"
+#include "game/MapInfo.h"
+#include "lua/LuaClientScripts.h"
 
 // local implementation headers
-#include "common/bzglob.h"
-#include "guiplaying.h"
-#include "playing.h"
 #include "HubLink.h"
 #include "LocalCommand.h"
 #include "LocalPlayer.h"
 #include "Roaming.h"
 #include "Roster.h"
 #include "ServerLink.h"
+#include "guiplaying.h"
+#include "playing.h"
+#include "common/bzglob.h"
 
 // class definitions
 

@@ -22,31 +22,32 @@
 #include <vector>
 
 // common headers
-#include "common/bzfio.h"
-#include "common/BzVFS.h"
 #include "clientbase/EventHandler.h"
+#include "common/BzVFS.h"
+#include "common/bzfio.h"
 
 // local headers
 #include "LuaHeader.h"
 
-#include "LuaClientOrder.h"
 #include "LuaCallInCheck.h"
 #include "LuaCallInDB.h"
-#include "LuaUtils.h"
+#include "LuaClientOrder.h"
 #include "LuaExtras.h"
+#include "LuaUtils.h"
 
 // local lua library headers
-#include "LuaBitOps.h"
 #include "LuaBZDB.h"
+#include "LuaBitOps.h"
 #include "LuaBzMaterial.h"
 #include "LuaCallOuts.h"
 #include "LuaConsole.h"
-#include "LuaGameConst.h"
-#include "LuaGLConst.h"
 #include "LuaControl.h"
 #include "LuaDouble.h"
 #include "LuaDynCol.h"
 #include "LuaExtras.h"
+#include "LuaGLConst.h"
+#include "LuaGameConst.h"
+#include "LuaHTTP.h"
 #include "LuaKeySyms.h"
 #include "LuaObstacle.h"
 #include "LuaOpenGL.h"
@@ -57,9 +58,8 @@
 #include "LuaServerPing.h"
 #include "LuaSpatial.h"
 #include "LuaTexMat.h"
-#include "LuaHTTP.h"
-#include "LuaVector.h"
 #include "LuaVFS.h"
+#include "LuaVector.h"
 #include "LuaZip.h"
 
 

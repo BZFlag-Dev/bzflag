@@ -14,16 +14,16 @@
 #include "Downloads.h"
 
 /* common implementation headers */
-#include "common/cURLManager.h"
 #include "AnsiCodes.h"
-#include "common/CacheManager.h"
-#include "obstacle/ObstacleMgr.h"
 #include "3D/TextureManager.h"
+#include "common/CacheManager.h"
+#include "common/cURLManager.h"
 #include "game/WorldText.h"
+#include "obstacle/ObstacleMgr.h"
 
 /* local implementation headers */
-#include "playing.h"
 #include "HUDDialogStack.h"
+#include "playing.h"
 
 
 // local variables for file tracker

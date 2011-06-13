@@ -19,8 +19,8 @@
 
 #include "common.h"
 #include <string>
-#include "obstacle/Obstacle.h"
 #include "vectors.h"
+#include "obstacle/Obstacle.h"
 
 class BaseBuilding : public Obstacle {
 

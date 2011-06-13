@@ -21,8 +21,8 @@
 #include <cctype>
 
 // common headers
-#include "common/BzVFS.h"
 #include "clientbase/EventHandler.h"
+#include "common/BzVFS.h"
 #include "common/StateDatabase.h"
 
 // bzflag headers
@@ -30,10 +30,10 @@
 #include "clientbase/World.h"
 
 // local headers
+#include "LuaBZDB.h"
 #include "LuaClientOrder.h"
 #include "LuaHeader.h"
 #include "LuaUtils.h"
-#include "LuaBZDB.h"
 
 
 LuaRules* luaRules = NULL;

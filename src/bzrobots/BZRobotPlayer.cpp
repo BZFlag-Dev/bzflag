@@ -18,9 +18,9 @@
 
 // local implementation headers
 #include "Roster.h"
+#include "TargetingUtils.h"
 #include "World.h"
 #include "game/Intersect.h"
-#include "TargetingUtils.h"
 
 
 #define MIN_EXEC_TIME 0.05f // 1000ms * 0.05 = 50ms

@@ -23,12 +23,12 @@
 // common headers
 #include "bzfgl.h"
 #include "vectors.h"
-#include "ogl/OpenGLGState.h"
-#include "ogl/OpenGLMaterial.h"
-#include "geometry/ViewFrustum.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
+#include "geometry/ViewFrustum.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLMaterial.h"
 
 
 // FIXME - flag geometry would benefit from VBOs

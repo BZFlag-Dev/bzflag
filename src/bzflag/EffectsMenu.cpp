@@ -14,18 +14,18 @@
 #include "EffectsMenu.h"
 
 /* common implementation headers */
-#include "common/TextUtils.h"
 #include "3D/FontManager.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 
 /* local implementation headers */
+#include "EffectsRenderer.h"
 #include "FontSizer.h"
+#include "HUDuiLabel.h"
+#include "HUDuiList.h"
+#include "LocalFontFace.h"
 #include "MainMenu.h"
 #include "TrackMarks.h"
-#include "HUDuiList.h"
-#include "HUDuiLabel.h"
-#include "EffectsRenderer.h"
-#include "LocalFontFace.h"
 
 EffectsMenu::EffectsMenu() {
   // cache font face ID

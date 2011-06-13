@@ -21,10 +21,10 @@
 #include "game/BZDBCache.h"
 
 // local implementation headers
-#include "World.h"
 #include "RemotePlayer.h"
-#include "game/Intersect.h"
 #include "TargetingUtils.h"
+#include "World.h"
+#include "game/Intersect.h"
 
 
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;

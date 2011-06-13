@@ -14,8 +14,8 @@
 
 // implementation-specific headers
 #include <string>
-#include "common/Language.h"
 #include "common/Country.h"
+#include "common/Language.h"
 
 
 /* private */

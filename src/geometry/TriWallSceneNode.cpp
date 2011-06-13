@@ -22,9 +22,9 @@
 
 // common headers
 #include "bzfgl.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 #include "game/BZDBCache.h"
 #include "game/Intersect.h"
-#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 
 //

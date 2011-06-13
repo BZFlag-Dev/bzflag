@@ -17,10 +17,10 @@
 #include <math.h>
 
 // common implementation headers
+#include "Protocol.h"
 #include "game/BZDBCache.h"
 #include "game/NetMessage.h"
 #include "net/Pack.h"
-#include "Protocol.h"
 
 
 // the full scale of a int16_t  (less 1.0 for safety)

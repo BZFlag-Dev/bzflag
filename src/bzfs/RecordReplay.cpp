@@ -37,20 +37,20 @@
 #endif
 
 // common headers
-#include "game/global.h"
-#include "common/bzglob.h"
-#include "net/Pack.h"
-#include "game/GameTime.h"
+#include "Score.h"
+#include "global.h"
+#include "version.h"
+#include "common/BzTime.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "common/bz_md5.h"
+#include "common/bzglob.h"
 #include "game/DirectoryNames.h"
+#include "game/GameTime.h"
+#include "game/MsgStrings.h"
 #include "game/NetHandler.h"
 #include "game/NetMessage.h"
-#include "common/bz_md5.h"
-#include "Score.h"
-#include "version.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
-#include "game/MsgStrings.h"
+#include "net/Pack.h"
 
 // bzfs specific headers
 #include "bzfs.h"

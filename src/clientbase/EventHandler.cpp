@@ -20,8 +20,8 @@
 #include <algorithm>
 
 // common headers
-#include "common/bzfio.h"
 #include "clientbase/GfxBlock.h"
+#include "common/bzfio.h"
 #include "ogl/OpenGLPassState.h"
 
 

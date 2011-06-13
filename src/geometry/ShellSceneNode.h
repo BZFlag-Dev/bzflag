@@ -18,8 +18,8 @@
 #ifndef BZF_SHELL_SCENE_NODE_H
 #define BZF_SHELL_SCENE_NODE_H
 
-#include "common.h"
 #include "ShotSceneNode.h"
+#include "common.h"
 
 const float   ShellRadius = 0.5f;
 

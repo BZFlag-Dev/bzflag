@@ -21,13 +21,13 @@
 #include <vector>
 
 /* common interface headers */
+#include "vectors.h"
 #include "game/BzMaterial.h"
 #include "obstacle/MeshObstacle.h"
-#include "vectors.h"
 
 /* local interface headers */
-#include "WorldInfo.h"
 #include "CustomMeshFace.h"
+#include "WorldInfo.h"
 
 
 class CustomMesh : public WorldFileObstacle {

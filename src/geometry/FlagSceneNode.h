@@ -18,8 +18,8 @@
 #define BZF_FLAG_SCENE_NODE_H
 
 #include "common.h"
-#include "geometry/SceneNode.h"
 #include "vectors.h"
+#include "geometry/SceneNode.h"
 
 
 const int maxFlagLODs = 9; // max 256 quads

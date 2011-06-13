@@ -18,8 +18,8 @@
 #include <deque>
 #include <string>
 
-#include "common/VotingBooth.h"
 #include "common/BzTime.h"
+#include "common/VotingBooth.h"
 
 
 /** VotingArbiter is a means to manage and enforce a poll.  The poll will

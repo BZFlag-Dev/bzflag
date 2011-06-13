@@ -20,8 +20,8 @@
 #include <string>
 
 /* common interface header */
-#include "game/BzMaterial.h"
 #include "vectors.h"
+#include "game/BzMaterial.h"
 
 /* local interface header */
 #include "WorldInfo.h"

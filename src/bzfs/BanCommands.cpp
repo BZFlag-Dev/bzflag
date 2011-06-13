@@ -18,12 +18,12 @@
 #include <string.h>
 
 // common implementation headers
-#include "common/TextUtils.h"
 #include "bzfs/WorldEventManager.h"
+#include "common/TextUtils.h"
 
 // local implementation headers
-#include "ServerCommand.h"
 #include "MasterBanList.h"
+#include "ServerCommand.h"
 #include "bzfs.h"
 
 

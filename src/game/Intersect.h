@@ -17,9 +17,9 @@
 #ifndef BZF_INTERSECT_H
 #define BZF_INTERSECT_H
 
+#include "Ray.h"
 #include "common.h"
 #include "vectors.h"
-#include "Ray.h"
 #include "game/Frustum.h"
 
 class Extents;

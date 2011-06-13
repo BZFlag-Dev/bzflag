@@ -14,37 +14,37 @@
 #include "SceneBuilder.h"
 
 // local implemenation headers
-#include "scene/ZSceneDatabase.h"
-#include "scene/BSPSceneDatabase.h"
 #include "World.h"
+#include "scene/BSPSceneDatabase.h"
+#include "scene/ZSceneDatabase.h"
 
 // scene node implemenation headers
-#include "obstacle/BaseSceneNodeGenerator.h"
-#include "obstacle/BoxSceneNodeGenerator.h"
 #include "geometry/EighthDBaseSceneNode.h"
 #include "geometry/EighthDBoxSceneNode.h"
-#include "geometry/EighthDimShellNode.h"
 #include "geometry/EighthDPyrSceneNode.h"
+#include "geometry/EighthDimShellNode.h"
 #include "geometry/MeshPolySceneNode.h"
+#include "geometry/TankSceneNode.h"
+#include "geometry/TextSceneNode.h"
+#include "obstacle/BaseSceneNodeGenerator.h"
+#include "obstacle/BoxSceneNodeGenerator.h"
 #include "obstacle/MeshSceneNodeGenerator.h"
 #include "obstacle/ObstacleSceneNodeGenerator.h"
 #include "obstacle/PyramidSceneNodeGenerator.h"
-#include "geometry/TankSceneNode.h"
-#include "geometry/TextSceneNode.h"
 #include "obstacle/WallSceneNodeGenerator.h"
 
 // common implementation headers
-#include "common/StateDatabase.h"
-#include "bzflag/SceneRenderer.h"
-#include "game/BZDBCache.h"
 #include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "game/WorldText.h"
 #include "obstacle/ObstacleList.h"
 #include "obstacle/ObstacleMgr.h"
-#include "game/WorldText.h"
 
 // local implementation headers
-#include "LocalPlayer.h"
 #include "DynamicWorldText.h"
+#include "LocalPlayer.h"
 
 // uncomment for cheaper eighth dimension scene nodes
 //#define SHELL_INSIDE_NODES

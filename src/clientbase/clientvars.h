@@ -21,6 +21,8 @@
 
 // common client headers
 #include "FlashClock.h"
+#include "LocalPlayer.h"
+#include "Region.h"
 #include "World.h"
 #include "game/Team.h"
 

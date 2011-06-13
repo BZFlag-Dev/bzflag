@@ -15,15 +15,15 @@
 
 /* common headers */
 #include "GameKeeper.h"
+#include "vectors.h"
 #include "common/BzTime.h"
-#include "game/PlayerInfo.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
-#include "vectors.h"
+#include "game/PlayerInfo.h"
 
 /* server headers */
-#include "bzfs.h"
 #include "DropGeometry.h"
+#include "bzfs.h"
 
 
 DangerousSpawnPolicy::DangerousSpawnPolicy() {

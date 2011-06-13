@@ -15,8 +15,8 @@
 
 #include "common.h"
 #include <string>
-#include "common/bzfio.h"
 #include "Singleton.h"
+#include "common/bzfio.h"
 
 #define FILEMGR (FileManager::instance())
 

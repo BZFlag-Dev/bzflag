@@ -21,31 +21,31 @@
 #include <string>
 
 // common headers
-#include "ogl/OpenGLUtils.h"
-#include "common/TextUtils.h"
-#include "scene/SceneDatabase.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "ogl/OpenGLUtils.h"
+#include "scene/SceneDatabase.h"
 
 // bzflag headers
-#include "bzflag/guiplaying.h"
 #include "bzflag/Downloads.h"
-#include "clientbase/playing.h"
+#include "bzflag/guiplaying.h"
 #include "clientbase/World.h"
+#include "clientbase/playing.h"
 
 // local headers
-#include "LuaCallInDB.h"
-#include "LuaOpenGL.h"
 #include "LuaBZDB.h"
 #include "LuaBzMaterial.h"
+#include "LuaCallInDB.h"
 #include "LuaHTTP.h"
+#include "LuaOpenGL.h"
 #include "LuaSceneNode.h"
 #include "LuaServerPing.h"
 
 // LuaHandle headers
-#include "LuaUser.h"
 #include "LuaBzOrg.h"
-#include "LuaWorld.h"
 #include "LuaRules.h"
+#include "LuaUser.h"
+#include "LuaWorld.h"
 
 
 //============================================================================//

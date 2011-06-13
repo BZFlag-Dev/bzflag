@@ -16,8 +16,8 @@
 #include "common.h"
 
 // common headers
-#include "game/Flag.h"
 #include "vectors.h"
+#include "game/Flag.h"
 
 // FIXME -- why global? use a namespace or class
 

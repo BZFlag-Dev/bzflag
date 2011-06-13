@@ -26,22 +26,22 @@
 
 // common headers
 #include "bzfgl.h"
+#include "3D/FontManager.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "common/BzTime.h"
+#include "common/CacheManager.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h" // for debugLevel
 #include "game/BZDBCache.h"
 #include "game/BzMaterial.h"
-#include "common/CacheManager.h"
 #include "game/DynamicColor.h"
-#include "3D/FontManager.h"
 #include "game/Intersect.h"
 #include "game/MeshTransform.h"
+#include "game/WorldText.h"
 #include "ogl/OpenGLMaterial.h"
 #include "ogl/OpenGLUtils.h"
-#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
-#include "common/StateDatabase.h"
-#include "3D/TextureManager.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
-#include "game/WorldText.h"
-#include "common/bzfio.h" // for debugLevel
 
 // local headers
 #include "geometry/ViewFrustum.h"

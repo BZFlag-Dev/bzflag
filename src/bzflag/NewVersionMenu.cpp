@@ -24,16 +24,16 @@
 /* common implementation headers */
 #include "3D/FontManager.h"
 #include "common/StateDatabase.h"
-#include "game/DirectoryNames.h"
 #include "common/TextUtils.h"
+#include "game/DirectoryNames.h"
 
 /* local implementation headers */
+#include "CommandsStandard.h"
 #include "FontSizer.h"
-#include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
-#include "CommandsStandard.h"
 #include "LocalFontFace.h"
+#include "MainMenu.h"
 
 /* as platforms get added to the automatic upgrade system, update this */
 #if defined(WIN32)

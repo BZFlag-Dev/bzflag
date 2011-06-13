@@ -29,8 +29,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "bzfs/bzfsAPI.h"
 #include "Singleton.h"
+#include "bzfs/bzfsAPI.h"
 
 
 #define worldEventManager (WorldEventManager::instance())

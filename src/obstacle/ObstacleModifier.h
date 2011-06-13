@@ -17,8 +17,8 @@
 #include "common.h"
 
 // common headers
-#include "game/BzMaterial.h"
 #include "vectors.h"
+#include "game/BzMaterial.h"
 
 
 class Obstacle;

@@ -19,11 +19,11 @@
 #include <vector>
 
 // common headers
+#include "vectors.h"
+#include "game/BzMaterial.h"
 #include "geometry/SceneNode.h"
 #include "obstacle/MeshFace.h"
 #include "obstacle/MeshObstacle.h"
-#include "game/BzMaterial.h"
-#include "vectors.h"
 
 class WallSceneNode;
 class MeshPolySceneNode;

@@ -29,8 +29,8 @@
 #include "Downloads.h"
 
 /* local implementation headers */
-#include "playing.h"
 #include "clientvars.h"
+#include "playing.h"
 
 
 WorldDownLoader::WorldDownLoader() :

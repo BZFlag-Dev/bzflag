@@ -19,17 +19,17 @@
 #include <algorithm>
 
 // common headers
-#include "common/bzfio.h"
-#include "common/BzTime.h"
-#include "game/BZDBCache.h"
 #include "3D/FontManager.h"
+#include "common/BzTime.h"
 #include "common/StateDatabase.h"
 #include "common/TextUtils.h"
+#include "common/bzfio.h"
+#include "game/BZDBCache.h"
 
 // local headers
-#include "guiplaying.h"
 #include "LocalFontFace.h"
 #include "MainWindow.h"
+#include "guiplaying.h"
 
 
 //============================================================================//

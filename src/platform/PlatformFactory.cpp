@@ -13,8 +13,8 @@
 #include "PlatformFactory.h"
 #include "bzfSDL.h"
 #include "common/ErrorHandler.h"
-#include "platform/BzfMedia.h"
 #include "platform/BzfJoystick.h"
+#include "platform/BzfMedia.h"
 
 PlatformFactory*  PlatformFactory::instance = 0;
 BzfMedia*   PlatformFactory::media = 0;

@@ -20,8 +20,8 @@
 #include "CustomWaterLevel.h"
 
 /* bzfs implementation headers */
-#include "WorldInfo.h"
 #include "ParseMaterial.h"
+#include "WorldInfo.h"
 
 /* common implementation headers */
 #include "game/BzMaterial.h"

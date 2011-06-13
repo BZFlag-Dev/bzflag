@@ -19,12 +19,12 @@
 #include "obstacle/MeshFace.h"
 
 /* local headers */
+#include "Plan.h"
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
 #include "WorldPlayer.h"
 #include "playing.h"
-#include "Plan.h"
 
 typedef std::map<FlagType*, std::pair<int, int> > FlagSuccessMap;
 

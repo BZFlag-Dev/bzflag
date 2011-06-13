@@ -16,8 +16,8 @@
 
 #ifndef BZF_SDLMEDIA_H
 #define BZF_SDLMEDIA_H
-#include "platform/BzfMedia.h"
 #include "bzfSDL.h"
+#include "platform/BzfMedia.h"
 #include <string>
 
 class SDLMedia : public BzfMedia {

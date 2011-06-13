@@ -20,10 +20,10 @@
 #include "ServerItem.h"
 
 /* common implementation headers */
-#include "common/bzfio.h"
 #include "AnsiCodes.h"
 #include "Protocol.h"
 #include "common/TextUtils.h"
+#include "common/bzfio.h"
 
 /* local implementation headers */
 #include "game/ServerListCache.h"

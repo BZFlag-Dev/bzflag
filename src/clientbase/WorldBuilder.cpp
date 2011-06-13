@@ -14,19 +14,19 @@
 #include "WorldBuilder.h"
 
 // common headers
-#include "obstacle/BaseBuilding.h"
+#include "Protocol.h"
 #include "common/BzDocket.h"
 #include "common/BzVFS.h"
+#include "common/TextUtils.h"
 #include "game/DynamicColor.h"
+#include "game/PhysicsDriver.h"
+#include "game/TextureMatrix.h"
 #include "geometry/FlagSceneNode.h"
+#include "net/Pack.h"
+#include "obstacle/BaseBuilding.h"
 #include "obstacle/MeshFace.h"
 #include "obstacle/MeshObstacle.h"
 #include "obstacle/ObstacleMgr.h"
-#include "net/Pack.h"
-#include "game/PhysicsDriver.h"
-#include "Protocol.h"
-#include "game/TextureMatrix.h"
-#include "common/TextUtils.h"
 
 // compression library header
 #include "zlib.h"

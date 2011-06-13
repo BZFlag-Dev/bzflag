@@ -24,12 +24,12 @@
 #include <vector>
 
 // common headers
-#include "game/DirectoryNames.h"
-#include "common/FileManager.h"
 #include "ServerLink.h"
-#include "game/StartupInfo.h"
+#include "common/FileManager.h"
 #include "common/WordFilter.h"
 #include "common/bz_md5.h"
+#include "game/DirectoryNames.h"
+#include "game/StartupInfo.h"
 
 // common client headers
 #include "FlashClock.h"
@@ -41,8 +41,8 @@
 
 // FIXME: The following should not be in the clientbase
 #include "ControlPanel.h"
-#include "game/CommandCompleter.h"
 #include "ThirdPersonVars.h"
+#include "game/CommandCompleter.h"
 
 
 class NetMessage;

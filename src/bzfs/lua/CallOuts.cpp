@@ -26,29 +26,29 @@
 #include <map>
 
 // common headers
-#include "common/bzfio.h"
-#include "bzfs/bzfsAPI.h"
 #include "vectors.h"
 #include "version.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
 #include "game/GameTime.h"
 #include "game/LinkManager.h"
-#include "obstacle/MeshFace.h"
 #include "game/NetMessage.h"
 #include "game/PlayerState.h"
-#include "common/TextUtils.h"
+#include "obstacle/MeshFace.h"
 
 // bzfs headers
-#include "bzfs/bzfs.h"
-#include "bzfs/GameKeeper.h"
 #include "bzfs/CmdLineOptions.h"
+#include "bzfs/GameKeeper.h"
+#include "bzfs/RecordReplay.h"
+#include "bzfs/bzfs.h"
 #include "bzfs/bzfsMessages.h"
 #include "bzfs/commands.h"
-#include "bzfs/RecordReplay.h"
 
 // local headers
+#include "LuaDouble.h"
 #include "LuaHeader.h"
 #include "LuaServer.h"
-#include "LuaDouble.h"
 
 
 // FIXME: TODO
@@ -2369,7 +2369,7 @@ static int GetGameTime(lua_State* L) {
 static int GetTimer(lua_State* L) {
   const double nowTime = BzTime::getCurrent().getSeconds();
   const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
-  lua_pushlightuserdata(L, (void*)millisecs);
+  lua_pushlightuserdata(L, reinterpret_cast<void*>(millisecs));
   return 1;
 }
 

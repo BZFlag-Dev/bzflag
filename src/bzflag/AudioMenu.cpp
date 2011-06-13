@@ -18,19 +18,19 @@
 #include <vector>
 
 /* common implementation headers */
-#include "common/TextUtils.h"
 #include "3D/FontManager.h"
+#include "common/TextUtils.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "common/StateDatabase.h"
-#include "MainMenu.h"
-#include "sound.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "LocalFontFace.h"
+#include "MainMenu.h"
 #include "Mumble.h"
+#include "sound.h"
+#include "common/StateDatabase.h"
 
 AudioMenu::AudioMenu() {
   // add controls

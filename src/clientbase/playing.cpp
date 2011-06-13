@@ -28,36 +28,34 @@
 #endif
 
 // common headers
-#include "common/bzsignal.h"
-#include "common/AccessList.h"
 #include "AnsiCodes.h"
-#include "net/AresHandler.h"
-#include "obstacle/BaseBuilding.h"
-#include "game/BZDBCache.h"
-#include "common/CacheManager.h"
 #include "CommandsStandard.h"
 #include "Downloads.h"
 #include "clientbase/EventHandler.h"
+#include "common/AccessList.h"
+#include "common/CacheManager.h"
 #include "common/FileManager.h"
-#include "game/GameTime.h"
-#include "lua/LuaClientScripts.h"
-#include "game/NetMessage.h"
-#include "game/MsgStrings.h"
-#include "game/ServerList.h"
 #include "common/TextUtils.h"
+#include "common/bzsignal.h"
+#include "game/BZDBCache.h"
+#include "game/GameTime.h"
+#include "game/MsgStrings.h"
+#include "game/NetMessage.h"
+#include "game/ServerList.h"
+#include "lua/LuaClientScripts.h"
+#include "net/AresHandler.h"
+#include "obstacle/BaseBuilding.h"
 
 // common client headers
 #include "ClientIntangibilityManager.h"
 #include "FlashClock.h"
 #include "Region.h"
 #include "Roster.h"
-#include "game/GameTime.h"
 #include "World.h"
 #include "WorldPlayer.h"
 
-
-#include "motd.h"
 #include "clientvars.h"
+#include "motd.h"
 
 
 // FIXME: The following are referenced in some parts of the client base

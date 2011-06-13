@@ -23,12 +23,12 @@
 #include "BzfEvent.h"
 
 /* local interface headers */
+#include "HUDDialog.h"
+#include "HUDuiControl.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
-#include "HUDuiControl.h"
-#include "HUDDialog.h"
-#include "QuickKeysMenu.h"
 #include "MenuDefaultKey.h"
+#include "QuickKeysMenu.h"
 
 
 class KeyboardMapMenu;

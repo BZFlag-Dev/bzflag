@@ -22,11 +22,11 @@
 #include <iostream>
 
 // common headers
-#include "obstacle/ObstacleList.h"
-#include "obstacle/Obstacle.h"
+#include "vectors.h"
 #include "game/BzMaterial.h"
 #include "game/MeshTransform.h"
-#include "vectors.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/ObstacleList.h"
 
 // avoid nasty dependencies
 class Obstacle;

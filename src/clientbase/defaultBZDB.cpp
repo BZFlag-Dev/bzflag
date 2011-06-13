@@ -16,9 +16,9 @@
 
 #include <assert.h>
 
-#include "defaultBZDB.h"
 #include "Protocol.h"
 #include "callbacks.h"
+#include "defaultBZDB.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/TextUtils.h"
 

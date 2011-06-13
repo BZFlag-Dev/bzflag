@@ -12,20 +12,20 @@
 #include <algorithm>
 
 // common headers
-#include "common/StateDatabase.h"
-#include "game/BZDBCache.h"
+#include "3D/TextureManager.h"
 #include "bzflag/SceneRenderer.h"
+#include "common/StateDatabase.h"
+#include "common/bzfio.h"
+#include "game/BZDBCache.h"
+#include "ogl/OpenGLGState.h"
 #include "platform/BzfDisplay.h"
 #include "platform/BzfWindow.h"
-#include "3D/TextureManager.h"
-#include "ogl/OpenGLGState.h"
-#include "common/bzfio.h"
 
 // bzflag headers - FIXME - breaks abstraction
-#include "bzflag/guiplaying.h"
+#include "bzflag/BackgroundRenderer.h"
 #include "bzflag/MainWindow.h"
 #include "bzflag/RadarRenderer.h"
-#include "bzflag/BackgroundRenderer.h"
+#include "bzflag/guiplaying.h"
 
 
 #define TEXMGR (TextureManager::instance())

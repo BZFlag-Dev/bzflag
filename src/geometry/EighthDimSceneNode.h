@@ -18,8 +18,8 @@
 #define BZF_EIGHTH_DIM_SCENE_NODE_H
 
 #include "common.h"
-#include "geometry/SceneNode.h"
 #include "vectors.h"
+#include "geometry/SceneNode.h"
 
 class EighthDimSceneNode : public SceneNode {
   public:

@@ -14,10 +14,10 @@
 #include "HUDDialogStack.h"
 
 /* local implementation headers */
-#include "playing.h"
-#include "guiplaying.h"
-#include "HUDui.h"
 #include "HUDDialog.h"
+#include "HUDui.h"
+#include "guiplaying.h"
+#include "playing.h"
 
 HUDDialogStack HUDDialogStack::globalStack;
 

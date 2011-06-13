@@ -22,16 +22,16 @@
 
 // common headers
 #include "LuaHeader.h"
+#include "bzflag/SceneRenderer.h"
+#include "geometry/SceneNode.h"
 #include "ogl/OpenGLGState.h"
 #include "ogl/OpenGLPassState.h"
-#include "geometry/SceneNode.h"
-#include "bzflag/SceneRenderer.h"
 #include "scene/SceneDatabase.h"
 
-#include "clientbase/playing.h"
 #include "clientbase/ClientFlag.h"
 #include "clientbase/Roster.h"
 #include "clientbase/World.h"
+#include "clientbase/playing.h"
 
 
 // local headers

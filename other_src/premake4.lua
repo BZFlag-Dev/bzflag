@@ -1,6 +1,8 @@
 
 dofile('premake4_lua.lua')
 
+include('astyle')
+
 if (CONFIG.BUILD_ZLIB)     then dofile('premake4_zlib.lua')     end
 if (CONFIG.BUILD_REGEX)    then dofile('premake4_regex.lua')    end
 if (CONFIG.BUILD_ARES)     then dofile('premake4_ares.lua')     end

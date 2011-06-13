@@ -28,11 +28,11 @@
 #include "common.h"
 
 /* common interface headers */
+#include "vectors.h"
+#include "clientbase/GfxBlock.h"
 #include "common/BzTime.h"
 #include "game/Flag.h"
 #include "game/ShotUpdate.h"
-#include "clientbase/GfxBlock.h"
-#include "vectors.h"
 
 /* local interface headers */
 #include "ShotStrategy.h"

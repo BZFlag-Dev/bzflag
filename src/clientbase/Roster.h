@@ -21,13 +21,13 @@
 #include <string>
 
 /* common interface headers */
-#include "game/global.h"
+#include "global.h"
 #include "game/Team.h"
 
 /* local interface headers */
-#include "RobotPlayer.h"
 #include "BaseLocalPlayer.h"
 #include "RemotePlayer.h"
+#include "RobotPlayer.h"
 
 
 //

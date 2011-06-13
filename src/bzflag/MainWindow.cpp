@@ -17,7 +17,7 @@
 
 // common headers
 #include "bzfgl.h"
-#include "game/global.h"
+#include "global.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/StateDatabase.h"
 

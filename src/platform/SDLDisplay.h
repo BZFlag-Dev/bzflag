@@ -18,9 +18,9 @@
 #define __SDLDISPLAY_H__
 
 /* interface headers */
+#include "BzfEvent.h"
 #include "bzfSDL.h"
 #include "platform/BzfDisplay.h"
-#include "BzfEvent.h"
 
 
 class SDLDisplay : public BzfDisplay {

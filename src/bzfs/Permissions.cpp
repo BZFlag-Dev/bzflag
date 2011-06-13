@@ -21,10 +21,10 @@
 #include <stdlib.h>
 
 /* common implementation headers */
-#include "common/bz_md5.h"
-#include "common/bzfio.h"
 #include "Protocol.h"
 #include "common/TextUtils.h"
+#include "common/bz_md5.h"
+#include "common/bzfio.h"
 
 #include "bzfs.h"
 

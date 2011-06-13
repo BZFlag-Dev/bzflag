@@ -21,9 +21,9 @@
 #include <vector>
 
 // common headers
-#include "obstacle/Obstacle.h"
-#include "common/BzTime.h"
 #include "vectors.h"
+#include "common/BzTime.h"
+#include "obstacle/Obstacle.h"
 
 // local headers
 #include "Player.h"

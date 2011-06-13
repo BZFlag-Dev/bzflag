@@ -22,13 +22,13 @@
 #include <set>
 
 // common headers
-#include "net/network.h"
-#include "net/Address.h"
 #include "game/ServerPing.h"
+#include "net/Address.h"
+#include "net/network.h"
 
 // local headers
-#include "LuaHeader.h"
 #include "LuaDouble.h"
+#include "LuaHeader.h"
 
 
 const char* LuaServerPingMgr::metaName = "SPing";

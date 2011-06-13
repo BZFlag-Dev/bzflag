@@ -21,10 +21,10 @@
 #include "version.h"
 
 /* common implementation headers */
-#include "common/FileManager.h"
 #include "Protocol.h"
-#include "game/DirectoryNames.h"
+#include "common/FileManager.h"
 #include "common/TextUtils.h"
+#include "game/DirectoryNames.h"
 
 
 ServerListCache ServerListCache::globalCache;

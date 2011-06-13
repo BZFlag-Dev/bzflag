@@ -16,23 +16,23 @@
 #include "HubMenu.h"
 
 /* common implementation headers */
+#include "3D/FontManager.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
 #include "game/BZDBCache.h"
 #include "platform/BzfDisplay.h"
-#include "3D/FontManager.h"
-#include "bzflag/SceneRenderer.h"
-#include "3D/TextureManager.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "HubLink.h"
-#include "JoinMenu.h"
-#include "game/StartupInfo.h"
 #include "HUDDialogStack.h"
 #include "HUDuiList.h"
+#include "HubLink.h"
+#include "JoinMenu.h"
 #include "LocalFontFace.h"
 #include "MainMenu.h"
-#include "playing.h"
 #include "guiplaying.h"
+#include "playing.h"
+#include "game/StartupInfo.h"
 
 
 HubMenu::HubMenu() {

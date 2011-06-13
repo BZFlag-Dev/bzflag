@@ -17,8 +17,8 @@
 #include "3D/TextureManager.h"
 
 // local implementation headers
-#include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "HUDui.h"
 #include "HUDuiNestedContainer.h"
 
 

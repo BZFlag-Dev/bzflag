@@ -27,11 +27,11 @@
 #include <iostream>
 
 // common headers
-#include "game/global.h"
-#include "vectors.h"
 #include "Ray.h"
-#include "obstacle/Obstacle.h"
+#include "global.h"
+#include "vectors.h"
 #include "game/BzMaterial.h"
+#include "obstacle/Obstacle.h"
 
 
 class FlagType;

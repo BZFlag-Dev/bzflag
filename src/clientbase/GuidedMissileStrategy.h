@@ -20,9 +20,9 @@
 #include <vector>
 
 /* common interface headers */
-#include "scene/SceneDatabase.h"
 #include "common/BzTime.h"
 #include "geometry/BoltSceneNode.h"
+#include "scene/SceneDatabase.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"

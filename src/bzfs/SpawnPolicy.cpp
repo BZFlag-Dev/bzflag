@@ -14,8 +14,8 @@
 #include "SpawnPolicy.h"
 
 /* common implementation headers */
-#include "GameKeeper.h"
 #include "FlagInfo.h"
+#include "GameKeeper.h"
 #include "game/BZDBCache.h"
 
 

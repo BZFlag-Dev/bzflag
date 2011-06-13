@@ -24,14 +24,11 @@
 #include "game/BZDBCache.h"
 
 // implementation-specific bzfs-specific headers
-#include "TeamBases.h"
-#include "WorldFileObject.h"
 #include "CustomArc.h"
 #include "CustomBase.h"
 #include "CustomBox.h"
 #include "CustomCone.h"
 #include "CustomDynamicColor.h"
-#include "CustomTeleporter.h"
 #include "CustomGroup.h"
 #include "CustomLink.h"
 #include "CustomMaterial.h"
@@ -40,6 +37,7 @@
 #include "CustomPhysicsDriver.h"
 #include "CustomPyramid.h"
 #include "CustomSphere.h"
+#include "CustomTeleporter.h"
 #include "CustomTetra.h"
 #include "CustomTextureMatrix.h"
 #include "CustomWaterLevel.h"
@@ -47,14 +45,16 @@
 #include "CustomWorld.h"
 #include "CustomWorldText.h"
 #include "CustomZone.h"
+#include "TeamBases.h"
+#include "WorldFileObject.h"
 
 // common headers
-#include "obstacle/ObstacleMgr.h"
-#include "obstacle/BaseBuilding.h"
-#include "obstacle/MeshObstacle.h"
-#include "obstacle/MeshFace.h"
-#include "common/TextUtils.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/ObstacleMgr.h"
 
 // bzfs specific headers
 #include "bzfs.h"
@@ -172,7 +172,8 @@ bool BZWReader::parseNormalObject(const char* token, WorldFileObject** object) {
     name[0] = 0;
   }
 
-  if (lower == "box")           { obj = new CustomBox(false);          }
+  if (false) {}
+  else if (lower == "box")           { obj = new CustomBox(false);          }
   else if (lower == "meshbox")       { obj = new CustomBox(true);           }
   else if (lower == "pyramid")       { obj = new CustomPyramid(false);      }
   else if (lower == "meshpyr")       { obj = new CustomPyramid(true);       }

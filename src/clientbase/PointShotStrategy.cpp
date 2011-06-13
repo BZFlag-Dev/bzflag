@@ -18,8 +18,8 @@
 
 /* common implementation headers */
 #include "game/BZDBCache.h"
-#include "obstacle/WallObstacle.h"
 #include "game/Intersect.h"
+#include "obstacle/WallObstacle.h"
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "playing.h"

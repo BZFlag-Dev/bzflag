@@ -26,10 +26,10 @@
 #include <vector>
 
 /* common interface headers */
-#include "ogl/OpenGLGState.h"
+#include "vectors.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/BzTime.h"
-#include "vectors.h"
+#include "ogl/OpenGLGState.h"
 
 #include "Singleton.h"
 

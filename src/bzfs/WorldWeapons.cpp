@@ -22,14 +22,14 @@
 #include <vector>
 
 // common-interface headers
-#include "common/BzTime.h"
-#include "game/ShotUpdate.h"
 #include "Protocol.h"
-#include "net/Address.h"
-#include "common/StateDatabase.h"
-#include "bzfs/bzfsAPI.h"
 #include "bzfsMessages.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/BzTime.h"
+#include "common/StateDatabase.h"
 #include "game/NetMessage.h"
+#include "game/ShotUpdate.h"
+#include "net/Address.h"
 
 // bzfs specific headers
 #include "bzfs.h"

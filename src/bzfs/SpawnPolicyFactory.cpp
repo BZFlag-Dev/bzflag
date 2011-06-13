@@ -14,9 +14,9 @@
 #include "SpawnPolicyFactory.h"
 
 /* bzfs-specific implementation headers */
+#include "DangerousSpawnPolicy.h"
 #include "DefaultSpawnPolicy.h"
 #include "RandomSpawnPolicy.h"
-#include "DangerousSpawnPolicy.h"
 
 
 // initialize the singleton

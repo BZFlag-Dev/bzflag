@@ -14,9 +14,9 @@
 #define BZF_PLAYERSTATE_H
 
 #include "common.h"
-#include "game/global.h"
-#include "common/BzTime.h"
+#include "global.h"
 #include "vectors.h"
+#include "common/BzTime.h"
 
 
 class NetMessage;

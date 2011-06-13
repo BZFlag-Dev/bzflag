@@ -14,7 +14,7 @@
 #define __PLAYER_AVATAR_MANAGER_H__
 
 #include "common.h"
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
 
 typedef enum {

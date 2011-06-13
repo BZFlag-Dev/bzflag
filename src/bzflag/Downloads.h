@@ -13,10 +13,10 @@
 #ifndef DOWNLOADS_H
 #define DOWNLOADS_H
 
-#include "common.h"
 #include "Singleton.h"
-#include "game/BzMaterial.h"
+#include "common.h"
 #include "common/AccessList.h"
+#include "game/BzMaterial.h"
 
 /* system interface headers */
 #include <string>

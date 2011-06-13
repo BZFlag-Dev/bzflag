@@ -27,8 +27,8 @@
 #include "ogl/OpenGLUtils.h"
 
 /* local implementation headers */
-#include "obstacle/MeshObstacle.h"
 #include "obstacle/BoxBuilding.h"
+#include "obstacle/MeshObstacle.h"
 #include "obstacle/PyramidBuilding.h"
 
 

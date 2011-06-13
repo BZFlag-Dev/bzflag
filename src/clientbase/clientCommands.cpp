@@ -21,34 +21,34 @@
 #include <string>
 
 /* common implementation headers */
-#include "game/BZDBCache.h"
-#include "game/DirectoryNames.h"
+#include "version.h"
+#include "bzflag/SceneRenderer.h"
 #include "clientbase/EventHandler.h"
 #include "common/FileManager.h"
-#include "lua/LuaClientScripts.h"
-#include "game/MotionUtils.h"
-#include "bzflag/SceneRenderer.h"
 #include "common/TextUtils.h"
 #include "common/bzglob.h"
-#include "version.h"
+#include "game/BZDBCache.h"
+#include "game/DirectoryNames.h"
+#include "game/MotionUtils.h"
+#include "lua/LuaClientScripts.h"
 
 /* local implementation headers */
-#include "common/BzPNG.h"
 #include "ComposeDefaultKey.h"
-#include "HUDRenderer.h"
 #include "HUDDialogStack.h"
+#include "HUDRenderer.h"
 #include "HUDui.h"
 #include "HubComposeKey.h"
 #include "LocalPlayer.h"
 #include "Roaming.h"
 #include "ServerCommandKey.h"
-#include "SilenceDefaultKey.h"
 #include "ShotStats.h"
-#include "sound.h"
+#include "SilenceDefaultKey.h"
 #include "playing.h"
+#include "sound.h"
+#include "common/BzPNG.h"
 // FIXME: Shouldn't need to depend on GUI elements
-#include "guiplaying.h"
 #include "LocalCommand.h"
+#include "guiplaying.h"
 
 typedef CommandManager::ArgList CmdArgList;
 

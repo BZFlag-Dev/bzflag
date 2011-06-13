@@ -17,10 +17,10 @@
 #include <limits.h>
 
 /* common implementation headers */
-#include "net/network.h"
+#include "Protocol.h"
 #include "common/bzfio.h"
 #include "net/Pack.h"
-#include "Protocol.h"
+#include "net/network.h"
 
 
 ServerPing::ServerPing() : fd(-1), received(0), samples(4), timeout(1), interval(1) {

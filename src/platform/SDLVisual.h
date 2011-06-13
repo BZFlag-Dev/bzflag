@@ -18,8 +18,8 @@
 #define __SDLVISUAL_H__
 
 /* interface headers */
-#include "platform/BzfVisual.h"
 #include "SDLDisplay.h"
+#include "platform/BzfVisual.h"
 
 
 class SDLVisual : public BzfVisual {

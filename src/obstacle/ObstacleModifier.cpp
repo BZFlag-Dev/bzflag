@@ -20,14 +20,14 @@
 #include <map>
 
 // common headers
-#include "obstacle/ObstacleMgr.h"
 #include "game/BzMaterial.h"
 #include "game/WorldText.h"
+#include "obstacle/ObstacleMgr.h"
 
 // obstacle headers
-#include "obstacle/Obstacle.h"
 #include "obstacle/BaseBuilding.h"
 #include "obstacle/MeshObstacle.h"
+#include "obstacle/Obstacle.h"
 
 
 //============================================================================//

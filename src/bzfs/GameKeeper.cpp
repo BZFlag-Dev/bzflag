@@ -19,12 +19,12 @@
 #include <string>
 
 // common headers
-#include "game/GameTime.h"
 #include "FlagInfo.h"
-#include "game/NetMessage.h"
-#include "common/StateDatabase.h"
 #include "bzfsMessages.h"
 #include "bzfs/bzfsAPI.h"
+#include "common/StateDatabase.h"
+#include "game/GameTime.h"
+#include "game/NetMessage.h"
 
 GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = {NULL};
 bool GameKeeper::Player::allNeedHostbanChecked = false;

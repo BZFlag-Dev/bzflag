@@ -20,9 +20,9 @@
 #include <vector>
 
 // common headers
-#include "game/Flag.h"
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
+#include "game/Flag.h"
 
 class EntryZone {
   public:

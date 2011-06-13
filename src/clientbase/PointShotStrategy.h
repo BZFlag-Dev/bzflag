@@ -20,9 +20,9 @@
 #include <vector>
 
 /* common interface headers */
-#include "common/BzTime.h"
-#include "ShotPathSegment.h"
 #include "Extents.h"
+#include "ShotPathSegment.h"
+#include "common/BzTime.h"
 
 
 class Obstacle;

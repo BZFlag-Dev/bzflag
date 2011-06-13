@@ -19,9 +19,9 @@
 #include <string>
 
 /* common interface headers */
-#include "net/Address.h"
 #include "colors.h"
-#include "game/global.h"
+#include "global.h"
+#include "net/Address.h"
 
 //#include "BZAdminClient.h"
 class BZAdminClient;

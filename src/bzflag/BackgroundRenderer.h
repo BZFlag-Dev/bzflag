@@ -26,10 +26,10 @@
 #include <string>
 
 /* common interface headers */
-#include "bzfgl.h"
-#include "ogl/OpenGLGState.h"
-#include "bzflag/SceneRenderer.h"
 #include "WeatherRenderer.h"
+#include "bzfgl.h"
+#include "bzflag/SceneRenderer.h"
+#include "ogl/OpenGLGState.h"
 
 #include "ogl/OpenGLUtils.h"
 

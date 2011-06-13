@@ -19,15 +19,15 @@
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "HUDui.h"
+#include "HUDuiFrame.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
-#include "HUDuiFrame.h"
-#include "HUDui.h"
-#include "common/ConfigFileManager.h"
-#include "clientConfig.h"
 #include "LocalFontFace.h"
+#include "MainMenu.h"
+#include "clientConfig.h"
+#include "common/ConfigFileManager.h"
 
 /* from bzflag.cpp */
 extern void dumpResources();

@@ -15,11 +15,11 @@
 #include "Protocol.h"
 #include "common/TextUtils.h"
 // common implementation headers
-#include "common/BundleMgr.h"
-#include "common/Bundle.h"
 #include "LocalFontFace.h"
-#include "game/BZDBCache.h"
+#include "common/Bundle.h"
+#include "common/BundleMgr.h"
 #include "common/bzUnicode.h"
+#include "game/BZDBCache.h"
 
 //
 // HUDuiServerListItem

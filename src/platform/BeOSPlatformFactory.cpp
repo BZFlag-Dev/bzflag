@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "BeOSPlatformFactory.h"
 #include "BeOSDisplay.h"
 #include "BeOSMedia.h"
+#include "BeOSPlatformFactory.h"
 #include "BeOSVisual.h"
 #include "BeOSWindow.h"
 #include <Application.h>

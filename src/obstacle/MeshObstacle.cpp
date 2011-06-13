@@ -20,16 +20,16 @@
 #include <stdlib.h>
 
 // common headers
-#include "common/bzfio.h"
-#include "game/global.h"
-#include "net/Pack.h"
-#include "obstacle/MeshFace.h"
-#include "game/CollisionManager.h"
-#include "game/Intersect.h"
-#include "obstacle/MeshDrawInfo.h"
-#include "game/MeshTransform.h"
+#include "global.h"
 #include "common/StateDatabase.h"
 #include "common/TextUtils.h"
+#include "common/bzfio.h"
+#include "game/CollisionManager.h"
+#include "game/Intersect.h"
+#include "game/MeshTransform.h"
+#include "net/Pack.h"
+#include "obstacle/MeshDrawInfo.h"
+#include "obstacle/MeshFace.h"
 
 // local headers
 #include "Triangulate.h"

@@ -19,8 +19,8 @@
 #include <string>
 
 /* local interface headers */
-#include "RobotScript.h"
 #include "Robot.h"
+#include "RobotScript.h"
 
 
 class SharedObjectLoader : public RobotScript {

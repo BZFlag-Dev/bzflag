@@ -17,8 +17,8 @@
 #ifndef BZF_SDLJOY_H
 #define BZF_SDLJOY_H
 
-#include "platform/BzfJoystick.h"
 #include "bzfSDL.h"
+#include "platform/BzfJoystick.h"
 
 class SDLJoystick : public BzfJoystick {
   public:

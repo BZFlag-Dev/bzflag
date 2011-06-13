@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "geometry/SceneNode.h"
-#include "game/Frustum.h"
-#include "game/Intersect.h"
 #include "Extents.h"
 #include "vectors.h"
+#include "game/Frustum.h"
+#include "game/Intersect.h"
+#include "geometry/SceneNode.h"
 
 class Occluder {
   public:

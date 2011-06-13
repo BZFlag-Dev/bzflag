@@ -21,14 +21,14 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "bzfgl.h" // for debugf(3,)
-#include "common/bzfio.h" // for debugf(3,)
 #include "OpenGLGState.h"
 #include "3D/TextureManager.h"
+#include "bzfgl.h" // for debugf(3,)
+#include "clientbase/EventHandler.h"
+#include "common/bzfio.h" // for debugf(3,)
 #include "game/TextureMatrix.h"
 #include "ogl/OpenGLMaterial.h"
 #include "ogl/RenderNode.h"
-#include "clientbase/EventHandler.h"
 
 #include "ogl/OpenGLUtils.h"
 

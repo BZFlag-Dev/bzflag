@@ -18,8 +18,8 @@
 #define BZF_TANK_GEOMETRY_MGR_H
 
 #include "common.h"
-#include "geometry/SceneNode.h"
 #include "vectors.h"
+#include "geometry/SceneNode.h"
 
 
 namespace TankGeometryEnums {

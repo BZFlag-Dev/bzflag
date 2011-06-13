@@ -14,17 +14,17 @@
 #include "InputMenu.h"
 
 /* common implementation headers */
-#include "common/StateDatabase.h"
 #include "3D/FontManager.h"
+#include "common/StateDatabase.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "MainMenu.h"
 #include "HUDDialogStack.h"
-#include "LocalPlayer.h"
 #include "LocalFontFace.h"
-#include "playing.h"
+#include "LocalPlayer.h"
+#include "MainMenu.h"
 #include "guiplaying.h"
+#include "playing.h"
 
 InputMenu::InputMenu() : keyboardMapMenu(NULL) {
   std::string currentJoystickDevice = BZDB.get("joystickname");

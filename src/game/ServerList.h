@@ -20,11 +20,11 @@
 
 /* common interface headers */
 #include "ListServer.h"
-#include "game/StartupInfo.h"
+#include "Singleton.h"
+#include "common/cURLManager.h"
 #include "game/ServerItem.h"
 #include "game/ServerListCache.h"
-#include "common/cURLManager.h"
-#include "Singleton.h"
+#include "game/StartupInfo.h"
 
 typedef void (*ServerListCallback)(ServerItem* addedServer, void*);
 

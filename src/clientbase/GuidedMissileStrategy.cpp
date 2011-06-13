@@ -14,14 +14,14 @@
 #include "GuidedMissileStrategy.h"
 
 // common headers
-#include "game/BZDBCache.h"
+#include "Roster.h"
+#include "3D/TextureManager.h"
 #include "clientbase/EventHandler.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
 #include "game/Intersect.h"
 #include "game/LinkManager.h"
 #include "obstacle/MeshFace.h"
-#include "Roster.h"
-#include "common/TextUtils.h"
-#include "3D/TextureManager.h"
 
 // local headers
 #include "LocalPlayer.h"
@@ -391,7 +391,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray) {
   // check in reverse order to see what we hit first
   if (linkSrc) {
     // entered teleporter -- teleport it
-    fvec3 vel = getPath().getVelocity();
+//FIXME - something wrong here?    fvec3 vel = getPath().getVelocity();
     linkSrc->teleportShot(*linkDst, *physics, nextPos, nextPos,
                           nextVel, nextVel);
     if (!physics->shotPassText.empty()) {

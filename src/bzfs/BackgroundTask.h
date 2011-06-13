@@ -12,8 +12,8 @@
 #ifndef __BACKGROUND_TASK_H__
 #define __BACKGROUND_TASK_H__
 
-#include "common.h"
 #include "Singleton.h"
+#include "common.h"
 #include "bzfs/bzfsAPI.h"
 
 #include <vector>

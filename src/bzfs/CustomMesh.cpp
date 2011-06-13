@@ -24,8 +24,8 @@
 
 /* common implementation headers */
 #include "game/PhysicsDriver.h"
-#include "obstacle/ObstacleMgr.h"
 #include "obstacle/MeshDrawInfo.h"
+#include "obstacle/ObstacleMgr.h"
 
 
 CustomMesh::CustomMesh(const char* meshName) {

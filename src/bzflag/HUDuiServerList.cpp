@@ -15,15 +15,15 @@
 #include "HUDuiServerList.h"
 
 // common implementation headers
-#include "bzfgl.h"
-#include "common/bzglob.h"
-#include "common/ErrorHandler.h"
-#include "3D/FontManager.h"
 #include "LocalFontFace.h"
+#include "bzfgl.h"
+#include "3D/FontManager.h"
+#include "3D/TextureManager.h"
+#include "common/ErrorHandler.h"
+#include "common/TextUtils.h"
+#include "common/bzglob.h"
 #include "ogl/OpenGLGState.h"
 #include "ogl/OpenGLUtils.h"
-#include "3D/TextureManager.h"
-#include "common/TextUtils.h"
 
 //
 // HUDuiServerList

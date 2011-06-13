@@ -17,18 +17,18 @@
 #include "LuaGameConst.h"
 
 // common headers
-#include "game/global.h"
-#include "game/Flag.h"
-#include "net/Address.h"
 #include "AnsiCodes.h"
-#include "obstacle/Obstacle.h"
-#include "clientbase/GfxBlock.h"
-#include "game/PlayerState.h"
 #include "Protocol.h"
+#include "global.h"
+#include "clientbase/GfxBlock.h"
+#include "game/Flag.h"
+#include "game/PlayerState.h"
+#include "net/Address.h"
+#include "obstacle/Obstacle.h"
 
 // bzflag headers
-#include "bzflag/Roaming.h"
 #include "bzflag/ControlPanel.h"
+#include "bzflag/Roaming.h"
 
 // local headers
 #include "LuaHeader.h"

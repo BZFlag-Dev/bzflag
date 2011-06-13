@@ -16,10 +16,10 @@
 #include <iostream>
 
 // common headers
+#include "common/FileManager.h"
+#include "common/OSFile.h"
 #include "common/bzfio.h"
 #include "net/Pack.h"
-#include "common/OSFile.h"
-#include "common/FileManager.h"
 
 
 const char* BzDocket::magic = "BzDocket";

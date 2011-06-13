@@ -12,9 +12,9 @@
 
 // interface header
 #include "StandardTankAvatar.h"
-#include "game/BZDBCache.h"
-#include "bzflag/SceneRenderer.h"
 #include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "game/BZDBCache.h"
 #include "game/Team.h"
 #include "ogl/OpenGLMaterial.h"
 

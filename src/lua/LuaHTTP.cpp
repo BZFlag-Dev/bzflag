@@ -22,14 +22,14 @@
 #include <vector>
 
 // common headers
-#include "common/bzfio.h"
-#include "net/network.h"
 #include "common/AccessList.h"
 #include "common/CacheManager.h"
+#include "common/bzfio.h"
+#include "net/network.h"
 
 // local headers
-#include "LuaHeader.h"
 #include "LuaDouble.h"
+#include "LuaHeader.h"
 
 
 const char* LuaHTTPMgr::metaName = "HTTP";

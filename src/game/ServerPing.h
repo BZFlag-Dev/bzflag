@@ -21,8 +21,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "net/Address.h"
 #include "common/BzTime.h"
+#include "net/Address.h"
 
 /**
  * This class represents the act of pinging a server and calculating

@@ -23,8 +23,8 @@
 #include <stdio.h>
 
 // local implementation headers
-#include "common/StateDatabase.h"
 #include "AnsiCodes.h"
+#include "common/StateDatabase.h"
 
 
 Bundle::Bundle(const Bundle* pBundle) {

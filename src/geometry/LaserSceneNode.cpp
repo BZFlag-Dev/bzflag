@@ -21,9 +21,9 @@
 
 // common headers
 #include "bzfgl.h"
+#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
-#include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
 
 
 const float LaserRadius = 0.1f;

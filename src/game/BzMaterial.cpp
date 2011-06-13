@@ -21,12 +21,12 @@
 #include <map>
 
 // common headers
-#include "common/bzfio.h"
-#include "game/DynamicColor.h"
-#include "game/TextureMatrix.h"
-#include "game/BZDBCache.h"
 #include "common/CacheManager.h"
 #include "common/TextUtils.h"
+#include "common/bzfio.h"
+#include "game/BZDBCache.h"
+#include "game/DynamicColor.h"
+#include "game/TextureMatrix.h"
 #include "net/Pack.h"
 
 

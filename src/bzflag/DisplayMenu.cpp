@@ -16,13 +16,13 @@
 #include "DisplayMenu.h"
 
 /* common implementation headers */
+#include "bzfgl.h"
+#include "3D/FontManager.h"
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
 #include "game/BZDBCache.h"
 #include "platform/BzfDisplay.h"
-#include "3D/FontManager.h"
-#include "bzflag/SceneRenderer.h"
-#include "3D/TextureManager.h"
 #include "platform/VerticalSync.h"
-#include "bzfgl.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
@@ -31,8 +31,8 @@
 #include "LocalFontFace.h"
 #include "MainMenu.h"
 #include "Roaming.h"
-#include "playing.h"
 #include "guiplaying.h"
+#include "playing.h"
 
 
 DisplayMenu::DisplayMenu()

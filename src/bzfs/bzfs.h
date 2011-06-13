@@ -27,19 +27,19 @@
 #include "net/network.h"
 
 // common interface headers
-#include "net/Address.h"
+#include "vectors.h"
 #include "common/BzTime.h"
 #include "game/Flag.h"
+#include "net/Address.h"
 #include "net/Ping.h"
-#include "vectors.h"
 
 // bzfs specific headers
-#include "TeamBases.h"
 #include "CmdLineOptions.h"
-#include "GameKeeper.h"
 #include "FlagInfo.h"
-#include "WorldInfo.h"
+#include "GameKeeper.h"
 #include "RejoinList.h"
+#include "TeamBases.h"
+#include "WorldInfo.h"
 #include "game/VotingArbiter.h"
 
 #include "bzfs/bzfsAPI.h"

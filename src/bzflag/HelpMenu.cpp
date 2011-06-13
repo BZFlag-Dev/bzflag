@@ -14,21 +14,21 @@
 #include "HelpMenu.h"
 
 /* common implementation headers */
-#include "game/Flag.h"
 #include "3D/FontManager.h"
+#include "game/Flag.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
-#include "MainMenu.h"
 #include "LocalFontFace.h"
+#include "MainMenu.h"
 
 /* help menus */
-#include "HelpKeymapMenu.h"
 #include "HelpCreditsMenu.h"
-#include "HelpInstructionsMenu.h"
 #include "HelpFlagsMenu.h"
+#include "HelpInstructionsMenu.h"
+#include "HelpKeymapMenu.h"
 
 
 /* local functions to generate the text for instructional help */

@@ -26,12 +26,12 @@
 
 // common implementation headers
 #include "bzfgl.h"
-#include "common/TextUtils.h"
-#include "game/global.h"
-#include "mediafile/MediaFile.h"
+#include "global.h"
 #include "common/ErrorHandler.h"
-#include "ogl/OpenGLTexture.h"
 #include "common/OSFile.h"
+#include "common/TextUtils.h"
+#include "mediafile/MediaFile.h"
+#include "ogl/OpenGLTexture.h"
 
 /*const int NO_VARIANT = (-1); */
 

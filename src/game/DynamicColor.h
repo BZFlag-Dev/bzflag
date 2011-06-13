@@ -23,8 +23,8 @@
 #include <iostream>
 
 /* common interface headers */
-#include "common/BzTime.h"
 #include "vectors.h"
+#include "common/BzTime.h"
 
 
 class DynamicColor {

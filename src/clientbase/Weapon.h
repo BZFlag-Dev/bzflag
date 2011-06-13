@@ -19,8 +19,8 @@
 #include <vector>
 
 // common headers
-#include "game/Flag.h"
 #include "vectors.h"
+#include "game/Flag.h"
 
 
 class Weapon {

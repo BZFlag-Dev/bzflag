@@ -22,9 +22,9 @@
 #include <string>
 
 /* common interface headers */
+#include "common/BzTime.h"
 #include "net/Address.h"
 #include "net/Ping.h"
-#include "common/BzTime.h"
 
 class ListServerLink : private cURLManager {
   public:

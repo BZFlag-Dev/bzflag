@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "XWindow.h"
 #include "XVisual.h"
+#include "XWindow.h"
 #if defined(XF86VIDMODE_EXT)
 #  define USE_XF86VIDMODE_EXT
 #  define private c_private

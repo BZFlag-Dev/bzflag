@@ -17,8 +17,8 @@
 #include <string>
 
 // local headers
-#include "RobotScript.h"
 #include "Robot.h"
+#include "RobotScript.h"
 
 
 class LuaScript : public RobotScript {

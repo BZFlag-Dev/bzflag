@@ -52,7 +52,7 @@
 #include <string>
 
 /* common interface headers */
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
 
 

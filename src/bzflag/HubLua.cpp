@@ -24,31 +24,31 @@
 
 // common headers
 #include "AnsiCodes.h"
-#include "game/BZDBCache.h"
-#include "game/DirectoryNames.h"
-#include "3D/FontManager.h"
-#include "HubComposeKey.h"
-#include "HubLink.h"
 #include "HUDRenderer.h"
 #include "HUDui.h"
-#include "common/KeyManager.h"
+#include "HubComposeKey.h"
+#include "HubLink.h"
 #include "LuaHeader.h"
-#include "net/Pack.h"
 #include "ServerLink.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
 #include "bzfgl.h"
-#include "common/bzfio.h"
-#include "common/bz_md5.h"
 #include "version.h"
+#include "3D/FontManager.h"
+#include "common/BzTime.h"
+#include "common/KeyManager.h"
+#include "common/TextUtils.h"
+#include "common/bz_md5.h"
+#include "common/bzfio.h"
+#include "game/BZDBCache.h"
+#include "game/DirectoryNames.h"
+#include "net/Pack.h"
 
 // lua common headers
 #include "../lua/LuaDouble.h"
 
 // local headers
-#include "sound.h"
-#include "guiplaying.h"
 #include "LocalFontFace.h"
+#include "guiplaying.h"
+#include "sound.h"
 
 
 static int thisIndex = -12345; // LUA_REGISTRYINDEX for the HubLink pointer

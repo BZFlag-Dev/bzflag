@@ -17,8 +17,8 @@
 #include <iostream>
 
 // common headers
-#include "game/NetMessage.h"
 #include "common/StateDatabase.h"
+#include "game/NetMessage.h"
 #include "net/Pack.h"
 
 

@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "SGIPlatformFactory.h"
 #include "SGIDisplay.h"
+#include "SGIMedia.h"
+#include "SGIPlatformFactory.h"
 #include "XVisual.h"
 #include "XWindow.h"
-#include "SGIMedia.h"
 
 PlatformFactory*  PlatformFactory::getInstance() {
   if (!instance) { instance = new SGIPlatformFactory; }

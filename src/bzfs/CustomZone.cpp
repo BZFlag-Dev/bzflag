@@ -24,8 +24,8 @@
 #include <math.h>
 
 // common headers
-#include "obstacle/MeshFace.h"
 #include "common/TextUtils.h"
+#include "obstacle/MeshFace.h"
 
 // local headers
 //#include "EntryZones.h"

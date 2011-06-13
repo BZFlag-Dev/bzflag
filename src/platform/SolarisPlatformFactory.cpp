@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "SolarisMedia.h"
 #include "SolarisPlatformFactory.h"
 #include "XDisplay.h"
 #include "XVisual.h"
 #include "XWindow.h"
-#include "SolarisMedia.h"
 
 PlatformFactory*  PlatformFactory::getInstance() {
   if (!instance) { instance = new SolarisPlatformFactory; }

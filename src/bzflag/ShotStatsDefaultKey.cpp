@@ -14,12 +14,12 @@
 #include "ShotStatsDefaultKey.h"
 
 /* common implementation headers */
-#include "common/KeyManager.h"
 #include "common/CommandManager.h"
+#include "common/KeyManager.h"
 
 /* local implementation headers */
-#include "HUDDialogStack.h"
 #include "HUDDialog.h"
+#include "HUDDialogStack.h"
 
 
 ShotStatsDefaultKey ShotStatsDefaultKey::instance;

@@ -22,8 +22,8 @@
 // common headers
 
 // bzflag headers
-#include "bzflag/guiplaying.h"
 #include "bzflag/ControlPanel.h"
+#include "bzflag/guiplaying.h"
 
 // local headers
 #include "LuaHeader.h"

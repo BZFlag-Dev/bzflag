@@ -20,10 +20,10 @@
 #include <vector>
 
 /* common interface headers */
-#include "scene/SceneDatabase.h"
+#include "Extents.h"
 #include "common/BzTime.h"
 #include "geometry/LaserSceneNode.h"
-#include "Extents.h"
+#include "scene/SceneDatabase.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"

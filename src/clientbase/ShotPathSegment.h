@@ -14,9 +14,9 @@
 #define __SHOTPATHSEGMENT_H__
 
 /* common interface headers */
-#include "common/BzTime.h"
-#include "Ray.h"
 #include "Extents.h"
+#include "Ray.h"
+#include "common/BzTime.h"
 
 
 class MeshFace;

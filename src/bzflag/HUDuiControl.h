@@ -30,8 +30,8 @@
 
 /* common headers */
 #include "BzfEvent.h"
-#include "ogl/OpenGLGState.h"
 #include "common/BzTime.h"
+#include "ogl/OpenGLGState.h"
 
 class HUDuiControl;
 class HUDNavigationQueue;

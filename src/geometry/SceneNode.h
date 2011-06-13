@@ -17,12 +17,12 @@
 #ifndef BZF_SCENE_NODE_H
 #define BZF_SCENE_NODE_H
 
+#include "Extents.h"
 #include "common.h"
+#include "vectors.h"
 #include "common/bzfio.h"
 #include "ogl/OpenGLGState.h"
 #include "ogl/RenderNode.h"
-#include "Extents.h"
-#include "vectors.h"
 #include <vector>
 
 #if !defined(_WIN32)

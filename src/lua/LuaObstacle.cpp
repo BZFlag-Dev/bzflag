@@ -22,6 +22,10 @@
 #include <vector>
 
 // common headers
+#include "Extents.h"
+#include "game/CollisionManager.h"
+#include "game/LinkManager.h"
+#include "game/WorldText.h"
 #include "obstacle/ArcObstacle.h"
 #include "obstacle/BaseBuilding.h"
 #include "obstacle/BoxBuilding.h"
@@ -34,15 +38,11 @@
 #include "obstacle/SphereObstacle.h"
 #include "obstacle/Teleporter.h"
 #include "obstacle/WallObstacle.h"
-#include "game/WorldText.h"
-#include "game/CollisionManager.h"
-#include "game/LinkManager.h"
-#include "Extents.h"
 
 // local headers
+#include "LuaDouble.h"
 #include "LuaHeader.h"
 #include "LuaUtils.h"
-#include "LuaDouble.h"
 
 
 //============================================================================//
@@ -206,7 +206,7 @@ static int GetTypeFromName(const std::string& name) {
 
 static void PushObstacleGUID(lua_State* L, uint32_t guid) {
   assert(sizeof(void*) >= sizeof(uint32_t));
-  lua_pushlightuserdata(L, (void*)guid);
+  lua_pushlightuserdata(L, reinterpret_cast<void*>(guid));
 }
 
 

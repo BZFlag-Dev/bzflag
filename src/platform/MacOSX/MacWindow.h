@@ -17,9 +17,9 @@
 
 #include "bzfgl.h"
 
-#include "platform/BzfWindow.h"
 #include "MacDisplay.h"
 #include "MacVisual.h"
+#include "platform/BzfWindow.h"
 
 class MacWindow : public BzfWindow {
   public:

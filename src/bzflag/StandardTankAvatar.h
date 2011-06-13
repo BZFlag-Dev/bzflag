@@ -14,9 +14,9 @@
 #define __STD_TANK_AVATAR_H__
 
 #include "PlayerAvatarManager.h"
+#include "vectors.h"
 #include "geometry/SphereSceneNode.h"
 #include "geometry/TankSceneNode.h"
-#include "vectors.h"
 
 class StandardTankAvatar : public PlayerAvatar {
   public:

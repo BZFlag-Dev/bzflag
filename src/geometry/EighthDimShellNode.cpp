@@ -22,8 +22,8 @@
 // common headers
 #include "bzfgl.h"
 #include "bzflag/SceneRenderer.h"
-#include "ogl/OpenGLGState.h"
 #include "game/BZDBCache.h"
+#include "ogl/OpenGLGState.h"
 
 
 EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode) {

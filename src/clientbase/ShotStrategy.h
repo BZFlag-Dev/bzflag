@@ -23,11 +23,11 @@
 #include "common.h"
 
 /* common interface headers */
-#include "Ray.h"
 #include "Extents.h"
+#include "Ray.h"
+#include "vectors.h"
 #include "obstacle/Obstacle.h"
 #include "scene/SceneDatabase.h"
-#include "vectors.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"

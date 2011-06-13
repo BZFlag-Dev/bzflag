@@ -26,15 +26,15 @@
 #include "platform/BzfDisplay.h"
 
 // local headers
+#include "LuaCallInCheck.h"
+#include "LuaCallInDB.h"
+#include "LuaGLPointers.h"
 #include "LuaHeader.h"
 #include "LuaUtils.h"
-#include "LuaCallInDB.h"
-#include "LuaCallInCheck.h"
-#include "LuaGLPointers.h"
 
 // bzflag headers
-#include "bzflag/guiplaying.h"
 #include "bzflag/MainWindow.h"
+#include "bzflag/guiplaying.h"
 #include "clientbase/Player.h"
 #include "clientbase/ShotPath.h"
 

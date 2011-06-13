@@ -25,7 +25,7 @@
 #endif
 
 /* implementation headers */
-#include "game/global.h"
+#include "global.h"
 
 #ifdef _WIN32
 unsigned long __stdcall winInput(void* that) {

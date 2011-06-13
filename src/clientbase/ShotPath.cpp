@@ -14,8 +14,8 @@
 #include "ShotPath.h"
 
 // local  headers
-#include "SegmentedShotStrategy.h"
 #include "GuidedMissileStrategy.h"
+#include "SegmentedShotStrategy.h"
 #include "ShockWaveStrategy.h"
 
 // common headers

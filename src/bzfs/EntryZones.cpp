@@ -17,11 +17,11 @@
 #include <vector>
 
 // common headers
-#include "game/global.h"
-#include "net/Pack.h"
 #include "Protocol.h"
+#include "global.h"
 #include "game/Flag.h"
 #include "game/Team.h"
+#include "net/Pack.h"
 
 // local headers
 #include "CustomZone.h"

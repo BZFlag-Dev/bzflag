@@ -29,7 +29,7 @@
 #include <math.h>
 
 // common headers
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
 #include "game/Flag.h"
 

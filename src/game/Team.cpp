@@ -10,10 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
 #include "Team.h"
-#include "net/Pack.h"
+#include "common.h"
 #include "game/NetMessage.h"
+#include "net/Pack.h"
 
 
 fvec4 Team::tankColor[NumTeams] = {

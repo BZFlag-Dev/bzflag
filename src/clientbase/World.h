@@ -20,17 +20,17 @@
 #include <string>
 
 // common headers
-#include "game/Team.h"
-#include "geometry/FlagWarpSceneNode.h"
+#include "global.h"
+#include "vectors.h"
 #include "common/BundleMgr.h"
 #include "game/MapInfo.h"
-#include "game/global.h"
-#include "vectors.h"
+#include "game/Team.h"
+#include "geometry/FlagWarpSceneNode.h"
 
 // local headers
-#include "Weapon.h"
-#include "EntryZone.h"
 #include "ClientFlag.h"
+#include "EntryZone.h"
+#include "Weapon.h"
 
 
 class WorldPlayer;

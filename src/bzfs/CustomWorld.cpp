@@ -18,8 +18,8 @@
 
 /* common implementation headers */
 #include "common/StateDatabase.h"
-#include "game/BZDBCache.h"
 #include "common/TextUtils.h"
+#include "game/BZDBCache.h"
 
 
 CustomWorld::CustomWorld() {

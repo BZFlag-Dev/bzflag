@@ -22,8 +22,8 @@
 
 // common headers
 #include "bzfgl.h"
-#include "common/StateDatabase.h"
 #include "bzflag/SceneRenderer.h" // FIXME (SceneRenderer.cpp is in src/bzflag)
+#include "common/StateDatabase.h"
 
 
 const int BoxPolygons = 60;

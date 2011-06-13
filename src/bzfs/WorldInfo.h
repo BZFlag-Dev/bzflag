@@ -20,13 +20,13 @@
 #include <string>
 
 // common headers
-#include "game/MapInfo.h"
 #include "vectors.h"
+#include "game/MapInfo.h"
 
 // bzfs headers
 #include "EntryZones.h"
-#include "WorldWeapons.h"
 #include "TeamBases.h"
+#include "WorldWeapons.h"
 
 class BzMaterial;
 class Obstacle;

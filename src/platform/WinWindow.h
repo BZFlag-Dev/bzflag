@@ -17,9 +17,9 @@
 #ifndef BZF_WINWINDOW_H
 #define BZF_WINWINDOW_H
 
-#include "platform/BzfWindow.h"
 #include "WinDisplay.h"
 #include "WinVisual.h"
+#include "platform/BzfWindow.h"
 
 class WinWindow : public BzfWindow {
   public:

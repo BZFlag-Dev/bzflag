@@ -21,8 +21,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "game/Flag.h"
 #include "common/BzTime.h"
+#include "game/Flag.h"
 
 /* local interface headers */
 #include "WorldInfo.h"

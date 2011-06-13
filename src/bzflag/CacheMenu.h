@@ -17,11 +17,11 @@
 
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
 #include "HUDDialog.h"
+#include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
-#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
 
 
 /** this class provides options for setting the gui

@@ -20,8 +20,8 @@
 #define BZF_GAME_TIME_H
 
 #include "common.h"
-#include "game/BZDBCache.h"
 #include "common/BzTime.h"
+#include "game/BZDBCache.h"
 
 
 class NetMessage;

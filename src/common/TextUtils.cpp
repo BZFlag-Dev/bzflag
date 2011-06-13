@@ -29,8 +29,8 @@
 
 #ifndef _TEXT_UTIL_NO_REGEX_
 // common headers
-#include "bzregex.h"
 #include "AnsiCodes.h"
+#include "bzregex.h"
 #endif //_TEXT_UTIL_NO_REGEX_
 
 namespace TextUtils {

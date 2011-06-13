@@ -17,10 +17,10 @@
 #include <cstring>
 
 // common headers
-#include "platform/PlatformFactory.h"
-#include "game/BZDBCache.h"
-#include "common/TextUtils.h"
 #include "vectors.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
+#include "platform/PlatformFactory.h"
 
 // local headers
 #include "Mumble.h"

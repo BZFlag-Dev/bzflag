@@ -21,11 +21,11 @@
 
 // common headers
 #include "bzfgl.h"
+#include "3D/TextureManager.h"
 #include "bzflag/SceneRenderer.h"
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"
 #include "ogl/OpenGLMaterial.h"
-#include "3D/TextureManager.h"
 
 // local headers
 #include "geometry/ViewFrustum.h"

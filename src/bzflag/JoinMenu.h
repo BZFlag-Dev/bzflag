@@ -20,17 +20,17 @@
 #include <string>
 
 /* common interface headers */
-#include "game/global.h"
+#include "global.h"
 #include "lua/LuaClientScripts.h"
 
 /* local interface headers */
 #include "HUDDialog.h"
-#include "HUDuiDefaultKey.h"
 #include "HUDuiControl.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiImage.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "HUDuiTypeIn.h"
-#include "HUDuiImage.h"
 
 class ServerStartMenu;
 class ServerMenu;

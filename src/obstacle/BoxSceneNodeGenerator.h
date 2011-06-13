@@ -13,8 +13,8 @@
 #ifndef __BOXSCENENODEGENERATOR_H__
 #define __BOXSCENENODEGENERATOR_H__
 
-#include "obstacle/ObstacleSceneNodeGenerator.h"
 #include "obstacle/BoxBuilding.h"
+#include "obstacle/ObstacleSceneNodeGenerator.h"
 
 class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
     friend class SceneDatabaseBuilder;

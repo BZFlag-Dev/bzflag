@@ -25,31 +25,29 @@
 
 // common headers
 #include "AnsiCodes.h"
+#include "version.h"
+#include "bzflag/SceneRenderer.h"
+#include "clientbase/GfxBlock.h"
 #include "common/Bundle.h"
 #include "common/BundleMgr.h"
+#include "common/BzTime.h"
 #include "common/BzVFS.h"
-#include "platform/BzfDisplay.h"
-#include "platform/BzfWindow.h"
 #include "common/CacheManager.h"
-#include "game/CollisionManager.h"
 #include "common/CommandManager.h"
-#include "game/GameTime.h"
-#include "clientbase/GfxBlock.h"
 #include "common/KeyManager.h"
+#include "common/TextUtils.h"
+#include "common/bz_md5.h"
+#include "common/bzfio.h"
+#include "game/CollisionManager.h"
+#include "game/GameTime.h"
 #include "game/MapInfo.h"
+#include "game/Team.h"
 #include "mediafile/MediaFile.h"
 #include "ogl/OpenGLLight.h"
-#include "bzflag/SceneRenderer.h"
-#include "game/Team.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
-#include "common/bzfio.h"
-#include "common/bz_md5.h"
-#include "version.h"
+#include "platform/BzfDisplay.h"
+#include "platform/BzfWindow.h"
 
 // bzflag headers
-#include "bzflag/guiplaying.h"
-#include "bzflag/sound.h"
 #include "bzflag/ControlPanel.h"
 #include "bzflag/HUDDialogStack.h"
 #include "bzflag/LocalCommand.h"
@@ -57,21 +55,23 @@
 #include "bzflag/RadarRenderer.h"
 #include "bzflag/Roaming.h"
 #include "bzflag/ScoreboardRenderer.h"
-#include "clientbase/playing.h"
+#include "bzflag/guiplaying.h"
+#include "bzflag/sound.h"
 #include "clientbase/ClientFlag.h"
 #include "clientbase/LocalPlayer.h"
 #include "clientbase/Roster.h"
 #include "clientbase/ServerLink.h"
 #include "clientbase/World.h"
 #include "clientbase/WorldPlayer.h"
+#include "clientbase/playing.h"
 
 // mediafile headers
 #include "mediafile/PNGImageFile.h"
 
 // local headers
 #include "LuaDouble.h"
-#include "LuaHeader.h"
 #include "LuaHandle.h"
+#include "LuaHeader.h"
 
 // LuaHandle headers
 #include "LuaUser.h"
@@ -938,6 +938,7 @@ int LuaCallOuts::PlaySound(lua_State* L) {
   bool repeated = false;
   bool important = false;
   float volume = 1.0f; // currently unused
+  UNUSED(volume);
   fvec3 pos(0.0f, 0.0f, 0.0f);
 
   if (lua_istable(L, 2)) {
@@ -1578,7 +1579,7 @@ int LuaCallOuts::GetGameTime(lua_State* L) {
 int LuaCallOuts::GetTimer(lua_State* L) {
   const double nowTime = BzTime::getCurrent().getSeconds();
   const uint32_t millisecs = (uint32_t)(nowTime * 1000.0);
-  lua_pushlightuserdata(L, (void*)millisecs);
+  lua_pushlightuserdata(L, reinterpret_cast<void*>(millisecs));
   return 1;
 }
 

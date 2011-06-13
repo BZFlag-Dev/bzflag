@@ -10,14 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "Plan.h"
-#include "game/BZDBCache.h"
-#include "playing.h"
 #include "LocalPlayer.h"
-#include "WorldPlayer.h"
+#include "Plan.h"
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
+#include "WorldPlayer.h"
+#include "playing.h"
+#include "game/BZDBCache.h"
 
 /**
  * Plan

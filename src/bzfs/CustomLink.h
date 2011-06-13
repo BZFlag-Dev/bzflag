@@ -21,8 +21,8 @@
 #include <string>
 
 // common headers
-#include "obstacle/ObstacleMgr.h"
 #include "game/LinkDef.h"
+#include "obstacle/ObstacleMgr.h"
 
 // local headers
 #include "WorldInfo.h"

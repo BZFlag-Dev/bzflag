@@ -14,9 +14,9 @@
 #include "Daylight.h"
 
 // common headers
-#include "common/StateDatabase.h"
-#include "common/ParseColor.h"
 #include "vectors.h"
+#include "common/ParseColor.h"
+#include "common/StateDatabase.h"
 
 
 static const double radPerDeg  = M_PI / 180.0;

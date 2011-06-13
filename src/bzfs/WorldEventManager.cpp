@@ -18,7 +18,7 @@
 #include <set>
 
 /* common implementation headers */
-#include "game/global.h"
+#include "global.h"
 #include "bzfs/bzfsAPI.h"
 
 

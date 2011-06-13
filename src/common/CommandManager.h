@@ -21,8 +21,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "common.h"
 #include "Singleton.h"
+#include "common.h"
 
 
 #define CMDMGR (CommandManager::instance())

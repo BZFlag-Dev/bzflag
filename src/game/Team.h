@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
 
 class NetMessage;

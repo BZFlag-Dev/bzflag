@@ -25,8 +25,8 @@
 #define BZF_WALL_SCENE_NODE_H
 
 #include "common.h"
-#include "geometry/SceneNode.h"
 #include "vectors.h"
+#include "geometry/SceneNode.h"
 
 
 class BzMaterial;

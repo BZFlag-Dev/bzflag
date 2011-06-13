@@ -25,9 +25,9 @@
 #include "ServerLink.h"
 
 /* local interface headers */
-#include "Robot.h"
 #include "Region.h"
 #include "RegionPriorityQueue.h"
+#include "Robot.h"
 #include "RobotPlayer.h"
 
 #if defined(HAVE_PTHREADS)

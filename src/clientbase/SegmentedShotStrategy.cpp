@@ -17,23 +17,23 @@
 #include <assert.h>
 
 /* common implementation headers */
-#include "game/BZDBCache.h"
-#include "common/TextUtils.h"
+#include "Protocol.h"
+#include "Roster.h"
 #include "3D/TextureManager.h"
+#include "clientbase/EventHandler.h"
+#include "common/TextUtils.h"
+#include "game/BZDBCache.h"
 #include "game/Intersect.h"
 #include "game/LinkManager.h"
-#include "clientbase/EventHandler.h"
 #include "obstacle/MeshFace.h"
-#include "Roster.h"
 #include "obstacle/WallObstacle.h"
-#include "Protocol.h"
 
 /* local implementation headers */
-#include "sound.h"
+#include "EffectsRenderer.h"
 #include "LocalPlayer.h"
 #include "World.h"
-#include "EffectsRenderer.h"
 #include "playing.h"
+#include "sound.h"
 // FIXME: Shouldn't need to depend on GUI elements
 #include "guiplaying.h"
 

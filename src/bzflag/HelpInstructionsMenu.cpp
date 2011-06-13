@@ -19,10 +19,10 @@
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "3D/FontManager.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
 #include "LocalFontFace.h"
+#include "3D/FontManager.h"
 
 HelpInstructionsMenu::HelpInstructionsMenu(const char* title, std::vector<std::string> text)
   : HelpMenu(title) {

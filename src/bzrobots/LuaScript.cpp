@@ -23,8 +23,8 @@
 #include "common/BzTime.h"
 
 // local headers
-#include "LuaHeader.h"
 #include "AdvancedRobot.h"
+#include "LuaHeader.h"
 
 
 using namespace BZRobots;

@@ -59,17 +59,17 @@
 #include <stdlib.h>
 
 // common headers
-#include "game/global.h"
-#include "game/Flag.h"
 #include "AnsiCodes.h"
-#include "common/TextUtils.h"
+#include "global.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "game/Flag.h"
 
 // local headers
-#include "World.h"
-#include "Player.h"
-#include "LocalPlayer.h"
 #include "ControlPanel.h"
+#include "LocalPlayer.h"
+#include "Player.h"
+#include "World.h"
 #include "guiplaying.h"
 #include "playing.h"
 

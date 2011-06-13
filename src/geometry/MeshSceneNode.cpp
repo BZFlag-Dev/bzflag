@@ -22,26 +22,26 @@
 #include <stdlib.h>
 
 // common headers
-#include "vectors.h"
 #include "Extents.h"
-#include "game/Intersect.h"
+#include "vectors.h"
 #include "common/BzTime.h"
+#include "game/Intersect.h"
 
-#include "obstacle/MeshFace.h"
-#include "obstacle/MeshObstacle.h"
-#include "obstacle/MeshDrawInfo.h"
 #include "MeshRenderNode.h"
 #include "geometry/SceneNode.h"
+#include "obstacle/MeshDrawInfo.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
 
+#include "3D/TextureManager.h"
+#include "bzflag/SceneRenderer.h"
 #include "game/BzMaterial.h"
-#include "ogl/OpenGLGState.h"
-#include "ogl/OpenGLMaterial.h"
-#include "ogl/OpenGLUtils.h"
 #include "game/DynamicColor.h"
 #include "game/TextureMatrix.h"
 #include "geometry/ViewFrustum.h"
-#include "bzflag/SceneRenderer.h"
-#include "3D/TextureManager.h"
+#include "ogl/OpenGLGState.h"
+#include "ogl/OpenGLMaterial.h"
+#include "ogl/OpenGLUtils.h"
 
 #include "common/StateDatabase.h"
 #include "game/BZDBCache.h"

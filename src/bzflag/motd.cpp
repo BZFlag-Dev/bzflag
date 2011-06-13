@@ -17,15 +17,15 @@
 #include <vector>
 
 // common implementation headers
-#include "bzregex.h"
-#include "common/TextUtils.h"
 #include "AnsiCodes.h"
+#include "bzregex.h"
 #include "version.h"
+#include "common/TextUtils.h"
 
 // local implementation headers
-#include "guiplaying.h"
-#include "NewVersionMenu.h"
 #include "HUDDialogStack.h"
+#include "NewVersionMenu.h"
+#include "guiplaying.h"
 
 typedef struct {
   std::string title;

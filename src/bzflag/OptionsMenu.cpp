@@ -19,12 +19,12 @@
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "LocalFontFace.h"
+#include "MainMenu.h"
+#include "bzflag.h"
 #include "clientConfig.h"
 #include "common/ConfigFileManager.h"
-#include "bzflag.h"
-#include "LocalFontFace.h"
 
 
 OptionsMenu::OptionsMenu()

@@ -93,6 +93,17 @@ class WorldScript {
 
     static int SetTransform(lua_State* L);
 
+    // OpenGL1.0 style matrix operations
+    static int PushMatrix(lua_State* L);     // FIXME
+    static int PopMatrix(lua_State* L);      // FIXME
+    static int LoadMatrix(lua_State* L);     // FIXME
+    static int LoadIdentity(lua_State* L);   // FIXME
+    static int MultMatrix(lua_State* L);     // FIXME
+    static int Translate(lua_State* L);      // FIXME
+    static int Scale(lua_State* L);          // FIXME
+    static int Rotate(lua_State* L);         // FIXME
+    static int GetMatrixDepth(lua_State* L); // FIXME
+
     static int AddOption(lua_State* L);
     static int AddDynamicColor(lua_State* L);
     static int AddTextureMatrix(lua_State* L);
@@ -108,6 +119,11 @@ class WorldScript {
     static int AddFace(lua_State* L);
     static int AddWeapon(lua_State* L);
     static int SetDrawInfo(lua_State* L);
+
+    static int CreateTemplate(lua_State* L); // FIXME
+    static int StampTemplate(lua_State* L);  // FIXME
+
+    static int ModifyMesh(lua_State* L); // FIXME - useful?
 
   private: // no copying
     WorldScript(const WorldScript&);

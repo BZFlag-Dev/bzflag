@@ -32,24 +32,24 @@
 
 // common headers
 #include "3D/FontManager.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/CacheManager.h"
+#include "common/StateDatabase.h"
+#include "common/TextUtils.h"
 #include "ogl/OpenGLGState.h"
 #include "ogl/OpenGLPassState.h"
-#include "bzflag/SceneRenderer.h"
-#include "common/StateDatabase.h"
-#include "common/CacheManager.h"
-#include "common/TextUtils.h"
 
 // local headers
-#include "LuaHeader.h"
-#include "LuaHandle.h"
-#include "LuaShaders.h"
-#include "LuaTextures.h"
+#include "LuaDLists.h"
 #include "LuaFBOs.h"
-#include "LuaRBOs.h"
 #include "LuaGLBuffers.h"
 #include "LuaGLPointers.h"
 #include "LuaGLQueries.h"
-#include "LuaDLists.h"
+#include "LuaHandle.h"
+#include "LuaHeader.h"
+#include "LuaRBOs.h"
+#include "LuaShaders.h"
+#include "LuaTextures.h"
 
 
 #undef far // avoid collision with windef.h
@@ -434,6 +434,9 @@ int LuaOpenGL::Text(lua_State* L) {
       c++;
     }
   }
+  UNUSED(outline);
+  UNUSED(colorCodes);
+  UNUSED(lightOut);
 
   float xj = x; // justified x position
   if (right) {

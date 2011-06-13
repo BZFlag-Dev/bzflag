@@ -13,13 +13,13 @@
 /* interface header */
 #include "ServerCommandKey.h"
 
-#include "LocalPlayer.h"
 #include "HUDRenderer.h"
-#include "common/TextUtils.h"
-#include "common/KeyManager.h"
-#include "playing.h"
-#include "guiplaying.h"
 #include "HUDui.h"
+#include "LocalPlayer.h"
+#include "guiplaying.h"
+#include "playing.h"
+#include "common/KeyManager.h"
+#include "common/TextUtils.h"
 
 namespace {
   /**

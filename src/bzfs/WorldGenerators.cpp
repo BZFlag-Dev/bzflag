@@ -28,17 +28,17 @@
 
 // common headers
 #include "WorldInfo.h"
-#include "obstacle/ObstacleMgr.h"
-#include "obstacle/BaseBuilding.h"
-#include "common/StateDatabase.h"
-#include "game/BZDBCache.h"
-#include "common/BzTime.h"
 #include "vectors.h"
 #include "version.h"
+#include "common/BzTime.h"
+#include "common/StateDatabase.h"
+#include "game/BZDBCache.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/ObstacleMgr.h"
 
 // local headers
-#include "CustomZone.h"
 #include "CmdLineOptions.h"
+#include "CustomZone.h"
 #include "bzfs.h"
 
 

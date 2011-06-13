@@ -20,9 +20,9 @@
 #include <vector>
 
 /* common interface header */
-#include "obstacle/MeshObstacle.h"
-#include "obstacle/MeshFace.h"
 #include "game/BzMaterial.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
 
 
 class CustomMeshFace {

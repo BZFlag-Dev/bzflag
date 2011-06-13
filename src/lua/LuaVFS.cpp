@@ -25,8 +25,8 @@
 #include "common/BzVFS.h"
 
 // local headers
-#include "LuaHeader.h"
 #include "LuaHandle.h"
+#include "LuaHeader.h"
 #include "LuaUtils.h"
 
 

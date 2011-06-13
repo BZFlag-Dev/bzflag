@@ -21,7 +21,7 @@
 #include "common.h"
 
 // common headers
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
 #include "ogl/OpenGLMaterial.h"
 

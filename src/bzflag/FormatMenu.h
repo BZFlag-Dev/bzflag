@@ -18,10 +18,10 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
-#include "HUDuiLabel.h"
-#include "HUDuiDefaultKey.h"
-#include "MenuDefaultKey.h"
 #include "HUDNavigationQueue.h"
+#include "HUDuiDefaultKey.h"
+#include "HUDuiLabel.h"
+#include "MenuDefaultKey.h"
 
 
 class FormatMenu;

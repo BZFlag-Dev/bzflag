@@ -19,8 +19,8 @@
 #include <ctype.h>
 
 /* common implementation headers */
-#include "game/global.h"
 #include "Protocol.h"
+#include "global.h"
 #include "common/BzTime.h"
 #include "common/bzfio.h"
 

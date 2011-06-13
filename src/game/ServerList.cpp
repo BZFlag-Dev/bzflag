@@ -24,13 +24,13 @@
 #include <ctype.h>
 
 /* common implementation headers */
+#include "Protocol.h"
 #include "version.h"
+#include "common/BzTime.h"
+#include "common/ErrorHandler.h"
+#include "common/TextUtils.h"
 #include "common/bzsignal.h"
 #include "net/Ping.h"
-#include "Protocol.h"
-#include "common/BzTime.h"
-#include "common/TextUtils.h"
-#include "common/ErrorHandler.h"
 
 /* local implementation headers */
 #include "game/ServerListCache.h"

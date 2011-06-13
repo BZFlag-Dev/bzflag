@@ -14,8 +14,8 @@
 #include "RobotScript.h"
 
 /* common implementation headers */
-#include "common/bzsignal.h"
 #include "common/BzTime.h"
+#include "common/bzsignal.h"
 
 /* local implementation headers */
 #include "RobotControl.h"

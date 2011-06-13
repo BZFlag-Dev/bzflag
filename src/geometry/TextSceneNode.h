@@ -26,9 +26,9 @@
 
 /* common headers */
 #include "vectors.h"
-#include "geometry/SceneNode.h"
-#include "game/WorldText.h"
 #include "game/MeshTransform.h"
+#include "game/WorldText.h"
+#include "geometry/SceneNode.h"
 
 
 class TextSceneNode : public SceneNode {

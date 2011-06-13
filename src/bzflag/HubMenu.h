@@ -20,12 +20,12 @@
 #include "HUDDialog.h"
 
 /* local interface headers */
-#include "MenuDefaultKey.h"
 #include "FormatMenu.h"
 #include "HUDuiDefaultKey.h"
 #include "HUDuiLabel.h"
 #include "HUDuiList.h"
 #include "HUDuiTypeIn.h"
+#include "MenuDefaultKey.h"
 
 /** this class provides options for setting the gui
  */

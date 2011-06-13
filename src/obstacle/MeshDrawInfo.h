@@ -17,8 +17,8 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "vectors.h"
 #include "Extents.h"
+#include "vectors.h"
 #include "game/BzMaterial.h"
 #include "game/MeshTransform.h"
 

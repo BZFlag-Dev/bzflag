@@ -10,12 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
 #include "ConfigFileManager.h"
-#include "common/FileManager.h"
+#include "common.h"
 #include "common/CommandManager.h"
-#include "common/StateDatabase.h"
+#include "common/FileManager.h"
 #include "common/KeyManager.h"
+#include "common/StateDatabase.h"
 
 
 static const int  MaximumLineLength = 1024;

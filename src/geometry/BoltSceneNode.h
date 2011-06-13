@@ -17,8 +17,8 @@
 #ifndef BZF_BOLT_SCENE_NODE_H
 #define BZF_BOLT_SCENE_NODE_H
 
-#include "common.h"
 #include "ShotSceneNode.h"
+#include "common.h"
 #include "ogl/OpenGLLight.h"
 
 class BoltSceneNode : public ShotSceneNode {

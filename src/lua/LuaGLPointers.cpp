@@ -25,9 +25,9 @@
 #include "ogl/OpenGLPassState.h"
 
 // local headers
+#include "LuaGLBuffers.h"
 #include "LuaHeader.h"
 #include "LuaOpenGL.h"
-#include "LuaGLBuffers.h"
 #include "LuaTextures.h"
 
 
@@ -559,7 +559,7 @@ static const void* ParseIndices(lua_State* L, int index, size_t count,
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buf->id);
 
-    return (const void*)((char*)offset);
+    return reinterpret_cast<const void*>(offset);
   }
 
   // string index data

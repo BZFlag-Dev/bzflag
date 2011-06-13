@@ -21,9 +21,9 @@
 #include <vector>
 
 // common headers
-#include "vectors.h"
 #include "AnsiCodes.h"
 #include "Singleton.h"
+#include "vectors.h"
 
 
 typedef enum {

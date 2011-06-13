@@ -19,9 +19,9 @@
 #include "ParseMaterial.h"
 
 /* common headers */
+#include "common/ParseColor.h"
 #include "game/WorldText.h"
 #include "obstacle/ObstacleMgr.h"
-#include "common/ParseColor.h"
 
 /* system headers */
 #include <iostream>

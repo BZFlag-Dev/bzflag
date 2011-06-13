@@ -18,10 +18,10 @@
 
 /* local implementation headers */
 #include "FontSizer.h"
+#include "LocalFontFace.h"
+#include "MainMenu.h"
 #include "MenuDefaultKey.h"
 #include "World.h"
-#include "MainMenu.h"
-#include "LocalFontFace.h"
 
 
 SaveWorldMenu::SaveWorldMenu() {

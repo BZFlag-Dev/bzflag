@@ -11,8 +11,8 @@
  */
 
 // interface header
-#include "playing.h"
 #include "botplaying.h"
+#include "playing.h"
 
 // system includes
 #include <iostream>
@@ -32,32 +32,32 @@
 
 // common headers
 #include "AnsiCodes.h"
-#include "common/AccessList.h"
 #include "AutoHunt.h"
-#include "obstacle/BaseBuilding.h"
-#include "game/BZDBCache.h"
-#include "platform/BzfMedia.h"
-#include "common/bzsignal.h"
-#include "common/CacheManager.h"
-#include "game/CollisionManager.h"
 #include "CommandsStandard.h"
-#include "game/DirectoryNames.h"
-#include "common/ErrorHandler.h"
-#include "common/FileManager.h"
-#include "game/GameTime.h"
-#include "common/KeyManager.h"
-#include "game/LinkManager.h"
-#include "obstacle/ObstacleList.h"
-#include "obstacle/ObstacleMgr.h"
-#include "game/PhysicsDriver.h"
-#include "platform/PlatformFactory.h"
-#include "game/ServerList.h"
-#include "common/TextUtils.h"
-#include "common/BzTime.h"
-#include "common/WordFilter.h"
-#include "common/bz_md5.h"
 #include "vectors.h"
 #include "version.h"
+#include "common/AccessList.h"
+#include "common/BzTime.h"
+#include "common/CacheManager.h"
+#include "common/ErrorHandler.h"
+#include "common/FileManager.h"
+#include "common/KeyManager.h"
+#include "common/TextUtils.h"
+#include "common/WordFilter.h"
+#include "common/bz_md5.h"
+#include "common/bzsignal.h"
+#include "game/BZDBCache.h"
+#include "game/CollisionManager.h"
+#include "game/DirectoryNames.h"
+#include "game/GameTime.h"
+#include "game/LinkManager.h"
+#include "game/PhysicsDriver.h"
+#include "game/ServerList.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/ObstacleList.h"
+#include "obstacle/ObstacleMgr.h"
+#include "platform/BzfMedia.h"
+#include "platform/PlatformFactory.h"
 
 // common client headers
 #include "ClientIntangibilityManager.h"
@@ -68,20 +68,20 @@
 #include "RobotPlayer.h"
 #include "Roster.h"
 #include "ShotStats.h"
-#include "game/GameTime.h"
+#include "World.h"
 #include "WorldBuilder.h"
 #include "WorldPlayer.h"
-#include "World.h"
+#include "game/GameTime.h"
 
 // local implementation headers
 #include "BZRobotPlayer.h"
-#include "RobotScript.h"
 #include "RobotControl.h"
+#include "RobotScript.h"
 
+#include "HubLink.h"
 #include "bzflag.h"
 #include "commands.h"
 #include "motd.h"
-#include "HubLink.h"
 
 #include "clientvars.h"
 
@@ -470,6 +470,7 @@ void handleKilledMessage(void* msg, bool /*human*/, bool& checkScores) {
     msg = nboUnpackInt32(msg, inPhyDrv);
     phydrv = int(inPhyDrv);
   }
+  UNUSED(phydrv);
   BaseLocalPlayer* victimLocal = getLocalPlayer(victim);
   BaseLocalPlayer* killerLocal = getLocalPlayer(killer);
   Player* victimPlayer = lookupPlayer(victim);

@@ -26,8 +26,8 @@
 #endif
 #include "mediafile/MediaFile.h"
 
-#include "game/DirectoryNames.h"
 #include "version.h"
+#include "game/DirectoryNames.h"
 
 
 BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) {

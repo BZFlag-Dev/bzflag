@@ -14,10 +14,10 @@
 // in this file at least, we want wide-character functionality
 #define UNICODE
 
+#include "BzfEvent.h"
 #include "WinDisplay.h"
 #include "WinWindow.h"
 #include "resource.h"
-#include "BzfEvent.h"
 #include <stdio.h>
 #include <string.h>
 #include "common/StateDatabase.h"

@@ -17,22 +17,22 @@
 #include <string.h>
 
 // common headers
-#include "ogl/OpenGLMaterial.h"
 #include "3D/TextureManager.h"
+#include "clientbase/EventHandler.h"
+#include "clientbase/GfxBlock.h"
+#include "common/ParseColor.h"
+#include "game/BZDBCache.h"
 #include "game/BZDBCache.h"
 #include "game/BzMaterial.h"
 #include "game/TextureMatrix.h"
-#include "common/ParseColor.h"
-#include "game/BZDBCache.h"
-#include "clientbase/EventHandler.h"
-#include "clientbase/GfxBlock.h"
+#include "ogl/OpenGLMaterial.h"
 
 // local headers
 #include "Daylight.h"
-#include "stars.h"
-#include "MainWindow.h"
-#include "geometry/SceneNode.h"
 #include "EffectsRenderer.h"
+#include "MainWindow.h"
+#include "stars.h"
+#include "geometry/SceneNode.h"
 
 static const fvec3 squareShape[4] = {
   fvec3(+1.0f, +1.0f, 0.0f),

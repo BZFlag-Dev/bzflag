@@ -24,10 +24,10 @@
 #include <vector>
 
 /* common headers */
-#include "game/StartupInfo.h"
-#include "game/CommandCompleter.h"
-#include "net/Address.h"
 #include "vectors.h"
+#include "game/CommandCompleter.h"
+#include "game/StartupInfo.h"
+#include "net/Address.h"
 
 /* local headers */
 #include "ControlPanel.h"

@@ -31,8 +31,8 @@
 
 
 /* local interface headers */
-#include "RobotScript.h"
 #include "Robot.h"
+#include "RobotScript.h"
 
 #ifdef SWIG_VERSION_BCD
 # if SWIG_VERSION_BCD < 0x010337

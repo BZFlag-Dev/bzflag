@@ -25,31 +25,31 @@
 #include <assert.h>
 
 // common headers
-#include "net/Pack.h"
-#include "game/MeshTransform.h"
-#include "obstacle/ObstacleModifier.h"
+#include "vectors.h"
 #include "common/StateDatabase.h"
-#include "game/PhysicsDriver.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
 #include "game/BzMaterial.h"
-#include "obstacle/MeshDrawInfo.h"
 #include "game/LinkDef.h"
 #include "game/LinkManager.h"
+#include "game/MeshTransform.h"
+#include "game/PhysicsDriver.h"
 #include "game/WorldText.h"
-#include "common/TextUtils.h"
-#include "vectors.h"
-#include "common/bzfio.h"
+#include "net/Pack.h"
+#include "obstacle/MeshDrawInfo.h"
+#include "obstacle/ObstacleModifier.h"
 
 // obstacle headers
-#include "obstacle/Obstacle.h"
-#include "obstacle/WallObstacle.h"
-#include "obstacle/BoxBuilding.h"
-#include "obstacle/PyramidBuilding.h"
-#include "obstacle/BaseBuilding.h"
-#include "obstacle/Teleporter.h"
-#include "obstacle/MeshObstacle.h"
 #include "obstacle/ArcObstacle.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/BoxBuilding.h"
 #include "obstacle/ConeObstacle.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/Obstacle.h"
+#include "obstacle/PyramidBuilding.h"
 #include "obstacle/SphereObstacle.h"
+#include "obstacle/Teleporter.h"
+#include "obstacle/WallObstacle.h"
 
 
 //============================================================================//

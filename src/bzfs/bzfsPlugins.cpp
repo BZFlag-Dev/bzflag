@@ -19,13 +19,13 @@
 #include <map>
 
 /* common headers */
-#include "common/bzfio.h"
-#include "version.h"
-#include "common/TextUtils.h"
 #include "commands.h"
+#include "version.h"
 #include "bzfs/bzfsAPI.h"
-#include "game/DirectoryNames.h"
 #include "common/OSFile.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
+#include "game/DirectoryNames.h"
 
 #ifdef _WIN32
 std::string extension = ".dll";

@@ -10,13 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "SDLPlatformFactory.h"
-#include "SDLMedia.h"
+#include "EvdevJoystick.h"
 #include "SDLDisplay.h"
 #include "SDLJoystick.h"
+#include "SDLMedia.h"
+#include "SDLPlatformFactory.h"
 #include "SDLVisual.h"
 #include "SDLWindow.h"
-#include "EvdevJoystick.h"
 
 PlatformFactory* PlatformFactory::getInstance() {
   if (!instance) {

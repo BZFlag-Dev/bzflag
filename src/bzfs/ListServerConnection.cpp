@@ -23,16 +23,16 @@
 #include <set>
 
 /* common implementation headers */
-#include "common/bzfio.h"
-#include "version.h"
-#include "common/TextUtils.h"
 #include "Protocol.h"
-#include "bzfs/bzfsAPI.h"
+#include "version.h"
 #include "bzfs/WorldEventManager.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/TextUtils.h"
+#include "common/bzfio.h"
 
 /* local implementation headers */
-#include "bzfs.h"
 #include "CmdLineOptions.h"
+#include "bzfs.h"
 
 const int ListServerLink::NotConnected = -1;
 

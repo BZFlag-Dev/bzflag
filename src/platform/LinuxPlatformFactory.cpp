@@ -10,11 +10,11 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "LinuxPlatformFactory.h"
 #include "LinuxDisplay.h"
+#include "LinuxMedia.h"
+#include "LinuxPlatformFactory.h"
 #include "XVisual.h"
 #include "XWindow.h"
-#include "LinuxMedia.h"
 #if defined(USBJOYSTICK)
 #include "USBJoystick.h"
 #else

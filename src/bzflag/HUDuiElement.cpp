@@ -14,10 +14,10 @@
 #include "HUDuiElement.h"
 
 // common implementation headers
-#include "common/BundleMgr.h"
-#include "common/Bundle.h"
-#include "3D/FontManager.h"
 #include "LocalFontFace.h"
+#include "3D/FontManager.h"
+#include "common/Bundle.h"
+#include "common/BundleMgr.h"
 
 
 //

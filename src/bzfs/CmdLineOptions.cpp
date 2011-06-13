@@ -36,20 +36,20 @@
 
 /* common implementation headers */
 #include "version.h"
-#include "game/Team.h"
+#include "common/BzVFS.h"
 #include "common/TextUtils.h"
 #include "game/BZDBCache.h"
 #include "game/BzMaterial.h"
-#include "common/BzVFS.h"
+#include "game/Team.h"
 
 /* local implementation headers */
+#include "BZWError.h"
+#include "EntryZones.h"
+#include "Permissions.h"
+#include "RecordReplay.h"
+#include "SpawnPolicyFactory.h"
 #include "bzfs.h"
 #include "bzfsPlugins.h"
-#include "RecordReplay.h"
-#include "BZWError.h"
-#include "Permissions.h"
-#include "EntryZones.h"
-#include "SpawnPolicyFactory.h"
 #include "lua/LuaServer.h"
 
 

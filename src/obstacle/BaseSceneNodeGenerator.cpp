@@ -11,9 +11,9 @@
  */
 
 #include "BaseSceneNodeGenerator.h"
-#include "obstacle/BaseBuilding.h"
 #include "bzfgl.h"
 #include "geometry/QuadWallSceneNode.h"
+#include "obstacle/BaseBuilding.h"
 
 
 BaseSceneNodeGenerator::BaseSceneNodeGenerator(const BaseBuilding* _base) : base(_base) {

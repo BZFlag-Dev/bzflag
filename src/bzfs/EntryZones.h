@@ -17,8 +17,8 @@
 #include "common.h"
 
 // common headers
-#include "game/Flag.h"
 #include "vectors.h"
+#include "game/Flag.h"
 
 // bzfs headers
 #include "CustomZone.h"

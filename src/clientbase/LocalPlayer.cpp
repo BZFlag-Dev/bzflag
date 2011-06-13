@@ -14,29 +14,29 @@
 #include "LocalPlayer.h"
 
 /* common implementation headers */
+#include "BzfEvent.h"
+#include "clientbase/EventHandler.h"
+#include "common/CommandManager.h"
+#include "common/TextUtils.h"
 #include "common/bzfio.h"
 #include "game/BZDBCache.h"
-#include "BzfEvent.h"
 #include "game/CollisionManager.h"
-#include "common/CommandManager.h"
-#include "clientbase/EventHandler.h"
-#include "geometry/FlagSceneNode.h"
-#include "obstacle/MeshObstacle.h"
-#include "game/PhysicsDriver.h"
-#include "common/TextUtils.h"
-#include "obstacle/WallObstacle.h"
 #include "game/LinkManager.h"
 #include "game/LinkPhysics.h"
+#include "game/PhysicsDriver.h"
+#include "geometry/FlagSceneNode.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/WallObstacle.h"
 
 /* local implementation headers */
-#include "World.h"
-#include "sound.h"
-#include "ForceFeedback.h"
-#include "EffectsRenderer.h"
-#include "game/GameTime.h"
 #include "ClientIntangibilityManager.h"
-#include "game/MotionUtils.h"
+#include "EffectsRenderer.h"
+#include "ForceFeedback.h"
+#include "World.h"
 #include "playing.h"
+#include "sound.h"
+#include "game/GameTime.h"
+#include "game/MotionUtils.h"
 
 
 static BZDB_int debugTele("debugTele");

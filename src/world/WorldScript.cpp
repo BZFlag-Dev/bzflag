@@ -13,18 +13,18 @@
 #include <memory> // for auto_ptr<>
 
 // common headers
+#include "LuaHeader.h"
 #include "game/BzMaterial.h"
 #include "game/DynamicColor.h"
 #include "game/LinkManager.h"
-#include "LuaHeader.h"
 //FIXME #include "MeshDrawInfo.h"
-#include "obstacle/MeshFace.h"
-#include "obstacle/MeshObstacle.h"
-#include "net/Pack.h"
+#include "common/cURLManager.h"
 #include "game/PhysicsDriver.h"
 #include "game/TextureMatrix.h"
 #include "game/WorldText.h"
-#include "common/cURLManager.h"
+#include "net/Pack.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/MeshObstacle.h"
 
 // local headers
 #include "LuaTable.h"
@@ -910,7 +910,7 @@ int WorldScript::SetDrawInfo(lua_State* L) { // FIXME -- no real parsing
       setTable.GetFVec4("sphere", drawSet.sphere);
 
       for (size_t mode = 0; mode < modeCount; mode++) {
-        for (;false;) { // cmdCount
+        for (; false;) { // cmdCount
           LuaDrawInfo::Lod::Set::Cmd drawCmd;
           drawCmd.mode = mode;
           drawCmd.indices.push_back(1);

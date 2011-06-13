@@ -11,16 +11,16 @@
  */
 
 /* interface headers */
-#include "HelpMenu.h"
 #include "HelpKeymapMenu.h"
+#include "HelpMenu.h"
 
 /* system headers */
 #include <vector>
 
 /* common implementation headers */
-#include "common/KeyManager.h"
 #include "HUDuiControl.h"
 #include "HUDuiLabel.h"
+#include "common/KeyManager.h"
 
 HelpKeymapMenu::HelpKeymapMenu() : HelpMenu("Controls") {
   // add controls

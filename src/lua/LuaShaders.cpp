@@ -22,17 +22,17 @@
 #include <vector>
 
 // common headers
-#include "common/TextUtils.h"
 #include "bzfgl.h"
+#include "bzflag/SceneRenderer.h"
+#include "common/TextUtils.h"
 #include "common/bzfio.h"
 #include "ogl/OpenGLGState.h"
-#include "bzflag/SceneRenderer.h"
 
 // local headers
-#include "LuaHeader.h"
-#include "LuaHandle.h"
-#include "LuaOpenGL.h"
 #include "LuaGLBuffers.h"
+#include "LuaHandle.h"
+#include "LuaHeader.h"
+#include "LuaOpenGL.h"
 
 
 const char* LuaShaderMgr::metaName = "Shader";
@@ -302,13 +302,13 @@ static bool ParseUniformIntTable(lua_State* L, int index, GLuint progID) {
             glUniform1i(loc, value);
           }
           else if (lua_istable(L, -1)) {
-            int a[4];
+            GLsizei a[4];
             const int count = ParseIntArray(L, a, 4);
             switch (count) {
-              case 1: { glUniform1i(loc, a[0]);      break; }
-              case 2: { glUniform2i(loc, a[0], a[1]);      break; }
-              case 3: { glUniform3i(loc, a[0], a[1], a[2]);       break; }
-              case 4: { glUniform4i(loc, a[0], a[1], a[2], a[3]); break; }
+              case 1: { glUniform1iv(loc, 1, a); break; }
+              case 2: { glUniform2iv(loc, 1, a); break; }
+              case 3: { glUniform3iv(loc, 1, a); break; }
+              case 4: { glUniform4iv(loc, 1, a); break; }
             }
           }
         }

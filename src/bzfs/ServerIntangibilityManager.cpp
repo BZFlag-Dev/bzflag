@@ -13,8 +13,8 @@
 /* interface header */
 
 #include "ServerIntangibilityManager.h"
-#include "obstacle/ObstacleMgr.h"
 #include "bzfsMessages.h"
+#include "obstacle/ObstacleMgr.h"
 
 template <>
 ServerIntangibilityManager* Singleton<ServerIntangibilityManager>::_instance =

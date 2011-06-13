@@ -20,8 +20,8 @@
 #include "bzfgl.h"
 
 // local headers
-#include "geometry/TankSceneNode.h"
 #include "geometry/TankGeometryMgr.h"
+#include "geometry/TankSceneNode.h"
 
 using namespace TankGeometryUtils;
 

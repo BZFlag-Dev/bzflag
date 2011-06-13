@@ -14,8 +14,8 @@
 #include "common.h"
 
 // interface headers
-#include "game/Frustum.h"
 #include "ViewFrustum.h"
+#include "game/Frustum.h"
 
 // common headers
 #include "bzfgl.h"

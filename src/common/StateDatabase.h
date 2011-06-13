@@ -24,10 +24,10 @@
 #include <string>
 
 // implementation headers
-#include "Singleton.h"
 #include "CallbackList.h"
-#include "common/bzfio.h"
+#include "Singleton.h"
 #include "vectors.h"
+#include "common/bzfio.h"
 #include "game/BZDBNames.h"
 
 

@@ -26,8 +26,8 @@
 #include "common/BzPNG.h"
 
 // local headers
-#include "LuaHeader.h"
 #include "LuaDouble.h"
+#include "LuaHeader.h"
 
 
 //============================================================================//

@@ -14,9 +14,9 @@
 #include "HUDDialog.h"
 
 // local interface headers
-#include "HUDuiElement.h"
-#include "HUDuiControl.h"
 #include "HUDNavigationQueue.h"
+#include "HUDuiControl.h"
+#include "HUDuiElement.h"
 
 HUDDialog::HUDDialog() {
   height = width = 0;

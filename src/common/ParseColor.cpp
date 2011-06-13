@@ -23,8 +23,8 @@
 #include <map>
 
 // common headers
-#include "common/TextUtils.h"
 #include "vectors.h"
+#include "common/TextUtils.h"
 
 
 //============================================================================//

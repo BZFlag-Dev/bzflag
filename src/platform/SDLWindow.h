@@ -18,9 +18,9 @@
 #define __SDLWINDOW_H__
 
 /* interface headers */
-#include "platform/BzfWindow.h"
 #include "SDLDisplay.h"
 #include "SDLVisual.h"
+#include "platform/BzfWindow.h"
 
 class SDLWindow : public BzfWindow {
   public:

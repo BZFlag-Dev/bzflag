@@ -19,12 +19,12 @@
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "ShotStatsDefaultKey.h"
 #include "HUDDialogStack.h"
 #include "HUDuiLabel.h"
+#include "LocalFontFace.h"
 #include "LocalPlayer.h"
 #include "Roster.h"
-#include "LocalFontFace.h"
+#include "ShotStatsDefaultKey.h"
 
 
 ShotStats::ShotStats() : HUDDialog() {

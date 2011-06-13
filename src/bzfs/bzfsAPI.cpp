@@ -11,7 +11,7 @@
  */
 
 // bzflag global header
-#include "game/global.h"
+#include "global.h"
 
 // implementation wrappers for all the bzf_ API functions
 #include "bzfsAPI.h"
@@ -20,36 +20,36 @@
 #  include <iostream>
 #endif
 
-#include "common/bz_md5.h"
-#include "bzfs.h"
-#include "bzfsMessages.h"
-#include "bzfsClientMessages.h"
-#include "bzfsPlugins.h"
-#include "vectors.h"
-#include "version.h"
-#include "obstacle/BaseBuilding.h"
-#include "game/NetMessage.h"
-#include "game/BZDBCache.h"
-#include "game/BzMaterial.h"
-#include "common/CommandManager.h"
-#include "commands.h"
-#include "common/cURLManager.h"
 #include "CustomWorld.h"
 #include "FlagInfo.h"
 #include "GameKeeper.h"
-#include "game/LinkManager.h"
-#include "obstacle/MeshFace.h"
-#include "game/MotionUtils.h"
-#include "obstacle/ObstacleMgr.h"
 #include "Permissions.h"
-#include "game/PhysicsDriver.h"
 #include "Reports.h"
 #include "ServerIntangibilityManager.h"
 #include "SpawnPosition.h"
-#include "game/VotingArbiter.h"
-#include "bzfs/WorldEventManager.h"
 #include "WorldInfo.h"
 #include "WorldWeapons.h"
+#include "bzfs.h"
+#include "bzfsClientMessages.h"
+#include "bzfsMessages.h"
+#include "bzfsPlugins.h"
+#include "commands.h"
+#include "vectors.h"
+#include "version.h"
+#include "bzfs/WorldEventManager.h"
+#include "common/CommandManager.h"
+#include "common/bz_md5.h"
+#include "common/cURLManager.h"
+#include "game/BZDBCache.h"
+#include "game/BzMaterial.h"
+#include "game/LinkManager.h"
+#include "game/MotionUtils.h"
+#include "game/NetMessage.h"
+#include "game/PhysicsDriver.h"
+#include "game/VotingArbiter.h"
+#include "obstacle/BaseBuilding.h"
+#include "obstacle/MeshFace.h"
+#include "obstacle/ObstacleMgr.h"
 
 
 BzTime synct = BzTime::getCurrent();

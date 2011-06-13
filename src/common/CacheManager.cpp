@@ -28,11 +28,11 @@
 #endif
 
 // common headers
-#include "common/bz_md5.h"
-#include "common/bzfio.h"
-#include "common/TextUtils.h"
 #include "common/FileManager.h"
 #include "common/StateDatabase.h"
+#include "common/TextUtils.h"
+#include "common/bz_md5.h"
+#include "common/bzfio.h"
 #include "game/DirectoryNames.h"
 
 // function prototypes

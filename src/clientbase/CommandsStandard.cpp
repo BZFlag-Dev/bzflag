@@ -21,8 +21,8 @@
 
 /* common implementation headers */
 #include "common/CommandManager.h"
-#include "common/StateDatabase.h"
 #include "common/KeyManager.h"
+#include "common/StateDatabase.h"
 #include "common/TextUtils.h"
 
 // FIXME: Shouldn't need to depend on GUI elements

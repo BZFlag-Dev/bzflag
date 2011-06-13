@@ -13,10 +13,10 @@
 #ifndef BZF_MACDISPLAY_H
 #define BZF_MACDISPLAY_H
 
-#include "common.h"
-#include "platform/BzfDisplay.h"
 #include "BzfEvent.h"
 #include "bzfgl.h"
+#include "common.h"
+#include "platform/BzfDisplay.h"
 
 #include <Carbon/Carbon.h>
 

@@ -22,9 +22,9 @@
 #include <string.h>
 
 // common headers
+#include "zlib.h"
 #include "common/CacheManager.h"
 #include "net/Pack.h"
-#include "zlib.h"
 
 
 #ifdef WIN32
@@ -130,10 +130,10 @@ uint32_t MediaFile::swap32BE(uint32_t* d) {
 // utility methods to read various media files in any supported format
 //
 
-#include "common/FileManager.h"
-#include "SGIImageFile.h"
 #include "PNGImageFile.h"
+#include "SGIImageFile.h"
 #include "WaveAudioFile.h"
+#include "common/FileManager.h"
 
 
 //============================================================================//

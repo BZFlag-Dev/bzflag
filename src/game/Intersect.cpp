@@ -12,8 +12,8 @@
 
 #include "common.h"
 #include <math.h>
-#include "Intersect.h"
 #include "Extents.h"
+#include "Intersect.h"
 
 using namespace Intersect;
 

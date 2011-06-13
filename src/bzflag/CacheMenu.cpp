@@ -17,14 +17,14 @@
 #include "3D/FontManager.h"
 
 /* local implementation headers */
-#include "FontSizer.h"
-#include "MainMenu.h"
 #include "Downloads.h"
+#include "FontSizer.h"
+#include "HUDuiList.h"
+#include "LocalFontFace.h"
+#include "MainMenu.h"
+#include "guiplaying.h"
 #include "common/CacheManager.h"
 #include "game/ServerListCache.h"
-#include "HUDuiList.h"
-#include "guiplaying.h"
-#include "LocalFontFace.h"
 
 CacheMenu::CacheMenu() {
   // cache font face ID

@@ -25,9 +25,9 @@
 #include <ctype.h>
 
 /* implementation headers */
+#include "bzfSDL.h"
 #include "common/ErrorHandler.h"
 #include "common/TextUtils.h"
-#include "bzfSDL.h"
 
 SDLJoystick::SDLJoystick() : joystickID(NULL) {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {

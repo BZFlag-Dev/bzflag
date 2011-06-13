@@ -22,12 +22,12 @@
 #include <math.h>
 
 /* common implementation headers */
-#include "obstacle/PyramidBuilding.h"
-#include "obstacle/MeshObstacle.h"
-#include "game/PhysicsDriver.h"
-#include "common/StateDatabase.h"
-#include "obstacle/ObstacleMgr.h"
 #include "vectors.h"
+#include "common/StateDatabase.h"
+#include "game/PhysicsDriver.h"
+#include "obstacle/MeshObstacle.h"
+#include "obstacle/ObstacleMgr.h"
+#include "obstacle/PyramidBuilding.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"

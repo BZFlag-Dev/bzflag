@@ -20,10 +20,10 @@
 #include <map>
 #include <string>
 
-#include "bzadmin/PlayerInfo.h"
-#include "colors.h"
 #include "ServerLink.h"
 #include "UIMap.h"
+#include "colors.h"
+#include "bzadmin/PlayerInfo.h"
 #include "game/StartupInfo.h"
 
 

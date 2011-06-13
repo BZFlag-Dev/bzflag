@@ -17,14 +17,14 @@
 #include <string>
 
 /* common headers */
-#include "Singleton.h"
 #include "Player.h"
-#include "game/Flag.h"
+#include "Singleton.h"
 #include "vectors.h"
+#include "game/Flag.h"
 
 /* local headers */
-#include "World.h"
 #include "Roster.h"
+#include "World.h"
 
 #define ROAM (Roaming::instance())
 

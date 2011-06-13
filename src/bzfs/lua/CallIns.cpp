@@ -29,9 +29,9 @@
 #include "bzfs/bzfsAPI.h"
 
 // local headers
+#include "LuaDouble.h"
 #include "LuaHeader.h"
 #include "LuaServer.h"
-#include "LuaDouble.h"
 
 
 //============================================================================//

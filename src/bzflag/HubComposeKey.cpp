@@ -22,14 +22,14 @@
 #include "common/KeyManager.h"
 
 // local headers
-#include "LocalPlayer.h"
-#include "HUDRenderer.h"
-#include "HubLink.h"
 #include "ControlPanel.h"
+#include "HUDRenderer.h"
+#include "HUDui.h"
+#include "HubLink.h"
 #include "LocalCommand.h"
+#include "LocalPlayer.h"
 #include "guiplaying.h"
 #include "playing.h"
-#include "HUDui.h"
 
 
 #define MAX_MESSAGE_HISTORY (20)

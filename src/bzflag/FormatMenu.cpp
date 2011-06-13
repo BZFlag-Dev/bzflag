@@ -14,18 +14,18 @@
 #include "FormatMenu.h"
 
 /* common implementation headers */
-#include "platform/BzfDisplay.h"
-#include "common/ErrorHandler.h"
 #include "3D/FontManager.h"
+#include "common/ErrorHandler.h"
+#include "platform/BzfDisplay.h"
 
 /* local implementation headers */
 #include "FontSizer.h"
-#include "MainMenu.h"
-#include "HUDui.h"
 #include "HUDNavigationQueue.h"
+#include "HUDui.h"
 #include "LocalFontFace.h"
-#include "playing.h"
+#include "MainMenu.h"
 #include "guiplaying.h"
+#include "playing.h"
 
 const int FormatMenu::NumReadouts = 4;
 const int FormatMenu::NumItems = 30;

@@ -22,12 +22,12 @@
 #include <vector>
 
 /* common implementation headers */
+#include "vectors.h"
+#include "common/StateDatabase.h"
+#include "game/PhysicsDriver.h"
 #include "obstacle/BoxBuilding.h"
 #include "obstacle/MeshObstacle.h"
-#include "game/PhysicsDriver.h"
-#include "common/StateDatabase.h"
 #include "obstacle/ObstacleMgr.h"
-#include "vectors.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"

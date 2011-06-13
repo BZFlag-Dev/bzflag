@@ -19,18 +19,18 @@
 
 // common headers
 #include "BzfEvent.h"
-#include "common/KeyManager.h"
 #include "clientbase/EventHandler.h"
+#include "common/KeyManager.h"
 #include "game/BZDBCache.h"
 
 // local headers
-#include "LocalPlayer.h"
 #include "HUDRenderer.h"
+#include "HUDui.h"
 #include "HubLink.h"
 #include "LocalCommand.h"
+#include "LocalPlayer.h"
 #include "guiplaying.h"
 #include "playing.h"
-#include "HUDui.h"
 
 #define MAX_MESSAGE_HISTORY (20)
 

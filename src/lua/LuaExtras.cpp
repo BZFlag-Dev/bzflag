@@ -256,8 +256,8 @@ int LuaExtras::traceback(lua_State* L) { // db_errorfb() function
 //  dump()  &  listing()
 //
 
-#include "../../other_src/lua/src/lstate.h"
 #include "../../other_src/lua/src/llimits.h"
+#include "../../other_src/lua/src/lstate.h"
 #define luac_c // for luaU_print()
 #include "../../other_src/lua/src/lundump.h"
 

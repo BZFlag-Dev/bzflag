@@ -13,8 +13,8 @@
 #ifndef __CLIENTINTANGIBILITYMANAGER_H__
 #define __CLIENTINTANGIBILITYMANAGER_H__
 
-#include "common.h"
 #include "Singleton.h"
+#include "common.h"
 #include <map>
 
 #include "obstacle/ObstacleMgr.h"

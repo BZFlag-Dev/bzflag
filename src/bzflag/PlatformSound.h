@@ -19,8 +19,8 @@
 
 #include "common.h"
 #include "sound.h"
-#include "platform/BzfMedia.h"
 #include "common/BzTime.h"
+#include "platform/BzfMedia.h"
 
 #include <string>
 #include <vector>

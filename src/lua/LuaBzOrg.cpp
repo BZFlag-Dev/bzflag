@@ -22,8 +22,8 @@
 #include <set>
 
 // common headers
-#include "common/BzVFS.h"
 #include "clientbase/EventHandler.h"
+#include "common/BzVFS.h"
 #include "common/StateDatabase.h"
 #include "common/bzfio.h"
 #include "common/cURLManager.h"

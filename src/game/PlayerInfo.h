@@ -14,7 +14,7 @@
 #define __PLAYERINFO_H__
 
 // bzflag global header
-#include "game/global.h"
+#include "global.h"
 
 // system headers
 #include <string>
@@ -26,11 +26,11 @@
 #endif
 
 // common interface headers
-#include "common/BzTime.h"
-#include "game/Team.h"
 #include "Protocol.h"
-#include "game/Flag.h"
+#include "common/BzTime.h"
 #include "common/WordFilter.h"
+#include "game/Flag.h"
+#include "game/Team.h"
 
 
 class NetMessage;

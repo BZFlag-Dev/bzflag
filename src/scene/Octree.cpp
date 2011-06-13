@@ -22,10 +22,10 @@
 #include "Occluder.h"
 
 // common headers
-#include "bzfgl.h"
 #include "Extents.h"
-#include "game/Intersect.h"
+#include "bzfgl.h"
 #include "common/StateDatabase.h"
+#include "game/Intersect.h"
 
 
 using namespace Intersect;

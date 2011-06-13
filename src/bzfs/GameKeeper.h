@@ -25,21 +25,21 @@
 #endif
 
 // common headers
+#include "vectors.h"
+#include "bzfs/bzfsAPI.h"
+#include "common/BzTime.h"
 #include "game/PlayerInfo.h"
 #include "game/PlayerState.h"
-#include "common/BzTime.h"
-#include "bzfs/bzfsAPI.h"
-#include "vectors.h"
 
 // bzfs headers
+#include "Authentication.h"
 #include "CmdLineOptions.h"
 #include "FlagHistory.h"
 #include "Permissions.h"
-#include "game/LagInfo.h"
-#include "Score.h"
 #include "RecordReplay.h"
+#include "Score.h"
+#include "game/LagInfo.h"
 #include "game/NetHandler.h"
-#include "Authentication.h"
 #include "game/ShotUpdate.h"
 
 

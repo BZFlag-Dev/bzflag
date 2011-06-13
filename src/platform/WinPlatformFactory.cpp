@@ -12,18 +12,18 @@
 
 #include "WinPlatformFactory.h"
 #ifdef HAVE_SDL
-#include "SDLMedia.h"
 #include "SDLDisplay.h"
 #include "SDLJoystick.h"
+#include "SDLMedia.h"
 #endif
 #include "DXJoystick.h"
 #ifdef HAVE_DSOUND_H
 #include "WinMedia.h"
 #endif
 #include "WinDisplay.h"
+#include "WinJoystick.h"
 #include "WinVisual.h"
 #include "WinWindow.h"
-#include "WinJoystick.h"
 #include "common/StateDatabase.h"
 
 PlatformFactory*  PlatformFactory::getInstance() {

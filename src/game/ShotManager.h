@@ -33,8 +33,8 @@
 
 /* common interface headers */
 #include "Singleton.h"
-#include "game/ShotUpdate.h"
 #include "vectors.h"
+#include "game/ShotUpdate.h"
 
 class ShotEventCallbacks {
   public:

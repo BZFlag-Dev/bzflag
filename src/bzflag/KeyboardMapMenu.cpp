@@ -17,17 +17,17 @@
 #include <ctype.h>
 
 /* common implementation headers */
-#include "common/KeyManager.h"
 #include "3D/FontManager.h"
+#include "common/KeyManager.h"
 
 /* local implementation headers */
-#include "FontSizer.h"
 #include "ActionBinding.h"
+#include "FontSizer.h"
 #include "HUDDialogStack.h"
-#include "MainMenu.h"
 #include "LocalFontFace.h"
-#include "playing.h"
+#include "MainMenu.h"
 #include "guiplaying.h"
+#include "playing.h"
 
 
 KeyboardMapMenuDefaultKey::KeyboardMapMenuDefaultKey(KeyboardMapMenu* _menu) :

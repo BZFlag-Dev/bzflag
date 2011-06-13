@@ -20,13 +20,13 @@
 #include <map>
 
 // common headers
-#include "game/global.h"
+#include "global.h"
 #include "vectors.h"
 #include "net/Address.h"
 
 // local headers
-#include "bzfs.h"
 #include "GameKeeper.h"
+#include "bzfs.h"
 
 
 class NetMessage;

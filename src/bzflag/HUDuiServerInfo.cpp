@@ -16,9 +16,9 @@
 #include "playing.h"
 #include "game/ServerList.h"
 
-#include "3D/FontManager.h"
 #include "FontSizer.h"
 #include "LocalFontFace.h"
+#include "3D/FontManager.h"
 
 #include "HUDuiLabel.h"
 #include "ogl/OpenGLUtils.h"

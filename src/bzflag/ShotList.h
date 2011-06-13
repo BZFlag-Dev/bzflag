@@ -20,8 +20,8 @@
 #include <vector>
 
 /* common interface headers */
-#include "Singleton.h"
 #include "ShotPath.h"
+#include "Singleton.h"
 #include "game/ShotUpdate.h"
 
 class ShotList : public Singleton<ShotList> {

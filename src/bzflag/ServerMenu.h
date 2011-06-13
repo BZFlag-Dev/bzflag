@@ -17,18 +17,18 @@
 
 /* local interface headers */
 #include "HUDDialog.h"
-#include "MenuDefaultKey.h"
-#include "HUDuiDefaultKey.h"
 #include "HUDuiControl.h"
+#include "HUDuiDefaultKey.h"
+#include "MenuDefaultKey.h"
 
+#include "HUDuiServerInfo.h"
 #include "HUDuiServerList.h"
 #include "HUDuiServerListCache.h"
-#include "game/ServerList.h"
-#include "game/ServerItem.h"
-#include "game/ServerPing.h"
-#include "HUDuiTabbedControl.h"
-#include "HUDuiServerInfo.h"
 #include "HUDuiServerListCustomTab.h"
+#include "HUDuiTabbedControl.h"
+#include "game/ServerItem.h"
+#include "game/ServerList.h"
+#include "game/ServerPing.h"
 
 class ServerMenu;
 

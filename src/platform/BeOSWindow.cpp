@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "BeOSDisplay.h"
-#include "BeOSWindow.h"
 #include "BeOSVisual.h"
+#include "BeOSWindow.h"
 #include "BzfEvent.h"
 
 //#define MSGDBG(a) printf a
