@@ -1,3 +1,11 @@
+new bugs in 2.3 that must be fixed before release
+-------------------------------------------------
+
+* A [nr] player does not drop his flag after a few seconds.
+
+* Player sometimes picks up a new flag without explicitly dropping the
+  flag already carried.
+
 recent bugs
 ------------
 
