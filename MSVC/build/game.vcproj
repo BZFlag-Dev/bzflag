@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="../../src/include/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
+				AdditionalIncludeDirectories="../../src/include;../../src/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -109,7 +109,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../../src/include/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
+				AdditionalIncludeDirectories="../../src/include;../../src/;./;.\curl\;../,..\..\other_src\curl\include;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../../src/include/;..\..\other_src\ares"
+				AdditionalIncludeDirectories="./;../../src/include;../../src/;..\..\other_src\ares"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;CARES_STATICLIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -103,7 +103,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="./;../../src/include/"
+				AdditionalIncludeDirectories="./;../../src/include;../../src/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB;CARES_STATICLIB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
