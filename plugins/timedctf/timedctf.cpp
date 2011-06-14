@@ -169,14 +169,15 @@ bool TeamsBalanced(){
 	float RatioBP = 0;
 	float RatioGP = 0;
 	float RS = (float)bz_getTeamCount(eRedTeam);
-	float GS = (float)bz_getTeamCount(eGreenTeam);
+	// "GS" is a macro defined in /usr/include/sys/regset.h on Solaris x86
+	float _GS = (float)bz_getTeamCount(eGreenTeam);
 	float BS = (float)bz_getTeamCount(eBlueTeam);
 	float PS = (float)bz_getTeamCount(ePurpleTeam);
 
-	if (RS >= GS && RS !=0)
-		RatioRG = (GS / RS);
-	if (GS > RS && GS !=0)
-		RatioRG = (RS / GS);
+	if (RS >= _GS && RS !=0)
+		RatioRG = (_GS / RS);
+	if (_GS > RS && _GS !=0)
+		RatioRG = (RS / _GS);
 
 	if (RS >= BS && RS !=0)
 		RatioRB = (BS / RS);
@@ -188,15 +189,15 @@ bool TeamsBalanced(){
 	if (PS > RS && PS !=0)
 		RatioRP = (RS / PS);
 
-	if (GS >= BS && GS !=0)
-		RatioGB = (BS / GS);
-	if (BS > GS && BS !=0)
-		RatioGB = (GS / BS);
+	if (_GS >= BS && _GS !=0)
+		RatioGB = (BS / _GS);
+	if (BS > _GS && BS !=0)
+		RatioGB = (_GS / BS);
 
-	if (PS >= GS && PS !=0)
-		RatioGP = (GS / PS);
-	if (GS > PS && GS !=0)
-		RatioGP = (PS / GS);
+	if (PS >= _GS && PS !=0)
+		RatioGP = (_GS / PS);
+	if (_GS > PS && _GS !=0)
+		RatioGP = (PS / _GS);
 
 	if (BS >= PS && BS !=0)
 		RatioBP = (PS / BS);
