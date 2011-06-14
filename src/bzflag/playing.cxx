@@ -3768,7 +3768,7 @@ static bool isKillable(const Player *target)
     return true;
   if (myTank->getFlag() == Flags::Colorblindness)
     return true;
-  if (World::getWorld()->allowTeamKills() &&
+  if (World::getWorld()->allowTeamKills() || 
     target->getTeam() != myTank->getTeam())
     return true;
 
