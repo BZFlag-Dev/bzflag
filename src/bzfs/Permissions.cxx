@@ -628,22 +628,22 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       std::string perm = line.substr(colonpos + 1);
 
       // check if we already have this group, else make a new
-      PlayerAccessInfo info;
+      PlayerAccessInfo accessInfo;
       PlayerAccessMap::iterator oldgroup = groupAccess.find(name);
       if (oldgroup != groupAccess.end())
-	info = oldgroup->second;
+	accessInfo = oldgroup->second;
       else
-	info.groupState[PlayerAccessInfo::isGroup] = true;
+	accessInfo.groupState[PlayerAccessInfo::isGroup] = true;
 
       // don't allow changing permissions for a group
       // that was used as a reference before
-      if (info.groupState.test(isReferenced)) {
+      if (accessInfo.groupState.test(isReferenced)) {
 	logDebugMessage(1,"groupdb: skipping groupdb line (%i), group was used as reference before\n", linenum);
 	continue;
       }
-      parsePermissionString(perm, info);
-      info.verified = true;
-      groupAccess[name] = info;
+      parsePermissionString(perm, accessInfo);
+      accessInfo.verified = true;
+      groupAccess[name] = accessInfo;
     } else {
       logDebugMessage(1,"WARNING: bad groupdb line (%i)\n", linenum);
     }
@@ -665,7 +665,7 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
     if (!std::getline(in, name))
       break;
 
-    PlayerAccessInfo info;
+    PlayerAccessInfo accessInfo;
 
     // 2nd line - groups
     std::string groupline;
@@ -673,22 +673,22 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
     std::istringstream groupstream(groupline);
     std::string group;
     while (groupstream >> group) {
-      info.addGroup(group);
+      accessInfo.addGroup(group);
     }
 
     // 3rd line - allows
     std::string perms;
     std::getline(in, perms);
-    parsePermissionString(perms, info);
+    parsePermissionString(perms, accessInfo);
 
     // 4th line - denies
     // FIXME: not nice ... any ideas how to make it better?
     std::getline(in, perms);
     PlayerAccessInfo dummy;
     parsePermissionString(perms, dummy);
-    info.explicitDenys = dummy.explicitAllows;
+    accessInfo.explicitDenys = dummy.explicitAllows;
 
-    userDatabase[name] = info;
+    userDatabase[name] = accessInfo;
   }
 
   return true;
