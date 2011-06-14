@@ -18,10 +18,10 @@ BZFlag 2.3.0  "Born Again"
 * Accepted patch from McSpider, added -noTeamKills option - David Anderson
 * Removed -3Dfx, -no3Dfx. Moved -geometry ->  -window <geometry-spec> - David Anderson
 * Add ricochet on a per object basis for .bzw files - trepan, David Anderson
-* serverControl plugin- Add option to ignore observers for server shutdowns
-* serverControl plugin- Only report ban file access errors once
-* serverControl plugin- Limit filesystem checks to once every 3 seconds
-* LogDetail plugin-Add SERVER-MAPNAME with the public server description
+* serverControl plugin- Add option to ignore observers for server shutdowns - Bernt Hansen
+* serverControl plugin- Only report ban file access errors once - Bernt Hansen
+* serverControl plugin- Limit filesystem checks to once every 3 seconds - Bernt Hansen
+* LogDetail plugin-Add SERVER-MAPNAME with the public server description - Bernt Hansen
 * The bzfs -time command line option allows end time - Scott Wichser, Ian Agar
 * screenshots now compressed asynchronously - Daniel Remenak, randomparticle
 * Add /serverdebug command and plugin API - Bernt Hansen
