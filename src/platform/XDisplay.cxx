@@ -280,9 +280,9 @@ bool			XDisplay::getKey(const XEvent& xevent,
   return true;
 }
 
-bool			XDisplay::doSetResolution(int modeIndex)
+bool			XDisplay::doSetResolution(int _modeIndex)
 {
-  return mode->set(modeIndex);
+  return mode->set(_modeIndex);
 }
 
 bool			XDisplay::doSetDefaultResolution()
