@@ -466,7 +466,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\include\ShotSceneNode.h"
+				RelativePath="..\..\src\geometry\ShotSceneNode.h"
 				>
 			</File>
 			<File
