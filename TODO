@@ -1,150 +1,14 @@
 to do list for BZFlag
 ---------------------
 
-These are the tasks that are generally agreed upon by the core developers.
-If a task has a name next to it, then that person has agreed to work on it.
-If you wish to do that task, or help on it, please contact the developer
-so that no work is duplicated.
+THESE SHOULD HAPPEN BEFORE THE NEXT RELEASE:
 
 * The 2.0 branch should be considered "done", do not plan for new
   features or bug fixes on this branch.  Use trunk sources for new
   development.
 
 
---------------------------------------------------------------------------------
---
---  Required for the next release
---
-
---------------------------------------------------------------------------------
---
---  Required for release of 3.0:
---
-
-* fix the MsgPause messages
-
-* fix the Z dead-reckoning issue  (ask JeffM about it)
-
-* Change countdown stuff to be "/match" functions
-  When a match is over, make everyone non shoot and non move then
-  start an internal clock for _matchResetTime (5min default) then
-  respawn everyone and reset scores. If a new match is started, then
-  reset immediately. Add a /match report that dumps the results out to
-  the report file, as well as calling an API event for further
-  processing.
-
-* MsgNewRabbit packs and unpacks a zeroed byte.  Find out why and remove
-  it if possible.
-
-* server list is still mildly jacked while navigating.  requesting
-  pings seems to exacerbate the problem, and having the list change
-  after the result comes back in is pretty annoying.
-
-* fix the clientConfig auto-update routines so that it'll properly
-  upgrade an existing config file.  build a "patchlist" for it to
-  apply, have config files stash their revision, write a routine to
-  detect what version it is for the older files based on contents
-  (or based on the dir that the config file is in if that fails).
-
-* fix all server stat "scanning" scripts and sites to send out
-  "BZFLAG\r\n\r\n" on connect.
-
-* bzfs intermittently drops the client (causing a client hang) after
-  performing a reverse lookup on the client's IP
-
-
---------------------------------------------------------------------------------
---
---  Should be considered for the release
---
-
-* Add the roaming smooth-follow mode
-
-* Fixed the zoomed radar tank-tread rendering
-
-* When flags are dropped in undroppable areas they need to go to the
-  closest "open" area, not be resent to the origin or safe zone.
-  The postion of things like the team flags mean something, so moving
-  it all over the place does affect gameplay.
-
-* Update the flag grab code to use a more cylindrical volume for grabs
-  using tank and pole heights. This should let tanks get near flags
-  in Z and grab them.
-
-* Add option to let flags rest on pyramids and sloped surfaces so they
-  can be picked up by jumpers using the new Z grab features.
-
-* Create a defined method to allow for a "passing" feature on flag
-  drop. Old game behavior uses the fact that flags respawn to 0,0
-  or safezone if dropped over a pyramid or other "undropable" area.
-  This is not fully defined behavior and will be broken as
-  BZFlag is improved. To allow this gameplay we need a real feature
-  in the map that fully defines some kind of zone (or face property)
-  that can detect a flag drop and then define a target zone (or area)
-  to send the flag to. This should be defineable per flag type and
-  be totally arbitrary around the map. This way there will be a clearly
-  defined system for pass zones. The API should also be expanded to be
-  able to fully override the entire flag grab/cap/respawn system.
-
-* send the shot limits to the client so we don't shoot the wrong shot
-  and can do interactive ammo display instead of chat messages. (javawizard2539)
-
-* Change the title image to not have the flag with the version in it. Add
-  either the flag, or some version number to the image at run time using GL
-
-* Don't call "got blowed up" on the local client when it gets shot, send
-  a new "I got hit" message asking the server what to do. Then have the
-  server send out the death, flag transfer, or flag drop for shield message.
-  This will fix a number of cheats, and allow the API to modify the game play
-  in a number of interesting ways (real freeze tag, etc ). -- don't bother
-  thinking about this, wait for an authoratative server rewrite  ;)
-
-* Move all the flag effects ( wings, OO, and other non shot effects ) into
-  an enumeration that is sent with the flag, to allow for truly custom flags.
-
-* local register and identify have been removed. we need to implement
-  a new way that uses the internal password, somehow encyrpted.
-  or just say it's global or nothing
-  Design Doc at http://my.bzflag.org/w/LocalAuthentication
-
-* take out the flag type out of the flag messages, as they are all PZ.
-  Change the team flags to be a different message and take the real team
-  enumeration. The flag type is told on pickup.
-
-* Implement Server side shot tracking (JeffM2501)
-
-* Implement server side shot ID and path enhancements (JeffM2501)
-  Design Doc at http://my.bzflag.org/w/Server_Updated_Shots
-
-* Apply Simple Gravity to all DR (JeffM2501)
-
-* Do Server side object collisions (JeffM2501)
-
-* Verify player updates with Serer State for movement and death (JeffM2501)
-
-
---------------------------------------------------------------------------------
---
---  Would be nice to have but are not critical
---
-
-* Reference counting for external resources (textures, sounds, fonts, etc...)
-  Optional features might be deletion holdoff time, not deleting until some
-  sort of resource manager related limit is reached (number of resources, amount
-  of memory consumed by resources, etc...)
-
-* Force feedback joystick support for Mac OS X
-  http://developer.apple.com/documentation/DeviceDrivers/Reference/ForceFeedback/index.html
-
-* Split out radar and 3d and world position updates, Radar can be less data
-  at a way lower resolution. Don't send the type of data when it is invalid
-  for the player. (JeffM2501)
-
-* Finish Server listener class and hooks to the API (JeffM2501)
-
-* Create a user modifiable group management system that is based on
-  the concepts of registered organisations.
-  Design Doc at http://my.bzflag.org/w/Group_Management_System
+THESE ARE LOWER PRIORITY
 
 * add a command line option to let random worlds do an oncap weapon
   for CTF bases.
@@ -152,26 +16,18 @@ so that no work is duplicated.
 * command line options that have -set <name> <value> equivalents should be
   reviewed and possibly eliminated
 
-* When jumping, leave the tank in contact for a <put here a new BZD var name>
-  msec, so force could be applied even after the jump instant. Should fix
-  different behaviour when jumping with inertia, comparing low/high FPS
-  players.
-
-* Give the antidote flag server side, and check when player ask to drop a bad
-  flag.
-
-* Autopilot message should be send at player joining, otherwise we loose
-  autopilot status for all the players, until they change their setting
+* Hunters should be a separate team (not rogue).  Remove all the ugly
+  hunter-color and hunter-teamkill hacks.  Needs protocol breakage.
 
 * Send world weapon 'tilt' info over the wire for saving maps
 
 * look closely at how local and global logins / groups interact:
   - add option for non-public servers to use global logins? (match servers)
-	 [this was done with the -advertise bzfs option in 2.0.5]
+         [this was done with the -advertise bzfs option in 2.0.5]
   - add option for public-servers to not use global logins?
     (if no passdb, then they only use global logins ie: no /register)
 
-* bzfs should error out if no users or groups have SPAWN (Thumper)
+* bzfs should error out if no users or groups have SPAWN
 
 * bzbb login names are used for global authentication. If the user changes
   bzbb login names (which is possible), this can cause problems Another user
@@ -179,16 +35,13 @@ so that no work is duplicated.
   are unique, though, maybe somehow move to those. This would fix some issues
   and create others. All the implications are not quite clear yet. Best
   practice at the moment: Don't change your bzbb login name.
-  - This is only a problem when using a userdb to assign people to groups.
-    Global groups already use the BZID, so changing a name will not cause
-    issues. (blast)
 
 * fix the misalignment between the selected server and the one that
   is joined when the Server List Cache is enabled.
 
 * Teach Roger not to drive into deadly physics drivers.
 
-* need to verify that the anti permissions (e.g. antiban) really do (Thumper)
+* need to verify that the anti permissions (e.g. antiban) really do
   prevent the action properly (e.g. you cannot get banned if you have
   antiban -- even from master ban list).
 
@@ -215,7 +68,6 @@ so that no work is duplicated.
   grouping for physics drivers (with transforms and copying)
   grouping for texture matrices, dynamic color, xforms, and materials
     (mostly for keeping a clean namespace)
-  => NOTE: mesh weapons and zones can already be used instead
 
 * sdl build does not set the application icon .. kinda important for
   the folks with icons
@@ -234,6 +86,9 @@ so that no work is duplicated.
 
 * instead of kicking laggy players, they should be made observers
   unless there are no observer slots left (then kick).
+
+* ban both the player's name in addition to their IP case insensitively.
+  (at least on a poll ban) (might not be relevant with central login)
 
 * keep track of the last messages sent by a player in the last N
   seconds and auto-silence them if they spam any specific message
@@ -260,11 +115,8 @@ so that no work is duplicated.
 * when game is over, autoboot everyone after some time, so server cannot be
   blocked forever by one player just sitting there.
 
-* Limit the time that the "game over" message is flashed to observers.
-  One minute should be enough, or stop when a countdown begins.
-
 * make tank scene node not use a list per size mode, just use the scale matrix.
-  (the disadvantage is the speed hits from GL_NORMALIZE or GL_RESCALE)
+  (the disadvange is the speed hits from GL_NORMALIZE or GL_RESCALE)
 
 * server should track last reported player and shot positions (done?)
 
@@ -319,7 +171,7 @@ so that no work is duplicated.
 
   - some bzdb values are stored elsewhere and written to bzdb only on exit.
     these should be stored in bzdb for the entire time; also why are some
-    variables starting with _, while others are not? The distinction between
+    variabels startign with _, while others are not? The distinction between
     the different types of variables stored in BZDB is not quite clear
 
 * make the vertical rico solution more elegant - get rid of
@@ -394,14 +246,9 @@ so that no work is duplicated.
 
 * consider allowing maps to specify image based skyboxes.
 
---------------------------------------------------------------------------------
---
---  Future Development
---
 
-* When a BU flag is dropped, wait until the tank is fully out of the
-  ground before returning its maximum speed and acceleration to
-  normal.
+
+THESE NEED TO WAIT FOR THE NEXT PROTOCOL BREAKAGE
 
 * flags should all be nullflags from client view until
   a) you pick one up
@@ -412,6 +259,8 @@ so that no work is duplicated.
   This is needed for larger maps so we can send sparse player updates.
 
 * server should send less frequent updates for "distant" players
+
+* remove flipz from pyr net code and replace with neg height.
 
 * ipv6 support
 
@@ -433,12 +282,14 @@ so that no work is duplicated.
    figure out how to do team colors if a team skin is not provided.
 
 * supply tank/map meshes and textures from the server if client does not have.
-   implement resource cache on client and have server offer
-   new resources as needed. (md5 resources to ensure they are the same??)
+   implement resouce cache on client and have server offer
+   new resources as needed. (md5 resouces to ensure they are the same??)
 
-* allow client to only choose meshes from the server list
+* allow client to only choose meshs from the server list
 
 * find some way to limit tank skins to team colors.
+
+* implement one way cross server teleporters
 
 * implement a visual "server list" game server
 
@@ -447,19 +298,20 @@ so that no work is duplicated.
    a game.  basic text chat facilities.  allows players
    to wait for enough players for a game and to discuss
    strategy, etc.  could build this into bzfs easily.
-  => NOTE: see MsgJoinServer
 
 * look into doing projected textures for light glows, this would
   get rid of the 8 light limit.
 
 * look into burning global lighting into world, perhaps with lightmaps. Allow map lights.
 
-* look into using projected textures or some other shadow method that allows for better shadows.
+* look into useing projected textures or some other shadow method that allows for better shadows.
 
 * see if 3dfx/other old hardware limits are still practical.
 
 * break rendering system into separate lib and allow different renderers that are targeted
   to hardware or software..
+
+* inertia acceleration setting should be transformed in BZDB variable
 
 * client should not send endshot, unless is the shot originator. When killed,
   tank should send an "I am hit by <killer> <shot Number>" and server kill the
@@ -472,72 +324,5 @@ so that no work is duplicated.
 * bzadmin should notify bzfs of being a bzadmin, so we could remove all the
   unneeded information like shot, tank position, world ...
 
-* Bot should share the TCP connection with the normal tank player, and
-  should be allowed to increase / decrease number of it run-time
-
-THESE ARE NOT REALLY TIED TO ANY VERSION OR PROTOCOL BUT ARE GOOD IDEAS THAT WE WANT TO DO
-
-* Make a simple non forum registration page that is linked from the
-  main web page
-
-* Have the installer ask if the user wants to register on install, and
-  take them to the reg page.
-
-* Have the game know what servers are reg only, and help the user get
-  reged, if they aren't.
-
-* Make the server list page have multiple tabs to separate games out
-  by , game type, bandwith, players, shots, quality, and other
-  factors.
-
-* Create a system where server operators can apply to be come
-  "prefered" servers if they meet a set of requirements.  These
-  requirements should include, being a global registration server, use
-  of the master ban list, allowing the global admin team to admin the
-  server, use of a standard language filter file, and bandwith and
-  uptime requirements.  In exchange these servers are listed on the
-  default "prefered" servers tab in game. This provides a set of
-  servers for new users to start in, and where everyone follows a
-  default set of rules.
-
-* Create a tab for local servers ( lan games )
-
-* Create a tab for user defined "favorite" servers ( bookmarks ).
-
-* Create some sort of server "rating" system like the movies use, to
-  let players know what to expect.  Provide some way to override and
-  control it at a list server level, as well as make it so the client
-  can filter out servers with ratings higher then it wants.
-
---------------------------------------------------------------------------------
---
---  BZROBOTS TODO
---
-
-! Hook up the botCanSpawn boolean to prevent the bots from spawning when they can't
-? Convert RCLink to use an STL type and not a static buffer (overflows, though handled "gracefully",
-  shouldn't be happening).
-? Make RCLink more c++-ish, by e.g. using operator << and not sendf/vsendf/send.
-! Implement all events as per RoboCode standards.
-    onSkippedTurn(const SkippedTurnEvent &)
-    onBulletHit(const BulletHitEvent &)
-    onBulletHitBullet(const BulletHitBulletEvent &)
-    onBulletMissed(const BulletMissedEvent &)
-    onHitByBullet(const HitByBulletEvent &)
-    onHitRobot(const HitRobotEvent &)
-    onRobotDeath(const RobotDeathEvent &)
-    onScannedRobot(const ScannedRobotEvent &)
-    onWin(const WinEvent &)
-! Implement proper RoboCode compatability (radar, turret-turning, more?)
-! Make various classes use operator<<(ostream, class) instead of ostream-taking methods.
-! Implement more data in Tank (e.g. velocity & angular velocity?)
-
- Legend:
-  ! Definite task
-  ? Proposed task
-
 See the Task Tracker on Sourceforge (http://sourceforge.net/pm/?group_id=3248)
 for more todo items and future planning endeavors.
-
-
---------------------------------------------------------------------------------
