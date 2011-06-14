@@ -496,13 +496,17 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   return PlayerAccessInfo::lastPerm;
 }
 
-void parsePermissionString(const std::string &permissionString, PlayerAccessInfo &info)
+// Parse a list of permissions &permissionString and set the corrosponding Permissions 
+// in &info. Return true if a group is referenced but not defined yet, else false.
+// return value is only needed for groupdb parsing, not for userdb.
+bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo &info)
 {
   if (permissionString.length() < 1)
-    return;
+    return false;
 
   std::istringstream permStream(permissionString);
   std::string word;
+  bool invokeGroupdbRecursion = false;
 
   while (permStream >> word) {
     makeupper(word);
@@ -517,7 +521,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
     // Operators are not allowed for userdb
     if (!info.groupState.test(PlayerAccessInfo::isGroup) && first != '\0'){
       logDebugMessage(1,"userdb: illegal permission string, operators are not allowed in userdb\n");
-      return;
+      return false;
     }
 
     // if we have an operator, lets handle it
@@ -532,9 +536,8 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	  if (refgroup != groupAccess.end()) {
 	    info.explicitAllows |= refgroup->second.explicitAllows;
 	    info.explicitDenys |= refgroup->second.explicitDenys;
-	    refgroup->second.groupState.set(PlayerAccessInfo::isReferenced);
 	  } else {
-	    logDebugMessage(1,"groupdb: unknown group \"%s\" was referenced\n", word.c_str());
+	    invokeGroupdbRecursion = true;
 	  }
 
 	  continue;
@@ -599,6 +602,7 @@ void parsePermissionString(const std::string &permissionString, PlayerAccessInfo
       }
     }
   }
+  return invokeGroupdbRecursion;
 }
 
 
@@ -607,49 +611,58 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
   std::ifstream in(filename.c_str());
   if (!in)
     return false;
+  
+  int recursionNeeded = 1;
+  bool initialRun = true;
+  
+   // read groupdb and check for unsolved group references, read the file again
+  // for each of them. One more recursion should make sure everything is fine.
+  do {
+    in.clear();
+    in.seekg(0, std::ios::beg);
+    int linenum = 0;
 
-  int linenum = 0;
-  std::string line;
-  while (std::getline(in, line)) {
-    linenum++;
+    std::string line;
+    while (std::getline(in, line)) {
+      linenum++;
 
-    // strip leading whitespace
-    line.erase(0 , line.find_first_not_of(" \t"));
+      // strip leading whitespace
+      line.erase(0 , line.find_first_not_of(" \t"));
     
-    // check for a comment string or empty line
-    if(line.empty() || line[0] == '#')
-      continue;
-
-    makeupper(line);
-
-    std::string::size_type colonpos = line.find(':');
-    if (colonpos != std::string::npos) {
-      std::string name = line.substr(0, colonpos);
-      std::string perm = line.substr(colonpos + 1);
-
-      // check if we already have this group, else make a new
-      PlayerAccessInfo accessInfo;
-      PlayerAccessMap::iterator oldgroup = groupAccess.find(name);
-      if (oldgroup != groupAccess.end())
-	accessInfo = oldgroup->second;
-      else
-	accessInfo.groupState[PlayerAccessInfo::isGroup] = true;
-
-      // don't allow changing permissions for a group
-      // that was used as a reference before
-      if (accessInfo.groupState.test(isReferenced)) {
-	logDebugMessage(1,"groupdb: skipping groupdb line (%i), group was used as reference before\n", linenum);
+      // check for a comment string or empty line
+      if(line.empty() || line[0] == '#')
 	continue;
+
+      makeupper(line);
+
+      std::string::size_type colonpos = line.find(':');
+      if (colonpos == std::string::npos) 
+	logDebugMessage(1,"WARNING: bad groupdb line (%i)\n", linenum);
+      else {
+	std::string name = line.substr(0, colonpos);
+	std::string perm = line.substr(colonpos + 1);
+
+	// check if we already have this group, else make a new
+	PlayerAccessInfo accessInfo;
+	PlayerAccessMap::iterator oldgroup = groupAccess.find(name);
+	if (oldgroup != groupAccess.end())
+	  accessInfo = oldgroup->second;
+	else
+	  accessInfo.groupState[PlayerAccessInfo::isGroup] = true;
+
+	// Parse the permission string. If it contains a yet undefined group
+	// add a recursion
+	if(parsePermissionString(perm, accessInfo) && initialRun){
+	  recursionNeeded++;
+	}
+	
+	accessInfo.verified = true;
+	groupAccess[name] = accessInfo;
       }
-      parsePermissionString(perm, accessInfo);
-      accessInfo.verified = true;
-      groupAccess[name] = accessInfo;
-    } else {
-      logDebugMessage(1,"WARNING: bad groupdb line (%i)\n", linenum);
     }
-
-  }
-
+    initialRun = false;
+  } while(recursionNeeded--);
+  
   return true;
 }
 

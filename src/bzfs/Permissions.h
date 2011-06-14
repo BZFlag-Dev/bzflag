@@ -113,7 +113,6 @@ public:
 	{
 	  isGroup,  // we can check if this is a group or a player
 	  isDefault,   // mark default groups
-	  isReferenced, // do not allow to alter group perms once it's referenced
 	  lastState
 	};
 
@@ -205,7 +204,7 @@ bool checkPasswordExistence(const std::string &nick);
 bool verifyUserPassword(const std::string &nick, const std::string &pass);
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm);
 PlayerAccessInfo::AccessPerm permFromName(const std::string &name);
-void parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
+bool parsePermissionString(const std::string &permissionString, std::bitset<PlayerAccessInfo::lastPerm> &perms);
 
 uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
 
