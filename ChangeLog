@@ -17,7 +17,7 @@ BZFlag 2.3.0  "Born Again"
 * Accepted patch from McSpider, removed client option to turn off fog - David Anderson
 * Accepted patch from McSpider, added -noTeamKills option - David Anderson
 * Removed -3Dfx, -no3Dfx. Moved -geometry ->  -window <geometry-spec> - David Anderson
-* Add ricochet on a per object basis for .bzw files - David Anderson
+* Add ricochet on a per object basis for .bzw files - trepan, David Anderson
 * serverControl plugin- Add option to ignore observers for server shutdowns
 * serverControl plugin- Only report ban file access errors once
 * serverControl plugin- Limit filesystem checks to once every 3 seconds
