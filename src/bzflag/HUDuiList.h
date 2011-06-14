@@ -35,7 +35,7 @@ class HUDuiList : public HUDuiControl {
     int			getIndex() const;
     void		setIndex(int);
 
-    void		createSlider(int);
+    void		createSlider(const int);
 
     std::vector<std::string>&	getList();
     void		update();

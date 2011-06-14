@@ -85,7 +85,7 @@ bool VotingBooth::hasVoted(const std::string voterName) const
 }
 
 
-bool VotingBooth::vote(std::string voterName, std::string response)
+bool VotingBooth::vote(const std::string voterName, const std::string response)
 {
   if (this->hasVoted(voterName)) {
     /* voters are not allowed to vote multiple times */

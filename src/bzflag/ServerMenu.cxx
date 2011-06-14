@@ -410,7 +410,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	}
 	else {
 	  // colorize servers: many shots->red, jumping->green, CTF->blue
-	  const float rf = std::min(1.0f, logf(server.ping.maxShots) / logf(20.0f));
+	  const float rf = std::min(1.0f, logf((float)server.ping.maxShots) / logf(20.0f));
 	  const float gf = gameOptions & JumpingGameStyle ? 1.0f : 0.0f;
 	  const float bf = (gameType == ClassicCTF) ? 1.0f : 0.0f;
 	  label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
