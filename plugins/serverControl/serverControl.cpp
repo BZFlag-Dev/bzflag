@@ -251,7 +251,7 @@ void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *dat
   }
   numPlayers = numLines;
   numObservers = numObs;
-  bz_debugMessagef(2, "serverControl - %d total players, %d observers", numPlayers, numObservers);
+  bz_debugMessagef(3, "serverControl - %d total players, %d observers", numPlayers, numObservers);
   bz_deleteIntList(playerList);
 }
 
