@@ -108,7 +108,7 @@ const char *usageString =
 #ifdef PRINTSCORE
 "[-printscore] "
 #endif
-"[-public <server-description>] "
+"[-publictitle <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
 "[-q] "
@@ -211,7 +211,7 @@ const char *extraUsageString =
 #ifdef PRINTSCORE
 "\t-printscore: write score to stdout whenever it changes\n"
 #endif
-"\t-public <server-description>\n"
+"\t-publictitle <server-description>\n"
 "\t-publicaddr <effective-server-hostname>[:<effective-server-port>]\n"
 "\t-publiclist <list-server-url>\n"
 "\t-publickey <key>\n"
@@ -929,7 +929,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.printScore = true;
 #endif
     }
-    else if (strcmp(argv[i], "-public") == 0) {
+    else if (strcmp(argv[i], "-publictitle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.publicizeServer = true;
       options.publicizedTitle = argv[i];
@@ -959,9 +959,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-publickey") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
+      options.publicizeServer = true;
       // at least put publickey someplace that ps won't see
       options.publicizedKey = argv[i];
       memset(argv[i], 'X', options.publicizedKey.size());
+      if (options.publicizedKey.length() == 0) {
+	options.publicizeServer = true;
+	std::cerr << "key too short server will not be made public" << std::endl;
+      }
     }
     else if (strcmp(argv[i], "-q") == 0) {
       // don't handle pings

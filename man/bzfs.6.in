@@ -67,7 +67,7 @@ bzfs \- BZFlag game server
 [\fB\-pidfile \fIfilename\fR]
 [\fB\-poll \fIvariable=value\fR]
 [\fB\-printscore\fR]
-[\fB\-public \fIdescription\fR]
+[\fB\-publictitle \fIdescription\fR]
 [\fB\-publicaddr \fIaddress\fR[\fI:port\fR]]
 [\fB\-publiclist \fIurl\fR]
 [\fB\-publickey \fIkey\fR]
@@ -362,7 +362,7 @@ maximum amount of time player has to vote, in seconds (default is 60)
 .B \-printscore
 Write score to stdout whenever it changes
 .TP
-\fB\-public \fIdescription\fR
+\fB\-publictitle \fIdescription\fR
 Advertise this server on the internet with the given \fIdescription\fR.
 By default, a server will respond to broadcast queries, allowing clients
 to find servers running on the standard port on the local subnet.
@@ -387,7 +387,7 @@ automatically.  This argument may be provided multiple times to
 publicize a server to multiple list servers.
 .TP 
 \fB\-publickey \fIkey\fR
-Log-into the public list server using the specified key, owner will be set by the list server.
+Advertise this server on the list servers using the specified key.
 .TP
 .B \-q
 If specified, the server will not listen for nor respond to ``pings''.
