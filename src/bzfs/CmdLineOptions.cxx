@@ -111,6 +111,7 @@ const char *usageString =
 "[-publictitle <server-description>] "
 "[-publicaddr <server-hostname>[:<server-port>]] "
 "[-publiclist <list-server-url>] "
+"[-publickey <key>] "
 "[-q] "
 "[+r] "
 "[-rabbit [score|killer|random]] "
