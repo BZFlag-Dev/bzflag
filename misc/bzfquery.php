@@ -80,6 +80,9 @@ function bzfquery ($hostport) {
     echo "$errstr ($errno)\n";
     return $server;
   }
+
+  fwrite($fp, "BZFLAG\r\n\r\n");
+
   $buffer=fread($fp, 9);
   //var_dump($buffer);
   if (strlen($buffer) != 9) {
@@ -94,21 +97,13 @@ function bzfquery ($hostport) {
     fclose($fp);
     return $server;
   }
-  switch ($server['protocol']) {
-  case "1910":
-   return bzfquery1910($server,$fp);
-   break;
-  case "0026":
-   return bzfquery0026($server,$fp);
-   break;
-  default:
+
+  if ($server['protocol'] != '0213') {
     echo "incompatible version\n";
     fclose($fp);
     return $server;
   }
-}
 
-function bzfquery1910 ($server,&$fp) {
   # MsgQueryGame + MsgQueryPlayers
   $request = pack("n2", 0, 0x7167);
   $request .= pack("n2", 0, 0x7170);
@@ -134,66 +129,17 @@ function bzfquery1910 ($server,&$fp) {
 
     switch($packet['code']) {
       case MsgQueryGame:
-        $server += unpack("nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime", $packet['data']);
+        $server += unpack("ngameStyle/ngameOptions/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $packet['data']);
         $have['QueryGame'] = true;
-        break;
-      case MsgQueryPlayers:
-        $server += unpack("nnumTotalTeams/nnumPlayers", $packet['data']);
-        $have['QueryPlayers'] = true;
-        if ($server['numPlayers'] == 0) $have['AllAddPlayer'] = true;
-        break;
-      case MsgTeamUpdate:
-        $server += unpack("CnumTeams", $packet['data']);
-        $packet['data'] = substr($packet['data'], 1);
-        for ( $team = 0; $team < $server['numTeams']; $team++ ) {
-          $server['team'][$team] = unpack("nnum/nsize/nwon/nlost", $packet['data']);
-          $packet['data'] = substr($packet['data'], 8);
+        // If it's OpenFFA, we won't get MsgTeamUpdate
+        if ($server['gameStyle'] == 2) {
+          $have['TeamUpdate'] = true;
+          $server['numTeams'] = 0;
         }
-        $have['TeamUpdate'] = true;
-        break;
-      case MsgAddPlayer:
-        $player = unpack("Cid/ntype/nteam/nwon/nlost/ntks/a32sign/a128motto", $packet['data']);
-        $server['player'][ $player['id'] ] = $player;
-        if (sizeof($server['player']) >= $server['numPlayers']) $have['AllAddPlayer'] = true;
-        break;
-    }
-  }
-
-  fclose($fp);
-  return $server;
-}
-
-function bzfquery0026 ($server,&$fp) {
-  # MsgQueryGame + MsgQueryPlayers
-  $request = pack("n2", 0, 0x7167);
-  $request .= pack("n2", 0, 0x7170);
-  //var_dump($request);
-  fwrite($fp, $request);
-
-  $loop = 0;
-
-  $have = Array();
-  $have['QueryGame'] = false;
-  $have['QueryPlayers'] = false;
-  $have['TeamUpdate'] = false;
-  $have['AllAddPlayer'] = false;
-
-  while (in_array(false, $have) && $loop < 64) {
-    $packet = readpacket($fp);
-
-    if ($GLOBALS['debug']) {
-      echo "Length: " . $packet['len'] . "\n";
-      echo "Code: " . $packet['code'] . " (" . dechex($packet['code']) . ") [" . chr(hexdec(substr(dechex($packet['code']), 0, 2))) . chr(hexdec(substr(dechex($packet['code']), 2, 2)))  . "]\n";
-      echo "Data: " . $packet['data'] . "\n\n";
-    }
-
-    switch($packet['code']) {
-      case MsgQueryGame:
-        $server += unpack("nstyle/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $packet['data']);
-        $have['QueryGame'] = true;
         break;
       case MsgQueryPlayers:
         $server += unpack("nnumTotalTeams/nnumPlayers", $packet['data']);
+        unset($server['numTotalTeams']);
         $have['QueryPlayers'] = true;
         if ($server['numPlayers'] == 0) $have['AllAddPlayer'] = true;
         break;
@@ -219,109 +165,58 @@ function bzfquery0026 ($server,&$fp) {
 }
 
 function bzfdump ($server) {
-  switch ($server['protocol']) {
-    case '1910':
-      echo $server['host'] . ":" . $server['port'] . " (" . $server['ip'] . ")\n";
-      echo "style:";
-      if ($server['style'] & 0x0001) echo " CTF";
-      if ($server['style'] & 0x0002) echo " flags";
-      if ($server['style'] & 0x0008) echo " jumping";
-      if ($server['style'] & 0x0010) echo " inertia";
-      if ($server['style'] & 0x0020) echo " ricochet";
-      if ($server['style'] & 0x0040) echo " shaking";
-      if ($server['style'] & 0x0080) echo " antidote";
-      if ($server['style'] & 0x0100) echo " handicap";
-      if ($server['style'] & 0x0200) echo " rabbit-hunt";
-      echo "\n";
-      echo "maxPlayers: " . $server['maxPlayers'] . "\n";
-      echo "maxShots: " . $server['maxShots'] . "\n";
-      echo "team sizes: " . $server['rogueSize'] . " " .
-          $server['redSize'] . " " . $server['greenSize'] . " " .
-          $server['blueSize'] . " " . $server['purpleSize'] .
-          " (rogue red green blue purple)\n";
-      echo  "max sizes:  " . $server['rogueMax'] . " " .
-          $server['redMax'] . " " . $server['greenMax'] . " " .
-          $server['blueMax'] . " " . $server['purpleMax'] . "\n";
-      if ($server['style'] & 0x0040) {
-        echo "wins to shake bad flag: " . $server['shakeWins'] . "\n";
-        echo "time to shake bad flag: " . $server['shakeTimeout'] / 10 . "\n";
-      }
-      echo "max player score: " . $server['maxPlayerScore'] . "\n";
-      echo "max team score: " . $server['maxTeamScore'] . "\n";
-      echo "max time: " . $maxTime / 10 . "\n";
-      $teamName = array(0=>"Rogue", 1=>"Red", 2=>"Green", 3=>"Blue", 4=>"Purple", 5=>"Observer", 6=>"Rabbit");
-      for ( $team = 0; $team < $server['numTeams']; $team++ ) {
-        echo $teamName[$team] . " team: "
-    	. $server['team'][$team]['size'] . " players, "
-    	. "score: " . ($server['team'][$team]['won'] - $server['team'][$team]['lost'])
-            . " (" . $server['team'][$team]['won'] . " wins, "
-    	. $server['team'][$team]['lost'] . " losses)\n";
-      }
-      echo "\n";
-      $playerType = array(0=>"tank", 1=>"observer", 2=>"robot tank");
-      for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
-        echo "player " . $server['player'][$player]['sign']
-    	. " (" . $teamName[$server['player'][$player]['team']]
-    	. " team) is a " . $playerType[$server['player'][$player]['type']] . ":\n";
-        echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
-    	. " (" . $server['player'][$player]['won']
-    	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
-        echo "  " . $server['player'][$player]['motto'] . "\n";
-      }
-      break;
+  if ($server['protocol'] != '0213')
+    return;
 
-    case '0026':
-      echo $server['host'] . ":" . $server['port'] . " (" . $server['ip'] . ")\n";
-      echo "style:";
-      if ($server['style'] & 0x0001) echo " CTF";
-      if ($server['style'] & 0x0002) echo " flags";
-      if ($server['style'] & 0x0008) echo " jumping";
-      if ($server['style'] & 0x0010) echo " inertia";
-      if ($server['style'] & 0x0020) echo " ricochet";
-      if ($server['style'] & 0x0040) echo " shaking";
-      if ($server['style'] & 0x0080) echo " antidote";
-      if ($server['style'] & 0x0100) echo " handicap";
-      if ($server['style'] & 0x0200) echo " rabbit-hunt";
-      echo "\n";
-      echo "maxPlayers: " . $server['maxPlayers'] . "\n";
-      echo "maxShots: " . $server['maxShots'] . "\n";
-      echo "team sizes: " . $server['rogueSize'] . " " .
-          $server['redSize'] . " " . $server['greenSize'] . " " .
-          $server['blueSize'] . " " . $server['purpleSize'] . " " . $server['observerSize'] .
-          " (rogue red green blue purple observer)\n";
-      echo  "max sizes:  " . $server['rogueMax'] . " " .
-          $server['redMax'] . " " . $server['greenMax'] . " " .
-          $server['blueMax'] . " " . $server['purpleMax'] .  " " . $server['observerMax'] . "\n";
-      if ($server['style'] & 0x0040) {
-        echo "wins to shake bad flag: " . $server['shakeWins'] . "\n";
-        echo "time to shake bad flag: " . $server['shakeTimeout'] / 10 . "\n";
-      }
-      echo "max player score: " . $server['maxPlayerScore'] . "\n";
-      echo "max team score: " . $server['maxTeamScore'] . "\n";
-      echo "max time: " . $maxTime / 10 . "\n";
-      $teamName = array(0=>"Rogue", 1=>"Red", 2=>"Green", 3=>"Blue", 4=>"Purple", 5=>"Observer", 6=>"Rabbit");
-      for ( $team = 0; $team < $server['numTeams']; $team++ ) {
-        echo $teamName[$team] . " team: "
-    	. $server['team'][$team]['size'] . " players, "
+  $styles = Array('TeamFFA', 'ClassicCTF', 'OpenFFA', 'RabbitChase');
+
+  echo $server['host'] . ":" . $server['port'] . " (" . $server['ip'] . ")\n";
+  echo "gameStyle: ".$styles[$server['gameStyle']]."\n";
+  echo "gameOptions:";
+  if ($server['gameOptions'] & 0x0002) echo " flags";
+  if ($server['gameOptions'] & 0x0008) echo " jumping";
+  if ($server['gameOptions'] & 0x0010) echo " inertia";
+  if ($server['gameOptions'] & 0x0020) echo " ricochet";
+  if ($server['gameOptions'] & 0x0040) echo " shaking";
+  if ($server['gameOptions'] & 0x0080) echo " antidote";
+  if ($server['gameOptions'] & 0x0100) echo " handicap";
+  if ($server['gameOptions'] & 0x0200) echo " no-team-kills";
+  echo "\n";
+  echo "maxPlayers: " . $server['maxPlayers'] . "\n";
+  echo "maxShots: " . $server['maxShots'] . "\n";
+  echo "team sizes: " . $server['rogueSize'] . " " .
+      $server['redSize'] . " " . $server['greenSize'] . " " .
+      $server['blueSize'] . " " . $server['purpleSize'] . " " . $server['observerSize'] .
+      " (rogue red green blue purple observer)\n";
+  echo  "max sizes:  " . $server['rogueMax'] . " " .
+      $server['redMax'] . " " . $server['greenMax'] . " " .
+      $server['blueMax'] . " " . $server['purpleMax'] .  " " . $server['observerMax'] . "\n";
+  if ($server['gameOptions'] & 0x0040) {
+    echo "wins to shake bad flag: " . $server['shakeWins'] . "\n";
+    echo "time to shake bad flag: " . $server['shakeTimeout'] / 10 . "\n";
+  }
+  echo "max player score: " . $server['maxPlayerScore'] . "\n";
+  echo "max team score: " . $server['maxTeamScore'] . "\n";
+  echo "max time: " . $server['maxTime'] . " seconds\n";
+  $teamName = array(0=>"Rogue", 1=>"Red", 2=>"Green", 3=>"Blue", 4=>"Purple", 5=>"Observer", 6=>"Rabbit");
+  for ( $team = 0; $team < $server['numTeams']; $team++ ) {
+    echo $teamName[$team] . " team: "
+        . $server['team'][$team]['size'] . " players, "
     	. "score: " . ($server['team'][$team]['won'] - $server['team'][$team]['lost'])
             . " (" . $server['team'][$team]['won'] . " wins, "
     	. $server['team'][$team]['lost'] . " losses)\n";
-      }
-      echo "\n";
-      $playerType = array(0=>"tank", 1=>"observer", 2=>"robot tank");
-      for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
-        echo "player " . $server['player'][$player]['sign']
-    	. " (" . $teamName[$server['player'][$player]['team']]
-    	. " team) is a " . $playerType[$server['player'][$player]['type']] . ":\n";
-        echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
-    	. " (" . $server['player'][$player]['won']
-    	. " wins, " . $server['player'][$player]['lost'] . " losses)\n";
-        echo "  " . $server['player'][$player]['motto'] . "\n";
-      }
-      break;
   }
-  //var_dump($server);
-  return;
+  echo "\n";
+  $playerType = array(0=>"tank", 1=>"observer", 2=>"robot tank");
+  for ( $player = 0; $player < $server['numPlayers']; $player++ ) {
+    echo "player " . $server['player'][$player]['sign']
+    . " (" . $teamName[$server['player'][$player]['team']]
+    . " team) is a " . $playerType[$server['player'][$player]['type']] . ":\n";
+    echo "  score: " . ( $server['player'][$player]['won'] - $server['player'][$player]['lost'] )
+    . " (" . $server['player'][$player]['won']
+    . " wins, " . $server['player'][$player]['lost'] . " losses)\n";
+    echo "  " . $server['player'][$player]['motto'] . "\n";
+  }
 }
 
 
