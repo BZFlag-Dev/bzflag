@@ -107,11 +107,6 @@ THESE ARE LOWER PRIORITY
 * Fix the Windows version of bzadmin so that EOF quits the program, like
   the UNIX version (see checkCommand() in StdBothUI.cxx).
 
-* provide the ability to publish a single server to multiple list servers.
-  (i.e. multiple -publiclist options)  this is useful for a variety of
-  reasons, including testing out a new user-reg'd, karmafied list server,
-  without needing to run multiple servers.
-
 * when game is over, autoboot everyone after some time, so server cannot be
   blocked forever by one player just sitting there.
 
@@ -135,8 +130,6 @@ THESE ARE LOWER PRIORITY
   to do global scoping on key actions
 
 * StateDatabase should probably have min max values for eval values
-
-* split -public <desc> into -public, -description <desc>, and -email <contact>
 
 * require an email contact name for public servers. Perhaps
   unpublished by default. Perhaps a central username, probably without password
