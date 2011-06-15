@@ -20,6 +20,10 @@
 
 
 // opaque version number increments on protocol incompatibility
+// update the following files (and their protocol implementations) to match:
+//  misc/bzfquery.php
+//  misc/bzfquery.pl
+//  misc/bzfquery.py
 #ifndef BZ_PROTO_VERSION
 #  define BZ_PROTO_VERSION	"0213"
 #endif
@@ -31,7 +35,6 @@
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
 //  tools/TextTool-W32/TextTool.rc
-//  win32/VC6/installer.dsp
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION	2
 #endif

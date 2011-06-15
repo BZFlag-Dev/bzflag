@@ -484,10 +484,14 @@ cannot proceed.  A checklist of items to be completed follows:
   buildDate.cxx, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
+- When BZ_PROTO_VERSION has already changed since the last release,
+  increment it one more time in buildDate.cxx and bzfquery.* to
+  distinguish the new release from development versions.
+
 - BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
 
-- Update package/win32/nsis/*.nsi (for windows) with appropriate
-  version numbers.
+- Update package/win32/nsis/*.nsi (for windows) and
+  tools/TextTool-W32/TextTool.rc with appropriate version numbers.
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
   This will verify that a proper source distribution can be made.
