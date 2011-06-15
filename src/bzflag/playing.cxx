@@ -3759,7 +3759,6 @@ bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *
   return true;
 }
 
-
 static bool isKillable(const Player *target)
 {
   if (target == myTank)
@@ -3775,6 +3774,21 @@ static bool isKillable(const Player *target)
   return false;
 }
 
+static bool isFriendly(const Player *target)
+{
+  if (target == myTank)
+    return true;
+
+  if (!World::getWorld()->allowTeams())
+    return false;
+
+  if (target->getTeam() == RogueTeam)
+    return false;
+  if (myTank->getFlag() == Flags::Colorblindness)
+    return false;
+
+  return target->getTeam() == myTank->getTeam();
+}
 
 void setLookAtMarker(void)
 {
@@ -3862,7 +3876,7 @@ void setLookAtMarker(void)
   
   hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
                               Float3ToVec4(Team::getRadarColor(markercolor)),
-                              label, !isKillable(bestTarget), 2.0f);
+                              label, isFriendly(bestTarget), 2.0f);
 }
 
 static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
