@@ -964,7 +964,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.publicizedKey = argv[i];
       memset(argv[i], 'X', options.publicizedKey.size());
       if (options.publicizedKey.length() == 0) {
-	options.publicizeServer = true;
+	options.publicizeServer = false;
 	std::cerr << "key too short server will not be made public" << std::endl;
       }
     }
