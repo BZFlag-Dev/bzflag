@@ -113,7 +113,7 @@ print "maxPlayers: $maxPlayers\nmaxShots: $maxShots\n";
 print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize $obsSize" .
 	" (rogue red green blue purple observer)\n";
 print "max sizes:  $rogueMax $redMax $greenMax $blueMax $purpleMax $obsMax\n";
-if ($style & 0x0040) {
+if ($options & 0x0040) {
   print "wins to shake bad flag: $shakeWins\n";
   print "time to shake bad flag: " . $shakeTimeout / 10 . "\n";
 }
@@ -132,20 +132,25 @@ die $! unless sysread(S, $buffer, 8) == 8;
 ($len,$code,$numTotalTeams,$numPlayers) = unpack("n4", $buffer);
 die $! unless $code == 0x7170;
 
-# get the teams
+# get the teams (for all except OpenFFA)
 # TimRiker: MsgTeamUpdate has numTotalTeams but this is how many we will get
-die $! unless sysread(S, $buffer, 5) == 5;
+if ($style != 2) {
+  die $! unless sysread(S, $buffer, 5) == 5;
 
-($len,$code,$numTeams) = unpack("n n C", $buffer);
-die $! unless $code == 0x7475;
-@teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
-for (1..$numTeams) {
- die $! unless sysread(S, $buffer, 8) == 8;
- ($team,$size,$won,$lost) = unpack("n4", $buffer);
- $score = $won - $lost;
- print "$teamName[$team] team: $size players, score: $score ($won wins, $lost losses)\n";
+  ($len,$code,$numTeams) = unpack("n n C", $buffer);
+  die $! unless $code == 0x7475;
+  @teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
+  for (1..$numTeams) {
+   die $! unless sysread(S, $buffer, 8) == 8;
+   ($team,$size,$won,$lost) = unpack("n4", $buffer);
+   $score = $won - $lost;
+   print "$teamName[$team] team: $size players, score: $score ($won wins, $lost losses)\n";
+  }
+  print "\n";
 }
-print "\n";
+else {
+  $numTeams = 0;
+}
 
 # get the players
 @playerType = ("tank", "observer", "robot tank");
