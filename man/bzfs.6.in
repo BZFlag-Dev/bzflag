@@ -366,12 +366,11 @@ Write score to stdout whenever it changes
 Advertise this server on the internet with the given \fIdescription\fR.
 By default, a server will respond to broadcast queries, allowing clients
 to find servers running on the standard port on the local subnet.
-The \fB\-public\fR option causes the server to register itself with
+The \fB\-publictitle\fR option causes the server to register itself with
 a list server, which clients can query to get a list of \fBbzfs\fR servers.
 .TP
 \fB\-publicaddr \fIaddress\fR[:\fIport\fR]
 Advertise this server with the given \fIaddress\fR and \fIport\fR.
-Only has an effect when used with \fB\-public\fR.
 Normally a server advertises itself at the local address and port.
 Some servers are not accessible from the internet at this address
 (for example servers behind a firewall using Network Address
@@ -380,14 +379,15 @@ that internet users should use to access this server.
 .TP
 \fB\-publiclist \fIurl\fR
 Advertise this server on the list servers listed at \fIurl\fR.
-Only has an effect when used with \fB\-public\fR.
+Only has an effect when used with \fB\-publictitle\fR and/or \fB\-publicaddr\fR.
 A built\-in url is used by default.  The \fBBZFlag\fR clients use the
 same built\-in url so, by default, clients will see public servers
 automatically.  This argument may be provided multiple times to
 publicize a server to multiple list servers.
 .TP 
 \fB\-publickey \fIkey\fR
-Advertise this server on the list servers using the specified key.
+Advertise this server on the list server(s) using the specified key.
+Only has an effect when used with \fB\-publictitle\fR and/or \fB\-publicaddr\fR.
 .TP
 .B \-q
 If specified, the server will not listen for nor respond to ``pings''.
@@ -578,7 +578,7 @@ and forward them to the server.
 Clients can search for servers by sending broadcast UDP
 packets.  But they must be on the same local area network for this to work.
 Clients can also find servers
-advertised using \fI\-public\fR by querying list servers.
+advertised using \fI\-publictitle\fR by querying list servers.
 .PP
 Game information is relayed through the server. Some communication between
 clients, such as position and orientation information, is normally sent via UDP

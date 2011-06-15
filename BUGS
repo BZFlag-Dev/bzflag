@@ -14,7 +14,7 @@ recent bugs
 
 - Zbuffer flickering with Narrow and Covered animated treads
 
-- ANSI codes can be used in the server -public messages
+- ANSI codes can be used in the server -publictitle messages
   The best solution is probably to strip the codes at the listserver
 
 - some ATI cards get font rendering to have variable alpha values
