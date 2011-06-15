@@ -2153,6 +2153,7 @@ void resetFlag(FlagInfo &flag)
   float flagPos[3] = {0.0f, 0.0f, 0.0f};
 
   int teamIndex = flag.teamIndex();
+  std::map<int, TeamBases>::size_type numberOfBases = bases.size();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
     if (!world->getFlagSpawnPoint(&flag, flagPos)) {
@@ -2491,9 +2492,14 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   if (wasPlaying) {
     // if everybody left then reset world
     if (GameKeeper::Player::count() == 0) {
-      if (clOptions->worldFile == "") {
+
+      /* // No idea why this was in here. Deleting the bases however made
+       // players and flags spawn at random places after caps. If anyone thinks 
+       // it should be in here, uncomment and fix the bug.Maybe this made sense once?
+       // i really don't think it does.
+            if (clOptions->worldFile == "") {
 	bases.clear();
-      }
+      }*/
 
       if (clOptions->oneGameOnly) {
 	done = true;
