@@ -460,9 +460,6 @@ static void sendFlagUpdate(int playerIndex)
 
 void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
 {
-  if (!allowTeams())
-    return;
-  
   // If teamIndex1 is -1, send all teams
   // If teamIndex2 is -1, just send teamIndex1 team
   // else send both teamIndex1 and teamIndex2 teams
