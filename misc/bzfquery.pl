@@ -134,23 +134,18 @@ die $! unless $code == 0x7170;
 
 # get the teams (for all except OpenFFA)
 # TimRiker: MsgTeamUpdate has numTotalTeams but this is how many we will get
-if ($style != 2) {
-  die $! unless sysread(S, $buffer, 5) == 5;
+die $! unless sysread(S, $buffer, 5) == 5;
 
-  ($len,$code,$numTeams) = unpack("n n C", $buffer);
-  die $! unless $code == 0x7475;
-  @teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
-  for (1..$numTeams) {
-   die $! unless sysread(S, $buffer, 8) == 8;
-   ($team,$size,$won,$lost) = unpack("n4", $buffer);
-   $score = $won - $lost;
-   print "$teamName[$team] team: $size players, score: $score ($won wins, $lost losses)\n";
-  }
-  print "\n";
+($len,$code,$numTeams) = unpack("n n C", $buffer);
+die $! unless $code == 0x7475;
+@teamName = ("Rogue", "Red", "Green", "Blue", "Purple", "Observer", "Rabbit");
+for (1..$numTeams) {
+ die $! unless sysread(S, $buffer, 8) == 8;
+ ($team,$size,$won,$lost) = unpack("n4", $buffer);
+ $score = $won - $lost;
+ print "$teamName[$team] team: $size players, score: $score ($won wins, $lost losses)\n";
 }
-else {
-  $numTeams = 0;
-}
+print "\n";
 
 # get the players
 @playerType = ("tank", "observer", "robot tank");

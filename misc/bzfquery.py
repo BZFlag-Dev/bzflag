@@ -135,7 +135,6 @@ class Server :
 
 	def __init__( self , host = '127.0.0.1' , port = 5154 ) :
 
-		self.gameStyle = None
 		self.sock = socket.socket( socket.AF_INET , socket.SOCK_STREAM )
 		self.sock.connect( ( host , port ) )
 		self.sock.sendall( "BZFLAG\r\n\r\n" )
@@ -195,7 +194,7 @@ class Server :
 			maxTime , elapsedTime \
 			= data
 		print "Style is %d\n" % style
-		self.gameStyle = gameStyles[style]
+		style = gameStyles[style]
 		options = decodeOptions( options )
 		teams = {
 			'rogue'    : ( rogueSize  , rogueMax ) ,
@@ -206,7 +205,7 @@ class Server :
 			'observer' : ( obsSize    , obsMax ) ,
 		}
 		infos = {
-			'style' : self.gameStyle ,
+			'style' : style ,
 			'options' : options ,
 			'teams' : teams ,
 			'maxPlayerScore' : maxPlayerScore ,
@@ -225,24 +224,22 @@ class Server :
 		data = self.cmd( 'qp' )
 		data = struct.unpack( '>2H' , data )
 		numTeams_ , numPlayers = data
+		data = self.getResponse( 'tu' )
+		numTeams , data = ord( data[ 0 ] ) , data[ 1 : ]
+		#if numTeams != numTeams_ :
+		#	raise Error( 'Inconsistency in numTeams (got %d and %d)' \
+		#		% ( numTeams_ , numTeams ) )
 		teamsInfo = {}
-		if self.gameStyle != "OpenFFA" :
-			data = self.getResponse( 'tu' )
-			numTeams , data = ord( data[ 0 ] ) , data[ 1 : ]
-			#if numTeams != numTeams_ :
-			#	raise Error( 'Inconsistency in numTeams (got %d and %d)' \
-			    #		% ( numTeams_ , numTeams ) )
-			for i in range( numTeams ) :
-				teamInfo , data = data[ : 8 ] , data[ 8 : ]
-				team , size , won , lost = struct.unpack( '>4H' , teamInfo )
-				score = won - lost
-				teamsInfo[ teamsName[ team ] ] = {
-					'size'  : size ,
-					'score' : score ,
-					'won'   : won ,
-					'lost'  : lost
-				}
-
+		for i in range( numTeams ) :
+			teamInfo , data = data[ : 8 ] , data[ 8 : ]
+			team , size , won , lost = struct.unpack( '>4H' , teamInfo )
+			score = won - lost
+			teamsInfo[ teamsName[ team ] ] = {
+				'size'  : size ,
+				'score' : score ,
+				'won'   : won ,
+				'lost'  : lost
+			}
 		playersInfo = []
 		for i in range( numPlayers ) :
 			data = self.getResponse( 'ap'  )
@@ -273,7 +270,7 @@ def getAndPrintStat( hostname , port ) :
 	print
 	print '--[ GAME ]' + '-' * 40
 	print
-	print 'Type:' , s.gameStyle
+	print 'Type:' , game[ 'style' ]
 	print 'Options:' , ' '.join( game[ 'options' ] )
 	print
 	print 'Max players: %s   Max shots: %s' % ( game[ 'maxPlayers' ] , game[ 'maxShots' ] )
@@ -295,17 +292,16 @@ def getAndPrintStat( hostname , port ) :
 	print 'Time elapsed: %g' % game[ 'elapsedTime' ]
 
 	teams , players = s.queryPlayers()
-	if s.gameStyle != 'OpenFFA' :
-		print
-		print '--[ TEAMS ]' + '-' * 39
-		print
-		print 'Teams     Size  Score  Won  Lost'
-		print '-' * 32
-		for team in teamsName :
-			t = teams.get( team )
-			if t is not None :
-				print '%-8s %5d %5d %5d %5d' \
-					% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] )
+	print
+	print '--[ TEAMS ]' + '-' * 39
+	print
+	print 'Teams     Size  Score  Won  Lost'
+	print '-' * 32
+	for team in teamsName :
+		t = teams.get( team )
+		if t is not None :
+			print '%-8s %5d %5d %5d %5d' \
+				% ( team , t[ 'size' ] , t[ 'score' ] , t[ 'won' ] , t[ 'lost' ] )
 
 	print
 	print '--[ PLAYERS ]' + '-' * 37

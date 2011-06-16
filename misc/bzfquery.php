@@ -131,11 +131,6 @@ function bzfquery ($hostport) {
       case MsgQueryGame:
         $server += unpack("ngameStyle/ngameOptions/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $packet['data']);
         $have['QueryGame'] = true;
-        // If it's OpenFFA, we won't get MsgTeamUpdate
-        if ($server['gameStyle'] == 2) {
-          $have['TeamUpdate'] = true;
-          $server['numTeams'] = 0;
-        }
         break;
       case MsgQueryPlayers:
         $server += unpack("nnumTotalTeams/nnumPlayers", $packet['data']);
