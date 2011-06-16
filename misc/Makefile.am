@@ -12,7 +12,6 @@ EXTRA_DIST =				\
 	bzfs_conf.html			\
 	bzfsd				\
 	bzirc.pl			\
-	bzlist.php			\
 	bzwcvt.pl			\
 	checkam				\
 	doxyfile			\
