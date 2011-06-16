@@ -16,10 +16,7 @@ EXTRA_DIST =				\
 	checkam				\
 	doxyfile			\
 	filter.txt			\
-	flagbuffet.bzw			\
-	fountains.bzw			\
 	groups.conf			\
-	hix.bzw				\
 	libtool.m4			\
 	man2html.c			\
 	mrtg-bzflag.pl			\
