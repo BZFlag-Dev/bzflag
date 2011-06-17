@@ -3,7 +3,7 @@
 
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-man_MANS = curl.1 curl-config.1
+noinst_MANS = curl.1 curl-config.1
 GENHTMLPAGES = curl.html curl-config.html
 PDFPAGES = curl.pdf curl-config.pdf
 

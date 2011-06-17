@@ -41,7 +41,7 @@ EXTRA_DIST = Makefile.b32 Makefile.m32 Makefile.vc6 Makefile.riscos $(DSP) \
 
 # CLEANFILES = $(DSP) $(VCPROJ)
 
-lib_LTLIBRARIES = libcurl.la
+noinst_LTLIBRARIES = libcurl.la
 LIBCURL_LIBS = @LIBCURL_LIBS@
 
 # Specify our include paths here, and do it relative to $(top_srcdir) and

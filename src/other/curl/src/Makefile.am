@@ -42,7 +42,7 @@ INCLUDES = -I$(top_builddir)/include/curl \
            -I$(top_srcdir)/lib            \
            -I$(top_srcdir)/src
 
-bin_PROGRAMS = curl
+noinst_PROGRAMS = curl
 
 include Makefile.inc
 
