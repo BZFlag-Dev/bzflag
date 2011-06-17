@@ -34,9 +34,9 @@ INCLUDES = -I$(top_builddir) \
            -I$(top_srcdir)
 endif
 
-lib_LTLIBRARIES = libcares.la
+noinst_LTLIBRARIES = libcares.la
 
-man_MANS = $(MANPAGES)
+noinst_MANS = $(MANPAGES)
 
 MSVCFILES = vc/vc6aws.dsw vc/acountry/vc6acountry.dsp vc/adig/vc6adig.dsp \
  vc/ahost/vc6ahost.dsp vc/cares/vc6cares.dsp vc/cares/vc6cares.dsw
@@ -61,7 +61,7 @@ CLEANFILES = $(PDFPAGES) $(HTMLPAGES)
 DISTCLEANFILES = ares_build.h
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libcares.pc
+noinst_DATA = libcares.pc
 
 VER=-version-info 2:0:0
 # This flag accepts an argument of the form current[:revision[:age]]. So,
@@ -107,7 +107,7 @@ libcares_la_SOURCES = $(CSOURCES) $(HHEADERS)
 # where to install the c-ares headers
 libcares_ladir = $(includedir)
 # what headers to install on 'make install':
-libcares_la_HEADERS = ares.h ares_version.h ares_dns.h \
+noinst_HEADERS = ares.h ares_version.h ares_dns.h \
 	ares_build.h ares_rules.h
 
 ahost_SOURCES = ahost.c $(SAMPLESOURCES) $(SAMPLEHEADERS)
