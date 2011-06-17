@@ -5351,6 +5351,9 @@ int main(int argc, char **argv)
 
   // start listening and prepare world database
   if (!defineWorld()) {
+#ifdef BZ_PLUGINS
+    unloadPlugins();
+#endif
 #if defined(_WIN32)
     WSACleanup();
 #endif /* defined(_WIN32) */
