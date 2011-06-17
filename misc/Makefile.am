@@ -19,6 +19,9 @@ EXTRA_DIST =				\
 	groups.conf			\
 	libtool.m4			\
 	man2html.c			\
+	maps/flagbuffet.bzw		\
+	maps/fountains.bzw		\
+	maps/hix.bzw			\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
 	pingtimes.sh			\
