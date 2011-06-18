@@ -584,8 +584,7 @@ AC_DEFINE_UNQUOTED(BZFLAG_DATA, "$BZFLAG_DATA", [Data file directory])
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
 AC_LANG(C)
-if test x$with_SDL = xyes; then
-
+if test "x$enable_client" != xno -a "x$with_SDL" = xyes; then
     AC_MSG_CHECKING([for SDL framework])
     savedLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -framework SDL"
@@ -1118,7 +1117,7 @@ bz_configure_args="$ac_configure_args"
 AC_CONFIG_SUBDIRS(src/other/ares)
 if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
     # instruct curl to use the included ares
-    ac_configure_args="$ac_configure_args --enable-ares"
+    ac_configure_args="$ac_configure_args --enable-ares --disable-manual"
 fi
 
 AC_CONFIG_SUBDIRS(src/other/curl)
