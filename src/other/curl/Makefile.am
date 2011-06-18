@@ -32,7 +32,7 @@ CMake/Utilities.cmake include/curl/curlbuild.h.cmake
 
 EXTRA_DIST = CHANGES COPYING maketgz curl-config.in	\
  curl-style.el sample.emacs RELEASE-NOTES buildconf 	\
- libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST)
+ libcurl.pc.in vc6curl.dsw MacOSX-Framework Android.mk $(CMAKE_DIST) missing
 
 noinst_SCRIPTS = curl-config
 
