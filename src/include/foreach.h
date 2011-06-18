@@ -5,16 +5,16 @@
 #include "typeof.h"
 
 
-// NOTE: the 'copy' variants can be used with temporary containers
+// NOTE: the 'tmp' variants can be used with temporary containers
 
 
 // foreach              (varname, container) { ... }
 
 // foreach_reverse      (varname, container) { ... }
 
-// foreach_copy         (varname, container) { ... }
+// foreach_tmp         (varname, container) { ... }
 
-// foreach_copy_reverse (varname, container) { ... }
+// foreach_tmp_reverse (varname, container) { ... }
 
 
 #define FOREACH_ITERATOR(VAR) (VAR##_ITER)
@@ -60,13 +60,13 @@ struct foreach_container_pointer {
 //============================================================================//
 
 template <typename T>
-struct foreach_container_copy : public T {
-  foreach_container_copy(const T& t) : T(t) {}
+struct foreach_container_tmp : public T {
+  foreach_container_tmp(const T& t) : T(t) {}
   operator bool() const { return false; } // for the "if (X) {} else" setup
 };
 
-#define FOREACH_COPY_BASIS(VAR, CON, BEGIN, END) \
-  if (foreach_container_copy<typeof(CON)> FOREACH_CON = (CON)) {} else \
+#define FOREACH_TMP_BASIS(VAR, CON, BEGIN, END) \
+  if (foreach_container_tmp<typeof(CON)> FOREACH_CON = (CON)) {} else \
   for (FOREACH_VAR_SETUP(VAR##_ITER, VAR##_NEXT, FOREACH_CON.BEGIN()); \
        bool VAR##_FOREACH_ONCE = /* bool used in the next for statement */ \
          (VAR##_ITER != FOREACH_CON.END()) \
@@ -77,8 +77,8 @@ struct foreach_container_copy : public T {
          VAR##_FOREACH_ONCE; \
          VAR##_FOREACH_ONCE = false)
 
-#define foreach_copy(VAR, CON)         FOREACH_COPY_BASIS(VAR, CON,  begin,  end)
-#define foreach_copy_reverse(VAR, CON) FOREACH_COPY_BASIS(VAR, CON, rbegin, rend)
+#define foreach_tmp(VAR, CON)         FOREACH_TMP_BASIS(VAR, CON,  begin,  end)
+#define foreach_tmp_reverse(VAR, CON) FOREACH_TMP_BASIS(VAR, CON, rbegin, rend)
 
 //============================================================================//
 
