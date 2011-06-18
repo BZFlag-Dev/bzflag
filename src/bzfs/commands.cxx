@@ -1887,12 +1887,19 @@ bool PlayerListCommand::operator() (const char	 *,
 
   for (int i = 0; i < curMaxPlayers; i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->player.isPlaying() &&
-      // allow all players to see their own connection
-      (otherData->getIndex() == t || playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList))) {
-      snprintf(reply, MessageLen, "[%d]%-16s: %s", t,
-	playerData->player.getCallSign(),
-	otherData->netHandler->getPlayerHostInfo().c_str());
+    if (otherData && otherData->player.isPlaying()) {
+      if (playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList))
+	snprintf(reply, MessageLen, "[%d]%-16s: %s",
+	  otherData->getIndex(),
+	  otherData->player.getCallSign(),
+	  otherData->netHandler->getPlayerHostInfo().c_str());
+      else if (otherData->getIndex() == t)
+	// allow all players to see their own connection, but not player ID
+	snprintf(reply, MessageLen, "%-16s: %s",
+	  otherData->player.getCallSign(),
+	  otherData->netHandler->getPlayerHostInfo().c_str());
+      else
+	continue;	// no permission to see connections of other players
       sendMessage(ServerPlayer, t, reply);
     }
   }
