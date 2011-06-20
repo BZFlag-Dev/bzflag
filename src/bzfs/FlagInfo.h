@@ -36,7 +36,7 @@ public:
   void dropFlag(float pos[3], float landingPos[3], bool vanish);
   void resetFlag(float position[3], bool teamIsEmpty);
   void grab(int playerIndex);
-  int  teamIndex() const;
+  TeamColor teamIndex() const;
   int  getIndex() const;
   bool landing(const TimeKeeper &tm);
   void getTextualInfo(char *message);

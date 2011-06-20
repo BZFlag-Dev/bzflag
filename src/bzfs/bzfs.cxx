@@ -2149,7 +2149,7 @@ void resetFlag(FlagInfo &flag)
   // reposition flag (middle of the map might be a bad idea)
   float flagPos[3] = {0.0f, 0.0f, 0.0f};
 
-  int teamIndex = flag.teamIndex();
+  TeamColor teamIndex = flag.teamIndex();
   if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
       && (bases.find(teamIndex) != bases.end())) {
     if (!world->getFlagSpawnPoint(&flag, flagPos)) {
@@ -3193,7 +3193,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     return;
   FlagInfo &flag = *FlagInfo::get(flagIndex);
 
-  int teamIndex = flag.teamIndex();
+  TeamColor teamIndex = flag.teamIndex();
   if (teamIndex == ::NoTeam)
     return;
 

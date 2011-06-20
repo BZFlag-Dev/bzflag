@@ -222,7 +222,7 @@ void FlagInfo::grab(int playerIndex)
   numShots    = 0;
 }
 
-int FlagInfo::teamIndex() const
+TeamColor FlagInfo::teamIndex() const
 {
   return flag.type->flagTeam;
 }
