@@ -117,7 +117,7 @@ extern int debugLevel;
 #ifdef FLT_EPSILON
 #  define ZERO_TOLERANCE FLT_EPSILON
 #else
-#  define ZERO_TOLERANCE 0.00005f
+#  define ZERO_TOLERANCE 1.0e-06f
 #endif
 
 /* Might we be BSDish? sys/param.h has BSD defined if so */
