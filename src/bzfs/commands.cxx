@@ -1885,23 +1885,25 @@ bool PlayerListCommand::operator() (const char	 *,
   GameKeeper::Player *otherData;
   char reply[MessageLen] = {0};
 
-  for (int i = 0; i < curMaxPlayers; i++) {
-    otherData = GameKeeper::Player::getPlayerByIndex(i);
-    if (otherData && otherData->player.isPlaying()) {
-      if (playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList))
-	snprintf(reply, MessageLen, "[%d]%-16s: %s",
-	  otherData->getIndex(),
-	  otherData->player.getCallSign(),
-	  otherData->netHandler->getPlayerHostInfo().c_str());
-      else if (otherData->getIndex() == t)
-	// allow all players to see their own connection, but not player ID
-	snprintf(reply, MessageLen, "%-16s: %s",
-	  otherData->player.getCallSign(),
-	  otherData->netHandler->getPlayerHostInfo().c_str());
-      else
-	continue;	// no permission to see connections of other players
-      sendMessage(ServerPlayer, t, reply);
+  if (playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList)) {
+    for (int i = 0; i < curMaxPlayers; i++) {
+      otherData = GameKeeper::Player::getPlayerByIndex(i);
+      if (otherData && otherData->player.isPlaying()) {
+	if (playerData->accessInfo.hasPerm(PlayerAccessInfo::playerList))
+	  snprintf(reply, MessageLen, "[%d]%-16s: %s",
+	    otherData->getIndex(),
+	    otherData->player.getCallSign(),
+	    otherData->netHandler->getPlayerHostInfo().c_str());
+	sendMessage(ServerPlayer, t, reply);
+      }
     }
+  }
+  else {
+    // allow all players to see their own connection, but not player ID
+      snprintf(reply, MessageLen, "%-16s: %s",
+	playerData->player.getCallSign(),
+	playerData->netHandler->getPlayerHostInfo().c_str());
+      sendMessage(ServerPlayer, t, reply);
   }
   return true;
 }
