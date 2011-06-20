@@ -15,6 +15,7 @@
 
 // interface header
 #include "ServerLink.h"
+// #include "MsgStrings.h"
 
 #if defined(DEBUG)
 #define NETWORK_STATS
@@ -397,6 +398,8 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 {
   bool needForSpeed=false;
   if (state != Okay) return;
+//  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
+//    logDebugMessage(1,"send %s len %d\n",MsgStrings::strMsgCode(code),len);
   char msgbuf[MaxPacketLen];
   void* buf = msgbuf;
   buf = nboPackUShort(buf, len);
@@ -490,6 +493,8 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
       }
       udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
       udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+//      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
+//	logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
       if (len > udpLength) {
 	udpLength = 0;
@@ -556,7 +561,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 
-  //printError("Code is %02x",code);
+//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (len > MaxPacketLen)
     return -1;
   if (len > 0)

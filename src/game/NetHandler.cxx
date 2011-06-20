@@ -12,6 +12,7 @@
 
 /* interface header */
 #include "NetHandler.h"
+// #include "MsgStrings.h"
 
 // system headers
 #include <errno.h>
@@ -143,6 +144,8 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   void *buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+//  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
+//    logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (n == 6 && len == 2 && code == MsgPingCodeRequest)
     // Ping code request
     return -2;
@@ -472,6 +475,8 @@ int NetHandler::pwrite(const void *b, int l) {
   uint16_t len, code;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+//  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
+//    logDebugMessage(1,"send %s len %d\n",MsgStrings::strMsgCode(code),len);
 #ifdef NETWORK_STATS
   countMessage(code, len, 1);
 #endif
@@ -524,6 +529,7 @@ RxStatus NetHandler::tcpReceive() {
   void *buf = tcpmsg;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (len > MaxPacketLen) {
     logDebugMessage(1,"Player [%d] sent huge packet length (len=%d), possible attack\n",
 	   playerIndex, len);
