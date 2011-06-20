@@ -80,8 +80,10 @@ static MsgStringList handleMsgGameTime(PacketInfo *pi);
 static MsgStringList handleMsgGrabFlag(PacketInfo *pi);
 static MsgStringList handleMsgGMUpdate(PacketInfo *pi);
 static MsgStringList handleMsgGetWorld(PacketInfo *pi);
+static MsgStringList handleMsgGameSettings(PacketInfo *pi);
 static MsgStringList handleMsgKilled(PacketInfo *pi);
 static MsgStringList handleMsgMessage(PacketInfo *pi);
+static MsgStringList handleMsgNearFlag(PacketInfo *pi);
 static MsgStringList handleMsgNewRabbit(PacketInfo *pi);
 static MsgStringList handleMsgNegotiateFlags(PacketInfo *pi);
 static MsgStringList handleMsgPause(PacketInfo *pi);
@@ -104,10 +106,13 @@ static MsgStringList handleMsgTeleport(PacketInfo *pi);
 static MsgStringList handleMsgTransferFlag(PacketInfo *pi);
 static MsgStringList handleMsgTeamUpdate(PacketInfo *pi);
 static MsgStringList handleMsgWantWHash(PacketInfo *pi);
+static MsgStringList handleMsgWantSettings(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
 static MsgStringList handleMsgServerControl(PacketInfo *pi);
 static MsgStringList handleMsgLagPing(PacketInfo *pi);
+static MsgStringList handleMsgPingCodeReply(PacketInfo *pi);
+static MsgStringList handleMsgPingCodeRequest(PacketInfo *pi);
 
 
 typedef struct {
@@ -133,8 +138,10 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgGrabFlag),
   PACKET_LIST_ENTRY (MsgGMUpdate),
   PACKET_LIST_ENTRY (MsgGetWorld),
+  PACKET_LIST_ENTRY (MsgGameSettings),
   PACKET_LIST_ENTRY (MsgKilled),
   PACKET_LIST_ENTRY (MsgMessage),
+  PACKET_LIST_ENTRY (MsgNearFlag),
   PACKET_LIST_ENTRY (MsgNewRabbit),
   PACKET_LIST_ENTRY (MsgNegotiateFlags),
   PACKET_LIST_ENTRY (MsgPause),
@@ -157,10 +164,13 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgTransferFlag),
   PACKET_LIST_ENTRY (MsgTeamUpdate),
   PACKET_LIST_ENTRY (MsgWantWHash),
+  PACKET_LIST_ENTRY (MsgWantSettings),
   PACKET_LIST_ENTRY (MsgUDPLinkRequest),
   PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
   PACKET_LIST_ENTRY (MsgServerControl),
-  PACKET_LIST_ENTRY (MsgLagPing)
+  PACKET_LIST_ENTRY (MsgLagPing),
+  PACKET_LIST_ENTRY (MsgPingCodeReply),
+  PACKET_LIST_ENTRY (MsgPingCodeRequest)
 };
 static const int PacketListCount = sizeof (PacketList) / sizeof (PacketList[0]);
 
@@ -651,6 +661,14 @@ static MsgStringList handleMsgGetWorld (PacketInfo *pi)
 }
 
 
+static MsgStringList handleMsgGameSettings (PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+
 static MsgStringList handleMsgKilled (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
@@ -698,6 +716,14 @@ static MsgStringList handleMsgMessage (PacketInfo *pi)
   listPush (list, 1, "dst: %s", strPlayer(dst).c_str());
   listPush (list, 1, "message: \"%s\"", (char*) d);
 
+  return list;
+}
+
+
+static MsgStringList handleMsgNearFlag (PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
   return list;
 }
 
@@ -1049,6 +1075,14 @@ static MsgStringList handleMsgWantWHash (PacketInfo *pi)
 }
 
 
+static MsgStringList handleMsgWantSettings (PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+
 static MsgStringList handleMsgUDPLinkRequest (PacketInfo *pi)
 {
   // not recorded
@@ -1082,6 +1116,22 @@ static MsgStringList handleMsgLagPing (PacketInfo *pi)
 
 
 static MsgStringList handleMsgGameTime (PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+
+static MsgStringList handleMsgPingCodeReply (PacketInfo *pi)
+{
+  // not recorded
+  MsgStringList list = listMsgBasics (pi);
+  return list;
+}
+
+
+static MsgStringList handleMsgPingCodeRequest (PacketInfo *pi)
 {
   // not recorded
   MsgStringList list = listMsgBasics (pi);
