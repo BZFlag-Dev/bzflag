@@ -3619,8 +3619,10 @@ static void		checkEnvironment()
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) &&
 	((flagd->flagTeam == team && base != team) ||
-	(flagd->flagTeam != team && base == team)))
+	(flagd->flagTeam != team && base == team))) {
       serverLink->sendCaptureFlag(base);
+      myTank->setFlag(Flags::Null);	// prevent subsequent capture messages
+    }
   }
   else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
 				    myTank->getLocation() == LocalPlayer::OnBuilding)) {
