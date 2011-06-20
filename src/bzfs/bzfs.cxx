@@ -3196,6 +3196,10 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   TeamColor teamIndex = flag.teamIndex();
   if (teamIndex == ::NoTeam)
     return;
+  if (teamIndex != teamCaptured)
+      logDebugMessage(1,"Player %s [%d] claimed to capture %s flag while carrying %s flag\n",
+	playerData->player.getCallSign(), playerIndex,
+	Team::getName(teamCaptured), Team::getName(teamIndex));
 
   { //cheat checking
     TeamColor base = whoseBase(playerData->lastState.pos[0],
@@ -3214,7 +3218,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 	     "reaching their own base. (Player position: %f %f %f)\n",
 	     playerData->player.getCallSign(), playerIndex,
 	     Team::getName(playerData->player.getTeam()),
-	     Team::getName((TeamColor)teamIndex),
+	     Team::getName(teamIndex),
 	     playerData->lastState.pos[0], playerData->lastState.pos[1],
 	     playerData->lastState.pos[2]);
       //char message[MessageLen];
@@ -3227,7 +3231,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   bz_AllowCTFCaptureEventData_V1 allowCap;
 
-  allowCap.teamCapped = convertTeam((TeamColor)teamIndex);
+  allowCap.teamCapped = convertTeam(teamIndex);
   allowCap.teamCapping = convertTeam(teamCaptured);
   allowCap.playerCapping = playerIndex;
   playerData->getPlayerState(allowCap.pos, allowCap.rot);
@@ -3252,7 +3256,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
   // find any events for capturing the flags on the capped team or events for ANY team
   bz_CTFCaptureEventData_V1	eventData;
-  eventData.teamCapped = convertTeam((TeamColor)teamIndex);
+  eventData.teamCapped = convertTeam(teamIndex);
   eventData.teamCapping = convertTeam(teamCaptured);
   eventData.playerCapping = playerIndex;
   playerData->getPlayerState(eventData.pos, eventData.rot);
