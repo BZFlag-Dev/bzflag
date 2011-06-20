@@ -84,7 +84,6 @@ std::string		getConfigDirName( const char* versionName )
     }
   }
 
-  // yes your suposed to have the "my" in front of it. I know it's silly, but it's the MS way.
   name += "\\BZFlag\\";
   if (versionName) {
     name += versionName;
