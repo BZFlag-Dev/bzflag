@@ -69,13 +69,24 @@ std::string	getOldConfigFileName(void)
 
 #elif defined(_WIN32) /* !defined(_WIN32) */
 
-	// get location of personal files from system.  this appears to be
-	// the closest thing to a home directory on windows.  use root of
-	// C drive as a default in case we can't get the path or it doesn't
-	// exist.
-	std::string oldConfigName = "bzflag19.bzc";
-	std::string name = getConfigDirName();
-	name += oldConfigName;
+	std::string name("C:");
+	char dir[MAX_PATH];
+	ITEMIDLIST* idl;
+	if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL , &idl))) {
+		if (SHGetPathFromIDList(idl, dir)) {
+			struct stat statbuf;
+			if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+				name = dir;
+		}
+
+		IMalloc* shalloc;
+		if (SUCCEEDED(SHGetMalloc(&shalloc))) {
+			shalloc->Free(idl);
+			shalloc->Release();
+		}
+	}
+
+	name += "\\My BZFlag Files\\2.0\\";
 	return name;
 
 #endif /* !defined(_WIN32) */
