@@ -78,7 +78,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Send to Teammates:"));
   controls.push_back(createLabel(NULL, "Send to Nemesis:"));
   controls.push_back(createLabel(NULL, "Send to Recipient:"));
-	controls.push_back(createLabel(NULL, "Send to Admin:"));
+  controls.push_back(createLabel(NULL, "Send to Admin:"));
   controls.push_back(createLabel(NULL, "Jump:"));
   controls.push_back(createLabel(NULL, "Binoculars:"));
   controls.push_back(createLabel(NULL, "Toggle Score:"));
@@ -113,6 +113,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Restart:"));
   controls.push_back(createLabel(NULL, "Iconify:"));
   controls.push_back(createLabel(NULL, "Fullscreen:"));
+  controls.push_back(createLabel(NULL, "Screenshot:"));
   controls.push_back(quickKeys = createLabel(NULL, "Define Quick Keys"));
 
   initNavigation(controls, 2, controls.size()-1);
@@ -163,6 +164,7 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("restart", ++i);
   initkeymap("iconify", ++i);
   initkeymap("fullscreen", ++i);
+  initkeymap("screenshot", ++i);
 }
 
 void KeyboardMapMenu::initkeymap(const std::string& name, int index)

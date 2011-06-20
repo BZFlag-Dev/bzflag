@@ -114,9 +114,7 @@ ActionBinding::ActionBinding() {
   defaultBinding.insert(BindingTable::value_type("Q", "toggleRadar"));
   defaultBinding.insert(BindingTable::value_type("W", "toggleConsole"));
   defaultBinding.insert(BindingTable::value_type("F4", "iconify"));
-#ifdef SNAPPING
   defaultBinding.insert(BindingTable::value_type("F5", "screenshot"));
-#endif
   defaultBinding.insert(BindingTable::value_type("-", "time backward"));
   defaultBinding.insert(BindingTable::value_type("=", "time forward"));
   defaultBinding.insert(BindingTable::value_type("H", "toggleFlags radar"));
