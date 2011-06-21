@@ -2987,21 +2987,22 @@ void doSpawns()
   }
 }
 
+// Currently only used for the server-side ID flag
 static void searchFlag(GameKeeper::Player &playerData)
 {
   if (!playerData.player.isAlive())
     return;
-  float radius = BZDBCache::tankRadius + BZDBCache::flagRadius;
-  bool  id     = false;
 
+  // Only continue if the player has the ID flag
   int flagId = playerData.player.getFlag();
-  if (flagId >= 0) {
-    FlagInfo &playerFlag = *FlagInfo::get(flagId);
-    if (playerFlag.flag.type != Flags::Identify)
-      return;
-    id     = true;
-    radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
-  }
+  if (flagId < 0)
+    return;
+
+  FlagInfo &playerFlag = *FlagInfo::get(flagId);
+  if (playerFlag.flag.type != Flags::Identify)
+    return;
+
+  float radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
 
   const PlayerId playerIndex = playerData.getIndex();
 
@@ -3017,44 +3018,78 @@ static void searchFlag(GameKeeper::Player &playerData)
       continue;
 
     const float *fpos = flag.flag.position;
-    float dist = (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
-    if (!id && dist >= 0.01f)
-      continue;
-    dist += (tpos[0] - fpos[0]) * (tpos[0] - fpos[0])
-      + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+    float dist = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0])
+      + (tpos[1] - fpos[1]) * (tpos[1] - fpos[1])
+      + (tpos[2] - fpos[2]) * (tpos[2] - fpos[2]);
 
     if (dist < radius2) {
       radius2     = dist;
       closestFlag = i;
-      if (!id)
-       break;
     }
   }
 
   if (closestFlag < 0) {
-    if (id)
-      playerData.setLastIdFlag(-1);
+    playerData.setLastIdFlag(-1);
     return;
   }
-  FlagInfo &flag = *FlagInfo::get(closestFlag);
-  if (id) {
-    if (closestFlag != playerData.getLastIdFlag()) {
-      sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
-      playerData.setLastIdFlag(closestFlag);
-    }
-  } else {
-      // okay, player can have it
-      flag.grab(playerIndex);
-      playerData.player.setFlag(flag.getIndex());
 
-      // send MsgGrabFlag
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, playerIndex);
-      buf = flag.pack(buf);
-      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
-      playerData.flagHistory.add(flag.flag.type);
-   
+  FlagInfo &flag = *FlagInfo::get(closestFlag);
+  if (closestFlag != playerData.getLastIdFlag()) {
+    sendClosestFlagMessage(playerIndex,flag.flag.type,flag.flag.position);
+    playerData.setLastIdFlag(closestFlag);
   }
+}
+
+
+static void grabFlag(int playerIndex, FlagInfo &flag)
+{
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+  // player wants to take possession of flag
+  if (!playerData ||
+      playerData->player.isObserver() ||
+      !playerData->player.isAlive() ||
+      playerData->player.haveFlag() ||
+      flag.flag.status != FlagOnGround)
+    return;
+
+  //last Pos might be lagged by TankSpeed so include in calculation
+  const float tankRadius = BZDBCache::tankRadius;
+  const float tankSpeed = BZDBCache::tankSpeed;
+  const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
+  const float* tpos = playerData->lastState.pos;
+  const float* fpos = flag.flag.position;
+  const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+
+  if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
+       logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
+    playerData->player.getCallSign(), playerIndex,
+    tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
+    return;
+  }
+
+  // okay, player can have it
+  flag.grab(playerIndex);
+  playerData->player.setFlag(flag.getIndex());
+
+  // send MsgGrabFlag
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = flag.pack(buf);
+
+  bz_FlagGrabbedEventData_V1	data;
+  data.flagID = flag.getIndex();
+  data.flagType = flag.flag.type->flagAbbv.c_str();
+  memcpy(data.pos,fpos,sizeof(float)*3);
+  data.playerID = playerIndex;
+
+  worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
+
+  broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+
+  playerData->flagHistory.add(flag.flag.type);
 }
 
 
@@ -4082,6 +4117,21 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       playerData->player.endShotCredit--;
       playerKilled(t, lookupPlayer(killer), reason, shot, flagType, phydrv);
 
+      break;
+    }
+
+    // player requesting to grab flag
+    case MsgGrabFlag: {
+      // data: flag index
+      uint16_t flag;
+
+      if (invalidPlayerAction(playerData->player, t, "grab a flag"))
+	break;
+
+      buf = nboUnpackUShort(buf, flag);
+      // Sanity check
+      if (flag < numFlags)
+	grabFlag(t, *FlagInfo::get(flag));
       break;
     }
 

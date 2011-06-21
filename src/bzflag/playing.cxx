@@ -3619,10 +3619,8 @@ static void		checkEnvironment()
     TeamColor team = myTank->getTeam();
     if ((base != NoTeam) &&
 	((flagd->flagTeam == team && base != team) ||
-	(flagd->flagTeam != team && base == team))) {
+	(flagd->flagTeam != team && base == team)))
       serverLink->sendCaptureFlag(base);
-      myTank->setFlag(Flags::Null);	// prevent subsequent capture messages
-    }
   }
   else if (flagd == Flags::Null && (myTank->getLocation() == LocalPlayer::OnGround ||
 				    myTank->getLocation() == LocalPlayer::OnBuilding)) {
@@ -3639,7 +3637,7 @@ static void		checkEnvironment()
 	const float* fpos = world->getFlag(i).position;
 	if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 						 (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2)) {
-	  serverLink->sendPlayerUpdate(myTank);
+	  serverLink->sendGrabFlag(i);
 	  lastGrabSent=TimeKeeper::getTick();
 	}
       }
