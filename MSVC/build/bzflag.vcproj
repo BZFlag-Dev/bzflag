@@ -55,7 +55,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -158,7 +158,7 @@
 				Optimization="0"
 				InlineFunctionExpansion="0"
 				WholeProgramOptimization="false"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/"
 				PreprocessorDefinitions="_WINDOWS;WIN32;_DEBUG"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -192,7 +192,7 @@
 				OutputFile="$(OutDir)/bzflag.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="..\..\src\3D\debug"
+				AdditionalLibraryDirectories=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/bzflag.pdb"
 				SubSystem="2"
@@ -259,7 +259,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -291,6 +291,7 @@
 				OutputFile="$(OutDir)/bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile="$(OutDir)/bzflag.pdb"
 				SubSystem="2"
@@ -356,7 +357,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/"
+				AdditionalIncludeDirectories="..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/"
 				PreprocessorDefinitions="_WINDOWS;WIN32;NDEBUG"
 				StringPooling="true"
 				RuntimeLibrary="2"
@@ -388,6 +389,7 @@
 				OutputFile="$(OutDir)/bzflag.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories=""
 				IgnoreDefaultLibraryNames="LIBCMT"
 				ProgramDatabaseFile="$(OutDir)/bzflag.pdb"
 				SubSystem="2"
@@ -710,6 +712,10 @@
 			</File>
 			<File
 				RelativePath="..\..\src\bzflag\ForceFeedback.cxx"
+				>
+			</File>
+			<File
+				RelativePath="..\..\src\other\glew\src\glew.c"
 				>
 			</File>
 			<File

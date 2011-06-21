@@ -97,6 +97,9 @@
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #define HAVE_SDL_SDL_H 1
 
+/* Define to 1 if you have GL/glew headers. */
+#define HAVE_GLEW 1
+
 /* Define if you wish to build exporting the bzflag API for plugins */
 #define BZ_PLUGINS 1
 
