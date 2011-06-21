@@ -162,7 +162,7 @@ bzflag-server: build
 	chmod a+rx debian/$@/usr/games/bzfquery
 	#dh_installdebconf -p$@
 	dh_installdocs -p$@
-	cp -p misc/*.bzw debian/$@/usr/share/doc/$@/
+	cp -p misc/maps/*.bzw debian/$@/usr/share/doc/$@/
 	dh_installexamples -p$@
 	dh_installmenu -p$@
 	#dh_installemacsen -p$@

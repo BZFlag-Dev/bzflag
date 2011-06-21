@@ -545,4 +545,4 @@ Testing the server
 An example line to use for bzfs testing is:
 
 src/bzfs/bzfs -c -d -d -d +f good +f bad -fb -j -ms 3 -password \
- password -s 10 -sa -sb -sw 1 -st 15 -world misc/hix.bzw
+ password -s 10 -sa -sb -sw 1 -st 15 -world misc/maps/hix.bzw
