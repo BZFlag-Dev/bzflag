@@ -487,6 +487,10 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   p.x = (face2 == 0) ? size2.x : -size2.x;
   p.yz() *= dimsScale; // note the .yz()
 
+  // for reversing teleporters
+  if ((&tele1 == &tele2) && (face1 == face2))
+    p.y = -p.y;
+
   // apply rotation, translate to new position
   p = p.rotateZ(+tele2.getRotation());
   p += pos2;
