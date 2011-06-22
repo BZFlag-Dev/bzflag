@@ -1,9 +1,6 @@
 new bugs in 2.3 that must be fixed before release
 -------------------------------------------------
 
-* Self-linked teleporters bounce shots directly back instead of
-  teleporting them.  A shot into the right side should come back on
-  the left, for example.
 
 new bugs in 2.3
 ---------------
@@ -12,11 +9,6 @@ new bugs in 2.3
   missing.
 
 * bzflag -directory command line option doesn't help find fonts.
-
-* bzfs continues to identify flags for 1 lag period after player drops
-  ID flag.  This can't be helped when identification is done on the
-  server, but bzflag could suppress identifications when ID is not
-  carried.
 
 * After turning roger off, the new brackets remain around the targeted
   player.  Maybe just disable markers when in autopilot.
