@@ -4,7 +4,7 @@ if [ -z "$1" -o ! -r configure.ac ] ; then
  echo "$0 { svn | release } - must be run in the project home directory"
  exit 1
 fi
-if [ "$1" == "release" ] ; then
+if [ "$1" = "release" ] ; then
  if [ ! -r debian/changelog ] ; then
    echo "You must create debian/changelog to do a release"
    exit 1
