@@ -8,7 +8,7 @@ must tell the configure script:
 
 ./configure --without-SDL
 
-For information on enabling SDL on windows builds, see README.WIN32.
+For information on enabling SDL on windows builds, see README.WINDOWS
 
 See the BUGS and TODO files for known issues.
 
