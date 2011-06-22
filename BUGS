@@ -10,9 +10,6 @@ new bugs in 2.3
 
 * bzflag -directory command line option doesn't help find fonts.
 
-* After turning roger off, the new brackets remain around the targeted
-  player.  Maybe just disable markers when in autopilot.
-
 * If the other player has ST, and you turn the autopilot on twice, the
   second time the red brackets appear around the stealthed tank.
 

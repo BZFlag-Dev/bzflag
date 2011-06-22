@@ -1156,6 +1156,7 @@ void			LocalPlayer::activateAutoPilot(bool autopilot)
   else if (!autopilot && isAutoPilot()) {
     setAutoPilot(false);
     server->sendAutoPilot(false);
+    setTarget(NULL);
   }
 }
 
