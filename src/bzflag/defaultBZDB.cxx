@@ -185,9 +185,6 @@ DefaultDBItem	defaultDBItems[] = {
   { "hideMottos",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "mottoDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
 
-  // last screenshot
-  { "lastScreenshot",		"0",			true,	StateDatabase::ReadWrite,	NULL },
-
   // listFilters
   { "listFilter",  "",					true, StateDatabase::ReadWrite, NULL },
   { "listFilter0", "",					true, StateDatabase::ReadWrite, NULL },
