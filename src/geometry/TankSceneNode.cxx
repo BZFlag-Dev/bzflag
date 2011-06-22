@@ -513,13 +513,13 @@ void TankSceneNode::renderRadar()
   }
 
   gstate.setState();
-  if (BZDBCache::animatedTreads) {
-//	  treadState.setState();
-	  treadsRenderNode.setRadar(true);
-	  treadsRenderNode.sortOrder(true /* above */, false, false);
-	  treadsRenderNode.render();
-	  treadsRenderNode.setRadar(false);
-  }
+//   if (BZDBCache::animatedTreads) {
+// //	  treadState.setState();
+// 	  treadsRenderNode.setRadar(true);
+// 	  treadsRenderNode.sortOrder(true /* above */, false, false);
+// 	  treadsRenderNode.render();
+// 	  treadsRenderNode.setRadar(false);
+//   }
 
   tankRenderNode.setRadar(true);
   tankRenderNode.sortOrder(true /* above */, false, false);
@@ -945,13 +945,10 @@ void TankSceneNode::TankRenderNode::render()
   }
 
   if (isRadar && !isExploding) {
-    if (BZDBCache::animatedTreads) {
-      renderPart(LeftTread);
-      renderPart(RightTread);
-    } else {
-      renderPart(LeftCasing);
-      renderPart(RightCasing);
-    }
+	renderPart(LeftCasing);
+	renderPart(RightCasing);
+	renderPart(LeftTread);
+	renderPart(RightTread);
     renderPart(Body);
     renderPart(Turret);
     renderPart(Barrel);
