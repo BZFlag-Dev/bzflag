@@ -1,0 +1,24 @@
+#!/bin/sh
+# BZFlag
+# Copyright (c) 1993-2011 Tim Riker
+#
+# This package is free software;  you can redistribute it and/or
+# modify it under the terms of the license found in the file
+# named COPYING that should have accompanied this file.
+#
+# THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+# for any compiled plugin:
+#  copy README.txt to plugin.txt
+#  copy any other txt file too
+for doc in plugins/*/.libs/*.so ; do
+	name=`echo $doc|cut -d / -f 2)`
+	if [ -r plugins/$name/README.txt ]; then
+		cp -p plugins/$name/README.txt $1/$name.txt
+		for file in `ls plugins/$name/*txt|egrep -v '(README|CHANGELOG).txt'` ; do
+			cp -p $file $1/
+		done
+	fi
+done

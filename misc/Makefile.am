@@ -14,6 +14,7 @@ EXTRA_DIST =				\
 	bzirc.pl			\
 	bzwcvt.pl			\
 	checkam				\
+	copyplugindocs			\
 	doxyfile			\
 	filter.txt			\
 	groups.conf			\

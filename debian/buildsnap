@@ -35,7 +35,7 @@ head -n 1 debian/changelog
 #make maintainer-clean
 #./autogen.sh
 #./configure --quiet
-chmod +x debian/rules misc/tar
+chmod +x debian/rules misc/tar misc/copyplugindocs
 # svn/non-svn builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
