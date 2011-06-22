@@ -26,7 +26,7 @@ window.
 If you are using a passthrough card with acceleration (e.g. VooDoo, etc.)
 use the `-3dfx' option to make use of it.
 
-You can also use the MESA_GLX_FX enviornment variable to do something
+You can also use the MESA_GLX_FX environment variable to do something
 similar. Set MESA_GLX_FX to `fullscreen'. Remember if you use a Bourne
 shell (or compatible) like /bin/sh, /bin/ksh or /bin/bash
 you need to do the following:
