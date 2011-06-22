@@ -45,6 +45,8 @@ BZFlag 2.3.0  "Born Again"
 * Move flag identification server side - Alfredo Tupone, Jeff Myers,
     Frank Evers, Scott Wichser
 * GM sanity checks - Alfredo Tupone
+* Added the -publickey requirement for publicly listed servers (and renamed
+  the bzfs -public option to -publictitle) - trepan, Jeff Myers
 
 
 BZFlag 2.0.16  "No Foolin'" (2010-04-01)
