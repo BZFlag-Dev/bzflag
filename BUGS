@@ -1,13 +1,7 @@
 new bugs in 2.3 that must be fixed before release
 -------------------------------------------------
 
-* Multiple screenshot problems on Windows:
-  - screenshot .png file does not get closed until bzflag exits
-  - detection of highest existing index number fails in writeScreenshot()
-
-* PNG file is corrupted on Windows when each dimension is not a
-  multipe of 8 pixels.  Linux doesn't save the screenshot at all.
-  Demonstrate with "bzflag -window 1366x768".
+* screenshot .png file does not get closed until bzflag exits
 
 * Self-linked teleporters bounce shots directly back instead of
   teleporting them.  A shot into the right side should come back on
