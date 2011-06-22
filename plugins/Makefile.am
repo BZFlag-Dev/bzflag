@@ -1,4 +1,6 @@
+# plugin_utils is used by other plugins, build first
 SUBDIRS = \
+	plugin_utils \
 	airspawn \
 	chathistory \
 	customflagsample \
@@ -12,7 +14,6 @@ SUBDIRS = \
 	nagware \
 	Phoenix \
 	playHistoryTracker \
-	plugin_utils \
 	pushstats \
 	rabbitTimer \
 	rabidRabbit \
