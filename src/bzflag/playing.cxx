@@ -1761,7 +1761,10 @@ static void		handleServerMessage(bool human, uint16_t code,
   switch (code) {
 
     case MsgNearFlag:
-      handleNearFlag(msg,len);
+      // MsgNearFlag may arrive up to 1 lag period after dropping ID,
+      // so process this only when carrying the ID flag
+      if (myTank && myTank->getFlag() == Flags::Identify)
+	handleNearFlag(msg,len);
       break;
 
     case MsgFetchResources:
