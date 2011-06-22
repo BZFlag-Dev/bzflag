@@ -5,6 +5,6 @@ exec /bin/tar \
  --exclude .svn \
  --exclude .cvsignore \
  --exclude config.log \
- --exclude config.cache \
+ --exclude config.cache\* \
  --exclude config.status \
  $*
