@@ -6,7 +6,7 @@ new bugs in 2.3
 ---------------
 
 * When radar is zoomed all the way in, the texture for my tank is
-  missing.
+  missing (only happens when animated treads are set to "open").
 
 * bzflag -directory command line option doesn't help find fonts.
 
