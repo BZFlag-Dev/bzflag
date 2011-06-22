@@ -1287,8 +1287,6 @@ bindir=`eval "echo $bindir"`
 bindir=`eval "echo $bindir"`
 libdir=`eval "echo $libdir"`
 libdir=`eval "echo $libdir"`
-sysconfdir=`eval "echo $sysconfdir"`
-sysconfdir=`eval "echo $sysconfdir"`
 mandir=`eval "echo $mandir"`
 mandir=`eval "echo $mandir"`
 
@@ -1311,7 +1309,6 @@ AC_MSG_RESULT([])
 AC_MSG_RESULT([             Prefix: ${prefix}])
 AC_MSG_RESULT([           Binaries: ${bindir}])
 AC_MSG_RESULT([            Plugins: ${libdir}])
-AC_MSG_RESULT([Configuration files: ${sysconfdir}])
 AC_MSG_RESULT([       Manual pages: ${mandir}])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([CC       = ${CC}])
