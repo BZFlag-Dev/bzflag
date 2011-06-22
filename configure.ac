@@ -279,7 +279,7 @@ AC_CHECK_LIB([socket], [socket])
 AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
 
 # see if pthreads are in libc_r (as on FreeBSD) or libpthread
-AC_CHECK_LIB([c_r], [pthread_create], LIBPTHREAD="-lc_r", 
+AC_CHECK_LIB([c_r], [pthread_create], LIBPTHREAD="-lc_r",
     [AC_CHECK_LIB([pthread], [pthread_create], LIBPTHREAD="-lpthread",
      LIBPTHREAD="")]
 )
@@ -869,7 +869,7 @@ case $host_os in
     linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*)
 	linux=true
 	;;
-    macos|darwin*) 
+    macos|darwin*)
 	macos=true
 	;;
     solaris*)
@@ -959,7 +959,7 @@ void callback(void * /*arg*/, int /*callbackStatus*/,
 ], [
   ares_channel aresChannel;
   in_addr requestedAddress;
-  
+
   ares_gethostbyaddr(aresChannel, &requestedAddress,
 		     sizeof(in_addr), AF_INET, callback, NULL);
     ], [ares_works=yes], [ares_works=no])
