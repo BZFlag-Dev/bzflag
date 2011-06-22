@@ -42,9 +42,6 @@ recent bugs
   because the flag was dropped by the time the kill was scored...
   even though the shot was fired while I still had the flag.
 
-- do all Riva128 systems require "noMeshClusers"? Is there a
-  workaround to make vertex array work on those cards?
-
 - Mac OS X client sometimes (50/50) seems to now start to a black
   screen (only the console tab tabs render).  must be recent..
 
