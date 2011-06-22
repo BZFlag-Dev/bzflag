@@ -5,8 +5,6 @@ new bugs in 2.3 that must be fixed before release
   teleporting them.  A shot into the right side should come back on
   the left, for example.
 
-* Shot length setting does not cause the new shot graphics to appear.
-
 new bugs in 2.3
 ---------------
 
@@ -25,10 +23,6 @@ new bugs in 2.3
 
 * If the other player has ST, and you turn the autopilot on twice, the
   second time the red brackets appear around the stealthed tank.
-
-* The new tank markers turn on when a player is behind a wall, but
-  turn off when the player is not moving.  They cannot be turned off,
-  and may appear when they shouldn't.
 
 recent bugs
 ------------

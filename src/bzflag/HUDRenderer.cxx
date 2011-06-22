@@ -482,6 +482,8 @@ void HUDRenderer::AddEnhancedNamedMarker(const fvec3& pos, const fvec4& color,
 					 std::string name, bool friendly,
 					 float zShift)
 {
+  return;
+
   EnhancedHUDMarker newMarker(pos, color);
   newMarker.pos.z += zShift;
   newMarker.name = name;
@@ -1614,7 +1616,6 @@ void			HUDRenderer::renderBox(SceneRenderer&)
 
 void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
 {
-
   if (myTank) {
     glPushMatrix();
 
@@ -1691,7 +1692,9 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     renderCracks();
 
   // draw the markers, if we should
-  if (!BZDB.isTrue("_forbidMarkers")) {
+  const bool  experimental = (RENDERER.useQuality() >= 3);
+
+  if (!BZDB.isTrue("_forbidMarkers") && experimental) {
       bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
       glDisable(GL_TEXTURE_2D);
 
