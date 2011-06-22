@@ -736,6 +736,7 @@ static void* writeScreenshot(void* data)
   std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
   if (f != NULL) {
+    delete(f);
 
     const std::string& renderer = ssdata->renderer;
     unsigned char* pixels       = ssdata->pixels;
