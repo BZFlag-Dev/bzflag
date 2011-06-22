@@ -37,7 +37,7 @@
 //============================================================================//
 
 void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
-                  fvec4& color, const fvec4*& colorPtr)
+		  fvec4& color, const fvec4*& colorPtr)
 {
   // cheat a little
   ((BzMaterial*)bzmat)->setReference();
@@ -66,25 +66,25 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     else {
       useDiffuseColor = bzmat->getUseColorOnTexture(0);
       if (bzmat->getUseTextureAlpha(0)) {
-        const ImageInfo& imageInfo = tm.getInfo(texID);
-        textureAlpha = imageInfo.alpha;
+	const ImageInfo& imageInfo = tm.getInfo(texID);
+	textureAlpha = imageInfo.alpha;
       }
     }
 
     if (texID >= 0) {
       // sphere mapping
       if (bzmat->getUseSphereMap(0)) {
-        builder.enableSphereMap(true);
+	builder.enableSphereMap(true);
       }
       // texture matrix
       const int texMatId = bzmat->getTextureMatrix(0);
       const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
       if (texmat != NULL) {
-        const GLfloat* matrix = texmat->getMatrix();
-        if (matrix != NULL) {
-          builder.setTextureMatrix(matrix);
-          builder.enableTextureMatrix(true);
-        }
+	const GLfloat* matrix = texmat->getMatrix();
+	if (matrix != NULL) {
+	  builder.setTextureMatrix(matrix);
+	  builder.enableTextureMatrix(true);
+	}
       }
       // setup the builder
       builder.setTexture(texID);
@@ -125,21 +125,21 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
   // blending
   bool needsSorting   = false;
   bool blendingForced = false;
-  
+
   if (!blendingForced) {
     const bool isAlpha = (colorAlpha || textureAlpha);
     if (isAlpha) {
       if (BZDBCache::blend) {
-        builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        builder.setStipple(1.0f);
-        needsSorting = true;
+	builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	builder.setStipple(1.0f);
+	needsSorting = true;
       } else {
-        builder.resetBlending();
-        if (dyncol != NULL) {
-          builder.setStipple(0.5f);
-        } else {
-          builder.setStipple(color.a);
-        }
+	builder.resetBlending();
+	if (dyncol != NULL) {
+	  builder.setStipple(0.5f);
+	} else {
+	  builder.setStipple(color.a);
+	}
       }
     }
   }

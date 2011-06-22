@@ -194,7 +194,7 @@ class Obstacle {
       this object, @c false if either can not */
   bool isPassable() const;
 
-  /** This function returns @c true if  bullets will bounce off of this 
+  /** This function returns @c true if  bullets will bounce off of this
    * object, @c false if they simply die of contact */
   bool canRicochet() const;
 

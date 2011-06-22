@@ -53,7 +53,7 @@ public:
 
 BZ_PLUGIN(WebReport)
 
-WebReport::WebReport() :bz_Plugin(), bzhttp_VDir(),bzhttp_TemplateCallback() 
+WebReport::WebReport() :bz_Plugin(), bzhttp_VDir(),bzhttp_TemplateCallback()
 {
   evenLine = false;
   valid = false;

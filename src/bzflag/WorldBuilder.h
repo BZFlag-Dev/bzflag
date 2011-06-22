@@ -33,7 +33,7 @@ class WorldBuilder {
     World*		peekWorld();	// doesn't give up ownership
 
     void		setGameType(short gameType);
-    void 		setGameOptions(short gameOptions);
+    void		setGameOptions(short gameOptions);
     void		setMaxPlayers(int maxPlayers);
     void		setMaxShots(int maxSimultaneousShots);
     void		setMaxFlags(int maxFlags);

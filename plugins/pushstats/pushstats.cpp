@@ -65,7 +65,7 @@ public:
 
 			params += format("&token%d=V2",index);
 
-			if (player->team != eObservers) 
+			if (player->team != eObservers)
 			{
 				params += format("&wins%d=%d",index,player->wins);
 				params += format("&losses%d=%d",index,player->losses);
@@ -231,7 +231,7 @@ public:
 			}
 			else
 			{
-				if (eventData->eventType == bz_eListServerUpdateEvent) 
+				if (eventData->eventType == bz_eListServerUpdateEvent)
 				{
 					bz_ListServerUpdateEvent_V1 *data = (bz_ListServerUpdateEvent_V1*)eventData;
 
@@ -250,7 +250,7 @@ public:
 
 					bz_addURLJob(url.c_str(),NULL,params.c_str());
 				}
-				else if (eventData->eventType == bz_ePlayerPartEvent) 
+				else if (eventData->eventType == bz_ePlayerPartEvent)
 				{
 					bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1*)eventData;
 					std::string params = "action=part";

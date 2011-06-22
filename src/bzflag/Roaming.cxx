@@ -204,7 +204,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     if (world) {
       tracked = world->getPlayer(targetWinner);
     }
-  } 
+  }
   else {
     tracked = LocalPlayer::getMyTank();
   }
@@ -405,7 +405,7 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.pos[2] = muzzleHeight;
     dc->pos[2] = 0.0f;
   }
-                  
+
   // adjust zoom
   camera.zoom += dt * dc->zoom;
   if (camera.zoom < BZDB.eval("roamZoomMin")) {
@@ -426,7 +426,7 @@ Roaming::RoamingView Roaming::parseView(const std::string& str) const
   else if (strcasecmp(s, "follow")   == 0) { return roamViewFollow;   }
   else if (strcasecmp(s, "fps")      == 0) { return roamViewFP;       }
   else if (strcasecmp(s, "flag")     == 0) { return roamViewFlag;     }
-  else                                     { return roamViewDisabled; }
+  else				     { return roamViewDisabled; }
 }
 
 
@@ -439,7 +439,7 @@ const char* Roaming::getViewName(RoamingView roamView) const
     case roamViewFollow:   { return "follow";   }
     case roamViewFP:       { return "fps";      }
     case roamViewFlag:     { return "flag";     }
-    default:               { return "unknown";  }
+    default:	       { return "unknown";  }
   }
 }
 

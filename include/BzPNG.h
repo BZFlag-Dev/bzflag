@@ -26,23 +26,23 @@ namespace BzPNG {
     Chunk() {}
     Chunk(const std::string& t, const std::string& d) : type(t), data(d) {}
     Chunk(const std::string& t, // for tEXt chunks
-          const std::string& keyword,
-          const std::string& text)
-          : type(t)
-          , data(keyword + std::string(1, 0) + text)
-          {}
+	  const std::string& keyword,
+	  const std::string& text)
+	  : type(t)
+	  , data(keyword + std::string(1, 0) + text)
+	  {}
     std::string type; // must be 4 bytes
     std::string data;
   };
 
   /** Create a PNG image, string starts with "ERROR" if there's an error */
   std::string create(const std::vector<Chunk>& extraChunks,
-                     size_t sx, size_t sy, size_t channels, const void* pixels);
+		     size_t sx, size_t sy, size_t channels, const void* pixels);
 
   /** Save a PNG image */
   bool save(const std::string& filename,
-            const std::vector<Chunk>& extraChunks,
-            size_t sx, size_t sy, size_t channels, const void* pixels);
+	    const std::vector<Chunk>& extraChunks,
+	    size_t sx, size_t sy, size_t channels, const void* pixels);
 }
 
 #endif

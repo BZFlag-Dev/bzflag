@@ -308,8 +308,8 @@ const ObsList* CollisionManager::boxTest (const float* pos, float UNUSED(angle),
 
 
 const ObsList* CollisionManager::movingBoxTest (const float* oldPos, float UNUSED(oldAngle),
-                                                const float* pos, float UNUSED(angle),
-                                                float dx, float dy, float dz) const
+						const float* pos, float UNUSED(angle),
+						float dx, float dy, float dz) const
 {
   float newpos[3];
 

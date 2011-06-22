@@ -28,7 +28,7 @@ SUBDIRS = \
 	wwzones
 
 DIST_SUBDIRS = \
-	$(SUBDIRS)	
+	$(SUBDIRS)
 
 EXTRA_DIST = \
 	api_notes \

@@ -97,7 +97,7 @@ void ServerListFilter::reset()
   freeSlots  .reset();
   validTeams .reset();
 
-  maxTime        .reset();
+  maxTime	.reset();
   maxPlayers     .reset();
   maxTeamScore   .reset();
   maxPlayerScore .reset();
@@ -179,7 +179,7 @@ static int countValidTeams(const ServerItem& item)
 static bool isReplay(const ServerItem& item)
 {
   return ((item.ping.observerMax == 16) &&
-          (item.ping.maxPlayers == 200));
+	  (item.ping.maxPlayers == 200));
 }
 
 
@@ -209,7 +209,7 @@ bool ServerListFilter::check(const ServerItem& item) const
   if (!flags    .check(type == TeamFFA))   { return false; }
   if (!teams    .check(type == ClassicCTF))  { return false; }
   if (!rabbit   .check(type == RabbitChase)) { return false; }
-  
+
   const uint16_t options = p.gameOptions;
   if (!jump     .check(options & JumpingGameStyle))     { return false; }
   if (!rico     .check(options & RicochetGameStyle))    { return false; }
@@ -222,12 +222,12 @@ bool ServerListFilter::check(const ServerItem& item) const
   if (!cached   .check(item.cached))    { return false; }
 
   // range filters
-  if (!shots          .check(p.maxShots))            { return false; }
-  if (!players        .check(countPlayers(item)))    { return false; }
+  if (!shots	  .check(p.maxShots))	    { return false; }
+  if (!players	.check(countPlayers(item)))    { return false; }
   if (!freeSlots      .check(countFreeSlots(item)))  { return false; }
   if (!validTeams     .check(countValidTeams(item))) { return false; }
 
-  if (!maxTime        .check(p.maxTime))        { return false; }
+  if (!maxTime	.check(p.maxTime))	{ return false; }
   if (!maxPlayers     .check(p.maxPlayers))     { return false; }
   if (!maxTeamScore   .check(p.maxTeamScore))   { return false; }
   if (!maxPlayerScore .check(p.maxPlayerScore)) { return false; }
@@ -307,7 +307,7 @@ bool ServerListFilter::parse(const std::string& filter)
   if (!adGlobStr.empty()) {
     addrDescPat.setupGlob(adGlobStr, true);
   }
-  
+
   const std::vector<std::string> filters = TextUtils::tokenize(filterStr, ",");
   for (size_t i = 0; i < filters.size(); i++) {
     parseFilter(filters[i]);
@@ -325,7 +325,7 @@ bool ServerListFilter::parseFilter(const std::string& f)
   std::string label, param;
   switch (parseFilterType(f, op, label, param)) {
     case '#': { return true; }
-    case 'b': { return parseBoolFilter(label, op);           }
+    case 'b': { return parseBoolFilter(label, op);	   }
     case 'r': { return parseRangeFilter(label, op, param);   }
     case 'p': { return parsePatternFilter(label, op, param); }
     default: {
@@ -337,10 +337,10 @@ bool ServerListFilter::parseFilter(const std::string& f)
 
 
 char ServerListFilter::parseFilterType(const std::string& _f, char& op,
-                                       std::string& label, std::string& param)
+				       std::string& label, std::string& param)
 {
   const std::string f = stripLeadingWhite(_f);
-  
+
   if (f.empty() || (f[0] == '#')) {
     return '#'; // comment
   }
@@ -362,11 +362,11 @@ char ServerListFilter::parseFilterType(const std::string& _f, char& op,
     case '<': {
       label = std::string(s, c - s);
       if ((*c == '=') || (*(c + 1) != '=')) {
-        param = std::string(c + 1);
-        op = *c;
+	param = std::string(c + 1);
+	op = *c;
       } else {
-        param = std::string(c + 2);
-        op = *c + 0x3f; // map [<>] to [{}]
+	param = std::string(c + 2);
+	op = *c + 0x3f; // map [<>] to [{}]
       }
       return 'r'; // range
     }
@@ -401,7 +401,7 @@ bool ServerListFilter::parseBoolFilter(const std::string& label, char op)
 
 
 bool ServerListFilter::parseRangeFilter(const std::string& label, char op,
-                                        const std::string& param)
+					const std::string& param)
 {
   std::map<std::string, size_t>::const_iterator it = rangeMap.find(label);
   if (it == rangeMap.end()) {
@@ -419,9 +419,9 @@ bool ServerListFilter::parseRangeFilter(const std::string& label, char op,
 
   RangeFilter* rf = (RangeFilter*)((char*)this + it->second);
   switch (op) {
-    case '<': { rf->maxActive = true; rf->maxValue = value;        break; }
+    case '<': { rf->maxActive = true; rf->maxValue = value;	break; }
     case '{': { rf->maxActive = true; rf->maxValue = value + 1.0f; break; }
-    case '>': { rf->minActive = true; rf->minValue = value;        break; }
+    case '>': { rf->minActive = true; rf->minValue = value;	break; }
     case '}': { rf->minActive = true; rf->minValue = value - 1.0f; break; }
     case '=': {
       rf->minActive = true;
@@ -438,7 +438,7 @@ bool ServerListFilter::parseRangeFilter(const std::string& label, char op,
 
 
 bool ServerListFilter::parsePatternFilter(const std::string& label, char op,
-                                          const std::string& param)
+					  const std::string& param)
 {
   const std::string lower = TextUtils::tolower(label);
   std::map<std::string, size_t>::const_iterator it = patternMap.find(lower);
@@ -459,7 +459,7 @@ bool ServerListFilter::parsePatternFilter(const std::string& label, char op,
   PatternFilter* pf = (PatternFilter*)((char*)this + it->second);
 
   return useGlob ? pf->setupGlob(param, noCase)
-                 : pf->setupRegex(param, noCase);
+		 : pf->setupRegex(param, noCase);
 }
 
 
@@ -498,12 +498,12 @@ void ServerListFilter::setupRangeMap()
 
   std::map<std::string, size_t>& m = rangeMap;
 
-  m["s"]   = m["shots"]           = OFFSETOF(shots);
-  m["p"]   = m["players"]         = OFFSETOF(players);
+  m["s"]   = m["shots"]	   = OFFSETOF(shots);
+  m["p"]   = m["players"]	 = OFFSETOF(players);
   m["f"]   = m["freeSlots"]       = OFFSETOF(freeSlots);
   m["vt"]  = m["validTeams"]      = OFFSETOF(validTeams);
 
-  m["mt"]  = m["maxTime"]         = OFFSETOF(maxTime);
+  m["mt"]  = m["maxTime"]	 = OFFSETOF(maxTime);
   m["mp"]  = m["maxPlayers"]      = OFFSETOF(maxPlayers);
   m["mts"] = m["maxTeamScore"]    = OFFSETOF(maxTeamScore);
   m["mps"] = m["maxPlayerScore"]  = OFFSETOF(maxPlayerScore);
@@ -511,10 +511,10 @@ void ServerListFilter::setupRangeMap()
   m["sw"]  = m["shakeWins"]       = OFFSETOF(shakeWins);
   m["st"]  = m["shakeTime"]       = OFFSETOF(shakeTime);
 
-  m["Rm"]  = m["rogueMax"]        = OFFSETOF(rogueMax);
-  m["rm"]  = m["redMax"]          = OFFSETOF(redMax);
-  m["gm"]  = m["greenMax"]        = OFFSETOF(greenMax);
-  m["bm"]  = m["blueMax"]         = OFFSETOF(blueMax);
+  m["Rm"]  = m["rogueMax"]	= OFFSETOF(rogueMax);
+  m["rm"]  = m["redMax"]	  = OFFSETOF(redMax);
+  m["gm"]  = m["greenMax"]	= OFFSETOF(greenMax);
+  m["bm"]  = m["blueMax"]	 = OFFSETOF(blueMax);
   m["pm"]  = m["purpleMax"]       = OFFSETOF(purpleMax);
   m["om"]  = m["observerMax"]     = OFFSETOF(observerMax);
 
@@ -526,9 +526,9 @@ void ServerListFilter::setupRangeMap()
   m["op"]  = m["observerPlayers"] = OFFSETOF(observerCount);
 
   m["Rf"]  = m["rogueFree"]       = OFFSETOF(rogueFree);
-  m["rf"]  = m["redFree"]         = OFFSETOF(redFree);
+  m["rf"]  = m["redFree"]	 = OFFSETOF(redFree);
   m["gf"]  = m["greenFree"]       = OFFSETOF(greenFree);
-  m["bf"]  = m["blueFree"]        = OFFSETOF(blueFree);
+  m["bf"]  = m["blueFree"]	= OFFSETOF(blueFree);
   m["pf"]  = m["purpleFree"]      = OFFSETOF(purpleFree);
   m["of"]  = m["observerFree"]    = OFFSETOF(observerFree);
 }
@@ -542,7 +542,7 @@ void ServerListFilter::setupPatternMap()
 
   m["a"] = m["addr"] = m["address"]     = OFFSETOF(addrPat);
   m["d"] = m["desc"] = m["description"] = OFFSETOF(descPat);
-  m["ad"] = m["addrdesc"]               = OFFSETOF(addrDescPat);
+  m["ad"] = m["addrdesc"]	       = OFFSETOF(addrDescPat);
 }
 
 
@@ -596,7 +596,7 @@ void ServerListFilter::print(const std::string& origIndent) const
   freeSlots  .print("freeSlots",  indent);
   validTeams .print("validTeams", indent);
 
-  maxTime        .print("maxTime",        indent);
+  maxTime	.print("maxTime",	indent);
   maxPlayers     .print("maxPlayers",     indent);
   maxTeamScore   .print("maxTeamScore",   indent);
   maxPlayerScore .print("maxPlayerScore", indent);
@@ -650,7 +650,7 @@ void ServerListFilter::PatternFilter::reset()
 
 
 bool ServerListFilter::PatternFilter::setupGlob(const std::string& _pattern,
-                                                bool _noCase)
+						bool _noCase)
 {
   reset();
 
@@ -678,7 +678,7 @@ bool ServerListFilter::PatternFilter::setupGlob(const std::string& _pattern,
 
 
 bool ServerListFilter::PatternFilter::setupRegex(const std::string& _pattern,
-                                                 bool _noCase)
+						 bool _noCase)
 {
   reset();
 
@@ -719,9 +719,9 @@ bool ServerListFilter::PatternFilter::check(const std::string& s) const
     }
     case GlobPattern: {
       if (noCase) {
-        return glob_match(pattern, TextUtils::tolower(s));
+	return glob_match(pattern, TextUtils::tolower(s));
       } else {
-        return glob_match(pattern, s);
+	return glob_match(pattern, s);
       }
     }
   }
@@ -735,38 +735,38 @@ bool ServerListFilter::PatternFilter::check(const std::string& s) const
 //
 
 void ServerListFilter::BoolFilter::print(const std::string& name,
-                                         const std::string& indent) const
+					 const std::string& indent) const
 {
   if (active) {
     printf("%s%s = %s\n", indent.c_str(),
-           name.c_str(), value ? "true" : "false");
+	   name.c_str(), value ? "true" : "false");
   }
 }
 
 
 void ServerListFilter::RangeFilter::print(const std::string& name,
-                                          const std::string& indent) const
+					  const std::string& indent) const
 {
   if (!minActive && !maxActive) {
     return;
   }
   else if (minActive && maxActive) {
     printf("%s%.3g < %s < %.3g\n", indent.c_str(),
-           minValue, name.c_str(), maxValue);
+	   minValue, name.c_str(), maxValue);
   }
   else if (minActive) {
     printf("%s%s > %.3g\n", indent.c_str(),
-           name.c_str(), minValue);
+	   name.c_str(), minValue);
   }
   else if (maxActive) {
     printf("%s%s < %.3g\n", indent.c_str(),
-           name.c_str(), maxValue);
+	   name.c_str(), maxValue);
   }
 }
 
 
 void ServerListFilter::PatternFilter::print(const std::string& name,
-                                            const std::string& indent) const
+					    const std::string& indent) const
 {
   if (type == NoPattern) {
     return;
@@ -774,7 +774,7 @@ void ServerListFilter::PatternFilter::print(const std::string& name,
   const char* typeStr = (type == GlobPattern) ? "glob" : "regex";
   const char* caseStr = noCase ? "nocase" : "case";
   printf("%s%s = '%s' <%s|%s>\n", indent.c_str(),
-         name.c_str(), pattern.c_str(), typeStr, caseStr);
+	 name.c_str(), pattern.c_str(), typeStr, caseStr);
 }
 
 

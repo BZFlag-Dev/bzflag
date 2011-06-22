@@ -202,7 +202,7 @@ WinDisplay::~WinDisplay()
 
 bool			WinDisplay::isFullScreenOnly() const
 {
-  return false; 
+  return false;
 }
 
 int			WinDisplay::getFullWidth() const

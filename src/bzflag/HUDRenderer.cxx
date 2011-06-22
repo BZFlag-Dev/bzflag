@@ -735,7 +735,7 @@ void			HUDRenderer::render(SceneRenderer& renderer)
     const bool showTimes = (fps > 0.0f) || (drawTime > 0.0f) ||
 			   (triangleCount > 0) || (radarTriangleCount > 0);
     const bool showTankLabels = roaming &&
-                                BZDB.isTrue("displayLabels");
+				BZDB.isTrue("displayLabels");
 
     if (showCompose || showTimes || showTankLabels) {
       // get view metrics
@@ -854,13 +854,13 @@ void			HUDRenderer::renderStatus(void)
 
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
-  	Player *target = ROAM.getTargetTank();
-   	if(!target){
+	Player *target = ROAM.getTargetTank();
+	if(!target){
       sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
 	      (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
       fm.drawString(x, (y - h), 0, majorFontFace, majorFontSize, buffer);
-  	}     
+	}
    }
 
   if (roaming && BZDB.isTrue("showVelocities"))

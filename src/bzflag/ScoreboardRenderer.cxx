@@ -495,23 +495,23 @@ void ScoreboardRenderer::renderScoreboard(void)
 
   const int maxLines = BZDB.evalInt("maxScoreboardLines");
   int lines = 0;
-  int hiddenLines = 0;  
+  int hiddenLines = 0;
   while ((player = players[i]) != NULL) {
     if ((maxLines > 0) && (lines >= maxLines)) {
       hiddenLines++;
     }
     else {
       if (player->isHunted()) {
-        ++numHunted;
+	++numHunted;
       }
       if (player->getTeam()==ObserverTeam && !haveObs){
-        y -= dy;
-        haveObs = true;
+	y -= dy;
+	haveObs = true;
       }
       if (huntState==HUNT_SELECTING && i==huntPosition) {
-        drawPlayerScore(player, x1, x2, x3, xs, (float)y, mottoLen, true);
+	drawPlayerScore(player, x1, x2, x3, xs, (float)y, mottoLen, true);
       } else {
-        drawPlayerScore(player, x1, x2, x3, xs, (float)y, mottoLen, false);
+	drawPlayerScore(player, x1, x2, x3, xs, (float)y, mottoLen, false);
       }
       y -= dy;
     }
@@ -534,7 +534,7 @@ void ScoreboardRenderer::renderScoreboard(void)
   }
 
   delete[] players;
-  
+
   if (World::getWorld()->allowTeams())
     renderTeamScores(winWidth, y0, dy);
 }
@@ -549,7 +549,7 @@ void ScoreboardRenderer::stringAppendNormalized (std::string *s, float n)
 
 
 void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
-                                        float _x1, float UNUSED(_y1))
+					float _x1, float UNUSED(_y1))
 {
   static const TimeKeeper startTime = TimeKeeper::getCurrent();
 
@@ -666,13 +666,13 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 
     float badFactor = 1.5f;
     if (linSpeed > player->getMaxSpeed()*badFactor)
-            playerInfo += ColorStrings[RedColor];
+	    playerInfo += ColorStrings[RedColor];
     if (linSpeed > player->getMaxSpeed())
-            playerInfo += ColorStrings[YellowColor];
+	    playerInfo += ColorStrings[YellowColor];
     else if (linSpeed < 0.0001f)
-            playerInfo += ColorStrings[GreyColor];
+	    playerInfo += ColorStrings[GreyColor];
     else
-            playerInfo += ColorStrings[WhiteColor];
+	    playerInfo += ColorStrings[WhiteColor];
     playerInfo += TextUtils::format("%5.2f ",linSpeed);
     playerInfo += teamColor;
   }
@@ -946,7 +946,7 @@ void ScoreboardRenderer::getPlayerList(std::vector<Player*>& players)
   }
   delete[] pList;
 }
-                              
+
 
 // Local Variables: ***
 // mode:C++ ***

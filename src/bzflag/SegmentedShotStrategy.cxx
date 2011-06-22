@@ -43,7 +43,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   if (_path->getPlayer() == ServerPlayer) {
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
-           (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
+	   (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
   } else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;
@@ -476,11 +476,11 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	  if(!building->canRicochet()) {
 	    timeLeft = 0.0f;
 	    break;
-          } else {
+	  } else {
 
 	  }
-        }     
-        case Reflect: {
+	}
+	case Reflect: {
 	  // move origin to point of reflection
 	  o[0] += t * d[0];
 	  o[1] += t * d[1];
@@ -492,16 +492,16 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	  reflect(d, normal);
 	  reason = ShotPathSegment::Ricochet;
 	  break;
-        }
+	}
 
-        case Through: {
+	case Through: {
 	  assert(0);
 	  break;
-	}  
+	}
       }
     }
     else if (hitGround) { // we hit the ground
-    
+
       switch (e) {
 	case Stop:
 	case Through: {

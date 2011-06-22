@@ -82,7 +82,7 @@ EffectsMenu::EffectsMenu()
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Shot Length:");
   option->setCallback(callback, (void*)"x");
-  options = &option->getList(); 
+  options = &option->getList();
   options->push_back(std::string("Off"));
   option->createSlider(10);
   option->update();

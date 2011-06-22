@@ -245,7 +245,7 @@ void ServerItem::splitAddrTitle(std::string& addr, std::string& title) const
   }
   addr.resize(pos);
 }
-  
+
 
 // Local Variables: ***
 // mode: C++ ***

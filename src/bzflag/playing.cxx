@@ -762,7 +762,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 
 static bool roamMouseWheel(const BzfKeyEvent& key, bool pressed)
 {
-  if ((key.button != BzfKeyEvent::WheelUp) && 
+  if ((key.button != BzfKeyEvent::WheelUp) &&
       (key.button != BzfKeyEvent::WheelDown)) {
     return false;
   }
@@ -782,8 +782,8 @@ static bool roamMouseWheel(const BzfKeyEvent& key, bool pressed)
     else if (rightMouseButton != roamMouseWheelSwap) {
       const int newMode = ROAM.getMode() + (up ? +1 : -1);
       if ((newMode < int(Roaming::roamViewCount)) &&
-          (newMode > int(Roaming::roamViewDisabled))) {
-        ROAM.setMode(Roaming::RoamingView(newMode));
+	  (newMode > int(Roaming::roamViewDisabled))) {
+	ROAM.setMode(Roaming::RoamingView(newMode));
       }
     }
   }
@@ -798,7 +798,7 @@ static void doKey(const BzfKeyEvent& key, bool pressed) {
     case BzfKeyEvent::RightMouse:  { rightMouseButton  = pressed; break; }
     case BzfKeyEvent::MiddleMouse: { middleMouseButton = pressed; break; }
   }
-    
+
   if (roamMouseWheel(key, pressed)) {
     return;
   }
@@ -1082,7 +1082,7 @@ static void		doEvent(BzfDisplay *disply)
       if (myTank && myTank->isAlive() && (myTank->getInputMethod() != LocalPlayer::Mouse) && (BZDB.isTrue("allowInputChange")))
 	myTank->setInputMethod(LocalPlayer::Mouse);
       if (BZDB.isTrue("mouseClamp")) {
-        mouseClamp(event.mouseMove);
+	mouseClamp(event.mouseMove);
       }
       break;
 
@@ -1108,7 +1108,7 @@ void		addMessage(const Player *_player, const std::string& msg,
       const PlayerId pid = _player->getId();
       if (pid < 200) {
 	int color = _player->getTeam();
-        if (color < 0 || (color > 4 && color != HunterTeam)) {
+	if (color < 0 || (color > 4 && color != HunterTeam)) {
 	  // non-teamed, rabbit are white (same as observer)
 	  color = WhiteColor;
 	}
@@ -1747,7 +1747,7 @@ static void handleNearFlag ( void *msg, uint16_t len )
 
        if (myTank)
        {
-               hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
+	       hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
        }
 }
 
@@ -2187,7 +2187,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	// TODO hook this back up for 2.4.4 or later
 	TankDeathOverride* death = NULL;
 	EFFECTS.addDeathEffect(victimPlayer->getColor(), pos, victimPlayer->getAngle(),reason,victimPlayer,flagType);
-  
+
 	victimPlayer->setDeathEffect(death);
 
 	if (!death || death->ShowExplosion())
@@ -2202,9 +2202,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	if (victimPlayer && killerLocal != victimPlayer) {
 	  if ((victimPlayer->getTeam() == killerLocal->getTeam()) &&
-        (killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit)
-        && World::getWorld()->allowTeams()) {
-            // teamkill
+	(killerLocal->getTeam() != RogueTeam) && !(killerPlayer == myTank && wasRabbit)
+	&& World::getWorld()->allowTeams()) {
+	    // teamkill
 	    if (killerPlayer == myTank) {
 	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
 	      playLocalSound(SFX_KILL_TEAM);
@@ -2315,29 +2315,29 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       if (World::getWorld()->allowTeams())  // geno only works in team games :)
       {
-        // blow up if killer has genocide flag and i'm on same team as victim
-        // (and we're not rogues, unless in rabbit mode)
-        if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
-            (victimPlayer->getTeam() == myTank->getTeam()) &&
-            (myTank->getTeam() != RogueTeam) && shotId >= 0) {
-          // now see if shot was fired with a GenocideFlag
-          const ShotPath* shot = killerPlayer->getShot(int(shotId));
-          if (shot && shot->getFlag() == Flags::Genocide) {
-            gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
-          }
-        }
-      
+	// blow up if killer has genocide flag and i'm on same team as victim
+	// (and we're not rogues, unless in rabbit mode)
+	if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
+	    (victimPlayer->getTeam() == myTank->getTeam()) &&
+	    (myTank->getTeam() != RogueTeam) && shotId >= 0) {
+	  // now see if shot was fired with a GenocideFlag
+	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	  if (shot && shot->getFlag() == Flags::Genocide) {
+	    gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
+	  }
+	}
+
 #ifdef ROBOT
-        // blow up robots on victim's team if shot was genocide
-        if (killerPlayer && victimPlayer && shotId >= 0) {
-          const ShotPath* shot = killerPlayer->getShot(int(shotId));
-          if (shot && shot->getFlag() == Flags::Genocide)
-            for (int i = 0; i < numRobots; i++)
-            if (robots[i] && victimPlayer != robots[i] &&
-                victimPlayer->getTeam() == robots[i]->getTeam() &&
-                robots[i]->getTeam() != RogueTeam)
-              gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-        }
+	// blow up robots on victim's team if shot was genocide
+	if (killerPlayer && victimPlayer && shotId >= 0) {
+	  const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	  if (shot && shot->getFlag() == Flags::Genocide)
+	    for (int i = 0; i < numRobots; i++)
+	    if (robots[i] && victimPlayer != robots[i] &&
+		victimPlayer->getTeam() == robots[i]->getTeam() &&
+		robots[i]->getTeam() != RogueTeam)
+	      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
+	}
       }
 #endif
 
@@ -2631,15 +2631,15 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUByte(msg, id);
 	msg = nboUnpackShort(msg, handicap);
 	Player *sPlayer = NULL;
-        if (id == myTank->getId()) {
+	if (id == myTank->getId()) {
 	  sPlayer = myTank;
-        } else {
-          int i = lookupPlayerIndex(id);
+	} else {
+	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
 	    sPlayer = remotePlayers[i];
 	  else
 	    logDebugMessage(1, "Received handicap update for unknown player!\n");
-        }
+	}
 	if (sPlayer) {
 	  // a relative score of -50 points will provide maximum handicap
 	  float normalizedHandicap = float(handicap)
@@ -2656,7 +2656,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    normalizedHandicap  = 0.0f;
 
 	  sPlayer->setHandicap(normalizedHandicap);
-        }
+	}
       }
     }
     case MsgScore: {
@@ -2672,17 +2672,17 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUShort(msg, tks);
 
 	Player *sPlayer = NULL;
-        if (id == myTank->getId()) {
+	if (id == myTank->getId()) {
 	  sPlayer = myTank;
-        } else {
-          int i = lookupPlayerIndex(id);
+	} else {
+	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
 	    sPlayer = remotePlayers[i];
 	  else
-            logDebugMessage(1,"Received score update for unknown player!\n");
-        }
+	    logDebugMessage(1,"Received score update for unknown player!\n");
+	}
 	if (sPlayer)
-          sPlayer->changeScore(wins - sPlayer->getWins(),
+	  sPlayer->changeScore(wins - sPlayer->getWins(),
 			       losses - sPlayer->getLosses(),
 			       tks - sPlayer->getTeamKills());
       }
@@ -2797,7 +2797,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	} else {
 	  const PlayerId pid = srcPlayer->getId();
 	  if (pid < 200) {
-            if (srcPlayer && srcPlayer->getTeam() != NoTeam)
+	    if (srcPlayer && srcPlayer->getTeam() != NoTeam)
 	      colorStr += ColorStrings[srcPlayer->getTeam()];
 	    else
 	      colorStr += ColorStrings[RogueTeam];
@@ -3007,7 +3007,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-    case MsgFlagType: 
+    case MsgFlagType:
       {
       FlagType* typ = NULL;
       FlagType::unpackCustom(msg, typ);
@@ -3342,7 +3342,7 @@ static void *handleMsgSetVars(void *msg)
 
     if ((name[0] != '_') && (name[0] != '$')) {
       logDebugMessage(1, "Server BZDB change blocked: '%s' = '%s'\n",
-                      name, value);
+		      name, value);
     }
     else {
       BZDB.set(name, value);
@@ -3366,7 +3366,7 @@ void handleFlagDropped(Player* tank)
     //drop lock if i had GM
     if(myTank->getFlag() == Flags::GuidedMissile)
       myTank->setTarget(NULL);
-    
+
     // update display and play sound effects
     playLocalSound(SFX_DROP_FLAG);
     updateFlag(Flags::Null);
@@ -3752,7 +3752,7 @@ bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *
   if (myTank->getFlag() == Flags::Blindness)
     return false;
 
-  if (player->getFlag() == Flags::Stealth || 
+  if (player->getFlag() == Flags::Stealth ||
     player->getFlag() == Flags::Cloaking)
     return myTank->getFlag() == Flags::Seer;
 
@@ -3767,7 +3767,7 @@ static bool isKillable(const Player *target)
     return true;
   if (myTank->getFlag() == Flags::Colorblindness)
     return true;
-  if (World::getWorld()->allowTeamKills() || 
+  if (World::getWorld()->allowTeamKills() ||
     target->getTeam() != myTank->getTeam())
     return true;
 
@@ -3864,7 +3864,7 @@ void setLookAtMarker(void)
   }
 
   // Color enhanced marker depending on Local and RemotePlayer's Flag
-    
+
   TeamColor markercolor = bestTarget->getTeam();
 
   if (bestTarget->getFlag() == Flags::Masquerade &&
@@ -3873,10 +3873,10 @@ void setLookAtMarker(void)
 
   if (myTank->getFlag() == Flags::Colorblindness)
     markercolor = RogueTeam;
-  
+
   hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
-                              Float3ToVec4(Team::getRadarColor(markercolor)),
-                              label, isFriendly(bestTarget), 2.0f);
+			      Float3ToVec4(Team::getRadarColor(markercolor)),
+			      label, isFriendly(bestTarget), 2.0f);
 }
 
 static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
@@ -3954,11 +3954,11 @@ void setTarget()
       msg += " (";
       msg += Team::getName(bestTarget->getTeam());
       if (bestTarget->getFlag() != Flags::Null) {
-        msg += ") with ";
-        msg += bestTarget->getFlag()->flagName;
+	msg += ") with ";
+	msg += bestTarget->getFlag()->flagName;
       }
       else {
-        msg += ")";
+	msg += ")";
       }
     }
     hud->setAlert(1, msg.c_str(), 2.0f, 1);
@@ -5154,7 +5154,7 @@ static void renderRoamMouse()
   static const float color1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
   glLineWidth(1.49f);
-  glBegin(GL_LINES);  
+  glBegin(GL_LINES);
   glColor4fv(color0); glVertex2i(xc, yc);
   glColor4fv(color1); glVertex2i(mx, my);
   glEnd();
@@ -5431,32 +5431,32 @@ void drawFrame(const float dt)
 	  targetPoint[0] = target->getPosition()[0];
 	  targetPoint[1] = target->getPosition()[1];
 	  targetPoint[2] = target->getPosition()[2] +
-	                   target->getMuzzleHeight();
+			   target->getMuzzleHeight();
 	}
 	// camera following target
 	else if (ROAM.getMode() == Roaming::roamViewFollow) {
 	  if (!trackPlayerShot(target, eyePoint, targetPoint)) {
 	    const bool slowKB = BZDB.isTrue("slowKeyboard");
 	    if (slowKB == (BZDB.eval("roamSmoothTime") < 0.0f)) {
-              eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
-              eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
-              eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
-              targetPoint[0] = target->getPosition()[0];
-              targetPoint[1] = target->getPosition()[1];
-              targetPoint[2] = target->getPosition()[2];
-            } else {
-              // the same as for the roamViewTrack mode
-              eyePoint[0] = roam->pos[0];
-              eyePoint[1] = roam->pos[1];
-              eyePoint[2] = roam->pos[2];
-              targetPoint[0] = target->getPosition()[0];
-              targetPoint[1] = target->getPosition()[1];
-              targetPoint[2] = target->getPosition()[2] +
-                               target->getMuzzleHeight();
-              if (BZDB.isSet("followOffsetZ")) {
-                targetPoint[2] += BZDB.eval("followOffsetZ");
-              }
-            }
+	      eyePoint[0] = target->getPosition()[0] - targetTankDir[0] * 40;
+	      eyePoint[1] = target->getPosition()[1] - targetTankDir[1] * 40;
+	      eyePoint[2] = target->getPosition()[2] + muzzleHeight * 6;
+	      targetPoint[0] = target->getPosition()[0];
+	      targetPoint[1] = target->getPosition()[1];
+	      targetPoint[2] = target->getPosition()[2];
+	    } else {
+	      // the same as for the roamViewTrack mode
+	      eyePoint[0] = roam->pos[0];
+	      eyePoint[1] = roam->pos[1];
+	      eyePoint[2] = roam->pos[2];
+	      targetPoint[0] = target->getPosition()[0];
+	      targetPoint[1] = target->getPosition()[1];
+	      targetPoint[2] = target->getPosition()[2] +
+			       target->getMuzzleHeight();
+	      if (BZDB.isSet("followOffsetZ")) {
+		targetPoint[2] += BZDB.eval("followOffsetZ");
+	      }
+	    }
 	  }
 	}
 	// target's view
@@ -6068,8 +6068,8 @@ static void setupRoamingCamera(float dt)
   static bool inited = false;
   static int prevMouseBits = 0;
   int currMouseBits = (leftMouseButton   ? leftMouseBit   : 0) |
-                      (rightMouseButton  ? rightMouseBit  : 0) |
-                      (middleMouseButton ? middleMouseBit : 0);
+		      (rightMouseButton  ? rightMouseBit  : 0) |
+		      (middleMouseButton ? middleMouseBit : 0);
 
   if (!inited) {
     memset(&prevDeltaCamera, 0, sizeof(Roaming::RoamingCamera));
@@ -6089,8 +6089,8 @@ static void setupRoamingCamera(float dt)
 
     if (currCtrl.x == prevCtrl.x) {
       if (currCtrl.y != prevCtrl.y) {
-        mainWindow->warpMouseCenterY();
-        my = 0;
+	mainWindow->warpMouseCenterY();
+	my = 0;
       }
     }
     else if (currCtrl.y == prevCtrl.y) {
@@ -6113,15 +6113,15 @@ static void setupRoamingCamera(float dt)
       const float sx = float(mx * abs(mx)) * wf;
       const float sy = float(my * abs(my)) * wf;
       switch (currCtrl.x) {
-        case SpinZ:  { deltaCamera.theta  = spinMult  * sx; break; }
-        case ShiftX: { deltaCamera.pos[1] = shiftMult * sx; break; }
-        default: { break; }
+	case SpinZ:  { deltaCamera.theta  = spinMult  * sx; break; }
+	case ShiftX: { deltaCamera.pos[1] = shiftMult * sx; break; }
+	default: { break; }
       }
       switch (currCtrl.y) {
-        case SpinX:  { deltaCamera.phi    =  spinMult * sy; break; }
-        case ShiftY: { deltaCamera.pos[0] = shiftMult * sy; break; }
-        case ShiftZ: { deltaCamera.pos[2] = shiftMult * sy; break; }
-        default: { break; }
+	case SpinX:  { deltaCamera.phi    =  spinMult * sy; break; }
+	case ShiftY: { deltaCamera.pos[0] = shiftMult * sy; break; }
+	case ShiftZ: { deltaCamera.pos[2] = shiftMult * sy; break; }
+	default: { break; }
       }
     }
     else {
@@ -6130,21 +6130,21 @@ static void setupRoamingCamera(float dt)
       bool alt     = ((shiftKeyStatus & BzfKeyEvent::AltKey) != 0);
       bool shift   = ((shiftKeyStatus & BzfKeyEvent::ShiftKey) != 0);
       if (display->hasGetKeyMode()) {
-        display->getModState (shift, control, alt);
+	display->getModState (shift, control, alt);
       }
       if (!control && !shift) {
-        deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+	deltaCamera.pos[0] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
       }
       if (alt) {
-        deltaCamera.pos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
+	deltaCamera.pos[1] = (float)(4 * myTank->getRotation()) * BZDBCache::tankSpeed;
       } else {
-        deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
+	deltaCamera.theta  = ROAM.getZoom() * (float)myTank->getRotation();
       }
       if (control) {
-        deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
+	deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
       }
       if (shift) {
-        deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+	deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
       }
     }
   }
@@ -6974,7 +6974,7 @@ void			startPlaying(BzfDisplay* _display,
   }
 
 // should we grab the mouse?
-#if defined(DEBUG)            // don't grab for debug builds
+#if defined(DEBUG)	    // don't grab for debug builds
   setGrabMouse(false);
 #elif defined(__linux__)      // linux usually has a virtual root window so grab mouse always
   setGrabMouse(true);

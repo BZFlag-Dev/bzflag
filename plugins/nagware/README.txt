@@ -5,7 +5,7 @@
 The nagware pluging is designed to encourage players to register their
 callsigns at my.bzflag.org/bb.
 
-Nagware can send text messages to unverified players at defined 
+Nagware can send text messages to unverified players at defined
 intervals, as well as automatically kick unverified players.
 
 The plugin is customizable with a plain-text configuration file.
@@ -29,17 +29,17 @@ sample config file for how to set the permission name):
 
 /nag on: Enables the plugin for sending messages and kicking players.
          The plugin is enabled by default.
-         
+
 /nag off: Stops the plugin from sending messages and kicking players.
          Renable with '/nag on'.  NOTE that the plugin is automatically
          disabled during a match.
-         
+
 /nag config: Display the current configuration options.
 
 /nag reload: Reload the configuration file. Any config file errors will
          be shown.
-         
+
 /nag list: Show all unverified players, and how long they have been
          connected.
-         
-         
+
+

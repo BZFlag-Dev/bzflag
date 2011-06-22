@@ -310,7 +310,7 @@ bool MuteListCommand::operator() (const char * UNUSED(message),
     GameKeeper::Player *iPlayerData = GameKeeper::Player::getPlayerByIndex(i);
     if (iPlayerData) {
       if (!iPlayerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
-        sendMessage(ServerPlayer, t, iPlayerData->player.getCallSign());
+	sendMessage(ServerPlayer, t, iPlayerData->player.getCallSign());
       }
     }
   }

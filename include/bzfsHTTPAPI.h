@@ -24,7 +24,7 @@ public:
   ~bzhttp_SessionData();
 
   unsigned int SessionID;
-  
+
   const char* GetPrivateItem ( const char* name );
   void SetPrivateItem ( const char * name, const char* value );
   void ClearPrivateItem ( const char * name );

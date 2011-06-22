@@ -575,7 +575,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   {
     // keep reading until we get the whole message
     tlen = rlen;
-    while (rlen >= 1 && tlen < int(len)) 
+    while (rlen >= 1 && tlen < int(len))
     {
 	FD_ZERO(&read_set);
 	FD_SET((unsigned int)fd, &read_set);

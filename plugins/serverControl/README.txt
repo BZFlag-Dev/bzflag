@@ -2,7 +2,7 @@
     DYNAMIC LINK LIBRARY : serverControl Project Overview
 ========================================================================
 
-This is the serverControl plugin. 
+This is the serverControl plugin.
 
 This plugin takes a single command line argument that specifies the
 filename for the plugin configuration file.

@@ -625,8 +625,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-c") == 0) {
       // capture the flag style
       if (options.gameType == RabbitChase) {
-        std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
-        std::cerr << "Capture the flag assumed" << std::endl;
+	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
+	std::cerr << "Capture the flag assumed" << std::endl;
       }
       options.gameType = ClassicCTF;
     }
@@ -677,20 +677,20 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // option beginning with -d so that -dd, -ddd, etc. work
       const char num = argv[i][2];
       if ((num >= '0') && (num <= '9') && (argv[i][3] == 0)) {
-        debugLevel = num - '0';
+	debugLevel = num - '0';
       }
       else {
-        int count = 0;
-        const char *scan;
-        for (scan = (argv[i] + 1); *scan == 'd'; scan++) {
-          count++;
-        }
-        if (*scan != '\0') {
-          std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
-          usage(argv[0]);
-        }
-        debugLevel += count;
-        // std::cout << "Debug level is now " << debugLevel << "" << std::endl;
+	int count = 0;
+	const char *scan;
+	for (scan = (argv[i] + 1); *scan == 'd'; scan++) {
+	  count++;
+	}
+	if (*scan != '\0') {
+	  std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
+	  usage(argv[0]);
+	}
+	debugLevel += count;
+	// std::cout << "Debug level is now " << debugLevel << "" << std::endl;
       }
     }
     else if (strcmp(argv[i], "-f") == 0) {
@@ -981,8 +981,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-rabbit") == 0) {
       // rabbit chase style
       if (options.gameType == ClassicCTF) {
-        std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
-        std::cerr << "Rabbit Chase assumed" << std::endl;;
+	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
+	std::cerr << "Rabbit Chase assumed" << std::endl;;
       }
       options.gameType = RabbitChase;
       // default selection style
@@ -1077,14 +1077,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       i++; // move past the flag descriptor for now (we'll store it in a bit)
       int x = 1;
       if (isdigit(argv[i][0])){
-        x = atoi(argv[i]);
-        if (x < 1){
-          std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
-          x = 1;
-        }
+	x = atoi(argv[i]);
+	if (x < 1){
+	  std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
+	  x = 1;
+	}
       } else {
-        std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
-        usage(argv[0]);
+	std::cerr << "ERROR: invalid shot limit [" << argv[i] << "]" << std::endl;
+	usage(argv[0]);
       }
       storedFlagLimits[argv[i-1]] = x;
     } else if (strcmp(argv[i], "-spamtime") == 0) {
@@ -1156,8 +1156,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-offa") == 0) {
       // capture the flag style
       if (options.gameType == RabbitChase || options.gameType == ClassicCTF) {
-        std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
-        std::cerr << "Open Free-for-all assumed" << std::endl;
+	std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
+	std::cerr << "Open Free-for-all assumed" << std::endl;
       }
       options.gameType = OpenFFA;
     }
@@ -1174,44 +1174,44 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       const std::string timeStr = argv[i];
       // If there is no colon in the time, consider it to be the time limit in seconds
       if (timeStr.find(':') == std::string::npos) {
-        options.timeLimit = (float)atof(timeStr.c_str());
+	options.timeLimit = (float)atof(timeStr.c_str());
       }
       // Otherwise treat it as the end time
       else {
-        std::vector<std::string> endTime = TextUtils::tokenize(timeStr, std::string(":"));
-        {
-          unsigned int sizer = endTime.size();
-          if (sizer > 3) {
-            std::cerr << "ERROR: too many arguments to -time" << std::endl;
-            usage(argv[0]);
-          }
-          while (sizer != 3) {
-            endTime.push_back("00");
-            ++sizer;
-          }
+	std::vector<std::string> endTime = TextUtils::tokenize(timeStr, std::string(":"));
+	{
+	  unsigned int sizer = endTime.size();
+	  if (sizer > 3) {
+	    std::cerr << "ERROR: too many arguments to -time" << std::endl;
+	    usage(argv[0]);
+	  }
+	  while (sizer != 3) {
+	    endTime.push_back("00");
+	    ++sizer;
+	  }
 
-          // Force the countdown to start right away
-          gameOver = false;
-          gameStartTime = TimeKeeper::getCurrent();
-          countdownActive = true;
-        }
-        time_t tnow = time(0);
-        struct tm *now = localtime(&tnow);
-        unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
-          cmdHour = atoi(endTime[0].c_str()),
-          cmdMin = atoi(endTime[1].c_str()),
-          cmdSec = atoi(endTime[2].c_str());
-        unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
-          secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
-        if (secsToday > secsTill) { //if the requested time has already past
-          options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
-        } else {
-          options.timeLimit = (float)(secsTill - secsToday);
-        }
+	  // Force the countdown to start right away
+	  gameOver = false;
+	  gameStartTime = TimeKeeper::getCurrent();
+	  countdownActive = true;
+	}
+	time_t tnow = time(0);
+	struct tm *now = localtime(&tnow);
+	unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
+	  cmdHour = atoi(endTime[0].c_str()),
+	  cmdMin = atoi(endTime[1].c_str()),
+	  cmdSec = atoi(endTime[2].c_str());
+	unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
+	  secsTill = (cmdHour * 3600) + (cmdMin * 60) + cmdSec;
+	if (secsToday > secsTill) { //if the requested time has already past
+	  options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
+	} else {
+	  options.timeLimit = (float)(secsTill - secsToday);
+	}
       }
       if (options.timeLimit <= 0.0f) {
-        // league matches are 30 min
-        options.timeLimit = 1800.0f;
+	// league matches are 30 min
+	options.timeLimit = 1800.0f;
       }
       std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
     }
@@ -1260,7 +1260,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.bzdbVars = argv[i];
     }
     else if ((strcmp(argv[i], "-w") == 0) ||
-               (strcmp(argv[i], "-world") == 0)) {
+	       (strcmp(argv[i], "-world") == 0)) {
       checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.worldFile = argv[i];
@@ -1380,16 +1380,16 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     if (strcmp(vsitr->c_str(), "bad") == 0) {
       FlagSet badFlags = Flag::getBadFlags();
       for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-        options.flagDisallowed[*it] = true;
+	options.flagDisallowed[*it] = true;
     } else if (strcmp(vsitr->c_str(), "good") == 0) {
       FlagSet goodFlags = Flag::getGoodFlags();
       for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-        options.flagDisallowed[*it] = true;
+	options.flagDisallowed[*it] = true;
     } else {
       FlagType* fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
       if (fDesc == Flags::Null) {
-        std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
-        usage(argv[0]);
+	std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
+	usage(argv[0]);
       }
       options.flagDisallowed[fDesc] = true;
     }
@@ -1403,29 +1403,29 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     if (rptBgn > 0) {
       rptCnt = atoi(vsitr->substr(rptBgn+1, vsitr->length() - rptBgn).c_str());
       if (rptCnt <= 0)
-        rptCnt = 1;
+	rptCnt = 1;
       (*vsitr) = vsitr->substr(0, rptBgn);
     }
     if (strcmp(vsitr->c_str(), "good") == 0) {
       FlagSet goodFlags = Flag::getGoodFlags();
       for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); it++)
-        options.flagCount[*it] += rptCnt;
+	options.flagCount[*it] += rptCnt;
     } else if (strcmp(vsitr->c_str(), "bad") == 0) {
       FlagSet badFlags = Flag::getBadFlags();
       for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); it++)
-        options.flagCount[*it] += rptCnt;
+	options.flagCount[*it] += rptCnt;
     } else if (strcmp(vsitr->c_str(), "team") == 0) {
       for (int t = RedTeam; t <= PurpleTeam; t++)
-        options.numTeamFlags[t] += rptCnt;
+	options.numTeamFlags[t] += rptCnt;
     } else {
       FlagType *fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
       if (fDesc == Flags::Null) {
-        std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
-        usage(argv[0]);
+	std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
+	usage(argv[0]);
       } else if (fDesc->flagTeam != NoTeam) {
-        options.numTeamFlags[fDesc->flagTeam] += rptCnt;
+	options.numTeamFlags[fDesc->flagTeam] += rptCnt;
       } else {
-        options.flagCount[fDesc] += rptCnt;
+	options.flagCount[fDesc] += rptCnt;
       }
     }
   }
@@ -1678,7 +1678,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     logDebugMessage(1,"  open free-for-all\n");
   if (options.gameType == TeamFFA)
     logDebugMessage(1,"  teamed free-for-all\n");
-  
+
   logDebugMessage(1,"options: %X\n", options.gameOptions);
   if (options.gameOptions & int(SuperFlagGameStyle))
     logDebugMessage(1,"  super flags allowed\n");

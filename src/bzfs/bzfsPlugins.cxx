@@ -293,7 +293,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 		{
 			*(void**) &lpProc = dlsym(hLib,"bz_GetPlugin");
 			if (lpProc)
-			{	
+			{
 				lastPluginDir = getPluginPath(realPluginName);
 				bz_Plugin * p = (*lpProc)();
 				if (!p)

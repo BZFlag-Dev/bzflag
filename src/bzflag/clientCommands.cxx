@@ -166,7 +166,7 @@ static std::string cmdIconify(const std::string&,
 /** mouse box size flags
  */
 static std::string cmdMouseBox(const std::string&,
-                               const CommandManager::ArgList& args, bool*);
+			       const CommandManager::ArgList& args, bool*);
 
 /** toggle mouse capture
  */
@@ -222,7 +222,7 @@ static std::string cmdToggleFS(const std::string&,
 }
 
 static std::string cmdMouseBox(const std::string&,
-                               const CommandManager::ArgList& args, bool*)
+			       const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1) {
     return "usage: mousebox <size>";
@@ -706,7 +706,7 @@ static void* writeScreenshot(void* data)
       file = findData.cFileName;
       const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
       if (snap < number) {
-        snap = number;
+	snap = number;
       }
     }
   }
@@ -719,10 +719,10 @@ static void* writeScreenshot(void* data)
     while ((contents = readdir(directory))) {
       file = contents->d_name;
       if (glob_match(pattern, file)) {
-        const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
-        if (snap < number) {
-          snap = number;
-        }
+	const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
+	if (snap < number) {
+	  snap = number;
+	}
       }
     }
     closedir(directory);
@@ -738,25 +738,25 @@ static void* writeScreenshot(void* data)
 
     const std::string& renderer = ssdata->renderer;
     unsigned char* pixels       = ssdata->pixels;
-    const int xsize             = ssdata->xsize;
-    const int ysize             = ssdata->ysize;
-    const int channels          = ssdata->channels;
+    const int xsize	     = ssdata->xsize;
+    const int ysize	     = ssdata->ysize;
+    const int channels	  = ssdata->channels;
 
     // Gamma-correction is preapplied by BZFlag's gamma table
     // This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
     if (BZDB.isSet("gamma")) {
       const float gamma = BZDB.eval("gamma");
       if (gamma != 1.0f) {
-        unsigned char gammaTable[256];
-        for (int i = 0; i < 256; i++) {
-          const float lum    = float(i) / 256.0f;
-          const float lumadj = pow(lum, 1.0f / gamma);
-          gammaTable[i] = (unsigned char) (lumadj * 256);
-        }
-        const int pixelCount = (xsize * ysize * channels);
-        for (int i = 0; i < pixelCount; i++) {
-          pixels[i] = gammaTable[pixels[i]];
-        }
+	unsigned char gammaTable[256];
+	for (int i = 0; i < 256; i++) {
+	  const float lum    = float(i) / 256.0f;
+	  const float lumadj = pow(lum, 1.0f / gamma);
+	  gammaTable[i] = (unsigned char) (lumadj * 256);
+	}
+	const int pixelCount = (xsize * ysize * channels);
+	for (int i = 0; i < pixelCount; i++) {
+	  pixels[i] = gammaTable[pixels[i]];
+	}
       }
     }
 
@@ -806,12 +806,12 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
   pthread_create(&thread, NULL, writeScreenshot, (void *) ssdata);
 #elif defined(_WIN32)
   CreateThread(
-            NULL, // Security attributes
-            0, // Stack size (0 -> default)
-            writeScreenshot,
-            ssdata,
-            0, // creation flags (0 -> run immediately)
-            NULL); // thread id return value (NULL -> don't care)
+	    NULL, // Security attributes
+	    0, // Stack size (0 -> default)
+	    writeScreenshot,
+	    ssdata,
+	    0, // creation flags (0 -> run immediately)
+	    NULL); // thread id return value (NULL -> don't care)
 #else
   // no threads?  sucks to be you, but we'll still write the screenshot
   writeScreenshot(ssdata);

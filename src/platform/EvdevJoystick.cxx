@@ -401,14 +401,14 @@ bool		    EvdevJoystick::ffHasRumble() const
 #if (defined HAVE_FF_EFFECT_DIRECTIONAL || defined HAVE_FF_EFFECT_RUMBLE)
 void EvdevJoystick::writeJoystick(int count) {
     struct input_event event;
-    ssize_t            written_byte;
+    ssize_t	    written_byte;
 
     event.type   = EV_FF;
     event.code   = ff_rumble->id;
     event.value  = count;
     written_byte = write(joystickfd, &event, sizeof(event));
     if (written_byte != sizeof(event))
-    	printError("Unable to write on joystick");
+	printError("Unable to write on joystick");
 }
 #else
 void EvdevJoystick::writeJoystick(int) {

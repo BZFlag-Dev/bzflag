@@ -143,7 +143,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	callsign = base + strlen(unknownPlayer);
 	authReply  = true;
       } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))){
-        setPublicOwner(base + strlen(ownerIdentifier));
+	setPublicOwner(base + strlen(ownerIdentifier));
       } else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
 	std::string line = base;
 	std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);

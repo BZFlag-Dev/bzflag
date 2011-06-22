@@ -93,8 +93,8 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], floa
 void bz_ServerSidePlayerHandler::textMessage(int, int, const char*){}
 
 void bz_ServerSidePlayerHandler::playerKilled(int victimIndex, int killerIndex,
-                                              bz_ePlayerDeathReason reason, int UNUSED(shotIndex),
-                                              const char *UNUSED(flagType), int UNUSED(phydrv))
+					      bz_ePlayerDeathReason reason, int UNUSED(shotIndex),
+					      const char *UNUSED(flagType), int UNUSED(phydrv))
 {
 	if (victimIndex != getPlayerID())
 		return;
@@ -433,7 +433,7 @@ bz_ePlayerDeathReason getDeathReason (bz_PlayerDieEventData_V1* data)
 
 	if (data->shotID > 0)
 		return eGotShot;
-	
+
 	// TODO, do better here
 	return eGotKilled;
 }

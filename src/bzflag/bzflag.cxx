@@ -345,13 +345,13 @@ static void		parse(int argc, char** argv)
       checkArgc(i, argc, argv[i]);
       int w, h, x, y, count;
       char xs ='+', ys='+';
-      if (strcmp(argv[i], "default") != 0 
-         && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2) 
-         || (xs != '-' && xs != '+') 
-         || (ys != '-' && ys != '+')))
+      if (strcmp(argv[i], "default") != 0
+	 && (((count = sscanf(argv[i], "%dx%d%c%d%c%d", &w, &h, &xs, &x, &ys, &y)) != 6 && count != 2)
+	 || (xs != '-' && xs != '+')
+	 || (ys != '-' && ys != '+')))
       {
-        printFatalError("Invalid argument for %s. \nCorrect format is <width>x<height>[+|-]<x>[+|-].", argv[i-1]);
-        usage();
+	printFatalError("Invalid argument for %s. \nCorrect format is <width>x<height>[+|-]<x>[+|-].", argv[i-1]);
+	usage();
       }
       BZDB.set("geometry", argv[i]);
 #ifdef DEBUG
@@ -425,54 +425,54 @@ static void		parse(int argc, char** argv)
     }
     else if (argv[i][0] != '-') {
       if (i == (argc - 1)) {
-        // find the beginning of the server name, parse the callsign
-        char *serverName;
-        if ((serverName = strchr(argv[i], '@')) != NULL) {
-          char *password;
-          *serverName = '\0';
-          if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
-            printFatalError("Callsign truncated.");
-          }
-          strncpy(startupInfo.callsign, argv[i],
-                  sizeof(startupInfo.callsign) - 1);
-          startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-          if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
-            *(strchr(startupInfo.callsign, ':')) = '\0';
-            *password = '\0', ++password;
-            if (strlen(argv[i]) >= sizeof(startupInfo.password)) {
-              printFatalError("Password truncated.");
-            }
-            strncpy(startupInfo.password, password,
-                    sizeof(startupInfo.password) - 1);
-            startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-          }
-          ++serverName;
-        }
-        else {
-          serverName = argv[i];
-        }
+	// find the beginning of the server name, parse the callsign
+	char *serverName;
+	if ((serverName = strchr(argv[i], '@')) != NULL) {
+	  char *password;
+	  *serverName = '\0';
+	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
+	    printFatalError("Callsign truncated.");
+	  }
+	  strncpy(startupInfo.callsign, argv[i],
+		  sizeof(startupInfo.callsign) - 1);
+	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+	  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
+	    *(strchr(startupInfo.callsign, ':')) = '\0';
+	    *password = '\0', ++password;
+	    if (strlen(argv[i]) >= sizeof(startupInfo.password)) {
+	      printFatalError("Password truncated.");
+	    }
+	    strncpy(startupInfo.password, password,
+		    sizeof(startupInfo.password) - 1);
+	    startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
+	  }
+	  ++serverName;
+	}
+	else {
+	  serverName = argv[i];
+	}
 
-        // find the beginning of the port number, parse it
-        char *portNumber;
-        if ((portNumber = strchr(serverName, ':')) == NULL) {
-          startupInfo.serverPort = ServerPort;  // use the default
-        }
-        else {
-          *portNumber = '\0';
-          ++portNumber;
-          startupInfo.serverPort = atoi(portNumber);
-          if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-            startupInfo.serverPort = ServerPort;
-            printFatalError("Bad port, using default %d.", startupInfo.serverPort);
-          }
-        }
-        if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
-          printFatalError("Server name too long.  Ignoring.");
-        }
-        else {
-          strcpy(startupInfo.serverName, serverName);
-          startupInfo.autoConnect = true;
-        }
+	// find the beginning of the port number, parse it
+	char *portNumber;
+	if ((portNumber = strchr(serverName, ':')) == NULL) {
+	  startupInfo.serverPort = ServerPort;  // use the default
+	}
+	else {
+	  *portNumber = '\0';
+	  ++portNumber;
+	  startupInfo.serverPort = atoi(portNumber);
+	  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
+	    startupInfo.serverPort = ServerPort;
+	    printFatalError("Bad port, using default %d.", startupInfo.serverPort);
+	  }
+	}
+	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
+	  printFatalError("Server name too long.  Ignoring.");
+	}
+	else {
+	  strcpy(startupInfo.serverName, serverName);
+	  startupInfo.autoConnect = true;
+	}
       }
       else {
 	printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
@@ -485,18 +485,18 @@ static void		parse(int argc, char** argv)
     else if (strncmp(argv[i], "-d", 2) == 0) {
       const char num = argv[i][2];
       if ((num >= '0') && (num <= '9') && (argv[i][3] == 0)) {
-        debugLevel = num - '0';
+	debugLevel = num - '0';
       }
       else {
-        const char* c = argv[i] + 2;
-        while (*c != 0) {
-          if (*c != 'd') {
-            printFatalError("Unknown option %s.", argv[i]);
-            usage();
-          }
-          c++;
-        }
-        debugLevel += (int)((c - argv[i]) - 1);
+	const char* c = argv[i] + 2;
+	while (*c != 0) {
+	  if (*c != 'd') {
+	    printFatalError("Unknown option %s.", argv[i]);
+	    usage();
+	  }
+	  c++;
+	}
+	debugLevel += (int)((c - argv[i]) - 1);
       }
     }
     else {

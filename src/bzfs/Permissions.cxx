@@ -496,7 +496,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   return PlayerAccessInfo::lastPerm;
 }
 
-// Parse a list of permissions &permissionString and set the corrosponding Permissions 
+// Parse a list of permissions &permissionString and set the corrosponding Permissions
 // in &info. Return true if a group is referenced but not defined yet, else false.
 // return value is only needed for groupdb parsing, not for userdb.
 bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo &info)
@@ -611,10 +611,10 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
   std::ifstream in(filename.c_str());
   if (!in)
     return false;
-  
+
   int recursionNeeded = 1;
   bool initialRun = true;
-  
+
    // read groupdb and check for unsolved group references, read the file again
   // for each of them. One more recursion should make sure everything is fine.
   do {
@@ -628,7 +628,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 
       // strip leading whitespace
       line.erase(0 , line.find_first_not_of(" \t"));
-    
+
       // check for a comment string or empty line
       if(line.empty() || line[0] == '#')
 	continue;
@@ -636,7 +636,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       makeupper(line);
 
       std::string::size_type colonpos = line.find(':');
-      if (colonpos == std::string::npos) 
+      if (colonpos == std::string::npos)
 	logDebugMessage(1,"WARNING: bad groupdb line (%i)\n", linenum);
       else {
 	std::string name = line.substr(0, colonpos);
@@ -655,14 +655,14 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 	if(parsePermissionString(perm, accessInfo) && initialRun){
 	  recursionNeeded++;
 	}
-	
+
 	accessInfo.verified = true;
 	groupAccess[name] = accessInfo;
       }
     }
     initialRun = false;
   } while(recursionNeeded--);
-  
+
   return true;
 }
 

@@ -45,7 +45,7 @@ class World {
 			~World();
 
     bool		allowTeamFlags() const;
-    bool                allowTeamKills() const;
+    bool		allowTeamKills() const;
     bool		allowSuperFlags() const;
     bool		allowJumping() const;
     bool		allShotsRicochet() const;

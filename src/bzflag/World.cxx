@@ -1241,17 +1241,17 @@ static void drawInsideOutsidePoints()
     const afvec3* checkPoints = mesh->getCheckPoints();
     for (int c = 0; c < checkCount; c++) {
       switch (checkTypes[c]) {
-        case MeshObstacle::CheckInside: {
-          insides.push_back(checkPoints[c]);
-          break;
-        }
-        case MeshObstacle::CheckOutside: {
-          outsides.push_back(checkPoints[c]);
-          break;
-        }
-        default: {
-          break;
-        }
+	case MeshObstacle::CheckInside: {
+	  insides.push_back(checkPoints[c]);
+	  break;
+	}
+	case MeshObstacle::CheckOutside: {
+	  outsides.push_back(checkPoints[c]);
+	  break;
+	}
+	default: {
+	  break;
+	}
       }
     }
   }

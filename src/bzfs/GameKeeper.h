@@ -43,7 +43,7 @@ public:
   ShotInfo() : present(false) {};
 
   FiringInfo firingInfo;
-  int        salt;
+  int	salt;
   float      expireTime;
   bool       present;
   bool       running;
@@ -112,15 +112,15 @@ public:
     void		updateNextGameTime();
 
     // To handle Identify
-    void           setLastIdFlag(int _idFlag);
-    int            getLastIdFlag();
-    
+    void	   setLastIdFlag(int _idFlag);
+    int	    getLastIdFlag();
+
     // To handle shot
     static void    setMaxShots(int _maxShots);
-    bool           addShot(int id, int salt, FiringInfo &firingInfo);
-    bool           removeShot(int id, int salt);
-    bool           updateShot(int id, int salt);
-    
+    bool	   addShot(int id, int salt, FiringInfo &firingInfo);
+    bool	   removeShot(int id, int salt);
+    bool	   updateShot(int id, int salt);
+
 
     enum LSAState
       {
@@ -173,10 +173,10 @@ public:
     // In case you want recheck all condition on all players
     static bool       allNeedHostbanChecked;
 
-    static int             maxShots;
+    static int	     maxShots;
     std::vector<ShotInfo> shotsInfo;
-   
-    int               idFlag;
+
+    int	       idFlag;
 
   };
 

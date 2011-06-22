@@ -56,7 +56,7 @@ void BaseLocalPlayer::update(float inputDT)
   lastPosition[0] = oldPosition[0];
   lastPosition[1] = oldPosition[1];
   lastPosition[2] = oldPosition[2];
-  
+
   lastTime = TimeKeeper::getTick();
 
   if (inputDT > 0)

@@ -128,7 +128,7 @@ class vec2 {
     static bool normalize(vec2& v) {
       const T len = v.length();
       if (len == (T)0) {
-        return false;
+	return false;
       }
       const T scale = ((T)1 / len);
       v *= scale;
@@ -150,7 +150,7 @@ class vec2 {
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }
       return ::tostring(x, fmt) + sep +
-             ::tostring(y, fmt);
+	     ::tostring(y, fmt);
     }
 };
 
@@ -242,9 +242,9 @@ class vec3 {
 
     static vec3 cross(const vec3& a, const vec3& b) {
       return vec3(
-        ((a.y * b.z) - (a.z * b.y)),
-        ((a.z * b.x) - (a.x * b.z)),
-        ((a.x * b.y) - (a.y * b.x))
+	((a.y * b.z) - (a.z * b.y)),
+	((a.z * b.x) - (a.x * b.z)),
+	((a.x * b.y) - (a.y * b.x))
       );
     }
     vec3 cross(const vec3& v) const {
@@ -257,7 +257,7 @@ class vec3 {
     static bool normalize(vec3& v) {
       const T len = v.length();
       if (len == (T)0) {
-        return false;
+	return false;
       }
       const T scale = ((T)1 / len);
       v *= scale;
@@ -306,8 +306,8 @@ class vec3 {
       const T ys = n.y * sv;
       const T zs = n.z * sv;
       return vec3(dot(vec3(fxx + cv, fxy - zs, fxz + ys)),
-                  dot(vec3(fxy + zs, fyy + cv, fyz - xs)),
-                  dot(vec3(fxz - ys, fyz + xs, fzz + cv)));
+		  dot(vec3(fxy + zs, fyy + cv, fyz - xs)),
+		  dot(vec3(fxz - ys, fyz + xs, fzz + cv)));
     }
     static void rotate(vec3& v, T radians, const vec3& n) {
       v = v.rotate(radians, n);
@@ -316,8 +316,8 @@ class vec3 {
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }
       return ::tostring(x, fmt) + sep +
-             ::tostring(y, fmt) + sep +
-             ::tostring(z, fmt);
+	     ::tostring(y, fmt) + sep +
+	     ::tostring(z, fmt);
     }
 };
 
@@ -428,16 +428,16 @@ class vec4 {
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const {
       if (sep == NULL) { sep = " "; }
       return ::tostring(x, fmt) + sep +
-             ::tostring(y, fmt) + sep +
-             ::tostring(z, fmt) + sep +
-             ::tostring(w, fmt);
+	     ::tostring(y, fmt) + sep +
+	     ::tostring(z, fmt) + sep +
+	     ::tostring(w, fmt);
     }
 };
 
 
-template <typename T> vec4<T> operator+(T d, const vec4<T>& in) { vec4<T> v(in);         v += d;  return v; }
+template <typename T> vec4<T> operator+(T d, const vec4<T>& in) { vec4<T> v(in);	 v += d;  return v; }
 template <typename T> vec4<T> operator-(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v -= in; return v; }
-template <typename T> vec4<T> operator*(T d, const vec4<T>& in) { vec4<T> v(in);         v *= d;  return v; }
+template <typename T> vec4<T> operator*(T d, const vec4<T>& in) { vec4<T> v(in);	 v *= d;  return v; }
 template <typename T> vec4<T> operator/(T d, const vec4<T>& in) { vec4<T> v(d, d, d, d); v /= in; return v; }
 template <typename T> std::ostream& operator<<(std::ostream& out, const vec4<T>& v) {
   out << " " << v.tostring(); return out;

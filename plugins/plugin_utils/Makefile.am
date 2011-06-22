@@ -17,7 +17,7 @@ libplugin_utils_la_LDFLAGS = -avoid-version
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
-	
+
 EXTRA_DIST = \
 	templates_readme.txt \
 	base64_readme.txt \

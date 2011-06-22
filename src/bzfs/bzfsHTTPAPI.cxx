@@ -448,7 +448,7 @@ void bzhttp_Responce::AddHeader ( const char* n, const char* v)
 {
   RESPONCE_DATA(data);
 
-  std::string name = n; 
+  std::string name = n;
   data->Headers[name] = std::string(v);
 }
 
@@ -456,7 +456,7 @@ void bzhttp_Responce::AddCookies ( const char* n, const char* v)
 {
   RESPONCE_DATA(data);
 
-  std::string name = n; 
+  std::string name = n;
    data->Cookies[name] = std::string(v);
 }
 
@@ -531,7 +531,7 @@ void bzhttp_Request::AddHeader ( const char* n, const char* v)
 {
   REQUEST_DATA(data);
 
-  std::string name = TextUtils::toupper(n); 
+  std::string name = TextUtils::toupper(n);
   if (data->Headers.find(name) == data->Headers.end())
     data->Headers[name] = std::string(v);
 }
@@ -540,7 +540,7 @@ const char* bzhttp_Request::GetHeader ( const char* n) const
 {
   REQUEST_DATA(data);
 
-  std::string name = TextUtils::toupper(n); 
+  std::string name = TextUtils::toupper(n);
   if (data->Headers.find(name) == data->Headers.end())
     return NULL;
 
@@ -575,7 +575,7 @@ void bzhttp_Request::AddCookie ( const char* n, const char* v)
 {
   REQUEST_DATA(data);
 
-  std::string name = TextUtils::toupper(n); 
+  std::string name = TextUtils::toupper(n);
   if (data->Headers.find(name) == data->Headers.end())
     data->Headers[name] = std::string(v);
 }
@@ -584,7 +584,7 @@ const char* bzhttp_Request::GetCookie ( const char* n) const
 {
   REQUEST_DATA(data);
 
-  std::string name = TextUtils::toupper(n); 
+  std::string name = TextUtils::toupper(n);
   if (data->Cookies.find(name) == data->Cookies.end())
     return NULL;
 
@@ -619,7 +619,7 @@ void bzhttp_Request::AddParamater ( const char* n, const char* v)
 {
   REQUEST_DATA(data);
 
-  std::string name = TextUtils::toupper(n); 
+  std::string name = TextUtils::toupper(n);
   if (data->Paramaters.find(name) == data->Paramaters.end())
     data->Paramaters[name] = std::string(v);
 }
@@ -628,7 +628,7 @@ const char* bzhttp_Request::GetParamater ( const char* n) const
 {
   REQUEST_DATA(data);
 
-  std::string name = TextUtils::toupper(n); 
+  std::string name = TextUtils::toupper(n);
   if (data->Paramaters.find(name) == data->Paramaters.end())
     return NULL;
 
@@ -965,7 +965,7 @@ public:
       if (vDir && vDir->RequiredAuthentiction != eNoAuth)
       {
 	Authenticated = false;
-	
+
 	// check and see if we are cached
 	if (vDir->CacheAuthentication)
 	{
@@ -1019,11 +1019,11 @@ public:
 		bzIDAuthURL += TextUtils::url_encode(callsign);
 		bzIDAuthURL += "%3D";
 		bzIDAuthURL += TextUtils::url_encode(token);
-		
+
 		std::string groups;
 		// get the groups list
 		PlayerAccessMap::iterator itr = groupAccess.begin();
-		while (itr != groupAccess.end()) 
+		while (itr != groupAccess.end())
 		{
 		  groups += TextUtils::url_encode(itr->first) + "%0D%0A";
 		  itr++;
@@ -1131,7 +1131,7 @@ public:
     }
   }
 
-  virtual bzhttp_ePageGenStatus GetPage () 
+  virtual bzhttp_ePageGenStatus GetPage ()
   {
     if(!vDir)
       return eNoPage;
@@ -1582,7 +1582,7 @@ public:
     Mime = "application/octet-stream";
   }
 
-  virtual bzhttp_ePageGenStatus GetPage () 
+  virtual bzhttp_ePageGenStatus GetPage ()
   {
     if (!File.size())
       return eNoPage;
@@ -1788,7 +1788,7 @@ void NewHTTPConnection ( bz_EventData *eventData )
     else
       peer->vDir = dir;
 
-    // check and see if it's a resource 
+    // check and see if it's a resource
 
     if (peer->vDir->AllowResourceDownloads())
     {
@@ -1816,7 +1816,7 @@ void NewHTTPConnection ( bz_EventData *eventData )
     }
 
     bz_registerNonPlayerConnectionHandler(connData->connectionID,peer);
-    
+
     HTTPPeers[connData->connectionID] = peer;
     peer->pending(connData->connectionID,connData->data,connData->size);
   }
@@ -2238,11 +2238,11 @@ void processIF ( std::string &code, std::string::const_iterator &inItr, const st
   }
 
   // test the if, stuff that dosn't exist is false
-  if (CallIF(commandParts[1],param,info.Callback)) 
+  if (CallIF(commandParts[1],param,info.Callback))
     code += processTemplate(trueSection,info);
   else
     code += processTemplate(elseSection,info);
-  
+
   inItr = itr;
 }
 

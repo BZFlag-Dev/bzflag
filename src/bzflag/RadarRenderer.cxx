@@ -679,12 +679,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
 	continue;
       if (BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR)) {
-        if (flag.type->flagTeam != ::NoTeam) {
+	if (flag.type->flagTeam != ::NoTeam) {
 	  continue;
 	}
       }
       if (BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR)) {
-        if (flag.type) {
+	if (flag.type) {
 	  continue;
 	}
       }

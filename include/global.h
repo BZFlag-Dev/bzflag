@@ -59,7 +59,7 @@ enum TeamColor {
 			PurpleTeam = 4,
 			ObserverTeam = 5,
 			RabbitTeam = 6,
-                        HunterTeam = 7
+			HunterTeam = 7
 };
 
 #ifdef ROBOT
@@ -104,7 +104,7 @@ enum GameOptions {
 };
 
 // map object flags
-#define _DRIVE_THRU  ( 1 << 0 )	
+#define _DRIVE_THRU  ( 1 << 0 )
 #define _SHOOT_THRU  ( 1 << 1 )
 #define _FLIP_Z	     ( 1 << 2 )
 #define _RICOCHET    ( 1 << 3 )

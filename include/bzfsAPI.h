@@ -1699,7 +1699,7 @@ public:
   virtual void died ( int killer ); // the bot has died from gameplay
   virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner
 //  virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ){} // the bot ran into an object
- 
+
   // give the bot time to do it's processing
   virtual bool think(void); // return true to kill and delete the bot;
 
@@ -1797,8 +1797,8 @@ typedef int bz_eShotType;
 
 // Note: there is NO bz_UnregisterCustomFlag, 'cause that would jack up connected clients.
 // If you really need to unregister a flag, shut down the server.
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
-				   const char* helpString, bz_eShotType shotType, 
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
+				   const char* helpString, bz_eShotType shotType,
 				   bz_eFlagQuality quality);
 
 

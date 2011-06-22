@@ -236,7 +236,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-        MeshFace* face = (MeshFace*) mesh->getFace(i);
+	MeshFace* face = (MeshFace*) mesh->getFace(i);
 	face->ricochet = true;
       }
     }

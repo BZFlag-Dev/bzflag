@@ -90,7 +90,7 @@ koth
 end
 
 This would set up a King of the Hill cylindrical volume 30 x 30 x 20, centered at 0 0 30.  Teamplay would be enabled and the required time to occupy the "Hill" would be 100 seconds.  The time to occupy the hill would adjust downward with an increasing number of players (see autotime description above).  Each new player after 2 will reduce the hold time by 5% to a minimum of 25% of the hold time (25 seconds).  The sounds associated with the plugin would be disabled.
-  
+
 Obviously, the plugin must be loaded to the server at startup, or it will not recoginize these map parameters.
 
 -------------------------------------------------------------------------------------

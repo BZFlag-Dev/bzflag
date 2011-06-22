@@ -481,13 +481,13 @@ DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* po
 	float rots[3] = {0};
 	rots[2] = rot;
 
-// 	if (reason == GotKilledMsg)
-// 		effect = new FadeToHeaven();
-// 	else if (reason == GotRunOver || flag == Flags::Steamroller)
-// 		effect = new SquishDeathEffect;
-// 	else if (flag == Flags::GuidedMissile)
-// 		effect = new SpikesDeathEffect;
-// 	else
+//	if (reason == GotKilledMsg)
+//		effect = new FadeToHeaven();
+//	else if (reason == GotRunOver || flag == Flags::Steamroller)
+//		effect = new SquishDeathEffect;
+//	else if (flag == Flags::GuidedMissile)
+//		effect = new SpikesDeathEffect;
+//	else
 		effect = new RingsDeathEffect;
 
 	if (effect)
@@ -1483,7 +1483,7 @@ SmokeGMPuffEffect::SmokeGMPuffEffect() : BasicEffect()
 	jitter.x = ((float)bzfrand() * (randMod*2)) - randMod;
 	jitter.y = ((float)bzfrand() * (randMod*2)) - randMod;
 	jitter.z = ((float)bzfrand() * (randMod*2)) - randMod;
-	
+
 	du = dv = 0.5f;
 
 	if (bzfrand() < 0.5)
@@ -1545,7 +1545,7 @@ void SmokeGMPuffEffect::draw(const SceneRenderer &)
 	pos[2] = position[2] + velocity[2] * age;
 
 	glTranslatef(pos[0]+jitter.x,pos[1]+jitter.y,pos[2]+jitter.z+vertDrift);
-	
+
 	glPushMatrix();
 	RENDERER.getViewFrustum().executeBillboard();
 	glRotatef(age*180,0,0,1);

@@ -2881,7 +2881,7 @@ public:
   }
 
   ~URLFetchHandler()
-  { 
+  {
     removeAllJobs();
     if (curlHandle)
       curl_multi_cleanup(curlHandle);
@@ -2899,7 +2899,7 @@ public:
     {
       int running;
       curl_multi_perform(curlHandle, &running);
-      
+
       if (running == 0)
       {
 	int      msgs_in_queue;
@@ -3023,7 +3023,7 @@ public:
   }
 
 private:
- 
+
   void KillCurrentJob ( bool notify )
   {
     if (notify && Tasks.size())
@@ -3509,8 +3509,8 @@ BZF_API const char* bz_getProtocolVersion ( void )
   return getProtocolVersion();
 }
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, 
-				   const char* help, bz_eShotType shotType, 
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
+				   const char* help, bz_eShotType shotType,
 				   bz_eFlagQuality quality)
 {
   // require defined fields

@@ -453,22 +453,22 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   pos1.y = tele1.getPosition()[1];
   pos1.z = tele1.getPosition()[2];;
 
-  
+
   fvec3 pos2;
   pos2.x = tele2.getPosition()[0];
   pos2.y = tele2.getPosition()[1];
   pos2.z = tele2.getPosition()[2];;
-  
+
   fvec3 size1;
   size1.x = tele1.getSize()[0];
   size1.y = tele1.getSize()[1];
   size1.z = tele1.getSize()[2];
-  
+
   fvec3 size2;
   size2.x = tele2.getSize()[0];
   size2.y = tele2.getSize()[1];
   size2.z = tele2.getSize()[2];
-  
+
   // y & z axis scaling factors  (relative active areas)
   const fvec2 dims1(size1.y - bord1, size1.z - bord1);
   const fvec2 dims2(size2.y - bord2, size2.z - bord2);
@@ -477,7 +477,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   fvec3 p;
   p.x = pIn[0];
   p.y = pIn[1];
-  p.z = pIn[2];  
+  p.z = pIn[2];
 
   // translate to origin, and revert rotation
   p -= pos1;
@@ -485,7 +485,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 
   // fixed x offset, and scale y & z coordinates
   p.x = (face2 == 0) ? size2.x : -size2.x;
-  p.yz() *= dimsScale; // note the .yz() 
+  p.yz() *= dimsScale; // note the .yz()
 
   // apply rotation, translate to new position
   p = p.rotateZ(+tele2.getRotation());
@@ -498,7 +498,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 
   // fill in output angle and direction variables, if requested
   const float a = tele2.getRotation() - tele1.getRotation() +
-                  ((face1 == face2) ? (float)M_PI : 0.0f);
+		  ((face1 == face2) ? (float)M_PI : 0.0f);
   if (aOut) {
     *aOut = aIn + a;
   }

@@ -125,7 +125,7 @@ bool saveWorldCache( const char* file = NULL );
 void playerAlive(int playerIndex);
 bool allowTeams ( void );
 extern const std::string& getPublicOwner();
-extern void               setPublicOwner(const std::string& owner);
+extern void	       setPublicOwner(const std::string& owner);
 
 void rescanForBans ( bool isOperator = false, const char* callsign = NULL, int playerID = -1 );
 
@@ -182,7 +182,7 @@ struct NetConnectedPeer {
 	int socket;
 	int player;
 
-	NetHandler*                    netHandler;
+	NetHandler*		    netHandler;
 	bz_NonPlayerConnectionHandler* apiHandler;
 
 	std::list<std::string> sendChunks;

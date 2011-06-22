@@ -6,7 +6,7 @@ rabidRabbit plugin
 
 Author: LouMan
 
-Description: 
+Description:
 
 The rabidRabbit plugin will allow a rabbit player to enter a map defined volume (rabid rabbit 'zone') and kill all hunters at once.  The plugin will accomodate as many rabidRabbit zones as are defined in the map file (minimum of 2) and will cycle through each rabidRabbit zones sequentially so that the rabbit cannot repeatedly use the same zone to kill the hunters.  Map designers are highly advised to clearly indicate rabidRabbit zones in the map (texturing, world weapon option below, etc.), so that they are easily identified by all players.
 
@@ -24,7 +24,7 @@ bbox <Xmin> <Xmax> <Ymin> <Ymax> <Zmin> <Zmax>
 or
 cylinder <X> <Y> <Zmin> <Zmax> <radius>
 
-Required (at least 2 volumes).  These define a volume on the map that the rabbit can enter to trigger death of all hunters.  
+Required (at least 2 volumes).  These define a volume on the map that the rabbit can enter to trigger death of all hunters.
 
 
 rrzoneww <flagType> <lifetime> <X> <Y> <Z> <tilt> <direction> <shotID> <DT> <repeat>
@@ -71,13 +71,13 @@ rabidRabbitzone
   rrzoneww SW 1 -50 -50 1000 90 0 0 0 .5
   servermessage "You were killed by a rabid rabbit!"
   zonekillhunter "This area for rabbits only!"
-end 
+end
 rabidRabbitzone
   bbox 30 80 30 80 0 2
   rrzoneww SW 1 50 50 25 1000 0 0 0 .5
   servermessage "You were killed by a rabid rabbit!"
   zonekillhunter "This area for rabbits only!"
-end 
+end
 
 rrsoundoff
 end
@@ -86,7 +86,7 @@ rrcycleondie
 end
 
 
-This defines the 2 zones that the rabbit can enter to kill all hunters.  The plugin will use the first volume definition (bbox -80 -30 -80 -30 0 2) as the zone for the rabbit to enter to kill hunters.  If the rabbit successfully enters this zone and kill the hunters, the plugin will use the next defined volume (bbox 30 80 30 80 0 2) as the zone for the rabbit to enter to kill hunters.  And so on - the plugin will cycle through each zone sequentially.  If a rabbit successfully enters the correct zone, all hunters will be killed with a message stating, "You were killed by a rabid rabbit!"  If a hunter enters a rabidRabbit zone, he/she will be killed with message "This area for rabbits only!"  A laser world weapon will repeatedly fire 
+This defines the 2 zones that the rabbit can enter to kill all hunters.  The plugin will use the first volume definition (bbox -80 -30 -80 -30 0 2) as the zone for the rabbit to enter to kill hunters.  If the rabbit successfully enters this zone and kill the hunters, the plugin will use the next defined volume (bbox 30 80 30 80 0 2) as the zone for the rabbit to enter to kill hunters.  And so on - the plugin will cycle through each zone sequentially.  If a rabbit successfully enters the correct zone, all hunters will be killed with a message stating, "You were killed by a rabid rabbit!"  If a hunter enters a rabidRabbit zone, he/she will be killed with message "This area for rabbits only!"  A laser world weapon will repeatedly fire
 every 0.5 seconds (at the coordinates and with the tilt/direction indicated) when each zone is active for rabidRabbit.  Rabid rabbit sounds will be disabled due to "rrsoundoff" map entry, and the plugin will cycle to the next rabid rabbit zone upon the rabbit's death.
 
 -------------------------------------------------------------------------------------

@@ -253,7 +253,7 @@ void			InputMenu::callback(HUDuiControl* w, void* data) {
 	getMainWindow()->enableGrabMouse(grabbing);
 
 	const bool clamped = (selectedOption == "MotionBox");
-        BZDB.set("mouseClamp", clamped ? "1" : "0");
+	BZDB.set("mouseClamp", clamped ? "1" : "0");
       }
       break;
 

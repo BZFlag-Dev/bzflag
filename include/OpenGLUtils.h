@@ -33,7 +33,7 @@ class OpenGLGState;
 
 
 extern void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
-                         fvec4& color, const fvec4*& colorPtr);
+			 fvec4& color, const fvec4*& colorPtr);
 
 extern bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst);
 
@@ -59,22 +59,22 @@ extern void glLineRing(float radius, float width = 1.0f);
 
 // draw an outline box with the outside at the bounds, and inset by the thickness
 extern void glOutlineBoxCP(float thickness, float centerX, float centerY,
-                    float width, float height, float depth = 0.0f);
+		    float width, float height, float depth = 0.0f);
 inline void glOutlineBoxCP(float t, int x, int y, int w, int h, int d = 0) {
   glOutlineBoxCP(t, (float)x, (float)y, (float)w, (float)h, (float)d);
 }
 
 extern void glOutlineBoxHV(float thickness, float minX, float minY,
-                           float maxX, float maxY, float depth = 0.0f);
+			   float maxX, float maxY, float depth = 0.0f);
 inline void glOutlineBoxHV(float t, int minX, int minY, int maxX, int maxY, int d = 0) {
   glOutlineBoxHV(t, (float)minX, (float)minY, (float)maxX, (float)maxY, (float)d);
 }
 
 // draw an outline tabbed box
 extern void glOutlineTabbedBox(float thickness, float minX, float minY,
-                               float maxX, float maxY,
-                               float tabInset, float tabWidth, float tabHeight,
-                               float depth = 0);
+			       float maxX, float maxY,
+			       float tabInset, float tabWidth, float tabHeight,
+			       float depth = 0);
 
 // display list system
 typedef unsigned int GLDisplayList;

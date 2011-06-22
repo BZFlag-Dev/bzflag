@@ -1107,10 +1107,10 @@ void BackgroundRenderer::drawGroundCentered()
   {
     for (int q = 0; q < 5; q++) {
       for (int c = 0; c < 4; c++) {
-        const int index = indices[q][c];
-        glTexCoord2f(vertices[index][0] * repeat,
-                     vertices[index][1] * repeat);
-        glVertex2fv(vertices[index]);
+	const int index = indices[q][c];
+	glTexCoord2f(vertices[index][0] * repeat,
+		     vertices[index][1] * repeat);
+	glVertex2fv(vertices[index]);
       }
     }
   }

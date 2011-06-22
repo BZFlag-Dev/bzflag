@@ -172,7 +172,7 @@ private:
   // flag index player has
   int flag;
 
-  // addPlayer has completed for this player 
+  // addPlayer has completed for this player
   bool completelyAdded;
 
   TimeKeeper lastFlagDropTime;

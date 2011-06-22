@@ -40,44 +40,44 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   if (key.ascii == 0) {
     switch (key.button) {
       case BzfKeyEvent::Up: {
-        if (HUDui::getFocus()) {
-          if (!menu->getFind()) {
-            menu->setSelected(menu->getSelected() - 1);
-          } else {
-            menu->setFind(false);
-          }
-        }
-        return true;
+	if (HUDui::getFocus()) {
+	  if (!menu->getFind()) {
+	    menu->setSelected(menu->getSelected() - 1);
+	  } else {
+	    menu->setFind(false);
+	  }
+	}
+	return true;
       }
       case BzfKeyEvent::Down: {
-        if (HUDui::getFocus()) {
-          if (!menu->getFind()) {
-            menu->setSelected(menu->getSelected() + 1);
-          } else {
-            menu->setFind(false);
-          }
-        }
-        return true;
+	if (HUDui::getFocus()) {
+	  if (!menu->getFind()) {
+	    menu->setSelected(menu->getSelected() + 1);
+	  } else {
+	    menu->setFind(false);
+	  }
+	}
+	return true;
       }
       case BzfKeyEvent::PageUp: {
-        if (HUDui::getFocus()) {
-          if (!menu->getFind()) {
-            menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
-          } else {
-            menu->setFind(false);
-          }
-        }
-        return true;
+	if (HUDui::getFocus()) {
+	  if (!menu->getFind()) {
+	    menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
+	  } else {
+	    menu->setFind(false);
+	  }
+	}
+	return true;
       }
       case BzfKeyEvent::PageDown: {
-        if (HUDui::getFocus()) {
-          if (!menu->getFind()) {
-            menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
-          } else {
-            menu->setFind(false);
-          }
-        }
-        return true;
+	if (HUDui::getFocus()) {
+	  if (!menu->getFind()) {
+	    menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
+	  } else {
+	    menu->setFind(false);
+	  }
+	}
+	return true;
       }
     }
   }
@@ -424,9 +424,9 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 	  fullLabel += ANSI_STR_FG_WHITE;
 	fullLabel += addr;
 	if (!desc.empty()) {
-          fullLabel += ANSI_STR_RESET "  ";
-          fullLabel += desc;
-        }
+	  fullLabel += ANSI_STR_RESET "  ";
+	  fullLabel += desc;
+	}
 	label->setString(fullLabel);
 	label->setDarker(server.cached);
       }
@@ -738,7 +738,7 @@ void ServerMenu::resize(int _width, int _height)
 {
   lastWidth = _width;
   lastHeight = _height;
-  
+
   // remember size
   HUDDialog::resize(_width, _height);
 
@@ -940,21 +940,21 @@ static std::string colorizeSearch(const std::string& in)
     const char type =
       ServerListFilter::parseFilterType(filters[i], op, lbl, param);
     switch (type) {
-      case 'p': { 
-        if (ServerListFilter::isPatternLabel(lbl)) {
-          out += (op == ')') ? globColor : regexColor;
-        } else {
-          out += unknownColor;
-        }
-        break;
+      case 'p': {
+	if (ServerListFilter::isPatternLabel(lbl)) {
+	  out += (op == ')') ? globColor : regexColor;
+	} else {
+	  out += unknownColor;
+	}
+	break;
       }
       case 'b': {
-        out += ServerListFilter::isBoolLabel(lbl) ? boolColor : unknownColor;
-        break;
+	out += ServerListFilter::isBoolLabel(lbl) ? boolColor : unknownColor;
+	break;
       }
       case 'r': {
-        out += ServerListFilter::isRangeLabel(lbl) ? rangeColor : unknownColor;
-        break;
+	out += ServerListFilter::isRangeLabel(lbl) ? rangeColor : unknownColor;
+	break;
       }
       case '#': { out += commentColor; break; }
       default:  { out += badColor;     break; }

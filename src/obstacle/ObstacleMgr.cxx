@@ -225,7 +225,7 @@ void* GroupInstance::pack(void* buf)
   if (modifyMaterial)	   bits |= (1 << 3);
   if (driveThrough)	   bits |= (1 << 4);
   if (shootThrough)	   bits |= (1 << 5);
-  if (ricochet)            bits |= (1 << 6);
+  if (ricochet)	    bits |= (1 << 6);
   buf = nboPackUByte(buf, bits);
 
   if (modifyTeam) {
@@ -282,7 +282,7 @@ void* GroupInstance::unpack(void* buf)
   modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
   driveThrough =	((bits & (1 << 4)) == 0) ? false : true;
   shootThrough =	((bits & (1 << 5)) == 0) ? false : true;
-  ricochet =            ((bits & (1 << 6)) == 0) ? false : true;
+  ricochet =	    ((bits & (1 << 6)) == 0) ? false : true;
 
   if (modifyTeam) {
     uint16_t tmpTeam;

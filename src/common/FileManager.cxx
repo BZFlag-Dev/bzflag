@@ -64,7 +64,7 @@ std::istream*			FileManager::createDataInStream(
       delete stream;
     }
 
-    
+
     // try data directory
     {
       std::ifstream* stream = new std::ifstream(catPath(dataPath, filename).c_str(), mode);

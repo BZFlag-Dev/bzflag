@@ -53,18 +53,18 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
 
   if (BZDB.isTrue("remapTexCoords")) {
     const float uLen = sqrtf((uEdge[0] * uEdge[0]) +
-                             (uEdge[1] * uEdge[1]) +
-                             (uEdge[2] * uEdge[2]));
+			     (uEdge[1] * uEdge[1]) +
+			     (uEdge[2] * uEdge[2]));
     const float vLen = sqrtf((vEdge[0] * vEdge[0]) +
-                             (vEdge[1] * vEdge[1]) +
-                             (vEdge[2] * vEdge[2]));
+			     (vEdge[1] * vEdge[1]) +
+			     (vEdge[2] * vEdge[2]));
     const float uScale = 10.0f / floorf(10.0f * uLen / uRepeats);
     const float vScale = 10.0f / floorf(10.0f * vLen / vRepeats);
     if (fabsf(normal[2]) > 0.999f) {
       // horizontal surface
       for (int i = 0; i < vertex.getSize(); i++) {
-        uv[i][0] = uScale * vertex[i][0];
-        uv[i][1] = vScale * vertex[i][1];
+	uv[i][0] = uScale * vertex[i][0];
+	uv[i][1] = vScale * vertex[i][1];
       }
     }
     else {
@@ -74,11 +74,11 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
       const float ny = normal[1] / nh;
       const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
       for (int i = 0; i < vertex.getSize(); i++) {
-        const float* v = vertex[i];
-        const float uGeoScale = (nx * v[1]) - (ny * v[0]);
-        const float vGeoScale = v[2] * vs;
-        uv[i][0] = uScale * uGeoScale;
-        uv[i][1] = vScale * vGeoScale;
+	const float* v = vertex[i];
+	const float uGeoScale = (nx * v[1]) - (ny * v[0]);
+	const float vGeoScale = v[2] * vs;
+	uv[i][0] = uScale * uGeoScale;
+	uv[i][1] = vScale * vGeoScale;
       }
     }
   }

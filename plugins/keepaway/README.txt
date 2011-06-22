@@ -83,25 +83,25 @@ Examples of map (.bzw) entries:
 keepaway
   holdtime 90
   autotime 2 40
-  keepawayflags SB G TH MG GM L 
+  keepawayflags SB G TH MG GM L
   forcedflags
   teamplay
   noflagreset
-end  
+end
 
 This would set up a Keep Away game using Super Bullet, Genocide, Thief, Machine Gun, Guided Missile and Laser flags for Keep Away flags.  Teamplay would be enabled and the initial required time to hold the Keep Away flag would be 90 seconds (1.5 minutes).  Time to hold would automatically adjust downward with new players; 2% per new player after 2, to a minimum of 40% of the original time to hold (36 seconds).  The automatic flag reset function of the plugin would be disabled.
 
 
 keepaway
   holdtime 60
-  keepawayflags IB PZ US RO 
+  keepawayflags IB PZ US RO
   teamplay
   nosound
-end  
+end
 
 This would set up a Keep Away game using Invisible Bullet, Phantom Zone, Useless and Reverse Only flags for Keep Away flags.  Teamplay would be enabled and the initial required time to hold the Keep Away flag would be 60 seconds (1 minute).  Time to hold would not automatically adjust downward with new players - it would remain at 60 seconds.  The sounds associated with Keep Away would be disabled.
 
-  
+
 Obviously, the plugin must be loaded to the server at startup, or it will not recoginize these map parameters.
 
 -------------------------------------------------------------------------------------

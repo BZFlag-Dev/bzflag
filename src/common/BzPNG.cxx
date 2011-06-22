@@ -37,7 +37,7 @@ using namespace BzPNG;
 //
 
 static void writeChunk(std::stringstream& ss, const char type[4],
-                       const void* data, size_t len)
+		       const void* data, size_t len)
 {
   uint32_t count;
   nboPackUInt(&count, len);
@@ -58,7 +58,7 @@ static void writeChunk(std::stringstream& ss, const char type[4],
 
 
 std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
-                          size_t sx, size_t sy, size_t cc, const void* pixels)
+			  size_t sx, size_t sy, size_t cc, const void* pixels)
 {
   uint8_t colorType;
   switch (cc) {
@@ -96,7 +96,7 @@ std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
       return "ERROR: bad chunk type size";
     } else {
       writeChunk(ss, chunk.type.data(), chunk.data.data(),
-                                            chunk.data.size());
+					    chunk.data.size());
     }
   }
 
@@ -125,8 +125,8 @@ std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
 
 
 bool BzPNG::save(const std::string& filename,
-                 const std::vector<Chunk>& extraChunks,
-                 size_t sx, size_t sy, size_t cc, const void* pixels)
+		 const std::vector<Chunk>& extraChunks,
+		 size_t sx, size_t sy, size_t cc, const void* pixels)
 {
   const std::string pngData = create(extraChunks, sx, sy, cc, pixels);
 

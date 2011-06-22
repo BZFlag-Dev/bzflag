@@ -152,7 +152,7 @@ public:
 
   bool		isFogActive() const { return fogActive; }
   void			setFogActive(bool b) { fogActive = b; }
-  
+
   const fvec4&	getFogColor() const { return fogColor; }
   void	setFogColor( float *color) { fogColor = color; }
 

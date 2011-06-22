@@ -492,7 +492,7 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
 void sendClosestFlagMessage(int playerIndex,FlagType *type , float pos[3] )
 {
        if (!type)
-               return;
+	       return;
        void *buf, *bufStart = getDirectMessageBuffer();
        buf = nboPackVector(bufStart, pos);
        buf = nboPackStdString(buf, std::string(type->flagName));
@@ -963,13 +963,13 @@ bool defineWorld ( void )
   if (worldDatabase) {
     delete[] worldDatabase;
   }
-  
+
   bz_GetWorldEventData_V1	worldData;
   worldData.ctf     = (clOptions->gameType == ClassicCTF);
   worldData.rabbit  = (clOptions->gameType == RabbitChase);
   worldData.openFFA = (clOptions->gameType == OpenFFA);
   worldData.worldFile = clOptions->worldFile;
-  
+
   worldData.eventTime = TimeKeeper::getCurrent().getSeconds();
   worldEventManager.callEvents(bz_eGetWorldEvent, &worldData);
 
@@ -984,7 +984,7 @@ bool defineWorld ( void )
       clOptions->gameType = OpenFFA;
     else
       clOptions->gameType = TeamFFA;
-    
+
     // todo.. load this maps options and vars and stuff.
   }
 
@@ -1975,7 +1975,7 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
 	if (otherData)
 	  sendPlayerUpdate(otherData, playerIndex);
       }
-    
+
     if (clOptions->gameOptions & HandicapGameStyle) {
       int numHandicaps = 0;
 
@@ -2915,8 +2915,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
       gameOver = true;
       if (clOptions->oneGameOnly) {
-        done = true;
-        exitCode = 0;
+	done = true;
+	exitCode = 0;
       }
     }
   }
@@ -3007,7 +3007,7 @@ static void searchFlag(GameKeeper::Player &playerData)
   const PlayerId playerIndex = playerData.getIndex();
 
   const float *tpos    = playerData.lastState.pos;
-  float        radius2 = radius * radius;
+  float	radius2 = radius * radius;
 
   int closestFlag = -1;
   for (int i = 0; i < numFlags; i++) {
@@ -3355,7 +3355,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
   // verify playerId
   if (shot.player != playerIndex) {
     logDebugMessage(2,"Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
-          playerIndex);
+	  playerIndex);
     return;
   }
 
@@ -3432,7 +3432,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 
  if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
     return;
-  
+
 
   const float maxTankSpeed  = BZDBCache::tankSpeed;
   const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -4022,7 +4022,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    directMessage(t, MsgFlagType, cfbuf-cfbufStart, cfbufStart);
 	  } else {
 	    // they should already know about this one, dump it back to them
-	    buf = (*m_it)->pack(buf); 
+	    buf = (*m_it)->pack(buf);
 	  }
 	}
       }
@@ -4668,15 +4668,15 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  (state.status & short(PlayerState::Alive))) {
 	break;
       }
-            
+
       // observer shouldn't send bulk messages anymore, they used to
       // when it was a server-only hack; but the check does not hurt,
       // either
       if (playerData->player.isObserver())
-        break;
-       
+	break;
+
       searchFlag(*playerData);
-       
+
       relayPlayerPacket(t, len, rawbuf, code);
       break;
     }
@@ -4684,7 +4684,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgGMUpdate:
 
       shotUpdate(t, buf, int(len));
-      
+
       break;
 
       if (playerData->player.isObserver()) {
@@ -5115,7 +5115,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
        }
      }
 
-     if ((e == ReadAll) || (e == ReadPart)) 
+     if ((e == ReadAll) || (e == ReadPart))
      {
 	peer.lastActivity = TimeKeeper::getCurrent();
 
@@ -5138,8 +5138,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	   peer.bufferedInput += tmp;
 	   free(tmp);
 
-          if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
-          {
+	  if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
+	  {
 	    netHandler->flushData();
 	    // it's a player
 	    if (!MakePlayer(netHandler))
@@ -5148,9 +5148,9 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	      peer.player = netHandler->getPlayerID();
 
 	    return;
-          }
-          else
-          {
+	  }
+	  else
+	  {
 	    // it isn't a player yet, see if anyone else wants it.
 	    // build up a buffer of all the data that is pending
 	    while (e == ReadAll)
@@ -5189,7 +5189,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
 
 	    // if someone wanted him they'd have set his handler and he'll never get here again
-          }
+	  }
 	}
      }
   }
@@ -5244,7 +5244,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	peer.apiHandler->pending(peer.socket,netHandler->getTcpBuffer(),netHandler->getTcpReadSize());
 	netHandler->flushData();
       }
-      else 
+      else
       {
 	// they done disconnected
 	peer.apiHandler->disconnect(peer.socket);
@@ -5252,7 +5252,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
       }
     }
   }
-  
+
   if (peer.player < 0) // only send data if he's not a player, there may be disco data
     sendBufferedNetDataForPeer(peer);
 }
@@ -5452,7 +5452,7 @@ int main(int argc, char **argv)
   PlayerInfo::setFilterParameters(clOptions->filterCallsigns,
 				  clOptions->filter,
 				  clOptions->filterSimple);
-  
+
   GameKeeper::Player::setMaxShots(clOptions->maxShots);
 
   // enable replay server mode
@@ -5848,7 +5848,7 @@ int main(int argc, char **argv)
 	  }
 
 	  // reset all flags
-	  for (int j = 0; j < numFlags; j++) 
+	  for (int j = 0; j < numFlags; j++)
 	    zapFlag(*FlagInfo::get(j));
 
 	  // quietly reset team scores in case of a capture during the countdown
@@ -5953,7 +5953,7 @@ int main(int argc, char **argv)
 	buf = nboPackInt (bufStart, (int32_t) timeLeft);
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
 	clOptions->timeElapsed = newTimeElapsed;
-	if (clOptions->oneGameOnly && timeLeft == 0.0f) 
+	if (clOptions->oneGameOnly && timeLeft == 0.0f)
 	{
 	  done = true;
 	  exitCode = 0;
@@ -6364,7 +6364,7 @@ int main(int argc, char **argv)
       }
     }
 
-    for (unsigned int j = 0; j < toKill.size(); j++) 
+    for (unsigned int j = 0; j < toKill.size(); j++)
     {
       if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
       {
@@ -6388,7 +6388,7 @@ int main(int argc, char **argv)
       if (peerItr->second.player != -1)
 	toKill.push_back(peerItr->first);
     }
-    for (unsigned int j = 0; j < toKill.size(); j++) 
+    for (unsigned int j = 0; j < toKill.size(); j++)
     {
       if (netConnectedPeers.find(toKill[j]) != netConnectedPeers.end())
 	netConnectedPeers.erase(netConnectedPeers.find(toKill[j]));
@@ -6403,12 +6403,12 @@ int main(int argc, char **argv)
     for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
     {
       if (timeoutNow > (peerItr->second.lastActivity.getSeconds() + idleTimeout))
-      {	
+      {
 	peerItr->second.netHandler->closing();
 	toKill.push_back(peerItr->first);
       }
     }
-    for (unsigned int j = 0; j < toKill.size(); j++) 
+    for (unsigned int j = 0; j < toKill.size(); j++)
     {
       NetConnectedPeer &peer = netConnectedPeers[toKill[j]];
       if (peer.netHandler)
@@ -6443,7 +6443,7 @@ int main(int argc, char **argv)
     if (resetGame && playerHadWorld) {
       playerHadWorld = false;
       if ((clOptions->worldFile == "") && !Replay::enabled()) {
-        defineWorld();
+	defineWorld();
       }
     }
 

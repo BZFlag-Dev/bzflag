@@ -40,7 +40,7 @@ class BoltSceneNode : public ShotSceneNode {
 
 	bool		getInvisible() const {return invisible;}
 	void		setInvisible(bool _invisible) {invisible = _invisible;}
-	
+
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
     void		addLight(SceneRenderer&);
 

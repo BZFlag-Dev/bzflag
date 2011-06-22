@@ -48,7 +48,7 @@ bz_APIStringList* timeList = bz_newStringList();
 void showMatchDurations(int playerID)
 {
    bz_sendTextMessagef (BZ_SERVER, playerID, "Not a valid match duration, valid match durations are : ");
-   for (unsigned i=0; i < timeList->size(); i++) 
+   for (unsigned i=0; i < timeList->size(); i++)
       bz_sendTextMessagef (BZ_SERVER, playerID, "* %s minute(s)",timeList->get(i).c_str());
 }
 
@@ -56,14 +56,14 @@ void showMatchDurations(int playerID)
 // Checks if the regex matches the string or not
 bool isValidCmdLine(const char * regex, const char * commandLine)
 {
-   int result;	
+   int result;
    regex_t preg;
 
    result = regcomp(&preg, regex, REG_ICASE | REG_NOSUB | REG_EXTENDED);
    result = regexec(&preg, commandLine, 0, NULL, 0);
    regfree(&preg);
 
-   if (result == 0 ) 
+   if (result == 0 )
        return true;
 
    return false;
@@ -106,27 +106,27 @@ void TimeLimit::Event ( bz_EventData *eventData )
      break;
 
     default: {
-	        // do nothing
-    } 
+		// do nothing
+    }
   }
 
 }
 
 
-std::string convertIntToString(const int integer) 
+std::string convertIntToString(const int integer)
 {
   std::ostringstream ostr;
- 
+
   ostr << integer;
 
-  return ostr.str(); 
+  return ostr.str();
 }
 
 
 void parseCommand ( const char* commandLine )
 {
   if (isValidCmdLine("^[0-9]+-[0-9]+$",commandLine)) {
-    
+
     bz_APIStringList* range = bz_newStringList();
 
     range->tokenize(commandLine, "-", 2, false);
@@ -136,7 +136,7 @@ void parseCommand ( const char* commandLine )
     }
 
   } else if ( isValidCmdLine("^[[:digit:]+,]+$",commandLine))
-           timeList->tokenize(commandLine, ",", MAX_TIMES, false); 
+	   timeList->tokenize(commandLine, ",", MAX_TIMES, false);
 }
 
 
@@ -149,7 +149,7 @@ bool TimeLimit::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_
 
   // Check permissions
   if (! bz_hasPerm(playerID,"TIMELIMIT")) {
-	bz_sendTextMessagef (BZ_SERVER, playerID, "You do not have permission to run the timelimit command"); 
+	bz_sendTextMessagef (BZ_SERVER, playerID, "You do not have permission to run the timelimit command");
 	return true;
   }
 
@@ -179,7 +179,7 @@ bool TimeLimit::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_
   } else if ( bz_isCountDownActive() ) {
     bz_sendTextMessagef (BZ_SERVER, playerID, "A game is already in progress, match duration can't be changed now");
     return true;
-    }  
+    }
 
   bz_BasePlayerRecord *playerRecord;
   playerRecord = bz_getPlayerByIndex(playerID);
@@ -203,21 +203,21 @@ bool TimeLimit::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_
 	if (limit > 0 ) {
 
 	  if (! isValidTime(limit)) {
-			  
-        showMatchDurations(playerID);
+
+	showMatchDurations(playerID);
 		return true;
       }
 
       bz_setTimeLimit(limit * 60);
       bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS, "Match duration set to %.0f minute(s) by %s",(bz_getTimeLimit() / 60),playerRecord->callsign.c_str());
     } else {
-          bz_sendTextMessagef (BZ_SERVER, playerID, "Match duration can't be equal or lower then 0");
-	  	  return true;
+	  bz_sendTextMessagef (BZ_SERVER, playerID, "Match duration can't be equal or lower then 0");
+		  return true;
       }
-  } else { 
-        bz_sendTextMessagef (BZ_SERVER, playerID, "Not a correct value");
+  } else {
+	bz_sendTextMessagef (BZ_SERVER, playerID, "Not a correct value");
 	    return true;
-    }	       
+    }
 
   return true;
 
@@ -229,7 +229,7 @@ void TimeLimit::Init ( const char* commandLine )
 
   saveTimeLimit = bz_getTimeLimit();
 
-  bz_registerCustomSlashCommand ("timelimit",this); 
+  bz_registerCustomSlashCommand ("timelimit",this);
   Register(bz_ePlayerJoinEvent);
   Register(bz_eGameEndEvent);
 }

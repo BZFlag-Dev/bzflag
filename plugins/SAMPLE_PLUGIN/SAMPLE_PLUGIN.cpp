@@ -17,7 +17,7 @@ BZ_PLUGIN(SAMPLE_PLUGIN)
 void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
 {
   bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
-  
+
   // init events here with Register();
 }
 // Local Variables: ***

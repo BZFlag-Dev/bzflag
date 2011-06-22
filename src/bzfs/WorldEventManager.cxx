@@ -193,7 +193,7 @@ bool FlushEvents(bz_Plugin* plugin)
   bool foundOne = false;
 
   tmEventTypeList::iterator typeIt;
-  for (typeIt = worldEventManager.eventList.begin(); typeIt != worldEventManager.eventList.end(); ++typeIt) 
+  for (typeIt = worldEventManager.eventList.begin(); typeIt != worldEventManager.eventList.end(); ++typeIt)
   {
     tvEventList& evList = typeIt->second;
     tvEventList::iterator listIt = evList.begin();

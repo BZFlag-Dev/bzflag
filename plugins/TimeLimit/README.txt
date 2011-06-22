@@ -15,18 +15,18 @@ Plugin command Line:
 
   Example:   -loadplugin TimeLimit
 
-  The second example allows only those match durations 
+  The second example allows only those match durations
   passed as arguments. A maximum of 20 different durations can
   be specified.
 
-  Example :   -loadplugin TimeLimit,5,15,30,60 
+  Example :   -loadplugin TimeLimit,5,15,30,60
 
   The third example allows a specific range of match durations.
 
   Example :   -loadplugin TimeLimit,5-15
 
 
-  When the wrong arguments get passed through, the plugin will 
+  When the wrong arguments get passed through, the plugin will
   fallback to the first example.
 
 In-game commands:
@@ -36,7 +36,7 @@ The timelimit in game command requires the TIMELIMIT permission.
 It is also required the bzfs server is started with -timemanual .
 
   /timelimit          : displays the usage message
-  /timelimit <minutes>: sets the timelimit      
+  /timelimit <minutes>: sets the timelimit
   /timelimit show     : shows the current set timelimit
   /timelimit reset    : resets the timelimit back to default (-time setting)
 
@@ -45,11 +45,11 @@ It is also required the bzfs server is started with -timemanual .
 Matches:
 ========
 
- Before starting a match with the /countdown command you can set the 
- match duration with the /timelimit command. 
- It's not possible to set the match duration when a countdown is in 
+ Before starting a match with the /countdown command you can set the
+ match duration with the /timelimit command.
+ It's not possible to set the match duration when a countdown is in
  progress or when a match is already started.
- The timelimit will reset itself to the -time value at the end of a  
+ The timelimit will reset itself to the -time value at the end of a
  match or when there are no players on the server.
 
 Changelog:
@@ -57,7 +57,7 @@ Changelog:
 
  * TimeLimit 1.0.4 (26 December 2006)
 
-   - Added a makefile so the plugin doesn't relay anymore on 
+   - Added a makefile so the plugin doesn't relay anymore on
      bzflag plugin build system.
 
  * TimeLimit 1.0.3 (26 July 2006)

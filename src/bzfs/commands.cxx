@@ -3493,7 +3493,7 @@ bool DebugCommand::operator() (const char *message,
 
 
 bool OwnerCommand::operator() (const char* UNUSED(message),
-                               GameKeeper::Player *playerData)
+			       GameKeeper::Player *playerData)
 {
   const int playerIndex = playerData->getIndex();
   const std::string& owner = getPublicOwner();

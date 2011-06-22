@@ -45,7 +45,7 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool sup
 				elevation(0),
 				length(1.0f)
 {
-	
+
   OpenGLGStateBuilder builder(gstate);
   builder.setBlending();
   builder.setAlphaFunc();
@@ -144,8 +144,8 @@ void			BoltSceneNode::move(const GLfloat pos[3],
   velocity[1] = vel[1];
   velocity[2] = vel[2];
   length = sqrtf((vel[0] * vel[0]) +
-                 (vel[1] * vel[1]) +
-                 (vel[2] * vel[2]));
+		 (vel[1] * vel[1]) +
+		 (vel[2] * vel[2]));
 
   azimuth   = (float)(+RAD2DEG * atan2f(vel[1], vel[0]));
   elevation = (float)(-RAD2DEG * atan2f(vel[2], sqrtf(vel[0]* vel[0] + vel[1] *vel[1])));
@@ -593,7 +593,7 @@ void			BoltSceneNode::BoltRenderNode::render()
 	}
 	else
 		drawBillboardShot = true;
-	
+
 	if (drawBillboardShot){
 		RENDERER.getViewFrustum().executeBillboard();
 		glScalef(radius, radius, radius);

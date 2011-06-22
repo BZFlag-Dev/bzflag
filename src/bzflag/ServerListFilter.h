@@ -26,13 +26,13 @@ class ServerListFilter {
     struct BoolFilter {
       static bool parse(const std::string& s);
       BoolFilter() {
-        reset();
+	reset();
       }
       void reset() {
-        active = false; value = false;
+	active = false; value = false;
       }
       bool check(bool v) const {
-        return !active || (v == value);
+	return !active || (v == value);
       }
       void print(const std::string& name, const std::string& indent) const;
       bool active;
@@ -42,14 +42,14 @@ class ServerListFilter {
     struct RangeFilter {
       static bool parse(const std::string& s);
       RangeFilter() {
-        reset();
+	reset();
       }
       void reset() {
-        minActive = maxActive = false;
+	minActive = maxActive = false;
       }
       bool check(float v) const {
-        return !(minActive && (v <= minValue)) &&
-               !(maxActive && (v >= maxValue));
+	return !(minActive && (v <= minValue)) &&
+	       !(maxActive && (v >= maxValue));
       }
       bool check(int v) const { return check(float(v)); }
       void print(const std::string& name, const std::string& indent) const;
@@ -59,16 +59,16 @@ class ServerListFilter {
 
     struct PatternFilter {
       enum PatternType {
-        NoPattern    = 0,
-        GlobPattern  = 1,
-        RegexPattern = 2
+	NoPattern    = 0,
+	GlobPattern  = 1,
+	RegexPattern = 2
       };
       static bool parse(const std::string& s);
       PatternFilter() : re(NULL) {
-        reset();
+	reset();
       }
       ~PatternFilter() {
-        reset();
+	reset();
       }
       bool setupGlob(const std::string& pattern, bool noCase);
       bool setupRegex(const std::string& pattern, bool noCase);
@@ -76,12 +76,12 @@ class ServerListFilter {
       bool check(const std::string& s) const;
       void print(const std::string& name, const std::string& indent) const;
       PatternType type;
-      bool        noCase;
+      bool	noCase;
       std::string pattern;
       regex_t* re;
       private: // no copying
-        PatternFilter(const PatternFilter&);
-        PatternFilter& operator=(const PatternFilter&);
+	PatternFilter(const PatternFilter&);
+	PatternFilter& operator=(const PatternFilter&);
     };
 
   //==========================================================================//
@@ -114,15 +114,15 @@ class ServerListFilter {
     static bool isRangeLabel(const std::string& label);
     static bool isPatternLabel(const std::string& label);
     static char parseFilterType(const std::string& f, char& op,
-                                std::string& label, std::string& param);
+				std::string& label, std::string& param);
   private:
     void reset();
     bool parseFilter(const std::string& f);
     bool parseBoolFilter(const std::string& label, char op);
     bool parseRangeFilter(const std::string& label, char op,
-                          const std::string& param);
+			  const std::string& param);
     bool parsePatternFilter(const std::string& label, char op,
-                            const std::string& param);
+			    const std::string& param);
 
   private:
     std::string source;
@@ -134,7 +134,7 @@ class ServerListFilter {
     PatternFilter addrPat;
     PatternFilter descPat;
     PatternFilter addrDescPat;
-    
+
     // boolean filters
     BoolFilter jump;
     BoolFilter rico;

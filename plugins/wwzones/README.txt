@@ -8,7 +8,7 @@ Author: LouMan
 
 Credit to JeffM2501 for base zone and custom map object code (from flagStay plugin), which I have modified to fit this application.
 
-Description: 
+Description:
 
 The plugin will fire a map defined world weapon whenever a player is in a map defined volume.  It could be used for landmines, booby traps, clearing campers in difficult locations, general amusement, etc.  Multiple zones with different weapons, etc. may be used in same map file.
 
@@ -54,7 +54,7 @@ If used (optional), this will issue standard message to all players stating whic
 repeat <seconds>
 
 If used (optional), will repeat weapon fire while player is in defined volume.
-<seconds> defines the repeat time of the weapon (minimum 0.1 seconds). 
+<seconds> defines the repeat time of the weapon (minimum 0.1 seconds).
 If <seconds> not specified, default is 0.5 seconds.
 If repeat is not included in definition, weapon will only fire once when player enters zone.
 
@@ -74,7 +74,7 @@ wwzone
   playermessage "You triggered Shockwave!"
   repeat .25
   timedelay 2
-end 
+end
 
 This will fire a shockwave every 0.25 seconds (approximately) after a player is in the volume defined by the bbox for more than 2 seconds.  In this case, a square volume 50 x 50 x 1 centered at coordinates -50 50 1.  The shockwaves will occur at coordinates 0 0 1 and will send message "You triggered Shockwave!" to player that triggered it, when initially fired.
 

@@ -424,7 +424,7 @@ void *ConeObstacle::pack(void *buf) const
   stateByte |= isShootThrough() ? (1 << 1) : 0;
   stateByte |= smoothBounce     ? (1 << 2) : 0;
   stateByte |= useNormals       ? (1 << 3) : 0;
-  stateByte |= ricochet         ? (1 << 4) : 0;
+  stateByte |= ricochet	 ? (1 << 4) : 0;
   buf = nboPackUByte(buf, stateByte);
 
   return buf;
@@ -534,7 +534,7 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
   }
   if (ricochet) {
     out << indent << "  ricochet" << std::endl;
-  }  
+  }
   if (!useNormals) {
     out << indent << "  flatshading" << std::endl;
   }

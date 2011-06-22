@@ -51,7 +51,7 @@ public:
 };
 
 BZ_PLUGIN(KillAll)
- 
+
 
 
 // Local Variables: ***
