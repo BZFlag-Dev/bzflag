@@ -6,7 +6,7 @@
 #export DH_VERBOSE=1
 
 # This is the debhelper compatibility version to use.
-export DH_COMPAT=4
+export DH_COMPAT=5
 
 build: build-stamp
 build-stamp:
@@ -19,6 +19,7 @@ ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
 	./configure --prefix=/usr --enable-robots --enable-bzadmin --enable-client --enable-debug
 else
 	case "$(DEB_BUILD_ARCH)" in \
+		i386) ./configure --disable-ccachetest --prefix=/usr --target=i486-pc-linux-gnu --enable-robots --enable-bzadmin --enable-client ;; \
 		amd64) CFLAGS=-m64 CXXFLAGS=-m64 ./configure --disable-ccachetest --prefix=/usr --enable-robots --enable-bzadmin --enable-client ;; \
 		*) ./configure --disable-ccachetest --prefix=/usr --enable-robots --enable-bzadmin --enable-client ;; \
 	esac
@@ -41,7 +42,7 @@ clean:
 install: build
 	#dh_testdir
 	#dh_testroot
-	#dh_clean -k
+	#dh_prep
 	#dh_installdirs
 
 	# Add here commands to install the package into debian/<packagename>
@@ -61,7 +62,7 @@ binary-arch: build install bzflag-client bzflag-server
 bzflag: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	#dh_installdirs -p$@ usr/games
 	#dh_installdebconf -p$@
 	dh_installdocs -p$@
@@ -88,7 +89,7 @@ bzflag-client: DH_OPTIONS = -pbzflag-client
 bzflag-client: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs -p$@ usr/games
 	# copy files into debian/$@/ here
 	cp -p src/bzflag/bzflag debian/$@/usr/games/
@@ -117,7 +118,7 @@ bzflag-data: DH_OPTIONS = -pbzflag-data
 bzflag-data: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs -p$@ usr/share/bzflag/l10n usr/share/bzflag/fonts usr/share/man/man6 usr/share/applications usr/share/pixmaps
 	# copy files into debian/$@/ here
 	-cp -p data/[!CM]* debian/$@/usr/share/bzflag/
@@ -151,7 +152,7 @@ bzflag-server: DH_OPTIONS = -pbzflag-server
 bzflag-server: build
 	dh_testdir
 	dh_testroot
-	dh_clean -k
+	dh_prep
 	dh_installdirs -p$@ usr/games usr/share/man/man6
 	# copy files into debian/$@/ here
 	cp -p man/*.[0-9] debian/$@/usr/share/man/man6

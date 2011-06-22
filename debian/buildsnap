@@ -29,15 +29,16 @@ echo "../bzflag-data_${version}_${arch}.deb"
 echo "../bzflag-server_${version}_${arch}.deb"
 echo -n "debian/changelog entry: "
 head -n 1 debian/changelog
+## called from parent make, autogen/configure have already been run
 #./autogen.sh
 #./configure
 #make maintainer-clean
-./autogen.sh
-./configure --quiet
+#./autogen.sh
+#./configure --quiet
 chmod +x debian/rules misc/tar
 # svn/non-svn builds should conflict and replace each other.
 PATH=`pwd`/misc:$PATH dpkg-buildpackage -us -uc -rfakeroot
 echo "now do \"debsign\" and then a \"dupload ../bzflag_${version}_${arch}.changes\""
-if [ "$1" == "release" ] ; then
+if [ "$1" = "release" ] ; then
  echo "don't forget to copy new changelog entry to changelog.in"
 fi
