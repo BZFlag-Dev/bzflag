@@ -2489,10 +2489,6 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // if everybody left then reset world
     if (GameKeeper::Player::count() == 0) {
 
-      if (clOptions->worldFile == "") {
-	bases.clear();
-      }
-
       if (clOptions->oneGameOnly) {
 	done = true;
 	exitCode = 0;

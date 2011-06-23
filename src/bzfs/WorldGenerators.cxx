@@ -138,6 +138,9 @@ WorldInfo *defineTeamWorld()
   WorldInfo *myWorld = new WorldInfo();
   if (!myWorld)
     return NULL;
+  
+  // Make sure we don't have bases from earlier maps
+  bases.clear();
 
   const float worldSize = BZDBCache::worldSize;
   const float worldfactor = worldSize / (float)DEFAULT_WORLD;
