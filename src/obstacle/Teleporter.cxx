@@ -479,20 +479,22 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   p.y = pIn[1];
   p.z = pIn[2];
 
-  // spin an extra 180 degrees if the same face side is used for
-  // both input and output (reflecting vector)
-  const float faceAngle = (face1 == face2) ? (float)M_PI : 0.0f;
+  // adjust the angles for the faces
+  // NOTE: if (face1 != face2), there's an extra 180 degrees spin
+  const float pi = float(M_PI);
+  const float radians1 = tele1.getRotation() + ((face1 == 0) ? 0.0f : pi);
+  const float radians2 = tele2.getRotation() + ((face2 == 1) ? 0.0f : pi);
 
   // translate to origin, and revert rotation
   p -= pos1;
-  p = p.rotateZ(-tele1.getRotation());
+  p = p.rotateZ(-radians1);
 
   // fixed x offset, and scale y & z coordinates
-  p.x = (face2 == 0) ? size2.x : -size2.x;
+  p.x = -size2.x;
   p.yz() *= dimsScale; // note the .yz()
 
   // apply rotation, translate to new position
-  p = p.rotateZ(+tele2.getRotation() + faceAngle);
+  p = p.rotateZ(+radians2);
   p += pos2;
 
   // final output position
@@ -501,7 +503,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   pOut[2] = p.z;
 
   // fill in output angle and direction variables, if requested
-  const float a = tele2.getRotation() - tele1.getRotation() + faceAngle;
+  const float a = radians2 - radians1;
   if (aOut) {
     *aOut = aIn + a;
   }
