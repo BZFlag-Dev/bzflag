@@ -601,11 +601,15 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 	    player->getScore(), player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
-  } else {
+  } else if (World::getWorld()->allowTeams()) {
     sprintf(score, "%4d %4d-%-4d%s[%2d]", player->getScore(),
 	    player->getWins(), player->getLosses(),
 	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "",
 	    player->getTeamKills());
+  } else {
+    sprintf(score, "%4d %4d-%-4d%s", player->getScore(),
+	    player->getWins(), player->getLosses(),
+	    highlightTKratio ? ColorStrings[CyanColor].c_str() : "");
   }
 
   // kills
