@@ -430,7 +430,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 {
 	// bzdb these 2? they control the shot size
-	float lenMod = 0.025f;
+	float lenMod = 0.025f + (BZDBCache::shotLength * 1.0f);
 	float baseRadius = 0.225f;
 
 	float len = sceneNode->length * lenMod;
