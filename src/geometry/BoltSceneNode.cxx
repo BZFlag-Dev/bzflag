@@ -430,7 +430,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 {
 	// bzdb these 2? they control the shot size
-	float lenMod = 0.025f + (BZDBCache::shotLength * 1.0f);
+	float lenMod = 0.25f + (BZDBCache::shotLength * 0.25f);
 	float baseRadius = 0.225f;
 
 	float len = sceneNode->length * lenMod;
@@ -583,7 +583,7 @@ void			BoltSceneNode::BoltRenderNode::render()
 			renderGeoBolt();
 		else{
 			if (sceneNode->drawFlares){
-				if (BZDBCache::shotLength > 5)
+				if (BZDBCache::shotLength > 0)
 					renderGeoGMBolt();
 				drawBillboardShot = true;
 			}
