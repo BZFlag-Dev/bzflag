@@ -1379,7 +1379,7 @@ void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message
   else if ( dstPlayer == AdminPlayers )
     chatData.team = eAdministrators;
   else if ( dstPlayer > LastRealPlayer )
-    chatData.team = convertTeam((TeamColor)(250-dstPlayer));
+    chatData.team = convertTeam((TeamColor)(FirstTeam - dstPlayer));
   else
     chatData.to = dstPlayer;
 
@@ -1480,8 +1480,8 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
       directMessage(playerIndex, MsgMessage, len, bufStart);
   }
   // FIXME this teamcolor <-> player id conversion is in several files now
-  else if (dstPlayer >= 244 && dstPlayer <= 250) {
-    TeamColor _team = TeamColor(250 - dstPlayer);
+  else if (LastRealPlayer < dstPlayer && dstPlayer <= FirstTeam) {
+    TeamColor _team = TeamColor(FirstTeam - dstPlayer);
     // send message to all team members only
     GameKeeper::Player *playerData;
     for (int i = 0; i < curMaxPlayers; i++)
@@ -4261,7 +4261,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	  else if ( dstPlayer == AdminPlayers )
 		chatData.team = eAdministrators;
 	  else if ( dstPlayer > LastRealPlayer )
-		chatData.team =convertTeam((TeamColor)(250-dstPlayer));
+		chatData.team =convertTeam((TeamColor)(FirstTeam - dstPlayer));
 	  else
 		chatData.to = dstPlayer;
 

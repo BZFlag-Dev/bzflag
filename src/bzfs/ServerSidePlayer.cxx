@@ -228,7 +228,7 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 	case ePurpleTeam:
 	case eRabbitTeam:
 	case eHunterTeam:
-		dstPlayer = 250+(int)targetTeam;
+		dstPlayer = FirstTeam + (int)targetTeam;
 		break;
 
 	case eAdministrators:

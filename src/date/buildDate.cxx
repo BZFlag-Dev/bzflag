@@ -25,7 +25,7 @@
 //  misc/bzfquery.pl
 //  misc/bzfquery.py
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0215"
+#  define BZ_PROTO_VERSION	"0216"
 #endif
 
 // version numbers - also update as needed:
@@ -44,7 +44,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		15
+#  define BZ_REV		16
 #endif
 
 // DEVEL | RC# | STABLE | MAINT

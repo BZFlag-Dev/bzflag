@@ -202,8 +202,8 @@ void MsgStrings::reset ()
   PlayerList[AllPlayers] = "ALL";
   PlayerList[AdminPlayers] = "ADMIN";
   PlayerList[NoPlayer] = "NOPLAYER";
-  for (i=244 ; i<=250; i++) {
-    PlayerList[i] = Team::getName (TeamColor(250 - i));
+  for (i = LastRealPlayer + 1 ; i <= FirstTeam; i++) {
+    PlayerList[i] = Team::getName (TeamColor(FirstTeam - i));
   }
 
   // set default DB entries

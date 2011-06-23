@@ -65,7 +65,7 @@ CursesUI::CursesUI(BZAdminClient& c) :
   menu.setUpdateCallback(initMainMenu);
 
   // add additional chat targets
-  additionalTargets[PlayerId(250 - ObserverTeam)] = PlayerInfo("teammates");
+  additionalTargets[PlayerId(FirstTeam - ObserverTeam)] = PlayerInfo("teammates");
   additionalTargets[AdminPlayers] = PlayerInfo("admins");
 }
 

@@ -924,7 +924,7 @@ bool MsgCommand::operator() (const char	 *message,
     if (TextUtils::toupper(recipient) == "ADMIN")
       to = AdminPlayers;
     else if (TextUtils::toupper(recipient) == "TEAM")
-      to = 250 - (int)playerData->player.getTeam();
+      to = FirstTeam - (int)playerData->player.getTeam();
   } else {
     to = GameKeeper::Player::getPlayerIDByName(recipient);
 

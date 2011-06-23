@@ -402,8 +402,8 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 	break;
 
       // format the message depending on src and dst
-      TeamColor dstTeam = (dst >= 244 && dst <= 250 ?
-			   TeamColor(250 - dst) : NoTeam);
+      TeamColor dstTeam = (LastRealPlayer < dst && dst <= FirstTeam ?
+			   TeamColor(FirstTeam - dst) : NoTeam);
       if (messageMask[MsgMessage]) {
 	lastMessage.first = formatMessage((char*)vbuf, MessageType(mtype),
 					  src, dst, dstTeam, me);
