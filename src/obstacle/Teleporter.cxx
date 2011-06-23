@@ -480,7 +480,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   p.z = pIn[2];
 
   // adjust the angles for the faces
-  // NOTE: if (face1 != face2), there's an extra 180 degrees spin
+  // NOTE: if (face1 == face2), there's an extra 180 degrees spin
   const float pi = float(M_PI);
   const float radians1 = tele1.getRotation() + ((face1 == 0) ? 0.0f : pi);
   const float radians2 = tele2.getRotation() + ((face2 == 1) ? 0.0f : pi);
