@@ -1,6 +1,8 @@
 new bugs in 2.3 that must be fixed before release
 -------------------------------------------------
 
+* Team chat no longer works
+  'm' sends to 'all'
 
 new bugs in 2.3
 ---------------
