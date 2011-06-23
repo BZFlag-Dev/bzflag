@@ -445,45 +445,32 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
   const Teleporter& tele1 = *this;
   const Teleporter& tele2 = t2;
 
-  const float  bord1 = tele1.getBorder();
-  const float  bord2 = tele2.getBorder();
+  const float* p1 = tele1.getPosition();
+  const float* p2 = tele2.getPosition();
+  const float* s1 = tele1.getSize();
+  const float* s2 = tele2.getSize();
 
-  fvec3 pos1;
-  pos1.x = tele1.getPosition()[0];
-  pos1.y = tele1.getPosition()[1];
-  pos1.z = tele1.getPosition()[2];;
+  const fvec3  pos1 (p1[0], p1[1], p1[2]);
+  const fvec3 size1 (s1[0], s1[1], s1[2]);
+  const fvec3  pos2 (p2[0], p2[1], p2[2]);
+  const fvec3 size2 (s2[0], s2[1], s2[2]);
 
-
-  fvec3 pos2;
-  pos2.x = tele2.getPosition()[0];
-  pos2.y = tele2.getPosition()[1];
-  pos2.z = tele2.getPosition()[2];;
-
-  fvec3 size1;
-  size1.x = tele1.getSize()[0];
-  size1.y = tele1.getSize()[1];
-  size1.z = tele1.getSize()[2];
-
-  fvec3 size2;
-  size2.x = tele2.getSize()[0];
-  size2.y = tele2.getSize()[1];
-  size2.z = tele2.getSize()[2];
+  const float bord1 = tele1.getBorder();
+  const float bord2 = tele2.getBorder();
 
   // y & z axis scaling factors  (relative active areas)
   const fvec2 dims1(size1.y - bord1, size1.z - bord1);
   const fvec2 dims2(size2.y - bord2, size2.z - bord2);
   const fvec2 dimsScale = (dims2 / dims1);
 
-  fvec3 p;
-  p.x = pIn[0];
-  p.y = pIn[1];
-  p.z = pIn[2];
-
   // adjust the angles for the faces
   // NOTE: if (face1 == face2), there's an extra 180 degrees spin
   const float pi = float(M_PI);
   const float radians1 = tele1.getRotation() + ((face1 == 0) ? 0.0f : pi);
   const float radians2 = tele2.getRotation() + ((face2 == 1) ? 0.0f : pi);
+
+  // intermediate output position
+  fvec3 p(pIn[0], pIn[1], pIn[2]);
 
   // translate to origin, and revert rotation
   p -= pos1;
