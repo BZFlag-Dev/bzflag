@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include "OpenGLGState.h" // list first so glew.h precedes gl.h and glext.h
 #include "XWindow.h"
 #include "XVisual.h"
-#include "OpenGLGState.h"
 #if defined(XF86VIDMODE_EXT)
 #  define USE_XF86VIDMODE_EXT
 #  define private c_private
