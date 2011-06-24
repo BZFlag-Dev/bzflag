@@ -1090,6 +1090,9 @@ BUILD_GLEW="no (clients disabled)"
 AC_MSG_NOTICE([GLEW is disabled because no clients are being built])
 fi # enable_client
 AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
+if test "x$BUILD_GLEW" = xyes -o "x$glew_check" = xyes; then
+    AC_DEFINE(HAVE_GLEW, 1, [Using GLEW])
+fi
 
 
 # make sure ECHO and ECHO_N got defined and substituted
