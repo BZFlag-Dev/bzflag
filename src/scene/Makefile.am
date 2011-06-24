@@ -2,6 +2,8 @@ if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libSceneDB.la
 endif
 
+AM_CPPFLAGS = $(CONF_CPPFLAGS)
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
 

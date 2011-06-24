@@ -3,6 +3,8 @@ SUBDIRS = models
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+AM_CPPFLAGS = $(CONF_CPPFLAGS)
+
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGeometry.la
 endif
