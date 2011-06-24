@@ -139,7 +139,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
     const float tankAngle = player->getAngle();
     glPushMatrix();
     glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    if (useTankModels) {
+    if (0/*useTankModels*/) { // TODO fix the fancy drawing
       drawFancyTank(player);
     } else {
       const float* dims = player->getDimensions();
