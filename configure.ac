@@ -164,7 +164,9 @@ AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
 AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
 
 # compile our own glew
-AC_ARG_ENABLE(glew_build, [  --enable-glew-build     Force compilation of glew])
+AC_ARG_WITH(included-glew,
+        AC_HELP_STRING([--with-included-glew],[build with included GLEW library]),
+        [enable_glew_build="$withval"], )
 
 # compile our own regex
 AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
@@ -1081,8 +1083,12 @@ fi
 AC_MSG_CHECKING(whether to build the included GLEW library)
 BUILD_GLEW="no (using system)"
 if test "x$GLEW_LIBS" = "x" ; then
-    BUILD_GLEW="yes"
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
+    if test "x$enable_glew_build" = xno ; then
+	BUILD_GLEW=no
+    else
+	BUILD_GLEW="yes"
+	CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
+    fi
 fi
 AC_MSG_RESULT($BUILD_GLEW)
 else # enable_client
