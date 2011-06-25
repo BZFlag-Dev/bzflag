@@ -416,7 +416,7 @@ public:
   }
 };
 
-ConnectionEvent con;
+ConnectionEvent *con = NULL;
 
 //---- Responce----
 class bzhttp_Responce_Data
@@ -1680,8 +1680,15 @@ void InitHTTP()
 {
   indexHandler = new HTTPIndexHandler();
   VDirs.clear();
-  worldEventManager.addEvent(bz_eNewNonPlayerConnection,&con);
-  worldEventManager.addEvent(bz_eTickEvent,&con);
+  if (con){  
+    worldEventManager.removeEvent(bz_eTickEvent,con);
+    worldEventManager.removeEvent(bz_eNewNonPlayerConnection,con);
+    delete(con);
+  }
+  con = new ConnectionEvent();
+
+  worldEventManager.addEvent(bz_eNewNonPlayerConnection,con);
+  worldEventManager.addEvent(bz_eTickEvent,con);
 
   ServerHostname = "localhost";
   if (bz_getPublicAddr().size())
@@ -1710,8 +1717,13 @@ void KillHTTP()
   }
 
   HTTPPeers.clear();
-  worldEventManager.removeEvent(bz_eTickEvent,&con);
-  worldEventManager.removeEvent(bz_eNewNonPlayerConnection,&con);
+  if (con)
+  {
+    worldEventManager.removeEvent(bz_eTickEvent,con);
+    worldEventManager.removeEvent(bz_eNewNonPlayerConnection,con);
+    delete(con);
+    con = NULL;
+  }
   VDirs.clear();
   delete(indexHandler);
 }
