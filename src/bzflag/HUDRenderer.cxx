@@ -159,7 +159,7 @@ void			HUDRenderer::resize(bool firstTime)
   }
 
   // initialize readout spacings
-  headingMarkSpacing = (int)(5.0f * float(maxMotionSize) / headingOffset);
+  headingMarkSpacing = 5.0f * float(maxMotionSize) / headingOffset;
   altitudeMarkSpacing = floorf(5.0f * float(maxMotionSize) / altitudeOffset);
 
   setBigFontSize(w, vh);

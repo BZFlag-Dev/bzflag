@@ -205,7 +205,7 @@ private:
   bool		altitudeTape;
   float		fps;
   float		drawTime;
-  int		headingMarkSpacing;
+  float		headingMarkSpacing;
   float		headingLabelWidth[36];
   float		altitudeMarkSpacing;
   float		altitudeLabelMaxWidth;
