@@ -1,5 +1,4 @@
 MAINTAINERCLEANFILES = \
-	ServerLink.cxx \
 	Makefile.in
 
 bin_PROGRAMS = bzadmin
@@ -33,7 +32,7 @@ bzadmin_SOURCES = \
 	OptionParser.h \
 	OptionParser.cxx \
 	PlayerInfo.h \
-	ServerLink.cxx \
+	$(top_srcdir)/src/bzflag/ServerLink.cxx \
 	StdBothUI.h \
 	StdBothUI.cxx \
 	StdInUI.h \
@@ -44,9 +43,6 @@ bzadmin_SOURCES = \
 	UIMap.cxx \
 	bzadmin.cxx \
 	curses_wrapper.h
-
-ServerLink.cxx: @top_srcdir@/src/bzflag/ServerLink.cxx
-	cp -pR @top_srcdir@/src/bzflag/ServerLink.cxx .
 
 LDADD = \
 	../date/libDate.la	\
