@@ -101,19 +101,19 @@ and if successful, a configure script will be generated.  If the
 script fails, submit a report to the developers containing the output
 of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One
 of the most common failures is having insufficient versions or
-mismatched combinations of the GNU Build System tools, make sure your
-tools are recent.
+mismatched combinations of the GNU Build System tools, so make sure
+your tools are recent.
 
-Now that you have a configure script and presuming the previous step
-was successful, you can configure BZFlag:
+If the previous step was successful you now have a script for
+configuring BZFlag.  This command:
 
   % ./configure --help
 
-There are a variety of options possible when configuring BZFlag.  Most
-notably, you'll probably want to use the --enable-shared option if you
-are building server plugins.
+will list the variety of configuration options.  The script adapts
+well to various system configurations, so it may be enough to simply
+run it as:
 
-  % ./configure --enable-shared
+  % ./configure
 
 You may want to create a 'work' directory and configure from there to
 have all the build products and binary executables get placed in a
@@ -136,6 +136,7 @@ other dependencies that BZFlag automatically provides if you do not
 have them pre-installed:
 
   c-ares
+  GLEW
   libCURL
   libregex (usually provided as part of libc)
   zlib
