@@ -184,6 +184,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "hudGUIBorderOpacityFactor","0.75",			true,	StateDatabase::ReadWrite,	NULL },
   { "hideMottos",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "mottoDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
+  { "scoreboardSort",	"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // listFilters
   { "listFilter",  "",					true, StateDatabase::ReadWrite, NULL },
