@@ -846,9 +846,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
   // finalize dimming
   if (mapFog) {
     glDisable(GL_FOG);
-  } else {
-    renderPostDimming();
   }
+
+  renderDimming();
 
   triangleCount = RenderNode::getTriangleCount();
   if (background) {
@@ -1085,34 +1085,6 @@ void SceneRenderer::doRender()
 }
 
 
-void SceneRenderer::renderPreDimming()
-{
-  float worldSize = BZDBCache::worldSize;
-
-  if (useDimming) {
-    const float density = dimDensity;
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-    glFogfv(GL_FOG_COLOR, dimnessColor);
-    glEnable(GL_FOG);
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
-  else if (teleporterProximity > 0.0f) {
-    const float density = (teleporterProximity > 0.75f) ? 1.0f
-			  : (teleporterProximity / 0.75f);
-    glFogi(GL_FOG_MODE, GL_LINEAR);
-    glFogf(GL_FOG_START, -density * 1000.0f * worldSize);
-    glFogf(GL_FOG_END, (1.0f - density) * 1000.0f * worldSize);
-    glFogfv(GL_FOG_COLOR, blindnessColor);
-    glEnable(GL_FOG);
-    glHint(GL_FOG_HINT, GL_FASTEST);
-  }
-
-  return;
-}
-
-
 static bool setupMapFog()
 {
   RENDERER.setFogActive(false);
@@ -1167,18 +1139,18 @@ static bool setupMapFog()
 }
 
 
-void SceneRenderer::renderPostDimming()
+void SceneRenderer::renderDimming()
 {
   float density = 0.0f;
   const GLfloat* color = NULL;
   if (useDimming) {
-    density = dimDensity;
     color = dimnessColor;
+    density = dimDensity;
   }
   else if (teleporterProximity > 0.0f) {
-    density = (teleporterProximity > 0.75f) ?
-		      1.0f : teleporterProximity / 0.75f;
     color = blindnessColor;
+    density =
+      (teleporterProximity > 0.75f) ? 1.0f : teleporterProximity / 0.75f;
   }
   if (density > 0.0f && color != NULL) {
     glMatrixMode(GL_PROJECTION);

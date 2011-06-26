@@ -185,8 +185,7 @@ private:
 
   void		doRender();
   void		renderDepthComplexity();
-  void		renderPreDimming();
-  void		renderPostDimming();
+  void		renderDimming();
 
   MainWindow*		window;
   bool			blank;
