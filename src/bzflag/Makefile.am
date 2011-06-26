@@ -3,7 +3,8 @@ AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(CONF_CPPFLAGS)
 bin_PROGRAMS = bzflag
 
 MAINTAINERCLEANFILES = \
-	Makefile.in
+	Makefile.in \
+	glew.c
 
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
@@ -179,6 +180,13 @@ bzflag_SOURCES =			\
 	stars.cxx			\
 	stars.h
 
+
+if BUILD_GLEW
+bzflag_SOURCES += glew.c
+endif
+
+glew.c: $(top_srcdir)/src/other/glew/src/glew.c
+	cp -p $^ $@
 
 if WIN32
 RESOURCE = bzflag.res
