@@ -1127,6 +1127,14 @@ AC_CONFIG_SUBDIRS(src/other/ares)
 if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
     # instruct curl to use the included ares
     ac_configure_args="$ac_configure_args --enable-ares --disable-manual"
+    case $host_os in
+	solaris*)
+	    if test "$GCC" != yes; then
+	        # Solaris 10 SSL libraries are compatible only with gcc
+	        ac_configure_args="$ac_configure_args --without-ssl"
+	    fi
+	    ;;
+    esac
 fi
 
 AC_CONFIG_SUBDIRS(src/other/curl)
