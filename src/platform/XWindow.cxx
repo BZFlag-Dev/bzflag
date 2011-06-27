@@ -77,8 +77,10 @@ XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
   // set class property
   XClassHint* classHint = XAllocClassHint();
   if (classHint) {
-    classHint->res_name = "bzflag";
-    classHint->res_class = "BZFlag";
+    char rn[] = "bzflag";
+    char rc[] = "BZFlag";
+    classHint->res_name = rn;
+    classHint->res_class = rc;
     XSetClassHint(display->getDisplay(), window, classHint);
     XFree(classHint);
   }
