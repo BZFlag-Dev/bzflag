@@ -36,6 +36,7 @@ CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
   shootThrough = shoot;
   driveThrough = drive;
   material = _material;
+  ricochet = false;
   return;
 }
 
