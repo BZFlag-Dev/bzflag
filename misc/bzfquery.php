@@ -98,7 +98,7 @@ function bzfquery ($hostport) {
     return $server;
   }
 
-  if ($server['protocol'] != '0213') {
+  if ($server['protocol'] != '0217') {
     echo "incompatible version\n";
     fclose($fp);
     return $server;
@@ -160,7 +160,7 @@ function bzfquery ($hostport) {
 }
 
 function bzfdump ($server) {
-  if ($server['protocol'] != '0213')
+  if ($server['protocol'] != '0217')
     return;
 
   $styles = Array('TeamFFA', 'ClassicCTF', 'OpenFFA', 'RabbitChase');
