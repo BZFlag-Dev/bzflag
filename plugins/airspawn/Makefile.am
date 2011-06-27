@@ -2,7 +2,7 @@ lib_LTLIBRARIES = airspawn.la
 
 airspawn_la_SOURCES = airspawn.cpp
 airspawn_la_CPPFLAGS = -I$(top_srcdir)/include
-airspawn_la_LDFLAGS = -module -avoid-version
+airspawn_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	airspawn.def \

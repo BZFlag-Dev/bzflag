@@ -2,7 +2,7 @@ lib_LTLIBRARIES = wwzones.la
 
 wwzones_la_SOURCES = wwzones.cpp
 wwzones_la_CPPFLAGS = -I$(top_srcdir)/include
-wwzones_la_LDFLAGS = -module -avoid-version
+wwzones_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	README.txt \

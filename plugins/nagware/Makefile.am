@@ -2,7 +2,7 @@ lib_LTLIBRARIES = nagware.la
 
 nagware_la_SOURCES = nagware.cpp
 nagware_la_CPPFLAGS = -I$(top_srcdir)/include
-nagware_la_LDFLAGS = -module -avoid-version
+nagware_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	CHANGELOG.txt	\

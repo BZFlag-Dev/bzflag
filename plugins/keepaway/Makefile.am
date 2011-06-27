@@ -2,7 +2,7 @@ lib_LTLIBRARIES = keepaway.la
 
 keepaway_la_SOURCES = keepaway.cpp
 keepaway_la_CPPFLAGS = -I$(top_srcdir)/include
-keepaway_la_LDFLAGS = -module -avoid-version
+keepaway_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	README.txt \

@@ -2,7 +2,7 @@ lib_LTLIBRARIES = recordmatch.la
 
 recordmatch_la_SOURCES = recordmatch.cpp
 recordmatch_la_CPPFLAGS = -I$(top_srcdir)/include
-recordmatch_la_LDFLAGS = -module -avoid-version
+recordmatch_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	README.txt \

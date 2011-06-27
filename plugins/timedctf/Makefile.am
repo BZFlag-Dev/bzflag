@@ -2,7 +2,7 @@ lib_LTLIBRARIES = timedctf.la
 
 timedctf_la_SOURCES = timedctf.cpp
 timedctf_la_CPPFLAGS = -I$(top_srcdir)/include
-timedctf_la_LDFLAGS = -module -avoid-version
+timedctf_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	README.txt \

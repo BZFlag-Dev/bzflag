@@ -2,7 +2,7 @@ lib_LTLIBRARIES = RogueGenocide.la
 
 RogueGenocide_la_SOURCES = RogueGenocide.cpp
 RogueGenocide_la_CPPFLAGS = -I$(top_srcdir)/include
-RogueGenocide_la_LDFLAGS = -module -avoid-version
+RogueGenocide_la_LDFLAGS = -module -avoid-version -shared
 
 EXTRA_DIST = \
 	README.txt \
