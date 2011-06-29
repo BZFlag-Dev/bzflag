@@ -21,12 +21,12 @@
 #include "HUDui.h"
 
 
-const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [8] = {LagStats, IdleStats, FlagHistory, Report, Password, ClientQuery};
+const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [6] = {LagStats, IdleStats, FlagHistory, Report, Password, ClientQuery};
 
 /* FIXME - note the important numModes and numNonAdminModes values inited here
  * when new commands are added, the indices need to be adjusted here.
  */
-ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(35), numNonAdminModes(8)
+ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(35), numNonAdminModes(6)
 {
   return;
 }

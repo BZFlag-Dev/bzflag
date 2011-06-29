@@ -73,7 +73,7 @@ private:
   int startIndex;
   const int numModes;
   const int numNonAdminModes;
-  static const Mode nonAdminModes[8];
+  static const Mode nonAdminModes[6];
 
 
 };
