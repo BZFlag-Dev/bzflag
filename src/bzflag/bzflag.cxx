@@ -939,30 +939,9 @@ int			main(int argc, char** argv)
   }
 
   // use empty motto string unless previously set
-  std::string motto = BZDB.isSet("motto") ? BZDB.get("motto") : "";
-  if (BZDB.isSet("email")) {
-    if (motto.empty()) {
-      motto = BZDB.get("email");
-      // do not use something that looks like an e-mail address as the motto
-      if (motto.find('@') != std::string::npos)
-	motto = "";
-    }
-    BZDB.unset("email");	// discard email string from before version 2.4
-  }
+  std::string motto = BZDB.get("motto");
   motto = motto.substr(0, sizeof(startupInfo.motto) - 1);
   strcpy(startupInfo.motto, motto.c_str());
-
-  if (BZDB.isSet("emailDispLen")) {
-    if (!BZDB.isSet("mottoDispLen"))
-      BZDB.set("mottoDispLen", BZDB.get("emailDispLen"));
-    BZDB.unset("emailDispLen");	// discard setting from before version 2.4
-  }
-
-  if (BZDB.isSet("hideEmails")) {
-    if (!BZDB.isSet("hideMottos"))
-      BZDB.set("hideMottos", BZDB.get("hideEmails"));
-    BZDB.unset("hideEmails");	// discard setting from before version 2.4
-  }
 
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();

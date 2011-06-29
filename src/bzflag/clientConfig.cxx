@@ -86,7 +86,7 @@ std::string	getOldConfigFileName(void)
 		}
 	}
 
-	name += "\\My BZFlag Files\\2.0\\";
+	name += "\\My BZFlag Files\\2.0\\config.cfg";
 	return name;
 
 #endif /* !defined(_WIN32) */
@@ -264,8 +264,40 @@ void updateConfigFile(void)
 		  && (KEYMGR.get(key, true) == ""))
 		  KEYMGR.bind(key, true, "addhunt");
 
-  case 3: // 2.0.4
-	  break; // no action, current version
+  case 3: // Upgrade from 2.0.x to 2.4.x
+
+    // Convert from email to motto
+    
+    // If the email is set, see if we should convert it
+    if (BZDB.isSet("email")) {
+      std::string email = BZDB.get("email");
+      // If the email is set and does not contain an @ sign, move it to motto
+      if (!email.empty() && email.find('@') == std::string::npos) {
+	BZDB.set("motto", email);
+      }
+      BZDB.unset("email");	// discard email string from before version 2.4
+    }
+
+    if (BZDB.isSet("emailDispLen")) {
+      BZDB.set("mottoDispLen", BZDB.get("emailDispLen"));
+      BZDB.unset("emailDispLen");	// discard setting from before version 2.4
+    }
+
+    if (BZDB.isSet("hideEmails")) {
+      BZDB.setBool("hideMottos", BZDB.isTrue("hideEmails"));
+      BZDB.unset("hideEmails");	// discard setting from before version 2.4
+    }
+
+    // Get rid of geometry setting
+    BZDB.unset("geometry");
+
+    // Turn off dithering (since none of our automatic performance checks turn it on anymore)
+    BZDB.setBool("dither", false);
+
+    break;
+  
+  case 4: // Upgrade 2.4.x to .... (Do nothing right now as this is the current version)
+	  break;
 
   default: // hm, we don't know about this one...
 	  printError(TextUtils::format("Config file is tagged version \"%d\", "
@@ -286,4 +318,3 @@ void updateConfigFile(void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
