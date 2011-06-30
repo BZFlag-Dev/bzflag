@@ -25,7 +25,7 @@
 //  misc/bzfquery.pl
 //  misc/bzfquery.py
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0217"
+#  define BZ_PROTO_VERSION	"0218"
 #endif
 
 // version numbers - also update as needed:
@@ -44,12 +44,12 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		17
+#  define BZ_REV		18
 #endif
 
 // DEVEL | RC# | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"RC1"
+#  define BZ_BUILD_TYPE		"RC2"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993-2011 Tim Riker";
