@@ -4270,11 +4270,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       chatData.message = message;
 
-      // send any events that want to watch the chat
-      // everyone
-      if ((strlen(message) < 2) || !((message[0] == '/') && (message[1] != '/')))
-	worldEventManager.callEvents(bz_eRawChatMessageEvent,&chatData);
-
       // send the actual Message after all the callbacks have done there magic to it.
       if (chatData.message.size())
 	sendPlayerMessage(playerData, dstPlayer, chatData.message.c_str());
