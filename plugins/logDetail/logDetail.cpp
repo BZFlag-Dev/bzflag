@@ -90,6 +90,8 @@ void LogDetail::Event( bz_EventData *eventData )
 	}
 	break;
       case bz_eRawChatMessageEvent:
+		  if (chatData->from == BZ_SERVER)
+			  break;
 	if ((chatData->to == BZ_ALLUSERS) && (chatData->team == eNoTeam)) {
 	  bz_debugMessagef(0, "MSG-BROADCAST %s %s",
 			   displayCallsign( chatData->from ).c_str(),
