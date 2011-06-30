@@ -288,8 +288,9 @@ void updateConfigFile(void)
       BZDB.unset("hideEmails");	// discard setting from before version 2.4
     }
 
-    // Get rid of geometry setting
+    // Get rid of geometry and lastScreenshot settings
     BZDB.unset("geometry");
+    BZDB.unset("lastScreenshot");
 
     // Turn off dithering (since none of our automatic performance checks turn it on anymore)
     BZDB.setBool("dither", false);
