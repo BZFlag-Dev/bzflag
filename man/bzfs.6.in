@@ -311,7 +311,7 @@ Enables the Open\-Free\-for\-All style game. This is a teamless mode, similar to
 the classic deathmatch in other games.
 .TP
 .B \-noTeamKills
-Players on the same team are immune to eachother's shots. Rogue is excepted.
+Players on the same team are immune to each other's shots. Rogue is excepted.
 .TP
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
