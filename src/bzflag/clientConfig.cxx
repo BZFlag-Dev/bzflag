@@ -56,8 +56,8 @@ std::string	getOldConfigFileName(void)
 {
 #if !defined(_WIN32)
 
-	std::string name = getConfigDirName();
-	name += "config";
+	std::string name = getConfigDirName("2.0");
+	name += "config.cfg";
 
 	// add in hostname on UNIX
 	if (getenv("HOST")) {
