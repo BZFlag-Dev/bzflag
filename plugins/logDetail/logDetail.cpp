@@ -41,7 +41,7 @@ BZ_PLUGIN(LogDetail)
 void LogDetail::Init ( const char* /*commandLine*/ )
 {
   Register(bz_eSlashCommandEvent);
-  Register(bz_eFilteredChatMessageEvent);
+  Register(bz_eRawChatMessageEvent);
   Register(bz_eServerMsgEvent);
   Register(bz_ePlayerJoinEvent);
   Register(bz_ePlayerPartEvent);
