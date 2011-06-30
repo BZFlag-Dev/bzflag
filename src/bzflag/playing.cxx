@@ -2513,7 +2513,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       for (int i = 0; i < curMaxPlayers; i++) {
 	if (remotePlayers[i])
 	  remotePlayers[i]->setHunted(false);
-	if (i != id && remotePlayers[i] && remotePlayers[i]->getTeam() != RogueTeam
+	if (i != id && remotePlayers[i] && remotePlayers[i]->getTeam() != HunterTeam
 	    && remotePlayers[i]->getTeam() != ObserverTeam) {
 	  remotePlayers[i]->changeTeam(HunterTeam);
 	}

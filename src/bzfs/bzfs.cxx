@@ -709,6 +709,7 @@ PingPacket getTeamCounts()
 	{
 	  case RabbitTeam:
 	  case RogueTeam:
+     case HunterTeam:
 	    pingReply.rogueCount++;
 	    break;
 
@@ -1277,7 +1278,8 @@ static void respondToPing(Address addr)
 {
   // reply with current game info
   pingReply.sourceAddr = addr;
-  pingReply.rogueCount = (uint8_t)team[0].team.size;
+  // Total up rogue + rabbit + hunter teams
+  pingReply.rogueCount = (uint8_t)team[0].team.size + (uint8_t)team[6].team.size + (uint8_t)team[7].team.size;
   pingReply.redCount = (uint8_t)team[1].team.size;
   pingReply.greenCount = (uint8_t)team[2].team.size;
   pingReply.blueCount = (uint8_t)team[3].team.size;
