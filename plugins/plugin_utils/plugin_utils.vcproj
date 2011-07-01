@@ -289,10 +289,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\base64.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\plugin_config.cpp"
 				>
 			</File>
@@ -302,10 +298,6 @@
 			</File>
 			<File
 				RelativePath=".\plugin_groups.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\plugin_HTTP.cpp"
 				>
 			</File>
 			<File
@@ -319,10 +311,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\base64.h"
-				>
-			</File>
-			<File
 				RelativePath=".\plugin_config.h"
 				>
 			</File>
@@ -332,10 +320,6 @@
 			</File>
 			<File
 				RelativePath=".\plugin_groups.h"
-				>
-			</File>
-			<File
-				RelativePath=".\plugin_HTTP.h"
 				>
 			</File>
 			<File

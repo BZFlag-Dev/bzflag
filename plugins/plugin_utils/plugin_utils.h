@@ -39,9 +39,6 @@ std::string replace_all(const std::string& in, const std::string& replaceMe, con
 std::string url_encode(const std::string &text);
 std::string url_decode(const std::string &text);
 
-std::string base64_encode(const std::string &text);
-std::string base64_decode(const std::string &text);
-
 size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset = 0);
 
 std::string getStringRange ( const std::string &find, size_t start, size_t end );

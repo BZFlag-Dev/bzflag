@@ -14,27 +14,6 @@
 #include <stdarg.h>
 #include <sstream>
 #include "plugin_utils.h"
-#include "base64.h"
-
-
-std::string base64_encode(const std::string &text)
-{
-  // convert to base64
-  std::string dest;
-
-  base64::encode(text.begin(), text.end(), std::back_inserter(dest));
-
-  return dest;
-}
-
-std::string base64_decode(const std::string &text)
-{
-  // convert back to binary
-  std::string dest;
-
-  base64::decode(text.begin(), text.end(),std::back_inserter(dest));
-  return dest;
-}
 
 const char* bzu_GetTeamName(bz_eTeamType team)
 {
