@@ -15,7 +15,8 @@
 
 #include "bzfsAPI.h"
 #include <sstream>
-#include "bzregex.h"
+#include <stdio.h>
+#include <string.h>
 
 #define TIMELIMIT_VER "1.0.4"
 #define MAX_TIMES 20
@@ -50,23 +51,6 @@ void showMatchDurations(int playerID)
    bz_sendTextMessagef (BZ_SERVER, playerID, "Not a valid match duration, valid match durations are : ");
    for (unsigned i=0; i < timeList->size(); i++)
       bz_sendTextMessagef (BZ_SERVER, playerID, "* %s minute(s)",timeList->get(i).c_str());
-}
-
-
-// Checks if the regex matches the string or not
-bool isValidCmdLine(const char * regex, const char * commandLine)
-{
-   int result;
-   regex_t preg;
-
-   result = regcomp(&preg, regex, REG_ICASE | REG_NOSUB | REG_EXTENDED);
-   result = regexec(&preg, commandLine, 0, NULL, 0);
-   regfree(&preg);
-
-   if (result == 0 )
-       return true;
-
-   return false;
 }
 
 
@@ -113,7 +97,7 @@ void TimeLimit::Event ( bz_EventData *eventData )
 }
 
 
-std::string convertIntToString(const int integer)
+std::string convertIntToString(const unsigned int integer)
 {
   std::ostringstream ostr;
 
@@ -125,18 +109,16 @@ std::string convertIntToString(const int integer)
 
 void parseCommand ( const char* commandLine )
 {
-  if (isValidCmdLine("^[0-9]+-[0-9]+$",commandLine)) {
+  const size_t len = strlen(commandLine);
 
-    bz_APIStringList* range = bz_newStringList();
-
-    range->tokenize(commandLine, "-", 2, false);
-
-    for ( int i=atoi(range->get(0).c_str()); i <= atoi(range->get(1).c_str()); i++) {
-       timeList->push_back(convertIntToString(i));
-    }
-
-  } else if ( isValidCmdLine("^[[:digit:]+,]+$",commandLine))
-	   timeList->tokenize(commandLine, ",", MAX_TIMES, false);
+  if (len != 0) {
+    unsigned int range_begin, range_end;
+    if (sscanf(commandLine, "%u-%u", &range_begin, &range_end) == 2) {
+      while (range_begin <= range_end)
+	timeList->push_back(convertIntToString(range_begin++));
+    } else if (strspn(commandLine, ",0123456789") == len)
+      timeList->tokenize(commandLine, ",", MAX_TIMES, false);
+  }
 }
 
 
