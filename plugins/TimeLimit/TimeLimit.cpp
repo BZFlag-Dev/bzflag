@@ -113,7 +113,9 @@ void parseCommand ( const char* commandLine )
 
   if (len != 0) {
     unsigned int range_begin, range_end;
-    if (sscanf(commandLine, "%u-%u", &range_begin, &range_end) == 2) {
+    char junk;
+
+    if (sscanf(commandLine, "%u-%u%c", &range_begin, &range_end, &junk) == 2) {
       while (range_begin <= range_end)
 	timeList->push_back(convertIntToString(range_begin++));
     } else if (strspn(commandLine, ",0123456789") == len)
