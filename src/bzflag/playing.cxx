@@ -3704,21 +3704,23 @@ static void		checkEnvironment()
     const float myRadius = myTank->getRadius();
     for (i = 0; i < curMaxPlayers; i++) {
       if (remotePlayers[i] && !remotePlayers[i]->isPaused() &&
-	  ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
-	   ((myPos[2] < 0.0f) && remotePlayers[i]->isAlive() &&
+	    ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
+	    ((myPos[2] < 0.0f) && remotePlayers[i]->isAlive() &&
 	    !remotePlayers[i]->isPhantomZoned()))) {
-	const float* pos = remotePlayers[i]->getPosition();
-	if (pos[2] < 0.0f) continue;
-	if (!myTank->isPhantomZoned()) {
-	  const float radius = myRadius +
-	    BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius();
-	  const float distSquared =
-	    hypotf(hypotf(myPos[0] - pos[0],
-			  myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-	  if (distSquared < radius) {
-	    gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
-	  }
-	}
+        const float* pos = remotePlayers[i]->getPosition();
+        if (pos[2] < 0.0f) continue;
+        if (remotePlayers[i]->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() &&
+        remotePlayers[i]->getTeam() == myTank->getTeam()) continue;
+        if (!myTank->isPhantomZoned()) {
+          const float radius = myRadius +
+          BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius();
+          const float distSquared =
+          hypotf(hypotf(myPos[0] - pos[0],
+                        myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+          if (distSquared < radius) {
+            gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
+          }
+        }
       }
     }
   }
