@@ -50,7 +50,7 @@ bzfs \- BZFlag game server
 [\fB\-lagannounce \fR\fImilliseconds\fR]
 [\fB\-lagdrop \fIwarn\-count\fR]
 [\fB\-lagwarn \fR\fImilliseconds\fR]
-[\fB\-masterBanURL \fR\URL\fR]
+[\fB\-masterBanURL \fIURL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
 [\fB\-mp \fR{\fIcount\fR|[\fIrogue\-count\fR]\fB,\fR[\fIred\-count\fR]\fB,\fR[\fIgreen\-count\fR]\fB,\fR[\fIblue\-count\fR]\fB,\fR[\fIpurple\-count\fR],\fR[\fIobserver\-count\fR]}]
 [\fB\-mps \fR\fImax\-score\fR]
@@ -491,7 +491,7 @@ default value is 30.
 .TP
 \fB\-time \fItime\-limit\fR
 Sets a time limit on the game to \fItime\-limit\fR or \fIending-time\fR. The game will be
-stopped \fItime\-limit\fR seconds after the first player connects, or at \fending-time\fR,
+stopped \fItime\-limit\fR seconds after the first player connects, or at \fIending-time\fR,
 whichever is given. The \fIending-time\fR should be given in hh:mm:ss format, but does not
 need minute and second arguments. If hour is only given, it must end in ':'. Each
 unspecified argument is set to 0.
@@ -869,7 +869,7 @@ A reason is required
 .ft R
 
 .TP
-.B /kill {\fi"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} [\fIreason\fR]
+.B /kill {\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} [\fIreason\fR]
 Kill a player just like when shooting. Example:
 .ft CW
 .nf

@@ -165,9 +165,9 @@ half. \fIanaglyph\fR supports red\-cyan stereo viewing glasses. Note that
 setting an unsupported view option will often lead to BZFlag not running
 successfully. To correct this, run with \-view normal.
 .TP
-.B \-window\fl width\fR\fBx\fR\flheight 
-Runs the application in a window instead of full screen.Specify the width and 
-height of the window after the option.
+.B \-window\fI width\fBx\fIheight\fR
+Runs the application in a window instead of full screen.
+Specify the width and height of the window after the option.
 .TP
 \fB\-zbuffer\fR {\fIon\fR | \fIoff\fR}
 When \fIoff\fR is chosen the game will not attempt to allocate a
