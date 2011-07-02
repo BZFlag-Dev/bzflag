@@ -3229,10 +3229,14 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   TeamColor teamIndex = flag.teamIndex();
   if (teamIndex == ::NoTeam)
     return;
-  if (teamIndex != teamCaptured)
-      logDebugMessage(1,"Player %s [%d] claimed to capture %s flag while carrying %s flag\n",
-	playerData->player.getCallSign(), playerIndex,
-	Team::getName(teamCaptured), Team::getName(teamIndex));
+/*
+ * The flag object always shows that it is the player's own team.
+ * TODO: understand this situation better and change or document it.
+ *if (teamIndex != teamCaptured)
+ *    logDebugMessage(1,"Player %s [%d] claimed to capture %s flag while carrying %s flag\n",
+ *	playerData->player.getCallSign(), playerIndex,
+ *	Team::getName(teamCaptured), Team::getName(teamIndex));
+ */
 
   { //cheat checking
     TeamColor base = whoseBase(playerData->lastState.pos[0],
