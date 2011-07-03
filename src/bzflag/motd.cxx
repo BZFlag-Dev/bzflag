@@ -19,11 +19,6 @@
 
 // system headers
 #include <vector>
-#if defined(BUILD_REGEX)
-#  include "bzregex.h"
-#elif defined(HAVE_REGEX_H)
-#  include <regex.h>
-#endif
 
 // common implementation headers
 #include "TextUtils.h"
