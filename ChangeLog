@@ -1,8 +1,8 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.3.0  "Born Again"
-----------------------------------------
+BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
+------------------------------------------
 * Shot messages are synchronized with position - Alfredo Tupone
 * Added /playerlist for everyone - Thomas Stauer
 * Added message type for properly handling /me actions - Scott Wichser
@@ -30,7 +30,7 @@ BZFlag 2.3.0  "Born Again"
 * The bzfs -time command line option allows end time - Scott Wichser, Ian Agar
 * screenshots now compressed asynchronously - Daniel Remenak, randomparticle
 * Add /serverdebug command and plugin API - Bernt Hansen
-* Add bzfs -utc command line option to log timestampes universal time
+* Add bzfs -utc command line option to log timestamps using universal time
     - Bernt Hansen
 * Fix buffer overrun when using -ts micros on Linux - trepan, Bernt Hansen
 * Only players with POLL permission are eligible to vote - Bernt Hansen
