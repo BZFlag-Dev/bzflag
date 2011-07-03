@@ -197,7 +197,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (c) 2003-2011 Tim Riker"
             VALUE "OriginalFilename", "TextTool.EXE"
             VALUE "ProductName", "BZFlag"
-            VALUE "ProductVersion", "2.3"
+            VALUE "ProductVersion", "2.4"
         END
     END
     BLOCK "VarFileInfo"
