@@ -3,6 +3,7 @@ EXTRA_DIST =				\
 	art				\
 	bzbz.pl				\
 	bzflag.desktop.in		\
+	bzfquery.lua			\
 	bzfquery.php			\
 	bzfquery.pl			\
 	bzfquery.py			\
