@@ -4400,6 +4400,25 @@ static void		addRobots()
   char msg[MaxPacketLen];
   char callsign[CallSignLen];
   int  j;
+
+  // add solo robots only when the server allows them
+  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+    for (j = 0; j < MAX_ROBOTS; j++) {	// ensure that all slots are empty
+      if (robots[j]) {		// should already be empty, but be sure
+	delete robots[j];
+	robots[j] = NULL;
+      }
+      if (robotServer[j]) {	// array was populated in joinInternetGame()
+	delete robotServer[j];
+	robotServer[j] = NULL;
+      }
+    }
+    numRobots = 0;
+    if (numRobotTanks > 0)
+      addMessage(NULL, "Solo robots are prohibited on this server.");
+    return;
+  }
+
   for (j = 0; j < numRobots; j++)
     if (robotServer[j]) {
       snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
