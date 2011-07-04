@@ -2676,13 +2676,6 @@ void playerAlive(int playerIndex)
 	spawnAllowData.allow = false;
 	}
 
-  if (playerData->player.isBot()
-      && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
-    sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow bots on this server.");
-    removePlayer(playerIndex, "ComputerPlayer");
-    return;
-  }
-
   // check for any spawn allow events
   worldEventManager.callEvents(bz_eAllowSpawn,&spawnAllowData);
 

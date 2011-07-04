@@ -147,6 +147,13 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     serverSpoofingFilter.addToFilter("SERVER", "");
   }
 
+  if (isBot() && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+    logDebugMessage(2,"rejecting robot tank: %s\n", callSign);
+    rejectCode   = RejectBadType;
+    strcpy(rejectMsg, "Robot tanks are not allowed on this server.");
+    return false;
+  }
+
   if (!isCallSignReadable()) {
     logDebugMessage(2,"rejecting unreadable callsign: %s\n", callSign);
     rejectCode   = RejectBadCallsign;
