@@ -57,6 +57,7 @@ void LogDetail::Cleanup()
 {
   listPlayers( part , NULL );
   bz_debugMessage(0, "SERVER-STATUS Stopped");
+  Flush();
 }
 
 void LogDetail::Event( bz_EventData *eventData )
