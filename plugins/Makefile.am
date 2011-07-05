@@ -24,6 +24,7 @@ SUBDIRS = \
 	serverControl \
 	shockwaveDeath \
 	teamflagreset \
+	thiefControl \
 	timedctf \
 	TimeLimit \
 	wwzones

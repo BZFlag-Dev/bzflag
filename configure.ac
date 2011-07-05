@@ -1187,6 +1187,7 @@ AC_CONFIG_FILES([
 	plugins/serverControl/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/teamflagreset/Makefile
+	plugins/thiefControl/Makefile
 	plugins/timedctf/Makefile
 	plugins/wwzones/Makefile
 	src/3D/Makefile
