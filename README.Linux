@@ -39,7 +39,7 @@ BZFlag.  Known requirements include:
 
   Fedora:
 
-    A "yum install SDL-devel curl-devel ftgl-devel ncurses-devel"
+    A "yum install SDL-devel curl-devel ncurses-devel"
     command will follow dependencies to automatically install all of
     the packages required to compile BZFlag.
 
