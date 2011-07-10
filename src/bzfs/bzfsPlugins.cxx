@@ -277,7 +277,7 @@ bool load1Plugin ( std::string plugin, std::string config )
 	if (hLib)
 	{
 		if (dlsym(hLib, "bz_GetPlugin") == NULL) {
-			logDebugMessage(1,"Plugin: %s found but does not contain bz_Load method, error %s\n",plugin.c_str(),dlerror());
+			logDebugMessage(1,"Plugin: %s found but does not contain bz_GetPlugin method, error %s\n",plugin.c_str(),dlerror());
 			dlclose(hLib);
 			return false;
 		}
