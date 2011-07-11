@@ -6598,10 +6598,15 @@ static void		playingLoop()
 	setLookAtMarker();
 
 	// see if we have a target, if so lock on to the bastage
-	if (myTank->getTarget())
+	const Player* targetdPlayer = myTank->getTarget();
+	if (targetdPlayer && targetdPlayer->isAlive() && targetdPlayer->getFlag() != Flags::Stealth)
+	{
 	  hud->AddLockOnMarker(Float3ToVec3(myTank->getTarget()->getPosition()),
 	  myTank->getTarget()->getCallSign(),
 	  !isKillable(myTank->getTarget()));
+	}
+	else // if we should not have a target, force that target to be cleared
+	  myTank->setTarget(NULL);
 
       } else {
 	int mx, my;
