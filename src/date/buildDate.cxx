@@ -24,6 +24,7 @@
 //  misc/bzfquery.php
 //  misc/bzfquery.pl
 //  misc/bzfquery.py
+//  misc/bzls.lua
 #ifndef BZ_PROTO_VERSION
 #  define BZ_PROTO_VERSION	"0221"
 #endif
