@@ -886,7 +886,7 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
     label = flagInfo->flag.type->label();
   playerRecord->currentFlag = label;
 
-  std::vector < FlagType* > flagHistoryList = player->flagHistory.get();
+  std::vector < FlagType* > flagHistoryList = player->flagHistory.getVec();
 
   playerRecord->flagHistory.clear();
   for (unsigned int i = 0; i < flagHistoryList.size(); i++)

@@ -18,6 +18,7 @@
 
 // system headers
 #include <vector>
+#include <string>
 
 // bzflag library headers
 #include "Flag.h"
@@ -25,9 +26,9 @@
 class FlagHistory {
  public:
   void clear();
-  void get(char message[]);
+  std::string getStr();
   void add(FlagType* type);
-  std::vector<FlagType*> get(void) { return flagHistory;}
+  std::vector<FlagType*> getVec() { return flagHistory;}
  private:
   std::vector<FlagType*> flagHistory;
 };

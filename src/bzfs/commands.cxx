@@ -1845,8 +1845,8 @@ bool FlagHistoryCommand::operator() (const char	 *,
     GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData != NULL && otherData->player.isPlaying()
 	&& !otherData->player.isObserver()) {
-      snprintf(reply, MessageLen, "%-16s : ", otherData->player.getCallSign());
-      otherData->flagHistory.get(reply+strlen(reply));
+      snprintf(reply, MessageLen, "%-16s :%s", otherData->player.getCallSign(),
+	otherData->flagHistory.getStr().c_str());
       sendMessage(ServerPlayer, t, reply);
     }
   }

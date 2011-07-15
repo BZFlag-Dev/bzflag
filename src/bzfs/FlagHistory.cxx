@@ -15,7 +15,7 @@
 
 /* system headers */
 #include <vector>
-#include <string.h>
+#include <string>
 
 #define MAX_FLAG_HISTORY (10)
 
@@ -23,19 +23,22 @@ void FlagHistory::clear() {
   flagHistory.clear();
 }
 
-void FlagHistory::get(char message[]) {
-    char flag[MessageLen];
+std::string FlagHistory::getStr() {
+    std::string flagList;
     std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
 
     while (fhIt != flagHistory.end()) {
+      flagList += " (";
       FlagType * fDesc = (FlagType*)(*fhIt);
-      if (fDesc->endurance == FlagNormal)
-	snprintf(flag, MessageLen, "(*%c) ", fDesc->flagName.c_str()[0]);
-      else
-	snprintf(flag, MessageLen, "(%s) ", fDesc->flagAbbv.c_str());
-      strncat(message, flag, sizeof(message) - strlen(message) - 1);
+      if (fDesc->endurance == FlagNormal) {
+	flagList += '*';
+	flagList += fDesc->flagName.c_str()[0];
+      } else
+	flagList += fDesc->flagAbbv;
+      flagList += ")";
       fhIt++;
     }
+    return flagList;
 }
 
 void FlagHistory::add(FlagType* type) {
