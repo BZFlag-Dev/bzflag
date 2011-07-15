@@ -33,15 +33,17 @@ BZFlag.  Known requirements include:
     libcurl3-dev
     libsdl-sound1.2-dev (may have to add this yourself as well)
 
-    In order to build bzrobot with python support, you will need:
-    python-dev
-    swig
-
   Fedora:
 
-    A "yum install SDL-devel curl-devel ncurses-devel"
-    command will follow dependencies to automatically install all of
-    the packages required to compile BZFlag.
+    A "yum install SDL-devel c-ares-devel libcurl-devel gcc-c++
+    glew-devel libidn-devel libtool ncurses-devel zlib-devel" command
+    will follow dependencies to automatically install all of the
+    packages required to compile BZFlag.
+
+After any development packages are installed do a "make distclean"
+command once in the top-level BZFlag source directory.  Then, when
+./configure is run as usual it will recognize and use the newly
+installed packages.
 
 Known bugs in the Linux version:
 
@@ -78,7 +80,7 @@ Known issues:
     use -mute to disable sound.
 
 Having sound problems? If you're using ALSA for sound, you may get
-better performance to use "hw:0" instead of "plughw:0" or "default"
+better performance using "hw:0" instead of "plughw:0" or "default"
 for audio by specifying "hw:0" under the Options->Audio->Device menu
 in the game.  This seems to be due to a bug in the SDL audio mixer.
 If you're using Debian, you may also have positive results replacing
