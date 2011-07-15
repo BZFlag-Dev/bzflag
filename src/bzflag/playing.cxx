@@ -216,6 +216,7 @@ static bool	     downloadingInitialTexture = false;
 static AresHandler* ares = NULL;
 void initGlobalAres() { ares = new AresHandler(0); }
 void killGlobalAres() { delete ares; ares = NULL; }
+static Address serverNetworkAddress = Address();
 
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
@@ -4399,28 +4400,22 @@ static void		addRobots()
   uint16_t code, len;
   char msg[MaxPacketLen];
   char callsign[CallSignLen];
-  int  j;
+  int i, j;
 
   // add solo robots only when the server allows them
   if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
-    for (j = 0; j < MAX_ROBOTS; j++) {	// ensure that all slots are empty
-      if (robots[j]) {		// should already be empty, but be sure
-	delete robots[j];
-	robots[j] = NULL;
-      }
-      if (robotServer[j]) {	// array was populated in joinInternetGame()
-	delete robotServer[j];
-	robotServer[j] = NULL;
-      }
-    }
     numRobots = 0;
     if (numRobotTanks > 0)
       addMessage(NULL, "Solo robots are prohibited on this server.");
     return;
   }
 
-  for (j = 0; j < numRobots; j++)
-    if (robotServer[j]) {
+  for (i = 0, j = 0; i < numRobotTanks; i++) {
+    robotServer[j] = new ServerLink(serverNetworkAddress, startupInfo.serverPort);
+    if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
+      delete robotServer[j];
+      continue;
+    } else {
       snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
       robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
 				  robotServer[j], myTank->getMotto());
@@ -4429,6 +4424,10 @@ static void		addRobots()
 				robots[j]->getCallSign(),
 				robots[j]->getMotto(), "");
     }
+    j++;
+  }
+  numRobots = j;
+
   for (j = 0; j < numRobots; j++) {
     // wait for response
     if (robotServer[j] && (robotServer[j]->read(code, len, msg, -1) < 0 || code != MsgAccept)) {
@@ -4868,6 +4867,7 @@ void		leaveGame()
   ServerLink::setServer(NULL);
   delete serverLink;
   serverLink = NULL;
+  serverNetworkAddress = Address();
 
   // reset viewpoint
   float eyePoint[3], targetPoint[3];
@@ -4904,11 +4904,10 @@ void		leaveGame()
 }
 
 
-static void joinInternetGame(const struct in_addr *inAddress)
+static void joinInternetGame()
 {
-  // get server address
-  Address serverAddress(*inAddress);
-  if (serverAddress.isAny()) {
+  // check server address
+  if (serverNetworkAddress.isAny()) {
     HUDDialogStack::get()->setFailedMessage("Server not found");
     return;
   }
@@ -4917,7 +4916,7 @@ static void joinInternetGame(const struct in_addr *inAddress)
   ServerAccessList.reload();
   std::vector<std::string> nameAndIp;
   nameAndIp.push_back(startupInfo.serverName);
-  nameAndIp.push_back(serverAddress.getDotNotation());
+  nameAndIp.push_back(serverNetworkAddress.getDotNotation());
   if (!ServerAccessList.authorized(nameAndIp)) {
     HUDDialogStack::get()->setFailedMessage("Server Access Denied Locally");
     std::string msg = ColorStrings[WhiteColor];
@@ -4931,20 +4930,11 @@ static void joinInternetGame(const struct in_addr *inAddress)
   }
 
   // open server
-  ServerLink* _serverLink = new ServerLink(serverAddress,
+  ServerLink* _serverLink = new ServerLink(serverNetworkAddress,
 					   startupInfo.serverPort);
 
 #if defined(ROBOT)
-  int i, j;
-  for (i = 0, j = 0; i < numRobotTanks; i++) {
-    robotServer[j] = new ServerLink(serverAddress, startupInfo.serverPort);
-    if (!robotServer[j] || robotServer[j]->getState() != ServerLink::Okay) {
-      delete robotServer[j];
-      continue;
-    }
-    j++;
-  }
-  numRobots = j;
+  numRobots = 0;
 #endif
 
   serverLink = _serverLink;
@@ -6442,7 +6432,8 @@ static void		playingLoop()
 	waitingDNS = false;
       } else if (status == AresHandler::HbNSucceeded) {
 	// now try connecting
-	joinInternetGame(&inAddress);
+	serverNetworkAddress = Address(inAddress);
+	joinInternetGame();
 	waitingDNS = false;
       }
     }
