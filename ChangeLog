@@ -1,8 +1,19 @@
 			     BZFlag Release Notes
 			     ====================
 
+
+BZFlag 2.4.1
+------------
+
+* Prevent prohibited solo bots from joining, rather than kick afterward
+    - Scott Wichser, Jeff Makey
+* Add thiefControl plugin which prevents stealing flags from teammates
+    - Bernt Hansen
+
+
 BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
 ------------------------------------------
+
 * Shot messages are synchronized with position - Alfredo Tupone
 * Added /playerlist for everyone - Thomas Stauer
 * Added message type for properly handling /me actions - Scott Wichser
