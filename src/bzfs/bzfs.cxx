@@ -3551,7 +3551,7 @@ static void shotFired(int playerIndex, void *buf, int len)
 	    lastPos[i] = playerData->lastState.pos[i];
 	  }
 	  fInfo.grabs = 0; // recycle this flag now
-	  dropPlayerFlag(*playerData, lastPos);
+	  dropFlag(fInfo, lastPos);
 	} else { // more shots fired than allowed
 	  // do nothing for now -- could return and not allow shot
 	}
