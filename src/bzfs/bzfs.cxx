@@ -4289,9 +4289,12 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       GameKeeper::Player *fromData = playerData;
 
       int flagIndex = fromData->player.getFlag();
+
+      FlagInfo* flagInfo = FlagInfo::get(flagIndex);
+
       if (to == ServerPlayer) {
 	if (flagIndex >= 0)
-	  zapFlag (*FlagInfo::get(flagIndex));
+	  zapFlag (*flagInfo);
 	return;
       }
 
@@ -4334,7 +4337,10 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       ftEventData.fromPlayerID = fromData->player.getPlayerIndex();
       ftEventData.toPlayerID = toData->player.getPlayerIndex();
-      ftEventData.flagType = NULL;
+      if (flagInfo)
+        ftEventData.flagType = flagInfo->flag.type->flagAbbv.c_str();
+      else
+        ftEventData.flagType = "";
       ftEventData.action = ftEventData.ContinueSteal;
 
       worldEventManager.callEvents(bz_eFlagTransferredEvent,&ftEventData);

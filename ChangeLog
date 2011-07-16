@@ -8,7 +8,7 @@ BZFlag 2.4.1
 * Prevent prohibited solo bots from joining, rather than kick afterward
     - Scott Wichser, Jeff Makey
 * Add thiefControl plugin which prevents stealing flags from teammates
-    - Bernt Hansen
+    - Bernt Hansen, Scott Wichser
 
 
 BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
