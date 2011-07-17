@@ -10,7 +10,7 @@
 class RogueGenoHandler : public bz_Plugin
 {
 public:
-	virtual const char* Name (){return "Rogue Geoncide";}
+	virtual const char* Name (){return "Rogue Genocide";}
 	virtual void Init ( const char* config);
 
   virtual void Event ( bz_EventData *eventData );
