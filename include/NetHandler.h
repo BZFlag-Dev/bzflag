@@ -96,6 +96,7 @@ public:
   /// return the opened socket, usable from all other network internal client
   static int  getUdpSocket();
 
+
   /**
       udpReceive will try to get the next udp message received
 
@@ -145,6 +146,7 @@ public:
   bool		reverseDNSDone();
 
   size_t	getTcpReadSize (){ return tcplen;}
+  bool		hasTcpOutbound(){ return outmsgSize > 0;}
 
   void setPlayer ( PlayerInfo* p, int index );
 

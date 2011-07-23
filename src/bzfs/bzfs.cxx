@@ -1185,6 +1185,8 @@ static void acceptClient()
   peer.socket = fd;
   peer.deleteMe = false;
   peer.sent = false;
+  peer.minSendTime = 0;
+  peer.lastSend = TimeKeeper::getCurrent();
   peer.startTime = TimeKeeper::getCurrent();
 
   netConnectedPeers[fd] = peer;
@@ -5060,11 +5062,22 @@ void initGroups()
 
 void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
 {
+  if (peer.netHandler->hasTcpOutbound())
+  {
+    peer.netHandler->bufferedSend(NULL, 0);
+    return;
+  } 
+  
   if (peer.sendChunks.empty()) {
     return;
   }
 
-  peer.lastActivity = TimeKeeper::getCurrent();
+  TimeKeeper now = TimeKeeper::getCurrent();
+
+  if (peer.lastSend.getSeconds() + peer.minSendTime > now.getSeconds())
+    return;
+
+  peer.lastActivity = now;
 
   const std::string& chunk = peer.sendChunks.front();
   peer.netHandler->bufferedSend(chunk.data(), chunk.size());
