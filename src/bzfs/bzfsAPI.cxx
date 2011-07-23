@@ -768,6 +768,17 @@ BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerC
 
 //-------------------------------------------------------------------------
 
+BZF_API bool bz_setNonPlayerDisconnectOnSend(int connectionID, bool bSet)
+{
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if (peer == NULL) {
+    return false;
+  }
+
+  peer->deleteWhenDoneSending = bSet;
+  return true;
+}
+
 BZF_API bool bz_setNonPlayerDataThrottle(int connectionID, double time)
 {
   NetConnectedPeer* peer = getNonPlayerPeer(connectionID);

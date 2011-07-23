@@ -1188,6 +1188,7 @@ static void acceptClient()
   peer.minSendTime = 0;
   peer.lastSend = TimeKeeper::getCurrent();
   peer.startTime = TimeKeeper::getCurrent();
+  peer.deleteWhenDoneSending = false;
 
   netConnectedPeers[fd] = peer;
 
@@ -5068,7 +5069,10 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
     return;
   } 
   
-  if (peer.sendChunks.empty()) {
+  if (peer.sendChunks.empty())
+  {
+    if (peer.deleteWhenDoneSending && peer.sent && !peer.netHandler->hasTcpOutbound())
+      peer.deleteMe = true;
     return;
   }
 
@@ -5077,6 +5081,7 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   if (peer.lastSend.getSeconds() + peer.minSendTime > now.getSeconds())
     return;
 
+  peer.sent = true;
   peer.lastActivity = now;
 
   const std::string& chunk = peer.sendChunks.front();

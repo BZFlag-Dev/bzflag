@@ -196,6 +196,7 @@ struct NetConnectedPeer {
 
 	bool   sent;
 	bool   deleteMe;
+	bool   deleteWhenDoneSending;
 };
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;

@@ -1338,6 +1338,8 @@ public:
 
     std::string pageBuffer = "HTTP/1.1";
 
+    bool redirected = false;
+
     switch (Responce.ReturnCode)
     {
       case e200OK:
@@ -1346,6 +1348,7 @@ public:
       case e301Redirect:
 	if (Responce.RedirectLocation.size())
 	{
+	  redirected = true;
 	  pageBuffer += " 301 Moved Permanently\n";
 	  pageBuffer += "Location: " + std::string(Responce.RedirectLocation.c_str()) + "\n";
 	}
@@ -1357,6 +1360,7 @@ public:
       case e302Found:
 	if (Responce.RedirectLocation.size())
 	{
+	  redirected = true;
 	  pageBuffer += " 302 Found\n";
 	  pageBuffer += "Location: " + std::string(Responce.RedirectLocation.c_str()) + "\n";
 	}
@@ -1501,6 +1505,9 @@ public:
      if (Request.RequestType != eHTTPHead && data->Body.size())
       pageBuffer += data->Body;
 
+     pageBuffer += "\n\n";
+
+     bz_setNonPlayerDisconnectOnSend(connectionID,redirected);
 
      // build up the buffers
      size_t i = 0;
