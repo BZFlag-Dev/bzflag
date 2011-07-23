@@ -1052,6 +1052,8 @@ public:
 		  bzIDAuthURL += "&groups=" + groups;
 		}
 
+		bz_setNonPlayerDisconnectOnSend(connectionID,false);
+		bz_setNonPlayerInactivityTimeout(connectionID,120);
 		bzAuthReturnData = "";
 		bz_addURLJob(bzIDAuthURL.c_str(),this);
 

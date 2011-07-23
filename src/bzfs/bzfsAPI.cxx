@@ -790,6 +790,17 @@ BZF_API bool bz_setNonPlayerDataThrottle(int connectionID, double time)
   return true;
 }
 
+BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time)
+{
+  NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
+  if (peer == NULL) {
+    return false;
+  }
+
+  peer->inactivityTimeout = time;
+  return true;
+}
+
 BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int size)
 {
   if ((data == NULL) || (size <= 0)) {

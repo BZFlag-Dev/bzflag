@@ -194,6 +194,7 @@ struct NetConnectedPeer {
 	TimeKeeper lastSend;
 	double minSendTime;
 
+	double inactivityTimeout;
 	bool   sent;
 	bool   deleteMe;
 	bool   deleteWhenDoneSending;

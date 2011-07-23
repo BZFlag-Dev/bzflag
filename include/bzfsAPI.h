@@ -1093,6 +1093,7 @@ public:
 
 BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
 BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
+BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time);
 BZF_API bool bz_setNonPlayerDataThrottle(int connectionID, double time);
 BZF_API bool bz_setNonPlayerDisconnectOnSend(int connectionID, bool bSet);
 BZF_API bool bz_sendNonPlayerData(int connectionID, const void *data, unsigned int size);

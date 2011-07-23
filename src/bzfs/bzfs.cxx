@@ -1189,9 +1189,9 @@ static void acceptClient()
   peer.lastSend = TimeKeeper::getCurrent();
   peer.startTime = TimeKeeper::getCurrent();
   peer.deleteWhenDoneSending = false;
+  peer.inactivityTimeout = 30;
 
   netConnectedPeers[fd] = peer;
-
 }
 
 PlayerId getNewPlayerID()
@@ -6409,14 +6409,12 @@ int main(int argc, char **argv)
     }
 
     // remove anyone that hasn't done anything in a long time
-    double idleTimeout = 30;
-
     toKill.clear();
     double timeoutNow = TimeKeeper::getCurrent().getSeconds();
 
     for (peerItr = netConnectedPeers.begin();peerItr != netConnectedPeers.end(); ++peerItr)
     {
-      if (timeoutNow > (peerItr->second.lastActivity.getSeconds() + idleTimeout))
+      if (timeoutNow > (peerItr->second.lastActivity.getSeconds() + peerItr->second.inactivityTimeout))
       {
 	peerItr->second.netHandler->closing();
 	toKill.push_back(peerItr->first);
