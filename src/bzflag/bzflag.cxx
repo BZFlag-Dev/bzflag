@@ -175,10 +175,14 @@ static void		usage()
 	" [-config <configfile>]"
 	" [-configdir <config dir name>]"
 	" [-d | -debug]"
+#ifdef DEBUG
 	" [-date mm/dd/yyyy]"
+#endif
 	" [{-dir | -directory} <data-directory>]"
 	" [-e | -echo]"
 	" [-ea | -echoAnsi]"
+	" [-eyesep separation]"
+	" [-focal distance]"
 	" [-h | -help | --help]"
 	" [-latitude <latitude>] [-longitude <longitude>]"
 	" [-list <list-server-url>] [-nolist]"
@@ -194,6 +198,7 @@ static void		usage()
 	" [-v | -version | --version]"
 	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
 	" [-window <geometry-spec>]"
+	" [-zbuffer {on|off}]"
 	" [-zoom <zoom-factor>]"
 	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
