@@ -43,7 +43,7 @@
 
 class bz_Plugin;
 
-#define BZ_API_VERSION	24
+#define BZ_API_VERSION	25
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetMinVersion ( void ) { return BZ_API_VERSION;}
 
@@ -1126,6 +1126,7 @@ BZF_API bool bz_isPlayerPaused( int playerID );
 
 BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
 BZF_API const char* bz_getPlayerCallsign(int playerID);
+BZF_API const char* bz_getPlayerMotto(int playerID);
 BZF_API const char* bz_getPlayerIPAddress(int playerID);
 
 // player lag info
@@ -1191,6 +1192,17 @@ public:
   int losses;
   int teamKills;
 
+};
+
+class BZF_API bz_PlayerRecordV2 : public bz_BasePlayerRecord
+{
+public:
+  bz_PlayerRecordV2():  bz_BasePlayerRecord()
+  {
+    version = 2;
+  }
+
+  bz_ApiString motto;
 };
 
 BZF_API bool bz_setPlayerOperator ( int playerId );

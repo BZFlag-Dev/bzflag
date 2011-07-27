@@ -13,7 +13,7 @@
 // common-interface headers
 #include "global.h"
 
-// implementation wrapers for all the bzf_ API functions
+// implementation wrappers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
 #include "bzfs.h"
@@ -943,6 +943,12 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
   playerRecord->losses = player->score.getLosses();
   playerRecord->teamKills = player->score.getTKs();
   playerRecord->canSpawn = true;
+
+  if (playerRecord->version > 1)
+  {
+    bz_PlayerRecordV2 *r = (bz_PlayerRecordV2*)playerRecord;
+    r->motto = player->player.getMotto();
+  }
   return true;
 }
 
@@ -1043,7 +1049,7 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
 
-  bz_BasePlayerRecord *playerRecord = new bz_BasePlayerRecord;
+  bz_PlayerRecordV2 *playerRecord = new bz_PlayerRecordV2;
 
   if (!player || !playerRecord)
     return NULL;
@@ -1061,6 +1067,7 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 
   playerRecord->lag = player->lagInfo.getLag();
   playerRecord->update();
+
   return playerRecord;
 }
 
@@ -1135,6 +1142,16 @@ BZF_API const char* bz_getPlayerCallsign( int playerID )
     return NULL;
 
   return player->player.getCallSign();
+}
+
+BZF_API const char* bz_getPlayerMotto(int playerID)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return NULL;
+
+  return player->player.getMotto();
 }
 
 BZF_API const char* bz_getPlayerIPAddress( int playerID )
