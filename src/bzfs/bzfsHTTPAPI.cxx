@@ -958,7 +958,8 @@ public:
       Request.Resource = resource;
 
       Request.RequesterIP = IP.c_str();
-      Request.RequesterHost = bz_getNonPlayerConnectionHost(connectionID);
+      if (bz_getNonPlayerConnectionHost(connectionID))
+	Request.RequesterHost = bz_getNonPlayerConnectionHost(connectionID);
 
       if (Request.RequestType == eHTTPPost)
       {
