@@ -291,7 +291,7 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
   // PLAYERS (2) [@]7:Thumper(16:me@somewhere.net) [ ]3:xxx()
   //
   msg.str("");
-  msg << "PLAYERS (" << numPlayers << ") ";
+  msg << "PLAYERS (" << numPlayers << ")";
   for ( unsigned int i = 0; i < playerList->size(); i++ ) {
     player = bz_getPlayerByIndex( playerList->get(i));
     if (player) {
@@ -300,9 +300,9 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 	if (player->globalUser) playerStatus = '+';
 	if (player->verified) playerStatus = '+';
 	if (player->admin && !bz_hasPerm(player->playerID, bz_perm_hideAdmin)) playerStatus = '@';
-	msg << "[" << playerStatus << "]";
+	msg << " [" << playerStatus << "]";
 	msg << player->callsign.size() << ':';
-	msg << player->callsign.c_str();
+	msg << player->callsign.c_str() << "(" << bz_getPlayerMotto(player->playerID) << ")";
       }
     }
   }
