@@ -54,7 +54,7 @@ class BZF_API bzhttp_Request
 {
 public:
   bzhttp_Request();
-  ~bzhttp_Request();
+  virtual ~bzhttp_Request();
 
   bzhttp_eRequestType RequestType;
   bz_ApiString	URL;
@@ -67,29 +67,30 @@ public:
   bz_ApiString	BZIDCallsign;
   bz_APIStringList BZIDGroups;
 
-  bool UserHasPerm ( const char* perm ) const;
+  virtual bool UserHasPerm ( const char* perm ) const;
 
   bz_ApiString	Body;
 
-  void AddHeader ( const char* name, const char* value);
-  const char* GetHeader ( const char* name) const;
-  const char* GetHeader ( size_t index ) const;
-  size_t GetHeaderCount ()const;
+  virtual void AddHeader ( const char* name, const char* value);
+  virtual const char* GetHeader ( const char* name) const;
+  virtual const char* GetHeader ( size_t index ) const;
+  virtual size_t GetHeaderCount ()const;
 
-  void AddCookie ( const char* name, const char* value);
-  const char* GetCookie ( const char* name) const;
-  const char* GetCookie ( size_t index ) const;
-  size_t GetCookieCount () const;
+  virtual void AddCookie ( const char* name, const char* value);
+  virtual const char* GetCookie ( const char* name) const;
+  virtual const char* GetCookie ( size_t index ) const;
+  virtual size_t GetCookieCount () const;
 
-  void AddParamater ( const char* name, const char* value);
-  const char* GetParamater ( const char* name) const;
-  const char* GetParamater ( size_t index ) const;
-  size_t GetParamaterCount () const;
+  virtual void AddParamater ( const char* name, const char* value);
+  virtual const char* GetParamater ( const char* name) const;
+  virtual const char* GetParamater ( size_t index ) const;
+  virtual size_t GetParamaterCount () const;
 
-  bool InBZIDGroup ( const char* name ) const;
+  virtual bool InBZIDGroup ( const char* name ) const{return false;}
 
   bzhttp_SessionData *Session;
 
+  int Version;
 protected:
   void  *pimple;
 };
@@ -120,7 +121,7 @@ class BZF_API bzhttp_Responce
 {
 public:
   bzhttp_Responce();
-  ~bzhttp_Responce();
+  virtual ~bzhttp_Responce();
 
   bzhttp_eReturnCode ReturnCode;
   bzhttp_eDocumentType DocumentType;
@@ -135,11 +136,13 @@ public:
   bz_ApiString CookieDomain;
   bz_ApiString CookiePath;
 
-  void AddHeader ( const char* name, const char* value);
-  void AddCookies ( const char* name, const char* value);
+  virtual void AddHeader ( const char* name, const char* value);
+  virtual void AddCookies ( const char* name, const char* value);
 
-  void AddBodyData ( const char* value);
-  void AddBodyData ( const void* value, size_t size);
+  virtual void AddBodyData ( const char* value);
+  virtual void AddBodyData ( const void* value, size_t size);
+
+  int Version;
 
   void  *pimple;
 };

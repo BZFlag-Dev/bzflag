@@ -447,6 +447,7 @@ public:
 
 bzhttp_Responce::bzhttp_Responce()
 {
+  Version = 1;
   pimple = new bzhttp_Responce_Data;
   ReturnCode = e404NotFound;
   DocumentType = eHTML;
@@ -504,6 +505,7 @@ public:
 
 bzhttp_Request::bzhttp_Request(): Session(NULL)
 {
+  Version = 1;
   pimple = new bzhttp_Request_Data;
 }
 
