@@ -950,9 +950,13 @@ public:
 	parseParams(Resource.substr(question+1,Resource.length()-(question+1)));
 	resource = Resource.substr(0,question);
       }
+      std::string IP = bz_getNonPlayerConnectionIP(connectionID);
 
       Request.URL = Resource;
       Request.Resource = resource;
+
+      Request.RequesterIP = IP.c_str();
+      Request.RequesterHost = bz_getNonPlayerConnectionHost(connectionID);
 
       if (Request.RequestType == eHTTPPost)
       {
@@ -965,7 +969,6 @@ public:
       else if (Request.RequestType == eHTTPPut)
 	Request.Body = RequestData.substr(HeaderSize,ContentSize);
 
-      std::string IP = bz_getNonPlayerConnectionIP(connectionID);
 
       if (sessionID == 0 && Request.GetParamater("SSID") != NULL)
 	Request.Session = &GetSessionByID(Request.GetParamater("SSID"),IP.c_str());

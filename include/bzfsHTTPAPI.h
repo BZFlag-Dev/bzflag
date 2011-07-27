@@ -60,6 +60,9 @@ public:
   bz_ApiString	URL;
   bz_ApiString	Resource;
 
+  bz_ApiString	RequesterIP;
+  bz_ApiString	RequesterHost;
+
   bz_ApiString	BZID;
   bz_ApiString	BZIDCallsign;
   bz_APIStringList BZIDGroups;
