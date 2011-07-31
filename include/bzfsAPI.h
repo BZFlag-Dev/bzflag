@@ -282,6 +282,7 @@ typedef enum
   bz_eReportFiledEvent,
   bz_eBZDBChange,
   bz_eGetPlayerMotto,
+  bz_eAllowConnection,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1046,6 +1047,22 @@ public:
   }
 
   bz_ApiString motto;
+};
+
+class BZF_API bz_AllowConnectionData_V1 : public bz_EventData
+{
+public:
+  bz_AllowConnectionData_V1(const char* i)
+    : bz_EventData(bz_eAllowConnection)
+  {
+    if (i)
+      ip = i;
+
+    allow = true;
+  }
+
+  bz_ApiString ip;
+  bool allow;
 };
 
 // logging

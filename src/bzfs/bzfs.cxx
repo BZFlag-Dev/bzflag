@@ -5090,6 +5090,18 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   peer.sendChunks.pop_front();
 }
 
+std::string getIPFromHandler (NetHandler* netHandler)
+{
+  unsigned int address = (unsigned int)netHandler->getIPAddress().s_addr;
+  unsigned char* a = (unsigned char*)&address;
+
+  static std::string strRet;
+
+  strRet = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
+
+  return strRet;
+}
+
 static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& UNUSED(write_set))
 {
   double connectionTimeout = 2.5; // timeout in seconds
@@ -5154,6 +5166,14 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 
 	  if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
 	  {
+	    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
+	    worldEventManager.callEvents(data);
+	    if (!data.allow)
+	    {
+	      peer.deleteMe = true;
+	      return;
+	    }
+
 	    netHandler->flushData();
 	    // it's a player
 	    if (!MakePlayer(netHandler))
@@ -5183,6 +5203,14 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	       free(tmp);
 	    }
 	    netHandler->flushData();
+
+	    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
+	    worldEventManager.callEvents(data);
+	    if (!data.allow)
+	    {
+	      peer.deleteMe = true;
+	      return;
+	    }
 
 	    in_addr IP = netHandler->getIPAddress();
 	    BanInfo info(IP);
