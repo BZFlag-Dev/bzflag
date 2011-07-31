@@ -91,7 +91,6 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   _LSAState = start;
   bzIdentifier = "";
   isParting = false;
-  netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
   playerHandler = handler;
   score.playerID = _playerIndex;
 }
