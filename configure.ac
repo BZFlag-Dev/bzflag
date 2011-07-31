@@ -725,7 +725,7 @@ if test x$enable_debug = xyes ; then
     CFLAGS="$CFLAGS -O0"
     CXXFLAGS="$CXXFLAGS -O0"
     case $host_os in
-	linux*|cygwin|mingw32*)
+	linux*|openbsd*|cygwin|mingw32*)
 	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -Wno-deprecated"
 	    if test x$enable_profiling = xyes ; then
@@ -747,7 +747,7 @@ if test x$enable_debug = xyes ; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
-	linux*|cygwin|mingw32*)
+	linux*|openbsd*|cygwin|mingw32*)
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
 	    ;;
 	solaris*)
@@ -868,7 +868,7 @@ case $host_os in
     irix*)
 	irix=true
 	;;
-    linux*|kfreebsd*|freebsd*|netbsd*|dragonfly*)
+    linux*|kfreebsd*|freebsd*|netbsd*|openbsd*|dragonfly*)
 	linux=true
 	;;
     macos|darwin*)
