@@ -168,7 +168,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex) {
     else {
       int i, j;
       const int maxFlags = world->getMaxFlags();
-      for (i = 1; i < maxFlags; ++i) {
+      for (i = 1; i <= maxFlags; ++i) {
 	if (target == next) {
 	  j = (targetFlag + i) % maxFlags;
 	} else {
