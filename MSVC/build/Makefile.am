@@ -1,5 +1,7 @@
 EXTRA_DIST =	\
 	bzflag.sln	\
+	bzfs.sln	\
+	fullbuild.sln	\
 	ares.vcproj	\
 	3D.vcproj	\
 	bzflag.vcproj	\
@@ -20,7 +22,10 @@ EXTRA_DIST =	\
 	platform.vcproj	\
 	regex.vcproj	\
 	scene.vcproj	\
-	zlib.vcproj
+	libcurl.vcproj	\
+	zlib.vcproj		\
+	pdcurses.vcproj		\
+	makeHTML.bat
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
