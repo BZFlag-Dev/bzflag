@@ -14,25 +14,33 @@
 BZFlag \- a tank battle game
 .SH "SYNOPSIS"
 .B bzflag
+[\fB\-badwords \fIfilterfile\fR]
 [\fB\-config \fIfilename\fR]
 [\fB\-configdir \fIdirectoryname\fR]
 [\fB\-d | \-debug\fR]
+[\fB\-date \fImm/dd/yyyy\fR]
 [\fB\-dir | \-directory \fIdirectory\fR]
-[\fB\-echo\fR]
-[\fB\-echoAnsi\fR]
+[\fB\-e | \-echo\fR]
+[\fB\-ea | \-echoAnsi\fR]
+[\fB\-h | \-help | \-\-help\fR]
 [\fB\-latitude \fIlatitude\fR]
 [\fB\-list \fIlist\-server\-url\fR]
 [\fB\-locale \fIlocale\fR]
 [\fB\-longitude \fIlongitude\fR]
+[\fB\-m | \-mute\fR]
+[\fB\-motd \fIURL\fR]
 [\fB\-multisample\fR]
-[\fB\-mute\fR]
 [\fB\-nolist\fR]
+[\fB\-nomotd\fR]
+[\fB\-notime\fR]
 [\fB\-solo \fInumber\-of\-robots\fR]
 [\fB\-team \fR{\fIautomatic\fR | \fIred\fR | \fIgreen\fR | \fIblue\fR | \fIpurple\fR | \fIrogue\fR}]
-[\fB\-version\fR]
+[\fB\-time \fIhh:mm:ss\fR]
+[\fB\-v | \-version | \-\-version\fR]
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}]
 [\fB\-window  \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB\-\fR}x{\fB+\fR|\fB\-\fR}y]]
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
+[\fB\-zoom \fIfactor\fR]
 [[\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]]
 .SH "DESCRIPTION"
 .B BZFlag
@@ -84,6 +92,10 @@ manual page (bzfs.6) for details on starting a new server, public or
 private.
 .SS Options
 .TP 15
+\fB\-badwords\fI filterFile\fR
+Specify a file containing bad words to be replaced with !@#$%^&*
+characters when they appear in chat.
+.TP
 \fB\-d or \-debug\fR
 Adds some diagnostic output. Can be specified multiple times to increase
 verbosity.
@@ -103,13 +115,20 @@ Specify the configuration directory to use. This will be the default config
 directory used by this instance of the game. This is realy only needed
 if you can not use the default directory.
 .TP
-.B \-echo
+\fB\-date\fI mm/dd/yyyy\fR
+Specifies the date for positioning celestial objects.  This option is
+available only when \fBbzflag\fR is compiled with debugging enabled.
+.TP
+.B \-e, \-echo
 Copies all message window output to the shell on *nux and OSX, to
 stdout.txt on windows
 .TP
-.B \-echoAnsi
+.B \-ea, \-echoAnsi
 Copies all message window output like -echo preserving the ANSI
 color coding on *nix, same as -echo on windows.
+.TP
+.B \-h, \-help, \-\-help
+Prints a concise list of the \fBbzflag\fR command line options.
 .TP
 \fB\-latitude\fI latitude\fR
 Uses \fIlatitude\fR when computing celestial object positions.
@@ -128,15 +147,27 @@ Set the locale used to display messages, menus, hud alerts, etc.
 \fB\-longitude \fIlongitude\fR
 Uses \fIlongitude\fR when computing celestial object positions.
 .TP
+.B \-m, \-mute
+Disables sound.
+.TP
+\fB\-motd \fIURL\fR
+Specify an alternate URL for the message of the day displayed when
+\fBbzflag\fR starts.  http://bzflag.org/motd.php is the default.
+See \fB\-nomotd\fR.
+.TP
 .B \-multisample
 Uses a multisample buffer for rendering.  If multisampling isn't
 available then the application will terminate.
 .TP
-.B \-mute
-Disables sound.
-.TP
 .B \-nolist
 Disables list server querying.  See \fB\-list\fR.
+.TP
+.B \-nomotd
+Disables queries for the message of the day when \fBbzflag\fR starts.
+.TP
+.B \-notime
+Removes a previously set fixed time for celestial object positions.
+See \fB\-time\fR.
 .TP
 \fB\-solo\fI number\-of\-robots\fR
 When you join a game, you'll also cause \fInumber\-of\-robots\fR robots
@@ -148,7 +179,12 @@ Chooses the player's team.  If there are no team positions available
 and the team\-name is set to be automatic, the player will try to
 join as an observer.
 .TP
-.B \-version
+\fB\-time \fIhh:mm:ss\fR
+Specifies the local time used for positioning celestial objects, which will
+remain fixed rather than move through the sky as the day advances.
+Use \fB\-notime\fR to undo this setting.
+.TP
+.B \-v, \-version, \-\-version
 Prints the version number of the executable.
 .TP
 \fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}
@@ -174,6 +210,10 @@ When \fIoff\fR is chosen the game will not attempt to allocate a
 depth (z) buffer and will use a different rendering technique for
 hidden surface removal.  Some systems may be capable of using a
 higher screen resolution if a depth buffer isn't allocated.
+.TP
+\fB\-zoom \fIfactor\fR
+Magnify the view out the window by the specified \fIfactor\fR, which
+must be an integer value from 1 to 8.  The default is 1.
 .TP
 [\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]
 Specifies the callsign you want, and the host running the \fBbzfs\fR
