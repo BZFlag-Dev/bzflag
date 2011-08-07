@@ -112,7 +112,7 @@ default configuration directory. This is usually only used by developers.
 .TP
 .B \-configdir
 Specify the configuration directory to use. This will be the default config
-directory used by this instance of the game. This is realy only needed
+directory used by this instance of the game. This is really only needed
 if you can not use the default directory.
 .TP
 \fB\-date\fI mm/dd/yyyy\fR
@@ -405,7 +405,7 @@ you started).
 .PP
 Each side of a teleporter teleports independently of the other
 side.  However, it's possible for each side to go to the other.
-This is a thru\-teleporter and it's almost as if it weren't there.
+This is a through\-teleporter and it's almost as if it weren't there.
 It's also possible for a side to teleport to itself.  This is a
 reverse\-teleporter.  Shooting at a reverse teleporter is likely
 to be self\-destructive.  Shooting a laser at a reverse teleporter
@@ -641,7 +641,7 @@ Gives the tank a fish eye lens that's rather disorienting.
 Tank is not allowed to jump.
 .TP
 .B Trigger Happy (TR)
-Tank can't stop shooting.  Watch out for that richochet.
+Tank can't stop shooting.  Watch out for that ricochet.
 .TP
 .B Reverse Controls (RC)
 Tank driving controls are reversed from their usual behavior.
