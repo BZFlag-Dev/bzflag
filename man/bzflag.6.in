@@ -40,7 +40,6 @@ BZFlag \- a tank battle game
 [\fB\-view \fR{\fInormal\fR | \fIstereo\fR | \fIstacked\fR | \fIthree\fR | \fIanaglyph\fR}]
 [\fB\-window  \fIwidth\fR\fBx\fR\fIheight\fR[{\fB+\fR|\fB\-\fR}x{\fB+\fR|\fB\-\fR}y]]
 [\fB\-zbuffer \fR{\fIon\fR | \fIoff\fR}]
-[\fB\-zoom \fIfactor\fR]
 [[\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]]
 .SH "DESCRIPTION"
 .B BZFlag
@@ -210,10 +209,6 @@ When \fIoff\fR is chosen the game will not attempt to allocate a
 depth (z) buffer and will use a different rendering technique for
 hidden surface removal.  Some systems may be capable of using a
 higher screen resolution if a depth buffer isn't allocated.
-.TP
-\fB\-zoom \fIfactor\fR
-Magnify the view out the window by the specified \fIfactor\fR, which
-must be an integer value from 1 to 8.  The default is 1.
 .TP
 [\fIcallsign\fR[\fI:password\fR]\fI@\fR]\fIserver\fR[\fI:port\fR]
 Specifies the callsign you want, and the host running the \fBbzfs\fR

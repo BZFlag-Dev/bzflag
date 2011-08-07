@@ -1,7 +1,6 @@
 			     BZFlag Release Notes
 			     ====================
 
-
 BZFlag 2.4.1
 ------------
 
@@ -9,6 +8,7 @@ BZFlag 2.4.1
     - Scott Wichser, Jeff Makey
 * Add thiefControl plugin which prevents stealing flags from teammates
     - Bernt Hansen, Scott Wichser
+* Remove the -zoom command line option from bzflag - Jeff Makey
 
 
 BZFlag 2.4.0  "Wake the Dead" (2011-07-03)

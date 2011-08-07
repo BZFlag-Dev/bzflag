@@ -31,7 +31,6 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				isFullView(true),
 				allowMouseGrab(true),
 				grabEnabled(true),
-				zoomFactor(1),
 				width(0),
 				minWidth(MinX),
 				minHeight(MinY),
@@ -44,11 +43,6 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 MainWindow::~MainWindow()
 {
   window->removeResizeCallback(resizeCB, this);
-}
-
-void			MainWindow::setZoomFactor(int _zoomFactor)
-{
-  zoomFactor = _zoomFactor;
 }
 
 void			MainWindow::setMinSize(int _minWidth, int _minHeight)
@@ -240,8 +234,8 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
   }
 
   if (quadrant == ZoomRegion) {
-    width = inWidth / zoomFactor + 1;
-    height = inHeight / zoomFactor + 1;
+    width = inWidth + 1;
+    height = inHeight + 1;
   }
 
   glViewport(xOrigin, yOrigin, width, height);

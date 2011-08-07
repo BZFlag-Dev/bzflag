@@ -199,7 +199,6 @@ static void		usage()
 	" [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
 	" [-window <geometry-spec>]"
 	" [-zbuffer {on|off}]"
-	" [-zoom <zoom-factor>]"
 	" [callsign[:password]@]server[:port]\n\nExiting.", argv0);
   if (display != NULL) {
     delete display;
@@ -389,15 +388,6 @@ static void		parse(int argc, char** argv)
     else if (strcmp(argv[i], "-view") == 0) {
       checkArgc(i, argc, argv[i]);
       BZDB.set("view", argv[i]);
-    }
-    else if (strcmp(argv[i], "-zoom") == 0) {
-      checkArgc(i, argc, argv[i]);
-      const int zoom = atoi(argv[i]);
-      if (zoom < 1 || zoom > 8) {
-	printFatalError("Invalid argument for %s.", argv[i-1]);
-	usage();
-      }
-      BZDB.set("displayZoom", argv[i]);
     }
     else if (strcmp(argv[i], "-zbuffer") == 0) {
       checkArgc(i, argc, argv[i]);

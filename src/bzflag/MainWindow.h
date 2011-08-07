@@ -62,7 +62,6 @@ class MainWindow {
     void		iconify(void);
     void		setNoMouseGrab();
 
-    void		setZoomFactor(int);
     void		setQuadrant(Quadrant);
 
     void		showWindow(bool = true);
@@ -112,7 +111,6 @@ class MainWindow {
     bool		isFullView;
     bool		allowMouseGrab;
     bool		grabEnabled;
-    int			zoomFactor;
     int			trueWidth, trueHeight;
     int			xOrigin, yOrigin;
     int			width;

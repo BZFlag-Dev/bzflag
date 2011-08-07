@@ -5123,16 +5123,6 @@ static void checkDirtyControlPanel(ControlPanel *cp)
 }
 
 
-static int getZoomFactor()
-{
-  if (!BZDB.isSet("displayZoom")) return 1;
-  const int zoom = atoi(BZDB.get("displayZoom").c_str());
-  if (zoom < 1) return 1;
-  if (zoom > 8) return 8;
-  return zoom;
-}
-
-
 static void renderRoamMouse()
 {
   if (!ROAM.isRoaming() ||
@@ -5893,44 +5883,8 @@ void drawFrame(const float dt)
       drawUI();
 
     } else {
-      const int zoomFactor = getZoomFactor();
-      if (zoomFactor != 1) {
-	// draw small out-the-window view
-	mainWindow->setQuadrant(MainWindow::ZoomRegion);
-	const int x = mainWindow->getOriginX();
-	const int y = mainWindow->getOriginY();
-	const int w = mainWindow->getWidth();
-	const int h = mainWindow->getHeight();
-	const int vh = mainWindow->getViewHeight();
-	viewFrustum.setProjection(fov, NearPlane, FarPlane, FarDeepPlane, w, h, vh);
-	sceneRenderer->render();
-
-	// set entire window
-	mainWindow->setQuadrant(MainWindow::FullWindow);
-	glScissor(mainWindow->getOriginX(), mainWindow->getOriginY(),
-		  mainWindow->getWidth(), mainWindow->getHeight());
-
-	// set pixel copy destination
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-0.25, (GLdouble)mainWindow->getWidth() - 0.25,
-		-0.25, (GLdouble)mainWindow->getHeight() - 0.25, -1.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	glPushMatrix();
-	glLoadIdentity();
-	glRasterPos2i(0, 0);
-	glPopMatrix();
-
-	// zoom small image to entire window
-	glDisable(GL_DITHER);
-	glPixelZoom((float)zoomFactor, (float)zoomFactor);
-	glCopyPixels(x, y, w, h, GL_COLOR);
-	glPixelZoom(1.0f, 1.0f);
-	if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
-      } else {
-	// normal rendering
-	sceneRenderer->render();
-      }
+      // normal rendering
+      sceneRenderer->render();
 
       // draw other stuff
       drawUI();
@@ -6344,7 +6298,6 @@ static void		playingLoop()
 {
   int i;
 
-  mainWindow->setZoomFactor(getZoomFactor());
   if (BZDB.isTrue("fakecursor"))
     mainWindow->getWindow()->hideMouse();
 
