@@ -84,6 +84,10 @@ debian-release: debian/changelog dist
 # make sure files that should not be in the distribution in fact are
 # not included.
 dist-hook:
+	find $(distdir) -type f \( -name Makefile -o -name config.log -o -name config.status \) -exec rm -f {} \;
+	find $(distdir) -type d \( -name .deps -o -name .svn -o -name autom4te.cache \) -prune -exec rm -rf {} \;
+	rm -f $(distdir)/src/other/ares/ares_build.h \
+	      $(distdir)/src/other/curl/include/curl/curlbuild.h
 	files="`find . -name entries -exec grep 'name=' {} /dev/null \; | sed 's/:[[:space:]]*name=\"\(.*\)\"/\1/g' | sed 's/\/\.svn\/entries/\//g' | grep -v 'bzflag-' | grep -v '\/$$'`" ; \
 	missing=0 ; \
 	for file in $$files ; do \
@@ -95,5 +99,3 @@ dist-hook:
 	if test "x$$missing" = "x1" ; then \
 		exit 1 ; \
 	fi
-	find $(distdir) -type f \( -name Makefile -o -name config.log -o -name config.status \) -exec rm -f {} \;
-	find $(distdir) -type d \( -name .deps -o -name .svn -o -name autom4te.cache \) -prune -exec rm -rf {} \;
