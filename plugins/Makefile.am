@@ -35,7 +35,6 @@ DIST_SUBDIRS = \
 
 EXTRA_DIST = \
 	api_notes \
-	fastmap \
 	webReport \
 	newplug.sh
 
