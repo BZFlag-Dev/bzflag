@@ -76,10 +76,10 @@ nikomak                 # ar - fuck your mother
 sharmoota               # ar - bitch
 sharmuta                # ar - bitch
 sharmute                # ar - bitch
-tizak			# ar - ass
-tizi			# ar - ass
+tizak                   # ar - ass
+tizi                    # ar - ass
 zarba                   # ar - shit
-zibik			# ar - dick
+zibik                   # ar - dick
 
 
 # Armenian
@@ -110,8 +110,8 @@ hovnohlava              # cs - shithead
 mrdat                   # cs - very dirty words for "fuck,"
 prcat                   # cs - very dirty words for "fuck,"
 peecha                  # cs - pussy/cunt
-jebat			# cs - fuck
-pojeb sa		# cs - fuck off
+jebat                   # cs - fuck
+pojeb sa                # cs - fuck off
 
 # Dutch (Holland-Belgium)
 eikel                   # nl - dickhead
@@ -156,7 +156,7 @@ zobi                    # fr - penis
 
 # German
 arsch                   # de - ass
-asch      		# de - ass
+asch                    # de - ass
 fick dich               # de - fuck you
 fick mich               # de - fuck me
 fotze                   # de - cunt
@@ -189,7 +189,7 @@ zozo                    # ht - dick
 
 
 # Hebrew
-hadagdegan  		# he - clit
+hadagdegan              # he - clit
 harah                   # he - shit.
 tahat                   # he - ass
 
@@ -292,13 +292,13 @@ coorva                  # pl - fuck
 dupek                   # pl - asshole
 gowno                   # pl - shit
 huj                     # pl - dick
-pierdol	      	      	# pl - fuck
+pierdol                 # pl - fuck
 pierdolec               # pl - fucker
 pojebany                # pl - fucked up
 spierdalaj              # pl - fuck off
 zajebiste               # pl - "fucking awesome"
-zapierdol	      	# pl - fuck
-zapierdole	      	# pl - fuck
+zapierdol               # pl - fuck
+zapierdole              # pl - fuck
 
 
 # Portuguese
@@ -347,7 +347,7 @@ kurac                   # sl -  penis
 cabron                  # es - dick head
 chimba                  # es - pussy (colombian spanish)
 chingar                 # es - to fuck
-chingada		# es - fucking
+chingada                # es - fucking
 cogete                  # es - go fuck yourself (lit. go catch yourself)
 cono                    # es - cunt
 con~o                   # es - cunt
