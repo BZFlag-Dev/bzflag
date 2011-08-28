@@ -2289,7 +2289,8 @@ static bool replaceSettings(ReplayHeader *h)
     sizeof(uint16_t) + // packet len
     sizeof(uint16_t) + // packet code
     sizeof(float)    + // world size
-    sizeof(uint16_t);  // gamestyle
+    sizeof(uint16_t) + // gamestyle
+    sizeof(uint16_t);  // gameoptions
   char *hdrMaxPlayersPtr = h->worldSettings + maxPlayersOffset;
   nboPackUShort(hdrMaxPlayersPtr, MaxPlayers + ReplayObservers);
 
