@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "TextUtils.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <fstream>
 
