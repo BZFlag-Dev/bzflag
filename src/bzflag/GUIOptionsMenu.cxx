@@ -153,6 +153,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   options = &option->getList();
   options->push_back(std::string("Lagging"));
   options->push_back(std::string("Leading"));
+  options->push_back(std::string("Leading & Lagging"));
   option->update();
   listHUD.push_back(option);
 
@@ -355,7 +356,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("linedradarshots")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("sizedradarshots")));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::leadingShotLine ? 1 : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("radarShotLineType")));
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
@@ -442,7 +443,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'F':
-      BZDB.set("leadingShotLine", list->getIndex() ? "1" : "0");
+      BZDB.setInt("radarShotLineType", list->getIndex());
       break;
 
     case 'R':

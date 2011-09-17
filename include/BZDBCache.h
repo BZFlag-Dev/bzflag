@@ -56,7 +56,7 @@ class BZDBCache
     static Bool  animatedTreads;
     static Int   radarStyle;
     static Float radarTankPixels;
-    static Bool  leadingShotLine;
+    static Int   radarShotLineType;
     static Float linedRadarShots;
     static Float sizedRadarShots;
     static Float shotLength;

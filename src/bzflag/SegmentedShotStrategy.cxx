@@ -325,12 +325,20 @@ void			SegmentedShotStrategy::radarRender() const
     dir[2] = vel[2] * d * shotTailLength * length;
     glBegin(GL_LINES);
     glVertex2fv(orig);
-    if (BZDBCache::leadingShotLine) {
+    if (BZDB.eval("radarShotLineType") == 1) { //leading
       glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-    } else {
+      glEnd();
+    } else if(BZDB.eval("radarShotLineType") == 0) { //lagging
       glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+      glEnd();
+    } else if(BZDB.eval("radarShotLineType") == 2) { //both
+      glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
+      glEnd();
+      glBegin(GL_LINES);
+      glVertex2fv(orig);
+      glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
+      glEnd();
     }
-    glEnd();
 
     // draw a "bright" bullet tip
     if (size > 0) {
