@@ -356,7 +356,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("linedradarshots")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("sizedradarshots")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("radarShotLineType")));
+    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("leadingShotLine")));
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
@@ -443,7 +443,7 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
       break;
 
     case 'F':
-      BZDB.setInt("radarShotLineType", list->getIndex());
+      BZDB.setInt("leadingShotLine", list->getIndex());
       break;
 
     case 'R':
