@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(CONF_CPPFLAGS)
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(CONF_CPPFLAGS) -I$(top_srcdir)/include
 
 bin_PROGRAMS = bzflag
 

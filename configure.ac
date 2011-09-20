@@ -47,6 +47,7 @@ AC_PREREQ(2.58)
 AC_INIT(BZFlag, 2.4.1, [http://BZFlag.org/], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
+AC_CONFIG_MACRO_DIR([m4])
 
 # When --libdir has not been used put plugins in bzflag's own directory.
 if test "x$libdir" = 'x${exec_prefix}/lib' ; then
@@ -993,16 +994,17 @@ if test "x$enable_regex_build" != "xyes" ; then
     PRELDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS $LIBREGEX"
     AC_RUN_IFELSE([
+	AC_LANG_PROGRAM([
 #ifdef HAVE_SYS_TYPES_H
 #  include <sys/types.h>
 #endif
 #include <regex.h>
-int main() {
+],[
     regex_t re;
     regcomp(&re, "abc", REG_EXTENDED);
     regexec(&re, "", 0, 0, 0);
     return 0;
-}
+])
     ], [regex_works=yes],
     [regex_works=no],
     [regex_works=no] )

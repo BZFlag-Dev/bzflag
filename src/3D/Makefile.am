@@ -2,7 +2,7 @@ if CLIENT_INCLUDED
 noinst_LTLIBRARIES = lib3D.la
 endif
 
-AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

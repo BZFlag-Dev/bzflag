@@ -19,6 +19,7 @@ AM_CPPFLAGS = \
 	-DBUILDING_BZADMIN \
 	-I$(top_srcdir)/src/bzflag \
 	$(LIBCURL_CPPFLAGS) \
+	-I$(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
 bzadmin_LDFLAGS = -static

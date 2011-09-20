@@ -1,4 +1,5 @@
 AM_CPPFLAGS = $(LIBCURL_CPPFLAGS) \
+	-I $(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
 noinst_LTLIBRARIES = libGame.la

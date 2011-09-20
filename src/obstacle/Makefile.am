@@ -3,7 +3,7 @@ noinst_LTLIBRARIES = libObstacle.la
 MAINTAINERCLEANFILES =	\
 	Makefile.in
 
-AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
 
 libObstacle_la_LDFLAGS = -static
 

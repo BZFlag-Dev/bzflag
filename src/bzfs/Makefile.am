@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = \
 AM_CPPFLAGS = -DINSIDE_BZ \
 	-DINSTALL_LIB_DIR=\"$(libdir)/\" \
 	$(LIBCURL_CPPFLAGS) \
+	-I$(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
 if BUILD_PLUGINS

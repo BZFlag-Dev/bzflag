@@ -5,7 +5,7 @@ endif
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
 
 libGLKit_la_LDFLAGS = -static
 libGLKit_la_SOURCES =			\

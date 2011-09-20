@@ -6,7 +6,7 @@ else
 MIPSPRO_CXXFLAGS = @CXXFLAGS@
 endif
 
-libNet_la_CXXFLAGS = $(AM_CXXFLAGS) $(MIPSPRO_CXXFLAGS)
+libNet_la_CXXFLAGS = $(AM_CXXFLAGS) $(MIPSPRO_CXXFLAGS) -I$(top_srcdir)/include
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

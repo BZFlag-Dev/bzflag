@@ -35,6 +35,7 @@ terms of the curl license; see COPYING for more details])
 
 AC_CONFIG_SRCDIR([lib/urldata.h])
 AM_CONFIG_HEADER(lib/curl_config.h src/curl_config.h include/curl/curlbuild.h)
+AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
 
 CURL_CHECK_OPTION_DEBUG
@@ -926,15 +927,20 @@ dnl **********************************************************************
 
 AC_MSG_CHECKING([if argv can be written to])
 AC_CACHE_VAL(curl_cv_writable_argv, [
-AC_RUN_IFELSE([[
+AC_RUN_IFELSE([
+  AC_LANG_SOURCE([[
 int main(int argc, char ** argv) {
-        argv[0][0] = ' ';
-        return (argv[0][0] == ' ')?0:1;
+    argv[0][0] = ' ';
+    return (argv[0][0] == ' ')?0:1;
 }
-        ]],
-        curl_cv_writable_argv=yes,
-        curl_cv_writable_argv=no,
-        curl_cv_writable_argv=cross)
+  ]])
+],[
+  curl_cv_writable_argv=yes
+],[
+  curl_cv_writable_argv=no
+],[
+  curl_cv_writable_argv=cross
+])
 ])
 case $curl_cv_writable_argv in
 yes)
@@ -2065,11 +2071,17 @@ AC_CHECK_TYPE(long long,
 
 if test "xyes" = "x$longlong"; then
   AC_MSG_CHECKING([if numberLL works])
-  AC_COMPILE_IFELSE([long long val = 1000LL;],
-   [AC_DEFINE(HAVE_LL, 1, [if your compiler supports LL])]
-   AC_MSG_RESULT(yes),
-   AC_MSG_RESULT(no)
-  )
+  AC_COMPILE_IFELSE([
+    AC_LANG_PROGRAM([[
+    ]],[[
+      long long val = 1000LL;
+    ]])
+  ],[
+    AC_MSG_RESULT([yes])
+    AC_DEFINE(HAVE_LL, 1, [if your compiler supports LL])
+  ],[
+    AC_MSG_RESULT([no])
+  ])
 fi
 
 

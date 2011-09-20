@@ -256,6 +256,7 @@ EXTRA_libPlatform_la_SOURCES =		\
 
 AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" \
 	$(SDL_CFLAGS) \
+	-I$(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
 EXTRA_DIST = \
