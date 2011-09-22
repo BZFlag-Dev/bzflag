@@ -1736,7 +1736,7 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   return bytesLeft == 0;
 }
 
-static void handleNearFlag ( void *msg, uint16_t len )
+static void handleNearFlag (void *msg, uint16_t)
 {
        float pos[3];
        std::string flagName;

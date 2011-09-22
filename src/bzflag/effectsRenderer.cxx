@@ -466,7 +466,8 @@ std::vector<std::string> EffectsRenderer::getGMPuffEffectTypes ( void )
 	return ret;
 }
 
-DeathEffect* EffectsRenderer::addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player* player, FlagType* flag )
+DeathEffect* EffectsRenderer::addDeathEffect (const float *rgb, const float *pos, float rot,
+					      int, Player* player, FlagType *)
 {
 	if (!BZDB.isTrue("useFancyEffects"))
 		return NULL;
