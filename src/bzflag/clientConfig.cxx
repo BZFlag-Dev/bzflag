@@ -294,11 +294,11 @@ void updateConfigFile(void)
 
     // Turn off dithering (since none of our automatic performance checks turn it on anymore)
     BZDB.setBool("dither", false);
-
-    break;
   
-  case 4: // Upgrade 2.4.x to .... (Do nothing right now as this is the current version)
-	  break;
+  case 4: // Upgrade 2.4.0 to 2.4.1
+    BZDB.unset("displayZoom");		// removed in r22109
+    BZDB.unset("radarShotLineType");	// existed only in r22117
+    break;
 
   default: // hm, we don't know about this one...
 	  printError(TextUtils::format("Config file is tagged version \"%d\", "
