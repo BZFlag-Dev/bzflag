@@ -1644,16 +1644,11 @@ void BackgroundRenderer::doInitDisplayLists()
   //
 
   const GLfloat groundSize = 10.0f * worldSize;
-  const GLfloat gameSize = 0.5f * worldSize;
   GLfloat groundPlane[4][3];
-  GLfloat gameArea[4][3];
   for (i = 0; i < 4; i++) {
     groundPlane[i][0] = groundSize * squareShape[i][0];
     groundPlane[i][1] = groundSize * squareShape[i][1];
     groundPlane[i][2] = 0.0f;
-    gameArea[i][0] = gameSize * squareShape[i][0];
-    gameArea[i][1] = gameSize * squareShape[i][1];
-    gameArea[i][2] = 0.0f;
   }
 
   {
