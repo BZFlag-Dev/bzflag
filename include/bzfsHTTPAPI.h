@@ -86,7 +86,7 @@ public:
   virtual const char* GetParamater ( size_t index ) const;
   virtual size_t GetParamaterCount () const;
 
-  virtual bool InBZIDGroup ( const char* name ) const{return false;}
+  virtual bool InBZIDGroup (const char *) const {return false;}
 
   bzhttp_SessionData *Session;
 

@@ -49,7 +49,8 @@ public:
     bzhttp_RemoveAllVdirs(this);
   }
 
-  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
+  virtual bzhttp_ePageGenStatus GeneratePage (const bzhttp_Request &,
+		  			      bzhttp_Responce &responce)
   {
     responce.ReturnCode = e200OK;
     responce.DocumentType = eOctetStream;
