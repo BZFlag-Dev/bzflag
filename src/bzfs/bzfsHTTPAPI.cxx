@@ -423,7 +423,7 @@ public:
   {
     plugin = NULL;
   }
-  virtual void process ( bz_EventData *eventData )
+  virtual void process (bz_EventData *)
   {
       CheckForZombies();
   }
@@ -750,7 +750,7 @@ public:
       list[n] = std::string(d);
   }
 
-  virtual void URLDone ( const char* URL, void * data, unsigned int size, bool complete )
+  virtual void URLDone (const char*, void *data, unsigned int size, bool complete)
   {
     if (data && size)
       bzAuthReturnData += std::string((const char*)data,size);
@@ -1668,7 +1668,7 @@ public:
 
   virtual const char* VDirName(){return "INDEX";}
 
-  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
+  virtual bzhttp_ePageGenStatus GeneratePage (const bzhttp_Request &, bzhttp_Responce &responce)
   {
     responce.ReturnCode = e200OK;
     responce.DocumentType = eHTML;

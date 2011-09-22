@@ -1434,7 +1434,7 @@ BZF_API bool bz_sendTextMessage(int from, int to, const char* message)
   return bz_sendTextMessage(from, to, eChatMessage, message);
 }
 
-BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, bz_eMessageType type, const char* message)
+BZF_API bool bz_sendTextMessage(int from, bz_eTeamType to, bz_eMessageType, const char* message)
 {
   switch(to)
   {
@@ -2937,7 +2937,7 @@ public:
       curl_multi_cleanup(curlHandle);
   }
 
-  virtual void process ( bz_EventData *eventData )
+  virtual void process (bz_EventData *)
   {
     if (!Tasks.size())
       return;
