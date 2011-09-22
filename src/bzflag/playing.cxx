@@ -2831,7 +2831,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
 	    if (srcPlayer == myTank) {
 	      if (MessageType(type) == ActionMessage) {
-		fullMsg += "[->" + dstName + " " + text + "]";
+		fullMsg += "[->" + dstName + "][" + srcName + " " + text + "]";
 	      } else {
 		fullMsg += "[->" + dstName + "]";
 		fullMsg += ColorStrings[ResetColor] + " ";
@@ -2839,7 +2839,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	      }
 	    } else {
 	      if (MessageType(type) == ActionMessage) {
-		fullMsg += "[" + srcName + " " + text + "->]";
+		fullMsg += "[" + srcName + " " + text + "]";
 	      } else {
 		fullMsg += "[" + srcName + "->]";
 		fullMsg += ColorStrings[ResetColor] + " ";
