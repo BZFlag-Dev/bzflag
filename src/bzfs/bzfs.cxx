@@ -5222,7 +5222,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    {
 	      std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
 	      peer.sendChunks.push_back(banMsg);
-	      peer.deleteMe;
+	      peer.deleteMe = true;
 	    }
 
 	    // call an event to let people know we got a new connect
@@ -5261,7 +5261,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
     {
       std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
       peer.sendChunks.push_back(banMsg);
-      peer.deleteMe;
+      peer.deleteMe = true;
     }
 
     if (!peer.deleteMe)
