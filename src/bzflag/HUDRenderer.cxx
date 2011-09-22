@@ -1695,7 +1695,6 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const bool  experimental = (RENDERER.useQuality() >= 3);
 
   if (!BZDB.isTrue("_forbidMarkers") && experimental) {
-      bool enableTex = glIsEnabled(GL_TEXTURE_2D) != 0;
       glDisable(GL_TEXTURE_2D);
 
       drawMarkersInView(centerx,centery,myTank);
