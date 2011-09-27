@@ -118,6 +118,39 @@ std::string getCurrentConfigFileName(void)
 	return name;
 }
 
+#if !defined(_WIN32)
+static void copyConfigFile(const char *oldConfigName, std::string configName) {
+
+  FILE *fp = fopen(oldConfigName, "rb");
+  if (!fp)
+    return;
+
+  fseek(fp, 0, SEEK_END);
+  int len = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+
+  unsigned char temp[len];
+
+  size_t items_read = fread(temp, len, 1, fp);
+  fclose(fp);
+  if (items_read != 1)
+    printError("Old config file is not readable");
+
+  // there is an old config so lets copy it to the new dir and let the
+  // update take care of it.
+  mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
+  FILE *newFile = fopen(configName.c_str(),"wb");
+  if (!newFile)
+    return;
+
+  size_t items_written = fwrite(temp, len, 1, newFile);
+  fclose(newFile);
+  if (items_written != 1)
+    printError("New config file is not writable");
+
+}
+#endif
+
 // this function will look for the config, if it's not there,
 // it will TRY and find an old one and copy it
 // so that the update function can upgrade it to the current version
@@ -135,65 +168,28 @@ void findConfigFile(void)
 
 	// try and find the old file
 	std::string oldConfigName = getOldConfigFileName();
+#if defined(_WIN32)
 	fp = fopen(oldConfigName.c_str(), "rb");
 	if (fp) {
-		// there is an old config so lets copy it to the new dir and let the update take care of it.
-#if defined(_WIN32)
-		fclose(fp);
-		// make the dir if we need to
-		std::string configDir = getConfigDirName(BZ_CONFIG_DIR_VERSION);
-		mkdir(configDir.c_str());
-		// copy the old config to the new dir location with the new name
-		CopyFile(oldConfigName.c_str(), configName.c_str(),true);
-
-#else	// the other OSs should do what they need to do
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
-
-		FILE *newFile = fopen(configName.c_str(),"wb");
-		if (newFile) {
-			fseek(fp, 0, SEEK_END);
-			int len = ftell(fp);
-			fseek(fp, 0, SEEK_SET);
-
-			unsigned char* temp = (unsigned char*) malloc(len);
-
-			fread(temp, len, 1, fp);
-			fwrite(temp, len, 1, newFile);
-
-			free(temp);
-
-			fclose(newFile);
-			fclose(fp);
-		}
-#endif
+	  // there is an old config so lets copy it to the new dir and
+	  // let the update take care of it.
+	  fclose(fp);
+	  // make the dir if we need to
+	  std::string configDir = getConfigDirName(BZ_CONFIG_DIR_VERSION);
+	  mkdir(configDir.c_str());
+	  // copy the old config to the new dir location with the new name
+	  CopyFile(oldConfigName.c_str(), configName.c_str(),true);
 	}
+#else	// the other OSs should do what they need to do
+	copyConfigFile(oldConfigName.c_str(), configName);
+#endif
 
 	// try and find the REALLY old file
 	// who uses this sucker any more?
 #if !defined(_WIN32)
 	std::string realyOldConfigName = getReallyOldConfigFileName();
-	fp = fopen(realyOldConfigName.c_str(), "rb");
-	if (fp) {
-		// there is an old config so lets copy it to the new dir and let the update take care of it.
-		// apparently only linux needs this so do the magic
-		mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
-
-		FILE *newFile = fopen(configName.c_str(),"wb");
-		if (newFile) {
-			fseek(fp, 0, SEEK_END);
-			int len = ftell(fp);
-			fseek(fp, 0, SEEK_SET);
-
-			unsigned char* temp = (unsigned char*) malloc(len);
-
-			fread(temp, len, 1, fp);
-			fwrite(temp, len, 1, newFile);
-
-			free(temp);
-			fclose(newFile);
-			fclose(fp);
-		}
-	}
+	// apparently only linux needs this so do the magic
+	copyConfigFile(realyOldConfigName.c_str(), configName);
 #endif
 }
 
