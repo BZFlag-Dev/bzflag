@@ -1625,14 +1625,18 @@ public:
     size = ftell(fp);
     fseek(fp,0,SEEK_SET);
     void *p = malloc(size);
-    fread(p,size,1,fp);
+    size_t item_read = fread(p,size,1,fp);
+    fclose(fp);
 
     Responce.MD5Hash = bz_MD5(p,size);
-    fclose(fp);
 
     if (Request.RequestType != eHTTPHead)
       Responce.AddBodyData(p,size);
     free(p);
+
+    if (item_read != 1)
+      return eNoPage;
+
     Responce.ReturnCode = e200OK;
     Responce.DocumentType = eOther;
     Responce.MimeType = Mime.c_str();
@@ -2017,12 +2021,15 @@ std::string readFileText ( const char* file )
   fseek(fp,0,SEEK_SET);
 
   char* m = (char*)malloc(s+1);
-  fread(m,s,1,fp);
+  size_t item_read = fread(m, s, 1, fp);
   m[s] = 0;
   fclose(fp);
 
-  std::string ret = m;
+  std::string ret(m);
   free(m);
+
+  if (item_read != 1)
+    return std::string();
 
   if (ret.find_first_of('\n') != std::string::npos)
     return ret;
