@@ -360,13 +360,16 @@ ServerLink::~ServerLink()
   urecvfd = -1;
   ulinkup = false;
 
-// FIXME -- packet recording
-if (packetStream) {
-  long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
-  fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
-  fwrite(&dt, sizeof(dt), 1, packetStream);
-  fclose(packetStream);
-}
+  // FIXME -- packet recording
+  if (packetStream) {
+    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    size_t items_written = fwrite(&endPacket, sizeof(endPacket), 1, packetStream);
+    if (items_written == 1)
+      items_written = fwrite(&dt, sizeof(dt), 1, packetStream);
+    if (items_written != 1)
+      printError("Error writing on packetStream");
+    fclose(packetStream);
+  }
 
 #if defined(NETWORK_STATS)
   const float dt = float(TimeKeeper::getCurrent() - startTime);
@@ -591,14 +594,19 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     if (tlen < int(len)) return -1;
   }
 
-// FIXME -- packet recording
-if (packetStream) {
-  long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
-  fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
-  fwrite(&dt, sizeof(dt), 1, packetStream);
-  fwrite(headerBuffer, 4, 1, packetStream);
-  fwrite(msg, len, 1, packetStream);
-}
+  // FIXME -- packet recording
+  if (packetStream) {
+    long dt = (long)((TimeKeeper::getCurrent() - packetStartTime) * 10000.0f);
+    size_t items_written = fwrite(&serverPacket, sizeof(serverPacket), 1, packetStream);
+    if (items_written == 1)
+      items_written = fwrite(&dt, sizeof(dt), 1, packetStream);
+    if (items_written == 1)
+      items_written = fwrite(headerBuffer, 4, 1, packetStream);
+    if (items_written == 1)
+      items_written = fwrite(msg, len, 1, packetStream);
+    if (items_written != 1)
+      printError("Error writing on packetStream");
+  }
   return 1;
 }
 
