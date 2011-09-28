@@ -351,11 +351,15 @@ std::string getFileText(const char* file)
   fseek(fp,0,SEEK_SET);
 
   char *temp = (char*)malloc(i+1);
-  fread(temp,i,1,fp);
   temp[i] = 0;
-  text = temp;
-  free(temp);
+
+  size_t items_read = fread(temp,i,1,fp);
   fclose(fp);
+
+  if (items_read == 1)
+    text = temp;
+
+  free(temp);
 
   return replace_all(text,"\r",std::string());
 }
