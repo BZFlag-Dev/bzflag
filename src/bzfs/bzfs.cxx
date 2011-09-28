@@ -515,6 +515,20 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
 	}
 }
 
+std::string GetPlayerIPAddress( int i)
+{
+  std::string tmp = "localhost";
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+  if (!playerData || !playerData->netHandler)
+    return tmp;
+
+  unsigned int address = (unsigned int)playerData->netHandler->getIPAddress().s_addr;
+  unsigned char* a = (unsigned char*)&address;
+
+  tmp = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
+  return tmp;
+}
+
 void sendPlayerInfo() {
   void *buf, *bufStart = getDirectMessageBuffer();
   int i, numPlayers = 0;
@@ -535,6 +549,7 @@ void sendPlayerInfo() {
       playerInfoData.verified = playerData->accessInfo.isVerified();
       playerInfoData.registered = playerData->accessInfo.isRegistered();
       playerInfoData.admin = playerData->accessInfo.showAsAdmin();
+      playerInfoData.ipAddress =GetPlayerIPAddress(i);
 
       worldEventManager.callEvents(bz_eGetPlayerInfoEvent,&playerInfoData);
 
