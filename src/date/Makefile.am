@@ -10,3 +10,5 @@ libDate_la_SOURCES = \
 	buildDate.cxx
 
 AM_CPPFLAGS = -I$(top_srcdir)/include
+
+AM_CXXFLAGS = $(CONF_CXXFLAGS)

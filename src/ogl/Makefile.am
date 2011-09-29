@@ -7,6 +7,8 @@ MAINTAINERCLEANFILES = \
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
 
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 libGLKit_la_LDFLAGS = -static
 libGLKit_la_SOURCES =			\
 	OpenGLGState.cxx		\

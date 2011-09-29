@@ -543,7 +543,7 @@ bool MeshFace::inMovingBox(const float* oldPos, float UNUSED(oldAngle),
 }
 
 
-bool MeshFace::isCrossing(const float* UNUSED(p), float UNUSED(angle),
+bool MeshFace::isCrossing(const float* UNUSED(p), float UNUSED(_angle),
 			  float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
 			  float* _plane) const
 {

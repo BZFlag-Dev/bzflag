@@ -1,6 +1,8 @@
 AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" \
 	-I$(top_srcdir)/include
 
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libMediaFile.la
 endif

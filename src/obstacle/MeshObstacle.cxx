@@ -562,7 +562,7 @@ void MeshObstacle::getNormal(const float* p, float* n) const
 
 
 bool MeshObstacle::getHitNormal(const float* UNUSED(oldPos), float UNUSED(oldAngle),
-				 const float* p, float UNUSED(angle),
+				 const float* p, float UNUSED(_angle),
 				 float, float, float UNUSED(height),
 				 float* n) const
 {
@@ -581,7 +581,7 @@ bool MeshObstacle::inCylinder(const float* p,
 }
 
 
-bool MeshObstacle::inBox(const float* p, float UNUSED(angle),
+bool MeshObstacle::inBox(const float* p, float UNUSED(_angle),
 			 float UNUSED(dx), float UNUSED(dy), float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
@@ -590,7 +590,7 @@ bool MeshObstacle::inBox(const float* p, float UNUSED(angle),
 
 
 bool MeshObstacle::inMovingBox(const float*, float,
-			       const float* p, float UNUSED(angle),
+			       const float* p, float UNUSED(_angle),
 			       float UNUSED(dx), float UNUSED(dy), float height) const
 {
   const float mid[3] = { p[0], p[1], p[2] + (0.5f * height) };
@@ -598,7 +598,7 @@ bool MeshObstacle::inMovingBox(const float*, float,
 }
 
 
-bool MeshObstacle::isCrossing(const float* UNUSED(p), float UNUSED(angle),
+bool MeshObstacle::isCrossing(const float* UNUSED(p), float UNUSED(_angle),
 			       float UNUSED(dx), float UNUSED(dy), float UNUSED(height),
 			       float* UNUSED(plane)) const
 {

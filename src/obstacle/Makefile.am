@@ -5,6 +5,8 @@ MAINTAINERCLEANFILES =	\
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
 
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 libObstacle_la_LDFLAGS = -static
 
 if CLIENT_INCLUDED

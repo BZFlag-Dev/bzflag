@@ -5132,7 +5132,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 
   // see if the sucker is banned
 
-  size_t headerLen = strlen(BZ_CONNECT_HEADER);
+  const size_t headerLen = strlen(BZ_CONNECT_HEADER);
   size_t readLen = headerLen;
 
   if (peer.apiHandler == NULL && peer.player == -1)
@@ -5174,7 +5174,6 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	   void *buf = netHandler->getTcpBuffer();
 
 	   const char*  header = BZ_CONNECT_HEADER;
-	   const size_t headerLen = strlen(header);
 
 	   char* tmp = (char*)malloc(readSize+1);
 	   strncpy(tmp,(char*)buf,readSize);

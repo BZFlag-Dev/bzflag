@@ -3,6 +3,7 @@ noinst_LTLIBRARIES = lib3D.la
 endif
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

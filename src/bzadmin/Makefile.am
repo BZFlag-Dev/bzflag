@@ -22,6 +22,8 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 bzadmin_LDFLAGS = -static
 bzadmin_SOURCES = \
 	BZAdminClient.h \

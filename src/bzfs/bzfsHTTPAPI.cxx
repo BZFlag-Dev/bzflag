@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <sstream>
 #include <time.h>
+#include <cstdlib>
 
 // implementation wrapers for all the bzf_ API functions
 #include "bzfsHTTPAPI.h"
@@ -898,21 +899,13 @@ public:
 	{
 	  Request.AddHeader(headerParts[0].c_str(),headerParts[1].c_str());
 	  std::string name = TextUtils::toupper(headerParts[0]);
-	  if (name == "CONTENT-LENGTH")
-	  {
-	    int size = atoi(headerParts[1].c_str());
-	    if (size > 0)
-	    {
-	      ContentSize = (unsigned int)size;
-
-	      if (ContentSize > maxContentSize)
-	      {
-		send501Error(connectionID);
-		return;
-	      }
+	  if (name == "CONTENT-LENGTH") {
+	    int size1 = strtol(headerParts[1].c_str(), NULL, 0);
+	    ContentSize = (unsigned int)size1;
+	    if (ContentSize > maxContentSize) {
+	      send501Error(connectionID);
+	      return;
 	    }
-	    else
-	      ContentSize = 0;
 	  }
 	  if (name == "COOKIE")
 	  {

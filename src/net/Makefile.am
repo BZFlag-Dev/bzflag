@@ -2,11 +2,11 @@ noinst_LTLIBRARIES = libNet.la
 
 if BUGGY_MIPSPRO
 MIPSPRO_CXXFLAGS = -LANG:std
-else
-MIPSPRO_CXXFLAGS = @CXXFLAGS@
 endif
 
-libNet_la_CXXFLAGS = $(AM_CXXFLAGS) $(MIPSPRO_CXXFLAGS) -I$(top_srcdir)/include
+AM_CXXFLAGS = $(CONF_CXXFLAGS) $(MIPSPRO_CXXFLAGS)
+
+AM_CPPFLAGS = -I$(top_srcdir)/include
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

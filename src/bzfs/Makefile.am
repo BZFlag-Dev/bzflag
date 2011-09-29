@@ -9,6 +9,8 @@ AM_CPPFLAGS = -DINSIDE_BZ \
 	-I$(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 if BUILD_PLUGINS
 plugin_files = bzfsPlugins.h bzfsPlugins.cxx
 else

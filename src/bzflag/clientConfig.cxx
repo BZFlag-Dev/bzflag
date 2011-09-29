@@ -125,17 +125,6 @@ static void copyConfigFile(const char *oldConfigName, std::string configName) {
   if (!fp)
     return;
 
-  fseek(fp, 0, SEEK_END);
-  int len = ftell(fp);
-  fseek(fp, 0, SEEK_SET);
-
-  unsigned char temp[len];
-
-  size_t items_read = fread(temp, len, 1, fp);
-  fclose(fp);
-  if (items_read != 1)
-    printError("Old config file is not readable");
-
   // there is an old config so lets copy it to the new dir and let the
   // update take care of it.
   mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
@@ -143,11 +132,28 @@ static void copyConfigFile(const char *oldConfigName, std::string configName) {
   if (!newFile)
     return;
 
+  fseek(fp, 0, SEEK_END);
+  const int len = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+
+  unsigned char *temp = (unsigned char *)malloc(len);
+  if (temp == NULL) {
+    printError("Unsufficient Memory");
+    fclose(fp);
+    return;
+  }
+
+  size_t items_read = fread(temp, len, 1, fp);
+  fclose(fp);
+  if (items_read != 1)
+    printError("Old config file is not readable");
+
   size_t items_written = fwrite(temp, len, 1, newFile);
   fclose(newFile);
   if (items_written != 1)
     printError("New config file is not writable");
 
+  free (temp);
 }
 #endif
 

@@ -1,4 +1,7 @@
 AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(CONF_CPPFLAGS) -I$(top_srcdir)/include
+AM_CPPFLAGS += $(SDL_CFLAGS)
+
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 bin_PROGRAMS = bzflag
 
@@ -219,8 +222,6 @@ LDADD =	\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
-
-AM_CPPFLAGS += $(SDL_CFLAGS)
 
 bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	$(WINDRES) --include-dir=$(top_srcdir)/win32/ -i $(top_srcdir)/win32/bzflag.rc -o bzflag.res \

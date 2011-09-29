@@ -542,7 +542,7 @@ if test "x$enable_threads" != "xno" ; then
     if test $pthread_check = "yes"; then
 	AC_DEFINE(HAVE_PTHREADS, 1, [posix-compliant threading is available])
 	LIBS="$tmpLIBS $LIBS"
-	CONF_CXXFLAGS="$CONF_CPPFLAGS -D_REENTRANT"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS -D_REENTRANT"
 	CONF_CFLAGS="$CONF_CFLAGS -D_REENTRANT"
     else
 	LIBS=$tmpLIBS

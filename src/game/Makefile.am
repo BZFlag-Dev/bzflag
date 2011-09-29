@@ -2,6 +2,8 @@ AM_CPPFLAGS = $(LIBCURL_CPPFLAGS) \
 	-I $(top_srcdir)/include \
 	$(CONF_CPPFLAGS)
 
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 noinst_LTLIBRARIES = libGame.la
 
 MAINTAINERCLEANFILES = \
