@@ -1,5 +1,6 @@
 AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" \
-	-I$(top_srcdir)/include
+	-I$(top_srcdir)/include \
+	$(CONF_CPPFLAGS)
 
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
