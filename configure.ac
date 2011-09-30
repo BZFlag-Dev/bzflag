@@ -49,6 +49,9 @@ AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 AC_CONFIG_MACRO_DIR([m4])
 
+${CFLAGS=""}
+${CXXFLAGS=""}
+
 # When --libdir has not been used put plugins in bzflag's own directory.
 if test "x$libdir" = 'x${exec_prefix}/lib' ; then
     libdir="$libdir/bzflag"
@@ -541,9 +544,8 @@ if test "x$enable_threads" != "xno" ; then
 		   [pthread_check="yes"], [pthread_check="no"])
     if test $pthread_check = "yes"; then
 	AC_DEFINE(HAVE_PTHREADS, 1, [posix-compliant threading is available])
+	AC_DEFINE(_REENTRANT, 1, [Enable reentrant code])
 	LIBS="$tmpLIBS $LIBS"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS -D_REENTRANT"
-	CONF_CFLAGS="$CONF_CFLAGS -D_REENTRANT"
     else
 	LIBS=$tmpLIBS
     fi
@@ -661,7 +663,7 @@ case $host_os in
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	# time to use -Wextra instead of -W ? (gcc 3.4+)
-	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic -Wno-long-long"
+	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
@@ -723,12 +725,10 @@ case $host_os in
 esac
 
 if test x$enable_debug = xyes ; then
-    CFLAGS="$CFLAGS -O0"
-    CXXFLAGS="$CXXFLAGS -O0"
     case $host_os in
 	linux*|openbsd*|cygwin|mingw32*)
-	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -Wno-deprecated"
+	    CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
 	    if test x$enable_profiling = xyes ; then
 		CONF_CFLAGS="$CONF_CFLAGS -pg"
 		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
@@ -736,20 +736,20 @@ if test x$enable_debug = xyes ; then
 	    ;;
 	macos|darwin*)
 	    if test x$enable_profiling = xyes ; then
-		CONF_CFLAGS="$CONF_CFLAGS -pg"
-		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+		CONF_CFLAGS="$CONF_CFLAGS -pg -g -O0"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg -g -O0"
 		fi
 	    ;;
         beos)
-	    CONF_CFLAGS="$CONF_CFLAGS -Werror"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror"
+	    CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
 	    ;;
     esac
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     case $host_os in
 	linux*|openbsd*|cygwin|mingw32*)
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions -g -O2"
 	    ;;
 	solaris*)
 	    CONF_CFLAGS="$CONF_CFLAGS -O"
