@@ -618,7 +618,7 @@ static std::string cmdSend(const std::string&,
     buf = nboPackUByte(buf, AllPlayers);
     composePrompt = "Send to all: ";
   } else if (args[0] == "team") {
-    if (World::getWorld()->allowTeams())
+    if (World::getWorld()->allowTeams() || myTank->getTeam() == ObserverTeam)
     {
       void* buf = messageMessage;
       buf = nboPackUByte(buf, TeamToPlayerId(myTank->getTeam()));
