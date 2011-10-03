@@ -23,7 +23,7 @@ public:
   virtual void Event(bz_EventData *eventData);
 };
 
-BZ_PLUGIN(ThiefControl);
+BZ_PLUGIN(ThiefControl)
 
 void ThiefControl::Init(const char* /*config*/ )
 {

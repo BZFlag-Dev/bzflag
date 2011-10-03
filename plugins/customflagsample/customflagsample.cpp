@@ -14,7 +14,7 @@ public:
   virtual void Event ( bz_EventData *eventData );
 };
 
-BZ_PLUGIN(CustomFlagSample);
+BZ_PLUGIN(CustomFlagSample)
 
 void CustomFlagSample::Event(bz_EventData *eventData)
 {

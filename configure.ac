@@ -49,8 +49,8 @@ AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 AC_CONFIG_MACRO_DIR([m4])
 
-${CFLAGS=""}
-${CXXFLAGS=""}
+: ${CFLAGS=""}
+: ${CXXFLAGS=""}
 
 # When --libdir has not been used put plugins in bzflag's own directory.
 if test "x$libdir" = 'x${exec_prefix}/lib' ; then
@@ -663,9 +663,9 @@ case $host_os in
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
 	# time to use -Wextra instead of -W ? (gcc 3.4+)
-	FLAGS="-Wall -W -Wundef -Wshadow -ansi -pedantic"
-	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
+	FLAGS="-Wall -W -Wundef -Wshadow"
+	OPT_CFLAGS="$OPT_CFLAGS $FLAGS"
+	OPT_CXXFLAGS="$OPT_CXXFLAGS $FLAGS -ansi -pedantic -fno-exceptions"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
@@ -679,18 +679,20 @@ case $host_os in
 	       else
 		 FLAGS="$FLAGS=$host_cpu"
 	       fi
-	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
+	       OPT_CFLAGS="$OPT_CFLAGS $FLAGS";
+	       OPT_CXXFLAGS="$OPT_CXXFLAGS $FLAGS";
+	       CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
 	     ppc)
 	       FLAGS="-mcpu=$host_cpu"
-	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
+	       OPT_CFLAGS="$OPT_CFLAGS $FLAGS";
+	       OPT_CXXFLAGS="$OPT_CXXFLAGS $FLAGS";;
 	esac;;
      cygwin)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	FLAGS="-Wall -W -mcpu=$host_cpu"
-	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
+	OPT_CFLAGS="$OPT_CFLAGS $FLAGS";
+	OPT_CXXFLAGS="$OPT_CXXFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
      mingw32*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	FLAGS="-Wall -W"
@@ -699,8 +701,9 @@ case $host_os in
 	else
 	  FLAGS="$FLAGS -march=$host_cpu"
 	fi
-	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -fsigned-char";;
+	OPT_CFLAGS="$OPT_CFLAGS $FLAGS";
+	OPT_CXXFLAGS="$OPT_CXXFLAGS $FLAGS";
+	CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
      solaris*)
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
@@ -727,18 +730,18 @@ esac
 if test x$enable_debug = xyes ; then
     case $host_os in
 	linux*|openbsd*|cygwin|mingw32*)
-	    CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
+	    OPT_CFLAGS="$OPT_CFLAGS -Werror -g -O0"
+	    OPT_CXXFLAGS="$OPT_CXXFLAGS -Werror -g -O0"
 	    if test x$enable_profiling = xyes ; then
-		CONF_CFLAGS="$CONF_CFLAGS -pg"
-		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+		OPT_CFLAGS="$OPT_CFLAGS -pg"
+		OPT_CXXFLAGS="$OPT_CXXFLAGS -pg"
 	    fi
 	    ;;
 	macos|darwin*)
 	    if test x$enable_profiling = xyes ; then
 		CONF_CFLAGS="$CONF_CFLAGS -pg -g -O0"
 		CONF_CXXFLAGS="$CONF_CXXFLAGS -pg -g -O0"
-		fi
+	    fi
 	    ;;
         beos)
 	    CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
@@ -749,7 +752,8 @@ if test x$enable_debug = xyes ; then
 else
     case $host_os in
 	linux*|openbsd*|cygwin|mingw32*)
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions -g -O2"
+	    OPT_CFLAGS="$OPT_CFLAGS -g -O2"
+	    OPT_CXXFLAGS="$OPT_CXXFLAGS -g -O2"
 	    ;;
 	solaris*)
 	    CONF_CFLAGS="$CONF_CFLAGS -O"
@@ -1140,6 +1144,9 @@ if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
 fi
 
 AC_CONFIG_SUBDIRS(src/other/curl)
+
+: ${CFLAGS:="${OPT_CFLAGS}"}
+: ${CXXFLAGS:="${OPT_CXXFLAGS}"}
 
 AC_CONFIG_FILES([
 	BZFlag.xcodeproj/Makefile
