@@ -6298,15 +6298,6 @@ static void		playingLoop()
 {
   int i;
 
-  if (BZDB.isTrue("fakecursor"))
-    mainWindow->getWindow()->hideMouse();
-
-  // start timing
-  TimeKeeper::setTick();
-  updateDaylight(epochOffset, *sceneRenderer);
-
-  worldDownLoader = new WorldDownLoader;
-
   // main loop
   while (!CommandsStandard::isQuit()) {
 
@@ -6321,9 +6312,6 @@ static void		playingLoop()
     const float dt = float(TimeKeeper::getTick() - prevTime);
 
     mainWindow->getWindow()->yieldCurrent();
-
-    // handle incoming packets
-    doMessages();
 
     // see if the world collision grid needs to be updated
     if (world) {
@@ -6655,32 +6643,42 @@ static void		playingLoop()
       float fpsLimit = BZDB.eval("fpsLimit");
       if (fpsLimit < 15 || isnan(fpsLimit))
 	fpsLimit = 15;
-	const float elapsed = float(TimeKeeper::getCurrent() - lastTime);
-	if (elapsed > 0.0f) {
-	  const float period = (1.0f / fpsLimit);
-	  const float remaining = (period - elapsed);
-	  if (remaining > 0.0f) {
+	TimeKeeper nextTime(lastTime);
+	nextTime += 1.0f / fpsLimit;
+	float remaining;
+        while (1) {
+	  remaining = nextTime - TimeKeeper::getCurrent();
+	  if (remaining > 1.0f)
+	    break;
+	  if (remaining <= 0.0f)
+	    break;
+	  // Instead of sleeping try to handle network packets
+	  char msg[MaxPacketLen];
+	  uint16_t code, len;
+	  int e = 0;
+
+	  // handle server messages
+	  if (serverLink && !serverError) {
+	    e = serverLink->read(code, len, msg, int(remaining * 1000.0f));
+	    if (e == 1)
+	      handleServerMessage(true, code, len, msg);
+	    if (e == -2) {
+	      printError("Server communication error");
+	      serverError = true;
+	      break;
+	    }
+	  } else {
 	    TimeKeeper::sleep(remaining);
+	    break;
 	  }
 	}
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
 
+    // handle incoming packets
+    doMessages();
 
   } // end main client loop
-
-
-  delete worldDownLoader;
-  // restore the sound.  if we don't do this then we'll save the
-  // wrong volume when we dump out the configuration file if the
-  // app exits when the game is paused.
-  if (savedVolume != -1) {
-    setSoundVolume(savedVolume);
-    savedVolume = -1;
-  }
-
-  // hide window
-  mainWindow->showWindow(false);
 }
 
 
@@ -7228,8 +7226,30 @@ void			startPlaying(BzfDisplay* _display,
     HUDDialogStack::get()->push(mainMenu);
   }
 
+  if (BZDB.isTrue("fakecursor"))
+    mainWindow->getWindow()->hideMouse();
+
+  // start timing
+  TimeKeeper::setTick();
+  updateDaylight(epochOffset, *sceneRenderer);
+
+  worldDownLoader = new WorldDownLoader;
+
   // start game loop
   playingLoop();
+
+  delete worldDownLoader;
+
+  // restore the sound.  if we don't do this then we'll save the
+  // wrong volume when we dump out the configuration file if the
+  // app exits when the game is paused.
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
+  // hide window
+  mainWindow->showWindow(false);
 
   // clean up
   TankGeometryMgr::kill();
