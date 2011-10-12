@@ -2342,8 +2342,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 		robots[i]->getTeam() != RogueTeam)
 	      gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
 	}
-      }
 #endif
+      }
 
       checkScores = true;
       break;
@@ -2467,14 +2467,14 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (capturedTeam == int(myTank->getTeam())) {
 	gotBlowedUp(myTank, GotCaptured, id);
       }
-
+#ifdef ROBOT
       //kill all my robots if they are on the captured team
       for (int r = 0; r < numRobots; r++) {
 	if (robots[r] && robots[r]->getTeam() == capturedTeam) {
 	  gotBlowedUp(robots[r], GotCaptured, robots[r]->getId());
 	}
       }
-
+#endif
 
       // everybody who's alive on capture team will be blowing up
       // but we're not going to get an individual notification for

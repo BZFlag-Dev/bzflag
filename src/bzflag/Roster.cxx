@@ -20,7 +20,9 @@
 NameList silencePlayers;
 int curMaxPlayers = 0;
 RemotePlayer** remotePlayers = NULL;
+#ifdef ROBOT
 RobotPlayer* robots[MAX_ROBOTS];
+#endif
 int numRobots = 0;
 
 

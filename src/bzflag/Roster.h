@@ -38,7 +38,9 @@ typedef std::vector<std::string> NameList;
 
 extern int curMaxPlayers;
 extern RemotePlayer** remotePlayers;
+#ifdef ROBOT
 extern RobotPlayer* robots[MAX_ROBOTS];
+#endif
 extern int numRobots;
 
 extern NameList silencePlayers;
