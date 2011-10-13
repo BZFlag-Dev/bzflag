@@ -53,7 +53,8 @@ bool RejoinList::add (int playerIndex)
     return false;
   }
   RejoinNode* rn = new RejoinNode;
-  strcpy (rn->callsign, playerData->player.getCallSign());
+  strncpy (rn->callsign, playerData->player.getCallSign(), CallSignLen - 1);
+  rn->callsign[CallSignLen - 1] = '\0';
   rn->joinTime = TimeKeeper::getCurrent();
   queue.push_back (rn);
   return true;

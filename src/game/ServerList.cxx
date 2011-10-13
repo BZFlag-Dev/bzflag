@@ -91,7 +91,8 @@ void ServerList::readServerList()
     // error
     if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
       strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
-	      TokenLen);
+	      TokenLen - 1);
+      startupInfo->token[TokenLen - 1] = '\0';
 #ifdef DEBUG
       printError("got token:");
       printError(startupInfo->token);

@@ -820,7 +820,7 @@ bool WordFilter::filter(char *input, const bool simple) const
 
 bool WordFilter::filter(std::string &input, const bool simple) const
 {
-  char input2[512] = {0};
+  char input2[512];
   bool filtered = false;
   std::string resultString = "";
 
@@ -828,8 +828,9 @@ bool WordFilter::filter(std::string &input, const bool simple) const
    * but it works.  just means words that span the boundary might be
    * wrong.
    */
-  for (unsigned int i = 0; i < input.size(); i+=512) {
-    strncpy(input2, input.c_str() + i, 512);
+  for (unsigned int i = 0; i < input.size(); i+=511) {
+    strncpy(input2, input.c_str() + i, 511);
+    input2[511] = '\0';
     bool filteredChunk = filter(input2, simple);
     if (filteredChunk) {
       filtered = true;

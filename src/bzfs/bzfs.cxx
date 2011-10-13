@@ -1418,8 +1418,9 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   const char* msg = message;
 
   if (clOptions->filterChat) {
-    char filtered[MessageLen] = {0};
-    strncpy(filtered, message, MessageLen);
+    char filtered[MessageLen];
+    strncpy(filtered, message, MessageLen - 1);
+    filtered[MessageLen - 1] = '\0';
     if (clOptions->filterSimple) {
       clOptions->filter.filter(filtered, true);
     } else {

@@ -192,10 +192,12 @@ bool OSFile::open(const char *mode)
 
   char  modeToUse[32];
 
-  if (!mode)
+  if (!mode) {
     sprintf(modeToUse, "rb");
-  else
-    strcpy(modeToUse, mode);
+  } else {
+    strncpy(modeToUse, mode, sizeof(modeToUse) - 1);
+    modeToUse[31] = '\0';
+  }
 
   std::string fileName;
 
@@ -750,9 +752,12 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
   char   searchstr[1024];
   std::string  FilePath;
 
-  strcpy(searchstr, pathName.c_str());
-  if (searchstr[strlen(searchstr) - 1] != '/')
-    strcat(searchstr, "/");
+  strncpy(searchstr, pathName.c_str(), sizeof(searchstr) - 1);
+  searchstr[1023] = '\0';
+  size_t pathLen = strlen(searchstr);
+  if ((pathLen < 1022) && searchstr[pathLen - 1] != '/') {
+    searchstr[pathLen] = '/';
+  }
   directory = opendir(searchstr);
   if (!directory)
     return false;

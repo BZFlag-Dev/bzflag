@@ -92,8 +92,8 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 	;
       } else if (serverLink) {
 	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
-	strncpy(messageBuffer, message.c_str(), MessageLen);
+	strncpy(messageBuffer, message.c_str(), MessageLen - 1);
+	messageBuffer[MessageLen - 1] = '\0';
 	nboPackString(messageMessage + PlayerIdPLen, messageBuffer,
 		      MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);

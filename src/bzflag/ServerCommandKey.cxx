@@ -352,8 +352,8 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
       buf = nboPackUByte(buf, ServerPlayer);
 
       char messageBuffer[MessageLen];
-      memset(messageBuffer, 0, MessageLen);
-      strncpy(messageBuffer, sendMsg.c_str(), MessageLen);
+      strncpy(messageBuffer, sendMsg.c_str(), MessageLen - 1);
+      messageBuffer[MessageLen - 1] = '\0';
       buf = nboPackString(buf, messageBuffer, MessageLen);
       serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
     }

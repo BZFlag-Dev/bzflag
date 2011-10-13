@@ -742,10 +742,10 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
       }
       if (BZDB.isSet(name)) {
 	char messageBuffer[MessageLen];
-	memset(messageBuffer, 0, MessageLen);
 	strncpy(messageBuffer,
 		BZDB.get(name).c_str(),
-		MessageLen);
+		MessageLen - 1);
+	messageBuffer[MessageLen - 1] = '\0';;
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }

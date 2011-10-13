@@ -96,7 +96,6 @@ void			ServerListCache::saveCache()
   if (fileName == "") return;
 
   std::ostream* outFile = FILEMGR.createDataOutStream(fileName, true, true);
-  int lenCpy = max_string;
 
   if (outFile != NULL){
     char buffer[max_string+1];
@@ -108,9 +107,8 @@ void			ServerListCache::saveCache()
       }
 
       // write out the index of the map
-      memset(buffer, 0, sizeof(buffer));
-      lenCpy = int((iter->first).size() < max_string ? (iter->first).size() : max_string);
-      strncpy(buffer, (iter->first.c_str()), lenCpy);
+      strncpy(buffer, (iter->first.c_str()), max_string);
+      buffer[max_string] = '\0';
       outFile->write(buffer, sizeof(buffer));
 
       ServerItem x = iter->second;
