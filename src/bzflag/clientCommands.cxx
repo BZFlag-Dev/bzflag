@@ -808,7 +808,12 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
 
 #if defined(HAVE_PTHREADS)
   pthread_t thread;
-  pthread_create(&thread, NULL, writeScreenshot, (void *) ssdata);
+  pthread_attr_t attr;
+
+  pthread_attr_init(&attr);
+  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+  pthread_create(&thread, &attr, writeScreenshot, (void *) ssdata);
+  pthread_attr_destroy(&attr);
 #elif defined(_WIN32)
   CreateThread(
 	    NULL, // Security attributes
