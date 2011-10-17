@@ -1149,15 +1149,14 @@ void			LocalPlayer::setPause(bool pause)
 
 void			LocalPlayer::activateAutoPilot(bool autopilot)
 {
-  if (autopilot && !isAutoPilot()) {
-    setAutoPilot();
-    server->sendAutoPilot(true);
-  }
-  else if (!autopilot && isAutoPilot()) {
-    setAutoPilot(false);
-    server->sendAutoPilot(false);
+  // If desired and actual state is the same, ignore the request
+  if (autopilot == isAutoPilot())
+    return;
+
+  setAutoPilot(autopilot);
+  server->sendAutoPilot(autopilot);
+  if (!autopilot)
     setTarget(NULL);
-  }
 }
 
 bool			LocalPlayer::fireShot()
