@@ -10,14 +10,14 @@ If you wish to:
 
 you will need to install the package bzflag-server
 
-bzflag uses XFree86's VidMode extension to change resoultions
+bzflag uses XFree86's VidMode extension to change resolutions
 `on the fly'. Some people have reported problems with this but we have
 not been able to identify the reason (yet). Please report a bug if you
 are having problems.
 
 Other people, have color map problems when the change of video
 resolution occurs. If this happens to you as well please report it.
-The workaround it to manually switch resoultions before running bzflag
+The workaround it to manually switch resolutions before running bzflag
 
 bzflag, by default, will takeover your entire screen. By specifying
 the `-window' option on the command line it will display inside of a
@@ -34,9 +34,9 @@ you need to do the following:
 $ MESA_GLX_FX=fullscreen
 $ export MESA_GLX_FX
 
-If you use a Csh style sheel like /bin/csh or /bin/tcsh use this:
+If you use a Csh style shell like /bin/csh or /bin/tcsh use this:
 
-% set MESA_GLX_FX fullscreen
+% setenv MESA_GLX_FX fullscreen
 
 original by Anand Kumria <wildfire@progsoc.uts.edu.au>
 modified by Tim Riker <Tim@Rikers.org>
