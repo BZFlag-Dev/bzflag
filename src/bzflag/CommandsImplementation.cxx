@@ -355,7 +355,6 @@ bool ClientQueryCommand::operator() (const char *commandLine)
   if (strlen(commandLine) != 11)
     return false;
   char messageBuffer[MessageLen];
-  memset(messageBuffer, 0, MessageLen);
   strncpy(messageBuffer, "/clientquery", MessageLen);
   nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
   serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
@@ -591,7 +590,6 @@ bool LocalSetCommand::operator() (const char *commandLine)
 bool QuitCommand::operator() (const char *commandLine)
 {
   char messageBuffer[MessageLen]; // send message
-  memset(messageBuffer, 0, MessageLen);
   strncpy(messageBuffer, commandLine, MessageLen);
   nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
   serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
