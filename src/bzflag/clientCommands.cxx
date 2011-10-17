@@ -470,13 +470,10 @@ static std::string cmdAutoPilot(const std::string&,
   if (!BZDB.isTrue(StateDatabase::BZDB_TANKWIDTH))
     return std::string();
 
-  if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS) && ! myTank->isAutoPilot()) {
-    hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
+  if ((myTank == NULL) || (myTank->getTeam() == ObserverTeam))
     return std::string();
-  }
 
-  if (myTank != NULL && myTank->getTeam() != ObserverTeam) {
-    if (myTank->isAutoPilot()) {
+  if (myTank->isAutoPilot()) {
 
       myTank->activateAutoPilot(false);
       hud->setAlert(0, "autopilot disabled", 1.0f, true);
@@ -484,7 +481,9 @@ static std::string cmdAutoPilot(const std::string&,
       // grab mouse
       if (shouldGrabMouse()) mainWindow->grabMouse();
 
-    } else {
+  } else if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
+    hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
+  } else {
 
       // don't enable the AutoPilot if you have within the last 5 secs
       static TimeKeeper LastAutoPilotEnable = TimeKeeper::getSunGenesisTime();
@@ -500,10 +499,8 @@ static std::string cmdAutoPilot(const std::string&,
 	mainWindow->ungrabMouse();
       } else {
 	controlPanel->addMessage("You may not enable the Autopilot more than once every five seconds.");
-	return std::string();
       }
 
-    }
   }
 
   return std::string();
