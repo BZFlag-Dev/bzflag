@@ -1736,6 +1736,20 @@ static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
   return bytesLeft == 0;
 }
 
+static void sendMeaCulpa(PlayerId victim) {
+  char meaculpa[MessageLen];
+  char *buf;
+
+  if (!myTank->isAutoPilot())
+    return;
+
+  strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
+  buf = messageMessage;
+  buf = (char*)nboPackUByte(buf, victim);
+  nboPackString(buf, meaculpa, MessageLen-1);
+  serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+}
+
 static void handleNearFlag (void *msg, uint16_t)
 {
        float pos[3];
@@ -2212,17 +2226,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if (killerPlayer == myTank) {
 	      hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
 	      playLocalSound(SFX_KILL_TEAM);
-	      if (myTank->isAutoPilot()) {
-		char meaculpa[MessageLen];
-		memset(meaculpa, 0, MessageLen);
-		strncpy(meaculpa,
-			"sorry, i'm just a silly machine",
-			MessageLen);
-		char *buf = messageMessage;
-		buf = (char*)nboPackUByte(buf, victimPlayer->getId());
-		nboPackString(buf, meaculpa, MessageLen-1);
-		serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-	      }
+	      sendMeaCulpa(victimPlayer->getId());
 	    }
 	  } else {
 	    // enemy
@@ -2437,15 +2441,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (capturer == myTank) {
 	    hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
 	    playLocalSound( SFX_KILL_TEAM );
-	    if (myTank->isAutoPilot()) {
-	      char meaculpa[MessageLen];
-	      memset(meaculpa, 0, MessageLen);
-	      strncpy(meaculpa, "sorry, i'm just a silly machine", MessageLen);
-	      char *buf = messageMessage;
-	      buf = (char*)nboPackUShort(buf, myTank->getTeam());
-	      nboPackString(buf, meaculpa, MessageLen-1);
-	      serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
-	    }
+	    sendMeaCulpa(myTank->getTeam());
 	  }
 	} else {
 	  std::string message("captured ");
