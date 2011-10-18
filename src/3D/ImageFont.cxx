@@ -69,7 +69,10 @@ bool readKeyInt(OSFile &file, std::string expectedLeft, int &retval, bool newfil
   }
 
   if (tmpBuf.substr(0, expsize) == expectedLeft && tmpBuf[expsize]==':') {
-    retval = atoi(tmpBuf.c_str()+expsize+1);
+    long int retvalue = strtol(tmpBuf.c_str() + expsize + 1, (char **) NULL, 10);
+    if (retvalue < INT_MIN || retvalue > INT_MAX)
+      return false;
+    retval = (int) retvalue;
     return true;
   } else {
     logDebugMessage(2,"Unexpected line in font metrics file %s, line %d (expected %s)\n",
@@ -122,7 +125,7 @@ bool ImageFont::load(OSFile &file)
     return false;
   }
   faceName = texture.substr(0, underscore);
-  size = atoi(texture.c_str() + underscore + 1);
+  size = strtol(texture.c_str() + underscore + 1, (char **)NULL, 10);
 
   if (!file.open("rb"))
     return false;

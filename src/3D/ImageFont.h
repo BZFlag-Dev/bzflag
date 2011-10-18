@@ -61,7 +61,7 @@ protected:
 
   std::string faceName;
   std::string texture;
-  int	      size;
+  long int    size;
   int	      textureXSize;
   int	      textureYSize;
   int	      textureZStep;
