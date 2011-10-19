@@ -144,18 +144,24 @@ int main(int argc, char** argv) {
     startupInfo.serverPort = ServerPort;
     int cPos = serverName.find(':');
     if (cPos != -1) {
-      startupInfo.serverPort = atoi(serverName.substr(cPos + 1).c_str());
+      long int serverPort = strtol(serverName.substr(cPos + 1).c_str(), (char **)NULL, 10);
+      if (serverPort > 0 && serverPort < 65536)
+        startupInfo.serverPort = (int) serverPort;
       serverName = serverName.substr(0, cPos);
     }
+    // Flawfinder: ignore
     strncpy(startupInfo.callsign, callsign.c_str(), sizeof(startupInfo.callsign) - 1);
+    // Flawfinder: ignore
     strncpy(startupInfo.password, password.c_str(), sizeof(startupInfo.password) - 1);
+    // Flawfinder: ignore
     strncpy(startupInfo.serverName, serverName.c_str(), sizeof(startupInfo.serverName) - 1);
   }
   std::cerr << "Connecting to " <<
     startupInfo.callsign << "@" <<
     startupInfo.serverName << ":" <<
     startupInfo.serverPort;
-  if (strlen(startupInfo.password)) {
+  // Check if password is not empty
+  if (startupInfo.password[0]) {
     std::cerr << " using central login";
   }
   std::cerr << std::endl;
