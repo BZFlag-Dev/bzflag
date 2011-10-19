@@ -119,9 +119,9 @@ void FontManager::clear(void)	// clear all the lists
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
       delete(itr->second);
-      itr++;
+      ++itr;
     }
-    faceItr++;
+    ++faceItr;
   }
   fontFaces.clear();
   return;
@@ -506,9 +506,9 @@ void FontManager::unloadAll(void)
     FontSizeMap::iterator itr = faceItr->begin();
     while (itr != faceItr->end()) {
       itr->second->free();
-      itr++;
+      ++itr;
     }
-    faceItr++;
+    ++faceItr;
   }
 }
 
@@ -523,10 +523,10 @@ ImageFont* FontManager::getClosestSize(int faceID, float size, bool bigger)
   FontSizeMap::const_iterator itr = sizes.lower_bound(rsize);
   if (bigger) {
     if (itr == sizes.end())
-      itr--;
+      --itr;
   } else {
     if (itr != sizes.begin() && itr->first != rsize)
-      itr--;
+      --itr;
   }
 
   return itr->second;

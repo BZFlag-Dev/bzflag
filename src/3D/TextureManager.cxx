@@ -143,7 +143,7 @@ bool TextureManager::reloadTextures()
   TextureNameMap::iterator it = textureNames.begin();
   while (it != textureNames.end()) {
     reloadTextureImage(it->first);
-    it++;
+    ++it;
   }
   return true;
 }
@@ -262,7 +262,7 @@ void TextureManager::updateTextureFilters()
     // getting, then setting re-clamps the filter level
     OpenGLTexture::Filter current = texture->getFilter();
     texture->setFilter(current);
-    itr++;
+    ++itr;
   }
 
   // rebuild proc textures
