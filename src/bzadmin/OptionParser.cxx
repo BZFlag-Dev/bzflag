@@ -62,6 +62,10 @@ bool OptionParser::parse(int argc, char** argv) {
 	error = error + "Unknown option \"" + argv[i] + "\"";
 	break;
       }
+      if (i + 1 >= argc) {
+	error = error + "Missing argument to \"" + argv[i] + "\"";
+	break;
+      }
       i += iter->second->parse(&argv[i+1]);
     }
   }
