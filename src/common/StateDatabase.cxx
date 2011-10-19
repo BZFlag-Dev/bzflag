@@ -583,7 +583,7 @@ void		     StateDatabase::setSaveDefault(bool save) {
 
 StateDatabase::ExpressionToken::ExpressionToken()
 {
-  tokenType = number;
+  tokenType = Number;
   tokenContents.number = 0;
 }
 
@@ -591,12 +591,12 @@ StateDatabase::ExpressionToken::ExpressionToken(Type _tokenType)
 {
   tokenType = _tokenType;
   switch(tokenType) {
-    case number:
+    case Number:
       tokenContents.number = 0;
       break;
-    case variable:
+    case Variable:
       break;
-    case oper:
+    case Oper:
       tokenContents.oper = none;
       break;
   }
@@ -612,12 +612,12 @@ void StateDatabase::ExpressionToken::setType(Type _tokenType)
 {
   tokenType = _tokenType;
   switch(tokenType) {
-    case number:
+    case Number:
       tokenContents.number = 0;
       break;
-    case variable:
+    case Variable:
       break;
-    case oper:
+    case Oper:
       tokenContents.oper = none;
       break;
   }
@@ -630,19 +630,19 @@ void StateDatabase::ExpressionToken::setContents(Contents _tokenContents)
 
 void StateDatabase::ExpressionToken::setNumber(double num)
 {
-  tokenType = number;
+  tokenType = Number;
   tokenContents.number = num;
 }
 
 void StateDatabase::ExpressionToken::setVariable(std::string var)
 {
-  tokenType = variable;
+  tokenType = Variable;
   tokenContents.variable = var;
 }
 
 void StateDatabase::ExpressionToken::setOper(Operator op)
 {
-  tokenType = oper;
+  tokenType = Oper;
   tokenContents.oper = op;
 }
 
@@ -809,10 +809,10 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
 std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionToken& src)
 {
   switch (src.getTokenType()) {
-    case StateDatabase::ExpressionToken::number:
+    case StateDatabase::ExpressionToken::Number:
       dst << src.getNumber();
       break;
-    case StateDatabase::ExpressionToken::oper:
+    case StateDatabase::ExpressionToken::Oper:
       switch (src.getOperator()) {
 	case StateDatabase::ExpressionToken::add:
 	  dst << '+';
@@ -839,7 +839,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::ExpressionTok
 	  break;
       }
       break;
-    case StateDatabase::ExpressionToken::variable:
+    case StateDatabase::ExpressionToken::Variable:
       dst << src.getVariable();
       break;
   }
@@ -898,9 +898,9 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
   std::stack<ExpressionToken> operators;
 
   for (Expression::const_iterator i = infix.begin(); i != infix.end(); i++) {
-    if (i->getTokenType() == ExpressionToken::variable || i->getTokenType() == ExpressionToken::number) {
+    if (i->getTokenType() == ExpressionToken::Variable || i->getTokenType() == ExpressionToken::Number) {
       postfix.push_back(*i);
-    } else if (i->getTokenType() == ExpressionToken::oper) {
+    } else if (i->getTokenType() == ExpressionToken::Oper) {
       if (i->getOperator() == ExpressionToken::lparen) {
 	operators.push(*i);
       } else if (i->getOperator() == ExpressionToken::rparen) {
@@ -937,15 +937,15 @@ float StateDatabase::evaluate(Expression e) const
   for (Expression::reverse_iterator i = e.rbegin(); i != e.rend(); i++) {
     unary = false;
     switch(i->getTokenType()) {
-      case ExpressionToken::number:
+      case ExpressionToken::Number:
 	evaluationStack.push(*i);
 	break;
-      case ExpressionToken::variable:
+      case ExpressionToken::Variable:
 	// strip off '$'?
 	tok.setNumber(BZDB.eval(i->getVariable()));
 	evaluationStack.push(tok);
 	break;
-      case ExpressionToken::oper:
+      case ExpressionToken::Oper:
 	if ((i->getOperator() == ExpressionToken::lparen) ||
 	    (i->getOperator() == ExpressionToken::rparen)) {
 	    break;  // should not have any parens here, skip them

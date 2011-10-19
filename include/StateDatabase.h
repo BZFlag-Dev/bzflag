@@ -378,7 +378,7 @@ private:
 public:
   class ExpressionToken {
   public:
-    enum Type { oper, number, variable };
+    enum Type { Oper, Number, Variable };
     enum Operator { add, subtract, multiply, divide, power, lparen, rparen, none };
     struct Contents {
     public:
