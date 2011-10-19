@@ -41,7 +41,8 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     switch (sLink.getState()) {
       case ServerLink::BadVersion: {
 	static char versionError[] = "Incompatible server version XXXXXXXX";
-	strncpy(versionError + strlen(versionError) - 8,
+	// Flawfinder: ignore
+	strncpy(versionError + sizeof(versionError) - 8 - 1,
 	    sLink.getVersion(), 8);
 	std::cout << versionError;
 	break;
@@ -188,7 +189,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint16_t numVars;
       uint8_t nameLen, valueLen;
 
+      // Flawfinder: ignore
       char name[MaxPacketLen];
+      // Flawfinder: ignore
       char value[MaxPacketLen];
 
       vbuf = nboUnpackUShort(vbuf, numVars);
@@ -214,7 +217,9 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
 
     case MsgAddPlayer:
       uint16_t team, type, wins, losses, tks;
+      // Flawfinder: ignore
       char callsign[CallSignLen];
+      // Flawfinder: ignore
       char motto[MottoLen];
       vbuf = nboUnpackUByte(vbuf, p);
       vbuf = nboUnpackUShort(vbuf, type);
@@ -549,11 +554,14 @@ void BZAdminClient::sendMessage(const std::string& msg,
     return;
   }
 
+  // Flawfinder: ignore
   char buffer[MessageLen];
+  // Flawfinder: ignore
   char buffer2[1 + MessageLen];
   void* buf = buffer2;
 
   buf = nboPackUByte(buf, target);
+  // Flawfinder: ignore
   strncpy(buffer, msg.c_str(), MessageLen - 1);
   buffer[MessageLen - 1] = '\0';
   nboPackString(buffer2 + 1, buffer, MessageLen);
@@ -662,9 +670,11 @@ void BZAdminClient::showMessageType(std::string type) {
 
 
 void BZAdminClient::listSetVars(const std::string& name, void* thisObject) {
+  //Flawfinder: ignore
   char message[MessageLen];
   if (BZDB.getPermission(name) == StateDatabase::Locked) {
-    sprintf(message, "/set %s %f", name.c_str(), BZDB.eval(name));
+    // Flawfinder: ignore
+    snprintf(message, sizeof(message), "/set %s %f", name.c_str(), BZDB.eval(name));
     ((BZAdminClient*)thisObject)->ui->outputMessage(message, Default);
   }
 }
