@@ -283,12 +283,12 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 			    bool selected) {
   // score (wins-losses)[tks] callsign IP, reverse video if selected
   std::string name, ip;
-  int wins, losses, tks;
-  int scorePad = 17;
   int callsignPad = CallSignLen;
   int attrPad = std::string("(Reg/Ident/Admin)").length();
   PlayerIdMap::const_iterator iter = playerMap.find(id);
   if (iter != playerMap.end()) {
+    int wins, losses, tks;
+    const int scorePad = 17;
     name = iter->second.name;
     ip = iter->second.ip;
     wins = iter->second.wins;
@@ -332,7 +332,7 @@ void PlayerCMItem::showItem(WINDOW* menuWin, int line, int col, int width,
 
 
 CursesMenu::CursesMenu(BZAdminClient& c)
-  : client(c), players(c.getPlayers()), dirty(true) {
+  : selection(0), window(NULL), rebuilder(NULL), client(c), players(c.getPlayers()), dirty(true) {
 
 }
 
@@ -412,7 +412,7 @@ bool CursesMenu::handleKey(int c, std::string& str) {
     break;
   case KEY_DOWN:
     items[selection]->deselect();
-    selection = ((unsigned)selection == items.size() - 1 ? 0 : selection + 1);
+    selection = ((unsigned)selection == (items.size() - 1) ? 0 : selection + 1);
     break;
   default:
     result = items[selection]->handleKey(c, str, *this);

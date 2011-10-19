@@ -22,7 +22,7 @@ UIAdder CursesUI::uiAdder("curses", &CursesUI::creator);
 
 
 CursesUI::CursesUI(BZAdminClient& c) :
-  BZAdminUI(c),
+  BZAdminUI(c), menuWin(NULL),
   menuState(NoMenu), menu(c), client(c), players(c.getPlayers()),
   me(c.getMyId()), maxHistory(20), currentHistory(0),
   maxBufferSize(300), scrollOffset(0) {
@@ -160,7 +160,7 @@ bool CursesUI::checkCommand(std::string& str) {
 
     // scroll main window
   case KEY_NPAGE:
-    scrollOffset = (scrollOffset < unsigned(LINES - 2) / 2 ?
+    scrollOffset = (scrollOffset < (unsigned(LINES - 2) / 2) ?
 		    0 : scrollOffset - (LINES - 2) / 2);
     updateMainWinFromBuffer(LINES - 2);
     return false;
@@ -189,11 +189,11 @@ bool CursesUI::checkCommand(std::string& str) {
 	++targetIter;
     }
     else
-      targetIter--;
+      --targetIter;
     updateTargetWin();
     return false;
   case KEY_RIGHT:
-    targetIter++;
+    ++targetIter;
     if (targetIter == players.end())
       targetIter = additionalTargets.begin();
     else if (targetIter == additionalTargets.end())
@@ -203,7 +203,7 @@ bool CursesUI::checkCommand(std::string& str) {
 
     // command history
   case KEY_UP:
-    if (currentHistory == 0 || history.size() == 0)
+    if (currentHistory == 0 || history.empty())
       return false;
     --currentHistory;
     cmd = history[currentHistory];
@@ -254,6 +254,7 @@ bool CursesUI::checkCommand(std::string& str) {
       else {
 	std::string msg = "--- Can't ban ";
 	msg += targetIter->second.name + ", you don't have the IP address";
+        outputMessage(msg, White);
       }
     }
     return false;

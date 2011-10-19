@@ -136,8 +136,6 @@ PlayerId BZAdminClient::getMyId() {
 BZAdminClient::ServerCode BZAdminClient::checkMessage() {
   uint16_t code, len;
   char inbuf[MaxPacketLen];
-  std::string dstName, srcName;
-  int i = 0;
   PlayerIdMap::iterator iter;
 
   // read until we have a package, or until we have waited 100 ms
@@ -193,6 +191,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       char name[MaxPacketLen];
       // Flawfinder: ignore
       char value[MaxPacketLen];
+      int i;
 
       vbuf = nboUnpackUShort(vbuf, numVars);
       for (i = 0; i < numVars; i++) {
@@ -478,7 +477,7 @@ void BZAdminClient::outputServerList() const {
     std::vector<ServerItem> servers = serverList.getServers();
     for (std::vector<ServerItem>::const_iterator server = servers.begin();
 	 server != servers.end();
-	 server++) {
+	 ++server) {
       ui->outputMessage(std::string("  ") + server->description, Yellow);
     }
     ui->outputMessage(std::string("End Server List."), Yellow);
@@ -637,7 +636,6 @@ void BZAdminClient::waitForServer() {
     sendMessage("bzadminping", me);
     std::string expected = formatMessage("bzadminping", ChatMessage, me, me, NoTeam, me);
     std::string noTalk = formatMessage("We're sorry, you are not allowed to talk!", ChatMessage, ServerPlayer, me, NoTeam, me);
-    std::string str;
     BZAdminUI* tmpUI = ui;
     ui = NULL;
     do {
