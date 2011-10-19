@@ -386,7 +386,7 @@ namespace TextUtils {
 
   /** find the first instance of a substring,
   */
-  size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset = 0);
+  size_t find_first_substr(const std::string &findin, const std::string &findwhat, size_t offset = 0);
 }
 
 

@@ -365,7 +365,7 @@ namespace TextUtils
     return retstr;
   }
 
-  size_t find_first_substr(const std::string &findin, const std::string findwhat, size_t offset)
+  size_t find_first_substr(const std::string &findin, const std::string &findwhat, size_t offset)
   {
     if (findwhat.size()) {
       for (size_t f = offset; f < findin.size(); f++) {
