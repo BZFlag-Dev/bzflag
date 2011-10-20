@@ -65,8 +65,8 @@ class DXJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string axis);
-    void	setYAxis(const std::string axis);
+    void	setXAxis(const std::string &axis);
+    void	setYAxis(const std::string &axis);
     bool	ffHasRumble() const;
     void	ffRumble(int count,
 			 float delay, float duration,

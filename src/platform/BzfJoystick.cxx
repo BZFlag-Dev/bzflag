@@ -92,11 +92,11 @@ void		    BzfJoystick::ffDirectionalResistance(float, float, float, ResistanceTy
 {
 }
 
-void		    BzfJoystick::setXAxis(const std::string)
+void		    BzfJoystick::setXAxis(const std::string &)
 {
 }
 
-void		    BzfJoystick::setYAxis(const std::string)
+void		    BzfJoystick::setYAxis(const std::string &)
 {
 }
 

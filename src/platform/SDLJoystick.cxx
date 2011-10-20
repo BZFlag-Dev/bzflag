@@ -136,14 +136,14 @@ void		    SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
   }
 }
 
-void		    SDLJoystick::setXAxis(const std::string axis)
+void		    SDLJoystick::setXAxis(const std::string &axis)
 {
   // unset
   if (axis == "") return;
   xAxis = atoi(axis.c_str());
 }
 
-void		    SDLJoystick::setYAxis(const std::string axis)
+void		    SDLJoystick::setYAxis(const std::string &axis)
 {
   // unset
   if (axis == "") return;

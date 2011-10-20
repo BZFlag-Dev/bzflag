@@ -40,8 +40,8 @@ class BzfJoystick {
      ** are assumed to be default X and Y axes, respectively.
      **/
     virtual void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    virtual void	setXAxis(const std::string axis);
-    virtual void	setYAxis(const std::string axis);
+    virtual void	setXAxis(const std::string &axis);
+    virtual void	setYAxis(const std::string &axis);
 
     /* Rumble force feedback support - a motor in the controller vibrates it,
      * as tactile feedback for explosions, collisions, engines starting, death,

@@ -370,14 +370,14 @@ void		EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
       list.push_back(anames[i]);
 }
 
-void		    EvdevJoystick::setXAxis(const std::string axis)
+void		    EvdevJoystick::setXAxis(const std::string &axis)
 {
   for (int i = 0; i < 9; ++i)
     if (anames[i] == axis)
       useaxis[0] = ABS_X + i;
 }
 
-void		    EvdevJoystick::setYAxis(const std::string axis)
+void		    EvdevJoystick::setYAxis(const std::string &axis)
 {
   for (int i = 0; i < 9; ++i)
     if (anames[i] == axis)

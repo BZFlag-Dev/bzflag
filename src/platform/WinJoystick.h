@@ -32,8 +32,8 @@ class WinJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string axis);
-    void	setYAxis(const std::string axis);
+    void	setXAxis(const std::string &axis);
+    void	setYAxis(const std::string &axis);
 
   private:
     unsigned int JoystickID;
