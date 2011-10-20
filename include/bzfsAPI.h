@@ -425,7 +425,7 @@ class BZF_API bz_CTFCaptureEventData_V1 : public bz_EventData
 public:
   bz_CTFCaptureEventData_V1() : bz_EventData(bz_eCaptureEvent)
     , teamCapped(eNoTeam), teamCapping(eNoTeam), playerCapping(-1)
-    , rot(0.0)
+    , pos(), rot(0.0)
   {
   }
 
@@ -442,7 +442,7 @@ class BZF_API bz_PlayerDieEventData_V1 : public bz_EventData
 public:
   bz_PlayerDieEventData_V1() : bz_EventData(bz_ePlayerDieEvent)
     , playerID(-1), team(eNoTeam), killerID(-1), killerTeam(eNoTeam)
-    , shotID(-1) , driverID(-1)
+    , shotID(-1) , driverID(-1), state()
   {
   }
 
@@ -461,7 +461,7 @@ class BZF_API bz_PlayerSpawnEventData_V1 : public bz_EventData
 {
 public:
   bz_PlayerSpawnEventData_V1() : bz_EventData(bz_ePlayerSpawnEvent)
-    , playerID(-1), team(eNoTeam)
+    , playerID(-1), team(eNoTeam), state()
   {
   }
 
@@ -805,7 +805,7 @@ class BZF_API bz_PlayerUpdateEventData_V1 : public bz_EventData
 {
 public:
   bz_PlayerUpdateEventData_V1() : bz_EventData(bz_ePlayerUpdateEvent)
-    , playerID(-1), stateTime(0.0)
+    , playerID(-1), state(), lastState(), stateTime(0.0)
   {
   }
 
@@ -921,7 +921,7 @@ class BZF_API bz_AllowCTFCaptureEventData_V1 : public bz_EventData
  public:
   bz_AllowCTFCaptureEventData_V1() : bz_EventData(bz_eAllowCTFCaptureEvent)
     , teamCapped(eNoTeam), teamCapping(eNoTeam), playerCapping(-1)
-    , rot(0.0)
+    , pos(), rot(0.0)
     , allow(false), killTeam(true)
     {
     }
@@ -941,7 +941,7 @@ class BZF_API bz_MsgDebugEventData_V1 : public bz_EventData
 {
 public:
   bz_MsgDebugEventData_V1(): bz_EventData(bz_eMsgDebugEvent)
-    , receive(true)
+    , code(), len(), msg(), receive(true)
     , playerID(-1)
   {
   }
@@ -1157,7 +1157,7 @@ public:
   bz_BasePlayerRecord()
     : version(1), playerID(-1), team(eNoTeam)
     , currentFlagID(-1)
-    , lastUpdateTime(0.0)
+    , lastUpdateTime(0.0) , lastKnownState()
     , spawned(false), verified(false), globalUser(false)
     , admin(false), op(false), canSpawn(false)
     , lag(0), jitter(0), packetLoss(0.0)
