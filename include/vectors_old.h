@@ -23,7 +23,7 @@ typedef float afvec4[4];
 // vectors implemented as simple classes
 class cfvec2 {
   public:
-    cfvec2(){};
+    cfvec2(): data() {};
     cfvec2(const float values[2]) {
       memcpy (data, values, sizeof(float[2]));
     }
@@ -37,7 +37,7 @@ class cfvec2 {
 
 class cfvec3 {
   public:
-    cfvec3(){};
+    cfvec3(): data() {};
     cfvec3(const float values[3]) {
       memcpy (data, values, sizeof(float[3]));
     }
@@ -51,7 +51,7 @@ class cfvec3 {
 
 class cfvec4 {
   public:
-    cfvec4(){};
+    cfvec4(): data() {};
     cfvec4(const float values[4]) {
       memcpy (data, values, sizeof(float[4]));
     }
