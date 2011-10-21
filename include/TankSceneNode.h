@@ -32,7 +32,7 @@ public:
 	class DeathParams
 	{
 	public:
-		DeathParams( float param, fvec4 c)
+		DeathParams( float param, fvec4 c): part()
 		{
 			scale = fvec3(1,1,1);
 			explodeParam = param;
