@@ -27,11 +27,17 @@ BZFlag.  Known requirements include:
 
   Debian & Ubuntu:
 
+    g++
+    libtool
+    automake
+    autoconf
     libgl1-mesa-dev
     libglu1-mesa-dev
     libsdl1.2-dev
+    libsdl-sound1.2-dev
     libcurl3-dev
-    libsdl-sound1.2-dev (may have to add this yourself as well)
+    libc-ares-dev
+    libglew1.5 
 
   Fedora:
 
