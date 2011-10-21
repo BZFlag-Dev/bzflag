@@ -65,7 +65,7 @@ CacheManager::~CacheManager()
 }
 
 
-bool CacheManager::isCacheFileType(const std::string name) const
+bool CacheManager::isCacheFileType(const std::string &name) const
 {
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {
     return true;
@@ -77,7 +77,7 @@ bool CacheManager::isCacheFileType(const std::string name) const
 }
 
 
-std::string CacheManager::getLocalName(const std::string name) const
+std::string CacheManager::getLocalName(const std::string &name) const
 {
   std::string local = "";
   if (strncasecmp(name.c_str(), "http://", 7) == 0) {

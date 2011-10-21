@@ -63,7 +63,7 @@ PositionTracker::~PositionTracker()
 /* Linear O(n) time to track a new item since the entire vector is
  * searched.  if the item is not found, an item is created and added.
  */
-unsigned short PositionTracker::track(const std::string id, std::string group)
+unsigned short PositionTracker::track(const std::string &id, std::string group)
 {
   TrackedItemVector& trackSet = _trackedItem[group];
   for (unsigned int i = 0; i != trackSet.size(); i++) {
@@ -136,7 +136,7 @@ unsigned short PositionTracker::track(long int id, std::string group)
 }
 
 
-bool PositionTracker::update(unsigned short int token, const std::string id, const double position[3], std::string group)
+bool PositionTracker::update(unsigned short int token, const std::string &id, const double position[3], std::string group)
 {
   TrackedItemVector& trackSet = _trackedItem[group];
   if ((token >= trackSet.size()) ||
@@ -153,7 +153,7 @@ bool PositionTracker::update(unsigned short int token, const std::string id, con
 
   return true;
 }
-bool PositionTracker::update(unsigned short int token, const std::string id, const float position[3], std::string group)
+bool PositionTracker::update(unsigned short int token, const std::string &id, const float position[3], std::string group)
 {
   double pos[3];
   pos[0] = (double)position[0];
@@ -272,7 +272,7 @@ bool PositionTracker::addWaypoint(const float from[3], const float to[3], double
 }
 
 
-bool PositionTracker::forget(unsigned short int token, const std::string id, std::string group)
+bool PositionTracker::forget(unsigned short int token, const std::string &id, std::string group)
 {
   TrackedItemVector& trackSet = _trackedItem[group];
   if ((token >= trackSet.size()) ||

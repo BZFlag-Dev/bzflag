@@ -181,7 +181,7 @@ void cURLManager::setHTTPPostMode()
     logDebugMessage(1,"CURLOPT_HTTPPOST error %d : %s\n", result, errorBuffer);
 }
 
-void cURLManager::setURL(const std::string url)
+void cURLManager::setURL(const std::string &url)
 {
   CURLcode result;
 
@@ -396,7 +396,7 @@ void cURLManager::setTimeCondition(timeCondition condition, time_t &t)
   }
 }
 
-void cURLManager::setInterface(const std::string _interfaceIP)
+void cURLManager::setInterface(const std::string &_interfaceIP)
 {
   interfaceIP = _interfaceIP;
 
@@ -409,7 +409,7 @@ void cURLManager::setInterface(const std::string _interfaceIP)
     logDebugMessage(1,"CURLOPT_SET_INTERFACE error %d : %s\n", result, errorBuffer);
 }
 
-void cURLManager::setUserAgent(const std::string _userAgent)
+void cURLManager::setUserAgent(const std::string &_userAgent)
 {
   userAgent = _userAgent;
 

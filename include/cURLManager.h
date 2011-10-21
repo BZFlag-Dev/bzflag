@@ -44,11 +44,11 @@ public:
   void setHTTPPostMode();
   void setPostMode(std::string postData);
   void setRequestFileTime(bool request);
-  void setURL(const std::string url);
+  void setURL(const std::string &url);
   void setProgressFunction(curl_progress_callback func, void* data);
   void setTimeCondition(timeCondition condition, time_t &t);
-  void setInterface(const std::string interfaceIP);
-  void setUserAgent(const std::string userAgent);
+  void setInterface(const std::string &interfaceIP);
+  void setUserAgent(const std::string &userAgent);
   void setDNSCachingTime(long time);
 
   void addFormData(const char *key, const char *value);

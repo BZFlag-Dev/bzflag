@@ -60,25 +60,25 @@ protected:
   /** add a response to vote upon.  vote responses are the choices that
    * may be voted upon (e.g. "yes", "no", "maybe", etc).
    */
-  bool addResponse(const std::string response);
+  bool addResponse(const std::string &response);
 
   /** return truthfully if a particular person has already voted
     */
-  bool hasVoted(const std::string voterName) const;
+  bool hasVoted(const std::string &voterName) const;
 
   /** a given user id/name responds and votes to a particular poll
    * response.  returns truthfully whether the vote was placed.
    */
-  bool vote(const std::string voterName, const std::string response);
+  bool vote(const std::string &voterName, const std::string &response);
 
   /** allow a vote to be retracted, returns truefully whether a retraction
    * was possible.
    */
-  bool retractVote(const std::string voterName);
+  bool retractVote(const std::string &voterName);
 
   /** return how many votes have been placed for a particular response.
    */
-  unsigned long int getVoteCount(const std::string response) const;
+  unsigned long int getVoteCount(const std::string &response) const;
 
   /** return total number of votes received
    */

@@ -61,7 +61,7 @@ VotingBooth *YesNoVotingBooth(std::string question)
 }
 
 
-bool VotingBooth::addResponse(const std::string response)
+bool VotingBooth::addResponse(const std::string &response)
 {
   if (response.size() == 0) {
     return false;
@@ -73,7 +73,7 @@ bool VotingBooth::addResponse(const std::string response)
 }
 
 
-bool VotingBooth::hasVoted(const std::string voterName) const
+bool VotingBooth::hasVoted(const std::string &voterName) const
 {
   if (voterName.size() <= 0) {
     return false;
@@ -85,7 +85,7 @@ bool VotingBooth::hasVoted(const std::string voterName) const
 }
 
 
-bool VotingBooth::vote(const std::string voterName, const std::string response)
+bool VotingBooth::vote(const std::string &voterName, const std::string &response)
 {
   if (this->hasVoted(voterName)) {
     /* voters are not allowed to vote multiple times */
@@ -104,7 +104,7 @@ bool VotingBooth::vote(const std::string voterName, const std::string response)
   return true;
 }
 
-bool VotingBooth::retractVote(const std::string voterName)
+bool VotingBooth::retractVote(const std::string &voterName)
 {
   VoterResponseMap::iterator i = _vote.find(voterName);
 
@@ -118,7 +118,7 @@ bool VotingBooth::retractVote(const std::string voterName)
   return false;
 }
 
-unsigned long int VotingBooth::getVoteCount(const std::string response) const
+unsigned long int VotingBooth::getVoteCount(const std::string &response) const
 {
   unsigned long int total=0;
 

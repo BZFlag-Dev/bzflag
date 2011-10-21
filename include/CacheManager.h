@@ -31,8 +31,8 @@ class CacheManager {
       std::string key;
     } CacheRecord;
 
-    bool isCacheFileType(const std::string name) const;
-    std::string getLocalName(const std::string name) const;
+    bool isCacheFileType(const std::string &name) const;
+    std::string getLocalName(const std::string &name) const;
 
     bool loadIndex();
     bool saveIndex();

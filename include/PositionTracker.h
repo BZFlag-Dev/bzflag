@@ -75,7 +75,7 @@ public:
    * tracking items may be categorized using a provided group name.  a
    * token is returned that must be used for subsequent updates.
    */
-  unsigned short track(const std::string id, std::string group = std::string(""));
+  unsigned short track(const std::string &id, std::string group = std::string(""));
   unsigned short track(long int id, std::string group = std::string(""));
 
   /** update the position of a tracked item.  returns truthfully
@@ -83,8 +83,8 @@ public:
    * existed).  the token and string id are both required for
    * validation.
    */
-  bool update(unsigned short int token, const std::string id, const double position[3], std::string group = std::string(""));
-  bool update(unsigned short int token, const std::string id, const float position[3], std::string group = std::string(""));
+  bool update(unsigned short int token, const std::string &id, const double position[3], std::string group = std::string(""));
+  bool update(unsigned short int token, const std::string &id, const float position[3], std::string group = std::string(""));
   bool update(unsigned short int token, long int id, const double position[3], std::string group = std::string(""));
   bool update(unsigned short int token, long int id, const float position[3], std::string group = std::string(""));
 
@@ -100,7 +100,7 @@ public:
   /** stop tracking something if it was being tracked.  the token and
    * string id are both required for validation.
    */
-  bool forget(unsigned short int token, const std::string id, std::string group = std::string(""));
+  bool forget(unsigned short int token, const std::string &id, std::string group = std::string(""));
   bool forget(unsigned short int token, long int id, std::string group = std::string(""));
 
   /** compute the simple distance between two tracked items given their tokens.
