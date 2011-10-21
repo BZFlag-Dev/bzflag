@@ -956,8 +956,8 @@ AC_SUBST(CURSES_LIB)
 ares_works=no
 if test "x$enable_ares_build" != "xyes" ; then
     AC_MSG_CHECKING(for ares DNS lookup functionality)
-    PRELDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $LIBCARES"
+    PRELIBS="$LIBS"
+    LIBS="$LIBS $LIBCARES"
     AC_TRY_LINK([
 #include <stdio.h>
 #include <ares.h>
@@ -970,7 +970,7 @@ void callback(void * /*arg*/, int /*callbackStatus*/,
   ares_gethostbyaddr(aresChannel, &requestedAddress,
 		     sizeof(in_addr), AF_INET, callback, NULL);
     ], [ares_works=yes], [ares_works=no])
-    LDFLAGS="$PRELDFLAGS"
+    LIBS="$PRELIBS"
     AC_MSG_RESULT($ares_works)
 fi # enable_ares_build
 dnl figure out whether we need to build the included ares library
