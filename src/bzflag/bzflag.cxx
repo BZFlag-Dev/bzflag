@@ -421,51 +421,54 @@ static void		parse(int argc, char** argv)
     else if (argv[i][0] != '-') {
       if (i == (argc - 1)) {
 	// find the beginning of the server name, parse the callsign
-	char *serverName;
-	if ((serverName = strchr(argv[i], '@')) != NULL) {
-	  char *password;
-	  *serverName = '\0';
-	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
-	    printFatalError("Callsign truncated.");
-	  }
-	  strncpy(startupInfo.callsign, argv[i],
-		  sizeof(startupInfo.callsign) - 1);
-	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-	  if ((password = strchr(startupInfo.callsign, ':')) != NULL) {
-	    *(strchr(startupInfo.callsign, ':')) = '\0';
-	    *password = '\0', ++password;
-	    if (strlen(argv[i]) >= sizeof(startupInfo.password)) {
+	char *serverName = strchr(argv[i], '@');
+	if (serverName == NULL) {
+	  serverName = argv[i];
+	} else {
+	  *serverName++ = '\0';
+
+	  char *password = strchr(startupInfo.callsign, ':');
+	  if (password != NULL) {
+	    *password++ = '\0';
+	    if (strlen(password) >= sizeof(startupInfo.password)) {
 	      printFatalError("Password truncated.");
 	    }
+	    // Flawfinder: ignore
 	    strncpy(startupInfo.password, password,
 		    sizeof(startupInfo.password) - 1);
 	    startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
 	  }
-	  ++serverName;
-	}
-	else {
-	  serverName = argv[i];
+
+	  // Flawfinder: ignore
+	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
+	    printFatalError("Callsign truncated.");
+	  }
+	  // Flawfinder: ignore
+	  strncpy(startupInfo.callsign, argv[i],
+		  sizeof(startupInfo.callsign) - 1);
+	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
 	}
 
 	// find the beginning of the port number, parse it
-	char *portNumber;
-	if ((portNumber = strchr(serverName, ':')) == NULL) {
+	char *portNumber = strchr(serverName, ':');
+	if (portNumber == NULL) {
 	  startupInfo.serverPort = ServerPort;  // use the default
-	}
-	else {
-	  *portNumber = '\0';
-	  ++portNumber;
+	} else {
+	  *portNumber++ = '\0';
 	  startupInfo.serverPort = atoi(portNumber);
 	  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
 	    startupInfo.serverPort = ServerPort;
-	    printFatalError("Bad port, using default %d.", startupInfo.serverPort);
+	    printFatalError("Bad port, using default %d.",
+			    startupInfo.serverPort);
 	  }
 	}
 	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
 	  printFatalError("Server name too long.  Ignoring.");
-	}
-	else {
-	  strcpy(startupInfo.serverName, serverName);
+	} else {
+	  // Flawfinder: ignore
+	  strncpy(startupInfo.serverName, serverName,
+		  sizeof(startupInfo.serverName) - 1);
+	  startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
 	  startupInfo.autoConnect = true;
 	}
       }
@@ -630,8 +633,8 @@ static void createCacheSignature ()
   cacheTagName += "CACHEDIR.TAG";
   std::ostream* cacheTag = FILEMGR.createDataOutStream(cacheTagName, true, true);
   if (cacheTag != NULL) {
-    cacheTag->write(cacheSignature, strlen(cacheSignature));
-    cacheTag->write(cacheComment, strlen(cacheComment));
+    cacheTag->write(cacheSignature, strlen(cacheSignature)); // Flawfinder: ignore
+    cacheTag->write(cacheComment, strlen(cacheComment)); // Flawfinder: ignore
   }
   delete cacheTag;
 
@@ -743,6 +746,7 @@ int			main(int argc, char** argv)
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
   } else if (getenv("BZID")) {
     BZDB.set("callsign", getenv("BZID"));
+    // Flawfinder: ignore
     strncpy(startupInfo.callsign, getenv("BZID"),
 					sizeof(startupInfo.callsign) - 1);
     startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
@@ -787,11 +791,13 @@ int			main(int argc, char** argv)
   // restore some configuration (command line overrides these)
   if (startupInfo.hasConfiguration) {
     if (BZDB.isSet("callsign")) {
+      // Flawfinder: ignore
       strncpy(startupInfo.callsign, BZDB.get("callsign").c_str(),
 					sizeof(startupInfo.callsign) - 1);
       startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
     }
     if (BZDB.isSet("password")) {
+      // Flawfinder: ignore
       strncpy(startupInfo.password, BZDB.get("password").c_str(),
 					sizeof(startupInfo.password) - 1);
       startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
@@ -802,6 +808,7 @@ int			main(int argc, char** argv)
       startupInfo.team = Team::getTeam(value);
     }
     if (BZDB.isSet("server")) {
+      // Flawfinder: ignore
       strncpy(startupInfo.serverName, BZDB.get("server").c_str(),
 					sizeof(startupInfo.serverName) - 1);
       startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
@@ -878,7 +885,9 @@ int			main(int argc, char** argv)
   if (BZDB.isSet("fixedTime")) {
     int hours, minutes, seconds;
     char dbTime[256];
+    // Flawfinder: ignore
     strncpy(dbTime, BZDB.get("fixedTime").c_str(), sizeof(dbTime) - 1);
+    dbTime[sizeof(dbTime) - 1] = '\0';
     if (sscanf(dbTime, "%d:%d:%d", &hours, &minutes, &seconds) != 3 ||
 	hours < 0 || hours > 23 ||
 	minutes < 0 || minutes > 59 ||
@@ -936,6 +945,7 @@ int			main(int argc, char** argv)
   // use empty motto string unless previously set
   std::string motto = BZDB.get("motto");
   motto = motto.substr(0, sizeof(startupInfo.motto) - 1);
+  //Flawfinder: ignore
   strcpy(startupInfo.motto, motto.c_str());
 
   // make platform factory
