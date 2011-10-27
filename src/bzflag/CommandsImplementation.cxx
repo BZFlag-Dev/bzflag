@@ -191,7 +191,7 @@ bool CommandList::operator() (const char * UNUSED(cmdLine))
   std::vector<const std::string*> cmds;
   MapOfCommands::iterator it;
   MapOfCommands& commandMap = *mapOfCommands;
-  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+  for (it = commandMap.begin(); it != commandMap.end(); ++it) {
     const std::string& cmd = it->first;
     cmds.push_back(&cmd);
   }
@@ -323,7 +323,7 @@ bool UnsilenceCommand::operator() (const char *commandLine)
   Player *loudmouth = getPlayerByName(commandLine + 11);
   if (loudmouth) {
     std::vector<std::string>::iterator it = silencePlayers.begin();
-    for (; it != silencePlayers.end(); it++) {
+    for (; it != silencePlayers.end(); ++it) {
       if (*it == commandLine + 10) {
 	silencePlayers.erase(it);
 	std::string unsilenceMessage = "Unsilenced ";
@@ -719,7 +719,6 @@ bool SaveWorldCommand::operator() (const char *commandLine)
   bool ungrouped = false;
   bool wavefront = false;
 
-  std::string cmdLine = commandLine;
   std::vector<std::string> args;
   args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
