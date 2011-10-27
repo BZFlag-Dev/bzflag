@@ -291,7 +291,7 @@ void EffectsRenderer::update(void)
 			itr = effectsList.erase(itr);
 		}
 		else
-			itr++;
+			++itr;
 	}
 }
 
@@ -640,7 +640,7 @@ std::vector<std::string> EffectsRenderer::getShotTeleportEffectTypes ( void )
 
 
 //****************** effects base class*******************************
-BasicEffect::BasicEffect()
+BasicEffect::BasicEffect(): age()
 {
 	position[0] = position[1] = position[2] = 0.0f;
 	rotation[0] = rotation[1] = rotation[2] = 0.0f;
@@ -819,7 +819,7 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 
 
 //******************RingSpawnEffect****************
-RingSpawnEffect::RingSpawnEffect()
+RingSpawnEffect::RingSpawnEffect(): ringRange(), numRings()
 {
 	radius = 4.0f;
 	maxZ = 10.0f;
@@ -867,28 +867,25 @@ void RingSpawnEffect::draw(const SceneRenderer &)
 
 void RingSpawnEffect::drawRing(int n, float coreAlpha)
 {
-	float posZ = 0;
-	float alpha;
+  float posZ;
+  float alpha;
 
-	if (age > (ringRange * (n-1)))	// this ring in?
-	{
-		if ( age < ringRange * n) // the ring is still coming in
-		{
-			posZ = maxZ - ((age - ringRange * (n-1)) / ringRange) * (maxZ - n * 2.5f);
-			alpha = (age - ringRange) / (ringRange * n);
-		}
-		else
-		{
-			posZ = n * 2.5f;
-			alpha = coreAlpha;
-		}
+  if (age <= (ringRange * (n-1)))  // this ring in?
+    return;
 
-		glPushMatrix();
-		glTranslatef(0, 0, posZ);
-		glColor4f(color[0], color[1], color[2], alpha);
-		drawRingXY(radius, 2.5f * n);
-		glPopMatrix();
-	}
+  if (age < ringRange * n) { // the ring is still coming in
+    posZ = maxZ - ((age - ringRange * (n-1)) / ringRange) * (maxZ - n * 2.5f);
+    alpha = (age - ringRange) / (ringRange * n);
+  } else {
+    posZ = n * 2.5f;
+    alpha = coreAlpha;
+  }
+
+  glPushMatrix();
+  glTranslatef(0, 0, posZ);
+  glColor4f(color[0], color[1], color[2], alpha);
+  drawRingXY(radius, 2.5f * n);
+  glPopMatrix();
 }
 
 //******************StdShotEffect****************
@@ -962,7 +959,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 }
 
 //******************FlashShotEffect****************
-FlashShotEffect::FlashShotEffect() : StdShotEffect()
+FlashShotEffect::FlashShotEffect() : StdShotEffect(), length()
 {
 	// we use the jump jet texture upside-down to get a decent muzzle flare effect
 	texture = TextureManager::instance().getTextureID("jumpjets",false);
