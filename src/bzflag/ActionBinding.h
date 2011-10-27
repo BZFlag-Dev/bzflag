@@ -59,8 +59,8 @@ class ActionBinding : public Singleton<ActionBinding> {
   //~ActionBinding();
   void bind(std::string action, std::string key);
   void unbind(std::string action, std::string key);
-  static void onScanCB(const std::string& name, bool press,
-		       const std::string& cmd, void* userData);
+  static void onScanCB(const std::string& name, bool,
+		       const std::string& cmd, void*);
 };
 
 #endif
