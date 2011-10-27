@@ -38,7 +38,7 @@ HUDDialogStack* HUDDialogStack::get()
 
 bool HUDDialogStack::isActive() const
 {
-  return stack.size() != 0;
+  return not stack.empty();
 }
 
 HUDDialog* HUDDialogStack::top() const
@@ -73,7 +73,8 @@ void HUDDialogStack::pop()
     stack[index]->setFocus(HUDui::getFocus());
     stack[index]->dismiss();
     std::vector<HUDDialog*>::iterator it = stack.begin();
-    for(int i = 0; i < index; i++) it++;
+    for (int i = 0; i < index; i++)
+      ++it;
     stack.erase(it);
     if (index > 0) {
       HUDDialog* dialog = stack[index - 1];
