@@ -524,9 +524,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   OpenGLGState::resetState();
 
   // draw the lines around the console panel
-  long xpos;
-  long ypos;
-
   float outlineOpacity = RENDERER.getPanelOpacity();
   float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
   if ( outlineOpacity < 1.0f )
@@ -537,7 +534,11 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
   // nice border
   glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity );
-  glBegin(GL_LINE_LOOP); {
+  glBegin(GL_LINE_LOOP);
+  {
+    long xpos;
+    long ypos;
+
     // bottom left
     xpos = x + messageAreaPixels[0] - 1;
     ypos = y + messageAreaPixels[1] - 1;
@@ -558,7 +559,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     }
 
     // across the top from right to left
-    long int drawnTabWidth = 0;
     for (int tab = (int)tabs->size() - 1; tab >= 0; tab--) {
 
       if (messageMode == MessageModes(tab)) {
@@ -574,7 +574,6 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 	xpos -= long(tabTextWidth[tab]);
 	glVertex2f((float) xpos, (float) ypos);
       }
-      drawnTabWidth += long(tabTextWidth[tab]);
     }
 
     // over from panel on right
