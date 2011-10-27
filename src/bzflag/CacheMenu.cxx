@@ -25,7 +25,7 @@
 #include "playing.h"
 #include "HUDui.h"
 
-CacheMenu::CacheMenu()
+CacheMenu::CacheMenu(): center()
 {
   // cache font face ID
   int fontFace = MainMenu::getFontFace();
