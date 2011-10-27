@@ -257,14 +257,14 @@ void Help1Menu::resize(int _width, int _height)
   // get current key mapping and set strings appropriately
   KeyKeyMap::iterator it;
   // clear
-  for (it = mappable.begin(); it != mappable.end(); it++) {
+  for (it = mappable.begin(); it != mappable.end(); ++it) {
     it->second.key1 = "";
     it->second.key2 = "";
   }
   // load current settings
   KEYMGR.iterate(&onScanCB, this);
   std::vector<HUDuiControl*>& listHUD = getControls();
-  for (it = mappable.begin(); it != mappable.end(); it++) {
+  for (it = mappable.begin(); it != mappable.end(); ++it) {
     std::string value = "";
     if (it->second.key1.empty()) {
       value = "<not mapped>";
@@ -402,7 +402,7 @@ Help5Menu::Help5Menu() : HelpMenu("Good Flags")
   listHUD.push_back(createLabel("", "Good Flags:"));
 
   FlagSet fs = Flag::getGoodFlags();
-  for (FlagSet::iterator it = fs.begin(); it != fs.end(); it++) {
+  for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 
     if (((*it)->flagQuality != FlagGood) ||
 	((*it)->flagTeam != NoTeam) ||
@@ -438,7 +438,7 @@ Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
   listHUD.push_back(createLabel("", "Bad Flags:"));
 
   FlagSet fs = Flag::getBadFlags();
-  for (FlagSet::iterator it = fs.begin(); it != fs.end(); it++) {
+  for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it) {
 
     if (((*it)->flagQuality != FlagBad) ||
 	((*it)->flagTeam != NoTeam) ||
