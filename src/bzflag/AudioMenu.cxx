@@ -163,8 +163,6 @@ void			AudioMenu::resize(int _width, int _height)
 
 void			AudioMenu::callback(HUDuiControl* w, void* data) {
   HUDuiList* list = (HUDuiList*)w;
-  std::vector<std::string> *options = &list->getList();
-  std::string selectedOption = (*options)[list->getIndex()];
   switch (((const char*)data)[0]) {
     case 's':
       BZDB.set("volume", TextUtils::format("%d", list->getIndex()));
