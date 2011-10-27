@@ -81,8 +81,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   OpenGLMaterial defaultMaterial(black, black, 0.0f);
   OpenGLMaterial rainMaterial(white, white, 0.0f);
 
-  int i;
-
   sunList = INVALID_GL_LIST_ID;
   moonList = INVALID_GL_LIST_ID;
   starList = INVALID_GL_LIST_ID;
@@ -179,24 +177,20 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
   // make mountain stuff
   mountainsAvailable = false;
   {
-    int mountainTexture = -1;
-    int width = 0;
+    int mountainTexture;
     int height = 0;
+    int i;
+
     numMountainTextures = 0;
-    bool done = false;
-    while (!done) {
+    while (1) {
       char text[256];
       sprintf (text, "mountain%d", numMountainTextures + 1);
       mountainTexture = tm.getTextureID (text, false);
-      if (mountainTexture >= 0) {
-	const ImageInfo & info = tm.getInfo (mountainTexture);
-	height = info.y;
-	width += info.x;
-	numMountainTextures++;
-      }
-      else {
-	done = true;
-      }
+      if (mountainTexture < 0)
+	break;
+      const ImageInfo & info = tm.getInfo (mountainTexture);
+      height = info.y;
+      numMountainTextures++;
     }
 
     if (numMountainTextures > 0) {
@@ -209,9 +203,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
       gstate.setMaterial (defaultMaterial);
       gstate.setAlphaFunc ();
 
-      if (numMountainTextures > 1) {
-	width -= 2 * numMountainTextures;
-      }
       // find power of two at least as large as height
       int scaledHeight = 1;
       while (scaledHeight < height) {
