@@ -129,8 +129,10 @@ static void copyConfigFile(const char *oldConfigName, std::string configName) {
   // update take care of it.
   mkdir(getConfigDirName(BZ_CONFIG_DIR_VERSION).c_str(), 0755);
   FILE *newFile = fopen(configName.c_str(),"wb");
-  if (!newFile)
+  if (!newFile) {
+    fclose(fp);
     return;
+  }
 
   fseek(fp, 0, SEEK_END);
   const int len = ftell(fp);
@@ -140,6 +142,7 @@ static void copyConfigFile(const char *oldConfigName, std::string configName) {
   if (temp == NULL) {
     printError("Unsufficient Memory");
     fclose(fp);
+    fclose(newFile);
     return;
   }
 
