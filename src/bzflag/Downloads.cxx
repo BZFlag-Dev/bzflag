@@ -223,7 +223,7 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
   }
 
   if (doDownloads)
-    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    for (set_it = set.begin(); set_it != set.end(); ++set_it) {
       const std::string& texUrl = set_it->c_str();
       if (CACHEMGR.isCacheFileType(texUrl)) {
 	if (!referencing)
@@ -232,7 +232,7 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
       }
     }
   else
-    for (set_it = set.begin(); set_it != set.end(); set_it++) {
+    for (set_it = set.begin(); set_it != set.end(); ++set_it) {
       const std::string& texUrl = set_it->c_str();
       if (CACHEMGR.isCacheFileType(texUrl)) {
 
@@ -282,7 +282,7 @@ void Downloads::removeTextures()
 
   TextureManager& TEXMGR = TextureManager::instance();
 
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+  for (set_it = set.begin(); set_it != set.end(); ++set_it) {
     const std::string& texUrl = set_it->c_str();
     if (CACHEMGR.isCacheFileType(texUrl)) {
       const std::string& localname = CACHEMGR.getLocalName(texUrl);
@@ -326,7 +326,7 @@ bool authorizedServer(const std::string& hostname)
 
 bool parseHostname(const std::string& url, std::string& hostname)
 {
-  std::string protocol, path, ip;
+  std::string protocol, path;
   int port;
   if (BzfNetwork::parseURL(url, protocol, hostname, port, path)) {
     if ((protocol == "http") || (protocol == "ftp")) {
@@ -352,7 +352,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
   std::map<std::string, bool>::iterator host_it;
 
   // get the list of hosts to check
-  for (set_it = set.begin(); set_it != set.end(); set_it++) {
+  for (set_it = set.begin(); set_it != set.end(); ++set_it) {
     const std::string& url = *set_it;
     std::string hostname;
     if (parseHostname(url, hostname)) {
@@ -361,7 +361,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
   }
 
   // check the hosts
-  for (host_it = hostAccess.begin(); host_it != hostAccess.end(); host_it++) {
+  for (host_it = hostAccess.begin(); host_it != hostAccess.end(); ++host_it) {
     const std::string& host = host_it->first;
     host_it->second = authorizedServer(host);
   }
@@ -370,7 +370,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
   set_it = set.begin();
   while (set_it != set.end()) {
     BzMaterialManager::TextureSet::iterator next_it = set_it;
-    next_it++;
+    ++next_it;
     const std::string& url = *set_it;
     std::string hostname;
     if (parseHostname(url, hostname) && !hostAccess[hostname]) {
