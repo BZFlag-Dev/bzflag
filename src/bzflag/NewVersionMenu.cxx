@@ -159,9 +159,10 @@ void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
       // write data to temporary file
       const std::string tempfile = getTempDirName() + "\\temp-upgrade.exe";
       FILE* temp = fopen(tempfile.c_str(), "wb");
-      if (temp)
+      if (temp) {
 	fwrite(data, 1, length, temp);
-      fclose(temp);
+        fclose(temp);
+      }
       // start the program
       char* args [2];
       args[0] = "temp-upgrade.exe";
