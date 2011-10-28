@@ -54,10 +54,12 @@ public:
   EnhancedHUDMarker()
     : pos(0.0f, 0.0f, 0.0f)
     , color(0.0f, 0.0f, 0.0f, 1.0f)
+    , friendly(false)
   {}
   EnhancedHUDMarker(const fvec3& p, const fvec4& c)
     : pos(p)
     , color(c)
+    , friendly(false)
   {}
   fvec3 pos;
   fvec4 color;
