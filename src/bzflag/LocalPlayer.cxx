@@ -1443,7 +1443,6 @@ void			LocalPlayer::explodeTank()
   setExplode(TimeKeeper::getTick());
   const float* oldVelocity = getVelocity();
   float newVelocity[3];
-  float maxSpeed;
   newVelocity[0] = oldVelocity[0];
   newVelocity[1] = oldVelocity[1];
   if (gravity < 0) {
@@ -1452,7 +1451,7 @@ void			LocalPlayer::explodeTank()
     //   to reach the acme of parabola, under the max height established
     // take the less
     newVelocity[2] = - 0.5f * gravity * explodeTim;
-    maxSpeed       = sqrtf(- 2.0f * zMax * gravity);
+    float maxSpeed = sqrtf(- 2.0f * zMax * gravity);
     if (newVelocity[2] > maxSpeed)
       newVelocity[2] = maxSpeed;
   } else {
