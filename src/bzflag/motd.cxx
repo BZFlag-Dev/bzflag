@@ -72,7 +72,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 	messages.push_back(msg);
       }
     }
-    if (messages.size() == 0) {
+    if (messages.empty()) {
       MOTD_message msg;
       msg.text = data;
       messages.push_back(msg);
@@ -111,7 +111,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
 }
 
 
-void MessageOfTheDay::getURL(const std::string URL)
+void MessageOfTheDay::getURL(const std::string &URL)
 {
   // get all up on the internet and go get the thing
   setURL(URL);
