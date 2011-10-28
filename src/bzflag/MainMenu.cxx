@@ -31,8 +31,9 @@
 #include "playing.h"
 #include "HUDui.h"
 
-MainMenu::MainMenu() : HUDDialog(), joinMenu(NULL),
-		       optionsMenu(NULL), quitMenu(NULL)
+MainMenu::MainMenu() : HUDDialog(),
+		       join(), login(), options(), help(), leave(), save(), quit(),
+		       joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
 }
 
