@@ -53,7 +53,7 @@ BzfRegion::BzfRegion() : mailbox(0), target(0), A(0.0, 0.0)
 }
 
 BzfRegion::BzfRegion(int sides, const float p[][2]) :
-  mailbox(0), target(0), A(0.0, 0.0)
+  mailbox(0), target(0), distance(), A(0.0, 0.0)
 {
   for (int i = 0; i < sides; i++) {
     corners.push_back(RegionPoint(p[i]));
@@ -311,16 +311,16 @@ void BzfRegion::splitEdge(const BzfRegion* oldNeighbor,
   for (int i = 0; i < count; i++)
     if (neighbors[i] == oldNeighbor) {
       std::vector<RegionPoint>::iterator it1 = corners.begin();
-      for(int j = 0; j < i + 1; j++) it1++;
+      for(int j = 0; j < i + 1; j++) ++it1;
       corners.insert(it1, p);
       if (onRight) {
 	std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
-	for(int j = 0; j < i; j++) it2++;
+	for(int j = 0; j < i; j++) ++it2;
 	neighbors.insert(it2, newNeighbor);
       }
       else {
 	std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
-	for(int j = 0; j < i + 1; j++) it2++;
+	for(int j = 0; j < i + 1; j++) ++it2;
 	neighbors.insert(it2, newNeighbor);
       }
       tidy();
@@ -354,10 +354,10 @@ void BzfRegion::tidy()
     const float* p2 = corners[(i+1)%count].get();
     if (fabs(p1[0] - p2[0]) < ZERO_TOLERANCE && fabs(p1[1] - p2[1]) < ZERO_TOLERANCE) {
       std::vector<RegionPoint>::iterator it1 = corners.begin();
-      for(int j = 0; j < i; j++) it1++;
+      for(int j = 0; j < i; j++) ++it1;
       corners.erase(it1);
       std::vector<BzfRegion*>::iterator it2 = neighbors.begin();
-      for(int k = 0; k < i; k++) it2++;
+      for(int k = 0; k < i; k++) ++it2;
       neighbors.erase(it2);
       i--;
       count--;
@@ -365,7 +365,7 @@ void BzfRegion::tidy()
   }
 }
 
-bool BzfRegion::test(int mailboxIndex)
+bool BzfRegion::test(int mailboxIndex) const
 {
   return (mailbox != mailboxIndex);
 }

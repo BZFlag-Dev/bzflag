@@ -49,7 +49,7 @@ class BzfRegion {
     const RegionPoint&	getCorner(int index) const;
     BzfRegion*		getNeighbor(int index) const;
 
-    bool		test(int mailboxIndex);
+    bool		test(int mailboxIndex) const;
     void		setPathStuff(float distance, BzfRegion* target,
 					const float p[2], int mailboxIndex);
     float		getDistance() const;
