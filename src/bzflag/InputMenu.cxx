@@ -157,7 +157,7 @@ void InputMenu::fillJSOptions()
   std::vector<std::string>* yoptions = &jsy->getList();
   std::vector<std::string> joystickAxes;
   getMainWindow()->getJoyDeviceAxes(joystickAxes);
-  if (joystickAxes.size() == 0)
+  if (joystickAxes.empty())
     joystickAxes.push_back("N/A");
   int i;
   for (i = 0; i < (int)joystickAxes.size(); i++) {
