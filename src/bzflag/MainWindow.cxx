@@ -291,12 +291,12 @@ void		    MainWindow::getJoyDeviceAxes(std::vector<std::string>
   joystick->getJoyDeviceAxes(list);
 }
 
-void		    MainWindow::setJoyXAxis(const std::string axis)
+void MainWindow::setJoyXAxis(const std::string &axis)
 {
   joystick->setXAxis(axis);
 }
 
-void		    MainWindow::setJoyYAxis(const std::string axis)
+void MainWindow::setJoyYAxis(const std::string &axis)
 {
   joystick->setYAxis(axis);
 }

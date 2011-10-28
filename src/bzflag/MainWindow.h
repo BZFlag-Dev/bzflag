@@ -87,8 +87,8 @@ class MainWindow {
     unsigned long	getJoyButtonSet() const;
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void		setJoyXAxis(const std::string axis);
-    void		setJoyYAxis(const std::string axis);
+    void		setJoyXAxis(const std::string &axis);
+    void		setJoyYAxis(const std::string &axis);
     void		initJoystick(std::string &joystickName);
 
     bool		isInFault() { return faulting; };
