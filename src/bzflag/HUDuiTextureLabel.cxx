@@ -24,7 +24,7 @@
 // HUDuiTextureLabel
 //
 
-HUDuiTextureLabel::HUDuiTextureLabel() : HUDuiLabel()
+HUDuiTextureLabel::HUDuiTextureLabel() : HUDuiLabel(), texture()
 {
 }
 
