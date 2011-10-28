@@ -75,7 +75,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
     dater = false;
   else if (BZDB.eval("timedate") == 1) //just the date
     dater = true;
-  int i;
 
   // initialize colors
   hudColor[0] = 1.0f;
@@ -94,6 +93,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
   // initialize heading and altitude labels
   if (headingLabel[0].length() == 0) {
     char buf[10];
+    int i;
     for (i = 0; i < 36; i++) {
       sprintf(buf, "%d", i * 10);
       headingLabel[i] = std::string(buf);
@@ -1661,8 +1661,6 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
   const int oy = window.getOriginY();
   const int centerx = width >> 1;
   const int centery = viewHeight >> 1;
-  int i;
-  float y;
 
   FontManager &fm = FontManager::instance();
 
@@ -1715,6 +1713,8 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
   // draw flag help
   if (flagHelpClock.isOn()) {
+    int i;
+    float y;
     hudColor3fv(messageColor);
     flagHelpY = (float) ((window.getViewHeight() >> 1) - maxMotionSize);
     y = flagHelpY;
