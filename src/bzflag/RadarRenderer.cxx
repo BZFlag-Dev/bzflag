@@ -47,9 +47,15 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
     w(0),
     h(0),
     dimming(0.0f),
+    ps(),
+    range(),
     decay(0.01f),
+    smooth(false),
     jammed(false),
-    multiSampled(false)
+    multiSampled(false),
+    useTankModels(false),
+    useTankDimensions(false),
+    triangleCount()
 {
 
   setControlColor();
