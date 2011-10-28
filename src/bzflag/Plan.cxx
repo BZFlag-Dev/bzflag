@@ -318,7 +318,7 @@ void PlanStack::execute(float &rotation, float &speed)
 
 	Plan *pPlan = NULL;
 
-	while (plans.size() > 0) {
+	while (not plans.empty()) {
 		pPlan = plans.top();
 		if (!pPlan->isValid()) {
 			delete pPlan;
@@ -484,8 +484,7 @@ Plan *HuntPlayerPlan::createSubPlan()
  * HuntTeamFlagPlan
  */
 
-HuntTeamFlagPlan::HuntTeamFlagPlan()
-:Plan(300.0f)
+HuntTeamFlagPlan::HuntTeamFlagPlan() : Plan(300.0f), flagID()
 {
 }
 
