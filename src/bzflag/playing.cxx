@@ -297,7 +297,7 @@ void warnAboutMainFlags()
     showFlagsMsg += "Flags on field hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
 
-    if (keys.size() != 0) {
+    if (not keys.empty()) {
       showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
       showFlagsMsg += tolower(keys[0][0]);
       showFlagsMsg += ColorStrings[YellowColor] + "\"";
@@ -315,12 +315,12 @@ void warnAboutRadarFlags()
     showFlagsMsg += "Flags on radar hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
 
-    if (keys.size() != 0) {
+    if (keys.empty()) {
+      showFlagsMsg += " bind a key to Toggle Flags on Radar";
+    } else {
       showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
       showFlagsMsg += tolower(keys[0][0]);
       showFlagsMsg += ColorStrings[YellowColor] + "\"";
-    } else {
-      showFlagsMsg += " bind a key to Toggle Flags on Radar";
     }
     addMessage(NULL, showFlagsMsg);
   }
@@ -333,12 +333,12 @@ void warnAboutRadar()
     message += "To toggle the radar ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleRadar", true);
 
-    if (keys.size() != 0) {
+    if (keys.empty()) {
+      message += " bind a key to Toggle Radar";
+    } else {
       message += "hit \"" + ColorStrings[WhiteColor];
       message += keys[0];
       message += ColorStrings[YellowColor] + "\"";
-    } else {
-      message += " bind a key to Toggle Radar";
     }
 
     addMessage(NULL, message);
@@ -352,12 +352,12 @@ void warnAboutConsole()
     message += "To toggle the console ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleConsole", true);
 
-    if (keys.size() != 0) {
+    if (keys.empty()) {
+      message += " bind a key to Toggle Console";
+    } else {
       message += "hit \"" + ColorStrings[WhiteColor];
       message += keys[0];
       message += ColorStrings[YellowColor] + "\"";
-    } else {
-      message += " bind a key to Toggle Console";
     }
 
     // can't use a console message for this one
@@ -464,7 +464,7 @@ void			removePlayingCallback(PlayingCallback _cb, void* data)
       playingCallbacks.erase(it);
       break;
     }
-    it++;
+    ++it;
   }
 }
 
@@ -1254,10 +1254,10 @@ void			notifyBzfKeyMapChanged()
   std::string restartLabel = "Right Mouse";
   std::vector<std::string> keys = KEYMGR.getKeysFromCommand("restart", false);
 
-  if (keys.size() == 0) {
+  if (keys.empty()) {
     // found nothing on down binding, so try up
     keys = KEYMGR.getKeysFromCommand("identify", true);
-    if (keys.size() == 0) {
+    if (keys.empty()) {
       std::cerr << "There does not appear to be any key bound to enter the game" << std::endl;
     }
   }
@@ -1386,7 +1386,7 @@ static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
 
 
 static void printIpInfo (const Player *_player, const Address& addr,
-			 const std::string note)
+			 const std::string &note)
 {
   if (_player == NULL) {
     return;
@@ -3125,10 +3125,10 @@ static void		doMessages()
 {
   char msg[MaxPacketLen];
   uint16_t code, len;
-  int e = 0;
 
   // handle server messages
   if (serverLink) {
+    int e = 0;
     while (!serverError && (e = serverLink->read(code, len, msg, 0)) == 1)
       handleServerMessage(true, code, len, msg);
     if (e == -2) {
@@ -3171,7 +3171,8 @@ bool			addExplosion(const float* _pos,
 				     float size, float duration, bool grounded)
 {
   // ignore if no prototypes available;
-  if (prototypeExplosions.size() == 0) return false;
+  if (prototypeExplosions.empty())
+    return false;
 
   // don't show explosions if quality is low
   if (sceneRenderer->useQuality() < 1) return false;
@@ -3297,7 +3298,8 @@ static void		updateExplosions(float dt)
     if (explosions[i]->isAtEnd()) {
       delete explosions[i];
       std::vector<BillboardSceneNode*>::iterator it = explosions.begin();
-      for(int j = 0; j < i; j++) it++;
+      for (int j = 0; j < i; j++)
+	++it;
       explosions.erase(it);
     }
   }
@@ -3733,24 +3735,6 @@ static void		checkEnvironment()
     }
   }
 }
-
-
-
-bool inLockRange(float angle, float distance, float bestDistance, RemotePlayer *player)
-{
-  if (player->isPaused() || player->isNotResponding() ||
-    player->getFlag() == Flags::Stealth)
-    return false; // can't lock to paused, NR, or stealth
-
-  if (angle >=  BZDB.eval(StateDatabase::BZDB_LOCKONANGLE))
-    return false;
-
-  if (distance >= bestDistance)
-    return false;
-
-  return true;
-}
-
 
 bool inLookRange(float angle, float distance, float bestDistance, RemotePlayer *player)
 {
@@ -4732,9 +4716,9 @@ static void sendFlagNegotiation()
    * the abbreviations for all the flags we support.
    */
   for (i = FlagType::getFlagMap().begin();
-       i != FlagType::getFlagMap().end(); i++) {
+       i != FlagType::getFlagMap().end();
+       ++i)
     buf = (char*) i->second->pack(buf);
-  }
   serverLink->send(MsgNegotiateFlags, buf - msg, msg);
 }
 
@@ -5373,7 +5357,6 @@ void drawFrame(const float dt)
   GLfloat fov;
   GLfloat eyePoint[3];
   GLfloat targetPoint[3];
-  int i;
 
   checkDirtyControlPanel(controlPanel);
 
@@ -5546,6 +5529,7 @@ void drawFrame(const float dt)
     SceneDatabase* scene = sceneRenderer->getSceneDatabase();
     if (scene && myTank) {
 
+      int i;
       const bool seerView = (myTank->getFlag() == Flags::Seer);
       const bool showTreads = BZDB.isTrue("showTreads");
 
@@ -6600,21 +6584,20 @@ static void		playingLoop()
     updateSound();
 
 
-    double heartbeatTime = 30.0f;
     bool sendUpdate = myTank && myTank->isDeadReckoningWrong();
     if (myTank && myTank->getTeam() == ObserverTeam) {
       if (BZDB.isTrue("sendObserverHeartbeat")) {
-	if (BZDB.isSet("observerHeartbeat"))
-		heartbeatTime = BZDB.eval("observerHeartbeat");
+        double heartbeatTime = BZDB.isSet("observerHeartbeat")
+			       ? BZDB.eval("observerHeartbeat") : 30.0f;
 	if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getTick().getSeconds()) {
 	  lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
 	  sendUpdate = true;
-	}
-	else
+	} else {
 	  sendUpdate = false;
-      }
-      else
+	}
+      } else {
 	sendUpdate = false;
+      }
     }
     // send my data
     if ( sendUpdate) {
@@ -6662,10 +6645,10 @@ static void		playingLoop()
 	  // Instead of sleeping try to handle network packets
 	  char msg[MaxPacketLen];
 	  uint16_t code, len;
-	  int e = 0;
 
 	  // handle server messages
 	  if (serverLink && !serverError) {
+	    int e = 0;
 	    e = serverLink->read(code, len, msg, int(remaining * 1000.0f));
 	    if (e == 1)
 	      handleServerMessage(true, code, len, msg);
