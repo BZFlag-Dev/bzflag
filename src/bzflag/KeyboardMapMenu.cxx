@@ -184,7 +184,7 @@ void KeyboardMapMenu::setKey(const BzfKeyEvent& event)
   if (editing == -1)
     return;
   KeyKeyMap::iterator it;
-  for (it = mappable.begin(); it != mappable.end(); it++)
+  for (it = mappable.begin(); it != mappable.end(); ++it)
     if (it->second.index == editing)
       break;
   if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR.keyEventToString(event) == it->second.key2))
@@ -208,14 +208,13 @@ void KeyboardMapMenu::execute()
     // start editing
     std::vector<HUDuiControl*>& listHUD = getControls();
     KeyKeyMap::iterator it;
-    for (it = mappable.begin(); it != mappable.end(); it++) {
+    for (it = mappable.begin(); it != mappable.end(); ++it)
       if (listHUD[it->second.index] == _focus) {
 	editing = it->second.index;
 	if (!it->second.key1.empty() && !it->second.key2.empty()) {
 	  ActionBinding::instance().deassociate(it->first);
 	}
       }
-    }
   }
   update();
 }
@@ -286,14 +285,14 @@ void KeyboardMapMenu::update()
 {
   KeyKeyMap::iterator it;
   // clear
-  for (it = mappable.begin(); it != mappable.end(); it++) {
+  for (it = mappable.begin(); it != mappable.end(); ++it) {
     it->second.key1 = "";
     it->second.key2 = "";
   }
   // load current settings
   KEYMGR.iterate(&onScanCB, this);
   std::vector<HUDuiControl*>& listHUD = getControls();
-  for (it = mappable.begin(); it != mappable.end(); it++) {
+  for (it = mappable.begin(); it != mappable.end(); ++it) {
     std::string value = "";
     if (it->second.key1.empty()) {
       if (isEditing() && (it->second.index == editing))
