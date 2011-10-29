@@ -139,7 +139,7 @@ void			RobotPlayer::doUpdate(float dt)
   bool	shoot   = false;
   const float azimuth = getAngle();
   // Allow shooting only if angle is near and timer has elapsed
-  if ((int)path.size() != 0 && timerForShot <= 0.0f) {
+  if ((not path.empty()) && timerForShot <= 0.0f) {
     float p1[3];
     getProjectedPosition(target, p1);
     const float* p2     = getPosition();
