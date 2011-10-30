@@ -318,7 +318,7 @@ void PlanStack::execute(float &rotation, float &speed)
 
 	Plan *pPlan = NULL;
 
-	while (not plans.empty()) {
+	while (!plans.empty()) {
 		pPlan = plans.top();
 		if (!pPlan->isValid()) {
 			delete pPlan;
