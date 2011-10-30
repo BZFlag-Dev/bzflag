@@ -38,7 +38,7 @@ HUDDialogStack* HUDDialogStack::get()
 
 bool HUDDialogStack::isActive() const
 {
-  return not stack.empty();
+  return !stack.empty();
 }
 
 HUDDialog* HUDDialogStack::top() const

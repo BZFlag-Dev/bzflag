@@ -425,8 +425,9 @@ class BZF_API bz_CTFCaptureEventData_V1 : public bz_EventData
 public:
   bz_CTFCaptureEventData_V1() : bz_EventData(bz_eCaptureEvent)
     , teamCapped(eNoTeam), teamCapping(eNoTeam), playerCapping(-1)
-    , pos(), rot(0.0)
+    , rot(0.0)
   {
+    memset(pos,0,sizeof(float)*3);
   }
 
   bz_eTeamType teamCapped;
@@ -921,9 +922,10 @@ class BZF_API bz_AllowCTFCaptureEventData_V1 : public bz_EventData
  public:
   bz_AllowCTFCaptureEventData_V1() : bz_EventData(bz_eAllowCTFCaptureEvent)
     , teamCapped(eNoTeam), teamCapping(eNoTeam), playerCapping(-1)
-    , pos(), rot(0.0)
+    , rot(0.0)
     , allow(false), killTeam(true)
     {
+      memset (pos, 0, sizeof(float)*3);
     }
 
   bz_eTeamType teamCapped;
@@ -941,9 +943,10 @@ class BZF_API bz_MsgDebugEventData_V1 : public bz_EventData
 {
 public:
   bz_MsgDebugEventData_V1(): bz_EventData(bz_eMsgDebugEvent)
-    , code(), len(), msg(), receive(true)
+    , len(), msg(), receive(true)
     , playerID(-1)
   {
+    memset (code, 0, sizeof(char)*2);
   }
 
   char code[2];

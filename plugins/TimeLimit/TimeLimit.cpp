@@ -182,7 +182,7 @@ bool TimeLimit::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_
   }
 
   if (nonumber == 0 ) {
-    float limit = atof(cmdParams->get(0).c_str());
+    float limit = (float)atof(cmdParams->get(0).c_str());
 	// Don't allow timelimit being equal or lower then 0
 	if (limit > 0 ) {
 

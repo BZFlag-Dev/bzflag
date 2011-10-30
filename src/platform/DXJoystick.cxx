@@ -295,13 +295,13 @@ void	      DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
   }
 }
 
-void	      DXJoystick::setXAxis(std::string &axis)
+void	      DXJoystick::setXAxis(const std::string &axis)
 {
   if (axes[axis] == false) return;
   xAxis = axis;
 }
 
-void	      DXJoystick::setYAxis(std::string &axis)
+void	      DXJoystick::setYAxis(const std::string &axis)
 {
   if (axes[axis] == false) return;
   yAxis = axis;

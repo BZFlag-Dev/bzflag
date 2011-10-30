@@ -159,7 +159,9 @@ application so it is important to remember that not all builds will
 use your specific compiler. This also includes not using features
 in C99 and C1x as the windows compiler only supports C++11 and 
 there are some features in the later C versions that were not adopted
-by the C++ standard, namely the 'not' and 'o'r keywords instead of ! and ||.
+by the C++ standard, namely the 'not' and 'or' keywords instead of ! and ||.
+Also MSVC seems to be a bit picky about what bits of older standards it
+supports.
 
 Formatting
 ----------
