@@ -297,7 +297,7 @@ void warnAboutMainFlags()
     showFlagsMsg += "Flags on field hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
 
-    if (not keys.empty()) {
+    if (!keys.empty()) {
       showFlagsMsg += "hit \"" + ColorStrings[WhiteColor];
       showFlagsMsg += tolower(keys[0][0]);
       showFlagsMsg += ColorStrings[YellowColor] + "\"";
