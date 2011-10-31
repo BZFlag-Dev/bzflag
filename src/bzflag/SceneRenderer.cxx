@@ -1088,7 +1088,6 @@ void SceneRenderer::doRender()
 static bool setupMapFog()
 {
   RENDERER.setFogActive(false);
-  std::string fogModeStr;
   if (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")
   {
     glDisable(GL_FOG);
