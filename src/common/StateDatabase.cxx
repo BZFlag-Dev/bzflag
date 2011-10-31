@@ -755,6 +755,9 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
   char temp;
   std::string tempname;
 
+  if (src.size() == 0)
+    return src;
+
   temp = src[0]; src = src.substr(1);
   if ((temp >= '0' && temp <= '9') || temp == '.') {
     // number
