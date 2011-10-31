@@ -158,10 +158,12 @@ const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] = {
 
 SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 				renderer(_renderer),
-				wallMaterial(black, black, 0.0f),
-				boxMaterial(black, black, 0.0f),
-				pyramidMaterial(black, black, 0.0f),
-				teleporterMaterial(black, black, 0.0f)
+				wallMaterial(black, black, 0.0f), wallLOD(),
+				boxMaterial(black, black, 0.0f), boxLOD(),
+				pyramidMaterial(black, black, 0.0f), pyramidLOD(),
+				baseLOD(),
+				teleporterMaterial(black, black, 0.0f),
+				teleporterLOD()
 {
   // FIXME -- should get texture heights from resources
 
