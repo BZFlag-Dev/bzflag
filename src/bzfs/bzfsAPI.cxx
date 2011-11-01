@@ -2933,8 +2933,10 @@ public:
   ~URLFetchHandler()
   {
     removeAllJobs();
-    if (curlHandle)
+    if (curlHandle) {
       curl_multi_cleanup(curlHandle);
+      worldEventManager.removeEvent(bz_eTickEvent,this);
+    }
   }
 
   virtual void process (bz_EventData *)
