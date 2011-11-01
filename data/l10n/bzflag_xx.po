@@ -1983,7 +1983,7 @@ msgstr ""
 
 msgid "Client Version Query"
 msgstr ""
-1
+
 msgid "Lag / Ping Stats"
 msgstr ""
 
@@ -2374,16 +2374,10 @@ msgstr ""
 msgid "GM"
 msgstr ""
 
-msgid "Laser"
-msgstr ""
-
 msgid "Bullet"
 msgstr ""
 
 msgid "Wave"
-msgstr ""
-
-msgid "Thief"
 msgstr ""
 
 msgid "Flag"
@@ -2732,7 +2726,7 @@ msgstr ""
 
 msgid "Invalid reason"
 msgstr ""
-1
+
 msgid "Shot myself"
 msgstr ""
 

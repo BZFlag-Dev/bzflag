@@ -1959,7 +1959,7 @@ msgstr "Estadísticas de inactividad"
 
 msgid "Client Version Query"
 msgstr "Consultar versión de cliente"
-1
+
 msgid "Lag / Ping Stats"
 msgstr "Estadísticas de lag / ping"
 
@@ -2350,17 +2350,11 @@ msgstr "Norm"
 msgid "GM"
 msgstr "Misil"
 
-msgid "Laser"
-msgstr "Laser"
-
 msgid "Bullet"
 msgstr "Bala"
 
 msgid "Wave"
 msgstr "Onda"
-
-msgid "Thief"
-msgstr "Ladrón"
 
 msgid "Flag"
 msgstr "Bandera"
@@ -2708,7 +2702,7 @@ msgstr "Asesinado por obstáculo desconocido"
 
 msgid "Invalid reason"
 msgstr "Razón inválida"
-1
+
 msgid "Shot myself"
 msgstr "Me he suicidado"
 

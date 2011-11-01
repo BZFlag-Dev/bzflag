@@ -748,7 +748,7 @@ msgstr "Tyv"
 #msgid "Masquerade"
 #msgstr ""
 
-msgid "Seer"
+#msgid "Seer"
 #msgstr ""
 
 #msgid "Burrow"

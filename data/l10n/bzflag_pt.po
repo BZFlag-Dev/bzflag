@@ -183,9 +183,6 @@ msgstr "Servidores"
 msgid "Players"
 msgstr "Jogadores"
 
-msgid "Rogue"
-msgstr "Individual"
-
 msgid "Red"
 msgstr "Vermelho"
 

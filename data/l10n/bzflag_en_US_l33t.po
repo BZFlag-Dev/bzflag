@@ -118,7 +118,7 @@ msgid "Sound Volume:"
 msgstr "5OUnD VOlUmE:"
 
 msgid "Off / Backup Mode"
-msgstr "Awlf / B4C|<u9 |\/|0c|3"
+msgstr "Awlf / B4C|<u9 |\\/|0c|3"
 
 msgid "5 Minutes"
 msgstr "5 m1nu735"
@@ -527,9 +527,6 @@ msgstr "{1} $H0T"
 
 msgid "{1} Shots"
 msgstr "{1} 5H07$"
-
-msgid "{1} Shot"
-msgstr "{1} $H0T$"
 
 msgid "{1} sec To Drop Bad Flag"
 msgstr "{1} 5eC t0 DR0p 84D PHl4g"
