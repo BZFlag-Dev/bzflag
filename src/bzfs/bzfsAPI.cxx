@@ -3079,9 +3079,12 @@ private:
     if (notify && Tasks.size())
       Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Canceled");
 
-    curl_multi_remove_handle(curlHandle, currentJob);
-    curl_easy_cleanup(currentJob);
-    currentJob = NULL;
+    if (currentJob) {
+      curl_multi_remove_handle(curlHandle, currentJob);
+      curl_easy_cleanup(currentJob);
+      currentJob = NULL;
+    }
+
     if (Tasks.size())
       Tasks.erase(Tasks.begin());
   }
