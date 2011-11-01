@@ -2963,10 +2963,8 @@ public:
 	  else
 	    Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Error");
 
-	  bufferedJobData = "";
-	  curl_easy_cleanup(currentJob);
-	  currentJob = NULL;
-	  Tasks.erase(Tasks.begin());
+    bufferedJobData = "";
+    KillCurrentJob(false);
 	}
       }
 
