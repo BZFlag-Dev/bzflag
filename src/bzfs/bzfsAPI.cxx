@@ -2979,8 +2979,9 @@ public:
     {
       currentJob = curl_easy_init();
       curl_easy_setopt(currentJob, CURLOPT_URL, task.url.c_str());
+
       if (task.postData.size())
-	curl_easy_setopt(currentJob, CURLOPT_HTTPPOST, task.postData.c_str());
+        curl_easy_setopt(currentJob, CURLOPT_POSTFIELDS, task.postData.c_str());
 
       curl_easy_setopt(currentJob, CURLOPT_WRITEFUNCTION, urlWriteFunction);
       curl_easy_setopt(currentJob, CURLOPT_WRITEDATA, &bufferedJobData);
