@@ -68,6 +68,18 @@ ScoreboardRenderer::ScoreboardRenderer() :
 	huntAddMode(false),
 	teamScoreYVal(0.0f),
 	roaming(false),
+	minorFontFace(),
+	minorFontSize(),
+	labelsFontFace(),
+	labelsFontSize(),
+	scoreLabelWidth(),
+	killsLabelWidth(),
+	teamScoreLabelWidth(),
+	teamCountLabelWidth(),
+	huntArrowWidth(),
+	huntPlusesWidth(),
+	huntedArrowWidth(),
+	tkWarnRatio(),
 	numHunted(0)
 {
   // initialize message color (white)
