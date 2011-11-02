@@ -58,7 +58,10 @@ bool ScoreboardRenderer::alwaysShowTeamScore = 0;
 
 
 ScoreboardRenderer::ScoreboardRenderer() :
+				winX(),
+				winY(),
 				winWidth (0.0),
+				winHeight(),
 				dim(false),
 				huntIndicator(false),
 				huntPosition(0),
