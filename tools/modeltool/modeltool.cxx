@@ -40,6 +40,7 @@ bool useTexcoords = true;
 bool flipYZ = false;
 bool useSmoothBounce = false;
 float shineFactor = 1.0f;
+bool useRicoMat = false;
 
 float maxShineExponent = 128.0f; // OpenGL minimum shininess
 
@@ -175,6 +176,10 @@ static void writeBZW  ( CModel &model, std::string file )
 			  fprintf (fp, "    matref %s\n", face.material.c_str());
 			}
 
+			if (useRicoMat && face.material.size() > 0 && strstr(face.material.c_str(),"rico_") != NULL){
+				fprintf (fp, "    ricochetn");
+			}
+
 			fprintf (fp,"  endface\n");
 
 			faceItr++;
@@ -224,6 +229,7 @@ static int  dumpUsage ( char *exeName, const char* reason )
 	printf("       -gsy <val> : shift the map by this value in Y\n\n");
 	printf("       -gsz <val> : shift the map by this value in Z\n\n");
 	printf("       -bspskip <val> : skip faces with this material when importing a bsp\n\n");
+	printf("       -usericomat : faces that use materials that start with rico_ will have the ricochet property\n\n");
 	return 1;
 }
 
@@ -283,6 +289,9 @@ int main(int argc, char* argv[])
 			} else {
 			  printf ("missing -tx argument\n");
 			}
+		}
+		else if (command == "-ricomat"){
+			useRicoMat = true;
 		}
 		else if (command == "-sm") {
 			useSmoothBounce = true;
