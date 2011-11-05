@@ -1159,7 +1159,6 @@ AC_CONFIG_FILES([
 	data/Makefile
 	data/fonts/Makefile
 	data/l10n/Makefile
-	debian/Makefile
 	include/Makefile
 	m4/Makefile
 	man/Makefile

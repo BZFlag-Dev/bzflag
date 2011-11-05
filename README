@@ -353,7 +353,6 @@ following files in the new 'bzflag' directory:
   autogen.sh	- build system preparation script
   configure.ac	- build system configuration script template
   data/		- data files (sounds, images, etc.)
-  debian/	- Debian apt files
   doc/		- partial documentation in Doxygen format
   include/	- include headers for libraries
   man/		- man pages

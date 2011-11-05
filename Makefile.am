@@ -20,7 +20,6 @@ SUBDIRS = \
 
 DIST_SUBDIRS = \
 	$(traversal_dirs) \
-	debian \
 	m4 \
 	misc \
 	plugins \

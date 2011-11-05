@@ -50,7 +50,6 @@ src/platform	- general platform dependent code
 BZFlag.xcodeproj/ - project definition for Apple XCode
 MSVC/		- project definitions for Microsoft Visual C
 data/		- images, sounds, fonts, translations
-debian/		- packaging aids for Debian Linux
 include/	- public headers
 m4/		- configuration macros
 man/		- documentation in manual page format

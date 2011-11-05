@@ -1,7 +1,0 @@
-?package(bzflag):\
- needs="X11"\
- hints="3D,first-person"\
- section="Games/Arcade"\
- title="bzflag"\
- icon="/usr/share/bzflag/bzflag-32x32.xpm"\
- command="/usr/games/bzflag"
