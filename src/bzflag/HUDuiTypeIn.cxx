@@ -132,8 +132,9 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     HUDui::setFocus(getNext());
     return true;
   }
-  if (!isprint(c) && c != backspace)
-    return false;
+  if (c > 0)
+    if (!isprint(c) && c != backspace)
+      return false;
 
   if (c == backspace) {
     if (cursorPos == 0) goto noRoom;
@@ -141,7 +142,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     cursorPos--;
     string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
     onSetFont();
-  } else {
+  } else if (c > 0) {
     if (isspace(c)) c = whitespace;
     if ((int)string.length() == maxLength) goto noRoom;
 
