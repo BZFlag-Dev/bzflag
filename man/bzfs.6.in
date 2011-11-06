@@ -207,9 +207,9 @@ Disallows random flags of the given type.  Required flags given by the
 \fB+f\fR option are still provided.  The \fIbad\fR argument is equivalent
 to specifying \fB\-f\fR once for each kind of bad flag.  Same goes for
 \fBgood\fR, but you probably do not want to do that.
-.TP
+.br
 An example of running a server with 40 to 50 flags except genocide would
-be "+s40 \-s50 \-f G".  Similarly, "+f good{40} +f bad{10} \-f G{40}" would
+be "+s 40 \-s 50 \-f G".  Similarly, "+f good{40} +f bad{10} \-f G{40}" would
 give you exactly 40 good flags except genocide and 10 of each bad flag.
 .TP
 .B \-fb
