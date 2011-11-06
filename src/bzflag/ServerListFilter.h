@@ -41,7 +41,7 @@ class ServerListFilter {
 
     struct RangeFilter {
       static bool parse(const std::string& s);
-      RangeFilter() {
+      RangeFilter(): minValue(), maxValue() {
 	reset();
       }
       void reset() {
