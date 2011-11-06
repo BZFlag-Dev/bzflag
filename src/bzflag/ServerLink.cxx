@@ -90,7 +90,9 @@ ServerLink*		ServerLink::server = NULL;
 ServerLink::ServerLink(const Address& serverAddress, int port) :
 				state(SocketError),	// assume failure
 				fd(-1),			// assume failure
-				udpLength(0)
+				udpLength(0),
+				udpBufferPtr(),
+				ubuf()
 {
   int i;
 
@@ -476,12 +478,11 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   if (state != Okay) return -1;
 
   if ((urecvfd >= 0) /* && ulinkup */) {
-    int n;
 
     if (!udpLength) {
       AddrLen recvlen = sizeof(urecvaddr);
-      n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0, &urecvaddr,
-		   (socklen_t*) &recvlen);
+      int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
+		       &urecvaddr, (socklen_t*) &recvlen);
       if (n > 0) {
 	udpLength    = n;
 	udpBufferPtr = ubuf;
