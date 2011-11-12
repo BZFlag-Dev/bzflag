@@ -1,5 +1,5 @@
 # This is generic German
-# Author: Martin Jungowski <mj@hashmark.net>
+# Author: Martin Jungowski <mj@hashmark.net>, Andreas "Cobra_Fast" Seifert
 
 msgid "Join Game"
 msgstr "Spiel starten"
@@ -44,13 +44,13 @@ msgid "Quit"
 msgstr "Verlassen"
 
 #msgid "on"
-#msgstr ""
+#msgstr "an"
 
 #msgid "Dithering:"
 #msgstr "Dithering:"
 
 #msgid "off"
-#msgstr ""
+#msgstr "aus"
 
 msgid "Off"
 msgstr "Aus"
@@ -122,40 +122,40 @@ msgstr "Lautstärke:"
 #msgstr ""
 
 #msgid "5 Minutes"
-#msgstr ""
+#msgstr "5 Minuten"
 
 #msgid "15 Minutes"
-#msgstr ""
+#msgstr "15 Minuten"
 
 #msgid "30 Minutes"
-#msgstr ""
+#msgstr "30 Minuten"
 
 #msgid "1 Hour"
-#msgstr ""
+#msgstr "1 Stunde"
 
 #msgid "5 Hours"
-#msgstr ""
+#msgstr "5 Stunden"
 
 #msgid "15 Hours"
-#msgstr ""
+#msgstr "15 Stunden"
 
 #msgid "1 day"
-#msgstr ""
+#msgstr "1 Tag"
 
 #msgid "15 days"
-#msgstr ""
+#msgstr "15 Tage"
 
 #msgid "30 days"
-#msgstr ""
+#msgstr "30 Tage"
 
 msgid "UDP network connection:"
 msgstr "UDP-Netzwerkverbindung"
 
 #msgid "Server List Cache:"
-#msgstr ""
+#msgstr "Serverlisten-Cache:"
 
 #msgid "Clear Server List Cache"
-#msgstr ""
+#msgstr "Serverlisten-Cache leeren"
 
 msgid "Change Key Mapping"
 msgstr "Tastenbelegung ändern"
@@ -292,8 +292,8 @@ msgstr "Zeit rückwärts:"
 msgid "Pause/Resume:"
 msgstr "Pause/Fortsetzen:"
 
-#msgid "Self Destruct/Cancel:"
-#msgstr ""
+msgid "Self Destruct/Cancel:"
+msgstr "Selbstzerstörung/Abbruch:"
 
 msgid "SelfDestruct/Cancel:"
 msgstr "Selbstzerstörung/Abbruch:"
@@ -388,11 +388,11 @@ msgstr "Message log vorwärts scrollen"
 #msgid "Slow Keyboard Motion"
 #msgstr ""
 
-#msgid "Toggle Radar Flags"
-#msgstr ""
+msgid "Toggle Radar Flags"
+msgstr "Flaggen auf Radar an/aus"
 
-#msgid "Toggle Main Flags"
-#msgstr ""
+msgid "Toggle Main Flags"
+msgstr "Flaggen an/aus"
 
 #msgid "Silence/UnSilence"
 #msgstr ""
@@ -400,14 +400,14 @@ msgstr "Message log vorwärts scrollen"
 #msgid "Server Admin"
 #msgstr ""
 
-#msgid "Hunt"
-#msgstr ""
+msgid "Hunt"
+msgstr "Jagen"
 
-#msgid "autopilot enabled"
-#msgstr ""
+msgid "autopilot enabled"
+msgstr "autopilot eingeschaltet"
 
-#msgid "autopilot disabled"
-#msgstr ""
+msgid "autopilot disabled"
+msgstr "autopilot ausgeschaltet"
 
 msgid "show/dismiss menu"
 msgstr "Menü ein/ausblenden"
@@ -481,14 +481,14 @@ msgstr "Anzeigen II"
 msgid "Press Enter to select and T to test a format. Esc to exit."
 msgstr "Enter drücken um auszuwählen und T um ein Format zu testen. Esc um abzubrechen."
 
-#msgid "Free-style"
-#msgstr "Free-style"
+msgid "Free-style"
+msgstr "Freistil"
 
-#msgid "Capture-the-Flag"
-#msgstr "Capture-the-Flag"
+msgid "Capture-the-Flag"
+msgstr "Erobere-die-Flagge"
 
-#msgid "Rabbit Chase"
-#msgstr ""
+msgid "Rabbit Chase"
+msgstr "Hasenjagt"
 
 msgid "Super Flags"
 msgstr "Super-Flaggen"
@@ -520,17 +520,17 @@ msgstr "Versiegelt"
 msgid "Zoned"
 msgstr "Abgegrenzt"
 
-#msgid "You are now the rabbit."
-#msgstr ""
+msgid "You are now the rabbit."
+msgstr "Du bist jetzt der Hase."
 
-#msgid "Servers found: {1}"
-#msgstr ""
+msgid "Servers found: {1}"
+msgstr "Server gefunden: {1}"
 
-#msgid "{1} Shot"
-#msgstr ""
+msgid "{1} Shot"
+msgstr "{1} Schuss"
 
-#msgid "{1} Shots"
-#msgstr ""
+msgid "{1} Shots"
+msgstr "{1} Schüsse"
 
 #msgid "{1} sec To Drop Bad Flag"
 #msgstr ""
@@ -553,14 +553,14 @@ msgstr "Abgegrenzt"
 #msgid "Max player score: {1}"
 #msgstr ""
 
-#msgid "Page {1} of {2}"
-#msgstr ""
+msgid "Page {1} of {2}"
+msgstr "Seite {1} von {2}"
 
 #msgid "openBroadcast: No udp service {1}"
 #msgstr ""
 
-#msgid "joystick '{1}' not supported..."
-#msgstr ""
+msgid "joystick '{1}' not supported..."
+msgstr "Joystick '{1}' nicht unterstützt..."
 
 #msgid "Server did send endpoint information, UDP connection up"
 #msgstr ""
@@ -568,8 +568,8 @@ msgstr "Abgegrenzt"
 #msgid "Ignoring Finder argument '{1}'"
 #msgstr ""
 
-#msgid "Can't open list server: {1}"
-#msgstr ""
+msgid "Can't open list server: {1}"
+msgstr "Kann Listenserver nicht öffnen: {1}"
 
 #msgid "Server sent downlink endpoint information, port {1}"
 #msgstr ""
@@ -595,32 +595,32 @@ msgstr "Abgegrenzt"
 #msgid "More Info: [{1}:{2}:{3}]"
 #msgstr ""
 
-#msgid "cannot load texture: {1}"
-#msgstr ""
+msgid "cannot load texture: {1}"
+msgstr "kann Textur nicht laden: {1}"
 
-#msgid "Connection failed."
-#msgstr ""
+msgid "Connection failed."
+msgstr "Verbindung fehlgeschlagen"
 
-#msgid "Server forced a disconnect"
-#msgstr ""
+msgid "Server forced a disconnect"
+msgstr "Verbindung vom Server unterbrochen"
 
 #msgid "Rogues not allowed.  Try another team."
 #msgstr ""
 
-#msgid "This team is full.  Try another team."
-#msgstr ""
+msgid "This team is full.  Try another team."
+msgstr "Team ist voll, versuche ein anderes."
 
-#msgid "This game is full.  Try again later."
-#msgstr ""
+msgid "This game is full.  Try again later."
+msgstr "Spiel ist voll, versuche es später erneut."
 
-#msgid "Game is full or over.  Try again later."
-#msgstr ""
+msgid "Game is full or over.  Try again later."
+msgstr "Spiel ist voll oder zu Ende. Versuche es später erneut."
 
-#msgid "Error connecting to server."
-#msgstr ""
+msgid "Error connecting to server."
+msgstr "Fehler bei der Serververbindung"
 
-#msgid "Error downloading world database"
-#msgstr ""
+msgid "Error downloading world database"
+msgstr "Fehler beim Runterladen der Weltdatenbank"
 
 #msgid "Score"
 #msgstr ""
@@ -740,20 +740,20 @@ msgstr "Die Gegnerische Flagge: Bringe sie in die eigene Basis um sie zu erobern
 #msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
 #msgstr ""
 
-#msgid "Useless"
-#msgstr ""
+msgid "Useless"
+msgstr "Nutzlos"
 
-#msgid "Thief"
-#msgstr ""
+msgid "Thief"
+msgstr "Dieb"
 
-#msgid "Masquerade"
-#msgstr ""
+msgid "Masquerade"
+msgstr "Täuschung"
 
-#msgid "Seer"
-#msgstr ""
+msgid "Seer"
+msgstr "Seher"
 
-#msgid "Burrow"
-#msgstr ""
+msgid "Burrow"
+msgstr "Graben"
 
 #msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
 #msgstr ""
@@ -1281,8 +1281,8 @@ msgstr "Andeutung auf seine Höhe, je höher der Panzer platziert ist desto grö
 #msgid "Silience/UnSilence Key:"
 #msgstr ""
 
-#msgid "Server Command Key:"
-#msgstr ""
+msgid "Server Command Key:"
+msgstr "Serverbefehlstaste:"
 
 #msgid "self destruct/cancel"
 #msgstr ""
@@ -1295,62 +1295,62 @@ msgstr "Andeutung auf seine Höhe, je höher der Panzer platziert ist desto grö
 #msgid "no"
 #msgstr ""
 
-#msgid "Style:"
-#msgstr ""
+msgid "Style:"
+msgstr "Stil"
 
-#msgid "Free for All"
-#msgstr ""
+msgid "Free for All"
+msgstr "Frei für Alle"
 
-#msgid "Capture the Flag"
-#msgstr ""
+msgid "Capture the Flag"
+msgstr "Erobere die Flagge"
 
-#msgid "Max Players:"
-#msgstr ""
+msgid "Max Players:"
+msgstr "Max Spieler:"
 
-#msgid "Max Shots:"
-#msgstr ""
+msgid "Max Shots:"
+msgstr "Max Schüsse:"
 
-#msgid "Teleporters:"
-#msgstr ""
+msgid "Teleporters:"
+msgstr "Teleporter:"
 
-#msgid "Ricochet:"
-#msgstr ""
+msgid "Ricochet:"
+msgstr "Querschläger:"
 
-#msgid "Jumping:"
-#msgstr ""
+msgid "Jumping:"
+msgstr "Springen:"
 
-#msgid "Superflags:"
-#msgstr ""
+msgid "Superflags:"
+msgstr "Superflaggen:"
 
-#msgid "all flags"
-#msgstr ""
+msgid "all flags"
+msgstr "alle Flaggen"
 
-#msgid "good flags only"
-#msgstr ""
+msgid "good flags only"
+msgstr "nur gute Flaggen"
 
-#msgid "Max Superflags:"
-#msgstr ""
+msgid "Max Superflags:"
+msgstr "Max Superflaggen:"
 
-#msgid "Bad Flag Antidote:"
-#msgstr ""
+msgid "Bad Flag Antidote:"
+msgstr "Schlechte Flaggen Gegengift:"
 
-#msgid "Bad Flag Time Limit:"
-#msgstr ""
+msgid "Bad Flag Time Limit:"
+msgstr "Schlechte Flaggen Zeitlimit"
 
-#msgid "no limit"
-#msgstr ""
+msgid "no limit"
+msgstr "kein Limit"
 
-#msgid "15 seconds"
-#msgstr ""
+msgid "15 seconds"
+msgstr "15 sekunden"
 
-#msgid "30 seconds"
-#msgstr ""
+msgid "30 seconds"
+msgstr "30 sekunden"
 
-#msgid "60 seconds"
-#msgstr ""
+msgid "60 seconds"
+msgstr "60 sekunden"
 
-#msgid "180 seconds"
-#msgstr ""
+msgid "180 seconds"
+msgstr "180 sekunden"
 
 #msgid "Bad Flag Win Limit:"
 #msgstr ""
@@ -1388,20 +1388,20 @@ msgstr "Andeutung auf seine Höhe, je höher der Panzer platziert ist desto grö
 #msgid "world (ttl=255)"
 #msgstr ""
 
-#msgid "Game Over:"
-#msgstr ""
+msgid "Game Over:"
+msgstr "Spiel vorbei:"
 
-#msgid "never"
-#msgstr ""
+msgid "never"
+msgstr "nie"
 
-#msgid "after 5 minutes"
-#msgstr ""
+msgid "after 5 minutes"
+msgstr "nach 5 minuten"
 
-#msgid "after 15 minutes"
-#msgstr ""
+msgid "after 15 minutes"
+msgstr "nach 15 minuten"
 
-#msgid "after 60 minutes"
-#msgstr ""
+msgid "after 60 minutes"
+msgstr "nach 60 minuten"
 
 #msgid "after 3 hours"
 #msgstr ""
@@ -1442,11 +1442,11 @@ msgstr "Flaggen werden dargestellt durch kleine weiße Punkte, Team-Flaggen in d
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
 msgstr "die Gegenmittel-Flagge ist gelb. Schüsse werden dargestellt durch kleine, sich bewegende Punkte oder"
 
-#msgid "cyan"
-#msgstr ""
+msgid "cyan"
+msgstr "zyan"
 
-#msgid "grey"
-#msgstr ""
+msgid "grey"
+msgstr "grau"
 
 #msgid "text"
 #msgstr ""
@@ -1454,111 +1454,111 @@ msgstr "die Gegenmittel-Flagge ist gelb. Schüsse werden dargestellt durch klein
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
 msgstr "Kreisförmige Wellen für Laser und Druckwelle. Der eigene Panzer wird zentriert dargestellt,"
 
-#msgid "None"
-#msgstr ""
+msgid "None"
+msgstr "Keine"
 
-#msgid "Pulsating"
-#msgstr ""
+msgid "Pulsating"
+msgstr "Pulsierend"
 
-#msgid "Underline"
-#msgstr ""
+msgid "Underline"
+msgstr "Unterstreichen"
 
 # Identifikace vlajek
 # Flags identification
-#msgid "Closest Flag: High Speed"
-#msgstr ""
+msgid "Closest Flag: High Speed"
+msgstr "Nächste Flagge: Hohe Geschwidigkeit"
 
-#msgid "Closest Flag: Quick Turn"
-#msgstr ""
+msgid "Closest Flag: Quick Turn"
+msgstr "Nächste Flagge: Schnelles Drehen"
 
 #msgid "Closest Flag: Oscillation Overthurster"
-#msgstr ""
+#msgstr "Nächste Flagge: "
 
-#msgid "Closest Flag: Rapid Fire"
-#msgstr ""
+msgid "Closest Flag: Rapid Fire"
+msgstr "Nächste Flagge: Schnellfeuer"
 
-#msgid "Closest Flag: Machine Gun"
-#msgstr ""
+msgid "Closest Flag: Machine Gun"
+msgstr "Nächste Flagge: Maschinengewehr"
 
-#msgid "Closest Flag: Guided Missile"
-#msgstr ""
+msgid "Closest Flag: Guided Missile"
+msgstr "Nächste Flagge: Lenkgeschoss"
 
-#msgid "Closest Flag: Laser"
-#msgstr ""
+msgid "Closest Flag: Laser"
+msgstr "Nächste Flagge: Laser"
 
-#msgid "Closest Flag: Ricochet"
-#msgstr ""
+msgid "Closest Flag: Ricochet"
+msgstr "Nächste Flagge: Querschläger"
 
-#msgid "Closest Flag: Super Bullet"
-#msgstr ""
+msgid "Closest Flag: Super Bullet"
+msgstr "Nächste Flagge: Supergeschoss"
 
-#msgid "Closest Flag: Stealth"
-#msgstr ""
+msgid "Closest Flag: Stealth"
+msgstr "Nächste Flagge: Stealth"
 
-#msgid "Closest Flag: Cloaking"
-#msgstr ""
+msgid "Closest Flag: Cloaking"
+msgstr "Nächste Flagge: Verschleierung"
 
-#msgid "Closest Flag: Invisible Bullet"
-#msgstr ""
+msgid "Closest Flag: Invisible Bullet"
+msgstr "Nächste Flagge: Unsichtbares Geschoss"
 
-#msgid "Closest Flag: Tiny"
-#msgstr ""
+msgid "Closest Flag: Tiny"
+msgstr "Nächste Flagge: Klein"
 
-#msgid "Closest Flag: Narrow"
-#msgstr ""
+msgid "Closest Flag: Narrow"
+msgstr "Nächste Flagge: Schmal"
 
-#msgid "Closest Flag: Shield"
-#msgstr ""
+msgid "Closest Flag: Shield"
+msgstr "Nächste Flagge: Schild"
 
-#msgid "Closest Flag: Steamroller"
-#msgstr ""
+msgid "Closest Flag: Steamroller"
+msgstr "Nächste Flagge: Dampfwalze"
 
-#msgid "Closest Flag: Shock Wave"
-#msgstr ""
+msgid "Closest Flag: Shock Wave"
+msgstr "Nächste Flagge: Schockwelle"
 
-#msgid "Closest Flag: Phantom Zone"
-#msgstr ""
+msgid "Closest Flag: Phantom Zone"
+msgstr "Nächste Flagge: Phantom Zone"
 
-#msgid "Closest Flag: Genocide"
-#msgstr ""
+msgid "Closest Flag: Genocide"
+msgstr "Nächste Flagge: Genozid"
 
-#msgid "Closest Flag: Jumping"
-#msgstr ""
+msgid "Closest Flag: Jumping"
+msgstr "Nächste Flagge: Springen"
 
-#msgid "Closest Flag: Identify"
-#msgstr ""
+msgid "Closest Flag: Identify"
+msgstr "Nächste Flagge: Identifizieren"
 
-#msgid "Closest Flag: Colorblindness"
-#msgstr ""
+msgid "Closest Flag: Colorblindness"
+msgstr "Nächste Flagge: Farbenblindheit"
 
-#msgid "Closest Flag: Obesity"
-#msgstr ""
+msgid "Closest Flag: Obesity"
+msgstr "Nächste Flagge: Übergewicht"
 
-#msgid "Closest Flag: Left Turn Only"
-#msgstr ""
+msgid "Closest Flag: Left Turn Only"
+msgstr "Nächste Flagge: Nur Linksdrehen"
 
-#msgid "Closest Flag: Right Turn Only"
-#msgstr ""
+msgid "Closest Flag: Right Turn Only"
+msgstr "Nächste Flagge: Nur Rechtsdrehen"
 
-#msgid "Closest Flag: Momentum"
-#msgstr ""
+msgid "Closest Flag: Momentum"
+msgstr "Nächste Flagge: Verzögerung"
 
-#msgid "Closest Flag: Blindness"
-#msgstr ""
+msgid "Closest Flag: Blindness"
+msgstr "Nächste Flagge: Blindheit"
 
-#msgid "Closest Flag: Jamming"
-#msgstr ""
+msgid "Closest Flag: Jamming"
+msgstr "Nächste Flagge: Störung"
 
-#msgid "Closest Flag: Wide Angle"
-#msgstr ""
+msgid "Closest Flag: Wide Angle"
+msgstr "Nächste Flagge: Fischauge"
 
 # Ostatni
 # Other
-#msgid "Server started."
-#msgstr ""
+msgid "Server started."
+msgstr "Server gestartet."
 
-#msgid "Shot myself"
-#msgstr ""
+msgid "Shot myself"
+msgstr "Selbst abgeschossen"
 
 # !!! Hlaseni nize nelze prelozit :-(
 # !!! Messages below cannot be translated :-(
@@ -1654,14 +1654,14 @@ msgstr "Kreisförmige Wellen für Laser und Druckwelle. Der eigene Panzer wird z
 
 # Ostatni hlasky, ktere nelze prelozit
 # Other messages that cannot be translated
-#msgid "Pausing in"
-#msgstr ""
+msgid "Pausing in"
+msgstr "Pausiere in"
 
-#msgid "Press Pause to resume"
-#msgstr ""
+msgid "Press Pause to resume"
+msgstr "Drücke Pause um weiter zu machen"
 
-#msgid "Got shot by "
-#msgstr ""
+msgid "Got shot by "
+msgstr "Wurde erschossen von "
 
 #msgid "got skewred by "
 #msgstr ""
