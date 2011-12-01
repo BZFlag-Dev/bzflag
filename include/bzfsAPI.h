@@ -1638,20 +1638,6 @@ typedef struct {
   int tks;
 } bz_ScoreRecord;
 
-typedef enum {
-  eRegularPlayer,
-  eRobotPlayer,
-  eObserverPlayer
-} bz_ePlayerType;
-
-typedef struct {
-  int index;
-  bz_ePlayerType type;
-  bz_eTeamType team;
-  bz_ScoreRecord score;
-  char callsign[32];
-} bz_PlayerInfoUpdateRecord;
-
 typedef struct {
   int id;
   int size;
