@@ -1225,6 +1225,9 @@ public:
   bz_ApiString motto;
 };
 
+// player info
+BZF_API bool bz_getPlayerHumanity( int playerId );
+
 BZF_API bool bz_setPlayerOperator ( int playerId );
 
 // team info

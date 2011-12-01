@@ -1242,6 +1242,16 @@ BZF_API bool bz_setPlayerOperator (int playerId)
   return true;
 }
 
+BZF_API bool bz_getPlayerHumanity( int playerId )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return false;
+
+  return player->player.isHuman();
+}
+
 BZF_API bool bz_setPlayerLosses (int playerId, int losses)
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
