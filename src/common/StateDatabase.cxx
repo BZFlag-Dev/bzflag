@@ -762,11 +762,13 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
   if ((temp >= '0' && temp <= '9') || temp == '.') {
     // number
     tempname += temp;
-    temp = src[0];
+    if (!src.empty())
+      temp = src[0];
     while (((temp >= '0' && temp <= '9') || temp == '.') && (src.length() != 0)) {
       src = src.substr(1);
       tempname += temp;
-      temp = src[0];
+      if (!src.empty())
+	temp = src[0];
     }
     dst.setNumber(atof(tempname.c_str()));
   } else if (temp == '+' || temp == '-' || temp == '*' || temp == '/' || temp == '^' || temp == '(' || temp == ')') {
@@ -796,11 +798,13 @@ std::string& operator >> (std::string& src, StateDatabase::ExpressionToken& dst)
     }
   } else if ((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') {
     tempname += temp;
-    temp = src[0];
+    if (!src.empty())
+      temp = src[0];
     while (((temp >= 'a' && temp <= 'z') || (temp >= 'A' && temp <= 'Z') || temp == '_') && (src.length() != 0)) {
       src = src.substr(1);
       tempname += temp;
-      temp = src[0];
+      if (!src.empty())
+	temp = src[0];
     }
     dst.setVariable(tempname);
   } else {
