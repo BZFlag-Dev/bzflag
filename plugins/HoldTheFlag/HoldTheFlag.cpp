@@ -52,17 +52,17 @@ HTFscore *htfScore = NULL;
 
 bz_eTeamType HTFscore::colorNameToDef (const char *color)
 {
-  if (!strcasecmp (color, "gre"))
+  if (!strncasecmp (color, "gre", 3))
     return eGreenTeam;
-  if (!strcasecmp (color, "red"))
+  if (!strncasecmp (color, "red", 3))
     return eRedTeam;
-  if (!strcasecmp (color, "pur"))
+  if (!strncasecmp (color, "pur", 3))
     return ePurpleTeam;
-  if (!strcasecmp (color, "blu"))
+  if (!strncasecmp (color, "blu", 3))
     return eBlueTeam;
-  if (!strcasecmp (color, "rog"))
+  if (!strncasecmp (color, "rog", 3))
     return eRogueTeam;
-  if (!strcasecmp (color, "obs"))
+  if (!strncasecmp (color, "obs", 3))
     return eObservers;
   return eNoTeam;
 }
@@ -342,8 +342,8 @@ bool parseCommandLine (const char *cmdLine)
   if (cmdLine==NULL || *cmdLine=='\0')
     return false;
   htfTeam = eGreenTeam;
-  if (strcasecmp (cmdLine, "TEAM=") == 0){
-    if ((htfTeam = htfScore->colorNameToDef(cmdLine+5)) == eNoTeam)
+  if (strncasecmp (cmdLine, "[TEAM=", 6) == 0){
+    if ((htfTeam = htfScore->colorNameToDef(cmdLine+6)) == eNoTeam)
       return commandLineHelp ();
   } else
     return commandLineHelp ();
