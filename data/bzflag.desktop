@@ -5,4 +5,4 @@ Comment=Battle enemy tanks
 Exec=/usr/games/bzflag
 Icon=bzflag-48x48
 Type=Application
-Categories=Game;ActionGame;3DGraphics;
+Categories=Game;ActionGame;
