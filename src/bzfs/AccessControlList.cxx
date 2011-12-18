@@ -671,21 +671,21 @@ void AccessControlList::purge(bool master) {
     if (bItr->fromMaster == master)
       bItr = banList.erase(bItr);
     else
-      bItr++;
+      ++bItr;
   }
   hostBanList_t::iterator	hItr = hostBanList.begin();
   while (hItr != hostBanList.end()) {
     if (hItr->fromMaster == master)
       hItr = hostBanList.erase(hItr);
     else
-      hItr++;
+      ++hItr;
   }
   idBanList_t::iterator	iItr = idBanList.begin();
   while (iItr != idBanList.end()) {
     if (iItr->fromMaster == master) {
       iItr = idBanList.erase(iItr);
     } else {
-      iItr++;
+      ++iItr;
     }
   }
 }
@@ -709,7 +709,7 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
   std::string explain;
 
   banList_t::const_iterator bItr;
-  for (bItr = banList.begin(); bItr != banList.end(); bItr++) {
+  for (bItr = banList.begin(); bItr != banList.end(); ++bItr) {
     if (bItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
 				  bItr->reason.c_str(), bItr->bannedBy.c_str());
@@ -719,7 +719,7 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
     }
   }
   hostBanList_t::const_iterator hItr;
-  for (hItr = hostBanList.begin(); hItr != hostBanList.end(); hItr++) {
+  for (hItr = hostBanList.begin(); hItr != hostBanList.end(); ++hItr) {
     if (hItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
 				  hItr->reason.c_str(), hItr->bannedBy.c_str());
@@ -729,7 +729,7 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
     }
   }
   idBanList_t::const_iterator iItr;
-  for (iItr = idBanList.begin(); iItr != idBanList.end(); iItr++) {
+  for (iItr = idBanList.begin(); iItr != idBanList.end(); ++iItr) {
     if (iItr->fromMaster) {
       explain = TextUtils::format("%s (banned by %s)",
 				  iItr->reason.c_str(), iItr->bannedBy.c_str());
