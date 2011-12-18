@@ -24,7 +24,7 @@
 class TeamBase
 { // This class represents one base
 public:
-  TeamBase() {}
+  TeamBase(): position(), size(), rotation(0.0) {}
   TeamBase(const float *pos, const float *siz, float rot);
   void getRandomPosition( float &x, float &y, float &z ) const;
   float position[3];
