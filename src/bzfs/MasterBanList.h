@@ -18,7 +18,7 @@
 
 class MasterBanList : cURLManager {
 public:
-const std::string& get ( const std::string URL );
+const std::string &get(const std::string &URL);
 protected:
 	std::string	data;
  private:

@@ -17,7 +17,7 @@
 // interface header
 #include "MasterBanList.h"
 
-const std::string& MasterBanList::get ( const std::string URL )
+const std::string &MasterBanList::get(const std::string &URL)
 {
   data = "";
   // get all up on the internet and go get the thing
