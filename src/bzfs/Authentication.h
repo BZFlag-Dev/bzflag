@@ -20,7 +20,7 @@ class Authentication {
  public:
   Authentication();
 
-  bool isGlobal(void) {return globallyAuthenticated;};
+  bool isGlobal(void) const {return globallyAuthenticated;};
   void global(bool set) {globallyAuthenticated = set;}
 private:
   bool		   globallyAuthenticated;
