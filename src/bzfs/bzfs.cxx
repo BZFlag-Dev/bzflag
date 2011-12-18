@@ -806,12 +806,14 @@ void publicize()
 
 static bool serverStart()
 {
+#ifdef SO_REUSEADDR
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
   BOOL opt;
 #else
   const int optOn = 1;
   int opt;
+#endif
 #endif
   maxFileDescriptor = 0;
 
