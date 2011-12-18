@@ -40,7 +40,7 @@
 
 class ShotInfo {
 public:
-  ShotInfo() : present(false) {};
+  ShotInfo() : salt(0), expireTime(0.0), present(false), running(false) {};
 
   FiringInfo firingInfo;
   int	salt;
