@@ -790,7 +790,7 @@ void publicize()
 
   if (clOptions->publicizeServer) {
     // list server initialization
-    for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); i++) {
+    for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); ++i) {
       listServerLink = new ListServerLink(i->c_str(),
 	    clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups, ListServerReAddTime*2.0f); /* recheck dns every other re-add */
       listServerLinksCount++;
@@ -808,10 +808,10 @@ static bool serverStart()
 {
 #if defined(_WIN32)
   const BOOL optOn = TRUE;
-  BOOL opt = optOn;
+  BOOL opt;
 #else
   const int optOn = 1;
-  int opt = optOn;
+  int opt;
 #endif
   maxFileDescriptor = 0;
 
@@ -1582,7 +1582,7 @@ struct TeamSize {
   TeamColor color;
   int       current;
   int       max;
-  bool operator < (const TeamSize x) const { return x.current < current; }
+  bool operator < (const TeamSize &x) const { return x.current < current; }
 };
 
 bool teamFull(const TeamSize &x)  { return x.current == x.max; }
@@ -1605,7 +1605,7 @@ struct teamHasntSize
 
 static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
 {
-  if (teams.size() == 0)
+  if (teams.empty())
     return RogueTeam;
 
   // see if the player's choice was a weak team
@@ -3157,7 +3157,6 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   if (isTeamFlag && !safelyDropped) {
     // figure out landing spot -- if flag in a Bad Place
     // when dropped, move to safety position or make it going
-    std::string teamName = Team::getName((TeamColor) flagTeam);
     if (!world->getFlagDropPoint(&drpFlag, pos, landing)) {
       // try the center
       landing[0] = landing[1] = landing[2] = 0.0f;
@@ -5612,7 +5611,7 @@ int main(int argc, char **argv)
     MasterBanList banList;
     std::vector<std::string>::const_iterator it;
     for (it = clOptions->masterBanListURL.begin();
-	 it != clOptions->masterBanListURL.end(); it++) {
+	 it != clOptions->masterBanListURL.end(); ++it) {
       clOptions->acl.merge(banList.get(it->c_str()));
       logDebugMessage(1,"Loaded master ban list from %s\n", it->c_str());
     }
@@ -5796,8 +5795,7 @@ int main(int argc, char **argv)
       waitTime = pluginMaxWait;
 #endif
 
-    if (netConnectedPeers.size())
-    {
+    if (!netConnectedPeers.empty()) {
       std::map<int,NetConnectedPeer>::iterator itr = netConnectedPeers.begin();
       while (itr != netConnectedPeers.end())
       {
@@ -5807,7 +5805,7 @@ int main(int argc, char **argv)
 	  waitTime = 0;
 	  break;
 	}
-	itr++;
+	++itr;
       }
       if (waitTime > 0.1f)
 	waitTime = 0.1f;
@@ -6196,7 +6194,7 @@ int main(int argc, char **argv)
 		  {
 			std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
 			if ( args.size() < 2 )
-				logDebugMessage(1,"Poll set taking action: no action taken, not enough parameters (%s).\n", (args.size() > 0 ? args[0].c_str() : "No parameters."));
+				logDebugMessage(1,"Poll set taking action: no action taken, not enough parameters (%s).\n", (!args.empty() ? args[0].c_str() : "No parameters."));
 			else
 			{
 				StateDatabase::Permission permission = BZDB.getPermission(args[0]);
@@ -6485,7 +6483,7 @@ int main(int argc, char **argv)
     while ( itr != pendingChatMessages.end() )
     {
       sendMessage(itr->from, itr->to, itr->text.c_str(), itr->type);
-      itr++;
+      ++itr;
     }
     pendingChatMessages.clear();
 
