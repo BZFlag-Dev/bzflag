@@ -2734,9 +2734,9 @@ BZF_API bool bz_registerCustomPluginHandler ( const char* extension, bz_APIPlugi
   if (!extension || !handler)
     return false;
 
+#ifdef BZ_PLUGINS
   std::string ext = extension;
 
-#ifdef BZ_PLUGINS
   return registerCustomPluginHandler( ext,handler);
 #else
   std::cerr << "This BZFlag server does not support plugins." << std::endl;
@@ -2749,9 +2749,9 @@ BZF_API bool bz_removeCustomPluginHandler ( const char* extension, bz_APIPluginH
   if (!extension || !handler)
     return false;
 
+#ifdef BZ_PLUGINS
   std::string ext = extension;
 
-#ifdef BZ_PLUGINS
   return removeCustomPluginHandler( ext,handler);
 #else
   std::cerr << "This BZFlag server does not support plugins." << std::endl;
@@ -3265,10 +3265,6 @@ BZF_API bool bz_addclipFieldNotifier ( const char *name, bz_ClipFieldNotifier *c
   if (!cb)
     return false;
 
-  std::string field;
-  if (name)
-    field = name;
-
   if (clipFieldMap.find(name) == clipFieldMap.end())
   {
     std::vector<bz_ClipFieldNotifier*> vec;
@@ -3283,10 +3279,6 @@ BZF_API bool bz_removeclipFieldNotifier ( const char *name, bz_ClipFieldNotifier
 {
   if (!cb)
     return false;
-
-  std::string field;
-  if (name)
-    field = name;
 
   if (clipFieldMap.find(name) == clipFieldMap.end())
     return false;
