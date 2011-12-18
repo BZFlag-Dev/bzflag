@@ -5124,7 +5124,7 @@ std::string getIPFromHandler (NetHandler* netHandler)
 
 static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& UNUSED(write_set))
 {
-  double connectionTimeout = 2.5; // timeout in seconds
+  const double connectionTimeout = 2.5; // timeout in seconds
 
   if (peer.deleteMe)
     return; // skip it, it's dead to us, we'll close and purge it later
