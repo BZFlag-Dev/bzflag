@@ -1131,7 +1131,7 @@ bool MasterBanCommand::operator() (const char	 *message,
 		  TextUtils::format("There are %d bans, only displaying the "
 				    "first 20", bans.size()).c_str());
 
-    } else if (bans.size() == 0) {
+    } else if (bans.empty()) {
       sendMessage(ServerPlayer, t, "There are no master bans loaded.");
 
     } else {
@@ -1148,7 +1148,7 @@ bool MasterBanCommand::operator() (const char	 *message,
     // print out the bans
     int counter = 0;
     for (std::vector<std::pair<std::string, std::string> >::const_iterator j
-	   = bans.begin(); j != bans.end() && counter < 20; j++, counter++) {
+	   = bans.begin(); j != bans.end() && counter < 20; ++j, counter++) {
       sendMessage(ServerPlayer, t,
 		  TextUtils::format("%s: %s", (j->first).c_str(),
 				    (j->second).c_str()).c_str());
