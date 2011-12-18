@@ -803,7 +803,7 @@ BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time)
 
 BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int size)
 {
-  if ((data == NULL) || (size <= 0)) {
+  if (!data || !size) {
     return false;
   }
 
@@ -1357,7 +1357,7 @@ BZF_API bz_APIStringList* bz_getGroupList ( void )
   PlayerAccessMap::iterator itr = groupAccess.begin();
   while (itr != groupAccess.end()) {
     groupList->push_back(itr->first);
-    itr++;
+    ++itr;
   }
   return groupList;
 }
@@ -2951,7 +2951,7 @@ public:
 
   virtual void process (bz_EventData *)
   {
-    if (!Tasks.size())
+    if (Tasks.empty())
       return;
 
     URLFetchTask &task = Tasks[0];
@@ -3028,7 +3028,7 @@ public:
 
   bool removeJob(size_t id)
   {
-    if (!Tasks.size())
+    if (Tasks.empty())
       return false;
 
     if (Tasks[0].id == id)
@@ -3053,7 +3053,7 @@ public:
 
   bool removeJob(const char* url)
   {
-    if (!Tasks.size())
+    if (Tasks.empty())
       return false;
 
     if (Tasks[0].url == url)
@@ -3096,7 +3096,7 @@ private:
       currentJob = NULL;
     }
 
-    if (Tasks.size())
+    if (!Tasks.empty())
       Tasks.erase(Tasks.begin());
   }
 };
