@@ -387,7 +387,7 @@ BZF_API bool bzhttp_RemoveAllVdirs (bz_Plugin* plugin )
       names.push_back(itr->second.name);
   }
 
-  if (names.size() == 0)
+  if (names.empty())
     return false;
 
   for( size_t i = 0; i < names.size(); i++)
@@ -1528,7 +1528,7 @@ public:
       if (v[i].size())
       {
 	std::vector<std::string> t = TextUtils::tokenize(v[i],"=");
-	if (t.size())
+	if (!t.empty())
 	  Request.AddParamater(TextUtils::url_decode(t[0]).c_str(), t.size() > 1 ? TextUtils::url_decode(t[1]).c_str() : "");
       }
     }
@@ -1667,10 +1667,9 @@ public:
     responce.AddBodyData(ServerHostname.c_str());
     responce.AddBodyData("</title></head><body>");
 
-    if (VDirs.size() == 0)
+    if (VDirs.empty()) {
      responce.AddBodyData("No HTTP Services are running on this server");
-    else
-    {
+    } else {
       std::map<std::string,VDir>::iterator itr = VDirs.begin();
       {
 	std::string vdirName = itr->second.vdir->VDirName();
@@ -1753,7 +1752,7 @@ void KillHTTP()
 
 void NewHTTPConnection ( bz_EventData *eventData )
 {
-  if (VDirs.size() == 0)
+  if (VDirs.empty())
     return;
 
   bz_NewNonPlayerConnectionEventData_V1 *connData = (bz_NewNonPlayerConnectionEventData_V1*)eventData;
@@ -2083,7 +2082,7 @@ std::string::const_iterator readKey ( std::string &key, std::string::const_itera
 
 std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str )
 {
-  if (!keys.size())
+  if (keys.empty())
     return inItr;
 
   std::string::const_iterator itr = inItr;
