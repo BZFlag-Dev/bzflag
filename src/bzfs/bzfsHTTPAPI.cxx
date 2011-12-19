@@ -575,7 +575,7 @@ const char* bzhttp_Request::GetHeader ( size_t index ) const
     if (index == i)
       return itr->second.c_str();
     i++;
-    itr++;
+    ++itr;
   }
   return NULL;
 }
@@ -619,7 +619,7 @@ const char* bzhttp_Request::GetCookie ( size_t index ) const
     if (index == i)
       return itr->second.c_str();
     i++;
-    itr++;
+    ++itr;
   }
   return NULL;
 }
@@ -663,7 +663,7 @@ const char* bzhttp_Request::GetParamater ( size_t index ) const
     if (index == i)
       return itr->second.c_str();
     i++;
-    itr++;
+    ++itr;
   }
   return NULL;
 }
@@ -1032,7 +1032,7 @@ public:
 		while (itr != groupAccess.end())
 		{
 		  groups += TextUtils::url_encode(itr->first) + "%0D%0A";
-		  itr++;
+		  ++itr;
 		}
 
 		for (size_t i = 0; i < vDir->BZIDAuthenicationGroups.size(); i++)
@@ -1439,7 +1439,7 @@ public:
       pageBuffer += itr->first + ":" + itr->second + "\n";
       if (itr->first == "Date")
 	didDate = true;
-      itr++;
+      ++itr;
     }
 
     if (!didDate)
@@ -1490,7 +1490,7 @@ public:
 	}
 
 	pageBuffer +=  TextUtils::format("Set-Cookie: %s=%s; Domain=%s; Path=%s; Max-Age=3600; HttpOnly\n",itr->first.c_str(),itr->second.c_str(),d.c_str(),p.c_str());
-	itr++;
+	++itr;
       }
     }
 
@@ -1733,7 +1733,7 @@ void KillHTTP()
   {
     bz_disconnectNonPlayerConnection(itr->first);
     delete(itr->second);
-    itr++;
+    ++itr;
   }
 
   HTTPPeers.clear();
@@ -1893,7 +1893,7 @@ void CheckForZombies ( void )
       delete (sessionItr->second);
       toKill.push_back(sessionItr->first);
     }
-    sessionItr++;
+    ++sessionItr;
   }
 
   for (size_t i = 0; i < toKill.size(); i++)
@@ -2068,10 +2068,10 @@ std::string::const_iterator readKey ( std::string &key, std::string::const_itera
   while ( itr != str.end() ) {
     if (*itr != ']') {
       key += *itr;
-      itr++;
+      ++itr;
     } else {
       // go past the code
-      itr++;
+      ++itr;
       key = TextUtils::tolower(key);
       return itr;
     }
@@ -2095,7 +2095,7 @@ std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, 
     // save off the itr in case this is the one, so we can copy to this point
     std::string::const_iterator keyStartItr = itr;
 
-    itr++;
+    ++itr;
     if (itr == str.end())
       return itr;
 
@@ -2347,9 +2347,9 @@ std::string processTemplate ( const std::string &templateText, TemplateInfo& inf
   while ( templateItr != templateText.end() ) {
     if ( *templateItr != '[' ) {
       code += *templateItr;
-      templateItr++;
+      ++templateItr;
     } else {
-      templateItr++;
+      ++templateItr;
 
       if (templateItr == templateText.end()) {
 	code += '[';
