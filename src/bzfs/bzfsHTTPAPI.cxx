@@ -366,8 +366,6 @@ BZF_API bool bzhttp_RemoveVDir (bz_Plugin* plugin, bzhttp_VDir *vdir )
     return false;
   VDir dir;
 
-  std::string name =  TextUtils::toupper(vdir->VDirName());
-
   std::map<std::string,VDir>::iterator itr = VDirs.find(dir.name);
   if (itr == VDirs.end())
     return false;
@@ -886,11 +884,6 @@ public:
     {
       std::string headerSubStir = RequestData.substr(0,HeaderSize);
       std::vector<std::string> headers = TextUtils::tokenize(headerSubStir,"\r\n");
-
-      if (headers.size() > 0)
-      {
-	std::string browserInfo = headers[0];
-      }
 
       for ( size_t i = 1; i < headers.size(); i++ )
       {
@@ -2159,11 +2152,7 @@ void replaceVar ( std::string &code, std::string::const_iterator &itr, const std
   itr = readKey(key,itr,str);
 
   if (itr != str.end()) {
-    std::string lowerKey;
-    std::string val;
-
-    lowerKey = TextUtils::tolower(key);
-
+    std::string lowerKey(TextUtils::tolower(key));
     code += CallKey(lowerKey,info.Callback);
   }
 }
