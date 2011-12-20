@@ -66,7 +66,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
   queueMessage(ListServerLink::ADD);
 }
 
-ListServerLink::ListServerLink()
+ListServerLink::ListServerLink(): nextMessageType(), port(0), queuedRequest(0)
 {
   // does not create a usable link, so checks should be placed
   // in  all public member functions to ensure that nothing tries
@@ -348,7 +348,6 @@ void ListServerLink::addMe(PingPacket pingInfo,
 			   std::string _advertiseGroups)
 {
   std::string msg;
-  std::string hdr;
 
   // encode ping reply as ascii hex digits plus NULL
   char gameInfo[PingPacketHexPackedSize + 1];
@@ -393,7 +392,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
   msg += "&groups=";
   // *groups=GROUP0%0D%0AGROUP1%0D%0A
   PlayerAccessMap::iterator itr = groupAccess.begin();
-  for ( ; itr != groupAccess.end(); itr++) {
+  for ( ; itr != groupAccess.end(); ++itr) {
     if (itr->first.substr(0, 6) != "LOCAL.") {
       msg += itr->first.c_str();
       msg += "%0D%0A";
