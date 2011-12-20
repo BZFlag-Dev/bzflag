@@ -24,7 +24,7 @@
 #include "ParseMaterial.h"
 
 
-CustomTetra::CustomTetra()
+CustomTetra::CustomTetra(): vertices(), normals(), texcoords()
 {
   vertexCount = 0; // no vertices have yet been defined
 
