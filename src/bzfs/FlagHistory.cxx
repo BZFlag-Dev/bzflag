@@ -24,21 +24,21 @@ void FlagHistory::clear() {
 }
 
 std::string FlagHistory::getStr() {
-    std::string flagList;
-    std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
+  std::string flagList;
+  std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
 
-    while (fhIt != flagHistory.end()) {
-      flagList += " (";
-      FlagType * fDesc = (FlagType*)(*fhIt);
-      if (fDesc->endurance == FlagNormal) {
-	flagList += '*';
-	flagList += fDesc->flagName.c_str()[0];
-      } else
-	flagList += fDesc->flagAbbv;
-      flagList += ")";
-      fhIt++;
-    }
-    return flagList;
+  while (fhIt != flagHistory.end()) {
+    flagList += " (";
+    FlagType * fDesc = (FlagType*)(*fhIt);
+    if (fDesc->endurance == FlagNormal) {
+      flagList += '*';
+      flagList += fDesc->flagName.c_str()[0];
+    } else
+      flagList += fDesc->flagAbbv;
+    flagList += ")";
+    ++fhIt;
+  }
+  return flagList;
 }
 
 void FlagHistory::add(FlagType* type) {
