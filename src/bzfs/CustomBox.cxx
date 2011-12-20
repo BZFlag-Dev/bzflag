@@ -115,7 +115,7 @@ bool CustomBox::read(const char *cmd, std::istream& input)
     }
   }
 
-  if (faceList.size() > 0) {
+  if (!faceList.empty()) {
     isOldBox = false;
     if (parms >> tmpCmd) {
       // set the cmd string by eating the first parameter
