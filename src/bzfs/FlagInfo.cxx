@@ -38,7 +38,7 @@ int		    FlagInfo::numExtraFlags = 0;
 int		    FlagInfo::numFlags      = 0;
 int		    FlagInfo::numFlagsInAir;
 
-FlagInfo::FlagInfo()
+FlagInfo::FlagInfo(): numShots(0), flagIndex(0)
 {
   // prep flag
   flag.type		  = Flags::Null;
