@@ -120,3 +120,5 @@
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
 #endif
+
+#pragma warning( disable : 4351 )

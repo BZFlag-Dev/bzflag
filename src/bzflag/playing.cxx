@@ -6637,7 +6637,7 @@ static void		playingLoop()
 	nextTime += 1.0f / fpsLimit;
 	float remaining;
         while (1) {
-	  remaining = nextTime - TimeKeeper::getCurrent();
+	  remaining = (float)(nextTime - TimeKeeper::getCurrent());
 	  if (remaining > 1.0f)
 	    break;
 	  if (remaining <= 0.0f)
