@@ -36,7 +36,7 @@ std::string FlagHistory::getStr() {
     } else
       flagList += fDesc->flagAbbv;
     flagList += ")";
-    ++fhIt;
+    fhIt++;
   }
   return flagList;
 }
