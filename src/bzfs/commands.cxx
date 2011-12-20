@@ -635,7 +635,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
   std::vector<const std::string*> commands;
   MapOfCommands::iterator it;
   MapOfCommands& commandMap = *getMapRef();
-  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+  for (it = commandMap.begin(); it != commandMap.end(); ++it) {
     const std::string& cmd = it->first;
     if (cmd[0] != '/') {
       continue; // ignore any fake entries (ex: CmdHelp)
@@ -706,7 +706,7 @@ bool CmdHelp::operator() (const char	 *message,
   int t = playerData->getIndex();
   MapOfCommands::iterator it;
   MapOfCommands &commandMap = *getMapRef();
-  for (it = commandMap.begin(); it != commandMap.end(); it++) {
+  for (it = commandMap.begin(); it != commandMap.end(); ++it) {
     std::string master = it->first;
     master.resize(i);
     if (master == commandToken) {
@@ -718,7 +718,7 @@ bool CmdHelp::operator() (const char	 *message,
     sendMessage(ServerPlayer, t,
 		("No command starting with " + commandToken).c_str());
   else
-    for (it = commandMap.begin(); it != commandMap.end(); it++) {
+    for (it = commandMap.begin(); it != commandMap.end(); ++it) {
       std::string master = it->first;
       master.resize(i);
       if (master == commandToken) {
@@ -1513,8 +1513,8 @@ bool FlagCommand::operator() (const char	 *message,
 	  void *buf = nboPackUByte(bufStart, fi->player);
 	  buf = fi->pack(buf);
 	  broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+	  fPlayer->player.setFlag(-1);
 	}
-	fPlayer->player.setFlag(-1);
       }
 
       // setup bzfs' state
@@ -2117,7 +2117,7 @@ bool GroupListCommand::operator() (const char	 *,
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
   PlayerAccessMap::iterator itr;
-  for (itr = groupAccess.begin(); itr != groupAccess.end(); itr++) {
+  for (itr = groupAccess.begin(); itr != groupAccess.end(); ++itr) {
     sendMessage(ServerPlayer, t, itr->first.c_str());
   }
   return true;
@@ -2134,7 +2134,7 @@ bool ShowGroupCommand::operator() (const char* msg,
 
   msg += commandName.size();
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
-  if (argv.size() > 0) {
+  if (!argv.empty()) {
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
       sendMessage(ServerPlayer, t, "No permission!");
       return true;
@@ -2165,7 +2165,7 @@ bool ShowGroupCommand::operator() (const char* msg,
     while (itr != info.groups.end()) {
       line += *itr;
       line += " ";
-      itr++;
+      ++itr;
     }
     while (line.size() >= (unsigned int)MessageLen) {
       sendMessage(ServerPlayer, t, line.substr(0, MessageLen - 1).c_str());
@@ -2185,7 +2185,7 @@ bool ShowGroupCommand::operator() (const char* msg,
     while (itr != info.groups.end()) {
       line += *itr;
       line += " ";
-      itr++;
+      ++itr;
     }
     while (line.size() >= (unsigned int)MessageLen) {
       sendMessage(ServerPlayer, t, line.substr(0, MessageLen - 1).c_str());
@@ -2208,7 +2208,7 @@ bool ShowPermsCommand::operator() (const char* msg,
   msg += commandName.size();
   GameKeeper::Player* query = playerData; // the asking player by default
   std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
-  if (argv.size() > 0) {
+  if (!argv.empty()) {
     if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showOthers)) {
       sendMessage(ServerPlayer, t, "No permission!");
       return true;
@@ -2249,7 +2249,7 @@ bool GroupPermsCommand::operator() (const char*,
   int t = playerData->getIndex();
   sendMessage(ServerPlayer, t, "Group List:");
   PlayerAccessMap::iterator itr;
-  for (itr = groupAccess.begin(); itr != groupAccess.end(); itr++) {
+  for (itr = groupAccess.begin(); itr != groupAccess.end(); ++itr) {
     std::string line;
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
@@ -3412,7 +3412,7 @@ void parseServerCommand(const char *message, int t)
     std::vector<std::string> params =
       TextUtils::tokenize(std::string(message+1),std::string(" "));
 
-    if (params.size() == 0)
+    if (params.empty())
       return;
 
     tmCustomSlashCommandMap::iterator itr =
