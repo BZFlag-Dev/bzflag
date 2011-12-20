@@ -517,7 +517,7 @@ class BotEventHandler : public bz_EventHandler
 	  }
 	  break;
       }
-      itr++;
+      ++itr;
     }
   }
 };
