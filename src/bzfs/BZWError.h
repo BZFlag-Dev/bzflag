@@ -30,8 +30,8 @@ public:
   bool warning(std::string warningMsg, int line);
 
   /* status */
-  bool hasHadError() {return hadError;};
-  bool hasHadWarning() {return hadWarning;};
+  bool hasHadError() const {return hadError;};
+  bool hasHadWarning() const {return hadWarning;};
 
 private:
   /* data */
