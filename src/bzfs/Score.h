@@ -26,15 +26,15 @@ class Score {
       Try to penalize winning casuality
   */
   float ranking();
-  bool  isTK();
+  bool  isTK() const;
   void  tK();
   void  killedBy();
   void  kill();
   void *pack(void *buf);
-  bool  reached();
-  int	getWins(){return wins;}
-  int	getLosses(){return losses;}
-  int	getTKs(){return tks;}
+  bool  reached() const;
+  int	getWins() const {return wins;}
+  int	getLosses() const {return losses;}
+  int	getTKs() const {return tks;}
 
   void	setWins(int v){wins = v;}
   void	setLosses(int v){losses = v;}
@@ -47,7 +47,7 @@ class Score {
   static void setWinLimit(int _score);
   static void setRandomRanking();
 
-  int   getHandicap();
+  int   getHandicap() const;
  private:
   // player's score
   int wins, losses, tks;

@@ -49,7 +49,7 @@ float Score::ranking() {
   return average * penalty;
 }
 
-bool Score::isTK() {
+bool Score::isTK() const {
   // arbitrary 3
   return (tks >= 3) && (tkKickRatio > 0)
     && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
@@ -83,7 +83,7 @@ void *Score::pack(void *buf) {
   return buf;
 }
 
-bool Score::reached() {
+bool Score::reached() const {
   return wins - losses >= score;
 }
 
@@ -99,7 +99,7 @@ void Score::setRandomRanking() {
   randomRanking = true;
 }
 
-int Score::getHandicap() {
+int Score::getHandicap() const {
   return losses - wins;
 }
 
