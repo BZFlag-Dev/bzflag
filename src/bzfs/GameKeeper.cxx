@@ -33,7 +33,7 @@ void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 GameKeeper::Player::Player(int _playerIndex,
 			   const struct sockaddr_in &clientAddr, int fd,
 			   tcpCallback _clientCallback):
-  player(_playerIndex), lagInfo(&player),
+  player(_playerIndex), lagInfo(&player), serverTimeStamp(0.0),
   playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
   needThisHostbanChecked(false), idFlag(-1)
 {
@@ -76,9 +76,9 @@ GameKeeper::Player::Player(int _playerIndex,
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
-  : player(_playerIndex), lagInfo(&player),
+  : player(_playerIndex), lagInfo(&player), serverTimeStamp(0.0),
   playerIndex(_playerIndex), closed(false), clientCallback(NULL),
-  needThisHostbanChecked(false)
+  needThisHostbanChecked(false), idFlag(0)
 {
   playerList[playerIndex] = this;
 
