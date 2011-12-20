@@ -130,7 +130,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
     }
 
     input.putback('\n');
-    if (qualifiers.size() == 0) {
+    if (qualifiers.empty()) {
       return false;
     }
   }
@@ -202,7 +202,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
       }
     }
     input.putback('\n');
-    if (qualifiers.size() == 0) {
+    if (qualifiers.empty()) {
       return false;
     }
   }
