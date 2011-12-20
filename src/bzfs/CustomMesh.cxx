@@ -49,7 +49,7 @@ CustomMesh::~CustomMesh()
   }
 
   std::vector<CustomMeshFace*>::iterator face_it;
-  for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
+  for (face_it = faces.begin(); face_it != faces.end(); ++face_it) {
     CustomMeshFace* _face = *face_it;
     delete _face;
   }
@@ -196,7 +196,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     cfvec3 vert;
     if (decorative) {
       vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
-      if ((faces.size() > 0) && !(driveThrough && shootThrough)) {
+      if (!faces.empty() && !(driveThrough && shootThrough)) {
 	logDebugMessage(0,"WARNING: mesh is supposed to be decorative, setting to passable\n");
 	forcePassable = true;
       }
@@ -218,7 +218,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 
   // add the faces
   std::vector<CustomMeshFace*>::const_iterator face_it;
-  for (face_it = faces.begin(); face_it != faces.end(); face_it++) {
+  for (face_it = faces.begin(); face_it != faces.end(); ++face_it) {
     const CustomMeshFace* customFace = *face_it;
     customFace->write(mesh);
   }
