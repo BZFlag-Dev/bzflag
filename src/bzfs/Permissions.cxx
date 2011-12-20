@@ -720,7 +720,7 @@ bool PlayerAccessInfo::writePermsFile(const std::string &filename)
     group = itr->second.groups.begin();
     while (group != itr->second.groups.end()) {
       out << (*group) << ' ';
-      group++;
+      ++group;
     }
     out << std::endl;
     // allows
@@ -733,7 +733,7 @@ bool PlayerAccessInfo::writePermsFile(const std::string &filename)
       if (itr->second.explicitDenys.test(i))
 	out << nameFromPerm((PlayerAccessInfo::AccessPerm) i);
     out << std::endl;
-    itr++;
+    ++itr;
   }
   out.close();
   return true;
