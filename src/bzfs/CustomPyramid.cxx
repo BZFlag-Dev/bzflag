@@ -110,7 +110,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     }
   }
 
-  if (faceList.size() > 0) {
+  if (!faceList.empty()) {
     isOldPyramid = false;
     if (parms >> tmpCmd) {
       // set the cmd string by eating the first parameter
@@ -118,8 +118,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     } else {
       return false; // missing param
     }
-  }
-  else {
+  } else {
     for (int i = 0; i < FaceCount; i++) {
       faceList.push_back(i);
     }
