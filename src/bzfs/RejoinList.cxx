@@ -38,7 +38,7 @@ RejoinList::RejoinList ()
 RejoinList::~RejoinList ()
 {
   std::list<struct RejoinNode*>::iterator it;
-  for (it = queue.begin(); it != queue.end(); it++) {
+  for (it = queue.begin(); it != queue.end(); ++it) {
     RejoinNode *rn = *it;
     delete rn;
   }
@@ -81,7 +81,7 @@ float RejoinList::waitTime (int playerIndex)
       it = queue.erase(it);
       continue;
     }
-    it++;
+    ++it;
   }
 
   const char *callsign = playerData->player.getCallSign();
@@ -92,7 +92,7 @@ float RejoinList::waitTime (int playerIndex)
     if (strcasecmp (rn->callsign, callsign) == 0) {
       value = float(rn->joinTime - thenTime);
     }
-    it++;
+    ++it;
   }
 
   return value;
