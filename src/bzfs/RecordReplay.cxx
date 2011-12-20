@@ -1246,8 +1246,6 @@ bool Replay::sendPackets()
   }
 
   while ((p != NULL) && (Replay::nextTime() < 0.0f)) {
-    int i;
-
     if (p == NULL) {
       // this is a safety, it shouldn't happen
       resetStates();
@@ -1261,6 +1259,8 @@ bool Replay::sendPackets()
 	    (int)p->mode, p->len, msgString(p->code), p->data);
 
     if (p->mode != HiddenPacket) {
+      int i;
+
       // set the database variables if this is MsgSetVar
       if (p->code == MsgSetVar) {
 	setVariables(p->data);
