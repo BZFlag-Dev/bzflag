@@ -131,7 +131,7 @@ bool PluginExists ( const char* n )
   while ( itr != vPluginList.end()) {
     if (itr->name == name)
       return true;
-    itr++;
+    ++itr;
   }
   return false;
 }
@@ -144,7 +144,7 @@ bz_Plugin* getPlugin( const char* n )
   while ( itr != vPluginList.end()) {
     if (itr->name == name)
       return itr->plugin;
-    itr++;
+    ++itr;
   }
   return NULL;
 }
@@ -452,7 +452,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
       if ( TextUtils::tolower(command) == "listplugins" ) {
 	std::vector<std::string>	plugins = getPluginList();
 
-	if (!plugins.size()) {
+	if (plugins.empty()) {
 	  bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
 	} else {
 	  bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
