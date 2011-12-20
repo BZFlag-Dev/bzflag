@@ -64,7 +64,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
       }
     }
     input.putback('\n');
-    if (delay.size() == 0)
+    if (delay.empty())
       return false;
   }
   else if (strcmp(cmd, "type") == 0) {
