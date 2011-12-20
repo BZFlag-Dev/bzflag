@@ -440,86 +440,86 @@ bz_ePlayerDeathReason getDeathReason (bz_PlayerDieEventData_V1* data)
 
 class BotEventHandler : public bz_EventHandler
 {
-	virtual void process ( bz_EventData *eventData )
-	{
-		std::vector<bz_ServerSidePlayerHandler*>::iterator itr = serverSidePlayer.begin();
-		while (itr != serverSidePlayer.end())
-		{
-			bz_ServerSidePlayerHandler* handler = *itr;
+  virtual void process ( bz_EventData *eventData )
+  {
+    std::vector<bz_ServerSidePlayerHandler*>::iterator itr = serverSidePlayer.begin();
+    while (itr != serverSidePlayer.end())
+    {
+      bz_ServerSidePlayerHandler* handler = *itr;
 
-			switch (eventData->eventType)
-			{
-			default:
-				break;
+      switch (eventData->eventType)
+      {
+	default:
+	  break;
 
-			case bz_ePlayerJoinEvent:
-				handler->playerAdded(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
-				break;
+	case bz_ePlayerJoinEvent:
+	  handler->playerAdded(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
+	  break;
 
-			case bz_ePlayerPartEvent:
-				handler->playerRemoved(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
-				break;
+	case bz_ePlayerPartEvent:
+	  handler->playerRemoved(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
+	  break;
 
-			case bz_ePlayerSpawnEvent:
-				{
-					bz_PlayerSpawnEventData_V1* spawnData = (bz_PlayerSpawnEventData_V1*)eventData;
-					handler->playerSpawned(spawnData->playerID,spawnData->state.pos,spawnData->state.rotation);
-				}
-				break;
+	case bz_ePlayerSpawnEvent:
+	  {
+	    bz_PlayerSpawnEventData_V1* spawnData = (bz_PlayerSpawnEventData_V1*)eventData;
+	    handler->playerSpawned(spawnData->playerID,spawnData->state.pos,spawnData->state.rotation);
+	  }
+	  break;
 
-			case bz_eCaptureEvent:
-				{
-					bz_CTFCaptureEventData_V1* capData = (bz_CTFCaptureEventData_V1*)eventData;
-					handler->flagCaptured(capData->playerCapping,capData->teamCapped);
-				}
-				break;
+	case bz_eCaptureEvent:
+	  {
+	    bz_CTFCaptureEventData_V1* capData = (bz_CTFCaptureEventData_V1*)eventData;
+	    handler->flagCaptured(capData->playerCapping,capData->teamCapped);
+	  }
+	  break;
 
-			case bz_eFilteredChatMessageEvent:
-				{
-					bz_ChatEventData_V1* chat = (bz_ChatEventData_V1*)eventData;
-					handler->textMessage (chat->to, chat->from, chat->message.c_str());
-				}
-				break;
+	case bz_eFilteredChatMessageEvent:
+	  {
+	    bz_ChatEventData_V1* chat = (bz_ChatEventData_V1*)eventData;
+	    handler->textMessage (chat->to, chat->from, chat->message.c_str());
+	  }
+	  break;
 
-			case bz_ePlayerDieEvent:
-				{
-					bz_PlayerDieEventData_V1* die = (bz_PlayerDieEventData_V1*)eventData;
-					handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(), die->driverID);
-				}
-				break;
+	case bz_ePlayerDieEvent:
+	  {
+	    bz_PlayerDieEventData_V1* die = (bz_PlayerDieEventData_V1*)eventData;
+	    handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(), die->driverID);
+	  }
+	  break;
 
-			case bz_eShotFiredEvent:
-				{
-					bz_ShotFiredEventData_V1* fired = (bz_ShotFiredEventData_V1*)eventData;
-					handler->shotFired(fired->playerID,fired->shotID);
-				}
-				break;
+	case bz_eShotFiredEvent:
+	  {
+	    bz_ShotFiredEventData_V1* fired = (bz_ShotFiredEventData_V1*)eventData;
+	    handler->shotFired(fired->playerID,fired->shotID);
+	  }
+	  break;
 
-			case bz_eShotEndedEvent:
-				{
-					bz_ShotEndedEventData_V1* ended = (bz_ShotEndedEventData_V1*)eventData;
-					handler->shotEnded(ended->playerID,ended->shotID,ended->explode? 1 : 0);
-				}
-				break;
+	case bz_eShotEndedEvent:
+	  {
+	    bz_ShotEndedEventData_V1* ended = (bz_ShotEndedEventData_V1*)eventData;
+	    handler->shotEnded(ended->playerID,ended->shotID,ended->explode? 1 : 0);
+	  }
+	  break;
 
-			case bz_ePlayerUpdateEvent:
-				{
-					bz_PlayerUpdateEventData_V1* updated = (bz_PlayerUpdateEventData_V1*)eventData;
-					handler->playerStateUpdate(updated->playerID, &updated->state, updated->stateTime);
+	case bz_ePlayerUpdateEvent:
+	  {
+	    bz_PlayerUpdateEventData_V1* updated = (bz_PlayerUpdateEventData_V1*)eventData;
+	    handler->playerStateUpdate(updated->playerID, &updated->state, updated->stateTime);
 
-					if (updated->lastState.status == eTeleporting &&  updated->lastState.status != eTeleporting)
-						handler->playerTeleported(updated->playerID,&updated->state,&updated->lastState);
+	    if (updated->lastState.status == eTeleporting &&  updated->lastState.status != eTeleporting)
+	      handler->playerTeleported(updated->playerID,&updated->state,&updated->lastState);
 
-					if (updated->playerID == handler->getPlayerID())
-					{
-						// check for stuff on us
-					}
-				}
-				break;
-			}
-			itr++;
-		}
-	}
+	    if (updated->playerID == handler->getPlayerID())
+	    {
+	      // check for stuff on us
+	    }
+	  }
+	  break;
+      }
+      itr++;
+    }
+  }
 };
 
 bz_EventHandler *botEventHandler = NULL;
