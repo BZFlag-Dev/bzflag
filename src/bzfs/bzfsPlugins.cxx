@@ -128,8 +128,7 @@ bool PluginExists ( const char* n )
   std::string name = n;
 
   std::vector<trPluginRecord>::iterator itr = vPluginList.begin();
-  while ( itr != vPluginList.end())
-  {
+  while ( itr != vPluginList.end()) {
     if (itr->name == name)
       return true;
     itr++;
@@ -142,8 +141,7 @@ bz_Plugin* getPlugin( const char* n )
   std::string name = n;
 
   std::vector<trPluginRecord>::iterator itr = vPluginList.begin();
-  while ( itr != vPluginList.end())
-  {
+  while ( itr != vPluginList.end()) {
     if (itr->name == name)
       return itr->plugin;
     itr++;
@@ -433,103 +431,92 @@ void parseServerCommand(const char *message, int dstPlayerId);
 
 class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
-public:
-	virtual ~DynamicPluginCommands(){};
-	virtual bool SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
-	{
-		bz_BasePlayerRecord	record;
+  public:
+    virtual ~DynamicPluginCommands(){};
+    virtual bool SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
+    {
+      bz_BasePlayerRecord	record;
 
-		std::string command = _command.c_str();
-		std::string message = _message.c_str();
+      std::string command = _command.c_str();
+      std::string message = _message.c_str();
 
-		bz_BasePlayerRecord	*p = bz_getPlayerByIndex(playerID);
-		if (!p)
-			return false;
+      bz_BasePlayerRecord	*p = bz_getPlayerByIndex(playerID);
+      if (!p)
+	return false;
 
-		record = *p;
+      record = *p;
 
-		bz_freePlayerRecord(p);
+      bz_freePlayerRecord(p);
 
-		// list dosn't need admin
-		if ( TextUtils::tolower(command) == "listplugins" )
-		{
-			std::vector<std::string>	plugins = getPluginList();
+      // list dosn't need admin
+      if ( TextUtils::tolower(command) == "listplugins" ) {
+	std::vector<std::string>	plugins = getPluginList();
 
-			if (!plugins.size())
-				bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
-			else
-			{
-				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
+	if (!plugins.size()) {
+	  bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
+	} else {
+	  bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
 
-				for ( unsigned int i = 0; i < plugins.size(); i++)
-				{
-				  char tmp[256];
-				  sprintf(tmp,"%d %s", i+1, plugins[i].c_str());
-				  bz_sendTextMessage(BZ_SERVER,playerID,tmp);
-				}
-			}
-			return true;
-		}
-
-		if (!record.hasPerm("PLUGINS"))
-		{
-			bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to (un)load plug-ins.");
-			return true;
-		}
-
-		if ( TextUtils::tolower(command) == "loadplugin" )
-		{
-			if ( !params->size() )
-			{
-				bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /loadplugin plug-in");
-				return true;
-			}
-
-			std::vector<std::string> subparams = TextUtils::tokenize(message,std::string(","));
-
-			std::string config;
-			if ( subparams.size() >1)
-				config = subparams[1];
-
-			if (loadPlugin(subparams[0],config))
-				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded.");
-			else
-				bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in load failed.");
-			return true;
-		}
-
-		if ( TextUtils::tolower(command) == "unloadplugin" )
-		{
-			if ( !params->size() )
-			{
-				bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /unloadplugin plug-in");
-				return true;
-			}
-
-			std::string name;
-			for(size_t i = 0; i < params->size(); i++)
-			{
-			  name += params->get(i).c_str();
-			  if (i != params->size()-1)
-			    name += " ";
-			}
-			if (TextUtils::isNumeric(name[0]))
-			{
-			  int index = atoi(name.c_str())-1;
-			  std::vector<std::string>	plugins = getPluginList();
-			  if (index > 0 && index < (int)plugins.size())
-			    name = plugins[index];
-			}
-			if ( unloadPlugin(name) )
-			{
-			  std::string msg = "Plug-In " + name + " unloaded.";
-			  bz_sendTextMessage(BZ_SERVER,playerID,msg.c_str());
-			}
-
-			return true;
-		}
-		return true;
+	  for ( unsigned int i = 0; i < plugins.size(); i++) {
+	    char tmp[256];
+	    sprintf(tmp,"%d %s", i+1, plugins[i].c_str());
+	    bz_sendTextMessage(BZ_SERVER,playerID,tmp);
+	  }
 	}
+	return true;
+      }
+
+      if (!record.hasPerm("PLUGINS")) {
+	bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to (un)load plug-ins.");
+	return true;
+      }
+
+      if ( TextUtils::tolower(command) == "loadplugin" ) {
+	if ( !params->size() ) {
+	  bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /loadplugin plug-in");
+	  return true;
+	}
+
+	std::vector<std::string> subparams = TextUtils::tokenize(message,std::string(","));
+
+	std::string config;
+	if ( subparams.size() >1)
+	  config = subparams[1];
+
+	if (loadPlugin(subparams[0],config))
+	  bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in loaded.");
+	else
+	  bz_sendTextMessage(BZ_SERVER,playerID,"Plug-in load failed.");
+	return true;
+      }
+
+      if ( TextUtils::tolower(command) == "unloadplugin" ) {
+	if ( !params->size() ) {
+	  bz_sendTextMessage(BZ_SERVER,playerID,"Usage: /unloadplugin plug-in");
+	  return true;
+	}
+
+	std::string name;
+	for(size_t i = 0; i < params->size(); i++) {
+	  name += params->get(i).c_str();
+	  if (i != params->size()-1)
+	    name += " ";
+	}
+	if (TextUtils::isNumeric(name[0])) {
+	  int index = atoi(name.c_str())-1;
+	  std::vector<std::string>	plugins = getPluginList();
+	  if (index > 0 && index < (int)plugins.size())
+	    name = plugins[index];
+	}
+	if ( unloadPlugin(name) ) {
+	  std::string msg = "Plug-In " + name + " unloaded.";
+	  bz_sendTextMessage(BZ_SERVER,playerID,msg.c_str());
+	}
+
+	return true;
+      }
+      return true;
+    }
 };
 
 DynamicPluginCommands	command;
