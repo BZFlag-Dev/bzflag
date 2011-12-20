@@ -27,7 +27,7 @@
 #include "TextureMatrix.h"
 
 
-CustomWaterLevel::CustomWaterLevel()
+CustomWaterLevel::CustomWaterLevel(): height(0.0)
 {
   modedMaterial = false;
   return;
