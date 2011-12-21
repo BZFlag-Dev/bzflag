@@ -27,7 +27,6 @@ CustomLink::CustomLink()
 
 bool CustomLink::read(const char *cmd, std::istream& input)
 {
-  std::string to_string;
   if (strcmp(cmd, "from") == 0) {
     input >> from;
   }
