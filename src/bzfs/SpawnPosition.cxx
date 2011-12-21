@@ -22,7 +22,7 @@
 SpawnPolicy *SpawnPosition::policy = (SpawnPolicy*)0;
 
 
-SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges)
+SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges): azimuth(0.0), pos()
 {
   /* if a spawn policy hasn't been set yet, just go with the default */
   if (!SpawnPosition::policy) {
