@@ -56,14 +56,16 @@
 
 WorldInfo::WorldInfo() :
   maxHeight(0.0f),
-  database(NULL)
+  database(NULL),
+  databaseSize(0),
+  uncompressedSize(0)
 {
   size[0] = 400.0f;
   size[1] = 400.0f;
   gravity = -9.81f;
   waterLevel = -1.0f;
   waterMatRef = NULL;
-	finished = false;
+  finished = false;
 }
 
 WorldInfo::~WorldInfo()
