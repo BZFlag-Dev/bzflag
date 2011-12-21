@@ -153,7 +153,7 @@ void GameTime::update()
 {
   std::list<TimeRecord>::iterator it;
   unsigned int count = timeRecs.size();
-  if (count <= 0) {
+  if (count == 0) {
     const TimeRecord tr = {0,0};
     resetToRecord(tr);
   }
@@ -254,9 +254,9 @@ void* GameTime::unpack(void *buf)
   }
 
   // clear the aged entries
-  if (timeRecs.size() > 0) {
+  if (!timeRecs.empty()) {
     s64 nowTime = getRawTime();
-    while (timeRecs.size() > 0) {
+    while (!timeRecs.empty()) {
       TimeRecord back = *timeRecs.rbegin();
       if ((nowTime - back.localTime) < maxRecordAge) {
 	break;
