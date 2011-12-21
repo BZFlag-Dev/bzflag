@@ -25,7 +25,7 @@
 #include "DropGeometry.h"
 
 
-SpawnPolicy::SpawnPolicy()
+SpawnPolicy::SpawnPolicy(): testPos(), safeSWRadius(0.0), safeSRRadius(0.0), safeDistance(0.0)
 {
 }
 
