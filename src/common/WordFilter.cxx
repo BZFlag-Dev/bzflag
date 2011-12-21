@@ -651,7 +651,7 @@ WordFilter::~WordFilter(void)
   for (int j = 0; j < MAX_FILTER_SETS; j++) {
     for (i = filters[j].begin();
 	 i != filters[j].end();
-	 i++) {
+	 ++i) {
       if (i->compiled) {
 	regfree(i->compiled);
 	free(i->compiled);
@@ -661,7 +661,7 @@ WordFilter::~WordFilter(void)
   // delete compiled prefixes
   for (i = prefixes.begin();
        i != prefixes.end();
-       i++) {
+       ++i) {
     if (i->compiled) {
       regfree(i->compiled);
       free(i->compiled);
@@ -670,7 +670,7 @@ WordFilter::~WordFilter(void)
   // delete compiled suffixes
   for (i = suffixes.begin();
        i != suffixes.end();
-       i++) {
+       ++i) {
     if (i->compiled) {
       regfree(i->compiled);
       free(i->compiled);

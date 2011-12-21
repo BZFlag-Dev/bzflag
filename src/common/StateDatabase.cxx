@@ -904,7 +904,7 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
   Expression postfix, prefix;
   std::stack<ExpressionToken> operators;
 
-  for (Expression::const_iterator i = infix.begin(); i != infix.end(); i++) {
+  for (Expression::const_iterator i = infix.begin(); i != infix.end(); ++i) {
     if (i->getTokenType() == ExpressionToken::Variable || i->getTokenType() == ExpressionToken::Number) {
       postfix.push_back(*i);
     } else if (i->getTokenType() == ExpressionToken::Oper) {
@@ -930,7 +930,7 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
     postfix.push_back(operators.top()); operators.pop();
   }
 
-  for (Expression::reverse_iterator ri = postfix.rbegin(); ri != postfix.rend(); ri++)
+  for (Expression::reverse_iterator ri = postfix.rbegin(); ri != postfix.rend(); ++ri)
     prefix.push_back(*ri);
   return prefix;
 }
@@ -941,7 +941,7 @@ float StateDatabase::evaluate(Expression e) const
   ExpressionToken tok, lvalue, rvalue;
   bool unary;
 
-  for (Expression::reverse_iterator i = e.rbegin(); i != e.rend(); i++) {
+  for (Expression::reverse_iterator i = e.rbegin(); i != e.rend(); ++i) {
     unary = false;
     switch(i->getTokenType()) {
       case ExpressionToken::Number:

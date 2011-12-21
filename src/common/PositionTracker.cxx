@@ -38,7 +38,7 @@ PositionTracker::PositionTracker(const PositionTracker& tracker)
 PositionTracker::~PositionTracker()
 {
   // clear out all the tracked items vectors
-  for (std::map<std::string, TrackedItemVector>::iterator jano = _trackedItem.begin(); jano != _trackedItem.end(); jano++) {
+  for (std::map<std::string, TrackedItemVector>::iterator jano = _trackedItem.begin(); jano != _trackedItem.end(); ++jano) {
     TrackedItemVector& trackSet = (*jano).second;
     for (unsigned int i = 0; i != trackSet.size(); i++) {
       /* sanity clear */
@@ -337,7 +337,7 @@ double PositionTracker::waypointDistance(unsigned short int fromToken, unsigned 
 
   // horrible linear search
   std::map<std::pair<unsigned short int, unsigned short int>, double>::const_iterator waypointIterator;
-  for (waypointIterator = _waypointDistance.begin(); waypointIterator != _waypointDistance.end(); waypointIterator++) {
+  for (waypointIterator = _waypointDistance.begin(); waypointIterator != _waypointDistance.end(); ++waypointIterator) {
     double fromDist, toDist, waypointDist;
     fromDist = distanceBetween(fromToken, (*waypointIterator).first.first, fromGroup, std::string("__waypoint__"));
     toDist = distanceBetween((*waypointIterator).first.second, toToken, std::string("__waypoint__"), toGroup);

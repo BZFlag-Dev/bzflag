@@ -172,10 +172,10 @@ void			KeyManager::unbindCommand(const char* command)
   while (index != pressEventToCommand.end()) {
     if (index->second == command) {
       deleteme = index;
-      index++;
+      ++index;
       unbind(deleteme->first, true);
     } else {
-      index++;
+      ++index;
     }
   }
 
@@ -183,10 +183,10 @@ void			KeyManager::unbindCommand(const char* command)
   while (index != releaseEventToCommand.end()) {
     if (index->second == command) {
       deleteme = index;
-      index++;
+      ++index;
       unbind(deleteme->first, false);
     } else {
-      index++;
+      ++index;
     }
   }
 }

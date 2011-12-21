@@ -110,7 +110,7 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
     *matches = "";
     if (first != last) {
       std::vector<WordRecord>::iterator it = first;
-      for (it = first; it != (last + 1); it++) {
+      for (it = first; it != (last + 1); ++it) {
 	std::string tmp2 = it->word;
 	// strip the trailing whitespace
 	while ((tmp2.size() > 0) && isspace(tmp2[tmp2.size() - 1])) {
