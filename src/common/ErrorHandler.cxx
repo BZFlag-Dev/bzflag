@@ -41,7 +41,7 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
   if (!pBdl)
     return;
 
-  if ((parms != NULL) && (parms->size() > 0))
+  if ((parms != NULL) && !parms->empty())
     msg = pBdl->formatMessage(fmt, parms);
   else
     msg = pBdl->getLocalString(fmt);
