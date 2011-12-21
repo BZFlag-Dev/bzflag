@@ -161,7 +161,7 @@ const StringVector& TextChunkManager::getChunkNames() const
 void TextChunkManager::reload()
 {
   TextChunkMap::iterator it;
-  for (it = theChunks.begin(); it != theChunks.end(); it++) {
+  for (it = theChunks.begin(); it != theChunks.end(); ++it) {
     it->second.reload();
   }
   return;
