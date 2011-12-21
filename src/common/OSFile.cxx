@@ -549,7 +549,6 @@ bool OSDir::getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive)
 
   realMask = TextUtils::toupper(realMask);
 
-  std::string theFileExt;
   if (info->namePos == -1)
   {
     info->nameList.clear();
