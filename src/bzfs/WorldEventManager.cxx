@@ -26,17 +26,15 @@ WorldEventManager::WorldEventManager()
 WorldEventManager::~WorldEventManager()
 {
   tmEventTypeList::iterator eventItr = eventList.begin();
-  while (eventItr != eventList.end())
-  {
+  while (eventItr != eventList.end()) {
     tvEventList::iterator itr = eventItr->second.begin();
-    while ( itr != eventItr->second.end() )
-    {
+    while (itr != eventItr->second.end()) {
       delete (*itr);
       *itr = NULL;
 
-      itr++;
+      ++itr;
     }
-    eventItr++;
+    ++eventItr;
   }
 }
 
@@ -64,12 +62,11 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
     return;
 
   tvEventList::iterator itr = eventTypeItr->second.begin();
-  while (itr != eventTypeItr->second.end())
-  {
+  while (itr != eventTypeItr->second.end()) {
     if (*itr == theEvent)
       itr = eventTypeItr->second.erase(itr);
     else
-      itr++;
+      ++itr;
   }
 }
 
@@ -86,7 +83,7 @@ bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
 	listIt = evList.erase(listIt);
 	foundOne = true;
       } else {
-	listIt++;
+	++listIt;
       }
     }
   }
@@ -143,17 +140,15 @@ bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
   bz_EventHandler *handler = new bz_EventHandler();
   handler->plugin = plugin;
 
-  if (worldEventManager.getEventCount(eventType) == 0)
+  if (worldEventManager.getEventCount(eventType) == 0) {
     worldEventManager.addEvent(eventType,handler);
-  else
-  {
+  } else {
     tvEventList& list = worldEventManager.eventList[eventType];
     tvEventList::iterator itr = list.begin();
-    while (itr != list.end())
-    {
+    while (itr != list.end()) {
       if ((*itr)->plugin == plugin)
 	return false;
-      itr++;
+      ++itr;
     }
     list.push_back(handler);
   }
@@ -168,18 +163,15 @@ bool RemoveEvent ( bz_eEventType eventType, bz_Plugin* plugin )
   tvEventList& list = worldEventManager.eventList[eventType];
 
   tvEventList::iterator itr = list.begin();
-  while (itr != list.end())
-  {
+  while (itr != list.end()) {
     bz_EventHandler* handler = *itr;
 
-    if (handler->plugin == plugin)
-    {
+    if (handler->plugin == plugin) {
       itr = list.erase(itr);
       delete(handler);
       return true;
     }
-    else
-      itr++;
+    ++itr;
   }
 
   return false;
@@ -193,22 +185,19 @@ bool FlushEvents(bz_Plugin* plugin)
   bool foundOne = false;
 
   tmEventTypeList::iterator typeIt;
-  for (typeIt = worldEventManager.eventList.begin(); typeIt != worldEventManager.eventList.end(); ++typeIt)
-  {
+  for (typeIt = worldEventManager.eventList.begin(); typeIt != worldEventManager.eventList.end(); ++typeIt) {
     tvEventList& evList = typeIt->second;
     tvEventList::iterator listIt = evList.begin();
-    while (listIt != evList.end())
-    {
+    while (listIt != evList.end()) {
       bz_EventHandler* handler = *listIt;
 
-      if (handler->plugin == plugin)
-      {
+      if (handler->plugin == plugin) {
 	listIt = evList.erase(listIt);
 	delete(handler);
 	foundOne = true;
+      } else {
+	++listIt;
       }
-      else
-	listIt++;
     }
   }
 
