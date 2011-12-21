@@ -68,11 +68,11 @@ BZDBCache::Float BZDBCache::gmSize;
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
 
 
-static float getGoodPosValue(float oldVal, const std::string var)
+static float getGoodPosValue(float oldVal, const std::string &var)
 {
   float newVal = BZDB.eval(var);
-  if (isnan(newVal) || newVal <= 0.0f)  // it's bad
-  {
+  if (isnan(newVal) || newVal <= 0.0f) {
+    // it's bad
     BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
     return oldVal;
   }
@@ -80,11 +80,11 @@ static float getGoodPosValue(float oldVal, const std::string var)
 }
 
 
-static float getGoodNonZeroValue(float oldVal, const std::string var)
+static float getGoodNonZeroValue(float oldVal, const std::string &var)
 {
   float newVal = BZDB.eval(var);
-  if (isnan(newVal) || newVal == 0.0f)  // it's bad
-  {
+  if (isnan(newVal) || newVal == 0.0f) {
+    // it's bad
     BZDB.setFloat(var, oldVal, BZDB.getPermission(var));
     return oldVal;
   }
