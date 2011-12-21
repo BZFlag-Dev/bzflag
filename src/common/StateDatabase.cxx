@@ -912,21 +912,21 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
 	operators.push(*i);
       } else if (i->getOperator() == ExpressionToken::rparen) {
 	// unstack operators until a matching ( is found
-	while((operators.size() > 0) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	while (!operators.empty() && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
 	}
 	// discard (
-	if (operators.size() > 0) // handle extra-rparen case
+	if (!operators.empty()) // handle extra-rparen case
 	  operators.pop();
       } else {
-	while((operators.size() > 0) && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
+	while (!operators.empty() && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen)) {
 	  postfix.push_back(operators.top()); operators.pop();
 	}
 	operators.push(*i);
       }
     }
   }
-  while (operators.size() > 0) {
+  while (!operators.empty()) {
     postfix.push_back(operators.top()); operators.pop();
   }
 
@@ -957,7 +957,7 @@ float StateDatabase::evaluate(Expression e) const
 	    (i->getOperator() == ExpressionToken::rparen)) {
 	    break;  // should not have any parens here, skip them
 	}
-	if (evaluationStack.size() == 0) {
+	if (evaluationStack.empty()) {
 	  // syntax error
 	  // ugly hack, since gcc 2.95 doesn't have <limits>
 	  float NaN;
@@ -966,7 +966,7 @@ float StateDatabase::evaluate(Expression e) const
 	}
 	// rvalue and lvalue are switched, since we're reversed
 	rvalue = evaluationStack.top(); evaluationStack.pop();
-	if (evaluationStack.size() == 0) {
+	if (evaluationStack.empty()) {
 	  unary = true; // syntax error or unary operator
 	}
 	if (!unary) {
@@ -1004,7 +1004,7 @@ float StateDatabase::evaluate(Expression e) const
 	break;
     }
   }
-  if (!evaluationStack.size())
+  if (evaluationStack.empty())
     return 0; // yeah we are screwed. TODO, don't let us get this far
 
   return (float)evaluationStack.top().getNumber();
