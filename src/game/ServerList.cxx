@@ -361,7 +361,7 @@ void			ServerList::addCacheToList()
     return;
   addedCacheToList = true;
   for (ServerListCache::SRV_STR_MAP::iterator iter = serverCache->begin();
-       iter != serverCache->end(); iter++){
+       iter != serverCache->end(); ++iter) {
     addToList(iter->second);
   }
 }
@@ -405,7 +405,7 @@ int ServerList::updateFromCache() {
   int numItemsAdded = 0;
 
   for (ServerListCache::SRV_STR_MAP::const_iterator iter = serverCache->begin();
-       iter != serverCache->end(); iter++) {
+       iter != serverCache->end(); ++iter) {
     // if maxCacheAge is 0 we add nothing
     // if the item is young enough we add it
     if (serverCache->getMaxCacheAge() != 0

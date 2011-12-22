@@ -45,11 +45,10 @@ TextureMatrixManager::~TextureMatrixManager()
 void TextureMatrixManager::clear()
 {
   std::vector<TextureMatrix*>::iterator it;
-  for (it = matrices.begin(); it != matrices.end(); it++) {
+  for (it = matrices.begin(); it != matrices.end(); ++it) {
     delete *it;
   }
   matrices.clear();
-  return;
 }
 
 
@@ -57,11 +56,10 @@ void TextureMatrixManager::update()
 {
   const double gameTime = GameTime::getStepTime();
   std::vector<TextureMatrix*>::iterator it;
-  for (it = matrices.begin(); it != matrices.end(); it++) {
+  for (it = matrices.begin(); it != matrices.end(); ++it) {
     TextureMatrix* texmat = *it;
     texmat->update(gameTime);
   }
-  return;
 }
 
 
@@ -110,7 +108,7 @@ void * TextureMatrixManager::pack(void *buf) const
 {
   std::vector<TextureMatrix*>::const_iterator it;
   buf = nboPackUInt(buf, (unsigned int)matrices.size());
-  for (it = matrices.begin(); it != matrices.end(); it++) {
+  for (it = matrices.begin(); it != matrices.end(); ++it) {
     TextureMatrix* texmat = *it;
     buf = texmat->pack(buf);
   }
@@ -136,7 +134,7 @@ int TextureMatrixManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
   std::vector<TextureMatrix*>::const_iterator it;
-  for (it = matrices.begin(); it != matrices.end(); it++) {
+  for (it = matrices.begin(); it != matrices.end(); ++it) {
     TextureMatrix* texmat = *it;
     fullSize = fullSize + texmat->packSize();
   }
@@ -148,11 +146,10 @@ void TextureMatrixManager::print(std::ostream& out,
 				 const std::string& indent) const
 {
   std::vector<TextureMatrix*>::const_iterator it;
-  for (it = matrices.begin(); it != matrices.end(); it++) {
+  for (it = matrices.begin(); it != matrices.end(); ++it) {
     TextureMatrix* texmat = *it;
     texmat->print(out, indent);
   }
-  return;
 }
 
 

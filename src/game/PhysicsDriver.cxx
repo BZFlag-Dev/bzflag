@@ -50,11 +50,10 @@ PhysicsDriverManager::~PhysicsDriverManager()
 void PhysicsDriverManager::clear()
 {
   std::vector<PhysicsDriver*>::iterator it;
-  for (it = drivers.begin(); it != drivers.end(); it++) {
+  for (it = drivers.begin(); it != drivers.end(); ++it) {
     delete *it;
   }
   drivers.clear();
-  return;
 }
 
 
@@ -62,11 +61,10 @@ void PhysicsDriverManager::update()
 {
   float t = (float)(TimeKeeper::getCurrent() - TimeKeeper::getStartTime());
   std::vector<PhysicsDriver*>::iterator it;
-  for (it = drivers.begin(); it != drivers.end(); it++) {
+  for (it = drivers.begin(); it != drivers.end(); ++it) {
     PhysicsDriver* driver = *it;
     driver->update(t);
   }
-  return;
 }
 
 
@@ -105,7 +103,7 @@ void * PhysicsDriverManager::pack(void *buf) const
 {
   std::vector<PhysicsDriver*>::const_iterator it;
   buf = nboPackUInt(buf, (int)drivers.size());
-  for (it = drivers.begin(); it != drivers.end(); it++) {
+  for (it = drivers.begin(); it != drivers.end(); ++it) {
     PhysicsDriver* driver = *it;
     buf = driver->pack(buf);
   }
@@ -131,7 +129,7 @@ int PhysicsDriverManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
   std::vector<PhysicsDriver*>::const_iterator it;
-  for (it = drivers.begin(); it != drivers.end(); it++) {
+  for (it = drivers.begin(); it != drivers.end(); ++it) {
     PhysicsDriver* driver = *it;
     fullSize = fullSize + driver->packSize();
   }
@@ -143,11 +141,10 @@ void PhysicsDriverManager::print(std::ostream& out,
 				 const std::string& indent) const
 {
   std::vector<PhysicsDriver*>::const_iterator it;
-  for (it = drivers.begin(); it != drivers.end(); it++) {
+  for (it = drivers.begin(); it != drivers.end(); ++it) {
     const PhysicsDriver* driver = *it;
     driver->print(out, indent);
   }
-  return;
 }
 
 

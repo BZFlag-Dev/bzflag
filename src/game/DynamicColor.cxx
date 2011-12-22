@@ -50,7 +50,7 @@ DynamicColorManager::~DynamicColorManager()
 void DynamicColorManager::clear()
 {
   std::vector<DynamicColor*>::iterator it;
-  for (it = colors.begin(); it != colors.end(); it++) {
+  for (it = colors.begin(); it != colors.end(); ++it) {
     delete *it;
   }
   colors.clear();
@@ -62,7 +62,7 @@ void DynamicColorManager::update()
 {
   const double gameTime = GameTime::getStepTime();
   std::vector<DynamicColor*>::iterator it;
-  for (it = colors.begin(); it != colors.end(); it++) {
+  for (it = colors.begin(); it != colors.end(); ++it) {
     DynamicColor* color = *it;
     color->update(gameTime);
   }
@@ -115,7 +115,7 @@ void * DynamicColorManager::pack(void *buf) const
 {
   std::vector<DynamicColor*>::const_iterator it;
   buf = nboPackUInt(buf, (int)colors.size());
-  for (it = colors.begin(); it != colors.end(); it++) {
+  for (it = colors.begin(); it != colors.end(); ++it) {
     const DynamicColor* color = *it;
     buf = color->pack(buf);
   }
@@ -141,7 +141,7 @@ int DynamicColorManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
   std::vector<DynamicColor*>::const_iterator it;
-  for (it = colors.begin(); it != colors.end(); it++) {
+  for (it = colors.begin(); it != colors.end(); ++it) {
     DynamicColor* color = *it;
     fullSize = fullSize + color->packSize();
   }
@@ -152,7 +152,7 @@ int DynamicColorManager::packSize() const
 void DynamicColorManager::print(std::ostream& out, const std::string& indent) const
 {
   std::vector<DynamicColor*>::const_iterator it;
-  for (it = colors.begin(); it != colors.end(); it++) {
+  for (it = colors.begin(); it != colors.end(); ++it) {
     DynamicColor* color = *it;
     color->print(out, indent);
   }

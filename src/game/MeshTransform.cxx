@@ -51,7 +51,7 @@ MeshTransformManager::~MeshTransformManager()
 void MeshTransformManager::clear()
 {
   std::vector<MeshTransform*>::iterator it;
-  for (it = transforms.begin(); it != transforms.end(); it++) {
+  for (it = transforms.begin(); it != transforms.end(); ++it) {
     delete *it;
   }
   transforms.clear();
@@ -100,7 +100,7 @@ void * MeshTransformManager::pack(void *buf) const
 {
   std::vector<MeshTransform*>::const_iterator it;
   buf = nboPackUInt(buf, (int)transforms.size());
-  for (it = transforms.begin(); it != transforms.end(); it++) {
+  for (it = transforms.begin(); it != transforms.end(); ++it) {
     MeshTransform* transform = *it;
     buf = transform->pack(buf);
   }
@@ -126,7 +126,7 @@ int MeshTransformManager::packSize() const
 {
   int fullSize = sizeof (uint32_t);
   std::vector<MeshTransform*>::const_iterator it;
-  for (it = transforms.begin(); it != transforms.end(); it++) {
+  for (it = transforms.begin(); it != transforms.end(); ++it) {
     MeshTransform* transform = *it;
     fullSize = fullSize + transform->packSize();
   }
@@ -137,11 +137,10 @@ int MeshTransformManager::packSize() const
 void MeshTransformManager::print(std::ostream& out, const std::string& indent) const
 {
   std::vector<MeshTransform*>::const_iterator it;
-  for (it = transforms.begin(); it != transforms.end(); it++) {
+  for (it = transforms.begin(); it != transforms.end(); ++it) {
     MeshTransform* transform = *it;
     transform->print(out, indent);
   }
-  return;
 }
 
 
