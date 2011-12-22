@@ -58,7 +58,7 @@ void			ServerCommandKey::init()
 
 void			ServerCommandKey::updatePrompt()
 {
-  std::string composePrompt, banPattern;
+  std::string composePrompt;
   // decide what should be on the composing prompt
 
   LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -235,7 +235,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
   if (sendIt) {
     std::string message = hud->getComposeString();
-    std::string banPattern, sendMsg, displayMsg, name;
+    std::string sendMsg, displayMsg, name;
 
     const Player * troll = myTank->getRecipient();
     if (mode >= Kick && mode <=Ghost){ // handle more complicated modes
