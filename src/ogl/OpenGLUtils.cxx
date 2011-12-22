@@ -480,18 +480,17 @@ DisplayListSystem::~DisplayListSystem()
   flushLists();
 }
 
-void DisplayListSystem::flushLists ( void )
+void DisplayListSystem::flushLists(void)
 {
   std::map<GLDisplayList,DisplayList>::iterator itr = lists.begin();
 
-  while (itr != lists.end())
-    {
-      if (itr->second.list != INVALID_GL_ID)
-	glDeleteLists(itr->second.list, 1);
+  while (itr != lists.end()) {
+    if (itr->second.list != INVALID_GL_ID)
+      glDeleteLists(itr->second.list, 1);
 
-      itr->second.list = INVALID_GL_ID;
-      itr++;
-    }
+    itr->second.list = INVALID_GL_ID;
+    ++itr;
+  }
 }
 
 GLDisplayList DisplayListSystem::newList (GLDisplayListCreator *creator)
