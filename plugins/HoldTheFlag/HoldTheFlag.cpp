@@ -52,17 +52,17 @@ HTFscore *htfScore = NULL;
 
 bz_eTeamType HTFscore::colorNameToDef (const char *color)
 {
-  if (!strncasecmp (color, "gre", 3))
+  if (!strcasecmp (color, "green"))
     return eGreenTeam;
-  if (!strncasecmp (color, "red", 3))
+  if (!strcasecmp (color, "red"))
     return eRedTeam;
-  if (!strncasecmp (color, "pur", 3))
+  if (!strcasecmp (color, "purple"))
     return ePurpleTeam;
-  if (!strncasecmp (color, "blu", 3))
+  if (!strcasecmp (color, "blue"))
     return eBlueTeam;
-  if (!strncasecmp (color, "rog", 3))
+  if (!strcasecmp (color, "rogue"))
     return eRogueTeam;
-  if (!strncasecmp (color, "obs", 3))
+  if (!strcasecmp (color, "observer"))
     return eObservers;
   return eNoTeam;
 }
@@ -327,7 +327,7 @@ bool HTFscore::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_A
 
 bool commandLineHelp (void){
   const char *help[] = {
-    "Command line args:  PLUGINNAME,[TEAM=color]",
+    "Command line args:  PLUGINNAME,team=color",
     NULL
   };
   bz_debugMessage (0, "+++ HoldTheFlag plugin command-line error");
@@ -342,11 +342,11 @@ bool parseCommandLine (const char *cmdLine)
   if (cmdLine==NULL || *cmdLine=='\0')
     return false;
   htfTeam = eGreenTeam;
-  if (strncasecmp (cmdLine, "[TEAM=", 6) == 0){
-    if ((htfTeam = htfScore->colorNameToDef(cmdLine+6)) == eNoTeam)
+  if (strcasecmp (cmdLine, "team=") == 0){
+    if ((htfTeam = htfScore->colorNameToDef(cmdLine+5)) == eNoTeam) {
       return commandLineHelp ();
-  } else
-    return commandLineHelp ();
+    }
+  }
   return false;
 }
 
