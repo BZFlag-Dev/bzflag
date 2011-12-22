@@ -1,5 +1,4 @@
 LIBRARY	shockwaveDeath
-DESCRIPTION  'shockwaveDeath Windows Dynamic Link Library'
 
 EXPORTS
     ; Explicit exports can go here
