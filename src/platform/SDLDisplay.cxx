@@ -23,7 +23,7 @@ static int mx = 0;
 static int my = 0;
 
 SDLDisplay::SDLDisplay() : fullScreen(false), base_width(640),
-			   base_height(480), canGrabMouse(true),
+			   base_height(480), min_width(), min_height(),  x(), y(), canGrabMouse(true),
 			   oldFullScreen(false),
 			   oldWidth(0), oldHeight(0)
 {
