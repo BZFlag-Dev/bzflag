@@ -209,14 +209,13 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
   if (face->isValid()) {
     faces[faceCount] = face;
     faceCount++;
-  }
-  else if (triangulate) {
+  } else if (triangulate) {
     // triangulate
     std::vector<TriIndices> triIndices;
     triangulateFace(count, v, triIndices);
     delete face; // delete the old face
     const unsigned int triSize = triIndices.size();
-    if (triSize <= 0) {
+    if (triSize == 0) {
       return false;
     } else {
       // prepare array for extra faces
@@ -250,8 +249,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 	}
       }
     }
-  }
-  else {
+  } else {
     // just nuke it
     delete face;
     return false;
@@ -313,7 +311,6 @@ MeshObstacle::~MeshObstacle()
 
 Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 {
-  int i;
   MeshObstacle* copy;
   std::vector<char> ctlist;
   std::vector<cfvec3> clist;
@@ -329,6 +326,7 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
 			    vlist, nlist, tlist, 0, noclusters,
 			    smoothBounce, driveThrough, shootThrough, ricochet);
   } else {
+    int i;
     for (i = 0; i < checkCount; i++) {
       ctlist.push_back(checkTypes[i]);
     }
@@ -340,8 +338,8 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     }
 
     copy = new MeshObstacle(xform, ctlist, clist,
-			    vlist, nlist, tlist, faceCount, noclusters,
-			    smoothBounce, driveThrough, shootThrough, ricochet);
+	vlist, nlist, tlist, faceCount, noclusters,
+	smoothBounce, driveThrough, shootThrough, ricochet);
 
     for (i = 0; i < faceCount; i++) {
       copyFace(i, copy);
