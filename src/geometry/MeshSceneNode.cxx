@@ -438,9 +438,9 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
   // texturing
   if (BZDBCache::texture) {
-    int faceTexture = -1;
     bool userTexture = (bzmat->getTextureCount() > 0);
     if (userTexture) {
+      int faceTexture = -1;
       const std::string& texname = bzmat->getTextureLocal(0);
       if (texname.size() > 0) {
 	faceTexture = tm.getTextureID(texname.c_str());
