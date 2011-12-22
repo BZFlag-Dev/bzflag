@@ -41,7 +41,7 @@ void WWZEventHandler::Init (const char* /*commandLineParameter*/){
 	bz_registerCustomMapObject("WWZONE",this);
 	Register(bz_eTickEvent);
 
-	MaxWaitTime = wwinfo.tickTime;
+	MaxWaitTime = (float)wwinfo.tickTime;
 }
 
 void WWZEventHandler::Cleanup (void){
@@ -224,7 +224,7 @@ bool WWZEventHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *d
 	}
 	zoneList.push_back(newZone);
 
-	MaxWaitTime = wwinfo.tickTime;
+	MaxWaitTime = (float)wwinfo.tickTime;
 	return true;
 }
 

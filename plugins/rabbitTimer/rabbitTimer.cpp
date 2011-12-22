@@ -35,7 +35,7 @@ void rabbitTimer::Event(bz_EventData *eventData)
 
 			//stopgap. the kill event should do this, really...
 			currentRabbit = -1;
-			rabbitDeathTime = tickdata->eventTime + rabbitKillTimeLimit;
+			rabbitDeathTime = (float)tickdata->eventTime + rabbitKillTimeLimit;
 
 			bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Time's up! Selecting new rabbit.");
 		}
@@ -71,7 +71,7 @@ void rabbitTimer::Event(bz_EventData *eventData)
 		{
 			currentRabbit = -1; //we will sort this out on the next tick
 
-			rabbitDeathTime = killdata->eventTime + rabbitKillTimeLimit;
+			rabbitDeathTime = (float)killdata->eventTime + rabbitKillTimeLimit;
 		}
 		else if (killdata->killerTeam == eRabbitTeam && currentRabbit != -1)
 		{
@@ -86,7 +86,7 @@ void rabbitTimer::Event(bz_EventData *eventData)
 			}
 			else
 			{
-				rabbitDeathTime = killdata->eventTime + rabbitKillTimeLimit;
+				rabbitDeathTime = (float)killdata->eventTime + rabbitKillTimeLimit;
 
 				int limit = (int)rabbitKillTimeLimit;
 				bz_sendTextMessage(BZ_SERVER, currentRabbit, bz_format("%d seconds remaining.", limit));
@@ -101,7 +101,7 @@ void rabbitTimer::Event(bz_EventData *eventData)
 		{
 			currentRabbit = -1; //we will sort this out on the next tick
 
-			rabbitDeathTime = partdata->eventTime + rabbitKillTimeLimit;
+			rabbitDeathTime = (float)partdata->eventTime + rabbitKillTimeLimit;
 		}
 	}
 }
