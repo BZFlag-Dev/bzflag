@@ -118,7 +118,7 @@ ObstacleModifier::ObstacleModifier(const ObstacleModifier& obsMod,
     } else {
       matMap = obsMod.matMap;
       MaterialMap::const_iterator it;
-      for (it = grpinst.matMap.begin(); it != grpinst.matMap.end(); it++) {
+      for (it = grpinst.matMap.begin(); it != grpinst.matMap.end(); ++it) {
 	MaterialMap::const_iterator find_it;
 	find_it = obsMod.matMap.find(it->second);
 	if (find_it != obsMod.matMap.end()) {
@@ -253,7 +253,7 @@ void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
 
   if (modifyColor || modifyMaterial || (matMap.size() > 0)) {
     MaterialSet::const_iterator it;
-    for (it = matSet.begin(); it != matSet.end(); it++) {
+    for (it = matSet.begin(); it != matSet.end(); ++it) {
       const BzMaterial* origMat = *it;
       const BzMaterial* convMat = *it;
       if (modifyMaterial) {

@@ -203,7 +203,7 @@ void* GroupInstance::pack(void* buf)
     p = nboPackUByte(buffer, 0); // terminate
     p = nboPackInt(p, count);
     MaterialMap::const_iterator it;
-    for (it = matMap.begin(); it != matMap.end(); it++) {
+    for (it = matMap.begin(); it != matMap.end(); ++it) {
       int srcIndex = MATERIALMGR.getIndex(it->first);
       int dstIndex = MATERIALMGR.getIndex(it->second);
       p = nboPackInt(p, srcIndex);
@@ -374,7 +374,7 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
   }
   else if (matMap.size() > 0) {
     MaterialMap::const_iterator it;
-    for (it = matMap.begin(); it != matMap.end(); it++) {
+    for (it = matMap.begin(); it != matMap.end(); ++it) {
       out << indent << "  matswap ";
       MATERIALMGR.printReference(out, it->first);
       out << " ";
