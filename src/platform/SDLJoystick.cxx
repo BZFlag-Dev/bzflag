@@ -29,7 +29,7 @@
 #include "TextUtils.h"
 #include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick() : joystickID(NULL)
+SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons()
 {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
     std::vector<std::string> args;
