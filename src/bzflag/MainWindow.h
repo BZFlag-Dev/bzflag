@@ -50,7 +50,7 @@ class MainWindow {
     int			getWidth() const;
     int			getHeight() const;
     int			getViewHeight() const;
-    bool		getFullscreen();
+    bool		getFullscreen() const;
     bool		getFullView() const;
 
     void		setPosition(int x, int y);
@@ -71,7 +71,7 @@ class MainWindow {
     void		warpMouseCenterY();
     void		grabMouse();
     void		enableGrabMouse(bool on);
-    bool		isGrabEnabled(void);
+    bool		isGrabEnabled(void) const;
     void		ungrabMouse();
 
     void		resize();
@@ -91,7 +91,7 @@ class MainWindow {
     void		setJoyYAxis(const std::string &axis);
     void		initJoystick(std::string &joystickName);
 
-    bool		isInFault() { return faulting; };
+    bool		isInFault() const { return faulting; };
 
   private:
     // no copying

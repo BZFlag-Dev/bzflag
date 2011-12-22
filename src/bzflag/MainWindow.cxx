@@ -128,12 +128,12 @@ void			MainWindow::enableGrabMouse(bool on)
   grabEnabled = on;
 }
 
-bool			MainWindow::isGrabEnabled(void)
+bool MainWindow::isGrabEnabled(void) const
 {
   return grabEnabled;
 }
 
-bool			MainWindow::getFullscreen()
+bool MainWindow::getFullscreen() const
 {
   return isFullscreen;
 }
