@@ -16,7 +16,8 @@
 // AudioFile
 //
 
-AudioFile::AudioFile(std::istream* _stream) : MediaFile(_stream), open(false)
+AudioFile::AudioFile(std::istream* _stream) : MediaFile(_stream), open(false),
+  framesPerSecond(), numChannels(), numFrames(), sampWidth()
 {
   // do nothing
 }
