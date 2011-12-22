@@ -93,6 +93,7 @@ AudioSamples::~AudioSamples()
 		delete[] monoRaw;
 }
 
+// (warning) 'operator=' should check for assignment to self
 AudioSamples& AudioSamples::operator = ( const AudioSamples& r)
 {
 	if (data)
@@ -651,15 +652,15 @@ static int		recalcEventIgnoring(SoundEvent* e)
     endTime = eventDistance;
   }
   else {
-    float timeFromFront;
     if (e->flags & SEF_IGNORING) {
+      float timeFromFront;
       /* compute time from sound front */
       timeFromFront = travelTime - e->dLeft / SpeedOfSound;
       if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
 
       /* recompute sample pointers */
       e->ptrFracLeft = timeFromFront *
-		   (float)PlatformFactory::getMedia()->getAudioOutputRate();
+	(float)PlatformFactory::getMedia()->getAudioOutputRate();
       if (e->ptrFracLeft >= 0.0 && e->ptrFracLeft < e->samples->dmlength) {
 	/* not ignoring anymore */
 	e->flags &= ~SEF_IGNORING;
@@ -670,13 +671,12 @@ static int		recalcEventIgnoring(SoundEvent* e)
       timeFromFront = travelTime - e->dRight / SpeedOfSound;
       if (!positionDiscontinuity && timeFromFront < 0.0f) timeFromFront = 0.0f;
       e->ptrFracRight = timeFromFront *
-		   (float)PlatformFactory::getMedia()->getAudioOutputRate();
+	(float)PlatformFactory::getMedia()->getAudioOutputRate();
       if (e->ptrFracRight >= 0.0 && e->ptrFracRight < e->samples->dmlength) {
 	e->flags &= ~SEF_IGNORING;
 	useChange = 1;
       }
-    }
-    else {
+    } else {
       /* do nothing -- still not ignoring */
     }
   }
@@ -719,13 +719,14 @@ static void		receiverVelocity(float* data)
 
 static int		addLocalContribution(SoundEvent* e, long* len)
 {
-  long		n, numSamples;
+  long		numSamples;
   float*	src;
 
   numSamples = e->samples->length - e->ptr;
   if (numSamples > audioBufferSize) numSamples = audioBufferSize;
 
   if (!mutingOn && numSamples != 0) {
+    long n;
     /* initialize new areas of scratch space and adjust output sample count */
     if (numSamples > *len) {
       for (n = *len; n < numSamples; n += 2)
