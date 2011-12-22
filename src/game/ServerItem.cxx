@@ -122,7 +122,6 @@ std::string ServerItem::getAgeString() const
   std::string returnMe;
   char buffer [80];
   time_t age = getAgeMinutes();
-  float fAge;
   if (age < 60){ // < 1 hr
     if (age < 1){
       time_t ageSecs = getAgeSeconds();
@@ -131,6 +130,7 @@ std::string ServerItem::getAgeString() const
       sprintf(buffer,"%-3ld mins",(long)age);
     }
   } else { // >= 60 minutes
+    float fAge;
     if (age < (24*60)){ // < 24 hours & > 1 hr
       fAge = ((float)age / 60.0f);
       sprintf(buffer, "%-2.1f hrs", fAge);
