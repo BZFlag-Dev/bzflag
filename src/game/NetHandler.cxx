@@ -672,7 +672,7 @@ void NetHandler::dumpMessageStats() {
     logDebugMessage(1,"Player messages %s:", direction ? "out" : "in");
 
     for (MessageCountMap::iterator i = msg[direction].begin();
-	 i != msg[direction].end(); i++) {
+	 i != msg[direction].end(); ++i) {
       logDebugMessage(1," %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
 	     i->second.count, i->second.maxSize);
       total += i->second.count;

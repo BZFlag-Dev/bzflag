@@ -93,30 +93,31 @@ void			ServerListCache::saveCache()
 {
   const int subrevision = 1;
   std::string fileName = getCacheFilename(subrevision);
-  if (fileName == "") return;
+  if (fileName == "")
+    return;
 
   std::ostream* outFile = FILEMGR.createDataOutStream(fileName, true, true);
 
-  if (outFile != NULL){
-    char buffer[max_string+1];
-    for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); iter++){
+  if (outFile == NULL)
+    return;
 
-      // skip items that are more than 30 days old, but always save favorites
-      if (!iter->second.favorite && iter->second.getAgeMinutes() > 60*24*30) {
-	continue;
-      }
+  char buffer[max_string+1];
+  for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); ++iter) {
 
-      // write out the index of the map
-      strncpy(buffer, (iter->first.c_str()), max_string);
-      buffer[max_string] = '\0';
-      outFile->write(buffer, sizeof(buffer));
+    // skip items that are more than 30 days old, but always save favorites
+    if (!iter->second.favorite && iter->second.getAgeMinutes() > 60*24*30)
+      continue;
 
-      ServerItem x = iter->second;
-      // write out the serverinfo -- which is mapped by index
-      iter->second.writeToFile(*outFile);
-    }
-    delete outFile;
+    // write out the index of the map
+    strncpy(buffer, (iter->first.c_str()), max_string);
+    buffer[max_string] = '\0';
+    outFile->write(buffer, sizeof(buffer));
+
+    ServerItem x = iter->second;
+    // write out the serverinfo -- which is mapped by index
+    iter->second.writeToFile(*outFile);
   }
+  delete outFile;
 }
 
 
