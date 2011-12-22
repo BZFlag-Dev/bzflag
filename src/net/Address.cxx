@@ -129,7 +129,7 @@ uint8_t			Address::getIPVersion() const {
   return 4;
 }
 
-Address			Address::getHostAddress(const std::string hname)
+Address	Address::getHostAddress(const std::string &hname)
 {
   Address a;
   InAddr tempAddr;
@@ -175,7 +175,7 @@ std::string		Address::getHostByAddress(InAddr addr)
   return std::string(hent->h_name);
 }
 
-const std::string Address::getHostName(const std::string hostname) // const
+const std::string Address::getHostName(const std::string &hostname) // const
 {
   char myname[MAXHOSTNAMELEN+1];
   std::string name = hostname;
