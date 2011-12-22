@@ -921,13 +921,12 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& exts,
     }
   }
 
-  int hitPlane;
   float hitTime[3];
 
   if (inside) {
     *inTime = 0.0f;
-  }
-  else {
+  } else {
+    int hitPlane;
     // calculate the hitTimes
     for (a = 0; a < 3; a++) {
       if (zone[a] < 0) {
