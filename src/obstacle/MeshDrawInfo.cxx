@@ -959,7 +959,7 @@ bool MeshDrawInfo::parse(std::istream& input)
   }
 
   // make raw verts
-  if (pVerts.size() > 0) {
+  if (!pVerts.empty()) {
     rawVertCount = pVerts.size();
     rawVerts = new afvec3[rawVertCount];
     for (i = 0; i < rawVertCount; i++) {
@@ -967,7 +967,7 @@ bool MeshDrawInfo::parse(std::istream& input)
     }
   }
   // make raw norms
-  if (pNorms.size() > 0) {
+  if (!pNorms.empty()) {
     rawNormCount = pNorms.size();
     rawNorms = new afvec3[rawNormCount];
     for (i = 0; i < rawNormCount; i++) {
@@ -975,7 +975,7 @@ bool MeshDrawInfo::parse(std::istream& input)
     }
   }
   // make raw texcoords
-  if (pTxcds.size() > 0) {
+  if (!pTxcds.empty()) {
     rawTxcdCount = pTxcds.size();
     rawTxcds = new afvec2[rawTxcdCount];
     for (i = 0; i < rawTxcdCount; i++) {
