@@ -14,7 +14,7 @@
 #include "ShotPathSegment.h"
 
 
-ShotPathSegment::ShotPathSegment()
+ShotPathSegment::ShotPathSegment(): reason(), bbox()
 {
   // do nothing
 }
