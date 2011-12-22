@@ -27,6 +27,7 @@
 /* JUST THIS ONE FILE */
 
 #ifdef _WIN32
+#pragma warning( disable : 4996 )
 #ifdef INSIDE_BZ
 #define BZF_API __declspec( dllexport )
 #else
