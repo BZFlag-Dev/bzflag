@@ -248,7 +248,7 @@ void		    EvdevJoystick::poll()
     case EV_ABS:
       if (ev.code - ABS_X > 8)
 	break;
-      currentJoystick->axis_info[ev.code - ABS_X].value = ev.value; break;
+      currentJoystick->axis_info[ev.code - ABS_X].value = ev.value;
       break;
 
     case EV_KEY:
