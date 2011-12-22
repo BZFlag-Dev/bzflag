@@ -28,7 +28,7 @@ class HUDuiTextureLabel : public HUDuiLabel {
 			~HUDuiTextureLabel();
 
     void		setTexture(const int);
-    int			getTexture();
+    int			getTexture() const;
 
   protected:
     void		doRender();
@@ -38,7 +38,7 @@ class HUDuiTextureLabel : public HUDuiLabel {
     int		texture;
 };
 
-inline int HUDuiTextureLabel::getTexture() {
+inline int HUDuiTextureLabel::getTexture() const {
   return texture;
 }
 
