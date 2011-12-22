@@ -349,7 +349,6 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     // normal smoothing to fake curved surfaces
     int i;
     // calculate the triangle ares
-    float totalArea = 0.0f;
     float* areas = new float[vertexCount];
     for (i = 0; i < vertexCount; i++) {
       int next = (i + 1) % vertexCount;
@@ -358,7 +357,6 @@ void MeshFace::get3DNormal(const float* p, float* n) const
       vec3sub(eb, vertices[next], vertices[i]);
       vec3cross(cross, ea, eb);
       areas[i] = sqrtf(vec3dot(cross, cross));
-      totalArea = totalArea + areas[i];
     }
     float smallestArea = MAXFLOAT;
     float* twinAreas = new float[vertexCount];
