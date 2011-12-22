@@ -1564,7 +1564,7 @@ void bzMatrixMode(GLenum mode)
   }
   matrixMode = mode;
   glMatrixMode(mode);
-  logDebugMessage(3, ("MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
+  logDebugMessage(3, "MatrixMode: %i %i %i\n", matrixDepth[0], matrixDepth[1], matrixDepth[2]);
 }
 
 #endif // DEBUG_GL_MATRIX_STACKS
