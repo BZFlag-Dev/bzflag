@@ -54,10 +54,15 @@ World::World() :
   curMaxPlayers(0),
   maxShots(1),
   maxFlags(0),
+  shakeTimeout(),
+  shakeWins(),
   players(NULL),
   flags(NULL),
   flagNodes(NULL),
-  flagWarpNodes(NULL)
+  flagWarpNodes(NULL),
+  wind(),
+  oldFogEffect(),
+  oldUseDrawInfo()
 {
   worldWeapons = new WorldPlayer();
   waterLevel = -1.0f;
@@ -1144,7 +1149,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 			   << weapon.pos[2] << std::endl;
       out << indent << "  rotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
       out << indent << "  initdelay " << weapon.initDelay << std::endl;
-      if (weapon.delay.size() > 0) {
+      if (!weapon.delay.empty()) {
 	out << indent << "  delay";
 	for (std::vector<float>::iterator dit = weapon.delay.begin();
 	     dit != weapon.delay.end(); ++dit) {
@@ -1167,7 +1172,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       out << indent << "  size " << zone.size[0] << " " << zone.size[1] << " "
 		       << zone.size[2] << std::endl;
       out << indent << "  rotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
-      if (zone.flags.size() > 0) {
+      if (!zone.flags.empty()) {
 	out << indent << "  flag";
 	std::vector<FlagType*>::iterator fit;
 	for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit) {
@@ -1175,7 +1180,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 	}
 	out << std::endl;
       }
-      if (zone.teams.size() > 0) {
+      if (!zone.teams.empty()) {
 	out << indent << "  team";
 	std::vector<TeamColor>::iterator tit;
 	for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit) {
@@ -1183,7 +1188,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 	}
 	out << std::endl;
       }
-      if (zone.safety.size() > 0) {
+      if (!zone.safety.empty()) {
 	out << indent << "  safety";
 	std::vector<TeamColor>::iterator sit;
 	for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit) {
