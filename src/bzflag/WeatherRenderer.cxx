@@ -473,14 +473,12 @@ void WeatherRenderer::update(void)
 void WeatherRenderer::draw(const SceneRenderer& sr)
 {
   if (!_CULLING_RAIN) {
-    if (!raindrops.size())
+    if (raindrops.empty())
       return;
   } else {
     if (!rainCount)
       return;
   }
-
-  int visibleChunks = 0;
 
   glDisable(GL_CULL_FACE);
   glMatrixMode(GL_MODELVIEW);
@@ -514,7 +512,6 @@ void WeatherRenderer::draw(const SceneRenderer& sr)
 	// block the Extents copy constructor to avoid passing by value.
 	exts.set(itr->second.bbox.mins, itr->second.bbox.maxs);
 	if (testAxisBoxInFrustum(exts, frustum) != Outside) {
-	  visibleChunks++;
 	  std::vector<rain>::iterator dropItr = itr->second.drops.begin();
 	  while (dropItr != itr->second.drops.end()) {
 	    drawDrop(*dropItr, sr);
@@ -880,7 +877,7 @@ void WeatherRenderer::addDrop(rain& drop)
 }
 
 
-int WeatherRenderer::keyFromPos(float x, float y)
+int WeatherRenderer::keyFromPos(float x, float y) const
 {
   union {
     short pos[2];

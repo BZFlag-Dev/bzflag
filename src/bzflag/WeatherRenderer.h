@@ -112,7 +112,7 @@ protected:
 	// some kinda culling
 	void addDrop(rain &drop);
 
-	int keyFromPos(float x, float y);
+	int keyFromPos(float x, float y) const;
 
 	float			gridSize;
 	float			keyFactor;
