@@ -79,15 +79,15 @@ debian-release: debian/changelog dist
 	cp debian/changelog $(distdir)/debian/
 	(cd $(distdir) && debian/buildsnap release)
 
-# make sure all files are in the repository are also in the dist.
-# make sure files that should not be in the distribution in fact are
-# not included.
+# Remove unwanted files from the distribution.
+# Ensure that all files in the repository are also in the distribution.
 dist-hook:
-	find $(distdir) -type f \( -name Makefile -o -name config.log -o -name config.status \) -exec rm -f {} \;
+	find $(distdir) -type f \( -name config.log -o -name config.status \) -exec rm -f {} \;
 	find $(distdir) -type d \( -name .deps -o -name .svn -o -name autom4te.cache \) -prune -exec rm -rf {} \;
 	rm -f $(distdir)/src/other/ares/ares_build.h \
 	      $(distdir)/src/other/curl/include/curl/curlbuild.h
-	files="`find . -name entries -exec grep 'name=' {} /dev/null \; | sed 's/:[[:space:]]*name=\"\(.*\)\"/\1/g' | sed 's/\/\.svn\/entries/\//g' | grep -v 'bzflag-' | grep -v '\/$$'`" ; \
+	entries=`find . -name entries -print | grep -v src/other/` ; \
+	files=`perl -wnle 'BEGIN {$$/ = "\f"} $$ARGV =~ m=^\./(.*/)\.svn/entries$$= and $$d = $$1 and /^\n([^\n]+)\nfile\n/ and print $$d,$$1' $$entries` ; \
 	missing=0 ; \
 	for file in $$files ; do \
 		if test ! -e $(distdir)/$$file ; then \
