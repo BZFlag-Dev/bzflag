@@ -1449,11 +1449,6 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
     recursive_manual_autogen
 fi
 
-# ugly hack to provide curl with the "missing" script
-if [ -x "${_aux_dir}/missing" -a ! -f src/other/curl/missing ] ; then
-    cp -p "${_aux_dir}/missing" src/other/curl
-fi
-
 #########################
 # restore and summarize #
 #########################
