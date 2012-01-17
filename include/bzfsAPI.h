@@ -1545,12 +1545,20 @@ public:
   virtual void URLDone ( const char* URL, void * data, unsigned int size, bool complete ) = 0;
   virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ ){};
   virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
-
-protected:
+  
   int version;
 };
 
+class bz_URLHandler_V2 : public bz_BaseURLHandler
+{
+public:
+	bz_URLHandler_V2() : bz_BaseURLHandler() { version = 2;  token = NULL;}
+	void* token;
+};
+
+
 BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL);
 BZF_API bool bz_removeURLJob(const char* URL);
 BZF_API size_t bz_addURLJobForID(const char* URL,
 				 bz_BaseURLHandler* handler = NULL,

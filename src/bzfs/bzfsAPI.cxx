@@ -2903,6 +2903,7 @@ public:
   size_t id;
   bz_BaseURLHandler *handler;
   double lastTime;
+  void* token;
 };
 
 //-------------------------------------------------------------------------
@@ -2968,6 +2969,10 @@ public:
 	CURLMsg *pendingMsg = curl_multi_info_read(curlHandle, &msgs_in_queue);
 	if (currentJob == pendingMsg->easy_handle)
 	{
+	  if (Tasks[0].handler->version >= 2)
+	  {
+		  ((bz_URLHandler_V2*)Tasks[0].handler)->token = Tasks[0].token;
+	  }
 	  if (bufferedJobData.size())
 	    Tasks[0].handler->URLDone(Tasks[0].url.c_str(),(void*)bufferedJobData.c_str(),bufferedJobData.size(),true);
 	  else
@@ -3005,7 +3010,7 @@ public:
   }
 
   size_t addJob(const char *URL, bz_BaseURLHandler *handler,
-    const char *postData)
+    const char *postData, void* token)
   {
     if (!curlHandle)
     {
@@ -3014,6 +3019,7 @@ public:
     }
 
     URLFetchTask newTask;
+	newTask.token = NULL;
     newTask.handler = handler;
     newTask.url = URL;
     if (postData)
@@ -3111,7 +3117,15 @@ BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const cha
     return false;
   }
 
-  return (urlFetchHandler.addJob(URL, handler, postData) != 0);
+  return (urlFetchHandler.addJob(URL, handler, postData,NULL) != 0);
+}
+
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData)
+{
+	if (!URL)
+		return false;
+
+	return (urlFetchHandler.addJob(URL, handler, postData,token) != 0);
 }
 
 //-------------------------------------------------------------------------
@@ -3124,7 +3138,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
     return false;
   }
 
-  return urlFetchHandler.addJob(URL, handler, postData);
+  return urlFetchHandler.addJob(URL, handler, postData,NULL);
 }
 
 //-------------------------------------------------------------------------
