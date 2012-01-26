@@ -61,6 +61,17 @@ void CustomFlagSample::Event(bz_EventData *eventData)
     }
     break;
   }
+
+  case bz_ePlayerDieEvent: {
+    bz_PlayerDieEventData_V1* deed = (bz_PlayerDieEventData_V1*)eventData;
+    bz_ApiString flag = deed->flagKilledWith;
+    int p = deed->playerID;
+    bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(p);
+    if (flag == "CF")
+      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Player %s killed by a player with Custom Flag!", playerRecord->callsign.c_str());
+    break;
+  }
+
   }
 }
 
@@ -76,6 +87,7 @@ void CustomFlagSample::Init ( const char* /*commandLine*/ )
   Register(bz_eFlagGrabbedEvent);
   Register(bz_eFlagDroppedEvent);
   Register(bz_eShotFiredEvent);
+  Register(bz_ePlayerDieEvent);
 }
 
 void CustomFlagSample::Cleanup ( void )
@@ -85,7 +97,6 @@ void CustomFlagSample::Cleanup ( void )
 
   bz_debugMessage(4, "customflagsample plugin unloaded");
 }
-
 
 // Local Variables: ***
 // mode:C++ ***
