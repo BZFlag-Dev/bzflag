@@ -3176,11 +3176,30 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   }
 
   if (isTeamFlag) {
-    // if it is a team flag, check if there are any players left in
-    // that team - if not, start the flag timeout
+    // flag timeout gets started when the LAST team flag held is dropped,
+    // AND the team is already empty
     if (team[drpFlag.flag.type->flagTeam].team.size == 0) {
-      team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
-      team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+      // see if the flag being dropped was the last team flag being held
+      bool startTimeout = true;
+      for (int i = 0; i < numFlags; i++)
+      {
+	FlagInfo* fi = FlagInfo::get(i);
+	if (fi->teamIndex() == drpFlag.teamIndex() && fi->getIndex() != drpFlag.getIndex())
+	{
+	  // this is another flag belonging to the same team
+	  if (realPlayer(fi->player))
+	  {
+	    startTimeout = false; // can't start timeout if another team flag is being carried
+	    break;
+	  }
+	}
+      }
+
+      if (startTimeout)
+      {
+	team[flagIndex + 1].flagTimeout = TimeKeeper::getCurrent();
+	team[flagIndex + 1].flagTimeout += (float)clOptions->teamFlagTimeout;
+      }
     }
   }
 
