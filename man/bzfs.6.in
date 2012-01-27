@@ -1,5 +1,5 @@
 .\" bzflag
-.\" Copyright (c) 1993-2011 Tim Riker
+.\" Copyright (c) 1993-2012 Tim Riker
 .\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
@@ -52,7 +52,7 @@ bzfs \- BZFlag game server
 [\fB\-lagwarn \fR\fImilliseconds\fR]
 [\fB\-masterBanURL \fIURL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
-[\fB\-mp \fR{\fIcount\fR|[\fIrogue\-count\fR]\fB,\fR[\fIred\-count\fR]\fB,\fR[\fIgreen\-count\fR]\fB,\fR[\fIblue\-count\fR]\fB,\fR[\fIpurple\-count\fR],\fR[\fIobserver\-count\fR]}]
+[\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR]\fB,\fR[\fIobserver-count\fR]}]
 [\fB\-mps \fR\fImax\-score\fR]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
@@ -73,7 +73,7 @@ bzfs \- BZFlag game server
 [\fB\-publickey \fIkey\fR]
 [\fB\-q\fR]
 [\fB\+r\fR]
-[\fB\-rabbit [\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
+[\fB\-rabbit \fR[\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
 [\fB\-recbuf \fIsize\fR]
 [\fB\-recbufonly\fR]
 [\fB\-recdir \fIdirectory\fR]
@@ -95,12 +95,12 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-tftimeout \fItime\-limit\fR]
-[\fB\-time {\fItime\-limit\fR|\fIending-time\fR}]
+[\fB\-time \fR{\fItime\-limit\fR|\fIending-time\fR}]
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-trackplayhistory\fR]
-[\fB\-ts [\fImicros\fR]]
+[\fB\-ts \fR[\fImicros\fR]]
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
@@ -248,8 +248,8 @@ relation to other players.
 Shows a help page and lists all the valid flag id's.
 .TP
 \fB\-helpmsg \fIfile\fR \fIname\fR
-Create a help message accessible by /help name, which prints the contents
-of file. Restricted to 10 lines per help message.
+Create a help message accessible by /help \fIname\fR, which prints the
+contents of \fIfile\fR. Restricted to 10 lines per help message.
 .TP
 \fB\-i \fIinterface\fR
 Server will listen for and respond to ``pings'' (sent via broadcast)
@@ -283,7 +283,7 @@ Kick players that did not play longer than \fIseconds\fR. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
 .TP
-\fB\-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR],\fR[\fIobserver\fR]}
+\fB\-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]\fB,\fR[\fIobserver\fR]}
 Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
 maximum for each team.  If a count is left blank then no limit is set for
@@ -489,11 +489,11 @@ drops it and it is left alone for some time. This option specifies the number
 of seconds that the flag should be left alone before it is reset. The
 default value is 30.
 .TP
-\fB\-time \fItime\-limit\fR
+\fB\-time \fR{\fItime\-limit\fR|\fIending-time\fR}
 Sets a time limit on the game to \fItime\-limit\fR or \fIending-time\fR. The game will be
 stopped \fItime\-limit\fR seconds after the first player connects, or at \fIending-time\fR,
 whichever is given. The \fIending-time\fR should be given in hh:mm:ss format, but does not
-need minute and second arguments. If hour is only given, it must end in ':'. Each
+need minute and second arguments. If only hour is given, it must end in ':'. Each
 unspecified argument is set to 0.
 .TP
 \fB\-timemanual\fR
@@ -601,7 +601,7 @@ edited.  See the bzw(5) manual page for more details.
 
 .SH "GENERAL SERVER COMMANDS"
 .TP
-.B /clientquery [\fIcallsign\fR]
+.B /clientquery \fR[\fIcallsign\fR]
 Retrieve client version info from all users, or just CALLSIGN if given. Example:
 .ft CW
 .nf
@@ -669,7 +669,7 @@ the "," and "." message keys in the game and then selecting your recipient, this
 will send some message to particular player.  The quotes are optional.
 
 .TP
-.B /part [\fImessage\fR]
+.B /part \fR[\fImessage\fR]
 Leave the server with a goodbye message (similar to IRC's /part)
 .ft CW
 .nf
@@ -688,7 +688,7 @@ You are now an administrator!
 .ft R
 
 .TP
-.B /poll {{ban|kick} \fIcallsign\fR|vote {yes|no}|veto}
+.B /poll \fR{{\fIban\fR|\fIkick\fR} \fIcallsign\fR|vote {\fIyes\fR|\fIno\fR}|veto}
 Interact and make requests of the bzflag voting system via the /poll command.
 The ban and kick subcommands request a vote to respectively ban or kick some
 player.  The playername is expected as the next argument.  The vote and veto
@@ -697,7 +697,7 @@ expecting the same arguments in following.  By default, you must be registered
 to request or vote on a poll, and an admin to veto.
 
 .TP
-.B /quit [\fImessage\fR]
+.B /quit \fR[\fImessage\fR]
 Quit the game with a goodbye message (similar to IRC's /quit)
 .ft CW
 .nf
@@ -719,7 +719,7 @@ Write a message to the server administrator. Example:
 Prints server's current running time in days, hours, mins and secs.
 
 .TP
-.B /vote {yes|no}
+.B /vote \fR{\fIyes\fR|\fIno\fR}
 If there is a poll active, this command will place a vote in favor or in
 opposition to the poll.  Multiple languages are supported as a vote argument
 in addition to "yes" and "no".  By default, you must be registered to vote on
@@ -729,7 +729,7 @@ a poll.
 .SH "SERVER ADMINISTRATIVE COMMANDS"
 .BR
 .TP
-.B /ban {\fIip\fR|\fIipList\fR|\fI#slot\fR|\fI"Player Name"\fR|\fIplayerName\fR} \fIduration\fR \fIreason\fR
+.B /ban \fR{\fIip\fR|\fIipList\fR|\fI#slot\fR|\fI"Player Name"\fR|\fIplayerName\fR} \fIduration\fR \fIreason\fR
 
 Ban players using the specified IPs for certain length of time
 from using this server.
@@ -786,7 +786,7 @@ cover hostbans. Example:
 .ft R
 
 .TP
-.B /countdown [\fIseconds\fR]
+.B /countdown \fR[\fIseconds\fR]
 Starts the countdown sequence for a timed game.  The countdown
 sequence length can optionally be specified in seconds.  Examples:
 .ft CW
@@ -797,8 +797,8 @@ sequence length can optionally be specified in seconds.  Examples:
 .ft R
 
 .TP
-.B /flag reset [unused]
-Repositions flags. If unused is specified, flags carried by tanks are not affected.
+.B /flag reset \fR[\fIunused\fR]
+Repositions flags. If \fIunused\fR is specified, flags carried by tanks are not affected.
 
 .TP
 .B /flag show
@@ -835,7 +835,7 @@ bans all players from foo.com for 2 minutes
 List all of the host patterns currently banned from this server.
 
 .TP
-.B /jitterwarn [\fItime\fR]
+.B /jitterwarn \fR[\fItime\fR]
 Change the maximum allowed jitter time. Example:
 .ft CW
 .nf
@@ -844,7 +844,7 @@ Change the maximum allowed jitter time. Example:
 .ft R
 
 .TP
-.B /jitterdrop [\fIcount\fR]
+.B /jitterdrop \fR[\fIcount\fR]
 Change the number of jitter warnings given before a player is kicked. Example:
 .ft CW
 .nf
@@ -853,7 +853,7 @@ Change the number of jitter warnings given before a player is kicked. Example:
 .ft R
 
 .TP
-.B /kick {\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} \fIreason\fR
+.B /kick \fR{\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} \fIreason\fR
 Kick a player off the server. Example:
 .ft CW
 .nf
@@ -869,7 +869,7 @@ A reason is required
 .ft R
 
 .TP
-.B /kill {\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} [\fIreason\fR]
+.B /kill \fR{\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} [\fIreason\fR]
 Kill a player just like when shooting. Example:
 .ft CW
 .nf
@@ -882,7 +882,7 @@ Kill the player using slot 4 because teamkilling
 .ft R
 
 .TP
-.B /lagwarn [\fItime\fR]
+.B /lagwarn \fR[\fItime\fR]
 Change the maximum allowed lag time. Example:
 .ft CW
 .nf
@@ -891,7 +891,7 @@ Change the maximum allowed lag time. Example:
 .ft R
 
 .TP
-.B /lagdrop [\fIcount\fR]
+.B /lagdrop \fR[\fIcount\fR]
 Change the number of lag warnings given before a player is kicked. Example:
 .ft CW
 .nf
@@ -900,7 +900,7 @@ Change the number of lag warnings given before a player is kicked. Example:
 .ft R
 
 .TP
-.B /modcount [\fIseconds\fR]
+.B /modcount \fR[\fIseconds\fR]
 Change the time on the clock by the specified number of seconds. Example:
 .ft CW
 .nf
@@ -909,14 +909,14 @@ Change the time on the clock by the specified number of seconds. Example:
 .ft R
 
 .TP
-.B /mute {\fI#slot\fR|\fIcallsign\fR}
+.B /mute \fR{\fI#slot\fR|\fIcallsign\fR}
 Allows a server admin to remove the ability for a player to communicate with
 other players. Once muted the player may only talk to admins on the server.
 This command removes the TALK permission that is enabled by default for all
 players. (disabling TALK by default would let you run a "silent" server)
 
 .TP
-.B /packetlosswarn [\fItime\fR]
+.B /packetlosswarn \fR[\fItime\fR]
 Change the maximum allowed packetloss. Example:
 .ft CW
 .nf
@@ -925,7 +925,7 @@ Change the maximum allowed packetloss. Example:
 .ft R
 
 .TP
-.B /packetlossdrop [\fIcount\fR]
+.B /packetlossdrop \fR[\fIcount\fR]
 Change the number of packetloss warnings given before a player is kicked. Example:
 .ft CW
 .nf
@@ -985,7 +985,7 @@ Stop recording into the memory buffer
 List all files in the recordings directory
 
 .TP
-.B /replay load {\fIfilename\fR|\fI#index\fR}
+.B /replay load \fR{\fIfilename\fR|\fI#index\fR}
 Load the specified recording file by name, or by index
 (same indices as produced by the 'replay list' command)
 
@@ -1000,7 +1000,7 @@ Start playing the recording. This will oftentimes require that all players conne
 to the server rejoin  (to reload the map, etc...)
 
 .TP
-.B /replay skip [{\fI+\fR|\fI\-\fR} \fIseconds\fR]
+.B /replay skip \fR[{\fI+\fR|\fI\-\fR} \fIseconds\fR]
 If seconds is specified, then skip that amount of time in the recording.
 Otherwise, skip forwards until there is activity.
 
@@ -1019,7 +1019,7 @@ Generate a public message sent by the server. Example:
 .ft R
 
 .TP
-.B /sendhelp  {\fI"Player name"\fR|\fIplayerName\fR|\fI#slot\fR}  \fIhelp page\fR
+.B /sendhelp \fR{\fI"Player name"\fR|\fIplayerName\fR|\fI#slot\fR}  \fIhelp page\fR
 Send the specified help page to a user
 .ft CW
 .nf
@@ -1037,7 +1037,7 @@ Stop serving BZFlag on this server
 Kick all players off the server
 
 .TP
-.B /unmute {\fI#slot\fR|\fIcallsign\fR}
+.B /unmute \fR{\fI#slot\fR|\fIcallsign\fR}
 Allows a server admin to restore the TALK permission to a previously muted
 player.
 
@@ -1240,7 +1240,7 @@ Lists the available user groups
 Lists the permissions for each group
 
 .TP
-.B /masterban {flush|reload}
+.B /masterban \fR{\fIflush\fR|\fIreload\fR}
 Forces the server to flush any bans from the master server. If reload is specified
 instead of flush, also reloads bans from the the internet. Local bans are unaffected.
 This command requires the UNBAN permision.
