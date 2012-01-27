@@ -3019,7 +3019,7 @@ public:
     }
 
     URLFetchTask newTask;
-	newTask.token = NULL;
+	newTask.token = token;
     newTask.handler = handler;
     newTask.url = URL;
     if (postData)
