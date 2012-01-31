@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -178,17 +178,19 @@ bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
 {
   expire();
 
+  const in_addr_t player_ip = ntohl(ipAddr.s_addr);
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
-    in_addr mask = it->addr;
+    in_addr_t banned = ntohl(it->addr.s_addr);
 
-    if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff)
-      mask.s_addr = htonl((ntohl(mask.s_addr) & 0xff000000) | (ntohl(ipAddr.s_addr) & 0x00ffffff));
-    else if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff)
-      mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffff0000) | (ntohl(ipAddr.s_addr) & 0x0000ffff));
-    else if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-      mask.s_addr = htonl((ntohl(mask.s_addr) & 0xffffff00) | (ntohl(ipAddr.s_addr) & 0x000000ff));
+    if ((banned & 0x00ffffff) == 0x00ffffff)		// class A
+      banned = (banned & 0xff000000) | (player_ip & 0x00ffffff);
+    else if ((banned & 0x0000ffff) == 0x0000ffff)	// class B
+      banned = (banned & 0xffff0000) | (player_ip & 0x0000ffff);
+    else if ((banned & 0x000000ff) == 0x000000ff)	// class C
+      banned = (banned & 0xffffff00) | (player_ip & 0x000000ff);
+    // else the IP address represents a single host
 
-    if (mask.s_addr == ipAddr.s_addr)	{
+    if (player_ip == banned) {
       if (info)
 	*info = *it;
       return false;
