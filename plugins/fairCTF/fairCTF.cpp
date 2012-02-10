@@ -10,146 +10,306 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <stdlib.h>
+#include <string>
+
 #include "bzfsAPI.h"
 
-BZ_GET_PLUGIN_VERSION
-
-class fairCTF : public bz_EventHandler
+class fairCTF : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
 public:
-  fairCTF();
+  virtual const char* Name (){return "Fair CTF";}
+
+  virtual void Init (const char* config);
+  virtual void Cleanup(void );
+  virtual void Event (bz_EventData *eventData);
+  
+  virtual bool SlashCommand (int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params);
+  
+  virtual void DropTeamFlag(int playerID);
+  virtual void SetDropTime();
+  virtual void UpdateState();
   virtual bool isEven();
-  virtual void updateEven();
-  virtual void process (bz_EventData *eventData);
 
-  bool is_auto;
+  bool allowCTF;
+  bool autoMode;
 
-  bool is_even;
   float max_ratio;
   int max_gap_by_1;
   int max_gap;
+  int drop_delay;
+  
 
-  double switchtime;
-  int activeteams;
+  double droptime;
 };
 
+BZ_PLUGIN(fairCTF)
 
-fairCTF fairctf;
-
-class ctfCommand : public bz_CustomSlashCommandHandler
+void fairCTF::Init ( const char* config )
 {
-public:
-  virtual ~ctfCommand(){};
-  virtual bool handle ( int playerID, bzApiString command, bzApiString message, bzAPIStringList *params );
-};
-
-ctfCommand ctf_command;
-
-
-BZF_PLUGIN_CALL int bz_Load ( const char* commandLine )
-{
-
-  bz_registerEvent (bz_eTickEvent, &fairctf);
-  bz_registerCustomSlashCommand ("ctf", &ctf_command);
-
-  std::string rawparams = commandLine;
-
-  unsigned int n = 0;
-
-  //get ratio from param string
-  float temp_ratio = 0.0;
-  int digit = 0;
-  float dec_digit = 0.0; 
-  bool has_hit_dot = false;
-  int number_of_dec_places = 0;
-  while(n < rawparams.length() && rawparams[n] != ':')
-  {
-    if (has_hit_dot)
-    {
-      number_of_dec_places++;
-      digit = static_cast<int> (rawparams[n] - '0');
-      dec_digit = static_cast<float> (digit);
-      for (int x = 0; x < number_of_dec_places; x++)
-      {
-	dec_digit /= 10.0;
-      }
-
-      temp_ratio += dec_digit;
-    }
-    else
-    {
-      if (rawparams[n] == '.')
-      {
-	has_hit_dot = true;
-      }
-      else
-      {
-	digit = static_cast<int> (rawparams[n] - '0');
-	temp_ratio *= 10;
-	temp_ratio += digit;
-      }
-    }
-    n++;
-  }
-  if (temp_ratio != 0.0)
-  {
-    fairctf.max_ratio = temp_ratio;
-  }
-
-  n++;
-
-  //get max 
-  int temp_1_gap = 0;
-  while(n < rawparams.length() && rawparams[n] != ':')
-  {
-    digit = static_cast<int> (rawparams[n] - '0');
-    temp_1_gap *= 10;
-    temp_1_gap += digit;
-    n++;
-  }
-  if (temp_1_gap != 0)
-  {
-    fairctf.max_gap_by_1 = temp_1_gap;
-  }
-
-  n++;
-
-  int temp_max_gap = 0;
-  while(n < rawparams.length())
-  {
-    digit = static_cast<int> (rawparams[n] - '0');
-    temp_max_gap *= 10;
-    temp_max_gap += digit;
-    n++;
-  }
-  if (temp_max_gap != 0)
-  {
-    fairctf.max_gap = temp_max_gap;
-  }
-
-  bz_debugMessage(4,"fairCTF plugin loaded");
-  return 0;
-}
-
-BZF_PLUGIN_CALL int bz_Unload (  )
-{
-
-  bz_removeEvent (bz_eTickEvent, &fairctf);
-  bz_removeCustomSlashCommand ("ctf");
-
-  bz_debugMessage(4,"fairCTF plugin unloaded");
-  return 0;
-}
-
-fairCTF::fairCTF()
-{
-  //initialize evenness state and constants (in case they aren't specified)
-  is_even = true;
+  // Initialize defaults
+  allowCTF = true;
+  autoMode = true;
   max_ratio = .25;
   max_gap_by_1 = 2;
   max_gap = 3;
+  drop_delay = 5;
+  
+  // Parse out args
 
-  is_auto = true;
+  std::string rawparams = config;
+  
+  std::string params[4];
+  params[0] = "";
+  params[1] = "";
+  params[2] = "";
+  params[3] = "";
+
+  unsigned int n = 0;
+  
+  for(int i = 0; i < rawparams.length(); i++)
+  {
+    if (rawparams.at(i) == ':')
+    {
+      n++;
+      
+      if (n > 3)
+      {
+	break;
+      }
+    }
+    else
+    {
+      params[n] += rawparams.at(i);
+    }
+  }
+  
+  if(params[0].length() > 0)
+  {
+    float tempratio = atof(params[0].c_str());
+    if (tempratio > 0.0)
+    {
+      max_ratio = tempratio;
+    }
+  }
+  
+  if(params[1].length() > 0)
+  {
+    int tempmax1gap = atoi(params[1].c_str());
+    if (tempmax1gap > 0)
+    {
+      max_gap_by_1 = tempmax1gap;
+    }
+  }
+  
+  if(params[2].length() > 0)
+  {
+    int tempmaxgap = atoi(params[2].c_str());
+    if (tempmaxgap > 0)
+    {
+      max_gap = tempmaxgap;
+    }
+  }
+  
+  if(params[3].length() > 0)
+  {
+    int tempdelay = atoi(params[3].c_str());
+    if (tempdelay > 0)
+    {
+      drop_delay = tempdelay;
+    }
+  }
+  
+  Register(bz_eFlagGrabbedEvent);
+  Register(bz_ePlayerJoinEvent);
+  Register(bz_ePlayerPartEvent);
+  Register(bz_eTickEvent);
+  
+  bz_registerCustomSlashCommand ("ctf", this);
+
+  bz_debugMessage(4,"fairCTF plugin loaded");
+}
+
+void fairCTF::Cleanup()
+{
+
+  Flush();
+  bz_removeCustomSlashCommand ("ctf");
+
+  bz_debugMessage(4,"fairCTF plugin unloaded");
+}
+
+void fairCTF::Event(bz_EventData *eventData)
+{
+  if (eventData->eventType == bz_eFlagGrabbedEvent)
+  {
+    bz_FlagGrabbedEventData_V1* grabData = (bz_FlagGrabbedEventData_V1*)eventData;
+    
+    if (!allowCTF)
+    {
+      // Don't allow a team flag grab
+      DropTeamFlag(grabData->playerID);
+    }
+  }
+  else if (eventData->eventType == bz_ePlayerJoinEvent || eventData->eventType == bz_ePlayerPartEvent)
+  {
+    UpdateState();
+  }
+  else if (eventData->eventType == bz_eTickEvent)
+  {
+    
+    if (droptime != 0.0 && bz_getCurrentTime() >= droptime)
+    {
+      // Time to drop any team flags.
+      bz_APIIntList* pl = bz_getPlayerIndexList();
+      
+      for (unsigned int x = 0; x < pl->size(); x++)
+      {
+	DropTeamFlag(pl->get(x));
+      }
+      
+      droptime = 0.0;
+    }
+  }
+  else
+  {
+    // Huh?
+    return;
+  }
+}
+
+bool fairCTF::SlashCommand (int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
+{
+  std::string cs = "UNKNOWN";
+  bz_BasePlayerRecord* pr = bz_getPlayerByIndex(playerID);
+  if (pr != NULL)
+  {
+    cs = pr->callsign.c_str();
+    bz_freePlayerRecord (pr);
+  }
+
+  if (!bz_hasPerm(playerID, "FAIRCTF"))
+  {
+    bz_sendTextMessage(BZ_SERVER, playerID, (cs + ", you do not have permission to use the /ctf command.").c_str());
+  }
+  else
+  {
+    if (message == "on")
+    {
+      if (!autoMode && allowCTF)
+      {
+	bz_sendTextMessage(BZ_SERVER, playerID, "CTF is already set to \"on\".");
+      }
+      else
+      {
+	autoMode = false;
+	bz_sendTextMessage (BZ_SERVER, eAdministrators, ("CTF setting has been changed to \"on\" by " + cs + ".").c_str());
+	if (!allowCTF)
+	{
+	  bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, ("CTF has been enabled by " + cs + ".").c_str());
+	  allowCTF = true;
+	}
+      }
+    }
+    else if (message == "off")
+    {
+      if (!autoMode && !allowCTF)
+      {
+	bz_sendTextMessage(BZ_SERVER, playerID, "CTF is already set to \"off\".");
+      }
+      else
+      {
+	autoMode = false;
+	bz_sendTextMessage (BZ_SERVER, eAdministrators, ("CTF setting has been changed to \"off\" by " + cs + ".").c_str());
+	if (allowCTF)
+	{
+	  bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, ("CTF has been disabled by " + cs + ".").c_str());
+	  allowCTF = false;
+	  SetDropTime();
+	}
+      }
+    }
+    else if (message == "auto")
+    {
+      if (autoMode)
+      {
+	bz_sendTextMessage(BZ_SERVER, playerID, "CTF is already set to \"auto\".");
+      }
+      else
+      {
+	autoMode = true;
+	bz_sendTextMessage (BZ_SERVER, eAdministrators, ("CTF setting has been changed to \"auto\" by " + cs + ".").c_str());
+	UpdateState();
+      }
+    }
+    else
+    {
+      bz_sendTextMessage (BZ_SERVER, playerID, "Usage: /ctf on|off|auto");
+    }
+  }
+  return true;
+}
+
+void fairCTF::DropTeamFlag(int playerID)
+{
+  bz_BasePlayerRecord* droppr = bz_getPlayerByIndex (playerID);
+  
+  if (droppr != NULL)
+  {
+    // Are they carrying a team flag?
+    if (droppr->currentFlag == "Red team flag" || 
+      droppr->currentFlag == "Green team flag" || 
+      droppr->currentFlag == "Blue team flag" || 
+      droppr->currentFlag == "Purple team flag")
+    {
+      bz_removePlayerFlag(playerID);
+      bz_sendTextMessage (BZ_SERVER, playerID, "CTF play is currently disabled.");
+    }
+    
+    bz_freePlayerRecord(droppr);
+  }
+}
+
+void fairCTF::UpdateState()
+{
+  if (autoMode)
+  {
+    bool fair = isEven();
+    
+    if (fair && !allowCTF)
+    {
+      allowCTF = true;
+      bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Team sizes are sufficiently even. CTF play is now enabled.");
+    }
+    else if (!fair && allowCTF)
+    {
+      allowCTF = false;
+      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Team sizes are uneven. CTF play is now disabled.");
+      
+      SetDropTime();
+    }
+  }
+}
+
+void fairCTF::SetDropTime()
+{  
+  if (drop_delay >= 0)
+  {
+    droptime = bz_getCurrentTime() + (double)drop_delay;
+    if (drop_delay > 1)
+    {
+      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, bz_format("Currently-held team flags will be dropped in %d seconds.", drop_delay));
+    }
+    else
+    {
+      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will be dropped in 1 second.");
+    }
+    
+  }
+  else
+  {
+    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will not be dropped.");
+  }   
 }
 
 bool fairCTF::isEven()
@@ -161,30 +321,6 @@ bool fairCTF::isEven()
   teamsizes[1] = bz_getTeamCount (eGreenTeam);
   teamsizes[2] = bz_getTeamCount (eBlueTeam);
   teamsizes[3] = bz_getTeamCount (ePurpleTeam);
-
-  //check how many active teams there are
-
-  int tempactiveteams = 0;
-
-  for (int x = 0; x < 4; x++)
-  {
-    if (teamsizes[x] > 0)
-    {
-      tempactiveteams++;
-    }
-  }
-
-  //reset CTF scores if only one team present
-
-  if (tempactiveteams == 1)
-  {
-    bz_resetTeamScore (eRedTeam);
-    bz_resetTeamScore (eGreenTeam);
-    bz_resetTeamScore (eBlueTeam);
-    bz_resetTeamScore (ePurpleTeam);
-  }
-
-  activeteams = tempactiveteams;
 
 
   //check fairness
@@ -229,127 +365,6 @@ bool fairCTF::isEven()
 
   return true; 
 }
-
-void fairCTF::updateEven()
-{
-  if (isEven())
-  {
-    if (!is_even)
-    {
-      if (bz_getCurrentTime() - switchtime >= 5.0)
-      {
-	if (activeteams > 1)
-	{
-	  bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Teams are now even enough to be fair. CTF enabled.");
-	}
-	is_even = true;
-      }
-    }
-    else
-    {
-      switchtime = bz_getCurrentTime();
-    }
-  }
-  else
-  {
-    if (is_even)
-    {
-      if (bz_getCurrentTime() - switchtime >= 3.0)
-      {
-	if (activeteams > 1)
-	{
-	  bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Teams are uneven. CTF disabled.");
-	}
-	is_even = false;
-      }
-    }
-    else
-    {
-      switchtime = bz_getCurrentTime();
-    }
-  }
-}
-
-void fairCTF::process(bz_EventData *eventData)
-{
-  if (is_auto)
-  {
-    updateEven();
-  }
-  if (!is_even)
-  {  
-  
-    bzAPIIntList pl;
-
-    bz_getPlayerIndexList(&pl);
-    
-    for (unsigned int x = 0; x < pl.size(); x++)
-    {
-      bz_PlayerRecord *pr;
-      pr = bz_getPlayerByIndex(pl.get(x));
-
-      if (pr != NULL)
-      {
-	if (pr->currentFlag == "Red team flag" || pr->currentFlag == "Green team flag" || pr->currentFlag == "Blue team flag" || pr->currentFlag == "Purple team flag")
-	{
-	  bz_removePlayerFlag(pl.get(x));
-	  bz_sendTextMessage (BZ_SERVER, pl.get(x), "No CTF!");
-	}
-      }
-      bz_freePlayerRecord (pr);
-    }
-  }
-}
-
-bool ctfCommand::handle(int playerID, bzApiString command, bzApiString message, bzAPIStringList *params)
-{
-  bz_PlayerRecord *pr = bz_getPlayerByIndex (playerID);
-  std::string cs = pr->callsign.c_str();
-  bz_freePlayerRecord (pr);
-
-  if (!bz_hasPerm(playerID, "FAIRCTF"))
-  {
-    bz_sendTextMessage (BZ_SERVER, playerID, (cs + ", you do not have permission to run the /ctf command.").c_str());
-  }
-  else
-  {
-    if (message == "on")
-    {
-      fairctf.is_auto = false;
-      if (!fairctf.is_even)
-      {
-	bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, ("CTF has been manually enabled by " + cs + ".").c_str());
-	fairctf.is_even = true;
-      }
-      bz_sendTextMessage (BZ_SERVER, eAdministrators, ("fairCTF setting has been changed to \"on\" by " + cs + ".").c_str());
-    }
-    else if (message == "off")
-    {
-      fairctf.is_auto = false;
-      if (fairctf.is_even)
-      {
-	bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, ("CTF has been manually disabled by " + cs + ".").c_str());
-	fairctf.is_even = false;
-      }
-      
-      bz_sendTextMessage (BZ_SERVER, eAdministrators,  ("fairCTF setting has been changed to \"off\" by " + cs + ".").c_str());
-    }
-    else if (message == "auto")
-    {
-      fairctf.is_auto = true;
-      bz_sendTextMessage (BZ_SERVER, eAdministrators, ("fairCTF setting has been changed to \"auto\" by " + cs + ".").c_str());
-    }
-    else
-    {
-      bz_sendTextMessage (BZ_SERVER, playerID, "Usage: /ctf on|off|auto");
-    }
-  }
-  return true;
-}
-
-
-
-
 
 // Local Variables: ***
 // mode:C++ ***

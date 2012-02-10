@@ -1,5 +1,6 @@
 ========================================================================
-    DYNAMIC LINK LIBRARY : rabbitTimer Project Overview
+Rabbit Timer: BZFlag server plug-in
+Original author: L4m3r
 ========================================================================
 
 The rabbitTimer plug-in helps solve that pesky rabbit cowardice problem.
