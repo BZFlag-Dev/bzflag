@@ -2,7 +2,6 @@
 //
 
 #include "bzfsAPI.h"
-#include <string>
 
 // event handler callback
 class SWDeathHandler : public bz_Plugin

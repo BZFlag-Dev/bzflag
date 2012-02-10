@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,8 +14,6 @@
 #ifndef _PLUGIN_FILES_H_
 #define _PLUGIN_FILES_H_
 
-#include <string>
-#include <vector>
 #include "bzfsAPI.h"
 
 std::vector<std::string> getFilesInDir ( const char* dir, const char* filter = "*.*", bool recursive = false );

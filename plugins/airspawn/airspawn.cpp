@@ -2,9 +2,7 @@
 //
 
 #include "bzfsAPI.h"
-#include <string>
 #include <map>
-#include <cstdlib>
 
 // plugin definition
 

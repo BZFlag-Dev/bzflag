@@ -4,8 +4,6 @@
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
 
-#include<string>
-
 std::string url;
 
 class StatPush : public bz_Plugin

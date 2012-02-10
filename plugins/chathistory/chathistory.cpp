@@ -2,15 +2,12 @@
 //
 
 #include "bzfsAPI.h"
-#include <string>
 #include <algorithm>
 #include <sstream>
 #include <stdarg.h>
-#include <vector>
 #include <stdio.h>
 #include <assert.h>
 #include <map>
-#include <vector>
 
 inline std::string tolower(const std::string& s)
 {

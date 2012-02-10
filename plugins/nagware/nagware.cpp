@@ -3,7 +3,6 @@
 // $Id$
 
 #include "bzfsAPI.h"
-#include <vector>
 #include <stdio.h>
 
 #define NAGWAREPLUG_VER "1.00.03"

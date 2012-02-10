@@ -3,7 +3,6 @@
 
 
 #include "bzfsAPI.h"
-#include <string>
 #include <map>
 
 // event handler callback

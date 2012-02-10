@@ -1,11 +1,8 @@
 // keepaway.cpp : Defines the entry point for the DLL application.
 
 #include "bzfsAPI.h"
-#include <string>
-#include <vector>
 #include <map>
 #include <cmath>
-#include <cstdlib>
 
 class KeepAwayMapHandler : public bz_CustomMapObjectHandler
 {

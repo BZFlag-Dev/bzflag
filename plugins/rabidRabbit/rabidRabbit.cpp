@@ -1,11 +1,8 @@
 // rabidRabbit.cpp : Defines the entry point for the DLL application.
 
 #include "bzfsAPI.h"
-#include <string>
-#include <vector>
 #include <map>
 #include <cmath>
-#include <cstdlib>
 
 class RabidRabbitHandler : public bz_CustomMapObjectHandler
 {

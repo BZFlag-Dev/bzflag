@@ -10,9 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <stdlib.h>
-#include <string>
-
 #include "bzfsAPI.h"
 
 class fairCTF : public bz_Plugin, public bz_CustomSlashCommandHandler

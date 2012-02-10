@@ -2,11 +2,8 @@
 //
 
 #include "bzfsAPI.h"
-#include <string>
-#include <vector>
 #include <map>
 #include <cmath>
-#include <cstdlib>
 
 class FlagStayZoneHandler : public bz_CustomMapObjectHandler
 {

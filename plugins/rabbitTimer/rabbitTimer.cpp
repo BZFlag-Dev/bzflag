@@ -11,7 +11,6 @@
  */
 
 #include "bzfsAPI.h"
-#include <cstdlib>
 
 class rabbitTimer : public bz_Plugin
 {
