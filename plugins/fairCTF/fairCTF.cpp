@@ -216,6 +216,7 @@ bool fairCTF::SlashCommand (int playerID, bz_ApiString /*command*/, bz_ApiString
 	{
 	  bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, ("CTF has been enabled by " + cs + ".").c_str());
 	  allowCTF = true;
+	  droptime = 0.0;
 	}
       }
     }
@@ -287,6 +288,7 @@ void fairCTF::UpdateState(bz_eTeamType teamLeaving)
     if (fair && !allowCTF)
     {
       allowCTF = true;
+      droptime = 0.0;
       bz_sendTextMessage (BZ_SERVER, BZ_ALLUSERS, "Team sizes are sufficiently even. CTF play is now enabled.");
     }
     else if (!fair && allowCTF)
