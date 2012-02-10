@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993-2011 Tim Riker
+dnl Copyright (c) 1993-2012 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -1189,7 +1189,6 @@ AC_CONFIG_FILES([
 	plugins/nagware/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/plugin_utils/Makefile
-	plugins/pushstats/Makefile
 	plugins/rabbitTimer/Makefile
 	plugins/rabidRabbit/Makefile
 	plugins/recordmatch/Makefile

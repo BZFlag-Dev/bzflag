@@ -16,7 +16,6 @@ SUBDIRS = \
 	nagware \
 	Phoenix \
 	playHistoryTracker \
-	pushstats \
 	rabbitTimer \
 	rabidRabbit \
 	recordmatch \
@@ -36,6 +35,7 @@ DIST_SUBDIRS = \
 
 EXTRA_DIST = \
 	api_notes \
+	pushstats \
 	webReport \
 	newplug.sh
 
