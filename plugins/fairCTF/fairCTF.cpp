@@ -67,7 +67,7 @@ void fairCTF::Init ( const char* config )
 
   unsigned int n = 0;
   
-  for(int i = 0; i < rawparams.length(); i++)
+  for(unsigned int i = 0; i < rawparams.length(); i++)
   {
     if (rawparams.at(i) == ':')
     {
@@ -186,7 +186,7 @@ void fairCTF::Event(bz_EventData *eventData)
   }
 }
 
-bool fairCTF::SlashCommand (int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
+bool fairCTF::SlashCommand (int playerID, bz_ApiString /*command*/, bz_ApiString message, bz_APIStringList * /*params*/)
 {
   std::string cs = "UNKNOWN";
   bz_BasePlayerRecord* pr = bz_getPlayerByIndex(playerID);
