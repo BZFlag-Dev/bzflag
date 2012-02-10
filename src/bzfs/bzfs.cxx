@@ -3545,6 +3545,11 @@ static void shotFired(int playerIndex, void *buf, int len)
 	shotEvent.pos[0] = shot.pos[0];
 	shotEvent.pos[1] = shot.pos[1];
 	shotEvent.pos[2] = shot.pos[2];
+	
+	shotEvent.vel[0] = shot.vel[0];
+	shotEvent.vel[1] = shot.vel[1];
+	shotEvent.vel[2] = shot.vel[2];
+	
 	shotEvent.playerID = shooter.getPlayerIndex();
 
 	shotEvent.type = firingInfo.flagType->flagAbbv;
