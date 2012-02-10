@@ -3,13 +3,14 @@
 
 BZFlag 2.4.1
 ------------
-* Added an option to have both leading and lagging radar shot lines 
+* Added an option to have both leading and lagging radar shot lines
     - David Anderson
 * Prevent prohibited solo bots from joining, rather than kick afterward
     - Scott Wichser, Jeff Makey
 * Add thiefControl plugin which prevents stealing flags from teammates
     - Bernt Hansen, Scott Wichser
 * Remove the -zoom command line option from bzflag - Jeff Makey
+* Add fairCTF plugin - Chris Wible
 
 
 BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
