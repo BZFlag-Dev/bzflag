@@ -91,9 +91,9 @@ public:
 
       md5 = bz_MD5(mapData,mapDataSize);
 
-      std::string URL = BaseURL.c_str();
-      bz_debugMessagef(2, "FastMap: Running local HTTP server for maps using URL %s", URL.c_str());
-      bz_setClientWorldDownloadURL(URL.c_str());
+      const char *URL = BaseURL.c_str();
+      bz_debugMessagef(2, "FastMap: Running local HTTP server for maps using URL %s", URL);
+      bz_setClientWorldDownloadURL(URL);
     }
   }
   char *mapData;
