@@ -1178,6 +1178,7 @@ AC_CONFIG_FILES([
 	plugins/airspawn/Makefile
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
+	plugins/fairCTF/Makefile
 	plugins/fastmap/Makefile
 	plugins/flagStay/Makefile
 	plugins/hiddenAdmin/Makefile

@@ -28,8 +28,8 @@ public:
   
   virtual void DropTeamFlag(int playerID);
   virtual void SetDropTime();
-  virtual void UpdateState();
-  virtual bool isEven();
+  virtual void UpdateState(bz_eTeamType teamLeaving);
+  virtual bool isEven(bz_eTeamType teamLeaving);
 
   bool allowCTF;
   bool autoMode;
@@ -128,6 +128,8 @@ void fairCTF::Init ( const char* config )
   bz_registerCustomSlashCommand ("ctf", this);
 
   bz_debugMessage(4,"fairCTF plugin loaded");
+  
+  UpdateState(eNoTeam);
 }
 
 void fairCTF::Cleanup()
@@ -151,9 +153,15 @@ void fairCTF::Event(bz_EventData *eventData)
       DropTeamFlag(grabData->playerID);
     }
   }
-  else if (eventData->eventType == bz_ePlayerJoinEvent || eventData->eventType == bz_ePlayerPartEvent)
+  else if (eventData->eventType == bz_ePlayerJoinEvent)
   {
-    UpdateState();
+    UpdateState(eNoTeam);
+  }
+  else if (eventData->eventType == bz_ePlayerPartEvent)
+  {
+    bz_PlayerJoinPartEventData_V1* partData = (bz_PlayerJoinPartEventData_V1*)eventData;
+    // Need to compensate for that leaving player.
+    UpdateState(partData->record->team);
   }
   else if (eventData->eventType == bz_eTickEvent)
   {
@@ -239,7 +247,7 @@ bool fairCTF::SlashCommand (int playerID, bz_ApiString command, bz_ApiString mes
       {
 	autoMode = true;
 	bz_sendTextMessage (BZ_SERVER, eAdministrators, ("CTF setting has been changed to \"auto\" by " + cs + ".").c_str());
-	UpdateState();
+	UpdateState(eNoTeam);
       }
     }
     else
@@ -270,11 +278,11 @@ void fairCTF::DropTeamFlag(int playerID)
   }
 }
 
-void fairCTF::UpdateState()
+void fairCTF::UpdateState(bz_eTeamType teamLeaving)
 {
   if (autoMode)
   {
-    bool fair = isEven();
+    bool fair = isEven(teamLeaving);
     
     if (fair && !allowCTF)
     {
@@ -312,7 +320,7 @@ void fairCTF::SetDropTime()
   }   
 }
 
-bool fairCTF::isEven()
+bool fairCTF::isEven(bz_eTeamType teamLeaving)
 {
 
   int teamsizes[4]; 
@@ -321,6 +329,13 @@ bool fairCTF::isEven()
   teamsizes[1] = bz_getTeamCount (eGreenTeam);
   teamsizes[2] = bz_getTeamCount (eBlueTeam);
   teamsizes[3] = bz_getTeamCount (ePurpleTeam);
+  
+  int leavingTeamIndex = (int)teamLeaving;
+  if (leavingTeamIndex >= 1 && leavingTeamIndex <= 4)
+  {
+    // Decrement the team count for the player that's leaving the game.
+    teamsizes[leavingTeamIndex - 1]--;
+  }
 
 
   //check fairness
