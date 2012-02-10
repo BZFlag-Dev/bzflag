@@ -944,6 +944,8 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
   playerRecord->teamKills = player->score.getTKs();
   playerRecord->canSpawn = true;
 
+  playerRecord->clientVersion = player->player.getClientVersion();
+
   if (playerRecord->version > 1)
   {
     bz_PlayerRecordV2 *r = (bz_PlayerRecordV2*)playerRecord;
