@@ -4,6 +4,7 @@ SUBDIRS = \
 	airspawn \
 	chathistory \
 	customflagsample \
+	fairCTF \
 	fastmap \
 	flagStay \
 	hiddenAdmin \
