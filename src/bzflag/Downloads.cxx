@@ -52,7 +52,7 @@ static const char DownloadContent[] =
   "#\n"
   "\n"
   "#\n"
-  "# To authorize all servers, remove the last 3 lines.\n"
+  "# To authorize all servers, remove the last 2 lines.\n"
   "#\n"
   "\n"
   "allow *images.bzflag.org\n"
