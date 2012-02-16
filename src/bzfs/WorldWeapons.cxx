@@ -69,7 +69,7 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 
 static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
     lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
-    float dt)
+    float dt, TeamColor shotTeam = RogueTeam)
 {
 
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -88,7 +88,7 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
   firingInfo.shot.id = shotID;
   firingInfo.shot.dt = dt;
 
-  firingInfo.shot.team = RogueTeam;
+  firingInfo.shot.team = shotTeam;
 
   buf = firingInfo.pack(bufStart);
 
@@ -294,16 +294,16 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 // for bzfsAPI: it needs to be global
 int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 			float *pos, float tilt, float direction,
-			int shotID, float dt)
+			int shotID, float dt, TeamColor shotTeam)
 {
-  return fireWorldWepReal(type, lifetime, player, RogueTeam,
+  return fireWorldWepReal(type, lifetime, player, shotTeam,
 			  pos, tilt, direction, shotID, dt);
 }
 
 
 int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
 		PlayerId player, float *pos, float tilt, float direction,
-		int shotID, float dt)
+		int shotID, float dt, TeamColor shotTeam)
 {
   return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
 			 direction, shotID, dt);

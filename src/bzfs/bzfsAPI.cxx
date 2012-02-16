@@ -1541,7 +1541,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt )
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam )
 {
   if (!pos || !flagType)
     return false;
@@ -1562,10 +1562,10 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
   if ( realShotID == 0)
     realShotID = world->getWorldWeapons().getNewWorldShotID();
 
-  return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt) == realShotID;
+  return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
 }
 
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt)
+BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
 {
   const char* flagType = "GM";
 
@@ -1583,7 +1583,7 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
   int shotID =  world->getWorldWeapons().getNewWorldShotID();
 
   fireWorldGM(flag,targetPlayerID, lifetime,player,pos,tilt,direction,
-    shotID, dt);
+    shotID, dt, (TeamColor)convertTeam(shotTeam));
 
   return shotID;
 }
