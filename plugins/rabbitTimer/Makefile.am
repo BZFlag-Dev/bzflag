@@ -1,10 +1,8 @@
 lib_LTLIBRARIES = rabbitTimer.la
 
 rabbitTimer_la_SOURCES = rabbitTimer.cpp
-rabbitTimer_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
+rabbitTimer_la_CPPFLAGS = -I$(top_srcdir)/include
 rabbitTimer_la_LDFLAGS = -module -avoid-version -shared
-rabbitTimer_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
-
 
 EXTRA_DIST = \
 	README.txt \

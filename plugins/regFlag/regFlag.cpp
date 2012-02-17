@@ -2,7 +2,6 @@
 //
 
 #include "bzfsAPI.h"
-#include "plugin_utils.h"
 
 class RegFlag : public bz_Plugin
 {
