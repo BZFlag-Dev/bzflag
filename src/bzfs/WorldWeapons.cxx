@@ -303,10 +303,10 @@ int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 
 int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
 		PlayerId player, float *pos, float tilt, float direction,
-		int shotID, float dt, TeamColor /*shotTeam*/)
+		int shotID, float dt, TeamColor shotTeam)
 {
   return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
-			 direction, shotID, dt);
+			 direction, shotID, dt, shotTeam);
 }
 
 // Local Variables: ***
