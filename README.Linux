@@ -38,6 +38,7 @@ BZFlag.  Known requirements include:
     libcurl3-dev
     libc-ares-dev
     libglew1.5-dev
+    zlib1g-dev
 
   Fedora:
 
