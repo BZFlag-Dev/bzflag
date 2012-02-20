@@ -1176,6 +1176,7 @@ AC_CONFIG_FILES([
 	plugins/SAMPLE_PLUGIN/Makefile
 	plugins/TimeLimit/Makefile
 	plugins/airspawn/Makefile
+	plugins/autoFlagReset/Makefile
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
 	plugins/fairCTF/Makefile

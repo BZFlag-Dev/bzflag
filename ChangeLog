@@ -12,6 +12,7 @@ BZFlag 2.4.1
 * Remove the -zoom command line option from bzflag - Jeff Makey
 * Add fairCTF plugin - Chris Wible
 * Allow plugins to specify a color when firing world weapons - Chris Wible
+* Add autoFlagReset plugin - Chris Wible
 
 
 BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
