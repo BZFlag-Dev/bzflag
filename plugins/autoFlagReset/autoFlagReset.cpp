@@ -36,8 +36,12 @@ void autoFlagReset::Init (const char* commandLine)
   
   incremental = false;
   freq = 900.0; 
-  nextRunTime = 0.0;
   nextFlag = 0;
+  nextRunTime = bz_getCurrentTime();
+  if (nextRunTime < 0.0)
+  {
+    nextRunTime = 0.0;
+  }
   
   if (cl.length() > 0)
   {
