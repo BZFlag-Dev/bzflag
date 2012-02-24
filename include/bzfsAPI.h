@@ -284,6 +284,7 @@ typedef enum
   bz_eBZDBChange,
   bz_eGetPlayerMotto,
   bz_eAllowConnection,
+  bz_eAllowFlagGrab,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1064,8 +1065,25 @@ public:
 
     allow = true;
   }
-
   bz_ApiString ip;
+  bool allow;
+
+};
+
+class BZF_API bz_AllowFlagGrabData_V1 : public bz_EventData
+{
+public:
+  bz_AllowFlagGrabData_V1()
+    : bz_EventData(bz_eAllowFlagGrab)
+  {
+    allow = true;
+  }
+
+  int playerID;
+  int flagID;
+
+  const char* flagType;
+
   bool allow;
 };
 

@@ -3082,6 +3082,16 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
     return;
   }
 
+  bz_AllowFlagGrabData_V1 allow;
+  allow.playerID = playerIndex;
+  allow.flagID = flag.getIndex();
+  allow.flagType = flag.flag.type->flagAbbv.c_str();
+
+  worldEventManager.callEvents(bz_eAllowFlagGrab,&allow);
+
+  if (!allow.allow)
+    return;
+
   // okay, player can have it
   flag.grab(playerIndex);
   playerData->player.setFlag(flag.getIndex());
