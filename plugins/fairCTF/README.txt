@@ -4,9 +4,9 @@ Original author: L4m3r
 ===============================================================================
 
 Fair CTF is a server plug-in that regulates CTF games for team evenness. If 
-the team sizes become unfair, CTF is disabled and players are notified; team 
-flags will be dropped instantly when picked up. Once the teams even up again, 
-CTF is re-enabled and the game can continue.
+the team sizes become unfair, CTF is disabled and players are notified. Team 
+flags then cannot be picked up, and previously-held team flags may be dropped. 
+Once the teams even up again, CTF is re-enabled and the game can continue.
 
 This plug-in uses a state-based approach that was designed for 2-team CTF 
 games. While it will still work with more teams, chances are that CTF play 
@@ -48,7 +48,7 @@ helps mitigate abuse issues with players leaving the game to disrupt an
 impending capture. Set this to 0 to drop flags instantly. If -1 is given, 
 flags will not force-drop at all; any team flags will be stuck wherever the 
 players drop them (by capturing, dying, or regular dropping). Only integers 
-are valid; The default is 5 seconds
+are valid; The default is 5 seconds.
 
 If any of these parameters are omitted, the defaults will be used. 
 

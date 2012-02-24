@@ -117,7 +117,7 @@ void fairCTF::Init ( const char* config )
     }
   }
   
-  Register(bz_eFlagGrabbedEvent);
+  Register(bz_eAllowFlagGrab);
   Register(bz_ePlayerJoinEvent);
   Register(bz_ePlayerPartEvent);
   Register(bz_eTickEvent);
@@ -140,14 +140,19 @@ void fairCTF::Cleanup()
 
 void fairCTF::Event(bz_EventData *eventData)
 {
-  if (eventData->eventType == bz_eFlagGrabbedEvent)
+  if (eventData->eventType == bz_eAllowFlagGrab)
   {
-    bz_FlagGrabbedEventData_V1* grabData = (bz_FlagGrabbedEventData_V1*)eventData;
+    bz_AllowFlagGrabData_V1* grabData = (bz_AllowFlagGrabData_V1*)eventData;
     
     if (!allowCTF)
     {
       // Don't allow a team flag grab
-      DropTeamFlag(grabData->playerID);
+      std::string flagtype = bz_getName(grabData->flagID).c_str();
+      if (flagtype == "R*" || flagtype == "G*" || flagtype == "B*" || flagtype == "P*")
+      {
+	grabData->allow = false;
+	bz_sendTextMessage (BZ_SERVER, grabData->playerID, "CTF play is currently disabled.");
+      }
     }
   }
   else if (eventData->eventType == bz_ePlayerJoinEvent)
