@@ -172,15 +172,15 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 	  netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
 	netPlayer[index]->udpin = true;
 	udpLinkRequest = true;
-	logDebugMessage(2,"Player %s [%d] inbound UDP up %s:%d actual %d\n",
-	       netPlayer[index]->info->getCallSign(), index,
+	logDebugMessage(2,"Player slot %d inbound UDP up %s:%d actual %d\n",
+	       index,
 	       inet_ntoa(uaddr->sin_addr),
 	       ntohs(netPlayer[index]->uaddr.sin_port),
 	       ntohs(uaddr->sin_port));
       } else {
-	logDebugMessage(2,"Player %s [%d] inbound UDP rejected %s:%d different IP \
+	logDebugMessage(2,"Player slot %d inbound UDP rejected %s:%d different IP \
 than %s:%d\n",
-	   netPlayer[index]->info->getCallSign(), index,
+	   index,
 	   inet_ntoa(netPlayer[index]->uaddr.sin_addr),
 	   ntohs(netPlayer[index]->uaddr.sin_port),
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
@@ -201,8 +201,8 @@ than %s:%d\n",
     }
     logDebugMessage(2,"\n");
   } else {
-    logDebugMessage(4,"Player %s [%d] uread() %s:%d len %d from %s:%d on %i\n",
-	   netPlayer[id]->info->getCallSign(), id,
+    logDebugMessage(4,"Player slot %d uread() %s:%d len %d from %s:%d on %i\n",
+	   id,
 	   inet_ntoa(netPlayer[id]->uaddr.sin_addr),
 	   ntohs(netPlayer[id]->uaddr.sin_port), n,
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
@@ -215,8 +215,7 @@ than %s:%d\n",
 
     if (code == MsgUDPLinkEstablished) {
       netPlayer[id]->udpout = true;
-      logDebugMessage(2,"Player %s [%d] outbound UDP up\n",
-	      netPlayer[id]->info->getCallSign(), id);
+      logDebugMessage(2,"Player %d outbound UDP up\n", id);
     }
   }
   return id;
