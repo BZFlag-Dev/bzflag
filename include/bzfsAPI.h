@@ -1103,7 +1103,7 @@ public:
 
   virtual const char* Name () = 0;
   virtual void Init(const char* config) = 0;
-  virtual void Cleanup() {Flush();}
+  virtual void Cleanup() {}
   virtual void Event(bz_EventData* /*eventData*/) { return; }
 
   // used for inter plugin communication

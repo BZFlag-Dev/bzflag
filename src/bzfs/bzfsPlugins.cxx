@@ -238,6 +238,7 @@ void unload1Plugin ( int iPluginID )
 	evt.eventType = bz_ePluginUnloaded;
 	worldEventManager.callEvents(&evt);
 
+	FlushEvents(plugin.plugin);
 	plugin.plugin->Cleanup();
 	bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
 
@@ -339,6 +340,7 @@ void unload1Plugin ( int iPluginID )
 	evt.eventType = bz_ePluginUnloaded;
 	worldEventManager.callEvents(&evt);
 
+	FlushEvents(plugin.plugin);
 	plugin.plugin->Cleanup();
 	bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
 
