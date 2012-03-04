@@ -1442,18 +1442,26 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 		if (eventData.filteredMessage.size() < size)
 			size = eventData.filteredMessage.size();
 		strncpy(filtered, eventData.filteredMessage.c_str(), size);
+		filtered[size] = '\0';
 	}
 
 	msg = filtered;
+	
+  }
+  
+  // if the message is empty, stop.
+  if (strlen(msg) == 0)
+  {
+    return;
   }
 
   // check that the player has the talk permission
   GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
 
-  if (!senderData) {
+  if (!senderData && sendingPlayer != ServerPlayer) {
     return;
   }
-  if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+  if (senderData && !senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
 
     // if the player were sending to is an admin
     GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
