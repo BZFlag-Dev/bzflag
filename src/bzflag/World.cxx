@@ -674,6 +674,9 @@ void		World::makeLinkMaterial()
 
 void			World::initFlag(int index)
 {
+  // make sure the server has not sent us a bogus value.
+  if (flags >= maxFlags || flags < 0)
+    return;
   // set color of flag (opaque)
   const float* color = flags[index].type->getColor();
   flagNodes[index]->setColor(color[0], color[1], color[2]);
