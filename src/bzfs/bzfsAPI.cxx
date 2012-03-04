@@ -1436,8 +1436,6 @@ BZF_API bool bz_sendTextMessage(int from, int to, bz_eMessageType type, const ch
 
   pendingChatMessages.push_back(PendingChatMessages(dstPlayer,playerIndex,message,msgType));
 
-  if (0)
-    sendMessage(playerIndex, dstPlayer, message);
   return true;
 }
 

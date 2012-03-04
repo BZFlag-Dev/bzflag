@@ -1428,8 +1428,6 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
     } else {
       clOptions->filter.filter(filtered, false);
     }
-    msg = filtered;
-
 	if (strcmp(message,filtered) != 0)	// the filter did do something so barf a message
 	{
 		bz_MessageFilteredEventData_V1	eventData;
@@ -1439,7 +1437,14 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 		eventData.filteredMessage = filtered;
 
 		worldEventManager.callEvents(bz_eMessageFilteredEvent,&eventData);
+
+		size_t size = MessageLen-1;
+		if (eventData.filteredMessage.size() < size)
+			size = eventData.filteredMessage.size();
+		strncpy(filtered, eventData.filteredMessage.c_str(), size);
 	}
+
+	msg = filtered;
   }
 
   // check that the player has the talk permission
@@ -6518,7 +6523,7 @@ int main(int argc, char **argv)
     std::list<PendingChatMessages>::iterator itr = pendingChatMessages.begin();
     while ( itr != pendingChatMessages.end() )
     {
-      sendMessage(itr->from, itr->to, itr->text.c_str(), itr->type);
+      ::sendChatMessage(itr->from,itr->to,itr->text.c_str(),itr->type);
       ++itr;
     }
     pendingChatMessages.clear();
