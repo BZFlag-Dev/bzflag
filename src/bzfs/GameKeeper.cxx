@@ -70,7 +70,7 @@ GameKeeper::Player::Player(int _playerIndex,
   _LSAState = start;
   bzIdentifier = "";
   isParting = false;
-  netHandler->setPlayer((PlayerInfo*)this,_playerIndex);
+  netHandler->setPlayer(&player,_playerIndex);
   playerHandler = NULL;
   score.playerID = _playerIndex;
 }
