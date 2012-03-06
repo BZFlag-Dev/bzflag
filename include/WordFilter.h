@@ -221,6 +221,9 @@ class WordFilter
   void outputFilter(void) const;
   /** retuns a count of how many words are in the filter */
   unsigned long int wordCount(void) const;
+
+  /** Clears the Filter */
+  void clear(void);
 };
 
 

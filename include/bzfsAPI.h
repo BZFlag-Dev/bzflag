@@ -1860,6 +1860,14 @@ BZF_API const char* bz_MD5(const void * data, size_t size);
 BZF_API const char* bz_getServerVersion(void);
 BZF_API const char* bz_getProtocolVersion(void);
 
+BZF_API bool bz_ChatFiltered(void);
+BZF_API bool bz_CallsignsFiltered(void);
+
+BZF_API void bz_SetFiltering(bool chat, bool callsigns);
+BZF_API void bz_LoadFilterDefFile(const char* fileName);
+BZF_API void bz_AddFilterItem(const char* word, const char* expression = NULL);
+BZF_API void bz_ClearFilter(void);
+
 #endif //_BZFS_API_H_
 
 // Local Variables: ***

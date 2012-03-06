@@ -3626,6 +3626,54 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
   return true;
 }
 
+BZF_API bool bz_ChatFiltered(void)
+{
+  return clOptions->filterChat;
+}
+
+BZF_API bool bz_CallsignsFiltered(void)
+{
+  return clOptions->filterCallsigns;
+}
+
+BZF_API void bz_SetFiltering(bool chat, bool callsigns)
+{
+  clOptions->filterChat = chat;
+  clOptions->filterCallsigns = callsigns;
+}
+
+BZF_API void bz_LoadFilterDefFile(const char* fileName)
+{
+  if (!fileName)
+    return;
+
+  clOptions->filterChat = true;
+  clOptions->filterFilename = fileName;
+  clOptions->filter.loadFromFile(fileName, true);
+
+}
+
+BZF_API void bz_AddFilterItem(const char* word, const char* expression)
+{
+  if (!word || !expression)
+    return;
+
+  clOptions->filterChat = true;
+  std::string filterWord = word;
+  std::string filterExpression = "";
+  if (expression != NULL)
+    filterExpression = expression;
+
+  std::transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);
+
+  clOptions->filter.addToFilter(filterWord,filterExpression);
+}
+
+BZF_API void bz_ClearFilter(void)
+{
+  clOptions->filter.clear();
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

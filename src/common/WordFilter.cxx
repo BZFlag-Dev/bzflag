@@ -795,7 +795,6 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
   return totalAdded;
 } // end loadFromFile
 
-
 /** filters an input message either a complex regular expression-based
  * pattern match (default) catching hundreds of variations per filter
  * word or using a simple exact word match technique (original).
@@ -883,6 +882,14 @@ unsigned long int WordFilter::wordCount(void) const
   return count;
 }
 
+void WordFilter::clear(void)
+{
+	for (int i = 0; i < MAX_FILTER_SETS; i++)
+		filters[i].clear();
+
+	suffixes.clear();
+	prefixes.clear();
+}
 
 // Local Variables: ***
 // mode:C++ ***
