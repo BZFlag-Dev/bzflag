@@ -74,6 +74,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   controls.push_back(createLabel(NULL, "Radar Short:"));
   controls.push_back(createLabel(NULL, "Radar Medium:"));
   controls.push_back(createLabel(NULL, "Radar Long:"));
+  controls.push_back(createLabel(NULL, "Radar Zoom In:"));
+  controls.push_back(createLabel(NULL, "Radar Zoom Out:"));
   controls.push_back(createLabel(NULL, "Send to All:"));
   controls.push_back(createLabel(NULL, "Send to Teammates:"));
   controls.push_back(createLabel(NULL, "Send to Nemesis:"));
@@ -125,6 +127,8 @@ KeyboardMapMenu::KeyboardMapMenu() : defaultKey(this), editing(-1), quickKeysMen
   initkeymap("set displayRadarRange 0.25", ++i);
   initkeymap("set displayRadarRange 0.5", ++i);
   initkeymap("set displayRadarRange 1.0", ++i);
+  initkeymap("radarZoom in", ++i);
+  initkeymap("radarZoom out", ++i);
   initkeymap("send all", ++i);
   initkeymap("send team", ++i);
   initkeymap("send nemesis", ++i);
