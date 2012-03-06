@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -731,7 +731,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-groupdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       groupsFile = argv[i];
-      std::cerr << "using group file \"" << argv[i] << "\"" << std::endl;
+      logDebugMessage(1,"using group file \"%s\"\n", argv[1]);
     }
     else if (strcmp(argv[i], "-h") == 0) {
       options.randomHeights = true;
@@ -1092,17 +1092,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     } else if (strcmp(argv[i], "-spamtime") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.msgTimer = atoi(argv[i]);
-      std::cerr << "using spam time of " << options.msgTimer << "\n";
+      logDebugMessage(1,"using spam time of %d seconds\n", options.msgTimer);
     }
     else if (strcmp(argv[i], "-spamwarn") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.spamWarnMax = atoi(argv[i]);
-      std::cerr << "using spam warn amount of " << options.spamWarnMax << "\n";
+      logDebugMessage(1,"using spam warn threshold of %d\n", options.spamWarnMax);
     }
     else if (strcmp(argv[i], "-speedtol") == 0) {
       checkArgc(1, i, argc, argv[i]);
       speedTolerance = (float) atof(argv[i]);
-      std::cerr << "using speed autokick tolerance of \"" << speedTolerance << "\"" << std::endl;
+      logDebugMessage(1,"using speed autokick tolerance of \"%f\"\n", speedTolerance);
     }
     else if (strcmp(argv[i], "-srvmsg") == 0) {
       checkArgc(1, i, argc, argv[i]);
@@ -1169,7 +1169,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.teamFlagTimeout = atoi(argv[i]);
       if (options.teamFlagTimeout < 0)
 	options.teamFlagTimeout = 0;
-      std::cerr << "using team flag timeout of " << options.teamFlagTimeout << " seconds" << std::endl;
+      logDebugMessage(1,"using team flag timeout of %d seconds\n", options.teamFlagTimeout);
     }
     else if (strcmp(argv[i], "-time") == 0) {
       checkArgc(1, i, argc, argv[i]);
@@ -1215,7 +1215,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	// league matches are 30 min
 	options.timeLimit = 1800.0f;
       }
-      std::cerr << "using time limit of " << (int)options.timeLimit << " seconds" << std::endl;
+      logDebugMessage(1,"using time limit of %d seconds\n", (int)options.timeLimit);
     }
     else if (strcmp(argv[i], "-timemanual") == 0) {
       options.timeManualStart = true;
@@ -1251,7 +1251,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-userdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       userDatabaseFile = argv[i];
-      std::cerr << "using userDB file \"" << argv[i] << "\"" << std::endl;
+      logDebugMessage(1,"using userDB file \"%s\"\n", argv[i]);
     }
     else if (strcmp(argv[i], "-v") == 0 || strcmp(argv[i], "-version") == 0) {
       printVersion();
@@ -1282,7 +1282,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-worldsize") == 0) {
       checkArgc(1, i, argc, argv[i]);
       BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%d",atoi(argv[i])*2));
-      std::cerr << "using world size of \"" << BZDBCache::worldSize << "\"" << std::endl;
+      logDebugMessage(1,"using world size of \"%f\"\n", (float)BZDBCache::worldSize);
     }
     else if (strcmp(argv[i], "-ws") == 0) {
       checkArgc(1, i, argc, argv[i]);
