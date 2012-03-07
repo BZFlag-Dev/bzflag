@@ -737,7 +737,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-groupdb") == 0) {
       checkArgc(1, i, argc, argv[i]);
       groupsFile = argv[i];
-      logDebugMessage(1,"using group file \"%s\"\n", argv[1]);
+      logDebugMessage(1,"using group file \"%s\"\n", argv[i]);
     }
     else if (strcmp(argv[i], "-h") == 0) {
       options.randomHeights = true;
