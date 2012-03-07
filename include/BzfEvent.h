@@ -126,6 +126,8 @@ class BzfKeyEvent {
 			BZ_Button_8,
 			BZ_Button_9,
 			BZ_Button_10,
+			BZ_Button_11,
+			BZ_Button_12,
 			LastButton  // special marker that must be last
     };
     enum {

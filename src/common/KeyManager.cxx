@@ -102,6 +102,8 @@ const char*		KeyManager::buttonNames[] = {
   "Joystick Button 8",
   "Joystick Button 9",
   "Joystick Button 10",
+  "Joystick Button 11",
+  "Joystick Button 12",
   "LastButton"  // should always be last item listed
 };
 const char*		KeyManager::asciiNames[][2] = {

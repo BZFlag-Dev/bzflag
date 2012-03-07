@@ -6387,6 +6387,8 @@ static void		playingLoop()
 	BzfKeyEvent::BZ_Button_8,
 	BzfKeyEvent::BZ_Button_9,
 	BzfKeyEvent::BZ_Button_10,
+	BzfKeyEvent::BZ_Button_11,
+	BzfKeyEvent::BZ_Button_12,
       };
 
       static unsigned long old_buttons = 0;
