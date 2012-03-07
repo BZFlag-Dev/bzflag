@@ -20,6 +20,10 @@
 #include <vector>
 #include <string>
 #include <time.h>
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+#include <miniupnpc/miniupnpc.h>
+#include <miniupnpc/upnpcommands.h>
+#endif
 
 // implementation-specific bzflag headers
 #include "NetHandler.h"
@@ -5635,6 +5639,59 @@ int main(int argc, char **argv)
   if (clOptions->pingInterface != "") {
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
   }
+
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+  if (clOptions->UPnP) {
+    // Discover uPnP devices waiting for 200ms
+    struct UPNPDev *devlist = upnpDiscover(200, NULL, NULL, 0, 0, NULL);
+    if (devlist) {
+      struct UPNPUrls urls;
+      struct IGDdatas data;
+      char   lanaddr[128];
+      int i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));
+      if (i == 1) {
+	// Found Valid IGD
+        if (clOptions->publicizedAddress.length() == 0) {
+	  char externalIPAddress[128];
+	  int result = UPNP_GetExternalIPAddress(urls.controlURL,
+						 data.first.servicetype,
+						 externalIPAddress);
+	  if (result == UPNPCOMMAND_SUCCESS) {
+            clOptions->publicizedAddress = externalIPAddress;
+          } else {
+	    std::cerr << "GetExternalIPAddress returned"
+		      << result
+		      << std::endl;
+          }
+	}
+      } else {
+	switch (i) {
+	  case 2:
+	    std::cerr << "Found a non connected IGD"
+		      << urls.controlURL
+		      << std::endl;
+  	    break;
+	  case 3:
+	    std::cerr << "Not recognized as IGD"
+		      << urls.controlURL
+		      << std::endl;
+	    break;
+	  default:
+	    std::cerr << "Non recognized"
+		      << urls.controlURL
+		      << std::endl;
+	    break;
+	}
+      }
+      if (i)
+	FreeUPNPUrls(&urls);
+      freeUPNPDevlist(devlist);
+    } else {
+      std::cerr << "No UPnP device found"
+		<< std::endl;
+    }
+  }
+#endif
 
   // my address to publish.  allow arguments to override (useful for
   // firewalls).  use my official hostname if it appears to be

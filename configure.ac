@@ -190,6 +190,9 @@ if test "x$enable_all_builds" = "xyes" ; then
     enable_zlib_build=yes
 fi
 
+# enable UPnP for server
+AC_ARG_ENABLE(UPnP,       [  --enable-UPnP           Use UPnP for server],
+	      , [enable_UPnP=no])
 
 dnl **************************
 dnl *** Check for programs ***
@@ -363,6 +366,11 @@ AC_CHECK_HEADERS( \
 if test "x$enable_regex_build" != "xyes" ; then
     AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]) )
 fi
+
+if test "x$enable_UPnP" = "xyes"; then
+    AC_CHECK_HEADERS(miniupnpc/miniupnpc.h, [LIBMINIUPNPC=-lminiupnpc])
+fi
+AC_SUBST(LIBMINIUPNPC)
 
 dnl **********************************
 dnl *** Check for types/structures ***
@@ -1105,7 +1113,6 @@ AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
 if test "x$BUILD_GLEW" = xyes -o "x$glew_check" = xyes; then
     AC_DEFINE(HAVE_GLEW, 1, [Using GLEW])
 fi
-
 
 # make sure ECHO and ECHO_N got defined and substituted
 if test "x$ECHO" = "x" ; then

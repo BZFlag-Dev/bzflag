@@ -143,4 +143,5 @@ LDADD =					\
 	$(LIBREGEX)			\
 	$(LIBZ)				\
 	$(LIBDL)			\
+	$(LIBMINIUPNPC)			\
 	../date/libDate.la

@@ -145,6 +145,9 @@ const char *usageString =
 "[-tkannounce] "
 "[-tkkr <percent>] "
 "[-ts [micros]] "
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+"[-UPnP] "
+#endif
 "[-userdb <user permissions file>] "
 "[-utc] "
 "[-vars <filename>] "
@@ -255,6 +258,9 @@ const char *extraUsageString =
 "\t-tkkr: team-kills-to-wins percentage (1-100) for kicking tk-ing players\n"
 "\t-ts [micros]: timestamp all console output, [micros] to include\n"
 "\t\tmicroseconds\n"
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+"\t-UPnP: enable UPnP "
+#endif
 "\t-userdb: file to read for user access permissions\n"
 "\t-utc: timestamp console output in UTC instead of local time, implies -ts\n"
 "\t-vars: file to read for worlds configuration variables\n"
@@ -1243,6 +1249,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	}
       }
     }
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+    else if (strcmp(argv[i], "-UPnP") == 0) {
+      // timestamp output
+      options.UPnP = true;
+    }
+#endif
     else if (strcmp(argv[i], "-utc") == 0) {
       // timestamp output
       options.timestampLog = true;
