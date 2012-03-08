@@ -292,13 +292,13 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
     os << " (m)";
   if (baninfo.bannedBy.length())
     os << " banned by: " << baninfo.bannedBy;
-  sendMessage(ServerPlayer, id, os.str().c_str());
+    bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
 
   // add reason, if any
   if (baninfo.reason.size()) {
     std::ostringstream ost;
     ost << "   reason: " << baninfo.reason;
-    sendMessage(ServerPlayer, id, ost.str().c_str());
+    bz_sendTextMessage(BZ_SERVER, id, ost.str().c_str());
   }
 }
 
@@ -306,8 +306,8 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 void AccessControlList::sendBans(PlayerId id, const char* pattern)
 {
   expire();
-  sendMessage(ServerPlayer, id, "IP Ban List");
-  sendMessage(ServerPlayer, id, "-----------");
+  bz_sendTextMessage(BZ_SERVER, id, "IP Ban List");
+  bz_sendTextMessage(BZ_SERVER, id, "-----------");
 
   const std::string glob = makeGlobPattern(pattern);
 
