@@ -247,17 +247,6 @@ static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
   return result;
 }
 
-static int bufferedWrite(GameKeeper::Player &playerData, const void *b, int l)
-{
-  if (!playerData.netHandler)
-    return l;
-
-  int result = playerData.netHandler->bufferedSend(b, l);
-  if (result == -1)
-    removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
-  return result;
-}
-
 static char sMsgBuf[MaxPacketLen];
 char *getDirectMessageBuffer()
 {
@@ -289,30 +278,6 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
     return;
 
   directMessage(*playerData, code, len, msg);
-}
-
-static int bufferedMessage(GameKeeper::Player &playerData,
-			 uint16_t code, int len, const void *msg)
-{
-  if (playerData.isParting)
-    return -1;
-  // send message to one player
-  void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-
-  void *buf = bufStart;
-  buf = nboPackUShort(buf, uint16_t(len));
-  buf = nboPackUShort(buf, code);
-  return bufferedWrite(playerData, bufStart, len + 4);
-}
-
-void bufferedMessage(int playerIndex, uint16_t code, int len, const void *msg)
-{
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (!playerData)
-    return;
-
-  bufferedMessage(*playerData, code, len, msg);
 }
 
 void broadcastMessage(uint16_t code, int len, const void *msg)
@@ -465,15 +430,14 @@ static void sendFlagUpdate(int playerIndex)
   buf = nboPackUShort(bufStart,0); //placeholder
   int cnt = 0;
   int length = sizeof(uint16_t);
-  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
-  {
+  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
     FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.exist())
-    {
-      if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t))
-      {
+    if (flag.exist()) {
+      if ((length + sizeof(uint16_t) + FlagPLen)
+	  > MaxPacketLen - 2*sizeof(uint16_t)) {
 	nboPackUShort(bufStart, cnt);
-	result = bufferedMessage(*playerData, MsgFlagUpdate,(char*)buf - (char*)bufStart, bufStart);
+	result = directMessage(*playerData, MsgFlagUpdate,
+			       (char*)buf - (char*)bufStart, bufStart);
 	if (result == -1)
 	  return;
 	cnt    = 0;
@@ -481,7 +445,9 @@ static void sendFlagUpdate(int playerIndex)
 	buf    = nboPackUShort(bufStart,0); //placeholder
       }
 
-      bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
+      bool hide
+	= (flag.flag.type->flagTeam == ::NoTeam)
+	&& (flag.player == -1);
       buf = flag.pack(buf, hide);
       length += sizeof(uint16_t)+FlagPLen;
       cnt++;
@@ -490,7 +456,7 @@ static void sendFlagUpdate(int playerIndex)
 
   if (cnt > 0) {
     nboPackUShort(bufStart, cnt);
-    result = bufferedMessage(*playerData, MsgFlagUpdate,
+    result = directMessage(*playerData, MsgFlagUpdate,
 			   (char*)buf - (char*)bufStart, bufStart);
   }
 }
