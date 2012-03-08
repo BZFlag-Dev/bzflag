@@ -368,7 +368,10 @@ if test "x$enable_regex_build" != "xyes" ; then
 fi
 
 if test "x$enable_UPnP" = "xyes"; then
-    AC_CHECK_HEADERS(miniupnpc/miniupnpc.h, [LIBMINIUPNPC=-lminiupnpc])
+    AC_CHECK_HEADERS(
+	[miniupnpc/miniupnpc.h],
+	[LIBMINIUPNPC=-lminiupnpc],
+	[AC_MSG_WARN([You need to install miniupnpc for UPnP to work])])
 fi
 AC_SUBST(LIBMINIUPNPC)
 

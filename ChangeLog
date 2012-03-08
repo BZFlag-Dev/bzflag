@@ -3,6 +3,7 @@
 
 BZFlag 2.4.1
 ------------
+* Added UPnP option to configure server networking - Alfredo Tupone
 * Added an option to have both leading and lagging radar shot lines
     - David Anderson
 * Prevent prohibited solo bots from joining, rather than kick afterward
