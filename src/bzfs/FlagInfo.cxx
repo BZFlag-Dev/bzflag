@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -65,9 +65,9 @@ FlagInfo::FlagInfo(): numShots(0), flagIndex(0)
 void FlagInfo::setSize(int _numFlags)
 {
   // sanity check
-  if (_numFlags > 1000000) {
+  if (_numFlags > 100000) {
     std::cerr << "WARNING: FlagInfo::setSize was given an insane flag count of " << _numFlags << std::endl;
-    std::cerr << "clamping to 1000000 flags just for kicks" << std::endl;
+    std::cerr << "clamping to 100000 flags just for kicks" << std::endl;
     _numFlags = 100000;
   }
 
@@ -111,7 +111,7 @@ void FlagInfo::addFlag()
   const float gravity      = BZDBCache::gravity;
   const float maxGrabs     = BZDB.eval(StateDatabase::BZDB_MAXFLAGGRABS);
 
-  // flag in now entering game
+  // flag is now entering game
   numFlagsInAir++;
   flag.status	  = FlagComing;
 
