@@ -2,9 +2,10 @@
     DYNAMIC LINK LIBRARY : thiefControl Project Overview
 ========================================================================
 
-This is the thiefControl. It makes a thiefControl_DESCRIPTION
+This is the thiefControl plugin, which causes players to drop their
+Thief flag if they attempt to steal a flag from a teammate.
+Exceptions:
 
-Replace every occurance of the term thiefControl in every file in here
-with the name of your project.  Also open .sln and .vcproj files in a
-text editor and do a search and replace.  Then write a short readme with
-usage instructions or other details in this file.
+* rogue players may steal flags from each other as usual
+* non-rogue players may steal team flags from teammates for quick
+  movement across the battlefield

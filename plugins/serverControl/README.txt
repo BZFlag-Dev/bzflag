@@ -23,12 +23,10 @@ ban file changes.
 An example script (for Linux systems) to keep a local copy of the
 masterban file is provided in check_masterbans.sh.
 
-This plugin can shut down the BZFlag server on demand or everytime a
+This plugin can shut down the BZFlag server on demand or every time a
 game ends.  See the supplied plugin.cfg configuration file for
 details.
 
 Plugin loading format:
 
   -loadplugin /path/to/serverControl,/path/to/plugins.cfg
-
-

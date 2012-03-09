@@ -32,7 +32,7 @@ Plugin features/notes:
 
 * Explicit spawn zones are recommended in map files to prevent player spawns on the Hill.
 
-* There is an autotime function (optional) that will reduce the time to hold the hill, based on the number of players in the game.  With this option enabled, the time is reduced a certain percentage (default is 3%) with every additional player (after 2) to a certain minimum percentage (defaut is 50%) of the original specified time to hold.  This means that (with default settings) the time to hold would not be affected for 2 players, but would be reduced by 3% for 3 players, 6% for 4 players and so on.  The minimum 50% of the original time to hold would be reached at about 19 players and would remain at 50%, no matter how many additional players were to join after that.
+* There is an autotime function (optional) that will reduce the time to hold the hill, based on the number of players in the game.  With this option enabled, the time is reduced a certain percentage (default is 3%) with every additional player (after 2) to a certain minimum percentage (default is 50%) of the original specified time to hold.  This means that (with default settings) the time to hold would not be affected for 2 players, but would be reduced by 3% for 3 players, 6% for 4 players and so on.  The minimum 50% of the original time to hold would be reached at about 19 players and would remain at 50%, no matter how many additional players were to join after that.
 
 * There is a "/kingsay <message>" command available to all players to send a message to person holding the hill.
 
@@ -91,7 +91,7 @@ end
 
 This would set up a King of the Hill cylindrical volume 30 x 30 x 20, centered at 0 0 30.  Teamplay would be enabled and the required time to occupy the "Hill" would be 100 seconds.  The time to occupy the hill would adjust downward with an increasing number of players (see autotime description above).  Each new player after 2 will reduce the hold time by 5% to a minimum of 25% of the hold time (25 seconds).  The sounds associated with the plugin would be disabled.
 
-Obviously, the plugin must be loaded to the server at startup, or it will not recoginize these map parameters.
+Obviously, the plugin must be loaded to the server at startup, or it will not recognize these map parameters.
 
 -------------------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ There are several administrator commands available with the plugin:
 "kothautotimeon" - this will enable the autotime function.
 "kothsoundon" - this will enable the plugin's sounds.
 "kothsoundoff" - this will disable the plugin's sounds.
-"kothautotimeoff" - this will disable the autotime funtion.
+"kothautotimeoff" - this will disable the autotime function.
 "kothtime <seconds>" - this will change King of the Hill hold time 1 -> 7200 seconds.
 "kothstatus" - this will return the status of the plugin modes, times, etc.
 

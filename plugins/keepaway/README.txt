@@ -28,7 +28,7 @@ Plugin features/notes:
 
 * It is highly recommended to add exactly 1 flag to the map file for each type of flag that might be considered the Keep Away flag.  Duplicate Keep Away flags has not been tested.
 
-* There is an autotime function (optional) that will reduce the time to hold the Keep Away flag, based on the number of players in the game.  With this option enabled, the time is reduced a certain percentage (default is 3%) with every additional player (after 2) to a certain minimum percentage (defaut is 50%) of the original specified time to hold.  This means that (with default settings) the time to hold would not be affected for 2 players, but would be reduced by 3% for 3 players, 6% for 4 players and so on.  The minimum 50% of the original time to hold would be reached at about 19 players and would remain at 50%, no matter how many additional players were to join after that.
+* There is an autotime function (optional) that will reduce the time to hold the Keep Away flag, based on the number of players in the game.  With this option enabled, the time is reduced a certain percentage (default is 3%) with every additional player (after 2) to a certain minimum percentage (default is 50%) of the original specified time to hold.  This means that (with default settings) the time to hold would not be affected for 2 players, but would be reduced by 3% for 3 players, 6% for 4 players and so on.  The minimum 50% of the original time to hold would be reached at about 19 players and would remain at 50%, no matter how many additional players were to join after that.
 
 * Local sounds for dropped Keep Away flag, team grab, successful Keep Away, etc. are incorporated into plugin.  In general, these sounds correspond to standard CTF sounds.
 
@@ -102,7 +102,7 @@ end
 This would set up a Keep Away game using Invisible Bullet, Phantom Zone, Useless and Reverse Only flags for Keep Away flags.  Teamplay would be enabled and the initial required time to hold the Keep Away flag would be 60 seconds (1 minute).  Time to hold would not automatically adjust downward with new players - it would remain at 60 seconds.  The sounds associated with Keep Away would be disabled.
 
 
-Obviously, the plugin must be loaded to the server at startup, or it will not recoginize these map parameters.
+Obviously, the plugin must be loaded to the server at startup, or it will not recognize these map parameters.
 
 -------------------------------------------------------------------------------------
 
@@ -118,7 +118,7 @@ There are several administrator commands available with the plugin:
 "katimemult" - this will set auto time multiplier (per new player).
 "katimemultmin" - this will set minimum auto time multiplier.
 "kaautotimeon" - this will enable the autotime function.
-"kaautotimeoff" - this will disable the autotime funtion.
+"kaautotimeoff" - this will disable the autotime function.
 "katime <seconds>" - this will change Keep Away hold time 1 -> 7200 seconds.
 "kastatus" - this will return the status of the plugin modes, times, etc.
 "kaffon" - this will turn on forced flags.

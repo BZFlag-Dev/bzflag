@@ -17,7 +17,7 @@ this approach.
 
 PARAMETERS:
 
-The behavior of the plug-in is configureable with four parameters:
+The behavior of the plug-in is configurable with four parameters:
 
 	-loadplugin "/pathtoplugin/fairCTF.so,A:B:C:D"
 
@@ -67,7 +67,7 @@ plugin will resume normal operation after this command is issued.
 
 Add the perm "FAIRCTF" to any groups who need to be able to use the command. 
 
-These command will publically announce changes (and who made them) only when 
+These command will publicly announce changes (and who made them) only when 
 they change the state of CTF. For example, if CTF is enabled, /ctf on will not 
 create an announcement, but /ctf off will. The admin channel will always be 
 notified of any change, however.

@@ -8,7 +8,7 @@ Author: LouMan
 
 Description:
 
-The rabidRabbit plugin will allow a rabbit player to enter a map defined volume (rabid rabbit 'zone') and kill all hunters at once.  The plugin will accomodate as many rabidRabbit zones as are defined in the map file (minimum of 2) and will cycle through each rabidRabbit zones sequentially so that the rabbit cannot repeatedly use the same zone to kill the hunters.  Map designers are highly advised to clearly indicate rabidRabbit zones in the map (texturing, world weapon option below, etc.), so that they are easily identified by all players.
+The rabidRabbit plugin will allow a rabbit player to enter a map defined volume (rabid rabbit 'zone') and kill all hunters at once.  The plugin will accommodate as many rabidRabbit zones as are defined in the map file (minimum of 2) and will cycle through each rabidRabbit zones sequentially so that the rabbit cannot repeatedly use the same zone to kill the hunters.  Map designers are highly advised to clearly indicate rabidRabbit zones in the map (texturing, world weapon option below, etc.), so that they are easily identified by all players.
 
 If a rabbit enters the incorrect rabidRabbit zone, a message will be sent to him/her that it isn't the correct rabidRabbit zone and to try the next zone.  If the 'zonekillhunter' option is defined in the map file (see below), a hunter that enters the rabidRabbit zone will be killed.  If the  'zonekillhunter' option is not defined, there will be no effect on a hunter entering the rabidRabbit zone.
 
