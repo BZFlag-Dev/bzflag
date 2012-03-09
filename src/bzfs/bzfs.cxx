@@ -827,14 +827,6 @@ static bool serverStart()
   addr.sin_family = AF_INET;
   addr.sin_addr = serverAddress;
 
-  // look up service name and use that port if no port given on
-  // command line.  if no service then use default port.
-  if (!clOptions->useGivenPort) {
-    struct servent *service = getservbyname("bzfs", "tcp");
-    if (service) {
-      clOptions->wksPort = ntohs(service->s_port);
-    }
-  }
   pingReply.serverId.port = addr.sin_port = htons(clOptions->wksPort);
 
   // open well known service port
@@ -5427,14 +5419,20 @@ static void bzUPnP()
 
   // Use UPnP to set the public IP interface
   // override with - publicaddr argument
-  if (clOptions->publicizedAddress.length() == 0) {
+  if ((clOptions->publicizedAddress.length() == 0)
+      || (clOptions->publicizedAddress[0] == ':')) {
     char externalIPAddress[128];
     int result = UPNP_GetExternalIPAddress(
 	urls.controlURL,
 	data.first.servicetype,
 	externalIPAddress);
     if (result == UPNPCOMMAND_SUCCESS) {
-      clOptions->publicizedAddress = externalIPAddress;
+      if (clOptions->publicizedAddress.length() == 0)
+        clOptions->publicizedAddress = externalIPAddress
+	  + TextUtils::format(":%d", clOptions->wksPort);
+      else
+        clOptions->publicizedAddress = externalIPAddress
+	  + clOptions->publicizedAddress;
     } else {
       std::cerr << "GetExternalIPAddress returned"
 		<< result
@@ -5696,6 +5694,15 @@ int main(int argc, char **argv)
     votingarbiter->setAvailableVoters(maxPlayers);
     BZDB.setPointer("poll", (void *)votingarbiter);
     BZDB.setPermission("poll", StateDatabase::ReadOnly);
+  }
+
+  // look up service name and use that port if no port given on
+  // command line.  if no service then use default port.
+  if (!clOptions->useGivenPort) {
+    struct servent *service = getservbyname("bzfs", "tcp");
+    if (service) {
+      clOptions->wksPort = ntohs(service->s_port);
+    }
   }
 
   if (clOptions->UPnP)
