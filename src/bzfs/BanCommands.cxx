@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -242,9 +242,14 @@ bool MuteCommand::operator() (const char	 *message,
 	     playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, msg);
     // confirm player is muted
-    snprintf(msg, MessageLen, "player id #%d \"%s\" is now muted.", i,
-	     muteData->player.getCallSign());
-    sendMessage(ServerPlayer, t, msg);
+    snprintf(msg, MessageLen, "player id #%d \"%s\" has been muted by %s.", i,
+	     muteData->player.getCallSign(), playerData->player.getCallSign());
+    sendMessage(ServerPlayer, AdminPlayers, msg);
+    if (!playerData->accessInfo.isAdmin()) {
+      snprintf(msg, MessageLen, "player id #%d \"%s\" is now muted.", i,
+	       muteData->player.getCallSign());
+      sendMessage(ServerPlayer, t, msg);
+    }
   }
   return true;
 }
@@ -286,9 +291,14 @@ bool UnmuteCommand::operator() (const char	 *message,
 	     playerData->player.getCallSign());
     sendMessage(ServerPlayer, i, msg);
     // confirm player is unmuted
-    snprintf(msg, MessageLen, "player id #%d \"%s\" is now unmuted.", i,
-	     unmuteData->player.getCallSign());
-    sendMessage(ServerPlayer, t, msg);
+    snprintf(msg, MessageLen, "player id #%d \"%s\" has been unmuted by %s.", i,
+	    unmuteData->player.getCallSign(), playerData->player.getCallSign());
+    sendMessage(ServerPlayer, AdminPlayers, msg);
+    if (!playerData->accessInfo.isAdmin()) {
+      snprintf(msg, MessageLen, "player id #%d \"%s\" is now unmuted.", i,
+	       unmuteData->player.getCallSign());
+      sendMessage(ServerPlayer, t, msg);
+    }
   }
   return true;
 }
