@@ -5373,7 +5373,38 @@ static void bzdbGlobalCallback(const std::string& name, void* UNUSED(data))
   worldEventManager.callEvents(eventData);
 }
 
-static void bzUPnP()
+class UPnP {
+  public:
+    UPnP();
+    void start();
+    void stop();
+  private:
+    void setIGD();
+    void clearIGD();
+    void setPorts();
+    void setLocalInterface();
+    void setRemoteInterface();
+    void addPortForwarding();
+    void deletePortForwarding();
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+    struct UPNPUrls urls;
+    struct IGDdatas data;
+#endif
+    char        lanaddr[128];
+    bool        IGD_Found;
+    std::string remotePort;
+    char        localPort[16];
+};
+
+UPnP bzUPnP;
+
+UPnP::UPnP(): IGD_Found(false)
+{
+  lanaddr[0]   = 0;
+  localPort[0] = 0;
+}
+
+void UPnP::setIGD()
 {
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
   // Discover uPnP devices waiting for 200ms
@@ -5383,17 +5414,12 @@ static void bzUPnP()
 	      << std::endl;
     return;
   }
-  struct UPNPUrls urls;
-  struct IGDdatas data;
-  char   lanaddr[128];
   // Select a good IGD (Internet Gateway Device)
   int i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));
   freeUPNPDevlist(devlist);
   if (!i) {
     std::cerr << "No recognized device" << std::endl;
-    return;
-  }
-  if (i != 1) {
+  } else if (i != 1) {
     switch (i) {
       case 2:
 	std::cerr << "Found a non connected IGD"
@@ -5407,40 +5433,219 @@ static void bzUPnP()
 	break;
     }
     FreeUPNPUrls(&urls);
-    return;
+  } else {
+    IGD_Found = true;
   }
+#endif
+}
 
-  // Found a Valid IGD
+void UPnP::clearIGD()
+{
+  if (!IGD_Found)
+    return;
 
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+  FreeUPNPUrls(&urls);
+#endif
+  IGD_Found = true;
+}
+
+void UPnP::setLocalInterface()
+{
   // Use UPnP to set the local interface
   // Override with -i argument
   if (clOptions->pingInterface == "")
     clOptions->pingInterface = lanaddr;
+}
+
+void UPnP::setRemoteInterface()
+{
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+  char externalIPAddress[128];
+  int result = UPNP_GetExternalIPAddress(
+      urls.controlURL,
+      data.first.servicetype,
+      externalIPAddress);
+  if (result != UPNPCOMMAND_SUCCESS) {
+    std::cerr << "GetExternalIPAddress returned"
+	      << result
+	      << std::endl;
+    FreeUPNPUrls(&urls);
+    IGD_Found = false;
+    return;
+  }
 
   // Use UPnP to set the public IP interface
   // override with - publicaddr argument
   if ((clOptions->publicizedAddress.length() == 0)
       || (clOptions->publicizedAddress[0] == ':')) {
-    char externalIPAddress[128];
-    int result = UPNP_GetExternalIPAddress(
+    if (clOptions->publicizedAddress.length() == 0)
+      clOptions->publicizedAddress = externalIPAddress
+	+ TextUtils::format(":%d", clOptions->wksPort);
+    else
+      clOptions->publicizedAddress = externalIPAddress
+	+ clOptions->publicizedAddress;
+  }
+#endif
+}
+
+void UPnP::setPorts()
+{
+  size_t colonPos = clOptions->publicizedAddress.find(':');
+  if (colonPos == std::string::npos)
+    remotePort = "5154";
+  else
+    remotePort = std::string(clOptions->publicizedAddress, colonPos + 1);
+  snprintf(localPort, sizeof(localPort), "%d", clOptions->wksPort);
+}
+
+void UPnP::addPortForwarding()
+{
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+  int result;
+  result = UPNP_AddPortMapping(
+      urls.controlURL,
+      data.first.servicetype,
+      remotePort.c_str(),
+      localPort,
+      lanaddr,
+      "bzfs",
+      "TCP",
+      0,
+      "0");
+  if (result == UPNPCOMMAND_SUCCESS)
+    result = UPNP_AddPortMapping(
 	urls.controlURL,
 	data.first.servicetype,
-	externalIPAddress);
-    if (result == UPNPCOMMAND_SUCCESS) {
-      if (clOptions->publicizedAddress.length() == 0)
-        clOptions->publicizedAddress = externalIPAddress
-	  + TextUtils::format(":%d", clOptions->wksPort);
-      else
-        clOptions->publicizedAddress = externalIPAddress
-	  + clOptions->publicizedAddress;
-    } else {
-      std::cerr << "GetExternalIPAddress returned"
-		<< result
-		<< std::endl;
+	remotePort.c_str(),
+	localPort,
+	lanaddr,
+	"bzfs",
+	"UDP",
+	0,
+	"0");
+  if (result != UPNPCOMMAND_SUCCESS) {
+    switch (result) {
+      case 402:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "Invalid Args"
+		  << std::endl;
+	break;
+      case 501:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "Action Failed"
+		  << std::endl;
+	break;
+      case 715:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "WildCardNotPermittedInSrcIP"
+		  << std::endl;
+	break;
+      case 716:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "WildCardNotPermittedInExtPort"
+		  << std::endl;
+	break;
+      case 718:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "ConflictInMappingEntry"
+		  << std::endl;
+	break;
+      case 724:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "SamePortValuesRequired"
+		  << std::endl;
+	break;
+      case 725:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "OnlyPermanentLeasesSupported"
+		  << std::endl;
+	break;
+      case 726:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "RemoteHostOnlySupportsWildcard"
+		  << std::endl;
+	break;
+      case 727:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "ExternalPortOnlySupportsWildcard"
+		  << std::endl;
+	break;
+      default:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << result
+		  << std::endl;
+	break;
     }
+    FreeUPNPUrls(&urls);
+    IGD_Found = false;
   }
-  FreeUPNPUrls(&urls);
 #endif
+}
+
+void UPnP::deletePortForwarding()
+{
+#ifdef HAVE_MINIUPNPC_MINIUPNPC_H
+  int result;
+  result = UPNP_DeletePortMapping(
+      urls.controlURL,
+      data.first.servicetype,
+      remotePort.c_str(),
+      "TCP",
+      0);
+  if (result == UPNPCOMMAND_SUCCESS)
+    result = UPNP_DeletePortMapping(
+	urls.controlURL,
+	data.first.servicetype,
+	remotePort.c_str(),
+        "UDP",
+	0);
+  if (result != UPNPCOMMAND_SUCCESS) {
+    switch (result) {
+      case 402:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "Invalid Args"
+		  << std::endl;
+	break;
+      case 714:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << "NoSuchEntryInArray"
+		  << std::endl;
+	break;
+      default:
+        std::cerr << "UPNP_AddPortMapping returned "
+		  << result
+		  << std::endl;
+	break;
+    }
+    FreeUPNPUrls(&urls);
+    IGD_Found = false;
+  }
+#endif
+}
+
+void UPnP::start()
+{
+  setIGD();
+  if (!IGD_Found)
+    return;
+
+  setLocalInterface();
+  setRemoteInterface();
+  setPorts();
+  if (!IGD_Found)
+    return;
+  addPortForwarding();
+}
+
+void UPnP::stop()
+{
+  if (!IGD_Found)
+    return;
+  deletePortForwarding();
+  if (!IGD_Found)
+    return;
+  clearIGD();
 }
 
 /** main parses command line options and then enters an event and activity
@@ -5706,7 +5911,7 @@ int main(int argc, char **argv)
   }
 
   if (clOptions->UPnP)
-    bzUPnP();
+    bzUPnP.start();
 
   if (clOptions->pingInterface != "") {
     serverAddress = Address::getHostAddress(clOptions->pingInterface);
@@ -5802,6 +6007,7 @@ int main(int argc, char **argv)
 
   // start the server
   if (!serverStart()) {
+    bzUPnP.stop();
 #ifdef BZ_PLUGINS
     unloadPlugins();
 #endif
@@ -6633,6 +6839,7 @@ int main(int argc, char **argv)
     dontWait = dontWait || cURLManager::perform();
   }
 
+  bzUPnP.stop();
 #ifdef BZ_PLUGINS
   unloadPlugins();
 #endif
