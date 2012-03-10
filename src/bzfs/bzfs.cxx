@@ -4748,12 +4748,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     case MsgUDPLinkRequest:
       break;
 
-    case MsgKrbPrincipal:
-      break;
-
-    case MsgKrbTicket:
-      break;
-
     // unknown msg type
     default:
       logDebugMessage(1,"Player [%d] sent unknown packet type (%x), possible attack from %s\n",

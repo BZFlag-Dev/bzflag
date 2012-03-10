@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -81,8 +81,6 @@ const uint16_t		MsgGameSettings = 0x6773;		// 'gs'
 const uint16_t		MsgGameTime = 0x6774;			// 'gt'
 const uint16_t	  MsgHandicap = 0x6863;		   // 'hc'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
-const uint16_t		MsgKrbPrincipal = 0x6b70;		// 'kp'
-const uint16_t		MsgKrbTicket    = 0x6b74;		// 'kt'
 const uint16_t		MsgLagState = 0x6c73;			// 'ls'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
 const uint16_t	  MsgNearFlag = 0x4e66;		   // 'Nf'
