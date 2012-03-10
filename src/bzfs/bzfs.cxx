@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -4741,15 +4741,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
     }
 
     case MsgGMUpdate:
-
       shotUpdate(t, buf, int(len));
-
-      break;
-
-      if (playerData->player.isObserver()) {
-	break;
-      }
-      relayPlayerPacket(t, len, rawbuf, code);
       break;
 
     // FIXME handled inside uread, but not discarded
