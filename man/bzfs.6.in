@@ -101,6 +101,7 @@ bzfs \- BZFlag game server
 [\fB\-tkkr \fIpercent\fR]
 [\fB\-trackplayhistory\fR]
 [\fB\-ts \fR[\fImicros\fR]]
+[\fB\-UPnP\fR]
 [\fB\-userdb \fIfile\fR]
 [\fB\-vars \fIfile\fR]
 [\fB\-version\fR]
@@ -517,6 +518,11 @@ Also anounces those players that stop the runs of good players.
 \fB\-ts \fR[\fImicros\fR]
 Include timestamp information in DEBUG output - useful for logging.
 If \fImicros\fR is specified, microseconds will be added to the timestamp.
+.TP
+\fB\-UPnP\fR
+If enabled during build, bzfs try to communicate with the Gateway to set Port
+Forwarding and to supply informations not specified with -i (local interface)
+and -publicaddr
 .TP
 \fB\-userdb \fIfile\fR
 Load group associations from file
