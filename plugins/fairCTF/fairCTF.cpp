@@ -305,23 +305,45 @@ void fairCTF::UpdateState(bz_eTeamType teamLeaving)
 
 void fairCTF::SetDropTime()
 {  
-  if (drop_delay >= 0)
+  bz_APIIntList	*playerList = bz_newIntList();
+  bz_getPlayerIndexList(playerList);
+  bool TeamFlagIsCarried = false;
+
+  // is any tank carrying a team flag?
+  for (unsigned int i = 0; i < playerList->size(); i++)
   {
-    droptime = bz_getCurrentTime() + (double)drop_delay;
-    if (drop_delay > 1)
+    const char *FlagHeld = bz_getPlayerFlag((*playerList)[i]);
+
+    if (FlagHeld != NULL && (strcmp(FlagHeld, "R*") == 0 || strcmp(FlagHeld, "G*") == 0 || strcmp(FlagHeld, "B*") == 0 || strcmp(FlagHeld, "P*") == 0))
     {
-      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, bz_format("Currently-held team flags will be dropped in %d seconds.", drop_delay));
+      TeamFlagIsCarried = true;
+      break;
+    }
+  }
+
+  bz_deleteIntList(playerList);
+
+  // announce drop delay only if some tank is carrying a team flag
+  if (TeamFlagIsCarried)
+  {
+    if (drop_delay >= 0)
+    {
+      droptime = bz_getCurrentTime() + (double)drop_delay;
+      if (drop_delay > 1)
+      {
+	bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, bz_format("Currently-held team flags will be dropped in %d seconds.", drop_delay));
+      }
+      else
+      {
+	bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will be dropped in 1 second.");
+      }
+
     }
     else
     {
-      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will be dropped in 1 second.");
-    }
-    
+      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will not be dropped.");
+    }   
   }
-  else
-  {
-    bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will not be dropped.");
-  }   
 }
 
 bool fairCTF::isEven(bz_eTeamType teamLeaving)
