@@ -1188,6 +1188,7 @@ bool CountdownCommand::operator() (const char	 * message,
 		std::istringstream timespec(message+10);
 		if (!(timespec >> countdownDelay))
 		{
+		        countdownDelay = -1;
 			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
 			return true;
 		}
