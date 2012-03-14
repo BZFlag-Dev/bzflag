@@ -10,11 +10,6 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
-		KRB5 Debug|Win32 = KRB5 Debug|Win32
-		KRB5 Release|Win32 = KRB5 Release|Win32
-		release_modern_p3|Win32 = release_modern_p3|Win32
-		release_modern|Win32 = release_modern|Win32
-		Release_pdcurses|Win32 = Release_pdcurses|Win32
 		Release|Win32 = Release|Win32
 		SDL_Debug|Win32 = SDL_Debug|Win32
 		SDL_Release|Win32 = SDL_Release|Win32
@@ -22,16 +17,6 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.Debug|Win32.Build.0 = Debug|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.KRB5 Debug|Win32.ActiveCfg = Debug|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.KRB5 Debug|Win32.Build.0 = Debug|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.KRB5 Release|Win32.ActiveCfg = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.KRB5 Release|Win32.Build.0 = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.release_modern_p3|Win32.ActiveCfg = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.release_modern_p3|Win32.Build.0 = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.release_modern|Win32.ActiveCfg = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.release_modern|Win32.Build.0 = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.Release_pdcurses|Win32.ActiveCfg = Release|Win32
-		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.Release_pdcurses|Win32.Build.0 = Release|Win32
 		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.Release|Win32.ActiveCfg = Release|Win32
 		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.Release|Win32.Build.0 = Release|Win32
 		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.SDL_Debug|Win32.ActiveCfg = Debug|Win32
@@ -40,16 +25,6 @@ Global
 		{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}.SDL_Release|Win32.Build.0 = Release|Win32
 		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.Debug|Win32.ActiveCfg = Debug|Win32
 		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.Debug|Win32.Build.0 = Debug|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.KRB5 Debug|Win32.ActiveCfg = KRB5 Debug|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.KRB5 Debug|Win32.Build.0 = KRB5 Debug|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.KRB5 Release|Win32.ActiveCfg = KRB5 Release|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.KRB5 Release|Win32.Build.0 = KRB5 Release|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.release_modern_p3|Win32.ActiveCfg = release_modern_p3|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.release_modern_p3|Win32.Build.0 = release_modern_p3|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.release_modern|Win32.ActiveCfg = release_modern|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.release_modern|Win32.Build.0 = release_modern|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.Release_pdcurses|Win32.ActiveCfg = Release_pdcurses|Win32
-		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.Release_pdcurses|Win32.Build.0 = Release_pdcurses|Win32
 		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.Release|Win32.ActiveCfg = Release|Win32
 		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.Release|Win32.Build.0 = Release|Win32
 		{C79F8023-42A4-4A6F-A039-FE0D474017EC}.SDL_Debug|Win32.ActiveCfg = SDL_Debug|Win32
