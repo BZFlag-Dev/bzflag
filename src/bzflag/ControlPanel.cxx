@@ -643,13 +643,23 @@ void			ControlPanel::resize()
 
   // compute areas in pixels x,y,w,h
   // leave off 1 pixel for the border
-  radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
   radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
+  if(BZDB.get("radarPosition") == "1") {         //radar on right
+    radarAreaPixels[0] = (int)(w - radarSize + radarSpace);
+    radarAreaPixels[1] = (int)radarSpace;
 
-  messageAreaPixels[0] = (int)radarSize + 1;		    // X coord
-  messageAreaPixels[1] = radarAreaPixels[1];		    // Y coord
-  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
-  messageAreaPixels[3] = radarAreaPixels[3];		    // Height
+    messageAreaPixels[0] = (int)radarSpace + 1;                       // X coord
+    messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2; // Width
+    messageAreaPixels[3] = radarAreaPixels[3];                        // Height
+  } else if(BZDB.get("radarPosition") == "0") {  //radar on left
+    radarAreaPixels[0] = radarAreaPixels[1] = (int)radarSpace + 1;
+
+    messageAreaPixels[0] = (int)radarSize + 1;                        // X coord
+    messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;     // Width
+    messageAreaPixels[3] = radarAreaPixels[3];                        // Height
+  }
+  messageAreaPixels[1] = radarAreaPixels[1];                          // Y coord
+
   if (!BZDB.isTrue("displayRadar") || (BZDBCache::radarLimit <= 0.0f)) {
     messageAreaPixels[0] = (int)radarSpace + 1;
     messageAreaPixels[2] = (int)(w - (radarSpace * 2.0f)) - 2;

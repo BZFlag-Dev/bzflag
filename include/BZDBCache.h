@@ -59,6 +59,7 @@ class BZDBCache
     static Int   leadingShotLine;
     static Float linedRadarShots;
     static Float sizedRadarShots;
+    static Int   radarPosition;
     static Float shotLength;
     static Float pulseRate;
     static Float pulseDepth;

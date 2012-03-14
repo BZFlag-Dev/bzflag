@@ -442,47 +442,6 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\BZAdminClient.cxx"
@@ -521,47 +480,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -610,38 +528,6 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\CursesUI.cxx"
@@ -672,38 +558,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|x64"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
 					ExcludedFromBuild="true"
 					>
 					<Tool
@@ -748,47 +602,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -843,47 +656,6 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\StdBothUI.cxx"
@@ -922,47 +694,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1017,47 +748,6 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\src\bzadmin\StdOutUI.cxx"
@@ -1096,47 +786,6 @@
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
@@ -1191,52 +840,11 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
-				<FileConfiguration
-					Name="KRB5 Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="0"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-						BasicRuntimeChecks="3"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="release_modern_p3|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_pdcurses|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						Optimization="2"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl"
+			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
 				RelativePath="..\..\src\bzadmin\BZAdminClient.h"
