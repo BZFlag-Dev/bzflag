@@ -1,7 +1,5 @@
-AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(CONF_CPPFLAGS) -I$(top_srcdir)/include
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\"
 AM_CPPFLAGS += $(SDL_CFLAGS)
-
-AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 bin_PROGRAMS = bzflag
 

@@ -254,12 +254,7 @@ EXTRA_libPlatform_la_SOURCES =		\
 	wave.cxx			\
 	wave.h
 
-AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" \
-	$(SDL_CFLAGS) \
-	-I$(top_srcdir)/include \
-	$(CONF_CPPFLAGS)
-
-AM_CXXFLAGS = $(CONF_CXXFLAGS)
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(SDL_CFLAGS)
 
 EXTRA_DIST = \
 	NewMedia.cxx \

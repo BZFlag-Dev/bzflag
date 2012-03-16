@@ -18,11 +18,7 @@ endif
 AM_CPPFLAGS = \
 	-DBUILDING_BZADMIN \
 	-I$(top_srcdir)/src/bzflag \
-	$(LIBCURL_CPPFLAGS) \
-	-I$(top_srcdir)/include \
-	$(CONF_CPPFLAGS)
-
-AM_CXXFLAGS = $(CONF_CXXFLAGS)
+	$(LIBCURL_CPPFLAGS)
 
 bzadmin_LDFLAGS = -static
 bzadmin_SOURCES = \

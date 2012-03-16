@@ -1,8 +1,5 @@
 lib_LTLIBRARIES = webReport.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@
-AM_CXXFLAGS = @CONF_CXXFLAGS@
-
 webReport_la_SOURCES = \
 	webReport.cpp
 
