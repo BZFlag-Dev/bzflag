@@ -569,6 +569,8 @@ void dumpResources()
 
   BZDB.set("panelopacity", TextUtils::format("%f", RENDERER.getPanelOpacity()));
 
+  BZDB.set("radaropacity", TextUtils::format("%f", RENDERER.getRadarOpacity()));
+
   BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
 
   BZDB.set("mouseboxsize", TextUtils::format("%d", RENDERER.getMaxMotionFactor()));
@@ -1178,7 +1180,7 @@ int			main(int argc, char** argv)
   // there's no sense in continuing.
   const char* const glRenderer = (const char*)glGetString(GL_RENDERER);
   if (!glRenderer) {
-    // bad code, no donut for you
+    // bad code, no doughnut for you
 
     GLenum error = GL_NO_ERROR;
     while ((error = glGetError()) != GL_NO_ERROR) {
@@ -1286,6 +1288,9 @@ int			main(int argc, char** argv)
 
     if (BZDB.isSet("panelopacity"))
       RENDERER.setPanelOpacity(BZDB.eval("panelopacity"));
+
+    if (BZDB.isSet("radaropacity"))
+          RENDERER.setRadarOpacity(BZDB.eval("radaropacity"));
 
     if (BZDB.isSet("radarsize"))
       RENDERER.setRadarSize(BZDB.getIntClamped("radarsize", 0, GUIOptionsMenu::maxRadarSize));

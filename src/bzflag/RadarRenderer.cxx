@@ -275,8 +275,8 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
   const float top = float(oy + y) - 0.5f;
   const float bottom = float(oy + y + h) + 0.5f;
 
-  float outlineOpacity = RENDERER.getPanelOpacity();
-  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
+  float outlineOpacity = RENDERER.getRadarOpacity();
+  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this maybe?
   if ( outlineOpacity < 1.0f )
 	  outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
 
@@ -306,7 +306,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
   glColor4f(teamColor[0],teamColor[1],teamColor[2],1.0f);
 
-  const float opacity = renderer.getPanelOpacity();
+  const float opacity = renderer.getRadarOpacity();
   if ((opacity < 1.0f) && (opacity > 0.0f)) {
     glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
     // draw nice blended background

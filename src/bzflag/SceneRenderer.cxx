@@ -101,6 +101,7 @@ SceneRenderer::SceneRenderer() :
 				useWireframeOn(false),
 				useHiddenLineOn(false),
 				panelOpacity(0.3f),
+				radarOpacity(0.3f),
 				radarSize(4),
 				maxMotionFactor(5),
 				viewType(Normal),
@@ -404,9 +405,21 @@ void SceneRenderer::setPanelOpacity(float opacity)
 }
 
 
+void SceneRenderer::setRadarOpacity(float opacity)
+{
+  radarOpacity = opacity;
+}
+
+
 float SceneRenderer::getPanelOpacity() const
 {
   return panelOpacity;
+}
+
+
+float SceneRenderer::getRadarOpacity() const
+{
+  return radarOpacity;
 }
 
 

@@ -525,7 +525,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
   // draw the lines around the console panel
   float outlineOpacity = RENDERER.getPanelOpacity();
-  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this manybe?
+  float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this maybe?
   if ( outlineOpacity < 1.0f )
 	outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
 

@@ -79,6 +79,8 @@ public:
   bool		useWireframe() const;
   bool		useHiddenLine() const;
   float		getPanelOpacity() const;
+  float         getRadarOpacity() const;
+  bool          isPanelOpaque() const;
   int		getRadarSize() const;
   int		getMaxMotionFactor() const;
   bool		isLastFrame() const;
@@ -93,6 +95,7 @@ public:
   void		setWireframe(bool on);
   void		setHiddenLine(bool on);
   void		setPanelOpacity(float opacity);
+  void          setRadarOpacity(float opacity);
   void		setRadarSize(int size);
   void		setMaxMotionFactor(int size);
   void		setDim(bool on);
@@ -225,6 +228,7 @@ private:
   bool		useWireframeOn;
   bool		useHiddenLineOn;
   float		panelOpacity;
+  float         radarOpacity;
   int		radarSize;
   int		maxMotionFactor;
   bool		useStencilOn;

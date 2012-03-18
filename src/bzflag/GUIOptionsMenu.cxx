@@ -107,11 +107,20 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // set Panel Translucency
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Panel Opacity:");
+  option->setCallback(callback, (void*)"y");
+  option->createSlider(11);
+  option->update();
+  listHUD.push_back(option);
+
   // set Radar Translucency
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Radar & Panel Opacity:");
-  option->setCallback(callback, (void*)"y");
+  option->setLabel("Radar Opacity:");
+  option->setCallback(callback, (void*)"Y");
   option->createSlider(11);
   option->update();
   listHUD.push_back(option);
@@ -361,6 +370,8 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 		("showVelocities")));
    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
 					       ->getPanelOpacity() + 0.5));
+   ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
+                                                  ->getRadarOpacity() + 0.5));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
 					 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
@@ -438,8 +449,20 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
 
     case 'y':
       {
-	sceneRenderer->setPanelOpacity(((float)list->getIndex()) / 10.0f);
+        const float newOpacity = (float)list->getIndex() / 10.0f;
+        if (newOpacity == 1.0f || sceneRenderer->getRadarOpacity() == 1.0f)
+          sceneRenderer->setRadarOpacity(newOpacity);
+	sceneRenderer->setPanelOpacity(newOpacity);
 	break;
+      }
+
+    case 'Y':
+      {
+        const float newOpacity = (float)list->getIndex() / 10.0f;
+        sceneRenderer->setRadarOpacity(newOpacity);
+        if (newOpacity == 1.0f || sceneRenderer->getPanelOpacity() == 1.0f)
+          sceneRenderer->setPanelOpacity(newOpacity);
+        break;
       }
 
     case 'z':

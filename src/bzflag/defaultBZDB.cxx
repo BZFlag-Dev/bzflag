@@ -39,6 +39,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
+  { "radaropacity",             "0.3",                  true,   StateDatabase::ReadWrite,       NULL },
   { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseClamp",		"0",			true,	StateDatabase::ReadWrite,	NULL },
