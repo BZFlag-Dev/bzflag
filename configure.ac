@@ -716,7 +716,7 @@ case $host_os in
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex]);;
      macos|darwin*)
-	FLAGS="-pipe -Wno-long-long -fno-exceptions -W -Wall -Wundef -Wno-import"
+	FLAGS="-pipe -Wno-long-long -W -Wall -Wundef -Wno-import"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic";;
      irix)
