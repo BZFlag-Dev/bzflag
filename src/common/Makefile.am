@@ -1,6 +1,10 @@
-AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" $(LIBCURL_CPPFLAGS)
-
 noinst_LTLIBRARIES = libCommon.la
+
+AM_CPPFLAGS = -DINSTALL_DATA_DIR=\"$(pkgdatadir)\" \
+	$(LIBCURL_CPPFLAGS) \
+	$(CONF_CPPFLAGS)
+AM_CFLAGS = $(CONF_CFLAGS)
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 libCommon_la_LDFLAGS = -static
 libCommon_la_SOURCES  =			\

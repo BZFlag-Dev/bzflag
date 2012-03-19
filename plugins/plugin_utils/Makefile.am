@@ -1,6 +1,8 @@
 noinst_LTLIBRARIES = libplugin_utils.la
 
-AM_CPPFLAGS = -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_srcdir)/include $(CONF_CPPFLAGS)
+AM_CFLAGS = $(CONF_CFLAGS)
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 libplugin_utils_la_SOURCES = \
 	plugin_utils.cpp \

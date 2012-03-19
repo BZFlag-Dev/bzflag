@@ -35,7 +35,9 @@ endif
 SDLMain.lo:
 	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
 
-AM_CPPFLAGS = -I$(top_srcdir)/src/platform $(SDL_CFLAGS)
+AM_CPPFLAGS = -I$(top_srcdir)/src/platform $(SDL_CFLAGS) $(CONF_CPPFLAGS)
+AM_CFLAGS = $(CONF_CFLAGS)
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 MAINTAINERCLEANFILES = Makefile.in
 
