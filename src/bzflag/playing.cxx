@@ -139,6 +139,8 @@ static FlashClock		pulse;
 static bool		wasRabbit = false;
 static bool		justJoined = false;
 
+int                     sentForbidIdentify = 0;
+
 float			roamDZoom = 0.0f;
 
 static MessageOfTheDay		*motd = NULL;
@@ -3965,7 +3967,15 @@ void setTarget()
     addMessage(NULL, msg);
   }
   else if (forbidIdentify) {
-    addMessage(NULL, "'identify' disabled on this server");
+    if (sentForbidIdentify == 10 || sentForbidIdentify == 0) { 
+      addMessage(NULL, "'identify' disabled on this server");
+    }
+    if(sentForbidIdentify == 10) {
+      sentForbidIdentify = 0;
+    }
+    if(sentForbidIdentify < 10) {
+      sentForbidIdentify++;
+    }
   }
   else if (myTank->getFlag() == Flags::Colorblindness) {
     std::string msg("Looking at a tank");
