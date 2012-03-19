@@ -673,7 +673,7 @@ case $host_os in
 	# time to use -Wextra instead of -W ? (gcc 3.4+)
 	FLAGS="-Wall -W -Wundef -Wshadow"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -ansi -pedantic -fno-exceptions"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -ansi -pedantic"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
@@ -747,25 +747,11 @@ if test x$enable_debug = xyes ; then
     CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
-    case $host_os in
-	macos|darwin*)
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fomit-frame-pointer"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fexpensive-optimizations"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
-	    ;;
-	irix)
-	    if test x$host_cpu = xmips64 ; then
-		FLAGS="-fomit-frame-pointer"
-		FLAGS="$FLAGS -fexpensive-optimizations -fno-exceptions"
-		CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-		CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
-	    fi
-	    ;;
-	beos)
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fomit-frame-pointer"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS -fno-exceptions"
-	    ;;
-    esac
+    if test "$GCC" = yes ; then
+	OPTIMIZE="-fomit-frame-pointer -fexpensive-optimizations -fno-exceptions"
+	CONF_CFLAGS="$CONF_CFLAGS $OPTIMIZE"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $OPTIMIZE"
+    fi
     AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi
 
