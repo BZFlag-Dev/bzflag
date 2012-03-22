@@ -3,7 +3,8 @@ bin_PROGRAMS = bzfs
 AM_CPPFLAGS = -DINSIDE_BZ \
 	-DINSTALL_LIB_DIR=\"$(libdir)/\" \
 	$(LIBCURL_CPPFLAGS) \
-	$(CONF_CPPFLAGS)
+	$(CONF_CPPFLAGS) \
+	-I$(top_srcdir)/include
 AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
