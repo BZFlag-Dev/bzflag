@@ -14,6 +14,9 @@ libMac_la_SOURCES =			\
 libMac_la_LIBADD = SDLMain.lo
 all: SDLMain.lo
 
+SDLMain.lo: SDLMain.m
+	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
+
 else
 
 libMac_la_SOURCES =			\
@@ -31,9 +34,6 @@ libMac_la_SOURCES =			\
 	SDLMain.h
 
 endif
-
-SDLMain.lo:
-	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
 
 AM_CPPFLAGS = -I$(top_srcdir)/src/platform $(SDL_CFLAGS) $(CONF_CPPFLAGS)
 AM_CFLAGS = $(CONF_CFLAGS)
