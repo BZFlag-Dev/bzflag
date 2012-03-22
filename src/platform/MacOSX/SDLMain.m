@@ -7,6 +7,14 @@
 
 #include "SDLMain.h"
 
+/*
+  Apparently, Apple removed setAppleMenu from the NSApplication interface
+ */
+
+@interface NSApplication(MissingFunction)
+- (void)setAppleMenu:(NSMenu *)menu;
+@end
+
 #include <sys/param.h> /* for MAXPATHLEN */
 #include <unistd.h>
 
@@ -64,6 +72,7 @@ static NSString *getApplicationName(void)
 /* Invoked from the Quit menu item */
 - (void)terminate:(id)sender
 {
+#pragma unused (sender)
     /* Post a SDL_QUIT event */
     SDL_Event event;
     event.type = SDL_QUIT;
@@ -77,17 +86,17 @@ static NSString *getApplicationName(void)
 /* Set the working directory to the .app's parent directory */
 - (void) setupWorkingDirectory:(BOOL)shouldChdir
 {
-    if (shouldChdir)
+  if (shouldChdir)
     {
-        char parentdir[MAXPATHLEN];
-		CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-		CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
-		if (CFURLGetFileSystemRepresentation(url2, true, parentdir, MAXPATHLEN)) {
-	        assert ( chdir (parentdir) == 0 );   /* chdir to the binary app's parent */
-		}
-		CFRelease(url);
-		CFRelease(url2);
-	}
+      char parentdir[MAXPATHLEN];
+      CFURLRef url = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+      CFURLRef url2 = CFURLCreateCopyDeletingLastPathComponent(0, url);
+      if (CFURLGetFileSystemRepresentation(url2, true, (unsigned char*)parentdir, MAXPATHLEN)) {
+	assert ( chdir (parentdir) == 0 );   /* chdir to the binary app's parent */
+      }
+      CFRelease(url);
+      CFRelease(url2);
+    }
 
 }
 
@@ -190,8 +199,11 @@ static void setupWindowMenu(void)
 }
 
 /* Replacement for NSApplicationMain */
-static void CustomApplicationMain (argc, argv)
+static void CustomApplicationMain(int argc, char** argv)
 {
+#pragma unused (argc)
+#pragma unused (argv)
+
     NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
     SDLMain				*sdlMain;
 
@@ -245,6 +257,8 @@ static void CustomApplicationMain (argc, argv)
  */
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
+#pragma unused(theApplication)
+
     if (!gFinderLaunch)  /* MacOS is passing command line args. */
         return FALSE;
 
@@ -279,6 +293,7 @@ static void CustomApplicationMain (argc, argv)
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
+#pragma unused (note)
     int status;
 
     /* Set the working directory to the .app's parent directory */
@@ -367,9 +382,9 @@ int main (int argc, char **argv)
 
 #if SDL_USE_NIB_FILE
     [SDLApplication poseAsClass:[NSApplication class]];
-    NSApplicationMain (argc, argv);
+    NSApplicationMain(argc, argv);
 #else
-    CustomApplicationMain (argc, argv);
+    CustomApplicationMain(argc, argv);
 #endif
     return 0;
 }
