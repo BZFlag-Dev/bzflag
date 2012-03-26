@@ -3,13 +3,16 @@ README for Windows (32- and 64-bit) platforms
 
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary
-releases (Visual C++ 7.1 aka ".NET 2003" and Visual C++ 8.0 aka
-".NET 2005" were used for versions pre 3.0, and Visual C++ 9.0 aka
-".Net 2008" is used for 3.0 and later). Project files are provided
-for Visual C++ version 9.0.
+releases and project files are provided for it. The current
+compiler used is Visual C++ 2008 (VC9). Both the full
+and express versions will build just fine.
 
 Visual Studio 6.0, 7.1 and 8.0 support has been discontinued,
 and no projects are provided for these versions.
+
+The project will not build in Visual C++ 2010 (VC10) with out
+modifications. At this time we have no plans to include support
+for Visual C++ 2010 as 2008 is freely available.
 
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;
@@ -33,23 +36,16 @@ refer to the build process using Visual C++ 9.0 (.net 2008).
 **Targets**
 There are a total of 4 build targets in the VC projects.
 Release and Debug targets are configured so that they will
-"build out of the box" for the majority of users. The
-Release_Distribution and Debug_Distribution targets are configured to
-use additional libraries that are used for the final release binaries
-that the project distributes.
+"build out of the box" for the majority of users. Both targets
+are provided for both 32 and 64 bit binaries.
+
+Please note that there is no real performance advantage in having
+a 64 bit BZFlag client, the game does not use that much ram.
 
 **Required Libraries**
-As you are using Visual C++ 2008 EXPRESS edition, you will need to
-install a Microsoft SDK (Software development kit) in addition to the
-base compiler. As of VC9 'Windows Platform SDK' is built in. Individual
-install and linking of this particular SDK is no longer necessary.
 
 You will need the windows DirectX SDK
-  (download at http://msdn.microsoft.com/en-us/directx/aa937788.aspx )
-
-  *note*
-  If you get a direct X SDK that is older then April 2007, you will not
-  have the dinput8.h file that bzflag needs and will not be able to build with joystick support.
+  (download at hhttp://www.microsoft.com/download/en/details.aspx?displaylang=en&id=6812)
 
 Once you have this SDK, you must configure VC to include it.
 This can be done using the Tools Menu, Options item, then opening the
@@ -58,7 +54,7 @@ item. Using that dialog you must set the paths to the include and lib
 dirs of any SDKs. Be sure that you use the correct lib dir for your
 platform (x86 or x64)
 
-You may also need to install curses and glew if you wish to do a full
+You may also need to install curses and NSIS to do a full
 distribution build.  Public Domain Curses is at
 http://sourceforge.net/projects/pdcurses/files/ .  The release notes
 file there explains which .zip file to use.
@@ -71,12 +67,9 @@ the program, you must set the debug executable path and working directory
 inside VC to use this executable and path.
 
 **Installer**
-If you wish to build the installer, configure your executables in the
-Tools/Options/Projects/VC++ Directories dialog.
-Click the Executables tab, and add the directory where the NSIS
-installer builder is found.
-
-The built installer will be placed in the dist folder.
+If you wish to build the full release package using the fullbuild solution,
+you will need to have NSIS installed. The built installer will be placed in 
+the _bin folder for the target in the root of the source tree.
 
 **BZRobots**
 Please note that due to the way BZRobots is written it can not be built or run on windows
