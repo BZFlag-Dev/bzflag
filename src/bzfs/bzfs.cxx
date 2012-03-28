@@ -4330,7 +4330,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 
       chatData.message = message;
 
-      // send the actual Message after all the callbacks have done there magic to it.
+      // send the actual Message after all the callbacks have done their magic to it.
       if (chatData.message.size())
 	sendPlayerMessage(playerData, dstPlayer, chatData.message.c_str());
       break;
