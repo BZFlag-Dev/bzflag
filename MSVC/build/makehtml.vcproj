@@ -292,7 +292,7 @@
 				>
 				<Tool
 					Name="VCCustomBuildTool"
-					CommandLine="$(InputDir)$(InputName).html&#x0D;&#x0A;"
+					CommandLine=""
 					Outputs="$(InputDir)bzw.html"
 				/>
 			</FileConfiguration>
