@@ -77,6 +77,9 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
+msgid "N/A"
+msgstr ""
+
 msgid "Failed... unknown error (%d)."
 msgstr ""
 
@@ -90,31 +93,13 @@ msgstr ""
 ## INPUT EVENTS ##
 ##################
 
-msgid "Left Mouse"
+msgid "Pause"
 msgstr ""
 
-msgid "Right Mouse"
+msgid "Home"
 msgstr ""
 
-msgid "Middle Mouse"
-msgstr ""
-
-msgid "Space"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Enter"
-msgstr ""
-
-msgid "Return"
-msgstr ""
-
-msgid "Up Arrow"
-msgstr ""
-
-msgid "Down Arrow"
+msgid "End"
 msgstr ""
 
 msgid "Left Arrow"
@@ -123,20 +108,228 @@ msgstr ""
 msgid "Right Arrow"
 msgstr ""
 
-msgid "Pause"
+msgid "Up Arrow"
+msgstr ""
+
+msgid "Down Arrow"
+msgstr ""
+
+msgid "Page Up"
+msgstr ""
+
+msgid "Page Down"
+msgstr ""
+
+msgid "Insert"
+msgstr ""
+
+msgid "Backspace"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Kp0"
+msgstr ""
+
+msgid "Kp1"
+msgstr ""
+
+msgid "Kp2"
+msgstr ""
+
+msgid "Kp3"
+msgstr ""
+
+msgid "Kp4"
+msgstr ""
+
+msgid "Kp5"
+msgstr ""
+
+msgid "Kp6"
+msgstr ""
+
+msgid "Kp7"
+msgstr ""
+
+msgid "Kp8"
+msgstr ""
+
+msgid "Kp9"
+msgstr ""
+
+msgid "Kp_Period"
+msgstr ""
+
+msgid "Kp_Divide"
+msgstr ""
+
+msgid "Kp_Multiply"
+msgstr ""
+
+msgid "Kp_Minus"
+msgstr ""
+
+msgid "Kp_Plus"
+msgstr ""
+
+msgid "Kp_Enter"
+msgstr ""
+
+msgid "Kp_Equals"
+msgstr ""
+
+msgid "F1"
+msgstr ""
+
+msgid "F2"
+msgstr ""
+
+msgid "F3"
+msgstr ""
+
+msgid "F4"
+msgstr ""
+
+msgid "F5"
+msgstr ""
+
+msgid "F6"
+msgstr ""
+
+msgid "F7"
+msgstr ""
+
+msgid "F8"
+msgstr ""
+
+msgid "F9"
+msgstr ""
+
+msgid "F10"
+msgstr ""
+
+msgid "F11"
+msgstr ""
+
+msgid "F12"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Print"
+msgstr ""
+
+msgid "Sysreq"
+msgstr ""
+
+msgid "Break"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "Power"
+msgstr ""
+
+msgid "Euro"
+msgstr ""
+
+msgid "Undo"
+msgstr ""
+
+msgid "Left Mouse"
+msgstr ""
+
+msgid "Middle Mouse"
+msgstr ""
+
+msgid "Right Mouse"
+msgstr ""
+
+msgid "Wheel Up"
+msgstr ""
+
+msgid "Wheel Down"
+msgstr ""
+
+msgid "Mouse Button 6"
+msgstr ""
+
+msgid "Mouse Button 7"
+msgstr ""
+
+msgid "Mouse Button 8"
+msgstr ""
+
+msgid "Mouse Button 9"
+msgstr ""
+
+msgid "Mouse Button 10"
+msgstr ""
+
+msgid "Joystick Button 1"
+msgstr ""
+
+msgid "Joystick Button 2"
+msgstr ""
+
+msgid "Joystick Button 3"
+msgstr ""
+
+msgid "Joystick Button 4"
+msgstr ""
+
+msgid "Joystick Button 5"
+msgstr ""
+
+msgid "Joystick Button 6"
+msgstr ""
+
+msgid "Joystick Button 7"
+msgstr ""
+
+msgid "Joystick Button 8"
+msgstr ""
+
+msgid "Joystick Button 9"
+msgstr ""
+
+msgid "Joystick Button 10"
+msgstr ""
+
+msgid "Joystick Button 11"
+msgstr ""
+
+msgid "Joystick Button 12"
+msgstr ""
+
+msgid "LastButton"
 msgstr ""
 
 msgid "Tab"
 msgstr ""
 
+msgid "Enter"
+msgstr ""
+
+msgid "Space"
+msgstr ""
+
+
 #################
 ## SUPER FLAGS ##
 #################
 
+msgid "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr ""
+
 msgid "High Speed"
 msgstr ""
 
-msgid "high speed (+V)"
+msgid "High speed (+V)"
 msgstr ""
 
 msgid "Tank moves faster.  Outrun bad guys."
@@ -496,7 +689,7 @@ msgstr ""
 msgid "Trigger Happy"
 msgstr ""
 
-msgid "TRigger happy (-TR)"
+msgid "Trigger Happy (-TR)"
 msgstr ""
 
 msgid "Tank can't stop firing."
@@ -511,6 +704,9 @@ msgstr ""
 msgid "Tank can't stop bouncing."
 msgstr ""
 
+msgid " flag"
+msgstr ""
+
 ####################
 ## AUDIO SETTINGS ##
 ####################
@@ -519,6 +715,9 @@ msgid "Audio Settings"
 msgstr ""
 
 msgid "Sound Volume:"
+msgstr ""
+
+msgid "Unavailable"
 msgstr ""
 
 msgid "Driver:"
@@ -616,6 +815,15 @@ msgstr ""
 msgid "Lighting:"
 msgstr ""
 
+msgid "None"
+msgstr ""
+
+msgid "Fast"
+msgstr ""
+
+msgid "Best"
+msgstr ""
+
 msgid "Texturing:"
 msgstr ""
 
@@ -635,6 +843,9 @@ msgid "Nearest Mipmap Linear"
 msgstr ""
 
 msgid "Linear Mipmap Linear"
+msgstr ""
+
+msgid "AntiFlicker:"
 msgstr ""
 
 msgid "Anisotropic:"
@@ -716,6 +927,9 @@ msgstr ""
 msgid "not downloading: "
 msgstr ""
 
+msgid "NOTE: "
+msgstr ""
+
 msgid "download access is controlled by "
 msgstr ""
 
@@ -739,6 +953,9 @@ msgid "Fog:"
 msgstr ""
 
 msgid "Nice"
+msgstr ""
+
+msgid "Shot Length:"
 msgstr ""
 
 msgid "Display Treads:"
@@ -825,7 +1042,10 @@ msgstr ""
 msgid "Shock Cone"
 msgstr ""
 
-msgid "We Got Death Star"
+msgid "Smoke"
+msgstr ""
+
+msgid "Fancy Deaths"
 msgstr ""
 
 msgid "Dirt Flash"
@@ -865,10 +1085,25 @@ msgstr ""
 msgid "Scoreboard Font Size:"
 msgstr ""
 
+msgid "Auto"
+msgstr ""
+
 msgid "ControlPanel Font Size:"
 msgstr ""
 
-msgid "Radar & Panel Opacity:"
+msgid "Extended Observer Info:"
+msgstr ""
+
+msgid "On With Apparent Speeds"
+msgstr ""
+
+msgid "Full"
+msgstr ""
+
+msgid "Panel Opacity:"
+msgstr ""
+
+msgid "Radar Opacity:"
 msgstr ""
 
 msgid "Colored shots on radar:"
@@ -889,6 +1124,18 @@ msgstr ""
 msgid "Leading"
 msgstr ""
 
+msgid "Leading & Lagging"
+msgstr ""
+
+msgid "Radar Position:"
+msgstr ""
+
+msgid "Left"
+msgstr ""
+
+msgid "Right"
+msgstr ""
+
 msgid "Radar & Panel Size:"
 msgstr ""
 
@@ -898,13 +1145,10 @@ msgstr ""
 msgid "Locale:"
 msgstr ""
 
+msgid "Default"
+msgstr ""
+
 msgid "Control panel tabs:"
-msgstr ""
-
-msgid "Left"
-msgstr ""
-
-msgid "Right"
 msgstr ""
 
 msgid "Control panel coloring:"
@@ -992,6 +1236,12 @@ msgstr ""
 msgid "Long Radar Range:"
 msgstr ""
 
+msgid "Zoom Radar In:"
+msgstr ""
+
+msgid "Zoom Radar Out:"
+msgstr ""
+
 msgid "Send Message to Everybody:"
 msgstr ""
 
@@ -1025,6 +1275,9 @@ msgstr ""
 msgid "Set Time of Day Forward:"
 msgstr ""
 
+msgid "Pause/Resume:"
+msgstr ""
+
 msgid "Self destruct/Cancel:"
 msgstr ""
 
@@ -1035,6 +1288,9 @@ msgid "Scroll Message Log Backward:"
 msgstr ""
 
 msgid "Scroll Message Log Forward:"
+msgstr ""
+
+msgid "Slow Keyboard Motion:"
 msgstr ""
 
 msgid "Toggle Radar Flags:"
@@ -1073,6 +1329,12 @@ msgstr ""
 msgid "Show/Dismiss menu:"
 msgstr ""
 
+msgid "<not mapped>"
+msgstr ""
+
+msgid " or "
+msgstr ""
+
 msgid "General"
 msgstr ""
 
@@ -1094,40 +1356,43 @@ msgstr ""
 msgid "teammates and they don't have a team score."
 msgstr ""
 
-msgid "There are three styles of play, determined by the server configuration:  capture-"
+msgid "There are four styles of play, determined by the server configuration:  capture-"
 msgstr ""
 
-msgid "the-flag, rabbit-chase and free-for-all.  In free-for-all the object is simply to get the"
+msgid "the-flag, rabbit-chase, free-for-all and open-free-for-all.  In free-for-all the"
 msgstr ""
 
-msgid "highest score by shooting opponents.  The object in rabbit chase is to be the highest score"
+msgid "object is simply to get the highest score by shooting opponents.  In open-free-"
 msgstr ""
 
-msgid "so that you have the white tank, then everyone is against you. The object in capture-the-flag is to"
+msgid "for-all highest score is still the goal but there are no teams.  In rabbit chase,"
 msgstr ""
 
-msgid "capture enemy flags while preventing opponents from capturing yours.  In this"
+msgid "the white tank tries to stay alive while all other tanks try to hunt and kill it."
 msgstr ""
 
-msgid "style, each team (but not rogues) has a team base and each team with at least"
+msgid "The object in capture-the-flag is to capture enemy flags while preventing opponents"
 msgstr ""
 
-msgid "one player has a team flag which has the color of the team.  To capture a flag,"
+msgid " from capturing yours.  In this style, each team (but not rogues) has a team base"
 msgstr ""
 
-msgid "you must grab it and bring it back to your team base (you must be on the ground"
+msgid "and each team with at least one player has a team flag which has the color of the team."
 msgstr ""
 
-msgid "in your base to register the capture).  Capturing a flag destroys all the players"
+msgid "To capture a flag, you must grab it and bring it back to your team base (you must be"
 msgstr ""
 
-msgid "on that team and gives your team score a bonus;  the players will restart on"
+msgid "on the ground in your base to register the capture).  Capturing a flag destroys"
 msgstr ""
 
-msgid "their team base.  Taking your flag onto an enemy base counts as a capture against"
+msgid "all the players on that team and gives your team score a bonus;  the players will"
 msgstr ""
 
-msgid "your team but not for the enemy team."
+msgid "restart on their team base.  Taking your flag onto an enemy base counts as a capture"
+msgstr ""
+
+msgid "against your team but not for the enemy team."
 msgstr ""
 
 msgid "Environment"
@@ -1367,8 +1632,9 @@ msgstr ""
 msgid "BZFlag Home Page:"
 msgstr ""
 
-msgid "Copyright (c) 1993 - 2008"
+msgid "Copyright (c) 1993-2011"
 msgstr ""
+
 
 ####################
 ## HUD RENDERERER ##
@@ -1391,6 +1657,30 @@ msgid "GAME OVER"
 msgstr ""
 
 msgid "Send:"
+msgstr ""
+
+msgid "Target Info"
+msgstr ""
+
+msgid "Position [%d %d %d]"
+msgstr ""
+
+msgid "Linear Speed:"
+msgstr ""
+
+msgid "Vertical Speed:%5.2f"
+msgstr ""
+
+msgid "Vertical Speed:%5.2f(%5.2f)"
+msgstr ""
+
+msgid "Angular Speed:"
+msgstr ""
+
+msgid "Last Shot Info  Time:%6.4f  Deviation:%6.3f"
+msgstr ""
+
+msgid "ReportedHits %d ComputedHits %d ratio %f"
 msgstr ""
 
 msgid "Dead"
@@ -1442,27 +1732,6 @@ msgstr ""
 msgid "Team:"
 msgstr ""
 
-msgid "Rogue"
-msgstr ""
-
-msgid "Observer"
-msgstr ""
-
-msgid "Automatic"
-msgstr ""
-
-msgid "Red Team"
-msgstr ""
-
-msgid "Blue Team"
-msgstr ""
-
-msgid "Green Team"
-msgstr ""
-
-msgid "Purple Team"
-msgstr ""
-
 msgid "Server:"
 msgstr ""
 
@@ -1485,6 +1754,43 @@ msgid "Port is invalid.  Try %d."
 msgstr ""
 
 msgid "Trying..."
+msgstr ""
+
+##########
+## TEAM ##
+##########
+
+msgid "Automatic"
+msgstr ""
+
+msgid "Rogue"
+msgstr ""
+
+msgid "Red Team"
+msgstr ""
+
+msgid "Green Team"
+msgstr ""
+
+msgid "Blue Team"
+msgstr ""
+
+msgid "Purple Team"
+msgstr ""
+
+msgid "Observer"
+msgstr ""
+
+msgid "Rabbit"
+msgstr ""
+
+msgid "Hunter"
+msgstr ""
+
+msgid "No Team??"
+msgstr ""
+
+msgid "Invalid team"
 msgstr ""
 
 ####################
@@ -1521,19 +1827,13 @@ msgstr ""
 msgid "Confine mouse:"
 msgstr ""
 
+msgid "Window"
+msgstr ""
+
+msgid "MotionBox"
+msgstr ""
+
 msgid "Jump while typing:"
-msgstr ""
-
-msgid "Keyboard"
-msgstr ""
-
-msgid "Mouse"
-msgstr ""
-
-msgid "Joystick"
-msgstr ""
-
-msgid "Unnamed Device"
 msgstr ""
 
 #######################
@@ -1565,6 +1865,12 @@ msgid "Radar Medium:"
 msgstr ""
 
 msgid "Radar Long:"
+msgstr ""
+
+msgid "Radar Zoom In:"
+msgstr ""
+
+msgid "Radar Zoom Out:"
 msgstr ""
 
 msgid "Send to All:"
@@ -1678,6 +1984,9 @@ msgstr ""
 msgid "Fullscreen:"
 msgstr ""
 
+msgid "Screenshot:"
+msgstr ""
+
 msgid "Define Quick Keys"
 msgstr ""
 
@@ -1697,16 +2006,10 @@ msgstr ""
 msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
 msgstr ""
 
-msgid "Login"
-msgstr ""
-
-msgid "Username:"
+msgid "Options"
 msgstr ""
 
 msgid "Save Settings"
-msgstr ""
-
-msgid "Help"
 msgstr ""
 
 msgid "Leave Game"
@@ -1714,6 +2017,10 @@ msgstr ""
 
 msgid "Quit"
 msgstr ""
+
+###############
+## QUIT MENU ##
+###############
 
 msgid "Enter to quit, Esc to resume"
 msgstr ""
@@ -1724,9 +2031,6 @@ msgstr ""
 #############
 ## OPTIONS ##
 #############
-
-msgid "Options"
-msgstr ""
 
 msgid "Save Settings:"
 msgstr ""
@@ -1742,6 +2046,10 @@ msgstr ""
 
 msgid "Username and password"
 msgstr ""
+
+################
+## SAVE WORLD ##
+################
 
 msgid "Save World"
 msgstr ""
@@ -1766,6 +2074,9 @@ msgid "MOTD contains unexpected data"
 msgstr ""
 
 msgid "<not available>"
+msgstr ""
+
+msgid "UPGRADE: "
 msgstr ""
 
 msgid "Message of the day: "
@@ -1802,6 +2113,9 @@ msgid "Failed... not enough memory."
 msgstr ""
 
 msgid "Failed... installer is not executable."
+msgstr ""
+
+msgid "Failed... unknown error (%d)."
 msgstr ""
 
 msgid "Failed to start upgrade installer (%s) - error %d.\n"
@@ -1848,6 +2162,9 @@ msgstr ""
 msgid "Score"
 msgstr ""
 
+msgid "888~888 Hunt->"
+msgstr ""
+
 msgid " Kills"
 msgstr ""
 
@@ -1882,9 +2199,6 @@ msgid "Team Score"
 msgstr ""
 
 msgid "Team Flags"
-msgstr ""
-
-msgid "playerInfo: %s\n"
 msgstr ""
 
 msgid "TK Leader "
@@ -1996,15 +2310,6 @@ msgstr ""
 msgid "Send Report to Server:"
 msgstr ""
 
-msgid "Register your nick [enter pass]:"
-msgstr ""
-
-msgid "Login [enter pass]:"
-msgstr ""
-
-msgid "Set your password [enter pass]:"
-msgstr ""
-
 msgid "List Groups"
 msgstr ""
 
@@ -2030,7 +2335,25 @@ msgstr ""
 msgid "Connected Event"
 msgstr ""
 
-msgid "Server version: '%8s'"
+msgid "CONNECT:send in connect returned %d\n"
+msgstr ""
+
+msgid "CONNECT:select in connect failed, nfound = %d\n"
+msgstr ""
+
+msgid "CONNECT:got net data in connect, bytes read = %d\n"
+msgstr ""
+
+msgid "CONNECT:Time To Connect = %f\n"
+msgstr ""
+
+msgid "CONNECT:connect time out failed\n"
+msgstr ""
+
+msgid "CONNECT:connect loop count = %d\n"
+msgstr ""
+
+msgid "Error writing on packetStream"
 msgstr ""
 
 msgid "Server network statistics:\n"
@@ -2081,9 +2404,6 @@ msgstr ""
 msgid "Got server's UDP packet back, server using UDP"
 msgstr ""
 
-msgid "Sent authentication ticket to server : \n"
-msgstr ""
-
 msgid "Servers"
 msgstr ""
 
@@ -2092,6 +2412,9 @@ msgstr ""
 #######################
 
 msgid "Players"
+msgstr ""
+
+msgid "Rogue"
 msgstr ""
 
 msgid "Red"
@@ -2109,7 +2432,10 @@ msgstr ""
 msgid "Observers"
 msgstr ""
 
-msgid "Find Servers:"
+msgid "Press  +/- add/remove favorites   f - toggle view"
+msgstr ""
+
+msgid "Edit Filter:"
 msgstr ""
 
 msgid "Press '/' to search"
@@ -2124,10 +2450,13 @@ msgstr ""
 msgid "{1} Shots"
 msgstr ""
 
-msgid "Capture-the-Flag"
+msgid "Classic Capture-the-Flag"
 msgstr ""
 
 msgid "Rabbit Chase"
+msgstr ""
+
+msgid "Open (Teamless) Free-For-All"
 msgstr ""
 
 msgid "Free-style"
@@ -2163,10 +2492,16 @@ msgstr ""
 msgid "Max player score: {1}"
 msgstr ""
 
+msgid "Cached"
+msgstr ""
+
 msgid "Searching"
 msgstr ""
 
-msgid "Servers found: {1}/{2}"
+msgid "Favorite servers: {1}/{2}  ({3} players, {4} observers)"
+msgstr ""
+
+msgid "Servers found: {1}/{2}  ({3} players, {4} observers)"
 msgstr ""
 
 msgid "Style:"
@@ -2310,9 +2645,6 @@ msgstr ""
 msgid "random map"
 msgstr ""
 
-msgid "directory"
-msgstr ""
-
 msgid "Start"
 msgstr ""
 
@@ -2396,6 +2728,9 @@ msgstr ""
 msgid "Unblocked Msgs"
 msgstr ""
 
+msgid "Silenced All Msgs"
+msgstr ""
+
 msgid " Does not exist"
 msgstr ""
 
@@ -2408,9 +2743,6 @@ msgstr ""
 ######################
 ## PLAYING MESSAGES ##
 ######################
-
-msgid "world weapon"
-msgstr ""
 
 msgid "Got shot by "
 msgstr ""
@@ -2431,6 +2763,9 @@ msgid "Tank Rusted"
 msgstr ""
 
 msgid "Flags on field hidden, to show them "
+msgstr ""
+
+msgid "hit \""
 msgstr ""
 
 msgid " bind a key to Toggle Flags on Field"
@@ -2556,6 +2891,12 @@ msgstr ""
 msgid "Downloading World (%2d%% complete/%d kb remaining)..."
 msgstr ""
 
+msgid "sorry, i'm just a silly machine"
+msgstr ""
+
+msgid "Closest Flag: "
+msgstr ""
+
 msgid "Server forced a disconnect"
 msgstr ""
 
@@ -2580,10 +2921,13 @@ msgstr ""
 msgid "Roger releasing controls"
 msgstr ""
 
-msgid "Don't kill teammates!!!"
+msgid "has paused"
 msgstr ""
 
-msgid "sorry, i'm just a silly machine"
+msgid "has unpaused"
+msgstr ""
+
+msgid "Don't kill teammates!!!"
 msgstr ""
 
 msgid "blew myself up"
@@ -2652,9 +2996,6 @@ msgstr ""
 msgid "grabbed "
 msgstr ""
 
-msgid " flag"
-msgstr ""
-
 msgid "took my flag into "
 msgstr ""
 
@@ -2676,6 +3017,12 @@ msgstr ""
 msgid "is now the rabbit"
 msgstr ""
 
+msgid "Received handicap update for unknown player!\n"
+msgstr ""
+
+msgid "Received score update for unknown player!\n"
+msgstr ""
+
 msgid "SERVER"
 msgstr ""
 
@@ -2688,22 +3035,22 @@ msgstr ""
 msgid "Ignored Msg"
 msgstr ""
 
-msgid "Identify with /identify"
-msgstr ""
-
-msgid "Autoidentifying with password stored for "
-msgstr ""
-
 msgid "[Admin] "
 msgstr ""
 
 msgid "[to "
 msgstr ""
 
+msgid "] "
+msgstr ""
+
 msgid "[Team] "
 msgstr ""
 
 msgid "(join)"
+msgstr ""
+
+msgid "Got custom flag type from server: %s\n"
 msgstr ""
 
 msgid "Paused"
@@ -2713,6 +3060,9 @@ msgid "locked on me"
 msgstr ""
 
 msgid "Server communication error"
+msgstr ""
+
+msgid "Server BZDB change blocked: '%s' = '%s'\n"
 msgstr ""
 
 msgid "dropped "
@@ -2733,19 +3083,19 @@ msgstr ""
 msgid "Killed by the server"
 msgstr ""
 
-msgid "Hunter"
-msgstr ""
-
 msgid " with "
 msgstr ""
 
-msgid "Closest Flag: "
+msgid "local collision with "
 msgstr ""
 
 msgid "Locked on "
 msgstr ""
 
 msgid ") with "
+msgstr ""
+
+msgid "'identify' disabled on this server"
 msgstr ""
 
 msgid "Looking at a tank"
@@ -2755,6 +3105,9 @@ msgid "Looking at "
 msgstr ""
 
 msgid "SPOTTED: "
+msgstr ""
+
+msgid "Solo robots are prohibited on this server."
 msgstr ""
 
 msgid "%s team was unavailable, you were joined "
@@ -2850,49 +3203,25 @@ msgstr ""
 msgid "Server has unexpectedly disconnected"
 msgstr ""
 
-msgid " movement"
-msgstr ""
-
-msgid "not responding"
-msgstr ""
-
 msgid "okay"
-msgstr ""
-
-msgid "  lowest quality"
-msgstr ""
-
-msgid "  lowest quality with texture"
 msgstr ""
 
 msgid "  full quality"
 msgstr ""
 
-msgid "  medium quality"
+msgid "  Stipple Shadows"
 msgstr ""
 
-msgid "  low quality"
+msgid "  no Blend"
 msgstr ""
 
-msgid "  nearest texturing"
-msgstr ""
-
-msgid "  no texturing"
-msgstr ""
-
-msgid "  no blending"
-msgstr ""
-
-msgid "  no smoothing"
-msgstr ""
-
-msgid "  no lighting"
-msgstr ""
-
-msgid "  no dithering"
+msgid "  lowest quality"
 msgstr ""
 
 msgid "testing performance;  please wait..."
+msgstr ""
+
+msgid "explode%d"
 msgstr ""
 
 msgid "BZFlag version:   %s\n"
@@ -2916,13 +3245,13 @@ msgstr ""
 msgid "Running on Windows %s%d.%d %s\n"
 msgstr ""
 
-msgid "NT "
-msgstr ""
-
 msgid "This release will expire on %s"
 msgstr ""
 
 msgid "BZFlag version: "
+msgstr ""
+
+msgid "Distributed under the terms of the LGPL"
 msgstr ""
 
 msgid "Author: Chris Schoeneman <crs23@bigfoot.com>"
