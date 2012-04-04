@@ -833,7 +833,7 @@ static int		addWorldContribution(SoundEvent* e, size_t& len)
 
   /* initialize new areas of scratch space and adjust output sample count */
   if (audioBufferSize > len) {
-    for (size_t n(len); n < audioBufferSize; n += 2)
+    for (n = len; n < audioBufferSize; n += 2)
       scratch[n] = scratch[n+1] = 0.0f;
     len = audioBufferSize;
   }
@@ -902,7 +902,7 @@ static int		addFixedContribution(SoundEvent* e, size_t& len)
 
   /* initialize new areas of scratch space and adjust output sample count */
   if (audioBufferSize > len) {
-    for (size_t n = len; n < audioBufferSize; n += 2)
+    for (n = len; n < audioBufferSize; n += 2)
       scratch[n] = scratch[n+1] = 0.0f;
     len = audioBufferSize;
   }
