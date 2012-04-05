@@ -748,7 +748,7 @@ if test x$enable_debug = xyes ; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     if test "$GCC" = yes ; then
-	OPTIMIZE="-fomit-frame-pointer -fexpensive-optimizations"
+	OPTIMIZE="-fexpensive-optimizations"
 	CONF_CFLAGS="$CONF_CFLAGS $OPTIMIZE"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $OPTIMIZE"
     fi
