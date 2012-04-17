@@ -99,10 +99,22 @@ extern "C" {
 
 #define	MAXHOSTNAMELEN	64
 
+#ifndef EINPROGRESS
 #define EINPROGRESS	WSAEWOULDBLOCK
+#endif
+
+#ifndef EWOULDBLOCK
 #define	EWOULDBLOCK	WSAEWOULDBLOCK
+#endif
+
+#ifndef ECONNRESET
 #define	ECONNRESET	WSAECONNRESET
+#endif
+
+#ifndef EBADMSG
 #define	EBADMSG		WSAECONNRESET	/* not defined by windows */
+#endif
+
 
 /* setsockopt prototypes the 4th arg as const char*. */
 #define SSOType		const char*
