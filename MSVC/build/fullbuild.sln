@@ -47,6 +47,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pdcurses", "pdcurses.vcxproj", "{948A0A16-9121-4CC5-828C-DC3417510068}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "airspawn", "..\..\plugins\airspawn\airspawn.vcxproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chathistory", "..\..\plugins\chathistory\chathistory.vcxproj", "{B629554E-D0E9-4400-909B-7130F116E15D}"
 EndProject
@@ -61,6 +64,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "killall", "..\..\plugins\killall\killall.vcxproj", "{A9898AEC-086B-4B9E-8978-C1BFE3EA56A6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "koth", "..\..\plugins\koth\koth.vcxproj", "{3086EB1F-209A-43CF-91B7-0AECBA87B4D9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logDetail", "..\..\plugins\logDetail\logDetail.vcxproj", "{6B10F1DA-CD6A-4994-8C29-95DAE215D331}"
 EndProject
