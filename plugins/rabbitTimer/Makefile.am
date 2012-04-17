@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	rabbitTimer.def \
 	rabbitTimer.sln \
-	rabbitTimer.vcproj
+	rabbitTimer.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

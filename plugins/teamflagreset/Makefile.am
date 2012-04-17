@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	teamflagreset.def \
 	teamflagreset.sln \
-	teamflagreset.vcproj	\
+	teamflagreset.vcxproj	\
 	tfr_admin.txt
 
 MAINTAINERCLEANFILES =	\

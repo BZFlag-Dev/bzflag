@@ -11,7 +11,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	playHistoryTracker.def \
 	playHistoryTracker.sln \
-	playHistoryTracker.vcproj
+	playHistoryTracker.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

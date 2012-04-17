@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	README.txt \
 	SAMPLE_PLUGIN.def \
 	SAMPLE_PLUGIN.sln \
-	SAMPLE_PLUGIN.vcproj
+	SAMPLE_PLUGIN.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -1,11 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimeLimit", "TimeLimit.vcproj", "{F0524257-1263-4511-A1F9-CA18758F1065}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6DD493F8-31E1-4958-A240-D157AFFCB07E} = {6DD493F8-31E1-4958-A240-D157AFFCB07E}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TimeLimit", "TimeLimit.vcxproj", "{F0524257-1263-4511-A1F9-CA18758F1065}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\MSVC\build\regex.vcproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\MSVC\build\regex.vcxproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

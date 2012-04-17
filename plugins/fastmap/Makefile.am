@@ -11,7 +11,7 @@ EXTRA_DIST = \
 	README.txt \
 	fastmap.def \
 	fastmap.sln \
-	fastmap.vcproj
+	fastmap.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

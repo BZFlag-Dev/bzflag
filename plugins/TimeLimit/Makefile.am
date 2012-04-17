@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	TimeLimit.def \
 	TimeLimit.sln \
-	TimeLimit.vcproj
+	TimeLimit.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

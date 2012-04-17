@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	fairCTF.def \
 	fairCTF.sln \
-	fairCTF.vcproj
+	fairCTF.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

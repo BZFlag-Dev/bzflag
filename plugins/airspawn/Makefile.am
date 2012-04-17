@@ -11,7 +11,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	airspawn.def \
 	airspawn.sln \
-	airspawn.vcproj
+	airspawn.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

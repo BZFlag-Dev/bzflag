@@ -4,15 +4,12 @@ README for Windows (32- and 64-bit) platforms
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary
 releases and project files are provided for it. The current
-compiler used is Visual C++ 2008 (VC9). Both the full
+compiler used is Visual C++ 2010 (VC10). Both the full
 and express versions will build just fine.
 
-Visual Studio 6.0, 7.1 and 8.0 support has been discontinued,
+Visual Studio 6.0, 7.1, 8.0 and 9.0 support has been discontinued,
 and no projects are provided for these versions.
 
-The project will not build in Visual C++ 2010 (VC10) with out
-modifications. At this time we have no plans to include support
-for Visual C++ 2010 as 2008 is freely available.
 
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;

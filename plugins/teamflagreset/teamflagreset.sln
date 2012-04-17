@@ -1,6 +1,6 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "teamflagreset", "teamflagreset.vcproj", "{A7AF7B05-55FA-4995-A50A-1C120AC61FF6}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "teamflagreset", "teamflagreset.vcxproj", "{A7AF7B05-55FA-4995-A50A-1C120AC61FF6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

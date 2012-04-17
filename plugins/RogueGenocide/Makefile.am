@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	RogueGenocide.def \
 	RogueGenocide.sln \
-	RogueGenocide.vcproj
+	RogueGenocide.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

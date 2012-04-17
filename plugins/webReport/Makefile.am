@@ -14,7 +14,7 @@ EXTRA_DIST = \
 	templates \
 	webReport.def \
 	webReport.sln \
-	webReport.vcproj
+	webReport.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

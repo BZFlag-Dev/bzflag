@@ -166,11 +166,11 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR
   File ..\..\..\bin_${PLATFORM}\libcurl.dll
 
-  ; This requires the Visual C++ 2008 SP1 runtime file to be located in
+  ; This requires the Visual C++ runtime file to be located in
   ; the same directory as the NSIS script
   ; http://www.microsoft.com/downloads/details.aspx?familyid=2051A0C1-C9B5-4B0A-A8F5-770A549FD78C
   SetOutPath $TEMP
-  DetailPrint "Installing Visual C++ 2008 SP1 ${BITNESS} runtime"         
+  DetailPrint "Installing Visual C++ ${BITNESS} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
   ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /q"         
   DetailPrint "Cleaning up"         

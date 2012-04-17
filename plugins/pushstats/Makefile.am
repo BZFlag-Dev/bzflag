@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	README.txt \
 	pushstats.def \
 	pushstats.sln \
-	pushstats.vcproj
+	pushstats.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

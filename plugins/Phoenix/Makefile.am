@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	Phoenix.def \
 	Phoenix.sln \
-	Phoenix.vcproj
+	Phoenix.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

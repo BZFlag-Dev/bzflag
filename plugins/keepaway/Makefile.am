@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	keepaway.def \
 	keepaway.sln \
-	keepaway.vcproj		\
+	keepaway.vcxproj		\
 	keepaway_admin.txt	\
 	keepaway_rules.txt
 

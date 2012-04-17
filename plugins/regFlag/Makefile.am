@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	regFlag.def \
 	regFlag.sln \
-	regFlag.vcproj
+	regFlag.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

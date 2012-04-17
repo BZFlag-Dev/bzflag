@@ -1,11 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serverControl", "serverControl.vcproj", "{C2021BB4-EB46-4855-B26F-DBBDB97EE43C}"
-	ProjectSection(ProjectDependencies) = postProject
-		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serverControl", "serverControl.vcxproj", "{C2021BB4-EB46-4855-B26F-DBBDB97EE43C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_utils", "..\plugin_utils\plugin_utils.vcproj", "{645768BE-97C8-4DE4-9100-111BD2808B35}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "plugin_utils", "..\plugin_utils\plugin_utils.vcxproj", "{645768BE-97C8-4DE4-9100-111BD2808B35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	timedctf.def \
 	timedctf.sln \
-	timedctf.vcproj		\
+	timedctf.vcxproj		\
 	timedctf_admin.txt	\
 	timedctf_rules.txt
 

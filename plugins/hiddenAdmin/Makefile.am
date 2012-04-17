@@ -11,7 +11,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	hiddenAdmin.def \
 	hiddenAdmin.sln \
-	hiddenAdmin.vcproj
+	hiddenAdmin.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

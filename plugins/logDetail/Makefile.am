@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	logDetail.def \
 	logDetail.sln \
-	logDetail.vcproj
+	logDetail.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

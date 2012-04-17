@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	recordmatch.def \
 	recordmatch.sln \
-	recordmatch.vcproj
+	recordmatch.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

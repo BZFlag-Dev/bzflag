@@ -11,7 +11,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	chathistory.def \
 	chathistory.sln \
-	chathistory.vcproj
+	chathistory.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

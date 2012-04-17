@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	wwzones.def \
 	wwzones.sln \
-	wwzones.vcproj
+	wwzones.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -1,6 +1,6 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logDetail", "logDetail.vcproj", "{6B10F1DA-CD6A-4994-8C29-95DAE215D331}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logDetail", "logDetail.vcxproj", "{6B10F1DA-CD6A-4994-8C29-95DAE215D331}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

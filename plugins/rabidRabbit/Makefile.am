@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	rabidRabbit.def \
 	rabidRabbit.sln \
 	rabidRabbit.txt \
-	rabidRabbit.vcproj
+	rabidRabbit.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

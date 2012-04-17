@@ -2,32 +2,32 @@ EXTRA_DIST =		\
 	bzflag.sln	\
 	bzfs.sln	\
 	fullbuild.sln	\
-	ares.vcproj	\
+	ares.vcxproj	\
 	ares_build.h	\
-	3D.vcproj	\
-	bzflag.vcproj	\
+	3D.vcxproj	\
+	bzflag.vcxproj	\
 	bzadmin.sln	\
-	bzadmin.vcproj	\
-	bzfs.vcproj	\
-	common.vcproj	\
+	bzadmin.vcxproj	\
+	bzfs.vcxproj	\
+	common.vcxproj	\
 	config.h	\
 	curl/curlbuild.h	\
-	date.vcproj	\
-	game.vcproj	\
-	geometry.vcproj	\
-	installer.vcproj	\
-	makehtml.vcproj	\
-	man2html.vcproj	\
-	mediafile.vcproj	\
-	net.vcproj	\
-	obstacle.vcproj	\
-	ogl.vcproj	\
-	platform.vcproj	\
-	regex.vcproj	\
-	scene.vcproj	\
-	libcurl.vcproj	\
-	zlib.vcproj	\
-	pdcurses.vcproj	\
+	date.vcxproj	\
+	game.vcxproj	\
+	geometry.vcxproj	\
+	installer.vcxproj	\
+	makehtml.vcxproj	\
+	man2html.vcxproj	\
+	mediafile.vcxproj	\
+	net.vcxproj	\
+	obstacle.vcxproj	\
+	ogl.vcxproj	\
+	platform.vcxproj	\
+	regex.vcxproj	\
+	scene.vcxproj	\
+	libcurl.vcxproj	\
+	zlib.vcxproj	\
+	pdcurses.vcxproj	\
 	makeHTML.bat
 
 MAINTAINERCLEANFILES = \

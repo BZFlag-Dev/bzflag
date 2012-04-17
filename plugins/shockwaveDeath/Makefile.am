@@ -12,7 +12,7 @@ EXTRA_DIST =			\
 	README.txt		\
 	shockwaveDeath.def	\
 	shockwaveDeath.sln	\
-	shockwaveDeath.vcproj
+	shockwaveDeath.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

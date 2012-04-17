@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	README.txt \
 	HoldTheFlag.def \
 	HoldTheFlag.sln \
-	HoldTheFlag.vcproj
+	HoldTheFlag.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

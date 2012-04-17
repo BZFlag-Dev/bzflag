@@ -1,6 +1,6 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rabbitTimer", "rabbitTimer.vcproj", "{A4F41740-C547-4696-B2B4-9FDF66FD9112}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rabbitTimer", "rabbitTimer.vcxproj", "{A4F41740-C547-4696-B2B4-9FDF66FD9112}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

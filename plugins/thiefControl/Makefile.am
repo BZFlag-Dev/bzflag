@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	thiefControl.def \
 	thiefControl.sln \
-	thiefControl.vcproj
+	thiefControl.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

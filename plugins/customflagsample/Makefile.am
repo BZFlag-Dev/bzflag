@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	README.txt \
 	customflagsample.def \
 	customflagsample.sln \
-	customflagsample.vcproj
+	customflagsample.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

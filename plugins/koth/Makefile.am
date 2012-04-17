@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	koth.def \
 	koth.sln \
-	koth.vcproj	\
+	koth.vcxproj	\
 	koth_admin.txt	\
 	koth_rules.txt
 

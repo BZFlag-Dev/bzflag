@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	autoFlagReset.def \
 	autoFlagReset.sln \
-	autoFlagReset.vcproj
+	autoFlagReset.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
