@@ -17,7 +17,7 @@ for details, see README.MINGW32 (for MinGW) or the main
 README (for Cygwin).
 
 The most common way to build on windows is to use VisualC++.
-The Freely available VC9 EE edition is well suited to users
+The Freely available VC10 EE edition is well suited to users
 who wish to compile the client for personal use. It can be found at
 http://www.microsoft.com/express/download/. Please note that the
 free versions of Visual C++ do not allow for the re-distribution
@@ -28,7 +28,7 @@ ether use the full (retail, or student) versions of the compiler
 or use one of the other free solutions (minGW). For more info
 on compiling with minGW please see the README.MINGW32 that was
 included in this source package. The rest of this document will
-refer to the build process using Visual C++ 9.0 (.net 2008).
+refer to the build process using Visual C++ 10.0 (2010).
 
 **Targets**
 There are a total of 4 build targets in the VC projects.
@@ -43,13 +43,6 @@ a 64 bit BZFlag client, the game does not use that much ram.
 
 You will need the windows DirectX SDK
   (download at hhttp://www.microsoft.com/download/en/details.aspx?displaylang=en&id=6812)
-
-Once you have this SDK, you must configure VC to include it.
-This can be done using the Tools Menu, Options item, then opening the
-'projects and solutions' sub item, and selecting the 'vc++ directories'
-item. Using that dialog you must set the paths to the include and lib
-dirs of any SDKs. Be sure that you use the correct lib dir for your
-platform (x86 or x64)
 
 You may also need to install curses and NSIS to do a full
 distribution build.  Public Domain Curses is at
