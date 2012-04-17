@@ -1188,7 +1188,7 @@ AC_CONFIG_FILES([
 	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
-	tools/modeltool/vc9/Makefile
+	tools/modeltool/MSVC/Makefile
 ])
 AC_OUTPUT
 
