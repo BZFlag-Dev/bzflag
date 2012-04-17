@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	README.txt \
 	flagStay.def \
 	flagStay.sln \
-	flagStay.vcproj
+	flagStay.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
