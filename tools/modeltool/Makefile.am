@@ -1,4 +1,4 @@
-SUBDIRS = vc9
+SUBDIRS = MSVC
 
 bin_PROGRAMS = modeltool
 

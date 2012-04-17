@@ -1,6 +1,6 @@
 EXTRA_DIST =	\
 	modeltool.sln \
-	modeltool.vcproj
+	modeltool.vcxproj
 
 MAINTAINERCLEANFILES = \
 	Makefile.in

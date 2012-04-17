@@ -1,11 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modeltool", "modeltool.vcproj", "{75BC8894-499A-441C-B21B-875CA252507A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6DD493F8-31E1-4958-A240-D157AFFCB07E} = {6DD493F8-31E1-4958-A240-D157AFFCB07E}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modeltool", "modeltool.vcxproj", "{75BC8894-499A-441C-B21B-875CA252507A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\MSVC\BUILD\regex.vcproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\MSVC\build\regex.vcxproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +12,7 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug|Win32.Build.0 = Debug|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release|Win32.ActiveCfg = Release|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug|Win32.Build.0 = Debug|Win32
 		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release|Win32.ActiveCfg = Release|Win32
