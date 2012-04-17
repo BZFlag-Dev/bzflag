@@ -22,8 +22,6 @@ EXTRA_DIST = \
 	README.txt \
 	resource.h	\
 	TextTool.clw \
-	TextTool.dsp \
-	TextTool.dsw \
 	TextTool.rc \
 	TextTool.sln \
 	TextTool.vcproj	\
