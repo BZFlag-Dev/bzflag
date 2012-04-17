@@ -160,7 +160,9 @@ in C99 and C1x as the windows compiler only supports C++11 and
 there are some features in the later C versions that were not adopted
 by the C++ standard, namely the 'not' and 'or' keywords instead of ! and ||.
 Also MSVC seems to be a bit picky about what bits of older standards it
-supports.
+supports. When the windows compiler supports this, we should stick with 
+a consistent method and not mix AND with &&. Use the same type of operators
+that are in the existing code.
 
 Formatting
 ----------
