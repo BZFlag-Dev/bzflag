@@ -143,7 +143,7 @@ bool AudioSamples::resample(const float* in, int frames, int rate,
 
   // attenuation on all sounds
   static const float GlobalAtten(0.5f);
-  float const outputRate( PlatformFactory::getMedia()->getAudioOutputRate() );
+  float const outputRate( (float)PlatformFactory::getMedia()->getAudioOutputRate() );
 
   if (rate != outputRate) {
     std::cout << name << " rate is " << rate
@@ -162,7 +162,7 @@ bool AudioSamples::resample(const float* in, int frames, int rate,
   // sounds, which don't have this effect).  to avoid doing a lot of tests
   // in inner loops, we'll just put some silent samples before and after
   // the sound effect.  here we compute how many samples can be needed.
-  const int safetyMargin(1.5f + InterAuralDistance / SpeedOfSound * outputRate);
+  const int safetyMargin((int)(1.5f + InterAuralDistance / SpeedOfSound * outputRate));
 
   // fill in samples structure
   file = name;
@@ -578,8 +578,8 @@ void			playLocalSound(int soundCode)
 {
   // Check for conditions which preclude sounds
   if (soundLevel <= 0				  // no volume
-      or soundCode > (int)soundSamples.size()	  // unknown sound
-      or soundSamples[soundCode].length() == 0) { // empty sound
+      || soundCode > (int)soundSamples.size()	  // unknown sound
+      || soundSamples[soundCode].length() == 0) { // empty sound
     return;
   }
   SoundCommand s(SoundCommand::LOCAL_SFX, soundCode);
@@ -615,8 +615,8 @@ void			playFixedSound(int soundCode,
 {
   // Check for conditions which preclude sounds
   if (soundLevel <= 0				  // no volume
-      or soundCode > (int)soundSamples.size()	  // unknown sound
-      or soundSamples[soundCode].length() == 0) { // empty sound
+      || soundCode > (int)soundSamples.size()	  // unknown sound
+      || soundSamples[soundCode].length() == 0) { // empty sound
     return;
   }
   SoundCommand s(SoundCommand::FIXED_SFX, soundCode, x, y, z);
@@ -956,7 +956,7 @@ static size_t		findBestWorldSlot()
   // (much).  this will cause a pop or crackle if the replaced sound is
   // currently playing.  first see if there are any world events.
   for (i = 0; i < MaxEvents; i++)
-    if (events[i].isWorld() and not events[i].isFixed())
+    if (events[i].isWorld() && !events[i].isFixed())
       break;
 
   // give up if no (non-fixed) world events
@@ -966,7 +966,7 @@ static size_t		findBestWorldSlot()
   // completely passed us.
   const size_t first(i);
   for (i = first; i < MaxEvents; i++) {
-    if (events[i].isFixed() or not events[i].isWorld()) continue;
+    if (events[i].isFixed() || !events[i].isWorld()) continue;
     if (!(events[i].isIgnoring())) continue;
     const float travelTime = (float)(curTime - events[i].time);
     const float eventDistance = events[i].d / SpeedOfSound;
@@ -980,7 +980,7 @@ static size_t		findBestWorldSlot()
   float farthestDistance = 0.0f;
   for (i = first; i < MaxEvents; i++) {
     if (events[i].isImportant()) continue;
-    if (events[i].isFixed() or not events[i].isWorld()) continue;
+    if (events[i].isFixed() || !events[i].isWorld()) continue;
     if (!(events[i].isIgnoring())) continue;
     const float eventDistance = events[i].d / SpeedOfSound;
     if (eventDistance > farthestDistance) {
@@ -993,7 +993,7 @@ static size_t		findBestWorldSlot()
   // same thing but look at important sounds
   for (i = first; i < MaxEvents; i++) {
     if (!(events[i].isImportant())) continue;
-    if (events[i].isFixed() or not events[i].isWorld()) continue;
+    if (events[i].isFixed() || !events[i].isWorld()) continue;
     if (!(events[i].isIgnoring())) continue;
     const float eventDistance = events[i].d / SpeedOfSound;
     if (eventDistance > farthestDistance) {
@@ -1008,7 +1008,7 @@ static size_t		findBestWorldSlot()
   farthestEvent = first;
   farthestDistance = events[farthestEvent].d / SpeedOfSound;
   for (i = first + 1; i < MaxEvents; i++) {
-    if (events[i].isFixed() or not events[i].isWorld()) continue;
+    if (events[i].isFixed() || !events[i].isWorld()) continue;
     const float eventDistance = events[i].d / SpeedOfSound;
     if (eventDistance > farthestDistance) {
       farthestEvent = i;
