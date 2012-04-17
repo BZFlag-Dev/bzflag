@@ -27,6 +27,7 @@ EXTRA_DIST =		\
 	scene.vcxproj	\
 	libcurl.vcxproj	\
 	zlib.vcxproj	\
+	zlib.vcproj	\
 	pdcurses.vcxproj	\
 	makeHTML.bat
 
