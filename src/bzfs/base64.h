@@ -52,6 +52,7 @@
 
 #include <algorithm>
 #include <string>
+#include <iterator>
 
 namespace base64 {
   typedef unsigned uint32;
