@@ -659,16 +659,18 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	free(av[j]);
       delete[] av;
       options.numAllowedFlags = 0;
-    } else if (strcmp(argv[i], "-cr") == 0)  {
+    }
+    else if (strcmp(argv[i], "-cr") == 0) {
       // CTF with random world
       options.randomCTF = true;
       // capture the flag style
-      if (options.gameType == RabbitChase)  {
+      if (options.gameType == RabbitChase) {
 	std::cerr << "Capture the flag incompatible with Rabbit Chase" << std::endl;
 	std::cerr << "Capture the flag assumed" << std::endl;
       }
       options.gameType = ClassicCTF;
-    } else if (strcmp(argv[i], "-density") ==0) {
+    }
+    else if (strcmp(argv[i], "-density") == 0) {
       if (i+1 != argc && isdigit(*argv[i+1])) {
 	options.citySize = atoi(argv[i+1]);
 	i++;
@@ -800,7 +802,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     else if (strcmp(argv[i], "-maxidle") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.idlekickthresh = (float) atoi(argv[i]);
-	} else if (strcmp(argv[i], "-mp") == 0) {
+    }
+    else if (strcmp(argv[i], "-mp") == 0) {
       // set maximum number of players
       checkArgc(1, i, argc, argv[i]);
       if (playerCountArg == 0)
@@ -901,7 +904,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	fprintf(fp, "%d", pid);
 	fclose(fp);
       }
-    }  else if (strcmp(argv[i], "-pf") == 0) {
+    }
+    else if (strcmp(argv[i], "-pf") == 0) {
       // try wksPort first and if we can't open that port then
       // let system assign a port for us.
       options.useFallbackPort = true;
@@ -1095,7 +1099,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	usage(argv[0]);
       }
       storedFlagLimits[argv[i-1]] = x;
-    } else if (strcmp(argv[i], "-spamtime") == 0) {
+    }
+    else if (strcmp(argv[i], "-spamtime") == 0) {
       checkArgc(1, i, argc, argv[i]);
       options.msgTimer = atoi(argv[i]);
       logDebugMessage(1,"using spam time of %d seconds\n", options.msgTimer);
