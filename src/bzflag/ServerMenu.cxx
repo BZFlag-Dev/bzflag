@@ -300,6 +300,8 @@ void ServerMenu::toggleFavView()
 
 void ServerMenu::setFav(bool fav)
 {
+  if (selectedIndex < 0 || (int)serverList.size() <= selectedIndex)
+    return;	// no such entry (server list may be empty)
   const ServerItem& item = serverList.getServers()[selectedIndex];
   std::string addrname = item.getAddrName();
   ServerListCache *cache = ServerListCache::get();
