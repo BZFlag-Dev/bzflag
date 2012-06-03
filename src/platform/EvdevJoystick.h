@@ -67,6 +67,7 @@ class EvdevJoystick : public BzfJoystick {
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
     void	getJoy(int& x, int& y);
+    int*        getJoyHats();
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
 
@@ -116,6 +117,7 @@ class EvdevJoystick : public BzfJoystick {
     EvdevJoystickInfo*	  currentJoystick;
     int			 joystickfd;
     int			 buttons;
+    int                  hats[8];
     struct ff_effect*	   ff_rumble;
 };
 

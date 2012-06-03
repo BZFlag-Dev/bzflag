@@ -148,6 +148,22 @@ class BzfKeyEvent {
 			BZ_Button_30,
 			BZ_Button_31,
 			BZ_Button_32,
+			BZ_Hatswitch_1_left,
+			BZ_Hatswitch_1_right,
+			BZ_Hatswitch_1_up,
+			BZ_Hatswitch_1_down,
+			BZ_Hatswitch_2_left,
+			BZ_Hatswitch_2_right,
+			BZ_Hatswitch_2_up,
+			BZ_Hatswitch_2_down,
+			BZ_Hatswitch_3_left,
+			BZ_Hatswitch_3_right,
+			BZ_Hatswitch_3_up,
+			BZ_Hatswitch_3_down,
+			BZ_Hatswitch_4_left,
+			BZ_Hatswitch_4_right,
+			BZ_Hatswitch_4_up,
+			BZ_Hatswitch_4_down,
 			LastButton  // special marker that must be last
     };
     enum {

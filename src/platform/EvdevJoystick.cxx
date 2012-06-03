@@ -218,7 +218,7 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
   } else {
     joystickfd = open(info->filename.c_str(), O_RDONLY | O_NONBLOCK);
     if (joystickfd > 0) {
-      /* Got it in read only */
+      /* Got it in read-only */
       currentJoystick = info;
       currentJoystick->readonly = true;
       printError("No write access to joystick device, force feedback disabled.");
@@ -246,8 +246,11 @@ void		    EvdevJoystick::poll()
     switch (ev.type) {
 
     case EV_ABS:
-      if (ev.code - ABS_X > 8)
-	break;
+      if (ev.code > ABS_WHEEL) {
+        if (ABS_HAT0X <= ev.code && ev.code <= ABS_HAT3Y)
+          hats[ev.code - ABS_HAT0X] = ev.value;
+        break;
+      }
       currentJoystick->axis_info[ev.code - ABS_X].value = ev.value;
       break;
 
@@ -333,6 +336,17 @@ void			EvdevJoystick::getJoy(int& x, int& y)
     y = axes[useaxis[1]];
   } else {
     x = y = 0;
+  }
+}
+
+int*           EvdevJoystick::getJoyHats()
+{
+  if (currentJoystick) {
+    poll();
+    return hats;
+  }
+  else {
+    return 0;
   }
 }
 

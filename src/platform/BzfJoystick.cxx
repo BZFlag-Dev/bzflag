@@ -38,6 +38,11 @@ void			BzfJoystick::initJoystick(const char* joystickName)
   }
 }
 
+int*                    BzfJoystick::getJoyHats()
+{
+  return 0;
+}
+
 unsigned long		BzfJoystick::getJoyButtons()
 {
   return 0;

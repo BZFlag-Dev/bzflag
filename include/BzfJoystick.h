@@ -33,6 +33,7 @@ class BzfJoystick {
     virtual void	initJoystick(const char* joystickName);
     virtual bool	joystick() const;
     virtual void	getJoy(int& x, int& y);
+    virtual int*        getJoyHats();
     virtual unsigned long getJoyButtons();
     virtual void	getJoyDevices(std::vector<std::string> &list) const;
 

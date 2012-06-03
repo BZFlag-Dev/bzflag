@@ -6423,6 +6423,25 @@ static void		playingLoop()
 	BzfKeyEvent::BZ_Button_32,
       };
 
+      static const BzfKeyEvent::Button hat_map[] = {
+        BzfKeyEvent::BZ_Hatswitch_1_left,
+        BzfKeyEvent::BZ_Hatswitch_1_right,
+        BzfKeyEvent::BZ_Hatswitch_1_up,
+        BzfKeyEvent::BZ_Hatswitch_1_down,
+        BzfKeyEvent::BZ_Hatswitch_2_left,
+        BzfKeyEvent::BZ_Hatswitch_2_right,
+        BzfKeyEvent::BZ_Hatswitch_2_up,
+        BzfKeyEvent::BZ_Hatswitch_2_down,
+        BzfKeyEvent::BZ_Hatswitch_3_left,
+        BzfKeyEvent::BZ_Hatswitch_3_right,
+        BzfKeyEvent::BZ_Hatswitch_3_up,
+        BzfKeyEvent::BZ_Hatswitch_3_down,
+        BzfKeyEvent::BZ_Hatswitch_4_left,
+        BzfKeyEvent::BZ_Hatswitch_4_right,
+        BzfKeyEvent::BZ_Hatswitch_4_up,
+        BzfKeyEvent::BZ_Hatswitch_4_down,
+      };
+
       static unsigned long old_buttons = 0;
       const int button_count = countof(button_map);
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
@@ -6437,6 +6456,28 @@ static void		playingLoop()
 	  }
 	}
       old_buttons = new_buttons;
+
+      int* new_hats = mainWindow->getJoyHats();
+      const int hat_count = sizeof(new_hats);
+      static int old_hats[hat_count];
+      if (0 != new_hats && new_hats != old_hats) {
+        for (int j = 0; j < hat_count; j++) {
+            if (old_hats[j] != new_hats[j]) {
+                BzfKeyEvent ev;
+                ev.ascii = 0;
+                ev.shift = 0;
+                //each hat axis counts as two buttons
+                if(old_hats[j] < 0 || new_hats[j] < 0) {
+                  ev.button = hat_map[j * 2];
+                  doKey(ev, new_hats[j] < 0);
+                } else {
+                  ev.button = hat_map[j * 2 + 1];
+                  doKey(ev, new_hats[j] > 0);
+                }
+            }
+        }
+        memcpy(old_hats, new_hats, hat_count);
+      }
     }
 
     mainWindow->getWindow()->yieldCurrent();
