@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -188,7 +188,7 @@ bool			LinuxMedia::openAudioHardware()
   openIoctl(SNDCTL_DSP_RESET, 0);
   n = fragmentInfo;
   noSetFragment = false;
-  if (!openIoctl(SNDCTL_DSP_SETFRAGMENT, &n, false)) {
+  if (!openIoctl((int)SNDCTL_DSP_SETFRAGMENT, &n, false)) {
     // this is not good.  we can't set the size of the fragment
     // buffers.  we'd like something short to minimize latencies
     // and the default is probably too long.  we've got two
@@ -199,16 +199,16 @@ bool			LinuxMedia::openAudioHardware()
       noSetFragment = true;
   }
   n = format;
-  openIoctl(SNDCTL_DSP_SETFMT, &n, false);
+  openIoctl((int)SNDCTL_DSP_SETFMT, &n, false);
   if (n != format) {
     audio8Bit = true;
     n = AFMT_U8;
-    openIoctl(SNDCTL_DSP_SETFMT, &n);
+    openIoctl((int)SNDCTL_DSP_SETFMT, &n);
   }
   n = 1;
-  openIoctl(SNDCTL_DSP_STEREO, &n);
+  openIoctl((int)SNDCTL_DSP_STEREO, &n);
   n = defaultAudioRate;
-  openIoctl(SNDCTL_DSP_SPEED, &n);
+  openIoctl((int)SNDCTL_DSP_SPEED, &n);
 
   // set audioBufferSize, which is the number of samples (not bytes)
   // in each fragment.  there are two bytes per sample so divide the
@@ -217,7 +217,7 @@ bool			LinuxMedia::openAudioHardware()
   // the size we would've asked for.  we'll force the buffer to be
   // flushed after we write that much data to keep latency low.
   if (noSetFragment ||
-	!openIoctl(SNDCTL_DSP_GETBLKSIZE, &audioBufferSize, false) ||
+	!openIoctl((int)SNDCTL_DSP_GETBLKSIZE, &audioBufferSize, false) ||
 	audioBufferSize > (1 << fragmentSize)) {
     audioBufferSize = 1 << fragmentSize;
     noSetFragment = true;
@@ -230,7 +230,7 @@ bool			LinuxMedia::openAudioHardware()
   // clock.  *shudder*
   if (audioPortFd != -1) {
     audio_buf_info info;
-    if (!openIoctl(SNDCTL_DSP_GETOSPACE, &info, false)) {
+    if (!openIoctl((int)SNDCTL_DSP_GETOSPACE, &info, false)) {
       getospaceBroken = true;
       chunksPending = 0;
       chunksPerSecond = (double)getAudioOutputRate() /
@@ -364,7 +364,7 @@ void			LinuxMedia::writeAudioFrames8Bit(
     else limit=numSamples;
     for (int j = 0; j < limit; j++) {
       if (samples[j] <= -32767.0) smOutputBuffer[j] = 0;
-      else if (samples[j] >= 32767.0) smOutputBuffer[j] = 255;
+      else if (samples[j] >= 32767.0) smOutputBuffer[j] = (char)255;
       else smOutputBuffer[j] = char((samples[j]+32767)/257);
     }
 
