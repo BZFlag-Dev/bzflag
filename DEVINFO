@@ -298,12 +298,7 @@ https://sourceforge.net/tracker/?func=add&group_id=3248&atid=303248
 You can create a patch for submission to SourceForge from a source
 checkout using the following command:
 
-svn diff -u > my_patch_name.diff
-
-If your patch results in the deletion of existing files, you can
-annotate that deletion by adding it to the patch like this:
-
-diff -u src/bzfs/somefile.cxx /dev/null >> my_patch_name.diff
+svn diff > my_patch_name.diff
 
 If your patch requires the addition of new files, simply include these
 new files individually or in a tarball as part of the patch submission.
