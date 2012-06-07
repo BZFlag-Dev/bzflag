@@ -71,6 +71,7 @@ void			SDLJoystick::initJoystick(const char* joystickName)
     return;
   }
   joystickButtons = SDL_JoystickNumButtons(joystickID);
+  joystickHats = SDL_JoystickNumHats(joystickID);
 }
 
 bool			SDLJoystick::joystick() const
@@ -110,6 +111,26 @@ unsigned long		SDLJoystick::getJoyButtons()
     buttons |= SDL_JoystickGetButton(joystickID, i) << i;
 
   return buttons;
+}
+
+int                 SDLJoystick::getNumHats()
+{
+  if (!joystickID)
+    return 0;
+
+  return joystickHats;
+}
+
+int                 SDLJoystick::getJoyHat(int hat)
+{
+  if (!joystickID)
+    return 0;
+
+  if (hat >= joystickHats) // a precaution
+    return 0;
+
+  SDL_JoystickUpdate();
+  return SDL_JoystickGetHat(joystickID, hat);
 }
 
 void		    SDLJoystick::getJoyDevices(std::vector<std::string>

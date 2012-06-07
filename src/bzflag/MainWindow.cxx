@@ -274,9 +274,14 @@ void			MainWindow::getJoyPosition(int& mx, int& my) const
   my = ((height >> 1) * my) / (900);
 }
 
-int*               MainWindow::getJoyHats() const
+int                     MainWindow::getNumHats() const
 {
-  return joystick->getJoyHats();
+  return joystick->getNumHats();
+}
+
+int                     MainWindow::getJoyHat(int hat) const
+{
+  return joystick->getJoyHat(hat);
 }
 
 unsigned long		  MainWindow::getJoyButtonSet() const

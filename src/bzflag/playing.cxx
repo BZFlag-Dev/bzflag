@@ -6423,25 +6423,6 @@ static void		playingLoop()
 	BzfKeyEvent::BZ_Button_32,
       };
 
-      static const BzfKeyEvent::Button hat_map[] = {
-        BzfKeyEvent::BZ_Hatswitch_1_left,
-        BzfKeyEvent::BZ_Hatswitch_1_right,
-        BzfKeyEvent::BZ_Hatswitch_1_up,
-        BzfKeyEvent::BZ_Hatswitch_1_down,
-        BzfKeyEvent::BZ_Hatswitch_2_left,
-        BzfKeyEvent::BZ_Hatswitch_2_right,
-        BzfKeyEvent::BZ_Hatswitch_2_up,
-        BzfKeyEvent::BZ_Hatswitch_2_down,
-        BzfKeyEvent::BZ_Hatswitch_3_left,
-        BzfKeyEvent::BZ_Hatswitch_3_right,
-        BzfKeyEvent::BZ_Hatswitch_3_up,
-        BzfKeyEvent::BZ_Hatswitch_3_down,
-        BzfKeyEvent::BZ_Hatswitch_4_left,
-        BzfKeyEvent::BZ_Hatswitch_4_right,
-        BzfKeyEvent::BZ_Hatswitch_4_up,
-        BzfKeyEvent::BZ_Hatswitch_4_down,
-      };
-
       static unsigned long old_buttons = 0;
       const int button_count = countof(button_map);
       unsigned long new_buttons = mainWindow->getJoyButtonSet();
@@ -6457,26 +6438,63 @@ static void		playingLoop()
 	}
       old_buttons = new_buttons;
 
-      int* new_hats = mainWindow->getJoyHats();
-      const int hat_count = sizeof(new_hats);
-      static int old_hats[hat_count];
-      if (0 != new_hats && new_hats != old_hats) {
-        for (int j = 0; j < hat_count; j++) {
-            if (old_hats[j] != new_hats[j]) {
-                BzfKeyEvent ev;
-                ev.ascii = 0;
-                ev.shift = 0;
-                //each hat axis counts as two buttons
-                if(old_hats[j] < 0 || new_hats[j] < 0) {
-                  ev.button = hat_map[j * 2];
-                  doKey(ev, new_hats[j] < 0);
-                } else {
-                  ev.button = hat_map[j * 2 + 1];
-                  doKey(ev, new_hats[j] > 0);
-                }
-            }
+      static const BzfKeyEvent::Button hat_map[] = {////////////////////
+        BzfKeyEvent::BZ_Hatswitch_1_upright,        // 9 1 3 -> 3 4 0 //
+        BzfKeyEvent::BZ_Hatswitch_1_downright,      // 8 0 2 -> 7 - 5 //
+        BzfKeyEvent::BZ_Hatswitch_1_downleft,       //12 4 6 -> 2 6 1 //
+        BzfKeyEvent::BZ_Hatswitch_1_upleft,         ////////////////////};
+        BzfKeyEvent::BZ_Hatswitch_1_up,
+        BzfKeyEvent::BZ_Hatswitch_1_right,          //the left numbers are
+        BzfKeyEvent::BZ_Hatswitch_1_down,           //those returned by
+        BzfKeyEvent::BZ_Hatswitch_1_left,           //getJoyHat(), the right
+        BzfKeyEvent::BZ_Hatswitch_2_upright,        //numbers are in the
+        BzfKeyEvent::BZ_Hatswitch_2_downright,      //button order shown here
+        BzfKeyEvent::BZ_Hatswitch_2_downleft,
+        BzfKeyEvent::BZ_Hatswitch_2_upleft,
+        BzfKeyEvent::BZ_Hatswitch_2_up,
+        BzfKeyEvent::BZ_Hatswitch_2_right,
+        BzfKeyEvent::BZ_Hatswitch_2_down,
+        BzfKeyEvent::BZ_Hatswitch_2_left,
+        BzfKeyEvent::BZ_Hatswitch_3_upright,
+        BzfKeyEvent::BZ_Hatswitch_3_downright,
+        BzfKeyEvent::BZ_Hatswitch_3_downleft,
+        BzfKeyEvent::BZ_Hatswitch_3_upleft,
+        BzfKeyEvent::BZ_Hatswitch_3_up,
+        BzfKeyEvent::BZ_Hatswitch_3_right,
+        BzfKeyEvent::BZ_Hatswitch_3_down,
+        BzfKeyEvent::BZ_Hatswitch_3_left,
+        BzfKeyEvent::BZ_Hatswitch_4_upright,
+        BzfKeyEvent::BZ_Hatswitch_4_downright,
+        BzfKeyEvent::BZ_Hatswitch_4_downleft,
+        BzfKeyEvent::BZ_Hatswitch_4_upleft,
+        BzfKeyEvent::BZ_Hatswitch_4_up,
+        BzfKeyEvent::BZ_Hatswitch_4_right,
+        BzfKeyEvent::BZ_Hatswitch_4_down,
+        BzfKeyEvent::BZ_Hatswitch_4_left,
+      };
+
+      const int hat_count = countof(hat_map) / 8;
+      int hat, hat_age, num_hats = mainWindow->getNumHats();
+      num_hats = (hat_count < num_hats) ?  hat_count : num_hats;
+      static int * hats = new int[num_hats];
+      for (int num = 0; num < num_hats; num++) {
+        if ((hat_age = (hat = mainWindow->getJoyHat(num)) - hats[num]) != 0) {
+          BzfKeyEvent ev;
+          ev.button = -1;
+          ev.ascii = 0;
+          ev.shift = 0;
+          if (hats[num] ==  3|| 3 == hat) ev.button = hat_map[0 + 8 * num];
+          if (hats[num] ==  6|| 6 == hat) ev.button = hat_map[1 + 8 * num];
+          if (hats[num] == 12||12 == hat) ev.button = hat_map[2 + 8 * num];
+          if (hats[num] ==  9|| 9 == hat) ev.button = hat_map[3 + 8 * num];
+          if (ev.button != -1) doKey(ev, hat_age > 0); // report diagonals before orthonormal directions
+          if (abs(hat_age) == 1) ev.button = hat_map[4 + 8 * num];
+          if (abs(hat_age) == 2) ev.button = hat_map[5 + 8 * num];
+          if (abs(hat_age) == 4) ev.button = hat_map[6 + 8 * num];
+          if (abs(hat_age) == 8) ev.button = hat_map[7 + 8 * num];
+          doKey(ev, hat_age > 0);
+          hats[num] = hat;
         }
-        memcpy(old_hats, new_hats, hat_count);
       }
     }
 

@@ -339,15 +339,30 @@ void			EvdevJoystick::getJoy(int& x, int& y)
   }
 }
 
-int*           EvdevJoystick::getJoyHats()
+int                     EvdevJoystick::getNumHats()
+{
+  int joystickHats = 0;
+  if (currentJoystick)
+    for (int i = 0; i < 4; ++i)
+      if (test_bit(ABS_HAT0X + i * 2, currentJoystick->absbit))
+        ++joystickHats;
+  return joystickHats;
+}
+
+int                     EvdevJoystick::getJoyHat(int hat)
 {
   if (currentJoystick) {
-    poll();
-    return hats;
+    if (hat < 4) {
+      poll();
+      int
+      value  = (hats[hat * 2 + 1] < 0) ? 1 : 0;
+      value += (hats[hat * 2]     > 0) ? 2 : 0;
+      value += (hats[hat * 2 + 1] > 0) ? 4 : 0;
+      value += (hats[hat * 2]     < 0) ? 8 : 0;
+      return value;
+    }
   }
-  else {
-    return 0;
-  }
+  return 0;
 }
 
 unsigned long		EvdevJoystick::getJoyButtons()

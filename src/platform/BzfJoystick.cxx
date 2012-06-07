@@ -38,7 +38,12 @@ void			BzfJoystick::initJoystick(const char* joystickName)
   }
 }
 
-int*                    BzfJoystick::getJoyHats()
+int                     BzfJoystick::getNumHats()
+{
+  return 0;
+}
+
+int                     BzfJoystick::getJoyHat(int UNUSED(hat))
 {
   return 0;
 }
