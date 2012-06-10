@@ -90,11 +90,14 @@ class DXJoystick : public BzfJoystick {
     void	enumerateDevices();
     void	resetFF();
 
+
+
     void	DXError(const char* situation, HRESULT problem);
 
     std::map<std::string,bool> axes;
     std::string xAxis;
     std::string yAxis;
+	int		numberOfHats;
 
     static std::vector<DIDEVICEINSTANCE> devices;
     static EffectMap effectDatabase;

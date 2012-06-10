@@ -46,7 +46,7 @@ DXJoystick::DXJoystick() : device(NULL)
     DXError("Could not initialize DirectInput", success);
     return;
   }
-
+  numberOfHats = 0;
   enumerateDevices();
 }
 
@@ -202,6 +202,28 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   if (success == DI_OK)
     axes["Slider 2"] = true;
 
+  range.diph.dwObj = DIJOFS_POV(0);
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+	  numberOfHats = 1;
+
+  range.diph.dwObj = DIJOFS_POV(1);
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+	  numberOfHats = 2;
+
+  range.diph.dwObj = DIJOFS_POV(2);
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+	  numberOfHats = 3;
+
+  range.diph.dwObj = DIJOFS_POV(3);
+  success = device->SetProperty(DIPROP_RANGE, &range.diph);
+  if (success == DI_OK)
+	  numberOfHats = 4;
+
+  // TODO Tell the Joystick we have one or more HATs
+
   /*
    * Acquire the device so that we can get input from it.
    */
@@ -237,6 +259,25 @@ void	      DXJoystick::getJoy(int& x, int& y)
   else if (yAxis == "Rz") y = state.lRz;
   else if (yAxis == "Slider 1") y = state.rglSlider[0];
   else if (yAxis == "Slider 2") y = state.rglSlider[1];
+
+  for (int i = 0; i < numberOfHats; i++)
+  {
+	  DWORD hatPos = state.rgdwPOV[i];
+
+	  float hatX = 0;
+	  float hatY = 0;
+	  BOOL hatCentered = (LOWORD(hatPos) == 0xFFFF);
+	  if (!hatCentered)
+	  {
+		  float angle = (float)hatPos/100.0f;
+
+		  hatX = cosf(angle * ((float)M_PI/180.0f));
+		  hatY = sinf(angle * ((float)M_PI/180.0f));
+
+		  // TODO SET hat axes in the joystick HERE
+	  }
+  }
+  
 
   // ballistics
   x = (x * abs(x)) / 1000;
