@@ -65,6 +65,7 @@ namespace Flags {
   FlagType *Thief;
   FlagType *Burrow;
   FlagType *Wings;
+  FlagType *Agility;
   FlagType *Colorblindness;
   FlagType *Obesity;
   FlagType *LeftTurnOnly;
@@ -79,7 +80,6 @@ namespace Flags {
   FlagType *TriggerHappy;
   FlagType *ReverseControls;
   FlagType *Bouncy;
-  FlagType *Agility;
 
   void init()
   {
