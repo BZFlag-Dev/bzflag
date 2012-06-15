@@ -153,6 +153,8 @@ fi
 if test x$enable_debug = xyes; then
     AC_DEFINE(DEBUG, 1, [Debugging])
     AC_DEFINE(DEBUG_RENDERING, 1, [Debug Rendering])
+    user_CFLAGS="$ac_save_CFLAGS"
+    user_CXXFLAGS="$CXXFLAGS"	# ac_save_CXXFLAGS is not set yet
 fi
 
 # do we want the bzflag  client?
@@ -745,6 +747,10 @@ fi
 if test x$enable_debug = xyes ; then
     CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
     CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
+    # revert automatic setting of CFLAGS and CXXFLAGS to prevent
+    # override of "-g -O0" put into CONF_CFLAGS and CONF_CXXFLAGS above
+    CFLAGS="$user_CFLAGS"
+    CXXFLAGS="$user_CXXFLAGS"
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     if test "$GCC" = yes ; then
